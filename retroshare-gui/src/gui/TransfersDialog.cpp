@@ -761,6 +761,9 @@ int TransfersDialog::addItem(int row, const FileInfo &fileInfo, const std::map<s
 															 break ;
 			case FileChunksInfo::CHUNK_ACTIVE: 	 pinfo.chunks_in_progress.push_back(i);
 															 break ;
+			case FileChunksInfo::CHUNK_DONE:
+			case FileChunksInfo::CHUNK_OUTSTANDING:
+				break ;
 		}
 
 	QString tooltip;

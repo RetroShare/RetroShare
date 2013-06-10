@@ -369,7 +369,6 @@ behind a firewall or a VPN.</string>
       <zorder>showDiscStatusBar</zorder>
       <zorder>allowIpDeterminationCB</zorder>
       <zorder>IPServersLV</zorder>
-      <zorder></zorder>
       <zorder>textlabel_ext</zorder>
       <zorder>textlabel_netLimited</zorder>
       <zorder>ipAddressList</zorder>
@@ -563,7 +562,6 @@ The default value is 20.</string>
  </tabstops>
  <resources>
   <include location="../images.qrc"/>
-  <include location="images.qrc"/>
  </resources>
  <connections/>
 </ui>

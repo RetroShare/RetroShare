@@ -119,6 +119,9 @@ bool RsHtml::canReplaceAnchor(QDomDocument &/*doc*/, QDomElement &/*element*/, c
 	case RetroShareLink::TYPE_CHANNEL:
 	case RetroShareLink::TYPE_SEARCH:
 	case RetroShareLink::TYPE_MESSAGE:
+	case RetroShareLink::TYPE_EXTRAFILE:
+	case RetroShareLink::TYPE_PRIVATE_CHAT:
+	case RetroShareLink::TYPE_PUBLIC_MSG:
 		// not yet implemented
 		break;
 
@@ -144,6 +147,9 @@ void RsHtml::anchorStylesheetForImg(QDomDocument &/*doc*/, QDomElement &/*elemen
 	case RetroShareLink::TYPE_CHANNEL:
 	case RetroShareLink::TYPE_SEARCH:
 	case RetroShareLink::TYPE_MESSAGE:
+	case RetroShareLink::TYPE_EXTRAFILE:
+	case RetroShareLink::TYPE_PRIVATE_CHAT:
+	case RetroShareLink::TYPE_PUBLIC_MSG:
 		// not yet implemented
 		break;
 
@@ -698,7 +704,7 @@ void RsHtml::optimizeHtml(QTextEdit *textEdit, QString &text, unsigned int flag)
  */
 void RsHtml::optimizeHtml(QString &text, unsigned int flag, const QColor &backgroundColor, qreal desiredContrast)
 {
-	int originalLength = text.length();
+//	int originalLength = text.length();
 
 	// remove doctype
 	text.remove(QRegExp("<!DOCTYPE[^>]*>"));

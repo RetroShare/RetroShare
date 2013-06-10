@@ -248,7 +248,7 @@ public:
   bool getForumExpandNewMessages();
   void setForumExpandNewMessages(bool value);
   bool getForumOpenAllInNewTab();
-  bool setForumOpenAllInNewTab(bool value);
+  void setForumOpenAllInNewTab(bool value);
 
   /* time before idle */
   uint getMaxTimeBeforeIdle();

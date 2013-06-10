@@ -28,7 +28,7 @@
 #include <gui/common/FriendSelectionWidget.h>
 #include <gui/RetroShareLink.h>
 
-CreateMsgLinkDialog::CreateMsgLinkDialog(QWidget *parent)
+CreateMsgLinkDialog::CreateMsgLinkDialog()
 	:QDialog(NULL, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint)
 {
 	/* Invoke the Qt Designer generated object setup routine */
@@ -112,8 +112,10 @@ void CreateMsgLinkDialog::update()
 	{
 		RetroShareLink link ;
 
-		if(!link.createPrivateChatInvite(invites[i].time_of_validity,QString::fromStdString(invites[i].destination_pgp_id),QString::fromStdString(invites[i].encrypted_radix64_string)));
+		if(!link.createPrivateChatInvite(invites[i].time_of_validity,QString::fromStdString(invites[i].destination_pgp_id),QString::fromStdString(invites[i].encrypted_radix64_string))) {
 			std::cerr << "Cannot create link." << std::endl;
+			continue;
+		}
 
 		QListWidgetItem *item = new QListWidgetItem;
 		item->setData(Qt::DisplayRole,tr("Private chat invite to ")+QString::fromStdString(invites[i].destination_pgp_id)) ;

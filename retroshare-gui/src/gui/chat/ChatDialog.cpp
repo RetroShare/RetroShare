@@ -93,7 +93,6 @@ void ChatDialog::init(const std::string &peerId, const QString &title)
 
 	if (cd == NULL) {
 		ChatLobbyId lobby_id = 0;
-		bool distant_peer = false ;
 
 		if (rsMsgs->isLobbyId(peerId, lobby_id)) {
 			chatflags = RS_CHAT_OPEN | RS_CHAT_FOCUS; // use own flags

@@ -30,7 +30,7 @@ class CreateMsgLinkDialog : public QDialog, public Ui::CreateMsgLinkDialog
 	Q_OBJECT
 
 	public:
-		CreateMsgLinkDialog(QWidget *parent = NULL);
+		CreateMsgLinkDialog();
 		virtual ~CreateMsgLinkDialog() {}
 
 	private slots:

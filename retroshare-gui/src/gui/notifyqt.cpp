@@ -170,7 +170,7 @@ class SignatureEventData
 			free(data) ;
 		}
 
-		bool performSignature()
+		void performSignature()
 		{
 			if(rsPeers->gpgSignData(data,len,sign,signlen))
 				signature_result = 1 ;
@@ -463,7 +463,8 @@ void NotifyQt::notifyChatLobbyTimeShift(int shift)
 #endif
 	emit chatLobbyTimeShift(shift) ;
 }
-void NotifyQt::handleChatLobbyTimeShift(int shift)
+
+void NotifyQt::handleChatLobbyTimeShift(int /*shift*/)
 {
 	static bool already = false ;
 

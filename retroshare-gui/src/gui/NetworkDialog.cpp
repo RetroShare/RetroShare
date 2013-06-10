@@ -259,7 +259,7 @@ void NetworkDialog::removeUnusedKeys()
 			std::cerr << "Skipping public/secret key pair " << *it << std::endl;
 			continue ;
 		}
-		if(now > THREE_MONTHS + details.lastUsed)
+		if(now > (time_t) (THREE_MONTHS + details.lastUsed))
 		{
 			std::cerr << "Adding " << *it << " to pre-selection." << std::endl;
 			pre_selected.push_back(*it) ;

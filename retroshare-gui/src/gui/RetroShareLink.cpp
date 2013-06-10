@@ -1046,6 +1046,8 @@ static void processList(const QStringList &list, const QString &textSingular, co
 			case TYPE_SEARCH:
 			case TYPE_MESSAGE:
 			case TYPE_CERTIFICATE:
+			case TYPE_PRIVATE_CHAT:
+			case TYPE_PUBLIC_MSG:
 				// no need to ask
 				break;
 
@@ -1275,8 +1277,8 @@ static void processList(const QStringList &list, const QString &textSingular, co
 					QString cleanname = link.name() ;
 					static const QString bad_chars_str = "/\\\"*:?<>|" ;
 
-					for(uint32_t i=0;i<cleanname.length();++i)
-						for(uint32_t j=0;j<bad_chars_str.length();++j)
+					for(int i=0;i<cleanname.length();++i)
+						for(int j=0;j<bad_chars_str.length();++j)
 							if(cleanname[i] == bad_chars_str[j])
 							{
 								cleanname[i] = '_';

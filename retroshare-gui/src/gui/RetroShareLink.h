@@ -96,7 +96,7 @@ class RetroShareLink
 		const QString& localIPAndPort() const { return _loc_ip_port ; }
 		const QString& externalIPAndPort() const { return _ext_ip_port ; }
 		const QString& location() const { return _location ; }
-		const time_t timeStamp() const { return _time_stamp ; }
+		time_t timeStamp() const { return _time_stamp ; }
 		const QString& encryptedPrivateChatInfo() const { return _encrypted_chat_info ; }
 		QString title() const;
 

@@ -63,7 +63,7 @@ static QString purifyFileName(const QString& input,bool& bad)
 	bad = false ;
 	QString output = input ;
 
-	for(uint32_t i=0;i<output.length();++i)
+	for(int i=0;i<output.length();++i)
 		for(int j=0;j<bad_chars.length();++j)
 			if(output[i] == bad_chars[j])
 			{

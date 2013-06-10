@@ -45,7 +45,7 @@
 /** Constructor */
 SecurityItem::SecurityItem(FeedHolder *parent, uint32_t feedId, const std::string &gpgId, const std::string &sslId, const std::string &sslCn, const std::string& ip_address,uint32_t type, bool isHome)
 :QWidget(NULL), mParent(parent), mFeedId(feedId),
-	mGpgId(gpgId), mSslId(sslId), mSslCn(sslCn), mType(type), mIsHome(isHome), mIP(ip_address)
+	mGpgId(gpgId), mSslId(sslId), mSslCn(sslCn), mIP(ip_address), mType(type), mIsHome(isHome)
 {
     /* Invoke the Qt Designer generated object setup routine */
     setupUi(this);

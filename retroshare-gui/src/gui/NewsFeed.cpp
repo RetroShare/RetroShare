@@ -810,14 +810,11 @@ void NewsFeed::openChat(std::string peerId)
 	ChatDialog::chatFriend(peerId);
 }
 
-
-void NewsFeed::openComments(uint32_t type, const RsGxsGroupId &groupId, const RsGxsMessageId &msgId, const QString &title)
+void NewsFeed::openComments(uint32_t /*type*/, const RsGxsGroupId &/*groupId*/, const RsGxsMessageId &/*msgId*/, const QString &/*title*/)
 {
 	std::cerr << "NewsFeed::openComments() Not Handled Yet";
 	std::cerr << std::endl;
 }
-
-
 
 void NewsFeed::itemDestroyed(QObject *item)
 {

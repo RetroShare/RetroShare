@@ -314,7 +314,7 @@ void ChatLobbyWidget::updateDisplay()
 		updateItem(item, lobby.lobby_id, lobby.lobby_name,lobby.lobby_topic, lobby.total_number_of_peers, subscribed);
 	}
 
-	time_t now = time(NULL) ;
+//	time_t now = time(NULL) ;
 
 	// Now add participating lobbies.
 	//

@@ -12,9 +12,6 @@ std::list<std::string> FriendSelectionDialog::selectFriends(QWidget *parent,cons
 {
 	FriendSelectionDialog dialog(parent,header_text,modus,show_type,pre_selected_id_type,pre_selected_ids) ;
 
-	dialog.friends_widget->start() ;
-	dialog.friends_widget->setSelectedIds(pre_selected_id_type,pre_selected_ids,true) ;
-
 	dialog.setWindowTitle(caption) ;
 
 	if(QDialog::Rejected == dialog.exec())
@@ -38,6 +35,8 @@ FriendSelectionDialog::FriendSelectionDialog(QWidget *parent,const QString& head
 	friends_widget->setHeaderText(header_text);
 	friends_widget->setModus(modus) ;
 	friends_widget->setShowType(show_type) ;
+	friends_widget->start() ;
+	friends_widget->setSelectedIds(pre_selected_id_type, pre_selected_ids, false);
 
 	QLayout *l = new QVBoxLayout ;
 	setLayout(l) ;

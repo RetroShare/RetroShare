@@ -755,7 +755,7 @@ bool RshareSettings::getForumOpenAllInNewTab()
     return valueFromGroup("ForumDialog", "OpenAllInNewTab", true).toBool();
 }
 
-bool RshareSettings::setForumOpenAllInNewTab(bool value)
+void RshareSettings::setForumOpenAllInNewTab(bool value)
 {
     setValueToGroup("ForumDialog", "OpenAllInNewTab", value);
 }
