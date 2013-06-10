@@ -1187,6 +1187,10 @@ p, li { white-space: pre-wrap; }
 Please choose one of it to chat with.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Talking to </source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ChatLobbyDialog</name>
@@ -1754,6 +1758,10 @@ Double click lobbies to enter and chat.</source>
         <source>is Busy and may not reply</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Paste/Create private chat or Message link...</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>CirclesDialog</name>
@@ -1993,23 +2001,11 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Disabling anonymous routing will suppress all sending/retrieval of tunnel and anonymous search requests from/to this user. This user will not be able to transfer anonymously through you.&lt;/p&gt;&lt;p&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Anonymous routing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Disabling discovery removes the sending of public keys of your own friends to this user. Discovery information from this friend will be dropped as well.&lt;/p&gt;&lt;p&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Discovery</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Disabling this means that forums and channels posts will not be passed from you to this friend, and items coming from this friend will be dropped.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2075,6 +2071,26 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Maybe password is wrong</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling anonymous routing will suppress all sending/retrieval of tunnel and anonymous search requests from/to this user. This user will not be able to transfer anonymously through you.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling discovery removes the sending of public keys of your own friends to this user. Discovery information from this friend will be dropped as well.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling this means that forums and channels posts will not be passed from you to this friend, and items coming from this friend will be dropped.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Retroshare always periodically your friend lists for browsable files matching your transfers, to establish a direct transfer. In this case, your friend knows you&apos;re downloading the file.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;To prevent this behavior for this friend only, uncheck this box. You can still perform a direct transfer if you explicitly ask for it, by e.g. downloading from your friend&apos;s file list. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use as direct source, when available</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2503,6 +2519,14 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>*** None ***</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use as direct source, when available</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Direct source</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3597,6 +3621,125 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Contacts:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>CreateMsgLinkDialog</name>
+    <message>
+        <source>Dialog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Valid until:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Type:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Usable by:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Copy to clipboard</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create new</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invite type:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Private chat</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Public message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Validity time :</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>hour</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>day</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>week</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>month</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>year</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Information</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Private chat invite</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Public message invite</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Private chat invite to </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Public message link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Private chat invite creation failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The creation of the chat invite failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Private chat invite created</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your new chat invite has been copied to clipboard. You can now paste it as a Retroshare link.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Messenging invite creation failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The creation of the messenging invite failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Messenging invite created</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your new messenging chat invite has been copied to clipboard. You can now paste it as a Retroshare link.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7982,6 +8125,10 @@ Do you want to save message ?</source>
         <source>Add Extra File</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Distant peer (PGP key: %1)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MessagePage</name>
@@ -8544,6 +8691,22 @@ Do you want to save message ?</source>
         <source>Total:</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Decrypt Message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Encrypted message. Right-click to decrypt it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Decryption failed!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This message could not be decrypted.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MessengerWindow</name>
@@ -8891,7 +9054,11 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Data iconsistency in the keyring. This is most probably a bug. Please contact the developers.</source>
+        <source>Create a distant chat invitation...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Data inconsistency in the keyring. This is most probably a bug. Please contact the developers.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9684,6 +9851,25 @@ malicious behavior of crafted plugins.</source>
     </message>
 </context>
 <context>
+    <name>PopupDistantChatDialog</name>
+    <message>
+        <source>Hash error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tunnel is broken</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tunnel established</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tunnel is working</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>PostedCreatePostDialog</name>
     <message>
         <source>Create Post</source>
@@ -10430,6 +10616,50 @@ Reported error is: %2</source>
     </message>
     <message>
         <source>Start with a RetroShare link is only supported for Windows.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select who can contact you:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Messenging link is expired</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This Messenging link is expired. The destination peer will not receive it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Chat link is expired</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This chat link is expired. The destination peer will not answer.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Chat link cannot be decrypted</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This chat link is encrypted with a key that is not yours. You can&apos;t used it. Key ID = </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The link could not be decrypted.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The link signature cannot be checked.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The link is signed by an unknown key.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Chat connexion is not possible</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

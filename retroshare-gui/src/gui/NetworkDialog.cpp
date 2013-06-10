@@ -297,7 +297,7 @@ void NetworkDialog::removeUnusedKeys()
 			case PGP_KEYRING_REMOVAL_ERROR_CANNOT_WRITE_BACKUP:
 			case PGP_KEYRING_REMOVAL_ERROR_CANNOT_CREATE_BACKUP: error_string = tr("Cannot create backup file. Check for permissions in pgp directory, disk space, etc.") ;
 																				  break ;
-			case PGP_KEYRING_REMOVAL_ERROR_DATA_INCONSISTENCY: 	error_string = tr("Data iconsistency in the keyring. This is most probably a bug. Please contact the developers.") ;
+			case PGP_KEYRING_REMOVAL_ERROR_DATA_INCONSISTENCY: 	error_string = tr("Data inconsistency in the keyring. This is most probably a bug. Please contact the developers.") ;
 																				  break ;
 
 		}
