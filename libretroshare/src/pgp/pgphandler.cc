@@ -1027,6 +1027,11 @@ bool PGPHandler::encryptDataBin(const PGPIdType& key_id,const void *data, const 
 		std::cerr << "PGPHandler::encryptTextToFile(): ERROR: supplied id did not return a public key!" << std::endl;
 		return false ;
 	}
+	if(public_key->key.pkey.algorithm != OPS_PKA_RSA)
+	{
+		std::cerr << "PGPHandler::encryptTextToFile(): ERROR: supplied key id " << key_id.toStdString() << " is not an RSA key (DSA for instance, is not supported)!" << std::endl;
+		return false ;
+	}
 	ops_create_info_t *info;
 	ops_memory_t *buf = NULL ;
    ops_setup_memory_write(&info, &buf, 0);
