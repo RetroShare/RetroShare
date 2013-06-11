@@ -68,12 +68,21 @@ void CreateMsgLinkDialog::updateCurrentRow(int r)
 	std::cerr << "Parsing link : " << text.toString().toStdString() << std::endl;
 	RetroShareLink link(text) ;
 
-	if( link.type() == RetroShareLink::TYPE_PRIVATE_CHAT )
-		_current_link_type_LE->setText( tr("Private chat invite") ) ;
-	else
-		_current_link_type_LE->setText( tr("Public message invite") ) ;
+	RsPeerDetails detail ;
+	rsPeers->getPeerDetails(link.GPGId().toStdString(),detail) ;
 
-	_current_link_dst_LE->setText(link.GPGId()) ;
+	if( link.type() == RetroShareLink::TYPE_PRIVATE_CHAT )
+	{
+		_current_link_type_LE->setText( tr("Private chat invite") ) ;
+		_usable_LB->setText(tr("Usable only by :")) ;
+	}
+	else
+	{
+		_current_link_type_LE->setText( tr("Public message invite") ) ;
+		_usable_LB->setText(tr("Usable to contact :")) ;
+	}
+
+	_current_link_dst_LE->setText(QString::fromStdString(detail.name)+" ("+link.GPGId()+")") ;
 	_current_link_date_DE->setDateTime(QDateTime::fromTime_t(link.timeStamp())) ;
 }
 
@@ -117,8 +126,11 @@ void CreateMsgLinkDialog::update()
 			continue;
 		}
 
+	RsPeerDetails detail ;
+	rsPeers->getPeerDetails(link.GPGId().toStdString(),detail) ;
+
 		QListWidgetItem *item = new QListWidgetItem;
-		item->setData(Qt::DisplayRole,tr("Private chat invite to ")+QString::fromStdString(invites[i].destination_pgp_id)) ;
+		item->setData(Qt::DisplayRole,tr("Private chat invite to ")+QString::fromStdString(detail.name)+" ("+QString::fromStdString(invites[i].destination_pgp_id)+")") ;
 		item->setData(Qt::UserRole,link.toString()) ;
 
 		_existing_links_LW->insertItem(0,item) ;
