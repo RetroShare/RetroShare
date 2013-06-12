@@ -360,4 +360,8 @@ bool p3Msgs::getDistantChatStatus(const std::string& hash,uint32_t& status,std::
 {
 	return mChatSrv->getDistantChatStatus(hash,status,pgp_id) ;
 }
+bool p3Msgs::closeDistantChatConnexion(const std::string& hash)
+{
+	return mChatSrv->closeDistantChatConnexion(hash) ;
+}
 

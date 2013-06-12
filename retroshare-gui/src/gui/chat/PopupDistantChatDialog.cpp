@@ -20,6 +20,8 @@
  ****************************************************************/
 
 #include <QTimer>
+#include <QCloseEvent>
+#include "RsAutoUpdatePage.h"
 #include "PopupDistantChatDialog.h"
 
 #define IMAGE_RED_LED ":/images/redled.png"
@@ -27,24 +29,25 @@
 #define IMAGE_GRN_LED ":/images/greenled.png"
 #define IMAGE_GRY_LED ":/images/grayled.png"
 
-PopupDistantChatDialog::~PopupDistantChatDialog()
-{
-	delete _tunnel_check_timer ;
+PopupDistantChatDialog::~PopupDistantChatDialog() 
+{ 
+	_update_timer->stop() ;
+	delete _update_timer ;
 }
 
 PopupDistantChatDialog::PopupDistantChatDialog(QWidget *parent, Qt::WFlags flags)
 	: PopupChatDialog(parent,flags)
 {
-	_tunnel_check_timer = new QTimer;
-	_tunnel_check_timer->setInterval(1000) ;
-
-	QObject::connect(_tunnel_check_timer,SIGNAL(timeout()),this,SLOT(checkTunnel())) ;
-
-	_tunnel_check_timer->start() ;
 	_status_label = new QLabel ;
+	_update_timer = new QTimer ;
+
+	_update_timer->setInterval(1000) ;
+	QObject::connect(_update_timer,SIGNAL(timeout()),this,SLOT(updateDisplay())) ;
+
+	_update_timer->start() ;
 
 	addChatBarWidget(_status_label) ;
-	checkTunnel() ;
+	updateDisplay() ;
 }
 
 void PopupDistantChatDialog::init(const std::string& hash,const QString & title)
@@ -53,8 +56,11 @@ void PopupDistantChatDialog::init(const std::string& hash,const QString & title)
 	PopupChatDialog::init(hash,title) ;
 }
 
-void PopupDistantChatDialog::checkTunnel()
+void PopupDistantChatDialog::updateDisplay()
 {
+	if(RsAutoUpdatePage::eventsLocked())	// we need to do that by end, because it's not possible to derive from both PopupChatDialog and RsAutoUpdatePage 
+		return ;										// which both derive from QObject. Signals-slot connexions won't work anymore.
+
 	if(!isVisible())
 		return ;
 
@@ -70,23 +76,32 @@ void PopupDistantChatDialog::checkTunnel()
 	{
 		case RS_DISTANT_CHAT_STATUS_UNKNOWN: std::cerr << "Unknown hash. Error!" << std::endl;
 														 _status_label->setPixmap(QPixmap(IMAGE_GRY_LED)) ;
-														  _status_label->setToolTip(tr("Hash error")) ;
+														  _status_label->setToolTip(QObject::tr("Hash error")) ;
 														 break ;
 		case RS_DISTANT_CHAT_STATUS_TUNNEL_DN: std::cerr << "Tunnel asked. Waiting for reponse. " << std::endl;
 														 _status_label->setPixmap(QPixmap(IMAGE_RED_LED)) ;
-														  _status_label->setToolTip(tr("Tunnel is broken")) ;
+														  _status_label->setToolTip(QObject::tr("Tunnel is broken")) ;
 														 break ;
 		case RS_DISTANT_CHAT_STATUS_TUNNEL_OK: std::cerr << "Tunnel is ok. " << std::endl;
 														 _status_label->setPixmap(QPixmap(IMAGE_YEL_LED)) ;
-														  _status_label->setToolTip(tr("Tunnel established")) ;
+														  _status_label->setToolTip(QObject::tr("Tunnel established")) ;
 														 break ;
 		case RS_DISTANT_CHAT_STATUS_CAN_TALK: std::cerr << "Tunnel is ok and works. You can talk!" << std::endl;
 														 _status_label->setPixmap(QPixmap(IMAGE_GRN_LED)) ;
-														  _status_label->setToolTip(tr("Tunnel is working")) ;
+														  _status_label->setToolTip(QObject::tr("Tunnel is working")) ;
 														 break ;
 	}
 }
 
+void PopupDistantChatDialog::closeEvent(QCloseEvent *e)
+{
+	std::cerr << "Closing window => closing distant chat for hash " << _hash << std::endl;
+	rsMsgs->closeDistantChatConnexion(_hash) ;
+
+	e->accept() ;
+
+	PopupChatDialog::closeEvent(e) ;
+}
 
 
 

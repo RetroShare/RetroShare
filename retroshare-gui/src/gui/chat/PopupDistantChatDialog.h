@@ -25,6 +25,7 @@
 #include "PopupChatDialog.h"
 
 class QTimer ;
+class QCloseEvent ;
 
 class PopupDistantChatDialog: public PopupChatDialog 
 {
@@ -32,10 +33,7 @@ class PopupDistantChatDialog: public PopupChatDialog
 
 	friend class ChatDialog;
 
-	public slots:
-		void checkTunnel() ;
-
-protected:
+	protected:
 	/** Default constructor */
 	PopupDistantChatDialog(QWidget *parent = 0, Qt::WFlags flags = 0);
 	/** Default destructor */
@@ -43,8 +41,13 @@ protected:
 
 	virtual void init(const std::string& _hash, const QString &title);
 	virtual void updateStatus(int /*status*/) {}
+	virtual void closeEvent(QCloseEvent *e) ;
 
-	QTimer *_tunnel_check_timer ;
+	protected slots:
+		void updateDisplay() ; // overloads RsAutoUpdatePage
+
+	private:
+	QTimer *_update_timer ;
 	std::string _hash ;
 	std::string _virtual_peer_id ;
 	QLabel *_status_label ;

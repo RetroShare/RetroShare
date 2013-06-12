@@ -329,6 +329,7 @@ virtual bool createDistantChatInvite(const std::string& pgp_id,time_t time_of_va
 virtual bool getDistantChatInviteList(std::vector<DistantChatInviteInfo>& invites) = 0;
 virtual bool initiateDistantChatConnexion(const std::string& encrypted_string,std::string& hash,uint32_t& error_code) = 0;
 virtual bool getDistantChatStatus(const std::string& hash,uint32_t& status,std::string& pgp_id) = 0;
+virtual bool closeDistantChatConnexion(const std::string& hash) = 0;
 
 };
 

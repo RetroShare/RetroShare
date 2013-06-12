@@ -42,6 +42,7 @@ CreateMsgLinkDialog::CreateMsgLinkDialog()
 	QObject::connect(_create_link_PB,SIGNAL(clicked()),this,SLOT(createLink())) ;
 	QObject::connect(_create_new_PB,SIGNAL(toggled(bool)),this,SLOT(toggleCreateLink(bool))) ;
 	QObject::connect(_existing_links_LW,SIGNAL(currentRowChanged(int)),this,SLOT(updateCurrentRow(int))) ;
+	QObject::connect(_copy_to_clipboard_PB,SIGNAL(clicked()),this,SLOT(copyLinkToClipboard())) ;
 
 	_gpg_selection->setModus(FriendSelectionWidget::MODUS_SINGLE) ;
 	_gpg_selection->setShowType(FriendSelectionWidget::SHOW_NON_FRIEND_GPG | FriendSelectionWidget::SHOW_GPG) ;
@@ -51,6 +52,24 @@ CreateMsgLinkDialog::CreateMsgLinkDialog()
 	toggleCreateLink(false) ;
 	update() ;
 	updateCurrentRow(-1) ;
+}
+
+void CreateMsgLinkDialog::copyLinkToClipboard()
+{
+	QList<QListWidgetItem*> selected = _existing_links_LW->selectedItems() ;
+
+	QList<RetroShareLink> links ;
+
+	for(QList<QListWidgetItem*>::const_iterator it(selected.begin());it!=selected.end();++it)
+	{
+		QUrl text = (*it)->data(Qt::UserRole).toUrl() ;
+		RetroShareLink link(text) ;
+
+		links.push_back(link) ;
+	}
+
+	if(!links.empty())
+		RSLinkClipboard::copyLinks(links) ;
 }
 
 void CreateMsgLinkDialog::updateCurrentRow(int r)

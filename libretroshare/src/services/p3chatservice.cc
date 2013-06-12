@@ -2891,6 +2891,7 @@ void p3ChatService::addVirtualPeer(const TurtleFileHash& hash,const TurtleVirtua
 		it->second.last_contact = now ;
 		it->second.status = RS_DISTANT_CHAT_STATUS_TUNNEL_OK ;
 		it->second.virtual_peer_id = virtual_peer_id ;
+		it->second.direction = dir ;
 
 #ifdef DEBUG_DISTANT_CHAT
 		std::cerr << "(II) Adding virtual peer " << virtual_peer_id << " for chat hash " << hash << std::endl;
@@ -2918,6 +2919,7 @@ void p3ChatService::addVirtualPeer(const TurtleFileHash& hash,const TurtleVirtua
 		info.status = RS_DISTANT_CHAT_STATUS_TUNNEL_OK ;
 		info.virtual_peer_id = virtual_peer_id ;
 		info.pgp_id = it->second.destination_pgp_id ;
+		info.direction = dir ;
 		memcpy(info.aes_key,it->second.aes_key,DISTANT_CHAT_AES_KEY_SIZE) ;
 
 		_distant_chat_peers[hash] = info ;
@@ -2926,8 +2928,6 @@ void p3ChatService::addVirtualPeer(const TurtleFileHash& hash,const TurtleVirtua
 
 	rsicontrol->getNotify().notifyChatStatus(hash,"tunnel is up again!",true) ;
 	rsicontrol->getNotify().notifyPeerStatusChanged(hash,RS_STATUS_ONLINE) ;
-
-	getPqiNotify()->AddPopupMessage(RS_POPUP_CHAT, hash, "Distant peer", "Conversation starts...");
 }
 
 void p3ChatService::removeVirtualPeer(const TurtleFileHash& hash,const TurtleVirtualPeerId& virtual_peer_id)
@@ -3079,7 +3079,7 @@ void p3ChatService::sendTurtleData(RsChatItem *item)
 
 		if(it == _distant_chat_peers.end())
 		{
-			std::cerr << "(EE) item is not coming out of a registered tunnel. Weird. peer id = " << virtual_peer_id << std::endl;
+			std::cerr << "(EE) item is not going into a registered tunnel. Weird. peer id = " << virtual_peer_id << std::endl;
 			delete[] buff ;
 			return ;
 		}
@@ -3285,6 +3285,7 @@ bool p3ChatService::initiateDistantChatConnexion(const std::string& encrypted_st
 	info.last_contact = time(NULL) ;
 	info.status = RS_DISTANT_CHAT_STATUS_TUNNEL_DN ;
 	info.pgp_id = pgp_id.toStdString() ;
+	info.direction = RsTurtleGenericTunnelItem::DIRECTION_SERVER ;
 	memcpy(info.aes_key,data+DISTANT_CHAT_HASH_SIZE,DISTANT_CHAT_AES_KEY_SIZE) ;
 
 	_distant_chat_peers[hash] = info ;
@@ -3302,6 +3303,8 @@ bool p3ChatService::initiateDistantChatConnexion(const std::string& encrypted_st
 	// And notify about chatting.
 
 	error_code = RS_DISTANT_CHAT_ERROR_NO_ERROR ;
+
+	getPqiNotify()->AddPopupMessage(RS_POPUP_CHAT, hash, "Distant peer", "Conversation starts...");
 	return true ;
 }
 
@@ -3359,10 +3362,47 @@ bool p3ChatService::getDistantChatStatus(const std::string& hash,uint32_t& statu
 	std::map<TurtleFileHash,DistantChatPeerInfo>::const_iterator it = _distant_chat_peers.find(hash) ;
 	
 	if(it == _distant_chat_peers.end())
+	{
+		status = RS_DISTANT_CHAT_STATUS_UNKNOWN ;
 		return false ;
+	}
 
 	status = it->second.status ;
 	pgp_id = it->second.pgp_id ;
+
+	return true ;
+}
+
+bool p3ChatService::closeDistantChatConnexion(const std::string& hash)
+{
+	// two cases: 
+	// 	- client needs to stop asking for tunnels => remove the hash from the list of tunnelled files
+	// 	- server needs to only close the window and let the tunnel die. But the window should only open if a message arrives.
+
+	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+
+	std::map<std::string,DistantChatPeerInfo>::iterator it = _distant_chat_peers.find(hash) ;
+
+	if(it == _distant_chat_peers.end())		// server side. Nothing to do.
+	{
+		std::cerr << "Cannot close chat associated to hash " << hash << ": not found." << std::endl;
+		return false ;
+	}
+
+	// We can't do just that. We should:
+	// - mark the peer as closing, but not closed. If the tunnel gets deleted because of no traffic, then stop monitor
+	//   it. That can be done in removeVirtualPeer
+	//
+	if(it->second.direction == RsTurtleGenericTunnelItem::DIRECTION_SERVER)
+	{
+		// Client side: Stop tunnels
+		//
+		std::cerr << "This is client side. Stopping tunnel manageement for hash " << hash << std::endl;
+		mTurtle->stopMonitoringTunnels(hash) ;
+
+		// and remove hash from list of current peers.
+		_distant_chat_peers.erase(it) ;
+	}
 
 	return true ;
 }
