@@ -35,16 +35,17 @@
 /**************************************************************************/
 
 /* chat Flags */
-const uint32_t RS_CHAT_FLAG_PRIVATE                = 0x0001;
-const uint32_t RS_CHAT_FLAG_REQUESTS_AVATAR        = 0x0002;
-const uint32_t RS_CHAT_FLAG_CONTAINS_AVATAR        = 0x0004;
-const uint32_t RS_CHAT_FLAG_AVATAR_AVAILABLE       = 0x0008;
-const uint32_t RS_CHAT_FLAG_CUSTOM_STATE           = 0x0010;  // used for transmitting peer status string
-const uint32_t RS_CHAT_FLAG_PUBLIC                 = 0x0020;
-const uint32_t RS_CHAT_FLAG_REQUEST_CUSTOM_STATE   = 0x0040;
-const uint32_t RS_CHAT_FLAG_CUSTOM_STATE_AVAILABLE = 0x0080;
-const uint32_t RS_CHAT_FLAG_PARTIAL_MESSAGE        = 0x0100;
-const uint32_t RS_CHAT_FLAG_LOBBY                  = 0x0200;
+const uint32_t RS_CHAT_FLAG_PRIVATE                    = 0x0001;
+const uint32_t RS_CHAT_FLAG_REQUESTS_AVATAR            = 0x0002;
+const uint32_t RS_CHAT_FLAG_CONTAINS_AVATAR            = 0x0004;
+const uint32_t RS_CHAT_FLAG_AVATAR_AVAILABLE           = 0x0008;
+const uint32_t RS_CHAT_FLAG_CUSTOM_STATE               = 0x0010;  // used for transmitting peer status string
+const uint32_t RS_CHAT_FLAG_PUBLIC                     = 0x0020;
+const uint32_t RS_CHAT_FLAG_REQUEST_CUSTOM_STATE       = 0x0040;
+const uint32_t RS_CHAT_FLAG_CUSTOM_STATE_AVAILABLE     = 0x0080;
+const uint32_t RS_CHAT_FLAG_PARTIAL_MESSAGE            = 0x0100;
+const uint32_t RS_CHAT_FLAG_LOBBY                      = 0x0200;
+const uint32_t RS_CHAT_FLAG_CLOSING_DISTANT_CONNECTION = 0x0400;
 
 const uint32_t RS_CHATMSG_CONFIGFLAG_INCOMING 		= 0x0001;
 

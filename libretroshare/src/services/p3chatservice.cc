@@ -1196,7 +1196,12 @@ void p3ChatService::handleRecvChatStatusItem(RsChatStatusItem *cs)
 		sendCustomStateRequest(cs->PeerId()) ;
 	}
 	else if(cs->flags & RS_CHAT_FLAG_PRIVATE)
+	{
 		rsicontrol->getNotify().notifyChatStatus(cs->PeerId(),cs->status_string,true) ;
+
+		if(cs->flags & RS_CHAT_FLAG_CLOSING_DISTANT_CONNECTION)
+			markDistantChatAsClosed(cs->PeerId()) ;
+	}
 	else if(cs->flags & RS_CHAT_FLAG_PUBLIC)
 		rsicontrol->getNotify().notifyChatStatus(cs->PeerId(),cs->status_string,false) ;
 }
@@ -3379,22 +3384,41 @@ bool p3ChatService::closeDistantChatConnexion(const std::string& hash)
 	// 	- client needs to stop asking for tunnels => remove the hash from the list of tunnelled files
 	// 	- server needs to only close the window and let the tunnel die. But the window should only open if a message arrives.
 
-	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
-
-	std::map<std::string,DistantChatPeerInfo>::iterator it = _distant_chat_peers.find(hash) ;
-
-	if(it == _distant_chat_peers.end())		// server side. Nothing to do.
+	bool is_client = false ;
 	{
-		std::cerr << "Cannot close chat associated to hash " << hash << ": not found." << std::endl;
-		return false ;
+		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+
+		std::map<std::string,DistantChatPeerInfo>::iterator it = _distant_chat_peers.find(hash) ;
+
+		if(it == _distant_chat_peers.end())		// server side. Nothing to do.
+		{
+			std::cerr << "Cannot close chat associated to hash " << hash << ": not found." << std::endl;
+			return false ;
+		}
+		if(it->second.direction == RsTurtleGenericTunnelItem::DIRECTION_SERVER)
+			is_client = true ;
 	}
 
-	// We can't do just that. We should:
-	// - mark the peer as closing, but not closed. If the tunnel gets deleted because of no traffic, then stop monitor
-	//   it. That can be done in removeVirtualPeer
-	//
-	if(it->second.direction == RsTurtleGenericTunnelItem::DIRECTION_SERVER)
+	if(is_client)
 	{
+		// send a status item saying that we're closing the connection
+
+		RsChatStatusItem *cs = new RsChatStatusItem ;
+
+		cs->status_string = "" ;
+		cs->flags = RS_CHAT_FLAG_PRIVATE | RS_CHAT_FLAG_CLOSING_DISTANT_CONNECTION;
+		cs->PeerId(hash);
+
+		sendTurtleData(cs) ;	// that needs to be done off-mutex!
+
+		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+		std::map<std::string,DistantChatPeerInfo>::iterator it = _distant_chat_peers.find(hash) ;
+
+		if(it == _distant_chat_peers.end())		// server side. Nothing to do.
+		{
+			std::cerr << "Cannot close chat associated to hash " << hash << ": not found." << std::endl;
+			return false ;
+		}
 		// Client side: Stop tunnels
 		//
 		std::cerr << "This is client side. Stopping tunnel manageement for hash " << hash << std::endl;
@@ -3405,6 +3429,20 @@ bool p3ChatService::closeDistantChatConnexion(const std::string& hash)
 	}
 
 	return true ;
+}
+
+void p3ChatService::markDistantChatAsClosed(const std::string& hash)
+{
+	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+	std::map<std::string,DistantChatPeerInfo>::iterator it = _distant_chat_peers.find(hash) ;
+
+	if(it == _distant_chat_peers.end())		// server side. Nothing to do.
+	{
+		std::cerr << "Cannot mask distant chat as closed for hash " << hash << ": not found." << std::endl;
+		return ;
+	}
+	
+	it->second.status = RS_DISTANT_CHAT_STATUS_REMOTELY_CLOSED ;
 }
 
 

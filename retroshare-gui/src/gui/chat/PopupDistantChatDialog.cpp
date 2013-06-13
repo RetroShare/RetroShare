@@ -21,6 +21,8 @@
 
 #include <QTimer>
 #include <QCloseEvent>
+#include <QMessageBox>
+
 #include "RsAutoUpdatePage.h"
 #include "PopupDistantChatDialog.h"
 
@@ -78,17 +80,24 @@ void PopupDistantChatDialog::updateDisplay()
 														 _status_label->setPixmap(QPixmap(IMAGE_GRY_LED)) ;
 														  _status_label->setToolTip(QObject::tr("Hash error")) ;
 														 break ;
+		case RS_DISTANT_CHAT_STATUS_REMOTELY_CLOSED: std::cerr << "Chat remotely closed. " << std::endl;
+														 _status_label->setPixmap(QPixmap(IMAGE_RED_LED)) ;
+														  _status_label->setToolTip(QObject::tr("Distant peer has closed the chat")) ;
+
+														  QMessageBox::warning(NULL,tr("Distant chat terminated"),tr("The person you're talking to has deleted the secured chat tunnel. You may remove the chat window now.")) ;
+														  _update_timer->stop() ;
+														 break ;
 		case RS_DISTANT_CHAT_STATUS_TUNNEL_DN: std::cerr << "Tunnel asked. Waiting for reponse. " << std::endl;
 														 _status_label->setPixmap(QPixmap(IMAGE_RED_LED)) ;
-														  _status_label->setToolTip(QObject::tr("Tunnel is broken")) ;
+														  _status_label->setToolTip(QObject::tr("Tunnel is pending...")) ;
 														 break ;
 		case RS_DISTANT_CHAT_STATUS_TUNNEL_OK: std::cerr << "Tunnel is ok. " << std::endl;
 														 _status_label->setPixmap(QPixmap(IMAGE_YEL_LED)) ;
-														  _status_label->setToolTip(QObject::tr("Tunnel established")) ;
+														  _status_label->setToolTip(QObject::tr("Secured tunnel established!")) ;
 														 break ;
 		case RS_DISTANT_CHAT_STATUS_CAN_TALK: std::cerr << "Tunnel is ok and works. You can talk!" << std::endl;
 														 _status_label->setPixmap(QPixmap(IMAGE_GRN_LED)) ;
-														  _status_label->setToolTip(QObject::tr("Tunnel is working")) ;
+														  _status_label->setToolTip(QObject::tr("Secured tunnel is working")) ;
 														 break ;
 	}
 }
@@ -96,7 +105,23 @@ void PopupDistantChatDialog::updateDisplay()
 void PopupDistantChatDialog::closeEvent(QCloseEvent *e)
 {
 	std::cerr << "Closing window => closing distant chat for hash " << _hash << std::endl;
-	rsMsgs->closeDistantChatConnexion(_hash) ;
+
+	uint32_t status= RS_DISTANT_CHAT_STATUS_UNKNOWN;
+	std::string pgp_id ;
+	rsMsgs->getDistantChatStatus(_hash,status,pgp_id) ;
+
+	if(status != RS_DISTANT_CHAT_STATUS_REMOTELY_CLOSED)
+	{
+		QString msg = tr("Closing this window will end the conversation, notify the peer and remove the encrypted tunnel.") ;
+
+		if(QMessageBox::Ok == QMessageBox::critical(NULL,tr("Kill the tunnel?"),msg, QMessageBox::Ok | QMessageBox::Cancel))
+			rsMsgs->closeDistantChatConnexion(_hash) ;
+		else
+		{
+			e->ignore() ;
+			return ;
+		}
+	}
 
 	e->accept() ;
 

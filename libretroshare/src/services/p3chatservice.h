@@ -351,6 +351,7 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor, publi
 		virtual void receiveTurtleData(RsTurtleGenericTunnelItem *item,const std::string& hash,const std::string& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction) ;
 		void addVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&,RsTurtleGenericTunnelItem::Direction dir) ;
 		void removeVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&) ;
+		void markDistantChatAsClosed(const TurtleFileHash& hash) ;
 
 		// Utility functions
 
