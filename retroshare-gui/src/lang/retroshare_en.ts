@@ -2086,11 +2086,11 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Retroshare always periodically your friend lists for browsable files matching your transfers, to establish a direct transfer. In this case, your friend knows you&apos;re downloading the file.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;To prevent this behavior for this friend only, uncheck this box. You can still perform a direct transfer if you explicitly ask for it, by e.g. downloading from your friend&apos;s file list. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <source>Use as direct source, when available</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Use as direct source, when available</source>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Retroshare periodically checks your friend lists for browsable files matching your transfers, to establish a direct transfer. In this case, your friend knows you&apos;re downloading the file.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;To prevent this behavior for this friend only, uncheck this box. You can still perform a direct transfer if you explicitly ask for it, by e.g. downloading from your friend&apos;s file list. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3740,6 +3740,14 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Your new messenging chat invite has been copied to clipboard. You can now paste it as a Retroshare link.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Usable only by :</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Usable to contact :</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9851,25 +9859,6 @@ malicious behavior of crafted plugins.</source>
     </message>
 </context>
 <context>
-    <name>PopupDistantChatDialog</name>
-    <message>
-        <source>Hash error</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Tunnel is broken</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Tunnel established</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Tunnel is working</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>PostedCreatePostDialog</name>
     <message>
         <source>Create Post</source>
@@ -10660,6 +10649,22 @@ Reported error is: %2</source>
     </message>
     <message>
         <source>Chat connexion is not possible</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hash error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tunnel is broken</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tunnel established</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tunnel is working</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
