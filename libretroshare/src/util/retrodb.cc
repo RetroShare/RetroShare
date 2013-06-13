@@ -32,6 +32,7 @@
 #include "rsdbbind.h"
 
 //#define RETRODB_DEBUG
+#define ENABLE_ENCRYPTED_DB
 
 
 const int RetroDb::OPEN_READONLY = SQLITE_OPEN_READONLY;
