@@ -426,7 +426,7 @@ QVariant TreeStyle_RDM::sortRole(const QModelIndex& /*index*/,const DirDetails& 
 		switch(coln)
 		{
 			case 0:
-				return QString::fromUtf8(details.name.c_str());
+				return (RemoteMode)?(QString::fromUtf8(rsPeers->getPeerName(details.id).c_str())):tr("My files");
 			case 1:
 				return QString();
 			case 2:
