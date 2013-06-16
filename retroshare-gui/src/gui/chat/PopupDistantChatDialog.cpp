@@ -95,7 +95,7 @@ void PopupDistantChatDialog::updateDisplay()
 														 _status_label->setPixmap(QPixmap(IMAGE_YEL_LED)) ;
 														  _status_label->setToolTip(QObject::tr("Secured tunnel established!")) ;
 														 break ;
-		case RS_DISTANT_CHAT_STATUS_CAN_TALK: std::cerr << "Tunnel is ok and works. You can talk!" << std::endl;
+		case RS_DISTANT_CHAT_STATUS_CAN_TALK: std::cerr << "Tunnel is ok and data is transmitted." << std::endl;
 														 _status_label->setPixmap(QPixmap(IMAGE_GRN_LED)) ;
 														  _status_label->setToolTip(QObject::tr("Secured tunnel is working")) ;
 														 break ;

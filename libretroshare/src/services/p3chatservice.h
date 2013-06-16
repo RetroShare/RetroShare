@@ -312,8 +312,10 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor, publi
 		//
 		bool createDistantChatInvite(const std::string& pgp_id,time_t time_of_validity,TurtleFileHash& hash) ;
 		bool getDistantChatInviteList(std::vector<DistantChatInviteInfo>& invites) ;
-		bool initiateDistantChatConnexion(const std::string& encrypted_string,std::string& hash,uint32_t& error_code) ;
+		bool initiateDistantChatConnexion(const std::string& encrypted_string,time_t time_of_validity,std::string& hash,uint32_t& error_code) ;		// from encrypted data
+		bool initiateDistantChatConnexion(const std::string& hash,uint32_t& error_code) ;												// from known hash of a decrypted link
 		bool closeDistantChatConnexion(const std::string& hash) ;
+		bool removeDistantChatInvite(const std::string& hash) ;
 
 		virtual bool getDistantChatStatus(const std::string& hash,uint32_t& status,std::string& pgp_id) ;
 
@@ -352,6 +354,7 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor, publi
 		void addVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&,RsTurtleGenericTunnelItem::Direction dir) ;
 		void removeVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&) ;
 		void markDistantChatAsClosed(const TurtleFileHash& hash) ;
+		void startClientDistantChatConnection(const std::string& hash,const std::string& pgp_id,const unsigned char *aes_key_buf) ;
 
 		// Utility functions
 

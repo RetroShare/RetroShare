@@ -20,11 +20,18 @@
  ****************************************************************/
 
 #include <QFontDialog>
+#include <QMenu>
+#include <QMessageBox>
 #include <time.h>
 
 #include <retroshare/rsnotify.h>
+#include <retroshare/rsmsgs.h>
+#include <retroshare/rspeers.h>
 #include "ChatPage.h"
+#include <gui/RetroShareLink.h>
+#include <gui/CreateMsgLinkDialog.h>
 #include "gui/chat/ChatStyle.h"
+#include "gui/chat/ChatDialog.h"
 #include "gui/notifyqt.h"
 #include "rsharesettings.h"
 
@@ -32,6 +39,10 @@
 #include <retroshare/rsmsgs.h>
 
 #define VARIANT_STANDARD    "Standard"
+#define IMAGE_CHAT_CREATE   ":/images/add_24x24.png"
+#define IMAGE_CHAT_OPEN     ":/images/typing.png"
+#define IMAGE_CHAT_DELETE   ":/images/deletemail24.png"
+#define IMAGE_CHAT_COPY     ":/images/copyrslink.png"
 
 static QString loadStyleInfo(ChatStyle::enumStyleType type, QListWidget *listWidget, QComboBox *comboBox, QString &styleVariant)
 {
@@ -94,10 +105,145 @@ ChatPage::ChatPage(QWidget * parent, Qt::WFlags flags)
     ui.minimumContrast->hide();
 #endif
 
+	 connect(ui._personal_invites_LW, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(personalInvites_customPopupMenu(QPoint)));
+	 connect(ui._collected_contacts_LW, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(collectedContacts_customPopupMenu(QPoint)));
+
     /* Hide platform specific features */
 #ifdef Q_WS_WIN
 
 #endif
+}
+
+void ChatPage::collectedContacts_customPopupMenu(QPoint p)
+{
+	// items: chat with this person, copy to clipboard, delete
+	std::cerr << "In custom popup menu" << std::endl;
+
+	QListWidgetItem *item = ui._collected_contacts_LW->itemAt(p) ;
+
+	if(item == NULL)
+		return  ;
+
+	QList<QListWidgetItem*> selected = ui._collected_contacts_LW->selectedItems() ;
+
+	QMenu contextMnu( this );
+
+	if(selected.size() == 1)
+		contextMnu.addAction( QIcon(IMAGE_CHAT_OPEN), tr("Open secured chat tunnel"), this, SLOT(collectedInvite_openDistantChat()) ) ;
+
+	contextMnu.addAction( QIcon(IMAGE_CHAT_DELETE), tr("Delete this invite"), this, SLOT(collectedInvite_delete()) ) ;
+
+	contextMnu.exec(QCursor::pos());
+}
+
+void ChatPage::collectedInvite_openDistantChat()
+{
+	QList<QListWidgetItem*> selected = ui._collected_contacts_LW->selectedItems() ;
+
+	std::string hash = (*selected.begin())->data(Qt::UserRole).toString().toStdString() ;
+
+	std::cerr << "Openning secured chat tunnel for hash " << hash << ". Please wait..." << std::endl;
+	uint32_t error_code ;
+
+	if(!rsMsgs->initiateDistantChatConnexion(hash,error_code))
+		QMessageBox::critical(NULL,tr("Can't open distant chat"),tr("Cannot open distant chat. Error code=")+QString::number(error_code)) ;
+	else
+		ChatDialog::chatFriend(hash);
+}
+
+void ChatPage::collectedInvite_delete()
+{
+	QList<QListWidgetItem*> selected = ui._collected_contacts_LW->selectedItems() ;
+
+	for(QList<QListWidgetItem*>::const_iterator it(selected.begin());it!=selected.end();++it)
+	{
+		std::string hash = (*it)->data(Qt::UserRole).toString().toStdString() ;
+
+		std::cerr << "Removing chat invite for hash " << hash << std::endl;
+
+		if(!rsMsgs->removeDistantChatInvite(hash))
+			QMessageBox::critical(NULL,tr("Can't open distant chat"),tr("Cannot remove distant chat invite.")) ;
+	}
+
+	load() ;
+}
+
+void ChatPage::personalInvites_customPopupMenu(QPoint p)
+{
+	// items: create invite, copy to clipboard, delete
+	std::cerr << "In custom popup menu" << std::endl;
+
+	QList<QListWidgetItem*> selected = ui._personal_invites_LW->selectedItems() ;
+
+	QMenu contextMnu( this );
+
+	contextMnu.addAction( QIcon(IMAGE_CHAT_CREATE), tr("Create a chat invitation"), this, SLOT(personalInvites_create()) ) ;
+
+	if(!selected.empty())
+	{
+		contextMnu.addAction( QIcon(IMAGE_CHAT_COPY), tr("Copy link to clipboard"), this, SLOT(personalInvites_copyLink()) ) ;
+		contextMnu.addAction( QIcon(IMAGE_CHAT_DELETE), tr("Delete this invite"), this, SLOT(personalInvites_delete()) ) ;
+	}
+
+	contextMnu.exec(QCursor::pos());
+}
+
+void ChatPage::personalInvites_copyLink()
+{
+	QList<QListWidgetItem*> selected = ui._personal_invites_LW->selectedItems() ;
+	QList<RetroShareLink> links ;
+
+	std::vector<DistantChatInviteInfo> invites ;
+	rsMsgs->getDistantChatInviteList(invites) ;
+
+	for(QList<QListWidgetItem*>::const_iterator it(selected.begin());it!=selected.end();++it)
+	{
+		std::string hash = (*it)->data(Qt::UserRole).toString().toStdString() ;
+
+		bool found = false ;
+		for(uint32_t i=0;i<invites.size();++i)
+			if(invites[i].hash == hash)
+			{
+				RetroShareLink link ;
+
+				if(!link.createPrivateChatInvite(invites[i].time_of_validity,QString::fromStdString(invites[i].destination_pgp_id),QString::fromStdString(invites[i].encrypted_radix64_string))) 
+				{
+					std::cerr << "Cannot create link." << std::endl;
+					continue;
+				}
+
+				links.push_back(link) ;
+				break ;
+			}
+	}
+
+	if(!links.empty())
+		RSLinkClipboard::copyLinks(links) ;
+}
+
+void ChatPage::personalInvites_delete()
+{
+	QList<QListWidgetItem*> selected = ui._personal_invites_LW->selectedItems() ;
+	QList<RetroShareLink> links ;
+
+	for(QList<QListWidgetItem*>::const_iterator it(selected.begin());it!=selected.end();++it)
+	{
+		std::string hash = (*it)->data(Qt::UserRole).toString().toStdString() ;
+
+		rsMsgs->removeDistantChatInvite(hash) ;
+	}
+	load() ;
+}
+
+void ChatPage::personalInvites_create()
+{
+	// Call the link creation box
+
+	CreateMsgLinkDialog::createNewChatLink() ;
+
+	// Now update the page
+	//
+	load() ;
 }
 
 /** Saves the changes on this page */
@@ -229,6 +375,37 @@ ChatPage::load()
     uint chatLobbyFlags = Settings->getChatLobbyFlags();
 
     ui.chatLobby_Blink->setChecked(chatLobbyFlags & RS_CHATLOBBY_BLINK);
+
+	 // load personal invites
+	 //
+	 std::vector<DistantChatInviteInfo> invites ;
+	 rsMsgs->getDistantChatInviteList(invites) ;
+
+	 ui._personal_invites_LW->clear() ;
+	 ui._collected_contacts_LW->clear() ;
+
+	for(uint32_t i=0;i<invites.size();++i)
+	{
+		RsPeerDetails detail ;
+		rsPeers->getPeerDetails(invites[i].destination_pgp_id,detail) ;
+
+		if(invites[i].encrypted_radix64_string.empty())
+		{
+			QListWidgetItem *item = new QListWidgetItem;
+			item->setData(Qt::DisplayRole,tr("Private chat invite from ")+QString::fromStdString(detail.name)+" ("+QString::fromStdString(invites[i].destination_pgp_id)+", " + QString::fromStdString(detail.name) + ", valid until " + QDateTime::fromTime_t(invites[i].time_of_validity).toString() + ")") ;
+			item->setData(Qt::UserRole,QString::fromStdString(invites[i].hash)) ;
+
+			ui._collected_contacts_LW->insertItem(0,item) ;
+		}
+		else
+		{
+			QListWidgetItem *item = new QListWidgetItem;
+			item->setData(Qt::DisplayRole,tr("Private chat invite to ")+QString::fromStdString(detail.name)+" ("+QString::fromStdString(invites[i].destination_pgp_id)+", " + QString::fromStdString(detail.name) + ", valid until " + QDateTime::fromTime_t(invites[i].time_of_validity).toString() + ")") ;
+			item->setData(Qt::UserRole,QString::fromStdString(invites[i].hash)) ;
+
+			ui._personal_invites_LW->insertItem(0,item) ;
+		}
+	}
 }
 
 void ChatPage::on_pushButtonChangeChatFont_clicked()

@@ -36,145 +36,23 @@ CreateMsgLinkDialog::CreateMsgLinkDialog()
 
 	setAttribute(Qt::WA_DeleteOnClose, false);
 
-	_info_GB->layout()->addWidget( _gpg_selection = new FriendSelectionWidget(this) ) ;
-
-	QObject::connect(_link_type_CB,SIGNAL(currentIndexChanged(int)),this,SLOT(update())) ;
+	layout()->addWidget( _gpg_selection = new FriendSelectionWidget(this) ) ;
 	QObject::connect(_create_link_PB,SIGNAL(clicked()),this,SLOT(createLink())) ;
-	QObject::connect(_create_new_PB,SIGNAL(toggled(bool)),this,SLOT(toggleCreateLink(bool))) ;
-	QObject::connect(_existing_links_LW,SIGNAL(currentRowChanged(int)),this,SLOT(updateCurrentRow(int))) ;
-	QObject::connect(_copy_to_clipboard_PB,SIGNAL(clicked()),this,SLOT(copyLinkToClipboard())) ;
 
 	_gpg_selection->setModus(FriendSelectionWidget::MODUS_SINGLE) ;
 	_gpg_selection->setShowType(FriendSelectionWidget::SHOW_NON_FRIEND_GPG | FriendSelectionWidget::SHOW_GPG) ;
 	_gpg_selection->setHeaderText(QObject::tr("Select who can contact you:")) ;
 	_gpg_selection->start() ;
 
-	toggleCreateLink(false) ;
+	layout()->update() ;
 	update() ;
-	updateCurrentRow(-1) ;
 }
 
-void CreateMsgLinkDialog::copyLinkToClipboard()
+void CreateMsgLinkDialog::createNewChatLink()
 {
-	QList<QListWidgetItem*> selected = _existing_links_LW->selectedItems() ;
-
-	QList<RetroShareLink> links ;
-
-	for(QList<QListWidgetItem*>::const_iterator it(selected.begin());it!=selected.end();++it)
-	{
-		QUrl text = (*it)->data(Qt::UserRole).toUrl() ;
-		RetroShareLink link(text) ;
-
-		links.push_back(link) ;
-	}
-
-	if(!links.empty())
-		RSLinkClipboard::copyLinks(links) ;
-}
-
-void CreateMsgLinkDialog::updateCurrentRow(int r)
-{
-	if(r < 0)
-	{
-		_current_link_type_LE->setText("") ;
-		_current_link_dst_LE->setText("") ;
-		_current_link_date_DE->setDateTime(QDateTime::fromTime_t(0)) ;
-		return  ;
-	}
-
-	QUrl text = _existing_links_LW->item(r)->data(Qt::UserRole).toUrl() ;
-	
-	std::cerr << "Parsing link : " << text.toString().toStdString() << std::endl;
-	RetroShareLink link(text) ;
-
-	RsPeerDetails detail ;
-	rsPeers->getPeerDetails(link.GPGId().toStdString(),detail) ;
-
-	if( link.type() == RetroShareLink::TYPE_PRIVATE_CHAT )
-	{
-		_current_link_type_LE->setText( tr("Private chat invite") ) ;
-		_usable_LB->setText(tr("Usable only by :")) ;
-	}
-	else
-	{
-		_current_link_type_LE->setText( tr("Public message invite") ) ;
-		_usable_LB->setText(tr("Usable to contact :")) ;
-	}
-
-	_current_link_dst_LE->setText(QString::fromStdString(detail.name)+" ("+link.GPGId()+")") ;
-	_current_link_date_DE->setDateTime(QDateTime::fromTime_t(link.timeStamp())) ;
-}
-
-void CreateMsgLinkDialog::toggleCreateLink(bool b)
-{
-	_new_link_F->setHidden(!b) ;
-}
-void CreateMsgLinkDialog::update()
-{
-	if(_link_type_CB->currentIndex() == 0)
-	{
-		QString s ;
-
-		s += "A private chat invite allows a specific peer to contact you using encrypted private chat. You need to select a destination peer from your PGP keyring before creating the link. The link contains the encryption code and your PGP signature, so that the peer can authenticate you." ;
-
-		_info_TB->setHtml(s) ;
-		_gpg_selection->setHidden(false) ;
-	}
-	else
-	{
-		QString s ;
-
-		s += "A public message link allows any peer in the nearby network to send a private message to you. The message is encrypted and only you can read it." ;
-
-		_info_TB->setHtml(s) ;
-		_gpg_selection->setHidden(true) ;
-	}
-
-	std::vector<DistantChatInviteInfo> invites ;
-
-	rsMsgs->getDistantChatInviteList(invites) ;
-
-	_existing_links_LW->clear() ;
-
-	for(uint32_t i=0;i<invites.size();++i)
-	{
-		RetroShareLink link ;
-
-		if(!link.createPrivateChatInvite(invites[i].time_of_validity,QString::fromStdString(invites[i].destination_pgp_id),QString::fromStdString(invites[i].encrypted_radix64_string))) {
-			std::cerr << "Cannot create link." << std::endl;
-			continue;
-		}
-
-	RsPeerDetails detail ;
-	rsPeers->getPeerDetails(link.GPGId().toStdString(),detail) ;
-
-		QListWidgetItem *item = new QListWidgetItem;
-		item->setData(Qt::DisplayRole,tr("Private chat invite to ")+QString::fromStdString(detail.name)+" ("+QString::fromStdString(invites[i].destination_pgp_id)+")") ;
-		item->setData(Qt::UserRole,link.toString()) ;
-
-		_existing_links_LW->insertItem(0,item) ;
-	}
-
-	std::vector<DistantOfflineMessengingInvite> invites2 ;
-	rsMsgs->getDistantOfflineMessengingInvites(invites2) ;
-
-	for(uint32_t i=0;i<invites2.size();++i)
-	{
-		RetroShareLink link ;
-
-		if(!link.createPublicMsgInvite(invites2[i].time_of_validity,QString::fromStdString(invites2[i].issuer_pgp_id),QString::fromStdString(invites2[i].hash)))
-			std::cerr << "Cannot create link." << std::endl;
-		else
-		{
-			QListWidgetItem *item = new QListWidgetItem;
-			item->setData(Qt::DisplayRole,tr("Public message link")) ;
-			item->setData(Qt::UserRole,link.toString()) ;
-
-			_existing_links_LW->insertItem(0,item) ;
-		}
-	}
-
-
+	std::cerr << "In static method..." << std::endl;
+	CreateMsgLinkDialog dialog ;
+	dialog.exec() ;
 }
 
 time_t CreateMsgLinkDialog::computeValidityDuration() const
@@ -203,8 +81,6 @@ void CreateMsgLinkDialog::createLink()
 {
 	std::cerr << "Creating link!" << std::endl;
 
-	if(_link_type_CB->currentIndex() == 0)
-	{
 		time_t validity_duration = computeValidityDuration() ;
 		FriendSelectionWidget::IdType type ;
 		std::string current_pgp_id = _gpg_selection->selectedId(type) ;
@@ -226,10 +102,11 @@ void CreateMsgLinkDialog::createLink()
 		if(!res)
 			QMessageBox::critical(NULL,tr("Private chat invite creation failed"),tr("The creation of the chat invite failed")) ;
 		else
-			QMessageBox::information(NULL,tr("Private chat invite created"),tr("Your new chat invite has been copied to clipboard. You can now paste it as a Retroshare link.")) ;
-	}
-	else
-	{
+			QMessageBox::information(NULL,tr("Private chat invite created"),tr("Your new chat invite has been created. You can now copy/paste it as a Retroshare link.")) ;
+
+#ifdef TO_REMOVE
+		/*	 OLD  CODE TO CREATE A MSG LINK  */
+
 		time_t validity_duration = computeValidityDuration() ;
 		std::string hash; 
 		std::string issuer_pgp_id = rsPeers->getGPGOwnId() ;
@@ -253,8 +130,6 @@ void CreateMsgLinkDialog::createLink()
 			QMessageBox::critical(NULL,tr("Messenging invite creation failed"),tr("The creation of the messenging invite failed")) ;
 		else
 			QMessageBox::information(NULL,tr("Messenging invite created"),tr("Your new messenging chat invite has been copied to clipboard. You can now paste it as a Retroshare link.")) ;
-	}
-
-	QTimer::singleShot(100,this,SLOT(update())) ;
+#endif
 }
 

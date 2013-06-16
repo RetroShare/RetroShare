@@ -52,6 +52,16 @@ class ChatPage : public ConfigPage
       void on_privateList_currentRowChanged(int currentRow);
       void on_historyList_currentRowChanged(int currentRow);
 
+		void personalInvites_customPopupMenu(QPoint) ;
+		void collectedContacts_customPopupMenu(QPoint) ;
+
+		void personalInvites_copyLink() ;
+		void personalInvites_delete() ;
+		void personalInvites_create() ;
+
+		void collectedInvite_openDistantChat() ;
+		void collectedInvite_delete() ;
+
   private:
       void setPreviewMessages(QString &stylePath, QString styleVariant, QTextBrowser *textBrowser);
       void fillPreview(QListWidget *listWidget, QComboBox *comboBox, QTextBrowser *textBrowser);

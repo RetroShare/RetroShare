@@ -7,94 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>590</width>
-    <height>388</height>
+    <height>179</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Create distant chat invite</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_6">
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_4">
-     <item>
-      <widget class="QListWidget" name="_existing_links_LW">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <layout class="QVBoxLayout" name="verticalLayout_4">
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_3">
-         <item>
-          <layout class="QVBoxLayout" name="verticalLayout_3">
-           <item>
-            <widget class="QLabel" name="label_3">
-             <property name="text">
-              <string>Valid until:</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="label_5">
-             <property name="text">
-              <string>Type:</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="_usable_LB">
-             <property name="text">
-              <string>Usable by:</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QVBoxLayout" name="verticalLayout_2">
-           <item>
-            <widget class="QDateTimeEdit" name="_current_link_date_DE"/>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="_current_link_type_LE"/>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="_current_link_dst_LE"/>
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_5">
-         <item>
-          <widget class="QPushButton" name="_copy_to_clipboard_PB">
-           <property name="text">
-            <string>Copy to clipboard</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="_create_new_PB">
-           <property name="text">
-            <string>Create new</string>
-           </property>
-           <property name="checkable">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </item>
-    </layout>
-   </item>
    <item>
     <widget class="QFrame" name="_new_link_F">
      <property name="frameShape">
@@ -105,113 +24,99 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_5">
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <widget class="QLabel" name="label">
-          <property name="text">
-           <string>Invite type:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QComboBox" name="_link_type_CB">
-          <item>
-           <property name="text">
-            <string>Private chat</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Public message</string>
-           </property>
-          </item>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="label_2">
-          <property name="text">
-           <string>Validity time :</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QSpinBox" name="_validity_time_SB">
-          <property name="minimum">
-           <number>1</number>
-          </property>
-          <property name="maximum">
-           <number>30</number>
-          </property>
-          <property name="value">
-           <number>5</number>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QComboBox" name="_validity_time_CB">
-          <item>
-           <property name="text">
-            <string>hour</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>day</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>week</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>month</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>year</string>
-           </property>
-          </item>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="_create_link_PB">
-          <property name="text">
-           <string>Create!</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <widget class="QGroupBox" name="_info_GB">
-        <property name="title">
-         <string>Information</string>
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;To create a private chat invite for a non-friend person, select his key below and a validity time for your invite, then press &amp;quot;Create&amp;quot;. The invite will contain the  information required to open a tunnel to chat with you. &lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;The invite is encrypted, and does not reveal your identity. Only the selected peer can decrypt the link, and use it to contact you.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout">
-         <item>
-          <widget class="QTextBrowser" name="_info_TB"/>
-         </item>
-        </layout>
+        <property name="textFormat">
+         <enum>Qt::RichText</enum>
+        </property>
+        <property name="scaledContents">
+         <bool>true</bool>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
      </layout>
     </widget>
    </item>
    <item>
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Invite type:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="_link_type_CB">
+       <item>
+        <property name="text">
+         <string>Private chat</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Validity time :</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="_validity_time_SB">
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>30</number>
+       </property>
+       <property name="value">
+        <number>5</number>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="_validity_time_CB">
+       <item>
+        <property name="text">
+         <string>hour</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>day</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>week</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>month</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>year</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="_create_link_PB">
+       <property name="text">
+        <string>Create!</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>

@@ -30,16 +30,15 @@ class CreateMsgLinkDialog : public QDialog, public Ui::CreateMsgLinkDialog
 	Q_OBJECT
 
 	public:
+		static void createNewChatLink() ;
+
+	protected:
 		CreateMsgLinkDialog();
 		virtual ~CreateMsgLinkDialog() {}
 
 	private slots:
 		/* actions to take.... */
 		void createLink();
-		void update() ;
-		void toggleCreateLink(bool) ;
-		void updateCurrentRow(int) ;
-		void copyLinkToClipboard() ;
 
 	private:
 		time_t computeValidityDuration() const ;

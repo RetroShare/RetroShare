@@ -217,6 +217,15 @@ void ChatDialog::init(const std::string &peerId, const QString &title)
 		return;
 	}
 
+	std::string distant_chat_pgp_id ;
+	uint32_t distant_peer_status ;
+
+	if(rsMsgs->getDistantChatStatus(peerId,distant_peer_status,distant_chat_pgp_id)) 
+	{
+		getChat(peerId,RS_CHAT_OPEN | RS_CHAT_FOCUS); // use own flags
+		return ;
+	}
+
 	ChatLobbyId lid;
 	if (rsMsgs->isLobbyId(peerId, lid)) {
 		getChat(peerId, RS_CHAT_OPEN | RS_CHAT_FOCUS);

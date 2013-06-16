@@ -1226,7 +1226,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 					std::string hash  ;
 					uint32_t error_code ;
 
-					if(!rsMsgs->initiateDistantChatConnexion(link._encrypted_chat_info.toStdString(),hash,error_code))
+					if(!rsMsgs->initiateDistantChatConnexion(link._encrypted_chat_info.toStdString(),link._time_stamp,hash,error_code))
 					{
 						QString error_msg ;
 						switch(error_code)

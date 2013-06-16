@@ -352,9 +352,13 @@ bool p3Msgs::getDistantChatInviteList(std::vector<DistantChatInviteInfo>& invite
 {
 	return mChatSrv->getDistantChatInviteList(invites) ;
 }
-bool p3Msgs::initiateDistantChatConnexion(const std::string& encrypted_str,std::string& hash,uint32_t& error_code)
+bool p3Msgs::initiateDistantChatConnexion(const std::string& encrypted_str,time_t validity_time,std::string& hash,uint32_t& error_code)
 {
-	return mChatSrv->initiateDistantChatConnexion(encrypted_str,hash,error_code) ;
+	return mChatSrv->initiateDistantChatConnexion(encrypted_str,validity_time,hash,error_code) ;
+}
+bool p3Msgs::initiateDistantChatConnexion(const std::string& hash,uint32_t& error_code)
+{
+	return mChatSrv->initiateDistantChatConnexion(hash,error_code) ;
 }
 bool p3Msgs::getDistantChatStatus(const std::string& hash,uint32_t& status,std::string& pgp_id) 
 {
@@ -363,5 +367,9 @@ bool p3Msgs::getDistantChatStatus(const std::string& hash,uint32_t& status,std::
 bool p3Msgs::closeDistantChatConnexion(const std::string& hash)
 {
 	return mChatSrv->closeDistantChatConnexion(hash) ;
+}
+bool p3Msgs::removeDistantChatInvite(const std::string& hash)
+{
+	return mChatSrv->removeDistantChatInvite(hash) ;
 }
 

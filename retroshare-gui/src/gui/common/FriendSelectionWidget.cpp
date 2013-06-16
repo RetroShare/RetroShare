@@ -340,7 +340,7 @@ void FriendSelectionWidget::fillList()
 				gpgItem = new RSTreeWidgetItem(mCompareRole, IDTYPE_GPG);
 
 				QString name = QString::fromUtf8(detail.name.c_str());
-				gpgItem->setText(COLUMN_NAME, name);
+				gpgItem->setText(COLUMN_NAME, name + " ("+QString::fromStdString(*gpgIt)+")");
 
 				sslIds.clear();
 				rsPeers->getAssociatedSSLIds(*gpgIt, sslIds);
