@@ -39,6 +39,7 @@
 #include "common/RsCollectionFile.h"
 #include "gui/connect/ConnectFriendWizard.h"
 #include "gui/connect/ConfCertDialog.h"
+#include "gui/chat/ChatDialog.h"
 
 #include <retroshare/rsfiles.h>
 #include <retroshare/rsmsgs.h>
@@ -1238,6 +1239,8 @@ static void processList(const QStringList &list, const QString &textSingular, co
 						}
 						QMessageBox::information(NULL,QObject::tr("Chat connexion is not possible"),error_msg) ;
 					}
+					else
+						ChatDialog::chatFriend(hash);
 				}
 				break ;
 
