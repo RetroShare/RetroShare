@@ -2932,7 +2932,7 @@ void p3ChatService::addVirtualPeer(const TurtleFileHash& hash,const TurtleVirtua
 	}
 
 	rsicontrol->getNotify().notifyChatStatus(hash,"tunnel is up again!",true) ;
-	rsicontrol->getNotify().notifyPeerStatusChanged(hash,RS_STATUS_ONLINE) ;
+	//rsicontrol->getNotify().notifyPeerStatusChanged(hash,RS_STATUS_ONLINE) ;
 }
 
 void p3ChatService::removeVirtualPeer(const TurtleFileHash& hash,const TurtleVirtualPeerId& virtual_peer_id)
@@ -3053,6 +3053,8 @@ void p3ChatService::receiveTurtleData(	RsTurtleGenericTunnelItem *gitem,const st
 	// Setup the virtual peer to be the origin, and pass it on.
 	//
 	citem->PeerId(hash) ;
+	//rsicontrol->getNotify().notifyPeerStatusChanged(hash,RS_STATUS_ONLINE) ;
+
 	handleIncomingItem(citem) ; // Treats the item, and deletes it 
 }
 

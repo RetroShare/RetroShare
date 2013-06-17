@@ -306,7 +306,12 @@ bool ChatDialog::hasNewMessages()
 
 	return false;
 }
-
+void ChatDialog::setPeerStatus(uint32_t status)
+{
+	ChatWidget *cw = getChatWidget();
+	if (cw) 
+		cw->updateStatus(QString::fromStdString(getPeerId()), status);
+}
 int ChatDialog::getPeerStatus()
 {
 	ChatWidget *cw = getChatWidget();

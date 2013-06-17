@@ -40,7 +40,6 @@ class PopupDistantChatDialog: public PopupChatDialog
 	virtual ~PopupDistantChatDialog();
 
 	virtual void init(const std::string& _hash, const QString &title);
-	virtual void updateStatus(int /*status*/) {}
 	virtual void closeEvent(QCloseEvent *e) ;
 
 	protected slots:

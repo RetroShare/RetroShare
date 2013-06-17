@@ -60,6 +60,7 @@ public:
 
 	void insertChatMsgs();
 	int getPeerStatus();
+	void setPeerStatus(uint32_t state);
 
 	void focusDialog();
 
