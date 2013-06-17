@@ -1008,7 +1008,15 @@ void p3turtle::routeGenericTunnelItem(RsTurtleGenericTunnelItem *item)
 		else if(item->PeerId() == tunnel.local_src)
 			item->setTravelingDirection(RsTurtleGenericTunnelItem::DIRECTION_SERVER) ;
 		else
+		{
 			std::cerr << "(EE) critical error in p3turtle::routeGenericTunnelItem(): item mismatches tunnel src/dst ids." << std::endl;
+			std::cerr << "(EE)          tunnel.local_src = " << tunnel.local_src << std::endl;
+			std::cerr << "(EE)          tunnel.local_dst = " << tunnel.local_dst << std::endl;
+			std::cerr << "(EE)            item->PeerId() = " << item->PeerId()    << std::endl;
+			std::cerr << "(EE) Deleting this item." << std::endl ;
+			delete item ;
+			return ;
+		}
 
 		// Let's figure out whether this packet is for us or not.
 
