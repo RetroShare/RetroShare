@@ -23,6 +23,7 @@
 #include <QDialogButtonBox>
 #include "FriendSelectionWidget.h"
 #include "ui_FriendSelectionWidget.h"
+#include <retroshare-gui/RsAutoUpdatePage.h>
 #include "gui/notifyqt.h"
 #include "gui/common/RSTreeWidgetItem.h"
 #include "gui/common/StatusDefs.h"
@@ -219,6 +220,10 @@ void FriendSelectionWidget::fillList()
 	if (!mStarted) {
 		return;
 	}
+	if(!isVisible())
+		return ;
+	if(RsAutoUpdatePage::eventsLocked())
+		return ;
 
 	mInFillList = true;
 
@@ -481,6 +486,11 @@ void FriendSelectionWidget::fillList()
 
 void FriendSelectionWidget::peerStatusChanged(const QString& peerId, int status)
 {
+	if(!isVisible())
+		return ;
+	if(RsAutoUpdatePage::eventsLocked())
+		return ;
+
 	QString gpgId;
 	int gpgStatus = RS_STATUS_OFFLINE;
 
