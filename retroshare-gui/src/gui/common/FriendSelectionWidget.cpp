@@ -183,7 +183,7 @@ int FriendSelectionWidget::addColumn(const QString &title)
 void FriendSelectionWidget::start()
 {
 	mStarted = true;
-	fillList();
+	secured_fillList();
 
 	for (int i = 0; i < ui->friendList->columnCount(); ++i) {
 		ui->friendList->resizeColumnToContents(i);
@@ -225,6 +225,11 @@ void FriendSelectionWidget::fillList()
 	if(RsAutoUpdatePage::eventsLocked())
 		return ;
 
+	secured_fillList() ;
+}
+
+void FriendSelectionWidget::secured_fillList()
+{
 	mInFillList = true;
 
 	// get selected items

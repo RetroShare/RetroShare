@@ -106,6 +106,7 @@ signals:
 
 private slots:
 	void fillList();
+	void secured_fillList();
 	void peerStatusChanged(const QString& peerId, int status);
 	void filterItems(const QString &text);
 	void contextMenuRequested(const QPoint &pos);
