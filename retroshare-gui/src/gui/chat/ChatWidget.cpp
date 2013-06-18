@@ -522,12 +522,14 @@ void ChatWidget::pasteText(const QString& S)
 {
 	//std::cerr << "In paste link" << std::endl;
 	ui->chatTextEdit->insertHtml(S);
+	setColorAndFont();
 }
 
 void ChatWidget::pasteLink()
 {
 	//std::cerr << "In paste link" << std::endl;
 	ui->chatTextEdit->insertHtml(RSLinkClipboard::toHtml());
+	setColorAndFont();
 }
 
 void ChatWidget::pasteOwnCertificateLink()
@@ -538,6 +540,7 @@ void ChatWidget::pasteOwnCertificateLink()
 
 	if( link.createCertificate(ownId) )	{
 		ui->chatTextEdit->insertHtml(link.toHtml() + " ");
+		setColorAndFont();
 	}
 }
 
