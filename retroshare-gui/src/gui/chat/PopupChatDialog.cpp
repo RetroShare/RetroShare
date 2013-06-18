@@ -124,7 +124,7 @@ void PopupChatDialog::showDialog(uint chatflags)
 void PopupChatDialog::chatStatusChanged(const QString &peerId, const QString& statusString, bool isPrivateChat)
 {
 	if (isPrivateChat && this->peerId == peerId.toStdString()) {
-		ui.chatWidget->updateStatusString(QString::fromUtf8(rsPeers->getPeerName(this->peerId).c_str()) + " %1", statusString);
+		ui.chatWidget->updateStatusString(getPeerName(peerId.toStdString()) + " %1", statusString);
 	}
 }
 
@@ -135,7 +135,7 @@ void PopupChatDialog::addIncomingChatMsg(const ChatInfo& info)
 		QDateTime sendTime = QDateTime::fromTime_t(info.sendTime);
 		QDateTime recvTime = QDateTime::fromTime_t(info.recvTime);
 		QString message = QString::fromStdWString(info.msg);
-		QString name = QString::fromUtf8(rsPeers->getPeerName(info.rsid).c_str()) ;
+		QString name = getPeerName(info.rsid) ;
 
 		cw->addChatMsg(true, name, sendTime, recvTime, message, ChatWidget::TYPE_NORMAL);
 	}
@@ -154,7 +154,7 @@ void PopupChatDialog::onChatChanged(int list, int type)
 			{
 				std::list<ChatInfo> savedOfflineChatNew;
 
-				QString name = QString::fromUtf8(rsPeers->getPeerName(rsPeers->getOwnId()).c_str());
+				QString name = getPeerName(rsPeers->getOwnId()) ;
 
 				std::list<ChatInfo> offlineChat;
 				if (rsMsgs->getPrivateChatQueueCount(false) && rsMsgs->getPrivateChatQueue(false, peerId, offlineChat)) {
@@ -188,7 +188,7 @@ void PopupChatDialog::onChatChanged(int list, int type)
 		case NOTIFY_TYPE_DEL:
 			{
 				if (manualDelete == false) {
-					QString name = QString::fromUtf8(rsPeers->getPeerName(rsPeers->getOwnId()).c_str());
+					QString name = getPeerName(rsPeers->getOwnId()) ;
 
 					// now show saved offline chat messages as sent
 					std::list<ChatInfo>::iterator it;

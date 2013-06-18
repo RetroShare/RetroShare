@@ -136,6 +136,16 @@ void PopupDistantChatDialog::closeEvent(QCloseEvent *e)
 	PopupChatDialog::closeEvent(e) ;
 }
 
+QString PopupDistantChatDialog::getPeerName(const std::string& id) const
+{
+	uint32_t status ;
+	std::string pgp_id ; 
+
+	if(rsMsgs->getDistantChatStatus(_hash,status,pgp_id))
+		return ChatDialog::getPeerName(pgp_id) ;
+	else
+		return ChatDialog::getPeerName(id) ;
+}
 
 
 

@@ -80,6 +80,8 @@ protected:
 	void closeEvent(QCloseEvent *event);
 	virtual bool canClose() { return true; }
 
+	virtual QString getPeerName(const std::string& sslid) const ;	// can be overloaded for chat dialogs that have specific peers
+
 	virtual void init(const std::string &peerId, const QString &title);
 	virtual void onChatChanged(int /*list*/, int /*type*/) {}
 

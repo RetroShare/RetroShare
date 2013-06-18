@@ -50,6 +50,7 @@
 #include <retroshare/rsstatus.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rshistory.h>
+#include <retroshare/rsmsgs.h>
 
 #include <time.h>
 
@@ -860,7 +861,14 @@ void ChatWidget::updateStatus(const QString &peer_id, int status)
 	if (peer_id.toStdString() == peerId) {
 		// the peers status has changed
 
-		QString peerName = QString::fromUtf8(rsPeers->getPeerName(peerId).c_str());
+		QString peerName ;
+		uint32_t status ;
+		std::string pgp_id ;
+
+		if(rsMsgs->getDistantChatStatus(peerId,status,pgp_id))
+			peerName = QString::fromUtf8(rsPeers->getPeerName(pgp_id).c_str());
+		else
+			peerName = QString::fromUtf8(rsPeers->getPeerName(peerId).c_str());
 
 		// is scrollbar at the end?
 		QScrollBar *scrollbar = ui->textBrowser->verticalScrollBar();

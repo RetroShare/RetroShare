@@ -306,6 +306,11 @@ bool ChatDialog::hasNewMessages()
 
 	return false;
 }
+QString ChatDialog::getPeerName(const std::string& id) const
+{
+	return QString::fromUtf8(  rsPeers->getPeerName(id).c_str() ) ;
+}
+
 void ChatDialog::setPeerStatus(uint32_t status)
 {
 	ChatWidget *cw = getChatWidget();
