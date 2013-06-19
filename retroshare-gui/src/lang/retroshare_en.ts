@@ -1586,6 +1586,58 @@ Double click lobbies to enter and chat.</source>
         <source>Chat</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Distant chat</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Retroshare allows you to anonymously chat to nearby people beyond your friends in the network, using encrypted tunnels. In your personal invites list you keep chat links for people to contact you. In the &amp;quot;collected contacts&amp;quot; list, you keep such chat links that people sent you to contact them.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your personal invites</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Collected contacts</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open secured chat tunnel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete this invite</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Can&apos;t open distant chat</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot open distant chat. Error code=</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot remove distant chat invite.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create a chat invitation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Copy link to clipboard</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Private chat invite from </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Private chat invite to </source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ChatStyle</name>
@@ -1756,10 +1808,6 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>is Busy and may not reply</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Paste/Create private chat or Message link...</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3627,39 +3675,11 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>CreateMsgLinkDialog</name>
     <message>
-        <source>Dialog</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Valid until:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Type:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Usable by:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Copy to clipboard</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create new</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Invite type:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Private chat</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Public message</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3691,26 +3711,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Information</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Private chat invite</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Public message invite</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Private chat invite to </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Public message link</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Private chat invite creation failed</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3720,10 +3720,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Private chat invite created</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Your new chat invite has been copied to clipboard. You can now paste it as a Retroshare link.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3743,11 +3739,15 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Usable only by :</source>
+        <source>Create distant chat invite</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Usable to contact :</source>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;To create a private chat invite for a non-friend person, select his key below and a validity time for your invite, then press &amp;quot;Create&amp;quot;. The invite will contain the  information required to open a tunnel to chat with you. &lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;The invite is encrypted, and does not reveal your identity. Only the selected peer can decrypt the link, and use it to contact you.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your new chat invite has been created. You can now copy/paste it as a Retroshare link.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9062,10 +9062,6 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Create a distant chat invitation...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Data inconsistency in the keyring. This is most probably a bug. Please contact the developers.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9859,6 +9855,25 @@ malicious behavior of crafted plugins.</source>
     </message>
 </context>
 <context>
+    <name>PopupDistantChatDialog</name>
+    <message>
+        <source>Distant chat terminated</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The person you&apos;re talking to has deleted the secured chat tunnel. You may remove the chat window now.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Closing this window will end the conversation, notify the peer and remove the encrypted tunnel.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Kill the tunnel?</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>PostedCreatePostDialog</name>
     <message>
         <source>Create Post</source>
@@ -10107,18 +10122,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Select an identity from the list below to be used on another computer, and press &amp;quot;Export selected identity&amp;quot;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;To use it on a different computer,  select the identity manager in the login window. From there you can import the identity file and create a new location for that identity. &lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;When keeping the same identity for your new  location, your friends will automatically accept you.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Identities</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10196,6 +10199,18 @@ and use the import button to load it</source>
     </message>
     <message>
         <source>Certificates (*.pqi *.pem)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;Select an identity from the list below to be used on another computer, and press &amp;quot;Export selected identity&amp;quot;&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;To use it on a different computer,  select the identity manager in the login window. From there you can import the identity file and create a new location for that identity. &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;When keeping the same identity for your new  location, your friends will automatically accept you.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10656,15 +10671,19 @@ Reported error is: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Tunnel is broken</source>
+        <source>Distant peer has closed the chat</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Tunnel established</source>
+        <source>Tunnel is pending...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Tunnel is working</source>
+        <source>Secured tunnel established!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Secured tunnel is working</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
