@@ -533,6 +533,9 @@ void FriendSelectionWidget::peerStatusChanged(const QString& peerId, int status)
 	while ((item = *itemIterator) != NULL) {
 		itemIterator++;
 
+		bool bFoundGPG = false;
+		bool bFoundSSL = false;
+
 		switch (idTypeFromItem(item)) {
 		case IDTYPE_NONE:
 		case IDTYPE_GROUP:
@@ -549,6 +552,8 @@ void FriendSelectionWidget::peerStatusChanged(const QString& peerId, int status)
 
 					item->setTextColor(COLUMN_NAME, color);
 					item->setIcon(COLUMN_NAME, QIcon(StatusDefs::imageUser(gpgStatus)));
+
+					bFoundGPG = true;
 				}
 			}
 			break;
@@ -564,11 +569,31 @@ void FriendSelectionWidget::peerStatusChanged(const QString& peerId, int status)
 
 					item->setTextColor(COLUMN_NAME, color);
 					item->setIcon(COLUMN_NAME, QIcon(StatusDefs::imageUser(status)));
+
+					bFoundSSL = true;
 				}
 			}
 			break;
 		}
-		// friend can assigned to groups more than one
+
+		if (bFoundGPG) {
+			if (mShowTypes & SHOW_GROUP) {
+				// a friend can be assigned to more than one group
+			} else {
+				if (mShowTypes & SHOW_SSL) {
+					// search for ssl id
+				} else {
+					break;
+				}
+			}
+		}
+		if (bFoundSSL) {
+			if (mShowTypes & SHOW_GROUP) {
+				// a friend can be assigned to more than one group
+			} else {
+				break;
+			}
+		}
 	}
 }
 

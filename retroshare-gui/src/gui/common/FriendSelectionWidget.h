@@ -106,7 +106,6 @@ signals:
 
 private slots:
 	void fillList();
-	void secured_fillList();
 	void peerStatusChanged(const QString& peerId, int status);
 	void filterItems(const QString &text);
 	void contextMenuRequested(const QPoint &pos);
@@ -116,6 +115,7 @@ private slots:
 	void deselectAll() ;
 
 private:
+	void secured_fillList();
 	bool filterItem(QTreeWidgetItem *item, const QString &text);
 
 	void selectedIds(IdType idType, std::list<std::string> &ids, bool onlyDirectSelected);

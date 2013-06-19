@@ -42,12 +42,4 @@ class CreateMsgLinkDialog : public QDialog, public Ui::CreateMsgLinkDialog
 
 	private:
 		time_t computeValidityDuration() const ;
-
-		/** Qt Designer generated object */
-		FriendSelectionWidget *_gpg_selection ;
 };
-
-
-
-
-

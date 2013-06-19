@@ -36,13 +36,12 @@ CreateMsgLinkDialog::CreateMsgLinkDialog()
 
 	setAttribute(Qt::WA_DeleteOnClose, false);
 
-	layout()->addWidget( _gpg_selection = new FriendSelectionWidget(this) ) ;
 	QObject::connect(_create_link_PB,SIGNAL(clicked()),this,SLOT(createLink())) ;
 
-	_gpg_selection->setModus(FriendSelectionWidget::MODUS_SINGLE) ;
-	_gpg_selection->setShowType(FriendSelectionWidget::SHOW_NON_FRIEND_GPG | FriendSelectionWidget::SHOW_GPG) ;
-	_gpg_selection->setHeaderText(QObject::tr("Select who can contact you:")) ;
-	_gpg_selection->start() ;
+	friendSelectionWidget->setModus(FriendSelectionWidget::MODUS_SINGLE) ;
+	friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_NON_FRIEND_GPG | FriendSelectionWidget::SHOW_GPG) ;
+	friendSelectionWidget->setHeaderText(QObject::tr("Select who can contact you:")) ;
+	friendSelectionWidget->start() ;
 
 	layout()->update() ;
 	update() ;
@@ -83,7 +82,7 @@ void CreateMsgLinkDialog::createLink()
 
 		time_t validity_duration = computeValidityDuration() ;
 		FriendSelectionWidget::IdType type ;
-		std::string current_pgp_id = _gpg_selection->selectedId(type) ;
+		std::string current_pgp_id = friendSelectionWidget->selectedId(type) ;
 
 		std::string encrypted_string ;
 
@@ -132,4 +131,3 @@ void CreateMsgLinkDialog::createLink()
 			QMessageBox::information(NULL,tr("Messenging invite created"),tr("Your new messenging chat invite has been copied to clipboard. You can now paste it as a Retroshare link.")) ;
 #endif
 }
-
