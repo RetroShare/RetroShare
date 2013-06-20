@@ -2271,7 +2271,7 @@ int RsServer::StartupRetroShare()
 	//
 	mPluginsManager->registerClientServices(pqih) ;
 	mPluginsManager->registerCacheServices() ;
-#define RS_ENABLE_GXS
+
 #ifdef RS_ENABLE_GXS
 
         // The idea is that if priorGxsDir is non
