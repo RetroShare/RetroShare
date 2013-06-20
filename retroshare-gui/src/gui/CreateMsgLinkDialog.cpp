@@ -42,9 +42,6 @@ CreateMsgLinkDialog::CreateMsgLinkDialog()
 	friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_NON_FRIEND_GPG | FriendSelectionWidget::SHOW_GPG) ;
 	friendSelectionWidget->setHeaderText(QObject::tr("Select who can contact you:")) ;
 	friendSelectionWidget->start() ;
-
-	layout()->update() ;
-	update() ;
 }
 
 void CreateMsgLinkDialog::createNewChatLink()
