@@ -383,7 +383,7 @@ void p3turtle::autoWash()
 	// Remove hashes that are marked as such.
 	//
 
-	std::vector<std::pair<TurtleFileHash,TurtleVirtualPeerId> > peers_to_remove ;
+	std::vector<std::pair<RsTurtleClientService*,std::pair<TurtleFileHash,TurtleVirtualPeerId> > > services_vpids_to_remove ;
 
 	{
 		RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
@@ -417,7 +417,7 @@ void p3turtle::autoWash()
 			std::cerr << ")" << std::endl ;
 #endif
 			for(unsigned int k=0;k<tunnels_to_remove.size();++k)
-				locked_closeTunnel(tunnels_to_remove[k],peers_to_remove) ;
+				locked_closeTunnel(tunnels_to_remove[k],services_vpids_to_remove) ;
 
 			_incoming_file_hashes.erase(it) ;
 		}
@@ -486,34 +486,24 @@ void p3turtle::autoWash()
 #endif
 				tunnels_to_close.push_back(it->first) ;
 			}
+
 		for(unsigned int i=0;i<tunnels_to_close.size();++i)
-			locked_closeTunnel(tunnels_to_close[i],peers_to_remove) ;
+			locked_closeTunnel(tunnels_to_close[i],services_vpids_to_remove) ;
 	}
 
-	// File hashes can only be removed by calling the 'stopMonitoringFileTunnels()' command.
+	// Now remove all the virtual peers ids at the client services. Off mutex!
+	//
 	
-	for(uint32_t i=0;i<peers_to_remove.size();++i)
+	for(uint32_t i=0;i<services_vpids_to_remove.size();++i)
 	{
-		RsTurtleClientService *service = NULL ;
-
-		{
-			RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
-
-			std::map<TurtleFileHash,TurtleHashInfo>::iterator it(_incoming_file_hashes.find(peers_to_remove[i].first)) ;
-
-			if(it != _incoming_file_hashes.end())
-				service = it->second.service ;
-			else
-				std::cerr << "p3turtle::autowash(): ERROR. No service associated to hash " << peers_to_remove[i].first << ": this is super weird." << std::endl;
-		}
-		// All calls to services are done off-mutex, to avoir cross-lock
-		//
-		if(service != NULL)
-			service->removeVirtualPeer(peers_to_remove[i].first,peers_to_remove[i].second) ;
+//#ifdef P3TURTLE_DEBUG
+		std::cerr << "  removing virtual peer id " << services_vpids_to_remove[i].second.second << " for service " << services_vpids_to_remove[i].first <<", for hash " << services_vpids_to_remove[i].second.first << std::endl ;
+//#endif
+		services_vpids_to_remove[i].first->removeVirtualPeer(services_vpids_to_remove[i].second.first,services_vpids_to_remove[i].second.second) ;
 	}
 }
 
-void p3turtle::locked_closeTunnel(TurtleTunnelId tid,std::vector<std::pair<TurtleFileHash,TurtleVirtualPeerId> >& sources_to_remove)
+void p3turtle::locked_closeTunnel(TurtleTunnelId tid,std::vector<std::pair<RsTurtleClientService*,std::pair<TurtleFileHash,TurtleVirtualPeerId> > >& sources_to_remove)
 {
 	// This is closing a given tunnel, removing it from file sources, and from the list of tunnels of its
 	// corresponding file hash. In the original turtle4privacy paradigm, they also send back and forward
@@ -545,7 +535,7 @@ void p3turtle::locked_closeTunnel(TurtleTunnelId tid,std::vector<std::pair<Turtl
 		std::cerr << "      Virtual Peer Id " << vpid << std::endl ;
 		std::cerr << "      Associated file source." << std::endl ;
 #endif
-		sources_to_remove.push_back(std::pair<TurtleFileHash,TurtleVirtualPeerId>(hash,vpid)) ;
+		std::pair<TurtleFileHash,TurtleVirtualPeerId> hash_vpid(hash,vpid) ;
 
 		// Let's be cautious. Normally we should never be here without consistent information,
 		// but still, this happens, rarely.
@@ -571,6 +561,8 @@ void p3turtle::locked_closeTunnel(TurtleTunnelId tid,std::vector<std::pair<Turtl
 				}
 				else
 					++i ;
+
+			sources_to_remove.push_back(std::pair<RsTurtleClientService*,std::pair<TurtleFileHash,TurtleVirtualPeerId> >(it->second.service,hash_vpid)) ;
 		}
 	}
 	else if(it->second.local_dst == mLinkMgr->getOwnId())	// This is a ending tunnel. We also remove the virtual peer id
@@ -580,7 +572,16 @@ void p3turtle::locked_closeTunnel(TurtleTunnelId tid,std::vector<std::pair<Turtl
 #endif
 		std::map<TurtleFileHash,RsTurtleClientService*>::iterator itHash = _outgoing_file_hashes.find(it->second.hash);
 		if(itHash != _outgoing_file_hashes.end())
+		{
+			TurtleVirtualPeerId vpid = it->second.vpid ;
+			TurtleFileHash hash = it->second.hash ;
+
+			std::pair<TurtleFileHash,TurtleVirtualPeerId> hash_vpid(hash,vpid) ;
+
+			sources_to_remove.push_back(std::pair<RsTurtleClientService*,std::pair<TurtleFileHash,TurtleVirtualPeerId> >(itHash->second,hash_vpid)) ;
+
 			_outgoing_file_hashes.erase(itHash) ;
+		}
 	}
 
 	_local_tunnels.erase(it) ;
@@ -1009,11 +1010,11 @@ void p3turtle::routeGenericTunnelItem(RsTurtleGenericTunnelItem *item)
 			item->setTravelingDirection(RsTurtleGenericTunnelItem::DIRECTION_SERVER) ;
 		else
 		{
-			std::cerr << "(EE) critical error in p3turtle::routeGenericTunnelItem(): item mismatches tunnel src/dst ids." << std::endl;
+			std::cerr << "(EE) p3turtle::routeGenericTunnelItem(): item mismatches tunnel src/dst ids." << std::endl;
 			std::cerr << "(EE)          tunnel.local_src = " << tunnel.local_src << std::endl;
 			std::cerr << "(EE)          tunnel.local_dst = " << tunnel.local_dst << std::endl;
 			std::cerr << "(EE)            item->PeerId() = " << item->PeerId()    << std::endl;
-			std::cerr << "(EE) Deleting this item." << std::endl ;
+			std::cerr << "(EE) This item is probably lost while tunnel route got redefined. Deleting this item." << std::endl ;
 			delete item ;
 			return ;
 		}

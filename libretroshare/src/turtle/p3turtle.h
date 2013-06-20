@@ -342,7 +342,7 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 		/// The hashes and peers to remove (by calling 
 		/// ftController::removeFileSource() are happended to the supplied vector 
 		/// so that they can be removed off the turtle mutex.
-		void locked_closeTunnel(TurtleTunnelId tid,std::vector<std::pair<TurtleFileHash,TurtleVirtualPeerId> >& peers_to_remove) ;	
+		void locked_closeTunnel(TurtleTunnelId tid,std::vector<std::pair<RsTurtleClientService*,std::pair<TurtleFileHash,TurtleVirtualPeerId> > >& peers_to_remove) ;	
 
 		/// Main routing function
 		int handleIncoming(); 									
