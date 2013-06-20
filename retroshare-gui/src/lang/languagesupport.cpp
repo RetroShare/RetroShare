@@ -45,12 +45,12 @@ LanguageSupport::languages()
     languages.insert("cs",    QString::fromUtf8("\304\214esky"));
     languages.insert("de",    "Deutsch");
     languages.insert("da",    "Dansk");
-    languages.insert("nl",    "Dutch");
+    languages.insert("nl",    "Nederlands");
     languages.insert("en",    "English");
     languages.insert("es",    QString::fromUtf8("Espa\303\261ol"));
     languages.insert("fr",    QString::fromUtf8("Fran\303\247ais"));
     languages.insert("fi",    "Suomi");
-    languages.insert("el",    "Greek");
+    languages.insert("el",    QString::fromUtf8("\316\225\316\273\316\273\316\267\316\275\316\271\316\272\316\254"));
     languages.insert("hu",    "Magyar");
     languages.insert("it",    "Italiano");
     languages.insert("ja_JP",    QString::fromUtf8("\346\227\245\346\234\254\350\252\236"));
