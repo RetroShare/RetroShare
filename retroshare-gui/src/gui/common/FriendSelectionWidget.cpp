@@ -94,7 +94,7 @@ FriendSelectionWidget::FriendSelectionWidget(QWidget *parent) :
 	connect(ui->deselectAll_PB, SIGNAL(clicked()), this, SLOT(deselectAll()));
 	connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterItems(QString)));
 
-	connect(NotifyQt::getInstance(), SIGNAL(groupsChanged(int)), this, SLOT(fillList()));
+	connect(NotifyQt::getInstance(), SIGNAL(groupsChanged(int)), this, SLOT(groupsChanged(int)));
 	connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(const QString&,int)), this, SLOT(peerStatusChanged(const QString&,int)));
 
 	mCompareRole = new RSTreeWidgetItemCompareRole;
@@ -489,6 +489,13 @@ void FriendSelectionWidget::secured_fillList()
 	emit contentChanged();
 }
 
+void FriendSelectionWidget::groupsChanged(int /*type*/)
+{
+	if (mShowTypes & SHOW_GROUP) {
+		fillList();
+	}
+}
+
 void FriendSelectionWidget::peerStatusChanged(const QString& peerId, int status)
 {
 	if(!isVisible())
@@ -826,6 +833,7 @@ void FriendSelectionWidget::deselectAll()
 	for(QTreeWidgetItemIterator itemIterator(ui->friendList);*itemIterator!=NULL;++itemIterator)
 		setSelected(mListModus, *itemIterator, false);
 }
+
 void FriendSelectionWidget::selectAll()
 {
 	for(QTreeWidgetItemIterator itemIterator(ui->friendList);*itemIterator!=NULL;++itemIterator)

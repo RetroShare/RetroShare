@@ -105,7 +105,7 @@ signals:
 	void itemChanged(int idType, const QString &id, QTreeWidgetItem *item, int column);
 
 private slots:
-	void fillList();
+	void groupsChanged(int type);
 	void peerStatusChanged(const QString& peerId, int status);
 	void filterItems(const QString &text);
 	void contextMenuRequested(const QPoint &pos);
@@ -115,6 +115,7 @@ private slots:
 	void deselectAll() ;
 
 private:
+	void fillList();
 	void secured_fillList();
 	bool filterItem(QTreeWidgetItem *item, const QString &text);
 
