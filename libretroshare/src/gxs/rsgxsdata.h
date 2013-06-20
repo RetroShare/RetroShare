@@ -32,9 +32,6 @@
 #include "serialiser/rstlvkeys.h"
 #include "serialiser/rsgxsitems.h"
 
-typedef std::string RsGxsGroupId;
-typedef std::string RsGxsMessageId;
-
 class RsGroupMetaData;
 class RsMsgMetaData;
 

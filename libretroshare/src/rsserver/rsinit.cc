@@ -109,6 +109,7 @@ class RsInitConfig
                 static std::string load_key;
 
 		static std::string passwd;
+		static std::string gxs_passwd;
 
                 static bool autoLogin;                  /* autoLogin allowed */
                 static bool startMinimised; 		/* Icon or Full Window */
@@ -163,6 +164,7 @@ std::string RsInitConfig::load_cert;
 std::string RsInitConfig::load_key;
 
 std::string RsInitConfig::passwd;
+std::string RsInitConfig::gxs_passwd;
 //std::string RsInitConfig::gpgPasswd;
 
 bool RsInitConfig::autoLogin;  		/* autoLogin allowed */
@@ -1585,6 +1587,10 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 	}
 
 	/* wipe out password */
+
+	// store pword to allow gxs use it to services' key their databases
+	// ideally gxs should have its own password
+	RsInitConfig::gxs_passwd = RsInitConfig::passwd;
 	RsInitConfig::passwd = "";
 	create_configinit(RsInitConfig::basedir, RsInitConfig::preferedId);
       
@@ -2265,7 +2271,7 @@ int RsServer::StartupRetroShare()
 	//
 	mPluginsManager->registerClientServices(pqih) ;
 	mPluginsManager->registerCacheServices() ;
-
+#define RS_ENABLE_GXS
 #ifdef RS_ENABLE_GXS
 
         // The idea is that if priorGxsDir is non
@@ -2300,7 +2306,7 @@ int RsServer::StartupRetroShare()
         /**** Identity service ****/
 
         RsGeneralDataService* gxsid_ds = new RsDataService(currGxsDir + "/", "gxsid_db",
-                        RS_SERVICE_GXSV2_TYPE_GXSID, NULL, RsInitConfig::passwd);
+                        RS_SERVICE_GXSV2_TYPE_GXSID, NULL, RsInitConfig::gxs_passwd);
 
 #ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
         gxsid_ds->resetDataStore(); 
@@ -2310,7 +2316,7 @@ int RsServer::StartupRetroShare()
         mGxsIdService = new p3IdService(gxsid_ds, NULL);
 
         RsGeneralDataService* gxscircles_ds = new RsDataService(currGxsDir + "/", "gxscircles_db",
-                        RS_SERVICE_GXSV2_TYPE_GXSCIRCLE, NULL, RsInitConfig::passwd);
+                        RS_SERVICE_GXSV2_TYPE_GXSCIRCLE, NULL, RsInitConfig::gxs_passwd);
 
         mGxsCircles = new p3GxsCircles(gxscircles_ds, NULL, mGxsIdService);
 
@@ -2339,7 +2345,7 @@ int RsServer::StartupRetroShare()
 
         /**** Photo service ****/
         RsGeneralDataService* photo_ds = new RsDataService(currGxsDir + "/", "photoV2_db",
-                        RS_SERVICE_GXSV2_TYPE_PHOTO, NULL, RsInitConfig::passwd);
+                        RS_SERVICE_GXSV2_TYPE_PHOTO, NULL, RsInitConfig::gxs_passwd);
 
 #ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
         photo_ds->resetDataStore(); //TODO: remove, new service data per RS session, for testing
@@ -2357,7 +2363,7 @@ int RsServer::StartupRetroShare()
 
 
         RsGeneralDataService* posted_ds = new RsDataService(currGxsDir + "/", "posted_db",
-                                                            RS_SERVICE_GXSV2_TYPE_POSTED, NULL, RsInitConfig::passwd);
+                                                            RS_SERVICE_GXSV2_TYPE_POSTED, NULL, RsInitConfig::gxs_passwd);
 
 #ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
         posted_ds->resetDataStore(); //TODO: remove, new service data per RS session, for testing
@@ -2376,7 +2382,7 @@ int RsServer::StartupRetroShare()
 
         RsGeneralDataService* wiki_ds = new RsDataService(currGxsDir + "/", "wiki_db",
                                                             RS_SERVICE_GXSV2_TYPE_WIKI,
-                                                            NULL, RsInitConfig::passwd);
+                                                            NULL, RsInitConfig::gxs_passwd);
 
 #ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
         wiki_ds->resetDataStore(); //TODO: remove, new service data per RS session, for testing
@@ -2393,7 +2399,7 @@ int RsServer::StartupRetroShare()
 
 
         RsGeneralDataService* wire_ds = new RsDataService(currGxsDir + "/", "wire_db",
-                                                            RS_SERVICE_GXSV2_TYPE_WIRE, NULL, RsInitConfig::passwd);
+                                                            RS_SERVICE_GXSV2_TYPE_WIRE, NULL, RsInitConfig::gxs_passwd);
 
 #ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
         wire_ds->resetDataStore(); //TODO: remove, new service data per RS session, for testing
@@ -2409,7 +2415,7 @@ int RsServer::StartupRetroShare()
         /**** Forum GXS service ****/
 
         RsGeneralDataService* gxsforums_ds = new RsDataService(currGxsDir + "/", "gxsforums_db",
-                                                            RS_SERVICE_GXSV2_TYPE_FORUMS, NULL, RsInitConfig::passwd);
+                                                            RS_SERVICE_GXSV2_TYPE_FORUMS, NULL, RsInitConfig::gxs_passwd);
 
 #ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
         gxsforums_ds->resetDataStore(); //TODO: remove, new service data per RS session, for testing
@@ -2426,7 +2432,7 @@ int RsServer::StartupRetroShare()
         /**** Channel GXS service ****/
 
         RsGeneralDataService* gxschannels_ds = new RsDataService(currGxsDir + "/", "gxschannels_db",
-                                                            RS_SERVICE_GXSV2_TYPE_CHANNELS, NULL, RsInitConfig::passwd);
+                                                            RS_SERVICE_GXSV2_TYPE_CHANNELS, NULL, RsInitConfig::gxs_passwd);
 
 #ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
        gxschannels_ds->resetDataStore(); //TODO: remove, new service data per RS session, for testing
@@ -2447,6 +2453,9 @@ int RsServer::StartupRetroShare()
         pqih->addService(wiki_ns);
         pqih->addService(gxsforums_ns);
         pqih->addService(gxschannels_ns);
+
+        // remove pword from memory
+        RsInitConfig::gxs_passwd = "";
 
 #endif // RS_ENABLE_GXS.
 

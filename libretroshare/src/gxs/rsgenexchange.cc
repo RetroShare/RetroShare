@@ -1562,12 +1562,12 @@ bool RsGenExchange::processGrpMask(const RsGxsGroupId& grpId, ContentValue &grpC
         ok = true;
     }
 
-    if(grpCv.getAsInt32(RsGeneralDataService::GRP_META_STATUS, value))
+    if(grpCv.getAsInt32(RsGeneralDataService::GRP_META_STATUS, value) && grpMeta)
     {
         key = RsGeneralDataService::GRP_META_STATUS;
         currValue = grpMeta->mGroupStatus;
     }
-    else if(grpCv.getAsInt32(RsGeneralDataService::GRP_META_SUBSCRIBE_FLAG, value))
+    else if(grpCv.getAsInt32(RsGeneralDataService::GRP_META_SUBSCRIBE_FLAG, value) && grpMeta)
     {
         key = RsGeneralDataService::GRP_META_SUBSCRIBE_FLAG;
         currValue = grpMeta->mSubscribeFlags;
@@ -1575,7 +1575,7 @@ bool RsGenExchange::processGrpMask(const RsGxsGroupId& grpId, ContentValue &grpC
     {
         if(grpMeta)
             delete grpMeta;
-        return true;
+        return false;
     }
 
     ok &= grpCv.getAsInt32(key+GXS_MASK, mask);

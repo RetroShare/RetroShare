@@ -47,18 +47,26 @@ RetroDb::RetroDb(const std::string &dbPath, int flags, const std::string& key) :
         std::cerr << "Can't open database, Error code: " <<  sqlite3_errmsg(mDb)
                   << std::endl;
         sqlite3_close(mDb);
+        mDb = NULL;
+        return;
      }
 
 #ifdef ENABLE_ENCRYPTED_DB
-    rc = sqlite3_key(mDb, mKey.c_str(), mKey.size());
+    if(!mKey.empty())
+    {
+    	rc = sqlite3_key(mDb, mKey.c_str(), mKey.size());
+
+		if(rc){
+			std::cerr << "Can't key database: " <<  sqlite3_errmsg(mDb)
+					  << std::endl;
+
+			sqlite3_close(mDb);
+			mDb = NULL;
+			return;
+		 }
+    }
 #endif
 
-    if(rc){
-        std::cerr << "Can't key database: " <<  sqlite3_errmsg(mDb)
-                  << std::endl;
-
-        sqlite3_close(mDb);
-     }
 }
 
 
