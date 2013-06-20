@@ -865,10 +865,10 @@ void ChatWidget::updateStatus(const QString &peer_id, int status)
 		// the peers status has changed
 
 		QString peerName ;
-		uint32_t status ;
+		uint32_t stts ;
 		std::string pgp_id ;
 
-		if(rsMsgs->getDistantChatStatus(peerId,status,pgp_id))
+		if(rsMsgs->getDistantChatStatus(peerId,stts,pgp_id))
 			peerName = QString::fromUtf8(rsPeers->getPeerName(pgp_id).c_str());
 		else
 			peerName = QString::fromUtf8(rsPeers->getPeerName(peerId).c_str());
