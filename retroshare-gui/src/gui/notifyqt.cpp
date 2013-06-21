@@ -670,6 +670,7 @@ void NotifyQt::notifyListChange(int list, int type)
 			std::cerr << "received notify chat lobby list" << std::endl;
 #endif
 			emit lobbyListChanged();
+			break;
 
 		case NOTIFY_LIST_GROUPLIST:
 #ifdef NOTIFY_DEBUG
