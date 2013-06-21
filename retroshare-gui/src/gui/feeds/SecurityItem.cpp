@@ -124,7 +124,7 @@ void SecurityItem::updateItemStatic()
 		case SEC_TYPE_AUTH_DENIED:
 			title = tr("Connection refused by remote peer");
 			requestLabel->hide();
-			avatar->setDefaultAvatar(":images/avatar_request.png");
+			avatar->setDefaultAvatar(":images/avatar_refused.png");
 			break;
 		case SEC_TYPE_UNKNOWN_IN:
 			title = tr("Unknown (Incoming) Connect Attempt");

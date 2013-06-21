@@ -348,11 +348,6 @@ SecurityItem > QFrame#frame {
 	border-radius: 10px;
 }
 
-SecurityItem QWidget#avatar {
-	border: 2px solid red;
-	background-color: #FDBF7D;
-}
-
 SecurityItem QLabel#peerNameLabel, SecurityItem QLabel#requestLabel {
 	color: #990033
 }
