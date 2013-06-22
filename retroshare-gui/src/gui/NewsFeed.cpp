@@ -44,8 +44,8 @@
 #include "feeds/MsgItem.h"
 #include "feeds/PeerItem.h"
 #include "feeds/ChatMsgItem.h"
-
 #include "feeds/SecurityItem.h"
+#include "feeds/NewsFeedUserNotify.h"
 
 #include "settings/rsharesettings.h"
 #include "chat/ChatDialog.h"
@@ -76,16 +76,14 @@ NewsFeed::NewsFeed(QWidget *parent)
 	/* Invoke the Qt Designer generated object setup routine */
 	setupUi(this);
 
+	setUpdateWhenInvisible(true);
+
 	if (!instance) {
 		instance = this;
 	}
 
 	connect(removeAllButton, SIGNAL(clicked()), this, SLOT(removeAll()));
 	connect(feedOptionsButton, SIGNAL(clicked()), this, SLOT(feedoptions()));
-
-//	QTimer *timer = new QTimer(this);
-//	timer->connect(timer, SIGNAL(timeout()), this, SLOT(updateFeed()));
-//	timer->start(1000);
 }
 
 NewsFeed::~NewsFeed()
@@ -93,6 +91,11 @@ NewsFeed::~NewsFeed()
 	if (instance == this) {
 		instance = NULL;
 	}
+}
+
+UserNotify *NewsFeed::getUserNotify(QObject *parent)
+{
+	return new NewsFeedUserNotify(this, parent);
 }
 
 void NewsFeed::updateDisplay()

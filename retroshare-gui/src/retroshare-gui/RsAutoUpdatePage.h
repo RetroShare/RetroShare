@@ -25,6 +25,8 @@ class RsAutoUpdatePage: public MainPage
 		static void unlockAllEvents() ;
 		static bool eventsLocked() ;
 
+		void setUpdateWhenInvisible(bool update) { mUpdateWhenInvisible = update; }
+
 	public slots:
 		// This method updates the widget only if not locked, and if visible.
 		// This is *the* method to call when on callbacks etc, to avoid locks due
@@ -45,6 +47,7 @@ class RsAutoUpdatePage: public MainPage
 
 	private:
 		QTimer *_timer ;
+		bool mUpdateWhenInvisible; // Update also when not visible
 
 		static bool _locked ;
 };

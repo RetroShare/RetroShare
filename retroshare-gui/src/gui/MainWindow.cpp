@@ -242,7 +242,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     QAction *action;
 
     ui->stackPages->add(newsFeed = new NewsFeed(ui->stackPages),
-                       createPageAction(QIcon(IMAGE_NEWSFEED), tr("News feed"), grp));
+                       action = createPageAction(QIcon(IMAGE_NEWSFEED), tr("News feed"), grp));
+    notify.push_back(QPair<MainPage*, QAction*>(newsFeed, action));
 
 //    ui->stackPages->add(networkDialog = new NetworkDialog(ui->stackPages),
 //                       createPageAction(QIcon(IMAGE_NETWORK2), tr("Network"), grp));

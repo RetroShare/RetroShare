@@ -44,7 +44,9 @@ public:
   /** Default Destructor */
   virtual ~NewsFeed();
 
-	/* FeedHolder Functions (for FeedItem functionality) */
+  virtual UserNotify *getUserNotify(QObject *parent);
+
+    /* FeedHolder Functions (for FeedItem functionality) */
   virtual QScrollArea *getScrollArea();
   virtual void deleteFeedItem(QWidget *item, uint32_t type);
   virtual void openChat(std::string peerId);

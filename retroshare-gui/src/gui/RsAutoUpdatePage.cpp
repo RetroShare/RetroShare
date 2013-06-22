@@ -6,6 +6,8 @@ bool RsAutoUpdatePage::_locked = false ;
 RsAutoUpdatePage::RsAutoUpdatePage(int ms_update_period, QWidget *parent, Qt::WindowFlags flags)
 	: MainPage(parent, flags)
 {
+	mUpdateWhenInvisible = false;
+
 	_timer = new QTimer ;
 	_timer->setInterval(ms_update_period);
 	_timer->setSingleShot(true);
@@ -25,7 +27,7 @@ RsAutoUpdatePage::~RsAutoUpdatePage()
 
 void RsAutoUpdatePage::securedUpdateDisplay()
 {
-	if(_locked == false && isVisible()) {
+	if(_locked == false && (mUpdateWhenInvisible || isVisible())) {
 		updateDisplay();
 		update() ;				// Qt flush
 	}
@@ -33,8 +35,8 @@ void RsAutoUpdatePage::securedUpdateDisplay()
 
 void RsAutoUpdatePage::showEvent(QShowEvent */*event*/)
 {
-        //std::cout << "RsAutoUpdatePage::showEvent() In show event !!" << std::endl ;
-	if(!_locked)
+	//std::cout << "RsAutoUpdatePage::showEvent() In show event !!" << std::endl ;
+	if(!_locked && !mUpdateWhenInvisible)
 		updateDisplay();
 }
 

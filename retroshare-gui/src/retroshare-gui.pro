@@ -456,6 +456,7 @@ HEADERS +=  rshare.h \
             gui/feeds/SubFileItem.h \
             gui/feeds/AttachFileItem.h \
             gui/feeds/SecurityItem.h \
+            gui/feeds/NewsFeedUserNotify.h \
             gui/connect/ConnectFriendWizard.h \
             gui/groups/CreateGroup.h \
             gui/dht/DhtWindow.h \
@@ -757,6 +758,7 @@ SOURCES +=  main.cpp \
             gui/feeds/SubFileItem.cpp \
             gui/feeds/AttachFileItem.cpp \
             gui/feeds/SecurityItem.cpp \
+            gui/feeds/NewsFeedUserNotify.cpp \
             gui/connect/ConnectFriendWizard.cpp \
             gui/groups/CreateGroup.cpp \
             gui/dht/DhtWindow.cpp \
