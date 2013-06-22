@@ -1,6 +1,49 @@
 retroshare (0.5.4-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
   * Improvements
+  	  - GUI
+        * added/enabled GUI for distant chat (Invitation handler in config->chat, handling of Distant chat links)
+        * Localized Greek and Dutch (patch from Henry). Updated English.
+        * Languages updates from transifex
+        * Color transfer for copy/paste (patch from AC)
+        * various improvements to FriendSelectionWidget
+        * typos (patches from Henry)
+        * Added default stylesheet for the QTextEdit in ProfileManager
+        * Fixed sort of friends in shared files.
+        * fixed update of flag for peer signature over own key
+
+     - FT
+        * added a new per-friend flag to allow to seek for direct transfers. Disabled for existing friends 
+         (should be added manually), enabled by default for new friends
+
+     - libretroshare
+        * Merged branch v0.5-GenericTunneling into trunk (Rev. 6284 to 6410).
+           - Tunnel system is now generic. Any service can asks for tunnels and send generic data through them
+           - made ftServer a client of the service. Now turtle file items are handled in ftServer
+           - added new client: p3MsgService to send/recv pgp-encrypted distant messages
+           - added new client: p3ChatService to perform private (AES-encrypted) distant chat through tunnels.
+           - added distant chat. Works on invitations and tunnels. Has tunnel closing notification.
+           - Added system to collect and create chat invites from pgp keys
+           - /!\ Needs a route of peers with version > 6441 to work.
+        * drop generic items with inconsistent peer id vs. tunnel directions (due to tunnel re-routing)
+        * fixed several compiler warnings
+        * fixed bug in anti-search-by-depth mechanism
+        * Fixed crash with Windows compile. Renamed method "RsFiles::CopyFile" to "RsFiles::copyFile" (lower case) 
+          to avoid renaming of "CopyFile" to "CopyFileW" with the newly included "windows.h".
+
+     - GXS
+        * Merged GXS-phase2 branch into trunk
+        * Enabled db encryption and changed gxs folder 
+          needs sql cipher to compile if gxs compile flags are enabled
+  * Bugs
+     - Fixed deadlock in FriendSelectionWidget 
+     - fixed assert for non RSA keys
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Sat, 22 Jun 2013 15:00:00 +0100
+
+retroshare (0.5.4-0.6399~precise) precise; urgency=low
+
+  * Improvements
     - Added a drop-down item to allow removing unused keys, in the Network dialog, key removal method in OpenPGP-SDK,
       and PGPHandler. 
     - added backup system to public keyring, impossibility to remove public parts of owned secret keys, etc.
