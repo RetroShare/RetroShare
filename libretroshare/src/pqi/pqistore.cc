@@ -411,10 +411,11 @@ bool pqiSSLstore::getEncryptedItems(std::list<RsItem* >& rsItemList)
 {
 	RsItem* item;
 
-	while(NULL != (item = GetItem()))
+	do
 	{
-		rsItemList.push_back(item);
-	}
+		if (NULL != (item = GetItem()))
+			rsItemList.push_back(item);
+	} while (enc_bio->isactive() && enc_bio->moretoread());
 
 	return true;
 }
