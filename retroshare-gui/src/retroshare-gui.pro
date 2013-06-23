@@ -146,17 +146,18 @@ win32 {
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
 	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
 	LIBS += -L"../../../lib"
+
+	gxs {
+		LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
+		LIBS += -lsqlite3
+	}
+
 	LIBS += -lssl -lcrypto -lpthreadGC2d -lminiupnpc -lz
 # added after bitdht
 #	LIBS += -lws2_32
 	LIBS += -luuid -lole32 -liphlpapi -lcrypt32-cygwin -lgdi32
 	LIBS += -lole32 -lwinmm
 	RC_FILE = gui/images/retroshare_win.rc
-
-	gxs {
-		LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
-		LIBS += -lsqlite3
-	}
 
 	# export symbols for the plugins
 	LIBS += -Wl,--export-all-symbols,--out-implib,lib/libretroshare-gui.a
