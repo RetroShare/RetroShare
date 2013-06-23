@@ -41,11 +41,20 @@ public:
 	void loadIds(uint32_t chooserFlags, RsGxsId defId);
 	bool getChosenId(RsGxsId &id);
 
+private slots:
+	void timer();
+
 private:
 	void loadPrivateIds();
+	void addPrivateId(const RsGxsId &gxsId, bool replace);
+	bool MakeIdDesc(const RsGxsId &id, QString &desc);
 
 	uint32_t mFlags;
 	RsGxsId mDefaultId;
+
+	QList<RsGxsId> mPendingId;
+	QTimer *mTimer;
+	unsigned int mTimerCount;
 };
 
 #endif

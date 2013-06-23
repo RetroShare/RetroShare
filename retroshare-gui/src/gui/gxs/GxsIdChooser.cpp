@@ -23,17 +23,32 @@
 
 #include "GxsIdChooser.h"
 
+#include <QTimer>
+#include <QSortFilterProxyModel>
 #include <algorithm>
 
 #include <retroshare/rspeers.h>
 
 #include <iostream>
 
+#define MAX_TRY  10 // 5 seconds
+
+#define ROLE_SORT Qt::UserRole + 1 // Qt::UserRole is reserved for data
+
 /** Constructor */
 GxsIdChooser::GxsIdChooser(QWidget *parent)
 : QComboBox(parent), mFlags(IDCHOOSER_ANON_DEFAULT), mDefaultId("")
 {
-	return;
+	mTimer = NULL;
+	mTimerCount = 0;
+
+	/* Enable sort with own role */
+	QSortFilterProxyModel *proxy = new QSortFilterProxyModel(this);
+	proxy->setSourceModel(model());
+	model()->setParent(proxy);
+	setModel(proxy);
+
+	proxy->setSortRole(ROLE_SORT);
 }
 
 void GxsIdChooser::loadIds(uint32_t chooserFlags, RsGxsId defId)
@@ -44,37 +59,79 @@ void GxsIdChooser::loadIds(uint32_t chooserFlags, RsGxsId defId)
 	loadPrivateIds();
 }
 
-
-bool MakeIdDesc(const RsGxsId &id, QString &desc)
+bool GxsIdChooser::MakeIdDesc(const RsGxsId &id, QString &desc)
 {
 	RsIdentityDetails details;
-	
-	if (!rsIdentity->getIdDetails(id, details))
+
+	bool found = rsIdentity->getIdDetails(id, details);
+	if (found)
 	{
-		return false;
+		desc = QString::fromUtf8(details.mNickname.c_str());
+		if (details.mPgpLinked)
+		{
+			desc += " (PGP) [";
+		}
+		else
+		{
+			desc += " (Anon) [";
+		}
+	} else {
+		if (mTimerCount <= MAX_TRY) {
+			desc = QString("%1 ... [").arg(tr("Loading"));
+		} else {
+			desc = QString("%1 ... [").arg(tr("Not found"));
+		}
 	}
 
-	desc = QString::fromUtf8(details.mNickname.c_str());
-	if (details.mPgpLinked)
-	{
-		desc += " (PGP) [";
-	}
-	else
-	{
-		desc += " (Anon) [";
-	}
 	desc += QString::fromStdString(id.substr(0,5));
 	desc += "...]";
 
-	return true;
+	return found;
 }
 
+void GxsIdChooser::addPrivateId(const RsGxsId &gxsId, bool replace)
+{
+	QString str;
+	bool found = MakeIdDesc(gxsId, str);
+	if (!found)
+	{
+		/* Add to pending id's */
+		mPendingId.push_back(gxsId);
+		if (replace && mTimerCount <= MAX_TRY) {
+			/* Retry */
+			return;
+		}
+	}
+
+	QString id = QString::fromStdString(gxsId);
+
+	if (replace) {
+		/* Find and replace text of exisiting item */
+		int index = findData(id);
+		if (index >= 0) {
+			setItemText(index, str);
+			setItemData(index, QString("%1_%2").arg(found ? "1" : "2").arg(str), ROLE_SORT);
+			model()->sort(0);
+		}
+		return;
+	}
+
+	/* Add new item */
+	addItem(str, id);
+	setItemData(count() - 1, QString("%1_%2").arg(found ? "1" : "2").arg(str), ROLE_SORT);
+	model()->sort(0);
+}
 
 void GxsIdChooser::loadPrivateIds()
 {
+	mPendingId.clear();
+	mTimerCount = 0;
+	if (mTimer) {
+		delete(mTimer);
+	}
+
 	std::list<RsGxsId> ids;
 	rsIdentity->getOwnIds(ids);
-
 
 	if (ids.empty())
 	{
@@ -90,10 +147,11 @@ void GxsIdChooser::loadPrivateIds()
 	if (!(mFlags & IDCHOOSER_ID_REQUIRED))
 	{
 		/* add No Signature option */
-		QString str = "No Signature";
+		QString str = tr("No Signature");
 		QString id = "";
 
 		addItem(str, id);
+		setItemData(count() - 1, QString("0_%2").arg(str), ROLE_SORT);
 		if (mFlags & IDCHOOSER_ANON_DEFAULT)
 		{
 			def = 0;
@@ -105,16 +163,7 @@ void GxsIdChooser::loadPrivateIds()
 	for(it = ids.begin(); it != ids.end(); it++, i++)
 	{
 		/* add to Chooser */
-		QString str;
-		if (!MakeIdDesc(*it, str))
-		{
-			std::cerr << "GxsIdChooser::loadPrivateIds() ERROR Desc for Id: " << *it;
-			std::cerr << std::endl;
-			continue;
-		}
-		QString id = QString::fromStdString(*it);
-
-		addItem(str, id);
+		addPrivateId(*it, false);
 
 		if (mDefaultId == *it)
 		{
@@ -126,6 +175,16 @@ void GxsIdChooser::loadPrivateIds()
 	{
 		setCurrentIndex(def);
 		//ui.comboBox->setCurrentIndex(def);
+	}
+
+	if (!mPendingId.empty()) {
+		/* Create and start timer to load pending id's */
+		mTimerCount = 0;
+		mTimer = new QTimer();
+		mTimer->setSingleShot(true);
+		mTimer->setInterval(500);
+		connect(mTimer, SIGNAL(timeout()), this, SLOT(timer()));
+		mTimer->start();
 	}
 }
 
@@ -144,3 +203,35 @@ bool GxsIdChooser::getChosenId(RsGxsId &id)
 	return true;
 }
 		
+void GxsIdChooser::timer()
+{
+	++mTimerCount;
+
+	QList<RsGxsId> pendingId = mPendingId;
+	mPendingId.clear();
+
+	/* Process pending id's */
+	while (!pendingId.empty()) {
+		RsGxsId id = pendingId.front();
+		pendingId.pop_front();
+
+		addPrivateId(id, true);
+	}
+
+	if (mPendingId.empty()) {
+		/* All pending id's processed */
+		delete(mTimer);
+		mTimer = NULL;
+		mTimerCount = 0;
+	} else {
+		if (mTimerCount <= MAX_TRY) {
+			/* Restart timer */
+			mTimer->start();
+		} else {
+			delete(mTimer);
+			mTimer = NULL;
+			mTimerCount = 0;
+			mPendingId.clear();
+		}
+	}
+}
