@@ -317,7 +317,7 @@ int ftFileCreator::locked_notifyReceived(uint64_t offset, uint32_t chunk_size)
 	{
 		// Chunk is not found. Maybe that is because the packet is in the middle
 		// of an existing chunk. This case occurs whenever a packet is lost due
-		// to temporarily interrupted connexion.  In such a case we split the
+		// to temporarily interrupted connection.  In such a case we split the
 		// chunk. Any pending block will be re-asked to the source after 40 secs.
 		//
 #ifdef FILE_DEBUG

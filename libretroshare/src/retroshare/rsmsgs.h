@@ -73,7 +73,7 @@
 #define RS_MSGTAGTYPE_LATER      5
 #define RS_MSGTAGTYPE_USER       100
 
-#define RS_CHAT_LOBBY_PRIVACY_LEVEL_CHALLENGE  	0	/* Used to accept connexion challenges only. */
+#define RS_CHAT_LOBBY_PRIVACY_LEVEL_CHALLENGE  	0	/* Used to accept connection challenges only. */
 #define RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC  		1	/* lobby is visible by friends. Friends can connect.*/
 #define RS_CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE 		2	/* lobby invisible by friends. Peers on invitation only .*/
 

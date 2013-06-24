@@ -50,9 +50,9 @@
  * #define DEBUG_DISTANT_CHAT 1
  ****/
 
-static const int 		CONNECTION_CHALLENGE_MAX_COUNT 	  =   20 ; // sends a connexion challenge every 20 messages
-static const time_t	CONNECTION_CHALLENGE_MAX_MSG_AGE	  =   30 ; // maximum age of a message to be used in a connexion challenge
-static const int 		CONNECTION_CHALLENGE_MIN_DELAY 	  =   15 ; // sends a connexion at most every 15 seconds
+static const int 		CONNECTION_CHALLENGE_MAX_COUNT 	  =   20 ; // sends a connection challenge every 20 messages
+static const time_t	CONNECTION_CHALLENGE_MAX_MSG_AGE	  =   30 ; // maximum age of a message to be used in a connection challenge
+static const int 		CONNECTION_CHALLENGE_MIN_DELAY 	  =   15 ; // sends a connection at most every 15 seconds
 static const int 		LOBBY_CACHE_CLEANING_PERIOD    	  =   10 ; // clean lobby caches every 10 secs (remove old messages)
 static const time_t 	MAX_KEEP_MSG_RECORD 					  = 1200 ; // keep msg record for 1200 secs max.
 static const time_t 	MAX_KEEP_INACTIVE_NICKNAME         =  180 ; // keep inactive nicknames for 3 mn max.
@@ -2129,7 +2129,7 @@ void p3ChatService::handleConnectionChallenge(RsChatLobbyConnectChallengeItem *i
 	// Look into message cache of all lobbys to handle the challenge.
 	//
 #ifdef CHAT_DEBUG
-	std::cerr << "p3ChatService::handleConnectionChallenge(): received connexion challenge:" << std::endl;
+	std::cerr << "p3ChatService::handleConnectionChallenge(): received connection challenge:" << std::endl;
 	std::cerr << "    Challenge code = 0x" << std::hex << item->challenge_code << std::dec << std::endl;
 	std::cerr << "    Peer Id        =   " << item->PeerId() << std::endl;
 #endif
@@ -2263,7 +2263,7 @@ void p3ChatService::invitePeerToLobby(const ChatLobbyId& lobby_id, const std::st
 {
 #ifdef CHAT_DEBUG
 	if(connexion_challenge)
-		std::cerr << "Sending connexion challenge accept to peer " << peer_id << " for lobby "<< std::hex << lobby_id << std::dec << std::endl;
+		std::cerr << "Sending connection challenge accept to peer " << peer_id << " for lobby "<< std::hex << lobby_id << std::dec << std::endl;
 	else
 		std::cerr << "Sending invitation to peer " << peer_id << " to lobby "<< std::hex << lobby_id << std::dec << std::endl;
 #endif
@@ -2810,7 +2810,7 @@ void p3ChatService::cleanLobbyCaches()
 				it->second.last_keep_alive_packet_time = now ;
 			}
 
-			// 4 - look at lobby activity and possibly send connexion challenge
+			// 4 - look at lobby activity and possibly send connection challenge
 			//
 			if(++it->second.connexion_challenge_count > CONNECTION_CHALLENGE_MAX_COUNT && now > it->second.last_connexion_challenge_time + CONNECTION_CHALLENGE_MIN_DELAY) 
 			{
@@ -2847,7 +2847,7 @@ void p3ChatService::cleanLobbyCaches()
 	for(std::list<ChatLobbyId>::const_iterator it(changed_lobbies.begin());it!=changed_lobbies.end();++it)
 		rsicontrol->getNotify().notifyChatLobbyEvent(*it,RS_CHAT_LOBBY_EVENT_KEEP_ALIVE,"------------","") ;
 
-	// send connexion challenges
+	// send connection challenges
 	//
 	for(std::list<ChatLobbyId>::const_iterator it(send_challenge_lobbies.begin());it!=send_challenge_lobbies.end();++it)
 		sendConnectionChallenge(*it) ;

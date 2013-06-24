@@ -1613,7 +1613,7 @@ int 	pqissl::readdata(void *data, int len)
 			{							
 				// SSL_WANT_READ is not a crittical error. It's just a sign that
 				// the internal SSL buffer is not ready to accept more data. So -1 
-				// is returned, and the connexion will be retried as is on next
+				// is returned, and the connection will be retried as is on next
 				// call of readdata().
 
 #ifdef PQISSL_DEBUG

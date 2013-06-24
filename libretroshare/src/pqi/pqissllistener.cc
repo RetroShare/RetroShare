@@ -381,13 +381,13 @@ int	pqissllistenbase::continueSSL(IncomingSSLInfo& incoming_connexion_info, bool
 	// attempt the accept again.
 	int fd =  SSL_get_fd(incoming_connexion_info.ssl);
 
-	// clear the connexion info that will be filled in by the callback.
+	// clear the connection info that will be filled in by the callback.
 	//
 	AuthSSL::getAuthSSL()->setCurrentConnectionAttemptInfo(std::string(),std::string(),std::string()) ;
 
 	int err = SSL_accept(incoming_connexion_info.ssl);
 
-	// No grab the connexion info that was filled in by the callback.
+	// No grab the connection info that was filled in by the callback.
 	//
 	AuthSSL::getAuthSSL()->getCurrentConnectionAttemptInfo(incoming_connexion_info.gpgid,incoming_connexion_info.sslid,incoming_connexion_info.sslcn) ;
 

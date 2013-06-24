@@ -61,7 +61,7 @@
 //           the correct peers, selecting randomly among all the possible tunnels for this hash.
 //      5 - when a file data packet gets back, the turtle router forwards it back to the file transfer module.
 //
-//================================ connexion to the file transfer module ===============================//
+//================================ connection to the file transfer module ===============================//
 //
 //  The turtle router should provide the ft module with the necessary interface for asking files, and
 //  retreiving data:

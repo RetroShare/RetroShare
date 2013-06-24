@@ -1296,7 +1296,7 @@ bool    AuthSSLimpl::decrypt(void *&out, int &outlen, const void *in, int inlen)
 void AuthSSLimpl::setCurrentConnectionAttemptInfo(const std::string& gpg_id,const std::string& ssl_id,const std::string& ssl_cn)
 {
 #ifdef AUTHSSL_DEBUG
-	std::cerr << "AuthSSL: registering connexion attempt from:" << std::endl;
+	std::cerr << "AuthSSL: registering connection attempt from:" << std::endl;
 	std::cerr << "    GPG id: " << gpg_id << std::endl;
 	std::cerr << "    SSL id: " << ssl_id << std::endl;
 	std::cerr << "    SSL cn: " << ssl_cn << std::endl;

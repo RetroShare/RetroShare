@@ -123,8 +123,8 @@ void CreateMsgLinkDialog::createLink()
 		RSLinkClipboard::copyLinks(links) ;
 
 		if(!res)
-			QMessageBox::critical(NULL,tr("Messenging invite creation failed"),tr("The creation of the messenging invite failed")) ;
+			QMessageBox::critical(NULL,tr("Messaging invite creation failed"),tr("The creation of the messaging invite failed")) ;
 		else
-			QMessageBox::information(NULL,tr("Messenging invite created"),tr("Your new messenging chat invite has been copied to clipboard. You can now paste it as a Retroshare link.")) ;
+			QMessageBox::information(NULL,tr("Messaging invite created"),tr("Your new messaging chat invite has been copied to clipboard. You can now paste it as a Retroshare link.")) ;
 #endif
 }

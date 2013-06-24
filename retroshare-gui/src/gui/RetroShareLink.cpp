@@ -1199,7 +1199,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 
 					if(link._time_stamp < time(NULL))
 					{
-						QMessageBox::information(NULL,QObject::tr("Messenging link is expired"),QObject::tr("This Messenging link is expired. The destination peer will not receive it.")) ;
+						QMessageBox::information(NULL,QObject::tr("Messaging link is expired"),QObject::tr("This Messaging link is expired. The destination peer will not receive it.")) ;
 						break ;
 					}
 	
@@ -1220,7 +1220,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 					}
 					if(link._GPGid.toStdString() != rsPeers->getGPGOwnId())
 					{
-						QMessageBox::information(NULL,QObject::tr("Chat link cannot be decrypted"),QObject::tr("This chat link is encrypted with a key that is not yours. You can't used it. Key ID = ")+link._GPGid) ;
+						QMessageBox::information(NULL,QObject::tr("Chat link cannot be decrypted"),QObject::tr("This chat link is encrypted with a key that is not yours. You can't use it. Key ID = ")+link._GPGid) ;
 						break ;
 					}
 
@@ -1237,7 +1237,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 							case RS_DISTANT_CHAT_ERROR_SIGNATURE_MISMATCH: error_msg = QObject::tr("The link signature cannot be checked.") ; break ;
 							case RS_DISTANT_CHAT_ERROR_UNKNOWN_KEY:        error_msg = QObject::tr("The link is signed by an unknown key.") ; break ;
 						}
-						QMessageBox::information(NULL,QObject::tr("Chat connexion is not possible"),error_msg) ;
+						QMessageBox::information(NULL,QObject::tr("Chat connection is not possible"),error_msg) ;
 					}
 					else
 						ChatDialog::chatFriend(hash);

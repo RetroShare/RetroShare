@@ -83,16 +83,16 @@ static void getPage(const std::string& server_name,std::string& page)
 	serveur.sin_port = htons(80);
 
 #ifdef EXTADDRSEARCH_DEBUG
-	printf("Connexion attempt\n");
+	printf("Connection attempt\n");
 #endif
 
 	if(unix_connect(sockfd,(struct sockaddr *)&serveur, sizeof(serveur)) == -1)
 	{
-		std::cerr << "ExtAddrFinder: Connexion error to " << server_name << std::endl ;
+		std::cerr << "ExtAddrFinder: Connection error to " << server_name << std::endl ;
 		return ;
 	}
 #ifdef EXTADDRSEARCH_DEBUG
-	std::cerr << "ExtAddrFinder: Connexion established to " << server_name << std::endl ;
+	std::cerr << "ExtAddrFinder: Connection established to " << server_name << std::endl ;
 #endif
 
 	// envoi 
