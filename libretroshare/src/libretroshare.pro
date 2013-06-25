@@ -5,7 +5,7 @@ TARGET = retroshare
 
 CONFIG += test_voip 
 
- #GXS Stuff.
+#GXS Stuff.
 # This should be disabled for releases until further notice.
 #CONFIG += gxs debug
 
@@ -235,7 +235,6 @@ win32 {
 	# SQLite include path is required to compile GXS.
 	gxs {
 		SQLITE_DIR = ../../../sqlcipher-2.1.1
-		DEFINES += SQLITE_HAS_CODEC
 		INCLUDEPATH += $${SQLITE_DIR}
 	}
 }
@@ -616,6 +615,7 @@ SOURCES +=	zeroconf/p3zcnatassist.cc \
 # this should be disabled for releases until further notice.
 gxs {
 	DEFINES *= RS_ENABLE_GXS
+	DEFINES *= SQLITE_HAS_CODEC
 
 	DEFINES *= GXS_DEV_TESTNET
 	DEFINES *= GXS_ENABLE_SYNC_MSGS
