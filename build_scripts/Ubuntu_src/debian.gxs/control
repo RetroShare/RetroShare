@@ -1,0 +1,52 @@
+Source: retroshare
+Section: devel
+Priority: standard
+Maintainer: Cyril Soler <csoler@users.sourceforge.net>
+Build-Depends: debhelper (>= 7),  tcl8.5, libsqlite3-dev, libglib2.0-dev, libupnp-dev, qt4-dev-tools, libqt4-dev, libssl-dev, libxss-dev, libgnome-keyring-dev, libbz2-dev, libqt4-opengl-dev, libqtmultimediakit1, qtmobility-dev, libspeex-dev, libspeexdsp-dev, libxslt1-dev, libprotobuf-dev, protobuf-compiler, cmake, libcurl4-openssl-dev
+Standards-Version: 3.9.1
+Homepage: http://retroshare.sourceforge.net
+
+Package: retroshare-voip-plugin
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, retroshare, libspeex1, libspeexdsp1, libqtmultimediakit1
+Description: RetroShare VOIP plugin
+ This package provides a plugin for RetroShare, a secured Friend-to-Friend communication 
+ plateform. The plugin adds voice-over-IP functionality to the private chat window. Both
+ friends chatting together need the plugin installed to be able to talk together.
+
+Package: retroshare-linkscloud-plugin
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, retroshare
+Description: RetroShare LinksCloud plugin
+ This package provides a plugin for RetroShare, a secured Friend-to-Friend communication 
+ plateform. The plugin adds a pool of html links that friends can share, and includes a 
+ voting system to promote links. 
+
+Package: retroshare-feedreader-plugin
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, retroshare
+Description: RetroShare LinksCloud plugin
+ This package provides a plugin for RetroShare, a secured Friend-to-Friend communication 
+ plateform. The plugin adds a RSS feed reader tab to retroshare.
+
+Package: retroshare-nogui
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, gnome-keyring
+Conflicts: retroshare
+Description: Secure communication with friends
+ This is the command-line client for RetroShare network. This client
+ can be contacted and talked-to using SSL. Clients exist for portable
+ devices running e.g. Android. 
+
+Package: retroshare
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, gnome-keyring
+Conflicts: retroshare-nogui
+Description: Secure communication with friends
+ RetroShare is a Open Source cross-platform, private and secure decentralised 
+ commmunication platform. It lets you to securely chat and share files with your 
+ friends and family, using a web-of-trust to authenticate peers and OpenSSL to 
+ encrypt all communication. RetroShare provides filesharing, chat, messages, 
+ forums and channels.
+
+

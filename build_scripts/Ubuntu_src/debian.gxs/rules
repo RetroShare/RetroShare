@@ -1,0 +1,75 @@
+#!/usr/bin/make -f
+
+builddir:
+	mkdir -p builddir
+
+builddir/Makefile: builddir
+	touch $@
+
+build: build-stamp
+
+build-stamp: builddir/Makefile
+	dh_testdir
+	# Add here commands to compile the package.
+	cd sqlcipher && ./configure --disable-shared --enable-static --enable-tempstore=yes CFLAGS="-DSQLITE_HAS_CODEC" LDFLAGS="-lcrypto" && make 
+	cd libssh-0.5.4 && mkdir build && cd build && cmake -DWITH_STATIC_LIB=ON .. && make 
+	mkdir lib
+	cp -r libssh-0.5.4 lib
+	cp -r sqlcipher lib
+	#cd src/rsctrl/src && make
+	cd src && qmake-qt4 CONFIG="release gxs" RetroShare.pro && make
+	touch $@
+
+clean:
+	dh_testdir
+	dh_testroot
+	rm -f build-stamp
+	# Add here commands to clean up after the build process.
+	rm -rf builddir
+	dh_clean
+
+install: build
+	dh_testdir
+	dh_testroot
+	dh_clean -k
+	dh_installdirs
+	install -D -m 644 src/data/retroshare.desktop                           $(CURDIR)/debian/retroshare/usr/share/applications/retroshare.desktop
+	install -D -m 644 src/data/24x24/retroshare.png                         $(CURDIR)/debian/retroshare/usr/share/icons/hicolor/24x24/apps/retroshare.png
+	install -D -m 644 src/data/48x48/retroshare.png                         $(CURDIR)/debian/retroshare/usr/share/icons/hicolor/48x48/apps/retroshare.png
+	install -D -m 644 src/data/64x64/retroshare.png                         $(CURDIR)/debian/retroshare/usr/share/icons/hicolor/64x64/apps/retroshare.png
+	install -D -m 644 src/data/retroshare.xpm                               $(CURDIR)/debian/retroshare/usr/share/pixmaps/retroshare.xpm
+	install -D -m 644 src/plugins/VOIP/libVOIP.so.1.0.0              		$(CURDIR)/debian/retroshare-voip-plugin/usr/lib/retroshare/extensions/libVOIP.so
+	install -D -m 644 src/plugins/LinksCloud/libLinksCloud.so.1.0.0  		$(CURDIR)/debian/retroshare-linkscloud-plugin/usr/lib/retroshare/extensions/libLinksCloud.so
+	install -D -m 644 src/plugins/FeedReader/libFeedReader.so.1.0.0  		$(CURDIR)/debian/retroshare-feedreader-plugin/usr/lib/retroshare/extensions/libFeedReader.so
+	install -D -m 644 src/libbitdht/src/bitdht/bdboot.txt                   $(CURDIR)/debian/retroshare-nogui/usr/share/RetroShare/bdboot.txt
+	install -D -m 644 src/libbitdht/src/bitdht/bdboot.txt                   $(CURDIR)/debian/retroshare/usr/share/RetroShare/bdboot.txt
+	install -D -m 755 src/retroshare-nogui/src/retroshare-nogui        		$(CURDIR)/debian/retroshare-nogui/usr/bin/RetroShare-nogui
+	install -D -m 755 src/retroshare-nogui/src/retroshare-nogui        		$(CURDIR)/debian/retroshare/usr/bin/RetroShare-nogui
+	install -D -m 755 src/retroshare-gui/src/RetroShare                		$(CURDIR)/debian/retroshare/usr/bin/RetroShare
+
+# Add here commands to install the package into debian/your_appname
+#    cd builddir && $(MAKE) INSTALL_ROOT=$(CURDIR)/debian/$(APPNAME) install
+# Build architecture-independent files here.
+binary-indep: build install
+# We have nothing to do by default.
+
+# Build architecture-dependent files here.
+binary-arch: build install
+	dh_testdir
+	dh_testroot
+	dh_installdocs
+	dh_installexamples
+	dh_installman
+	dh_link
+	dh_strip
+	dh_compress
+	dh_fixperms
+	dh_installdeb
+	dh_shlibdeps
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+binary: binary-indep binary-arch
+.PHONY: build clean binary-indep binary-arch binary install configure
+

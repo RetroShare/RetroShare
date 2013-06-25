@@ -1,0 +1,10 @@
+usr/share/applications/retroshare.desktop
+usr/share/pixmaps/retroshare.xpm
+usr/share/RetroShare/bdboot.txt
+usr/share/icons/hicolor/48x48/apps/retroshare.png
+usr/share/icons/hicolor/24x24/apps/retroshare.png
+usr/share/icons/hicolor/64x64/apps/retroshare.png
+usr/bin
+usr/bin/RetroShare
+usr/bin/RetroShare-nogui
+

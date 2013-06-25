@@ -4,6 +4,7 @@
 version="0.5.4"
 svnpath="svn://csoler@svn.code.sf.net/p/retroshare/code/"
 workdir=retroshare-$version
+gxs=".gxs"	# comment out to compile without gxs
 ######################################################
 
 echo This script is going to build the debian source package for RetroShare, from the svn.
@@ -38,7 +39,7 @@ echo version is $version
 echo Extracting base archive...
 
 mkdir -p $workdir/src
-cp -r debian $workdir/
+cp -r debian"$gxs" $workdir/debian
 cp -r data   $workdir/src/
 
 echo Checking out latest snapshot in libbitdht...
@@ -54,6 +55,14 @@ wget https://red.libssh.org/attachments/download/41/libssh-0.5.4.tar.gz
 cd $workdir
 tar zxvf ../libssh-0.5.4.tar.gz
 cd ..
+
+if ! test "$gxs" = "" ; then
+	cd $workdir
+	git clone https://github.com/sqlcipher/sqlcipher.git
+#	cat src/retroshare-gui/src/retroshare-gui.pro | sed -e s/-lsqlite3/..\\\/..\\\/..\\\/lib\\\/sqlcipher\\\/.libs\\\/libsqlite3.a/g > /tmp/tutu3278
+	cp  /tmp/tutu3278  src/retroshare-gui/src/retroshare-gui.pro 
+	cd ..
+fi
 
 # cleaning up protobof generated files
 #        \rm -f $workdir/src/rsctrl/src/gencc/*.pb.h
@@ -86,6 +95,7 @@ mv -f $workdir/debian/control.tmp $workdir/debian/control
 cd $workdir
 
 #for i in sid squeeze; do
+#for i in sid ; do
 #for i in precise; do
 for i in natty oneiric precise quantal raring; do
 	echo copying changelog for $i
