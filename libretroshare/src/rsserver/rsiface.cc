@@ -85,13 +85,11 @@ public:
 
 	virtual void lockData()
 	{
-//		std::cerr << "RsIfaceReal::lockData()" << std::endl;
 		return rsIfaceMutex.lock();
 	}
 
 	virtual void unlockData()
 	{
-//		std::cerr << "RsIfaceReal::unlockData()" << std::endl;
 		return rsIfaceMutex.unlock();
 	}
 

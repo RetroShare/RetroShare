@@ -31,12 +31,16 @@
 #include "pqi/pqipersongrp.h"
 
 class p3PeerMgr;
+class RsPeerCryptoParams;
+class pqissl ;
 
 class pqisslpersongrp: public pqipersongrp
 {
 	public:
 	pqisslpersongrp(SecurityPolicy *pol, unsigned long flags, p3PeerMgr *pm)
 	:pqipersongrp(pol, flags), mPeerMgr(pm) { return; }
+
+	bool locked_getCryptoParams(const std::string&, RsPeerCryptoParams&) ;
 
 	protected:
 
@@ -48,6 +52,7 @@ virtual pqiperson   *locked_createPerson(std::string id, pqilistener *listener);
 	private:
 
 	p3PeerMgr *mPeerMgr;
+	std::map<std::string,pqissl*> ssl_tunnels ;
 };
 
 

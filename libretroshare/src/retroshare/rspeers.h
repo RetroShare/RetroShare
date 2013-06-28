@@ -228,6 +228,19 @@ class RsPeerDetails
 	uint32_t		linkType;
 };
 
+// This class is used to get info about crytographic algorithms used with a
+// particular peer.
+//
+class RsPeerCryptoParams
+{
+	public:
+		int         connexion_state ;
+		std::string cipher_name ; 
+		int         cipher_bits_1 ; 
+		int         cipher_bits_2 ; 
+		std::string cipher_version ; 
+};
+
 class RsGroupInfo
 {
 public:

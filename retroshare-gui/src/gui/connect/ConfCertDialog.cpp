@@ -199,9 +199,19 @@ void ConfCertDialog::load()
         std::map<std::string, std::string> versions;
         bool retv = rsDisc->getDiscVersions(versions);
         if (retv && versions.end() != (vit = versions.find(detail.id)))
-        {
             ui.version->setText(QString::fromStdString(vit->second));
-        }
+
+		  RsPeerCryptoParams cdet ;
+		  if(rsicontrol->getPeerCryptoDetails(detail.id,cdet) && cdet.connexion_state!=0)
+		  {
+			  QString ct ;
+			  ct += QString::fromStdString(cdet.cipher_name) ;
+			  ct += QString::number(cdet.cipher_bits_1) ;
+			  ct += "-"+QString::fromStdString(cdet.cipher_version) ;
+			  ui.crypto_info->setText(ct) ;
+		  }
+		  else
+			  ui.crypto_info->setText(tr("Not connected")) ;
 
         /* set local address */
         ui.localAddress->setText(QString::fromStdString(detail.localAddr));
@@ -245,6 +255,8 @@ void ConfCertDialog::load()
         ui.version->hide();
         ui.label_version->hide();
         ui.groupBox_4->hide();
+        ui.crypto_info->hide();
+        ui.crypto_label->hide();
 
         ui.groupBox->hide();
     }

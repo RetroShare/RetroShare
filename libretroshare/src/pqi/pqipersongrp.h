@@ -45,6 +45,7 @@
 const unsigned long PQIPERSON_NO_LISTENER = 	0x0001;
 
 const unsigned long PQIPERSON_ALL_BW_LIMITED =  0x0010;
+class RsPeerCryptoParams ;
 
 class pqipersongrp: public pqihandler, public pqiMonitor, public p3ServiceServer, public pqiNetListener
 {
@@ -90,7 +91,10 @@ bool    notifyConnect(std::string id, uint32_t type, bool success, struct sockad
 virtual int tick();
 virtual int status();
 
+virtual bool getCryptoParams(const std::string&,RsPeerCryptoParams&) ;
 	protected:
+
+virtual bool locked_getCryptoParams(const std::string&, RsPeerCryptoParams&) { return false ;}
 
 	/********* FUNCTIONS to OVERLOAD for specialisation ********/
 	// THESE NEED TO BE LOCKED UNTIL PQILISTENER IS THREAD-SAFE.

@@ -55,6 +55,17 @@ pqilistener * pqisslpersongrp::locked_createListener(struct sockaddr_in laddr)
 	return listener;
 }
 
+bool pqisslpersongrp::locked_getCryptoParams(const std::string& id,RsPeerCryptoParams& params)
+{
+	std::map<std::string, pqissl*>::const_iterator it = ssl_tunnels.find(id) ;
+
+	if(it == ssl_tunnels.end())
+		return false ;
+
+	it->second->getCryptoParams(params) ;
+	return true ;
+}
+
 pqiperson * pqisslpersongrp::locked_createPerson(std::string id, pqilistener *listener)
 {
 	pqioutput(PQL_DEBUG_BASIC, pqipersongrpzone, "pqipersongrp::createPerson() PeerId: " + id);
@@ -68,6 +79,8 @@ pqiperson * pqisslpersongrp::locked_createPerson(std::string id, pqilistener *li
 	 * * FileData
 	 * * ServiceGeneric
 	 */
+
+	ssl_tunnels[id] = pqis ;	// keeps for getting crypt info per peer.
 
 	RsSerialiser *rss = new RsSerialiser();
 	rss->addSerialType(new RsFileItemSerialiser());

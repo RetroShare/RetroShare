@@ -346,6 +346,12 @@ void pqipersongrp::statusChanged()
 ///////////////////////////////////////////////////////////
 #endif
 
+bool pqipersongrp::getCryptoParams(const std::string& id,RsPeerCryptoParams& params)
+{
+	RsStackMutex stack(coreMtx); /******* LOCKED MUTEX **********/
+
+	return locked_getCryptoParams(id,params) ;
+}
 
 int     pqipersongrp::addPeer(std::string id)
 {

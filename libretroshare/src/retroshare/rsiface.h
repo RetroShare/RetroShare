@@ -35,6 +35,7 @@ class NotifyBase;
 class RsIface;
 class RsControl;
 class RsInit;
+class RsPeerCryptoParams;
 struct TurtleFileInfo ;
 
 /* declare single RsIface for everyone to use! */
@@ -163,8 +164,10 @@ class RsControl /* The Main Interface Class - for controlling the server */
 
 		/****************************************/
 
-		NotifyBase &getNotify() { return cb; }
-		RsIface    &getIface()  { return rsIface; }
+		NotifyBase & getNotify() { return cb; }
+		RsIface    & getIface()  { return rsIface; }
+
+		virtual bool getPeerCryptoDetails(const std::string& ssl_id,RsPeerCryptoParams& params) = 0;
 
 	private:
 		NotifyBase &cb;

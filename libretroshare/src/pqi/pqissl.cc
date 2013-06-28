@@ -38,6 +38,7 @@
 #include "pqi/pqissllistener.h"
 
 #include "pqi/p3linkmgr.h"
+#include <retroshare/rspeers.h>
 
 const int pqisslzone = 37714;
 
@@ -308,6 +309,31 @@ bool 	pqissl::connect_parameter(uint32_t type, uint32_t value)
  * to the NetInterface, and not the BinInterface,
  *
  */
+
+void pqissl::getCryptoParams(RsPeerCryptoParams& params)
+{
+	if(active)
+	{
+		params.connexion_state = 1 ;
+		params.cipher_name = std::string( SSL_get_cipher(ssl_connection));
+
+		int alg ;
+		int al2 = SSL_get_cipher_bits(ssl_connection,&alg);
+
+		params.cipher_bits_1 = alg ;
+		params.cipher_bits_2 = al2 ;
+
+		params.cipher_version = SSL_get_cipher_version(ssl_connection) ;
+	}
+	else
+	{
+		params.connexion_state = 0 ;
+		params.cipher_name.clear() ;
+		params.cipher_bits_1 = 0 ;
+		params.cipher_bits_2 = 0 ;
+		params.cipher_version.clear() ;
+	}
+}
 
 /* returns ...
  * -1 if inactive.

@@ -83,6 +83,7 @@ class cert;
 
 class pqissllistener;
 class p3LinkMgr;
+class RsPeerCryptoParams ;
 
 class pqissl: public NetBinInterface
 {
@@ -151,6 +152,8 @@ public:
  */
 
 int	accept(SSL *ssl, int fd, struct sockaddr_in foreign_addr); 
+
+void getCryptoParams(RsPeerCryptoParams& params) ;
 
 protected:
 
