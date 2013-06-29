@@ -95,7 +95,7 @@ void ChatDialog::init(const std::string &peerId, const QString &title)
 		ChatLobbyId lobby_id = 0;
 
 		if (rsMsgs->isLobbyId(peerId, lobby_id)) {
-			chatflags = RS_CHAT_OPEN | RS_CHAT_FOCUS; // use own flags
+        //    chatflags = RS_CHAT_OPEN | RS_CHAT_FOCUS; // use own flags
 		}
 
 		uint32_t distant_peer_status ;
@@ -211,7 +211,7 @@ void ChatDialog::init(const std::string &peerId, const QString &title)
 	}
 }
 
-/*static*/ void ChatDialog::chatFriend(const std::string &peerId)
+/*static*/ void ChatDialog::chatFriend(const std::string &peerId, const bool forceFocus)
 {
 	if (peerId.empty()){
 		return;
@@ -222,14 +222,13 @@ void ChatDialog::init(const std::string &peerId, const QString &title)
 
 	if(rsMsgs->getDistantChatStatus(peerId,distant_peer_status,distant_chat_pgp_id)) 
 	{
-		getChat(peerId,RS_CHAT_OPEN | RS_CHAT_FOCUS); // use own flags
+        getChat(peerId, forceFocus ? RS_CHAT_OPEN | RS_CHAT_FOCUS : RS_CHAT_OPEN ); // use own flags
 		return ;
 	}
 
 	ChatLobbyId lid;
 	if (rsMsgs->isLobbyId(peerId, lid)) {
-		getChat(peerId, RS_CHAT_OPEN | RS_CHAT_FOCUS);
-		return;
+        getChat(peerId, (forceFocus ? (RS_CHAT_OPEN | RS_CHAT_FOCUS) : RS_CHAT_OPEN));
 	}
 
 	RsPeerDetails detail;
@@ -245,7 +244,7 @@ void ChatDialog::init(const std::string &peerId, const QString &title)
 
 		if (sslIds.size() == 1) {
 			// chat with the one ssl id (online or offline)
-			getChat(sslIds.front(), RS_CHAT_OPEN | RS_CHAT_FOCUS);
+            getChat(sslIds.front(), forceFocus ? RS_CHAT_OPEN | RS_CHAT_FOCUS : RS_CHAT_OPEN);
 			return;
 		}
 
@@ -258,7 +257,7 @@ void ChatDialog::init(const std::string &peerId, const QString &title)
 
 		if (onlineIds.size() == 1) {
 			// chat with the online ssl id
-			getChat(onlineIds.front(), RS_CHAT_OPEN | RS_CHAT_FOCUS);
+            getChat(onlineIds.front(), forceFocus ? RS_CHAT_OPEN | RS_CHAT_FOCUS : RS_CHAT_OPEN);
 			return;
 		}
 
@@ -267,7 +266,7 @@ void ChatDialog::init(const std::string &peerId, const QString &title)
 		mb.setWindowIcon(QIcon(":/images/rstray3.png"));
 		mb.exec();
 	} else {
-		getChat(peerId, RS_CHAT_OPEN | RS_CHAT_FOCUS);
+        getChat(peerId, forceFocus ? RS_CHAT_OPEN | RS_CHAT_FOCUS : RS_CHAT_OPEN);
 	}
 }
 

@@ -37,7 +37,7 @@ public:
 	static ChatDialog *getExistingChat(const std::string &peerId);
 	static ChatDialog *getChat(const std::string &peerId, uint chatflags);
 	static void cleanupChat();
-	static void chatFriend(const std::string &peerId);
+    static void chatFriend(const std::string &peerId, bool forceFocus = true);
 	static void closeChat(const std::string &peerId);
 	static void chatChanged(int list, int type);
 

@@ -211,8 +211,18 @@ std::ostream& RsPrivateChatDistantInviteConfigItem::print(std::ostream &out, uin
 	printRsItemEnd(out, "RsPrivateChatDistantInviteConfigItem", indent);
 	return out;
 }
+std::ostream& RsChatLobbyConfigItem::print(std::ostream &out, uint16_t indent)
+{
+    printRsItemBase(out, "RsChatLobbyConfigItem", indent);
+    uint16_t int_Indent = indent + 2;
 
+    printIndent(out, int_Indent);
+    out << "lobby_Id: " << lobby_Id << std::endl;
+    out << "flags   : " << flags << std::endl;
 
+    printRsItemEnd(out, "RsChatLobbyConfigItem", indent);
+    return out;
+}
 std::ostream& RsChatStatusItem::print(std::ostream &out, uint16_t indent)
 {
 	printRsItemBase(out, "RsChatStatusItem", indent);
@@ -281,6 +291,7 @@ RsItem *RsChatSerialiser::deserialise(void *data, uint32_t *pktsize)
 		case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST:        	return new RsChatLobbyListItem(data,*pktsize) ;
 		case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_deprecated:	return new RsChatLobbyListItem_deprecated(data,*pktsize) ;
 		case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_deprecated2:return new RsChatLobbyListItem_deprecated2(data,*pktsize) ;
+		case RS_PKT_SUBTYPE_CHAT_LOBBY_CONFIG:  		return new RsChatLobbyConfigItem(data,*pktsize) ;
 		default:
 			std::cerr << "Unknown packet type in chat!" << std::endl ;
 			return NULL ;
@@ -441,6 +452,16 @@ uint32_t RsChatAvatarItem::serial_size()
 
 	return s;
 }
+uint32_t RsChatLobbyConfigItem::serial_size()
+{
+    uint32_t s = 8; /* header */
+    s += 8;/* lobby_Id */
+    s += 4;/* flags */
+
+    return s;
+}
+
+/*************************************************************************/
 
 RsChatAvatarItem::~RsChatAvatarItem()
 {
@@ -942,6 +963,43 @@ bool RsChatAvatarItem::serialise(void *data, uint32_t& pktsize)
 
 	return ok;
 }
+bool RsChatLobbyConfigItem::serialise(void *data, uint32_t& pktsize)
+{
+    uint32_t tlvsize = serial_size() ;
+    uint32_t offset = 0;
+
+    if (pktsize < tlvsize)
+        return false; /* not enough space */
+
+    pktsize = tlvsize;
+
+    bool ok = true;
+
+    ok &= setRsItemHeader(data, tlvsize, PacketId(), tlvsize);
+
+#ifdef CHAT_DEBUG
+    std::cerr << "RsChatLobbyConfigItem::serialiseItem() Header: " << ok << std::endl;
+    std::cerr << "RsChatLobbyConfigItem::serialiseItem() Size: " << tlvsize << std::endl;
+#endif
+
+    /* skip the header */
+    offset += 8;
+
+    /* add mandatory parts first */
+    ok &= setRawUInt64(data, tlvsize, &offset, lobby_Id);
+    ok &= setRawUInt32(data, tlvsize, &offset, flags   );
+
+    if (offset != tlvsize)
+    {
+        ok = false;
+#ifdef CHAT_DEBUG
+        std::cerr << "RsChatLobbyConfigItem::serialise() Size Error! " << std::endl;
+#endif
+    }
+
+    return ok;
+}
+
 RsChatMsgItem::RsChatMsgItem(void *data,uint32_t /*size*/,uint8_t subtype)
 	: RsChatItem(subtype)
 {
@@ -1233,6 +1291,25 @@ RsPrivateChatDistantInviteConfigItem::RsPrivateChatDistantInviteConfigItem(void 
 		std::cerr << "Size error while deserializing." << std::endl ;
 	if (!ok)
 		std::cerr << "Unknown error while deserializing." << std::endl ;
+}
+RsChatLobbyConfigItem::RsChatLobbyConfigItem(void *data,uint32_t /*size*/)
+    : RsChatItem(RS_PKT_SUBTYPE_CHAT_LOBBY_CONFIG)
+{
+    uint32_t offset = 8; // skip the header
+    uint32_t rssize = getRsItemSize(data);
+    bool ok = true ;
+
+    /* get mandatory parts first */
+    ok &= getRawUInt64(data, rssize, &offset, &lobby_Id);
+    ok &= getRawUInt32(data, rssize, &offset, &flags);
+
+#ifdef CHAT_DEBUG
+    std::cerr << "Building new chat msg config item." << std::endl ;
+#endif
+    if (offset != rssize)
+        std::cerr << "Size error while deserializing." << std::endl ;
+    if (!ok)
+        std::cerr << "Unknown error while deserializing." << std::endl ;
 }
 
 /* set data from RsChatMsgItem to RsPrivateChatMsgConfigItem */

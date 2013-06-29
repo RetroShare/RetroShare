@@ -25,6 +25,8 @@
 #define ROLE_ID           Qt::UserRole + 1
 #define ROLE_SUBSCRIBED   Qt::UserRole + 2
 #define ROLE_PRIVACYLEVEL Qt::UserRole + 3
+#define ROLE_AUTOSUBSCRIBE Qt::UserRole + 4
+
 
 #define TYPE_FOLDER       0
 #define TYPE_LOBBY        1
@@ -38,6 +40,7 @@
 #define IMAGE_PEER_LEAVING   ":images/user/remove_user24.png"
 #define IMAGE_TYPING		  ":images/typing.png" 
 #define IMAGE_MESSAGE	  ":images/chat.png" 
+#define IMAGE_AUTOSUBSCRIBE  ":images/accepted16.png"
 
 ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WFlags flags)
 	: RsAutoUpdatePage(5000, parent, flags)
@@ -138,6 +141,11 @@ void ChatLobbyWidget::lobbyTreeWidgetCustomPopupMenu(QPoint)
 		} else {
 			contextMnu.addAction(QIcon(IMAGE_SUBSCRIBE), tr("Subscribe"), this, SLOT(subscribeItem()));
 		}
+        if (item->data(COLUMN_DATA, ROLE_AUTOSUBSCRIBE).toBool()) {
+            contextMnu.addAction(QIcon(IMAGE_AUTOSUBSCRIBE), tr("Remove Auto Subscribe"), this, SLOT(autoSubscribeItem()));
+        } else {
+            contextMnu.addAction(QIcon(IMAGE_UNSUBSCRIBE), tr("Add Auto Subscribe"), this, SLOT(autoSubscribeItem()));
+        }
 	}
 
 	if (contextMnu.children().count() == 0) {
@@ -152,7 +160,7 @@ void ChatLobbyWidget::lobbyChanged()
 	updateDisplay();
 }
 
-static void updateItem(QTreeWidgetItem *item, ChatLobbyId id, const std::string &name, const std::string &topic, int count, bool subscribed)
+static void updateItem(QTreeWidgetItem *item, ChatLobbyId id, const std::string &name, const std::string &topic, int count, bool subscribed, bool autoSubscribe)
 {
 	item->setText(COLUMN_NAME, QString::fromUtf8(name.c_str()));
 	item->setData(COLUMN_NAME, ROLE_SORT, QString::fromUtf8(name.c_str()));
@@ -172,6 +180,7 @@ static void updateItem(QTreeWidgetItem *item, ChatLobbyId id, const std::string 
 
 	item->setData(COLUMN_DATA, ROLE_ID, (qulonglong)id);
 	item->setData(COLUMN_DATA, ROLE_SUBSCRIBED, subscribed);
+    item->setData(COLUMN_DATA, ROLE_AUTOSUBSCRIBE, autoSubscribe);
 
 	QColor color = QApplication::palette().color(QPalette::Active, QPalette::Text);
 	if (!subscribed) {
@@ -311,7 +320,23 @@ void ChatLobbyWidget::updateDisplay()
 			subscribed = true;
 		}
 
-		updateItem(item, lobby.lobby_id, lobby.lobby_name,lobby.lobby_topic, lobby.total_number_of_peers, subscribed);
+        bool autoSubscribe = rsMsgs->getLobbyAutoSubscribe(lobby.lobby_id);
+
+        if (autoSubscribe && subscribed)
+        {
+            if(_lobby_infos.find(lobby.lobby_id) == _lobby_infos.end())
+            {
+                if (item == lobbyTreeWidget->currentItem())
+                {
+                    ChatDialog::chatFriend(vpid) ;
+                }else{
+                    ChatDialog::chatFriend(vpid,false) ;
+                }
+            }
+        }
+
+        updateItem(item, lobby.lobby_id, lobby.lobby_name,lobby.lobby_topic, lobby.total_number_of_peers, subscribed, autoSubscribe);
+
 	}
 
 //	time_t now = time(NULL) ;
@@ -358,7 +383,9 @@ void ChatLobbyWidget::updateDisplay()
 //			item->setIcon(COLUMN_NAME, QIcon(IMAGE_PRIVATE));
 //		}
 
-		updateItem(item, lobby.lobby_id, lobby.lobby_name,lobby.lobby_topic, lobby.nick_names.size(), true);
+        bool autoSubscribe = rsMsgs->getLobbyAutoSubscribe(lobby.lobby_id);
+
+        updateItem(item, lobby.lobby_id, lobby.lobby_name,lobby.lobby_topic, lobby.nick_names.size(), true, autoSubscribe);
 	}
 }
 
@@ -399,9 +426,21 @@ static void subscribeLobby(QTreeWidgetItem *item)
 	if (rsMsgs->joinVisibleChatLobby(id)) {
 		std::string vpeer_id;
 		if (rsMsgs->getVirtualPeerId(id, vpeer_id)) {
-			ChatDialog::chatFriend(vpeer_id) ;
+            ChatDialog::chatFriend(vpeer_id,true) ;
 		}
 	}
+}
+
+void ChatLobbyWidget::autoSubscribeLobby(QTreeWidgetItem *item)
+{
+    if (item == NULL && item->type() != TYPE_LOBBY) {
+        return;
+    }
+
+    ChatLobbyId id = item->data(COLUMN_DATA, ROLE_ID).toULongLong();
+    bool isAutoSubscribe = rsMsgs->getLobbyAutoSubscribe(id);
+    rsMsgs->setLobbyAutoSubscribe(id, !isAutoSubscribe);
+    if (!isAutoSubscribe) subscribeLobby(item);
 }
 
 void ChatLobbyWidget::showBlankPage(ChatLobbyId id)
@@ -437,6 +476,11 @@ void ChatLobbyWidget::showBlankPage(ChatLobbyId id)
 void ChatLobbyWidget::subscribeItem()
 {
 	subscribeLobby(lobbyTreeWidget->currentItem());
+}
+
+void ChatLobbyWidget::autoSubscribeItem()
+{
+    autoSubscribeLobby(lobbyTreeWidget->currentItem());
 }
 
 QTreeWidgetItem *ChatLobbyWidget::getTreeWidgetItem(ChatLobbyId id)
@@ -539,6 +583,9 @@ void ChatLobbyWidget::unsubscribeChatLobby(ChatLobbyId id)
 		ChatDialog::closeChat(vpeer_id);
 
 	rsMsgs->unsubscribeChatLobby(id);
+    bool isAutoSubscribe = rsMsgs->getLobbyAutoSubscribe(id);
+    if (isAutoSubscribe) rsMsgs->setLobbyAutoSubscribe(id, !isAutoSubscribe);
+
 }
 
 void ChatLobbyWidget::updateCurrentLobby()
@@ -605,7 +652,7 @@ void ChatLobbyWidget::readChatLobbyInvites()
 
 			std::string vpid;
 			if(rsMsgs->getVirtualPeerId((*it).lobby_id,vpid )) {
-				ChatDialog::chatFriend(vpid);
+                ChatDialog::chatFriend(vpid,true);
 			} else {
 				std::cerr << "No lobby known with id 0x" << std::hex << (*it).lobby_id << std::dec << std::endl;
 			}

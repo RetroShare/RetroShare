@@ -169,6 +169,8 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor, publi
 		bool getNickNameForChatLobby(const ChatLobbyId& lobby_id,std::string& nick) ;
 		bool setDefaultNickNameForChatLobby(const std::string& nick) ;
 		bool getDefaultNickNameForChatLobby(std::string& nick) ;
+		void setLobbyAutoSubscribe(const ChatLobbyId& lobby_id, const bool autoSubscribe);
+		bool getLobbyAutoSubscribe(const ChatLobbyId& lobby_id);
 		void sendLobbyStatusString(const ChatLobbyId& id,const std::string& status_string) ;
 		ChatLobbyId createChatLobby(const std::string& lobby_name,const std::string& lobby_topic, const std::list<std::string>& invited_friends,uint32_t privacy_type) ;
 
@@ -286,12 +288,18 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor, publi
 				time_t last_connexion_challenge_time ;
 				time_t last_keep_alive_packet_time ;
 				std::set<std::string> previously_known_peers ;
+				uint32_t flags ;
 		};
 
 		std::map<ChatLobbyId,ChatLobbyEntry> _chat_lobbys ;
 		std::map<ChatLobbyId,ChatLobbyInvite> _lobby_invites_queue ;
 		std::map<ChatLobbyId,VisibleChatLobbyRecord> _visible_lobbies ;
 		std::map<std::string,ChatLobbyId> _lobby_ids ;
+		std::map<ChatLobbyId,ChatLobbyFlags> _known_lobbies_flags ;	// flags for all lobbies, including the ones that are not known. So we can't
+																				// store them in _chat_lobbies (subscribed lobbies) nor _visible_lobbies.
+																				// Known flags:
+																				// 		RS_CHAT_LOBBY_FLAGS_AUTO_SUBSCRIBE
+
 		std::string _default_nick_name ;
 		float _time_shift_average ;
 		time_t last_lobby_challenge_time ; 					// prevents bruteforce attack

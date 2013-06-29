@@ -185,6 +185,8 @@ class p3Msgs: public RsMsgs
 	  virtual bool getNickNameForChatLobby(const ChatLobbyId&,std::string& nick) ;
 	  virtual bool setDefaultNickNameForChatLobby(const std::string&) ;
 	  virtual bool getDefaultNickNameForChatLobby(std::string& nick) ;
+    virtual void setLobbyAutoSubscribe(const ChatLobbyId& lobby_id, const bool autoSubscribe);
+    virtual bool getLobbyAutoSubscribe(const ChatLobbyId& lobby_id);
 	  virtual ChatLobbyId createChatLobby(const std::string& lobby_name,const std::string& lobby_topic,const std::list<std::string>& invited_friends,uint32_t privacy_type) ;
 
 	  virtual bool createDistantChatInvite(const std::string& pgp_id,time_t time_of_validity,std::string& encrypted_string) ;

@@ -51,8 +51,11 @@ protected slots:
 	void updateMessageChanged(ChatLobbyId);
 	void updatePeerEntering(ChatLobbyId);
 	void updatePeerLeaving(ChatLobbyId);
+    void autoSubscribeItem();
 
 private:
+    void autoSubscribeLobby(QTreeWidgetItem *item);
+
 	RSTreeWidgetItemCompareRole *compareRole;
 	QTreeWidgetItem *privateLobbyItem;
 	QTreeWidgetItem *publicLobbyItem;

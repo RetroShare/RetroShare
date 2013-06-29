@@ -332,6 +332,17 @@ ChatLobbyId p3Msgs::createChatLobby(const std::string& lobby_name,const std::str
 	return mChatSrv->createChatLobby(lobby_name,lobby_topic,invited_friends,privacy_type) ;
 }
 
+void p3Msgs::setLobbyAutoSubscribe(const ChatLobbyId& lobby_id, const bool autoSubscribe)
+{
+    mChatSrv->setLobbyAutoSubscribe(lobby_id, autoSubscribe);
+}
+
+bool p3Msgs::getLobbyAutoSubscribe(const ChatLobbyId& lobby_id)
+{
+    return mChatSrv->getLobbyAutoSubscribe(lobby_id);
+}
+
+
 bool p3Msgs::acceptLobbyInvite(const ChatLobbyId& id) 
 {
 	return mChatSrv->acceptLobbyInvite(id) ;

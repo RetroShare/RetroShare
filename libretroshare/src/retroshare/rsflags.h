@@ -57,6 +57,7 @@ template<int n> class t_RsFlags32
 #define FLAGS_TAG_FILE_STORAGE 	0x184738
 #define FLAGS_TAG_FILE_SEARCH 	0xf29ba5
 #define FLAGS_TAG_SERVICE_PERM 	0x380912
+#define FLAGS_TAG_SERVICE_CHAT 	0x839042
 
 // Flags for requesting transfers, ask for turtle, cache, speed, etc.
 //
@@ -73,4 +74,8 @@ typedef t_RsFlags32<FLAGS_TAG_FILE_SEARCH  > FileSearchFlags ;
 // Service permissions. Will allow each user to use or not use each service.
 //
 typedef t_RsFlags32<FLAGS_TAG_SERVICE_PERM > ServicePermissionFlags ;			
+
+// Flags for chat lobbies
+//
+typedef t_RsFlags32<FLAGS_TAG_SERVICE_CHAT > ChatLobbyFlags ;			
 

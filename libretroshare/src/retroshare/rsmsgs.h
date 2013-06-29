@@ -77,6 +77,8 @@
 #define RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC  		1	/* lobby is visible by friends. Friends can connect.*/
 #define RS_CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE 		2	/* lobby invisible by friends. Peers on invitation only .*/
 
+const ChatLobbyFlags RS_CHAT_LOBBY_FLAGS_AUTO_SUBSCRIBE( 0x00000001 ) ;
+
 typedef uint64_t 		ChatLobbyId ;
 typedef uint64_t 		ChatLobbyMsgId ;
 typedef std::string 	ChatLobbyNickName ;
@@ -321,6 +323,8 @@ virtual bool setNickNameForChatLobby(const ChatLobbyId& lobby_id,const std::stri
 virtual bool getNickNameForChatLobby(const ChatLobbyId& lobby_id,std::string& nick) = 0 ;
 virtual bool setDefaultNickNameForChatLobby(const std::string& nick) = 0;
 virtual bool getDefaultNickNameForChatLobby(std::string& nick) = 0 ;
+    virtual void setLobbyAutoSubscribe(const ChatLobbyId& lobby_id, const bool autoSubscribe) = 0 ;
+    virtual bool getLobbyAutoSubscribe(const ChatLobbyId& lobby_id) = 0 ;
 virtual ChatLobbyId createChatLobby(const std::string& lobby_name,const std::string& lobby_topic,const std::list<std::string>& invited_friends,uint32_t lobby_privacy_type) = 0 ;
 
 /****************************************/

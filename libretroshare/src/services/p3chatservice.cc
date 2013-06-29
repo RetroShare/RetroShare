@@ -399,6 +399,11 @@ void p3ChatService::locked_printDebugInfo() const
 		for(std::set<std::string>::const_iterator it2(it->second.participating_friends.begin());it2!=it->second.participating_friends.end();++it2)
 			std::cerr << "    With friend: " << *it2 << std::endl;
 	}
+
+    std::cerr << "Chat lobby flags: " << std::endl;
+
+    for( std::map<ChatLobbyId,ChatLobbyFlags>::const_iterator it(_known_lobbies_flags.begin()) ;it!=_known_lobbies_flags.end();++it)
+        std::cerr << "   \"" << std::hex << it->first << "\" flags = " << it->second << std::dec << std::endl;
 }
 
 bool p3ChatService::isLobbyId(const std::string& id,ChatLobbyId& lobby_id) 
@@ -840,6 +845,8 @@ void p3ChatService::handleRecvChatLobbyList(RsChatLobbyListItem_deprecated2 *ite
 }
 void p3ChatService::handleRecvChatLobbyList(RsChatLobbyListItem *item)
 {
+    std::list<ChatLobbyId> chatLobbyToSubscribe;
+
 	{
 		time_t now = time(NULL) ;
 
@@ -851,7 +858,7 @@ void p3ChatService::handleRecvChatLobbyList(RsChatLobbyListItem *item)
 
 			rec.lobby_id = item->lobby_ids[i] ;
 			rec.lobby_name = item->lobby_names[i] ;
-      rec.lobby_topic = item->lobby_topics[i] ;
+			rec.lobby_topic = item->lobby_topics[i] ;
 			rec.participating_friends.insert(item->PeerId()) ;
 
 			if(_should_reset_lobby_counts)
@@ -861,8 +868,20 @@ void p3ChatService::handleRecvChatLobbyList(RsChatLobbyListItem *item)
 
 			rec.last_report_time = now ;
 			rec.lobby_privacy_level = item->lobby_privacy_levels[i] ;
+
+			std::map<ChatLobbyId,ChatLobbyFlags>::const_iterator it(_known_lobbies_flags.find(item->lobby_ids[i])) ;
+
+			if(it != _known_lobbies_flags.end() && (it->second & RS_CHAT_LOBBY_FLAGS_AUTO_SUBSCRIBE))
+			{
+				ChatLobbyId clid = item->lobby_ids[i];
+				chatLobbyToSubscribe.push_back(clid);
+			}
 		}
 	}
+
+    std::list<ChatLobbyId>::iterator it;
+    for (it = chatLobbyToSubscribe.begin(); it != chatLobbyToSubscribe.end(); it++) 
+        joinVisibleChatLobby(*it);
 
 	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_CHAT_LOBBY_LIST, NOTIFY_TYPE_ADD) ;
 	_should_reset_lobby_counts = false ;
@@ -1782,6 +1801,11 @@ bool p3ChatService::loadList(std::list<RsItem*>& load)
 						_default_nick_name = kit->value ;
 				}
 
+		RsChatLobbyConfigItem *cas = NULL ;
+
+		if(NULL != (cas = dynamic_cast<RsChatLobbyConfigItem*>(*it)))
+			_known_lobbies_flags[cas->lobby_Id] = ChatLobbyFlags(cas->flags) ;
+
 		// delete unknown items
 		delete *it;
 	}
@@ -1854,6 +1878,17 @@ bool p3ChatService::saveList(bool& cleanup, std::list<RsItem*>& list)
 	vitem->tlvkvs.pairs.push_back(kv) ;
 
 	list.push_back(vitem) ;
+
+	/* Save Lobby Auto Subscribe */
+	for(std::map<ChatLobbyId,ChatLobbyFlags>::const_iterator it=_known_lobbies_flags.begin();it!=_known_lobbies_flags.end();++it)
+	{
+		RsChatLobbyConfigItem *cas = new RsChatLobbyConfigItem ;
+		cas->lobby_Id=it->first;
+		cas->flags=it->second.toUInt32();
+
+		list.push_back(cas) ;
+	}
+
 
 	return true;
 }
@@ -2747,6 +2782,25 @@ bool p3ChatService::setNickNameForChatLobby(const ChatLobbyId& lobby_id,const st
 	return true ;
 }
 
+void p3ChatService::setLobbyAutoSubscribe(const ChatLobbyId& lobby_id, const bool autoSubscribe)
+{
+	if(autoSubscribe)
+		_known_lobbies_flags[lobby_id] |=  RS_CHAT_LOBBY_FLAGS_AUTO_SUBSCRIBE ;
+	else
+		_known_lobbies_flags[lobby_id] &= ~RS_CHAT_LOBBY_FLAGS_AUTO_SUBSCRIBE ;
+    
+    rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_CHAT_LOBBY_LIST, NOTIFY_TYPE_ADD) ;
+    IndicateConfigChanged();
+}
+
+bool p3ChatService::getLobbyAutoSubscribe(const ChatLobbyId& lobby_id)
+{
+    if(_known_lobbies_flags.find(lobby_id) == _known_lobbies_flags.end()) 	// keep safe about default values form std::map
+		 return false;
+
+    return _known_lobbies_flags[lobby_id] & RS_CHAT_LOBBY_FLAGS_AUTO_SUBSCRIBE ;
+}
+
 void p3ChatService::cleanLobbyCaches()
 {
 #ifdef CHAT_DEBUG
@@ -3127,7 +3181,7 @@ void p3ChatService::sendTurtleData(RsChatItem *item)
 	gitem->data_bytes = malloc(gitem->data_size) ;
 
 	memcpy(gitem->data_bytes  ,&IV,8) ;
-	memcpy(gitem->data_bytes+8,encrypted_data,encrypted_size) ;
+	memcpy(& (((uint8_t*)gitem->data_bytes)[8]),encrypted_data,encrypted_size) ;
 
 	delete[] encrypted_data ;
 	delete item ;
