@@ -6,8 +6,16 @@ To compile:
 			   libspeex-dev libspeexdsp-dev libxslt1-dev libprotobuf-dev protobuf-compiler cmake         \
 			   libcurl4-openssl-dev
 
+	- create project directory (e.g. ~/retroshare) and check out the source code
+		# mkdir ~/retroshare
+		# cd ~/retroshare && svn co svn://svn.code.sf.net/p/retroshare/code/trunk trunk
+
+	- create a new directory named lib
+		# mkdir lib
+
 	- get source code for libssh-0.5.4, unzip it, and create build directory (if needed) 
 
+		# cd lib
 		# wget https://red.libssh.org/attachments/download/41/libssh-0.5.4.tar.gz
 		# tar zxvf libssh-0.5.4.tar.gz
 		# cd libssh-0.5.4
@@ -15,16 +23,44 @@ To compile:
 		# cd build
 		# cmake -DWITH_STATIC_LIB=ON ..
 		# make
-		# cd ../..
-	
-	- go to retroshare-nogui, and compile it
+		# cd ../../..
 
-		# cd ../../retroshare-nogui
-		# qmake
+	- get source code for sqlcipher, and build it (only needed for GXS) 
+
+		# cd lib
+		# git clone git://github.com/sqlcipher/sqlcipher.git
+		# cd sqlcipher
+		# ./configure --enable-tempstore=yes CFLAGS="-DSQLITE_HAS_CODEC" \
+		  LDFLAGS="-lcrypto"
 		# make
+		# cd ..
 
-	- to use the SSH RS server:
-		
+	- go to your svn base directory
+		# cd trunk
+
+	- go to libbitdht and compile it
+		# cd libbitdht/src && qmake && make clean && make -j 4 
+
+	- go to openpgpsdk and compile it
+		# cd ../../openpgpsdk/src && qmake && make clean && make -j 4
+
+	- go to supportlibs and compile it
+		# cd ../../supportlibs/pegmarkdown && qmake && make clean && make -j 4
+
+	- go to libretroshare and compile it
+		# cd ../../libretroshare/src && qmake && make clean && make -j 4
+
+	- go to rsctrl and compile it
+		# cd ../../rsctrl/src && make &&
+
+	- go to retroshare-nogui, and compile it
+		# cd ../../retroshare-nogui/src && qmake && make clean && make -j 4
+
+	- go to retroshare gui and compile it
+		# cd ../../retroshare-gui/src && qmake && make clean && make -j 4
+
+	- to use the SSH RS server (nogui):
+
 		# ssh-keygen -t rsa -f rs_ssh_host_rsa_key					# this makes a RSA
 		# ./retroshare-nogui -G										# generates a login+passwd hash for the RSA key used.
 		# ./retroshare-nogui -S 7022 -U[SSLid] -P [Passwd hash]

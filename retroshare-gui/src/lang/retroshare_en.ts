@@ -1380,6 +1380,14 @@ Double click lobbies to enter and chat.</source>
         <source>%1  invites you to chat lobby named %2</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Remove Auto Subscribe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add Auto Subscribe</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ChatMsgItem</name>
@@ -2139,6 +2147,14 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Retroshare periodically checks your friend lists for browsable files matching your transfers, to establish a direct transfer. In this case, your friend knows you&apos;re downloading the file.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;To prevent this behavior for this friend only, uncheck this box. You can still perform a direct transfer if you explicitly ask for it, by e.g. downloading from your friend&apos;s file list. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Encryption</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Not connected</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3723,22 +3739,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Messenging invite creation failed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>The creation of the messenging invite failed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Messenging invite created</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Your new messenging chat invite has been copied to clipboard. You can now paste it as a Retroshare link.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Create distant chat invite</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3748,6 +3748,22 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Your new chat invite has been created. You can now copy/paste it as a Retroshare link.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Messaging invite creation failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The creation of the messaging invite failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Messaging invite created</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your new messaging chat invite has been copied to clipboard. You can now paste it as a Retroshare link.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6990,6 +7006,21 @@ before you can comment</source>
     </message>
     <message>
         <source>Invalid Circle Selection - Personal disabled for now</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>GxsIdChooser</name>
+    <message>
+        <source>Loading</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Not found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No Signature</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10627,14 +10658,6 @@ Reported error is: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Messenging link is expired</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This Messenging link is expired. The destination peer will not receive it.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Chat link is expired</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10647,10 +10670,6 @@ Reported error is: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>This chat link is encrypted with a key that is not yours. You can&apos;t used it. Key ID = </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>The link could not be decrypted.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10660,10 +10679,6 @@ Reported error is: %2</source>
     </message>
     <message>
         <source>The link is signed by an unknown key.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Chat connexion is not possible</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -10684,6 +10699,22 @@ Reported error is: %2</source>
     </message>
     <message>
         <source>Secured tunnel is working</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Messaging link is expired</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This Messaging link is expired. The destination peer will not receive it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This chat link is encrypted with a key that is not yours. You can&apos;t use it. Key ID = </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Chat connection is not possible</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
