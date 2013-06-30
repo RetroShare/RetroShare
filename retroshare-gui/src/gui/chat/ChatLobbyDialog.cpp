@@ -158,7 +158,7 @@ void ChatLobbyDialog::init(const std::string &peerId, const QString &title)
 		if (rsMsgs->getVirtualPeerId(lobbyIt->lobby_id, vpid)) {
 			if (vpid == peerId) {
 				QString msg = tr("Welcome to lobby %1").arg(QString::fromUtf8(lobbyIt->lobby_name.c_str()));
-				_lobby_name = QString(lobbyIt->lobby_name.c_str()) ;
+				_lobby_name = QString::fromUtf8(lobbyIt->lobby_name.c_str()) ;
 				if (!lobbyIt->lobby_topic.empty()) {
 					msg += "\n" + tr("Topic: %1").arg(QString::fromUtf8(lobbyIt->lobby_topic.c_str()));
 				}
