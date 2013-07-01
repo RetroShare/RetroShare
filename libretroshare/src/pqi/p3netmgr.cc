@@ -905,7 +905,7 @@ bool 	p3NetMgrIMPL::checkNetAddress()
 	struct in_addr prefAddr;
 	struct sockaddr_in oldAddr;
 
-	validAddr = getPreferredInterface(prefAddr);
+	validAddr = getPreferredInterface(mLocalAddr.sin_addr, prefAddr);
 
 	/* if we don't have a valid address - reset */
 	if (!validAddr)

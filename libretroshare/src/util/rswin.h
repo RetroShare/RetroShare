@@ -45,6 +45,19 @@
 // For win32 systems (tested on MingW+Ubuntu)
 #define stat64 _stati64
 
+// Should be in Iphlpapi.h, but mingw doesn't seem to have these
+// Values copied directly from:
+// http://msdn.microsoft.com/en-us/library/aa366845(v=vs.85).aspx
+// (Title: MIB_IPADDRROW structure)
+
+#ifndef MIB_IPADDR_DISCONNECTED
+#define MIB_IPADDR_DISCONNECTED 0x0008 // Address is on disconnected interface
+#endif
+
+#ifndef MIB_IPADDR_DELETED
+#define MIB_IPADDR_DELETED      0x0040 // Address is being deleted
+#endif
+
 #endif // WINDOWS_SYS
 
 #endif // RSWIN_H_

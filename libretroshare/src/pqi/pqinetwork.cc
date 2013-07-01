@@ -147,7 +147,7 @@ std::string socket_errorType(int err)
 #include <net/if.h> 
 #include <sys/ioctl.h> 
 
-bool getLocalInterfaces(std::list<struct in_addr> &addrs)
+bool getLocalInterfaces(struct in_addr &/*routeAddr*/, std::list<struct in_addr> &addrs)
 {
 	int sock = 0;
 	struct ifreq ifreq;
@@ -328,18 +328,23 @@ std::string socket_errorType(int err)
 // A function to determine the interfaces on your computer....
 // No idea of how to do this in windows....
 // see if it compiles.
-bool getLocalInterfaces(std::list<struct in_addr> &addrs)
+bool getLocalInterfaces(struct in_addr &routeAddr, std::list<struct in_addr> &addrs)
 {
+	// Get the best interface for transport to routeAddr
+	// This interface should be first in list!
+	DWORD bestInterface;
+	if (GetBestInterface((IPAddr) routeAddr.s_addr, &bestInterface) != NO_ERROR)
+	{
+		bestInterface = 0;
+	}
 
 	/* USE MIB IPADDR Interface */
 	PMIB_IPADDRTABLE iptable =  NULL;
 	DWORD dwSize = 0;
 
-	if (GetIpAddrTable(iptable, &dwSize, 0) != 
-				ERROR_INSUFFICIENT_BUFFER)
+	if (GetIpAddrTable(iptable, &dwSize, 0) != ERROR_INSUFFICIENT_BUFFER)
 	{
-		pqioutput(PQL_ALERT, pqinetzone, 
-			"Cannot Find Windoze Interfaces!");
+		pqioutput(PQL_ALERT, pqinetzone, "Cannot Find Windoze Interfaces!");
 		exit(0);
 	}
 
@@ -348,15 +353,38 @@ bool getLocalInterfaces(std::list<struct in_addr> &addrs)
 
 	struct in_addr addr;
 
-	for(unsigned int i = 0; i < iptable -> dwNumEntries; i++)
+	for (unsigned int i = 0; i < iptable -> dwNumEntries; i++)
 	{
+		MIB_IPADDRROW &ipaddr = iptable->table[i];
+
 		std::string out;
 
-		addr.s_addr = iptable->table[i].dwAddr;
-		rs_sprintf(out, "Iface(%ld) => %s\n", iptable->table[i].dwIndex, rs_inet_ntoa(addr).c_str());
-		pqioutput(PQL_DEBUG_BASIC, pqinetzone, out);
+		addr.s_addr = ipaddr.dwAddr;
+		rs_sprintf(out, "Iface(%ld) => %s\n", ipaddr.dwIndex, rs_inet_ntoa(addr).c_str());
 
-		addrs.push_back(addr);
+		unsigned short wType = ipaddr.unused2; // should be wType
+		if (wType & MIB_IPADDR_DISCONNECTED)
+		{
+			pqioutput(PQL_DEBUG_BASIC, pqinetzone, "Interface disconnected, " + out);
+			continue;
+		}
+
+		if (wType & MIB_IPADDR_DELETED)
+		{
+			pqioutput(PQL_DEBUG_BASIC, pqinetzone, "Interface deleted, " + out);
+			continue;
+		}
+
+		if (ipaddr.dwIndex == bestInterface)
+		{
+			pqioutput(PQL_DEBUG_BASIC, pqinetzone, "Best address, " + out);
+			addrs.push_front(addr);
+		}
+		else
+		{
+			pqioutput(PQL_DEBUG_BASIC, pqinetzone, out);
+			addrs.push_back(addr);
+		}
 	}
 
 	free (iptable);
@@ -529,7 +557,7 @@ int inaddr_cmp(struct sockaddr_in addr1, unsigned long addr2)
 }
 
 
-bool 	getPreferredInterface(struct in_addr &prefAddr) // returns best addr.
+bool 	getPreferredInterface(in_addr &routeAddr, struct in_addr &prefAddr) // returns best addr.
 {
 	std::list<struct in_addr> addrs;
 	std::list<struct in_addr>::iterator it;
@@ -544,7 +572,7 @@ bool 	getPreferredInterface(struct in_addr &prefAddr) // returns best addr.
 	bool found_priv = false;
 	bool found_ext = false;
 
-	if (!getLocalInterfaces(addrs))
+	if (!getLocalInterfaces(routeAddr, addrs))
 	{
 		return false;
 	}
