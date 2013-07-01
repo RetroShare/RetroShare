@@ -28,8 +28,6 @@
 #ifndef HANDLE_RICH_TEXT_H_
 #define HANDLE_RICH_TEXT_H_
 
-#include <QRegExp>
-
 /* Flags for RsHtml::formatText */
 #define RSHTML_FORMATTEXT_EMBED_SMILEYS       1
 #define RSHTML_FORMATTEXT_EMBED_LINKS         2
@@ -70,6 +68,9 @@ public:
 
 	static bool    makeEmbeddedImage(const QString &fileName, QString &embeddedImage, const int maxPixels);
 	static bool    makeEmbeddedImage(const QImage &originalImage, QString &embeddedImage, const int maxPixels);
+
+	static QString plainText(const QString &text);
+	static QString plainText(const std::string &text);
 
 protected:
 	void embedHtml(QTextDocument *textDocument, QDomDocument &doc, QDomElement &currentElement, EmbedInHtml& embedInfos, ulong flag);

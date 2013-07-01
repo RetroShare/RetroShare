@@ -152,7 +152,7 @@ void ChatWidget::init(const std::string &peerId, const QString &title)
 	this->peerId = peerId;
 	this->title = title;
 
-	ui->titleLabel->setText(title);
+	ui->titleLabel->setText(RsHtml::plainText(title));
 
 	std::string ownId = rsPeers->getOwnId();
 	setName(QString::fromUtf8(rsPeers->getPeerName(ownId).c_str()));
@@ -929,7 +929,7 @@ void ChatWidget::updateTitle()
 		return;
 	}
 
-	ui->titleLabel->setText(name + "@" + title);
+	ui->titleLabel->setText(RsHtml::plainText(name) + "@" + RsHtml::plainText(title));
 }
 
 void ChatWidget::updatePeersCustomStateString(const QString& peer_id, const QString& status_string)

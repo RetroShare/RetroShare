@@ -40,7 +40,7 @@ ChatLobbyToaster::ChatLobbyToaster(const std::string &peerId, const QString &nam
 	ui.avatarWidget->setFrameType(AvatarWidget::NORMAL_FRAME);
 	ui.avatarWidget->setDefaultAvatar(":images/user/agt_forum64.png");
 
-	QString lobbyName = name;
+	QString lobbyName = RsHtml::plainText(name);
 
 	std::list<ChatLobbyInfo> linfos;
 	rsMsgs->getChatLobbyList(linfos);
@@ -49,7 +49,7 @@ ChatLobbyToaster::ChatLobbyToaster(const std::string &peerId, const QString &nam
 	if (rsMsgs->isLobbyId(peerId, lobbyId)) {
 		for (std::list<ChatLobbyInfo>::const_iterator it(linfos.begin()); it != linfos.end(); ++it) {
 			if ((*it).lobby_id == lobbyId) {
-				lobbyName += "@" + QString::fromUtf8((*it).lobby_name.c_str());
+				lobbyName += "@" + RsHtml::plainText(it->lobby_name);
 				break;
 			}
 		}

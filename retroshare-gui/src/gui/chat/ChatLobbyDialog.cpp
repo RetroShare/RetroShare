@@ -34,6 +34,7 @@
 #include <gui/common/html.h>
 #include "gui/common/RSTreeWidgetItem.h"
 #include "gui/common/FriendSelectionDialog.h"
+#include "util/HandleRichText.h"
 
 #include <retroshare/rsnotify.h>
 
@@ -157,10 +158,10 @@ void ChatLobbyDialog::init(const std::string &peerId, const QString &title)
 		std::string vpid;
 		if (rsMsgs->getVirtualPeerId(lobbyIt->lobby_id, vpid)) {
 			if (vpid == peerId) {
-				QString msg = tr("Welcome to lobby %1").arg(QString::fromUtf8(lobbyIt->lobby_name.c_str()));
+				QString msg = tr("Welcome to lobby %1").arg(RsHtml::plainText(lobbyIt->lobby_name));
 				_lobby_name = QString::fromUtf8(lobbyIt->lobby_name.c_str()) ;
 				if (!lobbyIt->lobby_topic.empty()) {
-					msg += "\n" + tr("Topic: %1").arg(QString::fromUtf8(lobbyIt->lobby_topic.c_str()));
+					msg += "\n" + tr("Topic: %1").arg(RsHtml::plainText(lobbyIt->lobby_topic));
 				}
 				ui.chatWidget->setWelcomeMessage(msg);
 				break;
@@ -402,7 +403,7 @@ void ChatLobbyDialog::participantsTreeWidgetDoubleClicked(QTreeWidgetItem *item,
 
 	if(column == COLUMN_NAME)
 	{
-		getChatWidget()->pasteText("@"+item->text(COLUMN_NAME)) ;
+		getChatWidget()->pasteText("@" + RsHtml::plainText(item->text(COLUMN_NAME))) ;
 		return ;
 	}
 
@@ -477,21 +478,21 @@ void ChatLobbyDialog::displayLobbyEvent(int event_type, const QString& nickname,
 {
 	switch (event_type) {
 	case RS_CHAT_LOBBY_EVENT_PEER_LEFT:
-		ui.chatWidget->addChatMsg(true, tr("Lobby management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("%1 has left the lobby.").arg(str), ChatWidget::TYPE_SYSTEM);
+		ui.chatWidget->addChatMsg(true, tr("Lobby management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("%1 has left the lobby.").arg(RsHtml::plainText(str)), ChatWidget::TYPE_SYSTEM);
 		emit peerLeft(id()) ;
 		break;
 	case RS_CHAT_LOBBY_EVENT_PEER_JOINED:
-		ui.chatWidget->addChatMsg(true, tr("Lobby management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("%1 joined the lobby.").arg(str), ChatWidget::TYPE_SYSTEM);
+		ui.chatWidget->addChatMsg(true, tr("Lobby management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("%1 joined the lobby.").arg(RsHtml::plainText(str)), ChatWidget::TYPE_SYSTEM);
 		emit peerJoined(id()) ;
 		break;
 	case RS_CHAT_LOBBY_EVENT_PEER_STATUS:
-		ui.chatWidget->updateStatusString(nickname + " %1", str);
+		ui.chatWidget->updateStatusString(RsHtml::plainText(nickname) + " %1", RsHtml::plainText(str));
 		if (!isParticipantMuted(nickname)) {
 			emit typingEventReceived(id()) ;
 		}
 		break;
 	case RS_CHAT_LOBBY_EVENT_PEER_CHANGE_NICKNAME:
-		ui.chatWidget->addChatMsg(true, tr("Lobby management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("%1 changed his name to: %2").arg(nickname, str), ChatWidget::TYPE_SYSTEM);
+		ui.chatWidget->addChatMsg(true, tr("Lobby management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("%1 changed his name to: %2").arg(RsHtml::plainText(nickname), RsHtml::plainText(str)), ChatWidget::TYPE_SYSTEM);
 		
 		// TODO if a user was muted and changed his name, update mute list, but only, when the muted peer, dont change his name to a other peer in your chat lobby
 		if (isParticipantMuted(nickname) && !isNicknameInLobby(str)) {

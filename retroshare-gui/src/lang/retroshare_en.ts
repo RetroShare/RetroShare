@@ -1377,15 +1377,15 @@ Double click lobbies to enter and chat.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>%1  invites you to chat lobby named %2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Remove Auto Subscribe</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Add Auto Subscribe</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 invites you to chat lobby named %2</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

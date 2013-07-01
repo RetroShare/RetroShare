@@ -792,3 +792,13 @@ bool RsHtml::makeEmbeddedImage(const QImage &originalImage, QString &embeddedIma
 	}
 	return true;
 }
+
+QString RsHtml::plainText(const QString &text)
+{
+	return Qt::escape(text);
+}
+
+QString RsHtml::plainText(const std::string &text)
+{
+	return Qt::escape(QString::fromUtf8(text.c_str()));
+}

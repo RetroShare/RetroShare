@@ -10,6 +10,7 @@
 #include "common/RSTreeWidgetItem.h"
 #include "notifyqt.h"
 #include "chat/ChatLobbyDialog.h"
+#include "util/HandleRichText.h"
 
 #include "retroshare/rsmsgs.h"
 #include "retroshare/rspeers.h"
@@ -458,9 +459,9 @@ void ChatLobbyWidget::showBlankPage(ChatLobbyId id)
 			QString lobby_description_string ;
 
 			lobby_description_string += "<h2>"+tr("Selected lobby info")+"</h2>" ;
-			lobby_description_string += "<b>"+tr("Lobby name: ")+"</b>\t" + (*it).lobby_name.c_str() + "<br/>" ;
+			lobby_description_string += "<b>"+tr("Lobby name: ")+"</b>\t" + RsHtml::plainText(it->lobby_name) + "<br/>" ;
 			lobby_description_string += "<b>"+tr("Lobby Id: ")+"</b>\t" + QString::number((*it).lobby_id,16) + "<br/>" ;
-			lobby_description_string += "<b>"+tr("Topic: ")+"</b>\t" + (*it).lobby_topic.c_str() + "<br/>" ;
+			lobby_description_string += "<b>"+tr("Topic: ")+"</b>\t" + RsHtml::plainText(it->lobby_topic) + "<br/>" ;
 			lobby_description_string += "<b>"+tr("Type: ")+"</b>\t" + (( (*it).lobby_privacy_level == RS_CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE)?tr("Private"):tr("Public")) + "<br/>" ;
 			lobby_description_string += "<b>"+tr("Peers: ")+"</b>\t" + QString::number((*it).total_number_of_peers) + "<br/>" ;
 
@@ -645,7 +646,7 @@ void ChatLobbyWidget::readChatLobbyInvites()
 	rsMsgs->getPendingChatLobbyInvites(invites);
 
 	for(std::list<ChatLobbyInvite>::const_iterator it(invites.begin());it!=invites.end();++it) {
-		if (QMessageBox::Ok == QMessageBox::question(this, tr("Invitation to chat lobby"), tr("%1  invites you to chat lobby named %2").arg(QString::fromUtf8(rsPeers->getPeerName((*it).peer_id).c_str())).arg(QString::fromUtf8((*it).lobby_name.c_str())), QMessageBox::Ok, QMessageBox::Ignore)) {
+		if (QMessageBox::Ok == QMessageBox::question(this, tr("Invitation to chat lobby"), tr("%1 invites you to chat lobby named %2").arg(QString::fromUtf8(rsPeers->getPeerName((*it).peer_id).c_str())).arg(RsHtml::plainText(it->lobby_name)), QMessageBox::Ok, QMessageBox::Ignore)) {
 			std::cerr << "Accepting invite to lobby " << (*it).lobby_name << std::endl;
 
 			rsMsgs->acceptLobbyInvite((*it).lobby_id);
