@@ -30,6 +30,7 @@
 #include <QTreeView>
 #include <QShortcut>
 #include <QFileInfo>
+#include <QDateTime>
 #include <QDir>
 #include <QMessageBox>
 #include <gui/common/RsUrlHandler.h>
@@ -110,8 +111,8 @@ public:
 			return QStandardItem::operator<(other);
 		}
 
-		QStandardItem *myName = myParent->child(index().row(), NAME);
-		QStandardItem *otherName = otherParent->child(other.index().row(), NAME);
+        QStandardItem *myName = myParent->child(index().row(), COLUMN_NAME);
+        QStandardItem *otherName = otherParent->child(other.index().row(), COLUMN_NAME);
 
 		if (header == NULL || header->sortIndicatorOrder() == Qt::AscendingOrder) {
 			/* Ascending */
@@ -187,20 +188,21 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     connect( ui.downloadList, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( downloadListCustomPopupMenu( QPoint ) ) );
 
     // Set Download list model
-    DLListModel = new QStandardItemModel(0,ID + 1);
-    DLListModel->setHeaderData(NAME, Qt::Horizontal, tr("Name", "i.e: file name"));
-    DLListModel->setHeaderData(SIZE, Qt::Horizontal, tr("Size", "i.e: file size"));
-    DLListModel->setHeaderData(COMPLETED, Qt::Horizontal, tr("Completed", ""));
-    DLListModel->setHeaderData(DLSPEED, Qt::Horizontal, tr("Speed", "i.e: Download speed"));
-    DLListModel->setHeaderData(PROGRESS, Qt::Horizontal, tr("Progress / Availability", "i.e: % downloaded"));
-    DLListModel->setHeaderData(SOURCES, Qt::Horizontal, tr("Sources", "i.e: Sources"));
-    DLListModel->setHeaderData(STATUS, Qt::Horizontal, tr("Status"));
-    DLListModel->setHeaderData(PRIORITY, Qt::Horizontal, tr("Speed / Queue position"));
-    DLListModel->setHeaderData(REMAINING, Qt::Horizontal, tr("Remaining"));
-    DLListModel->setHeaderData(DOWNLOADTIME, Qt::Horizontal, tr("Download time", "i.e: Estimated Time of Arrival / Time left"));
-    DLListModel->setHeaderData(ID, Qt::Horizontal, tr("Core-ID"));
+    DLListModel = new QStandardItemModel(0,COLUMN_COUNT);
+    DLListModel->setHeaderData(COLUMN_NAME, Qt::Horizontal, tr("Name", "i.e: file name"));
+    DLListModel->setHeaderData(COLUMN_SIZE, Qt::Horizontal, tr("Size", "i.e: file size"));
+    DLListModel->setHeaderData(COLUMN_COMPLETED, Qt::Horizontal, tr("Completed", ""));
+    DLListModel->setHeaderData(COLUMN_DLSPEED, Qt::Horizontal, tr("Speed", "i.e: Download speed"));
+    DLListModel->setHeaderData(COLUMN_PROGRESS, Qt::Horizontal, tr("Progress / Availability", "i.e: % downloaded"));
+    DLListModel->setHeaderData(COLUMN_SOURCES, Qt::Horizontal, tr("Sources", "i.e: Sources"));
+    DLListModel->setHeaderData(COLUMN_STATUS, Qt::Horizontal, tr("Status"));
+    DLListModel->setHeaderData(COLUMN_PRIORITY, Qt::Horizontal, tr("Speed / Queue position"));
+    DLListModel->setHeaderData(COLUMN_REMAINING, Qt::Horizontal, tr("Remaining"));
+    DLListModel->setHeaderData(COLUMN_DOWNLOADTIME, Qt::Horizontal, tr("Download time", "i.e: Estimated Time of Arrival / Time left"));
+    DLListModel->setHeaderData(COLUMN_ID, Qt::Horizontal, tr("Core-ID"));
+    DLListModel->setHeaderData(COLUMN_LASTDL, Qt::Horizontal, tr("Last Time Seen", "i.e: Last Time Receiced Data"));
     ui.downloadList->setModel(DLListModel);
-    ui.downloadList->hideColumn(ID);
+    //ui.downloadList->hideColumn(ID);
     DLDelegate = new DLListDelegate();
     ui.downloadList->setItemDelegate(DLDelegate);
 
@@ -223,42 +225,49 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 
     /* Set header resize modes and initial section sizes Downloads TreeView*/
     QHeaderView * _header = ui.downloadList->header () ;
-    _header->setResizeMode (NAME, QHeaderView::Interactive);
-    _header->setResizeMode (SIZE, QHeaderView::Interactive);
-    _header->setResizeMode (COMPLETED, QHeaderView::Interactive);
-    _header->setResizeMode (DLSPEED, QHeaderView::Interactive);
-    _header->setResizeMode (PROGRESS, QHeaderView::Interactive);
-    _header->setResizeMode (SOURCES, QHeaderView::Interactive);
-    _header->setResizeMode (STATUS, QHeaderView::Interactive);
-    _header->setResizeMode (PRIORITY, QHeaderView::Interactive);
-    _header->setResizeMode (REMAINING, QHeaderView::Interactive);
+    _header->setResizeMode (COLUMN_NAME, QHeaderView::Interactive);
+    _header->setResizeMode (COLUMN_SIZE, QHeaderView::Interactive);
+    _header->setResizeMode (COLUMN_COMPLETED, QHeaderView::Interactive);
+    _header->setResizeMode (COLUMN_DLSPEED, QHeaderView::Interactive);
+    _header->setResizeMode (COLUMN_PROGRESS, QHeaderView::Interactive);
+    _header->setResizeMode (COLUMN_SOURCES, QHeaderView::Interactive);
+    _header->setResizeMode (COLUMN_STATUS, QHeaderView::Interactive);
+    _header->setResizeMode (COLUMN_PRIORITY, QHeaderView::Interactive);
+    _header->setResizeMode (COLUMN_REMAINING, QHeaderView::Interactive);
+    _header->setResizeMode (COLUMN_DOWNLOADTIME, QHeaderView::Interactive);
+    _header->setResizeMode (COLUMN_ID, QHeaderView::Interactive);
+    _header->setResizeMode (COLUMN_LASTDL, QHeaderView::Interactive);
 
-    _header->resizeSection ( NAME, 170 );
-    _header->resizeSection ( SIZE, 70 );
-    _header->resizeSection ( COMPLETED, 75 );
-    _header->resizeSection ( DLSPEED, 75 );
-    _header->resizeSection ( PROGRESS, 170 );
-    _header->resizeSection ( SOURCES, 90 );
-    _header->resizeSection ( STATUS, 100 );
-    _header->resizeSection ( PRIORITY, 100 );
-    _header->resizeSection ( REMAINING, 100 );
+    _header->resizeSection ( COLUMN_NAME, 170 );
+    _header->resizeSection ( COLUMN_SIZE, 70 );
+    _header->resizeSection ( COLUMN_COMPLETED, 75 );
+    _header->resizeSection ( COLUMN_DLSPEED, 75 );
+    _header->resizeSection ( COLUMN_PROGRESS, 170 );
+    _header->resizeSection ( COLUMN_SOURCES, 90 );
+    _header->resizeSection ( COLUMN_STATUS, 100 );
+    _header->resizeSection ( COLUMN_PRIORITY, 100 );
+    _header->resizeSection ( COLUMN_REMAINING, 100 );
+    _header->resizeSection ( COLUMN_DOWNLOADTIME, 100 );
+    _header->resizeSection ( COLUMN_ID, 100 );
+    _header->resizeSection ( COLUMN_LASTDL, 100 );
 
     // set default column and sort order for download
-    ui.downloadList->sortByColumn(NAME, Qt::AscendingOrder);
+    ui.downloadList->sortByColumn(COLUMN_NAME, Qt::AscendingOrder);
     
     // Set Upload list model
-    ULListModel = new QStandardItemModel(0,8);
-    ULListModel->setHeaderData(UNAME, Qt::Horizontal, tr("Name", "i.e: file name"));
-    ULListModel->setHeaderData(USIZE, Qt::Horizontal, tr("Size", "i.e: file size"));
-    ULListModel->setHeaderData(USERNAME, Qt::Horizontal, tr("Peer", "i.e: user name"));
-    ULListModel->setHeaderData(UPROGRESS, Qt::Horizontal, tr("Progress", "i.e: % uploaded"));
-    ULListModel->setHeaderData(ULSPEED, Qt::Horizontal, tr("Speed", "i.e: upload speed"));
-    ULListModel->setHeaderData(USTATUS, Qt::Horizontal, tr("Status"));
-    ULListModel->setHeaderData(UTRANSFERRED, Qt::Horizontal, tr("Transferred", ""));
-    ULListModel->setHeaderData(UHASH, Qt::Horizontal, tr("Hash", ""));
+    ULListModel = new QStandardItemModel(0,COLUMN_UCOUNT);
+    ULListModel->setHeaderData(COLUMN_UNAME, Qt::Horizontal, tr("Name", "i.e: file name"));
+    ULListModel->setHeaderData(COLUMN_USIZE, Qt::Horizontal, tr("Size", "i.e: file size"));
+    ULListModel->setHeaderData(COLUMN_USERNAME, Qt::Horizontal, tr("Peer", "i.e: user name"));
+    ULListModel->setHeaderData(COLUMN_UPROGRESS, Qt::Horizontal, tr("Progress", "i.e: % uploaded"));
+    ULListModel->setHeaderData(COLUMN_ULSPEED, Qt::Horizontal, tr("Speed", "i.e: upload speed"));
+    ULListModel->setHeaderData(COLUMN_USTATUS, Qt::Horizontal, tr("Status"));
+    ULListModel->setHeaderData(COLUMN_UTRANSFERRED, Qt::Horizontal, tr("Transferred", ""));
+    ULListModel->setHeaderData(COLUMN_UHASH, Qt::Horizontal, tr("Hash", ""));
+    ULListModel->setHeaderData(COLUMN_UUSERID, Qt::Horizontal, tr("UserID", ""));
     ui.uploadsList->setModel(ULListModel);
-    ULListModel->insertColumn(UUSERID);
-    ui.uploadsList->hideColumn(UUSERID);
+    //ULListModel->insertColumn(COLUMN_UUSERID);
+    //ui.uploadsList->hideColumn(COLUMN_UUSERID);
     ULDelegate = new ULListDelegate();
     ui.uploadsList->setItemDelegate(ULDelegate);
 
@@ -275,24 +284,24 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 
     /* Set header resize modes and initial section sizes Uploads TreeView*/
     QHeaderView * upheader = ui.uploadsList->header () ;
-    upheader->setResizeMode (UNAME, QHeaderView::Interactive);
-    upheader->setResizeMode (USIZE, QHeaderView::Interactive);
-    upheader->setResizeMode (UTRANSFERRED, QHeaderView::Interactive);
-    upheader->setResizeMode (ULSPEED, QHeaderView::Interactive);
-    upheader->setResizeMode (UPROGRESS, QHeaderView::Interactive);
-    upheader->setResizeMode (USTATUS, QHeaderView::Interactive);
-    upheader->setResizeMode (USERNAME, QHeaderView::Interactive);
+    upheader->setResizeMode (COLUMN_UNAME, QHeaderView::Interactive);
+    upheader->setResizeMode (COLUMN_USIZE, QHeaderView::Interactive);
+    upheader->setResizeMode (COLUMN_UTRANSFERRED, QHeaderView::Interactive);
+    upheader->setResizeMode (COLUMN_ULSPEED, QHeaderView::Interactive);
+    upheader->setResizeMode (COLUMN_UPROGRESS, QHeaderView::Interactive);
+    upheader->setResizeMode (COLUMN_USTATUS, QHeaderView::Interactive);
+    upheader->setResizeMode (COLUMN_USERNAME, QHeaderView::Interactive);
 
-    upheader->resizeSection ( UNAME, 190 );
-    upheader->resizeSection ( USIZE, 70 );
-    upheader->resizeSection ( UTRANSFERRED, 75 );
-    upheader->resizeSection ( ULSPEED, 75 );
-    upheader->resizeSection ( UPROGRESS, 170 );
-    upheader->resizeSection ( USTATUS, 100 );
-    upheader->resizeSection ( USERNAME, 120 );
+    upheader->resizeSection ( COLUMN_UNAME, 190 );
+    upheader->resizeSection ( COLUMN_USIZE, 70 );
+    upheader->resizeSection ( COLUMN_UTRANSFERRED, 75 );
+    upheader->resizeSection ( COLUMN_ULSPEED, 75 );
+    upheader->resizeSection ( COLUMN_UPROGRESS, 170 );
+    upheader->resizeSection ( COLUMN_USTATUS, 100 );
+    upheader->resizeSection ( COLUMN_USERNAME, 120 );
 
     // set default column and sort order for upload
-    ui.uploadsList->sortByColumn(UNAME, Qt::AscendingOrder);
+    ui.uploadsList->sortByColumn(COLUMN_UNAME, Qt::AscendingOrder);
 	
     // FileTransferInfoWidget *ftiw = new FileTransferInfoWidget();
     // ui.fileTransferInfoWidget->setWidget(ftiw);
@@ -742,6 +751,18 @@ int TransfersDialog::addItem(int row, const FileInfo &fileInfo, const std::map<s
 	qlonglong completed = fileInfo.transfered;
 	qlonglong remaining = fileInfo.size - fileInfo.transfered;
 	qlonglong downloadtime = (fileInfo.size - fileInfo.transfered) / (fileInfo.tfRate * 1024.0);
+    QString strLastDL = tr("File Never Seen");
+    QFileInfo file;
+
+    if (fileInfo.downloadStatus == FT_STATE_COMPLETE) {
+        file = QFileInfo(QString::fromUtf8(fileInfo.path.c_str()), QString::fromUtf8(fileInfo.fname.c_str()));
+    } else {
+        file = QFileInfo(QString::fromUtf8(rsFiles->getPartialsDirectory().c_str()), QString::fromUtf8(fileInfo.hash.c_str()));
+    }
+    /*Get Last Access on File */
+    if (file.exists()) {
+        strLastDL= file.lastModified().toString("yyyy-MM-dd_hh:mm:ss");
+    }
 
 	FileChunksInfo fcinfo;
 	if (!rsFiles->FileDownloadChunksDetails(fileInfo.hash, fcinfo)) {
@@ -777,26 +798,27 @@ int TransfersDialog::addItem(int row, const FileInfo &fileInfo, const std::map<s
 		DLListModel->insertRow(row);
 
 		// change progress column to own class for sorting
-		DLListModel->setItem(row, PROGRESS, new ProgressItem(NULL));
-		DLListModel->setItem(row, PRIORITY, new PriorityItem(NULL));
+        DLListModel->setItem(row, COLUMN_PROGRESS, new ProgressItem(NULL));
+        DLListModel->setItem(row, COLUMN_PRIORITY, new PriorityItem(NULL));
 
-		DLListModel->setData(DLListModel->index(row, SIZE), QVariant((qlonglong) fileInfo.size));
-		DLListModel->setData(DLListModel->index(row, ID), fileHash);
+        DLListModel->setData(DLListModel->index(row, COLUMN_SIZE), QVariant((qlonglong) fileInfo.size));
+        DLListModel->setData(DLListModel->index(row, COLUMN_ID), fileHash);
 	}
 	QString fileName = QString::fromUtf8(fileInfo.fname.c_str());
 
-	DLListModel->setData(DLListModel->index(row, NAME), fileName);
-	DLListModel->setData(DLListModel->index(row, NAME), FilesDefs::getIconFromFilename(fileName), Qt::DecorationRole);
+    DLListModel->setData(DLListModel->index(row, COLUMN_NAME), fileName);
+    DLListModel->setData(DLListModel->index(row, COLUMN_NAME), FilesDefs::getIconFromFilename(fileName), Qt::DecorationRole);
 
-	DLListModel->setData(DLListModel->index(row, COMPLETED), QVariant((qlonglong)completed));
-	DLListModel->setData(DLListModel->index(row, DLSPEED), QVariant((double)fileDlspeed));
-	DLListModel->setData(DLListModel->index(row, PROGRESS), QVariant::fromValue(pinfo));
-	DLListModel->setData(DLListModel->index(row, STATUS), QVariant(status));
-	DLListModel->setData(DLListModel->index(row, PRIORITY), QVariant(priority));
-	DLListModel->setData(DLListModel->index(row, REMAINING), QVariant((qlonglong)remaining));
-	DLListModel->setData(DLListModel->index(row, DOWNLOADTIME), QVariant((qlonglong)downloadtime));
+    DLListModel->setData(DLListModel->index(row, COLUMN_COMPLETED), QVariant((qlonglong)completed));
+    DLListModel->setData(DLListModel->index(row, COLUMN_DLSPEED), QVariant((double)fileDlspeed));
+    DLListModel->setData(DLListModel->index(row, COLUMN_PROGRESS), QVariant::fromValue(pinfo));
+    DLListModel->setData(DLListModel->index(row, COLUMN_STATUS), QVariant(status));
+    DLListModel->setData(DLListModel->index(row, COLUMN_PRIORITY), QVariant(priority));
+    DLListModel->setData(DLListModel->index(row, COLUMN_REMAINING), QVariant((qlonglong)remaining));
+    DLListModel->setData(DLListModel->index(row, COLUMN_DOWNLOADTIME), QVariant((qlonglong)downloadtime));
+    DLListModel->setData(DLListModel->index(row, COLUMN_LASTDL), QVariant(strLastDL));
 
-	DLListModel->item(row,STATUS)->setToolTip(tooltip);
+    DLListModel->item(row,COLUMN_STATUS)->setToolTip(tooltip);
 
 	QStandardItem *dlItem = DLListModel->item(row);
 
@@ -839,7 +861,7 @@ int TransfersDialog::addItem(int row, const FileInfo &fileInfo, const std::map<s
 	}
 
 	QString sources = QString("%1 (%2)").arg(active).arg(fileInfo.peers.size());
-	DLListModel->setData(DLListModel->index(row, SOURCES), QVariant(sources));
+    DLListModel->setData(DLListModel->index(row, COLUMN_SOURCES), QVariant(sources));
 
 	// This is not optimal, but we deal with a small number of elements. The reverse order is really important,
 	// because rows after the deleted rows change positions !
@@ -860,7 +882,7 @@ int TransfersDialog::addPeerToItem(QStandardItem *dlItem, const QString& name, c
 	int count = 0;
 	QStandardItem *childId = NULL;
 
-	for (count = 0; (childId = dlItem->child(count, ID)) != NULL; ++count) {
+    for (count = 0; (childId = dlItem->child(count, COLUMN_ID)) != NULL; ++count) {
 		if (childId->data(Qt::DisplayRole).toString() == coreID) {
 			childRow = count;
 			break;
@@ -920,11 +942,11 @@ int TransfersDialog::addPeerToItem(QStandardItem *dlItem, const QString& name, c
 		childRow = dlItem->rowCount() - 1;
 	} else {
 		// just update the child (peer)
-		dlItem->child(childRow, DLSPEED)->setData(QVariant((double)dlspeed), Qt::DisplayRole);
-		dlItem->child(childRow, PROGRESS)->setData(QVariant::fromValue(peerInfo), Qt::DisplayRole);
+        dlItem->child(childRow, COLUMN_DLSPEED)->setData(QVariant((double)dlspeed), Qt::DisplayRole);
+        dlItem->child(childRow, COLUMN_PROGRESS)->setData(QVariant::fromValue(peerInfo), Qt::DisplayRole);
 
-		si1 = dlItem->child(childRow,NAME);
-		si7 = dlItem->child(childRow, STATUS);
+        si1 = dlItem->child(childRow,COLUMN_NAME);
+        si7 = dlItem->child(childRow, COLUMN_STATUS);
 	}
 
 	switch (status) {
@@ -965,7 +987,7 @@ int TransfersDialog::addUploadItem(	const QString&, const QString& name, const Q
 	//
 	int row ;
 	for(row=0;row<ULListModel->rowCount();++row)
-		if(ULListModel->item(row,UUSERID)->data(Qt::EditRole).toString() == peer_id && ULListModel->item(row,UHASH)->data(Qt::EditRole).toString() == coreID)
+        if(ULListModel->item(row,COLUMN_UUSERID)->data(Qt::EditRole).toString() == peer_id && ULListModel->item(row,COLUMN_UHASH)->data(Qt::EditRole).toString() == coreID)
 			break ;
 
 	if(row >= ULListModel->rowCount() )
@@ -974,21 +996,21 @@ int TransfersDialog::addUploadItem(	const QString&, const QString& name, const Q
 		ULListModel->insertRow(row);
 
 		// change progress column to own class for sorting
-		ULListModel->setItem(row, UPROGRESS, new ProgressItem(NULL));
+        ULListModel->setItem(row, COLUMN_UPROGRESS, new ProgressItem(NULL));
 
-		ULListModel->setData(ULListModel->index(row, UNAME),    QVariant((QString)" "+name), Qt::DisplayRole);
-		ULListModel->setData(ULListModel->index(row, USERNAME), QVariant((QString)source));
-		ULListModel->setData(ULListModel->index(row, UHASH),    QVariant((QString)coreID));
-		ULListModel->setData(ULListModel->index(row, UUSERID),  QVariant((QString)peer_id));
+        ULListModel->setData(ULListModel->index(row, COLUMN_UNAME),    QVariant((QString)" "+name), Qt::DisplayRole);
+        ULListModel->setData(ULListModel->index(row, COLUMN_USERNAME), QVariant((QString)source));
+        ULListModel->setData(ULListModel->index(row, COLUMN_UHASH),    QVariant((QString)coreID));
+        ULListModel->setData(ULListModel->index(row, COLUMN_UUSERID),  QVariant((QString)peer_id));
 
-		ULListModel->setData(ULListModel->index(row,UNAME), FilesDefs::getIconFromFilename(name), Qt::DecorationRole);
+        ULListModel->setData(ULListModel->index(row,COLUMN_UNAME), FilesDefs::getIconFromFilename(name), Qt::DecorationRole);
 	}
 
-	ULListModel->setData(ULListModel->index(row, USIZE),        QVariant((qlonglong)fileSize));
-	ULListModel->setData(ULListModel->index(row, UTRANSFERRED), QVariant((qlonglong)completed));
-	ULListModel->setData(ULListModel->index(row, ULSPEED),      QVariant((double)dlspeed));
-	ULListModel->setData(ULListModel->index(row, UPROGRESS),    QVariant::fromValue(pinfo));
-	ULListModel->setData(ULListModel->index(row, USTATUS),      QVariant((QString)status));
+    ULListModel->setData(ULListModel->index(row, COLUMN_USIZE),        QVariant((qlonglong)fileSize));
+    ULListModel->setData(ULListModel->index(row, COLUMN_UTRANSFERRED), QVariant((qlonglong)completed));
+    ULListModel->setData(ULListModel->index(row, COLUMN_ULSPEED),      QVariant((double)dlspeed));
+    ULListModel->setData(ULListModel->index(row, COLUMN_UPROGRESS),    QVariant::fromValue(pinfo));
+    ULListModel->setData(ULListModel->index(row, COLUMN_USTATUS),      QVariant((QString)status));
 
 	return row;
 }
@@ -1028,7 +1050,7 @@ void TransfersDialog::insertTransfers()
 	std::set<std::string>::iterator hashIt;
 
 	for (row = 0; row < rowCount; ) {
-		std::string hash = DLListModel->item(row, ID)->data(Qt::DisplayRole).toString().toStdString();
+        std::string hash = DLListModel->item(row, COLUMN_ID)->data(Qt::DisplayRole).toString().toStdString();
 
 		hashIt = hashs.find(hash);
 		if (hashIt == hashs.end()) {
@@ -1168,8 +1190,8 @@ void TransfersDialog::insertTransfers()
 	rowCount = ULListModel->rowCount();
 	while (removeIndex < rowCount)
 	{
-		std::string hash = ULListModel->item(removeIndex, UHASH)->data(Qt::EditRole).toString().toStdString();
-		std::string peer = ULListModel->item(removeIndex, UUSERID)->data(Qt::EditRole).toString().toStdString();
+        std::string hash = ULListModel->item(removeIndex, COLUMN_UHASH)->data(Qt::EditRole).toString().toStdString();
+        std::string peer = ULListModel->item(removeIndex, COLUMN_UUSERID)->data(Qt::EditRole).toString().toStdString();
 
 		if(used_hashes.find(hash + peer) == used_hashes.end()) {
 			ULListModel->removeRow(removeIndex);
@@ -1339,7 +1361,7 @@ void TransfersDialog::getSelectedItems(std::set<std::string> *ids, std::set<int>
 		/* if transfered file or it's peers are selected control it*/
 		if (isParentSelected || isChildSelected) {
 			if (ids) {
-				QStandardItem *id = DLListModel->item(i, ID);
+                QStandardItem *id = DLListModel->item(i, COLUMN_ID);
 				ids->insert(id->data(Qt::DisplayRole).toString().toStdString());
 			}
 			if (rows) {
@@ -1671,55 +1693,60 @@ return 0.0 ;
 
 double TransfersDialog::getSpeed(int row, QStandardItemModel *model)
 {
-	return model->data(model->index(row, DLSPEED), Qt::DisplayRole).toDouble();
+    return model->data(model->index(row, COLUMN_DLSPEED), Qt::DisplayRole).toDouble();
 }
 
 QString TransfersDialog::getFileName(int row, QStandardItemModel *model)
 {
-	return model->data(model->index(row, NAME), Qt::DisplayRole).toString();
+    return model->data(model->index(row, COLUMN_NAME), Qt::DisplayRole).toString();
 }
 
 QString TransfersDialog::getStatus(int row, QStandardItemModel *model)
 {
-	return model->data(model->index(row, STATUS), Qt::DisplayRole).toString();
+    return model->data(model->index(row, COLUMN_STATUS), Qt::DisplayRole).toString();
 }
 
 QString TransfersDialog::getID(int row, QStandardItemModel *model)
 {
-	return model->data(model->index(row, ID), Qt::DisplayRole).toString().left(40); // gets only the "hash" part of the name
+    return model->data(model->index(row, COLUMN_ID), Qt::DisplayRole).toString().left(40); // gets only the "hash" part of the name
 }
 
 QString TransfersDialog::getPriority(int row, QStandardItemModel *model)
 {
-	return model->data(model->index(row, PRIORITY), Qt::DisplayRole).toString();
+    return model->data(model->index(row, COLUMN_PRIORITY), Qt::DisplayRole).toString();
 }
 
 qlonglong TransfersDialog::getFileSize(int row, QStandardItemModel *model)
 {
 	bool ok = false;
-	return model->data(model->index(row, SIZE), Qt::DisplayRole).toULongLong(&ok);
+    return model->data(model->index(row, COLUMN_SIZE), Qt::DisplayRole).toULongLong(&ok);
 }
 
 qlonglong TransfersDialog::getTransfered(int row, QStandardItemModel *model)
 {
 	bool ok = false;
-	return model->data(model->index(row, COMPLETED), Qt::DisplayRole).toULongLong(&ok);
+    return model->data(model->index(row, COLUMN_COMPLETED), Qt::DisplayRole).toULongLong(&ok);
 }
 
 qlonglong TransfersDialog::getRemainingTime(int row, QStandardItemModel *model)
 {
 	bool ok = false;
-	return model->data(model->index(row, REMAINING), Qt::DisplayRole).toULongLong(&ok);
+    return model->data(model->index(row, COLUMN_REMAINING), Qt::DisplayRole).toULongLong(&ok);
 }
 
 qlonglong TransfersDialog::getDownloadTime(int row, QStandardItemModel *model)
 {
-	return model->data(model->index(row, DOWNLOADTIME), Qt::DisplayRole).toULongLong();
+    return model->data(model->index(row, COLUMN_DOWNLOADTIME), Qt::DisplayRole).toULongLong();
+}
+
+qlonglong TransfersDialog::getLastDL(int row, QStandardItemModel *model)
+{
+    return model->data(model->index(row, COLUMN_LASTDL), Qt::DisplayRole).toULongLong();
 }
 
 QString TransfersDialog::getSources(int row, QStandardItemModel *model)
 {
-	return model->data(model->index(row, SOURCES), Qt::DisplayRole).toString();
+    return model->data(model->index(row, COLUMN_SOURCES), Qt::DisplayRole).toString();
 }
 
 void TransfersDialog::openCollection()

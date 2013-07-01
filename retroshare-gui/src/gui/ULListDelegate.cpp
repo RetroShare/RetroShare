@@ -65,7 +65,7 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 	}
 
 	// draw the background color
-	if(index.column() != UPROGRESS) {
+    if(index.column() != COLUMN_UPROGRESS) {
 		if(option.showDecorationSelected && (option.state & QStyle::State_Selected)) {
 			if(cg == QPalette::Normal && !(option.state & QStyle::State_Active)) {
 				cg = QPalette::Inactive;
@@ -79,7 +79,7 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 		}
 	}
 	switch(index.column()) {
-		case USIZE:
+        case COLUMN_USIZE:
 			fileSize = index.data().toLongLong();
                         if(fileSize <= 0){
                                 temp = "";
@@ -98,7 +98,7 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 			}
 			painter->drawText(option.rect, Qt::AlignRight, temp);
 			break;
-		case UTRANSFERRED:
+        case COLUMN_UTRANSFERRED:
 			transferred = index.data().toLongLong();
                         if(transferred <= 0){
                                 temp = "";
@@ -117,7 +117,7 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 			}
 			painter->drawText(option.rect, Qt::AlignRight, temp);
 			break;
-		case ULSPEED:
+        case COLUMN_ULSPEED:
                         ulspeed = index.data().toDouble();
                         if (ulspeed <= 0) {
                             temp = "";
@@ -128,7 +128,7 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
                         }
 			painter->drawText(option.rect, Qt::AlignRight, temp);
 			break;
-		case UPROGRESS:
+        case COLUMN_UPROGRESS:
 			{
 				FileProgressInfo pinfo = index.data().value<FileProgressInfo>() ;
 
@@ -136,7 +136,7 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 				painter->save() ;
 				xProgressBar progressBar(pinfo,option.rect,painter,0);// the 3rd param is the  color schema (0 is the default value)
 
-				QString ext = QFileInfo(QString::fromStdString(index.sibling(index.row(), UNAME).data().toString().toStdString())).suffix();;
+                QString ext = QFileInfo(QString::fromStdString(index.sibling(index.row(), COLUMN_UNAME).data().toString().toStdString())).suffix();;
 				if (ext == "rsfc" || ext == "rsrl" || ext == "dist" || ext == "rsfb")
 					progressBar.setColorSchema( 9);
 				else
@@ -150,7 +150,7 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 			}
 			painter->drawText(option.rect, Qt::AlignCenter, newopt.text);
 			break;
-		case UNAME:
+        case COLUMN_UNAME:
         		// decoration
 			value = index.data(Qt::DecorationRole);
 			pixmap = qvariant_cast<QIcon>(value).pixmap(option.decorationSize, option.state & QStyle::State_Enabled ? QIcon::Normal : QIcon::Disabled, option.state & QStyle::State_Open ? QIcon::On : QIcon::Off);
@@ -161,7 +161,7 @@ void ULListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 			}
 			painter->drawText(option.rect.translated(pixmap.size().width(), 0), Qt::AlignLeft, index.data().toString());
 			break;
-		case USTATUS:
+        case COLUMN_USTATUS:
 			painter->drawText(option.rect.translated(pixmap.size().width(), 0), Qt::AlignCenter, index.data().toString());
 			break;
 		default:

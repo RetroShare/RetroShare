@@ -213,6 +213,7 @@ public slots:
     qlonglong getTransfered(int row, QStandardItemModel *model);
     qlonglong getRemainingTime(int row, QStandardItemModel *model);
     qlonglong getDownloadTime(int row, QStandardItemModel *model);
+    qlonglong getLastDL(int row, QStandardItemModel *model);
     QString getSources(int row, QStandardItemModel *model);
 };
 

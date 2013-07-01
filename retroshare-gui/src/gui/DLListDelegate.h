@@ -27,17 +27,19 @@
 
 
 // Defines for download list list columns
-#define NAME 0
-#define SIZE 1
-#define COMPLETED 2
-#define DLSPEED 3
-#define PROGRESS 4
-#define SOURCES 5
-#define STATUS 6
-#define PRIORITY 7
-#define REMAINING 8
-#define DOWNLOADTIME 9
-#define ID 10
+#define COLUMN_NAME 0
+#define COLUMN_SIZE 1
+#define COLUMN_COMPLETED 2
+#define COLUMN_DLSPEED 3
+#define COLUMN_PROGRESS 4
+#define COLUMN_SOURCES 5
+#define COLUMN_STATUS 6
+#define COLUMN_PRIORITY 7
+#define COLUMN_REMAINING 8
+#define COLUMN_DOWNLOADTIME 9
+#define COLUMN_ID 10
+#define COLUMN_LASTDL 11
+#define COLUMN_COUNT 12
 
 
 #define MAX_CHAR_TMP 128
