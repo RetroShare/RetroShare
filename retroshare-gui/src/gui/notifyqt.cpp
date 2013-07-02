@@ -738,6 +738,9 @@ void NotifyQt::enable()
 
 void NotifyQt::UpdateGUI()
 {
+	if(RsAutoUpdatePage::eventsLocked())
+		return ;
+
 	{
 		QMutexLocker m(&_mutex) ;
 		if(!_enabled)
