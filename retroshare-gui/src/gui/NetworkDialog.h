@@ -73,8 +73,8 @@ private slots:
   void peerdetails();
   void copyLink();
   /** Create the context popup menu and it's submenus */
-  void connecttreeWidgetCostumPopupMenu( QPoint point );
-  //void unvalidGPGkeyWidgetCostumPopupMenu( QPoint point );
+  void connectTreeWidgetCostumPopupMenu( QPoint point );
+  //void unvalidGPGKeyWidgetCostumPopupMenu( QPoint point );
 
   /** Called when user clicks "Load Cert" to choose location of a Cert file */
 //  void loadcert();
@@ -106,8 +106,6 @@ private slots:
 private:
   QTreeWidgetItem *getCurrentNeighbour();
 
-  QTreeWidget *connecttreeWidget;
-  
 //  class NetworkView *networkview;
   
   bool filterItem(QTreeWidgetItem *item, const QString &text, int filterColumn);

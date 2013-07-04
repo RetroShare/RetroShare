@@ -74,12 +74,12 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
   
-    connect( ui.connecttreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( connecttreeWidgetCostumPopupMenu( QPoint ) ) );
-    connect( ui.connecttreeWidget, SIGNAL( itemSelectionChanged()), ui.unvalidGPGkeyWidget, SLOT( clearSelection() ) );
-    connect( ui.connecttreeWidget, SIGNAL( itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT( peerdetails () ) );
-    connect( ui.unvalidGPGkeyWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( connecttreeWidgetCostumPopupMenu( QPoint ) ) );
-    connect( ui.unvalidGPGkeyWidget, SIGNAL( itemSelectionChanged()), ui.connecttreeWidget, SLOT( clearSelection() ) );
-    connect( ui.unvalidGPGkeyWidget, SIGNAL( itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT( peerdetails () ) );
+    connect( ui.connectTreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( connectTreeWidgetCostumPopupMenu( QPoint ) ) );
+    connect( ui.connectTreeWidget, SIGNAL( itemSelectionChanged()), ui.unvalidGPGKeyWidget, SLOT( clearSelection() ) );
+    connect( ui.connectTreeWidget, SIGNAL( itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT( peerdetails () ) );
+    connect( ui.unvalidGPGKeyWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( connectTreeWidgetCostumPopupMenu( QPoint ) ) );
+    connect( ui.unvalidGPGKeyWidget, SIGNAL( itemSelectionChanged()), ui.connectTreeWidget, SLOT( clearSelection() ) );
+    connect( ui.unvalidGPGKeyWidget, SIGNAL( itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT( peerdetails () ) );
 
     connect( ui.filterLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterItems(QString)));
     connect( ui.filterLineEdit, SIGNAL(filterChanged(int)), this, SLOT(filterColumnChanged(int)));
@@ -87,12 +87,12 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     connect( ui.showUnvalidKeys, SIGNAL(clicked()), this, SLOT(securedUpdateDisplay()));
 
     /* hide the Tree +/- */
-    ui.connecttreeWidget -> setRootIsDecorated( false );
-    ui.connecttreeWidget -> setColumnCount(6);
-    ui.unvalidGPGkeyWidget-> setColumnCount(6);
+    ui.connectTreeWidget -> setRootIsDecorated( false );
+    ui.connectTreeWidget -> setColumnCount(6);
+    ui.unvalidGPGKeyWidget-> setColumnCount(6);
 
     /* Set header resize modes and initial section sizes */
-    QHeaderView * _header = ui.connecttreeWidget->header () ;
+    QHeaderView * _header = ui.connectTreeWidget->header () ;
     _header->setResizeMode (0, QHeaderView::Custom);
     _header->setResizeMode (1, QHeaderView::Interactive);
     _header->setResizeMode (2, QHeaderView::Interactive);
@@ -107,7 +107,7 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     _header->resizeSection ( 5, 75 );
 
     // set header text aligment
-    QTreeWidgetItem * headerItem = ui.connecttreeWidget->headerItem();
+    QTreeWidgetItem * headerItem = ui.connectTreeWidget->headerItem();
     headerItem->setTextAlignment(0, Qt::AlignHCenter | Qt::AlignVCenter);
     headerItem->setTextAlignment(1, Qt::AlignHCenter | Qt::AlignVCenter);
     headerItem->setTextAlignment(2, Qt::AlignHCenter | Qt::AlignVCenter);
@@ -116,32 +116,32 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     headerItem->setTextAlignment(5, Qt::AlignVCenter);
 
       /* hide the Tree +/- */
-    ui.unvalidGPGkeyWidget -> setRootIsDecorated( false );
+    ui.unvalidGPGKeyWidget -> setRootIsDecorated( false );
 
     /* Set header resize modes and initial section sizes */
-    ui.unvalidGPGkeyWidget->header()->setResizeMode (0, QHeaderView::Custom);
-    ui.unvalidGPGkeyWidget->header()->setResizeMode (1, QHeaderView::Interactive);
-    ui.unvalidGPGkeyWidget->header()->setResizeMode (2, QHeaderView::Interactive);
-    ui.unvalidGPGkeyWidget->header()->setResizeMode (3, QHeaderView::Interactive);
-    ui.unvalidGPGkeyWidget->header()->setResizeMode (4, QHeaderView::Interactive);
-    ui.unvalidGPGkeyWidget->header()->setResizeMode (5, QHeaderView::Interactive);
+    ui.unvalidGPGKeyWidget->header()->setResizeMode (0, QHeaderView::Custom);
+    ui.unvalidGPGKeyWidget->header()->setResizeMode (1, QHeaderView::Interactive);
+    ui.unvalidGPGKeyWidget->header()->setResizeMode (2, QHeaderView::Interactive);
+    ui.unvalidGPGKeyWidget->header()->setResizeMode (3, QHeaderView::Interactive);
+    ui.unvalidGPGKeyWidget->header()->setResizeMode (4, QHeaderView::Interactive);
+    ui.unvalidGPGKeyWidget->header()->setResizeMode (5, QHeaderView::Interactive);
 
-    ui.unvalidGPGkeyWidget->header()->resizeSection ( 0, 25 );
-    ui.unvalidGPGkeyWidget->header()->resizeSection ( 1, 200 );
-    ui.unvalidGPGkeyWidget->header()->resizeSection ( 2, 200 );
-    ui.unvalidGPGkeyWidget->header()->resizeSection ( 3, 200 );
-    ui.unvalidGPGkeyWidget->header()->resizeSection ( 5, 75 );
+    ui.unvalidGPGKeyWidget->header()->resizeSection ( 0, 25 );
+    ui.unvalidGPGKeyWidget->header()->resizeSection ( 1, 200 );
+    ui.unvalidGPGKeyWidget->header()->resizeSection ( 2, 200 );
+    ui.unvalidGPGKeyWidget->header()->resizeSection ( 3, 200 );
+    ui.unvalidGPGKeyWidget->header()->resizeSection ( 5, 75 );
 
     // set header text aligment
-    ui.unvalidGPGkeyWidget->headerItem()->setTextAlignment(0, Qt::AlignHCenter | Qt::AlignVCenter);
-    ui.unvalidGPGkeyWidget->headerItem()->setTextAlignment(1, Qt::AlignHCenter | Qt::AlignVCenter);
-    ui.unvalidGPGkeyWidget->headerItem()->setTextAlignment(2, Qt::AlignHCenter | Qt::AlignVCenter);
-    ui.unvalidGPGkeyWidget->headerItem()->setTextAlignment(3, Qt::AlignHCenter | Qt::AlignVCenter);
-    ui.unvalidGPGkeyWidget->headerItem()->setTextAlignment(4, Qt::AlignVCenter);
-    ui.unvalidGPGkeyWidget->headerItem()->setTextAlignment(5, Qt::AlignVCenter);
+    ui.unvalidGPGKeyWidget->headerItem()->setTextAlignment(0, Qt::AlignHCenter | Qt::AlignVCenter);
+    ui.unvalidGPGKeyWidget->headerItem()->setTextAlignment(1, Qt::AlignHCenter | Qt::AlignVCenter);
+    ui.unvalidGPGKeyWidget->headerItem()->setTextAlignment(2, Qt::AlignHCenter | Qt::AlignVCenter);
+    ui.unvalidGPGKeyWidget->headerItem()->setTextAlignment(3, Qt::AlignHCenter | Qt::AlignVCenter);
+    ui.unvalidGPGKeyWidget->headerItem()->setTextAlignment(4, Qt::AlignVCenter);
+    ui.unvalidGPGKeyWidget->headerItem()->setTextAlignment(5, Qt::AlignVCenter);
 
-    ui.connecttreeWidget->sortItems( 1, Qt::AscendingOrder );
-    ui.unvalidGPGkeyWidget->sortItems( 1, Qt::AscendingOrder );
+    ui.connectTreeWidget->sortItems( 1, Qt::AscendingOrder );
+    ui.unvalidGPGKeyWidget->sortItems( 1, Qt::AscendingOrder );
 
 //    ui.networkTab->addTab(new TrustView(),QString(tr("Authentication matrix")));
 //    ui.networkTab->addTab(networkview = new NetworkView(),QString(tr("Network View")));
@@ -202,9 +202,9 @@ void NetworkDialog::changeEvent(QEvent *e)
     }
 }
 
-void NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint /*point*/ )
+void NetworkDialog::connectTreeWidgetCostumPopupMenu( QPoint /*point*/ )
 {
-	//std::cerr << "NetworkDialog::connecttreeWidgetCostumPopupMenu( QPoint point ) called" << std::endl;
+	//std::cerr << "NetworkDialog::connectTreeWidgetCostumPopupMenu( QPoint point ) called" << std::endl;
 	QTreeWidgetItem *wi = getCurrentNeighbour();
 	if (!wi)
 		return;
@@ -372,9 +372,9 @@ void NetworkDialog::insertConnect()
 		return;
 
 	if (ui.showUnvalidKeys->isChecked()) {
-		ui.unvalidGPGkeyWidget->show();
+		ui.unvalidGPGKeyWidget->show();
 	} else {
-		ui.unvalidGPGkeyWidget->hide();
+		ui.unvalidGPGKeyWidget->hide();
 	}
 
 //	// Because this is called from a qt signal, there's no limitation between calls.
@@ -389,7 +389,7 @@ void NetworkDialog::insertConnect()
 	rsPeers->getGPGAllList(neighs);
 
 	/* get a link to the table */
-	QTreeWidget *connectWidget = ui.connecttreeWidget;
+	QTreeWidget *connectWidget = ui.connectTreeWidget;
 
 	//remove items
 	int index = 0;
@@ -403,11 +403,11 @@ void NetworkDialog::insertConnect()
 		}
 	}
 	index = 0;
-	while (index < ui.unvalidGPGkeyWidget->topLevelItemCount()) {
-		std::string gpg_widget_id = (ui.unvalidGPGkeyWidget->topLevelItem(index))->text(COLUMN_PEERID).toStdString();
+	while (index < ui.unvalidGPGKeyWidget->topLevelItemCount()) {
+		std::string gpg_widget_id = (ui.unvalidGPGKeyWidget->topLevelItem(index))->text(COLUMN_PEERID).toStdString();
 		RsPeerDetails detail;
 		if (!rsPeers->getGPGDetails(gpg_widget_id, detail) || detail.validLvl >= RS_TRUST_LVL_MARGINAL || detail.accept_connection) {
-			delete (ui.unvalidGPGkeyWidget->takeTopLevelItem(index));
+			delete (ui.unvalidGPGKeyWidget->takeTopLevelItem(index));
 		} else {
 			index++;
 		}
@@ -437,7 +437,7 @@ void NetworkDialog::insertConnect()
 		if (list.size() == 1) {
 			item = list.front();
 		} else {
-			list = ui.unvalidGPGkeyWidget->findItems(QString::fromStdString(*it), Qt::MatchExactly, 4);
+			list = ui.unvalidGPGKeyWidget->findItems(QString::fromStdString(*it), Qt::MatchExactly, 4);
 			if (list.size() == 1) {
 				item = list.front();
 			} else {
@@ -552,7 +552,7 @@ void NetworkDialog::insertConnect()
 		} 
 		else 
 		{
-			ui.unvalidGPGkeyWidget->addTopLevelItem(item);
+			ui.unvalidGPGKeyWidget->addTopLevelItem(item);
 		}
 
 	}
@@ -583,7 +583,7 @@ void NetworkDialog::insertConnect()
 	connectWidget->addTopLevelItem(self_item);
 
 	connectWidget->update(); /* update display */
-	ui.unvalidGPGkeyWidget->update(); /* update display */
+	ui.unvalidGPGKeyWidget->update(); /* update display */
 
 	if (ui.filterLineEdit->text().isEmpty() == false) {
 		filterItems(ui.filterLineEdit->text());
@@ -593,10 +593,10 @@ void NetworkDialog::insertConnect()
 
 QTreeWidgetItem *NetworkDialog::getCurrentNeighbour()
 { 
-        if (ui.connecttreeWidget->selectedItems().size() != 0)  {
-            return ui.connecttreeWidget -> currentItem();
-        } else if (ui.unvalidGPGkeyWidget->selectedItems().size() != 0) {
-            return ui.unvalidGPGkeyWidget->currentItem();
+        if (ui.connectTreeWidget->selectedItems().size() != 0)  {
+            return ui.connectTreeWidget -> currentItem();
+        } else if (ui.unvalidGPGKeyWidget->selectedItems().size() != 0) {
+            return ui.unvalidGPGKeyWidget->currentItem();
         }
 
         return NULL;
@@ -828,13 +828,13 @@ void NetworkDialog::filterItems(const QString &text)
 {
     int filterColumn = ui.filterLineEdit->currentFilter();
 
-    int count = ui.connecttreeWidget->topLevelItemCount ();
+    int count = ui.connectTreeWidget->topLevelItemCount ();
     for (int index = 0; index < count; index++) {
-        filterItem(ui.connecttreeWidget->topLevelItem(index), text, filterColumn);
+        filterItem(ui.connectTreeWidget->topLevelItem(index), text, filterColumn);
     }
-    count = ui.unvalidGPGkeyWidget->topLevelItemCount ();
+    count = ui.unvalidGPGKeyWidget->topLevelItemCount ();
     for (int nIndex = 0; nIndex < count; nIndex++) {
-        filterItem(ui.unvalidGPGkeyWidget->topLevelItem(nIndex), text, filterColumn);
+        filterItem(ui.unvalidGPGKeyWidget->topLevelItem(nIndex), text, filterColumn);
     }
 }
 

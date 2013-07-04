@@ -440,8 +440,11 @@ void FeedReaderDialog::calculateFeedItem(QTreeWidgetItem *item, uint32_t &unread
 
 	bool deactivated = item->data(COLUMN_FEED_DATA, ROLE_FEED_DEACTIVATED).toBool();
 
-	QColor colorActivated;
-	QColor colorDeactivated = QColor(Qt::gray);
+	QColor colorActivated = ui->feedTreeWidget->palette().color(QPalette::Active, QPalette::Text);
+	QColor color = ui->feedTreeWidget->palette().color(QPalette::Active, QPalette::Base);
+	QColor colorDeactivated;
+	colorDeactivated.setRgbF((color.redF() + colorActivated.redF()) / 2, (color.greenF() + colorActivated.greenF()) / 2, (color.blueF() + colorActivated.blueF()) / 2);
+
 	for (int i = 0; i < COLUMN_FEED_COUNT; i++) {
 		QFont font = item->font(i);
 		font.setBold(unreadCountItem != 0);

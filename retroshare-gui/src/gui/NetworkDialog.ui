@@ -48,7 +48,7 @@
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
-     <widget class="QTreeWidget" name="connecttreeWidget">
+     <widget class="QTreeWidget" name="connectTreeWidget">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
         <horstretch>0</horstretch>
@@ -131,7 +131,7 @@
        </property>
       </column>
      </widget>
-     <widget class="QTreeWidget" name="unvalidGPGkeyWidget">
+     <widget class="QTreeWidget" name="unvalidGPGKeyWidget">
       <property name="contextMenuPolicy">
        <enum>Qt::CustomContextMenu</enum>
       </property>

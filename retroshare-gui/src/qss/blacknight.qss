@@ -41,6 +41,11 @@ SearchDialog
 	qproperty-textColorHighSources: rgb(255, 255, 228);
 }
 
+NetworkDialog > QSplitter > QTreeWidget#connectTreeWidget, NetworkDialog > QSplitter > QTreeWidget#unvalidGPGKeyWidget
+{
+	color: black;
+}
+
 QWidget{
 background: black;
 color: lightgray;
@@ -260,73 +265,10 @@ border-color: transparent;
 */
 }
 
-QLabel#infolabel{
-    color: black;
+QTextBrowser {
+	color: white;
 }
 
-QLabel#friendslabel{
-    color: black;
-}
-
-QLabel#networklabel{
-    color: black;
-}
-
-QLabel#channellabel{
-    color: black;
-}
-
-QLabel#forumslabel{
-    color: black;
-}
-
-QLabel#downloadslabel{
-    color: black;
-}
-
-QLabel#forumName{
-    color: black;
-}
-
-QLabel#threadTitle{
-    color: black;
-}
-
-QLabel#labeltext{
-    color: black;
-}
-
-QLabel#label{
-    color: black;
-}
-
-QPushButton#Folders_Button{
-    color: black;
-}
-
-QToolButton#Tags_Button{
-    color: black;
-}
-
-QTextBrowser#msgText{
-    color: black;
-}
-
-QTextEdit#lineedit{
-    color: black;
-    background: white;
-
-}
-
-QTextEdit#chattextEdit{
-    color: black;
-}
-
-QTextEdit#lineEdit{
-    color: black;
-    background: white;
-}
-
-QTextBrowser#postText{
-    color: white;
+QTextEdit {
+	color: white;
 }

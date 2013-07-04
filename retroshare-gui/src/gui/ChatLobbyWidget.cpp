@@ -161,7 +161,7 @@ void ChatLobbyWidget::lobbyChanged()
 	updateDisplay();
 }
 
-static void updateItem(QTreeWidgetItem *item, ChatLobbyId id, const std::string &name, const std::string &topic, int count, bool subscribed, bool autoSubscribe)
+static void updateItem(QTreeWidget *treeWidget, QTreeWidgetItem *item, ChatLobbyId id, const std::string &name, const std::string &topic, int count, bool subscribed, bool autoSubscribe)
 {
 	item->setText(COLUMN_NAME, QString::fromUtf8(name.c_str()));
 	item->setData(COLUMN_NAME, ROLE_SORT, QString::fromUtf8(name.c_str()));
@@ -183,10 +183,10 @@ static void updateItem(QTreeWidgetItem *item, ChatLobbyId id, const std::string 
 	item->setData(COLUMN_DATA, ROLE_SUBSCRIBED, subscribed);
     item->setData(COLUMN_DATA, ROLE_AUTOSUBSCRIBE, autoSubscribe);
 
-	QColor color = QApplication::palette().color(QPalette::Active, QPalette::Text);
+	QColor color = treeWidget->palette().color(QPalette::Active, QPalette::Text);
 	if (!subscribed) {
 		// Average between Base and Text colors
-		QColor color2 = QApplication::palette().color(QPalette::Active, QPalette::Base);
+		QColor color2 = treeWidget->palette().color(QPalette::Active, QPalette::Base);
 		color.setRgbF((color2.redF()+color.redF())/2, (color2.greenF()+color.greenF())/2, (color2.blueF()+color.blueF())/2);
 	}
 
@@ -336,7 +336,7 @@ void ChatLobbyWidget::updateDisplay()
             }
         }
 
-        updateItem(item, lobby.lobby_id, lobby.lobby_name,lobby.lobby_topic, lobby.total_number_of_peers, subscribed, autoSubscribe);
+        updateItem(lobbyTreeWidget, item, lobby.lobby_id, lobby.lobby_name,lobby.lobby_topic, lobby.total_number_of_peers, subscribed, autoSubscribe);
 
 	}
 
@@ -386,7 +386,7 @@ void ChatLobbyWidget::updateDisplay()
 
         bool autoSubscribe = rsMsgs->getLobbyAutoSubscribe(lobby.lobby_id);
 
-        updateItem(item, lobby.lobby_id, lobby.lobby_name,lobby.lobby_topic, lobby.nick_names.size(), true, autoSubscribe);
+        updateItem(lobbyTreeWidget, item, lobby.lobby_id, lobby.lobby_name,lobby.lobby_topic, lobby.nick_names.size(), true, autoSubscribe);
 	}
 }
 
