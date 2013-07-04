@@ -50,6 +50,10 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 	ui.name_input->setPlaceholderText(tr("[Required] Visible to your friends, and friends of friends."));
 	ui.password_input->setPlaceholderText(tr("[Required] This password protects your PGP key."));
 #endif
+
+	ui.email_input->hide() ;
+	ui.email_label->hide() ;
+
 	/* get all available pgp private certificates....
 	 * mark last one as default.
 	 */
@@ -119,8 +123,8 @@ void GenCertDialog::newGPGKeyGenUiSetup() {
 		genNewGPGKey = true;
 		ui.name_label->show();
 		ui.name_input->show();
-		ui.email_label->show();
-		ui.email_input->show();
+//		ui.email_label->show();
+//		ui.email_input->show();
 		ui.password_label->show();
 		ui.password_input->show();
 		ui.genPGPuserlabel->hide();
@@ -134,8 +138,8 @@ void GenCertDialog::newGPGKeyGenUiSetup() {
 		genNewGPGKey = false;
 		ui.name_label->hide();
 		ui.name_input->hide();
-		ui.email_label->hide();
-		ui.email_input->hide();
+//		ui.email_label->hide();
+//		ui.email_input->hide();
 		ui.password_label->hide();
 		ui.password_input->hide();
 		ui.genPGPuserlabel->show();
@@ -236,8 +240,8 @@ void GenCertDialog::genPerson()
 		ui.new_gpg_key_checkbox->hide();
 		ui.name_label->hide();
 		ui.name_input->hide();
-		ui.email_label->hide();
-		ui.email_input->hide();
+//		ui.email_label->hide();
+//		ui.email_input->hide();
 		ui.password_label->hide();
 		ui.password_input->hide();
 		ui.genPGPuserlabel->hide();
@@ -253,7 +257,8 @@ void GenCertDialog::genPerson()
 		QCoreApplication::processEvents();
 		while(QAbstractEventDispatcher::instance()->processEvents(QEventLoop::AllEvents)) ;
 
-		RsInit::GeneratePGPCertificate(ui.name_input->text().toUtf8().constData(), ui.email_input->text().toUtf8().constData(), ui.password_input->text().toUtf8().constData(), PGPId, err_string);
+		std::string email_str = "" ;
+		RsInit::GeneratePGPCertificate(ui.name_input->text().toUtf8().constData(), email_str.c_str(), ui.password_input->text().toUtf8().constData(), PGPId, err_string);
 
 		setCursor(Qt::ArrowCursor) ;
 	}

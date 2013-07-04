@@ -51,6 +51,19 @@
       <item row="1" column="0">
        <widget class="QGroupBox" name="groupBox">
         <layout class="QGridLayout" name="gridLayout_2">
+         <item row="9" column="0" colspan="2">
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>1</width>
+             <height>1</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
          <item row="0" column="0" colspan="2">
           <widget class="QLabel" name="no_gpg_key_label">
            <property name="text">
@@ -80,21 +93,8 @@
            <property name="toolTip">
             <string>Enter your nickname here</string>
            </property>
-          </widget>
-         </item>
-         <item row="4" column="0">
-          <widget class="QLabel" name="email_label">
-           <property name="text">
-            <string>Email</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="1">
-          <widget class="QLineEdit" name="email_input">
-           <property name="toolTip">
-            <string>Be careful: this email will be visible to your friends and friends 
-of your friends. This information is required by PGP, but to stay 
-anonymous, you can use a fake email.</string>
+           <property name="maxLength">
+            <number>64</number>
            </property>
           </widget>
          </item>
@@ -116,6 +116,9 @@ anonymous, you can use a fake email.</string>
            <property name="inputMask">
             <string/>
            </property>
+           <property name="maxLength">
+            <number>1024</number>
+           </property>
            <property name="echoMode">
             <enum>QLineEdit::Password</enum>
            </property>
@@ -129,7 +132,11 @@ anonymous, you can use a fake email.</string>
           </widget>
          </item>
          <item row="6" column="1">
-          <widget class="QLineEdit" name="location_input"/>
+          <widget class="QLineEdit" name="location_input">
+           <property name="maxLength">
+            <number>64</number>
+           </property>
+          </widget>
          </item>
          <item row="7" column="1">
           <widget class="QLabel" name="label_location2">
@@ -176,19 +183,6 @@ anonymous, you can use a fake email.</string>
             <string>Use identity</string>
            </property>
           </widget>
-         </item>
-         <item row="9" column="0" colspan="2">
-          <spacer name="verticalSpacer">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>1</width>
-             <height>1</height>
-            </size>
-           </property>
-          </spacer>
          </item>
          <item row="1" column="0" colspan="2">
           <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,0,0,0">
@@ -258,6 +252,25 @@ anonymous, you can use a fake email.</string>
             </spacer>
            </item>
           </layout>
+         </item>
+         <item row="4" column="0">
+          <widget class="QLabel" name="email_label">
+           <property name="text">
+            <string>Email</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="QLineEdit" name="email_input">
+           <property name="toolTip">
+            <string>Be careful: this email will be visible to your friends and friends 
+of your friends. This information is required by PGP, but to stay 
+anonymous, you can use a fake email.</string>
+           </property>
+           <property name="maxLength">
+            <number>64</number>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>
