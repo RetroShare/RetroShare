@@ -4969,6 +4969,10 @@ p, li { white-space: pre-wrap; }
         <source>You can&apos;t reply an Anonymous Author</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Forum Description</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ForumsFillThread</name>
@@ -5205,6 +5209,18 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Sort by</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>IP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sort by IP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show IP Column</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6765,6 +6781,10 @@ before you can comment</source>
     </message>
     <message>
         <source>You cant reply to an Anonymous Author</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Forum Description</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -12759,6 +12779,19 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Please enter a new--and valid--filename</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Last Time Seen</source>
+        <comment>i.e: Last Time Receiced Data</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>UserID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File Never Seen</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

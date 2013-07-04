@@ -1111,13 +1111,30 @@ QString ForumsDialog::messageFromInfo(ForumMsgInfo &msgInfo)
 
 void ForumsDialog::insertPost()
 {
-    if ((mCurrForumId == "") || (mCurrThreadId == ""))
+    if (mCurrForumId.empty())
     {
         ui.postText->setText("");
         ui.threadTitle->setText("");
         ui.previousButton->setEnabled(false);
         ui.nextButton->setEnabled(false);
         ui.newmessageButton->setEnabled (false);
+        return;
+    }
+
+    if (mCurrThreadId.empty())
+    {
+        ui.previousButton->setEnabled(false);
+        ui.nextButton->setEnabled(false);
+        ui.newmessageButton->setEnabled (false);
+
+        ForumInfo fi;
+        if (!rsForums->getForumInfo(mCurrForumId, fi)) {
+            ui.postText->setText("");
+            ui.threadTitle->setText("");
+            return;
+        }
+        ui.threadTitle->setText(tr("Forum Description"));
+        ui.postText->setText(QString::fromStdWString(fi.forumDesc));
         return;
     }
 

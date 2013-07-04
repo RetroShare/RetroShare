@@ -903,6 +903,7 @@ void GxsForumThreadWidget::insertThreads()
 	}
 
 	mSubscribeFlags = 0;
+	mForumDescription.clear();
 
 	ui->newmessageButton->setEnabled(false);
 	ui->newthreadButton->setEnabled(false);
@@ -938,6 +939,7 @@ void GxsForumThreadWidget::insertForumThreads(const RsGroupMetaData &fi)
 {
 	mSubscribeFlags = fi.mSubscribeFlags;
 	ui->forumName->setText(QString::fromUtf8(fi.mGroupName.c_str()));
+//	mForumDescription = QString::fromUtf8(fi.mDescription); // not available
 
 	ui->progressBarLayout->setEnabled(true);
 
@@ -1156,13 +1158,24 @@ void GxsForumThreadWidget::fillChildren(QTreeWidgetItem *parentItem, QTreeWidget
 
 void GxsForumThreadWidget::insertPost()
 {
-	if (mForumId.empty() || mThreadId.empty())
+	if (mForumId.empty())
 	{
 		ui->postText->setText("");
 		ui->threadTitle->setText("");
 		ui->previousButton->setEnabled(false);
 		ui->nextButton->setEnabled(false);
 		ui->newmessageButton->setEnabled (false);
+		return;
+	}
+
+	if (mThreadId.empty())
+	{
+		ui->previousButton->setEnabled(false);
+		ui->nextButton->setEnabled(false);
+		ui->newmessageButton->setEnabled (false);
+
+		ui->threadTitle->setText(tr("Forum Description"));
+		ui->postText->setText(mForumDescription);
 		return;
 	}
 

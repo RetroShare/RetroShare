@@ -137,6 +137,7 @@ private:
 	std::string mForumId;
 	std::string mLastForumID;
 	std::string mThreadId;
+	QString mForumDescription;
 	int mSubscribeFlags;
 	bool mInProcessSettings;
 	bool mInMsgAsReadUnread;
