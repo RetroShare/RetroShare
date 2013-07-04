@@ -51,7 +51,7 @@
       <bool>false</bool>
      </property>
      <property name="columnCount">
-      <number>4</number>
+      <number>5</number>
      </property>
      <attribute name="headerStretchLastSection">
       <bool>false</bool>
@@ -74,6 +74,11 @@
      <column>
       <property name="text">
        <string>Avatar</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>IP</string>
       </property>
      </column>
     </widget>
@@ -205,6 +210,28 @@
    </property>
    <property name="toolTip">
     <string>Show Groups</string>
+   </property>
+  </action>
+  <action name="actionSortByIP">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>IP</string>
+   </property>
+   <property name="toolTip">
+    <string>Sort by IP</string>
+   </property>
+  </action>
+  <action name="actionShowIPColumn">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>IP</string>
+   </property>
+   <property name="toolTip">
+    <string>Show IP Column</string>
    </property>
   </action>
  </widget>

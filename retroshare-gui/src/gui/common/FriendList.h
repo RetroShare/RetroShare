@@ -86,11 +86,13 @@ public slots:
     void setHideState(bool hidden);
     void setShowStatusColumn(bool show);
     void setShowLastContactColumn(bool show);
+    void setShowIPColumn(bool show);
     void setShowAvatarColumn(bool show);
     void setRootIsDecorated(bool show);
     void setSortByName();
     void setSortByState();
     void setSortByLastContact();
+    void setSortByIP();
     void sortPeersAscendingOrder();
     void sortPeersDescendingOrder();
 

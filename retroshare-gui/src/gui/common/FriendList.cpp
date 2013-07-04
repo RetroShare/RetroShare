@@ -72,11 +72,12 @@
 #define IMAGE_PASTELINK          ":/images/pasterslink.png"
 #define IMAGE_GROUP24            ":/images/user/group24.png"
 
-#define COLUMN_COUNT        4
+#define COLUMN_COUNT        5
 #define COLUMN_NAME         0
 #define COLUMN_STATE        1
 #define COLUMN_LAST_CONTACT 2
 #define COLUMN_AVATAR       3
+#define COLUMN_IP           4
 
 #define COLUMN_DATA     0 // column for storing the userdata id
 
@@ -123,6 +124,7 @@ FriendList::FriendList(QWidget *parent) :
     m_compareRole->setRole(COLUMN_NAME, ROLE_SORT);
     m_compareRole->setRole(COLUMN_STATE, ROLE_SORT);
     m_compareRole->setRole(COLUMN_LAST_CONTACT, ROLE_SORT);
+    m_compareRole->setRole(COLUMN_IP, ROLE_SORT);
     m_compareRole->setRole(COLUMN_AVATAR, ROLE_STANDARD);
 
     connect(ui->peerTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(peerTreeWidgetCostumPopupMenu()));
@@ -136,6 +138,7 @@ FriendList::FriendList(QWidget *parent) :
     connect(ui->actionShowStatusColumn, SIGNAL(triggered(bool)), this, SLOT(setShowStatusColumn(bool)));
     connect(ui->actionShowAvatarColumn, SIGNAL(triggered(bool)), this, SLOT(setShowAvatarColumn(bool)));
     connect(ui->actionShowLastContactColumn, SIGNAL(triggered(bool)), this, SLOT(setShowLastContactColumn(bool)));
+    connect(ui->actionShowIPColumn, SIGNAL(triggered(bool)), this, SLOT(setShowIPColumn(bool)));
     connect(ui->actionHideState, SIGNAL(triggered(bool)), this, SLOT(setHideState(bool)));
     connect(ui->actionRootIsDecorated, SIGNAL(triggered(bool)), this, SLOT(setRootIsDecorated(bool)));
     connect(ui->actionShowGroups, SIGNAL(triggered(bool)), this, SLOT(setShowGroups(bool)));
@@ -143,6 +146,7 @@ FriendList::FriendList(QWidget *parent) :
     connect(ui->actionSortByName, SIGNAL(triggered()), this, SLOT(setSortByName()));
     connect(ui->actionSortByState, SIGNAL(triggered()), this, SLOT(setSortByState()));
     connect(ui->actionSortByLastContact, SIGNAL(triggered()), this, SLOT(setSortByLastContact()));
+    connect(ui->actionSortByIP, SIGNAL(triggered()), this, SLOT(setSortByIP()));
     connect(ui->actionSortPeersAscendingOrder, SIGNAL(triggered()), this, SLOT(sortPeersAscendingOrder()));
     connect(ui->actionSortPeersDescendingOrder, SIGNAL(triggered()), this, SLOT(sortPeersDescendingOrder()));
 
@@ -185,6 +189,7 @@ void FriendList::processSettings(bool bLoad)
         // state of the columns
         setShowStatusColumn(Settings->value("showStatusColumn", !ui->peerTreeWidget->isColumnHidden(COLUMN_STATE)).toBool());
         setShowLastContactColumn(Settings->value("showLastContactColumn", !ui->peerTreeWidget->isColumnHidden(COLUMN_LAST_CONTACT)).toBool());
+        setShowIPColumn(Settings->value("showIPColumn", !ui->peerTreeWidget->isColumnHidden(COLUMN_IP)).toBool());
         setShowAvatarColumn(Settings->value("showAvatarColumn", !ui->peerTreeWidget->isColumnHidden(COLUMN_AVATAR)).toBool());
 
         // states
@@ -213,6 +218,7 @@ void FriendList::processSettings(bool bLoad)
         // state of the columns
         Settings->setValue("showStatusColumn", !ui->peerTreeWidget->isColumnHidden(COLUMN_STATE));
         Settings->setValue("showLastContactColumn", !ui->peerTreeWidget->isColumnHidden(COLUMN_LAST_CONTACT));
+        Settings->setValue("showIPColumn", !ui->peerTreeWidget->isColumnHidden(COLUMN_IP));
         Settings->setValue("showAvatarColumn", !ui->peerTreeWidget->isColumnHidden(COLUMN_AVATAR));
 
         // states
@@ -255,6 +261,7 @@ void FriendList::initializeHeader(bool afterLoadSettings)
     header->setResizeMode(COLUMN_NAME, QHeaderView::Stretch);
     header->setResizeMode(COLUMN_STATE, QHeaderView::Interactive);
     header->setResizeMode(COLUMN_LAST_CONTACT, QHeaderView::Interactive);
+    header->setResizeMode(COLUMN_IP, QHeaderView::Interactive);
     header->setResizeMode(COLUMN_AVATAR, QHeaderView::Fixed);
 
     if (!afterLoadSettings) {
@@ -544,6 +551,7 @@ void  FriendList::insertPeers()
 
     bool isStatusColumnHidden = ui->peerTreeWidget->isColumnHidden(COLUMN_STATE);
     bool isAvatarColumnHidden = ui->peerTreeWidget->isColumnHidden(COLUMN_AVATAR);
+    bool isIPColumnHidden = ui->peerTreeWidget->isColumnHidden(COLUMN_IP);
 
     std::list<StatusInfo> statusInfo;
     rsStatus->getStatusList(statusInfo);
@@ -829,6 +837,7 @@ void  FriendList::insertPeers()
             QString bestCustomStateString;// for gpg item
             std::list<std::string> sslContacts;
             QDateTime lastContact;
+            QString itemIP;
 
             rsPeers->getAssociatedSSLIds(detail.gpg_id, sslContacts);
             for (std::list<std::string>::iterator sslIt = sslContacts.begin(); sslIt != sslContacts.end(); sslIt++) {
@@ -907,6 +916,15 @@ void  FriendList::insertPeers()
                 sslItem->setData(COLUMN_LAST_CONTACT, ROLE_SORT, sslLastContact);
                 if (sslLastContact > lastContact) {
                     lastContact = sslLastContact;
+                }
+
+                /* IP */
+					 
+                QString sslItemIP = (sslDetail.state & RS_PEER_STATE_CONNECTED)?QString(sslDetail.extAddr.c_str()):QString("---");
+                sslItem->setData(COLUMN_IP, Qt::DisplayRole, QVariant(sslItemIP));
+                sslItem->setData(COLUMN_IP, ROLE_SORT, sslItemIP);
+                if (sslItemIP != itemIP) {
+                    itemIP = sslItemIP;
                 }
 
                 /* change color and icon */
@@ -1101,6 +1119,8 @@ void  FriendList::insertPeers()
             gpgItem->setIcon(COLUMN_NAME, gpgIcon);
             gpgItem->setData(COLUMN_LAST_CONTACT, Qt::DisplayRole, QVariant(lastContact));
             gpgItem->setData(COLUMN_LAST_CONTACT, ROLE_SORT, "2 " + lastContact.toString("yyyyMMdd_hhmmss"));
+            gpgItem->setData(COLUMN_IP, Qt::DisplayRole, QVariant());
+            gpgItem->setData(COLUMN_IP, ROLE_SORT, "2 " + itemIP);
 
             if (openPeers != NULL && openPeers->find(gpgId) != openPeers->end()) {
                 gpgItem->setExpanded(true);
@@ -1699,6 +1719,18 @@ void FriendList::setShowLastContactColumn(bool show)
     }
 }
 
+void FriendList::setShowIPColumn(bool show)
+{
+    bool isColumnVisible = !ui->peerTreeWidget->isColumnHidden(COLUMN_IP);
+
+    if (isColumnVisible != show) {
+        ui->peerTreeWidget->setColumnHidden(COLUMN_IP, !show);
+
+        updateHeader();
+        insertPeers();
+    }
+}
+
 void FriendList::setShowAvatarColumn(bool show)
 {
     bool isColumnVisible = !ui->peerTreeWidget->isColumnHidden(COLUMN_AVATAR);
@@ -1724,7 +1756,9 @@ void FriendList::setHideState(bool hidden)
  */
 void FriendList::updateHeader()
 {
-    if (ui->peerTreeWidget->isColumnHidden(COLUMN_STATE) && ui->peerTreeWidget->isColumnHidden(COLUMN_LAST_CONTACT)) {
+    if (ui->peerTreeWidget->isColumnHidden(COLUMN_STATE) \
+            && ui->peerTreeWidget->isColumnHidden(COLUMN_LAST_CONTACT) \
+            && ui->peerTreeWidget->isColumnHidden(COLUMN_IP)) {
         ui->peerTreeWidget->setHeaderHidden(true);
     } else {
         ui->peerTreeWidget->setHeaderHidden(false);
@@ -1746,6 +1780,12 @@ void FriendList::setSortByState()
 void FriendList::setSortByLastContact()
 {
     ui->peerTreeWidget->sortByColumn(COLUMN_LAST_CONTACT);
+    sortPeersDescendingOrder();
+}
+
+void FriendList::setSortByIP()
+{
+    ui->peerTreeWidget->sortByColumn(COLUMN_IP);
     sortPeersDescendingOrder();
 }
 
@@ -1894,11 +1934,13 @@ QMenu *FriendList::createDisplayMenu()
     QMenu *menu = displayMenu->addMenu(tr("Columns"));
     menu->addAction(ui->actionShowAvatarColumn);
     menu->addAction(ui->actionShowLastContactColumn);
+    menu->addAction(ui->actionShowIPColumn);
     menu->addAction(ui->actionShowStatusColumn);
     menu = displayMenu->addMenu(tr("Sort by"));
     menu->addAction(ui->actionSortByName);
     menu->addAction(ui->actionSortByState);
     menu->addAction(ui->actionSortByLastContact);
+    menu->addAction(ui->actionSortByIP);
     displayMenu->addAction(ui->actionHideOfflineFriends);
     displayMenu->addAction(ui->actionHideState);
     displayMenu->addAction(ui->actionRootIsDecorated);
@@ -1908,6 +1950,7 @@ QMenu *FriendList::createDisplayMenu()
     group->addAction(ui->actionSortByName);
     group->addAction(ui->actionSortByState);
     group->addAction(ui->actionSortByLastContact);
+    group->addAction(ui->actionSortByIP);
 
     return displayMenu;
 }
@@ -1924,11 +1967,15 @@ void FriendList::updateMenu()
     case COLUMN_LAST_CONTACT:
         ui->actionSortByLastContact->setChecked(true);
         break;
+    case COLUMN_IP:
+        ui->actionSortByIP->setChecked(true);
+        break;
     case COLUMN_AVATAR:
         break;
     }
     ui->actionShowStatusColumn->setChecked(!ui->peerTreeWidget->isColumnHidden(COLUMN_STATE));
     ui->actionShowLastContactColumn->setChecked(!ui->peerTreeWidget->isColumnHidden(COLUMN_LAST_CONTACT));
+    ui->actionShowIPColumn->setChecked(!ui->peerTreeWidget->isColumnHidden(COLUMN_IP));
     ui->actionShowAvatarColumn->setChecked(!ui->peerTreeWidget->isColumnHidden(COLUMN_AVATAR));
     ui->actionHideOfflineFriends->setChecked(mHideUnconnected);
     ui->actionHideState->setChecked(mHideState);
