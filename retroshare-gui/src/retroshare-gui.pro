@@ -5,10 +5,10 @@ CONFIG += qt gui uic qrc resources uitools idle bitdht
 #CONFIG += gxs debug
 
 gxs {
-#	CONFIG += photoshare
+	
 	CONFIG += wikipoos
 	CONFIG += identities
-#	CONFIG += circles
+	CONFIG += circles
 	CONFIG += gxsforums
 	CONFIG += gxschannels
 	CONFIG += posted
@@ -16,6 +16,7 @@ gxs {
 	CONFIG += gxsgui
 	# thewire is incomplete - dont enable
 	#CONFIG += thewire
+	#CONFIG += photoshare
 }
 
 
@@ -930,7 +931,7 @@ unfinished {
 	
 	
 photoshare {
-	DEFINES += RS_USE_PHOTOSHARE
+	#DEFINES += RS_USE_PHOTOSHARE
 
 	HEADERS += \
 		gui/PhotoShare/PhotoDrop.h \
