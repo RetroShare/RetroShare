@@ -23,6 +23,7 @@
 #define MIMETEXTEDIT_H
 
 #include <QTextEdit>
+#include <QCompleter>
 
 class MimeTextEdit : public QTextEdit
 {
@@ -31,9 +32,33 @@ class MimeTextEdit : public QTextEdit
 public:
 	MimeTextEdit(QWidget *parent = 0);
 
+    //Form here: http://qt-project.org/doc/qt-4.8/tools-customcompleter.html
+    void setCompleter(QCompleter *completer);
+    QCompleter *completer() const;
+    void setCompleterKeyModifiers(Qt::KeyboardModifier modifiers);
+    Qt::KeyboardModifier getCompleterKeyModifiers() const;
+    void setCompleterKey(Qt::Key key);
+    Qt::Key getCompleterKey() const;
+    void forceCompleterShowNextKeyEvent(QString startString);
+
 protected:
 	virtual bool canInsertFromMimeData(const QMimeData* source) const;
 	virtual void insertFromMimeData(const QMimeData* source);
+    void keyPressEvent(QKeyEvent *e);
+    void focusInEvent(QFocusEvent *e);
+
+private slots:
+    void insertCompletion(const QString &completion);
+
+private:
+    QString textUnderCursor() const;
+
+private:
+    QCompleter *mCompleter;
+    Qt::KeyboardModifier mCompleterKeyModifiers;
+    Qt::Key mCompleterKey;
+    bool mForceCompleterShowNextKeyEvent;
+    QString mCompleterStartString;
 
 };
 

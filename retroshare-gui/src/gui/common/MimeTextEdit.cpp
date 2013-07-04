@@ -23,10 +23,16 @@
 #include <QTextDocumentFragment>
 #include "MimeTextEdit.h"
 #include "util/HandleRichText.h"
+#include <QCompleter>
+#include <QAbstractItemView>
+#include <QKeyEvent>
+#include <QScrollBar>
 
 MimeTextEdit::MimeTextEdit(QWidget *parent)
-	: QTextEdit(parent)
+    : QTextEdit(parent), mCompleter(0)
 {
+    mCompleterKeyModifiers=Qt::ControlModifier;
+    mCompleterKey=Qt::Key_Space;
 }
 
 bool MimeTextEdit::canInsertFromMimeData(const QMimeData* source) const
@@ -64,4 +70,129 @@ void MimeTextEdit::insertFromMimeData(const QMimeData* source)
 #endif
 
 	return QTextEdit::insertFromMimeData(source);
+}
+
+void MimeTextEdit::setCompleter(QCompleter *completer)
+{
+    if (mCompleter)
+        QObject::disconnect(mCompleter, 0, this, 0);
+
+    mCompleter = completer;
+
+    if (!mCompleter)
+        return;
+
+    mCompleter->setWidget(this);
+    mCompleter->setCompletionMode(QCompleter::PopupCompletion);
+    mCompleter->setCaseSensitivity(Qt::CaseInsensitive);
+    QObject::connect(mCompleter, SIGNAL(activated(QString)),
+                     this, SLOT(insertCompletion(QString)));
+}
+
+QCompleter *MimeTextEdit::completer() const
+{
+    return mCompleter;
+}
+
+void MimeTextEdit::insertCompletion(const QString& completion)
+{
+    if (mCompleter->widget() != this)
+        return;
+    QTextCursor tc = textCursor();
+    if (mCompleter->completionPrefix().length()>0) {
+        tc.movePosition(QTextCursor::PreviousWord, QTextCursor::KeepAnchor);
+    }
+    tc.removeSelectedText();
+    tc.insertText(mCompleterStartString+completion);
+    mCompleterStartString="";
+    setTextCursor(tc);
+}
+
+QString MimeTextEdit::textUnderCursor() const
+{
+    QTextCursor tc = textCursor();
+    tc.select(QTextCursor::WordUnderCursor);
+    return tc.selectedText();
+}
+
+void MimeTextEdit::focusInEvent(QFocusEvent *e)
+{
+    if (mCompleter)
+        mCompleter->setWidget(this);
+    QTextEdit::focusInEvent(e);
+}
+
+void MimeTextEdit::keyPressEvent(QKeyEvent *e)
+{
+
+    if (mCompleter && mCompleter->popup()->isVisible()) {
+        // The following keys are forwarded by the completer to the widget
+        switch (e->key()) {
+        case Qt::Key_Enter:
+        case Qt::Key_Return:
+        case Qt::Key_Escape:
+        case Qt::Key_Tab:
+        case Qt::Key_Backtab:
+            mCompleter->popup()->hide();
+            mForceCompleterShowNextKeyEvent=false;
+            e->ignore();
+            return; // let the completer do default behavior
+        default:
+            break;
+        }
+    }
+
+    bool isShortcut = ((e->modifiers() & mCompleterKeyModifiers) && e->key() == mCompleterKey);
+    if (isShortcut && !mForceCompleterShowNextKeyEvent) {
+        mCompleterStartString="";
+    }
+    isShortcut |= mForceCompleterShowNextKeyEvent;
+    if (!mCompleter || !isShortcut) // do not process the shortcut when we have a completer
+        QTextEdit::keyPressEvent(e);
+
+    if (!isShortcut && (mCompleter && !mCompleter->popup()->isVisible())) {
+        return;
+    }
+
+    if (!mForceCompleterShowNextKeyEvent) {
+        static QString eow(" ~!@#$%^&*()_+{}|:\"<>?,./;'[]\\-="); // end of word
+        if (!isShortcut && ( e->text().isEmpty() || eow.contains(e->text().right(1)))){
+            mCompleter->popup()->hide();
+            return;
+        }
+    }
+
+    QString completionPrefix = textUnderCursor();
+    if (completionPrefix != mCompleter->completionPrefix()) {
+        mCompleter->setCompletionPrefix(completionPrefix);
+        mCompleter->popup()->setCurrentIndex(mCompleter->completionModel()->index(0, 0));
+    }
+    QRect cr = cursorRect();
+    cr.setWidth(mCompleter->popup()->sizeHintForColumn(0)
+                + mCompleter->popup()->verticalScrollBar()->sizeHint().width());
+    mCompleter->complete(cr); // popup it up!
+    mForceCompleterShowNextKeyEvent=false;
+}
+
+void MimeTextEdit::setCompleterKeyModifiers(Qt::KeyboardModifier modifiers)
+{
+    mCompleterKeyModifiers=modifiers;
+}
+Qt::KeyboardModifier MimeTextEdit::getCompleterKeyModifiers() const
+{
+    return mCompleterKeyModifiers;
+}
+
+void MimeTextEdit::setCompleterKey(Qt::Key key)
+{
+    mCompleterKey=key;
+}
+Qt::Key MimeTextEdit::getCompleterKey() const
+{
+    return mCompleterKey;
+}
+void MimeTextEdit::forceCompleterShowNextKeyEvent(QString startString="")
+{
+    mForceCompleterShowNextKeyEvent=true;
+    mCompleterStartString=startString;
 }

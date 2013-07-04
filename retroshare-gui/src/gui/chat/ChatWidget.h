@@ -24,7 +24,7 @@
 #define CHATWIDGET_H
 
 #include <QWidget>
-
+#include <QCompleter>
 #include "gui/common/HashBox.h"
 #include "ChatStyle.h"
 #include "gui/style/RSStyle.h"
@@ -137,6 +137,7 @@ private:
 	void processSettings(bool load);
 
 	void completeNickname(bool reverse);
+    QAbstractItemModel *modelFromPeers();
 
 	std::string peerId;
 	QString title;
@@ -163,6 +164,8 @@ private:
 	bool inChatCharFormatChanged;
 
 	TransferRequestFlags mDefaultExtraFileFlags ; // flags for extra files shared in this chat. Will be 0 by default, but might be ANONYMOUS for chat lobbies.
+
+    QCompleter *completer;
 
 	Ui::ChatWidget *ui;
 };
