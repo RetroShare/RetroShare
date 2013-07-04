@@ -233,6 +233,9 @@ void ServerPage::toggleTurtleRouting(bool b)
 /** Loads the settings for this page */
 void ServerPage::updateStatus()
 {
+	if(RsAutoUpdatePage::eventsLocked())
+		return ;
+
 	if(!isVisible())
 		return ;
 
