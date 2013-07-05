@@ -32,7 +32,7 @@ linux-* {
 
 	gxs {
 		# We need a explicit path here, to force using the home version of sqlite3 that really encrypts the database.
-	    LIBS += ../../../lib/sqlcipher/.libs/libsqlite3.a
+	    LIBS += ../../../lib/sqlcipher/.libs/libsqlcipher.a
 	}
 }
 
