@@ -70,6 +70,7 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	isChatLobby = false;
 	firstShow = true;
 	inChatCharFormatChanged = false;
+	completer = NULL;
 
 	lastStatusSendTime = 0 ;
 
@@ -128,16 +129,6 @@ ChatWidget::ChatWidget(QWidget *parent) :
 #endif
 
 	resetStatusBar();
-
-    completer = new QCompleter(this);
-    completer->setModel(modelFromPeers());
-    completer->setModelSorting(QCompleter::CaseInsensitivelySortedModel);
-    completer->setCaseSensitivity(Qt::CaseInsensitive);
-    completer->setWrapAround(false);
-    ui->chatTextEdit->setCompleter(completer);
-    ui->chatTextEdit->setCompleterKeyModifiers(Qt::ControlModifier);
-    ui->chatTextEdit->setCompleterKey(Qt::Key_Space);
-
 }
 
 ChatWidget::~ChatWidget()
@@ -197,6 +188,15 @@ void ChatWidget::init(const std::string &peerId, const QString &title)
 		QString customStateString = QString::fromUtf8(rsMsgs->getCustomStateString(peerId).c_str());
 		updatePeersCustomStateString(QString::fromStdString(peerId), customStateString);
 	} else {
+		completer = new QCompleter(this);
+		completer->setModel(modelFromPeers());
+		completer->setModelSorting(QCompleter::CaseInsensitivelySortedModel);
+		completer->setCaseSensitivity(Qt::CaseInsensitive);
+		completer->setWrapAround(false);
+		ui->chatTextEdit->setCompleter(completer);
+		ui->chatTextEdit->setCompleterKeyModifiers(Qt::ControlModifier);
+		ui->chatTextEdit->setCompleterKey(Qt::Key_Space);
+
 		updateTitle();
 	}
 
@@ -256,13 +256,17 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 						completionWord.clear();
 					}
 				}
-                if ((keyEvent->modifiers() & ui->chatTextEdit->getCompleterKeyModifiers()) && keyEvent->key() == ui->chatTextEdit->getCompleterKey()) {
-                    completer->setModel(modelFromPeers());
-                }
-                if (keyEvent->text()=="@") {
-                    ui->chatTextEdit->forceCompleterShowNextKeyEvent("@");
-                    completer->setModel(modelFromPeers());
-                }
+
+				if (completer) {
+					if ((keyEvent->modifiers() & ui->chatTextEdit->getCompleterKeyModifiers()) && keyEvent->key() == ui->chatTextEdit->getCompleterKey()) {
+						completer->setModel(modelFromPeers());
+					}
+					if (keyEvent->text()=="@") {
+						ui->chatTextEdit->forceCompleterShowNextKeyEvent("@");
+						completer->setModel(modelFromPeers());
+					}
+				}
+
 				if (keyEvent->key() == Qt::Key_Enter || keyEvent->key() == Qt::Key_Return) {
 					// Enter pressed
 					if (Settings->getChatSendMessageWithCtrlReturn()) {
@@ -417,41 +421,40 @@ void ChatWidget::completeNickname(bool reverse)
 
 QAbstractItemModel *ChatWidget::modelFromPeers()
 {
-    // Find lobby we belong to
-    const ChatLobbyInfo *lobby = NULL;
-    std::list<ChatLobbyInfo> lobbies;
-    rsMsgs->getChatLobbyList(lobbies);
+	// Find lobby we belong to
+	const ChatLobbyInfo *lobby = NULL;
+	std::list<ChatLobbyInfo> lobbies;
+	rsMsgs->getChatLobbyList(lobbies);
 
-    std::list<ChatLobbyInfo>::const_iterator lobbyIt;
-    for (lobbyIt = lobbies.begin(); lobbyIt != lobbies.end(); ++lobbyIt) {
-        std::string vpid;
-        if (rsMsgs->getVirtualPeerId(lobbyIt->lobby_id, vpid)) {
-            if (vpid == peerId) {
-                lobby = &*lobbyIt;
-                break;
-            }
-        }
-    }
+	std::list<ChatLobbyInfo>::const_iterator lobbyIt;
+	for (lobbyIt = lobbies.begin(); lobbyIt != lobbies.end(); ++lobbyIt) {
+		std::string vpid;
+		if (rsMsgs->getVirtualPeerId(lobbyIt->lobby_id, vpid)) {
+			if (vpid == peerId) {
+				lobby = &*lobbyIt;
+				break;
+			}
+		}
+	}
 
-    if (!lobby)
-        return new QStringListModel(completer);
-
-
-#ifndef QT_NO_CURSOR
-    QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
-#endif
-    // Get participants list
-     QStringList participants;
-    for (	std::map<std::string,time_t>::const_iterator it = lobby->nick_names.begin();
-            it != lobby->nick_names.end();
-            it++) {
-        participants.push_front(QString::fromUtf8(it->first.c_str()));
-    }
+	if (!lobby)
+		return new QStringListModel(completer);
 
 #ifndef QT_NO_CURSOR
-    QApplication::restoreOverrideCursor();
+	QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
 #endif
-    return new QStringListModel(participants, completer);
+	// Get participants list
+	 QStringList participants;
+	for (	std::map<std::string,time_t>::const_iterator it = lobby->nick_names.begin();
+			it != lobby->nick_names.end();
+			it++) {
+		participants.push_front(QString::fromUtf8(it->first.c_str()));
+	}
+
+#ifndef QT_NO_CURSOR
+	QApplication::restoreOverrideCursor();
+#endif
+	return new QStringListModel(participants, completer);
 }
 
 void ChatWidget::addToolsAction(QAction *action)
