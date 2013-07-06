@@ -27,6 +27,10 @@ extern "C" {
 #include "util/rsdir.h"		
 #include "pgp/pgpkeyutil.h"
 
+static const uint32_t PGP_CERTIFICATE_LIMIT_MAX_NAME_SIZE   = 64 ;
+static const uint32_t PGP_CERTIFICATE_LIMIT_MAX_EMAIL_SIZE  = 64 ;
+static const uint32_t PGP_CERTIFICATE_LIMIT_MAX_PASSWD_SIZE = 1024 ;
+
 //#define DEBUG_PGPHANDLER 1
 //#define PGPHANDLER_DSA_SUPPORT
 
@@ -357,6 +361,25 @@ bool PGPHandler::availableGPGCertificatesWithPrivateKeys(std::list<PGPIdType>& i
 
 bool PGPHandler::GeneratePGPCertificate(const std::string& name, const std::string& email, const std::string& passphrase, PGPIdType& pgpId, std::string& errString) 
 {
+	// Some basic checks
+	
+	if(name.length() > PGP_CERTIFICATE_LIMIT_MAX_NAME_SIZE)
+	{
+		errString = std::string("(EE) name in certificate exceeds the maximum allowed name size") ;
+		return false ;
+	}
+	if(email.length() > PGP_CERTIFICATE_LIMIT_MAX_EMAIL_SIZE)
+	{
+		errString = std::string("(EE) name in certificate exceeds the maximum allowed email size") ;
+		return false ;
+	}
+	if(email.length() > PGP_CERTIFICATE_LIMIT_MAX_PASSWD_SIZE)
+	{
+		errString = std::string("(EE) name in certificate exceeds the maximum allowed name size") ;
+		return false ;
+	}
+
+	// Now the real thing
 	RsStackMutex mtx(pgphandlerMtx) ;				// lock access to PGP memory structures.
 	RsStackFileLock flck(_pgp_lock_filename) ;	// lock access to PGP directory.
 
@@ -1069,13 +1092,13 @@ bool PGPHandler::decryptDataBin(const PGPIdType& /*key_id*/,const void *encrypte
 	unsigned char *out ;
 	ops_boolean_t res = ops_decrypt_memory((const unsigned char *)encrypted_data,encrypted_len,&out,&out_length,_secring,ops_false,cb_get_passphrase) ;
 
-	if(*data_len < out_length)
+	if(*data_len < (unsigned int)out_length)
 	{
 		std::cerr << "Not enough room to store decrypted data! Please give more."<< std::endl;
 		return false ;
 	}
 
-	*data_len = out_length ;
+	*data_len = (unsigned int)out_length ;
 	memcpy(data,out,out_length) ;
 	free(out) ;
 
@@ -1756,7 +1779,7 @@ bool PGPHandler::removeKeysFromPGPKeyring(const std::list<PGPIdType>& keys_to_re
 			continue ;
 		}
 
-		if(res->second._key_index >= _pubring->nkeys || PGPIdType(_pubring->keys[res->second._key_index].key_id) != *it)
+		if(res->second._key_index >= (unsigned int)_pubring->nkeys || PGPIdType(_pubring->keys[res->second._key_index].key_id) != *it)
 		{
 			std::cerr << "(EE) PGPHandler:: can't remove key " << (*it).toStdString() << ". Inconsistency found." << std::endl;
 			error_code = PGP_KEYRING_REMOVAL_ERROR_DATA_INCONSISTENCY ;
