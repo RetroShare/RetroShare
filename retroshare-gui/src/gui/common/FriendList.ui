@@ -53,8 +53,11 @@
      <property name="columnCount">
       <number>5</number>
      </property>
+     <attribute name="headerCascadingSectionResizes">
+      <bool>true</bool>
+     </attribute>
      <attribute name="headerStretchLastSection">
-      <bool>false</bool>
+      <bool>true</bool>
      </attribute>
      <column>
       <property name="text">
