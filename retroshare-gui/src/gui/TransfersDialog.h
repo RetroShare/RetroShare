@@ -90,6 +90,9 @@ private slots:
     void setDestinationDirectory();
     void chooseDestinationDirectory();
 
+    void expandAll();
+    void collapseAll();
+
 //    void rootdecorated();
 //    void rootisnotdecorated();
 
@@ -174,6 +177,8 @@ private:
     QAction *openCollectionAct;
     QAction *renameFileAct;
     QAction *specifyDestinationDirectoryAct;
+    QAction *expandAllAct;
+    QAction *collapseAllAct;
 
     bool m_bProcessSettings;
     void processSettings(bool bLoad);

@@ -12794,6 +12794,14 @@ Try to be patient!</source>
         <source>File Never Seen</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Expand all</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Collapse all</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>TreeStyle_RDM</name>

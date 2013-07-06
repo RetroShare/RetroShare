@@ -86,6 +86,8 @@
 #define IMAGE_PRIORITYHIGH			   ":/images/priorityhigh.png"
 #define IMAGE_PRIORITYAUTO			   ":/images/priorityauto.png"
 #define IMAGE_SEARCH    		      ":/images/filefind.png"
+#define IMAGE_EXPAND             ":/images/edit_add24.png"
+#define IMAGE_COLLAPSE           ":/images/edit_remove24.png"
 
 Q_DECLARE_METATYPE(FileProgressInfo) 
 
@@ -414,6 +416,10 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 	connect(renameFileAct, SIGNAL(triggered()), this, SLOT(renameFile()));
 	specifyDestinationDirectoryAct = new QAction(QIcon(IMAGE_SEARCH),tr("Specify..."),this) ;
 	connect(specifyDestinationDirectoryAct,SIGNAL(triggered()),this,SLOT(chooseDestinationDirectory())) ;
+	expandAllAct= new QAction(QIcon(IMAGE_EXPAND),tr("Expand all"),this);
+	connect(expandAllAct,SIGNAL(triggered()),this,SLOT(expandAll())) ;
+	collapseAllAct= new QAction(QIcon(IMAGE_COLLAPSE),tr("Collapse all"),this);
+	connect(collapseAllAct,SIGNAL(triggered()),this,SLOT(collapseAll())) ;
 
     // load settings
     processSettings(true);
@@ -677,6 +683,13 @@ void TransfersDialog::downloadListCustomPopupMenu( QPoint /*point*/ )
 	contextMnu.addAction( pastelinkAct);
 
 	contextMnu.addSeparator();
+
+	if (DLListModel->rowCount()>0 ) {
+		contextMnu.addAction( expandAllAct ) ;
+		contextMnu.addAction( collapseAllAct ) ;
+	}
+
+	contextMnu.addSeparator();//-----------------------------------------------
 
 	contextMnu.addAction( toggleShowCacheTransfersAct ) ;
 	toggleShowCacheTransfersAct->setChecked(_show_cache_transfers) ;
@@ -1755,4 +1768,13 @@ void TransfersDialog::openCollection()
 	if (Collection.load(this)) {
 		Collection.downloadFiles();
 	}
+}
+
+void TransfersDialog::expandAll()
+{
+	ui.downloadList->expandAll();
+}
+void TransfersDialog::collapseAll()
+{
+	ui.downloadList->collapseAll();
 }
