@@ -78,6 +78,7 @@ private slots:
 
     /** Create the context popup menu and it's submenus */
     void downloadListCustomPopupMenu( QPoint point );
+    void downloadListHeaderCustomPopupMenu( QPoint point );
 
     void cancel();
     void forceCheck();
@@ -126,6 +127,18 @@ private slots:
     void updateDetailsDialog();
 
     void openCollection();
+
+    void setShowDLSizeColumn(bool show);
+    void setShowDLCompleteColumn(bool show);
+    void setShowDLDLSpeedColumn(bool show);
+    void setShowDLProgressColumn(bool show);
+    void setShowDLSourcesColumn(bool show);
+    void setShowDLStatusColumn(bool show);
+    void setShowDLPriorityColumn(bool show);
+    void setShowDLRemainingColumn(bool show);
+    void setShowDLDownloadTimeColumn(bool show);
+    void setShowDLIDColumn(bool show);
+    void setShowDLLastDLColumn(bool show);
 
 signals:
     void playFiles(QStringList files);
@@ -179,6 +192,20 @@ private:
     QAction *specifyDestinationDirectoryAct;
     QAction *expandAllAct;
     QAction *collapseAllAct;
+
+    /** Defines the actions for the header context menu */
+    QAction* showDLSizeAct;
+    QAction* showDLCompleteAct;
+    QAction* showDLDLSpeedAct;
+    QAction* showDLProgressAct;
+    QAction* showDLSourcesAct;
+    QAction* showDLStatusAct;
+    QAction* showDLPriorityAct;
+    QAction* showDLRemainingAct;
+    QAction* showDLDownloadTimeAct;
+    QAction* showDLIDAct;
+    QAction* showDLLastDLAct;
+
 
     bool m_bProcessSettings;
     void processSettings(bool bLoad);

@@ -201,12 +201,16 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     DLListModel->setHeaderData(COLUMN_PRIORITY, Qt::Horizontal, tr("Speed / Queue position"));
     DLListModel->setHeaderData(COLUMN_REMAINING, Qt::Horizontal, tr("Remaining"));
     DLListModel->setHeaderData(COLUMN_DOWNLOADTIME, Qt::Horizontal, tr("Download time", "i.e: Estimated Time of Arrival / Time left"));
-    DLListModel->setHeaderData(COLUMN_ID, Qt::Horizontal, tr("Core-ID"));
+    DLListModel->setHeaderData(COLUMN_ID, Qt::Horizontal, tr("Hash"));
     DLListModel->setHeaderData(COLUMN_LASTDL, Qt::Horizontal, tr("Last Time Seen", "i.e: Last Time Receiced Data"));
     ui.downloadList->setModel(DLListModel);
     //ui.downloadList->hideColumn(ID);
     DLDelegate = new DLListDelegate();
     ui.downloadList->setItemDelegate(DLDelegate);
+
+    QHeaderView *qhvDLList = ui.downloadList->header();
+    qhvDLList->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(qhvDLList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(downloadListHeaderCustomPopupMenu(QPoint)));
 
 // Why disable autoscroll ?
 // With disabled autoscroll, the treeview doesn't scroll with cursor move
@@ -344,6 +348,7 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 
 #endif
 
+    /** Setup the actions for the context menu */
    toggleShowCacheTransfersAct = new QAction(tr( "Show cache transfers" ), this );
 	toggleShowCacheTransfersAct->setCheckable(true) ;
 	connect(toggleShowCacheTransfersAct,SIGNAL(triggered()),this,SLOT(toggleShowCacheTransfers())) ;
@@ -421,6 +426,41 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 	collapseAllAct= new QAction(QIcon(IMAGE_COLLAPSE),tr("Collapse all"),this);
 	connect(collapseAllAct,SIGNAL(triggered()),this,SLOT(collapseAll())) ;
 
+    /** Setup the actions for the header context menu */
+    showDLSizeAct= new QAction(tr("Size"),this);
+    showDLSizeAct->setCheckable(true); showDLSizeAct->setToolTip(tr("Show Size Column"));
+    connect(showDLSizeAct,SIGNAL(triggered(bool)),this,SLOT(setShowDLSizeColumn(bool))) ;
+    showDLCompleteAct= new QAction(tr("Completed"),this);
+    showDLCompleteAct->setCheckable(true); showDLCompleteAct->setToolTip(tr("Show Completed Column"));
+    connect(showDLCompleteAct,SIGNAL(triggered(bool)),this,SLOT(setShowDLCompleteColumn(bool))) ;
+    showDLDLSpeedAct= new QAction(tr("Speed"),this);
+    showDLDLSpeedAct->setCheckable(true); showDLDLSpeedAct->setToolTip(tr("Show Speed Column"));
+    connect(showDLDLSpeedAct,SIGNAL(triggered(bool)),this,SLOT(setShowDLDLSpeedColumn(bool))) ;
+    showDLProgressAct= new QAction(tr("Progress / Availability"),this);
+    showDLProgressAct->setCheckable(true); showDLProgressAct->setToolTip(tr("Show Progress / Availability Column"));
+    connect(showDLProgressAct,SIGNAL(triggered(bool)),this,SLOT(setShowDLProgressColumn(bool))) ;
+    showDLSourcesAct= new QAction(tr("Sources"),this);
+    showDLSourcesAct->setCheckable(true); showDLSourcesAct->setToolTip(tr("Show Sources Column"));
+    connect(showDLSourcesAct,SIGNAL(triggered(bool)),this,SLOT(setShowDLSourcesColumn(bool))) ;
+    showDLStatusAct= new QAction(tr("Status"),this);
+    showDLStatusAct->setCheckable(true); showDLStatusAct->setToolTip(tr("Show Status Column"));
+    connect(showDLStatusAct,SIGNAL(triggered(bool)),this,SLOT(setShowDLStatusColumn(bool))) ;
+    showDLPriorityAct= new QAction(tr("Speed / Queue position"),this);
+    showDLPriorityAct->setCheckable(true); showDLPriorityAct->setToolTip(tr("Show Speed / Queue position Column"));
+    connect(showDLPriorityAct,SIGNAL(triggered(bool)),this,SLOT(setShowDLPriorityColumn(bool))) ;
+    showDLRemainingAct= new QAction(tr("Remaining"),this);
+    showDLRemainingAct->setCheckable(true); showDLRemainingAct->setToolTip(tr("Show Remaining Column"));
+    connect(showDLRemainingAct,SIGNAL(triggered(bool)),this,SLOT(setShowDLRemainingColumn(bool))) ;
+    showDLDownloadTimeAct= new QAction(tr("Download time"),this);
+    showDLDownloadTimeAct->setCheckable(true); showDLDownloadTimeAct->setToolTip(tr("Show Download time Column"));
+    connect(showDLDownloadTimeAct,SIGNAL(triggered(bool)),this,SLOT(setShowDLDownloadTimeColumn(bool))) ;
+    showDLIDAct= new QAction(tr("Hash"),this);
+    showDLIDAct->setCheckable(true); showDLIDAct->setToolTip(tr("Show Hash Column"));
+    connect(showDLIDAct,SIGNAL(triggered(bool)),this,SLOT(setShowDLIDColumn(bool))) ;
+    showDLLastDLAct= new QAction(tr("Last Time Seen"),this);
+    showDLLastDLAct->setCheckable(true); showDLLastDLAct->setToolTip(tr("Show Last Time Seen Column"));
+    connect(showDLLastDLAct,SIGNAL(triggered(bool)),this,SLOT(setShowDLLastDLColumn(bool))) ;
+
     // load settings
     processSettings(true);
 }
@@ -477,6 +517,18 @@ void TransfersDialog::processSettings(bool bLoad)
         // state of splitter
 //        ui.splitter->restoreState(Settings->value("Splitter").toByteArray());
 
+        setShowDLSizeColumn(Settings->value("showDLSizeColumn", !ui.downloadList->isColumnHidden(COLUMN_SIZE)).toBool());
+        setShowDLCompleteColumn(Settings->value("showDLCompleteColumn", !ui.downloadList->isColumnHidden(COLUMN_COMPLETED)).toBool());
+        setShowDLDLSpeedColumn(Settings->value("showDLDLSpeedColumn", !ui.downloadList->isColumnHidden(COLUMN_DLSPEED)).toBool());
+        setShowDLProgressColumn(Settings->value("showDLProgressColumn", !ui.downloadList->isColumnHidden(COLUMN_PROGRESS)).toBool());
+        setShowDLSourcesColumn(Settings->value("showDLSourcesColumn", !ui.downloadList->isColumnHidden(COLUMN_SOURCES)).toBool());
+        setShowDLStatusColumn(Settings->value("showDLStatusColumn", !ui.downloadList->isColumnHidden(COLUMN_STATUS)).toBool());
+        setShowDLPriorityColumn(Settings->value("showDLPriorityColumn", !ui.downloadList->isColumnHidden(COLUMN_PRIORITY)).toBool());
+        setShowDLRemainingColumn(Settings->value("showDLRemainingColumn", !ui.downloadList->isColumnHidden(COLUMN_REMAINING)).toBool());
+        setShowDLDownloadTimeColumn(Settings->value("showDLDownloadTimeColumn", !ui.downloadList->isColumnHidden(COLUMN_DOWNLOADTIME)).toBool());
+        setShowDLIDColumn(Settings->value("showDLIDColumn", !ui.downloadList->isColumnHidden(COLUMN_ID)).toBool());
+        setShowDLLastDLColumn(Settings->value("showDLLastDLColumn", !ui.downloadList->isColumnHidden(COLUMN_LASTDL)).toBool());
+
         // selected tab
         ui.tabWidget->setCurrentIndex(Settings->value("selectedTab").toInt());
     } else {
@@ -491,6 +543,18 @@ void TransfersDialog::processSettings(bool bLoad)
 
         // state of splitter
 //        Settings->setValue("Splitter", ui.splitter->saveState());
+
+        Settings->setValue("showDLSizeColumn", !ui.downloadList->isColumnHidden(COLUMN_SIZE));
+        Settings->setValue("showDLCompleteColumn", !ui.downloadList->isColumnHidden(COLUMN_COMPLETED));
+        Settings->setValue("showDLDLSpeedColumn", !ui.downloadList->isColumnHidden(COLUMN_DLSPEED));
+        Settings->setValue("showDLProgressColumn", !ui.downloadList->isColumnHidden(COLUMN_PROGRESS));
+        Settings->setValue("showDLSourcesColumn", !ui.downloadList->isColumnHidden(COLUMN_SOURCES));
+        Settings->setValue("showDLStatusColumn", !ui.downloadList->isColumnHidden(COLUMN_STATUS));
+        Settings->setValue("showDLPriorityColumn", !ui.downloadList->isColumnHidden(COLUMN_PRIORITY));
+        Settings->setValue("showDLRemainingColumn", !ui.downloadList->isColumnHidden(COLUMN_REMAINING));
+        Settings->setValue("showDLDownloadTimeColumn", !ui.downloadList->isColumnHidden(COLUMN_DOWNLOADTIME));
+        Settings->setValue("showDLIDColumn", !ui.downloadList->isColumnHidden(COLUMN_ID));
+        Settings->setValue("showDLLastDLColumn", !ui.downloadList->isColumnHidden(COLUMN_LASTDL));
 
         // selected tab
         Settings->setValue("selectedTab", ui.tabWidget->currentIndex());
@@ -698,6 +762,40 @@ void TransfersDialog::downloadListCustomPopupMenu( QPoint /*point*/ )
 	contextMnu.addSeparator();
 
 	contextMnu.exec(QCursor::pos());
+}
+
+void TransfersDialog::downloadListHeaderCustomPopupMenu( QPoint /*point*/ )
+{
+    std::cerr << "TransfersDialog::downloadListHeaderCustomPopupMenu()" << std::endl;
+    QMenu contextMnu( this );
+
+    showDLSizeAct->setChecked(!ui.downloadList->isColumnHidden(COLUMN_SIZE));
+    showDLCompleteAct->setChecked(!ui.downloadList->isColumnHidden(COLUMN_COMPLETED));
+    showDLDLSpeedAct->setChecked(!ui.downloadList->isColumnHidden(COLUMN_DLSPEED));
+    showDLProgressAct->setChecked(!ui.downloadList->isColumnHidden(COLUMN_PROGRESS));
+    showDLSourcesAct->setChecked(!ui.downloadList->isColumnHidden(COLUMN_SOURCES));
+    showDLStatusAct->setChecked(!ui.downloadList->isColumnHidden(COLUMN_STATUS));
+    showDLPriorityAct->setChecked(!ui.downloadList->isColumnHidden(COLUMN_PRIORITY));
+    showDLRemainingAct->setChecked(!ui.downloadList->isColumnHidden(COLUMN_REMAINING));
+    showDLDownloadTimeAct->setChecked(!ui.downloadList->isColumnHidden(COLUMN_DOWNLOADTIME));
+    showDLIDAct->setChecked(!ui.downloadList->isColumnHidden(COLUMN_ID));
+    showDLLastDLAct->setChecked(!ui.downloadList->isColumnHidden(COLUMN_LASTDL));
+
+    QMenu *menu = contextMnu.addMenu(tr("Columns"));
+    menu->addAction(showDLSizeAct);
+    menu->addAction(showDLCompleteAct);
+    menu->addAction(showDLDLSpeedAct);
+    menu->addAction(showDLProgressAct);
+    menu->addAction(showDLSourcesAct);
+    menu->addAction(showDLStatusAct);
+    menu->addAction(showDLPriorityAct);
+    menu->addAction(showDLRemainingAct);
+    menu->addAction(showDLDownloadTimeAct);
+    menu->addAction(showDLIDAct);
+    menu->addAction(showDLLastDLAct);
+
+    contextMnu.exec(QCursor::pos());
+
 }
 
 void TransfersDialog::chooseDestinationDirectory()
@@ -1768,6 +1866,82 @@ void TransfersDialog::openCollection()
 	if (Collection.load(this)) {
 		Collection.downloadFiles();
 	}
+}
+void TransfersDialog::setShowDLSizeColumn(bool show)
+{
+    if (!ui.downloadList->isColumnHidden(COLUMN_SIZE) != show) {
+        ui.downloadList->setColumnHidden(COLUMN_SIZE, !show);
+    }
+}
+
+void TransfersDialog::setShowDLCompleteColumn(bool show)
+{
+    if (!ui.downloadList->isColumnHidden(COLUMN_COMPLETED) != show) {
+        ui.downloadList->setColumnHidden(COLUMN_COMPLETED, !show);
+    }
+}
+
+void TransfersDialog::setShowDLDLSpeedColumn(bool show)
+{
+    if (!ui.downloadList->isColumnHidden(COLUMN_DLSPEED) != show) {
+        ui.downloadList->setColumnHidden(COLUMN_DLSPEED, !show);
+    }
+}
+
+void TransfersDialog::setShowDLProgressColumn(bool show)
+{
+    if (!ui.downloadList->isColumnHidden(COLUMN_PROGRESS) != show) {
+        ui.downloadList->setColumnHidden(COLUMN_PROGRESS, !show);
+    }
+}
+
+void TransfersDialog::setShowDLSourcesColumn(bool show)
+{
+    if (!ui.downloadList->isColumnHidden(COLUMN_SOURCES) != show) {
+        ui.downloadList->setColumnHidden(COLUMN_SOURCES, !show);
+    }
+}
+
+void TransfersDialog::setShowDLStatusColumn(bool show)
+{
+    if (!ui.downloadList->isColumnHidden(COLUMN_STATUS) != show) {
+        ui.downloadList->setColumnHidden(COLUMN_STATUS, !show);
+    }
+}
+
+void TransfersDialog::setShowDLPriorityColumn(bool show)
+{
+    if (!ui.downloadList->isColumnHidden(COLUMN_PRIORITY) != show) {
+        ui.downloadList->setColumnHidden(COLUMN_PRIORITY, !show);
+    }
+}
+
+void TransfersDialog::setShowDLRemainingColumn(bool show)
+{
+    if (!ui.downloadList->isColumnHidden(COLUMN_REMAINING) != show) {
+        ui.downloadList->setColumnHidden(COLUMN_REMAINING, !show);
+    }
+}
+
+void TransfersDialog::setShowDLDownloadTimeColumn(bool show)
+{
+    if (!ui.downloadList->isColumnHidden(COLUMN_DOWNLOADTIME) != show) {
+        ui.downloadList->setColumnHidden(COLUMN_DOWNLOADTIME, !show);
+    }
+}
+
+void TransfersDialog::setShowDLIDColumn(bool show)
+{
+    if (!ui.downloadList->isColumnHidden(COLUMN_ID) != show) {
+        ui.downloadList->setColumnHidden(COLUMN_ID, !show);
+    }
+}
+
+void TransfersDialog::setShowDLLastDLColumn(bool show)
+{
+    if (!ui.downloadList->isColumnHidden(COLUMN_LASTDL) != show) {
+        ui.downloadList->setColumnHidden(COLUMN_LASTDL, !show);
+    }
 }
 
 void TransfersDialog::expandAll()
