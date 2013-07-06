@@ -370,12 +370,12 @@ bool PGPHandler::GeneratePGPCertificate(const std::string& name, const std::stri
 	}
 	if(email.length() > PGP_CERTIFICATE_LIMIT_MAX_EMAIL_SIZE)
 	{
-		errString = std::string("(EE) name in certificate exceeds the maximum allowed email size") ;
+		errString = std::string("(EE) email in certificate exceeds the maximum allowed email size") ;
 		return false ;
 	}
-	if(email.length() > PGP_CERTIFICATE_LIMIT_MAX_PASSWD_SIZE)
+	if(passphrase.length() > PGP_CERTIFICATE_LIMIT_MAX_PASSWD_SIZE)
 	{
-		errString = std::string("(EE) name in certificate exceeds the maximum allowed name size") ;
+		errString = std::string("(EE) passphrase in certificate exceeds the maximum allowed passphrase size") ;
 		return false ;
 	}
 
