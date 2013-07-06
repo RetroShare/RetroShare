@@ -90,6 +90,7 @@
 #define CERTIFICATE_NAME         "name"
 #define CERTIFICATE_EXT_IPPORT   "extipp"
 #define CERTIFICATE_LOC_IPPORT   "locipp"
+#define CERTIFICATE_DYNDNS       "dyndns"
 
 #define PRIVATE_CHAT_TIME_STAMP  "time_stamp"
 #define PRIVATE_CHAT_STRING      "encrypted_data"
@@ -289,6 +290,7 @@ void RetroShareLink::fromUrl(const QUrl& url)
 		  _GPGBase64CheckSum = url.queryItemValue(CERTIFICATE_GPG_CHECKSUM);
 		  _ext_ip_port = url.queryItemValue(CERTIFICATE_EXT_IPPORT);
 		  _loc_ip_port = url.queryItemValue(CERTIFICATE_LOC_IPPORT);
+		  _dyndns_name = url.queryItemValue(CERTIFICATE_DYNDNS);
 		  std::cerr << "Got a certificate link!!" << std::endl;
 		  check() ;
         return;
@@ -419,6 +421,7 @@ bool RetroShareLink::createCertificate(const std::string& ssl_or_gpg_id)
 		_location = QString::fromUtf8(detail.location.c_str()) ;
 		_ext_ip_port = QString::fromStdString(detail.extAddr) + ":" + QString::number(detail.extPort) + ";" ;
 		_loc_ip_port = QString::fromStdString(detail.localAddr) + ":" + QString::number(detail.localPort) + ";" ;
+		_dyndns_name = QString::fromStdString(detail.dyndns);
 	}
 	_name = QString::fromUtf8(detail.name.c_str()) ;
 
@@ -429,6 +432,7 @@ bool RetroShareLink::createCertificate(const std::string& ssl_or_gpg_id)
 	std::cerr << "Found Local    IP+Port     = " << _loc_ip_port.toStdString() << std::endl;
 	std::cerr << "Found External IP+Port     = " << _ext_ip_port.toStdString() << std::endl;
 	std::cerr << "Found Location             = " << _location.toStdString() << std::endl;
+	std::cerr << "Found DNS                  = " << _dyndns_name.toStdString() << std::endl;
 
 	return true;
 }
@@ -686,7 +690,7 @@ QString RetroShareLink::title() const
 	case TYPE_MESSAGE:
 		return PeerDefs::rsidFromId(hash().toStdString());
 	case TYPE_CERTIFICATE:
-		return QObject::tr("Click to add this RetroShare cert to your PGP keyring\nand open the Make Friend Wizard.\n") + QString("GPG Id = ") + GPGId() + QString("\nSSLId = ")+SSLId();
+		return QObject::tr("Click to add this RetroShare cert to your PGP keyring\nand open the Make Friend Wizard.\n") + QString("PGP Id = ") + GPGId() + QString("\nSSLId = ")+SSLId();
 	}
 
 	return "";
@@ -826,6 +830,9 @@ QString RetroShareLink::toString() const
 			  }
 			  if (!_ext_ip_port.isEmpty()) {
 				  url.addQueryItem(CERTIFICATE_EXT_IPPORT, encodeItem(_ext_ip_port));
+			  }
+			  if (!_dyndns_name.isEmpty()) {
+				  url.addQueryItem(CERTIFICATE_DYNDNS, encodeItem(_dyndns_name));
 			  }
 
 			  return url.toString();
@@ -1178,6 +1185,8 @@ static void processList(const QStringList &list, const QString &textSingular, co
 						RS_Certificate += "--EXT--" + link.externalIPAndPort() + ";" ;
 					if(!link.localIPAndPort().isNull())
 						RS_Certificate += "--LOCAL--" + link.localIPAndPort() + ";" ;
+					if(!link.dyndns().isNull())
+						RS_Certificate += "--DYNDNS--" + link.dyndns() + ";" ;
 					RS_Certificate += "\n" ;
 
 					std::cerr << "Usign this certificate:" << std::endl;
