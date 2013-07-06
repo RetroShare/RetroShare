@@ -234,7 +234,7 @@ win32 {
 
 	# SQLite include path is required to compile GXS.
 	gxs {
-		SQLITE_DIR = ../../../sqlcipher-2.1.1
+		SQLITE_DIR = ../../../sqlcipher-2.2.0
 		INCLUDEPATH += $${SQLITE_DIR}
 	}
 }

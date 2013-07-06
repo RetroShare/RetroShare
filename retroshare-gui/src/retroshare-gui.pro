@@ -152,7 +152,7 @@ win32 {
 
 	gxs {
 		LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
-		LIBS += -lsqlite3
+		LIBS += -lsqlcipher
 	}
 
 	LIBS += -lssl -lcrypto -lpthreadGC2d -lminiupnpc -lz
