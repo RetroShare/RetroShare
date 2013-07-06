@@ -33,6 +33,8 @@ MimeTextEdit::MimeTextEdit(QWidget *parent)
 {
     mCompleterKeyModifiers=Qt::ControlModifier;
     mCompleterKey=Qt::Key_Space;
+    mForceCompleterShowNextKeyEvent=false;
+    mCompleterStartString="";
 }
 
 bool MimeTextEdit::canInsertFromMimeData(const QMimeData* source) const
@@ -150,13 +152,15 @@ void MimeTextEdit::keyPressEvent(QKeyEvent *e)
     if (!mCompleter || !isShortcut) // do not process the shortcut when we have a completer
         QTextEdit::keyPressEvent(e);
 
+    if (!mCompleter) return; //Nothing else to do if not mCompleter initialized
+
     if (!isShortcut && (mCompleter && !mCompleter->popup()->isVisible())) {
         return;
     }
 
     if (!mForceCompleterShowNextKeyEvent) {
         static QString eow(" ~!@#$%^&*()_+{}|:\"<>?,./;'[]\\-="); // end of word
-        if (!isShortcut && ( e->text().isEmpty() || eow.contains(e->text().right(1)))){
+        if (!isShortcut && !e->text().isEmpty() && eow.contains(e->text())){
             mCompleter->popup()->hide();
             return;
         }
