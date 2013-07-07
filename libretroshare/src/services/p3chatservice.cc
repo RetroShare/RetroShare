@@ -2920,6 +2920,9 @@ bool p3ChatService::handleTunnelRequest(const std::string& hash,const std::strin
 	if(it == _distant_chat_invites.end())
 		return false ;
 
+	if(it->second.encrypted_radix64_string.empty())		// don't respond to collected invites. Only to the ones we actually created!
+		return false ;
+
 	it->second.last_hit_time = time(NULL) ;
 	return true ;
 }
