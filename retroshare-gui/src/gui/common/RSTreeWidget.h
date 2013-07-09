@@ -34,8 +34,13 @@ public:
 
 	void setPlaceholderText(const QString &text);
 
+	void filterItems(int filterColumn, const QString &text);
+
 signals:
 	void signalMouseMiddleButtonClicked(QTreeWidgetItem *item);
+
+private:
+	bool filterItem(QTreeWidgetItem *item, int filterColumn, const QString &text);
 
 protected:
 	void paintEvent(QPaintEvent *event);

@@ -71,3 +71,38 @@ void RSTreeWidget::mousePressEvent(QMouseEvent *event)
 
 	QTreeWidget::mousePressEvent(event);
 }
+
+void RSTreeWidget::filterItems(int filterColumn, const QString &text)
+{
+	int count = topLevelItemCount();
+	for (int index = 0; index < count; ++index) {
+		filterItem(topLevelItem(index), filterColumn, text);
+	}
+}
+
+bool RSTreeWidget::filterItem(QTreeWidgetItem *item, int filterColumn, const QString &text)
+{
+	bool itemVisible = true;
+
+	if (!text.isEmpty()) {
+		if (!item->text(filterColumn).contains(text, Qt::CaseInsensitive)) {
+			itemVisible = false;
+		}
+	}
+
+	int visibleChildCount = 0;
+	int count = item->childCount();
+	for (int index = 0; index < count; ++index) {
+		if (filterItem(item->child(index), filterColumn, text)) {
+			++visibleChildCount;
+		}
+	}
+
+	if (itemVisible || visibleChildCount) {
+		item->setHidden(false);
+	} else {
+		item->setHidden(true);
+	}
+
+	return (itemVisible || visibleChildCount);
+}
