@@ -99,8 +99,9 @@ public:
 	bool checkForRequest(uint32_t token);
 	void loadRequest(const TokenRequest &req);
 
-        bool activeRequestExist(const uint32_t& userType) const;
-        void activeRequestTokens(const uint32_t& userType, std::list<uint32_t>& tokens) const;
+	bool activeRequestExist(const uint32_t& userType) const;
+	void activeRequestTokens(const uint32_t& userType, std::list<uint32_t>& tokens) const;
+	void cancelActiveRequestTokens(const uint32_t& userType);
 
 protected:
 	void doPoll(float dt);

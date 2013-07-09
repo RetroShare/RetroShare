@@ -209,6 +209,18 @@ void TokenQueue::activeRequestTokens(const uint32_t& userType, std::list<uint32_
 
 }
 
+void TokenQueue::cancelActiveRequestTokens(const uint32_t& userType)
+{
+	std::list<uint32_t> tokens;
+	activeRequestTokens(userType, tokens);
+	if (!tokens.empty()) {
+		std::list<uint32_t>::iterator tokenIt;
+		for (tokenIt = tokens.begin(); tokenIt != tokens.end(); ++tokenIt) {
+			cancelRequest(*tokenIt);
+		}
+	}
+}
+
 void TokenQueue::loadRequest(const TokenRequest &req)
 {
 	std::cerr << "TokenQueue::loadRequest(): ";
