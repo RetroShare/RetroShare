@@ -309,6 +309,7 @@ HEADERS +=  rshare.h \
             gui/im_history/IMHistoryItemDelegate.h \
             gui/im_history/IMHistoryItemPainter.h \
             lang/languagesupport.h \
+            util/RsProtectedTimer.h \
             util/stringutil.h \
             util/DateTime.h \
             util/win32.h \

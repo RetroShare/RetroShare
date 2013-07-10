@@ -22,6 +22,7 @@
  */
 
 #include "util/TokenQueue.h"
+#include "retroshare-gui/RsAutoUpdatePage.h"
 #include <iostream>
 
 #include <QTimer>
@@ -118,6 +119,9 @@ void TokenQueue::doPoll(float dt)
 
 void TokenQueue::pollRequests()
 {
+	if(RsAutoUpdatePage::eventsLocked())
+		return ;
+
 	double pollPeriod = 1.0; // max poll period.
 
 	if (mRequests.empty())	{

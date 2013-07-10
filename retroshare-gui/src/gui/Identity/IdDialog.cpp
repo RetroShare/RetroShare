@@ -31,7 +31,7 @@
 #include <iostream>
 #include <sstream>
 
-#include <QTimer>
+#include <util/RsProtectedTimer.h>
 
 /******
  * #define ID_DEBUG 1
@@ -80,7 +80,7 @@ IdDialog::IdDialog(QWidget *parent)
 	connect( ui.radioButton_ListPseudo, SIGNAL(toggled( bool ) ), this, SLOT(ListTypeToggled( bool ) ) );
 	connect( ui.radioButton_ListAll, SIGNAL(toggled( bool ) ), this, SLOT(ListTypeToggled( bool ) ) );
 
-	QTimer *timer = new QTimer(this);
+	QTimer *timer = new RsProtectedTimer(this);
 	timer->connect(timer, SIGNAL(timeout()), this, SLOT(checkUpdate()));
 	timer->start(1000);
 
