@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef MRK_IDENTITY_DIALOG_H
-#define MRK_IDENTITY_DIALOG_H
+#ifndef IDENTITYDIALOG_H
+#define IDENTITYDIALOG_H
 
 #include "retroshare-gui/mainpage.h"
 #include "ui_IdDialog.h"
@@ -34,34 +34,38 @@
 #include "gui/Identity/IdEditDialog.h"
 #include "util/TokenQueue.h"
 
+class UIStateHelper;
+
 class IdDialog : public MainPage, public TokenResponse
 {
-  Q_OBJECT
+	Q_OBJECT
 
 public:
 	IdDialog(QWidget *parent = 0);
 
-void    loadRequest(const TokenQueue *queue, const TokenRequest &req);
+	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 private slots:
+	void filterComboBoxChanged();
+	void filterChanged(const QString &text);
 
-
-	void ListTypeToggled(bool checked);
 	void checkUpdate();
-	void OpenOrShowAddDialog();
-	void OpenOrShowEditDialog();
+	void addIdentity();
+	void editIdentity();
 
 	void updateSelection();
 
-private:
+	void todo();
 
-	void blankSelection();
+private:
 	void requestIdDetails(std::string &id);
 	void insertIdDetails(uint32_t token);
 
 	void requestIdList();
 	void requestIdData(std::list<std::string> &ids);
+	bool fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, const std::string &ownPgpId, int accept);
 	void insertIdList(uint32_t token);
+	void filterIds();
 
 	void requestRepList(const RsGxsGroupId &aboutId);
 	void insertRepList(uint32_t token);
@@ -69,14 +73,12 @@ private:
 	void requestIdEdit(std::string &id);
 	void showIdEdit(uint32_t token);
 
-	IdEditDialog *mEditDialog;
-
+private:
 	TokenQueue *mIdQueue;
+	UIStateHelper *mStateHelper;
 
 	/* UI - from Designer */
 	Ui::IdDialog ui;
-
 };
 
 #endif
-

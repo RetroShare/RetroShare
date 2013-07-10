@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef MRK_ID_EDIT_DIALOG_H
-#define MRK_ID_EDIT_DIALOG_H
+#ifndef IDEDITDIALOG_H
+#define IDEDITDIALOG_H
 
 #include "ui_IdEditDialog.h"
 
@@ -30,35 +30,34 @@
 
 #include "util/TokenQueue.h"
 
-class IdEditDialog : public QWidget, public TokenResponse
+class UIStateHelper;
+
+class IdEditDialog : public QDialog, public TokenResponse
 {
-  Q_OBJECT
+	Q_OBJECT
 
 public:
 	IdEditDialog(QWidget *parent = 0);
 
 	void setupNewId(bool pseudo);
 	void setupExistingId(std::string keyId);
-	void loadExistingId(uint32_t token);
 
-void    loadRequest(const TokenQueue *queue, const TokenRequest &req);
+	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 private slots:
-
-	void IdTypeToggled(bool checked);
+	void idTypeToggled(bool checked);
 	void updateId();
-	void cancelId();
 
 private:
 	void updateIdType(bool pseudo);
-	void clearDialog();
+	void loadExistingId(uint32_t token);
 
 protected:
-
 	Ui::IdEditDialog ui;
+	bool mIsNew;
+	UIStateHelper *mStateHelper;
 
 	TokenQueue *mIdQueue;
 };
 
 #endif
-

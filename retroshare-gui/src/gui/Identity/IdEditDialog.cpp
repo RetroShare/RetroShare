@@ -22,6 +22,7 @@
  */
 
 #include "gui/Identity/IdEditDialog.h"
+#include "gui/common/UIStateHelper.h"
 #include "util/TokenQueue.h"
 
 #include <retroshare/rsidentity.h>
@@ -33,22 +34,46 @@
 
 /** Constructor */
 IdEditDialog::IdEditDialog(QWidget *parent)
-: QWidget(parent)
+: QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint)
 {
+	mIsNew = true;
+
 	ui.setupUi(this);
 
-	connect(ui.radioButton_GpgId, SIGNAL( toggled( bool ) ), this, SLOT( IdTypeToggled( bool ) ) );
-	connect(ui.radioButton_Pseudo, SIGNAL( toggled( bool ) ), this, SLOT( IdTypeToggled( bool ) ) );
-	connect(ui.pushButton_Update, SIGNAL( clicked( void ) ), this, SLOT( updateId( void ) ) );
-	connect(ui.pushButton_Cancel, SIGNAL( clicked( void ) ), this, SLOT( cancelId( void ) ) );
+	/* Setup UI helper */
+	mStateHelper = new UIStateHelper(this);
+
+	mStateHelper->addWidget(IDEDITDIALOG_LOADID, ui.lineEdit_Nickname);
+	mStateHelper->addWidget(IDEDITDIALOG_LOADID, ui.lineEdit_KeyId);
+	mStateHelper->addWidget(IDEDITDIALOG_LOADID, ui.lineEdit_GpgHash);
+	mStateHelper->addWidget(IDEDITDIALOG_LOADID, ui.lineEdit_GpgId);
+	mStateHelper->addWidget(IDEDITDIALOG_LOADID, ui.lineEdit_GpgName);
+	mStateHelper->addWidget(IDEDITDIALOG_LOADID, ui.radioButton_GpgId);
+	mStateHelper->addWidget(IDEDITDIALOG_LOADID, ui.radioButton_Pseudo);
+
+	mStateHelper->addLoadPlaceholder(IDEDITDIALOG_LOADID, ui.lineEdit_Nickname);
+	mStateHelper->addLoadPlaceholder(IDEDITDIALOG_LOADID, ui.lineEdit_GpgName);
+	mStateHelper->addLoadPlaceholder(IDEDITDIALOG_LOADID, ui.lineEdit_KeyId);
+	mStateHelper->addLoadPlaceholder(IDEDITDIALOG_LOADID, ui.lineEdit_GpgHash);
+	mStateHelper->addLoadPlaceholder(IDEDITDIALOG_LOADID, ui.lineEdit_GpgId);
+	mStateHelper->addLoadPlaceholder(IDEDITDIALOG_LOADID, ui.lineEdit_GpgName);
+
+	/* Connect signals */
+	connect(ui.radioButton_GpgId, SIGNAL(toggled(bool)), this, SLOT(idTypeToggled(bool)));
+	connect(ui.radioButton_Pseudo, SIGNAL(toggled(bool)), this, SLOT(idTypeToggled(bool)));
+	connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(updateId()));
+	connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(close()));
+
 	mIdQueue = new TokenQueue(rsIdentity->getTokenService(), this);
 }
 
 void IdEditDialog::setupNewId(bool pseudo)
 {
-	ui.checkBox_NewId->setChecked(true);
-	ui.checkBox_NewId->setEnabled(false);
-	ui.lineEdit_KeyId->setText("To Be Generated");
+	setWindowTitle(tr("New identity"));
+
+	mIsNew = true;
+
+	ui.lineEdit_KeyId->setText(tr("To be generated"));
 	ui.lineEdit_Nickname->setText("");
 	ui.radioButton_GpgId->setEnabled(true);
 	ui.radioButton_Pseudo->setEnabled(true);
@@ -63,11 +88,10 @@ void IdEditDialog::setupNewId(bool pseudo)
 	}
 
 	// force - incase it wasn't triggered.
-	IdTypeToggled(true);
-	return;
+	idTypeToggled(true);
 }
 
-void IdEditDialog::IdTypeToggled(bool checked)
+void IdEditDialog::idTypeToggled(bool checked)
 {
 	if (checked)
 	{
@@ -80,10 +104,9 @@ void IdEditDialog::updateIdType(bool pseudo)
 {
 	if (pseudo)
 	{
-		ui.lineEdit_GpgHash->setText("N/A");
-		ui.lineEdit_GpgId->setText("N/A");
-		ui.lineEdit_GpgName->setText("N/A");
-		ui.lineEdit_GpgEmail->setText("N/A");
+		ui.lineEdit_GpgHash->setText(tr("N/A"));
+		ui.lineEdit_GpgId->setText(tr("N/A"));
+		ui.lineEdit_GpgName->setText(tr("N/A"));
 	}
 	else
 	{
@@ -93,39 +116,39 @@ void IdEditDialog::updateIdType(bool pseudo)
 		rsPeers->getPeerDetails(gpgid, details);
 
 		ui.lineEdit_GpgId->setText(QString::fromStdString(gpgid));
-		ui.lineEdit_GpgHash->setText("To Be Generated");
+		ui.lineEdit_GpgHash->setText(tr("To be generated"));
 		ui.lineEdit_GpgName->setText(QString::fromStdString(details.name));
-		ui.lineEdit_GpgEmail->setText(QString::fromStdString(details.email));
 	}
-	return;
 }
-
 
 void IdEditDialog::setupExistingId(std::string keyId)
 {
-        RsTokReqOptions opts;
+	setWindowTitle(tr("Edit identity"));
 
-        std::list<std::string> groupIds;
-        groupIds.push_back(keyId);
+	mIsNew = false;
 
-        uint32_t token;
-        mIdQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds, IDEDITDIALOG_LOADID);
+	mStateHelper->setLoading(IDEDITDIALOG_LOADID, true);
+
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+
+	std::list<std::string> groupIds;
+	groupIds.push_back(keyId);
+
+	uint32_t token;
+	mIdQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds, IDEDITDIALOG_LOADID);
 }
-
 
 void IdEditDialog::loadExistingId(uint32_t token)
 {
-	ui.checkBox_NewId->setChecked(false);
-	ui.checkBox_NewId->setEnabled(false);
-	ui.radioButton_GpgId->setEnabled(false);
-	ui.radioButton_Pseudo->setEnabled(false);
+	mStateHelper->setLoading(IDEDITDIALOG_LOADID, false);
 
-        /* get details from libretroshare */
+	/* get details from libretroshare */
 	RsGxsIdGroup data;
 	std::vector<RsGxsIdGroup> datavector;
 	if (!rsIdentity->getGroupData(token, datavector))
 	{
-		ui.lineEdit_KeyId->setText("ERROR GETTING KEY!");
+		ui.lineEdit_KeyId->setText(tr("Error getting key!"));
 		return;
 	}
 	
@@ -134,13 +157,12 @@ void IdEditDialog::loadExistingId(uint32_t token)
 		std::cerr << "IdDialog::insertIdDetails() Invalid datavector size";
 		std::cerr << std::endl;
 
-		ui.lineEdit_KeyId->setText("ERROR KEYID INVALID");
+		ui.lineEdit_KeyId->setText(tr("Error KeyID invalid"));
 		ui.lineEdit_Nickname->setText("");
 
-		ui.lineEdit_GpgHash->setText("N/A");
-		ui.lineEdit_GpgId->setText("N/A");
-		ui.lineEdit_GpgName->setText("N/A");
-		ui.lineEdit_GpgEmail->setText("N/A");
+		ui.lineEdit_GpgHash->setText(tr("N/A"));
+		ui.lineEdit_GpgId->setText(tr("N/A"));
+		ui.lineEdit_GpgName->setText(tr("N/A"));
 		return;
 	}
 
@@ -159,10 +181,10 @@ void IdEditDialog::loadExistingId(uint32_t token)
 
 	// DOES THIS TRIGGER ALREADY???
 	// force - incase it wasn't triggered.
-	IdTypeToggled(true);
+	idTypeToggled(true);
 
 	ui.lineEdit_Nickname->setText(QString::fromStdString(data.mMeta.mGroupName));
-        ui.lineEdit_KeyId->setText(QString::fromStdString(data.mMeta.mGroupId));
+	ui.lineEdit_KeyId->setText(QString::fromStdString(data.mMeta.mGroupId));
 
 	if (realid)
 	{
@@ -173,33 +195,27 @@ void IdEditDialog::loadExistingId(uint32_t token)
 			RsPeerDetails details;
 			rsPeers->getGPGDetails(data.mPgpId, details);
 			ui.lineEdit_GpgName->setText(QString::fromStdString(details.name));
-			ui.lineEdit_GpgEmail->setText(QString::fromStdString(details.email));
 
 			ui.lineEdit_GpgId->setText(QString::fromStdString(data.mPgpId));
 		}
 		else
 		{
-			ui.lineEdit_GpgId->setText("Unknown PgpId");
-			ui.lineEdit_GpgName->setText("Unknown Real Name");
-			ui.lineEdit_GpgEmail->setText("Unknown Email");
+			ui.lineEdit_GpgId->setText(tr("Unknown GpgId"));
+			ui.lineEdit_GpgName->setText(tr("Unknown real name"));
 		}
 	}
 	else
 	{
-		ui.lineEdit_GpgHash->setText("N/A");
-		ui.lineEdit_GpgId->setText("N/A");
-		ui.lineEdit_GpgName->setText("N/A");
-		ui.lineEdit_GpgEmail->setText("N/A");
+		ui.lineEdit_GpgHash->setText(tr("N/A"));
+		ui.lineEdit_GpgId->setText(tr("N/A"));
+		ui.lineEdit_GpgName->setText(tr("N/A"));
 	}
-
-	return;
 }
 
 void IdEditDialog::updateId()
 {
 	RsGxsIdGroup rid;
 	// Must set, Nickname, KeyId(if existing), mIdType, GpgId.
-
 
 	rid.mMeta.mGroupName = ui.lineEdit_Nickname->text().toStdString();
 
@@ -211,7 +227,7 @@ void IdEditDialog::updateId()
 	}
 
 	//rid.mIdType = RSID_RELATION_YOURSELF;
-	if (ui.checkBox_NewId->isChecked())
+	if (mIsNew)
 	{
 		rid.mMeta.mGroupId = "";
 	}
@@ -227,7 +243,6 @@ void IdEditDialog::updateId()
 		//rid.mGpgId = ui.lineEdit_GpgId->text().toStdString();
 		rid.mPgpIdHash = ui.lineEdit_GpgHash->text().toStdString();
 		//rid.mGpgName = ui.lineEdit_GpgName->text().toStdString();
-		//rid.mGpgEmail = ui.lineEdit_GpgEmail->text().toStdString();
 	}
 	else
 	{
@@ -238,7 +253,6 @@ void IdEditDialog::updateId()
 		//rid.mGpgName = "";
 		//rid.mGpgEmail = "";
 	}
-
 	
 	// Can only create Identities for the moment!
 	RsIdentityParameters params;
@@ -248,23 +262,10 @@ void IdEditDialog::updateId()
 	uint32_t dummyToken = 0;
 	rsIdentity->createIdentity(dummyToken, params);
 
-	hide();
-	return;
+	close();
 }
 
-void IdEditDialog::cancelId()
-{
-	hide();
-	return;
-}
-
-void IdEditDialog::clearDialog()
-{
-	return;
-}
-
-
-void IdEditDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
+void IdEditDialog::loadRequest(const TokenQueue */*queue*/, const TokenRequest &req)
 {
 	std::cerr << "IdDialog::loadRequest() UserType: " << req.mUserType;
 	std::cerr << std::endl;
@@ -272,5 +273,3 @@ void IdEditDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 	// only one here!
 	loadExistingId(req.mToken);
 }
-
-	

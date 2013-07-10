@@ -23,6 +23,7 @@
 
 #include <QTimer>
 #include <retroshare-gui/RsAutoUpdatePage.h>
+#include <iostream>
 
 #define PROTECTED_TIMER_DEBUG
 
@@ -45,7 +46,7 @@ class RsProtectedTimer: public QTimer
 			}
 
 #ifdef PROTECTED_TIMER_DEBUG
-			std::cerr << "Timer has passsed protection." << std::endl;
+			std::cerr << "Timer has passed protection." << std::endl;
 #endif
 			QTimer::timerEvent(e) ;
 		}
