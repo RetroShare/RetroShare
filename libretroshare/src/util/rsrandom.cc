@@ -3,11 +3,8 @@
 #include <unistd.h>
 #include "rsrandom.h"
 
-#define RSRANDOM_USE_SSL
-
-#ifdef RSRANDOM_USE_SSL
 #include <openssl/rand.h>
-#endif
+
 uint32_t RSRandom::index = RSRandom::N ;
 std::vector<uint32_t> RSRandom::MT(RSRandom::N,0u) ;
 RsMutex RSRandom::rndMtx("RSRandom") ;
@@ -16,22 +13,9 @@ RsMutex RSRandom::rndMtx("RSRandom") ;
 // 	OpenSSL random bytes:
 // 			- on systems that only have /dev/urandom (linux, BSD, MacOS), we don't need to call the seed
 // 			- on windows, we need to
-// 	MT19937 pseudo random
-// 			- always seed.
 //
 #ifdef WINDOWS_SYS
 static bool auto_seed = RSRandom::seed( (time(NULL) + ((uint32_t) pthread_self().p)*0x1293fe)^0x18e34a12 ) ;
-#else
-#ifndef RSRANDOM_USE_SSL
-  #ifdef __APPLE__
-	static bool auto_seed = RSRandom::seed( (time(NULL) + pthread_mach_thread_np(pthread_self())*0x1293fe + (getpid()^0x113ef76b))^0x18e34a12 ) ;
-  #elif defined(__FreeBSD__)
-    // since this is completely insecure anyway, just kludge for now
-    static bool auto_seed = RSRandom::seed(time(NULL));
-  #else
-    static bool auto_seed = RSRandom::seed( (time(NULL) + pthread_self()*0x1293fe + (getpid()^0x113ef76b))^0x18e34a12 ) ;
-  #endif
-#endif
 #endif
 
 bool RSRandom::seed(uint32_t s) 
@@ -45,9 +29,9 @@ bool RSRandom::seed(uint32_t s)
 	for (j=1; j<N; j++) 
 		MT[j] = (1812433253UL * (MT[j-1] ^ (MT[j-1] >> 30)) + j) & 0xffffffffUL ;
 
-#ifdef RSRANDOM_USE_SSL
 	RAND_seed((unsigned char *)&MT[0],N*sizeof(uint32_t)) ;
-#endif
+	locked_next_state() ;
+
 	return true ;
 }
 
@@ -57,19 +41,7 @@ void RSRandom::random_bytes(unsigned char *data,uint32_t size)
 }
 void RSRandom::locked_next_state() 
 {
-#ifdef RSRANDOM_USE_SSL
 	RAND_bytes((unsigned char *)&MT[0],N*sizeof(uint32_t)) ;
-#else
-	for(uint32_t i=0;i<N;++i)
-	{
-		uint32_t y = ((MT[i]) & UMASK) | ((MT[(i+1)%(int)N]) & LMASK) ;
-
-		MT[i] = MT[(i + M) % (int)N] ^ (y >> 1) ;
-
-		if((y & 1) == 1) 
-			MT[i] = MT[i] ^ 0x9908b0df ;
-	}
-#endif
 	index = 0 ;
 }
 

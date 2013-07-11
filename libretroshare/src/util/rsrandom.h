@@ -51,12 +51,7 @@ class RSRandom
 	private:
 		static RsMutex rndMtx ;
 
-		static const uint32_t N = 624;
-		static const uint32_t M = 397;
-
-		static const uint32_t MATRIX_A 	= 0x9908b0dfUL;
-		static const uint32_t UMASK 		= 0x80000000UL;
-		static const uint32_t LMASK 		= 0x7fffffffUL;
+		static const uint32_t N = 1024;
 
 		static void locked_next_state() ;
 		static uint32_t index ;
