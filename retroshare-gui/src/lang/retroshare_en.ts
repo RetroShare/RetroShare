@@ -7300,10 +7300,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Showing:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Yourself</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7321,10 +7317,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>All</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>filter</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7380,10 +7372,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>PGP Email</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>PGP Id</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7419,6 +7407,34 @@ p, li { white-space: pre-wrap; }
         <source>Local Reputation</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Todo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PGP Linked Id</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Anon Id</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown real name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Anonymous Id</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>IdEditDialog</name>
@@ -7435,19 +7451,11 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>PGP Email</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>PGP Hash</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>PGP Id</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>New Identity</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7459,11 +7467,35 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Cancel</source>
+        <source>New identity</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Create/Update ID</source>
+        <source>To be generated</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>N/A</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit identity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error getting key!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error KeyID invalid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown GpgId</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown real name</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -12514,10 +12546,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Core-ID</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Peer</source>
         <comment>i.e: user name</comment>
         <translation type="unfinished"></translation>
@@ -12802,6 +12830,78 @@ Try to be patient!</source>
         <source>Collapse all</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Size Column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Completed Column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Speed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Speed Column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Progress / Availability</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Progress / Availability Column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Sources</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Sources Column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Status Column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Speed / Queue position Column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Remaining Column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Download time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Download time Column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Hash Column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Last Time Seen</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Last Time Seen Column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Columns</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>TreeStyle_RDM</name>
@@ -13022,6 +13122,13 @@ Try to be patient!</source>
     </message>
     <message>
         <source>TR Forward probabilities</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>UIStateHelper</name>
+    <message>
+        <source>Loading</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

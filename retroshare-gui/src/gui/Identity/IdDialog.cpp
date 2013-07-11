@@ -46,14 +46,14 @@
 /****************************************************************
  */
 
-#define RSID_COL_NICKNAME	0
-#define RSID_COL_KEYID		1
-#define RSID_COL_IDTYPE		2
+#define RSID_COL_NICKNAME   0
+#define RSID_COL_KEYID      1
+#define RSID_COL_IDTYPE     2
 
-#define RSIDREP_COL_NAME	0
-#define RSIDREP_COL_OPINION	1
-#define RSIDREP_COL_COMMENT	2
-#define RSIDREP_COL_REPUTATION	3
+#define RSIDREP_COL_NAME       0
+#define RSIDREP_COL_OPINION    1
+#define RSIDREP_COL_COMMENT    2
+#define RSIDREP_COL_REPUTATION 3
 
 #define RSID_FILTER_YOURSELF     0x0001
 #define RSID_FILTER_FRIENDS      0x0002
@@ -161,9 +161,9 @@ void IdDialog::todo()
 }
 
 void IdDialog::filterComboBoxChanged()
-        {
-                requestIdList();
-        }
+{
+	requestIdList();
+}
 
 void IdDialog::filterChanged(const QString& /*text*/)
 {
@@ -371,13 +371,13 @@ void IdDialog::requestIdDetails(std::string &id)
 	mStateHelper->setLoading(IDDIALOG_REPLIST, true);
 
 	RsTokReqOptions opts;
-        opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
 
 	uint32_t token;
 	std::list<std::string> groupIds;
 	groupIds.push_back(id);
 
-        mIdQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds, IDDIALOG_IDDETAILS);
+	mIdQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds, IDDIALOG_IDDETAILS);
 }
 
 void IdDialog::insertIdDetails(uint32_t token)
@@ -421,7 +421,7 @@ void IdDialog::insertIdDetails(uint32_t token)
 
 	/* get GPG Details from rsPeers */
 	std::string ownPgpId  = rsPeers->getGPGOwnId();
-	
+
 	ui.lineEdit_Nickname->setText(QString::fromStdString(data.mMeta.mGroupName));
 	ui.lineEdit_KeyId->setText(QString::fromStdString(data.mMeta.mGroupId));
 	ui.lineEdit_GpgHash->setText(QString::fromStdString(data.mPgpIdHash));
@@ -464,7 +464,7 @@ void IdDialog::insertIdDetails(uint32_t token)
 				ui.radioButton_IdFOF->setChecked(true);
 			}
 		}
-		else 
+		else
 		{
 			ui.radioButton_IdOther->setChecked(true);
 		}
@@ -502,7 +502,7 @@ void IdDialog::insertIdDetails(uint32_t token)
 	{
 		ui.line_RatingImplicit->setText("+10 UnKnown PGP");
 	}
-	else 
+	else
 	{
 		ui.line_RatingImplicit->setText("+5 Anon Id");
 	}
@@ -561,14 +561,14 @@ void IdDialog::requestRepList(const RsGxsGroupId &aboutId)
 
 	mIdQueue->cancelActiveRequestTokens(IDDIALOG_REPLIST);
 
-        std::list<RsGxsGroupId> groupIds;
-        groupIds.push_back(aboutId);
+	std::list<RsGxsGroupId> groupIds;
+	groupIds.push_back(aboutId);
 
-        RsTokReqOptions opts;
-        opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
 
-        uint32_t token;
-        mIdQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds, IDDIALOG_REPLIST);
+	uint32_t token;
+	mIdQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds, IDDIALOG_REPLIST);
 }
 
 void IdDialog::insertRepList(uint32_t token)
@@ -615,26 +615,26 @@ void IdDialog::insertRepList(uint32_t token)
 
 void IdDialog::loadRequest(const TokenQueue */*queue*/, const TokenRequest &req)
 {
-        std::cerr << "IdDialog::loadRequest() UserType: " << req.mUserType;
-        std::cerr << std::endl;
-		
+	std::cerr << "IdDialog::loadRequest() UserType: " << req.mUserType;
+	std::cerr << std::endl;
+
 	switch(req.mUserType)
 	{
 		case IDDIALOG_IDLIST:
 			insertIdList(req.mToken);
 			break;
-		
+
 		case IDDIALOG_IDDETAILS:
 			insertIdDetails(req.mToken);
 			break;
-		
+
 		case IDDIALOG_REPLIST:
 			insertRepList(req.mToken);
 			break;
-		
+
 		default:
-        		std::cerr << "IdDialog::loadRequest() ERROR";
-        		std::cerr << std::endl;
+			std::cerr << "IdDialog::loadRequest() ERROR";
+			std::cerr << std::endl;
 			break;
 	}
 }

@@ -151,7 +151,7 @@ void IdEditDialog::loadExistingId(uint32_t token)
 		ui.lineEdit_KeyId->setText(tr("Error getting key!"));
 		return;
 	}
-	
+
 	if (datavector.size() != 1)
 	{
 		std::cerr << "IdDialog::insertIdDetails() Invalid datavector size";
@@ -253,7 +253,7 @@ void IdEditDialog::updateId()
 		//rid.mGpgName = "";
 		//rid.mGpgEmail = "";
 	}
-	
+
 	// Can only create Identities for the moment!
 	RsIdentityParameters params;
 	params.nickname = rid.mMeta.mGroupName;
@@ -269,7 +269,7 @@ void IdEditDialog::loadRequest(const TokenQueue */*queue*/, const TokenRequest &
 {
 	std::cerr << "IdDialog::loadRequest() UserType: " << req.mUserType;
 	std::cerr << std::endl;
-	
+
 	// only one here!
 	loadExistingId(req.mToken);
 }
