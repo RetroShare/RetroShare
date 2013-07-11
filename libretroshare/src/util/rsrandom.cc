@@ -9,10 +9,11 @@ uint32_t RSRandom::index = RSRandom::N ;
 std::vector<uint32_t> RSRandom::MT(RSRandom::N,0u) ;
 RsMutex RSRandom::rndMtx("RSRandom") ;
 
-// Random seed is called according to the following rules:
-// 	OpenSSL random bytes:
-// 			- on systems that only have /dev/urandom (linux, BSD, MacOS), we don't need to call the seed
-// 			- on windows, we need to
+// According to our tests (cyril+thunder), on both Windows and Linux does
+// RAND_bytes init itself automatically at first call, from system-based
+// unpredictable values, so that seeding is not even needed.
+// This call still adds some randomness (not much actually, but it's always good to
+// have anyway)
 //
 #ifdef WINDOWS_SYS
 static bool auto_seed = RSRandom::seed( (time(NULL) + ((uint32_t) pthread_self().p)*0x1293fe)^0x18e34a12 ) ;
