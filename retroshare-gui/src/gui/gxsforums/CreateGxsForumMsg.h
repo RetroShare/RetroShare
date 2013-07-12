@@ -28,6 +28,8 @@
 
 #include <retroshare/rsgxsforums.h>
 
+class UIStateHelper;
+
 class CreateGxsForumMsg : public QDialog, public TokenResponse
 {
 	Q_OBJECT
@@ -58,8 +60,6 @@ protected:
 	void closeEvent (QCloseEvent * event);
 
 private:
-	void saveForumInfo(const RsGroupMetaData &meta);
-	void saveParentMsg(const RsGxsForumMsg &msg);
 	void loadFormInformation();
 
 	void loadForumInfo(const uint32_t &token);
@@ -74,6 +74,7 @@ private:
 	RsGroupMetaData mForumMeta;
 
 	TokenQueue *mForumQueue;
+	UIStateHelper *mStateHelper;
 
 	/** Qt Designer generated object */
 	Ui::CreateGxsForumMsg ui;

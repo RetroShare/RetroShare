@@ -105,6 +105,13 @@
            </widget>
           </item>
           <item>
+           <widget class="QPushButton" name="todoPushButton">
+            <property name="text">
+             <string>Todo</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QToolButton" name="displayButton">
             <property name="focusPolicy">
              <enum>Qt::NoFocus</enum>

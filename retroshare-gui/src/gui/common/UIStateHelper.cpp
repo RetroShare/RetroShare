@@ -105,6 +105,48 @@ public:
 		}
 	}
 
+	QWidget *widget() const
+	{
+		if (mLabel) {
+			return mLabel;
+		}
+
+		if (mLineEdit) {
+			return mLineEdit;
+		}
+
+		if (mTreeWidget) {
+			return mTreeWidget;
+		}
+
+		if (mLinkTextBrowser) {
+			return mLinkTextBrowser;
+		}
+
+		return NULL;
+	}
+
+	bool isWidget(QWidget *widget) const
+	{
+		if (mLabel == widget) {
+			return true;
+		}
+
+		if (mLineEdit == widget) {
+			return true;
+		}
+
+		if (mTreeWidget == widget) {
+			return true;
+		}
+
+		if (mLinkTextBrowser == widget) {
+			return true;
+		}
+
+		return false;
+	}
+
 	bool operator ==(const UIStateHelperObject &data) const
 	{
 		if (mLabel == data.mLabel &&
@@ -364,6 +406,33 @@ bool UIStateHelper::isWidgetEnabled(QWidget *widget)
 	return enabled;
 }
 
+bool UIStateHelper::isWidgetLoading(QWidget *widget, QString &text)
+{
+	bool loading = false;
+	text.clear();
+
+	QMap<long, UIStateHelperData*>::iterator dataIt;
+	for (dataIt = mData.begin(); dataIt != mData.end(); ++dataIt) {
+		UIStateHelperData *data = dataIt.value();
+		QMap<UIStateHelperObject, QPair<QString, bool> >::iterator it;
+		for (it = data->mLoad.begin(); it != data->mLoad.end(); ++it) {
+			if (it.key().isWidget(widget)) {
+				break;
+			}
+		}
+
+		if (it != data->mLoad.end()) {
+			if (dataIt.value()->mLoading) {
+				loading = true;
+				text = it.value().first;
+				break;
+			}
+		}
+	}
+
+	return loading;
+}
+
 void UIStateHelper::updateData(UIStateHelperData *data)
 {
 	QMap<QWidget*, UIStates>::iterator it;
@@ -393,10 +462,17 @@ void UIStateHelper::setLoading(int index, bool loading)
 
 	QMap<UIStateHelperObject, QPair<QString, bool> >::iterator it;
 	for (it = data->mLoad.begin(); it != data->mLoad.end(); ++it) {
+		const UIStateHelperObject &object = it.key();
+
 		if (loading) {
-			it.key().setPlaceholder(loading, it.value().first, it.value().second);
+			object.setPlaceholder(loading, it.value().first, it.value().second);
 		} else {
-			it.key().setPlaceholder(loading, "", it.value().second);
+			QString text;
+			if (isWidgetLoading(object.widget(), text)) {
+				object.setPlaceholder(true, text, it.value().second);
+			} else {
+				object.setPlaceholder(loading, "", it.value().second);
+			}
 		}
 	}
 }

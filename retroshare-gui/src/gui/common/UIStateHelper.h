@@ -85,6 +85,7 @@ private:
 	void updateData(UIStateHelperData *data);
 	bool isWidgetVisible(QWidget *widget);
 	bool isWidgetEnabled(QWidget *widget);
+	bool isWidgetLoading(QWidget *widget, QString &text);
 
 private:
 	QMap<long, UIStateHelperData*> mData;

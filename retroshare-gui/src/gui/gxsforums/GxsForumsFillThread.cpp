@@ -31,7 +31,9 @@
 #include <iostream>
 #include <algorithm>
 
-#define DEBUG_FORUMS
+//#define DEBUG_FORUMS
+
+#define PROGRESSBAR_MAX 100
 
 GxsForumsFillThread::GxsForumsFillThread(GxsForumThreadWidget *parent)
 	: QThread(parent), mParent(parent)
@@ -153,6 +155,8 @@ void GxsForumsFillThread::run()
 
 	int count = msgs.size();
 	int pos = 0;
+	int steps = count / PROGRESSBAR_MAX;
+	int step = 0;
 	QList<QPair<std::string, QTreeWidgetItem*> > threadList;
 	QPair<std::string, QTreeWidgetItem*> threadPair;
 
@@ -179,7 +183,11 @@ void GxsForumsFillThread::run()
 		calculateExpand(msg, item);
 
 		mItems.append(item);
-		emit progress(++pos, count);
+
+		if (++step >= steps) {
+			step = 0;
+			emit progress(++pos, PROGRESSBAR_MAX);
+		}
 
 		msgIt = msgs.erase(msgIt);
 	}
@@ -222,7 +230,11 @@ void GxsForumsFillThread::run()
 				/* add item to process list */
 				threadList.push_back(QPair<std::string, QTreeWidgetItem*>(msg.mMeta.mMsgId, item));
 
-				emit progress(++pos, count);
+				if (++step >= steps) {
+					step = 0;
+					emit progress(++pos, PROGRESSBAR_MAX);
+				}
+
 				msgIt = msgs.erase(msgIt);
 			}
 		}

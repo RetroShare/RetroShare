@@ -9,6 +9,7 @@ class QTreeWidgetItem;
 class RSTreeWidgetItemCompareRole;
 class RsGxsForumMsg;
 class GxsForumsFillThread;
+class UIStateHelper;
 
 namespace Ui {
 class GxsForumThreadWidget;
@@ -132,8 +133,6 @@ private:
 
 	void processSettings(bool bLoad);
 
-	void updateInterface();
-
 	std::string mForumId;
 	std::string mLastForumID;
 	std::string mThreadId;
@@ -163,6 +162,8 @@ private:
 	QColor mTextColorUnreadChildren;
 	QColor mTextColorNotSubscribed;
 	QColor mTextColorMissing;
+
+	UIStateHelper *mStateHelper;
 
 	Ui::GxsForumThreadWidget *ui;
 };

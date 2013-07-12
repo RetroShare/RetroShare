@@ -37,6 +37,7 @@
 class ForumInfo;
 class RsGxsForumMsg;
 class GxsForumThreadWidget;
+class UIStateHelper;
 
 class GxsForumsDialog : public RsAutoUpdatePage, public TokenResponse 
 {
@@ -59,6 +60,7 @@ public:
 private slots:
 	void settingsChanged();
 	void forceUpdateDisplay(); // TEMP HACK FN.
+	void todo();
 
 	/** Create the context popup menu and it's submenus */
 	void forumListCustomPopupMenu( QPoint point );
@@ -120,6 +122,8 @@ private:
 	QTreeWidgetItem *subscribedForums;
 	QTreeWidgetItem *popularForums;
 	QTreeWidgetItem *otherForums;
+
+//	UIStateHelper *mStateHelper;
 
 	/** Qt Designer generated object */
 	Ui::GxsForumsDialog ui;

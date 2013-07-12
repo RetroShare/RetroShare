@@ -31,6 +31,7 @@
 #include "channels/ShareKey.h"
 #include "common/RSTreeWidget.h"
 #include "notifyqt.h"
+//#include "gui/common/UIStateHelper.h"
 
 // These should be in retroshare/ folder.
 #include "retroshare/rsgxsflags.h"
@@ -50,6 +51,9 @@
 #define IMAGE_FORUMAUTHD     ":/images/konv_message2.png"
 #define IMAGE_COPYLINK       ":/images/copyrslink.png"
 
+#define TOKEN_TYPE_LISTING       1
+//#define TOKEN_TYPE_CURRENTFORUM  2
+
 /*
  * Transformation Notes:
  *   there are still a couple of things that the new forums differ from Old version.
@@ -68,9 +72,13 @@ GxsForumsDialog::GxsForumsDialog(QWidget *parent)
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
 
-		/* Setup Queue */
+	/* Setup Queue */
 	mForumQueue = new TokenQueue(rsGxsForums->getTokenService(), this);
 	mThreadWidget = NULL;
+
+	/* Setup UI helper */
+//	mStateHelper = new UIStateHelper(this);
+	// no widget to add yet
 
 	connect(ui.forumTreeWidget, SIGNAL(treeCustomContextMenuRequested(QPoint)), this, SLOT(forumListCustomPopupMenu(QPoint)));
 	connect(ui.newForumButton, SIGNAL(clicked()), this, SLOT(newforum()));
@@ -83,6 +91,7 @@ GxsForumsDialog::GxsForumsDialog(QWidget *parent)
 
 	// HACK - TEMPORARY HIJACKING THIS BUTTON FOR REFRESH.
 	connect(ui.refreshButton, SIGNAL(clicked()), this, SLOT(forceUpdateDisplay()));
+	connect(ui.todoPushButton, SIGNAL(clicked()), this, SLOT(todo()));
 
 	/* Initialize group tree */
 	ui.forumTreeWidget->initDisplayMenu(ui.displayButton);
@@ -121,6 +130,22 @@ GxsForumsDialog::~GxsForumsDialog()
 //{
 //	return new GxsForumUserNotify(parent);
 //}
+
+void GxsForumsDialog::todo()
+{
+	QMessageBox::information(this, "Todo",
+							 "<b>Open points:</b><ul>"
+							 "<li>Automatic update"
+							 "<li>Restore forum keys"
+							 "<li>Display AUTHD"
+							 "<li>Copy/navigate forum link"
+							 "<li>Display count of unread messages"
+							 "<li>Show missing messages"
+							 "<li>Show/Edit forum details"
+							 "<li>Don't show own posts as unread"
+							 "<li>Remove messages"
+							 "</ul>");
+}
 
 void GxsForumsDialog::processSettings(bool load)
 {
@@ -707,9 +732,6 @@ void GxsForumsDialog::generateMassData()
 /** Request / Response of Data ********************************/
 /*********************** **** **** **** ***********************/
 
-#define TOKEN_TYPE_LISTING       1
-//#define TOKEN_TYPE_CURRENTFORUM  2
-
 void GxsForumsDialog::insertForums()
 {
 	requestGroupSummary();
@@ -717,6 +739,8 @@ void GxsForumsDialog::insertForums()
 
 void GxsForumsDialog::requestGroupSummary()
 {
+//	mStateHelper->setLoading(TOKEN_TYPE_LISTING, true);
+
 	std::cerr << "GxsForumsDialog::requestGroupSummary()";
 	std::cerr << std::endl;
 
@@ -749,13 +773,19 @@ void GxsForumsDialog::loadGroupSummary(const uint32_t &token)
 
 	if (groupInfo.size() > 0)
 	{
+//		mStateHelper->setActive(TOKEN_TYPE_LISTING, true);
+
 		insertForumsData(groupInfo);
 	}
 	else
 	{
 		std::cerr << "GxsForumsDialog::loadGroupSummary() ERROR No Groups...";
 		std::cerr << std::endl;
+
+//		mStateHelper->setActive(TOKEN_TYPE_LISTING, false);
 	}
+
+//	mStateHelper->setLoading(TOKEN_TYPE_LISTING, false);
 }
 
 /*********************** **** **** **** ***********************/
@@ -823,7 +853,6 @@ void GxsForumsDialog::loadRequest(const TokenQueue *queue, const TokenRequest &r
 		default:
 			std::cerr << "GxsForumsDialog::loadRequest() ERROR: INVALID TYPE";
 			std::cerr << std::endl;
-			break;
 		}
 	}
 }

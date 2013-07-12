@@ -34,6 +34,7 @@
 #include "gui/settings/rsharesettings.h"
 #include "gui/RetroShareLink.h"
 #include "gui/common/Emoticons.h"
+#include "gui/common/UIStateHelper.h"
 
 #include "util/HandleRichText.h"
 #include "util/misc.h"
@@ -50,10 +51,25 @@ CreateGxsForumMsg::CreateGxsForumMsg(const std::string &fId, const std::string &
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
+
 	setAttribute(Qt::WA_DeleteOnClose, true);
 
 	/* Setup Queue */
 	mForumQueue = new TokenQueue(rsGxsForums->getTokenService(), this);
+
+	/* Setup UI helper */
+	mStateHelper = new UIStateHelper(this);
+	mStateHelper->addWidget(CREATEGXSFORUMMSG_FORUMINFO, ui.buttonBox->button(QDialogButtonBox::Ok));
+	mStateHelper->addWidget(CREATEGXSFORUMMSG_FORUMINFO, ui.innerFrame);
+	mStateHelper->addLoadPlaceholder(CREATEGXSFORUMMSG_FORUMINFO, ui.forumName);
+	mStateHelper->addLoadPlaceholder(CREATEGXSFORUMMSG_FORUMINFO, ui.forumSubject);
+	mStateHelper->addClear(CREATEGXSFORUMMSG_FORUMINFO, ui.forumName);
+
+	mStateHelper->addWidget(CREATEGXSFORUMMSG_PARENTMSG, ui.buttonBox->button(QDialogButtonBox::Ok));
+	mStateHelper->addWidget(CREATEGXSFORUMMSG_PARENTMSG, ui.innerFrame);
+	mStateHelper->addLoadPlaceholder(CREATEGXSFORUMMSG_PARENTMSG, ui.forumName);
+	mStateHelper->addLoadPlaceholder(CREATEGXSFORUMMSG_PARENTMSG, ui.forumSubject);
+	mStateHelper->addClear(CREATEGXSFORUMMSG_PARENTMSG, ui.forumName);
 
 	QString text = pId.empty() ? tr("Start New Thread") : tr("Post Forum Message");
 	setWindowTitle(text);
@@ -117,18 +133,19 @@ void  CreateGxsForumMsg::newMsg()
 	/* fill in the available OwnIds for signing */
 	ui.idChooser->loadIds(IDCHOOSER_ID_REQUIRED, "");
 
-	/* lock gui */
-	ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
-	ui.innerFrame->setEnabled(false);
-
 	if (mForumId.empty()) {
+		mStateHelper->setActive(CREATEGXSFORUMMSG_FORUMINFO, false);
+		mStateHelper->setActive(CREATEGXSFORUMMSG_PARENTMSG, false);
+		mStateHelper->clear(CREATEGXSFORUMMSG_FORUMINFO);
+		mStateHelper->clear(CREATEGXSFORUMMSG_PARENTMSG);
 		ui.forumName->setText(tr("No Forum"));
 		return;
 	}
-	ui.forumName->setText(tr("Loading"));
 
 	/* request Data */
 	{
+		mStateHelper->setLoading(CREATEGXSFORUMMSG_FORUMINFO, true);
+
 		RsTokReqOptions opts;
 		opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
 
@@ -144,10 +161,13 @@ void  CreateGxsForumMsg::newMsg()
 
 	if (mParentId.empty())
 	{
+		mStateHelper->setActive(CREATEGXSFORUMMSG_PARENTMSG, true);
 		mParentMsgLoaded = true;
 	}
 	else
 	{
+		mStateHelper->setLoading(CREATEGXSFORUMMSG_PARENTMSG, true);
+
 		RsTokReqOptions opts;
 		opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
 
@@ -163,40 +183,36 @@ void  CreateGxsForumMsg::newMsg()
 	}
 }
 
-void  CreateGxsForumMsg::saveForumInfo(const RsGroupMetaData &meta)
-{
-	mForumMeta = meta;
-	mForumMetaLoaded = true;
-
-	loadFormInformation();
-}
-
-void  CreateGxsForumMsg::saveParentMsg(const RsGxsForumMsg &msg)
-{
-	mParentMsg = msg;
-	mParentMsgLoaded = true;
-
-	loadFormInformation();
-}
-
 void  CreateGxsForumMsg::loadFormInformation()
 {
-	if ((!mParentMsgLoaded) && (!mParentId.empty()))
-	{
-		std::cerr << "CreateGxsForumMsg::loadMsgInformation() ParentMsg not Loaded Yet";
-		std::cerr << std::endl;
-		return;
+	if (!mParentId.empty()) {
+		if (mParentMsgLoaded) {
+			mStateHelper->setActive(CREATEGXSFORUMMSG_PARENTMSG, true);
+			mStateHelper->setLoading(CREATEGXSFORUMMSG_PARENTMSG, false);
+		} else {
+			std::cerr << "CreateGxsForumMsg::loadMsgInformation() ParentMsg not Loaded Yet";
+			std::cerr << std::endl;
+
+			mStateHelper->setActive(CREATEGXSFORUMMSG_PARENTMSG, false);
+
+			return;
+		}
+	} else {
+		mStateHelper->setActive(CREATEGXSFORUMMSG_PARENTMSG, true);
+		mStateHelper->setLoading(CREATEGXSFORUMMSG_PARENTMSG, false);
 	}
 
-	if (!mForumMetaLoaded)
-	{
+	if (mForumMetaLoaded) {
+		mStateHelper->setActive(CREATEGXSFORUMMSG_FORUMINFO, true);
+		mStateHelper->setLoading(CREATEGXSFORUMMSG_FORUMINFO, false);
+	} else {
 		std::cerr << "CreateGxsForumMsg::loadMsgInformation() ForumMeta not Loaded Yet";
 		std::cerr << std::endl;
+
+		mStateHelper->setActive(CREATEGXSFORUMMSG_FORUMINFO, false);
+
 		return;
 	}
-
-	ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
-	ui.innerFrame->setEnabled(true);
 
 	std::cerr << "CreateGxsForumMsg::loadMsgInformation() Data Available!";
 	std::cerr << std::endl;
@@ -356,10 +372,6 @@ void CreateGxsForumMsg::fileHashingFinished(QList<HashedFile> hashedFiles)
 		}
 	}
 
-#ifdef CHAT_DEBUG
-	std::cerr << "CreateGxsForumMsg::anchorClicked mesgString : " << mesgString.toStdString() << std::endl;
-#endif
-
 	if (!mesgString.isEmpty()) {
 		ui.forumMessage->textCursor().insertHtml(mesgString);
 	}
@@ -397,12 +409,19 @@ void CreateGxsForumMsg::loadForumInfo(const uint32_t &token)
 	if (groupInfo.size() == 1)
 	{
 		RsGroupMetaData fi = groupInfo.front();
-		saveForumInfo(fi);
+
+		mForumMeta = fi;
+		mForumMetaLoaded = true;
+
+		loadFormInformation();
 	}
 	else
 	{
 		std::cerr << "CreateGxsForumMsg::loadForumInfo() ERROR INVALID Number of Forums";
 		std::cerr << std::endl;
+
+		mStateHelper->setActive(CREATEGXSFORUMMSG_FORUMINFO, false);
+		mStateHelper->setLoading(CREATEGXSFORUMMSG_FORUMINFO, false);
 	}
 }
 
@@ -420,8 +439,17 @@ void CreateGxsForumMsg::loadParentMsg(const uint32_t &token)
 			/* error */
 			std::cerr << "CreateGxsForumMsg::loadParentMsg() ERROR wrong number of msgs";
 			std::cerr << std::endl;
+
+			mStateHelper->setActive(CREATEGXSFORUMMSG_PARENTMSG, false);
+			mStateHelper->setLoading(CREATEGXSFORUMMSG_PARENTMSG, false);
+
+			return;
 		}
-		saveParentMsg(msgs[0]);
+
+		mParentMsg = msgs[0];
+		mParentMsgLoaded = true;
+
+		loadFormInformation();
 	}
 }
 
@@ -444,7 +472,6 @@ void CreateGxsForumMsg::loadRequest(const TokenQueue *queue, const TokenRequest 
 			default:
 				std::cerr << "CreateGxsForum::loadRequest() UNKNOWN UserType ";
 				std::cerr << std::endl;
-
 		}
 	}
 }

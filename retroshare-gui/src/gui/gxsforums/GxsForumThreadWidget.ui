@@ -97,6 +97,13 @@
           <number>3</number>
          </property>
          <item>
+          <widget class="QLabel" name="forumLabel">
+           <property name="text">
+            <string>Forum:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QLabel" name="forumName">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -235,7 +242,20 @@
           <number>3</number>
          </property>
          <item>
+          <widget class="QLabel" name="threadLabel">
+           <property name="text">
+            <string>Thread:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QLabel" name="threadTitle">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="wordWrap">
             <bool>true</bool>
            </property>
