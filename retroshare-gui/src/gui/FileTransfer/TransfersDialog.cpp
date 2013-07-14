@@ -40,18 +40,18 @@
 #include <algorithm>
 
 #include "TransfersDialog.h"
-#include "RetroShareLink.h"
+#include <gui/RetroShareLink.h>
 #include "DetailsDialog.h"
 #include "DLListDelegate.h"
 #include "ULListDelegate.h"
 #include "FileTransferInfoWidget.h"
-#include "SearchDialog.h"
-#include "SharedFilesDialog.h"
+#include <gui/SearchDialog.h>
+#include <gui/SharedFilesDialog.h>
 #include "xprogressbar.h"
-#include "settings/rsharesettings.h"
+#include <gui/settings/rsharesettings.h>
 #include "util/misc.h"
-#include "common/RsCollectionFile.h"
-#include "transfers/TransferUserNotify.h"
+#include <gui/common/RsCollectionFile.h>
+#include "TransferUserNotify.h"
 
 #include <retroshare/rsfiles.h>
 #include <retroshare/rspeers.h>

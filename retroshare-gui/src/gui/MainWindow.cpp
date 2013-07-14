@@ -41,7 +41,7 @@
 #include "MessengerWindow.h"
 #include "NetworkDialog.h"
 #include "SearchDialog.h"
-#include "TransfersDialog.h"
+#include "gui/FileTransfer/TransfersDialog.h"
 #include "MessagesDialog.h"
 #include "SharedFilesDialog.h"
 #include "PluginsPage.h"
@@ -71,7 +71,7 @@
 #include "gui/GetStartedDialog.h"
 #endif
 
-#include "gui/TurtleRouterDialog.h"
+#include "gui/FileTransfer/TurtleRouterDialog.h"
 #include "idle/idle.h"
 
 #include "statusbar/peerstatus.h"

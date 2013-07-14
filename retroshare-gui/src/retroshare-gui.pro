@@ -263,20 +263,14 @@ HEADERS +=  rshare.h \
             control/bandwidthevent.h \
             control/eventtype.h \
             gui/QuickStartWizard.h \
-            gui/DetailsDialog.h \
-            gui/DLListDelegate.h \
-            gui/ULListDelegate.h \
             gui/StartDialog.h \
             gui/NetworkDialog.h \
             gui/GenCertDialog.h \
-            gui/TransfersDialog.h \
             gui/graphframe.h \
             gui/linetypes.h \
             gui/mainpagestack.h \
             gui/MainWindow.h \
             gui/RSHumanReadableDelegate.h \
-            gui/TurtleRouterDialog.h \
-            gui/TurtleRouterStatistics.h \
             gui/AboutDialog.h \
             gui/ForumsDialog.h \
 				gui/CreateMsgLinkDialog.h \
@@ -300,10 +294,17 @@ HEADERS +=  rshare.h \
             gui/ShareDialog.h \
             gui/SFListDelegate.h \
             gui/SoundManager.h \
-            gui/FileTransferInfoWidget.h \
             gui/HelpDialog.h \
             gui/LogoBar.h \
-            gui/xprogressbar.h \
+            gui/FileTransfer/xprogressbar.h \
+            gui/FileTransfer/DetailsDialog.h \
+            gui/FileTransfer/FileTransferInfoWidget.h \
+            gui/FileTransfer/DLListDelegate.h \
+            gui/FileTransfer/ULListDelegate.h \
+            gui/FileTransfer/TransfersDialog.h \
+            gui/FileTransfer/TurtleRouterDialog.h \
+            gui/FileTransfer/TurtleRouterStatistics.h \
+            gui/FileTransfer/TransferUserNotify.h \
             gui/plugins/PluginInterface.h \
             gui/im_history/ImHistoryBrowser.h \
             gui/im_history/IMHistoryItemDelegate.h \
@@ -361,7 +362,6 @@ HEADERS +=  rshare.h \
             gui/msgs/TagsMenu.h \
             gui/msgs/textformat.h \
             gui/msgs/MessageUserNotify.h \
-            gui/transfers/TransferUserNotify.h \
             gui/images/retroshare_win.rc.h \
             gui/settings/rsharesettings.h \
             gui/settings/RsharePeerSettings.h \
@@ -475,11 +475,12 @@ FORMS +=    gui/StartDialog.ui \
             gui/AboutDialog.ui \
             gui/QuickStartWizard.ui \
             gui/NetworkDialog.ui \
-            gui/TransfersDialog.ui \
+            gui/FileTransfer/TransfersDialog.ui \
+            gui/FileTransfer/TurtleRouterDialog.ui \
+            gui/FileTransfer/TurtleRouterStatistics.ui \
+            gui/FileTransfer/DetailsDialog.ui \
             gui/ForumsDialog.ui \
             gui/MainWindow.ui \
-            gui/TurtleRouterDialog.ui \
-            gui/TurtleRouterStatistics.ui \
 				gui/CreateMsgLinkDialog.ui \
             gui/forums/CreateForum.ui \
             gui/forums/CreateForumMsg.ui \
@@ -496,7 +497,6 @@ FORMS +=    gui/StartDialog.ui \
             gui/MessagesDialog.ui \
             gui/help/browser/helpbrowser.ui \
             gui/HelpDialog.ui \
-            gui/DetailsDialog.ui \
             gui/FriendRecommendDialog.ui \
             gui/ServicePermissionDialog.ui \
             gui/bwgraph/bwgraph.ui \
@@ -577,17 +577,11 @@ SOURCES +=  main.cpp \
             gui/notifyqt.cpp \
             gui/AboutDialog.cpp \
             gui/QuickStartWizard.cpp \
-            gui/DetailsDialog.cpp \
-            gui/DLListDelegate.cpp \
-            gui/ULListDelegate.cpp \
             gui/StartDialog.cpp \
             gui/GenCertDialog.cpp \
             gui/NetworkDialog.cpp \
-            gui/TransfersDialog.cpp \
             gui/graphframe.cpp \
             gui/mainpagestack.cpp \
-            gui/TurtleRouterDialog.cpp \
-            gui/TurtleRouterStatistics.cpp \
             gui/MainWindow.cpp \
             gui/ForumsDialog.cpp \
 				gui/CreateMsgLinkDialog.cpp \
@@ -613,15 +607,22 @@ SOURCES +=  main.cpp \
             gui/SFListDelegate.cpp \
             gui/SoundManager.cpp \
             gui/MessagesDialog.cpp \
-            gui/FileTransferInfoWidget.cpp \
             gui/im_history/ImHistoryBrowser.cpp \
             gui/im_history/IMHistoryItemDelegate.cpp \
             gui/im_history/IMHistoryItemPainter.cpp \
             gui/help/browser/helpbrowser.cpp \
             gui/help/browser/helptextbrowser.cpp \
+            gui/FileTransfer/TransfersDialog.cpp \
+            gui/FileTransfer/FileTransferInfoWidget.cpp \
+            gui/FileTransfer/DLListDelegate.cpp \
+            gui/FileTransfer/ULListDelegate.cpp \
+            gui/FileTransfer/xprogressbar.cpp \
+            gui/FileTransfer/TurtleRouterDialog.cpp \
+            gui/FileTransfer/TurtleRouterStatistics.cpp \
+            gui/FileTransfer/DetailsDialog.cpp \
+            gui/FileTransfer/TransferUserNotify.cpp \
             gui/HelpDialog.cpp \
             gui/LogoBar.cpp \
-            gui/xprogressbar.cpp \
             lang/languagesupport.cpp \
             util/stringutil.cpp \
             util/DateTime.cpp \
@@ -668,7 +669,6 @@ SOURCES +=  main.cpp \
             gui/msgs/MessageWindow.cpp \
             gui/msgs/TagsMenu.cpp \
             gui/msgs/MessageUserNotify.cpp \
-            gui/transfers/TransferUserNotify.cpp \
             gui/common/vmessagebox.cpp \
             gui/common/RsCollectionFile.cpp \
             gui/common/RsCollectionDialog.cpp \

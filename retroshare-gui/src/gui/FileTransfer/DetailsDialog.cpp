@@ -28,7 +28,7 @@
 #include "retroshare/rsfiles.h"
 #include "util/misc.h"
 #include "FileTransferInfoWidget.h"
-#include "RetroShareLink.h"
+#include "gui/RetroShareLink.h"
 
 /** Default constructor */
 DetailsDialog::DetailsDialog(QWidget *parent, Qt::WFlags flags)

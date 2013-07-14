@@ -28,7 +28,7 @@
 #include <retroshare/rstypes.h>
 #include "util/misc.h"
 #include "FileTransferInfoWidget.h"
-#include "RetroShareLink.h"
+#include <gui/RetroShareLink.h>
 
 // Variables to decide of display behaviour. Should be adapted to window size.
 //
