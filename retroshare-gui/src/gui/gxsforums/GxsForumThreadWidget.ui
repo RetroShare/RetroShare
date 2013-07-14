@@ -268,6 +268,31 @@
        </item>
        <item>
         <layout class="QGridLayout" name="postLayout">
+         <item row="0" column="7">
+          <widget class="QLabel" name="time_label">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string notr="true"/>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="11">
+          <widget class="QPushButton" name="nextUnreadButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Next unread</string>
+           </property>
+          </widget>
+         </item>
          <item row="0" column="1">
           <widget class="QToolButton" name="newmessageButton">
            <property name="maximumSize">
@@ -287,47 +312,6 @@
              <normaloff>:/images/mail_reply.png</normaloff>:/images/mail_reply.png</iconset>
            </property>
            <property name="autoRaise">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="3">
-          <widget class="QPushButton" name="previousButton">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>24</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>24</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="focusPolicy">
-            <enum>Qt::NoFocus</enum>
-           </property>
-           <property name="toolTip">
-            <string>Previous Thread</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="icon">
-            <iconset resource="../images.qrc">
-             <normaloff>:/images/back.png</normaloff>:/images/back.png</iconset>
-           </property>
-           <property name="flat">
             <bool>true</bool>
            </property>
           </widget>
@@ -373,6 +357,32 @@
            </property>
           </widget>
          </item>
+         <item row="0" column="13">
+          <widget class="QPushButton" name="expandButton">
+           <property name="maximumSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="../images.qrc">
+             <normaloff>:/images/edit_remove24.png</normaloff>:/images/edit_remove24.png</iconset>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
          <item row="0" column="5">
           <widget class="QToolButton" name="downloadButton">
            <property name="maximumSize">
@@ -403,15 +413,10 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="7">
-          <widget class="QLabel" name="time_label">
-           <property name="font">
-            <font>
-             <pointsize>10</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string notr="true"/>
+         <item row="0" column="8">
+          <widget class="Line" name="line">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
            </property>
           </widget>
          </item>
@@ -440,21 +445,23 @@
            </property>
           </spacer>
          </item>
-         <item row="0" column="12">
-          <widget class="QPushButton" name="nextUnreadButton">
+         <item row="0" column="3">
+          <widget class="QPushButton" name="previousButton">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+            <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="text">
-            <string>Next unread</string>
+           <property name="minimumSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
            </property>
-          </widget>
-         </item>
-         <item row="0" column="14">
-          <widget class="QPushButton" name="expandButton">
            <property name="maximumSize">
             <size>
              <width>24</width>
@@ -464,32 +471,18 @@
            <property name="focusPolicy">
             <enum>Qt::NoFocus</enum>
            </property>
+           <property name="toolTip">
+            <string>Previous Thread</string>
+           </property>
            <property name="text">
             <string/>
            </property>
            <property name="icon">
             <iconset resource="../images.qrc">
-             <normaloff>:/images/edit_remove24.png</normaloff>:/images/edit_remove24.png</iconset>
+             <normaloff>:/images/back.png</normaloff>:/images/back.png</iconset>
            </property>
-           <property name="checkable">
+           <property name="flat">
             <bool>true</bool>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="8">
-          <widget class="Line" name="line">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="11">
-          <widget class="QPushButton" name="refreshButton">
-           <property name="text">
-            <string>Refresh</string>
            </property>
           </widget>
          </item>

@@ -26,7 +26,6 @@
 #include "IdDialog.h"
 #include "gui/gxs/GxsIdTreeWidgetItem.h"
 #include "gui/common/UIStateHelper.h"
-#include <util/RsProtectedTimer.h>
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsidentity.h>
@@ -63,7 +62,7 @@
 
 /** Constructor */
 IdDialog::IdDialog(QWidget *parent)
-: MainPage(parent)
+: RsGxsUpdateBroadcastPage(rsIdentity, parent)
 {
 	ui.setupUi(this);
 
@@ -138,10 +137,6 @@ IdDialog::IdDialog(QWidget *parent)
 	/* Setup tree */
 	ui.treeWidget_IdList->sortByColumn(RSID_COL_NICKNAME, Qt::AscendingOrder);
 
-	QTimer *timer = new RsProtectedTimer(this);
-	timer->connect(timer, SIGNAL(timeout()), this, SLOT(checkUpdate()));
-	timer->start(1000);
-
 	mIdQueue = new TokenQueue(rsIdentity->getTokenService(), this);
 
 	mStateHelper->setActive(IDDIALOG_IDDETAILS, false);
@@ -152,7 +147,6 @@ void IdDialog::todo()
 {
 	QMessageBox::information(this, "Todo",
 							 "<b>Open points:</b><ul>"
-							 "<li>Initial fill of data"
 							 "<li>Delete ID"
 							 "<li>Edit ID"
 							 "<li>Reputation"
@@ -511,16 +505,10 @@ void IdDialog::insertIdDetails(uint32_t token)
 	requestRepList(data.mMeta.mGroupId);
 }
 
-void IdDialog::checkUpdate()
+void IdDialog::updateDisplay(bool /*initialFill*/)
 {
-	/* update */
-	if (!rsIdentity)
-		return;
-
-	if (rsIdentity->updated())
-	{
-		requestIdList();
-	}
+	/* Update identity list */
+	requestIdList();
 }
 
 void IdDialog::addIdentity()

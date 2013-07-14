@@ -45,6 +45,7 @@
 #include "gui/SoundManager.h"
 #include "gui/NetworkView.h"
 #include "lang/languagesupport.h"
+#include "util/RsGxsUpdateBroadcast.h"
 
 /*** WINDOWS DON'T LIKE THIS - REDEFINES VER numbers.
 #include <gui/qskinobject/qskinobject.h>
@@ -374,6 +375,9 @@ int main(int argc, char *argv[])
 
 	/* cleanup */
 	ChatDialog::cleanupChat();
+#ifdef RS_ENABLE_GXS
+	RsGxsUpdateBroadcast::cleanup();
+#endif
 
 	rsicontrol->rsGlobalShutDown();
 

@@ -58,7 +58,6 @@
  * Transformation Notes:
  *   there are still a couple of things that the new forums differ from Old version.
  *   these will need to be addressed in the future.
- *     -> Missing Messages are not handled yet.
  *     -> Child TS (for sorting) is not handled by GXS, this will probably have to be done in the GUI.
  *     -> Need to handle IDs properly.
  *     -> Popularity not handled in GXS yet.
@@ -67,7 +66,7 @@
 
 /** Constructor */
 GxsForumsDialog::GxsForumsDialog(QWidget *parent)
-: RsAutoUpdatePage(1000,parent)
+: RsGxsUpdateBroadcastPage(rsGxsForums, parent)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
@@ -111,11 +110,6 @@ GxsForumsDialog::GxsForumsDialog(QWidget *parent)
 	processSettings(true);
 
 	settingsChanged();
-
-/* Hide platform specific features */
-#ifdef Q_WS_WIN
-
-#endif
 }
 
 GxsForumsDialog::~GxsForumsDialog()
@@ -135,12 +129,11 @@ void GxsForumsDialog::todo()
 {
 	QMessageBox::information(this, "Todo",
 							 "<b>Open points:</b><ul>"
-							 "<li>Automatic update"
+							 "<li>Automatic refresh after subscribe/unsubscibe"
 							 "<li>Restore forum keys"
 							 "<li>Display AUTHD"
 							 "<li>Copy/navigate forum link"
 							 "<li>Display count of unread messages"
-							 "<li>Show missing messages"
 							 "<li>Show/Edit forum details"
 							 "<li>Don't show own posts as unread"
 							 "<li>Remove messages"
@@ -266,35 +259,10 @@ void GxsForumsDialog::restoreForumKeys(void)
 #endif
 }
 
-void GxsForumsDialog::updateDisplay()
+void GxsForumsDialog::updateDisplay(bool /*initialFill*/)
 {
-	std::list<std::string> forumIds;
-	std::list<std::string>::iterator it;
-	if (!rsGxsForums)
-		return;
-
-#if 0
-	// TODO groupsChanged... HACK XXX.
-	if ((rsGxsForums->groupsChanged(forumIds)) || (rsGxsForums->updated()))
-	{
-		/* update Forums List */
-		insertForums();
-
-		it = std::find(forumIds.begin(), forumIds.end(), mCurrForumId);
-		if (it != forumIds.end())
-		{
-			/* update threads as well */
-			insertThreads();
-		}
-	}
-#endif
-
-	/* The proper version (above) can be done with a data request -> TODO */
-	if (rsGxsForums->updated())
-	{
-		/* update Forums List */
-		insertForums();
-	}
+	/* Update forums list */
+	insertForums();
 }
 
 // HACK until update works.

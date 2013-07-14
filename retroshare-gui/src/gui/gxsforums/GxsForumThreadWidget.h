@@ -1,8 +1,7 @@
 #ifndef GXSFORUMTHREADWIDGET_H
 #define GXSFORUMTHREADWIDGET_H
 
-#include <QWidget>
-
+#include "gui/gxs/RsGxsUpdateBroadcastWidget.h"
 #include "util/TokenQueue.h"
 
 class QTreeWidgetItem;
@@ -15,7 +14,7 @@ namespace Ui {
 class GxsForumThreadWidget;
 }
 
-class GxsForumThreadWidget : public QWidget, public TokenResponse
+class GxsForumThreadWidget : public RsGxsUpdateBroadcastWidget, public TokenResponse
 {
 	Q_OBJECT
 
@@ -62,12 +61,9 @@ signals:
 protected:
 	bool eventFilter(QObject *obj, QEvent *ev);
 	void changeEvent(QEvent *e);
+	virtual void updateDisplay(bool initialFill);
 
 private slots:
-	void forceUpdateDisplay(); // TEMP HACK FN.
-
-//	void updateDisplay();
-
 	/** Create the context popup menu and it's submenus */
 	void threadListCustomPopupMenu(QPoint point);
 
@@ -143,7 +139,6 @@ private:
 	int mLastViewType;
 	RSTreeWidgetItemCompareRole *mThreadCompareRole;
 	TokenQueue *mThreadQueue;
-//	QTimer *mTimer;
 	GxsForumsFillThread *mFillThread;
 	unsigned int mUnreadCount;
 	unsigned int mNewCount;

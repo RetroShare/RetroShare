@@ -19,18 +19,41 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#pragma once
+#include <retroshare-gui/RsAutoUpdatePage.h>
+#include <iostream>
 
-#include <QTimer>
+#include "RsProtectedTimer.h"
 
-class RsProtectedTimer : public QTimer
+//#define PROTECTED_TIMER_DEBUG
+
+RsProtectedTimer::RsProtectedTimer(QObject *parent)
+	: QTimer(parent)
 {
-public:
-	RsProtectedTimer(QObject *parent);
+}
 
-protected:
-	virtual void timerEvent(QTimerEvent *e);
+void RsProtectedTimer::timerEvent(QTimerEvent *e)
+{
+	if(RsAutoUpdatePage::eventsLocked())
+	{
+#ifdef PROTECTED_TIMER_DEBUG
+		if (isSingleShot()) {
+			/* Singleshot timer will be stopped in QTimer::timerEvent */
+			std::cerr << "Singleshot timer is blocked!" << std::endl;
+		} else {
+			std::cerr << "Timer is blocked!" << std::endl;
+		}
+#endif
 
-	// do not use, please use setInterval, setSingleShot and connect signal timeout
-	static void singleShot(int /*msec*/, QObject */*receiver*/, const char */*member*/) {}
-};
+		return ;
+	}
+
+#ifdef PROTECTED_TIMER_DEBUG
+	if (isSingleShot()) {
+		std::cerr << "Singleshot timer has passed protection." << std::endl;
+	} else {
+		std::cerr << "Timer has passed protection." << std::endl;
+	}
+#endif
+
+	QTimer::timerEvent(e) ;
+}

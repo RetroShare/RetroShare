@@ -17,6 +17,8 @@ gxs {
 	# thewire is incomplete - dont enable
 	#CONFIG += thewire
 	#CONFIG += photoshare
+
+	DEFINES += RS_ENABLE_GXS
 }
 
 
@@ -273,7 +275,7 @@ HEADERS +=  rshare.h \
             gui/RSHumanReadableDelegate.h \
             gui/AboutDialog.h \
             gui/ForumsDialog.h \
-				gui/CreateMsgLinkDialog.h \
+            gui/CreateMsgLinkDialog.h \
             gui/forums/ForumDetails.h \
             gui/forums/EditForumDetails.h \
             gui/forums/CreateForum.h \
@@ -481,7 +483,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/FileTransfer/DetailsDialog.ui \
             gui/ForumsDialog.ui \
             gui/MainWindow.ui \
-				gui/CreateMsgLinkDialog.ui \
+            gui/CreateMsgLinkDialog.ui \
             gui/forums/CreateForum.ui \
             gui/forums/CreateForumMsg.ui \
             gui/forums/ForumDetails.ui \
@@ -584,7 +586,7 @@ SOURCES +=  main.cpp \
             gui/mainpagestack.cpp \
             gui/MainWindow.cpp \
             gui/ForumsDialog.cpp \
-				gui/CreateMsgLinkDialog.cpp \
+            gui/CreateMsgLinkDialog.cpp \
             gui/forums/ForumDetails.cpp \
             gui/forums/EditForumDetails.cpp \
             gui/forums/CreateForum.cpp \
@@ -624,6 +626,7 @@ SOURCES +=  main.cpp \
             gui/HelpDialog.cpp \
             gui/LogoBar.cpp \
             lang/languagesupport.cpp \
+            util/RsProtectedTimer.cpp \
             util/stringutil.cpp \
             util/DateTime.cpp \
             util/win32.cpp \
@@ -1132,7 +1135,11 @@ gxsgui {
 		gui/gxs/GxsCommentDialog.h \
 		gui/gxs/GxsCreateCommentDialog.h \
 		gui/gxs/GxsFeedItem.h \
+		gui/gxs/RsGxsUpdateBroadcastBase.h \
+		gui/gxs/RsGxsUpdateBroadcastWidget.h \
+		gui/gxs/RsGxsUpdateBroadcastPage.h \
 		util/TokenQueue.h \
+		util/RsGxsUpdateBroadcast.h \
 	
 #		gui/gxs/GxsMsgDialog.h \
 	
@@ -1156,7 +1163,11 @@ gxsgui {
 		gui/gxs/GxsCommentDialog.cpp \
 		gui/gxs/GxsCreateCommentDialog.cpp \
 		gui/gxs/GxsFeedItem.cpp \
+		gui/gxs/RsGxsUpdateBroadcastBase.cpp \
+		gui/gxs/RsGxsUpdateBroadcastWidget.cpp \
+		gui/gxs/RsGxsUpdateBroadcastPage.cpp \
 		util/TokenQueue.cpp \
+		util/RsGxsUpdateBroadcast.cpp \
 	
 #		gui/gxs/GxsMsgDialog.cpp \
 	

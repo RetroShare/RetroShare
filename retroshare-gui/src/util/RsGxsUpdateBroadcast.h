@@ -3,31 +3,34 @@
 
 #include <QObject>
 
-#include <retroshare/rsgxsifacehelper.h>
+#include <retroshare/rsgxsifacetypes.h>
+
+class RsGxsIfaceHelper;
+class QTimer;
 
 class RsGxsUpdateBroadcast : public QObject
 {
-    Q_OBJECT
-public:
-    explicit RsGxsUpdateBroadcast(RsGxsIfaceHelper* ifaceImpl, float dt, QObject *parent = 0);
+	Q_OBJECT
 
-    void startMonitor();
-    void update();
+public:
+	static void cleanup();
+
+	static RsGxsUpdateBroadcast *get(RsGxsIfaceHelper* ifaceImpl);
 
 signals:
+	void changed();
+	void msgsChanged(const std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >& msgIds);
+	void grpsChanged(const std::list<RsGxsGroupId>& grpIds);
 
-    void msgsChanged(const std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > & msgIds);
-    void grpsChanged(const std::list<RsGxsGroupId>& grpIds);
-
-public slots:
-
-    void fastPoll();
-    void slowPoll();
+private slots:
+	void poll();
 
 private:
+	explicit RsGxsUpdateBroadcast(RsGxsIfaceHelper* ifaceImpl);
 
-    RsGxsIfaceHelper* mIfaceImpl;
-    float mDt;
+private:
+	RsGxsIfaceHelper* mIfaceImpl;
+	QTimer *mTimer;
 };
 
 #endif // RSGXSUPDATEBROADCAST_H

@@ -24,7 +24,7 @@
 
 #include <QThread>
 
-#include "mainpage.h"
+#include "gui/gxs/RsGxsUpdateBroadcastPage.h"
 #include "RsAutoUpdatePage.h"
 #include "ui_GxsForumsDialog.h"
 
@@ -39,7 +39,7 @@ class RsGxsForumMsg;
 class GxsForumThreadWidget;
 class UIStateHelper;
 
-class GxsForumsDialog : public RsAutoUpdatePage, public TokenResponse 
+class GxsForumsDialog : public RsGxsUpdateBroadcastPage, public TokenResponse
 {
 	Q_OBJECT
 
@@ -51,11 +51,11 @@ public:
 
 	bool navigate(const std::string& forumId, const std::string& msgId);
 
-	/* overloaded from RsAuthUpdatePage */
-	virtual void updateDisplay();
-
 	// Callback for all Loads.
 	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
+
+protected:
+	virtual void updateDisplay(bool initialFill);
 
 private slots:
 	void settingsChanged();

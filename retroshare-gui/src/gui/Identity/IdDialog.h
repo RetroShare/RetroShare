@@ -24,7 +24,7 @@
 #ifndef IDENTITYDIALOG_H
 #define IDENTITYDIALOG_H
 
-#include "retroshare-gui/mainpage.h"
+#include "gui/gxs/RsGxsUpdateBroadcastPage.h"
 #include "ui_IdDialog.h"
 
 #include <retroshare/rsidentity.h>
@@ -36,7 +36,7 @@
 
 class UIStateHelper;
 
-class IdDialog : public MainPage, public TokenResponse
+class IdDialog : public RsGxsUpdateBroadcastPage, public TokenResponse
 {
 	Q_OBJECT
 
@@ -45,11 +45,13 @@ public:
 
 	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
+protected:
+	virtual void updateDisplay(bool initialFill);
+
 private slots:
 	void filterComboBoxChanged();
 	void filterChanged(const QString &text);
 
-	void checkUpdate();
 	void addIdentity();
 	void editIdentity();
 

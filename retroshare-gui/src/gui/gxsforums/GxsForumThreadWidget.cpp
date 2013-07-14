@@ -86,13 +86,15 @@
 #define TOKEN_TYPE_REPLY_MESSAGE    3
 
 GxsForumThreadWidget::GxsForumThreadWidget(const std::string &forumId, QWidget *parent) :
-	QWidget(parent),
+	RsGxsUpdateBroadcastWidget(rsGxsForums, parent),
 	ui(new Ui::GxsForumThreadWidget)
 {
 	ui->setupUi(this);
 
 	/* Setup UI helper */
 	mStateHelper = new UIStateHelper(this);
+
+	setUpdateWhenInvisible(true);
 
 	mStateHelper->addWidget(TOKEN_TYPE_CURRENTFORUM, ui->progressBar, UISTATE_LOADING_VISIBLE);
 	mStateHelper->addWidget(TOKEN_TYPE_CURRENTFORUM, ui->progressText, UISTATE_LOADING_VISIBLE);
@@ -140,9 +142,6 @@ GxsForumThreadWidget::GxsForumThreadWidget(const std::string &forumId, QWidget *
 	connect(ui->nextButton, SIGNAL(clicked()), this, SLOT(nextMessage()));
 	connect(ui->nextUnreadButton, SIGNAL(clicked()), this, SLOT(nextUnreadMessage()));
 	connect(ui->downloadButton, SIGNAL(clicked()), this, SLOT(downloadAllFiles()));
-
-	// HACK - TEMPORARY HIJACKING THIS BUTTON FOR REFRESH.
-	connect(ui->refreshButton, SIGNAL(clicked()), this, SLOT(forceUpdateDisplay()));
 
 	connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterItems(QString)));
 	connect(ui->filterLineEdit, SIGNAL(filterChanged(int)), this, SLOT(filterColumnChanged(int)));
@@ -299,7 +298,7 @@ QIcon GxsForumThreadWidget::forumIcon()
 
 void GxsForumThreadWidget::changeEvent(QEvent *e)
 {
-	QWidget::changeEvent(e);
+	RsGxsUpdateBroadcastWidget::changeEvent(e);
 	switch (e->type()) {
 	case QEvent::StyleChange:
 		calculateIconsAndFonts();
@@ -310,38 +309,25 @@ void GxsForumThreadWidget::changeEvent(QEvent *e)
 	}
 }
 
-#ifdef TODO
-void GxsForumThreadWidget::updateDisplay()
+void GxsForumThreadWidget::updateDisplay(bool initialFill)
 {
-	std::list<std::string> forumIds;
-	std::list<std::string>::iterator it;
-	if (!rsGxsForums)
+	if (initialFill) {
+		/* Not needed */
 		return;
+	}
 
-#if 0
-	// TODO groupsChanged... HACK XXX.
-	if ((rsGxsForums->groupsChanged(forumIds)) || (rsGxsForums->updated()))
-	{
-		/* update Forums List */
-		insertForums();
-
-		it = std::find(forumIds.begin(), forumIds.end(), mCurrForumId);
-		if (it != forumIds.end())
-		{
-			/* update threads as well */
+	std::list<RsGxsGroupId> &grpIds = getGrpIds();
+	if (std::find(grpIds.begin(), grpIds.end(), mForumId) != grpIds.end()) {
+		/* Update threads */
+		insertThreads();
+	} else {
+		std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgIds = getMsgIds();
+		if (msgIds.find(mForumId) != msgIds.end()) {
+			/* Update threads */
 			insertThreads();
 		}
 	}
-#endif
-
-	/* The proper version (above) can be done with a data request -> TODO */
-	if (rsGxsForums->updated())
-	{
-		/* update Forums List */
-		insertThreads();
-	}
 }
-#endif
 
 void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 {
@@ -453,7 +439,7 @@ bool GxsForumThreadWidget::eventFilter(QObject *obj, QEvent *event)
 		}
 	}
 	// pass the event on to the parent class
-	return QWidget::eventFilter(obj, event);
+	return RsGxsUpdateBroadcastWidget::eventFilter(obj, event);
 }
 
 void GxsForumThreadWidget::togglethreadview()
@@ -784,16 +770,6 @@ void GxsForumThreadWidget::fillThreadProgress(int current, int count)
 void GxsForumThreadWidget::fillThreadStatus(QString text)
 {
 	ui->progressText->setText(text);
-}
-
-// HACK until update works.
-void GxsForumThreadWidget::forceUpdateDisplay()
-{
-	std::cerr << "GxsForumThreadWidget::forceUpdateDisplay()";
-	std::cerr << std::endl;
-
-	/* update Thread List */
-	insertThreads();
 }
 
 QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForumMsg &msg, bool useChildTS, uint32_t filterColumn)
