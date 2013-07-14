@@ -355,6 +355,11 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor, publi
 		//
 		std::map<std::string,DistantChatPeerInfo> _distant_chat_peers ;
 
+		// List of items to be sent asap. Used to store items that we cannot pass directly to 
+		// sendTurtleData(), because of Mutex protection.
+
+		std::list<RsChatItem*> pendingDistantChatItems ;
+
 		// Overloaded from RsTurtleClientService
 
 		virtual bool handleTunnelRequest(const std::string& hash,const std::string& peer_id) ;

@@ -68,7 +68,7 @@ void PopupDistantChatDialog::updateDisplay()
 	if(!isVisible())
 		return ;
 
-	std::cerr << "Checking tunnel..." ;
+	//std::cerr << "Checking tunnel..." ;
 	// make sure about the tunnel status
 	//
 	
@@ -78,7 +78,7 @@ void PopupDistantChatDialog::updateDisplay()
 
 	switch(status)
 	{
-		case RS_DISTANT_CHAT_STATUS_UNKNOWN: std::cerr << "Unknown hash. Error!" << std::endl;
+		case RS_DISTANT_CHAT_STATUS_UNKNOWN: //std::cerr << "Unknown hash. Error!" << std::endl;
 														 _status_label->setPixmap(QPixmap(IMAGE_GRY_LED)) ;
 														  _status_label->setToolTip(QObject::tr("Hash error")) ;
 														  setPeerStatus(RS_STATUS_OFFLINE) ;
@@ -92,19 +92,19 @@ void PopupDistantChatDialog::updateDisplay()
 														  setPeerStatus(RS_STATUS_OFFLINE) ;
 
 														 break ;
-		case RS_DISTANT_CHAT_STATUS_TUNNEL_DN: std::cerr << "Tunnel asked. Waiting for reponse. " << std::endl;
+		case RS_DISTANT_CHAT_STATUS_TUNNEL_DN: //std::cerr << "Tunnel asked. Waiting for reponse. " << std::endl;
 														 _status_label->setPixmap(QPixmap(IMAGE_RED_LED)) ;
 														  _status_label->setToolTip(QObject::tr("Tunnel is pending...")) ;
 														  setPeerStatus(RS_STATUS_OFFLINE) ;
 														 break ;
-		case RS_DISTANT_CHAT_STATUS_TUNNEL_OK: std::cerr << "Tunnel is ok. " << std::endl;
+		case RS_DISTANT_CHAT_STATUS_TUNNEL_OK: //std::cerr << "Tunnel is ok. " << std::endl;
 														 _status_label->setPixmap(QPixmap(IMAGE_YEL_LED)) ;
-														  _status_label->setToolTip(QObject::tr("Secured tunnel established!")) ;
+														  _status_label->setToolTip(QObject::tr("Secured tunnel established. Waiting for ACK...")) ;
 														  setPeerStatus(RS_STATUS_ONLINE) ;
 														 break ;
-		case RS_DISTANT_CHAT_STATUS_CAN_TALK: std::cerr << "Tunnel is ok and data is transmitted." << std::endl;
+		case RS_DISTANT_CHAT_STATUS_CAN_TALK: //std::cerr << "Tunnel is ok and data is transmitted." << std::endl;
 														 _status_label->setPixmap(QPixmap(IMAGE_GRN_LED)) ;
-														  _status_label->setToolTip(QObject::tr("Secured tunnel is working")) ;
+														  _status_label->setToolTip(QObject::tr("Secured tunnel is working. You can talk!")) ;
 														  setPeerStatus(RS_STATUS_ONLINE) ;
 														 break ;
 	}
@@ -112,7 +112,7 @@ void PopupDistantChatDialog::updateDisplay()
 
 void PopupDistantChatDialog::closeEvent(QCloseEvent *e)
 {
-	std::cerr << "Closing window => closing distant chat for hash " << _hash << std::endl;
+	//std::cerr << "Closing window => closing distant chat for hash " << _hash << std::endl;
 
 	uint32_t status= RS_DISTANT_CHAT_STATUS_UNKNOWN;
 	std::string pgp_id ;

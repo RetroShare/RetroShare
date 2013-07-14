@@ -54,6 +54,7 @@ static const int 		CONNECTION_CHALLENGE_MAX_COUNT 	  =   20 ; // sends a connect
 static const time_t	CONNECTION_CHALLENGE_MAX_MSG_AGE	  =   30 ; // maximum age of a message to be used in a connection challenge
 static const int 		CONNECTION_CHALLENGE_MIN_DELAY 	  =   15 ; // sends a connection at most every 15 seconds
 static const int 		LOBBY_CACHE_CLEANING_PERIOD    	  =   10 ; // clean lobby caches every 10 secs (remove old messages)
+
 static const time_t 	MAX_KEEP_MSG_RECORD 					  = 1200 ; // keep msg record for 1200 secs max.
 static const time_t 	MAX_KEEP_INACTIVE_NICKNAME         =  180 ; // keep inactive nicknames for 3 mn max.
 static const time_t  MAX_DELAY_BETWEEN_LOBBY_KEEP_ALIVE =  120 ; // send keep alive packet every 2 minutes.
@@ -61,6 +62,7 @@ static const time_t 	MAX_KEEP_PUBLIC_LOBBY_RECORD       =   60 ; // keep inactiv
 static const time_t 	MIN_DELAY_BETWEEN_PUBLIC_LOBBY_REQ =   20 ; // don't ask for lobby list more than once every 30 secs.
 
 static const time_t 	 DISTANT_CHAT_CLEANING_PERIOD      =   60 ; // don't ask for lobby list more than once every 30 secs.
+static const time_t 	 DISTANT_CHAT_KEEP_ALIVE_PERIOD    =   10 ; // sens keep alive distant chat packets every 10 secs.
 static const uint32_t DISTANT_CHAT_AES_KEY_SIZE         =   16 ; // size of AES encryption key for distant chat.
 static const uint32_t DISTANT_CHAT_HASH_SIZE            =   20 ; // This is sha1 size in bytes.
 
@@ -105,6 +107,14 @@ int	p3ChatService::tick()
 	{
 		cleanDistantChatInvites() ;
 		last_clean_time_dchat = now ;
+	}
+
+	// Flush items that could not be sent, probably because of a Mutex protected zone.
+	//
+	while(!pendingDistantChatItems.empty())
+	{
+		sendTurtleData( pendingDistantChatItems.front() ) ;
+		pendingDistantChatItems.pop_front() ;
 	}
 	return 0;
 }
@@ -2988,8 +2998,26 @@ void p3ChatService::addVirtualPeer(const TurtleFileHash& hash,const TurtleVirtua
 		it->second.last_hit_time = now ;
 	}
 
+	// then we send an ACK packet to notify that the tunnel works. That's useful
+	// because it makes the peer at the other end of the tunnel know that all
+	// intermediate peer in the tunnel are able to transmit the data.
+	// However, it is not possible here to call sendTurtleData(), without dead-locking
+	// the turtle router, so we store the item is a list of items to be sent.
+
+	RsChatStatusItem *cs = new RsChatStatusItem ;
+
+	cs->status_string = "Tunnel is working. You can talk!" ;
+	cs->flags = RS_CHAT_FLAG_PRIVATE | RS_CHAT_FLAG_ACK_DISTANT_CONNECTION;
+	cs->PeerId(hash);
+
+	{
+		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+		pendingDistantChatItems.push_back(cs) ;
+	}
+
+	// Notify the GUI that the tunnel is up.
+	//
 	rsicontrol->getNotify().notifyChatStatus(hash,"tunnel is up again!",true) ;
-	//rsicontrol->getNotify().notifyPeerStatusChanged(hash,RS_STATUS_ONLINE) ;
 }
 
 void p3ChatService::removeVirtualPeer(const TurtleFileHash& hash,const TurtleVirtualPeerId& virtual_peer_id)
