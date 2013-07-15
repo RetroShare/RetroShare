@@ -42,14 +42,9 @@ public:
 	void editNewId(bool isExternal);
 	void editExistingId(std::string circleId);
 
-#if 0
-	void newMsg(); /* cleanup */
-#endif
-
 	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 private slots:
-
 	void addMember();
 	void removeMember();
 
@@ -57,49 +52,8 @@ private slots:
 	void selectedMember(QTreeWidgetItem*, QTreeWidgetItem*);
 
 	void createCircle();
-	void cancelDialog();
-
-#if 0
-	/** Create the context popup menu and it's submenus */
-	void forumMessageCostumPopupMenu( QPoint point );
-
-	void fileHashingFinished(QList<HashedFile> hashedFiles);
-	/* actions to take.... */
-	void createMsg();
-	void pasteLink();
-	void pasteLinkFull();
-	void pasteOwnCertificateLink();
-
-	void smileyWidgetForums();
-	void addSmileys();
-	void addFile();
-#endif
-
-protected:
-
-#if 0
-	void closeEvent (QCloseEvent * event);
-#endif
 
 private:
-
-#if 0
-	void saveForumInfo(const RsGroupMetaData &meta);
-	void saveParentMsg(const RsGxsForumMsg &msg);
-	void loadFormInformation();
-
-	void loadForumInfo(const uint32_t &token);
-	void loadParentMsg(const uint32_t &token);
-
-	std::string mForumId;
-	std::string mParentId;
-
-	bool mParentMsgLoaded;
-	bool mForumMetaLoaded;
-	RsGxsForumMsg mParentMsg;
-	RsGroupMetaData mForumMeta;
-#endif
-
 	void setupForPersonalCircle();
 	void setupForExternalCircle();
 

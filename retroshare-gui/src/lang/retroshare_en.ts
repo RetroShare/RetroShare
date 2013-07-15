@@ -1822,10 +1822,6 @@ Double click lobbies to enter and chat.</source>
 <context>
     <name>CirclesDialog</name>
     <message>
-        <source>Refresh</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Showing details: </source>
         <translation type="unfinished"></translation>
     </message>
@@ -1899,6 +1895,26 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Edit Circle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Todo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Friends Of Friends</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>External Circles (Admin)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>External Circles (Subscribed)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>External Circles (Other)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3192,63 +3208,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Cancel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create Group</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Start New Thread</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Post Forum Message</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Paste RetroShare Link</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Paste full RetroShare Link</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Paste my certificate link</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>No Forum</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Loading</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>In Reply to</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>RetroShare</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Please set a Forum Subject and Forum Message</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Please choose Signing Id</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Please choose Signing Id, it is required</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add Extra File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3602,10 +3562,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>No Forum</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Loading</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -6676,10 +6632,6 @@ before you can comment</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Refresh</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Search Title</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6787,6 +6739,14 @@ before you can comment</source>
         <source>Forum Description</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Forum:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Thread:</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>GxsForumsDialog</name>
@@ -6892,6 +6852,10 @@ before you can comment</source>
     </message>
     <message>
         <source>On %1, %2 wrote:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Todo</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10746,14 +10710,6 @@ Reported error is: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Secured tunnel established!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Secured tunnel is working</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Messaging link is expired</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10767,6 +10723,14 @@ Reported error is: %2</source>
     </message>
     <message>
         <source>Chat connection is not possible</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Secured tunnel established. Waiting for ACK...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Secured tunnel is working. You can talk!</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

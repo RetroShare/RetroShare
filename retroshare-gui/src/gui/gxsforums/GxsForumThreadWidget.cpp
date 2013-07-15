@@ -91,10 +91,10 @@ GxsForumThreadWidget::GxsForumThreadWidget(const std::string &forumId, QWidget *
 {
 	ui->setupUi(this);
 
+	setUpdateWhenInvisible(true);
+
 	/* Setup UI helper */
 	mStateHelper = new UIStateHelper(this);
-
-	setUpdateWhenInvisible(true);
 
 	mStateHelper->addWidget(TOKEN_TYPE_CURRENTFORUM, ui->progressBar, UISTATE_LOADING_VISIBLE);
 	mStateHelper->addWidget(TOKEN_TYPE_CURRENTFORUM, ui->progressText, UISTATE_LOADING_VISIBLE);

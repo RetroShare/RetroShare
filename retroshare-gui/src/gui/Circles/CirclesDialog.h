@@ -24,37 +24,33 @@
 #ifndef MRK_CIRCLE_DIALOG_H
 #define MRK_CIRCLE_DIALOG_H
 
-#include "retroshare-gui/mainpage.h"
+#include "gui/gxs/RsGxsUpdateBroadcastPage.h"
+#include "util/TokenQueue.h"
 #include "ui_CirclesDialog.h"
 
-//#include <retroshare/rscircles.h>
+class UIStateHelper;
 
-#include "util/TokenQueue.h"
-
-#include <map>
-
-class CirclesDialog : public MainPage, public TokenResponse
+class CirclesDialog : public RsGxsUpdateBroadcastPage, public TokenResponse
 {
-  Q_OBJECT
+	Q_OBJECT
 
 public:
 	CirclesDialog(QWidget *parent = 0);
 
-void 	loadRequest(const TokenQueue *queue, const TokenRequest &req);
+	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
+
+protected:
+	virtual void updateDisplay(bool initialFill);
 
 private slots:
+	void todo();
+	void createExternalCircle();
+	void createPersonalCircle();
+	void editExistingCircle();
 
-void createExternalCircle();
-void createPersonalCircle();
-void editExistingCircle();
-
-void checkUpdate();
-
-void reloadAll();
-
-void circle_selected();
-void friend_selected();
-void category_selected();
+	void circle_selected();
+	void friend_selected();
+	void category_selected();
 
 #if 0
 	void OpenOrShowAddPageDialog();
@@ -72,29 +68,27 @@ void category_selected();
 #endif
 
 private:
+	void reloadAll();
 
 #if 0
-void 	clearWikiPage();
-void    clearGroupTree();
+	voidclearWikiPage();
+	void clearGroupTree();
 
-void 	updateWikiPage(const RsWikiSnapshot &page);
+	void updateWikiPage(const RsWikiSnapshot &page);
 
-bool 	getSelectedPage(std::string &groupId, std::string &pageId, std::string &origPageId);	
-std::string getSelectedPage();
-std::string getSelectedGroup();
-
+	bool getSelectedPage(std::string &groupId, std::string &pageId, std::string &origPageId);
+	std::string getSelectedPage();
+	std::string getSelectedGroup();
 #endif
 
-void 	requestGroupMeta();
-void 	loadGroupMeta(const uint32_t &token);
-
+	void requestGroupMeta();
+	void loadGroupMeta(const uint32_t &token);
 
 	TokenQueue *mCircleQueue;
+	UIStateHelper *mStateHelper;
 
 	/* UI - from Designer */
 	Ui::CirclesDialog ui;
-
 };
 
 #endif
-
