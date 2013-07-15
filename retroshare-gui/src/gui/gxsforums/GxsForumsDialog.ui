@@ -98,13 +98,6 @@
            </spacer>
           </item>
           <item>
-           <widget class="QPushButton" name="refreshButton">
-            <property name="text">
-             <string notr="true">Refresh</string>
-            </property>
-           </widget>
-          </item>
-          <item>
            <widget class="QPushButton" name="todoPushButton">
             <property name="text">
              <string>Todo</string>
@@ -202,15 +195,15 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>RSTabWidget</class>
-   <extends>QTabWidget</extends>
-   <header>gui/common/RSTabWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>GroupTreeWidget</class>
    <extends>QWidget</extends>
    <header>gui/common/GroupTreeWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>RSTabWidget</class>
+   <extends>QTabWidget</extends>
+   <header>gui/common/RSTabWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

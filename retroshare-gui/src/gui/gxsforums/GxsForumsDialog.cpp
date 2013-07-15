@@ -23,14 +23,14 @@
 #include <QMessageBox>
 
 #include "GxsForumsDialog.h"
-#include "gxsforums/GxsForumGroupDialog.h"
-#include "gxsforums/GxsForumThreadWidget.h"
+#include "GxsForumGroupDialog.h"
+#include "GxsForumThreadWidget.h"
 
-#include "settings/rsharesettings.h"
-#include "RetroShareLink.h"
-#include "channels/ShareKey.h"
-#include "common/RSTreeWidget.h"
-#include "notifyqt.h"
+#include "gui/settings/rsharesettings.h"
+#include "gui/RetroShareLink.h"
+#include "gui/channels/ShareKey.h"
+#include "gui/common/RSTreeWidget.h"
+#include "gui/notifyqt.h"
 //#include "gui/common/UIStateHelper.h"
 
 // These should be in retroshare/ folder.
@@ -51,8 +51,9 @@
 #define IMAGE_FORUMAUTHD     ":/images/konv_message2.png"
 #define IMAGE_COPYLINK       ":/images/copyrslink.png"
 
-#define TOKEN_TYPE_LISTING       1
-//#define TOKEN_TYPE_CURRENTFORUM  2
+#define TOKEN_TYPE_LISTING          1
+#define TOKEN_TYPE_SUBSCRIBE_CHANGE 2
+//#define TOKEN_TYPE_CURRENTFORUM   3
 
 /*
  * Transformation Notes:
@@ -88,8 +89,6 @@ GxsForumsDialog::GxsForumsDialog(QWidget *parent)
 	connect(NotifyQt::getInstance(), SIGNAL(forumMsgReadSatusChanged(QString,QString,int)), this, SLOT(forumMsgReadSatusChanged(QString,QString,int)));
 	connect(NotifyQt::getInstance(), SIGNAL(settingsChanged()), this, SLOT(settingsChanged()));
 
-	// HACK - TEMPORARY HIJACKING THIS BUTTON FOR REFRESH.
-	connect(ui.refreshButton, SIGNAL(clicked()), this, SLOT(forceUpdateDisplay()));
 	connect(ui.todoPushButton, SIGNAL(clicked()), this, SLOT(todo()));
 
 	/* Initialize group tree */
@@ -129,7 +128,6 @@ void GxsForumsDialog::todo()
 {
 	QMessageBox::information(this, "Todo",
 							 "<b>Open points:</b><ul>"
-							 "<li>Automatic refresh after subscribe/unsubscibe"
 							 "<li>Restore forum keys"
 							 "<li>Display AUTHD"
 							 "<li>Copy/navigate forum link"
@@ -262,16 +260,6 @@ void GxsForumsDialog::restoreForumKeys(void)
 void GxsForumsDialog::updateDisplay(bool /*initialFill*/)
 {
 	/* Update forums list */
-	insertForums();
-}
-
-// HACK until update works.
-void GxsForumsDialog::forceUpdateDisplay()
-{
-	std::cerr << "GxsForumsDialog::forceUpdateDisplay()";
-	std::cerr << std::endl;
-
-	/* update Forums List */
 	insertForums();
 }
 
@@ -549,6 +537,7 @@ void GxsForumsDialog::forumSubscribe(bool subscribe)
 
 	uint32_t token;
 	rsGxsForums->subscribeToGroup(token, mForumId, subscribe);
+	mForumQueue->queueRequest(token, 0, RS_TOKREQ_ANSTYPE_ACK, TOKEN_TYPE_SUBSCRIBE_CHANGE);
 }
 
 void GxsForumsDialog::showForumDetails()
@@ -709,20 +698,12 @@ void GxsForumsDialog::requestGroupSummary()
 {
 //	mStateHelper->setLoading(TOKEN_TYPE_LISTING, true);
 
+#ifdef DEBUG_FORUMS
 	std::cerr << "GxsForumsDialog::requestGroupSummary()";
 	std::cerr << std::endl;
+#endif
 
-	std::list<uint32_t> tokens;
-	mForumQueue->activeRequestTokens(TOKEN_TYPE_LISTING, tokens);
-	if (!tokens.empty()) {
-		std::list<uint32_t>::iterator tokenIt;
-		for (tokenIt = tokens.begin(); tokenIt != tokens.end(); ++tokenIt) {
-			std::cerr << "GxsForumsDialog::requestGroupSummary() Canceling Request: " << *tokenIt;
-			std::cerr << std::endl;
-
-			mForumQueue->cancelRequest(*tokenIt);
-		}
-	}
+	mForumQueue->cancelActiveRequestTokens(TOKEN_TYPE_LISTING);
 
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
@@ -733,8 +714,10 @@ void GxsForumsDialog::requestGroupSummary()
 
 void GxsForumsDialog::loadGroupSummary(const uint32_t &token)
 {
+#ifdef DEBUG_FORUMS
 	std::cerr << "GxsForumsDialog::loadGroupSummary()";
 	std::cerr << std::endl;
+#endif
 
 	std::list<RsGroupMetaData> groupInfo;
 	rsGxsForums->getGroupSummary(token, groupInfo);
@@ -754,6 +737,22 @@ void GxsForumsDialog::loadGroupSummary(const uint32_t &token)
 	}
 
 //	mStateHelper->setLoading(TOKEN_TYPE_LISTING, false);
+}
+
+/*********************** **** **** **** ***********************/
+/*********************** **** **** **** ***********************/
+
+void GxsForumsDialog::acknowledgeSubscribeChange(const uint32_t &token)
+{
+#ifdef DEBUG_FORUMS
+	std::cerr << "GxsForumsDialog::acknowledgeSubscribeChange()";
+	std::cerr << std::endl;
+#endif
+
+	RsGxsGroupId groupId;
+	rsGxsForums->acknowledgeGrp(token, groupId);
+
+	insertForums();
 }
 
 /*********************** **** **** **** ***********************/
@@ -802,8 +801,10 @@ void GxsForumsDialog::loadGroupSummary(const uint32_t &token)
 
 void GxsForumsDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 {
+#ifdef DEBUG_FORUMS
 	std::cerr << "GxsForumsDialog::loadRequest() UserType: " << req.mUserType;
 	std::cerr << std::endl;
+#endif
 
 	if (queue == mForumQueue)
 	{
@@ -812,6 +813,10 @@ void GxsForumsDialog::loadRequest(const TokenQueue *queue, const TokenRequest &r
 		{
 		case TOKEN_TYPE_LISTING:
 			loadGroupSummary(req.mToken);
+			break;
+
+		case TOKEN_TYPE_SUBSCRIBE_CHANGE:
+			acknowledgeSubscribeChange(req.mToken);
 			break;
 
 //		case TOKEN_TYPE_CURRENTFORUM:

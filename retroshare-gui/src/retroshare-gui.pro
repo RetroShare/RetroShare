@@ -1051,18 +1051,18 @@ circles {
 	
 	
 gxsforums {
-	
-	HEADERS += gui/GxsForumsDialog.h \
+
+	HEADERS += gui/gxsforums/GxsForumsDialog.h \
 		gui/gxsforums/GxsForumGroupDialog.h \
 		gui/gxsforums/CreateGxsForumMsg.h \
 		gui/gxsforums/GxsForumThreadWidget.h \
 		gui/gxsforums/GxsForumsFillThread.h
-	
-	FORMS += gui/GxsForumsDialog.ui \
+
+	FORMS += gui/gxsforums/GxsForumsDialog.ui \
 		gui/gxsforums/CreateGxsForumMsg.ui \
 		gui/gxsforums/GxsForumThreadWidget.ui
-	
-	SOURCES += gui/GxsForumsDialog.cpp \
+
+	SOURCES += gui/gxsforums/GxsForumsDialog.cpp \
 		gui/gxsforums/GxsForumGroupDialog.cpp \
 		gui/gxsforums/CreateGxsForumMsg.cpp \
 		gui/gxsforums/GxsForumThreadWidget.cpp \

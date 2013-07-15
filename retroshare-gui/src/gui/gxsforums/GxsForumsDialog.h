@@ -59,7 +59,6 @@ protected:
 
 private slots:
 	void settingsChanged();
-	void forceUpdateDisplay(); // TEMP HACK FN.
 	void todo();
 
 	/** Create the context popup menu and it's submenus */
@@ -107,6 +106,9 @@ private:
 
 	void requestGroupSummary();
 	void loadGroupSummary(const uint32_t &token);
+
+	// subscribe/unsubscribe ack.
+	void acknowledgeSubscribeChange(const uint32_t &token);
 
 	GxsForumThreadWidget *forumThreadWidget(const std::string &forumId);
 	GxsForumThreadWidget *createThreadWidget(const std::string &forumId);

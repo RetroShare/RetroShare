@@ -26,7 +26,7 @@
 #include "GxsForumThreadWidget.h"
 #include "ui_GxsForumThreadWidget.h"
 #include "GxsForumsFillThread.h"
-#include "gui/GxsForumsDialog.h"
+#include "GxsForumsDialog.h"
 #include "gui/RetroShareLink.h"
 #include "gui/common/RSTreeWidgetItem.h"
 #include "gui/common/RSItemDelegate.h"
