@@ -28,10 +28,11 @@
 
 #include "gui/gxs/GxsCommentContainer.h"
 #include "gui/Posted/PostedListDialog.h"
+#include "gui/Posted/PostedItem.h"
 
 class PostedDialog : public GxsCommentContainer
 {
-  Q_OBJECT
+	Q_OBJECT
 
 public:
 	PostedDialog(QWidget *parent = 0)
@@ -44,7 +45,7 @@ public:
 
 	virtual QString getServiceName()
 	{
-		return tr("Posted");
+		return tr("Posted Links");
 	}
 
 	virtual RsTokenService *getTokenService()
@@ -57,12 +58,15 @@ public:
 		return rsPosted;
 	}
 
-        virtual QWidget *createHeaderWidget(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId)
-        {
-                return new PostedItem(NULL, 0, grpId, msgId, true);
-        }
+	virtual QWidget *createHeaderWidget(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId)
+	{
+		return new PostedItem(NULL, 0, grpId, msgId, true);
+	}
 
+	virtual QPixmap getServicePixmap()
+	{
+		return QPixmap(":/images/posted_24.png");
+	}
 };
 
 #endif
-

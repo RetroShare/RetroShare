@@ -30,59 +30,50 @@
 #include <retroshare/rsgxscommon.h>
 #include <retroshare/rstokenservice.h>
 
-#include <map>
-
 class GxsServiceDialog;
 
 class GxsCommentContainer : public MainPage
 {
-  Q_OBJECT
+	Q_OBJECT
 
 public:
 	GxsCommentContainer(QWidget *parent = 0);
 	void setup();
 
-        void commentLoad(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId, const QString &title);
+	void commentLoad(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId, const QString &title);
 
-        virtual GxsServiceDialog *createServiceDialog() = 0;
-        virtual QString getServiceName() = 0;
-        virtual RsTokenService *getTokenService() = 0;
-        virtual RsGxsCommentService *getCommentService() = 0;
-        virtual QWidget *createHeaderWidget(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId) = 0;
+	virtual GxsServiceDialog *createServiceDialog() = 0;
+	virtual QString getServiceName() = 0;
+	virtual RsTokenService *getTokenService() = 0;
+	virtual RsGxsCommentService *getCommentService() = 0;
+	virtual QWidget *createHeaderWidget(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId) = 0;
+	virtual QPixmap getServicePixmap() = 0;
 
 private slots:
 	void tabCloseRequested(int index);
 
 private:
-
 	GxsServiceDialog *mServiceDialog;
 
 	/* UI - from Designer */
 	Ui::GxsCommentContainer ui;
-
 };
-
-
 
 class GxsServiceDialog
 {
-
 public:
 	GxsServiceDialog(GxsCommentContainer *container)
 	:mContainer(container) { return; }
 
-virtual ~GxsServiceDialog() { return; }
+	virtual ~GxsServiceDialog() { return; }
 
 	void commentLoad(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId, const QString &title)
 	{
 		mContainer->commentLoad(grpId, msgId, title);
 	}
+
 private:
 	GxsCommentContainer *mContainer;
-
 };
 
-
-
 #endif
-

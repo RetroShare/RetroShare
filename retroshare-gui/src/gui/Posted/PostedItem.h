@@ -27,31 +27,29 @@
 #include "ui_PostedItem.h"
 
 #include <retroshare/rsposted.h>
-#include "gui/feeds/FeedHolder.h"
 #include "gui/gxs/GxsFeedItem.h"
 
+class RsPostedPost;
 
 class PostedItem : public GxsFeedItem, private Ui::PostedItem
 {
-  Q_OBJECT
+	Q_OBJECT
 
 public:
-        PostedItem(FeedHolder *parent, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome);
-        PostedItem(FeedHolder *parent, uint32_t feedId, const RsPostedPost &post, bool isHome);
+	PostedItem(FeedHolder *parent, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome);
+	PostedItem(FeedHolder *parent, uint32_t feedId, const RsPostedPost &post, bool isHome);
 
-        RsPostedPost getPost() const;
-        void setContent(const RsPostedPost& post);
-
-	// Make this public so we can sort based on it.
-        RsPostedPost mPost;
+	const RsPostedPost &getPost() const;
+	RsPostedPost &post();
+	void setContent(const RsPostedPost& post);
 
 private slots:
-        void loadComments();
-        void makeUpVote();
-        void makeDownVote();
+	void loadComments();
+	void makeUpVote();
+	void makeDownVote();
 
 signals:
-        void vote(const RsGxsGrpMsgIdPair& msgId, bool up);
+	void vote(const RsGxsGrpMsgIdPair& msgId, bool up);
 
 protected:
 	virtual void loadMessage(const uint32_t &token);
@@ -59,12 +57,9 @@ protected:
 private:
 	void setup();
 
-	uint32_t     mType;
-        bool mSelected;
-
-
+	uint32_t mType;
+	bool mSelected;
+	RsPostedPost mPost;
 };
 
-
 #endif
-

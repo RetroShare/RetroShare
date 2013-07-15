@@ -26,12 +26,11 @@
 
 #include <QDialog>
 #include "retroshare/rsposted.h"
-#include "PostedUserTypes.h"
 
-#include "util/TokenQueue.h"
+class TokenQueue;
 
 namespace Ui {
-    class PostedCreatePostDialog;
+	class PostedCreatePostDialog;
 }
 
 class PostedCreatePostDialog : public QDialog
@@ -39,26 +38,24 @@ class PostedCreatePostDialog : public QDialog
     Q_OBJECT
 
 public:
-
-    /*!
-     * @param tokenQ parent callee token
-     * @param posted
-     */
-    explicit PostedCreatePostDialog(TokenQueue* tokenQ, RsPosted* posted, const RsGxsGroupId& grpId, QWidget *parent = 0);
-    ~PostedCreatePostDialog();
+	/*!
+	 * @param tokenQ parent callee token
+	 * @param posted
+	 */
+	explicit PostedCreatePostDialog(TokenQueue* tokenQ, RsPosted* posted, const RsGxsGroupId& grpId, QWidget *parent = 0);
+	~PostedCreatePostDialog();
 
 private slots:
-
-    void createPost();
+	void createPost();
 
 private:
-    Ui::PostedCreatePostDialog *ui;
+	QString mLink;
+	QString mNotes;
+	TokenQueue* mTokenQueue;
+	RsPosted* mPosted;
+	RsGxsGroupId mGrpId;
 
-    QString mLink;
-    QString mNotes;
-    RsPosted* mPosted;
-    RsGxsGroupId mGrpId;
-    TokenQueue* mTokenQueue;
+	Ui::PostedCreatePostDialog *ui;
 };
 
 #endif // POSTEDCREATEPOSTDIALOG_H

@@ -9962,7 +9962,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PostedDialog</name>
     <message>
-        <source>Posted</source>
+        <source>Posted Links</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10048,10 +10048,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Top</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Refresh</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

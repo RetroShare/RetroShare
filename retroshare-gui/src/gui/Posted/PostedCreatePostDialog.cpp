@@ -24,50 +24,54 @@
 #include <QMessageBox>
 #include "PostedCreatePostDialog.h"
 #include "ui_PostedCreatePostDialog.h"
+#include "PostedUserTypes.h"
+
+#include "util/TokenQueue.h"
 
 #include <iostream>
 
 PostedCreatePostDialog::PostedCreatePostDialog(TokenQueue* tokenQ, RsPosted *posted, const RsGxsGroupId& grpId, QWidget *parent):
-    QDialog(parent), mTokenQueue(tokenQ), mPosted(posted), mGrpId(grpId),
-    ui(new Ui::PostedCreatePostDialog)
+	QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint),
+	mTokenQueue(tokenQ), mPosted(posted), mGrpId(grpId),
+	ui(new Ui::PostedCreatePostDialog)
 {
-    ui->setupUi(this);
-    connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(createPost()));
+	ui->setupUi(this);
 
-    /* fill in the available OwnIds for signing */
-    ui->idChooser->loadIds(IDCHOOSER_ID_REQUIRED, "");
+	connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(createPost()));
+	connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(close()));
 
-}
-
-void PostedCreatePostDialog::createPost()
-{
-    RsGxsId authorId;
-    if (!ui->idChooser->getChosenId(authorId))
-    {
-        std::cerr << "PostedCreatePostDialog::createPost() ERROR GETTING AuthorId!, Post Failed";
-        std::cerr << std::endl;
-
-        QMessageBox::warning(this, tr("RetroShare"),tr("Please create or choose a Signing Id first"),
-            QMessageBox::Ok, QMessageBox::Ok);
-
-	return;
-    }
-
-
-    RsPostedPost post;
-    post.mMeta.mGroupId = mGrpId;
-    post.mLink = std::string(ui->linkEdit->text().toUtf8());
-    post.mNotes = std::string(ui->notesTextEdit->toPlainText().toUtf8());
-    post.mMeta.mMsgName = std::string(ui->titleEdit->text().toUtf8());
-    post.mMeta.mAuthorId = authorId;
-
-    uint32_t token;
-    mPosted->createPost(token, post);
-    mTokenQueue->queueRequest(token, TOKENREQ_MSGINFO, RS_TOKREQ_ANSTYPE_ACK, TOKEN_USER_TYPE_POST);
-    accept();
+	/* fill in the available OwnIds for signing */
+	ui->idChooser->loadIds(IDCHOOSER_ID_REQUIRED, "");
 }
 
 PostedCreatePostDialog::~PostedCreatePostDialog()
 {
-    delete ui;
+	delete ui;
+}
+
+void PostedCreatePostDialog::createPost()
+{
+	RsGxsId authorId;
+	if (!ui->idChooser->getChosenId(authorId))
+	{
+		std::cerr << "PostedCreatePostDialog::createPost() ERROR GETTING AuthorId!, Post Failed";
+		std::cerr << std::endl;
+
+		QMessageBox::warning(this, tr("RetroShare"),tr("Please create or choose a Signing Id first"), QMessageBox::Ok, QMessageBox::Ok);
+
+		return;
+	}
+
+	RsPostedPost post;
+	post.mMeta.mGroupId = mGrpId;
+	post.mLink = std::string(ui->linkEdit->text().toUtf8());
+	post.mNotes = std::string(ui->notesTextEdit->toPlainText().toUtf8());
+	post.mMeta.mMsgName = std::string(ui->titleEdit->text().toUtf8());
+	post.mMeta.mAuthorId = authorId;
+
+	uint32_t token;
+	mPosted->createPost(token, post);
+	mTokenQueue->queueRequest(token, TOKENREQ_MSGINFO, RS_TOKREQ_ANSTYPE_ACK, TOKEN_USER_TYPE_POST);
+
+	accept();
 }

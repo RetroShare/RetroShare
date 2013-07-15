@@ -21,20 +21,14 @@
  *
  */
 
-
 #include <QDateTime>
-#include <QMessageBox>
-#include <QMouseEvent>
-#include <QBuffer>
-#include <time.h>
 
 #include "PostedItem.h"
+#include "gui/feeds/FeedHolder.h"
 
 #include <retroshare/rsposted.h>
 
-#include <algorithm>
 #include <iostream>
-
 
 /** Constructor */
 
@@ -53,48 +47,41 @@ PostedItem::PostedItem(FeedHolder *parent, uint32_t feedId, const RsPostedPost &
 	setContent(mPost);
 }
 
-
 void PostedItem::setup()
 {
 	setupUi(this);
-	setAttribute ( Qt::WA_DeleteOnClose, true );
+	setAttribute(Qt::WA_DeleteOnClose, true);
 
-	connect( commentButton, SIGNAL( clicked() ), this, SLOT( loadComments() ) );
-	connect( voteUpButton, SIGNAL(clicked()), this, SLOT(makeUpVote()));
-	connect( voteDownButton, SIGNAL(clicked()), this, SLOT( makeDownVote()));
-
-	return;
+	connect(commentButton, SIGNAL( clicked()), this, SLOT(loadComments()));
+	connect(voteUpButton, SIGNAL(clicked()), this, SLOT(makeUpVote()));
+	connect(voteDownButton, SIGNAL(clicked()), this, SLOT( makeDownVote()));
 }
-
 
 void PostedItem::loadMessage(const uint32_t &token)
 {
 	std::vector<RsPostedPost> posts;
-        if (!rsPosted->getPostData(token, posts))
-        {
-                std::cerr << "GxsChannelPostItem::loadMessage() ERROR getting data";
-                std::cerr << std::endl;
-                return;
-        }
+	if (!rsPosted->getPostData(token, posts))
+	{
+		std::cerr << "GxsChannelPostItem::loadMessage() ERROR getting data";
+		std::cerr << std::endl;
+		return;
+	}
 
-        if (posts.size() != 1)
-        {
-                std::cerr << "GxsChannelPostItem::loadMessage() Wrong number of Items";
-                std::cerr << std::endl;
-                return;
-        }
+	if (posts.size() != 1)
+	{
+		std::cerr << "GxsChannelPostItem::loadMessage() Wrong number of Items";
+		std::cerr << std::endl;
+		return;
+	}
 
 	mPost = posts[0];
 	setContent(mPost);
-
-	return;
 }
-
-
 
 void PostedItem::setContent(const RsPostedPost &post)
 {
 	mPost = post;
+
 	QDateTime qtime;
 	qtime.setTime_t(mPost.mMeta.mPublishTs);
 	QString timestamp = qtime.toString("dd.MMMM yyyy hh:mm");
@@ -169,10 +156,14 @@ void PostedItem::setContent(const RsPostedPost &post)
 								  + QString::number(nComments) + "</span></p>");
 	}
 #endif
-
 }
 
-RsPostedPost PostedItem::getPost() const
+const RsPostedPost &PostedItem::getPost() const
+{
+	return mPost;
+}
+
+RsPostedPost &PostedItem::post()
 {
 	return mPost;
 }
@@ -185,6 +176,7 @@ void PostedItem::makeDownVote()
 
 	voteUpButton->setEnabled(false);
 	voteDownButton->setEnabled(false);
+
 	emit vote(msgId, false);
 }
 
@@ -210,6 +202,3 @@ void PostedItem::loadComments()
 		mParent->openComments(0, mPost.mMeta.mGroupId, mPost.mMeta.mMsgId, title);
 	}
 }
-
-
-

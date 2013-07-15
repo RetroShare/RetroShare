@@ -52,19 +52,14 @@ uint32_t PostedCreateDefaultsFlags = ( GXS_GROUP_DEFAULTS_DISTRIB_PUBLIC    |
                            GXS_GROUP_DEFAULTS_COMMENTS_NO          |
                            0);
 
-
 PostedGroupDialog::PostedGroupDialog(TokenQueue *tokenQueue, QWidget *parent)
 	:GxsGroupDialog(tokenQueue, PostedCreateEnabledFlags, PostedCreateDefaultsFlags, parent)
 {
-
-
 }
 
 PostedGroupDialog::PostedGroupDialog(const RsPostedGroup &group, QWidget *parent)
-		:GxsGroupDialog(group.mMeta, MODE_SHOW, parent)
+	:GxsGroupDialog(group.mMeta, MODE_SHOW, parent)
 {
-
-
 }
 
 void PostedGroupDialog::initUi()
@@ -96,7 +91,7 @@ bool PostedGroupDialog::service_CreateGroup(uint32_t &token, const RsGroupMetaDa
 	// Specific Function.
 	RsPostedGroup grp;
 	grp.mMeta = meta;
-        grp.mDescription = getDescription().toStdString();
+	grp.mDescription = getDescription().toStdString();
 	std::cerr << "PostedGroupDialog::service_CreateGroup() storing to Queue";
 	std::cerr << std::endl;
 

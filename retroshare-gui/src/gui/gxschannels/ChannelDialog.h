@@ -24,23 +24,21 @@
 #ifndef MRK_CHANNEL_DIALOG_H
 #define MRK_CHANNEL_DIALOG_H
 
-
 #include <retroshare/rsgxschannels.h>
 
 #include "gui/gxs/GxsCommentContainer.h"
 #include "gui/gxschannels/GxsChannelDialog.h"
 #include "gui/feeds/GxsChannelPostItem.h"
 
-
 class ChannelDialog : public GxsCommentContainer
 {
-  //Q_OBJECT
+	Q_OBJECT
 
 public:
 	ChannelDialog(QWidget *parent = 0)
 	:GxsCommentContainer(parent) { return; }
 
-        virtual GxsServiceDialog *createServiceDialog()
+	virtual GxsServiceDialog *createServiceDialog()
 	{
 		return new GxsChannelDialog(this);
 	}
@@ -50,21 +48,25 @@ public:
 		return tr("GxsChannels");
 	}
 
-        virtual RsTokenService *getTokenService()
+	virtual RsTokenService *getTokenService()
 	{
 		return rsGxsChannels->getTokenService();
 	}
 
-        virtual RsGxsCommentService *getCommentService()
+	virtual RsGxsCommentService *getCommentService()
 	{
 		return rsGxsChannels;
 	}
 
-        virtual QWidget *createHeaderWidget(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId)
+	virtual QWidget *createHeaderWidget(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId)
 	{
 		return new GxsChannelPostItem(NULL, 0, grpId, msgId, true);
+	}
+
+	virtual QPixmap getServicePixmap()
+	{
+		return QPixmap(":/images/channels24.png");
 	}
 };
 
 #endif
-

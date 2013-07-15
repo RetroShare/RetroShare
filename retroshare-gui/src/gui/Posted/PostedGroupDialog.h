@@ -21,7 +21,6 @@
  *
  */
 
-
 #ifndef _POSTED_GROUP_DIALOG_H
 #define _POSTED_GROUP_DIALOG_H
 
@@ -42,10 +41,7 @@ protected:
 	virtual bool service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta);
 
 private:
-
-    RsPostedGroup mTopic;
-
+	RsPostedGroup mTopic;
 };
 
 #endif
-

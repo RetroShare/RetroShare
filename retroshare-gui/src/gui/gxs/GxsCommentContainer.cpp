@@ -25,18 +25,11 @@
 #include "gui/gxs/GxsCommentDialog.h"
 
 #include <iostream>
-#include <sstream>
 
-#include <QTimer>
-#include <QMessageBox>
-
-/******
- * #define PHOTO_DEBUG 1
- *****/
-
+#define MAX_COMMENT_TITLE 32
 
 /****************************************************************
- * Posted Dialog
+ * GxsCommentContainer
  *
  */
 
@@ -45,23 +38,21 @@ GxsCommentContainer::GxsCommentContainer(QWidget *parent)
 {
 	ui.setupUi(this);
 
-	connect(ui.tabWidget, SIGNAL(tabCloseRequested( int )), this, SLOT(tabCloseRequested( int )));
-
+	connect(ui.tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(tabCloseRequested(int)));
 }
-
 
 void GxsCommentContainer::setup()
 {
 	mServiceDialog = createServiceDialog();
+
 	QString name = getServiceName();
+	ui.titleBarLabel->setText(name);
+	ui.titleBarPixmap->setPixmap(getServicePixmap());
 
-	QString list(name);
 	QWidget *widget = dynamic_cast<QWidget *>(mServiceDialog);
-	ui.tabWidget->addTab(widget, name);
+	int index = ui.tabWidget->addTab(widget, name);
+	ui.tabWidget->hideCloseButton(index);
 }
-
-
-#define MAX_COMMENT_TITLE 32
 
 void GxsCommentContainer::commentLoad(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId, const QString &title)
 {
@@ -72,7 +63,7 @@ void GxsCommentContainer::commentLoad(const RsGxsGroupId &grpId, const RsGxsMess
 		comments += "...";
 	}
 
-        GxsCommentDialog *commentDialog = new GxsCommentDialog(this, getTokenService(), getCommentService());
+	GxsCommentDialog *commentDialog = new GxsCommentDialog(this, getTokenService(), getCommentService());
 
 	QWidget *commentHeader = createHeaderWidget(grpId, msgId);
 	commentDialog->setCommentHeader(commentHeader);
@@ -82,12 +73,11 @@ void GxsCommentContainer::commentLoad(const RsGxsGroupId &grpId, const RsGxsMess
 	ui.tabWidget->addTab(commentDialog, comments);
 }
 
-
-
 void GxsCommentContainer::tabCloseRequested(int index)
 {
 	std::cerr << "GxsCommentContainer::tabCloseRequested(" << index << ")";
 	std::cerr << std::endl;
+
 	if (index != 0)
 	{
 		QWidget *comments = ui.tabWidget->widget(index);
@@ -100,21 +90,3 @@ void GxsCommentContainer::tabCloseRequested(int index)
 		std::cerr << std::endl;
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
