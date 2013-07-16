@@ -31,8 +31,11 @@
 
 #include "GroupDefs.h"
 #include "gui/chat/ChatDialog.h"
-#include "gui/chat/CreateLobbyDialog.h"
+//#include "gui/chat/CreateLobbyDialog.h"
 #include "gui/common/AvatarDefs.h"
+#include "gui/ServicePermissionDialog.h"
+#include "gui/FriendRecommendDialog.h"
+
 #include "gui/connect/ConfCertDialog.h"
 #include "gui/connect/ConnectFriendWizard.h"
 #include "gui/groups/CreateGroup.h"
@@ -53,7 +56,7 @@
 
 /* Images for context menu icons */
 #define IMAGE_DENYFRIEND         ":/images/denied16.png"
-#define IMAGE_REMOVEFRIEND       ":/images/removefriend16.png"
+#define IMAGE_REMOVEFRIEND       ":/images/remove_user24.png"
 #define IMAGE_EXPORTFRIEND       ":/images/user/friend_suggestion16.png"
 #define IMAGE_ADDFRIEND          ":/images/user/add_user16.png"
 #define IMAGE_FRIENDINFO         ":/images/peerdetails_16x16.png"
@@ -195,7 +198,8 @@ void FriendList::processSettings(bool bLoad)
         // states
         setHideUnconnected(Settings->value("hideUnconnected", mHideUnconnected).toBool());
         setHideState(Settings->value("hideState", mHideState).toBool());
-        setRootIsDecorated(Settings->value("rootIsDecorated", ui->peerTreeWidget->rootIsDecorated()).toBool());
+        //setRootIsDecorated(Settings->value("rootIsDecorated", ui->peerTreeWidget->rootIsDecorated()).toBool());
+        setRootIsDecorated(true) ;
         setShowGroups(Settings->value("showGroups", mShowGroups).toBool());
 
         // open groups
@@ -334,7 +338,7 @@ void FriendList::peerTreeWidgetCostumPopupMenu()
                  break;
          }
 
-         QMenu *lobbyMenu = NULL;
+//         QMenu *lobbyMenu = NULL;
 
          switch (type) {
          case TYPE_GROUP:
@@ -342,7 +346,7 @@ void FriendList::peerTreeWidgetCostumPopupMenu()
                  bool standard = c->data(COLUMN_DATA, ROLE_STANDARD).toBool();
 
                  contextMnu.addAction(QIcon(IMAGE_MSG), tr("Message Group"), this, SLOT(msgfriend()));
-                 contextMnu.addAction(QIcon(IMAGE_ADDFRIEND), tr("Add Friend"), this, SLOT(addFriend()));
+//                 contextMnu.addAction(QIcon(IMAGE_ADDFRIEND), tr("Add Friend"), this, SLOT(addFriend()));
 
                  contextMnu.addSeparator();
 
@@ -351,14 +355,14 @@ void FriendList::peerTreeWidgetCostumPopupMenu()
                  QAction *action = contextMnu.addAction(QIcon(IMAGE_REMOVE), tr("Remove Group"), this, SLOT(removeGroup()));
                  action->setDisabled(standard);
 
-                 lobbyMenu = contextMnu.addMenu(QIcon(IMAGE_CHAT), tr("Chat lobbies")) ;
+//                 lobbyMenu = contextMnu.addMenu(QIcon(IMAGE_CHAT), tr("Chat lobbies")) ;
              }
              break;
          case TYPE_GPG:
          case TYPE_SSL:
              {
                  contextMnu.addAction(QIcon(IMAGE_CHAT), tr("Chat"), this, SLOT(chatfriendproxy()));
-                 lobbyMenu = contextMnu.addMenu(QIcon(IMAGE_CHAT), tr("Chat lobbies")) ;
+//                lobbyMenu = contextMnu.addMenu(QIcon(IMAGE_CHAT), tr("Chat lobbies")) ;
 
                  contextMnu.addAction(QIcon(IMAGE_MSG), tr("Message Friend"), this, SLOT(msgfriend()));
 
@@ -372,7 +376,7 @@ void FriendList::peerTreeWidgetCostumPopupMenu()
                      contextMnu.addAction(QIcon(IMAGE_EXPORTFRIEND), tr("Recommend this Friend to..."), this, SLOT(recommendfriend()));
                  }
 
-                 contextMnu.addAction(QIcon(IMAGE_CONNECT), tr("Connect To Friend"), this, SLOT(connectfriend()));
+                 contextMnu.addAction(QIcon(IMAGE_CONNECT), tr("Attempt to connect"), this, SLOT(connectfriend()));
 
                  if (type == TYPE_SSL) {
                      contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy certificate link"), this, SLOT(copyFullCertificate()));
@@ -435,6 +439,8 @@ void FriendList::peerTreeWidgetCostumPopupMenu()
                      if (addToGroupMenu || moveToGroupMenu || foundGroup) {
                          QMenu *groupsMenu = contextMnu.addMenu(QIcon(IMAGE_GROUP16), tr("Groups"));
 
+								 groupsMenu->addAction(QIcon(IMAGE_EXPAND), tr("Create new group"), this, SLOT(createNewGroup()));
+
                          if (addToGroupMenu) {
                              groupsMenu->addMenu(addToGroupMenu);
                          }
@@ -460,36 +466,36 @@ void FriendList::peerTreeWidgetCostumPopupMenu()
              }
          }
 
-         if (lobbyMenu) {
-             lobbyMenu->addAction(QIcon(IMAGE_ADDFRIEND), tr("Create new"), this, SLOT(createchatlobby()));
-
-             // Get existing lobbies
-             //
-             std::list<ChatLobbyInfo> cl_infos ;
-             rsMsgs->getChatLobbyList(cl_infos) ;
-
-             for(std::list<ChatLobbyInfo>::const_iterator it(cl_infos.begin());it!=cl_infos.end();++it)
-             {
-                 std::cerr << "Adding meny entry with lobby id " << std::hex << (*it).lobby_id << std::dec << std::endl;
-
-                 QMenu *mnu2 = lobbyMenu->addMenu(QIcon(IMAGE_CHAT), QString::fromUtf8((*it).lobby_name.c_str())) ;
-
-                 QAction* inviteToLobbyAction = new QAction((type == TYPE_GROUP) ? tr("Invite this group") : tr("Invite this friend"), mnu2);
-                 inviteToLobbyAction->setData(QString::number((*it).lobby_id));
-                 connect(inviteToLobbyAction, SIGNAL(triggered()), this, SLOT(inviteToLobby()));
-                 mnu2->addAction(inviteToLobbyAction);
-
-                 QAction* showLobbyAction = new QAction(tr("Show"), mnu2);
-                 showLobbyAction->setData(QString::number((*it).lobby_id));
-                 connect(showLobbyAction, SIGNAL(triggered()), this, SLOT(showLobby()));
-                 mnu2->addAction(showLobbyAction);
-
-                 QAction* unsubscribeToLobbyAction = new QAction(tr("Unsubscribe"), mnu2);
-                 unsubscribeToLobbyAction->setData(QString::number((*it).lobby_id));
-                 connect(unsubscribeToLobbyAction, SIGNAL(triggered()), this, SLOT(unsubscribeToLobby()));
-                 mnu2->addAction(unsubscribeToLobbyAction);
-             }
-         }
+//         if (lobbyMenu) {
+//            lobbyMenu->addAction(QIcon(IMAGE_ADDFRIEND), tr("Create new"), this, SLOT(createchatlobby()));
+//
+//             // Get existing lobbies
+//             //
+//             std::list<ChatLobbyInfo> cl_infos ;
+//             rsMsgs->getChatLobbyList(cl_infos) ;
+//
+//             for(std::list<ChatLobbyInfo>::const_iterator it(cl_infos.begin());it!=cl_infos.end();++it)
+//             {
+//                 std::cerr << "Adding meny entry with lobby id " << std::hex << (*it).lobby_id << std::dec << std::endl;
+//
+//                 QMenu *mnu2 = lobbyMenu->addMenu(QIcon(IMAGE_CHAT), QString::fromUtf8((*it).lobby_name.c_str())) ;
+//
+//                 QAction* inviteToLobbyAction = new QAction((type == TYPE_GROUP) ? tr("Invite this group") : tr("Invite this friend"), mnu2);
+//                 inviteToLobbyAction->setData(QString::number((*it).lobby_id));
+//                 connect(inviteToLobbyAction, SIGNAL(triggered()), this, SLOT(inviteToLobby()));
+//                 mnu2->addAction(inviteToLobbyAction);
+//
+//                 QAction* showLobbyAction = new QAction(tr("Show"), mnu2);
+//                 showLobbyAction->setData(QString::number((*it).lobby_id));
+//                 connect(showLobbyAction, SIGNAL(triggered()), this, SLOT(showLobby()));
+//                 mnu2->addAction(showLobbyAction);
+//
+//                 QAction* unsubscribeToLobbyAction = new QAction(tr("Unsubscribe"), mnu2);
+//                 unsubscribeToLobbyAction->setData(QString::number((*it).lobby_id));
+//                 connect(unsubscribeToLobbyAction, SIGNAL(triggered()), this, SLOT(unsubscribeToLobby()));
+//                 mnu2->addAction(unsubscribeToLobbyAction);
+//             }
+//         }
      } else {
         QAction *action = contextMnu.addAction(QIcon(IMAGE_PASTELINK), tr("Paste Friend Link"), this, SLOT(pastePerson()));
         if (RSLinkClipboard::empty(RetroShareLink::TYPE_PERSON) && RSLinkClipboard::empty(RetroShareLink::TYPE_CERTIFICATE)) {
@@ -497,12 +503,33 @@ void FriendList::peerTreeWidgetCostumPopupMenu()
         }
     }
 
+
+    contextMnu.addSeparator();
+
+    contextMnu.addAction(QIcon(IMAGE_EXPAND), tr("Recommend many friends to each others"), this, SLOT(recommendFriends()));
+    contextMnu.addAction(QIcon(IMAGE_EXPAND), tr("Service permissions matrix"), this, SLOT(servicePermission()));
+
     contextMnu.addSeparator();
 
     contextMnu.addAction(QIcon(IMAGE_EXPAND), tr("Expand all"), ui->peerTreeWidget, SLOT(expandAll()));
     contextMnu.addAction(QIcon(IMAGE_COLLAPSE), tr("Collapse all"), ui->peerTreeWidget, SLOT(collapseAll()));
 
     contextMnu.exec(QCursor::pos());
+}
+void FriendList::createNewGroup()
+{
+    CreateGroup createGrpDialog ("", this);
+    createGrpDialog.exec();
+}
+
+void FriendList::recommendFriends()
+{
+	FriendRecommendDialog::showYourself();
+}
+void FriendList::servicePermission()
+{
+	ServicePermissionDialog dlg;
+	dlg.exec();
 }
 
 void FriendList::updateDisplay()
@@ -1473,35 +1500,35 @@ void FriendList::configurefriend()
     ConfCertDialog::showIt(getRsId(getCurrentPeer()), ConfCertDialog::PageDetails);
 }
 
-void FriendList::showLobby()
-{
-    std::string lobby_id = qobject_cast<QAction*>(sender())->data().toString().toStdString();
-
-    if (lobby_id.empty())
-        return;
-
-    std::string vpeer_id;
-
-    if (rsMsgs->getVirtualPeerId(ChatLobbyId(QString::fromStdString(lobby_id).toULongLong()), vpeer_id))
-        ChatDialog::chatFriend(vpeer_id);
-}
-
-void FriendList::unsubscribeToLobby()
-{
-    std::string lobby_id = qobject_cast<QAction*>(sender())->data().toString().toStdString();
-
-    if (lobby_id.empty())
-        return;
-
-    std::string vpeer_id ;
-    rsMsgs->getVirtualPeerId (ChatLobbyId(QString::fromStdString(lobby_id).toULongLong()), vpeer_id);
-
-    if (QMessageBox::Ok == QMessageBox::question(this,tr("Unsubscribe to lobby"),tr("You are about to unsubscribe a chat lobby<br>You can only re-enter if your friends invite you again."),QMessageBox::Ok | QMessageBox::Cancel))
-        rsMsgs->unsubscribeChatLobby(ChatLobbyId(QString::fromStdString(lobby_id).toULongLong())) ;
-
-    // we should also close existing windows.
-    ChatDialog::closeChat(vpeer_id);
-}
+// void FriendList::showLobby()
+// {
+//     std::string lobby_id = qobject_cast<QAction*>(sender())->data().toString().toStdString();
+// 
+//     if (lobby_id.empty())
+//         return;
+// 
+//     std::string vpeer_id;
+// 
+//     if (rsMsgs->getVirtualPeerId(ChatLobbyId(QString::fromStdString(lobby_id).toULongLong()), vpeer_id))
+//         ChatDialog::chatFriend(vpeer_id);
+// }
+// 
+// void FriendList::unsubscribeToLobby()
+// {
+//     std::string lobby_id = qobject_cast<QAction*>(sender())->data().toString().toStdString();
+// 
+//     if (lobby_id.empty())
+//         return;
+// 
+//     std::string vpeer_id ;
+//     rsMsgs->getVirtualPeerId (ChatLobbyId(QString::fromStdString(lobby_id).toULongLong()), vpeer_id);
+// 
+//     if (QMessageBox::Ok == QMessageBox::question(this,tr("Unsubscribe to lobby"),tr("You are about to unsubscribe a chat lobby<br>You can only re-enter if your friends invite you again."),QMessageBox::Ok | QMessageBox::Cancel))
+//         rsMsgs->unsubscribeChatLobby(ChatLobbyId(QString::fromStdString(lobby_id).toULongLong())) ;
+// 
+//     // we should also close existing windows.
+//     ChatDialog::closeChat(vpeer_id);
+// }
 
 void FriendList::getSslIdsFromItem(QTreeWidgetItem *item, std::list<std::string> &sslIds)
 {
@@ -1532,6 +1559,7 @@ void FriendList::getSslIdsFromItem(QTreeWidgetItem *item, std::list<std::string>
     }
 }
 
+#ifdef TO_REMOVE
 void FriendList::inviteToLobby()
 {
     QTreeWidgetItem *c = getCurrentPeer();
@@ -1565,6 +1593,7 @@ void FriendList::createchatlobby()
 
     CreateLobbyDialog(sslIds).exec();
 }
+#endif
 
 void FriendList::addToGroup()
 {
@@ -1930,28 +1959,28 @@ QMenu *FriendList::createDisplayMenu()
     QMenu *displayMenu = new QMenu(this);
     connect(displayMenu, SIGNAL(aboutToShow()), this, SLOT(updateMenu()));
 
-    displayMenu->addAction(ui->actionSortPeersDescendingOrder);
-    displayMenu->addAction(ui->actionSortPeersAscendingOrder);
+//    displayMenu->addAction(ui->actionSortPeersDescendingOrder);
+//    displayMenu->addAction(ui->actionSortPeersAscendingOrder);
     QMenu *menu = displayMenu->addMenu(tr("Columns"));
     menu->addAction(ui->actionShowAvatarColumn);
     menu->addAction(ui->actionShowLastContactColumn);
     menu->addAction(ui->actionShowIPColumn);
     menu->addAction(ui->actionShowStatusColumn);
-    menu = displayMenu->addMenu(tr("Sort by"));
-    menu->addAction(ui->actionSortByName);
-    menu->addAction(ui->actionSortByState);
-    menu->addAction(ui->actionSortByLastContact);
-    menu->addAction(ui->actionSortByIP);
+//    menu = displayMenu->addMenu(tr("Sort by"));
+//    menu->addAction(ui->actionSortByName);
+//    menu->addAction(ui->actionSortByState);
+//    menu->addAction(ui->actionSortByLastContact);
+//    menu->addAction(ui->actionSortByIP);
     displayMenu->addAction(ui->actionHideOfflineFriends);
     displayMenu->addAction(ui->actionHideState);
-    displayMenu->addAction(ui->actionRootIsDecorated);
+//    displayMenu->addAction(ui->actionRootIsDecorated);
     displayMenu->addAction(ui->actionShowGroups);
 
-    QActionGroup *group = new QActionGroup(this);
-    group->addAction(ui->actionSortByName);
-    group->addAction(ui->actionSortByState);
-    group->addAction(ui->actionSortByLastContact);
-    group->addAction(ui->actionSortByIP);
+//    QActionGroup *group = new QActionGroup(this);
+//    group->addAction(ui->actionSortByName);
+//    group->addAction(ui->actionSortByState);
+//    group->addAction(ui->actionSortByLastContact);
+//    group->addAction(ui->actionSortByIP);
 
     return displayMenu;
 }

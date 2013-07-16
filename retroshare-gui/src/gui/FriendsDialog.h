@@ -112,7 +112,7 @@ private slots:
 
     void getAvatar();
 
-    void on_actionAdd_Group_activated();
+//    void on_actionAdd_Group_activated();
 
     void loadmypersonalstatus();
 
@@ -125,8 +125,8 @@ private slots:
 
     //void newsFeedChanged(int count);
 
-    void recommendFriends();
-    void servicePermission();
+//    void recommendFriends();
+ //   void servicePermission();
 
 signals:
     void notifyGroupChat(const QString&,const QString&) ;

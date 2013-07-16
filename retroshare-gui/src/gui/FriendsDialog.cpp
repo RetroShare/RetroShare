@@ -50,9 +50,9 @@
 #include "util/misc.h"
 #include "util/HandleRichText.h"
 #include "util/DateTime.h"
-#include "FriendRecommendDialog.h"
+//#include "FriendRecommendDialog.h"
 #include "FriendsDialog.h"
-#include "ServicePermissionDialog.h"
+//#include "ServicePermissionDialog.h"
 #include "NetworkView.h"
 #include "NetworkDialog.h"
 
@@ -168,18 +168,18 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     menu->addAction(ui.actionMessageHistory);
     ui.menuButton->setMenu(menu);
 
-    menu = new QMenu();
-    menu->addAction(ui.actionAdd_Friend);
-    menu->addAction(ui.actionAdd_Group);
-    menu->addAction(ui.actionCreate_new_Chat_lobby);
-    menu->addAction(ui.actionFriendRecommendations);
-    menu->addAction(ui.actionServicePermission);
-
-    menu->addSeparator();
-    menu->addAction(ui.actionSet_your_Avatar);
-    menu->addAction(ui.actionSet_your_Personal_Message);
-
-    ui.menutoolButton->setMenu(menu);
+//    menu = new QMenu();
+//    menu->addAction(ui.actionAdd_Friend);
+//    menu->addAction(ui.actionAdd_Group);
+//    menu->addAction(ui.actionCreate_new_Chat_lobby);
+//    menu->addAction(ui.actionFriendRecommendations);
+//    menu->addAction(ui.actionServicePermission);
+//
+//    menu->addSeparator();
+//    menu->addAction(ui.actionSet_your_Avatar);
+//    menu->addAction(ui.actionSet_your_Personal_Message);
+//
+//    ui.menutoolButton->setMenu(menu);
 
     setAcceptDrops(true);
     ui.lineEdit->setAcceptDrops(false);
@@ -859,11 +859,11 @@ void FriendsDialog::on_actionMessageHistory_triggered()
     imBrowser.exec();
 }
 
-void FriendsDialog::on_actionAdd_Group_activated()
-{
-    CreateGroup createGrpDialog ("", this);
-    createGrpDialog.exec();
-}
+//void FriendsDialog::on_actionAdd_Group_activated()
+//{
+//    CreateGroup createGrpDialog ("", this);
+//    createGrpDialog.exec();
+//}
 
 // void FriendsDialog::newsFeedChanged(int count)
 // {
@@ -883,16 +883,16 @@ void FriendsDialog::on_actionAdd_Group_activated()
 //     }
 // }
 
-void FriendsDialog::recommendFriends()
-{
-	FriendRecommendDialog::showYourself();
-}
+//void FriendsDialog::recommendFriends()
+//{
+//	FriendRecommendDialog::showYourself();
+//}
 
-void FriendsDialog::servicePermission()
-{
-	ServicePermissionDialog dlg;
-	dlg.exec();
-}
+//void FriendsDialog::servicePermission()
+//{
+//	ServicePermissionDialog dlg;
+//	dlg.exec();
+//}
 
 /*static*/ bool FriendsDialog::isGroupChatActive()
 {
