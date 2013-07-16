@@ -71,6 +71,7 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	firstShow = true;
 	inChatCharFormatChanged = false;
 	completer = NULL;
+	lastMsgDate = QDate::currentDate();
 
 	lastStatusSendTime = 0 ;
 
@@ -512,6 +513,13 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const QDateTime 
 	unsigned int formatTextFlag = RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_OPTIMIZE;
 	unsigned int formatFlag = 0;
 
+    bool addDate = false;
+    if (QDate::currentDate()>lastMsgDate) 
+	 {
+		 lastMsgDate=QDate::currentDate();
+		 addDate=true;
+    }
+
 	// embed smileys ?
 	if (Settings->valueFromGroup(QString("Chat"), QString::fromUtf8("Emoteicons_PrivatChat"), true).toBool()) {
 		formatTextFlag |= RSHTML_FORMATTEXT_EMBED_SMILEYS;
@@ -541,7 +549,7 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const QDateTime 
 		type = ChatStyle::FORMATMSG_OOUTGOING;
 	} else if (chatType == TYPE_SYSTEM) {
 		type = ChatStyle::FORMATMSG_SYSTEM;
-	} else if (chatType == TYPE_HISTORY) {
+    } else if (chatType == TYPE_HISTORY || addDate) {
 		type = incoming ? ChatStyle::FORMATMSG_HINCOMING : ChatStyle::FORMATMSG_HOUTGOING;
 	} else {
 		type = incoming ? ChatStyle::FORMATMSG_INCOMING : ChatStyle::FORMATMSG_OUTGOING;
