@@ -99,7 +99,7 @@ FriendsDialog::FriendsDialog(QWidget *parent)
 
     ui.tabWidget->setTabPosition(QTabWidget::North);
     ui.tabWidget->addTab(networkView = new NetworkView(),QIcon(IMAGE_NETWORK2), tr("Local network"));
-    ui.tabWidget->addTab(networkDialog = new NetworkDialog(),QIcon(IMAGE_PEERS), tr("Known people"));
+    ui.tabWidget->addTab(networkDialog = new NetworkDialog(),QIcon(IMAGE_PEERS), tr("Keyring"));
 
     //ui.tabWidget->addTab(new ProfileWidget(), tr("Profile"));
     //newsFeed = new NewsFeed();
