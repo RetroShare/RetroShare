@@ -224,9 +224,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     connect(ui->actionAdd_Friend, SIGNAL(triggered() ), this , SLOT( addFriend() ) );
     connect(ui->actionAdd_Share, SIGNAL(triggered() ), this , SLOT( openShareManager() ) );
     connect(ui->actionOptions, SIGNAL(triggered()), this, SLOT( showSettings()) );
-    connect(ui->actionMessenger, SIGNAL(triggered()), this, SLOT( showMessengerWindow()) );
+//    connect(ui->actionMessenger, SIGNAL(triggered()), this, SLOT( showMessengerWindow()) );
 
-    ui->actionMessenger->setVisible(true);
+    ui->actionMessenger->setVisible(false);
 
     connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT( showabout()) );
     //connect(ui->actionColor, SIGNAL(triggered()), this, SLOT( setStyle()) );
