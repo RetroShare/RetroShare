@@ -33,12 +33,11 @@
 #include <retroshare/rstokenservice.h>
 
 
-#define COMPLETED_REQUEST		4
+#define COMPLETED_REQUEST       4
 
-#define TOKENREQ_GROUPINFO		1
-#define TOKENREQ_MSGINFO		2
-#define TOKENREQ_MSGRELATEDINFO	        3
-
+#define TOKENREQ_GROUPINFO      1
+#define TOKENREQ_MSGINFO        2
+#define TOKENREQ_MSGRELATEDINFO 3
 
 class TokenQueue;
 
@@ -114,7 +113,7 @@ private:
 	std::list<TokenRequest> mRequests;
 
 	RsTokenService *mService;
-        TokenResponse *mResponder;
+	TokenResponse *mResponder;
 
 	QTimer *mTrigger;
 };

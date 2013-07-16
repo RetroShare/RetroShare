@@ -22,7 +22,7 @@
  */
 
 #include "util/TokenQueue.h"
-#include "retroshare-gui/RsAutoUpdatePage.h"
+#include "util/RsProtectedTimer.h"
 #include <iostream>
 
 #include <QTimer>
@@ -35,6 +35,9 @@
 TokenQueue::TokenQueue(RsTokenService *service, TokenResponse *resp)
 	: QObject(NULL), mService(service), mResponder(resp)
 {
+	mTrigger = new RsProtectedTimer(this);
+	mTrigger->setSingleShot(true);
+	connect(mTrigger, SIGNAL(timeout()), this, SLOT(pollRequests()));
 }
 
 bool TokenQueue::requestGroupInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptions &opts, std::list<RsGxsGroupId>& ids, uint32_t usertype)
@@ -73,8 +76,7 @@ bool TokenQueue::requestMsgRelatedInfo(uint32_t &token, uint32_t anstype,  const
 	return true;
 }
 
-bool TokenQueue::requestMsgInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptions &opts,
-								const std::list<RsGxsGroupId> &grpIds, uint32_t usertype)
+bool TokenQueue::requestMsgInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptions &opts, const std::list<RsGxsGroupId> &grpIds, uint32_t usertype)
 {
 	uint32_t basictype = TOKENREQ_MSGINFO;
 	mService->requestMsgInfo(token, anstype, opts, grpIds);
@@ -82,7 +84,6 @@ bool TokenQueue::requestMsgInfo(uint32_t &token, uint32_t anstype, const RsTokRe
 
 	return true;
 }
-
 
 void TokenQueue::queueRequest(uint32_t token, uint32_t basictype, uint32_t anstype, uint32_t usertype)
 {
@@ -99,9 +100,7 @@ void TokenQueue::queueRequest(uint32_t token, uint32_t basictype, uint32_t ansty
 	gettimeofday(&req.mRequestTs, NULL);
 	req.mPollTs = req.mRequestTs;
 
-
 	mRequests.push_back(req);
-
 
 	if (mRequests.size() == 1)
 	{
@@ -113,15 +112,11 @@ void TokenQueue::queueRequest(uint32_t token, uint32_t basictype, uint32_t ansty
 void TokenQueue::doPoll(float dt)
 {
 	/* single shot poll */
-	//mTrigger->singlesshot(dt * 1000);
-	QTimer::singleShot((int) (dt * 1000.0), this, SLOT(pollRequests()));
+	mTrigger->start(dt * 1000);
 }
 
 void TokenQueue::pollRequests()
 {
-	if(RsAutoUpdatePage::eventsLocked())
-		return ;
-
 	double pollPeriod = 1.0; // max poll period.
 
 	if (mRequests.empty())	{
@@ -130,10 +125,8 @@ void TokenQueue::pollRequests()
 
 	TokenRequest req;
 
-
 	req = mRequests.front();
 	mRequests.pop_front();
-
 
 	if (checkForRequest(req.mToken))
 	{
@@ -148,9 +141,7 @@ void TokenQueue::pollRequests()
 		/* drop old requests too */
 		if (time(NULL) - req.mRequestTs.tv_sec < MAX_REQUEST_AGE)
 		{
-
 			mRequests.push_back(req);
-
 		}
 		else
 		{
@@ -176,8 +167,6 @@ bool TokenQueue::checkForRequest(uint32_t token)
 
 bool TokenQueue::activeRequestExist(const uint32_t& userType) const
 {
-
-
 	std::list<TokenRequest>::const_iterator lit = mRequests.begin();
 
 	for(; lit != mRequests.end(); lit++)
@@ -186,20 +175,15 @@ bool TokenQueue::activeRequestExist(const uint32_t& userType) const
 
 		if(req.mUserType == userType)
 		{
-
 			return true;
 		}
 	}
-
-
 
 	return false;
 }
 
 void TokenQueue::activeRequestTokens(const uint32_t& userType, std::list<uint32_t>& tokens) const
 {
-
-
 	std::list<TokenRequest>::const_iterator lit = mRequests.begin();
 
 	for(; lit != mRequests.end(); lit++)
@@ -209,8 +193,6 @@ void TokenQueue::activeRequestTokens(const uint32_t& userType, std::list<uint32_
 		if(req.mUserType == userType)
 			tokens.push_back(req.mToken);
 	}
-
-
 }
 
 void TokenQueue::cancelActiveRequestTokens(const uint32_t& userType)
@@ -242,7 +224,6 @@ bool TokenQueue::cancelRequest(const uint32_t token)
 
 	std::list<TokenRequest>::iterator it;
 
-
 	for(it = mRequests.begin(); it != mRequests.end(); it++)
 	{
 		if (it->mToken == token)
@@ -252,12 +233,9 @@ bool TokenQueue::cancelRequest(const uint32_t token)
 			std::cerr << "TokenQueue::cancelRequest() Cleared Request: " << token;
 			std::cerr << std::endl;
 
-
-
 			return true;
 		}
 	}
-
 
 	std::cerr << "TokenQueue::cancelRequest() Failed to Find Request: " << token;
 	std::cerr << std::endl;

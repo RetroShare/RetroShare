@@ -24,17 +24,27 @@
 
 #include "RsProtectedTimer.h"
 
+#define TIMER_FAST_POLL 499 // unique time in RetroShare
+
 //#define PROTECTED_TIMER_DEBUG
 
 RsProtectedTimer::RsProtectedTimer(QObject *parent)
 	: QTimer(parent)
 {
+	mInterval = 0;
 }
 
 void RsProtectedTimer::timerEvent(QTimerEvent *e)
 {
 	if(RsAutoUpdatePage::eventsLocked())
 	{
+		if (!mInterval && interval() > TIMER_FAST_POLL) {
+			/* Save interval */
+			mInterval = interval();
+			/* Set fast interval */
+			setInterval(TIMER_FAST_POLL); // restart timer
+		}
+
 #ifdef PROTECTED_TIMER_DEBUG
 		if (isSingleShot()) {
 			/* Singleshot timer will be stopped in QTimer::timerEvent */
@@ -56,4 +66,15 @@ void RsProtectedTimer::timerEvent(QTimerEvent *e)
 #endif
 
 	QTimer::timerEvent(e) ;
+
+	if (mInterval) {
+		if (interval() == TIMER_FAST_POLL) {
+			/* Still fast poll */
+			if (!isSingleShot()) {
+				/* Restore interval */
+				setInterval(mInterval); // restart timer
+			}
+		}
+		mInterval = 0;
+	}
 }

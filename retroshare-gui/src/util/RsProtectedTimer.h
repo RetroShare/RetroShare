@@ -31,6 +31,10 @@ public:
 protected:
 	virtual void timerEvent(QTimerEvent *e);
 
+private:
 	// do not use, please use setInterval, setSingleShot and connect signal timeout
 	static void singleShot(int /*msec*/, QObject */*receiver*/, const char */*member*/) {}
+
+private:
+	int mInterval;
 };
