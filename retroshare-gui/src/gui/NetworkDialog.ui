@@ -35,9 +35,9 @@
       </widget>
      </item>
      <item>
-      <widget class="QCheckBox" name="showUnvalidKeys">
+      <widget class="QCheckBox" name="onlyTrustedKeys">
        <property name="text">
-        <string>Show all accessible keys</string>
+        <string>Only show people you trusted</string>
        </property>
       </widget>
      </item>
@@ -113,56 +113,6 @@
        </property>
        <property name="toolTip">
         <string>Did I sign his PGP key</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Did peer authenticated me</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Cert Id</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Last used</string>
-       </property>
-      </column>
-     </widget>
-     <widget class="QTreeWidget" name="unvalidGPGKeyWidget">
-      <property name="contextMenuPolicy">
-       <enum>Qt::CustomContextMenu</enum>
-      </property>
-      <property name="sortingEnabled">
-       <bool>true</bool>
-      </property>
-      <property name="allColumnsShowFocus">
-       <bool>true</bool>
-      </property>
-      <attribute name="headerCascadingSectionResizes">
-       <bool>true</bool>
-      </attribute>
-      <attribute name="headerDefaultSectionSize">
-       <number>200</number>
-      </attribute>
-      <attribute name="headerShowSortIndicator" stdset="0">
-       <bool>true</bool>
-      </attribute>
-      <column>
-       <property name="text">
-        <string/>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Name</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>Did I authenticated peer</string>
        </property>
       </column>
       <column>

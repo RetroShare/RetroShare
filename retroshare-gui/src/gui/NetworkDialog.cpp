@@ -75,21 +75,16 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     ui.setupUi(this);
   
     connect( ui.connectTreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( connectTreeWidgetCostumPopupMenu( QPoint ) ) );
-    connect( ui.connectTreeWidget, SIGNAL( itemSelectionChanged()), ui.unvalidGPGKeyWidget, SLOT( clearSelection() ) );
     connect( ui.connectTreeWidget, SIGNAL( itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT( peerdetails () ) );
-    connect( ui.unvalidGPGKeyWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( connectTreeWidgetCostumPopupMenu( QPoint ) ) );
-    connect( ui.unvalidGPGKeyWidget, SIGNAL( itemSelectionChanged()), ui.connectTreeWidget, SLOT( clearSelection() ) );
-    connect( ui.unvalidGPGKeyWidget, SIGNAL( itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT( peerdetails () ) );
 
     connect( ui.filterLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterItems(QString)));
     connect( ui.filterLineEdit, SIGNAL(filterChanged(int)), this, SLOT(filterColumnChanged(int)));
 
-    connect( ui.showUnvalidKeys, SIGNAL(clicked()), this, SLOT(securedUpdateDisplay()));
+    connect( ui.onlyTrustedKeys, SIGNAL(clicked()), this, SLOT(securedUpdateDisplay()));
 
     /* hide the Tree +/- */
     ui.connectTreeWidget -> setRootIsDecorated( false );
     ui.connectTreeWidget -> setColumnCount(6);
-    ui.unvalidGPGKeyWidget-> setColumnCount(6);
 
     /* Set header resize modes and initial section sizes */
     QHeaderView * _header = ui.connectTreeWidget->header () ;
@@ -115,38 +110,13 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     headerItem->setTextAlignment(4, Qt::AlignVCenter);
     headerItem->setTextAlignment(5, Qt::AlignVCenter);
 
-      /* hide the Tree +/- */
-    ui.unvalidGPGKeyWidget -> setRootIsDecorated( false );
-
-    /* Set header resize modes and initial section sizes */
-    ui.unvalidGPGKeyWidget->header()->setResizeMode (0, QHeaderView::Custom);
-    ui.unvalidGPGKeyWidget->header()->setResizeMode (1, QHeaderView::Interactive);
-    ui.unvalidGPGKeyWidget->header()->setResizeMode (2, QHeaderView::Interactive);
-    ui.unvalidGPGKeyWidget->header()->setResizeMode (3, QHeaderView::Interactive);
-    ui.unvalidGPGKeyWidget->header()->setResizeMode (4, QHeaderView::Interactive);
-    ui.unvalidGPGKeyWidget->header()->setResizeMode (5, QHeaderView::Interactive);
-
-    ui.unvalidGPGKeyWidget->header()->resizeSection ( 0, 25 );
-    ui.unvalidGPGKeyWidget->header()->resizeSection ( 1, 200 );
-    ui.unvalidGPGKeyWidget->header()->resizeSection ( 2, 200 );
-    ui.unvalidGPGKeyWidget->header()->resizeSection ( 3, 200 );
-    ui.unvalidGPGKeyWidget->header()->resizeSection ( 5, 75 );
-
-    // set header text aligment
-    ui.unvalidGPGKeyWidget->headerItem()->setTextAlignment(0, Qt::AlignHCenter | Qt::AlignVCenter);
-    ui.unvalidGPGKeyWidget->headerItem()->setTextAlignment(1, Qt::AlignHCenter | Qt::AlignVCenter);
-    ui.unvalidGPGKeyWidget->headerItem()->setTextAlignment(2, Qt::AlignHCenter | Qt::AlignVCenter);
-    ui.unvalidGPGKeyWidget->headerItem()->setTextAlignment(3, Qt::AlignHCenter | Qt::AlignVCenter);
-    ui.unvalidGPGKeyWidget->headerItem()->setTextAlignment(4, Qt::AlignVCenter);
-    ui.unvalidGPGKeyWidget->headerItem()->setTextAlignment(5, Qt::AlignVCenter);
 
     ui.connectTreeWidget->sortItems( 1, Qt::AscendingOrder );
-    ui.unvalidGPGKeyWidget->sortItems( 1, Qt::AscendingOrder );
 
 //    ui.networkTab->addTab(new TrustView(),QString(tr("Authentication matrix")));
 //    ui.networkTab->addTab(networkview = new NetworkView(),QString(tr("Network View")));
     
-    ui.showUnvalidKeys->setMinimumWidth(20);
+    ui.onlyTrustedKeys->setMinimumWidth(20);
      
     QString version = "-";
     std::map<std::string, std::string>::iterator vit;
@@ -371,12 +341,6 @@ void NetworkDialog::insertConnect()
 	if (!rsPeers)
 		return;
 
-	if (ui.showUnvalidKeys->isChecked()) {
-		ui.unvalidGPGKeyWidget->show();
-	} else {
-		ui.unvalidGPGKeyWidget->hide();
-	}
-
 //	// Because this is called from a qt signal, there's no limitation between calls.
 	time_t now = time(NULL);
 //	if(last_time + 5 > now)		// never update more often then every 5 seconds.
@@ -393,26 +357,15 @@ void NetworkDialog::insertConnect()
 
 	//remove items
 	int index = 0;
-	while (index < connectWidget->topLevelItemCount()) {
+	while (index < connectWidget->topLevelItemCount()) 
+	{
 		std::string gpg_widget_id = (connectWidget->topLevelItem(index))->text(COLUMN_PEERID).toStdString();
 		RsPeerDetails detail;
-		if (!rsPeers->getGPGDetails(gpg_widget_id, detail) || (detail.validLvl < RS_TRUST_LVL_MARGINAL && !detail.accept_connection)) {
+		if ( (!rsPeers->getGPGDetails(gpg_widget_id, detail)) || (ui.onlyTrustedKeys->isChecked() && (detail.validLvl < RS_TRUST_LVL_MARGINAL && !detail.accept_connection))) 
 			delete (connectWidget->takeTopLevelItem(index));
-		} else {
+		else 
 			index++;
-		}
 	}
-	index = 0;
-	while (index < ui.unvalidGPGKeyWidget->topLevelItemCount()) {
-		std::string gpg_widget_id = (ui.unvalidGPGKeyWidget->topLevelItem(index))->text(COLUMN_PEERID).toStdString();
-		RsPeerDetails detail;
-		if (!rsPeers->getGPGDetails(gpg_widget_id, detail) || detail.validLvl >= RS_TRUST_LVL_MARGINAL || detail.accept_connection) {
-			delete (ui.unvalidGPGKeyWidget->takeTopLevelItem(index));
-		} else {
-			index++;
-		}
-	}
-
 	QList<QTreeWidgetItem *> validItems;
 	QList<QTreeWidgetItem *> unvalidItems;
 
@@ -437,10 +390,6 @@ void NetworkDialog::insertConnect()
 		if (list.size() == 1) {
 			item = list.front();
 		} else {
-			list = ui.unvalidGPGKeyWidget->findItems(QString::fromStdString(*it), Qt::MatchExactly, 4);
-			if (list.size() == 1) {
-				item = list.front();
-			} else {
 				//create new item
 #ifdef NET_DEBUG
 				std::cerr << "NetworkDialog::insertConnect() creating new tree widget item : " << *it << std::endl;
@@ -454,7 +403,6 @@ void NetworkDialog::insertConnect()
 
 				/* (4) key id */
 				item -> setText(COLUMN_PEERID, QString::fromStdString(detail.id));
-			}
 		}
 
 		QString TrustLevelString ;
@@ -544,17 +492,8 @@ void NetworkDialog::insertConnect()
 		for(int i = 0; i <10; i++)
 			item -> setBackground(i,QBrush(backgrndcolor));
 
-		/* add to the list */
-		if (detail.accept_connection || detail.validLvl >= RS_TRUST_LVL_MARGINAL) 
-		{
-			/* add gpg item to the list. If item is already in the list, it won't be duplicated thanks to Qt */
+		if( (detail.accept_connection || detail.validLvl >= RS_TRUST_LVL_MARGINAL) || !ui.onlyTrustedKeys->isChecked()) 
 			connectWidget->addTopLevelItem(item);
-		} 
-		else 
-		{
-			ui.unvalidGPGKeyWidget->addTopLevelItem(item);
-		}
-
 	}
 
 	// add self to network.
@@ -583,7 +522,6 @@ void NetworkDialog::insertConnect()
 	connectWidget->addTopLevelItem(self_item);
 
 	connectWidget->update(); /* update display */
-	ui.unvalidGPGKeyWidget->update(); /* update display */
 
 	if (ui.filterLineEdit->text().isEmpty() == false) {
 		filterItems(ui.filterLineEdit->text());
@@ -593,11 +531,10 @@ void NetworkDialog::insertConnect()
 
 QTreeWidgetItem *NetworkDialog::getCurrentNeighbour()
 { 
-        if (ui.connectTreeWidget->selectedItems().size() != 0)  {
+        if (ui.connectTreeWidget->selectedItems().size() != 0)  
+		  {
             return ui.connectTreeWidget -> currentItem();
-        } else if (ui.unvalidGPGKeyWidget->selectedItems().size() != 0) {
-            return ui.unvalidGPGKeyWidget->currentItem();
-        }
+        } 
 
         return NULL;
 }   
@@ -831,10 +768,6 @@ void NetworkDialog::filterItems(const QString &text)
     int count = ui.connectTreeWidget->topLevelItemCount ();
     for (int index = 0; index < count; index++) {
         filterItem(ui.connectTreeWidget->topLevelItem(index), text, filterColumn);
-    }
-    count = ui.unvalidGPGKeyWidget->topLevelItemCount ();
-    for (int nIndex = 0; nIndex < count; nIndex++) {
-        filterItem(ui.unvalidGPGKeyWidget->topLevelItem(nIndex), text, filterColumn);
     }
 }
 
