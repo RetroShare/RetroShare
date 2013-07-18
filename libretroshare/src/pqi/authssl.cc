@@ -698,8 +698,8 @@ X509 *AuthSSLimpl::SignX509ReqWithGPG(X509_REQ *req, long days)
         EVP_MD_CTX ctx;
         unsigned char *p,*buf_in=NULL;
         unsigned char *buf_hashout=NULL,*buf_sigout=NULL;
-        int inl=0,hashoutl=0,hashoutll=0;
-        int sigoutl=0,sigoutll=0;
+        int inl=0,hashoutl=0;
+        int sigoutl=0;
         X509_ALGOR *a;
 
         EVP_MD_CTX_init(&ctx);
@@ -729,10 +729,10 @@ X509 *AuthSSLimpl::SignX509ReqWithGPG(X509_REQ *req, long days)
         inl=i2d(data,NULL);
         buf_in=(unsigned char *)OPENSSL_malloc((unsigned int)inl);
 
-        hashoutll=hashoutl=EVP_MD_size(type);
+        hashoutl=EVP_MD_size(type);
         buf_hashout=(unsigned char *)OPENSSL_malloc((unsigned int)hashoutl);
 
-        sigoutll=sigoutl=2048; // hashoutl; //EVP_PKEY_size(pkey);
+        sigoutl=2048; // hashoutl; //EVP_PKEY_size(pkey);
         buf_sigout=(unsigned char *)OPENSSL_malloc((unsigned int)sigoutl);
 
         if ((buf_in == NULL) || (buf_hashout == NULL) || (buf_sigout == NULL))
@@ -795,6 +795,12 @@ X509 *AuthSSLimpl::SignX509ReqWithGPG(X509_REQ *req, long days)
 	/* XXX CLEANUP */
   err:
         /* cleanup */
+        if(buf_in != NULL)
+            OPENSSL_free(buf_in) ;
+        if(buf_hashout != NULL)
+            OPENSSL_free(buf_hashout) ;
+        if(buf_sigout != NULL)
+            OPENSSL_free(buf_sigout) ;
         std::cerr << "GPGAuthMgr::SignX509Req() err: FAIL" << std::endl;
 
         return NULL;
@@ -840,8 +846,8 @@ bool AuthSSLimpl::AuthX509WithGPG(X509 *x509)
         EVP_MD_CTX ctx;
         unsigned char *p,*buf_in=NULL;
         unsigned char *buf_hashout=NULL,*buf_sigout=NULL;
-        int inl=0,hashoutl=0,hashoutll=0;
-        int sigoutl=0,sigoutll=0;
+        int inl=0,hashoutl=0;
+        int sigoutl=0;
         //X509_ALGOR *a;
 
         EVP_MD_CTX_init(&ctx);
@@ -850,10 +856,10 @@ bool AuthSSLimpl::AuthX509WithGPG(X509 *x509)
         inl=i2d(data,NULL);
         buf_in=(unsigned char *)OPENSSL_malloc((unsigned int)inl);
 
-        hashoutll=hashoutl=EVP_MD_size(type);
+        hashoutl=EVP_MD_size(type);
         buf_hashout=(unsigned char *)OPENSSL_malloc((unsigned int)hashoutl);
 
-        sigoutll=sigoutl=2048; //hashoutl; //EVP_PKEY_size(pkey);
+        sigoutl=2048; //hashoutl; //EVP_PKEY_size(pkey);
         buf_sigout=(unsigned char *)OPENSSL_malloc((unsigned int)sigoutl);
 
         #ifdef AUTHSSL_DEBUG
@@ -915,6 +921,8 @@ bool AuthSSLimpl::AuthX509WithGPG(X509 *x509)
 
 		  OPENSSL_free(buf_in) ;
 		  OPENSSL_free(buf_hashout) ;
+          OPENSSL_free(buf_sigout) ;
+
         return true;
 
   err:
@@ -924,6 +932,8 @@ bool AuthSSLimpl::AuthX509WithGPG(X509 *x509)
 			  OPENSSL_free(buf_in) ;
 		  if(buf_hashout != NULL)
 			  OPENSSL_free(buf_hashout) ;
+        if(buf_sigout != NULL)
+            OPENSSL_free(buf_sigout) ;
         return false;
 }
 
