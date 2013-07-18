@@ -171,10 +171,15 @@ void MimeTextEdit::keyPressEvent(QKeyEvent *e)
         mCompleter->setCompletionPrefix(completionPrefix);
         mCompleter->popup()->setCurrentIndex(mCompleter->completionModel()->index(0, 0));
     }
+
     QRect cr = cursorRect();
     cr.setWidth(mCompleter->popup()->sizeHintForColumn(0)
                 + mCompleter->popup()->verticalScrollBar()->sizeHint().width());
     mCompleter->complete(cr); // popup it up!
+
+    if (mCompleter->completionCount()==0 && isShortcut){
+        QTextEdit::keyPressEvent(e);// Process the key if no match
+    }
     mForceCompleterShowNextKeyEvent=false;
 }
 
@@ -197,6 +202,10 @@ Qt::Key MimeTextEdit::getCompleterKey() const
 }
 void MimeTextEdit::forceCompleterShowNextKeyEvent(QString startString="")
 {
+    if (!mCompleter) return; //Nothing else to do if not mCompleter initialized
+
+    if(!mCompleter->popup()->isVisible()){
     mForceCompleterShowNextKeyEvent=true;
     mCompleterStartString=startString;
+}
 }

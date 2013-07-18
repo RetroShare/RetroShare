@@ -130,6 +130,17 @@ ChatWidget::ChatWidget(QWidget *parent) :
 #endif
 
 	resetStatusBar();
+
+    completer = new QCompleter(this);
+    completer->setModel(modelFromPeers());
+    completer->setModelSorting(QCompleter::CaseInsensitivelySortedModel);
+    completer->setModelSorting(QCompleter::UnsortedModel);
+    //completer->setCaseSensitivity(Qt::CaseInsensitive);
+    completer->setWrapAround(false);
+    ui->chatTextEdit->setCompleter(completer);
+    ui->chatTextEdit->setCompleterKeyModifiers(Qt::ControlModifier);
+    ui->chatTextEdit->setCompleterKey(Qt::Key_Space);
+
 }
 
 ChatWidget::~ChatWidget()
@@ -257,8 +268,6 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 						completionWord.clear();
 					}
 				}
-
-				if (completer) {
 					if ((keyEvent->modifiers() & ui->chatTextEdit->getCompleterKeyModifiers()) && keyEvent->key() == ui->chatTextEdit->getCompleterKey()) {
 						completer->setModel(modelFromPeers());
 					}
@@ -266,8 +275,6 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 						ui->chatTextEdit->forceCompleterShowNextKeyEvent("@");
 						completer->setModel(modelFromPeers());
 					}
-				}
-
 				if (keyEvent->key() == Qt::Key_Enter || keyEvent->key() == Qt::Key_Return) {
 					// Enter pressed
 					if (Settings->getChatSendMessageWithCtrlReturn()) {
