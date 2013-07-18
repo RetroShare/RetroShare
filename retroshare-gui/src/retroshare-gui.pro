@@ -623,6 +623,7 @@ SOURCES +=  main.cpp \
             gui/FileTransfer/TurtleRouterStatistics.cpp \
             gui/FileTransfer/DetailsDialog.cpp \
             gui/FileTransfer/TransferUserNotify.cpp \
+            gui/MainPage.cpp \
             gui/HelpDialog.cpp \
             gui/LogoBar.cpp \
             lang/languagesupport.cpp \

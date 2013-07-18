@@ -24,17 +24,31 @@
 #define _MAINPAGE_H
 
 #include <QWidget>
+#include <QTextBrowser>
 
 class UserNotify;
 
 class MainPage : public QWidget
 {
-public:
-  /** Default Constructor */
-  MainPage(QWidget *parent = 0, Qt::WindowFlags flags = 0) : QWidget(parent, flags) {}
+	Q_OBJECT 
 
-  virtual void retranslateUi() {}
-  virtual UserNotify *getUserNotify(QObject */*parent*/) { return NULL; }
+	public:
+		/** Default Constructor */
+		MainPage(QWidget *parent = 0, Qt::WindowFlags flags = 0) ;
+
+		virtual void retranslateUi() {}
+		virtual UserNotify *getUserNotify(QObject */*parent*/) { return NULL; }
+
+		// Overload this to add some help info  to the page. The way the info is 
+		// shown is handled by showHelp() below;
+		//
+		virtual const QString& helpHtmlText() const { static QString s ; return s ; }	
+
+	public slots:
+		void showHelp(bool b) ;
+
+	private:
+			QTextBrowser *help_browser ;
 };
 
 #endif

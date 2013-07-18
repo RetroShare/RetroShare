@@ -52,6 +52,8 @@ public:
   virtual void openChat(std::string peerId);
   virtual void openComments(uint32_t type, const RsGxsGroupId &groupId, const RsGxsMessageId &msgId, const QString &title);
 
+  virtual const QString& helpHtmlText() const ;
+
   static void testFeeds(uint notifyFlags);
   static void testFeed(FeedNotify *feedNotify);
 
