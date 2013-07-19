@@ -1,7 +1,22 @@
 retroshare (0.5.4-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
   * Improvements
-  	  - added last time of transfer (Patch from Phenom)
+      - TokenQueue: fixed stop of TokenQueue polling when events are locked
+      - RsProtectedTimer: switched to faster poll when events are locked
+      - distant chat: added ACK system to make sure the secured tunnels for distant chat are actually working, before one starts using it.
+      - moved all files related to file transfer in gui/FileTransfer/
+      - renamed known people into keyring
+      - make friendlist fully resizable (Patch from phenom)
+      - added DynDNS to RS certificate link if available
+      - removed MT19937 random generator which is not used anymore. Changed N from 624 to 1024 to reduce cost
+      - improved completion for chat (Patch from Phenom)
+  		- added help panels in MainWindow, to help beginners startup with the basic concepts.
+      - improved GUI layout in FriendList, removed doubling unused buttons
+  	   - added last time of transfer (Patch from Phenom)
+      - added column with IP for connected peers (modified patch from Phenom)
+      - Removed some more hardcoded colors
+      - added completer to MimeTextEdit and ChatWidget (Patch from Phenom)
+      - fixed deadlock (reported by Like)
       - Added quick fix to show the plain name and title in the chat lobby
       - Use the best network interface to route an ip instead of the first interface in getLocalInterfaces on Windows
       - Fixed showing utf8 characters in chat lobby name
@@ -17,9 +32,53 @@ retroshare (0.5.4-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
       - Set path to sqlcipher instead of sqlite for Windows compile.
       - new db for release, TESTNET5, old TESTNET4 db's are not keyed
       - Updated english translation
+      - added Specific protected timer class RsProtectedTimer to avoid passwd deadlock.
+      - Added filter of items to RSTreeWidget.
+      - removed email field from GenCertDialog, since it is not useful inside RS
+    GXS:
+      - GxsChannels:
+         * cleaned source code
+         * added auto refresh
+         * added todo button
+         * removed some debug output
+      - Posted Links:
+         * cleaned source code
+         * added auto refresh
+         * Updated english translation
+      - GxsForums:
+         * added automatic refresh after subscribe/unsubscribe
+         * removed some debug output
+         * moved GxsForumsDialog.* to gui/gxsforums
+         * optimized steps of the progressbar when loading
+         * added UIStateHelper
+         * removed debug output
+         * added Todo button
+      - Identity:
+         * Redesigned dialog
+         * Fixed high CPU usage when showing reputation list
+         * Added todo button
+      - UIStateHelper:
+         * Added new base class for easier handling of ui elements with token request (show "Loading", set enable state, ...)
+      - Circles:
+         * cleaned source code
+         * added auto refresh
+         * added todo button
+         * fixed utf8 issues
+         * added new strings to translation
+       - added three new classes for automatic refresh of ui
+         * RsGxsUpdateBroadcastBase
+         * RsGxsUpdateBroadcastWidget
+         * RsGxsUpdateBroadcastPage
+       - prevent call to :singleShot on RsProtectedTimer
+       - extend RsGxsUpdateBroadcast
+       - added automatic refresh to Identity and Forums (except subscribe/unsubscribe)
+       - Added new method cancelActiveRequestTokens to TokenQueue
 
   * Bugs
       - fixed deadlock in notifyQt
+      - fixed memory leak in cert signature verification at connect (Patch from Phenom). Also removed some unused variables reported by gcc
+      - add date to chat msg if it is mroe than 1 day old
+      - fixed bug in distant chat accepting tunnels for collecting invites with same hash
 
  -- Cyril Soler <csoler@users.sourceforge.net>  Tue, 02 Jun 2013 22:00:00 +0100
 
