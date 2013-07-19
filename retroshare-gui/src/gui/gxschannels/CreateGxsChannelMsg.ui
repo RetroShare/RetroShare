@@ -161,8 +161,8 @@ p, li { white-space: pre-wrap; }
             <property name="title">
              <string>Message</string>
             </property>
-            <layout class="QGridLayout" name="gridLayout_2">
-             <item row="1" column="0" colspan="2">
+            <layout class="QVBoxLayout" name="verticalLayout_2">
+             <item>
               <layout class="QHBoxLayout">
                <item>
                 <widget class="QLabel" name="label_5">
@@ -182,7 +182,7 @@ p, li { white-space: pre-wrap; }
                </item>
               </layout>
              </item>
-             <item row="2" column="0" colspan="2">
+             <item>
               <widget class="QTextEdit" name="msgEdit"/>
              </item>
             </layout>
@@ -293,7 +293,7 @@ p, li { white-space: pre-wrap; }
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>98</width>
+               <width>518</width>
                <height>24</height>
               </rect>
              </property>
@@ -336,14 +336,35 @@ p, li { white-space: pre-wrap; }
        </widget>
       </item>
       <item row="1" column="0">
-       <widget class="QDialogButtonBox" name="buttonBox">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="standardButtons">
-         <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-        </property>
-       </widget>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QCheckBox" name="generateCheckBox">
+          <property name="text">
+           <string>Generate mass data</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QSpinBox" name="generateSpinBox">
+          <property name="minimum">
+           <number>1</number>
+          </property>
+          <property name="maximum">
+           <number>999</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QDialogButtonBox" name="buttonBox">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="standardButtons">
+           <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </widget>

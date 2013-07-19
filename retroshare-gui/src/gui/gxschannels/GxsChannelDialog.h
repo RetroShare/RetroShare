@@ -86,8 +86,6 @@ private slots:
 
 //	void channelMsgReadSatusChanged(const QString& channelId, const QString& msgId, int status);
 
-	//void generateMassData();
-
 	//void fillThreadFinished();
 	//void fillThreadAddMsg(const QString &channelId, const QString &channelMsgId, int current, int count);
 

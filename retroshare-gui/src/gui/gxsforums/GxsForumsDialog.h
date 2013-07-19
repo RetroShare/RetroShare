@@ -85,8 +85,6 @@ private slots:
 	void markMsgAsRead();
 	void markMsgAsUnread();
 
-	void generateMassData();
-
 	void shareKey();
 
 private:

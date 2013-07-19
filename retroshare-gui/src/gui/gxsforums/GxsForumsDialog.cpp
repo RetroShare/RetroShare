@@ -239,12 +239,6 @@ void GxsForumsDialog::forumListCustomPopupMenu(QPoint /*point*/)
 	action = contextMnu.addAction(QIcon(":/images/message-mail.png"), tr("Mark all as unread"), this, SLOT(markMsgAsUnread()));
 	action->setEnabled (!mForumId.empty () && IS_GROUP_SUBSCRIBED(subscribeFlags));
 
-#ifdef DEBUG_FORUMS
-	contextMnu.addSeparator();
-	action = contextMnu.addAction("Generate mass data", this, SLOT(generateMassData()));
-	action->setEnabled (!mCurrForumId.empty() && IS_GROUP_SUBSCRIBED(mSubscribeFlags));
-#endif
-
 	contextMnu.exec(QCursor::pos());
 }
 
@@ -648,43 +642,6 @@ bool GxsForumsDialog::navigate(const std::string& forumId, const std::string& ms
 //	}
 
 	return false;
-}
-
-void GxsForumsDialog::generateMassData()
-{
-#ifdef DEBUG_FORUMS
-	if (mCurrForumId.empty ()) {
-		return;
-	}
-
-	if (QMessageBox::question(this, "Generate mass data", "Do you really want to generate mass data ?", QMessageBox::Yes|QMessageBox::No, QMessageBox::No) == QMessageBox::No) {
-		return;
-	}
-
-	for (int thread = 1; thread < 1000; thread++) {
-		ForumMsgInfo threadInfo;
-		threadInfo.forumId = mCurrForumId;
-		threadInfo.title = QString("Test %1").arg(thread, 3, 10, QChar('0')).toStdWString();
-		threadInfo.msg = QString("That is only a test").toStdWString();
-
-		if (rsGxsForums->ForumMessageSend(threadInfo) == false) {
-			return;
-		}
-
-		for (int msg = 1; msg < 3; msg++) {
-			ForumMsgInfo msgInfo;
-			msgInfo.forumId = mCurrForumId;
-			msgInfo.threadId = threadInfo.msgId;
-			msgInfo.parentId = threadInfo.msgId;
-			msgInfo.title = threadInfo.title;
-			msgInfo.msg = threadInfo.msg;
-
-			if (rsGxsForums->ForumMessageSend(msgInfo) == false) {
-				return;
-			}
-		}
-	}
-#endif
 }
 
 /*********************** **** **** **** ***********************/

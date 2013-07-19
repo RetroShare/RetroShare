@@ -45,6 +45,8 @@
 #define CREATEGXSFORUMMSG_FORUMINFO		1
 #define CREATEGXSFORUMMSG_PARENTMSG		2
 
+//#define ENABLE_GENERATE
+
 /** Constructor */
 CreateGxsForumMsg::CreateGxsForumMsg(const std::string &fId, const std::string &pId)
 : QDialog(NULL, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint), mForumId(fId), mParentId(pId)
@@ -77,6 +79,8 @@ CreateGxsForumMsg::CreateGxsForumMsg(const std::string &fId, const std::string &
 	ui.headerFrame->setHeaderImage(QPixmap(":/images/konversation64.png"));
 	ui.headerFrame->setHeaderText(text);
 
+	ui.generateSpinBox->setEnabled(false);
+
 	Settings->loadWidgetInformation(this);
 
 	connect(ui.forumMessage, SIGNAL( customContextMenuRequested(QPoint)), this, SLOT(forumMessageCostumPopupMenu(QPoint)));
@@ -89,6 +93,7 @@ CreateGxsForumMsg::CreateGxsForumMsg(const std::string &fId, const std::string &
 	connect(ui.emoticonButton, SIGNAL(clicked()), this, SLOT(smileyWidgetForums()));
 	connect(ui.attachFileButton, SIGNAL(clicked()), this, SLOT(addFile()));
 	connect(ui.pastersButton, SIGNAL(clicked()), this, SLOT(pasteLink()));
+	connect(ui.generateCheckBox, SIGNAL(toggled(bool)), ui.generateSpinBox, SLOT(setEnabled(bool)));
 
 	setAcceptDrops(true);
 	ui.hashBox->setDropWidget(this);
@@ -98,6 +103,11 @@ CreateGxsForumMsg::CreateGxsForumMsg(const std::string &fId, const std::string &
 	mForumMetaLoaded = false;
 
 	newMsg();
+
+#ifndef ENABLE_GENERATE
+	ui.generateCheckBox->hide();
+	ui.generateSpinBox->hide();
+#endif
 }
 
 CreateGxsForumMsg::~CreateGxsForumMsg()
@@ -277,8 +287,7 @@ void  CreateGxsForumMsg::createMsg()
 
 	if(name.isEmpty())
 	{	/* error message */
-		QMessageBox::warning(this, tr("RetroShare"),tr("Please set a Forum Subject and Forum Message"),
-							 QMessageBox::Ok, QMessageBox::Ok);
+		QMessageBox::warning(this, tr("RetroShare"),tr("Please set a Forum Subject and Forum Message"), QMessageBox::Ok, QMessageBox::Ok);
 
 		return; //Don't add  a empty Subject!!
 	}
@@ -314,8 +323,7 @@ void  CreateGxsForumMsg::createMsg()
 		{
 			std::cerr << "CreateGxsForumMsg::createMsg() ERROR GETTING AuthorId!";
 			std::cerr << std::endl;
-			QMessageBox::warning(this, tr("RetroShare"),tr("Please choose Signing Id"),
-					 QMessageBox::Ok, QMessageBox::Ok);
+			QMessageBox::warning(this, tr("RetroShare"),tr("Please choose Signing Id"), QMessageBox::Ok, QMessageBox::Ok);
 
 			return;
 		}
@@ -324,13 +332,35 @@ void  CreateGxsForumMsg::createMsg()
 	{
 		std::cerr << "CreateGxsForumMsg::createMsg() No Signature (for now :)";
 		std::cerr << std::endl;
-		QMessageBox::warning(this, tr("RetroShare"),tr("Please choose Signing Id, it is required"),
-			 QMessageBox::Ok, QMessageBox::Ok);
+		QMessageBox::warning(this, tr("RetroShare"),tr("Please choose Signing Id, it is required"), QMessageBox::Ok, QMessageBox::Ok);
 		return;
 	}
 
+	int generateCount = 0;
+
+#ifdef ENABLE_GENERATE
+	if (ui.generateCheckBox->isChecked()) {
+		generateCount = ui.generateSpinBox->value();
+		if (QMessageBox::question(this, "Generate mass data", QString("Do you really want to generate %1 messages ?").arg(generateCount), QMessageBox::Yes|QMessageBox::No, QMessageBox::No) == QMessageBox::No) {
+			return;
+		}
+	}
+#endif
+
 	uint32_t token;
-	rsGxsForums->createMsg(token, msg);
+	if (generateCount) {
+#ifdef ENABLE_GENERATE
+		for (int count = 0; count < generateCount; ++count) {
+			RsGxsForumMsg generateMsg = msg;
+			generateMsg.mMeta.mMsgName = QString("%1 %2").arg(QString::fromUtf8(msg.mMeta.mMsgName.c_str())).arg(count + 1, 3, 10, QChar('0')).toUtf8().constData();
+
+			rsGxsForums->createMsg(token, generateMsg);
+		}
+#endif
+	} else {
+		rsGxsForums->createMsg(token, msg);
+	}
+
 	close();
 }
 

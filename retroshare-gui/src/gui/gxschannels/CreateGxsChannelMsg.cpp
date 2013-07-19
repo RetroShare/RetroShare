@@ -34,6 +34,8 @@
 
 #include <iostream>
 
+//#define ENABLE_GENERATE
+
 #define CREATEMSG_CHANNELINFO 0x002
 
 /** Constructor */
@@ -58,6 +60,9 @@ CreateGxsChannelMsg::CreateGxsChannelMsg(std::string cId)
 	connect(addThumbnailButton, SIGNAL(clicked() ), this , SLOT(addThumbnail()));
 	connect(thumbNailCb, SIGNAL(toggled(bool)), this, SLOT(allowAutoMediaThumbNail(bool)));
 	connect(tabWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenu(QPoint)));
+	connect(generateCheckBox, SIGNAL(toggled(bool)), generateSpinBox, SLOT(setEnabled(bool)));
+
+	generateSpinBox->setEnabled(false);
 
 	thumbNailCb->setVisible(false);
 	thumbNailCb->setEnabled(false);
@@ -71,6 +76,11 @@ CreateGxsChannelMsg::CreateGxsChannelMsg(std::string cId)
 	setAcceptDrops(true);
 
 	newChannelMsg();
+
+#ifndef ENABLE_GENERATE
+	generateCheckBox->hide();
+	generateSpinBox->hide();
+#endif
 }
 
 void CreateGxsChannelMsg::contextMenu(QPoint /*point*/)
@@ -628,8 +638,30 @@ void CreateGxsChannelMsg::sendMessage(const std::string &subject, const std::str
 			post.mThumbnail.copy((uint8_t *) ba.data(), ba.size());
 		}
 
+		int generateCount = 0;
+
+#ifdef ENABLE_GENERATE
+		if (generateCheckBox->isChecked()) {
+			generateCount = generateSpinBox->value();
+			if (QMessageBox::question(this, "Generate mass data", QString("Do you really want to generate %1 messages ?").arg(generateCount), QMessageBox::Yes|QMessageBox::No, QMessageBox::No) == QMessageBox::No) {
+				return;
+			}
+		}
+#endif
+
 		uint32_t token;
-		rsGxsChannels->createPost(token, post);
+		if (generateCount) {
+#ifdef ENABLE_GENERATE
+			for (int count = 0; count < generateCount; ++count) {
+				RsGxsChannelPost generatePost = post;
+				generatePost.mMeta.mMsgName = QString("%1 %2").arg(QString::fromUtf8(post.mMeta.mMsgName.c_str())).arg(count + 1, 3, 10, QChar('0')).toUtf8().constData();
+
+				rsGxsChannels->createPost(token, generatePost);
+			}
+#endif
+		} else {
+			rsGxsChannels->createPost(token, post);
+		}
 	}
 
 	accept();

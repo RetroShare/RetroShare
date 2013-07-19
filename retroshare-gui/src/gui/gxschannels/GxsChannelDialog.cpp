@@ -338,12 +338,6 @@ void GxsChannelDialog::channelListCustomPopupMenu( QPoint /*point*/ )
 	QAction *action = contextMnu.addAction(QIcon(":/images/copyrslink.png"), tr("Copy RetroShare Link"), this, SLOT(copyChannelLink()));
 	action->setEnabled(!mChannelId.empty());
 
-#ifdef DEBUG_CHANNEL
-	contextMnu.addSeparator();
-	action = contextMnu.addAction("Generate mass data", this, SLOT(generateMassData()));
-	action->setEnabled (!mChannelId.empty() && (ci.channelFlags & RS_DISTRIB_PUBLISH));
-#endif
-
 	contextMnu.exec(QCursor::pos());
 
 #endif
