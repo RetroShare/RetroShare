@@ -20,8 +20,6 @@
  ****************************************************************/
 
 #include <QDragEnterEvent>
-#include <QUrl>
-#include <QTimer>
 #include <QMessageBox>
 #include <QBuffer>
 #include <QMenu>
@@ -31,19 +29,16 @@
 #include "CreateGxsChannelMsg.h"
 #include "gui/feeds/SubFileItem.h"
 #include "util/misc.h"
-#include "util/TokenQueue.h"
 
-#include <retroshare/rsgxschannels.h>
 #include <retroshare/rsfiles.h>
 
 #include <iostream>
 
-#define 	 CREATEMSG_CHANNELINFO		0x002
-
+#define CREATEMSG_CHANNELINFO 0x002
 
 /** Constructor */
 CreateGxsChannelMsg::CreateGxsChannelMsg(std::string cId)
-: QDialog (NULL, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint), mChannelId(cId) ,mCheckAttachment(true), mAutoMediaThumbNail(false)
+	: QDialog (NULL, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint), mChannelId(cId) ,mCheckAttachment(true), mAutoMediaThumbNail(false)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	setupUi(this);
@@ -71,10 +66,10 @@ CreateGxsChannelMsg::CreateGxsChannelMsg(std::string cId)
 	thumbNailCb->setVisible(true);
 	thumbNailCb->setEnabled(true);
 #endif
-    //buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+	//buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
 
 	setAcceptDrops(true);
-	
+
 	newChannelMsg();
 }
 
@@ -89,17 +84,16 @@ void CreateGxsChannelMsg::contextMenu(QPoint /*point*/)
 		if((*it).type() == RetroShareLink::TYPE_FILE)
 			n_file++ ;
 
-    QMenu contextMnu(this) ;
+	QMenu contextMnu(this) ;
 
-    QAction *action ;
-	 
-	 if(n_file > 1)
-		 action = contextMnu.addAction(QIcon(":/images/pasterslink.png"), tr("Paste RetroShare Links"), this, SLOT(pasteLink()));
-	 else
-		 action = contextMnu.addAction(QIcon(":/images/pasterslink.png"), tr("Paste RetroShare Link"), this, SLOT(pasteLink()));
+	QAction *action ;
+	if(n_file > 1)
+		action = contextMnu.addAction(QIcon(":/images/pasterslink.png"), tr("Paste RetroShare Links"), this, SLOT(pasteLink()));
+	else
+		action = contextMnu.addAction(QIcon(":/images/pasterslink.png"), tr("Paste RetroShare Link"), this, SLOT(pasteLink()));
 
-    action->setDisabled(n_file < 1) ;
-    contextMnu.exec(QCursor::pos());
+	action->setDisabled(n_file < 1) ;
+	contextMnu.exec(QCursor::pos());
 }
 
 void CreateGxsChannelMsg::pasteLink()
@@ -135,12 +129,11 @@ void CreateGxsChannelMsg::pasteLink()
 	}
 }
 
-CreateGxsChannelMsg::~CreateGxsChannelMsg(){
-
+CreateGxsChannelMsg::~CreateGxsChannelMsg()
+{
 #ifdef CHANNELS_FRAME_CATCHER
 	delete fCatcher;
 #endif
-
 }
 
 /* Dropping */
@@ -325,13 +318,11 @@ void CreateGxsChannelMsg::parseRsFileListAttachments(const std::string &attachLi
 				// TEMP NOT ALLOWED UNTIL FT WORKING.
 				addAttachment(hash, fname, size, false, source);
 			}
-
 		}
 		else
 		{
 			std::cerr << "Error Decode: Hash size: " << hash.size() << std::endl;
 		}
-
 	}
 }
 
@@ -368,21 +359,19 @@ void CreateGxsChannelMsg::addAttachment(const std::string &hash, const std::stri
 	return;
 }
 
-
 void CreateGxsChannelMsg::addExtraFile()
 {
-    /* add a SubFileItem to the attachment section */
-    std::cerr << "CreateGxsChannelMsg::addExtraFile() opening file dialog";
-    std::cerr << std::endl;
+	/* add a SubFileItem to the attachment section */
+	std::cerr << "CreateGxsChannelMsg::addExtraFile() opening file dialog";
+	std::cerr << std::endl;
 
-    QStringList files;
-    if (misc::getOpenFileNames(this, RshareSettings::LASTDIR_EXTRAFILE, tr("Add Extra File"), "", files)) {
-	for (QStringList::iterator fileIt = files.begin(); fileIt != files.end(); fileIt++) {
-	    addAttachment((*fileIt).toUtf8().constData());
+	QStringList files;
+	if (misc::getOpenFileNames(this, RshareSettings::LASTDIR_EXTRAFILE, tr("Add Extra File"), "", files)) {
+		for (QStringList::iterator fileIt = files.begin(); fileIt != files.end(); fileIt++) {
+			addAttachment((*fileIt).toUtf8().constData());
+		}
 	}
-    }
 }
-
 
 void CreateGxsChannelMsg::addAttachment(const std::string &path)
 {
@@ -402,13 +391,10 @@ void CreateGxsChannelMsg::addAttachment(const std::string &path)
 	for(it= mAttachments.begin(); it != mAttachments.end(); it++){
 
 		if((*it)->FilePath() == path){
-			QMessageBox::warning(this, tr("RetroShare"),
-			   tr("File already Added and Hashed"),
-			   QMessageBox::Ok, QMessageBox::Ok);
+			QMessageBox::warning(this, tr("RetroShare"), tr("File already Added and Hashed"), QMessageBox::Ok, QMessageBox::Ok);
 
 			return;
 		}
-
 	}
 
 	FileInfo fInfo;
@@ -481,8 +467,8 @@ bool CreateGxsChannelMsg::setThumbNail(const std::string& path, int frame){
 	return true;
 }
 
-void CreateGxsChannelMsg::allowAutoMediaThumbNail(bool allowThumbNail){
-
+void CreateGxsChannelMsg::allowAutoMediaThumbNail(bool allowThumbNail)
+{
 	mAutoMediaThumbNail = allowThumbNail;
 }
 
@@ -520,7 +506,6 @@ void CreateGxsChannelMsg::checkAttachmentReady()
 	QTimer::singleShot( msec_rate, this, SLOT(checkAttachmentReady(void)));
 }
 
-
 void CreateGxsChannelMsg::cancelMsg()
 {
 	std::cerr << "CreateGxsChannelMsg::cancelMsg() :"
@@ -533,8 +518,7 @@ void CreateGxsChannelMsg::cancelMsg()
 	for(it = mAttachments.begin(); it != mAttachments.end(); it++)
 		rsGxsChannels->ExtraFileRemove((*it)->FileHash());
 
-	close();
-	return;
+	reject();
 }
 
 void CreateGxsChannelMsg::newChannelMsg()
@@ -560,7 +544,6 @@ void CreateGxsChannelMsg::newChannelMsg()
 	}
 }
 
-
 void CreateGxsChannelMsg::saveChannelInfo(const RsGroupMetaData &meta)
 {
 	mChannelMeta = meta;
@@ -569,7 +552,6 @@ void CreateGxsChannelMsg::saveChannelInfo(const RsGroupMetaData &meta)
 	channelName->setText(QString::fromUtf8(mChannelMeta.mGroupName.c_str()));
 	subjectEdit->setFocus();
 }
-
 
 void CreateGxsChannelMsg::sendMsg()
 {
@@ -609,17 +591,14 @@ void CreateGxsChannelMsg::sendMsg()
 	}
 
 	sendMessage(subject, msg, files);
-
 }
 
 void CreateGxsChannelMsg::sendMessage(const std::string &subject, const std::string &msg, const std::list<RsGxsFile> &files)
 {
 	if(subject.empty())
 	{	/* error message */
-		QMessageBox::warning(this, tr("RetroShare"),
-		   tr("Please add a Subject"),
-		   QMessageBox::Ok, QMessageBox::Ok);
-		   
+		QMessageBox::warning(this, tr("RetroShare"), tr("Please add a Subject"), QMessageBox::Ok, QMessageBox::Ok);
+
 		return; //Don't add  an empty Subject!!
 	}
 	else
@@ -627,12 +606,12 @@ void CreateGxsChannelMsg::sendMessage(const std::string &subject, const std::str
 	if (rsGxsChannels)
 	{
 		RsGxsChannelPost post;
-				
+
 		post.mMeta.mGroupId = mChannelId;
 		post.mMeta.mParentId = "";
 		post.mMeta.mThreadId = "";
 		post.mMeta.mMsgId = "";
-				
+
 		post.mMeta.mMsgName = subject;
 		post.mMsg = msg;
 		post.mFiles = files;
@@ -648,14 +627,12 @@ void CreateGxsChannelMsg::sendMessage(const std::string &subject, const std::str
 			picture.save(&buffer, "PNG"); // writes image into ba in PNG format
 			post.mThumbnail.copy((uint8_t *) ba.data(), ba.size());
 		}
-				
+
 		uint32_t token;
 		rsGxsChannels->createPost(token, post);
 	}
-			
-	close();
-  	return;
 
+	accept();
 }
 
 void CreateGxsChannelMsg::addThumbnail()
@@ -670,8 +647,6 @@ void CreateGxsChannelMsg::addThumbnail()
 	// to show the selected
 	thumbnail_label->setPixmap(picture);
 }
-
-
 
 void CreateGxsChannelMsg::loadChannelInfo(const uint32_t &token)
 {
@@ -693,7 +668,6 @@ void CreateGxsChannelMsg::loadChannelInfo(const uint32_t &token)
 	}
 }
 
-
 void CreateGxsChannelMsg::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 {
 	std::cerr << "CreateGxsChannelMsg::loadRequest() UserType: " << req.mUserType;
@@ -710,12 +684,6 @@ void CreateGxsChannelMsg::loadRequest(const TokenQueue *queue, const TokenReques
 			default:
 				std::cerr << "CreateGxsChannelMsg::loadRequest() UNKNOWN UserType ";
 				std::cerr << std::endl;
-
 		}
 	}
 }
-  
-
-
-
-

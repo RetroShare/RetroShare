@@ -25,7 +25,7 @@ protected:
 	void showEvent(QShowEvent *e);
 
 signals:
-	void fillDisplay(bool initialFill);
+	void fillDisplay(bool complete);
 
 private slots:
 	void updateBroadcastChanged();

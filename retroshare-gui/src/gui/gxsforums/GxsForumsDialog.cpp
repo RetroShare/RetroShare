@@ -257,10 +257,12 @@ void GxsForumsDialog::restoreForumKeys(void)
 #endif
 }
 
-void GxsForumsDialog::updateDisplay(bool /*initialFill*/)
+void GxsForumsDialog::updateDisplay(bool complete)
 {
-	/* Update forums list */
-	insertForums();
+	if (complete || !getGrpIds().empty()) {
+		/* Update forums list */
+		insertForums();
+	}
 }
 
 void GxsForumsDialog::forumInfoToGroupItemInfo(const RsGroupMetaData &forumInfo, GroupItemInfo &groupItemInfo)

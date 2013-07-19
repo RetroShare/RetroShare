@@ -30,10 +30,10 @@ protected:
 	virtual void showEvent(QShowEvent *event);
 
 	// This is overloaded in subclasses.
-	virtual void updateDisplay(bool initialFill) = 0;
+	virtual void updateDisplay(bool complete) = 0;
 
 private slots:
-	void fillDisplay(bool initialFill);
+	void fillDisplay(bool complete);
 
 private:
 	RsGxsUpdateBroadcastBase *mBase;

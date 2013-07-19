@@ -54,7 +54,7 @@
              <string/>
             </property>
             <property name="pixmap">
-             <pixmap>:/images/channels32.png</pixmap>
+             <pixmap resource="../images.qrc">:/images/channels32.png</pixmap>
             </property>
             <property name="scaledContents">
              <bool>true</bool>
@@ -89,9 +89,9 @@
            </spacer>
           </item>
           <item>
-           <widget class="QPushButton" name="refreshButton">
+           <widget class="QPushButton" name="todoPushButton">
             <property name="text">
-             <string>refresh</string>
+             <string>Todo</string>
             </property>
            </widget>
           </item>
@@ -104,7 +104,7 @@
              <string>Display</string>
             </property>
             <property name="icon">
-             <iconset>
+             <iconset resource="../images.qrc">
               <normaloff>:/images/looknfeel.png</normaloff>:/images/looknfeel.png</iconset>
             </property>
             <property name="iconSize">
@@ -133,7 +133,7 @@
              <string>Create Channel</string>
             </property>
             <property name="icon">
-             <iconset>
+             <iconset resource="../images.qrc">
               <normaloff>:/images/add_channel24.png</normaloff>:/images/add_channel24.png</iconset>
             </property>
             <property name="iconSize">
@@ -194,7 +194,7 @@
              <string/>
             </property>
             <property name="pixmap">
-             <pixmap>:/images/channels.png</pixmap>
+             <pixmap resource="../images.qrc">:/images/channels.png</pixmap>
             </property>
             <property name="scaledContents">
              <bool>true</bool>
@@ -236,7 +236,7 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>380</width>
+            <width>362</width>
             <height>16</height>
            </rect>
           </property>
@@ -299,7 +299,7 @@
              <string>Post to Channel</string>
             </property>
             <property name="icon">
-             <iconset>
+             <iconset resource="../images.qrc">
               <normaloff>:/images/mail_send.png</normaloff>:/images/mail_send.png</iconset>
             </property>
             <property name="iconSize">
@@ -360,7 +360,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="images.qrc"/>
+  <include location="../images.qrc"/>
  </resources>
  <connections/>
 </ui>

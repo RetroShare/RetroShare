@@ -505,7 +505,7 @@ void IdDialog::insertIdDetails(uint32_t token)
 	requestRepList(data.mMeta.mGroupId);
 }
 
-void IdDialog::updateDisplay(bool /*initialFill*/)
+void IdDialog::updateDisplay(bool /*complete*/)
 {
 	/* Update identity list */
 	requestIdList();

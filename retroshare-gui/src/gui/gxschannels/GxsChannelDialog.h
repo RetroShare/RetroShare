@@ -22,14 +22,9 @@
 #ifndef _GXS_CHANNEL_DIALOG_H
 #define _GXS_CHANNEL_DIALOG_H
 
-#include <retroshare/rsgxschannels.h>
-
-#include <QStandardItemModel>
-#include <QThread>
 #include <map>
 
-#include "mainpage.h"
-#include "RsAutoUpdatePage.h"
+#include "gui/gxs/RsGxsUpdateBroadcastPage.h"
 
 #include "ui_GxsChannelDialog.h"
 
@@ -41,9 +36,9 @@
 //class ChanMsgItem;
 class GxsChannelPostItem;
 class QTreeWidgetItem;
+class UIStateHelper;
 
-class GxsChannelDialog : public RsAutoUpdatePage, public TokenResponse, public GxsServiceDialog, 
-			public FeedHolder
+class GxsChannelDialog : public RsGxsUpdateBroadcastPage, public TokenResponse, public GxsServiceDialog, public FeedHolder
 {
 	Q_OBJECT
 
@@ -53,7 +48,7 @@ public:
 	/** Default Destructor */
 	~GxsChannelDialog();
 
-	virtual UserNotify *getUserNotify(QObject *parent);
+//	virtual UserNotify *getUserNotify(QObject *parent);
 
 	/* FeedHolder */
 	virtual QScrollArea *getScrollArea();
@@ -63,16 +58,15 @@ public:
 
 	bool navigate(const std::string& channelId, const std::string& msgId);
 
-	/* overloaded from RsAuthUpdatePage */ 
-	virtual void updateDisplay();
-
-
 	/* NEW GXS FNS */
 	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
+protected:
+	virtual void updateDisplay(bool complete);
 
 private slots:
-	void channelListCustomPopupMenu( QPoint point );
+	void todo();
+	void channelListCustomPopupMenu(QPoint point);
 	void selectChannel(const QString &id);
 
 	void createChannel();
@@ -90,17 +84,12 @@ private slots:
 	void shareKey();
 	void copyChannelLink();
 
-	void channelMsgReadSatusChanged(const QString& channelId, const QString& msgId, int status);
+//	void channelMsgReadSatusChanged(const QString& channelId, const QString& msgId, int status);
 
 	//void generateMassData();
 
 	//void fillThreadFinished();
 	//void fillThreadAddMsg(const QString &channelId, const QString &channelMsgId, int current, int count);
-
-	/* NEW GXS FNS */
-	void forceUpdateDisplay();
-
-
 
 private:
 	//void updateChannelList();
@@ -134,7 +123,6 @@ private:
 	std::string mChannelId; /* current Channel */
 	TokenQueue *mChannelQueue;
 
-
 	/* Layout Pointers */
 	QBoxLayout *mMsgLayout;
 
@@ -147,6 +135,8 @@ private:
 	QTreeWidgetItem *subcribedChannels;
 	QTreeWidgetItem *popularChannels;
 	QTreeWidgetItem *otherChannels;
+
+	UIStateHelper *mStateHelper;
 
 	/* UI - from Designer */
 	Ui::GxsChannelDialog ui;

@@ -27,9 +27,9 @@ std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &RsGxsUpdateBroadcastPage::
 	return mBase->getMsgIds();
 }
 
-void RsGxsUpdateBroadcastPage::fillDisplay(bool initialFill)
+void RsGxsUpdateBroadcastPage::fillDisplay(bool complete)
 {
-	updateDisplay(initialFill);
+	updateDisplay(complete);
 	update(); // Qt flush
 }
 

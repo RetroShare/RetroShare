@@ -92,7 +92,7 @@ void CirclesDialog::todo()
 							 "</ul>");
 }
 
-void CirclesDialog::updateDisplay(bool /*initialFill*/)
+void CirclesDialog::updateDisplay(bool /*complete*/)
 {
 	reloadAll();
 }

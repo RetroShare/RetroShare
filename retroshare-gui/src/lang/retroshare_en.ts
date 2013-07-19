@@ -5040,19 +5040,11 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Add Friend</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Edit Group</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Remove Group</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Chat lobbies</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5069,10 +5061,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Recommend this Friend to...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Connect To Friend</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5116,26 +5104,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Create new</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Invite this group</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Invite this friend</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Show</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Unsubscribe</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Expand all</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5152,19 +5120,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Unsubscribe to lobby</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>You are about to unsubscribe a chat lobby&lt;br&gt;You can only re-enter if your friends invite you again.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Columns</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Sort by</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5177,6 +5133,22 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Show IP Column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Attempt to connect</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create new group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Recommend many friends to each others</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Service permissions matrix</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5253,10 +5225,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Display</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5376,10 +5344,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Known people</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Welcome to RetroShare&apos;s group chat.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5409,6 +5373,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Text File (*.txt );;All Files (*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Keyring</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6255,10 +6223,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>refresh</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Display</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6348,6 +6312,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>No Channel Selected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Todo</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8903,10 +8871,6 @@ Do you want to save message ?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Show all accessible keys</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Name</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9112,6 +9076,10 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <source>Data inconsistency in the keyring. This is most probably a bug. Please contact the developers.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Only show people you trusted</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>NetworkPage</name>
@@ -9174,6 +9142,10 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>This is a test.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;News Feed&lt;/h1&gt;                                                          		  &lt;p&gt;The News Feed displays the last events on your network, sorted by the time you received them.                		  This gives you a summary of the activity of your friends.                                                       		  You can configure which events to show by pressing on &lt;b&gt;Options&lt;/b&gt;. &lt;/p&gt;                                      		  &lt;p&gt;The various events shown are:                                                                                		  &lt;ul&gt;	                                                                                                         		  		&lt;li&gt;Connection attempts (useful to make friends with new people and control who&apos;s trying to reach you)&lt;/li&gt; 		  		&lt;li&gt;Channel and Forum posts&lt;/li&gt;                                                                            		  		&lt;li&gt;New Channels and Forums you can subscribe to&lt;/li&gt;                                                       		  		&lt;li&gt;Private messages from your friends&lt;/li&gt;                                                                 		  &lt;/ul&gt; &lt;/p&gt;                                                                                                      		</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

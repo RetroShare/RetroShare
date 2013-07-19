@@ -80,7 +80,7 @@ private slots:
 	void showPrev();
 
 protected:
-	virtual void updateDisplay(bool initialFill);
+	virtual void updateDisplay(bool complete);
 
 private:
 	void updateShowText();

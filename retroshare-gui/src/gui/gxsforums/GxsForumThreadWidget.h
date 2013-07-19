@@ -61,7 +61,7 @@ signals:
 protected:
 	bool eventFilter(QObject *obj, QEvent *ev);
 	void changeEvent(QEvent *e);
-	virtual void updateDisplay(bool initialFill);
+	virtual void updateDisplay(bool complete);
 
 private slots:
 	/** Create the context popup menu and it's submenus */

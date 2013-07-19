@@ -291,7 +291,7 @@ void PostedListDialog::openComments(uint32_t /*feed_type*/, const RsGxsGroupId &
 
 /*****************************************************************************************/
 
-void PostedListDialog::updateDisplay(bool /*initialFill*/)
+void PostedListDialog::updateDisplay(bool /*complete*/)
 {
 	std::cerr << "rsPosted->updateDisplay()";
 	std::cerr << std::endl;

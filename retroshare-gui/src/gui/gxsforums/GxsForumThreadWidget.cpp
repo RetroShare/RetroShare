@@ -309,9 +309,9 @@ void GxsForumThreadWidget::changeEvent(QEvent *e)
 	}
 }
 
-void GxsForumThreadWidget::updateDisplay(bool initialFill)
+void GxsForumThreadWidget::updateDisplay(bool complete)
 {
-	if (initialFill) {
+	if (complete) {
 		/* Not needed */
 		return;
 	}

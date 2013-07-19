@@ -40,7 +40,7 @@ public:
 	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 protected:
-	virtual void updateDisplay(bool initialFill);
+	virtual void updateDisplay(bool complete);
 
 private slots:
 	void todo();
