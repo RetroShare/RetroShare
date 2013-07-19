@@ -37,7 +37,7 @@ void MainPage::registerHelpButton(QPushButton *button,const QString& help_html_t
 		help_browser->hide() ;
 	}
 
-	help_browser->setHtml(help_html_txt) ;
+	help_browser->setHtml("<div align=\"justify\">"+help_html_txt+"</div>") ;
 
 	QObject::connect(button,SIGNAL(toggled(bool)), this, SLOT( showHelp(bool) ) ) ;
 }

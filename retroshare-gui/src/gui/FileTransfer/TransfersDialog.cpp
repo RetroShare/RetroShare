@@ -463,6 +463,21 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 
     // load settings
     processSettings(true);
+
+	 QString help_str = tr(
+			 " <h1><img width=\"32\" src=\":/images/64px_help.png\">&nbsp;&nbsp;File Transfer</h1>                                                         \
+			 <p>Retroshare brings two ways of transferring files: direct transfers from your friends, and                                     \
+			 distant anonymous tunnelled transfers. In addition, file transfer is multi-source and allows swarming                                      \
+			 (you can be a source while downloading)</p>                                     \
+			 <p>You can share files using the <img src=\":/images/directoryadd_24x24_shadow.png\" width=16 /> icon from the left side bar. \
+				These files will be listed in the My Files tab. You can decide for each friend group whether they can or not see these files \
+				in their Friends Files tab</p>\
+			 <p>The search tab reports files from your friends' file lists, and distant files that can be reached \
+			 anonymously using the multi-hop tunnelling system.</p> \
+			 ") ;
+
+
+	 registerHelpButton(ui.helpButton,help_str) ;
 }
 
 TransfersDialog::~TransfersDialog()

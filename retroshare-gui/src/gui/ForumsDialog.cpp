@@ -201,6 +201,21 @@ ForumsDialog::ForumsDialog(QWidget *parent)
 #ifdef Q_WS_WIN
 
 #endif
+	 
+		QString help_str = tr(
+		" <h1><img width=\"32\" src=\":/images/64px_help.png\">&nbsp;&nbsp;Forums</h1>                              \
+		  <p>Retroshare Forums look like internet forums, but they work in a decentralized way:                     \
+		  You see forums your friends are subscribed to, and you forward subscribed forums to                      \
+		  your friends. This automatically promotes interesting forums in the network.</p>                     \
+		  <p>Forums are either Authenticated (<img src=\":/images/konv_message2.png\" width=\"12\"/>) in which case you need to cryptographically sign                      \
+		  your posts, or anonymous (<img src=\":/images/konversation.png\" width=\"12\"/>). The former class is more resistant to spamming.</p>                 \
+		  <p>Forum posts propagate from friend to friend using small cache file exchanges. When you first connect to a new friend, it's likely \
+		  you will receive many such cache files, and new forums will appear. \
+		  </p>                                      \
+		") ;
+
+
+	registerHelpButton(ui.helpButton,help_str) ;
 }
 
 ForumsDialog::~ForumsDialog()

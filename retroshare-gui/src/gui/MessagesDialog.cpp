@@ -275,6 +275,18 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 #ifdef Q_WS_WIN
 
 #endif
+
+	 QString help_str = tr(
+			 " <h1><img width=\"32\" src=\":/images/64px_help.png\">&nbsp;&nbsp;Messages</h1>                                                         \	\
+			 <p>Messages are like e-mail: you send/receive them from your friends when both of you	\
+			 are connected.</p>	\
+			 <p>Some additional features allow to exchange data in messages: you can recommend files to your friends,	\
+			 or recommend friends to be for other friends to streathen your network.</p>	\
+			 ") ;
+
+
+	 registerHelpButton(ui.helpButton,help_str) ;
+
 }
 
 MessagesDialog::~MessagesDialog()

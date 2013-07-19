@@ -216,11 +216,13 @@ FriendsDialog::FriendsDialog(QWidget *parent)
 		" <h1><img width=\"32\" src=\":/images/64px_help.png\">&nbsp;&nbsp;Friends</h1>                                   \
 		  <p>The Friends tab shows...your friends: the list of persons you have accepted to connect to.                   \
 		  </p>                                                   \
+		  <p>You can group friends together to allow a finer level of information access, for instance to only allow      \
+		  some friends to see some files.</p> \
 		  <p>On the right, you will find 3 useful tabs:                                                                   \
 		  <ul>	                                                                                                         \
-		  		<li>Broadcast allows you to send messages to all connected friends at once</li>                             \
-		  		<li>Local Network represents the network around you, including friends of your friends</li>                 \
-		  		<li>Keyring contains keys you collected, forwarded to you by your friends</li>                              \
+		  		<li>Broadcast sends messages to all connected friends at once</li>                             \
+		  		<li>Local Network shows the network around you, including friends of your friends</li>                 \
+		  		<li>Keyring contains keys you collected, mostly forwarded to you by your friends</li>                              \
 		  </ul> </p>                                                                                                      \
 		") ;
 
