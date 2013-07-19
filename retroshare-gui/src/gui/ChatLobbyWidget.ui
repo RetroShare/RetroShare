@@ -26,16 +26,7 @@
       <enum>QFrame::Sunken</enum>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
-      <property name="leftMargin">
-       <number>2</number>
-      </property>
-      <property name="topMargin">
-       <number>2</number>
-      </property>
-      <property name="rightMargin">
-       <number>2</number>
-      </property>
-      <property name="bottomMargin">
+      <property name="margin">
        <number>2</number>
       </property>
       <item>
@@ -76,24 +67,24 @@
        </spacer>
       </item>
       <item>
-       <widget class="QToolButton" name="newlobbytoolButton">
-        <property name="focusPolicy">
-         <enum>Qt::NoFocus</enum>
+       <widget class="QPushButton" name="helpButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
-        <property name="toolTip">
-         <string>Create new chat lobby</string>
+        <property name="text">
+         <string/>
         </property>
         <property name="icon">
          <iconset resource="images.qrc">
-          <normaloff>:/images/edit_add24.png</normaloff>:/images/edit_add24.png</iconset>
+          <normaloff>:/images/64px_help.png</normaloff>:/images/64px_help.png</iconset>
         </property>
-        <property name="iconSize">
-         <size>
-          <width>24</width>
-          <height>16</height>
-         </size>
+        <property name="checkable">
+         <bool>true</bool>
         </property>
-        <property name="autoRaise">
+        <property name="flat">
          <bool>true</bool>
         </property>
        </widget>

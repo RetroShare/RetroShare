@@ -27,6 +27,7 @@
 #include <QTextBrowser>
 
 class UserNotify;
+class QPushButton ;
 
 class MainPage : public QWidget
 {
@@ -42,13 +43,13 @@ class MainPage : public QWidget
 		// Overload this to add some help info  to the page. The way the info is 
 		// shown is handled by showHelp() below;
 		//
-		virtual const QString& helpHtmlText() const { static QString s ; return s ; }	
+		void registerHelpButton(QPushButton *button, const QString& help_html_text) ;
 
-	public slots:
+	private slots:
 		void showHelp(bool b) ;
 
 	private:
-			QTextBrowser *help_browser ;
+		QTextBrowser *help_browser ;
 };
 
 #endif

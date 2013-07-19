@@ -212,6 +212,20 @@ FriendsDialog::FriendsDialog(QWidget *parent)
         ui.nicknameLabel->setText(PeerDefs::nameWithLocation(pd));
     }
 
+	QString hlp_str = tr(
+		" <h1><img width=\"32\" src=\":/images/64px_help.png\">&nbsp;&nbsp;Friends</h1>                                   \
+		  <p>The Friends tab shows...your friends: the list of persons you have accepted to connect to.                   \
+		  </p>                                                   \
+		  <p>On the right, you will find 3 useful tabs:                                                                   \
+		  <ul>	                                                                                                         \
+		  		<li>Broadcast allows you to send messages to all connected friends at once</li>                             \
+		  		<li>Local Network represents the network around you, including friends of your friends</li>                 \
+		  		<li>Keyring contains keys you collected, forwarded to you by your friends</li>                              \
+		  </ul> </p>                                                                                                      \
+		") ;
+
+	 registerHelpButton(ui.helpButton, hlp_str) ;
+
     /* Hide platform specific features */
 #ifdef Q_WS_WIN
 
@@ -858,41 +872,6 @@ void FriendsDialog::on_actionMessageHistory_triggered()
     ImHistoryBrowser imBrowser("", ui.lineEdit, this);
     imBrowser.exec();
 }
-
-//void FriendsDialog::on_actionAdd_Group_activated()
-//{
-//    CreateGroup createGrpDialog ("", this);
-//    createGrpDialog.exec();
-//}
-
-// void FriendsDialog::newsFeedChanged(int count)
-// {
-//     int newsFeedTabIndex = ui.tabWidget->indexOf(newsFeed);
-//     if (newsFeedTabIndex < 0) {
-//         return;
-//     }
-// 
-//     if (count) {
-//         ui.tabWidget->tabBar()->setTabText(newsFeedTabIndex, QString("%1 (%2)").arg(newsFeedText).arg(count));
-//         ui.tabWidget->tabBar()->setTabTextColor(newsFeedTabIndex, Qt::blue);
-//         ui.tabWidget->tabBar()->setTabIcon(newsFeedTabIndex, QIcon(IMAGE_NEWSFEED_NEW));
-//     } else {
-//         ui.tabWidget->tabBar()->setTabText(newsFeedTabIndex, newsFeedText);
-//         ui.tabWidget->tabBar()->setTabTextColor(newsFeedTabIndex, newsFeedTabColor);
-//         ui.tabWidget->tabBar()->setTabIcon(newsFeedTabIndex,  QIcon(IMAGE_NEWSFEED));
-//     }
-// }
-
-//void FriendsDialog::recommendFriends()
-//{
-//	FriendRecommendDialog::showYourself();
-//}
-
-//void FriendsDialog::servicePermission()
-//{
-//	ServicePermissionDialog dlg;
-//	dlg.exec();
-//}
 
 /*static*/ bool FriendsDialog::isGroupChatActive()
 {

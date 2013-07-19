@@ -20,6 +20,7 @@
  ****************************************************************/
 
 #include <QTimer>
+#include <QSpacerItem>
 
 #include "NewsFeed.h"
 
@@ -84,19 +85,8 @@ NewsFeed::NewsFeed(QWidget *parent)
 
 	connect(removeAllButton, SIGNAL(clicked()), this, SLOT(removeAll()));
 	connect(feedOptionsButton, SIGNAL(clicked()), this, SLOT(feedoptions()));
-	connect(helpButton, SIGNAL(toggled(bool)), (MainPage*)this, SLOT(showHelp(bool)));
-}
 
-NewsFeed::~NewsFeed()
-{
-	if (instance == this) {
-		instance = NULL;
-	}
-}
-
-const QString& NewsFeed::helpHtmlText() const
-{
-	static const QString str = tr(
+	QString hlp_str = tr(
 		" <h1><img width=\"32\" src=\":/images/64px_help.png\">&nbsp;&nbsp;News Feed</h1>                                                          \
 		  <p>The News Feed displays the last events on your network, sorted by the time you received them.                \
 		  This gives you a summary of the activity of your friends.                                                       \
@@ -110,7 +100,17 @@ const QString& NewsFeed::helpHtmlText() const
 		  </ul> </p>                                                                                                      \
 		") ;
 
-	return str ;
+	registerHelpButton(helpButton,hlp_str) ;
+
+	mLayout = new QVBoxLayout(scrollArea) ;
+	mLayout->addItem(new QSpacerItem(10,0,QSizePolicy::Minimum, QSizePolicy::MinimumExpanding)) ;
+}
+
+NewsFeed::~NewsFeed()
+{
+	if (instance == this) {
+		instance = NULL;
+	}
 }
 
 UserNotify *NewsFeed::getUserNotify(QObject *parent)
@@ -462,9 +462,9 @@ void NewsFeed::addFeedItem(QWidget *item)
 	lockLayout(NULL, true);
 
 	if (Settings->getAddFeedsAtEnd()) {
-		verticalLayout->addWidget(item);
+		mLayout->addWidget(item);
 	} else {
-		verticalLayout->insertWidget(0, item);
+		mLayout->insertWidget(0, item);
 	}
 	item->show();
 
