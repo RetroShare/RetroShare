@@ -12,13 +12,6 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QSplitter" name="splitter_2">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item>
     <widget class="QFrame" name="titleBarFrame">
      <property name="frameShape">
       <enum>QFrame::Box</enum>
@@ -620,10 +613,7 @@
    </property>
   </action>
   <zorder>splitter</zorder>
-  <zorder>forumTreeWidget</zorder>
-  <zorder>forumTreeWidget</zorder>
   <zorder>titleBarFrame</zorder>
-  <zorder>threadSplitter</zorder>
  </widget>
  <customwidgets>
   <customwidget>
