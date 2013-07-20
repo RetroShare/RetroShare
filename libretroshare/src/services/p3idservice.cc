@@ -437,6 +437,7 @@ bool p3IdService::getGroupData(const uint32_t &token, std::vector<RsGxsIdGroup> 
 
                         groups.push_back(group);
                 }
+        delete *vit ;
         }
 
         return ok;
