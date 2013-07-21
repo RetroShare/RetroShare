@@ -165,6 +165,8 @@ int p3disc::handleIncoming()
 		{
 			if(rsPeers->servicePermissionFlags_sslid(item->PeerId()) & RS_SERVICE_PERM_DISCOVERY)
 				recvDiscReply(dri);
+            else
+                delete item ;
 		}
 		else if (NULL != (dvi = dynamic_cast<RsDiscVersion *> (item))) 
 		{
