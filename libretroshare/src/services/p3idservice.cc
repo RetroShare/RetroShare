@@ -1075,7 +1075,8 @@ bool p3IdService::cache_load_ownids(uint32_t token)
 				if (item->meta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
 				{
 					mOwnIds.push_back(item->meta.mGroupId);	
-				}
+                }
+                delete item ;
 	                }
 		}
 
