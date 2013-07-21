@@ -179,11 +179,19 @@ bool p3Posted::getGroupData(const uint32_t &token, std::vector<RsPostedGroup> &g
 		for(; vit != grpData.end(); vit++)
 		{
 			RsGxsPostedGroupItem* item = dynamic_cast<RsGxsPostedGroupItem*>(*vit);
-			RsPostedGroup grp = item->mGroup;
-			item->mGroup.mMeta = item->meta;
-			grp.mMeta = item->mGroup.mMeta;
-			delete item;
-			groups.push_back(grp);
+			if (item)
+			{
+				RsPostedGroup grp = item->mGroup;
+				item->mGroup.mMeta = item->meta;
+				grp.mMeta = item->mGroup.mMeta;
+				delete item;
+				groups.push_back(grp);
+			}
+			else
+			{
+				std::cerr << "Not a RsGxsPostedGroupItem, deleting!" << std::endl;
+				delete *vit;
+			}
 		}
 	}
 	return ok;
@@ -194,7 +202,7 @@ bool p3Posted::getPostData(const uint32_t &token, std::vector<RsPostedPost> &msg
 	GxsMsgDataMap msgData;
 	bool ok = RsGenExchange::getMsgData(token, msgData);
 	time_t now = time(NULL);
-		
+
 	if(ok)
 	{
 		GxsMsgDataMap::iterator mit = msgData.begin();
@@ -208,7 +216,7 @@ bool p3Posted::getPostData(const uint32_t &token, std::vector<RsPostedPost> &msg
 			for(; vit != msgItems.end(); vit++)
 			{
 				RsGxsPostedPostItem* item = dynamic_cast<RsGxsPostedPostItem*>(*vit);
-		
+
 				if(item)
 				{
 					RsPostedPost msg = item->mPost;

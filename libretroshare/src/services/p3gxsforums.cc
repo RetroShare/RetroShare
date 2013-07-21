@@ -102,11 +102,19 @@ bool p3GxsForums::getGroupData(const uint32_t &token, std::vector<RsGxsForumGrou
 		for(; vit != grpData.end(); vit++)
 		{
 			RsGxsForumGroupItem* item = dynamic_cast<RsGxsForumGroupItem*>(*vit);
-			RsGxsForumGroup grp = item->mGroup;
-			item->mGroup.mMeta = item->meta;
-			grp.mMeta = item->mGroup.mMeta;
-			delete item;
-			groups.push_back(grp);
+			if (item)
+			{
+				RsGxsForumGroup grp = item->mGroup;
+				item->mGroup.mMeta = item->meta;
+				grp.mMeta = item->mGroup.mMeta;
+				delete item;
+				groups.push_back(grp);
+			}
+			else
+			{
+				std::cerr << "Not a GxsForumGrpItem, deleting!" << std::endl;
+				delete *vit;
+			}
 		}
 	}
 	return ok;
@@ -121,21 +129,21 @@ bool p3GxsForums::getMsgData(const uint32_t &token, std::vector<RsGxsForumMsg> &
 {
 	GxsMsgDataMap msgData;
 	bool ok = RsGenExchange::getMsgData(token, msgData);
-		
+
 	if(ok)
 	{
 		GxsMsgDataMap::iterator mit = msgData.begin();
-		
+
 		for(; mit != msgData.end();  mit++)
 		{
 			RsGxsGroupId grpId = mit->first;
 			std::vector<RsGxsMsgItem*>& msgItems = mit->second;
 			std::vector<RsGxsMsgItem*>::iterator vit = msgItems.begin();
-		
+
 			for(; vit != msgItems.end(); vit++)
 			{
 				RsGxsForumMsgItem* item = dynamic_cast<RsGxsForumMsgItem*>(*vit);
-		
+
 				if(item)
 				{
 					RsGxsForumMsg msg = item->mMsg;
@@ -151,7 +159,7 @@ bool p3GxsForums::getMsgData(const uint32_t &token, std::vector<RsGxsForumMsg> &
 			}
 		}
 	}
-		
+
 	return ok;
 }
 

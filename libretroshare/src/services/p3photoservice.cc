@@ -207,17 +207,24 @@ bool p3PhotoService::getAlbum(const uint32_t& token, std::vector<RsPhotoAlbum>& 
 		for(; vit != grpData.end(); vit++)
 		{
 			RsGxsPhotoAlbumItem* item = dynamic_cast<RsGxsPhotoAlbumItem*>(*vit);
-			RsPhotoAlbum album = item->album;
-                        item->album.mMeta = item->meta;
-			album.mMeta = item->album.mMeta;
-			delete item;
-			albums.push_back(album);
+			if (item)
+			{
+				RsPhotoAlbum album = item->album;
+				item->album.mMeta = item->meta;
+				album.mMeta = item->album.mMeta;
+				delete item;
+				albums.push_back(album);
+			}
+			else
+			{
+				std::cerr << "Not a RsGxsPhotoAlbumItem, deleting!" << std::endl;
+				delete *vit;
+			}
 		}
 	}
 
 	return ok;
 }
-
 
 bool p3PhotoService::getPhoto(const uint32_t& token, PhotoResult& photos)
 {
@@ -240,14 +247,14 @@ bool p3PhotoService::getPhoto(const uint32_t& token, PhotoResult& photos)
 
 				if(item)
 				{
-                                        RsPhotoPhoto photo = item->photo;
+					RsPhotoPhoto photo = item->photo;
 					photo.mMeta = item->meta;
 					photos[grpId].push_back(photo);
 					delete item;
 				}else
 				{
-                                    std::cerr << "Not a photo Item, deleting!" << std::endl;
-                                    delete *vit;
+					std::cerr << "Not a photo Item, deleting!" << std::endl;
+					delete *vit;
 				}
 			}
 		}

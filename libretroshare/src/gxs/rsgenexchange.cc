@@ -1109,7 +1109,6 @@ bool RsGenExchange::getMsgRelatedMeta(const uint32_t &token, GxsMsgRelatedMetaMa
 
 bool RsGenExchange::getGroupData(const uint32_t &token, std::vector<RsGxsGrpItem *>& grpItem)
 {
-
 	std::list<RsNxsGrp*> nxsGrps;
 	bool ok = mDataAccess->getGroupData(token, nxsGrps);
 
@@ -1118,7 +1117,7 @@ bool RsGenExchange::getGroupData(const uint32_t &token, std::vector<RsGxsGrpItem
 	std::cerr << "RsGenExchange::getGroupData() RsNxsGrp::len: " << nxsGrps.size();
 	std::cerr << std::endl;
 
-        if(ok)
+	if(ok)
 	{
 		for(; lit != nxsGrps.end(); lit++)
 		{
@@ -1134,7 +1133,7 @@ bool RsGenExchange::getGroupData(const uint32_t &token, std::vector<RsGxsGrpItem
 				if (gItem)
 				{
 					gItem->meta = *((*lit)->metaData);
-                                	grpItem.push_back(gItem);
+					grpItem.push_back(gItem);
 				}
 				else
 				{
@@ -1148,46 +1147,42 @@ bool RsGenExchange::getGroupData(const uint32_t &token, std::vector<RsGxsGrpItem
 				std::cerr << "RsGenExchange::getGroupData() ERROR deserialising item";
 				std::cerr << std::endl;
 			}
-                        delete *lit;
+			delete *lit;
 		}
 	}
-    return ok;
+	return ok;
 }
 
-bool RsGenExchange::getMsgData(const uint32_t &token,
-                               GxsMsgDataMap &msgItems)
+bool RsGenExchange::getMsgData(const uint32_t &token, GxsMsgDataMap &msgItems)
 {
+	RsStackMutex stack(mGenMtx);
+	NxsMsgDataResult msgResult;
+	bool ok = mDataAccess->getMsgData(token, msgResult);
+	NxsMsgDataResult::iterator mit = msgResult.begin();
 
-    RsStackMutex stack(mGenMtx);
-    NxsMsgDataResult msgResult;
-    bool ok = mDataAccess->getMsgData(token, msgResult);
-    NxsMsgDataResult::iterator mit = msgResult.begin();
+	if(ok)
+	{
+		for(; mit != msgResult.end(); mit++)
+		{
+			std::vector<RsGxsMsgItem*> gxsMsgItems;
+			const RsGxsGroupId& grpId = mit->first;
+			std::vector<RsNxsMsg*>& nxsMsgsV = mit->second;
+			std::vector<RsNxsMsg*>::iterator vit = nxsMsgsV.begin();
+			for(; vit != nxsMsgsV.end(); vit++)
+			{
+				RsNxsMsg*& msg = *vit;
+				RsItem* item = NULL;
 
-    if(ok)
-    {
-        for(; mit != msgResult.end(); mit++)
-        {
-            std::vector<RsGxsMsgItem*> gxsMsgItems;
-            const RsGxsGroupId& grpId = mit->first;
-            std::vector<RsNxsMsg*>& nxsMsgsV = mit->second;
-            std::vector<RsNxsMsg*>::iterator vit
-            = nxsMsgsV.begin();
-            for(; vit != nxsMsgsV.end(); vit++)
-            {
-                RsNxsMsg*& msg = *vit;
-                RsItem* item = NULL;
-
-                if(msg->msg.bin_len != 0)
-                	item = mSerialiser->deserialise(msg->msg.bin_data,
-                                &msg->msg.bin_len);
+				if(msg->msg.bin_len != 0)
+					item = mSerialiser->deserialise(msg->msg.bin_data, &msg->msg.bin_len);
 
 				if (item)
 				{
 					RsGxsMsgItem* mItem = dynamic_cast<RsGxsMsgItem*>(item);
 					if (mItem)
 					{
-								mItem->meta = *((*vit)->metaData); // get meta info from nxs msg
-								gxsMsgItems.push_back(mItem);
+						mItem->meta = *((*vit)->metaData); // get meta info from nxs msg
+						gxsMsgItems.push_back(mItem);
 					}
 					else
 					{
@@ -1205,12 +1200,12 @@ bool RsGenExchange::getMsgData(const uint32_t &token,
 					std::cerr << std::endl;
 #endif
 				}
-						delete msg;
-					}
-					msgItems[grpId] = gxsMsgItems;
-				}
+				delete msg;
 			}
-    return ok;
+			msgItems[grpId] = gxsMsgItems;
+		}
+	}
+	return ok;
 }
 
 bool RsGenExchange::getMsgRelatedData(const uint32_t &token, GxsMsgRelatedDataMap &msgItems)

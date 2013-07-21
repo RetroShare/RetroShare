@@ -175,7 +175,7 @@ bool p3GxsChannels::getGroupData(const uint32_t &token, std::vector<RsGxsChannel
 
 	std::vector<RsGxsGrpItem*> grpData;
 	bool ok = RsGenExchange::getGroupData(token, grpData);
-		
+
 	if(ok)
 	{
 		std::vector<RsGxsGrpItem*>::iterator vit = grpData.begin();
@@ -194,6 +194,7 @@ bool p3GxsChannels::getGroupData(const uint32_t &token, std::vector<RsGxsChannel
 			{
 				std::cerr << "p3GxsChannels::getGroupData() ERROR in decode";
 				std::cerr << std::endl;
+				delete(*vit);
 			}
 		}
 	}
@@ -218,7 +219,7 @@ bool p3GxsChannels::getPostData(const uint32_t &token, std::vector<RsGxsChannelP
 
 	GxsMsgDataMap msgData;
 	bool ok = RsGenExchange::getMsgData(token, msgData);
-		
+
 	if(ok)
 	{
 		GxsMsgDataMap::iterator mit = msgData.begin();
@@ -228,11 +229,11 @@ bool p3GxsChannels::getPostData(const uint32_t &token, std::vector<RsGxsChannelP
 			RsGxsGroupId grpId = mit->first;
 			std::vector<RsGxsMsgItem*>& msgItems = mit->second;
 			std::vector<RsGxsMsgItem*>::iterator vit = msgItems.begin();
-		
+
 			for(; vit != msgItems.end(); vit++)
 			{
 				RsGxsChannelPostItem* item = dynamic_cast<RsGxsChannelPostItem*>(*vit);
-		
+
 				if(item)
 				{
 					RsGxsChannelPost msg;
@@ -253,7 +254,7 @@ bool p3GxsChannels::getPostData(const uint32_t &token, std::vector<RsGxsChannelP
 		std::cerr << "p3GxsChannels::getPostData() ERROR in request";
 		std::cerr << std::endl;
 	}
-		
+
 	return ok;
 }
 

@@ -370,11 +370,20 @@ bool p3GxsCircles::getGroupData(const uint32_t &token, std::vector<RsGxsCircleGr
 		for(; vit != grpData.end(); vit++)
 		{
 			RsGxsCircleGroupItem* item = dynamic_cast<RsGxsCircleGroupItem*>(*vit);
-			RsGxsCircleGroup group;
-			item->convertTo(group);
+			if (item)
+			{
+				RsGxsCircleGroup group;
+				item->convertTo(group);
 
-			// If its cached - add that info (TODO).
-			groups.push_back(group);
+				// If its cached - add that info (TODO).
+				groups.push_back(group);
+				delete(item);
+			}
+			else
+			{
+				std::cerr << "Not a RsGxsCircleGroupItem, deleting!" << std::endl;
+				delete *vit;
+			}
 		}
 	}
 

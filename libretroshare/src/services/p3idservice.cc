@@ -397,72 +397,78 @@ bool p3IdService::getReputation(const RsGxsId &id, GixsReputation &rep)
 
 bool p3IdService::getGroupData(const uint32_t &token, std::vector<RsGxsIdGroup> &groups)
 {
+	std::vector<RsGxsGrpItem*> grpData;
+	bool ok = RsGenExchange::getGroupData(token, grpData);
 
-        std::vector<RsGxsGrpItem*> grpData;
-        bool ok = RsGenExchange::getGroupData(token, grpData);
+	if(ok)
+	{
+		std::vector<RsGxsGrpItem*>::iterator vit = grpData.begin();
 
-        if(ok)
-        {
-                std::vector<RsGxsGrpItem*>::iterator vit = grpData.begin();
-
-                for(; vit != grpData.end(); vit++)
-                {
-                        RsGxsIdGroupItem* item = dynamic_cast<RsGxsIdGroupItem*>(*vit);
-                        RsGxsIdGroup group = item->group;
-                        group.mMeta = item->meta;
-
-			// Decode information from serviceString.
-			SSGxsIdGroup ssdata;
-			if (ssdata.load(group.mMeta.mServiceString))
+		for(; vit != grpData.end(); vit++)
+		{
+			RsGxsIdGroupItem* item = dynamic_cast<RsGxsIdGroupItem*>(*vit);
+			if (item)
 			{
-				group.mPgpKnown = ssdata.pgp.idKnown;
-				group.mPgpId    = ssdata.pgp.pgpId;
+				RsGxsIdGroup group = item->group;
+				group.mMeta = item->meta;
+
+				// Decode information from serviceString.
+				SSGxsIdGroup ssdata;
+				if (ssdata.load(group.mMeta.mServiceString))
+				{
+					group.mPgpKnown = ssdata.pgp.idKnown;
+					group.mPgpId    = ssdata.pgp.pgpId;
 #ifdef DEBUG_IDS
-				std::cerr << "p3IdService::getGroupData() Success decoding ServiceString";
-				std::cerr << std::endl;
-				std::cerr << "\t mGpgKnown: " << group.mPgpKnown;
-				std::cerr << std::endl;
-				std::cerr << "\t mGpgId: " << group.mPgpId;
-				std::cerr << std::endl;
+					std::cerr << "p3IdService::getGroupData() Success decoding ServiceString";
+					std::cerr << std::endl;
+					std::cerr << "\t mGpgKnown: " << group.mPgpKnown;
+					std::cerr << std::endl;
+					std::cerr << "\t mGpgId: " << group.mPgpId;
+					std::cerr << std::endl;
 #endif // DEBUG_IDS
+				}
+				else
+				{
+					group.mPgpKnown = false;
+					group.mPgpId    = "";
+
+					std::cerr << "p3IdService::getGroupData() Failed to decode ServiceString";
+					std::cerr << std::endl;
+				}
+
+				groups.push_back(group);
+				delete(item);
 			}
 			else
 			{
-				group.mPgpKnown = false;
-				group.mPgpId    = "";
-
-				std::cerr << "p3IdService::getGroupData() Failed to decode ServiceString";
-				std::cerr << std::endl;
+				std::cerr << "Not a Id Item, deleting!" << std::endl;
+				delete(*vit);
 			}
+		}
+	}
 
-                        groups.push_back(group);
-                }
-        delete *vit ;
-        }
-
-        return ok;
+	return ok;
 }
-
 
 bool p3IdService::getMsgData(const uint32_t &token, std::vector<RsGxsIdOpinion> &opinions)
 {
 	GxsMsgDataMap msgData;
 	bool ok = RsGenExchange::getMsgData(token, msgData);
-	
+
 	if(ok)
 	{
 		GxsMsgDataMap::iterator mit = msgData.begin();
-		
+
 		for(; mit != msgData.end();  mit++)
 		{
 			RsGxsGroupId grpId = mit->first;
 			std::vector<RsGxsMsgItem*>& msgItems = mit->second;
 			std::vector<RsGxsMsgItem*>::iterator vit = msgItems.begin();
-			
+
 			for(; vit != msgItems.end(); vit++)
 			{
 				RsGxsIdOpinionItem* item = dynamic_cast<RsGxsIdOpinionItem*>(*vit);
-				
+
 				if (item)
 				{
 					RsGxsIdOpinion opinion = item->opinion;
