@@ -101,8 +101,10 @@ NewsFeed::NewsFeed(QWidget *parent)
 		") ;
 
 	registerHelpButton(helpButton,hlp_str) ;
+	QFrame * frame = new QFrame ;
+	scrollArea->setWidget(frame) ;
 
-	mLayout = new QVBoxLayout(scrollArea) ;
+	mLayout = new QVBoxLayout(scrollArea->widget()) ;
 	mLayout->addItem(new QSpacerItem(10,0,QSizePolicy::Minimum, QSizePolicy::MinimumExpanding)) ;
 }
 
