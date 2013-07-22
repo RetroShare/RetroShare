@@ -94,18 +94,12 @@ private:
 
   void sendNewsFeedChanged();
 
-  QVBoxLayout *mLayout;
   QSet<QObject*> widgets;
 
   /* lists of feedItems */
   std::list<ForumNewItem *> 	mForumNewItems;
 
   std::list<ChanMsgItem *> 	mChanMsgItems;
-
 };
 
-
-
 #endif
-
-

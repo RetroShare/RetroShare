@@ -20,7 +20,6 @@
  ****************************************************************/
 
 #include <QTimer>
-#include <QSpacerItem>
 
 #include "NewsFeed.h"
 
@@ -101,11 +100,6 @@ NewsFeed::NewsFeed(QWidget *parent)
 		") ;
 
 	registerHelpButton(helpButton,hlp_str) ;
-	QFrame * frame = new QFrame ;
-	scrollArea->setWidget(frame) ;
-
-	mLayout = new QVBoxLayout(scrollArea->widget()) ;
-	mLayout->addItem(new QSpacerItem(10,0,QSizePolicy::Minimum, QSizePolicy::MinimumExpanding)) ;
 }
 
 NewsFeed::~NewsFeed()
@@ -464,9 +458,9 @@ void NewsFeed::addFeedItem(QWidget *item)
 	lockLayout(NULL, true);
 
 	if (Settings->getAddFeedsAtEnd()) {
-		mLayout->addWidget(item);
+		itemsLayout->addWidget(item);
 	} else {
-		mLayout->insertWidget(0, item);
+		itemsLayout->insertWidget(0, item);
 	}
 	item->show();
 
