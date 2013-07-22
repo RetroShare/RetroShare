@@ -146,7 +146,7 @@ FriendsDialog::FriendsDialog(QWidget *parent)
 
     style.setStyleFromSettings(ChatStyle::TYPE_PUBLIC);
 
-    setChatInfo(tr("Welcome to RetroShare's group chat."), QString::fromUtf8("blue"));
+    setChatInfo(tr("Retroshare broadcast chat: messages are sent to all connected friends."), QString::fromUtf8("blue"));
 
     if (rsHistory->getEnable(true)) {
         int messageCount = Settings->getPublicChatHistoryCount();
