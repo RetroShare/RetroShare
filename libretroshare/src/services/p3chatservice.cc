@@ -3271,7 +3271,7 @@ bool p3ChatService::createDistantChatInvite(const std::string& pgp_id,time_t tim
 	// 	retroshare://chat?time_stamp=3243242&private_data=[radix64 string]
 
 	uint32_t header_size = DISTANT_CHAT_AES_KEY_SIZE + DISTANT_CHAT_HASH_SIZE + KEY_ID_SIZE;
-	unsigned char *data = new unsigned char[header_size+400] ; 
+    unsigned char *data = new unsigned char[header_size+800] ;
 
 	PGPIdType OwnId(AuthGPG::getAuthGPG()->getGPGOwnId());
 
@@ -3282,7 +3282,7 @@ bool p3ChatService::createDistantChatInvite(const std::string& pgp_id,time_t tim
 #ifdef DEBUG_DISTANT_CHAT
 	std::cerr << "Performing signature " << std::endl;
 #endif
-	uint32_t signlen = 400;
+    uint32_t signlen = 800;
 
 	if(!AuthGPG::getAuthGPG()->SignDataBin(data,header_size,data+header_size,&signlen))
 		return false ;
