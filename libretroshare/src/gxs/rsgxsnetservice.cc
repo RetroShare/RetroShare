@@ -541,10 +541,10 @@ RsSerialiser *RsGxsNetService::setupSerialiser()
 
 void RsGxsNetService::recvNxsItemQueue(){
 
-    RsItem *item ;
+	RsItem *item ;
 
-    while(NULL != (item=recvItem()))
-    {
+	while(NULL != (item=recvItem()))
+	{
 #ifdef NXS_NET_DEBUG
 		std::cerr << "RsGxsNetService Item:" << (void*)item << std::endl ;
 #endif
@@ -553,7 +553,6 @@ void RsGxsNetService::recvNxsItemQueue(){
 		RsNxsItem *ni = dynamic_cast<RsNxsItem*>(item) ;
 		if(ni != NULL)
 		{
-
 			// a live transaction has a non zero value
 			if(ni->transactionNumber != 0){
 
@@ -563,7 +562,7 @@ void RsGxsNetService::recvNxsItemQueue(){
 #endif
 
 				if(handleTransaction(ni))
-						continue ;
+					continue ;
 			}
 
 
@@ -576,7 +575,12 @@ void RsGxsNetService::recvNxsItemQueue(){
 			}
 			delete item ;
 		}
-    }
+		else
+		{
+			std::cerr << "Not a RsNxsItem, deleting!" << std::endl;
+			delete(item);
+		}
+	}
 }
 
 
@@ -1881,6 +1885,7 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsg* item)
 
 	if(req.empty())
 	{
+		delete(grpMeta);
 		return;
 	}
 
@@ -1905,7 +1910,6 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsg* item)
 			mItem->PeerId(peer);
 			mItem->transactionNumber = transN;
 			itemL.push_back(mItem);
-
 		}
 
 		if(!itemL.empty())
@@ -1917,7 +1921,7 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsg* item)
 	for(vit = msgMetas.begin(); vit != msgMetas.end(); vit++)
 		delete *vit;
 
-	return;
+	delete(grpMeta);
 }
 
 void RsGxsNetService::locked_pushMsgRespFromList(std::list<RsNxsItem*>& itemL, const std::string& sslId,
