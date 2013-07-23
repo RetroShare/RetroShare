@@ -902,6 +902,7 @@ void p3Posted::background_loadMsgs(const uint32_t &token, bool unprocessed)
 					std::cerr << std::endl;
 					std::cerr << "p3Posted::background_loadMsgs() ERROR This should not happen";
 					std::cerr << std::endl;
+					delete(*vit);
 					continue;
 				}
 			}
@@ -999,6 +1000,7 @@ void p3Posted::background_loadMsgs(const uint32_t &token, bool unprocessed)
 				RsGxsGrpMsgIdPair msgId = std::make_pair(groupId, (*vit)->meta.mMsgId);
 				RsGenExchange::setMsgStatusFlags(token_a, msgId, 0, GXS_SERV::GXS_MSG_STATUS_UNPROCESSED);
 			}
+			delete(*vit);
 		}
 	}
 

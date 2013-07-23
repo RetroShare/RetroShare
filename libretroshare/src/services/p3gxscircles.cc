@@ -840,6 +840,12 @@ bool p3GxsCircles::cache_load_for_token(uint32_t token)
 		for(; vit != grpData.end(); vit++)
 		{
 			RsGxsCircleGroupItem *item = dynamic_cast<RsGxsCircleGroupItem*>(*vit);
+			if (!item)
+			{
+				std::cerr << "Not a RsGxsCircleGroupItem Item, deleting!" << std::endl;
+				delete(*vit);
+				continue;
+			}
 			RsGxsCircleGroup group;
 			item->convertTo(group);
 
@@ -861,6 +867,7 @@ bool p3GxsCircles::cache_load_for_token(uint32_t token)
 				std::cerr << "p3GxsCircles::cache_load_for_token() Load ERROR: ";
 				std::cerr << item->meta;
 				std::cerr << std::endl;
+				delete(item);
 				// ERROR.
 				continue;
 			}

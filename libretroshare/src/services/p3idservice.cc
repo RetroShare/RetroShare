@@ -950,16 +950,22 @@ bool p3IdService::cache_load_for_token(uint32_t token)
 	std::cerr << std::endl;
 #endif // DEBUG_IDS
 
-        std::vector<RsGxsGrpItem*> grpData;
-        bool ok = RsGenExchange::getGroupData(token, grpData);
+	std::vector<RsGxsGrpItem*> grpData;
+	bool ok = RsGenExchange::getGroupData(token, grpData);
 
-        if(ok)
-        {
-                std::vector<RsGxsGrpItem*>::iterator vit = grpData.begin();
+	if(ok)
+	{
+		std::vector<RsGxsGrpItem*>::iterator vit = grpData.begin();
 
-                for(; vit != grpData.end(); vit++)
-                {
-                        RsGxsIdGroupItem* item = dynamic_cast<RsGxsIdGroupItem*>(*vit);
+		for(; vit != grpData.end(); vit++)
+		{
+			RsGxsIdGroupItem* item = dynamic_cast<RsGxsIdGroupItem*>(*vit);
+			if (!item)
+			{
+				std::cerr << "Not a RsGxsIdGroupItem Item, deleting!" << std::endl;
+				delete(*vit);
+				continue;
+			}
 
 #ifdef DEBUG_IDS
 			std::cerr << "p3IdService::cache_load_for_token() Loaded Id with Meta: ";
@@ -970,8 +976,8 @@ bool p3IdService::cache_load_for_token(uint32_t token)
 			/* cache the data */
 			cache_store(item);
 			delete item;
-                }
-        }
+		}
+	}
 	else
 	{
 		std::cerr << "p3IdService::cache_load_for_token() ERROR no data";
@@ -981,8 +987,6 @@ bool p3IdService::cache_load_for_token(uint32_t token)
 	}
 	return true;
 }
-
-
 
 bool p3IdService::cache_update_if_cached(const RsGxsId &id, std::string serviceString)
 {
@@ -1055,45 +1059,50 @@ bool p3IdService::cache_load_ownids(uint32_t token)
 	std::cerr << std::endl;
 #endif // DEBUG_IDS
 
-        std::vector<RsGxsGrpItem*> grpData;
-        bool ok = RsGenExchange::getGroupData(token, grpData);
+	std::vector<RsGxsGrpItem*> grpData;
+	bool ok = RsGenExchange::getGroupData(token, grpData);
 
-        if(ok)
-        {
-                std::vector<RsGxsGrpItem*>::iterator vit = grpData.begin();
+	if(ok)
+	{
+		std::vector<RsGxsGrpItem*>::iterator vit = grpData.begin();
 
-		// Save List 
+		// Save List
 		{
 			RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 
 			mOwnIds.clear();
-                	for(vit = grpData.begin(); vit != grpData.end(); vit++)
-	                {
-	                        RsGxsIdGroupItem* item = dynamic_cast<RsGxsIdGroupItem*>(*vit);
-
+			for(vit = grpData.begin(); vit != grpData.end(); vit++)
+			{
+				RsGxsIdGroupItem* item = dynamic_cast<RsGxsIdGroupItem*>(*vit);
+				if (!item)
+				{
+					std::cerr << "Not a IdOpinion Item, deleting!" << std::endl;
+					delete(*vit);
+					continue;
+				}
 
 				if (item->meta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
 				{
-					mOwnIds.push_back(item->meta.mGroupId);	
-                }
-                delete item ;
-	                }
+					mOwnIds.push_back(item->meta.mGroupId);
+				}
+				delete item ;
+			}
 		}
 
-// No need to cache these items...
-// as it just causes the cache to be flushed.
+		// No need to cache these items...
+		// as it just causes the cache to be flushed.
 #if 0
 		// Cache Items too.
-                for(vit = grpData.begin(); vit != grpData.end(); vit++)
-                {
+		for(vit = grpData.begin(); vit != grpData.end(); vit++)
+		{
 			RsGxsIdGroupItem* item = dynamic_cast<RsGxsIdGroupItem*>(*vit);
 			if (item->meta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
 			{
-	
+
 				std::cerr << "p3IdService::cache_load_ownids() Loaded Id with Meta: ";
 				std::cerr << item->meta;
 				std::cerr << std::endl;
-	
+
 				/* cache the data */
 				cache_store(item);
 			}
@@ -1101,7 +1110,7 @@ bool p3IdService::cache_load_ownids(uint32_t token)
 		}
 #endif
 
-        }
+	}
 	else
 	{
 		std::cerr << "p3IdService::cache_load_ownids() ERROR no data";
@@ -1111,7 +1120,6 @@ bool p3IdService::cache_load_ownids(uint32_t token)
 	}
 	return true;
 }
-
 
 /************************************************************************************/
 /************************************************************************************/
@@ -1565,16 +1573,16 @@ bool p3IdService::pgphash_handlerequest(uint32_t token)
 	std::vector<RsGxsIdGroup> groupsToProcess;
 	bool ok = getGroupData(token, groups);
 
-        if(ok)
-        {
+	if(ok)
+	{
 #ifdef DEBUG_IDS
 		std::cerr << "p3IdService::pgphash_request() Have " << groups.size() << " Groups";
 		std::cerr << std::endl;
 #endif // DEBUG_IDS
 
 		std::vector<RsGxsIdGroup>::iterator vit;
-                for(vit = groups.begin(); vit != groups.end(); vit++)
-                {
+		for(vit = groups.begin(); vit != groups.end(); vit++)
+		{
 #ifdef DEBUG_IDS
 			std::cerr << "p3IdService::pgphash_request() Group Id: " << vit->mMeta.mGroupId;
 			std::cerr << std::endl;
