@@ -691,6 +691,9 @@ bool RsGxsNetService::locked_processTransac(RsNxsTransac* item)
 	// initiating an incoming transaction
 	if(item->transactFlag & RsNxsTransac::FLAG_BEGIN_P1){
 
+		if(transExists)
+			return false; // should not happen!
+
 		// create a transaction if the peer does not exist
 		if(!peerTrExists){
 			mTransactions[peer] = TransactionIdMap();
@@ -698,8 +701,6 @@ bool RsGxsNetService::locked_processTransac(RsNxsTransac* item)
 
 		TransactionIdMap& transMap = mTransactions[peer];
 
-		if(transExists)
-			return false; // should not happen!
 
 		// create new transaction
 		tr = new NxsTransaction();
@@ -787,13 +788,13 @@ void RsGxsNetService::processTransactions(){
 
 		mmit_end = transMap.end();
 
+		// transaction to be removed
+		std::list<uint32_t> toRemove;
+
 		/*!
 		 * Transactions owned by peer
 		 */
 		if(mit->first == mOwnId){
-
-			// transaction to be removed
-			std::list<uint32_t> toRemove;
 
 			for(; mmit != mmit_end; mmit++){
 
@@ -814,6 +815,7 @@ void RsGxsNetService::processTransactions(){
 
 					tr->mFlag = NxsTransaction::FLAG_STATE_FAILED;
 					toRemove.push_back(transN);
+					mComplTransactions.push_back(tr);
 					continue;
 				}
 
@@ -855,13 +857,6 @@ void RsGxsNetService::processTransactions(){
 				}
 			}
 
-			std::list<uint32_t>::iterator lit = toRemove.begin();
-
-			for(; lit != toRemove.end(); lit++)
-			{
-				transMap.erase(*lit);
-			}
-
 		}else{
 
 			/*!
@@ -874,8 +869,6 @@ void RsGxsNetService::processTransactions(){
 			 * Starting: this is a new transaction and need to teell peer
 			 * involved in transaction
 			 */
-
-			std::list<uint32_t> toRemove;
 
 			for(; mmit != mmit_end; mmit++){
 
@@ -895,6 +888,7 @@ void RsGxsNetService::processTransactions(){
 
 					tr->mFlag = NxsTransaction::FLAG_STATE_FAILED;
 					toRemove.push_back(transN);
+					mComplTransactions.push_back(tr);
 					continue;
 				}
 
@@ -948,14 +942,15 @@ void RsGxsNetService::processTransactions(){
 					tr->mFlag = NxsTransaction::FLAG_STATE_FAILED; // flag as a failed transaction
 				}
 			}
-
-			std::list<uint32_t>::iterator lit = toRemove.begin();
-
-			for(; lit != toRemove.end(); lit++)
-			{
-				transMap.erase(*lit);
-			}
 		}
+
+		std::list<uint32_t>::iterator lit = toRemove.begin();
+
+		for(; lit != toRemove.end(); lit++)
+		{
+			transMap.erase(*lit);
+		}
+
 	}
 }
 
@@ -1190,7 +1185,7 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
 
 	std::list<RsNxsItem*>::iterator lit = tr->mItems.begin();
 
-        // first get item list sent from transaction
+	// first get item list sent from transaction
 	for(; lit != tr->mItems.end(); lit++)
 	{
 		RsNxsSyncMsgItem* item = dynamic_cast<RsNxsSyncMsgItem*>(*lit);
@@ -1200,18 +1195,14 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
 		}else
 		{
 #ifdef NXS_NET_DEBUG
-                        std::cerr << "RsGxsNetService::genReqMsgTransaction(): item failed cast to RsNxsSyncMsgItem* "
-					  << std::endl;
+		std::cerr << "RsGxsNetService::genReqMsgTransaction(): item failed cast to RsNxsSyncMsgItem* "
+				  << std::endl;
 #endif
-			delete item;
-			item = NULL;
 		}
 	}
 
 	if(msgItemL.empty())
 		return;
-
-
 
 	// get grp id for this transaction
 	RsNxsSyncMsgItem* item = msgItemL.front();
@@ -1251,11 +1242,14 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
 
 	// put ids in set for each searching
 	for(; vit != msgMetaV.end(); vit++)
+	{
 		msgIdSet.insert((*vit)->mMsgId);
+		delete(*vit);
+	}
+	msgMetaV.clear();
 
 	// get unique id for this transaction
 	uint32_t transN = locked_getTransactionId();
-
 
 	// add msgs that you don't have to request list
 	std::list<RsNxsSyncMsgItem*>::iterator llit = msgItemL.begin();
@@ -1271,7 +1265,6 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
 		const std::string& msgId = syncItem->msgId;
 
 		if(msgIdSet.find(msgId) == msgIdSet.end()){
-
 
 			if(mReputations->haveReputation(syncItem->authorId) || syncItem->authorId.empty())
 			{
@@ -1369,8 +1362,6 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
 			std::cerr << "RsGxsNetService::genReqGrpTransaction(): item failed to caste to RsNxsSyncMsgItem* "
 					  << std::endl;
 #endif
-			delete item;
-			item = NULL;
 		}
 	}
 
@@ -1465,7 +1456,16 @@ void RsGxsNetService::locked_genSendGrpsTransaction(NxsTransaction* tr)
 	for(;lit != tr->mItems.end(); lit++)
 	{
 		RsNxsSyncGrpItem* item = dynamic_cast<RsNxsSyncGrpItem*>(*lit);
-		grps[item->grpId] = NULL;
+		if (item)
+		{
+			grps[item->grpId] = NULL;
+		}else
+		{
+#ifdef NXS_NET_DEBUG
+			std::cerr << "RsGxsNetService::locked_genSendGrpsTransaction(): item failed to caste to RsNxsSyncGrpItem* "
+					  << std::endl;
+#endif
+		}
 	}
 
 	if(!grps.empty())
@@ -1486,7 +1486,7 @@ void RsGxsNetService::locked_genSendGrpsTransaction(NxsTransaction* tr)
 	std::string peerId = tr->mTransaction->PeerId();
 	for(;mit != grps.end(); mit++)
 	{
-        mit->second->PeerId(peerId); // set so it gets sent to right peer
+		mit->second->PeerId(peerId); // set so it gets sent to right peer
 		mit->second->transactionNumber = transN;
 		newTr->mItems.push_back(mit->second);
 	}
@@ -1502,7 +1502,7 @@ void RsGxsNetService::locked_genSendGrpsTransaction(NxsTransaction* tr)
 	ntr->transactFlag = RsNxsTransac::FLAG_BEGIN_P1 |
 			RsNxsTransac::FLAG_TYPE_GRPS;
 	ntr->nItems = grps.size();
-        ntr->PeerId(tr->mTransaction->PeerId());
+	ntr->PeerId(tr->mTransaction->PeerId());
 
 	newTr->mTransaction = new RsNxsTransac(*ntr);
 	newTr->mTransaction->PeerId(mOwnId);
@@ -1619,7 +1619,17 @@ void RsGxsNetService::locked_genSendMsgsTransaction(NxsTransaction* tr)
 	for(;lit != tr->mItems.end(); lit++)
 	{
 		RsNxsSyncMsgItem* item = dynamic_cast<RsNxsSyncMsgItem*>(*lit);
-		msgIds[item->grpId].push_back(item->msgId);
+		if (item)
+		{
+			msgIds[item->grpId].push_back(item->msgId);
+		}
+		else
+		{
+#ifdef NXS_NET_DEBUG
+			std::cerr << "RsGxsNetService::locked_genSendMsgsTransaction(): item failed to caste to RsNxsSyncMsgItem* "
+					  << std::endl;
+#endif
+		}
 	}
 
 	mDataStore->retrieveNxsMsgs(msgIds, msgs, false, false);
