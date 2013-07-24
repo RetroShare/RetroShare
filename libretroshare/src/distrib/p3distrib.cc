@@ -1913,6 +1913,7 @@ bool    p3GroupDistrib::loadList(std::list<RsItem *>& load)
 
 			childLoadL.push_back(childConfigItem);
 
+			delete newChildConfig ;
 		}
 	}
 
