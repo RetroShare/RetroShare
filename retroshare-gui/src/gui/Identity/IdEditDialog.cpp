@@ -117,7 +117,7 @@ void IdEditDialog::updateIdType(bool pseudo)
 
 		ui.lineEdit_GpgId->setText(QString::fromStdString(gpgid));
 		ui.lineEdit_GpgHash->setText(tr("To be generated"));
-		ui.lineEdit_GpgName->setText(QString::fromStdString(details.name));
+		ui.lineEdit_GpgName->setText(QString::fromUtf8(details.name.c_str()));
 	}
 }
 
@@ -183,7 +183,7 @@ void IdEditDialog::loadExistingId(uint32_t token)
 	// force - incase it wasn't triggered.
 	idTypeToggled(true);
 
-	ui.lineEdit_Nickname->setText(QString::fromStdString(data.mMeta.mGroupName));
+	ui.lineEdit_Nickname->setText(QString::fromUtf8(data.mMeta.mGroupName.c_str()));
 	ui.lineEdit_KeyId->setText(QString::fromStdString(data.mMeta.mGroupId));
 
 	if (realid)
@@ -194,7 +194,7 @@ void IdEditDialog::loadExistingId(uint32_t token)
 		{
 			RsPeerDetails details;
 			rsPeers->getGPGDetails(data.mPgpId, details);
-			ui.lineEdit_GpgName->setText(QString::fromStdString(details.name));
+			ui.lineEdit_GpgName->setText(QString::fromUtf8(details.name.c_str()));
 
 			ui.lineEdit_GpgId->setText(QString::fromStdString(data.mPgpId));
 		}
@@ -217,7 +217,7 @@ void IdEditDialog::updateId()
 	RsGxsIdGroup rid;
 	// Must set, Nickname, KeyId(if existing), mIdType, GpgId.
 
-	rid.mMeta.mGroupName = ui.lineEdit_Nickname->text().toStdString();
+	rid.mMeta.mGroupName = ui.lineEdit_Nickname->text().toUtf8().constData();
 
 	if (rid.mMeta.mGroupName.size() < 2)
 	{
@@ -242,7 +242,7 @@ void IdEditDialog::updateId()
 
 		//rid.mGpgId = ui.lineEdit_GpgId->text().toStdString();
 		rid.mPgpIdHash = ui.lineEdit_GpgHash->text().toStdString();
-		//rid.mGpgName = ui.lineEdit_GpgName->text().toStdString();
+		//rid.mGpgName = ui.lineEdit_GpgName->text().toUtf8().constData();
 	}
 	else
 	{

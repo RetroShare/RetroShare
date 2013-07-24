@@ -416,7 +416,7 @@ void IdDialog::insertIdDetails(uint32_t token)
 	/* get GPG Details from rsPeers */
 	std::string ownPgpId  = rsPeers->getGPGOwnId();
 
-	ui.lineEdit_Nickname->setText(QString::fromStdString(data.mMeta.mGroupName));
+	ui.lineEdit_Nickname->setText(QString::fromUtf8(data.mMeta.mGroupName.c_str()));
 	ui.lineEdit_KeyId->setText(QString::fromStdString(data.mMeta.mGroupId));
 	ui.lineEdit_GpgHash->setText(QString::fromStdString(data.mPgpIdHash));
 	ui.lineEdit_GpgId->setText(QString::fromStdString(data.mPgpId));
@@ -425,7 +425,7 @@ void IdDialog::insertIdDetails(uint32_t token)
 	{
 		RsPeerDetails details;
 		rsPeers->getGPGDetails(data.mPgpId, details);
-		ui.lineEdit_GpgName->setText(QString::fromStdString(details.name));
+		ui.lineEdit_GpgName->setText(QString::fromUtf8(details.name.c_str()));
 	}
 	else
 	{
