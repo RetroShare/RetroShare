@@ -388,7 +388,7 @@ bool p3DistribSecurity::validateDistribGrp(RsDistribGrp *newGrp)
 	unsigned int siglen = tmpSign.signData.bin_len;
 
 	/* clear signature */
-	newGrp->adminSignature.ShallowClear();
+	newGrp->adminSignature.TlvClear();
 
 	uint32_t size = serialType->size(newGrp);
 	char* data = new char[size];
@@ -415,7 +415,7 @@ bool p3DistribSecurity::validateDistribGrp(RsDistribGrp *newGrp)
 
 	/* restore signature */
 	newGrp->adminSignature = tmpSign;
-	tmpSign.ShallowClear();
+	tmpSign.TlvClear();
 
 	/* clean up */
 	EVP_PKEY_free(key);
