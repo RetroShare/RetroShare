@@ -705,7 +705,7 @@ int RsDataService::retrieveNxsGrps(std::map<std::string, RsNxsGrp *> &grp, bool 
         }
     }
 
-    if(withMeta)
+    if(withMeta && !grp.empty())
     {
         std::map<RsGxsGroupId, RsGxsGrpMetaData*> metaMap;
         std::map<std::string, RsNxsGrp *>::iterator mit = grp.begin();
