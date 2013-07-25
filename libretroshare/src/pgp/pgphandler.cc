@@ -25,6 +25,7 @@ extern "C" {
 #include "retroshare/rsiface.h"		// For rsicontrol.
 #include "retroshare/rspeers.h"		// For rsicontrol.
 #include "util/rsdir.h"		
+#include "util/rsdiscspace.h"		
 #include "pgp/pgpkeyutil.h"
 
 static const uint32_t PGP_CERTIFICATE_LIMIT_MAX_NAME_SIZE   = 64 ;
@@ -363,6 +364,11 @@ bool PGPHandler::GeneratePGPCertificate(const std::string& name, const std::stri
 {
 	// Some basic checks
 	
+	if(!RsDiscSpace::checkForDiscSpace(RS_PGP_DIRECTORY))
+	{
+		errString = std::string("(EE) low disc space in pgp directory. Can't write safely to keyring.") ;
+		return false ;
+	}
 	if(name.length() > PGP_CERTIFICATE_LIMIT_MAX_NAME_SIZE)
 	{
 		errString = std::string("(EE) name in certificate exceeds the maximum allowed name size") ;
@@ -437,7 +443,14 @@ bool PGPHandler::GeneratePGPCertificate(const std::string& name, const std::stri
 	// 5 - add key to secret keyring on disk.
 	
 	cinfo = NULL ;
-	int fd=ops_setup_file_append(&cinfo, _secring_path.c_str());
+	std::string secring_path_tmp = _secring_path + ".tmp" ;
+
+	if(RsDirUtil::fileExists(_secring_path) && !RsDirUtil::copyFile(_secring_path,secring_path_tmp))
+	{
+		errString= std::string("Cannot copy secret keyring !! Disk full? Out of disk quota?") ;
+		return false ;
+	}
+	int fd=ops_setup_file_append(&cinfo, secring_path_tmp.c_str());
 
 	if(!ops_write_transferable_secret_key(key,(unsigned char *)passphrase.c_str(),passphrase.length(),ops_false,cinfo))
 	{
@@ -446,10 +459,23 @@ bool PGPHandler::GeneratePGPCertificate(const std::string& name, const std::stri
 	}
 	ops_teardown_file_write(cinfo,fd) ;
 
+	if(!RsDirUtil::renameFile(secring_path_tmp,_secring_path))
+	{
+		errString= std::string("Cannot rename tmp secret key file ") + secring_path_tmp + " into " + _secring_path +". Disk error?" ;
+		return false ;
+	}
+
 	// 6 - copy the public key to the public keyring on disk
 	
 	cinfo = NULL ;
-	fd=ops_setup_file_append(&cinfo, _pubring_path.c_str());
+	std::string pubring_path_tmp = _pubring_path + ".tmp" ;
+
+	if(RsDirUtil::fileExists(_pubring_path) && !RsDirUtil::copyFile(_pubring_path,pubring_path_tmp))
+	{
+		errString= std::string("Cannot encode secret key to disk!! Disk full? Out of disk quota?") ;
+		return false ;
+	}
+	fd=ops_setup_file_append(&cinfo, pubring_path_tmp.c_str());
 
 	if(!ops_write_transferable_public_key(key, ops_false, cinfo))
 	{
@@ -458,6 +484,11 @@ bool PGPHandler::GeneratePGPCertificate(const std::string& name, const std::stri
 	}
 	ops_teardown_file_write(cinfo,fd) ;
 
+	if(!RsDirUtil::renameFile(pubring_path_tmp,_pubring_path))
+	{
+		errString= std::string("Cannot rename tmp public key file ") + pubring_path_tmp + " into " + _pubring_path +". Disk error?" ;
+		return false ;
+	}
 	// 7 - clean
 	ops_keydata_free(key) ;
 
@@ -806,6 +837,11 @@ bool PGPHandler::importGPGKeyPair(const std::string& filename,PGPIdType& importe
 	}
 	ops_validate_result_free(result);
 
+	if(!RsDiscSpace::checkForDiscSpace(RS_PGP_DIRECTORY))
+	{
+		import_error = std::string("(EE) low disc space in pgp directory. Can't write safely to keyring.") ;
+		return false ;
+	}
 	// 5 - All test passed. Adding key to keyring.
 	//
 	{
@@ -818,7 +854,19 @@ bool PGPHandler::importGPGKeyPair(const std::string& filename,PGPIdType& importe
 			RsStackFileLock flck(_pgp_lock_filename) ;	// lock access to PGP directory.
 
 			ops_create_info_t *cinfo = NULL ;
-			int fd=ops_setup_file_append(&cinfo, _secring_path.c_str());
+
+			// Make a copy of the secret keyring
+			//
+			std::string secring_path_tmp = _secring_path + ".tmp" ;
+			if(RsDirUtil::fileExists(_secring_path) && !RsDirUtil::copyFile(_secring_path,secring_path_tmp)) 
+			{
+				import_error = "(EE) Cannot write secret key to disk!! Disk full? Out of disk quota. Keyring will be left untouched." ;
+				return false ;
+			}
+
+			// Append the new key
+
+			int fd=ops_setup_file_append(&cinfo, secring_path_tmp.c_str());
 
 			if(!ops_write_transferable_secret_key_from_packet_data(seckey,ops_false,cinfo))
 			{
@@ -826,6 +874,14 @@ bool PGPHandler::importGPGKeyPair(const std::string& filename,PGPIdType& importe
 				return false ;
 			}
 			ops_teardown_file_write(cinfo,fd) ;
+
+			// Rename the new keyring to overwrite the old one.
+			//
+			if(!RsDirUtil::renameFile(secring_path_tmp,_secring_path))
+			{
+				import_error = "  (EE) Cannot move temp file " + secring_path_tmp + ". Bad write permissions?" ;
+				return false ;
+			}
 
 			addNewKeyToOPSKeyring(_secring,*seckey) ;
 			initCertificateInfo(_secret_keyring_map[ imported_key_id.toStdString() ],seckey,_secring->nkeys-1) ;
@@ -1003,8 +1059,10 @@ bool PGPHandler::encryptTextToFile(const PGPIdType& key_id,const std::string& te
 {
 	RsStackMutex mtx(pgphandlerMtx) ;				// lock access to PGP memory structures.
 
+	std::string outfile_tmp = outfile + ".tmp" ;
+
 	ops_create_info_t *info;
-	int fd = ops_setup_file_write(&info, outfile.c_str(), ops_true);
+	int fd = ops_setup_file_write(&info, outfile_tmp.c_str(), ops_true);
 
 	const ops_keydata_t *public_key = locked_getPublicKey(key_id,true) ;
 
@@ -1016,19 +1074,25 @@ bool PGPHandler::encryptTextToFile(const PGPIdType& key_id,const std::string& te
 
 	if(public_key->type != OPS_PTAG_CT_PUBLIC_KEY)
 	{
-		std::cerr << "PGPHandler::encryptTextToFile(): ERROR: supplied id did not return a public key!" << outfile << std::endl;
+		std::cerr << "PGPHandler::encryptTextToFile(): ERROR: supplied id did not return a public key!" << std::endl;
 		return false ;
 	}
 
 	if (fd < 0) 
 	{
-		std::cerr << "PGPHandler::encryptTextToFile(): ERROR: Cannot write to " << outfile << std::endl;
+		std::cerr << "PGPHandler::encryptTextToFile(): ERROR: Cannot write to " << outfile_tmp << std::endl;
 		return false ;
 	}
 	ops_encrypt_stream(info, public_key, NULL, ops_false, ops_true);
 	ops_write(text.c_str(), text.length(), info);
 	ops_writer_close(info);
 	ops_create_info_delete(info);
+
+	if(!RsDirUtil::renameFile(outfile_tmp,outfile))
+	{
+		std::cerr << "PGPHandler::encryptTextToFile(): ERROR: Cannot rename " + outfile_tmp + " to " + outfile + ". Disk error?" << std::endl;
+		return false ;
+	}
 
 	return true ;
 }
@@ -1631,7 +1695,7 @@ bool PGPHandler::locked_syncPublicKeyring()
 	}
 
 	// Now check if the pubring was locally modified, which needs saving it again
-	if(_pubring_changed)
+	if(_pubring_changed && RsDiscSpace::checkForDiscSpace(RS_PGP_DIRECTORY))
 	{
 		std::string tmp_keyring_file = _pubring_path + ".tmp" ;
 

@@ -126,6 +126,7 @@ class RsInit
 		 */
 		static std::string 	RsConfigDirectory();
 		static std::string 	RsConfigKeysDirectory();
+		static std::string 	RsPGPDirectory();
 
 		static std::string  RsProfileConfigDirectory();
 		static bool         getStartMinimised() ;

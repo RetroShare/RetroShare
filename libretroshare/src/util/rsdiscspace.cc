@@ -130,7 +130,7 @@ bool RsDiscSpace::checkForDiscSpace(RsDiscSpace::DiscLocation loc)
 {
 	RsStackMutex m(_mtx) ; // Locked
 
-	if(_partials_path == "" || _download_path == "")
+	if(_partials_path == "" && loc == RS_PARTIALS_DIRECTORY || _download_path == "" && loc == RS_DOWNLOAD_DIRECTORY)
 		throw std::runtime_error("Download path and partial path not properly set in RsDiscSpace. Please call RsDiscSpace::setPartialsPath() and RsDiscSpace::setDownloadPath()") ;
 
 	time_t now = time(NULL) ;
@@ -160,6 +160,12 @@ bool RsDiscSpace::checkForDiscSpace(RsDiscSpace::DiscLocation loc)
 			case RS_CONFIG_DIRECTORY: 		rs = crossSystemDiskStats(RsInit::RsConfigDirectory().c_str(),free_blocks,block_size) ;
 #ifdef DEBUG_RSDISCSPACE
 													std::cerr << "  path = " << RsInit::RsConfigDirectory() << std::endl ;
+#endif
+													break ;
+
+			case RS_PGP_DIRECTORY: 		   rs = crossSystemDiskStats(RsInit::RsPGPDirectory().c_str(),free_blocks,block_size) ;
+#ifdef DEBUG_RSDISCSPACE
+													std::cerr << "  path = " << RsInit::RsPGPDirectory() << std::endl ;
 #endif
 													break ;
 		}

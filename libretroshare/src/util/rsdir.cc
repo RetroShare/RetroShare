@@ -291,6 +291,11 @@ int	RsDirUtil::breakupDirList(const std::string& path,
 	return 1;
 }
 
+/**** Copied and Tweaked from ftcontroller ***/
+bool RsDirUtil::fileExists(const std::string& filename)
+{
+	return ( access( filename.c_str(), F_OK ) != -1 );
+}
 
 /**** Copied and Tweaked from ftcontroller ***/
 bool RsDirUtil::copyFile(const std::string& source,const std::string& dest)

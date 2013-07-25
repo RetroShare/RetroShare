@@ -609,7 +609,8 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 
 	get_configinit(RsInitConfig::basedir, RsInitConfig::preferedId);
 
-	std::string pgp_dir = RsInitConfig::basedir + "/pgp" ;
+	std::string pgp_dir = RsPGPDirectory() ;
+
 	if(!RsDirUtil::checkCreateDirectory(pgp_dir))
 		throw std::runtime_error("Cannot create pgp directory " + pgp_dir) ;
 
@@ -719,7 +720,8 @@ bool RsInit::importIdentity(const std::string& fname,std::string& id,std::string
 
 bool RsInit::copyGnuPGKeyrings()
 {
-	std::string pgp_dir = RsInitConfig::basedir + "/pgp" ;
+	std::string pgp_dir = RsPGPDirectory() ;
+
 	if(!RsDirUtil::checkCreateDirectory(pgp_dir))
 		throw std::runtime_error("Cannot create pgp directory " + pgp_dir) ;
 
@@ -1719,6 +1721,10 @@ std::string RsInit::RsConfigKeysDirectory()
 std::string RsInit::RsConfigDirectory()
 {
 	return RsInitConfig::basedir;
+}
+std::string RsInit::RsPGPDirectory()
+{
+	return RsInitConfig::basedir + "/pgp" ;
 }
 
 std::string RsInit::RsProfileConfigDirectory()
