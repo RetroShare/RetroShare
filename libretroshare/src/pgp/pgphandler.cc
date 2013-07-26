@@ -1059,11 +1059,6 @@ bool PGPHandler::encryptTextToFile(const PGPIdType& key_id,const std::string& te
 {
 	RsStackMutex mtx(pgphandlerMtx) ;				// lock access to PGP memory structures.
 
-	std::string outfile_tmp = outfile + ".tmp" ;
-
-	ops_create_info_t *info;
-	int fd = ops_setup_file_write(&info, outfile_tmp.c_str(), ops_true);
-
 	const ops_keydata_t *public_key = locked_getPublicKey(key_id,true) ;
 
 	if(public_key == NULL)
@@ -1078,15 +1073,20 @@ bool PGPHandler::encryptTextToFile(const PGPIdType& key_id,const std::string& te
 		return false ;
 	}
 
-	if (fd < 0) 
+	std::string outfile_tmp = outfile + ".tmp" ;
+
+	ops_create_info_t *info;
+	int fd = ops_setup_file_write(&info, outfile_tmp.c_str(), ops_true);
+
+	if (fd < 0)
 	{
 		std::cerr << "PGPHandler::encryptTextToFile(): ERROR: Cannot write to " << outfile_tmp << std::endl;
 		return false ;
 	}
+
 	ops_encrypt_stream(info, public_key, NULL, ops_false, ops_true);
 	ops_write(text.c_str(), text.length(), info);
-	ops_writer_close(info);
-	ops_create_info_delete(info);
+	ops_teardown_file_write(info, fd);
 
 	if(!RsDirUtil::renameFile(outfile_tmp,outfile))
 	{

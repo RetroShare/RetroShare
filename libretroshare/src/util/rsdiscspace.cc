@@ -40,10 +40,10 @@
  * #define DEBUG_RSDISCSPACE 
  */
 
-time_t 	RsDiscSpace::_last_check[3] 	= { 0,0,0 } ;
+time_t 	RsDiscSpace::_last_check[RS_DIRECTORY_COUNT] 	= { 0,0,0,0 } ;
 uint32_t RsDiscSpace::_size_limit_mb 	= 100 ;
-uint32_t RsDiscSpace::_current_size[3] = { 10000,10000,10000 } ;
-bool		RsDiscSpace::_last_res[3] = { true,true,true };
+uint32_t RsDiscSpace::_current_size[RS_DIRECTORY_COUNT] = { 10000,10000,10000,10000 } ;
+bool		RsDiscSpace::_last_res[RS_DIRECTORY_COUNT] = { true,true,true,true };
 RsMutex 	RsDiscSpace::_mtx("RsDiscSpace") ;
 std::string RsDiscSpace::_partials_path = "" ;
 std::string RsDiscSpace::_download_path = "" ;

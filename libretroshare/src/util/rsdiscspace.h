@@ -28,6 +28,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <util/rsthreads.h>
+#include <retroshare/rstypes.h>
 
 class RsDiscSpace
 {
@@ -53,10 +54,10 @@ class RsDiscSpace
 
 		static RsMutex _mtx ;
 
-		static time_t _last_check[3] ;
+		static time_t _last_check[RS_DIRECTORY_COUNT] ;
 		static uint32_t _size_limit_mb ;
-		static uint32_t _current_size[3] ;
-		static bool		_last_res[3] ;
+		static uint32_t _current_size[RS_DIRECTORY_COUNT] ;
+		static bool		_last_res[RS_DIRECTORY_COUNT] ;
 
 		static std::string _partials_path ;
 		static std::string _download_path ;

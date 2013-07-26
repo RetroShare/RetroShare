@@ -58,6 +58,7 @@ const uint32_t RS_PARTIALS_DIRECTORY = 0x0000 ;
 const uint32_t RS_DOWNLOAD_DIRECTORY = 0x0001 ;
 const uint32_t RS_CONFIG_DIRECTORY   = 0x0002 ;
 const uint32_t RS_PGP_DIRECTORY      = 0x0003 ;
+const uint32_t RS_DIRECTORY_COUNT    = 0x0004 ;
 
 class Sha1CheckSum
 {
