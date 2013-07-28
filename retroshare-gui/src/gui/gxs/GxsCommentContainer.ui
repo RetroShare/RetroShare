@@ -16,6 +16,12 @@
    </property>
    <item>
     <widget class="QFrame" name="titleBarFrame">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="frameShape">
       <enum>QFrame::Box</enum>
      </property>
@@ -35,7 +41,7 @@
          </size>
         </property>
         <property name="pixmap">
-         <pixmap>:/images/posted_24.png</pixmap>
+         <pixmap resource="../Posted/Posted_images.qrc">:/images/posted_24.png</pixmap>
         </property>
        </widget>
       </item>
@@ -89,6 +95,8 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../Posted/Posted_images.qrc"/>
+ </resources>
  <connections/>
 </ui>
