@@ -4,7 +4,8 @@
 version="0.5.4"
 svnpath="svn://csoler@svn.code.sf.net/p/retroshare/code/"
 workdir=retroshare-$version
-gxs=".gxs"	# comment out to compile without gxs
+use_gxs="Y"							# comment out to compile without gxs
+bubba3="Y"							# comment out to compile for bubba3
 ######################################################
 
 echo This script is going to build the debian source package for RetroShare, from the svn.
@@ -39,7 +40,12 @@ echo version is $version
 echo Extracting base archive...
 
 mkdir -p $workdir/src
-cp -r debian"$gxs" $workdir/debian
+
+if test "$use_gxs" = "Y" ; then
+	cp -r debian.gxs $workdir/debian
+else
+	cp -r debian $workdir/debian
+fi
 cp -r data   $workdir/src/
 
 echo Checking out latest snapshot in libbitdht...
@@ -51,22 +57,20 @@ cd ../..
 cp $workdir/src/retroshare-gui/src/gui/chat/PopupChatDialog.ui $workdir/src/plugins/VOIP/gui/PopupChatDialog.ui
 
 # handling of libssh-0.5.4
+
 wget https://red.libssh.org/attachments/download/41/libssh-0.5.4.tar.gz
 cd $workdir
 tar zxvf ../libssh-0.5.4.tar.gz
 cd ..
 
-if ! test "$gxs" = "" ; then
+if ! test "$specific" = "" ; then
 	cd $workdir
 	git clone https://github.com/sqlcipher/sqlcipher.git
-#	cat src/retroshare-gui/src/retroshare-gui.pro | sed -e s/-lsqlite3/..\\\/..\\\/..\\\/lib\\\/sqlcipher\\\/.libs\\\/libsqlite3.a/g > /tmp/tutu3278
-	cp  /tmp/tutu3278  src/retroshare-gui/src/retroshare-gui.pro 
 	cd ..
 fi
 
 # cleaning up protobof generated files
-#        \rm -f $workdir/src/rsctrl/src/gencc/*.pb.h
-#        \rm -f $workdir/src/rsctrl/src/gencc/*.pb.cpp
+
 \rm -f $workdir/src/retroshare-nogui/src/rpc/proto/gencc/*.pb.h
 \rm -f $workdir/src/retroshare-nogui/src/rpc/proto/gencc/*.pb.cc
 
@@ -88,26 +92,28 @@ cp /tmp/toto4463 $workdir/src/retroshare-gui/src/util/rsversion.h
 echo Cleaning...
 find $workdir -name ".svn" -exec rm -rf {} \;		# remove all svn repositories
 
-echo Calling debuild...
-cat $workdir/debian/control | sed -e s/XXXXXX/"$version"/g > $workdir/debian/control.tmp
-mv -f $workdir/debian/control.tmp $workdir/debian/control
+#echo Calling debuild...
+#cat $workdir/debian/control | sed -e s/XXXXXX/"$version"/g > $workdir/debian/control.tmp
+#mv -f $workdir/debian/control.tmp $workdir/debian/control
 
 cd $workdir
 
-#for i in sid squeeze; do
+#for i in wheezy; do
 #for i in sid ; do
 #for i in precise; do
-for i in natty oneiric precise quantal raring; do
+#for i in natty precise lucid quantal raring; do
+
+for i in sid squeeze; do
 	echo copying changelog for $i
 	cat ../changelog | sed -e s/XXXXXX/"$svn"/g | sed -e s/YYYYYY/"$i"/g > debian/changelog
 
-	# This is the key for "Cyril Soler <csoler@sourceforge.net>"
-	debuild -S -kC737CA98
-done
-for i in lucid; do
-	echo copying changelog for $i
-	cat ../changelog | sed -e s/XXXXXX/"$svn"/g | sed -e s/YYYYYY/"$i"/g > debian/changelog
-	cp ../control.ubuntu_lucid debian/control
+	if test "$i" = "lucid" ; then
+		cp ../control.ubuntu_lucid debian/control
+	elif test "$bubba3" = "Y" ; then
+		cp ../control.squeeze_bubba3 debian/control
+	else
+		cp ../debian/control debian/control
+	fi
 
 	# This is the key for "Cyril Soler <csoler@sourceforge.net>"
 	debuild -S -kC737CA98
