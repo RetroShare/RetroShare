@@ -4,8 +4,8 @@
 version="0.5.4"
 svnpath="svn://csoler@svn.code.sf.net/p/retroshare/code/"
 workdir=retroshare-$version
-use_gxs="Y"							# comment out to compile without gxs
-bubba3="Y"							# comment out to compile for bubba3
+#use_gxs="Y"							# comment out to compile without gxs
+#bubba3="Y"							# comment out to compile for bubba3
 ######################################################
 
 echo This script is going to build the debian source package for RetroShare, from the svn.
@@ -101,9 +101,8 @@ cd $workdir
 #for i in wheezy; do
 #for i in sid ; do
 #for i in precise; do
-#for i in natty precise lucid quantal raring; do
-
-for i in sid squeeze; do
+for i in natty precise lucid quantal raring; do
+#for i in sid squeeze; do
 	echo copying changelog for $i
 	cat ../changelog | sed -e s/XXXXXX/"$svn"/g | sed -e s/YYYYYY/"$i"/g > debian/changelog
 
