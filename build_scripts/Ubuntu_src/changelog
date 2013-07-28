@@ -1,6 +1,8 @@
 retroshare (0.5.4-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
   * Improvements
+      - doubled data chunk for signature in chat links. Apparently some keys need more than 287 bytes
+      - added security checks against disk full in PGP keyring manager
       - TokenQueue: fixed stop of TokenQueue polling when events are locked
       - RsProtectedTimer: switched to faster poll when events are locked
       - distant chat: added ACK system to make sure the secured tunnels for distant chat are actually working, before one starts using it.
@@ -11,7 +13,8 @@ retroshare (0.5.4-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
       - removed MT19937 random generator which is not used anymore. Changed N from 624 to 1024 to reduce cost
       - improved completion for chat (Patch from Phenom)
   		- added help panels in MainWindow, to help beginners startup with the basic concepts.
-      - improved GUI layout in FriendList, removed doubling unused buttons
+      - changed welcome message in broadcast chat
+      - improved GUI layouts in FriendList, NewsFeed, Forums, Channels, removed doubling unused buttons
   	   - added last time of transfer (Patch from Phenom)
       - added column with IP for connected peers (modified patch from Phenom)
       - Removed some more hardcoded colors
@@ -26,9 +29,6 @@ retroshare (0.5.4-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
       - fixed packaging with GXS (sqlite linkage, define for encrypted database
       - patch from Henry morgan to fix soem typos (e.g misspelled connexion into connection)
       - Made pqiStore accept packets even after deserialization error, so that it is retrocompatible (Patch from Phenom)
-      - GxsIdChooser
-         * Sort items
-         * Added timer to load not cached RsGxsId's
       - Set path to sqlcipher instead of sqlite for Windows compile.
       - new db for release, TESTNET5, old TESTNET4 db's are not keyed
       - Updated english translation
@@ -73,12 +73,17 @@ retroshare (0.5.4-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
        - extend RsGxsUpdateBroadcast
        - added automatic refresh to Identity and Forums (except subscribe/unsubscribe)
        - Added new method cancelActiveRequestTokens to TokenQueue
+       - GxsIdChooser
+         * Sort items
+         * Added timer to load not cached RsGxsId's
 
   * Bugs
       - fixed deadlock in notifyQt
       - fixed memory leak in cert signature verification at connect (Patch from Phenom). Also removed some unused variables reported by gcc
       - add date to chat msg if it is mroe than 1 day old
       - fixed bug in distant chat accepting tunnels for collecting invites with same hash
+      - fixed memory leaks in p3distrib, signature key verification, RsDataService::retrieveNxsGrps, 
+        RsGxsNetService, p3GxsCircles, p3Posted, RsDiscReply handling, getGroupData of all gxs services
 
  -- Cyril Soler <csoler@users.sourceforge.net>  Tue, 02 Jun 2013 22:00:00 +0100
 
