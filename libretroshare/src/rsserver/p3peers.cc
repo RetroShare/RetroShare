@@ -364,7 +364,8 @@ bool	p3Peers::getPeerDetails(const std::string &id, RsPeerDetails &d)
 	peerConnectState pcs;
 	if (!mLinkMgr->getFriendNetStatus(id, pcs)) 
 	{
-		std::cerr << "p3Peers::getPeerDetails() ERROR No Link Information : " << id << std::endl;
+		if(id != sOwnId)
+			std::cerr << "p3Peers::getPeerDetails() ERROR No Link Information : " << id << std::endl;
 		return true;
 	}
 
