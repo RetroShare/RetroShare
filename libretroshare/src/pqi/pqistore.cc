@@ -383,12 +383,11 @@ bool pqiSSLstore::encryptedSendItems(const std::list<RsItem*>& rsItemList)
 	for(it = rsItemList.begin(); it != rsItemList.end(); it++)
 	{
 		sizeItem = rsSerialiser->size(*it);
-		if(!rsSerialiser->serialise(*it, (data+offset),&sizeItem))
-		{
-			std::cerr << "(EE) pqiSSLstore::encryptedSendItems(): One item did not serialize. sizeItem=" << sizeItem << ". Dropping the entire file. " << std::endl;
-			return false;
-		}
-		offset += sizeItem;
+
+		if(rsSerialiser->serialise(*it, (data+offset),&sizeItem))
+			offset += sizeItem;
+		else
+			std::cerr << "(EE) pqiSSLstore::encryptedSendItems(): One item did not serialize. The item is probably unknown from the serializer. Dropping the item. " << std::endl;
 
 		if (!(bio_flags & BIN_FLAGS_NO_DELETE))
 			delete *it;
