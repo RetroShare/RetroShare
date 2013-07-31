@@ -45,7 +45,8 @@
 #include <iomanip>
 #include <map>
 
-//#define DEBUG_DISTANT_MSG
+#define DEBUG_DISTANT_MSG
+#define DISABLE_DISTANT_MESSAGES 
 
 const int msgservicezone = 54319;
 
@@ -1682,19 +1683,29 @@ bool p3MsgService::decryptMessage(const std::string& mId)
 	uint32_t msgId = atoi(mId.c_str());
 	std::string encrypted_string ;
 
+#ifdef DEBUG_DISTANT_MSG
+	std::cerr << "Decrypting message with Id " << mId << std::endl;
+#endif
 	{
 		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 
 		std::map<uint32_t, RsMsgItem *>::iterator mit = imsg.find(msgId);
 
 		if(mit == imsg.end() || !librs::util::ConvertUtf16ToUtf8(mit->second->message,encrypted_string)) 
+		{
+			std::cerr << "Can't find this message in msg list. Id=" << mId << std::endl;
 			return false;
+		}
 	}
 
 	char *encrypted_data ;
 	size_t encrypted_size ;
 
 	Radix64::decode(encrypted_string,encrypted_data,encrypted_size) ;
+
+#ifdef DEBUG_DISTANT_MSG
+	std::cerr << "Message has been radix64 decoded." << std::endl;
+#endif
 
 	uint32_t decrypted_size = encrypted_size + 500 ;
 	unsigned char *decrypted_data = new unsigned char[decrypted_size] ;
@@ -1706,15 +1717,31 @@ bool p3MsgService::decryptMessage(const std::string& mId)
 		std::cerr << "decryption failed!" << std::endl;
 		return false;
 	}
+#ifdef DEBUG_DISTANT_MSG
+	std::cerr << "Message has succesfully decrypted." << std::endl;
+#endif
 
 	RsMsgItem *item = dynamic_cast<RsMsgItem*>(_serialiser->deserialise(decrypted_data,&decrypted_size)) ;
 
 	if(item == NULL)
+	{
+		std::cerr << "Decrypted message could not be deserialized." << std::endl;
 		return false ;
+	}
 
+#ifdef DEBUG_DISTANT_MSG
+	std::cerr << "Decrypted message was succesfully deserialized. New message:" << std::endl;
+	item->print(std::cerr,0) ;
+#endif
 	{
 		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
-		*imsg[msgId] = *item ;
+
+		// Keer the id.
+		RsMsgItem& msgi( *imsg[msgId] ) ;
+
+		msgi = *item ;											// copy everything
+		msgi.msgId = msgId ;									// restore the correct message id, to make it consistent
+		msgi.msgFlags &= ~RS_MSG_FLAGS_ENCRYPTED ;	// just in case.
 	}
 	delete item ;
 
@@ -1746,6 +1773,65 @@ bool p3MsgService::createDistantOfflineMessengingInvite(time_t time_of_validity,
 
 	return true ;
 }
+void p3MsgService::enableDistantMessaging(bool b)
+{
+	// compute the hash
+	
+	std::string hash ;
+	
+	if(!getDistantMessageHash(AuthGPG::getAuthGPG()->getGPGOwnId(),hash))
+		return ;
+
+#ifdef DEBUG_DISTANT_MSG
+	std::cerr << (b?"Enabling":"Disabling") << " distant messaging, with hash  = " << hash << std::endl;
+#endif
+	std::map<std::string,DistantMessengingInvite>::iterator it = _messenging_invites.find(hash) ;
+
+	if(b && it == _messenging_invites.end())
+	{
+		DistantMessengingInvite invite ;
+		invite.time_of_validity = time(NULL) + 10*365*86400;	// 10 years from now
+		_messenging_invites[hash] = invite ;
+
+		IndicateConfigChanged() ;
+	}
+	if((!b) && it != _messenging_invites.end())
+	{
+		_messenging_invites.erase(it) ;
+		IndicateConfigChanged() ;
+	}
+
+#ifdef DEBUG_DISTANT_MSG
+	std::cerr << "List of distant message invites: " << std::endl;
+	for(std::map<std::string,DistantMessengingInvite>::const_iterator it(_messenging_invites.begin());it!=_messenging_invites.end();++it)
+		std::cerr << "   hash = " << it->first << std::endl;
+#endif
+}
+bool p3MsgService::distantMessagingEnabled()
+{
+	// compute the hash
+	
+	std::string hash ;
+	
+	if(!getDistantMessageHash(AuthGPG::getAuthGPG()->getGPGOwnId(),hash))
+		return false;
+
+	return _messenging_invites.find(hash) != _messenging_invites.end() ;
+}
+bool p3MsgService::getDistantMessageHash(const std::string& pgp_id,std::string& hash)
+{
+	if(pgp_id.length() != 16)
+	{
+		std::cerr << "pgp id \"" << pgp_id << "\" is not valid! Something definitly wrong." << std::endl;
+		return false;
+	}
+
+	hash = RsDirUtil::sha1sum((uint8_t*)pgp_id.c_str(),16).toStdString() ;
+
+	// Also check that we have the public key.
+	
+	return AuthGPG::getAuthGPG()->isKeySupported(pgp_id) ;
+}
 bool p3MsgService::getDistantOfflineMessengingInvites(std::vector<DistantOfflineMessengingInvite>& invites) 
 {
 	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
@@ -1763,21 +1849,20 @@ bool p3MsgService::getDistantOfflineMessengingInvites(std::vector<DistantOffline
 		std::cerr << "   adding invite with hash " << invite.hash << std::endl;
 #endif
 	}
-
 	return true ;
 }
 bool p3MsgService::handleTunnelRequest(const std::string& hash,const std::string& /*peer_id*/)
 {
-#ifdef DEBUG_DISTANT_MSG
-	std::cerr << "p3MsgService::handleTunnelRequest: received TR for hash " << hash << std::endl;
-#endif
 
 	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 	std::map<std::string,DistantMessengingInvite>::const_iterator it = _messenging_invites.find(hash) ;
 
 #ifdef DEBUG_DISTANT_MSG
 	if(it != _messenging_invites.end())
+	{
+		std::cerr << "p3MsgService::handleTunnelRequest: received TR for hash " << hash << std::endl;
 		std::cerr << "Responding OK!" << std::endl;
+	}
 #endif
 
 	return it != _messenging_invites.end() ;
@@ -1868,17 +1953,32 @@ void p3MsgService::addVirtualPeer(const TurtleFileHash& hash, const TurtleVirtua
 	std::cerr << "p3MsgService::addVirtualPeer(): adding virtual peer " << vpid << " for hash " << hash << std::endl;
 #endif
 }
-void p3MsgService::removeVirtualPeer(const TurtleFileHash& hash, const TurtleVirtualPeerId& /*vpid*/)
+void p3MsgService::removeVirtualPeer(const TurtleFileHash& hash, const TurtleVirtualPeerId& vpid)
 {
-	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
-	// A new tunnel has been created. We need to flush pending messages for the corresponding peer.
+#ifdef DEBUG_DISTANT_MSG
+	std::cerr << "Removing virtual peer " << vpid << " for hash " << hash << std::endl;
+#endif
 
-	//std::map<std::string,DistantMessengingContact>::const_iterator it = _messenging_contacts.find(hash) ;
+	bool remove_tunnel = false ;
+	{
+		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 
-	DistantMessengingContact& contact(_messenging_contacts[hash]) ; // possibly creates it.
+		DistantMessengingContact& contact(_messenging_contacts[hash]) ; // possibly creates it.
 
-	contact.status = RS_DISTANT_MSG_STATUS_TUNNEL_DN ;
-	contact.virtual_peer_id.clear() ;
+		contact.status = RS_DISTANT_MSG_STATUS_TUNNEL_DN ;
+		contact.virtual_peer_id.clear() ;
+
+		if(contact.pending_messages.empty())
+			remove_tunnel = true ;
+	}
+
+	if(remove_tunnel)
+	{
+#ifdef DEBUG_DISTANT_MSG
+		std::cerr << "Also removing tunnel, since pending messages have been sent." << std::endl;
+#endif
+		mTurtle->stopMonitoringTunnels(hash) ;
+	}
 }
 #ifdef DEBUG_DISTANT_MSG
 static void printBinaryData(void *data,uint32_t size)
@@ -1960,6 +2060,12 @@ void p3MsgService::receiveTurtleData(RsTurtleGenericTunnelItem *gitem,const std:
 		std::cerr << "(EE) p3MsgService::receiveTurtleData(): item is not a data item. That is an error." << std::endl;
 		return ;
 	}
+#ifdef DISABLE_DISTANT_MESSAGES
+	std::cerr << "Received distant message item. Protocol is not yet finalized. Droping the item." << std::endl;
+	delete item ;
+	return ;
+#endif
+
 #ifdef DEBUG_DISTANT_MSG
 	std::cerr << "p3MsgService::sendTurtleData(): Receiving through virtual peer: " << virtual_peer_id << std::endl;
 	std::cerr << "   gitem->data_size = " << item->data_size << std::endl;

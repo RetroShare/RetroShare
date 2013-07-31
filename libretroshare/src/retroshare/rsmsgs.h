@@ -184,7 +184,7 @@ class ChatLobbyInvite
 class VisibleChatLobbyRecord
 {
 	public:
-		VisibleChatLobbyRecord() { total_number_of_peers = 0 ; }
+    VisibleChatLobbyRecord() { total_number_of_peers = 0 ; }
 
 		ChatLobbyId lobby_id ;									// unique id of the lobby
 		std::string lobby_name ;								// name to use for this lobby
@@ -279,6 +279,9 @@ virtual bool resetMessageStandardTagTypes(MsgTagType& tags) = 0;
 
 virtual bool createDistantOfflineMessengingInvite(time_t validity_time_stamp, std::string& hash)=0 ;
 virtual bool getDistantOfflineMessengingInvites(std::vector<DistantOfflineMessengingInvite>& invites) = 0 ;
+virtual void enableDistantMessaging(bool b) = 0;
+virtual bool distantMessagingEnabled() = 0;
+virtual bool getDistantMessageHash(const std::string& pgp_id, std::string& hash) = 0;
 
 /****************************************/
 /*                 Chat                 */

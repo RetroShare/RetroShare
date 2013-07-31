@@ -1493,7 +1493,7 @@ void MessagesDialog::decryptSelectedMsg()
 
 	 if(!msgInfo.msgflags & RS_MSG_ENCRYPTED)
 	 {
-		 std::cerr << "This message is not encrypted! Cannot decrypt!" << std::endl;
+		 QMessageBox::warning(NULL,tr("Decryption failed!"),tr("This message is not encrypted. Cannot decrypt!")) ;
 		 return ;
 	 }
 
@@ -1501,7 +1501,16 @@ void MessagesDialog::decryptSelectedMsg()
 		 QMessageBox::warning(NULL,tr("Decryption failed!"),tr("This message could not be decrypted.")) ;
 
 	 //setMsgAsReadUnread(currentIndex.row(), true);
+    timer->start();
+
 	 updateMessageSummaryList();
+
+	 //QModelIndex currentIndex = ui.messagestreeView->currentIndex();
+	 //QModelIndex index = ui.messagestreeView->model()->index(currentIndex.row(), COLUMN_UNREAD, currentIndex.parent());
+	 //currentChanged(index);
+
+    MessagesModel->removeRows (0, MessagesModel->rowCount());
+
     insertMessages();
     insertMsgTxtAndFiles();
 }

@@ -82,6 +82,10 @@ class p3Msgs: public RsMsgs
 	  virtual bool createDistantOfflineMessengingInvite(time_t, std::string&) ;
 	  virtual bool getDistantOfflineMessengingInvites(std::vector<DistantOfflineMessengingInvite>&);
 
+	  virtual void enableDistantMessaging(bool b) ;
+	  virtual bool distantMessagingEnabled() ;
+	  virtual bool getDistantMessageHash(const std::string& pgp_id,std::string& hash) ;
+
 	  /*!
 	   * gets avatar from peer, image data in jpeg format
 	   */

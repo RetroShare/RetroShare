@@ -25,9 +25,7 @@
 
 #include "MessagePage.h"
 #include "gui/common/TagDefs.h"
-
 #include <algorithm>
-
 #include "NewTag.h"
 
 MessagePage::MessagePage(QWidget * parent, Qt::WFlags flags)
@@ -41,6 +39,7 @@ MessagePage::MessagePage(QWidget * parent, Qt::WFlags flags)
     connect (ui.editpushButton, SIGNAL(clicked(bool)), this, SLOT (editTag()));
     connect (ui.deletepushButton, SIGNAL(clicked(bool)), this, SLOT (deleteTag()));
     connect (ui.defaultTagButton, SIGNAL(clicked(bool)), this, SLOT (defaultTag()));
+    connect (ui.encryptedMsgs_CB, SIGNAL(toggled(bool)), this, SLOT (toggleEnableEncryptedDistantMsgs(bool)));
 
     connect (ui.tags_listWidget, SIGNAL(currentRowChanged(int)), this, SLOT(currentRowChangedTag(int)));
 
@@ -49,11 +48,18 @@ MessagePage::MessagePage(QWidget * parent, Qt::WFlags flags)
 
     ui.openComboBox->addItem(tr("A new tab"), RshareSettings::MSG_OPEN_TAB);
     ui.openComboBox->addItem(tr("A new window"), RshareSettings::MSG_OPEN_WINDOW);
+
+	 ui.encryptedMsgs_CB->setEnabled(false) ;
 }
 
 MessagePage::~MessagePage()
 {
     delete(m_pTags);
+}
+
+void MessagePage::toggleEnableEncryptedDistantMsgs(bool b)
+{
+	rsMsgs->enableDistantMessaging(b) ;
 }
 
 /** Saves the changes on this page */
@@ -91,6 +97,7 @@ MessagePage::load()
     ui.setMsgToReadOnActivate->setChecked(Settings->getMsgSetToReadOnActivate());
     ui.openComboBox->setCurrentIndex(ui.openComboBox->findData(Settings->getMsgOpen()));
 
+	 ui.encryptedMsgs_CB->setChecked(rsMsgs->distantMessagingEnabled()) ;
     // fill items
     rsMsgs->getMessageTagTypes(*m_pTags);
     fillTags();

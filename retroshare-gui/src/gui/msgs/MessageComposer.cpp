@@ -209,7 +209,8 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
     /* initialize friends list */
     ui.friendSelectionWidget->setHeaderText(tr("Send To:"));
     ui.friendSelectionWidget->setModus(FriendSelectionWidget::MODUS_MULTI);
-    ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_GROUP | FriendSelectionWidget::SHOW_SSL);
+    //ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_GROUP | FriendSelectionWidget::SHOW_SSL | FriendSelectionWidget::SHOW_NON_FRIEND_GPG );
+    ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_GROUP | FriendSelectionWidget::SHOW_SSL );
     ui.friendSelectionWidget->start();
 
     QActionGroup *grp = new QActionGroup(this);
@@ -1406,8 +1407,10 @@ void MessageComposer::setRecipientToRow(int row, enumType type, std::string id, 
 
     QIcon icon;
     QString name;
-    if (id.empty() == FALSE) {
-        if (group) {
+    if (!id.empty()) 
+	 {
+        if (group) 
+		  {
             icon = QIcon(IMAGE_GROUP16);
 
             RsGroupInfo groupInfo;
@@ -1417,28 +1420,39 @@ void MessageComposer::setRecipientToRow(int row, enumType type, std::string id, 
                 name = tr("Unknown");
                 id.clear();
             }
-        } else {
-            RsPeerDetails details;
-				if(_distant_peers.find(id) != _distant_peers.end())
-				{
-					name = tr("Distant peer (PGP key: %1)").arg(QString::fromStdString(_distant_peers[id])) ;
-					icon = QIcon(StatusDefs::imageUser(RS_STATUS_ONLINE));
-				}
-				else if (rsPeers->getPeerDetails(id, details)) 
-				{
-                name = PeerDefs::nameWithLocation(details);
+        } 
+		  else 
+		  {
+			  RsPeerDetails details;
 
-                StatusInfo peerStatusInfo;
-                // No check of return value. Non existing status info is handled as offline.
-                rsStatus->getStatus(id, peerStatusInfo);
+			  if(_distant_peers.find(id) != _distant_peers.end())
+			  {
+			  	  if(!rsPeers->getPeerDetails(_distant_peers[id], details))
+				  {
+					  std::cerr << "Can't get peer details from " << _distant_peers[id] << std::endl;
+					  return ;
+				  }
 
-                icon = QIcon(StatusDefs::imageUser(peerStatusInfo.status));
-            } else {
-                icon = QIcon(StatusDefs::imageUser(RS_STATUS_OFFLINE));
-                name = tr("Unknown friend");
-                id.clear();
-            }
-        }
+				  name = tr("Distant peer (name: %2, PGP key: %1)").arg(QString::fromStdString(_distant_peers[id])).arg(QString::fromStdString(details.name)) ;
+				  icon = QIcon(StatusDefs::imageUser(RS_STATUS_ONLINE));
+			  }
+			  else if(rsPeers->getPeerDetails(id, details) && (!details.isOnlyGPGdetail))
+			  {
+				  name = PeerDefs::nameWithLocation(details);
+
+				  StatusInfo peerStatusInfo;
+				  // No check of return value. Non existing status info is handled as offline.
+				  rsStatus->getStatus(id, peerStatusInfo);
+
+				  icon = QIcon(StatusDefs::imageUser(peerStatusInfo.status));
+			  } 
+			  else 
+			  {
+				  icon = QIcon(StatusDefs::imageUser(RS_STATUS_OFFLINE));
+				  name = tr("Unknown friend");
+				  id.clear();
+			  }
+		  }
     }
 
     comboBox->setCurrentIndex(comboBox->findData(type, Qt::UserRole));
@@ -2291,6 +2305,16 @@ void MessageComposer::addContact(enumType type)
     for (idIt = ids.begin(); idIt != ids.end(); idIt++) {
         addRecipient(type, *idIt, false);
     }
+
+    ids.empty();
+    ui.friendSelectionWidget->selectedGpgIds(ids, true);
+    for (idIt = ids.begin(); idIt != ids.end(); idIt++) 
+	 {
+		 std::string hash ;
+
+		 if(rsMsgs->getDistantMessageHash(*idIt,hash))
+			 addRecipient(type, hash, *idIt);
+	 }
 }
 
 void MessageComposer::addTo()

@@ -50,6 +50,7 @@ public:
 
     static void msgFriend(const std::string &id, bool group);
     static void msgDistantPeer(const std::string& hash,const std::string& pgp_id) ;
+    static void msgDistantPeer(const std::string& pgp_id) ;
 
     static QString recommendMessage();
     static void recommendFriend(const std::list <std::string> &sslIds, const std::string &to = "", const QString &msg = "", bool autoSend = false);

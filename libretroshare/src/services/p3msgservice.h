@@ -118,6 +118,11 @@ int     checkOutgoingMessages();
 
 		bool createDistantOfflineMessengingInvite(time_t time_of_validity,TurtleFileHash& hash) ;
 		bool getDistantOfflineMessengingInvites(std::vector<DistantOfflineMessengingInvite>& invites) ;
+
+		void enableDistantMessaging(bool b) ;
+		bool distantMessagingEnabled() ;
+		bool getDistantMessageHash(const std::string& pgp_id,std::string& hash) ;
+
 		void sendPrivateMsgItem(RsMsgItem *) ;
 
 	private:

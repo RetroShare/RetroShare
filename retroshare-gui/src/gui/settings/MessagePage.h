@@ -53,6 +53,7 @@ private slots:
     void defaultTag();
 
     void currentRowChangedTag(int row);
+	 void toggleEnableEncryptedDistantMsgs(bool) ;
 
 private:
     void fillTags();
