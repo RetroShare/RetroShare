@@ -243,9 +243,13 @@ int main(int argc, char **argv)
 		}
 
 
-		std::cerr << "Usage: ./retroshare-nogui -S [port] -L <username> -P " << pwdHashRadix64;
+		std::cerr << "Usage:";
 		std::cerr << std::endl;
-		exit(1);
+		std::cerr << " - for SSH access: ./retroshare-nogui -S [port] -L <username> -P " << pwdHashRadix64;
+		std::cerr << std::endl;
+		std::cerr << " - for RPC access: ./retroshare-nogui -C -S [port] -L <username> -P " << pwdHashRadix64;
+		std::cerr << std::endl;
+		exit(0);
 	}
 	
 
