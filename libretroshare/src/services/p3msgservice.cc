@@ -54,6 +54,8 @@ static const uint32_t RS_DISTANT_MSG_STATUS_TUNNEL_OK = 0x0001 ;
 static const uint32_t RS_DISTANT_MSG_STATUS_TUNNEL_DN = 0x0000 ;
 static const uint32_t DISTANT_MSG_HASH_SIZE = 20 ;
 
+static const uint8_t ENCRYPTED_MSG_PROTOCOL_VERSION_01 = 0x37 ;
+
 /* Another little hack ..... unique message Ids
  * will be handled in this class.....
  * These are unique within this run of the server, 
@@ -1400,6 +1402,12 @@ void p3MsgService::initRsMI(RsMsgItem *msg, MessageInfo &mi)
 		mi.msgflags |= RS_MSG_NEW;
 	}
 
+	if (msg->msgFlags & RS_MSG_FLAGS_SIGNED)
+		mi.msgflags |= RS_MSG_SIGNED ;
+
+	if (msg->msgFlags & RS_MSG_FLAGS_SIGNATURE_CHECKS)
+		mi.msgflags |= RS_MSG_SIGNATURE_CHECKS ;
+
 	if (msg->msgFlags & RS_MSG_FLAGS_ENCRYPTED)
 		mi.msgflags |= RS_MSG_ENCRYPTED ;
 
@@ -1490,6 +1498,12 @@ void p3MsgService::initRsMIS(RsMsgItem *msg, MsgInfoSummary &mis)
 
 	if (msg->msgFlags & RS_MSG_FLAGS_ENCRYPTED)
 		mis.msgflags |= RS_MSG_ENCRYPTED ;
+
+	if (msg->msgFlags & RS_MSG_FLAGS_SIGNED)
+		mis.msgflags |= RS_MSG_SIGNED ;
+
+	if (msg->msgFlags & RS_MSG_FLAGS_SIGNATURE_CHECKS)
+		mis.msgflags |= RS_MSG_SIGNATURE_CHECKS ;
 
 	/* translate flags, if we sent it... outgoing */
 	if ((msg->msgFlags & RS_MSG_FLAGS_OUTGOING)
@@ -1609,6 +1623,9 @@ RsMsgItem *p3MsgService::initMIRsMsg(MessageInfo &info, const std::string &to)
 	if (info.msgflags & RS_MSG_FRIEND_RECOMMENDATION)
 		msg->msgFlags |= RS_MSG_FLAGS_FRIEND_RECOMMENDATION;
 
+	if (info.msgflags & RS_MSG_SIGNED)
+		msg->msgFlags |= RS_MSG_FLAGS_SIGNED;
+
 	// See if we need to encrypt this message.  If so, we replace the msg text
 	// by the whole message serialized and binary encrypted, so as to obfuscate
 	// all its content.
@@ -1628,32 +1645,96 @@ bool p3MsgService::encryptMessage(const std::string& pgp_id,RsMsgItem *item)
 	std::cerr << "Encrypting message with public key " << pgp_id << " in place." << std::endl;
 #endif
 
-	// 1 - serialise the whole message item into a binary chunk.
+	// 0 - happend own id to the data.
 	//
 	uint32_t rssize = _serialiser->size(item) ;
-	unsigned char *data = new unsigned char[rssize] ;
+	unsigned char *data = (unsigned char *)malloc(1+rssize+KEY_ID_SIZE) ;
+	
+	// -1 - setup protocol version
+	//
+#ifdef DEBUG_DISTANT_MSG
+	std::cerr << "  adding protocol version TAG = " << std::hex << (int)ENCRYPTED_MSG_PROTOCOL_VERSION_01 << std::dec << std::endl;
+#endif
+	data[0] = ENCRYPTED_MSG_PROTOCOL_VERSION_01 ;
+	
+#ifdef DEBUG_DISTANT_MSG
+	std::cerr << "  adding own key ID " << AuthGPG::getAuthGPG()->getGPGOwnId() << std::endl;
+#endif
+	memcpy(&data[1], PGPIdType(AuthGPG::getAuthGPG()->getGPGOwnId()).toByteArray(), KEY_ID_SIZE) ;
 
-	if(!_serialiser->serialise(item,data,&rssize))
+	// 1 - serialise the whole message item into a binary chunk.
+	//
+
+#ifdef DEBUG_DISTANT_MSG
+	std::cerr << "  serialising item..." << std::endl;
+#endif
+	if(!_serialiser->serialise(item,&data[1+KEY_ID_SIZE],&rssize))
 	{
 		std::cerr << "(EE) p3MsgService::sendTurtleData(): Serialization error." << std::endl;
-		delete[] data ;
+		free(data) ;
 		return false;
 	}
 
-	// 2 - pgp-encrypt the chunk with the user-supplied public key.
+	// 2 - now sign the data, if necessary, and put the signature up front
+
+	uint32_t signature_length = 0 ;
+	unsigned char *signature_data = NULL ;
+
+	if(item->msgFlags & RS_MSG_FLAGS_SIGNED)
+	{
+#ifdef DEBUG_DISTANT_MSG
+		std::cerr << "  Signing the message..." << std::endl;
+#endif
+		signature_length = 2000 ;
+		signature_data = new unsigned char[signature_length] ;
+
+		if(!AuthGPG::getAuthGPG()->SignDataBin(data,1+rssize+KEY_ID_SIZE,signature_data,&signature_length))
+		{
+			free(data) ;
+			std::cerr << "Signature failed!" << std::endl;
+			return false;
+		}
+#ifdef DEBUG_DISTANT_MSG
+		std::cerr << "  After signature: signature size = " << signature_length << std::endl;
+#endif
+	}
+#ifdef DEBUG_DISTANT_MSG
+	std::cerr << "  total decrypted size = " << KEY_ID_SIZE + 1 + rssize + signature_length << std::endl;
+#endif
+	// 3 - happend the signature to the serialized data.
+
+	if(signature_length > 0)
+	{
+#ifdef DEBUG_DISTANT_MSG
+		std::cerr << "  Appending signature." << std::endl;
+#endif
+		data = (uint8_t*)realloc(data,1+rssize+signature_length+KEY_ID_SIZE) ;
+		memcpy(&data[1+rssize+KEY_ID_SIZE],signature_data,signature_length) ;
+	}
+
+	// 2 - pgp-encrypt the whole chunk with the user-supplied public key.
 	//
-	uint32_t encrypted_size = rssize + 1000 ;
+	uint32_t encrypted_size = 1+rssize + KEY_ID_SIZE + signature_length + 1000 ;
 	unsigned char *encrypted_data = new unsigned char[encrypted_size] ;
 
-	if(!AuthGPG::getAuthGPG()->encryptDataBin(pgp_id,data,rssize,encrypted_data,&encrypted_size))
+#ifdef DEBUG_DISTANT_MSG
+	std::cerr << "  Encrypting for Key ID " << pgp_id << std::endl;
+#endif
+	if(!AuthGPG::getAuthGPG()->encryptDataBin(pgp_id,data,1+rssize+signature_length+KEY_ID_SIZE,encrypted_data,&encrypted_size))
 	{
-		delete[] data ;
+		free(data) ;
 		delete[] encrypted_data ;
 		std::cerr << "Encryption failed!" << std::endl;
 		return false;
 	}
-	delete[] data ;
+	free(data) ;
 
+#ifdef DEBUG_DISTANT_MSG
+	std::cerr << "  Decrypted size = " << 1+rssize+signature_length+KEY_ID_SIZE << std::endl;
+	std::cerr << "  Encrypted size = " << encrypted_size << std::endl;
+	std::cerr << "  First bytes of encrypted data: " << std::hex << (int)encrypted_data[0] << " " << (int)encrypted_data[1] << " " << (int)encrypted_data[2] << std::dec << std::endl;
+	std::cerr << "  Encrypted data hash = " << RsDirUtil::sha1sum(encrypted_data,encrypted_size).toStdString() << std::endl;
+#endif
 	// Now turn the binary encrypted chunk into a readable radix string.
 	//
 	std::string armoured_data ;
@@ -1662,6 +1743,9 @@ bool p3MsgService::encryptMessage(const std::string& pgp_id,RsMsgItem *item)
 
 	std::wstring encrypted_msg ;
 
+#ifdef DEBUG_DISTANT_MSG
+	std::cerr << "  Converting to radix64" << std::endl;
+#endif
 	if(!librs::util::ConvertUtf8ToUtf16(armoured_data,encrypted_msg)) 
 		return false;
 
@@ -1675,6 +1759,9 @@ bool p3MsgService::encryptMessage(const std::string& pgp_id,RsMsgItem *item)
 	item->msgFlags |= RS_MSG_FLAGS_ENCRYPTED ;
 	item->attachment.TlvClear() ;
 
+#ifdef DEBUG_DISTANT_MSG
+	std::cerr << "  Done" << std::endl;
+#endif
 	return true ;
 }
 
@@ -1704,12 +1791,17 @@ bool p3MsgService::decryptMessage(const std::string& mId)
 	Radix64::decode(encrypted_string,encrypted_data,encrypted_size) ;
 
 #ifdef DEBUG_DISTANT_MSG
-	std::cerr << "Message has been radix64 decoded." << std::endl;
+	std::cerr << "  Message has been radix64 decoded." << std::endl;
 #endif
 
 	uint32_t decrypted_size = encrypted_size + 500 ;
 	unsigned char *decrypted_data = new unsigned char[decrypted_size] ;
 
+#ifdef DEBUG_DISTANT_MSG
+	std::cerr << "  Calling decryption. Encrypted data size = " << encrypted_size << ", Allocated size = " << decrypted_size << std::endl;
+	std::cerr << "  First bytes of encrypted data: " << std::hex << (int)((unsigned char*)encrypted_data)[0] << " " << (int)((unsigned char*)encrypted_data)[1] << " " << (int)((unsigned char*)encrypted_data)[2] << std::dec << std::endl;
+	std::cerr << "  Encrypted data hash = " << RsDirUtil::sha1sum((uint8_t*)encrypted_data,encrypted_size).toStdString() << std::endl;
+#endif
 	if(!AuthGPG::getAuthGPG()->decryptDataBin(encrypted_data,encrypted_size,decrypted_data,&decrypted_size))
 	{
 		delete[] encrypted_data ;
@@ -1718,10 +1810,36 @@ bool p3MsgService::decryptMessage(const std::string& mId)
 		return false;
 	}
 #ifdef DEBUG_DISTANT_MSG
-	std::cerr << "Message has succesfully decrypted." << std::endl;
+	std::cerr << "  Message has succesfully decrypted. Decrypted size = " << decrypted_size << std::endl;
 #endif
 
-	RsMsgItem *item = dynamic_cast<RsMsgItem*>(_serialiser->deserialise(decrypted_data,&decrypted_size)) ;
+	// 1 - get the sender's id
+	
+	unsigned char protocol_version = decrypted_data[0] ;
+
+#ifdef DEBUG_DISTANT_MSG
+	std::cerr << "  Read protocol version number " << std::hex << (int)protocol_version << std::dec << std::endl;
+#endif
+	if(protocol_version != ENCRYPTED_MSG_PROTOCOL_VERSION_01)
+	{
+		std::cerr << "Bad version number " << std::hex << (int)protocol_version << std::dec << " => packet is dropped." << std::endl;
+		delete[] encrypted_data ;
+		delete[] decrypted_data ;
+		return false;
+	}
+
+	PGPIdType senders_id(&decrypted_data[1]) ;
+
+#ifdef DEBUG_DISTANT_MSG
+	std::cerr << "  Sender's ID: " << senders_id.toStdString() << std::endl;
+#endif
+	// 2 - deserialize the item
+
+#ifdef DEBUG_DISTANT_MSG
+	std::cerr << "  Deserializing..." << std::endl;
+#endif
+	uint32_t item_size = decrypted_size ;	// just needs to be larger than the actual size.
+	RsMsgItem *item = dynamic_cast<RsMsgItem*>(_serialiser->deserialise(&decrypted_data[1+KEY_ID_SIZE],&item_size)) ;
 
 	if(item == NULL)
 	{
@@ -1729,8 +1847,40 @@ bool p3MsgService::decryptMessage(const std::string& mId)
 		return false ;
 	}
 
+	// 3 - check signature
+
+	bool signature_present = false ;
+	bool signature_ok = false ;
+
+	if(1+item_size + KEY_ID_SIZE < decrypted_size)
+	{
+		std::cerr << "  Signature is present. Verifying it..." << std::endl;
+
+		PGPFingerprintType fingerprint ;
+		if(!AuthGPG::getAuthGPG()->getKeyFingerprint(senders_id,fingerprint)) 
+		{
+			std::cerr << "Cannot get fingerprint" << std::endl;
+			return false ;
+		}
+		std::cerr << "  Fingerprint = " << fingerprint.toStdString() << std::endl;
+
+		signature_present = true ;
+		signature_ok = AuthGPG::getAuthGPG()->VerifySignBin(decrypted_data, 1+KEY_ID_SIZE+item_size, &decrypted_data[1+KEY_ID_SIZE+item_size], decrypted_size - KEY_ID_SIZE - item_size - 1, fingerprint.toStdString()) ;
+	}
+	else if(1 + item_size + KEY_ID_SIZE == decrypted_size)
+		std::cerr << "  No signature in this packet" << std::endl;
+	else
+	{
+		std::cerr << "Structural error in packet: sizes do not match. Dropping the message." << std::endl;
+		return false ;
+	}
+
+	delete[] decrypted_data ;
+
+	// 4 - replace the item with the decrypted data, and update flags
+	
 #ifdef DEBUG_DISTANT_MSG
-	std::cerr << "Decrypted message was succesfully deserialized. New message:" << std::endl;
+	std::cerr << "  Decrypted message was succesfully deserialized. New message:" << std::endl;
 	item->print(std::cerr,0) ;
 #endif
 	{
@@ -1742,6 +1892,17 @@ bool p3MsgService::decryptMessage(const std::string& mId)
 		msgi = *item ;											// copy everything
 		msgi.msgId = msgId ;									// restore the correct message id, to make it consistent
 		msgi.msgFlags &= ~RS_MSG_FLAGS_ENCRYPTED ;	// just in case.
+		msgi.PeerId(senders_id.toStdString()) ;
+
+		if(signature_present)
+		{
+			msgi.msgFlags |= RS_MSG_FLAGS_SIGNED ;	
+
+			if(signature_ok)
+				msgi.msgFlags |= RS_MSG_FLAGS_SIGNATURE_CHECKS ;	// just in case.
+			else
+				msgi.msgFlags &= ~RS_MSG_FLAGS_SIGNATURE_CHECKS ;	// just in case.
+		}
 	}
 	delete item ;
 
@@ -1972,7 +2133,7 @@ void p3MsgService::removeVirtualPeer(const TurtleFileHash& hash, const TurtleVir
 			remove_tunnel = true ;
 	}
 
-	if(remove_tunnel)
+	if(remove_tunnel)	// We do that whenever we're client or server. But normally, we should only do it when we're client.
 	{
 #ifdef DEBUG_DISTANT_MSG
 		std::cerr << "Also removing tunnel, since pending messages have been sent." << std::endl;
@@ -1997,22 +2158,23 @@ void p3MsgService::sendTurtleData(const std::string& hash,RsMsgItem *msgitem)
 {
 	// The item is serialized and turned into a generic turtle item.
 	
-	uint32_t rssize = _serialiser->size(msgitem) ;
-	unsigned char *data = new unsigned char[rssize] ;
+	uint32_t msg_serialized_rssize = _serialiser->size(msgitem) ;
+	unsigned char *msg_serialized_data = new unsigned char[msg_serialized_rssize] ;
 
-	if(!_serialiser->serialise(msgitem,data,&rssize))
+	if(!_serialiser->serialise(msgitem,msg_serialized_data,&msg_serialized_rssize))
 	{
 		std::cerr << "(EE) p3MsgService::sendTurtleData(): Serialization error." << std::endl;
-		delete[] data ;
+		delete[] msg_serialized_data ;
 		return ;
 	}
 
 	RsTurtleGenericDataItem *item = new RsTurtleGenericDataItem ;
-	item->data_bytes = malloc(rssize) ;
-	item->data_size = rssize ;
-	memcpy(item->data_bytes,data,rssize) ;
 
-	delete[] data ;
+	item->data_bytes = malloc(msg_serialized_rssize) ;
+	item->data_size = msg_serialized_rssize ;
+	memcpy(item->data_bytes,msg_serialized_data,msg_serialized_rssize) ;
+
+	delete[] msg_serialized_data ;
 
 #ifdef DEBUG_DISTANT_MSG
 	printBinaryData(item->data_bytes,item->data_size) ;
@@ -2030,7 +2192,7 @@ void p3MsgService::sendTurtleData(const std::string& hash,RsMsgItem *msgitem)
 		if(it == _messenging_contacts.end())
 		{
 			std::cerr << "(EE) p3MsgService::sendTurtleData(): Can't find hash " << hash << " in recorded contact list." << std::endl;
-			delete[] data ;
+			delete[] msg_serialized_data ;
 			return ;
 		}
 

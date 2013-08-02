@@ -412,23 +412,25 @@ class RsChatSerialiser: public RsSerialType
 
 /**************************************************************************/
 
-const uint32_t RS_MSG_FLAGS_OUTGOING              = 0x0001;
-const uint32_t RS_MSG_FLAGS_PENDING               = 0x0002;
-const uint32_t RS_MSG_FLAGS_DRAFT                 = 0x0004;
-const uint32_t RS_MSG_FLAGS_NEW                   = 0x0010;
-const uint32_t RS_MSG_FLAGS_TRASH                 = 0x0020;
-const uint32_t RS_MSG_FLAGS_UNREAD_BY_USER        = 0x0040;
-const uint32_t RS_MSG_FLAGS_REPLIED               = 0x0080;
-const uint32_t RS_MSG_FLAGS_FORWARDED             = 0x0100;
-const uint32_t RS_MSG_FLAGS_STAR                  = 0x0200;
-const uint32_t RS_MSG_FLAGS_PARTIAL               = 0x0400;
+const uint32_t RS_MSG_FLAGS_OUTGOING              = 0x00000001;
+const uint32_t RS_MSG_FLAGS_PENDING               = 0x00000002;
+const uint32_t RS_MSG_FLAGS_DRAFT                 = 0x00000004;
+const uint32_t RS_MSG_FLAGS_NEW                   = 0x00000010;
+const uint32_t RS_MSG_FLAGS_TRASH                 = 0x00000020;
+const uint32_t RS_MSG_FLAGS_UNREAD_BY_USER        = 0x00000040;
+const uint32_t RS_MSG_FLAGS_REPLIED               = 0x00000080;
+const uint32_t RS_MSG_FLAGS_FORWARDED             = 0x00000100;
+const uint32_t RS_MSG_FLAGS_STAR                  = 0x00000200;
+const uint32_t RS_MSG_FLAGS_PARTIAL               = 0x00000400;
 // system message
-const uint32_t RS_MSG_FLAGS_USER_REQUEST          = 0x0800;
-const uint32_t RS_MSG_FLAGS_FRIEND_RECOMMENDATION = 0x1000;
+const uint32_t RS_MSG_FLAGS_USER_REQUEST          = 0x00000800;
+const uint32_t RS_MSG_FLAGS_FRIEND_RECOMMENDATION = 0x00001000;
 const uint32_t RS_MSG_FLAGS_SYSTEM                = RS_MSG_FLAGS_USER_REQUEST | RS_MSG_FLAGS_FRIEND_RECOMMENDATION;
-const uint32_t RS_MSG_FLAGS_RETURN_RECEPT         = 0x2000;
-const uint32_t RS_MSG_FLAGS_ENCRYPTED             = 0x4000;
-const uint32_t RS_MSG_FLAGS_DISTANT               = 0x8000;
+const uint32_t RS_MSG_FLAGS_RETURN_RECEPT         = 0x00002000;
+const uint32_t RS_MSG_FLAGS_ENCRYPTED             = 0x00004000;
+const uint32_t RS_MSG_FLAGS_DISTANT               = 0x00008000;
+const uint32_t RS_MSG_FLAGS_SIGNATURE_CHECKS      = 0x00010000;
+const uint32_t RS_MSG_FLAGS_SIGNED                = 0x00020000;
 
 class RsMsgItem: public RsItem
 {

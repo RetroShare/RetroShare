@@ -59,6 +59,8 @@
 #define RS_MSG_FRIEND_RECOMMENDATION 0x0800   /* friend recommendation */
 #define RS_MSG_SYSTEM                (RS_MSG_USER_REQUEST | RS_MSG_FRIEND_RECOMMENDATION)
 #define RS_MSG_ENCRYPTED             0x1000	 /* message is encrypted */
+#define RS_MSG_SIGNATURE_CHECKS      0x2000	 /* message was signed, and signature checked */
+#define RS_MSG_SIGNED                0x4000	 /* message was signed and signature didn't check */
 
 #define RS_CHAT_LOBBY_EVENT_PEER_LEFT   				0x01
 #define RS_CHAT_LOBBY_EVENT_PEER_STATUS 				0x02

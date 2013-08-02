@@ -36,6 +36,7 @@
 #include "common/PeerDefs.h"
 #include "common/RSItemDelegate.h"
 #include "util/DateTime.h"
+#include "util/RsProtectedTimer.h"
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsmsgs.h>
@@ -49,15 +50,16 @@
 #define IMAGE_STAR_OFF         ":/images/star-off-16.png"
 #define IMAGE_SYSTEM           ":/images/user/user_request16.png"
 
-#define COLUMN_COUNT         8
 #define COLUMN_STAR          0
 #define COLUMN_ATTACHEMENTS  1
 #define COLUMN_SUBJECT       2
 #define COLUMN_UNREAD        3
 #define COLUMN_FROM          4
-#define COLUMN_DATE          5
-#define COLUMN_CONTENT       6
-#define COLUMN_TAGS          7
+#define COLUMN_SIGNATURE     5
+#define COLUMN_DATE          6
+#define COLUMN_CONTENT       7
+#define COLUMN_TAGS          8
+#define COLUMN_COUNT         9
 
 #define COLUMN_DATA          0 // column for storing the userdata like msgid and srcid
 
@@ -155,6 +157,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     MessagesModel->setHeaderData(COLUMN_SUBJECT,       Qt::Horizontal, tr("Subject"));
     MessagesModel->setHeaderData(COLUMN_UNREAD,        Qt::Horizontal, QIcon(":/images/message-state-header.png"), Qt::DecorationRole);
     MessagesModel->setHeaderData(COLUMN_FROM,          Qt::Horizontal, tr("From"));
+    MessagesModel->setHeaderData(COLUMN_SIGNATURE,     Qt::Horizontal, QIcon(":/images/signature.png"),Qt::DecorationRole);
     MessagesModel->setHeaderData(COLUMN_DATE,          Qt::Horizontal, tr("Date"));
     MessagesModel->setHeaderData(COLUMN_TAGS,          Qt::Horizontal, tr("Tags"));
     MessagesModel->setHeaderData(COLUMN_CONTENT,       Qt::Horizontal, tr("Content"));
@@ -164,6 +167,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     MessagesModel->setHeaderData(COLUMN_SUBJECT,       Qt::Horizontal, tr("Click to sort by subject"), Qt::ToolTipRole);
     MessagesModel->setHeaderData(COLUMN_UNREAD,        Qt::Horizontal, tr("Click to sort by read"), Qt::ToolTipRole);
     MessagesModel->setHeaderData(COLUMN_FROM,          Qt::Horizontal, tr("Click to sort by from"), Qt::ToolTipRole);
+    MessagesModel->setHeaderData(COLUMN_SIGNATURE,     Qt::Horizontal, tr("Click to sort by signature"), Qt::ToolTipRole);
     MessagesModel->setHeaderData(COLUMN_DATE,          Qt::Horizontal, tr("Click to sort by date"), Qt::ToolTipRole);
     MessagesModel->setHeaderData(COLUMN_TAGS,          Qt::Horizontal, tr("Click to sort by tags"), Qt::ToolTipRole);
     MessagesModel->setHeaderData(COLUMN_STAR,          Qt::Horizontal, tr("Click to sort by star"), Qt::ToolTipRole);
@@ -201,6 +205,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     msgwheader->resizeSection (COLUMN_SUBJECT,      250);
     msgwheader->resizeSection (COLUMN_UNREAD,       16);
     msgwheader->resizeSection (COLUMN_FROM,         140);
+    msgwheader->resizeSection (COLUMN_SIGNATURE,    16);
     msgwheader->resizeSection (COLUMN_DATE,         140);
     msgwheader->resizeSection (COLUMN_STAR,         16);
 
@@ -240,7 +245,9 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     msgwheader->setResizeMode (COLUMN_ATTACHEMENTS, QHeaderView::Fixed);
     msgwheader->setResizeMode (COLUMN_DATE, QHeaderView::Interactive);
     msgwheader->setResizeMode (COLUMN_UNREAD, QHeaderView::Fixed);
+    msgwheader->setResizeMode (COLUMN_SIGNATURE, QHeaderView::Fixed);
     msgwheader->resizeSection (COLUMN_UNREAD, 24);
+    msgwheader->resizeSection (COLUMN_SIGNATURE, 16);
     msgwheader->resizeSection (COLUMN_STAR, 24);
     msgwheader->setResizeMode (COLUMN_STAR, QHeaderView::Fixed);
     msgwheader->setStretchLastSection(false);
@@ -261,7 +268,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     fillQuickView();
 
     // create timer for navigation
-    timer = new QTimer(this);
+    timer = new RsProtectedTimer(this);
     timer->setInterval(300);
     timer->setSingleShot(true);
     connect(timer, SIGNAL(timeout()), this, SLOT(updateCurrentMessage()));
@@ -1207,7 +1214,18 @@ void MessagesDialog::insertMessages()
                 }
             }
 
-            if (bInsert) {
+				if(it->msgflags & RS_MSG_ENCRYPTED)
+					item[COLUMN_SIGNATURE]->setIcon(QIcon(":/images/blue_lock.png")) ;
+				else 
+					if(it->msgflags & RS_MSG_SIGNED) 
+						if(it->msgflags & RS_MSG_SIGNATURE_CHECKS)
+							item[COLUMN_SIGNATURE]->setIcon(QIcon(":/images/stock_signature_ok.png")) ;
+						else
+							item[COLUMN_SIGNATURE]->setIcon(QIcon(":/images/stock_signature_bad.png")) ;
+					else
+						item[COLUMN_SIGNATURE]->setIcon(QIcon()) ;
+
+				if (bInsert) {
                 /* add to the list */
                 QList<QStandardItem *> itemList;
                 for (int i = 0; i < COLUMN_COUNT; i++) {

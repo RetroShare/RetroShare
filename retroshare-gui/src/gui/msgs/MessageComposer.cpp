@@ -1287,6 +1287,7 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
             return false; // Don't send with no recipient
         }
 		  mi.encryption_keys = _distant_peers ;
+		  mi.msgflags |= RS_MSG_SIGNED ;
 
         if (rsMsgs->MessageSend(mi) == false) {
             return false;
