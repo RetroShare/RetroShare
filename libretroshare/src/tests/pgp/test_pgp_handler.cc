@@ -5,6 +5,7 @@
 #include <iostream>
 #include <pgp/pgphandler.h>
 #include <util/utest.h>
+#include <util/rsdir.h>
 #include <common/argstream.h>
 
 INITTEST() ;
@@ -103,6 +104,7 @@ int main(int argc,char *argv[])
 	bool test_signature = false ;
 	bool test_passphrase_callback = false ;
 	bool full_test = false ;
+	bool test_memory_encryption = false ;
 
 	std::string key_id_string = "" ;
 	std::string secring_file = "" ;
@@ -115,6 +117,7 @@ int main(int argc,char *argv[])
 		>> option('4',"keygen",test_gen_key,"Test key generation.")
 		>> option('5',"signature",test_signature,"Test signature.")
 		>> option('6',"output",test_output,"Test output.")
+		>> option('7',"memory-encryption",test_memory_encryption,"Test output.")
 		>> option('F',"fulltest",full_test,"Test everything.")
 		>> parameter('f',"file",file_to_encrypt,"File to encrypt. Used with -3",false)
 		>> parameter('p',"pubring",pubring_file,"Public keyring file.",false)
@@ -125,7 +128,7 @@ int main(int argc,char *argv[])
 	as.defaultErrorHandling() ;
 
 	if(!full_test)
-		if(test_pgpid_type + test_keyring_read + test_file_encryption + test_gen_key + test_signature + test_output != 1)
+		if(test_pgpid_type + test_keyring_read + test_file_encryption + test_gen_key + test_signature + test_output + test_memory_encryption != 1)
 		{
 			std::cerr << "Options 1 to 6 are mutually exclusive." << std::endl;
 			return 1; 
@@ -324,6 +327,60 @@ int main(int argc,char *argv[])
 
 		CHECK(decrypted_text == text_to_encrypt) ;
 	}
+
+	if(full_test || test_memory_encryption)
+	{
+		if(key_id_string.empty())
+			key_id_string = askForKeyId(pgph) ;
+
+		static const int MEM_TO_ENCRYPT_SIZE = 10000 ;
+
+		PGPIdType key_id(key_id_string) ;
+
+		unsigned char *memory_to_encrypt = new unsigned char[MEM_TO_ENCRYPT_SIZE] ;
+		RSRandom::random_bytes(memory_to_encrypt,MEM_TO_ENCRYPT_SIZE) ;
+
+		Sha1CheckSum original_sha1 = RsDirUtil::sha1sum(memory_to_encrypt,MEM_TO_ENCRYPT_SIZE) ;
+
+		std::cerr << "Checking encrypted memory block creation:" << std::endl;
+		std::cerr << "  mem block size = " << MEM_TO_ENCRYPT_SIZE << std::endl;
+		std::cerr << "  mem block hash = " << original_sha1.toStdString() << std::endl;
+
+		uint32_t encrypted_mem_size = MEM_TO_ENCRYPT_SIZE + 1000 ;
+		unsigned char *encrypted_mem_block = new unsigned char[encrypted_mem_size] ;
+
+		bool res = pgph.encryptDataBin(key_id,memory_to_encrypt,MEM_TO_ENCRYPT_SIZE,encrypted_mem_block,&encrypted_mem_size) ;
+
+		CHECK(res) ;
+
+		if(!res)
+			std::cerr << "Encryption failed" << std::endl;
+		else
+			std::cerr << "Encryption success" << std::endl;
+
+		std::cerr << "Encryption done: size = " << encrypted_mem_size << std::endl;
+		std::cerr << "Now testing decryption of the same block." << std::endl;
+
+		uint32_t decrypted_mem_size = encrypted_mem_size + 1000 ;
+		unsigned char *decrypted_mem = new unsigned char[decrypted_mem_size] ;
+
+		res = pgph.decryptDataBin(key_id,encrypted_mem_block,encrypted_mem_size,decrypted_mem,&decrypted_mem_size) ;
+
+		CHECK(res) ;
+
+		if(!res)
+			std::cerr << "Decryption failed" << std::endl;
+		else
+			std::cerr << "Decryption success" << std::endl;
+
+		Sha1CheckSum decrypted_sha1 = RsDirUtil::sha1sum(decrypted_mem,decrypted_mem_size) ;
+		
+		std::cerr << "Decrypted size: " << decrypted_mem_size << std::endl;
+		std::cerr << "Decrypted hash: " << decrypted_sha1.toStdString() << std::endl;
+
+		CHECK(original_sha1 == decrypted_sha1) ;
+	}
+
 
 	FINALREPORT("PGP Handler test") ;
 	return TESTRESULT() ;
