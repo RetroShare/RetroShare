@@ -205,7 +205,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     msgwheader->resizeSection (COLUMN_SUBJECT,      250);
     msgwheader->resizeSection (COLUMN_UNREAD,       16);
     msgwheader->resizeSection (COLUMN_FROM,         140);
-    msgwheader->resizeSection (COLUMN_SIGNATURE,    16);
+    msgwheader->resizeSection (COLUMN_SIGNATURE,    24);
     msgwheader->resizeSection (COLUMN_DATE,         140);
     msgwheader->resizeSection (COLUMN_STAR,         16);
 
@@ -247,7 +247,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     msgwheader->setResizeMode (COLUMN_UNREAD, QHeaderView::Fixed);
     msgwheader->setResizeMode (COLUMN_SIGNATURE, QHeaderView::Fixed);
     msgwheader->resizeSection (COLUMN_UNREAD, 24);
-    msgwheader->resizeSection (COLUMN_SIGNATURE, 16);
+    msgwheader->resizeSection (COLUMN_SIGNATURE, 24);
     msgwheader->resizeSection (COLUMN_STAR, 24);
     msgwheader->setResizeMode (COLUMN_STAR, QHeaderView::Fixed);
     msgwheader->setStretchLastSection(false);
@@ -1215,13 +1215,22 @@ void MessagesDialog::insertMessages()
             }
 
 				if(it->msgflags & RS_MSG_ENCRYPTED)
+				{
 					item[COLUMN_SIGNATURE]->setIcon(QIcon(":/images/blue_lock.png")) ;
+					item[COLUMN_SIGNATURE]->setToolTip(tr("This message is encrypted. Right click to decrypt it.")) ;
+				}
 				else 
 					if(it->msgflags & RS_MSG_SIGNED) 
 						if(it->msgflags & RS_MSG_SIGNATURE_CHECKS)
+						{
 							item[COLUMN_SIGNATURE]->setIcon(QIcon(":/images/stock_signature_ok.png")) ;
+							item[COLUMN_SIGNATURE]->setToolTip(tr("This message was signed and the signature checks")) ;
+						}
 						else
+						{
 							item[COLUMN_SIGNATURE]->setIcon(QIcon(":/images/stock_signature_bad.png")) ;
+							item[COLUMN_SIGNATURE]->setToolTip(tr("This message was signed but the signature doesn't check")) ;
+						}
 					else
 						item[COLUMN_SIGNATURE]->setIcon(QIcon()) ;
 

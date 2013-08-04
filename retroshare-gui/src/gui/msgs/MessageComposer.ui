@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>796</width>
-    <height>624</height>
+    <height>682</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -634,6 +634,16 @@
                 </property>
                </widget>
               </item>
+              <item row="0" column="13">
+               <widget class="QCheckBox" name="signMessage_CB">
+                <property name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Check this to cryptographically sign your message. This is only recommended for distant messages, since messages for your connected friends cannot be spoofed.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
+                <property name="text">
+                 <string>Sign message</string>
+                </property>
+               </widget>
+              </item>
              </layout>
             </item>
            </layout>
@@ -839,7 +849,7 @@
      <x>0</x>
      <y>0</y>
      <width>796</width>
-     <height>20</height>
+     <height>25</height>
     </rect>
    </property>
   </widget>

@@ -1,6 +1,8 @@
 <RCC>
     <qresource prefix="/" >
-        <file>images/anonymous_128_green.png</file>
+        <file>images/blue_lock.png</file>
+        <file>images/stock_signature_bad.png</file>
+        <file>images/stock_signature_ok.png</file>
         <file>images/anonymous_128_blue.png</file>
         <file>images/browsable_128_green.png</file>
         <file>images/browsable_128_blue.png</file>
