@@ -69,7 +69,7 @@ bool GeneralPage::save(QString &/*errmsg*/)
 {
   Settings->setStartMinimized(ui.checkStartMinimized->isChecked());
   Settings->setValue("doQuit", ui.checkQuit->isChecked());
-  Settings->setCloseToTray(ui.checkClosetoTray->isChecked());
+  Settings->setCloseToTray(ui.checkCloseToTray->isChecked());
 
 #ifdef Q_WS_WIN
   Settings->setRunRetroshareOnBoot(ui.chkRunRetroshareAtSystemStartup->isChecked(), ui.chkRunRetroshareAtSystemStartupMinimized->isChecked());
@@ -117,7 +117,7 @@ void GeneralPage::load()
   ui.checkStartMinimized->setChecked(Settings->getStartMinimized());
   ui.checkQuit->setChecked(Settings->value("doQuit", false).toBool());
 
-  ui.checkClosetoTray->setChecked(Settings->getCloseToTray());
+  ui.checkCloseToTray->setChecked(Settings->getCloseToTray());
   
   ui.spinBox->setValue(Settings->getMaxTimeBeforeIdle());
 

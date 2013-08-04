@@ -266,12 +266,12 @@ void RshareSettings::setStartMinimized(bool startMinimized)
 
 bool RshareSettings::getCloseToTray()
 {
-  return value("ClosetoTray", false).toBool();
+  return value("CloseToTray", true).toBool();
 }
 
 void RshareSettings::setCloseToTray(bool closeToTray)
 {
-  setValue("ClosetoTray", closeToTray);
+  setValue("CloseToTray", closeToTray);
 }
 
 /** Setting for Notify / Chat and NewsFeeds **/

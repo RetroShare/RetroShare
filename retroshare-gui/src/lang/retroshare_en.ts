@@ -5360,10 +5360,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Welcome to RetroShare&apos;s group chat.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Paste RetroShare Link</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5397,6 +5393,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Friends&lt;/h1&gt;                                   		  &lt;p&gt;The Friends tab shows...your friends: the list of persons you have accepted to connect to.                   		  &lt;/p&gt;                                                   		  &lt;p&gt;You can group friends together to allow a finer level of information access, for instance to only allow      		  some friends to see some files.&lt;/p&gt; 		  &lt;p&gt;On the right, you will find 3 useful tabs:                                                                   		  &lt;ul&gt;	                                                                                                         		  		&lt;li&gt;Broadcast sends messages to all connected friends at once&lt;/li&gt;                             		  		&lt;li&gt;Local Network shows the network around you, including friends of your friends&lt;/li&gt;                 		  		&lt;li&gt;Keyring contains keys you collected, mostly forwarded to you by your friends&lt;/li&gt;                              		  &lt;/ul&gt; &lt;/p&gt;                                                                                                      		</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Retroshare broadcast chat: messages are sent to all connected friends.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5772,10 +5772,6 @@ Fill in your PGP password when asked, to sign your new key.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Do not Minimize to Tray Icon</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Auto Login</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5817,6 +5813,10 @@ Fill in your PGP password when asked, to sign your new key.</source>
     </message>
     <message>
         <source>General</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Minimize to Tray Icon</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5992,49 +5992,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>RetroShare Support</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add ChatServer to access Forums</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Add ChatServer</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:12pt;&quot;&gt;No friends? Add ChatServer to access the forum and chat with new people. Click on the Button to start the process.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:12pt;&quot;&gt;Just paste your certificat on the RetroShare key Text area. (Your key was already copied) &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:12pt;&quot;&gt;After enter Captcha code and validate, copy the ChatServer key.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:12pt;&quot;&gt;Then continue the process.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>RetroShare</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Sorry, create certificate failed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Your Cert is copied to Clipboard, paste it to next opened web page.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Copy the returned key after validating the captcha code.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Next click continue button.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Is ChatServer key copied.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7567,10 +7524,6 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>MainWindow</name>
     <message>
-        <source>MainWindow</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Add Friend</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8212,7 +8165,11 @@ Do you want to save message ?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Distant peer (PGP key: %1)</source>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Cryptographically sign message to distant peers. This is prevents intermediate peers to spoof your identity.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Distant peer (name: %2, PGP key: %1)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8268,6 +8225,18 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Distant messages:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;The link below allows people in the network to send encrypted messages to you, using tunnels. To do that, they need your public PGP key, which they will get using the Retroshare discovery system. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Accept encrypted distant messages from everyone</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8798,7 +8767,27 @@ Do you want to save message ?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Messages&lt;/h1&gt;                                                         				 &lt;p&gt;Messages are like e-mail: you send/receive them from your friends when both of you				 are connected.&lt;/p&gt;				 &lt;p&gt;Some additional features allow to exchange data in messages: you can recommend files to your friends,				 or recommend friends to be for other friends to streathen your network.&lt;/p&gt;				 </source>
+        <source>Click to sort by signature</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Messages&lt;/h1&gt;                         			 &lt;p&gt;Messages are like &lt;b&gt;e-mail&lt;/b&gt;: you send/receive them from your friends when both of you	are connected.&lt;/p&gt; 			 &lt;p&gt;It is also possible to send messages to non friends, using tunnels. Such messages are always encrypted. It is 			 recommended to cryptographically sign distant messages, as a proof of your identity, using the &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; button 			 in the message composer window. Distant messages are not guarrantied to arrive, since this requires the distant peer to accept them (You need yourself to switch this on in Config-Messages).&lt;/p&gt;			 &lt;p&gt;Some additional features allow you to exchange data in messages: you may recommend files to your friends by pasting file links, 			 or recommend friends-to-be to other friends, in order to streathen your network.&lt;/p&gt;	                   			 </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This message is encrypted. Right click to decrypt it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This message was signed and the signature checks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This message was signed but the signature doesn&apos;t check</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This message is not encrypted. Cannot decrypt!</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

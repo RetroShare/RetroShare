@@ -1012,30 +1012,26 @@ void MainWindow::displayErrorMessage(int /*a*/,int /*b*/,const QString& error_ms
 
 void MainWindow::closeEvent(QCloseEvent *e)
 {
-    static bool firstTime = true;
+    e->ignore();
 
-   if(!Settings->getCloseToTray())
-   {
-      if (trayIcon->isVisible()) {
-          if (firstTime)
-          {
+    if (Settings->getCloseToTray())
+    {
+        if (trayIcon->isVisible()) {
 /*****
-            QMessageBox::information(this, tr("RetroShare System tray"),
-            tr("Application will continue running. Quit using context menu in the system tray"));
-*****/
-            firstTime = false;
-          }
-          hide();
-          e->ignore();
-      }
-   }
-   else   
-   {
-       rsicontrol->rsGlobalShutDown();
-       rApp->quit();
-   }
-   
+            static bool firstTime = true;
 
+            if (firstTime)
+            {
+                QMessageBox::information(this, tr("RetroShare System tray"), tr("Application will continue running. Quit using context menu in the system tray"));
+                firstTime = false;
+            }
+*****/
+            hide();
+        }
+        return;
+    }
+
+    doQuit();
 }
 
 void MainWindow::updateMenu()
