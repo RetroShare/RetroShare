@@ -46,7 +46,7 @@
 #include <map>
 
 #define DEBUG_DISTANT_MSG
-#define DISABLE_DISTANT_MESSAGES 
+//#define DISABLE_DISTANT_MESSAGES 
 
 const int msgservicezone = 54319;
 

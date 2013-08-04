@@ -209,8 +209,8 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
     /* initialize friends list */
     ui.friendSelectionWidget->setHeaderText(tr("Send To:"));
     ui.friendSelectionWidget->setModus(FriendSelectionWidget::MODUS_MULTI);
-    //ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_GROUP | FriendSelectionWidget::SHOW_SSL | FriendSelectionWidget::SHOW_NON_FRIEND_GPG );
-    ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_GROUP | FriendSelectionWidget::SHOW_SSL );
+    ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_GROUP | FriendSelectionWidget::SHOW_SSL | FriendSelectionWidget::SHOW_NON_FRIEND_GPG );
+    //ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_GROUP | FriendSelectionWidget::SHOW_SSL );
     ui.friendSelectionWidget->start();
 
     QActionGroup *grp = new QActionGroup(this);
@@ -1287,7 +1287,9 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
             return false; // Don't send with no recipient
         }
 		  mi.encryption_keys = _distant_peers ;
-		  mi.msgflags |= RS_MSG_SIGNED ;
+
+		  if(ui.signMessage_CB->isChecked())
+			  mi.msgflags |= RS_MSG_SIGNED ;
 
         if (rsMsgs->MessageSend(mi) == false) {
             return false;

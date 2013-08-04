@@ -49,7 +49,7 @@ MessagePage::MessagePage(QWidget * parent, Qt::WFlags flags)
     ui.openComboBox->addItem(tr("A new tab"), RshareSettings::MSG_OPEN_TAB);
     ui.openComboBox->addItem(tr("A new window"), RshareSettings::MSG_OPEN_WINDOW);
 
-	 ui.encryptedMsgs_CB->setEnabled(false) ;
+	 //ui.encryptedMsgs_CB->setEnabled(false) ;
 }
 
 MessagePage::~MessagePage()
