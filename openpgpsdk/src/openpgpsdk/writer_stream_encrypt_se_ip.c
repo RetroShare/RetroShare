@@ -118,7 +118,7 @@ void ops_writer_push_stream_encrypt_se_ip(ops_create_info_t *cinfo,
     // This is a streaming writer, so we don't know the length in
     // advance. Use a partial writer to handle the partial body
     // packet lengths.
-    ops_writer_push_partial(2048, cinfo, OPS_PTAG_CT_SE_IP_DATA,
+    ops_writer_push_partial(PARTIAL_PACKET_SIZE, cinfo, OPS_PTAG_CT_SE_IP_DATA,
 			    write_encrypt_se_ip_header, arg);
 
     // And push encryption writer on stack

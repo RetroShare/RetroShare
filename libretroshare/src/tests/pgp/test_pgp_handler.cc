@@ -299,6 +299,10 @@ int main(int argc,char *argv[])
 		PGPIdType key_id(key_id_string) ;
 		std::string outfile = "crypted_toto.pgp" ;
 		std::string text_to_encrypt = "this is a secret message" ;
+		std::string text = "fhdsjfhskfhdsjhfskhfkdsfskfhsdhdsj" ;
+
+		for(int i=0;i<2;++i)
+			text_to_encrypt += text ;
 
 		std::cerr << "Checking encrypted file creation: streaming chain \"" << text_to_encrypt << "\" to file " << outfile << " with key " << key_id.toStdString() << std::endl;
 
@@ -333,7 +337,7 @@ int main(int argc,char *argv[])
 		if(key_id_string.empty())
 			key_id_string = askForKeyId(pgph) ;
 
-		static const int MEM_TO_ENCRYPT_SIZE = 10000 ;
+		static const int MEM_TO_ENCRYPT_SIZE = 20000 ;
 
 		PGPIdType key_id(key_id_string) ;
 
@@ -353,6 +357,11 @@ int main(int argc,char *argv[])
 
 		CHECK(res) ;
 
+		// dump to a file
+		FILE *f = fopen("crypted_toto.bin","w") ;
+		fwrite(encrypted_mem_block,encrypted_mem_size,1,f) ;
+		fclose(f) ;
+
 		if(!res)
 			std::cerr << "Encryption failed" << std::endl;
 		else
@@ -368,10 +377,10 @@ int main(int argc,char *argv[])
 
 		CHECK(res) ;
 
-		if(!res)
-			std::cerr << "Decryption failed" << std::endl;
-		else
+		if(res && decrypted_mem_size == MEM_TO_ENCRYPT_SIZE)
 			std::cerr << "Decryption success" << std::endl;
+		else
+			std::cerr << "Decryption failed" << std::endl;
 
 		Sha1CheckSum decrypted_sha1 = RsDirUtil::sha1sum(decrypted_mem,decrypted_mem_size) ;
 		

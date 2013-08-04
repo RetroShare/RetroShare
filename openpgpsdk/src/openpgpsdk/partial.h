@@ -26,6 +26,16 @@
 #include "types.h"
 #include "writer.h"
 
+// (Cyril) Originally 2048. But for the moment openpgp-sdk cannot read partial packets, so in order
+// to allow to PGP-encrypt messages of reasonnable size, I had to turn it into  larger value. 
+//
+#define PARTIAL_PACKET_SIZE     1048576
+
+// (Cyril) Originally 512. But for the moment openpgp-sdk cannot read partial packets, so in order
+// to allow to PGP-encrypt messages of reasonnable size, I had to turn it into  larger value. 
+//
+#define MIN_PARTIAL_DATA_LENGTH 1048576
+
 /**
  * Function that writes out a packet header. See
  * ops_writer_push_partial

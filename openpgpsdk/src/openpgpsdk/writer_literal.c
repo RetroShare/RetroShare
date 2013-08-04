@@ -34,7 +34,7 @@
 #include <openpgpsdk/literal.h>
 #include <openpgpsdk/partial.h>
 
-#define MIN_PARTIAL_DATA_LENGTH 512
+//#define MIN_PARTIAL_DATA_LENGTH 512	// now defined in partial.h
 #define MAX_PARTIAL_DATA_LENGTH 1073741824
 
 

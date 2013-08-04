@@ -40,8 +40,6 @@
 
 static const int debug = 0;
 
-#define PACKET_SIZE             2048
-#define MIN_PARTIAL_DATA_LENGTH 512
 #define MAX_PARTIAL_DATA_LENGTH 1073741824
 
 typedef struct
@@ -349,7 +347,7 @@ void ops_writer_push_partial_with_trailer(
     void *trailer_data)
     {
     if (packet_size == 0)
-	packet_size = PACKET_SIZE;
+	packet_size = MIN_PARTIAL_DATA_LENGTH;
     assert(packet_size >= MIN_PARTIAL_DATA_LENGTH);
     // Verify that the packet size is a valid power of 2.
     assert(ops_calc_partial_data_length(packet_size) == packet_size);
