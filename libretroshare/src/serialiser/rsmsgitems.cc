@@ -511,9 +511,7 @@ bool RsChatMsgItem::serialise(void *data, uint32_t& pktsize)
 	if (offset != tlvsize)
 	{
 		ok = false;
-#ifdef CHAT_DEBUG
 		std::cerr << "RsChatSerialiser::serialiseItem() Size Error! " << std::endl;
-#endif
 	}
 #ifdef CHAT_DEBUG
 	std::cerr << "computed size: " << 256*((unsigned char*)data)[6]+((unsigned char*)data)[7] << std::endl ;
@@ -555,9 +553,7 @@ bool RsChatLobbyMsgItem::serialise(void *data, uint32_t& pktsize)
 	if (offset != tlvsize)
 	{
 		ok = false;
-#ifdef CHAT_DEBUG
 		std::cerr << "RsChatSerialiser::serialiseItem() Size Error! " << std::endl;
-#endif
 	}
 #ifdef CHAT_DEBUG
 	std::cerr << "computed size: " << 256*((unsigned char*)data)[6]+((unsigned char*)data)[7] << std::endl ;
@@ -605,9 +601,7 @@ bool RsChatLobbyListItem_deprecated::serialise(void *data, uint32_t& pktsize)
 	if (offset != tlvsize)
 	{
 		ok = false;
-#ifdef CHAT_DEBUG
 		std::cerr << "RsChatSerialiser::serialiseItem() Size Error! " << std::endl;
-#endif
 	}
 	return ok ;
 }
@@ -640,9 +634,7 @@ bool RsChatLobbyListItem_deprecated2::serialise(void *data, uint32_t& pktsize)
 	if (offset != tlvsize)
 	{
 		ok = false;
-#ifdef CHAT_DEBUG
 		std::cerr << "RsChatSerialiser::serialiseItem() Size Error! " << std::endl;
-#endif
 	}
 	return ok ;
 }
@@ -676,9 +668,7 @@ bool RsChatLobbyListItem::serialise(void *data, uint32_t& pktsize)
 	if (offset != tlvsize)
 	{
 		ok = false;
-#ifdef CHAT_DEBUG
 		std::cerr << "RsChatSerialiser::serialiseItem() Size Error! " << std::endl;
-#endif
 	}
 	return ok ;
 }
@@ -704,9 +694,7 @@ bool RsChatLobbyEventItem::serialise(void *data, uint32_t& pktsize)
 	if (offset != tlvsize)
 	{
 		ok = false;
-#ifdef CHAT_DEBUG
 		std::cerr << "RsChatSerialiser::serialiseItem() Size Error! " << std::endl;
-#endif
 	}
 #ifdef CHAT_DEBUG
 	std::cerr << "computed size: " << 256*((unsigned char*)data)[6]+((unsigned char*)data)[7] << std::endl ;
@@ -730,9 +718,7 @@ bool RsChatLobbyUnsubscribeItem::serialise(void *data, uint32_t& pktsize)
 	if (offset != tlvsize)
 	{
 		ok = false;
-#ifdef CHAT_DEBUG
 		std::cerr << "RsChatSerialiser::serialiseItem() Size Error! " << std::endl;
-#endif
 	}
 #ifdef CHAT_DEBUG
 	std::cerr << "computed size: " << 256*((unsigned char*)data)[6]+((unsigned char*)data)[7] << std::endl ;
@@ -756,9 +742,7 @@ bool RsChatLobbyConnectChallengeItem::serialise(void *data, uint32_t& pktsize)
 	if (offset != tlvsize)
 	{
 		ok = false;
-#ifdef CHAT_DEBUG
 		std::cerr << "RsChatSerialiser::serialiseItem() Size Error! " << std::endl;
-#endif
 	}
 #ifdef CHAT_DEBUG
 	std::cerr << "computed size: " << 256*((unsigned char*)data)[6]+((unsigned char*)data)[7] << std::endl ;
@@ -785,9 +769,7 @@ bool RsChatLobbyInviteItem::serialise(void *data, uint32_t& pktsize)
 	if (offset != tlvsize)
 	{
 		ok = false;
-#ifdef CHAT_DEBUG
 		std::cerr << "RsChatSerialiser::serialiseItem() Size Error! " << std::endl;
-#endif
 	}
 #ifdef CHAT_DEBUG
 	std::cerr << "computed size: " << 256*((unsigned char*)data)[6]+((unsigned char*)data)[7] << std::endl ;
@@ -830,9 +812,7 @@ bool RsPrivateChatMsgConfigItem::serialise(void *data, uint32_t& pktsize)
 	if (offset != tlvsize)
 	{
 		ok = false;
-#ifdef CHAT_DEBUG
 		std::cerr << "RsChatSerialiser::serialiseItem() Size Error! " << std::endl;
-#endif
 	}
 
 	return ok;
@@ -873,9 +853,7 @@ bool RsPrivateChatDistantInviteConfigItem::serialise(void *data, uint32_t& pktsi
 	if (offset != tlvsize)
 	{
 		ok = false;
-#ifdef CHAT_DEBUG
 		std::cerr << "RsChatSerialiser::serialiseItem() Size Error! " << std::endl;
-#endif
 	}
 
 	return ok;
@@ -910,9 +888,7 @@ bool RsChatStatusItem::serialise(void *data, uint32_t& pktsize)
 	if (offset != tlvsize)
 	{
 		ok = false;
-#ifdef CHAT_DEBUG
 		std::cerr << "RsChatSerialiser::serialiseItem() Size Error! " << std::endl;
-#endif
 	}
 #ifdef CHAT_DEBUG
 	std::cerr << "computed size: " << 256*((unsigned char*)data)[6]+((unsigned char*)data)[7] << std::endl ;
@@ -953,9 +929,7 @@ bool RsChatAvatarItem::serialise(void *data, uint32_t& pktsize)
 	if (offset != tlvsize)
 	{
 		ok = false;
-#ifdef CHAT_DEBUG
 		std::cerr << "RsChatSerialiser::serialiseItem() Size Error! " << std::endl;
-#endif
 	}
 #ifdef CHAT_DEBUG
 	std::cerr << "computed size: " << 256*((unsigned char*)data)[6]+((unsigned char*)data)[7] << std::endl ;
@@ -992,9 +966,7 @@ bool RsChatLobbyConfigItem::serialise(void *data, uint32_t& pktsize)
     if (offset != tlvsize)
     {
         ok = false;
-#ifdef CHAT_DEBUG
         std::cerr << "RsChatLobbyConfigItem::serialise() Size Error! " << std::endl;
-#endif
     }
 
     return ok;
@@ -1388,11 +1360,6 @@ RsChatAvatarItem::RsChatAvatarItem(void *data,uint32_t /*size*/)
 /*************************************************************************/
 
 
-RsMsgItem::~RsMsgItem()
-{
-	return;
-}
-
 void 	RsMsgItem::clear()
 {
 	msgId    = 0;
@@ -1457,7 +1424,6 @@ void RsMsgTagType::clear()
 	tagId = 0;
 	rgb_color = 0;
 }
-
 
 void RsPublicMsgInviteConfigItem::clear()
 {
@@ -1527,30 +1493,20 @@ std::ostream& RsMsgTags::print(std::ostream &out, uint16_t indent)
 	return out;
 }
 
-RsMsgTagType::~RsMsgTagType()
-{
-	return;
-}
-
-RsMsgTags::~RsMsgTags()
-{
-	return;
-}
-
-uint32_t    RsMsgSerialiser::sizeMsgItem(RsMsgItem *item)
+uint32_t    RsMsgItem::serial_size(bool m_bConfiguration)
 {
 	uint32_t s = 8; /* header */
 	s += 4; /* msgFlags */
 	s += 4; /* sendTime  */
 	s += 4; /* recvTime  */
 
-	s += GetTlvWideStringSize(item->subject);
-	s += GetTlvWideStringSize(item->message);
+	s += GetTlvWideStringSize(subject);
+	s += GetTlvWideStringSize(message);
 
-	s += item->msgto.TlvSize();
-	s += item->msgcc.TlvSize();
-	s += item->msgbcc.TlvSize();
-	s += item->attachment.TlvSize();
+	s += msgto.TlvSize();
+	s += msgcc.TlvSize();
+	s += msgbcc.TlvSize();
+	s += attachment.TlvSize();
 
 	if (m_bConfiguration) {
 		// serialise msgId too
@@ -1561,19 +1517,19 @@ uint32_t    RsMsgSerialiser::sizeMsgItem(RsMsgItem *item)
 }
 
 /* serialise the data to the buffer */
-bool     RsMsgSerialiser::serialiseMsgItem(RsMsgItem *item, void *data, uint32_t *pktsize)
+bool     RsMsgItem::serialise(void *data, uint32_t& pktsize,bool config)
 {
-	uint32_t tlvsize = sizeMsgItem(item);
+	uint32_t tlvsize = serial_size( config) ;
 	uint32_t offset = 0;
 
-	if (*pktsize < tlvsize)
+	if (pktsize < tlvsize)
 		return false; /* not enough space */
 
-	*pktsize = tlvsize;
+	pktsize = tlvsize;
 
 	bool ok = true;
 
-	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
+	ok &= setRsItemHeader(data, tlvsize, PacketId(), tlvsize);
 
 #ifdef RSSERIAL_DEBUG
 	std::cerr << "RsMsgSerialiser::serialiseItem() Header: " << ok << std::endl;
@@ -1584,30 +1540,26 @@ bool     RsMsgSerialiser::serialiseMsgItem(RsMsgItem *item, void *data, uint32_t
 	offset += 8;
 
 	/* add mandatory parts first */
-	ok &= setRawUInt32(data, tlvsize, &offset, item->msgFlags);
-	ok &= setRawUInt32(data, tlvsize, &offset, item->sendTime);
-	ok &= setRawUInt32(data, tlvsize, &offset, item->recvTime);
+	ok &= setRawUInt32(data, tlvsize, &offset, msgFlags);
+	ok &= setRawUInt32(data, tlvsize, &offset, sendTime);
+	ok &= setRawUInt32(data, tlvsize, &offset, recvTime);
 
-	ok &= SetTlvWideString(data,tlvsize,&offset,TLV_TYPE_WSTR_SUBJECT,item->subject);
-	ok &= SetTlvWideString(data, tlvsize, &offset, TLV_TYPE_WSTR_MSG, item->message);
+	ok &= SetTlvWideString(data,tlvsize,&offset,TLV_TYPE_WSTR_SUBJECT,subject);
+	ok &= SetTlvWideString(data, tlvsize, &offset, TLV_TYPE_WSTR_MSG, message);
 
-	ok &= item->msgto.SetTlv(data, tlvsize, &offset);
-	ok &= item->msgcc.SetTlv(data, tlvsize, &offset);
-	ok &= item->msgbcc.SetTlv(data, tlvsize, &offset);
+	ok &= msgto.SetTlv(data, tlvsize, &offset);
+	ok &= msgcc.SetTlv(data, tlvsize, &offset);
+	ok &= msgbcc.SetTlv(data, tlvsize, &offset);
 
-	ok &= item->attachment.SetTlv(data, tlvsize, &offset);
+	ok &= attachment.SetTlv(data, tlvsize, &offset);
 
-	if (m_bConfiguration) {
-		// serialise msgId too
-		ok &= setRawUInt32(data, tlvsize, &offset, item->msgId);
-	}
+	if (config) // serialise msgId too
+		ok &= setRawUInt32(data, tlvsize, &offset, msgId);
 
 	if (offset != tlvsize)
 	{
 		ok = false;
-#ifdef RSSERIAL_DEBUG
 		std::cerr << "RsMsgSerialiser::serialiseItem() Size Error! " << std::endl;
-#endif
 	}
 
 	return ok;
@@ -1677,40 +1629,40 @@ RsMsgItem *RsMsgSerialiser::deserialiseMsgItem(void *data, uint32_t *pktsize)
 
 	return item;
 }
-uint32_t RsMsgSerialiser::sizePublicMsgInviteConfigItem(RsPublicMsgInviteConfigItem* item)
+uint32_t RsPublicMsgInviteConfigItem::serial_size(bool)
 {
 	uint32_t s = 8; /* header */
 
-	s += GetTlvStringSize(item->hash);
+	s += GetTlvStringSize(hash);
 	s += 4; /* time_stamp */
 
 	return s;
 }
 
-uint32_t RsMsgSerialiser::sizeTagItem(RsMsgTagType* item)
+uint32_t RsMsgTagType::serial_size(bool)
 {
 	uint32_t s = 8; /* header */
 
-	s += GetTlvStringSize(item->text);
+	s += GetTlvStringSize(text);
 	s +=  4; /* color */
 	s += 4; /* tag id */
 
 	return s;
 }
 
-bool RsMsgSerialiser::serialisePublicMsgInviteConfigItem(RsPublicMsgInviteConfigItem *item, void *data, uint32_t* pktsize)
+bool RsPublicMsgInviteConfigItem::serialise(void *data, uint32_t& pktsize,bool config)
 {
-	uint32_t tlvsize = sizePublicMsgInviteConfigItem(item);
+	uint32_t tlvsize = serial_size(config) ;
 	uint32_t offset = 0;
 
-	if (*pktsize < tlvsize)
+	if (pktsize < tlvsize)
 		return false; /* not enough space */
 
-	*pktsize = tlvsize;
+	pktsize = tlvsize;
 
 	bool ok = true;
 
-	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
+	ok &= setRsItemHeader(data, tlvsize, PacketId(), tlvsize);
 
 #ifdef RSSERIAL_DEBUG
 	std::cerr << "RsMsgSerialiser::serialiseMsgTagItem() Header: " << ok << std::endl;
@@ -1722,34 +1674,32 @@ bool RsMsgSerialiser::serialisePublicMsgInviteConfigItem(RsPublicMsgInviteConfig
 
 	/* add mandatory parts first */
 
-	ok &= SetTlvString(data,tlvsize,&offset, TLV_TYPE_STR_HASH_SHA1, item->hash);
-	ok &= setRawUInt32(data,tlvsize,&offset, item->time_stamp);
+	ok &= SetTlvString(data,tlvsize,&offset, TLV_TYPE_STR_HASH_SHA1, hash);
+	ok &= setRawUInt32(data,tlvsize,&offset, time_stamp);
 
 	if (offset != tlvsize)
 	{
 		ok = false;
-#ifdef RSSERIAL_DEBUG
 		std::cerr << "RsMsgSerialiser::serialiseMsgTagItem() Size Error! " << std::endl;
-#endif
 	}
 
 	return ok;
 }
 
 
-bool RsMsgSerialiser::serialiseTagItem(RsMsgTagType *item, void *data, uint32_t* pktsize)
+bool RsMsgTagType::serialise(void *data, uint32_t& pktsize,bool config)
 {
-	uint32_t tlvsize = sizeTagItem(item);
+	uint32_t tlvsize = serial_size( config) ;
 	uint32_t offset = 0;
 
-	if (*pktsize < tlvsize)
+	if (pktsize < tlvsize)
 		return false; /* not enough space */
 
-	*pktsize = tlvsize;
+	pktsize = tlvsize;
 
 	bool ok = true;
 
-	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
+	ok &= setRsItemHeader(data, tlvsize, PacketId(), tlvsize);
 
 #ifdef RSSERIAL_DEBUG
 	std::cerr << "RsMsgSerialiser::serialiseMsgTagItem() Header: " << ok << std::endl;
@@ -1761,16 +1711,14 @@ bool RsMsgSerialiser::serialiseTagItem(RsMsgTagType *item, void *data, uint32_t*
 
 	/* add mandatory parts first */
 
-	ok &= SetTlvString(data,tlvsize,&offset, TLV_TYPE_STR_NAME, item->text);
-	ok &= setRawUInt32(data, tlvsize, &offset, item->rgb_color);
-	ok &= setRawUInt32(data, tlvsize, &offset, item->tagId);
+	ok &= SetTlvString(data,tlvsize,&offset, TLV_TYPE_STR_NAME, text);
+	ok &= setRawUInt32(data, tlvsize, &offset, rgb_color);
+	ok &= setRawUInt32(data, tlvsize, &offset, tagId);
 
 	if (offset != tlvsize)
 	{
 		ok = false;
-#ifdef RSSERIAL_DEBUG
 		std::cerr << "RsMsgSerialiser::serialiseMsgTagItem() Size Error! " << std::endl;
-#endif
 	}
 
 	return ok;
@@ -1882,29 +1830,29 @@ RsMsgTagType* RsMsgSerialiser::deserialiseTagItem(void *data,uint32_t* pktsize)
 	return item;
 }
 
-uint32_t RsMsgSerialiser::sizeMsgTagItem(RsMsgTags* item)
+uint32_t RsMsgTags::serial_size(bool)
 {
 	uint32_t s = 8; /* header */
 
 	s += 4; /* msgId */
-	s += item->tagIds.size() * 4; /* tagIds */
+	s += tagIds.size() * 4; /* tagIds */
 
 	return s;
 }
 
-bool RsMsgSerialiser::serialiseMsgTagItem(RsMsgTags *item, void *data, uint32_t* pktsize)
+bool RsMsgTags::serialise(void *data, uint32_t& pktsize,bool config)
 {
-	uint32_t tlvsize = sizeMsgTagItem(item);
+	uint32_t tlvsize = serial_size( config) ;
 	uint32_t offset = 0;
 
-	if (*pktsize < tlvsize)
+	if (pktsize < tlvsize)
 		return false; /* not enough space */
 
-	*pktsize = tlvsize;
+	pktsize = tlvsize;
 
 	bool ok = true;
 
-	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
+	ok &= setRsItemHeader(data, tlvsize, PacketId(), tlvsize);
 
 #ifdef RSSERIAL_DEBUG
 	std::cerr << "RsMsgSerialiser::serialiseMsgTagItem() Header: " << ok << std::endl;
@@ -1914,20 +1862,16 @@ bool RsMsgSerialiser::serialiseMsgTagItem(RsMsgTags *item, void *data, uint32_t*
 	/* skip the header */
 	offset += 8;
 
-	ok &= setRawUInt32(data,tlvsize,&offset, item->msgId);
+	ok &= setRawUInt32(data,tlvsize,&offset, msgId);
 
-	std::list<uint32_t>::iterator mit = item->tagIds.begin();
-	for(;mit != item->tagIds.end(); mit++)
-	{
+	std::list<uint32_t>::iterator mit = tagIds.begin();
+	for(;mit != tagIds.end(); mit++)
 		ok &= setRawUInt32(data, tlvsize, &offset, *mit);
-	}
 
 	if (offset != tlvsize)
 	{
 		ok = false;
-#ifdef RSSERIAL_DEBUG
 		std::cerr << "RsMsgSerialiser::serialiseMsgTagItem() Size Error! " << std::endl;
-#endif
 	}
 
 	return ok;
@@ -1997,13 +1941,6 @@ RsMsgTags* RsMsgSerialiser::deserialiseMsgTagItem(void* data, uint32_t* pktsize)
 
 /************************************** Message SrcId **********************/
 
-
-
-RsMsgSrcId::~RsMsgSrcId()
-{
-	return;
-}
-
 std::ostream& RsMsgSrcId::print(std::ostream& out, uint16_t indent)
 {
 	printRsItemBase(out, "RsMsgSrcIdItem", indent);
@@ -2029,30 +1966,30 @@ void RsMsgSrcId::clear()
 	return;
 }
 
-uint32_t RsMsgSerialiser::sizeMsgSrcIdItem(RsMsgSrcId* item)
+uint32_t RsMsgSrcId::serial_size(bool)
 {
 	uint32_t s = 8; /* header */
 
 	s += 4;
-	s += GetTlvStringSize(item->srcId);
+	s += GetTlvStringSize(srcId);
 
 	return s;
 }
 
 
-bool RsMsgSerialiser::serialiseMsgSrcIdItem(RsMsgSrcId *item, void *data, uint32_t* pktsize)
+bool RsMsgSrcId::serialise(void *data, uint32_t& pktsize,bool config)
 {
-	uint32_t tlvsize = sizeMsgSrcIdItem(item);
+	uint32_t tlvsize = serial_size(config) ;
 	uint32_t offset = 0;
 
-	if (*pktsize < tlvsize)
+	if (pktsize < tlvsize)
 		return false; /* not enough space */
 
-	*pktsize = tlvsize;
+	pktsize = tlvsize;
 
 	bool ok = true;
 
-	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
+	ok &= setRsItemHeader(data, tlvsize, PacketId(), tlvsize);
 
 #ifdef RSSERIAL_DEBUG
 	std::cerr << "RsMsgSerialiser::serialiseMsgSrcIdItem() Header: " << ok << std::endl;
@@ -2062,15 +1999,13 @@ bool RsMsgSerialiser::serialiseMsgSrcIdItem(RsMsgSrcId *item, void *data, uint32
 	/* skip the header */
 	offset += 8;
 
-	ok &= setRawUInt32(data, tlvsize, &offset, item->msgId);
-	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_PEERID, (item->srcId));
+	ok &= setRawUInt32(data, tlvsize, &offset, msgId);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_PEERID, srcId);
 
 	if (offset != tlvsize)
 	{
 		ok = false;
-#ifdef RSSERIAL_DEBUG
 		std::cerr << "RsMsgSerialiser::serialiseMsgSrcIdItem() Size Error! " << std::endl;
-#endif
 	}
 
 	return ok;
@@ -2132,11 +2067,6 @@ RsMsgSrcId* RsMsgSerialiser::deserialiseMsgSrcIdItem(void* data, uint32_t* pktsi
 
 /************************************** Message ParentId **********************/
 
-RsMsgParentId::~RsMsgParentId()
-{
-	return;
-}
-
 std::ostream& RsMsgParentId::print(std::ostream& out, uint16_t indent)
 {
 	printRsItemBase(out, "RsMsgParentIdItem", indent);
@@ -2162,7 +2092,7 @@ void RsMsgParentId::clear()
 	return;
 }
 
-uint32_t RsMsgSerialiser::sizeMsgParentIdItem(RsMsgParentId* /*item*/)
+uint32_t RsMsgParentId::serial_size(bool)
 {
 	uint32_t s = 8; /* header */
 
@@ -2172,19 +2102,19 @@ uint32_t RsMsgSerialiser::sizeMsgParentIdItem(RsMsgParentId* /*item*/)
 	return s;
 }
 
-bool RsMsgSerialiser::serialiseMsgParentIdItem(RsMsgParentId *item, void *data, uint32_t* pktsize)
+bool RsMsgParentId::serialise(void *data, uint32_t& pktsize,bool config)
 {
-	uint32_t tlvsize = sizeMsgParentIdItem(item);
+	uint32_t tlvsize = serial_size( config) ;
 	uint32_t offset = 0;
 
-	if (*pktsize < tlvsize)
+	if (pktsize < tlvsize)
 		return false; /* not enough space */
 
-	*pktsize = tlvsize;
+	pktsize = tlvsize;
 
 	bool ok = true;
 
-	ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
+	ok &= setRsItemHeader(data, tlvsize, PacketId(), tlvsize);
 
 #ifdef RSSERIAL_DEBUG
 	std::cerr << "RsMsgSerialiser::serialiseMsgParentIdItem() Header: " << ok << std::endl;
@@ -2194,15 +2124,13 @@ bool RsMsgSerialiser::serialiseMsgParentIdItem(RsMsgParentId *item, void *data, 
 	/* skip the header */
 	offset += 8;
 
-	ok &= setRawUInt32(data, tlvsize, &offset, item->msgId);
-	ok &= setRawUInt32(data, tlvsize, &offset, item->msgParentId);
+	ok &= setRawUInt32(data, tlvsize, &offset, msgId);
+	ok &= setRawUInt32(data, tlvsize, &offset, msgParentId);
 
 	if (offset != tlvsize)
 	{
 		ok = false;
-#ifdef RSSERIAL_DEBUG
 		std::cerr << "RsMsgSerialiser::serialiseMsgParentIdItem() Size Error! " << std::endl;
-#endif
 	}
 
 	return ok;
@@ -2261,80 +2189,6 @@ RsMsgParentId* RsMsgSerialiser::deserialiseMsgParentIdItem(void* data, uint32_t*
 }
 
 /************************* end of definition of msgParentId serialisation functions ************************/
-
-uint32_t    RsMsgSerialiser::size(RsItem *i)
-{
-	RsMsgItem *mi;
-	RsMsgTagType *mtt;
-	RsMsgTags *mts;
-	RsMsgSrcId *msi;
-	RsMsgParentId *msp;
-
-	/* in order of frequency */
-	if (NULL != (mi = dynamic_cast<RsMsgItem *>(i)))
-	{
-		return sizeMsgItem(mi);
-	}
-	else if (NULL != (msi = dynamic_cast<RsMsgSrcId *>(i)))
-	{
-		return sizeMsgSrcIdItem(msi);
-	}
-	else if (NULL != (msp = dynamic_cast<RsMsgParentId *>(i)))
-	{
-		return sizeMsgParentIdItem(msp);
-	}
-	else if (NULL != (mtt = dynamic_cast<RsMsgTagType *>(i)))
-	{
-		return sizeTagItem(mtt);
-	}
-	else if (NULL != (mts = dynamic_cast<RsMsgTags *>(i)))
-	{
-		return sizeMsgTagItem(mts);
-	}
-
-	return 0;
-}
-
-bool     RsMsgSerialiser::serialise(RsItem *i, void *data, uint32_t *pktsize)
-{
-#ifdef RSSERIAL_DEBUG
-	std::cerr << "RsMsgSerialiser::serialise()" << std::endl;
-#endif
-
-	RsMsgItem *mi;
-	RsMsgSrcId* msi;
-	RsMsgParentId* msp;
-	RsMsgTagType *mtt;
-	RsMsgTags *mts;
-	RsPublicMsgInviteConfigItem *mtu;
-
-	if (NULL != (mi = dynamic_cast<RsMsgItem *>(i)))
-	{
-		return serialiseMsgItem(mi, data, pktsize);
-	}
-	else if (NULL != (msi = dynamic_cast<RsMsgSrcId *>(i)))
-	{
-		return serialiseMsgSrcIdItem(msi, data, pktsize);
-	}
-	else if (NULL != (msp = dynamic_cast<RsMsgParentId *>(i)))
-	{
-		return serialiseMsgParentIdItem(msp, data, pktsize);
-	}
-	else if (NULL != (mtt = dynamic_cast<RsMsgTagType *>(i)))
-	{
-		return serialiseTagItem(mtt, data, pktsize);
-	}
-	else if (NULL != (mts = dynamic_cast<RsMsgTags *>(i)))
-	{
-		return serialiseMsgTagItem(mts, data, pktsize);
-	}
-	else if (NULL != (mtu = dynamic_cast<RsPublicMsgInviteConfigItem *>(i)))
-	{
-		return serialisePublicMsgInviteConfigItem(mtu, data, pktsize);
-	}
-
-	return false;
-}
 
 RsItem* RsMsgSerialiser::deserialise(void *data, uint32_t *pktsize)
 {
