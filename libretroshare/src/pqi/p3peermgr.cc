@@ -947,6 +947,7 @@ bool p3PeerMgrIMPL::setDynDNS(const std::string &id, const std::string &dyndns)
     {
         RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
         mOwnState.dyndns = dyndns;
+        IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
         return true;
     }
 
