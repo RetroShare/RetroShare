@@ -11,7 +11,7 @@ extern "C"
 }
 
 #include <util/utest.h>
-#include <common/argstream.h>
+#include <util/argstream.h>
 
 INITTEST() ;
 

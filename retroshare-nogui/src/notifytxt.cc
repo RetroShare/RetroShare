@@ -101,9 +101,9 @@ bool NotifyTxt::askForPluginConfirmation(const std::string& plugin_file_name, co
 	return a == 'y' ;
 }
 
-bool NotifyTxt::askForPassword(const std::string& key_details, bool prev_is_bad, std::string& password)
+bool NotifyTxt::askForPassword(const std::string& question, bool prev_is_bad, std::string& password)
 {
-	char *passwd = getpass(("Please enter GPG password for key "+key_details+": ").c_str()) ;
+	char *passwd = getpass(question.c_str()) ;
 	password = passwd;
 
 	return !password.empty();

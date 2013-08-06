@@ -28,7 +28,7 @@
 
 #include "util/rsaes.h"
 #include "util/utest.h"
-#include <common/argstream.h>
+#include <util/argstream.h>
 
 #include <iostream>
 #include <list>

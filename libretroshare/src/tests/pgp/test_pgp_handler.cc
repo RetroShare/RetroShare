@@ -6,7 +6,7 @@
 #include <pgp/pgphandler.h>
 #include <util/utest.h>
 #include <util/rsdir.h>
-#include <common/argstream.h>
+#include <util/argstream.h>
 
 INITTEST() ;
 

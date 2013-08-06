@@ -35,6 +35,7 @@
 #include "util/rswin.h"
 #endif
 
+#include "util/argstream.h"
 #include "util/rsdebug.h"
 #include "util/rsdir.h"
 #include "util/rsrandom.h"
@@ -122,12 +123,11 @@ class RsInitConfig
                 static bool forceExtPort;
                 static bool forceLocalAddr;
                 static unsigned short port;
-                static char inet[256];
+                static std::string inet ;
 
                 /* Logging */
                 static bool haveLogFile;
                 static bool outStderr;
-                static bool haveDebugLevel;
                 static int  debugLevel;
                 static std::string logfname;
 
@@ -183,12 +183,11 @@ bool RsInitConfig::isWindowsXP = false;
 bool RsInitConfig::forceExtPort;
 bool RsInitConfig::forceLocalAddr;
 unsigned short RsInitConfig::port;
-char RsInitConfig::inet[256];
+std::string RsInitConfig::inet;
 
 /* Logging */
 bool RsInitConfig::haveLogFile;
 bool RsInitConfig::outStderr;
-bool RsInitConfig::haveDebugLevel;
 int  RsInitConfig::debugLevel;
 std::string RsInitConfig::logfname;
 
@@ -220,12 +219,11 @@ void RsInit::InitRsConfig()
 	RsInitConfig::outStderr      = false;
 	RsInitConfig::forceExtPort   = false;
 
-	strcpy(RsInitConfig::inet, "127.0.0.1");
+	RsInitConfig::inet = std::string("127.0.0.1");
 
 	RsInitConfig::autoLogin      = false; // .
 	RsInitConfig::startMinimised = false;
 	RsInitConfig::passwd         = "";
-	RsInitConfig::haveDebugLevel = false;
 	RsInitConfig::debugLevel	= PQL_WARNING;
 	RsInitConfig::udpListenerOnly = false;
 
@@ -330,19 +328,12 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 {
 
   /* THIS IS A HACK TO ALLOW WINDOWS TO ACCEPT COMMANDLINE ARGUMENTS */
-
-
-
-
   int argc;
   int i;
 #ifdef USE_CMD_ARGS
   char** argv = argvIgnored;
   argc = argcIgnored;
-
-
 #else
-
   const int MAX_ARGS = 32;
   int j;
   char *argv[MAX_ARGS];
@@ -368,24 +359,16 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
         }
   }
   argc = i;
-
 #endif
 
   for( i=0; i<argc; i++)
-  {
     printf("%d: %s\n", i, argv[i]);
-  }
-
-
-
-
 
 /* for static PThreads under windows... we need to init the library...
  */
   #ifdef PTW32_STATIC_LIB
 	 pthread_win32_process_attach_np();
   #endif
-
 #endif
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
@@ -394,6 +377,41 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
          /* getopt info: every availiable option is listed here. if it is followed by a ':' it
             needs an argument. If it is followed by a '::' the argument is optional.
          */
+			//RsInitConfig::logfname = "" ;
+			//RsInitConfig::inet = "" ;
+
+			argstream as(argc,argv) ;
+
+			as >> option('a',"auto-login"       ,RsInitConfig::autoLogin      ,"AutoLogin (Windows Only) + StartMinimised")
+			   >> option('m',"minimized"        ,RsInitConfig::startMinimised ,"Start minimized."                         )
+			   >> option('s',"stderr"           ,RsInitConfig::outStderr      ,"output to stderr instead of log file."    )
+			   >> option('u',"udp"              ,RsInitConfig::udpListenerOnly,"Only listen to UDP."                      )
+			   >> option('e',"external-port"    ,RsInitConfig::forceExtPort   ,"Use a forwarded external port."           )
+
+			   >> parameter('l',"log-file"      ,RsInitConfig::logfname       ,"logfile"   ,"Set Log filename."                        ,false)
+			   >> parameter('d',"debug-level"   ,RsInitConfig::debugLevel     ,"level"     ,"Set debug level."                         ,false)
+			   >> parameter('w',"password"      ,RsInitConfig::passwd         ,"password"  ,"Set Login Password."                      ,false)
+			   >> parameter('i',"ip-address"    ,RsInitConfig::inet           ,"nnn.nnn.nnn.nnn", "Set IP address to use."                   ,false)
+			   >> parameter('p',"port"          ,RsInitConfig::port           ,"port", "Set listenning port to use."              ,false)
+			   >> parameter('c',"base-dir"      ,RsInitConfig::basedir        ,"directory", "Set base directory."                      ,false)
+			   >> parameter('U',"user-id"       ,prefUserString               ,"ID", "[User Name/GPG id/SSL id] Sets Account to Use, Useful when Autologin is enabled",false)
+			   >> parameter('r',"link"          ,RsInitConfig::RetroShareLink ,"retroshare://...", "Use a given Retroshare Link"              ,false)
+#ifdef LOCALNET_TESTING
+			   >> parameter('R',"restrict-port" ,portRestrictions             ,"port1-port2","Apply port restriction"                   ,false)
+#endif
+				>> help() ;
+
+			as.defaultErrorHandling(true) ;
+
+			if(RsInitConfig::autoLogin)         RsInitConfig::startMinimised = true ;
+			if(RsInitConfig::outStderr)         RsInitConfig::haveLogFile    = false ;
+			if(!RsInitConfig::logfname.empty()) RsInitConfig::haveLogFile    = true;
+			if(!RsInitConfig::inet.empty())     RsInitConfig::forceLocalAddr = true;
+#ifdef LOCALNET_TESTING
+			if(!portRestrictions.empty())       doPortRestrictions           = true;
+#endif
+
+#ifdef SUSPENDED_CODE
 #ifdef LOCALNET_TESTING
          while((c = getopt(argc, argv,"hesamui:p:c:w:l:d:U:r:R:")) != -1)
 #else
@@ -402,85 +420,6 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
          {
                  switch (c)
                  {
-                         case 'a':
-                                 RsInitConfig::autoLogin = true;
-                                 RsInitConfig::startMinimised = true;
-                                 std::cerr << "AutoLogin Allowed / Start Minimised On";
-                                 std::cerr << std::endl;
-                                 break;
-                         case 'm':
-                                 RsInitConfig::startMinimised = true;
-                                 std::cerr << "Start Minimised On";
-                                 std::cerr << std::endl;
-                                 break;
-                         case 'l':
-                                 RsInitConfig::logfname = optarg;
-                                 std::cerr << "LogFile (" << RsInitConfig::logfname;
-                                 std::cerr << ") Selected" << std::endl;
-                                 RsInitConfig::haveLogFile = true;
-                                 break;
-                         case 'w':
-                                 RsInitConfig::passwd = optarg;
-                                 std::cerr << "Password Specified(********" ; //<< RsInitConfig::passwd;
-                                 std::cerr << ") Selected" << std::endl;
-                                 break;
-                         case 'i':
-                                 strncpy(RsInitConfig::inet, optarg, 256);
-                                 std::cerr << "New Inet Addr(" << RsInitConfig::inet;
-                                 std::cerr << ") Selected" << std::endl;
-                                 RsInitConfig::forceLocalAddr = true;
-                                 break;
-                         case 'p':
-                                 RsInitConfig::port = atoi(optarg);
-                                 std::cerr << "New Listening Port(" << RsInitConfig::port;
-                                 std::cerr << ") Selected" << std::endl;
-                                 break;
-                         case 'c':
-                                 RsInitConfig::basedir = optarg;
-                                 std::cerr << "New Base Config Dir(";
-                                 std::cerr << RsInitConfig::basedir;
-                                 std::cerr << ") Selected" << std::endl;
-                                 break;
-                         case 's':
-                                 RsInitConfig::outStderr = true;
-                                 RsInitConfig::haveLogFile = false;
-                                 std::cerr << "Output to Stderr";
-                                 std::cerr << std::endl;
-                                 break;
-                         case 'd':
-                                 RsInitConfig::haveDebugLevel = true;
-                                 RsInitConfig::debugLevel = atoi(optarg);
-                                 std::cerr << "Opt for new Debug Level";
-                                 std::cerr << std::endl;
-                                 break;
-                         case 'u':
-                                 RsInitConfig::udpListenerOnly = true;
-                                 std::cerr << "Opt for only udpListener";
-                                 std::cerr << std::endl;
-                                 break;
-                         case 'e':
-                                 RsInitConfig::forceExtPort = true;
-                                 std::cerr << "Opt for External Port Mode";
-                                 std::cerr << std::endl;
-                                 break;
-                         case 'U':
-                                 prefUserString = optarg;
-                                 std::cerr << "Opt for User Id ";
-                                 std::cerr << std::endl;
-                                 break;
-                         case 'r':
-                                 RsInitConfig::RetroShareLink = optarg;
-                                 std::cerr << "Opt for RetroShare link";
-                                 std::cerr << std::endl;
-                                 break;
-#ifdef LOCALNET_TESTING
-                         case 'R':
-				 portRestrictions = optarg;
-				 doPortRestrictions = true;
-                                 std::cerr << "Opt for Port Restrictions";
-                                 std::cerr << std::endl;
-                                 break;
-#endif
                          case 'h':
                                  std::cerr << "Help: " << std::endl;
                                  std::cerr << "The commandline options are for retroshare-nogui, a headless server in a shell, or systems without QT." << std::endl << std::endl;
@@ -510,32 +449,31 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
                                  }
                  }
          }
+#endif
 
+			setOutputLevel(RsInitConfig::debugLevel);
 
-	// set the default Debug Level...
-	if (RsInitConfig::haveDebugLevel)
-	{
-		if ((RsInitConfig::debugLevel > 0) &&
-			(RsInitConfig::debugLevel <= PQL_DEBUG_ALL))
-		{
-			std::cerr << "Setting Debug Level to: ";
-			std::cerr << RsInitConfig::debugLevel;
-			std::cerr << std::endl;
-  			setOutputLevel(RsInitConfig::debugLevel);
-		}
-		else
-		{
-			std::cerr << "Ignoring Invalid Debug Level: ";
-			std::cerr << RsInitConfig::debugLevel;
-			std::cerr << std::endl;
-		}
-	}
+//	// set the default Debug Level...
+//	if (RsInitConfig::haveDebugLevel)
+//	{
+//		if ((RsInitConfig::debugLevel > 0) &&
+//			(RsInitConfig::debugLevel <= PQL_DEBUG_ALL))
+//		{
+//			std::cerr << "Setting Debug Level to: ";
+//			std::cerr << RsInitConfig::debugLevel;
+//			std::cerr << std::endl;
+//		}
+//		else
+//		{
+//			std::cerr << "Ignoring Invalid Debug Level: ";
+//			std::cerr << RsInitConfig::debugLevel;
+//			std::cerr << std::endl;
+//		}
+//	}
 
 	// set the debug file.
 	if (RsInitConfig::haveLogFile)
-	{
 		setDebugFile(RsInitConfig::logfname.c_str());
-	}
 
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS
@@ -2599,7 +2537,7 @@ int RsServer::StartupRetroShare()
 		laddr.sin_port = htons(RsInitConfig::port);
 
 		// universal
-		laddr.sin_addr.s_addr = inet_addr(RsInitConfig::inet);
+		laddr.sin_addr.s_addr = inet_addr(RsInitConfig::inet.c_str());
 
 		mPeerMgr->setLocalAddress(ownId, laddr);
 	}

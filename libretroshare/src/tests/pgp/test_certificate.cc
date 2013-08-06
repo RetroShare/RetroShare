@@ -2,7 +2,7 @@
 #include <string.h>
 
 #include <util/utest.h>
-#include <common/argstream.h>
+#include <util/argstream.h>
 //#include <pqi/cleanupxpgp.h>
 #include <retroshare/rspeers.h>
 #include <pgp/rscertificate.h>
