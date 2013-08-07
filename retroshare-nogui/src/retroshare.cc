@@ -113,7 +113,6 @@ int main(int argc, char **argv)
 	std::string sshUser = "user";
 	std::string sshPwdHash = "";
 	std::string sshRsaFile = "";
-	std::string sshPortStr = "0";
 
 	uint16_t extPort = 0;
 	uint16_t sshPort = 7022;
@@ -273,7 +272,10 @@ int main(int argc, char **argv)
 
 	if (enableSsh)
 	{
-		ssh = RsSshd::InitRsSshd(sshPortStr, "rs_ssh_host_rsa_key");
+		std::ostringstream os ;
+		os << sshPort ;
+		ssh = RsSshd::InitRsSshd(os.str(), "rs_ssh_host_rsa_key");
+
 		// TODO Parse Option
 		if (enableSshRsa)
 		{
@@ -287,7 +289,7 @@ int main(int argc, char **argv)
 			
 		if (!extPortSet)
 		{
-			extPort = atoi(sshPortStr.c_str());
+			extPort = sshPort;
 		}
 
 		// NASTY GLOBAL VARIABLE HACK - NEED TO THINK OF A BETTER SYSTEM.
@@ -437,9 +439,9 @@ void generatePasswordHash()
 
 	std::cerr << "Usage:";
 	std::cerr << std::endl;
-	std::cerr << " - for SSH access: ./retroshare-nogui -X -S [port] -L <username> -P " << pwdHashRadix64;
+	std::cerr << " - for SSH access: ./retroshare-nogui    -X -S [port] -L <username> -P " << pwdHashRadix64;
 	std::cerr << std::endl;
-	std::cerr << " - for RPC access: ./retroshare-nogui -C -S [port] -L <username> -P " << pwdHashRadix64;
+	std::cerr << " - for RPC access: ./retroshare-nogui -C -X -S [port] -L <username> -P " << pwdHashRadix64;
 	std::cerr << std::endl;
 }
 #endif
