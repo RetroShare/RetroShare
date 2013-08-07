@@ -2288,7 +2288,7 @@ void p3MsgService::sendPrivateMsgItem(RsMsgItem *msgitem)
 		DistantMessengingContact& contact( _messenging_contacts[hash] ) ;
 
 		if(it == _messenging_contacts.end())
-			it->second.status = RS_DISTANT_MSG_STATUS_TUNNEL_DN ;
+			contact.status = RS_DISTANT_MSG_STATUS_TUNNEL_DN ;
 
 		contact.pending_messages.push_back(msgitem) ;								 // record the msg to be sent.
 	}
