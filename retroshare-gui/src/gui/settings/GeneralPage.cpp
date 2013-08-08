@@ -38,8 +38,17 @@ GeneralPage::GeneralPage(QWidget * parent, Qt::WFlags flags)
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
 
+    /* Connect signals */
+    connect(ui.runStartWizard_PB,SIGNAL(clicked()), this,SLOT(runStartWizard())) ;
+
     /* Hide platform specific features */
 #ifdef Q_WS_WIN
+
+#ifdef QT_DEBUG
+    ui.chkRunRetroshareAtSystemStartup->setEnabled(false);
+    ui.chkRunRetroshareAtSystemStartupMinimized->setEnabled(false);
+#endif
+
     if (Settings->canSetRetroShareProtocol() == false) {
         ui.enableRetroShareProtocol->setEnabled(false);
     } else {
@@ -52,7 +61,6 @@ GeneralPage::GeneralPage(QWidget * parent, Qt::WFlags flags)
     ui.enableRetroShareProtocol->setVisible(false);
     ui.adminLabel->setVisible(false);
 #endif
-	 connect(ui.runStartWizard_PB,SIGNAL(clicked()), this,SLOT(runStartWizard())) ;
 }
 
 /** Destructor */
@@ -72,7 +80,10 @@ bool GeneralPage::save(QString &/*errmsg*/)
   Settings->setCloseToTray(ui.checkCloseToTray->isChecked());
 
 #ifdef Q_WS_WIN
+
+#ifndef QT_DEBUG
   Settings->setRunRetroshareOnBoot(ui.chkRunRetroshareAtSystemStartup->isChecked(), ui.chkRunRetroshareAtSystemStartupMinimized->isChecked());
+#endif
 
   if (ui.enableRetroShareProtocol->isChecked() != Settings->getRetroShareProtocol()) {
     if (Settings->setRetroShareProtocol(ui.enableRetroShareProtocol->isChecked()) == false) {
