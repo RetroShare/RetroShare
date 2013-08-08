@@ -306,7 +306,11 @@ int     pqistore::readPkt(RsItem **item_out)
 	int extralen = getRsItemSize(block) - blen;
 
 	if(extralen+blen > maxlen)
+	{
+		free(block) ;
 		std::cerr << "***** ERROR: trying to read a packet of length " << extralen+blen << ", while the maximum length is " << maxlen << std::endl ;
+		return 0 ;
+	}
 
 	if (extralen > 0)
 	{
@@ -496,7 +500,11 @@ int     pqiSSLstore::readPkt(RsItem **item_out)
 	int extralen = getRsItemSize(block) - blen;
 
 	if(extralen+blen > maxlen)
+	{
+		free(block) ;
 		std::cerr << "***** ERROR: trying to read a packet of length " << extralen+blen << ", while the maximum length is " << maxlen << std::endl ;
+		return 0 ;
+	}
 
 	if (extralen > 0)
 	{
