@@ -300,8 +300,8 @@ void	setManagers(p3LinkMgrIMPL *linkMgr, p3NetMgrIMPL *netMgr);
 void 	tick();
 
 const std::string getOwnId();
-void 	setOwnNetworkMode(uint32_t netMode);
-void 	setOwnVisState(uint32_t visState);
+bool 	setOwnNetworkMode(uint32_t netMode);
+bool 	setOwnVisState(uint32_t visState);
 
 int 	getConnectAddresses(const std::string &id, 
 				struct sockaddr_in &lAddr, struct sockaddr_in &eAddr, 

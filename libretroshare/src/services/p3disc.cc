@@ -742,16 +742,34 @@ void p3disc::recvPeerDetails(RsDiscReply *item, const std::string &certGpgId)
 				std::cerr << std::endl;
 #endif
 
+				bool peerDataChanged = false;
+
 				// When the peer sends his own list of IPs, the info replaces the existing info, because the
 				// peer is the primary source of his own IPs.
-				mPeerMgr->setNetworkMode(pit->pid, pit->netMode);
-				mPeerMgr->setLocation(pit->pid, pit->location);
-				mPeerMgr->setLocalAddress(pit->pid, pit->currentlocaladdr);
-				mPeerMgr->setExtAddress(pit->pid,   pit->currentremoteaddr);
-				mPeerMgr->setVisState(pit->pid, pit->visState); 
+				if (mPeerMgr->setNetworkMode(pit->pid, pit->netMode)) {
+					peerDataChanged = true;
+				}
+				if (mPeerMgr->setLocation(pit->pid, pit->location)) {
+					peerDataChanged = true;
+				}
+				if (mPeerMgr->setLocalAddress(pit->pid, pit->currentlocaladdr)) {
+					peerDataChanged = true;
+				}
+				if (mPeerMgr->setExtAddress(pit->pid, pit->currentremoteaddr)) {
+					peerDataChanged = true;
+				}
+				if (mPeerMgr->setVisState(pit->pid, pit->visState)) {
+					peerDataChanged = true;
+				}
+				if (mPeerMgr->setDynDNS(pit->pid, pit->dyndns)) {
+					peerDataChanged = true;
+				}
 
-				if (pit->dyndns != "") 
-					mPeerMgr->setDynDNS(pit->pid, pit->dyndns);
+				if (peerDataChanged == true)
+				{
+					// inform all connected peers of change
+					sendJustConnectedPeerInfoToAllPeer(pit->pid);
+				}
 			}
 
 			// always update historical address list... this should be enough to let us connect.

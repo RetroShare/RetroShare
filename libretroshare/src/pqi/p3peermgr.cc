@@ -137,8 +137,9 @@ void    p3PeerMgrIMPL::setManagers(p3LinkMgrIMPL *linkMgr, p3NetMgrIMPL *netMgr)
 	mNetMgr = netMgr;
 }
 
-void p3PeerMgrIMPL::setOwnNetworkMode(uint32_t netMode)
+bool p3PeerMgrIMPL::setOwnNetworkMode(uint32_t netMode)
 {
+	bool changed = false;
 	{
 		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
@@ -149,17 +150,22 @@ void p3PeerMgrIMPL::setOwnNetworkMode(uint32_t netMode)
 		std::cerr << std::endl;
 #endif
 
-		mOwnState.netMode = (netMode & RS_NET_MODE_ACTUAL);
-
-		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+		if (mOwnState.netMode != (netMode & RS_NET_MODE_ACTUAL))
+		{
+			mOwnState.netMode = (netMode & RS_NET_MODE_ACTUAL);
+			IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+			changed = true;
+		}
 	}
 	
 	// Pass on Flags to NetMgr.
 	mNetMgr->setNetworkMode((netMode & RS_NET_MODE_ACTUAL));
+	return changed;
 }
 
-void p3PeerMgrIMPL::setOwnVisState(uint32_t visState)
+bool p3PeerMgrIMPL::setOwnVisState(uint32_t visState)
 {
+	bool changed = false;
 	{
 		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
@@ -171,13 +177,17 @@ void p3PeerMgrIMPL::setOwnVisState(uint32_t visState)
 		std::cerr << out.str() << std::endl;
 #endif
 
-		mOwnState.visState = visState;
-
-		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+		if (mOwnState.visState != visState) {
+			mOwnState.visState = visState;
+			changed = true;
+			IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+		}
 	}
 	
 	// Pass on Flags to NetMgr.
 	mNetMgr->setVisState(visState);
+
+	return changed;
 }
 
 
@@ -842,18 +852,18 @@ bool 	p3PeerMgrIMPL::UpdateOwnAddress(const struct sockaddr_in &localAddr, const
 
 bool    p3PeerMgrIMPL::setLocalAddress(const std::string &id, struct sockaddr_in addr)
 {
+	bool changed = false;
+
 	if (id == AuthSSL::getAuthSSL()->OwnId())
 	{
-		bool changed = false;
 		{
 			RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 			if (mOwnState.localaddr.sin_addr.s_addr != addr.sin_addr.s_addr ||
 			    mOwnState.localaddr.sin_port != addr.sin_port)
 			{
+				mOwnState.localaddr = addr;
 				changed = true;
 			}
-
-			mOwnState.localaddr = addr;
 		}
 
 		if (changed)
@@ -863,7 +873,7 @@ bool    p3PeerMgrIMPL::setLocalAddress(const std::string &id, struct sockaddr_in
 			mNetMgr->setLocalAddress(addr);
 			mLinkMgr->setLocalAddress(addr);
 		}
-		return true;
+		return changed;
 	}
 
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
@@ -881,7 +891,11 @@ bool    p3PeerMgrIMPL::setLocalAddress(const std::string &id, struct sockaddr_in
 	}
 
 	/* "it" points to peer */
-	it->second.localaddr = addr;
+	if ((it->second.localaddr.sin_addr.s_addr != addr.sin_addr.s_addr) ||
+		(it->second.localaddr.sin_port != addr.sin_port)) {
+		it->second.localaddr = addr;
+		changed = true;
+	}
 
 #if 0
 	//update ip address list
@@ -891,23 +905,32 @@ bool    p3PeerMgrIMPL::setLocalAddress(const std::string &id, struct sockaddr_in
 	it->second.updateIpAddressList(ipAddressTimed);
 #endif
 
-	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+	if (changed) {
+		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+	}
 
-	return true;
+	return changed;
 }
 
 bool    p3PeerMgrIMPL::setExtAddress(const std::string &id, struct sockaddr_in addr)
 {
+	bool changed = false;
+
 	if (id == AuthSSL::getAuthSSL()->OwnId())
 	{
 		{
 			RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
-			mOwnState.serveraddr = addr;
+			if (mOwnState.serveraddr.sin_addr.s_addr != addr.sin_addr.s_addr ||
+				mOwnState.serveraddr.sin_port != addr.sin_port)
+			{
+				mOwnState.serveraddr = addr;
+				changed = true;
+			}
 		}
 		
 		mNetMgr->setExtAddress(addr);
 		
-		return true;
+		return changed;
 	}
 
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
@@ -925,7 +948,11 @@ bool    p3PeerMgrIMPL::setExtAddress(const std::string &id, struct sockaddr_in a
 	}
 
 	/* "it" points to peer */
-	it->second.serveraddr = addr;
+	if ((it->second.serveraddr.sin_addr.s_addr != addr.sin_addr.s_addr) ||
+		(it->second.serveraddr.sin_port != addr.sin_port)) {
+		it->second.serveraddr = addr;
+		changed = true;
+	}
 
 #if 0
 	//update ip address list
@@ -935,20 +962,28 @@ bool    p3PeerMgrIMPL::setExtAddress(const std::string &id, struct sockaddr_in a
 	it->second.updateIpAddressList(ipAddressTimed);
 #endif
 
-	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+	if (changed) {
+		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+	}
 
-	return true;
+	return changed;
 }
 
 
 bool p3PeerMgrIMPL::setDynDNS(const std::string &id, const std::string &dyndns)
 {
+    bool changed = false;
+
     if (id == AuthSSL::getAuthSSL()->OwnId())
     {
         RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
-        mOwnState.dyndns = dyndns;
-        IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
-        return true;
+
+        if (mOwnState.dyndns.compare(dyndns) != 0) {
+            mOwnState.dyndns = dyndns;
+            IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+            changed = true;
+        }
+        return changed;
     }
 
     RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
@@ -966,11 +1001,13 @@ bool p3PeerMgrIMPL::setDynDNS(const std::string &id, const std::string &dyndns)
     }
 
     /* "it" points to peer */
-    it->second.dyndns = dyndns;
+    if (it->second.dyndns.compare(dyndns) != 0) {
+        it->second.dyndns = dyndns;
+        IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+        changed = true;
+    }
 
-    IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
-
-    return true;
+    return changed;
 }
 
 bool    p3PeerMgrIMPL::updateAddressList(const std::string& id, const pqiIpAddrSet &addrs)
@@ -1089,15 +1126,11 @@ bool    p3PeerMgrIMPL::updateLastContact(const std::string& id)
 	return true;
 }
 
-	
-
-
 bool    p3PeerMgrIMPL::setNetworkMode(const std::string &id, uint32_t netMode)
 {
 	if (id == AuthSSL::getAuthSSL()->OwnId())
 	{
-		setOwnNetworkMode(netMode);
-		return true;
+		return setOwnNetworkMode(netMode);
 	}
 
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
@@ -1111,15 +1144,23 @@ bool    p3PeerMgrIMPL::setNetworkMode(const std::string &id, uint32_t netMode)
 		}
 	}
 
-	/* "it" points to peer */
-	it->second.netMode = netMode;
-	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+	bool changed = false;
 
-	return false;
+	/* "it" points to peer */
+	if (it->second.netMode != netMode)
+	{
+		it->second.netMode = netMode;
+		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+		changed = true;
+	}
+
+	return changed;
 }
 
 bool    p3PeerMgrIMPL::setLocation(const std::string &id, const std::string &location)
 {
+        bool changed = false;
+
         RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
 #ifdef PEER_DEBUG
@@ -1127,18 +1168,22 @@ bool    p3PeerMgrIMPL::setLocation(const std::string &id, const std::string &loc
 #endif
         if (id == AuthSSL::getAuthSSL()->OwnId())
         {
+            if (mOwnState.location.compare(location) != 0) {
                 mOwnState.location = location;
-                return true;
+                changed = true;
+            }
+            return changed;
         }
 
         /* check if it is a friend */
         std::map<std::string, peerState>::iterator it;
-        if (mFriendList.end() == (it = mFriendList.find(id))) {
-            return false;
-        } else {
-            it->second.location = location;
-            return true;
+        if (mFriendList.end() != (it = mFriendList.find(id))) {
+            if (it->second.location.compare(location) != 0) {
+                it->second.location = location;
+                changed = true;
+            }
         }
+        return changed;
 }
 
 bool    p3PeerMgrIMPL::setVisState(const std::string &id, uint32_t visState)
@@ -1151,12 +1196,12 @@ bool    p3PeerMgrIMPL::setVisState(const std::string &id, uint32_t visState)
 
 	if (id == AuthSSL::getAuthSSL()->OwnId())
 	{
-		setOwnVisState(visState);
-		return true;
+		return setOwnVisState(visState);
 	}
 
 	bool dht_state ;
 	bool isFriend = false;
+	bool changed = false;
 	{
 		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
@@ -1175,32 +1220,35 @@ bool    p3PeerMgrIMPL::setVisState(const std::string &id, uint32_t visState)
 		}
 
 		/* "it" points to peer */
-		it->second.visState = visState;
-		dht_state = it->second.visState & RS_VIS_STATE_NODHT ;
+		if (it->second.visState != visState) {
+			it->second.visState = visState;
+			changed = true;
 
-		std::cerr << "p3PeerMgrIMPL::setVisState(" << id << ", " << std::hex << visState << std::dec << ") ";
-		std::cerr << " NAME: " << it->second.name;
+			dht_state = it->second.visState & RS_VIS_STATE_NODHT ;
 
-		if (it->second.visState & RS_VIS_STATE_NODHT)
-		{
-			std::cerr << " NO-DHT ";
-		}
-		else
-		{
-			std::cerr << " DHT-OK ";
-		}
-		if (it->second.visState & RS_VIS_STATE_NODISC)
-		{
-			std::cerr << " NO-DISC ";
-		}
-		else
-		{
-			std::cerr << " DISC-OK ";
-		}
-		std::cerr << std::endl;
+			std::cerr << "p3PeerMgrIMPL::setVisState(" << id << ", " << std::hex << visState << std::dec << ") ";
+			std::cerr << " NAME: " << it->second.name;
 
+			if (it->second.visState & RS_VIS_STATE_NODHT)
+			{
+				std::cerr << " NO-DHT ";
+			}
+			else
+			{
+				std::cerr << " DHT-OK ";
+			}
+			if (it->second.visState & RS_VIS_STATE_NODISC)
+			{
+				std::cerr << " NO-DISC ";
+			}
+			else
+			{
+				std::cerr << " DISC-OK ";
+			}
+			std::cerr << std::endl;
+		}
 	}
-	if(isFriend)
+	if(isFriend && changed)
 	{
 		/* toggle DHT state */
 		if(dht_state)
@@ -1221,9 +1269,11 @@ bool    p3PeerMgrIMPL::setVisState(const std::string &id, uint32_t visState)
 		}
 	}
 
-	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+	if (changed) {
+		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+	}
 
-	return false;
+	return changed;
 }
 
 
