@@ -92,7 +92,7 @@ std::string pgp_pwd_callback(void * /*hook*/, const char *uid_hint, const char *
 	fprintf(stderr, "pgp_pwd_callback() called.\n");
 #endif
 	std::string password;
-	rsicontrol->getNotify().askForPassword(std::string("Please enter your PGP password for key ")+uid_hint+" :", prev_was_bad, password) ;
+	rsicontrol->getNotify().askForPassword(std::string("Please enter your PGP password for key:\n    ")+uid_hint+" :", prev_was_bad, password) ;
 
 	return password ;
 }
