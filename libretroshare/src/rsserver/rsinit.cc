@@ -374,6 +374,7 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 
          int c;
          std::string prefUserString = "";
+
          /* getopt info: every availiable option is listed here. if it is followed by a ':' it
             needs an argument. If it is followed by a '::' the argument is optional.
          */
@@ -406,7 +407,7 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 			if(RsInitConfig::autoLogin)         RsInitConfig::startMinimised = true ;
 			if(RsInitConfig::outStderr)         RsInitConfig::haveLogFile    = false ;
 			if(!RsInitConfig::logfname.empty()) RsInitConfig::haveLogFile    = true;
-			if(!RsInitConfig::inet.empty())     RsInitConfig::forceLocalAddr = true;
+			if(RsInitConfig::inet != "127.0.0.1") RsInitConfig::forceLocalAddr = true;
 #ifdef LOCALNET_TESTING
 			if(!portRestrictions.empty())       doPortRestrictions           = true;
 #endif
