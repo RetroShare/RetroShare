@@ -1060,8 +1060,39 @@ void p3ChatService::handleRecvChatAvatarItem(RsChatAvatarItem *ca)
 	rsicontrol->getNotify().notifyPeerHasNewAvatar(ca->PeerId()) ;
 }
 
+bool p3ChatService::checkForMessageSecurity(RsChatMsgItem *ci)
+{
+	// https://en.wikipedia.org/wiki/Billion_laughs
+	// This should be done for all incoming HTML messages (also in forums
+	// etc.) so this should be a function in some other file.
+	wchar_t tmp[10];
+	mbstowcs(tmp, "<!", 9);
+
+	if (ci->message.find(tmp) != std::string::npos)
+	{
+		// Drop any message with "<!doctype" or "<!entity"...
+		// TODO: check what happens with partial messages
+		//
+		std::wcout << "handleRecvChatMsgItem: " << ci->message << std::endl;
+		std::wcout << "**********" << std::endl;
+		std::wcout << "********** entity attack by " << ci->PeerId().c_str() << std::endl;
+		std::wcout << "**********" << std::endl;
+
+		ci->message = L"**** This message has been removed because it breaks security rules.****" ;
+		return false;
+	}
+	// For a future whitelist:
+	// things to be kept:
+	// <span> <img src="data:image/png;base64,... />
+	// <a href="retroshare://…>…</a>
+	
+	return true ;
+}
+
 bool p3ChatService::handleRecvChatMsgItem(RsChatMsgItem *ci)
 {
+	bool message_is_secure = checkForMessageSecurity(ci) ;
+
 	bool publicChanged = false;
 	bool privateChanged = false;
 
@@ -1098,8 +1129,9 @@ bool p3ChatService::handleRecvChatMsgItem(RsChatMsgItem *ci)
 			std::cerr << std::endl;
 			return false ;
 		}
-		if(!bounceLobbyObject(cli,cli->PeerId()))	// forwards the message to friends, keeps track of subscribers, etc.
-			return false;
+		if(message_is_secure)								// never bounce bad messages
+			if(!bounceLobbyObject(cli,cli->PeerId()))	// forwards the message to friends, keeps track of subscribers, etc.
+				return false;
 
 		// setup the peer id to the virtual peer id of the lobby.
 		//

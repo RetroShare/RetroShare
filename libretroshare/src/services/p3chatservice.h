@@ -153,6 +153,12 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor, publi
 		bool getPrivateChatQueue(bool incoming, const std::string &id, std::list<ChatInfo> &chats);
 
 		/*!
+		 * Checks message security, especially remove billion laughs attacks
+		 */
+
+		static bool checkForMessageSecurity(RsChatMsgItem *) ;
+
+		/*!
 		 * @param clear private chat queue
 		 */
 		bool clearPrivateChatQueue(bool incoming, const std::string &id);
