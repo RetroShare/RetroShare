@@ -1091,8 +1091,6 @@ bool p3ChatService::checkForMessageSecurity(RsChatMsgItem *ci)
 
 bool p3ChatService::handleRecvChatMsgItem(RsChatMsgItem *ci)
 {
-	bool message_is_secure = checkForMessageSecurity(ci) ;
-
 	bool publicChanged = false;
 	bool privateChanged = false;
 
@@ -1112,6 +1110,7 @@ bool p3ChatService::handleRecvChatMsgItem(RsChatMsgItem *ci)
 			if(!locked_checkAndRebuildPartialMessage(cli))
 				return true ;
 		}
+		bool message_is_secure = checkForMessageSecurity(cli) ;
 
 		if(now+100 > (time_t) cli->sendTime + MAX_KEEP_MSG_RECORD)	// the message is older than the max cache keep plus 100 seconds ! It's too old, and is going to make an echo!
 		{
@@ -1146,6 +1145,8 @@ bool p3ChatService::handleRecvChatMsgItem(RsChatMsgItem *ci)
 		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 		if(!locked_checkAndRebuildPartialMessage_deprecated(ci)) 	// Don't delete ! This function is not handled propoerly for chat lobby msgs, so
 			return true ;															// we don't use it in this case.
+
+		checkForMessageSecurity(ci) ;
 	}
 
 #ifdef CHAT_DEBUG
