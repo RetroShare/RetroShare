@@ -66,22 +66,22 @@ SecurityItem::SecurityItem(FeedHolder *parent, uint32_t feedId, const std::strin
 
     /* specific ones */
     connect( chatButton, SIGNAL( clicked( void ) ), this, SLOT( openChat ( void ) ) );
-    connect( actionNew_Message, SIGNAL( triggered( ) ), this, SLOT( sendMsg ( void ) ) );
+//    connect( actionNew_Message, SIGNAL( triggered( ) ), this, SLOT( sendMsg ( void ) ) );
 
-    connect( quickmsgButton, SIGNAL( clicked( ) ), this, SLOT( togglequickmessage() ) );
-    connect( cancelButton, SIGNAL( clicked( ) ), this, SLOT( togglequickmessage() ) );
+//    connect( quickmsgButton, SIGNAL( clicked( ) ), this, SLOT( togglequickmessage() ) );
+//    connect( cancelButton, SIGNAL( clicked( ) ), this, SLOT( togglequickmessage() ) );
 
-    connect( sendmsgButton, SIGNAL( clicked( ) ), this, SLOT( sendMessage() ) );
+    connect( quickmsgButton, SIGNAL( clicked( ) ), this, SLOT( sendMsg() ) );
+
     connect( removeFriendButton, SIGNAL(clicked()), this, SLOT(removeFriend()));
     connect( peerDetailsButton, SIGNAL(clicked()), this, SLOT(peerDetails()));
     connect( friendRequesttoolButton, SIGNAL(clicked()), this, SLOT(friendRequest()));
 
     connect(NotifyQt::getInstance(), SIGNAL(friendsChanged()), this, SLOT(updateItem()));
 
-    QMenu *msgmenu = new QMenu();
-    msgmenu->addAction(actionNew_Message);
-
-    quickmsgButton->setMenu(msgmenu);
+    //QMenu *msgmenu = new QMenu();
+    //msgmenu->addAction(actionNew_Message);
+    //quickmsgButton->setMenu(msgmenu);
 
     avatar->setId(mSslId, false);
 
@@ -173,7 +173,7 @@ void SecurityItem::updateItem()
 		if (!rsPeers->getPeerDetails(mSslId, details))
 		{
 			/* then gpgid */
-			if (!rsPeers->getPeerDetails(mGpgId, details))
+			if(!rsPeers->getPeerDetails(mGpgId, details))
 			{
 				/* it is very likely that we will end up here for some of the
 				 * Unknown peer cases.... so allow them here
@@ -195,10 +195,9 @@ void SecurityItem::updateItem()
 				quickmsgButton->hide();
 				requestLabel->hide();
 
-
-                removeFriendButton->setEnabled(false);
-                removeFriendButton->hide();
-                peerDetailsButton->setEnabled(false);
+				removeFriendButton->setEnabled(false);
+				removeFriendButton->hide();
+				peerDetailsButton->setEnabled(false);
 
 				return;
 			}
@@ -258,14 +257,7 @@ void SecurityItem::updateItem()
 			removeFriendButton->hide();
 		}
 
-		if (details.state & RS_PEER_STATE_FRIEND)
-		{
-			quickmsgButton->show();
-		}
-		else
-		{
-			quickmsgButton->hide();
-		}
+		quickmsgButton->show();
 	}
 
 	/* slow Tick  */
@@ -374,9 +366,14 @@ void SecurityItem::sendMsg()
 		return;
 	}
 
-	nMsgDialog->addRecipient(MessageComposer::TO, mGpgId, false);
-	nMsgDialog->show();
-	nMsgDialog->activateWindow();
+	std::string hash ;
+
+	if(rsMsgs->getDistantMessageHash(mGpgId,hash))
+	{
+		nMsgDialog->addRecipient(MessageComposer::TO, hash, mGpgId);
+		nMsgDialog->show();
+		nMsgDialog->activateWindow();
+	}
 
 	/* window will destroy itself! */
 }

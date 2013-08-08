@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>776</width>
-    <height>349</height>
+    <width>961</width>
+    <height>402</height>
    </rect>
   </property>
   <layout class="QGridLayout">
@@ -285,7 +285,7 @@
                <normaloff>:/images/message-mail.png</normaloff>:/images/message-mail.png</iconset>
              </property>
              <property name="popupMode">
-              <enum>QToolButton::MenuButtonPopup</enum>
+              <enum>QToolButton::DelayedPopup</enum>
              </property>
              <property name="toolButtonStyle">
               <enum>Qt::ToolButtonTextBesideIcon</enum>
