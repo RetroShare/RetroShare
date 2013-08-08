@@ -1,6 +1,29 @@
 retroshare (0.5.4-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
   * Improvements
+      - improved security feed so that one can send distant messages to peers that attempt to connect
+      - improved command line parameter handling (used argstream class)
+      - Disabled setting "Start RetroShare when my system starts" on Windows when running the debug version.
+      - modified patch from AC to remove messages with security issues (e.g. Billion Laughs bomb). The message is 
+        replaced by a warning, and is not forwarded
+      - Updated english translation
+      - Enabled distant messages. These need to be switched on the config->Messages. GUI improvements needs to be done, 
+        such as properly setting peers names everywhere, but the service works. Have fun using it!
+      - updated values for min/normal partial packet size to 1MB in openpgp-sdk, so that we do not create partial packets 
+        for everyday use. We will have to properly extend openpgp-sdk to support parsing of partial packets if we want to 
+        PGP-encrypt chunks larger than 1MB
+
+  * Bug fixes
+      - Added missing IndicateConfigChanged to p3PeerMgrIMPL::setDynDNS
+      - Fixed crash when closing the main window without the setting "Minimize to Tray Icon"
+      - Renamed the setting "Do not Minimize to Tray Icon" to "Minimize to Tray Icon" and fixed wrong usage Please check your setting!
+      - removed dropping an entire config file when a single item cannot be serialized.
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Tue, 08 Aug 2013 18:00:00 +0100
+
+retroshare (0.5.4-0.6546~precise) precise; urgency=low
+
+  * Improvements
       - doubled data chunk for signature in chat links. Apparently some keys need more than 287 bytes
       - added security checks against disk full in PGP keyring manager
       - TokenQueue: fixed stop of TokenQueue polling when events are locked
