@@ -67,6 +67,10 @@ static const time_t 	 DISTANT_CHAT_KEEP_ALIVE_PERIOD    =   10 ; // sens keep al
 static const uint32_t DISTANT_CHAT_AES_KEY_SIZE         =   16 ; // size of AES encryption key for distant chat.
 static const uint32_t DISTANT_CHAT_HASH_SIZE            =   20 ; // This is sha1 size in bytes.
 
+static const uint32_t MAX_AVATAR_JPEG_SIZE              = 32767; // Maximum size in bytes for an avatar. Too large packets 
+                                                                 // don't transfer correctly and can kill the system.
+																					  // Images are 96x96, which makes approx. 27000 bytes uncompressed.
+
 p3ChatService::p3ChatService(p3LinkMgr *lm, p3HistoryMgr *historyMgr)
 	:p3Service(RS_SERVICE_TYPE_CHAT), p3Config(CONFIG_TYPE_CHAT), mChatMtx("p3ChatService"), mLinkMgr(lm) , mHistoryMgr(historyMgr)
 {
@@ -1536,6 +1540,11 @@ void p3ChatService::setOwnAvatarJpegData(const unsigned char *data,int size)
 		std::cerr << "p3chatservice: Setting own avatar to new image." << std::endl ;
 #endif
 
+		if((uint32_t)size > MAX_AVATAR_JPEG_SIZE)
+		{
+			std::cerr << "Supplied avatar image is too big. Maximum size is " << MAX_AVATAR_JPEG_SIZE << ", supplied image has size " << size << std::endl;
+			return ;
+		}
 		if(_own_avatar != NULL)
 			delete _own_avatar ;
 
@@ -1576,6 +1585,11 @@ void p3ChatService::receiveAvatarJpegData(RsChatAvatarItem *ci)
    std::cerr << "p3chatservice: received avatar jpeg data for peer " << ci->PeerId() << ". Storing it." << std::endl ;
 #endif
 
+	if(ci->image_size > MAX_AVATAR_JPEG_SIZE)
+	{
+		std::cerr << "Peer " << ci->PeerId()<< " is sending a jpeg image for avatar that exceeds the admitted size (size=" << ci->image_size << ", max=" << MAX_AVATAR_JPEG_SIZE << ")"<< std::endl;
+		return ;
+	}
    bool new_peer = (_avatars.find(ci->PeerId()) == _avatars.end()) ;
 
    if (new_peer == false && _avatars[ci->PeerId()]) {
@@ -1776,7 +1790,10 @@ bool p3ChatService::loadList(std::list<RsItem*>& load)
 		{
 			RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
-			_own_avatar = new AvatarInfo(ai->image_data,ai->image_size) ;
+			if(ai->image_size <= MAX_AVATAR_JPEG_SIZE)
+				_own_avatar = new AvatarInfo(ai->image_data,ai->image_size) ;
+			else
+				std::cerr << "Dropping avatar image, because its size is " << ai->image_size << ", and the maximum allowed size is " << MAX_AVATAR_JPEG_SIZE << std::endl;
 
 			delete *it;
 
