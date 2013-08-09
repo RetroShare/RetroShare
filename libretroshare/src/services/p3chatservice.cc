@@ -60,6 +60,7 @@ static const time_t 	MAX_KEEP_INACTIVE_NICKNAME         =  180 ; // keep inactiv
 static const time_t  MAX_DELAY_BETWEEN_LOBBY_KEEP_ALIVE =  120 ; // send keep alive packet every 2 minutes.
 static const time_t 	MAX_KEEP_PUBLIC_LOBBY_RECORD       =   60 ; // keep inactive lobbies records for 60 secs max.
 static const time_t 	MIN_DELAY_BETWEEN_PUBLIC_LOBBY_REQ =   20 ; // don't ask for lobby list more than once every 30 secs.
+static const time_t 	LOBBY_LIST_AUTO_UPDATE_TIME        =  121 ; // regularly ask for available lobbies every 5 minutes, to allow auto-subscribe to work
 
 static const time_t 	 DISTANT_CHAT_CLEANING_PERIOD      =   60 ; // don't ask for lobby list more than once every 30 secs.
 static const time_t 	 DISTANT_CHAT_KEEP_ALIVE_PERIOD    =   10 ; // sens keep alive distant chat packets every 10 secs.
@@ -95,6 +96,7 @@ int	p3ChatService::tick()
 
 	static time_t last_clean_time_lobby = 0 ;
 	static time_t last_clean_time_dchat = 0 ;
+	static time_t last_req_chat_lobby_list = 0 ;
 
 	time_t now = time(NULL) ;
 
@@ -107,6 +109,15 @@ int	p3ChatService::tick()
 	{
 		cleanDistantChatInvites() ;
 		last_clean_time_dchat = now ;
+	}
+	if(last_req_chat_lobby_list + LOBBY_LIST_AUTO_UPDATE_TIME < now)
+	{
+		cleanDistantChatInvites() ;
+
+		std::vector<VisibleChatLobbyRecord> visible_lobbies_tmp ;
+		getListOfNearbyChatLobbies(visible_lobbies_tmp) ;
+
+		last_req_chat_lobby_list = now ;
 	}
 
 	// Flush items that could not be sent, probably because of a Mutex protected zone.
