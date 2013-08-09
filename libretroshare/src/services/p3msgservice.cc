@@ -45,7 +45,7 @@
 #include <iomanip>
 #include <map>
 
-#define DEBUG_DISTANT_MSG
+//#define DEBUG_DISTANT_MSG
 //#define DISABLE_DISTANT_MESSAGES 
 
 const int msgservicezone = 54319;
@@ -396,6 +396,14 @@ bool    p3MsgService::saveList(bool& cleanup, std::list<RsItem*>& itemList)
 
 		itemList.push_back(item) ;
 	}
+	RsConfigKeyValueSet *vitem = new RsConfigKeyValueSet ;
+	RsTlvKeyValue kv;
+	kv.key = "DISTANT_MESSAGES_ENABLED" ;
+	kv.value = mDistantMessagingEnabled?"YES":"NO" ;
+	vitem->tlvkvs.pairs.push_back(kv) ;
+
+	itemList.push_back(vitem) ;
+
 	return true;
 }
 
@@ -407,8 +415,11 @@ void p3MsgService::saveDone()
 
 RsSerialiser* p3MsgService::setupSerialiser()
 {
-    RsSerialiser *rss = new RsSerialiser ;
-    rss->addSerialType(new RsMsgSerialiser(true));
+	RsSerialiser *rss = new RsSerialiser ;
+
+	rss->addSerialType(new RsMsgSerialiser(true));
+	rss->addSerialType(new RsGeneralConfigSerialiser());
+
 	return rss;
 }
 
@@ -468,6 +479,7 @@ bool    p3MsgService::loadList(std::list<RsItem*>& load)
 	std::map<uint32_t, std::string> srcIdMsgMap;
 	std::map<uint32_t, std::string>::iterator srcIt;
 
+	bool distant_messaging_set = false ;
 
 	// load items and calculate next unique msgId
 	for(it = load.begin(); it != load.end(); it++)
@@ -513,6 +525,25 @@ bool    p3MsgService::loadList(std::list<RsItem*>& load)
 		{
 			_messenging_invites[msv->hash].time_of_validity = msv->time_stamp ;
 		}
+
+		RsConfigKeyValueSet *vitem = NULL ;
+
+		if(NULL != (vitem = dynamic_cast<RsConfigKeyValueSet*>(*it)))
+			for(std::list<RsTlvKeyValue>::const_iterator kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); ++kit) 
+				if(kit->key == "DISTANT_MESSAGES_ENABLED")
+				{
+#ifdef CHAT_DEBUG
+					std::cerr << "Loaded config default nick name for distant chat: " << kit->value << std::endl ;
+#endif
+					enableDistantMessaging(kit->value == "YES") ;
+					distant_messaging_set = true ;
+				}
+
+	}
+	if(!distant_messaging_set)
+	{
+		std::cerr << "No config value for distant messaging. Setting it to true." << std::endl;
+		enableDistantMessaging(true) ;
 	}
 
         // sort items into lists
@@ -1943,24 +1974,36 @@ void p3MsgService::enableDistantMessaging(bool b)
 	if(!getDistantMessageHash(AuthGPG::getAuthGPG()->getGPGOwnId(),hash))
 		return ;
 
+	bool cchanged = false ;
+
 #ifdef DEBUG_DISTANT_MSG
 	std::cerr << (b?"Enabling":"Disabling") << " distant messaging, with hash  = " << hash << std::endl;
 #endif
-	std::map<std::string,DistantMessengingInvite>::iterator it = _messenging_invites.find(hash) ;
-
-	if(b && it == _messenging_invites.end())
 	{
-		DistantMessengingInvite invite ;
-		invite.time_of_validity = time(NULL) + 10*365*86400;	// 10 years from now
-		_messenging_invites[hash] = invite ;
+		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 
-		IndicateConfigChanged() ;
+		std::map<std::string,DistantMessengingInvite>::iterator it = _messenging_invites.find(hash) ;
+
+		if(b && it == _messenging_invites.end())
+		{
+			DistantMessengingInvite invite ;
+			invite.time_of_validity = time(NULL) + 10*365*86400;	// 10 years from now
+			_messenging_invites[hash] = invite ;
+			mDistantMessagingEnabled = true ;
+
+			cchanged = true ;
+		}
+		if((!b) && it != _messenging_invites.end())
+		{
+			_messenging_invites.erase(it) ;
+			mDistantMessagingEnabled = false ;
+
+			cchanged = true ;
+		}
 	}
-	if((!b) && it != _messenging_invites.end())
-	{
-		_messenging_invites.erase(it) ;
+
+	if(cchanged)
 		IndicateConfigChanged() ;
-	}
 
 #ifdef DEBUG_DISTANT_MSG
 	std::cerr << "List of distant message invites: " << std::endl;
@@ -1977,7 +2020,12 @@ bool p3MsgService::distantMessagingEnabled()
 	if(!getDistantMessageHash(AuthGPG::getAuthGPG()->getGPGOwnId(),hash))
 		return false;
 
-	return _messenging_invites.find(hash) != _messenging_invites.end() ;
+	bool res ;
+	{
+		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
+		res = _messenging_invites.find(hash) != _messenging_invites.end() ;
+	}
+	return res ;
 }
 bool p3MsgService::getDistantMessageHash(const std::string& pgp_id,std::string& hash)
 {

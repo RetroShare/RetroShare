@@ -193,6 +193,8 @@ void    initStandardTagTypes();
 	std::map<uint32_t, RsMsgParentId*> mParentId;
 
 	std::string config_dir;
+
+	bool mDistantMessagingEnabled ;
 };
 
 #endif // MESSAGE_SERVICE_HEADER
