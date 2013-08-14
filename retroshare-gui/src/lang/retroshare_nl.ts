@@ -1179,15 +1179,15 @@ p, li { white-space: pre-wrap; }⏎
     </message>
     <message>
         <source>Set destination directory</source>
-        <translation type="unfinished"/>
+        <translation>Stel doel directory in</translation>
     </message>
     <message>
         <source>Other...</source>
-        <translation type="unfinished"/>
+        <translation>Anders...</translation>
     </message>
     <message>
         <source>[Default]</source>
-        <translation type="unfinished"/>
+        <translation>[Standaard]</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
@@ -1195,7 +1195,7 @@ p, li { white-space: pre-wrap; }⏎
     </message>
     <message>
         <source>Select channel destination directory</source>
-        <translation type="unfinished"/>
+        <translation>Stel kanaal doel directory in</translation>
     </message>
     <message>
         <source>Publish rights restored.</source>
@@ -1217,6 +1217,10 @@ p, li { white-space: pre-wrap; }⏎
         <source>No Channel Selected</source>
         <translation>Geen kanaal geselecteerd</translation>
     </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Channels&lt;/h1&gt;                                                         		  &lt;p&gt;Channels allow you to post data (e.g. movies, music) that will spread in the network                                                		  among people who subscribed your channel.  If you activate auto-download on a channel, files attached to each post will start  		  downloading automatically when the post is received.&lt;/p&gt;                                                                               		  &lt;p&gt;You see channels your friends are subscribed to, and forward subscribed channels to                                                		  your friends. This promotes good channels in the network.                                                     		  When you first connect to a new friend, it&apos;s likely 		  you will receive many such cache files, and new channels will appear.                                                                  		  &lt;/p&gt;                                                                                                                                   		  &lt;p&gt;Only the channel&apos;s creator can post on that channel. Other peers                       		  in the network can only read from it, unless the channel is private. You can however share the posting rights or the reading rights 		  with your friends.&lt;/p&gt;                            		  </source>
+        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Kanalen&lt;/h1&gt;                                                         		  &lt;p&gt;Naar kanalen kan je data posten (bijvoorbeeld films, muziek) dat dan zich dan door het netwerk zal verspreiden naar de mensen die zich hebben geabonneerd op jouw kanaal. Als je de automatisch downloaden optie aan hebt staan dan zullen bestanden in de channel automatisch gedownload worden als er nieuwe posts binnenkomen.&lt;/p&gt;                                                                               		  &lt;p&gt;Je ziet channels waar je vrienden op geabonneerd zijn en forward channels naar je vrienden. Dit zorgt er voor dat goede channels zich sneller verspreiden in het netwerk. Zodra je verbind met een nieuwe vriend kan het zijn dat je posts via hem binnenkrijgt en dan kunnen er nieuwe kanalen verschijnen.&lt;/p&gt;&lt;p&gt;Alleen de maker van een kanaal kan posten op dat kanaal. Andere gebruikers in het netwerk kunnen alleen lezen tenzij het kanaal prive is. Je kan de rechten om te schrijven of lezen wel delen met je vrienden.&lt;/p&gt;                            		  </translation>
+    </message>
 </context>
 <context>
     <name>ChannelUserNotify</name>
@@ -1232,6 +1236,10 @@ p, li { white-space: pre-wrap; }⏎
 Please choose one of it to chat with.</source>
         <translation>Uw vriend heeft meerdere locaties.⏎
 Kies er één om te chatten</translation>
+    </message>
+    <message>
+        <source>Talking to </source>
+        <translation>Praat met</translation>
     </message>
 </context>
 <context>
@@ -1258,11 +1266,11 @@ Kies er één om te chatten</translation>
     </message>
     <message>
         <source>Invite friends</source>
-        <translation type="unfinished"/>
+        <translation>Nodig vrienden uit</translation>
     </message>
     <message>
         <source>Select friends to invite:</source>
-        <translation type="unfinished"/>
+        <translation>Kies vrienden om uit te nodigen:</translation>
     </message>
     <message>
         <source>Welcome to lobby %1</source>
@@ -1329,10 +1337,6 @@ Kies er één om te chatten</translation>
     <message>
         <source>Chat lobbies</source>
         <translation>Chat portaal</translation>
-    </message>
-    <message>
-        <source>Create new chat lobby</source>
-        <translation>Maak een nieuw chat portaal</translation>
     </message>
     <message>
         <source>Name</source>
@@ -1423,8 +1427,27 @@ Dubbelklik een portaal om aan te melden.</translation>
         <translation>Uitnodiging voor een chat Portaal</translation>
     </message>
     <message>
-        <source>%1  invites you to chat lobby named %2</source>
-        <translation>%1 nodigt je uit in het portaal %2</translation>
+        <source>Remove Auto Subscribe</source>
+        <translation>Niet Automatisch Abonneren</translation>
+    </message>
+    <message>
+        <source>Add Auto Subscribe</source>
+        <translation>Automatisch Abonneren</translation>
+    </message>
+    <message>
+        <source>%1 invites you to chat lobby named %2</source>
+        <translation>%1 heeft je uitgenodigd voor chatlobby genaamd %2</translation>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Chat Lobbies&lt;/h1&gt;                              		  &lt;p&gt;Chat lobbies are distributed chat rooms, and work pretty much like IRC.                                      		  They allow you to talk anonymously with tons of people without the need to make friends.&lt;/p&gt;                    		  &lt;p&gt;A chat lobby can be public (you friends see it) or private (your friends can&apos;t see it, unless you           		  invite them with &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). Once you have been invited to a private lobby, you will be able to see it when your friends   		  are using it.&lt;/p&gt;                                                                                               		  &lt;p&gt;The list at left shows                                                                                     		  chat lobbies your friends are participating into. You can either                                 		  &lt;ul&gt;                                                                                                            			  &lt;li&gt;Right click to create a new chat lobby&lt;/li&gt;                                                              		     &lt;li&gt;Double click a chat lobby to enter, chat, and show it to your friends&lt;/li&gt;                      		  &lt;/ul&gt; 		  &lt;/p&gt;                                      		</source>
+        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Chatlobby&apos;s&lt;/h1&gt;
+&lt;p&gt;Chatlobby&apos;s zijn gedistribueerde chatkamers en werken ongeveer zoals IRC. Ze stellen je in staat om anoniem te praten met mensen zonder hun vrienden te zijn.&lt;/p&gt;
+&lt;p&gt;Een chatlobby kan publiek zijn (al je vrienden kunnen het zien) of privé zijn (je vrienden kunnen het alleen zien als je ze uitnodigd met &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). Zodra je uitgenodigd ben voor een privélobby kan je nieuwe berichten zien als een vriend er op geabonneerd is.&lt;/p&gt;
+&lt;p&gt;De lijst aan de linker kant toont de chatlobby&apos;s waar je vrienden op geabonneerd zijn. Je kan of &lt;ul&gt;
+&lt;li&gt;Rechts klikken om een nieuwe chatlobby te maken&lt;/li&gt;
+&lt;li&gt;Dubbel klikken om een chatlobby in te gaan, te chatten en hem aan je vrienden te laten zien.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/p&gt;</translation>
     </message>
 </context>
 <context>
@@ -1632,6 +1655,58 @@ Dubbelklik een portaal om aan te melden.</translation>
         <source>Chat</source>
         <translation>Chat</translation>
     </message>
+    <message>
+        <source>Distant chat</source>
+        <translation>Afstandschat</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Retroshare allows you to anonymously chat to nearby people beyond your friends in the network, using encrypted tunnels. In your personal invites list you keep chat links for people to contact you. In the &amp;quot;collected contacts&amp;quot; list, you keep such chat links that people sent you to contact them.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Het is mogelijk om anoniem te chatten met mensen die verder zitten dan je vrienden via versleutelde tunnels. In je persoonlijke uitnodigingen lijst bewaar je uitnodigingen die je aan mensen hebt verstuurd. In de &amp;quot;verzamelde contacten&amp;quot; lijst bewaar je uitnodigingen die je van ander mensen hebt ontvangen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Your personal invites</source>
+        <translation>Je persoonlijke uitnodigingen</translation>
+    </message>
+    <message>
+        <source>Collected contacts</source>
+        <translation>Verzamelde contacten</translation>
+    </message>
+    <message>
+        <source>Open secured chat tunnel</source>
+        <translation>Versleutelde chat-tunnel openen</translation>
+    </message>
+    <message>
+        <source>Delete this invite</source>
+        <translation>Verwijder deze uitnodiging</translation>
+    </message>
+    <message>
+        <source>Can&apos;t open distant chat</source>
+        <translation>Kan afstandschat niet openen</translation>
+    </message>
+    <message>
+        <source>Cannot open distant chat. Error code=</source>
+        <translation>Kan afstandschat niet openen. Foutcode=</translation>
+    </message>
+    <message>
+        <source>Cannot remove distant chat invite.</source>
+        <translation>Kan afstandchat uitnodiging niet verwijderen.</translation>
+    </message>
+    <message>
+        <source>Create a chat invitation</source>
+        <translation>Maak een chatuitnodiging</translation>
+    </message>
+    <message>
+        <source>Copy link to clipboard</source>
+        <translation>Kopieer link naar het klembord</translation>
+    </message>
+    <message>
+        <source>Private chat invite from </source>
+        <translation>Privéchat uitnodiging van</translation>
+    </message>
+    <message>
+        <source>Private chat invite to </source>
+        <translation>Privéchat uitnodiging naar</translation>
+    </message>
 </context>
 <context>
     <name>ChatStyle</name>
@@ -1808,10 +1883,6 @@ Dubbelklik een portaal om aan te melden.</translation>
 <context>
     <name>CirclesDialog</name>
     <message>
-        <source>Refresh</source>
-        <translation>Ververs</translation>
-    </message>
-    <message>
         <source>Showing details: </source>
         <translation>Toon details:</translation>
     </message>
@@ -1877,15 +1948,35 @@ Dubbelklik een portaal om aan te melden.</translation>
     </message>
     <message>
         <source>Create Personal Circle</source>
-        <translation type="unfinished"/>
+        <translation>Maak een Persoonlijke Cirkel</translation>
     </message>
     <message>
         <source>Create External Circle</source>
-        <translation type="unfinished"/>
+        <translation>Maak een Externe Cirkel</translation>
     </message>
     <message>
         <source>Edit Circle</source>
-        <translation type="unfinished"/>
+        <translation>Bewerk Cirkel</translation>
+    </message>
+    <message>
+        <source>Todo</source>
+        <translation>Nog te doen</translation>
+    </message>
+    <message>
+        <source>Friends Of Friends</source>
+        <translation>Vrienden van Vrienden</translation>
+    </message>
+    <message>
+        <source>External Circles (Admin)</source>
+        <translation>Externe Cirkels (Administrator)</translation>
+    </message>
+    <message>
+        <source>External Circles (Subscribed)</source>
+        <translation>Externe Cirkels (Geabonneerd)</translation>
+    </message>
+    <message>
+        <source>External Circles (Other)</source>
+        <translation>Externe Cirkels (Overig)</translation>
     </message>
 </context>
 <context>
@@ -2051,24 +2142,12 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
 Sommige services (Ontdekking, anonieme routing) kan voor alle gebruikers uitgezet worden waardoor de instellingen per gebruiker overrulled worden.</translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Disabling anonymous routing will suppress all sending/retrieval of tunnel and anonymous search requests from/to this user. This user will not be able to transfer anonymously through you.&lt;/p&gt;&lt;p&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Uitschakelen van anonieme routing zal alle zend/ontvang van tunnel en anonieme zoek aanvragen van/naar deze gebruiker onderdrukken. Deze gebruiker kan niet meer anoniem bestanden via u overbrengen.&lt;/p&gt;&lt;p&gt;Voor een globale schakeling, ga naar de server configuratie panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
         <source>Anonymous routing</source>
         <translation>Anonieme routing</translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Disabling discovery removes the sending of public keys of your own friends to this user. Discovery information from this friend will be dropped as well.&lt;/p&gt;&lt;p&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Het uitschakelen van &quot;Onderzoeken&quot; stopt het verzenden van uw Publieke Sleutel van uw vrienden naar deze gebruiker. Onderzoeks informatie van deze vriend zal verwijderd worden.&lt;/p&gt;&lt;p&gt;Voor een globale schakeling, ga naar de server configuratie panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
         <source>Discovery</source>
         <translation>Ontdekking</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Disabling this means that forums and channels posts will not be passed from you to this friend, and items coming from this friend will be dropped.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Uitschakeling van dit betekend berichten van forums en kanalen niet worden doorgegeven aan deze vriend, en berichten komend  van deze vriend worden verwijderd.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Forums/Channels</source>
@@ -2135,6 +2214,34 @@ Sommige services (Ontdekking, anonieme routing) kan voor alle gebruikers uitgeze
     <message>
         <source>Maybe password is wrong</source>
         <translation>Misschien is uw wachtwoord fout</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling anonymous routing will suppress all sending/retrieval of tunnel and anonymous search requests from/to this user. This user will not be able to transfer anonymously through you.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Het uitschakelen van anonieme routing zal alle anonieme tunnels en anonieme zoek aanvragen tegenhouden. Deze gebruiker kan dan niet anoniem informatie delen via jou.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;Om dit globaal uit te zetten, ga naar het server configuratiepaneel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling discovery removes the sending of public keys of your own friends to this user. Discovery information from this friend will be dropped as well.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Ontdekking uitschakelen houd het uitwisselen van de publieke sleutels van je vrienden tegen naar deze gebruiker. Sleutels van deze gebruikers worden ook genegeerd.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;Voor een globale instelling, ga naar het server confuguratie paneel&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling this means that forums and channels posts will not be passed from you to this friend, and items coming from this friend will be dropped.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Dit uitschakelen zorgt er voor dat forums en kanaalberichten niet zullen worden uitgewisseld met deze vriend, alle inkomende informatie zal ook worden genegeerd.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Use as direct source, when available</source>
+        <translation>Gebruiken als directe bron indien mogelijk</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Retroshare periodically checks your friend lists for browsable files matching your transfers, to establish a direct transfer. In this case, your friend knows you&apos;re downloading the file.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;To prevent this behavior for this friend only, uncheck this box. You can still perform a direct transfer if you explicitly ask for it, by e.g. downloading from your friend&apos;s file list. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Retroshare controleert regelmatig of een van de downloads direct van een vriend kan worden gedownload om een directe verbinding te starten. In dat geval kan de vriend zien dat jij het bestand aan het downloaden bent.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;Om dit tegen te gaan kan je dit hier uitzetten. Je kan nog steeds een directe verbinding opzetten door er expliciet om te vragen door bijvoorbeeld een bestand te downloaden van de bestandenlijst van je de vriend.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Encryption</source>
+        <translation>Versleuteling</translation>
+    </message>
+    <message>
+        <source>Not connected</source>
+        <translation>Niet verbonden</translation>
     </message>
 </context>
 <context>
@@ -2564,6 +2671,14 @@ Sommige services (Ontdekking, anonieme routing) kan voor alle gebruikers uitgeze
     <message>
         <source>*** None ***</source>
         <translation>*** Geen ***</translation>
+    </message>
+    <message>
+        <source>Use as direct source, when available</source>
+        <translation>Gebruiken als directe bron indien mogelijk</translation>
+    </message>
+    <message>
+        <source>Direct source</source>
+        <translation>Directe bron</translation>
     </message>
 </context>
 <context>
@@ -3175,64 +3290,8 @@ p, li { white-space: pre-wrap; }⏎
         <translation>Type</translation>
     </message>
     <message>
-        <source>Cancel</source>
-        <translation>Annuleren</translation>
-    </message>
-    <message>
-        <source>Create Group</source>
-        <translation>Maak groep</translation>
-    </message>
-    <message>
-        <source>Start New Thread</source>
-        <translation>Start nieuw draadje</translation>
-    </message>
-    <message>
-        <source>Post Forum Message</source>
-        <translation>Post forum bericht</translation>
-    </message>
-    <message>
-        <source>Paste RetroShare Link</source>
-        <translation>PLak RetroShare Link</translation>
-    </message>
-    <message>
-        <source>Paste full RetroShare Link</source>
-        <translation>PLak volledige RetroShare Link</translation>
-    </message>
-    <message>
-        <source>Paste my certificate link</source>
-        <translation>PLak mijn certificaat link</translation>
-    </message>
-    <message>
-        <source>No Forum</source>
-        <translation>Geen Forum</translation>
-    </message>
-    <message>
-        <source>Loading</source>
-        <translation>Laden</translation>
-    </message>
-    <message>
-        <source>In Reply to</source>
-        <translation>In antwoord op</translation>
-    </message>
-    <message>
         <source>RetroShare</source>
         <translation>RetroShare</translation>
-    </message>
-    <message>
-        <source>Please set a Forum Subject and Forum Message</source>
-        <translation>Geef een forum onderwerp en forum bericht</translation>
-    </message>
-    <message>
-        <source>Please choose Signing Id</source>
-        <translation>Kies een Getekende ID</translation>
-    </message>
-    <message>
-        <source>Please choose Signing Id, it is required</source>
-        <translation>Kies een Getekende ID, het is nodig</translation>
-    </message>
-    <message>
-        <source>Add Extra File</source>
-        <translation>Voeg extra bestand toe</translation>
     </message>
     <message>
         <source>Please set a name for your Circle</source>
@@ -3240,23 +3299,23 @@ p, li { white-space: pre-wrap; }⏎
     </message>
     <message>
         <source>Personal Circle Details</source>
-        <translation type="unfinished"/>
+        <translation>Persoonlijke Cirkel Gegevens</translation>
     </message>
     <message>
         <source>External Circle Details</source>
-        <translation type="unfinished"/>
+        <translation>Externe Cirkel Gegevens</translation>
     </message>
     <message>
         <source>Cannot Edit Existing Circles Yet</source>
-        <translation type="unfinished"/>
+        <translation>Het is nog niet mogelijk om huidige cirkels aan te passen</translation>
     </message>
     <message>
         <source>No Restriction Circle Selected</source>
-        <translation type="unfinished"/>
+        <translation>Geen Restrictie Cirkel Geselecteerd</translation>
     </message>
     <message>
         <source>No Circle Limitations Selected</source>
-        <translation type="unfinished"/>
+        <translation>Geen Cirkel Limitaties Geselecteerd</translation>
     </message>
 </context>
 <context>
@@ -3538,6 +3597,10 @@ p, li { white-space: pre-wrap; }⏎
         <source>Load thumbnail picture</source>
         <translation>Laad miniatuur plaatje</translation>
     </message>
+    <message>
+        <source>Generate mass data</source>
+        <translation>Massa gegevens genereren</translation>
+    </message>
 </context>
 <context>
     <name>CreateGxsForumMsg</name>
@@ -3594,10 +3657,6 @@ p, li { white-space: pre-wrap; }⏎
         <translation>Geen Forum</translation>
     </message>
     <message>
-        <source>Loading</source>
-        <translation>Laden</translation>
-    </message>
-    <message>
         <source>In Reply to</source>
         <translation>In antwoord op</translation>
     </message>
@@ -3620,6 +3679,10 @@ p, li { white-space: pre-wrap; }⏎
     <message>
         <source>Add Extra File</source>
         <translation>Extra bestand toevoegen</translation>
+    </message>
+    <message>
+        <source>Generate mass data</source>
+        <translation>Massa gegevens genereren</translation>
     </message>
 </context>
 <context>
@@ -3675,6 +3738,85 @@ p, li { white-space: pre-wrap; }⏎
     <message>
         <source>Contacts:</source>
         <translation>Contacts:</translation>
+    </message>
+</context>
+<context>
+    <name>CreateMsgLinkDialog</name>
+    <message>
+        <source>Invite type:</source>
+        <translation>Uitnodigingstype:</translation>
+    </message>
+    <message>
+        <source>Private chat</source>
+        <translation>Privé Chat</translation>
+    </message>
+    <message>
+        <source>Validity time :</source>
+        <translation>Geldigheidsduur:</translation>
+    </message>
+    <message>
+        <source>hour</source>
+        <translation>uur</translation>
+    </message>
+    <message>
+        <source>day</source>
+        <translation>dag</translation>
+    </message>
+    <message>
+        <source>week</source>
+        <translation>week</translation>
+    </message>
+    <message>
+        <source>month</source>
+        <translation>maand</translation>
+    </message>
+    <message>
+        <source>year</source>
+        <translation>jaar</translation>
+    </message>
+    <message>
+        <source>Create!</source>
+        <translation>Maak!</translation>
+    </message>
+    <message>
+        <source>Private chat invite creation failed</source>
+        <translation>Creatie van privéchat uitnodiging is mislukt</translation>
+    </message>
+    <message>
+        <source>The creation of the chat invite failed</source>
+        <translation>De creatie van de chatuitnodiging is mislukt</translation>
+    </message>
+    <message>
+        <source>Private chat invite created</source>
+        <translation>Privéchat uitnodiging aangemaakt</translation>
+    </message>
+    <message>
+        <source>Create distant chat invite</source>
+        <translation>Maak afstandchat uitnodiging</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;To create a private chat invite for a non-friend person, select his key below and a validity time for your invite, then press &amp;quot;Create&amp;quot;. The invite will contain the  information required to open a tunnel to chat with you. &lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;The invite is encrypted, and does not reveal your identity. Only the selected peer can decrypt the link, and use it to contact you.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Om een privéchat uitnodiging te maken voor iemand die geen vriend is, selecteer zijn sleutel hieronder, stel een verlooptijd in en druk op &amp;quot;Maak&amp;quot;. De uitnodiging bevat de benodigde informatie om een chat-tunnel te starten.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;De uitnodiging is versleuteld en anoniem. Alleen de geselecteerde persoon kan de link ontsleutelen om je te contacteren.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Your new chat invite has been created. You can now copy/paste it as a Retroshare link.</source>
+        <translation>Je nieuwe chatuitnodiging is gemaakt. Je kan het nu kopieren/plakken als Retroshare link.</translation>
+    </message>
+    <message>
+        <source>Messaging invite creation failed</source>
+        <translation>Creatie van chatuitnodiging mislukt</translation>
+    </message>
+    <message>
+        <source>The creation of the messaging invite failed</source>
+        <translation>De creatie van de chatuitnodiging is mislukt</translation>
+    </message>
+    <message>
+        <source>Messaging invite created</source>
+        <translation>Chatuitnodiging gemaakt</translation>
+    </message>
+    <message>
+        <source>Your new messaging chat invite has been copied to clipboard. You can now paste it as a Retroshare link.</source>
+        <translation>Je nieuwe chatuitnodiging is gekopieerd naar het klipbord. Je kan het nu plakken als Retroshare link.</translation>
     </message>
 </context>
 <context>
@@ -4883,6 +5025,14 @@ p, li { white-space: pre-wrap; }⏎
         <source>You can&apos;t reply an Anonymous Author</source>
         <translation>U kunt een Anonieme Auteur niet beantwoorden</translation>
     </message>
+    <message>
+        <source>Forum Description</source>
+        <translation>Forum Beschrijving</translation>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Forums&lt;/h1&gt;                              		  &lt;p&gt;Retroshare Forums look like internet forums, but they work in a decentralized way:                     		  You see forums your friends are subscribed to, and you forward subscribed forums to                      		  your friends. This automatically promotes interesting forums in the network.&lt;/p&gt;                     		  &lt;p&gt;Forums are either Authenticated (&lt;img src=&quot;:/images/konv_message2.png&quot; width=&quot;12&quot;/&gt;) in which case you need to cryptographically sign                      		  your posts, or anonymous (&lt;img src=&quot;:/images/konversation.png&quot; width=&quot;12&quot;/&gt;). The former class is more resistant to spamming.&lt;/p&gt;                 		  &lt;p&gt;Forum posts propagate from friend to friend using small cache file exchanges. When you first connect to a new friend, it&apos;s likely 		  you will receive many such cache files, and new forums will appear. 		  &lt;/p&gt;                                      		</source>
+        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Forums&lt;/h1&gt;&lt;p&gt;Retroshare Forums lijken op internet forums maar werken op een gedecentraliseerde manier: Je ziet forums waar je vrienden op geabonneerd zijn en je stuurt geabonneerde forums door naar je vrienden. Dit zorgt er voor dat intressante forums zich sneller verspreiden.&lt;/p&gt;&lt;p&gt;Forums kunnen Geauthenticeerd zijn (&lt;img src=&quot;:/images/konv_message2.png&quot; width=&quot;12&quot;/&gt;) in welk geval je je posts cryptografisch moet tekenen of anoniem (&lt;img src=&quot;:/images/konversation.png&quot; width=&quot;12&quot;/&gt;). Geauthenticeerde forums zijn beter resistent tegen spamberichten.&lt;/p&gt;&lt;p&gt;Forum posts verspreiden zich van vriend naar vriend door middel van cachefile uitwisselingen. Als je voor het eerst verbind met een nieuwe vriend is het waarschijnlijk dat je veel van deze cachefiles ontvangt en nieuwe forums kunnen dan verschijnen.&lt;/p&gt;</translation>
+    </message>
 </context>
 <context>
     <name>ForumsFillThread</name>
@@ -4994,20 +5144,12 @@ p, li { white-space: pre-wrap; }⏎
         <translation>Berichten groep</translation>
     </message>
     <message>
-        <source>Add Friend</source>
-        <translation>Vriend toevoegen</translation>
-    </message>
-    <message>
         <source>Edit Group</source>
         <translation>Bewerk groep</translation>
     </message>
     <message>
         <source>Remove Group</source>
         <translation>Verwijder groep</translation>
-    </message>
-    <message>
-        <source>Chat lobbies</source>
-        <translation>Chat portaal</translation>
     </message>
     <message>
         <source>Chat</source>
@@ -5024,10 +5166,6 @@ p, li { white-space: pre-wrap; }⏎
     <message>
         <source>Recommend this Friend to...</source>
         <translation>Beveel deze vriend aan bij...</translation>
-    </message>
-    <message>
-        <source>Connect To Friend</source>
-        <translation>Verbinding maken met vriend</translation>
     </message>
     <message>
         <source>Copy certificate link</source>
@@ -5070,26 +5208,6 @@ p, li { white-space: pre-wrap; }⏎
         <translation>Verwijder van alle groepen</translation>
     </message>
     <message>
-        <source>Create new</source>
-        <translation>Maak een nieuwe</translation>
-    </message>
-    <message>
-        <source>Invite this group</source>
-        <translation>Nodig deze groep uit</translation>
-    </message>
-    <message>
-        <source>Invite this friend</source>
-        <translation>Nodig deze vriend uit</translation>
-    </message>
-    <message>
-        <source>Show</source>
-        <translation>Toon</translation>
-    </message>
-    <message>
-        <source>Unsubscribe</source>
-        <translation>Uitschrijven</translation>
-    </message>
-    <message>
         <source>Expand all</source>
         <translation>Alles uitbreiden</translation>
     </message>
@@ -5106,20 +5224,36 @@ p, li { white-space: pre-wrap; }⏎
         <translation>Wil je deze vriend verwijderen=</translation>
     </message>
     <message>
-        <source>Unsubscribe to lobby</source>
-        <translation>Uitschrijven bij dit portaal</translation>
-    </message>
-    <message>
-        <source>You are about to unsubscribe a chat lobby&lt;br&gt;You can only re-enter if your friends invite you again.</source>
-        <translation>U gaat uitschrijven bij dit portaal&lt;br&gt;U kunt alleen op uitnodiging weer ingeschreven worden.</translation>
-    </message>
-    <message>
         <source>Columns</source>
         <translation>Kolommen</translation>
     </message>
     <message>
-        <source>Sort by</source>
-        <translation>Sorteer op</translation>
+        <source>IP</source>
+        <translation>IP</translation>
+    </message>
+    <message>
+        <source>Sort by IP</source>
+        <translation>Sorteer op IP</translation>
+    </message>
+    <message>
+        <source>Show IP Column</source>
+        <translation>Toon IP Kolom</translation>
+    </message>
+    <message>
+        <source>Attempt to connect</source>
+        <translation>Probeer te verbinden</translation>
+    </message>
+    <message>
+        <source>Create new group</source>
+        <translation>Maak een nieuwe groep</translation>
+    </message>
+    <message>
+        <source>Recommend many friends to each others</source>
+        <translation>Raad veel vrienden aan elkaar aan</translation>
+    </message>
+    <message>
+        <source>Service permissions matrix</source>
+        <translation>Service toestemming matrix</translation>
     </message>
 </context>
 <context>
@@ -5168,11 +5302,11 @@ p, li { white-space: pre-wrap; }⏎
     <name>FriendSelectionWidget</name>
     <message>
         <source>Search :</source>
-        <translation type="unfinished"/>
+        <translation>Zoeken:</translation>
     </message>
     <message>
         <source>All</source>
-        <translation type="unfinished"/>
+        <translation>Alles</translation>
     </message>
     <message>
         <source>None</source>
@@ -5196,10 +5330,6 @@ p, li { white-space: pre-wrap; }⏎
     <message>
         <source>Display</source>
         <translation>Toon</translation>
-    </message>
-    <message>
-        <source>Add</source>
-        <translation>Toevoegen</translation>
     </message>
     <message>
         <source>Edit status message</source>
@@ -5318,14 +5448,6 @@ p, li { white-space: pre-wrap; }⏎
         <translation>Lokaal netwerk</translation>
     </message>
     <message>
-        <source>Known people</source>
-        <translation>Bekende mensen</translation>
-    </message>
-    <message>
-        <source>Welcome to RetroShare&apos;s group chat.</source>
-        <translation>Welkom bij RetroShare&apos;s groep chat.</translation>
-    </message>
-    <message>
         <source>Paste RetroShare Link</source>
         <translation>PLak RetroShare Link</translation>
     </message>
@@ -5352,6 +5474,21 @@ p, li { white-space: pre-wrap; }⏎
     <message>
         <source>Text File (*.txt );;All Files (*)</source>
         <translation>Tekst bestand (*.txt );;Alle bestanden (*)</translation>
+    </message>
+    <message>
+        <source>Keyring</source>
+        <translation>Sleutelbos</translation>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Friends&lt;/h1&gt;                                   		  &lt;p&gt;The Friends tab shows...your friends: the list of persons you have accepted to connect to.                   		  &lt;/p&gt;                                                   		  &lt;p&gt;You can group friends together to allow a finer level of information access, for instance to only allow      		  some friends to see some files.&lt;/p&gt; 		  &lt;p&gt;On the right, you will find 3 useful tabs:                                                                   		  &lt;ul&gt;	                                                                                                         		  		&lt;li&gt;Broadcast sends messages to all connected friends at once&lt;/li&gt;                             		  		&lt;li&gt;Local Network shows the network around you, including friends of your friends&lt;/li&gt;                 		  		&lt;li&gt;Keyring contains keys you collected, mostly forwarded to you by your friends&lt;/li&gt;                              		  &lt;/ul&gt; &lt;/p&gt;                                                                                                      		</source>
+        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Vrienden&lt;/h1&gt;
+&lt;p&gt;De vrienden tab toont je vrienden: de lijst van personen waarvan je hebt toegestaan dat ze met je verbinden.&lt;/p&gt;
+&lt;p&gt;Je kan vrienden in groepen stoppen om hun permissies makkelijker te kunnen beheren, om bijvoorbeeld alleen sommige vrienden bepaalde bestanden te laten zien.&lt;/p&gt;
+&lt;p&gt;Aan de rechterkan vind je drie tabs:&lt;ul&gt;&lt;li&gt;Uitzending stuurt berichten aan alle verbonden vrienden tegelijkertijd&lt;/li&gt;&lt;li&gt;Lokaal Netwerk toont het netwerk om je heen, inclusief vrienden van vrienden&lt;/li&gt;&lt;li&gt;Sleutelbos bevat de sleutels die je hebt verzameld, voornamelijk doorgestuurd door je vrienden&lt;/li&gt;&lt;/ul&gt;&lt;/p&gt;                                                                                                      		</translation>
+    </message>
+    <message>
+        <source>Retroshare broadcast chat: messages are sent to all connected friends.</source>
+        <translation>Retroshare groepschat: berichten worden verstuurd naar alle verbonden vrienden.</translation>
     </message>
 </context>
 <context>
@@ -5737,10 +5874,6 @@ Om uw sleutel te ondertekenen vult uw PGP wachtwoord in zodra erom gevraagd word
         <translation>Toon niet de &quot;Stop RetroShare berichten box&quot;</translation>
     </message>
     <message>
-        <source>Do not Minimize to Tray Icon</source>
-        <translation>Niet minimaliseren naar Tray ikoon</translation>
-    </message>
-    <message>
         <source>Auto Login</source>
         <translation>Automatisch inloggen</translation>
     </message>
@@ -5783,6 +5916,10 @@ Om uw sleutel te ondertekenen vult uw PGP wachtwoord in zodra erom gevraagd word
     <message>
         <source>General</source>
         <translation>Algemeen</translation>
+    </message>
+    <message>
+        <source>Minimize to Tray Icon</source>
+        <translation>Minimalizeer naar Tray</translation>
     </message>
 </context>
 <context>
@@ -6264,10 +6401,6 @@ p, li { white-space: pre-wrap; }⏎
         <translation>Kanalen</translation>
     </message>
     <message>
-        <source>refresh</source>
-        <translation>ververs</translation>
-    </message>
-    <message>
         <source>Display</source>
         <translation>Toon</translation>
     </message>
@@ -6358,6 +6491,10 @@ p, li { white-space: pre-wrap; }⏎
     <message>
         <source>No Channel Selected</source>
         <translation>Geen kanaal geselecteerd</translation>
+    </message>
+    <message>
+        <source>Todo</source>
+        <translation>Nog te doen</translation>
     </message>
 </context>
 <context>
@@ -6646,10 +6783,6 @@ voor je een opmerking kan doen</translation>
         <translation>Volgende ongelezen</translation>
     </message>
     <message>
-        <source>Refresh</source>
-        <translation>Ververs</translation>
-    </message>
-    <message>
         <source>Search Title</source>
         <translation>Zoek Titel</translation>
     </message>
@@ -6752,6 +6885,18 @@ voor je een opmerking kan doen</translation>
     <message>
         <source>You cant reply to an Anonymous Author</source>
         <translation>U kunt niet antwoorden aan een Anonieme Auteur</translation>
+    </message>
+    <message>
+        <source>Forum Description</source>
+        <translation>Forum Beschrijving</translation>
+    </message>
+    <message>
+        <source>Forum:</source>
+        <translation>Forum:</translation>
+    </message>
+    <message>
+        <source>Thread:</source>
+        <translation>Draadje:</translation>
     </message>
 </context>
 <context>
@@ -6859,6 +7004,10 @@ voor je een opmerking kan doen</translation>
     <message>
         <source>On %1, %2 wrote:</source>
         <translation>Op %1, %2 schreef:</translation>
+    </message>
+    <message>
+        <source>Todo</source>
+        <translation>Nog te doen</translation>
     </message>
 </context>
 <context>
@@ -6992,7 +7141,22 @@ voor je een opmerking kan doen</translation>
     </message>
     <message>
         <source>Invalid Circle Selection - Personal disabled for now</source>
-        <translation type="unfinished"/>
+        <translation>Ongeldige Cirkel Selectie - Persoonlijk is tijdelijk uitgeschakeld</translation>
+    </message>
+</context>
+<context>
+    <name>GxsIdChooser</name>
+    <message>
+        <source>Loading</source>
+        <translation>Laden</translation>
+    </message>
+    <message>
+        <source>Not found</source>
+        <translation>Niet gevonden</translation>
+    </message>
+    <message>
+        <source>No Signature</source>
+        <translation>Geen handtekening</translation>
     </message>
 </context>
 <context>
@@ -7289,10 +7453,6 @@ p, li { white-space: pre-wrap; }⏎
         <translation>Nieuwe ID</translation>
     </message>
     <message>
-        <source>Showing:</source>
-        <translation>Toon:</translation>
-    </message>
-    <message>
         <source>Yourself</source>
         <translation>Uzelf</translation>
     </message>
@@ -7311,10 +7471,6 @@ p, li { white-space: pre-wrap; }⏎
     <message>
         <source>All</source>
         <translation>Alles</translation>
-    </message>
-    <message>
-        <source>filter</source>
-        <translation>filter</translation>
     </message>
     <message>
         <source>Nickname</source>
@@ -7369,10 +7525,6 @@ p, li { white-space: pre-wrap; }⏎
         <translation>PGP Naam</translation>
     </message>
     <message>
-        <source>PGP Email</source>
-        <translation>PGP Email</translation>
-    </message>
-    <message>
         <source>PGP Id</source>
         <translation>PGP ID</translation>
     </message>
@@ -7394,19 +7546,47 @@ p, li { white-space: pre-wrap; }⏎
     </message>
     <message>
         <source>Implicit Score</source>
-        <translation type="unfinished"/>
+        <translation>Impliciete Score</translation>
     </message>
     <message>
         <source>Rating</source>
-        <translation type="unfinished"/>
+        <translation>Rang</translation>
     </message>
     <message>
         <source>Comment</source>
-        <translation type="unfinished"/>
+        <translation>Opmerking</translation>
     </message>
     <message>
         <source>Local Reputation</source>
-        <translation type="unfinished"/>
+        <translation>Lokale Reputatie</translation>
+    </message>
+    <message>
+        <source>Todo</source>
+        <translation>Nog te doen</translation>
+    </message>
+    <message>
+        <source>Show:</source>
+        <translation>Toon:</translation>
+    </message>
+    <message>
+        <source>Search</source>
+        <translation>Zoek</translation>
+    </message>
+    <message>
+        <source>PGP Linked Id</source>
+        <translation>PGP geaccocieerd ID</translation>
+    </message>
+    <message>
+        <source>Anon Id</source>
+        <translation>Anoniem ID</translation>
+    </message>
+    <message>
+        <source>Unknown real name</source>
+        <translation>Onbekende echte naam</translation>
+    </message>
+    <message>
+        <source>Anonymous Id</source>
+        <translation>Anoniem Id</translation>
     </message>
 </context>
 <context>
@@ -7424,20 +7604,12 @@ p, li { white-space: pre-wrap; }⏎
         <translation>PGP Naam</translation>
     </message>
     <message>
-        <source>PGP Email</source>
-        <translation>PGP Email</translation>
-    </message>
-    <message>
         <source>PGP Hash</source>
         <translation>PGP Index</translation>
     </message>
     <message>
         <source>PGP Id</source>
         <translation>PGP ID</translation>
-    </message>
-    <message>
-        <source>New Identity</source>
-        <translation>Nieuwe Identiteit</translation>
     </message>
     <message>
         <source>PGP Associated ID</source>
@@ -7448,12 +7620,36 @@ p, li { white-space: pre-wrap; }⏎
         <translation>Pseudoniem</translation>
     </message>
     <message>
-        <source>Cancel</source>
-        <translation>Annuleren</translation>
+        <source>New identity</source>
+        <translation>Nieuwe identiteit</translation>
     </message>
     <message>
-        <source>Create/Update ID</source>
-        <translation>Maak/Update ID</translation>
+        <source>To be generated</source>
+        <translation>Te genereren</translation>
+    </message>
+    <message>
+        <source>N/A</source>
+        <translation>Onbekend</translation>
+    </message>
+    <message>
+        <source>Edit identity</source>
+        <translation>Identiteit aanpassen</translation>
+    </message>
+    <message>
+        <source>Error getting key!</source>
+        <translation>Fout bij ophalen sleutel!</translation>
+    </message>
+    <message>
+        <source>Error KeyID invalid</source>
+        <translation>SleutelID is ongeldig</translation>
+    </message>
+    <message>
+        <source>Unknown GpgId</source>
+        <translation>Onbekend GPG ID</translation>
+    </message>
+    <message>
+        <source>Unknown real name</source>
+        <translation>Onbekende echte naam</translation>
     </message>
 </context>
 <context>
@@ -7528,10 +7724,6 @@ p, li { white-space: pre-wrap; }⏎
 </context>
 <context>
     <name>MainWindow</name>
-    <message>
-        <source>MainWindow</source>
-        <translation>HoofdScherm</translation>
-    </message>
     <message>
         <source>Add Friend</source>
         <translation>Vriend toevoegen</translation>
@@ -8178,6 +8370,14 @@ Wil je het bericht bewaren?</translation>
         <source>Add Extra File</source>
         <translation>Voeg extra bestand toe</translation>
     </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Cryptographically sign message to distant peers. This is prevents intermediate peers to spoof your identity.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Teken bericht cryptografisch. Dit zorgt er voor dat niemand je bericht kan aanpassen of zich als jou kan voordoen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Distant peer (name: %2, PGP key: %1)</source>
+        <translation>Afstands gebruiker (naam: %2, PGP sleutel: %1)</translation>
+    </message>
 </context>
 <context>
     <name>MessagePage</name>
@@ -8232,6 +8432,18 @@ Wil je het bericht bewaren?</translation>
     <message>
         <source>Message</source>
         <translation>Bericht</translation>
+    </message>
+    <message>
+        <source>Distant messages:</source>
+        <translation>Afstands berichten:</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;The link below allows people in the network to send encrypted messages to you, using tunnels. To do that, they need your public PGP key, which they will get using the Retroshare discovery system. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;De link hieronder zorgt er voor dat mensen in het netwerk je versleutelde berichten naar je kan sturen door middel van tunnels. Om dat te doen moeten ze je publieke PGP sleutel hebben. Deze krijgen ze via het Retroshare ontdekkingssysteem.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Accept encrypted distant messages from everyone</source>
+        <translation>Accepteer versleutelde afstandsberichten van iedereen</translation>
     </message>
 </context>
 <context>
@@ -8740,6 +8952,53 @@ Wil je het bericht bewaren?</translation>
         <source>Total:</source>
         <translation>Totaal:</translation>
     </message>
+    <message>
+        <source>Decrypt Message</source>
+        <translation>Ontsleutel Bericht</translation>
+    </message>
+    <message>
+        <source>Encrypted message. Right-click to decrypt it.</source>
+        <translation>Versleuteld bericht. Gebruik rechtermuisklik om te ontsleutelen.</translation>
+    </message>
+    <message>
+        <source>Decryption failed!</source>
+        <translation>Ontsleutelen is mislukt!</translation>
+    </message>
+    <message>
+        <source>This message could not be decrypted.</source>
+        <translation>Dit bericht kon niet worden ontsleuteld.</translation>
+    </message>
+    <message>
+        <source>Messages</source>
+        <translation>Berichten</translation>
+    </message>
+    <message>
+        <source>Click to sort by signature</source>
+        <translation>Klik om te sorteren op tekening</translation>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Messages&lt;/h1&gt;                         			 &lt;p&gt;Messages are like &lt;b&gt;e-mail&lt;/b&gt;: you send/receive them from your friends when both of you	are connected.&lt;/p&gt; 			 &lt;p&gt;It is also possible to send messages to non friends, using tunnels. Such messages are always encrypted. It is 			 recommended to cryptographically sign distant messages, as a proof of your identity, using the &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; button 			 in the message composer window. Distant messages are not guarrantied to arrive, since this requires the distant peer to accept them (You need yourself to switch this on in Config-Messages).&lt;/p&gt;			 &lt;p&gt;Some additional features allow you to exchange data in messages: you may recommend files to your friends by pasting file links, 			 or recommend friends-to-be to other friends, in order to streathen your network.&lt;/p&gt;	                   			 </source>
+        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Berichten&lt;/h1&gt;
+&lt;p&gt;Berichten werken net als &lt;b&gt;e-mail&lt;/b&gt;: je stuurt en ontvangt ze als je tegelijkertijd met je vrienden online bent.&lt;/p&gt;
+&lt;p&gt;Het is ook mogelijk om berichten te versturen naar gebruikers waar je geen vrienden mee bent via tunnels. Deze berichten zijn altijd verslteuteld. Het is aangeraden om afstandsberichten cryptografisch te tekenen om aan te kunnen tonen dat jij het bericht verstuurd hebt via de &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; knop in het opstel venster. Er is geen garantie dat afstandsberichten aankomen, de ontvangende gebruiker moet de berichten accepteren. (Dit moet je aanzetten in Instellingen - Berichten).&lt;/p&gt;
+&lt;p&gt;In afstandsberichten kan je bestanden aanraden aan andere mensen door bestandslinks te plakken of een gebruiker aanraden vrienden te worden met iemand om je netwerk te versterken.&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <source>This message is encrypted. Right click to decrypt it.</source>
+        <translation>Dit bericht is versleuteld. Gebruik rechtermuisklik om te ontsleutelen.</translation>
+    </message>
+    <message>
+        <source>This message was signed and the signature checks</source>
+        <translation>Dit bericht heeft een valide handtekening</translation>
+    </message>
+    <message>
+        <source>This message was signed but the signature doesn&apos;t check</source>
+        <translation>Dit bericht heeft een ongeldige handtekening</translation>
+    </message>
+    <message>
+        <source>This message is not encrypted. Cannot decrypt!</source>
+        <translation>Dit bericht is niet versleuteld. Ontsleutelen is niet mogelijk!</translation>
+    </message>
 </context>
 <context>
     <name>MessengerWindow</name>
@@ -8881,10 +9140,6 @@ Wil je het bericht bewaren?</translation>
         <translation>Zoek netwerk</translation>
     </message>
     <message>
-        <source>Show all accessible keys</source>
-        <translation>Toon alle beschikbare sleutels</translation>
-    </message>
-    <message>
         <source>Name</source>
         <translation>Naam</translation>
     </message>
@@ -8906,7 +9161,7 @@ Wil je het bericht bewaren?</translation>
     </message>
     <message>
         <source>Last used</source>
-        <translation type="unfinished"/>
+        <translation>Laatst gebruikt</translation>
     </message>
     <message>
         <source>Clear</source>
@@ -8978,7 +9233,7 @@ Wil je het bericht bewaren?</translation>
     </message>
     <message>
         <source>Export my certificate...</source>
-        <translation type="unfinished"/>
+        <translation>Exporteer mijn certificaat...</translation>
     </message>
     <message>
         <source>Peer details...</source>
@@ -8990,11 +9245,11 @@ Wil je het bericht bewaren?</translation>
     </message>
     <message>
         <source>Remove unused keys...</source>
-        <translation type="unfinished"/>
+        <translation>Verwijder ongebruikte sleutels...</translation>
     </message>
     <message>
         <source>Clean keyring</source>
-        <translation type="unfinished"/>
+        <translation>Schoon sleutelring</translation>
     </message>
     <message>
         <source>The selected keys below haven't been used in the last 3 months. 
@@ -9002,18 +9257,25 @@ Do you want to delete them permanently ?
 
 Notes: Your old keyring will be backed up.
     The removal may fail when running multiple Retroshare instances on the same machine.</source>
-        <translation type="unfinished"/>
+        <translation>De hieronder geselecteerde sleutels zijn niet gebruikt in de laatste 3 maanden. 
+Wilt u ze permanent verwijderen? 
+
+Opmerkingen: Je oude sleutelbos zal gebackupped worden.
+Deze operatie kan mislukken als er meerdere Retroshare instanties draaien op dezelfde machine.</translation>
     </message>
     <message>
         <source>Keyring info</source>
-        <translation type="unfinished"/>
+        <translation>Sleutelring info</translation>
     </message>
     <message>
         <source>%1 keys have been deleted from your keyring. 
 For security, your keyring was previously backed-up to file 
 
 </source>
-        <translation type="unfinished"/>
+        <translation>Er zijn %1 sleutels verwijderd uit uw sleutelhanger. 
+Voor de veiligheid is je sleutelbos gebackupped.
+
+</translation>
     </message>
     <message>
         <source>Unknown error</source>
@@ -9021,17 +9283,19 @@ For security, your keyring was previously backed-up to file
     </message>
     <message>
         <source>Cannot delete secret keys</source>
-        <translation type="unfinished"/>
+        <translation>Kan geselecteerde sleutels niet verwijderen</translation>
     </message>
     <message>
         <source>Cannot create backup file. Check for permissions in pgp directory, disk space, etc.</source>
-        <translation type="unfinished"/>
+        <translation>Er kon geen backup worden gemaakt. Controleer de bestandspermissies in de pgp map, schijfruimte e.d.</translation>
     </message>
     <message>
         <source>Key removal has failed. Your keyring remains intact.
 
 Reported error: </source>
-        <translation type="unfinished"/>
+        <translation>Het verwijderen van de sleutel is mislukt. Je sleutelbos is niet aangepast.
+
+Foutmelding:</translation>
     </message>
     <message>
         <source>Personal signature</source>
@@ -9063,11 +9327,11 @@ Reported error: </source>
     </message>
     <message>
         <source>Last hour</source>
-        <translation type="unfinished"/>
+        <translation>Laatste uur</translation>
     </message>
     <message>
         <source>Today</source>
-        <translation type="unfinished"/>
+        <translation>Vandaag</translation>
     </message>
     <message>
         <source>Never</source>
@@ -9075,7 +9339,7 @@ Reported error: </source>
     </message>
     <message>
         <source>%1 days ago</source>
-        <translation type="unfinished"/>
+        <translation>%1 dag geleden</translation>
     </message>
     <message>
         <source> has authenticated you. 
@@ -9088,8 +9352,12 @@ Rechts klik en selecteer &quot;maak vriend&quot; om verbinding te kunnen maken.<
         <translation>uzelf</translation>
     </message>
     <message>
-        <source>Data iconsistency in the keyring. This is most probably a bug. Please contact the developers.</source>
-        <translation type="unfinished"/>
+        <source>Data inconsistency in the keyring. This is most probably a bug. Please contact the developers.</source>
+        <translation>Datainconsistentie in de sleutelbos. Dit is hoogstwaarschijnlijk een bug. Neem contact op met de ontwikkelaars.</translation>
+    </message>
+    <message>
+        <source>Only show people you trusted</source>
+        <translation>Alleen vertrouwde mensen tonen</translation>
     </message>
 </context>
 <context>
@@ -9154,6 +9422,10 @@ Rechts klik en selecteer &quot;maak vriend&quot; om verbinding te kunnen maken.<
     <message>
         <source>This is a test.</source>
         <translation>Dit is een test.</translation>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;News Feed&lt;/h1&gt;                                                          		  &lt;p&gt;The News Feed displays the last events on your network, sorted by the time you received them.                		  This gives you a summary of the activity of your friends.                                                       		  You can configure which events to show by pressing on &lt;b&gt;Options&lt;/b&gt;. &lt;/p&gt;                                      		  &lt;p&gt;The various events shown are:                                                                                		  &lt;ul&gt;	                                                                                                         		  		&lt;li&gt;Connection attempts (useful to make friends with new people and control who&apos;s trying to reach you)&lt;/li&gt; 		  		&lt;li&gt;Channel and Forum posts&lt;/li&gt;                                                                            		  		&lt;li&gt;New Channels and Forums you can subscribe to&lt;/li&gt;                                                       		  		&lt;li&gt;Private messages from your friends&lt;/li&gt;                                                                 		  &lt;/ul&gt; &lt;/p&gt;                                                                                                      		</source>
+        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Nieuws Feed&lt;/h1&gt;                                                          		  &lt;p&gt;De nieuws feed toont de laatste activiteit op je netwerk, gesorteerd op de tijd dat je ze ontvangen hebt.                		  Dit geeft je een samenvatting van de activiteit van je vridnen.                                                       		  Je kan aanpassen welke berichten je hier ziet door op &lt;b&gt;Opties&lt;/b&gt; te klikken.  &lt;/p&gt;                                      		  &lt;p&gt;De verschillende berichten die getoont worden zijn:                                                                                		  &lt;ul&gt;	                                                                                                         		  		&lt;li&gt;Verbindings pogingen (handig om nieuwe vrienden te maken en in te stellen wie met je mag verbinden)&lt;/li&gt; 		  		&lt;li&gt;Kanaal en Forum posts&lt;/li&gt;                                                                            		  		&lt;li&gt;Nieuwe kanalen en forums waar je je op kan abonneren.&lt;/li&gt;                                                       		  		&lt;li&gt;Privéberichten van vrienden&lt;/ul&gt; &lt;/p&gt;                                                                                                      		</translation>
     </message>
 </context>
 <context>
@@ -9901,6 +10173,25 @@ malicious behavior of crafted plugins.</source>
     </message>
 </context>
 <context>
+    <name>PopupDistantChatDialog</name>
+    <message>
+        <source>Distant chat terminated</source>
+        <translation>Afstandschat beëindigd</translation>
+    </message>
+    <message>
+        <source>The person you&apos;re talking to has deleted the secured chat tunnel. You may remove the chat window now.</source>
+        <translation>De andere persoon heeft de chat-tunnel verwijderd. Je kan het chatvenster sluiten.</translation>
+    </message>
+    <message>
+        <source>Closing this window will end the conversation, notify the peer and remove the encrypted tunnel.</source>
+        <translation>Het sluiten van dit venster zal het gesprek beëindigen en de chat-tunnel verwijderen.</translation>
+    </message>
+    <message>
+        <source>Kill the tunnel?</source>
+        <translation>Verwijder de tunnel?</translation>
+    </message>
+</context>
+<context>
     <name>PostedCreatePostDialog</name>
     <message>
         <source>Create Post</source>
@@ -9950,8 +10241,8 @@ p, li { white-space: pre-wrap; }⏎
 <context>
     <name>PostedDialog</name>
     <message>
-        <source>Posted</source>
-        <translation>Gepost</translation>
+        <source>Posted Links</source>
+        <translation>Geposte Links</translation>
     </message>
 </context>
 <context>
@@ -10013,11 +10304,11 @@ p, li { white-space: pre-wrap; }⏎
     </message>
     <message>
         <source>Comments</source>
-        <translation type="unfinished"/>
+        <translation>Opmerkingen</translation>
     </message>
     <message>
         <source>Comment</source>
-        <translation type="unfinished"/>
+        <translation>Opmerking</translation>
     </message>
 </context>
 <context>
@@ -10037,10 +10328,6 @@ p, li { white-space: pre-wrap; }⏎
     <message>
         <source>Top</source>
         <translation>Boven</translation>
-    </message>
-    <message>
-        <source>Refresh</source>
-        <translation>Ververs</translation>
     </message>
     <message>
         <source>Today</source>
@@ -10108,15 +10395,15 @@ p, li { white-space: pre-wrap; }⏎
     </message>
     <message>
         <source>Showing</source>
-        <translation type="unfinished"/>
+        <translation>Tonen</translation>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished"/>
+        <translation>RetroShare</translation>
     </message>
     <message>
         <source>Please create or choose a Signing Id before Voting</source>
-        <translation type="unfinished"/>
+        <translation>Maak of kies een teken-identiteit voor het stemmen</translation>
     </message>
 </context>
 <context>
@@ -10155,26 +10442,6 @@ p, li { white-space: pre-wrap; }⏎
     <message>
         <source>Profile Manager</source>
         <translation>Profiel Beheerder</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Select an identity from the list below to be used on another computer, and press &amp;quot;Export selected identity&amp;quot;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;To use it on a different computer,  select the identity manager in the login window. From there you can import the identity file and create a new location for that identity. &lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;When keeping the same identity for your new  location, your friends will automatically accept you.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
-p, li { white-space: pre-wrap; }⏎
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;⏎
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Selecteer een identiteit van onderstaande lijst om deze op een andere computer te gebruiken, en druk &amp;quot;Exporteer gekozen identiteit&amp;quot;&lt;/p&gt;⏎
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;⏎
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Om het op een andere computer te gebruiken selecteer de identiteits beheer in het loginscherm. Daarvandaan kun je een identiteit importeren en een nieuwe locatie aanmaken. &lt;/p&gt;⏎
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;⏎
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Als je dezelfde identiteit aanhoud voor de nieuwe locatie zullen je vrienden je automatisch accepteren.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Identities</source>
@@ -10259,6 +10526,26 @@ en daar de importeer functie gebruiken</translation>
     <message>
         <source>Certificates (*.pqi *.pem)</source>
         <translation>Certificaten (*.pqi *.pem)</translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:11pt;&quot;&gt;Select an identity from the list below to be used on another computer, and press &amp;quot;Export selected identity&amp;quot;&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Ubuntu'; font-size:11pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:11pt;&quot;&gt;To use it on a different computer,  select the identity manager in the login window. From there you can import the identity file and create a new location for that identity. &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Ubuntu'; font-size:11pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;When keeping the same identity for your new  location, your friends will automatically accept you.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;Selecteer een identiteit in de lijst hieronder om te gebruiken op een andere computer en druk op &amp;quot;Exporteer geselecteerde identiteit&amp;quot;&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;Om het te gebruiken op een andere computer, open de identiteitsmanager in het login scherm. Hier kan je het identiteitsbestand importeren en een nieuwe locatie maken voor deze identiteit. &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;Als je dezelfde identiteit gebruikt voor je neiuwe locatie zullen je vrienden je automatisch accepteren.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
@@ -10676,6 +10963,70 @@ Lock file:⏎
     <message>
         <source>Start with a RetroShare link is only supported for Windows.</source>
         <translation>Starten met een RetroShare link wordt alleen door Windows ondersteunt.</translation>
+    </message>
+    <message>
+        <source>Select who can contact you:</source>
+        <translation>Geef aan wie contact met je mag opnemen:</translation>
+    </message>
+    <message>
+        <source>Chat link is expired</source>
+        <translation>Chatlink is verlopen</translation>
+    </message>
+    <message>
+        <source>This chat link is expired. The destination peer will not answer.</source>
+        <translation>Deze chatlink is verlopen. De ontvangende partij zal niet antwoorden.</translation>
+    </message>
+    <message>
+        <source>Chat link cannot be decrypted</source>
+        <translation>Chatlink kan niet worden ontsleuteld</translation>
+    </message>
+    <message>
+        <source>The link could not be decrypted.</source>
+        <translation>De link kon niet worden ontsleuteld.</translation>
+    </message>
+    <message>
+        <source>The link signature cannot be checked.</source>
+        <translation>De link handtekening kon niet worden gecontroleerd.</translation>
+    </message>
+    <message>
+        <source>The link is signed by an unknown key.</source>
+        <translation>De link is getekend door een onbekende sleutel.</translation>
+    </message>
+    <message>
+        <source>Hash error</source>
+        <translation>Hash-fout</translation>
+    </message>
+    <message>
+        <source>Distant peer has closed the chat</source>
+        <translation>Andere persoon heeft de chat gesloten</translation>
+    </message>
+    <message>
+        <source>Tunnel is pending...</source>
+        <translation>Tunnel wordt opgezet...</translation>
+    </message>
+    <message>
+        <source>Messaging link is expired</source>
+        <translation>Chatlink is verlopen</translation>
+    </message>
+    <message>
+        <source>This Messaging link is expired. The destination peer will not receive it.</source>
+        <translation>Deze chatlink is verlopen. De ontvangende partij zal deze niet ontvangen.</translation>
+    </message>
+    <message>
+        <source>This chat link is encrypted with a key that is not yours. You can&apos;t use it. Key ID = </source>
+        <translation>De chatlink is niet versleuteld voor jouw sleutel. Je kan hem niet gebruiken. Sleutel ID =</translation>
+    </message>
+    <message>
+        <source>Chat connection is not possible</source>
+        <translation>Chatverbinding is niet mogelijk</translation>
+    </message>
+    <message>
+        <source>Secured tunnel established. Waiting for ACK...</source>
+        <translation>Versleutelde tunnel gemaakt. Wachten op reactie...</translation>
+    </message>
+    <message>
+        <source>Secured tunnel is working. You can talk!</source>
+        <translation>Versleutelde tunnel is opgezet. Je kan praten!</translation>
     </message>
 </context>
 <context>
@@ -12555,10 +12906,6 @@ p, li { white-space: pre-wrap; }⏎
         <translation>Download tijd</translation>
     </message>
     <message>
-        <source>Core-ID</source>
-        <translation>Core-ID</translation>
-    </message>
-    <message>
         <source>Peer</source>
         <comment>i.e: user name</comment>
         <translation>Verbinding</translation>
@@ -12829,6 +13176,107 @@ Even geduld a.u.b.!</translation>
         <source>Please enter a new--and valid--filename</source>
         <translation>Vul een nieuwe -en geldige- bestandsnaam in</translation>
     </message>
+    <message>
+        <source>Last Time Seen</source>
+        <comment>i.e: Last Time Receiced Data</comment>
+        <translation>Laatst Gezien Op</translation>
+    </message>
+    <message>
+        <source>UserID</source>
+        <translation>GebruikersID</translation>
+    </message>
+    <message>
+        <source>File Never Seen</source>
+        <translation>Bestand Nooit Gezien</translation>
+    </message>
+    <message>
+        <source>Expand all</source>
+        <translation>Alles uitklappen</translation>
+    </message>
+    <message>
+        <source>Collapse all</source>
+        <translation>Alles inklappen</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Grootte</translation>
+    </message>
+    <message>
+        <source>Show Size Column</source>
+        <translation>Toon Grootte Kolom</translation>
+    </message>
+    <message>
+        <source>Show Completed Column</source>
+        <translation>Toon Compleet Kolom</translation>
+    </message>
+    <message>
+        <source>Speed</source>
+        <translation>Snelheid</translation>
+    </message>
+    <message>
+        <source>Show Speed Column</source>
+        <translation>Toon Snelheid Kolom</translation>
+    </message>
+    <message>
+        <source>Progress / Availability</source>
+        <translation>Voortgang / Beschikbaarheid</translation>
+    </message>
+    <message>
+        <source>Show Progress / Availability Column</source>
+        <translation>Toon Voortgang / Beschikbaarheid Kolom</translation>
+    </message>
+    <message>
+        <source>Sources</source>
+        <translation>Bronnen</translation>
+    </message>
+    <message>
+        <source>Show Sources Column</source>
+        <translation>Toon Bronnen Kolom</translation>
+    </message>
+    <message>
+        <source>Show Status Column</source>
+        <translation>Toon Status Kolom</translation>
+    </message>
+    <message>
+        <source>Show Speed / Queue position Column</source>
+        <translation>Toon Snelheid / Wachtrij positie Kolom</translation>
+    </message>
+    <message>
+        <source>Show Remaining Column</source>
+        <translation>Toon Resterend Kolom</translation>
+    </message>
+    <message>
+        <source>Download time</source>
+        <translation>Download tijd</translation>
+    </message>
+    <message>
+        <source>Show Download time Column</source>
+        <translation>Toon Download tijd Kolom</translation>
+    </message>
+    <message>
+        <source>Show Hash Column</source>
+        <translation>Toon Hash Kolom</translation>
+    </message>
+    <message>
+        <source>Last Time Seen</source>
+        <translation>Laatst Gezien Op</translation>
+    </message>
+    <message>
+        <source>Show Last Time Seen Column</source>
+        <translation>Toon Laatst Gezien Op Kolom</translation>
+    </message>
+    <message>
+        <source>Columns</source>
+        <translation>Kolommen</translation>
+    </message>
+    <message>
+        <source>File Transfers</source>
+        <translation>Bestandsoverdrachten</translation>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;File Transfer&lt;/h1&gt;                                                         			 &lt;p&gt;Retroshare brings two ways of transferring files: direct transfers from your friends, and                                     			 distant anonymous tunnelled transfers. In addition, file transfer is multi-source and allows swarming                                      			 (you can be a source while downloading)&lt;/p&gt;                                     			 &lt;p&gt;You can share files using the &lt;img src=&quot;:/images/directoryadd_24x24_shadow.png&quot; width=16 /&gt; icon from the left side bar. 				These files will be listed in the My Files tab. You can decide for each friend group whether they can or not see these files 				in their Friends Files tab&lt;/p&gt;			 &lt;p&gt;The search tab reports files from your friends&apos; file lists, and distant files that can be reached 			 anonymously using the multi-hop tunnelling system.&lt;/p&gt; 			 </source>
+        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Bestandsoverdracht&lt;/h1&gt;&lt;p&gt;Retroshare heeft twee manieren van bestandsoverdracht: via een directe verbinding naar je vrienden en anonieme tunnels. Bestanden kunnen van meerdere mensen tegelijkertijd worden gedownload en bestanden worden direct gedeeld zodra je download.&lt;/p&gt;&lt;p&gt;Je kan bestanden delen door te klikken op het &lt;img src=&quot;:/images/directoryadd_24x24_shadow.png&quot; width=16 /&gt; icoontje aan de linkerkant. Deze bestanden staan in de Mijn bestanden tab. Je kan op de Vrienden Bestanden tab per vriendengroep bepalen of ze de bestanden kunnen zien of niet.&lt;/p&gt;&lt;p&gt;Op de zoektab kan je zien welke bestanden je kan downloaden van vrienden en kan je anoniem zoeken in het hele netwerk.&lt;/p&gt; 			 </translation>
+    </message>
 </context>
 <context>
     <name>TreeStyle_RDM</name>
@@ -13050,6 +13498,13 @@ Even geduld a.u.b.!</translation>
     <message>
         <source>TR Forward probabilities</source>
         <translation>TR Forward probabilities</translation>
+    </message>
+</context>
+<context>
+    <name>UIStateHelper</name>
+    <message>
+        <source>Loading</source>
+        <translation>Laden</translation>
     </message>
 </context>
 <context>

@@ -4,17 +4,17 @@
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="14"/>
         <source>Create new feed</source>
-        <translation>创建新订阅</translation>
+        <translation>新建订阅</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="106"/>
         <source>Authentication (not yet supported)</source>
-        <translation>身份认证(暂不支持)</translation>
+        <translation>密码验证(暂不支持)</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="112"/>
         <source>Feed needs authentication</source>
-        <translation>订阅需要身份认证</translation>
+        <translation>订阅要求密码认证</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="119"/>
@@ -34,12 +34,12 @@
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="228"/>
         <source>Use standard update interval</source>
-        <translation>使用标准的更新间隔</translation>
+        <translation>使用默认更新间隔</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="235"/>
         <source>Interval in minutes (0 = manual)</source>
-        <translation>时间间隔（分钟） (0=手动更新)</translation>
+        <translation>间隔（分钟） (0=手动更新)</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="254"/>
@@ -54,7 +54,7 @@
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="388"/>
         <source>Embed images</source>
-        <translation>嵌入图像</translation>
+        <translation>显示内嵌图像</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="146"/>
@@ -64,7 +64,7 @@
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="152"/>
         <source>Use standard storage time</source>
-        <translation>使用标准保存时间</translation>
+        <translation>使用默认保存时间</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="159"/>
@@ -79,7 +79,7 @@
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="188"/>
         <source>Use standard proxy</source>
-        <translation>使用标准代理</translation>
+        <translation>使用默认代理</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="195"/>
@@ -119,7 +119,7 @@
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="349"/>
         <source>Preview &amp;&amp; Transformation</source>
-        <translation>预览并且转换</translation>
+        <translation>预览/转换</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="361"/>
@@ -129,12 +129,12 @@
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="367"/>
         <source>Activated</source>
-        <translation>激活</translation>
+        <translation>启用</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="374"/>
         <source>Use name and description from feed</source>
-        <translation>使用订阅内容里的名称和描述</translation>
+        <translation>使用订阅源中提取的名称和描述</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="381"/>
@@ -144,7 +144,7 @@
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="395"/>
         <source>Save complete web page (experimental for local feeds)</source>
-        <translation>保存整个web页面(对于本地订阅只是个实验功能)</translation>
+        <translation>保存整个web页面(实验性支持本地订阅)</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="292"/>
@@ -164,12 +164,12 @@
     <message>
         <location filename="../gui/AddFeedDialog.cpp" line="63"/>
         <source>Feed Details</source>
-        <translation>订阅详细信息</translation>
+        <translation>订阅详情</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.cpp" line="96"/>
         <source>Create a new anonymous public forum</source>
-        <translation>创建新的匿名公用论坛</translation>
+        <translation>新建一个匿名公共论坛</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.cpp" line="212"/>
@@ -201,12 +201,12 @@
     <message>
         <location filename="../gui/AddFeedDialog.cpp" line="335"/>
         <source>Cannot create feed.</source>
-        <translation>不能创建订阅</translation>
+        <translation>无法创建订阅</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.cpp" line="340"/>
         <source>Cannot change feed.</source>
-        <translation>不能改变订阅</translation>
+        <translation>无法修改订阅</translation>
     </message>
 </context>
 <context>
@@ -249,7 +249,7 @@
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="91"/>
         <source>Server</source>
-        <translation>服务器地址</translation>
+        <translation>地址</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="108"/>
@@ -269,7 +269,7 @@
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="138"/>
         <source>Save configuration in background (for slow systems, more memory needed)</source>
-        <translation type="unfinished"/>
+        <translation>在后台保存配置(适用于速度慢的系统，但占用更多内存)</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="124"/>
@@ -279,7 +279,7 @@
     <message>
         <location filename="../gui/FeedReaderConfig.h" line="50"/>
         <source>FeedReader</source>
-        <translation>Feed订阅器</translation>
+        <translation>RSS 订阅</translation>
     </message>
 </context>
 <context>
@@ -342,12 +342,12 @@
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="329"/>
         <source>Activate</source>
-        <translation>激活</translation>
+        <translation>启用</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="329"/>
         <source>Deactivate</source>
-        <translation>取消激活</translation>
+        <translation>禁用</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="521"/>
@@ -357,24 +357,24 @@
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="733"/>
         <source>Add new folder</source>
-        <translation>添加新文件夹</translation>
+        <translation>新建文件夹</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="734"/>
         <source>Please enter a name for the folder</source>
-        <translation>请输入文件夹的名字</translation>
+        <translation>请输入文件夹名称</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="740"/>
         <location filename="../gui/FeedReaderDialog.cpp" line="793"/>
         <source>Create folder</source>
-        <translation>创建文件夹</translation>
+        <translation>新建文件夹</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="740"/>
         <location filename="../gui/FeedReaderDialog.cpp" line="793"/>
         <source>Cannot create folder.</source>
-        <translation>不能创建文件夹</translation>
+        <translation>无法创建文件夹</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="766"/>
@@ -384,17 +384,17 @@
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="766"/>
         <source>Remove feed</source>
-        <translation>移除订阅</translation>
+        <translation>删除订阅</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="766"/>
         <source>Do you want to remove the folder %1?</source>
-        <translation>你真想移除此文件夹%1?</translation>
+        <translation>您确定要删除此文件夹 %1?</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="766"/>
         <source>Do you want to remove the feed %1?</source>
-        <translation>你真想移除此订阅%1?</translation>
+        <translation>您确定要删除此订阅 %1?</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="786"/>
@@ -404,7 +404,7 @@
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="787"/>
         <source>Please enter a new name for the folder</source>
-        <translation>请输入新的文件夹名</translation>
+        <translation>请输入新文件夹名</translation>
     </message>
 </context>
 <context>
@@ -418,12 +418,12 @@
     <message>
         <location filename="../gui/FeedReaderFeedItem.ui" line="222"/>
         <source>Set as read and remove item</source>
-        <translation>设置为已读并删除项目</translation>
+        <translation>设置为已读并删除条目</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderFeedItem.ui" line="248"/>
         <source>Remove Item</source>
-        <translation>删除项目</translation>
+        <translation>删除条目</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderFeedItem.cpp" line="80"/>
@@ -446,7 +446,7 @@
     <message>
         <location filename="../gui/FeedReaderFeedNotify.cpp" line="47"/>
         <source>Feed Reader</source>
-        <translation>Feed阅读器</translation>
+        <translation>RSS 订阅</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderFeedNotify.cpp" line="125"/>
@@ -474,7 +474,7 @@
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="66"/>
         <source>Mark messages as read</source>
-        <translation>将信息标记为已读</translation>
+        <translation>标记消息为已读</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="69"/>
@@ -484,17 +484,17 @@
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="86"/>
         <source>Mark messages as unread</source>
-        <translation>将信息标记为未读</translation>
+        <translation>标记消息为未读</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="103"/>
         <source>Mark all messages as read</source>
-        <translation>将所有信息标记为已读</translation>
+        <translation>标记所有消息为已读</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="120"/>
         <source>Remove messages</source>
-        <translation>移除消息</translation>
+        <translation>删除消息</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="137"/>
@@ -587,7 +587,7 @@
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="323"/>
         <source>Retransform</source>
-        <translation>转回原形</translation>
+        <translation>重新转换</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="697"/>
@@ -605,12 +605,12 @@
     <message>
         <location filename="../FeedReaderPlugin.cpp" line="159"/>
         <source>This plugin provides a Feedreader.</source>
-        <translation>这个插件提供一个Feed阅读器</translation>
+        <translation>此插件提供了一个 RSS 阅读器</translation>
     </message>
     <message>
         <location filename="../FeedReaderPlugin.cpp" line="164"/>
         <source>FeedReader</source>
-        <translation>Feed阅读器</translation>
+        <translation>RSS订阅</translation>
     </message>
 </context>
 <context>
@@ -623,22 +623,22 @@
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="39"/>
         <source>Parent not found.</source>
-        <translation>上级未找到</translation>
+        <translation>上一级未找到</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="42"/>
         <source>Parent is no folder.</source>
-        <translation>上级不是一个文件夹</translation>
+        <translation>上一级不是文件夹</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="45"/>
         <source>Feed is a folder.</source>
-        <translation>Feed是个文件夹</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="48"/>
         <source>Feed is no folder.</source>
-        <translation>Feed不是文件夹</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="51"/>
@@ -684,7 +684,7 @@
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="97"/>
         <source>Unknown content type</source>
-        <translation>未知目录类型</translation>
+        <translation>未知内容类型</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="100"/>
@@ -699,7 +699,7 @@
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="108"/>
         <source>Internal process error</source>
-        <translation>内部进程错误</translation>
+        <translation>内部处理错误</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="111"/>
@@ -709,7 +709,7 @@
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="114"/>
         <source>Can&apos;t create forum</source>
-        <translation>不能创建论坛</translation>
+        <translation>无法创建论坛</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="117"/>
@@ -719,47 +719,47 @@
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="120"/>
         <source>You are not admin of the forum</source>
-        <translation>你不是此论坛的管理员</translation>
+        <translation>您不是此论坛的管理员</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="123"/>
         <source>The forum is no anonymous forum</source>
-        <translation>这个论坛不是匿名论坛</translation>
+        <translation>此论坛不是匿名论坛</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="127"/>
         <source>Can&apos;t read html</source>
-        <translation>不能读取html</translation>
+        <translation>无法读取 HTML</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="130"/>
         <source>Internal XPath error</source>
-        <translation>内部XPath错误</translation>
+        <translation>内部 XPath 错误</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="133"/>
         <source>Wrong XPath expression</source>
-        <translation>错误的XPath表达式</translation>
+        <translation>XPath 表达式错误</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="136"/>
         <source>Empty XPath result</source>
-        <translation>空XPath结果</translation>
+        <translation>XPath 结果为空</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="139"/>
         <source>XSLT format error</source>
-        <translation>XPath格式错误</translation>
+        <translation>XSLT 格式错误</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="142"/>
         <source>XSLT transformation error</source>
-        <translation>XSLT转换错误</translation>
+        <translation>XSLT 转换错误</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="145"/>
         <source>Empty XSLT result</source>
-        <translation>空XSLT结果</translation>
+        <translation>XSLT 结果为空</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="149"/>
@@ -787,7 +787,7 @@
     <message>
         <location filename="../gui/FeedReaderUserNotify.cpp" line="40"/>
         <source>FeedReader Message</source>
-        <translation>Feed阅读器消息</translation>
+        <translation>RSS订阅消息</translation>
     </message>
 </context>
 <context>
@@ -805,12 +805,12 @@
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="68"/>
         <source>Feed name</source>
-        <translation>Feed名称</translation>
+        <translation>订阅名称</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="204"/>
         <source>Previous</source>
-        <translation>前一个</translation>
+        <translation>上一条</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="233"/>
@@ -820,7 +820,7 @@
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="262"/>
         <source>Next</source>
-        <translation>下一个</translation>
+        <translation>下一条</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="282"/>
@@ -830,7 +830,7 @@
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="308"/>
         <source>Structure</source>
-        <translation>构造</translation>
+        <translation>代码结构</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="328"/>
@@ -840,22 +840,22 @@
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="520"/>
         <source>XPath use</source>
-        <translation>XPath 使用</translation>
+        <translation>XPath 包括</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="541"/>
         <source>XPath remove</source>
-        <translation>XPath 移除</translation>
+        <translation>XPath 排除</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.cpp" line="179"/>
         <source>Cannot create preview</source>
-        <translation>不能创建预览</translation>
+        <translation>无法创建预览</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.cpp" line="166"/>
         <source>XSLT is used on focus lost or when Ctrl+Enter is pressed</source>
-        <translation>当失去焦点或按下Ctrl+回车时使用XSLT</translation>
+        <translation>当失去焦点或按下 Ctrl +回车时使用 XSLT</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.cpp" line="423"/>
@@ -887,7 +887,7 @@
         <location filename="../gui/PreviewFeedDialog.cpp" line="772"/>
         <location filename="../gui/PreviewFeedDialog.cpp" line="793"/>
         <source>Error parsing document</source>
-        <translation>解析文档错误</translation>
+        <translation>文档解析错误</translation>
     </message>
 </context>
 </TS>

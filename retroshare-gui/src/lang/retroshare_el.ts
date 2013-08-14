@@ -1191,6 +1191,10 @@ p, li { white-space: pre-wrap; }
         <source>No Channel Selected</source>
         <translation>Κανενα καναλι δεν επιλεχθηκε</translation>
     </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Channels&lt;/h1&gt;                                                         		  &lt;p&gt;Channels allow you to post data (e.g. movies, music) that will spread in the network                                                		  among people who subscribed your channel.  If you activate auto-download on a channel, files attached to each post will start  		  downloading automatically when the post is received.&lt;/p&gt;                                                                               		  &lt;p&gt;You see channels your friends are subscribed to, and forward subscribed channels to                                                		  your friends. This promotes good channels in the network.                                                     		  When you first connect to a new friend, it&apos;s likely 		  you will receive many such cache files, and new channels will appear.                                                                  		  &lt;/p&gt;                                                                                                                                   		  &lt;p&gt;Only the channel&apos;s creator can post on that channel. Other peers                       		  in the network can only read from it, unless the channel is private. You can however share the posting rights or the reading rights 		  with your friends.&lt;/p&gt;                            		  </source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>ChannelUserNotify</name>
@@ -1205,6 +1209,10 @@ p, li { white-space: pre-wrap; }
         <source>Your friend has more than one locations.
 Please choose one of it to chat with.</source>
         <translation>Ο φίλος σας έχει περισσότερες από μία θέσεις.⏎ Παρακαλώ επιλέξτε μια για να συνομιλήσετε μαζι του. </translation>
+    </message>
+    <message>
+        <source>Talking to </source>
+        <translation>Μιλάμε για </translation>
     </message>
 </context>
 <context>
@@ -1304,10 +1312,6 @@ Please choose one of it to chat with.</source>
         <translation>Προθαλαμος συνομιλιων</translation>
     </message>
     <message>
-        <source>Create new chat lobby</source>
-        <translation>Δημιουργια νεου προθαλαμου συνομιλιων</translation>
-    </message>
-    <message>
         <source>Name</source>
         <translation>Ονομα</translation>
     </message>
@@ -1396,8 +1400,20 @@ Double click lobbies to enter and chat.</source>
         <translation>Προσκληση σε προθαλαμο συνομιλιων</translation>
     </message>
     <message>
-        <source>%1  invites you to chat lobby named %2</source>
-        <translation>%1 σας προσκαλεσε στον προθαλαμο συνομιλιων %2</translation>
+        <source>Remove Auto Subscribe</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Add Auto Subscribe</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>%1 invites you to chat lobby named %2</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Chat Lobbies&lt;/h1&gt;                              		  &lt;p&gt;Chat lobbies are distributed chat rooms, and work pretty much like IRC.                                      		  They allow you to talk anonymously with tons of people without the need to make friends.&lt;/p&gt;                    		  &lt;p&gt;A chat lobby can be public (you friends see it) or private (your friends can&apos;t see it, unless you           		  invite them with &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). Once you have been invited to a private lobby, you will be able to see it when your friends   		  are using it.&lt;/p&gt;                                                                                               		  &lt;p&gt;The list at left shows                                                                                     		  chat lobbies your friends are participating into. You can either                                 		  &lt;ul&gt;                                                                                                            			  &lt;li&gt;Right click to create a new chat lobby&lt;/li&gt;                                                              		     &lt;li&gt;Double click a chat lobby to enter, chat, and show it to your friends&lt;/li&gt;                      		  &lt;/ul&gt; 		  &lt;/p&gt;                                      		</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -1605,6 +1621,58 @@ Double click lobbies to enter and chat.</source>
         <source>Chat</source>
         <translation>Συνομιλια</translation>
     </message>
+    <message>
+        <source>Distant chat</source>
+        <translation>Μακρινό chat</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Retroshare allows you to anonymously chat to nearby people beyond your friends in the network, using encrypted tunnels. In your personal invites list you keep chat links for people to contact you. In the &amp;quot;collected contacts&amp;quot; list, you keep such chat links that people sent you to contact them.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Retroshare σας επιτρέπει να συνομιλήσετε ανώνυμα στο κοντινό τους ανθρώπους πέρα ​​από τους φίλους σας στο δίκτυο, χρησιμοποιώντας κρυπτογραφημένα σήραγγες. Στην προσωπική σας προσκαλεί λίστα σας κρατήσει συνομιλίας συνδέσεις για τους ανθρώπους για να επικοινωνήσουμε μαζί σας. Στο «Collected επαφών&quot; λίστα, θα κρατήσει τέτοιες συνδέσεις συνομιλίας που οι άνθρωποι έστειλε να επικοινωνήσετε μαζί τους.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Your personal invites</source>
+        <translation>Πρωσοπικες προσκλησεις</translation>
+    </message>
+    <message>
+        <source>Collected contacts</source>
+        <translation>Συλλέγονται επαφές</translation>
+    </message>
+    <message>
+        <source>Open secured chat tunnel</source>
+        <translation>Ανοιχτή συνομιλία ασφαλή σήραγγα</translation>
+    </message>
+    <message>
+        <source>Delete this invite</source>
+        <translation>Διαγραφη προσκλησης</translation>
+    </message>
+    <message>
+        <source>Can&apos;t open distant chat</source>
+        <translation>Δεν μπορεί να ανοίξει το μακρινό chat</translation>
+    </message>
+    <message>
+        <source>Cannot open distant chat. Error code=</source>
+        <translation>Δεν μπορεί να ανοίξει το μακρινό chat. Κωδικός σφάλματος=</translation>
+    </message>
+    <message>
+        <source>Cannot remove distant chat invite.</source>
+        <translation>Δεν μπορείτε να καταργήσετε μακρινό πρόσκληση chat.</translation>
+    </message>
+    <message>
+        <source>Create a chat invitation</source>
+        <translation>Δημιουργία μιας πρόσκλησης συζήτησης</translation>
+    </message>
+    <message>
+        <source>Copy link to clipboard</source>
+        <translation>Αντιγράφη του λινκ στο Clipboard</translation>
+    </message>
+    <message>
+        <source>Private chat invite from </source>
+        <translation>Ιδιωτική συνομιλία πρόσκληση από</translation>
+    </message>
+    <message>
+        <source>Private chat invite to </source>
+        <translation>Προσκληση για ιδιωτική συνομιλία στον</translation>
+    </message>
 </context>
 <context>
     <name>ChatStyle</name>
@@ -1781,10 +1849,6 @@ Double click lobbies to enter and chat.</source>
 <context>
     <name>CirclesDialog</name>
     <message>
-        <source>Refresh</source>
-        <translation>Ανανέωση</translation>
-    </message>
-    <message>
         <source>Showing details: </source>
         <translation>Εμφανιση λεπτομερειών: </translation>
     </message>
@@ -1850,14 +1914,34 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Create Personal Circle</source>
-        <translation type="unfinished"/>
+        <translation>Δημιουργια προσωπικου κυκλου</translation>
     </message>
     <message>
         <source>Create External Circle</source>
-        <translation type="unfinished"/>
+        <translation>Δημιουργια εξωτερικόυ κύκλου</translation>
     </message>
     <message>
         <source>Edit Circle</source>
+        <translation>Επεξεργασια κύκλου</translation>
+    </message>
+    <message>
+        <source>Todo</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Friends Of Friends</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>External Circles (Admin)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>External Circles (Subscribed)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>External Circles (Other)</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -2018,24 +2102,12 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
 Ορισμένες υπηρεσίες (ανακάλυψη, Ανώνυμη δρομολόγησης) μπορουν να απενεργοποιηθουν σε παγκόσμιο επίπεδο, που πάντα παρακάμπτει τις ρυθμίσεις ανά χρήστη.</translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Disabling anonymous routing will suppress all sending/retrieval of tunnel and anonymous search requests from/to this user. This user will not be able to transfer anonymously through you.&lt;/p&gt;&lt;p&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Disabling anonymous routing will suppress all sending/retrieval of tunnel and anonymous search requests from/to this user. This user will not be able to transfer anonymously through you.&lt;/p&gt;&lt;p&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
         <source>Anonymous routing</source>
         <translation>Ανώνυμη δρομολόγηση</translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Disabling discovery removes the sending of public keys of your own friends to this user. Discovery information from this friend will be dropped as well.&lt;/p&gt;&lt;p&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Disabling discovery removes the sending of public keys of your own friends to this user. Discovery information from this friend will be dropped as well.&lt;/p&gt;&lt;p&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
         <source>Discovery</source>
         <translation>Ανακάλυψη</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Disabling this means that forums and channels posts will not be passed from you to this friend, and items coming from this friend will be dropped.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Disabling this means that forums and channels posts will not be passed from you to this friend, and items coming from this friend will be dropped.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Forums/Channels</source>
@@ -2101,6 +2173,34 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     <message>
         <source>Maybe password is wrong</source>
         <translation>Μαλλον ο κωδικος ειναι λαθος</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling anonymous routing will suppress all sending/retrieval of tunnel and anonymous search requests from/to this user. This user will not be able to transfer anonymously through you.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt; &lt;head/&gt; &lt;body&gt; &lt;p align=&quot;justify&quot;&gt; απενεργοποίηση ανώνυμο δρομολόγησης θα καταστείλει κάθε αποστολή / ανάκτησης της σήραγγας και ανώνυμα αιτήματα αναζήτησης από / προς αυτόν τον χρήστη. Αυτός ο χρήστης δεν θα είναι σε θέση να μεταφέρει ανώνυμα μέσα από σένα. &lt;/ P&gt; &lt;p align=&quot;justify&quot;&gt; Για μια παγκόσμια αλλαγή, μεταβείτε στον πίνακα ρύθμισης παραμέτρων του διακομιστή. &lt;/ P&gt; &lt;/ body&gt; &lt;/ html&gt;.</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling discovery removes the sending of public keys of your own friends to this user. Discovery information from this friend will be dropped as well.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt; &lt;head/&gt; &lt;body&gt; &lt;p align=&quot;justify&quot;&gt; απενεργοποίηση ανακάλυψη αφαιρεί την αποστολή των δημόσιων κλειδιών από τη δική τους φίλους σας σε αυτόν τον χρήστη. Πληροφορίες Discovery από αυτόν το φίλο, θα πέσει επίσης. &lt;/ P&gt; &lt;p align=&quot;justify&quot;&gt; Για μια παγκόσμια αλλαγή, μεταβείτε στον πίνακα ρύθμισης παραμέτρων του διακομιστή. &lt;/ P&gt; &lt;/ body&gt; &lt;/ html&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling this means that forums and channels posts will not be passed from you to this friend, and items coming from this friend will be dropped.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt; &lt;head/&gt; &lt;body&gt; &lt;p align=&quot;justify&quot;&gt; απενεργοποίηση αυτό σημαίνει ότι τα φόρουμ και τα κανάλια θέσεις δεν θα πρέπει να περάσει από εσάς σε αυτό το φίλο, και τα στοιχεία που προέρχονται από το φίλο σας, θα πρέπει να πέσει. &lt;/ p&gt; &lt;/ body&gt; &lt;/ html&gt;</translation>
+    </message>
+    <message>
+        <source>Use as direct source, when available</source>
+        <translation>Χρήση ως άμεση πηγή, όταν θα είναι διαθέσιμα</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Retroshare periodically checks your friend lists for browsable files matching your transfers, to establish a direct transfer. In this case, your friend knows you&apos;re downloading the file.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;To prevent this behavior for this friend only, uncheck this box. You can still perform a direct transfer if you explicitly ask for it, by e.g. downloading from your friend&apos;s file list. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt; &lt;head/&gt; &lt;body&gt; &lt;p align=&quot;justify&quot;&gt; Retroshare πάντα περιοδικά φίλο σας παραθέτει για τα αρχεία με δυνατότητα περιήγησης που ταιριάζουν μετακινήσεις σας, για να διαπιστωθεί άμεση μεταφορά. Σε αυτή την περίπτωση, ο φίλος σας γνωρίζει είστε λήψη του αρχείου. &lt;/ P&gt; &lt;p align=&quot;justify&quot;&gt; Για να αποτραπεί αυτή η συμπεριφορά για το φίλο μόνο, αποεπιλέξτε αυτό το πλαίσιο. Μπορείτε ακόμα να εκτελέσετε μια άμεση μεταφορά αν ρητά ζητήσει, π.χ. με κατέβασμα αρχείων από τη λίστα φίλων σας. &lt;/ p&gt; &lt;/ body&gt; &lt;/ html&gt;</translation>
+    </message>
+    <message>
+        <source>Encryption</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Not connected</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2530,6 +2630,14 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     <message>
         <source>*** None ***</source>
         <translation>*** Κανένας ***</translation>
+    </message>
+    <message>
+        <source>Use as direct source, when available</source>
+        <translation>Use as direct source, when available</translation>
+    </message>
+    <message>
+        <source>Direct source</source>
+        <translation>Αμεση πηγή</translation>
     </message>
 </context>
 <context>
@@ -3136,64 +3244,8 @@ p, li { white-space: pre-wrap; }⏎
         <translation>Τυπος</translation>
     </message>
     <message>
-        <source>Cancel</source>
-        <translation>Διακοπη</translation>
-    </message>
-    <message>
-        <source>Create Group</source>
-        <translation>Δημιουργία ομάδας</translation>
-    </message>
-    <message>
-        <source>Start New Thread</source>
-        <translation>Έναρξη νέας μηνυματοσειράς</translation>
-    </message>
-    <message>
-        <source>Post Forum Message</source>
-        <translation>Ποσταρισμα μυνηματος στο φορουμ</translation>
-    </message>
-    <message>
-        <source>Paste RetroShare Link</source>
-        <translation>Επικολληση του Λινκ</translation>
-    </message>
-    <message>
-        <source>Paste full RetroShare Link</source>
-        <translation>Επικολληση ολοκληρωμενου λινκ</translation>
-    </message>
-    <message>
-        <source>Paste my certificate link</source>
-        <translation>Επικόλληση συνδέσμου πιστοποιητικό</translation>
-    </message>
-    <message>
-        <source>No Forum</source>
-        <translation>Κανενα φόρουμ</translation>
-    </message>
-    <message>
-        <source>Loading</source>
-        <translation>Φορτωση</translation>
-    </message>
-    <message>
-        <source>In Reply to</source>
-        <translation>Απάντηση στον</translation>
-    </message>
-    <message>
         <source>RetroShare</source>
         <translation>RetroShare</translation>
-    </message>
-    <message>
-        <source>Please set a Forum Subject and Forum Message</source>
-        <translation>Ορίστε ένα θέμα του φόρουμ και ενα μήνυμα</translation>
-    </message>
-    <message>
-        <source>Please choose Signing Id</source>
-        <translation>Παρακαλώ επιλέξτε μια υπογραφή Id</translation>
-    </message>
-    <message>
-        <source>Please choose Signing Id, it is required</source>
-        <translation>Παρακαλώ επιλέξτε μια υπογραφή Id, απαιτείται</translation>
-    </message>
-    <message>
-        <source>Add Extra File</source>
-        <translation>Προσθηκη επιπλεον αρχειου</translation>
     </message>
     <message>
         <source>Please set a name for your Circle</source>
@@ -3201,23 +3253,23 @@ p, li { white-space: pre-wrap; }⏎
     </message>
     <message>
         <source>Personal Circle Details</source>
-        <translation type="unfinished"/>
+        <translation>Προσωπικές λεπτομέρειες Κύκλου</translation>
     </message>
     <message>
         <source>External Circle Details</source>
-        <translation type="unfinished"/>
+        <translation>Εξωτερικές Λεπτομέρειες Κύκλου</translation>
     </message>
     <message>
         <source>Cannot Edit Existing Circles Yet</source>
-        <translation type="unfinished"/>
+        <translation>Δεν μπορείτε να επεξεργαστείτε τους υπάρχον κύκλους ακόμα</translation>
     </message>
     <message>
         <source>No Restriction Circle Selected</source>
-        <translation type="unfinished"/>
+        <translation>Κανένας περιορισμός κύκλου εχει επιλέγθει</translation>
     </message>
     <message>
         <source>No Circle Limitations Selected</source>
-        <translation type="unfinished"/>
+        <translation>Δεν υπάρχουν περιορισμοί επιλεγμένου Κύκλου</translation>
     </message>
 </context>
 <context>
@@ -3499,6 +3551,10 @@ p, li { white-space: pre-wrap; }⏎
         <source>Load thumbnail picture</source>
         <translation>Φορτωση εικονιδιου εικονας</translation>
     </message>
+    <message>
+        <source>Generate mass data</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>CreateGxsForumMsg</name>
@@ -3555,10 +3611,6 @@ p, li { white-space: pre-wrap; }⏎
         <translation>Κανενα φόρουμ</translation>
     </message>
     <message>
-        <source>Loading</source>
-        <translation>Φορτωση</translation>
-    </message>
-    <message>
         <source>In Reply to</source>
         <translation>Απάντηση στον</translation>
     </message>
@@ -3581,6 +3633,10 @@ p, li { white-space: pre-wrap; }⏎
     <message>
         <source>Add Extra File</source>
         <translation>Προσθηκη επιπλεον αρχειου</translation>
+    </message>
+    <message>
+        <source>Generate mass data</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -3636,6 +3692,85 @@ p, li { white-space: pre-wrap; }⏎
     <message>
         <source>Contacts:</source>
         <translation>Επαφες:</translation>
+    </message>
+</context>
+<context>
+    <name>CreateMsgLinkDialog</name>
+    <message>
+        <source>Invite type:</source>
+        <translation>Πρόσκληση τύπου:</translation>
+    </message>
+    <message>
+        <source>Private chat</source>
+        <translation>Ιδιωτική συνομιλία</translation>
+    </message>
+    <message>
+        <source>Validity time :</source>
+        <translation>Χρόνος ισχύος:</translation>
+    </message>
+    <message>
+        <source>hour</source>
+        <translation>ώρα</translation>
+    </message>
+    <message>
+        <source>day</source>
+        <translation>ημέρα</translation>
+    </message>
+    <message>
+        <source>week</source>
+        <translation>εβδομάδα</translation>
+    </message>
+    <message>
+        <source>month</source>
+        <translation>μήνας</translation>
+    </message>
+    <message>
+        <source>year</source>
+        <translation>έτος</translation>
+    </message>
+    <message>
+        <source>Create!</source>
+        <translation>Δημιουργία!</translation>
+    </message>
+    <message>
+        <source>Private chat invite creation failed</source>
+        <translation>Η δημιουργία πρόσκλησής συνομιλίας απέτυχε</translation>
+    </message>
+    <message>
+        <source>The creation of the chat invite failed</source>
+        <translation>Απέτυχε η δημιουργία της chat πρόσκλησης</translation>
+    </message>
+    <message>
+        <source>Private chat invite created</source>
+        <translation>Η ιδιωτική πρόσκληση συνομιλίας δημιουργήθηκε</translation>
+    </message>
+    <message>
+        <source>Create distant chat invite</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;To create a private chat invite for a non-friend person, select his key below and a validity time for your invite, then press &amp;quot;Create&amp;quot;. The invite will contain the  information required to open a tunnel to chat with you. &lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;The invite is encrypted, and does not reveal your identity. Only the selected peer can decrypt the link, and use it to contact you.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your new chat invite has been created. You can now copy/paste it as a Retroshare link.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Messaging invite creation failed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>The creation of the messaging invite failed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Messaging invite created</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your new messaging chat invite has been copied to clipboard. You can now paste it as a Retroshare link.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -4844,6 +4979,14 @@ p, li { white-space: pre-wrap; }⏎
         <source>You can&apos;t reply an Anonymous Author</source>
         <translation>Δεν μπορείτε να απαντήσετε σε έναν ανώνυμο δημιουργο</translation>
     </message>
+    <message>
+        <source>Forum Description</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Forums&lt;/h1&gt;                              		  &lt;p&gt;Retroshare Forums look like internet forums, but they work in a decentralized way:                     		  You see forums your friends are subscribed to, and you forward subscribed forums to                      		  your friends. This automatically promotes interesting forums in the network.&lt;/p&gt;                     		  &lt;p&gt;Forums are either Authenticated (&lt;img src=&quot;:/images/konv_message2.png&quot; width=&quot;12&quot;/&gt;) in which case you need to cryptographically sign                      		  your posts, or anonymous (&lt;img src=&quot;:/images/konversation.png&quot; width=&quot;12&quot;/&gt;). The former class is more resistant to spamming.&lt;/p&gt;                 		  &lt;p&gt;Forum posts propagate from friend to friend using small cache file exchanges. When you first connect to a new friend, it&apos;s likely 		  you will receive many such cache files, and new forums will appear. 		  &lt;/p&gt;                                      		</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>ForumsFillThread</name>
@@ -4955,20 +5098,12 @@ p, li { white-space: pre-wrap; }⏎
         <translation>Μήνυμα ομάδας</translation>
     </message>
     <message>
-        <source>Add Friend</source>
-        <translation>Προσθήκη φίλου</translation>
-    </message>
-    <message>
         <source>Edit Group</source>
         <translation>Επεξεργασια ομαδας</translation>
     </message>
     <message>
         <source>Remove Group</source>
         <translation>Μετακινηση ομαδας</translation>
-    </message>
-    <message>
-        <source>Chat lobbies</source>
-        <translation>Προθαλαμος συνομιλιων</translation>
     </message>
     <message>
         <source>Chat</source>
@@ -4985,10 +5120,6 @@ p, li { white-space: pre-wrap; }⏎
     <message>
         <source>Recommend this Friend to...</source>
         <translation>Συστιση φιλου σε...</translation>
-    </message>
-    <message>
-        <source>Connect To Friend</source>
-        <translation>Συνδεθείτε με το φίλο</translation>
     </message>
     <message>
         <source>Copy certificate link</source>
@@ -5031,26 +5162,6 @@ p, li { white-space: pre-wrap; }⏎
         <translation>Αφαιρεση από όλες τις ομάδες</translation>
     </message>
     <message>
-        <source>Create new</source>
-        <translation>Δημιουργία νέας</translation>
-    </message>
-    <message>
-        <source>Invite this group</source>
-        <translation>Προσκληση στην ομαδα</translation>
-    </message>
-    <message>
-        <source>Invite this friend</source>
-        <translation>Προσκληση φίλου</translation>
-    </message>
-    <message>
-        <source>Show</source>
-        <translation>Εμφανιση</translation>
-    </message>
-    <message>
-        <source>Unsubscribe</source>
-        <translation>Καταργηση εγγραφης</translation>
-    </message>
-    <message>
         <source>Expand all</source>
         <translation>Επεκταση ολων</translation>
     </message>
@@ -5067,20 +5178,36 @@ p, li { white-space: pre-wrap; }⏎
         <translation>Θέλετε να διαγραψετε αυτόν τον φίλο?</translation>
     </message>
     <message>
-        <source>Unsubscribe to lobby</source>
-        <translation>Καταργηση εγγραφης απο τον προθαλαμο</translation>
-    </message>
-    <message>
-        <source>You are about to unsubscribe a chat lobby&lt;br&gt;You can only re-enter if your friends invite you again.</source>
-        <translation>Είστε έτοιμος να διαγραψετε εναν προθαλαμο συνομηλιων&lt;br&gt;μπορείτε να τον επανενεργοποιήσετε μόνο αν οι φίλοι σας προσκληθουν και πάλι.</translation>
-    </message>
-    <message>
         <source>Columns</source>
         <translation>Στήλες</translation>
     </message>
     <message>
-        <source>Sort by</source>
-        <translation>Ταξινόμηση κατά</translation>
+        <source>IP</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Sort by IP</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show IP Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Attempt to connect</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create new group</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Recommend many friends to each others</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Service permissions matrix</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -5157,10 +5284,6 @@ p, li { white-space: pre-wrap; }⏎
     <message>
         <source>Display</source>
         <translation>Οθονη</translation>
-    </message>
-    <message>
-        <source>Add</source>
-        <translation>Προσθηκη</translation>
     </message>
     <message>
         <source>Edit status message</source>
@@ -5279,14 +5402,6 @@ p, li { white-space: pre-wrap; }⏎
         <translation>Τοπικό δίκτυο</translation>
     </message>
     <message>
-        <source>Known people</source>
-        <translation>Γνωστά ατομα</translation>
-    </message>
-    <message>
-        <source>Welcome to RetroShare&apos;s group chat.</source>
-        <translation>Καλώς ηρθατε στην ομαδικη συνομιλια του RetroShare</translation>
-    </message>
-    <message>
         <source>Paste RetroShare Link</source>
         <translation>Επικολληση του Λινκ</translation>
     </message>
@@ -5313,6 +5428,18 @@ p, li { white-space: pre-wrap; }⏎
     <message>
         <source>Text File (*.txt );;All Files (*)</source>
         <translation>Αρχειο κειμενου (*.txt );;Ολα τα αρχεια (*)</translation>
+    </message>
+    <message>
+        <source>Keyring</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Friends&lt;/h1&gt;                                   		  &lt;p&gt;The Friends tab shows...your friends: the list of persons you have accepted to connect to.                   		  &lt;/p&gt;                                                   		  &lt;p&gt;You can group friends together to allow a finer level of information access, for instance to only allow      		  some friends to see some files.&lt;/p&gt; 		  &lt;p&gt;On the right, you will find 3 useful tabs:                                                                   		  &lt;ul&gt;	                                                                                                         		  		&lt;li&gt;Broadcast sends messages to all connected friends at once&lt;/li&gt;                             		  		&lt;li&gt;Local Network shows the network around you, including friends of your friends&lt;/li&gt;                 		  		&lt;li&gt;Keyring contains keys you collected, mostly forwarded to you by your friends&lt;/li&gt;                              		  &lt;/ul&gt; &lt;/p&gt;                                                                                                      		</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Retroshare broadcast chat: messages are sent to all connected friends.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -5689,10 +5816,6 @@ Fill in your PGP password when asked, to sign your new key.</source>
         <translation>Καμμια εμφανιση της RetroShare MessageBox</translation>
     </message>
     <message>
-        <source>Do not Minimize to Tray Icon</source>
-        <translation>Καμμια ελαχιστοποιηση του εικονιδιου</translation>
-    </message>
-    <message>
         <source>Auto Login</source>
         <translation>Αυτόματη σύνδεση</translation>
     </message>
@@ -5735,6 +5858,10 @@ Fill in your PGP password when asked, to sign your new key.</source>
     <message>
         <source>General</source>
         <translation>Γενικα</translation>
+    </message>
+    <message>
+        <source>Minimize to Tray Icon</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6215,10 +6342,6 @@ p, li { white-space: pre-wrap; }⏎
         <translation>Κανάλια</translation>
     </message>
     <message>
-        <source>refresh</source>
-        <translation>Ανανέωση</translation>
-    </message>
-    <message>
         <source>Display</source>
         <translation>Οθονη</translation>
     </message>
@@ -6309,6 +6432,10 @@ p, li { white-space: pre-wrap; }⏎
     <message>
         <source>No Channel Selected</source>
         <translation>Κανενα καναλι δεν επιλεχθηκε</translation>
+    </message>
+    <message>
+        <source>Todo</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6596,10 +6723,6 @@ before you can comment</source>
         <translation>Επόμενο μη αναγνωσμένο</translation>
     </message>
     <message>
-        <source>Refresh</source>
-        <translation>Ανανέωση</translation>
-    </message>
-    <message>
         <source>Search Title</source>
         <translation>Αναζήτηση τίτλου</translation>
     </message>
@@ -6702,6 +6825,18 @@ before you can comment</source>
     <message>
         <source>You cant reply to an Anonymous Author</source>
         <translation>Δεν μπορείτε να απαντήσετε σε έναν ανώνυμο δημιουργο</translation>
+    </message>
+    <message>
+        <source>Forum Description</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Forum:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Thread:</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6809,6 +6944,10 @@ before you can comment</source>
     <message>
         <source>On %1, %2 wrote:</source>
         <translation>Στις % 1, %2 έγραψε:</translation>
+    </message>
+    <message>
+        <source>Todo</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6942,6 +7081,21 @@ before you can comment</source>
     </message>
     <message>
         <source>Invalid Circle Selection - Personal disabled for now</source>
+        <translation>Μη έγκυρη επιλογή κύκλου - Απενεργοποιηση τώρα</translation>
+    </message>
+</context>
+<context>
+    <name>GxsIdChooser</name>
+    <message>
+        <source>Loading</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Not found</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No Signature</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -7236,10 +7390,6 @@ p, li { white-space: pre-wrap; }⏎
         <translation>Νέο ID</translation>
     </message>
     <message>
-        <source>Showing:</source>
-        <translation>Εμφανιση:</translation>
-    </message>
-    <message>
         <source>Yourself</source>
         <translation>τον εαυτό σας</translation>
     </message>
@@ -7258,10 +7408,6 @@ p, li { white-space: pre-wrap; }⏎
     <message>
         <source>All</source>
         <translation>Όλα</translation>
-    </message>
-    <message>
-        <source>filter</source>
-        <translation>φίλτρο</translation>
     </message>
     <message>
         <source>Nickname</source>
@@ -7316,10 +7462,6 @@ p, li { white-space: pre-wrap; }⏎
         <translation>Όνομα του PGP</translation>
     </message>
     <message>
-        <source>PGP Email</source>
-        <translation>PGP Email</translation>
-    </message>
-    <message>
         <source>PGP Id</source>
         <translation>PGP Id</translation>
     </message>
@@ -7341,18 +7483,46 @@ p, li { white-space: pre-wrap; }⏎
     </message>
     <message>
         <source>Implicit Score</source>
-        <translation type="unfinished"/>
+        <translation>Έμμεσο αποτέλεσμα</translation>
     </message>
     <message>
         <source>Rating</source>
-        <translation type="unfinished"/>
+        <translation>Βαθμολογία</translation>
     </message>
     <message>
         <source>Comment</source>
-        <translation type="unfinished"/>
+        <translation>Σχολιο</translation>
     </message>
     <message>
         <source>Local Reputation</source>
+        <translation>Τοπική φήμη</translation>
+    </message>
+    <message>
+        <source>Todo</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Search</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP Linked Id</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Anon Id</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown real name</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Anonymous Id</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -7371,20 +7541,12 @@ p, li { white-space: pre-wrap; }⏎
         <translation>Όνομα του PGP</translation>
     </message>
     <message>
-        <source>PGP Email</source>
-        <translation>PGP Email</translation>
-    </message>
-    <message>
         <source>PGP Hash</source>
         <translation>PGP Hash</translation>
     </message>
     <message>
         <source>PGP Id</source>
         <translation>PGP Id</translation>
-    </message>
-    <message>
-        <source>New Identity</source>
-        <translation>Νέα ταυτότητα</translation>
     </message>
     <message>
         <source>PGP Associated ID</source>
@@ -7395,12 +7557,36 @@ p, li { white-space: pre-wrap; }⏎
         <translation>Ψευδώνυμο</translation>
     </message>
     <message>
-        <source>Cancel</source>
-        <translation>Διακοπη</translation>
+        <source>New identity</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Create/Update ID</source>
-        <translation>Δημιουργία/ανανεωση ID</translation>
+        <source>To be generated</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>N/A</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Edit identity</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Error getting key!</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Error KeyID invalid</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown GpgId</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown real name</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7475,10 +7661,6 @@ p, li { white-space: pre-wrap; }⏎
 </context>
 <context>
     <name>MainWindow</name>
-    <message>
-        <source>MainWindow</source>
-        <translation>MainWindow</translation>
-    </message>
     <message>
         <source>Add Friend</source>
         <translation>Προσθήκη φίλου</translation>
@@ -8126,6 +8308,14 @@ Do you want to save message ?</source>
         <source>Add Extra File</source>
         <translation>Προσθηκη επιπλεον αρχειου</translation>
     </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Cryptographically sign message to distant peers. This is prevents intermediate peers to spoof your identity.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Distant peer (name: %2, PGP key: %1)</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>MessagePage</name>
@@ -8180,6 +8370,18 @@ Do you want to save message ?</source>
     <message>
         <source>Message</source>
         <translation>Μυνημα</translation>
+    </message>
+    <message>
+        <source>Distant messages:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;The link below allows people in the network to send encrypted messages to you, using tunnels. To do that, they need your public PGP key, which they will get using the Retroshare discovery system. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Accept encrypted distant messages from everyone</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -8688,6 +8890,50 @@ Do you want to save message ?</source>
         <source>Total:</source>
         <translation>Σύνολο:</translation>
     </message>
+    <message>
+        <source>Decrypt Message</source>
+        <translation>Αποκρυπτογράφηση μηνύματος</translation>
+    </message>
+    <message>
+        <source>Encrypted message. Right-click to decrypt it.</source>
+        <translation>Κρυπτογραφημένο μήνυμα. Κάντε δεξιό κλικ για να αποκρυπτογραφήθει.</translation>
+    </message>
+    <message>
+        <source>Decryption failed!</source>
+        <translation>Απέτυχε η αποκρυπτογράφηση!</translation>
+    </message>
+    <message>
+        <source>This message could not be decrypted.</source>
+        <translation>Αυτό το μήνυμα δεν μπορεί να αποκρυπτογραφηθεί.</translation>
+    </message>
+    <message>
+        <source>Messages</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Click to sort by signature</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Messages&lt;/h1&gt;                         			 &lt;p&gt;Messages are like &lt;b&gt;e-mail&lt;/b&gt;: you send/receive them from your friends when both of you	are connected.&lt;/p&gt; 			 &lt;p&gt;It is also possible to send messages to non friends, using tunnels. Such messages are always encrypted. It is 			 recommended to cryptographically sign distant messages, as a proof of your identity, using the &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; button 			 in the message composer window. Distant messages are not guarrantied to arrive, since this requires the distant peer to accept them (You need yourself to switch this on in Config-Messages).&lt;/p&gt;			 &lt;p&gt;Some additional features allow you to exchange data in messages: you may recommend files to your friends by pasting file links, 			 or recommend friends-to-be to other friends, in order to streathen your network.&lt;/p&gt;	                   			 </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This message is encrypted. Right click to decrypt it.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This message was signed and the signature checks</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This message was signed but the signature doesn&apos;t check</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This message is not encrypted. Cannot decrypt!</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>MessengerWindow</name>
@@ -8827,10 +9073,6 @@ Do you want to save message ?</source>
     <message>
         <source>Search Network</source>
         <translation>Δίκτυο αναζήτησης</translation>
-    </message>
-    <message>
-        <source>Show all accessible keys</source>
-        <translation>Εμφάνιση όλων των προσβασιμων κλειδιων</translation>
     </message>
     <message>
         <source>Name</source>
@@ -9045,7 +9287,11 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <translation>τον εαυτό σας</translation>
     </message>
     <message>
-        <source>Data iconsistency in the keyring. This is most probably a bug. Please contact the developers.</source>
+        <source>Data inconsistency in the keyring. This is most probably a bug. Please contact the developers.</source>
+        <translation>Ασυνέπεια δεδομένων στην κλειδοθήκη. Αυτό είναι πιθανότατα ένα bug. Επικοινωνήστε με τους προγραμματιστές.</translation>
+    </message>
+    <message>
+        <source>Only show people you trusted</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -9111,6 +9357,10 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     <message>
         <source>This is a test.</source>
         <translation>Αυτό είναι μια δοκιμη.</translation>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;News Feed&lt;/h1&gt;                                                          		  &lt;p&gt;The News Feed displays the last events on your network, sorted by the time you received them.                		  This gives you a summary of the activity of your friends.                                                       		  You can configure which events to show by pressing on &lt;b&gt;Options&lt;/b&gt;. &lt;/p&gt;                                      		  &lt;p&gt;The various events shown are:                                                                                		  &lt;ul&gt;	                                                                                                         		  		&lt;li&gt;Connection attempts (useful to make friends with new people and control who&apos;s trying to reach you)&lt;/li&gt; 		  		&lt;li&gt;Channel and Forum posts&lt;/li&gt;                                                                            		  		&lt;li&gt;New Channels and Forums you can subscribe to&lt;/li&gt;                                                       		  		&lt;li&gt;Private messages from your friends&lt;/li&gt;                                                                 		  &lt;/ul&gt; &lt;/p&gt;                                                                                                      		</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -9857,6 +10107,25 @@ malicious behavior of crafted plugins.</source>
     </message>
 </context>
 <context>
+    <name>PopupDistantChatDialog</name>
+    <message>
+        <source>Distant chat terminated</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>The person you&apos;re talking to has deleted the secured chat tunnel. You may remove the chat window now.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Closing this window will end the conversation, notify the peer and remove the encrypted tunnel.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Kill the tunnel?</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>PostedCreatePostDialog</name>
     <message>
         <source>Create Post</source>
@@ -9906,8 +10175,8 @@ p, li { white-space: pre-wrap; }⏎
 <context>
     <name>PostedDialog</name>
     <message>
-        <source>Posted</source>
-        <translation>Καταχωρήθηκε</translation>
+        <source>Posted Links</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -9969,11 +10238,11 @@ p, li { white-space: pre-wrap; }⏎
     </message>
     <message>
         <source>Comments</source>
-        <translation type="unfinished"/>
+        <translation>Σχολια</translation>
     </message>
     <message>
         <source>Comment</source>
-        <translation type="unfinished"/>
+        <translation>Σχόλιο</translation>
     </message>
 </context>
 <context>
@@ -9993,10 +10262,6 @@ p, li { white-space: pre-wrap; }⏎
     <message>
         <source>Top</source>
         <translation>Κορυφή</translation>
-    </message>
-    <message>
-        <source>Refresh</source>
-        <translation>Ανανέωση</translation>
     </message>
     <message>
         <source>Today</source>
@@ -10064,15 +10329,15 @@ p, li { white-space: pre-wrap; }⏎
     </message>
     <message>
         <source>Showing</source>
-        <translation type="unfinished"/>
+        <translation>Εμφάνιση</translation>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished"/>
+        <translation>RetroShare</translation>
     </message>
     <message>
         <source>Please create or choose a Signing Id before Voting</source>
-        <translation type="unfinished"/>
+        <translation>Δημιουργήστε ή επιλέξτε ένα Id υπογραφής πριν από την ψηφοφορία</translation>
     </message>
 </context>
 <context>
@@ -10111,26 +10376,6 @@ p, li { white-space: pre-wrap; }⏎
     <message>
         <source>Profile Manager</source>
         <translation>Διαχειριστης προφιλ</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Select an identity from the list below to be used on another computer, and press &amp;quot;Export selected identity&amp;quot;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;To use it on a different computer,  select the identity manager in the login window. From there you can import the identity file and create a new location for that identity. &lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;When keeping the same identity for your new  location, your friends will automatically accept you.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
-p, li { white-space: pre-wrap; }⏎
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;⏎
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Select an identity from the list below to be used on another computer, and press &amp;quot;Export selected identity&amp;quot;&lt;/p&gt;⏎
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;⏎
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;To use it on a different computer, select the identity manager in the login window. From there you can import the identity file and create a new location for that identity. &lt;/p&gt;⏎
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;⏎
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;When keeping the same identity for your new location, your friends will automatically accept you.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Identities</source>
@@ -10211,6 +10456,18 @@ and use the import button to load it</source>
     <message>
         <source>Certificates (*.pqi *.pem)</source>
         <translation>Certificates (*.pqi *.pem)</translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:11pt;&quot;&gt;Select an identity from the list below to be used on another computer, and press &amp;quot;Export selected identity&amp;quot;&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Ubuntu'; font-size:11pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:11pt;&quot;&gt;To use it on a different computer,  select the identity manager in the login window. From there you can import the identity file and create a new location for that identity. &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Ubuntu'; font-size:11pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;When keeping the same identity for your new  location, your friends will automatically accept you.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -10626,6 +10883,70 @@ Reported error is: %2</source>
     <message>
         <source>Start with a RetroShare link is only supported for Windows.</source>
         <translation>Έναρξη με μια RetroShare σύνδεση που υποστηρίζεται μόνο απο το Windows.</translation>
+    </message>
+    <message>
+        <source>Select who can contact you:</source>
+        <translation>Επιλέξτε ποιος μπορεί να επικοινωνήσει μαζί σας:</translation>
+    </message>
+    <message>
+        <source>Chat link is expired</source>
+        <translation>Το Chat link έχει λήξει</translation>
+    </message>
+    <message>
+        <source>This chat link is expired. The destination peer will not answer.</source>
+        <translation>Αυτό το chat link έχει λήξει. Ο σταθμός προορισμού δεν θα απαντήσει.</translation>
+    </message>
+    <message>
+        <source>Chat link cannot be decrypted</source>
+        <translation>Ο Chat σύνδεσμος δεν μπορεί να αποκρυπτογραφηθεί</translation>
+    </message>
+    <message>
+        <source>The link could not be decrypted.</source>
+        <translation>Η σύνδεση δεν ήταν δυνατή να αποκρυπτογραφηθεί.</translation>
+    </message>
+    <message>
+        <source>The link signature cannot be checked.</source>
+        <translation>Η υπογραφή συνδέσμου δεν μπορεί να ελεγχθεί.</translation>
+    </message>
+    <message>
+        <source>The link is signed by an unknown key.</source>
+        <translation>Η σύνδεση υπογράφεται από ένα άγνωστο κλειδί.</translation>
+    </message>
+    <message>
+        <source>Hash error</source>
+        <translation>Hash σφάλμα</translation>
+    </message>
+    <message>
+        <source>Distant peer has closed the chat</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Tunnel is pending...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Messaging link is expired</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This Messaging link is expired. The destination peer will not receive it.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This chat link is encrypted with a key that is not yours. You can&apos;t use it. Key ID = </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Chat connection is not possible</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Secured tunnel established. Waiting for ACK...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Secured tunnel is working. You can talk!</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -12489,10 +12810,6 @@ p, li { white-space: pre-wrap; }⏎
         <translation>Χρονος λυψης</translation>
     </message>
     <message>
-        <source>Core-ID</source>
-        <translation>Πυρήνας-ID</translation>
-    </message>
-    <message>
         <source>Peer</source>
         <comment>i.e: user name</comment>
         <translation>Peer</translation>
@@ -12758,6 +13075,107 @@ Try to be patient!</source>
         <source>Please enter a new--and valid--filename</source>
         <translation>Παρακαλούμε εισάγετε ένα νέο--και έγκυρο--όνομα αρχείου</translation>
     </message>
+    <message>
+        <source>Last Time Seen</source>
+        <comment>i.e: Last Time Receiced Data</comment>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>UserID</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>File Never Seen</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Expand all</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Collapse all</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show Size Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show Completed Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Speed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show Speed Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Progress / Availability</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show Progress / Availability Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Sources</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show Sources Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show Status Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show Speed / Queue position Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show Remaining Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Download time</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show Download time Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show Hash Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Last Time Seen</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show Last Time Seen Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Columns</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>File Transfers</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;File Transfer&lt;/h1&gt;                                                         			 &lt;p&gt;Retroshare brings two ways of transferring files: direct transfers from your friends, and                                     			 distant anonymous tunnelled transfers. In addition, file transfer is multi-source and allows swarming                                      			 (you can be a source while downloading)&lt;/p&gt;                                     			 &lt;p&gt;You can share files using the &lt;img src=&quot;:/images/directoryadd_24x24_shadow.png&quot; width=16 /&gt; icon from the left side bar. 				These files will be listed in the My Files tab. You can decide for each friend group whether they can or not see these files 				in their Friends Files tab&lt;/p&gt;			 &lt;p&gt;The search tab reports files from your friends&apos; file lists, and distant files that can be reached 			 anonymously using the multi-hop tunnelling system.&lt;/p&gt; 			 </source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>TreeStyle_RDM</name>
@@ -12979,6 +13397,13 @@ Try to be patient!</source>
     <message>
         <source>TR Forward probabilities</source>
         <translation>Πιθανότητες TR προς τα εμπρός</translation>
+    </message>
+</context>
+<context>
+    <name>UIStateHelper</name>
+    <message>
+        <source>Loading</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>

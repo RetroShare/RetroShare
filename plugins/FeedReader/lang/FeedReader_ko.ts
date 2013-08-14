@@ -4,157 +4,157 @@
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="14"/>
         <source>Create new feed</source>
-        <translation type="unfinished"/>
+        <translation>새 피드 만들기</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="106"/>
         <source>Authentication (not yet supported)</source>
-        <translation type="unfinished"/>
+        <translation>인증 (아직 지원하지 않음)</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="112"/>
         <source>Feed needs authentication</source>
-        <translation type="unfinished"/>
+        <translation>피드를 받는데 인증이 필요합니다</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="119"/>
         <source>User</source>
-        <translation type="unfinished"/>
+        <translation>사용자</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="126"/>
         <source>Password</source>
-        <translation type="unfinished"/>
+        <translation>암호</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="222"/>
         <source>Update interval</source>
-        <translation type="unfinished"/>
+        <translation>업데이트 주기</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="228"/>
         <source>Use standard update interval</source>
-        <translation type="unfinished"/>
+        <translation>표준 업데이트 주기 사용</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="235"/>
         <source>Interval in minutes (0 = manual)</source>
-        <translation type="unfinished"/>
+        <translation>분 단위 시간 간격 (0 = 수동설정)</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="254"/>
         <source>Last update</source>
-        <translation type="unfinished"/>
+        <translation>최종 업데이트</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="267"/>
         <source>Never</source>
-        <translation type="unfinished"/>
+        <translation>안함</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="388"/>
         <source>Embed images</source>
-        <translation type="unfinished"/>
+        <translation>포함한 그림</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="146"/>
         <source>Storage time</source>
-        <translation type="unfinished"/>
+        <translation>저장소 시간</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="152"/>
         <source>Use standard storage time</source>
-        <translation type="unfinished"/>
+        <translation>표준 저장소 시간 사용</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="159"/>
         <source>Days (0 = off)</source>
-        <translation type="unfinished"/>
+        <translation>일 (0 = 끔)</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="182"/>
         <source>Proxy</source>
-        <translation type="unfinished"/>
+        <translation>프록시</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="188"/>
         <source>Use standard proxy</source>
-        <translation type="unfinished"/>
+        <translation>표준 프록시 사용</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="195"/>
         <source>Server</source>
-        <translation type="unfinished"/>
+        <translation>서버</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="205"/>
         <source>:</source>
-        <translation type="unfinished"/>
+        <translation>:</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="51"/>
         <source>Type</source>
-        <translation type="unfinished"/>
+        <translation>형식</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="71"/>
         <source>Forum</source>
-        <translation type="unfinished"/>
+        <translation>포럼</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="96"/>
         <source>Local Feed</source>
-        <translation type="unfinished"/>
+        <translation>로컬 피드</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="328"/>
         <source>Transformation</source>
-        <translation type="unfinished"/>
+        <translation>변환</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="336"/>
         <source>Transformation type</source>
-        <translation type="unfinished"/>
+        <translation>변환 형식</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="349"/>
         <source>Preview &amp;&amp; Transformation</source>
-        <translation type="unfinished"/>
+        <translation>미리보기 및 변환</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="361"/>
         <source>Misc</source>
-        <translation type="unfinished"/>
+        <translation>기타</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="367"/>
         <source>Activated</source>
-        <translation type="unfinished"/>
+        <translation>활성화됨</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="374"/>
         <source>Use name and description from feed</source>
-        <translation type="unfinished"/>
+        <translation>피드의 이름과 설명 사용</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="381"/>
         <source>Update forum information</source>
-        <translation type="unfinished"/>
+        <translation>포럼 정보 업데이트</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="395"/>
         <source>Save complete web page (experimental for local feeds)</source>
-        <translation type="unfinished"/>
+        <translation>전체 웹페이지 저장 (로컬 피드에 대해서는 시험중)</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="292"/>
         <source>Description:</source>
-        <translation type="unfinished"/>
+        <translation>설명:</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="306"/>
         <source>RSS-Feed-URL:</source>
-        <translation type="unfinished"/>
+        <translation>RSS-Feed-URL</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="316"/>
@@ -164,49 +164,49 @@
     <message>
         <location filename="../gui/AddFeedDialog.cpp" line="63"/>
         <source>Feed Details</source>
-        <translation type="unfinished"/>
+        <translation>피드 세부정보</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.cpp" line="96"/>
         <source>Create a new anonymous public forum</source>
-        <translation type="unfinished"/>
+        <translation>새 익명 공개 포럼 생성</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.cpp" line="212"/>
         <location filename="../gui/AddFeedDialog.cpp" line="325"/>
         <location filename="../gui/AddFeedDialog.cpp" line="340"/>
         <source>Edit feed</source>
-        <translation type="unfinished"/>
+        <translation>피드 편집</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.cpp" line="237"/>
         <source>Not yet created</source>
-        <translation type="unfinished"/>
+        <translation>아직 만들지 않음</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.cpp" line="243"/>
         <source>Unknown forum</source>
-        <translation type="unfinished"/>
+        <translation>알 수 없는 포럼</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.cpp" line="325"/>
         <source>Can&apos;t edit feed. Feed does not exist.</source>
-        <translation type="unfinished"/>
+        <translation>피드를 편집할 수 없습니다. 피드가 존재하지 않습니다.</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.cpp" line="335"/>
         <source>Create feed</source>
-        <translation type="unfinished"/>
+        <translation>피드 생성</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.cpp" line="335"/>
         <source>Cannot create feed.</source>
-        <translation type="unfinished"/>
+        <translation>피드를 만들 수 없습니다.</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.cpp" line="340"/>
         <source>Cannot change feed.</source>
-        <translation type="unfinished"/>
+        <translation>피드를 변경할 수 없습니다.</translation>
     </message>
 </context>
 <context>
@@ -214,7 +214,7 @@
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="14"/>
         <source>Form</source>
-        <translation type="unfinished"/>
+        <translation>양식</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="20"/>
@@ -224,62 +224,62 @@
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="26"/>
         <source>Interval in minutes (0 = manual)</source>
-        <translation type="unfinished"/>
+        <translation>분 단위 시간간격 (0 = 수동설정)</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="49"/>
         <source>Storage time</source>
-        <translation type="unfinished"/>
+        <translation>저장소 시간</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="55"/>
         <source>Days (0 = off)</source>
-        <translation type="unfinished"/>
+        <translation>일 (0 = 끔)</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="78"/>
         <source>Proxy</source>
-        <translation type="unfinished"/>
+        <translation>프록시</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="84"/>
         <source>Use proxy</source>
-        <translation type="unfinished"/>
+        <translation>프록시 사용</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="91"/>
         <source>Server</source>
-        <translation type="unfinished"/>
+        <translation>서버</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="108"/>
         <source>:</source>
-        <translation type="unfinished"/>
+        <translation>:</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="118"/>
         <source>Misc</source>
-        <translation type="unfinished"/>
+        <translation>기타</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="131"/>
         <source>Set message to read on activate</source>
-        <translation type="unfinished"/>
+        <translation>메시지를 읽기 위해 활동중으로 표시</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="138"/>
         <source>Save configuration in background (for slow systems, more memory needed)</source>
-        <translation type="unfinished"/>
+        <translation>백그라운드에서 설정 저장 (느린 시스템에서 사용, 메모리가 더 많이 필요합니다)</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="124"/>
         <source>Open all feeds in new tab</source>
-        <translation type="unfinished"/>
+        <translation>모든 피드를 새 탭에서 열기</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.h" line="50"/>
         <source>FeedReader</source>
-        <translation type="unfinished"/>
+        <translation>피드리더</translation>
     </message>
 </context>
 <context>
@@ -287,47 +287,47 @@
     <message>
         <location filename="../gui/FeedReaderDialog.ui" line="68"/>
         <source>Feeds</source>
-        <translation type="unfinished"/>
+        <translation>피드</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.ui" line="91"/>
         <source>Add new feed</source>
-        <translation type="unfinished"/>
+        <translation>새 피드 추가</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.ui" line="108"/>
         <source>Update feed</source>
-        <translation type="unfinished"/>
+        <translation>피드 업데이트</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="94"/>
         <source>Message Folders</source>
-        <translation type="unfinished"/>
+        <translation>메시지 폴더</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="288"/>
         <source>New</source>
-        <translation type="unfinished"/>
+        <translation>새 피드</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="289"/>
         <source>Feed</source>
-        <translation type="unfinished"/>
+        <translation>피드</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="293"/>
         <source>Folder</source>
-        <translation type="unfinished"/>
+        <translation>폴더</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="301"/>
         <source>Open in new tab</source>
-        <translation type="unfinished"/>
+        <translation>새 탭에서 열기</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="309"/>
         <source>Edit</source>
-        <translation type="unfinished"/>
+        <translation>편집</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="314"/>
@@ -342,69 +342,69 @@
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="329"/>
         <source>Activate</source>
-        <translation type="unfinished"/>
+        <translation>활성화</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="329"/>
         <source>Deactivate</source>
-        <translation type="unfinished"/>
+        <translation>비활성화</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="521"/>
         <source>No name</source>
-        <translation type="unfinished"/>
+        <translation>이름 없음</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="733"/>
         <source>Add new folder</source>
-        <translation type="unfinished"/>
+        <translation>새 폴더 추가</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="734"/>
         <source>Please enter a name for the folder</source>
-        <translation type="unfinished"/>
+        <translation>폴더 이름을 입력하십시오</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="740"/>
         <location filename="../gui/FeedReaderDialog.cpp" line="793"/>
         <source>Create folder</source>
-        <translation type="unfinished"/>
+        <translation>폴더 만들기</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="740"/>
         <location filename="../gui/FeedReaderDialog.cpp" line="793"/>
         <source>Cannot create folder.</source>
-        <translation type="unfinished"/>
+        <translation>폴더를 만들 수 없습니다.</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="766"/>
         <source>Remove folder</source>
-        <translation type="unfinished"/>
+        <translation>폴더 제거</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="766"/>
         <source>Remove feed</source>
-        <translation type="unfinished"/>
+        <translation>피드 제거</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="766"/>
         <source>Do you want to remove the folder %1?</source>
-        <translation type="unfinished"/>
+        <translation>%1 폴더를 제거하시겠습니까?</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="766"/>
         <source>Do you want to remove the feed %1?</source>
-        <translation type="unfinished"/>
+        <translation>%1 피드를 제거하시겠습니까?</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="786"/>
         <source>Edit folder</source>
-        <translation type="unfinished"/>
+        <translation>폴더 편집</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="787"/>
         <source>Please enter a new name for the folder</source>
-        <translation type="unfinished"/>
+        <translation>폴더의 새 이름을 입력하십시오</translation>
     </message>
 </context>
 <context>
@@ -413,32 +413,32 @@
         <location filename="../gui/FeedReaderFeedItem.ui" line="196"/>
         <location filename="../gui/FeedReaderFeedItem.cpp" line="109"/>
         <source>Expand</source>
-        <translation type="unfinished"/>
+        <translation>확장</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderFeedItem.ui" line="222"/>
         <source>Set as read and remove item</source>
-        <translation type="unfinished"/>
+        <translation>항목을 읽음으로 설정하고 제거</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderFeedItem.ui" line="248"/>
         <source>Remove Item</source>
-        <translation type="unfinished"/>
+        <translation>항목 제거</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderFeedItem.cpp" line="80"/>
         <source>Open link in browser</source>
-        <translation type="unfinished"/>
+        <translation>브라우저에서 링크 열기</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderFeedItem.cpp" line="81"/>
         <source>Copy link to clipboard</source>
-        <translation type="unfinished"/>
+        <translation>클립보드에 복사</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderFeedItem.cpp" line="103"/>
         <source>Hide</source>
-        <translation type="unfinished"/>
+        <translation>숨김</translation>
     </message>
 </context>
 <context>
@@ -446,22 +446,22 @@
     <message>
         <location filename="../gui/FeedReaderFeedNotify.cpp" line="47"/>
         <source>Feed Reader</source>
-        <translation type="unfinished"/>
+        <translation>피드 리더</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderFeedNotify.cpp" line="125"/>
         <source>Test</source>
-        <translation type="unfinished"/>
+        <translation>시험</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderFeedNotify.cpp" line="136"/>
         <source>Test message</source>
-        <translation type="unfinished"/>
+        <translation>시험 메시지</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderFeedNotify.cpp" line="137"/>
         <source>This is a test message.</source>
-        <translation type="unfinished"/>
+        <translation>테스트 메시지입니다.</translation>
     </message>
 </context>
 <context>
@@ -469,12 +469,12 @@
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="14"/>
         <source>Form</source>
-        <translation type="unfinished"/>
+        <translation>양식</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="66"/>
         <source>Mark messages as read</source>
-        <translation type="unfinished"/>
+        <translation>메시지를 읽음으로 표시</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="69"/>
@@ -484,120 +484,120 @@
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="86"/>
         <source>Mark messages as unread</source>
-        <translation type="unfinished"/>
+        <translation>메시지를 읽지 않음으로 표시</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="103"/>
         <source>Mark all messages as read</source>
-        <translation type="unfinished"/>
+        <translation>모든 메시지를 읽음으로 표시</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="120"/>
         <source>Remove messages</source>
-        <translation type="unfinished"/>
+        <translation>메시지 제거</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="137"/>
         <source>Update feed</source>
-        <translation type="unfinished"/>
+        <translation>피드 업데이트</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="151"/>
         <source>Search forums</source>
-        <translation type="unfinished"/>
+        <translation>포럼 검색</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="182"/>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="91"/>
         <source>Title</source>
-        <translation type="unfinished"/>
+        <translation>제목</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="196"/>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="92"/>
         <source>Date</source>
-        <translation type="unfinished"/>
+        <translation>날짜</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="201"/>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="93"/>
         <source>Author</source>
-        <translation type="unfinished"/>
+        <translation>작성자</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="91"/>
         <source>Search Title</source>
-        <translation type="unfinished"/>
+        <translation>제목 검색</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="92"/>
         <source>Search Date</source>
-        <translation type="unfinished"/>
+        <translation>날짜 검색</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="93"/>
         <source>Search Author</source>
-        <translation type="unfinished"/>
+        <translation>작성자 검색</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="105"/>
         <source>Open link in browser</source>
-        <translation type="unfinished"/>
+        <translation>브라우저에서 링크 열기</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="106"/>
         <source>Copy link to clipboard</source>
-        <translation type="unfinished"/>
+        <translation>클립보드에 복사</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="228"/>
         <source>The messages will be added to the forum</source>
-        <translation type="unfinished"/>
+        <translation>메시지를 포럼에 추가합니다</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="243"/>
         <source>No name</source>
-        <translation type="unfinished"/>
+        <translation>이름 없음</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="304"/>
         <source>Mark as read</source>
-        <translation type="unfinished"/>
+        <translation>읽음으로 표시</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="307"/>
         <source>Mark as unread</source>
-        <translation type="unfinished"/>
+        <translation>읽지 않음으로 표시</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="310"/>
         <source>Mark all as read</source>
-        <translation type="unfinished"/>
+        <translation>모두 읽음으로 표시</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="315"/>
         <source>Copy link</source>
-        <translation type="unfinished"/>
+        <translation>링크 복사</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="318"/>
         <source>Remove</source>
-        <translation type="unfinished"/>
+        <translation>제거</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="323"/>
         <source>Retransform</source>
-        <translation type="unfinished"/>
+        <translation>재 변환</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="697"/>
         <source>Hide</source>
-        <translation type="unfinished"/>
+        <translation>숨김</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="701"/>
         <source>Expand</source>
-        <translation type="unfinished"/>
+        <translation>확장</translation>
     </message>
 </context>
 <context>
@@ -605,12 +605,12 @@
     <message>
         <location filename="../FeedReaderPlugin.cpp" line="159"/>
         <source>This plugin provides a Feedreader.</source>
-        <translation type="unfinished"/>
+        <translation>이 플러그인은 피드리더를 제공합니다</translation>
     </message>
     <message>
         <location filename="../FeedReaderPlugin.cpp" line="164"/>
         <source>FeedReader</source>
-        <translation type="unfinished"/>
+        <translation>피드리더</translation>
     </message>
 </context>
 <context>
@@ -618,168 +618,168 @@
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="36"/>
         <source>Feed not found.</source>
-        <translation type="unfinished"/>
+        <translation>피드를 찾을 수 없습니다.</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="39"/>
         <source>Parent not found.</source>
-        <translation type="unfinished"/>
+        <translation>상위 요소를 찾을 수 없습니다.</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="42"/>
         <source>Parent is no folder.</source>
-        <translation type="unfinished"/>
+        <translation>상위 요소는 폴더가 아닙니다.</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="45"/>
         <source>Feed is a folder.</source>
-        <translation type="unfinished"/>
+        <translation>피드가 폴더입니다.</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="48"/>
         <source>Feed is no folder.</source>
-        <translation type="unfinished"/>
+        <translation>피드는 폴더가 아닙니다.</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="51"/>
         <source>Unknown error occured.</source>
-        <translation type="unfinished"/>
+        <translation>알 수 없는 오류가 생겼습니다.</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="65"/>
         <source>Waiting for download</source>
-        <translation type="unfinished"/>
+        <translation>다운로드 대기중</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="67"/>
         <source>Downloading</source>
-        <translation type="unfinished"/>
+        <translation>다운로드중</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="69"/>
         <source>Waiting for process</source>
-        <translation type="unfinished"/>
+        <translation>처리 대기중</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="71"/>
         <source>Processing</source>
-        <translation type="unfinished"/>
+        <translation>처리중</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="74"/>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="170"/>
         <source>Unknown</source>
-        <translation type="unfinished"/>
+        <translation>알 수 없음</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="91"/>
         <source>Internal download error</source>
-        <translation type="unfinished"/>
+        <translation>내부 다운로드 오류</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="94"/>
         <source>Download error</source>
-        <translation type="unfinished"/>
+        <translation>다운로드 오류</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="97"/>
         <source>Unknown content type</source>
-        <translation type="unfinished"/>
+        <translation>알 수 없는 내용 형식</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="100"/>
         <source>Download not found</source>
-        <translation type="unfinished"/>
+        <translation>다운로드 내용을 찾을 수 없습니다</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="103"/>
         <source>Unknown response code</source>
-        <translation type="unfinished"/>
+        <translation>알 수 없는 응답 코드</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="108"/>
         <source>Internal process error</source>
-        <translation type="unfinished"/>
+        <translation>내부 처리 오류</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="111"/>
         <source>Unknown XML format</source>
-        <translation type="unfinished"/>
+        <translation>알 수 없는 XML 형식</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="114"/>
         <source>Can&apos;t create forum</source>
-        <translation type="unfinished"/>
+        <translation>포럼을 만들 수 없습니다</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="117"/>
         <source>Forum not found</source>
-        <translation type="unfinished"/>
+        <translation>포럼이 없습니다</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="120"/>
         <source>You are not admin of the forum</source>
-        <translation type="unfinished"/>
+        <translation>포럼의 관리자가 아닙니다</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="123"/>
         <source>The forum is no anonymous forum</source>
-        <translation type="unfinished"/>
+        <translation>익명 포럼이 아닙니다</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="127"/>
         <source>Can&apos;t read html</source>
-        <translation type="unfinished"/>
+        <translation>HTML을 읽을 수 없습니다</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="130"/>
         <source>Internal XPath error</source>
-        <translation type="unfinished"/>
+        <translation>내부 XPath 오류</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="133"/>
         <source>Wrong XPath expression</source>
-        <translation type="unfinished"/>
+        <translation>잘못된 XPath 표현식</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="136"/>
         <source>Empty XPath result</source>
-        <translation type="unfinished"/>
+        <translation>빈 XPath 결과</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="139"/>
         <source>XSLT format error</source>
-        <translation type="unfinished"/>
+        <translation>XSLT 형식 오류</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="142"/>
         <source>XSLT transformation error</source>
-        <translation type="unfinished"/>
+        <translation>XSLT 변환 오류</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="145"/>
         <source>Empty XSLT result</source>
-        <translation type="unfinished"/>
+        <translation>빈 XSLT 결과</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="149"/>
         <source>Unknown error</source>
-        <translation type="unfinished"/>
+        <translation>알 수 없는 오류</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="163"/>
         <source>No transformation</source>
-        <translation type="unfinished"/>
+        <translation>변환하지 않음</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="165"/>
         <source>XPath</source>
-        <translation type="unfinished"/>
+        <translation>XPath</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="167"/>
         <source>XSLT</source>
-        <translation type="unfinished"/>
+        <translation>XSLT</translation>
     </message>
 </context>
 <context>
@@ -787,7 +787,7 @@
     <message>
         <location filename="../gui/FeedReaderUserNotify.cpp" line="40"/>
         <source>FeedReader Message</source>
-        <translation type="unfinished"/>
+        <translation>피드리더 메시지</translation>
     </message>
 </context>
 <context>
@@ -805,57 +805,57 @@
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="68"/>
         <source>Feed name</source>
-        <translation type="unfinished"/>
+        <translation>피드 이름</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="204"/>
         <source>Previous</source>
-        <translation type="unfinished"/>
+        <translation>이전</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="233"/>
         <source>0/0</source>
-        <translation type="unfinished"/>
+        <translation>0/0</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="262"/>
         <source>Next</source>
-        <translation type="unfinished"/>
+        <translation>다음</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="282"/>
         <source>Transformation type</source>
-        <translation type="unfinished"/>
+        <translation>변환 형식</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="308"/>
         <source>Structure</source>
-        <translation type="unfinished"/>
+        <translation>구조</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="328"/>
         <source>Title:</source>
-        <translation type="unfinished"/>
+        <translation>제목:</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="520"/>
         <source>XPath use</source>
-        <translation type="unfinished"/>
+        <translation>XPath 사용</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="541"/>
         <source>XPath remove</source>
-        <translation type="unfinished"/>
+        <translation>XPath 제거</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.cpp" line="179"/>
         <source>Cannot create preview</source>
-        <translation type="unfinished"/>
+        <translation>미리보기를 만들 수 없습니다</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.cpp" line="166"/>
         <source>XSLT is used on focus lost or when Ctrl+Enter is pressed</source>
-        <translation type="unfinished"/>
+        <translation>XSLT는 포커스를 잃었을때나 Ctrl+Enter 키를 눌렀을 때 사용합니다</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.cpp" line="423"/>
@@ -865,7 +865,7 @@
     <message>
         <location filename="../gui/PreviewFeedDialog.cpp" line="426"/>
         <source>Edit</source>
-        <translation type="unfinished"/>
+        <translation>편집</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.cpp" line="432"/>
@@ -875,19 +875,19 @@
     <message>
         <location filename="../gui/PreviewFeedDialog.cpp" line="547"/>
         <source>No name</source>
-        <translation type="unfinished"/>
+        <translation>이름 없음</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.cpp" line="642"/>
         <location filename="../gui/PreviewFeedDialog.cpp" line="661"/>
         <source>Error getting content</source>
-        <translation type="unfinished"/>
+        <translation>내용을 가져오는중 오류</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.cpp" line="772"/>
         <location filename="../gui/PreviewFeedDialog.cpp" line="793"/>
         <source>Error parsing document</source>
-        <translation type="unfinished"/>
+        <translation>문서를 해석하는데 오류</translation>
     </message>
 </context>
 </TS>

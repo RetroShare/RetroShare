@@ -4,22 +4,22 @@
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="14"/>
         <source>Create new feed</source>
-        <translation type="unfinished"/>
+        <translation>Vytvořit nový kanál</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="106"/>
         <source>Authentication (not yet supported)</source>
-        <translation type="unfinished"/>
+        <translation>Ověřování (zatím nepodporováno)</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="112"/>
         <source>Feed needs authentication</source>
-        <translation type="unfinished"/>
+        <translation>Kanál vyžaduje ověření</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="119"/>
         <source>User</source>
-        <translation type="unfinished"/>
+        <translation>Uživatel</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="126"/>
@@ -29,27 +29,27 @@
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="222"/>
         <source>Update interval</source>
-        <translation type="unfinished"/>
+        <translation>Interval aktualizací</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="228"/>
         <source>Use standard update interval</source>
-        <translation type="unfinished"/>
+        <translation>Použít standardní interval aktualizací</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="235"/>
         <source>Interval in minutes (0 = manual)</source>
-        <translation type="unfinished"/>
+        <translation>Interval v minutách (0 = ruční)</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="254"/>
         <source>Last update</source>
-        <translation type="unfinished"/>
+        <translation>Poslední aktualizace</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="267"/>
         <source>Never</source>
-        <translation type="unfinished"/>
+        <translation>Nikdy</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="388"/>
@@ -69,7 +69,7 @@
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="159"/>
         <source>Days (0 = off)</source>
-        <translation type="unfinished"/>
+        <translation>Dní (0 = vypnuto)</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="182"/>
@@ -79,7 +79,7 @@
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="188"/>
         <source>Use standard proxy</source>
-        <translation type="unfinished"/>
+        <translation>Použít standardní proxy</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="195"/>
@@ -89,7 +89,7 @@
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="205"/>
         <source>:</source>
-        <translation type="unfinished"/>
+        <translation>:</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="51"/>
@@ -104,7 +104,7 @@
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="96"/>
         <source>Local Feed</source>
-        <translation type="unfinished"/>
+        <translation>Místní kanál</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="328"/>
@@ -129,12 +129,12 @@
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="367"/>
         <source>Activated</source>
-        <translation type="unfinished"/>
+        <translation>Aktivováno</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="374"/>
         <source>Use name and description from feed</source>
-        <translation type="unfinished"/>
+        <translation>Použít název a popis z kanálu</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="381"/>
@@ -169,24 +169,24 @@
     <message>
         <location filename="../gui/AddFeedDialog.cpp" line="96"/>
         <source>Create a new anonymous public forum</source>
-        <translation type="unfinished"/>
+        <translation>Vytvořit nové anonymní veřejné fórum</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.cpp" line="212"/>
         <location filename="../gui/AddFeedDialog.cpp" line="325"/>
         <location filename="../gui/AddFeedDialog.cpp" line="340"/>
         <source>Edit feed</source>
-        <translation type="unfinished"/>
+        <translation>Upravit kanál</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.cpp" line="237"/>
         <source>Not yet created</source>
-        <translation type="unfinished"/>
+        <translation>Ještě nevytvořeno</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.cpp" line="243"/>
         <source>Unknown forum</source>
-        <translation type="unfinished"/>
+        <translation>Neznámé Fórum</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.cpp" line="325"/>
@@ -224,7 +224,7 @@
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="26"/>
         <source>Interval in minutes (0 = manual)</source>
-        <translation type="unfinished"/>
+        <translation>Interval v minutách (0 = ruční)</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="49"/>
@@ -234,7 +234,7 @@
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="55"/>
         <source>Days (0 = off)</source>
-        <translation type="unfinished"/>
+        <translation>Dní (0 = vypnuto)</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="78"/>
@@ -244,7 +244,7 @@
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="84"/>
         <source>Use proxy</source>
-        <translation type="unfinished"/>
+        <translation>Použít proxy server</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="91"/>
@@ -254,7 +254,7 @@
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="108"/>
         <source>:</source>
-        <translation type="unfinished"/>
+        <translation>:</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="118"/>
@@ -274,7 +274,7 @@
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="124"/>
         <source>Open all feeds in new tab</source>
-        <translation type="unfinished"/>
+        <translation>Otevřít všechny kanály v nové kartě</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.h" line="50"/>
@@ -292,12 +292,12 @@
     <message>
         <location filename="../gui/FeedReaderDialog.ui" line="91"/>
         <source>Add new feed</source>
-        <translation type="unfinished"/>
+        <translation>Přidat nový kanál</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.ui" line="108"/>
         <source>Update feed</source>
-        <translation type="unfinished"/>
+        <translation>Aktualizovat kanál</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="94"/>
@@ -322,7 +322,7 @@
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="301"/>
         <source>Open in new tab</source>
-        <translation type="unfinished"/>
+        <translation>Otevřít v nové kartě</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="309"/>
@@ -342,49 +342,49 @@
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="329"/>
         <source>Activate</source>
-        <translation type="unfinished"/>
+        <translation>Aktivovat</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="329"/>
         <source>Deactivate</source>
-        <translation type="unfinished"/>
+        <translation>Deaktivovat</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="521"/>
         <source>No name</source>
-        <translation type="unfinished"/>
+        <translation>Bez jména</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="733"/>
         <source>Add new folder</source>
-        <translation type="unfinished"/>
+        <translation>Přidat novou složku</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="734"/>
         <source>Please enter a name for the folder</source>
-        <translation type="unfinished"/>
+        <translation>Zadejte název složky</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="740"/>
         <location filename="../gui/FeedReaderDialog.cpp" line="793"/>
         <source>Create folder</source>
-        <translation type="unfinished"/>
+        <translation>Vytvořit složku</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="740"/>
         <location filename="../gui/FeedReaderDialog.cpp" line="793"/>
         <source>Cannot create folder.</source>
-        <translation type="unfinished"/>
+        <translation>Nelze vytvořit složku.</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="766"/>
         <source>Remove folder</source>
-        <translation type="unfinished"/>
+        <translation>Odstranit složku</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="766"/>
         <source>Remove feed</source>
-        <translation type="unfinished"/>
+        <translation>Odstranit kanál</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="766"/>
@@ -428,12 +428,12 @@
     <message>
         <location filename="../gui/FeedReaderFeedItem.cpp" line="80"/>
         <source>Open link in browser</source>
-        <translation type="unfinished"/>
+        <translation>Otevřít odkaz v prohlížeči</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderFeedItem.cpp" line="81"/>
         <source>Copy link to clipboard</source>
-        <translation type="unfinished"/>
+        <translation>Kopírovat odkaz do schránky</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderFeedItem.cpp" line="103"/>
@@ -446,7 +446,7 @@
     <message>
         <location filename="../gui/FeedReaderFeedNotify.cpp" line="47"/>
         <source>Feed Reader</source>
-        <translation type="unfinished"/>
+        <translation>Čtečka kanálů</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderFeedNotify.cpp" line="125"/>
@@ -461,7 +461,7 @@
     <message>
         <location filename="../gui/FeedReaderFeedNotify.cpp" line="137"/>
         <source>This is a test message.</source>
-        <translation type="unfinished"/>
+        <translation>Toto je testovací zpráva.</translation>
     </message>
 </context>
 <context>
@@ -474,7 +474,7 @@
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="66"/>
         <source>Mark messages as read</source>
-        <translation type="unfinished"/>
+        <translation>Označit zprávy jako přečtené</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="69"/>
@@ -484,22 +484,22 @@
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="86"/>
         <source>Mark messages as unread</source>
-        <translation type="unfinished"/>
+        <translation>Označit zprávy jako nepřečtené</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="103"/>
         <source>Mark all messages as read</source>
-        <translation type="unfinished"/>
+        <translation>Označit všechny zprávy jako přečtené</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="120"/>
         <source>Remove messages</source>
-        <translation type="unfinished"/>
+        <translation>Odstranit zprávy</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="137"/>
         <source>Update feed</source>
-        <translation type="unfinished"/>
+        <translation>Aktualizovat kanál</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="151"/>
@@ -542,12 +542,12 @@
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="105"/>
         <source>Open link in browser</source>
-        <translation type="unfinished"/>
+        <translation>Otevřít odkaz v prohlížeči</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="106"/>
         <source>Copy link to clipboard</source>
-        <translation type="unfinished"/>
+        <translation>Kopírovat odkaz do schránky</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="228"/>
@@ -557,7 +557,7 @@
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="243"/>
         <source>No name</source>
-        <translation type="unfinished"/>
+        <translation>Bez jména</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="304"/>
@@ -577,7 +577,7 @@
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="315"/>
         <source>Copy link</source>
-        <translation type="unfinished"/>
+        <translation>Kopírovat odkaz</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="318"/>
@@ -820,7 +820,7 @@
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="262"/>
         <source>Next</source>
-        <translation type="unfinished"/>
+        <translation>Další</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="282"/>
@@ -830,7 +830,7 @@
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="308"/>
         <source>Structure</source>
-        <translation type="unfinished"/>
+        <translation>Struktura</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="328"/>
@@ -850,7 +850,7 @@
     <message>
         <location filename="../gui/PreviewFeedDialog.cpp" line="179"/>
         <source>Cannot create preview</source>
-        <translation type="unfinished"/>
+        <translation>Nelze vytvořit náhled</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.cpp" line="166"/>
@@ -875,13 +875,13 @@
     <message>
         <location filename="../gui/PreviewFeedDialog.cpp" line="547"/>
         <source>No name</source>
-        <translation type="unfinished"/>
+        <translation>Bez jména</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.cpp" line="642"/>
         <location filename="../gui/PreviewFeedDialog.cpp" line="661"/>
         <source>Error getting content</source>
-        <translation type="unfinished"/>
+        <translation>Chyba při získávání obsahu</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.cpp" line="772"/>

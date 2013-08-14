@@ -111,7 +111,7 @@
     <message>
         <location filename="../LinksDialog.ui" line="93"/>
         <source>Sort by</source>
-        <translation type="unfinished"/>
+        <translation>Сортировать по</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="101"/>

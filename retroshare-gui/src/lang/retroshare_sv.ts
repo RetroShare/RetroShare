@@ -1217,6 +1217,10 @@ p, li { white-space: pre-wrap; }
         <source>No Channel Selected</source>
         <translation>Ingen kanal vald</translation>
     </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Channels&lt;/h1&gt;                                                         		  &lt;p&gt;Channels allow you to post data (e.g. movies, music) that will spread in the network                                                		  among people who subscribed your channel.  If you activate auto-download on a channel, files attached to each post will start  		  downloading automatically when the post is received.&lt;/p&gt;                                                                               		  &lt;p&gt;You see channels your friends are subscribed to, and forward subscribed channels to                                                		  your friends. This promotes good channels in the network.                                                     		  When you first connect to a new friend, it&apos;s likely 		  you will receive many such cache files, and new channels will appear.                                                                  		  &lt;/p&gt;                                                                                                                                   		  &lt;p&gt;Only the channel&apos;s creator can post on that channel. Other peers                       		  in the network can only read from it, unless the channel is private. You can however share the posting rights or the reading rights 		  with your friends.&lt;/p&gt;                            		  </source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>ChannelUserNotify</name>
@@ -1231,6 +1235,10 @@ p, li { white-space: pre-wrap; }
         <source>Your friend has more than one locations.
 Please choose one of it to chat with.</source>
         <translation>Din kontakt finns på mer än en plats. Välj en av dom för chatt.</translation>
+    </message>
+    <message>
+        <source>Talking to </source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -1330,10 +1338,6 @@ Please choose one of it to chat with.</source>
         <translation>Chattlobbys</translation>
     </message>
     <message>
-        <source>Create new chat lobby</source>
-        <translation>Skapa ny chattlobby</translation>
-    </message>
-    <message>
         <source>Name</source>
         <translation>Namn</translation>
     </message>
@@ -1422,8 +1426,20 @@ Dubbelklicka lobbyer för att chatta.</translation>
         <translation>Inbjudan till chattlobby</translation>
     </message>
     <message>
-        <source>%1  invites you to chat lobby named %2</source>
-        <translation>%1 bjuder in dig till chattlobbyn %2</translation>
+        <source>Remove Auto Subscribe</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Add Auto Subscribe</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>%1 invites you to chat lobby named %2</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Chat Lobbies&lt;/h1&gt;                              		  &lt;p&gt;Chat lobbies are distributed chat rooms, and work pretty much like IRC.                                      		  They allow you to talk anonymously with tons of people without the need to make friends.&lt;/p&gt;                    		  &lt;p&gt;A chat lobby can be public (you friends see it) or private (your friends can&apos;t see it, unless you           		  invite them with &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). Once you have been invited to a private lobby, you will be able to see it when your friends   		  are using it.&lt;/p&gt;                                                                                               		  &lt;p&gt;The list at left shows                                                                                     		  chat lobbies your friends are participating into. You can either                                 		  &lt;ul&gt;                                                                                                            			  &lt;li&gt;Right click to create a new chat lobby&lt;/li&gt;                                                              		     &lt;li&gt;Double click a chat lobby to enter, chat, and show it to your friends&lt;/li&gt;                      		  &lt;/ul&gt; 		  &lt;/p&gt;                                      		</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -1631,6 +1647,58 @@ Dubbelklicka lobbyer för att chatta.</translation>
         <source>Chat</source>
         <translation>Chatt</translation>
     </message>
+    <message>
+        <source>Distant chat</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Retroshare allows you to anonymously chat to nearby people beyond your friends in the network, using encrypted tunnels. In your personal invites list you keep chat links for people to contact you. In the &amp;quot;collected contacts&amp;quot; list, you keep such chat links that people sent you to contact them.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your personal invites</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Collected contacts</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Open secured chat tunnel</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Delete this invite</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Can&apos;t open distant chat</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Cannot open distant chat. Error code=</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Cannot remove distant chat invite.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create a chat invitation</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Copy link to clipboard</source>
+        <translation>Kopiera länk till Urklipp</translation>
+    </message>
+    <message>
+        <source>Private chat invite from </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Private chat invite to </source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>ChatStyle</name>
@@ -1807,10 +1875,6 @@ Dubbelklicka lobbyer för att chatta.</translation>
 <context>
     <name>CirclesDialog</name>
     <message>
-        <source>Refresh</source>
-        <translation>Uppdatera</translation>
-    </message>
-    <message>
         <source>Showing details: </source>
         <translation>Visningsdetaljer:</translation>
     </message>
@@ -1876,7 +1940,7 @@ Dubbelklicka lobbyer för att chatta.</translation>
     </message>
     <message>
         <source>Create Personal Circle</source>
-        <translation type="unfinished"/>
+        <translation>Skapa personlig cirkel</translation>
     </message>
     <message>
         <source>Create External Circle</source>
@@ -1884,6 +1948,26 @@ Dubbelklicka lobbyer för att chatta.</translation>
     </message>
     <message>
         <source>Edit Circle</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Todo</source>
+        <translation>Att göra</translation>
+    </message>
+    <message>
+        <source>Friends Of Friends</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>External Circles (Admin)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>External Circles (Subscribed)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>External Circles (Other)</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -2050,24 +2134,12 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
 Vissa tjänster (Upptäckt, anonym routning) kan stängas av lokalt, vilket alltid går före inställningarna per användare.</translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Disabling anonymous routing will suppress all sending/retrieval of tunnel and anonymous search requests from/to this user. This user will not be able to transfer anonymously through you.&lt;/p&gt;&lt;p&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Inaktivering av anonym routning kommer att blockera all sändning/mottagning av tunnel- och anonyma sökförfrågningar från/till denna användare. Användaren kommer inte att kunna överföra anonymt genom dig.&lt;/p&gt;&lt;p&gt;Gå till serverkonfigurationen för globala inställningar.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
         <source>Anonymous routing</source>
         <translation>Anonym routning</translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Disabling discovery removes the sending of public keys of your own friends to this user. Discovery information from this friend will be dropped as well.&lt;/p&gt;&lt;p&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Inaktivering av Upptäckt tar bort sändningen av publika nycklar tillhörande dina egna kontakter, till den här användaren. Informationen från den här kontakten kommer också att stoppas.&lt;/p&gt;&lt;p&gt;Gå till serverkonfigurationen för globala inställningar.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
         <source>Discovery</source>
         <translation>Upptäckt</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Disabling this means that forums and channels posts will not be passed from you to this friend, and items coming from this friend will be dropped.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Inaktivering av detta innebär att forum- och kanalinlägg inte kommer att vidarebefordras från dig till den här kontakten, och objekt som kommer från den här kontakten kommer inte att vidarebordras.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Forums/Channels</source>
@@ -2133,6 +2205,34 @@ Vissa tjänster (Upptäckt, anonym routning) kan stängas av lokalt, vilket allt
     <message>
         <source>Maybe password is wrong</source>
         <translation>Lösenordet kanske är fel</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling anonymous routing will suppress all sending/retrieval of tunnel and anonymous search requests from/to this user. This user will not be able to transfer anonymously through you.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling discovery removes the sending of public keys of your own friends to this user. Discovery information from this friend will be dropped as well.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling this means that forums and channels posts will not be passed from you to this friend, and items coming from this friend will be dropped.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Use as direct source, when available</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Retroshare periodically checks your friend lists for browsable files matching your transfers, to establish a direct transfer. In this case, your friend knows you&apos;re downloading the file.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;To prevent this behavior for this friend only, uncheck this box. You can still perform a direct transfer if you explicitly ask for it, by e.g. downloading from your friend&apos;s file list. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Encryption</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Not connected</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2562,6 +2662,14 @@ Vissa tjänster (Upptäckt, anonym routning) kan stängas av lokalt, vilket allt
     <message>
         <source>*** None ***</source>
         <translation>*** Ingen ***</translation>
+    </message>
+    <message>
+        <source>Use as direct source, when available</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Direct source</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -3172,64 +3280,8 @@ p, li { white-space: pre-wrap; }
         <translation>Typ</translation>
     </message>
     <message>
-        <source>Cancel</source>
-        <translation>Avbryt</translation>
-    </message>
-    <message>
-        <source>Create Group</source>
-        <translation>Skapa grupp</translation>
-    </message>
-    <message>
-        <source>Start New Thread</source>
-        <translation>Starta ny tråd</translation>
-    </message>
-    <message>
-        <source>Post Forum Message</source>
-        <translation>Posta foruminlägg</translation>
-    </message>
-    <message>
-        <source>Paste RetroShare Link</source>
-        <translation>Klistra in RetroShare-länk</translation>
-    </message>
-    <message>
-        <source>Paste full RetroShare Link</source>
-        <translation>Klistra in hela RetroShare-länken</translation>
-    </message>
-    <message>
-        <source>Paste my certificate link</source>
-        <translation>Klistra in min certifikatlänk</translation>
-    </message>
-    <message>
-        <source>No Forum</source>
-        <translation>Inget forum</translation>
-    </message>
-    <message>
-        <source>Loading</source>
-        <translation>Läser in</translation>
-    </message>
-    <message>
-        <source>In Reply to</source>
-        <translation>Som svar på</translation>
-    </message>
-    <message>
         <source>RetroShare</source>
         <translation>RetroShare</translation>
-    </message>
-    <message>
-        <source>Please set a Forum Subject and Forum Message</source>
-        <translation>Ange ett forumämne och ett meddelande</translation>
-    </message>
-    <message>
-        <source>Please choose Signing Id</source>
-        <translation>Välj signatur-ID</translation>
-    </message>
-    <message>
-        <source>Please choose Signing Id, it is required</source>
-        <translation>Välj signatur-ID, det är ett krav</translation>
-    </message>
-    <message>
-        <source>Add Extra File</source>
-        <translation>Lägg till fil</translation>
     </message>
     <message>
         <source>Please set a name for your Circle</source>
@@ -3535,6 +3587,10 @@ p, li { white-space: pre-wrap; }
         <source>Load thumbnail picture</source>
         <translation>Läs in miniatyrbild</translation>
     </message>
+    <message>
+        <source>Generate mass data</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>CreateGxsForumMsg</name>
@@ -3591,10 +3647,6 @@ p, li { white-space: pre-wrap; }
         <translation>Inga forum</translation>
     </message>
     <message>
-        <source>Loading</source>
-        <translation>Läser in</translation>
-    </message>
-    <message>
         <source>In Reply to</source>
         <translation>Som svar på</translation>
     </message>
@@ -3617,6 +3669,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Add Extra File</source>
         <translation>Lägg till extra fil</translation>
+    </message>
+    <message>
+        <source>Generate mass data</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -3672,6 +3728,85 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Contacts:</source>
         <translation>Kontakter:</translation>
+    </message>
+</context>
+<context>
+    <name>CreateMsgLinkDialog</name>
+    <message>
+        <source>Invite type:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Private chat</source>
+        <translation>Privatchatt</translation>
+    </message>
+    <message>
+        <source>Validity time :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>hour</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>day</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>week</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>month</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>year</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create!</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Private chat invite creation failed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>The creation of the chat invite failed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Private chat invite created</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create distant chat invite</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;To create a private chat invite for a non-friend person, select his key below and a validity time for your invite, then press &amp;quot;Create&amp;quot;. The invite will contain the  information required to open a tunnel to chat with you. &lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;The invite is encrypted, and does not reveal your identity. Only the selected peer can decrypt the link, and use it to contact you.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your new chat invite has been created. You can now copy/paste it as a Retroshare link.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Messaging invite creation failed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>The creation of the messaging invite failed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Messaging invite created</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your new messaging chat invite has been copied to clipboard. You can now paste it as a Retroshare link.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -4879,6 +5014,14 @@ p, li { white-space: pre-wrap; }
         <source>You can&apos;t reply an Anonymous Author</source>
         <translation>Du kan inte svara en anonym författare</translation>
     </message>
+    <message>
+        <source>Forum Description</source>
+        <translation>Forumbeskrivning</translation>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Forums&lt;/h1&gt;                              		  &lt;p&gt;Retroshare Forums look like internet forums, but they work in a decentralized way:                     		  You see forums your friends are subscribed to, and you forward subscribed forums to                      		  your friends. This automatically promotes interesting forums in the network.&lt;/p&gt;                     		  &lt;p&gt;Forums are either Authenticated (&lt;img src=&quot;:/images/konv_message2.png&quot; width=&quot;12&quot;/&gt;) in which case you need to cryptographically sign                      		  your posts, or anonymous (&lt;img src=&quot;:/images/konversation.png&quot; width=&quot;12&quot;/&gt;). The former class is more resistant to spamming.&lt;/p&gt;                 		  &lt;p&gt;Forum posts propagate from friend to friend using small cache file exchanges. When you first connect to a new friend, it&apos;s likely 		  you will receive many such cache files, and new forums will appear. 		  &lt;/p&gt;                                      		</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>ForumsFillThread</name>
@@ -4990,20 +5133,12 @@ p, li { white-space: pre-wrap; }
         <translation>Meddelande till grupp</translation>
     </message>
     <message>
-        <source>Add Friend</source>
-        <translation>Lägg till kontakt</translation>
-    </message>
-    <message>
         <source>Edit Group</source>
         <translation>Redigera gruppen</translation>
     </message>
     <message>
         <source>Remove Group</source>
         <translation>Ta bort grupp</translation>
-    </message>
-    <message>
-        <source>Chat lobbies</source>
-        <translation>Chattlobbys</translation>
     </message>
     <message>
         <source>Chat</source>
@@ -5020,10 +5155,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Recommend this Friend to...</source>
         <translation>Rekommendera den här kontakten till...</translation>
-    </message>
-    <message>
-        <source>Connect To Friend</source>
-        <translation>Anslut till kontakt</translation>
     </message>
     <message>
         <source>Copy certificate link</source>
@@ -5066,26 +5197,6 @@ p, li { white-space: pre-wrap; }
         <translation>Ta bort från alla grupper</translation>
     </message>
     <message>
-        <source>Create new</source>
-        <translation>Skapa ny</translation>
-    </message>
-    <message>
-        <source>Invite this group</source>
-        <translation>Bjud in den här gruppen</translation>
-    </message>
-    <message>
-        <source>Invite this friend</source>
-        <translation>Bjud in den här kontakten</translation>
-    </message>
-    <message>
-        <source>Show</source>
-        <translation>Visa</translation>
-    </message>
-    <message>
-        <source>Unsubscribe</source>
-        <translation>Avsluta prenumerationen</translation>
-    </message>
-    <message>
         <source>Expand all</source>
         <translation>Expandera alla</translation>
     </message>
@@ -5102,20 +5213,36 @@ p, li { white-space: pre-wrap; }
         <translation>Vill du ta bort den här kontakten?</translation>
     </message>
     <message>
-        <source>Unsubscribe to lobby</source>
-        <translation>Avsluta prenumerationen på lobbyn</translation>
-    </message>
-    <message>
-        <source>You are about to unsubscribe a chat lobby&lt;br&gt;You can only re-enter if your friends invite you again.</source>
-        <translation>Du är på väg att avsluta prenumerationen på en chattlobby &lt;br&gt;Du kan bara återansluta om du blir inbjuden igen.</translation>
-    </message>
-    <message>
         <source>Columns</source>
         <translation>Kolumner</translation>
     </message>
     <message>
-        <source>Sort by</source>
-        <translation>Sortera efter</translation>
+        <source>IP</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Sort by IP</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show IP Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Attempt to connect</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create new group</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Recommend many friends to each others</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Service permissions matrix</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -5192,10 +5319,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Display</source>
         <translation>Visa</translation>
-    </message>
-    <message>
-        <source>Add</source>
-        <translation>Lägg till</translation>
     </message>
     <message>
         <source>Edit status message</source>
@@ -5314,14 +5437,6 @@ p, li { white-space: pre-wrap; }
         <translation>Lokalt nätverk</translation>
     </message>
     <message>
-        <source>Known people</source>
-        <translation>Kända personer</translation>
-    </message>
-    <message>
-        <source>Welcome to RetroShare&apos;s group chat.</source>
-        <translation>Välkommen till RetroShares gruppchatt.</translation>
-    </message>
-    <message>
         <source>Paste RetroShare Link</source>
         <translation>Klistra in RetroShare-länk</translation>
     </message>
@@ -5348,6 +5463,18 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Text File (*.txt );;All Files (*)</source>
         <translation>Textfil (*.txt );;Alla Filer (*)</translation>
+    </message>
+    <message>
+        <source>Keyring</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Friends&lt;/h1&gt;                                   		  &lt;p&gt;The Friends tab shows...your friends: the list of persons you have accepted to connect to.                   		  &lt;/p&gt;                                                   		  &lt;p&gt;You can group friends together to allow a finer level of information access, for instance to only allow      		  some friends to see some files.&lt;/p&gt; 		  &lt;p&gt;On the right, you will find 3 useful tabs:                                                                   		  &lt;ul&gt;	                                                                                                         		  		&lt;li&gt;Broadcast sends messages to all connected friends at once&lt;/li&gt;                             		  		&lt;li&gt;Local Network shows the network around you, including friends of your friends&lt;/li&gt;                 		  		&lt;li&gt;Keyring contains keys you collected, mostly forwarded to you by your friends&lt;/li&gt;                              		  &lt;/ul&gt; &lt;/p&gt;                                                                                                      		</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Retroshare broadcast chat: messages are sent to all connected friends.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -5731,10 +5858,6 @@ Ange ditt PGP-lösenord vid anmodan, för att signera din nya nyckel.</translati
         <translation>Visa inte bekräftelsemeddelande vid avslut</translation>
     </message>
     <message>
-        <source>Do not Minimize to Tray Icon</source>
-        <translation>Minimera inte till meddelandefältet</translation>
-    </message>
-    <message>
         <source>Auto Login</source>
         <translation>Logga in automatiskt</translation>
     </message>
@@ -5777,6 +5900,10 @@ Ange ditt PGP-lösenord vid anmodan, för att signera din nya nyckel.</translati
     <message>
         <source>General</source>
         <translation>Allmänt</translation>
+    </message>
+    <message>
+        <source>Minimize to Tray Icon</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6258,10 +6385,6 @@ p, li { white-space: pre-wrap; }
         <translation>Kanaler</translation>
     </message>
     <message>
-        <source>refresh</source>
-        <translation>Uppdatera</translation>
-    </message>
-    <message>
         <source>Display</source>
         <translation>Visa</translation>
     </message>
@@ -6352,6 +6475,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>No Channel Selected</source>
         <translation>Inga kanaler markerade</translation>
+    </message>
+    <message>
+        <source>Todo</source>
+        <translation>Att göra</translation>
     </message>
 </context>
 <context>
@@ -6640,10 +6767,6 @@ innan du kan kommentera</translation>
         <translation>Nästa olästa</translation>
     </message>
     <message>
-        <source>Refresh</source>
-        <translation>Uppdatera</translation>
-    </message>
-    <message>
         <source>Search Title</source>
         <translation>Sök titel</translation>
     </message>
@@ -6746,6 +6869,18 @@ innan du kan kommentera</translation>
     <message>
         <source>You cant reply to an Anonymous Author</source>
         <translation>Du kan inte svara en anonym upphovsman</translation>
+    </message>
+    <message>
+        <source>Forum Description</source>
+        <translation>Forumbeskrivning</translation>
+    </message>
+    <message>
+        <source>Forum:</source>
+        <translation>Forum:</translation>
+    </message>
+    <message>
+        <source>Thread:</source>
+        <translation>Tråd:</translation>
     </message>
 </context>
 <context>
@@ -6853,6 +6988,10 @@ innan du kan kommentera</translation>
     <message>
         <source>On %1, %2 wrote:</source>
         <translation>I %1, skrev %2:</translation>
+    </message>
+    <message>
+        <source>Todo</source>
+        <translation>Att göra</translation>
     </message>
 </context>
 <context>
@@ -6986,6 +7125,21 @@ innan du kan kommentera</translation>
     </message>
     <message>
         <source>Invalid Circle Selection - Personal disabled for now</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>GxsIdChooser</name>
+    <message>
+        <source>Loading</source>
+        <translation>Läser in</translation>
+    </message>
+    <message>
+        <source>Not found</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No Signature</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -7282,10 +7436,6 @@ p, li { white-space: pre-wrap; }
         <translation>Nytt ID</translation>
     </message>
     <message>
-        <source>Showing:</source>
-        <translation>Visar:</translation>
-    </message>
-    <message>
         <source>Yourself</source>
         <translation>Dig själv</translation>
     </message>
@@ -7304,10 +7454,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>All</source>
         <translation>Alla</translation>
-    </message>
-    <message>
-        <source>filter</source>
-        <translation>filter</translation>
     </message>
     <message>
         <source>Nickname</source>
@@ -7362,10 +7508,6 @@ p, li { white-space: pre-wrap; }
         <translation>PGP-namn</translation>
     </message>
     <message>
-        <source>PGP Email</source>
-        <translation>E-postadress</translation>
-    </message>
-    <message>
         <source>PGP Id</source>
         <translation>PGP-ID</translation>
     </message>
@@ -7401,6 +7543,34 @@ p, li { white-space: pre-wrap; }
         <source>Local Reputation</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>Todo</source>
+        <translation>Att göra</translation>
+    </message>
+    <message>
+        <source>Show:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Search</source>
+        <translation>Sök</translation>
+    </message>
+    <message>
+        <source>PGP Linked Id</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Anon Id</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown real name</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Anonymous Id</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>IdEditDialog</name>
@@ -7417,20 +7587,12 @@ p, li { white-space: pre-wrap; }
         <translation>PGP-namn</translation>
     </message>
     <message>
-        <source>PGP Email</source>
-        <translation>PGP e-post</translation>
-    </message>
-    <message>
         <source>PGP Hash</source>
         <translation>PGP-hash</translation>
     </message>
     <message>
         <source>PGP Id</source>
         <translation>PGP-ID</translation>
-    </message>
-    <message>
-        <source>New Identity</source>
-        <translation>Ny identitet</translation>
     </message>
     <message>
         <source>PGP Associated ID</source>
@@ -7441,12 +7603,36 @@ p, li { white-space: pre-wrap; }
         <translation>Pseudonym</translation>
     </message>
     <message>
-        <source>Cancel</source>
-        <translation>Avbryt</translation>
+        <source>New identity</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Create/Update ID</source>
-        <translation>Skapa/Uppdatera ID</translation>
+        <source>To be generated</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>N/A</source>
+        <translation>N/A</translation>
+    </message>
+    <message>
+        <source>Edit identity</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Error getting key!</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Error KeyID invalid</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown GpgId</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown real name</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7521,10 +7707,6 @@ p, li { white-space: pre-wrap; }
 </context>
 <context>
     <name>MainWindow</name>
-    <message>
-        <source>MainWindow</source>
-        <translation>Huvudfönster</translation>
-    </message>
     <message>
         <source>Add Friend</source>
         <translation>Lägg till kontakt</translation>
@@ -8172,6 +8354,14 @@ Vill du spara meddelandet?</translation>
         <source>Add Extra File</source>
         <translation>Lägg till fil</translation>
     </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Cryptographically sign message to distant peers. This is prevents intermediate peers to spoof your identity.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Distant peer (name: %2, PGP key: %1)</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>MessagePage</name>
@@ -8226,6 +8416,18 @@ Vill du spara meddelandet?</translation>
     <message>
         <source>Message</source>
         <translation>Meddelande</translation>
+    </message>
+    <message>
+        <source>Distant messages:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;The link below allows people in the network to send encrypted messages to you, using tunnels. To do that, they need your public PGP key, which they will get using the Retroshare discovery system. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Accept encrypted distant messages from everyone</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -8734,6 +8936,50 @@ Vill du spara meddelandet?</translation>
         <source>Total:</source>
         <translation>Totalt:</translation>
     </message>
+    <message>
+        <source>Decrypt Message</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Encrypted message. Right-click to decrypt it.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Decryption failed!</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This message could not be decrypted.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Messages</source>
+        <translation>Meddelanden</translation>
+    </message>
+    <message>
+        <source>Click to sort by signature</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Messages&lt;/h1&gt;                         			 &lt;p&gt;Messages are like &lt;b&gt;e-mail&lt;/b&gt;: you send/receive them from your friends when both of you	are connected.&lt;/p&gt; 			 &lt;p&gt;It is also possible to send messages to non friends, using tunnels. Such messages are always encrypted. It is 			 recommended to cryptographically sign distant messages, as a proof of your identity, using the &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; button 			 in the message composer window. Distant messages are not guarrantied to arrive, since this requires the distant peer to accept them (You need yourself to switch this on in Config-Messages).&lt;/p&gt;			 &lt;p&gt;Some additional features allow you to exchange data in messages: you may recommend files to your friends by pasting file links, 			 or recommend friends-to-be to other friends, in order to streathen your network.&lt;/p&gt;	                   			 </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This message is encrypted. Right click to decrypt it.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This message was signed and the signature checks</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This message was signed but the signature doesn&apos;t check</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This message is not encrypted. Cannot decrypt!</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>MessengerWindow</name>
@@ -8873,10 +9119,6 @@ Vill du spara meddelandet?</translation>
     <message>
         <source>Search Network</source>
         <translation>Sök i nätverk</translation>
-    </message>
-    <message>
-        <source>Show all accessible keys</source>
-        <translation>Visa alla tillgängliga nycklar</translation>
     </message>
     <message>
         <source>Name</source>
@@ -9091,7 +9333,11 @@ Högerklicka och välj &apos;Skapa kontakt&apos; för att kunna ansluta.</transl
         <translation>Du själv</translation>
     </message>
     <message>
-        <source>Data iconsistency in the keyring. This is most probably a bug. Please contact the developers.</source>
+        <source>Data inconsistency in the keyring. This is most probably a bug. Please contact the developers.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Only show people you trusted</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -9157,6 +9403,10 @@ Högerklicka och välj &apos;Skapa kontakt&apos; för att kunna ansluta.</transl
     <message>
         <source>This is a test.</source>
         <translation>Detta är ett test.</translation>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;News Feed&lt;/h1&gt;                                                          		  &lt;p&gt;The News Feed displays the last events on your network, sorted by the time you received them.                		  This gives you a summary of the activity of your friends.                                                       		  You can configure which events to show by pressing on &lt;b&gt;Options&lt;/b&gt;. &lt;/p&gt;                                      		  &lt;p&gt;The various events shown are:                                                                                		  &lt;ul&gt;	                                                                                                         		  		&lt;li&gt;Connection attempts (useful to make friends with new people and control who&apos;s trying to reach you)&lt;/li&gt; 		  		&lt;li&gt;Channel and Forum posts&lt;/li&gt;                                                                            		  		&lt;li&gt;New Channels and Forums you can subscribe to&lt;/li&gt;                                                       		  		&lt;li&gt;Private messages from your friends&lt;/li&gt;                                                                 		  &lt;/ul&gt; &lt;/p&gt;                                                                                                      		</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -9907,6 +10157,25 @@ felaktigt utformade insticksprogram. </translation>
     </message>
 </context>
 <context>
+    <name>PopupDistantChatDialog</name>
+    <message>
+        <source>Distant chat terminated</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>The person you&apos;re talking to has deleted the secured chat tunnel. You may remove the chat window now.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Closing this window will end the conversation, notify the peer and remove the encrypted tunnel.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Kill the tunnel?</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>PostedCreatePostDialog</name>
     <message>
         <source>Create Post</source>
@@ -9956,8 +10225,8 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PostedDialog</name>
     <message>
-        <source>Posted</source>
-        <translation>Postat</translation>
+        <source>Posted Links</source>
+        <translation>Postade länkar</translation>
     </message>
 </context>
 <context>
@@ -10043,10 +10312,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Top</source>
         <translation>Överst</translation>
-    </message>
-    <message>
-        <source>Refresh</source>
-        <translation>Uppdatera</translation>
     </message>
     <message>
         <source>Today</source>
@@ -10163,26 +10428,6 @@ p, li { white-space: pre-wrap; }
         <translation>Profilhanterare</translation>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Select an identity from the list below to be used on another computer, and press &amp;quot;Export selected identity&amp;quot;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;To use it on a different computer,  select the identity manager in the login window. From there you can import the identity file and create a new location for that identity. &lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;When keeping the same identity for your new  location, your friends will automatically accept you.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Välj en identitet från nedanstående lista och tryck &amp;quot;Exportera markerad identitet&amp;quot;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;För att använda den på en annan dator, väljer du identitetshanteraren i inloggningsfönstret. Därifrån kan du importera identitetsfilen och skapa en ny plats för den identiteten. &lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;När du behåller samma identitet från en annan plats, kommer du automatiskt att accepteras av dina kontakter.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
         <source>Identities</source>
         <translation>Identiteter</translation>
     </message>
@@ -10265,6 +10510,18 @@ och där läsa in den med importfunktionen.</translation>
     <message>
         <source>Certificates (*.pqi *.pem)</source>
         <translation>Certifikat (*.pqi *.pem)</translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:11pt;&quot;&gt;Select an identity from the list below to be used on another computer, and press &amp;quot;Export selected identity&amp;quot;&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Ubuntu'; font-size:11pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:11pt;&quot;&gt;To use it on a different computer,  select the identity manager in the login window. From there you can import the identity file and create a new location for that identity. &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Ubuntu'; font-size:11pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;When keeping the same identity for your new  location, your friends will automatically accept you.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -10681,6 +10938,70 @@ Rapporterat fel är: %2</translation>
     <message>
         <source>Start with a RetroShare link is only supported for Windows.</source>
         <translation>Start via RetroShare-länk, stöds endast i Windows.</translation>
+    </message>
+    <message>
+        <source>Select who can contact you:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Chat link is expired</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This chat link is expired. The destination peer will not answer.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Chat link cannot be decrypted</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>The link could not be decrypted.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>The link signature cannot be checked.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>The link is signed by an unknown key.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Hash error</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Distant peer has closed the chat</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Tunnel is pending...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Messaging link is expired</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This Messaging link is expired. The destination peer will not receive it.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This chat link is encrypted with a key that is not yours. You can&apos;t use it. Key ID = </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Chat connection is not possible</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Secured tunnel established. Waiting for ACK...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Secured tunnel is working. You can talk!</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -12563,10 +12884,6 @@ p, li { white-space: pre-wrap; }
         <translation>Nedladdningstid</translation>
     </message>
     <message>
-        <source>Core-ID</source>
-        <translation>Kärn-ID</translation>
-    </message>
-    <message>
         <source>Peer</source>
         <comment>i.e: user name</comment>
         <translation>Användare</translation>
@@ -12840,6 +13157,107 @@ Försök ha tålamod!
         <source>Please enter a new--and valid--filename</source>
         <translation>Ange nytt giltigt filnamn</translation>
     </message>
+    <message>
+        <source>Last Time Seen</source>
+        <comment>i.e: Last Time Receiced Data</comment>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>UserID</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>File Never Seen</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Expand all</source>
+        <translation>Expandera alla</translation>
+    </message>
+    <message>
+        <source>Collapse all</source>
+        <translation>Fäll ihop alla</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Storlek</translation>
+    </message>
+    <message>
+        <source>Show Size Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show Completed Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Speed</source>
+        <translation>Hastighet</translation>
+    </message>
+    <message>
+        <source>Show Speed Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Progress / Availability</source>
+        <translation>Förlopp / Tillgänglighet</translation>
+    </message>
+    <message>
+        <source>Show Progress / Availability Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Sources</source>
+        <translation>Källor</translation>
+    </message>
+    <message>
+        <source>Show Sources Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show Status Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show Speed / Queue position Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show Remaining Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Download time</source>
+        <translation>Nedladdningstid</translation>
+    </message>
+    <message>
+        <source>Show Download time Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show Hash Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Last Time Seen</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show Last Time Seen Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Columns</source>
+        <translation>Kolumner</translation>
+    </message>
+    <message>
+        <source>File Transfers</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;File Transfer&lt;/h1&gt;                                                         			 &lt;p&gt;Retroshare brings two ways of transferring files: direct transfers from your friends, and                                     			 distant anonymous tunnelled transfers. In addition, file transfer is multi-source and allows swarming                                      			 (you can be a source while downloading)&lt;/p&gt;                                     			 &lt;p&gt;You can share files using the &lt;img src=&quot;:/images/directoryadd_24x24_shadow.png&quot; width=16 /&gt; icon from the left side bar. 				These files will be listed in the My Files tab. You can decide for each friend group whether they can or not see these files 				in their Friends Files tab&lt;/p&gt;			 &lt;p&gt;The search tab reports files from your friends&apos; file lists, and distant files that can be reached 			 anonymously using the multi-hop tunnelling system.&lt;/p&gt; 			 </source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>TreeStyle_RDM</name>
@@ -13061,6 +13479,13 @@ Försök ha tålamod!
     <message>
         <source>TR Forward probabilities</source>
         <translation>TR Forward probabilities</translation>
+    </message>
+</context>
+<context>
+    <name>UIStateHelper</name>
+    <message>
+        <source>Loading</source>
+        <translation>Läser in</translation>
     </message>
 </context>
 <context>

@@ -11,7 +11,7 @@
     </message>
     <message>
         <source>close</source>
-        <translation>kapat</translation>
+        <translation>kapatın</translation>
     </message>
     <message>
         <source>About RetroShare %1</source>
@@ -620,15 +620,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Unknown Blog</source>
-        <translation type="unfinished"/>
+        <translation>Bilinmeyen Blog</translation>
     </message>
     <message>
         <source>New Blog</source>
-        <translation type="unfinished"/>
+        <translation>Yeni Blog</translation>
     </message>
     <message>
         <source>Updated Blog</source>
-        <translation type="unfinished"/>
+        <translation>Güncel Blog</translation>
     </message>
     <message>
         <source>Hide</source>
@@ -687,7 +687,11 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Unsubscribe To Blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
+p, li { white-space: pre-wrap; }⏎
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:400; font-style:normal;&quot;&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Blog Aboneliğinden Çıkın&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Unsubscribe</source>
@@ -825,11 +829,11 @@ p, li { white-space: pre-wrap; }
     <name>BwCtrlWindow</name>
     <message>
         <source>Bandwidth Control Window</source>
-        <translation type="unfinished"/>
+        <translation>Bantgenişliği Kontrol Penceresi</translation>
     </message>
     <message>
         <source>Bandwidth Measurements</source>
-        <translation type="unfinished"/>
+        <translation>Bantgenişliği Ölçümleri</translation>
     </message>
     <message>
         <source>Name</source>
@@ -841,43 +845,43 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>In (KB/s)</source>
-        <translation type="unfinished"/>
+        <translation>Gelen (KB/s)</translation>
     </message>
     <message>
         <source>InMax (KB/s)</source>
-        <translation type="unfinished"/>
+        <translation>GelenAzami (KB/s)</translation>
     </message>
     <message>
         <source>InQueue</source>
-        <translation type="unfinished"/>
+        <translation>GelenKuyruğu</translation>
     </message>
     <message>
         <source>InAllocated (KB/s)</source>
-        <translation type="unfinished"/>
+        <translation>GelenPaylaşımlı (KB/s)</translation>
     </message>
     <message>
         <source>Allocated Sent</source>
-        <translation type="unfinished"/>
+        <translation>Paylaşımlı Gönderilen</translation>
     </message>
     <message>
         <source>Out (KB/s)</source>
-        <translation type="unfinished"/>
+        <translation>Giden (KB/s)</translation>
     </message>
     <message>
         <source>OutMax (KB/s)</source>
-        <translation type="unfinished"/>
+        <translation>GidenAzami (KB/s)</translation>
     </message>
     <message>
         <source>OutQueue</source>
-        <translation type="unfinished"/>
+        <translation>GidenKuyruğu</translation>
     </message>
     <message>
         <source>OutAllowed (KB/s)</source>
-        <translation type="unfinished"/>
+        <translation>Gidenİzinverilen (KB/s)</translation>
     </message>
     <message>
         <source>Allowed Recvd</source>
-        <translation type="unfinished"/>
+        <translation>İzin verilmiş Alınan</translation>
     </message>
 </context>
 <context>
@@ -947,7 +951,7 @@ p, li { white-space: pre-wrap; }
     <name>ChanMsgItem</name>
     <message>
         <source>Toggle Message Read Status</source>
-        <translation>Degistir Mesaj  okuma durumu</translation>
+        <translation>İleti okunma durumunu değiştirin</translation>
     </message>
     <message>
         <source>New</source>
@@ -955,23 +959,23 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Download</source>
-        <translation>Indir</translation>
+        <translation>İndirin</translation>
     </message>
     <message>
         <source>Play</source>
-        <translation>Baslat</translation>
+        <translation>Oynatın</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation>Kopyala retroshare Link</translation>
+        <translation>RetroShare Bağlantısını Kopyalayın</translation>
     </message>
     <message>
         <source>Unsubscribe From Channel</source>
-        <translation>Kanaldan çik</translation>
+        <translation>Kanaldan ayrılın</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation>Genislet</translation>
+        <translation>Genişletin</translation>
     </message>
     <message>
         <source>Set as read and remove item</source>
@@ -979,11 +983,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Remove Item</source>
-        <translation>Kaldir</translation>
+        <translation>Ögeyi Silin</translation>
     </message>
     <message>
         <source>Channel Feed</source>
-        <translation>Kanal kaynagi</translation>
+        <translation>Kanal Akışı</translation>
     </message>
     <message>
         <source>Files</source>
@@ -991,26 +995,26 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Warning! You have less than %1 hours and %2 minute before this file is deleted Consider saving it.</source>
-        <translation type="unfinished"/>
+        <translation>Uyarı! Bu dosyanın silinmesine %1 saat %2 dakikadan az kaldı, Kaydetmeyi bir düşünün.</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation>Gizle</translation>
+        <translation>Gizleyin</translation>
     </message>
 </context>
 <context>
     <name>ChanNewItem</name>
     <message>
         <source>Subscribe to Channel</source>
-        <translation>Kanala Abone Ol</translation>
+        <translation>Kanala Abone Olun</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation>Genislet</translation>
+        <translation>Genişletin</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation>Kaldir</translation>
+        <translation>Ögeyi Silin</translation>
     </message>
     <message>
         <source>Channel Description</source>
@@ -1026,7 +1030,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Updated Channel</source>
-        <translation>Kanal Güncellenmis</translation>
+        <translation>Güncellenmiş Kanal</translation>
     </message>
     <message>
         <source>Hide</source>
@@ -1037,15 +1041,15 @@ p, li { white-space: pre-wrap; }
     <name>ChannelDetails</name>
     <message>
         <source>Channel Details</source>
-        <translation>Kanal Ayrintilari</translation>
+        <translation>Kanal Ayrıntıları</translation>
     </message>
     <message>
         <source>Channel Info</source>
-        <translation>Kanal bilgisi</translation>
+        <translation>Kanal Bilgileri</translation>
     </message>
     <message>
         <source>Channel Name</source>
-        <translation>Kanal Ismi</translation>
+        <translation>Kanal Adı</translation>
     </message>
     <message>
         <source>Popularity</source>
@@ -1061,7 +1065,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Channel Description</source>
-        <translation>Kanal Açiklama</translation>
+        <translation>Kanal Açıklaması</translation>
     </message>
     <message>
         <source>Type</source>
@@ -1095,7 +1099,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Create Channel</source>
-        <translation>Kanal olustur</translation>
+        <translation>Kanal Oluşturun</translation>
     </message>
     <message>
         <source>Loading</source>
@@ -1103,15 +1107,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Post to Channel</source>
-        <translation>Kanala yaz</translation>
+        <translation>Kanala Gönderin</translation>
     </message>
     <message>
         <source>Set all as read</source>
-        <translation>Hepsini Isaretle Okunmus olarak</translation>
+        <translation>Tümünü okunmuş olarak işaretleyin</translation>
     </message>
     <message>
         <source>Enable Auto-Download</source>
-        <translation>Otomatik Indirmeyi Etkinlestirin</translation>
+        <translation>Otomatik İndirmeyi Etkinleştirin</translation>
     </message>
     <message>
         <source>My Channels</source>
@@ -1119,7 +1123,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Subscribed Channels</source>
-        <translation>Abone Kanallar</translation>
+        <translation>Abone Olunmuş Kanallar</translation>
     </message>
     <message>
         <source>Popular Channels</source>
@@ -1127,15 +1131,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Other Channels</source>
-        <translation>Diger Kanallar</translation>
+        <translation>Diğer Kanallar</translation>
     </message>
     <message>
         <source>Subscribe to Channel</source>
-        <translation>Kanala Abone Ol</translation>
+        <translation>Kanala Abone Olun</translation>
     </message>
     <message>
         <source>Unsubscribe to Channel</source>
-        <translation>Kanaldan Iptal Ol</translation>
+        <translation>Kanal Aboneliğinden Ayrılın</translation>
     </message>
     <message>
         <source>Disable Auto-Download</source>
@@ -1143,7 +1147,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Show Channel Details</source>
-        <translation>Kanal Detaylari göster</translation>
+        <translation>Kanal Ayrıntılarına Bakın</translation>
     </message>
     <message>
         <source>Restore Publish Rights for Channel</source>
@@ -1197,6 +1201,10 @@ p, li { white-space: pre-wrap; }
         <source>No Channel Selected</source>
         <translation>Kanal seçmediniz</translation>
     </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Channels&lt;/h1&gt;                                                         		  &lt;p&gt;Channels allow you to post data (e.g. movies, music) that will spread in the network                                                		  among people who subscribed your channel.  If you activate auto-download on a channel, files attached to each post will start  		  downloading automatically when the post is received.&lt;/p&gt;                                                                               		  &lt;p&gt;You see channels your friends are subscribed to, and forward subscribed channels to                                                		  your friends. This promotes good channels in the network.                                                     		  When you first connect to a new friend, it&apos;s likely 		  you will receive many such cache files, and new channels will appear.                                                                  		  &lt;/p&gt;                                                                                                                                   		  &lt;p&gt;Only the channel&apos;s creator can post on that channel. Other peers                       		  in the network can only read from it, unless the channel is private. You can however share the posting rights or the reading rights 		  with your friends.&lt;/p&gt;                            		  </source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>ChannelUserNotify</name>
@@ -1212,6 +1220,10 @@ p, li { white-space: pre-wrap; }
 Please choose one of it to chat with.</source>
         <translation>Arkadasiniz birden fazla yerleri bulunmaktadir.
 Sohbet için birini seçin.</translation>
+    </message>
+    <message>
+        <source>Talking to </source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -1311,10 +1323,6 @@ Sohbet için birini seçin.</translation>
         <translation>Sohbet lobileri</translation>
     </message>
     <message>
-        <source>Create new chat lobby</source>
-        <translation>Lobi Sohbet olustur</translation>
-    </message>
-    <message>
         <source>Name</source>
         <translation>Isim</translation>
     </message>
@@ -1399,8 +1407,20 @@ Double click lobbies to enter and chat.</source>
         <translation>Lobi sohbete Davet</translation>
     </message>
     <message>
-        <source>%1  invites you to chat lobby named %2</source>
-        <translation>%1 sizi %2 adli lobi sohbet etmek için davet ediyor</translation>
+        <source>Remove Auto Subscribe</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Add Auto Subscribe</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>%1 invites you to chat lobby named %2</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Chat Lobbies&lt;/h1&gt;                              		  &lt;p&gt;Chat lobbies are distributed chat rooms, and work pretty much like IRC.                                      		  They allow you to talk anonymously with tons of people without the need to make friends.&lt;/p&gt;                    		  &lt;p&gt;A chat lobby can be public (you friends see it) or private (your friends can&apos;t see it, unless you           		  invite them with &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). Once you have been invited to a private lobby, you will be able to see it when your friends   		  are using it.&lt;/p&gt;                                                                                               		  &lt;p&gt;The list at left shows                                                                                     		  chat lobbies your friends are participating into. You can either                                 		  &lt;ul&gt;                                                                                                            			  &lt;li&gt;Right click to create a new chat lobby&lt;/li&gt;                                                              		     &lt;li&gt;Double click a chat lobby to enter, chat, and show it to your friends&lt;/li&gt;                      		  &lt;/ul&gt; 		  &lt;/p&gt;                                      		</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -1450,7 +1470,7 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Enable Emoticons Private Chat</source>
-        <translation type="unfinished"/>
+        <translation>Özel Sohbette İfadeleri Etkinleştirin</translation>
     </message>
     <message>
         <source>Enable Emoticons Group Chat</source>
@@ -1458,23 +1478,23 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Enable custom fonts</source>
-        <translation type="unfinished"/>
+        <translation>Özel yazıtiplerini etkinleştirin</translation>
     </message>
     <message>
         <source>Enable custom font size</source>
-        <translation type="unfinished"/>
+        <translation>Özel yazıtipi boyutunu etkinleştirin</translation>
     </message>
     <message>
         <source>Enable bold</source>
-        <translation type="unfinished"/>
+        <translation>Kalın yazımı etkinleştirin</translation>
     </message>
     <message>
         <source>Enable italics</source>
-        <translation type="unfinished"/>
+        <translation>Eğik yazımı etkinleştirin</translation>
     </message>
     <message>
         <source>Minimum text contrast</source>
-        <translation type="unfinished"/>
+        <translation>Asgari metin zıtlığı</translation>
     </message>
     <message>
         <source>Send message with Ctrl+Return</source>
@@ -1607,6 +1627,58 @@ Double click lobbies to enter and chat.</source>
     <message>
         <source>Chat</source>
         <translation>Sohbet</translation>
+    </message>
+    <message>
+        <source>Distant chat</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Retroshare allows you to anonymously chat to nearby people beyond your friends in the network, using encrypted tunnels. In your personal invites list you keep chat links for people to contact you. In the &amp;quot;collected contacts&amp;quot; list, you keep such chat links that people sent you to contact them.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your personal invites</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Collected contacts</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Open secured chat tunnel</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Delete this invite</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Can&apos;t open distant chat</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Cannot open distant chat. Error code=</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Cannot remove distant chat invite.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create a chat invitation</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Copy link to clipboard</source>
+        <translation>Bağlantıyı panoya kopyalayın</translation>
+    </message>
+    <message>
+        <source>Private chat invite from </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Private chat invite to </source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -1762,7 +1834,7 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>appears to be Offline.</source>
-        <translation type="unfinished"/>
+        <translation>çevirimdışı görünüyor.</translation>
     </message>
     <message>
         <source>Messages you send will be delivered after Friend is again Online</source>
@@ -1783,10 +1855,6 @@ Double click lobbies to enter and chat.</source>
 </context>
 <context>
     <name>CirclesDialog</name>
-    <message>
-        <source>Refresh</source>
-        <translation>Yenile</translation>
-    </message>
     <message>
         <source>Showing details: </source>
         <translation type="unfinished"/>
@@ -1863,6 +1931,26 @@ Double click lobbies to enter and chat.</source>
         <source>Edit Circle</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>Todo</source>
+        <translation>Yapilacak</translation>
+    </message>
+    <message>
+        <source>Friends Of Friends</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>External Circles (Admin)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>External Circles (Subscribed)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>External Circles (Other)</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>ConfCertDialog</name>
@@ -1892,7 +1980,7 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Other info</source>
-        <translation type="unfinished"/>
+        <translation>Diğer bilgiler</translation>
     </message>
     <message>
         <source>Loc</source>
@@ -2025,23 +2113,11 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Disabling anonymous routing will suppress all sending/retrieval of tunnel and anonymous search requests from/to this user. This user will not be able to transfer anonymously through you.&lt;/p&gt;&lt;p&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Anonymous routing</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Disabling discovery removes the sending of public keys of your own friends to this user. Discovery information from this friend will be dropped as well.&lt;/p&gt;&lt;p&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Discovery</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Disabling this means that forums and channels posts will not be passed from you to this friend, and items coming from this friend will be dropped.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -2110,6 +2186,34 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
         <source>Maybe password is wrong</source>
         <translation>Belki sifre yanlis</translation>
     </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling anonymous routing will suppress all sending/retrieval of tunnel and anonymous search requests from/to this user. This user will not be able to transfer anonymously through you.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling discovery removes the sending of public keys of your own friends to this user. Discovery information from this friend will be dropped as well.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling this means that forums and channels posts will not be passed from you to this friend, and items coming from this friend will be dropped.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Use as direct source, when available</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Retroshare periodically checks your friend lists for browsable files matching your transfers, to establish a direct transfer. In this case, your friend knows you&apos;re downloading the file.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;To prevent this behavior for this friend only, uncheck this box. You can still perform a direct transfer if you explicitly ask for it, by e.g. downloading from your friend&apos;s file list. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Encryption</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Not connected</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>ConnectFriendWizard</name>
@@ -2135,7 +2239,7 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>&amp;Make friend with selected friends of my friends</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Seçilen arkadaşlarımla arkadaş yap</translation>
     </message>
     <message>
         <source>&amp;Enter RetroShare ID manually</source>
@@ -2144,7 +2248,8 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     <message>
         <source>&amp;Send an Invitation by Email 
  (She/He receives an email with instructions how to to download RetroShare)</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Eposta yoluyla Davetiye yollayın
+(RetroShare indirme talimatlarını içeren bir eposta alacaktır)</translation>
     </message>
     <message>
         <source>Text certificate</source>
@@ -2208,19 +2313,19 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Friends of friends</source>
-        <translation type="unfinished"/>
+        <translation>Arkadaşlarımın arkadaşları</translation>
     </message>
     <message>
         <source>Select now who you want to make friends with.</source>
-        <translation type="unfinished"/>
+        <translation>Kiminle arkadaş yapmak istediğinizi seçin.</translation>
     </message>
     <message>
         <source>Show me:</source>
-        <translation type="unfinished"/>
+        <translation>Göster:</translation>
     </message>
     <message>
         <source>Make friend with these peers</source>
-        <translation type="unfinished"/>
+        <translation>Bu kişilerle arkadaş yapın</translation>
     </message>
     <message>
         <source>RetroShare ID</source>
@@ -2248,7 +2353,7 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Enter your friends&apos; email addresses (separate each one with a semicolon)</source>
-        <translation type="unfinished"/>
+        <translation>Arkadaşlarınızın eposta adreslerini girin (herbirini noktalı virgülle ayırın)</translation>
     </message>
     <message>
         <source>Your friends&apos; email addresses:</source>
@@ -2328,7 +2433,7 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Here is the error message:</source>
-        <translation type="unfinished"/>
+        <translation>İşte hata iletisi:</translation>
     </message>
     <message>
         <source>Make Friend</source>
@@ -2396,15 +2501,15 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Any peer I&apos;ve not signed</source>
-        <translation type="unfinished"/>
+        <translation>Onaylamadığım herkes</translation>
     </message>
     <message>
         <source>Friends of my friends who already trust me</source>
-        <translation type="unfinished"/>
+        <translation>Arkadaşlarımın arkadaşlarından bana güvenenler</translation>
     </message>
     <message>
         <source>Signed peers showing as denied</source>
-        <translation type="unfinished"/>
+        <translation>Reddedilmiş görünen onaylanmış kişiler</translation>
     </message>
     <message>
         <source>Peer name</source>
@@ -2448,19 +2553,19 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Certificate Load Failed:can&apos;t read from file %1 </source>
-        <translation type="unfinished"/>
+        <translation>Sertifika yüklenemedi: %1 dosyasından okunamıyor </translation>
     </message>
     <message>
         <source>Certificate Load Failed:something is wrong with %1 </source>
-        <translation type="unfinished"/>
+        <translation>Sertifika yüklenemedi: %1 ile ilgili bir sorun var</translation>
     </message>
     <message>
         <source>Certificate Load Failed:file %1 not found</source>
-        <translation type="unfinished"/>
+        <translation>Sertifika yüklenemedi: %1 dosyası bulunamadı</translation>
     </message>
     <message>
         <source>This Peer %1 is not available in your Network</source>
-        <translation type="unfinished"/>
+        <translation>Bu kişi %1 Ağınızda mevcut değil</translation>
     </message>
     <message>
         <source>Use new certificate format (safer, more robust)</source>
@@ -2480,27 +2585,27 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>No or misspelled BEGIN tag found</source>
-        <translation type="unfinished"/>
+        <translation>BEGIN etiketi eksik ya da yanlış yazılmış</translation>
     </message>
     <message>
         <source>No or misspelled END tag found</source>
-        <translation type="unfinished"/>
+        <translation>END etiketi eksik ya da yanlış yazılmış</translation>
     </message>
     <message>
         <source>No checksum found (the last 5 chars should be separated by a &apos;=&apos; char), or no newline after tag line (e.g. line beginning with Version:)</source>
-        <translation type="unfinished"/>
+        <translation>Sağlama bulunamadı (son 5 karakterin &apos;=&apos; ile ayrılmış olması gerekir), ya da etiket satırından sonra yeni satıra geçilmemiş(ör. Version: ile başlayan satır)</translation>
     </message>
     <message>
         <source>Unknown error. Your cert is probably not even a certificate.</source>
-        <translation type="unfinished"/>
+        <translation>Bilinmeyen hata. Girdiğiniz muhtemelen bir sertifika bile değil.</translation>
     </message>
     <message>
         <source>Connect Friend Help</source>
-        <translation type="unfinished"/>
+        <translation>Arkadaşa Bağlanmada Yardım</translation>
     </message>
     <message>
         <source>You can copy this text and send it to your friend via email or some other way</source>
-        <translation type="unfinished"/>
+        <translation>Bu metni kopyalayıp email ve ya başka bir şekilde arkadaşınıza yollayabilirsiniz</translation>
     </message>
     <message>
         <source>Your Cert is copied to Clipboard, paste and send it to your friend via email or some other way</source>
@@ -2537,6 +2642,14 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     <message>
         <source>*** None ***</source>
         <translation>*** Yok ***</translation>
+    </message>
+    <message>
+        <source>Use as direct source, when available</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Direct source</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -3056,7 +3169,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>File already Added and Hashed</source>
-        <translation>Dosya zaten Eklenmiş ve Şifrelenmiş</translation>
+        <translation>Dosya zaten Eklenmiş ve Karılmış</translation>
     </message>
     <message>
         <source>Please add a Subject</source>
@@ -3142,64 +3255,8 @@ p, li { white-space: pre-wrap; }
         <translation>Tip</translation>
     </message>
     <message>
-        <source>Cancel</source>
-        <translation>İptal</translation>
-    </message>
-    <message>
-        <source>Create Group</source>
-        <translation>Grup Oluştur</translation>
-    </message>
-    <message>
-        <source>Start New Thread</source>
-        <translation>Yeni konu baslat</translation>
-    </message>
-    <message>
-        <source>Post Forum Message</source>
-        <translation>Forum Mesaj Gönder</translation>
-    </message>
-    <message>
-        <source>Paste RetroShare Link</source>
-        <translation>Yapistir retroshare Link</translation>
-    </message>
-    <message>
-        <source>Paste full RetroShare Link</source>
-        <translation>Tam RetroShare Linki Yapistir</translation>
-    </message>
-    <message>
-        <source>Paste my certificate link</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>No Forum</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Loading</source>
-        <translation>Yükleniyor</translation>
-    </message>
-    <message>
-        <source>In Reply to</source>
-        <translation>Cevap olarak</translation>
-    </message>
-    <message>
         <source>RetroShare</source>
         <translation>Retroshare</translation>
-    </message>
-    <message>
-        <source>Please set a Forum Subject and Forum Message</source>
-        <translation>Bir Forum Konusu ve Forum Mesaji veriniz lütfen</translation>
-    </message>
-    <message>
-        <source>Please choose Signing Id</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Please choose Signing Id, it is required</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Add Extra File</source>
-        <translation>Ekstra Dosya Ekle</translation>
     </message>
     <message>
         <source>Please set a name for your Circle</source>
@@ -3499,6 +3556,10 @@ p, li { white-space: pre-wrap; }
         <source>Load thumbnail picture</source>
         <translation>Önizleme resmi Yükleyin</translation>
     </message>
+    <message>
+        <source>Generate mass data</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>CreateGxsForumMsg</name>
@@ -3555,10 +3616,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Loading</source>
-        <translation>Yükleniyor</translation>
-    </message>
-    <message>
         <source>In Reply to</source>
         <translation>Cevap olarak</translation>
     </message>
@@ -3581,6 +3638,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Add Extra File</source>
         <translation>Ekstra Dosya Ekle</translation>
+    </message>
+    <message>
+        <source>Generate mass data</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -3636,6 +3697,85 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Contacts:</source>
         <translation>Rehber:</translation>
+    </message>
+</context>
+<context>
+    <name>CreateMsgLinkDialog</name>
+    <message>
+        <source>Invite type:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Private chat</source>
+        <translation>Özel Sohbet</translation>
+    </message>
+    <message>
+        <source>Validity time :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>hour</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>day</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>week</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>month</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>year</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create!</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Private chat invite creation failed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>The creation of the chat invite failed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Private chat invite created</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create distant chat invite</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;To create a private chat invite for a non-friend person, select his key below and a validity time for your invite, then press &amp;quot;Create&amp;quot;. The invite will contain the  information required to open a tunnel to chat with you. &lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;The invite is encrypted, and does not reveal your identity. Only the selected peer can decrypt the link, and use it to contact you.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your new chat invite has been created. You can now copy/paste it as a Retroshare link.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Messaging invite creation failed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>The creation of the messaging invite failed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Messaging invite created</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your new messaging chat invite has been copied to clipboard. You can now paste it as a Retroshare link.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -3718,7 +3858,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Your certificate could not be parsed correctly. Please contact the developers.</source>
-        <translation type="unfinished"/>
+        <translation>Sertifikanız çözümlenemedi. Lütfen geliştiricilerle iletişime geçin.</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -4000,15 +4140,14 @@ p, li { white-space: pre-wrap; }
 This might be useful if you're sharing an 
 external HD, to avoid re-hashing files when 
 you plug it in.</source>
-        <translation>Paylaşılmayan dosyaların bile⏎
-şifrelemelerinin hatırlanmasını ister misiniz?⏎
-Harici bir Sabit Sürücü kullanıyorsanız⏎
-işe yarayabilir, böylece taktığınız her seferde⏎
-tekrar-şifrelemekten kurtulursunuz.</translation>
+        <translation>Dosya karmaları paylaşılmasa bile hatırlansın mı?
+Harici bir Sabit Sürücü kullanıyorsanız
+kullanışlı olabilir, böylece her taktığınızda 
+dosyaların tekrar-karılmasından kurtulursunuz.</translation>
     </message>
     <message>
         <source>Remember hashed files for </source>
-        <translation>hashed dosyalari hatirla</translation>
+        <translation>Şunun için karılmış dosyalar hatırlansın</translation>
     </message>
     <message>
         <source> days</source>
@@ -4016,11 +4155,11 @@ tekrar-şifrelemekten kurtulursunuz.</translation>
     </message>
     <message>
         <source>Forget any hashed file that is not anymore shared.</source>
-        <translation>Artik paylaşilmaz herhangi hashed dosyayi unutun.</translation>
+        <translation>Artık paylaşılmayan her karılmış dosya unutulsun.</translation>
     </message>
     <message>
         <source>Clean Hash Cache</source>
-        <translation>Temilezle Hash Önbellek</translation>
+        <translation>Karılma Önbelleğini Temizleyin</translation>
     </message>
     <message>
         <source>Auto-check shared directories every </source>
@@ -4036,7 +4175,7 @@ tekrar-şifrelemekten kurtulursunuz.</translation>
     </message>
     <message>
         <source>This will forget any former hash of non shared files. Do you confirm ?</source>
-        <translation>Bu olmayan paylaşilan dosyalari herhangi bir eski karma unutacak. Siz onayliyor musunuz?</translation>
+        <translation>Paylaşılmayan dosyaların eski karılmalarının unutulmasını, Onaylıyor musunuz?</translation>
     </message>
     <message>
         <source>Set Incoming Directory</source>
@@ -4162,7 +4301,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Organization</source>
-        <translation type="unfinished"/>
+        <translation>Düzenleme</translation>
     </message>
     <message>
         <source>Location</source>
@@ -4302,7 +4441,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>File hash</source>
-        <translation>Dosya hash</translation>
+        <translation>Dosya Karılımı</translation>
     </message>
     <message>
         <source>File size</source>
@@ -4842,6 +4981,14 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>You can&apos;t reply an Anonymous Author</source>
+        <translation>Anonim bir Yazara cevap veremezsiniz</translation>
+    </message>
+    <message>
+        <source>Forum Description</source>
+        <translation>Forum Açiklama</translation>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Forums&lt;/h1&gt;                              		  &lt;p&gt;Retroshare Forums look like internet forums, but they work in a decentralized way:                     		  You see forums your friends are subscribed to, and you forward subscribed forums to                      		  your friends. This automatically promotes interesting forums in the network.&lt;/p&gt;                     		  &lt;p&gt;Forums are either Authenticated (&lt;img src=&quot;:/images/konv_message2.png&quot; width=&quot;12&quot;/&gt;) in which case you need to cryptographically sign                      		  your posts, or anonymous (&lt;img src=&quot;:/images/konversation.png&quot; width=&quot;12&quot;/&gt;). The former class is more resistant to spamming.&lt;/p&gt;                 		  &lt;p&gt;Forum posts propagate from friend to friend using small cache file exchanges. When you first connect to a new friend, it&apos;s likely 		  you will receive many such cache files, and new forums will appear. 		  &lt;/p&gt;                                      		</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -4955,20 +5102,12 @@ p, li { white-space: pre-wrap; }
         <translation>Gruba Mesaj yaz</translation>
     </message>
     <message>
-        <source>Add Friend</source>
-        <translation>Arkadas ekle</translation>
-    </message>
-    <message>
         <source>Edit Group</source>
         <translation>Grubu düzenle</translation>
     </message>
     <message>
         <source>Remove Group</source>
         <translation>Grubu Kaldir</translation>
-    </message>
-    <message>
-        <source>Chat lobbies</source>
-        <translation>Sohbet lobileri</translation>
     </message>
     <message>
         <source>Chat</source>
@@ -4985,10 +5124,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Recommend this Friend to...</source>
         <translation>Bu Arkadasi Tavsiye Et...</translation>
-    </message>
-    <message>
-        <source>Connect To Friend</source>
-        <translation>Arkadas&apos;a Baglan</translation>
     </message>
     <message>
         <source>Copy certificate link</source>
@@ -5031,26 +5166,6 @@ p, li { white-space: pre-wrap; }
         <translation>Tüm grublardan Kaldir</translation>
     </message>
     <message>
-        <source>Create new</source>
-        <translation>Yeni olustur</translation>
-    </message>
-    <message>
-        <source>Invite this group</source>
-        <translation>Bu grupa davet et</translation>
-    </message>
-    <message>
-        <source>Invite this friend</source>
-        <translation>Bu arkadasini davet et</translation>
-    </message>
-    <message>
-        <source>Show</source>
-        <translation>Göster</translation>
-    </message>
-    <message>
-        <source>Unsubscribe</source>
-        <translation>Iptal</translation>
-    </message>
-    <message>
         <source>Expand all</source>
         <translation>Tüm genisletin</translation>
     </message>
@@ -5067,20 +5182,36 @@ p, li { white-space: pre-wrap; }
         <translation>Bu Arkadasi kaldirmak istiyor musunuz?</translation>
     </message>
     <message>
-        <source>Unsubscribe to lobby</source>
-        <translation>Lobiy&apos;den çik</translation>
-    </message>
-    <message>
-        <source>You are about to unsubscribe a chat lobby&lt;br&gt;You can only re-enter if your friends invite you again.</source>
-        <translation>Siz sohbet lobisinden çikmak üzeresiniz. Arkadaslariniz sizi tekrar davet etmesi gerek, yeniden girebilmeniz icin.</translation>
-    </message>
-    <message>
         <source>Columns</source>
         <translation>Sütunlar</translation>
     </message>
     <message>
-        <source>Sort by</source>
-        <translation>Siralama</translation>
+        <source>IP</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Sort by IP</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show IP Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Attempt to connect</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create new group</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Recommend many friends to each others</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Service permissions matrix</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -5157,10 +5288,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Display</source>
         <translation>Görüntü</translation>
-    </message>
-    <message>
-        <source>Add</source>
-        <translation>Ekle</translation>
     </message>
     <message>
         <source>Edit status message</source>
@@ -5279,14 +5406,6 @@ p, li { white-space: pre-wrap; }
         <translation>Yerel ag</translation>
     </message>
     <message>
-        <source>Known people</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Welcome to RetroShare&apos;s group chat.</source>
-        <translation>Hosgeldiniz RetroShare grub sohbetine.</translation>
-    </message>
-    <message>
         <source>Paste RetroShare Link</source>
         <translation>Yapistir retroshare Link</translation>
     </message>
@@ -5313,6 +5432,18 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Text File (*.txt );;All Files (*)</source>
         <translation>Metin Dosyasi (* txt.);; Tüm Dosyalar (*)</translation>
+    </message>
+    <message>
+        <source>Keyring</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Friends&lt;/h1&gt;                                   		  &lt;p&gt;The Friends tab shows...your friends: the list of persons you have accepted to connect to.                   		  &lt;/p&gt;                                                   		  &lt;p&gt;You can group friends together to allow a finer level of information access, for instance to only allow      		  some friends to see some files.&lt;/p&gt; 		  &lt;p&gt;On the right, you will find 3 useful tabs:                                                                   		  &lt;ul&gt;	                                                                                                         		  		&lt;li&gt;Broadcast sends messages to all connected friends at once&lt;/li&gt;                             		  		&lt;li&gt;Local Network shows the network around you, including friends of your friends&lt;/li&gt;                 		  		&lt;li&gt;Keyring contains keys you collected, mostly forwarded to you by your friends&lt;/li&gt;                              		  &lt;/ul&gt; &lt;/p&gt;                                                                                                      		</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Retroshare broadcast chat: messages are sent to all connected friends.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -5694,10 +5825,6 @@ Fill in your PGP password when asked, to sign your new key.</source>
         <translation>RetroShare&apos;dan çıkarken onay alınmasın</translation>
     </message>
     <message>
-        <source>Do not Minimize to Tray Icon</source>
-        <translation>Tepsi Simgesnie küçült etmeyin</translation>
-    </message>
-    <message>
         <source>Auto Login</source>
         <translation>Otomatik Giris</translation>
     </message>
@@ -5740,6 +5867,10 @@ Fill in your PGP password when asked, to sign your new key.</source>
     <message>
         <source>General</source>
         <translation>Genel</translation>
+    </message>
+    <message>
+        <source>Minimize to Tray Icon</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6107,7 +6238,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Hash</source>
-        <translation>Şifreleme</translation>
+        <translation>Karılım</translation>
     </message>
     <message>
         <source>Date</source>
@@ -6163,10 +6294,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Channels</source>
         <translation>Kanallar</translation>
-    </message>
-    <message>
-        <source>refresh</source>
-        <translation type="unfinished"/>
     </message>
     <message>
         <source>Display</source>
@@ -6260,6 +6387,10 @@ p, li { white-space: pre-wrap; }
         <source>No Channel Selected</source>
         <translation>Kanal seçmediniz</translation>
     </message>
+    <message>
+        <source>Todo</source>
+        <translation>Yapilacak</translation>
+    </message>
 </context>
 <context>
     <name>GxsChannelGroupDialog</name>
@@ -6324,7 +6455,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Warning! You have less than %1 hours and %2 minute before this file is deleted Consider saving it.</source>
-        <translation type="unfinished"/>
+        <translation>Uyarı! Bu dosyanın silinmesine %1 saat %2 dakikadan az kaldı, Kaydetmeyi bir düşünün.</translation>
     </message>
     <message>
         <source>Hide</source>
@@ -6346,7 +6477,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Hot</source>
-        <translation type="unfinished"/>
+        <translation>Yeni</translation>
     </message>
     <message>
         <source>New</source>
@@ -6413,7 +6544,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Reputation</source>
-        <translation type="unfinished"/>
+        <translation>İtibar</translation>
     </message>
     <message>
         <source>Show Reputation</source>
@@ -6543,10 +6674,6 @@ bir kimlik oluşturmalısınız</translation>
         <translation>Sonraki okunmamis </translation>
     </message>
     <message>
-        <source>Refresh</source>
-        <translation>Yenile</translation>
-    </message>
-    <message>
         <source>Search Title</source>
         <translation>Başlık ara</translation>
     </message>
@@ -6649,6 +6776,18 @@ bir kimlik oluşturmalısınız</translation>
     <message>
         <source>You cant reply to an Anonymous Author</source>
         <translation>Bir Anonim Yazara yanit veremiyoruz</translation>
+    </message>
+    <message>
+        <source>Forum Description</source>
+        <translation>Forum Açiklama</translation>
+    </message>
+    <message>
+        <source>Forum:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Thread:</source>
+        <translation>Konu:</translation>
     </message>
 </context>
 <context>
@@ -6756,6 +6895,10 @@ bir kimlik oluşturmalısınız</translation>
     <message>
         <source>On %1, %2 wrote:</source>
         <translation>%1 üzerinde,%2 yazdi:</translation>
+    </message>
+    <message>
+        <source>Todo</source>
+        <translation>Yapilacak</translation>
     </message>
 </context>
 <context>
@@ -6889,6 +7032,21 @@ bir kimlik oluşturmalısınız</translation>
     </message>
     <message>
         <source>Invalid Circle Selection - Personal disabled for now</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>GxsIdChooser</name>
+    <message>
+        <source>Loading</source>
+        <translation>Yükleniyor</translation>
+    </message>
+    <message>
+        <source>Not found</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No Signature</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -7148,10 +7306,6 @@ p, li { white-space: pre-wrap; }
         <translation>Yeni Kod oluşturun</translation>
     </message>
     <message>
-        <source>Showing:</source>
-        <translation>Gösterilen:</translation>
-    </message>
-    <message>
         <source>Yourself</source>
         <translation>Kendin</translation>
     </message>
@@ -7165,15 +7319,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Pseudonyms</source>
-        <translation type="unfinished"/>
+        <translation>Takma Adlar</translation>
     </message>
     <message>
         <source>All</source>
         <translation>Hepsi</translation>
-    </message>
-    <message>
-        <source>filter</source>
-        <translation>Filtre</translation>
     </message>
     <message>
         <source>Nickname</source>
@@ -7217,7 +7367,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Pseudonym</source>
-        <translation type="unfinished"/>
+        <translation>Takma Ad</translation>
     </message>
     <message>
         <source>Key ID</source>
@@ -7225,10 +7375,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>PGP Name</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>PGP Email</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -7241,7 +7387,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Reputation</source>
-        <translation type="unfinished"/>
+        <translation>İtibar</translation>
     </message>
     <message>
         <source>Your Rating</source>
@@ -7267,6 +7413,34 @@ p, li { white-space: pre-wrap; }
         <source>Local Reputation</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>Todo</source>
+        <translation>Yapilacak</translation>
+    </message>
+    <message>
+        <source>Show:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Search</source>
+        <translation>Baslat</translation>
+    </message>
+    <message>
+        <source>PGP Linked Id</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Anon Id</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown real name</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Anonymous Id</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>IdEditDialog</name>
@@ -7283,10 +7457,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>PGP Email</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>PGP Hash</source>
         <translation type="unfinished"/>
     </message>
@@ -7295,24 +7465,44 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>New Identity</source>
-        <translation>Yeni Kimlik</translation>
-    </message>
-    <message>
         <source>PGP Associated ID</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <source>Pseudonym</source>
+        <translation>Takma Ad</translation>
+    </message>
+    <message>
+        <source>New identity</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Cancel</source>
-        <translation>Iptal</translation>
+        <source>To be generated</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Create/Update ID</source>
-        <translation>Kod Oluşturun / Güncelleyin</translation>
+        <source>N/A</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Edit identity</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Error getting key!</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Error KeyID invalid</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown GpgId</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown real name</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7388,10 +7578,6 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>MainWindow</name>
     <message>
-        <source>MainWindow</source>
-        <translation>AnaPencere</translation>
-    </message>
-    <message>
         <source>Add Friend</source>
         <translation>Arkadas ekle</translation>
     </message>
@@ -7429,7 +7615,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>RetroShare %1 a secure decentralized communication platform</source>
-        <translation type="unfinished"/>
+        <translation>RetroShare %1 güvenli merkezi olmayan bir iletişim platformudur</translation>
     </message>
     <message>
         <source>News feed</source>
@@ -7700,7 +7886,7 @@ Lütfen biraz boş disk alanı oluşturun ve Tamam&apos;a tıklayın.</translati
     </message>
     <message>
         <source>Add an Image</source>
-        <translation type="unfinished"/>
+        <translation>Resim Ekleyin</translation>
     </message>
     <message>
         <source>Sets text font to code style</source>
@@ -7736,7 +7922,7 @@ Lütfen biraz boş disk alanı oluşturun ve Tamam&apos;a tıklayın.</translati
     </message>
     <message>
         <source>Hash</source>
-        <translation>Şifreleme</translation>
+        <translation>Karılım</translation>
     </message>
     <message>
         <source>Send</source>
@@ -7800,7 +7986,7 @@ Lütfen biraz boş disk alanı oluşturun ve Tamam&apos;a tıklayın.</translati
     </message>
     <message>
         <source>Hello,&lt;br&gt;I recommend a good friend of mine; you can trust them too when you trust me. &lt;br&gt;</source>
-        <translation type="unfinished"/>
+        <translation>Merhaba, &lt;br&gt;İyi bir arkadaşımı tavsiye ediyorum; bana güvenirsen ona da güvenebilirsin. &lt;br&gt;</translation>
     </message>
     <message>
         <source>You have a friend recommendation</source>
@@ -8038,6 +8224,14 @@ mesaji kaydetmek istiyor musunuz?</translation>
         <source>Add Extra File</source>
         <translation>Ekstra Dosya Ekle</translation>
     </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Cryptographically sign message to distant peers. This is prevents intermediate peers to spoof your identity.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Distant peer (name: %2, PGP key: %1)</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>MessagePage</name>
@@ -8092,6 +8286,18 @@ mesaji kaydetmek istiyor musunuz?</translation>
     <message>
         <source>Message</source>
         <translation>Mesaj</translation>
+    </message>
+    <message>
+        <source>Distant messages:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;The link below allows people in the network to send encrypted messages to you, using tunnels. To do that, they need your public PGP key, which they will get using the Retroshare discovery system. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Accept encrypted distant messages from everyone</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -8152,7 +8358,7 @@ mesaji kaydetmek istiyor musunuz?</translation>
     </message>
     <message>
         <source>Hash</source>
-        <translation>Şifreleme</translation>
+        <translation>Karılım</translation>
     </message>
     <message>
         <source>Print</source>
@@ -8600,6 +8806,50 @@ mesaji kaydetmek istiyor musunuz?</translation>
         <source>Total:</source>
         <translation>Toplam:</translation>
     </message>
+    <message>
+        <source>Decrypt Message</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Encrypted message. Right-click to decrypt it.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Decryption failed!</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This message could not be decrypted.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Messages</source>
+        <translation>Mesajlar</translation>
+    </message>
+    <message>
+        <source>Click to sort by signature</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Messages&lt;/h1&gt;                         			 &lt;p&gt;Messages are like &lt;b&gt;e-mail&lt;/b&gt;: you send/receive them from your friends when both of you	are connected.&lt;/p&gt; 			 &lt;p&gt;It is also possible to send messages to non friends, using tunnels. Such messages are always encrypted. It is 			 recommended to cryptographically sign distant messages, as a proof of your identity, using the &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; button 			 in the message composer window. Distant messages are not guarrantied to arrive, since this requires the distant peer to accept them (You need yourself to switch this on in Config-Messages).&lt;/p&gt;			 &lt;p&gt;Some additional features allow you to exchange data in messages: you may recommend files to your friends by pasting file links, 			 or recommend friends-to-be to other friends, in order to streathen your network.&lt;/p&gt;	                   			 </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This message is encrypted. Right click to decrypt it.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This message was signed and the signature checks</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This message was signed but the signature doesn&apos;t check</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This message is not encrypted. Cannot decrypt!</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>MessengerWindow</name>
@@ -8739,10 +8989,6 @@ mesaji kaydetmek istiyor musunuz?</translation>
     <message>
         <source>Search Network</source>
         <translation>Agi Ara</translation>
-    </message>
-    <message>
-        <source>Show all accessible keys</source>
-        <translation type="unfinished"/>
     </message>
     <message>
         <source>Name</source>
@@ -8947,7 +9193,11 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <translation>kendin</translation>
     </message>
     <message>
-        <source>Data iconsistency in the keyring. This is most probably a bug. Please contact the developers.</source>
+        <source>Data inconsistency in the keyring. This is most probably a bug. Please contact the developers.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Only show people you trusted</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -9012,6 +9262,10 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>This is a test.</source>
+        <translation>Bu bir denemedir.</translation>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;News Feed&lt;/h1&gt;                                                          		  &lt;p&gt;The News Feed displays the last events on your network, sorted by the time you received them.                		  This gives you a summary of the activity of your friends.                                                       		  You can configure which events to show by pressing on &lt;b&gt;Options&lt;/b&gt;. &lt;/p&gt;                                      		  &lt;p&gt;The various events shown are:                                                                                		  &lt;ul&gt;	                                                                                                         		  		&lt;li&gt;Connection attempts (useful to make friends with new people and control who&apos;s trying to reach you)&lt;/li&gt; 		  		&lt;li&gt;Channel and Forum posts&lt;/li&gt;                                                                            		  		&lt;li&gt;New Channels and Forums you can subscribe to&lt;/li&gt;                                                       		  		&lt;li&gt;Private messages from your friends&lt;/li&gt;                                                                 		  &lt;/ul&gt; &lt;/p&gt;                                                                                                      		</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -9166,11 +9420,11 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Unregistered plugin/executable</source>
-        <translation type="unfinished"/>
+        <translation>Kaydedilmemiş eklenti/çalıştırılabilir</translation>
     </message>
     <message>
         <source>RetroShare has detected an unregistered plugin. This happens in two cases:&lt;UL&gt;&lt;LI&gt;Your RetroShare executable has changed.&lt;/LI&gt;&lt;LI&gt;The plugin has changed&lt;/LI&gt;&lt;/UL&gt;Click on Yes to authorize this plugin, or No to deny it. You can change your mind later in Options -&gt; Plugins, then restart.</source>
-        <translation type="unfinished"/>
+        <translation>RetroShare kaydedilmemiş bir eklenti farketti. Bu iki durumda olur: &lt;UL&gt;&lt;LI&gt;RetroShare çalıştırılabiliriniz değişti.&lt;/LI&gt;&lt;LI&gt;Eklenti değişti&lt;/LI&gt;&lt;/UL&gt;Bu eklentiyi onaylamak için Evet&apos;e, reddetmek için Hayır&apos;a tıklayın. Daha sonra fikrinizi değiştirirseniz Ayarlar -&gt; Eklentiler&apos;den düzeltip, yeniden başlatabilirsiniz.</translation>
     </message>
     <message>
         <source>For the chat lobbies to work properly, the time of your computer needs to be correct. Please check that this is the case (A possible time shift of several minutes was detected with your friends). </source>
@@ -9186,7 +9440,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Hashing file</source>
-        <translation>Dosya şifreleniyor</translation>
+        <translation>Dosya karılıyor</translation>
     </message>
     <message>
         <source>Saving file index...</source>
@@ -9198,7 +9452,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>This is a test.</source>
-        <translation type="unfinished"/>
+        <translation>Bu bir denemedir.</translation>
     </message>
 </context>
 <context>
@@ -9362,7 +9616,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     <name>PhotoDialog</name>
     <message>
         <source>PhotoShare</source>
-        <translation type="unfinished"/>
+        <translation>PhotoShare</translation>
     </message>
     <message>
         <source>Photo</source>
@@ -9484,7 +9738,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>PhotoShare</source>
-        <translation type="unfinished"/>
+        <translation>PhotoShare</translation>
     </message>
     <message>
         <source>Please select an album before
@@ -9508,7 +9762,7 @@ requesting to edit it!</source>
     </message>
     <message>
         <source>&lt;&lt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;&lt;</translation>
     </message>
     <message>
         <source>Stop</source>
@@ -9516,7 +9770,7 @@ requesting to edit it!</source>
     </message>
     <message>
         <source>&gt;&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&gt;&gt;</translation>
     </message>
     <message>
         <source>Close</source>
@@ -9598,7 +9852,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>File hash:</source>
-        <translation>Dosya hash:</translation>
+        <translation>Dosya karılımı:</translation>
     </message>
     <message>
         <source>Status: </source>
@@ -9640,15 +9894,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Hash rejected. Enable it manually and restart, if you need.</source>
-        <translation type="unfinished"/>
+        <translation>Karılma reddedildi. Eğer gerekirse, elle etkinleştirin ve yeniden başlatın.</translation>
     </message>
     <message>
         <source>No API number supplied. Please read plugin development manual.</source>
-        <translation type="unfinished"/>
+        <translation>Hiçbir API numarası verilmedi. Lütfen eklenti geliştirme kılavuzunu okuyun.</translation>
     </message>
     <message>
         <source>No SVN number supplied. Please read plugin development manual.</source>
-        <translation type="unfinished"/>
+        <translation>Hiçbir SVN numarası verilmedi. Lütfen eklenti geliştirme kılavuzunu okuyun.</translation>
     </message>
     <message>
         <source>Loading error.</source>
@@ -9687,7 +9941,10 @@ p, li { white-space: pre-wrap; }
 be checked for the hash. However, in normal
 times, checking the hash protects you from
 malicious behavior of crafted plugins.</source>
-        <translation type="unfinished"/>
+        <translation>Gelişim aşamasındaki eklentiler için bunu seçin.
+Karılma için kontrol edilmeyecekler. Yine de,
+ normalde karılmaları kontrol etmek 
+hazırlanmış eklentilerin zararlı davranışlarından korur.</translation>
     </message>
     <message>
         <source>Plugins</source>
@@ -9744,6 +10001,25 @@ malicious behavior of crafted plugins.</source>
     </message>
 </context>
 <context>
+    <name>PopupDistantChatDialog</name>
+    <message>
+        <source>Distant chat terminated</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>The person you&apos;re talking to has deleted the secured chat tunnel. You may remove the chat window now.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Closing this window will end the conversation, notify the peer and remove the encrypted tunnel.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Kill the tunnel?</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>PostedCreatePostDialog</name>
     <message>
         <source>Create Post</source>
@@ -9785,8 +10061,8 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PostedDialog</name>
     <message>
-        <source>Posted</source>
-        <translation type="unfinished"/>
+        <source>Posted Links</source>
+        <translation>Yayinlanan Linkler</translation>
     </message>
 </context>
 <context>
@@ -9820,11 +10096,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>/\</source>
-        <translation type="unfinished"/>
+        <translation>/\</translation>
     </message>
     <message>
         <source>\/</source>
-        <translation type="unfinished"/>
+        <translation>\/</translation>
     </message>
     <message>
         <source>This is a very very very very loooooooooooooooonnnnnnnnnnnnnnnnng title don&apos;t you think? Yes it is and should wrap around I hope</source>
@@ -9840,7 +10116,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Site</source>
-        <translation type="unfinished"/>
+        <translation>Site</translation>
     </message>
     <message>
         <source>View Comments</source>
@@ -9863,7 +10139,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Hot</source>
-        <translation type="unfinished"/>
+        <translation>Yeni</translation>
     </message>
     <message>
         <source>New</source>
@@ -9872,10 +10148,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Top</source>
         <translation>Üst</translation>
-    </message>
-    <message>
-        <source>Refresh</source>
-        <translation>Yenile</translation>
     </message>
     <message>
         <source>Today</source>
@@ -9903,7 +10175,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Submit Post</source>
-        <translation type="unfinished"/>
+        <translation>İletiyi Gönderin</translation>
     </message>
     <message>
         <source>Showing 1-100</source>
@@ -9923,15 +10195,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Subscribed Topics</source>
-        <translation type="unfinished"/>
+        <translation>Abone Olunan Başlıklar</translation>
     </message>
     <message>
         <source>Popular Topics</source>
-        <translation type="unfinished"/>
+        <translation>Tutulan Başlıklar</translation>
     </message>
     <message>
         <source>Other Topics</source>
-        <translation type="unfinished"/>
+        <translation>Diğer Başlıklar</translation>
     </message>
     <message>
         <source>Subscribe</source>
@@ -9992,26 +10264,6 @@ p, li { white-space: pre-wrap; }
         <translation>Profil Yöneticisi</translation>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Select an identity from the list below to be used on another computer, and press &amp;quot;Export selected identity&amp;quot;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;To use it on a different computer,  select the identity manager in the login window. From there you can import the identity file and create a new location for that identity. &lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;When keeping the same identity for your new  location, your friends will automatically accept you.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
-p, li { white-space: pre-wrap; }⏎
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;⏎
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Alttaki listeden başka bilgisayarda kullanmak üzere bir kimlik seçin, ve &amp;quot;Seçili kimliği aktarın&amp;quot;&apos;a tıklayın&lt;/p&gt;⏎
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;⏎
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Başka bilgisayarda kullanmak için, giriş ekranında kimlik yöneticisini seçin. Oradan kimlik dosyasını edinip, bu kimlik için yeni bir adres oluşturabilirsiniz. &lt;/p&gt;⏎
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;⏎
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Yeni adreste aynı kimliği kullanırsanız, arkadaşlarınız otomatik olarak sizi onaylayacaktır.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
         <source>Identities</source>
         <translation>Kimlikler</translation>
     </message>
@@ -10025,7 +10277,7 @@ p, li { white-space: pre-wrap; }⏎
     </message>
     <message>
         <source>GID</source>
-        <translation type="unfinished"/>
+        <translation>GID</translation>
     </message>
     <message>
         <source>Export selected identity</source>
@@ -10095,6 +10347,18 @@ ve yüklemek için ithalat dügmesini kullanin</translation>
         <source>Certificates (*.pqi *.pem)</source>
         <translation>Sertifika (*.pqi *.pem)</translation>
     </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:11pt;&quot;&gt;Select an identity from the list below to be used on another computer, and press &amp;quot;Export selected identity&amp;quot;&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Ubuntu'; font-size:11pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:11pt;&quot;&gt;To use it on a different computer,  select the identity manager in the login window. From there you can import the identity file and create a new location for that identity. &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Ubuntu'; font-size:11pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;When keeping the same identity for your new  location, your friends will automatically accept you.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>ProfileWidget</name>
@@ -10156,11 +10420,11 @@ ve yüklemek için ithalat dügmesini kullanin</translation>
     </message>
     <message>
         <source>Dynamic DNS:</source>
-        <translation type="unfinished"/>
+        <translation>Dinamik DNS:</translation>
     </message>
     <message>
         <source>Addresses list:</source>
-        <translation type="unfinished"/>
+        <translation>Adres listesi:</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -10179,19 +10443,19 @@ ve yüklemek için ithalat dügmesini kullanin</translation>
     <name>PulseAddDialog</name>
     <message>
         <source>Post From:</source>
-        <translation type="unfinished"/>
+        <translation>Buradan İlet:</translation>
     </message>
     <message>
         <source>Account 1</source>
-        <translation type="unfinished"/>
+        <translation>Hesap 1</translation>
     </message>
     <message>
         <source>Account 2</source>
-        <translation type="unfinished"/>
+        <translation>Hesap 2</translation>
     </message>
     <message>
         <source>Account 3</source>
-        <translation type="unfinished"/>
+        <translation>Hesap 3</translation>
     </message>
     <message>
         <source>Add to Pulse</source>
@@ -10203,15 +10467,15 @@ ve yüklemek için ithalat dügmesini kullanin</translation>
     </message>
     <message>
         <source>URL Adder</source>
-        <translation type="unfinished"/>
+        <translation>URL Ekleme</translation>
     </message>
     <message>
         <source>Display As</source>
-        <translation type="unfinished"/>
+        <translation>Olarak Görüntüleyin</translation>
     </message>
     <message>
         <source>URL</source>
-        <translation type="unfinished"/>
+        <translation>URL</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -10446,11 +10710,11 @@ Reported error is: %2</source>
     </message>
     <message>
         <source>You appear to have locations associated to DSA keys:</source>
-        <translation type="unfinished"/>
+        <translation>DSA anahtarlarıyla ilişkili konumlarınız var görünüyor:</translation>
     </message>
     <message>
         <source>DSA keys are not yet supported by this version of RetroShare. All these locations will be unusable. We&apos;re very sorry for that.</source>
-        <translation type="unfinished"/>
+        <translation>DSA anahtarları RetroShare&apos;ın bu sürümü için henüz desteklenmiyor. Bu konumlar kullanılamayacak. Bunun için çok üzgünüz.</translation>
     </message>
     <message>
         <source>This version of RetroShare is using OpenPGP-SDK. As a side effect, it&apos;s not using the system shared PGP keyring, but has it&apos;s own keyring shared by all RetroShare instances. &lt;br&gt;&lt;br&gt;You do not appear to have such a keyring, although PGP keys are mentioned by existing RetroShare accounts, probably because you just changed to this new version of the software.</source>
@@ -10504,6 +10768,70 @@ Dosyayı kilitle:⏎</translation>
     <message>
         <source>Start with a RetroShare link is only supported for Windows.</source>
         <translation>RetroShare bağlantısıyla başlatma yalnızca Windows için geçerli.</translation>
+    </message>
+    <message>
+        <source>Select who can contact you:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Chat link is expired</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This chat link is expired. The destination peer will not answer.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Chat link cannot be decrypted</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>The link could not be decrypted.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>The link signature cannot be checked.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>The link is signed by an unknown key.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Hash error</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Distant peer has closed the chat</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Tunnel is pending...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Messaging link is expired</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This Messaging link is expired. The destination peer will not receive it.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This chat link is encrypted with a key that is not yours. You can&apos;t use it. Key ID = </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Chat connection is not possible</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Secured tunnel established. Waiting for ACK...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Secured tunnel is working. You can talk!</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -10586,7 +10914,7 @@ p, li { white-space: pre-wrap; }⏎
     </message>
     <message>
         <source>Manually forwarded port</source>
-        <translation type="unfinished"/>
+        <translation>Elle yönlendirilmiş port</translation>
     </message>
     <message>
         <source>Discovery :</source>
@@ -10672,11 +11000,18 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;These settings configure how and when RetroShare starts .&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
+p, li { white-space: pre-wrap; }⏎
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Sadece bir adım kaldı! RetroShare&apos;ın bilgisayarınıza uygun yapılandırmayı neredeyse tamamladınız.&lt;/span&gt;&lt;/p&gt;⏎
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Bu ayarlar RetroShare&apos;ın nasıl ve ne zaman başlayacağını belirler.&lt;/span&gt;&lt;/p&gt;⏎
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Do not show a message when Closing RetroShare</source>
-        <translation type="unfinished"/>
+        <translation>RetroShare kapatılırken mesaj gösterme</translation>
     </message>
     <message>
         <source>Start Minimized</source>
@@ -10700,11 +11035,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Shared Directory Added!</source>
-        <translation type="unfinished"/>
+        <translation>Paylaşılan Dizin Eklendi!</translation>
     </message>
     <message>
         <source>Do you really want to stop sharing this directory ? </source>
-        <translation type="unfinished"/>
+        <translation>Gerçekten bu dizini paylaşıma kapatmak istiyor musunuz?</translation>
     </message>
     <message>
         <source>Warning!</source>
@@ -10765,7 +11100,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>kB/s</source>
-        <translation type="unfinished"/>
+        <translation>kB/s</translation>
     </message>
     <message>
         <source>Friends of Friends</source>
@@ -10822,27 +11157,27 @@ p, li { white-space: pre-wrap; }
     <name>RsCollectionDialog</name>
     <message>
         <source>Collection</source>
-        <translation type="unfinished"/>
+        <translation>Koleksiyon</translation>
     </message>
     <message>
         <source>File name :</source>
-        <translation type="unfinished"/>
+        <translation>Dosya adı :</translation>
     </message>
     <message>
         <source>Total size :</source>
-        <translation type="unfinished"/>
+        <translation>Toplam boyut :</translation>
     </message>
     <message>
         <source>Selected files:</source>
-        <translation type="unfinished"/>
+        <translation>Seçilen dosyalar:</translation>
     </message>
     <message>
         <source>Select all</source>
-        <translation type="unfinished"/>
+        <translation>Hepsini seç</translation>
     </message>
     <message>
         <source>Deselect all</source>
-        <translation type="unfinished"/>
+        <translation>Hiçbirini seçme</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -10850,7 +11185,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Download!</source>
-        <translation type="unfinished"/>
+        <translation>İndir!</translation>
     </message>
     <message>
         <source>File</source>
@@ -10862,7 +11197,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Hash</source>
-        <translation>Şifreleme</translation>
+        <translation>Karılım</translation>
     </message>
     <message>
         <source>Bad filenames have been cleaned</source>
@@ -10903,26 +11238,27 @@ Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replace
     <message>
         <source>Image is oversized for transmission.
 Reducing image to %1x%2 pixels?</source>
-        <translation type="unfinished"/>
+        <translation>Resim boyutu iletim için aşırı büyük.
+%1x%2 piksele küçültülsün mü?</translation>
     </message>
 </context>
 <context>
     <name>Rshare</name>
     <message>
         <source>Resets ALL stored RetroShare settings.</source>
-        <translation type="unfinished"/>
+        <translation>TÜM RetroShare ayarlarını sıfırla.</translation>
     </message>
     <message>
         <source>Sets the directory RetroShare uses for data files.</source>
-        <translation type="unfinished"/>
+        <translation>RetroShare&apos;ın veri dosyaları için kullandığı dizini seçin.</translation>
     </message>
     <message>
         <source>Sets the name and location of RetroShare&apos;s logfile.</source>
-        <translation type="unfinished"/>
+        <translation>RetroShare&apos;ın günlük dosyasının adını ve konumunu belirleyin.</translation>
     </message>
     <message>
         <source>Sets the verbosity of RetroShare&apos;s logging.</source>
-        <translation type="unfinished"/>
+        <translation>RetroShare günlüğünün ayrıntı düzeyini belirleyin.</translation>
     </message>
     <message>
         <source>Sets RetroShare&apos;s interface style.</source>
@@ -10930,15 +11266,15 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Sets RetroShare&apos;s interface stylesheets.</source>
-        <translation type="unfinished"/>
+        <translation>RetroShare arayüz biçimini belirleyin.</translation>
     </message>
     <message>
         <source>Sets RetroShare&apos;s language.</source>
-        <translation type="unfinished"/>
+        <translation>RetroShare&apos;ın dilini belirleyin.</translation>
     </message>
     <message>
         <source>RetroShare Usage Information</source>
-        <translation type="unfinished"/>
+        <translation>RetroShare Kullanıcı Bilgileri.</translation>
     </message>
     <message>
         <source>Invalid language code specified: </source>
@@ -10950,11 +11286,11 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Invalid log level specified: </source>
-        <translation type="unfinished"/>
+        <translation>Belirtilen geçersiz günlük düzeyi:</translation>
     </message>
     <message>
         <source>Unable to open log file &apos;%1&apos;: %2</source>
-        <translation type="unfinished"/>
+        <translation>&apos;%1&apos;:%2 Günlük dosyası açılamadı</translation>
     </message>
     <message>
         <source>built-in</source>
@@ -11069,7 +11405,7 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Hash</source>
-        <translation>Şifreleme</translation>
+        <translation>Karılım</translation>
     </message>
     <message>
         <source>Filter:</source>
@@ -11077,7 +11413,7 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Filter Search Result</source>
-        <translation type="unfinished"/>
+        <translation>Filtreli Arama Sonucu</translation>
     </message>
     <message>
         <source>Max results:</source>
@@ -11141,7 +11477,7 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Send RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>RetroShare Bağlantısı Yollayın</translation>
     </message>
     <message>
         <source>Download Notice</source>
@@ -11149,15 +11485,15 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Skipping Local Files</source>
-        <translation type="unfinished"/>
+        <translation>Yerel Dosyalar Atlansın</translation>
     </message>
     <message>
         <source>Sorry</source>
-        <translation type="unfinished"/>
+        <translation>Malesef</translation>
     </message>
     <message>
         <source>This function is not yet implemented.</source>
-        <translation type="unfinished"/>
+        <translation>Bu işlev henüz uygulanmadı.</translation>
     </message>
     <message>
         <source>Search again</source>
@@ -11355,11 +11691,11 @@ peers still need to trust each other to allow connection. </source>
     </message>
     <message>
         <source>Port:</source>
-        <translation type="unfinished"/>
+        <translation>Port:</translation>
     </message>
     <message>
         <source>Acceptable ports range from 1024 to 65535. Ports below 1024 are reserved by your system.</source>
-        <translation type="unfinished"/>
+        <translation>1024 ile 65535 arası portlar kabul edilebilir. 1024&apos;ün altındaki portlar sisteminiz tarafından ayrılmıştır.</translation>
     </message>
     <message>
         <source>Local network</source>
@@ -11379,7 +11715,7 @@ peers still need to trust each other to allow connection. </source>
     </message>
     <message>
         <source>Show Discovery information in statusbar</source>
-        <translation type="unfinished"/>
+        <translation>Keşif bilgilerini durum çubuğunda gösterin</translation>
     </message>
     <message>
         <source>If you uncheck this, RetroShare can only determine your IP 
@@ -11390,7 +11726,7 @@ behind a firewall or a VPN.</source>
     </message>
     <message>
         <source>Allow RetroShare to ask my ip to these websites:</source>
-        <translation type="unfinished"/>
+        <translation>RetroShare şu sitelere ip&apos;nizi sorabilir:</translation>
     </message>
     <message>
         <source>Bandwidth</source>
@@ -11406,7 +11742,7 @@ behind a firewall or a VPN.</source>
     </message>
     <message>
         <source>kB/s</source>
-        <translation type="unfinished"/>
+        <translation>kB/s</translation>
     </message>
     <message>
         <source>Upload (KB/s) </source>
@@ -11532,11 +11868,11 @@ The default value is 20.</source>
     </message>
     <message>
         <source>Share for Friend</source>
-        <translation type="unfinished"/>
+        <translation>Arkadaşınızla Paylaşın</translation>
     </message>
     <message>
         <source>Select the Friends with which you want to Share your Channel.</source>
-        <translation type="unfinished"/>
+        <translation>Kanalınızı Paylaşmak istediğiniz arkadaşlarınızı seçin.</translation>
     </message>
     <message>
         <source>Contacts:</source>
@@ -11544,7 +11880,7 @@ The default value is 20.</source>
     </message>
     <message>
         <source>Please select at least one peer</source>
-        <translation type="unfinished"/>
+        <translation>Lütfen en az bir kişi seçin</translation>
     </message>
 </context>
 <context>
@@ -11718,15 +12054,15 @@ p, li { white-space: pre-wrap; }⏎
     </message>
     <message>
         <source>Send retroshare Links to Cloud</source>
-        <translation type="unfinished"/>
+        <translation>RetroShare Bağlantılarını Bulut&apos;a Gönder</translation>
     </message>
     <message>
         <source>Add Links to Cloud</source>
-        <translation type="unfinished"/>
+        <translation>Bağlantıları Bulut&apos;a Ekleyin</translation>
     </message>
     <message>
         <source>RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>RetoShare Bağlantısı</translation>
     </message>
     <message>
         <source>Recommendation(s)</source>
@@ -11858,7 +12194,11 @@ varolan profilinize adres ekleyin.⏎
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Manage profiles and locations...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
+p, li { white-space: pre-wrap; }⏎
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Profilleri ve konumları düzenleyin...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Load Person Failure</source>
@@ -12043,11 +12383,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Solid</source>
-        <translation type="unfinished"/>
+        <translation>Sağlam</translation>
     </message>
     <message>
         <source>Gradient</source>
-        <translation type="unfinished"/>
+        <translation>Eğim</translation>
     </message>
 </context>
 <context>
@@ -12199,11 +12539,16 @@ to be equal to the queue size above will always prioritize your files
 over cache. 
 
 It is however recommended to leave at least a few slots for cache files.</source>
-        <translation type="unfinished"/>
+        <translation>RetroShare&apos;ı dilediğiniz kadar yere önbellek dosyaları yerine
+ kendi dosyalarınızı indirmeye zorlamak için kullanabilirsiniz.
+O numarayı yukarıdaki kuyruk boyutuna eşit ayarlarsanız
+dosyalarınız önbellekten öncelikli olacaktır.
+
+Yinede önbellek dosyaları için bir kaç yer bırakmanız tavsiye edilir.</translation>
     </message>
     <message>
         <source>Streaming</source>
-        <translation type="unfinished"/>
+        <translation>Akışı</translation>
     </message>
     <message>
         <source>Progressive</source>
@@ -12215,7 +12560,7 @@ It is however recommended to leave at least a few slots for cache files.</source
     </message>
     <message>
         <source> MB</source>
-        <translation type="unfinished"/>
+        <translation>MB</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -12314,10 +12659,6 @@ p, li { white-space: pre-wrap; }
         <translation>Indirme zamani</translation>
     </message>
     <message>
-        <source>Core-ID</source>
-        <translation>Çekirdek-Kodu</translation>
-    </message>
-    <message>
         <source>Peer</source>
         <comment>i.e: user name</comment>
         <translation>Kişi</translation>
@@ -12338,7 +12679,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Hash</source>
-        <translation>Şifreleme</translation>
+        <translation>Karılım</translation>
     </message>
     <message>
         <source>Search</source>
@@ -12422,7 +12763,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Streaming</source>
-        <translation type="unfinished"/>
+        <translation>Akışı</translation>
     </message>
     <message>
         <source>Slower</source>
@@ -12523,7 +12864,14 @@ map of the data; it will compare and invalidate
 bad blocks, and download them again
 
 Try to be patient!</source>
-        <translation type="unfinished"/>
+        <translation>İndirilen dosyanın karılımı dosya kaynağındakiyle
+eşleşmiyorsa muhtemelen dosya hasarlıdır.
+
+RetroShare kaynağa verinin ayrıntılı haritasını soracak:
+karşılaştırıp bozuk kesimleri geçersiz kılacak,
+ve tekrar indirecek
+
+Sabırlı olun!</translation>
     </message>
     <message>
         <source>version: </source>
@@ -12579,6 +12927,107 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Please enter a new--and valid--filename</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Last Time Seen</source>
+        <comment>i.e: Last Time Receiced Data</comment>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>UserID</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>File Never Seen</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Expand all</source>
+        <translation>Tüm genisletin</translation>
+    </message>
+    <message>
+        <source>Collapse all</source>
+        <translation>Tümünü daralt</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Boyut</translation>
+    </message>
+    <message>
+        <source>Show Size Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show Completed Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Speed</source>
+        <translation>Hiz</translation>
+    </message>
+    <message>
+        <source>Show Speed Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Progress / Availability</source>
+        <translation>Ilerleme</translation>
+    </message>
+    <message>
+        <source>Show Progress / Availability Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Sources</source>
+        <translation>Kaynak</translation>
+    </message>
+    <message>
+        <source>Show Sources Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show Status Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show Speed / Queue position Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show Remaining Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Download time</source>
+        <translation>Indirme zamani</translation>
+    </message>
+    <message>
+        <source>Show Download time Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show Hash Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Last Time Seen</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show Last Time Seen Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Columns</source>
+        <translation>Sütunlar</translation>
+    </message>
+    <message>
+        <source>File Transfers</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;File Transfer&lt;/h1&gt;                                                         			 &lt;p&gt;Retroshare brings two ways of transferring files: direct transfers from your friends, and                                     			 distant anonymous tunnelled transfers. In addition, file transfer is multi-source and allows swarming                                      			 (you can be a source while downloading)&lt;/p&gt;                                     			 &lt;p&gt;You can share files using the &lt;img src=&quot;:/images/directoryadd_24x24_shadow.png&quot; width=16 /&gt; icon from the left side bar. 				These files will be listed in the My Files tab. You can decide for each friend group whether they can or not see these files 				in their Friends Files tab&lt;/p&gt;			 &lt;p&gt;The search tab reports files from your friends&apos; file lists, and distant files that can be reached 			 anonymously using the multi-hop tunnelling system.&lt;/p&gt; 			 </source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -12649,7 +13098,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Showing: whole network</source>
-        <translation type="unfinished"/>
+        <translation>Gösterilen: bütün ağ</translation>
     </message>
     <message>
         <source>This table normally auto-updates every 10 seconds.</source>
@@ -12657,7 +13106,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Self</source>
-        <translation type="unfinished"/>
+        <translation>Kendi</translation>
     </message>
     <message>
         <source>Trust</source>
@@ -12665,7 +13114,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source> is authenticated (one way) by </source>
-        <translation type="unfinished"/>
+        <translation>tarafından (tek yönlü) onaylandı</translation>
     </message>
     <message>
         <source>Half</source>
@@ -12673,11 +13122,11 @@ Try to be patient!</source>
     </message>
     <message>
         <source> authenticated himself</source>
-        <translation type="unfinished"/>
+        <translation>kendini onayladı</translation>
     </message>
     <message>
         <source> authenticated each other</source>
-        <translation type="unfinished"/>
+        <translation>birbirlerini onayladılar</translation>
     </message>
     <message>
         <source>Full</source>
@@ -12685,19 +13134,19 @@ Try to be patient!</source>
     </message>
     <message>
         <source> is authenticated by </source>
-        <translation type="unfinished"/>
+        <translation>tarafından onaylandı</translation>
     </message>
     <message>
         <source> peers, including him(her)self.</source>
-        <translation type="unfinished"/>
+        <translation>kişiler, kendi dahil.</translation>
     </message>
     <message>
         <source> authenticated </source>
-        <translation type="unfinished"/>
+        <translation>onaylanmış</translation>
     </message>
     <message>
         <source>Showing: peers connected to </source>
-        <translation type="unfinished"/>
+        <translation>Gösteriliyor: bağlanılan kişiler</translation>
     </message>
 </context>
 <context>
@@ -12712,7 +13161,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Unknown hashes</source>
-        <translation>Bilinmeyen hashes</translation>
+        <translation>Bilinmeyen karılımlar</translation>
     </message>
     <message>
         <source>Tunnel id</source>
@@ -12805,6 +13254,13 @@ Try to be patient!</source>
     </message>
 </context>
 <context>
+    <name>UIStateHelper</name>
+    <message>
+        <source>Loading</source>
+        <translation>Yükleniyor</translation>
+    </message>
+</context>
+<context>
     <name>ULListDelegate</name>
     <message>
         <source>B</source>
@@ -12893,7 +13349,7 @@ Try to be patient!</source>
     <name>WikiAddDialog</name>
     <message>
         <source>Basic Details</source>
-        <translation type="unfinished"/>
+        <translation>Temel Ayrıntılar</translation>
     </message>
     <message>
         <source>Group Name:</source>
@@ -12957,11 +13413,11 @@ Try to be patient!</source>
     </message>
     <message>
         <source>This List Contains</source>
-        <translation type="unfinished"/>
+        <translation>Bu Listede Bulunanlar</translation>
     </message>
     <message>
         <source>All your Groups</source>
-        <translation type="unfinished"/>
+        <translation>Bütün Gruplarınız</translation>
     </message>
     <message>
         <source>No Comments Allowed</source>
@@ -12977,7 +13433,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Publish with XXX Key</source>
-        <translation type="unfinished"/>
+        <translation>XXX Anahtarıyla Yayınlayın</translation>
     </message>
     <message>
         <source>Cancel </source>
@@ -13012,11 +13468,11 @@ Try to be patient!</source>
     </message>
     <message>
         <source>&lt;&lt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;&lt;</translation>
     </message>
     <message>
         <source>&gt;&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&gt;&gt;</translation>
     </message>
     <message>
         <source>Republish</source>
@@ -13095,11 +13551,11 @@ Try to be patient!</source>
     </message>
     <message>
         <source>\/</source>
-        <translation type="unfinished"/>
+        <translation>\/</translation>
     </message>
     <message>
         <source>/\</source>
-        <translation type="unfinished"/>
+        <translation>/\</translation>
     </message>
     <message>
         <source>Wiki Group:</source>
@@ -13253,15 +13709,15 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Account 1</source>
-        <translation type="unfinished"/>
+        <translation>Hesap 1</translation>
     </message>
     <message>
         <source>Account 2</source>
-        <translation type="unfinished"/>
+        <translation>Hesap 2</translation>
     </message>
     <message>
         <source>Account 3</source>
-        <translation type="unfinished"/>
+        <translation>Hesap 3</translation>
     </message>
     <message>
         <source>CheckBox</source>
@@ -13282,27 +13738,27 @@ Try to be patient!</source>
     <message>
         <source> B</source>
         <comment>bytes</comment>
-        <translation type="unfinished"/>
+        <translation>B</translation>
     </message>
     <message>
         <source> KB</source>
         <comment>kilobytes (1024 bytes)</comment>
-        <translation type="unfinished"/>
+        <translation>KB</translation>
     </message>
     <message>
         <source> MB</source>
         <comment>megabytes (1024 kilobytes)</comment>
-        <translation type="unfinished"/>
+        <translation>MB</translation>
     </message>
     <message>
         <source> GB</source>
         <comment>gigabytes (1024 megabytes)</comment>
-        <translation type="unfinished"/>
+        <translation>GB</translation>
     </message>
     <message>
         <source> TB,</source>
         <comment>terabytes (1024 gigabytes)</comment>
-        <translation type="unfinished"/>
+        <translation>TB</translation>
     </message>
     <message>
         <source> TB</source>
@@ -13316,7 +13772,7 @@ Try to be patient!</source>
     <message>
         <source>&lt; 1m</source>
         <comment>&lt; 1 minute</comment>
-        <translation type="unfinished"/>
+        <translation>&lt; 1d</translation>
     </message>
     <message>
         <source>%1 minutes</source>
@@ -13341,22 +13797,22 @@ Try to be patient!</source>
     <message>
         <source>k</source>
         <comment>e.g: 3.1 k</comment>
-        <translation type="unfinished"/>
+        <translation>k</translation>
     </message>
     <message>
         <source>M</source>
         <comment>e.g: 3.1 M</comment>
-        <translation type="unfinished"/>
+        <translation>M</translation>
     </message>
     <message>
         <source>G</source>
         <comment>e.g: 3.1 G</comment>
-        <translation type="unfinished"/>
+        <translation>G</translation>
     </message>
     <message>
         <source>T</source>
         <comment>e.g: 3.1 T</comment>
-        <translation type="unfinished"/>
+        <translation>T</translation>
     </message>
     <message>
         <source>Load avatar image</source>
@@ -13364,7 +13820,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Pictures (*.png *.xpm *.jpg *.tiff *.gif)</source>
-        <translation type="unfinished"/>
+        <translation>Resimler (*.png *.xpm *.jpg *.tiff *.gif)</translation>
     </message>
 </context>
 </TS>

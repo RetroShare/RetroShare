@@ -4,37 +4,37 @@
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="17"/>
         <source>Audio Wizard</source>
-        <translation type="unfinished"/>
+        <translation>오디오 마법사</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="30"/>
         <source>Transmission</source>
-        <translation type="unfinished"/>
+        <translation>전송</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="36"/>
         <source>&amp;Transmit</source>
-        <translation type="unfinished"/>
+        <translation>보내기(&amp;T)</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="46"/>
         <source>When to transmit your speech</source>
-        <translation type="unfinished"/>
+        <translation>음성을 보낼 때</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="49"/>
         <source>&lt;b&gt;This sets when speech should be transmitted.&lt;/b&gt;&lt;br /&gt;&lt;i&gt;Continuous&lt;/i&gt; - All the time&lt;br /&gt;&lt;i&gt;Voice Activity&lt;/i&gt; - When you are speaking clearly.&lt;br /&gt;&lt;i&gt;Push To Talk&lt;/i&gt; - When you hold down the hotkey set under &lt;i&gt;Shortcuts&lt;/i&gt;.</source>
-        <translation type="unfinished"/>
+        <translation>&lt;b&gt;음성을 보내야 할 경우 설정합니다.&lt;/b&gt;&lt;br /&gt;&lt;i&gt;계속&lt;/i&gt; - 항상&lt;br /&gt;&lt;i&gt;음성 활성화 상태&lt;/i&gt; - 분명하게 말할 때&lt;br /&gt;&lt;i&gt;말하려면 누르기&lt;/i&gt; - &lt;i&gt;단축키&lt;/i&gt;로 설정한 핫키를 누르고 있어야 함.</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="63"/>
         <source>DoublePush Time</source>
-        <translation type="unfinished"/>
+        <translation>더블푸쉬 시간</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="73"/>
         <source>If you press the PTT key twice in this time it will get locked.</source>
-        <translation type="unfinished"/>
+        <translation>PTT 키를 두번 누르면 잠깁니다.</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="76"/>
@@ -44,17 +44,17 @@
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="119"/>
         <source>Voice &amp;Hold</source>
-        <translation type="unfinished"/>
+        <translation>말하기 유지(&amp;H)</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="129"/>
         <source>How long to keep transmitting after silence</source>
-        <translation type="unfinished"/>
+        <translation>묵음 상태 후에 유지할 전송시간</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="132"/>
         <source>&lt;b&gt;This selects how long after a perceived stop in speech transmission should continue.&lt;/b&gt;&lt;br /&gt;Set this higher if your voice breaks up when you speak (seen by a rapidly blinking voice icon next to your name).</source>
-        <translation type="unfinished"/>
+        <translation>&lt;b&gt;이 옵션에서는 음성 수신 멈춤을 인지한 후 음성을 전송할 시간 길이를 선택합니다.&lt;/b&gt;&lt;br /&gt;여러분이 말할 때 음성이 깨지면 이 시간을 길게 잡아보십시오(여러분 이름 옆의 음성 아이콘이 빠르게 깜빡이는 것을 보실 수 있습니다).</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="148"/>
@@ -85,22 +85,22 @@
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="225"/>
         <source>empty</source>
-        <translation type="unfinished"/>
+        <translation>비어 있음</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="240"/>
         <source>Audio Processing</source>
-        <translation type="unfinished"/>
+        <translation>음성 처리</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="246"/>
         <source>Noise Suppression</source>
-        <translation type="unfinished"/>
+        <translation>잡음 감쇄</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="259"/>
         <source>Noise suppression</source>
-        <translation type="unfinished"/>
+        <translation>잡음 감쇄</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="262"/>

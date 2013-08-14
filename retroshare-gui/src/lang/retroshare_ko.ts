@@ -3,35 +3,35 @@
     <name>AboutDialog</name>
     <message>
         <source>About RetroShare</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 정보</translation>
     </message>
     <message>
         <source>About</source>
-        <translation type="unfinished"/>
+        <translation>정보</translation>
     </message>
     <message>
         <source>close</source>
-        <translation type="unfinished"/>
+        <translation>닫기</translation>
     </message>
     <message>
         <source>About RetroShare %1</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 %1 정보</translation>
     </message>
     <message>
         <source>Max score: %1</source>
-        <translation type="unfinished"/>
+        <translation>최고 점수: %1</translation>
     </message>
     <message>
         <source>Score: %1</source>
-        <translation type="unfinished"/>
+        <translation>점수: %1</translation>
     </message>
     <message>
         <source>Level: %1</source>
-        <translation type="unfinished"/>
+        <translation>레벨: %1</translation>
     </message>
     <message>
         <source>Have fun ;-)</source>
-        <translation type="unfinished"/>
+        <translation>즐거운 시간 되세요 ;-)</translation>
     </message>
 </context>
 <context>
@@ -45,47 +45,48 @@
     <name>AddFileAssociationDialog</name>
     <message>
         <source>File type(extension):</source>
-        <translation type="unfinished"/>
+        <translation>파일 형식(확장자):</translation>
     </message>
     <message>
         <source>Use default command</source>
-        <translation type="unfinished"/>
+        <translation>기본 명령 사용</translation>
     </message>
     <message>
         <source>Command</source>
-        <translation type="unfinished"/>
+        <translation>명</translation>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation>Retroshare (뒤에몫) </translation>
+        <translation>레트로 쉐어</translation>
     </message>
     <message>
         <source>Sorry, can't determine system default command for this file
 </source>
-        <translation type="unfinished"/>
+        <translation>죄송하지만 이 파일에 대한 시스템 기본 명령을 결정할 수 없습니다
+</translation>
     </message>
 </context>
 <context>
     <name>AdvancedSearchDialog</name>
     <message>
         <source>RetroShare: Advanced Search</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어: 고급 검색</translation>
     </message>
     <message>
         <source>Search Criteria</source>
-        <translation type="unfinished"/>
+        <translation>검색 문구</translation>
     </message>
     <message>
         <source>Add a further search criterion.</source>
-        <translation type="unfinished"/>
+        <translation>검색 문구 더 추가합니다.</translation>
     </message>
     <message>
         <source>Reset the search criteria.</source>
-        <translation type="unfinished"/>
+        <translation>검색 문구를 초기화합니다.</translation>
     </message>
     <message>
         <source>Cancels the search.</source>
-        <translation type="unfinished"/>
+        <translation>검색을 취소합니다.</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -93,11 +94,11 @@
     </message>
     <message>
         <source>Perform the advanced search.</source>
-        <translation type="unfinished"/>
+        <translation>고급 검색을 수행합니다.</translation>
     </message>
     <message>
         <source>Search</source>
-        <translation type="unfinished"/>
+        <translation>검색</translation>
     </message>
 </context>
 <context>
@@ -172,7 +173,7 @@
     </message>
     <message>
         <source>Description:</source>
-        <translation type="unfinished"/>
+        <translation>설명:</translation>
     </message>
     <message>
         <source>Share Options</source>
@@ -196,7 +197,7 @@
     </message>
     <message>
         <source>Public</source>
-        <translation type="unfinished"/>
+        <translation>공용</translation>
     </message>
     <message>
         <source>Restricted</source>
@@ -307,7 +308,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Description:</source>
-        <translation type="unfinished"/>
+        <translation>설명:</translation>
     </message>
     <message>
         <source>Share Options</source>
@@ -354,7 +355,7 @@ p, li { white-space: pre-wrap; }
     <name>AlbumItem</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"/>
+        <translation>양식</translation>
     </message>
     <message>
         <source>TextLabel</source>
@@ -381,7 +382,7 @@ p, li { white-space: pre-wrap; }
     <name>AppearancePage</name>
     <message>
         <source>Language</source>
-        <translation type="unfinished"/>
+        <translation>언어</translation>
     </message>
     <message>
         <source>Changes to language will only take effect after restarting RetroShare!</source>
@@ -393,7 +394,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Style</source>
-        <translation type="unfinished"/>
+        <translation>스타일</translation>
     </message>
     <message>
         <source>Choose RetroShare&apos;s interface style</source>
@@ -401,18 +402,18 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Style Sheet</source>
-        <translation type="unfinished"/>
+        <translation>스타일 시트</translation>
     </message>
     <message>
         <source>Appearance</source>
-        <translation type="unfinished"/>
+        <translation>모양새</translation>
     </message>
 </context>
 <context>
     <name>ApplicationWindow</name>
     <message>
         <source>RetroShare</source>
-        <translation>Retroshare (뒤에몫) </translation>
+        <translation>레트로 쉐어</translation>
     </message>
     <message>
         <source> Warning: The services here are experimental. Please help us test them. 
@@ -456,33 +457,33 @@ p, li { white-space: pre-wrap; }
     <name>AttachFileItem</name>
     <message>
         <source>%p Kb</source>
-        <translation type="unfinished"/>
+        <translation>%p Kb</translation>
     </message>
     <message>
         <source>Cancel Download</source>
-        <translation type="unfinished"/>
+        <translation>다운로드 취소</translation>
     </message>
     <message>
         <source>[ERROR])</source>
-        <translation type="unfinished"/>
+        <translation>[오류])</translation>
     </message>
 </context>
 <context>
     <name>AvatarWidget</name>
     <message>
         <source>Click to change your avatar</source>
-        <translation type="unfinished"/>
+        <translation>아바타를 바꾸려면 누르십시오</translation>
     </message>
 </context>
 <context>
     <name>BandwidthGraph</name>
     <message>
         <source>RetroShare Bandwidth Usage</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 대역폭 사용</translation>
     </message>
     <message>
         <source>Show Settings</source>
-        <translation>옵션</translation>
+        <translation>옵션 보이기</translation>
     </message>
     <message>
         <source>Reset</source>
@@ -490,35 +491,35 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Receive Rate</source>
-        <translation type="unfinished"/>
+        <translation>수신율</translation>
     </message>
     <message>
         <source>Send Rate</source>
-        <translation type="unfinished"/>
+        <translation>송신율</translation>
     </message>
     <message>
         <source>Always on Top</source>
-        <translation type="unfinished"/>
+        <translation>항상 위로</translation>
     </message>
     <message>
         <source>Style</source>
-        <translation type="unfinished"/>
+        <translation>스타일</translation>
     </message>
     <message>
         <source>Changes the transparency of the Bandwidth Graph</source>
-        <translation type="unfinished"/>
+        <translation>대역폭 그래프 투명도를 바꿉니다</translation>
     </message>
     <message>
         <source>100</source>
-        <translation type="unfinished"/>
+        <translation>100</translation>
     </message>
     <message>
         <source>% Opaque</source>
-        <translation type="unfinished"/>
+        <translation>% 투명도</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation>저장하기</translation>
+        <translation>저장</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -526,42 +527,42 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Since:</source>
-        <translation type="unfinished"/>
+        <translation>시초:</translation>
     </message>
     <message>
         <source>Hide Settings</source>
-        <translation type="unfinished"/>
+        <translation>설정 숨기기</translation>
     </message>
 </context>
 <context>
     <name>BlogDetails</name>
     <message>
         <source>Blog Details</source>
-        <translation type="unfinished"/>
+        <translation>블로그 세부내용</translation>
     </message>
     <message>
         <source>Blog Info</source>
-        <translation type="unfinished"/>
+        <translation>블로그 정보</translation>
     </message>
     <message>
         <source>Blog Name</source>
-        <translation type="unfinished"/>
+        <translation>블로그 이름</translation>
     </message>
     <message>
         <source>Popularity</source>
-        <translation type="unfinished"/>
+        <translation>인기도</translation>
     </message>
     <message>
         <source>Last Post</source>
-        <translation type="unfinished"/>
+        <translation>최신 게시글</translation>
     </message>
     <message>
         <source>Blog ID</source>
-        <translation type="unfinished"/>
+        <translation>블로그 ID</translation>
     </message>
     <message>
         <source>Blog Description</source>
-        <translation type="unfinished"/>
+        <translation>블로그 설명</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -573,49 +574,49 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Close</source>
-        <translation type="unfinished"/>
+        <translation>닫기</translation>
     </message>
 </context>
 <context>
     <name>BlogMsgItem</name>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished"/>
+        <translation>항목 제거</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished"/>
+        <translation>확장</translation>
     </message>
     <message>
         <source>Subject</source>
-        <translation type="unfinished"/>
+        <translation>제목</translation>
     </message>
     <message>
         <source>Play Media</source>
-        <translation type="unfinished"/>
+        <translation>미디어 재생</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"/>
+        <translation>숨김</translation>
     </message>
 </context>
 <context>
     <name>BlogNewItem</name>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished"/>
+        <translation>항목 제거</translation>
     </message>
     <message>
         <source>Subscribe to Blog</source>
-        <translation type="unfinished"/>
+        <translation>블로그 가입</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished"/>
+        <translation>확장</translation>
     </message>
     <message>
         <source>Blog Description</source>
-        <translation type="unfinished"/>
+        <translation>블로그 설명</translation>
     </message>
     <message>
         <source>Unknown Blog</source>
@@ -631,14 +632,14 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"/>
+        <translation>숨김</translation>
     </message>
 </context>
 <context>
     <name>BlogsDialog</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"/>
+        <translation>양식</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -646,7 +647,11 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:600;&quot;&gt;Blogs&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:600;&quot;&gt;블로그&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Add</source>
@@ -658,7 +663,11 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Post To Blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;블로그에 게시&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -666,7 +675,11 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:600; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:14pt; color:#ffffff;&quot;&gt;Blog Name&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:600; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:14pt; color:#ffffff;&quot;&gt;블로그 이름&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -678,7 +691,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Unsubscribe</source>
-        <translation type="unfinished"/>
+        <translation>탈퇴</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -686,15 +699,19 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Subscribe To Blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;블로그에 가입&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Subscribe</source>
-        <translation type="unfinished"/>
+        <translation>가입</translation>
     </message>
     <message>
         <source>Create New Blog</source>
-        <translation type="unfinished"/>
+        <translation>새 블로그 만들기</translation>
     </message>
     <message>
         <source>Name</source>
@@ -702,7 +719,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>ID</source>
-        <translation type="unfinished"/>
+        <translation>ID</translation>
     </message>
     <message>
         <source>My Blogs</source>
@@ -710,48 +727,50 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Subscribed Blogs</source>
-        <translation type="unfinished"/>
+        <translation>블로그에 가입했습니다</translation>
     </message>
     <message>
         <source>Popular Blogs</source>
-        <translation type="unfinished"/>
+        <translation>인기있는 블로그</translation>
     </message>
     <message>
         <source>Other Blogs</source>
-        <translation type="unfinished"/>
+        <translation>기타 블로그</translation>
     </message>
     <message>
         <source>Post to Blog</source>
-        <translation type="unfinished"/>
+        <translation>블로그에 게시</translation>
     </message>
     <message>
         <source>Subscribe to Blog</source>
-        <translation type="unfinished"/>
+        <translation>블로그에 가입</translation>
     </message>
     <message>
         <source>Unsubscribe to Blog</source>
-        <translation type="unfinished"/>
+        <translation>블로그에서 탈퇴</translation>
     </message>
     <message>
         <source>Show Blog Details</source>
-        <translation type="unfinished"/>
+        <translation>블로그 세부 내용 보이기</translation>
     </message>
     <message>
         <source>Create a new Blog</source>
-        <translation type="unfinished"/>
+        <translation>새 블로그 만들기</translation>
     </message>
     <message>
         <source>Popularity: %1
 Fetches: %2
 Available: %3</source>
-        <translation type="unfinished"/>
+        <translation>인기도: %1
+가져온 글 수: %2
+존재 유무: %3</translation>
     </message>
 </context>
 <context>
     <name>BlogsMsgItem</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"/>
+        <translation>양식</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -759,7 +778,11 @@ Available: %3</source>
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:11pt; font-weight:600; font-style:italic;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#656565;&quot;&gt;Blog Subject&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:11pt; font-weight:600; font-style:italic;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#656565;&quot;&gt;블로그 제목&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -767,31 +790,35 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:600; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;DateTime&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:600; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;일시&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished"/>
+        <translation>확장</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished"/>
+        <translation>항목 제거</translation>
     </message>
     <message>
         <source>Unsubscribe From Channel</source>
-        <translation type="unfinished"/>
+        <translation>채널에서 탈퇴</translation>
     </message>
     <message>
         <source>Comments here</source>
-        <translation type="unfinished"/>
+        <translation>여기에 답글을 적으십시오</translation>
     </message>
     <message>
         <source>Comment</source>
-        <translation type="unfinished"/>
+        <translation>답글 달기</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"/>
+        <translation>숨김</translation>
     </message>
 </context>
 <context>
@@ -810,7 +837,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>ID</source>
-        <translation type="unfinished"/>
+        <translation>ID</translation>
     </message>
     <message>
         <source>In (KB/s)</source>
@@ -857,19 +884,19 @@ p, li { white-space: pre-wrap; }
     <name>CalDialog</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"/>
+        <translation>양식</translation>
     </message>
     <message>
         <source>Local Calendars</source>
-        <translation type="unfinished"/>
+        <translation>지역 달력</translation>
     </message>
     <message>
         <source>Shared Calendar List</source>
-        <translation type="unfinished"/>
+        <translation>공유한 달력 목록</translation>
     </message>
     <message>
         <source>Share Details</source>
-        <translation type="unfinished"/>
+        <translation>세부 내용 공유</translation>
     </message>
     <message>
         <source>Name:</source>
@@ -877,7 +904,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Location:</source>
-        <translation type="unfinished"/>
+        <translation>지역:</translation>
     </message>
     <message>
         <source>...</source>
@@ -885,23 +912,23 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Status:</source>
-        <translation type="unfinished"/>
+        <translation>상태:</translation>
     </message>
     <message>
         <source>Private</source>
-        <translation type="unfinished"/>
+        <translation>개인용</translation>
     </message>
     <message>
         <source>Public</source>
-        <translation type="unfinished"/>
+        <translation>공용</translation>
     </message>
     <message>
         <source>Allow List:</source>
-        <translation type="unfinished"/>
+        <translation>허용 목록:</translation>
     </message>
     <message>
         <source>&lt;Disabled&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;Disabled&gt;</translation>
     </message>
     <message>
         <source>Add</source>
@@ -909,7 +936,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Remove</source>
-        <translation type="unfinished"/>
+        <translation>제거</translation>
     </message>
     <message>
         <source>Peer Calendars</source>
@@ -924,11 +951,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>New</source>
-        <translation type="unfinished"/>
+        <translation>새 피드</translation>
     </message>
     <message>
         <source>Download</source>
-        <translation type="unfinished"/>
+        <translation>다운로드</translation>
     </message>
     <message>
         <source>Play</source>
@@ -936,27 +963,27 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 링크 복사</translation>
     </message>
     <message>
         <source>Unsubscribe From Channel</source>
-        <translation type="unfinished"/>
+        <translation>채널에서 탈퇴</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished"/>
+        <translation>확장</translation>
     </message>
     <message>
         <source>Set as read and remove item</source>
-        <translation type="unfinished"/>
+        <translation>항목을 읽음으로 설정하고 제거</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished"/>
+        <translation>항목 제거</translation>
     </message>
     <message>
         <source>Channel Feed</source>
-        <translation type="unfinished"/>
+        <translation>채널 피드</translation>
     </message>
     <message>
         <source>Files</source>
@@ -968,53 +995,53 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"/>
+        <translation>숨김</translation>
     </message>
 </context>
 <context>
     <name>ChanNewItem</name>
     <message>
         <source>Subscribe to Channel</source>
-        <translation type="unfinished"/>
+        <translation>채널에 가입</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished"/>
+        <translation>확장</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished"/>
+        <translation>항목 제거</translation>
     </message>
     <message>
         <source>Channel Description</source>
-        <translation type="unfinished"/>
+        <translation>채널 설명</translation>
     </message>
     <message>
         <source>Unknown Channel</source>
-        <translation type="unfinished"/>
+        <translation>알 수 없는 채널</translation>
     </message>
     <message>
         <source>New Channel</source>
-        <translation type="unfinished"/>
+        <translation>새 채널</translation>
     </message>
     <message>
         <source>Updated Channel</source>
-        <translation type="unfinished"/>
+        <translation>최신 채널</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"/>
+        <translation>숨김</translation>
     </message>
 </context>
 <context>
     <name>ChannelDetails</name>
     <message>
         <source>Channel Details</source>
-        <translation type="unfinished"/>
+        <translation>채널 세부 내용</translation>
     </message>
     <message>
         <source>Channel Info</source>
-        <translation type="unfinished"/>
+        <translation>채널 정보</translation>
     </message>
     <message>
         <source>Channel Name</source>
@@ -1022,31 +1049,31 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Popularity</source>
-        <translation type="unfinished"/>
+        <translation>인기도</translation>
     </message>
     <message>
         <source>Last Post</source>
-        <translation type="unfinished"/>
+        <translation>최신 게시글</translation>
     </message>
     <message>
         <source>Channel ID</source>
-        <translation type="unfinished"/>
+        <translation>채널 ID</translation>
     </message>
     <message>
         <source>Channel Description</source>
-        <translation type="unfinished"/>
+        <translation>채널 설명</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished"/>
+        <translation>형식</translation>
     </message>
     <message>
         <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation type="unfinished"/>
+        <translation>제한됨 - 누구나 읽을 수 있지만, 글 게시는 제한됨 (개인 게시 키)</translation>
     </message>
     <message>
         <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation type="unfinished"/>
+        <translation>개인용 - (메시지를 보려면 개인 게시 키가 필요함)</translation>
     </message>
 </context>
 <context>
@@ -1064,27 +1091,27 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Display</source>
-        <translation type="unfinished"/>
+        <translation>표시</translation>
     </message>
     <message>
         <source>Create Channel</source>
-        <translation type="unfinished"/>
+        <translation>채널 만들기</translation>
     </message>
     <message>
         <source>Loading</source>
-        <translation type="unfinished"/>
+        <translation>불러오는 중</translation>
     </message>
     <message>
         <source>Post to Channel</source>
-        <translation type="unfinished"/>
+        <translation>채널에 게시하기</translation>
     </message>
     <message>
         <source>Set all as read</source>
-        <translation type="unfinished"/>
+        <translation>모두 읽음으로 표시</translation>
     </message>
     <message>
         <source>Enable Auto-Download</source>
-        <translation type="unfinished"/>
+        <translation>자동 다운로드 활성화</translation>
     </message>
     <message>
         <source>My Channels</source>
@@ -1092,43 +1119,43 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Subscribed Channels</source>
-        <translation type="unfinished"/>
+        <translation>가입한 채널</translation>
     </message>
     <message>
         <source>Popular Channels</source>
-        <translation type="unfinished"/>
+        <translation>인기 있는 채널</translation>
     </message>
     <message>
         <source>Other Channels</source>
-        <translation type="unfinished"/>
+        <translation>기타 채널</translation>
     </message>
     <message>
         <source>Subscribe to Channel</source>
-        <translation type="unfinished"/>
+        <translation>채널에 가입</translation>
     </message>
     <message>
         <source>Unsubscribe to Channel</source>
-        <translation type="unfinished"/>
+        <translation>채널에서 탈퇴</translation>
     </message>
     <message>
         <source>Disable Auto-Download</source>
-        <translation type="unfinished"/>
+        <translation>자동 다운로드 비활성화</translation>
     </message>
     <message>
         <source>Show Channel Details</source>
-        <translation type="unfinished"/>
+        <translation>채널 세부 정보 보이기</translation>
     </message>
     <message>
         <source>Restore Publish Rights for Channel</source>
-        <translation type="unfinished"/>
+        <translation>채널 게시 권한 복구</translation>
     </message>
     <message>
         <source>Edit Channel Details</source>
-        <translation type="unfinished"/>
+        <translation>채널 세부 정보 편집</translation>
     </message>
     <message>
         <source>Share Channel</source>
-        <translation type="unfinished"/>
+        <translation>채널 공유</translation>
     </message>
     <message>
         <source>Set destination directory</source>
@@ -1144,7 +1171,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 링크 복사</translation>
     </message>
     <message>
         <source>Select channel destination directory</source>
@@ -1168,6 +1195,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>No Channel Selected</source>
+        <translation>선택한 채널 없음</translation>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Channels&lt;/h1&gt;                                                         		  &lt;p&gt;Channels allow you to post data (e.g. movies, music) that will spread in the network                                                		  among people who subscribed your channel.  If you activate auto-download on a channel, files attached to each post will start  		  downloading automatically when the post is received.&lt;/p&gt;                                                                               		  &lt;p&gt;You see channels your friends are subscribed to, and forward subscribed channels to                                                		  your friends. This promotes good channels in the network.                                                     		  When you first connect to a new friend, it&apos;s likely 		  you will receive many such cache files, and new channels will appear.                                                                  		  &lt;/p&gt;                                                                                                                                   		  &lt;p&gt;Only the channel&apos;s creator can post on that channel. Other peers                       		  in the network can only read from it, unless the channel is private. You can however share the posting rights or the reading rights 		  with your friends.&lt;/p&gt;                            		  </source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -1183,6 +1214,11 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Your friend has more than one locations.
 Please choose one of it to chat with.</source>
+        <translation>여러분의 친구가 한 군데 이상의 위치에 있습니다.
+대화할 친구 중 하나를 선택하십시오.</translation>
+    </message>
+    <message>
+        <source>Talking to </source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -1194,7 +1230,7 @@ Please choose one of it to chat with.</source>
     </message>
     <message>
         <source>Change nick name</source>
-        <translation type="unfinished"/>
+        <translation>별명 바꾸기</translation>
     </message>
     <message>
         <source>Mute participant</source>
@@ -1218,15 +1254,15 @@ Please choose one of it to chat with.</source>
     </message>
     <message>
         <source>Welcome to lobby %1</source>
-        <translation type="unfinished"/>
+        <translation>%1 대기방에서 환영합니다</translation>
     </message>
     <message>
         <source>Topic: %1</source>
-        <translation type="unfinished"/>
+        <translation>주제: %1</translation>
     </message>
     <message>
         <source>Please enter your new nick name</source>
-        <translation type="unfinished"/>
+        <translation>새 별명을 입력하십시오</translation>
     </message>
     <message>
         <source>Lobby chat</source>
@@ -1238,52 +1274,48 @@ Please choose one of it to chat with.</source>
     </message>
     <message>
         <source>Lobby management</source>
-        <translation type="unfinished"/>
+        <translation>대기방 관리</translation>
     </message>
     <message>
         <source>%1 has left the lobby.</source>
-        <translation type="unfinished"/>
+        <translation>%1 이(가) 대기방을 나갔습니다.</translation>
     </message>
     <message>
         <source>%1 joined the lobby.</source>
-        <translation type="unfinished"/>
+        <translation>%1 이(가) 대기방에 참여했습니다.</translation>
     </message>
     <message>
         <source>%1 changed his name to: %2</source>
-        <translation type="unfinished"/>
+        <translation>%1이(가) %2 이름으로 바꾸었습니다</translation>
     </message>
     <message>
         <source>Unsubscribe to lobby</source>
-        <translation type="unfinished"/>
+        <translation>대기방에서 탈퇴</translation>
     </message>
     <message>
         <source>Do you want to unsubscribe to this chat lobby?</source>
-        <translation type="unfinished"/>
+        <translation>대화 대기방에서 탈퇴하시겠습니까?</translation>
     </message>
     <message>
         <source>Hide Participants</source>
-        <translation type="unfinished"/>
+        <translation>참여자 숨기기</translation>
     </message>
     <message>
         <source>Show Participants</source>
-        <translation type="unfinished"/>
+        <translation>참여자 보이기</translation>
     </message>
 </context>
 <context>
     <name>ChatLobbyToaster</name>
     <message>
         <source>Show Chat Lobby</source>
-        <translation type="unfinished"/>
+        <translation>대화 대기방 보이기</translation>
     </message>
 </context>
 <context>
     <name>ChatLobbyWidget</name>
     <message>
         <source>Chat lobbies</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Create new chat lobby</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -1296,31 +1328,31 @@ Please choose one of it to chat with.</source>
     </message>
     <message>
         <source>Topic</source>
-        <translation type="unfinished"/>
+        <translation>주제</translation>
     </message>
     <message>
         <source>Private Lobbies</source>
-        <translation type="unfinished"/>
+        <translation>개인 대기방</translation>
     </message>
     <message>
         <source>Public Lobbies</source>
-        <translation type="unfinished"/>
+        <translation>공개 대기방</translation>
     </message>
     <message>
         <source>Create chat lobby</source>
-        <translation type="unfinished"/>
+        <translation>대화 대기방 만들기</translation>
     </message>
     <message>
         <source>Unsubscribe</source>
-        <translation type="unfinished"/>
+        <translation>탈퇴</translation>
     </message>
     <message>
         <source>Subscribe</source>
-        <translation type="unfinished"/>
+        <translation>가입</translation>
     </message>
     <message>
         <source>[No topic provided]</source>
-        <translation type="unfinished"/>
+        <translation>[설정한 주제가 없습니다]</translation>
     </message>
     <message>
         <source>Selected lobby info</source>
@@ -1344,11 +1376,11 @@ Please choose one of it to chat with.</source>
     </message>
     <message>
         <source>Private</source>
-        <translation type="unfinished"/>
+        <translation>개인용</translation>
     </message>
     <message>
         <source>Public</source>
-        <translation type="unfinished"/>
+        <translation>공용</translation>
     </message>
     <message>
         <source>Peers: </source>
@@ -1368,10 +1400,22 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Invitation to chat lobby</source>
+        <translation>대화 대기방에 초대하기</translation>
+    </message>
+    <message>
+        <source>Remove Auto Subscribe</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>%1  invites you to chat lobby named %2</source>
+        <source>Add Auto Subscribe</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>%1 invites you to chat lobby named %2</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Chat Lobbies&lt;/h1&gt;                              		  &lt;p&gt;Chat lobbies are distributed chat rooms, and work pretty much like IRC.                                      		  They allow you to talk anonymously with tons of people without the need to make friends.&lt;/p&gt;                    		  &lt;p&gt;A chat lobby can be public (you friends see it) or private (your friends can&apos;t see it, unless you           		  invite them with &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). Once you have been invited to a private lobby, you will be able to see it when your friends   		  are using it.&lt;/p&gt;                                                                                               		  &lt;p&gt;The list at left shows                                                                                     		  chat lobbies your friends are participating into. You can either                                 		  &lt;ul&gt;                                                                                                            			  &lt;li&gt;Right click to create a new chat lobby&lt;/li&gt;                                                              		     &lt;li&gt;Double click a chat lobby to enter, chat, and show it to your friends&lt;/li&gt;                      		  &lt;/ul&gt; 		  &lt;/p&gt;                                      		</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -1379,27 +1423,27 @@ Double click lobbies to enter and chat.</source>
     <name>ChatMsgItem</name>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished"/>
+        <translation>항목 제거</translation>
     </message>
     <message>
         <source>Write a quick Message</source>
-        <translation type="unfinished"/>
+        <translation>간단한 메시지 작성</translation>
     </message>
     <message>
         <source>Send Mail</source>
-        <translation type="unfinished"/>
+        <translation>메일 보내기</translation>
     </message>
     <message>
         <source>Write Message</source>
-        <translation type="unfinished"/>
+        <translation>메시지 작성</translation>
     </message>
     <message>
         <source>Start Chat</source>
-        <translation type="unfinished"/>
+        <translation>대화 시작</translation>
     </message>
     <message>
         <source>Send</source>
-        <translation type="unfinished"/>
+        <translation>보내기</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -1407,18 +1451,18 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Quick Message</source>
-        <translation type="unfinished"/>
+        <translation>간단한 메시지</translation>
     </message>
 </context>
 <context>
     <name>ChatPage</name>
     <message>
         <source>General</source>
-        <translation type="unfinished"/>
+        <translation>일반</translation>
     </message>
     <message>
         <source>Chat Settings</source>
-        <translation type="unfinished"/>
+        <translation>대화 설정</translation>
     </message>
     <message>
         <source>Enable Emoticons Private Chat</source>
@@ -1426,7 +1470,7 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Enable Emoticons Group Chat</source>
-        <translation type="unfinished"/>
+        <translation>이모티콘 집단 대화 활성화</translation>
     </message>
     <message>
         <source>Enable custom fonts</source>
@@ -1450,7 +1494,7 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Send message with Ctrl+Return</source>
-        <translation type="unfinished"/>
+        <translation>Ctrl+Return 으로 메시지 보내기</translation>
     </message>
     <message>
         <source>Chat Lobby</source>
@@ -1462,11 +1506,11 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Default nickname for chat lobbies:</source>
-        <translation type="unfinished"/>
+        <translation>대화 대기방에서의 기본 별명:</translation>
     </message>
     <message>
         <source>Private Chat</source>
-        <translation type="unfinished"/>
+        <translation>개인 대화</translation>
     </message>
     <message>
         <source>Open Window for new chat</source>
@@ -1486,43 +1530,43 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Chat Font</source>
-        <translation type="unfinished"/>
+        <translation>대화 글꼴</translation>
     </message>
     <message>
         <source>Change Chat Font</source>
-        <translation type="unfinished"/>
+        <translation>대화 글꼴 바꾸기</translation>
     </message>
     <message>
         <source>Chat Font:</source>
-        <translation type="unfinished"/>
+        <translation>대화 글꼴:</translation>
     </message>
     <message>
         <source>History</source>
-        <translation type="unfinished"/>
+        <translation>기록</translation>
     </message>
     <message>
         <source>Group Chat</source>
-        <translation type="unfinished"/>
+        <translation>집단 대화</translation>
     </message>
     <message>
         <source>Enable</source>
-        <translation>사용</translation>
+        <translation>활성화</translation>
     </message>
     <message>
         <source>Number of saved messages (0 = unlimited)</source>
-        <translation type="unfinished"/>
+        <translation>저장할 메시지 갯수 (0 = 제한 없음)</translation>
     </message>
     <message>
         <source>Load number of messages (0 = off)</source>
-        <translation type="unfinished"/>
+        <translation>불러올 메시지 갯수 (0 = 끔) </translation>
     </message>
     <message>
         <source>Style</source>
-        <translation type="unfinished"/>
+        <translation>스타일</translation>
     </message>
     <message>
         <source>Group chat</source>
-        <translation type="unfinished"/>
+        <translation>집단 대화</translation>
     </message>
     <message>
         <source>Variant</source>
@@ -1530,15 +1574,15 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Author:</source>
-        <translation>저자 :</translation>
+        <translation>저자:</translation>
     </message>
     <message>
         <source>Description:</source>
-        <translation type="unfinished"/>
+        <translation>설명:</translation>
     </message>
     <message>
         <source>Private chat</source>
-        <translation type="unfinished"/>
+        <translation>개인 대화</translation>
     </message>
     <message>
         <source>Incoming</source>
@@ -1570,14 +1614,66 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>System</source>
-        <translation type="unfinished"/>
+        <translation>시스템</translation>
     </message>
     <message>
         <source>System message</source>
-        <translation type="unfinished"/>
+        <translation>시스템 메시지</translation>
     </message>
     <message>
         <source>Chat</source>
+        <translation>대화</translation>
+    </message>
+    <message>
+        <source>Distant chat</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Retroshare allows you to anonymously chat to nearby people beyond your friends in the network, using encrypted tunnels. In your personal invites list you keep chat links for people to contact you. In the &amp;quot;collected contacts&amp;quot; list, you keep such chat links that people sent you to contact them.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your personal invites</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Collected contacts</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Open secured chat tunnel</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Delete this invite</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Can&apos;t open distant chat</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Cannot open distant chat. Error code=</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Cannot remove distant chat invite.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create a chat invitation</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Copy link to clipboard</source>
+        <translation>클립보드에 복사</translation>
+    </message>
+    <message>
+        <source>Private chat invite from </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Private chat invite to </source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -1585,11 +1681,11 @@ Double click lobbies to enter and chat.</source>
     <name>ChatStyle</name>
     <message>
         <source>Standard style for group chat</source>
-        <translation type="unfinished"/>
+        <translation>집단 대화에 표준 스타일</translation>
     </message>
     <message>
         <source>Compact style for group chat</source>
-        <translation type="unfinished"/>
+        <translation>집단 대화에 간단한 스타일</translation>
     </message>
     <message>
         <source>Standard style for private chat</source>
@@ -1612,97 +1708,97 @@ Double click lobbies to enter and chat.</source>
     <name>ChatToaster</name>
     <message>
         <source>Show Chat</source>
-        <translation type="unfinished"/>
+        <translation>대화 보이기</translation>
     </message>
 </context>
 <context>
     <name>ChatUserNotify</name>
     <message>
         <source>Private Chat</source>
-        <translation type="unfinished"/>
+        <translation>개인 대화</translation>
     </message>
 </context>
 <context>
     <name>ChatWidget</name>
     <message>
         <source>Close</source>
-        <translation type="unfinished"/>
+        <translation>닫기</translation>
     </message>
     <message>
         <source>Send</source>
-        <translation type="unfinished"/>
+        <translation>보내기</translation>
     </message>
     <message>
         <source>Bold</source>
-        <translation type="unfinished"/>
+        <translation>굵게</translation>
     </message>
     <message>
         <source>Underline</source>
-        <translation type="unfinished"/>
+        <translation>밑줄</translation>
     </message>
     <message>
         <source>Italic</source>
-        <translation type="unfinished"/>
+        <translation>기울임</translation>
     </message>
     <message>
         <source>Font</source>
-        <translation type="unfinished"/>
+        <translation>글꼴</translation>
     </message>
     <message>
         <source>Text Color</source>
-        <translation type="unfinished"/>
+        <translation>글자 색</translation>
     </message>
     <message>
         <source>Attach a Picture</source>
-        <translation type="unfinished"/>
+        <translation>그림 첨부</translation>
     </message>
     <message>
         <source>Add a File for your Friend</source>
-        <translation type="unfinished"/>
+        <translation>친구에게 파일 추가</translation>
     </message>
     <message>
         <source>Strike</source>
-        <translation type="unfinished"/>
+        <translation>취소선</translation>
     </message>
     <message>
         <source>Clear Chat History</source>
-        <translation type="unfinished"/>
+        <translation>대화 기록 지우기</translation>
     </message>
     <message>
         <source>Disable Emoticons</source>
-        <translation type="unfinished"/>
+        <translation>이모티콘 비활성화</translation>
     </message>
     <message>
         <source>Save Chat History</source>
-        <translation type="unfinished"/>
+        <translation>대화 기록 저장</translation>
     </message>
     <message>
         <source>Browse Message History</source>
-        <translation type="unfinished"/>
+        <translation>메시지 기록 찾아보기</translation>
     </message>
     <message>
         <source>Browse History</source>
-        <translation type="unfinished"/>
+        <translation>메시지 기록</translation>
     </message>
     <message>
         <source>Delete Chat History</source>
-        <translation type="unfinished"/>
+        <translation>대화 기록 삭제</translation>
     </message>
     <message>
         <source>Deletes all stored and displayed chat history</source>
-        <translation type="unfinished"/>
+        <translation>저장하고 표시한 모든 대화 기록을 삭제합니다</translation>
     </message>
     <message>
         <source>Choose font</source>
-        <translation type="unfinished"/>
+        <translation>글꼴 선택</translation>
     </message>
     <message>
         <source>Reset font to default</source>
-        <translation type="unfinished"/>
+        <translation>글꼴을 기본으로 재설정</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 링크 붙여넣기</translation>
     </message>
     <message>
         <source>Paste my certificate link</source>
@@ -1710,27 +1806,27 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>is typing...</source>
-        <translation type="unfinished"/>
+        <translation>입력중 ...</translation>
     </message>
     <message>
         <source>Do you really want to physically delete the history?</source>
-        <translation type="unfinished"/>
+        <translation>실제 기록을 정말로 삭제하시겠습니까?</translation>
     </message>
     <message>
         <source>Add Extra File</source>
-        <translation type="unfinished"/>
+        <translation>추가 파일 추가</translation>
     </message>
     <message>
         <source>Load Picture File</source>
-        <translation type="unfinished"/>
+        <translation>그림 파일 불러오기</translation>
     </message>
     <message>
         <source>Save as...</source>
-        <translation type="unfinished"/>
+        <translation>다른 이름으로 저장...</translation>
     </message>
     <message>
         <source>Text File (*.txt );;All Files (*)</source>
-        <translation type="unfinished"/>
+        <translation>텍스트 파일 (*.txt );;모든 파일 (*)</translation>
     </message>
     <message>
         <source>appears to be Offline.</source>
@@ -1738,27 +1834,23 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Messages you send will be delivered after Friend is again Online</source>
-        <translation type="unfinished"/>
+        <translation>여러분이 보낸 메시지는 친구가 온라인일때 도착합니다</translation>
     </message>
     <message>
         <source>is Idle and may not reply</source>
-        <translation type="unfinished"/>
+        <translation>대기중이며 응답하지 않을 수도 있습니다</translation>
     </message>
     <message>
         <source>is Away and may not reply</source>
-        <translation type="unfinished"/>
+        <translation>자리를 비웠으며 응답하지 않을 수도 있습니다</translation>
     </message>
     <message>
         <source>is Busy and may not reply</source>
-        <translation type="unfinished"/>
+        <translation>다른 용무중이며 응답하지 않을 수도 있습니다</translation>
     </message>
 </context>
 <context>
     <name>CirclesDialog</name>
-    <message>
-        <source>Refresh</source>
-        <translation type="unfinished"/>
-    </message>
     <message>
         <source>Showing details: </source>
         <translation type="unfinished"/>
@@ -1793,7 +1885,7 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>ID</source>
-        <translation type="unfinished"/>
+        <translation>ID</translation>
     </message>
     <message>
         <source>Friends</source>
@@ -1835,16 +1927,36 @@ Double click lobbies to enter and chat.</source>
         <source>Edit Circle</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>Todo</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Friends Of Friends</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>External Circles (Admin)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>External Circles (Subscribed)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>External Circles (Other)</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>ConfCertDialog</name>
     <message>
         <source>Friend Details</source>
-        <translation type="unfinished"/>
+        <translation>친구 세부 정보</translation>
     </message>
     <message>
         <source>Details</source>
-        <translation>세부사항</translation>
+        <translation>세부 정보</translation>
     </message>
     <message>
         <source>Peer Info</source>
@@ -1856,11 +1968,11 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Peer ID</source>
-        <translation type="unfinished"/>
+        <translation>동료 ID</translation>
     </message>
     <message>
         <source>RetroShare ID</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 ID</translation>
     </message>
     <message>
         <source>Other info</source>
@@ -1876,11 +1988,11 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Last Contact</source>
-        <translation>마지막 문의</translation>
+        <translation>마지막 연락</translation>
     </message>
     <message>
         <source>Version</source>
-        <translation type="unfinished"/>
+        <translation>버전</translation>
     </message>
     <message>
         <source>Peer Address</source>
@@ -1888,23 +2000,23 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Local Address</source>
-        <translation type="unfinished"/>
+        <translation>지역 주소</translation>
     </message>
     <message>
         <source>External Address</source>
-        <translation type="unfinished"/>
+        <translation>외부 주소</translation>
     </message>
     <message>
         <source>Dynamic DNS</source>
-        <translation type="unfinished"/>
+        <translation>동적 DNS</translation>
     </message>
     <message>
         <source>Port</source>
-        <translation>항구</translation>
+        <translation>포트</translation>
     </message>
     <message>
         <source>Addresses list</source>
-        <translation type="unfinished"/>
+        <translation>주소록</translation>
     </message>
     <message>
         <source>Trust </source>
@@ -1916,7 +2028,7 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>None </source>
-        <translation type="unfinished"/>
+        <translation>없음</translation>
     </message>
     <message>
         <source>Marginal </source>
@@ -1958,19 +2070,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Deny Friend</source>
-        <translation type="unfinished"/>
+        <translation>친구 거절</translation>
     </message>
     <message>
         <source>Make Friend</source>
-        <translation>친구를 사귀십시오</translation>
+        <translation>친구로 지정</translation>
     </message>
     <message>
         <source>Certificate</source>
-        <translation type="unfinished"/>
+        <translation>인증</translation>
     </message>
     <message>
         <source>Include signatures</source>
-        <translation type="unfinished"/>
+        <translation>서명 포함</translation>
     </message>
     <message>
         <source>Use old key format</source>
@@ -1991,23 +2103,11 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Disabling anonymous routing will suppress all sending/retrieval of tunnel and anonymous search requests from/to this user. This user will not be able to transfer anonymously through you.&lt;/p&gt;&lt;p&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Anonymous routing</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Disabling discovery removes the sending of public keys of your own friends to this user. Discovery information from this friend will be dropped as well.&lt;/p&gt;&lt;p&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Discovery</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Disabling this means that forums and channels posts will not be passed from you to this friend, and items coming from this friend will be dropped.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -2016,15 +2116,15 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Chat</source>
-        <translation type="unfinished"/>
+        <translation>대화</translation>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation>Retroshare (뒤에몫) </translation>
+        <translation>레트로 쉐어</translation>
     </message>
     <message>
         <source>Error : cannot get peer details.</source>
-        <translation type="unfinished"/>
+        <translation>오류 : 동료 세부 정보를 가져올 수 없습니다</translation>
     </message>
     <message>
         <source>The supplied key algorithm is not supported by RetroShare
@@ -2069,18 +2169,46 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Signature Failure</source>
-        <translation type="unfinished"/>
+        <translation>서명 실패</translation>
     </message>
     <message>
         <source>Maybe password is wrong</source>
-        <translation>아마 비밀 번호가 잘못입니다</translation>
+        <translation>비밀번호가 잘못된 것 같습니다</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling anonymous routing will suppress all sending/retrieval of tunnel and anonymous search requests from/to this user. This user will not be able to transfer anonymously through you.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling discovery removes the sending of public keys of your own friends to this user. Discovery information from this friend will be dropped as well.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling this means that forums and channels posts will not be passed from you to this friend, and items coming from this friend will be dropped.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Use as direct source, when available</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Retroshare periodically checks your friend lists for browsable files matching your transfers, to establish a direct transfer. In this case, your friend knows you&apos;re downloading the file.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;To prevent this behavior for this friend only, uncheck this box. You can still perform a direct transfer if you explicitly ask for it, by e.g. downloading from your friend&apos;s file list. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Encryption</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Not connected</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>ConnectFriendWizard</name>
     <message>
         <source>Connect Friend Wizard</source>
-        <translation type="unfinished"/>
+        <translation>친구 연결 마법사</translation>
     </message>
     <message>
         <source>Add a new Friend</source>
@@ -2104,7 +2232,7 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>&amp;Enter RetroShare ID manually</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 ID 직접 입력(&amp;E)</translation>
     </message>
     <message>
         <source>&amp;Send an Invitation by Email 
@@ -2125,7 +2253,7 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Include signatures</source>
-        <translation type="unfinished"/>
+        <translation>서명 포함</translation>
     </message>
     <message>
         <source>Copy your Cert to Clipboard</source>
@@ -2189,7 +2317,7 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>RetroShare ID</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 ID</translation>
     </message>
     <message>
         <source>Use RetroShare ID for adding a Friend which is available in your network.</source>
@@ -2197,7 +2325,7 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Add Friends RetroShare ID...</source>
-        <translation type="unfinished"/>
+        <translation>친구 레트로 쉐어 ID 추가...</translation>
     </message>
     <message>
         <source>Paste Friends RetroShare ID in the box below</source>
@@ -2225,7 +2353,7 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Subject:</source>
-        <translation type="unfinished"/>
+        <translation>제목:</translation>
     </message>
     <message>
         <source>Friend request</source>
@@ -2249,7 +2377,7 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Location:</source>
-        <translation type="unfinished"/>
+        <translation>지역:</translation>
     </message>
     <message>
         <source>Options</source>
@@ -2353,7 +2481,7 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Certificate Load Failed</source>
-        <translation type="unfinished"/>
+        <translation>서명 불러오기에 실패했습니다</translation>
     </message>
     <message>
         <source>Cannot get peer details of PGP key %1</source>
@@ -2385,7 +2513,7 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>RetroShare Invitation</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 초대</translation>
     </message>
     <message>
         <source>Ultimate</source>
@@ -2441,7 +2569,7 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>RetroShare Invite</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 초대</translation>
     </message>
     <message>
         <source>No or misspelled BEGIN tag found</source>
@@ -2473,11 +2601,11 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Save as...</source>
-        <translation type="unfinished"/>
+        <translation>다른 이름으로 저장...</translation>
     </message>
     <message>
         <source>RetroShare Certificate (*.rsc );;All Files (*)</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 인증 (*.rsc );;모든 파일 (*)</translation>
     </message>
     <message>
         <source>Select Certificate</source>
@@ -2503,12 +2631,20 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
         <source>*** None ***</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>Use as direct source, when available</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Direct source</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>CreateBlog</name>
     <message>
         <source>Create new Blog</source>
-        <translation type="unfinished"/>
+        <translation>새 블로그 만들기</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -2524,7 +2660,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"/>
+        <translation>설명</translation>
     </message>
     <message>
         <source>Type:</source>
@@ -2532,35 +2668,35 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Public - Anyone can read and publish (Shared Publish Key)</source>
-        <translation type="unfinished"/>
+        <translation>공용 - 누구나 읽고 게시할 수 있음 (공유 게시 키)</translation>
     </message>
     <message>
         <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation type="unfinished"/>
+        <translation>제한됨 - 누구나 읽을 수 있지만, 글 게시는 제한됨 (개인 게시 키)</translation>
     </message>
     <message>
         <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation type="unfinished"/>
+        <translation>개인용 - (메시지를 보려면 개인 게시 키가 필요함)</translation>
     </message>
     <message>
         <source>Allowed Messages</source>
-        <translation type="unfinished"/>
+        <translation>허가된 메시지</translation>
     </message>
     <message>
         <source>Authenticated Messages</source>
-        <translation type="unfinished"/>
+        <translation>인증된 메시지</translation>
     </message>
     <message>
         <source>Anonymous Messages</source>
-        <translation type="unfinished"/>
+        <translation>익명 메시지</translation>
     </message>
     <message>
         <source>Blog Logo</source>
-        <translation type="unfinished"/>
+        <translation>블로그 로고</translation>
     </message>
     <message>
         <source>Add Blog Logo</source>
-        <translation type="unfinished"/>
+        <translation>블로그 로고 추가</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -2568,34 +2704,34 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Create</source>
-        <translation type="unfinished"/>
+        <translation>만들기</translation>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation>Retroshare (뒤에몫) </translation>
+        <translation>레트로 쉐어</translation>
     </message>
     <message>
         <source>Please add a Name</source>
-        <translation type="unfinished"/>
+        <translation>이름을 입력해주십시오</translation>
     </message>
     <message>
         <source>Load File</source>
-        <translation type="unfinished"/>
+        <translation>파일 불러오기</translation>
     </message>
     <message>
         <source>Pictures (*.png *.xpm *.jpg)</source>
-        <translation type="unfinished"/>
+        <translation>그림 (*.png *.xpm *.jpg)</translation>
     </message>
 </context>
 <context>
     <name>CreateBlogMsg</name>
     <message>
         <source>New Blog Post</source>
-        <translation type="unfinished"/>
+        <translation>새 블로그 게시물</translation>
     </message>
     <message>
         <source>Blog Post</source>
-        <translation type="unfinished"/>
+        <translation>블로그 게시</translation>
     </message>
     <message>
         <source>Blog Post to:</source>
@@ -2603,27 +2739,27 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Visual Editor</source>
-        <translation type="unfinished"/>
+        <translation>비주얼 편집기</translation>
     </message>
     <message>
         <source>Blog Message</source>
-        <translation type="unfinished"/>
+        <translation>블로그 메시지</translation>
     </message>
     <message>
         <source>Subject :</source>
-        <translation type="unfinished"/>
+        <translation>제목 :</translation>
     </message>
     <message>
         <source>Html Editor</source>
-        <translation type="unfinished"/>
+        <translation>HTML 편집기</translation>
     </message>
     <message>
         <source>toolBar</source>
-        <translation type="unfinished"/>
+        <translation>도구모음</translation>
     </message>
     <message>
         <source>toolBar_2</source>
-        <translation type="unfinished"/>
+        <translation>도구모음_2</translation>
     </message>
     <message>
         <source>blockquote</source>
@@ -2631,35 +2767,35 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Increase font Size</source>
-        <translation type="unfinished"/>
+        <translation>글꼴 크기 증가</translation>
     </message>
     <message>
         <source>Decrease font size</source>
-        <translation type="unfinished"/>
+        <translation>글꼴 크기 감소</translation>
     </message>
     <message>
         <source>Bold</source>
-        <translation type="unfinished"/>
+        <translation>굵게</translation>
     </message>
     <message>
         <source>Underline</source>
-        <translation type="unfinished"/>
+        <translation>밑줄</translation>
     </message>
     <message>
         <source>Italic</source>
-        <translation type="unfinished"/>
+        <translation>기울임</translation>
     </message>
     <message>
         <source>Publish</source>
-        <translation type="unfinished"/>
+        <translation>게시</translation>
     </message>
     <message>
         <source>New</source>
-        <translation type="unfinished"/>
+        <translation>새 글</translation>
     </message>
     <message>
         <source>Code</source>
-        <translation type="unfinished"/>
+        <translation>코드</translation>
     </message>
     <message>
         <source>splitPost</source>
@@ -2667,27 +2803,27 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Ordered List</source>
-        <translation type="unfinished"/>
+        <translation>정렬 목록</translation>
     </message>
     <message>
         <source>Unordered List</source>
-        <translation type="unfinished"/>
+        <translation>비정렬 목록</translation>
     </message>
     <message>
         <source>Clipboard</source>
-        <translation type="unfinished"/>
+        <translation>클립보드</translation>
     </message>
     <message>
         <source>Undo</source>
-        <translation type="unfinished"/>
+        <translation>실행 취소</translation>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation>Retroshare (뒤에몫) </translation>
+        <translation>레트로 쉐어</translation>
     </message>
     <message>
         <source>Please add a Subject</source>
-        <translation type="unfinished"/>
+        <translation>제목을 입력해주십시오</translation>
     </message>
     <message>
         <source>&amp;File</source>
@@ -2816,7 +2952,7 @@ Do you want to save your changes?</source>
     </message>
     <message>
         <source>Save as...</source>
-        <translation type="unfinished"/>
+        <translation>다른 이름으로 저장...</translation>
     </message>
     <message>
         <source>ODF files (*.odt);;HTML-Files (*.htm *.html);;All Files (*)</source>
@@ -2859,7 +2995,7 @@ Do you want to save your changes?</source>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"/>
+        <translation>설명</translation>
     </message>
     <message>
         <source>Type:</source>
@@ -2867,23 +3003,23 @@ Do you want to save your changes?</source>
     </message>
     <message>
         <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation type="unfinished"/>
+        <translation>제한됨 - 누구나 읽을 수 있지만, 글 게시는 제한됨 (개인 게시 키)</translation>
     </message>
     <message>
         <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation type="unfinished"/>
+        <translation>개인용 - (메시지를 보려면 개인 게시 키가 필요함)</translation>
     </message>
     <message>
         <source>Allowed Messages</source>
-        <translation type="unfinished"/>
+        <translation>허가된 메시지</translation>
     </message>
     <message>
         <source>Anonymous Messages</source>
-        <translation type="unfinished"/>
+        <translation>익명 메시지</translation>
     </message>
     <message>
         <source>Authenticated Messages</source>
-        <translation type="unfinished"/>
+        <translation>인증된 메시지</translation>
     </message>
     <message>
         <source>Key Sharing</source>
@@ -2907,7 +3043,7 @@ Do you want to save your changes?</source>
     </message>
     <message>
         <source>New Channel</source>
-        <translation type="unfinished"/>
+        <translation>새 채널</translation>
     </message>
     <message>
         <source>Contacts:</source>
@@ -2915,7 +3051,7 @@ Do you want to save your changes?</source>
     </message>
     <message>
         <source>Please add a Name</source>
-        <translation type="unfinished"/>
+        <translation>이름을 입력해주십시오</translation>
     </message>
     <message>
         <source>Load channel logo</source>
@@ -2960,7 +3096,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Subject :</source>
-        <translation type="unfinished"/>
+        <translation>제목 :</translation>
     </message>
     <message>
         <source>Attachments</source>
@@ -2980,11 +3116,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Paste RetroShare Links</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 링크 붙여넣기</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 링크 붙여넣기</translation>
     </message>
     <message>
         <source>You are about to add files you&apos;re not actually sharing. Do you still want this to happen?</source>
@@ -3008,11 +3144,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add Extra File</source>
-        <translation type="unfinished"/>
+        <translation>추가 파일 추가</translation>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation>Retroshare (뒤에몫) </translation>
+        <translation>레트로 쉐어</translation>
     </message>
     <message>
         <source>File already Added and Hashed</source>
@@ -3020,7 +3156,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Please add a Subject</source>
-        <translation type="unfinished"/>
+        <translation>제목을 입력해주십시오</translation>
     </message>
     <message>
         <source>Load thumbnail picture</source>
@@ -3047,7 +3183,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Public</source>
-        <translation type="unfinished"/>
+        <translation>공용</translation>
     </message>
     <message>
         <source>Self-Restricted</source>
@@ -3095,71 +3231,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>ID</source>
-        <translation type="unfinished"/>
+        <translation>ID</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>취소</translation>
-    </message>
-    <message>
-        <source>Create Group</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Start New Thread</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Post Forum Message</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Paste RetroShare Link</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Paste full RetroShare Link</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Paste my certificate link</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>No Forum</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Loading</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>In Reply to</source>
-        <translation type="unfinished"/>
+        <translation>형식</translation>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation>Retroshare (뒤에몫) </translation>
-    </message>
-    <message>
-        <source>Please set a Forum Subject and Forum Message</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Please choose Signing Id</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Please choose Signing Id, it is required</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Add Extra File</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어</translation>
     </message>
     <message>
         <source>Please set a name for your Circle</source>
@@ -3206,7 +3286,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"/>
+        <translation>설명</translation>
     </message>
     <message>
         <source>Type:</source>
@@ -3214,15 +3294,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Public - Anyone can read and publish (Shared Publish Key)</source>
-        <translation type="unfinished"/>
+        <translation>공용 - 누구나 읽고 게시할 수 있음 (공유 게시 키)</translation>
     </message>
     <message>
         <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation type="unfinished"/>
+        <translation>제한됨 - 누구나 읽을 수 있지만, 글 게시는 제한됨 (개인 게시 키)</translation>
     </message>
     <message>
         <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation type="unfinished"/>
+        <translation>개인용 - (메시지를 보려면 개인 게시 키가 필요함)</translation>
     </message>
     <message>
         <source>Key Sharing</source>
@@ -3238,15 +3318,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Allowed Messages</source>
-        <translation type="unfinished"/>
+        <translation>허가된 메시지</translation>
     </message>
     <message>
         <source>Authenticated Messages</source>
-        <translation type="unfinished"/>
+        <translation>인증된 메시지</translation>
     </message>
     <message>
         <source>Anonymous Messages</source>
-        <translation type="unfinished"/>
+        <translation>익명 메시지</translation>
     </message>
     <message>
         <source>New Forum</source>
@@ -3258,7 +3338,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Please add a Name</source>
-        <translation type="unfinished"/>
+        <translation>이름을 입력해주십시오</translation>
     </message>
 </context>
 <context>
@@ -3269,11 +3349,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Forum</source>
-        <translation type="unfinished"/>
+        <translation>포럼</translation>
     </message>
     <message>
         <source>Subject</source>
-        <translation type="unfinished"/>
+        <translation>제목</translation>
     </message>
     <message>
         <source>Attach File</source>
@@ -3285,7 +3365,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Paste RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 링크 붙여넣기</translation>
     </message>
     <message>
         <source>Forum Post</source>
@@ -3305,7 +3385,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Paste full RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>전체 레트로 쉐어 링크 붙여넣기</translation>
     </message>
     <message>
         <source>Paste my certificate link</source>
@@ -3317,15 +3397,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>RetroShare</source>
-        <translation>Retroshare (뒤에몫) </translation>
+        <translation>레트로 쉐어</translation>
     </message>
     <message>
         <source>Please set a Forum Subject and Forum Message</source>
-        <translation type="unfinished"/>
+        <translation>포럼 제목과 포럼 메시지를 설정하십시오</translation>
     </message>
     <message>
         <source>Add Extra File</source>
-        <translation type="unfinished"/>
+        <translation>추가 파일 추가</translation>
     </message>
 </context>
 <context>
@@ -3389,7 +3469,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Subject :</source>
-        <translation type="unfinished"/>
+        <translation>제목 :</translation>
     </message>
     <message>
         <source>Attachments</source>
@@ -3413,11 +3493,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Paste RetroShare Links</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 링크 붙여넣기</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 링크 붙여넣기</translation>
     </message>
     <message>
         <source>GxsChannel security policy prevents you from posting files that you don&apos;t have. If you have these files, you need to share them before, or attach them explicitly:</source>
@@ -3441,11 +3521,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add Extra File</source>
-        <translation type="unfinished"/>
+        <translation>추가 파일 추가</translation>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation>Retroshare (뒤에몫) </translation>
+        <translation>레트로 쉐어</translation>
     </message>
     <message>
         <source>File already Added and Hashed</source>
@@ -3453,10 +3533,14 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Please add a Subject</source>
-        <translation type="unfinished"/>
+        <translation>제목을 입력해주십시오</translation>
     </message>
     <message>
         <source>Load thumbnail picture</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Generate mass data</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -3468,11 +3552,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Forum</source>
-        <translation type="unfinished"/>
+        <translation>포럼</translation>
     </message>
     <message>
         <source>Subject</source>
-        <translation type="unfinished"/>
+        <translation>제목</translation>
     </message>
     <message>
         <source>Attach File</source>
@@ -3484,7 +3568,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Paste RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 링크 붙여넣기</translation>
     </message>
     <message>
         <source>Forum Post</source>
@@ -3504,7 +3588,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Paste full RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>전체 레트로 쉐어 링크 붙여넣기</translation>
     </message>
     <message>
         <source>Paste my certificate link</source>
@@ -3515,20 +3599,16 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Loading</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>In Reply to</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation>Retroshare (뒤에몫) </translation>
+        <translation>레트로 쉐어</translation>
     </message>
     <message>
         <source>Please set a Forum Subject and Forum Message</source>
-        <translation type="unfinished"/>
+        <translation>포럼 제목과 포럼 메시지를 설정하십시오</translation>
     </message>
     <message>
         <source>Please choose Signing Id</source>
@@ -3540,6 +3620,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add Extra File</source>
+        <translation>추가 파일 추가</translation>
+    </message>
+    <message>
+        <source>Generate mass data</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -3599,6 +3683,85 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>CreateMsgLinkDialog</name>
+    <message>
+        <source>Invite type:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Private chat</source>
+        <translation>개인 대화</translation>
+    </message>
+    <message>
+        <source>Validity time :</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>hour</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>day</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>week</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>month</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>year</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create!</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Private chat invite creation failed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>The creation of the chat invite failed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Private chat invite created</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create distant chat invite</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;To create a private chat invite for a non-friend person, select his key below and a validity time for your invite, then press &amp;quot;Create&amp;quot;. The invite will contain the  information required to open a tunnel to chat with you. &lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;The invite is encrypted, and does not reveal your identity. Only the selected peer can decrypt the link, and use it to contact you.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your new chat invite has been created. You can now copy/paste it as a Retroshare link.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Messaging invite creation failed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>The creation of the messaging invite failed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Messaging invite created</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your new messaging chat invite has been copied to clipboard. You can now paste it as a Retroshare link.</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>CryptoPage</name>
     <message>
         <source>Profile</source>
@@ -3618,7 +3781,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Location:</source>
-        <translation type="unfinished"/>
+        <translation>지역:</translation>
     </message>
     <message>
         <source>Location ID:</source>
@@ -3646,11 +3809,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Certificate</source>
-        <translation type="unfinished"/>
+        <translation>인증</translation>
     </message>
     <message>
         <source>Include signatures</source>
-        <translation type="unfinished"/>
+        <translation>서명 포함</translation>
     </message>
     <message>
         <source>Use old key format</source>
@@ -3658,7 +3821,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Copy link to clipboard</source>
-        <translation type="unfinished"/>
+        <translation>클립보드에 복사</translation>
     </message>
     <message>
         <source>Save Key into a file</source>
@@ -3670,7 +3833,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>A RetroShare link with your Public Key is copied to Clipboard, paste and send it to your friend via email or some other way</source>
-        <translation type="unfinished"/>
+        <translation>여러분의 공개 키와 레트로 쉐어 링크를 클립보드에 복사했습니다. 이 내용을 이메일 또는 다른 방법을 통해 붙여넣고 보내십시오</translation>
     </message>
     <message>
         <source>Error</source>
@@ -3682,7 +3845,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>RetroShare</source>
-        <translation>Retroshare (뒤에몫) </translation>
+        <translation>레트로 쉐어</translation>
     </message>
     <message>
         <source>Your Public Key is copied to Clipboard, paste and send it to your friend via email or some other way</source>
@@ -3690,11 +3853,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Save as...</source>
-        <translation type="unfinished"/>
+        <translation>다른 이름으로 저장...</translation>
     </message>
     <message>
         <source>RetroShare Certificate (*.rsc );;All Files (*)</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 인증 (*.rsc );;모든 파일 (*)</translation>
     </message>
 </context>
 <context>
@@ -3709,11 +3872,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>DHT Searching for RetroShare Peers</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 동료에 대한 DHT 검색중입니다</translation>
     </message>
     <message>
         <source>RetroShare users in DHT (Total DHT users)</source>
-        <translation type="unfinished"/>
+        <translation>DHT의 레트로 쉐어 사용자 (총 DHT 사용자 수)</translation>
     </message>
     <message>
         <source>DHT Good</source>
@@ -3751,7 +3914,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>General</source>
-        <translation type="unfinished"/>
+        <translation>일반</translation>
     </message>
     <message>
         <source>Done</source>
@@ -3771,15 +3934,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>retroshare link(s)</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 링크</translation>
     </message>
     <message>
         <source>retroshare link</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 링크</translation>
     </message>
     <message>
         <source>Copy link to clipboard</source>
-        <translation type="unfinished"/>
+        <translation>클립보드에 복사</translation>
     </message>
     <message>
         <source>Rating</source>
@@ -3910,7 +4073,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Proxy</source>
-        <translation type="unfinished"/>
+        <translation>프록시</translation>
     </message>
     <message>
         <source>Destination</source>
@@ -4029,15 +4192,15 @@ you plug it in.</source>
     <name>EditChanDetails</name>
     <message>
         <source>Channel Details</source>
-        <translation type="unfinished"/>
+        <translation>채널 세부 내용</translation>
     </message>
     <message>
         <source>Edit Channel Details</source>
-        <translation type="unfinished"/>
+        <translation>채널 세부 정보 편집</translation>
     </message>
     <message>
         <source>Channel Info</source>
-        <translation type="unfinished"/>
+        <translation>채널 정보</translation>
     </message>
     <message>
         <source>Channel Name</source>
@@ -4045,7 +4208,7 @@ you plug it in.</source>
     </message>
     <message>
         <source>Channel Description</source>
-        <translation type="unfinished"/>
+        <translation>채널 설명</translation>
     </message>
     <message>
         <source>Add Channel Logo</source>
@@ -4337,7 +4500,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>RetroShare collection file</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 수집 파일</translation>
     </message>
     <message>
         <source>Subtitles</source>
@@ -4395,11 +4558,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Popularity</source>
-        <translation type="unfinished"/>
+        <translation>인기도</translation>
     </message>
     <message>
         <source>Last Post</source>
-        <translation type="unfinished"/>
+        <translation>최신 게시글</translation>
     </message>
     <message>
         <source>Forum ID</source>
@@ -4415,22 +4578,22 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Allowed Messages</source>
-        <translation type="unfinished"/>
+        <translation>허가된 메시지</translation>
     </message>
     <message>
         <source>Authenticated Messages</source>
-        <translation type="unfinished"/>
+        <translation>인증된 메시지</translation>
     </message>
     <message>
         <source>Anonymous Messages</source>
-        <translation type="unfinished"/>
+        <translation>익명 메시지</translation>
     </message>
 </context>
 <context>
     <name>ForumMsgItem</name>
     <message>
         <source>Subject: </source>
-        <translation type="unfinished"/>
+        <translation>제목:</translation>
     </message>
     <message>
         <source>Unsubscribe To Forum</source>
@@ -4442,19 +4605,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished"/>
+        <translation>확장</translation>
     </message>
     <message>
         <source>Set as read and remove item</source>
-        <translation type="unfinished"/>
+        <translation>항목을 읽음으로 설정하고 제거</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished"/>
+        <translation>항목 제거</translation>
     </message>
     <message>
         <source>Send</source>
-        <translation type="unfinished"/>
+        <translation>보내기</translation>
     </message>
     <message>
         <source>Signed</source>
@@ -4478,7 +4641,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"/>
+        <translation>숨김</translation>
     </message>
     <message>
         <source>Please give a Text Message</source>
@@ -4493,11 +4656,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished"/>
+        <translation>확장</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished"/>
+        <translation>항목 제거</translation>
     </message>
     <message>
         <source>Forum Description</source>
@@ -4517,18 +4680,18 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"/>
+        <translation>숨김</translation>
     </message>
 </context>
 <context>
     <name>ForumPage</name>
     <message>
         <source>Misc</source>
-        <translation type="unfinished"/>
+        <translation>기타</translation>
     </message>
     <message>
         <source>Set message to read on activate</source>
-        <translation type="unfinished"/>
+        <translation>메시지를 읽기 위해 활동중으로 표시</translation>
     </message>
     <message>
         <source>Expand new messages</source>
@@ -4544,7 +4707,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Forum</source>
-        <translation type="unfinished"/>
+        <translation>포럼</translation>
     </message>
 </context>
 <context>
@@ -4562,7 +4725,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Display</source>
-        <translation type="unfinished"/>
+        <translation>표시</translation>
     </message>
     <message>
         <source>Create Forum</source>
@@ -4574,7 +4737,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Last Post</source>
-        <translation type="unfinished"/>
+        <translation>최신 게시글</translation>
     </message>
     <message>
         <source>Threaded View</source>
@@ -4586,15 +4749,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Title</source>
-        <translation type="unfinished"/>
+        <translation>제목</translation>
     </message>
     <message>
         <source>Date</source>
-        <translation type="unfinished"/>
+        <translation>날짜</translation>
     </message>
     <message>
         <source>Author</source>
-        <translation type="unfinished"/>
+        <translation>작성자</translation>
     </message>
     <message>
         <source>Signed</source>
@@ -4630,7 +4793,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Loading</source>
-        <translation type="unfinished"/>
+        <translation>불러오는 중</translation>
     </message>
     <message>
         <source>Print</source>
@@ -4658,15 +4821,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Search Title</source>
-        <translation type="unfinished"/>
+        <translation>제목 검색</translation>
     </message>
     <message>
         <source>Search Date</source>
-        <translation type="unfinished"/>
+        <translation>날짜 검색</translation>
     </message>
     <message>
         <source>Search Author</source>
-        <translation type="unfinished"/>
+        <translation>작성자 검색</translation>
     </message>
     <message>
         <source>Content</source>
@@ -4706,11 +4869,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 링크 복사</translation>
     </message>
     <message>
         <source>Mark all as read</source>
-        <translation type="unfinished"/>
+        <translation>모두 읽음으로 표시</translation>
     </message>
     <message>
         <source>Mark all as unread</source>
@@ -4738,7 +4901,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Mark as read</source>
-        <translation type="unfinished"/>
+        <translation>읽음으로 표시</translation>
     </message>
     <message>
         <source>with children</source>
@@ -4746,15 +4909,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Mark as unread</source>
-        <translation type="unfinished"/>
+        <translation>읽지 않음으로 표시</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"/>
+        <translation>숨김</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished"/>
+        <translation>확장</translation>
     </message>
     <message>
         <source>AUTHD</source>
@@ -4770,7 +4933,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>RetroShare</source>
-        <translation>Retroshare (뒤에몫) </translation>
+        <translation>레트로 쉐어</translation>
     </message>
     <message>
         <source>No Forum Selected!</source>
@@ -4782,7 +4945,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>From</source>
-        <translation type="unfinished"/>
+        <translation>보낸이</translation>
     </message>
     <message>
         <source>Sent</source>
@@ -4790,7 +4953,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Subject</source>
-        <translation type="unfinished"/>
+        <translation>제목</translation>
     </message>
     <message>
         <source>On %1, %2 wrote:</source>
@@ -4800,12 +4963,20 @@ p, li { white-space: pre-wrap; }
         <source>You can&apos;t reply an Anonymous Author</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>Forum Description</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Forums&lt;/h1&gt;                              		  &lt;p&gt;Retroshare Forums look like internet forums, but they work in a decentralized way:                     		  You see forums your friends are subscribed to, and you forward subscribed forums to                      		  your friends. This automatically promotes interesting forums in the network.&lt;/p&gt;                     		  &lt;p&gt;Forums are either Authenticated (&lt;img src=&quot;:/images/konv_message2.png&quot; width=&quot;12&quot;/&gt;) in which case you need to cryptographically sign                      		  your posts, or anonymous (&lt;img src=&quot;:/images/konversation.png&quot; width=&quot;12&quot;/&gt;). The former class is more resistant to spamming.&lt;/p&gt;                 		  &lt;p&gt;Forum posts propagate from friend to friend using small cache file exchanges. When you first connect to a new friend, it&apos;s likely 		  you will receive many such cache files, and new forums will appear. 		  &lt;/p&gt;                                      		</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>ForumsFillThread</name>
     <message>
         <source>Unknown</source>
-        <translation type="unfinished"/>
+        <translation>알 수 없음</translation>
     </message>
     <message>
         <source>Anonymous</source>
@@ -4911,10 +5082,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Add Friend</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Edit Group</source>
         <translation type="unfinished"/>
     </message>
@@ -4923,12 +5090,8 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Chat lobbies</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Chat</source>
-        <translation type="unfinished"/>
+        <translation>대화</translation>
     </message>
     <message>
         <source>Message Friend</source>
@@ -4936,14 +5099,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Friend Details</source>
-        <translation type="unfinished"/>
+        <translation>친구 세부 정보</translation>
     </message>
     <message>
         <source>Recommend this Friend to...</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Connect To Friend</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -4952,7 +5111,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 링크 복사</translation>
     </message>
     <message>
         <source>Paste Friend Link</source>
@@ -4960,7 +5119,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Deny Friend</source>
-        <translation type="unfinished"/>
+        <translation>친구 거절</translation>
     </message>
     <message>
         <source>Remove Friend Location</source>
@@ -4987,26 +5146,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Create new</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Invite this group</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Invite this friend</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Show</source>
-        <translation>표시</translation>
-    </message>
-    <message>
-        <source>Unsubscribe</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Expand all</source>
         <translation type="unfinished"/>
     </message>
@@ -5023,19 +5162,35 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Unsubscribe to lobby</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>You are about to unsubscribe a chat lobby&lt;br&gt;You can only re-enter if your friends invite you again.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Columns</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Sort by</source>
+        <source>IP</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Sort by IP</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show IP Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Attempt to connect</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create new group</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Recommend many friends to each others</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Service permissions matrix</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -5074,7 +5229,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>wants to be friend with you on RetroShare</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어에서 여러분을 친구로 삼고 싶어합니다</translation>
     </message>
     <message>
         <source>Unknown (Incoming) Connect Attempt</source>
@@ -5112,11 +5267,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Display</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Add</source>
-        <translation>추가</translation>
+        <translation>표시</translation>
     </message>
     <message>
         <source>Edit status message</source>
@@ -5128,23 +5279,23 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Bold</source>
-        <translation type="unfinished"/>
+        <translation>굵게</translation>
     </message>
     <message>
         <source>Underline</source>
-        <translation type="unfinished"/>
+        <translation>밑줄</translation>
     </message>
     <message>
         <source>Italic</source>
-        <translation type="unfinished"/>
+        <translation>기울임</translation>
     </message>
     <message>
         <source>Font</source>
-        <translation type="unfinished"/>
+        <translation>글꼴</translation>
     </message>
     <message>
         <source>Text Color</source>
-        <translation type="unfinished"/>
+        <translation>글자 색</translation>
     </message>
     <message>
         <source>Attach File</source>
@@ -5152,7 +5303,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Send</source>
-        <translation type="unfinished"/>
+        <translation>보내기</translation>
     </message>
     <message>
         <source>Messages entered here are sent to all connected friends</source>
@@ -5160,7 +5311,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Clear Chat History</source>
-        <translation type="unfinished"/>
+        <translation>대화 기록 지우기</translation>
     </message>
     <message>
         <source>Add Friend</source>
@@ -5184,15 +5335,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Browse Message History</source>
-        <translation type="unfinished"/>
+        <translation>메시지 기록 찾아보기</translation>
     </message>
     <message>
         <source>Browse History</source>
-        <translation type="unfinished"/>
+        <translation>메시지 기록</translation>
     </message>
     <message>
         <source>Save Chat History</source>
-        <translation type="unfinished"/>
+        <translation>대화 기록 저장</translation>
     </message>
     <message>
         <source>Add a new Group</source>
@@ -5200,11 +5351,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Delete Chat History</source>
-        <translation type="unfinished"/>
+        <translation>대화 기록 삭제</translation>
     </message>
     <message>
         <source>Deletes all stored and displayed chat history</source>
-        <translation type="unfinished"/>
+        <translation>저장하고 표시한 모든 대화 기록을 삭제합니다</translation>
     </message>
     <message>
         <source>Create new Chat lobby</source>
@@ -5220,7 +5371,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Reset font to default</source>
-        <translation type="unfinished"/>
+        <translation>글꼴을 기본으로 재설정</translation>
     </message>
     <message>
         <source>Service permissions</source>
@@ -5228,27 +5379,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Search</source>
-        <translation type="unfinished"/>
+        <translation>검색</translation>
     </message>
     <message>
         <source>Local network</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Known people</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Welcome to RetroShare&apos;s group chat.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Paste RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 링크 붙여넣기</translation>
     </message>
     <message>
         <source>is typing...</source>
-        <translation type="unfinished"/>
+        <translation>입력중 ...</translation>
     </message>
     <message>
         <source>New group chat</source>
@@ -5256,18 +5399,30 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Do you really want to physically delete the history?</source>
-        <translation type="unfinished"/>
+        <translation>실제 기록을 정말로 삭제하시겠습니까?</translation>
     </message>
     <message>
         <source>Add Extra File</source>
-        <translation type="unfinished"/>
+        <translation>추가 파일 추가</translation>
     </message>
     <message>
         <source>Save as...</source>
-        <translation type="unfinished"/>
+        <translation>다른 이름으로 저장...</translation>
     </message>
     <message>
         <source>Text File (*.txt );;All Files (*)</source>
+        <translation>텍스트 파일 (*.txt );;모든 파일 (*)</translation>
+    </message>
+    <message>
+        <source>Keyring</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Friends&lt;/h1&gt;                                   		  &lt;p&gt;The Friends tab shows...your friends: the list of persons you have accepted to connect to.                   		  &lt;/p&gt;                                                   		  &lt;p&gt;You can group friends together to allow a finer level of information access, for instance to only allow      		  some friends to see some files.&lt;/p&gt; 		  &lt;p&gt;On the right, you will find 3 useful tabs:                                                                   		  &lt;ul&gt;	                                                                                                         		  		&lt;li&gt;Broadcast sends messages to all connected friends at once&lt;/li&gt;                             		  		&lt;li&gt;Local Network shows the network around you, including friends of your friends&lt;/li&gt;                 		  		&lt;li&gt;Keyring contains keys you collected, mostly forwarded to you by your friends&lt;/li&gt;                              		  &lt;/ul&gt; &lt;/p&gt;                                                                                                      		</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Retroshare broadcast chat: messages are sent to all connected friends.</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -5275,7 +5430,7 @@ p, li { white-space: pre-wrap; }
     <name>GamesDialog</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"/>
+        <translation>양식</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
@@ -5302,7 +5457,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Title / Comment</source>
-        <translation type="unfinished"/>
+        <translation>제목 / 답글</translation>
     </message>
     <message>
         <source>Create New Game</source>
@@ -5318,7 +5473,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Server</source>
-        <translation type="unfinished"/>
+        <translation>서버</translation>
     </message>
     <message>
         <source>Status</source>
@@ -5326,7 +5481,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Comment</source>
-        <translation type="unfinished"/>
+        <translation>답글 달기</translation>
     </message>
     <message>
         <source>GameID</source>
@@ -5443,7 +5598,7 @@ anonymous, you can use a fake email.</source>
     </message>
     <message>
         <source>Password</source>
-        <translation type="unfinished"/>
+        <translation>암호</translation>
     </message>
     <message>
         <source>Put a strong password here. This password protects your PGP key.</source>
@@ -5539,7 +5694,7 @@ anonymous, you can use a fake email.</source>
     </message>
     <message>
         <source>RetroShare Identity files (*.asc)</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 인증 파일 (*.asc)</translation>
     </message>
     <message>
         <source>Identity saved</source>
@@ -5616,7 +5771,7 @@ Fill in your PGP password when asked, to sign your new key.</source>
     </message>
     <message>
         <source>Start RetroShare when my system starts</source>
-        <translation type="unfinished"/>
+        <translation>시스템을 시작할 때 레트로 쉐어 시작하기</translation>
     </message>
     <message>
         <source>Start minimized</source>
@@ -5636,15 +5791,11 @@ Fill in your PGP password when asked, to sign your new key.</source>
     </message>
     <message>
         <source>Misc</source>
-        <translation type="unfinished"/>
+        <translation>기타</translation>
     </message>
     <message>
         <source>Do not show the Quit RetroShare MessageBox</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Do not Minimize to Tray Icon</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 종료 메시지 상자 보이지 않기</translation>
     </message>
     <message>
         <source>Auto Login</source>
@@ -5680,14 +5831,18 @@ Fill in your PGP password when asked, to sign your new key.</source>
     </message>
     <message>
         <source>Could not add retroshare:// as protocol.</source>
-        <translation type="unfinished"/>
+        <translation>retroshare:// 를 프로토콜로 추가할 수 없습니다</translation>
     </message>
     <message>
         <source>Could not remove retroshare:// protocol.</source>
-        <translation type="unfinished"/>
+        <translation>retroshare:// 프로토콜을 제거할 수 없습니다</translation>
     </message>
     <message>
         <source>General</source>
+        <translation>일반</translation>
+    </message>
+    <message>
+        <source>Minimize to Tray Icon</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -5716,7 +5871,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add Your Friends to RetroShare</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어에 친구 추가하기</translation>
     </message>
     <message>
         <source> Add Friends </source>
@@ -5819,19 +5974,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>RetroShare Invitation</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 초대</translation>
     </message>
     <message>
         <source>Your friend has installed RetroShare, and would like you to try it out.</source>
-        <translation type="unfinished"/>
+        <translation>여러분의 친구가 레트로 쉐어를 설치했고, 여러분이 사용해보길 바라고 있습니다.</translation>
     </message>
     <message>
         <source>You can get RetroShare here: %1</source>
-        <translation type="unfinished"/>
+        <translation>여기서 레트로 쉐어를 받을 수 있습니다: %1</translation>
     </message>
     <message>
         <source>RetroShare is a private Friend-2-Friend sharing network.</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어는 개인용 친구간 공유 네트워크 입니다.</translation>
     </message>
     <message>
         <source>It has many features, including built-in chat, messaging, </source>
@@ -5847,7 +6002,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Cut and paste the text below into your RetroShare client</source>
-        <translation type="unfinished"/>
+        <translation>글을 잘라내고 아래 레트로 쉐어 클라이언트에 붙여넣으십시오</translation>
     </message>
     <message>
         <source>and send them your ID Certificate to get securely connected.</source>
@@ -5859,11 +6014,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>RetroShare Feedback</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 피드백</translation>
     </message>
     <message>
         <source>RetroShare Support</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 지원</translation>
     </message>
 </context>
 <context>
@@ -5997,15 +6152,15 @@ p, li { white-space: pre-wrap; }
     <name>GroupTreeWidget</name>
     <message>
         <source>Title</source>
-        <translation type="unfinished"/>
+        <translation>제목</translation>
     </message>
     <message>
         <source>Search Title</source>
-        <translation type="unfinished"/>
+        <translation>제목 검색</translation>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"/>
+        <translation>설명</translation>
     </message>
     <message>
         <source>Search Description</source>
@@ -6060,7 +6215,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Date</source>
-        <translation type="unfinished"/>
+        <translation>날짜</translation>
     </message>
     <message>
         <source>Size</source>
@@ -6068,7 +6223,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Popularity</source>
-        <translation type="unfinished"/>
+        <translation>인기도</translation>
     </message>
     <message>
         <source>contains</source>
@@ -6114,32 +6269,28 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>refresh</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Display</source>
-        <translation type="unfinished"/>
+        <translation>표시</translation>
     </message>
     <message>
         <source>Create Channel</source>
-        <translation type="unfinished"/>
+        <translation>채널 만들기</translation>
     </message>
     <message>
         <source>Loading</source>
-        <translation type="unfinished"/>
+        <translation>불러오는 중</translation>
     </message>
     <message>
         <source>Post to Channel</source>
-        <translation type="unfinished"/>
+        <translation>채널에 게시하기</translation>
     </message>
     <message>
         <source>Set all as read</source>
-        <translation type="unfinished"/>
+        <translation>모두 읽음으로 표시</translation>
     </message>
     <message>
         <source>Enable Auto-Download</source>
-        <translation type="unfinished"/>
+        <translation>자동 다운로드 활성화</translation>
     </message>
     <message>
         <source>My Channels</source>
@@ -6147,47 +6298,47 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Subscribed Channels</source>
-        <translation type="unfinished"/>
+        <translation>가입한 채널</translation>
     </message>
     <message>
         <source>Popular Channels</source>
-        <translation type="unfinished"/>
+        <translation>인기 있는 채널</translation>
     </message>
     <message>
         <source>Other Channels</source>
-        <translation type="unfinished"/>
+        <translation>기타 채널</translation>
     </message>
     <message>
         <source>Disable Auto-Download</source>
-        <translation type="unfinished"/>
+        <translation>자동 다운로드 비활성화</translation>
     </message>
     <message>
         <source>Unsubscribe to Channel</source>
-        <translation type="unfinished"/>
+        <translation>채널에서 탈퇴</translation>
     </message>
     <message>
         <source>Subscribe to Channel</source>
-        <translation type="unfinished"/>
+        <translation>채널에 가입</translation>
     </message>
     <message>
         <source>Edit Channel Details</source>
-        <translation type="unfinished"/>
+        <translation>채널 세부 정보 편집</translation>
     </message>
     <message>
         <source>Show Channel Details</source>
-        <translation type="unfinished"/>
+        <translation>채널 세부 정보 보이기</translation>
     </message>
     <message>
         <source>Restore Publish Rights for Channel</source>
-        <translation type="unfinished"/>
+        <translation>채널 게시 권한 복구</translation>
     </message>
     <message>
         <source>Share Channel</source>
-        <translation type="unfinished"/>
+        <translation>채널 공유</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 링크 복사</translation>
     </message>
     <message>
         <source>Publish rights restored.</source>
@@ -6207,6 +6358,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>No Channel Selected</source>
+        <translation>선택한 채널 없음</translation>
+    </message>
+    <message>
+        <source>Todo</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -6233,7 +6388,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Download</source>
-        <translation type="unfinished"/>
+        <translation>다운로드</translation>
     </message>
     <message>
         <source>Play</source>
@@ -6245,27 +6400,27 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 링크 복사</translation>
     </message>
     <message>
         <source>Unsubscribe From Channel</source>
-        <translation type="unfinished"/>
+        <translation>채널에서 탈퇴</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished"/>
+        <translation>확장</translation>
     </message>
     <message>
         <source>Set as read and remove item</source>
-        <translation type="unfinished"/>
+        <translation>항목을 읽음으로 설정하고 제거</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished"/>
+        <translation>항목 제거</translation>
     </message>
     <message>
         <source>Channel Feed</source>
-        <translation type="unfinished"/>
+        <translation>채널 피드</translation>
     </message>
     <message>
         <source>Files</source>
@@ -6277,7 +6432,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"/>
+        <translation>숨김</translation>
     </message>
 </context>
 <context>
@@ -6291,7 +6446,7 @@ p, li { white-space: pre-wrap; }
     <name>GxsCommentDialog</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"/>
+        <translation>양식</translation>
     </message>
     <message>
         <source>Hot</source>
@@ -6299,7 +6454,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>New</source>
-        <translation type="unfinished"/>
+        <translation>새 피드</translation>
     </message>
     <message>
         <source>Top</source>
@@ -6315,19 +6470,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Comment</source>
-        <translation type="unfinished"/>
+        <translation>답글 달기</translation>
     </message>
     <message>
         <source>Author</source>
-        <translation type="unfinished"/>
+        <translation>작성자</translation>
     </message>
     <message>
         <source>Date</source>
-        <translation type="unfinished"/>
+        <translation>날짜</translation>
     </message>
     <message>
         <source>Score</source>
-        <translation type="unfinished"/>
+        <translation>점수</translation>
     </message>
     <message>
         <source>UpVotes</source>
@@ -6417,7 +6572,7 @@ before you can comment</source>
     </message>
     <message>
         <source>Forum</source>
-        <translation type="unfinished"/>
+        <translation>포럼</translation>
     </message>
     <message>
         <source>Edit Forum</source>
@@ -6428,7 +6583,7 @@ before you can comment</source>
     <name>GxsForumThreadWidget</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"/>
+        <translation>양식</translation>
     </message>
     <message>
         <source>Start new Thread for Selected Forum</source>
@@ -6436,11 +6591,11 @@ before you can comment</source>
     </message>
     <message>
         <source>Search forums</source>
-        <translation type="unfinished"/>
+        <translation>포럼 검색</translation>
     </message>
     <message>
         <source>Last Post</source>
-        <translation type="unfinished"/>
+        <translation>최신 게시글</translation>
     </message>
     <message>
         <source>Threaded View</source>
@@ -6452,15 +6607,15 @@ before you can comment</source>
     </message>
     <message>
         <source>Title</source>
-        <translation type="unfinished"/>
+        <translation>제목</translation>
     </message>
     <message>
         <source>Date</source>
-        <translation type="unfinished"/>
+        <translation>날짜</translation>
     </message>
     <message>
         <source>Author</source>
-        <translation type="unfinished"/>
+        <translation>작성자</translation>
     </message>
     <message>
         <source>Signed</source>
@@ -6468,7 +6623,7 @@ before you can comment</source>
     </message>
     <message>
         <source>Loading</source>
-        <translation type="unfinished"/>
+        <translation>불러오는 중</translation>
     </message>
     <message>
         <source>Reply Message</source>
@@ -6491,20 +6646,16 @@ before you can comment</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Refresh</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Search Title</source>
-        <translation type="unfinished"/>
+        <translation>제목 검색</translation>
     </message>
     <message>
         <source>Search Date</source>
-        <translation type="unfinished"/>
+        <translation>날짜 검색</translation>
     </message>
     <message>
         <source>Search Author</source>
-        <translation type="unfinished"/>
+        <translation>작성자 검색</translation>
     </message>
     <message>
         <source>Content</source>
@@ -6516,7 +6667,7 @@ before you can comment</source>
     </message>
     <message>
         <source>No name</source>
-        <translation type="unfinished"/>
+        <translation>이름 없음</translation>
     </message>
     <message>
         <source>Reply</source>
@@ -6540,7 +6691,7 @@ before you can comment</source>
     </message>
     <message>
         <source>Mark as read</source>
-        <translation type="unfinished"/>
+        <translation>읽음으로 표시</translation>
     </message>
     <message>
         <source>with children</source>
@@ -6548,19 +6699,19 @@ before you can comment</source>
     </message>
     <message>
         <source>Mark as unread</source>
-        <translation type="unfinished"/>
+        <translation>읽지 않음으로 표시</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 링크 복사</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"/>
+        <translation>숨김</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished"/>
+        <translation>확장</translation>
     </message>
     <message>
         <source>Anonymous</source>
@@ -6584,7 +6735,7 @@ before you can comment</source>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation>Retroshare (뒤에몫) </translation>
+        <translation>레트로 쉐어</translation>
     </message>
     <message>
         <source>No Forum Selected!</source>
@@ -6598,6 +6749,18 @@ before you can comment</source>
         <source>You cant reply to an Anonymous Author</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>Forum Description</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Forum:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Thread:</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>GxsForumsDialog</name>
@@ -6607,7 +6770,7 @@ before you can comment</source>
     </message>
     <message>
         <source>Display</source>
-        <translation type="unfinished"/>
+        <translation>표시</translation>
     </message>
     <message>
         <source>Create Forum</source>
@@ -6647,7 +6810,7 @@ before you can comment</source>
     </message>
     <message>
         <source>Open in new tab</source>
-        <translation type="unfinished"/>
+        <translation>새 탭에서 열기</translation>
     </message>
     <message>
         <source>New Forum</source>
@@ -6671,11 +6834,11 @@ before you can comment</source>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 링크 복사</translation>
     </message>
     <message>
         <source>Mark all as read</source>
-        <translation type="unfinished"/>
+        <translation>모두 읽음으로 표시</translation>
     </message>
     <message>
         <source>Mark all as unread</source>
@@ -6691,7 +6854,7 @@ before you can comment</source>
     </message>
     <message>
         <source>From</source>
-        <translation type="unfinished"/>
+        <translation>보낸이</translation>
     </message>
     <message>
         <source>Sent</source>
@@ -6699,10 +6862,14 @@ before you can comment</source>
     </message>
     <message>
         <source>Subject</source>
-        <translation type="unfinished"/>
+        <translation>제목</translation>
     </message>
     <message>
         <source>On %1, %2 wrote:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Todo</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -6718,7 +6885,7 @@ before you can comment</source>
     </message>
     <message>
         <source>Loading</source>
-        <translation type="unfinished"/>
+        <translation>불러오는 중</translation>
     </message>
 </context>
 <context>
@@ -6753,7 +6920,7 @@ before you can comment</source>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"/>
+        <translation>설명</translation>
     </message>
     <message>
         <source>Message Distribution</source>
@@ -6761,7 +6928,7 @@ before you can comment</source>
     </message>
     <message>
         <source>Public</source>
-        <translation type="unfinished"/>
+        <translation>공용</translation>
     </message>
     <message>
         <source>Restricted to Group</source>
@@ -6829,7 +6996,7 @@ before you can comment</source>
     </message>
     <message>
         <source>Please add a Name</source>
-        <translation type="unfinished"/>
+        <translation>이름을 입력해주십시오</translation>
     </message>
     <message>
         <source>Load Group Logo</source>
@@ -6837,6 +7004,21 @@ before you can comment</source>
     </message>
     <message>
         <source>Invalid Circle Selection - Personal disabled for now</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>GxsIdChooser</name>
+    <message>
+        <source>Loading</source>
+        <translation>불러오는 중</translation>
+    </message>
+    <message>
+        <source>Not found</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No Signature</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -6859,7 +7041,7 @@ before you can comment</source>
     <name>HelpBrowser</name>
     <message>
         <source>RetroShare Help</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 도움말</translation>
     </message>
     <message>
         <source>Find:</source>
@@ -6891,7 +7073,7 @@ before you can comment</source>
     </message>
     <message>
         <source>Search</source>
-        <translation type="unfinished"/>
+        <translation>검색</translation>
     </message>
     <message>
         <source>Searching for:</source>
@@ -6951,7 +7133,7 @@ before you can comment</source>
     </message>
     <message>
         <source>Close</source>
-        <translation type="unfinished"/>
+        <translation>닫기</translation>
     </message>
     <message>
         <source>Close Vidalia Help</source>
@@ -6990,7 +7172,7 @@ before you can comment</source>
     <name>HelpDialog</name>
     <message>
         <source>About</source>
-        <translation type="unfinished"/>
+        <translation>정보</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -7070,11 +7252,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>RetroShare can open the link you selected in your default Web browser. If your browser is not currently configured to use Tor then the request will not be anonymous.</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어는 기본 웹 브라우저에 선택한 링크를 열 수 있습니다. 브라우저가 Tor을 사용할 수 있게 설정되지 않았다면 익명이 될 수 없습니다.</translation>
     </message>
     <message>
         <source>Do you want Retroshare to open the link in your Web browser?</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어가 웹 브라우저를 통해 링크를 열도록 하시겠습니까?</translation>
     </message>
     <message>
         <source>Unable to Open Link</source>
@@ -7082,7 +7264,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>RetroShare was unable to open the selected link in your Web browser. You can still copy the URL and paste it into your browser.</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어가 여러분의 웹 브라우저에서 선택한 링크를 열 수 없습니다. 그래도 URL을 복사해서 브라우저에 붙여넣기 할 수 있습니다.</translation>
     </message>
 </context>
 <context>
@@ -7093,10 +7275,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>New ID</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Showing:</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -7120,10 +7298,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>filter</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Nickname</source>
         <translation type="unfinished"/>
     </message>
@@ -7133,7 +7307,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished"/>
+        <translation>형식</translation>
     </message>
     <message>
         <source>Delete ID</source>
@@ -7176,10 +7350,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>PGP Email</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>PGP Id</source>
         <translation type="unfinished"/>
     </message>
@@ -7209,10 +7379,38 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Comment</source>
-        <translation type="unfinished"/>
+        <translation>답글 달기</translation>
     </message>
     <message>
         <source>Local Reputation</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Todo</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Search</source>
+        <translation>검색</translation>
+    </message>
+    <message>
+        <source>PGP Linked Id</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Anon Id</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown real name</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Anonymous Id</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -7231,19 +7429,11 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>PGP Email</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>PGP Hash</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <source>PGP Id</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>New Identity</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -7255,11 +7445,35 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Cancel</source>
-        <translation>취소</translation>
+        <source>New identity</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Create/Update ID</source>
+        <source>To be generated</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>N/A</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Edit identity</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Error getting key!</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Error KeyID invalid</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown GpgId</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown real name</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -7275,7 +7489,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Remove</source>
-        <translation type="unfinished"/>
+        <translation>제거</translation>
     </message>
     <message>
         <source>Mark all</source>
@@ -7291,7 +7505,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Send</source>
-        <translation type="unfinished"/>
+        <translation>보내기</translation>
     </message>
 </context>
 <context>
@@ -7336,10 +7550,6 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>MainWindow</name>
     <message>
-        <source>MainWindow</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Add Friend</source>
         <translation type="unfinished"/>
     </message>
@@ -7361,7 +7571,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>About</source>
-        <translation type="unfinished"/>
+        <translation>정보</translation>
     </message>
     <message>
         <source>SMPlayer</source>
@@ -7441,7 +7651,11 @@ p, li { white-space: pre-wrap; }
  RetroShare will now safely suspend any disk access to this directory. 
 
  Please make some free space and click Ok.</source>
-        <translation type="unfinished"/>
+        <translation>MB). 
+
+레트로 쉐어는 이제 안전하게 이 디렉터리로의 디스크 접근을 중단합니다.
+
+빈 공간을 확인하신 후 확인 버튼을 누르십시오.</translation>
     </message>
     <message>
         <source>Show/Hide</source>
@@ -7497,7 +7711,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>RetroShare</source>
-        <translation>Retroshare (뒤에몫) </translation>
+        <translation>레트로 쉐어</translation>
     </message>
     <message>
         <source>%1 new message</source>
@@ -7525,7 +7739,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Do you really want to exit RetroShare ?</source>
-        <translation type="unfinished"/>
+        <translation>정말로 레트로 쉐어를 나가시겠습니까?</translation>
     </message>
     <message>
         <source>Really quit ? </source>
@@ -7537,7 +7751,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"/>
+        <translation>숨김</translation>
     </message>
     <message>
         <source>Show</source>
@@ -7553,7 +7767,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>It seems to be an old RetroShare link. Please use copy instead.</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 링크가 오래된 것 같습니다. 대신 복사본을 사용하십시오.</translation>
     </message>
     <message>
         <source>The file link is malformed.</source>
@@ -7624,15 +7838,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Decrease font size</source>
-        <translation type="unfinished"/>
+        <translation>글꼴 크기 감소</translation>
     </message>
     <message>
         <source>Bold</source>
-        <translation type="unfinished"/>
+        <translation>굵게</translation>
     </message>
     <message>
         <source>Italic</source>
-        <translation type="unfinished"/>
+        <translation>기울임</translation>
     </message>
     <message>
         <source>Select Color</source>
@@ -7652,11 +7866,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Underline</source>
-        <translation type="unfinished"/>
+        <translation>밑줄</translation>
     </message>
     <message>
         <source>Subject:</source>
-        <translation type="unfinished"/>
+        <translation>제목:</translation>
     </message>
     <message>
         <source>Tags:</source>
@@ -7684,7 +7898,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Send</source>
-        <translation type="unfinished"/>
+        <translation>보내기</translation>
     </message>
     <message>
         <source>Send this message now</source>
@@ -7756,11 +7970,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Thanks, &lt;br&gt;The RetroShare Team</source>
-        <translation type="unfinished"/>
+        <translation>감사합니다,&lt;br&gt;레트로 쉐어팀</translation>
     </message>
     <message>
         <source>wants to be friends with you on RetroShare</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어에서 여러분과 친구가 되고 싶어합니다.</translation>
     </message>
     <message>
         <source>Hi %1,&lt;br&gt;&lt;br&gt;%2 wants to be friends with you on RetroShare.&lt;br&gt;&lt;br&gt;Respond now:&lt;br&gt;%3&lt;br&gt;&lt;br&gt;Thanks,&lt;br&gt;The RetroShare Team</source>
@@ -7777,7 +7991,7 @@ Do you want to save message to draft box?</source>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 링크 붙여넣기</translation>
     </message>
     <message>
         <source>Add to &quot;To&quot;</source>
@@ -7797,7 +8011,7 @@ Do you want to save message to draft box?</source>
     </message>
     <message>
         <source>Friend Details</source>
-        <translation type="unfinished"/>
+        <translation>친구 세부 정보</translation>
     </message>
     <message>
         <source>Original Message</source>
@@ -7805,7 +8019,7 @@ Do you want to save message to draft box?</source>
     </message>
     <message>
         <source>From</source>
-        <translation type="unfinished"/>
+        <translation>보낸이</translation>
     </message>
     <message>
         <source>To</source>
@@ -7821,7 +8035,7 @@ Do you want to save message to draft box?</source>
     </message>
     <message>
         <source>Subject</source>
-        <translation type="unfinished"/>
+        <translation>제목</translation>
     </message>
     <message>
         <source>On %1, %2 wrote:</source>
@@ -7837,11 +8051,11 @@ Do you want to save message to draft box?</source>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation>Retroshare (뒤에몫) </translation>
+        <translation>레트로 쉐어</translation>
     </message>
     <message>
         <source>Do you want to send the message without a subject ?</source>
-        <translation type="unfinished"/>
+        <translation>제목 없이 메시지를 보내시겠습니까?</translation>
     </message>
     <message>
         <source>Please insert at least one recipient.</source>
@@ -7853,7 +8067,7 @@ Do you want to save message to draft box?</source>
     </message>
     <message>
         <source>Unknown</source>
-        <translation type="unfinished"/>
+        <translation>알 수 없음</translation>
     </message>
     <message>
         <source>Unknown friend</source>
@@ -7953,7 +8167,7 @@ Do you want to save message to draft box?</source>
     </message>
     <message>
         <source>Save as...</source>
-        <translation type="unfinished"/>
+        <translation>다른 이름으로 저장...</translation>
     </message>
     <message>
         <source>Print Document</source>
@@ -7978,6 +8192,14 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Add Extra File</source>
+        <translation>추가 파일 추가</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Cryptographically sign message to distant peers. This is prevents intermediate peers to spoof your identity.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Distant peer (name: %2, PGP key: %1)</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -7989,7 +8211,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Set message to read on activate</source>
-        <translation type="unfinished"/>
+        <translation>메시지를 읽기 위해 활동중으로 표시</translation>
     </message>
     <message>
         <source>Open messages in</source>
@@ -8009,7 +8231,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Edit</source>
-        <translation type="unfinished"/>
+        <translation>편집</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -8033,6 +8255,18 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Message</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Distant messages:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;The link below allows people in the network to send encrypted messages to you, using tunnels. To do that, they need your public PGP key, which they will get using the Retroshare discovery system. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Accept encrypted distant messages from everyone</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -8062,7 +8296,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Subject:</source>
-        <translation type="unfinished"/>
+        <translation>제목:</translation>
     </message>
     <message>
         <source>From:</source>
@@ -8114,11 +8348,11 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>No subject</source>
-        <translation type="unfinished"/>
+        <translation>제목 없음</translation>
     </message>
     <message>
         <source>Download</source>
-        <translation type="unfinished"/>
+        <translation>다운로드</translation>
     </message>
     <message>
         <source>Download all</source>
@@ -8126,11 +8360,11 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"/>
+        <translation>숨김</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished"/>
+        <translation>확장</translation>
     </message>
     <message>
         <source>File</source>
@@ -8146,7 +8380,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Save as...</source>
-        <translation type="unfinished"/>
+        <translation>다른 이름으로 저장...</translation>
     </message>
     <message>
         <source>HTML-Files (*.htm *.html);;All Files (*)</source>
@@ -8205,7 +8439,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Display</source>
-        <translation type="unfinished"/>
+        <translation>표시</translation>
     </message>
     <message>
         <source>Tags</source>
@@ -8308,7 +8542,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Display</source>
-        <translation type="unfinished"/>
+        <translation>표시</translation>
     </message>
     <message>
         <source>Tags</source>
@@ -8392,15 +8626,15 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Subject</source>
-        <translation type="unfinished"/>
+        <translation>제목</translation>
     </message>
     <message>
         <source>From</source>
-        <translation type="unfinished"/>
+        <translation>보낸이</translation>
     </message>
     <message>
         <source>Date</source>
-        <translation type="unfinished"/>
+        <translation>날짜</translation>
     </message>
     <message>
         <source>Content</source>
@@ -8412,7 +8646,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Click to sort by subject</source>
-        <translation type="unfinished"/>
+        <translation>제목별로 정렬하려면 누르십시오</translation>
     </message>
     <message>
         <source>Click to sort by read</source>
@@ -8440,7 +8674,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Search Subject</source>
-        <translation type="unfinished"/>
+        <translation>제목 검색</translation>
     </message>
     <message>
         <source>Search From</source>
@@ -8448,7 +8682,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Search Date</source>
-        <translation type="unfinished"/>
+        <translation>날짜 검색</translation>
     </message>
     <message>
         <source>Search Content</source>
@@ -8472,7 +8706,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>System</source>
-        <translation type="unfinished"/>
+        <translation>시스템</translation>
     </message>
     <message>
         <source>Open in a new window</source>
@@ -8484,11 +8718,11 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Mark as read</source>
-        <translation type="unfinished"/>
+        <translation>읽음으로 표시</translation>
     </message>
     <message>
         <source>Mark as unread</source>
-        <translation type="unfinished"/>
+        <translation>읽지 않음으로 표시</translation>
     </message>
     <message>
         <source>Add Star</source>
@@ -8496,7 +8730,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Edit</source>
-        <translation type="unfinished"/>
+        <translation>편집</translation>
     </message>
     <message>
         <source>Edit as new</source>
@@ -8542,12 +8776,56 @@ Do you want to save message ?</source>
         <source>Total:</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>Decrypt Message</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Encrypted message. Right-click to decrypt it.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Decryption failed!</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This message could not be decrypted.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Messages</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Click to sort by signature</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Messages&lt;/h1&gt;                         			 &lt;p&gt;Messages are like &lt;b&gt;e-mail&lt;/b&gt;: you send/receive them from your friends when both of you	are connected.&lt;/p&gt; 			 &lt;p&gt;It is also possible to send messages to non friends, using tunnels. Such messages are always encrypted. It is 			 recommended to cryptographically sign distant messages, as a proof of your identity, using the &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; button 			 in the message composer window. Distant messages are not guarrantied to arrive, since this requires the distant peer to accept them (You need yourself to switch this on in Config-Messages).&lt;/p&gt;			 &lt;p&gt;Some additional features allow you to exchange data in messages: you may recommend files to your friends by pasting file links, 			 or recommend friends-to-be to other friends, in order to streathen your network.&lt;/p&gt;	                   			 </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This message is encrypted. Right click to decrypt it.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This message was signed and the signature checks</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This message was signed but the signature doesn&apos;t check</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This message is not encrypted. Cannot decrypt!</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>MessengerWindow</name>
     <message>
         <source>RetroShare Messenger</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 메신저</translation>
     </message>
     <message>
         <source>Search Friends</source>
@@ -8563,7 +8841,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Search</source>
-        <translation type="unfinished"/>
+        <translation>검색</translation>
     </message>
 </context>
 <context>
@@ -8582,15 +8860,15 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Play Media</source>
-        <translation type="unfinished"/>
+        <translation>미디어 재생</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished"/>
+        <translation>확장</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished"/>
+        <translation>항목 제거</translation>
     </message>
     <message>
         <source>Message From</source>
@@ -8610,7 +8888,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"/>
+        <translation>숨김</translation>
     </message>
 </context>
 <context>
@@ -8649,7 +8927,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>RetroShare Server</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 서버</translation>
     </message>
     <message>
         <source>Forwarded Port</source>
@@ -8657,7 +8935,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>OK | RetroShare Server</source>
-        <translation type="unfinished"/>
+        <translation>확인 | 레트로 쉐어 서버</translation>
     </message>
     <message>
         <source>Internet connection</source>
@@ -8680,10 +8958,6 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Search Network</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Show all accessible keys</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -8764,7 +9038,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Peer ID</source>
-        <translation type="unfinished"/>
+        <translation>동료 ID</translation>
     </message>
     <message>
         <source>Search Peer ID</source>
@@ -8788,7 +9062,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 링크 복사</translation>
     </message>
     <message>
         <source>Remove unused keys...</source>
@@ -8819,7 +9093,7 @@ For security, your keyring was previously backed-up to file
     </message>
     <message>
         <source>Unknown error</source>
-        <translation type="unfinished"/>
+        <translation>알 수 없는 오류</translation>
     </message>
     <message>
         <source>Cannot delete secret keys</source>
@@ -8861,7 +9135,7 @@ Reported error: </source>
     </message>
     <message>
         <source>Unknown</source>
-        <translation type="unfinished"/>
+        <translation>알 수 없음</translation>
     </message>
     <message>
         <source>Last hour</source>
@@ -8873,7 +9147,7 @@ Reported error: </source>
     </message>
     <message>
         <source>Never</source>
-        <translation type="unfinished"/>
+        <translation>안함</translation>
     </message>
     <message>
         <source>%1 days ago</source>
@@ -8889,7 +9163,11 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Data iconsistency in the keyring. This is most probably a bug. Please contact the developers.</source>
+        <source>Data inconsistency in the keyring. This is most probably a bug. Please contact the developers.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Only show people you trusted</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -8956,6 +9234,10 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <source>This is a test.</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;News Feed&lt;/h1&gt;                                                          		  &lt;p&gt;The News Feed displays the last events on your network, sorted by the time you received them.                		  This gives you a summary of the activity of your friends.                                                       		  You can configure which events to show by pressing on &lt;b&gt;Options&lt;/b&gt;. &lt;/p&gt;                                      		  &lt;p&gt;The various events shown are:                                                                                		  &lt;ul&gt;	                                                                                                         		  		&lt;li&gt;Connection attempts (useful to make friends with new people and control who&apos;s trying to reach you)&lt;/li&gt; 		  		&lt;li&gt;Channel and Forum posts&lt;/li&gt;                                                                            		  		&lt;li&gt;New Channels and Forums you can subscribe to&lt;/li&gt;                                                       		  		&lt;li&gt;Private messages from your friends&lt;/li&gt;                                                                 		  &lt;/ul&gt; &lt;/p&gt;                                                                                                      		</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>NotifyPage</name>
@@ -8985,7 +9267,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Chat</source>
-        <translation type="unfinished"/>
+        <translation>대화</translation>
     </message>
     <message>
         <source>Security</source>
@@ -8997,7 +9279,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Test</source>
-        <translation type="unfinished"/>
+        <translation>시험</translation>
     </message>
     <message>
         <source>Systray Icon</source>
@@ -9029,11 +9311,11 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Private Chat</source>
-        <translation type="unfinished"/>
+        <translation>개인 대화</translation>
     </message>
     <message>
         <source>Group Chat</source>
-        <translation type="unfinished"/>
+        <translation>집단 대화</translation>
     </message>
     <message>
         <source>Chat Lobby</source>
@@ -9057,7 +9339,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Group chat</source>
-        <translation type="unfinished"/>
+        <translation>집단 대화</translation>
     </message>
     <message>
         <source>Chat lobbies</source>
@@ -9136,7 +9418,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Test</source>
-        <translation type="unfinished"/>
+        <translation>시험</translation>
     </message>
     <message>
         <source>This is a test.</source>
@@ -9180,30 +9462,30 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     <name>PeerDefs</name>
     <message>
         <source>Unknown</source>
-        <translation type="unfinished"/>
+        <translation>알 수 없음</translation>
     </message>
 </context>
 <context>
     <name>PeerItem</name>
     <message>
         <source>Write a quick Message</source>
-        <translation type="unfinished"/>
+        <translation>간단한 메시지 작성</translation>
     </message>
     <message>
         <source>Chat</source>
-        <translation type="unfinished"/>
+        <translation>대화</translation>
     </message>
     <message>
         <source>Start Chat</source>
-        <translation type="unfinished"/>
+        <translation>대화 시작</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished"/>
+        <translation>확장</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished"/>
+        <translation>항목 제거</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -9211,7 +9493,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Send</source>
-        <translation type="unfinished"/>
+        <translation>보내기</translation>
     </message>
     <message>
         <source>Name:</source>
@@ -9227,7 +9509,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Location:</source>
-        <translation type="unfinished"/>
+        <translation>지역:</translation>
     </message>
     <message>
         <source>IP Address:</source>
@@ -9239,11 +9521,11 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Status:</source>
-        <translation type="unfinished"/>
+        <translation>상태:</translation>
     </message>
     <message>
         <source>Write Message</source>
-        <translation type="unfinished"/>
+        <translation>메시지 작성</translation>
     </message>
     <message>
         <source>Friend</source>
@@ -9271,11 +9553,11 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"/>
+        <translation>숨김</translation>
     </message>
     <message>
         <source>Quick Message</source>
-        <translation type="unfinished"/>
+        <translation>간단한 메시지</translation>
     </message>
 </context>
 <context>
@@ -9297,7 +9579,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     <name>PhotoCommentItem</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"/>
+        <translation>양식</translation>
     </message>
 </context>
 <context>
@@ -9316,7 +9598,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Comment</source>
-        <translation type="unfinished"/>
+        <translation>답글 달기</translation>
     </message>
     <message>
         <source>Summary</source>
@@ -9355,7 +9637,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     <name>PhotoItem</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"/>
+        <translation>양식</translation>
     </message>
     <message>
         <source>TextLabel</source>
@@ -9390,7 +9672,7 @@ p, li { white-space: pre-wrap; }
     <name>PhotoShare</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"/>
+        <translation>양식</translation>
     </message>
     <message>
         <source>Create Album</source>
@@ -9462,7 +9744,7 @@ requesting to edit it!</source>
     </message>
     <message>
         <source>Close</source>
-        <translation type="unfinished"/>
+        <translation>닫기</translation>
     </message>
     <message>
         <source>Start</source>
@@ -9481,7 +9763,7 @@ requesting to edit it!</source>
     <name>PluginFrame</name>
     <message>
         <source>Remove</source>
-        <translation type="unfinished"/>
+        <translation>제거</translation>
     </message>
 </context>
 <context>
@@ -9528,7 +9810,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>About</source>
-        <translation type="unfinished"/>
+        <translation>정보</translation>
     </message>
     <message>
         <source>File name: </source>
@@ -9544,7 +9826,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>will be enabled after your restart RetroShare.</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어를 다시 시작한 수 활성화됩니다.</translation>
     </message>
 </context>
 <context>
@@ -9636,7 +9918,7 @@ malicious behavior of crafted plugins.</source>
     <name>PopularityDefs</name>
     <message>
         <source>Popularity</source>
-        <translation type="unfinished"/>
+        <translation>인기도</translation>
     </message>
 </context>
 <context>
@@ -9682,6 +9964,25 @@ malicious behavior of crafted plugins.</source>
     </message>
 </context>
 <context>
+    <name>PopupDistantChatDialog</name>
+    <message>
+        <source>Distant chat terminated</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>The person you&apos;re talking to has deleted the secured chat tunnel. You may remove the chat window now.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Closing this window will end the conversation, notify the peer and remove the encrypted tunnel.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Kill the tunnel?</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>PostedCreatePostDialog</name>
     <message>
         <source>Create Post</source>
@@ -9723,7 +10024,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PostedDialog</name>
     <message>
-        <source>Posted</source>
+        <source>Posted Links</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -9770,11 +10071,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Date</source>
-        <translation type="unfinished"/>
+        <translation>날짜</translation>
     </message>
     <message>
         <source>From</source>
-        <translation type="unfinished"/>
+        <translation>보낸이</translation>
     </message>
     <message>
         <source>Site</source>
@@ -9790,14 +10091,14 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Comment</source>
-        <translation type="unfinished"/>
+        <translation>답글 달기</translation>
     </message>
 </context>
 <context>
     <name>PostedListDialog</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"/>
+        <translation>양식</translation>
     </message>
     <message>
         <source>Hot</source>
@@ -9805,14 +10106,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>New</source>
-        <translation type="unfinished"/>
+        <translation>새 피드</translation>
     </message>
     <message>
         <source>Top</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Refresh</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -9853,7 +10150,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Next</source>
-        <translation type="unfinished"/>
+        <translation>다음</translation>
     </message>
     <message>
         <source>My Topics</source>
@@ -9873,11 +10170,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Subscribe</source>
-        <translation type="unfinished"/>
+        <translation>가입</translation>
     </message>
     <message>
         <source>Unsubscribe</source>
-        <translation type="unfinished"/>
+        <translation>탈퇴</translation>
     </message>
     <message>
         <source>Showing</source>
@@ -9885,7 +10182,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>RetroShare</source>
-        <translation>Retroshare (뒤에몫) </translation>
+        <translation>레트로 쉐어</translation>
     </message>
     <message>
         <source>Please create or choose a Signing Id before Voting</source>
@@ -9896,7 +10193,7 @@ p, li { white-space: pre-wrap; }
     <name>PrintPreview</name>
     <message>
         <source>RetroShare Message - Print Preview</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 메시지 - 인쇄 미리보기</translation>
     </message>
     <message>
         <source>Print</source>
@@ -9930,18 +10227,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Select an identity from the list below to be used on another computer, and press &amp;quot;Export selected identity&amp;quot;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;To use it on a different computer,  select the identity manager in the login window. From there you can import the identity file and create a new location for that identity. &lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;When keeping the same identity for your new  location, your friends will automatically accept you.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Identities</source>
         <translation type="unfinished"/>
     </message>
@@ -9967,7 +10252,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>RetroShare Identity files (*.asc)</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 인증 파일 (*.asc)</translation>
     </message>
     <message>
         <source>Identity saved</source>
@@ -10021,6 +10306,18 @@ and use the import button to load it</source>
         <source>Certificates (*.pqi *.pem)</source>
         <translation>증명서 (*.pqi *.pem) </translation>
     </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:11pt;&quot;&gt;Select an identity from the list below to be used on another computer, and press &amp;quot;Export selected identity&amp;quot;&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Ubuntu'; font-size:11pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:11pt;&quot;&gt;To use it on a different computer,  select the identity manager in the login window. From there you can import the identity file and create a new location for that identity. &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Ubuntu'; font-size:11pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;When keeping the same identity for your new  location, your friends will automatically accept you.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>ProfileWidget</name>
@@ -10046,7 +10343,7 @@ and use the import button to load it</source>
     </message>
     <message>
         <source>Location:</source>
-        <translation type="unfinished"/>
+        <translation>지역:</translation>
     </message>
     <message>
         <source>Peer ID:</source>
@@ -10090,7 +10387,7 @@ and use the import button to load it</source>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation>Retroshare (뒤에몫) </translation>
+        <translation>레트로 쉐어</translation>
     </message>
     <message>
         <source>Sorry, create certificate failed</source>
@@ -10152,11 +10449,11 @@ and use the import button to load it</source>
     <name>PulseItem</name>
     <message>
         <source>From</source>
-        <translation type="unfinished"/>
+        <translation>보낸이</translation>
     </message>
     <message>
         <source>Date</source>
-        <translation type="unfinished"/>
+        <translation>날짜</translation>
     </message>
     <message>
         <source>...</source>
@@ -10167,7 +10464,7 @@ and use the import button to load it</source>
     <name>QObject</name>
     <message>
         <source>Subject: </source>
-        <translation type="unfinished"/>
+        <translation>제목:</translation>
     </message>
     <message>
         <source>Participants: </source>
@@ -10269,7 +10566,7 @@ and open the Make Friend Wizard.
     </message>
     <message>
         <source>Forum not found</source>
-        <translation type="unfinished"/>
+        <translation>포럼이 없습니다</translation>
     </message>
     <message>
         <source>Forums not found</source>
@@ -10388,7 +10685,7 @@ Reported error is: %2</source>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation>Retroshare (뒤에몫) </translation>
+        <translation>레트로 쉐어</translation>
     </message>
     <message>
         <source>Initialization failed. Wrong or missing installation of PGP.</source>
@@ -10400,7 +10697,7 @@ Reported error is: %2</source>
     </message>
     <message>
         <source>An unexpected error occured. Please report &apos;RsInit::InitRetroShare unexpected return code %1&apos;.</source>
-        <translation type="unfinished"/>
+        <translation>예상치 못한 오류가 발생했습니다. &apos;RsInit::InitRetroShare unexpexted return code %1&apos; 을 보고해 주십시오.</translation>
     </message>
     <message>
         <source>Multiple instances</source>
@@ -10410,7 +10707,9 @@ Reported error is: %2</source>
         <source>Another RetroShare using the same profile is already running on your system. Please close that instance first
  Lock file:
 </source>
-        <translation type="unfinished"/>
+        <translation>동일한 프로파일을 사용하는 다른 레트로 쉐어가 시스템에서 실행중입니다. 해당 인스턴스를 먼저 닫으십시오
+잠금 파일:
+</translation>
     </message>
     <message>
         <source>An unexpected error occurred when Retroshare tried to acquire the single instance lock
@@ -10428,6 +10727,70 @@ Reported error is: %2</source>
     </message>
     <message>
         <source>Start with a RetroShare link is only supported for Windows.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Select who can contact you:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Chat link is expired</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This chat link is expired. The destination peer will not answer.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Chat link cannot be decrypted</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>The link could not be decrypted.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>The link signature cannot be checked.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>The link is signed by an unknown key.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Hash error</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Distant peer has closed the chat</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Tunnel is pending...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Messaging link is expired</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This Messaging link is expired. The destination peer will not receive it.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This chat link is encrypted with a key that is not yours. You can&apos;t use it. Key ID = </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Chat connection is not possible</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Secured tunnel established. Waiting for ACK...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Secured tunnel is working. You can talk!</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -10550,7 +10913,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Remove</source>
-        <translation type="unfinished"/>
+        <translation>제거</translation>
     </message>
     <message>
         <source>Automatically share incoming directory (Recommended)</source>
@@ -10587,7 +10950,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Start RetroShare when my System Starts.</source>
-        <translation type="unfinished"/>
+        <translation>시스템을 시작할 때 레트로 쉐어를 시작합니다.</translation>
     </message>
     <message>
         <source>Start minimized on system start</source>
@@ -10676,7 +11039,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>General</source>
-        <translation type="unfinished"/>
+        <translation>일반</translation>
     </message>
     <message>
         <source>Total:</source>
@@ -10707,7 +11070,7 @@ p, li { white-space: pre-wrap; }
     <name>RemoteSharedFilesDialog</name>
     <message>
         <source>Download</source>
-        <translation type="unfinished"/>
+        <translation>다운로드</translation>
     </message>
     <message>
         <source>Recommend in a message to</source>
@@ -10813,35 +11176,35 @@ Reducing image to %1x%2 pixels?</source>
     <name>Rshare</name>
     <message>
         <source>Resets ALL stored RetroShare settings.</source>
-        <translation type="unfinished"/>
+        <translation>저장한 모든 레트로 쉐어 설정을 초기화합니다.</translation>
     </message>
     <message>
         <source>Sets the directory RetroShare uses for data files.</source>
-        <translation type="unfinished"/>
+        <translation>데이터 파일에 대해 레트로 쉐어가 사용하는 디렉터리를 설정합니다</translation>
     </message>
     <message>
         <source>Sets the name and location of RetroShare&apos;s logfile.</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어의 로그 파일의 이름과 위치를 설정합니다.</translation>
     </message>
     <message>
         <source>Sets the verbosity of RetroShare&apos;s logging.</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어의 로그 상세 레벨을 설정합니다.</translation>
     </message>
     <message>
         <source>Sets RetroShare&apos;s interface style.</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어의 인터페이스 스타일을 설정합니다.</translation>
     </message>
     <message>
         <source>Sets RetroShare&apos;s interface stylesheets.</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어의 인터페이스 스타일 시트를 설정합니다.</translation>
     </message>
     <message>
         <source>Sets RetroShare&apos;s language.</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 언어를 설정합니다.</translation>
     </message>
     <message>
         <source>RetroShare Usage Information</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 사용 정보</translation>
     </message>
     <message>
         <source>Invalid language code specified: </source>
@@ -10895,7 +11258,7 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Search</source>
-        <translation type="unfinished"/>
+        <translation>검색</translation>
     </message>
     <message>
         <source>Advanced Search</source>
@@ -10964,7 +11327,7 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished"/>
+        <translation>형식</translation>
     </message>
     <message>
         <source>Age</source>
@@ -11036,15 +11399,15 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Download</source>
-        <translation type="unfinished"/>
+        <translation>다운로드</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 링크 복사</translation>
     </message>
     <message>
         <source>Send RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 링크 보내기</translation>
     </message>
     <message>
         <source>Download Notice</source>
@@ -11068,7 +11431,7 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Remove</source>
-        <translation type="unfinished"/>
+        <translation>제거</translation>
     </message>
     <message>
         <source>Remove All</source>
@@ -11076,18 +11439,18 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Folder</source>
-        <translation type="unfinished"/>
+        <translation>폴더</translation>
     </message>
     <message>
         <source>New RetroShare Link(s)</source>
-        <translation type="unfinished"/>
+        <translation>새 레트로 쉐어 링크 만들기</translation>
     </message>
 </context>
 <context>
     <name>SecurityItem</name>
     <message>
         <source>wants to be friend with you on RetroShare</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어에서 여러분을 친구로 삼고 싶어합니다</translation>
     </message>
     <message>
         <source>Accept Friend Request</source>
@@ -11103,23 +11466,23 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Write a quick Message</source>
-        <translation type="unfinished"/>
+        <translation>간단한 메시지 작성</translation>
     </message>
     <message>
         <source>Chat</source>
-        <translation type="unfinished"/>
+        <translation>대화</translation>
     </message>
     <message>
         <source>Start Chat</source>
-        <translation type="unfinished"/>
+        <translation>대화 시작</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished"/>
+        <translation>확장</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished"/>
+        <translation>항목 제거</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -11127,7 +11490,7 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Send</source>
-        <translation type="unfinished"/>
+        <translation>보내기</translation>
     </message>
     <message>
         <source>Name:</source>
@@ -11143,7 +11506,7 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Location:</source>
-        <translation type="unfinished"/>
+        <translation>지역:</translation>
     </message>
     <message>
         <source>IP Address:</source>
@@ -11155,11 +11518,11 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Status:</source>
-        <translation type="unfinished"/>
+        <translation>상태:</translation>
     </message>
     <message>
         <source>Write Message</source>
-        <translation type="unfinished"/>
+        <translation>메시지 작성</translation>
     </message>
     <message>
         <source>Connect Attempt</source>
@@ -11187,7 +11550,7 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"/>
+        <translation>숨김</translation>
     </message>
     <message>
         <source>Do you want to remove this Friend?</source>
@@ -11195,7 +11558,7 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Quick Message</source>
-        <translation type="unfinished"/>
+        <translation>간단한 메시지</translation>
     </message>
 </context>
 <context>
@@ -11246,15 +11609,15 @@ peers still need to trust each other to allow connection. </source>
     </message>
     <message>
         <source>Local Address</source>
-        <translation type="unfinished"/>
+        <translation>지역 주소</translation>
     </message>
     <message>
         <source>External Address</source>
-        <translation type="unfinished"/>
+        <translation>외부 주소</translation>
     </message>
     <message>
         <source>Dynamic DNS</source>
-        <translation type="unfinished"/>
+        <translation>동적 DNS</translation>
     </message>
     <message>
         <source>Port:</source>
@@ -11293,7 +11656,7 @@ behind a firewall or a VPN.</source>
     </message>
     <message>
         <source>Allow RetroShare to ask my ip to these websites:</source>
-        <translation type="unfinished"/>
+        <translation>이 웹사이트에서의 내 아이피 요청을 레트로 쉐어가 허용합니다:</translation>
     </message>
     <message>
         <source>Bandwidth</source>
@@ -11355,7 +11718,7 @@ The default value is 20.</source>
     </message>
     <message>
         <source>Server</source>
-        <translation type="unfinished"/>
+        <translation>서버</translation>
     </message>
 </context>
 <context>
@@ -11388,7 +11751,7 @@ The default value is 20.</source>
     <name>ShareDialog</name>
     <message>
         <source>RetroShare Share Folder</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 공유 폴더</translation>
     </message>
     <message>
         <source>Share Folder</source>
@@ -11427,7 +11790,7 @@ The default value is 20.</source>
     <name>ShareKey</name>
     <message>
         <source>Share Channel</source>
-        <translation type="unfinished"/>
+        <translation>채널 공유</translation>
     </message>
     <message>
         <source>check peers you would like to share private publish key with</source>
@@ -11454,7 +11817,7 @@ The default value is 20.</source>
     <name>ShareManager</name>
     <message>
         <source>RetroShare Share Manager</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 공유 관리자</translation>
     </message>
     <message>
         <source>Shared Folder Manager</source>
@@ -11502,7 +11865,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Remove</source>
-        <translation type="unfinished"/>
+        <translation>제거</translation>
     </message>
     <message>
         <source>Apply and close</source>
@@ -11514,7 +11877,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Edit</source>
-        <translation type="unfinished"/>
+        <translation>편집</translation>
     </message>
     <message>
         <source>Share Manager</source>
@@ -11597,23 +11960,23 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Download</source>
-        <translation type="unfinished"/>
+        <translation>다운로드</translation>
     </message>
     <message>
         <source>Copy retroshare Links to Clipboard</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 링크를 클립보드에 복사</translation>
     </message>
     <message>
         <source>Copy retroshare Links to Clipboard (HTML)</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 링크를 클립보드에 복사 (HTML)</translation>
     </message>
     <message>
         <source>Send retroshare Links</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 링크 보내기</translation>
     </message>
     <message>
         <source>Send retroshare Links to Cloud</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 링크를 클라우드에 보내기</translation>
     </message>
     <message>
         <source>Add Links to Cloud</source>
@@ -11621,7 +11984,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 링크</translation>
     </message>
     <message>
         <source>Recommendation(s)</source>
@@ -11676,7 +12039,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Download</source>
-        <translation type="unfinished"/>
+        <translation>다운로드</translation>
     </message>
     <message>
         <source>Download complete</source>
@@ -11721,7 +12084,7 @@ p, li { white-space: pre-wrap; }
     <name>StartDialog</name>
     <message>
         <source>RetroShare</source>
-        <translation>Retroshare (뒤에몫) </translation>
+        <translation>레트로 쉐어</translation>
     </message>
     <message>
         <source>Login</source>
@@ -11928,7 +12291,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Style</source>
-        <translation type="unfinished"/>
+        <translation>스타일</translation>
     </message>
     <message>
         <source>None</source>
@@ -11947,11 +12310,11 @@ p, li { white-space: pre-wrap; }
     <name>SubFileItem</name>
     <message>
         <source>%p Kb</source>
-        <translation type="unfinished"/>
+        <translation>%p Kb</translation>
     </message>
     <message>
         <source>Cancel Download</source>
-        <translation type="unfinished"/>
+        <translation>다운로드 취소</translation>
     </message>
     <message>
         <source>Download File</source>
@@ -11959,7 +12322,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Download</source>
-        <translation type="unfinished"/>
+        <translation>다운로드</translation>
     </message>
     <message>
         <source>Play File</source>
@@ -12207,10 +12570,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Core-ID</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Peer</source>
         <comment>i.e: user name</comment>
         <translation type="unfinished"/>
@@ -12235,7 +12594,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Search</source>
-        <translation type="unfinished"/>
+        <translation>검색</translation>
     </message>
     <message>
         <source>Friends files</source>
@@ -12291,11 +12650,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 링크 복사</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>레트로 쉐어 링크 붙여넣기</translation>
     </message>
     <message>
         <source>Down</source>
@@ -12383,7 +12742,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Downloading</source>
-        <translation type="unfinished"/>
+        <translation>다운로드중</translation>
     </message>
     <message>
         <source>Complete</source>
@@ -12403,7 +12762,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Unknown</source>
-        <translation type="unfinished"/>
+        <translation>알 수 없음</translation>
     </message>
     <message>
         <source>If the hash of the downloaded data does
@@ -12472,6 +12831,107 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Please enter a new--and valid--filename</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Last Time Seen</source>
+        <comment>i.e: Last Time Receiced Data</comment>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>UserID</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>File Never Seen</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Expand all</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Collapse all</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show Size Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show Completed Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Speed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show Speed Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Progress / Availability</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show Progress / Availability Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Sources</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show Sources Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show Status Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show Speed / Queue position Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show Remaining Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Download time</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show Download time Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show Hash Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Last Time Seen</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show Last Time Seen Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Columns</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>File Transfers</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;File Transfer&lt;/h1&gt;                                                         			 &lt;p&gt;Retroshare brings two ways of transferring files: direct transfers from your friends, and                                     			 distant anonymous tunnelled transfers. In addition, file transfer is multi-source and allows swarming                                      			 (you can be a source while downloading)&lt;/p&gt;                                     			 &lt;p&gt;You can share files using the &lt;img src=&quot;:/images/directoryadd_24x24_shadow.png&quot; width=16 /&gt; icon from the left side bar. 				These files will be listed in the My Files tab. You can decide for each friend group whether they can or not see these files 				in their Friends Files tab&lt;/p&gt;			 &lt;p&gt;The search tab reports files from your friends&apos; file lists, and distant files that can be reached 			 anonymously using the multi-hop tunnelling system.&lt;/p&gt; 			 </source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -12698,6 +13158,13 @@ Try to be patient!</source>
     </message>
 </context>
 <context>
+    <name>UIStateHelper</name>
+    <message>
+        <source>Loading</source>
+        <translation>불러오는 중</translation>
+    </message>
+</context>
+<context>
     <name>ULListDelegate</name>
     <message>
         <source>B</source>
@@ -12822,7 +13289,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Description:</source>
-        <translation type="unfinished"/>
+        <translation>설명:</translation>
     </message>
     <message>
         <source>Share Options</source>
@@ -12830,7 +13297,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Public</source>
-        <translation type="unfinished"/>
+        <translation>공용</translation>
     </message>
     <message>
         <source>All Friends</source>
@@ -12917,7 +13384,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Edit</source>
-        <translation type="unfinished"/>
+        <translation>편집</translation>
     </message>
     <message>
         <source>New Page</source>
@@ -12929,7 +13396,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Search</source>
-        <translation type="unfinished"/>
+        <translation>검색</translation>
     </message>
     <message>
         <source>My Groups</source>
@@ -13102,7 +13569,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>New</source>
-        <translation type="unfinished"/>
+        <translation>새 피드</translation>
     </message>
     <message>
         <source>from</source>
@@ -13170,7 +13637,7 @@ Try to be patient!</source>
     <message>
         <source>Unknown</source>
         <comment>Unknown (size)</comment>
-        <translation type="unfinished"/>
+        <translation>알 수 없음</translation>
     </message>
     <message>
         <source> B</source>
@@ -13204,7 +13671,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Unknown</source>
-        <translation type="unfinished"/>
+        <translation>알 수 없음</translation>
     </message>
     <message>
         <source>&lt; 1m</source>

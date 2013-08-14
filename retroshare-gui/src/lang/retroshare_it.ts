@@ -136,7 +136,7 @@
     </message>
     <message>
         <source>Landscapes</source>
-        <translation type="unfinished"/>
+        <translation>Panorami</translation>
     </message>
     <message>
         <source>Pets</source>
@@ -433,7 +433,8 @@ p, li { white-space: pre-wrap; }
     <message>
         <source> Warning: The services here are experimental. Please help us test them. 
  But Remember: Any data here *WILL* be lost when we upgrade the protocols.</source>
-        <translation type="unfinished"/>
+        <translation>Avvertimento: I servizi qui presenti sono sperimentali. Per favore aiutaci a testarli.
+Ma ricorda: Qualsiasi dato qui presente *SARÀ PERSO* quando aggiorneremo il protocollo</translation>
     </message>
     <message>
         <source>Identities</source>
@@ -461,7 +462,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>GxsChannels</source>
-        <translation type="unfinished"/>
+        <translation>Canali Gxs </translation>
     </message>
     <message>
         <source>The Wire</source>
@@ -1075,7 +1076,7 @@ p, li { white-space: pre-wrap; }
     <name>ChannelDialog</name>
     <message>
         <source>GxsChannels</source>
-        <translation type="unfinished"/>
+        <translation>Canali Gxs</translation>
     </message>
 </context>
 <context>
@@ -1154,15 +1155,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Set destination directory</source>
-        <translation type="unfinished"/>
+        <translation>Imposta la cartella di destinazione</translation>
     </message>
     <message>
         <source>Other...</source>
-        <translation type="unfinished"/>
+        <translation>Altri...</translation>
     </message>
     <message>
         <source>[Default]</source>
-        <translation type="unfinished"/>
+        <translation>[Predefinito]</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
@@ -1170,7 +1171,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Select channel destination directory</source>
-        <translation type="unfinished"/>
+        <translation>Seleziona la cartella di destinazione per il canale</translation>
     </message>
     <message>
         <source>Publish rights restored.</source>
@@ -1192,6 +1193,10 @@ p, li { white-space: pre-wrap; }
         <source>No Channel Selected</source>
         <translation>Nessun canale scelto</translation>
     </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Channels&lt;/h1&gt;                                                         		  &lt;p&gt;Channels allow you to post data (e.g. movies, music) that will spread in the network                                                		  among people who subscribed your channel.  If you activate auto-download on a channel, files attached to each post will start  		  downloading automatically when the post is received.&lt;/p&gt;                                                                               		  &lt;p&gt;You see channels your friends are subscribed to, and forward subscribed channels to                                                		  your friends. This promotes good channels in the network.                                                     		  When you first connect to a new friend, it&apos;s likely 		  you will receive many such cache files, and new channels will appear.                                                                  		  &lt;/p&gt;                                                                                                                                   		  &lt;p&gt;Only the channel&apos;s creator can post on that channel. Other peers                       		  in the network can only read from it, unless the channel is private. You can however share the posting rights or the reading rights 		  with your friends.&lt;/p&gt;                            		  </source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>ChannelUserNotify</name>
@@ -1206,6 +1211,10 @@ p, li { white-space: pre-wrap; }
         <source>Your friend has more than one locations.
 Please choose one of it to chat with.</source>
         <translation>I tuoi amici hanno più di un sito.⏎ Scegline uno per dialogarci.</translation>
+    </message>
+    <message>
+        <source>Talking to </source>
+        <translation>Parlando a</translation>
     </message>
 </context>
 <context>
@@ -1224,19 +1233,19 @@ Please choose one of it to chat with.</source>
     </message>
     <message>
         <source>Invite friends to this lobby</source>
-        <translation type="unfinished"/>
+        <translation>Invita amici a questo gruppo di interesse</translation>
     </message>
     <message>
         <source>Leave this lobby (Unsubscribe)</source>
-        <translation type="unfinished"/>
+        <translation>Abbandona questo gruppo di interesse (Disdici sottoscrizione)</translation>
     </message>
     <message>
         <source>Invite friends</source>
-        <translation type="unfinished"/>
+        <translation>Invita amici</translation>
     </message>
     <message>
         <source>Select friends to invite:</source>
-        <translation type="unfinished"/>
+        <translation>Seleziona gli amici da invitare:</translation>
     </message>
     <message>
         <source>Welcome to lobby %1</source>
@@ -1256,7 +1265,7 @@ Please choose one of it to chat with.</source>
     </message>
     <message>
         <source>Right click to mute/unmute participants&lt;br/&gt;Double click to address this person</source>
-        <translation type="unfinished"/>
+        <translation>Fare clic col tasto destro per silenziare/abilitare l&apos;audio dei partecipanti&lt;br/&gt;Fare doppio clic per rivolgersi a questa persona</translation>
     </message>
     <message>
         <source>Lobby management</source>
@@ -1305,10 +1314,6 @@ Please choose one of it to chat with.</source>
         <translation>Gruppi Discussione</translation>
     </message>
     <message>
-        <source>Create new chat lobby</source>
-        <translation>Crea nuova conversazione  gruppo d&apos;interesse</translation>
-    </message>
-    <message>
         <source>Name</source>
         <translation>Nome</translation>
     </message>
@@ -1346,19 +1351,19 @@ Please choose one of it to chat with.</source>
     </message>
     <message>
         <source>Selected lobby info</source>
-        <translation type="unfinished"/>
+        <translation>Informazioni sul gruppo di interesse selezionato</translation>
     </message>
     <message>
         <source>Lobby name: </source>
-        <translation type="unfinished"/>
+        <translation>Nome del gruppo di interesse:</translation>
     </message>
     <message>
         <source>Lobby Id: </source>
-        <translation type="unfinished"/>
+        <translation>Id del gruppo di interesse:</translation>
     </message>
     <message>
         <source>Topic: </source>
-        <translation type="unfinished"/>
+        <translation>Argomento:</translation>
     </message>
     <message>
         <source>Type: </source>
@@ -1374,11 +1379,11 @@ Please choose one of it to chat with.</source>
     </message>
     <message>
         <source>Peers: </source>
-        <translation type="unfinished"/>
+        <translation>Contatti:</translation>
     </message>
     <message>
         <source>You&apos;re not subscribed to this lobby; Double click-it to enter and chat.</source>
-        <translation type="unfinished"/>
+        <translation>Non hai sottoscritto questo gruppo di interesse; Fare doppio clic su di esso per entrare e chattare</translation>
     </message>
     <message>
         <source>No lobby selected. 
@@ -1386,15 +1391,31 @@ Please choose one of it to chat with.</source>
 Select lobbies at left to show details.
 
 Double click lobbies to enter and chat.</source>
-        <translation type="unfinished"/>
+        <translation>Nessun gruppo di interesse selezionato.
+
+Seleziona gruppi di interesse sulla sinistra per vederne i dettagli.
+
+Fare doppio clic sui gruppi di interesse per entrare e chattare.</translation>
     </message>
     <message>
         <source>Invitation to chat lobby</source>
         <translation>Invito a conversazione gruppo d&apos;interesse</translation>
     </message>
     <message>
-        <source>%1  invites you to chat lobby named %2</source>
-        <translation>%1  ti invita alla conversazione del gruppo d&apos;interesse %2</translation>
+        <source>Remove Auto Subscribe</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Add Auto Subscribe</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>%1 invites you to chat lobby named %2</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Chat Lobbies&lt;/h1&gt;                              		  &lt;p&gt;Chat lobbies are distributed chat rooms, and work pretty much like IRC.                                      		  They allow you to talk anonymously with tons of people without the need to make friends.&lt;/p&gt;                    		  &lt;p&gt;A chat lobby can be public (you friends see it) or private (your friends can&apos;t see it, unless you           		  invite them with &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). Once you have been invited to a private lobby, you will be able to see it when your friends   		  are using it.&lt;/p&gt;                                                                                               		  &lt;p&gt;The list at left shows                                                                                     		  chat lobbies your friends are participating into. You can either                                 		  &lt;ul&gt;                                                                                                            			  &lt;li&gt;Right click to create a new chat lobby&lt;/li&gt;                                                              		     &lt;li&gt;Double click a chat lobby to enter, chat, and show it to your friends&lt;/li&gt;                      		  &lt;/ul&gt; 		  &lt;/p&gt;                                      		</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -1602,6 +1623,58 @@ Double click lobbies to enter and chat.</source>
         <source>Chat</source>
         <translation>Conversazione</translation>
     </message>
+    <message>
+        <source>Distant chat</source>
+        <translation>Conversazione lontana</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Retroshare allows you to anonymously chat to nearby people beyond your friends in the network, using encrypted tunnels. In your personal invites list you keep chat links for people to contact you. In the &amp;quot;collected contacts&amp;quot; list, you keep such chat links that people sent you to contact them.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your personal invites</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Collected contacts</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Open secured chat tunnel</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Delete this invite</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Can&apos;t open distant chat</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Cannot open distant chat. Error code=</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Cannot remove distant chat invite.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create a chat invitation</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Copy link to clipboard</source>
+        <translation>Copiare il collegamento negli Appunti</translation>
+    </message>
+    <message>
+        <source>Private chat invite from </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Private chat invite to </source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>ChatStyle</name>
@@ -1778,10 +1851,6 @@ Double click lobbies to enter and chat.</source>
 <context>
     <name>CirclesDialog</name>
     <message>
-        <source>Refresh</source>
-        <translation>Aggiornamento</translation>
-    </message>
-    <message>
         <source>Showing details: </source>
         <translation>Visualizzando i dettagli: </translation>
     </message>
@@ -1847,14 +1916,34 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Create Personal Circle</source>
-        <translation type="unfinished"/>
+        <translation>Crea un Circolo Personale</translation>
     </message>
     <message>
         <source>Create External Circle</source>
-        <translation type="unfinished"/>
+        <translation>Crea un Circolo Esteso</translation>
     </message>
     <message>
         <source>Edit Circle</source>
+        <translation>Modifica Circolo</translation>
+    </message>
+    <message>
+        <source>Todo</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Friends Of Friends</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>External Circles (Admin)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>External Circles (Subscribed)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>External Circles (Other)</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -2016,24 +2105,12 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
 Alcuni servizi (scoperta, routing anonimo) possono essere spenti globalmente, il che soprassiede sempre alle impostazioni utente.</translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Disabling anonymous routing will suppress all sending/retrieval of tunnel and anonymous search requests from/to this user. This user will not be able to transfer anonymously through you.&lt;/p&gt;&lt;p&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Disattivando il routing anonimo sopprimerà ogni invio/recupero di tunnel, e le richieste di ricerca di questo utente. Questi non potrà trasferire anonimamente attraverso te.&lt;/p&gt;&lt;p&gt;Per un cambiamento globale, vai al pannello di configurazione del server.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
         <source>Anonymous routing</source>
         <translation>Routing Anonimo</translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Disabling discovery removes the sending of public keys of your own friends to this user. Discovery information from this friend will be dropped as well.&lt;/p&gt;&lt;p&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Disattivando la scoperta, si rimuove l&apos;invio di chiavi pubbliche dei tuoi amici a questo utente. Le informazioni di scoperta da questo amico saranno anche scartate.&lt;/p&gt;&lt;p&gt;Per un cambiamento globale, vai al pannello di configurazione del server.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
         <source>Discovery</source>
         <translation>Scoperta</translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Disabling this means that forums and channels posts will not be passed from you to this friend, and items coming from this friend will be dropped.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Disattivare questo, significa che i posts in  forums e canali non passeranno date a questo amico, ed elementi provenienti da questo amico saranno scartati.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Forums/Channels</source>
@@ -2102,6 +2179,34 @@ Alcuni servizi (scoperta, routing anonimo) possono essere spenti globalmente, il
     <message>
         <source>Maybe password is wrong</source>
         <translation>Forse password sbagliata</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling anonymous routing will suppress all sending/retrieval of tunnel and anonymous search requests from/to this user. This user will not be able to transfer anonymously through you.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabilitando il routing anonimo sopprimerai tutti gli invi/ricezioni di tunnel e di richieste di ricerca anonime da/a questo utente. Questo utente non sarà in grado di trasferire anonimamente attraverso di te.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;Per cambiare globalmente, vai nel pannello di configurazione alla voce server.</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling discovery removes the sending of public keys of your own friends to this user. Discovery information from this friend will be dropped as well.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabilitando la scoperta impedisce l&apos;invio delle chiavi pubbliche dei tuoi amici a questo utente. Le informazioni di scoperta provenienti da questo amico saranno scartate.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;Per un cambio globale, andare al pannello di configurazione nella scheda server.</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling this means that forums and channels posts will not be passed from you to this friend, and items coming from this friend will be dropped.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabilitare questo vuol dire che i forum e i post sui canali non saranno passati da te a questo amico, e gli elementi provenienti da questo amico saranno scartati.</translation>
+    </message>
+    <message>
+        <source>Use as direct source, when available</source>
+        <translation>Usa come fonte diretta, quando disponibile</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Retroshare periodically checks your friend lists for browsable files matching your transfers, to establish a direct transfer. In this case, your friend knows you&apos;re downloading the file.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;To prevent this behavior for this friend only, uncheck this box. You can still perform a direct transfer if you explicitly ask for it, by e.g. downloading from your friend&apos;s file list. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Retroshare controlla periodicamente la lista dei tuoi amici cercando dei file consultabili che corrispondano ai tuoi trasferimenti, per stabilire un trasferimento diretto. In questo caso, i tuoi amici sapranno che stai scaricando il file.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;Per prevenire questo comportamento soltanto per questo amico, deseleziona questa casella. Puoi sempre stabilire un trasferimento diretto se lo chiedi esplicitamente, per esempio scaricando il file dalla lista dei file dei tuoi amici.</translation>
+    </message>
+    <message>
+        <source>Encryption</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Not connected</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2313,7 +2418,7 @@ Alcuni servizi (scoperta, routing anonimo) possono essere spenti globalmente, il
     </message>
     <message>
         <source>To accept the Friend Request, click the Finish button.</source>
-        <translation type="unfinished"/>
+        <translation>Per accettare la Richiesta di Amicizia, fai clic sul bottone Fine.</translation>
     </message>
     <message>
         <source>Sorry, some error appeared</source>
@@ -2530,6 +2635,14 @@ Alcuni servizi (scoperta, routing anonimo) possono essere spenti globalmente, il
     <message>
         <source>*** None ***</source>
         <translation>*** Nessuno ***</translation>
+    </message>
+    <message>
+        <source>Use as direct source, when available</source>
+        <translation>Usa come fonte diretta, quando disponibile</translation>
+    </message>
+    <message>
+        <source>Direct source</source>
+        <translation>Fonte diretta</translation>
     </message>
 </context>
 <context>
@@ -3022,11 +3135,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>You are about to add files you&apos;re not actually sharing. Do you still want this to happen?</source>
-        <translation type="unfinished"/>
+        <translation>Stai per aggiungere dei file che non stai condividendo veramente. Vuoi comunque che questo succeda?</translation>
     </message>
     <message>
         <source>About to post un-owned files to a channel.</source>
-        <translation type="unfinished"/>
+        <translation>Stai per spedire file non di tua proprietà in un canale.</translation>
     </message>
     <message>
         <source>Drop file error.</source>
@@ -3065,7 +3178,7 @@ p, li { white-space: pre-wrap; }
     <name>CreateCircleDialog</name>
     <message>
         <source>Circle Details</source>
-        <translation type="unfinished"/>
+        <translation>Dettagli della cerchia</translation>
     </message>
     <message>
         <source>Name</source>
@@ -3073,151 +3186,96 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Creator</source>
-        <translation type="unfinished"/>
+        <translation>Creatore</translation>
     </message>
     <message>
         <source>Distribution</source>
-        <translation type="unfinished"/>
+        <translation>Distribuzione</translation>
     </message>
     <message>
         <source>Public</source>
-        <translation type="unfinished"/>
+        <translation>Pubblico</translation>
     </message>
     <message>
         <source>Self-Restricted</source>
-        <translation type="unfinished"/>
+        <translation>Auto-Ristretto</translation>
     </message>
     <message>
         <source>Restricted to:</source>
-        <translation type="unfinished"/>
+        <translation>Ristretto a:</translation>
     </message>
     <message>
         <source>Circle Membership</source>
-        <translation type="unfinished"/>
+        <translation>Appartenenza alle cerchie</translation>
     </message>
     <message>
         <source>IDs</source>
-        <translation type="unfinished"/>
+        <translation>ID</translation>
     </message>
     <message>
         <source>&lt;&lt; Add</source>
-        <translation type="unfinished"/>
+        <translation>&lt;&lt; Aggiungi</translation>
     </message>
     <message>
         <source>&gt;&gt; Remove </source>
-        <translation type="unfinished"/>
+        <translation>&gt;&gt; Rimuovi</translation>
     </message>
     <message>
         <source>Known Identities</source>
-        <translation type="unfinished"/>
+        <translation>Identità conosciute</translation>
     </message>
     <message>
         <source>All PGP IDs</source>
-        <translation type="unfinished"/>
+        <translation>Tutti i PGP ID</translation>
     </message>
     <message>
         <source>Known PGP IDs</source>
-        <translation type="unfinished"/>
+        <translation>IDs PGP conosciuti</translation>
     </message>
     <message>
         <source>Filter</source>
-        <translation type="unfinished"/>
+        <translation>Filtro</translation>
     </message>
     <message>
         <source>Nickname</source>
-        <translation type="unfinished"/>
+        <translation>Soprannome</translation>
     </message>
     <message>
         <source>ID</source>
-        <translation type="unfinished"/>
+        <translation>ID</translation>
     </message>
     <message>
         <source>Type</source>
         <translation>Tipo</translation>
     </message>
     <message>
-        <source>Cancel</source>
-        <translation>Annulla</translation>
-    </message>
-    <message>
-        <source>Create Group</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Start New Thread</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Post Forum Message</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Paste RetroShare Link</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Paste full RetroShare Link</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Paste my certificate link</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>No Forum</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Loading</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>In Reply to</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>RetroShare</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Please set a Forum Subject and Forum Message</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Please choose Signing Id</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Please choose Signing Id, it is required</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Add Extra File</source>
-        <translation type="unfinished"/>
+        <translation>RetroShare</translation>
     </message>
     <message>
         <source>Please set a name for your Circle</source>
-        <translation type="unfinished"/>
+        <translation>Per favore imposta un nome per la tua cerchia</translation>
     </message>
     <message>
         <source>Personal Circle Details</source>
-        <translation type="unfinished"/>
+        <translation>Dettagli del Circolo Personale</translation>
     </message>
     <message>
         <source>External Circle Details</source>
-        <translation type="unfinished"/>
+        <translation>Dettagli del circolo Esterno</translation>
     </message>
     <message>
         <source>Cannot Edit Existing Circles Yet</source>
-        <translation type="unfinished"/>
+        <translation>Impossibile modificare il Circolo esistente adesso
+</translation>
     </message>
     <message>
         <source>No Restriction Circle Selected</source>
-        <translation type="unfinished"/>
+        <translation>Nessuna cerchia ristretta selezionata </translation>
     </message>
     <message>
         <source>No Circle Limitations Selected</source>
-        <translation type="unfinished"/>
+        <translation>Nessuna cerchia limitata selezionata</translation>
     </message>
 </context>
 <context>
@@ -3449,7 +3507,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>New GxsChannel Post</source>
-        <translation type="unfinished"/>
+        <translation>Nuovo Post di un canale Gxs</translation>
     </message>
     <message>
         <source>Paste RetroShare Links</source>
@@ -3461,7 +3519,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>GxsChannel security policy prevents you from posting files that you don&apos;t have. If you have these files, you need to share them before, or attach them explicitly:</source>
-        <translation type="unfinished"/>
+        <translation>Le regole di sicurezza del canale Gxs impediscono che tu possa postare file che non possiedi. Se possiedi questi file devi prima  condividerli o allegarli esplicitamente:</translation>
     </message>
     <message>
         <source>You can only post files that you do have</source>
@@ -3498,6 +3556,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Load thumbnail picture</source>
         <translation>Carica una miniatura d&apos;immagine</translation>
+    </message>
+    <message>
+        <source>Generate mass data</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -3552,11 +3614,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>No Forum</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Loading</source>
-        <translation>Caricamento</translation>
+        <translation>Nessun forum</translation>
     </message>
     <message>
         <source>In Reply to</source>
@@ -3572,15 +3630,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Please choose Signing Id</source>
-        <translation type="unfinished"/>
+        <translation>Per favore scegli Id di Firma</translation>
     </message>
     <message>
         <source>Please choose Signing Id, it is required</source>
-        <translation type="unfinished"/>
+        <translation>Per favore scegli Id di firma, è richiesto</translation>
     </message>
     <message>
         <source>Add Extra File</source>
         <translation>Aggiungi File Extra</translation>
+    </message>
+    <message>
+        <source>Generate mass data</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -3639,6 +3701,85 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>CreateMsgLinkDialog</name>
+    <message>
+        <source>Invite type:</source>
+        <translation>Tipo di invito:</translation>
+    </message>
+    <message>
+        <source>Private chat</source>
+        <translation>Chat privata</translation>
+    </message>
+    <message>
+        <source>Validity time :</source>
+        <translation>Tempo di validità:</translation>
+    </message>
+    <message>
+        <source>hour</source>
+        <translation>ore</translation>
+    </message>
+    <message>
+        <source>day</source>
+        <translation>giorno</translation>
+    </message>
+    <message>
+        <source>week</source>
+        <translation>settimana</translation>
+    </message>
+    <message>
+        <source>month</source>
+        <translation>mese</translation>
+    </message>
+    <message>
+        <source>year</source>
+        <translation>anno</translation>
+    </message>
+    <message>
+        <source>Create!</source>
+        <translation>Crea!</translation>
+    </message>
+    <message>
+        <source>Private chat invite creation failed</source>
+        <translation>Creazione dell&apos;invito alla chat privata fallito</translation>
+    </message>
+    <message>
+        <source>The creation of the chat invite failed</source>
+        <translation>La creazione dell&apos;invito alla chat è fallito</translation>
+    </message>
+    <message>
+        <source>Private chat invite created</source>
+        <translation>Invito alla chat privata creato</translation>
+    </message>
+    <message>
+        <source>Create distant chat invite</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;To create a private chat invite for a non-friend person, select his key below and a validity time for your invite, then press &amp;quot;Create&amp;quot;. The invite will contain the  information required to open a tunnel to chat with you. &lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;The invite is encrypted, and does not reveal your identity. Only the selected peer can decrypt the link, and use it to contact you.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your new chat invite has been created. You can now copy/paste it as a Retroshare link.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Messaging invite creation failed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>The creation of the messaging invite failed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Messaging invite created</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your new messaging chat invite has been copied to clipboard. You can now paste it as a Retroshare link.</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>CryptoPage</name>
     <message>
         <source>Profile</source>
@@ -3662,11 +3803,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Location ID:</source>
-        <translation type="unfinished"/>
+        <translation>ID della località:</translation>
     </message>
     <message>
         <source>Identity ID:</source>
-        <translation type="unfinished"/>
+        <translation>ID dell&apos;identità:</translation>
     </message>
     <message>
         <source>Number of Friends:</source>
@@ -3674,7 +3815,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Software Version:</source>
-        <translation type="unfinished"/>
+        <translation>Versione del software:</translation>
     </message>
     <message>
         <source>Online since:</source>
@@ -3815,7 +3956,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>retroshare link</source>
-        <translation type="unfinished"/>
+        <translation>collegamento retroshare</translation>
     </message>
     <message>
         <source>Copy link to clipboard</source>
@@ -4295,11 +4436,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>File name</source>
-        <translation type="unfinished"/>
+        <translation>Nome del file</translation>
     </message>
     <message>
         <source>Destination folder</source>
-        <translation type="unfinished"/>
+        <translation>Cartella di destinazione</translation>
     </message>
     <message>
         <source>File hash</source>
@@ -4845,6 +4986,14 @@ p, li { white-space: pre-wrap; }
         <source>You can&apos;t reply an Anonymous Author</source>
         <translation>Non puoi rispondere a un autore anonimo</translation>
     </message>
+    <message>
+        <source>Forum Description</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Forums&lt;/h1&gt;                              		  &lt;p&gt;Retroshare Forums look like internet forums, but they work in a decentralized way:                     		  You see forums your friends are subscribed to, and you forward subscribed forums to                      		  your friends. This automatically promotes interesting forums in the network.&lt;/p&gt;                     		  &lt;p&gt;Forums are either Authenticated (&lt;img src=&quot;:/images/konv_message2.png&quot; width=&quot;12&quot;/&gt;) in which case you need to cryptographically sign                      		  your posts, or anonymous (&lt;img src=&quot;:/images/konversation.png&quot; width=&quot;12&quot;/&gt;). The former class is more resistant to spamming.&lt;/p&gt;                 		  &lt;p&gt;Forum posts propagate from friend to friend using small cache file exchanges. When you first connect to a new friend, it&apos;s likely 		  you will receive many such cache files, and new forums will appear. 		  &lt;/p&gt;                                      		</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>ForumsFillThread</name>
@@ -4956,20 +5105,12 @@ p, li { white-space: pre-wrap; }
         <translation>Gruppo Messaggi</translation>
     </message>
     <message>
-        <source>Add Friend</source>
-        <translation>Aggiungi Amico</translation>
-    </message>
-    <message>
         <source>Edit Group</source>
         <translation>Modifica Gruppo</translation>
     </message>
     <message>
         <source>Remove Group</source>
         <translation>Rimuovi Gruppo</translation>
-    </message>
-    <message>
-        <source>Chat lobbies</source>
-        <translation>Gruppi di discussione</translation>
     </message>
     <message>
         <source>Chat</source>
@@ -4986,10 +5127,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Recommend this Friend to...</source>
         <translation>Raccomanda questo Amico a...</translation>
-    </message>
-    <message>
-        <source>Connect To Friend</source>
-        <translation>Connetti Amico</translation>
     </message>
     <message>
         <source>Copy certificate link</source>
@@ -5032,26 +5169,6 @@ p, li { white-space: pre-wrap; }
         <translation>Rimuovi da tutti i gruppi</translation>
     </message>
     <message>
-        <source>Create new</source>
-        <translation>Crea nuovo</translation>
-    </message>
-    <message>
-        <source>Invite this group</source>
-        <translation>Invita questo gruppo</translation>
-    </message>
-    <message>
-        <source>Invite this friend</source>
-        <translation>Invita questo amico</translation>
-    </message>
-    <message>
-        <source>Show</source>
-        <translation>Mostra</translation>
-    </message>
-    <message>
-        <source>Unsubscribe</source>
-        <translation>Revoca</translation>
-    </message>
-    <message>
         <source>Expand all</source>
         <translation>Espandi tutto</translation>
     </message>
@@ -5068,21 +5185,36 @@ p, li { white-space: pre-wrap; }
         <translation>Vuoi rimuovere questo amico?</translation>
     </message>
     <message>
-        <source>Unsubscribe to lobby</source>
-        <translation>Revoca sottoscrizione al gruppo</translation>
-    </message>
-    <message>
-        <source>You are about to unsubscribe a chat lobby&lt;br&gt;You can only re-enter if your friends invite you again.</source>
-        <translation>Stai per revocare sottoscrizione al gruppo di discussione&lt;br&gt;
-Puoi solo riscriverti se gli amici ti invitano.</translation>
-    </message>
-    <message>
         <source>Columns</source>
         <translation>Colonne</translation>
     </message>
     <message>
-        <source>Sort by</source>
-        <translation>Ordina per</translation>
+        <source>IP</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Sort by IP</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show IP Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Attempt to connect</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create new group</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Recommend many friends to each others</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Service permissions matrix</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -5131,11 +5263,11 @@ Puoi solo riscriverti se gli amici ti invitano.</translation>
     <name>FriendSelectionWidget</name>
     <message>
         <source>Search :</source>
-        <translation type="unfinished"/>
+        <translation>Cerca:</translation>
     </message>
     <message>
         <source>All</source>
-        <translation type="unfinished"/>
+        <translation>Tutti</translation>
     </message>
     <message>
         <source>None</source>
@@ -5161,16 +5293,12 @@ Puoi solo riscriverti se gli amici ti invitano.</translation>
         <translation>Mostra</translation>
     </message>
     <message>
-        <source>Add</source>
-        <translation>Aggiungi</translation>
-    </message>
-    <message>
         <source>Edit status message</source>
         <translation>Modificare il messaggio di stato</translation>
     </message>
     <message>
         <source>Broadcast</source>
-        <translation type="unfinished"/>
+        <translation>Trasmetti</translation>
     </message>
     <message>
         <source>Bold</source>
@@ -5281,14 +5409,6 @@ Puoi solo riscriverti se gli amici ti invitano.</translation>
         <translation>Rete locale</translation>
     </message>
     <message>
-        <source>Known people</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Welcome to RetroShare&apos;s group chat.</source>
-        <translation>Benvenuto al gruppo di conversazione di RetroShare</translation>
-    </message>
-    <message>
         <source>Paste RetroShare Link</source>
         <translation>Incolla collegamento RetroShare</translation>
     </message>
@@ -5315,6 +5435,18 @@ Puoi solo riscriverti se gli amici ti invitano.</translation>
     <message>
         <source>Text File (*.txt );;All Files (*)</source>
         <translation>File Testo(*.txt );;Tutti i Files (*)</translation>
+    </message>
+    <message>
+        <source>Keyring</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Friends&lt;/h1&gt;                                   		  &lt;p&gt;The Friends tab shows...your friends: the list of persons you have accepted to connect to.                   		  &lt;/p&gt;                                                   		  &lt;p&gt;You can group friends together to allow a finer level of information access, for instance to only allow      		  some friends to see some files.&lt;/p&gt; 		  &lt;p&gt;On the right, you will find 3 useful tabs:                                                                   		  &lt;ul&gt;	                                                                                                         		  		&lt;li&gt;Broadcast sends messages to all connected friends at once&lt;/li&gt;                             		  		&lt;li&gt;Local Network shows the network around you, including friends of your friends&lt;/li&gt;                 		  		&lt;li&gt;Keyring contains keys you collected, mostly forwarded to you by your friends&lt;/li&gt;                              		  &lt;/ul&gt; &lt;/p&gt;                                                                                                      		</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Retroshare broadcast chat: messages are sent to all connected friends.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -5695,10 +5827,6 @@ Compila la tua password PGP quando richiesto, per firmare la nuova chiave.</tran
         <translation>Non mostrare la finestra Esci da RetroShare</translation>
     </message>
     <message>
-        <source>Do not Minimize to Tray Icon</source>
-        <translation>Non ridurre in icona nel riquadro sistema</translation>
-    </message>
-    <message>
         <source>Auto Login</source>
         <translation>Login automatico</translation>
     </message>
@@ -5724,7 +5852,7 @@ Compila la tua password PGP quando richiesto, per firmare la nuova chiave.</tran
     </message>
     <message>
         <source>Launch startup wizard</source>
-        <translation type="unfinished"/>
+        <translation>Fai partire la configurazione guidata di avvio</translation>
     </message>
     <message>
         <source>Error</source>
@@ -5741,6 +5869,10 @@ Compila la tua password PGP quando richiesto, per firmare la nuova chiave.</tran
     <message>
         <source>General</source>
         <translation>Generale</translation>
+    </message>
+    <message>
+        <source>Minimize to Tray Icon</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -5986,35 +6118,35 @@ p, li { white-space: pre-wrap; }
     <name>GroupFlagsWidget</name>
     <message>
         <source>Directory is browsable for friends from groups</source>
-        <translation type="unfinished"/>
+        <translation>La cartella è consultabile per gli amici appartenenti ai gruppi</translation>
     </message>
     <message>
         <source>Directory is NOT browsable for friends from groups</source>
-        <translation type="unfinished"/>
+        <translation>La cartella NON è accessibile agli amici appartenenti ai gruppi</translation>
     </message>
     <message>
         <source>Directory is accessible by anonymous tunnels from friends from groups</source>
-        <translation type="unfinished"/>
+        <translation>La cartella è accessibile da tunnel anonimi provenienti dagli amici appartenenti ai gruppi</translation>
     </message>
     <message>
         <source>Directory is NOT accessible by anonymous tunnels from friends from groups</source>
-        <translation type="unfinished"/>
+        <translation>La cartella NON è accessibile attraverso tunnel anonimi provenienti dagli amici appartenenti ai gruppi</translation>
     </message>
     <message>
         <source>Directory is browsable for any friend</source>
-        <translation type="unfinished"/>
+        <translation>La cartella è consultabile per qualunque amico</translation>
     </message>
     <message>
         <source>Directory is NOT browsable for any friend</source>
-        <translation type="unfinished"/>
+        <translation>La cartella non è accessibile per alcun amico</translation>
     </message>
     <message>
         <source>Directory is accessible by anonymous tunnels from any friend</source>
-        <translation type="unfinished"/>
+        <translation>La cartella è accessibile attraverso tunnel anonimi provenienti da qualsiasi amico</translation>
     </message>
     <message>
         <source>Directory is NOT accessible by anonymous tunnels from any friend</source>
-        <translation type="unfinished"/>
+        <translation>La cartella NON è accessibile attraverso tunnel anonimi provenienti da alcun amico</translation>
     </message>
     <message>
         <source>All your friends can browse this directory</source>
@@ -6166,10 +6298,6 @@ p, li { white-space: pre-wrap; }
         <translation>Canali</translation>
     </message>
     <message>
-        <source>refresh</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Display</source>
         <translation>Mostra</translation>
     </message>
@@ -6262,20 +6390,24 @@ p, li { white-space: pre-wrap; }
         <source>No Channel Selected</source>
         <translation>Nessun canale scelto</translation>
     </message>
+    <message>
+        <source>Todo</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>GxsChannelGroupDialog</name>
     <message>
         <source>Create New Channel</source>
-        <translation type="unfinished"/>
+        <translation>Crea un Nuovo Canale</translation>
     </message>
     <message>
         <source>Channel</source>
-        <translation type="unfinished"/>
+        <translation>Canale</translation>
     </message>
     <message>
         <source>Edit Channel</source>
-        <translation type="unfinished"/>
+        <translation>Modifica Canale</translation>
     </message>
 </context>
 <context>
@@ -6338,7 +6470,7 @@ p, li { white-space: pre-wrap; }
     <name>GxsCommentContainer</name>
     <message>
         <source>Comment Container</source>
-        <translation type="unfinished"/>
+        <translation>Commenta Contenitore</translation>
     </message>
 </context>
 <context>
@@ -6361,7 +6493,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Voter ID:</source>
-        <translation type="unfinished"/>
+        <translation>ID del votante:</translation>
     </message>
     <message>
         <source>Refresh</source>
@@ -6385,15 +6517,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>UpVotes</source>
-        <translation type="unfinished"/>
+        <translation>Voti a favore</translation>
     </message>
     <message>
         <source>DownVotes</source>
-        <translation type="unfinished"/>
+        <translation>Voti a sfavore</translation>
     </message>
     <message>
         <source>OwnVote</source>
-        <translation type="unfinished"/>
+        <translation>Voti propri</translation>
     </message>
 </context>
 <context>
@@ -6420,19 +6552,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Show Reputation</source>
-        <translation type="unfinished"/>
+        <translation>Mostra reputazione</translation>
     </message>
     <message>
         <source>Interesting User</source>
-        <translation type="unfinished"/>
+        <translation>Utenti interessanti</translation>
     </message>
     <message>
         <source>Mark Spammy</source>
-        <translation type="unfinished"/>
+        <translation>Contrassegna come spam</translation>
     </message>
     <message>
         <source>Ban User</source>
-        <translation type="unfinished"/>
+        <translation>Banna l&apos;Utente</translation>
     </message>
 </context>
 <context>
@@ -6451,16 +6583,17 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Signed by</source>
-        <translation type="unfinished"/>
+        <translation>FIrmato da</translation>
     </message>
     <message>
         <source>Comment Signing Error</source>
-        <translation type="unfinished"/>
+        <translation>Commenta Errore nella Firma</translation>
     </message>
     <message>
         <source>You need to create an Identity
 before you can comment</source>
-        <translation type="unfinished"/>
+        <translation>È necessario creare un&apos;identità
+prima che tu possa commentare</translation>
     </message>
 </context>
 <context>
@@ -6545,12 +6678,8 @@ before you can comment</source>
         <translation>Successivo non letto</translation>
     </message>
     <message>
-        <source>Refresh</source>
-        <translation>Aggiorna</translation>
-    </message>
-    <message>
         <source>Search Title</source>
-        <translation>Ricerca titolo</translation>
+        <translation>Ricerca Titolo</translation>
     </message>
     <message>
         <source>Search Date</source>
@@ -6651,6 +6780,18 @@ before you can comment</source>
     <message>
         <source>You cant reply to an Anonymous Author</source>
         <translation>Non puoi rispondere a un autore anonimo</translation>
+    </message>
+    <message>
+        <source>Forum Description</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Forum:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Thread:</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6760,6 +6901,10 @@ before you can comment</source>
         <source>On %1, %2 wrote:</source>
         <translation>Su %1, %2 scrive:</translation>
     </message>
+    <message>
+        <source>Todo</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>GxsForumsFillThread</name>
@@ -6792,7 +6937,7 @@ before you can comment</source>
     </message>
     <message>
         <source>Key recipients can publish to restricted-type group and can view and publish for private-type channels</source>
-        <translation type="unfinished"/>
+        <translation>I destinatari della chiave possono pubblicare nei canali di tipo limitato, e vedere e pubblicare in questi canali.</translation>
     </message>
     <message>
         <source>Share Publish Key</source>
@@ -6892,6 +7037,21 @@ before you can comment</source>
     </message>
     <message>
         <source>Invalid Circle Selection - Personal disabled for now</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>GxsIdChooser</name>
+    <message>
+        <source>Loading</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Not found</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No Signature</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -7155,10 +7315,6 @@ p, li { white-space: pre-wrap; }
         <translation>Nuovo ID</translation>
     </message>
     <message>
-        <source>Showing:</source>
-        <translation>Visualizzo:</translation>
-    </message>
-    <message>
         <source>Yourself</source>
         <translation>Tu stesso</translation>
     </message>
@@ -7177,10 +7333,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>All</source>
         <translation>Tutto</translation>
-    </message>
-    <message>
-        <source>filter</source>
-        <translation>filtro</translation>
     </message>
     <message>
         <source>Nickname</source>
@@ -7235,10 +7387,6 @@ p, li { white-space: pre-wrap; }
         <translation>Nome PGP</translation>
     </message>
     <message>
-        <source>PGP Email</source>
-        <translation>Email PGP</translation>
-    </message>
-    <message>
         <source>PGP Id</source>
         <translation>ID PGP</translation>
     </message>
@@ -7264,14 +7412,42 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Rating</source>
-        <translation type="unfinished"/>
+        <translation>Valutazione</translation>
     </message>
     <message>
         <source>Comment</source>
-        <translation type="unfinished"/>
+        <translation>Commento</translation>
     </message>
     <message>
         <source>Local Reputation</source>
+        <translation>Reputazione locale</translation>
+    </message>
+    <message>
+        <source>Todo</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Search</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP Linked Id</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Anon Id</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown real name</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Anonymous Id</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -7290,20 +7466,12 @@ p, li { white-space: pre-wrap; }
         <translation>Nome PGP</translation>
     </message>
     <message>
-        <source>PGP Email</source>
-        <translation>Email PGP</translation>
-    </message>
-    <message>
         <source>PGP Hash</source>
         <translation>Segmento PGP</translation>
     </message>
     <message>
         <source>PGP Id</source>
         <translation>ID PGP</translation>
-    </message>
-    <message>
-        <source>New Identity</source>
-        <translation>Nuova identità</translation>
     </message>
     <message>
         <source>PGP Associated ID</source>
@@ -7314,12 +7482,36 @@ p, li { white-space: pre-wrap; }
         <translation>Pseudonimo</translation>
     </message>
     <message>
-        <source>Cancel</source>
-        <translation>Annulla</translation>
+        <source>New identity</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Create/Update ID</source>
-        <translation>Creare o aggiornare ID</translation>
+        <source>To be generated</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>N/A</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Edit identity</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Error getting key!</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Error KeyID invalid</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown GpgId</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown real name</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7395,10 +7587,6 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>MainWindow</name>
     <message>
-        <source>MainWindow</source>
-        <translation>Finestra principale</translation>
-    </message>
-    <message>
         <source>Add Friend</source>
         <translation>Aggiungi amico</translation>
     </message>
@@ -7440,7 +7628,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>News feed</source>
-        <translation type="unfinished"/>
+        <translation>Annuncio notizie</translation>
     </message>
     <message>
         <source>Friends</source>
@@ -7448,11 +7636,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>File sharing</source>
-        <translation type="unfinished"/>
+        <translation>Condivisione dei file</translation>
     </message>
     <message>
         <source>Chat Lobbies</source>
-        <translation type="unfinished"/>
+        <translation>Gruppi Discussione</translation>
     </message>
     <message>
         <source>Messages</source>
@@ -7606,11 +7794,11 @@ Libera un po&apos; di spazio e clicca OK.</translation>
     </message>
     <message>
         <source>Make sure this link has not been forged to drag you to a malicious website.</source>
-        <translation type="unfinished"/>
+        <translation>Accertati che questo link non sia stato creato per condurti a siti malevoli.</translation>
     </message>
     <message>
         <source>Don&apos;t ask me again</source>
-        <translation type="unfinished"/>
+        <translation>Non me lo chiedere nuovamente</translation>
     </message>
     <message>
         <source>It seems to be an old RetroShare link. Please use copy instead.</source>
@@ -8044,6 +8232,14 @@ Vuoi salvarlo?</translation>
         <source>Add Extra File</source>
         <translation>Aggiungi File Extra</translation>
     </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Cryptographically sign message to distant peers. This is prevents intermediate peers to spoof your identity.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Distant peer (name: %2, PGP key: %1)</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>MessagePage</name>
@@ -8098,6 +8294,18 @@ Vuoi salvarlo?</translation>
     <message>
         <source>Message</source>
         <translation>Messaggio</translation>
+    </message>
+    <message>
+        <source>Distant messages:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;The link below allows people in the network to send encrypted messages to you, using tunnels. To do that, they need your public PGP key, which they will get using the Retroshare discovery system. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Accept encrypted distant messages from everyone</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -8607,6 +8815,50 @@ ricerca</translation>
         <source>Total:</source>
         <translation>Totale:</translation>
     </message>
+    <message>
+        <source>Decrypt Message</source>
+        <translation>Decifra Messaggio</translation>
+    </message>
+    <message>
+        <source>Encrypted message. Right-click to decrypt it.</source>
+        <translation>Messaggio cifrato. Fare clic col tasto destro per decrittare.</translation>
+    </message>
+    <message>
+        <source>Decryption failed!</source>
+        <translation>Decifrazione fallita!</translation>
+    </message>
+    <message>
+        <source>This message could not be decrypted.</source>
+        <translation>Questo messaggio non può essere decifrato.</translation>
+    </message>
+    <message>
+        <source>Messages</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Click to sort by signature</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Messages&lt;/h1&gt;                         			 &lt;p&gt;Messages are like &lt;b&gt;e-mail&lt;/b&gt;: you send/receive them from your friends when both of you	are connected.&lt;/p&gt; 			 &lt;p&gt;It is also possible to send messages to non friends, using tunnels. Such messages are always encrypted. It is 			 recommended to cryptographically sign distant messages, as a proof of your identity, using the &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; button 			 in the message composer window. Distant messages are not guarrantied to arrive, since this requires the distant peer to accept them (You need yourself to switch this on in Config-Messages).&lt;/p&gt;			 &lt;p&gt;Some additional features allow you to exchange data in messages: you may recommend files to your friends by pasting file links, 			 or recommend friends-to-be to other friends, in order to streathen your network.&lt;/p&gt;	                   			 </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This message is encrypted. Right click to decrypt it.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This message was signed and the signature checks</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This message was signed but the signature doesn&apos;t check</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This message is not encrypted. Cannot decrypt!</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>MessengerWindow</name>
@@ -8741,15 +8993,11 @@ ricerca</translation>
     <name>NetworkDialog</name>
     <message>
         <source>Filter:</source>
-        <translation type="unfinished"/>
+        <translation>Filtro:</translation>
     </message>
     <message>
         <source>Search Network</source>
         <translation>Cerca rete</translation>
-    </message>
-    <message>
-        <source>Show all accessible keys</source>
-        <translation type="unfinished"/>
     </message>
     <message>
         <source>Name</source>
@@ -8773,7 +9021,7 @@ ricerca</translation>
     </message>
     <message>
         <source>Last used</source>
-        <translation type="unfinished"/>
+        <translation>Ultimi usati</translation>
     </message>
     <message>
         <source>Clear</source>
@@ -8845,7 +9093,7 @@ ricerca</translation>
     </message>
     <message>
         <source>Export my certificate...</source>
-        <translation type="unfinished"/>
+        <translation>Esporta il mio certificato</translation>
     </message>
     <message>
         <source>Peer details...</source>
@@ -8857,11 +9105,11 @@ ricerca</translation>
     </message>
     <message>
         <source>Remove unused keys...</source>
-        <translation type="unfinished"/>
+        <translation>Rimuovi chiavi non usate...</translation>
     </message>
     <message>
         <source>Clean keyring</source>
-        <translation type="unfinished"/>
+        <translation>Pulisci il portachiavi</translation>
     </message>
     <message>
         <source>The selected keys below haven't been used in the last 3 months. 
@@ -8869,18 +9117,25 @@ Do you want to delete them permanently ?
 
 Notes: Your old keyring will be backed up.
     The removal may fail when running multiple Retroshare instances on the same machine.</source>
-        <translation type="unfinished"/>
+        <translation>Le chiavi selezionate di seguito non sono state usate negli ultimi 3 mesi.
+Vuoi cancellarle permanentemente?
+
+Nota: Il tuo vecchio portachiavi sarà salvato.
+La rimozione potrebbe fallire quando istanze multiple di Retroshare sono in esecuzione sulla stessa macchina.</translation>
     </message>
     <message>
         <source>Keyring info</source>
-        <translation type="unfinished"/>
+        <translation>Informazioni sul Portachiavi</translation>
     </message>
     <message>
         <source>%1 keys have been deleted from your keyring. 
 For security, your keyring was previously backed-up to file 
 
 </source>
-        <translation type="unfinished"/>
+        <translation>%1 chiavi sono state cancellate dal tuo portachiavi.
+Per sicurezza, il tuo portachiavi è stato precedentemente salvato su di un file
+
+</translation>
     </message>
     <message>
         <source>Unknown error</source>
@@ -8888,17 +9143,19 @@ For security, your keyring was previously backed-up to file
     </message>
     <message>
         <source>Cannot delete secret keys</source>
-        <translation type="unfinished"/>
+        <translation>Impossibile cancellare le chiavi segrete</translation>
     </message>
     <message>
         <source>Cannot create backup file. Check for permissions in pgp directory, disk space, etc.</source>
-        <translation type="unfinished"/>
+        <translation>Impossibile creare il file di salvataggio, Controlla i permessi sulla cartella di pgp, lo spazio sul disco, ecc.</translation>
     </message>
     <message>
         <source>Key removal has failed. Your keyring remains intact.
 
 Reported error: </source>
-        <translation type="unfinished"/>
+        <translation>La rimozione della chiave è fallita. Il tuo portachiavi è rimasto intatto.
+
+Errore riportato:</translation>
     </message>
     <message>
         <source>Personal signature</source>
@@ -8930,11 +9187,11 @@ Reported error: </source>
     </message>
     <message>
         <source>Last hour</source>
-        <translation type="unfinished"/>
+        <translation>Ultima ora</translation>
     </message>
     <message>
         <source>Today</source>
-        <translation type="unfinished"/>
+        <translation>Oggi</translation>
     </message>
     <message>
         <source>Never</source>
@@ -8942,7 +9199,7 @@ Reported error: </source>
     </message>
     <message>
         <source>%1 days ago</source>
-        <translation type="unfinished"/>
+        <translation>%1 giorni fa</translation>
     </message>
     <message>
         <source> has authenticated you. 
@@ -8955,7 +9212,11 @@ Clic-destro e seleziona &apos;fatti amico&apos; per poterti connettere.</transla
         <translation>te stesso</translation>
     </message>
     <message>
-        <source>Data iconsistency in the keyring. This is most probably a bug. Please contact the developers.</source>
+        <source>Data inconsistency in the keyring. This is most probably a bug. Please contact the developers.</source>
+        <translation>Inconsistenza nei dati nel portachiavi. Questo è molto probabilmente un bug. Per favore contatta gli sviluppatori.</translation>
+    </message>
+    <message>
+        <source>Only show people you trusted</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -9021,6 +9282,10 @@ Clic-destro e seleziona &apos;fatti amico&apos; per poterti connettere.</transla
     <message>
         <source>This is a test.</source>
         <translation>Questo è un test.</translation>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;News Feed&lt;/h1&gt;                                                          		  &lt;p&gt;The News Feed displays the last events on your network, sorted by the time you received them.                		  This gives you a summary of the activity of your friends.                                                       		  You can configure which events to show by pressing on &lt;b&gt;Options&lt;/b&gt;. &lt;/p&gt;                                      		  &lt;p&gt;The various events shown are:                                                                                		  &lt;ul&gt;	                                                                                                         		  		&lt;li&gt;Connection attempts (useful to make friends with new people and control who&apos;s trying to reach you)&lt;/li&gt; 		  		&lt;li&gt;Channel and Forum posts&lt;/li&gt;                                                                            		  		&lt;li&gt;New Channels and Forums you can subscribe to&lt;/li&gt;                                                       		  		&lt;li&gt;Private messages from your friends&lt;/li&gt;                                                                 		  &lt;/ul&gt; &lt;/p&gt;                                                                                                      		</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -9183,11 +9448,11 @@ Clic-destro e seleziona &apos;fatti amico&apos; per poterti connettere.</transla
     </message>
     <message>
         <source>For the chat lobbies to work properly, the time of your computer needs to be correct. Please check that this is the case (A possible time shift of several minutes was detected with your friends). </source>
-        <translation type="unfinished"/>
+        <translation>Perché i gruppi di interesse funzionino correttamente, l&apos;orario del tuo computer deve essere corretto. Per favore controlla che questo sia il tuo caso (Una probabile differenza di diversi minuti è stata rilevata con i tuoi amici).</translation>
     </message>
     <message>
         <source>Please check your system clock.</source>
-        <translation type="unfinished"/>
+        <translation>Per favore controlla l&apos;orologio di sistema.</translation>
     </message>
     <message>
         <source>Examining shared files...</source>
@@ -9759,6 +10024,25 @@ ti protegge da comportamenti o moduli dannosi.</translation>
     </message>
 </context>
 <context>
+    <name>PopupDistantChatDialog</name>
+    <message>
+        <source>Distant chat terminated</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>The person you&apos;re talking to has deleted the secured chat tunnel. You may remove the chat window now.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Closing this window will end the conversation, notify the peer and remove the encrypted tunnel.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Kill the tunnel?</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>PostedCreatePostDialog</name>
     <message>
         <source>Create Post</source>
@@ -9782,7 +10066,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Signed by: </source>
-        <translation type="unfinished"/>
+        <translation>Firmato da:</translation>
     </message>
     <message>
         <source>Notes</source>
@@ -9794,13 +10078,13 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Please create or choose a Signing Id first</source>
-        <translation type="unfinished"/>
+        <translation>Per favore crea o scegli un Id per firmare prima</translation>
     </message>
 </context>
 <context>
     <name>PostedDialog</name>
     <message>
-        <source>Posted</source>
+        <source>Posted Links</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -9820,11 +10104,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add Topic Admins</source>
-        <translation type="unfinished"/>
+        <translation>Aggiungi Amministratore degli Argomenti</translation>
     </message>
     <message>
         <source>Select Topic Admins</source>
-        <translation type="unfinished"/>
+        <translation>Seleziona Amministratore degli Argomenti</translation>
     </message>
 </context>
 <context>
@@ -9863,11 +10147,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Comments</source>
-        <translation type="unfinished"/>
+        <translation>Commenti</translation>
     </message>
     <message>
         <source>Comment</source>
-        <translation type="unfinished"/>
+        <translation>Commento</translation>
     </message>
 </context>
 <context>
@@ -9887,10 +10171,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Top</source>
         <translation>In alto</translation>
-    </message>
-    <message>
-        <source>Refresh</source>
-        <translation>Aggiornamento</translation>
     </message>
     <message>
         <source>Today</source>
@@ -9950,23 +10230,23 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Subscribe</source>
-        <translation type="unfinished"/>
+        <translation>Sottoscrivi</translation>
     </message>
     <message>
         <source>Unsubscribe</source>
-        <translation type="unfinished"/>
+        <translation>Annulla sottoscrizione</translation>
     </message>
     <message>
         <source>Showing</source>
-        <translation type="unfinished"/>
+        <translation>Mostro</translation>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished"/>
+        <translation>RetroShare</translation>
     </message>
     <message>
         <source>Please create or choose a Signing Id before Voting</source>
-        <translation type="unfinished"/>
+        <translation>Per favore crea o scegli un Id per firmare prima di votare</translation>
     </message>
 </context>
 <context>
@@ -10005,18 +10285,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Profile Manager</source>
         <translation>Gestore Profilo</translation>
-    </message>
-    <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Select an identity from the list below to be used on another computer, and press &amp;quot;Export selected identity&amp;quot;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;To use it on a different computer,  select the identity manager in the login window. From there you can import the identity file and create a new location for that identity. &lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;When keeping the same identity for your new  location, your friends will automatically accept you.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
     </message>
     <message>
         <source>Identities</source>
@@ -10099,6 +10367,18 @@ Ora puoi copiarla su un altro computer e utilizzare il pulsante Importa per cari
     <message>
         <source>Certificates (*.pqi *.pem)</source>
         <translation>Certificati (*.pqi *.pem)</translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:11pt;&quot;&gt;Select an identity from the list below to be used on another computer, and press &amp;quot;Export selected identity&amp;quot;&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Ubuntu'; font-size:11pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:11pt;&quot;&gt;To use it on a different computer,  select the identity manager in the login window. From there you can import the identity file and create a new location for that identity. &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Ubuntu'; font-size:11pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;When keeping the same identity for your new  location, your friends will automatically accept you.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -10250,7 +10530,7 @@ Ora puoi copiarla su un altro computer e utilizzare il pulsante Importa per cari
     </message>
     <message>
         <source>Participants: </source>
-        <translation type="unfinished"/>
+        <translation>Partecipanti:</translation>
     </message>
     <message>
         <source>Confirmation</source>
@@ -10258,7 +10538,7 @@ Ora puoi copiarla su un altro computer e utilizzare il pulsante Importa per cari
     </message>
     <message>
         <source>Do you want this link to be handled by your system?</source>
-        <translation type="unfinished"/>
+        <translation>Vuoi che questo link sia gestito dal tuo sistema?</translation>
     </message>
     <message>
         <source>Click to add this RetroShare cert to your PGP keyring
@@ -10517,6 +10797,70 @@ Blocco del file:
     <message>
         <source>Start with a RetroShare link is only supported for Windows.</source>
         <translation>Avviare RetroShare con un collegamento è supportato solo in Windows.</translation>
+    </message>
+    <message>
+        <source>Select who can contact you:</source>
+        <translation>Seleziona chi può contattarti:</translation>
+    </message>
+    <message>
+        <source>Chat link is expired</source>
+        <translation>Il link della chat è scaduto</translation>
+    </message>
+    <message>
+        <source>This chat link is expired. The destination peer will not answer.</source>
+        <translation>Questo collegamento alla conversazione è scaduto. Il destinatario non risponderà.</translation>
+    </message>
+    <message>
+        <source>Chat link cannot be decrypted</source>
+        <translation>Il link alla conversazione non può essere decifrato</translation>
+    </message>
+    <message>
+        <source>The link could not be decrypted.</source>
+        <translation>Il link non può essere decifrato.</translation>
+    </message>
+    <message>
+        <source>The link signature cannot be checked.</source>
+        <translation>La firma sul collegamento non può essere controllata.</translation>
+    </message>
+    <message>
+        <source>The link is signed by an unknown key.</source>
+        <translation>Il collegamento è firmato da una chiave sconosciuta.</translation>
+    </message>
+    <message>
+        <source>Hash error</source>
+        <translation>Errore nell&apos;hash</translation>
+    </message>
+    <message>
+        <source>Distant peer has closed the chat</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Tunnel is pending...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Messaging link is expired</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This Messaging link is expired. The destination peer will not receive it.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This chat link is encrypted with a key that is not yours. You can&apos;t use it. Key ID = </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Chat connection is not possible</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Secured tunnel established. Waiting for ACK...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Secured tunnel is working. You can talk!</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -11038,7 +11382,7 @@ Riduzione immagine a %1x%2 pixel?</translation>
     </message>
     <message>
         <source>Browsable files</source>
-        <translation type="unfinished"/>
+        <translation>File consultabili</translation>
     </message>
     <message>
         <source>Multi-hop search at distance 6 in the network 
@@ -11047,7 +11391,7 @@ Riduzione immagine a %1x%2 pixel?</translation>
     </message>
     <message>
         <source>Distant</source>
-        <translation type="unfinished"/>
+        <translation>Lontana</translation>
     </message>
     <message>
         <source>Include files from your own file list in the search result</source>
@@ -11055,7 +11399,7 @@ Riduzione immagine a %1x%2 pixel?</translation>
     </message>
     <message>
         <source>Own files</source>
-        <translation type="unfinished"/>
+        <translation>Propri files</translation>
     </message>
     <message>
         <source>Close all Search Results</source>
@@ -11103,7 +11447,7 @@ Riduzione immagine a %1x%2 pixel?</translation>
     </message>
     <message>
         <source>Filter:</source>
-        <translation type="unfinished"/>
+        <translation>Filtro:</translation>
     </message>
     <message>
         <source>Filter Search Result</source>
@@ -11111,7 +11455,7 @@ Riduzione immagine a %1x%2 pixel?</translation>
     </message>
     <message>
         <source>Max results:</source>
-        <translation type="unfinished"/>
+        <translation>Numero massimo di risultati:</translation>
     </message>
     <message>
         <source>Any</source>
@@ -11294,7 +11638,7 @@ Riduzione immagine a %1x%2 pixel?</translation>
     </message>
     <message>
         <source>Connection refused by remote peer</source>
-        <translation type="unfinished"/>
+        <translation>Connessione rifiutata dal contatto remoto</translation>
     </message>
     <message>
         <source>Unknown (Incoming) Connect Attempt</source>
@@ -11410,7 +11754,7 @@ hanno bisogno di darsi fiducia reciproca per permettere la connessione. </transl
     </message>
     <message>
         <source>Known / Previous IPs:</source>
-        <translation type="unfinished"/>
+        <translation>IP conosciuti / precedenti:</translation>
     </message>
     <message>
         <source>Show Discovery information in statusbar</source>
@@ -11433,7 +11777,7 @@ behind a firewall or a VPN.</source>
     </message>
     <message>
         <source>Max Transfer Rates</source>
-        <translation type="unfinished"/>
+        <translation>Massima velocità di trasferimento:</translation>
     </message>
     <message>
         <source>Download (KB/s) </source>
@@ -11461,19 +11805,19 @@ behind a firewall or a VPN.</source>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Unchecking this disables all anonymous routing activity, except cache cleaning. Incoming tunnel requests are discarded, and no tunnel requests are sent to anyone.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Deselezionando questa casella disabilita tutte le attività di routing anonime, tranne la pulizia della cache. Le richieste in ingresso tunnel vengono scartate, e nessuna richiesta di tunnel verrà mandata &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Enabled</source>
-        <translation type="unfinished"/>
+        <translation>Abilitato</translation>
     </message>
     <message>
         <source>Show routing info</source>
-        <translation type="unfinished"/>
+        <translation>Mostra informazione di routing</translation>
     </message>
     <message>
         <source>Max. tunnel req. forwarded per second:</source>
-        <translation type="unfinished"/>
+        <translation>Massimo numero di richieste di tunnel inoltrate per secondo:</translation>
     </message>
     <message>
         <source>This value controls how many tunnel request your peer can forward per second. 
@@ -11498,7 +11842,7 @@ Il valore predefinito è 20.</translation>
     <name>ServicePermissionDialog</name>
     <message>
         <source>Service permissions</source>
-        <translation type="unfinished"/>
+        <translation>Autorizzazioni del servizio</translation>
     </message>
     <message>
         <source>Anonymous routing</source>
@@ -12275,7 +12619,7 @@ Tuttavia si consiglia di lasciare almeno qualche entrata per i file in memoria.<
     </message>
     <message>
         <source>Progressive</source>
-        <translation type="unfinished"/>
+        <translation>Progressivo</translation>
     </message>
     <message>
         <source>Random</source>
@@ -12382,10 +12726,6 @@ p, li { white-space: pre-wrap; }
         <translation>Tempo scaricamento</translation>
     </message>
     <message>
-        <source>Core-ID</source>
-        <translation>ID centrale</translation>
-    </message>
-    <message>
         <source>Peer</source>
         <comment>i.e: user name</comment>
         <translation>Contatto</translation>
@@ -12414,7 +12754,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Friends files</source>
-        <translation type="unfinished"/>
+        <translation>Files degli amici</translation>
     </message>
     <message>
         <source>My files</source>
@@ -12426,7 +12766,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Download from collection file...</source>
-        <translation type="unfinished"/>
+        <translation>Scarica da una collezione di file</translation>
     </message>
     <message>
         <source>Pause</source>
@@ -12510,7 +12850,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Progressive</source>
-        <translation type="unfinished"/>
+        <translation>Progressivo</translation>
     </message>
     <message>
         <source>Play</source>
@@ -12518,11 +12858,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Rename file...</source>
-        <translation type="unfinished"/>
+        <translation>Rinomina il file...</translation>
     </message>
     <message>
         <source>Specify...</source>
-        <translation type="unfinished"/>
+        <translation>Specifica...</translation>
     </message>
     <message>
         <source>Move in Queue...</source>
@@ -12538,11 +12878,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Set destination directory</source>
-        <translation type="unfinished"/>
+        <translation>Imposta la cartella di destinazione</translation>
     </message>
     <message>
         <source>Choose directory</source>
-        <translation type="unfinished"/>
+        <translation>Scegli la cartella</translation>
     </message>
     <message>
         <source>Failed</source>
@@ -12647,14 +12987,115 @@ Cerca di essere paziente!</translation>
     </message>
     <message>
         <source>Change file name</source>
-        <translation type="unfinished"/>
+        <translation>Cambia il nome del file</translation>
     </message>
     <message>
         <source>Please enter a new file name</source>
-        <translation type="unfinished"/>
+        <translation>Per favore inserisci un nuovo nome del file</translation>
     </message>
     <message>
         <source>Please enter a new--and valid--filename</source>
+        <translation>Per favore inserisci un nuovo--e valido--nome per il file</translation>
+    </message>
+    <message>
+        <source>Last Time Seen</source>
+        <comment>i.e: Last Time Receiced Data</comment>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>UserID</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>File Never Seen</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Expand all</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Collapse all</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show Size Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show Completed Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Speed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show Speed Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Progress / Availability</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show Progress / Availability Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Sources</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show Sources Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show Status Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show Speed / Queue position Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show Remaining Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Download time</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show Download time Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show Hash Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Last Time Seen</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show Last Time Seen Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Columns</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>File Transfers</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;File Transfer&lt;/h1&gt;                                                         			 &lt;p&gt;Retroshare brings two ways of transferring files: direct transfers from your friends, and                                     			 distant anonymous tunnelled transfers. In addition, file transfer is multi-source and allows swarming                                      			 (you can be a source while downloading)&lt;/p&gt;                                     			 &lt;p&gt;You can share files using the &lt;img src=&quot;:/images/directoryadd_24x24_shadow.png&quot; width=16 /&gt; icon from the left side bar. 				These files will be listed in the My Files tab. You can decide for each friend group whether they can or not see these files 				in their Friends Files tab&lt;/p&gt;			 &lt;p&gt;The search tab reports files from your friends&apos; file lists, and distant files that can be reached 			 anonymously using the multi-hop tunnelling system.&lt;/p&gt; 			 </source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -12881,6 +13322,13 @@ Cerca di essere paziente!</translation>
     </message>
 </context>
 <context>
+    <name>UIStateHelper</name>
+    <message>
+        <source>Loading</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>ULListDelegate</name>
     <message>
         <source>B</source>
@@ -13076,15 +13524,15 @@ Cerca di essere paziente!</translation>
     </message>
     <message>
         <source>Page Name</source>
-        <translation type="unfinished"/>
+        <translation>Nome della Pagina</translation>
     </message>
     <message>
         <source>Page Id</source>
-        <translation type="unfinished"/>
+        <translation>Id della pagina</translation>
     </message>
     <message>
         <source>Orig Id</source>
-        <translation type="unfinished"/>
+        <translation>Id originale</translation>
     </message>
     <message>
         <source>&lt;&lt;</source>
@@ -13116,27 +13564,27 @@ Cerca di essere paziente!</translation>
     </message>
     <message>
         <source>My Groups</source>
-        <translation type="unfinished"/>
+        <translation>I miei Gruppi</translation>
     </message>
     <message>
         <source>Subscribed Groups</source>
-        <translation type="unfinished"/>
+        <translation>Gruppi sottoscritti</translation>
     </message>
     <message>
         <source>Popular Groups</source>
-        <translation type="unfinished"/>
+        <translation>Gruppi popolari</translation>
     </message>
     <message>
         <source>Other Groups</source>
-        <translation type="unfinished"/>
+        <translation>Altri Gruppi</translation>
     </message>
     <message>
         <source>Subscribe to Group</source>
-        <translation type="unfinished"/>
+        <translation>Sottoscrivi il Gruppo</translation>
     </message>
     <message>
         <source>Unsubscribe to Group</source>
-        <translation type="unfinished"/>
+        <translation>Annulla sottoscrizione al Gruppo</translation>
     </message>
 </context>
 <context>
