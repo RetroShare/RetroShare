@@ -85,9 +85,11 @@
 #define IMAGE_PRIORITYNORMAL			 ":/images/prioritynormal.png"
 #define IMAGE_PRIORITYHIGH			   ":/images/priorityhigh.png"
 #define IMAGE_PRIORITYAUTO			   ":/images/priorityauto.png"
-#define IMAGE_SEARCH    		      ":/images/filefind.png"
-#define IMAGE_EXPAND             ":/images/edit_add24.png"
-#define IMAGE_COLLAPSE           ":/images/edit_remove24.png"
+#define IMAGE_SEARCH    		        ":/images/filefind.png"
+#define IMAGE_EXPAND                ":/images/edit_add24.png"
+#define IMAGE_COLLAPSE              ":/images/edit_remove24.png"
+#define IMAGE_FRIENDSFILES          ":/images/fileshare16.png"
+#define IMAGE_MYFILES               ":images/my_documents_16.png"
 
 Q_DECLARE_METATYPE(FileProgressInfo) 
 
@@ -321,9 +323,9 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     QObject::connect(ui.downloadList->selectionModel(),SIGNAL(selectionChanged (const QItemSelection&, const QItemSelection&)),this,SLOT(showFileDetails())) ;
 
 	 ui.tabWidget->insertTab(2,searchDialog = new SearchDialog(), QIcon(IMAGE_SEARCH), tr("Search")) ;
-	 ui.tabWidget->insertTab(3,remoteSharedFiles = new RemoteSharedFilesDialog(), QIcon(IMAGE_SEARCH), tr("Friends files")) ;
+	 ui.tabWidget->insertTab(3,remoteSharedFiles = new RemoteSharedFilesDialog(), QIcon(IMAGE_FRIENDSFILES), tr("Friends files")) ;
 
-	 ui.tabWidget->addTab(localSharedFiles = new LocalSharedFilesDialog(), QIcon(IMAGE_SEARCH), tr("My files")) ;
+	 ui.tabWidget->addTab(localSharedFiles = new LocalSharedFilesDialog(), QIcon(IMAGE_MYFILES), tr("My files")) ;
 
 	 //ui.tabWidget->addTab( new TurtleRouterStatistics(), tr("Router Statistics")) ;
 	 //ui.tabWidget->addTab( new TurtleRouterDialog(), tr("Router Requests")) ;

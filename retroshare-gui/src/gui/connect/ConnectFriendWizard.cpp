@@ -86,7 +86,7 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
 
 // we have no good pictures for watermarks
 //	setPixmap(QWizard::WatermarkPixmap, QPixmap(":/images/connectFriendWatermark.png"));
-	setPixmap(QWizard::BannerPixmap, QPixmap(":/images/connect/connectFriendBanner.png"));
+	setPixmap(QWizard::BannerPixmap, QPixmap(":/images/connect/connectFriendBanner1.png"));
 
 	/* register global fields */
 	ui->ErrorMessagePage->registerField("errorMessage", ui->messageLabel, "text");

@@ -154,7 +154,7 @@
 #define IMAGE_TWOONLINE         ":/images/rstray2.png"
 #define IMAGE_BLOGS             ":/images/kblogger.png"
 #define IMAGE_DHT               ":/images/dht16.png"
-#define IMAGE_CHATLOBBY			":/images/user/agt_forum32.png"
+#define IMAGE_CHATLOBBY			":/images/chat_32.png"
 
 /*static*/ MainWindow *MainWindow::_instance = NULL;
 

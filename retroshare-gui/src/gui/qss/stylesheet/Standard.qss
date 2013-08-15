@@ -10,7 +10,7 @@ QFrame#titleBarFrame, QFrame#toolBarFrame {
 /* HeaderFrame */
 
 HeaderFrame > QFrame#frame {
-	background-image: url(:/images/headerFrame.png);
+	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #9BDBF9, stop:1 #1592CD);
 	border: 0px;
 }
 
@@ -36,19 +36,19 @@ GenCertDialog > QFrame#frame {
 /* ProfileManager */
 
 ProfileManager > QFrame#frame {
-	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FEFEFE, stop:1 #E8E8E8);
+	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #9BDBF9, stop:1 #1592CD);
 	border: 1px solid #CCCCCC;
 }
 
 /* FriendsDialog */
 
 FriendsDialog QFrame#headFrame {
-	background-image: url(:/images/headerFrame.png);
+	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #9BDBF9, stop:1 #1592CD);
 	border: 0px;
 }
 
 FriendsDialog QFrame#headFrame > QLabel#nicknameLabel {
-	color: rgb(50, 205, 50);
+	color: rgb(255, 255, 255);
 }
 
 FriendsDialog QTextEdit#msgText, FriendsDialog QTextEdit#lineEdit {
@@ -134,7 +134,8 @@ ChatWidget QFrame#infoFrame {
 /* Messages */
 
 MessageComposer > QToolBar#toolBar  {
-	background-image: url(:/images/headerFrame.png);
+	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #9BDBF9, stop:1 #1592CD);
+
 }
 
 MessagesDialog QFrame#folderFrame, MessagesDialog QFrame#quickViewFrame {

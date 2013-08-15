@@ -35,7 +35,10 @@
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="images.qrc">:/images/user/agt_forum24.png</pixmap>
+         <pixmap resource="images.qrc">:/images/chat_22.png</pixmap>
+        </property>
+        <property name="scaledContents">
+         <bool>false</bool>
         </property>
        </widget>
       </item>

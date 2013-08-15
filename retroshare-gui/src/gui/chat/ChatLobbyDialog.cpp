@@ -89,7 +89,7 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::WF
 
 	{
 	QIcon icon ;
-	icon.addPixmap(QPixmap(":/images/deletemail24.png")) ;
+	icon.addPixmap(QPixmap(":/images/exit_32.png")) ;
 	unsubscribeButton->setIcon(icon) ;
 	unsubscribeButton->setIconSize(QSize(22,22)) ;
 	}

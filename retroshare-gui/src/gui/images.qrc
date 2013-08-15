@@ -136,7 +136,10 @@
         <file>images/button_cancel.png</file>
         <file>images/calendar.png</file>
         <file>images/chat.png</file>
+        <file>images/chat_22.png</file>
         <file>images/chat_24.png</file>
+        <file>images/chat_32.png</file>
+        <file>images/chat_64.png</file>
         <file>images/cancel.png</file>
         <file>images/close-down.png</file>
         <file>images/close_normal.png</file>
@@ -170,6 +173,7 @@
         <file>images/disabled_plugin_48.png</file>
         <file>images/evolution.png</file>
         <file>images/exit_24x24.png</file>
+        <file>images/exit_32.png</file>
         <file>images/expand_frame.png</file>
         <file>images/exportpeers_16x16.png</file>
         <file>images/extension_32.png</file>
@@ -251,6 +255,7 @@
         <file>images/hide_frame.png</file>
         <file>images/highlight.png</file>
         <file>images/hi16-app-ktorrent.png</file>
+        <file>images/hi24-app-ktorrent.png</file>
         <file>images/hot_0.png</file>
         <file>images/hot_1.png</file>
         <file>images/hot_2.png</file>
@@ -330,6 +335,7 @@
         <file>images/messenger.png</file>
         <file>images/mute-off-16.png</file>
         <file>images/mute-on-16.png</file>
+        <file>images/my_documents_16.png</file>
         <file>images/network.png</file>
         <file>images/network16.png</file>
         <file>images/network32.png</file>
@@ -621,6 +627,7 @@
         <file>images/connect/connectFriendWatermark.png</file>
         <file>images/connect/connectFriendLogo.png</file>
         <file>images/connect/connectFriendBanner.png</file>
+        <file>images/connect/connectFriendBanner1.png</file>
         <file>images/connect/info16.png</file>
         <file>images/connect/mail_send.png</file>
         <file>help/version.html</file>
