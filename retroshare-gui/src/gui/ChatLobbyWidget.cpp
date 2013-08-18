@@ -33,8 +33,8 @@
 #define TYPE_LOBBY        1
 
 #define IMAGE_CREATE      ""
-#define IMAGE_PUBLIC      ""
-#define IMAGE_PRIVATE     ""
+#define IMAGE_PUBLIC      ":/images/chat_x24.png"
+#define IMAGE_PRIVATE     ":/images/chat_red24.png"
 #define IMAGE_UNSUBSCRIBE   ""
 #define IMAGE_SUBSCRIBE   ""
 #define IMAGE_PEER_ENTERING  ":images/user/add_user24.png"
@@ -85,12 +85,14 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WFlags flags)
 	privateLobbyItem = new RSTreeWidgetItem(compareRole, TYPE_FOLDER);
 	privateLobbyItem->setText(COLUMN_NAME, tr("Private Lobbies"));
 	privateLobbyItem->setData(COLUMN_NAME, ROLE_SORT, "1");
+	privateLobbyItem->setIcon(COLUMN_NAME, QIcon(IMAGE_PRIVATE));
 	privateLobbyItem->setData(COLUMN_DATA, ROLE_PRIVACYLEVEL, RS_CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE);
 	lobbyTreeWidget->insertTopLevelItem(0, privateLobbyItem);
 
 	publicLobbyItem = new RSTreeWidgetItem(compareRole, TYPE_FOLDER);
 	publicLobbyItem->setText(COLUMN_NAME, tr("Public Lobbies"));
 	publicLobbyItem->setData(COLUMN_NAME, ROLE_SORT, "2");
+	publicLobbyItem->setIcon(COLUMN_NAME, QIcon(IMAGE_PUBLIC));
 	publicLobbyItem->setData(COLUMN_DATA, ROLE_PRIVACYLEVEL, RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC);
 	lobbyTreeWidget->insertTopLevelItem(1, publicLobbyItem);
 
