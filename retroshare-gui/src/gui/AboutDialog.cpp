@@ -24,7 +24,7 @@
 #include "HelpDialog.h"
 
 #include <retroshare/rsdisc.h>
-#include <retroshare/rsiface.h>
+#include <retroshare/rspeers.h>
 #include "settings/rsharesettings.h"
 
 #include <QtGui/QHBoxLayout>
@@ -53,9 +53,8 @@ AboutDialog::AboutDialog(QWidget* parent)
     /* get libretroshare version */
     std::map<std::string, std::string>::iterator vit;
     std::map<std::string, std::string> versions;
-    const RsConfig &conf = rsiface->getConfig();
     bool retv = rsDisc->getDiscVersions(versions);
-    if (retv && versions.end() != (vit = versions.find(conf.ownId)))
+    if (retv && versions.end() != (vit = versions.find(rsPeers->getOwnId())))
     {
       QString version = QString::fromStdString(vit->second);
       setWindowTitle(tr("About RetroShare %1").arg(version));    
@@ -140,9 +139,8 @@ void AboutDialog::updateTitle() {
         /* get libretroshare version */
         std::map<std::string, std::string>::iterator vit;
         std::map<std::string, std::string> versions;
-        const RsConfig &conf = rsiface->getConfig();
         bool retv = rsDisc->getDiscVersions(versions);
-        if (retv && versions.end() != (vit = versions.find(conf.ownId)))
+        if (retv && versions.end() != (vit = versions.find(rsPeers->getOwnId())))
         {
 
         QString version = QString::fromStdString(vit->second);
@@ -188,9 +186,8 @@ AWidget::AWidget() {
     /* get libretroshare version */
     std::map<std::string, std::string>::iterator vit;
     std::map<std::string, std::string> versions;
-    const RsConfig &conf = rsiface->getConfig();
     bool retv = rsDisc->getDiscVersions(versions);
-    if (retv && versions.end() != (vit = versions.find(conf.ownId)))
+    if (retv && versions.end() != (vit = versions.find(rsPeers->getOwnId())))
     {
 	    QString version = QString::fromStdString("RetroShare version : \n") + QString::fromStdString(vit->second);
       p.drawText(QRect(10, 20, width()-10, 60), version);

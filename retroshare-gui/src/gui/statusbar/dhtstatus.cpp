@@ -25,7 +25,7 @@
 #include <QIcon>
 #include <QPixmap>
 
-#include "retroshare/rsiface.h"
+#include "retroshare/rsconfig.h"
 #include "retroshare/rspeers.h"
 
 #include "util/misc.h"
@@ -66,10 +66,10 @@ DHTStatus::DHTStatus(QWidget *parent)
 
 void DHTStatus::getDHTStatus()
 {
-	rsiface->lockData(); /* Lock Interface */
 
 	/* now the extra bit .... switch on check boxes */
-	const RsConfig &config = rsiface->getConfig();
+	RsConfigNetStatus config;
+	rsConfig->getConfigNetStatus(config);
 
 	if (!(config.DHTActive))
 	{
@@ -114,9 +114,6 @@ void DHTStatus::getDHTStatus()
 				dhtnetworksizeLabel->setText(QString("%1 (%2)").arg(misc::userFriendlyUnit(config.netDhtRsNetSize, 1)).arg(misc::userFriendlyUnit(config.netDhtNetSize, 1)));
 				dhtnetworksizeLabel->setToolTip(tr("RetroShare users in DHT (Total DHT users)") );
 			}
-				
-		
-
 		}
 		else
 		{
@@ -132,6 +129,4 @@ void DHTStatus::getDHTStatus()
 			dhtnetworksizeLabel->setToolTip("");
 		}
 	}
-	rsiface->unlockData(); /* UnLock Interface */
-
 }

@@ -108,11 +108,8 @@ int main(int argc, char *argv[])
 
 	Q_INIT_RESOURCE(images);
 
-	rsiface = NULL;
-
 	NotifyQt *notify = NotifyQt::Create();
-	createRsIface(*notify);
-	createRsControl(*rsiface, *notify);
+	createRsControl(*notify);
 
 	/* RetroShare Core Objects */
 	RsInit::InitRsConfig();

@@ -778,7 +778,6 @@ void ConnectFriendWizard::generateCertificateCalled()
 
 void ConnectFriendWizard::updatePeersList(int index)
 {
-	rsiface->unlockData(); /* UnLock Interface */
 
 	ui->selectedPeersTW->clearContents();
 	ui->selectedPeersTW->setRowCount(0);

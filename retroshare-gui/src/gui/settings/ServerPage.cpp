@@ -31,7 +31,6 @@
 #include <retroshare/rsconfig.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsturtle.h>
-#include <retroshare/rsiface.h>
 
 #include <QTimer>
 
@@ -259,31 +258,26 @@ void ServerPage::updateStatus()
 
 
 	// Now update network bits.
-	//
-	rsiface->lockData(); /* Lock Interface */
-
-	/* now the extra bit .... switch on check boxes */
-	const RsConfig &config = rsiface->getConfig();
-
+	RsConfigNetStatus net_status;
+	rsConfig->getConfigNetStatus(net_status);
 
 	/******* Network Status Tab *******/
 
-	if(config.netUpnpOk)
+	if(net_status.netUpnpOk)
 		ui.iconlabel_upnp->setPixmap(QPixmap(":/images/ledon1.png"));
 	else
 		ui.iconlabel_upnp->setPixmap(QPixmap(":/images/ledoff1.png"));
 
-	if (config.netLocalOk)
+	if (net_status.netLocalOk)
 		ui.iconlabel_netLimited->setPixmap(QPixmap(":/images/ledon1.png"));
 	else
 		ui.iconlabel_netLimited->setPixmap(QPixmap(":/images/ledoff1.png"));
 
-	if (config.netExtraAddressOk)
+	if (net_status.netExtAddressOk)
 		ui.iconlabel_ext->setPixmap(QPixmap(":/images/ledon1.png"));
 	else
 		ui.iconlabel_ext->setPixmap(QPixmap(":/images/ledoff1.png"));
 
-	rsiface->unlockData(); /* UnLock Interface */
 }
 
 void ServerPage::toggleUPnP()
