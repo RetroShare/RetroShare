@@ -51,8 +51,8 @@ int rsserverzone = 101;
 #define WARN_BIG_CYCLE_TIME	(0.2)
 
 
-RsServer::RsServer(RsIface &i, NotifyBase &callback)
-	:RsControl(i, callback), coreMutex("RsServer")
+RsServer::RsServer(NotifyBase &callback)
+	:RsControl(callback), coreMutex("RsServer")
 {
 	ftserver = NULL;
 
@@ -232,8 +232,6 @@ void 	RsServer::run()
 #ifdef	DEBUG_TICK
 					std::cerr << "RsServer::run() Updates()" << std::endl;
 #endif
-					UpdateAllConfig();
-
 
 					mConfigMgr->tick(); /* saves stuff */
 

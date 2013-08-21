@@ -1824,9 +1824,9 @@ RsTurtle *rsTurtle = NULL ;
 #include "services/p3dsdv.h"
 
 
-RsControl *createRsControl(RsIface &iface, NotifyBase &notify)
+RsControl *createRsControl(NotifyBase &notify)
 {
-	RsServer *srv = new RsServer(iface, notify);
+	RsServer *srv = new RsServer(notify);
 	rsicontrol = srv;
 	return srv;
 }

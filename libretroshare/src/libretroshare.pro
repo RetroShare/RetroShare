@@ -493,7 +493,6 @@ SOURCES +=	rsserver/p3discovery.cc \
 			rsserver/p3msgs.cc \
 			rsserver/p3peers.cc \
 			rsserver/p3status.cc \
-			rsserver/rsiface.cc \
 			rsserver/rsinit.cc \
 			rsserver/rsloginhandler.cc \
 			rsserver/rstypes.cc \

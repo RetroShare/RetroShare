@@ -27,6 +27,9 @@
 #include "rsserver/p3serverconfig.h"
 #include "services/p3bwctrl.h"
 
+#include "pqi/authgpg.h"
+#include "pqi/authssl.h"
+
 RsServerConfig *rsConfig = NULL;
 
 static const std::string pqih_ftr("PQIH_FTR");
@@ -137,16 +140,50 @@ bool p3ServerConfig::setConfigurationOption(uint32_t key, const std::string &opt
 	return true;
 }
 
-
 	/* From RsIface::RsConfig */
-
-int 	p3ServerConfig::getConfigNetStatus(RsConfigNetStatus &/*status*/)
+int 	p3ServerConfig::getConfigNetStatus(RsConfigNetStatus &status)
 {
-	return 0;
+	status.ownId = AuthSSL::getAuthSSL()->OwnId();
+	status.ownName = AuthGPG::getAuthGPG()->getGPGOwnName();
+
+	// Details from PeerMgr.
+	peerState pstate;
+	mPeerMgr->getOwnNetStatus(pstate);
+
+	status.localAddr = rs_inet_ntoa(pstate.localaddr.sin_addr);
+	status.localPort = ntohs(pstate.localaddr.sin_port);
+
+	status.extAddr = rs_inet_ntoa(pstate.serveraddr.sin_addr);
+	status.extPort = ntohs(pstate.serveraddr.sin_port);
+	status.extDynDns = pstate.dyndns;
+
+	status.firewalled = true;
+	status.forwardPort  = true;
+
+	/* update network configuration */
+	pqiNetStatus nstatus;
+	mNetMgr->getNetStatus(nstatus);
+
+	status.netLocalOk = nstatus.mLocalAddrOk;
+	status.netUpnpOk  = nstatus.mUpnpOk;
+	status.netStunOk  = false;
+	status.netExtAddressOk = nstatus.mExtAddrOk;
+
+	status.netDhtOk   = nstatus.mDhtOk;
+	status.netDhtNetSize = nstatus.mDhtNetworkSize;
+	status.netDhtRsNetSize = nstatus.mDhtRsNetworkSize;
+
+	/* update DHT/UPnP status */
+	status.uPnPState  = mNetMgr->getUPnPState();
+	status.uPnPActive = mNetMgr->getUPnPEnabled();
+	status.DHTActive  = mNetMgr->getDHTEnabled();
+
+	return 1;
 }
 
 int 	p3ServerConfig::getConfigStartup(RsConfigStartup &/*params*/)
 {
+        //status.promptAtBoot = true; /* popup the password prompt */
 	return 0;
 }
 

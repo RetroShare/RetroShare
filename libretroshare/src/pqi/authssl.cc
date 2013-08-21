@@ -326,7 +326,10 @@ static  int initLib = 0;
 	sslctx = SSL_CTX_new(TLSv1_method());
 
 	// setup cipher lists.
-	SSL_CTX_set_cipher_list(sslctx, "DEFAULT");
+	std::string cipherString = "HIGH:!DSS:!aNULL:!3DES";
+	//SSL_CTX_set_cipher_list(sslctx, "DEFAULT");
+	SSL_CTX_set_cipher_list(sslctx, cipherString.c_str());
+
 
 	// certificates (Set Local Server Certificate).
 	FILE *ownfp = RsDirUtil::rs_fopen(cert_file, "r");

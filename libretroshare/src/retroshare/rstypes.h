@@ -99,58 +99,6 @@ enum DwlSpeed 		{ 	SPEED_LOW 		= 0x00,
 
 
 
-/* matched to the uPnP states */
-#define UPNP_STATE_UNINITIALISED  0
-#define UPNP_STATE_UNAVAILABILE   1
-#define UPNP_STATE_READY          2
-#define UPNP_STATE_FAILED_TCP     3
-#define UPNP_STATE_FAILED_UDP     4
-#define UPNP_STATE_ACTIVE         5
-
-class RsConfig
-{
-	public:
-		RsConfig()
-		{
-			localPort = extPort = 0 ;
-			firewalled = forwardPort = false ;
-			promptAtBoot = 0 ;
-			DHTActive = uPnPActive = netLocalOk = netUpnpOk = netDhtOk = netStunOk = netExtraAddressOk = false ;
-			uPnPState = DHTPeers = 0 ;
-		}
-		std::string		ownId;
-		std::string		ownName;
-
-		std::string		localAddr;
-		int			localPort;
-		std::string		extAddr;
-		int			extPort;
-		std::string		extName;
-
-		bool			firewalled;
-		bool			forwardPort;
-
-		int			promptAtBoot; /* popup the password prompt */
-
-		/* older data types */
-		bool			DHTActive;
-		bool			uPnPActive;
-
-		int			uPnPState;
-		int			DHTPeers;
-
-		/* Flags for Network Status */
-		bool 			netLocalOk;     /* That we've talked to someone! */
-		bool			netUpnpOk; /* upnp is enabled and active */
-		bool			netDhtOk;  /* response from dht */
-		bool			netStunOk;  /* recvd stun / udp packets */
-		bool			netExtraAddressOk;  /* recvd ip address with external finder*/
-
-		uint32_t		netDhtNetSize;  /* response from dht */
-		uint32_t		netDhtRsNetSize;  /* response from dht */
-
-};
-
 /********************** For Search Interface *****************/
 
 /* This is still rough, implement later! */

@@ -544,7 +544,7 @@ RsTurtleGenericDataItem::RsTurtleGenericDataItem(void *data,uint32_t pktsize)
 
 	if(data_bytes != NULL)
 	{
-		memcpy(data_bytes,data+offset,data_size) ;
+		memcpy(data_bytes,(void *)((uint8_t *)data+offset),data_size) ;
 		offset += data_size ;
 	}
 	else
@@ -585,7 +585,7 @@ bool RsTurtleGenericDataItem::serialize(void *data,uint32_t& pktsize)
 	ok &= setRawUInt32(data, tlvsize, &offset, tunnel_id);
 	ok &= setRawUInt32(data, tlvsize, &offset, data_size);
 
-	memcpy(data+offset,data_bytes,data_size) ;
+	memcpy((void *)((uint8_t *)data+offset),data_bytes,data_size) ;
 	offset += data_size ;
 
 	if (offset != tlvsize)

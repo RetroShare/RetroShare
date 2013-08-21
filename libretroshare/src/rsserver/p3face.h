@@ -87,7 +87,7 @@ class RsServer: public RsControl, public RsThread
 		/****************************************/
 		/* p3face.cc: main loop / util fns / locking. */
 
-		RsServer(RsIface &i, NotifyBase &callback);
+		RsServer(NotifyBase &callback);
 		virtual ~RsServer();
 
 		/* Thread Fn: Run the Core */
@@ -153,8 +153,6 @@ class RsServer: public RsControl, public RsThread
 		 * i.e. releases all held resources and saves current configuration
 		 */
 		virtual void 	rsGlobalShutDown( ); 
-	private:
-		int UpdateAllConfig();
 
 		/****************************************/
 

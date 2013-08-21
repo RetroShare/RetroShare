@@ -66,68 +66,6 @@ int     RsServer::ConfigSetBootPrompt( bool /*on*/ )
 	return 1;
 }
 
-
-int RsServer::UpdateAllConfig()
-{
-	/* fill the rsiface class */
-	RsIface &iface = getIface();
-
-	/* lock Mutexes */
-	lockRsCore();     /* LOCK */
-	iface.lockData(); /* LOCK */
-
- 	RsConfig &config = iface.mConfig;
-
-        config.ownId = AuthSSL::getAuthSSL()->OwnId();
-        config.ownName = AuthGPG::getAuthGPG()->getGPGOwnName();
-	peerState pstate;
-        mPeerMgr->getOwnNetStatus(pstate);
-
-	/* ports */
-	config.localAddr = rs_inet_ntoa(pstate.localaddr.sin_addr);
-	config.localPort = ntohs(pstate.localaddr.sin_port);
-
-	config.firewalled = true;
-	config.forwardPort  = true;
-	
-	config.extAddr = rs_inet_ntoa(pstate.serveraddr.sin_addr);
-	config.extPort = ntohs(pstate.serveraddr.sin_port);
-	config.promptAtBoot = true; /* popup the password prompt */      
-
-	/* update network configuration */
-
-	pqiNetStatus status;	
-	mNetMgr->getNetStatus(status);
-
-	config.netLocalOk = status.mLocalAddrOk;  
-	config.netUpnpOk  = status.mUpnpOk;
-	config.netStunOk  = false;
-	config.netExtraAddressOk = status.mExtAddrOk;
-
-	config.netDhtOk   = status.mDhtOk;
-	config.netDhtNetSize = status.mDhtNetworkSize;
-	config.netDhtRsNetSize = status.mDhtRsNetworkSize;
-
-	/* update DHT/UPnP config */
-
-	config.uPnPState  = mNetMgr->getUPnPState();
-	config.uPnPActive = mNetMgr->getUPnPEnabled();
-	config.DHTPeers   = 20;
-	config.DHTActive  = mNetMgr->getDHTEnabled();
-
-	/* Notify of Changes */
-//	iface.setChanged(RsIface::Config);
-	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_CONFIG, NOTIFY_TYPE_MOD);
-
-	/* unlock Mutexes */
-	iface.unlockData(); /* UNLOCK */
-	unlockRsCore();     /* UNLOCK */
-
-	return 1;
-
-
-}
-
 void    RsServer::ConfigFinalSave()
 {
 	/* force saving of transfers TODO */

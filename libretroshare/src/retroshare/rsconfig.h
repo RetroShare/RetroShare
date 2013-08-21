@@ -182,8 +182,10 @@ class RsConfigNetStatus
 	{
 		localPort = extPort = 0 ;
 		firewalled = forwardPort = false ;
-		DHTActive = uPnPActive = netLocalOk = netUpnpOk = netDhtOk = netStunOk = netExtraAddressOk = false ;
-		uPnPState = DHTPeers = 0 ;
+		DHTActive = uPnPActive = netLocalOk = netUpnpOk = netDhtOk = netStunOk = netExtAddressOk = false ;
+		uPnPState = 0 ;
+		//DHTPeers = 0 ;
+		
 	}
 
 	std::string		ownId;
@@ -193,7 +195,7 @@ class RsConfigNetStatus
 	int			localPort;
 	std::string		extAddr;
 	int			extPort;
-	std::string		extName;
+	std::string		extDynDns;
 
 	bool			firewalled;
 	bool			forwardPort;
@@ -203,14 +205,13 @@ class RsConfigNetStatus
 	bool			uPnPActive;
 
 	int			uPnPState;
-	int			DHTPeers;
 
 	/* Flags for Network Status */
 	bool 			netLocalOk;     /* That we've talked to someone! */
 	bool			netUpnpOk; /* upnp is enabled and active */
 	bool			netDhtOk;  /* response from dht */
 	bool			netStunOk;  /* recvd stun / udp packets */
-	bool			netExtraAddressOk;  /* recvd ip address with external finder*/
+	bool			netExtAddressOk;  /* from Dht/Stun or External IP Finder */
 
 	uint32_t		netDhtNetSize;  /* response from dht */
 	uint32_t		netDhtRsNetSize;  /* response from dht */

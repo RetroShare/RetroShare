@@ -32,15 +32,12 @@
 #include <map>
 
 class NotifyBase;
-class RsIface;
 class RsControl;
 class RsInit;
 class RsPeerCryptoParams;
 struct TurtleFileInfo ;
 
 /* declare single RsIface for everyone to use! */
-
-extern RsIface   *rsiface;
 extern RsControl *rsicontrol;
 
 /* RsInit -> Configuration Parameters for RetroShare Startup
@@ -71,76 +68,15 @@ bool  RsClearAutoLogin(std::string basedir);
 // Handle actual Login.
 int LoadCertificates(RsInit *config, bool autoLoginNT);
 
-RsIface   *createRsIface  (NotifyBase &notify);
-RsControl *createRsControl(RsIface &iface, NotifyBase &notify);
-
-
-class RsIface /* The Main Interface Class - create a single one! */
-{
-public:
-	RsIface(NotifyBase &callback)
-	:cb(callback) { return; }
-	virtual ~RsIface() { return; }
-
-/****************************************/
-
-	/* Stubs for Very Important Fns -> Locking Functions */
-virtual	void lockData() = 0;
-virtual	void unlockData() = 0;
-
-	const RsConfig &getConfig()
-		{ return mConfig; }
-/****************************************/
-
-
-	/* Flags to indicate used or not */
-	enum DataFlags
-	{
-		Neighbour = 0,
-		Friend = 1,
-		DirLocal = 2,  /* Not Used - QModel instead */
-		DirRemote = 3, /* Not Used - QModel instead */
-		Transfer = 4,
-		Message = 5,
-		Channel = 6,
-		Chat = 7,
-		Recommend = 8,
-		Config = 9,
-		NumOfFlags = 10
-	};
-
-
-	/* 
-	 * Operations for flags
-	 */
-
-bool	setChanged(DataFlags set); /* set to true */
-bool	getChanged(DataFlags set); /* leaves it */
-bool	hasChanged(DataFlags set); /* resets it */
-
-	private:
-
-void	fillLists(); /* create some dummy data to display */
-
-		/* Internals */
-	bool mChanged[NumOfFlags];
-
-	RsConfig mConfig;
-
-	NotifyBase &cb;
-
-	/* Classes which can update the Lists! */
-	friend class RsControl;
-	friend class RsServer; 
-};
+RsControl *createRsControl(NotifyBase &notify);
 
 
 class RsControl /* The Main Interface Class - for controlling the server */
 {
 	public:
 
-		RsControl(RsIface &i, NotifyBase &callback)
-			:cb(callback), rsIface(i) { return; }
+		RsControl(NotifyBase &callback)
+			:cb(callback) { return; }
 
 		virtual ~RsControl() { return; }
 
@@ -165,13 +101,11 @@ class RsControl /* The Main Interface Class - for controlling the server */
 		/****************************************/
 
 		NotifyBase & getNotify() { return cb; }
-		RsIface    & getIface()  { return rsIface; }
 
 		virtual bool getPeerCryptoDetails(const std::string& ssl_id,RsPeerCryptoParams& params) = 0;
 
 	private:
 		NotifyBase &cb;
-		RsIface    &rsIface;
 };
 
 
