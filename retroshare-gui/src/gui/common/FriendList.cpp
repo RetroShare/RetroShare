@@ -69,6 +69,7 @@
 #define IMAGE_REMOVE             ":/images/delete.png"
 #define IMAGE_EXPAND             ":/images/edit_add24.png"
 #define IMAGE_COLLAPSE           ":/images/edit_remove24.png"
+#define IMAGE_PERMISSIONS        ":/images/admin-16.png"
 /* Images for Status icons */
 #define IMAGE_AVAILABLE          ":/images/user/identityavaiblecyan24.png"
 #define IMAGE_CONNECT2           ":/images/reload24.png"
@@ -507,7 +508,7 @@ void FriendList::peerTreeWidgetCostumPopupMenu()
     contextMnu.addSeparator();
 
     contextMnu.addAction(QIcon(IMAGE_EXPAND), tr("Recommend many friends to each others"), this, SLOT(recommendFriends()));
-    contextMnu.addAction(QIcon(IMAGE_EXPAND), tr("Service permissions matrix"), this, SLOT(servicePermission()));
+    contextMnu.addAction(QIcon(IMAGE_PERMISSIONS), tr("Service permissions matrix"), this, SLOT(servicePermission()));
 
     contextMnu.addSeparator();
 
