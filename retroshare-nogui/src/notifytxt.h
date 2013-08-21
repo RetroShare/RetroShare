@@ -37,7 +37,6 @@ class NotifyTxt: public NotifyBase
 	public:
 		NotifyTxt():mNotifyMtx("NotifyMtx") { return; }
 		virtual ~NotifyTxt() { return; }
-		void setRsIface(RsIface *i) { iface = i; }
 
 		virtual void notifyListChange(int list, int type);
 		virtual void notifyErrorMsg(int list, int sev, std::string msg);
@@ -68,9 +67,6 @@ class NotifyTxt: public NotifyBase
 		void displayMessages();
 		void displayChannels();
 		void displayTransfers();
-
-		RsIface *iface; /* so we can get the data */
-
 
 		/* store TurtleSearchResults */
 		RsMutex mNotifyMtx;

@@ -184,51 +184,33 @@ void NotifyTxt::displayFriends()
 
 void NotifyTxt::displayDirectories()
 {
-	iface->lockData(); /* Lock Interface */
-
 	std::ostringstream out;
 	std::cerr << out.str();
-
-	iface->unlockData(); /* UnLock Interface */
 }
 
 
 void NotifyTxt::displaySearch()
 {
-	iface->lockData(); /* Lock Interface */
-
 	std::ostringstream out;
 	std::cerr << out.str();
-
-	iface->unlockData(); /* UnLock Interface */
 }
 
 
 void NotifyTxt::displayMessages()
 {
-	iface->lockData(); /* Lock Interface */
-	iface->unlockData(); /* UnLock Interface */
 }
 
 void NotifyTxt::displayChannels()
 {
-	iface->lockData(); /* Lock Interface */
-
 	std::ostringstream out;
 	std::cerr << out.str();
-
-	iface->unlockData(); /* UnLock Interface */
 }
 
 
 void NotifyTxt::displayTransfers()
 {
-	iface->lockData(); /* Lock Interface */
-
 	std::ostringstream out;
 	std::cerr << out.str();
-
-	iface->unlockData(); /* UnLock Interface */
 }
 
 

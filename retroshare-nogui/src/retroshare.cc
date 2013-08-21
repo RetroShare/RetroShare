@@ -234,11 +234,8 @@ int main(int argc, char **argv)
 	 * if you want to receive notifications of events */
 
 	NotifyTxt *notify = new NotifyTxt();
-	RsIface *iface = createRsIface(*notify);
-	RsControl *rsServer = createRsControl(*iface, *notify);
+	RsControl *rsServer = createRsControl(*notify);
 	rsicontrol = rsServer ;
-
-	notify->setRsIface(iface);
 
 	std::string preferredId, gpgId, gpgName, gpgEmail, sslName;
 	RsInit::getPreferedAccountId(preferredId);
