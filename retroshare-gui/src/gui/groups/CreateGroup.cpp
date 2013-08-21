@@ -64,6 +64,7 @@ CreateGroup::CreateGroup(const std::string &groupId, QWidget *parent)
 			}
 
 			setWindowTitle(tr("Edit Group"));
+			ui.headerFrame->setHeaderImage(QPixmap(":/images/user/edit_group64.png"));
 			ui.headerFrame->setHeaderText(tr("Edit Group"));
 
 			ui.groupName->setDisabled(mIsStandard);
