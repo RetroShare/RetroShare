@@ -1177,6 +1177,7 @@ int 	pqissl::Extract_Failed_SSL_Certificate()
 	std::string sslcn = getX509CNString(peercert->cert_info->subject);
 
 	AuthSSL::getAuthSSL()->FailedCertificate(peercert, gpgid,sslid,sslcn,remote_addr, false);
+	mLinkMgr->notifyDeniedConnection(gpgid, sslid, sslcn, remote_addr, false);
 
 	return 1;
 }

@@ -78,6 +78,7 @@ const ServicePermissionFlags RS_SERVICE_PERM_ALL        =  RS_SERVICE_PERM_TURTL
 // ...
 
 /* Connect state */
+const uint32_t RS_PEER_CONNECTSTATE_OFFLINE           = 0;
 const uint32_t RS_PEER_CONNECTSTATE_TRYING_TUNNEL     = 1;
 const uint32_t RS_PEER_CONNECTSTATE_TRYING_TCP        = 2;
 const uint32_t RS_PEER_CONNECTSTATE_TRYING_UDP        = 3;
@@ -223,6 +224,10 @@ class RsPeerDetails
 	std::string		connectStateString; /* Additional string like ip address */
 	uint32_t		connectPeriod;
 	bool			foundDHT;
+
+	/* have we been denied */
+	bool			wasDeniedConnection;
+	time_t			deniedTS;
 
 	/* linkType */
 	uint32_t		linkType;

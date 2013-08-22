@@ -104,7 +104,8 @@ peerConnectState::peerConnectState()
          name(""),
          state(0), actions(0),
 	 source(0), 
-	 inConnAttempt(0)
+	 inConnAttempt(0), 
+	 wasDeniedConnection(false), deniedTS(false), deniedInConnAttempt(false)
 {
 	//sockaddr_clear(&currentlocaladdr);
 	//sockaddr_clear(&currentserveraddr);
@@ -1036,6 +1037,46 @@ bool p3LinkMgrIMPL::connectResult(const std::string &id, bool success, uint32_t 
  * From various sources
  */
 
+// from pqissl, when a connection failed due to security
+void 	p3LinkMgrIMPL::notifyDeniedConnection(const std::string& gpgid,const std::string& sslid,const std::string& sslcn,const struct sockaddr_in &addr, bool incoming)
+{
+	std::cerr << "p3LinkMgrIMPL::notifyDeniedConnection()";
+	std::cerr << " pgpid: " << gpgid;
+	std::cerr << " sslid: " << sslid;
+	std::cerr << " sslcn: " << sslcn;
+	std::cerr << std::endl;
+
+	RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
+
+        std::map<std::string, peerConnectState>::iterator it;
+	it = mFriendList.find(sslid);
+	if (it == mFriendList.end())
+	{
+		std::cerr << "p3LinkMgrIMPL::notifyDeniedConnection() of NON-FRIEND: " << sslid;
+		std::cerr << std::endl;
+		return;
+	}
+
+	it->second.wasDeniedConnection = true;
+	it->second.deniedTS = time(NULL);
+
+	if ((!incoming) && it->second.inConnAttempt)
+	{
+		it->second.deniedInConnAttempt = true;
+		it->second.deniedConnectionAttempt = it->second.currentConnAddrAttempt;
+
+		std::cerr << "p3LinkMgrIMPL::notifyDeniedConnection() Denied In Connection Attempt";
+		std::cerr << std::endl;
+	}
+	else
+	{
+		it->second.deniedInConnAttempt = false;
+		std::cerr << "p3LinkMgrIMPL::notifyDeniedConnection() Denied NOT In Connection Attempt";
+		std::cerr << std::endl;
+	}
+	return;
+}
+	
 
 void    p3LinkMgrIMPL::peerStatus(std::string id, const pqiIpAddrSet &addrs,
                        uint32_t type, uint32_t flags, uint32_t source)

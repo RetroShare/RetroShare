@@ -302,6 +302,8 @@ void	convertDhtPeerDetailsToRsDhtNetPeer(RsDhtNetPeer &status, const DhtPeerDeta
 	switch(details.mPeerConnectMode)
 	{
 		default:
+			status.mPeerConnectMode = RSDHT_TOU_MODE_NONE;
+			break;
 		case BITDHT_CONNECT_MODE_DIRECT:
 			status.mPeerConnectMode = RSDHT_TOU_MODE_DIRECT;
 			break;

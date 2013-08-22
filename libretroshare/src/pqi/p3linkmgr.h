@@ -113,6 +113,11 @@ class peerConnectState
 	peerConnectAddress currentConnAddrAttempt;
 	std::list<peerConnectAddress> connAddrs;
 
+	/* information about denial */
+	bool wasDeniedConnection;
+        time_t deniedTS;
+	bool deniedInConnAttempt; /* is below valid */
+	peerConnectAddress deniedConnectionAttempt;
 
 };
 
@@ -158,6 +163,8 @@ virtual bool	connectAttempt(const std::string &id, struct sockaddr_in &raddr,
 	
 virtual bool 	connectResult(const std::string &id, bool success, uint32_t flags, struct sockaddr_in remote_peer_address) = 0;
 virtual bool	retryConnect(const std::string &id) = 0;
+
+virtual void 	notifyDeniedConnection(const std::string& gpgid,const std::string& sslid,const std::string& sslcn,const struct sockaddr_in &addr, bool incoming) = 0;
 
 	/* Network Addresses */
 virtual bool 	setLocalAddress(struct sockaddr_in addr) = 0;
@@ -215,6 +222,8 @@ virtual bool	connectAttempt(const std::string &id, struct sockaddr_in &raddr,
 	
 virtual bool 	connectResult(const std::string &id, bool success, uint32_t flags, struct sockaddr_in remote_peer_address);
 virtual bool	retryConnect(const std::string &id);
+
+virtual void 	notifyDeniedConnection(const std::string& gpgid,const std::string& sslid,const std::string& sslcn,const struct sockaddr_in &addr, bool incoming);
 
 	/* Network Addresses */
 virtual bool 	setLocalAddress(struct sockaddr_in addr);

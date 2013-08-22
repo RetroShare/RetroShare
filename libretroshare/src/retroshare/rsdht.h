@@ -66,6 +66,7 @@ extern RsDht *rsDht;
 #define RSDHT_PEERREQ_STOPPED                     1
 #define RSDHT_PEERREQ_RUNNING                     2
 
+#define RSDHT_TOU_MODE_NONE		0
 #define RSDHT_TOU_MODE_DIRECT		1
 #define RSDHT_TOU_MODE_PROXY		2
 #define RSDHT_TOU_MODE_RELAY		3

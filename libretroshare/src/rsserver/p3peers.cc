@@ -389,7 +389,7 @@ bool	p3Peers::getPeerDetails(const std::string &id, RsPeerDetails &d)
 	/* Finally determine AutoConnect Status */
 	d.foundDHT = pcs.dht.found;
 
-	d.connectState = 0;
+	d.connectState = RS_PEER_CONNECTSTATE_OFFLINE;
 	d.connectStateString.clear();
 
 
@@ -424,6 +424,9 @@ bool	p3Peers::getPeerDetails(const std::string &id, RsPeerDetails &d)
 			d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN;
 		}
 	}
+
+	d.wasDeniedConnection = pcs.wasDeniedConnection;
+	d.deniedTS = pcs.deniedTS;
 
 	return true;
 }
@@ -1178,7 +1181,8 @@ RsPeerDetails::RsPeerDetails()
 		  trustLvl(0), validLvl(0),ownsign(false), 
 	hasSignedMe(false),accept_connection(false),
 	state(0),localAddr(""),localPort(0),extAddr(""),extPort(0),netMode(0),visState(0),
-	lastConnect(0),connectState(0),connectStateString(""),connectPeriod(0),foundDHT(false)
+	lastConnect(0),connectState(0),connectStateString(""),connectPeriod(0),foundDHT(false), 
+	wasDeniedConnection(false), deniedTS(0)
 {
 }
 

@@ -129,19 +129,19 @@ std::string StateAsString(uint32_t state)
 	switch(state)
 	{
 		case CSB_START:
-			str = "Start";
+			str = "Start:";
 			break;
 
 		case CSB_TCP_WAIT:
-			str = "TCP Wait";
+			str = "TCP Wait:";
 			break;
 			
 		case CSB_DIRECT_ATTEMPT:
-			str = "Direct Attempt";
+			str = "Direct Attempt:";
 			break;
 			
 		case CSB_DIRECT_WAIT:
-			str = "Direct Wait";
+			str = "Direct Wait:";
 			break;
 			
 		case CSB_PROXY_ATTEMPT:
@@ -173,7 +173,7 @@ std::string StateAsString(uint32_t state)
 			break;
 
 		default:
-			str = "Unknown State";
+			str = "Unknown State:";
 			break;
 	}
 
