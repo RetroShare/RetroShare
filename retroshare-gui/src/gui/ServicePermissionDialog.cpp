@@ -52,6 +52,8 @@ ServicePermissionDialog::ServicePermissionDialog() :
 	mColumns[column] = RS_SERVICE_PERM_DISCOVERY;
 	column = ui->servicePermissionList->addColumn(tr("Forums/Channels"));
 	mColumns[column] = RS_SERVICE_PERM_DISTRIB;
+	column = ui->servicePermissionList->addColumn(tr("Use as direct source, when available"));
+	mColumns[column] = RS_SERVICE_PERM_DIRECT_DL;
 
 	ui->servicePermissionList->start();
 }

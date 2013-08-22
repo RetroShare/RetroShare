@@ -2615,6 +2615,377 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
 </context>
 <context>
+    <name>ConnectProgressDialog</name>
+    <message>
+        <source>Connection Progress</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Connecting to:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>TextLabel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Network </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Net Result</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Connect Status</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Contact Result</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>DHT Startup</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>DHT Result</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Peer Lookup</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Peer Result</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>UDP Setup</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>UDP Result</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Lucida Grande&apos;; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;This Widget shows the progress of your connection to your new peer.&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;It is helpful for problem-solving.&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;If you are an expert RS user, or trust that RS will do the right thing&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;you can close it.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Connection Assistant</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid Peer ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown State</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Offline</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Behind Symmetric NAT</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Behind NAT &amp; No DHT</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>NET Restart</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Behind NAT</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No DHT</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>NET STATE GOOD!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>UNVERIFABLE FORWARD!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>UNVERIFABLE FORWARD &amp; NO DHT</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>DHT Failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>DHT Disabled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>DHT Okay</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Finding RS Peers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lookup requires DHT</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Searching DHT</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lookup Timeout</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Peer DHT NOT ACTIVE</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lookup Failure</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Peer Offline</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Peer Firewalled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Peer Online</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Udp Connect Timeout</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Connection In Progress</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Initial connections can take a while, please be patient</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>If an error is detected it will be displayed here</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You can close this dialog at any time</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Retroshare will continue connecting in the background</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Connection Timeout</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Connection Attempt has taken too long</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>But no error has been detected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Try again shortly, Retroshare will continue connecting in the background</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>If you continue to get this message, please contact developers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>DHT Lookup Timeout</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>DHT Lookup has taken too long</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>UDP Connection Timeout</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>UDP Connection has taken too long</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>UDP Connection Failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>We are continually working to improve connectivity.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>In this case the UDP connection attempt has failed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Improve connectivity by opening a Port in your Firewall.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Congratulations, you are connected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>DHT startup Failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your DHT has not started properly</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Common causes of this problem are:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>     - You are not connected to the Internet</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>     - You have a missing or out-of-date DHT bootstrap file (bdboot.txt)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>DHT is Disabled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The DHT is OFF, so Retroshare cannot find your Friends.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Retroshare has tried All Known Addresses, with no success</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The DHT is needed if your friends have Dynamic IP Addresses.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Only Advanced Retroshare users should switch of the DHT.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Go to Settings-&gt;Server and change config to &quot;Public: DHT and Discovery&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Peer Denied Connection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>We successfully reached your Friend.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>but they have not added you as a Friend.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please contact them to add your Certificate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your Retroshare Node is configured Okay</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>We successfully reached your Friend via UDP.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please contact them to add your Full Certificate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>They need a Certificate + Location for UDP connections to succeed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>We Cannot find your Friend.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>They are either offline or their DHT is Off</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Peer DHT is Disabled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your Friend has configured Retroshare with DHT Disabled.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You have previously connected to this Friend</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Retroshare has determined that they have DHT switched off</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Without the DHT it is hard for Retroshare to locate your friend</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Try importing a fresh Certificate to get up-to-date connection information</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Incomplete Friend Details</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You have imported an incomplete Certificate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Retroshare cannot connect without ths information</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please retry importing the full Certificate</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>CreateBlog</name>
     <message>
         <source>Create new Blog</source>
@@ -9355,10 +9726,6 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Please enter the password to unlock your PGP key:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Unregistered plugin/executable</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11705,6 +12072,14 @@ The default value is 20.</source>
     </message>
     <message>
         <source>Forums/Channels</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Service Permissions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use as direct source, when available</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
