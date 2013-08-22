@@ -27,11 +27,12 @@
 #include <QTimer>
 
 #include <map>
+#include <time.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsconfig.h>
 #include <retroshare/rsdht.h>
 
-#include "StatusDefs.h"
+#include "gui/common/StatusDefs.h"
 
 /* maintain one static dialog per SSL ID */
 
