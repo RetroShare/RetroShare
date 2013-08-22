@@ -51,6 +51,11 @@
 #include "util/misc.h"
 #include "vmessagebox.h"
 
+#define PROGRESS_DIALOG	1
+#ifdef PROGRESS_DIALOG
+#include "gui/connect/ConnectProgressDialog.h"
+#endif
+
 #include "FriendList.h"
 #include "ui_FriendList.h"
 
@@ -1491,6 +1496,9 @@ void FriendList::connectfriend()
             //this is a SSL key
             rsPeers->connectAttempt(getRsId(c));
             c->setIcon(COLUMN_NAME,(QIcon(IMAGE_CONNECT2)));
+#ifdef PROGRESS_DIALOG
+	    ConnectProgressDialog::showProgress(getRsId(c));
+#endif
         }
     }
 }

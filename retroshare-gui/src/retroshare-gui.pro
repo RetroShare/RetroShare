@@ -466,6 +466,7 @@ HEADERS +=  rshare.h \
             gui/feeds/SecurityItem.h \
             gui/feeds/NewsFeedUserNotify.h \
             gui/connect/ConnectFriendWizard.h \
+            gui/connect/ConnectProgressDialog.h \
             gui/groups/CreateGroup.h \
             gui/dht/DhtWindow.h \
             gui/bwctrl/BwCtrlWindow.h \
@@ -519,6 +520,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/ChatLobbyWidget.ui \
             gui/connect/ConfCertDialog.ui \
             gui/connect/ConnectFriendWizard.ui \
+            gui/connect/ConnectProgressDialog.ui \
             gui/msgs/MessageComposer.ui \
             gui/msgs/MessageWindow.ui\
             gui/msgs/MessageWidget.ui\
@@ -771,6 +773,7 @@ SOURCES +=  main.cpp \
             gui/feeds/SecurityItem.cpp \
             gui/feeds/NewsFeedUserNotify.cpp \
             gui/connect/ConnectFriendWizard.cpp \
+            gui/connect/ConnectProgressDialog.cpp \
             gui/groups/CreateGroup.cpp \
             gui/dht/DhtWindow.cpp \
             gui/bwctrl/BwCtrlWindow.cpp \

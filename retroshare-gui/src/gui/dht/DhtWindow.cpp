@@ -431,6 +431,7 @@ void DhtWindow::updateNetPeers()
 				cpmstr = "Relay VIA " + QString::fromStdString(status.mPeerConnectProxyId);
 				break;
 			default:
+			case RSDHT_TOU_MODE_NONE:
 				cpmstr = "None";
 				break;
 		}
