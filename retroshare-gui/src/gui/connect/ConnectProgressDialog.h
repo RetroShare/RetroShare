@@ -28,7 +28,7 @@
 
 #include "ui_ConnectProgressDialog.h"
 
-
+#include <stdint.h>
 
 class ConnectProgressDialog : public QDialog
 {
