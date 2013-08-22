@@ -73,7 +73,7 @@ class RsPluginManager;
 //int InitRetroShare(int argc, char **argv, RsInit *config);
 //int LoadCertificates(RsInit *config);
 
-RsControl *createRsControl(RsIface &iface, NotifyBase &notify);
+RsControl *createRsControl(NotifyBase &notify);
 
 
 class RsServer: public RsControl, public RsThread
