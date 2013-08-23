@@ -658,6 +658,7 @@ bool p3ChatService::locked_checkAndRebuildPartialMessage(RsChatLobbyMsgItem *ci)
 
 			ci->chatFlags = flags ;
 			ci->message = msg ;
+			ci->chatFlags &= ~RS_CHAT_FLAG_PARTIAL_MESSAGE ;	// remove partial flag form message.
 
 			return true ;
 		}
