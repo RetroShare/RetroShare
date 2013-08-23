@@ -79,6 +79,7 @@ private slots:
     
     void copyResultLink();
     void copySearchLink();
+    void openFolderSearch();
 
     void searchAgain();
     void searchRemove();

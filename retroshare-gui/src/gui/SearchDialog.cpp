@@ -32,6 +32,7 @@
 #include "retroshare-gui/RsAutoUpdatePage.h"
 #include "gui/common/RsCollectionFile.h"
 #include "gui/common/FilesDefs.h"
+#include <gui/common/RsUrlHandler.h>
 #include "settings/rsharesettings.h"
 #include "advsearch/advancedsearchdialog.h"
 #include "common/RSTreeWidgetItem.h"
@@ -45,6 +46,7 @@
 #define IMAGE_REMOVE  		  ":/images/delete.png"
 #define IMAGE_REMOVEALL   	":/images/deleteall.png"
 #define IMAGE_DIRECTORY			":/images/folder16.png"
+#define IMAGE_OPENFOLDER		":/images/folderopen.png"
 
 /* Key for UI Preferences */
 #define UI_PREF_ADVANCED_SEARCH  "UIOptions/AdvancedSearch"
@@ -310,6 +312,13 @@ void SearchDialog::searchtableWidgetCostumPopupMenu( QPoint /*point*/ )
 
 //    contextMnu.addAction(tr("Broadcast on Channel"), this, SLOT(broadcastonchannel()));
 //    contextMnu.addAction(tr("Recommend to Friends"), this, SLOT(recommendtofriends()));
+
+    if (ui.searchResultWidget->selectedItems().size() == 1){
+        QList<QTreeWidgetItem*> item =ui.searchResultWidget->selectedItems();
+        if (item.at(0)->data(SR_DATA_COL, SR_ROLE_LOCAL).toBool()){
+            contextMnu.addAction(QIcon(IMAGE_OPENFOLDER), tr("Open Folder"), this, SLOT(openFolderSearch()));
+        }
+    }
 
     contextMnu.exec(QCursor::pos());
 }
@@ -1314,4 +1323,29 @@ bool SearchDialog::filterItem(QTreeWidgetItem *item, const QString &text, int fi
     }
 
     return (visible || visibleChildCount);
+}
+void SearchDialog::openFolderSearch()
+{
+    FileInfo info;
+
+    QList<QTreeWidgetItem*> item =ui.searchResultWidget->selectedItems();
+
+
+    if (item.at(0)->data(SR_DATA_COL, SR_ROLE_LOCAL).toBool()){
+        QString strFileID = item.at(0)->text(SR_HASH_COL);
+        if (rsFiles->FileDetails(strFileID.toStdString(), RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_BROWSABLE | RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_SPEC_ONLY, info)){
+            /* make path for downloaded or downloading files */
+            QFileInfo qinfo;
+            std::string path;
+            path = info.path.substr(0,info.path.length()-info.fname.length());
+
+            /* open folder with a suitable application */
+            qinfo.setFile(QString::fromUtf8(path.c_str()));
+            if (qinfo.exists() && qinfo.isDir()) {
+                if (!RsUrlHandler::openUrl(QUrl::fromLocalFile(qinfo.absoluteFilePath()))) {
+                    std::cerr << "openFolderSearch(): can't open folder " << path << std::endl;
+                }
+            }
+        }
+    }
 }
