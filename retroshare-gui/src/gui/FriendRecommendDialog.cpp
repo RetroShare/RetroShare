@@ -39,6 +39,9 @@ FriendRecommendDialog::FriendRecommendDialog() :
 	ui->setupUi(this);
 
 	setAttribute(Qt::WA_DeleteOnClose, true);
+	
+	ui->headerFrame->setHeaderImage(QPixmap(":/images/user/friends64.png"));
+  ui->headerFrame->setHeaderText(tr("Friend Recommendations"));
 
 	Settings->loadWidgetInformation(this);
 
