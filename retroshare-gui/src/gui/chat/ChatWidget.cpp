@@ -883,15 +883,8 @@ void ChatWidget::fileHashingFinished(QList<HashedFile> hashedFiles)
 	std::cerr << "ChatWidget::fileHashingFinished message : " << message.toStdString() << std::endl;
 #endif
 
-	/* convert to real html document */
-	QTextBrowser textBrowser;
-	textBrowser.setHtml(message);
-	std::wstring msg = textBrowser.toHtml().toStdWString();
+    ui->chatTextEdit->insertHtml(message);
 
-	if (rsMsgs->sendPrivateChat(peerId, msg)) {
-		QDateTime currentTime = QDateTime::currentDateTime();
-		addChatMsg(false, name, currentTime, currentTime, QString::fromStdWString(msg), TYPE_NORMAL);
-	}
 }
 
 bool ChatWidget::fileSave()
