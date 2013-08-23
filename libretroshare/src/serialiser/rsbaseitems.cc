@@ -349,7 +349,7 @@ std::ostream &RsFileChunkMap::print(std::ostream &out, uint16_t indent)
 	uint16_t int_Indent = indent + 2;
         printIndent(out, int_Indent); out << "PeerId: " << PeerId() << std::endl ;
         printIndent(out, int_Indent); out << "  hash: " << hash << std::endl ;
-        printIndent(out, int_Indent); out << "chunks: " << (void*)(compressed_map._map[0]) << "..." << std::endl ;
+        printIndent(out, int_Indent); out << "chunks: " << std::hex << compressed_map._map[0] << std::dec << "..." << std::endl ;
         printRsItemEnd(out, "RsFileChunkMap", indent);
         return out;
 }
@@ -368,7 +368,7 @@ std::ostream& RsFileCRC32Map::print(std::ostream &out, uint16_t indent)
 	uint16_t int_Indent = indent + 2;
         printIndent(out, int_Indent); out << "PeerId: " << PeerId() << std::endl ;
         printIndent(out, int_Indent); out << "  hash: " << hash << std::endl ;
-        printIndent(out, int_Indent); out << "chunks: " << (void*)(crc_map._ccmap._map[0]) << "..." << std::endl ;
+        printIndent(out, int_Indent); out << "chunks: " << std::hex << crc_map._ccmap._map[0]  << std::dec<< "..." << std::endl ;
         printRsItemEnd(out, "RsFileCRC32Map", indent);
         return out;
 }
