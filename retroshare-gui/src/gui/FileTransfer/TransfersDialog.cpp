@@ -262,6 +262,8 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     // set default column and sort order for download
     ui.downloadList->sortByColumn(COLUMN_NAME, Qt::AscendingOrder);
     
+    connect( ui.uploadsList, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( uploadsListCustomPopupMenu( QPoint ) ) );
+
     // Set Upload list model
     ULListModel = new QStandardItemModel(0,COLUMN_UCOUNT);
     ULListModel->setHeaderData(COLUMN_UNAME, Qt::Horizontal, tr("Name", "i.e: file name"));
@@ -287,7 +289,7 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 
 
   	//Selection Setup
-    selectionup = ui.uploadsList->selectionModel();
+    selectionUp = ui.uploadsList->selectionModel();
     ui.uploadsList->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
     /* Set header resize modes and initial section sizes Uploads TreeView*/
@@ -377,26 +379,26 @@ TransfersDialog::TransfersDialog(QWidget *parent)
    cancelAct = new QAction(QIcon(IMAGE_CANCEL), tr( "Cancel" ), this );
    connect( cancelAct , SIGNAL( triggered() ), this, SLOT( cancel() ) );
 
-   openfolderAct = new QAction(QIcon(IMAGE_OPENFOLDER), tr("Open Folder"), this);
-   connect(openfolderAct, SIGNAL(triggered()), this, SLOT(openFolderTransfer()));
+    openFolderAct = new QAction(QIcon(IMAGE_OPENFOLDER), tr("Open Folder"), this);
+    connect(openFolderAct, SIGNAL(triggered()), this, SLOT(openFolderTransfer()));
 
-   openfileAct = new QAction(QIcon(IMAGE_OPENFILE), tr("Open File"), this);
-   connect(openfileAct, SIGNAL(triggered()), this, SLOT(openTransfer()));
+    openFileAct = new QAction(QIcon(IMAGE_OPENFILE), tr("Open File"), this);
+    connect(openFileAct, SIGNAL(triggered()), this, SLOT(openTransfer()));
 
-   previewfileAct = new QAction(QIcon(IMAGE_PREVIEW), tr("Preview File"), this);
-   connect(previewfileAct, SIGNAL(triggered()), this, SLOT(previewTransfer()));
+    previewFileAct = new QAction(QIcon(IMAGE_PREVIEW), tr("Preview File"), this);
+    connect(previewFileAct, SIGNAL(triggered()), this, SLOT(previewTransfer()));
 
-   detailsfileAct = new QAction(QIcon(IMAGE_INFO), tr("Details..."), this);
-   connect(detailsfileAct, SIGNAL(triggered()), this, SLOT(showDetailsDialog()));
+    detailsFileAct = new QAction(QIcon(IMAGE_INFO), tr("Details..."), this);
+    connect(detailsFileAct, SIGNAL(triggered()), this, SLOT(showDetailsDialog()));
 
-	clearcompletedAct = new QAction(QIcon(IMAGE_CLEARCOMPLETED), tr( "Clear Completed" ), this );
-	connect( clearcompletedAct , SIGNAL( triggered() ), this, SLOT( clearcompleted() ) );
+    clearCompletedAct = new QAction(QIcon(IMAGE_CLEARCOMPLETED), tr( "Clear Completed" ), this );
+    connect( clearCompletedAct , SIGNAL( triggered() ), this, SLOT( clearcompleted() ) );
 
 
-	copylinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy RetroShare Link" ), this );
-	connect( copylinkAct , SIGNAL( triggered() ), this, SLOT( copyLink() ) );
-	pastelinkAct = new QAction(QIcon(IMAGE_PASTELINK), tr( "Paste RetroShare Link" ), this );
-	connect( pastelinkAct , SIGNAL( triggered() ), this, SLOT( pasteLink() ) );
+    copyLinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy RetroShare Link" ), this );
+    connect( copyLinkAct , SIGNAL( triggered() ), this, SLOT( copyLink() ) );
+    pasteLinkAct = new QAction(QIcon(IMAGE_PASTELINK), tr( "Paste RetroShare Link" ), this );
+    connect( pasteLinkAct , SIGNAL( triggered() ), this, SLOT( pasteLink() ) );
 	queueDownAct = new QAction(QIcon(":/images/go-down.png"), tr("Down"), this);
 	connect(queueDownAct, SIGNAL(triggered()), this, SLOT(priorityQueueDown()));
 	queueUpAct = new QAction(QIcon(":/images/go-up.png"), tr("Up"), this);
@@ -462,6 +464,12 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     showDLLastDLAct= new QAction(tr("Last Time Seen"),this);
     showDLLastDLAct->setCheckable(true); showDLLastDLAct->setToolTip(tr("Show Last Time Seen Column"));
     connect(showDLLastDLAct,SIGNAL(triggered(bool)),this,SLOT(setShowDLLastDLColumn(bool))) ;
+
+    /** Setup the actions for the upload context menu */
+    ulOpenFolderAct = new QAction(QIcon(IMAGE_OPENFOLDER), tr("Open Folder"), this);
+    connect(ulOpenFolderAct, SIGNAL(triggered()), this, SLOT(ulOpenFolder()));
+    ulCopyLinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy RetroShare Link" ), this );
+    connect( ulCopyLinkAct , SIGNAL( triggered() ), this, SLOT( ulCopyLink() ) );
 
     // load settings
     processSettings(true);
@@ -742,26 +750,26 @@ void TransfersDialog::downloadListCustomPopupMenu( QPoint /*point*/ )
 	if(single)
 	{
 		if (addOpenFileOption)
-			contextMnu.addAction( openfileAct);
+            contextMnu.addAction( openFileAct);
 
-		contextMnu.addAction( previewfileAct);
-		contextMnu.addAction( openfolderAct);
-		contextMnu.addAction( detailsfileAct);
+        contextMnu.addAction( previewFileAct);
+        contextMnu.addAction( openFolderAct);
+        contextMnu.addAction( detailsFileAct);
 		contextMnu.addSeparator();
 	}
 
-	contextMnu.addAction( clearcompletedAct);
+    contextMnu.addAction( clearCompletedAct);
 	contextMnu.addSeparator();
 
 	if(!items.empty())
-		contextMnu.addAction( copylinkAct);
+        contextMnu.addAction( copyLinkAct);
 
 	if(!RSLinkClipboard::empty(RetroShareLink::TYPE_FILE)) {
-		pastelinkAct->setEnabled(true);
+        pasteLinkAct->setEnabled(true);
 	} else {
-		pastelinkAct->setDisabled(true);
+        pasteLinkAct->setDisabled(true);
 	}
-	contextMnu.addAction( pastelinkAct);
+    contextMnu.addAction( pasteLinkAct);
 
 	contextMnu.addSeparator();
 
@@ -813,6 +821,36 @@ void TransfersDialog::downloadListHeaderCustomPopupMenu( QPoint /*point*/ )
 
     contextMnu.exec(QCursor::pos());
 
+}
+
+void TransfersDialog::uploadsListCustomPopupMenu( QPoint /*point*/ )
+{
+    std::cerr << "TransfersDialog::uploadsListCustomPopupMenu()" << std::endl;
+
+    std::set<std::string> items;
+    getULSelectedItems(&items, NULL);
+
+    bool single = (items.size() == 1);
+
+    bool add_CopyLink = false;
+
+    QMenu contextMnu( this );
+
+    if(!items.empty())
+    {
+        add_CopyLink = true;
+
+    }//if(!items.empty())
+
+    if(single)
+    {
+        contextMnu.addAction( ulOpenFolderAct);
+    }
+
+    if (add_CopyLink)
+        contextMnu.addAction( ulCopyLinkAct);
+
+    contextMnu.exec(QCursor::pos());
 }
 
 void TransfersDialog::chooseDestinationDirectory()
@@ -1420,6 +1458,29 @@ void TransfersDialog::copyLink ()
 	RSLinkClipboard::copyLinks(links) ;
 }
 
+void TransfersDialog::ulCopyLink ()
+{
+    QList<RetroShareLink> links ;
+
+    std::set<std::string> items;
+    std::set<std::string>::iterator it;
+    getULSelectedItems(&items, NULL);
+
+    for (it = items.begin(); it != items.end(); it ++) {
+        FileInfo info;
+        if (!rsFiles->FileDetails(*it, RS_FILE_HINTS_UPLOAD, info)) {
+            continue;
+        }
+
+        RetroShareLink link;
+        if (link.createFile(QString::fromUtf8(info.fname.c_str()), info.size, QString::fromStdString(info.hash))) {
+            links.push_back(link) ;
+        }
+    }
+
+    RSLinkClipboard::copyLinks(links) ;
+}
+
 DetailsDialog *TransfersDialog::detailsDialog()
 {
 	static DetailsDialog *detailsdlg = new DetailsDialog ;
@@ -1499,6 +1560,31 @@ void TransfersDialog::getSelectedItems(std::set<std::string> *ids, std::set<int>
 	}
 }
 
+void TransfersDialog::getULSelectedItems(std::set<std::string> *ids, std::set<int> *rows)
+{
+    if (ids == NULL && rows == NULL) {
+        return;
+    }
+
+    if (ids) ids->clear();
+    if (rows) rows->clear();
+
+    QModelIndexList indexes = selectionUp->selectedIndexes();
+    QModelIndex index;
+
+    foreach(index, indexes) {
+        if (ids) {
+            QStandardItem *id = ULListModel->item(index.row(), COLUMN_UHASH);
+            ids->insert(id->data(Qt::DisplayRole).toString().toStdString());
+        }
+        if (rows) {
+            rows->insert(index.row());
+        }
+
+    }
+
+}
+
 bool TransfersDialog::controlTransferFile(uint32_t flags)
 {
 	bool result = true;
@@ -1557,6 +1643,33 @@ void TransfersDialog::openFolderTransfer()
 			std::cerr << "openFolderTransfer(): can't open folder " << path << std::endl;
 		}
 	}
+}
+
+void TransfersDialog::ulOpenFolder()
+{
+    FileInfo info;
+
+    std::set<std::string> items;
+    std::set<std::string>::iterator it;
+    getULSelectedItems(&items, NULL);
+    for (it = items.begin(); it != items.end(); it ++) {
+        if (!rsFiles->FileDetails(*it, RS_FILE_HINTS_UPLOAD, info)) continue;
+        break;
+    }
+
+    /* make path for uploading files */
+    QFileInfo qinfo;
+    std::string path;
+    path = info.path.substr(0,info.path.length()-info.fname.length());
+
+    /* open folder with a suitable application */
+    qinfo.setFile(QString::fromUtf8(path.c_str()));
+    if (qinfo.exists() && qinfo.isDir()) {
+        if (!RsUrlHandler::openUrl(QUrl::fromLocalFile(qinfo.absoluteFilePath()))) {
+            std::cerr << "ulOpenFolder(): can't open folder " << path << std::endl;
+        }
+    }
+
 }
 
 void TransfersDialog::previewTransfer()

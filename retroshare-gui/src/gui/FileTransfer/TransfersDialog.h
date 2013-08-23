@@ -79,6 +79,7 @@ private slots:
     /** Create the context popup menu and it's submenus */
     void downloadListCustomPopupMenu( QPoint point );
     void downloadListHeaderCustomPopupMenu( QPoint point );
+    void uploadsListCustomPopupMenu( QPoint point );
 
     void cancel();
     void forceCheck();
@@ -103,6 +104,8 @@ private slots:
     void openTransfer();
     void previewTransfer();
 
+    void ulOpenFolder();
+    void ulCopyLink();
     /** clear download or all queue - for pending dwls */
 //    void clearQueue();
 
@@ -149,7 +152,7 @@ private:
     QStandardItemModel *DLListModel;
     QStandardItemModel *ULListModel;
     QItemSelectionModel *selection;
-    QItemSelectionModel *selectionup;
+    QItemSelectionModel *selectionUp;
 
     DLListDelegate *DLDelegate;
     ULListDelegate *ULDelegate;
@@ -158,20 +161,20 @@ private:
     void createActions();
 
     /** Defines the actions for the context menu */
-    QAction* showdowninfoAct;
+    QAction* showdownInfoAct;
     QAction* playAct;
     QAction* cancelAct;
     QAction* forceCheckAct;
-    QAction* clearcompletedAct;
-    QAction* copylinkAct;
-    QAction* pastelinkAct;
-    QAction* rootisnotdecoratedAct;
-    QAction* rootisdecoratedAct;
+    QAction* clearCompletedAct;
+    QAction* copyLinkAct;
+    QAction* pasteLinkAct;
+    QAction* rootIsNotDecoratedAct;
+    QAction* rootIsDecoratedAct;
     QAction *pauseAct;
     QAction *resumeAct;
-    QAction *openfolderAct;
-    QAction *openfileAct;
-    QAction *previewfileAct;
+    QAction *openFolderAct;
+    QAction *openFileAct;
+    QAction *previewFileAct;
 //    QAction *clearQueuedDwlAct;
 //    QAction *clearQueueAct;
     QAction *changePriorityAct;
@@ -185,7 +188,7 @@ private:
     QAction *chunkRandomAct;
     QAction *chunkProgressiveAct;
     QAction *chunkStreamingAct;
-    QAction *detailsfileAct;
+    QAction *detailsFileAct;
     QAction *toggleShowCacheTransfersAct;
     QAction *openCollectionAct;
     QAction *renameFileAct;
@@ -206,11 +209,15 @@ private:
     QAction* showDLIDAct;
     QAction* showDLLastDLAct;
 
+    /** Defines the actions for the upload context menu */
+    QAction* ulOpenFolderAct;
+    QAction* ulCopyLinkAct;
 
     bool m_bProcessSettings;
     void processSettings(bool bLoad);
 
     void getSelectedItems(std::set<std::string> *ids, std::set<int> *rows);
+    void getULSelectedItems(std::set<std::string> *ids, std::set<int> *rows);
     bool controlTransferFile(uint32_t flags);
     void changePriority(int priority);
     void setChunkStrategy(FileChunksInfo::ChunkStrategy s) ;
