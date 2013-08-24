@@ -42,7 +42,8 @@
 
 #define COLUMN_ICON  0
 #define COLUMN_NAME  1
-#define COLUMN_COUNT 2
+#define COLUMN_ACTIVITY  2
+#define COLUMN_COUNT     3
 
 /** Default constructor */
 ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::WFlags flags)
@@ -58,6 +59,7 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::WF
 
 	ui.participantsList->setColumnCount(COLUMN_COUNT);
 	ui.participantsList->setColumnWidth(COLUMN_ICON, 20);
+    ui.participantsList->setColumnHidden(COLUMN_ACTIVITY,true);
 
 	muteAct = new QAction(QIcon(), tr("Mute participant"), this);
 	connect(muteAct, SIGNAL(triggered()), this, SLOT(changePartipationState()));
@@ -134,6 +136,11 @@ void ChatLobbyDialog::participantsTreeWidgetCustomPopupMenu(QPoint)
 	muteAct->setEnabled(false);
 	muteAct->setChecked(false);
 	if (selectedItems.size()) {
+
+        std::string nickName;
+        rsMsgs->getNickNameForChatLobby(lobbyId, nickName);
+        if(selectedItems.count()>1 || (selectedItems.at(0)->text(COLUMN_NAME).toStdString()!=nickName))
+        {
 		muteAct->setEnabled(true);
 
 		QList<QTreeWidgetItem*>::iterator item;
@@ -144,6 +151,7 @@ void ChatLobbyDialog::participantsTreeWidgetCustomPopupMenu(QPoint)
 			}
 		}
 	}
+    }
 
 	contextMnu.exec(QCursor::pos());
 }
@@ -301,6 +309,9 @@ void ChatLobbyDialog::addIncomingChatMsg(const ChatInfo& info)
 
 	time_t now = time(NULL);
 
+   QList<QTreeWidgetItem*>  qlFoundParticipants=ui.participantsList->findItems(name,Qt::MatchExactly,COLUMN_NAME);
+    if (qlFoundParticipants.count()!=0) qlFoundParticipants.at(0)->setText(COLUMN_ACTIVITY,QString::number(now));
+
 	if (now > lastUpdateListTime) {
 		lastUpdateListTime = now;
 		updateParticipantsList();
@@ -314,47 +325,68 @@ void ChatLobbyDialog::addIncomingChatMsg(const ChatInfo& info)
  */
 void ChatLobbyDialog::updateParticipantsList()
 {
-	/* Save selected items */
-	QStringList selectedParcipants;
-	QList<QTreeWidgetItem*> selectedItems = ui.participantsList->selectedItems();
+    std::list<ChatLobbyInfo> lInfos;
+    rsMsgs->getChatLobbyList(lInfos);
 
-	QList<QTreeWidgetItem*>::iterator item;
-	for (item = selectedItems.begin(); item != selectedItems.end(); ++item) {
-		selectedParcipants.append((*item)->text(COLUMN_NAME));
-	}
+    std::list<ChatLobbyInfo>::const_iterator it(lInfos.begin());
 
-	ui.participantsList->clear();
-	ui.participantsList->setSortingEnabled(false);
+    // Set it to the current ChatLobby
+    for (; it!=lInfos.end() && (*it).lobby_id != lobbyId; ++it);
 
-	std::list<ChatLobbyInfo> linfos;
-	rsMsgs->getChatLobbyList(linfos);
+    if (it != lInfos.end()) {
+        ChatLobbyInfo cliInfo=(*it);
+        QList<QTreeWidgetItem*>  qlOldParticipants=ui.participantsList->findItems("*",Qt::MatchWildcard);
+        foreach(QTreeWidgetItem *qtwiCur,qlOldParticipants){
+            QString qsOldParticipant = qtwiCur->text(COLUMN_NAME);
 
-	std::list<ChatLobbyInfo>::const_iterator it(linfos.begin());
+            std::map<std::string,time_t>::iterator itFound(cliInfo.nick_names.find(qsOldParticipant.toStdString())) ;
 
-	// Set it to the current ChatLobby
-	for (; it!=linfos.end() && (*it).lobby_id != lobbyId; ++it);
+            if(itFound == cliInfo.nick_names.end())
+            {
+                //Old Participant go out, remove it
+                ui.participantsList->removeItemWidget(qtwiCur,0);
+            }
+        }
 
-	if (it != linfos.end()) {
+
+
 		for (std::map<std::string,time_t>::const_iterator it2((*it).nick_names.begin()); it2 != (*it).nick_names.end(); ++it2) {
 			QString participant = QString::fromUtf8( (it2->first).c_str() );
+            QList<QTreeWidgetItem*>  qlFoundParticipants=ui.participantsList->findItems(participant,Qt::MatchExactly,COLUMN_NAME);
+            QTreeWidgetItem *widgetitem;
 
+            if (qlFoundParticipants.count()==0)
+            {
 			// TE: Add Wigdet to participantsList with Checkbox, to mute Participant
-			QTreeWidgetItem *widgetitem = new RSTreeWidgetItem;
+                widgetitem = new RSTreeWidgetItem;
+                widgetitem->setText(COLUMN_NAME, participant);
+                widgetitem->setText(COLUMN_ACTIVITY,QString::number(time(NULL)));
+                ui.participantsList->addTopLevelItem(widgetitem);
+            } else { widgetitem = qlFoundParticipants.at(0);}
 
 			if (isParticipantMuted(participant)) {
-				widgetitem->setIcon(COLUMN_ICON, QIcon(":/images/yellowled.png"));
+                widgetitem->setIcon(COLUMN_ICON, QIcon(":/images/redled.png"));
+                widgetitem->setTextColor(COLUMN_NAME,QColor(255,0,0));
 			} else {
 				widgetitem->setIcon(COLUMN_ICON, QIcon(":/images/greenled.png"));
+                widgetitem->setTextColor(COLUMN_NAME,ui.participantsList->palette().color(QPalette::Active, QPalette::Text));
 			}
-			//widgetitem->setToolTip(COLUMN_ICON, tr("Double click to mute/unmute participant"));
 
-			widgetitem->setText(COLUMN_NAME, participant);
-			widgetitem->setToolTip(COLUMN_NAME,tr("Right click to mute/unmute participants<br/>Double click to address this person"));
+            time_t tLastAct=widgetitem->text(COLUMN_ACTIVITY).toInt();
+            time_t now = time(NULL);
+            if (tLastAct<now-60*30) widgetitem->setIcon(COLUMN_ICON, QIcon(":/images/grayled.png"));
 
-			ui.participantsList->addTopLevelItem(widgetitem);
-			if (selectedParcipants.contains(participant)) {
-				widgetitem->setSelected(true);
-			}
+            std::string nickName;
+            rsMsgs->getNickNameForChatLobby(lobbyId, nickName);
+            if (participant.toStdString()==nickName) widgetitem->setIcon(COLUMN_ICON, QIcon(":/images/yellowled.png"));
+
+
+            QTime qtLastAct=QTime(0,0,0).addSecs(now-tLastAct);
+            widgetitem->setToolTip(COLUMN_NAME,tr("Right click to mute/unmute participants<br/>Double click to address this person<br/>")
+                                                  +tr("This participant is not active since:")
+                                                  +qtLastAct.toString()
+                                                  +tr(" seconds")
+                                                  );
 		}
 	}
 	ui.participantsList->setSortingEnabled(true);
@@ -425,6 +457,9 @@ void ChatLobbyDialog::participantsTreeWidgetDoubleClicked(QTreeWidgetItem *item,
 
 void ChatLobbyDialog::muteParticipant(const QString &nickname) {
 	std::cerr << " Mute " << std::endl;
+    std::string myNickName;
+    rsMsgs->getNickNameForChatLobby(lobbyId, myNickName);
+    if (nickname.toStdString()!=myNickName)
 	mutedParticipants->append(nickname);
 }
 
@@ -476,22 +511,27 @@ bool ChatLobbyDialog::isParticipantMuted(const QString &participant)
 
 void ChatLobbyDialog::displayLobbyEvent(int event_type, const QString& nickname, const QString& str)
 {
+    QString qsParticipant="";
 	switch (event_type) {
 	case RS_CHAT_LOBBY_EVENT_PEER_LEFT:
+        qsParticipant=str;
 		ui.chatWidget->addChatMsg(true, tr("Lobby management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("%1 has left the lobby.").arg(RsHtml::plainText(str)), ChatWidget::TYPE_SYSTEM);
 		emit peerLeft(id()) ;
 		break;
 	case RS_CHAT_LOBBY_EVENT_PEER_JOINED:
+        qsParticipant=str;
 		ui.chatWidget->addChatMsg(true, tr("Lobby management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("%1 joined the lobby.").arg(RsHtml::plainText(str)), ChatWidget::TYPE_SYSTEM);
 		emit peerJoined(id()) ;
 		break;
 	case RS_CHAT_LOBBY_EVENT_PEER_STATUS:
+        qsParticipant=nickname;
 		ui.chatWidget->updateStatusString(RsHtml::plainText(nickname) + " %1", RsHtml::plainText(str));
 		if (!isParticipantMuted(nickname)) {
 			emit typingEventReceived(id()) ;
 		}
 		break;
 	case RS_CHAT_LOBBY_EVENT_PEER_CHANGE_NICKNAME:
+        qsParticipant=str;
 		ui.chatWidget->addChatMsg(true, tr("Lobby management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("%1 changed his name to: %2").arg(RsHtml::plainText(nickname), RsHtml::plainText(str)), ChatWidget::TYPE_SYSTEM);
 		
 		// TODO if a user was muted and changed his name, update mute list, but only, when the muted peer, dont change his name to a other peer in your chat lobby
@@ -506,6 +546,12 @@ void ChatLobbyDialog::displayLobbyEvent(int event_type, const QString& nickname,
 	default:
 		std::cerr << "ChatLobbyDialog::displayLobbyEvent() Unhandled lobby event type " << event_type << std::endl;
 	}
+
+    if (qsParticipant!=""){
+        QList<QTreeWidgetItem*>  qlFoundParticipants=ui.participantsList->findItems(str,Qt::MatchExactly,COLUMN_NAME);
+        if (qlFoundParticipants.count()!=0) qlFoundParticipants.at(0)->setText(COLUMN_ACTIVITY,QString::number(time(NULL)));
+    }
+
 	updateParticipantsList() ;
 }
 
