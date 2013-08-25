@@ -132,10 +132,9 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	resetStatusBar();
 
     completer = new QCompleter(this);
-    completer->setModel(modelFromPeers());
-    completer->setModelSorting(QCompleter::CaseInsensitivelySortedModel);
+    //completer->setModel(modelFromPeers()); //No peers at this point.
     completer->setModelSorting(QCompleter::UnsortedModel);
-    //completer->setCaseSensitivity(Qt::CaseInsensitive);
+    completer->setCaseSensitivity(Qt::CaseInsensitive);
     completer->setWrapAround(false);
     ui->chatTextEdit->setCompleter(completer);
     ui->chatTextEdit->setCompleterKeyModifiers(Qt::ControlModifier);
@@ -200,15 +199,6 @@ void ChatWidget::init(const std::string &peerId, const QString &title)
 		QString customStateString = QString::fromUtf8(rsMsgs->getCustomStateString(peerId).c_str());
 		updatePeersCustomStateString(QString::fromStdString(peerId), customStateString);
 	} else {
-		completer = new QCompleter(this);
-		completer->setModel(modelFromPeers());
-		completer->setModelSorting(QCompleter::CaseInsensitivelySortedModel);
-		completer->setCaseSensitivity(Qt::CaseInsensitive);
-		completer->setWrapAround(false);
-		ui->chatTextEdit->setCompleter(completer);
-		ui->chatTextEdit->setCompleterKeyModifiers(Qt::ControlModifier);
-		ui->chatTextEdit->setCompleterKey(Qt::Key_Space);
-
 		updateTitle();
 	}
 
