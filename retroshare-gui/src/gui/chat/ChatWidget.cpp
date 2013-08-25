@@ -240,7 +240,20 @@ void ChatWidget::processSettings(bool load)
 
 bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 {
-	if (obj == ui->chatTextEdit) {
+    if (obj == ui->textBrowser) {
+        if (event->type() == QEvent::KeyPress) {
+
+            QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+            if (keyEvent) {
+                if (keyEvent->key() == Qt::Key_Delete ) {
+                    // Delete pressed
+                    if (ui->textBrowser->textCursor().selectedText().length()>0)
+                        ui->textBrowser->textCursor().deleteChar();
+
+                }
+            }
+        }
+    } else if (obj == ui->chatTextEdit) {
 		if (event->type() == QEvent::KeyPress) {
 
 			QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
