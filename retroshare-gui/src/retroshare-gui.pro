@@ -222,6 +222,32 @@ freebsd-* {
 
 }
 
+##################################### OpenBSD ######################################
+
+openbsd-* {
+	INCLUDEPATH *= /usr/local/include
+
+	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
+	PRE_TARGETDEPS *= ../../openpgpsdk/src/lib/libops.a
+
+	LIBS *= ../../libretroshare/src/lib/libretroshare.a
+	LIBS *= ../../openpgpsdk/src/lib/libops.a -lbz2
+	LIBS *= -lssl -lcrypto
+	LIBS *= -lgpgme
+	LIBS *= -lupnp
+	LIBS *= -lgnome-keyring
+	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
+
+        gxs {
+                LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
+                LIBS += -lsqlite3
+        }
+
+	LIBS *= -rdynamic
+}
+
+
+
 ############################## Common stuff ######################################
 
 # On Linux systems that alredy have libssl and libcrypto it is advisable

@@ -5,7 +5,7 @@
 #include "rsloginhandler.h"
 #include "util/rsdir.h"
 
-#if defined(UBUNTU) || defined(__FreeBSD__)
+#if defined(UBUNTU) || defined(__FreeBSD__) || defined(__OpenBSD__)
 #include <gnome-keyring-1/gnome-keyring.h>
 
 	GnomeKeyringPasswordSchema my_schema = {
@@ -119,7 +119,7 @@ bool RsLoginHandler::tryAutoLogin(const std::string& ssl_id,std::string& ssl_pas
 
 	/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS /* UNIX */
-#if defined(UBUNTU) || defined(__FreeBSD__)
+#if defined(UBUNTU) || defined(__FreeBSD__) || defined(__OpenBSD__)
 
 	gchar *passwd = NULL;
 
@@ -361,7 +361,7 @@ bool RsLoginHandler::enableAutoLogin(const std::string& ssl_id,const std::string
 
 	/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS /* UNIX */
-#if defined(UBUNTU) || defined(__FreeBSD__)
+#if defined(UBUNTU) || defined(__FreeBSD__) || defined(__OpenBSD__)
 	if(GNOME_KEYRING_RESULT_OK == gnome_keyring_store_password_sync(&my_schema, NULL, (gchar*)("RetroShare password for SSL Id "+ssl_id).c_str(),(gchar*)ssl_passwd.c_str(),"RetroShare SSL Id",ssl_id.c_str(),NULL)) 
 	{
 		std::cerr << "Stored passwd " << "************************" << " into gnome keyring" << std::endl;

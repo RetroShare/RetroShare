@@ -92,3 +92,12 @@ win32 {
 
 	LIBS += -lcurl -lxml2 -lxslt -lws2_32 -lwldap32
 }
+
+openbsd-* {
+	LIBXML2_DIR = /usr/local/include/libxml2
+
+	INCLUDEPATH += $${LIBXML2_DIR}
+
+	LIBS += -lcurl -lxml2 -lxslt
+}
+

@@ -286,6 +286,22 @@ freebsd-* {
 	DESTDIR = lib
 }
 
+################################# OpenBSD ##########################################
+
+openbsd-* {
+	INCLUDEPATH *= /usr/local/include
+	INCLUDEPATH += $$system(pkg-config --cflags glib-2.0 | sed -e "s/-I//g")
+
+	OPENPGPSDK_DIR = ../../openpgpsdk/src
+	INCLUDEPATH *= $${OPENPGPSDK_DIR} ../openpgpsdk
+
+	QMAKE_CXXFLAGS *= -Dfseeko64=fseeko -Dftello64=ftello -Dstat64=stat -Dstatvfs64=statvfs -Dfopen64=fopen
+
+	CONFIG += upnp_libupnp
+
+	DESTDIR = lib
+}
+
 ################################### COMMON stuff ##################################
 
 HEADERS +=	dbase/cachestrapper.h \
