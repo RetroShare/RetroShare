@@ -58,6 +58,7 @@
 #define IMAGE_OPENFILE		 ":/images/fileopen.png"
 #define IMAGE_COLLECTION     ":/images/mimetypes/rscollection-16.png"
 #define IMAGE_EDITSHARE      ":/images/edit_16.png"
+#define IMAGE_MYFILES        ":images/my_documents_16.png"
 
 // Define to avoid using the search in treeview, because it is really slow for now.
 //
@@ -182,6 +183,8 @@ LocalSharedFilesDialog::LocalSharedFilesDialog(QWidget *parent)
   connect(openfileAct, SIGNAL(triggered()), this, SLOT(openfile()));
   connect(openfolderAct, SIGNAL(triggered()), this, SLOT(openfolder()));
   connect(editshareAct, SIGNAL(triggered()), this, SLOT(editSharePermissions()));
+
+  ui.titleBarPixmap->setPixmap(QPixmap(IMAGE_MYFILES));
 }
 
 RemoteSharedFilesDialog::RemoteSharedFilesDialog(QWidget *parent)
