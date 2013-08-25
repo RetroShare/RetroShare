@@ -824,15 +824,7 @@ void FriendsDialog::fileHashingFinished(QList<HashedFile> hashedFiles)
     std::cerr << "FriendsDialog::fileHashingFinished mesgString : " << mesgString.toStdString() << std::endl;
 #endif
 
-    if (!mesgString.isEmpty()) {
-        /* convert to real html document */
-        QTextBrowser textBrowser;
-        textBrowser.setHtml(mesgString);
-        std::wstring msg = textBrowser.toHtml().toStdWString();
-
-        rsMsgs->sendPublicChat(msg);
-        setFont();
-    }
+    ui.lineEdit->insertHtml(mesgString);
 }
 
 bool FriendsDialog::fileSave()
