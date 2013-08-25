@@ -39,7 +39,8 @@
 #define COLUMN_DOWNLOADTIME 9
 #define COLUMN_ID 10
 #define COLUMN_LASTDL 11
-#define COLUMN_COUNT 12
+#define COLUMN_PATH 12
+#define COLUMN_COUNT 13
 
 
 #define MAX_CHAR_TMP 128

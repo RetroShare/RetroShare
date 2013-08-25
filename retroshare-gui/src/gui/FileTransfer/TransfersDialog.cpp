@@ -205,6 +205,7 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     DLListModel->setHeaderData(COLUMN_DOWNLOADTIME, Qt::Horizontal, tr("Download time", "i.e: Estimated Time of Arrival / Time left"));
     DLListModel->setHeaderData(COLUMN_ID, Qt::Horizontal, tr("Hash"));
     DLListModel->setHeaderData(COLUMN_LASTDL, Qt::Horizontal, tr("Last Time Seen", "i.e: Last Time Receiced Data"));
+    DLListModel->setHeaderData(COLUMN_PATH, Qt::Horizontal, tr("Path", "i.e: Where file is saved"));
     ui.downloadList->setModel(DLListModel);
     //ui.downloadList->hideColumn(ID);
     DLDelegate = new DLListDelegate();
@@ -245,6 +246,7 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     _header->setResizeMode (COLUMN_DOWNLOADTIME, QHeaderView::Interactive);
     _header->setResizeMode (COLUMN_ID, QHeaderView::Interactive);
     _header->setResizeMode (COLUMN_LASTDL, QHeaderView::Interactive);
+    _header->setResizeMode (COLUMN_PATH, QHeaderView::Interactive);
 
     _header->resizeSection ( COLUMN_NAME, 170 );
     _header->resizeSection ( COLUMN_SIZE, 70 );
@@ -258,6 +260,7 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     _header->resizeSection ( COLUMN_DOWNLOADTIME, 100 );
     _header->resizeSection ( COLUMN_ID, 100 );
     _header->resizeSection ( COLUMN_LASTDL, 100 );
+    _header->resizeSection ( COLUMN_PATH, 100 );
 
     // set default column and sort order for download
     ui.downloadList->sortByColumn(COLUMN_NAME, Qt::AscendingOrder);
@@ -464,6 +467,9 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     showDLLastDLAct= new QAction(tr("Last Time Seen"),this);
     showDLLastDLAct->setCheckable(true); showDLLastDLAct->setToolTip(tr("Show Last Time Seen Column"));
     connect(showDLLastDLAct,SIGNAL(triggered(bool)),this,SLOT(setShowDLLastDLColumn(bool))) ;
+    showDLPath= new QAction(tr("Path"),this);
+    showDLPath->setCheckable(true); showDLPath->setToolTip(tr("Show Path Column"));
+    connect(showDLPath,SIGNAL(triggered(bool)),this,SLOT(setShowDLPath(bool))) ;
 
     /** Setup the actions for the upload context menu */
     ulOpenFolderAct = new QAction(QIcon(IMAGE_OPENFOLDER), tr("Open Folder"), this);
@@ -553,6 +559,7 @@ void TransfersDialog::processSettings(bool bLoad)
         setShowDLDownloadTimeColumn(Settings->value("showDLDownloadTimeColumn", !ui.downloadList->isColumnHidden(COLUMN_DOWNLOADTIME)).toBool());
         setShowDLIDColumn(Settings->value("showDLIDColumn", !ui.downloadList->isColumnHidden(COLUMN_ID)).toBool());
         setShowDLLastDLColumn(Settings->value("showDLLastDLColumn", !ui.downloadList->isColumnHidden(COLUMN_LASTDL)).toBool());
+        setShowDLPath(Settings->value("showDLPath", !ui.downloadList->isColumnHidden(COLUMN_PATH)).toBool());
 
         // selected tab
         ui.tabWidget->setCurrentIndex(Settings->value("selectedTab").toInt());
@@ -580,6 +587,7 @@ void TransfersDialog::processSettings(bool bLoad)
         Settings->setValue("showDLDownloadTimeColumn", !ui.downloadList->isColumnHidden(COLUMN_DOWNLOADTIME));
         Settings->setValue("showDLIDColumn", !ui.downloadList->isColumnHidden(COLUMN_ID));
         Settings->setValue("showDLLastDLColumn", !ui.downloadList->isColumnHidden(COLUMN_LASTDL));
+        Settings->setValue("showDLPath", !ui.downloadList->isColumnHidden(COLUMN_PATH));
 
         // selected tab
         Settings->setValue("selectedTab", ui.tabWidget->currentIndex());
@@ -805,6 +813,7 @@ void TransfersDialog::downloadListHeaderCustomPopupMenu( QPoint /*point*/ )
     showDLDownloadTimeAct->setChecked(!ui.downloadList->isColumnHidden(COLUMN_DOWNLOADTIME));
     showDLIDAct->setChecked(!ui.downloadList->isColumnHidden(COLUMN_ID));
     showDLLastDLAct->setChecked(!ui.downloadList->isColumnHidden(COLUMN_LASTDL));
+    showDLPath->setChecked(!ui.downloadList->isColumnHidden(COLUMN_PATH));
 
     QMenu *menu = contextMnu.addMenu(tr("Columns"));
     menu->addAction(showDLSizeAct);
@@ -818,6 +827,7 @@ void TransfersDialog::downloadListHeaderCustomPopupMenu( QPoint /*point*/ )
     menu->addAction(showDLDownloadTimeAct);
     menu->addAction(showDLIDAct);
     menu->addAction(showDLLastDLAct);
+    menu->addAction(showDLPath);
 
     contextMnu.exec(QCursor::pos());
 
@@ -918,6 +928,7 @@ int TransfersDialog::addItem(int row, const FileInfo &fileInfo, const std::map<s
 	qlonglong remaining = fileInfo.size - fileInfo.transfered;
 	qlonglong downloadtime = (fileInfo.size - fileInfo.transfered) / (fileInfo.tfRate * 1024.0);
     QString strLastDL = tr("File Never Seen");
+    {
     QFileInfo file;
 
     if (fileInfo.downloadStatus == FT_STATE_COMPLETE) {
@@ -929,6 +940,11 @@ int TransfersDialog::addItem(int row, const FileInfo &fileInfo, const std::map<s
     if (file.exists()) {
         strLastDL= file.lastModified().toString("yyyy-MM-dd_hh:mm:ss");
     }
+    }
+    QString strPath = QString::fromUtf8(fileInfo.path.c_str());
+    QString strPathAfterDL = strPath;
+    strPathAfterDL.replace(QString::fromUtf8(rsFiles->getDownloadDirectory().c_str()),"");
+    QStringList qslPath = strPathAfterDL.split("/");
 
 	FileChunksInfo fcinfo;
 	if (!rsFiles->FileDownloadChunksDetails(fileInfo.hash, fcinfo)) {
@@ -983,7 +999,8 @@ int TransfersDialog::addItem(int row, const FileInfo &fileInfo, const std::map<s
     DLListModel->setData(DLListModel->index(row, COLUMN_REMAINING), QVariant((qlonglong)remaining));
     DLListModel->setData(DLListModel->index(row, COLUMN_DOWNLOADTIME), QVariant((qlonglong)downloadtime));
     DLListModel->setData(DLListModel->index(row, COLUMN_LASTDL), QVariant(strLastDL));
-
+    DLListModel->setData(DLListModel->index(row, COLUMN_PATH), QVariant(strPathAfterDL));
+    DLListModel->item(row,COLUMN_PATH)->setToolTip(strPath);
     DLListModel->item(row,COLUMN_STATUS)->setToolTip(tooltip);
 
 	QStandardItem *dlItem = DLListModel->item(row);
@@ -1055,8 +1072,8 @@ int TransfersDialog::addPeerToItem(QStandardItem *dlItem, const QString& name, c
 		}
 	}
 
-	QStandardItem *si1 = NULL;
-	QStandardItem *si7 = NULL;
+    QStandardItem *siName = NULL;
+    QStandardItem *siStatus = NULL;
 
 	if (childRow == -1) {
 		// set this false if you want to expand on double click
@@ -1064,45 +1081,45 @@ int TransfersDialog::addPeerToItem(QStandardItem *dlItem, const QString& name, c
 
 		QHeaderView *header = ui.downloadList->header();
 
-		QStandardItem *i1  = new QStandardItem();
-		QStandardItem *i2  = new SortByNameItem(header);
-		QStandardItem *i3  = new SortByNameItem(header);
-		QStandardItem *i4  = new SortByNameItem(header);
-		QStandardItem *i5  = new ProgressItem(header);
-		QStandardItem *i6  = new SortByNameItem(header);
-		QStandardItem *i7  = new SortByNameItem(header);
-		QStandardItem *i8  = new SortByNameItem(header);
-		QStandardItem *i9  = new SortByNameItem(header);
-		QStandardItem *i10 = new SortByNameItem(header);
-		QStandardItem *i11 = new SortByNameItem(header);
+        QStandardItem *iName  = new QStandardItem();
+        QStandardItem *iSize  = new SortByNameItem(header);
+        QStandardItem *iCompleted  = new SortByNameItem(header);
+        QStandardItem *iDlSpeed  = new SortByNameItem(header);
+        QStandardItem *iProgress  = new ProgressItem(header);
+        QStandardItem *iSource  = new SortByNameItem(header);
+        QStandardItem *iStatus  = new SortByNameItem(header);
+        QStandardItem *iPriority  = new SortByNameItem(header);
+        QStandardItem *iRemaining  = new SortByNameItem(header);
+        QStandardItem *iDownloadTime = new SortByNameItem(header);
+        QStandardItem *iID = new SortByNameItem(header);
 
-		si1 = i1;
-		si7 = i7;
+        siName = iName;
+        siStatus = iStatus;
 
 		QList<QStandardItem*> items;
-		i1->setData(QVariant(" " + name), Qt::DisplayRole);
-		i2->setData(QVariant(QString()), Qt::DisplayRole);
-		i3->setData(QVariant(QString()), Qt::DisplayRole);
-		i4->setData(QVariant((double)dlspeed), Qt::DisplayRole);
-		i5->setData(QVariant::fromValue(peerInfo), Qt::DisplayRole);
-		i6->setData(QVariant(QString()), Qt::DisplayRole);
+        iName->setData(QVariant(" " + name), Qt::DisplayRole);
+        iSize->setData(QVariant(QString()), Qt::DisplayRole);
+        iCompleted->setData(QVariant(QString()), Qt::DisplayRole);
+        iDlSpeed->setData(QVariant((double)dlspeed), Qt::DisplayRole);
+        iProgress->setData(QVariant::fromValue(peerInfo), Qt::DisplayRole);
+        iSource->setData(QVariant(QString()), Qt::DisplayRole);
 
-		i8->setData(QVariant(QString()), Qt::DisplayRole);	// blank field for priority
-		i9->setData(QVariant(QString()), Qt::DisplayRole);
-		i10->setData(QVariant(QString()), Qt::DisplayRole);
-		i11->setData(QVariant(coreID), Qt::DisplayRole);
+        iPriority->setData(QVariant(QString()), Qt::DisplayRole);	// blank field for priority
+        iRemaining->setData(QVariant(QString()), Qt::DisplayRole);
+        iDownloadTime->setData(QVariant(QString()), Qt::DisplayRole);
+        iID->setData(QVariant(coreID), Qt::DisplayRole);
 
-		items.append(i1);
-		items.append(i2);
-		items.append(i3);
-		items.append(i4);
-		items.append(i5);
-		items.append(i6);
-		items.append(i7);
-		items.append(i8);
-		items.append(i9);
-		items.append(i10);
-		items.append(i11);
+        items.append(iName);
+        items.append(iSize);
+        items.append(iCompleted);
+        items.append(iDlSpeed);
+        items.append(iProgress);
+        items.append(iSource);
+        items.append(iStatus);
+        items.append(iPriority);
+        items.append(iRemaining);
+        items.append(iDownloadTime);
+        items.append(iID);
 		dlItem->appendRow(items);
 
 		childRow = dlItem->rowCount() - 1;
@@ -1111,34 +1128,34 @@ int TransfersDialog::addPeerToItem(QStandardItem *dlItem, const QString& name, c
         dlItem->child(childRow, COLUMN_DLSPEED)->setData(QVariant((double)dlspeed), Qt::DisplayRole);
         dlItem->child(childRow, COLUMN_PROGRESS)->setData(QVariant::fromValue(peerInfo), Qt::DisplayRole);
 
-        si1 = dlItem->child(childRow,COLUMN_NAME);
-        si7 = dlItem->child(childRow, COLUMN_STATUS);
+        siName = dlItem->child(childRow,COLUMN_NAME);
+        siStatus = dlItem->child(childRow, COLUMN_STATUS);
 	}
 
 	switch (status) {
 	case FT_STATE_FAILED:
-		si7->setData(QVariant(tr("Failed"))) ;
-		si1->setData(QIcon(":/images/Client1.png"), Qt::DecorationRole);
+        siStatus->setData(QVariant(tr("Failed"))) ;
+        siName->setData(QIcon(":/images/Client1.png"), Qt::DecorationRole);
 		break ;
 	case FT_STATE_OKAY:
-		si7->setData(QVariant(tr("Okay")));
-		si1->setData(QIcon(":/images/Client2.png"), Qt::DecorationRole);
+        siStatus->setData(QVariant(tr("Okay")));
+        siName->setData(QIcon(":/images/Client2.png"), Qt::DecorationRole);
 		break ;
 	case FT_STATE_WAITING:
-		si7->setData(QVariant(tr("")));
-		si1->setData(QIcon(":/images/Client3.png"), Qt::DecorationRole);
+        siStatus->setData(QVariant(tr("")));
+        siName->setData(QIcon(":/images/Client3.png"), Qt::DecorationRole);
 		break ;
 	case FT_STATE_DOWNLOADING:
-		si7->setData(QVariant(tr("Transferring")));
-		si1->setData(QIcon(":/images/Client0.png"), Qt::DecorationRole);
+        siStatus->setData(QVariant(tr("Transferring")));
+        siName->setData(QIcon(":/images/Client0.png"), Qt::DecorationRole);
 		break ;
 	case FT_STATE_COMPLETE:
-		si7->setData(QVariant(tr("Complete")));
-		si1->setData(QIcon(":/images/Client0.png"), Qt::DecorationRole);
+        siStatus->setData(QVariant(tr("Complete")));
+        siName->setData(QIcon(":/images/Client0.png"), Qt::DecorationRole);
 		break ;
 	default:
-		si7->setData(QVariant(tr("")));
-		si1->setData(QIcon(":/images/Client4.png"), Qt::DecorationRole);
+        siStatus->setData(QVariant(tr("")));
+        siName->setData(QIcon(":/images/Client4.png"), Qt::DecorationRole);
 	}
 
 	return childRow;
@@ -1985,6 +2002,11 @@ qlonglong TransfersDialog::getLastDL(int row, QStandardItemModel *model)
     return model->data(model->index(row, COLUMN_LASTDL), Qt::DisplayRole).toULongLong();
 }
 
+qlonglong TransfersDialog::getPath(int row, QStandardItemModel *model)
+{
+    return model->data(model->index(row, COLUMN_PATH), Qt::DisplayRole).toULongLong();
+}
+
 QString TransfersDialog::getSources(int row, QStandardItemModel *model)
 {
     return model->data(model->index(row, COLUMN_SOURCES), Qt::DisplayRole).toString();
@@ -2071,6 +2093,13 @@ void TransfersDialog::setShowDLLastDLColumn(bool show)
 {
     if (!ui.downloadList->isColumnHidden(COLUMN_LASTDL) != show) {
         ui.downloadList->setColumnHidden(COLUMN_LASTDL, !show);
+    }
+}
+
+void TransfersDialog::setShowDLPath(bool show)
+{
+    if (!ui.downloadList->isColumnHidden(COLUMN_PATH) != show) {
+        ui.downloadList->setColumnHidden(COLUMN_PATH, !show);
     }
 }
 

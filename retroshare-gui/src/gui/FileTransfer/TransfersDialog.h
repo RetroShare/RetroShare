@@ -142,6 +142,7 @@ private slots:
     void setShowDLDownloadTimeColumn(bool show);
     void setShowDLIDColumn(bool show);
     void setShowDLLastDLColumn(bool show);
+    void setShowDLPath(bool show);
 
 signals:
     void playFiles(QStringList files);
@@ -208,6 +209,7 @@ private:
     QAction* showDLDownloadTimeAct;
     QAction* showDLIDAct;
     QAction* showDLLastDLAct;
+    QAction* showDLPath;
 
     /** Defines the actions for the upload context menu */
     QAction* ulOpenFolderAct;
@@ -253,6 +255,7 @@ public slots:
     qlonglong getRemainingTime(int row, QStandardItemModel *model);
     qlonglong getDownloadTime(int row, QStandardItemModel *model);
     qlonglong getLastDL(int row, QStandardItemModel *model);
+    qlonglong getPath(int row, QStandardItemModel *model);
     QString getSources(int row, QStandardItemModel *model);
 };
 
