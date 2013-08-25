@@ -335,16 +335,19 @@ void ChatLobbyDialog::updateParticipantsList()
 
     if (it != lInfos.end()) {
         ChatLobbyInfo cliInfo=(*it);
-        QList<QTreeWidgetItem*>  qlOldParticipants=ui.participantsList->findItems("*",Qt::MatchWildcard);
+        QList<QTreeWidgetItem*>  qlOldParticipants=ui.participantsList->findItems("*",Qt::MatchWildcard,COLUMN_NAME);
         foreach(QTreeWidgetItem *qtwiCur,qlOldParticipants){
             QString qsOldParticipant = qtwiCur->text(COLUMN_NAME);
+            QByteArray qbaPart=qsOldParticipant.toUtf8();
+            std::string strTemp=std::string(qbaPart.begin(),qbaPart.end());
 
-            std::map<std::string,time_t>::iterator itFound(cliInfo.nick_names.find(qsOldParticipant.toStdString())) ;
+            std::map<std::string,time_t>::iterator itFound(cliInfo.nick_names.find(strTemp)) ;
 
             if(itFound == cliInfo.nick_names.end())
             {
                 //Old Participant go out, remove it
-                ui.participantsList->removeItemWidget(qtwiCur,0);
+                int index = ui.participantsList->indexOfTopLevelItem(qtwiCur);
+                delete ui.participantsList->takeTopLevelItem(index);
             }
         }
 
