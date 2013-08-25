@@ -118,6 +118,8 @@ private slots:
 
     void addExtraFile();
 
+    void addExtraPicture();
+
     bool fileSave();
     bool fileSaveAs();
 

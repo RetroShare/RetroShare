@@ -30,6 +30,7 @@
 #include <QTextCodec>
 #include <QTimer>
 #include <QMessageBox>
+#include <QTextDocumentFragment>
 
 #include "retroshare/rspeers.h"
 #include <retroshare/rshistory.h>
@@ -131,6 +132,7 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     connect(ui.textitalicChatButton, SIGNAL(clicked()), this, SLOT(setFont()));
     connect(ui.fontsButton, SIGNAL(clicked()), this, SLOT(chooseFont()));
     connect(ui.colorChatButton, SIGNAL(clicked()), this, SLOT(chooseColor()));
+    connect(ui.attachPictureButton, SIGNAL(clicked()), this, SLOT(addExtraPicture()));
     connect(ui.actionSave_History, SIGNAL(triggered()), this, SLOT(fileSaveAs()));
 
     connect(ui.hashBox, SIGNAL(fileHashingFinished(QList<HashedFile>)), this, SLOT(fileHashingFinished(QList<HashedFile>)));
@@ -231,6 +233,11 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     /* Hide platform specific features */
 #ifdef Q_WS_WIN
 
+#endif
+
+#if QT_VERSION < 0x040700
+    // embedded images are not supported before QT 4.7.0
+    ui->attachPictureButton->setVisible(false);
 #endif
 }
 
@@ -797,6 +804,19 @@ void FriendsDialog::addExtraFile()
     QStringList files;
     if (misc::getOpenFileNames(this, RshareSettings::LASTDIR_EXTRAFILE, tr("Add Extra File"), "", files)) {
         ui.hashBox->addAttachments(files,TransferRequestFlags(0u));	// no anonymous routing, because it is for friends only!
+    }
+}
+
+void FriendsDialog::addExtraPicture()
+{
+    // select a picture file
+    QString file;
+    if (misc::getOpenFileName(window(), RshareSettings::LASTDIR_IMAGES, tr("Load Picture File"), "Pictures (*.png *.xpm *.jpg)", file)) {
+        QString encodedImage;
+        if (RsHtml::makeEmbeddedImage(file, encodedImage, 640*480)) {
+            QTextDocumentFragment fragment = QTextDocumentFragment::fromHtml(encodedImage);
+            ui.lineEdit->textCursor().insertFragment(fragment);
+        }
     }
 }
 

@@ -550,40 +550,34 @@
                </widget>
               </item>
               <item>
-               <widget class="QToolButton" name="menuButton">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
+               <widget class="QToolButton" name="attachPictureButton">
                 <property name="minimumSize">
                  <size>
-                  <width>24</width>
-                  <height>24</height>
+                  <width>28</width>
+                  <height>28</height>
                  </size>
                 </property>
                 <property name="maximumSize">
                  <size>
-                  <width>24</width>
-                  <height>24</height>
+                  <width>28</width>
+                  <height>28</height>
                  </size>
                 </property>
                 <property name="focusPolicy">
                  <enum>Qt::NoFocus</enum>
                 </property>
+                <property name="toolTip">
+                 <string>Attach a Picture</string>
+                </property>
                 <property name="icon">
                  <iconset resource="images.qrc">
-                  <normaloff>:/images/configure.png</normaloff>:/images/configure.png</iconset>
+                  <normaloff>:/images/add_image24.png</normaloff>:/images/add_image24.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
-                  <width>22</width>
-                  <height>22</height>
+                  <width>24</width>
+                  <height>24</height>
                  </size>
-                </property>
-                <property name="popupMode">
-                 <enum>QToolButton::InstantPopup</enum>
                 </property>
                 <property name="autoRaise">
                  <bool>true</bool>
@@ -625,6 +619,47 @@
                   <width>24</width>
                   <height>24</height>
                  </size>
+                </property>
+                <property name="autoRaise">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QToolButton" name="menuButton">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>24</width>
+                  <height>24</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>24</width>
+                  <height>24</height>
+                 </size>
+                </property>
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
+                <property name="icon">
+                 <iconset resource="images.qrc">
+                  <normaloff>:/images/configure.png</normaloff>:/images/configure.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>22</width>
+                  <height>22</height>
+                 </size>
+                </property>
+                <property name="popupMode">
+                 <enum>QToolButton::InstantPopup</enum>
                 </property>
                 <property name="autoRaise">
                  <bool>true</bool>
