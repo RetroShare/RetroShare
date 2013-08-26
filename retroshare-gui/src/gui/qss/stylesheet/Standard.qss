@@ -33,13 +33,6 @@ GenCertDialog > QFrame#frame {
 	border: 1px solid #CCCCCC;
 }
 
-/* ProfileManager */
-
-ProfileManager > QFrame#frame {
-	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #9BDBF9, stop:1 #1592CD);
-	border: 1px solid #CCCCCC;
-}
-
 /* FriendsDialog */
 
 FriendsDialog QFrame#headFrame {
@@ -116,7 +109,12 @@ CreateLobbyDialog QFrame#lobbyFrame {
 	background: white;
 }
 
-/* Chat */
+CreateLobbyDialog QLabel#label {
+	border: 1px solid #DCDC41;
+	border-radius: 6px;
+	background: #FFFFD7;
+	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFD7, stop:1 #FFFFB2);
+}
 
 ChatWidget QTextEdit#chatTextEdit, ChatWidget QTextBrowser#textBrowser {
 	border: 1px solid #B8B6B1;
@@ -403,6 +401,13 @@ ConnectFriendWizard QLabel#requestinfolabel {
 	border-radius: 6px;
 	background: #FFFFD7;
 	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFD7, stop:1 #FFFFB2);
+}
+
+/* ProfileManager */
+
+ProfileManager > QFrame#headerFrame {
+	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #9BDBF9, stop:1 #1592CD);
+	border: 1px solid #CCCCCC;
 }
 
 ProfileManager QTextEdit#textEdit
