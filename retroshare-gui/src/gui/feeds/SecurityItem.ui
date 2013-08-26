@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>961</width>
-    <height>402</height>
+    <height>406</height>
    </rect>
   </property>
   <layout class="QGridLayout">
@@ -226,7 +226,13 @@
              </property>
              <property name="icon">
               <iconset resource="../images.qrc">
-               <normaloff>:/images/peerdetails_16x16.png</normaloff>:/images/peerdetails_16x16.png</iconset>
+               <normaloff>:/images/informations_24x24.png</normaloff>:/images/informations_24x24.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>24</width>
+               <height>24</height>
+              </size>
              </property>
              <property name="toolButtonStyle">
               <enum>Qt::ToolButtonTextBesideIcon</enum>
@@ -247,6 +253,12 @@
              <property name="icon">
               <iconset resource="../images.qrc">
                <normaloff>:/images/denied16.png</normaloff>:/images/denied16.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>16</width>
+               <height>16</height>
+              </size>
              </property>
              <property name="toolButtonStyle">
               <enum>Qt::ToolButtonTextBesideIcon</enum>
