@@ -199,7 +199,7 @@ bool HashCache::find(const std::string& full_path,uint64_t size,time_t time_stam
 	time_t now = time(NULL) ;
 	std::map<std::string,HashCacheInfo>::iterator it(_files.find(full_path)) ;
 
-	if(it != _files.end() && time_stamp == it->second.modf_stamp && size == it->second.size)
+	if(it != _files.end() && (uint64_t)time_stamp == it->second.modf_stamp && size == it->second.size)
 	{
 		hash = it->second.hash ;
 		it->second.time_stamp = now ;
@@ -244,7 +244,7 @@ void HashCache::clean()
 #endif
 
 	for(std::map<std::string,HashCacheInfo>::iterator it(_files.begin());it!=_files.end();)
-		if(it->second.time_stamp + duration < now)
+		if(it->second.time_stamp + duration < (uint64_t)now)
 		{
 #ifdef FIM_DEBUG
 			std::cerr << "  Entry too old: " << it->first << ", ts=" << it->second.time_stamp << std::endl ;

@@ -84,8 +84,8 @@ class HashCache
 		typedef struct 
 		{
 			uint64_t size ;
-			time_t time_stamp ;
-			time_t modf_stamp ;
+			uint64_t time_stamp ;
+			uint64_t modf_stamp ;
 			std::string hash ;
 		} HashCacheInfo ;
 
