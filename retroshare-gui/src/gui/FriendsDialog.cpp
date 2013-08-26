@@ -237,7 +237,7 @@ FriendsDialog::FriendsDialog(QWidget *parent)
 
 #if QT_VERSION < 0x040700
     // embedded images are not supported before QT 4.7.0
-    ui->attachPictureButton->setVisible(false);
+    ui.attachPictureButton->setVisible(false);
 #endif
 }
 

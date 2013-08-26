@@ -51,10 +51,7 @@
 #include "util/misc.h"
 #include "vmessagebox.h"
 
-#define PROGRESS_DIALOG	1
-#ifdef PROGRESS_DIALOG
 #include "gui/connect/ConnectProgressDialog.h"
-#endif
 
 #include "FriendList.h"
 #include "ui_FriendList.h"
@@ -1490,15 +1487,20 @@ void FriendList::connectfriend()
                 if (item->type() == TYPE_SSL) {
                     rsPeers->connectAttempt(getRsId(item));
                     item->setIcon(COLUMN_NAME,(QIcon(IMAGE_CONNECT2)));
+
+	    	    // Launch ProgressDialog, only if single SSL child.
+		    if (childCount == 1)
+		    {
+	    		ConnectProgressDialog::showProgress(getRsId(item));
+		    }
                 }
             }
         } else {
             //this is a SSL key
             rsPeers->connectAttempt(getRsId(c));
             c->setIcon(COLUMN_NAME,(QIcon(IMAGE_CONNECT2)));
-#ifdef PROGRESS_DIALOG
+	    // Launch ProgressDialog.
 	    ConnectProgressDialog::showProgress(getRsId(c));
-#endif
         }
     }
 }

@@ -63,7 +63,7 @@ ConnectProgressDialog::ConnectProgressDialog(const std::string& id, QWidget *par
 	ui->headerFrame->setHeaderImage(QPixmap(":/images/user/identityinfo64.png"));
 	ui->headerFrame->setHeaderText(tr("Connection Assistant"));
 
-	connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(close()));
+	connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(stopAndClose()));
 }
 
 ConnectProgressDialog::~ConnectProgressDialog()
@@ -88,12 +88,12 @@ void ConnectProgressDialog::showProgress(const std::string& peer_id)
     /* window will destroy itself! */
 }
 
-
 const uint32_t CONNECT_STATE_INIT		= 0;
 const uint32_t CONNECT_STATE_PROGRESS		= 1;
 const uint32_t CONNECT_STATE_CONNECTED		= 2;
 const uint32_t CONNECT_STATE_DENIED		= 3;
-const uint32_t CONNECT_STATE_FAILED		= 4;
+const uint32_t CONNECT_STATE_CLOSED		= 4;
+const uint32_t CONNECT_STATE_FAILED		= 5;
 
 const uint32_t CONNECT_DHT_INIT		= 0;
 const uint32_t CONNECT_DHT_OKAY		= 2;
@@ -227,6 +227,7 @@ void ConnectProgressDialog::updateStatus()
 			break;
 
 		default:
+		case CONNECT_STATE_CLOSED:
 		case CONNECT_STATE_FAILED:
 		case CONNECT_STATE_DENIED:
 		case CONNECT_STATE_CONNECTED:
@@ -236,6 +237,17 @@ void ConnectProgressDialog::updateStatus()
 	/* shutdown actions */
 	ui->progressFrame->setEnabled(false);
 	mTimer->stop();
+}
+
+
+void ConnectProgressDialog::stopAndClose()
+{
+	mState = CONNECT_STATE_CLOSED;
+	if (mTimer)
+	{
+		mTimer->stop();
+	}
+	close();
 }
 
 void ConnectProgressDialog::updateNetworkStatus()

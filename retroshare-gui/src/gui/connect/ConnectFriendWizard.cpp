@@ -35,6 +35,8 @@
 
 #include <retroshare/rsiface.h>
 
+#include "ConnectProgressDialog.h"
+
 //#define FRIEND_WIZARD_DEBUG
 
 ConnectFriendPage::ConnectFriendPage(QWidget *parent) : QWizardPage(parent)
@@ -313,7 +315,22 @@ void ConnectFriendWizard::initializePage(int id)
 			ui->nameEdit->setText(QString::fromUtf8(peerDetails.name.c_str()));
 			ui->trustEdit->setText(trustString);
 			ui->emailEdit->setText(QString::fromUtf8(peerDetails.email.c_str()));
-			ui->locationEdit->setText(QString::fromUtf8(peerDetails.location.c_str()));
+			QString loc = QString::fromUtf8(peerDetails.location.c_str());
+			if (!loc.isEmpty())
+			{
+				loc += " (";
+				loc += QString::fromStdString(peerDetails.id);
+				loc += ")";
+			}
+			else
+			{
+				if (!peerDetails.id.empty())
+				{
+				    loc += QString::fromStdString(peerDetails.id);
+				}
+			}
+
+			ui->locationEdit->setText(loc);
 			ui->signersEdit->setPlainText(ts);
 
 			fillGroups(this, ui->groupComboBox, groupId);
@@ -561,14 +578,18 @@ void ConnectFriendWizard::accept()
 		}
 	}
 
+	bool runProgressDialog = false;
 	if (!peerDetails.gpg_id.empty()) {
 		if (sign) {
 			std::cerr << "ConclusionPage::validatePage() signing GPG key." << std::endl;
 			rsPeers->signGPGCertificate(peerDetails.gpg_id); //bye default sign set accept_connection to true;
+			runProgressDialog = true;
+
 		} else if (accept_connection) {
 			std::cerr << "ConclusionPage::validatePage() accepting GPG key for connection." << std::endl;
 			rsPeers->addFriend("", peerDetails.gpg_id,serviceFlags()) ;
 			rsPeers->setServicePermissionFlags(peerDetails.gpg_id,serviceFlags()) ;
+			runProgressDialog = true;
 		}
 
 		if (!groupId.isEmpty()) {
@@ -578,6 +599,7 @@ void ConnectFriendWizard::accept()
 
 	if (peerDetails.id != "") {
 		rsPeers->addFriend(peerDetails.id, peerDetails.gpg_id,serviceFlags()) ;
+		runProgressDialog = true;
 
 		//let's check if there is ip adresses in the wizard.
 		if (!peerDetails.extAddr.empty() && peerDetails.extPort) {
@@ -596,6 +618,13 @@ void ConnectFriendWizard::accept()
 			std::cerr << "ConnectFriendWizard::accept() : setting peerLocation." << std::endl;
 			rsPeers->setLocation(peerDetails.id, peerDetails.location);
 		}
+	}
+		
+	if (runProgressDialog)
+	{
+		std::string ssl_id = peerDetails.id;
+		// its okay if ssl_id is invalid - dialog will show error.
+		ConnectProgressDialog::showProgress(ssl_id);
 	}
 
 	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_NEIGHBOURS,1) ;
@@ -927,3 +956,5 @@ void ConnectFriendWizard::groupCurrentIndexChanged(int index)
 		groupId = comboBox->itemData(index, Qt::UserRole).toString();
 	}
 }
+
+

@@ -45,6 +45,7 @@ private:
 
 private slots:
         void updateStatus();
+        void stopAndClose();
 
 private:
 
