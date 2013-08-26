@@ -107,6 +107,17 @@
       <enum>Qt::Horizontal</enum>
      </property>
      <widget class="QTreeWidget" name="lobbyTreeWidget">
+      <property name="font">
+       <font>
+        <pointsize>9</pointsize>
+       </font>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>24</width>
+        <height>24</height>
+       </size>
+      </property>
       <column>
        <property name="text">
         <string notr="true">1</string>
