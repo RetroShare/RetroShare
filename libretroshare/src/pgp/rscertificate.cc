@@ -314,6 +314,19 @@ bool RsCertificate::initFromString(const std::string& instr,uint32_t& err_code)
 	return true ;
 }
 
+std::string RsCertificate::sslid_string() const 
+{
+	if (only_pgp)
+	{
+		std::string empty;
+		return empty;
+	}
+	else
+	{
+		return location_id.toStdString(false); 
+	}
+}
+
 std::string RsCertificate::ext_ip_string() const
 {
 	std::ostringstream os ;
