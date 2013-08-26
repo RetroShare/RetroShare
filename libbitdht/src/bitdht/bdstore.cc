@@ -80,7 +80,7 @@ int bdStore::reloadFromStore()
 			{
 				addr.sin_port = htons(port);
 				bdPeer peer;
-				//bdZeroNodeId(&(peer.mPeerId.id));
+				bdZeroNodeId(&(peer.mPeerId.id));
 				peer.mPeerId.addr = addr;
 				peer.mLastSendTime = 0;
 				peer.mLastRecvTime = 0;

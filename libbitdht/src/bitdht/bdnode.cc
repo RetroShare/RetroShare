@@ -45,7 +45,7 @@
 #define BITDHT_QUERY_START_PEERS    10
 #define BITDHT_QUERY_NEIGHBOUR_PEERS    8
 
-#define BITDHT_MAX_REMOTE_QUERY_AGE	10
+#define BITDHT_MAX_REMOTE_QUERY_AGE	3 //  3 seconds, keep it fresh.
 #define MAX_REMOTE_PROCESS_PER_CYCLE	5
 
 /****
@@ -270,6 +270,8 @@ void bdNode::printState()
 #ifdef USE_HISTORY
 	mHistory.cleanupOldMsgs();
 	mHistory.printMsgs();
+	mHistory.analysePeers();
+	mHistory.peerTypeAnalysis();
 #endif
 
 	mAccount.printStats(std::cerr);
@@ -809,7 +811,7 @@ void bdNode::msgout_ping(bdId *id, bdToken *transId)
 	//registerOutgoingMsg(id, transId, BITDHT_MSG_TYPE_PING);
 
 	bdId dupId(*id);
-	registerOutgoingMsg(&dupId, transId, BITDHT_MSG_TYPE_PING);
+	registerOutgoingMsg(&dupId, transId, BITDHT_MSG_TYPE_PING, NULL);
 	
         /* create string */
         char msg[10240];
@@ -834,7 +836,7 @@ void bdNode::msgout_pong(bdId *id, bdToken *transId)
 	std::cerr << std::endl;
 #endif
 
-	registerOutgoingMsg(id, transId, BITDHT_MSG_TYPE_PONG);
+	registerOutgoingMsg(id, transId, BITDHT_MSG_TYPE_PONG, NULL);
 
 	/* generate message, send to udp */
 	bdToken vid;
@@ -870,7 +872,7 @@ void bdNode::msgout_find_node(bdId *id, bdToken *transId, bdNodeId *query)
 	std::cerr << std::endl;
 #endif
 
-	registerOutgoingMsg(id, transId, BITDHT_MSG_TYPE_FIND_NODE);
+	registerOutgoingMsg(id, transId, BITDHT_MSG_TYPE_FIND_NODE, query);
 	
 
 
@@ -890,7 +892,7 @@ void bdNode::msgout_reply_find_node(bdId *id, bdToken *transId, std::list<bdId> 
         char msg[10240];
         int avail = 10240;
 
-	registerOutgoingMsg(id, transId, BITDHT_MSG_TYPE_REPLY_NODE);
+	registerOutgoingMsg(id, transId, BITDHT_MSG_TYPE_REPLY_NODE, NULL);
 	
 	mAccount.incCounter(BDACCOUNT_MSG_REPLYFINDNODE, true);
 
@@ -934,7 +936,7 @@ void bdNode::msgout_get_hash(bdId *id, bdToken *transId, bdNodeId *info_hash)
         char msg[10240];
         int avail = 10240;
 
-	registerOutgoingMsg(id, transId, BITDHT_MSG_TYPE_GET_HASH);
+	registerOutgoingMsg(id, transId, BITDHT_MSG_TYPE_GET_HASH, info_hash);
 
 	
         int blen = bitdht_get_peers_msg(transId, &(mOwnId), info_hash, msg, avail-1);
@@ -968,7 +970,7 @@ void bdNode::msgout_reply_hash(bdId *id, bdToken *transId, bdToken *token, std::
         char msg[10240];
         int avail = 10240;
 
-	registerOutgoingMsg(id, transId, BITDHT_MSG_TYPE_REPLY_HASH);
+	registerOutgoingMsg(id, transId, BITDHT_MSG_TYPE_REPLY_HASH, NULL);
 
         int blen = bitdht_peers_reply_hash_msg(transId, &(mOwnId), token, values, msg, avail-1);
 
@@ -1001,7 +1003,7 @@ void bdNode::msgout_reply_nearest(bdId *id, bdToken *transId, bdToken *token, st
         char msg[10240];
         int avail = 10240;
 	
-	registerOutgoingMsg(id, transId, BITDHT_MSG_TYPE_REPLY_NEAR);
+	registerOutgoingMsg(id, transId, BITDHT_MSG_TYPE_REPLY_NEAR, NULL);
 	
 
 	
@@ -1031,7 +1033,7 @@ void bdNode::msgout_post_hash(bdId *id, bdToken *transId, bdNodeId *info_hash, u
         char msg[10240];
         int avail = 10240;
 	
-	registerOutgoingMsg(id, transId, BITDHT_MSG_TYPE_POST_HASH);
+	registerOutgoingMsg(id, transId, BITDHT_MSG_TYPE_POST_HASH, info_hash);
 	
 	
         int blen = bitdht_announce_peers_msg(transId,&(mOwnId),info_hash,port,token,msg,avail-1);
@@ -1056,7 +1058,7 @@ void bdNode::msgout_reply_post(bdId *id, bdToken *transId)
 	char msg[10240];
 	int avail = 10240;
 
-	registerOutgoingMsg(id, transId, BITDHT_MSG_TYPE_REPLY_POST);
+	registerOutgoingMsg(id, transId, BITDHT_MSG_TYPE_REPLY_POST, NULL);
 
 	int blen = bitdht_reply_announce_msg(transId, &(mOwnId), msg, avail-1);
 
@@ -1480,8 +1482,16 @@ void    bdNode::recvPkt(char *msg, int len, struct sockaddr_in addr)
 	/****************** Bits Parsed Ok. Process Msg ***********************/
 	/* Construct Source Id */
 	bdId srcId(id, addr);
-	
-	registerIncomingMsg(&srcId, &transId, beType);
+
+	if (be_target)
+	{	
+		registerIncomingMsg(&srcId, &transId, beType, &target_info_hash);
+	}
+	else
+	{
+		registerIncomingMsg(&srcId, &transId, beType, NULL);
+	}
+
 	switch(beType)
 	{
 		case BITDHT_MSG_TYPE_PING:  /* a: id, transId */
@@ -1679,6 +1689,22 @@ void bdNode::msgin_pong(bdId *id, bdToken *transId, bdToken *versionId)
 			std::cerr << versionId->data[i];
 		}
 		std::cerr << std::endl;
+#endif
+
+#ifdef USE_HISTORY
+		std::string version;
+		for(int i = 0; i < versionId->len; i++)
+		{
+			if (isalnum(versionId->data[i]))
+			{
+				version += versionId->data[i];
+			}
+			else
+			{
+				version += 'X';
+			}
+		}
+		mHistory.setPeerType(id, version);
 #endif
 	
 		/* check two bytes */
@@ -2014,7 +2040,7 @@ void bdNode::msgout_connect_genmsg(bdId *id, bdToken *transId, int msgtype, bdId
 			break;
 	}
 			
-	registerOutgoingMsg(id, transId, msgtype);
+	registerOutgoingMsg(id, transId, msgtype, NULL);
 	
         /* create string */
         char msg[10240];
@@ -2163,7 +2189,7 @@ int bdNode::queueQuery(bdId *id, bdNodeId *query, bdToken *transId, uint32_t que
 
 /*************** Register Transaction Ids *************/
 
-void bdNode::registerOutgoingMsg(bdId *id, bdToken *transId, uint32_t msgType)
+void bdNode::registerOutgoingMsg(bdId *id, bdToken *transId, uint32_t msgType, bdNodeId *aboutId)
 {
 	
 #ifdef DEBUG_MSG_CHECKS
@@ -2177,9 +2203,41 @@ void bdNode::registerOutgoingMsg(bdId *id, bdToken *transId, uint32_t msgType)
 #endif
 	
 #ifdef USE_HISTORY
-	mHistory.addMsg(id, transId, msgType, false);
+
+	// splitting up - to see if we can isolate the crash causes.
+	switch(msgType)
+	{
+		// disabled types (which appear to crash it!)
+		case BITDHT_MSG_TYPE_PING:
+			if (!id)
+			{
+				return;
+			}
+			if ((id->id.data[0] == 0)
+			  && (id->id.data[1] == 0)
+			  && (id->id.data[2] == 0)
+			  && (id->id.data[3] == 0))
+			{
+				return;
+			}
+			break;
+		case BITDHT_MSG_TYPE_UNKNOWN:
+		case BITDHT_MSG_TYPE_PONG:
+		case BITDHT_MSG_TYPE_FIND_NODE:
+		case BITDHT_MSG_TYPE_REPLY_NODE:
+		case BITDHT_MSG_TYPE_GET_HASH:
+		case BITDHT_MSG_TYPE_REPLY_HASH:
+		case BITDHT_MSG_TYPE_REPLY_NEAR:
+		case BITDHT_MSG_TYPE_POST_HASH:
+		case BITDHT_MSG_TYPE_REPLY_POST:
+			break;
+	}
+
+	// This line appears to cause crashes on OSX.
+	mHistory.addMsg(id, transId, msgType, false, aboutId);
 #else
 	(void) transId;
+	(void) aboutId;
 #endif
 	
 	
@@ -2201,7 +2259,7 @@ void bdNode::registerOutgoingMsg(bdId *id, bdToken *transId, uint32_t msgType)
 
 
 
-uint32_t bdNode::registerIncomingMsg(bdId *id, bdToken *transId, uint32_t msgType)
+uint32_t bdNode::registerIncomingMsg(bdId *id, bdToken *transId, uint32_t msgType, bdNodeId *aboutId)
 {
 	
 #ifdef DEBUG_MSG_CHECKS
@@ -2215,9 +2273,10 @@ uint32_t bdNode::registerIncomingMsg(bdId *id, bdToken *transId, uint32_t msgTyp
 #endif
 	
 #ifdef USE_HISTORY
-	mHistory.addMsg(id, transId, msgType, true);
+	mHistory.addMsg(id, transId, msgType, true, aboutId);
 #else
 	(void) transId;
+	(void) aboutId;
 #endif
 	
 	return 0;

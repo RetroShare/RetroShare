@@ -218,8 +218,8 @@ void	recvPkt(char *msg, int len, struct sockaddr_in addr);
 
 	/* transId handling */
 	void genNewTransId(bdToken *token);
-	void registerOutgoingMsg(bdId *id, bdToken *transId, uint32_t msgType);
-	uint32_t registerIncomingMsg(bdId *id, bdToken *transId, uint32_t msgType);
+	void registerOutgoingMsg(bdId *id, bdToken *transId, uint32_t msgType, bdNodeId *aboutId);
+	uint32_t registerIncomingMsg(bdId *id, bdToken *transId, uint32_t msgType, bdNodeId *aboutId);
 
 	void cleanupTransIdRegister();
 

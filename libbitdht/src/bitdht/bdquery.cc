@@ -37,8 +37,8 @@
 **/
 
 #define EXPECTED_REPLY 10 // Speed up queries
-#define QUERY_IDLE_RETRY_PEER_PERIOD 300 // 5min =  (mFns->bdNumQueryNodes() * 30)
-#define MAX_QUERY_IDLE_PERIOD 	     900 // 15min.
+#define QUERY_IDLE_RETRY_PEER_PERIOD 600 // 10min =  (mFns->bdNumQueryNodes() * 60)
+#define MAX_QUERY_IDLE_PERIOD 	     1200 // 20min.
 
 
 /************************************************************
@@ -980,6 +980,7 @@ int     bdQuery::printQuery()
 		fprintf(stderr, "Id:  ");
 		mFns->bdPrintId(std::cerr, &(it->second.mPeerId));
 		fprintf(stderr, "  Bucket: %d ", mFns->bdBucketDistance(&(it->first)));
+		fprintf(stderr," Flags: %x", it->second.mPeerFlags);
 		fprintf(stderr," Found: %ld ago", ts-it->second.mFoundTime);
 		fprintf(stderr," LastSent: %ld ago", ts-it->second.mLastSendTime);
 		fprintf(stderr," LastRecv: %ld ago", ts-it->second.mLastRecvTime);
@@ -992,35 +993,12 @@ int     bdQuery::printQuery()
 		fprintf(stderr, "Id:  ");
 		mFns->bdPrintId(std::cerr, &(it->second.mPeerId));
 		fprintf(stderr, "  Bucket: %d ", mFns->bdBucketDistance(&(it->first)));
+		fprintf(stderr," Flags: %x", it->second.mPeerFlags);
 		fprintf(stderr," Found: %ld ago", ts-it->second.mFoundTime);
 		fprintf(stderr," LastSent: %ld ago", ts-it->second.mLastSendTime);
 		fprintf(stderr," LastRecv: %ld ago", ts-it->second.mLastRecvTime);
 		fprintf(stderr, "\n");
 	}
-
-	std::list<bdPeer>::iterator lit;
-	fprintf(stderr, "\nProxies Flagged:\n");
-	for(lit = mProxiesFlagged.begin(); lit != mProxiesFlagged.end(); lit++)
-	{
-		fprintf(stderr, "ProxyId:  ");
-		mFns->bdPrintId(std::cerr, &(lit->mPeerId));
-		fprintf(stderr," Found: %ld ago", ts-lit->mFoundTime);
-		fprintf(stderr," LastSent: %ld ago", ts-lit->mLastSendTime);
-		fprintf(stderr," LastRecv: %ld ago", ts-lit->mLastRecvTime);
-		fprintf(stderr, "\n");
-	}
-
-	fprintf(stderr, "\nProxies Unknown:\n");
-	for(lit = mProxiesUnknown.begin(); lit != mProxiesUnknown.end(); lit++)
-	{
-		fprintf(stderr, "ProxyId:  ");
-		mFns->bdPrintId(std::cerr, &(lit->mPeerId));
-		fprintf(stderr," Found: %ld ago", ts-lit->mFoundTime);
-		fprintf(stderr," LastSent: %ld ago", ts-lit->mLastSendTime);
-		fprintf(stderr," LastRecv: %ld ago", ts-lit->mLastRecvTime);
-		fprintf(stderr, "\n");
-	}
-	
 #else
 	// shortened version.
 	fprintf(stderr, "Closest Available Peer: ");
@@ -1049,6 +1027,7 @@ int     bdQuery::printQuery()
 	}
 	fprintf(stderr, "\n");
 
+#endif
 	std::list<bdPeer>::iterator lit;
 	fprintf(stderr, "Flagged Proxies:\n");
 	for(lit = mProxiesFlagged.begin(); lit != mProxiesFlagged.end(); lit++)
@@ -1073,7 +1052,6 @@ int     bdQuery::printQuery()
 		fprintf(stderr," LastRecv: %ld ago", ts-lit->mLastRecvTime);
 		fprintf(stderr, "\n");
 	}
-#endif
 
 	return 1;
 }
