@@ -163,7 +163,7 @@ int     p3ChatService::sendPublicChat(const std::wstring &msg)
 		RsChatMsgItem *ci = new RsChatMsgItem();
 
 		ci->PeerId(*it);
-		ci->chatFlags = 0;
+		ci->chatFlags = RS_CHAT_FLAG_PUBLIC;
 		ci->sendTime = time(NULL);
 		ci->recvTime = ci->sendTime;
 		ci->message = msg;
@@ -1102,6 +1102,29 @@ bool p3ChatService::checkForMessageSecurity(RsChatMsgItem *ci)
 	// <span> <img src="data:image/png;base64,... />
 	// <a href="retroshare://…>…</a>
 	
+	// Also check flags. Lobby msgs should have proper flags, but they can be
+	// corrupted by a friend before sending them that can result in e.g. lobby
+	// messages ending up in the broadcast channel, etc.
+	
+	uint32_t fl = ci->chatFlags & (RS_CHAT_FLAG_PRIVATE | RS_CHAT_FLAG_PUBLIC | RS_CHAT_FLAG_LOBBY) ;
+
+	std::cerr << "Checking msg flags: " << std::hex << fl << std::endl;
+
+	if(dynamic_cast<RsChatLobbyMsgItem*>(ci) != NULL)
+	{
+		if(fl != (RS_CHAT_FLAG_PRIVATE | RS_CHAT_FLAG_LOBBY))
+			std::cerr << "Warning: received chat lobby message with iconsistent flags " << std::hex << fl << std::dec << " from friend peer " << ci->PeerId() << std::endl;
+
+		ci->chatFlags &= ~RS_CHAT_FLAG_PUBLIC ;
+	}
+	else if(fl!=0 && !(fl == RS_CHAT_FLAG_PRIVATE || fl == RS_CHAT_FLAG_PUBLIC))	// The !=0 is normally not needed, but we keep it for 
+	{																										// a while, for backward compatibility. It's not harmful.
+		std::cerr << "Warning: received chat lobby message with iconsistent flags " << std::hex << fl << std::dec << " from friend peer " << ci->PeerId() << std::endl;
+
+		std::cerr << "This message will be dropped."<< std::endl;
+		return false ;
+	}
+
 	return true ;
 }
 
@@ -1162,7 +1185,8 @@ bool p3ChatService::handleRecvChatMsgItem(RsChatMsgItem *ci)
 		if(!locked_checkAndRebuildPartialMessage_deprecated(ci)) 	// Don't delete ! This function is not handled propoerly for chat lobby msgs, so
 			return true ;															// we don't use it in this case.
 
-		checkForMessageSecurity(ci) ;
+		if(!checkForMessageSecurity(ci))
+			return false ;
 	}
 
 #ifdef CHAT_DEBUG
