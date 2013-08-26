@@ -612,39 +612,24 @@ void TransfersDialog::processSettings(bool bLoad)
 void TransfersDialog::downloadListCustomPopupMenu( QPoint /*point*/ )
 {
 	std::set<std::string> items;
-	std::set<std::string>::iterator it;
 	getSelectedItems(&items, NULL);
 
 	bool single = (items.size() == 1) ;
 
-	/* check which item is selected
-	 * - if it is completed - play should appear in menu
-	 */
-	std::cerr << "TransfersDialog::downloadListCustomPopupMenu()" << std::endl;
+    bool atLeastOne_Waiting = false;
+    bool atLeastOne_Downloading = false;
+    bool atLeastOne_Complete = false;
+    bool atLeastOne_Queued = false;
+    bool atLeastOne_Paused = false;
+
+    bool add_PlayOption = false;
+    bool add_PreviewOption=false;
+    bool add_OpenFileOption = false;
+    bool add_CopyLink = false;
+    bool add_PasteLink = false;
 	
 	FileInfo info;
 
-	for (it = items.begin(); it != items.end(); it ++) {
-		if (!rsFiles->FileDetails(*it, RS_FILE_HINTS_DOWNLOAD, info)) continue;
-		break;
-	}
-
-	bool addPlayOption = false;
-	bool addOpenFileOption = false;
-
-  if  (info.downloadStatus == FT_STATE_COMPLETE)
-  {
-	  std::cerr << "Add Play Option" << std::endl;
-
-	  addOpenFileOption = true;
-
-	  size_t pos = info.fname.find_last_of('.');
-
-	  /* check if the file is a media file */
-	  if(pos !=  std::string::npos && misc::isPreviewable(info.fname.substr(pos + 1).c_str()))
-		  addPlayOption = true;
-  }
-		
 	QMenu priorityQueueMenu(tr("Move in Queue..."), this);
 	priorityQueueMenu.setIcon(QIcon(IMAGE_PRIORITY));
 	priorityQueueMenu.addAction(queueTopAct);
@@ -666,42 +651,77 @@ void TransfersDialog::downloadListCustomPopupMenu( QPoint /*point*/ )
 
 	QMenu contextMnu( this );
 
-	if (addPlayOption)
-		contextMnu.addAction(playAct);
-
-	contextMnu.addSeparator();
+    if(!RSLinkClipboard::empty(RetroShareLink::TYPE_FILE))
+        add_PasteLink=true;
 
 	if(!items.empty())
 	{
-		bool all_paused = true ;
-		bool all_downld = true ;
-		bool all_downloading = true ;
-		bool all_queued = true ;
+        add_CopyLink = true;
 
 		QModelIndexList lst = ui.downloadList->selectionModel ()->selectedIndexes ();
 
+        //Look for all selected items
 		for (int i = 0; i < lst.count (); i++)
 		{
-			if ( lst[i].column() == 0 && info.downloadStatus == FT_STATE_PAUSED )
-				all_downld = false ;
-			if ( lst[i].column() == 0 && info.downloadStatus == FT_STATE_DOWNLOADING )
-				all_paused = false ;
-
+            //Look only for first column == File List
 			if ( lst[i].column() == 0)
 			{
+                //Get Info for current item
+                if (rsFiles->FileDetails(getID(lst[i].row(), DLListModel).toStdString(), RS_FILE_HINTS_DOWNLOAD, info))
+                {
+                    /*const uint32_t FT_STATE_FAILED        = 0x0000 ;
+                      const uint32_t FT_STATE_OKAY          = 0x0001 ;
+                      const uint32_t FT_STATE_WAITING       = 0x0002 ;
+                      const uint32_t FT_STATE_DOWNLOADING   = 0x0003 ;
+                      const uint32_t FT_STATE_COMPLETE      = 0x0004 ;
+                      const uint32_t FT_STATE_QUEUED        = 0x0005 ;
+                      const uint32_t FT_STATE_PAUSED        = 0x0006 ;
+                      const uint32_t FT_STATE_CHECKING_HASH = 0x0007 ;
+                    */
+                    if (info.downloadStatus == FT_STATE_WAITING)
+                    {
+                        atLeastOne_Waiting = true;
+                    }
+                    if (info.downloadStatus == FT_STATE_DOWNLOADING)
+                    {
+                        atLeastOne_Downloading=true;
+                    }
+                    if (info.downloadStatus == FT_STATE_COMPLETE)
+                    {
+                        atLeastOne_Complete = true;
+                        add_OpenFileOption = single;
+                    }
 				if(info.downloadStatus == FT_STATE_QUEUED)
-					all_downloading = false ;
-				else
-					all_queued = false ;
+                    {
+                        atLeastOne_Queued = true;
+			}
+                    if (info.downloadStatus == FT_STATE_PAUSED)
+                    {
+                        atLeastOne_Paused = true;
+		}
+
+                    size_t pos = info.fname.find_last_of('.');
+                    /* check if the file is a media file */
+                    if(pos !=  std::string::npos)
+                    {
+                        if (misc::isPreviewable(info.fname.substr(pos + 1).c_str()))
+                        {
+                            add_PlayOption = (info.downloadStatus != FT_STATE_COMPLETE);
+                            add_PreviewOption = !add_PlayOption;
 			}
 		}
 
-		if(all_downloading)
+                }//if (rsFiles->FileDetails(lst[i].data(COLUMN_ID), RS_FILE_HINTS_DOWNLOAD, info))
+            }//if (lst[i].column() == 0)
+        }// for (int i = 0; i < lst.count (); i++)
+    }//if(!items.empty())
+
+    if(atLeastOne_Downloading)
 			contextMnu.addMenu(&prioritySpeedMenu);
-		else if(all_queued)
+    if(atLeastOne_Queued)
 			contextMnu.addMenu(&priorityQueueMenu) ;
 
-		if(all_downloading)
+    if(!atLeastOne_Queued && !items.empty())
 		{
 			contextMnu.addMenu( &chunkMenu);
 
@@ -731,55 +751,42 @@ void TransfersDialog::downloadListCustomPopupMenu( QPoint /*point*/ )
 			}
 		}
 
-		if(!all_paused)
-			contextMnu.addAction( pauseAct);
-		if(!all_downld)
-			contextMnu.addAction( resumeAct);
-
-		if(single)
-		{	
-			if(info.downloadStatus == FT_STATE_PAUSED)
+    if(atLeastOne_Paused)
 				contextMnu.addAction( resumeAct);
-			else if(info.downloadStatus != FT_STATE_COMPLETE)
+    if(atLeastOne_Downloading || atLeastOne_Queued || atLeastOne_Waiting)
 				contextMnu.addAction( pauseAct);
-		}
 
-		if(info.downloadStatus != FT_STATE_COMPLETE)
+    if(!atLeastOne_Complete && !items.empty())
 		{
-//#ifdef USE_NEW_CHUNK_CHECKING_CODE
 			contextMnu.addAction( forceCheckAct);
-//#endif
 			contextMnu.addAction( cancelAct);
 		}
-
-		contextMnu.addSeparator();
+    if (add_PlayOption)
+    {
+        contextMnu.addAction(playAct);
 	}
+
+    if(atLeastOne_Paused || atLeastOne_Downloading || atLeastOne_Complete || add_PlayOption)
+        contextMnu.addSeparator();//------------------------------------------------
 
 	if(single)
 	{
-		if (addOpenFileOption)
-            contextMnu.addAction( openFileAct);
-
-        contextMnu.addAction( previewFileAct);
+        if (add_OpenFileOption) contextMnu.addAction( openFileAct);
+        if (add_PreviewOption) contextMnu.addAction( previewFileAct);
         contextMnu.addAction( openFolderAct);
         contextMnu.addAction( detailsFileAct);
-		contextMnu.addSeparator();
+        contextMnu.addSeparator();//--------------------------------------------
 	}
 
     contextMnu.addAction( clearCompletedAct);
-	contextMnu.addSeparator();
+    contextMnu.addSeparator();//------------------------------------------------
 
-	if(!items.empty())
+    if (add_CopyLink)
         contextMnu.addAction( copyLinkAct);
-
-	if(!RSLinkClipboard::empty(RetroShareLink::TYPE_FILE)) {
-        pasteLinkAct->setEnabled(true);
-	} else {
-        pasteLinkAct->setDisabled(true);
-	}
+    if (add_PasteLink)
     contextMnu.addAction( pasteLinkAct);
-
-	contextMnu.addSeparator();
+    if (add_CopyLink || add_PasteLink)
+        contextMnu.addSeparator();//--------------------------------------------
 
 	if (DLListModel->rowCount()>0 ) {
 		contextMnu.addAction( expandAllAct ) ;
@@ -792,8 +799,6 @@ void TransfersDialog::downloadListCustomPopupMenu( QPoint /*point*/ )
 	toggleShowCacheTransfersAct->setChecked(_show_cache_transfers) ;
 	contextMnu.addAction( openCollectionAct ) ;
 	
-	contextMnu.addSeparator();
-
 	contextMnu.exec(QCursor::pos());
 }
 
