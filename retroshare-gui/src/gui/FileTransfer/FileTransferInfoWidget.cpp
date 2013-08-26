@@ -244,9 +244,9 @@ void FileTransferInfoWidget::draw(const FileInfo& nfo,const FileChunksInfo& info
 	 painter->setPen(QColor::fromRgb(0,0,0)) ;
 	 y += text_height ; painter->drawText(0,y,tr("File info") + ":") ;
 	 y += block_sep ;
-	 y += text_height ; painter->drawText(20,y,tr("File name") + ":") ; painter->drawText(tab_size,y,QString::fromStdString(nfo.fname)) ;
+	 y += text_height ; painter->drawText(20,y,tr("File name") + ":") ; painter->drawText(tab_size,y,QString::fromUtf8(nfo.fname.c_str())) ;
 	 y += block_sep ;
-	 y += text_height ; painter->drawText(20,y,tr("Destination folder") + ":") ; painter->drawText(tab_size,y,QString::fromStdString(nfo.path)) ;
+	 y += text_height ; painter->drawText(20,y,tr("Destination folder") + ":") ; painter->drawText(tab_size,y,QString::fromUtf8(nfo.path.c_str())) ;
 	 y += block_sep ;
 	 y += text_height ; painter->drawText(20,y,tr("File hash") + ":") ; painter->drawText(tab_size,y,QString::fromStdString(nfo.hash)) ;
 	 y += block_sep ;

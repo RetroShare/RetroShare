@@ -108,7 +108,7 @@ void DetailsDialog::setFileHash(const std::string & hash)
 		return ;
 
 	RetroShareLink link ;
-	link.createFile(QString::fromStdString(nfo.fname),nfo.size,QString::fromStdString(nfo.hash)) ;
+	link.createFile(QString::fromUtf8(nfo.fname.c_str()),nfo.size,QString::fromStdString(nfo.hash)) ;
 
 	ui.Linktext->setText(link.toString()) ;
 }
