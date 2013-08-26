@@ -121,6 +121,23 @@ freebsd-* {
 	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
 }
 
+##################################### OpenBSD  ######################################
+
+openbsd-* {
+	INCLUDEPATH *= /usr/local/include
+	QMAKE_CXXFLAGS *= -Dfseeko64=fseeko -Dftello64=ftello -Dstat64=stat -Dstatvfs64=statvfs -Dfopen64=fopen
+	LIBS *= ../../libretroshare/src/lib/libretroshare.a
+	LIBS *= ../../openpgpsdk/src/lib/libops.a -lbz2
+	LIBS *= -lssl -lcrypto
+	LIBS *= -lgpgme
+	LIBS *= -lupnp
+	LIBS *= -lgnome-keyring
+	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
+	PRE_TARGETDEPS *= ../../openpgpsdk/src/lib/libops.a
+	LIBS *= -rdynamic
+}
+
+
 ############################## Common stuff ######################################
 
 # bitdht config
