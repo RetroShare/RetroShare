@@ -1292,13 +1292,13 @@ bool fillLobbyInfoFromChatLobbyInfo(const ChatLobbyInfo &cli, rsctrl::chat::Chat
 	lobby->set_last_activity(cli.last_activity);
 
 	std::set<std::string>::const_iterator pit;
-	for(pit = cli.participating_friends.begin(); pit != cli.participating_friends.begin(); pit++)
+	for(pit = cli.participating_friends.begin(); pit != cli.participating_friends.end(); pit++)
 	{
 		lobby->add_participating_friends(*pit);
 	}
 
 	std::map<std::string, time_t>::const_iterator mit;
-	for(mit = cli.nick_names.begin(); mit != cli.nick_names.begin(); mit++)
+	for(mit = cli.nick_names.begin(); mit != cli.nick_names.end(); mit++)
 	{
 		lobby->add_nicknames(mit->first);
 	}

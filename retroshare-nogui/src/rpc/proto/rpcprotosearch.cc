@@ -634,7 +634,7 @@ bool condenseSearchResults(const std::list<TurtleFileInfo> &searchResults, uint3
 	}
 
 	unsigned int i = 0;
-	for(mit = searchMap.begin(); (mit != searchMap.end()) && (i < limit); mit++, i++)
+	for(mit = searchMap.begin(); (mit != searchMap.end()) && (i < limit || limit == 0); mit++, i++)
 	{
 		std::map<std::string, uint32_t>::reverse_iterator nit;
 		nit = mit->second.name_map.rbegin();
