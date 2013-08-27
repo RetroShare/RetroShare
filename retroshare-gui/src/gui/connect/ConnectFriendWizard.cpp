@@ -583,6 +583,7 @@ void ConnectFriendWizard::accept()
 		if (sign) {
 			std::cerr << "ConclusionPage::validatePage() signing GPG key." << std::endl;
 			rsPeers->signGPGCertificate(peerDetails.gpg_id); //bye default sign set accept_connection to true;
+			rsPeers->setServicePermissionFlags(peerDetails.gpg_id,serviceFlags()) ;
 			runProgressDialog = true;
 
 		} else if (accept_connection) {
