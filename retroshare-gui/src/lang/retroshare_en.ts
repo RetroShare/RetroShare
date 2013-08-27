@@ -1243,10 +1243,6 @@ Please choose one of it to chat with.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Right click to mute/unmute participants&lt;br/&gt;Double click to address this person</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Lobby management</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1276,6 +1272,18 @@ Please choose one of it to chat with.</source>
     </message>
     <message>
         <source>Show Participants</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Right click to mute/unmute participants&lt;br/&gt;Double click to address this person&lt;br/&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This participant is not active since:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> seconds</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2669,18 +2677,6 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Lucida Grande&apos;; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;This Widget shows the progress of your connection to your new peer.&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;It is helpful for problem-solving.&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;If you are an expert RS user, or trust that RS will do the right thing&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;you can close it.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Connection Assistant</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2982,6 +2978,18 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Please retry importing the full Certificate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Lucida Grande&apos;; font-size:13pt;&quot;&gt;This Widget shows the progress of your connection to your new peer.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Lucida Grande&apos;; font-size:13pt;&quot;&gt;It is helpful for problem-solving.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Lucida Grande&apos;; font-size:13pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Lucida Grande&apos;; font-size:13pt;&quot;&gt;If you are an expert RS user, or trust that RS will do the right thing&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Lucida Grande&apos;; font-size:13pt;&quot;&gt;you can close it.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5768,6 +5776,14 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Retroshare broadcast chat: messages are sent to all connected friends.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Attach a Picture</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Load Picture File</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -11780,6 +11796,10 @@ Reducing image to %1x%2 pixels?</source>
         <source>New RetroShare Link(s)</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Open Folder</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SecurityItem</name>
@@ -13275,6 +13295,19 @@ Try to be patient!</source>
     </message>
     <message>
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;File Transfer&lt;/h1&gt;                                                         			 &lt;p&gt;Retroshare brings two ways of transferring files: direct transfers from your friends, and                                     			 distant anonymous tunnelled transfers. In addition, file transfer is multi-source and allows swarming                                      			 (you can be a source while downloading)&lt;/p&gt;                                     			 &lt;p&gt;You can share files using the &lt;img src=&quot;:/images/directoryadd_24x24_shadow.png&quot; width=16 /&gt; icon from the left side bar. 				These files will be listed in the My Files tab. You can decide for each friend group whether they can or not see these files 				in their Friends Files tab&lt;/p&gt;			 &lt;p&gt;The search tab reports files from your friends&apos; file lists, and distant files that can be reached 			 anonymously using the multi-hop tunnelling system.&lt;/p&gt; 			 </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Path</source>
+        <comment>i.e: Where file is saved</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Path</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Path Column</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
