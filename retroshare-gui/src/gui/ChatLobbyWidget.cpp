@@ -250,6 +250,13 @@ void ChatLobbyWidget::addChatPage(ChatLobbyDialog *d)
 void ChatLobbyWidget::setCurrentChatPage(ChatLobbyDialog *d)
 {
 	stackedWidget->setCurrentWidget(d) ;
+
+	if (d) {
+		QTreeWidgetItem *item = getTreeWidgetItem(d->id());
+		if (item) {
+			lobbyTreeWidget->setCurrentItem(item);
+		}
+	}
 }
 
 void ChatLobbyWidget::updateDisplay()
