@@ -190,7 +190,7 @@ AWidget::AWidget() {
     if (retv && versions.end() != (vit = versions.find(rsPeers->getOwnId())))
     {
 	    QString version = QString::fromStdString("RetroShare version : \n") + QString::fromStdString(vit->second);
-      p.drawText(QRect(10, 20, width()-10, 60), version);
+        p.drawText(QRect(10, 10, width()-10, 60), version);
           
     }
     p.end();
