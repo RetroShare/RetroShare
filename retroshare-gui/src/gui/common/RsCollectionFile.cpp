@@ -159,7 +159,7 @@ RsCollectionFile::RsCollectionFile(const std::vector<DirDetails>& file_infos)
 
 static void showErrorBox(const QString& filename, const QString& error)
 {
-	QMessageBox mb(QMessageBox::Warning, QObject::tr("Failed to process collection file"), QObject::tr("The collection file %1 could not be opened.\nReported error is: %2").arg(filename).arg(error), QMessageBox::Ok);
+	QMessageBox mb(QMessageBox::Warning, QObject::tr("Failed to process collection file"), QObject::tr("The collection file %1 could not be opened.\nReported error is: \n\n%2").arg(filename).arg(error), QMessageBox::Ok);
 	mb.setWindowIcon(QIcon(":/images/rstray3.png"));
 	mb.exec();
 }
@@ -176,6 +176,58 @@ bool RsCollectionFile::load(const QString& filename, bool showError /* = true*/)
 		}
 		return false;
 	}
+
+	// check that the file is a valid rscollection file, and not a lol bomb or some shit like this
+	
+	std::cerr << "Checking this file for bomb elements and various wrong stuff" << std::endl;
+
+	FILE *f = fopen(filename.toStdString().c_str(),"r") ;
+	char c ;
+
+	std::vector<std::string> bad_strings ;
+	bad_strings.push_back(std::string("<!entity ")) ;
+	static const int max_size = 12 ; // should be as large as the largest element in bad_strings
+	char current[max_size] = { 0,0,0,0,0,0,0,0,0,0,0,0 } ;
+	int n=0 ;
+	
+	while( (c = fgetc(f)) != EOF  || n >= 0)
+	{
+		if(c == '\t' || c == '\n' || c == '\b' || c == '\r')
+			continue ;
+
+		if(n == max_size || c==EOF)
+			for(int i=0;i<n-1;++i)
+				current[i] = current[i+1] ;
+
+		if(n == max_size)
+			--n ;
+
+		if(c >= 'A' && c <= 'Z') c += 'a' - 'A' ;
+
+		if(c != EOF)
+			current[n] = c ;
+		else
+			current[n] = 0 ;
+
+		//std::cerr << "n==" << n <<" Checking string " << std::string(current,n+1)  << " c = " << std::hex << (int)c << std::dec << std::endl;
+
+		for(int i=0;i<bad_strings.size();++i)
+			if(std::string(current,bad_strings[i].length()) == bad_strings[i])
+			{
+				showErrorBox(filename, QApplication::translate("RsCollectionFile", "This file contains the string \"%1\" and is therefore an invalid collection file. \n\nIf you believe it is correct, remove the corresponding line from the file and re-open it with Retroshare.").arg(bad_strings[i].c_str()));
+				return false ;
+				//std::cerr << "Bad string detected" << std::endl;
+			}
+
+		if(c == EOF)
+			n-- ;
+		else if(n < max_size)
+			n++ ;
+	}
+	fclose(f) ;
+
+//	std::cerr << "File is clean!" << std::endl;
+//	return false ;
 
 	bool ok = _xml_doc.setContent(&file) ;
 	file.close();
