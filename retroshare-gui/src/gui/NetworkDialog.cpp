@@ -33,6 +33,7 @@
 #include "common/vmessagebox.h"
 #include "common/RSTreeWidgetItem.h"
 #include <gui/common/FriendSelectionDialog.h>
+#include "gui/msgs/MessageComposer.h"
 #include "NetworkDialog.h"
 //#include "TrustView.h"
 #include "NetworkView.h"
@@ -45,12 +46,13 @@
 
 /* Images for context menu icons */
 #define IMAGE_LOADCERT       ":/images/loadcert16.png"
-#define IMAGE_PEERDETAILS    ":/images/peerdetails_16x16.png"
+#define IMAGE_PEERDETAILS    ":/images/info16.png"
 #define IMAGE_AUTH           ":/images/encrypted16.png"
 #define IMAGE_CLEAN_UNUSED   ":/images/deletemail24.png"
 #define IMAGE_MAKEFRIEND     ":/images/user/add_user16.png"
 #define IMAGE_EXPORT         ":/images/exportpeers_16x16.png"
 #define IMAGE_COPYLINK       ":/images/copyrslink.png"
+#define IMAGE_MESSAGE         ":/images/mail_new.png"
 
 /* Images for Status icons */
 #define IMAGE_AUTHED         ":/images/accepted16.png"
@@ -199,6 +201,7 @@ void NetworkDialog::connectTreeWidgetCostumPopupMenu( QPoint /*point*/ )
 		contextMnu->addAction(QIcon(IMAGE_EXPORT), tr("Export my certificate..."), this, SLOT(on_actionExportKey_activated()));
 
 	contextMnu->addAction(QIcon(IMAGE_PEERDETAILS), tr("Peer details..."), this, SLOT(peerdetails()));
+	contextMnu->addAction(QIcon(IMAGE_MESSAGE), tr("Send Message"), this, SLOT(sendDistantMessage()));
 	contextMnu->addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyLink()));
 	contextMnu->addSeparator() ;
 	contextMnu->addAction(QIcon(IMAGE_CLEAN_UNUSED), tr("Remove unused keys..."), this, SLOT(removeUnusedKeys()));
@@ -326,6 +329,31 @@ void NetworkDialog::copyLink()
 	}
 
 	RSLinkClipboard::copyLinks(urls);
+}
+
+void NetworkDialog::sendDistantMessage()
+{
+	QTreeWidgetItem *wi = getCurrentNeighbour();
+	if (wi == NULL) {
+		return;
+	}
+
+	MessageComposer *nMsgDialog = MessageComposer::newMsg();
+	if (nMsgDialog == NULL) {
+		return;
+	}
+
+	std::string hash ;
+	std::string mGpgId = wi->text(COLUMN_PEERID).toStdString() ;
+
+	if(rsMsgs->getDistantMessageHash(mGpgId,hash))
+	{
+		nMsgDialog->addRecipient(MessageComposer::TO, hash, mGpgId);
+		nMsgDialog->show();
+		nMsgDialog->activateWindow();
+	}
+
+	/* window will destroy itself! */
 }
 
 void NetworkDialog::updateDisplay()

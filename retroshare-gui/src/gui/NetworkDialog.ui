@@ -10,8 +10,8 @@
     <height>567</height>
    </rect>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <item>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="QLabel" name="titleBarLabel">
@@ -43,7 +43,7 @@
      </item>
     </layout>
    </item>
-   <item>
+   <item row="1" column="0">
     <widget class="QSplitter" name="splitter">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -97,6 +97,11 @@
       <attribute name="headerStretchLastSection">
        <bool>true</bool>
       </attribute>
+      <column>
+       <property name="text">
+        <string/>
+       </property>
+      </column>
       <column>
        <property name="text">
         <string/>

@@ -72,6 +72,7 @@ private slots:
   void deleteCert() ;
   void peerdetails();
   void copyLink();
+  void sendDistantMessage();
   /** Create the context popup menu and it's submenus */
   void connectTreeWidgetCostumPopupMenu( QPoint point );
   //void unvalidGPGKeyWidgetCostumPopupMenu( QPoint point );
