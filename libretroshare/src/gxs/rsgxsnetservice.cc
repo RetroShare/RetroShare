@@ -414,6 +414,7 @@ bool RsGxsNetService::locked_canReceive(const RsGxsGrpMetaData * const grpMeta,
 				return mCircles->canSend(grpMeta->mCircleId, pgpId);
 			}
 
+
 			i++;
 		}
 
@@ -1208,27 +1209,28 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
 	RsNxsSyncMsgItem* item = msgItemL.front();
 	const std::string& grpId = item->grpId;
 
-	std::map<std::string, RsGxsGrpMetaData*> grpMetaMap;
-	grpMetaMap[grpId] = NULL;
-	mDataStore->retrieveGxsGrpMetaData(grpMetaMap);
-	RsGxsGrpMetaData* grpMeta = grpMetaMap[grpId];
-
-	// you want to find out if you can receive it
-	// number polls essentially represent multiple
-	// of sleep interval
-	if(grpMeta)
-	{
-		bool can = locked_canReceive(grpMeta, tr->mTransaction->PeerId());
-
-		delete grpMeta;
-
-		if(!can)
-			return;
-
-	}else
-	{
-		return;
-	}
+//	std::map<std::string, RsGxsGrpMetaData*> grpMetaMap;
+//	grpMetaMap[grpId] = NULL;
+//	mDataStore->retrieveGxsGrpMetaData(grpMetaMap);
+//	RsGxsGrpMetaData* grpMeta = grpMetaMap[grpId];
+//
+//	// you want to find out if you can receive it
+//	// number polls essentially represent multiple
+//	// of sleep interval
+//	if(grpMeta)
+//	{
+//		// always can receive, only provides weak guaranttee this peer is part of the group
+//		bool can = true;//locked_canReceive(grpMeta, tr->mTransaction->PeerId());
+//
+//		delete grpMeta;
+//
+//		if(!can)
+//			return;
+//
+//	}else
+//	{
+//		return;
+//	}
 
 
 	GxsMsgReq reqIds;
@@ -1266,12 +1268,19 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
 
 		if(msgIdSet.find(msgId) == msgIdSet.end()){
 
-			if(mReputations->haveReputation(syncItem->authorId) || syncItem->authorId.empty())
+			bool noAuthor = syncItem->authorId.empty();
+			if(mReputations->haveReputation(syncItem->authorId) || noAuthor)
 			{
-				GixsReputation rep;
-				mReputations->getReputation(syncItem->authorId, rep);
 
-				if(rep.score > GIXS_CUT_OFF)
+
+				GixsReputation rep;
+
+				if(!noAuthor) // has author
+					mReputations->getReputation(syncItem->authorId, rep);
+
+				// if author is required for this message, it will simply get dropped
+				// at genexchange side of things
+				if(rep.score > GIXS_CUT_OFF || noAuthor)
 				{
 					RsNxsSyncMsgItem* msgItem = new RsNxsSyncMsgItem(mServType);
 					msgItem->grpId = grpId;
