@@ -273,8 +273,18 @@
             <property name="text">
              <string/>
             </property>
+            <property name="icon">
+             <iconset resource="images.qrc">
+              <normaloff>:/images/edit_16.png</normaloff>:/images/edit_16.png</iconset>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextBesideIcon</enum>
+            </property>
             <property name="autoRaise">
              <bool>true</bool>
+            </property>
+            <property name="arrowType">
+             <enum>Qt::NoArrow</enum>
             </property>
            </widget>
           </item>
