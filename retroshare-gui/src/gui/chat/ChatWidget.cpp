@@ -572,6 +572,7 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const QDateTime 
 	QString formattedMessage = RsHtml().formatText(ui->textBrowser->document(), message, formatTextFlag, backgroundColor, desiredContrast);
 	QString formatMsg = chatStyle.formatMessage(type, name, incoming ? sendTime : recvTime, formattedMessage, formatFlag);
 
+    ui->textBrowser->textCursor().setBlockFormat(QTextBlockFormat ());
 	ui->textBrowser->append(formatMsg);
 
 	resetStatusBar();
