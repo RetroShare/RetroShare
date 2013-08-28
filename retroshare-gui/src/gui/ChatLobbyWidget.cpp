@@ -432,7 +432,7 @@ void ChatLobbyWidget::createChatLobby()
 
 void ChatLobbyWidget::showLobby(QTreeWidgetItem *item)
 {
-	if (item == NULL && item->type() != TYPE_LOBBY) {
+    if (item == NULL || item->type() != TYPE_LOBBY) {
 		showBlankPage(0) ;
 		return;
 	}
@@ -615,6 +615,18 @@ void ChatLobbyWidget::unsubscribeChatLobby(ChatLobbyId id)
     bool isAutoSubscribe = rsMsgs->getLobbyAutoSubscribe(id);
     if (isAutoSubscribe) rsMsgs->setLobbyAutoSubscribe(id, !isAutoSubscribe);
 
+    ChatLobbyDialog *cldCW=NULL ;
+    if (NULL != (cldCW = dynamic_cast<ChatLobbyDialog *>(stackedWidget->currentWidget())))
+    {
+
+        QTreeWidgetItem *qtwiFound = getTreeWidgetItem(cldCW->id());
+        if (qtwiFound) {
+            lobbyTreeWidget->setCurrentItem(qtwiFound);
+        }
+    } else {
+        lobbyTreeWidget->clearSelection();
+
+    }
 }
 
 void ChatLobbyWidget::updateCurrentLobby()
