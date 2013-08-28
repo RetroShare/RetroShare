@@ -526,7 +526,6 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const QDateTime 
     bool addDate = false;
     if (QDate::currentDate()>lastMsgDate) 
 	 {
-		 lastMsgDate=QDate::currentDate();
 		 addDate=true;
     }
 
@@ -560,6 +559,7 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const QDateTime 
 	} else if (chatType == TYPE_SYSTEM) {
 		type = ChatStyle::FORMATMSG_SYSTEM;
     } else if (chatType == TYPE_HISTORY || addDate) {
+        lastMsgDate=QDate::currentDate();
 		type = incoming ? ChatStyle::FORMATMSG_HINCOMING : ChatStyle::FORMATMSG_HOUTGOING;
 	} else {
 		type = incoming ? ChatStyle::FORMATMSG_INCOMING : ChatStyle::FORMATMSG_OUTGOING;
