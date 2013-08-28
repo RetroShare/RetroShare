@@ -381,7 +381,21 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 			//RsInitConfig::logfname = "" ;
 			//RsInitConfig::inet = "" ;
 
+#ifdef __APPLE__
+	/* HACK to avoid stupid OSX Finder behaviour
+	 * remove the commandline arguments - if we detect we are launched from Finder, 
+	 * and we have the unparsable "-psn_0_12332" option.
+	 * this is okay, as you cannot pass commandline arguments via Finder anyway
+	 */
+	if ((argc >= 2) && (0 == strncmp(argv[1], "-psn", 4)))
+	{
+		argc = 1;
+	}
+#endif
+
+
 			argstream as(argc,argv) ;
+
 
 			as >> option('a',"auto-login"       ,RsInitConfig::autoLogin      ,"AutoLogin (Windows Only) + StartMinimised")
 			   >> option('m',"minimized"        ,RsInitConfig::startMinimised ,"Start minimized."                         )
