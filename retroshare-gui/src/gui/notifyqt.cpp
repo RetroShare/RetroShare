@@ -465,6 +465,7 @@ void NotifyQt::notifyChatLobbyTimeShift(int shift)
 
 void NotifyQt::handleChatLobbyTimeShift(int /*shift*/)
 {
+	return ; // we say nothing. The help dialog of lobbies explains this already.
 	static bool already = false ;
 
 	if(!already)

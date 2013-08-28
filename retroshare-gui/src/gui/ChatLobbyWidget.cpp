@@ -131,6 +131,7 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WFlags flags)
 			  <li>Right click to create a new chat lobby</li>                                                              \
 		     <li>Double click a chat lobby to enter, chat, and show it to your friends</li>                      \
 		  </ul> \
+		  Note: For the chat lobbies to work properly, your computer needs be on time.  So check your system clock!\
 		  </p>                                      \
 		") ;
 
