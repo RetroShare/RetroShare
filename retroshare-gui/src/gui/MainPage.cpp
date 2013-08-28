@@ -9,6 +9,23 @@ MainPage::MainPage(QWidget *parent , Qt::WindowFlags flags ) : QWidget(parent, f
 	help_browser = NULL ;
 }
 
+class MyTextBrowser: public QTextBrowser
+{
+	public:
+		MyTextBrowser(QWidget *parent,QPushButton *bt)
+			: QTextBrowser(parent),button(bt)
+		{
+		}
+
+		virtual void	mousePressEvent ( QMouseEvent * e )
+		{
+			hide() ;
+			button->setChecked(false) ;
+		}
+
+	protected:
+		QPushButton *button ;
+};
 
 void MainPage::showHelp(bool b) 
 {
@@ -27,7 +44,7 @@ void MainPage::registerHelpButton(QPushButton *button,const QString& help_html_t
 {
 	if(help_browser == NULL)
 	{
-		help_browser = new QTextBrowser(this) ;
+		help_browser = new MyTextBrowser(this,button) ;
 
 		QGraphicsDropShadowEffect * effect = new QGraphicsDropShadowEffect(help_browser) ;
 		effect->setBlurRadius(30.0);
