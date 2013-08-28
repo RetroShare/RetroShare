@@ -25,6 +25,10 @@ To compile:
 		# make
 		# cd ../../..
 
+		NB: There is a new libssh-0.6.0rc1 which fixes some bugs from v0.5.4, 
+		The procedure is the same as above, except for the following line. 
+		# cmake -DWITH_STATIC_LIB=ON -DWITH_GSSAPI=OFF ..
+
 	- get source code for sqlcipher, and build it (only needed for GXS) 
 
 		# cd lib
