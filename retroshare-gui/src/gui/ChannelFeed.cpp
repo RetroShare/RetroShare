@@ -71,7 +71,6 @@ ChannelFeed::ChannelFeed(QWidget *parent)
     /* Invoke the Qt Designer generated object setup routine */
     setupUi(this);
 
-    connect(newChannelButton, SIGNAL(clicked()), this, SLOT(createChannel()));
     connect(postButton, SIGNAL(clicked()), this, SLOT(createMsg()));
     connect(NotifyQt::getInstance(), SIGNAL(channelMsgReadSatusChanged(QString,QString,int)), this, SLOT(channelMsgReadSatusChanged(QString,QString,int)));
 
@@ -88,7 +87,11 @@ ChannelFeed::ChannelFeed(QWidget *parent)
     splitter->setSizes(sizes);
 
     /* Initialize group tree */
-    treeWidget->initDisplayMenu(displayButton);
+    QToolButton *newChannelButton = new QToolButton(this);
+    newChannelButton->setIcon(QIcon(":/images/add_channel24.png"));
+    newChannelButton->setToolTip(tr("Create Channel"));
+    connect(newChannelButton, SIGNAL(clicked()), this, SLOT(createChannel()));
+    treeWidget->addToolButton(newChannelButton);
 
     ownChannels = treeWidget->addCategoryItem(tr("My Channels"), QIcon(IMAGE_CHANNELBLUE), true);
     subcribedChannels = treeWidget->addCategoryItem(tr("Subscribed Channels"), QIcon(IMAGE_CHANNELRED), true);

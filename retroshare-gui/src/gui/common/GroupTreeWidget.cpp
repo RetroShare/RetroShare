@@ -95,6 +95,9 @@ GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
 	ui->filterLineEdit->addFilter(QIcon(), tr("Title"), FILTER_NAME_INDEX , tr("Search Title"));
 	ui->filterLineEdit->addFilter(QIcon(), tr("Description"), FILTER_DESC_INDEX , tr("Search Description"));
 	ui->filterLineEdit->setCurrentFilter(FILTER_NAME_INDEX);
+
+	/* Initialize display button */
+	initDisplayMenu(ui->displayButton);
 }
 
 GroupTreeWidget::~GroupTreeWidget()
@@ -116,6 +119,20 @@ void GroupTreeWidget::changeEvent(QEvent *e)
 		// remove compiler warnings
 		break;
 	}
+}
+
+void GroupTreeWidget::addToolButton(QToolButton *toolButton)
+{
+	if (!toolButton) {
+		return;
+	}
+
+	/* Initialize button */
+	toolButton->setAutoRaise(true);
+	toolButton->setIconSize(ui->displayButton->iconSize());
+	toolButton->setFocusPolicy(ui->displayButton->focusPolicy());
+
+	ui->titleBarFrame->layout()->addWidget(toolButton);
 }
 
 void GroupTreeWidget::processSettings(RshareSettings *settings, bool load)

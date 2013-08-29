@@ -117,7 +117,6 @@ ForumsDialog::ForumsDialog(QWidget *parent)
     connect( ui.forumTreeWidget, SIGNAL( treeCustomContextMenuRequested( QPoint ) ), this, SLOT( forumListCustomPopupMenu( QPoint ) ) );
     connect( ui.threadTreeWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( threadListCustomPopupMenu( QPoint ) ) );
 
-	connect(ui.newForumButton, SIGNAL(clicked()), this, SLOT(newforum()));
     connect(ui.newmessageButton, SIGNAL(clicked()), this, SLOT(createmessage()));
     connect(ui.newthreadButton, SIGNAL(clicked()), this, SLOT(createthread()));
 
@@ -162,7 +161,11 @@ ForumsDialog::ForumsDialog(QWidget *parent)
     headerItem->setText(COLUMN_THREAD_READ, "");
 
     /* Initialize group tree */
-    ui.forumTreeWidget->initDisplayMenu(ui.displayButton);
+    QToolButton *newForumButton = new QToolButton(this);
+    newForumButton->setIcon(QIcon(":/images/new_forum16.png"));
+    newForumButton->setToolTip(tr("Create Forum"));
+    connect(newForumButton, SIGNAL(clicked()), this, SLOT(newforum()));
+    ui.forumTreeWidget->addToolButton(newForumButton);
 
     /* create forum tree */
     yourForums = ui.forumTreeWidget->addCategoryItem(tr("My Forums"), QIcon(IMAGE_FOLDER), true);

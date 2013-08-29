@@ -75,7 +75,6 @@ GxsChannelDialog::GxsChannelDialog(QWidget *parent)
 
 	mChannelQueue = new TokenQueue(rsGxsChannels->getTokenService(), this);
 
-	connect(ui.newChannelButton, SIGNAL(clicked()), this, SLOT(createChannel()));
 	connect(ui.postButton, SIGNAL(clicked()), this, SLOT(createMsg()));
 //	connect(NotifyQt::getInstance(), SIGNAL(channelMsgReadSatusChanged(QString,QString,int)), this, SLOT(channelMsgReadSatusChanged(QString,QString,int)));
 
@@ -93,7 +92,11 @@ GxsChannelDialog::GxsChannelDialog(QWidget *parent)
 	ui.splitter->setSizes(sizes);
 
 	/* Initialize group tree */
-	ui.treeWidget->initDisplayMenu(ui.displayButton);
+	QToolButton *newChannelButton = new QToolButton(this);
+	newChannelButton->setIcon(QIcon(":/images/add_channel24.png"));
+	newChannelButton->setToolTip(tr("Create Channel"));
+	connect(newChannelButton, SIGNAL(clicked()), this, SLOT(createChannel()));
+	ui.treeWidget->addToolButton(newChannelButton);
 
 	ownChannels = ui.treeWidget->addCategoryItem(tr("My Channels"), QIcon(IMAGE_CHANNELBLUE), true);
 	subcribedChannels = ui.treeWidget->addCategoryItem(tr("Subscribed Channels"), QIcon(IMAGE_CHANNELRED), true);

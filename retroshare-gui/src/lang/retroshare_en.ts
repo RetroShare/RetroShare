@@ -1065,10 +1065,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Display</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Create Channel</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1397,7 +1393,7 @@ Double click lobbies to enter and chat.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Chat Lobbies&lt;/h1&gt;                              		  &lt;p&gt;Chat lobbies are distributed chat rooms, and work pretty much like IRC.                                      		  They allow you to talk anonymously with tons of people without the need to make friends.&lt;/p&gt;                    		  &lt;p&gt;A chat lobby can be public (you friends see it) or private (your friends can&apos;t see it, unless you           		  invite them with &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). Once you have been invited to a private lobby, you will be able to see it when your friends   		  are using it.&lt;/p&gt;                                                                                               		  &lt;p&gt;The list at left shows                                                                                     		  chat lobbies your friends are participating into. You can either                                 		  &lt;ul&gt;                                                                                                            			  &lt;li&gt;Right click to create a new chat lobby&lt;/li&gt;                                                              		     &lt;li&gt;Double click a chat lobby to enter, chat, and show it to your friends&lt;/li&gt;                      		  &lt;/ul&gt; 		  &lt;/p&gt;                                      		</source>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Chat Lobbies&lt;/h1&gt;                              		  &lt;p&gt;Chat lobbies are distributed chat rooms, and work pretty much like IRC.                                      		  They allow you to talk anonymously with tons of people without the need to make friends.&lt;/p&gt;                    		  &lt;p&gt;A chat lobby can be public (you friends see it) or private (your friends can&apos;t see it, unless you           		  invite them with &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). Once you have been invited to a private lobby, you will be able to see it when your friends   		  are using it.&lt;/p&gt;                                                                                               		  &lt;p&gt;The list at left shows                                                                                     		  chat lobbies your friends are participating into. You can either                                 		  &lt;ul&gt;                                                                                                            			  &lt;li&gt;Right click to create a new chat lobby&lt;/li&gt;                                                              		     &lt;li&gt;Double click a chat lobby to enter, chat, and show it to your friends&lt;/li&gt;                      		  &lt;/ul&gt; 		  Note: For the chat lobbies to work properly, your computer needs be on time.  So check your system clock!		  &lt;/p&gt;                                      		</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5077,10 +5073,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Display</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Create Forum</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6543,6 +6535,10 @@ p, li { white-space: pre-wrap; }
         <source>Private Key Available</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Display</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>GuiExprElement</name>
@@ -6627,10 +6623,6 @@ p, li { white-space: pre-wrap; }
     <name>GxsChannelDialog</name>
     <message>
         <source>Channels</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Display</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7127,10 +7119,6 @@ before you can comment</source>
     <name>GxsForumsDialog</name>
     <message>
         <source>Forums</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Display</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -9527,6 +9515,10 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <source>Only show people you trusted</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Send Message</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>NetworkPage</name>
@@ -10995,11 +10987,6 @@ Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replace
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>The collection file %1 could not be opened.
-Reported error is: %2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Deny friend</source>
         <translation type="unfinished"></translation>
     </message>
@@ -11142,6 +11129,13 @@ Reported error is: %2</source>
     </message>
     <message>
         <source>Secured tunnel is working. You can talk!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The collection file %1 could not be opened.
+Reported error is: 
+
+%2</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -11512,6 +11506,12 @@ Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replace
     </message>
     <message>
         <source>Create collection file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This file contains the string &quot;%1&quot; and is therefore an invalid collection file. 
+
+If you believe it is correct, remove the corresponding line from the file and re-open it with Retroshare.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

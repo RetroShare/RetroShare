@@ -73,10 +73,11 @@ public:
 	GroupTreeWidget(QWidget *parent = 0);
 	~GroupTreeWidget();
 
+	// Add a widget to the tool area
+	void addToolButton(QToolButton *toolButton);
+
 	// Load and save settings (group must be startet from the caller)
 	void processSettings(RshareSettings *settings, bool load);
-	// Initialize the display menu for sorting
-	void initDisplayMenu(QToolButton *toolButton);
 
 	// Add a new category item
 	QTreeWidgetItem *addCategoryItem(const QString &name, const QIcon &icon, bool expand);
@@ -117,6 +118,8 @@ private slots:
 	void sort();
 
 private:
+	// Initialize the display menu for sorting
+	void initDisplayMenu(QToolButton *toolButton);
 	void calculateScore(QTreeWidgetItem *item, const QString &filterText);
 	void resort(QTreeWidgetItem *categoryItem);
 	void updateColors();

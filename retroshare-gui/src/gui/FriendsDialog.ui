@@ -121,12 +121,6 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="maximumSize">
-            <size>
-             <width>32</width>
-             <height>16777215</height>
-            </size>
-           </property>
            <property name="focusPolicy">
             <enum>Qt::NoFocus</enum>
            </property>
@@ -910,7 +904,7 @@
   <customwidget>
    <class>LineEditClear</class>
    <extends>QLineEdit</extends>
-   <header>gui/common/LineEditClear.h</header>
+   <header location="global">gui/common/LineEditClear.h</header>
   </customwidget>
   <customwidget>
    <class>LinkTextBrowser</class>

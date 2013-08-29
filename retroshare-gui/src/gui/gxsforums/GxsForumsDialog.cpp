@@ -21,6 +21,7 @@
 
 #include <QMenu>
 #include <QMessageBox>
+#include <QToolButton>
 
 #include "GxsForumsDialog.h"
 #include "GxsForumGroupDialog.h"
@@ -81,7 +82,6 @@ GxsForumsDialog::GxsForumsDialog(QWidget *parent)
 	// no widget to add yet
 
 	connect(ui.forumTreeWidget, SIGNAL(treeCustomContextMenuRequested(QPoint)), this, SLOT(forumListCustomPopupMenu(QPoint)));
-	connect(ui.newForumButton, SIGNAL(clicked()), this, SLOT(newforum()));
 	connect(ui.forumTreeWidget, SIGNAL(treeItemActivated(QString)), this, SLOT(changedForum(QString)));
 	connect(ui.forumTreeWidget->treeWidget(), SIGNAL(signalMouseMiddleButtonClicked(QTreeWidgetItem*)), this, SLOT(forumTreeMiddleButtonClicked(QTreeWidgetItem*)));
 	connect(ui.threadTabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(threadTabCloseRequested(int)));
@@ -92,7 +92,11 @@ GxsForumsDialog::GxsForumsDialog(QWidget *parent)
 	connect(ui.todoPushButton, SIGNAL(clicked()), this, SLOT(todo()));
 
 	/* Initialize group tree */
-	ui.forumTreeWidget->initDisplayMenu(ui.displayButton);
+	QToolButton *newForumButton = new QToolButton(this);
+	newForumButton->setIcon(QIcon(":/images/new_forum16.png"));
+	newForumButton->setToolTip(tr("Create Forum"));
+	connect(newForumButton, SIGNAL(clicked()), this, SLOT(newforum()));
+	ui.forumTreeWidget->addToolButton(newForumButton);
 
 	/* Set initial size the splitter */
 	QList<int> sizes;
