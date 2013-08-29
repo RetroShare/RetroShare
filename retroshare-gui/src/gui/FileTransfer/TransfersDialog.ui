@@ -70,15 +70,9 @@
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="helpButton">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string/>
+       <widget class="QToolButton" name="helpButton">
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
         </property>
         <property name="icon">
          <iconset resource="../images.qrc">
@@ -87,7 +81,7 @@
         <property name="checkable">
          <bool>true</bool>
         </property>
-        <property name="flat">
+        <property name="autoRaise">
          <bool>true</bool>
         </property>
        </widget>

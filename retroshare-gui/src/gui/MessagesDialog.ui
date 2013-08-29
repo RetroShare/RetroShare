@@ -292,29 +292,6 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="13">
-       <widget class="QPushButton" name="helpButton">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset resource="images.qrc">
-          <normaloff>:/images/64px_help.png</normaloff>:/images/64px_help.png</iconset>
-        </property>
-        <property name="checkable">
-         <bool>true</bool>
-        </property>
-        <property name="flat">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="3">
        <widget class="Line" name="line">
         <property name="orientation">
@@ -445,6 +422,23 @@
         </property>
         <property name="toolButtonStyle">
          <enum>Qt::ToolButtonIconOnly</enum>
+        </property>
+        <property name="autoRaise">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="13">
+       <widget class="QToolButton" name="helpButton">
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
+        </property>
+        <property name="icon">
+         <iconset resource="images.qrc">
+          <normaloff>:/images/64px_help.png</normaloff>:/images/64px_help.png</iconset>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
         </property>
         <property name="autoRaise">
          <bool>true</bool>
@@ -819,7 +813,7 @@
   <customwidget>
    <class>LineEditClear</class>
    <extends>QLineEdit</extends>
-   <header>gui/common/LineEditClear.h</header>
+   <header location="global">gui/common/LineEditClear.h</header>
   </customwidget>
   <customwidget>
    <class>RSTabWidget</class>
