@@ -45,6 +45,7 @@
 #include "util/DateTime.h"
 
 #include <retroshare/rspeers.h>
+#include <retroshare/rsmsgs.h>
 #include <retroshare/rsforums.h>
 
 #include <algorithm>
@@ -1597,13 +1598,22 @@ void ForumsDialog::replytomessage()
     if (rsPeers->getPeerName(msgInfo.srcId) !="")
     {
         MessageComposer *nMsgDialog = MessageComposer::newMsg();
-        nMsgDialog->setTitleText(QString::fromStdWString(msgInfo.title), MessageComposer::REPLY);
 
-        nMsgDialog->setQuotedMsg(QString::fromStdWString(msgInfo.msg), buildReplyHeader(msgInfo));
-        nMsgDialog->addRecipient(MessageComposer::TO, msgInfo.srcId, false);
+		  	std::string hash ;
+			std::string mGpgId = msgInfo.srcId;
 
-        nMsgDialog->show();
-        nMsgDialog->activateWindow();
+			if(rsMsgs->getDistantMessageHash(mGpgId,hash))
+			{
+				nMsgDialog->addRecipient(MessageComposer::TO, hash, mGpgId);
+
+				nMsgDialog->setTitleText(QString::fromStdWString(msgInfo.title), MessageComposer::REPLY);
+				nMsgDialog->setQuotedMsg(QString::fromStdWString(msgInfo.msg), buildReplyHeader(msgInfo));
+
+				//nMsgDialog->addRecipient(MessageComposer::TO, msgInfo.srcId, false);
+
+				nMsgDialog->show();
+				nMsgDialog->activateWindow();
+			}
 
         /* window will destroy itself! */
     }
