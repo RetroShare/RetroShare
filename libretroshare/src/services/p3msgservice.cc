@@ -1942,6 +1942,24 @@ bool p3MsgService::decryptMessage(const std::string& mId)
 			else
 				msgi.msgFlags &= ~RS_MSG_FLAGS_SIGNATURE_CHECKS ;	// just in case.
 		}
+
+		std::map<uint32_t, RsMsgSrcId*>::iterator it = mSrcIds.find(msgi.msgId) ;
+
+		if(it == mSrcIds.end())
+		{
+			std::cerr << "Warning: could not find message source for id " << msgi.msgId << ". Weird." << std::endl;
+
+			RsMsgSrcId* msi = new RsMsgSrcId();
+			msi->msgId = msgi.msgId;
+			msi->srcId  = senders_id.toStdString() ;
+
+			mSrcIds.insert(std::pair<uint32_t, RsMsgSrcId*>(msi->msgId, msi));
+		}
+		else
+		{
+			std::cerr << "Substituting source name for message id " << msgi.msgId << ": " << it->second->srcId << " -> " << senders_id.toStdString()  << std::endl;
+			it->second->srcId = senders_id.toStdString() ;
+		}
 	}
 	delete item ;
 
