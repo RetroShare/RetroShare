@@ -21,6 +21,7 @@
 
 #include <QCoreApplication>
 #include <retroshare/rspeers.h>
+#include <retroshare/rsmsgs.h>
 
 #include "PeerDefs.h"
 
@@ -53,19 +54,32 @@ const QString PeerDefs::rsidFromId(const std::string &id, QString *name /* = NUL
     QString rsid;
 
     std::string peerName = rsPeers->getPeerName(id);
-    if (peerName.empty()) {
-        rsid = PeerDefs::rsid("", id);
+	 std::string hash ;
 
-        if (name) {
-            *name = qApp->translate("PeerDefs", "Unknown");
-        }
-    } else {
+	 if(!peerName.empty())	
+	 {
         rsid = PeerDefs::rsid(peerName, id);
 
         if (name) {
             *name = QString::fromUtf8(peerName.c_str());
         }
     }
+	 else if(rsMsgs->getDistantMessageHash(rsPeers->getGPGOwnId(),hash) && hash == id)
+	 {
+		 // not a real peer. Try from hash for distant messages
+	
+		 peerName = rsPeers->getGPGName(rsPeers->getGPGOwnId()) ;
+		 rsid = PeerDefs::rsid(peerName, rsPeers->getGPGOwnId());
+		 if(name)
+			 *name = QString::fromUtf8(peerName.c_str());
+	 }
+	 else
+    {
+        rsid = PeerDefs::rsid("", id);
+
+        if (name) 
+            *name = qApp->translate("PeerDefs", "Unknown");
+    } 
 
     return rsid;
 }

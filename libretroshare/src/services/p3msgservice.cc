@@ -1914,6 +1914,10 @@ bool p3MsgService::decryptMessage(const std::string& mId)
 	std::cerr << "  Decrypted message was succesfully deserialized. New message:" << std::endl;
 	item->print(std::cerr,0) ;
 #endif
+	std::string own_hash ;
+	std::string own_pgp_id = AuthGPG::getAuthGPG()->getGPGOwnId();
+	getDistantMessageHash(own_pgp_id,own_hash) ;
+
 	{
 		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 
@@ -1924,6 +1928,10 @@ bool p3MsgService::decryptMessage(const std::string& mId)
 		msgi.msgId = msgId ;									// restore the correct message id, to make it consistent
 		msgi.msgFlags &= ~RS_MSG_FLAGS_ENCRYPTED ;	// just in case.
 		msgi.PeerId(senders_id.toStdString()) ;
+
+		for(std::list<std::string>::iterator it(msgi.msgto.ids.begin());it!=msgi.msgto.ids.end();++it) if(*it == own_hash) *it = own_pgp_id ;
+		for(std::list<std::string>::iterator it(msgi.msgcc.ids.begin());it!=msgi.msgcc.ids.end();++it) if(*it == own_hash) *it = own_pgp_id ;
+		for(std::list<std::string>::iterator it(msgi.msgbcc.ids.begin());it!=msgi.msgbcc.ids.end();++it) if(*it == own_hash) *it = own_pgp_id ;
 
 		if(signature_present)
 		{

@@ -1481,7 +1481,10 @@ static void processList(const QStringList &list, const QString &textSingular, co
 					std::cerr << " RetroShareLink::process MessageRequest : id : " << link.hash().toStdString() << ", subject : " << link.name().toStdString() << std::endl;
 #endif
 					RsPeerDetails detail;
-					if (rsPeers->getPeerDetails(link.hash().toStdString(), detail)) {
+					std::string dm_hash ;
+
+					if (rsPeers->getPeerDetails(link.hash().toStdString(), detail)) 
+					{
 						if (detail.accept_connection || detail.id == rsPeers->getOwnId() || detail.id == rsPeers->getGPGOwnId()) {
 							MessageComposer *msg = MessageComposer::newMsg();
 							msg->addRecipient(MessageComposer::TO, detail.id, false);
@@ -1490,7 +1493,21 @@ static void processList(const QStringList &list, const QString &textSingular, co
 							}
 							msg->show();
 							messageStarted.append(PeerDefs::nameWithLocation(detail));
-						} else {
+						} 
+						else if(rsMsgs->getDistantMessageHash(detail.gpg_id,dm_hash))
+						{
+							MessageComposer *msg = MessageComposer::newMsg();
+							msg->addRecipient(MessageComposer::TO, dm_hash,detail.gpg_id) ;
+
+							if (link.subject().isEmpty() == false) {
+								msg->setTitleText(link.subject());
+							}
+							msg->show();
+							messageStarted.append(PeerDefs::nameWithLocation(detail));
+
+						}
+						else 
+						{
 							messageReceipientNotAccepted.append(PeerDefs::nameWithLocation(detail));
 						}
 					} else {
