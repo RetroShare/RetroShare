@@ -14,7 +14,7 @@
    <string>RetroShare Messenger</string>
   </property>
   <property name="windowIcon">
-   <iconset>
+   <iconset resource="images.qrc">
     <normaloff>:/images/rstray3.png</normaloff>:/images/rstray3.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
@@ -99,95 +99,7 @@
       </layout>
      </widget>
     </item>
-    <item row="1" column="0">
-     <widget class="QFrame" name="toolBarFrame">
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>32</height>
-       </size>
-      </property>
-      <property name="frameShape">
-       <enum>QFrame::Box</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Sunken</enum>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
-       <property name="margin">
-        <number>2</number>
-       </property>
-       <item>
-        <widget class="LineEditClear" name="filterLineEdit">
-         <property name="toolTip">
-          <string>Search Friends</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QToolButton" name="addIMAccountButton">
-         <property name="toolTip">
-          <string>Add a Friend</string>
-         </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>:/images/user/add_user24.png</normaloff>:/images/user/add_user24.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
-         <property name="autoRaise">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QToolButton" name="shareButton">
-         <property name="toolTip">
-          <string>Share files for your friends</string>
-         </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>:/images/friendsfolder24.png</normaloff>:/images/friendsfolder24.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
-         </property>
-         <property name="autoRaise">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QToolButton" name="displaytoolButton">
-         <property name="icon">
-          <iconset>
-           <normaloff>:/images/looknfeel.png</normaloff>:/images/looknfeel.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>24</height>
-          </size>
-         </property>
-         <property name="popupMode">
-          <enum>QToolButton::InstantPopup</enum>
-         </property>
-         <property name="autoRaise">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="3" column="0">
+    <item row="2" column="0">
      <widget class="LogoBar" name="logoFrame">
       <property name="minimumSize">
        <size>
@@ -203,7 +115,7 @@
       </property>
      </widget>
     </item>
-    <item row="2" column="0">
+    <item row="1" column="0">
      <widget class="QFrame" name="friendListFrame">
       <layout class="QGridLayout" name="gridLayout_3">
        <property name="margin">
@@ -230,17 +142,12 @@
      <x>0</x>
      <y>0</y>
      <width>258</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>LineEditClear</class>
-   <extends>QLineEdit</extends>
-   <header>gui/common/LineEditClear.h</header>
-  </customwidget>
   <customwidget>
    <class>AvatarWidget</class>
    <extends>QLabel</extends>
@@ -260,6 +167,8 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="images.qrc"/>
+ </resources>
  <connections/>
 </ui>

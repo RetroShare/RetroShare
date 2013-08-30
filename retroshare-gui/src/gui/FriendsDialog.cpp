@@ -90,10 +90,6 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     connect( ui.actionAdd_Friend, SIGNAL(triggered()), this, SLOT(addFriend()));
 	 connect( ui.actionFriendRecommendations, SIGNAL(triggered()), this, SLOT(recommendFriends()));
     connect( ui.actionServicePermission, SIGNAL(triggered()), this, SLOT(servicePermission()));
-    connect( ui.filter_lineEdit, SIGNAL(textChanged(QString)), ui.friendList, SLOT(filterItems(QString)));
-
-    ui.filter_lineEdit->setPlaceholderText(tr("Search")) ;
-    ui.filter_lineEdit->showFilterIcon();
 
     ui.avatar->setFrameType(AvatarWidget::STATUS_FRAME);
     ui.avatar->setOwnId();
@@ -194,7 +190,6 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     ui.splitter_2->setSizes(sizes);
 
     loadmypersonalstatus();
-    ui.displayButton->setMenu(ui.friendList->createDisplayMenu());
 
     // load settings
     RsAutoUpdatePage::lockAllEvents();

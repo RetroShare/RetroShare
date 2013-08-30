@@ -35,7 +35,7 @@ namespace Ui {
 
 class RSTreeWidgetItemCompareRole;
 class QTreeWidgetItem;
-class QMenu;
+class QToolButton;
 
 class FriendList : public RsAutoUpdatePage
 {
@@ -52,7 +52,8 @@ public:
     explicit FriendList(QWidget *parent = 0);
     ~FriendList();
 
-    QMenu *createDisplayMenu();
+    // Add a tool button to the tool area
+    void addToolButton(QToolButton *toolButton);
     void processSettings(bool bLoad);
     void addGroupToExpand(const std::string &groupId);
     bool getExpandedGroups(std::set<std::string> &groups) const;
@@ -98,6 +99,7 @@ public slots:
 
 protected:
     void changeEvent(QEvent *e);
+    void createDisplayMenu();
 
 private:
     Ui::FriendList *ui;

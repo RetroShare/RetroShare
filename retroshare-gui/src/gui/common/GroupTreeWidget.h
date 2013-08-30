@@ -73,7 +73,7 @@ public:
 	GroupTreeWidget(QWidget *parent = 0);
 	~GroupTreeWidget();
 
-	// Add a widget to the tool area
+	// Add a tool button to the tool area
 	void addToolButton(QToolButton *toolButton);
 
 	// Load and save settings (group must be startet from the caller)

@@ -5538,6 +5538,10 @@ p, li { white-space: pre-wrap; }
         <source>Service permissions matrix</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Display</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>FriendRecommendDialog</name>
@@ -5608,10 +5612,6 @@ p, li { white-space: pre-wrap; }
     <name>FriendsDialog</name>
     <message>
         <source>Friends</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Display</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -5720,10 +5720,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Service permissions</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Search</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -9173,19 +9169,11 @@ Do you want to save message ?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Search Friends</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Add a Friend</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Share files for your friends</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Search</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

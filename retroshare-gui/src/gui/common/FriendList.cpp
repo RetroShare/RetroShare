@@ -156,6 +156,11 @@ FriendList::FriendList(QWidget *parent) :
     connect(ui->actionSortPeersAscendingOrder, SIGNAL(triggered()), this, SLOT(sortPeersAscendingOrder()));
     connect(ui->actionSortPeersDescendingOrder, SIGNAL(triggered()), this, SLOT(sortPeersDescendingOrder()));
 
+    connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterItems(QString)));
+
+    ui->filterLineEdit->setPlaceholderText(tr("Search")) ;
+    ui->filterLineEdit->showFilterIcon();
+
     initializeHeader(false);
 
     ui->peerTreeWidget->sortItems(COLUMN_NAME, Qt::AscendingOrder);
@@ -170,12 +175,29 @@ FriendList::FriendList(QWidget *parent) :
     // http://bugreports.qt.nokia.com/browse/QTBUG-8270
     QShortcut *Shortcut = new QShortcut(QKeySequence(Qt::Key_Delete), ui->peerTreeWidget, 0, 0, Qt::WidgetShortcut);
     connect(Shortcut, SIGNAL(activated()), this, SLOT(removefriend()));
+
+    /* Initialize display menu */
+    createDisplayMenu();
 }
 
 FriendList::~FriendList()
 {
     delete ui;
     delete(m_compareRole);
+}
+
+void FriendList::addToolButton(QToolButton *toolButton)
+{
+    if (!toolButton) {
+        return;
+    }
+
+    /* Initialize button */
+    toolButton->setAutoRaise(true);
+    toolButton->setIconSize(ui->displayButton->iconSize());
+    toolButton->setFocusPolicy(ui->displayButton->focusPolicy());
+
+    ui->titleBarFrame->layout()->addWidget(toolButton);
 }
 
 void FriendList::processSettings(bool bLoad)
@@ -1965,7 +1987,7 @@ void FriendList::addPeerToExpand(const std::string &gpgId)
     openPeers->insert(gpgId);
 }
 
-QMenu *FriendList::createDisplayMenu()
+void FriendList::createDisplayMenu()
 {
     QMenu *displayMenu = new QMenu(this);
     connect(displayMenu, SIGNAL(aboutToShow()), this, SLOT(updateMenu()));
@@ -1993,7 +2015,7 @@ QMenu *FriendList::createDisplayMenu()
 //    group->addAction(ui->actionSortByLastContact);
 //    group->addAction(ui->actionSortByIP);
 
-    return displayMenu;
+    ui->displayButton->setMenu(displayMenu);
 }
 
 void FriendList::updateMenu()

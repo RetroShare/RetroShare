@@ -103,11 +103,7 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
     ui.avatar->setFrameType(AvatarWidget::STATUS_FRAME);
     ui.avatar->setOwnId();
 
-    connect( ui.shareButton, SIGNAL(clicked()), SLOT(openShareManager()));
-    connect( ui.addIMAccountButton, SIGNAL(clicked( bool ) ), this , SLOT( addFriend() ) );
-
     connect(ui.messagelineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(savestatusmessage()));
-    connect(ui.filterLineEdit, SIGNAL(textChanged(QString)), ui.friendList, SLOT(filterItems(QString)));
 
     connect(NotifyQt::getInstance(), SIGNAL(ownAvatarChanged()), this, SLOT(updateAvatar()));
     connect(NotifyQt::getInstance(), SIGNAL(ownStatusMessageChanged()), this, SLOT(loadmystatusmessage()));
@@ -131,10 +127,18 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
 
     ui.messagelineEdit->setMinimumWidth(20);
 
-    ui.displaytoolButton->setMenu(ui.friendList->createDisplayMenu());
+    /* Initialize friend list */
+    QToolButton *button = new QToolButton(this);
+    button->setIcon(QIcon(":/images/user/add_user24.png"));
+    button->setToolTip(tr("Add a Friend"));
+    connect(button, SIGNAL(clicked()), this, SLOT(addFriend()));
+    ui.friendList->addToolButton(button);
 
-    ui.filterLineEdit->setPlaceholderText(tr("Search")) ;
-    ui.filterLineEdit->showFilterIcon();
+    button = new QToolButton(this);
+    button->setIcon(QIcon(":/images/friendsfolder24.png"));
+    button->setToolTip(tr("Share files for your friends"));
+    connect(button, SIGNAL(clicked()), this, SLOT(openShareManager()));
+    ui.friendList->addToolButton(button);
 
     // load settings
     RsAutoUpdatePage::lockAllEvents();
