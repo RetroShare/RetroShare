@@ -140,7 +140,7 @@ void WikiGroupDialog::initUi()
 
 QPixmap WikiGroupDialog::serviceImage()
 {
-	return QPixmap(":/images/resource-group_64.png");
+	return QPixmap(":/images/resource-group-new_64.png");
 }
 
 bool WikiGroupDialog::service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta)
