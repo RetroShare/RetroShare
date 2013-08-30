@@ -31,9 +31,10 @@
     <widget class="QFrame" name="frame">
      <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
-       <widget class="QLabel" name="label">
+       <widget class="QLabel" name="lobbyinfo_label">
         <property name="font">
          <font>
+          <family>Tahoma</family>
           <pointsize>12</pointsize>
          </font>
         </property>
