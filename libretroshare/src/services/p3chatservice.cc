@@ -2084,7 +2084,9 @@ bool p3ChatService::bounceLobbyObject(RsChatLobbyBouncingObject *item,const std:
 
 	if(it == _chat_lobbys.end())
 	{
+#ifdef CHAT_DEBUG
 		std::cerr << "Chatlobby for id " << std::hex << item->lobby_id << " has no record. Dropping the msg." << std::dec << std::endl;
+#endif
 		return false ;
 	}
 	ChatLobbyEntry& lobby(it->second) ;
