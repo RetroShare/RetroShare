@@ -76,11 +76,14 @@ void GxsChannelGroupDialog::initUi()
 		setUiText(UITYPE_SERVICE_HEADER, tr("Edit Channel"));
 		break;
 	}
+	
+	setUiText(UITYPE_KEY_SHARE_CHECKBOX, tr("Add Channel Admins"));
+	setUiText(UITYPE_CONTACTS_DOCK, tr("Select Channel Admins"));
 }
 
 QPixmap GxsChannelGroupDialog::serviceImage()
 {
-	return QPixmap(":/images/konversation64.png");
+	return QPixmap(":/images/add_channel64.png");
 }
 
 bool GxsChannelGroupDialog::service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta)
