@@ -140,7 +140,11 @@ void p3MsgService::processMsg(RsMsgItem *mi, bool incoming)
 				std::string title, message;
 				librs::util::ConvertUtf16ToUtf8(mi->subject, title);
 				librs::util::ConvertUtf16ToUtf8(mi->message, message);
-				notify->AddPopupMessage(RS_POPUP_MSG, mi->PeerId(), title, message);
+
+				if(mi->msgFlags & RS_MSG_FLAGS_ENCRYPTED)
+					notify->AddPopupMessage(RS_POPUP_ENCRYPTED_MSG, mi->PeerId(), title, message);
+				else
+					notify->AddPopupMessage(RS_POPUP_MSG, mi->PeerId(), title, message);
 
 				std::string out;
 				rs_sprintf(out, "%lu", mi->msgId);
