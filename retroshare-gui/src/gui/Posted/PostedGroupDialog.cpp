@@ -83,7 +83,7 @@ void PostedGroupDialog::initUi()
 
 QPixmap PostedGroupDialog::serviceImage()
 {
-	return QPixmap(":/images/resource-group_64.png");
+	return QPixmap(":/images/posted_add_64.png");
 }
 
 bool PostedGroupDialog::service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta)

@@ -1,9 +1,12 @@
 <RCC>
 	<qresource prefix="/" >
+    <file>images/posted_16.png</file>
 		<file>images/posted_24.png</file>
 		<file>images/posted_32.png</file>
 		<file>images/posted_48.png</file>
 		<file>images/posted_64.png</file>
+		<file>images/posted_add_32.png</file>
 		<file>images/posted_add_64.png</file>
+		<file>images/hot_24.png</file>
 	</qresource>
 </RCC>

@@ -39,6 +39,9 @@ PostedCreatePostDialog::PostedCreatePostDialog(TokenQueue* tokenQ, RsPosted *pos
 
 	connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(createPost()));
 	connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(close()));
+	
+	ui->headerFrame->setHeaderImage(QPixmap(":/images/posted_64.png"));
+	ui->headerFrame->setHeaderText(tr("Create Post"));
 
 	/* fill in the available OwnIds for signing */
 	ui->idChooser->loadIds(IDCHOOSER_ID_REQUIRED, "");
