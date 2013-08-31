@@ -30,13 +30,19 @@
 #include <errno.h>    /* for usleep() */
 #include <iostream>
 
+
 #ifdef RSMUTEX_DEBUG
 #include <stdio.h>
 #endif
 
 /*******
  * #define DEBUG_THREADS 1
+ * #define RSMUTEX_ABORT 1  // Catch wrong pthreads mode.
  *******/
+
+#ifdef RSMUTEX_ABORT
+	#include <stdlib.h>
+#endif
 
 #ifdef DEBUG_THREADS
 	#include <iostream>
@@ -180,12 +186,66 @@ void RsMutex::lock()
 	clock_t t1 = clock();
 #endif
 
+	int retval = 0;
 #ifdef RSTHREAD_SELF_LOCKING_GUARD
 	if(!trylock())
 		if(!pthread_equal(_thread_id,pthread_self()))
 #endif
-			pthread_mutex_lock(&realMutex);
+			retval = pthread_mutex_lock(&realMutex);
 
+	switch(retval)
+	{
+		case 0:
+			break;
+
+		case EINVAL:
+			std::cerr << "RsMutex::lock() pthread_mutex_lock returned EINVAL";
+			std::cerr << std::endl;
+			break;
+ 
+		case EBUSY:
+			std::cerr << "RsMutex::lock() pthread_mutex_lock returned EBUSY";
+			std::cerr << std::endl;
+			break;
+ 
+		case EAGAIN:
+			std::cerr << "RsMutex::lock() pthread_mutex_lock returned EAGAIN";
+			std::cerr << std::endl;
+			break;
+ 
+		case EDEADLK:
+			std::cerr << "RsMutex::lock() pthread_mutex_lock returned EDEADLK";
+			std::cerr << std::endl;
+			break;
+ 
+		case EPERM:
+			std::cerr << "RsMutex::lock() pthread_mutex_lock returned EPERM";
+			std::cerr << std::endl;
+			break;
+
+		default:
+			std::cerr << "RsMutex::lock() pthread_mutex_lock returned UNKNOWN ERROR";
+			std::cerr << std::endl;
+			break;
+	}
+
+	/* Here is some debugging code - to catch failed locking attempts.
+	 * Major bug is it is ever triggered.
+	 */
+#ifdef RSMUTEX_ABORT
+
+	if (retval != 0)
+	{
+#ifdef RSMUTEX_DEBUG
+		std::cerr << "RsMutex::lock() name: " << name << std::endl;
+#endif
+		std::cerr << "RsMutex::lock() pthread_mutex_lock returned an Error. Aborting()";
+		std::cerr << std::endl;
+		abort();
+	}
+#endif
+
+ 
 	_thread_id = pthread_self() ;
 #ifdef RSTHREAD_SELF_LOCKING_GUARD
 	++_cnt ;
