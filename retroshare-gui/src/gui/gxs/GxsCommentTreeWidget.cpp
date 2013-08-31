@@ -48,6 +48,8 @@
 
 /* Images for context menu icons */
 #define IMAGE_MESSAGE		":/images/folder-draft.png"
+#define IMAGE_VOTEUP    ":/images/vote_up.png"
+#define IMAGE_VOTEDOWN   ":/images/vote_down.png"
 
 GxsCommentTreeWidget::GxsCommentTreeWidget(QWidget *parent)
 	:QTreeWidget(parent), mRsTokenService(NULL), mCommentService(NULL), mTokenQueue(NULL)
@@ -92,9 +94,9 @@ void GxsCommentTreeWidget::customPopUpMenu(const QPoint& point)
 
 	contextMnu.addSeparator();
 
-	action = contextMnu.addAction(QIcon(IMAGE_MESSAGE), tr("Vote Up"), this, SLOT(voteUp()));
+	action = contextMnu.addAction(QIcon(IMAGE_VOTEUP), tr("Vote Up"), this, SLOT(voteUp()));
 	action->setDisabled(mVoterId.empty());
-	action = contextMnu.addAction(QIcon(IMAGE_MESSAGE), tr("Vote Down"), this, SLOT(voteDown()));
+	action = contextMnu.addAction(QIcon(IMAGE_VOTEDOWN), tr("Vote Down"), this, SLOT(voteDown()));
 	action->setDisabled(mVoterId.empty());
 
 

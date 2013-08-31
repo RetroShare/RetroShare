@@ -515,6 +515,8 @@
         <file>images/view_calendar_month.png</file>
         <file>images/view_calendar_list.png</file>
         <file>images/view_split_top_bottom.png</file>
+        <file>images/vote_up.png</file>
+        <file>images/vote_down.png</file>
         <file>images/window_fullscreen.png</file>
         <file>images/window_nofullscreen.png</file>
         <file>qss/chat/standard/private/info.xml</file>
