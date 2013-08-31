@@ -969,6 +969,7 @@ int     p3MsgService::sendMessage(RsMsgItem *item)
 bool 	p3MsgService::MessageSend(MessageInfo &info)
 {
 	std::list<std::string>::const_iterator pit;
+
 	for(pit = info.msgto.begin(); pit != info.msgto.end(); pit++)
 	{
 		RsMsgItem *msg = initMIRsMsg(info, *pit);
@@ -1000,8 +1001,18 @@ bool 	p3MsgService::MessageSend(MessageInfo &info)
 	RsMsgItem *msg = initMIRsMsg(info, mLinkMgr->getOwnId());
 	if (msg)
 	{
+		std::list<std::string>::iterator it ;
+
+		// Update destination ids in place of distant message hash, since this Outgoing message is for display
+		//
+		for(it = msg->msgbcc.ids.begin(); it != msg->msgbcc.ids.end(); it++)
+			if(info.encryption_keys.find(*it) != info.encryption_keys.end()) *it = info.encryption_keys[*it] ;
+		for(it = msg->msgcc.ids.begin(); it != msg->msgcc.ids.end(); it++)
+			if(info.encryption_keys.find(*it) != info.encryption_keys.end()) *it = info.encryption_keys[*it] ;
+		for(it = msg->msgto.ids.begin(); it != msg->msgto.ids.end(); it++)
+			if(info.encryption_keys.find(*it) != info.encryption_keys.end()) *it = info.encryption_keys[*it] ;
+
 		/* use processMsg to get the new msgId */
-//		sendMessage(msg);
 		processMsg(msg, false);
 
 		// return new message id
