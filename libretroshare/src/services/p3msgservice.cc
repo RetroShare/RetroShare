@@ -1012,6 +1012,9 @@ bool 	p3MsgService::MessageSend(MessageInfo &info)
 		for(it = msg->msgto.ids.begin(); it != msg->msgto.ids.end(); it++)
 			if(info.encryption_keys.find(*it) != info.encryption_keys.end()) *it = info.encryption_keys[*it] ;
 
+		if (msg->msgFlags & RS_MSG_FLAGS_SIGNED)
+			msg->msgFlags |= RS_MSG_FLAGS_SIGNATURE_CHECKS;	// this is always true, since we are sending the message
+
 		/* use processMsg to get the new msgId */
 		processMsg(msg, false);
 
