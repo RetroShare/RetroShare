@@ -113,7 +113,7 @@ int     checkOutgoingMessages();
 			time_t last_hit_time ;
 			std::string virtual_peer_id ;
 			uint32_t status ;
-			std::vector<RsMsgItem*> pending_messages ;
+			bool pending_messages ;
 		};
 
 		bool createDistantOfflineMessengingInvite(time_t time_of_validity,TurtleFileHash& hash) ;
