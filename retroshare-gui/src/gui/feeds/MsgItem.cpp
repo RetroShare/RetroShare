@@ -129,7 +129,10 @@ void MsgItem::updateItemStatic()
 	titleLabel->setText(title);
 	subjectLabel->setText(QString::fromStdWString(mi.title));
 		
-	msgLabel->setText(RsHtml().formatText(NULL, QString::fromStdWString(mi.msg), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
+	if(mi.msgflags & RS_MSG_ENCRYPTED)
+		msgLabel->setText(RsHtml().formatText(NULL, tr("[Encrypted message]"), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
+	else
+		msgLabel->setText(RsHtml().formatText(NULL, QString::fromStdWString(mi.msg), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 
 	std::list<FileInfo>::iterator it;
 	for(it = mi.files.begin(); it != mi.files.end(); it++)
@@ -144,6 +147,9 @@ void MsgItem::updateItemStatic()
 
 	playButton->setEnabled(false);
 	
+	if(mi.msgflags & RS_MSG_ENCRYPTED)
+		replyButton->setEnabled(false) ;
+
 	if (mIsHome)
 	{
 		/* disable buttons */
