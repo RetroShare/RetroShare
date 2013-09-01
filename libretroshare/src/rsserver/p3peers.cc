@@ -944,6 +944,7 @@ bool 	p3Peers::loadDetailsFromStringCert(const std::string &certstr, RsPeerDetai
 #endif
 
 		pd.id = cert.sslid_string() ;
+		pd.location = cert.location_name_string();
 		pd.localAddr = cert.loc_ip_string();
 		pd.localPort = cert.loc_port_us();
 		pd.extAddr = cert.ext_ip_string();

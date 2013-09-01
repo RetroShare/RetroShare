@@ -34,6 +34,7 @@ class RsCertificate
 
 		std::string ext_ip_string() const ;
 		std::string loc_ip_string() const ;
+		std::string location_name_string() const { return location_name; }
 		std::string dns_string() const { return dns_name ; }
 		std::string sslid_string() const;
 		std::string armouredPGPKey() const ;
