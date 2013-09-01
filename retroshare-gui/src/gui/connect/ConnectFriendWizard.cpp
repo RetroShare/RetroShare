@@ -139,13 +139,16 @@ void ConnectFriendWizard::setCertificate(const QString &certificate, bool friend
 	}
 }
 
-void ConnectFriendWizard::setGpgId(const std::string &gpgId, bool friendRequest)
+void ConnectFriendWizard::setGpgId(const std::string &gpgId, const std::string &sslId, bool friendRequest)
 {
 	if (!rsPeers->getPeerDetails(gpgId, peerDetails)) {
 		setField("errorMessage", tr("Cannot get peer details of PGP key %1").arg(QString::fromStdString(gpgId)));
 		setStartId(Page_ErrorMessage);
 		return;
 	}
+
+	/* Set ssl id when available */
+	peerDetails.id = sslId;
 
 	setStartId(friendRequest ? Page_FriendRequest : Page_Conclusion);
 }
@@ -371,7 +374,23 @@ void ConnectFriendWizard::initializePage(int id)
 
 			ui->fr_nameEdit->setText(QString::fromUtf8(peerDetails.name.c_str()));
 			ui->fr_emailEdit->setText(QString::fromUtf8(peerDetails.email.c_str()));
-			ui->fr_locationEdit->setText(QString::fromUtf8(peerDetails.location.c_str()));
+
+			QString loc = QString::fromUtf8(peerDetails.location.c_str());
+			if (!loc.isEmpty())
+			{
+				loc += " (";
+				loc += QString::fromStdString(peerDetails.id);
+				loc += ")";
+			}
+			else
+			{
+				if (!peerDetails.id.empty())
+				{
+					loc += QString::fromStdString(peerDetails.id);
+				}
+			}
+
+			ui->fr_locationEdit->setText(loc);
 			
 			ui->fr_label->setText(tr("You have a friend request from") + " " + QString::fromUtf8(peerDetails.name.c_str()));
 

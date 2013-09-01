@@ -23,8 +23,8 @@
 
 #include <retroshare/rspeers.h>
 
-FriendRequestToaster::FriendRequestToaster(const std::string &gpgId, const QString &sslName, const std::string &/*peerId*/)
-	: QWidget(NULL), mGpgId(gpgId)
+FriendRequestToaster::FriendRequestToaster(const std::string &gpgId, const QString &sslName, const std::string &peerId)
+	: QWidget(NULL), mGpgId(gpgId), mSslId(peerId), mSslName(sslName)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
@@ -59,7 +59,7 @@ void FriendRequestToaster::friendrequestButtonSlot()
 {
 	ConnectFriendWizard *connectFriendWizard = new ConnectFriendWizard;
 	connectFriendWizard->setAttribute(Qt::WA_DeleteOnClose, true);
-	connectFriendWizard->setGpgId(mGpgId, true);
+	connectFriendWizard->setGpgId(mGpgId, mSslId, true);
 	connectFriendWizard->show();
 
 	hide();

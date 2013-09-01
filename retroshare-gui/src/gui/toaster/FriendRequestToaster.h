@@ -39,6 +39,8 @@ private slots:
 
 private:
 	std::string mGpgId;
+	std::string mSslId;
+	QString mSslName;
 
 	/** Qt Designer generated object */
 	Ui::FriendRequestToaster ui;
