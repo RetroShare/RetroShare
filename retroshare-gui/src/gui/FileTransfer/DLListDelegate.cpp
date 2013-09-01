@@ -222,7 +222,7 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
     case COLUMN_LASTDL:
         qi64Value = index.data().value<qint64>();
         if (qi64Value < std::numeric_limits<qint64>::max()){
-            QDateTime qdtLastDL = QDateTime::fromMSecsSinceEpoch(qi64Value);
+            QDateTime qdtLastDL = QDateTime::fromTime_t(qi64Value/1000);
             painter->drawText(option.rect, Qt::AlignCenter, qdtLastDL.toString("yyyy-MM-dd_hh:mm:ss"));
         } else {
             painter->drawText(option.rect, Qt::AlignCenter, tr("File Never Seen"));
