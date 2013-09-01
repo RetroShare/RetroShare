@@ -60,7 +60,7 @@ class DLListDelegate: public QAbstractItemDelegate {
 		DLListDelegate(QObject *parent=0);
 		~DLListDelegate();
 		void paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const;
-		QSize sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index) const;
+        QSize sizeHint(const QStyleOptionViewItem &, const QModelIndex &) const;
 
 	private:
 

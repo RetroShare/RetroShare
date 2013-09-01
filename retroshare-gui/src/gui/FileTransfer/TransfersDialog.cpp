@@ -38,6 +38,7 @@
 #include <gui/common/FilesDefs.h>
 
 #include <algorithm>
+#include <limits>
 
 #include "TransfersDialog.h"
 #include <gui/RetroShareLink.h>
@@ -932,7 +933,8 @@ int TransfersDialog::addItem(int row, const FileInfo &fileInfo, const std::map<s
 	qlonglong completed = fileInfo.transfered;
 	qlonglong remaining = fileInfo.size - fileInfo.transfered;
 	qlonglong downloadtime = (fileInfo.size - fileInfo.transfered) / (fileInfo.tfRate * 1024.0);
-    QString strLastDL = tr("File Never Seen");
+    qint64 qi64LastDL = std::numeric_limits<qint64>::max();
+
     {
     QFileInfo file;
 
@@ -943,7 +945,7 @@ int TransfersDialog::addItem(int row, const FileInfo &fileInfo, const std::map<s
     }
     /*Get Last Access on File */
     if (file.exists()) {
-        strLastDL= file.lastModified().toString("yyyy-MM-dd_hh:mm:ss");
+            qi64LastDL = file.lastModified().toMSecsSinceEpoch();
     }
     }
     QString strPath = QString::fromUtf8(fileInfo.path.c_str());
@@ -1003,7 +1005,7 @@ int TransfersDialog::addItem(int row, const FileInfo &fileInfo, const std::map<s
     DLListModel->setData(DLListModel->index(row, COLUMN_PRIORITY), QVariant(priority));
     DLListModel->setData(DLListModel->index(row, COLUMN_REMAINING), QVariant((qlonglong)remaining));
     DLListModel->setData(DLListModel->index(row, COLUMN_DOWNLOADTIME), QVariant((qlonglong)downloadtime));
-    DLListModel->setData(DLListModel->index(row, COLUMN_LASTDL), QVariant(strLastDL));
+    DLListModel->setData(DLListModel->index(row, COLUMN_LASTDL), QVariant(qi64LastDL));
     DLListModel->setData(DLListModel->index(row, COLUMN_PATH), QVariant(strPathAfterDL));
     DLListModel->item(row,COLUMN_PATH)->setToolTip(strPath);
     DLListModel->item(row,COLUMN_STATUS)->setToolTip(tooltip);

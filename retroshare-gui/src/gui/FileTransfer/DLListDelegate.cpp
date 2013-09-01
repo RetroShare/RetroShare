@@ -25,6 +25,8 @@
 #include <QStyleOptionProgressBarV2>
 #include <QProgressBar>
 #include <QApplication>
+#include <QDateTime>
+#include <limits>
 
 #include "DLListDelegate.h"
 
@@ -51,9 +53,10 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 	double dlspeed, multi;
 	int seconds,minutes, hours, days;
 	qlonglong remaining;
-	QString temp , status;
+    QString temp ;
 	qlonglong completed;
 	qlonglong downloadtime;
+    qint64 qi64Value;
 
 	// prepare
 	painter->save();
@@ -216,6 +219,15 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
                         }
                         painter->drawText(option.rect.translated(pixmap.size().width(), 0), Qt::AlignLeft, temp);
                         break;
+    case COLUMN_LASTDL:
+        qi64Value = index.data().value<qint64>();
+        if (qi64Value < std::numeric_limits<qint64>::max()){
+            QDateTime qdtLastDL = QDateTime::fromMSecsSinceEpoch(qi64Value);
+            painter->drawText(option.rect, Qt::AlignCenter, qdtLastDL.toString("yyyy-MM-dd_hh:mm:ss"));
+        } else {
+            painter->drawText(option.rect, Qt::AlignCenter, tr("File Never Seen"));
+        }
+        break;
 		default:
 			painter->drawText(option.rect, Qt::AlignCenter, index.data().toString());
 	}
@@ -224,14 +236,8 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 	painter->restore();
 }
 
-QSize DLListDelegate::sizeHint(const QStyleOptionViewItem & option, const QModelIndex & index) const
+QSize DLListDelegate::sizeHint(const QStyleOptionViewItem & /*option*/, const QModelIndex & /*index*/) const
 {
 	return QSize(50,17);
-	QVariant value = index.data(Qt::FontRole);
-	QFont fnt = value.isValid() ? qvariant_cast<QFont>(value) : option.font;
-	QFontMetrics fontMetrics(fnt);
-	const QString text = index.data(Qt::DisplayRole).toString();
-	QRect textRect = QRect(0, 0, 0, fontMetrics.lineSpacing() * (text.count(QLatin1Char('\n')) + 1));
-	return textRect.size();
 }
 
