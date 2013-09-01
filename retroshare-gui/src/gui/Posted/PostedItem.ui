@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>874</width>
-    <height>117</height>
+    <height>149</height>
    </rect>
   </property>
   <property name="font">
@@ -58,15 +58,41 @@ border-radius: 10px}</string>
          <layout class="QVBoxLayout" name="verticalLayout">
           <item>
            <widget class="QToolButton" name="voteUpButton">
+            <property name="toolTip">
+             <string>Vote Up</string>
+            </property>
             <property name="text">
-             <string>/\</string>
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="../images.qrc">
+              <normaloff>:/images/vote_up.png</normaloff>:/images/vote_up.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QToolButton" name="voteDownButton">
+            <property name="toolTip">
+             <string>Vote Down</string>
+            </property>
             <property name="text">
              <string>\/</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../images.qrc">
+              <normaloff>:/images/vote_down.png</normaloff>:/images/vote_down.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
             </property>
            </widget>
           </item>
@@ -246,6 +272,9 @@ border-radius: 10px}</string>
    <header>gui/gxs/GxsIdLabel.h</header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="Posted_images.qrc"/>
+  <include location="../images.qrc"/>
+ </resources>
  <connections/>
 </ui>
