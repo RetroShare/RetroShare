@@ -79,9 +79,9 @@ IdDialog::IdDialog(QWidget *parent)
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.lineEdit_GpgHash);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.lineEdit_GpgId);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.lineEdit_GpgName);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.pushButton_Reputation);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.pushButton_Delete);
-	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.pushButton_EditId);
+	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.toolButton_Reputation);
+	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.toolButton_Delete);
+	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.toolButton_EditId);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.line_RatingOverall);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.line_RatingImplicit);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.line_RatingOwn);
@@ -111,9 +111,9 @@ IdDialog::IdDialog(QWidget *parent)
 	mStateHelper->addClear(IDDIALOG_REPLIST, ui.treeWidget_RepList);
 
 	/* Connect signals */
-	connect(ui.pushButton_NewId, SIGNAL(clicked()), this, SLOT(addIdentity()));
+	connect(ui.toolButton_NewId, SIGNAL(clicked()), this, SLOT(addIdentity()));
 	connect(ui.todoPushButton, SIGNAL(clicked()), this, SLOT(todo()));
-	connect(ui.pushButton_EditId, SIGNAL(clicked()), this, SLOT(editIdentity()));
+	connect(ui.toolButton_EditId, SIGNAL(clicked()), this, SLOT(editIdentity()));
 	connect( ui.treeWidget_IdList, SIGNAL(itemSelectionChanged()), this, SLOT(updateSelection()));
 
 	connect(ui.filterComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(filterComboBoxChanged()));
@@ -470,18 +470,18 @@ void IdDialog::insertIdDetails(uint32_t token)
 
 	if (isOwnId)
 	{
-		mStateHelper->setWidgetEnabled(ui.pushButton_Reputation, false);
+		mStateHelper->setWidgetEnabled(ui.toolButton_Reputation, false);
 		// No Delete Ids yet!
-		mStateHelper->setWidgetEnabled(ui.pushButton_Delete, /*true*/ false);
+		mStateHelper->setWidgetEnabled(ui.toolButton_Delete, /*true*/ false);
 		// No Editing Ids yet!
-		mStateHelper->setWidgetEnabled(ui.pushButton_EditId, /*true*/ false);
+		mStateHelper->setWidgetEnabled(ui.toolButton_EditId, /*true*/ false);
 	}
 	else
 	{
 		// No Reputation yet!
-		mStateHelper->setWidgetEnabled(ui.pushButton_Reputation, /*true*/ false);
-		mStateHelper->setWidgetEnabled(ui.pushButton_Delete, false);
-		mStateHelper->setWidgetEnabled(ui.pushButton_EditId, false);
+		mStateHelper->setWidgetEnabled(ui.toolButton_Reputation, /*true*/ false);
+		mStateHelper->setWidgetEnabled(ui.toolButton_Delete, false);
+		mStateHelper->setWidgetEnabled(ui.toolButton_EditId, false);
 	}
 
 	/* now fill in the reputation information */

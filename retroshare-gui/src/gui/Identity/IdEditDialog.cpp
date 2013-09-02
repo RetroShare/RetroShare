@@ -39,6 +39,9 @@ IdEditDialog::IdEditDialog(QWidget *parent)
 	mIsNew = true;
 
 	ui.setupUi(this);
+	
+	ui.headerFrame->setHeaderImage(QPixmap(":/images/identity/list-add-user_64.png"));
+	ui.headerFrame->setHeaderText(tr("Create New Identity"));
 
 	/* Setup UI helper */
 	mStateHelper = new UIStateHelper(this);

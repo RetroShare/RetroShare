@@ -2,6 +2,7 @@
     <qresource prefix="/" >
         <file>images/add_chat24.png</file>
         <file>images/blue_lock.png</file>
+        <file>images/edit_24.png</file>
         <file>images/stock_signature_bad.png</file>
         <file>images/stock_signature_ok.png</file>
         <file>images/anonymous_128_blue.png</file>
@@ -427,7 +428,7 @@
         <file>images/typing.png</file>
         <file>images/trustsettings.png</file>
         <file>images/uploads.png</file>
-		<file>images/headerFrame.png</file>
+        <file>images/headerFrame.png</file>
         <file>images/loader/16-loader.gif</file>
         <file>images/loader/32-loader.gif</file>
         <file>images/loader/progress.gif</file>
@@ -520,6 +521,11 @@
         <file>images/vote_down.png</file>
         <file>images/window_fullscreen.png</file>
         <file>images/window_nofullscreen.png</file>
+        <file>images/identity/user-identity_32.png</file>
+        <file>images/identity/list-add-user_32.png</file>
+        <file>images/identity/list-add-user_64.png</file>
+        <file>images/identity/list-remove-user_32.png</file>
+        <file>images/identity/user-properties_32.png</file>
         <file>qss/chat/standard/private/info.xml</file>
         <file>qss/chat/standard/private/incoming.htm</file>
         <file>qss/chat/standard/private/outgoing.htm</file>
