@@ -945,7 +945,7 @@ int TransfersDialog::addItem(int row, const FileInfo &fileInfo, const std::map<s
     }
     /*Get Last Access on File */
     if (file.exists()) {
-            qi64LastDL = file.lastModified().toMSecsSinceEpoch();
+            qi64LastDL = file.lastModified().toTime_t();
     }
     }
     QString strPath = QString::fromUtf8(fileInfo.path.c_str());
