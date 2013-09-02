@@ -7,276 +7,306 @@
     <x>0</x>
     <y>0</y>
     <width>681</width>
-    <height>544</height>
+    <height>515</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string/>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_5">
-   <item>
-    <widget class="QGroupBox" name="groupBox_title">
-     <property name="title">
-      <string>Circle Details</string>
+  <layout class="QGridLayout" name="gridLayout_2">
+   <property name="margin">
+    <number>0</number>
+   </property>
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <item row="0" column="0">
+    <widget class="HeaderFrame" name="headerFrame">
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_3">
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_5">
-        <item>
-         <widget class="QLabel" name="label_2">
-          <property name="font">
-           <font>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>Name</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLineEdit" name="circleName"/>
-        </item>
-        <item>
-         <widget class="QLabel" name="idChooserLabel">
-          <property name="font">
-           <font>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>Creator</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="GxsIdChooser" name="idChooser"/>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <widget class="QFrame" name="frame_Distribution">
-        <property name="frameShape">
-         <enum>QFrame::StyledPanel</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Raised</enum>
-        </property>
-        <layout class="QHBoxLayout" name="horizontalLayout">
-         <property name="spacing">
-          <number>0</number>
-         </property>
-         <property name="margin">
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QLabel" name="label_3">
-           <property name="font">
-            <font>
-             <weight>75</weight>
-             <bold>true</bold>
-            </font>
-           </property>
-           <property name="text">
-            <string>Distribution</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QRadioButton" name="radioButton_Public">
-           <property name="text">
-            <string>Public</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QRadioButton" name="radioButton_Self">
-           <property name="text">
-            <string>Self-Restricted</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QRadioButton" name="radioButton_Restricted">
-           <property name="text">
-            <string>Restricted to:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="GxsCircleChooser" name="circleComboBox"/>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>147</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </widget>
-      </item>
-     </layout>
+     <property name="frameShadow">
+      <enum>QFrame::Plain</enum>
+     </property>
     </widget>
    </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
-     <item>
-      <widget class="QGroupBox" name="groupBox_2">
-       <property name="title">
-        <string>Circle Membership</string>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item row="1" column="0">
+    <widget class="QFrame" name="frame">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="1" column="0">
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
-         <widget class="QTreeWidget" name="treeWidget_membership">
-          <column>
-           <property name="text">
-            <string>Name</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>IDs</string>
-           </property>
-          </column>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item>
-      <layout class="QVBoxLayout" name="verticalLayout_4">
-       <item>
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>188</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
-        <widget class="QPushButton" name="addButton">
-         <property name="text">
-          <string>&lt;&lt; Add</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="removeButton">
-         <property name="text">
-          <string>&gt;&gt; Remove </string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="verticalSpacer_2">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>178</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <widget class="QGroupBox" name="groupBox_4">
-       <property name="title">
-        <string>Known Identities</string>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout">
-        <item>
-         <widget class="QFrame" name="frame_PgpTypes">
-          <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
+         <widget class="QGroupBox" name="groupBox_2">
+          <property name="title">
+           <string>Circle Membership</string>
           </property>
-          <property name="frameShadow">
-           <enum>QFrame::Raised</enum>
-          </property>
-          <layout class="QHBoxLayout" name="horizontalLayout_3">
-           <property name="spacing">
-            <number>0</number>
-           </property>
-           <property name="margin">
-            <number>0</number>
-           </property>
+          <layout class="QVBoxLayout" name="verticalLayout_2">
            <item>
-            <widget class="QRadioButton" name="radioButton_ListAllPGP">
-             <property name="text">
-              <string>All PGP IDs</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="radioButton_ListKnownPGP">
-             <property name="text">
-              <string>Known PGP IDs</string>
-             </property>
+            <widget class="QTreeWidget" name="treeWidget_membership">
+             <column>
+              <property name="text">
+               <string>Name</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>IDs</string>
+              </property>
+             </column>
             </widget>
            </item>
           </layout>
          </widget>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_4">
+         <layout class="QVBoxLayout" name="verticalLayout_4">
           <item>
-           <widget class="QLabel" name="label">
+           <spacer name="verticalSpacer">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>188</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="addButton">
             <property name="text">
-             <string>Filter</string>
+             <string>&lt;&lt; Add</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="IdFilter"/>
+           <widget class="QPushButton" name="removeButton">
+            <property name="text">
+             <string>&gt;&gt; Remove </string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="verticalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>178</height>
+             </size>
+            </property>
+           </spacer>
           </item>
          </layout>
         </item>
         <item>
-         <widget class="QTreeWidget" name="treeWidget_IdList">
-          <column>
-           <property name="text">
-            <string>Nickname</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>ID</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Type</string>
-           </property>
-          </column>
+         <widget class="QGroupBox" name="groupBox_4">
+          <property name="title">
+           <string>Known Identities</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout">
+           <item>
+            <widget class="QFrame" name="frame_PgpTypes">
+             <property name="frameShape">
+              <enum>QFrame::StyledPanel</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Raised</enum>
+             </property>
+             <layout class="QHBoxLayout" name="horizontalLayout_3">
+              <property name="spacing">
+               <number>0</number>
+              </property>
+              <property name="margin">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QRadioButton" name="radioButton_ListAllPGP">
+                <property name="text">
+                 <string>All PGP IDs</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QRadioButton" name="radioButton_ListKnownPGP">
+                <property name="text">
+                 <string>Known PGP IDs</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_4">
+             <item>
+              <widget class="QLabel" name="label">
+               <property name="text">
+                <string>Filter</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLineEdit" name="IdFilter"/>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QTreeWidget" name="treeWidget_IdList">
+             <column>
+              <property name="text">
+               <string>Nickname</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>ID</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Type</string>
+              </property>
+             </column>
+            </widget>
+           </item>
+          </layout>
          </widget>
         </item>
        </layout>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
+      </item>
+      <item row="2" column="0">
+       <widget class="QDialogButtonBox" name="buttonBox">
+        <property name="standardButtons">
+         <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QGroupBox" name="groupBox_title">
+        <property name="title">
+         <string>Circle Details</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_5">
+           <item>
+            <widget class="QLabel" name="label_2">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Name</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="circleName"/>
+           </item>
+           <item>
+            <widget class="QLabel" name="idChooserLabel">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Creator</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="GxsIdChooser" name="idChooser"/>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QFrame" name="frame_Distribution">
+           <property name="frameShape">
+            <enum>QFrame::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+           <layout class="QHBoxLayout" name="horizontalLayout">
+            <property name="spacing">
+             <number>9</number>
+            </property>
+            <property name="margin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="label_3">
+              <property name="font">
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>Distribution</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="radioButton_Public">
+              <property name="text">
+               <string>Public</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="radioButton_Self">
+              <property name="text">
+               <string>Self-Restricted</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="radioButton_Restricted">
+              <property name="text">
+               <string>Restricted to:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="GxsCircleChooser" name="circleComboBox"/>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>147</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+     <zorder>buttonBox</zorder>
+     <zorder>groupBox_title</zorder>
     </widget>
    </item>
   </layout>
@@ -291,6 +321,12 @@
    <class>GxsCircleChooser</class>
    <extends>QComboBox</extends>
    <header>gui/gxs/GxsCircleChooser.h</header>
+  </customwidget>
+  <customwidget>
+   <class>HeaderFrame</class>
+   <extends>QFrame</extends>
+   <header>gui/common/headerframe.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

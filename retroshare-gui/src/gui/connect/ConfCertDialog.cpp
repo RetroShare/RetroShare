@@ -239,6 +239,7 @@ void ConfCertDialog::load()
 
         ui.groupBox->show();
         ui.groupBox_4->show();
+        ui.tabWidget->show();
         ui.rsid->hide();
         ui.label_rsid->hide();
     } else {
@@ -259,6 +260,7 @@ void ConfCertDialog::load()
         ui.crypto_label->hide();
 
         ui.groupBox->hide();
+        ui.tabWidget->hide();
     }
 
     if (detail.gpg_id == rsPeers->getGPGOwnId()) {

@@ -546,12 +546,12 @@ void MessagesDialog::messageslistWidgetCustomPopupMenu( QPoint /*point*/ )
 
     QMenu contextMnu( this );
 
-    QAction *action = contextMnu.addAction(tr("Open in a new window"), this, SLOT(openAsWindow()));
+    QAction *action = contextMnu.addAction(QIcon(":/images/view_split_top_bottom.png"), tr("Open in a new window"), this, SLOT(openAsWindow()));
     if (nCount != 1) {
         action->setDisabled(true);
     }
 
-    action = contextMnu.addAction(tr("Open in a new tab"), this, SLOT(openAsTab()));
+    action = contextMnu.addAction(QIcon(":/images/tab-dock.png"), tr("Open in a new tab"), this, SLOT(openAsTab()));
     if (nCount != 1) {
         action->setDisabled(true);
     }

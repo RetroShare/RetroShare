@@ -49,6 +49,8 @@ CreateCircleDialog::CreateCircleDialog()
 	//QString text = pId.empty() ? tr("Start New Thread") : tr("Post Forum Message");
 	//setWindowTitle(text);
 	//Settings->loadWidgetInformation(this);
+			
+	ui.headerFrame->setHeaderImage(QPixmap(":/images/user/agt_forum64.png"));
 
 	// connect up the buttons.
 	connect(ui.addButton, SIGNAL(clicked()), this, SLOT(addMember()));
@@ -120,6 +122,8 @@ void CreateCircleDialog::setupForPersonalCircle()
 	mIsExternalCircle = false;
 
 	/* hide distribution line */
+	ui.headerFrame->setHeaderText(tr("Create New Personal Circle"));
+	
 	ui.groupBox_title->setTitle(tr("Personal Circle Details"));
 	ui.frame_PgpTypes->hide();
 	ui.frame_Distribution->hide();
@@ -134,12 +138,14 @@ void CreateCircleDialog::setupForExternalCircle()
 	mIsExternalCircle = true;
 
 	/* show distribution line */
+	ui.headerFrame->setHeaderText(tr("Create New External Circle"));
+	
 	ui.groupBox_title->setTitle(tr("External Circle Details"));
 	ui.frame_PgpTypes->show();
 	ui.frame_Distribution->show();
 	ui.idChooserLabel->show();
 	ui.idChooser->show();
-
+	
 	requestGxsIdentities();
 }
 

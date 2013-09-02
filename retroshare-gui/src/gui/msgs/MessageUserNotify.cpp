@@ -83,7 +83,7 @@ void MessageUserNotify::setNotifyEnabled(bool enabled, bool combined, bool blink
 
 QIcon MessageUserNotify::getIcon()
 {
-	return QIcon(":/images/newmsg.png");
+	return QIcon(":/images/inbox_22.png");
 }
 
 QIcon MessageUserNotify::getMainIcon(bool hasNew)

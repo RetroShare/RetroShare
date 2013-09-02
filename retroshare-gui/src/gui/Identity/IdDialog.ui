@@ -35,6 +35,12 @@
          <widget class="QLabel" name="titleBarPixmap">
           <property name="minimumSize">
            <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
             <width>24</width>
             <height>24</height>
            </size>
@@ -537,6 +543,7 @@
   <tabstop>treeWidget_RepList</tabstop>
  </tabstops>
  <resources>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
