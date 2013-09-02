@@ -32,6 +32,7 @@
 #include "gui/common/PeerDefs.h"
 #include "gui/common/GroupDefs.h"
 #include "gui/GetStartedDialog.h"
+#include "gui/msgs/MessageComposer.h"
 
 #include <retroshare/rsiface.h>
 
@@ -397,6 +398,18 @@ void ConnectFriendWizard::initializePage(int id)
 			fillGroups(this, ui->fr_groupComboBox, groupId);
 		}
 		break;
+	case Page_FriendRecommendations:
+		ui->frec_recommendList->setHeaderText(tr("Recommend friends"));
+		ui->frec_recommendList->setModus(FriendSelectionWidget::MODUS_CHECK);
+		ui->frec_recommendList->setShowType(FriendSelectionWidget::SHOW_GROUP | FriendSelectionWidget::SHOW_SSL);
+		ui->frec_recommendList->start();
+
+		ui->frec_toList->setHeaderText(tr("To"));
+		ui->frec_toList->setModus(FriendSelectionWidget::MODUS_CHECK);
+		ui->frec_toList->start();
+
+		ui->frec_messageEdit->setText(MessageComposer::recommendMessage());
+		break;
 	}
 }
 
@@ -509,7 +522,6 @@ bool ConnectFriendWizard::validateCurrentPage()
 			body += "\n\n" + QString::fromUtf8(rsPeers->GetRetroshareInvite(false).c_str());
 
 			sendMail (mailaddresses, ui->subjectEdit->text(), body);
-			return true;
 		}
 		break;
 	case Page_ErrorMessage:
@@ -518,6 +530,29 @@ bool ConnectFriendWizard::validateCurrentPage()
 		break;
 	case Page_FriendRequest:
 		break;
+	case Page_FriendRecommendations:
+		{
+			std::list<std::string> recommendIds;
+			ui->frec_recommendList->selectedSslIds(recommendIds, false);
+
+			if (recommendIds.empty()) {
+				QMessageBox::warning(this, "RetroShare", tr("Please select at least one friend for recommendation."), QMessageBox::Ok, QMessageBox::Ok);
+				return false;
+			}
+
+			std::list<std::string> toIds;
+			ui->frec_toList->selectedSslIds(toIds, false);
+
+			if (toIds.empty()) {
+				QMessageBox::warning(this, "RetroShare", tr("Please select at least one friend as recipient."), QMessageBox::Ok, QMessageBox::Ok);
+				return false;
+			}
+
+			std::list<std::string>::iterator toId;
+			for (toId = toIds.begin(); toId != toIds.end(); toId++) {
+				MessageComposer::recommendFriend(recommendIds, *toId, ui->frec_messageEdit->toHtml(), true);
+			}
+		}
 	}
 
 	return true;
@@ -532,6 +567,7 @@ int ConnectFriendWizard::nextId() const
 		if (ui->foffRadioButton->isChecked()) return Page_Foff;
 		if (ui->rsidRadioButton->isChecked()) return Page_Rsid;
 		if (ui->emailRadioButton->isChecked()) return Page_Email;
+		if (ui->friendRecommendationsRadioButton->isChecked()) return Page_FriendRecommendations;
 		return ConnectFriendWizard::Page_Foff;
 	case Page_Text:
 	case Page_Cert:
@@ -542,6 +578,7 @@ int ConnectFriendWizard::nextId() const
 	case Page_ErrorMessage:
 	case Page_Conclusion:
 	case Page_FriendRequest:
+	case Page_FriendRecommendations:
 		return -1;
 	}
 

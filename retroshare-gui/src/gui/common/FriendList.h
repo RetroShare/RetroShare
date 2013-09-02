@@ -150,7 +150,6 @@ private slots:
 #ifdef UNFINISHED_FD
     void viewprofile();
 #endif
-	 void recommendFriends() ;
 	 void createNewGroup() ;
 
     void addToGroup();

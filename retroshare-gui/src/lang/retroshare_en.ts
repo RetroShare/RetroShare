@@ -2625,6 +2625,34 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
         <source>Direct source</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Recommend many friends to each others</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Friend Recommendations</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Message:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Recommend friends</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>To</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please select at least one friend for recommendation.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please select at least one friend as recipient.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ConnectProgressDialog</name>
@@ -5543,38 +5571,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Recommend many friends to each others</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Display</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>FriendRecommendDialog</name>
-    <message>
-        <source>Friend Recommendations</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Message:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Recommend friends</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>To</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Please select at least one friend for recommendation.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Please select at least one friend as recipient.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5712,10 +5709,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Create new Chat lobby</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Friend Recommendations</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

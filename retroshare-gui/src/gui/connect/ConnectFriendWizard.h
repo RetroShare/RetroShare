@@ -25,7 +25,7 @@ class ConnectFriendWizard : public QWizard
 	Q_OBJECT
 
 public:
-	enum Page { Page_Intro, Page_Text, Page_Cert, Page_ErrorMessage, Page_Conclusion, Page_Foff, Page_Rsid, Page_Email, Page_FriendRequest };
+	enum Page { Page_Intro, Page_Text, Page_Cert, Page_ErrorMessage, Page_Conclusion, Page_Foff, Page_Rsid, Page_Email, Page_FriendRequest, Page_FriendRecommendations };
 
 	ConnectFriendWizard(QWidget *parent = 0);
 	~ConnectFriendWizard();

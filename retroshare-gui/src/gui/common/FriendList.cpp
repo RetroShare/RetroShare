@@ -33,7 +33,6 @@
 #include "gui/chat/ChatDialog.h"
 //#include "gui/chat/CreateLobbyDialog.h"
 #include "gui/common/AvatarDefs.h"
-#include "gui/FriendRecommendDialog.h"
 
 #include "gui/connect/ConfCertDialog.h"
 #include "gui/connect/ConnectFriendWizard.h"
@@ -529,24 +528,16 @@ void FriendList::peerTreeWidgetCostumPopupMenu()
 
     contextMnu.addSeparator();
 
-    contextMnu.addAction(QIcon(IMAGE_EXPAND), tr("Recommend many friends to each others"), this, SLOT(recommendFriends()));
-
-    contextMnu.addSeparator();
-
     contextMnu.addAction(QIcon(IMAGE_EXPAND), tr("Expand all"), ui->peerTreeWidget, SLOT(expandAll()));
     contextMnu.addAction(QIcon(IMAGE_COLLAPSE), tr("Collapse all"), ui->peerTreeWidget, SLOT(collapseAll()));
 
     contextMnu.exec(QCursor::pos());
 }
+
 void FriendList::createNewGroup()
 {
     CreateGroup createGrpDialog ("", this);
     createGrpDialog.exec();
-}
-
-void FriendList::recommendFriends()
-{
-	FriendRecommendDialog::showYourself();
 }
 
 void FriendList::updateDisplay()

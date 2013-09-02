@@ -64,6 +64,13 @@
       </property>
      </widget>
     </item>
+    <item>
+     <widget class="QRadioButton" name="friendRecommendationsRadioButton">
+      <property name="text">
+       <string>Recommend many friends to each others</string>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="ConnectFriendPage" name="TextPage">
@@ -951,6 +958,60 @@
     </item>
    </layout>
   </widget>
+  <widget class="QWizardPage" name="FriendRecommendationsPage">
+   <property name="title">
+    <string>Friend Recommendations</string>
+   </property>
+   <property name="subTitle">
+    <string>Recommend many friends to each others</string>
+   </property>
+   <attribute name="pageId">
+    <string notr="true">ConnectFriendWizard::Page_FriendRecommendations</string>
+   </attribute>
+   <layout class="QVBoxLayout" name="verticalLayout_16">
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_8">
+      <item>
+       <widget class="FriendSelectionWidget" name="frec_recommendList" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="FriendSelectionWidget" name="frec_toList" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QLabel" name="frec_label">
+      <property name="text">
+       <string>Message:</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QTextEdit" name="frec_messageEdit">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
  </widget>
  <customwidgets>
   <customwidget>
@@ -970,9 +1031,14 @@
    <header>gui/connect/ConnectFriendWizard.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>FriendSelectionWidget</class>
+   <extends>QWidget</extends>
+   <header>gui/common/FriendSelectionWidget.h</header>
+   <container>1</container>
+  </customwidget>
  </customwidgets>
  <resources>
-  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>

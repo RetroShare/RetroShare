@@ -51,7 +51,6 @@
 #include "util/misc.h"
 #include "util/HandleRichText.h"
 #include "util/DateTime.h"
-//#include "FriendRecommendDialog.h"
 #include "FriendsDialog.h"
 #include "NetworkView.h"
 #include "NetworkDialog.h"
@@ -87,7 +86,6 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     connect( ui.actionSet_your_Personal_Message, SIGNAL(triggered()), this, SLOT(statusmessage()));
     connect( ui.addfileButton, SIGNAL(clicked() ), this , SLOT(addExtraFile()));
     connect( ui.actionAdd_Friend, SIGNAL(triggered()), this, SLOT(addFriend()));
-    connect( ui.actionFriendRecommendations, SIGNAL(triggered()), this, SLOT(recommendFriends()));
 
     ui.avatar->setFrameType(AvatarWidget::STATUS_FRAME);
     ui.avatar->setOwnId();
@@ -168,7 +166,6 @@ FriendsDialog::FriendsDialog(QWidget *parent)
 //    menu->addAction(ui.actionAdd_Friend);
 //    menu->addAction(ui.actionAdd_Group);
 //    menu->addAction(ui.actionCreate_new_Chat_lobby);
-//    menu->addAction(ui.actionFriendRecommendations);
 //
 //    menu->addSeparator();
 //    menu->addAction(ui.actionSet_your_Avatar);
