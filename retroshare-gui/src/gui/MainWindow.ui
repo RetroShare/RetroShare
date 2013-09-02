@@ -50,6 +50,7 @@
    </attribute>
    <addaction name="actionAdd_Friend"/>
    <addaction name="actionAdd_Share"/>
+   <addaction name="actionServicePermissions"/>
    <addaction name="separator"/>
    <addaction name="actionMessenger"/>
    <addaction name="actionAbout"/>
@@ -132,6 +133,18 @@
    </property>
    <property name="toolTip">
     <string>Quick Start Wizard</string>
+   </property>
+  </action>
+  <action name="actionServicePermissions">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/images/admin-24.png</normaloff>:/images/admin-24.png</iconset>
+   </property>
+   <property name="text">
+    <string>ServicePermissions</string>
+   </property>
+   <property name="toolTip">
+    <string>Service permissions matrix</string>
    </property>
   </action>
  </widget>

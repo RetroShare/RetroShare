@@ -5547,10 +5547,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Service permissions matrix</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Display</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5728,10 +5724,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Reset font to default</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Service permissions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -7778,6 +7770,14 @@ p, li { white-space: pre-wrap; }
         <source>Anonymous Id</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Create new Identity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Delete Identity</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>IdEditDialog</name>
@@ -7839,6 +7839,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Unknown real name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create New Identity</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8132,6 +8136,14 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>The file link is malformed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ServicePermissions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Service permissions matrix</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

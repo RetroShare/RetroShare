@@ -61,6 +61,7 @@
 #include "SoundManager.h"
 #include "notifyqt.h"
 #include "common/UserNotify.h"
+#include "gui/ServicePermissionDialog.h"
 
 #ifdef UNFINISHED
 #include "unfinished/ApplicationWindow.h"
@@ -225,6 +226,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
     connect(ui->actionAdd_Share, SIGNAL(triggered() ), this , SLOT( openShareManager() ) );
     connect(ui->actionOptions, SIGNAL(triggered()), this, SLOT( showSettings()) );
 //    connect(ui->actionMessenger, SIGNAL(triggered()), this, SLOT( showMessengerWindow()) );
+    connect(ui->actionServicePermissions, SIGNAL(triggered()), this, SLOT(servicePermission()));
 
     ui->actionMessenger->setVisible(false);
 
@@ -1321,4 +1323,9 @@ void MainWindow::retroshareLinkActivated(const QUrl &url)
     QList<RetroShareLink> links;
     links.append(link);
     RetroShareLink::process(links);
+}
+
+void MainWindow::servicePermission()
+{
+    ServicePermissionDialog::showYourself();
 }

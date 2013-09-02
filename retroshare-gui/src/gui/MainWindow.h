@@ -187,6 +187,7 @@ private slots:
     void showMessengerWindow();
     void showDhtWindow();
     void showBwCtrlWindow();
+    void servicePermission();
 
 #ifdef UNFINISHED    
     void showApplWindow();

@@ -38,6 +38,9 @@ class ServicePermissionDialog : public QDialog
 	Q_OBJECT
 
 public:
+	static void showYourself();
+
+private:
 	ServicePermissionDialog();
 	~ServicePermissionDialog();
 

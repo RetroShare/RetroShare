@@ -25,16 +25,20 @@
 #include "ui_ServicePermissionDialog.h"
 #include "settings/rsharesettings.h"
 
+static ServicePermissionDialog *servicePermissionDialog = NULL;
+
 ServicePermissionDialog::ServicePermissionDialog() :
 	QDialog(NULL, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint),
 	ui(new Ui::ServicePermissionDialog)
 {
 	ui->setupUi(this);
 
+	setAttribute(Qt::WA_DeleteOnClose, true);
+
 	Settings->loadWidgetInformation(this);
 	
 	ui->headerFrame->setHeaderImage(QPixmap(":/images/user/servicepermissions64.png"));
-  ui->headerFrame->setHeaderText(tr("Service Permissions"));
+	ui->headerFrame->setHeaderText(tr("Service Permissions"));
 
 	connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(setPermissions()));
 	connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
@@ -63,6 +67,18 @@ ServicePermissionDialog::~ServicePermissionDialog()
 	Settings->saveWidgetInformation(this);
 
 	delete ui;
+
+	servicePermissionDialog = NULL;
+}
+
+void ServicePermissionDialog::showYourself()
+{
+	if (!servicePermissionDialog) {
+		servicePermissionDialog = new ServicePermissionDialog();
+	}
+
+	servicePermissionDialog->show();
+	servicePermissionDialog->activateWindow();
 }
 
 void ServicePermissionDialog::itemAdded(int idType, const QString &id, QTreeWidgetItem *item)
