@@ -75,6 +75,13 @@ PostedListDialog::PostedListDialog(QWidget *parent)
 	mLastSortMethod = RsPosted::TopRankType; // to be different.
 	mPostIndex = 0;
 	mPostShow = POSTED_DEFAULT_LISTING_LENGTH;
+	
+	/* Initialize group tree */
+	QToolButton *newTopicButton = new QToolButton(this);
+	newTopicButton->setIcon(QIcon(":/images/posted_add_24.png"));
+	newTopicButton->setToolTip(tr("Create New Topic"));
+	connect(newTopicButton, SIGNAL(clicked()), this, SLOT(newTopic()));
+	ui.groupTreeWidget->addToolButton(newTopicButton);
 
 	/* create posted tree */
 	yourTopics = ui.groupTreeWidget->addCategoryItem(tr("My Topics"), QIcon(IMAGE_FOLDER), true);
@@ -84,7 +91,6 @@ PostedListDialog::PostedListDialog(QWidget *parent)
 
 	ui.hotSortButton->setChecked(true);
 
-	connect(ui.newTopicButton, SIGNAL(clicked()), this, SLOT(newTopic()));
 	connect(ui.submitPostButton, SIGNAL(clicked()), this, SLOT(newPost()));
 }
 

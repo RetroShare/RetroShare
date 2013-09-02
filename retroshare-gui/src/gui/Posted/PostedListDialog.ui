@@ -24,31 +24,7 @@
      </property>
      <widget class="QWidget" name="layoutWidget">
       <layout class="QGridLayout" name="gridLayout_2">
-       <item row="0" column="0">
-        <spacer name="horizontalSpacer_3">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>36</width>
-           <height>21</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="0" column="1" colspan="2">
-        <widget class="QPushButton" name="newTopicButton">
-         <property name="text">
-          <string>New Topic</string>
-         </property>
-         <property name="icon">
-          <iconset resource="Posted_images.qrc">
-           <normaloff>:/images/posted_add_32.png</normaloff>:/images/posted_add_32.png</iconset>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0" colspan="3">
+       <item row="0" column="0" colspan="2">
         <widget class="GroupTreeWidget" name="groupTreeWidget" native="true">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
