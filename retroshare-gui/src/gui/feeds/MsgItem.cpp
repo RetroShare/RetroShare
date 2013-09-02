@@ -130,7 +130,7 @@ void MsgItem::updateItemStatic()
 	subjectLabel->setText(QString::fromStdWString(mi.title));
 		
 	if(mi.msgflags & RS_MSG_ENCRYPTED)
-		msgLabel->setText(RsHtml().formatText(NULL, tr("[Encrypted message]"), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
+		msgLabel->setText(RsHtml().formatText(NULL, QString("[%1]").arg(tr("Encrypted message")), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 	else
 		msgLabel->setText(RsHtml().formatText(NULL, QString::fromStdWString(mi.msg), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 

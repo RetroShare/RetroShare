@@ -780,7 +780,7 @@ void NotifyQt::UpdateGUI()
 
 					if (popupflags & RS_POPUP_MSG)
 					{
-						toaster = new Toaster(new MessageToaster(std::string(), QObject::tr("Unknown title"), QObject::tr("[Encrypted message]")));
+						toaster = new Toaster(new MessageToaster(std::string(), tr("Unknown title"), QString("[%1]").arg(tr("Encrypted message"))));
 					}
 					break;
 				case RS_POPUP_MSG:
@@ -934,7 +934,7 @@ void NotifyQt::testToaster(uint notifyFlags, /*RshareSettings::enumToasterPositi
 		switch(type)
 		{
 			case RS_POPUP_ENCRYPTED_MSG:
-				toaster = new Toaster(new MessageToaster(std::string(), tr("Unknown title"), tr("[Encrypted message]")));
+				toaster = new Toaster(new MessageToaster(std::string(), tr("Unknown title"), QString("[%1]").arg(tr("Encrypted message"))));
 				break;
 			case RS_POPUP_MSG:
 				toaster = new Toaster(new MessageToaster(id, title, message));

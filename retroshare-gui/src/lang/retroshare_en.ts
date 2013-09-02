@@ -1396,6 +1396,14 @@ Double click lobbies to enter and chat.</source>
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Chat Lobbies&lt;/h1&gt;                              		  &lt;p&gt;Chat lobbies are distributed chat rooms, and work pretty much like IRC.                                      		  They allow you to talk anonymously with tons of people without the need to make friends.&lt;/p&gt;                    		  &lt;p&gt;A chat lobby can be public (you friends see it) or private (your friends can&apos;t see it, unless you           		  invite them with &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). Once you have been invited to a private lobby, you will be able to see it when your friends   		  are using it.&lt;/p&gt;                                                                                               		  &lt;p&gt;The list at left shows                                                                                     		  chat lobbies your friends are participating into. You can either                                 		  &lt;ul&gt;                                                                                                            			  &lt;li&gt;Right click to create a new chat lobby&lt;/li&gt;                                                              		     &lt;li&gt;Double click a chat lobby to enter, chat, and show it to your friends&lt;/li&gt;                      		  &lt;/ul&gt; 		  Note: For the chat lobbies to work properly, your computer needs be on time.  So check your system clock!		  &lt;/p&gt;                                      		</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Search Chat lobbies</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search Name</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ChatMsgItem</name>
@@ -4254,6 +4262,10 @@ p, li { white-space: pre-wrap; }
         <source>GB</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>File Never Seen</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>DetailsDialog</name>
@@ -6726,6 +6738,14 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Edit Channel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add Channel Admins</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select Channel Admins</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9223,6 +9243,10 @@ Do you want to save message ?</source>
         <source>Hide</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Encrypted message</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>NATStatus</name>
@@ -9755,6 +9779,14 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>This is a test.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown title</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Encrypted message</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10391,10 +10423,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>/\</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>\/</source>
         <translation type="unfinished"></translation>
     </message>
@@ -10424,6 +10452,14 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Comment</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Vote Up</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Vote Down</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10463,10 +10499,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>This Year</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>New Topic</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -10519,6 +10551,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Please create or choose a Signing Id before Voting</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create New Topic</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -13191,10 +13227,6 @@ Try to be patient!</source>
     </message>
     <message>
         <source>UserID</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>File Never Seen</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
