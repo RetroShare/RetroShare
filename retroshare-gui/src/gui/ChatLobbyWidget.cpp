@@ -56,7 +56,9 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WFlags flags)
 	QObject::connect(lobbyTreeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(itemDoubleClicked(QTreeWidgetItem*,int)));
 	QObject::connect(lobbyTreeWidget, SIGNAL(itemSelectionChanged()), this, SLOT(updateCurrentLobby()));
 
-	//QObject::connect(newlobbytoolButton, SIGNAL(clicked()), this, SLOT(createChatLobby()));
+	QObject::connect( filterLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterItems(QString)));
+	QObject::connect( filterLineEdit, SIGNAL(filterChanged(int)), this, SLOT(filterColumnChanged(int)));
+	QObject::connect( createlobbytoolButton, SIGNAL(clicked()), this, SLOT(createChatLobby()));
 
 	compareRole = new RSTreeWidgetItemCompareRole;
 	compareRole->setRole(COLUMN_NAME, ROLE_SORT);
@@ -71,7 +73,7 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WFlags flags)
 	headerItem->setText(COLUMN_USER_COUNT, tr("Count"));
 	headerItem->setText(COLUMN_TOPIC, tr("Topic"));
 	headerItem->setTextAlignment(COLUMN_NAME, Qt::AlignHCenter | Qt::AlignVCenter);
-  headerItem->setTextAlignment(COLUMN_TOPIC, Qt::AlignHCenter | Qt::AlignVCenter);
+	headerItem->setTextAlignment(COLUMN_TOPIC, Qt::AlignHCenter | Qt::AlignVCenter);
 	headerItem->setTextAlignment(COLUMN_USER_COUNT, Qt::AlignHCenter | Qt::AlignVCenter);
 
 	QHeaderView *header = lobbyTreeWidget->header();
@@ -117,6 +119,10 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WFlags flags)
 
 	lobbyChanged();
 	showBlankPage(0) ;
+	
+	 /* add filter actions */
+	filterLineEdit->addFilter(QIcon(), tr("Name"), COLUMN_NAME, tr("Search Name"));
+	filterLineEdit->setCurrentFilter(COLUMN_NAME);
 
 		QString help_str = tr(
 		" <h1><img width=\"32\" src=\":/images/64px_help.png\">&nbsp;&nbsp;Chat Lobbies</h1>                              \
@@ -432,7 +438,7 @@ void ChatLobbyWidget::createChatLobby()
 
 void ChatLobbyWidget::showLobby(QTreeWidgetItem *item)
 {
-    if (item == NULL || item->type() != TYPE_LOBBY) {
+	if (item == NULL || item->type() != TYPE_LOBBY) {
 		showBlankPage(0) ;
 		return;
 	}
@@ -648,6 +654,10 @@ void ChatLobbyWidget::updateCurrentLobby()
 			item->setIcon(COLUMN_NAME, icon) ;
 		}
 	}
+	
+	if (filterLineEdit->text().isEmpty() == false) {
+		filterItems(filterLineEdit->text());
+	}
 }
 void ChatLobbyWidget::updateMessageChanged(ChatLobbyId id)
 {
@@ -704,4 +714,46 @@ void ChatLobbyWidget::readChatLobbyInvites()
 			rsMsgs->denyLobbyInvite((*it).lobby_id);
 		}
 	}
+}
+
+void ChatLobbyWidget::filterColumnChanged(int)
+{
+    filterItems(filterLineEdit->text());
+}
+
+void ChatLobbyWidget::filterItems(const QString &text)
+{
+    int filterColumn = filterLineEdit->currentFilter();
+
+    int count = lobbyTreeWidget->topLevelItemCount ();
+    for (int index = 0; index < count; index++) {
+        filterItem(lobbyTreeWidget->topLevelItem(index), text, filterColumn);
+    }
+}
+
+bool ChatLobbyWidget::filterItem(QTreeWidgetItem *item, const QString &text, int filterColumn)
+{
+    bool visible = true;
+
+    if (text.isEmpty() == false) {
+        if (item->text(filterColumn).contains(text, Qt::CaseInsensitive) == false) {
+            visible = false;
+        }
+    }
+
+    int visibleChildCount = 0;
+    int count = item->childCount();
+    for (int index = 0; index < count; index++) {
+        if (filterItem(item->child(index), text, filterColumn)) {
+            visibleChildCount++;
+        }
+    }
+
+    if (visible || visibleChildCount) {
+        item->setHidden(false);
+    } else {
+        item->setHidden(true);
+    }
+
+    return (visible || visibleChildCount);
 }
