@@ -87,14 +87,14 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WFlags flags)
 	privateLobbyItem = new RSTreeWidgetItem(compareRole, TYPE_FOLDER);
 	privateLobbyItem->setText(COLUMN_NAME, tr("Private Lobbies"));
 	privateLobbyItem->setData(COLUMN_NAME, ROLE_SORT, "1");
-	privateLobbyItem->setIcon(COLUMN_NAME, QIcon(IMAGE_PRIVATE));
+//	privateLobbyItem->setIcon(COLUMN_NAME, QIcon(IMAGE_PRIVATE));
 	privateLobbyItem->setData(COLUMN_DATA, ROLE_PRIVACYLEVEL, RS_CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE);
 	lobbyTreeWidget->insertTopLevelItem(0, privateLobbyItem);
 
 	publicLobbyItem = new RSTreeWidgetItem(compareRole, TYPE_FOLDER);
 	publicLobbyItem->setText(COLUMN_NAME, tr("Public Lobbies"));
 	publicLobbyItem->setData(COLUMN_NAME, ROLE_SORT, "2");
-	publicLobbyItem->setIcon(COLUMN_NAME, QIcon(IMAGE_PUBLIC));
+//	publicLobbyItem->setIcon(COLUMN_NAME, QIcon(IMAGE_PUBLIC));
 	publicLobbyItem->setData(COLUMN_DATA, ROLE_PRIVACYLEVEL, RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC);
 	lobbyTreeWidget->insertTopLevelItem(1, publicLobbyItem);
 
