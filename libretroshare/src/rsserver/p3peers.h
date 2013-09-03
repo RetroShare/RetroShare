@@ -92,9 +92,7 @@ virtual bool setVisState(const std::string &id, uint32_t mode);
 
 virtual void getIPServersList(std::list<std::string>& ip_servers) ;
 virtual void allowServerIPDetermination(bool) ;
-virtual void allowTunnelConnection(bool) ;
 virtual bool getAllowServerIPDetermination() ;
-virtual bool getAllowTunnelConnection() ;
 
 	/* Auth Stuff */
 // Get the invitation (GPG cert + local/ext address + SSL id for the given peer)

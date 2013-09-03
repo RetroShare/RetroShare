@@ -42,7 +42,6 @@ class DNSResolver ;
 /* order of attempts ... */
 const uint32_t RS_NET_CONN_TCP_ALL             = 0x000f;
 const uint32_t RS_NET_CONN_UDP_ALL             = 0x00f0;
-const uint32_t RS_NET_CONN_TUNNEL              = 0x0f00;
  
 const uint32_t RS_NET_CONN_TCP_LOCAL           = 0x0001;
 const uint32_t RS_NET_CONN_TCP_EXTERNAL        = 0x0002;
@@ -182,8 +181,6 @@ virtual struct sockaddr_in getLocalAddress() = 0;
 virtual void	getFriendList(std::list<std::string> &ssl_peers) = 0; // ONLY used by p3peers.cc USE p3PeerMgr instead.
 virtual bool	getFriendNetStatus(const std::string &id, peerConnectState &state) = 0; // ONLY used by p3peers.cc
 
-virtual void 	setTunnelConnection(bool b) = 0; // ONLY used by p3peermgr.cc & p3peers.cc MOVE => p3PeerMgr
-virtual bool 	getTunnelConnection() = 0;       // ONLY used by p3peermgr.cc & p3peers.cc MOVE => p3PeerMgr
 
 	/************* DEPRECIATED FUNCTIONS (TO REMOVE) ********/
 virtual int 	addFriend(const std::string &ssl_id, bool isVisible) = 0;
@@ -249,9 +246,6 @@ virtual void    peerConnectRequest(std::string id, struct sockaddr_in raddr,
 
 virtual void	getFriendList(std::list<std::string> &ssl_peers); // ONLY used by p3peers.cc USE p3PeerMgr instead.
 virtual bool	getFriendNetStatus(const std::string &id, peerConnectState &state); // ONLY used by p3peers.cc
-
-virtual void 	setTunnelConnection(bool b); // ONLY used by p3peermgr.cc & p3peers.cc MOVE => p3PeerMgr
-virtual bool 	getTunnelConnection();       // ONLY used by p3peermgr.cc & p3peers.cc MOVE => p3PeerMgr
 
 /************************************************************************************************/
 /* Extra IMPL Functions (used by p3PeerMgr, p3NetMgr + Setup) */

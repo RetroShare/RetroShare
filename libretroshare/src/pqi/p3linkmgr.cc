@@ -136,7 +136,6 @@ p3LinkMgrIMPL::p3LinkMgrIMPL(p3PeerMgrIMPL *peerMgr, p3NetMgrIMPL *netMgr)
 	{
 		RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
 	
-		mAllowTunnelConnection = false;
 		mDNSResolver = new DNSResolver();
 		mRetryPeriod = MIN_RETRY_PERIOD;
 	
@@ -157,18 +156,6 @@ p3LinkMgrIMPL::p3LinkMgrIMPL(p3PeerMgrIMPL *peerMgr, p3NetMgrIMPL *netMgr)
 #endif
 
 	return;
-}
-
-void p3LinkMgrIMPL::setTunnelConnection(bool b)
-{
-	RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
-	mAllowTunnelConnection = b;
-}
-
-bool p3LinkMgrIMPL::getTunnelConnection()
-{
-	RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
-	return mAllowTunnelConnection;
 }
 
 bool    p3LinkMgrIMPL::setLocalAddress(struct sockaddr_in addr)
@@ -694,13 +681,6 @@ bool p3LinkMgrIMPL::connectAttempt(const std::string &id, struct sockaddr_in &ra
 #endif
 			it->second.linkType |= RS_NET_CONN_TRANS_UDP_UNKNOWN;
 		}
-	}
-	else if (type & RS_NET_CONN_TUNNEL)
-	{
-#ifdef LINKMGR_DEBUG_LINKTYPE
-		std::cerr << "p3LinkMgrIMPL::connectAttempt() type & TUNNEL => TUNNEL" << std::endl;
-#endif
-		it->second.linkType |= RS_NET_CONN_TRANS_TUNNEL;
 	}
 	else
 	{
@@ -1529,16 +1509,7 @@ bool   p3LinkMgrIMPL::tryConnectUDP(const std::string &id, struct sockaddr_in &r
 #ifdef LINKMGR_DEBUG
 		std::cerr << "p3LinkMgrIMPL::retryConnectUDP() Peer Already Connected" << std::endl;
 #endif
-                if (it->second.connecttype & RS_NET_CONN_TUNNEL) {
-#ifdef LINKMGR_DEBUG
-                    std::cerr << "p3LinkMgrIMPL::retryConnectUDP() Peer Connected through a tunnel connection, let's try a normal connection." << std::endl;
-#endif
-                } else {
-#ifdef LINKMGR_DEBUG
-                    	std::cerr << "p3LinkMgrIMPL::retryConnectUDP() Peer Connected no more connection attempts" << std::endl;
-#endif
-                    return false;
-                }
+		return false;
 	}
 
 	/* Explicit Request to start the UDP connection */
@@ -1614,19 +1585,7 @@ bool   p3LinkMgrIMPL::retryConnectTCP(const std::string &id)
 #ifdef LINKMGR_DEBUG
 			std::cerr << "p3LinkMgrIMPL::retryConnectTCP() Peer Already Connected" << std::endl;
 #endif
-			if (it->second.connecttype & RS_NET_CONN_TUNNEL) 
-			{
-#ifdef LINKMGR_DEBUG
-				std::cerr << "p3LinkMgrIMPL::retryConnectTCP() Peer Connected through a tunnel connection, let's try a normal connection." << std::endl;
-#endif
-			} 
-			else 
-			{
-#ifdef LINKMGR_DEBUG
-				std::cerr << "p3LinkMgrIMPL::retryConnectTCP() Peer Connected no more connection attempts" << std::endl;
-#endif
-				return false;
-			}
+			return false;
 		}
 	} /****** END of LOCKED ******/
 
@@ -1683,8 +1642,6 @@ bool   p3LinkMgrIMPL::retryConnectTCP(const std::string &id)
 
 			locked_ConnectAttempt_HistoricalAddresses(&(it->second), histAddrs);
 
-			//locked_ConnectAttempt_AddTunnel(&(it->second));
-	
 			/* finish it off */
 			return locked_ConnectAttempt_Complete(&(it->second));
 		}
@@ -2042,31 +1999,6 @@ void  p3LinkMgrIMPL::locked_ConnectAttempt_ProxyAddress(peerConnectState *peer, 
 	if (locked_CheckPotentialAddr(&(pca.addr), 0))
 	{
 		addAddressIfUnique(peer->connAddrs, pca, true);
-	}
-}
-
-
-void  p3LinkMgrIMPL::locked_ConnectAttempt_AddTunnel(peerConnectState *peer)
-{
-	if (!(peer->state & RS_PEER_S_CONNECTED) && mAllowTunnelConnection)
-	{
-#ifdef LINKMGR_DEBUG
-		std::cerr << "Adding TUNNEL Connection Attempt";
-		std::cerr << std::endl;
-#endif
-		peerConnectAddress pca;
-		pca.type = RS_NET_CONN_TUNNEL;
-		pca.ts = time(NULL);
-		pca.period = 0;
-
-		sockaddr_clear(&pca.addr);
-
-		sockaddr_clear(&(pca.proxyaddr));
-		sockaddr_clear(&(pca.srcaddr));
-		pca.bandwidth = 0;
-		
-		
-		addAddressIfUnique(peer->connAddrs, pca, false);
 	}
 }
 

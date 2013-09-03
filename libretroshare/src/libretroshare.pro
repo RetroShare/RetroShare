@@ -9,10 +9,6 @@ CONFIG += test_voip
 # This should be disabled for releases until further notice.
 #CONFIG += gxs debug
 
-# Beware: All data of the stripped services are lost
-DEFINES *= PQI_DISABLE_TUNNEL
-#ENABLE_CACHE_OPT
-
 profiling {
 	QMAKE_CXXFLAGS -= -fomit-frame-pointer
 	QMAKE_CXXFLAGS *= -pg -g -fno-omit-frame-pointer
@@ -78,13 +74,9 @@ SOURCES +=	tcponudp/udppeer.cc \
 
 
 
-PUBLIC_HEADERS =	retroshare/rsblogs.h \
-					retroshare/rschannels.h \
-					retroshare/rsdisc.h \
-					retroshare/rsdistrib.h \
+PUBLIC_HEADERS =	retroshare/rsdisc.h \
 					retroshare/rsexpr.h \
 					retroshare/rsfiles.h \
-					retroshare/rsforums.h \
 					retroshare/rshistory.h \
 					retroshare/rsiface.h \
 					retroshare/rsinit.h \
@@ -101,15 +93,13 @@ PUBLIC_HEADERS =	retroshare/rsblogs.h \
 					retroshare/rsdsdv.h \
 					retroshare/rsconfig.h
 
+
 HEADERS += plugins/pluginmanager.h \
 		plugins/dlfcn_win32.h \
 		serialiser/rspluginitems.h
 
 HEADERS += $$PUBLIC_HEADERS
 
-# public headers to be...
-HEADERS +=	retroshare/rsgame.h \
-		retroshare/rsphoto.h
 
 ################################# Linux ##########################################
 linux-* {
@@ -309,8 +299,6 @@ HEADERS +=	dbase/cachestrapper.h \
 			dbase/findex.h \
 			dbase/fistore.h
 
-#HEADERS +=	dht/p3bitdht.h \
-
 HEADERS +=	ft/ftchunkmap.h \
 			ft/ftcontroller.h \
 			ft/ftdata.h \
@@ -361,7 +349,6 @@ HEADERS +=	pqi/authssl.h \
 			pqi/pqissl.h \
 			pqi/pqissllistener.h \
 			pqi/pqisslpersongrp.h \
-			pqi/pqissltunnel.h \
 			pqi/pqissludp.h \
 			pqi/pqisslproxy.h \
 			pqi/pqistore.h \
@@ -380,13 +367,8 @@ HEADERS +=	rsserver/p3discovery.h \
 
 HEADERS +=	serialiser/rsbaseitems.h \
 			serialiser/rsbaseserial.h \
-			serialiser/rsblogitems.h \
-			serialiser/rschannelitems.h \
 			serialiser/rsconfigitems.h \
 			serialiser/rsdiscitems.h \
-			serialiser/rsdistribitems.h \
-			serialiser/rsforumitems.h \
-			serialiser/rsgameitems.h \
 			serialiser/rshistoryitems.h \
 			serialiser/rsmsgitems.h \
 			serialiser/rsserial.h \
@@ -404,32 +386,21 @@ HEADERS +=	serialiser/rsbaseitems.h \
 			serialiser/rstlvbanlist.h \
 			serialiser/rsbanlistitems.h \
 			serialiser/rsbwctrlitems.h \
-			serialiser/rstunnelitems.h
 
-HEADERS +=	services/p3channels.h \
-			services/p3chatservice.h \
+HEADERS +=	services/p3chatservice.h \
 			services/p3disc.h \
-			services/p3forums.h \
-			services/p3gamelauncher.h \
-			services/p3gameservice.h \
 			services/p3msgservice.h \
 			services/p3service.h \
 			services/p3statusservice.h \
 			services/p3dsdv.h \
 			services/p3banlist.h \
-			services/p3bwctrl.h \
-			services/p3tunnel.h
+			services/p3bwctrl.h 
 		
 #			services/p3discovery2.h \
-
-HEADERS +=	distrib/p3distrib.h \
-			distrib/p3distribsecurity.h 
-#	services/p3blogs.h \
 
 HEADERS +=	turtle/p3turtle.h \
 			turtle/rsturtleitem.h \
 			turtle/turtletypes.h
-
 
 HEADERS +=	util/folderiterator.h \
 			util/rsdebug.h \
@@ -496,7 +467,6 @@ SOURCES +=	pqi/authgpg.cc \
 			pqi/pqissl.cc \
 			pqi/pqissllistener.cc \
 			pqi/pqisslpersongrp.cc \
-			pqi/pqissltunnel.cc \
 			pqi/pqissludp.cc \
 			pqi/pqisslproxy.cc \
 			pqi/pqistore.cc \
@@ -524,13 +494,8 @@ SOURCES += plugins/pluginmanager.cc \
 
 SOURCES +=	serialiser/rsbaseitems.cc \
 			serialiser/rsbaseserial.cc \
-			serialiser/rsblogitems.cc \
-			serialiser/rschannelitems.cc \
 			serialiser/rsconfigitems.cc \
 			serialiser/rsdiscitems.cc \
-			serialiser/rsdistribitems.cc \
-			serialiser/rsforumitems.cc \
-			serialiser/rsgameitems.cc \
 			serialiser/rshistoryitems.cc \
 			serialiser/rsmsgitems.cc \
 			serialiser/rsserial.cc \
@@ -548,13 +513,9 @@ SOURCES +=	serialiser/rsbaseitems.cc \
 			serialiser/rstlvbanlist.cc \
 			serialiser/rsbanlistitems.cc \
 			serialiser/rsbwctrlitems.cc \
-			serialiser/rstunnelitems.cc
 
-SOURCES +=	services/p3channels.cc \
-			services/p3chatservice.cc \
+SOURCES +=	services/p3chatservice.cc \
 			services/p3disc.cc \
-			services/p3forums.cc \
-			services/p3gamelauncher.cc \
 			services/p3msgservice.cc \
 			services/p3service.cc \
 			services/p3statusservice.cc \
@@ -565,11 +526,6 @@ SOURCES +=	services/p3channels.cc \
 
 #			services/p3discovery2.cc \
 
-# removed because getPeer() doesn t exist			services/p3tunnel.cc
-
-SOURCES += distrib/p3distrib.cc \
-		   distrib/p3distribsecurity.cc 
- 
 SOURCES +=	turtle/p3turtle.cc \
 				turtle/rsturtleitem.cc 
 #				turtle/turtlerouting.cc \
@@ -793,13 +749,4 @@ test_bitdht {
 }
 
 
-
-
-use_blogs {
-
-	HEADERS +=	services/p3blogs.h
-	SOURCES +=	services/p3blogs.cc 
-
-	DEFINES *= RS_USE_BLOGS
-}
 

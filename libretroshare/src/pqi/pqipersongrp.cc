@@ -597,15 +597,6 @@ int     pqipersongrp::connectPeer(std::string id
 		std::cerr << std::endl;
 #endif
 	}
-	else if (type & RS_NET_CONN_TUNNEL)
-	{
-		ptype = PQI_CONNECT_TUNNEL;
-		timeout = period * 2;
-#ifdef PGRP_DEBUG
-		std::cerr << " pqipersongrp::connectPeer() connecting with Tunnel: Timeout :" << timeout;
-		std::cerr << std::endl;
-#endif
-	}
 	else
 	{
 #ifdef PGRP_DEBUG
@@ -631,11 +622,6 @@ bool    pqipersongrp::notifyConnect(std::string id, uint32_t ptype, bool success
 	{
 		type = RS_NET_CONN_UDP_ALL;
 	}
-	else if (ptype == PQI_CONNECT_TUNNEL)
-	{
-		type = RS_NET_CONN_TUNNEL;
-	}
-
 	
 	if (mLinkMgr)
 		mLinkMgr->connectResult(id, success, type, raddr);

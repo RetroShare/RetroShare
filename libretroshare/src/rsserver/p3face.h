@@ -40,10 +40,7 @@
 #include "services/p3disc.h"
 #include "services/p3msgservice.h"
 #include "services/p3chatservice.h"
-#include "services/p3blogs.h"
 #include "services/p3statusservice.h"
-#include "services/p3channels.h"
-#include "services/p3forums.h"
 
 /* GXS Classes - just declare the classes.
    so we don't have to totally recompile to switch */
@@ -115,10 +112,6 @@ class RsServer: public RsControl, public RsThread
 		/* General Internal Helper Functions
 			(Must be Locked)
 		 */
-#if 0
-		cert   *intFindCert(RsCertId id);
-		RsCertId intGetCertId(cert *c);
-#endif
 
 		/****************************************/
 		/****************************************/
@@ -182,9 +175,6 @@ class RsServer: public RsControl, public RsThread
 		p3MsgService  *msgSrv;
 		p3ChatService *chatSrv;
 		p3StatusService *mStatusSrv;
-		p3Channels *mChannels;
-		p3Forums *mForums;
-		/* caches (that need ticking) */
 
                 /* GXS */
                 p3Wiki *mWiki;

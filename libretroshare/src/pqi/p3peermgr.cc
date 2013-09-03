@@ -1381,7 +1381,6 @@ bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 	/* create a list of current peers */
 	cleanup = false;
 	bool useExtAddrFinder = mNetMgr->getIPServersEnabled();
-	bool allowTunnelConnection = mLinkMgr->getTunnelConnection();
 
 	mPeerMtx.lock(); /****** MUTEX LOCKED *******/ 
 
@@ -1486,14 +1485,6 @@ bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 
         RsConfigKeyValueSet *vitem2 = new RsConfigKeyValueSet ;
 
-        RsTlvKeyValue kv2;
-        kv2.key = "ALLOW_TUNNEL_CONNECTION" ;
-        kv2.value = (allowTunnelConnection)?"TRUE":"FALSE" ;
-        vitem2->tlvkvs.pairs.push_back(kv2) ;
-
-#ifdef PEER_DEBUG
-        std::cout << "Pushing item for allow_tunnel_connection = " << allowTunnelConnection << std::endl ;
-#endif
         saveData.push_back(vitem2);
 	saveCleanupList.push_back(vitem2);
 
@@ -1527,7 +1518,6 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 
 	// DEFAULTS.
 	bool useExtAddrFinder = true;
-	bool allowTunnelConnection = true;
 	
         if (load.size() == 0) {
             std::cerr << "p3PeerMgrIMPL::loadList() list is empty, it may be a configuration problem."  << std::endl;
@@ -1613,10 +1603,7 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 				if(kit->key == "USE_EXTR_IP_FINDER") {
 					useExtAddrFinder = (kit->value == "TRUE");
 					std::cerr << "setting use_extr_addr_finder to " << useExtAddrFinder << std::endl ;
-				} else if (kit->key == "ALLOW_TUNNEL_CONNECTION") {
-					allowTunnelConnection = (kit->value == "TRUE");
-					std::cerr << "setting allow_tunnel_connection to " << allowTunnelConnection << std::endl ;
-				}
+				} 
 			}
 
 			delete(*it);
@@ -1714,7 +1701,6 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 	}
 
 	mNetMgr->setIPServersEnabled(useExtAddrFinder);
-	mLinkMgr->setTunnelConnection(allowTunnelConnection);
 	
 	return true;
 }

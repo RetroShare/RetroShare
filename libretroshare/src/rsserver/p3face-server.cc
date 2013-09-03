@@ -69,8 +69,6 @@ RsServer::RsServer(NotifyBase &callback)
 	msgSrv = NULL;
 	chatSrv = NULL;
 	mStatusSrv = NULL;
-	mChannels = NULL;
-	mForums = NULL;
 	/* caches (that need ticking) */
 
 	/* Config */

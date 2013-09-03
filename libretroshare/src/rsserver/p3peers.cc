@@ -395,9 +395,7 @@ bool	p3Peers::getPeerDetails(const std::string &id, RsPeerDetails &d)
 
 	if (pcs.inConnAttempt)
 	{
-		if (pcs.currentConnAddrAttempt.type & RS_NET_CONN_TUNNEL) {
-			d.connectState = RS_PEER_CONNECTSTATE_TRYING_TUNNEL;
-		} else if (pcs.currentConnAddrAttempt.type & RS_NET_CONN_TCP_ALL) {
+		if (pcs.currentConnAddrAttempt.type & RS_NET_CONN_TCP_ALL) {
 			d.connectState = RS_PEER_CONNECTSTATE_TRYING_TCP;
 			rs_sprintf(d.connectStateString, "%s:%u", rs_inet_ntoa(pcs.currentConnAddrAttempt.addr.sin_addr).c_str(), ntohs(pcs.currentConnAddrAttempt.addr.sin_port));
 		} else if (pcs.currentConnAddrAttempt.type & RS_NET_CONN_UDP_ALL) {
@@ -414,10 +412,6 @@ bool	p3Peers::getPeerDetails(const std::string &id, RsPeerDetails &d)
 		else if (pcs.connecttype == RS_NET_CONN_UDP_ALL)
 		{
 			d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_UDP;
-		}
-		else if (pcs.connecttype == RS_NET_CONN_TUNNEL)
-		{
-			d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_TUNNEL;
 		}
 		else
 		{
@@ -707,25 +701,9 @@ void p3Peers::allowServerIPDetermination(bool b)
 	mNetMgr->setIPServersEnabled(b) ;
 }
 
-void p3Peers::allowTunnelConnection(bool b)
-{
-        #ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::allowTunnelConnection() set tunnel to : " << b << std::endl;
-        #endif
-        mLinkMgr->setTunnelConnection(b) ;
-}
-
 bool p3Peers::getAllowServerIPDetermination()
 {
 	return mNetMgr->getIPServersEnabled() ;
-}
-
-bool p3Peers::getAllowTunnelConnection()
-{
-        #ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::getAllowTunnelConnection() tunnel is : " << mConnMgr->getTunnelConnection()  << std::endl;
-        #endif
-        return mLinkMgr->getTunnelConnection() ;
 }
 
 bool 	p3Peers::setLocalAddress(const std::string &id, const std::string &addr_str, uint16_t port)

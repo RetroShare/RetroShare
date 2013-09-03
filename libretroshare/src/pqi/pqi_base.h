@@ -237,7 +237,6 @@ class PQInterface: public RateInterface
 
 const uint32_t PQI_CONNECT_TCP = 0x0001;
 const uint32_t PQI_CONNECT_UDP = 0x0002;
-const uint32_t PQI_CONNECT_TUNNEL = 0x0003;
 const uint32_t PQI_CONNECT_HIDDEN_TCP = 0x0004;
 
 

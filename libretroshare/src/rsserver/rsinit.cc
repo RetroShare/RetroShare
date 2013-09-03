@@ -275,7 +275,6 @@ void RsInit::InitRsConfig()
 	//setZoneLevel(PQL_DEBUG_BASIC, 38422); // pqipacket.
 	//setZoneLevel(PQL_DEBUG_BASIC, 96184); // pqinetwork;
 	//setZoneLevel(PQL_DEBUG_BASIC, 82371); // pqiperson.
-	//setZoneLevel(PQL_DEBUG_BASIC, 60478); // pqitunnel.
 	//setZoneLevel(PQL_DEBUG_BASIC, 34283); // pqihandler.
 	//setZoneLevel(PQL_DEBUG_BASIC, 44863); // discItems.
 	//setZoneLevel(PQL_DEBUG_BASIC, 2482); // p3disc
@@ -1761,11 +1760,7 @@ RsTurtle *rsTurtle = NULL ;
 #include "services/p3disc.h"
 #include "services/p3msgservice.h"
 #include "services/p3chatservice.h"
-#include "services/p3gamelauncher.h"
-#include "services/p3forums.h"
-#include "services/p3channels.h"
 #include "services/p3statusservice.h"
-#include "services/p3blogs.h"
 #include "turtle/p3turtle.h"
 
 #ifdef RS_ENABLE_GXS
@@ -1785,10 +1780,6 @@ RsTurtle *rsTurtle = NULL ;
 
 #endif // RS_ENABLE_GXS
 
-#ifndef PQI_DISABLE_TUNNEL
-#include "services/p3tunnel.h"
-#endif
-
 
 #include <list>
 #include <string>
@@ -1805,7 +1796,6 @@ RsTurtle *rsTurtle = NULL ;
 #include "rsserver/p3history.h"
 #include "rsserver/p3serverconfig.h"
 
-#include "retroshare/rsgame.h"
 
 #include "pqi/p3notify.h" // HACK - moved to pqi for compilation order.
 
@@ -2134,9 +2124,6 @@ int RsServer::StartupRetroShare()
 	std::string config_dir = RsInitConfig::configDir;
 	std::string localcachedir = config_dir + "/cache/local";
 	std::string remotecachedir = config_dir + "/cache/remote";
-	std::string channelsdir = config_dir + "/channels";
-	std::string blogsdir = config_dir + "/blogs";
-	std::string forumdir = config_dir + "/forums";
 
 	std::vector<std::string> plugins_directories ;
 
@@ -2189,12 +2176,6 @@ int RsServer::StartupRetroShare()
 	chatSrv = new p3ChatService(mLinkMgr, mHistoryMgr);
 	mStatusSrv = new p3StatusService(mLinkMgr);
 
-#ifndef PQI_DISABLE_TUNNEL
-	p3tunnel *tn = new p3tunnel(mConnMgr, pqih);
-	pqih -> addService(tn);
-	mConnMgr->setP3tunnel(tn);
-#endif
-
 	p3turtle *tr = new p3turtle(mLinkMgr) ;
 	rsTurtle = tr ;
 	pqih -> addService(tr);
@@ -2208,22 +2189,6 @@ int RsServer::StartupRetroShare()
 	pqih -> addService(chatSrv);
 	pqih ->addService(mStatusSrv);
 
-	mForums = new p3Forums(RS_SERVICE_TYPE_FORUM, mCacheStrapper, mCacheTransfer, localcachedir, remotecachedir, forumdir);
-
-	mCacheStrapper -> addCachePair( CachePair(mForums, mForums, CacheId(RS_SERVICE_TYPE_FORUM, 0)));
-	pqih -> addService(mForums);  /* This must be also ticked as a service */
-
-	mChannels = new p3Channels(RS_SERVICE_TYPE_CHANNEL, mCacheStrapper, mCacheTransfer, rsFiles, localcachedir, remotecachedir, channelsdir);
-
-	mCacheStrapper -> addCachePair(CachePair(mChannels, mChannels, CacheId(RS_SERVICE_TYPE_CHANNEL, 0)));
-	pqih -> addService(mChannels);  /* This must be also ticked as a service */
-#ifdef RS_USE_BLOGS	
-	p3Blogs *mBlogs = new p3Blogs(RS_SERVICE_TYPE_QBLOG, mCacheStrapper, mCacheTransfer, rsFiles, localcachedir, remotecachedir, blogsdir);
-
-	mCacheStrapper -> addCachePair(CachePair(mBlogs, mBlogs, CacheId(RS_SERVICE_TYPE_QBLOG, 0)));
-	pqih -> addService(mBlogs);  /* This must be also ticked as a service */
-
-#endif
 	// now add plugin objects inside the loop:
 	// 	- client services provided by plugins.
 	// 	- cache services provided by plugins.
@@ -2419,11 +2384,6 @@ int RsServer::StartupRetroShare()
 #endif // RS_ENABLE_GXS.
 
 
-#ifndef RS_RELEASE
-	p3GameLauncher *gameLauncher = new p3GameLauncher(mLinkMgr);
-	pqih -> addService(gameLauncher);
-#endif
-
 #ifdef RS_VOIPTEST
 	p3VoRS *mVoipTest = new p3VoRS(mLinkMgr);
 	pqih -> addService(mVoipTest);
@@ -2476,7 +2436,7 @@ int RsServer::StartupRetroShare()
 	/* need to Monitor too! */
 	mLinkMgr->addMonitor(pqih);
 	mLinkMgr->addMonitor(mCacheStrapper);
-	mLinkMgr->addMonitor(ad);
+	//mLinkMgr->addMonitor(ad);
 	mLinkMgr->addMonitor(msgSrv);
 	mLinkMgr->addMonitor(mStatusSrv);
 	mLinkMgr->addMonitor(chatSrv);
@@ -2501,14 +2461,9 @@ int RsServer::StartupRetroShare()
 	mConfigMgr->addConfiguration("msgs.cfg", msgSrv);
 	mConfigMgr->addConfiguration("chat.cfg", chatSrv);
 	mConfigMgr->addConfiguration("p3History.cfg", mHistoryMgr);
-#ifdef RS_USE_BLOGS
-	mConfigMgr->addConfiguration("blogs.cfg", mBlogs);
-#endif
-	mConfigMgr->addConfiguration("forums.cfg", mForums);
-	mConfigMgr->addConfiguration("channels.cfg", mChannels);
 	mConfigMgr->addConfiguration("p3Status.cfg", mStatusSrv);
 	mConfigMgr->addConfiguration("turtle.cfg", tr);
-	mConfigMgr->addConfiguration("p3disc.cfg", ad);
+	//mConfigMgr->addConfiguration("p3disc.cfg", ad);
 
 #ifdef RS_USE_BITDHT
 	mConfigMgr->addConfiguration("bitdht.cfg", mBitDht);
@@ -2596,30 +2551,9 @@ int RsServer::StartupRetroShare()
 
 	/* Peer stuff is up to date */
 
-	/* Channel/Forum/Blog stuff will all come from Caches */
-	getPqiNotify()->ClearFeedItems(RS_FEED_ITEM_CHAN_NEW);
-	getPqiNotify()->ClearFeedItems(RS_FEED_ITEM_CHAN_UPDATE);
-	getPqiNotify()->ClearFeedItems(RS_FEED_ITEM_CHAN_MSG);
-
-	getPqiNotify()->ClearFeedItems(RS_FEED_ITEM_FORUM_NEW);
-	getPqiNotify()->ClearFeedItems(RS_FEED_ITEM_FORUM_UPDATE);
-	getPqiNotify()->ClearFeedItems(RS_FEED_ITEM_FORUM_MSG);
-
-	getPqiNotify()->ClearFeedItems(RS_FEED_ITEM_BLOG_NEW);
-	getPqiNotify()->ClearFeedItems(RS_FEED_ITEM_BLOG_UPDATE);
-	getPqiNotify()->ClearFeedItems(RS_FEED_ITEM_BLOG_MSG);
-
 	//getPqiNotify()->ClearFeedItems(RS_FEED_ITEM_CHAT_NEW);
 	getPqiNotify()->ClearFeedItems(RS_FEED_ITEM_MESSAGE);
 	//getPqiNotify()->ClearFeedItems(RS_FEED_ITEM_FILES_NEW);
-
-	/* flag that the basic Caches are now in the pending Queues */
-	mForums->HistoricalCachesDone();
-	mChannels->HistoricalCachesDone();
-
-#ifdef RS_USE_BLOGS	
-	mBlogs->HistoricalCachesDone();
-#endif
 
 	/**************************************************************************/
 	/* Add AuthGPG services */
@@ -2678,14 +2612,6 @@ int RsServer::StartupRetroShare()
 	mBitDht->start();
 #endif
 
-	// startup the p3distrib threads (for cache loading).
-	mForums->start();
-	mChannels->start();
-
-#ifdef RS_USE_BLOGS	
-	mBlogs->start();
-#endif
-
 	/**************************************************************************/
 
 	// create loopback device, and add to pqisslgrp.
@@ -2706,22 +2632,9 @@ int RsServer::StartupRetroShare()
 	rsConfig = serverConfig;
 
 	rsMsgs  = new p3Msgs(msgSrv, chatSrv);
-	rsForums = mForums;
-	rsChannels = mChannels;
-
-
-
-#ifdef RS_USE_BLOGS	
-	rsBlogs = mBlogs;
-#endif
+	
 	rsStatus = new p3Status(mStatusSrv);
 	rsHistory = new p3History(mHistoryMgr);
-
-#ifndef RS_RELEASE
-	rsGameLauncher = gameLauncher;
-#else
-	rsGameLauncher = NULL;
-#endif
 
 	/* put a welcome message in! */
 	if (RsInitConfig::firsttime_run)

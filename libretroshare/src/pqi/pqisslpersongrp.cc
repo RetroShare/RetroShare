@@ -41,9 +41,6 @@ const int pqipersongrpzone = 354;
 #include "pqi/pqissllistener.h"
 #include "pqi/p3peermgr.h"
 
-#ifndef PQI_DISABLE_TUNNEL
-#include "pqi/pqissltunnel.h"
-#endif
 
 #ifndef PQI_DISABLE_UDP
   #include "pqi/pqissludp.h"

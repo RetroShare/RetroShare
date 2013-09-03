@@ -79,12 +79,12 @@ const ServicePermissionFlags RS_SERVICE_PERM_ALL        =  RS_SERVICE_PERM_TURTL
 
 /* Connect state */
 const uint32_t RS_PEER_CONNECTSTATE_OFFLINE           = 0;
-const uint32_t RS_PEER_CONNECTSTATE_TRYING_TUNNEL     = 1;
+
 const uint32_t RS_PEER_CONNECTSTATE_TRYING_TCP        = 2;
 const uint32_t RS_PEER_CONNECTSTATE_TRYING_UDP        = 3;
 const uint32_t RS_PEER_CONNECTSTATE_CONNECTED_TCP     = 4;
 const uint32_t RS_PEER_CONNECTSTATE_CONNECTED_UDP     = 5;
-const uint32_t RS_PEER_CONNECTSTATE_CONNECTED_TUNNEL  = 6;
+
 const uint32_t RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN = 7;
 
 /* Error codes for certificate cleaning and cert parsing. Numbers should not overlap. */
@@ -129,7 +129,6 @@ const uint32_t RS_NET_CONN_TRANS_UDP_PROXY		= 0x00000040;
 const uint32_t RS_NET_CONN_TRANS_UDP_RELAY		= 0x00000080;
 
 const uint32_t RS_NET_CONN_TRANS_OTHER_MASK		= 0x00000f00;
-const uint32_t RS_NET_CONN_TRANS_TUNNEL			= 0x00000100;
 
 const uint32_t RS_NET_CONN_TRANS_UNKNOWN		= 0x00001000;
 
@@ -319,9 +318,7 @@ class RsPeers
 
 		virtual void getIPServersList(std::list<std::string>& ip_servers) = 0;
 		virtual void allowServerIPDetermination(bool) = 0;
-		virtual void allowTunnelConnection(bool) = 0;
 		virtual bool getAllowServerIPDetermination() = 0 ;
-		virtual bool getAllowTunnelConnection() = 0 ;
 
 		/* Auth Stuff */
 		virtual	std::string GetRetroshareInvite(const std::string& ssl_id,bool include_signatures,bool old_format = false) 			= 0;
