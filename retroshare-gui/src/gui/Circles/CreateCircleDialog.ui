@@ -325,7 +325,7 @@
   <customwidget>
    <class>HeaderFrame</class>
    <extends>QFrame</extends>
-   <header>gui/common/headerframe.h</header>
+   <header>gui/common/HeaderFrame.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
