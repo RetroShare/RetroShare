@@ -85,7 +85,7 @@ const uint32_t P3CONNMGR_UDP_DEFAULT_PERIOD = 30;  // this represents how long i
 void  printConnectState(std::ostream &out, peerConnectState &peer);
 
 peerConnectAddress::peerConnectAddress()
-	:delay(0), period(0), type(0), flags(0), ts(0)
+	:delay(0), period(0), type(0), flags(0), ts(0), domain_port(0)
 {
 	sockaddr_clear(&addr);
 }
@@ -588,7 +588,8 @@ const std::string p3LinkMgrIMPL::getOwnId()
 bool p3LinkMgrIMPL::connectAttempt(const std::string &id, struct sockaddr_in &raddr,
 								   struct sockaddr_in &proxyaddr,
 								   struct sockaddr_in &srcaddr,
-								   uint32_t &delay, uint32_t &period, uint32_t &type, uint32_t &flags, uint32_t &bandwidth)
+								   uint32_t &delay, uint32_t &period, uint32_t &type, uint32_t &flags, uint32_t &bandwidth,
+								   std::string &domain_addr, uint16_t &domain_port)
 
 {
 	RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
@@ -641,6 +642,9 @@ bool p3LinkMgrIMPL::connectAttempt(const std::string &id, struct sockaddr_in &ra
 	proxyaddr = it->second.currentConnAddrAttempt.proxyaddr;
 	srcaddr = it->second.currentConnAddrAttempt.srcaddr;
 	bandwidth = it->second.currentConnAddrAttempt.bandwidth;
+
+	domain_addr = it->second.currentConnAddrAttempt.domain_addr;
+	domain_port = it->second.currentConnAddrAttempt.domain_port;
 
 	/********* Setup LinkType parameters **********/
 
@@ -1632,6 +1636,29 @@ bool   p3LinkMgrIMPL::retryConnectTCP(const std::string &id)
 #endif
 	/* If we reach here, must retry .... extract the required info from p3PeerMgr */
 
+	/* first possibility - is it a hidden peer */
+	if (mPeerMgr->isHiddenPeer(id))
+	{
+		struct sockaddr_in proxy_addr;
+		std::string domain_addr;
+		uint16_t domain_port;
+
+		/* then we just have one connect attempt via the Proxy */
+		if (mPeerMgr->getProxyAddress(id, proxy_addr, domain_addr, domain_port))
+		{
+			RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
+
+	        	std::map<std::string, peerConnectState>::iterator it;
+			if (mFriendList.end() != (it = mFriendList.find(id)))
+			{
+				locked_ConnectAttempt_ProxyAddress(&(it->second), &proxy_addr, domain_addr, domain_port);
+				return locked_ConnectAttempt_Complete(&(it->second));
+			}
+		}
+		return false;
+	}
+
+
 	struct sockaddr_in lAddr;
 	struct sockaddr_in eAddr;
 	pqiIpAddrSet histAddrs;
@@ -1983,6 +2010,38 @@ void  p3LinkMgrIMPL::locked_ConnectAttempt_AddDynDNS(peerConnectState *peer, std
 		std::cerr << "p3LinkMgrIMPL::locked_ConnectAttempt_AddDynDNS() Address(" << dyndns << ") or Port(" << port << ") NULL ignoring";
 		std::cerr << std::endl;
 #endif
+	}
+}
+
+
+void  p3LinkMgrIMPL::locked_ConnectAttempt_ProxyAddress(peerConnectState *peer, struct sockaddr_in *proxy_addr, const std::string &domain_addr, uint16_t domain_port)
+{
+#ifdef LINKMGR_DEBUG
+	std::cerr << "p3LinkMgrIMPL::locked_ConnectAttempt_ProxyAddress() trying address: " << domain_addr << ":" << domain_port << std::endl;
+#endif
+	peerConnectAddress pca;
+	pca.addr.sin_family = AF_INET;
+	pca.addr.sin_addr.s_addr = proxy_addr->sin_addr.s_addr;
+	pca.addr.sin_port = proxy_addr->sin_port;
+
+	pca.type = RS_NET_CONN_TCP_HIDDEN;
+
+	//for the delay, we add a random time and some more time when the friend list is big
+	pca.delay = P3CONNMGR_TCP_DEFAULT_DELAY;
+	pca.ts = time(NULL);
+	pca.period = P3CONNMGR_TCP_DEFAULT_PERIOD;
+
+	sockaddr_clear(&(pca.proxyaddr));
+	sockaddr_clear(&(pca.srcaddr));
+	pca.bandwidth = 0;
+
+	pca.domain_addr = domain_addr;
+	pca.domain_port = domain_port;
+			
+	/* check address validity */
+	if (locked_CheckPotentialAddr(&(pca.addr), 0))
+	{
+		addAddressIfUnique(peer->connAddrs, pca, true);
 	}
 }
 

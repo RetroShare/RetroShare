@@ -238,6 +238,7 @@ class PQInterface: public RateInterface
 const uint32_t PQI_CONNECT_TCP = 0x0001;
 const uint32_t PQI_CONNECT_UDP = 0x0002;
 const uint32_t PQI_CONNECT_TUNNEL = 0x0003;
+const uint32_t PQI_CONNECT_HIDDEN_TCP = 0x0004;
 
 
 #define BIN_FLAGS_NO_CLOSE  0x0001
@@ -322,6 +323,9 @@ static const uint32_t NET_PARAM_CONNECT_BANDWIDTH = 5;
 static const uint32_t NET_PARAM_CONNECT_PROXY = 6;
 static const uint32_t NET_PARAM_CONNECT_SOURCE = 7;
 
+static const uint32_t NET_PARAM_CONNECT_DOMAIN_ADDRESS = 8;
+static const uint32_t NET_PARAM_CONNECT_REMOTE_PORT = 9;
+
 
 /*!
  * ******************** Network INTERFACE ***************************
@@ -357,7 +361,8 @@ virtual std::string PeerId() { return peerId; }
 virtual int getConnectAddress(struct sockaddr_in &raddr) = 0;
 
 virtual bool connect_parameter(uint32_t type, uint32_t value) = 0;
-virtual bool connect_additional_address(uint32_t /*type*/, struct sockaddr_in */*addr*/) { return false; } // only needed by udp.
+virtual bool connect_parameter(uint32_t /* type */ , const std::string & /* value */ ) { return false; } // not generally used.
+virtual bool connect_additional_address(uint32_t /*type*/, struct sockaddr_in * /*addr*/) { return false; } // only needed by udp.
 
 protected:
 PQInterface *parent() { return p; }

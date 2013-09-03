@@ -118,6 +118,10 @@ std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
 	RsTlvIpAddrSet localAddrList;
 	RsTlvIpAddrSet extAddrList;
+
+	// for proxy connection.
+	std::string domain_addr;
+	uint16_t    domain_port;  
 };
 
 class RsPeerServicePermissionItem : public RsItem

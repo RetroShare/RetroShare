@@ -546,8 +546,10 @@ int     pqipersongrp::connectPeer(std::string id
 	struct sockaddr_in proxyaddr;
 	struct sockaddr_in srcaddr;
 	uint32_t bandwidth;
+	std::string domain_addr;
+	uint16_t domain_port;
 	  	  
-	if (!mLinkMgr->connectAttempt(id, addr, proxyaddr, srcaddr, delay, period, type, flags, bandwidth))
+	if (!mLinkMgr->connectAttempt(id, addr, proxyaddr, srcaddr, delay, period, type, flags, bandwidth, domain_addr, domain_port))
 	{
 #ifdef PGRP_DEBUG
 		std::cerr << " pqipersongrp::connectPeer() No Net Address";
@@ -563,6 +565,8 @@ int     pqipersongrp::connectPeer(std::string id
 	std::cerr << " period: " << period;
 	std::cerr << " type: " << type;
 	std::cerr << " flags: " << flags;
+	std::cerr << " domain_addr: " << domain_addr;
+	std::cerr << " domain_port: " << domain_port;
 	std::cerr << std::endl;
 #endif
 
@@ -570,7 +574,14 @@ int     pqipersongrp::connectPeer(std::string id
 	uint32_t ptype;
 	if (type & RS_NET_CONN_TCP_ALL)
 	{
-		ptype = PQI_CONNECT_TCP;
+		if (type == RS_NET_CONN_TCP_HIDDEN)
+		{
+			ptype = PQI_CONNECT_HIDDEN_TCP;
+		}
+		else
+		{
+			ptype = PQI_CONNECT_TCP;
+		}
 		timeout = RS_TCP_STD_TIMEOUT_PERIOD; 
 #ifdef PGRP_DEBUG
 		std::cerr << " pqipersongrp::connectPeer() connecting with TCP: Timeout :" << timeout;
@@ -604,7 +615,7 @@ int     pqipersongrp::connectPeer(std::string id
 		return 0;
 	}
 
-	p->connect(ptype, addr, proxyaddr, srcaddr, delay, period, timeout, flags, bandwidth);
+	p->connect(ptype, addr, proxyaddr, srcaddr, delay, period, timeout, flags, bandwidth, domain_addr, domain_port);
 
 	return 1;
 }

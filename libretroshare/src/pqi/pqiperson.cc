@@ -368,7 +368,8 @@ int 	pqiperson::stoplistening()
 
 int	pqiperson::connect(uint32_t type, struct sockaddr_in raddr, 
 				struct sockaddr_in &proxyaddr, struct sockaddr_in &srcaddr,
-				uint32_t delay, uint32_t period, uint32_t timeout, uint32_t flags, uint32_t bandwidth)
+				uint32_t delay, uint32_t period, uint32_t timeout, uint32_t flags, uint32_t bandwidth, 
+				const std::string &domain_addr, uint16_t domain_port)
 {
 #ifdef PERSON_DEBUG
 #endif
@@ -417,14 +418,22 @@ int	pqiperson::connect(uint32_t type, struct sockaddr_in raddr,
 #ifdef PERSON_DEBUG
 	std::cerr << "pqiperson::connect() setting connect_parameters" << std::endl;
 #endif
+	
+	// These two are universal.
 	(it->second)->connect_parameter(NET_PARAM_CONNECT_DELAY, delay);
-	(it->second)->connect_parameter(NET_PARAM_CONNECT_PERIOD, period);
 	(it->second)->connect_parameter(NET_PARAM_CONNECT_TIMEOUT, timeout);
+
+	// these 5 are only used by UDP connections.
+	(it->second)->connect_parameter(NET_PARAM_CONNECT_PERIOD, period);
 	(it->second)->connect_parameter(NET_PARAM_CONNECT_FLAGS, flags);
 	(it->second)->connect_parameter(NET_PARAM_CONNECT_BANDWIDTH, bandwidth);
 
 	(it->second)->connect_additional_address(NET_PARAM_CONNECT_PROXY, &proxyaddr);
 	(it->second)->connect_additional_address(NET_PARAM_CONNECT_SOURCE, &srcaddr);
+
+	// These are used by Proxy/Hidden 
+	(it->second)->connect_parameter(NET_PARAM_CONNECT_DOMAIN_ADDRESS, domain_addr);
+	(it->second)->connect_parameter(NET_PARAM_CONNECT_REMOTE_PORT, domain_port);
 
 	(it->second)->connect(raddr);
 		

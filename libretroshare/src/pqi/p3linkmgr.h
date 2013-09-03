@@ -47,6 +47,8 @@ const uint32_t RS_NET_CONN_TUNNEL              = 0x0f00;
 const uint32_t RS_NET_CONN_TCP_LOCAL           = 0x0001;
 const uint32_t RS_NET_CONN_TCP_EXTERNAL        = 0x0002;
 const uint32_t RS_NET_CONN_TCP_UNKNOW_TOPOLOGY = 0x0004;
+const uint32_t RS_NET_CONN_TCP_HIDDEN 	       = 0x0008;
+
 const uint32_t RS_NET_CONN_UDP_DHT_SYNC        = 0x0010;
 const uint32_t RS_NET_CONN_UDP_PEER_SYNC       = 0x0020; /* coming soon */
 
@@ -80,6 +82,10 @@ class peerConnectAddress
 	struct sockaddr_in proxyaddr; 
 	struct sockaddr_in srcaddr;
 	uint32_t bandwidth;
+
+	// Extra Parameters for Proxy/Hidden connection.
+	std::string domain_addr;
+	uint16_t    domain_port;
 };
 
 class peerConnectState
@@ -159,7 +165,8 @@ virtual void	removeMonitor(pqiMonitor *mon) = 0;
 	/****************** Connections *******************/
 virtual bool	connectAttempt(const std::string &id, struct sockaddr_in &raddr,
 					struct sockaddr_in &proxyaddr, struct sockaddr_in &srcaddr,
-					uint32_t &delay, uint32_t &period, uint32_t &type, uint32_t &flags, uint32_t &bandwidth) = 0;
+					uint32_t &delay, uint32_t &period, uint32_t &type, uint32_t &flags, uint32_t &bandwidth,
+					std::string &domain_addr, uint16_t &domain_port) = 0;
 	
 virtual bool 	connectResult(const std::string &id, bool success, uint32_t flags, struct sockaddr_in remote_peer_address) = 0;
 virtual bool	retryConnect(const std::string &id) = 0;
@@ -218,7 +225,8 @@ virtual void	removeMonitor(pqiMonitor *mon);
 	/****************** Connections *******************/
 virtual bool	connectAttempt(const std::string &id, struct sockaddr_in &raddr,
 					struct sockaddr_in &proxyaddr, struct sockaddr_in &srcaddr,
-					uint32_t &delay, uint32_t &period, uint32_t &type, uint32_t &flags, uint32_t &bandwidth);
+					uint32_t &delay, uint32_t &period, uint32_t &type, uint32_t &flags, uint32_t &bandwidth, 
+					std::string &domain_addr, uint16_t &domain_port);
 	
 virtual bool 	connectResult(const std::string &id, bool success, uint32_t flags, struct sockaddr_in remote_peer_address);
 virtual bool	retryConnect(const std::string &id);
@@ -290,6 +298,7 @@ void 	locked_ConnectAttempt_CurrentAddresses(peerConnectState *peer, struct sock
 void 	locked_ConnectAttempt_HistoricalAddresses(peerConnectState *peer, const pqiIpAddrSet &ipAddrs);
 void 	locked_ConnectAttempt_AddDynDNS(peerConnectState *peer, std::string dyndns, uint16_t dynPort);
 void 	locked_ConnectAttempt_AddTunnel(peerConnectState *peer);
+void  	locked_ConnectAttempt_ProxyAddress(peerConnectState *peer, struct sockaddr_in *proxy_addr, const std::string &domain_addr, uint16_t domain_port);
 
 bool  	locked_ConnectAttempt_Complete(peerConnectState *peer);
 

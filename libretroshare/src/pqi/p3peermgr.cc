@@ -77,7 +77,8 @@ void  printConnectState(std::ostream &out, peerState &peer);
 peerState::peerState()
 	:id("unknown"), 
          gpg_id("unknown"),
-	 netMode(RS_NET_MODE_UNKNOWN), visState(RS_VIS_STATE_STD), lastcontact(0) 
+	 netMode(RS_NET_MODE_UNKNOWN), visState(RS_VIS_STATE_STD), lastcontact(0), 
+	 hiddenNode(false), hiddenPort(0) 
 {
         sockaddr_clear(&localaddr);
         sockaddr_clear(&serveraddr);
@@ -120,6 +121,10 @@ p3PeerMgrIMPL::p3PeerMgrIMPL(	const std::string& ssl_own_id,
 	
 		lastGroupId = 1;
 
+		// setup default ProxyServerAddress.
+		sockaddr_clear(&mProxyServerAddress);
+		inet_aton("127.0.0.1", &(mProxyServerAddress.sin_addr));
+		mProxyServerAddress.sin_port = htons(7050);
 
 	}
 	
@@ -273,6 +278,77 @@ bool    p3PeerMgrIMPL::getGpgId(const std::string &ssl_id, std::string &gpgId)
 	gpgId = it->second.gpg_id;
 	return true;
 }
+
+/**** HIDDEN STUFF ****/
+
+bool    p3PeerMgrIMPL::isHiddenPeer(const std::string &ssl_id)
+{
+	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+
+	/* check for existing */
+	std::map<std::string, peerState>::iterator it;
+	it = mFriendList.find(ssl_id);
+	if (it == mFriendList.end())
+	{
+		return (it->second).hiddenNode;
+	}
+
+	/* is it hidden ?? */
+	return false;
+}
+
+bool p3PeerMgrIMPL::setHiddenDomainPort(const std::string &ssl_id, const std::string &domain_addr, const uint16_t domain_port)
+{
+	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+
+	/* check for existing */
+	std::map<std::string, peerState>::iterator it;
+	it = mFriendList.find(ssl_id);
+	if (it == mFriendList.end())
+	{
+		return false;
+	}
+
+	it->second.hiddenDomain = domain_addr;
+	it->second.hiddenPort = domain_port;
+	it->second.hiddenNode = true;
+	return true;
+}
+
+bool p3PeerMgrIMPL::setProxyServerAddress(const struct sockaddr_in &proxy_addr)
+{
+	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+
+	mProxyServerAddress = proxy_addr;
+	return true;
+}
+	
+
+bool p3PeerMgrIMPL::getProxyAddress(const std::string &ssl_id, struct sockaddr_in &proxy_addr, std::string &domain_addr, uint16_t &domain_port)
+{
+	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+
+	/* check for existing */
+	std::map<std::string, peerState>::iterator it;
+	it = mFriendList.find(ssl_id);
+	if (it == mFriendList.end())
+	{
+		return false;
+	}
+
+	if (!it->second.hiddenNode)
+	{
+		return false;
+	}
+
+	domain_addr = it->second.hiddenDomain;
+	domain_port = it->second.hiddenPort;
+
+	proxy_addr = mProxyServerAddress;
+	return true;
+}
+	
+
 
 // Placeholder until we implement this functionality.
 uint32_t p3PeerMgrIMPL::getConnectionType(const std::string &/*sslId*/)
@@ -1368,6 +1444,9 @@ bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 		(it->second).ipAddrs.mLocal.loadTlv(item->localAddrList);
 		(it->second).ipAddrs.mExt.loadTlv(item->extAddrList);
 
+		item->domain_addr = (it->second).hiddenDomain;
+		item->domain_port = (it->second).hiddenPort;
+
 		saveData.push_back(item);
 		saveCleanupList.push_back(item);
 #ifdef PEER_DEBUG
@@ -1493,17 +1572,26 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 				addFriend(pitem->pid, pitem->gpg_id, pitem->netMode, pitem->visState, pitem->lastContact, RS_SERVICE_PERM_ALL);
 				setLocation(pitem->pid, pitem->location);
 			}
-			
-			setLocalAddress(pitem->pid, pitem->currentlocaladdr);
-			setExtAddress(pitem->pid, pitem->currentremoteaddr);
-			setDynDNS (pitem->pid, pitem->dyndns);
 
-			/* convert addresses */
-			pqiIpAddrSet addrs;
-			addrs.mLocal.extractFromTlv(pitem->localAddrList);
-			addrs.mExt.extractFromTlv(pitem->extAddrList);
+			if (pitem->netMode == RS_NET_MODE_HIDDEN)
+			{
+				/* set only the hidden stuff */
+				setHiddenDomainPort(pitem->pid, pitem->domain_addr, pitem->domain_port);
+
+			}
+			else
+			{
+				setLocalAddress(pitem->pid, pitem->currentlocaladdr);
+				setExtAddress(pitem->pid, pitem->currentremoteaddr);
+				setDynDNS (pitem->pid, pitem->dyndns);
+
+				/* convert addresses */
+				pqiIpAddrSet addrs;
+				addrs.mLocal.extractFromTlv(pitem->localAddrList);
+				addrs.mExt.extractFromTlv(pitem->extAddrList);
 			
-			updateAddressList(pitem->pid, addrs);
+				updateAddressList(pitem->pid, addrs);
+			}
 
 			delete(*it);
 

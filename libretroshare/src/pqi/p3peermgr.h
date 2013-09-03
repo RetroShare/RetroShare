@@ -55,20 +55,22 @@ const uint32_t RS_VIS_STATE_BROWN  = RS_VIS_STATE_NODISC;
 
 
 	/* Startup Modes (confirmed later) */
-const uint32_t RS_NET_MODE_TRYMODE =    0x00f0;
+const uint32_t RS_NET_MODE_TRYMODE    =   0xff00;
 
-const uint32_t RS_NET_MODE_TRY_EXT  =   0x0010;
-const uint32_t RS_NET_MODE_TRY_UPNP =   0x0020;
-const uint32_t RS_NET_MODE_TRY_UDP  =   0x0040;
+const uint32_t RS_NET_MODE_TRY_EXT    =   0x0100;
+const uint32_t RS_NET_MODE_TRY_UPNP   =   0x0200;
+const uint32_t RS_NET_MODE_TRY_UDP    =   0x0400;
+const uint32_t RS_NET_MODE_TRY_HIDDEN =   0x0800;
 
 	/* Actual State */
-const uint32_t RS_NET_MODE_ACTUAL =      0x000f;
+const uint32_t RS_NET_MODE_ACTUAL =      0x00ff;
 
 const uint32_t RS_NET_MODE_UNKNOWN =     0x0000;
 const uint32_t RS_NET_MODE_EXT =         0x0001;
 const uint32_t RS_NET_MODE_UPNP =        0x0002;
 const uint32_t RS_NET_MODE_UDP =         0x0004;
-const uint32_t RS_NET_MODE_UNREACHABLE = 0x0008;
+const uint32_t RS_NET_MODE_HIDDEN =      0x0008;
+const uint32_t RS_NET_MODE_UNREACHABLE = 0x0010;
 
 
 /* flags of peerStatus */
@@ -87,8 +89,9 @@ class peerState
 	std::string id;
 	std::string gpg_id;
 
-	uint32_t netMode; /* EXT / UPNP / UDP / INVALID */
+	uint32_t netMode; /* EXT / UPNP / UDP / HIDDEN / INVALID */
 	uint32_t visState; /* STD, GRAY, DARK */	
+
 
         struct sockaddr_in localaddr;
         struct sockaddr_in serveraddr;
@@ -98,6 +101,10 @@ class peerState
 
 	/* list of addresses from various sources */
 	pqiIpAddrSet ipAddrs;
+
+	bool hiddenNode; /* all IP addresses / dyndns must be blank */
+	std::string hiddenDomain;
+	uint16_t    hiddenPort;
 
 	std::string location;
 	std::string name;
@@ -162,6 +169,7 @@ virtual bool 	setNetworkMode(const std::string &id, uint32_t netMode) = 0;
 virtual bool 	setVisState(const std::string &id, uint32_t visState) = 0;
 
 virtual bool    setLocation(const std::string &pid, const std::string &location) = 0;
+virtual bool    setHiddenDomainPort(const std::string &id, const std::string &domain_addr, const uint16_t domain_port) = 0;
 
 virtual bool    updateCurrentAddress(const std::string& id, const pqiIpAddress &addr) = 0;
 virtual bool    updateLastContact(const std::string& id) = 0;
@@ -187,6 +195,11 @@ virtual bool	getOthersNetStatus(const std::string &id, peerState &state) = 0;
 virtual bool    getPeerName(const std::string &ssl_id, std::string &name) = 0;
 virtual bool	getGpgId(const std::string &sslId, std::string &gpgId) = 0;
 virtual uint32_t getConnectionType(const std::string &sslId) = 0;
+
+virtual bool    setProxyServerAddress(const struct sockaddr_in &proxy_addr) = 0;
+virtual bool    isHiddenPeer(const std::string &ssl_id) = 0;
+virtual bool    getProxyAddress(const std::string &ssl_id, struct sockaddr_in &proxy_addr, std::string &domain_addr, uint16_t &domain_port) = 0;
+
 
 virtual int 	getFriendCount(bool ssl, bool online) = 0;
 
@@ -253,7 +266,8 @@ virtual bool 	setNetworkMode(const std::string &id, uint32_t netMode);
 virtual bool 	setVisState(const std::string &id, uint32_t visState);
 
 virtual bool    setLocation(const std::string &pid, const std::string &location);
-
+virtual bool    setHiddenDomainPort(const std::string &id, const std::string &domain_addr, const uint16_t domain_port);
+	
 virtual bool    updateCurrentAddress(const std::string& id, const pqiIpAddress &addr);
 virtual bool    updateLastContact(const std::string& id);
 virtual bool    updateAddressList(const std::string& id, const pqiIpAddrSet &addrs);
@@ -277,6 +291,10 @@ virtual bool	getOthersNetStatus(const std::string &id, peerState &state);
 virtual bool    getPeerName(const std::string &ssl_id, std::string &name);
 virtual bool	getGpgId(const std::string &sslId, std::string &gpgId);
 virtual uint32_t getConnectionType(const std::string &sslId);
+
+virtual bool    setProxyServerAddress(const struct sockaddr_in &proxy_addr);
+virtual bool    isHiddenPeer(const std::string &ssl_id);
+virtual bool    getProxyAddress(const std::string &ssl_id, struct sockaddr_in &proxy_addr, std::string &domain_addr, uint16_t &domain_port);
 
 virtual int 	getFriendCount(bool ssl, bool online);
 
@@ -349,6 +367,8 @@ private:
 	std::list<RsItem *> saveCleanupList; /* TEMPORARY LIST WHEN SAVING */
 
 	std::map<std::string, ServicePermissionFlags> mFriendsPermissionFlags ; // permission flags for each gpg key
+
+	struct sockaddr_in mProxyServerAddress;
 };
 
 #endif // MRK_PQI_PEER_MANAGER_HEADER

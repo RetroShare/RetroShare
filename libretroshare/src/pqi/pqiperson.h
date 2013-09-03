@@ -71,6 +71,7 @@ virtual int	stoplistening() 	{ return ni -> stoplistening(); }
 virtual int 	reset() 		{ return ni -> reset(); }
 virtual int 	disconnect() 		{ return ni -> reset(); }
 virtual bool 	connect_parameter(uint32_t type, uint32_t value) { return ni -> connect_parameter(type, value);}
+virtual bool 	connect_parameter(uint32_t type, std::string value) { return ni -> connect_parameter(type, value);}
 virtual bool 	connect_additional_address(uint32_t type, struct sockaddr_in *addr) { return ni -> connect_additional_address(type, addr);}
 
 
@@ -111,10 +112,11 @@ int 	reset();
 int 	listen();
 int 	stoplistening();
 	
-int		connect(uint32_t type, struct sockaddr_in raddr, 
+int	connect(uint32_t type, struct sockaddr_in raddr, 
 				struct sockaddr_in &proxyaddr, struct sockaddr_in &srcaddr,
-				uint32_t delay, uint32_t period, uint32_t timeout, uint32_t flags, uint32_t bandwidth);
-	
+				uint32_t delay, uint32_t period, uint32_t timeout, uint32_t flags, uint32_t bandwidth,
+                                const std::string &domain_addr, uint16_t domain_port);
+
 int     receiveHeartbeat();
 	// add in connection method.
 int	addChildInterface(uint32_t type, pqiconnect *pqi);

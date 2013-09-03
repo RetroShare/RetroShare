@@ -1124,6 +1124,9 @@ bool    p3NetMgrIMPL::setNetworkMode(uint32_t netMode)
 			case RS_NET_MODE_UPNP:
 				mNetMode |= RS_NET_MODE_TRY_UPNP;
 				break;
+			case RS_NET_MODE_HIDDEN:
+				mNetMode |= RS_NET_MODE_TRY_UDP; // FOR THE MOMENT HIDDEN acts like = UDP.
+				break;
 			default:
 			case RS_NET_MODE_UDP:
 				mNetMode |= RS_NET_MODE_TRY_UDP;

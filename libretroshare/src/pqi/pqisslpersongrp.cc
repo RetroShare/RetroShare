@@ -39,6 +39,7 @@ const int pqipersongrpzone = 354;
 
 #include "pqi/pqissl.h"
 #include "pqi/pqissllistener.h"
+#include "pqi/p3peermgr.h"
 
 #ifndef PQI_DISABLE_TUNNEL
 #include "pqi/pqissltunnel.h"
@@ -48,6 +49,7 @@ const int pqipersongrpzone = 354;
   #include "pqi/pqissludp.h"
 #endif
 
+#include "pqi/pqisslproxy.h"
 
 pqilistener * pqisslpersongrp::locked_createListener(struct sockaddr_in laddr)
 {
@@ -71,51 +73,67 @@ pqiperson * pqisslpersongrp::locked_createPerson(std::string id, pqilistener *li
 	pqioutput(PQL_DEBUG_BASIC, pqipersongrpzone, "pqipersongrp::createPerson() PeerId: " + id);
 
 	pqiperson *pqip = new pqiperson(id, this);
-	pqissl *pqis   = new pqissl((pqissllistener *) listener, pqip, mLinkMgr);
 
-	/* construct the serialiser ....
-	 * Needs:
-	 * * FileItem
-	 * * FileData
-	 * * ServiceGeneric
-	 */
-
-	ssl_tunnels[id] = pqis ;	// keeps for getting crypt info per peer.
-
-	RsSerialiser *rss = new RsSerialiser();
-	rss->addSerialType(new RsFileItemSerialiser());
-	rss->addSerialType(new RsCacheItemSerialiser());
-	rss->addSerialType(new RsServiceSerialiser());
-
-	pqiconnect *pqisc = new pqiconnect(rss, pqis);
-
-	pqip -> addChildInterface(PQI_CONNECT_TCP, pqisc);
-
-#ifndef PQI_DISABLE_TUNNEL
-	pqissltunnel *pqitun 	= new pqissltunnel(pqip, mLinkMgr);
-
-	RsSerialiser *rss3 = new RsSerialiser();
-	rss3->addSerialType(new RsFileItemSerialiser());
-	rss3->addSerialType(new RsCacheItemSerialiser());
-	rss3->addSerialType(new RsServiceSerialiser());
-	pqiconnect *pqicontun 	= new pqiconnect(rss3, pqitun);
-	pqip -> addChildInterface(PQI_CONNECT_TUNNEL, pqicontun);
-#endif
-
-#ifndef PQI_DISABLE_UDP
-	pqissludp *pqius 	= new pqissludp(pqip, mLinkMgr);
-
-	RsSerialiser *rss2 = new RsSerialiser();
-	rss2->addSerialType(new RsFileItemSerialiser());
-	rss2->addSerialType(new RsCacheItemSerialiser());
-	rss2->addSerialType(new RsServiceSerialiser());
+	// If using proxy, then only create a proxy item, otherwise can use any.
+	if (mPeerMgr->isHiddenPeer(id))
+	{
+		pqisslproxy *pqis   = new pqisslproxy((pqissllistener *) listener, pqip, mLinkMgr);
 	
-	pqiconnect *pqiusc 	= new pqiconnect(rss2, pqius);
-
-	// add a ssl + proxy interface.
-	// Add Proxy First.
-	pqip -> addChildInterface(PQI_CONNECT_UDP, pqiusc);
+		/* construct the serialiser ....
+		 * Needs:
+		 * * FileItem
+		 * * FileData
+		 * * ServiceGeneric
+		 */
+	
+		ssl_tunnels[id] = pqis ;	// keeps for getting crypt info per peer.
+	
+		RsSerialiser *rss = new RsSerialiser();
+		rss->addSerialType(new RsFileItemSerialiser());
+		rss->addSerialType(new RsCacheItemSerialiser());
+		rss->addSerialType(new RsServiceSerialiser());
+	
+		pqiconnect *pqisc = new pqiconnect(rss, pqis);
+	
+		pqip -> addChildInterface(PQI_CONNECT_HIDDEN_TCP, pqisc);
+	}
+	else
+	{	
+		pqissl *pqis   = new pqissl((pqissllistener *) listener, pqip, mLinkMgr);
+	
+		/* construct the serialiser ....
+		 * Needs:
+		 * * FileItem
+		 * * FileData
+		 * * ServiceGeneric
+		 */
+	
+		ssl_tunnels[id] = pqis ;	// keeps for getting crypt info per peer.
+	
+		RsSerialiser *rss = new RsSerialiser();
+		rss->addSerialType(new RsFileItemSerialiser());
+		rss->addSerialType(new RsCacheItemSerialiser());
+		rss->addSerialType(new RsServiceSerialiser());
+	
+		pqiconnect *pqisc = new pqiconnect(rss, pqis);
+	
+		pqip -> addChildInterface(PQI_CONNECT_TCP, pqisc);
+	
+#ifndef PQI_DISABLE_UDP
+		pqissludp *pqius 	= new pqissludp(pqip, mLinkMgr);
+	
+		RsSerialiser *rss2 = new RsSerialiser();
+		rss2->addSerialType(new RsFileItemSerialiser());
+		rss2->addSerialType(new RsCacheItemSerialiser());
+		rss2->addSerialType(new RsServiceSerialiser());
+		
+		pqiconnect *pqiusc 	= new pqiconnect(rss2, pqius);
+	
+		// add a ssl + proxy interface.
+		// Add Proxy First.
+		pqip -> addChildInterface(PQI_CONNECT_UDP, pqiusc);
 #endif
+	}
 
 	return pqip;
 }

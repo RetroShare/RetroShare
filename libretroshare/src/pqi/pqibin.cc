@@ -500,6 +500,10 @@ void printNetBinID(std::ostream &out, std::string id, uint32_t t)
 	{
 		out << "TCP)";
 	}
+	else if (t == PQI_CONNECT_HIDDEN_TCP)
+	{
+		out << "HTCP";
+	}
 	else
 	{
 		out << "UDP)";

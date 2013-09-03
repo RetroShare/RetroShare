@@ -100,6 +100,7 @@ virtual int reset();
 virtual int disconnect();
 virtual int getConnectAddress(struct sockaddr_in &raddr);
 
+virtual bool connect_parameter(uint32_t type, const std::string &value);
 virtual bool connect_parameter(uint32_t type, uint32_t value);
 
 	// BinInterface

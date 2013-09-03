@@ -1060,6 +1060,9 @@ void RsPeerNetItem::clear()
 
 	localAddrList.TlvClear();
 	extAddrList.TlvClear();
+
+	domain_addr.clear();
+	domain_port = 0;
 }
 
 std::ostream &RsPeerNetItem::print(std::ostream &out, uint16_t indent)
@@ -1122,6 +1125,9 @@ uint32_t RsPeerConfigSerialiser::sizeNet(RsPeerNetItem *i)
 	s += i->localAddrList.TlvSize();
 	s += i->extAddrList.TlvSize();
 
+	s += GetTlvStringSize(i->domain_addr);
+	s += 2; /* domain_port */
+
 	return s;
 
 }
@@ -1172,6 +1178,10 @@ bool RsPeerConfigSerialiser::serialiseNet(RsPeerNetItem *item, void *data, uint3
 
 	ok &= item->localAddrList.SetTlv(data, tlvsize, &offset);
 	ok &= item->extAddrList.SetTlv(data, tlvsize, &offset);
+
+	// New for V0.6.
+        ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_DOMADDR, item->domain_addr);
+	ok &= setRawUInt16(data, tlvsize, &offset, item->domain_port); /* Mandatory */
 
 	if(offset != tlvsize)
 	{
@@ -1241,6 +1251,17 @@ RsPeerNetItem *RsPeerConfigSerialiser::deserialiseNet(void *data, uint32_t *size
 	ok &= item->localAddrList.GetTlv(data, rssize, &offset);
 	ok &= item->extAddrList.GetTlv(data, rssize, &offset);
 
+	// Allow acceptance of old format.
+	if (offset == rssize)
+	{
+		std::cerr << "RsPeerConfigSerialiser::deserialiseNet() Accepting Old format PeerNetItem" << std::endl;
+		return item;
+	}
+	
+
+	// New for V0.6.
+        ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_DOMADDR, item->domain_addr);
+	ok &= getRawUInt16(data, rssize, &offset, &(item->domain_port)); /* Mandatory */
 
         if (offset != rssize)
 	{

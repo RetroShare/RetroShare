@@ -157,6 +157,7 @@ const uint16_t TLV_TYPE_IPV4_LOCAL    = 0x0080;
 const uint16_t TLV_TYPE_IPV4_REMOTE   = 0x0081;
 const uint16_t TLV_TYPE_IPV4_LAST     = 0x0082;
 const uint16_t TLV_TYPE_STR_DYNDNS    = 0x0083;
+const uint16_t TLV_TYPE_STR_DOMADDR   = 0x0084;
 
 /*** MORE STRING IDS ****/
 const uint16_t TLV_TYPE_STR_GROUPID   = 0x00a0;

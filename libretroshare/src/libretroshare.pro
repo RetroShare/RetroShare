@@ -363,6 +363,7 @@ HEADERS +=	pqi/authssl.h \
 			pqi/pqisslpersongrp.h \
 			pqi/pqissltunnel.h \
 			pqi/pqissludp.h \
+			pqi/pqisslproxy.h \
 			pqi/pqistore.h \
 			pqi/pqistreamer.h \
 			pqi/pqiqosstreamer.h \
@@ -419,6 +420,8 @@ HEADERS +=	services/p3channels.h \
 			services/p3bwctrl.h \
 			services/p3tunnel.h
 		
+#			services/p3discovery2.h \
+
 HEADERS +=	distrib/p3distrib.h \
 			distrib/p3distribsecurity.h 
 #	services/p3blogs.h \
@@ -495,6 +498,7 @@ SOURCES +=	pqi/authgpg.cc \
 			pqi/pqisslpersongrp.cc \
 			pqi/pqissltunnel.cc \
 			pqi/pqissludp.cc \
+			pqi/pqisslproxy.cc \
 			pqi/pqistore.cc \
 			pqi/pqistreamer.cc \
 			pqi/pqiqosstreamer.cc \
@@ -557,6 +561,9 @@ SOURCES +=	services/p3channels.cc \
 			services/p3dsdv.cc \
 			services/p3banlist.cc \
 			services/p3bwctrl.cc \
+
+
+#			services/p3discovery2.cc \
 
 # removed because getPeer() doesn t exist			services/p3tunnel.cc
 

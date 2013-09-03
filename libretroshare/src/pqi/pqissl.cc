@@ -265,6 +265,12 @@ int 	pqissl::reset()
 	return 1;
 }
 
+bool 	pqissl::connect_parameter(uint32_t type, const std::string &value)
+{
+	return false;
+}
+
+
 bool 	pqissl::connect_parameter(uint32_t type, uint32_t value)
 {
 #ifdef PQISSL_LOG_DEBUG 
