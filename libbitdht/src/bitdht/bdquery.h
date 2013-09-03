@@ -127,5 +127,36 @@ class bdRemoteQuery
 	time_t mQueryTS;
 };
 
+
+
+class bdQueryHistoryList
+{
+	public:
+	bdQueryHistoryList();
+
+bool    addIncomingQuery(time_t recvd, const bdNodeId *aboutId); // calcs and returns mBadPeer
+bool	cleanupMsgs(time_t before);				 // returns true if empty.
+
+	bool mBadPeer;
+	std::multimap<time_t, bdNodeId> mList;
+};
+
+class bdQueryHistory
+{
+	public:
+	bdQueryHistory();
+
+bool    addIncomingQuery(time_t recvd, const bdId *id, const bdNodeId *aboutId);
+void    printMsgs();
+
+void    cleanupOldMsgs();
+
+bool    isBadPeer(const bdId *id);
+
+	int mStorePeriod;
+        std::map<bdId, bdQueryHistoryList> mHistory;
+};
+
+
 #endif
 

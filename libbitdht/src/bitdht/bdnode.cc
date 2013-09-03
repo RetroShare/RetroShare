@@ -71,7 +71,9 @@
 #define HISTORY_PERIOD  60
 
 bdNode::bdNode(bdNodeId *ownId, std::string dhtVersion, std::string bootfile, bdDhtFunctions *fns)
-	:mNodeSpace(ownId, fns), mQueryMgr(NULL), mConnMgr(NULL), mFilterPeers(NULL), mOwnId(*ownId), mDhtVersion(dhtVersion), mStore(bootfile, fns), mFns(fns), mFriendList(ownId), mHistory(HISTORY_PERIOD)
+	:mNodeSpace(ownId, fns), mQueryMgr(NULL), mConnMgr(NULL), 
+	mFilterPeers(NULL), mOwnId(*ownId), mDhtVersion(dhtVersion), mStore(bootfile, fns), mFns(fns), 
+	mFriendList(ownId), mHistory(HISTORY_PERIOD)
 {
 
 	init(); /* (uses this pointers) stuff it - do it here! */
@@ -264,14 +266,17 @@ void bdNode::printState()
 	std::cerr << "Outstanding Potential Peers: " << mPotentialPeers.size();
 	std::cerr << std::endl;
 	
-	std::cerr << "Outstanding Query Requests: " << mRemoteQueries.size();
-	std::cerr << std::endl;
-
 #ifdef USE_HISTORY
 	mHistory.cleanupOldMsgs();
 	mHistory.printMsgs();
 	mHistory.analysePeers();
 	mHistory.peerTypeAnalysis();
+
+	// Incoming Query Analysis.
+	std::cerr << "Outstanding Query Requests: " << mRemoteQueries.size();
+	std::cerr << std::endl;
+
+	mQueryHistory.printMsgs();
 #endif
 
 	mAccount.printStats(std::cerr);
@@ -647,12 +652,28 @@ void bdNode::processRemoteQuery()
 	while(nProcessed < MAX_REMOTE_PROCESS_PER_CYCLE)
 	{
 		/* extra exit clause */
-		if (mRemoteQueries.size() < 1) return;
+		if (mRemoteQueries.size() < 1) 
+		{
+#ifdef USE_HISTORY
+			if (nProcessed)
+			{
+				mQueryHistory.cleanupOldMsgs();
+			}
+#endif
+			return;
+		}
 
 		bdRemoteQuery &query = mRemoteQueries.front();
-		
+
+		// filtering.	
+		bool badPeer = false;
+#ifdef USE_HISTORY
+		// store result in badPeer to activate the filtering.
+		mQueryHistory.addIncomingQuery(query.mQueryTS, &(query.mId), &(query.mQuery));
+#endif
+	
 		/* discard older ones (stops queue getting overloaded) */
-		if (query.mQueryTS > oldTS)
+		if ((query.mQueryTS > oldTS) && (!badPeer))
 		{
 			/* recent enough to process! */
 			nProcessed++;
@@ -722,16 +743,27 @@ void bdNode::processRemoteQuery()
 		}
 		else
 		{
-			std::cerr << "bdNode::processRemoteQuery() Query Too Old: Discarding: ";
+			if (badPeer)
+			{
+				std::cerr << "bdNode::processRemoteQuery() Query from BadPeer: Discarding: ";
+			}
+			else
+			{
+				std::cerr << "bdNode::processRemoteQuery() Query Too Old: Discarding: ";
+			}
 			mFns->bdPrintId(std::cerr, &(query.mId));
 			std::cerr << std::endl;
 #ifdef DEBUG_NODE_MSGS 
 #endif
 		}
 
-
 		mRemoteQueries.pop_front();
+
 	}
+
+#ifdef USE_HISTORY
+	mQueryHistory.cleanupOldMsgs();
+#endif
 }
 
 

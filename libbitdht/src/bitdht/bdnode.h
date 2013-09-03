@@ -253,6 +253,8 @@ void	recvPkt(char *msg, int len, struct sockaddr_in addr);
 
 	bdHistory mHistory; /* for understanding the DHT */
 
+	bdQueryHistory mQueryHistory; /* for determining old peers */
+
 	private:
 
 	uint32_t mNodeOptionFlags;	

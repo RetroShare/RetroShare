@@ -26,6 +26,7 @@
 
 
 #include "bitdht/bdquery.h"
+#include "bitdht/bdstddht.h"
 #include "util/bdnet.h"
 
 #include <stdlib.h>
@@ -1060,11 +1061,141 @@ int     bdQuery::printQuery()
 
 
 /********************************* Remote Query **************************************/
+
+#define QUERY_HISTORY_LIMIT	10 // Typically get max of 4-6 per 10minutes.
+#define QUERY_HISTORY_PERIOD	600
+
 bdRemoteQuery::bdRemoteQuery(bdId *id, bdNodeId *query, bdToken *transId, uint32_t query_type)
 	:mId(*id), mQuery(*query), mTransId(*transId), mQueryType(query_type)
 {
 	mQueryTS = time(NULL);
 }
+
+
+
+
+bdQueryHistoryList::bdQueryHistoryList()
+	:mBadPeer(false)
+{
+
+}
+
+
+bool bdQueryHistoryList::addIncomingQuery(time_t recvd, const bdNodeId *aboutId)
+{
+	mList.insert(std::make_pair(recvd, *aboutId));
+	mBadPeer = (mList.size() > QUERY_HISTORY_LIMIT);
+	return mBadPeer;
+}
+
+
+// returns true if empty.
+bool bdQueryHistoryList::cleanupMsgs(time_t before)
+{
+	if (before == 0)
+	{
+		mList.clear();
+		return true;
+	}
+
+        // Delete the old stuff in the list.
+        while((mList.begin() != mList.end()) && (mList.begin()->first < before))
+        {
+                mList.erase(mList.begin());
+        }
+
+        // return true if empty.
+        if (mList.begin() == mList.end())
+        {
+                return true;
+        }
+        return false;
+}
+
+bdQueryHistory::bdQueryHistory()
+ :mStorePeriod(QUERY_HISTORY_PERIOD)
+{
+	return;
+}
+
+bool bdQueryHistory::addIncomingQuery(time_t recvd, const bdId *id, const bdNodeId *aboutId)
+{
+	std::map<bdId, bdQueryHistoryList>::iterator it;
+
+	it = mHistory.find(*id);
+	if (it == mHistory.end())
+	{
+		mHistory[*id] = bdQueryHistoryList();
+		it = mHistory.find(*id);
+	}
+
+	return (it->second).addIncomingQuery(recvd, aboutId);
+}
+
+bool bdQueryHistory::isBadPeer(const bdId *id)
+{
+	std::map<bdId, bdQueryHistoryList>::iterator it;
+
+	it = mHistory.find(*id);
+	if (it == mHistory.end())
+	{
+		return false;
+	}
+
+	return it->second.mBadPeer;
+}
+
+
+void bdQueryHistory::cleanupOldMsgs()
+{
+	if (mStorePeriod == 0)
+	{
+		return; // no cleanup.
+	}
+
+	time_t before = time(NULL) - mStorePeriod;
+	std::map<bdId, bdQueryHistoryList>::iterator it;
+	for(it = mHistory.begin(); it != mHistory.end(); )
+	{
+		if (it->second.cleanupMsgs(before))
+		{
+			std::map<bdId, bdQueryHistoryList>::iterator tit(it);
+			++tit;
+			mHistory.erase(it);
+			it = tit;
+		}
+		else
+		{
+			++it;
+		}
+	}
+}
+
+	
+void bdQueryHistory::printMsgs()
+{
+	std::ostream &out = std::cerr;
+
+	out << "bdQueryHistory::printMsgs() IncomingQueries in last " << mStorePeriod;
+	out << " secs" << std::endl;
+
+	std::map<bdId, bdQueryHistoryList>::iterator it;
+	for(it = mHistory.begin(); it != mHistory.end(); it++)
+	{
+		out << "\t";
+		bdStdPrintId(out, &(it->first));
+		out << " " << it->second.mList.size();
+		if (it->second.mBadPeer)
+		{
+			out << " BadPeer";
+		}
+		out << std::endl;
+	}
+}
+
+
+
+
 
 
 
