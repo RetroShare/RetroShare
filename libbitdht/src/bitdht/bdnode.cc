@@ -727,6 +727,9 @@ void bdNode::processRemoteQuery()
 #endif
 
 					/* TODO */
+					/* for now drop */
+					/* unprocess! */
+					nProcessed--;
 					break;
 				}
 				default:
