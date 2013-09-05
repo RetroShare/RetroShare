@@ -262,7 +262,7 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor, publi
 		void sendLobbyStatusNewPeer(const ChatLobbyId& lobby_id) ;
 		void sendLobbyStatusKeepAlive(const ChatLobbyId&) ;
 
-		void locked_initLobbyBouncableObject(const ChatLobbyId& id,RsChatLobbyBouncingObject&) ;
+		bool locked_initLobbyBouncableObject(const ChatLobbyId& id,RsChatLobbyBouncingObject&) ;
 
 		static std::string makeVirtualPeerId(ChatLobbyId) ;
 		static uint64_t makeConnexionChallengeCode(const std::string& peer_id,ChatLobbyId lobby_id,ChatLobbyMsgId msg_id) ;

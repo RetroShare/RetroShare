@@ -2188,7 +2188,9 @@ void p3ChatService::sendLobbyStatusItem(const ChatLobbyId& lobby_id,int type,con
 
 	{
 		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
-		locked_initLobbyBouncableObject(lobby_id,item) ;
+
+		if(! locked_initLobbyBouncableObject(lobby_id,item))
+			return ;
 
 		item.event_type = type ;
 		item.string1 = status_string ;
@@ -2198,7 +2200,7 @@ void p3ChatService::sendLobbyStatusItem(const ChatLobbyId& lobby_id,int type,con
 	bounceLobbyObject(&item,ownId) ;
 }
 
-void p3ChatService::locked_initLobbyBouncableObject(const ChatLobbyId& lobby_id,RsChatLobbyBouncingObject& item)
+bool p3ChatService::locked_initLobbyBouncableObject(const ChatLobbyId& lobby_id,RsChatLobbyBouncingObject& item)
 {
 	// get a pointer to the info for that chat lobby.
 	//
@@ -2209,7 +2211,7 @@ void p3ChatService::locked_initLobbyBouncableObject(const ChatLobbyId& lobby_id,
 #ifdef CHAT_DEBUG
 		std::cerr << "Chatlobby for id " << std::hex << lobby_id << " has no record. This is a serious error!!" << std::dec << std::endl;
 #endif
-		return ;
+		return false;
 	}
 	ChatLobbyEntry& lobby(it->second) ;
 
@@ -2223,6 +2225,8 @@ void p3ChatService::locked_initLobbyBouncableObject(const ChatLobbyId& lobby_id,
 
 	item.lobby_id = lobby_id ;
 	item.nick = lobby.nick_name ;
+
+	return true ;
 }
 
 bool p3ChatService::sendLobbyChat(const std::string &id, const std::wstring& msg, const ChatLobbyId& lobby_id)
@@ -2238,7 +2242,9 @@ bool p3ChatService::sendLobbyChat(const std::string &id, const std::wstring& msg
 	{
 		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 		// gives a random msg id, setup the nickname
-		locked_initLobbyBouncableObject(lobby_id,item) ;
+
+		if(!  locked_initLobbyBouncableObject(lobby_id,item))
+			return false;
 
 		// chat msg stuff
 		//
