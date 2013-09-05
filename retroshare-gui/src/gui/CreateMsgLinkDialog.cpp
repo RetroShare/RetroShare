@@ -37,6 +37,9 @@ CreateMsgLinkDialog::CreateMsgLinkDialog()
 	setAttribute(Qt::WA_DeleteOnClose, false);
 
 	QObject::connect(_create_link_PB,SIGNAL(clicked()),this,SLOT(createLink())) ;
+	
+	headerFrame->setHeaderImage(QPixmap(":/images/d-chat64.png"));
+	headerFrame->setHeaderText(tr("Create distant chat"));
 
 	friendSelectionWidget->setModus(FriendSelectionWidget::MODUS_SINGLE) ;
 	friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_NON_FRIEND_GPG | FriendSelectionWidget::SHOW_GPG) ;

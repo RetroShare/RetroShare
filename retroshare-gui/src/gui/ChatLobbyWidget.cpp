@@ -32,16 +32,16 @@
 #define TYPE_FOLDER       0
 #define TYPE_LOBBY        1
 
-#define IMAGE_CREATE      ""
-#define IMAGE_PUBLIC      ":/images/chat_x24.png"
-#define IMAGE_PRIVATE     ":/images/chat_red24.png"
-#define IMAGE_UNSUBSCRIBE   ""
-#define IMAGE_SUBSCRIBE   ""
-#define IMAGE_PEER_ENTERING  ":images/user/add_user24.png"
-#define IMAGE_PEER_LEAVING   ":images/user/remove_user24.png"
-#define IMAGE_TYPING		  ":images/typing.png" 
-#define IMAGE_MESSAGE	  ":images/chat.png" 
-#define IMAGE_AUTOSUBSCRIBE  ":images/accepted16.png"
+#define IMAGE_CREATE          ""
+#define IMAGE_PUBLIC          ":/images/chat_x24.png"
+#define IMAGE_PRIVATE         ":/images/chat_red24.png"
+#define IMAGE_SUBSCRIBE       ":/images/edit_add24.png"  
+#define IMAGE_UNSUBSCRIBE     ":/images/cancel.png"
+#define IMAGE_PEER_ENTERING   ":images/user/add_user24.png"
+#define IMAGE_PEER_LEAVING    ":images/user/remove_user24.png"
+#define IMAGE_TYPING		      ":images/typing.png" 
+#define IMAGE_MESSAGE	        ":images/chat.png" 
+#define IMAGE_AUTOSUBSCRIBE   ":images/accepted16.png"
 
 ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WFlags flags)
 	: RsAutoUpdatePage(5000, parent, flags)
@@ -173,7 +173,7 @@ void ChatLobbyWidget::lobbyTreeWidgetCustomPopupMenu(QPoint)
         if (item->data(COLUMN_DATA, ROLE_AUTOSUBSCRIBE).toBool()) {
             contextMnu.addAction(QIcon(IMAGE_AUTOSUBSCRIBE), tr("Remove Auto Subscribe"), this, SLOT(autoSubscribeItem()));
         } else {
-            contextMnu.addAction(QIcon(IMAGE_UNSUBSCRIBE), tr("Add Auto Subscribe"), this, SLOT(autoSubscribeItem()));
+            contextMnu.addAction(QIcon(IMAGE_SUBSCRIBE), tr("Add Auto Subscribe"), this, SLOT(autoSubscribeItem()));
         }
 	}
 
