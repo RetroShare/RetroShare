@@ -34,11 +34,9 @@
 #include <QtGui/QStyle>
 #include <assert.h>
 
-
 AboutDialog::AboutDialog(QWidget* parent)
-:QDialog(parent) 
+: QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint)
 {
-
     setupUi(this);
 
     QHBoxLayout* l = new QHBoxLayout();
@@ -181,7 +179,11 @@ AWidget::AWidget() {
 
     QImage image(":/images/about.png");
     QPainter p(&image);
-    p.setPen(Qt::lightGray);
+    p.setPen(Qt::black);
+    QFont font = p.font();
+    font.setBold(true);
+    font.setPointSizeF(11);
+    p.setFont(font);
 
     /* get libretroshare version */
     std::map<std::string, std::string>::iterator vit;
@@ -189,7 +191,7 @@ AWidget::AWidget() {
     bool retv = rsDisc->getDiscVersions(versions);
     if (retv && versions.end() != (vit = versions.find(rsPeers->getOwnId())))
     {
-	    QString version = QString::fromStdString("RetroShare version : \n") + QString::fromStdString(vit->second);
+        QString version = QString("RetroShare %1 : \n%2").arg(tr("version"), QString::fromStdString(vit->second));
         p.drawText(QRect(10, 10, width()-10, 60), version);
           
     }
@@ -733,4 +735,3 @@ NextPieceLabel::NextPieceLabel( QWidget* parent /* = 0*/ ) : QLabel(parent)
     setAlignment(Qt::AlignCenter);
     setAutoFillBackground(true);
 }
-

@@ -34,7 +34,7 @@
 
 /** Constructor */
 HelpDialog::HelpDialog(QWidget *parent)
-:QDialog(parent)
+: QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint)
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
