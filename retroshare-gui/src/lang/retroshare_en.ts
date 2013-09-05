@@ -1933,6 +1933,10 @@ Double click lobbies to enter and chat.</source>
         <source>External Circles (Other)</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Circles</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ConfCertDialog</name>
@@ -2187,6 +2191,10 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Not connected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Peer Addresses</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3650,6 +3658,14 @@ p, li { white-space: pre-wrap; }
         <source>No Circle Limitations Selected</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Create New Personal Circle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create New External Circle</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>CreateForum</name>
@@ -4143,6 +4159,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Your new messaging chat invite has been copied to clipboard. You can now paste it as a Retroshare link.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create distant chat</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
