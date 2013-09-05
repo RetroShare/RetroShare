@@ -30,6 +30,7 @@
 #include <string>
 #include <iomanip>
 #include "util/rsstring.h"
+#include "retroshare/rstypes.h"
 #include <inttypes.h>
 
 class pqihash
@@ -71,11 +72,14 @@ void 	Complete(std::string &hash)
 	SHA1_Final(sha_hash, sha_ctx);
 
 	endHash.clear();
-	for(int i = 0; i < SHA_DIGEST_LENGTH; i++)
-	{
-		rs_sprintf_append(endHash, "%02x", (unsigned int) (sha_hash[i]));
-	}
-	hash = endHash;
+
+	endHash = hash = Sha1CheckSum(sha_hash).toStdString() ;
+
+//	for(int i = 0; i < SHA_DIGEST_LENGTH; i++)
+//	{
+//		rs_sprintf_append(endHash, "%02x", (unsigned int) (sha_hash[i]));
+//	}
+//	hash = endHash;
 	doHash = false;
 
 	return;
