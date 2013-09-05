@@ -162,19 +162,19 @@ void DhtWindow::updateNetStatus()
 	switch(netMode)
 	{
 		case RSNET_NETWORK_UNKNOWN:
-			label->setText("Unknown NetState");
+			label->setText(tr("Unknown NetState"));
 			break;
 		case RSNET_NETWORK_OFFLINE:
-			label->setText("Offline");
+			label->setText(tr("Offline"));
 			break;
 		case RSNET_NETWORK_LOCALNET:
-			label->setText("Local Net");
+			label->setText(tr("Local Net"));
 			break;
 		case RSNET_NETWORK_BEHINDNAT:
-			label->setText("Behind NAT");
+			label->setText(tr("Behind NAT"));
 			break;
 		case RSNET_NETWORK_EXTERNALIP:
-			label->setText("External IP");
+			label->setText(tr("External IP"));
 			break;
 	}
 
@@ -184,25 +184,25 @@ void DhtWindow::updateNetStatus()
 	switch(natType)
 	{
 		case RSNET_NATTYPE_UNKNOWN:
-			label->setText("UNKNOWN NAT STATE");
+			label->setText(tr("UNKNOWN NAT STATE"));
 			break;
 		case RSNET_NATTYPE_SYMMETRIC:
-			label->setText("SYMMETRIC NAT");
+			label->setText(tr("SYMMETRIC NAT"));
 			break;
 		case RSNET_NATTYPE_DETERM_SYM:
-			label->setText("DETERMINISTIC SYM NAT");
+			label->setText(tr("DETERMINISTIC SYM NAT"));
 			break;
 		case RSNET_NATTYPE_RESTRICTED_CONE:
-			label->setText("RESTRICTED CONE NAT");
+			label->setText(tr("RESTRICTED CONE NAT"));
 			break;
 		case RSNET_NATTYPE_FULL_CONE:
-			label->setText("FULL CONE NAT");
+			label->setText(tr("FULL CONE NAT"));
 			break;
 		case RSNET_NATTYPE_OTHER:
-			label->setText("OTHER NAT");
+			label->setText(tr("OTHER NAT"));
 			break;
 		case RSNET_NATTYPE_NONE:
-			label->setText("NO NAT");
+			label->setText(tr("NO NAT"));
 			break;
 	}
 
@@ -214,19 +214,19 @@ void DhtWindow::updateNetStatus()
 	switch(natHole)
 	{
 		case RSNET_NATHOLE_UNKNOWN:
-			label->setText("UNKNOWN NAT HOLE STATUS");
+			label->setText(tr("UNKNOWN NAT HOLE STATUS"));
 			break;
 		case RSNET_NATHOLE_NONE:
-			label->setText("NO NAT HOLE");
+			label->setText(tr("NO NAT HOLE"));
 			break;
 		case RSNET_NATHOLE_UPNP:
-			label->setText("UPNP FORWARD");
+			label->setText(tr("UPNP FORWARD"));
 			break;
 		case RSNET_NATHOLE_NATPMP:
-			label->setText("NATPMP FORWARD");
+			label->setText(tr("NATPMP FORWARD"));
 			break;
 		case RSNET_NATHOLE_FORWARDED:
-			label->setText("MANUAL FORWARD");
+			label->setText(tr("MANUAL FORWARD"));
 			break;
 	}
 
@@ -263,34 +263,34 @@ void DhtWindow::updateNetStatus()
 	switch(netState)
 	{
 		case RSNET_NETSTATE_BAD_UNKNOWN:
-			label->setText("NET BAD: Unknown State");
+			label->setText(tr("NET BAD: Unknown State"));
 			break;
 		case RSNET_NETSTATE_BAD_OFFLINE:
-			label->setText("NET BAD: Offline");
+			label->setText(tr("NET BAD: Offline"));
 			break;
 		case RSNET_NETSTATE_BAD_NATSYM:
-			label->setText("NET BAD: Behind Symmetric NAT");
+			label->setText(tr("NET BAD: Behind Symmetric NAT"));
 			break;
 		case RSNET_NETSTATE_BAD_NODHT_NAT:
-			label->setText("NET BAD: Behind NAT & No DHT");
+			label->setText(tr("NET BAD: Behind NAT & No DHT"));
 			break;
 		case RSNET_NETSTATE_WARNING_RESTART:
-			label->setText("NET WARNING: NET Restart");
+			label->setText(tr("NET WARNING: NET Restart"));
 			break;
 		case RSNET_NETSTATE_WARNING_NATTED:
-			label->setText("NET WARNING: Behind NAT");
+			label->setText(tr("NET WARNING: Behind NAT"));
 			break;
 		case RSNET_NETSTATE_WARNING_NODHT:
-			label->setText("NET WARNING: No DHT");
+			label->setText(tr("NET WARNING: No DHT"));
 			break;
 		case RSNET_NETSTATE_GOOD:
-			label->setText("NET STATE GOOD!");
+			label->setText(tr("NET STATE GOOD!"));
 			break;
 		case RSNET_NETSTATE_ADV_FORWARD:
-			label->setText("CAUTION: UNVERIFABLE FORWARD!");
+			label->setText(tr("CAUTION: UNVERIFIABLE FORWARD!"));
 			break;
 		case RSNET_NETSTATE_ADV_DARK_FORWARD:
-			label->setText("CAUTION: UNVERIFABLE FORWARD & NO DHT");
+			label->setText(tr("CAUTION: UNVERIFIABLE FORWARD & NO DHT"));
 			break;
 	}
 }
@@ -393,24 +393,24 @@ void DhtWindow::updateNetPeers()
 		{
 			default:
 			case RSDHT_PEERDHT_NOT_ACTIVE:
-				dhtstate = "Not Active (Maybe Connected!)";
+				dhtstate = tr("Not Active (Maybe Connected!)");
 				break;
 			case RSDHT_PEERDHT_SEARCHING:
-				dhtstate = "Searching";
+				dhtstate = tr("Searching");
 				break;
 			case RSDHT_PEERDHT_FAILURE:
-				dhtstate = "Failed";
+				dhtstate = tr("Failed");
 				break;
 			case RSDHT_PEERDHT_OFFLINE:
-				dhtstate = "offline";
+				dhtstate = tr("offline");
 				nOfflinePeers++;
 				break;
 			case RSDHT_PEERDHT_UNREACHABLE:
-				dhtstate = "Unreachable";
+				dhtstate = tr("Unreachable");
 				nUnreachablePeers++;
 				break;
 			case RSDHT_PEERDHT_ONLINE:
-				dhtstate = "ONLINE";
+				dhtstate = tr("ONLINE");
 				nOnlinePeers++;
 				break;
 		}
@@ -422,17 +422,17 @@ void DhtWindow::updateNetPeers()
 		switch(status.mPeerConnectMode)
 		{
 			case RSDHT_TOU_MODE_DIRECT:
-				cpmstr = "Direct";
+				cpmstr = tr("Direct");
 				break;
 			case RSDHT_TOU_MODE_PROXY:
-				cpmstr = "Proxy VIA " + QString::fromStdString(status.mPeerConnectProxyId);
+				cpmstr = tr("Proxy VIA ") + QString::fromStdString(status.mPeerConnectProxyId);
 				break;
 			case RSDHT_TOU_MODE_RELAY:
-				cpmstr = "Relay VIA " + QString::fromStdString(status.mPeerConnectProxyId);
+				cpmstr = tr("Relay VIA ") + QString::fromStdString(status.mPeerConnectProxyId);
 				break;
 			default:
 			case RSDHT_TOU_MODE_NONE:
-				cpmstr = "None";
+				cpmstr = tr("None");
 				break;
 		}
 
@@ -442,15 +442,15 @@ void DhtWindow::updateNetPeers()
 		{
 			default:
 			case RSDHT_PEERCONN_DISCONNECTED:
-				cpsstr = "Disconnected";
+				cpsstr = tr("Disconnected");
 				nDisconnPeers++;
 				break;
 			case RSDHT_PEERCONN_UDP_STARTED:
-				cpsstr = "Udp Started";
+				cpsstr = tr("Udp Started");
 				break;
 			case RSDHT_PEERCONN_CONNECTED:
 			{
-				cpsstr = "Connected";
+				cpsstr = tr("Connected");
 				break;
 				switch(status.mPeerConnectMode)
 				{
@@ -489,13 +489,13 @@ void DhtWindow::updateNetPeers()
 		switch(status.mPeerReqState)
 		{
 			case RSDHT_PEERREQ_RUNNING:
-				reqstr += "Request Active";
+				reqstr += tr("Request Active");
 				break;
 			case RSDHT_PEERREQ_STOPPED:
-				reqstr += "No Request";
+				reqstr += tr("No Request");
 				break;
 			default:
-				reqstr += "Unknown";
+				reqstr += tr("Unknown");
 				break;
 		}
 		peer_item -> setData(PTW_COL_PEER_REQ_STATUS, Qt::DisplayRole, reqstr);
@@ -507,14 +507,14 @@ void DhtWindow::updateNetPeers()
 
 
 	QString connstr;
-	connstr =  "#Peers: " + QString::number(nPeers);
-	connstr += " DHT: (#off:" + QString::number(nOfflinePeers);
-	connstr += ",unreach:" + QString::number(nUnreachablePeers);
-	connstr += ",online:" + QString::number(nOnlinePeers);
-	connstr += ") Connections: (#dis:" + QString::number(nDisconnPeers);
-	connstr += ",#dir:" + QString::number(nDirectPeers);
-	connstr += ",#proxy:" + QString::number(nProxyPeers);
-	connstr += ",#relay:" + QString::number(nRelayPeers);
+	connstr =  tr("#Peers: ") + QString::number(nPeers);
+	connstr += tr(" DHT: (#off:") + QString::number(nOfflinePeers);
+	connstr += tr(",unreach:") + QString::number(nUnreachablePeers);
+	connstr += tr(",online:") + QString::number(nOnlinePeers);
+	connstr += tr(") Connections: (#dis:") + QString::number(nDisconnPeers);
+	connstr += tr(",#dir:") + QString::number(nDirectPeers);
+	connstr += tr(",#proxy:") + QString::number(nProxyPeers);
+	connstr += tr(",#relay:") + QString::number(nRelayPeers);
 	connstr += ")";
 
 	ui->peerSummaryLabel->setText(connstr);
@@ -555,14 +555,14 @@ void DhtWindow::updateRelays()
 		QTreeWidgetItem *item = new QTreeWidgetItem();
 		relayTreeWidget->addTopLevelItem(item);
 
-		QString typestr = "RELAY END";
-		QString srcstr = "Yourself";
+		QString typestr = tr("RELAY END");
+		QString srcstr = tr("Yourself");
 		QString proxystr = QString::fromStdString(reit->mProxyAddr);
 		QString deststr = QString::fromStdString(reit->mRemoteAddr);
-		QString agestr = "unknown";
-		QString lastsendstr = "unknown";
-		QString bandwidthstr = "unlimited";
-		QString classstr = "Own Relay";
+		QString agestr = tr("unknown");
+		QString lastsendstr = tr("unknown");
+		QString bandwidthstr = tr("unlimited");
+		QString classstr = tr("Own Relay");
 
 		//std::ostringstream dhtupdatestr;
 		//dhtupdatestr << now - status.mDhtUpdateTS << " secs ago";
@@ -585,13 +585,13 @@ void DhtWindow::updateRelays()
 		QTreeWidgetItem *item = new QTreeWidgetItem();
 		relayTreeWidget->addTopLevelItem(item);
 
-		QString typestr = "RELAY PROXY";
+		QString typestr = tr("RELAY PROXY");
 		QString srcstr = QString::fromStdString(rpit->mSrcAddr);
-		QString proxystr = "Yourself";
+		QString proxystr = tr("Yourself");
 		QString deststr = QString::fromStdString(rpit->mDestAddr);
-		QString agestr = QString("%1 secs ago").arg(now - rpit->mCreateTS);
-		QString lastsendstr = QString("%1 secs ago").arg(now - rpit->mLastTS);
-		QString bandwidthstr = QString("%1B/s").arg(QString::number(rpit->mBandwidth));
+		QString agestr = QString(tr("%1 secs ago")).arg(now - rpit->mCreateTS);
+		QString lastsendstr = QString(tr("%1 secs ago")).arg(now - rpit->mLastTS);
+		QString bandwidthstr = QString(tr("%1B/s")).arg(QString::number(rpit->mBandwidth));
 		QString classstr = QString::number(rpit->mRelayClass);
 
 		item -> setData(RTW_COL_TYPE, Qt::DisplayRole, typestr);
@@ -675,20 +675,20 @@ void DhtWindow::updateDhtPeers()
 		QString buckstr = QString::number(it->mBucket);
 		QString ipstr = QString::fromStdString(it->mAddr);
 		QString idstr = QString::fromStdString(it->mDhtId);
-		QString flagsstr = QString("0x%1 EX:0x%2").arg(it->mPeerFlags, 0, 16, QChar('0')).arg(it->mExtraFlags, 0, 16, QChar('0'));
-		QString foundstr = QString("%1 secs ago").arg(now - it->mFoundTime);
+		QString flagsstr = QString(tr("0x%1 EX:0x%2")).arg(it->mPeerFlags, 0, 16, QChar('0')).arg(it->mExtraFlags, 0, 16, QChar('0'));
+		QString foundstr = QString(tr("%1 secs ago")).arg(now - it->mFoundTime);
 
 		QString lastsendstr;
 		if (it->mLastSendTime == 0)
 		{
-			lastsendstr = "never";
+			lastsendstr = tr("never");
 		}
 		else
 		{
-			lastsendstr = QString ("%1 secs ago").arg(now - it->mLastSendTime);
+			lastsendstr = QString (tr("%1 secs ago")).arg(now - it->mLastSendTime);
 		}
 
-		QString lastrecvstr = QString ("%1 secs ago").arg(now - it->mLastRecvTime);
+		QString lastrecvstr = QString (tr("%1 secs ago")).arg(now - it->mLastRecvTime);
 
 		dht_item -> setData(DTW_COL_BUCKET, Qt::DisplayRole, buckstr);
 		dht_item -> setData(DTW_COL_IPADDR, Qt::DisplayRole, ipstr);

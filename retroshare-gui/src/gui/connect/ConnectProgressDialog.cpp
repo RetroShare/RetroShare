@@ -162,16 +162,16 @@ void ConnectProgressDialog::initDialog()
 
 	ui->progressFrame->setEnabled(true);
 	/* initialise GUI data */
-	ui->NetResult->setText("N/A");
-	ui->ContactResult->setText("N/A");
+	ui->NetResult->setText(tr("N/A"));
+	ui->ContactResult->setText(tr("N/A"));
 
-	ui->DhtResult->setText("DHT Startup");
+	ui->DhtResult->setText(tr("DHT Startup"));
 	ui->DhtProgressBar->setValue(0);
 
-	ui->LookupResult->setText("N/A");
+	ui->LookupResult->setText(tr("N/A"));
 	ui->LookupProgressBar->setValue(0);
 
-	ui->UdpResult->setText("N/A");
+	ui->UdpResult->setText(tr("N/A"));
 	ui->UdpProgressBar->setValue(0);
 
 	sayInProgress();
@@ -282,10 +282,10 @@ void ConnectProgressDialog::updateNetworkStatus()
 			label->setText(tr("NET STATE GOOD!"));
 			break;
 		case RSNET_NETSTATE_ADV_FORWARD:
-			label->setText(tr("UNVERIFABLE FORWARD!"));
+			label->setText(tr("UNVERIFIABLE FORWARD!"));
 			break;
 		case RSNET_NETSTATE_ADV_DARK_FORWARD:
-			label->setText(tr("UNVERIFABLE FORWARD & NO DHT"));
+			label->setText(tr("UNVERIFIABLE FORWARD & NO DHT"));
 			break;
 	}
 }
@@ -497,7 +497,7 @@ void ConnectProgressDialog::updateLookupStatus()
 			mLookupStatus = CONNECT_LOOKUP_NODHTCONFIG;
 			break;
 		case RSDHT_PEERDHT_SEARCHING:
-			ui->LookupResult->setText("Searching");
+			ui->LookupResult->setText(tr("Searching"));
 			break;
 		case RSDHT_PEERDHT_FAILURE:
 			ui->LookupProgressBar->setValue(0);
@@ -561,7 +561,7 @@ void ConnectProgressDialog::updateUdpStatus()
 	if (now > mUdpTS + CONNECT_UDP_PERIOD)
 	{
 		ui->UdpProgressBar->setValue(100);
-		ui->UdpResult->setText(tr("Udp Connect Timeout"));
+		ui->UdpResult->setText(tr("UDP Connect Timeout"));
 		mUdpStatus = CONNECT_UDP_FAIL;
 
 		mState = CONNECT_STATE_FAILED;
@@ -751,7 +751,7 @@ void ConnectProgressDialog::sayDHTOffline()
 	message += "\n";
 	message += tr("The DHT is needed if your friends have Dynamic IP Addresses.");
 	message += "\n";
-	message += tr("Only Advanced Retroshare users should switch of the DHT.");
+	message += tr("Only Advanced Retroshare users should switch off the DHT.");
 	message += "\n\n";
 	message += tr("Go to Settings->Server and change config to \"Public: DHT and Discovery\"");
 
@@ -827,7 +827,7 @@ void ConnectProgressDialog::sayInvalidPeer()
 	QString title = tr("Incomplete Friend Details");
 	QString message = tr("You have imported an incomplete Certificate");
 	message += "\n\n";
-	message += tr("Retroshare cannot connect without ths information");
+	message += tr("Retroshare cannot connect without this information");
 	message += "\n\n";
 	message += tr("Please retry importing the full Certificate");
 

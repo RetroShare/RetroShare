@@ -128,11 +128,11 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WFlags flags)
 		" <h1><img width=\"32\" src=\":/images/64px_help.png\">&nbsp;&nbsp;Chat Lobbies</h1>                              \
 		  <p>Chat lobbies are distributed chat rooms, and work pretty much like IRC.                                      \
 		  They allow you to talk anonymously with tons of people without the need to make friends.</p>                    \
-		  <p>A chat lobby can be public (you friends see it) or private (your friends can't see it, unless you           \
+		  <p>A chat lobby can be public (your friends see it) or private (your friends can't see it, unless you           \
 		  invite them with <img src=\":/images/add_24x24.png\" width=12/>). Once you have been invited to a private lobby, you will be able to see it when your friends   \
 		  are using it.</p>                                                                                               \
 		  <p>The list at left shows                                                                                     \
-		  chat lobbies your friends are participating into. You can either                                 \
+		  chat lobbies your friends are participating in. You can either                                 \
 		  <ul>                                                                                                            \
 			  <li>Right click to create a new chat lobby</li>                                                              \
 		     <li>Double click a chat lobby to enter, chat, and show it to your friends</li>                      \
