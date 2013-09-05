@@ -58,7 +58,7 @@
 #define IMAGE_OPENFILE		 ":/images/fileopen.png"
 #define IMAGE_COLLECTION     ":/images/mimetypes/rscollection-16.png"
 #define IMAGE_EDITSHARE      ":/images/edit_16.png"
-#define IMAGE_MYFILES        ":images/my_documents_16.png"
+#define IMAGE_MYFILES        ":images/my_documents_22.png"
 
 // Define to avoid using the search in treeview, because it is really slow for now.
 //
