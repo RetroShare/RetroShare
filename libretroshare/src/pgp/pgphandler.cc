@@ -1630,7 +1630,7 @@ bool PGPHandler::locked_writePrivateTrustDatabase()
 
 	for(std::map<std::string,PGPCertificateInfo>::iterator it = _public_keyring_map.begin();it!=_public_keyring_map.end() ;++it)
 	{
-		memcpy(&trustpacket.user_id,PGPIdType(it->first).toByteArray(),KEY_ID_SIZE) ;
+		memcpy(trustpacket.user_id,PGPIdType(it->first).toByteArray(),KEY_ID_SIZE) ;
 		trustpacket.trust_level = it->second._trustLvl ;
 		trustpacket.time_stamp = it->second._time_stamp ;
 
