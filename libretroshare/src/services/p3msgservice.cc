@@ -75,6 +75,8 @@ p3MsgService::p3MsgService(p3LinkMgr *lm)
 	_serialiser = new RsMsgSerialiser();
 	addSerialType(_serialiser);
 
+	mDistantMessagingEnabled = true ;
+
 	/* Initialize standard tag types */
 	if(lm)
 		initStandardTagTypes();
