@@ -351,15 +351,24 @@ void ChatLobbyWidget::updateDisplay()
 			}
 		}
 
-		if (item == NULL) {
-			item = new RSTreeWidgetItem(compareRole, TYPE_LOBBY);
-			item->setIcon(COLUMN_NAME, (lobby_item == publicLobbyItem) ? QIcon(IMAGE_PUBLIC) : QIcon(IMAGE_PRIVATE));
-			lobby_item->addChild(item);
-		}
-
 		bool subscribed = false;
 		if (rsMsgs->getVirtualPeerId(lobby.lobby_id, vpid)) {
 			subscribed = true;
+		}
+
+		QIcon icon;
+		if (item == NULL) {
+			item = new RSTreeWidgetItem(compareRole, TYPE_LOBBY);
+			icon = (lobby_item == publicLobbyItem) ? QIcon(IMAGE_PUBLIC) : QIcon(IMAGE_PRIVATE);
+			lobby_item->addChild(item);
+		} else {
+			if (item->data(COLUMN_DATA, ROLE_SUBSCRIBED).toBool() != subscribed) {
+				// Replace icon
+				icon = (lobby_item == publicLobbyItem) ? QIcon(IMAGE_PUBLIC) : QIcon(IMAGE_PRIVATE);
+			}
+		}
+		if (!icon.isNull()) {
+			item->setIcon(COLUMN_NAME, subscribed ? icon : icon.pixmap(lobbyTreeWidget->iconSize(), QIcon::Disabled));
 		}
 
         bool autoSubscribe = rsMsgs->getLobbyAutoSubscribe(lobby.lobby_id);
@@ -412,10 +421,19 @@ void ChatLobbyWidget::updateDisplay()
 			}
 		}
 
+		QIcon icon;
 		if (item == NULL) {
 			item = new RSTreeWidgetItem(compareRole, TYPE_LOBBY);
-			item->setIcon(COLUMN_NAME, (itemParent == publicLobbyItem) ? QIcon(IMAGE_PUBLIC) : QIcon(IMAGE_PRIVATE));
+			icon = (itemParent == publicLobbyItem) ? QIcon(IMAGE_PUBLIC) : QIcon(IMAGE_PRIVATE);
 			itemParent->addChild(item);
+		} else {
+			if (!item->data(COLUMN_DATA, ROLE_SUBSCRIBED).toBool()) {
+				// Replace icon
+				icon = (itemParent == publicLobbyItem) ? QIcon(IMAGE_PUBLIC) : QIcon(IMAGE_PRIVATE);
+			}
+		}
+		if (!icon.isNull()) {
+			item->setIcon(COLUMN_NAME, icon);
 		}
 
         bool autoSubscribe = rsMsgs->getLobbyAutoSubscribe(lobby.lobby_id);
