@@ -2143,7 +2143,12 @@ int RsServer::StartupRetroShare()
 #ifndef WINDOWS_SYS
 	plugins_directories.push_back(std::string("/usr/lib/retroshare/extensions/")) ;
 #endif
-	plugins_directories.push_back(RsInitConfig::basedir + "/extensions/") ;
+	std::string extensions_dir = RsInitConfig::basedir + "/extensions/" ;
+	plugins_directories.push_back(extensions_dir) ;
+
+	if(!RsDirUtil::checkCreateDirectory(extensions_dir))
+		std::cerr << "(EE) Cannot create extensions directory " + extensions_dir + ". This is not mandatory, but you probably have a permission problem." << std::endl;
+
 #ifdef DEBUG_PLUGIN_SYSTEM
 	plugins_directories.push_back(".") ;	// this list should be saved/set to some correct value.
 	// possible entries include: /usr/lib/retroshare, ~/.retroshare/extensions/, etc.
