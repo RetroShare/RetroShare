@@ -43,7 +43,7 @@ class PGPCertificateInfo
 		mutable time_t _time_stamp ;		// last time the key was used (received, used for signature verification, etc)
 
 		PGPFingerprintType _fpr;           /* fingerprint */
-		PGPIdType          _key_id ;
+	//	PGPIdType          _key_id ;
 
 		uint32_t _key_index ;			// index to array of keys in the public keyring 
 
