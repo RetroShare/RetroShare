@@ -112,6 +112,7 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     headerItem->setTextAlignment(4, Qt::AlignVCenter);
     headerItem->setTextAlignment(5, Qt::AlignVCenter);
 
+	 headerItem->setText(0,QString()) ;
 
     ui.connectTreeWidget->sortItems( 1, Qt::AscendingOrder );
 
