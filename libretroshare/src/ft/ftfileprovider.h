@@ -80,7 +80,7 @@ class ftFileProvider
 		{
 			public:
 				PeerUploadInfo() 
-					: req_loc(0),req_size(1), lastTS_t(0), transfer_rate(0), total_size(0), client_chunk_map_stamp(0) {}
+					: req_loc(0),req_size(1),  lastTS_t(0), lastTS(0),transfer_rate(0), total_size(0), client_chunk_map_stamp(0) {}
 
 				void updateStatus(uint64_t offset,uint32_t data_size,time_t now) ;
 
