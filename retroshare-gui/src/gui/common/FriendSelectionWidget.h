@@ -56,6 +56,7 @@ public:
 	};
 
     enum ShowType {
+        SHOW_NONE             = 0,
         SHOW_GROUP            = 1,
         SHOW_GPG              = 2,
         SHOW_SSL              = 4,

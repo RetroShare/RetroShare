@@ -193,6 +193,10 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
 
     connect(QApplication::clipboard(), SIGNAL(dataChanged()), this, SLOT(clipboardDataChanged()));
 
+    connect(ui.onlyTrustedKeys, SIGNAL(clicked(bool)), this, SLOT(toggleShowNonFriend(bool)));
+    ui.onlyTrustedKeys->setMinimumWidth(20);
+    ui.onlyTrustedKeys->setChecked(Settings->valueFromGroup("MessageComposer", "ShowOnlyTrustedKeys",false).toBool());
+
     connect(ui.addToButton, SIGNAL(clicked(void)), this, SLOT(addTo()));
     connect(ui.addCcButton, SIGNAL(clicked(void)), this, SLOT(addCc()));
     connect(ui.addBccButton, SIGNAL(clicked(void)), this, SLOT(addBcc()));
@@ -209,7 +213,9 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
     /* initialize friends list */
     ui.friendSelectionWidget->setHeaderText(tr("Send To:"));
     ui.friendSelectionWidget->setModus(FriendSelectionWidget::MODUS_MULTI);
-    ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_GROUP | FriendSelectionWidget::SHOW_SSL | FriendSelectionWidget::SHOW_NON_FRIEND_GPG );
+    ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_GROUP
+                                          | FriendSelectionWidget::SHOW_SSL
+                                          | (ui.onlyTrustedKeys->isChecked()? FriendSelectionWidget::SHOW_NONE : FriendSelectionWidget::SHOW_NON_FRIEND_GPG));
     //ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_GROUP | FriendSelectionWidget::SHOW_SSL );
     ui.friendSelectionWidget->start();
 
@@ -2318,6 +2324,14 @@ void MessageComposer::addContact(enumType type)
 		 if(rsMsgs->getDistantMessageHash(*idIt,hash))
 			 addRecipient(type, hash, *idIt);
 	 }
+}
+
+void MessageComposer::toggleShowNonFriend(bool bValue)
+{
+    ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_GROUP
+                                          | FriendSelectionWidget::SHOW_SSL
+                                          | (bValue?FriendSelectionWidget::SHOW_NONE : FriendSelectionWidget::SHOW_NON_FRIEND_GPG));
+    Settings->setValueToGroup("MessageComposer", "ShowOnlyTrustedKeys", bValue);
 }
 
 void MessageComposer::addTo()

@@ -133,6 +133,7 @@ private slots:
     void titleChanged();
 
     // Add to To/Cc/Bcc address fields
+    void toggleShowNonFriend(bool bValue);
     void addTo();
     void addCc();
     void addBcc();

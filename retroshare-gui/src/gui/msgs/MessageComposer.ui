@@ -103,6 +103,13 @@
          <item row="2" column="0">
           <layout class="QVBoxLayout" name="verticalLayout_4">
            <item>
+            <widget class="QCheckBox" name="onlyTrustedKeys">
+             <property name="text">
+              <string>Only show people you trusted</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <layout class="QHBoxLayout" name="horizontalLayout">
              <item>
               <widget class="QPushButton" name="addToButton">
