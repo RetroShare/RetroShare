@@ -672,11 +672,20 @@ bool Sha1CheckSum::operator==(const Sha1CheckSum& s) const
 
 std::string Sha1CheckSum::toStdString() const
 {
-	std::string tmpout;
+	static const char outl[16] = { '0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f' } ;
+	std::string tmpout(40,' ');
 
 	for(int i = 0; i < 5; i++)
 		for(int j = 0; j < 4; j++)
-			rs_sprintf_append(tmpout, "%02x", ((fourbytes[i] >> (8*j)) & 0xff ));
+		{
+			int k = j + i*4 ;
+			uint8_t byte = (fourbytes[i] >> (8*j)) & 0xff ;
+
+			tmpout[2*k  ] = outl[ (byte>>4) ] ;
+			tmpout[2*k+1] = outl[ byte & 0xf ] ;
+
+			//rs_sprintf_append(tmpout, "%02x", ((fourbytes[i] >> (8*j)) & 0xff ));
+		}
 
 	return tmpout;
 }
