@@ -36,7 +36,7 @@
 #include "RelayPage.h"
 #include "ChatPage.h"
 #include "MessagePage.h"
-#include "ForumPage.h"
+//#include "ForumPage.h"
 #include "PluginsPage.h"
 #include "rsharesettings.h"
 #include "gui/notifyqt.h"
@@ -127,7 +127,7 @@ RSettingsWin::initStackedWidget()
     addPage(new NotifyPage());
     addPage(new CryptoPage());
     addPage(new MessagePage());
-    addPage(new ForumPage());
+    //addPage(new ForumPage());
     addPage(new ChatPage());
     addPage(new AppearancePage());
     addPage(new SoundPage() );

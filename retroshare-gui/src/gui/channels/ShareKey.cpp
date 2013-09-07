@@ -24,8 +24,8 @@
 #include <QMessageBox>
 #include <algorithm>
 
-#include <retroshare/rschannels.h>
-#include <retroshare/rsforums.h>
+//#include <retroshare/rschannels.h>
+//#include <retroshare/rsforums.h>
 #include <retroshare/rspeers.h>
 
 #include "gui/common/PeerDefs.h"
@@ -77,6 +77,7 @@ void ShareKey::shareKey()
 		return;
 	}
 
+#if 0
 	if (mGrpType & CHANNEL_KEY_SHARE) {
 		if (!rsChannels)
 			return;
@@ -97,6 +98,7 @@ void ShareKey::shareKey()
 		// incorrect type
 		return;
 	}
+#endif
 
 	close();
 }

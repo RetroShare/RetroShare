@@ -30,8 +30,8 @@
 
 #include "RetroShareLink.h"
 #include "MainWindow.h"
-#include "ForumsDialog.h"
-#include "ChannelFeed.h"
+//#include "ForumsDialog.h"
+//#include "ChannelFeed.h"
 #include "SearchDialog.h"
 #include "msgs/MessageComposer.h"
 #include "util/misc.h"
@@ -44,8 +44,8 @@
 #include <retroshare/rsfiles.h>
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rspeers.h>
-#include <retroshare/rsforums.h>
-#include <retroshare/rschannels.h>
+//#include <retroshare/rsforums.h>
+//#include <retroshare/rschannels.h>
 
 //#define DEBUG_RSLINK 1
 
@@ -470,6 +470,7 @@ bool RetroShareLink::createForum(const std::string& id, const std::string& msgId
 {
 	clear();
 
+#if 0
 	if (!id.empty()) {
 		_hash = QString::fromStdString(id);
 		_msgId = QString::fromStdString(msgId);
@@ -488,6 +489,7 @@ bool RetroShareLink::createForum(const std::string& id, const std::string& msgId
 			}
 		}
 	}
+#endif
 
 	check();
 
@@ -498,6 +500,7 @@ bool RetroShareLink::createChannel(const std::string& id, const std::string& msg
 {
 	clear();
 
+#if 0
 	if (!id.empty()) {
 		_hash = QString::fromStdString(id);
 		_msgId = QString::fromStdString(msgId);
@@ -516,6 +519,7 @@ bool RetroShareLink::createChannel(const std::string& id, const std::string& msg
 			}
 		}
 	}
+#endif
 
 	check();
 
@@ -1365,6 +1369,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 					break;
 				}
 
+#if 0
 			case TYPE_FORUM:
 				{
 #ifdef DEBUG_RSLINK
@@ -1456,6 +1461,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 					}
 					break;
 				}
+#endif
 
 			case TYPE_SEARCH:
 				{

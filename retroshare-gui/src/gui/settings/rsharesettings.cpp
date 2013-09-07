@@ -123,8 +123,8 @@ void RshareSettings::initSettings()
 
   uint defNotify = (RS_POPUP_CONNECT | RS_POPUP_MSG);
 
-  uint defNewsFeed = (RS_FEED_TYPE_PEER | RS_FEED_TYPE_CHAN |
-                RS_FEED_TYPE_FORUM | RS_FEED_TYPE_BLOG |
+  uint defNewsFeed = (RS_FEED_TYPE_PEER | 
+//	RS_FEED_TYPE_CHAN | RS_FEED_TYPE_FORUM | RS_FEED_TYPE_BLOG |
                 RS_FEED_TYPE_CHAT | RS_FEED_TYPE_MSG |
                 RS_FEED_TYPE_FILES | RS_FEED_TYPE_SECURITY);
 

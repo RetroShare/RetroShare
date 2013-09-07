@@ -144,9 +144,6 @@ QString StatusDefs::connectStateString(RsPeerDetails &details)
 	case 0:
 		stateString = peerStateString(details.state);
 		break;
-	case RS_PEER_CONNECTSTATE_TRYING_TUNNEL:
-		stateString = qApp->translate("StatusDefs", "Trying tunnel connection");
-		break;
 	case RS_PEER_CONNECTSTATE_TRYING_TCP:
 		stateString = qApp->translate("StatusDefs", "Trying TCP");
 		break;
@@ -158,9 +155,6 @@ QString StatusDefs::connectStateString(RsPeerDetails &details)
 		break;
 	case RS_PEER_CONNECTSTATE_CONNECTED_UDP:
 		stateString = qApp->translate("StatusDefs", "Connected: UDP");
-		break;
-	case RS_PEER_CONNECTSTATE_CONNECTED_TUNNEL:
-		stateString = qApp->translate("StatusDefs", "Connected: Tunnel");
 		break;
 	case RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN:
 		stateString = qApp->translate("StatusDefs", "Connected: Unknown");

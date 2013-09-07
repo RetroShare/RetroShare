@@ -112,7 +112,7 @@ void ServerPage::toggleIpDetermination(bool b)
 void ServerPage::toggleTunnelConnection(bool b)
 {
         std::cerr << "ServerPage::toggleTunnelConnection() set tunnel to : " << b << std::endl;
-        rsPeers->allowTunnelConnection(b) ;
+        //rsPeers->allowTunnelConnection(b) ;
 }
 
 /** Saves the changes on this page */

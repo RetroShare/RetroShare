@@ -2,7 +2,7 @@ CONFIG += qt gui uic qrc resources uitools idle bitdht
 
 # Below is for GXS services.
 # Should be disabled for releases.
-#CONFIG += gxs debug
+CONFIG += gxs debug
 
 gxs {
 	
@@ -300,13 +300,7 @@ HEADERS +=  rshare.h \
             gui/MainWindow.h \
             gui/RSHumanReadableDelegate.h \
             gui/AboutDialog.h \
-            gui/ForumsDialog.h \
             gui/CreateMsgLinkDialog.h \
-            gui/forums/ForumDetails.h \
-            gui/forums/EditForumDetails.h \
-            gui/forums/CreateForum.h \
-            gui/forums/CreateForumMsg.h \
-            gui/forums/ForumUserNotify.h \
             gui/NetworkView.h \
             gui/TrustView.h \
             gui/MessengerWindow.h \
@@ -377,12 +371,6 @@ HEADERS +=  rshare.h \
             gui/chat/CreateLobbyDialog.h \
             gui/chat/ChatStyle.h \
             gui/chat/ChatUserNotify.h \
-            gui/channels/CreateChannel.h \
-            gui/channels/ChannelDetails.h \
-            gui/channels/CreateChannelMsg.h \
-            gui/channels/EditChanDetails.h \
-            gui/channels/ShareKey.h \
-            gui/channels/ChannelUserNotify.h \
             gui/connect/ConfCertDialog.h \
             gui/msgs/MessageComposer.h \
             gui/msgs/MessageWindow.h \
@@ -403,7 +391,6 @@ HEADERS +=  rshare.h \
             gui/settings/CryptoPage.h \
             gui/settings/MessagePage.h \
             gui/settings/NewTag.h \
-            gui/settings/ForumPage.h \
             gui/settings/PluginsPage.h \
             gui/settings/PluginItem.h \
             gui/settings/AppearancePage.h \
@@ -478,15 +465,10 @@ HEADERS +=  rshare.h \
             gui/elastic/arrow.h \
             gui/elastic/node.h \
             gui/NewsFeed.h \
-            gui/ChannelFeed.h \
             gui/feeds/FeedHolder.h \
-            gui/feeds/ForumNewItem.h \
-            gui/feeds/ForumMsgItem.h \
             gui/feeds/PeerItem.h \
             gui/feeds/MsgItem.h \
             gui/feeds/ChatMsgItem.h \
-            gui/feeds/ChanNewItem.h \
-            gui/feeds/ChanMsgItem.h \
             gui/feeds/SubFileItem.h \
             gui/feeds/AttachFileItem.h \
             gui/feeds/SecurityItem.h \
@@ -496,8 +478,26 @@ HEADERS +=  rshare.h \
             gui/groups/CreateGroup.h \
             gui/dht/DhtWindow.h \
             gui/bwctrl/BwCtrlWindow.h \
+            gui/channels/ShareKey.h \
             gui/GetStartedDialog.h
 
+#            gui/ForumsDialog.h \
+#            gui/forums/ForumDetails.h \
+#            gui/forums/EditForumDetails.h \
+#            gui/forums/CreateForum.h \
+#            gui/forums/CreateForumMsg.h \
+#            gui/forums/ForumUserNotify.h \
+#            gui/feeds/ForumNewItem.h \
+#            gui/feeds/ForumMsgItem.h \
+#            gui/ChannelFeed.h \
+#            gui/feeds/ChanNewItem.h \
+#            gui/feeds/ChanMsgItem.h \
+#            gui/channels/CreateChannel.h \
+#            gui/channels/ChannelDetails.h \
+#            gui/channels/CreateChannelMsg.h \
+#            gui/channels/EditChanDetails.h \
+#            gui/channels/ChannelUserNotify.h \
+#            gui/settings/ForumPage.h \
 
 FORMS +=    gui/StartDialog.ui \
             gui/GenCertDialog.ui \
@@ -508,13 +508,8 @@ FORMS +=    gui/StartDialog.ui \
             gui/FileTransfer/TurtleRouterDialog.ui \
             gui/FileTransfer/TurtleRouterStatistics.ui \
             gui/FileTransfer/DetailsDialog.ui \
-            gui/ForumsDialog.ui \
             gui/MainWindow.ui \
             gui/CreateMsgLinkDialog.ui \
-            gui/forums/CreateForum.ui \
-            gui/forums/CreateForumMsg.ui \
-            gui/forums/ForumDetails.ui \
-            gui/forums/EditForumDetails.ui \
             gui/NetworkView.ui \
             gui/TrustView.ui \
             gui/MessengerWindow.ui \
@@ -532,11 +527,6 @@ FORMS +=    gui/StartDialog.ui \
             gui/profile/ProfileWidget.ui \
             gui/profile/StatusMessage.ui \
             gui/profile/ProfileManager.ui \
-            gui/channels/CreateChannel.ui \
-            gui/channels/CreateChannelMsg.ui \
-            gui/channels/ChannelDetails.ui \
-            gui/channels/EditChanDetails.ui \
-            gui/channels/ShareKey.ui \
             gui/chat/PopupChatWindow.ui \
             gui/chat/PopupChatDialog.ui \
             gui/chat/ChatTabWidget.ui \
@@ -559,7 +549,6 @@ FORMS +=    gui/StartDialog.ui \
             gui/settings/CryptoPage.ui \
             gui/settings/MessagePage.ui \
             gui/settings/NewTag.ui \
-            gui/settings/ForumPage.ui \
             gui/settings/PluginsPage.ui \
             gui/settings/AppearancePage.ui \
             gui/settings/TransferPage.ui \
@@ -577,14 +566,9 @@ FORMS +=    gui/StartDialog.ui \
             gui/advsearch/AdvancedSearchDialog.ui \
             gui/advsearch/expressionwidget.ui \
             gui/NewsFeed.ui \
-            gui/ChannelFeed.ui \
-            gui/feeds/ForumNewItem.ui \
-            gui/feeds/ForumMsgItem.ui \
             gui/feeds/PeerItem.ui \
             gui/feeds/MsgItem.ui \
             gui/feeds/ChatMsgItem.ui \
-            gui/feeds/ChanNewItem.ui \
-            gui/feeds/ChanMsgItem.ui \
             gui/feeds/SubFileItem.ui \
             gui/feeds/AttachFileItem.ui \
             gui/feeds/SecurityItem.ui \
@@ -600,7 +584,24 @@ FORMS +=    gui/StartDialog.ui \
             gui/style/StyleDialog.ui \
             gui/dht/DhtWindow.ui \
             gui/bwctrl/BwCtrlWindow.ui \
+            gui/channels/ShareKey.ui \
             gui/GetStartedDialog.ui
+
+#            gui/ForumsDialog.ui \
+#            gui/forums/CreateForum.ui \
+#            gui/forums/CreateForumMsg.ui \
+#            gui/forums/ForumDetails.ui \
+#            gui/forums/EditForumDetails.ui \
+#            gui/feeds/ForumNewItem.ui \
+#            gui/feeds/ForumMsgItem.ui \
+#            gui/ChannelFeed.ui \
+#            gui/channels/CreateChannel.ui \
+#            gui/channels/CreateChannelMsg.ui \
+#            gui/channels/ChannelDetails.ui \
+#            gui/channels/EditChanDetails.ui \
+#            gui/feeds/ChanNewItem.ui \
+#            gui/feeds/ChanMsgItem.ui \
+#            gui/settings/ForumPage.ui \
 
 SOURCES +=  main.cpp \
             rshare.cpp \
@@ -613,13 +614,7 @@ SOURCES +=  main.cpp \
             gui/graphframe.cpp \
             gui/mainpagestack.cpp \
             gui/MainWindow.cpp \
-            gui/ForumsDialog.cpp \
             gui/CreateMsgLinkDialog.cpp \
-            gui/forums/ForumDetails.cpp \
-            gui/forums/EditForumDetails.cpp \
-            gui/forums/CreateForum.cpp \
-            gui/forums/CreateForumMsg.cpp \
-            gui/forums/ForumUserNotify.cpp \
             gui/NetworkView.cpp \
             gui/TrustView.cpp \
             gui/MessengerWindow.cpp \
@@ -678,12 +673,6 @@ SOURCES +=  main.cpp \
             gui/profile/ProfileWidget.cpp \
             gui/profile/StatusMessage.cpp \
             gui/profile/ProfileManager.cpp \
-            gui/channels/CreateChannel.cpp \
-            gui/channels/CreateChannelMsg.cpp \
-            gui/channels/ChannelDetails.cpp \
-            gui/channels/EditChanDetails.cpp \
-            gui/channels/ShareKey.cpp \
-            gui/channels/ChannelUserNotify.cpp \
             gui/chat/PopupChatWindow.cpp \
             gui/chat/PopupChatDialog.cpp \
             gui/chat/PopupDistantChatDialog.cpp \
@@ -752,7 +741,6 @@ SOURCES +=  main.cpp \
             gui/settings/CryptoPage.cpp \
             gui/settings/MessagePage.cpp \
             gui/settings/NewTag.cpp \
-            gui/settings/ForumPage.cpp \
             gui/settings/PluginsPage.cpp \
             gui/settings/PluginItem.cpp \
             gui/settings/AppearancePage.cpp \
@@ -785,15 +773,10 @@ SOURCES +=  main.cpp \
             gui/elastic/arrow.cpp \
             gui/elastic/node.cpp \
             gui/NewsFeed.cpp \
-            gui/ChannelFeed.cpp \
             gui/feeds/FeedHolder.cpp \
-            gui/feeds/ForumNewItem.cpp \
-            gui/feeds/ForumMsgItem.cpp \
             gui/feeds/PeerItem.cpp \
             gui/feeds/MsgItem.cpp \
             gui/feeds/ChatMsgItem.cpp \
-            gui/feeds/ChanNewItem.cpp \
-            gui/feeds/ChanMsgItem.cpp \
             gui/feeds/SubFileItem.cpp \
             gui/feeds/AttachFileItem.cpp \
             gui/feeds/SecurityItem.cpp \
@@ -803,7 +786,26 @@ SOURCES +=  main.cpp \
             gui/groups/CreateGroup.cpp \
             gui/dht/DhtWindow.cpp \
             gui/bwctrl/BwCtrlWindow.cpp \
+            gui/channels/ShareKey.cpp \
             gui/GetStartedDialog.cpp
+
+#            gui/ForumsDialog.cpp \
+#            gui/forums/ForumDetails.cpp \
+#            gui/forums/EditForumDetails.cpp \
+#            gui/forums/CreateForum.cpp \
+#            gui/forums/CreateForumMsg.cpp \
+#            gui/forums/ForumUserNotify.cpp \
+#            gui/feeds/ForumNewItem.cpp \
+#            gui/feeds/ForumMsgItem.cpp \
+#            gui/ChannelFeed.cpp \
+#            gui/channels/CreateChannel.cpp \
+#            gui/channels/CreateChannelMsg.cpp \
+#            gui/channels/ChannelDetails.cpp \
+#            gui/channels/EditChanDetails.cpp \
+#            gui/channels/ChannelUserNotify.cpp \
+#            gui/feeds/ChanNewItem.cpp \
+#            gui/feeds/ChanMsgItem.cpp \
+#            gui/settings/ForumPage.cpp \
 
 RESOURCES += gui/images.qrc lang/lang.qrc gui/help/content/content.qrc
 
@@ -856,36 +858,36 @@ pluginmgr {
 
 }
 
-blogs {
-
-DEPENDPATH += gui/unfinished \
-
-HEADERS += gui/unfinished/blogs/BlogsDialog.h \
-           gui/unfinished/blogs/CreateBlog.h \
-           gui/unfinished/blogs/CreateBlogMsg.h \
-           gui/unfinished/blogs/BlogsMsgItem.h \
-           gui/unfinished/blogs/BlogDetails.h \
-           gui/feeds/BlogNewItem.h \
-           gui/feeds/BlogMsgItem.h \
-
-FORMS += gui/unfinished/blogs/BlogsDialog.ui \
-         gui/unfinished/blogs/CreateBlog.ui \
-         gui/unfinished/blogs/CreateBlogMsg.ui \
-         gui/unfinished/blogs/BlogsMsgItem.ui \
-         gui/unfinished/blogs/BlogDetails.ui \
-         gui/feeds/BlogNewItem.ui \
-         gui/feeds/BlogMsgItem.ui \
-
-SOURCES += gui/unfinished/blogs/BlogsDialog.cpp \
-           gui/unfinished/blogs/CreateBlog.cpp \
-           gui/unfinished/blogs/CreateBlogMsg.cpp \
-           gui/unfinished/blogs/BlogsMsgItem.cpp \
-           gui/unfinished/blogs/BlogDetails.cpp \
-           gui/feeds/BlogNewItem.cpp \
-           gui/feeds/BlogMsgItem.cpp \
-
-DEFINES += BLOGS
-}
+#blogs {
+#
+#DEPENDPATH += gui/unfinished \
+#
+#HEADERS += gui/unfinished/blogs/BlogsDialog.h \
+#           gui/unfinished/blogs/CreateBlog.h \
+#           gui/unfinished/blogs/CreateBlogMsg.h \
+#           gui/unfinished/blogs/BlogsMsgItem.h \
+#           gui/unfinished/blogs/BlogDetails.h \
+#           gui/feeds/BlogNewItem.h \
+#           gui/feeds/BlogMsgItem.h \
+#
+#FORMS += gui/unfinished/blogs/BlogsDialog.ui \
+#         gui/unfinished/blogs/CreateBlog.ui \
+#         gui/unfinished/blogs/CreateBlogMsg.ui \
+#         gui/unfinished/blogs/BlogsMsgItem.ui \
+#         gui/unfinished/blogs/BlogDetails.ui \
+#         gui/feeds/BlogNewItem.ui \
+#         gui/feeds/BlogMsgItem.ui \
+#
+#SOURCES += gui/unfinished/blogs/BlogsDialog.cpp \
+#           gui/unfinished/blogs/CreateBlog.cpp \
+#           gui/unfinished/blogs/CreateBlogMsg.cpp \
+#           gui/unfinished/blogs/BlogsMsgItem.cpp \
+#           gui/unfinished/blogs/BlogDetails.cpp \
+#           gui/feeds/BlogNewItem.cpp \
+#           gui/feeds/BlogMsgItem.cpp \
+#
+#DEFINES += BLOGS
+#}
 
 # use_links {
 # HEADERS += gui/AddLinksDialog.h \
@@ -930,10 +932,10 @@ unfinished {
 	DEPENDPATH += gui/unfinished \
 	
 	HEADERS += gui/unfinished/ApplicationWindow.h \
-		gui/unfinished/CalDialog.h \
-		gui/unfinished/ExampleDialog.h \
-		gui/unfinished/GamesDialog.h \
-	
+
+#		gui/unfinished/CalDialog.h \
+#		gui/unfinished/ExampleDialog.h \
+#		gui/unfinished/GamesDialog.h \
 #		gui/unfinished/profile/ProfileView.h \
 #		gui/unfinished/profile/ProfileEdit.h
 #		gui/unfinished/StatisticDialog.h \
@@ -941,10 +943,10 @@ unfinished {
 #		gui/unfinished/PhotoShow.h \
 	
 	FORMS += gui/unfinished/ApplicationWindow.ui \
-		gui/unfinished/CalDialog.ui \
-		gui/unfinished/ExampleDialog.ui \
-		gui/unfinished/GamesDialog.ui \
-	
+
+#		gui/unfinished/CalDialog.ui \
+#		gui/unfinished/ExampleDialog.ui \
+#		gui/unfinished/GamesDialog.ui \
 #		gui/unfinished/profile/ProfileView.ui \
 #		gui/unfinished/profile/ProfileEdit.ui
 #		gui/unfinished/StatisticDialog.ui \
@@ -952,10 +954,10 @@ unfinished {
 #		gui/unfinished/PhotoShow.ui \
 	
 	SOURCES += gui/unfinished/ApplicationWindow.cpp \
-		gui/unfinished/CalDialog.cpp \
-		gui/unfinished/ExampleDialog.cpp \
-		gui/unfinished/GamesDialog.cpp \
-	
+
+#		gui/unfinished/CalDialog.cpp \
+#		gui/unfinished/ExampleDialog.cpp \
+#		gui/unfinished/GamesDialog.cpp \
 #		gui/unfinished/profile/ProfileView.cpp \
 #		gui/unfinished/profile/ProfileEdit.cpp
 #		gui/unfinished/StatisticDialog.cpp \
