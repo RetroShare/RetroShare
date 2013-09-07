@@ -418,6 +418,9 @@ bool pqiSSLstore::getEncryptedItems(std::list<RsItem* >& rsItemList)
 	{
 		if (NULL != (item = GetItem()))
 			rsItemList.push_back(item);
+		else
+			break ;
+
 	} while (enc_bio->isactive() && enc_bio->moretoread());
 
 	return true;
