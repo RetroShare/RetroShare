@@ -7,7 +7,7 @@ CONFIG += test_voip
 
 #GXS Stuff.
 # This should be disabled for releases until further notice.
-#CONFIG += gxs debug
+CONFIG += gxs debug
 
 profiling {
 	QMAKE_CXXFLAGS -= -fomit-frame-pointer

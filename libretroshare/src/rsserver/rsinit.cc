@@ -806,7 +806,7 @@ bool RsInit::setupBaseDir()
 			return false ;
 		}
 		RsInitConfig::basedir = h;
-		RsInitConfig::basedir += "/.retroshare";
+		RsInitConfig::basedir += "/.retroshare6";
 #else
 		if (RsInitConfig::portable) {
 			// use directory "Data" in portable version
@@ -844,7 +844,7 @@ bool RsInit::setupBaseDir()
 				std::cerr << "Cannot Create BaseConfig Dir" << std::endl;
 				return false ;
 			}
-			RsInitConfig::basedir += "\\RetroShare";
+			RsInitConfig::basedir += "\\RetroShare6";
 		}
 #endif
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
