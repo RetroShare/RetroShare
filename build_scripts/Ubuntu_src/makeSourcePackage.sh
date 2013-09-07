@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ###################### PARAMETERS ####################
-version="0.5.4"
+version="0.5.5"
 svnpath="svn://csoler@svn.code.sf.net/p/retroshare/code/"
 workdir=retroshare-$version
 #use_gxs="Y"							# comment out to compile without gxs
@@ -101,7 +101,7 @@ cd $workdir
 #for i in wheezy; do
 #for i in sid ; do
 #for i in precise; do
-for i in natty precise lucid quantal raring; do
+for i in lucid precise quantal raring; do
 #for i in sid squeeze; do
 	echo copying changelog for $i
 	cat ../changelog | sed -e s/XXXXXX/"$svn"/g | sed -e s/YYYYYY/"$i"/g > debian/changelog
