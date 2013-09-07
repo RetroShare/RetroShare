@@ -69,7 +69,7 @@ private slots:
 	void removeUnusedKeys() ;
   void makeFriend() ;
   void denyFriend() ;
-  void deleteCert() ;
+//  void deleteCert() ;
   void peerdetails();
   void copyLink();
   void sendDistantMessage();

@@ -59,9 +59,14 @@
 #define IMAGE_DENIED         ":/images/denied16.png"
 #define IMAGE_TRUSTED        ":/images/rs-2.png"
 
+// Defines for key list columns
+#define COLUMN_CHECK 0
 #define COLUMN_PEERNAME    1
+#define COLUMN_I_AUTH_PEER 2
+#define COLUMN_PEER_AUTH_ME 3
 #define COLUMN_PEERID      4
 #define COLUMN_LAST_USED   5
+#define COLUMN_COUNT 6
 
 RsCertId getNeighRsCertId(QTreeWidgetItem *i);
 
@@ -90,31 +95,45 @@ NetworkDialog::NetworkDialog(QWidget *parent)
 
     /* Set header resize modes and initial section sizes */
     QHeaderView * _header = ui.connectTreeWidget->header () ;
-    _header->setResizeMode (0, QHeaderView::Custom);
-    _header->setResizeMode (1, QHeaderView::Interactive);
-    _header->setResizeMode (2, QHeaderView::Interactive);
-    _header->setResizeMode (3, QHeaderView::Interactive);
-    _header->setResizeMode (4, QHeaderView::Interactive);
-    _header->setResizeMode (5, QHeaderView::Interactive);
+    _header->setResizeMode (COLUMN_CHECK, QHeaderView::Custom);
+    _header->setResizeMode (COLUMN_PEERNAME, QHeaderView::Interactive);
+    _header->setResizeMode (COLUMN_I_AUTH_PEER, QHeaderView::Interactive);
+    _header->setResizeMode (COLUMN_PEER_AUTH_ME, QHeaderView::Interactive);
+    _header->setResizeMode (COLUMN_PEERID, QHeaderView::Interactive);
+    _header->setResizeMode (COLUMN_LAST_USED, QHeaderView::Interactive);
 
-    _header->resizeSection ( 0, 25 );
-    _header->resizeSection ( 1, 200 );
-    _header->resizeSection ( 2, 200 );
-    _header->resizeSection ( 3, 200 );
-    _header->resizeSection ( 5, 75 );
+    _header->model()->setHeaderData(COLUMN_CHECK, Qt::Horizontal, tr(""));
+    _header->model()->setHeaderData(COLUMN_PEERNAME, Qt::Horizontal, tr("Name"));
+    _header->model()->setHeaderData(COLUMN_I_AUTH_PEER, Qt::Horizontal, tr("Did I authenticated peer"));
+    _header->model()->setHeaderData(COLUMN_PEER_AUTH_ME, Qt::Horizontal, tr("Did peer authenticated me"));
+    _header->model()->setHeaderData(COLUMN_PEERID, Qt::Horizontal, tr("Cert Id"));
+    _header->model()->setHeaderData(COLUMN_LAST_USED, Qt::Horizontal, tr("Last used"));
+
+    _header->model()->setHeaderData(COLUMN_CHECK, Qt::Horizontal, tr(" If I accept connection from peer"),Qt::ToolTipRole);
+    _header->model()->setHeaderData(COLUMN_PEERNAME, Qt::Horizontal, tr("Name of peer"),Qt::ToolTipRole);
+    _header->model()->setHeaderData(COLUMN_I_AUTH_PEER, Qt::Horizontal, tr("Did I sign his PGP key"),Qt::ToolTipRole);
+    _header->model()->setHeaderData(COLUMN_PEER_AUTH_ME, Qt::Horizontal, tr("Did peer sign mine PGP key"),Qt::ToolTipRole);
+    _header->model()->setHeaderData(COLUMN_PEERID, Qt::Horizontal, tr("Peer's Certificat ID"),Qt::ToolTipRole);
+    _header->model()->setHeaderData(COLUMN_LAST_USED, Qt::Horizontal, tr("Since when I use this Certificat"),Qt::ToolTipRole);
+
+    _header->resizeSection ( COLUMN_CHECK, 25 );
+    _header->resizeSection ( COLUMN_PEERNAME, 200 );
+    _header->resizeSection ( COLUMN_I_AUTH_PEER, 200 );
+    _header->resizeSection ( COLUMN_PEER_AUTH_ME, 200 );
+    _header->resizeSection ( COLUMN_LAST_USED, 75 );
 
     // set header text aligment
     QTreeWidgetItem * headerItem = ui.connectTreeWidget->headerItem();
-    headerItem->setTextAlignment(0, Qt::AlignHCenter | Qt::AlignVCenter);
-    headerItem->setTextAlignment(1, Qt::AlignHCenter | Qt::AlignVCenter);
-    headerItem->setTextAlignment(2, Qt::AlignHCenter | Qt::AlignVCenter);
-    headerItem->setTextAlignment(3, Qt::AlignHCenter | Qt::AlignVCenter);
-    headerItem->setTextAlignment(4, Qt::AlignVCenter);
-    headerItem->setTextAlignment(5, Qt::AlignVCenter);
+    headerItem->setTextAlignment(COLUMN_CHECK, Qt::AlignHCenter | Qt::AlignVCenter);
+    headerItem->setTextAlignment(COLUMN_PEERNAME, Qt::AlignHCenter | Qt::AlignVCenter);
+    headerItem->setTextAlignment(COLUMN_I_AUTH_PEER, Qt::AlignHCenter | Qt::AlignVCenter);
+    headerItem->setTextAlignment(COLUMN_PEER_AUTH_ME, Qt::AlignHCenter | Qt::AlignVCenter);
+    headerItem->setTextAlignment(COLUMN_PEERID, Qt::AlignVCenter);
+    headerItem->setTextAlignment(COLUMN_LAST_USED, Qt::AlignVCenter);
 
 	 headerItem->setText(0,QString()) ;
 
-    ui.connectTreeWidget->sortItems( 1, Qt::AscendingOrder );
+    ui.connectTreeWidget->sortItems( COLUMN_PEERNAME, Qt::AscendingOrder );
 
 //    ui.networkTab->addTab(new TrustView(),QString(tr("Authentication matrix")));
 //    ui.networkTab->addTab(networkview = new NetworkView(),QString(tr("Network View")));
@@ -218,7 +237,7 @@ void NetworkDialog::removeUnusedKeys()
 	rsPeers->getGPGAllList(ids) ;
 	RsPeerDetails details ;
 	time_t now = time(NULL) ;
-	time_t THREE_MONTHS = 86400*31*3 ;
+    time_t THREE_MONTHS = 3*31*24*60*60 ;//3*DayPerMonth*HoursPerDay*MinPerHour*SecPerMin
 
 	for(std::list<std::string>::const_iterator it(ids.begin());it!=ids.end();++it)
 	{
@@ -284,7 +303,8 @@ void NetworkDialog::denyFriend()
 
 	securedUpdateDisplay();
 }
-void NetworkDialog::deleteCert()
+
+/*void NetworkDialog::deleteCert()
 {
 #ifdef TODO
 	// do whatever is needed to remove the certificate completely, hopping this
@@ -297,7 +317,7 @@ void NetworkDialog::deleteCert()
 
 	securedUpdateDisplay();
 #endif
-}
+}*/
 
 void NetworkDialog::makeFriend()
 {
@@ -395,8 +415,8 @@ void NetworkDialog::insertConnect()
 		else 
 			index++;
 	}
-	QList<QTreeWidgetItem *> validItems;
-	QList<QTreeWidgetItem *> unvalidItems;
+    //QList<QTreeWidgetItem *> validItems;
+    //QList<QTreeWidgetItem *> unvalidItems;
 
 	for(it = neighs.begin(); it != neighs.end(); it++)
 	{
@@ -415,7 +435,7 @@ void NetworkDialog::insertConnect()
 
 		/* make a widget per friend */
 		QTreeWidgetItem *item;
-		QList<QTreeWidgetItem *> list = connectWidget->findItems(QString::fromStdString(*it), Qt::MatchExactly, 4);
+        QList<QTreeWidgetItem *> list = connectWidget->findItems(QString::fromStdString(*it), Qt::MatchExactly, COLUMN_PEERID);
 		if (list.size() == 1) {
 			item = list.front();
 		} else {
@@ -425,7 +445,7 @@ void NetworkDialog::insertConnect()
 #endif
 				item = new RSTreeWidgetItem(NULL, 0);
 				item -> setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
-				item -> setSizeHint(0, QSize( 18,18 ) );
+                item -> setSizeHint(COLUMN_CHECK, QSize( 18,18 ) );
 
 				/* (1) Person */
 				item -> setText(COLUMN_PEERNAME, QString::fromUtf8(detail.name.c_str()));
@@ -434,20 +454,20 @@ void NetworkDialog::insertConnect()
 				item -> setText(COLUMN_PEERID, QString::fromStdString(detail.id));
 		}
 
-		QString TrustLevelString ;
+        //QString TrustLevelString ;
 
 		/* (2) Key validity */
 		if (detail.ownsign) 
 		{
-			item -> setText(2, tr("Personal signature"));
-			item -> setToolTip(2, tr("PGP key signed by you"));
+            item -> setText(COLUMN_I_AUTH_PEER, tr("Personal signature"));
+            item -> setToolTip(COLUMN_I_AUTH_PEER, tr("PGP key signed by you"));
 		} 
 		else 
 			switch(detail.trustLvl)
 			{
-				case RS_TRUST_LVL_MARGINAL: item->setText(2,tr("Marginally trusted peer")) ; break;
+                case RS_TRUST_LVL_MARGINAL: item->setText(COLUMN_I_AUTH_PEER,tr("Marginally trusted peer")) ; break;
 				case RS_TRUST_LVL_FULL:
-				case RS_TRUST_LVL_ULTIMATE: item->setText(2,tr("Fully trusted peer")) ; break ;
+                case RS_TRUST_LVL_ULTIMATE: item->setText(COLUMN_I_AUTH_PEER,tr("Fully trusted peer")) ; break ;
 				case RS_TRUST_LVL_UNKNOWN:
 				case RS_TRUST_LVL_UNDEFINED: 
 				case RS_TRUST_LVL_NEVER:
@@ -462,7 +482,7 @@ void NetworkDialog::insertConnect()
 		else
 			PeerAuthenticationString = tr("Unknown");
 
-		item->setText(3,PeerAuthenticationString) ;
+        item->setText(COLUMN_PEER_AUTH_ME,PeerAuthenticationString) ;
 
 		uint64_t last_time_used = now - detail.lastUsed ;
 		QString lst_used_str ;
@@ -485,40 +505,38 @@ void NetworkDialog::insertConnect()
 
 		if (detail.accept_connection)
 		{
+            item -> setText(COLUMN_CHECK, "0");
+            item -> setIcon(COLUMN_CHECK,(QIcon(IMAGE_AUTHED)));
 			if (detail.ownsign) 
 			{
-				item -> setText(0, "0");
-				item -> setIcon(0,(QIcon(IMAGE_AUTHED)));
 				backgrndcolor = backgroundColorOwnSign();
 			} 
 			else 
 			{
-				item -> setText(0, "0");
-				item -> setIcon(0,(QIcon(IMAGE_AUTHED)));
 				backgrndcolor = backgroundColorAcceptConnection();
 			}
 		} 
 		else 
 		{
-			item -> setText(0, "1");
+            item -> setText(COLUMN_CHECK, "1");
 
 			if (detail.hasSignedMe)
 			{
 				backgrndcolor = backgroundColorHasSignedMe();
-				item -> setIcon(0,(QIcon(IMAGE_DENIED)));
-				for(int k=0;k<8;++k)
+                item -> setIcon(COLUMN_CHECK,(QIcon(IMAGE_DENIED)));
+                for(int k=0;k<COLUMN_COUNT;++k)
 					item -> setToolTip(k, QString::fromUtf8(detail.name.c_str()) + tr(" has authenticated you. \nRight-click and select 'make friend' to be able to connect."));
 			}
 			else
 			{
 				backgrndcolor = backgroundColorDenied();
-				item -> setIcon(0,(QIcon(IMAGE_DENIED)));
+                item -> setIcon(COLUMN_CHECK,(QIcon(IMAGE_DENIED)));
 			}
 		}
 
 		// Color each Background column in the Network Tab except the first one => 1-9
 		// whith the determinated color
-		for(int i = 0; i <10; i++)
+        for(int i = 0; i <COLUMN_COUNT; i++)
 			item -> setBackground(i,QBrush(backgrndcolor));
 
 		if( (detail.accept_connection || detail.validLvl >= RS_TRUST_LVL_MARGINAL) || !ui.onlyTrustedKeys->isChecked()) 
@@ -530,21 +548,21 @@ void NetworkDialog::insertConnect()
 	rsPeers->getGPGDetails(rsPeers->getGPGOwnId(), ownGPGDetails);
 	/* make a widget per friend */
 	QTreeWidgetItem *self_item;
-	QList<QTreeWidgetItem *> list = connectWidget->findItems(QString::fromStdString(ownGPGDetails.gpg_id), Qt::MatchExactly, 4);
+    QList<QTreeWidgetItem *> list = connectWidget->findItems(QString::fromStdString(ownGPGDetails.gpg_id), Qt::MatchExactly, COLUMN_PEERID);
 	if (list.size() == 1) {
 		self_item = list.front();
 	} else {
 		self_item = new RSTreeWidgetItem(NULL, 0);
 		self_item->setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
 	}
-	self_item -> setText(0, "0");
-	self_item->setIcon(0,(QIcon(IMAGE_AUTHED)));
+    self_item -> setText(COLUMN_CHECK, "0");
+    self_item->setIcon(COLUMN_CHECK,(QIcon(IMAGE_AUTHED)));
 	self_item->setText(COLUMN_PEERNAME, QString::fromUtf8(ownGPGDetails.name.c_str()) + " (" + tr("yourself") + ")");
-	self_item->setText(2,"N/A");
+    self_item->setText(COLUMN_I_AUTH_PEER,"N/A");
 	self_item->setText(COLUMN_PEERID, QString::fromStdString(ownGPGDetails.id));
 
 	// Color each Background column in the Network Tab except the first one => 1-9
-	for(int i=0;i<10;++i)
+    for(int i=0;i<COLUMN_COUNT;++i)
 	{
 		self_item->setBackground(i,backgroundColorSelf()) ;
 	}

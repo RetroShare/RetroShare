@@ -99,7 +99,7 @@
       </attribute>
       <column>
        <property name="text">
-        <string/>
+        <string> </string>
        </property>
       </column>
       <column>
