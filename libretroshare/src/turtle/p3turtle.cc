@@ -968,10 +968,12 @@ void p3turtle::handleSearchResult(RsTurtleSearchResultItem *item)
 // ---------------------------------  File Transfer. -------------------------------- //
 // -----------------------------------------------------------------------------------//
 
-// Routing of turtle tunnel items in a generic manner. Most tunnel packets will use this function, except packets designed for 
-// contructing the tunnels and searching, namely TurtleSearchRequests/Results and OpenTunnel/TunnelOkItems
+// Routing of turtle tunnel items in a generic manner. Most tunnel packets will
+// use this function, except packets designed for contructing the tunnels and
+// searching, namely TurtleSearchRequests/Results and OpenTunnel/TunnelOkItems
 //
-// Only packets coming from handleIncoming() end up here, so this function is able to catch the transiting traffic.
+// Only packets coming from handleIncoming() end up here, so this function is
+// able to catch the transiting traffic.
 //
 void p3turtle::routeGenericTunnelItem(RsTurtleGenericTunnelItem *item)
 {
@@ -1644,27 +1646,29 @@ void p3turtle::handleTunnelResult(RsTurtleTunnelOkItem *item)
 				{
 					found = true ;
 
-					// add the tunnel uniquely
-					bool found = false ;
+					{
+						// add the tunnel uniquely
+						bool found = false ;
 
-					for(unsigned int j=0;j<it->second.tunnels.size();++j)
-						if(it->second.tunnels[j] == item->tunnel_id)
-							found = true ;
+						for(unsigned int j=0;j<it->second.tunnels.size();++j)
+							if(it->second.tunnels[j] == item->tunnel_id)
+								found = true ;
 
-					if(!found)
-						it->second.tunnels.push_back(item->tunnel_id) ;
+						if(!found)
+							it->second.tunnels.push_back(item->tunnel_id) ;
 
-					tunnel.hash = it->first ;		// because it's a local tunnel
+						tunnel.hash = it->first ;		// because it's a local tunnel
 
-					// Adds a virtual peer to the list of online peers.
-					// We do this later, because of the mutex protection.
-					//
-					new_tunnel = true ;
-					new_hash = it->first ;
-					service = it->second.service ;
+						// Adds a virtual peer to the list of online peers.
+						// We do this later, because of the mutex protection.
+						//
+						new_tunnel = true ;
+						new_hash = it->first ;
+						service = it->second.service ;
 
-					locked_addDistantPeer(new_hash,item->tunnel_id) ;
-					new_vpid = _local_tunnels[item->tunnel_id].vpid ; // save it for off-mutex usage.
+						locked_addDistantPeer(new_hash,item->tunnel_id) ;
+						new_vpid = _local_tunnels[item->tunnel_id].vpid ; // save it for off-mutex usage.
+					}
 				}
 			if(!found)
 				std::cerr << "p3turtle: error. Could not find hash that emmitted tunnel request " << reinterpret_cast<void*>(item->tunnel_id) << std::endl ;
