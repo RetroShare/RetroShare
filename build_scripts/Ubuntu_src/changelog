@@ -1,6 +1,26 @@
-retroshare (0.5.4-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
+retroshare (0.5.5-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
+
+  * Notes
+  		This is the final release of the 0.5 brand. 
+
+  		- distant chat (encrypted with AES-PSK using tunnels, autenticated with PGP)
+      - distant messages (encrypted, through tunnels)
+         => See http://retroshareteam.wordpress.com/2013/08/08/distant-chat-and-messaging-using-generic-tunnels/
+      - connection progress/status dialog
+      - keyring cleaning dialog
+      - improved GUI (better layout, higher readability, protection agains xml bombs)
+      - many bug fixes in core
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Tue, 08 Aug 2013 18:00:00 +0100
+
+retroshare (0.5.4-0.6685~precise) precise; urgency=low
 
   * Improvements
+      - Added connection progress dialog, to show connection state, and give some feedback/advice to the user
+      - added storage for denied connections in linkMgr
+  		- new splash screen / about image
+  		- improved GUI layout. Many patches, mainly from Phenom, electron
+  		- GUI improvement for distant messages, showing correct names, handling links, correct toasters, etc
       - improved security feed so that one can send distant messages to peers that attempt to connect
       - improved command line parameter handling (used argstream class)
       - Disabled setting "Start RetroShare when my system starts" on Windows when running the debug version.
@@ -12,12 +32,32 @@ retroshare (0.5.4-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
       - updated values for min/normal partial packet size to 1MB in openpgp-sdk, so that we do not create partial packets 
         for everyday use. We will have to properly extend openpgp-sdk to support parsing of partial packets if we want to 
         PGP-encrypt chunks larger than 1MB
+      - patched RsCollection code to disallow crafted xml bombs
+      - plugged send message from security item to send distant messages 
+      - added info about libssh-0.6.0rc1 in README.txt
+      - added argstream.h (with authorized modified licence) to handle parameter lines
+      - added Use As Direct Source in service permission dialog
+      - fixed OpenBSD compilation (Patch from Stefan Sperling)
+      - Removed rsiface and moved configuration options to RsServerConfig
+      - Fixed cipher list to "HIGH:!DSS:!aNULL:!3DES", which should disable the weak ones, no idea how to force it to 
+        PFS (which it should use)
+      - fixed void * pointer maths.
+
 
   * Bug fixes
+  		- Added missing location from cert when addign new friend
       - Added missing IndicateConfigChanged to p3PeerMgrIMPL::setDynDNS
       - Fixed crash when closing the main window without the setting "Minimize to Tray Icon"
-      - Renamed the setting "Do not Minimize to Tray Icon" to "Minimize to Tray Icon" and fixed wrong usage Please check your setting!
+      - Renamed the setting "Do not Minimize to Tray Icon" to "Minimize to Tray
+        Icon" and fixed wrong usage Please check your setting!
       - removed dropping an entire config file when a single item cannot be serialized.
+      - removed time shift warning in lobbies. Changed into warning in help panel
+      - fixed bug allowing malicious peer to display lobby messages in broadcast window
+      - patch to avoid corrupting file cache on 64bits archs that store time_t as 32bits (from Stefan Sperling)
+      - allow big messages to bounce correctly in lobbies, after fixing a splitting error.
+      - fixed lobby aut-subscribe by looking at lobbies every 121 seconds
+      - fixed looping in pqistore when a crazily long packet is found. That is
+        the result of an unknown bug, but at least we should handle it correctly.
 
  -- Cyril Soler <csoler@users.sourceforge.net>  Tue, 08 Aug 2013 18:00:00 +0100
 
