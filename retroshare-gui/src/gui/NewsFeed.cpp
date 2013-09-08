@@ -85,19 +85,19 @@ NewsFeed::NewsFeed(QWidget *parent)
 	connect(removeAllButton, SIGNAL(clicked()), this, SLOT(removeAll()));
 	connect(feedOptionsButton, SIGNAL(clicked()), this, SLOT(feedoptions()));
 
-	QString hlp_str = tr(
-		" <h1><img width=\"32\" src=\":/images/64px_help.png\">&nbsp;&nbsp;News Feed</h1>                                                          \
-		  <p>The News Feed displays the last events on your network, sorted by the time you received them.                \
-		  This gives you a summary of the activity of your friends.                                                       \
-		  You can configure which events to show by pressing on <b>Options</b>. </p>                                      \
-		  <p>The various events shown are:                                                                                \
-		  <ul>	                                                                                                         \
-		  		<li>Connection attempts (useful to make friends with new people and control who's trying to reach you)</li> \
-		  		<li>Channel and Forum posts</li>                                                                            \
-		  		<li>New Channels and Forums you can subscribe to</li>                                                       \
-		  		<li>Private messages from your friends</li>                                                                 \
-		  </ul> </p>                                                                                                      \
-		") ;
+QString hlp_str = tr(
+ " <h1><img width=\"32\" src=\":/images/64px_help.png\">&nbsp;&nbsp;News Feed</h1>                                                          \
+   <p>The News Feed displays the last events on your network, sorted by the time you received them.                \
+   This gives you a summary of the activity of your friends.                                                       \
+   You can configure which events to show by pressing on <b>Options</b>. </p>                                      \
+   <p>The various events shown are:                                                                                \
+   <ul>                                                                                                         \
+   <li>Connection attempts (useful to make friends with new people and control who's trying to reach you)</li> \
+   <li>Channel and Forum posts</li>                                                                            \
+   <li>New Channels and Forums you can subscribe to</li>                                                       \
+   <li>Private messages from your friends</li>                                                                 \
+   </ul> </p>                                                                                                      \
+ ") ;
 
 	registerHelpButton(helpButton,hlp_str) ;
 }

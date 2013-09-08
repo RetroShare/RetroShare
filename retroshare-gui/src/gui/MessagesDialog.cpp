@@ -283,15 +283,15 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 
 #endif
 
-	 QString help_str = tr(
-			 " <h1><img width=\"32\" src=\":/images/64px_help.png\">&nbsp;&nbsp;Messages</h1>                         \
-			 <p>Messages are like <b>e-mail</b>: you send/receive them from your friends when both of you	are connected.</p> \
-			 <p>It is also possible to send messages to non friends, using tunnels. Such messages are always encrypted. It is \
-			 recommended to cryptographically sign distant messages, as a proof of your identity, using the <img width=\"16\" src=\":/images/stock_signature_ok.png\"/> button \
-			 in the message composer window. Distant messages are not guarrantied to arrive, since this requires the distant peer to accept them (You need yourself to switch this on in Config-Messages).</p>\
-			 <p>Some additional features allow you to exchange data in messages: you may recommend files to your friends by pasting file links, \
-			 or recommend friends-to-be to other friends, in order to streathen your network.</p>	                   \
-			 ") ;
+ QString help_str = tr(
+ " <h1><img width=\"32\" src=\":/images/64px_help.png\">&nbsp;&nbsp;Messages</h1>                         \
+ <p>Messages are like <b>e-mail</b>: you send/receive them from your friends when both of you are connected.</p> \
+ <p>It is also possible to send messages to non friends, using tunnels. Such messages are always encrypted. It is \
+ recommended to cryptographically sign distant messages, as a proof of your identity, using the <img width=\"16\" src=\":/images/stock_signature_ok.png\"/> button \
+ in the message composer window. Distant messages are not guarrantied to arrive, since this requires the distant peer to accept them (You need yourself to switch this on in Config-Messages).</p>\
+ <p>Some additional features allow you to exchange data in messages: you may recommend files to your friends by pasting file links, \
+ or recommend friends-to-be to other friends, in order to streathen your network.</p>                   \
+ ") ;
 
 	 registerHelpButton(ui.helpButton,help_str) ;
 }

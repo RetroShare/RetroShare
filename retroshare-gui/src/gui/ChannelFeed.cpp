@@ -113,20 +113,20 @@ ChannelFeed::ChannelFeed(QWidget *parent)
 
     updateChannelMsgs();
 
-	 QString help_str = tr(
-		" <h1><img width=\"32\" src=\":/images/64px_help.png\">&nbsp;&nbsp;Channels</h1>                                                         \
-		  <p>Channels allow you to post data (e.g. movies, music) that will spread in the network                                                \
-		  among people who subscribed your channel.  If you activate auto-download on a channel, files attached to each post will start  \
-		  downloading automatically when the post is received.</p>                                                                               \
-		  <p>You see channels your friends are subscribed to, and forward subscribed channels to                                                \
-		  your friends. This promotes good channels in the network.                                                     \
-		  When you first connect to a new friend, it's likely \
-		  you will receive many such cache files, and new channels will appear.                                                                  \
-		  </p>                                                                                                                                   \
-		  <p>Only the channel's creator can post on that channel. Other peers                       \
-		  in the network can only read from it, unless the channel is private. You can however share the posting rights or the reading rights \
-		  with your friends.</p>                            \
-		  ") ;
+  QString help_str = tr(
+  " <h1><img width=\"32\" src=\":/images/64px_help.png\">&nbsp;&nbsp;Channels</h1>                                                         \
+    <p>Channels allow you to post data (e.g. movies, music) that will spread in the network                                                \
+    among people who subscribed your channel.  If you activate auto-download on a channel, files attached to each post will start  \
+    downloading automatically when the post is received.</p>                                                                               \
+    <p>You see channels your friends are subscribed to, and forward subscribed channels to                                                \
+    your friends. This promotes good channels in the network.                                                     \
+    When you first connect to a new friend, it's likely \
+    you will receive many such cache files, and new channels will appear.                                                                  \
+    </p>                                                                                                                                   \
+    <p>Only the channel's creator can post on that channel. Other peers                       \
+    in the network can only read from it, unless the channel is private. You can however share the posting rights or the reading rights \
+    with your friends.</p>                            \
+    ") ;
 
 
 	 registerHelpButton(helpButton,help_str) ;
