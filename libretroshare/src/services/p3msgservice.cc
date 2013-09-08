@@ -264,7 +264,9 @@ void p3MsgService::checkSizeAndSendMessage(RsMsgItem *msg)
 		item->message = item->message.substr(0,MAX_STRING_SIZE) ;
 		msg->message = msg->message.substr(MAX_STRING_SIZE,msg->message.size()-MAX_STRING_SIZE) ;
 
+#ifdef DEBUG_DISTANT_MSG
 		std::cerr << "  Chopped off msg of size " << item->message.size() << std::endl;
+#endif
 
 		// Indicate that the message is to be continued.
 		//
@@ -275,7 +277,9 @@ void p3MsgService::checkSizeAndSendMessage(RsMsgItem *msg)
 		else
 			sendItem(item) ;
 	}
+#ifdef DEBUG_DISTANT_MSG
 	std::cerr << "  Chopped off msg of size " << msg->message.size() << std::endl;
+#endif
 
 	if(msg->msgFlags & RS_MSG_FLAGS_DISTANT)
 		sendPrivateMsgItem(msg) ;
@@ -591,7 +595,9 @@ bool    p3MsgService::loadList(std::list<RsItem*>& load)
 	}
 	if(!distant_messaging_set)
 	{
+#ifdef DEBUG_DISTANT_MSG
 		std::cerr << "No config value for distant messaging. Setting it to true." << std::endl;
+#endif
 		enableDistantMessaging(true) ;
 	}
 
