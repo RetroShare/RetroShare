@@ -8847,6 +8847,10 @@ Do you want to save message ?</source>
         <source>Distant peer (name: %2, PGP key: %1)</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Only show people you trusted</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MessagePage</name>
@@ -9813,6 +9817,26 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Send Message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> If I accept connection from peer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name of peer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Did peer sign mine PGP key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Peer&apos;s Certificat ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Since when I use this Certificat</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
