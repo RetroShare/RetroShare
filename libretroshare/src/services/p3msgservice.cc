@@ -271,7 +271,7 @@ void p3MsgService::checkSizeAndSendMessage(RsMsgItem *msg)
 		item->msgFlags |= RS_MSG_FLAGS_PARTIAL ;
 
 		if(msg->msgFlags & RS_MSG_FLAGS_DISTANT)
-			sendPrivateMsgItem(msg) ;
+			sendPrivateMsgItem(item) ;
 		else
 			sendItem(item) ;
 	}
@@ -1764,7 +1764,7 @@ bool p3MsgService::encryptMessage(const std::string& pgp_id,RsMsgItem *item)
 #endif
 	if(!_serialiser->serialise(item,&data[1+KEY_ID_SIZE],&rssize))
 	{
-		std::cerr << "(EE) p3MsgService::sendTurtleData(): Serialization error." << std::endl;
+		std::cerr << "(EE) p3MsgService::encryptMessage(): Serialization error." << std::endl;
 		free(data) ;
 		return false;
 	}
