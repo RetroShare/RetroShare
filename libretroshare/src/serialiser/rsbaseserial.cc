@@ -213,7 +213,7 @@ bool getRawString(void *data, uint32_t size, uint32_t *offset, std::string &outS
 	return true;
 }
 
-bool setRawString(void *data, uint32_t size, uint32_t *offset, std::string &inStr)
+bool setRawString(void *data, uint32_t size, uint32_t *offset, const std::string &inStr)
 {
 	uint32_t len = inStr.length();
 	/* first check there is space */

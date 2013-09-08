@@ -61,7 +61,7 @@ bool getRawUInt64(void *data, uint32_t size, uint32_t *offset, uint64_t *out);
 bool setRawUInt64(void *data, uint32_t size, uint32_t *offset, uint64_t in);
 
 bool getRawString(void *data, uint32_t size, uint32_t *offset, std::string &outStr);
-bool setRawString(void *data, uint32_t size, uint32_t *offset, std::string &inStr);
+bool setRawString(void *data, uint32_t size, uint32_t *offset, const std::string &inStr);
 
 #endif
 
