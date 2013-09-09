@@ -147,6 +147,10 @@ void ServerPage::load()
 	int netIndex = 0;
 	switch(detail.netMode)
 	{
+		case RS_NETMODE_HIDDEN:
+			netIndex = 3;
+			ui.netModeComboBox->setEnabled(false);
+			break;
 		case RS_NETMODE_EXT:
 			netIndex = 2;
 			break;

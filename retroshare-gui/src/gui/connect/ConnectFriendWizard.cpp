@@ -621,23 +621,33 @@ void ConnectFriendWizard::accept()
 		rsPeers->addFriend(peerDetails.id, peerDetails.gpg_id,serviceFlags()) ;
 		runProgressDialog = true;
 
-		//let's check if there is ip adresses in the wizard.
-		if (!peerDetails.extAddr.empty() && peerDetails.extPort) {
-			std::cerr << "ConnectFriendWizard::accept() : setting ip ext address." << std::endl;
-			rsPeers->setExtAddress(peerDetails.id, peerDetails.extAddr, peerDetails.extPort);
-		}
-		if (!peerDetails.localAddr.empty() && peerDetails.localPort) {
-			std::cerr << "ConnectFriendWizard::accept() : setting ip local address." << std::endl;
-			rsPeers->setLocalAddress(peerDetails.id, peerDetails.localAddr, peerDetails.localPort);
-		}
-		if (!peerDetails.dyndns.empty()) {
-			std::cerr << "ConnectFriendWizard::accept() : setting DynDNS." << std::endl;
-			rsPeers->setDynDNS(peerDetails.id, peerDetails.dyndns);
-		}
 		if (!peerDetails.location.empty()) {
 			std::cerr << "ConnectFriendWizard::accept() : setting peerLocation." << std::endl;
 			rsPeers->setLocation(peerDetails.id, peerDetails.location);
 		}
+
+		if (peerDetails.isHiddenNode)
+		{
+			std::cerr << "ConnectFriendWizard::accept() : setting hidden node." << std::endl;
+			rsPeers->setHiddenNode(peerDetails.id, peerDetails.hiddenNodeAddress);
+		}
+		else
+		{
+			//let's check if there is ip adresses in the wizard.
+			if (!peerDetails.extAddr.empty() && peerDetails.extPort) {
+				std::cerr << "ConnectFriendWizard::accept() : setting ip ext address." << std::endl;
+				rsPeers->setExtAddress(peerDetails.id, peerDetails.extAddr, peerDetails.extPort);
+			}
+			if (!peerDetails.localAddr.empty() && peerDetails.localPort) {
+				std::cerr << "ConnectFriendWizard::accept() : setting ip local address." << std::endl;
+				rsPeers->setLocalAddress(peerDetails.id, peerDetails.localAddr, peerDetails.localPort);
+			}
+			if (!peerDetails.dyndns.empty()) {
+				std::cerr << "ConnectFriendWizard::accept() : setting DynDNS." << std::endl;
+				rsPeers->setDynDNS(peerDetails.id, peerDetails.dyndns);
+			}
+		}
+
 	}
 		
 	if (runProgressDialog)

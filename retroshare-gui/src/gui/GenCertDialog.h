@@ -37,6 +37,7 @@ private slots:
 	void importIdentity();
 	void exportIdentity();
 	void newGPGKeyGenUiSetup();
+	void hiddenUiSetup();
 
 private:
 	void init();

@@ -37,6 +37,7 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 	ui.setupUi(this);
 
 	connect(ui.new_gpg_key_checkbox, SIGNAL(clicked()), this, SLOT(newGPGKeyGenUiSetup()));
+	connect(ui.hidden_checkbox, SIGNAL(clicked()), this, SLOT(hiddenUiSetup()));
 
 	connect(ui.genButton, SIGNAL(clicked()), this, SLOT(genPerson()));
 	connect(ui.importIdentity_PB, SIGNAL(clicked()), this, SLOT(importIdentity()));
@@ -115,6 +116,7 @@ void GenCertDialog::init()
 	ui.headerLabel2->setText(text);
 
 	newGPGKeyGenUiSetup();
+	hiddenUiSetup();
 }
 
 void GenCertDialog::newGPGKeyGenUiSetup() {
@@ -150,6 +152,28 @@ void GenCertDialog::newGPGKeyGenUiSetup() {
 		setWindowTitle(tr("Create new Location"));
 		ui.genButton->setText(tr("Generate new Location"));
 		ui.headerLabel->setText(tr("Create a new Location"));
+	}
+}
+
+
+void GenCertDialog::hiddenUiSetup() 
+{
+
+	if (ui.hidden_checkbox->isChecked()) 
+	{
+		ui.hiddenaddr_input->show();
+		ui.hiddenaddr_label->show();
+		ui.label_hiddenaddr2->show();
+		ui.hiddenport_label->show();
+		ui.hiddenport_spinBox->show();
+	} 
+	else 
+	{
+		ui.hiddenaddr_input->hide();
+		ui.hiddenaddr_label->hide();
+		ui.label_hiddenaddr2->hide();
+		ui.hiddenport_label->hide();
+		ui.hiddenport_spinBox->hide();
 	}
 }
 
@@ -202,6 +226,21 @@ void GenCertDialog::genPerson()
 	/* Check the data from the GUI. */
 	std::string genLoc  = ui.location_input->text().toUtf8().constData();
 	std::string PGPId;
+
+	if (ui.hidden_checkbox->isChecked()) 
+	{
+		std::string hl = ui.hiddenaddr_input->text().toStdString();
+		uint16_t port  = ui.hiddenport_spinBox->value();
+		if (!RsInit::SetHiddenLocation(hl, port))	/* parses it */
+		{
+			/* Message Dialog */
+			QMessageBox::warning(this,
+				tr("Invalid Hidden Location"),
+			tr("Please put in a valid address of the form: 31769173498.onion:7800"),
+			QMessageBox::Ok);
+			return;
+		}
+	}
 
 	if (!genNewGPGKey) {
 		if (genLoc.length() < 3) {

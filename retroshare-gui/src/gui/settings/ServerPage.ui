@@ -43,6 +43,11 @@
              <string>Manually Forwarded Port</string>
             </property>
            </item>
+           <item>
+            <property name="text">
+             <string>Hidden Node</string>
+            </property>
+           </item>
           </widget>
          </item>
          <item>
@@ -369,8 +374,6 @@ behind a firewall or a VPN.</string>
       <zorder>showDiscStatusBar</zorder>
       <zorder>allowIpDeterminationCB</zorder>
       <zorder>IPServersLV</zorder>
-      <zorder>textlabel_ext</zorder>
-      <zorder>textlabel_netLimited</zorder>
       <zorder>ipAddressList</zorder>
       <zorder>label_7</zorder>
      </widget>
