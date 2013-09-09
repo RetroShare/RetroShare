@@ -44,6 +44,7 @@
 #include <list>
 #include <map>
 #include <vector>
+#include <stdint.h>
 
 /*!
  * Initialisation Class (not publicly disclosed to RsIFace)
@@ -94,6 +95,12 @@ class RsInit
 
 		// copies existing gnupg keyrings to the new place of the OpenPGP-SDK version. Returns true on success.
 		static bool copyGnuPGKeyrings() ;
+
+
+		/*!
+		 * Setup Hidden Location;
+		 */
+		static bool 	SetHiddenLocation(const std::string& hiddenaddress, uint16_t port);
 
 		/*!
 		 * Login GGP

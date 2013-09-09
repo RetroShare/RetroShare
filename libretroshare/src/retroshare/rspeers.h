@@ -54,7 +54,8 @@ const uint32_t RS_TRUST_LVL_ULTIMATE   = 5;
 const uint32_t RS_NETMODE_UDP		= 0x0001;
 const uint32_t RS_NETMODE_UPNP		= 0x0002;
 const uint32_t RS_NETMODE_EXT		= 0x0003;
-const uint32_t RS_NETMODE_UNREACHABLE	= 0x0004;
+const uint32_t RS_NETMODE_HIDDEN	= 0x0004;
+const uint32_t RS_NETMODE_UNREACHABLE	= 0x0005;
 
 /* Visibility */
 const uint32_t RS_VS_DHT_ON		= 0x0001;
@@ -206,6 +207,10 @@ class RsPeerDetails
 	/* Network details (only valid if friend) */
 	uint32_t		state;
 
+	bool 			isHiddenNode;
+	std::string		hiddenNodeAddress;
+
+	// Filled in for Standard Node.
 	std::string             localAddr;
 	uint16_t                localPort;
 	std::string             extAddr;
@@ -310,6 +315,8 @@ class RsPeers
 		/* Network Stuff */
 		virtual	bool connectAttempt(const std::string &ssl_id)			= 0;
 		virtual bool setLocation(const std::string &ssl_id, const std::string &location) = 0;//location is shown in the gui to differentiate ssl certs
+		virtual bool setHiddenNode(const std::string &id, const std::string &hidden_node_address) = 0;
+
 		virtual	bool setLocalAddress(const std::string &ssl_id, const std::string &addr, uint16_t port) = 0;
 		virtual	bool setExtAddress(  const std::string &ssl_id, const std::string &addr, uint16_t port) = 0;
 		virtual	bool setDynDNS(const std::string &id, const std::string &addr) = 0;

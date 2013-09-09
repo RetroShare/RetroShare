@@ -107,6 +107,10 @@ std::string RsPeerNetModeString(uint32_t netModel)
 	{
 		str = "UDP Mode";
 	}
+	else if (netModel == RS_NETMODE_HIDDEN)
+	{
+		str = "Hidden";
+	}
 	else if (netModel == RS_NETMODE_UNREACHABLE)
 	{
 		str = "UDP Mode (Unreachable)";
@@ -302,31 +306,47 @@ bool	p3Peers::getPeerDetails(const std::string &id, RsPeerDetails &d)
 	d.authcode  	= "AUTHCODE";
 
 	/* fill from pcs */
-
-	d.localAddr	= rs_inet_ntoa(ps.localaddr.sin_addr);
-	d.localPort	= ntohs(ps.localaddr.sin_port);
-	d.extAddr	= rs_inet_ntoa(ps.serveraddr.sin_addr);
-	d.extPort	= ntohs(ps.serveraddr.sin_port);
-	d.dyndns        = ps.dyndns;
 	d.lastConnect	= ps.lastcontact;
 	d.connectPeriod = 0;
 
-	std::list<pqiIpAddress>::iterator it;
-	for(it = ps.ipAddrs.mLocal.mAddrs.begin(); 
-			it != ps.ipAddrs.mLocal.mAddrs.end(); it++)
+	if (ps.hiddenNode)
 	{
-		std::string toto;
-		rs_sprintf(toto, "%u    %ld sec", ntohs(it->mAddr.sin_port), time(NULL) - it->mSeenTime);
-		d.ipAddressList.push_back("L:" + rs_inet_ntoa(it->mAddr.sin_addr) + ":" + toto);
+		d.isHiddenNode = true;
+		rs_sprintf(d.hiddenNodeAddress, "%s:%u", ps.hiddenDomain.c_str(), ps.hiddenPort);
+		d.localAddr = "hidden";
+		d.localPort = 0;
+		d.extAddr = "hidden";
+		d.extPort = 0;
+		d.dyndns = "";
 	}
-	for(it = ps.ipAddrs.mExt.mAddrs.begin(); 
-			it != ps.ipAddrs.mExt.mAddrs.end(); it++)
+	else
 	{
-		std::string toto;
-		rs_sprintf(toto, "%u    %ld sec", ntohs(it->mAddr.sin_port), time(NULL) - it->mSeenTime);
-		d.ipAddressList.push_back("E:" + rs_inet_ntoa(it->mAddr.sin_addr) + ":" + toto);
-	}
+		d.isHiddenNode = false;
+		d.hiddenNodeAddress = "";
 
+		d.localAddr	= rs_inet_ntoa(ps.localaddr.sin_addr);
+		d.localPort	= ntohs(ps.localaddr.sin_port);
+		d.extAddr	= rs_inet_ntoa(ps.serveraddr.sin_addr);
+		d.extPort	= ntohs(ps.serveraddr.sin_port);
+		d.dyndns        = ps.dyndns;
+	
+		std::list<pqiIpAddress>::iterator it;
+		for(it = ps.ipAddrs.mLocal.mAddrs.begin(); 
+				it != ps.ipAddrs.mLocal.mAddrs.end(); it++)
+		{
+			std::string toto;
+			rs_sprintf(toto, "%u    %ld sec", ntohs(it->mAddr.sin_port), time(NULL) - it->mSeenTime);
+			d.ipAddressList.push_back("L:" + rs_inet_ntoa(it->mAddr.sin_addr) + ":" + toto);
+		}
+		for(it = ps.ipAddrs.mExt.mAddrs.begin(); 
+				it != ps.ipAddrs.mExt.mAddrs.end(); it++)
+		{
+			std::string toto;
+			rs_sprintf(toto, "%u    %ld sec", ntohs(it->mAddr.sin_port), time(NULL) - it->mSeenTime);
+			d.ipAddressList.push_back("E:" + rs_inet_ntoa(it->mAddr.sin_addr) + ":" + toto);
+		}
+	}
+	
 
 	switch(ps.netMode & RS_NET_MODE_ACTUAL)
 	{
@@ -338,6 +358,9 @@ bool	p3Peers::getPeerDetails(const std::string &id, RsPeerDetails &d)
 			break;
 		case RS_NET_MODE_UDP:
 			d.netMode	= RS_NETMODE_UDP;
+			break;
+		case RS_NET_MODE_HIDDEN:
+			d.netMode	= RS_NETMODE_HIDDEN;
 			break;
 		case RS_NET_MODE_UNREACHABLE:
 		case RS_NET_MODE_UNKNOWN:
@@ -706,6 +729,53 @@ bool p3Peers::getAllowServerIPDetermination()
 	return mNetMgr->getIPServersEnabled() ;
 }
 
+bool 	p3Peers::setLocation(const std::string &ssl_id, const std::string &location)
+{
+#ifdef P3PEERS_DEBUG
+        std::cerr << "p3Peers::setLocation() " << ssl_id << std::endl;
+#endif
+
+        return mPeerMgr->setLocation(ssl_id, location);
+}
+
+bool 	p3Peers::setHiddenNode(const std::string &id, const std::string &hidden_node_address)
+{
+#ifdef P3PEERS_DEBUG
+        std::cerr << "p3Peers::setHiddenNode() " << id << std::endl;
+#endif
+
+	size_t cpos = hidden_node_address.rfind(':');
+	if (cpos == std::string::npos)
+	{
+        	std::cerr << "p3Peers::setHiddenNode() Failed to parse (:) " << hidden_node_address << std::endl;
+		return false;
+	}
+
+	int lenport = hidden_node_address.length() - (cpos + 1); // +1 to skip over : char.
+	if (lenport <= 0)
+	{
+        	std::cerr << "p3Peers::setHiddenNode() Missing Port: " << hidden_node_address << std::endl;
+		return false;
+	}
+
+	std::string domain = hidden_node_address.substr(0, cpos);
+	std::string port = hidden_node_address.substr(cpos + 1, std::string::npos);
+	int portint = atoi(port.c_str());
+
+	if ((portint < 0) || (portint > 65535))
+	{
+        	std::cerr << "p3Peers::setHiddenNode() Invalid Port: " << hidden_node_address << std::endl;
+		return false;
+	}
+
+        std::cerr << "p3Peers::setHiddenNode() Domain: " << domain << " Port: " << portint;
+	std::cerr << std::endl;
+
+	mPeerMgr->setNetworkMode(id, RS_NET_MODE_HIDDEN);
+	mPeerMgr->setHiddenDomainPort(id, domain, (uint16_t) portint);
+	return true;
+}
+
 bool 	p3Peers::setLocalAddress(const std::string &id, const std::string &addr_str, uint16_t port)
 {
 #ifdef P3PEERS_DEBUG
@@ -731,14 +801,6 @@ bool 	p3Peers::setLocalAddress(const std::string &id, const std::string &addr_st
 	return false;
 }
 
-bool 	p3Peers::setLocation(const std::string &ssl_id, const std::string &location)
-{
-#ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::setLocation() " << ssl_id << std::endl;
-#endif
-
-        return mPeerMgr->setLocation(ssl_id, location);
-}
 bool 	p3Peers::setExtAddress(const std::string &id, const std::string &addr_str, uint16_t port)
 {
 #ifdef P3PEERS_DEBUG
@@ -790,6 +852,9 @@ bool 	p3Peers::setNetworkMode(const std::string &id, uint32_t extNetMode)
 			break;
 		case RS_NETMODE_UDP:
 			netMode = RS_NET_MODE_UDP;
+			break;
+		case RS_NETMODE_HIDDEN:
+			netMode = RS_NET_MODE_HIDDEN;
 			break;
 		case RS_NETMODE_UNREACHABLE:
 			netMode = RS_NET_MODE_UNREACHABLE;
@@ -923,13 +988,22 @@ bool 	p3Peers::loadDetailsFromStringCert(const std::string &certstr, RsPeerDetai
 
 		pd.id = cert.sslid_string() ;
 		pd.location = cert.location_name_string();
-		pd.localAddr = cert.loc_ip_string();
-		pd.localPort = cert.loc_port_us();
-		pd.extAddr = cert.ext_ip_string();
-		pd.extPort = cert.ext_port_us();
-		pd.dyndns = cert.dns_string() ;
+
 		pd.isOnlyGPGdetail = pd.id.empty();
 		pd.service_perm_flags = RS_SERVICE_PERM_ALL ;
+
+		if (pd.isHiddenNode)
+		{
+			pd.hiddenNodeAddress = cert.hidden_node_string();
+		}
+		else
+		{
+			pd.localAddr = cert.loc_ip_string();
+			pd.localPort = cert.loc_port_us();
+			pd.extAddr = cert.ext_ip_string();
+			pd.extPort = cert.ext_port_us();
+			pd.dyndns = cert.dns_string() ;
+		}
 	} 
 	catch(uint32_t e) 
 	{

@@ -60,7 +60,7 @@ const uint32_t RS_NET_MODE_TRYMODE    =   0xff00;
 const uint32_t RS_NET_MODE_TRY_EXT    =   0x0100;
 const uint32_t RS_NET_MODE_TRY_UPNP   =   0x0200;
 const uint32_t RS_NET_MODE_TRY_UDP    =   0x0400;
-const uint32_t RS_NET_MODE_TRY_HIDDEN =   0x0800;
+const uint32_t RS_NET_MODE_TRY_LOOPBACK = 0x0800;
 
 	/* Actual State */
 const uint32_t RS_NET_MODE_ACTUAL =      0x00ff;
@@ -314,6 +314,8 @@ virtual bool 	haveOnceConnected();
 				  				const std::string& ssl_own_location) ;
 
 void	setManagers(p3LinkMgrIMPL *linkMgr, p3NetMgrIMPL *netMgr);
+
+bool 	setupHiddenNode(const std::string &hiddenAddress, const uint16_t hiddenPort);
 
 void 	tick();
 

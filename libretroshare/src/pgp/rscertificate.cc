@@ -18,6 +18,7 @@ static const std::string EXTERNAL_IP_BEGIN_SECTION ( "--EXT--" );
 static const std::string LOCAL_IP_BEGIN_SECTION    ( "--LOCAL--" );
 static const std::string SSLID_BEGIN_SECTION       ( "--SSLID--" );
 static const std::string LOCATION_BEGIN_SECTION    ( "--LOCATION--" );
+static const std::string HIDDEN_NODE_BEGIN_SECTION    ( "--HIDDEN--" );
 
 static const uint8_t CERTIFICATE_PTAG_PGP_SECTION           = 0x01 ;  
 static const uint8_t CERTIFICATE_PTAG_EXTIPANDPORT_SECTION  = 0x02 ;  
@@ -26,6 +27,7 @@ static const uint8_t CERTIFICATE_PTAG_DNS_SECTION           = 0x04 ;
 static const uint8_t CERTIFICATE_PTAG_SSLID_SECTION         = 0x05 ;  
 static const uint8_t CERTIFICATE_PTAG_NAME_SECTION          = 0x06 ;  
 static const uint8_t CERTIFICATE_PTAG_CHECKSUM_SECTION      = 0x07 ;  
+static const uint8_t CERTIFICATE_PTAG_HIDDENNODE_SECTION    = 0x08 ;  
 
 static bool is_acceptable_radix64Char(char c)
 {
@@ -77,9 +79,17 @@ std::string RsCertificate::toStdString() const
 
 	if(!only_pgp)
 	{
-		addPacket( CERTIFICATE_PTAG_EXTIPANDPORT_SECTION, ipv4_external_ip_and_port              ,                     6   , buf, p, BS ) ;
-		addPacket( CERTIFICATE_PTAG_LOCIPANDPORT_SECTION, ipv4_internal_ip_and_port              ,                     6   , buf, p, BS ) ;
-		addPacket( CERTIFICATE_PTAG_DNS_SECTION         , (unsigned char *)dns_name.c_str()      ,     dns_name.length()   , buf, p, BS ) ;
+		if (hidden_node)
+		{
+			addPacket( CERTIFICATE_PTAG_HIDDENNODE_SECTION, (unsigned char *)hidden_node_address.c_str(), hidden_node_address.length() , buf, p, BS ) ;
+		}
+		else
+		{
+			addPacket( CERTIFICATE_PTAG_EXTIPANDPORT_SECTION, ipv4_external_ip_and_port              ,                     6   , buf, p, BS ) ;
+			addPacket( CERTIFICATE_PTAG_LOCIPANDPORT_SECTION, ipv4_internal_ip_and_port              ,                     6   , buf, p, BS ) ;
+			addPacket( CERTIFICATE_PTAG_DNS_SECTION         , (unsigned char *)dns_name.c_str()      ,     dns_name.length()   , buf, p, BS ) ;
+		}
+
 		addPacket( CERTIFICATE_PTAG_NAME_SECTION        , (unsigned char *)location_name.c_str() ,location_name.length()   , buf, p, BS ) ;
 		addPacket( CERTIFICATE_PTAG_SSLID_SECTION       , location_id.toByteArray()              ,location_id.SIZE_IN_BYTES, buf, p, BS ) ;
 	}
@@ -143,14 +153,31 @@ RsCertificate::RsCertificate(const RsPeerDetails& Detail, const unsigned char *b
 		location_id = SSLIdType( Detail.id ) ;
 		location_name = Detail.location ;
 
-		scan_ip(Detail.localAddr,Detail.localPort,ipv4_internal_ip_and_port) ;
-		scan_ip(Detail.extAddr,Detail.extPort,ipv4_external_ip_and_port) ;
+		if (Detail.isHiddenNode)
+		{
+			hidden_node = true;
+			hidden_node_address = Detail.hiddenNodeAddress;
 
-		dns_name = Detail.dyndns ;
+			memset(ipv4_internal_ip_and_port,0,6) ;
+			memset(ipv4_external_ip_and_port,0,6) ;
+			dns_name = "" ;
+		}
+		else
+		{
+			hidden_node = false;
+			hidden_node_address = "";
+
+			scan_ip(Detail.localAddr,Detail.localPort,ipv4_internal_ip_and_port) ;
+			scan_ip(Detail.extAddr,Detail.extPort,ipv4_external_ip_and_port) ;
+
+			dns_name = Detail.dyndns ;
+		}
 	}
 	else
 	{
 		only_pgp = true ;
+		hidden_node = false;
+		hidden_node_address = "";
 		location_id = SSLIdType() ;
 		location_name = "" ;
 		memset(ipv4_internal_ip_and_port,0,6) ;
@@ -253,6 +280,13 @@ bool RsCertificate::initFromString(const std::string& instr,uint32_t& err_code)
 															buf = &buf[s] ;
 														  break ;
 
+			case CERTIFICATE_PTAG_HIDDENNODE_SECTION: 
+				hidden_node_address = std::string((char *)buf,s);
+				hidden_node = true;
+				buf = &buf[s];
+				
+				break ;
+
 			case CERTIFICATE_PTAG_LOCIPANDPORT_SECTION: 
 														  if(s != 6)
 														  {
@@ -312,6 +346,17 @@ bool RsCertificate::initFromString(const std::string& instr,uint32_t& err_code)
 
 	delete[] bf ;
 	return true ;
+}
+
+std::string RsCertificate::hidden_node_string() const 
+{
+	if ((!only_pgp) && (hidden_node))
+	{
+		return hidden_node_address;
+	}
+
+	std::string empty;
+	return empty;
 }
 
 std::string RsCertificate::sslid_string() const 
@@ -793,21 +838,34 @@ std::string RsCertificate::toStdString_oldFormat() const
 	res += location_name ;
 	res += ";\n" ;
 
-	std::ostringstream os ;
-	os << LOCAL_IP_BEGIN_SECTION ;
-	os << (int)ipv4_internal_ip_and_port[0] << "." << (int)ipv4_internal_ip_and_port[1] << "." << (int)ipv4_internal_ip_and_port[2] << "." << (int)ipv4_internal_ip_and_port[3] ;
-	os << ":" ;
-	os << ipv4_internal_ip_and_port[4]*256+ipv4_internal_ip_and_port[5] ;
-	os << ";" ;
+	if (hidden_node)
+	{
+		std::ostringstream os ;
+		os << HIDDEN_NODE_BEGIN_SECTION;
+		os << hidden_node_address << ";";
 
-	os << EXTERNAL_IP_BEGIN_SECTION ;
-	os << (int)ipv4_external_ip_and_port[0] << "." << (int)ipv4_external_ip_and_port[1] << "." << (int)ipv4_external_ip_and_port[2] << "." << (int)ipv4_external_ip_and_port[3] ;
-	os << ":" ;
-	os << ipv4_external_ip_and_port[4]*256+ipv4_external_ip_and_port[5] ;
-	os << ";" ;
+		res += os.str() ;
+		res += "\n" ;
+	}
+	else
+	{
+		std::ostringstream os ;
+		os << LOCAL_IP_BEGIN_SECTION ;
+		os << (int)ipv4_internal_ip_and_port[0] << "." << (int)ipv4_internal_ip_and_port[1] << "." << (int)ipv4_internal_ip_and_port[2] << "." << (int)ipv4_internal_ip_and_port[3] ;
+		os << ":" ;
+		os << ipv4_internal_ip_and_port[4]*256+ipv4_internal_ip_and_port[5] ;
+		os << ";" ;
+	
+		os << EXTERNAL_IP_BEGIN_SECTION ;
+		os << (int)ipv4_external_ip_and_port[0] << "." << (int)ipv4_external_ip_and_port[1] << "." << (int)ipv4_external_ip_and_port[2] << "." << (int)ipv4_external_ip_and_port[3] ;
+		os << ":" ;
+		os << ipv4_external_ip_and_port[4]*256+ipv4_external_ip_and_port[5] ;
+		os << ";" ;
+	
+		res += os.str() ;
+		res += "\n" ;
+	}
 
-	res += os.str() ;
-	res += "\n" ;
 
 	return res ;
 }

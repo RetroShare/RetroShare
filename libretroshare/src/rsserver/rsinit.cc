@@ -125,6 +125,11 @@ class RsInitConfig
                 static unsigned short port;
                 static std::string inet ;
 
+		/* v0.6 features */
+		static bool forceApiUpgrade;
+		static std::string hiddenNodeAddress;
+		static uint16_t    hiddenNodePort;
+
                 /* Logging */
                 static bool haveLogFile;
                 static bool outStderr;
@@ -184,6 +189,11 @@ bool RsInitConfig::forceExtPort;
 bool RsInitConfig::forceLocalAddr;
 unsigned short RsInitConfig::port;
 std::string RsInitConfig::inet;
+
+/* v0.6 features */
+bool RsInitConfig::forceApiUpgrade = false;
+std::string RsInitConfig::hiddenNodeAddress;
+uint16_t RsInitConfig::hiddenNodePort;
 
 /* Logging */
 bool RsInitConfig::haveLogFile;
@@ -1437,6 +1447,8 @@ bool RsInit::setupAccount(const std::string& accountdir)
 
 
 /***************************** FINAL LOADING OF SETUP *************************/
+
+
                 /* Login SSL */
 bool     RsInit::LoadPassword(const std::string& id, const std::string& inPwd)
 {
@@ -1708,6 +1720,16 @@ void RsInit::setAutoLogin(bool autoLogin){
 	RsInitConfig::autoLogin = autoLogin;
 }
 
+/* Setup Hidden Location; */
+bool RsInit::SetHiddenLocation(const std::string& hiddenaddress, uint16_t port)
+{
+	/* parse the bugger (todo) */
+	RsInitConfig::hiddenNodeAddress = hiddenaddress;
+	RsInitConfig::hiddenNodePort = port;
+	return true;
+}
+
+
 /*
  *
  * Init Part of RsServer...  needs the private
@@ -1892,18 +1914,70 @@ int RsServer::StartupRetroShare()
 	emergencyPartialsDir += "Partials";
 
 	/**************************************************************************/
+	/* setup Configuration */
+	/**************************************************************************/
+	std::cerr << "Load Configuration" << std::endl;
+
+	mConfigMgr = new p3ConfigMgr(RsInitConfig::configDir);
+	mGeneralConfig = new p3GeneralConfig();
+
+	// Add General.cfg, and load - this allows key early options.
+	mConfigMgr->addConfiguration("general.cfg", mGeneralConfig);
+	std::string dummy2("dummy");
+	mGeneralConfig->loadConfiguration(dummy2);
+
+	// NOTE: if we lose GeneralConfiguration - then RS will fail to start.
+	// as API_VERSION won't exist. Furthermore HIDDEN node status will be lost.
+	// We can potentially detect HIDDEN node cofig from "peers.cfg", 
+	// If this is lost too - in real trouble.
+
+#define RS_API_VERSION_OPT 	"RS_API"
+#define RS_API_VERSION_STRING "0.6.0"
+
+#define RS_HIDDEN_NODE_OPT 	"HIDDEN_NODE"
+#define RS_HIDDEN_NODE_YES 	"YES"
+
+	bool forceApiUpgrade = false;
+	if ((RsInitConfig::firsttime_run) || (forceApiUpgrade))
+	{
+		mGeneralConfig->setSetting(RS_API_VERSION_OPT, RS_API_VERSION_STRING);
+	}
+
+	bool setupHiddenNode = false;
+	if (!RsInitConfig::hiddenNodeAddress.empty())
+	{
+		setupHiddenNode = true;
+		mGeneralConfig->setSetting(RS_HIDDEN_NODE_OPT, RS_HIDDEN_NODE_YES);
+	}
+
+	// BASIC COMPARISION FOR NOW... can be extended later if needed.
+	std::string version = mGeneralConfig->getSetting(RS_API_VERSION_OPT);
+	if (version != RS_API_VERSION_STRING)
+	{
+		std::cerr << "Aborting: Old Retroshare Configuration";
+		std::cerr << std::endl;
+		abort();
+	}
+	bool isHiddenNode = false;
+	if (RS_HIDDEN_NODE_YES == mGeneralConfig->getSetting(RS_HIDDEN_NODE_OPT))
+	{
+		isHiddenNode = true;
+		std::cerr << "Retroshare: Hidden Node";
+		std::cerr << std::endl;
+	}
+
+	/**************************************************************************/
 	/* setup classes / structures */
 	/**************************************************************************/
 	std::cerr << "setup classes / structures" << std::endl;
 
 
-
 	/* History Manager */
 	mHistoryMgr = new p3HistoryMgr();
 	mPeerMgr = new p3PeerMgrIMPL( AuthSSL::getAuthSSL()->OwnId(),
-											AuthGPG::getAuthGPG()->getGPGOwnId(),
-											AuthGPG::getAuthGPG()->getGPGOwnName(),
-											AuthSSL::getAuthSSL()->getOwnLocation());
+				AuthGPG::getAuthGPG()->getGPGOwnId(),
+				AuthGPG::getAuthGPG()->getGPGOwnName(),
+				AuthSSL::getAuthSSL()->getOwnLocation());
 	mNetMgr = new p3NetMgrIMPL();
 	mLinkMgr = new p3LinkMgrIMPL(mPeerMgr, mNetMgr);
 
@@ -1913,7 +1987,8 @@ int RsServer::StartupRetroShare()
 
 	mPeerMgr->setManagers(mLinkMgr, mNetMgr);
 	mNetMgr->setManagers(mPeerMgr, mLinkMgr);
-
+		
+		
 	//load all the SSL certs as friends
 	//        std::list<std::string> sslIds;
 	//        AuthSSL::getAuthSSL()->getAuthenticatedList(sslIds);
@@ -2117,9 +2192,6 @@ int RsServer::StartupRetroShare()
 	rsFiles = ftserver;
 
 
-	mConfigMgr = new p3ConfigMgr(RsInitConfig::configDir, "rs-v0.5.cfg", "rs-v0.5.sgn");
-	mGeneralConfig = new p3GeneralConfig();
-
 	/* create Cache Services */
 	std::string config_dir = RsInitConfig::configDir;
 	std::string localcachedir = config_dir + "/cache/local";
@@ -2139,7 +2211,6 @@ int RsServer::StartupRetroShare()
 	mPluginsManager = new RsPluginManager(RsInitConfig::main_executable_hash) ;
 	rsPlugins  = mPluginsManager ;
 	mConfigMgr->addConfiguration("plugins.cfg", mPluginsManager);
-
 	mPluginsManager->loadConfiguration() ;
 
 	// These are needed to load plugins: plugin devs might want to know the place of
@@ -2456,7 +2527,6 @@ int RsServer::StartupRetroShare()
 	mConfigMgr->loadConfiguration();
 
 	mConfigMgr->addConfiguration("peers.cfg", mPeerMgr);
-	mConfigMgr->addConfiguration("general.cfg", mGeneralConfig);
 	mConfigMgr->addConfiguration("cache.cfg", mCacheStrapper);
 	mConfigMgr->addConfiguration("msgs.cfg", msgSrv);
 	mConfigMgr->addConfiguration("chat.cfg", chatSrv);
@@ -2518,6 +2588,12 @@ int RsServer::StartupRetroShare()
 		mPeerMgr->setOwnVisState(RS_VIS_STATE_STD);
 
 	}
+
+	if (setupHiddenNode)
+	{
+		mPeerMgr->setupHiddenNode(RsInitConfig::hiddenNodeAddress, RsInitConfig::hiddenNodePort);
+	}
+
 
 #if 0
 	/* must load the trusted_peer before setting up the pqipersongrp */
@@ -2641,6 +2717,7 @@ int RsServer::StartupRetroShare()
 	{
 		msgSrv->loadWelcomeMsg();
 		ftserver->shareDownloadDirectory(true);
+		mGeneralConfig->saveConfiguration();
 	}
 
 	// load up the help page

@@ -124,7 +124,7 @@ p3PeerMgrIMPL::p3PeerMgrIMPL(	const std::string& ssl_own_id,
 		// setup default ProxyServerAddress.
 		sockaddr_clear(&mProxyServerAddress);
 		inet_aton("127.0.0.1", &(mProxyServerAddress.sin_addr));
-		mProxyServerAddress.sin_port = htons(7050);
+		mProxyServerAddress.sin_port = htons(9100);
 
 	}
 	
@@ -142,18 +142,45 @@ void    p3PeerMgrIMPL::setManagers(p3LinkMgrIMPL *linkMgr, p3NetMgrIMPL *netMgr)
 	mNetMgr = netMgr;
 }
 
+bool p3PeerMgrIMPL::setupHiddenNode(const std::string &hiddenAddress, const uint16_t hiddenPort)
+{
+	std::cerr << "p3PeerMgrIMPL::setupHiddenNode()";
+	std::cerr << " Address: " << hiddenAddress;
+	std::cerr << " Port: " << hiddenPort;
+	std::cerr << std::endl;
+
+	setOwnNetworkMode(RS_NET_MODE_HIDDEN);
+	mOwnState.hiddenNode = true;
+	mOwnState.hiddenPort = hiddenPort;
+	mOwnState.hiddenDomain = hiddenAddress;
+
+	// switch off DHT too.
+	setOwnVisState(RS_VIS_STATE_GRAY);
+
+	// Force the Port.
+	struct sockaddr_in loopback;
+	sockaddr_clear(&loopback);
+	inet_aton("127.0.0.1", &(loopback.sin_addr));
+	loopback.sin_port = htons(hiddenPort);
+
+	setLocalAddress(AuthSSL::getAuthSSL()->OwnId(), loopback);
+ 
+	return true;
+}
+
+
 bool p3PeerMgrIMPL::setOwnNetworkMode(uint32_t netMode)
 {
 	bool changed = false;
 	{
 		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
-#ifdef PEER_DEBUG
+//#ifdef PEER_DEBUG
 		std::cerr << "p3PeerMgrIMPL::setOwnNetworkMode() :";
 		std::cerr << " Existing netMode: " << mOwnState.netMode;
 		std::cerr << " Input netMode: " << netMode;
 		std::cerr << std::endl;
-#endif
+//#endif
 
 		if (mOwnState.netMode != (netMode & RS_NET_MODE_ACTUAL))
 		{
@@ -290,28 +317,50 @@ bool    p3PeerMgrIMPL::isHiddenPeer(const std::string &ssl_id)
 	it = mFriendList.find(ssl_id);
 	if (it == mFriendList.end())
 	{
-		return (it->second).hiddenNode;
+		std::cerr << "p3PeerMgrIMPL::isHiddenPeer(" << ssl_id << ") Missing Peer => false";
+		std::cerr << std::endl;
+
+		return false;
 	}
 
-	/* is it hidden ?? */
-	return false;
+	std::cerr << "p3PeerMgrIMPL::isHiddenPeer(" << ssl_id << ") = " << (it->second).hiddenNode;
+	std::cerr << std::endl;
+	return (it->second).hiddenNode;
 }
 
 bool p3PeerMgrIMPL::setHiddenDomainPort(const std::string &ssl_id, const std::string &domain_addr, const uint16_t domain_port)
 {
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
+	std::cerr << "p3PeerMgrIMPL::setHiddenDomainPort()";
+	std::cerr << std::endl;
+
+	if (ssl_id == AuthSSL::getAuthSSL()->OwnId()) 
+	{
+		mOwnState.hiddenNode = true;
+		mOwnState.hiddenDomain = domain_addr;
+		mOwnState.hiddenPort = domain_port;
+		std::cerr << "p3PeerMgrIMPL::setHiddenDomainPort() Set own State";
+		std::cerr << std::endl;
+		return true;
+	}
+
 	/* check for existing */
 	std::map<std::string, peerState>::iterator it;
 	it = mFriendList.find(ssl_id);
 	if (it == mFriendList.end())
 	{
+		std::cerr << "p3PeerMgrIMPL::setHiddenDomainPort() Peer Not Found";
+		std::cerr << std::endl;
 		return false;
 	}
 
 	it->second.hiddenDomain = domain_addr;
 	it->second.hiddenPort = domain_port;
 	it->second.hiddenNode = true;
+	std::cerr << "p3PeerMgrIMPL::setHiddenDomainPort() Set Peers State";
+	std::cerr << std::endl;
+
 	return true;
 }
 
@@ -1414,6 +1463,8 @@ bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
         item->dyndns = mOwnState.dyndns;
         mOwnState.ipAddrs.mLocal.loadTlv(item->localAddrList);
         mOwnState.ipAddrs.mExt.loadTlv(item->extAddrList);
+	item->domain_addr = mOwnState.hiddenDomain;
+	item->domain_port = mOwnState.hiddenPort;
 
 #ifdef PEER_DEBUG
 	std::cerr << "p3PeerMgrIMPL::saveList() Own Config Item:" << std::endl;

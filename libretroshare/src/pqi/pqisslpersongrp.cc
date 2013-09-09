@@ -67,6 +67,9 @@ bool pqisslpersongrp::locked_getCryptoParams(const std::string& id,RsPeerCryptoP
 
 pqiperson * pqisslpersongrp::locked_createPerson(std::string id, pqilistener *listener)
 {
+	std::cerr << "pqisslpersongrp::locked_createPerson() PeerId: " << id;
+	std::cerr << std::endl;
+
 	pqioutput(PQL_DEBUG_BASIC, pqipersongrpzone, "pqipersongrp::createPerson() PeerId: " + id);
 
 	pqiperson *pqip = new pqiperson(id, this);
@@ -74,6 +77,9 @@ pqiperson * pqisslpersongrp::locked_createPerson(std::string id, pqilistener *li
 	// If using proxy, then only create a proxy item, otherwise can use any.
 	if (mPeerMgr->isHiddenPeer(id))
 	{
+		std::cerr << "pqisslpersongrp::locked_createPerson() Is Hidden Peer!";
+		std::cerr << std::endl;
+
 		pqisslproxy *pqis   = new pqisslproxy((pqissllistener *) listener, pqip, mLinkMgr);
 	
 		/* construct the serialiser ....
@@ -96,6 +102,9 @@ pqiperson * pqisslpersongrp::locked_createPerson(std::string id, pqilistener *li
 	}
 	else
 	{	
+		std::cerr << "pqisslpersongrp::locked_createPerson() Is Normal Peer!";
+		std::cerr << std::endl;
+
 		pqissl *pqis   = new pqissl((pqissllistener *) listener, pqip, mLinkMgr);
 	
 		/* construct the serialiser ....

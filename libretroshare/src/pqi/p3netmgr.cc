@@ -380,6 +380,13 @@ void p3NetMgrIMPL::netStartup()
 			mNetStatus = RS_NET_EXT_SETUP;
 			break;
 
+		case RS_NET_MODE_TRY_LOOPBACK:
+			std::cerr << "p3NetMgrIMPL::netStartup() TRY_LOOPBACK mode";
+			std::cerr << std::endl;
+			mNetMode |= RS_NET_MODE_HIDDEN;
+			mNetStatus = RS_NET_LOOPBACK;
+			break;
+
 		default: // Fall through.
 
 #ifdef NETMGR_DEBUG_RESET
@@ -535,6 +542,7 @@ void p3NetMgrIMPL::netTick()
 		case RS_NET_LOOPBACK:
                         //don't do a shutdown because a client in a computer without local network might be usefull for debug.
                         //shutdown();
+                        std::cerr << "p3NetMgrIMPL::netTick() STATUS: RS_NET_LOOPBACK" << std::endl;
 #if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
                         std::cerr << "p3NetMgrIMPL::netTick() STATUS: RS_NET_LOOPBACK" << std::endl;
 #endif
@@ -905,7 +913,18 @@ bool 	p3NetMgrIMPL::checkNetAddress()
 	struct in_addr prefAddr;
 	struct sockaddr_in oldAddr;
 
-	validAddr = getPreferredInterface(mLocalAddr.sin_addr, prefAddr);
+	if (mNetMode & RS_NET_MODE_TRY_LOOPBACK)
+	{
+		std::cerr << "p3NetMgrIMPL::checkNetAddress() LOOPBACK ... forcing to 127.0.0.1";
+		std::cerr << std::endl;
+	        inet_aton("127.0.0.1", &prefAddr);
+		validAddr = true;
+	}
+	else
+	{
+		validAddr = getPreferredInterface(mLocalAddr.sin_addr, prefAddr);
+	}
+
 
 	/* if we don't have a valid address - reset */
 	if (!validAddr)
@@ -1108,12 +1127,12 @@ bool    p3NetMgrIMPL::setNetworkMode(uint32_t netMode)
 
 		oldNetMode = mNetMode;
 
-#ifdef NETMGR_DEBUG
+//#ifdef NETMGR_DEBUG
 		std::cerr << "p3NetMgrIMPL::setNetworkMode()";
 		std::cerr << " Existing netMode: " << mNetMode;
 		std::cerr << " Input netMode: " << netMode;
 		std::cerr << std::endl;
-#endif
+//#endif
 		mNetMode &= ~(RS_NET_MODE_TRYMODE);
 
 		switch(netMode & RS_NET_MODE_ACTUAL)
@@ -1125,7 +1144,7 @@ bool    p3NetMgrIMPL::setNetworkMode(uint32_t netMode)
 				mNetMode |= RS_NET_MODE_TRY_UPNP;
 				break;
 			case RS_NET_MODE_HIDDEN:
-				mNetMode |= RS_NET_MODE_TRY_UDP; // FOR THE MOMENT HIDDEN acts like = UDP.
+				mNetMode |= RS_NET_MODE_TRY_LOOPBACK; 
 				break;
 			default:
 			case RS_NET_MODE_UDP:
