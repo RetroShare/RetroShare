@@ -1,3 +1,176 @@
+Changes 0.5.5a  
+  
+  * Notes
+  		This is the final release of the 0.5 brand. 
+
+  		- distant chat (encrypted with AES-PSK using tunnels, autenticated with PGP)
+      - distant messages (encrypted, through tunnels)
+         => See http://retroshareteam.wordpress.com/2013/08/08/distant-chat-and-messaging-using-generic-tunnels/
+      - connection progress/status dialog
+      - keyring cleaning dialog
+      - improved GUI (better layout, higher readability, protection agains xml bombs)
+      - many bug fixes in core
+
+  * Improvements
+      - Added connection progress dialog, to show connection state, and give some feedback/advice to the user
+      - added storage for denied connections in linkMgr
+  		- new splash screen / about image
+  		- improved GUI layout. Many patches, mainly from Phenom, electron
+  		- GUI improvement for distant messages, showing correct names, handling links, correct toasters, etc
+      - improved security feed so that one can send distant messages to peers that attempt to connect
+      - improved command line parameter handling (used argstream class)
+      - Disabled setting "Start RetroShare when my system starts" on Windows when running the debug version.
+      - modified patch from AC to remove messages with security issues (e.g. Billion Laughs bomb). The message is 
+        replaced by a warning, and is not forwarded
+      - Updated english translation
+      - Enabled distant messages. These need to be switched on the config->Messages. GUI improvements needs to be done, 
+        such as properly setting peers names everywhere, but the service works. Have fun using it!
+      - updated values for min/normal partial packet size to 1MB in openpgp-sdk, so that we do not create partial packets 
+        for everyday use. We will have to properly extend openpgp-sdk to support parsing of partial packets if we want to 
+        PGP-encrypt chunks larger than 1MB
+      - patched RsCollection code to disallow crafted xml bombs
+      - plugged send message from security item to send distant messages 
+      - added info about libssh-0.6.0rc1 in README.txt
+      - added argstream.h (with authorized modified licence) to handle parameter lines
+      - added Use As Direct Source in service permission dialog
+      - fixed OpenBSD compilation (Patch from Stefan Sperling)
+      - Removed rsiface and moved configuration options to RsServerConfig
+      - Fixed cipher list to "HIGH:!DSS:!aNULL:!3DES", which should disable the weak ones, no idea how to force it to 
+        PFS (which it should use)
+      - fixed void * pointer maths.
+      - doubled data chunk for signature in chat links. Apparently some keys need more than 287 bytes
+      - added security checks against disk full in PGP keyring manager
+      - TokenQueue: fixed stop of TokenQueue polling when events are locked
+      - RsProtectedTimer: switched to faster poll when events are locked
+      - distant chat: added ACK system to make sure the secured tunnels for distant chat are actually working, before one starts using it.
+      - moved all files related to file transfer in gui/FileTransfer/
+      - renamed known people into keyring
+      - make friendlist fully resizable (Patch from phenom)
+      - added DynDNS to RS certificate link if available
+      - removed MT19937 random generator which is not used anymore. Changed N from 624 to 1024 to reduce cost
+      - improved completion for chat (Patch from Phenom)
+  		- added help panels in MainWindow, to help beginners startup with the basic concepts.
+      - changed welcome message in broadcast chat
+      - improved GUI layouts in FriendList, NewsFeed, Forums, Channels, removed doubling unused buttons
+  	  - added last time of transfer (Patch from Phenom)
+      - added column with IP for connected peers (modified patch from Phenom)
+      - Removed some more hardcoded colors
+      - added completer to MimeTextEdit and ChatWidget (Patch from Phenom)
+      - fixed deadlock (reported by Like)
+      - Added quick fix to show the plain name and title in the chat lobby
+      - Use the best network interface to route an ip instead of the first interface in getLocalInterfaces on Windows
+      - Fixed showing utf8 characters in chat lobby name
+      - Updated build instruction in file readme.txt (Patch from Henry)
+      - Patch (modified) from Phenom to allow auto-subscribe to chat lobbies
+      - added display of SSL encryption parameters in PeerDetails dialog
+      - fixed packaging with GXS (sqlite linkage, define for encrypted database
+      - patch from Henry morgan to fix soem typos (e.g misspelled connexion into connection)
+      - Made pqiStore accept packets even after deserialization error, so that it is retrocompatible (Patch from Phenom)
+      - Set path to sqlcipher instead of sqlite for Windows compile.
+      - new db for release, TESTNET5, old TESTNET4 db's are not keyed
+      - Updated english translation
+      - added Specific protected timer class RsProtectedTimer to avoid passwd deadlock.
+      - Added filter of items to RSTreeWidget.
+      - removed email field from GenCertDialog, since it is not useful inside RS
+                  
+  	  - GUI
+        * added/enabled GUI for distant chat (Invitation handler in config->chat, handling of Distant chat links)
+        * Localized Greek and Dutch (patch from Henry). Updated English.
+        * Languages updates from transifex
+        * Color transfer for copy/paste (patch from AC)
+        * various improvements to FriendSelectionWidget
+        * typos (patches from Henry)
+        * Added default stylesheet for the QTextEdit in ProfileManager
+        * Fixed sort of friends in shared files.
+        * fixed update of flag for peer signature over own key
+        
+      - FT
+        * added a new per-friend flag to allow to seek for direct transfers. Disabled for existing friends 
+         (should be added manually), enabled by default for new friends
+      - libretroshare
+        * Merged branch v0.5-GenericTunneling into trunk (Rev. 6284 to 6410).
+           - Tunnel system is now generic. Any service can asks for tunnels and send generic data through them
+           - made ftServer a client of the service. Now turtle file items are handled in ftServer
+           - added new client: p3MsgService to send/recv pgp-encrypted distant messages
+           - added new client: p3ChatService to perform private (AES-encrypted) distant chat through tunnels.
+           - added distant chat. Works on invitations and tunnels. Has tunnel closing notification.
+           - Added system to collect and create chat invites from pgp keys
+           - /!\ Needs a route of peers with version > 6441 to work.
+        * drop generic items with inconsistent peer id vs. tunnel directions (due to tunnel re-routing)
+        * fixed several compiler warnings
+        * fixed bug in anti-search-by-depth mechanism
+        * Fixed crash with Windows compile. Renamed method "RsFiles::CopyFile" to "RsFiles::copyFile" (lower case) 
+          to avoid renaming of "CopyFile" to "CopyFileW" with the newly included "windows.h".          
+      - Added a drop-down item to allow removing unused keys, in the Network dialog, key removal method in OpenPGP-SDK,
+        and PGPHandler. 
+      - added backup system to public keyring, impossibility to remove public parts of owned secret keys, etc.
+      - added columns for last used statistics on pgp keys in network dialog.
+      
+    - GUI
+       * fixed showing the filehash in hash column for the parent file only. The combined hash+tunnel id is used to give a unique id to each source, but should not be displayed
+       * added choice for default auto-download directory per channel.
+       * Removed unused member mChanReadStatus from p3Channels
+       * Ensured that inserConnect() is only called when the widget is visible. This reduces lags due to discovery info.
+       * patch from phenom to all resizing lobby participant lists
+       * Added patch from Henry Morgan, Fixed some typos.
+       * Added a info Label for the Friend Request Page
+       * Fixed online time in profile widget, Fixed width of settings dialog.
+       * patch (from Henry Morgan) to make the tooltips translate-able in the group flags widget
+       * Fixed the perm bug in ConnectFreindWizard (Patch from Henry Morgan)
+       * patch from Henry Morgan to use ConfCertDialog rather than connectFriendWizard from Security item
+       * made passwd box modal
+    - pgp
+       * added ability to keep track of when keys have been last used for signature check, signing and encryption, 
+         so that we can later detect which keys are unused and get rid of them
+    - Chat Lobbies
+       * Enabled history for chat lobbies (not saved to disc)
+    - FeedReader
+       * Added new icon for news feed from Agurer
+       * added new setting to save the config in the background for slow systems
+       * fixed memory leak in p3FeedReader::saveList
+    - retroshare-nogui
+       * Updated version of RPC protocol with fancy new features like streaming, add/remove friends, file listings.
+         (Merging r6107 through r6332 into 'libretroshare')          
+
+  * Bug fixes
+      - Fixed proper display of crypto params for UDP connections
+  		- Added missing location from cert when addign new friend
+      - Added missing IndicateConfigChanged to p3PeerMgrIMPL::setDynDNS
+      - Fixed crash when closing the main window without the setting "Minimize to Tray Icon"
+      - Renamed the setting "Do not Minimize to Tray Icon" to "Minimize to Tray
+        Icon" and fixed wrong usage Please check your setting!
+      - removed dropping an entire config file when a single item cannot be serialized.
+      - removed time shift warning in lobbies. Changed into warning in help panel
+      - fixed bug allowing malicious peer to display lobby messages in broadcast window
+      - patch to avoid corrupting file cache on 64bits archs that store time_t as 32bits (from Stefan Sperling)
+      - allow big messages to bounce correctly in lobbies, after fixing a splitting error.
+      - fixed lobby aut-subscribe by looking at lobbies every 121 seconds
+      - fixed looping in pqistore when a crazily long packet is found. That is
+        the result of an unknown bug, but at least we should handle it correctly.
+      - fixed deadlock in notifyQt
+      - fixed memory leak in cert signature verification at connect (Patch from Phenom). Also removed some unused variables reported by gcc
+      - add date to chat msg if it is mroe than 1 day old
+      - fixed bug in distant chat accepting tunnels for collecting invites with same hash
+      - fixed memory leaks in p3distrib, signature key verification, RsDataService::retrieveNxsGrps, 
+        RsGxsNetService, p3GxsCircles, p3Posted, RsDiscReply handling, getGroupData of all gxs services
+      - Fixed deadlock in FriendSelectionWidget 
+      - fixed assert for non RSA keys
+      - fixed display of names in file lists
+      - fixed destination directory when downloading channel items in auto DL mode
+      - improved time-stamp management for pgp keys
+      - fixed translatable string with .arg (Req. From H. Morgan)
+      - GUI
+         * Fixed sending of status typing in chat. Modifier keys does not send typing anymore.
+         * patch from Henry Morgan to avoid removing peer permission flags when removing locations
+         * fixed remembering flags for own id, tentatively fixed service perm bug
+      - File transfer
+         * changed priority for forwarded turtle traffic. The priority was so low that it explains 
+           why tunnels of length > 2 are so slow
+      - fixed bug in p3peer.cc not calling the correct method
+      - added missing mutex, and warnings if permission flags methods are not called with correct ids
+      - fixed bug that would reset service permission flags when discovery is enabled and discovery info is received
+
+
 Changes for 0.5.4e
 
 	* Improvements
