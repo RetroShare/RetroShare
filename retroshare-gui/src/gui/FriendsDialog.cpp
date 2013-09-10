@@ -190,6 +190,7 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     ui.friendList->setShowStatusColumn(true);
     ui.friendList->setShowLastContactColumn(false);
     ui.friendList->setShowAvatarColumn(false);
+    ui.friendList->setShowIPColumn(false);
     ui.friendList->setRootIsDecorated(true);
     ui.friendList->setShowGroups(true);
     processSettings(true);

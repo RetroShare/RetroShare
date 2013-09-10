@@ -145,6 +145,7 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
     ui.friendList->setShowStatusColumn(false);
     ui.friendList->setShowLastContactColumn(false);
     ui.friendList->setShowAvatarColumn(true);
+    ui.friendList->setShowIPColumn(false);
     ui.friendList->setRootIsDecorated(true);
     ui.friendList->setShowGroups(false);
     processSettings(true);
