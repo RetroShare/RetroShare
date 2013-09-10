@@ -991,7 +991,8 @@ int TransfersDialog::addItem(int row, const FileInfo &fileInfo, const std::map<s
         DLListModel->setItem(row, COLUMN_PRIORITY, new PriorityItem(NULL));
 
         DLListModel->setData(DLListModel->index(row, COLUMN_SIZE), QVariant((qlonglong) fileInfo.size));
-        DLListModel->setData(DLListModel->index(row, COLUMN_ID), fileHash);
+        DLListModel->setData(DLListModel->index(row, COLUMN_ID), fileHash, Qt::DisplayRole);
+        DLListModel->setData(DLListModel->index(row, COLUMN_ID), fileHash, Qt::UserRole);
 	}
 	QString fileName = QString::fromUtf8(fileInfo.fname.c_str());
 
@@ -1073,7 +1074,7 @@ int TransfersDialog::addPeerToItem(QStandardItem *dlItem, const QString& name, c
 	QStandardItem *childId = NULL;
 
     for (count = 0; (childId = dlItem->child(count, COLUMN_ID)) != NULL; ++count) {
-		if (childId->data(Qt::DisplayRole).toString() == coreID) {
+		if (childId->data(Qt::UserRole).toString() == coreID) {
 			childRow = count;
 			break;
 		}
@@ -1114,7 +1115,8 @@ int TransfersDialog::addPeerToItem(QStandardItem *dlItem, const QString& name, c
         iPriority->setData(QVariant(QString()), Qt::DisplayRole);	// blank field for priority
         iRemaining->setData(QVariant(QString()), Qt::DisplayRole);
         iDownloadTime->setData(QVariant(QString()), Qt::DisplayRole);
-        iID->setData(QVariant(coreID), Qt::DisplayRole);
+        iID->setData(QVariant()      , Qt::DisplayRole);
+        iID->setData(QVariant(coreID), Qt::UserRole);
 
         items.append(iName);
         items.append(iSize);
@@ -1240,7 +1242,7 @@ void TransfersDialog::insertTransfers()
 	std::set<std::string>::iterator hashIt;
 
 	for (row = 0; row < rowCount; ) {
-        std::string hash = DLListModel->item(row, COLUMN_ID)->data(Qt::DisplayRole).toString().toStdString();
+        std::string hash = DLListModel->item(row, COLUMN_ID)->data(Qt::UserRole).toString().toStdString();
 
 		hashIt = hashs.find(hash);
 		if (hashIt == hashs.end()) {
@@ -1576,6 +1578,7 @@ void TransfersDialog::getSelectedItems(std::set<std::string> *ids, std::set<int>
 			if (ids) {
                 QStandardItem *id = DLListModel->item(i, COLUMN_ID);
 				ids->insert(id->data(Qt::DisplayRole).toString().toStdString());
+				ids->insert(id->data(Qt::UserRole   ).toString().toStdString());
 			}
 			if (rows) {
 				rows->insert(i);
@@ -1973,7 +1976,7 @@ QString TransfersDialog::getStatus(int row, QStandardItemModel *model)
 
 QString TransfersDialog::getID(int row, QStandardItemModel *model)
 {
-    return model->data(model->index(row, COLUMN_ID), Qt::DisplayRole).toString().left(40); // gets only the "hash" part of the name
+    return model->data(model->index(row, COLUMN_ID), Qt::UserRole).toString().left(40); // gets only the "hash" part of the name
 }
 
 QString TransfersDialog::getPriority(int row, QStandardItemModel *model)
