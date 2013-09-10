@@ -14,7 +14,7 @@
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="36"/>
         <source>&amp;Transmit</source>
-        <translation>&amp;Metodo di trasmissione</translation>
+        <translation>&amp;Trasmetti</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="46"/>

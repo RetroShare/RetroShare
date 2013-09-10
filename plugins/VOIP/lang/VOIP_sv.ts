@@ -19,7 +19,7 @@
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="46"/>
         <source>When to transmit your speech</source>
-        <translation>När din röst ska  överföras</translation>
+        <translation>När ska din röst överföras</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="49"/>
@@ -49,12 +49,12 @@
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="129"/>
         <source>How long to keep transmitting after silence</source>
-        <translation>Tid för fortsatt överföring, efter tystnad</translation>
+        <translation>Tid för fortsatt överföring efter tystnad</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="132"/>
         <source>&lt;b&gt;This selects how long after a perceived stop in speech transmission should continue.&lt;/b&gt;&lt;br /&gt;Set this higher if your voice breaks up when you speak (seen by a rapidly blinking voice icon next to your name).</source>
-        <translation>&lt;b&gt;Detta avgör hur länge ett avbrott uppfattat i röstöverföringen bör fortsätta.&lt;/b&gt;&lt;br /&gt;Ändra detta till ett högre värde om din röst bryts när du talar (indikeras av en snabbt blinkande röstikon intill ditt namn).</translation>
+        <translation>&lt;b&gt;Detta avgör hur länge röstöverföringen bör fortsätta efter ett uppfattat avbrott.&lt;/b&gt;&lt;br /&gt;Ändra detta till ett högre värde om din röst bryts när du talar (indikeras av en snabbt blinkande röstikon intill ditt namn).</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="148"/>
@@ -105,7 +105,7 @@
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="262"/>
         <source>&lt;b&gt;This sets the amount of noise suppression to apply.&lt;/b&gt;&lt;br /&gt;The higher this value, the more aggressively stationary noise will be suppressed.</source>
-        <translation>&lt;b&gt;Detta anger värdet för brusreducering.&lt;/b&gt;&lt;br /&gt;Ju högre värde, desto mer aggressiv dämpning av bakgrundsljud.</translation>
+        <translation>&lt;b&gt;Detta anger värdet för brusreducering.&lt;/b&gt;&lt;br /&gt;Ju högre värde, desto mer aggressiv dämpning av bakgrundsbrus.</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="294"/>
@@ -125,7 +125,7 @@
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="339"/>
         <source>Echo Cancellation Processing</source>
-        <translation>Ekoborttagning</translation>
+        <translation>Ekodämpning</translation>
     </message>
 </context>
 <context>
@@ -143,7 +143,7 @@
     <message>
         <location filename="../gui/AudioInputConfig.cpp" line="100"/>
         <source>Push To Talk</source>
-        <translation>Vid &apos;Tryck för att tala&apos;</translation>
+        <translation>Tryck-för-att-tala</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.cpp" line="202"/>
@@ -206,7 +206,7 @@
     <message>
         <location filename="../gui/AudioStats.ui" line="38"/>
         <source>This shows the peak power in the last frame (20 ms), and is the same measurement as you would usually find displayed as &quot;input power&quot;. Please disregard this and look at &lt;b&gt;Microphone power&lt;/b&gt; instead, which is much more steady and disregards outliers.</source>
-        <translation>Detta visar den högsta effekten i den sista rutan (20 ms) och är samma mätning som du skulle hittat under &quot;Ingångseffekt&quot;. Ignorera detta och titta på &lt;b&gt;Mikrofoneffekt&lt;/b&gt; istället, vilket är mycket jämnare och bortser från avvikelser.</translation>
+        <translation>Detta visar den högsta effekten i den sista rutan (20 ms) och är samma mätning som du skulle hittat under &quot;Ingångseffekt&quot;. Ignorera detta och titta istället på &lt;b&gt;Mikrofoneffekt&lt;/b&gt; som är mycket jämnare och bortser från avvikelser.</translation>
     </message>
     <message>
         <location filename="../gui/AudioStats.ui" line="48"/>
@@ -226,7 +226,7 @@
     <message>
         <location filename="../gui/AudioStats.ui" line="78"/>
         <source>This shows the peak power in the last frame (20 ms) after all processing. Ideally, this should be -96 dB when you&apos;re not talking. In reality, a sound studio should see -60 dB, and you should hopefully see somewhere around -20 dB. When you are talking, this should rise to somewhere between -5 and -10 dB.&lt;br /&gt;If you are using echo cancellation, and this rises to more than -15 dB when you&apos;re not talking, your setup is not working, and you&apos;ll annoy other users with echoes.</source>
-        <translation>Detta visar den högsta effekten i sista rutan (20 ms) efter all bearbetning. I bästa fall skulle detta vara -96 dB när du inte talar. I verkligheten skulle en ljudstudio se -60 dB och du borde se någonting runt -20 dB. När du talar borde detta öka till någonting mellan -5 och -10 dB.&lt;br /&gt;Om du använder ekoborttagning och det ökar till mer än -15 dB när du inte pratar, fungerar inte din installation och du kommer att störa andra användare med ekon.</translation>
+        <translation>Detta visar den högsta effekten i den sista rutan (20 ms) efter all bearbetning. I bästa fall skulle detta vara -96 dB när du inte talar. I verkligheten skulle dock en ljudstudio se -60 dB och du borde se någonting runt -20 dB. När du talar borde detta öka till någonting mellan -5 och -10 dB.&lt;br /&gt;Om du använder ekoborttagning och det ökar till mer än -15 dB när du inte pratar, fungerar inte din installation och du kommer att störa andra användare med ekon.</translation>
     </message>
     <message>
         <location filename="../gui/AudioStats.ui" line="91"/>
@@ -251,12 +251,12 @@
     <message>
         <location filename="../gui/AudioStats.ui" line="117"/>
         <source>Signal-To-Noise ratio</source>
-        <translation>Signal-To-Noise ratio</translation>
+        <translation>Signal-Till-Brus-förhållande</translation>
     </message>
     <message>
         <location filename="../gui/AudioStats.ui" line="124"/>
         <source>Signal-To-Noise ratio from the microphone</source>
-        <translation>Signal-To-Noise ratio från mikrofon</translation>
+        <translation>Signal-Till-Brus-förhållande från mikrofonen</translation>
     </message>
     <message>
         <location filename="../gui/AudioStats.ui" line="127"/>
@@ -286,7 +286,7 @@
     <message>
         <location filename="../gui/AudioStats.ui" line="168"/>
         <source>Current audio bitrate</source>
-        <translation>Aktuellt ljuddataflöde</translation>
+        <translation>Aktuellt bithastighet för ljuddataflöde</translation>
     </message>
     <message>
         <location filename="../gui/AudioStats.ui" line="181"/>
@@ -296,7 +296,7 @@
     <message>
         <location filename="../gui/AudioStats.ui" line="184"/>
         <source>This is the audio bitrate of the last compressed frame (20 ms), and as such will jump up and down as the VBR adjusts the quality. The peak bitrate can be adjusted in the Settings dialog.</source>
-        <translation>Detta är ljuddataflödet för den sista komprimerade rutan (20 ms) och som sådan kommer den att hoppa upp och ner så länge VBR justerar kvaliteten. Högsta bithastigheten kan justeras i Inställningar.</translation>
+        <translation>Detta är bithastigheten för ljuddataflödet för den sista komprimerade rutan (20 ms) och som sådan kommer den att hoppa upp och ner så länge VBR justerar kvaliteten. Högsta bithastigheten kan justeras i Inställningar.</translation>
     </message>
     <message>
         <location filename="../gui/AudioStats.ui" line="194"/>
@@ -306,22 +306,22 @@
     <message>
         <location filename="../gui/AudioStats.ui" line="207"/>
         <source>Time between last two Push-To-Talk presses</source>
-        <translation>Tid mellen de sista två Tryck-för-att-tala-aktiviteterna</translation>
+        <translation>Tid mellan de senaste två Tfat-tryckningarna</translation>
     </message>
     <message>
         <location filename="../gui/AudioStats.ui" line="217"/>
         <source>Speech Detection</source>
-        <translation>Upptäckt av talaktivitet</translation>
+        <translation>Upptäckt av röstaktivitet</translation>
     </message>
     <message>
         <location filename="../gui/AudioStats.ui" line="224"/>
         <source>Current speech detection chance</source>
-        <translation>Aktuell sannolikhet för upptäckt av talaktivitet</translation>
+        <translation>Aktuell sannolikhet för upptäckt av röstaktivitet</translation>
     </message>
     <message>
         <location filename="../gui/AudioStats.ui" line="227"/>
         <source>&lt;b&gt;This shows the current speech detection settings.&lt;/b&gt;&lt;br /&gt;You can change the settings from the Settings dialog or from the Audio Wizard.</source>
-        <translation>&lt;b&gt;Detta visar de aktuella inställningarna för talupptäckt.&lt;/b&gt;&lt;br /&gt;Du kan ändra inställningen från &apos;Inställningar&apos;, eller från ljudinställningsguiden.</translation>
+        <translation>&lt;b&gt;Detta visar de aktuella inställningarna för röstupptäckt.&lt;/b&gt;&lt;br /&gt;Du kan ändra inställningarna från Inställningspanelen, eller från Ljudinställningsguiden.</translation>
     </message>
     <message>
         <location filename="../gui/AudioStats.ui" line="256"/>
@@ -331,7 +331,7 @@
     <message>
         <location filename="../gui/AudioStats.ui" line="262"/>
         <source>Power spectrum of input signal and noise estimate</source>
-        <translation>Styrkepektrum för ingångssignaler och brusberäkning</translation>
+        <translation>Styrkepektrum för ingångssignaler och brusuppskattning</translation>
     </message>
     <message>
         <location filename="../gui/AudioStats.ui" line="265"/>
@@ -341,7 +341,7 @@
     <message>
         <location filename="../gui/AudioStats.ui" line="281"/>
         <source>Echo Analysis</source>
-        <translation>Ekoanalyser</translation>
+        <translation>Ekoanalys</translation>
     </message>
     <message>
         <location filename="../gui/AudioStats.ui" line="293"/>
@@ -369,12 +369,12 @@
     <message>
         <location filename="../gui/AudioWizard.ui" line="21"/>
         <source>Welcome to the RetroShare Audio Wizard</source>
-        <translation>Välkommen till ljudinställningsguiden i RetroShare</translation>
+        <translation>Välkommen till RetroShares ljudinställningsguide</translation>
     </message>
     <message>
         <location filename="../gui/AudioWizard.ui" line="32"/>
         <source>This is the audio tuning wizard for RetroShare. This will help you correctly set the input levels of your sound card, and also set the correct parameters for sound processing in Retroshare. </source>
-        <translation>Detta är inställningsguiden för ljud i RetroShare. Den kommer att hjälpa dig med att ställa in ingångsnivåerna för ditt ljudkort, men också att ställa in korrekta parametrar för ljudbearbetning i RetroShare.</translation>
+        <translation>Detta är inställningsguiden för ljud i RetroShare. Den kommer att hjälpa dig med att ställa in ingångsnivåerna för ditt ljudkort, men också att ställa in rätta parametrar för ljudbearbetning i RetroShare.</translation>
     </message>
     <message>
         <location filename="../gui/AudioWizard.ui" line="56"/>
@@ -384,7 +384,7 @@
     <message>
         <location filename="../gui/AudioWizard.ui" line="59"/>
         <source>Tuning microphone hardware volume to optimal settings.</source>
-        <translation>Ljustera mikrofonvolymen för optimala inställningar.</translation>
+        <translation>Ljustera mikrofonvolymen till optimala inställningar.</translation>
     </message>
     <message>
         <location filename="../gui/AudioWizard.ui" line="70"/>
@@ -396,7 +396,7 @@
     <message>
         <location filename="../gui/AudioWizard.ui" line="86"/>
         <source>Talk normally, and adjust the slider below so that the bar moves into green when you talk, and doesn&apos;t go into the orange zone.</source>
-        <translation>Tala normalt och använd reglaget för att justera stapeln så att den håller sig inom det gröna utan att övergå i orange.</translation>
+        <translation>Tala normalt och använd reglaget för att justera stapeln så att den håller sig inom det gröna när du talar utan att övergå i orange.</translation>
     </message>
     <message>
         <location filename="../gui/AudioWizard.ui" line="130"/>
@@ -461,7 +461,7 @@
     <message>
         <location filename="../gui/AudioWizard.ui" line="312"/>
         <source>Congratulations. You should now be ready to enjoy a richer sound experience with Retroshare.</source>
-        <translation>Gratulerar! Du bör nu vara förberedd för att åtnjuta en bättre ljudupplevelse med RetroShare.</translation>
+        <translation>Gratulerar! Du bör nu vara redo att åtnjuta en bättre ljudupplevelse med RetroShare.</translation>
     </message>
 </context>
 <context>
@@ -474,7 +474,7 @@
     <message>
         <location filename="../VOIPPlugin.cpp" line="94"/>
         <source>&lt;br/&gt;The VOIP plugin adds VOIP to the private chat window of RetroShare. to use it, proceed as follows:&lt;UL&gt;</source>
-        <translation>&lt;br/&gt;VOIP-tillägget tillför röstsamtal till RetroShares privatchatt. För att använda det, fortsätt som följer:&lt;UL&gt;</translation>
+        <translation>&lt;br/&gt;VOIP-tillägget tillför röstsamtal till RetroShares privatchatt. För att använda det, fortsätt enligt följande:&lt;UL&gt;</translation>
     </message>
     <message>
         <location filename="../VOIPPlugin.cpp" line="95"/>
@@ -489,17 +489,17 @@
     <message>
         <location filename="../VOIPPlugin.cpp" line="97"/>
         <source>&lt;li&gt; in the private chat, enable sound input/output by clicking on the two VOIP icons&lt;/li&gt;&lt;/ul&gt;</source>
-        <translation>&lt;li&gt; Aktivera/Inaktivera ljud genom att klicka på de två VOIP-ikonerna i privatchatten&lt;/li&gt;&lt;/ul&gt;</translation>
+        <translation>&lt;li&gt; Aktivera ljudingång/-utgång i privatchatten genom att klicka på de två VOIP-ikonerna&lt;/li&gt;&lt;/ul&gt;</translation>
     </message>
     <message>
         <location filename="../VOIPPlugin.cpp" line="98"/>
         <source>Your friend needs to run the plugin to talk/listen to you, or course.</source>
-        <translation>Din kontakt måste naturligtvis också använda VOIP-tillägget för att prata med, eller lyssna till dig.</translation>
+        <translation>Din kontakt måste naturligtvis också använda VOIP-tillägget för att kunna prata med/höra dig.</translation>
     </message>
     <message>
         <location filename="../VOIPPlugin.cpp" line="99"/>
         <source>&lt;br/&gt;&lt;br/&gt;This is an experimental feature. Don&apos;t hesitate to send comments and suggestion to the RS dev team.</source>
-        <translation>&lt;br/&gt;&lt;br/&gt;Detta är en experimentell funktion. Tveka inte att skicka kommentarer och förslag till RS utvecklar-team.</translation>
+        <translation>&lt;br/&gt;&lt;br/&gt;Detta är en experimentell funktion. Tveka inte att skicka kommentarer och förslag till RetroShares utvecklar-team.</translation>
     </message>
     <message>
         <location filename="../VOIPPlugin.cpp" line="117"/>
@@ -511,7 +511,7 @@
         <location filename="../gui/VoipStatistics.cpp" line="147"/>
         <location filename="../gui/VoipStatistics.cpp" line="149"/>
         <source>secs</source>
-        <translation>sekunder</translation>
+        <translation>sek</translation>
     </message>
     <message>
         <location filename="../gui/VoipStatistics.cpp" line="151"/>
@@ -526,7 +526,7 @@
     <message>
         <location filename="../gui/VoipStatistics.cpp" line="361"/>
         <source>Round Trip Time:</source>
-        <translation>Tur och returtid:</translation>
+        <translation>Rundtrippstid:</translation>
     </message>
 </context>
 <context>
@@ -534,7 +534,7 @@
     <message>
         <location filename="../VOIPPlugin.cpp" line="153"/>
         <source>This plugin provides voice communication between friends in RetroShare.</source>
-        <translation>Tillägget erbjuder röstkommunikation mellan kontakter i RetroShare.</translation>
+        <translation>Tillägget förser RetroShare med röstkommunikation mellan kontakter.</translation>
     </message>
 </context>
 <context>
@@ -550,7 +550,7 @@
     <message>
         <location filename="../gui/VoipStatistics.ui" line="14"/>
         <source>VoipTest Statistics</source>
-        <translation>Voip Test-statistik</translation>
+        <translation>VoipTest-statistik</translation>
     </message>
 </context>
 </TS>

@@ -1,5 +1,12 @@
 <?xml version="1.0" ?><!DOCTYPE TS><TS language="tr" version="2.0">
 <context>
+    <name>AWidget</name>
+    <message>
+        <source>version</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>AboutDialog</name>
     <message>
         <source>About RetroShare</source>
@@ -38,7 +45,7 @@
     <name>AddCommentDialog</name>
     <message>
         <source>Add Comment</source>
-        <translation type="unfinished"/>
+        <translation>Yorum Ekleyin</translation>
     </message>
 </context>
 <context>
@@ -105,7 +112,7 @@
     <name>AlbumCreateDialog</name>
     <message>
         <source>Create Album</source>
-        <translation type="unfinished"/>
+        <translation>Albüm Oluşturun</translation>
     </message>
     <message>
         <source>Album Name:</source>
@@ -117,7 +124,7 @@
     </message>
     <message>
         <source>Animals</source>
-        <translation type="unfinished"/>
+        <translation>Hayvanlar</translation>
     </message>
     <message>
         <source>Family</source>
@@ -129,7 +136,7 @@
     </message>
     <message>
         <source>Flowers</source>
-        <translation type="unfinished"/>
+        <translation>Çiçekler</translation>
     </message>
     <message>
         <source>Holiday</source>
@@ -141,11 +148,11 @@
     </message>
     <message>
         <source>Pets</source>
-        <translation type="unfinished"/>
+        <translation>Ev hayvanları</translation>
     </message>
     <message>
         <source>Portraits</source>
-        <translation type="unfinished"/>
+        <translation>Portreler</translation>
     </message>
     <message>
         <source>Travel</source>
@@ -181,15 +188,15 @@
     </message>
     <message>
         <source>Policy:</source>
-        <translation type="unfinished"/>
+        <translation>Politika:</translation>
     </message>
     <message>
         <source>Quality:</source>
-        <translation type="unfinished"/>
+        <translation>Kalite:</translation>
     </message>
     <message>
         <source>Comments:</source>
-        <translation type="unfinished"/>
+        <translation>Yorum:</translation>
     </message>
     <message>
         <source>Identity:</source>
@@ -245,7 +252,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add Photos</source>
-        <translation type="unfinished"/>
+        <translation>Fotoğraf Ekleyin</translation>
     </message>
     <message>
         <source>Publish Album</source>
@@ -257,7 +264,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Say something about this album...</source>
-        <translation type="unfinished"/>
+        <translation>Bu albüm hakkında birşeyler yazın...</translation>
     </message>
     <message>
         <source>Where were these taken?</source>
@@ -272,7 +279,7 @@ p, li { white-space: pre-wrap; }
     <name>AlbumDialog</name>
     <message>
         <source>Album</source>
-        <translation type="unfinished"/>
+        <translation>Albüm</translation>
     </message>
     <message>
         <source>Album Thumbnail</source>
@@ -324,7 +331,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Visibility</source>
-        <translation type="unfinished"/>
+        <translation>Görünürlük</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -336,11 +343,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add Photo</source>
-        <translation type="unfinished"/>
+        <translation>Fotoğraf Ekleyin</translation>
     </message>
     <message>
         <source>Edit Photo</source>
-        <translation type="unfinished"/>
+        <translation>Fotoğrafı Düzenleyin</translation>
     </message>
     <message>
         <source>Delete Photo</source>
@@ -348,7 +355,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Publish Photos</source>
-        <translation type="unfinished"/>
+        <translation>Fotoğrafları Yayınlayın</translation>
     </message>
 </context>
 <context>
@@ -426,11 +433,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Circles</source>
-        <translation type="unfinished"/>
+        <translation>Çevreler</translation>
     </message>
     <message>
         <source>Photo Share</source>
-        <translation type="unfinished"/>
+        <translation>Fotoğraf Paylaşımı</translation>
     </message>
     <message>
         <source>Posted Links</source>
@@ -442,7 +449,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>GxsForums</source>
-        <translation type="unfinished"/>
+        <translation>GxsForumları</translation>
     </message>
     <message>
         <source>GxsChannels</source>
@@ -727,7 +734,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>My Blogs</source>
-        <translation type="unfinished"/>
+        <translation>Bloglarım</translation>
     </message>
     <message>
         <source>Subscribed Blogs</source>
@@ -1094,10 +1101,6 @@ p, li { white-space: pre-wrap; }
         <translation>Kanallar</translation>
     </message>
     <message>
-        <source>Display</source>
-        <translation>Görüntü</translation>
-    </message>
-    <message>
         <source>Create Channel</source>
         <translation>Kanal Oluşturun</translation>
     </message>
@@ -1119,7 +1122,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>My Channels</source>
-        <translation type="unfinished"/>
+        <translation>Kanallarım</translation>
     </message>
     <message>
         <source>Subscribed Channels</source>
@@ -1202,7 +1205,7 @@ p, li { white-space: pre-wrap; }
         <translation>Kanal seçmediniz</translation>
     </message>
     <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Channels&lt;/h1&gt;                                                         		  &lt;p&gt;Channels allow you to post data (e.g. movies, music) that will spread in the network                                                		  among people who subscribed your channel.  If you activate auto-download on a channel, files attached to each post will start  		  downloading automatically when the post is received.&lt;/p&gt;                                                                               		  &lt;p&gt;You see channels your friends are subscribed to, and forward subscribed channels to                                                		  your friends. This promotes good channels in the network.                                                     		  When you first connect to a new friend, it&apos;s likely 		  you will receive many such cache files, and new channels will appear.                                                                  		  &lt;/p&gt;                                                                                                                                   		  &lt;p&gt;Only the channel&apos;s creator can post on that channel. Other peers                       		  in the network can only read from it, unless the channel is private. You can however share the posting rights or the reading rights 		  with your friends.&lt;/p&gt;                            		  </source>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Channels&lt;/h1&gt;                                                             &lt;p&gt;Channels allow you to post data (e.g. movies, music) that will spread in the network                                                    among people who subscribed your channel.  If you activate auto-download on a channel, files attached to each post will start      downloading automatically when the post is received.&lt;/p&gt;                                                                                   &lt;p&gt;You see channels your friends are subscribed to, and forward subscribed channels to                                                    your friends. This promotes good channels in the network.                                                         When you first connect to a new friend, it&apos;s likely     you will receive many such cache files, and new channels will appear.                                                                      &lt;/p&gt;                                                                                                                                       &lt;p&gt;Only the channel&apos;s creator can post on that channel. Other peers                           in the network can only read from it, unless the channel is private. You can however share the posting rights or the reading rights     with your friends.&lt;/p&gt;                                </source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -1230,7 +1233,7 @@ Sohbet için birini seçin.</translation>
     <name>ChatLobbyDialog</name>
     <message>
         <source>Participants</source>
-        <translation type="unfinished"/>
+        <translation>Katılımcılar</translation>
     </message>
     <message>
         <source>Change nick name</source>
@@ -1238,7 +1241,7 @@ Sohbet için birini seçin.</translation>
     </message>
     <message>
         <source>Mute participant</source>
-        <translation type="unfinished"/>
+        <translation>Katılımcının sesini kapatın</translation>
     </message>
     <message>
         <source>Invite friends to this lobby</source>
@@ -1273,10 +1276,6 @@ Sohbet için birini seçin.</translation>
         <translation>Lobby Sohbet</translation>
     </message>
     <message>
-        <source>Right click to mute/unmute participants&lt;br/&gt;Double click to address this person</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Lobby management</source>
         <translation>Lobi yönetimi</translation>
     </message>
@@ -1307,6 +1306,18 @@ Sohbet için birini seçin.</translation>
     <message>
         <source>Show Participants</source>
         <translation>Katilimcilari göster</translation>
+    </message>
+    <message>
+        <source>Right click to mute/unmute participants&lt;br/&gt;Double click to address this person&lt;br/&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This participant is not active since:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source> seconds</source>
+        <translation>saniye</translation>
     </message>
 </context>
 <context>
@@ -1419,7 +1430,15 @@ Double click lobbies to enter and chat.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Chat Lobbies&lt;/h1&gt;                              		  &lt;p&gt;Chat lobbies are distributed chat rooms, and work pretty much like IRC.                                      		  They allow you to talk anonymously with tons of people without the need to make friends.&lt;/p&gt;                    		  &lt;p&gt;A chat lobby can be public (you friends see it) or private (your friends can&apos;t see it, unless you           		  invite them with &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). Once you have been invited to a private lobby, you will be able to see it when your friends   		  are using it.&lt;/p&gt;                                                                                               		  &lt;p&gt;The list at left shows                                                                                     		  chat lobbies your friends are participating into. You can either                                 		  &lt;ul&gt;                                                                                                            			  &lt;li&gt;Right click to create a new chat lobby&lt;/li&gt;                                                              		     &lt;li&gt;Double click a chat lobby to enter, chat, and show it to your friends&lt;/li&gt;                      		  &lt;/ul&gt; 		  &lt;/p&gt;                                      		</source>
+        <source>Search Chat lobbies</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Search Name</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Chat Lobbies&lt;/h1&gt;                              		  &lt;p&gt;Chat lobbies are distributed chat rooms, and work pretty much like IRC.                                      		  They allow you to talk anonymously with tons of people without the need to make friends.&lt;/p&gt;                    		  &lt;p&gt;A chat lobby can be public (your friends see it) or private (your friends can&apos;t see it, unless you           		  invite them with &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). Once you have been invited to a private lobby, you will be able to see it when your friends   		  are using it.&lt;/p&gt;                                                                                               		  &lt;p&gt;The list at left shows                                                                                     		  chat lobbies your friends are participating in. You can either                                 		  &lt;ul&gt;                                                                                                            			  &lt;li&gt;Right click to create a new chat lobby&lt;/li&gt;                                                              		     &lt;li&gt;Double click a chat lobby to enter, chat, and show it to your friends&lt;/li&gt;                      		  &lt;/ul&gt; 		  Note: For the chat lobbies to work properly, your computer needs be on time.  So check your system clock!		  &lt;/p&gt;                                      		</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -1506,7 +1525,7 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Blink tab icon</source>
-        <translation type="unfinished"/>
+        <translation>Yanıp sönen sekme simgesi</translation>
     </message>
     <message>
         <source>Default nickname for chat lobbies:</source>
@@ -1530,7 +1549,7 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Blink window/tab icon</source>
-        <translation type="unfinished"/>
+        <translation>Yanıp sönen pencere/sekme simgesi</translation>
     </message>
     <message>
         <source>Chat Font</source>
@@ -1861,7 +1880,7 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Membership</source>
-        <translation type="unfinished"/>
+        <translation>Üyelik</translation>
     </message>
     <message>
         <source>Name</source>
@@ -1869,15 +1888,15 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>IDs</source>
-        <translation type="unfinished"/>
+        <translation>Kodlar</translation>
     </message>
     <message>
         <source>Personal Circles</source>
-        <translation type="unfinished"/>
+        <translation>Kişisel Çevreler</translation>
     </message>
     <message>
         <source>Public Circles</source>
-        <translation type="unfinished"/>
+        <translation>Herkese Açık Çevreler</translation>
     </message>
     <message>
         <source>Peers</source>
@@ -1905,15 +1924,15 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Permissions</source>
-        <translation type="unfinished"/>
+        <translation>İzinler</translation>
     </message>
     <message>
         <source>Anon Transfers</source>
-        <translation type="unfinished"/>
+        <translation>Anonim Aktarımlar</translation>
     </message>
     <message>
         <source>Discovery</source>
-        <translation type="unfinished"/>
+        <translation>Keşif</translation>
     </message>
     <message>
         <source>Share Category</source>
@@ -1950,6 +1969,10 @@ Double click lobbies to enter and chat.</source>
     <message>
         <source>External Circles (Other)</source>
         <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Circles</source>
+        <translation>Çevreler</translation>
     </message>
 </context>
 <context>
@@ -2100,7 +2123,7 @@ p, li { white-space: pre-wrap; }⏎
     </message>
     <message>
         <source>Services</source>
-        <translation type="unfinished"/>
+        <translation>Hizmetler</translation>
     </message>
     <message>
         <source>User service permissions</source>
@@ -2114,15 +2137,15 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Anonymous routing</source>
-        <translation type="unfinished"/>
+        <translation>Anonim yöneltme</translation>
     </message>
     <message>
         <source>Discovery</source>
-        <translation type="unfinished"/>
+        <translation>Keşif</translation>
     </message>
     <message>
         <source>Forums/Channels</source>
-        <translation type="unfinished"/>
+        <translation>Forumlar/Kanallar</translation>
     </message>
     <message>
         <source>Chat</source>
@@ -2212,6 +2235,10 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Not connected</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Peer Addresses</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -2409,19 +2436,19 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Service permissions</source>
-        <translation type="unfinished"/>
+        <translation>Hizmet izinleri</translation>
     </message>
     <message>
         <source>Anonymous routing</source>
-        <translation type="unfinished"/>
+        <translation>Anonim yöneltme</translation>
     </message>
     <message>
         <source>Discovery</source>
-        <translation type="unfinished"/>
+        <translation>Keşif</translation>
     </message>
     <message>
         <source>Forums/channels</source>
-        <translation type="unfinished"/>
+        <translation>Forumlar/kanallar</translation>
     </message>
     <message>
         <source>To accept the Friend Request, click the Finish button.</source>
@@ -2649,6 +2676,413 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Direct source</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Recommend many friends to each others</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Friend Recommendations</source>
+        <translation>Arkadas tavsiyesi</translation>
+    </message>
+    <message>
+        <source>Message:</source>
+        <translation>Mesaj:</translation>
+    </message>
+    <message>
+        <source>Recommend friends</source>
+        <translation>Arkadaslar Tavsiye</translation>
+    </message>
+    <message>
+        <source>To</source>
+        <translation>Kime</translation>
+    </message>
+    <message>
+        <source>Please select at least one friend for recommendation.</source>
+        <translation>Öneri için en az bir arkadas seçiniz.</translation>
+    </message>
+    <message>
+        <source>Please select at least one friend as recipient.</source>
+        <translation>Alici olarak en az bir arkadas seçiniz.</translation>
+    </message>
+</context>
+<context>
+    <name>ConnectProgressDialog</name>
+    <message>
+        <source>Connection Progress</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Connecting to:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>TextLabel</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Network </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Net Result</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Connect Status</source>
+        <translation>Baglanti Durumu</translation>
+    </message>
+    <message>
+        <source>Contact Result</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>DHT Startup</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>DHT Result</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Peer Lookup</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Peer Result</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>UDP Setup</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>UDP Result</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Connection Assistant</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Invalid Peer ID</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown State</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Offline</source>
+        <translation>Çevrimdisi</translation>
+    </message>
+    <message>
+        <source>Behind Symmetric NAT</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Behind NAT &amp; No DHT</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>NET Restart</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Behind NAT</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No DHT</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>NET STATE GOOD!</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>DHT Failed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>DHT Disabled</source>
+        <translation>DHT etkisiz </translation>
+    </message>
+    <message>
+        <source>DHT Okay</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Finding RS Peers</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Lookup requires DHT</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Searching DHT</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Lookup Timeout</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Peer DHT NOT ACTIVE</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Lookup Failure</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Peer Offline</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Peer Firewalled</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Peer Online</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Connection In Progress</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Initial connections can take a while, please be patient</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>If an error is detected it will be displayed here</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You can close this dialog at any time</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Retroshare will continue connecting in the background</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Connection Timeout</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Connection Attempt has taken too long</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>But no error has been detected</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Try again shortly, Retroshare will continue connecting in the background</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>If you continue to get this message, please contact developers</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>DHT Lookup Timeout</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>DHT Lookup has taken too long</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>UDP Connection Timeout</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>UDP Connection has taken too long</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>UDP Connection Failed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>We are continually working to improve connectivity.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>In this case the UDP connection attempt has failed.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Improve connectivity by opening a Port in your Firewall.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>Bagli</translation>
+    </message>
+    <message>
+        <source>Congratulations, you are connected</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>DHT startup Failed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your DHT has not started properly</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Common causes of this problem are:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>     - You are not connected to the Internet</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>     - You have a missing or out-of-date DHT bootstrap file (bdboot.txt)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>DHT is Disabled</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>The DHT is OFF, so Retroshare cannot find your Friends.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Retroshare has tried All Known Addresses, with no success</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>The DHT is needed if your friends have Dynamic IP Addresses.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Go to Settings-&gt;Server and change config to &quot;Public: DHT and Discovery&quot;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Peer Denied Connection</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>We successfully reached your Friend.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>but they have not added you as a Friend.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Please contact them to add your Certificate</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your Retroshare Node is configured Okay</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>We successfully reached your Friend via UDP.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Please contact them to add your Full Certificate</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>They need a Certificate + Location for UDP connections to succeed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>We Cannot find your Friend.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>They are either offline or their DHT is Off</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Peer DHT is Disabled</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your Friend has configured Retroshare with DHT Disabled.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You have previously connected to this Friend</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Retroshare has determined that they have DHT switched off</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Without the DHT it is hard for Retroshare to locate your friend</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Try importing a fresh Certificate to get up-to-date connection information</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Incomplete Friend Details</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You have imported an incomplete Certificate</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Please retry importing the full Certificate</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Lucida Grande'; font-size:13pt;&quot;&gt;This Widget shows the progress of your connection to your new peer.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Lucida Grande'; font-size:13pt;&quot;&gt;It is helpful for problem-solving.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Lucida Grande'; font-size:13pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Lucida Grande'; font-size:13pt;&quot;&gt;If you are an expert RS user, or trust that RS will do the right thing&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Lucida Grande&apos;; font-size:13pt;&quot;&gt;you can close it.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>N/A</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>UNVERIFIABLE FORWARD!</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>UNVERIFIABLE FORWARD &amp; NO DHT</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Searching</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>UDP Connect Timeout</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Only Advanced Retroshare users should switch off the DHT.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Retroshare cannot connect without this information</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -3216,7 +3650,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>IDs</source>
-        <translation type="unfinished"/>
+        <translation>Kodlar</translation>
     </message>
     <message>
         <source>&lt;&lt; Add</source>
@@ -3280,6 +3714,14 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>No Circle Limitations Selected</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create New Personal Circle</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create New External Circle</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -3777,6 +4219,10 @@ p, li { white-space: pre-wrap; }
         <source>Your new messaging chat invite has been copied to clipboard. You can now paste it as a Retroshare link.</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>Create distant chat</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>CryptoPage</name>
@@ -3921,6 +4367,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>GB</source>
         <translation>GB</translation>
+    </message>
+    <message>
+        <source>File Never Seen</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -4107,6 +4557,250 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Bandwidth</source>
         <translation>Bant Genisligi</translation>
+    </message>
+    <message>
+        <source>Unknown NetState</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Offline</source>
+        <translation>Çevrimdisi</translation>
+    </message>
+    <message>
+        <source>Local Net</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Behind NAT</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>External IP</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>UNKNOWN NAT STATE</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>SYMMETRIC NAT</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>DETERMINISTIC SYM NAT</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>RESTRICTED CONE NAT</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>FULL CONE NAT</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>OTHER NAT</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>NO NAT</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>UNKNOWN NAT HOLE STATUS</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>NO NAT HOLE</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>UPNP FORWARD</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>NATPMP FORWARD</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>MANUAL FORWARD</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>NET BAD: Unknown State</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>NET BAD: Offline</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>NET BAD: Behind Symmetric NAT</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>NET BAD: Behind NAT &amp; No DHT</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>NET WARNING: NET Restart</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>NET WARNING: Behind NAT</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>NET WARNING: No DHT</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>NET STATE GOOD!</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>CAUTION: UNVERIFIABLE FORWARD!</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>CAUTION: UNVERIFIABLE FORWARD &amp; NO DHT</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Not Active (Maybe Connected!)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Searching</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Failed</source>
+        <translation>Basarisiz</translation>
+    </message>
+    <message>
+        <source>offline</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unreachable</source>
+        <translation>Ulasilamiyor</translation>
+    </message>
+    <message>
+        <source>ONLINE</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Direct</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Proxy VIA </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Relay VIA </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>None</source>
+        <translation>Yok</translation>
+    </message>
+    <message>
+        <source>Disconnected</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Udp Started</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>Bagli</translation>
+    </message>
+    <message>
+        <source>Request Active</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No Request</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown</source>
+        <translation>Bilinmeyen</translation>
+    </message>
+    <message>
+        <source>#Peers: </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source> DHT: (#off:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>,unreach:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>,online:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>) Connections: (#dis:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>,#dir:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>,#proxy:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>,#relay:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>RELAY END</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Yourself</source>
+        <translation>Kendin</translation>
+    </message>
+    <message>
+        <source>unknown</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>unlimited</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Own Relay</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>RELAY PROXY</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>%1 secs ago</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>%1B/s</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>0x%1 EX:0x%2</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>never</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -4744,10 +5438,6 @@ p, li { white-space: pre-wrap; }
         <translation>Forumlar</translation>
     </message>
     <message>
-        <source>Display</source>
-        <translation>Görüntü</translation>
-    </message>
-    <message>
         <source>Create Forum</source>
         <translation>Forum olustur</translation>
     </message>
@@ -4825,7 +5515,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>My Forums</source>
-        <translation type="unfinished"/>
+        <translation>Forumlarım</translation>
     </message>
     <message>
         <source>Subscribed Forums</source>
@@ -4857,7 +5547,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Search Content</source>
-        <translation type="unfinished"/>
+        <translation>İçeriği Arayın</translation>
     </message>
     <message>
         <source>Subscribe to Forum</source>
@@ -4988,7 +5678,7 @@ p, li { white-space: pre-wrap; }
         <translation>Forum Açiklama</translation>
     </message>
     <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Forums&lt;/h1&gt;                              		  &lt;p&gt;Retroshare Forums look like internet forums, but they work in a decentralized way:                     		  You see forums your friends are subscribed to, and you forward subscribed forums to                      		  your friends. This automatically promotes interesting forums in the network.&lt;/p&gt;                     		  &lt;p&gt;Forums are either Authenticated (&lt;img src=&quot;:/images/konv_message2.png&quot; width=&quot;12&quot;/&gt;) in which case you need to cryptographically sign                      		  your posts, or anonymous (&lt;img src=&quot;:/images/konversation.png&quot; width=&quot;12&quot;/&gt;). The former class is more resistant to spamming.&lt;/p&gt;                 		  &lt;p&gt;Forum posts propagate from friend to friend using small cache file exchanges. When you first connect to a new friend, it&apos;s likely 		  you will receive many such cache files, and new forums will appear. 		  &lt;/p&gt;                                      		</source>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Forums&lt;/h1&gt;                                  &lt;p&gt;Retroshare Forums look like internet forums, but they work in a decentralized way:                         You see forums your friends are subscribed to, and you forward subscribed forums to                          your friends. This automatically promotes interesting forums in the network.&lt;/p&gt;                         &lt;p&gt;Forums are either Authenticated (&lt;img src=&quot;:/images/konv_message2.png&quot; width=&quot;12&quot;/&gt;) in which case you need to cryptographically sign                          your posts, or anonymous (&lt;img src=&quot;:/images/konversation.png&quot; width=&quot;12&quot;/&gt;). The former class is more resistant to spamming.&lt;/p&gt;                     &lt;p&gt;Forum posts propagate from friend to friend using small cache file exchanges. When you first connect to a new friend, it&apos;s likely     you will receive many such cache files, and new forums will appear.     &lt;/p&gt;                                        </source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -5027,7 +5717,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Avatar</source>
-        <translation type="unfinished"/>
+        <translation>Avatar</translation>
     </message>
     <message>
         <source>Hide Offline Friends</source>
@@ -5206,39 +5896,8 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Recommend many friends to each others</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Service permissions matrix</source>
-        <translation type="unfinished"/>
-    </message>
-</context>
-<context>
-    <name>FriendRecommendDialog</name>
-    <message>
-        <source>Friend Recommendations</source>
-        <translation>Arkadas tavsiyesi</translation>
-    </message>
-    <message>
-        <source>Message:</source>
-        <translation>Mesaj:</translation>
-    </message>
-    <message>
-        <source>Recommend friends</source>
-        <translation>Arkadaslar Tavsiye</translation>
-    </message>
-    <message>
-        <source>To</source>
-        <translation>Kime</translation>
-    </message>
-    <message>
-        <source>Please select at least one friend for recommendation.</source>
-        <translation>Öneri için en az bir arkadas seçiniz.</translation>
-    </message>
-    <message>
-        <source>Please select at least one friend as recipient.</source>
-        <translation>Alici olarak en az bir arkadas seçiniz.</translation>
+        <source>Display</source>
+        <translation>Görüntü</translation>
     </message>
 </context>
 <context>
@@ -5286,12 +5945,8 @@ p, li { white-space: pre-wrap; }
         <translation>Arkadaslar</translation>
     </message>
     <message>
-        <source>Display</source>
-        <translation>Görüntü</translation>
-    </message>
-    <message>
         <source>Edit status message</source>
-        <translation type="unfinished"/>
+        <translation>Durum iletisini düzenleyin</translation>
     </message>
     <message>
         <source>Broadcast</source>
@@ -5347,11 +6002,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Set your status message</source>
-        <translation type="unfinished"/>
+        <translation>Durum iletinizi ayarlayın</translation>
     </message>
     <message>
         <source>Edit your status message</source>
-        <translation type="unfinished"/>
+        <translation>Durum iletinizi düzenleyin</translation>
     </message>
     <message>
         <source>Browse Message History</source>
@@ -5382,24 +6037,12 @@ p, li { white-space: pre-wrap; }
         <translation>Yeni Lobi Sohbeti olustur</translation>
     </message>
     <message>
-        <source>Friend Recommendations</source>
-        <translation>Arkadas tavsiyesi</translation>
-    </message>
-    <message>
         <source>Choose Font</source>
         <translation>yazi tipi seç</translation>
     </message>
     <message>
         <source>Reset font to default</source>
         <translation>Varsayilan yazi tipi sifirlayin</translation>
-    </message>
-    <message>
-        <source>Service permissions</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Search</source>
-        <translation>Baslat</translation>
     </message>
     <message>
         <source>Local network</source>
@@ -5438,11 +6081,19 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Friends&lt;/h1&gt;                                   		  &lt;p&gt;The Friends tab shows...your friends: the list of persons you have accepted to connect to.                   		  &lt;/p&gt;                                                   		  &lt;p&gt;You can group friends together to allow a finer level of information access, for instance to only allow      		  some friends to see some files.&lt;/p&gt; 		  &lt;p&gt;On the right, you will find 3 useful tabs:                                                                   		  &lt;ul&gt;	                                                                                                         		  		&lt;li&gt;Broadcast sends messages to all connected friends at once&lt;/li&gt;                             		  		&lt;li&gt;Local Network shows the network around you, including friends of your friends&lt;/li&gt;                 		  		&lt;li&gt;Keyring contains keys you collected, mostly forwarded to you by your friends&lt;/li&gt;                              		  &lt;/ul&gt; &lt;/p&gt;                                                                                                      		</source>
+        <source>Retroshare broadcast chat: messages are sent to all connected friends.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Retroshare broadcast chat: messages are sent to all connected friends.</source>
+        <source>Attach a Picture</source>
+        <translation>Resim ekle</translation>
+    </message>
+    <message>
+        <source>Load Picture File</source>
+        <translation>Resim Dosyasi yükleyin</translation>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Friends&lt;/h1&gt;                                       &lt;p&gt;The Friends tab shows...your friends: the list of persons you have accepted to connect to.                       &lt;/p&gt;                                                       &lt;p&gt;You can group friends together to allow a finer level of information access, for instance to only allow          some friends to see some files.&lt;/p&gt;     &lt;p&gt;On the right, you will find 3 useful tabs:                                                                       &lt;ul&gt;                                                                                                                &lt;li&gt;Broadcast sends messages to all connected friends at once&lt;/li&gt;                                   &lt;li&gt;Local Network shows the network around you, including friends of your friends&lt;/li&gt;                       &lt;li&gt;Keyring contains keys you collected, mostly forwarded to you by your friends&lt;/li&gt;                                  &lt;/ul&gt; &lt;/p&gt;                                                                                                        </source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -5603,7 +6254,7 @@ p, li { white-space: pre-wrap; }⏎
     </message>
     <message>
         <source>Enter your nickname here</source>
-        <translation type="unfinished"/>
+        <translation>Takma adınızı buraya yazın</translation>
     </message>
     <message>
         <source>Email</source>
@@ -6191,7 +6842,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Search Description</source>
-        <translation type="unfinished"/>
+        <translation>Açıklamayı Arayın</translation>
     </message>
     <message>
         <source>Sort by Name</source>
@@ -6208,6 +6859,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Private Key Available</source>
         <translation> Özel Anahtar mevcuttur</translation>
+    </message>
+    <message>
+        <source>Display</source>
+        <translation>Görüntü</translation>
     </message>
 </context>
 <context>
@@ -6296,10 +6951,6 @@ p, li { white-space: pre-wrap; }
         <translation>Kanallar</translation>
     </message>
     <message>
-        <source>Display</source>
-        <translation>Görüntü</translation>
-    </message>
-    <message>
         <source>Create Channel</source>
         <translation>Kanal olustur</translation>
     </message>
@@ -6321,7 +6972,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>My Channels</source>
-        <translation type="unfinished"/>
+        <translation>Kanallarım</translation>
     </message>
     <message>
         <source>Subscribed Channels</source>
@@ -6404,6 +7055,14 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Edit Channel</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Add Channel Admins</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Select Channel Admins</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -6528,11 +7187,11 @@ p, li { white-space: pre-wrap; }
     <name>GxsCommentTreeWidget</name>
     <message>
         <source>Reply to Comment</source>
-        <translation type="unfinished"/>
+        <translation>Yorumu Yanıtlayın</translation>
     </message>
     <message>
         <source>Submit Comment</source>
-        <translation type="unfinished"/>
+        <translation>Yorumu Gönderin</translation>
     </message>
     <message>
         <source>Vote Up</source>
@@ -6596,7 +7255,7 @@ bir kimlik oluşturmalısınız</translation>
     <name>GxsForumGroupDialog</name>
     <message>
         <source>Create New Forum</source>
-        <translation type="unfinished"/>
+        <translation>Forum Oluşturun</translation>
     </message>
     <message>
         <source>Forum</source>
@@ -6604,7 +7263,7 @@ bir kimlik oluşturmalısınız</translation>
     </message>
     <message>
         <source>Edit Forum</source>
-        <translation type="unfinished"/>
+        <translation>Forumu Düzenleyin</translation>
     </message>
 </context>
 <context>
@@ -6691,7 +7350,7 @@ bir kimlik oluşturmalısınız</translation>
     </message>
     <message>
         <source>Search Content</source>
-        <translation type="unfinished"/>
+        <translation>İçeriği Arayın</translation>
     </message>
     <message>
         <source>No name</source>
@@ -6797,10 +7456,6 @@ bir kimlik oluşturmalısınız</translation>
         <translation>Forum</translation>
     </message>
     <message>
-        <source>Display</source>
-        <translation>Görüntü</translation>
-    </message>
-    <message>
         <source>Create Forum</source>
         <translation>Forum olustur</translation>
     </message>
@@ -6814,7 +7469,7 @@ bir kimlik oluşturmalısınız</translation>
     </message>
     <message>
         <source>My Forums</source>
-        <translation type="unfinished"/>
+        <translation>Forumlarım</translation>
     </message>
     <message>
         <source>Subscribed Forums</source>
@@ -6909,7 +7564,7 @@ bir kimlik oluşturmalısınız</translation>
     </message>
     <message>
         <source>Retrieving</source>
-        <translation type="unfinished"/>
+        <translation>Alınıyor</translation>
     </message>
     <message>
         <source>Loading</source>
@@ -6920,7 +7575,7 @@ bir kimlik oluşturmalısınız</translation>
     <name>GxsGroupDialog</name>
     <message>
         <source>Create New</source>
-        <translation type="unfinished"/>
+        <translation>Yeni Ekleyin</translation>
     </message>
     <message>
         <source>Name</source>
@@ -6928,7 +7583,7 @@ bir kimlik oluşturmalısınız</translation>
     </message>
     <message>
         <source>Add Icon</source>
-        <translation type="unfinished"/>
+        <translation>Simge Ekleyin</translation>
     </message>
     <message>
         <source>Key recipients can publish to restricted-type group and can view and publish for private-type channels</source>
@@ -7441,6 +8096,14 @@ p, li { white-space: pre-wrap; }
         <source>Anonymous Id</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>Create new Identity</source>
+        <translation>Yeni Profil Olustur</translation>
+    </message>
+    <message>
+        <source>Delete Identity</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>IdEditDialog</name>
@@ -7504,6 +8167,10 @@ p, li { white-space: pre-wrap; }
         <source>Unknown real name</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>Create New Identity</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>ImHistoryBrowser</name>
@@ -7564,7 +8231,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Edit Shared Folder</source>
-        <translation type="unfinished"/>
+        <translation>Paylaşılmış Klasörü Düzenleyin</translation>
     </message>
     <message>
         <source>Recommend in a message to</source>
@@ -7800,6 +8467,14 @@ Lütfen biraz boş disk alanı oluşturun ve Tamam&apos;a tıklayın.</translati
     <message>
         <source>The file link is malformed.</source>
         <translation>Dosya baglantisi hatali.</translation>
+    </message>
+    <message>
+        <source>ServicePermissions</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Service permissions matrix</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -8230,6 +8905,10 @@ mesaji kaydetmek istiyor musunuz?</translation>
     </message>
     <message>
         <source>Distant peer (name: %2, PGP key: %1)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Only show people you trusted</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -8704,11 +9383,11 @@ mesaji kaydetmek istiyor musunuz?</translation>
     </message>
     <message>
         <source>Search Subject</source>
-        <translation type="unfinished"/>
+        <translation>Konuyu Arayın</translation>
     </message>
     <message>
         <source>Search From</source>
-        <translation type="unfinished"/>
+        <translation>Göndereni Arayın</translation>
     </message>
     <message>
         <source>Search Date</source>
@@ -8716,11 +9395,11 @@ mesaji kaydetmek istiyor musunuz?</translation>
     </message>
     <message>
         <source>Search Content</source>
-        <translation type="unfinished"/>
+        <translation>İçeriği Arayın</translation>
     </message>
     <message>
         <source>Search Tags</source>
-        <translation type="unfinished"/>
+        <translation>Etiketleri Arayın</translation>
     </message>
     <message>
         <source>Attachments</source>
@@ -8728,7 +9407,7 @@ mesaji kaydetmek istiyor musunuz?</translation>
     </message>
     <message>
         <source>Search Attachments</source>
-        <translation type="unfinished"/>
+        <translation>Ekleri Arayın</translation>
     </message>
     <message>
         <source>Starred</source>
@@ -8831,10 +9510,6 @@ mesaji kaydetmek istiyor musunuz?</translation>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Messages&lt;/h1&gt;                         			 &lt;p&gt;Messages are like &lt;b&gt;e-mail&lt;/b&gt;: you send/receive them from your friends when both of you	are connected.&lt;/p&gt; 			 &lt;p&gt;It is also possible to send messages to non friends, using tunnels. Such messages are always encrypted. It is 			 recommended to cryptographically sign distant messages, as a proof of your identity, using the &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; button 			 in the message composer window. Distant messages are not guarrantied to arrive, since this requires the distant peer to accept them (You need yourself to switch this on in Config-Messages).&lt;/p&gt;			 &lt;p&gt;Some additional features allow you to exchange data in messages: you may recommend files to your friends by pasting file links, 			 or recommend friends-to-be to other friends, in order to streathen your network.&lt;/p&gt;	                   			 </source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>This message is encrypted. Right click to decrypt it.</source>
         <translation type="unfinished"/>
     </message>
@@ -8850,6 +9525,10 @@ mesaji kaydetmek istiyor musunuz?</translation>
         <source>This message is not encrypted. Cannot decrypt!</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Messages&lt;/h1&gt;                          &lt;p&gt;Messages are like &lt;b&gt;e-mail&lt;/b&gt;: you send/receive them from your friends when both of you are connected.&lt;/p&gt;  &lt;p&gt;It is also possible to send messages to non friends, using tunnels. Such messages are always encrypted. It is  recommended to cryptographically sign distant messages, as a proof of your identity, using the &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; button  in the message composer window. Distant messages are not guarrantied to arrive, since this requires the distant peer to accept them (You need yourself to switch this on in Config-Messages).&lt;/p&gt; &lt;p&gt;Some additional features allow you to exchange data in messages: you may recommend files to your friends by pasting file links,  or recommend friends-to-be to other friends, in order to streathen your network.&lt;/p&gt;                    </source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>MessengerWindow</name>
@@ -8858,20 +9537,12 @@ mesaji kaydetmek istiyor musunuz?</translation>
         <translation>RetroShare Anlık Sohbet</translation>
     </message>
     <message>
-        <source>Search Friends</source>
-        <translation>Arkadas Ara</translation>
-    </message>
-    <message>
         <source>Add a Friend</source>
         <translation>Arkadas ekle</translation>
     </message>
     <message>
         <source>Share files for your friends</source>
         <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Search</source>
-        <translation>Baslat</translation>
     </message>
 </context>
 <context>
@@ -8919,6 +9590,10 @@ mesaji kaydetmek istiyor musunuz?</translation>
     <message>
         <source>Hide</source>
         <translation>Gizle</translation>
+    </message>
+    <message>
+        <source>Encrypted message</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -9064,7 +9739,7 @@ mesaji kaydetmek istiyor musunuz?</translation>
     </message>
     <message>
         <source>Search Name</source>
-        <translation type="unfinished"/>
+        <translation>Adı Arayın</translation>
     </message>
     <message>
         <source>Peer ID</source>
@@ -9072,7 +9747,7 @@ mesaji kaydetmek istiyor musunuz?</translation>
     </message>
     <message>
         <source>Search Peer ID</source>
-        <translation type="unfinished"/>
+        <translation>Eş Kodunu Arayın</translation>
     </message>
     <message>
         <source>Deny friend</source>
@@ -9200,6 +9875,30 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <source>Only show people you trusted</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>Send Message</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source> If I accept connection from peer</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Name of peer</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Did peer sign mine PGP key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Peer&apos;s Certificat ID</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Since when I use this Certificat</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>NetworkPage</name>
@@ -9265,7 +9964,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <translation>Bu bir denemedir.</translation>
     </message>
     <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;News Feed&lt;/h1&gt;                                                          		  &lt;p&gt;The News Feed displays the last events on your network, sorted by the time you received them.                		  This gives you a summary of the activity of your friends.                                                       		  You can configure which events to show by pressing on &lt;b&gt;Options&lt;/b&gt;. &lt;/p&gt;                                      		  &lt;p&gt;The various events shown are:                                                                                		  &lt;ul&gt;	                                                                                                         		  		&lt;li&gt;Connection attempts (useful to make friends with new people and control who&apos;s trying to reach you)&lt;/li&gt; 		  		&lt;li&gt;Channel and Forum posts&lt;/li&gt;                                                                            		  		&lt;li&gt;New Channels and Forums you can subscribe to&lt;/li&gt;                                                       		  		&lt;li&gt;Private messages from your friends&lt;/li&gt;                                                                 		  &lt;/ul&gt; &lt;/p&gt;                                                                                                      		</source>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;News Feed&lt;/h1&gt;                                                             &lt;p&gt;The News Feed displays the last events on your network, sorted by the time you received them.                   This gives you a summary of the activity of your friends.                                                          You can configure which events to show by pressing on &lt;b&gt;Options&lt;/b&gt;. &lt;/p&gt;                                         &lt;p&gt;The various events shown are:                                                                                   &lt;ul&gt;                                                                                                            &lt;li&gt;Connection attempts (useful to make friends with new people and control who&apos;s trying to reach you)&lt;/li&gt;    &lt;li&gt;Channel and Forum posts&lt;/li&gt;                                                                               &lt;li&gt;New Channels and Forums you can subscribe to&lt;/li&gt;                                                          &lt;li&gt;Private messages from your friends&lt;/li&gt;                                                                    &lt;/ul&gt; &lt;/p&gt;                                                                                                       </source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -9381,7 +10080,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Blink</source>
-        <translation type="unfinished"/>
+        <translation>Yanıp sönme</translation>
     </message>
     <message>
         <source>Top Left</source>
@@ -9413,10 +10112,6 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     <message>
         <source>Wrong password !</source>
         <translation>Yanlış parola !</translation>
-    </message>
-    <message>
-        <source>Please enter the password to unlock your PGP key:</source>
-        <translation type="unfinished"/>
     </message>
     <message>
         <source>Unregistered plugin/executable</source>
@@ -9454,6 +10149,14 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <source>This is a test.</source>
         <translation>Bu bir denemedir.</translation>
     </message>
+    <message>
+        <source>Unknown title</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Encrypted message</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>OnlineToaster</name>
@@ -9466,7 +10169,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     <name>OpModeStatus</name>
     <message>
         <source>Normal Mode</source>
-        <translation type="unfinished"/>
+        <translation>Normal Kip</translation>
     </message>
     <message>
         <source>No Anon D/L</source>
@@ -9474,11 +10177,11 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Gaming Mode</source>
-        <translation type="unfinished"/>
+        <translation>Oyun Kipi</translation>
     </message>
     <message>
         <source>Low Traffic</source>
-        <translation type="unfinished"/>
+        <translation>Düşük Trafik</translation>
     </message>
     <message>
         <source>Use this DropList to quickly change Retroshare's behaviour
@@ -9620,7 +10323,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Photo</source>
-        <translation type="unfinished"/>
+        <translation>Fotoğraf</translation>
     </message>
     <message>
         <source>TextLabel</source>
@@ -9644,7 +10347,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Photo Title:</source>
-        <translation type="unfinished"/>
+        <translation>Fotoğraf Başlığı:</translation>
     </message>
     <message>
         <source>When</source>
@@ -9656,11 +10359,11 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Add Comment</source>
-        <translation type="unfinished"/>
+        <translation>Yorum Ekleyin</translation>
     </message>
     <message>
         <source>Write a comment...</source>
-        <translation type="unfinished"/>
+        <translation>Yorum yazın...</translation>
     </message>
 </context>
 <context>
@@ -9706,15 +10409,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Create Album</source>
-        <translation type="unfinished"/>
+        <translation>Albüm Oluşturun</translation>
     </message>
     <message>
         <source>View Album</source>
-        <translation type="unfinished"/>
+        <translation>Albüme Bakın</translation>
     </message>
     <message>
         <source>Subscribe To Album</source>
-        <translation type="unfinished"/>
+        <translation>Albüme Abone Olun</translation>
     </message>
     <message>
         <source>Slide Show</source>
@@ -9722,19 +10425,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>My Albums</source>
-        <translation type="unfinished"/>
+        <translation>Albümlerim</translation>
     </message>
     <message>
         <source>Subscribed Albums</source>
-        <translation type="unfinished"/>
+        <translation>Abone Olunan Albümler</translation>
     </message>
     <message>
         <source>Shared Albums</source>
-        <translation type="unfinished"/>
+        <translation>Paylaşılan Albümler</translation>
     </message>
     <message>
         <source>View Photo</source>
-        <translation type="unfinished"/>
+        <translation>Fotoğrafa Bakın</translation>
     </message>
     <message>
         <source>PhotoShare</source>
@@ -9766,7 +10469,7 @@ requesting to edit it!</source>
     </message>
     <message>
         <source>Stop</source>
-        <translation type="unfinished"/>
+        <translation>Durdurun</translation>
     </message>
     <message>
         <source>&gt;&gt;</source>
@@ -9778,7 +10481,7 @@ requesting to edit it!</source>
     </message>
     <message>
         <source>Start</source>
-        <translation type="unfinished"/>
+        <translation>Başlatın</translation>
     </message>
     <message>
         <source>Start Slide Show</source>
@@ -9977,7 +10680,7 @@ hazırlanmış eklentilerin zararlı davranışlarından korur.</translation>
     <name>PopupChatWindow</name>
     <message>
         <source>Avatar</source>
-        <translation type="unfinished"/>
+        <translation>Avatar</translation>
     </message>
     <message>
         <source>Set your Avatar Picture</source>
@@ -10047,7 +10750,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Notes</source>
-        <translation type="unfinished"/>
+        <translation>Notlar</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -10095,10 +10798,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>/\</source>
-        <translation>/\</translation>
-    </message>
-    <message>
         <source>\/</source>
         <translation>\/</translation>
     </message>
@@ -10128,6 +10827,14 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Comment</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Vote Up</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Vote Down</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -10170,10 +10877,6 @@ p, li { white-space: pre-wrap; }
         <translation>Bu Yil</translation>
     </message>
     <message>
-        <source>New Topic</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Submit Post</source>
         <translation>İletiyi Gönderin</translation>
     </message>
@@ -10191,7 +10894,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>My Topics</source>
-        <translation type="unfinished"/>
+        <translation>Başlıklarım</translation>
     </message>
     <message>
         <source>Subscribed Topics</source>
@@ -10223,6 +10926,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Please create or choose a Signing Id before Voting</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create New Topic</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -10364,7 +11071,7 @@ p, li { white-space: pre-wrap; }
     <name>ProfileWidget</name>
     <message>
         <source>Edit status message</source>
-        <translation type="unfinished"/>
+        <translation>Durum iletisini düzenleyin</translation>
     </message>
     <message>
         <source>Copy Certificate</source>
@@ -10639,19 +11346,19 @@ and open the Make Friend Wizard.
     </message>
     <message>
         <source>Recipient not accepted</source>
-        <translation type="unfinished"/>
+        <translation>Alıcı kabul edilmedi</translation>
     </message>
     <message>
         <source>Recipients not accepted</source>
-        <translation type="unfinished"/>
+        <translation>Alıcılar kabul edilmedi</translation>
     </message>
     <message>
         <source>Unkown recipient</source>
-        <translation type="unfinished"/>
+        <translation>Alıcı bilinmiyor</translation>
     </message>
     <message>
         <source>Unkown recipients</source>
-        <translation type="unfinished"/>
+        <translation>Alıcılar bilinmiyor</translation>
     </message>
     <message>
         <source>Malformed links</source>
@@ -10680,11 +11387,6 @@ Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replace
     </message>
     <message>
         <source>Failed to process collection file</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>The collection file %1 could not be opened.
-Reported error is: %2</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -10831,6 +11533,13 @@ Dosyayı kilitle:⏎</translation>
     </message>
     <message>
         <source>Secured tunnel is working. You can talk!</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>The collection file %1 could not be opened.
+Reported error is: 
+
+%2</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -11232,6 +11941,12 @@ Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replace
         <source>Create collection file</source>
         <translation>Koleksiyon dosyasi olustur</translation>
     </message>
+    <message>
+        <source>This file contains the string &quot;%1&quot; and is therefore an invalid collection file. 
+
+If you believe it is correct, remove the corresponding line from the file and re-open it with Retroshare.</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>RsHtml</name>
@@ -11365,7 +12080,7 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Close all Search Results</source>
-        <translation type="unfinished"/>
+        <translation>Tüm arama sonuçlarını kapatın</translation>
     </message>
     <message>
         <source>Clear</source>
@@ -11515,6 +12230,10 @@ Reducing image to %1x%2 pixels?</source>
         <source>New RetroShare Link(s)</source>
         <translation>Yeni RetroShare Link (s)</translation>
     </message>
+    <message>
+        <source>Open Folder</source>
+        <translation>Klasör Aç</translation>
+    </message>
 </context>
 <context>
     <name>SecurityItem</name>
@@ -11647,7 +12366,7 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Manually Forwarded Port</source>
-        <translation type="unfinished"/>
+        <translation>El ile Yönlendirilmiş Kapı</translation>
     </message>
     <message>
         <source>The DHT allows you to answer connection 
@@ -11795,18 +12514,26 @@ The default value is 20.</source>
     <name>ServicePermissionDialog</name>
     <message>
         <source>Service permissions</source>
-        <translation type="unfinished"/>
+        <translation>Hizmet izinleri</translation>
     </message>
     <message>
         <source>Anonymous routing</source>
-        <translation type="unfinished"/>
+        <translation>Anonim yöneltme</translation>
     </message>
     <message>
         <source>Discovery</source>
-        <translation type="unfinished"/>
+        <translation>Keşif</translation>
     </message>
     <message>
         <source>Forums/Channels</source>
+        <translation>Forumlar/Kanallar</translation>
+    </message>
+    <message>
+        <source>Service Permissions</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Use as direct source, when available</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -11849,7 +12576,7 @@ The default value is 20.</source>
     </message>
     <message>
         <source>Edit Shared Folder</source>
-        <translation type="unfinished"/>
+        <translation>Paylaşılmış Klasörü Düzenleyin</translation>
     </message>
     <message>
         <source>Select A Folder To Share</source>
@@ -11963,7 +12690,7 @@ p, li { white-space: pre-wrap; }⏎
     </message>
     <message>
         <source>Edit Shared Folder</source>
-        <translation type="unfinished"/>
+        <translation>Paylaşılmış Klasörü Düzenleyin</translation>
     </message>
     <message>
         <source>Warning!</source>
@@ -12939,10 +13666,6 @@ Sabırlı olun!</translation>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>File Never Seen</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Expand all</source>
         <translation>Tüm genisletin</translation>
     </message>
@@ -13027,7 +13750,20 @@ Sabırlı olun!</translation>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;File Transfer&lt;/h1&gt;                                                         			 &lt;p&gt;Retroshare brings two ways of transferring files: direct transfers from your friends, and                                     			 distant anonymous tunnelled transfers. In addition, file transfer is multi-source and allows swarming                                      			 (you can be a source while downloading)&lt;/p&gt;                                     			 &lt;p&gt;You can share files using the &lt;img src=&quot;:/images/directoryadd_24x24_shadow.png&quot; width=16 /&gt; icon from the left side bar. 				These files will be listed in the My Files tab. You can decide for each friend group whether they can or not see these files 				in their Friends Files tab&lt;/p&gt;			 &lt;p&gt;The search tab reports files from your friends&apos; file lists, and distant files that can be reached 			 anonymously using the multi-hop tunnelling system.&lt;/p&gt; 			 </source>
+        <source>Path</source>
+        <comment>i.e: Where file is saved</comment>
+        <translation>Yol</translation>
+    </message>
+    <message>
+        <source>Path</source>
+        <translation>Yol</translation>
+    </message>
+    <message>
+        <source>Show Path Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;File Transfer&lt;/h1&gt;                                                             &lt;p&gt;Retroshare brings two ways of transferring files: direct transfers from your friends, and                                         distant anonymous tunnelled transfers. In addition, file transfer is multi-source and allows swarming                                          (you can be a source while downloading)&lt;/p&gt;                                         &lt;p&gt;You can share files using the &lt;img src=&quot;:/images/directoryadd_24x24_shadow.png&quot; width=16 /&gt; icon from the left side bar.     These files will be listed in the My Files tab. You can decide for each friend group whether they can or not see these files     in their Friends Files tab&lt;/p&gt;    &lt;p&gt;The search tab reports files from your friends&apos; file lists, and distant files that can be reached     anonymously using the multi-hop tunnelling system.&lt;/p&gt;     </source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -13721,7 +14457,7 @@ Sabırlı olun!</translation>
     </message>
     <message>
         <source>CheckBox</source>
-        <translation type="unfinished"/>
+        <translation>İşaret Kutusu</translation>
     </message>
     <message>
         <source>Post Pulse to Wire</source>
@@ -13782,7 +14518,7 @@ Sabırlı olun!</translation>
     <message>
         <source>%1h %2m</source>
         <comment>e.g: 3hours 5minutes</comment>
-        <translation type="unfinished"/>
+        <translation>%1h %2m</translation>
     </message>
     <message>
         <source>%1d %2h</source>
@@ -13816,7 +14552,7 @@ Sabırlı olun!</translation>
     </message>
     <message>
         <source>Load avatar image</source>
-        <translation type="unfinished"/>
+        <translation>Avatar görselini yükleyin</translation>
     </message>
     <message>
         <source>Pictures (*.png *.xpm *.jpg *.tiff *.gif)</source>

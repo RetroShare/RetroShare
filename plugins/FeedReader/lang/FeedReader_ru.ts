@@ -264,7 +264,7 @@
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="131"/>
         <source>Set message to read on activate</source>
-        <translation type="unfinished"/>
+        <translation>Отметить сообщение прочитанным при наведении</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="138"/>
@@ -669,7 +669,7 @@
         <location filename="../gui/FeedReaderStringDefs.cpp" line="74"/>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="170"/>
         <source>Unknown</source>
-        <translation type="unfinished"/>
+        <translation>Неизвестно</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="91"/>

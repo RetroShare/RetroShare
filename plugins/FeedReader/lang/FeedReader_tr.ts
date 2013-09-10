@@ -269,7 +269,7 @@
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="138"/>
         <source>Save configuration in background (for slow systems, more memory needed)</source>
-        <translation>Arkaplanda yapılandırmayı kaydedin (yavaş bilgisayarlar için, daha fazla alan gerektirir)</translation>
+        <translation>Ayarları artalanda kaydedin (yavaş bilgisayarlar için, daha fazla bellek gerekir)</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="124"/>

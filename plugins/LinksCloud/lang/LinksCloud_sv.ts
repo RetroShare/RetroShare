@@ -88,7 +88,7 @@
     <message>
         <location filename="../LinksCloudPlugin.cpp" line="98"/>
         <source>LinksCloud</source>
-        <translation>LinksCloud</translation>
+        <translation>LänkMoln</translation>
     </message>
 </context>
 <context>
@@ -111,7 +111,7 @@
     <message>
         <location filename="../LinksDialog.ui" line="93"/>
         <source>Sort by</source>
-        <translation>Sortera efter</translation>
+        <translation>Sortera enligt</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="101"/>
@@ -261,7 +261,7 @@
     <message>
         <location filename="../LinksDialog.ui" line="531"/>
         <source>Links Cloud</source>
-        <translation>Links Cloud</translation>
+        <translation>Länkmoln</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="551"/>
@@ -318,7 +318,7 @@
     <message>
         <location filename="../LinksDialog.cpp" line="813"/>
         <source>Expand</source>
-        <translation>Expandera</translation>
+        <translation>Visa</translation>
     </message>
     <message>
         <location filename="../LinksDialog.cpp" line="820"/>

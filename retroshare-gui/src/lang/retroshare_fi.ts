@@ -1,5 +1,12 @@
 <?xml version="1.0" ?><!DOCTYPE TS><TS language="fi" version="2.0">
 <context>
+    <name>AWidget</name>
+    <message>
+        <source>version</source>
+        <translation>versio</translation>
+    </message>
+</context>
+<context>
     <name>AboutDialog</name>
     <message>
         <source>About RetroShare</source>
@@ -1110,10 +1117,6 @@ p, li { white-space: pre-wrap; }
         <translation>Kanavat</translation>
     </message>
     <message>
-        <source>Display</source>
-        <translation>Näytä</translation>
-    </message>
-    <message>
         <source>Create Channel</source>
         <translation>Luo kanava</translation>
     </message>
@@ -1218,8 +1221,8 @@ p, li { white-space: pre-wrap; }
         <translation>Ei kanavaa valittuna</translation>
     </message>
     <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Channels&lt;/h1&gt;                                                         		  &lt;p&gt;Channels allow you to post data (e.g. movies, music) that will spread in the network                                                		  among people who subscribed your channel.  If you activate auto-download on a channel, files attached to each post will start  		  downloading automatically when the post is received.&lt;/p&gt;                                                                               		  &lt;p&gt;You see channels your friends are subscribed to, and forward subscribed channels to                                                		  your friends. This promotes good channels in the network.                                                     		  When you first connect to a new friend, it&apos;s likely 		  you will receive many such cache files, and new channels will appear.                                                                  		  &lt;/p&gt;                                                                                                                                   		  &lt;p&gt;Only the channel&apos;s creator can post on that channel. Other peers                       		  in the network can only read from it, unless the channel is private. You can however share the posting rights or the reading rights 		  with your friends.&lt;/p&gt;                            		  </source>
-        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Kanavat&lt;/h1&gt;                                                         		  &lt;p&gt;Kanavien avulla voit julkaista dataa (kuten elokuvia, musiikkia), joka leviää verkostossa                                                		  niiden ihmisten välillä, jotka ovat tilanneet kanavasi.  Jos otat käyttöön automaattisen latauksen kanavalla, kanavaviestiin liitetyt tiedostot alkavat  		  latautua automaattisesti, kun viesti on saatu.&lt;/p&gt;                                                                               		  &lt;p&gt;Näet kanavat, jotka ystäväsi ovat tilanneet ja vastaavasti välität tilaamasi kanavat                                                		  ystävillesi. Tämä edistää laadukkaiden kanavien leviämistä verkostossa.                                                     		  Kun otat ensimmäisen kerran yhteyden uuteen ystävään, on todennäköistä, 		  että vastaanotat useita välimuistitiedostoja ja uusia kanavia ilmestyy saatavillesi.                                                                  		  &lt;/p&gt;                                                                                                                                   		  &lt;p&gt;Vain kanavan luoja voi lähettää viestejä kanavalle. Muut vertaiset                       		  voivat ainoastaan lukea sitä, ellei kanava ole yksityinen Voit kuitenkin antaa viestien lähetys- tai lukuoikeuksia 		  ystävillesi.&lt;/p&gt;                            		  </translation>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Channels&lt;/h1&gt;                                                             &lt;p&gt;Channels allow you to post data (e.g. movies, music) that will spread in the network                                                    among people who subscribed your channel.  If you activate auto-download on a channel, files attached to each post will start      downloading automatically when the post is received.&lt;/p&gt;                                                                                   &lt;p&gt;You see channels your friends are subscribed to, and forward subscribed channels to                                                    your friends. This promotes good channels in the network.                                                         When you first connect to a new friend, it&apos;s likely     you will receive many such cache files, and new channels will appear.                                                                      &lt;/p&gt;                                                                                                                                       &lt;p&gt;Only the channel&apos;s creator can post on that channel. Other peers                           in the network can only read from it, unless the channel is private. You can however share the posting rights or the reading rights     with your friends.&lt;/p&gt;                                </source>
+        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Kanavat&lt;/h1&gt; &lt;p&gt;Kanavien avulla voit julkaista dataa (kuten elokuvia, musiikkia), joka leviää verkostossa niiden ihmisten välillä, jotka ovat tilanneet kanavasi.  Jos otat käyttöön automaattisen latauksen kanavalla, kanavaviestiin liitetyt tiedostot alkavat latautua automaattisesti, kun viesti on saatu.&lt;/p&gt; &lt;p&gt;Näet kanavat, jotka ystäväsi ovat tilanneet ja vastaavasti välität tilaamasi kanavat ystävillesi. Tämä edistää laadukkaiden kanavien leviämistä verkostossa. Kun otat ensimmäisen kerran yhteyden uuteen ystävään, on todennäköistä, että vastaanotat useita välimuistitiedostoja ja uusia kanavia ilmestyy saatavillesi. &lt;/p&gt; &lt;p&gt;Vain kanavan luoja voi lähettää viestejä kanavalle. Muut vertaiset voivat ainoastaan lukea sitä, ellei kanava ole yksityinen Voit kuitenkin antaa viestien lähetys- tai lukuoikeuksia ystävillesi.&lt;/p&gt;</translation>
     </message>
 </context>
 <context>
@@ -1289,10 +1292,6 @@ Ole hyvä ja valitse niistä yksi keskustellaksesi.</translation>
         <translation>Aulakeskustelu</translation>
     </message>
     <message>
-        <source>Right click to mute/unmute participants&lt;br/&gt;Double click to address this person</source>
-        <translation>Käytä hiiren oikeaa painiketta mykistääksesi osanottajan tai päinvastoin&lt;br/&gt;Kaksoisnapauta kohdistaaksesi viestisi tietylle henkilölle</translation>
-    </message>
-    <message>
         <source>Lobby management</source>
         <translation>Aulan hallinta</translation>
     </message>
@@ -1323,6 +1322,18 @@ Ole hyvä ja valitse niistä yksi keskustellaksesi.</translation>
     <message>
         <source>Show Participants</source>
         <translation>Näytä osallistujat</translation>
+    </message>
+    <message>
+        <source>Right click to mute/unmute participants&lt;br/&gt;Double click to address this person&lt;br/&gt;</source>
+        <translation>Käytä hiiren oikeaa painiketta mykistääksesi osanottajan tai päinvastoin&lt;br/&gt;Kaksoisnapauta kohdistaaksesi viestisi tietylle henkilölle&lt;br/&gt;</translation>
+    </message>
+    <message>
+        <source>This participant is not active since:</source>
+        <translation>Osanottaja ei ole ollut aktiivinen sitten:</translation>
+    </message>
+    <message>
+        <source> seconds</source>
+        <translation> sekuntia</translation>
     </message>
 </context>
 <context>
@@ -1439,8 +1450,16 @@ Kaksoisnapauta auloja siirtyäksesi keskustelemaan.</translation>
         <translation>%1 kutsuu sinut keskusteluaulaan nimeltä %2</translation>
     </message>
     <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Chat Lobbies&lt;/h1&gt;                              		  &lt;p&gt;Chat lobbies are distributed chat rooms, and work pretty much like IRC.                                      		  They allow you to talk anonymously with tons of people without the need to make friends.&lt;/p&gt;                    		  &lt;p&gt;A chat lobby can be public (you friends see it) or private (your friends can&apos;t see it, unless you           		  invite them with &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). Once you have been invited to a private lobby, you will be able to see it when your friends   		  are using it.&lt;/p&gt;                                                                                               		  &lt;p&gt;The list at left shows                                                                                     		  chat lobbies your friends are participating into. You can either                                 		  &lt;ul&gt;                                                                                                            			  &lt;li&gt;Right click to create a new chat lobby&lt;/li&gt;                                                              		     &lt;li&gt;Double click a chat lobby to enter, chat, and show it to your friends&lt;/li&gt;                      		  &lt;/ul&gt; 		  &lt;/p&gt;                                      		</source>
-        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Keskusteluaulat&lt;/h1&gt;                              		  &lt;p&gt;Keskusteluaulat ovat hajautettuja chat-huoneita ja toimivat kuten IRC.                                      		  Niiden avulla voit keskustella nimettömänä lukuisten ihmisten kanssa ilman, että sinun tarvitsee ystävystyä heidän kanssaan.&lt;/p&gt;                    		  &lt;p&gt;Keskusteluaula voi olla julkinen (ystäväsi näkevät sen) tai yksityinen (ystäväsi eivät näe sitä,           		  ellet kutsu heitä &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). Kun sinut on kutsuttu yksityiseen aulaan, näet sen, kun ystäväsi   		  käyttävät sitä.&lt;/p&gt;                                                                                               		  &lt;p&gt;Vasemmalla oleva luettelo näyttää                                                                                     		  keskusteluaulat, joissa on ystäviäsi. Voit joko                                  		  &lt;ul&gt;                                                                                                            			  &lt;li&gt;luoda uuden aulan painamalla hiiren kakkonpainiketta&lt;/li&gt;                                                              		     &lt;li&gt;kaksoisnapauttaa jotakin aulaa siirtyäksesi sinne&lt;/li&gt;                      		  &lt;/ul&gt; 		  &lt;/p&gt;                                      		</translation>
+        <source>Search Chat lobbies</source>
+        <translation>Hae keskusteluauloista</translation>
+    </message>
+    <message>
+        <source>Search Name</source>
+        <translation>Hae nimeä</translation>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Chat Lobbies&lt;/h1&gt;                              		  &lt;p&gt;Chat lobbies are distributed chat rooms, and work pretty much like IRC.                                      		  They allow you to talk anonymously with tons of people without the need to make friends.&lt;/p&gt;                    		  &lt;p&gt;A chat lobby can be public (your friends see it) or private (your friends can&apos;t see it, unless you           		  invite them with &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). Once you have been invited to a private lobby, you will be able to see it when your friends   		  are using it.&lt;/p&gt;                                                                                               		  &lt;p&gt;The list at left shows                                                                                     		  chat lobbies your friends are participating in. You can either                                 		  &lt;ul&gt;                                                                                                            			  &lt;li&gt;Right click to create a new chat lobby&lt;/li&gt;                                                              		     &lt;li&gt;Double click a chat lobby to enter, chat, and show it to your friends&lt;/li&gt;                      		  &lt;/ul&gt; 		  Note: For the chat lobbies to work properly, your computer needs be on time.  So check your system clock!		  &lt;/p&gt;                                      		</source>
+        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Keskusteluaulat&lt;/h1&gt; &lt;p&gt;Keskusteluaulat ovat hajautettuja chat-huoneita ja toimivat kuten IRC.   Niiden avulla voit keskustella nimettömänä lukuisten ihmisten kanssa ilman, että sinun tarvitsee ystävystyä heidän kanssaan&lt;/p&gt; &lt;p&gt;Keskusteluaula voi olla julkinen (ystäväsi näkevät sen) tai yksityinen (ystäväsi eivät näe sitä,  ellet kutsu heitä &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). Kun sinut on kutsuttu yksityiseen aulaan, näet sen, kun ystäväsi   käyttävät sitä.&lt;/p&gt;  &lt;p&gt;Vasemmalla oleva luettelo näyttää keskusteluaulat, joissa on ystäviäsi. Voit joko &lt;ul&gt;   &lt;li&gt;luoda uuden aulan painamalla hiiren kakkospainiketta&lt;/li&gt; &lt;li&gt;kaksoisnapauttaa jotakin aulaa siirtyäksesi sinne&lt;/li&gt;  &lt;/ul&gt; Huom.: tietokoneesi on oltava oikeassa ajassa, jotta keskusteluaulat toimivat oikein, joten tarkista järjestelmäsi kello!   &lt;/p&gt; </translation>
     </message>
 </context>
 <context>
@@ -1971,6 +1990,10 @@ Kaksoisnapauta auloja siirtyäksesi keskustelemaan.</translation>
         <source>External Circles (Other)</source>
         <translation>Ulkoiset piirit (Muu)</translation>
     </message>
+    <message>
+        <source>Circles</source>
+        <translation>Piirit</translation>
+    </message>
 </context>
 <context>
     <name>ConfCertDialog</name>
@@ -2234,6 +2257,10 @@ Jotkut palvelut (etsintä, nimetön reititys) voi kytkeä pois yleisellä tasoll
     <message>
         <source>Not connected</source>
         <translation>Ei yhteyttä</translation>
+    </message>
+    <message>
+        <source>Peer Addresses</source>
+        <translation>Vertaisten osoitteet</translation>
     </message>
 </context>
 <context>
@@ -2671,6 +2698,421 @@ Jotkut palvelut (etsintä, nimetön reititys) voi kytkeä pois yleisellä tasoll
     <message>
         <source>Direct source</source>
         <translation>Suora lähde</translation>
+    </message>
+    <message>
+        <source>Recommend many friends to each others</source>
+        <translation>Suosittele monia ystäviä toisilleen</translation>
+    </message>
+    <message>
+        <source>Friend Recommendations</source>
+        <translation>Ystäväsuositukset</translation>
+    </message>
+    <message>
+        <source>Message:</source>
+        <translation>Viesti:</translation>
+    </message>
+    <message>
+        <source>Recommend friends</source>
+        <translation>Suosittele ystäviä</translation>
+    </message>
+    <message>
+        <source>To</source>
+        <translation>Vastaanottaja</translation>
+    </message>
+    <message>
+        <source>Please select at least one friend for recommendation.</source>
+        <translation>Ole hyvä ja valitse ainakin yksi ystävä suositeltavaksi.</translation>
+    </message>
+    <message>
+        <source>Please select at least one friend as recipient.</source>
+        <translation>Ole hyvä ja valitse ainakin yksi ystävä vastaanottajaksi.</translation>
+    </message>
+</context>
+<context>
+    <name>ConnectProgressDialog</name>
+    <message>
+        <source>Connection Progress</source>
+        <translation>Yhteyden edistyminen</translation>
+    </message>
+    <message>
+        <source>Connecting to:</source>
+        <translation>Yhdistetään:</translation>
+    </message>
+    <message>
+        <source>TextLabel</source>
+        <translation>TekstiMerkki</translation>
+    </message>
+    <message>
+        <source>Network </source>
+        <translation>Verkko</translation>
+    </message>
+    <message>
+        <source>Net Result</source>
+        <translation>Verkon tulos</translation>
+    </message>
+    <message>
+        <source>Connect Status</source>
+        <translation>Yhteyden tila</translation>
+    </message>
+    <message>
+        <source>Contact Result</source>
+        <translation>Kontaktin tulos</translation>
+    </message>
+    <message>
+        <source>DHT Startup</source>
+        <translation>DHT:n käynnistys</translation>
+    </message>
+    <message>
+        <source>DHT Result</source>
+        <translation>DHT:n tulos</translation>
+    </message>
+    <message>
+        <source>Peer Lookup</source>
+        <translation>Vertaishaku</translation>
+    </message>
+    <message>
+        <source>Peer Result</source>
+        <translation>Vertaisen tulos</translation>
+    </message>
+    <message>
+        <source>UDP Setup</source>
+        <translation>UDP:n asetukset</translation>
+    </message>
+    <message>
+        <source>UDP Result</source>
+        <translation>UDP:n tulos</translation>
+    </message>
+    <message>
+        <source>Connection Assistant</source>
+        <translation>Yhteysavustaja</translation>
+    </message>
+    <message>
+        <source>Invalid Peer ID</source>
+        <translation>Väärä vertaistunniste</translation>
+    </message>
+    <message>
+        <source>Unknown State</source>
+        <translation>Tuntematon tila</translation>
+    </message>
+    <message>
+        <source>Offline</source>
+        <translation>Ei yhteyttä</translation>
+    </message>
+    <message>
+        <source>Behind Symmetric NAT</source>
+        <translation>Symmetrisen NAT:in takana</translation>
+    </message>
+    <message>
+        <source>Behind NAT &amp; No DHT</source>
+        <translation>NAT:in takana &amp; ilman DHT:tä</translation>
+    </message>
+    <message>
+        <source>NET Restart</source>
+        <translation>Verkon uudelleenkäynnistys</translation>
+    </message>
+    <message>
+        <source>Behind NAT</source>
+        <translation>NAT:in takana</translation>
+    </message>
+    <message>
+        <source>No DHT</source>
+        <translation>Ei DHT:tä</translation>
+    </message>
+    <message>
+        <source>NET STATE GOOD!</source>
+        <translation>VERKON TILA HYVÄ!</translation>
+    </message>
+    <message>
+        <source>DHT Failed</source>
+        <translation>DHT epäonnistui</translation>
+    </message>
+    <message>
+        <source>DHT Disabled</source>
+        <translation>Ei DHT:tä</translation>
+    </message>
+    <message>
+        <source>DHT Okay</source>
+        <translation>DHT ok</translation>
+    </message>
+    <message>
+        <source>Finding RS Peers</source>
+        <translation>Haetaan Retroshare-vertaisia</translation>
+    </message>
+    <message>
+        <source>Lookup requires DHT</source>
+        <translation>Haku vaatii DHT:tä</translation>
+    </message>
+    <message>
+        <source>Searching DHT</source>
+        <translation>Haetaan DHT:tä</translation>
+    </message>
+    <message>
+        <source>Lookup Timeout</source>
+        <translation>Haku aikakatkaistiin</translation>
+    </message>
+    <message>
+        <source>Peer DHT NOT ACTIVE</source>
+        <translation>Vertaisen DHT EI KÄYTÖSSÄ</translation>
+    </message>
+    <message>
+        <source>Lookup Failure</source>
+        <translation>Haku epäonnistui</translation>
+    </message>
+    <message>
+        <source>Peer Offline</source>
+        <translation>Vertainen ei linjoilla</translation>
+    </message>
+    <message>
+        <source>Peer Firewalled</source>
+        <translation>Vertainen palomuurin takana</translation>
+    </message>
+    <message>
+        <source>Peer Online</source>
+        <translation>Vertainen linjoilla</translation>
+    </message>
+    <message>
+        <source>Connection In Progress</source>
+        <translation>Yhdistyminen käynnissä</translation>
+    </message>
+    <message>
+        <source>Initial connections can take a while, please be patient</source>
+        <translation>Alustava yhdistyminen voi viedä hetken, ole hyvä ja odota</translation>
+    </message>
+    <message>
+        <source>If an error is detected it will be displayed here</source>
+        <translation>Jos havaitaan ongelma, se näkyy täällä</translation>
+    </message>
+    <message>
+        <source>You can close this dialog at any time</source>
+        <translation>Voit sulkea tämän ikkunan milloin tahansa</translation>
+    </message>
+    <message>
+        <source>Retroshare will continue connecting in the background</source>
+        <translation>RetroShare jatkaa yhdistämistä taustalla</translation>
+    </message>
+    <message>
+        <source>Connection Timeout</source>
+        <translation>Yhdistäminen aikakatkaistiin</translation>
+    </message>
+    <message>
+        <source>Connection Attempt has taken too long</source>
+        <translation>Yhdistäminen on kestänyt liian kauan</translation>
+    </message>
+    <message>
+        <source>But no error has been detected</source>
+        <translation>Mutta ongelmia ei ole havaittu</translation>
+    </message>
+    <message>
+        <source>Try again shortly, Retroshare will continue connecting in the background</source>
+        <translation>Kokeile pian uudestaan, Retroshare jatkaa yhdistämistä taustalla</translation>
+    </message>
+    <message>
+        <source>If you continue to get this message, please contact developers</source>
+        <translation>Jos saat tämä viestin jatkuvasti, ole hyvä ja ota yhteyttä kehittäjiin</translation>
+    </message>
+    <message>
+        <source>DHT Lookup Timeout</source>
+        <translation>DHT-haku aikakatkaistiin</translation>
+    </message>
+    <message>
+        <source>DHT Lookup has taken too long</source>
+        <translation>DHT-haku on kestänyt liian kauan</translation>
+    </message>
+    <message>
+        <source>UDP Connection Timeout</source>
+        <translation>UDP-yhdistäminen aikakatkaistiin</translation>
+    </message>
+    <message>
+        <source>UDP Connection has taken too long</source>
+        <translation>UDP:hen yhdistäminen on kestänyt liian kauan</translation>
+    </message>
+    <message>
+        <source>UDP Connection Failed</source>
+        <translation>UDP-yhteys epäonnistui</translation>
+    </message>
+    <message>
+        <source>We are continually working to improve connectivity.</source>
+        <translation>Työskentelemme jatkuvasti yhdistämisen toimintavarmuuden parantamiseksi.</translation>
+    </message>
+    <message>
+        <source>In this case the UDP connection attempt has failed.</source>
+        <translation>Tässä tapauksessa UDP-yhteysyritys epäonnistui.</translation>
+    </message>
+    <message>
+        <source>Improve connectivity by opening a Port in your Firewall.</source>
+        <translation>Paranna yhdistämisen toimintavarmuutta avaamalla portti palomuuriisi.</translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>Yhteydessä</translation>
+    </message>
+    <message>
+        <source>Congratulations, you are connected</source>
+        <translation>Onnittelut, olet yhteydessä</translation>
+    </message>
+    <message>
+        <source>DHT startup Failed</source>
+        <translation>DHT:n käynnistys epäonnistui</translation>
+    </message>
+    <message>
+        <source>Your DHT has not started properly</source>
+        <translation>DHT:si ei ole käynnistynyt oikein</translation>
+    </message>
+    <message>
+        <source>Common causes of this problem are:</source>
+        <translation>Yleisiä tämän ongelman syitä ovat:</translation>
+    </message>
+    <message>
+        <source>     - You are not connected to the Internet</source>
+        <translation>-Et ole yhteydessä Internetiin</translation>
+    </message>
+    <message>
+        <source>     - You have a missing or out-of-date DHT bootstrap file (bdboot.txt)</source>
+        <translation>- DHT:n esilataustiedostosi (bdboot.txt) puuttuu tai se on vanhentunut</translation>
+    </message>
+    <message>
+        <source>DHT is Disabled</source>
+        <translation>DHT kytketty pois</translation>
+    </message>
+    <message>
+        <source>The DHT is OFF, so Retroshare cannot find your Friends.</source>
+        <translation>DHT on kytketty pois päältä, joten Retroshare ei voi löytää ystäviäsi.</translation>
+    </message>
+    <message>
+        <source>Retroshare has tried All Known Addresses, with no success</source>
+        <translation>RetroShare on kokeillut kaikkia tunnettuja osoitteita tuloksetta</translation>
+    </message>
+    <message>
+        <source>The DHT is needed if your friends have Dynamic IP Addresses.</source>
+        <translation>DHT on tarpeen, jos ystäviesi IP-osoitteet ovat dynaamisia.</translation>
+    </message>
+    <message>
+        <source>Go to Settings-&gt;Server and change config to &quot;Public: DHT and Discovery&quot;</source>
+        <translation>Mene Asetukset -&gt; Palvelin ja ota käyttöön asetus &quot;Julkinen: DHT &amp; etsintä&quot;</translation>
+    </message>
+    <message>
+        <source>Peer Denied Connection</source>
+        <translation>Vertainen torjui yhteyden</translation>
+    </message>
+    <message>
+        <source>We successfully reached your Friend.</source>
+        <translation>Yhdistäminen ystävääsi onnistui.</translation>
+    </message>
+    <message>
+        <source>but they have not added you as a Friend.</source>
+        <translation>mutta he eivät ole lisänneet sinua ystäväkseen.</translation>
+    </message>
+    <message>
+        <source>Please contact them to add your Certificate</source>
+        <translation>Ota heihin yhteyttä ja pyydä lisäämään varmenteesi</translation>
+    </message>
+    <message>
+        <source>Your Retroshare Node is configured Okay</source>
+        <translation>Retroshare-solmusi on määritetty oikein</translation>
+    </message>
+    <message>
+        <source>We successfully reached your Friend via UDP.</source>
+        <translation>Yhdistäminen ystävääsi UDP:n kautta onnistui.</translation>
+    </message>
+    <message>
+        <source>Please contact them to add your Full Certificate</source>
+        <translation>Ota heihin yhteyttä ja pyydä lisäämään koko varmenteesi</translation>
+    </message>
+    <message>
+        <source>They need a Certificate + Location for UDP connections to succeed</source>
+        <translation>He tarvitsevat varmenteen ja sijainnin, jotta UDP-yhteyksien luominen onnistuu</translation>
+    </message>
+    <message>
+        <source>We Cannot find your Friend.</source>
+        <translation>Ystävääsi ei löydy.</translation>
+    </message>
+    <message>
+        <source>They are either offline or their DHT is Off</source>
+        <translation>He ovat joko poissa linjoilta tai DHT pois kytkettynä</translation>
+    </message>
+    <message>
+        <source>Peer DHT is Disabled</source>
+        <translation>Vertaisen DHT on kytketty pois</translation>
+    </message>
+    <message>
+        <source>Your Friend has configured Retroshare with DHT Disabled.</source>
+        <translation>Ystäväsi on kytkenyt Retrosharen DHT:n pois.</translation>
+    </message>
+    <message>
+        <source>You have previously connected to this Friend</source>
+        <translation>Olet aiemmin yhdistänyt tähän ystävään</translation>
+    </message>
+    <message>
+        <source>Retroshare has determined that they have DHT switched off</source>
+        <translation>RetroShare havaitsi, että heillä on DHT kytkettynä pois</translation>
+    </message>
+    <message>
+        <source>Without the DHT it is hard for Retroshare to locate your friend</source>
+        <translation>Retrosharen on vaikea löytää ystävääsi ilman DHT:tä</translation>
+    </message>
+    <message>
+        <source>Try importing a fresh Certificate to get up-to-date connection information</source>
+        <translation>Kokeile tuoda tuore varmenne saadaksesi ajantasaiset tiedot yhdistämisestä</translation>
+    </message>
+    <message>
+        <source>Incomplete Friend Details</source>
+        <translation>Epätäydelliset ystävän tiedot</translation>
+    </message>
+    <message>
+        <source>You have imported an incomplete Certificate</source>
+        <translation>Olet tuonut epätäydellisen varmenteen</translation>
+    </message>
+    <message>
+        <source>Please retry importing the full Certificate</source>
+        <translation>Yritä tuoda täydellinen varmenne uudelleen</translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Lucida Grande'; font-size:13pt;&quot;&gt;This Widget shows the progress of your connection to your new peer.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Lucida Grande'; font-size:13pt;&quot;&gt;It is helpful for problem-solving.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Lucida Grande'; font-size:13pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Lucida Grande'; font-size:13pt;&quot;&gt;If you are an expert RS user, or trust that RS will do the right thing&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Lucida Grande&apos;; font-size:13pt;&quot;&gt;you can close it.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Lucida Grande&apos;; font-size:13pt;&quot;&gt;Tämä ikkunaelementti näyttää yhdistymisen uuteen vertaiseesi edistymisen.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Lucida Grande&apos;; font-size:13pt;&quot;&gt;Se on hyödyllinen ratkaistaessa ongelmia.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Lucida Grande&apos;; font-size:13pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Lucida Grande&apos;; font-size:13pt;&quot;&gt;Jos olet asiantunteva RS-käyttäjä tai luotat siihen, että RS tekee oikeat ratkaisut,&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Lucida Grande&apos;; font-size:13pt;&quot;&gt;voit sulkea sen.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>N/A</source>
+        <translation>Ei sovellu</translation>
+    </message>
+    <message>
+        <source>UNVERIFIABLE FORWARD!</source>
+        <translation>VARMISTAMATON VÄLITYS!</translation>
+    </message>
+    <message>
+        <source>UNVERIFIABLE FORWARD &amp; NO DHT</source>
+        <translation>VARMISTAMATON VÄLITYS EIKÄ DHT:TÄ!</translation>
+    </message>
+    <message>
+        <source>Searching</source>
+        <translation>Haetaan</translation>
+    </message>
+    <message>
+        <source>UDP Connect Timeout</source>
+        <translation>UDP-yhdistäminen aikakatkaistiin</translation>
+    </message>
+    <message>
+        <source>Only Advanced Retroshare users should switch off the DHT.</source>
+        <translation>DHT:n pois kytkemistä suositellaan vain kokeneille Retrosharen käyttäjille.</translation>
+    </message>
+    <message>
+        <source>Retroshare cannot connect without this information</source>
+        <translation>Retroshare ei voi yhdistää ilman näitä tietoja</translation>
     </message>
 </context>
 <context>
@@ -3309,6 +3751,14 @@ p, li { white-space: pre-wrap; }
         <source>No Circle Limitations Selected</source>
         <translation>Piirien rajoituksia ei valittuna</translation>
     </message>
+    <message>
+        <source>Create New Personal Circle</source>
+        <translation>Luo uusi henkilökohtainen piiri</translation>
+    </message>
+    <message>
+        <source>Create New External Circle</source>
+        <translation>Luo uusi ulkoinen piiri</translation>
+    </message>
 </context>
 <context>
     <name>CreateForum</name>
@@ -3810,6 +4260,10 @@ p, li { white-space: pre-wrap; }
         <source>Your new messaging chat invite has been copied to clipboard. You can now paste it as a Retroshare link.</source>
         <translation>Uusi keskustelukutsu on kopioitu leikepöydälle. Voit nyt liittää sen Retroshare-linkkinä.</translation>
     </message>
+    <message>
+        <source>Create distant chat</source>
+        <translation>Luo etäinen keskustelu</translation>
+    </message>
 </context>
 <context>
     <name>CryptoPage</name>
@@ -3954,6 +4408,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>GB</source>
         <translation>GB</translation>
+    </message>
+    <message>
+        <source>File Never Seen</source>
+        <translation>Tiedostoa ei ole nähty ikinä</translation>
     </message>
 </context>
 <context>
@@ -4140,6 +4598,250 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Bandwidth</source>
         <translation>Kaistanleveys</translation>
+    </message>
+    <message>
+        <source>Unknown NetState</source>
+        <translation>Tuntematon verkon tila</translation>
+    </message>
+    <message>
+        <source>Offline</source>
+        <translation>Ei yhteyttä</translation>
+    </message>
+    <message>
+        <source>Local Net</source>
+        <translation>Paikallinen verkko</translation>
+    </message>
+    <message>
+        <source>Behind NAT</source>
+        <translation>NAT:in takana</translation>
+    </message>
+    <message>
+        <source>External IP</source>
+        <translation>Ulkoinen IP</translation>
+    </message>
+    <message>
+        <source>UNKNOWN NAT STATE</source>
+        <translation>TUNTEMATON NAT-TILA</translation>
+    </message>
+    <message>
+        <source>SYMMETRIC NAT</source>
+        <translation>SYMMETRINEN NAT</translation>
+    </message>
+    <message>
+        <source>DETERMINISTIC SYM NAT</source>
+        <translation>DETERMINISTINEN SYM NAT</translation>
+    </message>
+    <message>
+        <source>RESTRICTED CONE NAT</source>
+        <translation>RAJOITETTU CONE NAT</translation>
+    </message>
+    <message>
+        <source>FULL CONE NAT</source>
+        <translation>TÄYSI CONE NAT</translation>
+    </message>
+    <message>
+        <source>OTHER NAT</source>
+        <translation>MUU NAT</translation>
+    </message>
+    <message>
+        <source>NO NAT</source>
+        <translation>EI NAT:IA</translation>
+    </message>
+    <message>
+        <source>UNKNOWN NAT HOLE STATUS</source>
+        <translation>NAT-REIÄN TILA TUNTEMATON</translation>
+    </message>
+    <message>
+        <source>NO NAT HOLE</source>
+        <translation>EI NAT-REIKÄÄ</translation>
+    </message>
+    <message>
+        <source>UPNP FORWARD</source>
+        <translation>UPNP-VÄLITYS</translation>
+    </message>
+    <message>
+        <source>NATPMP FORWARD</source>
+        <translation>NATPMP-VÄLITYS</translation>
+    </message>
+    <message>
+        <source>MANUAL FORWARD</source>
+        <translation>MANUAALINEN VÄLITYS</translation>
+    </message>
+    <message>
+        <source>NET BAD: Unknown State</source>
+        <translation>VERKKOVIRHE: Tuntematon tila</translation>
+    </message>
+    <message>
+        <source>NET BAD: Offline</source>
+        <translation>VERKKOVIRHE: Offline-tila</translation>
+    </message>
+    <message>
+        <source>NET BAD: Behind Symmetric NAT</source>
+        <translation>VERKKOVIRHE: Symmetrisen NAT:in takana</translation>
+    </message>
+    <message>
+        <source>NET BAD: Behind NAT &amp; No DHT</source>
+        <translation>VERKKOVIRHE: NAT:in takana eikä DHT:tä</translation>
+    </message>
+    <message>
+        <source>NET WARNING: NET Restart</source>
+        <translation>VERKKOVAROITUS: Verkon uudelleenkäynnistys</translation>
+    </message>
+    <message>
+        <source>NET WARNING: Behind NAT</source>
+        <translation>VERKKOVAROITUS: NAT:in takana</translation>
+    </message>
+    <message>
+        <source>NET WARNING: No DHT</source>
+        <translation>VERKKOVAROITUS: Ei DHT:tä</translation>
+    </message>
+    <message>
+        <source>NET STATE GOOD!</source>
+        <translation>VERKON TILA HYVÄ!</translation>
+    </message>
+    <message>
+        <source>CAUTION: UNVERIFIABLE FORWARD!</source>
+        <translation>VAROITUS: VARMISTAMATON VÄLITYS!</translation>
+    </message>
+    <message>
+        <source>CAUTION: UNVERIFIABLE FORWARD &amp; NO DHT</source>
+        <translation>VAROITUS: VARMISTAMATON VÄLITYS EIKÄ DHT:TÄ!</translation>
+    </message>
+    <message>
+        <source>Not Active (Maybe Connected!)</source>
+        <translation>Ei aktiivinen (ehkä yhdistyneenä!)</translation>
+    </message>
+    <message>
+        <source>Searching</source>
+        <translation>Haetaan</translation>
+    </message>
+    <message>
+        <source>Failed</source>
+        <translation>Epäonnistunut</translation>
+    </message>
+    <message>
+        <source>offline</source>
+        <translation>Ei yhteyttä</translation>
+    </message>
+    <message>
+        <source>Unreachable</source>
+        <translation>Tavoittamattomissa</translation>
+    </message>
+    <message>
+        <source>ONLINE</source>
+        <translation>LINJOILLA</translation>
+    </message>
+    <message>
+        <source>Direct</source>
+        <translation>Suora</translation>
+    </message>
+    <message>
+        <source>Proxy VIA </source>
+        <translation>Välityspalvelimen kautta</translation>
+    </message>
+    <message>
+        <source>Relay VIA </source>
+        <translation>Välityksen kautta</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation>Ei mikään</translation>
+    </message>
+    <message>
+        <source>Disconnected</source>
+        <translation>Yhteys katkaistu</translation>
+    </message>
+    <message>
+        <source>Udp Started</source>
+        <translation>UDP käynnissä</translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>Yhteydessä</translation>
+    </message>
+    <message>
+        <source>Request Active</source>
+        <translation>Pyyntä aktiivinen</translation>
+    </message>
+    <message>
+        <source>No Request</source>
+        <translation>Ei pyyntöä</translation>
+    </message>
+    <message>
+        <source>Unknown</source>
+        <translation>Tuntematon</translation>
+    </message>
+    <message>
+        <source>#Peers: </source>
+        <translation>#Vertaiset:</translation>
+    </message>
+    <message>
+        <source> DHT: (#off:</source>
+        <translation> DHT: (#pois:</translation>
+    </message>
+    <message>
+        <source>,unreach:</source>
+        <translation>.tavoittamattomissa:</translation>
+    </message>
+    <message>
+        <source>,online:</source>
+        <translation>.linjoilla.</translation>
+    </message>
+    <message>
+        <source>) Connections: (#dis:</source>
+        <translation>) Yhteydet: (#ei yht:</translation>
+    </message>
+    <message>
+        <source>,#dir:</source>
+        <translation>,#suora:</translation>
+    </message>
+    <message>
+        <source>,#proxy:</source>
+        <translation>,#välityspalvelin:</translation>
+    </message>
+    <message>
+        <source>,#relay:</source>
+        <translation>,#välitys:</translation>
+    </message>
+    <message>
+        <source>RELAY END</source>
+        <translation>VÄLITYKSEN LOPPU</translation>
+    </message>
+    <message>
+        <source>Yourself</source>
+        <translation>Sinä itse</translation>
+    </message>
+    <message>
+        <source>unknown</source>
+        <translation>tuntematon</translation>
+    </message>
+    <message>
+        <source>unlimited</source>
+        <translation>rajoittamaton</translation>
+    </message>
+    <message>
+        <source>Own Relay</source>
+        <translation>Oma välitys</translation>
+    </message>
+    <message>
+        <source>RELAY PROXY</source>
+        <translation>VÄLITYKSEN VÄLITYSPALVELIN</translation>
+    </message>
+    <message>
+        <source>%1 secs ago</source>
+        <translation>%1 sek sitten</translation>
+    </message>
+    <message>
+        <source>%1B/s</source>
+        <translation>%1B/s</translation>
+    </message>
+    <message>
+        <source>0x%1 EX:0x%2</source>
+        <translation>0x%1 EX:0x%2</translation>
+    </message>
+    <message>
+        <source>never</source>
+        <translation>ei ikinä</translation>
     </message>
 </context>
 <context>
@@ -4780,10 +5482,6 @@ p, li { white-space: pre-wrap; }
         <translation>Foorumit</translation>
     </message>
     <message>
-        <source>Display</source>
-        <translation>Näytä</translation>
-    </message>
-    <message>
         <source>Create Forum</source>
         <translation>Luo foorumi</translation>
     </message>
@@ -5024,8 +5722,8 @@ p, li { white-space: pre-wrap; }
         <translation>Foorumin kuvaus</translation>
     </message>
     <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Forums&lt;/h1&gt;                              		  &lt;p&gt;Retroshare Forums look like internet forums, but they work in a decentralized way:                     		  You see forums your friends are subscribed to, and you forward subscribed forums to                      		  your friends. This automatically promotes interesting forums in the network.&lt;/p&gt;                     		  &lt;p&gt;Forums are either Authenticated (&lt;img src=&quot;:/images/konv_message2.png&quot; width=&quot;12&quot;/&gt;) in which case you need to cryptographically sign                      		  your posts, or anonymous (&lt;img src=&quot;:/images/konversation.png&quot; width=&quot;12&quot;/&gt;). The former class is more resistant to spamming.&lt;/p&gt;                 		  &lt;p&gt;Forum posts propagate from friend to friend using small cache file exchanges. When you first connect to a new friend, it&apos;s likely 		  you will receive many such cache files, and new forums will appear. 		  &lt;/p&gt;                                      		</source>
-        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Foorumit&lt;/h1&gt;                              		  &lt;p&gt;Retrosharen foorumit toimivat hajautetusti:                     		  Näet foorumit, jotka ystäväsi ovat tilanneet ja vastaavasti välität tilaamasi foorumit                      		  ystävillesi. Tällä tavoin kiinnostavien foorumeiden näkyvyys lisääntyy automaattisesti.&lt;/p&gt;                     		  &lt;p&gt;Foorumit ovat joko varmennettuja, (&lt;img src=&quot;:/images/konv_message2.png&quot; width=&quot;12&quot;/&gt;) jolloin sinun on allekirjoitettava                      		  viestisi salausavaimella tai nimettömiä (&lt;img src=&quot;:/images/konversation.png&quot; width=&quot;12&quot;/&gt;). Ensinmainittu on vastustuskykyisempi roskapostittamiselle.&lt;/p&gt;                 		  &lt;p&gt;Foorumiviestit leviävät ystävältä toiselle pieniä välimuistitiedostoja vaihtamalla. Kun otat ensimmäisen kerran yhteyden uuteen ystävään, on todennäköistä, 		  että vastaanotat useita välimuistitiedostoja ja uusia foorumeita ilmestyy saatavillesi. 		  &lt;/p&gt;                                      		</translation>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Forums&lt;/h1&gt;                                  &lt;p&gt;Retroshare Forums look like internet forums, but they work in a decentralized way:                         You see forums your friends are subscribed to, and you forward subscribed forums to                          your friends. This automatically promotes interesting forums in the network.&lt;/p&gt;                         &lt;p&gt;Forums are either Authenticated (&lt;img src=&quot;:/images/konv_message2.png&quot; width=&quot;12&quot;/&gt;) in which case you need to cryptographically sign                          your posts, or anonymous (&lt;img src=&quot;:/images/konversation.png&quot; width=&quot;12&quot;/&gt;). The former class is more resistant to spamming.&lt;/p&gt;                     &lt;p&gt;Forum posts propagate from friend to friend using small cache file exchanges. When you first connect to a new friend, it&apos;s likely     you will receive many such cache files, and new forums will appear.     &lt;/p&gt;                                        </source>
+        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Foorumit&lt;/h1&gt; &lt;p&gt;Retrosharen foorumit toimivat hajautetusti: Näet foorumit, jotka ystäväsi ovat tilanneet ja vastaavasti välität tilaamasi foorumit ystävillesi. Tällä tavoin kiinnostavien foorumeiden näkyvyys lisääntyy automaattisesti.&lt;/p&gt; &lt;p&gt;Foorumit ovat joko varmennettuja, (&lt;img src=&quot;:/images/konv_message2.png&quot; width=&quot;12&quot;/&gt;) jolloin sinun on allekirjoitettava viestisi salausavaimella tai nimettömiä (&lt;img src=&quot;:/images/konversation.png&quot; width=&quot;12&quot;/&gt;). Ensinmainittu on vastustuskykyisempi roskapostittamiselle.&lt;/p&gt; &lt;p&gt;Foorumiviestit leviävät ystävältä toiselle pieniä välimuistitiedostoja vaihtamalla. Kun otat ensimmäisen kerran yhteyden uuteen ystävään, on todennäköistä, että vastaanotat useita välimuistitiedostoja ja uusia foorumeita ilmestyy saatavillesi. &lt;/p&gt;</translation>
     </message>
 </context>
 <context>
@@ -5111,11 +5809,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Set root is Decorated</source>
-        <translation>Asetettu juuri on koristeltu</translation>
+        <translation>Aseta puunäkymä</translation>
     </message>
     <message>
         <source>Set Root Decorated</source>
-        <translation>Aseta juuri koristelluksi</translation>
+        <translation>Aseta puunäkymä</translation>
     </message>
     <message>
         <source>Show Groups</source>
@@ -5242,39 +5940,8 @@ p, li { white-space: pre-wrap; }
         <translation>Luo uusi ryhmä</translation>
     </message>
     <message>
-        <source>Recommend many friends to each others</source>
-        <translation>Suosittele monia ystäviä toisilleen</translation>
-    </message>
-    <message>
-        <source>Service permissions matrix</source>
-        <translation>Palveluiden käyttöoikeudet</translation>
-    </message>
-</context>
-<context>
-    <name>FriendRecommendDialog</name>
-    <message>
-        <source>Friend Recommendations</source>
-        <translation>Ystäväsuositukset</translation>
-    </message>
-    <message>
-        <source>Message:</source>
-        <translation>Viesti:</translation>
-    </message>
-    <message>
-        <source>Recommend friends</source>
-        <translation>Suosittele ystäviä</translation>
-    </message>
-    <message>
-        <source>To</source>
-        <translation>Vastaanottaja</translation>
-    </message>
-    <message>
-        <source>Please select at least one friend for recommendation.</source>
-        <translation>Ole hyvä ja valitse ainakin yksi ystävä suositeltavaksi.</translation>
-    </message>
-    <message>
-        <source>Please select at least one friend as recipient.</source>
-        <translation>Ole hyvä ja valitse ainakin yksi ystävä vastaanottajaksi.</translation>
+        <source>Display</source>
+        <translation>Näytä</translation>
     </message>
 </context>
 <context>
@@ -5320,10 +5987,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Friends</source>
         <translation>Ystävät</translation>
-    </message>
-    <message>
-        <source>Display</source>
-        <translation>Näytä</translation>
     </message>
     <message>
         <source>Edit status message</source>
@@ -5418,24 +6081,12 @@ p, li { white-space: pre-wrap; }
         <translation>Luo uusi keskusteluaula</translation>
     </message>
     <message>
-        <source>Friend Recommendations</source>
-        <translation>Ystäväsuositukset</translation>
-    </message>
-    <message>
         <source>Choose Font</source>
         <translation>Valitse kirjasin</translation>
     </message>
     <message>
         <source>Reset font to default</source>
         <translation>Palauta oletuskirjasin</translation>
-    </message>
-    <message>
-        <source>Service permissions</source>
-        <translation>Palvelujen käyttöoikeudet</translation>
-    </message>
-    <message>
-        <source>Search</source>
-        <translation>Etsi</translation>
     </message>
     <message>
         <source>Local network</source>
@@ -5474,12 +6125,20 @@ p, li { white-space: pre-wrap; }
         <translation>Avainnippu</translation>
     </message>
     <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Friends&lt;/h1&gt;                                   		  &lt;p&gt;The Friends tab shows...your friends: the list of persons you have accepted to connect to.                   		  &lt;/p&gt;                                                   		  &lt;p&gt;You can group friends together to allow a finer level of information access, for instance to only allow      		  some friends to see some files.&lt;/p&gt; 		  &lt;p&gt;On the right, you will find 3 useful tabs:                                                                   		  &lt;ul&gt;	                                                                                                         		  		&lt;li&gt;Broadcast sends messages to all connected friends at once&lt;/li&gt;                             		  		&lt;li&gt;Local Network shows the network around you, including friends of your friends&lt;/li&gt;                 		  		&lt;li&gt;Keyring contains keys you collected, mostly forwarded to you by your friends&lt;/li&gt;                              		  &lt;/ul&gt; &lt;/p&gt;                                                                                                      		</source>
-        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Ystävät&lt;/h1&gt;                                   		  &lt;p&gt;Ystävät-näkymä näyttää ystäväsi: luettelon henkilöistä, joihin yhdistämisen olet hyväksynyt.                   		  &lt;/p&gt;                                                   		  &lt;p&gt;Voit ryhmitellä ystäviäsi ja näin hienosäätää pääsyä tietoihisi. Voit esimerkiksi      		  sallia vain tiettyjen ystävien nähdä tietyt tiedostot.&lt;/p&gt; 		  &lt;p&gt;Oikealla näet kolme hyödyllistä välilehteä:                                                                   		  &lt;ul&gt;	                                                                                                         		  		&lt;li&gt;Kuulutus lähettää viestejä kaikille linjoilla oleville ystävillesi samanaikaisesti&lt;/li&gt;                             		  		&lt;li&gt;Paikallinen verkko näyttää sinua ympäröivän verkoston, mukaanlukien ystäviesi ystävät&lt;/li&gt;                 		  		&lt;li&gt;Avainnippu sisältää keräämäsi avaimet, joista useimmat ovat ystäviesi välittämiä&lt;/li&gt;                              		  &lt;/ul&gt; &lt;/p&gt;                                                                                                      		</translation>
-    </message>
-    <message>
         <source>Retroshare broadcast chat: messages are sent to all connected friends.</source>
         <translation>Retrosharen kuulutus: viestit lähetetään kaikille linjoilla oleville ystäville.</translation>
+    </message>
+    <message>
+        <source>Attach a Picture</source>
+        <translation>Liitä kuva</translation>
+    </message>
+    <message>
+        <source>Load Picture File</source>
+        <translation>Lataa kuvatiedosto</translation>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Friends&lt;/h1&gt;                                       &lt;p&gt;The Friends tab shows...your friends: the list of persons you have accepted to connect to.                       &lt;/p&gt;                                                       &lt;p&gt;You can group friends together to allow a finer level of information access, for instance to only allow          some friends to see some files.&lt;/p&gt;     &lt;p&gt;On the right, you will find 3 useful tabs:                                                                       &lt;ul&gt;                                                                                                                &lt;li&gt;Broadcast sends messages to all connected friends at once&lt;/li&gt;                                   &lt;li&gt;Local Network shows the network around you, including friends of your friends&lt;/li&gt;                       &lt;li&gt;Keyring contains keys you collected, mostly forwarded to you by your friends&lt;/li&gt;                                  &lt;/ul&gt; &lt;/p&gt;                                                                                                        </source>
+        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Ystävät&lt;/h1&gt;                                   		  &lt;p&gt;Ystävät-näkymä näyttää ystäväsi: luettelon henkilöistä, joihin yhdistämisen olet hyväksynyt.                   		  &lt;/p&gt;                                                   		  &lt;p&gt;Voit ryhmitellä ystäviäsi ja näin hienosäätää pääsyä tietoihisi. Voit esimerkiksi      		  sallia vain tiettyjen ystävien nähdä tietyt tiedostot.&lt;/p&gt; 		  &lt;p&gt;Oikealla näet kolme hyödyllistä välilehteä:                                                                   		  &lt;ul&gt;	                                                                                                         		  		&lt;li&gt;Kuulutus lähettää viestejä kaikille linjoilla oleville ystävillesi samanaikaisesti&lt;/li&gt;                             		  		&lt;li&gt;Paikallinen verkko näyttää sinua ympäröivän verkoston, mukaanlukien ystäviesi ystävät&lt;/li&gt;                 		  		&lt;li&gt;Avainnippu sisältää keräämäsi avaimet, joista useimmat ovat ystäviesi välittämiä&lt;/li&gt;                              		  &lt;/ul&gt; &lt;/p&gt;                                                                                                      		</translation>
     </message>
 </context>
 <context>
@@ -6305,6 +6964,10 @@ p, li { white-space: pre-wrap; }
         <source>Private Key Available</source>
         <translation>Yksityinen avain saatavilla</translation>
     </message>
+    <message>
+        <source>Display</source>
+        <translation>Näytä</translation>
+    </message>
 </context>
 <context>
     <name>GuiExprElement</name>
@@ -6390,10 +7053,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Channels</source>
         <translation>Kanavat</translation>
-    </message>
-    <message>
-        <source>Display</source>
-        <translation>Näytä</translation>
     </message>
     <message>
         <source>Create Channel</source>
@@ -6501,6 +7160,14 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Edit Channel</source>
         <translation>Muokkaa kanavaa</translation>
+    </message>
+    <message>
+        <source>Add Channel Admins</source>
+        <translation>Lisää ylläpitäjiä kanavalle</translation>
+    </message>
+    <message>
+        <source>Select Channel Admins</source>
+        <translation>Valitse ylläpitäjiä kanavalle</translation>
     </message>
 </context>
 <context>
@@ -6895,10 +7562,6 @@ kuin voit kommentoida</translation>
     <message>
         <source>Forums</source>
         <translation>Foorumi</translation>
-    </message>
-    <message>
-        <source>Display</source>
-        <translation>Näytä</translation>
     </message>
     <message>
         <source>Create Forum</source>
@@ -7577,6 +8240,14 @@ p, li { white-space: pre-wrap; }
         <source>Anonymous Id</source>
         <translation>Nimetön tunniste</translation>
     </message>
+    <message>
+        <source>Create new Identity</source>
+        <translation>Luo uusi henkilöllisyys</translation>
+    </message>
+    <message>
+        <source>Delete Identity</source>
+        <translation>Poista henkilöllisyys</translation>
+    </message>
 </context>
 <context>
     <name>IdEditDialog</name>
@@ -7639,6 +8310,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Unknown real name</source>
         <translation>Tuntematon oikea nimi</translation>
+    </message>
+    <message>
+        <source>Create New Identity</source>
+        <translation>Luo uusi henkilöllisyys</translation>
     </message>
 </context>
 <context>
@@ -7936,6 +8611,14 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>The file link is malformed.</source>
         <translation>Linkki on virheellinen.</translation>
+    </message>
+    <message>
+        <source>ServicePermissions</source>
+        <translation>Palveluiden käyttöoikeudet</translation>
+    </message>
+    <message>
+        <source>Service permissions matrix</source>
+        <translation>Palveluiden käyttöoikeudet</translation>
     </message>
 </context>
 <context>
@@ -8367,6 +9050,10 @@ Haluatko tallentaa viestin?</translation>
     <message>
         <source>Distant peer (name: %2, PGP key: %1)</source>
         <translation>Etäinen vertainen (nimi: %2, PGP-avain: %1)</translation>
+    </message>
+    <message>
+        <source>Only show people you trusted</source>
+        <translation>Näytä vain henkilöt, joihin luotat</translation>
     </message>
 </context>
 <context>
@@ -8967,10 +9654,6 @@ Haluatko tallentaa viestin?</translation>
         <translation>Järjestä allekirjoituksen mukaan</translation>
     </message>
     <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Messages&lt;/h1&gt;                         			 &lt;p&gt;Messages are like &lt;b&gt;e-mail&lt;/b&gt;: you send/receive them from your friends when both of you	are connected.&lt;/p&gt; 			 &lt;p&gt;It is also possible to send messages to non friends, using tunnels. Such messages are always encrypted. It is 			 recommended to cryptographically sign distant messages, as a proof of your identity, using the &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; button 			 in the message composer window. Distant messages are not guarrantied to arrive, since this requires the distant peer to accept them (You need yourself to switch this on in Config-Messages).&lt;/p&gt;			 &lt;p&gt;Some additional features allow you to exchange data in messages: you may recommend files to your friends by pasting file links, 			 or recommend friends-to-be to other friends, in order to streathen your network.&lt;/p&gt;	                   			 </source>
-        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Viestit&lt;/h1&gt;                         			 &lt;p&gt;Viestit ovat kuten &lt;b&gt;sähköposti&lt;/b&gt;: lähetät niitä ystävillesi ja päinvastoin, kun kumpikin teistä	on linjoilla.&lt;/p&gt; 			 &lt;p&gt;On myös mahdollista lähettää viestejä henkilöille, jotka eivät ole ystäviäsi. Tämä tapahtuu tunneleita käyttämällä ja tällaiset viestit ovat aina salattuja. Etäiset 			 viestit on suositeltavaa allekirjoittaa kryptografisesti, jotta henkilöllisyytesi voidaan todentaa, käyttämällä &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; -painiketta 			 viestinkirjoitusikkunassa. Etäiset viestit eivät välttämättä saavu perille, koska etäisen vertaisen on hyväksyttävä ne erikseen (sinun tulee kytkeä tämä päälle kohdasta Asetukset - Viesti).&lt;/p&gt;			 &lt;p&gt;Lisäominaisuudet mahdollistavat datan vaihtamisen viesteissä: voit suositella tiedostoja ystävillesi liittämällä tiedostolinkkejä 			 tai suositella potentiaalisia ystäviä muille ystävillesi verkostosi vahvistamiseksi.&lt;/p&gt;	                   			 </translation>
-    </message>
-    <message>
         <source>This message is encrypted. Right click to decrypt it.</source>
         <translation>Tämä viesti on salattu. Pura salaus napsauttamalla hiiren kakkospainiketta.</translation>
     </message>
@@ -8986,6 +9669,10 @@ Haluatko tallentaa viestin?</translation>
         <source>This message is not encrypted. Cannot decrypt!</source>
         <translation>Tämä viesti ei ole salattu. Ei voida purkaa!</translation>
     </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Messages&lt;/h1&gt;                          &lt;p&gt;Messages are like &lt;b&gt;e-mail&lt;/b&gt;: you send/receive them from your friends when both of you are connected.&lt;/p&gt;  &lt;p&gt;It is also possible to send messages to non friends, using tunnels. Such messages are always encrypted. It is  recommended to cryptographically sign distant messages, as a proof of your identity, using the &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; button  in the message composer window. Distant messages are not guarrantied to arrive, since this requires the distant peer to accept them (You need yourself to switch this on in Config-Messages).&lt;/p&gt; &lt;p&gt;Some additional features allow you to exchange data in messages: you may recommend files to your friends by pasting file links,  or recommend friends-to-be to other friends, in order to streathen your network.&lt;/p&gt;                    </source>
+        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Viestit&lt;/h1&gt;                         			 &lt;p&gt;Viestit ovat kuten &lt;b&gt;sähköposti&lt;/b&gt;: lähetät niitä ystävillesi ja päinvastoin, kun kumpikin teistä	on linjoilla.&lt;/p&gt; 			 &lt;p&gt;On myös mahdollista lähettää viestejä henkilöille, jotka eivät ole ystäviäsi. Tämä tapahtuu tunneleita käyttämällä ja tällaiset viestit ovat aina salattuja. Etäiset 			 viestit on suositeltavaa allekirjoittaa kryptografisesti, jotta henkilöllisyytesi voidaan todentaa, käyttämällä &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; -painiketta 			 viestinkirjoitusikkunassa. Etäiset viestit eivät välttämättä saavu perille, koska etäisen vertaisen on hyväksyttävä ne erikseen (sinun tulee kytkeä tämä päälle kohdasta Asetukset - Viesti).&lt;/p&gt;			 &lt;p&gt;Lisäominaisuudet mahdollistavat datan vaihtamisen viesteissä: voit suositella tiedostoja ystävillesi liittämällä tiedostolinkkejä 			 tai suositella potentiaalisia ystäviä muille ystävillesi verkostosi vahvistamiseksi.&lt;/p&gt;	                   			 </translation>
+    </message>
 </context>
 <context>
     <name>MessengerWindow</name>
@@ -8994,20 +9681,12 @@ Haluatko tallentaa viestin?</translation>
         <translation>RetroSharen pikaviestin</translation>
     </message>
     <message>
-        <source>Search Friends</source>
-        <translation>Etsi ystäviä</translation>
-    </message>
-    <message>
         <source>Add a Friend</source>
         <translation>Lisää ystävä</translation>
     </message>
     <message>
         <source>Share files for your friends</source>
         <translation>Jaa tiedostoja ystävillesi</translation>
-    </message>
-    <message>
-        <source>Search</source>
-        <translation>Etsi</translation>
     </message>
 </context>
 <context>
@@ -9055,6 +9734,10 @@ Haluatko tallentaa viestin?</translation>
     <message>
         <source>Hide</source>
         <translation>Piilota</translation>
+    </message>
+    <message>
+        <source>Encrypted message</source>
+        <translation>Salattu viesti</translation>
     </message>
 </context>
 <context>
@@ -9345,6 +10028,30 @@ Paina hiiren oikeaa nappia ja valitse &quot;ystävysty&quot; saadaksesi yhteyden
         <source>Only show people you trusted</source>
         <translation>Näytä vain henkilöt, joihin luotat</translation>
     </message>
+    <message>
+        <source>Send Message</source>
+        <translation>Lähetä viesti</translation>
+    </message>
+    <message>
+        <source> If I accept connection from peer</source>
+        <translation> Jos hyväksyn yhteyden vertaiselta</translation>
+    </message>
+    <message>
+        <source>Name of peer</source>
+        <translation>Vertaisen nimi</translation>
+    </message>
+    <message>
+        <source>Did peer sign mine PGP key</source>
+        <translation>Allekirjoittiko vertainen PGP-avaimeni</translation>
+    </message>
+    <message>
+        <source>Peer&apos;s Certificat ID</source>
+        <translation>Vertaisen varmennetunniste</translation>
+    </message>
+    <message>
+        <source>Since when I use this Certificat</source>
+        <translation>Mistä lähtien olen käyttänyt varmennetta</translation>
+    </message>
 </context>
 <context>
     <name>NetworkPage</name>
@@ -9410,7 +10117,7 @@ Paina hiiren oikeaa nappia ja valitse &quot;ystävysty&quot; saadaksesi yhteyden
         <translation>This is a test.</translation>
     </message>
     <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;News Feed&lt;/h1&gt;                                                          		  &lt;p&gt;The News Feed displays the last events on your network, sorted by the time you received them.                		  This gives you a summary of the activity of your friends.                                                       		  You can configure which events to show by pressing on &lt;b&gt;Options&lt;/b&gt;. &lt;/p&gt;                                      		  &lt;p&gt;The various events shown are:                                                                                		  &lt;ul&gt;	                                                                                                         		  		&lt;li&gt;Connection attempts (useful to make friends with new people and control who&apos;s trying to reach you)&lt;/li&gt; 		  		&lt;li&gt;Channel and Forum posts&lt;/li&gt;                                                                            		  		&lt;li&gt;New Channels and Forums you can subscribe to&lt;/li&gt;                                                       		  		&lt;li&gt;Private messages from your friends&lt;/li&gt;                                                                 		  &lt;/ul&gt; &lt;/p&gt;                                                                                                      		</source>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;News Feed&lt;/h1&gt;                                                             &lt;p&gt;The News Feed displays the last events on your network, sorted by the time you received them.                   This gives you a summary of the activity of your friends.                                                          You can configure which events to show by pressing on &lt;b&gt;Options&lt;/b&gt;. &lt;/p&gt;                                         &lt;p&gt;The various events shown are:                                                                                   &lt;ul&gt;                                                                                                            &lt;li&gt;Connection attempts (useful to make friends with new people and control who&apos;s trying to reach you)&lt;/li&gt;    &lt;li&gt;Channel and Forum posts&lt;/li&gt;                                                                               &lt;li&gt;New Channels and Forums you can subscribe to&lt;/li&gt;                                                          &lt;li&gt;Private messages from your friends&lt;/li&gt;                                                                    &lt;/ul&gt; &lt;/p&gt;                                                                                                       </source>
         <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Uutissyöte&lt;/h1&gt;                                                          		  &lt;p&gt;Uutissyöte näyttää uusimmat tapahtumat verkostossasi vastaanottohetken mukaan järjestettynä.                		  Näin saat yhteenvedon ystäviesi toiminnasta.                                                       		  Voit määrittää näytettävät tapahtumat &lt;b&gt;Asetuksista&lt;/b&gt;. &lt;/p&gt;                                      		  &lt;p&gt;Näytettäviä tapahtumia:                                                                                		  &lt;ul&gt;	                                                                                                         		  		&lt;li&gt;Yhteydenottoyritykset (hyödyllisiä ystävien hankkimiseen ja yhteydenottojen hallintaan)&lt;/li&gt; 		  		&lt;li&gt;Viestit kanaville ja foorumeille&lt;/li&gt;                                                                            		  		&lt;li&gt;Uudet kanavat ja foorumit, jotka ovat tilattavissasi&lt;/li&gt;                                                       		  		&lt;li&gt;Yksityisviestit ystäviltäsi&lt;/li&gt;                                                                 		  &lt;/ul&gt; &lt;/p&gt;                                                                                                      		</translation>
     </message>
 </context>
@@ -9560,10 +10267,6 @@ Paina hiiren oikeaa nappia ja valitse &quot;ystävysty&quot; saadaksesi yhteyden
         <translation>Väärä salasana!</translation>
     </message>
     <message>
-        <source>Please enter the password to unlock your PGP key:</source>
-        <translation>Anna salasanasi avataksesi PGP-avaimesi:</translation>
-    </message>
-    <message>
         <source>Unregistered plugin/executable</source>
         <translation>Rekisteröimätön lisäosa/suoritettava tiedosto</translation>
     </message>
@@ -9598,6 +10301,14 @@ Paina hiiren oikeaa nappia ja valitse &quot;ystävysty&quot; saadaksesi yhteyden
     <message>
         <source>This is a test.</source>
         <translation>This is a test.</translation>
+    </message>
+    <message>
+        <source>Unknown title</source>
+        <translation>Tuntematon otsikko</translation>
+    </message>
+    <message>
+        <source>Encrypted message</source>
+        <translation>Salattu viesti</translation>
     </message>
 </context>
 <context>
@@ -10264,10 +10975,6 @@ p, li { white-space: pre-wrap; }
         <translation>0</translation>
     </message>
     <message>
-        <source>/\</source>
-        <translation>/\</translation>
-    </message>
-    <message>
         <source>\/</source>
         <translation>\/</translation>
     </message>
@@ -10298,6 +11005,14 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Comment</source>
         <translation>Kommentti</translation>
+    </message>
+    <message>
+        <source>Vote Up</source>
+        <translation>Äänestä ylös</translation>
+    </message>
+    <message>
+        <source>Vote Down</source>
+        <translation>Äänestä alas</translation>
     </message>
 </context>
 <context>
@@ -10337,10 +11052,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>This Year</source>
         <translation>Tänä vuonna</translation>
-    </message>
-    <message>
-        <source>New Topic</source>
-        <translation>Uusi aihe</translation>
     </message>
     <message>
         <source>Submit Post</source>
@@ -10393,6 +11104,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Please create or choose a Signing Id before Voting</source>
         <translation>Luo tai valitse allekirjoitustunniste ennen äänestämistä</translation>
+    </message>
+    <message>
+        <source>Create New Topic</source>
+        <translation>Luo uusi aihe</translation>
     </message>
 </context>
 <context>
@@ -10863,12 +11578,6 @@ Merkit &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; korvataan merkillä
         <translation>Kokoelmatiedoston käsittely epäonnistui</translation>
     </message>
     <message>
-        <source>The collection file %1 could not be opened.
-Reported error is: %2</source>
-        <translation>Kokoelmatiedostoa %1 ei kyetty avaamaan.
-Virhe: %2</translation>
-    </message>
-    <message>
         <source>Deny friend</source>
         <translation>Torju ystävä</translation>
     </message>
@@ -11017,6 +11726,16 @@ Lukitustiedosto:
     <message>
         <source>Secured tunnel is working. You can talk!</source>
         <translation>Suojattu tunneli toimii. Voit puhua!</translation>
+    </message>
+    <message>
+        <source>The collection file %1 could not be opened.
+Reported error is: 
+
+%2</source>
+        <translation>Kokoelmatiedostoa %1 ei kyetty avaamaan.
+Virhe: 
+
+%2</translation>
     </message>
 </context>
 <context>
@@ -11426,6 +12145,14 @@ Merkit &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; korvataan merkillä
         <source>Create collection file</source>
         <translation>Luo kokoelmatiedosto</translation>
     </message>
+    <message>
+        <source>This file contains the string &quot;%1&quot; and is therefore an invalid collection file. 
+
+If you believe it is correct, remove the corresponding line from the file and re-open it with Retroshare.</source>
+        <translation>Tiedosto sisältää tekstin &quot;%1&quot; ja on täten viallinen kokoelmatiedosto. 
+
+Jos se on mielestäsi kunnollinen, poista mainittu rivi tiedostosta ja avaa se uudelleen Retrosharessa.</translation>
+    </message>
 </context>
 <context>
     <name>RsHtml</name>
@@ -11709,6 +12436,10 @@ Pienennetäänkö kuva kokoon %1x%2 pikseliä?</translation>
     <message>
         <source>New RetroShare Link(s)</source>
         <translation>Uusi RetroShare-linkki/-linkit</translation>
+    </message>
+    <message>
+        <source>Open Folder</source>
+        <translation>Avaa kansio</translation>
     </message>
 </context>
 <context>
@@ -12021,6 +12752,14 @@ Oletusarvo on 20.</translation>
     <message>
         <source>Forums/Channels</source>
         <translation>Foorumit/Kanavat</translation>
+    </message>
+    <message>
+        <source>Service Permissions</source>
+        <translation>Palvelujen käyttöoikeudet</translation>
+    </message>
+    <message>
+        <source>Use as direct source, when available</source>
+        <translation>Käytä suorana lähteenä, kun saatavilla</translation>
     </message>
 </context>
 <context>
@@ -13182,10 +13921,6 @@ Kärsivällisyyttä!</translation>
         <translation>Käyttäjätunniste</translation>
     </message>
     <message>
-        <source>File Never Seen</source>
-        <translation>Tiedostoa ei ole nähty ikinä</translation>
-    </message>
-    <message>
         <source>Expand all</source>
         <translation>Laajenna kaikki</translation>
     </message>
@@ -13270,7 +14005,20 @@ Kärsivällisyyttä!</translation>
         <translation>Tiedostojen siirrot</translation>
     </message>
     <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;File Transfer&lt;/h1&gt;                                                         			 &lt;p&gt;Retroshare brings two ways of transferring files: direct transfers from your friends, and                                     			 distant anonymous tunnelled transfers. In addition, file transfer is multi-source and allows swarming                                      			 (you can be a source while downloading)&lt;/p&gt;                                     			 &lt;p&gt;You can share files using the &lt;img src=&quot;:/images/directoryadd_24x24_shadow.png&quot; width=16 /&gt; icon from the left side bar. 				These files will be listed in the My Files tab. You can decide for each friend group whether they can or not see these files 				in their Friends Files tab&lt;/p&gt;			 &lt;p&gt;The search tab reports files from your friends&apos; file lists, and distant files that can be reached 			 anonymously using the multi-hop tunnelling system.&lt;/p&gt; 			 </source>
+        <source>Path</source>
+        <comment>i.e: Where file is saved</comment>
+        <translation>Polku</translation>
+    </message>
+    <message>
+        <source>Path</source>
+        <translation>Polku</translation>
+    </message>
+    <message>
+        <source>Show Path Column</source>
+        <translation>Näytä Polku-sarake</translation>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;File Transfer&lt;/h1&gt;                                                             &lt;p&gt;Retroshare brings two ways of transferring files: direct transfers from your friends, and                                         distant anonymous tunnelled transfers. In addition, file transfer is multi-source and allows swarming                                          (you can be a source while downloading)&lt;/p&gt;                                         &lt;p&gt;You can share files using the &lt;img src=&quot;:/images/directoryadd_24x24_shadow.png&quot; width=16 /&gt; icon from the left side bar.     These files will be listed in the My Files tab. You can decide for each friend group whether they can or not see these files     in their Friends Files tab&lt;/p&gt;    &lt;p&gt;The search tab reports files from your friends&apos; file lists, and distant files that can be reached     anonymously using the multi-hop tunnelling system.&lt;/p&gt;     </source>
         <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Tiedostojen siirto&lt;/h1&gt;                                                         			 &lt;p&gt;Retroshare tarjoaa kaksi tapaa tiedostojen siirtoon: suorat siirrot ystäviltäsi ja                                     			 etäiset nimettömästi tunneloidut siirrot. Lisäksi, tiedostojen siirto tukee useita lähteitä ja parven hyödyntämistä                                      			 (olet lähde tiedostolle jo ladatessasi sitä)&lt;/p&gt;                                     			 &lt;p&gt;Voit jakaa tiedostoja käyttäen &lt;img src=&quot;:/images/directoryadd_24x24_shadow.png&quot; width=16 /&gt; -kuvaketta vasemmassa sivupalkissa. 				Nämä tiedostot on luetteloitu Omat tiedostoni -välilehdellä. Voit päättää jokaisen ystäväryhmän kohdalla, näkevätkö he tiedostosi. 				Ystävien tiedostot -välilehdellään&lt;/p&gt;			 &lt;p&gt;Etsi-välilehteä käyttäen voit löytää tiedostoja ystäviesi luetteloista sekä 			 etäisiä tiedostoja, joihin pääset käsiksi nimettömästi usean loikan tunnelointijärjestelmän avulla.&lt;/p&gt; 			 </translation>
     </message>
 </context>

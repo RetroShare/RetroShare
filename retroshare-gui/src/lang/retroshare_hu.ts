@@ -1,5 +1,12 @@
 <?xml version="1.0" ?><!DOCTYPE TS><TS language="hu" version="2.0">
 <context>
+    <name>AWidget</name>
+    <message>
+        <source>version</source>
+        <translation>verzió</translation>
+    </message>
+</context>
+<context>
     <name>AboutDialog</name>
     <message>
         <source>About RetroShare</source>
@@ -136,7 +143,7 @@
     </message>
     <message>
         <source>Landscapes</source>
-        <translation type="unfinished"/>
+        <translation>Tájegységek</translation>
     </message>
     <message>
         <source>Pets</source>
@@ -1110,10 +1117,6 @@ p, li { white-space: pre-wrap; }
         <translation>Csatornák</translation>
     </message>
     <message>
-        <source>Display</source>
-        <translation>Megjelenítés beállításai</translation>
-    </message>
-    <message>
         <source>Create Channel</source>
         <translation>Csatorna létrehozása</translation>
     </message>
@@ -1218,7 +1221,7 @@ p, li { white-space: pre-wrap; }
         <translation>Nincs csatorna kiválasztva</translation>
     </message>
     <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Channels&lt;/h1&gt;                                                         		  &lt;p&gt;Channels allow you to post data (e.g. movies, music) that will spread in the network                                                		  among people who subscribed your channel.  If you activate auto-download on a channel, files attached to each post will start  		  downloading automatically when the post is received.&lt;/p&gt;                                                                               		  &lt;p&gt;You see channels your friends are subscribed to, and forward subscribed channels to                                                		  your friends. This promotes good channels in the network.                                                     		  When you first connect to a new friend, it&apos;s likely 		  you will receive many such cache files, and new channels will appear.                                                                  		  &lt;/p&gt;                                                                                                                                   		  &lt;p&gt;Only the channel&apos;s creator can post on that channel. Other peers                       		  in the network can only read from it, unless the channel is private. You can however share the posting rights or the reading rights 		  with your friends.&lt;/p&gt;                            		  </source>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Channels&lt;/h1&gt;                                                             &lt;p&gt;Channels allow you to post data (e.g. movies, music) that will spread in the network                                                    among people who subscribed your channel.  If you activate auto-download on a channel, files attached to each post will start      downloading automatically when the post is received.&lt;/p&gt;                                                                                   &lt;p&gt;You see channels your friends are subscribed to, and forward subscribed channels to                                                    your friends. This promotes good channels in the network.                                                         When you first connect to a new friend, it&apos;s likely     you will receive many such cache files, and new channels will appear.                                                                      &lt;/p&gt;                                                                                                                                       &lt;p&gt;Only the channel&apos;s creator can post on that channel. Other peers                           in the network can only read from it, unless the channel is private. You can however share the posting rights or the reading rights     with your friends.&lt;/p&gt;                                </source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -1289,10 +1292,6 @@ Please choose one of it to chat with.</translation>
         <translation>Csevegőszoba</translation>
     </message>
     <message>
-        <source>Right click to mute/unmute participants&lt;br/&gt;Double click to address this person</source>
-        <translation>Némításhoz kattints jobb gombbal a személyre&lt;br/&gt;Valaki megszólításához kattints duplán rá</translation>
-    </message>
-    <message>
         <source>Lobby management</source>
         <translation>Szobák kezelése</translation>
     </message>
@@ -1323,6 +1322,18 @@ Please choose one of it to chat with.</translation>
     <message>
         <source>Show Participants</source>
         <translation>Résztvevő mutatása</translation>
+    </message>
+    <message>
+        <source>Right click to mute/unmute participants&lt;br/&gt;Double click to address this person&lt;br/&gt;</source>
+        <translation>Némításhoz kattints jobb gombbal&lt;br/&gt;A személy megszólításához kattints duplán&lt;br/&gt;</translation>
+    </message>
+    <message>
+        <source>This participant is not active since:</source>
+        <translation>Ezen résztvevő már nem aktív:</translation>
+    </message>
+    <message>
+        <source> seconds</source>
+        <translation>másodpercek</translation>
     </message>
 </context>
 <context>
@@ -1428,18 +1439,26 @@ Kattints duplán a csevegőszobára, hogy belépj és beszélgethess.</translati
     </message>
     <message>
         <source>Remove Auto Subscribe</source>
-        <translation type="unfinished"/>
+        <translation>Automatikus feliratkozás megszüntetése</translation>
     </message>
     <message>
         <source>Add Auto Subscribe</source>
-        <translation type="unfinished"/>
+        <translation>Automatikus feliratkozás engedélyezése</translation>
     </message>
     <message>
         <source>%1 invites you to chat lobby named %2</source>
         <translation>%1 meghívott a %2 csevegőszobába</translation>
     </message>
     <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Chat Lobbies&lt;/h1&gt;                              		  &lt;p&gt;Chat lobbies are distributed chat rooms, and work pretty much like IRC.                                      		  They allow you to talk anonymously with tons of people without the need to make friends.&lt;/p&gt;                    		  &lt;p&gt;A chat lobby can be public (you friends see it) or private (your friends can&apos;t see it, unless you           		  invite them with &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). Once you have been invited to a private lobby, you will be able to see it when your friends   		  are using it.&lt;/p&gt;                                                                                               		  &lt;p&gt;The list at left shows                                                                                     		  chat lobbies your friends are participating into. You can either                                 		  &lt;ul&gt;                                                                                                            			  &lt;li&gt;Right click to create a new chat lobby&lt;/li&gt;                                                              		     &lt;li&gt;Double click a chat lobby to enter, chat, and show it to your friends&lt;/li&gt;                      		  &lt;/ul&gt; 		  &lt;/p&gt;                                      		</source>
+        <source>Search Chat lobbies</source>
+        <translation>Csevegőszobák keresése</translation>
+    </message>
+    <message>
+        <source>Search Name</source>
+        <translation>Név keresése</translation>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Chat Lobbies&lt;/h1&gt;                              		  &lt;p&gt;Chat lobbies are distributed chat rooms, and work pretty much like IRC.                                      		  They allow you to talk anonymously with tons of people without the need to make friends.&lt;/p&gt;                    		  &lt;p&gt;A chat lobby can be public (your friends see it) or private (your friends can&apos;t see it, unless you           		  invite them with &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). Once you have been invited to a private lobby, you will be able to see it when your friends   		  are using it.&lt;/p&gt;                                                                                               		  &lt;p&gt;The list at left shows                                                                                     		  chat lobbies your friends are participating in. You can either                                 		  &lt;ul&gt;                                                                                                            			  &lt;li&gt;Right click to create a new chat lobby&lt;/li&gt;                                                              		     &lt;li&gt;Double click a chat lobby to enter, chat, and show it to your friends&lt;/li&gt;                      		  &lt;/ul&gt; 		  Note: For the chat lobbies to work properly, your computer needs be on time.  So check your system clock!		  &lt;/p&gt;                                      		</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -1650,15 +1669,15 @@ Kattints duplán a csevegőszobára, hogy belépj és beszélgethess.</translati
     </message>
     <message>
         <source>Distant chat</source>
-        <translation type="unfinished"/>
+        <translation>Távoli csevegés</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Retroshare allows you to anonymously chat to nearby people beyond your friends in the network, using encrypted tunnels. In your personal invites list you keep chat links for people to contact you. In the &amp;quot;collected contacts&amp;quot; list, you keep such chat links that people sent you to contact them.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;A Retroshare használatával névtelenül, titkosított csatornákon cseveghetsz a barátaid közvetítésével elérhető emberekkel. A személyes meghívóid listájában megtarthatsz hivatkozásokat, hogy bizonyos személyek kapcsolatba léphessenek veled. Az &amp;quot;összegyűjtött kapcsolatok&amp;quot; listában azokat a csevegési hivatkozásokat találod, amiket mások küldtek neked, hogy elérhesd őket.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Your personal invites</source>
-        <translation type="unfinished"/>
+        <translation>A személyes meghívóid</translation>
     </message>
     <message>
         <source>Collected contacts</source>
@@ -1971,6 +1990,10 @@ Kattints duplán a csevegőszobára, hogy belépj és beszélgethess.</translati
         <source>External Circles (Other)</source>
         <translation>Külső körök (egyéb)</translation>
     </message>
+    <message>
+        <source>Circles</source>
+        <translation>Körök</translation>
+    </message>
 </context>
 <context>
     <name>ConfCertDialog</name>
@@ -2210,15 +2233,15 @@ Némely szolgáltatás (Felfedező, névtelen forgalmazás) kikapcsolható glob�
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling anonymous routing will suppress all sending/retrieval of tunnel and anonymous search requests from/to this user. This user will not be able to transfer anonymously through you.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;A névtelen alagutak letiltásával felfüggesztesz minden alagutat használó forgalmat  és keresést a felhasználó irányába. Ez a felhasználó képtelen lesz adatforgalmazásra rajtad keresztül.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;Teljes körű, minden felhasználóra kiterjedő alagút tiltást a a beállításokban a kiszolgáló fülön tudsz alkalmazni.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling discovery removes the sending of public keys of your own friends to this user. Discovery information from this friend will be dropped as well.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;A felfedezés letiltásával nem fogod tovább küldeni a barátaid publikus kulcsát a felhasználónak, valamint te se fogsz tőle ilyen információkat kapni..&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;Teljes körű, minden felhasználóra kiterjedő felfedezés tiltást a beállításokban a kiszolgáló fülön tudsz alkalmazni.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling this means that forums and channels posts will not be passed from you to this friend, and items coming from this friend will be dropped.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Ennek letiltásával nem fogsz fórum és csatorna üzeneteket küldeni illetve fogadni ezen barátod irányába.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Use as direct source, when available</source>
@@ -2226,15 +2249,19 @@ Némely szolgáltatás (Felfedező, névtelen forgalmazás) kikapcsolható glob�
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Retroshare periodically checks your friend lists for browsable files matching your transfers, to establish a direct transfer. In this case, your friend knows you&apos;re downloading the file.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;To prevent this behavior for this friend only, uncheck this box. You can still perform a direct transfer if you explicitly ask for it, by e.g. downloading from your friend&apos;s file list. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;A Retroshare időnként a letöltéseiddel megegyező fájlokat keres a barátaid megosztásában, hogy közvetlen kapcsolatot hozhasson létre. Ebben az esetben a barátod tudni fogja, hogy letöltöd a fájlt.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;Hogy ezen helyzetet megelőzd ennél a barátodnál, ne engedélyezd ezt az opciót. Továbbra is tölthetsz le tőle közvetlenül, de csak akkor, ha konkrétan a barátod fájllistájáról választod ki a fájlt. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Encryption</source>
-        <translation type="unfinished"/>
+        <translation>Titkosítás</translation>
     </message>
     <message>
         <source>Not connected</source>
-        <translation type="unfinished"/>
+        <translation>Nem csatlakozott</translation>
+    </message>
+    <message>
+        <source>Peer Addresses</source>
+        <translation>Partner címei</translation>
     </message>
 </context>
 <context>
@@ -2672,6 +2699,413 @@ Némely szolgáltatás (Felfedező, névtelen forgalmazás) kikapcsolható glob�
     <message>
         <source>Direct source</source>
         <translation>Közvetlen forrás</translation>
+    </message>
+    <message>
+        <source>Recommend many friends to each others</source>
+        <translation>Barátaid ajánlása egymásnak</translation>
+    </message>
+    <message>
+        <source>Friend Recommendations</source>
+        <translation>Ajánlott barátok</translation>
+    </message>
+    <message>
+        <source>Message:</source>
+        <translation>Üzenet:</translation>
+    </message>
+    <message>
+        <source>Recommend friends</source>
+        <translation>Barátok ajánlása</translation>
+    </message>
+    <message>
+        <source>To</source>
+        <translation>Címzett</translation>
+    </message>
+    <message>
+        <source>Please select at least one friend for recommendation.</source>
+        <translation>Kérlek, válassz ki az ajánláshoz legalább egy barátot.</translation>
+    </message>
+    <message>
+        <source>Please select at least one friend as recipient.</source>
+        <translation>Kérlek, válassz ki legalább egy barátot címzettnek.</translation>
+    </message>
+</context>
+<context>
+    <name>ConnectProgressDialog</name>
+    <message>
+        <source>Connection Progress</source>
+        <translation>Csatlakozási folyamat</translation>
+    </message>
+    <message>
+        <source>Connecting to:</source>
+        <translation>Kapcsolódás hozzá:</translation>
+    </message>
+    <message>
+        <source>TextLabel</source>
+        <translation>Szövegcímke</translation>
+    </message>
+    <message>
+        <source>Network </source>
+        <translation>Hálózat</translation>
+    </message>
+    <message>
+        <source>Net Result</source>
+        <translation>Hálózati eredmény</translation>
+    </message>
+    <message>
+        <source>Connect Status</source>
+        <translation>Kapcsolat állapota</translation>
+    </message>
+    <message>
+        <source>Contact Result</source>
+        <translation>Kapcsolat eredménye</translation>
+    </message>
+    <message>
+        <source>DHT Startup</source>
+        <translation>DHT indítása</translation>
+    </message>
+    <message>
+        <source>DHT Result</source>
+        <translation>DHT eredménye</translation>
+    </message>
+    <message>
+        <source>Peer Lookup</source>
+        <translation>Partner felkutatása</translation>
+    </message>
+    <message>
+        <source>Peer Result</source>
+        <translation>Partner eredménye</translation>
+    </message>
+    <message>
+        <source>UDP Setup</source>
+        <translation>UDP kapcsolat létrehozása</translation>
+    </message>
+    <message>
+        <source>UDP Result</source>
+        <translation>UDP kapcsolat eredménye</translation>
+    </message>
+    <message>
+        <source>Connection Assistant</source>
+        <translation>Kapcsolódási segéd</translation>
+    </message>
+    <message>
+        <source>Invalid Peer ID</source>
+        <translation>Helytelen partner ID</translation>
+    </message>
+    <message>
+        <source>Unknown State</source>
+        <translation>Ismeretlen állapot</translation>
+    </message>
+    <message>
+        <source>Offline</source>
+        <translation>Kilépett</translation>
+    </message>
+    <message>
+        <source>Behind Symmetric NAT</source>
+        <translation>Szimmetrikus NAT mögött</translation>
+    </message>
+    <message>
+        <source>Behind NAT &amp; No DHT</source>
+        <translation>NAT mögött, DHT nélkül</translation>
+    </message>
+    <message>
+        <source>NET Restart</source>
+        <translation>Hálózat újraindítása</translation>
+    </message>
+    <message>
+        <source>Behind NAT</source>
+        <translation>NAT mögött</translation>
+    </message>
+    <message>
+        <source>No DHT</source>
+        <translation>Nincs DHT</translation>
+    </message>
+    <message>
+        <source>NET STATE GOOD!</source>
+        <translation>A hálózat elérhető!</translation>
+    </message>
+    <message>
+        <source>DHT Failed</source>
+        <translation>DHT sikertelen</translation>
+    </message>
+    <message>
+        <source>DHT Disabled</source>
+        <translation>DHT letiltva</translation>
+    </message>
+    <message>
+        <source>DHT Okay</source>
+        <translation>DHT rendben</translation>
+    </message>
+    <message>
+        <source>Finding RS Peers</source>
+        <translation>RS partnerek keresése</translation>
+    </message>
+    <message>
+        <source>Lookup requires DHT</source>
+        <translation>A felkutatáshoz DHT szükséges</translation>
+    </message>
+    <message>
+        <source>Searching DHT</source>
+        <translation>Keresés a DHT-ben</translation>
+    </message>
+    <message>
+        <source>Lookup Timeout</source>
+        <translation>A keresés túl sokáig tartott</translation>
+    </message>
+    <message>
+        <source>Peer DHT NOT ACTIVE</source>
+        <translation>A partner DHT-je nem észlelhető</translation>
+    </message>
+    <message>
+        <source>Lookup Failure</source>
+        <translation>Sikertelen felkutatás</translation>
+    </message>
+    <message>
+        <source>Peer Offline</source>
+        <translation>A partner nincs bejelentkezve</translation>
+    </message>
+    <message>
+        <source>Peer Firewalled</source>
+        <translation>A partner tűzfal mögött van</translation>
+    </message>
+    <message>
+        <source>Peer Online</source>
+        <translation>A partner be van jelentkezve</translation>
+    </message>
+    <message>
+        <source>Connection In Progress</source>
+        <translation>A csatlakozás folyamatban van</translation>
+    </message>
+    <message>
+        <source>Initial connections can take a while, please be patient</source>
+        <translation>Az első csatlakozások eltarthatnak egy ideig, kérlek legyél türelmes</translation>
+    </message>
+    <message>
+        <source>If an error is detected it will be displayed here</source>
+        <translation>Amennyiben valamilyen hiba történik itt meg lesz jelenítve</translation>
+    </message>
+    <message>
+        <source>You can close this dialog at any time</source>
+        <translation>Bármikor bezárhatod ezt az ablakot</translation>
+    </message>
+    <message>
+        <source>Retroshare will continue connecting in the background</source>
+        <translation>A Retroshare továbbra is csatlakozni próbál majd a háttérben</translation>
+    </message>
+    <message>
+        <source>Connection Timeout</source>
+        <translation>A csatlakozási kísérlet túl sokáig tartott</translation>
+    </message>
+    <message>
+        <source>Connection Attempt has taken too long</source>
+        <translation>A csatlakozási kísérlet túl sokáig tartott</translation>
+    </message>
+    <message>
+        <source>But no error has been detected</source>
+        <translation>Nem észlelhető hiba</translation>
+    </message>
+    <message>
+        <source>Try again shortly, Retroshare will continue connecting in the background</source>
+        <translation>Próbáld újra pár perc múlva, a Retroshare továbbra is csatlakozni próbál majd a háttérben</translation>
+    </message>
+    <message>
+        <source>If you continue to get this message, please contact developers</source>
+        <translation>Amennyiben továbbra is csak ezt az üzenetet fogod látni, kérlek, lépj kapcsolatba a program fejlesztőivel</translation>
+    </message>
+    <message>
+        <source>DHT Lookup Timeout</source>
+        <translation>A DHT felkutatás túl sokáig tartott</translation>
+    </message>
+    <message>
+        <source>DHT Lookup has taken too long</source>
+        <translation>A DHT felkutatás túl sokáig tartott</translation>
+    </message>
+    <message>
+        <source>UDP Connection Timeout</source>
+        <translation>Az UDP csatlakozási kísérlet túl sokáig tartott</translation>
+    </message>
+    <message>
+        <source>UDP Connection has taken too long</source>
+        <translation>Az UDP csatlakozási kísérlet túl sokáig tartott</translation>
+    </message>
+    <message>
+        <source>UDP Connection Failed</source>
+        <translation>Sikertelen UDP csatlakozási kísérlet</translation>
+    </message>
+    <message>
+        <source>We are continually working to improve connectivity.</source>
+        <translation>Folyamatosan dolgozunk a csatlakozási módok fejlesztésén</translation>
+    </message>
+    <message>
+        <source>In this case the UDP connection attempt has failed.</source>
+        <translation>Ezúttal sikertelen volt az UDP csatlakozási kísérlet.</translation>
+    </message>
+    <message>
+        <source>Improve connectivity by opening a Port in your Firewall.</source>
+        <translation>Javítsd a hálózat elérését egy port nyitásával a tűzfalon.</translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>Csatlakozott</translation>
+    </message>
+    <message>
+        <source>Congratulations, you are connected</source>
+        <translation>Gratulálok, csatlakoztál</translation>
+    </message>
+    <message>
+        <source>DHT startup Failed</source>
+        <translation>A DHT indítása sikertelen</translation>
+    </message>
+    <message>
+        <source>Your DHT has not started properly</source>
+        <translation>A DHT nem indult el megfelelően.</translation>
+    </message>
+    <message>
+        <source>Common causes of this problem are:</source>
+        <translation>A gyakori problémák a következők:</translation>
+    </message>
+    <message>
+        <source>     - You are not connected to the Internet</source>
+        <translation>- Nem csatlakozol az internetre</translation>
+    </message>
+    <message>
+        <source>     - You have a missing or out-of-date DHT bootstrap file (bdboot.txt)</source>
+        <translation>- Hiányzik vagy elavult az indítást segítő fájlod (bdboot.txt)</translation>
+    </message>
+    <message>
+        <source>DHT is Disabled</source>
+        <translation>DHT letiltva</translation>
+    </message>
+    <message>
+        <source>The DHT is OFF, so Retroshare cannot find your Friends.</source>
+        <translation>A DHT ki van kapcsolva, ezért a Retroshare képtelen megtalálni a barátaidat.</translation>
+    </message>
+    <message>
+        <source>Retroshare has tried All Known Addresses, with no success</source>
+        <translation>A Retroshare végigpróbálta az összes ismert IP címet, ám egyikhez se sikerült kapcsolódnia</translation>
+    </message>
+    <message>
+        <source>The DHT is needed if your friends have Dynamic IP Addresses.</source>
+        <translation>A DHT létfontosságú, amennyiben a barátaidnak dinamikus IP címük van.</translation>
+    </message>
+    <message>
+        <source>Go to Settings-&gt;Server and change config to &quot;Public: DHT and Discovery&quot;</source>
+        <translation>Menj a Beállítások-&gt;Kiszolgáló részbe és válaszd ki a &quot;Publikus: DHT és felfedezés&quot; lehetőséget</translation>
+    </message>
+    <message>
+        <source>Peer Denied Connection</source>
+        <translation>A partner elutasította a kapcsolatot</translation>
+    </message>
+    <message>
+        <source>We successfully reached your Friend.</source>
+        <translation>Sikeresen elérted a barátodat.</translation>
+    </message>
+    <message>
+        <source>but they have not added you as a Friend.</source>
+        <translation>de ő még nem vett fel téged barátnak.</translation>
+    </message>
+    <message>
+        <source>Please contact them to add your Certificate</source>
+        <translation>Kérlek, lépj vele kapcsolatba és juttasd el hozzá a tanúsítványodat</translation>
+    </message>
+    <message>
+        <source>Your Retroshare Node is configured Okay</source>
+        <translation>A Retroshare kliensed megfelelően van beállítva</translation>
+    </message>
+    <message>
+        <source>We successfully reached your Friend via UDP.</source>
+        <translation>Sikeresen elértük a barátodat UDP használatával.</translation>
+    </message>
+    <message>
+        <source>Please contact them to add your Full Certificate</source>
+        <translation>Kérlek, lépj vele kapcsolatba és juttasd el hozzá a tanúsítványodat</translation>
+    </message>
+    <message>
+        <source>They need a Certificate + Location for UDP connections to succeed</source>
+        <translation>Szüksége van a tanúsítványodra, valamint egy helyszínre, hogy létrejöhessen az UDP kapcsolat</translation>
+    </message>
+    <message>
+        <source>We Cannot find your Friend.</source>
+        <translation>A barátod nem található meg.</translation>
+    </message>
+    <message>
+        <source>They are either offline or their DHT is Off</source>
+        <translation>Nincs bejelentkezve vagy a DHT-je ki van kapcsolva</translation>
+    </message>
+    <message>
+        <source>Peer DHT is Disabled</source>
+        <translation>A partner DHT-je le van tiltva</translation>
+    </message>
+    <message>
+        <source>Your Friend has configured Retroshare with DHT Disabled.</source>
+        <translation>A barátod nem engedélyezte a DHT-t a Retroshare kliensében.</translation>
+    </message>
+    <message>
+        <source>You have previously connected to this Friend</source>
+        <translation>Korábban már kapcsolódtál ezen barátodhoz</translation>
+    </message>
+    <message>
+        <source>Retroshare has determined that they have DHT switched off</source>
+        <translation>A Retroshare úgy érzékeli, hogy ki van kapcsolva a barátaid DHT-je</translation>
+    </message>
+    <message>
+        <source>Without the DHT it is hard for Retroshare to locate your friend</source>
+        <translation>A DHT nélkül nehéz megtalálni a barátodat</translation>
+    </message>
+    <message>
+        <source>Try importing a fresh Certificate to get up-to-date connection information</source>
+        <translation>Próbálj meg importálni egy friss tanúsítványt, hogy frissüljenek a barátod adatai</translation>
+    </message>
+    <message>
+        <source>Incomplete Friend Details</source>
+        <translation>A barátod részletei hiányosak</translation>
+    </message>
+    <message>
+        <source>You have imported an incomplete Certificate</source>
+        <translation>Félkész tanúsítványt importáltál</translation>
+    </message>
+    <message>
+        <source>Please retry importing the full Certificate</source>
+        <translation>Kérlek, próbáld meg újból importálni a tanúsítványt</translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Lucida Grande'; font-size:13pt;&quot;&gt;This Widget shows the progress of your connection to your new peer.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Lucida Grande'; font-size:13pt;&quot;&gt;It is helpful for problem-solving.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Lucida Grande'; font-size:13pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Lucida Grande'; font-size:13pt;&quot;&gt;If you are an expert RS user, or trust that RS will do the right thing&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Lucida Grande&apos;; font-size:13pt;&quot;&gt;you can close it.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>N/A</source>
+        <translation>N/A</translation>
+    </message>
+    <message>
+        <source>UNVERIFIABLE FORWARD!</source>
+        <translation>Végrehajthatatlan továbbítás!</translation>
+    </message>
+    <message>
+        <source>UNVERIFIABLE FORWARD &amp; NO DHT</source>
+        <translation>Végrehajthatatlan továbbítás és nincs DHT</translation>
+    </message>
+    <message>
+        <source>Searching</source>
+        <translation>Keresés</translation>
+    </message>
+    <message>
+        <source>UDP Connect Timeout</source>
+        <translation>Az UDP csatlakozás túl sokáig tartott</translation>
+    </message>
+    <message>
+        <source>Only Advanced Retroshare users should switch off the DHT.</source>
+        <translation>Csak tapasztalt Retroshare felhasználóknak ajánlott a DHT letiltása.</translation>
+    </message>
+    <message>
+        <source>Retroshare cannot connect without this information</source>
+        <translation>A Retroshare képtelen csatlakozni ezen információk nélkül</translation>
     </message>
 </context>
 <context>
@@ -3300,15 +3734,23 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Cannot Edit Existing Circles Yet</source>
-        <translation type="unfinished"/>
+        <translation>A meglévő körök még nem szerkeszthetőek.</translation>
     </message>
     <message>
         <source>No Restriction Circle Selected</source>
-        <translation type="unfinished"/>
+        <translation>Nincs korlátozás kiválasztva.</translation>
     </message>
     <message>
         <source>No Circle Limitations Selected</source>
-        <translation type="unfinished"/>
+        <translation>Nincs határ kiválasztva.</translation>
+    </message>
+    <message>
+        <source>Create New Personal Circle</source>
+        <translation>Személyes kör létrehozása</translation>
+    </message>
+    <message>
+        <source>Create New External Circle</source>
+        <translation>Külső kör létrehozása</translation>
     </message>
 </context>
 <context>
@@ -3789,27 +4231,31 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;To create a private chat invite for a non-friend person, select his key below and a validity time for your invite, then press &amp;quot;Create&amp;quot;. The invite will contain the  information required to open a tunnel to chat with you. &lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;The invite is encrypted, and does not reveal your identity. Only the selected peer can decrypt the link, and use it to contact you.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Ahhoz, hogy privát csevegési meghívót küldj valakinek, aki nem közvetlen barátod, választ ki alul a kulcsát és egy elavulási időt, majd kattints a &amp;quot;Létrehozás&amp;quot; gombra. A meghívó olyan adatokat fog tartalmazni, melyek segítségével egy alagút építhető ki a beszélgetéshez. &lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;A meghívó névtelen és nem fedi fel a valódi személyazonosságodat. Csak a kiválasztott személy dekódolhatja a hivatkozás, hogy kapcsolatba léphessen veled.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Your new chat invite has been created. You can now copy/paste it as a Retroshare link.</source>
-        <translation type="unfinished"/>
+        <translation>Az új csevegési meghívód létrejött. Most már másolhatod és beillesztheted Retroshare hivatkozásként.</translation>
     </message>
     <message>
         <source>Messaging invite creation failed</source>
-        <translation type="unfinished"/>
+        <translation>Üzenetküldés meghívó létrehozása sikertelen</translation>
     </message>
     <message>
         <source>The creation of the messaging invite failed</source>
-        <translation type="unfinished"/>
+        <translation>Üzenetküldés meghívó létrehozása sikertelen</translation>
     </message>
     <message>
         <source>Messaging invite created</source>
-        <translation type="unfinished"/>
+        <translation>Üzenetküldés meghívó létrehozva</translation>
     </message>
     <message>
         <source>Your new messaging chat invite has been copied to clipboard. You can now paste it as a Retroshare link.</source>
-        <translation type="unfinished"/>
+        <translation>Az új üzenetküldés meghívó a vágólapra lett másolva. Most már beillesztheted Retroshare hivatkozásként.</translation>
+    </message>
+    <message>
+        <source>Create distant chat</source>
+        <translation>Távoli beszélgetés kezdeményezése</translation>
     </message>
 </context>
 <context>
@@ -3955,6 +4401,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>GB</source>
         <translation>GB</translation>
+    </message>
+    <message>
+        <source>File Never Seen</source>
+        <translation>Soha nem látott fájl</translation>
     </message>
 </context>
 <context>
@@ -4141,6 +4591,250 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Bandwidth</source>
         <translation>Sávszélesség</translation>
+    </message>
+    <message>
+        <source>Unknown NetState</source>
+        <translation>Insmeretlen hálózati állapot</translation>
+    </message>
+    <message>
+        <source>Offline</source>
+        <translation>Kilépett</translation>
+    </message>
+    <message>
+        <source>Local Net</source>
+        <translation>Helyi hálózat</translation>
+    </message>
+    <message>
+        <source>Behind NAT</source>
+        <translation>NAT mögött</translation>
+    </message>
+    <message>
+        <source>External IP</source>
+        <translation>Külső IP</translation>
+    </message>
+    <message>
+        <source>UNKNOWN NAT STATE</source>
+        <translation>Ismeretlen NAT állapot</translation>
+    </message>
+    <message>
+        <source>SYMMETRIC NAT</source>
+        <translation>Szimmetrikus NAT</translation>
+    </message>
+    <message>
+        <source>DETERMINISTIC SYM NAT</source>
+        <translation>Determinisztikus szimmetrikus NAT</translation>
+    </message>
+    <message>
+        <source>RESTRICTED CONE NAT</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>FULL CONE NAT</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>OTHER NAT</source>
+        <translation>Egyéb NAT</translation>
+    </message>
+    <message>
+        <source>NO NAT</source>
+        <translation>Nincs NAT</translation>
+    </message>
+    <message>
+        <source>UNKNOWN NAT HOLE STATUS</source>
+        <translation>Ismeretlen a NAT rés állapota</translation>
+    </message>
+    <message>
+        <source>NO NAT HOLE</source>
+        <translation>Nincs NAT rés</translation>
+    </message>
+    <message>
+        <source>UPNP FORWARD</source>
+        <translation>UPNP továbbítás</translation>
+    </message>
+    <message>
+        <source>NATPMP FORWARD</source>
+        <translation>NATPMP továbbítás</translation>
+    </message>
+    <message>
+        <source>MANUAL FORWARD</source>
+        <translation>Kézi továbbítás</translation>
+    </message>
+    <message>
+        <source>NET BAD: Unknown State</source>
+        <translation>Hálózati hiba: Ismeretlen állapot</translation>
+    </message>
+    <message>
+        <source>NET BAD: Offline</source>
+        <translation>Hálózati hiba: Kijelentkezve</translation>
+    </message>
+    <message>
+        <source>NET BAD: Behind Symmetric NAT</source>
+        <translation>Hálózati hiba: Szimmetrikus NAT mögött</translation>
+    </message>
+    <message>
+        <source>NET BAD: Behind NAT &amp; No DHT</source>
+        <translation>Hálózati hiba: NAT mögött és DHT nélkül</translation>
+    </message>
+    <message>
+        <source>NET WARNING: NET Restart</source>
+        <translation>Vigyázat: A hálózat újraindul</translation>
+    </message>
+    <message>
+        <source>NET WARNING: Behind NAT</source>
+        <translation>Vigyázat: NAT mögött vagy</translation>
+    </message>
+    <message>
+        <source>NET WARNING: No DHT</source>
+        <translation>Vigyázat: Nincs DHT</translation>
+    </message>
+    <message>
+        <source>NET STATE GOOD!</source>
+        <translation>A hálózat elérhető!</translation>
+    </message>
+    <message>
+        <source>CAUTION: UNVERIFIABLE FORWARD!</source>
+        <translation>Figyelem: Végrehajthatatlan továbbítás!</translation>
+    </message>
+    <message>
+        <source>CAUTION: UNVERIFIABLE FORWARD &amp; NO DHT</source>
+        <translation>Figyelem: Végrehajthatatlan továbbítás és nincs DHT</translation>
+    </message>
+    <message>
+        <source>Not Active (Maybe Connected!)</source>
+        <translation>Nem aktív (De lehet, hogy csatlakozott!)</translation>
+    </message>
+    <message>
+        <source>Searching</source>
+        <translation>Keresés</translation>
+    </message>
+    <message>
+        <source>Failed</source>
+        <translation>Sikertelen</translation>
+    </message>
+    <message>
+        <source>offline</source>
+        <translation>Kilépett</translation>
+    </message>
+    <message>
+        <source>Unreachable</source>
+        <translation>Nem észlelhető</translation>
+    </message>
+    <message>
+        <source>ONLINE</source>
+        <translation>Bejelentkezve</translation>
+    </message>
+    <message>
+        <source>Direct</source>
+        <translation>Közvetlen</translation>
+    </message>
+    <message>
+        <source>Proxy VIA </source>
+        <translation>Proxy</translation>
+    </message>
+    <message>
+        <source>Relay VIA </source>
+        <translation>Relay</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation>Nincs</translation>
+    </message>
+    <message>
+        <source>Disconnected</source>
+        <translation>Szétkapcsolt</translation>
+    </message>
+    <message>
+        <source>Udp Started</source>
+        <translation>UDP elindult</translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>Csatlakozott</translation>
+    </message>
+    <message>
+        <source>Request Active</source>
+        <translation>Kérés folyamatban</translation>
+    </message>
+    <message>
+        <source>No Request</source>
+        <translation>Nincs kérés</translation>
+    </message>
+    <message>
+        <source>Unknown</source>
+        <translation>Ismeretlen</translation>
+    </message>
+    <message>
+        <source>#Peers: </source>
+        <translation>#Partnerek:</translation>
+    </message>
+    <message>
+        <source> DHT: (#off:</source>
+        <translation>DHT: (#kikapcsolva:</translation>
+    </message>
+    <message>
+        <source>,unreach:</source>
+        <translation>,elérhetetlen:</translation>
+    </message>
+    <message>
+        <source>,online:</source>
+        <translation>,elérhető:</translation>
+    </message>
+    <message>
+        <source>) Connections: (#dis:</source>
+        <translation>) Kapcsolódások: (#dis:</translation>
+    </message>
+    <message>
+        <source>,#dir:</source>
+        <translation>,#dir:</translation>
+    </message>
+    <message>
+        <source>,#proxy:</source>
+        <translation>,#proxy:</translation>
+    </message>
+    <message>
+        <source>,#relay:</source>
+        <translation>,#relay:</translation>
+    </message>
+    <message>
+        <source>RELAY END</source>
+        <translation>Relay vége</translation>
+    </message>
+    <message>
+        <source>Yourself</source>
+        <translation>Téged</translation>
+    </message>
+    <message>
+        <source>unknown</source>
+        <translation>ismeretlen</translation>
+    </message>
+    <message>
+        <source>unlimited</source>
+        <translation>korlátlan</translation>
+    </message>
+    <message>
+        <source>Own Relay</source>
+        <translation>Saját relay</translation>
+    </message>
+    <message>
+        <source>RELAY PROXY</source>
+        <translation>RELAY PROXY</translation>
+    </message>
+    <message>
+        <source>%1 secs ago</source>
+        <translation>%1 másodperccel ezelőtt</translation>
+    </message>
+    <message>
+        <source>%1B/s</source>
+        <translation>%1B/s</translation>
+    </message>
+    <message>
+        <source>0x%1 EX:0x%2</source>
+        <translation>0x%1 EX:0x%2</translation>
+    </message>
+    <message>
+        <source>never</source>
+        <translation>soha</translation>
     </message>
 </context>
 <context>
@@ -4780,10 +5474,6 @@ p, li { white-space: pre-wrap; }
         <translation>Fórumok</translation>
     </message>
     <message>
-        <source>Display</source>
-        <translation>Megjelenítés beállításai</translation>
-    </message>
-    <message>
         <source>Create Forum</source>
         <translation>Fórum létrehozása</translation>
     </message>
@@ -5024,7 +5714,7 @@ p, li { white-space: pre-wrap; }
         <translation>Fórum leírása</translation>
     </message>
     <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Forums&lt;/h1&gt;                              		  &lt;p&gt;Retroshare Forums look like internet forums, but they work in a decentralized way:                     		  You see forums your friends are subscribed to, and you forward subscribed forums to                      		  your friends. This automatically promotes interesting forums in the network.&lt;/p&gt;                     		  &lt;p&gt;Forums are either Authenticated (&lt;img src=&quot;:/images/konv_message2.png&quot; width=&quot;12&quot;/&gt;) in which case you need to cryptographically sign                      		  your posts, or anonymous (&lt;img src=&quot;:/images/konversation.png&quot; width=&quot;12&quot;/&gt;). The former class is more resistant to spamming.&lt;/p&gt;                 		  &lt;p&gt;Forum posts propagate from friend to friend using small cache file exchanges. When you first connect to a new friend, it&apos;s likely 		  you will receive many such cache files, and new forums will appear. 		  &lt;/p&gt;                                      		</source>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Forums&lt;/h1&gt;                                  &lt;p&gt;Retroshare Forums look like internet forums, but they work in a decentralized way:                         You see forums your friends are subscribed to, and you forward subscribed forums to                          your friends. This automatically promotes interesting forums in the network.&lt;/p&gt;                         &lt;p&gt;Forums are either Authenticated (&lt;img src=&quot;:/images/konv_message2.png&quot; width=&quot;12&quot;/&gt;) in which case you need to cryptographically sign                          your posts, or anonymous (&lt;img src=&quot;:/images/konversation.png&quot; width=&quot;12&quot;/&gt;). The former class is more resistant to spamming.&lt;/p&gt;                     &lt;p&gt;Forum posts propagate from friend to friend using small cache file exchanges. When you first connect to a new friend, it&apos;s likely     you will receive many such cache files, and new forums will appear.     &lt;/p&gt;                                        </source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -5242,39 +5932,8 @@ p, li { white-space: pre-wrap; }
         <translation>Új csoport létrehozása</translation>
     </message>
     <message>
-        <source>Recommend many friends to each others</source>
-        <translation>Barátok ajánlása egymásnak</translation>
-    </message>
-    <message>
-        <source>Service permissions matrix</source>
-        <translation>Szolgáltatás jogosultságok mátrix</translation>
-    </message>
-</context>
-<context>
-    <name>FriendRecommendDialog</name>
-    <message>
-        <source>Friend Recommendations</source>
-        <translation>Ajánlott barátok</translation>
-    </message>
-    <message>
-        <source>Message:</source>
-        <translation>Üzenet:</translation>
-    </message>
-    <message>
-        <source>Recommend friends</source>
-        <translation>Barátok ajánlása</translation>
-    </message>
-    <message>
-        <source>To</source>
-        <translation>Címzett</translation>
-    </message>
-    <message>
-        <source>Please select at least one friend for recommendation.</source>
-        <translation>Kérlek, válassz ki az ajánláshoz legalább egy barátot.</translation>
-    </message>
-    <message>
-        <source>Please select at least one friend as recipient.</source>
-        <translation>Kérlek, válassz ki legalább egy barátot címzettnek.</translation>
+        <source>Display</source>
+        <translation>Megjelenítés beállításai</translation>
     </message>
 </context>
 <context>
@@ -5322,16 +5981,12 @@ p, li { white-space: pre-wrap; }
         <translation>Barátok</translation>
     </message>
     <message>
-        <source>Display</source>
-        <translation>Megjelenítés beállításai</translation>
-    </message>
-    <message>
         <source>Edit status message</source>
         <translation>Állapot szerkesztése</translation>
     </message>
     <message>
         <source>Broadcast</source>
-        <translation>Adás</translation>
+        <translation>Üzenőfal</translation>
     </message>
     <message>
         <source>Bold</source>
@@ -5418,24 +6073,12 @@ p, li { white-space: pre-wrap; }
         <translation>Új chatszoba létrehozása</translation>
     </message>
     <message>
-        <source>Friend Recommendations</source>
-        <translation>Barátajánlások</translation>
-    </message>
-    <message>
         <source>Choose Font</source>
         <translation>Betűtípus választása</translation>
     </message>
     <message>
         <source>Reset font to default</source>
         <translation>Alapértelmezett betűtípus visszaállítása</translation>
-    </message>
-    <message>
-        <source>Service permissions</source>
-        <translation>Szolgáltatások jogosultságai</translation>
-    </message>
-    <message>
-        <source>Search</source>
-        <translation>Keresés</translation>
     </message>
     <message>
         <source>Local network</source>
@@ -5474,11 +6117,19 @@ p, li { white-space: pre-wrap; }
         <translation>Kulcstartó</translation>
     </message>
     <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Friends&lt;/h1&gt;                                   		  &lt;p&gt;The Friends tab shows...your friends: the list of persons you have accepted to connect to.                   		  &lt;/p&gt;                                                   		  &lt;p&gt;You can group friends together to allow a finer level of information access, for instance to only allow      		  some friends to see some files.&lt;/p&gt; 		  &lt;p&gt;On the right, you will find 3 useful tabs:                                                                   		  &lt;ul&gt;	                                                                                                         		  		&lt;li&gt;Broadcast sends messages to all connected friends at once&lt;/li&gt;                             		  		&lt;li&gt;Local Network shows the network around you, including friends of your friends&lt;/li&gt;                 		  		&lt;li&gt;Keyring contains keys you collected, mostly forwarded to you by your friends&lt;/li&gt;                              		  &lt;/ul&gt; &lt;/p&gt;                                                                                                      		</source>
-        <translation type="unfinished"/>
+        <source>Retroshare broadcast chat: messages are sent to all connected friends.</source>
+        <translation>Retroshare üzenőfal: az ide írt üzeneteidet az összes barátod láthatja.</translation>
     </message>
     <message>
-        <source>Retroshare broadcast chat: messages are sent to all connected friends.</source>
+        <source>Attach a Picture</source>
+        <translation>Kép csatolása</translation>
+    </message>
+    <message>
+        <source>Load Picture File</source>
+        <translation>Kép betöltése</translation>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Friends&lt;/h1&gt;                                       &lt;p&gt;The Friends tab shows...your friends: the list of persons you have accepted to connect to.                       &lt;/p&gt;                                                       &lt;p&gt;You can group friends together to allow a finer level of information access, for instance to only allow          some friends to see some files.&lt;/p&gt;     &lt;p&gt;On the right, you will find 3 useful tabs:                                                                       &lt;ul&gt;                                                                                                                &lt;li&gt;Broadcast sends messages to all connected friends at once&lt;/li&gt;                                   &lt;li&gt;Local Network shows the network around you, including friends of your friends&lt;/li&gt;                       &lt;li&gt;Keyring contains keys you collected, mostly forwarded to you by your friends&lt;/li&gt;                                  &lt;/ul&gt; &lt;/p&gt;                                                                                                        </source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -6303,6 +6954,10 @@ p, li { white-space: pre-wrap; }
         <source>Private Key Available</source>
         <translation>Elérhető privát kulcs</translation>
     </message>
+    <message>
+        <source>Display</source>
+        <translation>Megjelenítés beállításai</translation>
+    </message>
 </context>
 <context>
     <name>GuiExprElement</name>
@@ -6388,10 +7043,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Channels</source>
         <translation>Csatornák</translation>
-    </message>
-    <message>
-        <source>Display</source>
-        <translation>Megjelenítés</translation>
     </message>
     <message>
         <source>Create Channel</source>
@@ -6499,6 +7150,14 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Edit Channel</source>
         <translation>Csatorna szerkesztése</translation>
+    </message>
+    <message>
+        <source>Add Channel Admins</source>
+        <translation>Csatorna adminok hozzáadása</translation>
+    </message>
+    <message>
+        <source>Select Channel Admins</source>
+        <translation>Csatorna adminok kiválasztása</translation>
     </message>
 </context>
 <context>
@@ -6895,10 +7554,6 @@ mielőtt hozzászólhatsz</translation>
         <translation>Fórum</translation>
     </message>
     <message>
-        <source>Display</source>
-        <translation>Megjelenítés</translation>
-    </message>
-    <message>
         <source>Create Forum</source>
         <translation>Fórum létrehozása</translation>
     </message>
@@ -7030,7 +7685,7 @@ mielőtt hozzászólhatsz</translation>
     </message>
     <message>
         <source>Key recipients can publish to restricted-type group and can view and publish for private-type channels</source>
-        <translation type="unfinished"/>
+        <translation>Kulccsal rendelkező személyek írhatnak a korlátozott csoportokban és olvashatják, valamint írhatnak a privát csatornákra is.</translation>
     </message>
     <message>
         <source>Share Publish Key</source>
@@ -7130,7 +7785,7 @@ mielőtt hozzászólhatsz</translation>
     </message>
     <message>
         <source>Invalid Circle Selection - Personal disabled for now</source>
-        <translation type="unfinished"/>
+        <translation>Helytelen körválasztás - a személyes jelenleg le van tiltva</translation>
     </message>
 </context>
 <context>
@@ -7562,7 +8217,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>PGP Linked Id</source>
-        <translation type="unfinished"/>
+        <translation>PGP-hez linkelt ID</translation>
     </message>
     <message>
         <source>Anon Id</source>
@@ -7575,6 +8230,14 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Anonymous Id</source>
         <translation>Névtelen Id</translation>
+    </message>
+    <message>
+        <source>Create new Identity</source>
+        <translation>Új személyazonosság létrehozása</translation>
+    </message>
+    <message>
+        <source>Delete Identity</source>
+        <translation>Személyazonosság törlése</translation>
     </message>
 </context>
 <context>
@@ -7629,7 +8292,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Error KeyID invalid</source>
-        <translation type="unfinished"/>
+        <translation>Rossz kulcsID</translation>
     </message>
     <message>
         <source>Unknown GpgId</source>
@@ -7638,6 +8301,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Unknown real name</source>
         <translation>Ismeretlen igazi név</translation>
+    </message>
+    <message>
+        <source>Create New Identity</source>
+        <translation>Új személyazonosság létrehozása</translation>
     </message>
 </context>
 <context>
@@ -7935,6 +8602,14 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>The file link is malformed.</source>
         <translation>Hibás fájl link.</translation>
+    </message>
+    <message>
+        <source>ServicePermissions</source>
+        <translation>Szolgáltatás jogosultságok</translation>
+    </message>
+    <message>
+        <source>Service permissions matrix</source>
+        <translation>Szolgáltatás jogosultságok mátrix</translation>
     </message>
 </context>
 <context>
@@ -8361,11 +9036,15 @@ Szeretnéd menteni az üzenetet?</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Cryptographically sign message to distant peers. This is prevents intermediate peers to spoof your identity.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;A távoli partnereknek szánt üzenetek kriptografikus aláírása megelőzi, hogy a közöttetek lévő személyek a személyazonosságotokat felvéve hamis üzenetet küldhessenek.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Distant peer (name: %2, PGP key: %1)</source>
         <translation>Távoli partner (név: %2, PGP kulcs: %1)</translation>
+    </message>
+    <message>
+        <source>Only show people you trusted</source>
+        <translation>Csak az általad megbízhatónak jelölt partnereket mutassa</translation>
     </message>
 </context>
 <context>
@@ -8428,11 +9107,11 @@ Szeretnéd menteni az üzenetet?</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;The link below allows people in the network to send encrypted messages to you, using tunnels. To do that, they need your public PGP key, which they will get using the Retroshare discovery system. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Az alábbi hivatkozás segítségével a hálózatba kapcsolódott emberek titkosított üzenetet küldhetnek neked alagutak segítségével. Ehhez szükségük van a publikus PGP kulcsodra, amit elérhetnek a Retroshare felfedező szolgáltatásával. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Accept encrypted distant messages from everyone</source>
-        <translation type="unfinished"/>
+        <translation>Titkosított távoli üzenetek elfogadása mindenkitől</translation>
     </message>
 </context>
 <context>
@@ -8963,11 +9642,7 @@ Szeretnéd menteni az üzenetet?</translation>
     </message>
     <message>
         <source>Click to sort by signature</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Messages&lt;/h1&gt;                         			 &lt;p&gt;Messages are like &lt;b&gt;e-mail&lt;/b&gt;: you send/receive them from your friends when both of you	are connected.&lt;/p&gt; 			 &lt;p&gt;It is also possible to send messages to non friends, using tunnels. Such messages are always encrypted. It is 			 recommended to cryptographically sign distant messages, as a proof of your identity, using the &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; button 			 in the message composer window. Distant messages are not guarrantied to arrive, since this requires the distant peer to accept them (You need yourself to switch this on in Config-Messages).&lt;/p&gt;			 &lt;p&gt;Some additional features allow you to exchange data in messages: you may recommend files to your friends by pasting file links, 			 or recommend friends-to-be to other friends, in order to streathen your network.&lt;/p&gt;	                   			 </source>
-        <translation type="unfinished"/>
+        <translation>Rendezés aláírás szerint</translation>
     </message>
     <message>
         <source>This message is encrypted. Right click to decrypt it.</source>
@@ -8975,15 +9650,19 @@ Szeretnéd menteni az üzenetet?</translation>
     </message>
     <message>
         <source>This message was signed and the signature checks</source>
-        <translation type="unfinished"/>
+        <translation>Az üzenet aláírást tartalmazott és az értéke egyezett</translation>
     </message>
     <message>
         <source>This message was signed but the signature doesn&apos;t check</source>
-        <translation type="unfinished"/>
+        <translation>Az üzenet aláírást tartalmazott, de az értéke nem egyezik meg</translation>
     </message>
     <message>
         <source>This message is not encrypted. Cannot decrypt!</source>
         <translation>Az üzenet nincs titkosítva. Nincs mit dekódolni.</translation>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Messages&lt;/h1&gt;                          &lt;p&gt;Messages are like &lt;b&gt;e-mail&lt;/b&gt;: you send/receive them from your friends when both of you are connected.&lt;/p&gt;  &lt;p&gt;It is also possible to send messages to non friends, using tunnels. Such messages are always encrypted. It is  recommended to cryptographically sign distant messages, as a proof of your identity, using the &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; button  in the message composer window. Distant messages are not guarrantied to arrive, since this requires the distant peer to accept them (You need yourself to switch this on in Config-Messages).&lt;/p&gt; &lt;p&gt;Some additional features allow you to exchange data in messages: you may recommend files to your friends by pasting file links,  or recommend friends-to-be to other friends, in order to streathen your network.&lt;/p&gt;                    </source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -8993,20 +9672,12 @@ Szeretnéd menteni az üzenetet?</translation>
         <translation>RetroShare üzenetküldő</translation>
     </message>
     <message>
-        <source>Search Friends</source>
-        <translation>Barátok keresése</translation>
-    </message>
-    <message>
         <source>Add a Friend</source>
         <translation>Barát hozzáadása</translation>
     </message>
     <message>
         <source>Share files for your friends</source>
         <translation>Ossz meg fájlokat a barátaiddal</translation>
-    </message>
-    <message>
-        <source>Search</source>
-        <translation>Keresés</translation>
     </message>
 </context>
 <context>
@@ -9054,6 +9725,10 @@ Szeretnéd menteni az üzenetet?</translation>
     <message>
         <source>Hide</source>
         <translation>Elrejt</translation>
+    </message>
+    <message>
+        <source>Encrypted message</source>
+        <translation>Titkosított üzenet</translation>
     </message>
 </context>
 <context>
@@ -9345,6 +10020,30 @@ Kattints rá jobb gombbal, majd választ ki a &apos;barátság kezdeményezése&
         <source>Only show people you trusted</source>
         <translation>Csak az általad megbízhatónak jelölt partnereket mutassa</translation>
     </message>
+    <message>
+        <source>Send Message</source>
+        <translation>Üzenet küldése</translation>
+    </message>
+    <message>
+        <source> If I accept connection from peer</source>
+        <translation>Amennyiben elfogadom a csatlakozást a partnertől</translation>
+    </message>
+    <message>
+        <source>Name of peer</source>
+        <translation>Partner neve</translation>
+    </message>
+    <message>
+        <source>Did peer sign mine PGP key</source>
+        <translation>A személy aláírta a PGP kulcsomat</translation>
+    </message>
+    <message>
+        <source>Peer&apos;s Certificat ID</source>
+        <translation>Partner tanúsítványának azonosítója</translation>
+    </message>
+    <message>
+        <source>Since when I use this Certificat</source>
+        <translation>Mióta ezt a tanúsítványt használom</translation>
+    </message>
 </context>
 <context>
     <name>NetworkPage</name>
@@ -9410,7 +10109,7 @@ Kattints rá jobb gombbal, majd választ ki a &apos;barátság kezdeményezése&
         <translation>Ez egy teszt.</translation>
     </message>
     <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;News Feed&lt;/h1&gt;                                                          		  &lt;p&gt;The News Feed displays the last events on your network, sorted by the time you received them.                		  This gives you a summary of the activity of your friends.                                                       		  You can configure which events to show by pressing on &lt;b&gt;Options&lt;/b&gt;. &lt;/p&gt;                                      		  &lt;p&gt;The various events shown are:                                                                                		  &lt;ul&gt;	                                                                                                         		  		&lt;li&gt;Connection attempts (useful to make friends with new people and control who&apos;s trying to reach you)&lt;/li&gt; 		  		&lt;li&gt;Channel and Forum posts&lt;/li&gt;                                                                            		  		&lt;li&gt;New Channels and Forums you can subscribe to&lt;/li&gt;                                                       		  		&lt;li&gt;Private messages from your friends&lt;/li&gt;                                                                 		  &lt;/ul&gt; &lt;/p&gt;                                                                                                      		</source>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;News Feed&lt;/h1&gt;                                                             &lt;p&gt;The News Feed displays the last events on your network, sorted by the time you received them.                   This gives you a summary of the activity of your friends.                                                          You can configure which events to show by pressing on &lt;b&gt;Options&lt;/b&gt;. &lt;/p&gt;                                         &lt;p&gt;The various events shown are:                                                                                   &lt;ul&gt;                                                                                                            &lt;li&gt;Connection attempts (useful to make friends with new people and control who&apos;s trying to reach you)&lt;/li&gt;    &lt;li&gt;Channel and Forum posts&lt;/li&gt;                                                                               &lt;li&gt;New Channels and Forums you can subscribe to&lt;/li&gt;                                                          &lt;li&gt;Private messages from your friends&lt;/li&gt;                                                                    &lt;/ul&gt; &lt;/p&gt;                                                                                                       </source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -9560,10 +10259,6 @@ Kattints rá jobb gombbal, majd választ ki a &apos;barátság kezdeményezése&
         <translation>Rossz jelszó!</translation>
     </message>
     <message>
-        <source>Please enter the password to unlock your PGP key:</source>
-        <translation>A hitelesítéshez írd be a PGP kulcsod jelszavát:</translation>
-    </message>
-    <message>
         <source>Unregistered plugin/executable</source>
         <translation>Nem regisztrált beépülő/futtatható állomány</translation>
     </message>
@@ -9573,7 +10268,7 @@ Kattints rá jobb gombbal, majd választ ki a &apos;barátság kezdeményezése&
     </message>
     <message>
         <source>For the chat lobbies to work properly, the time of your computer needs to be correct. Please check that this is the case (A possible time shift of several minutes was detected with your friends). </source>
-        <translation type="unfinished"/>
+        <translation>A csevegőszobák rendes működéséhez szükséges, hogy az órád pontosan járjon. Kérlek, ellenőrízd ezt. (Eltérés észlelhető a barátaidhoz képest.)</translation>
     </message>
     <message>
         <source>Please check your system clock.</source>
@@ -9598,6 +10293,14 @@ Kattints rá jobb gombbal, majd választ ki a &apos;barátság kezdeményezése&
     <message>
         <source>This is a test.</source>
         <translation>Ez egy teszt.</translation>
+    </message>
+    <message>
+        <source>Unknown title</source>
+        <translation>Ismeretlen cím</translation>
+    </message>
+    <message>
+        <source>Encrypted message</source>
+        <translation>Titkosított üzenet</translation>
     </message>
 </context>
 <context>
@@ -10163,15 +10866,15 @@ a kártevőként működő beépülők használatától.</translation>
     <name>PopupDistantChatDialog</name>
     <message>
         <source>Distant chat terminated</source>
-        <translation type="unfinished"/>
+        <translation>Távoli csevegés lezárva</translation>
     </message>
     <message>
         <source>The person you&apos;re talking to has deleted the secured chat tunnel. You may remove the chat window now.</source>
-        <translation type="unfinished"/>
+        <translation>A csevegőpartnered megszűntette a biztonságos csevegő alagutat. Bezárhatod a csevegőablakot.</translation>
     </message>
     <message>
         <source>Closing this window will end the conversation, notify the peer and remove the encrypted tunnel.</source>
-        <translation type="unfinished"/>
+        <translation>Ha bezárod ezt az ablakot, akkor a beszélgetés megszakad és megszűnik titkosított alagút.</translation>
     </message>
     <message>
         <source>Kill the tunnel?</source>
@@ -10222,7 +10925,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Please create or choose a Signing Id first</source>
-        <translation type="unfinished"/>
+        <translation>Kérlek, először hozz létre vagy válassz ki egy aláírás Id-t.</translation>
     </message>
 </context>
 <context>
@@ -10262,10 +10965,6 @@ p, li { white-space: pre-wrap; }
         <translation>0</translation>
     </message>
     <message>
-        <source>/\</source>
-        <translation>/\</translation>
-    </message>
-    <message>
         <source>\/</source>
         <translation>\/</translation>
     </message>
@@ -10296,6 +10995,14 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Comment</source>
         <translation>Hozzászólás</translation>
+    </message>
+    <message>
+        <source>Vote Up</source>
+        <translation>Szavazás mellette</translation>
+    </message>
+    <message>
+        <source>Vote Down</source>
+        <translation>Szavazás ellene</translation>
     </message>
 </context>
 <context>
@@ -10335,10 +11042,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>This Year</source>
         <translation>Az évben</translation>
-    </message>
-    <message>
-        <source>New Topic</source>
-        <translation>Új téma</translation>
     </message>
     <message>
         <source>Submit Post</source>
@@ -10391,6 +11094,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Please create or choose a Signing Id before Voting</source>
         <translation>Kérlek, hozz létre vagy válassz ki egy aláírás azonosítót a szavazás előtt</translation>
+    </message>
+    <message>
+        <source>Create New Topic</source>
+        <translation>Új téma létrehozása</translation>
     </message>
 </context>
 <context>
@@ -10851,12 +11558,6 @@ A &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; karakterek le lesznek cs
         <translation>A kollekciófájl feldolgozása sikertelen</translation>
     </message>
     <message>
-        <source>The collection file %1 could not be opened.
-Reported error is: %2</source>
-        <translation>A kollekciófájl %1 nem nyitható meg.
-A jelentett hiba: %2</translation>
-    </message>
-    <message>
         <source>Deny friend</source>
         <translation>Barát elutasítása</translation>
     </message>
@@ -10971,15 +11672,15 @@ Zárolófájl:
     </message>
     <message>
         <source>Hash error</source>
-        <translation type="unfinished"/>
+        <translation>Hash hiba</translation>
     </message>
     <message>
         <source>Distant peer has closed the chat</source>
-        <translation type="unfinished"/>
+        <translation>A távoli partner kilépett a csevegésből</translation>
     </message>
     <message>
         <source>Tunnel is pending...</source>
-        <translation type="unfinished"/>
+        <translation>Függőben lévő alagút...</translation>
     </message>
     <message>
         <source>Messaging link is expired</source>
@@ -10991,7 +11692,7 @@ Zárolófájl:
     </message>
     <message>
         <source>This chat link is encrypted with a key that is not yours. You can&apos;t use it. Key ID = </source>
-        <translation type="unfinished"/>
+        <translation>Ez a csevegés hivatkozás nem a te kulcsoddal van titkosítva. Nem használhatod. Kulcs ID =</translation>
     </message>
     <message>
         <source>Chat connection is not possible</source>
@@ -11004,6 +11705,16 @@ Zárolófájl:
     <message>
         <source>Secured tunnel is working. You can talk!</source>
         <translation>A biztonságos alagút működik. Most már beszélhetsz!</translation>
+    </message>
+    <message>
+        <source>The collection file %1 could not be opened.
+Reported error is: 
+
+%2</source>
+        <translation>Nem lehet megnyitni a %1 kollekciófájlt.
+A hibajelentés: 
+
+%2</translation>
     </message>
 </context>
 <context>
@@ -11413,6 +12124,12 @@ A &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; karakterek &apos;_&apos;
         <source>Create collection file</source>
         <translation>Kollekciófájl létrehozása</translation>
     </message>
+    <message>
+        <source>This file contains the string &quot;%1&quot; and is therefore an invalid collection file. 
+
+If you believe it is correct, remove the corresponding line from the file and re-open it with Retroshare.</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>RsHtml</name>
@@ -11697,6 +12414,10 @@ Lecsökkented a méretét %1x%2 pixelre?</translation>
         <source>New RetroShare Link(s)</source>
         <translation>Új RetroShare hivatkozás(ok)</translation>
     </message>
+    <message>
+        <source>Open Folder</source>
+        <translation>Mappa megnyitása</translation>
+    </message>
 </context>
 <context>
     <name>SecurityItem</name>
@@ -11948,11 +12669,11 @@ behind a firewall or a VPN.</source>
     </message>
     <message>
         <source>Turtle router</source>
-        <translation>Teknős útválasztó</translation>
+        <translation>Teknőc útválasztó</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Unchecking this disables all anonymous routing activity, except cache cleaning. Incoming tunnel requests are discarded, and no tunnel requests are sent to anyone.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Ezen opció tiltása megszünteti az összes névtelen útválasztási tevékenységet. A bejövő alagút kérelmek el lesznek utasítva és kimenő alagút kérelmeket se lehet majd küldeni.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Enabled</source>
@@ -12001,6 +12722,14 @@ Az alapértelmezett érték 20.</translation>
     <message>
         <source>Forums/Channels</source>
         <translation>Fórumok/Csatornák</translation>
+    </message>
+    <message>
+        <source>Service Permissions</source>
+        <translation>Szolgáltatás jogosultságok</translation>
+    </message>
+    <message>
+        <source>Use as direct source, when available</source>
+        <translation>Közvetlen forrásként használat, amikor csak lehetséges</translation>
     </message>
 </context>
 <context>
@@ -13144,10 +13873,6 @@ Kérlek, légy türelmes!</translation>
         <translation>FelhasználóID</translation>
     </message>
     <message>
-        <source>File Never Seen</source>
-        <translation>Soha nem látott fájl</translation>
-    </message>
-    <message>
         <source>Expand all</source>
         <translation>Összes lenyitása</translation>
     </message>
@@ -13232,7 +13957,20 @@ Kérlek, légy türelmes!</translation>
         <translation>Fájl átvitelek</translation>
     </message>
     <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;File Transfer&lt;/h1&gt;                                                         			 &lt;p&gt;Retroshare brings two ways of transferring files: direct transfers from your friends, and                                     			 distant anonymous tunnelled transfers. In addition, file transfer is multi-source and allows swarming                                      			 (you can be a source while downloading)&lt;/p&gt;                                     			 &lt;p&gt;You can share files using the &lt;img src=&quot;:/images/directoryadd_24x24_shadow.png&quot; width=16 /&gt; icon from the left side bar. 				These files will be listed in the My Files tab. You can decide for each friend group whether they can or not see these files 				in their Friends Files tab&lt;/p&gt;			 &lt;p&gt;The search tab reports files from your friends&apos; file lists, and distant files that can be reached 			 anonymously using the multi-hop tunnelling system.&lt;/p&gt; 			 </source>
+        <source>Path</source>
+        <comment>i.e: Where file is saved</comment>
+        <translation>Elérési út</translation>
+    </message>
+    <message>
+        <source>Path</source>
+        <translation>Elérési út</translation>
+    </message>
+    <message>
+        <source>Show Path Column</source>
+        <translation>Elérési útvonal mutatása</translation>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;File Transfer&lt;/h1&gt;                                                             &lt;p&gt;Retroshare brings two ways of transferring files: direct transfers from your friends, and                                         distant anonymous tunnelled transfers. In addition, file transfer is multi-source and allows swarming                                          (you can be a source while downloading)&lt;/p&gt;                                         &lt;p&gt;You can share files using the &lt;img src=&quot;:/images/directoryadd_24x24_shadow.png&quot; width=16 /&gt; icon from the left side bar.     These files will be listed in the My Files tab. You can decide for each friend group whether they can or not see these files     in their Friends Files tab&lt;/p&gt;    &lt;p&gt;The search tab reports files from your friends&apos; file lists, and distant files that can be reached     anonymously using the multi-hop tunnelling system.&lt;/p&gt;     </source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -13431,7 +14169,7 @@ Kérlek, légy türelmes!</translation>
     </message>
     <message>
         <source>Turtle router traffic</source>
-        <translation>Teknős útválasztó forgalma</translation>
+        <translation>Teknőc útválasztó forgalma</translation>
     </message>
     <message>
         <source>Tunnel requests Up</source>

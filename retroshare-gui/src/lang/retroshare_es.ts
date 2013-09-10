@@ -1,5 +1,12 @@
 <?xml version="1.0" ?><!DOCTYPE TS><TS language="es" version="2.0">
 <context>
+    <name>AWidget</name>
+    <message>
+        <source>version</source>
+        <translation>versión</translation>
+    </message>
+</context>
+<context>
     <name>AboutDialog</name>
     <message>
         <source>About RetroShare</source>
@@ -1111,10 +1118,6 @@ p, li { white-space: pre-wrap; }
         <translation>Canales</translation>
     </message>
     <message>
-        <source>Display</source>
-        <translation>Mostrar</translation>
-    </message>
-    <message>
         <source>Create Channel</source>
         <translation>Crear canal</translation>
     </message>
@@ -1219,8 +1222,8 @@ p, li { white-space: pre-wrap; }
         <translation>Ningún canal seleccionado</translation>
     </message>
     <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Channels&lt;/h1&gt;                                                         		  &lt;p&gt;Channels allow you to post data (e.g. movies, music) that will spread in the network                                                		  among people who subscribed your channel.  If you activate auto-download on a channel, files attached to each post will start  		  downloading automatically when the post is received.&lt;/p&gt;                                                                               		  &lt;p&gt;You see channels your friends are subscribed to, and forward subscribed channels to                                                		  your friends. This promotes good channels in the network.                                                     		  When you first connect to a new friend, it&apos;s likely 		  you will receive many such cache files, and new channels will appear.                                                                  		  &lt;/p&gt;                                                                                                                                   		  &lt;p&gt;Only the channel&apos;s creator can post on that channel. Other peers                       		  in the network can only read from it, unless the channel is private. You can however share the posting rights or the reading rights 		  with your friends.&lt;/p&gt;                            		  </source>
-        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Canales&lt;/h1&gt; ⇥⇥ &lt;p&gt;Los canales que le permiten enviar datos (p.ej, películas, música) que se distribuyen en la red ⇥⇥ entre la gente que se ha suscrito a su canal. Si activa la descarga automática en un canal, los archivos adjuntos a cada mensaje se iniciarán ⇥⇥ automáticamente descargándose cuando se recibe el mensaje.&lt;/p&gt; ⇥⇥ &lt;p&gt;Usted ve los canales a los que sus amigos están suscritos, y reenvía los canales a los que esta suscrito a ⇥⇥ sus amigos. Esto promueve buenos canales en la red. ⇥⇥ Cuando se conecte por primera vez a un nuevo amigo, es probable que ⇥⇥ reciba muchos de estos archivos en caché, y aparecerán nuevos canales. ⇥⇥ &lt;/p&gt; ⇥⇥ &lt;p&gt;Sólo el creador del canal puede publicar en ese canal. Otros amigos ⇥⇥ en la red sólo podrán leer de ella, a menos que el canal sea privado. Sin embargo, usted puede compartir los derechos de publicación o los derechos de lectura ⇥⇥ con sus amigos.&lt;/p&gt; ⇥⇥ </translation>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Channels&lt;/h1&gt;                                                             &lt;p&gt;Channels allow you to post data (e.g. movies, music) that will spread in the network                                                    among people who subscribed your channel.  If you activate auto-download on a channel, files attached to each post will start      downloading automatically when the post is received.&lt;/p&gt;                                                                                   &lt;p&gt;You see channels your friends are subscribed to, and forward subscribed channels to                                                    your friends. This promotes good channels in the network.                                                         When you first connect to a new friend, it&apos;s likely     you will receive many such cache files, and new channels will appear.                                                                      &lt;/p&gt;                                                                                                                                       &lt;p&gt;Only the channel&apos;s creator can post on that channel. Other peers                           in the network can only read from it, unless the channel is private. You can however share the posting rights or the reading rights     with your friends.&lt;/p&gt;                                </source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -1290,10 +1293,6 @@ Por favor, elija una para chatear.</translation>
         <translation>Sala de chat</translation>
     </message>
     <message>
-        <source>Right click to mute/unmute participants&lt;br/&gt;Double click to address this person</source>
-        <translation>Clic con botón derecho para activar/desactivar a los participantes&lt;br/&gt;Doble clic para hablar a esta persona</translation>
-    </message>
-    <message>
         <source>Lobby management</source>
         <translation>Gestionar sala</translation>
     </message>
@@ -1324,6 +1323,18 @@ Por favor, elija una para chatear.</translation>
     <message>
         <source>Show Participants</source>
         <translation>Mostrar participantes</translation>
+    </message>
+    <message>
+        <source>Right click to mute/unmute participants&lt;br/&gt;Double click to address this person&lt;br/&gt;</source>
+        <translation>Clic con botón derecho para activar/desactivar a los participantes&lt;br/&gt;Doble clic para hablar a esta persona</translation>
+    </message>
+    <message>
+        <source>This participant is not active since:</source>
+        <translation>Este participante no está activo desde:</translation>
+    </message>
+    <message>
+        <source> seconds</source>
+        <translation>segundos</translation>
     </message>
 </context>
 <context>
@@ -1440,8 +1451,16 @@ Haga doble clic en las salas para entrar y charlar.</translation>
         <translation>%1 le invita a la sala de chat llamada %2</translation>
     </message>
     <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Chat Lobbies&lt;/h1&gt;                              		  &lt;p&gt;Chat lobbies are distributed chat rooms, and work pretty much like IRC.                                      		  They allow you to talk anonymously with tons of people without the need to make friends.&lt;/p&gt;                    		  &lt;p&gt;A chat lobby can be public (you friends see it) or private (your friends can&apos;t see it, unless you           		  invite them with &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). Once you have been invited to a private lobby, you will be able to see it when your friends   		  are using it.&lt;/p&gt;                                                                                               		  &lt;p&gt;The list at left shows                                                                                     		  chat lobbies your friends are participating into. You can either                                 		  &lt;ul&gt;                                                                                                            			  &lt;li&gt;Right click to create a new chat lobby&lt;/li&gt;                                                              		     &lt;li&gt;Double click a chat lobby to enter, chat, and show it to your friends&lt;/li&gt;                      		  &lt;/ul&gt; 		  &lt;/p&gt;                                      		</source>
-        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Salas de chat&lt;/h1&gt; ⇥⇥ &lt;p&gt;Las Salas de chat son chats distribuidos y trabajan más o menos como el IRC. ⇥⇥ Eso le permite charlar anónimamente con un montón de personas sin necesidad de hacerse amigos.&lt;/p&gt; ⇥⇥ &lt;p&gt;Una sala de chat puede ser pública (usted y sus amigos la veran) o privada (sus amigos no lo pueden ver, a menos que ⇥⇥ usted les invite &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). Una vez que haya sido invitado a una sala privada, será capaz de ver cuantos de sus amigos ⇥⇥ la están usando.&lt;/p&gt; ⇥⇥ &lt;p&gt;La lista de la izquierda muestra ⇥⇥ las salas de chat en que participan sus amigos. Usted puede escoger. ⇥⇥ &lt;ul&gt; ⇥⇥⇥ &lt;li&gt;Pulse el botón derecho para crear una nueva sala de chat&lt;/li&gt; ⇥⇥ &lt;li&gt;Haga doble clic en una sala de chat para entrar, charlar y presentarse a sus amigos&lt;/li&gt; ⇥⇥ &lt;/ul&gt; ⇥⇥ &lt;/p&gt; ⇥⇥</translation>
+        <source>Search Chat lobbies</source>
+        <translation>Buscar salas de chat</translation>
+    </message>
+    <message>
+        <source>Search Name</source>
+        <translation>Buscar por nombre</translation>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Chat Lobbies&lt;/h1&gt;                              		  &lt;p&gt;Chat lobbies are distributed chat rooms, and work pretty much like IRC.                                      		  They allow you to talk anonymously with tons of people without the need to make friends.&lt;/p&gt;                    		  &lt;p&gt;A chat lobby can be public (your friends see it) or private (your friends can&apos;t see it, unless you           		  invite them with &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). Once you have been invited to a private lobby, you will be able to see it when your friends   		  are using it.&lt;/p&gt;                                                                                               		  &lt;p&gt;The list at left shows                                                                                     		  chat lobbies your friends are participating in. You can either                                 		  &lt;ul&gt;                                                                                                            			  &lt;li&gt;Right click to create a new chat lobby&lt;/li&gt;                                                              		     &lt;li&gt;Double click a chat lobby to enter, chat, and show it to your friends&lt;/li&gt;                      		  &lt;/ul&gt; 		  Note: For the chat lobbies to work properly, your computer needs be on time.  So check your system clock!		  &lt;/p&gt;                                      		</source>
+        <translation>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Salas de chat&lt;/h1&gt;   &lt;p&gt;Las Salas de chat son chats distribuidos y trabajan más o menos como el IRC. Eso le permite charlar anónimamente con un montón de personas sin necesidad de hacerse amigos.&lt;/p&gt;   &lt;p&gt;Una sala de chat puede ser pública (usted y sus amigos la veran) o privada (sus amigos no lo pueden ver, a menos que   usted les invite &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). Una vez que haya sido invitado a una sala privada, será capaz de ver cuantos de sus amigos   la están usando.&lt;/p&gt;   &lt;p&gt;La lista de la izquierda muestra   las salas de chat en que participan sus amigos. Usted puede escoger.   &lt;ul&gt; &lt;li&gt;Pulse el botón derecho para crear una nueva sala de chat&lt;/li&gt;   &lt;li&gt;Haga doble clic en una sala de chat para entrar, charlar y presentarse a sus amigos&lt;/li&gt;   &lt;/ul&gt;   Nota: Para que las salas de chat funcionen correctamente tu ordenador necesita estas en hora, así que comprueba la hora!   &lt;/p&gt;  </translation>
     </message>
 </context>
 <context>
@@ -1972,6 +1991,10 @@ Haga doble clic en las salas para entrar y charlar.</translation>
         <source>External Circles (Other)</source>
         <translation>Círculos externos (Otros)</translation>
     </message>
+    <message>
+        <source>Circles</source>
+        <translation>Círculos</translation>
+    </message>
 </context>
 <context>
     <name>ConfCertDialog</name>
@@ -2236,6 +2259,10 @@ Algunos servicios (Descubrimiento, enrutado anónimo) se pueden desactivar de ma
     <message>
         <source>Not connected</source>
         <translation>No esta conectado</translation>
+    </message>
+    <message>
+        <source>Peer Addresses</source>
+        <translation>Direcciones del vecino</translation>
     </message>
 </context>
 <context>
@@ -2673,6 +2700,421 @@ Algunos servicios (Descubrimiento, enrutado anónimo) se pueden desactivar de ma
     <message>
         <source>Direct source</source>
         <translation>Fuente directa</translation>
+    </message>
+    <message>
+        <source>Recommend many friends to each others</source>
+        <translation>Recomendar varios amigos a los demás</translation>
+    </message>
+    <message>
+        <source>Friend Recommendations</source>
+        <translation>Recomendaciones de amigo</translation>
+    </message>
+    <message>
+        <source>Message:</source>
+        <translation>Mensage:</translation>
+    </message>
+    <message>
+        <source>Recommend friends</source>
+        <translation>Recomendar amigos</translation>
+    </message>
+    <message>
+        <source>To</source>
+        <translation>A</translation>
+    </message>
+    <message>
+        <source>Please select at least one friend for recommendation.</source>
+        <translation>Por favor, seleccione al menos un amigo por recomendación.</translation>
+    </message>
+    <message>
+        <source>Please select at least one friend as recipient.</source>
+        <translation>Por favor, seleccione al menos un amigo como destinatario.</translation>
+    </message>
+</context>
+<context>
+    <name>ConnectProgressDialog</name>
+    <message>
+        <source>Connection Progress</source>
+        <translation>Progresión de la conexión</translation>
+    </message>
+    <message>
+        <source>Connecting to:</source>
+        <translation>Conectándose a :</translation>
+    </message>
+    <message>
+        <source>TextLabel</source>
+        <translation>Texto de la etiqueta</translation>
+    </message>
+    <message>
+        <source>Network </source>
+        <translation>Red</translation>
+    </message>
+    <message>
+        <source>Net Result</source>
+        <translation>Resultado de red</translation>
+    </message>
+    <message>
+        <source>Connect Status</source>
+        <translation>Estado de la conexión</translation>
+    </message>
+    <message>
+        <source>Contact Result</source>
+        <translation>Resultado del contacto</translation>
+    </message>
+    <message>
+        <source>DHT Startup</source>
+        <translation>Inicio del DHT</translation>
+    </message>
+    <message>
+        <source>DHT Result</source>
+        <translation>Resultado de DHT</translation>
+    </message>
+    <message>
+        <source>Peer Lookup</source>
+        <translation>Búsqueda de vecino</translation>
+    </message>
+    <message>
+        <source>Peer Result</source>
+        <translation>Resultado de vecino</translation>
+    </message>
+    <message>
+        <source>UDP Setup</source>
+        <translation>Configurar UDP</translation>
+    </message>
+    <message>
+        <source>UDP Result</source>
+        <translation>Resultado UDP</translation>
+    </message>
+    <message>
+        <source>Connection Assistant</source>
+        <translation>Asistente de conexión</translation>
+    </message>
+    <message>
+        <source>Invalid Peer ID</source>
+        <translation>ID del vecino inválido</translation>
+    </message>
+    <message>
+        <source>Unknown State</source>
+        <translation>Estado desconocido</translation>
+    </message>
+    <message>
+        <source>Offline</source>
+        <translation>Desconectado</translation>
+    </message>
+    <message>
+        <source>Behind Symmetric NAT</source>
+        <translation>Detrás de NAT simétrico</translation>
+    </message>
+    <message>
+        <source>Behind NAT &amp; No DHT</source>
+        <translation>Detrás de NAT y sin DHT</translation>
+    </message>
+    <message>
+        <source>NET Restart</source>
+        <translation>Reiniciar red</translation>
+    </message>
+    <message>
+        <source>Behind NAT</source>
+        <translation>Detrás de NAT</translation>
+    </message>
+    <message>
+        <source>No DHT</source>
+        <translation>Sin DHT</translation>
+    </message>
+    <message>
+        <source>NET STATE GOOD!</source>
+        <translation>ESTADO DE LA RED BUENO!</translation>
+    </message>
+    <message>
+        <source>DHT Failed</source>
+        <translation>DHT fallido</translation>
+    </message>
+    <message>
+        <source>DHT Disabled</source>
+        <translation>DHT deshabilitado</translation>
+    </message>
+    <message>
+        <source>DHT Okay</source>
+        <translation>DHT Bueno</translation>
+    </message>
+    <message>
+        <source>Finding RS Peers</source>
+        <translation>Encontrando vecinos RS</translation>
+    </message>
+    <message>
+        <source>Lookup requires DHT</source>
+        <translation>La búsqueda requiere DHT</translation>
+    </message>
+    <message>
+        <source>Searching DHT</source>
+        <translation>Buscando DHT</translation>
+    </message>
+    <message>
+        <source>Lookup Timeout</source>
+        <translation>Tiempo de búsqueda máximo agotado</translation>
+    </message>
+    <message>
+        <source>Peer DHT NOT ACTIVE</source>
+        <translation>DHT del vecino NO ACTIVO</translation>
+    </message>
+    <message>
+        <source>Lookup Failure</source>
+        <translation>Búsqueda fallida</translation>
+    </message>
+    <message>
+        <source>Peer Offline</source>
+        <translation>Vecino desconectado</translation>
+    </message>
+    <message>
+        <source>Peer Firewalled</source>
+        <translation>Vecino tras cortafuegos</translation>
+    </message>
+    <message>
+        <source>Peer Online</source>
+        <translation>Vecino conectado</translation>
+    </message>
+    <message>
+        <source>Connection In Progress</source>
+        <translation>Conexión en progreso</translation>
+    </message>
+    <message>
+        <source>Initial connections can take a while, please be patient</source>
+        <translation>Las conexiones iniciales pueden tardar un poco, por favor, se paciente.</translation>
+    </message>
+    <message>
+        <source>If an error is detected it will be displayed here</source>
+        <translation>Si se detecta un error se mostrará aquí</translation>
+    </message>
+    <message>
+        <source>You can close this dialog at any time</source>
+        <translation>Puedes cerrar esta ventana en cualquier momento</translation>
+    </message>
+    <message>
+        <source>Retroshare will continue connecting in the background</source>
+        <translation>RetroShare continuará conectándose en segundo plano</translation>
+    </message>
+    <message>
+        <source>Connection Timeout</source>
+        <translation>Tiempo máximo de conexión agotado</translation>
+    </message>
+    <message>
+        <source>Connection Attempt has taken too long</source>
+        <translation>El intento de conexión tomó demasiado tiempo</translation>
+    </message>
+    <message>
+        <source>But no error has been detected</source>
+        <translation>Pero no se detectó ningún error</translation>
+    </message>
+    <message>
+        <source>Try again shortly, Retroshare will continue connecting in the background</source>
+        <translation>Intentalo de nuevo en breve, RetroShare continuará conectándose en segundo plano</translation>
+    </message>
+    <message>
+        <source>If you continue to get this message, please contact developers</source>
+        <translation>Si continuas recibiendo este mensaje, por favor contacta con los desarrolladores</translation>
+    </message>
+    <message>
+        <source>DHT Lookup Timeout</source>
+        <translation>Tiempo máximo de búsqueda DHT agotado</translation>
+    </message>
+    <message>
+        <source>DHT Lookup has taken too long</source>
+        <translation>La búsqueda DHT tardó demasiado tiempo</translation>
+    </message>
+    <message>
+        <source>UDP Connection Timeout</source>
+        <translation>Tiempo máximo de conexión UDP agotado</translation>
+    </message>
+    <message>
+        <source>UDP Connection has taken too long</source>
+        <translation>La conexión UDP tardó demasiado</translation>
+    </message>
+    <message>
+        <source>UDP Connection Failed</source>
+        <translation>La conexión UDP falló</translation>
+    </message>
+    <message>
+        <source>We are continually working to improve connectivity.</source>
+        <translation>Continuamos trabajando para mejorar la conectividad.</translation>
+    </message>
+    <message>
+        <source>In this case the UDP connection attempt has failed.</source>
+        <translation>En este caso el intento de conexión UDP falló.</translation>
+    </message>
+    <message>
+        <source>Improve connectivity by opening a Port in your Firewall.</source>
+        <translation>Mejora la conectividad abriendo un puerto en tu cortafuegos.</translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>Conectado</translation>
+    </message>
+    <message>
+        <source>Congratulations, you are connected</source>
+        <translation>Felicidades, estais conectados</translation>
+    </message>
+    <message>
+        <source>DHT startup Failed</source>
+        <translation>Inicialización DHT fallida</translation>
+    </message>
+    <message>
+        <source>Your DHT has not started properly</source>
+        <translation>Tu DHT no inició como debería</translation>
+    </message>
+    <message>
+        <source>Common causes of this problem are:</source>
+        <translation>Causas comunes de este problema son:</translation>
+    </message>
+    <message>
+        <source>     - You are not connected to the Internet</source>
+        <translation>- No estás conectado a Internet</translation>
+    </message>
+    <message>
+        <source>     - You have a missing or out-of-date DHT bootstrap file (bdboot.txt)</source>
+        <translation>- No tienes o están anticuados los archivos de base de datos DHT (bdboot.txt)</translation>
+    </message>
+    <message>
+        <source>DHT is Disabled</source>
+        <translation>El DHT está deshabilitado</translation>
+    </message>
+    <message>
+        <source>The DHT is OFF, so Retroshare cannot find your Friends.</source>
+        <translation>El DHT está APAGADO, luego RetroShare no puede encontrar tus Amigos.</translation>
+    </message>
+    <message>
+        <source>Retroshare has tried All Known Addresses, with no success</source>
+        <translation>RetroShare ha probado todas las direcciones conocidas, sin éxito</translation>
+    </message>
+    <message>
+        <source>The DHT is needed if your friends have Dynamic IP Addresses.</source>
+        <translation>Se requiere DHT si tus amigos tienen una dirección IP dinámica.</translation>
+    </message>
+    <message>
+        <source>Go to Settings-&gt;Server and change config to &quot;Public: DHT and Discovery&quot;</source>
+        <translation>Ve a Parámetros-&gt;Servidor y cambia la configuración a &quot;Público: DHT y descubrimiento&quot;</translation>
+    </message>
+    <message>
+        <source>Peer Denied Connection</source>
+        <translation>Conexión denegada por el vecino</translation>
+    </message>
+    <message>
+        <source>We successfully reached your Friend.</source>
+        <translation>Hemos contactado con tu Amigo con éxito.</translation>
+    </message>
+    <message>
+        <source>but they have not added you as a Friend.</source>
+        <translation>pero ellos no te han añadido como Amigo.</translation>
+    </message>
+    <message>
+        <source>Please contact them to add your Certificate</source>
+        <translation>Por favor, contacta con ellos para que añadan tu certificado</translation>
+    </message>
+    <message>
+        <source>Your Retroshare Node is configured Okay</source>
+        <translation>Tu nodo RetroShare está configurado correctamente</translation>
+    </message>
+    <message>
+        <source>We successfully reached your Friend via UDP.</source>
+        <translation>Hemos contactado con tu amigo via UDP con éxito.</translation>
+    </message>
+    <message>
+        <source>Please contact them to add your Full Certificate</source>
+        <translation>Por favor contacta con ellos para que añadan tu certificado completo</translation>
+    </message>
+    <message>
+        <source>They need a Certificate + Location for UDP connections to succeed</source>
+        <translation>Necesitan un certificado + ubicación para que la conexión por UDP funcione</translation>
+    </message>
+    <message>
+        <source>We Cannot find your Friend.</source>
+        <translation>No podemos encontrar tu amigo.</translation>
+    </message>
+    <message>
+        <source>They are either offline or their DHT is Off</source>
+        <translation>Ellos están o desconectados o su DHT está APAGADO</translation>
+    </message>
+    <message>
+        <source>Peer DHT is Disabled</source>
+        <translation>El DHT del vecino está deshabilitado</translation>
+    </message>
+    <message>
+        <source>Your Friend has configured Retroshare with DHT Disabled.</source>
+        <translation>Tu amigo ha configurado RetroShare con el DHT deshabilitado.</translation>
+    </message>
+    <message>
+        <source>You have previously connected to this Friend</source>
+        <translation>Te has conectado con este Amigo con anterioridad</translation>
+    </message>
+    <message>
+        <source>Retroshare has determined that they have DHT switched off</source>
+        <translation>RetroShare ha determinado que ellos tienen el DHT apagado</translation>
+    </message>
+    <message>
+        <source>Without the DHT it is hard for Retroshare to locate your friend</source>
+        <translation>Sin el DHT es díficil para RetroShare localizar tu amigo</translation>
+    </message>
+    <message>
+        <source>Try importing a fresh Certificate to get up-to-date connection information</source>
+        <translation>Intenta importando un certificado &quot;fresco&quot; para tener información de conexión actualizada</translation>
+    </message>
+    <message>
+        <source>Incomplete Friend Details</source>
+        <translation>Detalles del amigo incompletos</translation>
+    </message>
+    <message>
+        <source>You have imported an incomplete Certificate</source>
+        <translation>Has importado un certificado incompleto</translation>
+    </message>
+    <message>
+        <source>Please retry importing the full Certificate</source>
+        <translation>Por favor, intenta volver a importar el certificado completo</translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Lucida Grande'; font-size:13pt;&quot;&gt;This Widget shows the progress of your connection to your new peer.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Lucida Grande'; font-size:13pt;&quot;&gt;It is helpful for problem-solving.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Lucida Grande'; font-size:13pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Lucida Grande'; font-size:13pt;&quot;&gt;If you are an expert RS user, or trust that RS will do the right thing&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Lucida Grande&apos;; font-size:13pt;&quot;&gt;you can close it.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
+p, li { white-space: pre-wrap; }⏎
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Lucida Grande&apos;; font-size:13pt;&quot;&gt;Este diálogo muestra el progreso de tu conexión con tu nuevo vecino.&lt;/span&gt;&lt;/p&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Lucida Grande&apos;; font-size:13pt;&quot;&gt;És útil para solucionar problemas.&lt;/span&gt;&lt;/p&gt;⏎
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Lucida Grande&apos;; font-size:13pt;&quot;&gt;&lt;/p&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Lucida Grande&apos;; font-size:13pt;&quot;&gt;Si eres un usuario experto de RS o confías en que RS hará lo que es debido&lt;/span&gt;&lt;/p&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Lucida Grande&apos;; font-size:13pt;&quot;&gt;puedes cerrarlo.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>N/A</source>
+        <translation>N/A</translation>
+    </message>
+    <message>
+        <source>UNVERIFIABLE FORWARD!</source>
+        <translation>REENVÍO NO VERIFICABLE!</translation>
+    </message>
+    <message>
+        <source>UNVERIFIABLE FORWARD &amp; NO DHT</source>
+        <translation>REENVÍO NO VERIFICABLE Y SIN DHT</translation>
+    </message>
+    <message>
+        <source>Searching</source>
+        <translation>Buscando</translation>
+    </message>
+    <message>
+        <source>UDP Connect Timeout</source>
+        <translation>Tiempo de conexión UDP máximo agotado</translation>
+    </message>
+    <message>
+        <source>Only Advanced Retroshare users should switch off the DHT.</source>
+        <translation>Solo los usuarios avanzados de RetroShare deberían apagar el DHT.</translation>
+    </message>
+    <message>
+        <source>Retroshare cannot connect without this information</source>
+        <translation>RetroShare no puede conectar sin esta información</translation>
     </message>
 </context>
 <context>
@@ -3311,6 +3753,14 @@ p, li { white-space: pre-wrap; }
         <source>No Circle Limitations Selected</source>
         <translation>No hay limitaciones en el círculo seleccionado</translation>
     </message>
+    <message>
+        <source>Create New Personal Circle</source>
+        <translation>Crear nuevo círculo personal</translation>
+    </message>
+    <message>
+        <source>Create New External Circle</source>
+        <translation>Crear nuevo círculo externo</translation>
+    </message>
 </context>
 <context>
     <name>CreateForum</name>
@@ -3812,6 +4262,10 @@ p, li { white-space: pre-wrap; }
         <source>Your new messaging chat invite has been copied to clipboard. You can now paste it as a Retroshare link.</source>
         <translation>Su nuevo mensaje de invitación a chat ha sido copiado al portapapeles. Ahora puede pegarlo como un enlace de Retroshare.</translation>
     </message>
+    <message>
+        <source>Create distant chat</source>
+        <translation>Crear chat distante</translation>
+    </message>
 </context>
 <context>
     <name>CryptoPage</name>
@@ -3956,6 +4410,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>GB</source>
         <translation>GB</translation>
+    </message>
+    <message>
+        <source>File Never Seen</source>
+        <translation>Archivo nunca visto</translation>
     </message>
 </context>
 <context>
@@ -4142,6 +4600,250 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Bandwidth</source>
         <translation>Ancho de banda</translation>
+    </message>
+    <message>
+        <source>Unknown NetState</source>
+        <translation>EstadoRed desconocido</translation>
+    </message>
+    <message>
+        <source>Offline</source>
+        <translation>Desconectado</translation>
+    </message>
+    <message>
+        <source>Local Net</source>
+        <translation>Red local</translation>
+    </message>
+    <message>
+        <source>Behind NAT</source>
+        <translation>Detrás de NAT</translation>
+    </message>
+    <message>
+        <source>External IP</source>
+        <translation>IP externa</translation>
+    </message>
+    <message>
+        <source>UNKNOWN NAT STATE</source>
+        <translation>ESTADO NAT DESCONOCIDO</translation>
+    </message>
+    <message>
+        <source>SYMMETRIC NAT</source>
+        <translation>NAT SIMÉTRICO</translation>
+    </message>
+    <message>
+        <source>DETERMINISTIC SYM NAT</source>
+        <translation>NAT SYM DETERMINISTA</translation>
+    </message>
+    <message>
+        <source>RESTRICTED CONE NAT</source>
+        <translation>NAT CONO RESTRINGIDO</translation>
+    </message>
+    <message>
+        <source>FULL CONE NAT</source>
+        <translation>NAT CONO COMPLETO</translation>
+    </message>
+    <message>
+        <source>OTHER NAT</source>
+        <translation>OTROS NAT</translation>
+    </message>
+    <message>
+        <source>NO NAT</source>
+        <translation>SIN NAT</translation>
+    </message>
+    <message>
+        <source>UNKNOWN NAT HOLE STATUS</source>
+        <translation>ESTADO AGUJERO NAT DESCONOCIDO</translation>
+    </message>
+    <message>
+        <source>NO NAT HOLE</source>
+        <translation>SIN AGUJERO NAT</translation>
+    </message>
+    <message>
+        <source>UPNP FORWARD</source>
+        <translation>REENVÍO UPNP</translation>
+    </message>
+    <message>
+        <source>NATPMP FORWARD</source>
+        <translation>REENVÍO NETPMP</translation>
+    </message>
+    <message>
+        <source>MANUAL FORWARD</source>
+        <translation>REENVÍO MANUAL</translation>
+    </message>
+    <message>
+        <source>NET BAD: Unknown State</source>
+        <translation>RED MAL: Estado desconocido</translation>
+    </message>
+    <message>
+        <source>NET BAD: Offline</source>
+        <translation>RED MAL: Desconectado</translation>
+    </message>
+    <message>
+        <source>NET BAD: Behind Symmetric NAT</source>
+        <translation>RED MAL: Detrás de NAT simétrico</translation>
+    </message>
+    <message>
+        <source>NET BAD: Behind NAT &amp; No DHT</source>
+        <translation>RED MAL: Detrás de NAT y sin DHT</translation>
+    </message>
+    <message>
+        <source>NET WARNING: NET Restart</source>
+        <translation>AVISO RED: Reiniciar red</translation>
+    </message>
+    <message>
+        <source>NET WARNING: Behind NAT</source>
+        <translation>AVISO RED: Detrás de NAT</translation>
+    </message>
+    <message>
+        <source>NET WARNING: No DHT</source>
+        <translation>AVISO RED: Sin DHT</translation>
+    </message>
+    <message>
+        <source>NET STATE GOOD!</source>
+        <translation>ESTADO DE LA RED BUENO!</translation>
+    </message>
+    <message>
+        <source>CAUTION: UNVERIFIABLE FORWARD!</source>
+        <translation>PRECAUCIÓN: REENVÍO NO VERIFICABLE!</translation>
+    </message>
+    <message>
+        <source>CAUTION: UNVERIFIABLE FORWARD &amp; NO DHT</source>
+        <translation>PRECAUCIÓN: REENVÍO NO VERIFICABLE Y SIN DHT</translation>
+    </message>
+    <message>
+        <source>Not Active (Maybe Connected!)</source>
+        <translation>No activo (Puede estar conectado!)</translation>
+    </message>
+    <message>
+        <source>Searching</source>
+        <translation>Buscando</translation>
+    </message>
+    <message>
+        <source>Failed</source>
+        <translation>Fallido</translation>
+    </message>
+    <message>
+        <source>offline</source>
+        <translation>desconectado</translation>
+    </message>
+    <message>
+        <source>Unreachable</source>
+        <translation>Inaccesible</translation>
+    </message>
+    <message>
+        <source>ONLINE</source>
+        <translation>EN LINEA</translation>
+    </message>
+    <message>
+        <source>Direct</source>
+        <translation>Directo</translation>
+    </message>
+    <message>
+        <source>Proxy VIA </source>
+        <translation>VIA Proxy</translation>
+    </message>
+    <message>
+        <source>Relay VIA </source>
+        <translation>VIA Repetidor</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation>Ninguna</translation>
+    </message>
+    <message>
+        <source>Disconnected</source>
+        <translation>Desconectado</translation>
+    </message>
+    <message>
+        <source>Udp Started</source>
+        <translation>UDP Iniciado</translation>
+    </message>
+    <message>
+        <source>Connected</source>
+        <translation>Conectado</translation>
+    </message>
+    <message>
+        <source>Request Active</source>
+        <translation>Petición activa</translation>
+    </message>
+    <message>
+        <source>No Request</source>
+        <translation>Sin petición</translation>
+    </message>
+    <message>
+        <source>Unknown</source>
+        <translation>Desconocido</translation>
+    </message>
+    <message>
+        <source>#Peers: </source>
+        <translation>#Vecinos:</translation>
+    </message>
+    <message>
+        <source> DHT: (#off:</source>
+        <translation>DHT: (#inactivo:</translation>
+    </message>
+    <message>
+        <source>,unreach:</source>
+        <translation>,inaccesible:</translation>
+    </message>
+    <message>
+        <source>,online:</source>
+        <translation>,conectado:</translation>
+    </message>
+    <message>
+        <source>) Connections: (#dis:</source>
+        <translation>) Conexiones: (#des:</translation>
+    </message>
+    <message>
+        <source>,#dir:</source>
+        <translation>,#dir:</translation>
+    </message>
+    <message>
+        <source>,#proxy:</source>
+        <translation>,#proxy:</translation>
+    </message>
+    <message>
+        <source>,#relay:</source>
+        <translation>,#repetidor:</translation>
+    </message>
+    <message>
+        <source>RELAY END</source>
+        <translation>FINAL REPETIDOR</translation>
+    </message>
+    <message>
+        <source>Yourself</source>
+        <translation>Yo mismo</translation>
+    </message>
+    <message>
+        <source>unknown</source>
+        <translation>desconocido</translation>
+    </message>
+    <message>
+        <source>unlimited</source>
+        <translation>ilimitado</translation>
+    </message>
+    <message>
+        <source>Own Relay</source>
+        <translation>Repetidor propio</translation>
+    </message>
+    <message>
+        <source>RELAY PROXY</source>
+        <translation>PROXY REPETIDOR</translation>
+    </message>
+    <message>
+        <source>%1 secs ago</source>
+        <translation>Hace %1 seg.</translation>
+    </message>
+    <message>
+        <source>%1B/s</source>
+        <translation>%1B/s</translation>
+    </message>
+    <message>
+        <source>0x%1 EX:0x%2</source>
+        <translation>0x%1 EX:0x%2</translation>
+    </message>
+    <message>
+        <source>never</source>
+        <translation>nunca</translation>
     </message>
 </context>
 <context>
@@ -4782,10 +5484,6 @@ p, li { white-space: pre-wrap; }
         <translation>Foros</translation>
     </message>
     <message>
-        <source>Display</source>
-        <translation>Mostrar</translation>
-    </message>
-    <message>
         <source>Create Forum</source>
         <translation>Crear foro</translation>
     </message>
@@ -5026,8 +5724,8 @@ p, li { white-space: pre-wrap; }
         <translation>Descripción del foro</translation>
     </message>
     <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Forums&lt;/h1&gt;                              		  &lt;p&gt;Retroshare Forums look like internet forums, but they work in a decentralized way:                     		  You see forums your friends are subscribed to, and you forward subscribed forums to                      		  your friends. This automatically promotes interesting forums in the network.&lt;/p&gt;                     		  &lt;p&gt;Forums are either Authenticated (&lt;img src=&quot;:/images/konv_message2.png&quot; width=&quot;12&quot;/&gt;) in which case you need to cryptographically sign                      		  your posts, or anonymous (&lt;img src=&quot;:/images/konversation.png&quot; width=&quot;12&quot;/&gt;). The former class is more resistant to spamming.&lt;/p&gt;                 		  &lt;p&gt;Forum posts propagate from friend to friend using small cache file exchanges. When you first connect to a new friend, it&apos;s likely 		  you will receive many such cache files, and new forums will appear. 		  &lt;/p&gt;                                      		</source>
-        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Foros&lt;/h1&gt; ⇥⇥ &lt;p&gt;Los foros de Retroshare parecen foros de Internet, pero funcionan de forma descentralizada: ⇥⇥ Verá los foros a los que sus amigos están suscritos, y reenviará sus foros suscritos a ⇥⇥ sus amigos. Esto promueve automáticamente foros interesantes en la red.&lt;/p&gt; ⇥⇥ &lt;p&gt;Los foros son autenticados (&lt;img src=&quot;:/images/konv_message2.png&quot; width=&quot;12&quot;/&gt;) en cuyo caso es necesario firmar criptográficamente ⇥⇥ sus mensajes, o pueden ser anónimos (&lt;img src=&quot;:/images/konversation.png&quot; width=&quot;12&quot;/&gt;). La primera clase es más resistente al spam.&lt;/p&gt; ⇥⇥ &lt;p&gt;Los mensajes de foros se propagan de amigo a amigo usando pequeños intercambios de archivos de caché. Cuando conecte por primera vez a un nuevo amigo, lo más probable es⇥⇥ que reciba muchos de estos archivos de caché, y aparecerán nuevos foros. ⇥⇥ &lt;/p&gt; ⇥⇥</translation>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Forums&lt;/h1&gt;                                  &lt;p&gt;Retroshare Forums look like internet forums, but they work in a decentralized way:                         You see forums your friends are subscribed to, and you forward subscribed forums to                          your friends. This automatically promotes interesting forums in the network.&lt;/p&gt;                         &lt;p&gt;Forums are either Authenticated (&lt;img src=&quot;:/images/konv_message2.png&quot; width=&quot;12&quot;/&gt;) in which case you need to cryptographically sign                          your posts, or anonymous (&lt;img src=&quot;:/images/konversation.png&quot; width=&quot;12&quot;/&gt;). The former class is more resistant to spamming.&lt;/p&gt;                     &lt;p&gt;Forum posts propagate from friend to friend using small cache file exchanges. When you first connect to a new friend, it&apos;s likely     you will receive many such cache files, and new forums will appear.     &lt;/p&gt;                                        </source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -5244,39 +5942,8 @@ p, li { white-space: pre-wrap; }
         <translation>Crear nuevo grupo</translation>
     </message>
     <message>
-        <source>Recommend many friends to each others</source>
-        <translation>Recomendar varios amigos a los demás</translation>
-    </message>
-    <message>
-        <source>Service permissions matrix</source>
-        <translation>Matriz de permisos del servicio</translation>
-    </message>
-</context>
-<context>
-    <name>FriendRecommendDialog</name>
-    <message>
-        <source>Friend Recommendations</source>
-        <translation>Recomendaciones de amigo</translation>
-    </message>
-    <message>
-        <source>Message:</source>
-        <translation>Mensage:</translation>
-    </message>
-    <message>
-        <source>Recommend friends</source>
-        <translation>Recomendar amigos</translation>
-    </message>
-    <message>
-        <source>To</source>
-        <translation>A</translation>
-    </message>
-    <message>
-        <source>Please select at least one friend for recommendation.</source>
-        <translation>Por favor, seleccione al menos un amigo por recomendación.</translation>
-    </message>
-    <message>
-        <source>Please select at least one friend as recipient.</source>
-        <translation>Por favor, seleccione al menos un amigo como destinatario.</translation>
+        <source>Display</source>
+        <translation>Mostrar</translation>
     </message>
 </context>
 <context>
@@ -5322,10 +5989,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Friends</source>
         <translation>Amigos</translation>
-    </message>
-    <message>
-        <source>Display</source>
-        <translation>Mostrar</translation>
     </message>
     <message>
         <source>Edit status message</source>
@@ -5420,24 +6083,12 @@ p, li { white-space: pre-wrap; }
         <translation>Crear nueva sala de chat</translation>
     </message>
     <message>
-        <source>Friend Recommendations</source>
-        <translation>Recomendaciones de amigo</translation>
-    </message>
-    <message>
         <source>Choose Font</source>
         <translation>Elegir fuente</translation>
     </message>
     <message>
         <source>Reset font to default</source>
         <translation>Restablecer la fuente por defecto</translation>
-    </message>
-    <message>
-        <source>Service permissions</source>
-        <translation>Permisos del servicio</translation>
-    </message>
-    <message>
-        <source>Search</source>
-        <translation>Buscar</translation>
     </message>
     <message>
         <source>Local network</source>
@@ -5476,12 +6127,20 @@ p, li { white-space: pre-wrap; }
         <translation>Llavero</translation>
     </message>
     <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Friends&lt;/h1&gt;                                   		  &lt;p&gt;The Friends tab shows...your friends: the list of persons you have accepted to connect to.                   		  &lt;/p&gt;                                                   		  &lt;p&gt;You can group friends together to allow a finer level of information access, for instance to only allow      		  some friends to see some files.&lt;/p&gt; 		  &lt;p&gt;On the right, you will find 3 useful tabs:                                                                   		  &lt;ul&gt;	                                                                                                         		  		&lt;li&gt;Broadcast sends messages to all connected friends at once&lt;/li&gt;                             		  		&lt;li&gt;Local Network shows the network around you, including friends of your friends&lt;/li&gt;                 		  		&lt;li&gt;Keyring contains keys you collected, mostly forwarded to you by your friends&lt;/li&gt;                              		  &lt;/ul&gt; &lt;/p&gt;                                                                                                      		</source>
-        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Amigos&lt;/h1&gt; ⇥⇥ &lt;p&gt;La pestaña de amigos...muestra sus amigos: la lista de personas que han aceptado para conectarse con ellos. ⇥⇥ &lt;/p&gt; ⇥⇥ &lt;p&gt;Puede agrupar amigos juntos para permitir un mejor nivel de acceso a la información, p.ej., para sólo permitir ⇥⇥ a algunos amigos ver algunos archivos.&lt;/p&gt; ⇥⇥ &lt;p&gt;A la derecha, encontrará 3 pestañas útiles: ⇥⇥ &lt;ul&gt;⇥ ⇥⇥ ⇥⇥&lt;li&gt;Difusión, envía mensajes a todos los amigos que estén conectados a la vez&lt;/li&gt; ⇥⇥ ⇥⇥&lt;li&gt;Red Local, muestra la red a su alrededor, incluyendo amigos de sus amigos&lt;/li&gt; ⇥⇥ ⇥⇥&lt;li&gt;Llavero, contiene claves que recogió, en su mayoría enviadas por sus amigos&lt;/li&gt; ⇥⇥ &lt;/ul&gt; &lt;/p&gt; ⇥⇥</translation>
-    </message>
-    <message>
         <source>Retroshare broadcast chat: messages are sent to all connected friends.</source>
         <translation>Difusión de chat de Retroshare: Los mensajes se envían a todos los amigos conectados.</translation>
+    </message>
+    <message>
+        <source>Attach a Picture</source>
+        <translation>Adjuntar una imagen</translation>
+    </message>
+    <message>
+        <source>Load Picture File</source>
+        <translation>Cargar archivo de imagen</translation>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Friends&lt;/h1&gt;                                       &lt;p&gt;The Friends tab shows...your friends: the list of persons you have accepted to connect to.                       &lt;/p&gt;                                                       &lt;p&gt;You can group friends together to allow a finer level of information access, for instance to only allow          some friends to see some files.&lt;/p&gt;     &lt;p&gt;On the right, you will find 3 useful tabs:                                                                       &lt;ul&gt;                                                                                                                &lt;li&gt;Broadcast sends messages to all connected friends at once&lt;/li&gt;                                   &lt;li&gt;Local Network shows the network around you, including friends of your friends&lt;/li&gt;                       &lt;li&gt;Keyring contains keys you collected, mostly forwarded to you by your friends&lt;/li&gt;                                  &lt;/ul&gt; &lt;/p&gt;                                                                                                        </source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6260,6 +6919,10 @@ p, li { white-space: pre-wrap; }
         <source>Private Key Available</source>
         <translation>Llave GPG privada disponible</translation>
     </message>
+    <message>
+        <source>Display</source>
+        <translation>Mostrar</translation>
+    </message>
 </context>
 <context>
     <name>GuiExprElement</name>
@@ -6345,10 +7008,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Channels</source>
         <translation>Canales</translation>
-    </message>
-    <message>
-        <source>Display</source>
-        <translation>Mostrar</translation>
     </message>
     <message>
         <source>Create Channel</source>
@@ -6456,6 +7115,14 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Edit Channel</source>
         <translation>Editar canal</translation>
+    </message>
+    <message>
+        <source>Add Channel Admins</source>
+        <translation>Añadir administradores del canal</translation>
+    </message>
+    <message>
+        <source>Select Channel Admins</source>
+        <translation>Seleccionar administradores del canal</translation>
     </message>
 </context>
 <context>
@@ -6845,10 +7512,6 @@ before you can comment</source>
     <message>
         <source>Forums</source>
         <translation>Foros</translation>
-    </message>
-    <message>
-        <source>Display</source>
-        <translation>Mostrar</translation>
     </message>
     <message>
         <source>Create Forum</source>
@@ -7528,6 +8191,14 @@ p, li { white-space: pre-wrap; }
         <source>Anonymous Id</source>
         <translation>ID anónima</translation>
     </message>
+    <message>
+        <source>Create new Identity</source>
+        <translation>Crear nueva identidad</translation>
+    </message>
+    <message>
+        <source>Delete Identity</source>
+        <translation>Borrar identidad</translation>
+    </message>
 </context>
 <context>
     <name>IdEditDialog</name>
@@ -7590,6 +8261,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Unknown real name</source>
         <translation>Nombre real desconocido</translation>
+    </message>
+    <message>
+        <source>Create New Identity</source>
+        <translation>Crear nueva identidad</translation>
     </message>
 </context>
 <context>
@@ -7887,6 +8562,14 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>The file link is malformed.</source>
         <translation>Enlace erroneo.</translation>
+    </message>
+    <message>
+        <source>ServicePermissions</source>
+        <translation>PermisosServicio</translation>
+    </message>
+    <message>
+        <source>Service permissions matrix</source>
+        <translation>Matriz de permisos del servicio</translation>
     </message>
 </context>
 <context>
@@ -8318,6 +9001,10 @@ Do you want to save message ?</source>
     <message>
         <source>Distant peer (name: %2, PGP key: %1)</source>
         <translation>Par distante (nombre: %2, Llave PGP: %1)</translation>
+    </message>
+    <message>
+        <source>Only show people you trusted</source>
+        <translation>Sólo mostrar a la gente en que confío</translation>
     </message>
 </context>
 <context>
@@ -8918,10 +9605,6 @@ Do you want to save message ?</source>
         <translation>Haga clic en ordenar por firma</translation>
     </message>
     <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Messages&lt;/h1&gt;                         			 &lt;p&gt;Messages are like &lt;b&gt;e-mail&lt;/b&gt;: you send/receive them from your friends when both of you	are connected.&lt;/p&gt; 			 &lt;p&gt;It is also possible to send messages to non friends, using tunnels. Such messages are always encrypted. It is 			 recommended to cryptographically sign distant messages, as a proof of your identity, using the &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; button 			 in the message composer window. Distant messages are not guarrantied to arrive, since this requires the distant peer to accept them (You need yourself to switch this on in Config-Messages).&lt;/p&gt;			 &lt;p&gt;Some additional features allow you to exchange data in messages: you may recommend files to your friends by pasting file links, 			 or recommend friends-to-be to other friends, in order to streathen your network.&lt;/p&gt;	                   			 </source>
-        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Mensajes&lt;/h1&gt; ⇥⇥⇥ &lt;p&gt;Los mensajes son como &lt;b&gt;e-mail&lt;/b&gt;: que pude enviar/recibir de sus amigos cuando ambos ⇥están conectados.&lt;/p&gt; ⇥⇥⇥ &lt;p&gt;también es posible enviar mensajes a los no amigos, utilizando túneles. Estos mensajes se cifran siempre. Es muy ⇥⇥⇥ recomendable firmar criptográficamente los mensajes distantes, como una prueba de su identidad, usando el botón &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; ⇥⇥⇥ en la ventana del editor de mensajes. Los mensajes distantes no se puede garantizar que lleguen, ya que esto requiere que el interlocutor distante los acepte (Necesita cambiar esto en Configuración-Mensajes)​​.&lt;/p&gt;⇥⇥⇥ &lt;p&gt;Algunas características adicionales permiten el intercambio de datos en los mensajes: puede recomendar archivos a sus amigos pegando enlaces a los archivos, ⇥⇥⇥ o recomendar amigos-a-otros-amigos, con el fin de compartir con ellos su red.&lt;/p&gt;⇥ ⇥⇥⇥ </translation>
-    </message>
-    <message>
         <source>This message is encrypted. Right click to decrypt it.</source>
         <translation>Este mensaje esta cifrado. Haga clic con botón derecho para descifrarlo.</translation>
     </message>
@@ -8937,6 +9620,10 @@ Do you want to save message ?</source>
         <source>This message is not encrypted. Cannot decrypt!</source>
         <translation>¡Este mensaje no está cifrado. No se puede descifrar!</translation>
     </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Messages&lt;/h1&gt;                          &lt;p&gt;Messages are like &lt;b&gt;e-mail&lt;/b&gt;: you send/receive them from your friends when both of you are connected.&lt;/p&gt;  &lt;p&gt;It is also possible to send messages to non friends, using tunnels. Such messages are always encrypted. It is  recommended to cryptographically sign distant messages, as a proof of your identity, using the &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; button  in the message composer window. Distant messages are not guarrantied to arrive, since this requires the distant peer to accept them (You need yourself to switch this on in Config-Messages).&lt;/p&gt; &lt;p&gt;Some additional features allow you to exchange data in messages: you may recommend files to your friends by pasting file links,  or recommend friends-to-be to other friends, in order to streathen your network.&lt;/p&gt;                    </source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>MessengerWindow</name>
@@ -8945,20 +9632,12 @@ Do you want to save message ?</source>
         <translation>Mensajería instantanea de RetroShare</translation>
     </message>
     <message>
-        <source>Search Friends</source>
-        <translation>Buscar a amigos</translation>
-    </message>
-    <message>
         <source>Add a Friend</source>
         <translation>Añadir a amigo</translation>
     </message>
     <message>
         <source>Share files for your friends</source>
         <translation>Compartir archivos con sus amigos</translation>
-    </message>
-    <message>
-        <source>Search</source>
-        <translation>Buscar</translation>
     </message>
 </context>
 <context>
@@ -9006,6 +9685,10 @@ Do you want to save message ?</source>
     <message>
         <source>Hide</source>
         <translation>Ocultar</translation>
+    </message>
+    <message>
+        <source>Encrypted message</source>
+        <translation>Mesage criptado</translation>
     </message>
 </context>
 <context>
@@ -9295,6 +9978,30 @@ botón derecho y seleccione hacer amigo para conectar.</translation>
         <source>Only show people you trusted</source>
         <translation>Sólo mostrar a la gente en que confío</translation>
     </message>
+    <message>
+        <source>Send Message</source>
+        <translation>Enviar mensaje</translation>
+    </message>
+    <message>
+        <source> If I accept connection from peer</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Name of peer</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Did peer sign mine PGP key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Peer&apos;s Certificat ID</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Since when I use this Certificat</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>NetworkPage</name>
@@ -9360,8 +10067,8 @@ botón derecho y seleccione hacer amigo para conectar.</translation>
         <translation>Esto es una prueba.</translation>
     </message>
     <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;News Feed&lt;/h1&gt;                                                          		  &lt;p&gt;The News Feed displays the last events on your network, sorted by the time you received them.                		  This gives you a summary of the activity of your friends.                                                       		  You can configure which events to show by pressing on &lt;b&gt;Options&lt;/b&gt;. &lt;/p&gt;                                      		  &lt;p&gt;The various events shown are:                                                                                		  &lt;ul&gt;	                                                                                                         		  		&lt;li&gt;Connection attempts (useful to make friends with new people and control who&apos;s trying to reach you)&lt;/li&gt; 		  		&lt;li&gt;Channel and Forum posts&lt;/li&gt;                                                                            		  		&lt;li&gt;New Channels and Forums you can subscribe to&lt;/li&gt;                                                       		  		&lt;li&gt;Private messages from your friends&lt;/li&gt;                                                                 		  &lt;/ul&gt; &lt;/p&gt;                                                                                                      		</source>
-        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Últimas noticias&lt;/h1&gt; ⇥⇥ &lt;p&gt;Las Últimas noticias le muestran los últimos eventos de la red, ordenados por el momento en que los recibió. ⇥⇥ Esto le da un resumen de la actividad de sus amigos. ⇥⇥ Puede configurar los eventos a mostrar pulsando en &lt;b&gt;Opciones&lt;/b&gt;. &lt;/p&gt; ⇥⇥ &lt;p&gt;Los diferentes eventos a mostrar son: ⇥⇥ &lt;ul&gt;⇥ ⇥⇥ ⇥⇥&lt;li&gt;Intentos de conexión (útil para hacer amigos con gente nueva y controlar quién está intentando contactar con usted)&lt;/li&gt; ⇥⇥ ⇥⇥&lt;li&gt;Mensajes de canales y de foros&lt;/li&gt; ⇥⇥ ⇥⇥&lt;li&gt;Nuevos canales y foros a los que puede suscribirte&lt;/li&gt; ⇥⇥ ⇥⇥&lt;li&gt;Mensajes privados de sus amigos&lt;/li&gt; ⇥⇥ &lt;/ul&gt; &lt;/p&gt; ⇥⇥</translation>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;News Feed&lt;/h1&gt;                                                             &lt;p&gt;The News Feed displays the last events on your network, sorted by the time you received them.                   This gives you a summary of the activity of your friends.                                                          You can configure which events to show by pressing on &lt;b&gt;Options&lt;/b&gt;. &lt;/p&gt;                                         &lt;p&gt;The various events shown are:                                                                                   &lt;ul&gt;                                                                                                            &lt;li&gt;Connection attempts (useful to make friends with new people and control who&apos;s trying to reach you)&lt;/li&gt;    &lt;li&gt;Channel and Forum posts&lt;/li&gt;                                                                               &lt;li&gt;New Channels and Forums you can subscribe to&lt;/li&gt;                                                          &lt;li&gt;Private messages from your friends&lt;/li&gt;                                                                    &lt;/ul&gt; &lt;/p&gt;                                                                                                       </source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -9510,10 +10217,6 @@ botón derecho y seleccione hacer amigo para conectar.</translation>
         <translation>¡Contraseña errónea!</translation>
     </message>
     <message>
-        <source>Please enter the password to unlock your PGP key:</source>
-        <translation>Por favor, introduzca la contraseña para desbloquear la clave PGP:</translation>
-    </message>
-    <message>
         <source>Unregistered plugin/executable</source>
         <translation>Plugin no registrado/ejecutable</translation>
     </message>
@@ -9548,6 +10251,14 @@ botón derecho y seleccione hacer amigo para conectar.</translation>
     <message>
         <source>This is a test.</source>
         <translation>Esto es una prueba.</translation>
+    </message>
+    <message>
+        <source>Unknown title</source>
+        <translation>Título desconocido</translation>
+    </message>
+    <message>
+        <source>Encrypted message</source>
+        <translation>Mesaje criptado</translation>
     </message>
 </context>
 <context>
@@ -10206,10 +10917,6 @@ p, li { white-space: pre-wrap; }
         <translation>0</translation>
     </message>
     <message>
-        <source>/\</source>
-        <translation>/\</translation>
-    </message>
-    <message>
         <source>\/</source>
         <translation>\/</translation>
     </message>
@@ -10240,6 +10947,14 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Comment</source>
         <translation>Comentario</translation>
+    </message>
+    <message>
+        <source>Vote Up</source>
+        <translation>Voto positivo</translation>
+    </message>
+    <message>
+        <source>Vote Down</source>
+        <translation>Voto negativo</translation>
     </message>
 </context>
 <context>
@@ -10279,10 +10994,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>This Year</source>
         <translation>Este año</translation>
-    </message>
-    <message>
-        <source>New Topic</source>
-        <translation>Nuevo tema</translation>
     </message>
     <message>
         <source>Submit Post</source>
@@ -10335,6 +11046,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Please create or choose a Signing Id before Voting</source>
         <translation>Por favor, cree o seleccione una Id de firma antes de votar</translation>
+    </message>
+    <message>
+        <source>Create New Topic</source>
+        <translation>Crear nuevo tema</translation>
     </message>
 </context>
 <context>
@@ -10804,12 +11519,6 @@ Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replace
         <translation>No se pudo procesar el archivo de colección</translation>
     </message>
     <message>
-        <source>The collection file %1 could not be opened.
-Reported error is: %2</source>
-        <translation>El archivo de colección %1 no se puede abrir.
- El error reportado es: %2</translation>
-    </message>
-    <message>
         <source>Deny friend</source>
         <translation>Bloquear amigo</translation>
     </message>
@@ -10958,6 +11667,16 @@ archivo bloqueado:
     <message>
         <source>Secured tunnel is working. You can talk!</source>
         <translation>El túnel seguro está funcionando. ¡Puede hablar!</translation>
+    </message>
+    <message>
+        <source>The collection file %1 could not be opened.
+Reported error is: 
+
+%2</source>
+        <translation>El archivo de colección %1 no se puede abrir.
+El error reportado es: 
+
+%2</translation>
     </message>
 </context>
 <context>
@@ -11360,6 +12079,14 @@ Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replace
         <source>Create collection file</source>
         <translation>Crear archivo de colección</translation>
     </message>
+    <message>
+        <source>This file contains the string &quot;%1&quot; and is therefore an invalid collection file. 
+
+If you believe it is correct, remove the corresponding line from the file and re-open it with Retroshare.</source>
+        <translation>Este archivo contiene la cadena &quot;%1&quot; y por lo tanto es un archivo de colección inválido.⏎
+⏎
+Si crees que es correcto, elimina la correspondiente línea del archivo y reábrelo con el RetroShare.</translation>
+    </message>
 </context>
 <context>
     <name>RsHtml</name>
@@ -11643,6 +12370,10 @@ en la red (siempre informar de archivos disponibles)</translation>
     <message>
         <source>New RetroShare Link(s)</source>
         <translation>Nuevo(s) enlace(s) de RetroShare</translation>
+    </message>
+    <message>
+        <source>Open Folder</source>
+        <translation>Abrir carpeta</translation>
     </message>
 </context>
 <context>
@@ -11954,6 +12685,14 @@ The default value is 20.</source>
     <message>
         <source>Forums/Channels</source>
         <translation>Foros/Canales</translation>
+    </message>
+    <message>
+        <source>Service Permissions</source>
+        <translation>Permisos del servicio</translation>
+    </message>
+    <message>
+        <source>Use as direct source, when available</source>
+        <translation>Utilizar como fuente directa, cuando esté disponible</translation>
     </message>
 </context>
 <context>
@@ -13102,10 +13841,6 @@ bloques defectuosos y los descargará de nuevo.
         <translation>ID de usuario</translation>
     </message>
     <message>
-        <source>File Never Seen</source>
-        <translation>Archivo nunca visto</translation>
-    </message>
-    <message>
         <source>Expand all</source>
         <translation>Expandir todo</translation>
     </message>
@@ -13190,9 +13925,21 @@ bloques defectuosos y los descargará de nuevo.
         <translation>Transferencia de archivos</translation>
     </message>
     <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;File Transfer&lt;/h1&gt;                                                         			 &lt;p&gt;Retroshare brings two ways of transferring files: direct transfers from your friends, and                                     			 distant anonymous tunnelled transfers. In addition, file transfer is multi-source and allows swarming                                      			 (you can be a source while downloading)&lt;/p&gt;                                     			 &lt;p&gt;You can share files using the &lt;img src=&quot;:/images/directoryadd_24x24_shadow.png&quot; width=16 /&gt; icon from the left side bar. 				These files will be listed in the My Files tab. You can decide for each friend group whether they can or not see these files 				in their Friends Files tab&lt;/p&gt;			 &lt;p&gt;The search tab reports files from your friends&apos; file lists, and distant files that can be reached 			 anonymously using the multi-hop tunnelling system.&lt;/p&gt; 			 </source>
-        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Transferencia de archivos&lt;/h1&gt; ⇥⇥⇥ &lt;p&gt;Retroshare tiene dos posibilidades para transferir archivos: transferencias directas de sus amigos, y ⇥⇥⇥ transferencias distantes canalizadas anónimamente. Además, la transferencia de archivos es multi-fuente y permite formar un enjambre ⇥⇥⇥ (puede ser una fuente mientras descarga)&lt;/p&gt; ⇥⇥⇥ &lt;p&gt;Puede compartir archivos mediante el &lt;img src=&quot;:/images/directoryadd_24x24_shadow.png&quot; width=16 /&gt; icono de la barra lateral izquierda. ⇥⇥⇥⇥Estos archivos aparecerán en la pestaña Mis archivos. Usted puede decidir para cada grupo de amigo si pueden o no ver estos archivos ⇥⇥⇥⇥en la pestaña Archivos de amigos
-&lt;/p&gt;⇥⇥⇥ &lt;p&gt;La pestaña Búsqueda le informa de los archivos en las listas de archivos de sus amigos, y los archivos remotos que se pueden alcanzar ⇥⇥⇥ anónimamente usando el sistema de túneles de múltiples saltos.&lt;/p&gt; ⇥⇥⇥ </translation>
+        <source>Path</source>
+        <comment>i.e: Where file is saved</comment>
+        <translation>Ruta</translation>
+    </message>
+    <message>
+        <source>Path</source>
+        <translation>Ruta</translation>
+    </message>
+    <message>
+        <source>Show Path Column</source>
+        <translation>Mostrar columna de ruta</translation>
+    </message>
+    <message>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;File Transfer&lt;/h1&gt;                                                             &lt;p&gt;Retroshare brings two ways of transferring files: direct transfers from your friends, and                                         distant anonymous tunnelled transfers. In addition, file transfer is multi-source and allows swarming                                          (you can be a source while downloading)&lt;/p&gt;                                         &lt;p&gt;You can share files using the &lt;img src=&quot;:/images/directoryadd_24x24_shadow.png&quot; width=16 /&gt; icon from the left side bar.     These files will be listed in the My Files tab. You can decide for each friend group whether they can or not see these files     in their Friends Files tab&lt;/p&gt;    &lt;p&gt;The search tab reports files from your friends&apos; file lists, and distant files that can be reached     anonymously using the multi-hop tunnelling system.&lt;/p&gt;     </source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -13410,7 +14157,7 @@ bloques defectuosos y los descargará de nuevo.
     </message>
     <message>
         <source>Forwarded data    </source>
-        <translation>Datos reenviados    </translation>
+        <translation>Datos reenviados </translation>
     </message>
     <message>
         <source>TR Forward probabilities</source>

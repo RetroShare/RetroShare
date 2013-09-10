@@ -19,7 +19,7 @@
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="119"/>
         <source>User</source>
-        <translation>Anavändare</translation>
+        <translation>Användare</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="126"/>
@@ -39,12 +39,12 @@
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="235"/>
         <source>Interval in minutes (0 = manual)</source>
-        <translation>Intervall i minuter (0 = Manuellt)</translation>
+        <translation>Intervall i minuter (0 = manuell)</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="254"/>
         <source>Last update</source>
-        <translation>Senaste uppdaterat</translation>
+        <translation>Senaste uppdatering</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="267"/>
@@ -69,7 +69,7 @@
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="159"/>
         <source>Days (0 = off)</source>
-        <translation>Dagar (0 = Av)</translation>
+        <translation>Dagar (0 = av)</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="182"/>
@@ -119,7 +119,7 @@
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="349"/>
         <source>Preview &amp;&amp; Transformation</source>
-        <translation>Förhandsgranskning &amp;&amp; konvertering</translation>
+        <translation>Förhandsgranskning &amp;&amp; Konvertering</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="361"/>
@@ -129,7 +129,7 @@
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="367"/>
         <source>Activated</source>
-        <translation>Aktiverat</translation>
+        <translation>Aktiverad</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="374"/>
@@ -154,7 +154,7 @@
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="306"/>
         <source>RSS-Feed-URL:</source>
-        <translation>Flödets URL:</translation>
+        <translation>RSS-flödets URL:</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="316"/>
@@ -164,7 +164,7 @@
     <message>
         <location filename="../gui/AddFeedDialog.cpp" line="63"/>
         <source>Feed Details</source>
-        <translation>Flödesuppgifter</translation>
+        <translation>Flödesdetaljer</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.cpp" line="96"/>
@@ -181,7 +181,7 @@
     <message>
         <location filename="../gui/AddFeedDialog.cpp" line="237"/>
         <source>Not yet created</source>
-        <translation>Inte skapat</translation>
+        <translation>Inte skapat ännu</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.cpp" line="243"/>
@@ -191,7 +191,7 @@
     <message>
         <location filename="../gui/AddFeedDialog.cpp" line="325"/>
         <source>Can&apos;t edit feed. Feed does not exist.</source>
-        <translation>Kan inte redigera flödet. Flödet finns inte.</translation>
+        <translation>Kan inte redigera flödet. Flödet existerar inte.</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.cpp" line="335"/>
@@ -201,12 +201,12 @@
     <message>
         <location filename="../gui/AddFeedDialog.cpp" line="335"/>
         <source>Cannot create feed.</source>
-        <translation>Kan inte skapa flödet</translation>
+        <translation>Kan inte skapa flöde.</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.cpp" line="340"/>
         <source>Cannot change feed.</source>
-        <translation>Kan inte ändra flödet</translation>
+        <translation>Kan inte ändra flöde.</translation>
     </message>
 </context>
 <context>
@@ -224,7 +224,7 @@
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="26"/>
         <source>Interval in minutes (0 = manual)</source>
-        <translation>Intervall i minuter (0 = Manuellt)</translation>
+        <translation>Intervall i minuter (0 = manuellt)</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="49"/>
@@ -234,7 +234,7 @@
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="55"/>
         <source>Days (0 = off)</source>
-        <translation>Dagar (0 = Av)</translation>
+        <translation>Dagar (0 = av)</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="78"/>
@@ -264,12 +264,12 @@
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="131"/>
         <source>Set message to read on activate</source>
-        <translation>Markera meddelande som läst vid granskning</translation>
+        <translation>Markera meddelande som läst vid aktivering</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="138"/>
         <source>Save configuration in background (for slow systems, more memory needed)</source>
-        <translation>Spara inställningar i bakgrunden (något ökad minnesåtgång)</translation>
+        <translation>Spara inställningar i bakgrunden (ökad minnesåtgång på långsamma system)</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="124"/>
@@ -279,7 +279,7 @@
     <message>
         <location filename="../gui/FeedReaderConfig.h" line="50"/>
         <source>FeedReader</source>
-        <translation>FeedReader</translation>
+        <translation>Flödesläsare</translation>
     </message>
 </context>
 <context>
@@ -302,7 +302,7 @@
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="94"/>
         <source>Message Folders</source>
-        <translation>Meddelandemapp</translation>
+        <translation>Meddelandemappar</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="288"/>
@@ -362,7 +362,7 @@
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="734"/>
         <source>Please enter a name for the folder</source>
-        <translation>Ange ett mappnamn</translation>
+        <translation>Ange ett namn för mappen</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="740"/>
@@ -404,7 +404,7 @@
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="787"/>
         <source>Please enter a new name for the folder</source>
-        <translation>Ange nytt mappnamn</translation>
+        <translation>Ange nytt namn för mappen</translation>
     </message>
 </context>
 <context>
@@ -413,7 +413,7 @@
         <location filename="../gui/FeedReaderFeedItem.ui" line="196"/>
         <location filename="../gui/FeedReaderFeedItem.cpp" line="109"/>
         <source>Expand</source>
-        <translation>Expandera</translation>
+        <translation>Visa</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderFeedItem.ui" line="222"/>
@@ -446,7 +446,7 @@
     <message>
         <location filename="../gui/FeedReaderFeedNotify.cpp" line="47"/>
         <source>Feed Reader</source>
-        <translation>Feed Reader</translation>
+        <translation>Flödesläsare</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderFeedNotify.cpp" line="125"/>
@@ -504,7 +504,7 @@
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="151"/>
         <source>Search forums</source>
-        <translation>Sök i forum</translation>
+        <translation>Sök i forumen</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="182"/>
@@ -537,7 +537,7 @@
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="93"/>
         <source>Search Author</source>
-        <translation>Sök författare</translation>
+        <translation>Sök Upphovsman</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="105"/>
@@ -547,12 +547,12 @@
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="106"/>
         <source>Copy link to clipboard</source>
-        <translation>Kopiera länk till Urklipp</translation>
+        <translation>Kopiera länk till urklipp</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="228"/>
         <source>The messages will be added to the forum</source>
-        <translation>Meddelande kommer att läggas till forum</translation>
+        <translation>Meddelandena kommer att läggas till i forumet</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="243"/>
@@ -587,7 +587,7 @@
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="323"/>
         <source>Retransform</source>
-        <translation>Rekonvertera</translation>
+        <translation>Återkonvertera</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="697"/>
@@ -597,7 +597,7 @@
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="701"/>
         <source>Expand</source>
-        <translation>Expandera</translation>
+        <translation>Visa</translation>
     </message>
 </context>
 <context>
@@ -605,12 +605,12 @@
     <message>
         <location filename="../FeedReaderPlugin.cpp" line="159"/>
         <source>This plugin provides a Feedreader.</source>
-        <translation>Detta tillägg förser dig med en flödesläsare.</translation>
+        <translation>Detta tillägg förser dig med en Flödesläsare.</translation>
     </message>
     <message>
         <location filename="../FeedReaderPlugin.cpp" line="164"/>
         <source>FeedReader</source>
-        <translation>FeedReader</translation>
+        <translation>Flödesläsare</translation>
     </message>
 </context>
 <context>
@@ -618,12 +618,12 @@
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="36"/>
         <source>Feed not found.</source>
-        <translation>Flödet kan inte hittas.</translation>
+        <translation>Flödet kunde inte hittas.</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="39"/>
         <source>Parent not found.</source>
-        <translation>Överordnad post kan inte hittas.</translation>
+        <translation>Överordnad post hittades inte.</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="42"/>
@@ -669,7 +669,7 @@
         <location filename="../gui/FeedReaderStringDefs.cpp" line="74"/>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="170"/>
         <source>Unknown</source>
-        <translation>Okänd</translation>
+        <translation>Okänt</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="91"/>
@@ -689,7 +689,7 @@
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="100"/>
         <source>Download not found</source>
-        <translation>Nedladdningen hittas inte</translation>
+        <translation>Nedladdningen hittades inte</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="103"/>
@@ -709,12 +709,12 @@
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="114"/>
         <source>Can&apos;t create forum</source>
-        <translation>Kan inte skapa forum</translation>
+        <translation>Kan inte skapa forumet</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="117"/>
         <source>Forum not found</source>
-        <translation>Kunde inte hitta forum</translation>
+        <translation>Kunde inte hitta forumet</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="120"/>
@@ -787,7 +787,7 @@
     <message>
         <location filename="../gui/FeedReaderUserNotify.cpp" line="40"/>
         <source>FeedReader Message</source>
-        <translation>FeedReader-meddelande</translation>
+        <translation>Flödesläsare-meddelande</translation>
     </message>
 </context>
 <context>
@@ -795,7 +795,7 @@
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="14"/>
         <source>Preview</source>
-        <translation>Förhandsgranskning</translation>
+        <translation>Förhandsgranska</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="61"/>

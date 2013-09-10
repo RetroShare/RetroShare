@@ -54,7 +54,7 @@
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="388"/>
         <source>Embed images</source>
-        <translation type="unfinished"/>
+        <translation>Integra immagini</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="146"/>
@@ -109,17 +109,17 @@
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="328"/>
         <source>Transformation</source>
-        <translation type="unfinished"/>
+        <translation>Conversione</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="336"/>
         <source>Transformation type</source>
-        <translation type="unfinished"/>
+        <translation>Tipo di conversione</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="349"/>
         <source>Preview &amp;&amp; Transformation</source>
-        <translation type="unfinished"/>
+        <translation>Anteprima &amp;&amp; Conversione</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="361"/>
@@ -269,7 +269,7 @@
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="138"/>
         <source>Save configuration in background (for slow systems, more memory needed)</source>
-        <translation type="unfinished"/>
+        <translation>Salva la configurazione in background (per i sistemi lenti, più memoria è richiesta)</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="124"/>
@@ -446,7 +446,7 @@
     <message>
         <location filename="../gui/FeedReaderFeedNotify.cpp" line="47"/>
         <source>Feed Reader</source>
-        <translation type="unfinished"/>
+        <translation>Lettore di Feed</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderFeedNotify.cpp" line="125"/>
@@ -456,12 +456,12 @@
     <message>
         <location filename="../gui/FeedReaderFeedNotify.cpp" line="136"/>
         <source>Test message</source>
-        <translation type="unfinished"/>
+        <translation>Messaggio di prova</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderFeedNotify.cpp" line="137"/>
         <source>This is a test message.</source>
-        <translation type="unfinished"/>
+        <translation>Questo è un messaggio di prova</translation>
     </message>
 </context>
 <context>
@@ -552,7 +552,7 @@
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="228"/>
         <source>The messages will be added to the forum</source>
-        <translation type="unfinished"/>
+        <translation>Il messaggio verrà aggiunto al forum</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="243"/>
@@ -587,7 +587,7 @@
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="323"/>
         <source>Retransform</source>
-        <translation type="unfinished"/>
+        <translation>Riconvertire</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="697"/>
@@ -749,17 +749,17 @@
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="139"/>
         <source>XSLT format error</source>
-        <translation type="unfinished"/>
+        <translation>Errore nel formato </translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="142"/>
         <source>XSLT transformation error</source>
-        <translation type="unfinished"/>
+        <translation>Errore nella conversione XSLT</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="145"/>
         <source>Empty XSLT result</source>
-        <translation type="unfinished"/>
+        <translation>Risultato XSLT vuoto</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="149"/>
@@ -769,17 +769,17 @@
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="163"/>
         <source>No transformation</source>
-        <translation type="unfinished"/>
+        <translation>Nessuna conversione</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="165"/>
         <source>XPath</source>
-        <translation type="unfinished"/>
+        <translation>XPath</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="167"/>
         <source>XSLT</source>
-        <translation type="unfinished"/>
+        <translation>XSLT</translation>
     </message>
 </context>
 <context>
@@ -825,7 +825,7 @@
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="282"/>
         <source>Transformation type</source>
-        <translation type="unfinished"/>
+        <translation>Tipo di conversione</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="308"/>
@@ -855,7 +855,7 @@
     <message>
         <location filename="../gui/PreviewFeedDialog.cpp" line="166"/>
         <source>XSLT is used on focus lost or when Ctrl+Enter is pressed</source>
-        <translation type="unfinished"/>
+        <translation>XSLT è usato quando si perde il focus o quando viene premuto Ctrl+Enter</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.cpp" line="423"/>
