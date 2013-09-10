@@ -34,6 +34,7 @@
 #include <list>
 
 class pqiperson;
+class RsPeerCryptoParams ;
 
 static const int CONNECT_RECEIVED     = 1; 
 static const int CONNECT_SUCCESS      = 2;
@@ -63,6 +64,7 @@ public:
 	} 
 
 virtual ~pqiconnect() { return; }
+virtual bool getCryptoParams(RsPeerCryptoParams& params) ;
 
 	// presents a virtual NetInterface -> passes to ni.
 virtual int	connect(struct sockaddr_in raddr) { return ni->connect(raddr); }
@@ -118,6 +120,8 @@ int		connect(uint32_t type, struct sockaddr_in raddr,
 int     receiveHeartbeat();
 	// add in connection method.
 int	addChildInterface(uint32_t type, pqiconnect *pqi);
+
+virtual bool getCryptoParams(RsPeerCryptoParams&) ;
 
 	// The PQInterface interface.
 virtual int     SendItem(RsItem *,uint32_t& serialized_size);

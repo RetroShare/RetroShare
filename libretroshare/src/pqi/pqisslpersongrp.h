@@ -40,8 +40,6 @@ class pqisslpersongrp: public pqipersongrp
 	pqisslpersongrp(SecurityPolicy *pol, unsigned long flags, p3PeerMgr *pm)
 	:pqipersongrp(pol, flags), mPeerMgr(pm) { return; }
 
-	bool locked_getCryptoParams(const std::string&, RsPeerCryptoParams&) ;
-
 	protected:
 
 	/********* FUNCTIONS to OVERLOAD for specialisation ********/

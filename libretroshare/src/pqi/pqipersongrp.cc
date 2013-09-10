@@ -350,7 +350,14 @@ bool pqipersongrp::getCryptoParams(const std::string& id,RsPeerCryptoParams& par
 {
 	RsStackMutex stack(coreMtx); /******* LOCKED MUTEX **********/
 
-	return locked_getCryptoParams(id,params) ;
+	std::map<std::string, SearchModule *>::iterator it = mods.find(id) ;
+
+	if(it == mods.end())
+		return false ;
+
+	return it->second->pqi->getCryptoParams(params) ;
+
+	//return locked_getCryptoParams(id,params) ;
 }
 
 int     pqipersongrp::addPeer(std::string id)

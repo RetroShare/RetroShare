@@ -48,6 +48,8 @@
 int getPQIsearchId();
 int fixme(char *str, int n);
 
+class RsPeerCryptoParams ;
+
 //! controlling data rates
 /*!
  * For controlling data rates.
@@ -205,6 +207,8 @@ class PQInterface: public RateInterface
 			}
 			return SendItem(item) ;
 		}
+
+		virtual bool getCryptoParams(RsPeerCryptoParams&) { return false ;}
 
 		/*!
 		 * Retrieve RsItem from a facility

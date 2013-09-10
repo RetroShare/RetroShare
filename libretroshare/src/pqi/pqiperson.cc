@@ -26,11 +26,13 @@
 #include "pqi/pqi.h"
 #include "pqi/pqiperson.h"
 #include "pqi/pqipersongrp.h"
+#include "pqi/pqissl.h"
 #include "services/p3disc.h"
 
 const int pqipersonzone = 82371;
 #include "util/rsdebug.h"
 #include "util/rsstring.h"
+#include "retroshare/rspeers.h"
 
 /****
  * #define PERSON_DEBUG
@@ -468,6 +470,41 @@ int     pqiperson::getQueueSize(bool in)
 	return activepqi -> getQueueSize(in);
 }
 
+bool pqiperson::getCryptoParams(RsPeerCryptoParams& params)
+{
+	if(active && activepqi != NULL)
+		return activepqi->getCryptoParams(params) ;
+	else
+	{
+		params.connexion_state = 0 ;
+		params.cipher_name.clear() ;
+		params.cipher_bits_1 = 0 ;
+		params.cipher_bits_2 = 0 ;
+		params.cipher_version.clear() ;
+
+		return false ;
+	}
+}
+
+bool pqiconnect::getCryptoParams(RsPeerCryptoParams& params)
+{
+	pqissl *ssl = dynamic_cast<pqissl*>(ni) ;
+
+	if(ssl != NULL)
+	{
+		ssl->getCryptoParams(params) ;
+		return true ;
+	}
+	else
+	{
+		params.connexion_state = 0 ;
+		params.cipher_name.clear() ;
+		params.cipher_bits_1 = 0 ;
+		params.cipher_bits_2 = 0 ;
+		params.cipher_version.clear() ;
+		return false ;
+	}
+}
 
 float   pqiperson::getRate(bool in)
 {
