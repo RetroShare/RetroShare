@@ -736,6 +736,20 @@ private:
 
     static void computeHash(const RsTlvBinaryData& data, std::string& hash);
 
+    /*!
+     * Checks validation of recently received groups to be
+     * updated
+     */
+    void performUpdateValidation();
+
+    /*!
+     * Checks if the update is valid (i.e. the new admin signature is by the old admin key)
+     * @param oldGrp the old group to be updated (must have meta data member initialised)
+     * @param newGrp the new group that updates the old group (must have meta data member initialised)
+     * @return
+     */
+    bool updateValid(RsGxsGrpMetaData& oldGrp, RsNxsGrp& newGrp) const;
+
 private:
 
     RsMutex mGenMtx;
@@ -798,6 +812,10 @@ private:
     const uint8_t CREATE_FAIL, CREATE_SUCCESS, CREATE_FAIL_TRY_LATER, SIGN_MAX_ATTEMPTS;
     const uint8_t SIGN_FAIL, SIGN_SUCCESS, SIGN_FAIL_TRY_LATER;
     const uint8_t VALIDATE_FAIL, VALIDATE_SUCCESS, VALIDATE_FAIL_TRY_LATER, VALIDATE_MAX_ATTEMPTS;
+
+private:
+
+    std::vector<GroupUpdate> mGroupUpdates;
 };
 
 #endif // RSGENEXCHANGE_H

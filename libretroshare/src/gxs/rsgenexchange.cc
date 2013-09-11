@@ -2038,6 +2038,8 @@ void RsGenExchange::processRecvdData()
     processRecvdGroups();
 
     processRecvdMessages();
+
+    performUpdateValidation();
 }
 
 
@@ -2193,9 +2195,11 @@ void RsGenExchange::processRecvdGroups()
     RsStackMutex stack(mGenMtx);
 
     NxsGrpPendValidVect::iterator vit = mReceivedGrps.begin();
+    std::vector<std::string> existingGrpIds, grpIds;
+
     std::map<RsNxsGrp*, RsGxsGrpMetaData*> grps;
 
-    std::list<RsGxsGroupId> grpIds;
+    mDataStore->retrieveGroupIds(existingGrpIds);
 
     while( vit != mReceivedGrps.end())
     {
@@ -2224,9 +2228,19 @@ void RsGenExchange::processRecvdGroups()
 					meta->mOriginator = grp->PeerId();
 
 				computeHash(grp->grp, meta->mHash);
-				grps.insert(std::make_pair(grp, meta));
-				grpIds.push_back(grp->grpId);
 
+				// now check if group already existss
+				if(std::find(existingGrpIds.begin(), existingGrpIds.end(), grp->grpId) == existingGrpIds.end())
+				{
+					grps.insert(std::make_pair(grp, meta));
+					grpIds.push_back(grp->grpId);
+				}
+				else
+				{
+					GroupUpdate update;
+					update.newGrp = grp;
+					mGroupUpdates.push_back(update);
+				}
 				erase = true;
         	}
         	else if(ret == VALIDATE_FAIL)
@@ -2277,4 +2291,79 @@ void RsGenExchange::processRecvdGroups()
         mNotifications.push_back(c);
         mDataStore->storeGroup(grps);
     }
+}
+
+void RsGenExchange::performUpdateValidation()
+{
+#ifdef GXS_GENX_DEBUG
+	std::cerr << "RsGenExchange::performUpdateValidation() " << std::endl;
+#endif
+
+	std::map<std::string, RsGxsGrpMetaData*> grpMetas;
+
+	std::vector<GroupUpdate>::iterator vit = mGroupUpdates.begin();
+	for(; vit != mGroupUpdates.end(); vit++)
+		grpMetas.insert(std::make_pair(vit->newGrp->grpId, (RsGxsGrpMetaData*)NULL));
+
+	mDataStore->retrieveGxsGrpMetaData(grpMetas);
+
+	vit = mGroupUpdates.begin();
+	for(; vit != mGroupUpdates.end(); vit++)
+	{
+		GroupUpdate& gu = *vit;
+		std::map<std::string, RsGxsGrpMetaData*>::iterator mit =
+				grpMetas.find(gu.newGrp->grpId);
+		gu.oldGrpMeta = mit->second;
+		gu.validUpdate = updateValid(*(gu.oldGrpMeta), *(gu.newGrp));
+	}
+
+#ifdef GXS_GENX_DEBUG
+	std::cerr << "RsGenExchange::performUpdateValidation() " << std::endl;
+#endif
+
+	vit = mGroupUpdates.begin();
+	std::map<RsNxsGrp*, RsGxsGrpMetaData*> grps;
+	for(; vit != mGroupUpdates.end(); vit++)
+	{
+		GroupUpdate& gu = *vit;
+		grps.insert(std::make_pair(gu.newGrp, gu.newGrp->metaData));
+		delete gu.oldGrpMeta;
+	}
+
+	mDataStore->updateGroup(grps);
+	mGroupUpdates.clear();
+}
+
+bool RsGenExchange::updateValid(RsGxsGrpMetaData& oldGrpMeta, RsNxsGrp& newGrp) const
+{
+	std::map<SignType, RsTlvKeySignature>& signSet = newGrp.metaData->signSet.keySignSet;
+	std::map<SignType, RsTlvKeySignature>::iterator mit = signSet.find(GXS_SERV::FLAG_AUTHEN_ADMIN);
+
+	if(mit == signSet.end())
+	{
+#ifdef GXS_GENX_DEBUG
+		std::cerr << "RsGenExchange::updateValid() new admin sign not found! " << std::endl;
+		std::cerr << "RsGenExchange::updateValid() grpId: " << oldGrp.grpId << std::endl;
+#endif
+
+		return false;
+	}
+
+	RsTlvKeySignature& adminSign = mit->second;
+
+	std::map<std::string, RsTlvSecurityKey>& keys = oldGrpMeta.keys.keys;
+	std::map<std::string, RsTlvSecurityKey>::iterator keyMit = keys.find(oldGrpMeta.mGroupId);
+
+	if(keyMit == keys.end())
+	{
+#ifdef GXS_GENX_DEBUG
+		std::cerr << "RsGenExchange::updateValid() admin key not found! " << std::endl;
+#endif
+		return false;
+	}
+
+	// also check this is the latest published group
+	bool latest = newGrp.metaData->mPublishTs > oldGrpMeta.mPublishTs;
+
+	return GxsSecurity::validateNxsGrp(newGrp, adminSign, keyMit->second) && latest;
 }

@@ -177,6 +177,8 @@ RsDataService::RsDataService(const std::string &serviceDir, const std::string &d
     // for retrieving msg offsets
     mMsgOffSetColumns.push_back(KEY_MSG_ID); mMsgOffSetColumns.push_back(KEY_NXS_FILE_OFFSET);
     mMsgOffSetColumns.push_back(KEY_NXS_FILE_LEN);
+
+    grpIdColumn.push_back(KEY_GRP_ID);
 }
 
 RsDataService::~RsDataService(){
@@ -640,6 +642,99 @@ int RsDataService::storeGroup(std::map<RsNxsGrp *, RsGxsGrpMetaData *> &grp)
 
     return ret;
 }
+
+int RsDataService::updateGroup(std::map<RsNxsGrp *, RsGxsGrpMetaData *> &grp)
+{
+
+    RsStackMutex stack(mDbMutex);
+
+    std::map<RsNxsGrp*, RsGxsGrpMetaData* >::iterator sit = grp.begin();
+
+    // begin transaction
+    mDb->execSQL("BEGIN;");
+
+    for(; sit != grp.end(); sit++)
+    {
+
+        RsNxsGrp* grpPtr = sit->first;
+        RsGxsGrpMetaData* grpMetaPtr = sit->second;
+
+        // if data is larger than max item size do not add
+        if(!validSize(grpPtr)) continue;
+
+        std::string grpFile = mServiceDir + "/" + grpPtr->grpId;
+        std::fstream ostrm(grpFile.c_str(), std::ios::binary | std::ios::app | std::ios::out);
+        ostrm.seekg(0, std::ios::end); // go to end to append
+        uint32_t offset = ostrm.tellg(); // get fill offset
+
+        /*!
+         * STORE file offset, file length, file name,
+         * grpId, flags, publish time stamp, identity,
+         * id signature, admin signatue, key set, last posting ts
+         * and meta data
+         **/
+        ContentValue cv;
+        cv.put(KEY_NXS_FILE_OFFSET, (int32_t)offset);
+        cv.put(KEY_NXS_FILE_LEN, (int32_t)grpPtr->grp.TlvSize());
+        cv.put(KEY_NXS_FILE, grpFile);
+        cv.put(KEY_GRP_ID, grpPtr->grpId);
+        cv.put(KEY_GRP_NAME, grpMetaPtr->mGroupName);
+        cv.put(KEY_ORIG_GRP_ID, grpMetaPtr->mOrigGrpId);
+        cv.put(KEY_NXS_SERV_STRING, grpMetaPtr->mServiceString);
+        cv.put(KEY_NXS_FLAGS, (int32_t)grpMetaPtr->mGroupFlags);
+        cv.put(KEY_TIME_STAMP, (int32_t)grpMetaPtr->mPublishTs);
+        cv.put(KEY_GRP_SIGN_FLAGS, (int32_t)grpMetaPtr->mSignFlags);
+        cv.put(KEY_GRP_CIRCLE_ID, grpMetaPtr->mCircleId);
+        cv.put(KEY_GRP_CIRCLE_TYPE, (int32_t)grpMetaPtr->mCircleType);
+        cv.put(KEY_GRP_INTERNAL_CIRCLE, grpMetaPtr->mInternalCircle);
+        cv.put(KEY_GRP_ORIGINATOR, grpMetaPtr->mOriginator);
+        cv.put(KEY_GRP_AUTHEN_FLAGS, (int32_t)grpMetaPtr->mAuthenFlags);
+        cv.put(KEY_NXS_HASH, grpMetaPtr->mHash);
+
+        if(! (grpMetaPtr->mAuthorId.empty()) ){
+            cv.put(KEY_NXS_IDENTITY, grpMetaPtr->mAuthorId);
+        }
+
+        offset = 0;
+        char keySetData[grpMetaPtr->keys.TlvSize()];
+        grpMetaPtr->keys.SetTlv(keySetData, grpMetaPtr->keys.TlvSize(), &offset);
+        cv.put(KEY_KEY_SET, grpMetaPtr->keys.TlvSize(), keySetData);
+
+        offset = 0;
+        char metaData[grpPtr->meta.TlvSize()];
+        grpPtr->meta.SetTlv(metaData, grpPtr->meta.TlvSize(), &offset);
+        cv.put(KEY_NXS_META, grpPtr->meta.TlvSize(), metaData);
+
+        // local meta data
+        cv.put(KEY_GRP_SUBCR_FLAG, (int32_t)grpMetaPtr->mSubscribeFlags);
+        cv.put(KEY_GRP_POP, (int32_t)grpMetaPtr->mPop);
+        cv.put(KEY_MSG_COUNT, (int32_t)grpMetaPtr->mMsgCount);
+        cv.put(KEY_GRP_STATUS, (int32_t)grpMetaPtr->mGroupStatus);
+        cv.put(KEY_GRP_LAST_POST, (int32_t)grpMetaPtr->mLastPost);
+
+        offset = 0;
+        char grpData[grpPtr->grp.TlvSize()];
+        grpPtr->grp.SetTlv(grpData, grpPtr->grp.TlvSize(), &offset);
+        ostrm.write(grpData, grpPtr->grp.TlvSize());
+        ostrm.close();
+
+        mDb->sqlUpdate(GRP_TABLE_NAME, "grpId='" + grpPtr->grpId + "'", cv);
+    }
+    // finish transaction
+    bool ret = mDb->execSQL("COMMIT;");
+
+    for(sit = grp.begin(); sit != grp.end(); sit++)
+    {
+	//TODO: API encourages aliasing, remove this abomination
+			if(sit->second != sit->first->metaData)
+				delete sit->second;
+    	delete sit->first;
+
+    }
+
+    return ret;
+}
+
 
 bool RsDataService::validSize(RsNxsGrp* grp) const
 {
@@ -1177,6 +1272,31 @@ int RsDataService::removeGroups(const std::vector<std::string> &grpIds)
     return 1;
 }
 
+int RsDataService::retrieveGroupIds(std::vector<std::string> &grpIds)
+{
+    RsStackMutex stack(mDbMutex);
+
+	RetroCursor* c = mDb->sqlQuery(GRP_TABLE_NAME, grpIdColumn, "", "");
+
+	if(c)
+	{
+		bool valid = c->moveToFirst();
+
+		while(valid)
+		{
+			std::string grpId;
+			c->getString(0, grpId);
+			grpIds.push_back(grpId);
+			valid = c->moveToNext();
+		}
+		delete c;
+	}else
+	{
+		return 0;
+	}
+
+	return 1;
+}
 
 bool RsDataService::locked_updateMessageEntries(const MsgUpdates& updates)
 {
