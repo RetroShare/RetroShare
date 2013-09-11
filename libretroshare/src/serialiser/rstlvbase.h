@@ -273,6 +273,10 @@ bool     SetTlvIpAddrPortV4(void *data, uint32_t size, uint32_t *offset, uint16_
 bool     GetTlvIpAddrPortV4(void *data, uint32_t size, uint32_t *offset, uint16_t type, struct sockaddr_in *in);
 uint32_t GetTlvIpAddrPortV4Size();
 
+bool     SetTlvIpAddrPortV6(void *data, uint32_t size, uint32_t *offset, uint16_t type, struct sockaddr_in6 *out);
+bool     GetTlvIpAddrPortV6(void *data, uint32_t size, uint32_t *offset, uint16_t type, struct sockaddr_in6 *in);
+uint32_t GetTlvIpAddrPortV6Size();
+
 /* additional function to be added
 
 bool SetTlvBinData(void* data, uint32_t size, uint32_t* offset, uint16_t type, void* data_bin, uint32_t len_tlv)
