@@ -308,6 +308,13 @@ bool    p3PeerMgrIMPL::getGpgId(const std::string &ssl_id, std::string &gpgId)
 
 /**** HIDDEN STUFF ****/
 
+bool    p3PeerMgrIMPL::isHidden()
+{
+	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+	return mOwnState.hiddenNode;
+}
+
+
 bool    p3PeerMgrIMPL::isHiddenPeer(const std::string &ssl_id)
 {
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/

@@ -1478,6 +1478,13 @@ bool   p3LinkMgrIMPL::tryConnectUDP(const std::string &id, struct sockaddr_in &r
 	return false;	
 #endif
 
+	if (mPeerMgr->isHidden())
+	{
+		std::cerr << "p3LinkMgrIMPL::tryConnectUDP() isHidden(): no connection attempts for : " << id;
+		std::cerr << std::endl;
+		return false;
+	}
+
 
 	RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
 
@@ -1617,6 +1624,12 @@ bool   p3LinkMgrIMPL::retryConnectTCP(const std::string &id)
 		return false;
 	}
 
+	if (mPeerMgr->isHidden())
+	{
+		std::cerr << "p3LinkMgrIMPL::retryConnectTCP() isHidden(): no connection attempts for : " << id;
+		std::cerr << std::endl;
+		return false;
+	}
 
 	struct sockaddr_in lAddr;
 	struct sockaddr_in eAddr;

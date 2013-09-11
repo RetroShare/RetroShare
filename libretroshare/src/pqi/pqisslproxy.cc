@@ -40,6 +40,8 @@
 
 const int pqisslproxyzone = 3517;
 
+#define PROXY_DEBUG	1
+
 #define PROXY_STATE_FAILED			0
 #define PROXY_STATE_INIT			1
 #define PROXY_STATE_WAITING_METHOD_RESPONSE	2
