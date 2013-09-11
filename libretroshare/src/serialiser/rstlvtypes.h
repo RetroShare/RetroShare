@@ -122,6 +122,12 @@ class RsTlvHashSet: public RsTlvStringSet
 	RsTlvHashSet();
 };
 
+class RsTlvPgpIdSet: public RsTlvStringSet
+{
+	public:
+	RsTlvPgpIdSet();
+};
+
 class RsTlvServiceIdSet: public RsTlvItem
 {
 	public:

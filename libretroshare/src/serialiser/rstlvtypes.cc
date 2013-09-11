@@ -247,6 +247,7 @@ std::ostream &RsTlvBinaryData::print(std::ostream &out, uint16_t indent)
 
 RsTlvPeerIdSet::RsTlvPeerIdSet(): RsTlvStringSet(TLV_TYPE_PEERSET) {}
 RsTlvHashSet::RsTlvHashSet(): RsTlvStringSet(TLV_TYPE_HASHSET) {}
+RsTlvPgpIdSet::RsTlvPgpIdSet(): RsTlvStringSet(TLV_TYPE_PGPIDSET) {}
 
 
 RsTlvStringSet::RsTlvStringSet(uint16_t type) :mType(type)
