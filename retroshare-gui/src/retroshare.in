@@ -167,17 +167,17 @@ ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
     LangString DESC_sec_link ${LANG_TURKISH} "RetroShare .rsc almas? i?in kaydettirir"
     LangString LANGUAGEID ${LANG_TURKISH} "1055"
     
-    LangString sec_main ${LANG_SIMPCHINESE} "????"
-    LangString sec_data ${LANG_SIMPCHINESE} "????"
+    LangString sec_main ${LANG_SIMPCHINESE} "程序文件"
+    LangString sec_data ${LANG_SIMPCHINESE} "程序皮肤"
 	LangString sec_plugins ${LANG_SIMPCHINESE} "Plugins"
-    LangString sec_shortcuts ${LANG_SIMPCHINESE} "????"
-    LangString sec_link ${LANG_SIMPCHINESE} "RetroShare????"
-    LangString sec_autostart ${LANG_SIMPCHINESE} "????"
-    LangString DESC_sec_main ${LANG_SIMPCHINESE} "??RetroShare??"
-    LangString DESC_sec_data ${LANG_SIMPCHINESE} "??RetroShare??"
+    LangString sec_shortcuts ${LANG_SIMPCHINESE} "快捷方式"
+    LangString sec_link ${LANG_SIMPCHINESE} "RetroShare文件关联"
+    LangString sec_autostart ${LANG_SIMPCHINESE} "自动启动"
+    LangString DESC_sec_main ${LANG_SIMPCHINESE} "安装RetroShare程序"
+    LangString DESC_sec_data ${LANG_SIMPCHINESE} "安装RetroShare皮肤"
     LangString DESC_sec_plugins ${LANG_SIMPCHINESE} "Installs the RetroShare plugins."
-    LangString DESC_sec_shortcuts ${LANG_SIMPCHINESE} "?RetroShare????"
-    LangString DESC_sec_link ${LANG_SIMPCHINESE} "??.rsc???"
+    LangString DESC_sec_shortcuts ${LANG_SIMPCHINESE} "建RetroShare快捷方式"
+    LangString DESC_sec_link ${LANG_SIMPCHINESE} "关联.rsc扩展名"
     LangString LANGUAGEID ${LANG_SIMPCHINESE} "2052"
     
     LangString sec_main ${LANG_POLISH} "Pliki programu"
@@ -393,6 +393,18 @@ Section Voip SEC001
   File /r "..\..\plugins\VOIP\release\VOIP.dll"
   
 SectionEnd
+
+Section FeedReader SEC002
+
+  ; Set Section properties
+  SetOverwrite on
+  
+  ; Set Section Plugins
+  SetOutPath "$APPDATA\RetroShare\extensions\"
+ 
+  File /r "..\..\plugins\FeedReader\release\FeedReader.dll"
+  
+SectionEnd
 SectionGroupEnd  
 
 Section $(sec_link) sec_link
@@ -551,8 +563,8 @@ LangString FINISHPAGELINK ${LANG_ENGLISH}     "Visit the RetroShare forums for t
 LangString FINISHPAGELINK ${LANG_GERMAN}      "Das RetroShare Support-Forum besuchen, um Neuigkeiten und Unterstützung zu erfahren"
 LangString FINISHPAGELINK ${LANG_TURKISH}     "Destek için Retroshare foruma ziyaret et"
 LangString FINISHPAGELINK ${LANG_FRENCH}      "Consultez le forum RetroShare pour vous tenir au courant des dernieres modifications, et obtenir de l'aide."
-LangString FINISHPAGELINK ${LANG_SIMPCHINESE} "????"
-LangString FINISHPAGELINK ${LANG_POLISH}      "Odwiedz forum RetroShare do najswiezszych informacji i wsparcia"
+LangString FINISHPAGELINK ${LANG_SIMPCHINESE} "帮助论坛"
+LangString FINISHPAGELINK ${LANG_POLISH}      "Odwiedź forum RetroShare do najświeższych informacji i wsparcia"
 LangString FINISHPAGELINK ${LANG_DANISH}      "Besøg RetroShare fora for de seneste nyheder og støtte"
 LangString FINISHPAGELINK ${LANG_JAPANESE}    "Visit the RetroShare forums for the latest news and support"
 LangString FINISHPAGELINK ${LANG_KOREAN}      "Visit the RetroShare forums for the latest news and support"
@@ -565,9 +577,9 @@ LangString FINISHPAGELINK ${LANG_PORTUGUESEBR} "Visit the RetroShare forums for 
 
 LangString ^UninstallLink ${LANG_ENGLISH}     "Uninstall"
 LangString ^UninstallLink ${LANG_GERMAN}      "Deinstallieren"
-LangString ^UninstallLink ${LANG_TURKISH}     "Kald?r"
+LangString ^UninstallLink ${LANG_TURKISH}     "Kald�r"
 LangString ^UninstallLink ${LANG_FRENCH}      "Désinstaller"
-LangString ^UninstallLink ${LANG_SIMPCHINESE} "??"
+LangString ^UninstallLink ${LANG_SIMPCHINESE} "卸载"
 LangString ^UninstallLink ${LANG_POLISH}      "Odinstaluj"
 LangString ^UninstallLink ${LANG_DANISH}      "Afinstaller"
 LangString ^UninstallLink ${LANG_JAPANESE}    "Uninstall"
@@ -576,7 +588,7 @@ LangString ^UninstallLink ${LANG_RUSSIAN}     "Uninstall"
 LangString ^UninstallLink ${LANG_SWEDISH}     "Avinstallera"
 LangString ^UninstallLink ${LANG_SPANISH}     "Desinstalar"
 LangString ^UninstallLink ${LANG_ITALIAN}     "Disinstallare"
-LangString ^UninstallLink ${LANG_GREEK}       "?pe??at?stas?"
+LangString ^UninstallLink ${LANG_GREEK}       "Απεγκατάσταση"
 LangString ^UninstallLink ${LANG_PORTUGUESEBR}  "Desinstalar"
 
 ; eof

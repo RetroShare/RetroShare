@@ -1,12 +1,12 @@
-﻿; Script generated with the Venis Install Wizard & modified by defnax
+; Script generated with the Venis Install Wizard & modified by defnax
 
 ; Define your application name
 !define APPNAME "RetroShare"
-!define VERSION "0.5.4e"
-!define REVISION "6268"
+!define VERSION "0.5.5a"
+!define REVISION "6725"
 !define APPNAMEANDVERSION "${APPNAME} ${VERSION} ${REVISION}"
-!define QTBASE "d:\qt\2010.05"
-!define RSBASE "d:\Development\retroshare-trunk\retroshare-gui"
+!define QTBASE "h:\qt\2010.05"
+!define RSBASE "h:\Development\retroshare\retroshare-gui\"
 
 ; Main Install settings
 Name "${APPNAMEANDVERSION}"
@@ -341,7 +341,7 @@ Section $(sec_main) sec_main
   File /r  ${QTBASE}\qt\qt_*.qm
   File /r  ${RSBASE}\src\qt_*.qm
   File /r "release\pthreadGC2d.dll"
-  File /r "d:\Development\lib\libminiupnpc-1.3\miniupnpc.dll"
+  File /r "h:\Development\lib\libminiupnpc-1.3\miniupnpc.dll"
   File /r "changelog.txt"
   File /r /x Data "release\bdboot.txt" 
 
@@ -393,6 +393,19 @@ Section Voip SEC001
   File /r "..\..\plugins\VOIP\release\VOIP.dll"
   
 SectionEnd
+
+Section FeedReader SEC002
+
+  ; Set Section properties
+  SetOverwrite on
+  
+  ; Set Section Plugins
+  SetOutPath "$APPDATA\RetroShare\extensions\"
+ 
+  File /r "..\..\plugins\FeedReader\release\FeedReader.dll"
+  
+SectionEnd
+
 SectionGroupEnd  
 
 Section $(sec_link) sec_link
