@@ -35,6 +35,9 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 {
 	/* Invoke Qt Designer generated QObject setup routine */
 	ui.setupUi(this);
+	
+	ui.headerFrame->setHeaderImage(QPixmap(":/images/contact_new128.png"));
+	ui.headerFrame->setHeaderText(tr("Create a new Identity"));
 
 	connect(ui.new_gpg_key_checkbox, SIGNAL(clicked()), this, SLOT(newGPGKeyGenUiSetup()));
 
@@ -90,7 +93,7 @@ void GenCertDialog::init()
 		ui.new_gpg_key_checkbox->setChecked(false);
 		setWindowTitle(tr("Create new Location"));
 		ui.genButton->setText(tr("Generate new Location"));
-		ui.headerLabel->setText(tr("Create a new Location"));
+		ui.headerFrame->setHeaderText(tr("Create a new Location"));
 		genNewGPGKey = false;
 	} else {
 		ui.no_gpg_key_label->setVisible(!mOnlyGenerateIdentity);
@@ -98,21 +101,21 @@ void GenCertDialog::init()
 		ui.new_gpg_key_checkbox->setEnabled(true);
 		setWindowTitle(tr("Create new Identity"));
 		ui.genButton->setText(tr("Generate new Identity"));
-		ui.headerLabel->setText(tr("Create a new Identity"));
+		ui.headerFrame->setHeaderText(tr("Create a new Identity"));
 		genNewGPGKey = true;
 	}
 
-	QString text = ui.headerLabel2->text() + "\n";
+	QString text = ui.header_label->text() + "\n";
 
 	if (mOnlyGenerateIdentity) {
 		ui.new_gpg_key_checkbox->setChecked(true);
 		ui.new_gpg_key_checkbox->hide();
-		ui.label->hide();
+		ui.genprofileinfo_label->hide();
 		text += tr("You can create a new identity with this form.");
 	} else {
 		text += tr("You can use an existing identity (i.e. a PGP key pair), from the list below, or create a new one with this form.");
 	}
-	ui.headerLabel2->setText(text);
+	ui.header_label->setText(text);
 
 	newGPGKeyGenUiSetup();
 }
@@ -133,7 +136,7 @@ void GenCertDialog::newGPGKeyGenUiSetup() {
 		ui.exportIdentity_PB->hide();
 		setWindowTitle(tr("Create new Identity"));
 		ui.genButton->setText(tr("Generate new Identity"));
-		ui.headerLabel->setText(tr("Create a new Identity"));
+		ui.headerFrame->setHeaderText(tr("Create a new Identity"));
 	} else {
 		genNewGPGKey = false;
 		ui.name_label->hide();
@@ -149,7 +152,7 @@ void GenCertDialog::newGPGKeyGenUiSetup() {
 		ui.exportIdentity_PB->setEnabled(ui.genPGPuser->count() != 0);
 		setWindowTitle(tr("Create new Location"));
 		ui.genButton->setText(tr("Generate new Location"));
-		ui.headerLabel->setText(tr("Create a new Location"));
+		ui.headerFrame->setHeaderText(tr("Create a new Location"));
 	}
 }
 
@@ -251,6 +254,7 @@ void GenCertDialog::genPerson()
 		ui.genButton->hide();
 		ui.label_location2->hide();
 		ui.importIdentity_PB->hide();
+		ui.genprofileinfo_label->hide();
 
 		setCursor(Qt::WaitCursor) ;
 
