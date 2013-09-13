@@ -67,13 +67,13 @@ void PostedGroupDialog::initUi()
 	switch (mode())
 	{
 	case MODE_CREATE:
-		setUiText(UITYPE_SERVICE_HEADER, tr("Create New Posted Topic"));
+		setUiText(UITYPE_SERVICE_HEADER, tr("Create New Topic"));
 		break;
 	case MODE_SHOW:
 		setUiText(UITYPE_SERVICE_HEADER, tr("Posted Topic"));
 		break;
 	case MODE_EDIT:
-		setUiText(UITYPE_SERVICE_HEADER, tr("Edit Posted Topic"));
+		setUiText(UITYPE_SERVICE_HEADER, tr("Edit Topic"));
 		break;
 	}
 

@@ -39,6 +39,8 @@
 
 /* Images for context menu icons */
 #define IMAGE_MESSAGE        ":/images/folder-draft.png"
+#define IMAGE_SUBSCRIBE      ":/images/edit_add24.png"
+#define IMAGE_UNSUBSCRIBE    ":/images/cancel.png"
 
 /* Images for TreeWidget */
 #define IMAGE_FOLDER         ":/images/folder16.png"
@@ -177,9 +179,9 @@ void PostedListDialog::groupListCustomPopupMenu(QPoint /*point*/)
 
 	QAction *action = contextMnu.addAction(QIcon(IMAGE_MESSAGE), tr("Submit Post"), this, SLOT(newPost()));
 	action->setEnabled(isSubscribed);
-	action = contextMnu.addAction(QIcon(IMAGE_MESSAGE), tr("Subscribe"), this, SLOT(subscribeTopic()));
+	action = contextMnu.addAction(QIcon(IMAGE_SUBSCRIBE), tr("Subscribe"), this, SLOT(subscribeTopic()));
 	action->setEnabled(!isSubscribed);
-	action = contextMnu.addAction(QIcon(IMAGE_MESSAGE), tr("Unsubscribe"), this, SLOT(unsubscribeTopic()));
+	action = contextMnu.addAction(QIcon(IMAGE_UNSUBSCRIBE), tr("Unsubscribe"), this, SLOT(unsubscribeTopic()));
 	action->setEnabled(isSubscribed);
 
 	contextMnu.exec(QCursor::pos());
