@@ -1,6 +1,8 @@
 #include "dnsresolver.h"
 
 #include "pqi/pqinetwork.h"
+#include "util/rsnet.h"
+
 
 #ifndef WIN32
 #include <netdb.h>
@@ -64,13 +66,19 @@ void *solveDNSEntries(void *p)
 			{
 				RsStackMutex mut(dnsr->_rdnsMtx) ;
 
+				DNSResolver::AddrInfo &info = (*dnsr->_addr_map)[next_call];
+
 				if(pHost) 
 				{
-					(*dnsr->_addr_map)[next_call].state = DNSResolver::DNS_HAVE ;
-					(*dnsr->_addr_map)[next_call].addr.s_addr  = *(unsigned long*) (pHost->h_addr);
+					info.state = DNSResolver::DNS_HAVE ;
+					// IPv4 for the moment.
+					struct sockaddr_in *addrv4p = (struct sockaddr_in *) &(info.addr);
+					addrv4p->sin_family = AF_INET;
+					addrv4p->sin_addr.s_addr  = *(unsigned long*) (pHost->h_addr);
+					addrv4p->sin_port = htons(0);
 				}
 				else
-					(*dnsr->_addr_map)[next_call].state = DNSResolver::DNS_LOOKUP_ERROR ;
+					info.state = DNSResolver::DNS_LOOKUP_ERROR ;
 			}
 		}
 	}
@@ -103,9 +111,9 @@ void DNSResolver::reset()
 	_addr_map->clear();
 }
 
-bool DNSResolver::getIPAddressFromString(const std::string& server_name,struct in_addr& addr) 
+bool DNSResolver::getIPAddressFromString(const std::string& server_name,struct sockaddr_storage &addr) 
 {
-	addr.s_addr = 0 ;
+	sockaddr_storage_clear(addr);
 	bool running = false;
 	{
 		RsStackMutex mut(_rdnsMtx) ;

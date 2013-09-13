@@ -51,7 +51,7 @@ const int pqisslproxyzone = 3517;
 pqisslproxy::pqisslproxy(pqissllistener *l, PQInterface *parent, p3LinkMgr *lm)
         :pqissl(l, parent, lm)
 {
-	sockaddr_clear(&remote_addr);
+	sockaddr_storage_clear(remote_addr);
 	return;
 }
 

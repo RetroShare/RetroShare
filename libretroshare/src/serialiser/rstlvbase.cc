@@ -697,7 +697,7 @@ bool SetTlvIpAddrPortV6(void *data, uint32_t size, uint32_t *offset,
 	{
 		ok &= setRawUInt32(data, tlvend, offset, ip6addr[i]);
 	}
-	ok &= setRawUInt16(data, tlvend, offset, out->sin_port6);
+	ok &= setRawUInt16(data, tlvend, offset, out->sin6_port);
 	return ok;
 }
 
@@ -752,7 +752,7 @@ bool GetTlvIpAddrPortV6(void *data, uint32_t size, uint32_t *offset,
 	uint32_t *ip6addr = (uint32_t *) in->sin6_addr.s6_addr;
 	for(int i = 0; i < 4; i++)
 	{
-		ok &= getRawUInt32(data, tlvend, offset, ip6addr[i]);
+		ok &= getRawUInt32(data, tlvend, offset, &(ip6addr[i]));
 	}
 
 	in->sin6_family = AF_INET6; /* set FAMILY */

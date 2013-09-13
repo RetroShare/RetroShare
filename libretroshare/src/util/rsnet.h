@@ -75,4 +75,46 @@ std::ostream& operator<<(std::ostream& o,const struct sockaddr_in&) ;
 std::string rs_inet_ntoa(struct in_addr in);
 
 
+/***************************/
+// sockaddr_storage fns.
+
+void sockaddr_storage_clear(struct sockaddr_storage &addr);
+
+// mods.
+bool sockaddr_storage_zeroip(struct sockaddr_storage &addr);
+bool sockaddr_storage_copyip(struct sockaddr_storage &dst, const struct sockaddr_storage &src);
+uint16_t sockaddr_storage_port(const struct sockaddr_storage &addr);
+bool sockaddr_storage_setport(struct sockaddr_storage &addr, uint16_t port);
+
+bool sockaddr_storage_ipv4_aton(struct sockaddr_storage &addr, const char *name);
+bool sockaddr_storage_ipv4_setport(struct sockaddr_storage &addr, const uint16_t port);
+
+// comparisons.
+bool operator<(const struct sockaddr_storage &a, const struct sockaddr_storage &b);
+
+bool sockaddr_storage_same(const struct sockaddr_storage &addr, const struct sockaddr_storage &addr2);
+bool sockaddr_storage_samefamily(const struct sockaddr_storage &addr, const struct sockaddr_storage &addr2);
+bool sockaddr_storage_sameip(const struct sockaddr_storage &addr, const struct sockaddr_storage &addr2);
+bool sockaddr_storage_samenet(const struct sockaddr_storage &addr, const struct sockaddr_storage &addr2);
+bool sockaddr_storage_samesubnet(const struct sockaddr_storage &addr, const struct sockaddr_storage &addr2);
+
+// string,
+std::string sockaddr_storage_tostring(const struct sockaddr_storage &addr);
+std::string sockaddr_storage_familytostring(const struct sockaddr_storage &addr);
+std::string sockaddr_storage_iptostring(const struct sockaddr_storage &addr);
+std::string sockaddr_storage_porttostring(const struct sockaddr_storage &addr);
+
+// output
+//void sockaddr_storage_output(const struct sockaddr_storage &addr, std::ostream &out);
+//void sockaddr_storage_ipoutput(const struct sockaddr_storage &addr, std::ostream &out);
+
+// net checks.
+bool sockaddr_storage_isnull(const struct sockaddr_storage &addr);
+bool sockaddr_storage_isValidNet(const struct sockaddr_storage &addr);
+bool sockaddr_storage_isLoopbackNet(const struct sockaddr_storage &addr);
+bool sockaddr_storage_isPrivateNet(const struct sockaddr_storage &addr);
+bool sockaddr_storage_isExternalNet(const struct sockaddr_storage &addr);
+
+
+
 #endif /* RS_UNIVERSAL_NETWORK_HEADER */

@@ -74,6 +74,11 @@ const uint32_t MIN_TIME_BETWEEN_NET_RESET = 		5;
  * #define NETMGR_DEBUG_STATEBOX 1
  ***/
 
+#define NETMGR_DEBUG 1
+#define NETMGR_DEBUG_RESET 1
+#define NETMGR_DEBUG_TICK 1
+#define NETMGR_DEBUG_STATEBOX 1
+
 pqiNetStatus::pqiNetStatus()
 	:mLocalAddrOk(false), mExtAddrOk(false), mExtAddrStableOk(false), 
 	mUpnpOk(false), mDhtOk(false), mResetReq(false)
@@ -81,8 +86,8 @@ pqiNetStatus::pqiNetStatus()
         mDhtNetworkSize = 0;
         mDhtRsNetworkSize = 0;
 
-	sockaddr_clear(&mLocalAddr);
-	sockaddr_clear(&mExtAddr);
+	sockaddr_storage_clear(mLocalAddr);
+	sockaddr_storage_clear(mExtAddr);
 	return;
 }
 
@@ -101,8 +106,8 @@ void pqiNetStatus::print(std::ostream &out)
         out << std::endl;
 	out << "mDhtNetworkSize: " << mDhtNetworkSize << " mDhtRsNetworkSize: " << mDhtRsNetworkSize;
         out << std::endl;
-	out << "mLocalAddr: " << rs_inet_ntoa(mLocalAddr.sin_addr) << ":" << ntohs(mLocalAddr.sin_port) << " ";
-	out << "mExtAddr: " << rs_inet_ntoa(mExtAddr.sin_addr) << ":" << ntohs(mExtAddr.sin_port) << " ";
+	out << "mLocalAddr: " << sockaddr_storage_tostring(mLocalAddr) << " ";
+	out << "mExtAddr: " << sockaddr_storage_tostring(mExtAddr) << " ";
 	out << " NetOk: " << NetOk();
         out << std::endl;
 }
@@ -128,12 +133,8 @@ p3NetMgrIMPL::p3NetMgrIMPL()
 		mLastSlowTickTime = 0;
 		mOldNatType = RSNET_NATTYPE_UNKNOWN;
 		mOldNatHole = RSNET_NATHOLE_UNKNOWN;
-		mLocalAddr.sin_port = 0;
-		mLocalAddr.sin_addr.s_addr = 0;
-		mLocalAddr.sin_family = AF_INET ;
-		mExtAddr.sin_port = 0;
-		mExtAddr.sin_addr.s_addr = 0;
-		mExtAddr.sin_family = AF_INET ;
+		sockaddr_storage_clear(mLocalAddr);
+		sockaddr_storage_clear(mExtAddr);
 		mVisState = 0 ;
 	}
 	
@@ -269,7 +270,7 @@ void p3NetMgrIMPL::netReset()
 
 		RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
 
-		struct sockaddr_in iaddr = mLocalAddr;
+		struct sockaddr_storage iaddr = mLocalAddr;
 		
 #ifdef NETMGR_DEBUG_RESET
 		std::cerr << "p3NetMgrIMPL::netReset() resetting listeners" << std::endl;
@@ -582,8 +583,8 @@ void p3NetMgrIMPL::netUpnpInit()
 	/* get the ports from the configuration */
 
 	mNetStatus = RS_NET_UPNP_SETUP;
-	iport = ntohs(mLocalAddr.sin_port);
-	eport = ntohs(mExtAddr.sin_port);
+	iport = sockaddr_storage_port(mLocalAddr);
+	eport = sockaddr_storage_port(mExtAddr);
 	if ((eport < 1000) || (eport > 30000))
 	{
 		eport = iport;
@@ -608,7 +609,7 @@ void p3NetMgrIMPL::netUpnpCheck()
 
 	mNetMtx.unlock(); /* UNLOCK MUTEX */
 
-	struct sockaddr_in extAddr;
+	struct sockaddr_storage extAddr;
 	int upnpState = netAssistFirewallActive();
 
 	if (((upnpState == 0) && (delta > (time_t)MAX_UPNP_INIT)) ||
@@ -640,12 +641,11 @@ void p3NetMgrIMPL::netUpnpCheck()
 		 * we now have external upnp address. Golden!
 		 * don't set netOk flag until have seen some traffic.
 		 */
-		if (isValidNet(&(extAddr.sin_addr)))
+		if (sockaddr_storage_isValidNet(extAddr))
 		{
 #if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
 			std::cerr << "p3NetMgrIMPL::netUpnpCheck() ";
-			std::cerr << "UpnpAddr: " << rs_inet_ntoa(extAddr.sin_addr);
-			std::cerr << ":" << ntohs(extAddr.sin_port);
+			std::cerr << "UpnpAddr: " << sockaddr_storage_tostring(extAddr);
 			std::cerr << std::endl;
 #endif
 			mNetFlags.mUpnpOk = true;
@@ -680,7 +680,7 @@ void p3NetMgrIMPL::netExtCheck()
 	{
 		RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
 		bool isStable = false;
-		struct sockaddr_in tmpip ;
+		struct sockaddr_storage tmpip ;
 
 			/* check for External Address */
 		/* in order of importance */
@@ -697,7 +697,7 @@ void p3NetMgrIMPL::netExtCheck()
 #if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
 				std::cerr << "p3NetMgrIMPL::netExtCheck() Ext supplied from netAssistExternalAddress()" << std::endl;
 #endif
-				if (isValidNet(&(tmpip.sin_addr)))
+				if (sockaddr_storage_isValidNet(tmpip))
 				{
 					// must be stable???
 					isStable = true;
@@ -722,8 +722,8 @@ void p3NetMgrIMPL::netExtCheck()
 			std::cerr << "p3NetMgrIMPL::netExtCheck() Ext Not Ok, Checking DhtStunner" << std::endl;
 #endif
 			uint8_t isstable = 0;
-			struct sockaddr_in tmpaddr;
-			sockaddr_clear(&tmpaddr);
+			struct sockaddr_storage tmpaddr;
+			sockaddr_storage_clear(tmpaddr);
 
 			if (mDhtStunner)
 			{
@@ -738,7 +738,7 @@ void p3NetMgrIMPL::netExtCheck()
 			
 #ifdef	NETMGR_DEBUG_STATEBOX
 					std::cerr << "p3NetMgrIMPL::netExtCheck() From DhtStunner: ";
-					std::cerr << rs_inet_ntoa(tmpaddr.sin_addr) << ":" << htons(tmpaddr.sin_port);
+					std::cerr << sockaddr_storage_tostring(tmpaddr);
 					std::cerr << " Stable: " << (uint32_t) isstable;
 					std::cerr << std::endl;
 #endif
@@ -755,18 +755,18 @@ void p3NetMgrIMPL::netExtCheck()
 #if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
 				std::cerr << "p3NetMgrIMPL::netExtCheck() checking ExtAddrFinder" << std::endl;
 #endif
-				bool extFinderOk = mExtAddrFinder->hasValidIP(&(tmpip.sin_addr));
+				bool extFinderOk = mExtAddrFinder->hasValidIP(tmpip);
 				if (extFinderOk)
 				{
 #if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
 					std::cerr << "p3NetMgrIMPL::netExtCheck() Ext supplied by ExtAddrFinder" << std::endl;
 #endif
 					/* best guess at port */
-					tmpip.sin_port = mNetFlags.mLocalAddr.sin_port;
+					sockaddr_storage_setport(tmpip, sockaddr_storage_port(mLocalAddr));
+					
 #if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
 					std::cerr << "p3NetMgrIMPL::netExtCheck() ";
-					std::cerr << "ExtAddr: " << rs_inet_ntoa(tmpip.sin_addr);
-					std::cerr << ":" << ntohs(tmpip.sin_port);
+					std::cerr << "ExtAddr: " << sockaddr_storage_tostring(tmpip);
 					std::cerr << std::endl;
 #endif
 
@@ -790,8 +790,7 @@ void p3NetMgrIMPL::netExtCheck()
 
 #if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
 			std::cerr << "p3NetMgrIMPL::netExtCheck() ";
-			std::cerr << "ExtAddr: " << rs_inet_ntoa(mNetFlags.mExtAddr.sin_addr);
-			std::cerr << ":" << ntohs(mNetFlags.mExtAddr.sin_port);
+			std::cerr << "ExtAddr: " << sockaddr_storage_tostring(mNetFlags.mExtAddr);
 			std::cerr << std::endl;
 #endif
 			//update ip address list
@@ -910,19 +909,19 @@ bool 	p3NetMgrIMPL::checkNetAddress()
 	bool addrChanged = false;
 	bool validAddr = false;
 	
-	struct in_addr prefAddr;
-	struct sockaddr_in oldAddr;
+	struct sockaddr_storage prefAddr;
+	struct sockaddr_storage oldAddr;
 
 	if (mNetMode & RS_NET_MODE_TRY_LOOPBACK)
 	{
 		std::cerr << "p3NetMgrIMPL::checkNetAddress() LOOPBACK ... forcing to 127.0.0.1";
 		std::cerr << std::endl;
-	        inet_aton("127.0.0.1", &prefAddr);
+	    sockaddr_storage_ipv4_aton(prefAddr, "127.0.0.1");
 		validAddr = true;
 	}
 	else
 	{
-		validAddr = getPreferredInterface(mLocalAddr.sin_addr, prefAddr);
+		validAddr = getPreferredInterface(mLocalAddr, prefAddr);
 	}
 
 
@@ -945,15 +944,14 @@ bool 	p3NetMgrIMPL::checkNetAddress()
 		RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
 		
 		oldAddr = mLocalAddr;
-		addrChanged = (prefAddr.s_addr != mLocalAddr.sin_addr.s_addr);
+		addrChanged = !sockaddr_storage_sameip(prefAddr, mLocalAddr);
 
 #ifdef NETMGR_DEBUG_TICK
 		std::cerr << "p3NetMgrIMPL::checkNetAddress()";
 		std::cerr << std::endl;
-		std::cerr << "Current Local: " << rs_inet_ntoa(mLocalAddr.sin_addr);
-		std::cerr << ":" << ntohs(mLocalAddr.sin_port);
+		std::cerr << "Current Local: " << sockaddr_storage_tostring(mLocalAddr);
 		std::cerr << std::endl;
-		std::cerr << "Current Preferred: " << rs_inet_ntoa(prefAddr);
+		std::cerr << "Current Preferred: " << sockaddr_storage_iptostring(prefAddr);
 		std::cerr << std::endl;
 #endif
 		
@@ -962,19 +960,18 @@ bool 	p3NetMgrIMPL::checkNetAddress()
 		{
 			std::cerr << "p3NetMgrIMPL::checkNetAddress() Address Changed!";
 			std::cerr << std::endl;
-			std::cerr << "Current Local: " << rs_inet_ntoa(mLocalAddr.sin_addr);
-			std::cerr << ":" << ntohs(mLocalAddr.sin_port);
+			std::cerr << "Current Local: " << sockaddr_storage_tostring(mLocalAddr);
 			std::cerr << std::endl;
-			std::cerr << "Current Preferred: " << rs_inet_ntoa(prefAddr);
+			std::cerr << "Current Preferred: " << sockaddr_storage_iptostring(prefAddr);
 			std::cerr << std::endl;
 		}
 #endif
 		
 		// update address.
-		mLocalAddr.sin_addr = prefAddr;
+		sockaddr_storage_copyip(mLocalAddr, prefAddr);
 		mNetFlags.mLocalAddr = mLocalAddr;
 
-		if(isLoopbackNet(&(mLocalAddr.sin_addr)))
+		if(sockaddr_storage_isLoopbackNet(mLocalAddr))
 		{
 #ifdef NETMGR_DEBUG
 			std::cerr << "p3NetMgrIMPL::checkNetAddress() laddr: Loopback" << std::endl;
@@ -982,7 +979,7 @@ bool 	p3NetMgrIMPL::checkNetAddress()
 			mNetFlags.mLocalAddrOk = false;
 			mNetStatus = RS_NET_LOOPBACK;
 		}
-		else if (!isValidNet(&mLocalAddr.sin_addr))
+		else if (!sockaddr_storage_isValidNet(mLocalAddr))
 		{
 #ifdef NETMGR_DEBUG
 			std::cerr << "p3NetMgrIMPL::checkNetAddress() laddr: invalid" << std::endl;
@@ -998,7 +995,7 @@ bool 	p3NetMgrIMPL::checkNetAddress()
 		}
 
 
-		int port = ntohs(mLocalAddr.sin_port);
+		int port = sockaddr_storage_port(mLocalAddr);
 		if ((port < PQI_MIN_PORT) || (port > PQI_MAX_PORT))
 		{
 #ifdef NETMGR_DEBUG
@@ -1008,8 +1005,9 @@ bool 	p3NetMgrIMPL::checkNetAddress()
 			// same, but appear random from peer to peer.
 		 	// Random port avoids clashes, improves anonymity.
 			//
-			
-			mLocalAddr.sin_port = htons(PQI_MIN_PORT + (RSRandom::random_u32() % (PQI_MAX_PORT - PQI_MIN_PORT))); 
+		
+			int new_port = htons(PQI_MIN_PORT + (RSRandom::random_u32() % (PQI_MAX_PORT - PQI_MIN_PORT))); 
+			sockaddr_storage_setport(mLocalAddr, new_port);
 
 			addrChanged = true;
 		}
@@ -1018,18 +1016,17 @@ bool 	p3NetMgrIMPL::checkNetAddress()
 		 * are the same (modify server)... this mismatch can
 		 * occur when the local port is changed....
 		 */
-		if (mLocalAddr.sin_addr.s_addr == mExtAddr.sin_addr.s_addr)
+		if (sockaddr_storage_sameip(mLocalAddr, mExtAddr))
 		{
-			mExtAddr.sin_port = mLocalAddr.sin_port;
+			sockaddr_storage_setport(mExtAddr, sockaddr_storage_port(mLocalAddr));
 		}
 
 		// ensure that address family is set, otherwise windows Barfs.
-		mLocalAddr.sin_family = AF_INET;
-		mExtAddr.sin_family = AF_INET;
+		//mLocalAddr.sin_family = AF_INET;
+		//mExtAddr.sin_family = AF_INET;
 
 #ifdef NETMGR_DEBUG_TICK
-		std::cerr << "p3NetMgrIMPL::checkNetAddress() Final Local Address: " << rs_inet_ntoa(mLocalAddr.sin_addr);
-		std::cerr << ":" << ntohs(mLocalAddr.sin_port) << std::endl;
+		std::cerr << "p3NetMgrIMPL::checkNetAddress() Final Local Address: " << sockaddr_storage_tostring(mLocalAddr);
 		std::cerr << std::endl;
 #endif
 		
@@ -1068,13 +1065,12 @@ void    p3NetMgrIMPL::addNetListener(pqiNetListener *listener)
 
 
 
-bool    p3NetMgrIMPL::setLocalAddress(struct sockaddr_in addr)
+bool    p3NetMgrIMPL::setLocalAddress(const struct sockaddr_storage &addr)
 {
 	bool changed = false;
 	{
 		RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
-		if ((mLocalAddr.sin_addr.s_addr != addr.sin_addr.s_addr) ||
-		    (mLocalAddr.sin_port != addr.sin_port))
+		if (sockaddr_storage_same(mLocalAddr, addr))
 		{
 			changed = true;
 		}
@@ -1093,13 +1089,12 @@ bool    p3NetMgrIMPL::setLocalAddress(struct sockaddr_in addr)
 	return true;
 }
 
-bool    p3NetMgrIMPL::setExtAddress(struct sockaddr_in addr)
+bool    p3NetMgrIMPL::setExtAddress(const struct sockaddr_storage &addr)
 {
 	bool changed = false;
 	{
 		RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
-		if ((mExtAddr.sin_addr.s_addr != addr.sin_addr.s_addr) ||
-		    (mExtAddr.sin_port != addr.sin_port))
+		if (sockaddr_storage_same(mExtAddr, addr))
 		{
 			changed = true;
 		}
@@ -1250,7 +1245,7 @@ bool p3NetMgrIMPL::netAssistFirewallPorts(uint16_t iport, uint16_t eport)
 }
 
 
-bool p3NetMgrIMPL::netAssistExtAddress(struct sockaddr_in &extAddr)
+bool p3NetMgrIMPL::netAssistExtAddress(struct sockaddr_storage &extAddr)
 {
 	std::map<uint32_t, pqiNetAssistFirewall *>::iterator it;
 	for(it = mFwAgents.begin(); it != mFwAgents.end(); it++)
@@ -1398,7 +1393,7 @@ bool p3NetMgrIMPL::netAssistFriend(const std::string &id, bool on)
 }
 
 
-bool p3NetMgrIMPL::netAssistKnownPeer(const std::string &id, const struct sockaddr_in &addr, uint32_t flags)
+bool p3NetMgrIMPL::netAssistKnownPeer(const std::string &id, const struct sockaddr_storage &addr, uint32_t flags)
 {
 	std::map<uint32_t, pqiNetAssistConnect *>::iterator it;
 
@@ -1414,12 +1409,12 @@ bool p3NetMgrIMPL::netAssistKnownPeer(const std::string &id, const struct sockad
 	return true;
 }
 
-bool p3NetMgrIMPL::netAssistBadPeer(const struct sockaddr_in &addr, uint32_t reason, uint32_t flags, uint32_t age)
+bool p3NetMgrIMPL::netAssistBadPeer(const struct sockaddr_storage &addr, uint32_t reason, uint32_t flags, uint32_t age)
 {
 	std::map<uint32_t, pqiNetAssistConnect *>::iterator it;
 
 #ifdef NETMGR_DEBUG
-	std::cerr << "p3NetMgrIMPL::netAssistBadPeer(" << rs_inet_ntoa(addr.sin_addr) << ")";
+	std::cerr << "p3NetMgrIMPL::netAssistBadPeer(" << sockaddr_storage_iptostring(addr) << ")";
 	std::cerr << std::endl;
 #endif
 
@@ -1454,7 +1449,7 @@ bool p3NetMgrIMPL::netAssistStatusUpdate(const std::string &id, int state)
 	std::map<uint32_t, pqiNetAssistConnect *>::iterator it;
 
 #ifdef NETMGR_DEBUG
-	std::cerr << "p3NetMgrIMPL::netAssistFriend(" << id << ", " << on << ")";
+	std::cerr << "p3NetMgrIMPL::netAssistStatusUpdate(" << id << ", " << state << ")";
 	std::cerr << std::endl;
 #endif
 
@@ -1466,8 +1461,8 @@ bool p3NetMgrIMPL::netAssistStatusUpdate(const std::string &id, int state)
 }
 
 
-bool p3NetMgrIMPL::netAssistSetAddress( struct sockaddr_in &/*laddr*/,
-					struct sockaddr_in &/*eaddr*/,
+bool p3NetMgrIMPL::netAssistSetAddress( const struct sockaddr_storage & /*laddr*/,
+					const struct sockaddr_storage & /*eaddr*/,
 					uint32_t /*mode*/)
 {
 #if 0
@@ -1621,8 +1616,8 @@ void p3NetMgrIMPL::updateNetStateBox_temporal()
 #endif
 
 	uint8_t isstable = 0;
-	struct sockaddr_in tmpaddr;
-	sockaddr_clear(&tmpaddr);
+	struct sockaddr_storage tmpaddr;
+	sockaddr_storage_clear(tmpaddr);
 
 	if (mDhtStunner)
 	{
@@ -1631,11 +1626,11 @@ void p3NetMgrIMPL::updateNetStateBox_temporal()
        		if (mDhtStunner->getExternalAddr(tmpaddr, isstable))
 		{
 			RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
-			mNetStateBox.setAddressStunDht(&tmpaddr, isstable);
+			mNetStateBox.setAddressStunDht(tmpaddr, isstable);
 			
 #ifdef	NETMGR_DEBUG_STATEBOX
 			std::cerr << "p3NetMgrIMPL::updateNetStateBox_temporal() DhtStunner: ";
-			std::cerr << rs_inet_ntoa(tmpaddr.sin_addr) << ":" << htons(tmpaddr.sin_port);
+			std::cerr << sockaddr_storage_tostring(tmpaddr);
 			std::cerr << " Stable: " << (uint32_t) isstable;
 			std::cerr << std::endl;
 #endif
@@ -1650,11 +1645,11 @@ void p3NetMgrIMPL::updateNetStateBox_temporal()
        		if (mProxyStunner->getExternalAddr(tmpaddr, isstable))
 		{
 			RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
-			mNetStateBox.setAddressStunProxy(&tmpaddr, isstable);
+			mNetStateBox.setAddressStunProxy(tmpaddr, isstable);
 
 #ifdef	NETMGR_DEBUG_STATEBOX
 			std::cerr << "p3NetMgrIMPL::updateNetStateBox_temporal() ProxyStunner: ";
-			std::cerr << rs_inet_ntoa(tmpaddr.sin_addr) << ":" << htons(tmpaddr.sin_port);
+			std::cerr << sockaddr_storage_tostring(tmpaddr);
 			std::cerr << " Stable: " << (uint32_t) isstable;
 			std::cerr << std::endl;
 #endif
@@ -1826,7 +1821,7 @@ void p3NetMgrIMPL::updateNetStateBox_startup()
 		RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
 
 		/* fill in the data */
-		struct sockaddr_in tmpip;
+		struct sockaddr_storage tmpip;
 	
 		/* net Assist */
 		if (netAssistExtAddress(tmpip))
@@ -1838,19 +1833,18 @@ void p3NetMgrIMPL::updateNetStateBox_startup()
 			std::cerr << std::endl;
 #endif
 
-			if (isValidNet(&(tmpip.sin_addr)))
+			if (sockaddr_storage_isValidNet(tmpip))
 			{
 #ifdef	NETMGR_DEBUG_STATEBOX
 				std::cerr << "p3NetMgrIMPL::updateNetStateBox_startup() ";
-				std::cerr << "netAssist Returned: " << rs_inet_ntoa(tmpip.sin_addr);
-				std::cerr << ":" << ntohs(tmpip.sin_port);
+				std::cerr << "netAssist Returned: " << sockaddr_storage_tostring(tmpip);
 				std::cerr << std::endl;
 #endif
-				mNetStateBox.setAddressUPnP(true, &tmpip);
+				mNetStateBox.setAddressUPnP(true, tmpip);
 			}
 			else
 			{
-				mNetStateBox.setAddressUPnP(false, &tmpip);
+				mNetStateBox.setAddressUPnP(false, tmpip);
 #ifdef	NETMGR_DEBUG_STATEBOX
 				std::cerr << "p3NetMgrIMPL::updateNetStateBox_startup() ";
 				std::cerr << "ERROR Bad Address supplied from netAssistExternalAddress()";
@@ -1865,30 +1859,30 @@ void p3NetMgrIMPL::updateNetStateBox_startup()
 			std::cerr << " netAssistExtAddress() is not active";
 			std::cerr << std::endl;
 #endif
-			mNetStateBox.setAddressUPnP(false, &tmpip);
+			mNetStateBox.setAddressUPnP(false, tmpip);
 		}
 
 
 		/* ExtAddrFinder */
 		if (mUseExtAddrFinder)
 		{
-			bool extFinderOk = mExtAddrFinder->hasValidIP(&(tmpip.sin_addr));
+			bool extFinderOk = mExtAddrFinder->hasValidIP(tmpip);
 			if (extFinderOk)
 			{
 				/* best guess at port */
-				tmpip.sin_port = mNetFlags.mLocalAddr.sin_port;
+				sockaddr_storage_setport(tmpip, sockaddr_storage_port(mNetFlags.mLocalAddr));
 
 #ifdef	NETMGR_DEBUG_STATEBOX
 				std::cerr << "p3NetMgrIMPL::updateNetStateBox_startup() ";
-				std::cerr << "ExtAddrFinder Returned: " << rs_inet_ntoa(tmpip.sin_addr);
+				std::cerr << "ExtAddrFinder Returned: " << sockaddr_storage_iptostring(tmpip);
 				std::cerr << std::endl;
 #endif
 
-				mNetStateBox.setAddressWebIP(true, &tmpip);
+				mNetStateBox.setAddressWebIP(true, tmpip);
 			}
 			else
 			{
-				mNetStateBox.setAddressWebIP(false, &tmpip);
+				mNetStateBox.setAddressWebIP(false, tmpip);
 #ifdef	NETMGR_DEBUG_STATEBOX
 				std::cerr << "p3NetMgrIMPL::updateNetStateBox_startup() ";
 				std::cerr << " ExtAddrFinder hasn't found an address yet";
@@ -1903,7 +1897,7 @@ void p3NetMgrIMPL::updateNetStateBox_startup()
 			std::cerr << " ExtAddrFinder is not active";
 			std::cerr << std::endl;
 #endif
-			mNetStateBox.setAddressWebIP(false, &tmpip);
+			mNetStateBox.setAddressWebIP(false, tmpip);
 		}
 
 

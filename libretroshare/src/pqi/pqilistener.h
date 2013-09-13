@@ -38,7 +38,7 @@ virtual ~pqilistener() 		{ return; }
 
 virtual int     tick()					{ return 1; }
 virtual int     status()				{ return 1; }
-virtual int     setListenAddr(struct sockaddr_in addr)  
+virtual int     setListenAddr(const struct sockaddr_storage &addr)  
 	{ 
 		(void) addr; /* suppress unused parameter warning */
 		return 1; 

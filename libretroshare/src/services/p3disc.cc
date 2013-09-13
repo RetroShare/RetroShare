@@ -496,8 +496,8 @@ RsDiscReply *p3disc::createDiscReply(const std::string &to, const std::string &a
 		rsPeerNetItem.netMode = detail.netMode;
 		rsPeerNetItem.visState = detail.visState;
 		rsPeerNetItem.lastContact = detail.lastcontact;
-		rsPeerNetItem.currentlocaladdr = detail.localaddr;
-		rsPeerNetItem.currentremoteaddr = detail.serveraddr;
+		rsPeerNetItem.localAddr.addr = detail.localaddr;
+		rsPeerNetItem.extAddr.addr = detail.serveraddr;
 		rsPeerNetItem.dyndns = detail.dyndns;
 		detail.ipAddrs.mLocal.loadTlv(rsPeerNetItem.localAddrList);
 		detail.ipAddrs.mExt.loadTlv(rsPeerNetItem.extAddrList);
@@ -526,8 +526,8 @@ RsDiscReply *p3disc::createDiscReply(const std::string &to, const std::string &a
 			rsPeerNetItem.netMode = detail.netMode;
 			rsPeerNetItem.visState = detail.visState;
 			rsPeerNetItem.lastContact = time(NULL);
-			rsPeerNetItem.currentlocaladdr = detail.localaddr;
-			rsPeerNetItem.currentremoteaddr = detail.serveraddr;
+			rsPeerNetItem.localAddr.addr = detail.localaddr;
+			rsPeerNetItem.extAddr.addr = detail.serveraddr;
 			rsPeerNetItem.dyndns = detail.dyndns;
 			detail.ipAddrs.mLocal.loadTlv(rsPeerNetItem.localAddrList);
 			detail.ipAddrs.mExt.loadTlv(rsPeerNetItem.extAddrList);
@@ -677,7 +677,7 @@ void p3disc::recvPeerDetails(RsDiscReply *item, const std::string &certGpgId)
 
 		bool new_info = false;
 		addDiscoveryData(item->PeerId(), pit->pid,item_gpg_id,
-				item->aboutId, pit->currentlocaladdr, pit->currentremoteaddr, 0, time(NULL),new_info);
+				item->aboutId, pit->localAddr.addr, pit->extAddr.addr, 0, time(NULL),new_info);
 
 		if(new_info)
 			should_notify_discovery = true ;
@@ -724,7 +724,7 @@ void p3disc::recvPeerDetails(RsDiscReply *item, const std::string &certGpgId)
 				mNetMgr->netAssistFriend(pit->pid,false);
 
 				/* inform NetMgr that we know this peer */
-				mNetMgr->netAssistKnownPeer(pit->pid, pit->currentremoteaddr, 
+				mNetMgr->netAssistKnownPeer(pit->pid, pit->extAddr.addr, 
 						NETASSIST_KNOWN_PEER_FOF | NETASSIST_KNOWN_PEER_OFFLINE);
 
 				continue;
@@ -752,10 +752,10 @@ void p3disc::recvPeerDetails(RsDiscReply *item, const std::string &certGpgId)
 				if (mPeerMgr->setLocation(pit->pid, pit->location)) {
 					peerDataChanged = true;
 				}
-				if (mPeerMgr->setLocalAddress(pit->pid, pit->currentlocaladdr)) {
+				if (mPeerMgr->setLocalAddress(pit->pid, pit->localAddr.addr)) {
 					peerDataChanged = true;
 				}
-				if (mPeerMgr->setExtAddress(pit->pid, pit->currentremoteaddr)) {
+				if (mPeerMgr->setExtAddress(pit->pid, pit->extAddr.addr)) {
 					peerDataChanged = true;
 				}
 				if (mPeerMgr->setVisState(pit->pid, pit->visState)) {
@@ -1024,7 +1024,7 @@ void p3disc::setGPGOperation(AuthGPGOperation *operation)
 /*************************************************************************************/
 /*				Storing Network Graph				     */
 /*************************************************************************************/
-int	p3disc::addDiscoveryData(const std::string& fromId, const std::string& aboutId,const std::string& from_gpg_id,const std::string& about_gpg_id, const struct sockaddr_in& laddr, const struct sockaddr_in& raddr, uint32_t flags, time_t ts,bool& new_info)
+int	p3disc::addDiscoveryData(const std::string& fromId, const std::string& aboutId,const std::string& from_gpg_id,const std::string& about_gpg_id, const struct sockaddr_storage &laddr, const struct sockaddr_storage &raddr, uint32_t flags, time_t ts,bool& new_info)
 {
 	RsStackMutex stack(mDiscMtx); /********** STACK LOCKED MTX ******/
 

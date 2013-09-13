@@ -45,7 +45,7 @@ RsTlvBanListEntry::RsTlvBanListEntry()
 
 void RsTlvBanListEntry::TlvClear()
 {
-	sockaddr_clear(&addr);
+	addr.TlvClear();
 	level = 0;
 	reason = 0;
 	age = 0;
@@ -55,7 +55,7 @@ uint32_t RsTlvBanListEntry::TlvSize()
 {
 	uint32_t s = TLV_HEADER_SIZE; 
 
-	s += GetTlvIpAddrPortV4Size();
+	s += addr.TlvSize();
 	s += 4; // level;
 	s += 4; // reason;
 	s += 4; // age;
@@ -80,7 +80,7 @@ bool  RsTlvBanListEntry::SetTlv(void *data, uint32_t size, uint32_t *offset) /* 
 
 	ok &= SetTlvBase(data, tlvend, offset, TLV_TYPE_BAN_ENTRY, tlvsize);
 
-	ok &= SetTlvIpAddrPortV4(data, tlvend, offset, TLV_TYPE_IPV4_REMOTE, &addr);
+	ok &= addr.SetTlv(data, tlvend, offset);
 	ok &= setRawUInt32(data, tlvend, offset, level);
 	ok &= setRawUInt32(data, tlvend, offset, reason);
 	ok &= setRawUInt32(data, tlvend, offset, age);
@@ -112,7 +112,7 @@ bool  RsTlvBanListEntry::GetTlv(void *data, uint32_t size, uint32_t *offset) /* 
 	/* skip the header */
 	(*offset) += TLV_HEADER_SIZE;
 
-	ok &= GetTlvIpAddrPortV4(data, tlvend, offset, TLV_TYPE_IPV4_REMOTE, &addr);
+	ok &= addr.GetTlv(data, tlvend, offset);
 	ok &= getRawUInt32(data, tlvend, offset, &(level));
 	ok &= getRawUInt32(data, tlvend, offset, &(reason));
 	ok &= getRawUInt32(data, tlvend, offset, &(age));
@@ -143,8 +143,8 @@ std::ostream &RsTlvBanListEntry::print(std::ostream &out, uint16_t indent)
 	uint16_t int_Indent = indent + 2;
 
 	printIndent(out, int_Indent);
-	out << "addr:" << rs_inet_ntoa(addr.sin_addr) << ":" << htons(addr.sin_port);
-	out << std::endl;
+	out << "addr:" << std::endl;
+	addr.print(out, int_Indent);
 
 	printIndent(out, int_Indent);
 	out << "level:" << level;

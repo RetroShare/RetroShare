@@ -324,10 +324,10 @@ bool	p3Peers::getPeerDetails(const std::string &id, RsPeerDetails &d)
 		d.isHiddenNode = false;
 		d.hiddenNodeAddress = "";
 
-		d.localAddr	= rs_inet_ntoa(ps.localaddr.sin_addr);
-		d.localPort	= ntohs(ps.localaddr.sin_port);
-		d.extAddr	= rs_inet_ntoa(ps.serveraddr.sin_addr);
-		d.extPort	= ntohs(ps.serveraddr.sin_port);
+		d.localAddr	= sockaddr_storage_iptostring(ps.localaddr);
+		d.localPort	= sockaddr_storage_port(ps.localaddr);
+		d.extAddr	= sockaddr_storage_iptostring(ps.serveraddr);
+		d.extPort	= sockaddr_storage_port(ps.serveraddr);
 		d.dyndns        = ps.dyndns;
 	
 		std::list<pqiIpAddress>::iterator it;
@@ -335,15 +335,19 @@ bool	p3Peers::getPeerDetails(const std::string &id, RsPeerDetails &d)
 				it != ps.ipAddrs.mLocal.mAddrs.end(); it++)
 		{
 			std::string toto;
-			rs_sprintf(toto, "%u    %ld sec", ntohs(it->mAddr.sin_port), time(NULL) - it->mSeenTime);
-			d.ipAddressList.push_back("L:" + rs_inet_ntoa(it->mAddr.sin_addr) + ":" + toto);
+			toto += "L:";
+			toto += sockaddr_storage_tostring(it->mAddr);
+			rs_sprintf_append(toto, "    %ld sec", time(NULL) - it->mSeenTime);
+			d.ipAddressList.push_back(toto);
 		}
 		for(it = ps.ipAddrs.mExt.mAddrs.begin(); 
 				it != ps.ipAddrs.mExt.mAddrs.end(); it++)
 		{
 			std::string toto;
-			rs_sprintf(toto, "%u    %ld sec", ntohs(it->mAddr.sin_port), time(NULL) - it->mSeenTime);
-			d.ipAddressList.push_back("E:" + rs_inet_ntoa(it->mAddr.sin_addr) + ":" + toto);
+			toto += "E:";
+			toto += sockaddr_storage_tostring(it->mAddr);
+			rs_sprintf_append(toto, "    %ld sec", time(NULL) - it->mSeenTime);
+			d.ipAddressList.push_back(toto);
 		}
 	}
 	
@@ -420,10 +424,10 @@ bool	p3Peers::getPeerDetails(const std::string &id, RsPeerDetails &d)
 	{
 		if (pcs.currentConnAddrAttempt.type & RS_NET_CONN_TCP_ALL) {
 			d.connectState = RS_PEER_CONNECTSTATE_TRYING_TCP;
-			rs_sprintf(d.connectStateString, "%s:%u", rs_inet_ntoa(pcs.currentConnAddrAttempt.addr.sin_addr).c_str(), ntohs(pcs.currentConnAddrAttempt.addr.sin_port));
+			d.connectStateString = sockaddr_storage_tostring(pcs.currentConnAddrAttempt.addr);
 		} else if (pcs.currentConnAddrAttempt.type & RS_NET_CONN_UDP_ALL) {
 			d.connectState = RS_PEER_CONNECTSTATE_TRYING_UDP;
-			rs_sprintf(d.connectStateString, "%s:%u", rs_inet_ntoa(pcs.currentConnAddrAttempt.addr.sin_addr).c_str(), ntohs(pcs.currentConnAddrAttempt.addr.sin_port));
+			d.connectStateString = sockaddr_storage_tostring(pcs.currentConnAddrAttempt.addr);
 		}
 	}
 	else if (pcs.state & RS_PEER_S_CONNECTED)
@@ -782,16 +786,17 @@ bool 	p3Peers::setLocalAddress(const std::string &id, const std::string &addr_st
         std::cerr << "p3Peers::setLocalAddress() " << id << std::endl;
 #endif
 
-	struct sockaddr_in addr;
-	addr.sin_family = AF_INET;
-	addr.sin_port = htons(port);
+	struct sockaddr_storage addr;
+	struct sockaddr_in *addrv4p = (struct sockaddr_in *) &addr;
+	addrv4p->sin_family = AF_INET;
+	addrv4p->sin_port = htons(port);
 
 	int ret = 1;
 /********************************** WINDOWS/UNIX SPECIFIC PART *******************/
 #ifndef WINDOWS_SYS
-	if (ret && (0 != inet_aton(addr_str.c_str(), &(addr.sin_addr))))
+	if (ret && (0 != inet_aton(addr_str.c_str(), &(addrv4p->sin_addr))))
 #else
-	addr.sin_addr.s_addr = inet_addr(addr_str.c_str());
+	addrv4p->sin_addr.s_addr = inet_addr(addr_str.c_str());
 	if (ret)
 #endif
 /********************************** WINDOWS/UNIX SPECIFIC PART *******************/
@@ -807,16 +812,18 @@ bool 	p3Peers::setExtAddress(const std::string &id, const std::string &addr_str,
         std::cerr << "p3Peers::setExtAddress() " << id << std::endl;
 #endif
 
-	struct sockaddr_in addr;
-	addr.sin_family = AF_INET;
-	addr.sin_port = htons(port);
+	// NOTE THIS IS IPV4 FOR NOW.
+	struct sockaddr_storage addr;
+	struct sockaddr_in *addrv4p = (struct sockaddr_in *) &addr;
+	addrv4p->sin_family = AF_INET;
+	addrv4p->sin_port = htons(port);
 
 	int ret = 1;
 /********************************** WINDOWS/UNIX SPECIFIC PART *******************/
 #ifndef WINDOWS_SYS
-	if (ret && (0 != inet_aton(addr_str.c_str(), &(addr.sin_addr))))
+	if (ret && (0 != inet_aton(addr_str.c_str(), &(addrv4p->sin_addr))))
 #else
-	addr.sin_addr.s_addr = inet_addr(addr_str.c_str());
+	addrv4p->sin_addr.s_addr = inet_addr(addr_str.c_str());
 	if (ret)
 #endif
 /********************************** WINDOWS/UNIX SPECIFIC PART *******************/

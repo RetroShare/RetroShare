@@ -72,7 +72,13 @@ int p3BitDht::InfoCallback(const bdId *id, uint32_t /*type*/, uint32_t /*flags*/
 
 	if (mPeerSharer)
 	{
-		mPeerSharer->updatePeer(rsid, addr, outtype, outreason, outage);
+		struct sockaddr_storage tmpaddr;
+		struct sockaddr_in *ap = (struct sockaddr_in *) &tmpaddr;
+		ap->sin_family = AF_INET;
+		ap->sin_addr = addr.sin_addr;
+		ap->sin_port = addr.sin_port;
+		
+		mPeerSharer->updatePeer(rsid, tmpaddr, outtype, outreason, outage);
 	}
 
 	/* call to the Stunners to drop the address as well */
@@ -1768,14 +1774,25 @@ int p3BitDht::checkConnectionAllowed(const bdId *peerId, int mode)
  */
 
  
-void p3BitDht::ConnectCalloutTCPAttempt(const std::string &peerId, struct sockaddr_in raddr)
+void p3BitDht::ConnectCalloutTCPAttempt(const std::string &peerId, struct sockaddr_in raddrv4)
 {
-	struct sockaddr_in proxyaddr;
-	struct sockaddr_in srcaddr;
+	struct sockaddr_storage raddr;
+	struct sockaddr_storage proxyaddr;
+	struct sockaddr_storage srcaddr;
+	
+	sockaddr_storage_clear(proxyaddr);
+	sockaddr_storage_clear(proxyaddr);
+	sockaddr_storage_clear(srcaddr);
 
-	sockaddr_clear(&proxyaddr);
-	sockaddr_clear(&srcaddr);
-
+	struct sockaddr_in *rap = (struct sockaddr_in *) &raddr;
+	struct sockaddr_in *pap = (struct sockaddr_in *) &proxyaddr;
+	struct sockaddr_in *sap = (struct sockaddr_in *) &srcaddr;
+	
+	// only one to translate
+	rap->sin_family = AF_INET;
+	rap->sin_addr = raddrv4.sin_addr;
+	rap->sin_port = raddrv4.sin_port;
+	
 	uint32_t source = RS_CB_DHT;
 	uint32_t connectFlags = RS_CB_FLAG_ORDER_UNSPEC | RS_CB_FLAG_MODE_TCP;
 	uint32_t delay = 0;
@@ -1785,14 +1802,25 @@ void p3BitDht::ConnectCalloutTCPAttempt(const std::string &peerId, struct sockad
 }
 
  
-void p3BitDht::ConnectCalloutDirectOrProxy(const std::string &peerId, struct sockaddr_in raddr, uint32_t connectFlags, uint32_t delay)
+void p3BitDht::ConnectCalloutDirectOrProxy(const std::string &peerId, struct sockaddr_in raddrv4, uint32_t connectFlags, uint32_t delay)
 {
-        struct sockaddr_in proxyaddr;
-	struct sockaddr_in srcaddr;
-
-	sockaddr_clear(&proxyaddr);
-	sockaddr_clear(&srcaddr);
-
+	struct sockaddr_storage raddr;
+	struct sockaddr_storage proxyaddr;
+	struct sockaddr_storage srcaddr;
+	
+	sockaddr_storage_clear(proxyaddr);
+	sockaddr_storage_clear(proxyaddr);
+	sockaddr_storage_clear(srcaddr);
+	
+	struct sockaddr_in *rap = (struct sockaddr_in *) &raddr;
+	struct sockaddr_in *pap = (struct sockaddr_in *) &proxyaddr;
+	struct sockaddr_in *sap = (struct sockaddr_in *) &srcaddr;
+	
+	// only one to translate
+	rap->sin_family = AF_INET;
+	rap->sin_addr = raddrv4.sin_addr;
+	rap->sin_port = raddrv4.sin_port;
+	
 	uint32_t source = RS_CB_DHT;
 	uint32_t bandwidth = 0;
 
@@ -1800,9 +1828,33 @@ void p3BitDht::ConnectCalloutDirectOrProxy(const std::string &peerId, struct soc
 }
 
 void p3BitDht::ConnectCalloutRelay(const std::string &peerId, 
-		struct sockaddr_in srcaddr, struct sockaddr_in proxyaddr, struct sockaddr_in destaddr,
+		struct sockaddr_in srcaddrv4, struct sockaddr_in proxyaddrv4, struct sockaddr_in destaddrv4,
 			uint32_t connectFlags, uint32_t bandwidth)
 {
+	struct sockaddr_storage destaddr;
+	struct sockaddr_storage proxyaddr;
+	struct sockaddr_storage srcaddr;
+	
+	sockaddr_storage_clear(proxyaddr);
+	sockaddr_storage_clear(proxyaddr);
+	sockaddr_storage_clear(srcaddr);
+	
+	struct sockaddr_in *dap = (struct sockaddr_in *) &destaddr;
+	struct sockaddr_in *pap = (struct sockaddr_in *) &proxyaddr;
+	struct sockaddr_in *sap = (struct sockaddr_in *) &srcaddr;
+	
+	dap->sin_family = AF_INET;
+	dap->sin_addr = destaddrv4.sin_addr;
+	dap->sin_port = destaddrv4.sin_port;
+
+	pap->sin_family = AF_INET;
+	pap->sin_addr = proxyaddrv4.sin_addr;
+	pap->sin_port = proxyaddrv4.sin_port;
+	
+	sap->sin_family = AF_INET;
+	sap->sin_addr = srcaddrv4.sin_addr;
+	sap->sin_port = srcaddrv4.sin_port;
+	
 	uint32_t source = RS_CB_DHT;
 	uint32_t delay = 0;
 

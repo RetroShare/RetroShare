@@ -70,7 +70,7 @@ class peerConnectAddress
 	public:
 	peerConnectAddress(); /* init */
 
-	struct sockaddr_in addr;
+	struct sockaddr_storage addr;
 	uint32_t delay;  /* to stop simultaneous connects */
 	uint32_t period; /* UDP only */
 	uint32_t type;
@@ -78,8 +78,8 @@ class peerConnectAddress
 	time_t ts;
 	
 	// Extra Parameters for Relay connections.
-	struct sockaddr_in proxyaddr; 
-	struct sockaddr_in srcaddr;
+	struct sockaddr_storage proxyaddr; 
+	struct sockaddr_storage srcaddr;
 	uint32_t bandwidth;
 
 	// Extra Parameters for Proxy/Hidden connection.
@@ -162,19 +162,19 @@ virtual void	addMonitor(pqiMonitor *mon) = 0;
 virtual void	removeMonitor(pqiMonitor *mon) = 0;
 
 	/****************** Connections *******************/
-virtual bool	connectAttempt(const std::string &id, struct sockaddr_in &raddr,
-					struct sockaddr_in &proxyaddr, struct sockaddr_in &srcaddr,
+virtual bool	connectAttempt(const std::string &id, struct sockaddr_storage &raddr,
+					struct sockaddr_storage &proxyaddr, struct sockaddr_storage &srcaddr,
 					uint32_t &delay, uint32_t &period, uint32_t &type, uint32_t &flags, uint32_t &bandwidth,
 					std::string &domain_addr, uint16_t &domain_port) = 0;
 	
-virtual bool 	connectResult(const std::string &id, bool success, uint32_t flags, struct sockaddr_in remote_peer_address) = 0;
+virtual bool 	connectResult(const std::string &id, bool success, uint32_t flags, const struct sockaddr_storage &remote_peer_address) = 0;
 virtual bool	retryConnect(const std::string &id) = 0;
 
-virtual void 	notifyDeniedConnection(const std::string& gpgid,const std::string& sslid,const std::string& sslcn,const struct sockaddr_in &addr, bool incoming) = 0;
+virtual void 	notifyDeniedConnection(const std::string& gpgid,const std::string& sslid,const std::string& sslcn,const struct sockaddr_storage &addr, bool incoming) = 0;
 
 	/* Network Addresses */
-virtual bool 	setLocalAddress(struct sockaddr_in addr) = 0;
-virtual struct sockaddr_in getLocalAddress() = 0;
+virtual bool 	setLocalAddress(const struct sockaddr_storage &addr) = 0;
+virtual bool 	getLocalAddress(struct sockaddr_storage &addr) = 0;
 
 	/************* DEPRECIATED FUNCTIONS (TO REMOVE) ********/
 
@@ -188,8 +188,8 @@ virtual int 	addFriend(const std::string &ssl_id, bool isVisible) = 0;
 // THESE MUSTn't BE specfied HERE - as overloaded from pqiConnectCb.
 //virtual void    peerStatus(std::string id, const pqiIpAddrSet &addrs, 
 //                        uint32_t type, uint32_t flags, uint32_t source) = 0;
-//virtual void    peerConnectRequest(std::string id, struct sockaddr_in raddr,
-//                        struct sockaddr_in proxyaddr,  struct sockaddr_in srcaddr,
+//virtual void    peerConnectRequest(std::string id, const struct sockaddr_storage &raddr,
+//                        const struct sockaddr_storage &proxyaddr,  const struct sockaddr_storage &srcaddr,
 //                        uint32_t source, uint32_t flags, uint32_t delay, uint32_t bandwidth) = 0;
 
 /****************************************************************************/
@@ -220,25 +220,25 @@ virtual void	addMonitor(pqiMonitor *mon);
 virtual void	removeMonitor(pqiMonitor *mon);
 
 	/****************** Connections *******************/
-virtual bool	connectAttempt(const std::string &id, struct sockaddr_in &raddr,
-					struct sockaddr_in &proxyaddr, struct sockaddr_in &srcaddr,
+virtual bool	connectAttempt(const std::string &id, struct sockaddr_storage &raddr,
+					struct sockaddr_storage &proxyaddr, struct sockaddr_storage &srcaddr,
 					uint32_t &delay, uint32_t &period, uint32_t &type, uint32_t &flags, uint32_t &bandwidth, 
 					std::string &domain_addr, uint16_t &domain_port);
 	
-virtual bool 	connectResult(const std::string &id, bool success, uint32_t flags, struct sockaddr_in remote_peer_address);
+virtual bool 	connectResult(const std::string &id, bool success, uint32_t flags, const struct sockaddr_storage &remote_peer_address);
 virtual bool	retryConnect(const std::string &id);
 
-virtual void 	notifyDeniedConnection(const std::string& gpgid,const std::string& sslid,const std::string& sslcn,const struct sockaddr_in &addr, bool incoming);
+virtual void 	notifyDeniedConnection(const std::string& gpgid,const std::string& sslid,const std::string& sslcn,const struct sockaddr_storage &addr, bool incoming);
 
 	/* Network Addresses */
-virtual bool 	setLocalAddress(struct sockaddr_in addr);
-virtual struct sockaddr_in getLocalAddress();
+virtual bool 	setLocalAddress(const struct sockaddr_storage &addr);
+virtual bool 	getLocalAddress(struct sockaddr_storage &addr);
 
 	/******* overloaded from pqiConnectCb *************/
 virtual void    peerStatus(std::string id, const pqiIpAddrSet &addrs, 
                         uint32_t type, uint32_t flags, uint32_t source);
-virtual void    peerConnectRequest(std::string id, struct sockaddr_in raddr,
-                        struct sockaddr_in proxyaddr,  struct sockaddr_in srcaddr, 
+virtual void    peerConnectRequest(std::string id, const struct sockaddr_storage &raddr,
+                        const struct sockaddr_storage &proxyaddr,  const struct sockaddr_storage &srcaddr, 
                         uint32_t source, uint32_t flags, uint32_t delay, uint32_t bandwidth);
 
 
@@ -280,23 +280,23 @@ void 	statusTick();
 void 	tickMonitors();
 
 	/* connect attempts UDP */
-bool   tryConnectUDP(const std::string &id, struct sockaddr_in &rUdpAddr, 
-							struct sockaddr_in &proxyaddr, struct sockaddr_in &srcaddr,
+bool   tryConnectUDP(const std::string &id, const struct sockaddr_storage &rUdpAddr, 
+							const struct sockaddr_storage &proxyaddr, const struct sockaddr_storage &srcaddr,
 							uint32_t flags, uint32_t delay, uint32_t bandwidth);
 
 	/* connect attempts TCP */
 bool	retryConnectTCP(const std::string &id);
 
-void 	locked_ConnectAttempt_SpecificAddress(peerConnectState *peer, struct sockaddr_in *remoteAddr);
-void 	locked_ConnectAttempt_CurrentAddresses(peerConnectState *peer, struct sockaddr_in *localAddr, struct sockaddr_in *serverAddr);
+void 	locked_ConnectAttempt_SpecificAddress(peerConnectState *peer, const struct sockaddr_storage &remoteAddr);
+void 	locked_ConnectAttempt_CurrentAddresses(peerConnectState *peer, const struct sockaddr_storage &localAddr, const struct sockaddr_storage &serverAddr);
 void 	locked_ConnectAttempt_HistoricalAddresses(peerConnectState *peer, const pqiIpAddrSet &ipAddrs);
 void 	locked_ConnectAttempt_AddDynDNS(peerConnectState *peer, std::string dyndns, uint16_t dynPort);
 void 	locked_ConnectAttempt_AddTunnel(peerConnectState *peer);
-void  	locked_ConnectAttempt_ProxyAddress(peerConnectState *peer, struct sockaddr_in *proxy_addr, const std::string &domain_addr, uint16_t domain_port);
+void  	locked_ConnectAttempt_ProxyAddress(peerConnectState *peer, const struct sockaddr_storage &proxy_addr, const std::string &domain_addr, uint16_t domain_port);
 
 bool  	locked_ConnectAttempt_Complete(peerConnectState *peer);
 
-bool  	locked_CheckPotentialAddr(const struct sockaddr_in *addr, time_t age);
+bool  	locked_CheckPotentialAddr(const struct sockaddr_storage &addr, time_t age);
 bool 	addAddressIfUnique(std::list<peerConnectAddress> &addrList, peerConnectAddress &pca, bool pushFront);
 
 
@@ -314,7 +314,7 @@ private:
 
 	bool     mStatusChanged;
 
-	struct sockaddr_in mLocalAddress;
+	struct sockaddr_storage mLocalAddress;
 
 	std::list<pqiMonitor *> clients;
 
@@ -333,7 +333,7 @@ private:
 	uint32_t lastGroupId;
 
 	/* relatively static list of banned ip addresses */
-	std::list<struct in_addr> mBannedIpList;
+	std::list<struct sockaddr_storage> mBannedIpList;
 };
 
 #endif // MRK_PQI_LINK_MANAGER_HEADER

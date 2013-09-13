@@ -50,8 +50,8 @@ virtual void    setInternalPort(unsigned short iport_in) = 0;
 virtual void    setExternalPort(unsigned short eport_in) = 0;
  
 	 	/* as determined by uPnP */
-virtual bool    getInternalAddress(struct sockaddr_in &addr) = 0;
-virtual bool    getExternalAddress(struct sockaddr_in &addr) = 0;
+virtual bool    getInternalAddress(struct sockaddr_storage &addr) = 0;
+virtual bool    getExternalAddress(struct sockaddr_storage &addr) = 0;
 
 };
 

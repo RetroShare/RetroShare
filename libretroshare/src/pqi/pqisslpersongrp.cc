@@ -48,7 +48,7 @@ const int pqipersongrpzone = 354;
 
 #include "pqi/pqisslproxy.h"
 
-pqilistener * pqisslpersongrp::locked_createListener(struct sockaddr_in laddr)
+pqilistener * pqisslpersongrp::locked_createListener(const struct sockaddr_storage &laddr)
 {
 	pqilistener *listener = new pqissllistener(laddr, mPeerMgr);
 	return listener;

@@ -39,9 +39,21 @@ class  stunAddrAssist: public pqiAddrAssist
                 mStunner = stunner;
         }
 
-virtual bool    getExternalAddr(struct sockaddr_in &remote, uint8_t &stable) 
+virtual bool    getExternalAddr(struct sockaddr_storage &remote, uint8_t &stable) 
         {
-                return mStunner->externalAddr(remote, stable);
+		// IPV4 ONLY.
+		struct sockaddr_in remotev4;
+		if (mStunner->externalAddr(remotev4, stable))
+		{
+			sockaddr_storage_clear(remote);
+			struct sockaddr_in *addr = (struct sockaddr_in *) &remote;
+			addr->sin_family = AF_INET;
+			addr->sin_addr = remotev4.sin_addr;
+			addr->sin_port = remotev4.sin_port;
+
+			return true;
+		}
+		return false;
         }
 
 virtual int     tick()

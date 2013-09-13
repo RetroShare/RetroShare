@@ -62,13 +62,20 @@ class rsUdpStack: public UdpStack, public pqiNetListener
 	:UdpStack(testmode, local) { return; }
 
 	/* from pqiNetListener */
-virtual bool resetListener(struct sockaddr_in &local)
+virtual bool resetListener(const struct sockaddr_storage &local)
 	{
-		// The const_cast below is not so nice but without it, the compiler can't
-		// find the correct operator<<(). No idea why!
-		std::cerr << "rsUdpStack::resetListener(" << const_cast<const struct sockaddr_in &>(local) << ")";
+		std::cerr << "rsUdpStack::resetListener(" << sockaddr_storage_tostring(local) << ")";
 		std::cerr << std::endl;
-		return resetAddress(local);
+
+		if (local.ss_family != AF_INET)
+		{
+			std::cerr << "rsUdpStack::resetListener() NOT IPv4 ERROR";
+			std::cerr << std::endl;
+			abort();
+		}
+
+		struct sockaddr_in *addr = (struct sockaddr_in *) &local;
+		return resetAddress(*addr);
 	}
 
 };
@@ -83,14 +90,14 @@ class rsFixedUdpStack: public UdpStack, public pqiNetListener
 	:UdpStack(testmode, local) { return; }
 
 	/* from pqiNetListener */
-virtual bool resetListener(struct sockaddr_in &local)
+virtual bool resetListener(const struct sockaddr_storage &local)
 	{
 		struct sockaddr_in addr;
 		getLocalAddress(addr);
 
 		// The const_cast below is not so nice but without it, the compiler can't
 		// find the correct operator<<(). No idea why!
-		std::cerr << "rsFixedUdpStack::resetListener(" << const_cast<const struct sockaddr_in &>(local) << ")";
+		std::cerr << "rsFixedUdpStack::resetListener(" << sockaddr_storage_tostring(local) << ")";
 		std::cerr << " Resetting with original addr: " << const_cast<const struct sockaddr_in &>(addr);
 		std::cerr << std::endl;
 

@@ -51,8 +51,8 @@ class autoserver
 		:ts(0), discFlags(0) { return;}
 
 		std::string id;
-		struct sockaddr_in localAddr;
-		struct sockaddr_in remoteAddr;
+		struct sockaddr_storage localAddr;
+		struct sockaddr_storage remoteAddr;
 
 		time_t ts;
 		uint32_t discFlags;
@@ -137,7 +137,7 @@ void removeFriend(std::string ssl_id); //keep tracks of removed friend so we're 
 /* handle network shape */
 int     addDiscoveryData(const std::string& fromId, const std::string& aboutId,
 		const std::string& fromGPGId,const std::string& aboutGPGId,
-		const struct sockaddr_in& laddr, const struct sockaddr_in& raddr,
+		const struct sockaddr_storage &laddr, const struct sockaddr_storage &raddr,
 		uint32_t flags, time_t ts,bool& new_info);
 
 //int 	idServers();

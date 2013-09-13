@@ -48,9 +48,8 @@ const uint8_t RS_PKT_TYPE_HISTORY_CONFIG = 0x06;
 const uint8_t RS_PKT_SUBTYPE_KEY_VALUE = 0x01;
 
 	/* PEER CONFIG SUBTYPES */
-const uint8_t RS_PKT_SUBTYPE_PEER_OLD_NET     = 0x01;
 const uint8_t RS_PKT_SUBTYPE_PEER_STUN        = 0x02;
-const uint8_t RS_PKT_SUBTYPE_PEER_NET         = 0x03;     /* replacement for OLD_NET */
+const uint8_t RS_PKT_SUBTYPE_PEER_NET         = 0x03;  
 const uint8_t RS_PKT_SUBTYPE_PEER_GROUP       = 0x04;
 const uint8_t RS_PKT_SUBTYPE_PEER_PERMISSIONS = 0x05;
 
@@ -59,38 +58,6 @@ const uint8_t RS_PKT_SUBTYPE_FILE_TRANSFER = 0x01;
 const uint8_t RS_PKT_SUBTYPE_FILE_ITEM     = 0x02;
 
 /**************************************************************************/
-
-struct IpAddressTimed {
-    struct sockaddr_in ipAddr;
-    time_t seenTime;
-};
-
-class RsPeerOldNetItem: public RsItem
-{
-	public:
-	RsPeerOldNetItem() 
-	:RsItem(RS_PKT_VERSION1, RS_PKT_CLASS_CONFIG,
-		RS_PKT_TYPE_PEER_CONFIG,
-		RS_PKT_SUBTYPE_PEER_OLD_NET)
-	{ return; }
-virtual ~RsPeerOldNetItem();
-virtual void clear();
-std::ostream &print(std::ostream &out, uint16_t indent = 0);
-
-	/* networking information */
-	std::string pid;                          /* Mandatory */
-        std::string gpg_id;                          /* Mandatory */
-        std::string location;                          /* not Mandatory */
-        uint32_t    netMode;                      /* Mandatory */
-	uint32_t    visState;                     /* Mandatory */
-	uint32_t    lastContact;                  /* Mandatory */
-
-	struct sockaddr_in currentlocaladdr;             /* Mandatory */
-	struct sockaddr_in currentremoteaddr;            /* Mandatory */
-        std::string dyndns;
-
-        std::list<IpAddressTimed> ipAddressList;
-};
 
 class RsPeerNetItem: public RsItem
 {
@@ -112,8 +79,8 @@ std::ostream &print(std::ostream &out, uint16_t indent = 0);
 	uint32_t    visState;                     /* Mandatory */
 	uint32_t    lastContact;                  /* Mandatory */
 
-	struct sockaddr_in currentlocaladdr;             /* Mandatory */
-	struct sockaddr_in currentremoteaddr;            /* Mandatory */
+	RsTlvIpAddress localAddr;             /* Mandatory */
+	RsTlvIpAddress extAddr;            /* Mandatory */
         std::string dyndns;
 
 	RsTlvIpAddrSet localAddrList;
@@ -195,11 +162,6 @@ virtual	RsItem *    deserialise(void *data, uint32_t *size);
 
 	private:
 
-/* These are depreciated ... conversion functions used to seemlessly ungrade.
- */
-virtual	uint32_t    sizeOldNet(RsPeerOldNetItem *);
-virtual	bool        serialiseOldNet  (RsPeerOldNetItem *item, void *data, uint32_t *size);
-virtual	RsPeerOldNetItem *deserialiseOldNet(void *data, uint32_t *size);
 
 virtual	uint32_t    sizeNet(RsPeerNetItem *);
 virtual	bool        serialiseNet  (RsPeerNetItem *item, void *data, uint32_t *size);

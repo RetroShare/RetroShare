@@ -150,11 +150,11 @@ int 	p3ServerConfig::getConfigNetStatus(RsConfigNetStatus &status)
 	peerState pstate;
 	mPeerMgr->getOwnNetStatus(pstate);
 
-	status.localAddr = rs_inet_ntoa(pstate.localaddr.sin_addr);
-	status.localPort = ntohs(pstate.localaddr.sin_port);
+	status.localAddr = sockaddr_storage_iptostring(pstate.localaddr);
+	status.localPort = sockaddr_storage_port(pstate.localaddr);
 
-	status.extAddr = rs_inet_ntoa(pstate.serveraddr.sin_addr);
-	status.extPort = ntohs(pstate.serveraddr.sin_port);
+	status.extAddr = sockaddr_storage_iptostring(pstate.serveraddr);
+	status.extPort = sockaddr_storage_port(pstate.serveraddr);
 	status.extDynDns = pstate.dyndns;
 
 	status.firewalled = true;

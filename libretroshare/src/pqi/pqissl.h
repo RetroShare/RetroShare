@@ -93,12 +93,12 @@ public:
 virtual ~pqissl();
 
 	// NetInterface
-virtual int connect(struct sockaddr_in raddr);
+virtual int connect(const struct sockaddr_storage &raddr);
 virtual int listen();
 virtual int stoplistening();
 virtual int reset();
 virtual int disconnect();
-virtual int getConnectAddress(struct sockaddr_in &raddr);
+virtual int getConnectAddress(struct sockaddr_storage &raddr);
 
 virtual bool connect_parameter(uint32_t type, const std::string &value);
 virtual bool connect_parameter(uint32_t type, uint32_t value);
@@ -152,7 +152,7 @@ public:
  * the listener (should make friends??) 
  */
 
-int	accept(SSL *ssl, int fd, struct sockaddr_in foreign_addr); 
+int	accept(SSL *ssl, int fd, const struct sockaddr_storage &foreign_addr); 
 
 void getCryptoParams(RsPeerCryptoParams& params) ;
 
@@ -175,7 +175,7 @@ virtual int net_internal_fcntl_nonblock(int fd) { return unix_fcntl_nonblock(fd)
 	int sockfd;
 
 	pqissllistener *pqil;
-	struct sockaddr_in remote_addr;
+	struct sockaddr_storage remote_addr;
 
 	void *readpkt;
 	int pktlen;
@@ -199,7 +199,7 @@ virtual int net_internal_fcntl_nonblock(int fd) { return unix_fcntl_nonblock(fd)
 
 private:
 	// ssl only fns.
-int connectInterface(sockaddr_in&);
+int connectInterface(const struct sockaddr_storage &addr);
 
 };
 

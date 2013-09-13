@@ -104,7 +104,7 @@ pqissl::pqissl(pqissllistener *l, PQInterface *parent, p3LinkMgr *lm)
 
 {
 	/* set address to zero */
-        sockaddr_clear(&remote_addr);
+        sockaddr_storage_clear(remote_addr);
 
 #ifdef PQISSL_LOG_DEBUG 
     rslog(RSL_DEBUG_BASIC, pqisslzone, "pqissl for PeerId: " + PeerId());
@@ -142,11 +142,10 @@ pqissl::pqissl(pqissllistener *l, PQInterface *parent, p3LinkMgr *lm)
 
 /********** Implementation of NetInterface *************************/
 
-int	pqissl::connect(struct sockaddr_in raddr)
+int	pqissl::connect(const struct sockaddr_storage &raddr)
 {
 	// reset failures
 	remote_addr = raddr;
-	remote_addr.sin_family = AF_INET;
 
 	return ConnectAttempt();
 }
@@ -176,9 +175,10 @@ int 	pqissl::disconnect()
 	return reset();
 }
 
-int pqissl::getConnectAddress(struct sockaddr_in &raddr) {
+int pqissl::getConnectAddress(struct sockaddr_storage &raddr) {
     raddr = remote_addr;
-    return (remote_addr.sin_addr.s_addr == 0);
+    // TODO.
+    return (!sockaddr_storage_isnull(remote_addr));
 }
 
 /* BinInterface version of reset() for pqistreamer */
@@ -267,6 +267,7 @@ int 	pqissl::reset()
 
 bool 	pqissl::connect_parameter(uint32_t type, const std::string &value)
 {
+	(void) value;
 	return false;
 }
 
@@ -584,7 +585,7 @@ int 	pqissl::Delay_Connection()
 int 	pqissl::Initiate_Connection()
 {
 	int err;
-	struct sockaddr_in addr = remote_addr;
+	struct sockaddr_storage addr = remote_addr;
 
 #ifdef PQISSL_LOG_DEBUG 
   	rslog(RSL_DEBUG_BASIC, pqisslzone, 
@@ -644,11 +645,12 @@ int 	pqissl::Initiate_Connection()
 
 	{ 
 		std::string out;
-		rs_sprintf(out, "pqissl::Initiate_Connection() Connecting To: %s via: %s:%u", PeerId().c_str(), rs_inet_ntoa(addr.sin_addr).c_str(), ntohs(addr.sin_port));
+		rs_sprintf(out, "pqissl::Initiate_Connection() Connecting To: %s via: ", PeerId().c_str());
+		out += sockaddr_storage_tostring(addr);
 		rslog(RSL_WARNING, pqisslzone, out);
 	}
 
-	if (addr.sin_addr.s_addr == 0)
+	if (sockaddr_storage_isnull(addr))
 	{
 		rslog(RSL_WARNING, pqisslzone, "pqissl::Initiate_Connection() Invalid (0.0.0.0) Remote Address, Aborting Connect.");
 		waiting = WAITING_FAIL_INTERFACE;
@@ -1279,7 +1281,7 @@ int 	pqissl::Authorise_SSL_Connection()
 	return 0;
 }
 
-int	pqissl::accept(SSL *ssl, int fd, struct sockaddr_in foreign_addr) // initiate incoming connection.
+int	pqissl::accept(SSL *ssl, int fd, const struct sockaddr_storage &foreign_addr) // initiate incoming connection.
 {
 	if (waiting != WAITING_NOT)
 	{
@@ -1373,13 +1375,14 @@ int	pqissl::accept(SSL *ssl, int fd, struct sockaddr_in foreign_addr) // initiat
 
 	/* check whether it is on the same LAN */
 
-	struct sockaddr_in localaddr = mLinkMgr->getLocalAddress();
-	sameLAN = isSameSubnet(&(remote_addr.sin_addr), &(localaddr.sin_addr));
+	struct sockaddr_storage localaddr;
+	mLinkMgr->getLocalAddress(localaddr);
+	sameLAN = sockaddr_storage_samesubnet(remote_addr, localaddr);
 
 	{
 		std::string out = "pqissl::accept() SUCCESSFUL connection to: " + PeerId();
-		out += " localaddr: " + rs_inet_ntoa(localaddr.sin_addr);
-		out += " remoteaddr: " + rs_inet_ntoa(remote_addr.sin_addr);
+		out += " localaddr: " + sockaddr_storage_iptostring(localaddr);
+		out += " remoteaddr: " + sockaddr_storage_iptostring(remote_addr);
 
 		if (sameLAN)
 		{

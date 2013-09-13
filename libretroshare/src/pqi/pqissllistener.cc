@@ -55,7 +55,7 @@ const int pqissllistenzone = 49787;
  */
 
 
-pqissllistenbase::pqissllistenbase(struct sockaddr_in addr, p3PeerMgr *pm)
+pqissllistenbase::pqissllistenbase(const struct sockaddr_storage &addr, p3PeerMgr *pm)
         :laddr(addr), active(false), mPeerMgr(pm)
 
 {
@@ -87,7 +87,7 @@ int 	pqissllistenbase::tick()
 int 	pqissllistenbase::status()
 {
 	std::string out;
-	rs_sprintf(out, "pqissllistenbase::status(): Listening on port: %u", ntohs(laddr.sin_port));
+	rs_sprintf(out, "pqissllistenbase::status(): Listening on port: %u", sockaddr_storage_port(laddr));
 	pqioutput(PQL_DEBUG_ALL, pqissllistenzone, out);
 	return 1;
 }
@@ -146,16 +146,11 @@ int	pqissllistenbase::setuplisten()
 
 	// setup listening address.
 
-	// fill in fconstant bits.
-
-	laddr.sin_family = AF_INET;
-
 	{
 		std::string out = "pqissllistenbase::setuplisten()\n";
-		rs_sprintf_append(out, "\tAddress Family: %d\n", (int) laddr.sin_family);
-		rs_sprintf_append(out, "\tSetup Address: %s\n", rs_inet_ntoa(laddr.sin_addr).c_str());
-		rs_sprintf_append(out, "\tSetup Port: %u", ntohs(laddr.sin_port));
-
+		out += "\t FAMILY: " + sockaddr_storage_familytostring(laddr);
+		out += "\t ADDRESS: " + sockaddr_storage_tostring(laddr);
+		
         pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, out);
                 //std::cerr << out.str() << std::endl;
 	}
@@ -185,8 +180,8 @@ int	pqissllistenbase::setuplisten()
     	}
 
 #ifdef OPEN_UNIVERSAL_PORT
-	struct sockaddr_in tmpaddr = laddr;
-	tmpaddr.sin_addr.s_addr = 0;
+	struct sockaddr_storage tmpaddr = laddr;
+	sockaddr_storage_zeroip(tmpaddr);
 	if (0 != (err = bind(lsock, (struct sockaddr *) &tmpaddr, sizeof(tmpaddr))))
 #else
 	if (0 != (err = bind(lsock, (struct sockaddr *) &laddr, sizeof(laddr))))
@@ -268,7 +263,7 @@ int	pqissllistenbase::setuplisten()
 	return 1;
 }
 
-int	pqissllistenbase::setListenAddr(struct sockaddr_in addr)
+int	pqissllistenbase::setListenAddr(const struct sockaddr_storage &addr)
 {
 	laddr = addr;
 	return 1;
@@ -305,7 +300,7 @@ int	pqissllistenbase::acceptconnection()
 
 	// These are local but temp variables...
 	// can't be arsed making them all the time.
-	struct sockaddr_in remote_addr;
+	struct sockaddr_storage remote_addr;
 	socklen_t addrlen = sizeof(remote_addr);
 	int fd = accept(lsock, (struct sockaddr *) &remote_addr, &addrlen);
 	int err = 0;
@@ -356,7 +351,8 @@ int	pqissllistenbase::acceptconnection()
 
 	{
 	  std::string out;
-	  rs_sprintf(out, "Accepted Connection from %s:%u", rs_inet_ntoa(remote_addr.sin_addr).c_str(), ntohs(remote_addr.sin_port));
+	  out += "Accepted Connection from ";
+	  out += sockaddr_storage_tostring(remote_addr);
 	  pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, out);
 	}
 
@@ -507,12 +503,14 @@ int 	pqissllistenbase::Extract_Failed_SSL_Certificate(const IncomingSSLInfo& inf
 	std::cerr << "   GPG id = " << info.gpgid << std::endl;
 	std::cerr << "   SSL id = " << info.sslid << std::endl;
 	std::cerr << "   SSL cn = " << info.sslcn << std::endl;
-	std::cerr << "   addr+p = " << rs_inet_ntoa(info.addr.sin_addr) << ":" <<  ntohs(info.addr.sin_port) << std::endl;
+	std::cerr << "   addr+p = " << sockaddr_storage_tostring(info.addr) << std::endl;
 
 	if (peercert == NULL)
 	{
 		std::string out;
-		rs_sprintf(out, "pqissllistenbase::Extract_Failed_SSL_Certificate() from: %s:%u ERROR Peer didn't give Cert!", rs_inet_ntoa(info.addr.sin_addr).c_str(), ntohs(info.addr.sin_port));
+		out += "pqissllistenbase::Extract_Failed_SSL_Certificate() from: ";
+		out += sockaddr_storage_tostring(info.addr);
+		out += " ERROR Peer didn't give Cert!";
 		std::cerr << out << std::endl;
         AuthSSL::getAuthSSL()->FailedCertificate(peercert, info.gpgid,info.sslid,info.sslcn,info.addr, true);
 
@@ -525,7 +523,9 @@ int 	pqissllistenbase::Extract_Failed_SSL_Certificate(const IncomingSSLInfo& inf
 
 	{
 		std::string out;
-		rs_sprintf(out, "pqissllistenbase::Extract_Failed_SSL_Certificate() from: %s:%u Passing Cert to AuthSSL() for analysis", rs_inet_ntoa(info.addr.sin_addr).c_str(), ntohs(info.addr.sin_port));
+		out += "pqissllistenbase::Extract_Failed_SSL_Certificate() from: ";
+		out += sockaddr_storage_tostring(info.addr);
+		out += " Passing Cert to AuthSSL() for analysis";
 		std::cerr << out << std::endl;
 
 		pqioutput(PQL_WARNING, pqissllistenzone, out);
@@ -675,7 +675,7 @@ int pqissllistenbase::isSSLActive(int /*fd*/, SSL *ssl)
  *
  */
 
-pqissllistener::pqissllistener(struct sockaddr_in addr, p3PeerMgr *lm)
+pqissllistener::pqissllistener(const struct sockaddr_storage &addr, p3PeerMgr *lm)
         :pqissllistenbase(addr, lm)
 {
 	return;
@@ -743,8 +743,9 @@ int 	pqissllistener::status()
 	// print certificates we are listening for.
 	std::map<std::string, pqissl *>::iterator it;
 
-	std::string out = "pqissllistener::status(): ";
-	rs_sprintf(out, " Listening (%u) for Certs:", ntohs(laddr.sin_port));
+	std::string out = "pqissllistener::status(): Listening (";
+	out += sockaddr_storage_tostring(laddr);
+	out += ") for Certs:";
 	for(it = listenaddr.begin(); it != listenaddr.end(); it++)
 	{
 		out += "\n" + it -> first ;
@@ -820,7 +821,9 @@ int pqissllistener::completeConnection(int fd, IncomingSSLInfo& info)
 	
 	if (found == false)
 	{
-		std::string out = "No Matching Certificate for Connection:" + rs_inet_ntoa(info.addr.sin_addr) +"\npqissllistenbase: Will shut it down!";
+		std::string out = "No Matching Certificate for Connection:";
+		out += sockaddr_storage_tostring(info.addr);
+		out += "\npqissllistenbase: Will shut it down!";
 		pqioutput(PQL_WARNING, pqissllistenzone, out);
 
 		// but as it passed the authentication step, 
@@ -850,13 +853,15 @@ int pqissllistener::completeConnection(int fd, IncomingSSLInfo& info)
 	accepted_ssl.push_back(as);
 
 	std::string out = "pqissllistener::completeConnection() Successful Connection with: " + newPeerId;
-	out += " for Connection:" + rs_inet_ntoa(info.addr.sin_addr) + " Adding to WAIT-ACCEPT Queue";
+	out += " for Connection:";
+	out += sockaddr_storage_tostring(info.addr);
+	out += " Adding to WAIT-ACCEPT Queue";
 	pqioutput(PQL_WARNING, pqissllistenzone, out);
 
 	return 1;
 }
 
-int pqissllistener::finaliseConnection(int fd, SSL *ssl, std::string peerId, struct sockaddr_in &remote_addr)
+int pqissllistener::finaliseConnection(int fd, SSL *ssl, std::string peerId, const struct sockaddr_storage &remote_addr)
 { 
 	std::map<std::string, pqissl *>::iterator it;
 
@@ -867,13 +872,15 @@ int pqissllistener::finaliseConnection(int fd, SSL *ssl, std::string peerId, str
 	it = listenaddr.find(peerId);
 	if (it == listenaddr.end())
 	{
-		out += "No Matching Peer for Connection:" + rs_inet_ntoa(remote_addr.sin_addr);
+		out += "No Matching Peer for Connection:";
+		out += sockaddr_storage_tostring(remote_addr);
 		out += "\npqissllistener => Shutting Down!";
 		pqioutput(PQL_WARNING, pqissllistenzone, out);
 		return -1;
 	}
 
-	out += "Found Matching Peer for Connection:" + rs_inet_ntoa(remote_addr.sin_addr);
+	out += "Found Matching Peer for Connection:";
+	out += sockaddr_storage_tostring(remote_addr);
 	out += "\npqissllistener => Passing to pqissl module!";
 	pqioutput(PQL_WARNING, pqissllistenzone, out);
 

@@ -136,14 +136,14 @@ bool p3BanList::recvBanItem(RsBanListItem *item)
 	for(it = item->peerList.entries.begin(); it != item->peerList.entries.end(); it++)
 	{
 		// Order is important!.	
-		updated = (addBanEntry(item->PeerId(), it->addr, it->level, 
+		updated = (addBanEntry(item->PeerId(), it->addr.addr, it->level, 
 			it->reason, it->age) || updated);
 	}
 	return updated;
 }
 
 /* overloaded from pqiNetAssistSharePeer */
-void p3BanList::updatePeer(std::string /*id*/, struct sockaddr_in addr, int /*type*/, int /*reason*/, int age)
+void p3BanList::updatePeer(std::string /*id*/, const struct sockaddr_storage &addr, int /*type*/, int /*reason*/, int age)
 {
 	std::string ownId = mLinkMgr->getOwnId();
 
@@ -160,7 +160,7 @@ void p3BanList::updatePeer(std::string /*id*/, struct sockaddr_in addr, int /*ty
 }
 
 
-bool p3BanList::addBanEntry(const std::string &peerId, const struct sockaddr_in &addr, int level, uint32_t reason, uint32_t age)
+bool p3BanList::addBanEntry(const std::string &peerId, const struct sockaddr_storage &addr, int level, uint32_t reason, uint32_t age)
 {
 	RsStackMutex stack(mBanMtx); /****** LOCKED MUTEX *******/
 
@@ -174,10 +174,10 @@ bool p3BanList::addBanEntry(const std::string &peerId, const struct sockaddr_in 
 #endif
 
 	/* Only Accept it - if external address */
-	if (!isExternalNet(&(addr.sin_addr)))
+	if (!sockaddr_storage_isExternalNet(addr))
 	{
 #ifdef DEBUG_BANLIST
-		std::cerr << "p3BanList::addBanEntry() Ignoring Non External Addr: " << rs_inet_ntoa(addr.sin_addr);
+		std::cerr << "p3BanList::addBanEntry() Ignoring Non External Addr: " << sockaddr_storage_iptostring(addr);
 		std::cerr << std::endl;
 #endif
 		return false;
@@ -197,8 +197,14 @@ bool p3BanList::addBanEntry(const std::string &peerId, const struct sockaddr_in 
 		updated = true;
 	}
 	
-	std::map<uint32_t, BanListPeer>::iterator mit;
-	mit = it->second.mBanPeers.find(addr.sin_addr.s_addr);
+	// index is FAMILY + IP - the rest should be Zeros..
+	struct sockaddr_storage bannedaddr;
+	sockaddr_storage_clear(bannedaddr);
+	sockaddr_storage_copyip(bannedaddr, addr);
+	sockaddr_storage_setport(bannedaddr, 0);
+
+	std::map<struct sockaddr_storage, BanListPeer>::iterator mit;
+	mit = it->second.mBanPeers.find(bannedaddr);
 	if (mit == it->second.mBanPeers.end())
 	{
 		/* add in */
@@ -208,7 +214,8 @@ bool p3BanList::addBanEntry(const std::string &peerId, const struct sockaddr_in 
 		blp.level = level;
 		blp.mTs = now - age;
 
-		it->second.mBanPeers[addr.sin_addr.s_addr] = blp;
+		
+		it->second.mBanPeers[bannedaddr] = blp;
 		it->second.mLastUpdate = now;
 		updated = true;
 	}
@@ -266,7 +273,7 @@ int p3BanList::condenseBanSources_locked()
 		std::cerr << std::endl;
 #endif
 		
-		std::map<uint32_t, BanListPeer>::const_iterator lit;
+		std::map<struct sockaddr_storage, BanListPeer>::const_iterator lit;
 		for(lit = it->second.mBanPeers.begin();
 			lit != it->second.mBanPeers.end(); lit++)
 		{
@@ -276,7 +283,7 @@ int p3BanList::condenseBanSources_locked()
 #ifdef DEBUG_BANLIST_CONDENSE
 				std::cerr << "p3BanList::condenseBanSources_locked()";
 				std::cerr << " Ignoring Out-Of-Date Entry for: ";
-				std::cerr << rs_inet_ntoa(lit->second.addr.sin_addr);
+				std::cerr << sockaddr_storage_iptostring(lit->second.addr);
 				std::cerr << std::endl;
 #endif
 				continue;
@@ -289,19 +296,25 @@ int p3BanList::condenseBanSources_locked()
 				lvl++;
 			}
 
+			struct sockaddr_storage bannedaddr;
+			sockaddr_storage_clear(bannedaddr);
+			sockaddr_storage_copyip(bannedaddr, lit->second.addr);
+			sockaddr_storage_setport(bannedaddr, 0);
+
+
 			/* check if it exists in the Set already */
-			std::map<uint32_t, BanListPeer>::iterator sit;
-			sit = mBanSet.find(lit->second.addr.sin_addr.s_addr);
+			std::map<struct sockaddr_storage, BanListPeer>::iterator sit;
+			sit = mBanSet.find(bannedaddr);
 			if ((sit == mBanSet.end()) || (lvl < sit->second.level))
 			{
 				BanListPeer bp = lit->second;
 				bp.level = lvl;
-				bp.addr.sin_port = 0;
-				mBanSet[lit->second.addr.sin_addr.s_addr] = bp;
+				sockaddr_storage_setport(bp.addr, 0);
+				mBanSet[bannedaddr] = bp;
 #ifdef DEBUG_BANLIST_CONDENSE
 				std::cerr << "p3BanList::condenseBanSources_locked()";
 				std::cerr << " Added New Entry for: ";
-				std::cerr << rs_inet_ntoa(lit->second.addr.sin_addr);
+				std::cerr << sockaddr_storage_iptostring(bannedaddr);
 				std::cerr << std::endl;
 #endif
 			}
@@ -310,7 +323,7 @@ int p3BanList::condenseBanSources_locked()
 #ifdef DEBUG_BANLIST_CONDENSE
 				std::cerr << "p3BanList::condenseBanSources_locked()";
 				std::cerr << " Merging Info for: ";
-				std::cerr << rs_inet_ntoa(lit->second.addr.sin_addr);
+				std::cerr << sockaddr_storage_iptostring(bannedaddr);
 				std::cerr << std::endl;
 #endif
 				/* update if necessary */
@@ -405,7 +418,7 @@ int p3BanList::sendBanSet(std::string peerid)
 
 	{
 		RsStackMutex stack(mBanMtx); /****** LOCKED MUTEX *******/
-		std::map<uint32_t, BanListPeer>::iterator it;
+		std::map<struct sockaddr_storage, BanListPeer>::iterator it;
 		for(it = mBanSet.begin(); it != mBanSet.end(); it++)
 		{
 			if (it->second.level >= RSBANLIST_SOURCE_FRIEND)
@@ -414,7 +427,7 @@ int p3BanList::sendBanSet(std::string peerid)
 			}
 	
 			RsTlvBanListEntry bi;
-			bi.addr = it->second.addr;
+			bi.addr.addr = it->second.addr;
 			bi.reason = it->second.reason;
 			bi.level = it->second.level;
 			bi.age = now - it->second.mTs;
@@ -435,10 +448,10 @@ int p3BanList::printBanSet_locked(std::ostream &out)
 	
 	time_t now = time(NULL);
 
-	std::map<uint32_t, BanListPeer>::iterator it;
+	std::map<struct sockaddr_storage, BanListPeer>::iterator it;
 	for(it = mBanSet.begin(); it != mBanSet.end(); it++)
 	{
-		out << "Ban: " << rs_inet_ntoa(it->second.addr.sin_addr);
+		out << "Ban: " << sockaddr_storage_iptostring(it->second.addr);
 		out << " Reason: " << it->second.reason;
 		out << " Level: " << it->second.level;
 		if (it->second.level > RSBANLIST_SOURCE_FRIEND)
@@ -465,12 +478,12 @@ int p3BanList::printBanSources_locked(std::ostream &out)
 		out << " LastUpdate: " << now - it->second.mLastUpdate;
 		out << std::endl;
 
-		std::map<uint32_t, BanListPeer>::const_iterator lit;
+		std::map<struct sockaddr_storage, BanListPeer>::const_iterator lit;
 		for(lit = it->second.mBanPeers.begin();
 			lit != it->second.mBanPeers.end(); lit++)
 		{
 			out << "\t";
-			out << "Ban: " << rs_inet_ntoa(lit->second.addr.sin_addr);
+			out << "Ban: " << sockaddr_storage_iptostring(lit->second.addr);
 			out << " Reason: " << lit->second.reason;
 			out << " Level: " << lit->second.level;
 			out << " Age: " << now - lit->second.mTs;

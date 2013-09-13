@@ -351,17 +351,17 @@ public:
 virtual ~NetInterface() 
 	{ return; }
 
-virtual int connect(struct sockaddr_in raddr) = 0; 
+virtual int connect(const struct sockaddr_storage &raddr) = 0; 
 virtual int listen() = 0; 
 virtual int stoplistening() = 0; 
 virtual int disconnect() = 0;
 virtual int reset() = 0;
 virtual std::string PeerId() { return peerId; }
-virtual int getConnectAddress(struct sockaddr_in &raddr) = 0;
+virtual int getConnectAddress(struct sockaddr_storage &raddr) = 0;
 
 virtual bool connect_parameter(uint32_t type, uint32_t value) = 0;
 virtual bool connect_parameter(uint32_t /* type */ , const std::string & /* value */ ) { return false; } // not generally used.
-virtual bool connect_additional_address(uint32_t /*type*/, struct sockaddr_in * /*addr*/) { return false; } // only needed by udp.
+virtual bool connect_additional_address(uint32_t /*type*/, const struct sockaddr_storage & /*addr*/) { return false; } // only needed by udp.
 
 protected:
 PQInterface *parent() { return p; }

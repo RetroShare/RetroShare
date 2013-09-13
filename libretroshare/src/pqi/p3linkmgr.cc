@@ -58,6 +58,11 @@ const int p3connectzone = 3431;
  * #define LINKMGR_DEBUG_LINKTYPE	1
  ***/
 
+#define LINKMGR_DEBUG 1
+#define LINKMGR_DEBUG_CONNFAIL 1
+#define LINKMGR_DEBUG_ACTIONS  1
+#define LINKMGR_DEBUG_LINKTYPE	1
+
 /****
  * #define DISABLE_UDP_CONNECTIONS	1		
  ***/
@@ -87,7 +92,7 @@ void  printConnectState(std::ostream &out, peerConnectState &peer);
 peerConnectAddress::peerConnectAddress()
 	:delay(0), period(0), type(0), flags(0), ts(0), domain_port(0)
 {
-	sockaddr_clear(&addr);
+	sockaddr_storage_clear(addr);
 }
 
 
@@ -144,10 +149,13 @@ p3LinkMgrIMPL::p3LinkMgrIMPL(p3PeerMgrIMPL *peerMgr, p3NetMgrIMPL *netMgr)
 		/* setup Banned Ip Address - static for now 
 		 */
 
-		struct in_addr bip;
-		memset(&bip, 0, sizeof(bip));
-		bip.s_addr = 1;
-
+		struct sockaddr_storage bip;
+		sockaddr_storage_clear(bip);
+		struct sockaddr_in *addr = (struct sockaddr_in *) &bip;
+		addr->sin_family = AF_INET;
+		addr->sin_addr.s_addr = 1;
+		addr->sin_port = htons(0);
+		
 		mBannedIpList.push_back(bip);
 	}
 	
@@ -158,7 +166,7 @@ p3LinkMgrIMPL::p3LinkMgrIMPL(p3PeerMgrIMPL *peerMgr, p3NetMgrIMPL *netMgr)
 	return;
 }
 
-bool    p3LinkMgrIMPL::setLocalAddress(struct sockaddr_in addr)
+bool    p3LinkMgrIMPL::setLocalAddress(const struct sockaddr_storage &addr)
 {
 	RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
 	mLocalAddress = addr;
@@ -166,10 +174,11 @@ bool    p3LinkMgrIMPL::setLocalAddress(struct sockaddr_in addr)
 	return true ;
 }
 
-struct sockaddr_in p3LinkMgrIMPL::getLocalAddress()
+bool p3LinkMgrIMPL::getLocalAddress(struct sockaddr_storage &addr)
 {
 	RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
-	return mLocalAddress;
+	addr = mLocalAddress;
+	return true;
 }
 
 
@@ -572,9 +581,9 @@ const std::string p3LinkMgrIMPL::getOwnId()
 }
 
 
-bool p3LinkMgrIMPL::connectAttempt(const std::string &id, struct sockaddr_in &raddr,
-								   struct sockaddr_in &proxyaddr,
-								   struct sockaddr_in &srcaddr,
+bool p3LinkMgrIMPL::connectAttempt(const std::string &id, struct sockaddr_storage &raddr,
+								   struct sockaddr_storage &proxyaddr,
+								   struct sockaddr_storage &srcaddr,
 								   uint32_t &delay, uint32_t &period, uint32_t &type, uint32_t &flags, uint32_t &bandwidth,
 								   std::string &domain_addr, uint16_t &domain_port)
 
@@ -731,7 +740,7 @@ bool p3LinkMgrIMPL::connectAttempt(const std::string &id, struct sockaddr_in &ra
 
 
         std::cerr << "p3LinkMgrIMPL::connectAttempt() found an address: id: " << id << std::endl;
-	std::cerr << " laddr: " << rs_inet_ntoa(raddr.sin_addr) << " lport: " << ntohs(raddr.sin_port) << " delay: " << delay << " period: " << period;
+	std::cerr << " laddr: " << sockaddr_storage_tostring(raddr) << " delay: " << delay << " period: " << period;
 	std::cerr << " type: " << type << std::endl;
 	std::cerr << "p3LinkMgrIMPL::connectAttempt() set LinkType to: " << it->second.linkType << std::endl;
 #endif
@@ -741,11 +750,11 @@ bool p3LinkMgrIMPL::connectAttempt(const std::string &id, struct sockaddr_in &ra
 
 #ifdef LINKMGR_DEBUG
         	std::cerr << "p3LinkMgrIMPL::connectAttempt() found an address: id: " << id << std::endl;
-        std::cerr << " laddr: " << rs_inet_ntoa(addr.sin_addr) << " lport: " << ntohs(addr.sin_port) << " delay: " << delay << " period: " << period;
+        std::cerr << " laddr: " << sockaddr_storage_tostring(raddr) << " delay: " << delay << " period: " << period;
 		std::cerr << " type: " << type << std::endl;
         	std::cerr << "p3LinkMgrIMPL::connectAttempt() set LinkType to: " << it->second.linkType << std::endl;
 #endif
-        if (raddr.sin_addr.s_addr == 0 || raddr.sin_port == 0) {
+        if (sockaddr_storage_isnull(raddr)) {
 #ifdef LINKMGR_DEBUG
         	std::cerr << "p3LinkMgrIMPL::connectAttempt() WARNING: address or port is null" << std::endl;
         	std::cerr << " type: " << type << std::endl;
@@ -764,7 +773,7 @@ bool p3LinkMgrIMPL::connectAttempt(const std::string &id, struct sockaddr_in &ra
  *
  */
 
-bool p3LinkMgrIMPL::connectResult(const std::string &id, bool success, uint32_t flags, struct sockaddr_in remote_peer_address)
+bool p3LinkMgrIMPL::connectResult(const std::string &id, bool success, uint32_t flags, const struct sockaddr_storage &remote_peer_address)
 {
 	bool doDhtAssist = false ;
 	bool updatePeerAddr = false;
@@ -857,10 +866,7 @@ bool p3LinkMgrIMPL::connectResult(const std::string &id, bool success, uint32_t 
 			// This means we only update connections that we've made.. so maybe not too bad?
 			
 			if ((it->second.inConnAttempt) &&
-					(it->second.currentConnAddrAttempt.addr.sin_addr.s_addr 
-					 == remote_peer_address.sin_addr.s_addr) &&
-					(it->second.currentConnAddrAttempt.addr.sin_port 
-					 == remote_peer_address.sin_port))
+					(sockaddr_storage_same(it->second.currentConnAddrAttempt.addr, remote_peer_address)))
 			{				
 				updatePeerAddr = true;
 #ifdef LINKMGR_DEBUG
@@ -986,7 +992,7 @@ bool p3LinkMgrIMPL::connectResult(const std::string &id, bool success, uint32_t 
 		mNetMgr->netAssistFriend(id,false);
 
 		/* inform NetMgr that we know this peers address: but only if external address */
-		if (isExternalNet(&(remote_peer_address.sin_addr)))
+		if (sockaddr_storage_isExternalNet(remote_peer_address))
 		{
 			mNetMgr->netAssistKnownPeer(id,remote_peer_address, 
 				NETASSIST_KNOWN_PEER_FRIEND | NETASSIST_KNOWN_PEER_ONLINE);
@@ -1022,7 +1028,7 @@ bool p3LinkMgrIMPL::connectResult(const std::string &id, bool success, uint32_t 
  */
 
 // from pqissl, when a connection failed due to security
-void 	p3LinkMgrIMPL::notifyDeniedConnection(const std::string& gpgid,const std::string& sslid,const std::string& sslcn,const struct sockaddr_in &addr, bool incoming)
+void 	p3LinkMgrIMPL::notifyDeniedConnection(const std::string& gpgid,const std::string& sslid,const std::string& sslcn,const struct sockaddr_storage &addr, bool incoming)
 {
 	std::cerr << "p3LinkMgrIMPL::notifyDeniedConnection()";
 	std::cerr << " pgpid: " << gpgid;
@@ -1335,14 +1341,14 @@ void    p3LinkMgrIMPL::peerStatus(std::string id, const pqiIpAddrSet &addrs,
 }
 
 /* This has become very unwieldy - as extra arguments are required for UDP connections */
-void    p3LinkMgrIMPL::peerConnectRequest(std::string id, struct sockaddr_in raddr, struct sockaddr_in proxyaddr, struct sockaddr_in srcaddr,
+void    p3LinkMgrIMPL::peerConnectRequest(std::string id, const struct sockaddr_storage &raddr, const struct sockaddr_storage &proxyaddr, const struct sockaddr_storage &srcaddr,
 						uint32_t source, uint32_t flags, uint32_t delay, uint32_t bandwidth)
 {
 #ifdef LINKMGR_DEBUG
 	std::cerr << "p3LinkMgrIMPL::peerConnectRequest() id: " << id;
-	std::cerr << " raddr: " << rs_inet_ntoa(raddr.sin_addr) << ":" << ntohs(raddr.sin_port);
-	std::cerr << " proxyaddr: " << rs_inet_ntoa(proxyaddr.sin_addr) << ":" << ntohs(proxyaddr.sin_port);
-	std::cerr << " srcaddr: " << rs_inet_ntoa(srcaddr.sin_addr) << ":" << ntohs(srcaddr.sin_port);
+	std::cerr << " raddr: " << sockaddr_storage_tostring(raddr);
+	std::cerr << " proxyaddr: " << sockaddr_storage_tostring(proxyaddr);
+	std::cerr << " srcaddr: " << sockaddr_storage_tostring(srcaddr);
 	std::cerr << " source: " << source;
 	std::cerr << " flags: " << flags;
 	std::cerr << " delay: " << delay;
@@ -1352,9 +1358,13 @@ void    p3LinkMgrIMPL::peerConnectRequest(std::string id, struct sockaddr_in rad
 	{
 		/* Log */
 		std::string out = "p3LinkMgrIMPL::peerConnectRequest() id: " + id;
-		rs_sprintf_append(out, " raddr: %s:%u", rs_inet_ntoa(raddr.sin_addr).c_str(), ntohs(raddr.sin_port));
-		rs_sprintf_append(out, " proxyaddr: %s:%u", rs_inet_ntoa(proxyaddr.sin_addr).c_str(), ntohs(proxyaddr.sin_port));
-		rs_sprintf_append(out, " srcaddr: %s:%u", rs_inet_ntoa(srcaddr.sin_addr).c_str(), ntohs(srcaddr.sin_port));
+		out += " raddr: ";
+		out += sockaddr_storage_tostring(raddr);
+		out += " proxyaddr: ";
+		out += sockaddr_storage_tostring(proxyaddr);
+		out += " srcaddr: ";
+		out += sockaddr_storage_tostring(srcaddr);
+
 		rs_sprintf_append(out, " source: %lu", source);
 		rs_sprintf_append(out, " flags: %lu", flags);
 		rs_sprintf_append(out, " delay: %lu", delay);
@@ -1402,7 +1412,7 @@ void    p3LinkMgrIMPL::peerConnectRequest(std::string id, struct sockaddr_in rad
 					return;
 				} 
 				/* setup specific attempt for DHT found address. */
-				locked_ConnectAttempt_SpecificAddress(&(it->second), &raddr);
+				locked_ConnectAttempt_SpecificAddress(&(it->second), raddr);
 			}
 
 			retryConnect(id);
@@ -1454,8 +1464,8 @@ bool   p3LinkMgrIMPL::retryConnect(const std::string &id)
 
 
 
-bool   p3LinkMgrIMPL::tryConnectUDP(const std::string &id, struct sockaddr_in &rUdpAddr, 
-									struct sockaddr_in &proxyaddr, struct sockaddr_in &srcaddr,
+bool   p3LinkMgrIMPL::tryConnectUDP(const std::string &id, const struct sockaddr_storage &rUdpAddr, 
+									const struct sockaddr_storage &proxyaddr, const struct sockaddr_storage &srcaddr,
 									uint32_t flags, uint32_t delay, uint32_t bandwidth)
 
 {
@@ -1520,12 +1530,11 @@ bool   p3LinkMgrIMPL::tryConnectUDP(const std::string &id, struct sockaddr_in &r
 	}
 
 	/* Explicit Request to start the UDP connection */
-	if (isValidNet(&(rUdpAddr.sin_addr)))
+	if (sockaddr_storage_isValidNet(rUdpAddr))
 	{
 #ifdef LINKMGR_DEBUG
 		std::cerr << "Adding udp connection attempt: ";
-		std::cerr << "Addr: " << rs_inet_ntoa(rUdpAddr.sin_addr);
-		std::cerr << ":" << ntohs(rUdpAddr.sin_port);
+		std::cerr << "Addr: " << sockaddr_storage_tostring(rUdpAddr);
 		std::cerr << std::endl;
 #endif
 		peerConnectAddress pca;
@@ -1605,7 +1614,7 @@ bool   p3LinkMgrIMPL::retryConnectTCP(const std::string &id)
 	/* first possibility - is it a hidden peer */
 	if (mPeerMgr->isHiddenPeer(id))
 	{
-		struct sockaddr_in proxy_addr;
+		struct sockaddr_storage proxy_addr;
 		std::string domain_addr;
 		uint16_t domain_port;
 
@@ -1617,7 +1626,7 @@ bool   p3LinkMgrIMPL::retryConnectTCP(const std::string &id)
 	        	std::map<std::string, peerConnectState>::iterator it;
 			if (mFriendList.end() != (it = mFriendList.find(id)))
 			{
-				locked_ConnectAttempt_ProxyAddress(&(it->second), &proxy_addr, domain_addr, domain_port);
+				locked_ConnectAttempt_ProxyAddress(&(it->second), proxy_addr, domain_addr, domain_port);
 				return locked_ConnectAttempt_Complete(&(it->second));
 			}
 		}
@@ -1631,8 +1640,8 @@ bool   p3LinkMgrIMPL::retryConnectTCP(const std::string &id)
 		return false;
 	}
 
-	struct sockaddr_in lAddr;
-	struct sockaddr_in eAddr;
+	struct sockaddr_storage lAddr;
+	struct sockaddr_storage eAddr;
 	pqiIpAddrSet histAddrs;
 	std::string dyndns;
 
@@ -1643,11 +1652,11 @@ bool   p3LinkMgrIMPL::retryConnectTCP(const std::string &id)
 	        std::map<std::string, peerConnectState>::iterator it;
 		if (mFriendList.end() != (it = mFriendList.find(id)))
 		{
-			locked_ConnectAttempt_CurrentAddresses(&(it->second), &lAddr, &eAddr);
+			locked_ConnectAttempt_CurrentAddresses(&(it->second), lAddr, eAddr);
 
-			uint16_t dynPort = ntohs(eAddr.sin_port);
+			uint16_t dynPort = sockaddr_storage_port(eAddr);
 			if (!dynPort)
-				dynPort = ntohs(lAddr.sin_port);
+				dynPort = sockaddr_storage_port(lAddr);
 			if (dynPort)
 			{
 				locked_ConnectAttempt_AddDynDNS(&(it->second), dyndns, dynPort);
@@ -1677,12 +1686,11 @@ bool   p3LinkMgrIMPL::retryConnectTCP(const std::string &id)
 
 #define MAX_TCP_ADDR_AGE	(3600 * 24 * 14) // two weeks in seconds.
 
-bool  p3LinkMgrIMPL::locked_CheckPotentialAddr(const struct sockaddr_in *addr, time_t age)
+bool  p3LinkMgrIMPL::locked_CheckPotentialAddr(const struct sockaddr_storage &addr, time_t age)
 {
 #ifdef LINKMGR_DEBUG
 	std::cerr << "p3LinkMgrIMPL::locked_CheckPotentialAddr("; 
-	std::cerr << rs_inet_ntoa(addr->sin_addr);
-	std::cerr << ":" << ntohs(addr->sin_port);
+	std::cerr << sockaddr_storage_tostring(addr);
 	std::cerr << ", " << age << ")";
 	std::cerr << std::endl;
 #endif
@@ -1699,10 +1707,10 @@ bool  p3LinkMgrIMPL::locked_CheckPotentialAddr(const struct sockaddr_in *addr, t
 		return false;
 	}
 
-	bool isValid = isValidNet(&(addr->sin_addr));
-	//	bool isLoopback = isLoopbackNet(&(addr->sin_addr));
-	//	bool isPrivate = isPrivateNet(&(addr->sin_addr));
-	bool isExternal = isExternalNet(&(addr->sin_addr));
+	bool isValid = sockaddr_storage_isValidNet(addr);
+	//	bool isLoopback = sockaddr_storage_isLoopbackNet(addr);
+	//	bool isPrivate = sockaddr_storage_isPrivateNet(addr);
+	bool isExternal = sockaddr_storage_isExternalNet(addr);
 
 	/* if invalid - quick rejection */
 	if (!isValid)
@@ -1717,10 +1725,10 @@ bool  p3LinkMgrIMPL::locked_CheckPotentialAddr(const struct sockaddr_in *addr, t
 	/* if it is on the ban list - ignore */
 	/* checks - is it the dreaded 1.0.0.0 */
 
-	std::list<struct in_addr>::const_iterator it;
+	std::list<struct sockaddr_storage>::const_iterator it;
 	for(it = mBannedIpList.begin(); it != mBannedIpList.end(); it++)
 	{
-		if (it->s_addr == addr->sin_addr.s_addr)
+		if (sockaddr_storage_sameip(*it, addr))
 		{
 #ifdef LINKMGR_DEBUG
 			std::cerr << "p3LinkMgrIMPL::locked_CheckPotentialAddr() REJECTING - ON BANNED IPLIST"; 
@@ -1751,12 +1759,12 @@ bool  p3LinkMgrIMPL::locked_CheckPotentialAddr(const struct sockaddr_in *addr, t
 
 #ifdef LINKMGR_DEBUG
 	std::cerr << "p3LinkMgrIMPL::locked_CheckPotentialAddr() Checking sameNet against: "; 
-	std::cerr << rs_inet_ntoa(mLocalAddress.sin_addr);
+	std::cerr << sockaddr_storage_iptostring(mLocalAddress);
 	std::cerr << ")";
 	std::cerr << std::endl;
 #endif
 
-	if (sameNet(&(mLocalAddress.sin_addr), &(addr->sin_addr)))
+	if (sockaddr_storage_samenet(mLocalAddress, addr))
 	{
 #ifdef LINKMGR_DEBUG
 		std::cerr << "p3LinkMgrIMPL::locked_CheckPotentialAddr() ACCEPTING - PRIVATE & sameNET"; 
@@ -1776,29 +1784,28 @@ bool  p3LinkMgrIMPL::locked_CheckPotentialAddr(const struct sockaddr_in *addr, t
 }
 
 
-void  p3LinkMgrIMPL::locked_ConnectAttempt_SpecificAddress(peerConnectState *peer, struct sockaddr_in *remoteAddr)
+void  p3LinkMgrIMPL::locked_ConnectAttempt_SpecificAddress(peerConnectState *peer, const struct sockaddr_storage &remoteAddr)
 {
 #ifdef LINKMGR_DEBUG
 	std::cerr << "p3LinkMgrIMPL::locked_ConnectAttempt_SpecificAddresses()";
 	std::cerr << std::endl;
 #endif
-	if ((remoteAddr) && (locked_CheckPotentialAddr(remoteAddr, 0)))
+	if (locked_CheckPotentialAddr(remoteAddr, 0))
 	{
 #ifdef LINKMGR_DEBUG
 		std::cerr << "p3LinkMgrIMPL::locked_ConnectAttempt_SpecificAddresses() ";
 		std::cerr << "Adding tcp connection attempt: ";
-		std::cerr << "Addr: " << rs_inet_ntoa(remoteAddr->sin_addr);
-		std::cerr << ":" << ntohs(remoteAddr->sin_port);
+		std::cerr << "Addr: " << sockaddr_storage_tostring(remoteAddr);
 		std::cerr << std::endl;
 #endif
 		peerConnectAddress pca;
-		pca.addr = *remoteAddr;
+		pca.addr = remoteAddr;
 		pca.type = RS_NET_CONN_TCP_EXTERNAL;
 		pca.delay = P3CONNMGR_TCP_DEFAULT_DELAY;
 		pca.ts = time(NULL);
 		pca.period = P3CONNMGR_TCP_DEFAULT_PERIOD;
-		sockaddr_clear(&(pca.proxyaddr));
-		sockaddr_clear(&(pca.srcaddr));
+		sockaddr_storage_clear(pca.proxyaddr);
+		sockaddr_storage_clear(pca.srcaddr);
 		pca.bandwidth = 0;
 		
 		addAddressIfUnique(peer->connAddrs, pca, false);
@@ -1806,7 +1813,7 @@ void  p3LinkMgrIMPL::locked_ConnectAttempt_SpecificAddress(peerConnectState *pee
 }
 
 
-void  p3LinkMgrIMPL::locked_ConnectAttempt_CurrentAddresses(peerConnectState *peer, struct sockaddr_in *localAddr, struct sockaddr_in *serverAddr)
+void  p3LinkMgrIMPL::locked_ConnectAttempt_CurrentAddresses(peerConnectState *peer, const struct sockaddr_storage &localAddr, const struct sockaddr_storage &serverAddr)
 {
 #ifdef LINKMGR_DEBUG
 	std::cerr << "p3LinkMgrIMPL::locked_ConnectAttempt_CurrentAddresses()";
@@ -1814,45 +1821,43 @@ void  p3LinkMgrIMPL::locked_ConnectAttempt_CurrentAddresses(peerConnectState *pe
 #endif
 	// Just push all the addresses onto the stack.
 	/* try "current addresses" first */
-	if ((localAddr) && (locked_CheckPotentialAddr(localAddr, 0)))
+	if (locked_CheckPotentialAddr(localAddr, 0))
 	{
 #ifdef LINKMGR_DEBUG
 		std::cerr << "p3LinkMgrIMPL::locked_ConnectAttempt_CurrentAddresses() ";
 		std::cerr << "Adding tcp connection attempt: ";
-		std::cerr << "Current Local Addr: " << rs_inet_ntoa(localAddr->sin_addr);
-		std::cerr << ":" << ntohs(localAddr->sin_port);
+		std::cerr << "Current Local Addr: " << sockaddr_storage_tostring(localAddr);
 		std::cerr << std::endl;
 #endif
 		peerConnectAddress pca;
-		pca.addr = *localAddr;
+		pca.addr = localAddr;
 		pca.type = RS_NET_CONN_TCP_LOCAL;
 		pca.delay = P3CONNMGR_TCP_DEFAULT_DELAY;
 		pca.ts = time(NULL);
 		pca.period = P3CONNMGR_TCP_DEFAULT_PERIOD;
-		sockaddr_clear(&(pca.proxyaddr));
-		sockaddr_clear(&(pca.srcaddr));
+		sockaddr_storage_clear(pca.proxyaddr);
+		sockaddr_storage_clear(pca.srcaddr);
 		pca.bandwidth = 0;
 		
 		addAddressIfUnique(peer->connAddrs, pca, false);
 	}
 
-	if ((serverAddr) && (locked_CheckPotentialAddr(serverAddr, 0)))
+	if (locked_CheckPotentialAddr(serverAddr, 0))
 	{
 #ifdef LINKMGR_DEBUG
 		std::cerr << "p3LinkMgrIMPL::locked_ConnectAttempt_CurrentAddresses() ";
 		std::cerr << "Adding tcp connection attempt: ";
-		std::cerr << "Current Ext Addr: " << rs_inet_ntoa(serverAddr->sin_addr);
-		std::cerr << ":" << ntohs(serverAddr->sin_port);
+		std::cerr << "Current Ext Addr: " << sockaddr_storage_tostring(serverAddr);
 		std::cerr << std::endl;
 #endif
 		peerConnectAddress pca;
-		pca.addr = *serverAddr;
+		pca.addr = serverAddr;
 		pca.type = RS_NET_CONN_TCP_EXTERNAL;
 		pca.delay = P3CONNMGR_TCP_DEFAULT_DELAY;
 		pca.ts = time(NULL);
 		pca.period = P3CONNMGR_TCP_DEFAULT_PERIOD;
-		sockaddr_clear(&(pca.proxyaddr));
-		sockaddr_clear(&(pca.srcaddr));
+		sockaddr_storage_clear(pca.proxyaddr);
+		sockaddr_storage_clear(pca.srcaddr);
 		pca.bandwidth = 0;
 		
 		addAddressIfUnique(peer->connAddrs, pca, false);
@@ -1874,14 +1879,13 @@ void  p3LinkMgrIMPL::locked_ConnectAttempt_HistoricalAddresses(peerConnectState 
 	for(ait = ipAddrs.mLocal.mAddrs.begin(); 
 		ait != ipAddrs.mLocal.mAddrs.end(); ait++)
 	{
-		if (locked_CheckPotentialAddr(&(ait->mAddr), now - ait->mSeenTime))
+		if (locked_CheckPotentialAddr(ait->mAddr, now - ait->mSeenTime))
 		{
 
 #ifdef LINKMGR_DEBUG
 			std::cerr << "p3LinkMgrIMPL::locked_ConnectAttempt_HistoricalAddresses() ";
 			std::cerr << "Adding tcp connection attempt: ";
-			std::cerr << "Local Addr: " << rs_inet_ntoa(ait->mAddr.sin_addr);
-			std::cerr << ":" << ntohs(ait->mAddr.sin_port);
+			std::cerr << "Local Addr: " << sockaddr_storage_tostring(ait->mAddr);
 			std::cerr << std::endl;
 #endif
 
@@ -1891,8 +1895,8 @@ void  p3LinkMgrIMPL::locked_ConnectAttempt_HistoricalAddresses(peerConnectState 
 			pca.delay = P3CONNMGR_TCP_DEFAULT_DELAY;
 			pca.ts = time(NULL);
 			pca.period = P3CONNMGR_TCP_DEFAULT_PERIOD;
-			sockaddr_clear(&(pca.proxyaddr));
-			sockaddr_clear(&(pca.srcaddr));
+			sockaddr_storage_clear(pca.proxyaddr);
+			sockaddr_storage_clear(pca.srcaddr);
 			pca.bandwidth = 0;
 			
 			addAddressIfUnique(peer->connAddrs, pca, false);
@@ -1902,14 +1906,13 @@ void  p3LinkMgrIMPL::locked_ConnectAttempt_HistoricalAddresses(peerConnectState 
 	for(ait = ipAddrs.mExt.mAddrs.begin(); 
 		ait != ipAddrs.mExt.mAddrs.end(); ait++)
 	{
-		if (locked_CheckPotentialAddr(&(ait->mAddr), now - ait->mSeenTime))
+		if (locked_CheckPotentialAddr(ait->mAddr, now - ait->mSeenTime))
 		{
 	
 #ifdef LINKMGR_DEBUG
 			std::cerr << "p3LinkMgrIMPL::locked_ConnectAttempt_HistoricalAddresses() ";
 			std::cerr << "Adding tcp connection attempt: ";
-			std::cerr << "Ext Addr: " << rs_inet_ntoa(ait->mAddr.sin_addr);
-			std::cerr << ":" << ntohs(ait->mAddr.sin_port);
+			std::cerr << "Ext Addr: " << sockaddr_storage_tostring(ait->mAddr);
 			std::cerr << std::endl;
 #endif
 			peerConnectAddress pca;
@@ -1918,8 +1921,8 @@ void  p3LinkMgrIMPL::locked_ConnectAttempt_HistoricalAddresses(peerConnectState 
 			pca.delay = P3CONNMGR_TCP_DEFAULT_DELAY;
 			pca.ts = time(NULL);
 			pca.period = P3CONNMGR_TCP_DEFAULT_PERIOD;
-			sockaddr_clear(&(pca.proxyaddr));
-			sockaddr_clear(&(pca.srcaddr));
+			sockaddr_storage_clear(pca.proxyaddr);
+			sockaddr_storage_clear(pca.srcaddr);
 			pca.bandwidth = 0;
 			
 			addAddressIfUnique(peer->connAddrs, pca, false);
@@ -1931,7 +1934,7 @@ void  p3LinkMgrIMPL::locked_ConnectAttempt_HistoricalAddresses(peerConnectState 
 void  p3LinkMgrIMPL::locked_ConnectAttempt_AddDynDNS(peerConnectState *peer, std::string dyndns, uint16_t port)
 {
 	/* try dyndns address too */
-	struct in_addr addr;
+	struct sockaddr_storage addr;
 	if (!dyndns.empty() && port) 
 	{
 #ifdef LINKMGR_DEBUG
@@ -1942,26 +1945,25 @@ void  p3LinkMgrIMPL::locked_ConnectAttempt_AddDynDNS(peerConnectState *peer, std
 #ifdef LINKMGR_DEBUG
 			std::cerr << "p3LinkMgrIMPL::locked_ConnectAttempt_AddDynDNS() ";
 			std::cerr << "Adding tcp connection attempt: ";
-			std::cerr << "DynDNS Addr: " << rs_inet_ntoa(addr);
-			std::cerr << ":" << ntohs(port);
+			std::cerr << "DynDNS Addr: " << sockaddr_storage_iptostring(addr);
+			std::cerr << ":" << port;
 			std::cerr << std::endl;
 #endif
 			peerConnectAddress pca;
-			pca.addr.sin_family = AF_INET;
-			pca.addr.sin_addr.s_addr = addr.s_addr;
-			pca.addr.sin_port = htons(port);
+			sockaddr_storage_copyip(pca.addr, addr);
+			sockaddr_storage_setport(pca.addr, port);
 			pca.type = RS_NET_CONN_TCP_EXTERNAL;
 			//for the delay, we add a random time and some more time when the friend list is big
 			pca.delay = P3CONNMGR_TCP_DEFAULT_DELAY;
 			pca.ts = time(NULL);
 			pca.period = P3CONNMGR_TCP_DEFAULT_PERIOD;
 
-			sockaddr_clear(&(pca.proxyaddr));
-			sockaddr_clear(&(pca.srcaddr));
+			sockaddr_storage_clear(pca.proxyaddr);
+			sockaddr_storage_clear(pca.srcaddr);
 			pca.bandwidth = 0;
 			
 			/* check address validity */
-			if (locked_CheckPotentialAddr(&(pca.addr), 0))
+			if (locked_CheckPotentialAddr(pca.addr, 0))
 			{
 				addAddressIfUnique(peer->connAddrs, pca, true);
 			}
@@ -1984,15 +1986,13 @@ void  p3LinkMgrIMPL::locked_ConnectAttempt_AddDynDNS(peerConnectState *peer, std
 }
 
 
-void  p3LinkMgrIMPL::locked_ConnectAttempt_ProxyAddress(peerConnectState *peer, struct sockaddr_in *proxy_addr, const std::string &domain_addr, uint16_t domain_port)
+void  p3LinkMgrIMPL::locked_ConnectAttempt_ProxyAddress(peerConnectState *peer, const struct sockaddr_storage &proxy_addr, const std::string &domain_addr, uint16_t domain_port)
 {
 #ifdef LINKMGR_DEBUG
 	std::cerr << "p3LinkMgrIMPL::locked_ConnectAttempt_ProxyAddress() trying address: " << domain_addr << ":" << domain_port << std::endl;
 #endif
 	peerConnectAddress pca;
-	pca.addr.sin_family = AF_INET;
-	pca.addr.sin_addr.s_addr = proxy_addr->sin_addr.s_addr;
-	pca.addr.sin_port = proxy_addr->sin_port;
+	pca.addr = proxy_addr;
 
 	pca.type = RS_NET_CONN_TCP_HIDDEN;
 
@@ -2001,15 +2001,15 @@ void  p3LinkMgrIMPL::locked_ConnectAttempt_ProxyAddress(peerConnectState *peer, 
 	pca.ts = time(NULL);
 	pca.period = P3CONNMGR_TCP_DEFAULT_PERIOD;
 
-	sockaddr_clear(&(pca.proxyaddr));
-	sockaddr_clear(&(pca.srcaddr));
+	sockaddr_storage_clear(pca.proxyaddr);
+	sockaddr_storage_clear(pca.srcaddr);
 	pca.bandwidth = 0;
 
 	pca.domain_addr = domain_addr;
 	pca.domain_port = domain_port;
 			
 	/* check address validity */
-	if (locked_CheckPotentialAddr(&(pca.addr), 0))
+	if (locked_CheckPotentialAddr(pca.addr, 0))
 	{
 		addAddressIfUnique(peer->connAddrs, pca, true);
 	}
@@ -2022,15 +2022,14 @@ bool  p3LinkMgrIMPL::addAddressIfUnique(std::list<peerConnectAddress> &addrList,
 	 * in the list 
 	 */
 #ifdef LINKMGR_DEBUG
-	std::cerr << "p3LinkMgrIMPL::addAddressIfUnique() Checking Address: " << rs_inet_ntoa(pca.addr.sin_addr);
+	std::cerr << "p3LinkMgrIMPL::addAddressIfUnique() Checking Address: " << sockaddr_storage_iptostring(pca.addr);
 	std::cerr << std::endl;
 #endif
 
 	std::list<peerConnectAddress>::iterator it;
 	for(it = addrList.begin(); it != addrList.end(); it++)
 	{
-		if ((pca.addr.sin_addr.s_addr == it->addr.sin_addr.s_addr)	&&
-			(pca.addr.sin_port == it->addr.sin_port)	&&
+		if (sockaddr_storage_same(pca.addr, it->addr) &&
 			(pca.type == it->type))
 		{
 #ifdef LINKMGR_DEBUG

@@ -54,7 +54,7 @@ pqissludp::pqissludp(PQInterface *parent, p3LinkMgr *lm)
         :pqissl(NULL, parent, lm), tou_bio(NULL),
 	listen_checktime(0), mConnectPeriod(PQI_SSLUDP_DEF_CONN_PERIOD)
 {
-	sockaddr_clear(&remote_addr);
+	sockaddr_storage_clear(remote_addr);
 	return;
 }
 
@@ -150,7 +150,7 @@ int 	pqissludp::Initiate_Connection()
 	int err;
 
 	attach(); /* open socket */
-	remote_addr.sin_family = AF_INET;
+	//remote_addr.sin_family = AF_INET;
 
   	rslog(RSL_DEBUG_BASIC, pqissludpzone, 
 	  "pqissludp::Initiate_Connection() Attempting Outgoing Connection....");
@@ -196,7 +196,10 @@ int 	pqissludp::Initiate_Connection()
 
 	{
 		std::string out = "pqissludp::Initiate_Connection() Connecting To: " + PeerId();
-		rs_sprintf(out, " via: %s:%u", rs_inet_ntoa(remote_addr.sin_addr).c_str(), ntohs(remote_addr.sin_port));
+		out += " via: ";
+		out += sockaddr_storage_tostring(remote_addr);
+		out += " ";
+
 		if (sslmode)
 		{
 			out += "ACTIVE Connect (SSL_Connect)";
@@ -208,7 +211,7 @@ int 	pqissludp::Initiate_Connection()
 		rslog(RSL_WARNING, pqissludpzone, out);
 	}
 
-	if (remote_addr.sin_addr.s_addr == 0)
+	if (sockaddr_storage_isnull(remote_addr))
 	{
 		rslog(RSL_WARNING, pqissludpzone, "pqissludp::Initiate_Connection() Invalid (0.0.0.0) Remote Address, Aborting Connect.");
 		waiting = WAITING_FAIL_INTERFACE;
@@ -234,11 +237,48 @@ int 	pqissludp::Initiate_Connection()
 	else if (mConnectFlags & RS_CB_FLAG_MODE_UDP_RELAY)
 	{
 		std::cerr << "Calling tou_connect_via_relay(";
-		std::cerr << mConnectSrcAddr << ",";
-		std::cerr << mConnectProxyAddr << ",";
-		std::cerr << remote_addr << ")" << std::endl;
+		std::cerr << sockaddr_storage_tostring(mConnectSrcAddr) << ",";
+		std::cerr << sockaddr_storage_tostring(mConnectProxyAddr) << ",";
+		std::cerr << sockaddr_storage_tostring(remote_addr) << ")" << std::endl;
 
-                tou_connect_via_relay(sockfd, &(mConnectSrcAddr), &(mConnectProxyAddr), &(remote_addr));
+		
+		{
+			std::cerr << "CONVERTING ALL ADDRESSES TO IPV4: TODO make IPV6";
+			std::cerr << std::endl;
+			
+			struct sockaddr_in srcaddr;
+			struct sockaddr_in proxyaddr;
+			struct sockaddr_in remoteaddr;
+			
+			if ((mConnectSrcAddr.ss_family != AF_INET) ||
+					(mConnectProxyAddr.ss_family != AF_INET) ||
+					(remote_addr.ss_family != AF_INET))
+			{
+				std::cerr << "Error One Address is not IPv4. aborting";
+				std::cerr << std::endl;
+				abort();
+			}
+			
+			struct sockaddr_in *rap = (struct sockaddr_in *) &remote_addr;
+			struct sockaddr_in *pap = (struct sockaddr_in *) &mConnectProxyAddr;
+			struct sockaddr_in *sap = (struct sockaddr_in *) &mConnectSrcAddr;
+			
+			srcaddr.sin_family = AF_INET;
+			proxyaddr.sin_family = AF_INET;
+			remoteaddr.sin_family = AF_INET;
+
+			srcaddr.sin_addr = sap->sin_addr;
+			proxyaddr.sin_addr = pap->sin_addr;
+			remoteaddr.sin_addr = rap->sin_addr;
+			
+			srcaddr.sin_port = sap->sin_port;
+			proxyaddr.sin_port = pap->sin_port;
+			remoteaddr.sin_port = rap->sin_port;
+			
+			tou_connect_via_relay(sockfd, &srcaddr, &proxyaddr, &remoteaddr);
+			
+		}
+		
 
 /*** It seems that the UDP Layer sees x 1.2 the traffic of the SSL layer.
  * We need to compensate somewhere... we drop the maximum traffic to 75% of limit
@@ -472,15 +512,16 @@ bool 	pqissludp::connect_parameter(uint32_t type, uint32_t value)
 	return pqissl::connect_parameter(type, value);
 }
 
-bool pqissludp::connect_additional_address(uint32_t type, struct sockaddr_in *addr)
+bool pqissludp::connect_additional_address(uint32_t type, const struct sockaddr_storage &addr)
 {
 	if (type == NET_PARAM_CONNECT_PROXY)
 	{
 		std::string out;
-		rs_sprintf(out, "pqissludp::connect_additional_address() Peer: %s PROXYADDR: %s:%u", PeerId().c_str(), rs_inet_ntoa(addr->sin_addr).c_str(), ntohs(addr->sin_port));
+		rs_sprintf(out, "pqissludp::connect_additional_address() Peer: %s PROXYADDR: ", PeerId().c_str());
+		out += sockaddr_storage_tostring(addr);
 		rslog(RSL_WARNING, pqissludpzone, out);
 
-		mConnectProxyAddr = *addr;
+		mConnectProxyAddr = addr;
 
 		std::cerr << out << std::endl;
 		return true;
@@ -488,10 +529,11 @@ bool pqissludp::connect_additional_address(uint32_t type, struct sockaddr_in *ad
 	else if (type == NET_PARAM_CONNECT_SOURCE)
 	{
 		std::string out;
-		rs_sprintf(out, "pqissludp::connect_additional_address() Peer: %s SRCADDR: %s:%u", PeerId().c_str(), rs_inet_ntoa(addr->sin_addr).c_str(), ntohs(addr->sin_port));
+		rs_sprintf(out, "pqissludp::connect_additional_address() Peer: %s SRCADDR: ", PeerId().c_str());
+		out += sockaddr_storage_tostring(addr);
 		rslog(RSL_WARNING, pqissludpzone, out);
 
-		mConnectSrcAddr = *addr;
+		mConnectSrcAddr = addr;
 
 		std::cerr << out << std::endl;
 		return true;

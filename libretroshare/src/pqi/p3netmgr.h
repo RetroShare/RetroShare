@@ -68,8 +68,8 @@ class pqiNetStatus
 	uint32_t mDhtNetworkSize;
 	uint32_t mDhtRsNetworkSize;
 
-	struct sockaddr_in mLocalAddr; // percieved ext addr.
-	struct sockaddr_in mExtAddr; // percieved ext addr.
+	struct sockaddr_storage mLocalAddr; // percieved ext addr.
+	struct sockaddr_storage mExtAddr; // percieved ext addr.
 
 	bool mResetReq; // Not Used yet!.
 
@@ -119,8 +119,8 @@ virtual bool 	setVisState(uint32_t visState) = 0;
 
 	// Switch DHT On/Off.
 virtual bool netAssistFriend(const std::string &id, bool on) = 0;
-virtual bool netAssistKnownPeer(const std::string &id, const struct sockaddr_in &addr, uint32_t flags) = 0;
-virtual bool netAssistBadPeer(const struct sockaddr_in &addr, uint32_t reason, uint32_t flags, uint32_t age) = 0;
+virtual bool netAssistKnownPeer(const std::string &id, const struct sockaddr_storage &addr, uint32_t flags) = 0;
+virtual bool netAssistBadPeer(const struct sockaddr_storage &addr, uint32_t reason, uint32_t flags, uint32_t age) = 0;
 virtual bool netAssistStatusUpdate(const std::string &id, int mode) = 0;
 
 	/* Get Network State */
@@ -175,8 +175,8 @@ virtual bool 	setVisState(uint32_t visState);
 
 	// Switch DHT On/Off.
 virtual bool netAssistFriend(const std::string &id, bool on);
-virtual bool netAssistKnownPeer(const std::string &id, const struct sockaddr_in &addr, uint32_t flags);
-virtual bool netAssistBadPeer(const struct sockaddr_in &addr, uint32_t reason, uint32_t flags, uint32_t age);
+virtual bool netAssistKnownPeer(const std::string &id, const struct sockaddr_storage &addr, uint32_t flags);
+virtual bool netAssistBadPeer(const struct sockaddr_storage &addr, uint32_t reason, uint32_t flags, uint32_t age);
 virtual bool netAssistStatusUpdate(const std::string &id, int mode);
 
 	/* Get Network State */
@@ -214,8 +214,8 @@ void	setAddrAssist(pqiAddrAssist *dhtStun, pqiAddrAssist *proxyStun);
 void 	tick();
 
 	// THESE MIGHT BE ADDED TO INTERFACE.
-bool 	setLocalAddress(struct sockaddr_in addr);
-bool 	setExtAddress(struct sockaddr_in addr);
+bool 	setLocalAddress(const struct sockaddr_storage &addr);
+bool 	setExtAddress(const struct sockaddr_storage &addr);
 
 	/*************** Setup ***************************/
 void	addNetAssistConnect(uint32_t type, pqiNetAssistConnect *);
@@ -262,13 +262,13 @@ bool netAssistConnectStats(uint32_t &netsize, uint32_t &localnetsize);
 void netAssistTick();
 
 /* Assist Firewall */
-bool netAssistExtAddress(struct sockaddr_in &extAddr);
+bool netAssistExtAddress(struct sockaddr_storage &extAddr);
 bool netAssistFirewallPorts(uint16_t iport, uint16_t eport);
 
 		/* Assist Connect */
 //virtual bool netAssistFriend(std::string id, bool on); (PUBLIC)
-bool netAssistSetAddress( struct sockaddr_in &laddr,
-                                        struct sockaddr_in &eaddr,
+bool netAssistSetAddress(const struct sockaddr_storage &laddr,
+                                        const struct sockaddr_storage &eaddr,
 					uint32_t mode);
 
 bool netAssistAttach(bool on);
@@ -326,8 +326,8 @@ private:
 
 void 	netStatusReset_locked();
 
-	struct sockaddr_in mLocalAddr;
-	struct sockaddr_in mExtAddr;
+	struct sockaddr_storage mLocalAddr;
+	struct sockaddr_storage mExtAddr;
 
 	uint32_t mNetMode;
 	uint32_t mVisState;

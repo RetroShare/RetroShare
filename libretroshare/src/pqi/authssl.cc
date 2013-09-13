@@ -1329,11 +1329,10 @@ void AuthSSLimpl::getCurrentConnectionAttemptInfo(std::string& gpg_id,std::strin
 bool    AuthSSLimpl::FailedCertificate(X509 *x509, const std::string& gpgid,
 													const std::string& sslid,
 													const std::string& sslcn,
-													const struct sockaddr_in& addr, 
+													const struct sockaddr_storage& addr, 
 													bool incoming)
 {
-	std::string ip_address ;
-	rs_sprintf_append(ip_address, "%s:%u", rs_inet_ntoa(addr.sin_addr).c_str(), ntohs(addr.sin_port));
+	std::string ip_address = sockaddr_storage_tostring(addr);
 
 	bool authed = (x509 != NULL && AuthX509WithGPG(x509)) ;
 

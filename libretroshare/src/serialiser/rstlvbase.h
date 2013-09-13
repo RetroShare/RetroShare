@@ -159,6 +159,10 @@ const uint16_t TLV_TYPE_IPV4_LAST     = 0x0082;
 const uint16_t TLV_TYPE_STR_DYNDNS    = 0x0083;
 const uint16_t TLV_TYPE_STR_DOMADDR   = 0x0084;
 
+// rearrange these in the future.
+const uint16_t TLV_TYPE_IPV4          = 0x0085;
+const uint16_t TLV_TYPE_IPV6          = 0x0086;
+
 /*** MORE STRING IDS ****/
 const uint16_t TLV_TYPE_STR_GROUPID   = 0x00a0;
 const uint16_t TLV_TYPE_STR_MSGID     = 0x00a1;
@@ -202,6 +206,9 @@ const uint16_t TLV_TYPE_WKEYVALUESET  = 0x1013;
 const uint16_t TLV_TYPE_STRINGSET     = 0x1020; /* dummy non-existant */
 const uint16_t TLV_TYPE_PEERSET       = 0x1021;
 const uint16_t TLV_TYPE_HASHSET       = 0x1022;
+
+const uint16_t TLV_TYPE_PGPIDSET      = 0x1023;
+
 const uint16_t TLV_TYPE_SERVICESET    = 0x1030; 
 
 const uint16_t TLV_TYPE_SECURITYKEY   = 0x1040;
@@ -215,6 +222,7 @@ const uint16_t TLV_TYPE_IMAGE         = 0x1060;
 
 const uint16_t TLV_TYPE_ADDRESS_INFO  = 0x1070;
 const uint16_t TLV_TYPE_ADDRESS_SET   = 0x1071;
+const uint16_t TLV_TYPE_ADDRESS       = 0x1072;
 
 const uint16_t TLV_TYPE_DSDV_ENDPOINT = 0x1080;
 const uint16_t TLV_TYPE_DSDV_ENTRY    = 0x1081;

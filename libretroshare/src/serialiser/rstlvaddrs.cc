@@ -35,18 +35,161 @@
 #include <iostream>
 
 
+/************************************* RsTlvIpAddress ************************************/
+
+RsTlvIpAddress::RsTlvIpAddress()
+	:RsTlvItem()
+{
+	sockaddr_storage_clear(addr);
+	return;
+}
+
+void RsTlvIpAddress::TlvClear()
+{
+	sockaddr_storage_clear(addr);
+}
+
+uint32_t RsTlvIpAddress::TlvSize()
+{
+	uint32_t s = TLV_HEADER_SIZE; 
+	switch(addr.ss_family)
+	{
+		default:
+		case 0:
+			break;
+		case AF_INET:
+			s += GetTlvIpAddrPortV4Size(); 
+			break;
+		case AF_INET6:
+			s += GetTlvIpAddrPortV6Size(); 
+			break;
+	}
+	return s;
+}
+
+bool  RsTlvIpAddress::SetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
+{
+	/* must check sizes */
+	uint32_t tlvsize = TlvSize();
+	uint32_t tlvend  = *offset + tlvsize;
+
+	if (size < tlvend)
+		return false; /* not enough space */
+
+	bool ok = true;
+
+	/* start at data[offset] */
+        /* add mandatory parts first */
+
+	ok &= SetTlvBase(data, tlvend, offset, TLV_TYPE_ADDRESS, tlvsize);
+
+	switch(addr.ss_family)
+	{
+		default:
+		case 0:
+			break;
+		case AF_INET:
+			ok &= SetTlvIpAddrPortV4(data, tlvend, offset, TLV_TYPE_IPV4, (struct sockaddr_in *) &addr);
+			break;
+
+		case AF_INET6:
+			ok &= SetTlvIpAddrPortV6(data, tlvend, offset, TLV_TYPE_IPV6, (struct sockaddr_in6 *) &addr);
+			break;
+	}
+	return ok;
+
+}
+
+
+bool  RsTlvIpAddress::GetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
+{
+	if (size < *offset + TLV_HEADER_SIZE)
+		return false;	
+	
+	uint16_t tlvtype = GetTlvType( &(((uint8_t *) data)[*offset])  );
+	uint32_t tlvsize = GetTlvSize( &(((uint8_t *) data)[*offset])  );
+	uint32_t tlvend = *offset + tlvsize;
+
+	if (size < tlvend)    /* check size */
+		return false; /* not enough space */
+
+	if (tlvtype != TLV_TYPE_ADDRESS) /* check type */
+		return false;
+
+	bool ok = true;
+
+	/* ready to load */
+	TlvClear();
+
+	/* skip the header */
+	(*offset) += TLV_HEADER_SIZE;
+
+	if (*offset == tlvend)
+	{
+		/* empty address */
+		return ok;
+	}
+
+	uint16_t iptype = GetTlvType( &(((uint8_t *) data)[*offset])  );
+	switch(iptype)
+	{
+		case TLV_TYPE_IPV4:
+			ok &= GetTlvIpAddrPortV4(data, tlvend, offset, TLV_TYPE_IPV4, (struct sockaddr_in *) &addr);
+			break;
+		case TLV_TYPE_IPV6:
+			ok &= GetTlvIpAddrPortV6(data, tlvend, offset, TLV_TYPE_IPV6, (struct sockaddr_in6 *) &addr);
+			break;
+		default:
+			break;
+	}
+
+	/***************************************************************************
+	 * NB: extra components could be added (for future expansion of the type).
+	 *            or be present (if this code is reading an extended version).
+	 *
+	 * We must chew up the extra characters to conform with TLV specifications
+	 ***************************************************************************/
+	if (*offset != tlvend)
+	{
+#ifdef TLV_DEBUG
+		std::cerr << "RsTlvIpAddress::GetTlv() Warning extra bytes at end of item";
+		std::cerr << std::endl;
+#endif
+		*offset = tlvend;
+	}
+
+	return ok;
+	
+}
+
+
+std::ostream &RsTlvIpAddress::print(std::ostream &out, uint16_t indent)
+{ 
+	printBase(out, "RsTlvIpAddress", indent);
+	uint16_t int_Indent = indent + 2;
+
+	printIndent(out, int_Indent);
+	out << "Address:" << sockaddr_storage_tostring(addr) << std::endl;
+	
+	printEnd(out, "RsTlvIpAddress", indent);
+	return out;
+}
+
+
+
+
 /************************************* RsTlvIpAddressInfo ************************************/
 
 RsTlvIpAddressInfo::RsTlvIpAddressInfo()
 	:RsTlvItem(), seenTime(0), source(0)
 {
-	sockaddr_clear(&addr);
+	addr.TlvClear();
 	return;
 }
 
 void RsTlvIpAddressInfo::TlvClear()
 {
-	sockaddr_clear(&addr);
+	addr.TlvClear();
 	seenTime = 0;
 	source = 0;
 }
@@ -55,7 +198,7 @@ uint32_t RsTlvIpAddressInfo::TlvSize()
 {
 	uint32_t s = TLV_HEADER_SIZE; /* header + IpAddr + 8 for time & 4 for size */
 
-	s += GetTlvIpAddrPortV4Size(); 
+	s += addr.TlvSize();
 	s += 8; // seenTime
 	s += 4; // source
 
@@ -79,7 +222,7 @@ bool  RsTlvIpAddressInfo::SetTlv(void *data, uint32_t size, uint32_t *offset) /*
 
 	ok &= SetTlvBase(data, tlvend, offset, TLV_TYPE_ADDRESS_INFO, tlvsize);
 
-	ok &= SetTlvIpAddrPortV4(data, tlvend, offset, TLV_TYPE_IPV4_LAST, &addr);
+	ok &= addr.SetTlv(data, tlvend, offset);
 	ok &= setRawUInt64(data, tlvend, offset, seenTime);
 	ok &= setRawUInt32(data, tlvend, offset, source);
 
@@ -111,7 +254,7 @@ bool  RsTlvIpAddressInfo::GetTlv(void *data, uint32_t size, uint32_t *offset) /*
 	/* skip the header */
 	(*offset) += TLV_HEADER_SIZE;
 
-	ok &= GetTlvIpAddrPortV4(data, tlvend, offset, TLV_TYPE_IPV4_LAST, &addr);
+	ok &= addr.GetTlv(data, tlvend, offset);
 	ok &= getRawUInt64(data, tlvend, offset, &(seenTime));
 	ok &= getRawUInt32(data, tlvend, offset, &(source));
    
@@ -141,9 +284,7 @@ std::ostream &RsTlvIpAddressInfo::print(std::ostream &out, uint16_t indent)
 	printBase(out, "RsTlvIpAddressInfo", indent);
 	uint16_t int_Indent = indent + 2;
 
-	printIndent(out, int_Indent);
-	out << "Address:" << rs_inet_ntoa(addr.sin_addr);
-        out << ":" << htons(addr.sin_port) << std::endl;
+	addr.print(out, int_Indent);
 
 	printIndent(out, int_Indent);
 	out << "SeenTime:" << seenTime;

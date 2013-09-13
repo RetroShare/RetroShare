@@ -33,8 +33,10 @@ const int pqipersonzone = 82371;
 #include "util/rsstring.h"
 
 /****
- * #define PERSON_DEBUG
+ * #define PERSON_DEBUG 1
  ****/
+
+#define PERSON_DEBUG 1
 
 pqiperson::pqiperson(std::string id, pqipersongrp *pg)
 	:PQInterface(id), active(false), activepqi(NULL), 
@@ -217,7 +219,7 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
 
 		/* notify */
                 if (pqipg) {
-                        struct sockaddr_in remote_peer_address;
+                        struct sockaddr_storage remote_peer_address;
                         pqi->getConnectAddress(remote_peer_address);
                         pqipg->notifyConnect(PeerId(), type, true, remote_peer_address);
                 }
@@ -287,8 +289,8 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
 		/* notify up */
 		if (pqipg)
 		{
-			struct sockaddr_in raddr;
-			sockaddr_clear(&raddr);
+			struct sockaddr_storage raddr;
+			sockaddr_storage_clear(raddr);
 			pqipg->notifyConnect(PeerId(), type, false, raddr);
 		}
 
@@ -366,8 +368,8 @@ int 	pqiperson::stoplistening()
 	return 1;
 }
 
-int	pqiperson::connect(uint32_t type, struct sockaddr_in raddr, 
-				struct sockaddr_in &proxyaddr, struct sockaddr_in &srcaddr,
+int	pqiperson::connect(uint32_t type, const struct sockaddr_storage &raddr, 
+				const struct sockaddr_storage &proxyaddr, const struct sockaddr_storage &srcaddr,
 				uint32_t delay, uint32_t period, uint32_t timeout, uint32_t flags, uint32_t bandwidth, 
 				const std::string &domain_addr, uint16_t domain_port)
 {
@@ -376,9 +378,12 @@ int	pqiperson::connect(uint32_t type, struct sockaddr_in raddr,
 	{
 		std::string out = "pqiperson::connect() Id: " + PeerId();
 		rs_sprintf_append(out, " type: %u", type);
-		rs_sprintf_append(out, " addr: %s:%u", rs_inet_ntoa(raddr.sin_addr).c_str(), ntohs(raddr.sin_port));
-		rs_sprintf_append(out, " proxyaddr: %s:%u", rs_inet_ntoa(proxyaddr.sin_addr).c_str(), ntohs(proxyaddr.sin_port));
-		rs_sprintf_append(out, " srcaddr: %s:%u", rs_inet_ntoa(srcaddr.sin_addr).c_str(), ntohs(srcaddr.sin_port));
+		out += " addr: ";
+		out += sockaddr_storage_tostring(raddr);
+		out += " proxyaddr: ";
+		out += sockaddr_storage_tostring(proxyaddr);
+		out += " srcaddr: ";
+		out += sockaddr_storage_tostring(srcaddr);
 		rs_sprintf_append(out, " delay: %u", delay);
 		rs_sprintf_append(out, " period: %u", period);
 		rs_sprintf_append(out, " timeout: %u", timeout);
@@ -428,8 +433,8 @@ int	pqiperson::connect(uint32_t type, struct sockaddr_in raddr,
 	(it->second)->connect_parameter(NET_PARAM_CONNECT_FLAGS, flags);
 	(it->second)->connect_parameter(NET_PARAM_CONNECT_BANDWIDTH, bandwidth);
 
-	(it->second)->connect_additional_address(NET_PARAM_CONNECT_PROXY, &proxyaddr);
-	(it->second)->connect_additional_address(NET_PARAM_CONNECT_SOURCE, &srcaddr);
+	(it->second)->connect_additional_address(NET_PARAM_CONNECT_PROXY, proxyaddr);
+	(it->second)->connect_additional_address(NET_PARAM_CONNECT_SOURCE, srcaddr);
 
 	// These are used by Proxy/Hidden 
 	(it->second)->connect_parameter(NET_PARAM_CONNECT_DOMAIN_ADDRESS, domain_addr);

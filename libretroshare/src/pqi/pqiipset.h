@@ -37,7 +37,7 @@ class pqiIpAddress
 	bool sameAddress(const pqiIpAddress &a) const;
 	bool validAddress() const;
 
-	struct sockaddr_in mAddr;
+	struct sockaddr_storage mAddr;
 	time_t mSeenTime;
 	uint32_t mSrc;
 };

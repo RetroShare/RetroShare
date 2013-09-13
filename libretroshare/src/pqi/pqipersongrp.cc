@@ -43,7 +43,7 @@ static std::list<std::string> waitingIds;
 /****
  *#define PGRP_DEBUG 1
  ****/
-//#define PGRP_DEBUG 1
+#define PGRP_DEBUG 1
 
 #define DEFAULT_DOWNLOAD_KB_RATE	(200.0)
 #define DEFAULT_UPLOAD_KB_RATE		(50.0)
@@ -184,7 +184,8 @@ int	pqipersongrp::init_listener()
 	{
 		/* extract details from 
 		 */
-		struct sockaddr_in laddr = mLinkMgr->getLocalAddress();
+		struct sockaddr_storage laddr;
+		mLinkMgr->getLocalAddress(laddr);
 		
 		RsStackMutex stack(coreMtx); /******* LOCKED MUTEX **********/
 		pqil = locked_createListener(laddr);
@@ -192,7 +193,7 @@ int	pqipersongrp::init_listener()
 	return 1;
 }
 
-bool    pqipersongrp::resetListener(struct sockaddr_in &local)
+bool    pqipersongrp::resetListener(const struct sockaddr_storage &local)
 {
         #ifdef PGRP_DEBUG
 	std::cerr << "pqipersongrp::resetListener()" << std::endl;
@@ -536,15 +537,15 @@ int     pqipersongrp::connectPeer(std::string id
 	///////////////////////////////////////////////////////////
 #endif
 
-	struct sockaddr_in addr;
+	struct sockaddr_storage addr;
 	uint32_t delay;
 	uint32_t period;
 	uint32_t timeout;
 	uint32_t type;
 	uint32_t flags = 0 ;
 
-	struct sockaddr_in proxyaddr;
-	struct sockaddr_in srcaddr;
+	struct sockaddr_storage proxyaddr;
+	struct sockaddr_storage srcaddr;
 	uint32_t bandwidth;
 	std::string domain_addr;
 	uint16_t domain_port;
@@ -560,7 +561,7 @@ int     pqipersongrp::connectPeer(std::string id
 
 #ifdef PGRP_DEBUG
 	std::cerr << " pqipersongrp::connectPeer() connectAttempt data id: " << id;
-	std::cerr << " addr: " << rs_inet_ntoa(addr.sin_addr) << ":" << ntohs(addr.sin_port);
+	std::cerr << " addr: " << sockaddr_storage_tostring(addr);
 	std::cerr << " delay: " << delay;
 	std::cerr << " period: " << period;
 	std::cerr << " type: " << type;
@@ -611,7 +612,7 @@ int     pqipersongrp::connectPeer(std::string id
 	return 1;
 }
 
-bool    pqipersongrp::notifyConnect(std::string id, uint32_t ptype, bool success, struct sockaddr_in raddr)
+bool    pqipersongrp::notifyConnect(std::string id, uint32_t ptype, bool success, const struct sockaddr_storage &raddr)
 {
 	uint32_t type = 0;
 	if (ptype == PQI_CONNECT_TCP)
@@ -633,7 +634,7 @@ bool    pqipersongrp::notifyConnect(std::string id, uint32_t ptype, bool success
 
 #include "pqi/pqibin.h"
 
-pqilistener * pqipersongrpDummy::locked_createListener(struct sockaddr_in /*laddr*/)
+pqilistener * pqipersongrpDummy::locked_createListener(const struct sockaddr_storage & /*laddr*/)
 {
 	pqilistener *listener = new pqilistener();
 	return listener;

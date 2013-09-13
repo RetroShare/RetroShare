@@ -193,7 +193,7 @@ public:
 virtual ~NetBinDummy() { return; }
 
 	// Net Interface
-virtual int connect(struct sockaddr_in raddr);
+virtual int connect(const struct sockaddr_storage &raddr);
 virtual int listen();
 virtual int stoplistening();
 virtual int disconnect();
@@ -204,7 +204,7 @@ virtual bool connect_parameter(uint32_t type, uint32_t value)
 		(void) value; /* suppress unused parameter warning */
 		return false; 
 	}
-virtual int getConnectAddress(struct sockaddr_in &raddr) 
+virtual int getConnectAddress(struct sockaddr_storage &raddr) 
 	{
 		(void) raddr; /* suppress unused parameter warning */
 		return 0;

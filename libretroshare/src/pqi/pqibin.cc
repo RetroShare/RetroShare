@@ -528,11 +528,10 @@ NetBinDummy::NetBinDummy(PQInterface *parent, std::string id, uint32_t t)
 }
 
 	// Net Interface
-int NetBinDummy::connect(struct sockaddr_in raddr)
+int NetBinDummy::connect(const struct sockaddr_storage &raddr)
 {
 	std::cerr << "NetBinDummy::connect(";
-	std::cerr << rs_inet_ntoa(raddr.sin_addr) << ":";
-	std::cerr << htons(raddr.sin_port);
+	std::cerr << sockaddr_storage_tostring(raddr);
 	std::cerr << ") ";
 	printNetBinID(std::cerr, PeerId(), type);
 	std::cerr << std::endl; 

@@ -55,7 +55,7 @@ class AcceptedSSL
 	SSL *mSSL;
 	std::string mPeerId;
 	
-	struct sockaddr_in mAddr;
+	struct sockaddr_storage mAddr;
 	time_t mAcceptTS;
 };
 
@@ -67,7 +67,7 @@ class pqissllistenbase: public pqilistener
 	public:
 
 
-        pqissllistenbase(struct sockaddr_in addr, p3PeerMgr *pm);
+        pqissllistenbase(const struct sockaddr_storage &addr, p3PeerMgr *pm);
 virtual ~pqissllistenbase();
 
 /*************************************/
@@ -75,7 +75,7 @@ virtual ~pqissllistenbase();
 
 virtual int 	tick();
 virtual int 	status();
-virtual int     setListenAddr(struct sockaddr_in addr);
+virtual int     setListenAddr(const struct sockaddr_storage &addr);
 virtual int	setuplisten();
 virtual int     resetlisten();
 
@@ -88,7 +88,7 @@ int	finaliseAccepts();
 	struct IncomingSSLInfo
 	{
 		SSL *ssl ;
-		sockaddr_in addr ;
+		sockaddr_storage addr ;
 		std::string gpgid ;
 		std::string sslid ;
 		std::string sslcn ;
@@ -100,10 +100,10 @@ int 	closeConnection(int fd, SSL *ssl);
 int 	isSSLActive(int fd, SSL *ssl);
 
 virtual int completeConnection(int sockfd, IncomingSSLInfo&) = 0;
-virtual int finaliseConnection(int fd, SSL *ssl, std::string peerId, struct sockaddr_in &raddr) = 0;
+virtual int finaliseConnection(int fd, SSL *ssl, std::string peerId, const struct sockaddr_storage &raddr) = 0;
 	protected:
 
-	struct sockaddr_in laddr;
+	struct sockaddr_storage laddr;
 	std::list<AcceptedSSL> accepted_ssl;
 
 	private:
@@ -126,7 +126,7 @@ class pqissllistener: public pqissllistenbase
 {
 	public:
 
-        pqissllistener(struct sockaddr_in addr, p3PeerMgr *pm);
+        pqissllistener(const struct sockaddr_storage &addr, p3PeerMgr *pm);
 virtual ~pqissllistener();
 
 int 	addlistenaddr(std::string id, pqissl *acc);
@@ -136,7 +136,7 @@ int	removeListenPort(std::string id);
 virtual int 	status();
 
 virtual int completeConnection(int sockfd, IncomingSSLInfo&);
-virtual int finaliseConnection(int fd, SSL *ssl, std::string peerId, struct sockaddr_in &raddr);
+virtual int finaliseConnection(int fd, SSL *ssl, std::string peerId, const struct sockaddr_storage &raddr);
 
 	private:
 

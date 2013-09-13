@@ -21,12 +21,12 @@ class pqiNetStateBox
 	void reset();
 
 	/* input network bits */
-	void setAddressStunDht(struct sockaddr_in *, bool stable);
-	void setAddressStunProxy(struct sockaddr_in *, bool stable);
+	void setAddressStunDht(const struct sockaddr_storage &addr, bool stable);
+	void setAddressStunProxy(const struct sockaddr_storage &addr, bool stable);
 
-	void setAddressUPnP(bool active, struct sockaddr_in *addr);
-	void setAddressNatPMP(bool active, struct sockaddr_in *addr);
-	void setAddressWebIP(bool active, struct sockaddr_in *addr);
+	void setAddressUPnP(bool active, const struct sockaddr_storage &addr);
+	void setAddressNatPMP(bool active, const struct sockaddr_storage &addr);
+	void setAddressWebIP(bool active, const struct sockaddr_storage &addr);
 
 	void setPortForwarded(bool active, uint16_t port);
 
@@ -63,13 +63,13 @@ class pqiNetStateBox
 	bool mStunDhtSet;
 	time_t mStunDhtTS;
 	bool mStunDhtStable;
-	struct sockaddr_in mStunDhtAddr;
+	struct sockaddr_storage mStunDhtAddr;
 
 	bool mStunProxySet;
 	time_t mStunProxyTS;
 	bool mStunProxyStable;
 	bool mStunProxySemiStable;
-	struct sockaddr_in mStunProxyAddr;
+	struct sockaddr_storage mStunProxyAddr;
 
 	bool mDhtSet;
 	time_t mDhtTS;
@@ -77,17 +77,17 @@ class pqiNetStateBox
 	bool mDhtActive;
 
 	bool mUPnPSet;
-	struct sockaddr_in mUPnPAddr;
+	struct sockaddr_storage mUPnPAddr;
 	bool mUPnPActive;
 	time_t mUPnPTS;
 
 	bool mNatPMPSet;
-	struct sockaddr_in mNatPMPAddr;
+	struct sockaddr_storage mNatPMPAddr;
 	bool mNatPMPActive;
 	time_t mNatPMPTS;
 
 	bool mWebIPSet;
-	struct sockaddr_in mWebIPAddr;
+	struct sockaddr_storage mWebIPAddr;
 	bool mWebIPActive;
 	time_t mWebIPTS;
 

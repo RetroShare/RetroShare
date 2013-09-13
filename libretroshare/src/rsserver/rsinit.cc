@@ -2568,16 +2568,18 @@ int RsServer::StartupRetroShare()
 
 	if (RsInitConfig::forceLocalAddr)
 	{
-		struct sockaddr_in laddr;
+		struct sockaddr_storage laddr;
 
 		/* clean sockaddr before setting values (MaxOSX) */
-		sockaddr_clear(&laddr);
+		sockaddr_storage_clear(laddr);
 
-		laddr.sin_family = AF_INET;
-		laddr.sin_port = htons(RsInitConfig::port);
+		struct sockaddr_in *lap = (struct sockaddr_in *) &laddr;
+		
+		lap->sin_family = AF_INET;
+		lap->sin_port = htons(RsInitConfig::port);
 
 		// universal
-		laddr.sin_addr.s_addr = inet_addr(RsInitConfig::inet.c_str());
+		lap->sin_addr.s_addr = inet_addr(RsInitConfig::inet.c_str());
 
 		mPeerMgr->setLocalAddress(ownId, laddr);
 	}

@@ -6,15 +6,14 @@
 
 // External Interface.
 
-void pqiNetStateBox::setAddressStunDht(struct sockaddr_in *addr, bool stable)
+void pqiNetStateBox::setAddressStunDht(const struct sockaddr_storage &addr, bool stable)
 {
 	if ((!mStunDhtSet) || (mStunDhtStable != stable) || 
-			(addr->sin_addr.s_addr != mStunDhtAddr.sin_addr.s_addr) ||
-			(addr->sin_port != mStunDhtAddr.sin_port))
+			(!sockaddr_storage_same(addr, mStunDhtAddr)))
 	{
 		mStunDhtSet = true;
 		mStunDhtStable = stable;
-		mStunDhtAddr = *addr;
+		mStunDhtAddr = addr;
 
 		mStatusOkay = false;
 	}
@@ -22,15 +21,13 @@ void pqiNetStateBox::setAddressStunDht(struct sockaddr_in *addr, bool stable)
 }
 
 
-void pqiNetStateBox::setAddressStunProxy(struct sockaddr_in *addr, bool stable)
+void pqiNetStateBox::setAddressStunProxy(const struct sockaddr_storage &addr, bool stable)
 {
 	if ((!mStunProxySet) || (mStunProxyStable != stable) || 
-		(addr->sin_addr.s_addr != mStunProxyAddr.sin_addr.s_addr) ||
-		(addr->sin_port != mStunProxyAddr.sin_port))
-
+		(!sockaddr_storage_same(addr, mStunProxyAddr)))
 	{
 
-		if (addr->sin_addr.s_addr == mStunProxyAddr.sin_addr.s_addr) 
+		if (sockaddr_storage_sameip(addr,mStunProxyAddr)) 
 		{
 			if (mStunProxyStable != stable) 
 			{
@@ -44,22 +41,20 @@ void pqiNetStateBox::setAddressStunProxy(struct sockaddr_in *addr, bool stable)
 
 		mStunProxySet = true;
 		mStunProxyStable = stable;
-		mStunProxyAddr = *addr;
+		mStunProxyAddr = addr;
 		mStatusOkay = false;
 	}
 	mStunProxyTS = time(NULL);
 }
 
 
-void pqiNetStateBox::setAddressUPnP(bool active, struct sockaddr_in *addr)
+void pqiNetStateBox::setAddressUPnP(bool active, const struct sockaddr_storage &addr)
 {
 	if ((!mUPnPSet) || (mUPnPActive != active) || 
-		(addr->sin_addr.s_addr != mUPnPAddr.sin_addr.s_addr) ||
-		(addr->sin_port != mUPnPAddr.sin_port))
-
+		(!sockaddr_storage_same(addr, mUPnPAddr)))
 	{
 		mUPnPSet = true;
-		mUPnPAddr = *addr;
+		mUPnPAddr = addr;
 		mUPnPActive = active;
 
 		mStatusOkay = false;
@@ -68,15 +63,13 @@ void pqiNetStateBox::setAddressUPnP(bool active, struct sockaddr_in *addr)
 }
 
 
-void pqiNetStateBox::setAddressNatPMP(bool active, struct sockaddr_in *addr)
+void pqiNetStateBox::setAddressNatPMP(bool active, const struct sockaddr_storage &addr)
 {
 	if ((!mNatPMPSet) || (mNatPMPActive != active) || 
-		(addr->sin_addr.s_addr != mNatPMPAddr.sin_addr.s_addr) ||
-		(addr->sin_port != mNatPMPAddr.sin_port))
-
+		(!sockaddr_storage_same(addr, mNatPMPAddr)))
 	{
 		mNatPMPSet = true;
-		mNatPMPAddr = *addr;
+		mNatPMPAddr = addr;
 		mNatPMPActive = active;
 
 		mStatusOkay = false;
@@ -86,15 +79,13 @@ void pqiNetStateBox::setAddressNatPMP(bool active, struct sockaddr_in *addr)
 
 
 
-void pqiNetStateBox::setAddressWebIP(bool active, struct sockaddr_in *addr)
+void pqiNetStateBox::setAddressWebIP(bool active, const struct sockaddr_storage &addr)
 {
 	if ((!mWebIPSet) || (mWebIPActive != active) || 
-		(addr->sin_addr.s_addr != mWebIPAddr.sin_addr.s_addr) ||
-		(addr->sin_port != mWebIPAddr.sin_port))
-
+		(!sockaddr_storage_same(addr, mWebIPAddr)))
 	{
 		mWebIPSet = true;
-		mWebIPAddr = *addr;
+		mWebIPAddr = addr;
 		mWebIPActive = active;
 
 		mStatusOkay = false;
@@ -188,35 +179,25 @@ void pqiNetStateBox::reset()
 	mStunDhtSet = false;
 	mStunDhtTS = 0;
 	mStunDhtStable = false;
-	mStunDhtAddr.sin_addr.s_addr = 0 ;
-	mStunDhtAddr.sin_port = 0 ;
-	//struct sockaddr_in mStunDhtAddr;
+	sockaddr_storage_clear(mStunDhtAddr);
 	
 	mStunProxySet = false;
 	mStunProxySemiStable = false; 
 	mStunProxyTS = 0;
 	mStunProxyStable = false;
-	mStunProxyAddr.sin_addr.s_addr = 0 ;
-	mStunProxyAddr.sin_port = 0 ;
-	//struct sockaddr_in mStunProxyAddr;
+	sockaddr_storage_clear(mStunProxyAddr);
 	
 	mUPnPSet = false;
 	mUPnPActive = false;
-	mUPnPAddr.sin_addr.s_addr = 0 ;
-	mUPnPAddr.sin_port = 0 ;
-	//struct sockaddr_in mUPnPAddr;
+	sockaddr_storage_clear(mUPnPAddr);
 
 	mNatPMPSet = false;
 	mNatPMPActive = false;
-	mNatPMPAddr.sin_addr.s_addr = 0 ;
-	mNatPMPAddr.sin_port = 0 ;
-	//struct sockaddr_in mNatPMPAddr;
+	sockaddr_storage_clear(mNatPMPAddr);
 
 	mWebIPSet = false;
 	mWebIPActive = false;
-	mWebIPAddr.sin_addr.s_addr = 0 ;
-	mWebIPAddr.sin_port = 0 ;
-	//struct sockaddr_in mWebIPAddr;
+	sockaddr_storage_clear(mWebIPAddr);
 
 	mPortForwardSet = false;
 	mPortForwarded = false;

@@ -147,7 +147,7 @@ std::string socket_errorType(int err)
 #include <net/if.h> 
 #include <sys/ioctl.h> 
 
-bool getLocalInterfaces(struct in_addr &/*routeAddr*/, std::list<struct in_addr> &addrs)
+bool getLocalInterfaces_ipv4(struct in_addr &/*routeAddr*/, std::list<struct in_addr> &addrs)
 {
 	int sock = 0;
 	struct ifreq ifreq;
@@ -328,7 +328,7 @@ std::string socket_errorType(int err)
 // A function to determine the interfaces on your computer....
 // No idea of how to do this in windows....
 // see if it compiles.
-bool getLocalInterfaces(struct in_addr &routeAddr, std::list<struct in_addr> &addrs)
+bool getLocalInterfaces_ipv4(struct in_addr &routeAddr, std::list<struct in_addr> &addrs)
 {
 	// Get the best interface for transport to routeAddr
 	// This interface should be first in list!
@@ -556,8 +556,7 @@ int inaddr_cmp(struct sockaddr_in addr1, unsigned long addr2)
 	return 1;
 }
 
-
-bool 	getPreferredInterface(in_addr &routeAddr, struct in_addr &prefAddr) // returns best addr.
+bool 	getPreferredInterface_ipv4(in_addr &routeAddr, struct in_addr &prefAddr) // returns best addr.
 {
 	std::list<struct in_addr> addrs;
 	std::list<struct in_addr>::iterator it;
@@ -572,7 +571,7 @@ bool 	getPreferredInterface(in_addr &routeAddr, struct in_addr &prefAddr) // ret
 	bool found_priv = false;
 	bool found_ext = false;
 
-	if (!getLocalInterfaces(routeAddr, addrs))
+	if (!getLocalInterfaces_ipv4(routeAddr, addrs))
 	{
 		return false;
 	}
@@ -685,6 +684,78 @@ bool 	getPreferredInterface(in_addr &routeAddr, struct in_addr &prefAddr) // ret
 	prefAddr.s_addr = 0xffffffff;
 	return false;
 }
+
+
+
+bool getPreferredInterface(struct sockaddr_storage &existAddr, struct sockaddr_storage &prefAddr)
+{
+	struct in_addr existing_addr;
+	struct in_addr pref_addr;
+	
+	{
+		struct sockaddr_in *eaddr = (sockaddr_in *) &existAddr;
+		if (eaddr->sin_family != AF_INET)
+		{
+			std::cerr << "getPreferredInterface() ERROR only valid for IPv4 for now";
+			abort();
+			return false;
+		}
+		existing_addr = eaddr->sin_addr;
+	}
+	
+	if (getPreferredInterface_ipv4(existing_addr, pref_addr))
+	{
+		/* store into prefAddr */
+		sockaddr_storage_clear(prefAddr);
+		struct sockaddr_in *addr = (sockaddr_in *) &prefAddr;
+		addr->sin_family = AF_INET;
+		addr->sin_addr = pref_addr;
+		addr->sin_port = htons(0);
+		
+		return true;
+	}
+	return false;
+}
+
+
+bool getLocalInterfaces(struct sockaddr_storage &existAddr, std::list<struct sockaddr_storage> &addrs)
+{
+	struct in_addr existing_addr;
+	std::list<struct in_addr> local_addrs;
+	
+	{
+		struct sockaddr_in *eaddr = (sockaddr_in *) &existAddr;
+		if (eaddr->sin_family != AF_INET)
+		{
+			std::cerr << "getLocalInterfaces() ERROR only valid for IPv4 for now";
+			abort();
+			return false;
+		}
+		existing_addr = eaddr->sin_addr;
+	}
+	
+	if (getLocalInterfaces_ipv4(existing_addr, local_addrs))
+	{
+		std::list<struct in_addr>::iterator it;
+		for(it = local_addrs.begin(); it != local_addrs.end(); it++)
+		{
+			/* store into prefAddr */
+			
+			sockaddr_storage localAddr;
+			sockaddr_storage_clear(localAddr);
+			struct sockaddr_in *addr = (sockaddr_in *) &localAddr;
+			addr->sin_family = AF_INET;
+			addr->sin_addr = *it;
+			addr->sin_port = htons(0);	
+			addrs.push_back(localAddr);
+		}
+		return true;
+	}
+	return false;
+}
+
+
+
 
 bool    sameNet(const struct in_addr *addr, const struct in_addr *addr2)
 {
