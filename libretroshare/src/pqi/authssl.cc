@@ -325,11 +325,49 @@ static  int initLib = 0;
 	// setup connection method
 	sslctx = SSL_CTX_new(TLSv1_method());
 
-	// setup cipher lists.
-	std::string cipherString = "HIGH:!DSS:!aNULL:!3DES";
-	//SSL_CTX_set_cipher_list(sslctx, "DEFAULT");
+	// Setup cipher lists:
+	//
+	//       std::string cipherString = "HIGH:!DSS:!aNULL:!3DES";
+	//       std::string cipherString = "DEFAULT";
+	//
+	// The current cipher list  asks in priority for EDH which provides PFS. However EDH needs proper
+	// parameters to be set on the server side, so if we're a client for a RS instance that has no DH params,
+	// the connection will be refused. So we happend the HIGH cipher suite just after. In oder to force 
+	// PFS, at the risk of not always connecting, one should use:
+	//
+	// 		std::string cipherString = "kEDH:!ECDHE:!DSS:!aNULL:!3DES";
+	//
+	// ECDHE has been removed from the list because of suspicions about the level of security in the
+	// generation of the elliptic curves parameters. The following safe primes are 2048/4096 bits long. Should be enough.
+	//
+	// std::string dh_prime_2048_dec = "30651576830996935311378276950670996791883170963804289256203421500259588715033040934547350194073369837229137842804826417332761673984632102152477971341551955103053338169949165519208562998954887445690136488713010579430413255432398961330773637820158790237012997356731669148258317860643591694814197514454546928317578771868379525705082166818553884557266645700906836702542808787791878865135741211056957383668479369231868698451684633965462539374994559481908068730787128654626819903401038534403722014687647173327537458614224702967073490136394698912372792187651228785689025073104374674728645661275001416541267543884923191810923";
+	//
+	std::string dh_prime_2048_hex = "B3B86A844550486C7EA459FA468D3A8EFD71139593FE1C658BBEFA9B2FC0AD2628242C2CDC2F91F5B220ED29AAC271192A7374DFA28CDDCA70252F342D0821273940344A7A6A3CB70C7897A39864309F6CAC5C7EA18020EF882693CA2C12BB211B7BA8367D5A7C7252A5B5E840C9E8F081469EBA0B98BCC3F593A4D9C4D5DF539362084F1B9581316C1F80FDAD452FD56DBC6B8ED0775F596F7BB22A3FE2B4753764221528D33DB4140DE58083DB660E3E105123FC963BFF108AC3A268B7380FFA72005A1515C371287C5706FFA6062C9AC73A9B1A6AC842C2764CDACFC85556607E86611FDF486C222E4896CDF6908F239E177ACC641FCBFF72A758D1C10CBB" ;
+
+	std::string dh_prime_4096_hex = "A6F5777292D9E6BB95559C9124B9119E6771F11F2048C8FE74F4E8140494520972A087EF1D60B73894F1C5D509DD15D96CF379E9DDD46CE51B748085BACB440D915565782C73AF3A9580CE788441D1DA4D114E3D302CAB45A061ABCFC1F7E9200AE019CB923B77E096FA9377454A16FFE91D86535FF23E075B3E714F785CD7606E9CBD9D06F01CAFA2271883D649F13ABE170D714F6B6EC064C5BF35C4F4BDA5EF5ED5E70D5DC78F1AC1CDC04EEDAE8ADD65C4A9E27368E0B2C8595DD7626D763BFFB15364B3CCA9FCE814B9226B35FE652F4B041F0FF6694D6A482B0EF48CA41163D083AD2DE7B7A068BB05C0453E9D008551C7F67993A3EF2C4874F0244F78C4E0997BD31AB3BD88446916B499B2513DD5BA002063BD38D2CE55D29D071399D5CEE99458AF6FDC104A61CA3FACDAC803CBDE62B4C0EAC946D0E12F05CE9E94497110D64E611D957423B8AA412D84EC83E6E70E0977A31D6EE056D0527D4667D7242A77C9B679D191562E4026DA9C35FF85666296D872ED548E0FFE1A677FCC373C1F490CAB4F53DFD8735C0F1DF02FEAD824A217FDF4E3404D38A5BBC719C6622630FCD34F6F1968AF1B66A4AB1A9FCF653DA96EB3A42AF6FCFEA0547B8F314A527C519949007D7FA1726FF3D33EC46393B0207AA029E5EA574BDAC94D78894B22A2E3303E65A3F820DF57DB44951DE4E973C016C57F7A242D0BC53BC563AF" ;
+
+	std::string cipherString = "kEDH:HIGH:!ECDHE:!DSS:!aNULL:!3DES";
+
 	SSL_CTX_set_cipher_list(sslctx, cipherString.c_str());
 
+	DH* dh = DH_new();
+	int codes = 0;
+	bool pfs_enabled = true ;
+
+	if (dh)
+	{
+		BN_hex2bn(&dh->p,dh_prime_4096_hex.c_str()) ;
+		BN_hex2bn(&dh->g,"5") ;
+
+		std::cout.flush() ;
+
+		if(DH_check(dh, &codes) && codes == 0)
+			SSL_CTX_set_tmp_dh(sslctx, dh);	
+		else
+			pfs_enabled = false ;
+	}
+	else
+		pfs_enabled = false ;
 
 	// certificates (Set Local Server Certificate).
 	FILE *ownfp = RsDirUtil::rs_fopen(cert_file, "r");
@@ -338,8 +376,6 @@ static  int initLib = 0;
 		std::cerr << "Couldn't open Own Certificate!" << std::endl;
 		return -1;
 	}
-
-
 
 	// get xPGP certificate.
 	X509 *x509 = PEM_read_X509(ownfp, NULL, NULL, NULL);
@@ -393,12 +429,11 @@ static  int initLib = 0;
 		CloseAuth();
 		return -1;
 	}
-
 	/* Check that Certificate is Ok ( virtual function )
 	 * for gpg/pgp or CA verification
 	 */
 
-        if (!validateOwnCertificate(x509, mOwnPrivateKey))
+	if (!validateOwnCertificate(x509, mOwnPrivateKey))
 	{
 		std::cerr << "AuthSSLimpl::InitAuth() validateOwnCertificate() Failed";
 		std::cerr << std::endl;
@@ -419,6 +454,22 @@ static  int initLib = 0;
 	std::cerr << "SSL Verification Set" << std::endl;
 
 	mOwnCert = new sslcert(x509, mOwnId);
+
+	std::cerr << "Inited SSL context: " << std::endl;
+	std::cerr << "    Certificate: " << mOwnId << std::endl;
+	std::cerr << "    cipher list: " << cipherString << std::endl;
+	std::cerr << "    PFS enabled: " << (pfs_enabled?"YES":"NO") ;
+	if(codes > 0)
+	{
+		std::cerr << " (reason: " ;
+		if(codes & DH_CHECK_P_NOT_PRIME     ) std::cerr << "Not a prime number, " ;
+		if(codes & DH_CHECK_P_NOT_SAFE_PRIME) std::cerr << "Not a safe prime number, " ;
+		if(codes & DH_UNABLE_TO_CHECK_GENERATOR) std::cerr << "unable to check generator, " ;
+		if(codes & DH_NOT_SUITABLE_GENERATOR) std::cerr << "not a suitable generator" ;
+		std::cerr << ")" << std::endl;
+	}
+	else
+		std::cerr << std::endl;
 
 	init = 1;
 	return 1;
