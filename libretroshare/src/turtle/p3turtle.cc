@@ -699,14 +699,14 @@ uint32_t p3turtle::generateRandomRequestId()
 	return RSRandom::random_u32() ;
 }
 
-uint32_t p3turtle::generatePersonalFilePrint(const TurtleFileHash& hash,bool b)
+uint32_t p3turtle::generatePersonalFilePrint(const TurtleFileHash& hash,uint32_t seed,bool b)
 {
 	// whatever cooking from the file hash and OwnId that cannot be recovered.
 	// The only important thing is that the saem couple (hash,SSL id) produces the same tunnel
 	// id. The result uses a boolean to allow generating non symmetric tunnel ids.
 
 	std::string buff(hash + mLinkMgr->getOwnId()) ;
-	uint32_t res = 0 ;
+	uint32_t res = seed ;
 	uint32_t decal = 0 ;
 
 	for(int i=0;i<(int)buff.length();++i)
@@ -1288,7 +1288,7 @@ TurtleRequestId p3turtle::diggTunnel(const TurtleFileHash& hash)
 	item->PeerId(mLinkMgr->getOwnId()) ;
 	item->file_hash = hash ;
 	item->request_id = id ;
-	item->partial_tunnel_id = generatePersonalFilePrint(hash,true) ;
+	item->partial_tunnel_id = generatePersonalFilePrint(hash,_random_bias,true) ;
 	item->depth = 0 ;
 
 	// send it
@@ -1340,13 +1340,6 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 #ifdef P3TURTLE_DEBUG
 		std::cerr << "Forwarding probability: depth=" << item->depth << ", distance to max speed=" << distance_to_maximum << ", corrected=" << corrected_distance << ", prob.=" << forward_probability << std::endl;
 #endif
-//		if(forward_probability < 0.1)
-//		{
-//#ifdef P3TURTLE_DEBUG
-//			std::cerr << "Dropped packet!" << std::endl;
-//#endif
-//			return ;
-//		}
 	}
 
 	// If the item contains an already handled tunnel request, give up.  This
@@ -1363,44 +1356,6 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 		{
 #ifdef P3TURTLE_DEBUG
 			std::cerr << "  This is a bouncing request. Ignoring and deleting item." << std::endl ;
-#endif
-#ifdef SUSPENDED
-			// This trick allows to shorten tunnels, favoring tunnels of smallest length, with a bias that
-			// depends on a mix between a session-based constant and the tunnel partial id. This means
-			// that for a given couple of (source,hash), the optimisation always performs the same.
-			// overall, 80% tunnels are re-routed. The probability of a tunnel to have optimal length is
-			// thus 0.875^n where n is the length of the tunnel, supposing that it has 2 branching peers
-			// at each node. This makes:
-			// 		n				probability
-			// 		1				0.875
-			// 		2				0.76
-			// 		3				0.67
-			// 		4				0.58
-			// 		5				0.512
-			//
-			//  The lower the probability, the higher the anonymity level.
-			//
-
-			if(it->second.depth > item->depth && ((item->partial_tunnel_id ^ _random_bias)&0x7)>0)
-			{
-#ifdef P3TURTLE_DEBUG
-				std::cerr << "  re-routing tunnel request. Item age difference = " << time(NULL)-it->second.time_stamp << std::endl;
-				std::cerr << "     - old source: " << it->second.origin << ", old depth=" << it->second.depth << std::endl ;
-				std::cerr << "     - new source: " << item->PeerId() << ", new depth=" << item->depth << std::endl ;
-				std::cerr << "     - half id: " << (void*)it->first << std::endl ;
-#endif
-				it->second.origin = item->PeerId() ;
-				it->second.depth = item->depth ;
-
-				// also update local_tunnels is this is an ending tunnel.
-				//
-				std::map<std::string,FileInfo>::const_iterator it = _outgoing_file_hashes.find(item->file_hash) ;
-
-				if(it != _outgoing_file_hashes.end())
-					for(std::map<TurtleTunnelId,TurtleTunnel>::iterator it2(_local_tunnels.begin());it2!=_local_tunnels.end();++it2)
-						if(it2->second.hash == item->file_hash)
-							it2->second.local_src = item->PeerId() ;
-			}
 #endif
 			return ;
 		}
@@ -1449,7 +1404,7 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 			RsTurtleTunnelOkItem *res_item = new RsTurtleTunnelOkItem ;
 
 			res_item->request_id = item->request_id ;
-			res_item->tunnel_id = item->partial_tunnel_id ^ generatePersonalFilePrint(item->file_hash,false) ;
+			res_item->tunnel_id = item->partial_tunnel_id ^ generatePersonalFilePrint(item->file_hash,_random_bias,false) ;
 			res_item->PeerId(item->PeerId()) ;
 
 			sendItem(res_item) ;
@@ -1492,6 +1447,20 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 	//
 	bool random_bypass = (item->depth >= TURTLE_MAX_SEARCH_DEPTH && (((_random_bias ^ item->partial_tunnel_id)&0x7)==2)) ;
 	bool random_dshift = (item->depth == 1                       && (((_random_bias ^ item->partial_tunnel_id)&0x7)==6)) ;
+
+	// Multi-tunneling trick: consistently perturbate the half-tunnel id:
+	// - the tunnel id will now be unique for a given route
+	// - allows a better balance of bandwidth for a given transfer
+	// - avoid the waste of items that get lost when re-routing a tunnel
+	
+#ifdef P3TURTLE_DEBUG
+	std::cerr << "Perturbating partial tunnel id. Original=" << std::hex << item->partial_tunnel_id ;
+#endif
+	item->partial_tunnel_id = generatePersonalFilePrint(item->file_hash,item->partial_tunnel_id ^ _random_bias,true) ;
+
+#ifdef P3TURTLE_DEBUG
+	std::cerr << " new=" << item->partial_tunnel_id << std::dec << std::endl;
+#endif
 
 	if(item->depth < TURTLE_MAX_SEARCH_DEPTH || random_bypass)
 	{

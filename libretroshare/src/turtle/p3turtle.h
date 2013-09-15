@@ -314,7 +314,7 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 		//--------------------------- Admin/Helper functions -------------------------//
 		
 		/// Generates a cyphered combination of ownId() and file hash
-		uint32_t generatePersonalFilePrint(const TurtleFileHash&,bool) ;	
+		uint32_t generatePersonalFilePrint(const TurtleFileHash&,uint32_t seed,bool) ;	
 
 		/// Generates a random uint32_t number.
 		uint32_t generateRandomRequestId() ;								
