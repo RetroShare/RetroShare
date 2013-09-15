@@ -174,6 +174,7 @@ void ftController::addFileSource(const std::string& hash,const std::string& peer
 		if(it->first == hash)
 		{
 			it->second->mTransfer->addFileSource(peer_id);
+			setPeerState(it->second->mTransfer, peer_id, FT_CNTRL_STANDARD_RATE, mLinkMgr->isOnline( peer_id ));
 
 #ifdef CONTROL_DEBUG
 			std::cerr << "... added." << std::endl ;
