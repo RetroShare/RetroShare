@@ -111,7 +111,7 @@ public:
      * @param grpIds all grpids in store is inserted into this vector
      * @return error code
      */
-    int RsDataService::retrieveGroupIds(std::vector<std::string> &grpIds);
+    int retrieveGroupIds(std::vector<std::string> &grpIds);
 
     /*!
      * @return the cache size set for this RsGeneralDataService in bytes

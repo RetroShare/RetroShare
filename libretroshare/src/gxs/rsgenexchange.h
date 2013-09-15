@@ -71,13 +71,14 @@ class GxsGrpPendingSign
 public:
 
 	GxsGrpPendingSign(RsGxsGrpItem* item, uint32_t token): mLastAttemptTS(0), mStartTS(time(NULL)), mToken(token),
-		mItem(item), mHaveKeys(false)
+		mItem(item), mHaveKeys(false), mIsUpdate(false)
 	{}
 
 	time_t mLastAttemptTS, mStartTS;
 	uint32_t mToken;
 	RsGxsGrpItem* mItem;
 	bool mHaveKeys; // mKeys->first == true if key present
+	bool mIsUpdate;
 	RsTlvSecurityKeySet mPrivateKeys;
 	RsTlvSecurityKeySet mPublicKeys;
 };
@@ -516,13 +517,22 @@ protected:
 
     /*!
      * Enables publication of a group item \n
-     * If the item exists already this is simply versioned \n
      * This will induce a related change message \n
      * Ownership of item passes to this rsgenexchange \n
      * @param token
      * @param grpItem
      */
     void publishGroup(uint32_t& token, RsGxsGrpItem* grpItem);
+
+
+    /*!
+     * Updates an existing group item \n
+	 * This will induce a related change message \n
+	 * Ownership of item passes to this rsgenexchange \n
+	 * @param token
+	 * @param grpItem
+	 */
+	void updateGroup(uint32_t& token, RsGxsGrpItem* grpItem);
 
 public:
     /*!
@@ -628,6 +638,8 @@ private:
     void processRecvdGroups();
 
     void publishGrps();
+
+    void processGroupUpdatePublish();
 
     void publishMsgs();
 
@@ -750,6 +762,8 @@ private:
      */
     bool updateValid(RsGxsGrpMetaData& oldGrp, RsNxsGrp& newGrp) const;
 
+    bool splitKeys(const RsTlvSecurityKeySet& keySet, RsTlvSecurityKeySet& privateKeySet, RsTlvSecurityKeySet& publicKeySet);
+
 private:
 
     RsMutex mGenMtx;
@@ -815,7 +829,10 @@ private:
 
 private:
 
-    std::vector<GroupUpdate> mGroupUpdates;
+    std::vector<GroupUpdate> mGroupUpdates, mPeersGroupUpdate;
+
+    std::vector<GroupUpdatePublish> mGroupUpdatePublish;
+
 };
 
 #endif // RSGENEXCHANGE_H

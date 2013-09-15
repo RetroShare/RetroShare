@@ -167,14 +167,14 @@ public:
      * @param grpIds ids of groups to be removed
      * @return error code
      */
-    virtual int removeGroups(std::vector<RsGxsGroupId>& grpIds) = 0;
+    virtual int removeGroups(const std::vector<RsGxsGroupId>& grpIds) = 0;
 
     /*!
      * Retrieves all group ids in store
      * @param grpIds all grpids in store is inserted into this vector
      * @return error code
      */
-    virtual int retrieveGroupIds(const std::vector<RsGxsGroupId>& grpIds) = 0;
+    virtual int retrieveGroupIds(std::vector<RsGxsGroupId>& grpIds) = 0;
 
     /*!
      * @return the cache size set for this RsGeneralDataService in bytes
@@ -192,13 +192,6 @@ public:
      * @return error code
      */
     virtual int storeMessage(std::map<RsNxsMsg*, RsGxsMsgMetaData*>& msgs) = 0;
-
-    /*!
-	 * Stores a list of signed messages into data store
-	 * @param msg map of message and decoded meta data information
-	 * @return error code
-	 */
-	virtual int storeMessage(std::map<RsNxsMsg*, RsGxsMsgMetaData*>& msgs) = 0;
 
     /*!
      * Stores a list of groups in data store

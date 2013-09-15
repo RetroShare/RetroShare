@@ -663,7 +663,7 @@ int RsDataService::updateGroup(std::map<RsNxsGrp *, RsGxsGrpMetaData *> &grp)
         if(!validSize(grpPtr)) continue;
 
         std::string grpFile = mServiceDir + "/" + grpPtr->grpId;
-        std::fstream ostrm(grpFile.c_str(), std::ios::binary | std::ios::app | std::ios::out);
+        std::fstream ostrm(grpFile.c_str(), std::ios::binary | std::ios::app | std::ios::trunc);
         ostrm.seekg(0, std::ios::end); // go to end to append
         uint32_t offset = ostrm.tellg(); // get fill offset
 
