@@ -1078,6 +1078,43 @@ void p3ChatService::handleRecvChatAvatarItem(RsChatAvatarItem *ca)
 
 bool p3ChatService::checkForMessageSecurity(RsChatMsgItem *ci)
 {
+	// Remove too big messages
+	if (ci->message.length() > 2000)
+	{
+		wchar_t tmp[300];
+		mbstowcs(tmp, rsPeers->getPeerName(ci->PeerId()).c_str(), 299);
+
+		ci->message = std::wstring(L"**** Security warning: Message bigger than 2000 characters, coming from id ") + tmp + L", dropped. ****";
+		return false;
+	}
+
+	// The following code has been suggested, but is kept suspended since it is a bit too much restrictive.
+#ifdef SUSPENDED
+	// Transform message to lowercase
+	std::wstring mes(ci->message);
+	std::transform( mes.begin(), mes.end(), mes.begin(), std::towlower);
+
+	// Quick fix for svg attack and other nuisances (inline pictures)
+	if (mes.find(L"<img") != std::string::npos)
+	{
+		ci->message = L"**** Security warning: Message contains an . ****";
+		return false;
+	}
+
+	// Remove messages with too many line breaks
+	size_t pos = 0;
+	int count_line_breaks = 0;
+	while ((pos = mes.find(L"<br", pos+1)) != std::string::npos)
+	{
+		count_line_breaks++;
+	}
+	if (count_line_breaks > 50)
+	{
+		ci->message = L"**** More than 50 line breaks, dropped. ****";
+		return false;
+	}
+#endif
+
 	// https://en.wikipedia.org/wiki/Billion_laughs
 	// This should be done for all incoming HTML messages (also in forums
 	// etc.) so this should be a function in some other file.
@@ -1094,7 +1131,10 @@ bool p3ChatService::checkForMessageSecurity(RsChatMsgItem *ci)
 		std::wcout << "********** entity attack by " << ci->PeerId().c_str() << std::endl;
 		std::wcout << "**********" << std::endl;
 
-		ci->message = L"**** This message has been removed because it breaks security rules.****" ;
+		wchar_t tmp2[300];
+		mbstowcs(tmp2, rsPeers->getPeerName(ci->PeerId()).c_str(), 299);
+
+		ci->message = std::wstring(L"**** This message (from peer id ") + tmp2 + L") has been removed because it contains the string \"<!\".****" ;
 		return false;
 	}
 	// For a future whitelist:
