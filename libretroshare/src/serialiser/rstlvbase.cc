@@ -561,6 +561,18 @@ bool GetTlvWideString(void *data, uint32_t size, uint32_t *offset,
 		ok &= getRawUInt32(data, tlvend, offset, &widechar);
 		in += widechar;
 	}
+
+	// Check for message content. We want to avoid possible lol bombs as soon as possible.
+	
+	wchar_t tmp[10];
+	mbstowcs(tmp, "<!", 9);
+
+	// Drop any string with "<!" or "<!"...
+	// TODO: check what happens with partial messages
+	//
+	if (in.find(tmp) != std::string::npos)
+		in = L"**** This string has been removed because it contains \"<!\" (forbidden for security reasons).****" ;
+
 	return ok;
 }
 
