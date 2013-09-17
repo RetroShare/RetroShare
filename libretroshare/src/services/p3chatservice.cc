@@ -1079,7 +1079,7 @@ void p3ChatService::handleRecvChatAvatarItem(RsChatAvatarItem *ca)
 bool p3ChatService::checkForMessageSecurity(RsChatMsgItem *ci)
 {
 	// Remove too big messages
-	if (ci->message.length() > 2000)
+	if (ci->message.length() > 2000 && ci->chatFlags & RS_CHAT_FLAG_LOBBY)
 	{
 		wchar_t tmp[300];
 		mbstowcs(tmp, rsPeers->getPeerName(ci->PeerId()).c_str(), 299);
