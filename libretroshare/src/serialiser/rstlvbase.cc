@@ -38,7 +38,7 @@ inline void* right_shift_void_pointer(void* p, uint32_t len) {
 }
 //*********************
 
-#define TLV_BASE_DEBUG 1
+//#define TLV_BASE_DEBUG 1
 
 /**** Basic TLV Functions ****/
 uint32_t GetTlvSize(void *data) {
@@ -564,14 +564,35 @@ bool GetTlvWideString(void *data, uint32_t size, uint32_t *offset,
 
 	// Check for message content. We want to avoid possible lol bombs as soon as possible.
 	
-	wchar_t tmp[10];
-	mbstowcs(tmp, "<!", 9);
+	static const int number_of_suspiscious_strings = 4 ;
+	static const std::wstring err_in = L"**** String removed (SVG bomb?) ****" ;
+	static std::wstring suspiscious_strings[number_of_suspiscious_strings] = { L"<!e",       // base ingredient of xml bombs
+                      			                                                L"<!E",
+		                       			                                          L"PD94bWwg", // this is the base64 encoding of <?xml
+		                             			                                    L"PHN2Zy" 	// this is the base64 encoding of <svg
+	} ;
 
+#ifdef TLV_BASE_DEBUG
+	std::wcerr << L"Checking wide string \"" << in << std::endl;
+#endif
 	// Drop any string with "<!" or "<!"...
 	// TODO: check what happens with partial messages
 	//
-	if (in.find(tmp) != std::string::npos)
-		in = L"**** This string has been removed because it contains \"<!\" (forbidden for security reasons).****" ;
+	for(int i=0;i<number_of_suspiscious_strings;++i)
+		if (in.find(suspiscious_strings[i]) != std::string::npos)
+		{
+			std::wcerr << L"**** suspiscious wstring contains \"" << suspiscious_strings[i] << L"\" (SVG bomb suspected). " ;
+			std::cerr << "========== Original string =========" << std::endl;
+			std::wcerr << in << std::endl;
+			std::cerr << "=============== END ================" << std::endl;
+
+			for(uint32_t k=0;k<in.length();++k)
+				if(k < err_in.length())
+					in[k] = err_in[k] ;	// It's important to keep the same size for in than the size it should have,
+				else
+					in[k] = L' ';			// otherwise the deserialization of derived items that use it might fail 
+			break ;
+		}
 
 	return ok;
 }
