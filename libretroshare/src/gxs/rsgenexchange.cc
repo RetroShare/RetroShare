@@ -2388,13 +2388,19 @@ void RsGenExchange::performUpdateValidation()
 	std::cerr << "RsGenExchange::performUpdateValidation() " << std::endl;
 #endif
 
+	if(mGroupUpdates.empty())
+		return;
+
 	std::map<std::string, RsGxsGrpMetaData*> grpMetas;
 
 	std::vector<GroupUpdate>::iterator vit = mGroupUpdates.begin();
 	for(; vit != mGroupUpdates.end(); vit++)
 		grpMetas.insert(std::make_pair(vit->newGrp->grpId, (RsGxsGrpMetaData*)NULL));
 
-	mDataStore->retrieveGxsGrpMetaData(grpMetas);
+	if(!grpMetas.empty())
+		mDataStore->retrieveGxsGrpMetaData(grpMetas);
+	else
+		return;
 
 	vit = mGroupUpdates.begin();
 	for(; vit != mGroupUpdates.end(); vit++)
