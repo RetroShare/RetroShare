@@ -5,6 +5,9 @@
 #include "ui_ChatLobbyWidget.h"
 #include "RsAutoUpdatePage.h"
 
+class QModelIndex;
+class QPainter;
+
 class RSTreeWidgetItemCompareRole;
 class ChatTabWidget ;
 class ChatLobbyDialog ;
@@ -36,6 +39,7 @@ public:
 protected slots:
 	void lobbyChanged();
 	void lobbyTreeWidgetCustomPopupMenu(QPoint);
+    void lobbyTreeWidgetHeaderCustomPopupMenu( QPoint point );
 	void createChatLobby();
 	void subscribeItem();
 	void unsubscribeItem();
@@ -57,6 +61,11 @@ private slots:
 	void filterColumnChanged(int);
 	void filterItems(const QString &text);
 	
+
+    void setShowUserCountColumn(bool show);
+    void setShowTopicColumn(bool show);
+    void setShowSubscribeColumn(bool show);
+
 private:
 	void autoSubscribeLobby(QTreeWidgetItem *item);
 
@@ -73,5 +82,13 @@ private:
 	QTextBrowser *_lobby_blank_page ;
 
 	std::map<QTreeWidgetItem*,time_t> _icon_changed_map ;
+
+    bool m_bProcessSettings;
+    void processSettings(bool bLoad);
+
+    /** Defines the actions for the header context menu */
+    QAction* showUserCountAct;
+    QAction* showTopicAct;
+    QAction* showSubscribeAct;
 };
 

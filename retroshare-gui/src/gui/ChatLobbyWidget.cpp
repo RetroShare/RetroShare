@@ -11,6 +11,7 @@
 #include "notifyqt.h"
 #include "chat/ChatLobbyDialog.h"
 #include "util/HandleRichText.h"
+#include <gui/settings/rsharesettings.h>
 
 #include "retroshare/rsmsgs.h"
 #include "retroshare/rspeers.h"
@@ -19,7 +20,8 @@
 #define COLUMN_NAME       0
 #define COLUMN_USER_COUNT 1
 #define COLUMN_TOPIC      2
-#define COLUMN_COUNT      3
+#define COLUMN_SUBSCRIBED 3
+#define COLUMN_COUNT      4
 
 #define COLUMN_DATA       0
 #define ROLE_SORT         Qt::UserRole
@@ -43,10 +45,17 @@
 #define IMAGE_MESSAGE	        ":images/chat.png" 
 #define IMAGE_AUTOSUBSCRIBE   ":images/accepted16.png"
 
+
+#include <QModelIndex>
+#include <QPainter>
+#include <limits>
+
 ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WFlags flags)
 	: RsAutoUpdatePage(5000, parent, flags)
 {
 	setupUi(this);
+
+    m_bProcessSettings = false;
 
 	QObject::connect(NotifyQt::getInstance(), SIGNAL(lobbyListChanged()), SLOT(lobbyChanged()));
 	QObject::connect(NotifyQt::getInstance(), SIGNAL(chatLobbyEvent(qulonglong,int,const QString&,const QString&)), this, SLOT(displayChatLobbyEvent(qulonglong,int,const QString&,const QString&)));
@@ -72,17 +81,17 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WFlags flags)
 	headerItem->setText(COLUMN_NAME, tr("Name"));
 	headerItem->setText(COLUMN_USER_COUNT, tr("Count"));
 	headerItem->setText(COLUMN_TOPIC, tr("Topic"));
+    headerItem->setText(COLUMN_SUBSCRIBED, tr("Subscribed"));
 	headerItem->setTextAlignment(COLUMN_NAME, Qt::AlignHCenter | Qt::AlignVCenter);
 	headerItem->setTextAlignment(COLUMN_TOPIC, Qt::AlignHCenter | Qt::AlignVCenter);
 	headerItem->setTextAlignment(COLUMN_USER_COUNT, Qt::AlignHCenter | Qt::AlignVCenter);
+    headerItem->setTextAlignment(COLUMN_SUBSCRIBED, Qt::AlignHCenter | Qt::AlignVCenter);
 
 	QHeaderView *header = lobbyTreeWidget->header();
 	header->setResizeMode(COLUMN_NAME, QHeaderView::Interactive);
 	header->setResizeMode(COLUMN_USER_COUNT, QHeaderView::Interactive);
-	header->setResizeMode(COLUMN_TOPIC, QHeaderView::Stretch);
-
-	lobbyTreeWidget->setColumnWidth(COLUMN_NAME, 200);
-	lobbyTreeWidget->setColumnWidth(COLUMN_USER_COUNT, 50);
+    header->setResizeMode(COLUMN_TOPIC, QHeaderView::Interactive);
+    header->setResizeMode(COLUMN_SUBSCRIBED, QHeaderView::Interactive);
 
 	privateLobbyItem = new RSTreeWidgetItem(compareRole, TYPE_FOLDER);
 	privateLobbyItem->setText(COLUMN_NAME, tr("Private Lobbies"));
@@ -105,12 +114,31 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WFlags flags)
 	stackedWidget->addWidget(_lobby_blank_page) ;
 
 	lobbyTreeWidget->expandAll();
-	lobbyTreeWidget->setColumnHidden(1,true) ;
-	lobbyTreeWidget->setColumnHidden(2,true) ;
+    lobbyTreeWidget->setColumnHidden(COLUMN_NAME,false) ;
+    lobbyTreeWidget->setColumnHidden(COLUMN_USER_COUNT,true) ;
+    lobbyTreeWidget->setColumnHidden(COLUMN_TOPIC,true) ;
+    lobbyTreeWidget->setColumnHidden(COLUMN_SUBSCRIBED,true) ;
 	lobbyTreeWidget->setSortingEnabled(true) ;
 
 	lobbyTreeWidget->adjustSize();
-	lobbyTreeWidget->setColumnWidth(0,100);
+    lobbyTreeWidget->setColumnWidth(COLUMN_NAME,100);
+    lobbyTreeWidget->setColumnWidth(COLUMN_USER_COUNT, 50);
+    lobbyTreeWidget->setColumnWidth(COLUMN_TOPIC, 50);
+
+    QHeaderView *qhvLobbyList = lobbyTreeWidget->header();
+    qhvLobbyList->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(qhvLobbyList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(lobbyTreeWidgetHeaderCustomPopupMenu(QPoint)));
+
+    /** Setup the actions for the header context menu */
+    showUserCountAct= new QAction(headerItem->text(COLUMN_USER_COUNT),this);
+    showUserCountAct->setCheckable(true); showUserCountAct->setToolTip(tr("Show ")+showUserCountAct->text()+tr(" Column"));
+    connect(showUserCountAct,SIGNAL(triggered(bool)),this,SLOT(setShowUserCountColumn(bool))) ;
+    showTopicAct= new QAction(headerItem->text(COLUMN_TOPIC),this);
+    showTopicAct->setCheckable(true); showTopicAct->setToolTip(tr("Show ")+showTopicAct->text()+tr(" Column"));
+    connect(showTopicAct,SIGNAL(triggered(bool)),this,SLOT(setShowTopicColumn(bool))) ;
+    showSubscribeAct= new QAction(headerItem->text(COLUMN_SUBSCRIBED),this);
+    showSubscribeAct->setCheckable(true); showSubscribeAct->setToolTip(tr("Show ")+showSubscribeAct->text()+tr(" Column"));
+    connect(showSubscribeAct,SIGNAL(triggered(bool)),this,SLOT(setShowSubscribeColumn(bool))) ;
 
 	// Set initial size of the splitter
 	QList<int> sizes;
@@ -123,6 +151,9 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WFlags flags)
 	 /* add filter actions */
 	filterLineEdit->addFilter(QIcon(), tr("Name"), COLUMN_NAME, tr("Search Name"));
 	filterLineEdit->setCurrentFilter(COLUMN_NAME);
+
+    // load settings
+    processSettings(true);
 
 		QString help_str = tr(
 		" <h1><img width=\"32\" src=\":/images/64px_help.png\">&nbsp;&nbsp;Chat Lobbies</h1>                              \
@@ -147,6 +178,9 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WFlags flags)
 
 ChatLobbyWidget::~ChatLobbyWidget()
 {
+    // save settings
+    processSettings(false);
+
 	if (compareRole) {
 		delete(compareRole);
 	}
@@ -184,6 +218,25 @@ void ChatLobbyWidget::lobbyTreeWidgetCustomPopupMenu(QPoint)
 	contextMnu.exec(QCursor::pos());
 }
 
+
+void ChatLobbyWidget::lobbyTreeWidgetHeaderCustomPopupMenu( QPoint /*point*/ )
+{
+    std::cerr << "ChatLobbyWidget::lobbyTreeWidgetHeaderCustomPopupMenu()" << std::endl;
+    QMenu contextMnu( this );
+
+    showUserCountAct->setChecked(!lobbyTreeWidget->isColumnHidden(COLUMN_USER_COUNT));
+    showTopicAct->setChecked(!lobbyTreeWidget->isColumnHidden(COLUMN_TOPIC));
+    showSubscribeAct->setChecked(!lobbyTreeWidget->isColumnHidden(COLUMN_SUBSCRIBED));
+
+    QMenu *menu = contextMnu.addMenu(tr("Columns"));
+    menu->addAction(showUserCountAct);
+    menu->addAction(showTopicAct);
+    menu->addAction(showSubscribeAct);
+
+    contextMnu.exec(QCursor::pos());
+
+}
+
 void ChatLobbyWidget::lobbyChanged()
 {
 	updateDisplay();
@@ -205,7 +258,10 @@ static void updateItem(QTreeWidget *treeWidget, QTreeWidgetItem *item, ChatLobby
 		item->setData(COLUMN_TOPIC, ROLE_SORT, QString::fromUtf8(topic.c_str()));
 	}
 
-	item->setText(COLUMN_USER_COUNT, QString::number(count));
+    //item->setText(COLUMN_USER_COUNT, QString::number(count));
+    item->setData(COLUMN_USER_COUNT, Qt::DisplayRole, count);
+
+    item->setText(COLUMN_SUBSCRIBED, subscribed?qApp->translate("ChatLobbyWidget", "Yes"):qApp->translate("ChatLobbyWidget", "No"));
 
 	item->setData(COLUMN_DATA, ROLE_ID, (qulonglong)id);
 	item->setData(COLUMN_DATA, ROLE_SUBSCRIBED, subscribed);
@@ -774,4 +830,58 @@ bool ChatLobbyWidget::filterItem(QTreeWidgetItem *item, const QString &text, int
     }
 
     return (visible || visibleChildCount);
+}
+
+
+void ChatLobbyWidget::processSettings(bool bLoad)
+{
+    m_bProcessSettings = true;
+
+    QHeaderView *Header = lobbyTreeWidget->header () ;
+
+    Settings->beginGroup(QString("ChatLobbyWidget"));
+
+    if (bLoad) {
+        // load settings
+
+        // state of the lists
+        Header->restoreState(Settings->value("lobbyList").toByteArray());
+
+        setShowUserCountColumn(Settings->value("showUserCountColumn", !lobbyTreeWidget->isColumnHidden(COLUMN_USER_COUNT)).toBool());
+        setShowTopicColumn(Settings->value("showTopicColumn", !lobbyTreeWidget->isColumnHidden(COLUMN_TOPIC)).toBool());
+        setShowSubscribeColumn(Settings->value("showSubscribeColumn", !lobbyTreeWidget->isColumnHidden(COLUMN_SUBSCRIBED)).toBool());
+    } else {
+        // save settings
+
+        // state of the lists
+        Settings->setValue("lobbyList", Header->saveState());
+
+        Settings->setValue("showUserCountColumn", !lobbyTreeWidget->isColumnHidden(COLUMN_USER_COUNT));
+        Settings->setValue("showTopicColumn", !lobbyTreeWidget->isColumnHidden(COLUMN_TOPIC));
+        Settings->setValue("showSubscribeColumn", !lobbyTreeWidget->isColumnHidden(COLUMN_SUBSCRIBED));
+    }
+
+    Settings->endGroup();
+    m_bProcessSettings = false;
+}
+
+void ChatLobbyWidget::setShowUserCountColumn(bool show)
+{
+    if (lobbyTreeWidget->isColumnHidden(COLUMN_USER_COUNT) == show) {
+        lobbyTreeWidget->setColumnHidden(COLUMN_USER_COUNT, !show);
+    }
+}
+
+void ChatLobbyWidget::setShowTopicColumn(bool show)
+{
+    if (lobbyTreeWidget->isColumnHidden(COLUMN_TOPIC) == show) {
+        lobbyTreeWidget->setColumnHidden(COLUMN_TOPIC, !show);
+    }
+}
+
+void ChatLobbyWidget::setShowSubscribeColumn(bool show)
+{
+    if (lobbyTreeWidget->isColumnHidden(COLUMN_SUBSCRIBED) == show) {
+        lobbyTreeWidget->setColumnHidden(COLUMN_SUBSCRIBED, !show);
+    }
 }
