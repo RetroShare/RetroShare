@@ -230,6 +230,9 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor, publi
 		void handleRecvChatLobbyList(RsChatLobbyListItem_deprecated2 *item) ;
 		void handleRecvChatLobbyEventItem(RsChatLobbyEventItem *item) ;
 
+		/// Checks that the lobby object is not flooding a lobby.
+		bool locked_bouncingObjectCheck(RsChatLobbyBouncingObject *obj,const std::string& peer_id,uint32_t lobby_count) ;
+
 		/// Sends a request for an avatar to the peer of given id
 		void sendAvatarRequest(const std::string& peer_id) ;
 
