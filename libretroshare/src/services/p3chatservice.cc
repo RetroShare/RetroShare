@@ -70,6 +70,7 @@ static const uint32_t DISTANT_CHAT_HASH_SIZE            =   20 ; // This is sha1
 static const uint32_t MAX_AVATAR_JPEG_SIZE              = 32767; // Maximum size in bytes for an avatar. Too large packets 
                                                                  // don't transfer correctly and can kill the system.
 																					  // Images are 96x96, which makes approx. 27000 bytes uncompressed.
+static const uint32_t MAX_ALLOWED_LOBBIES_IN_LIST_WARNING = 50 ;
 
 p3ChatService::p3ChatService(p3LinkMgr *lm, p3HistoryMgr *historyMgr)
 	:p3Service(RS_SERVICE_TYPE_CHAT), p3Config(CONFIG_TYPE_CHAT), mChatMtx("p3ChatService"), mLinkMgr(lm) , mHistoryMgr(historyMgr)
@@ -814,12 +815,15 @@ void p3ChatService::handleRecvChatLobbyListRequest(RsChatLobbyListRequestItem *c
 }
 void p3ChatService::handleRecvChatLobbyList(RsChatLobbyListItem_deprecated *item)
 {
+	if(item->lobby_ids.size() > MAX_ALLOWED_LOBBIES_IN_LIST_WARNING)
+		std::cerr << "Warning: Peer " << item->PeerId() << "(" << rsPeers->getPeerName(item->PeerId()) << ") is sending a lobby list of " << item->lobby_ids.size() << " lobbies. This is unusual, and probably a attempt to crash you." << std::endl;
+
 	{
 		time_t now = time(NULL) ;
 
 		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
-		for(uint32_t i=0;i<item->lobby_ids.size();++i)
+		for(uint32_t i=0;i<item->lobby_ids.size() && i < MAX_ALLOWED_LOBBIES_IN_LIST_WARNING;++i)
 		{
 			VisibleChatLobbyRecord& rec(_visible_lobbies[item->lobby_ids[i]]) ;
 
@@ -842,12 +846,15 @@ void p3ChatService::handleRecvChatLobbyList(RsChatLobbyListItem_deprecated *item
 }
 void p3ChatService::handleRecvChatLobbyList(RsChatLobbyListItem_deprecated2 *item)
 {
+	if(item->lobby_ids.size() > MAX_ALLOWED_LOBBIES_IN_LIST_WARNING)
+		std::cerr << "Warning: Peer " << item->PeerId() << "(" << rsPeers->getPeerName(item->PeerId()) << ") is sending a lobby list of " << item->lobby_ids.size() << " lobbies. This is unusual, and probably a attempt to crash you." << std::endl;
+
 	{
 		time_t now = time(NULL) ;
 
 		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
-		for(uint32_t i=0;i<item->lobby_ids.size();++i)
+		for(uint32_t i=0;i<item->lobby_ids.size() && i < MAX_ALLOWED_LOBBIES_IN_LIST_WARNING;++i)
 		{
 			VisibleChatLobbyRecord& rec(_visible_lobbies[item->lobby_ids[i]]) ;
 
@@ -871,6 +878,9 @@ void p3ChatService::handleRecvChatLobbyList(RsChatLobbyListItem_deprecated2 *ite
 }
 void p3ChatService::handleRecvChatLobbyList(RsChatLobbyListItem *item)
 {
+	if(item->lobby_ids.size() > MAX_ALLOWED_LOBBIES_IN_LIST_WARNING)
+		std::cerr << "Warning: Peer " << item->PeerId() << "(" << rsPeers->getPeerName(item->PeerId()) << ") is sending a lobby list of " << item->lobby_ids.size() << " lobbies. This is unusual, and probably a attempt to crash you." << std::endl;
+
     std::list<ChatLobbyId> chatLobbyToSubscribe;
 
 	{
@@ -878,7 +888,7 @@ void p3ChatService::handleRecvChatLobbyList(RsChatLobbyListItem *item)
 
 		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
-		for(uint32_t i=0;i<item->lobby_ids.size();++i)
+		for(uint32_t i=0;i<item->lobby_ids.size() && i < MAX_ALLOWED_LOBBIES_IN_LIST_WARNING;++i)
 		{
 			VisibleChatLobbyRecord& rec(_visible_lobbies[item->lobby_ids[i]]) ;
 
