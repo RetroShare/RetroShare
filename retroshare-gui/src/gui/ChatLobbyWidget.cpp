@@ -107,12 +107,6 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WFlags flags)
 	publicLobbyItem->setData(COLUMN_DATA, ROLE_PRIVACYLEVEL, RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC);
 	lobbyTreeWidget->insertTopLevelItem(1, publicLobbyItem);
 
-	// add one blank page.
-	//
-	_lobby_blank_page = new QTextBrowser(this) ;
-	_lobby_blank_page->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding) ;
-	stackedWidget->addWidget(_lobby_blank_page) ;
-
 	lobbyTreeWidget->expandAll();
     lobbyTreeWidget->setColumnHidden(COLUMN_NAME,false) ;
     lobbyTreeWidget->setColumnHidden(COLUMN_USER_COUNT,true) ;
@@ -564,23 +558,26 @@ void ChatLobbyWidget::showBlankPage(ChatLobbyId id)
 	for(std::vector<VisibleChatLobbyRecord>::const_iterator it(lobbies.begin());it!=lobbies.end();++it)
 		if( (*it).lobby_id == id)
 		{
-			QString lobby_description_string ;
-
-			lobby_description_string += "<h2>"+tr("Selected lobby info")+"</h2>" ;
-			lobby_description_string += "<b>"+tr("Lobby name: ")+"</b>\t" + RsHtml::plainText(it->lobby_name) + "<br/>" ;
-			lobby_description_string += "<b>"+tr("Lobby Id: ")+"</b>\t" + QString::number((*it).lobby_id,16) + "<br/>" ;
-			lobby_description_string += "<b>"+tr("Topic: ")+"</b>\t" + RsHtml::plainText(it->lobby_topic) + "<br/>" ;
-			lobby_description_string += "<b>"+tr("Type: ")+"</b>\t" + (( (*it).lobby_privacy_level == RS_CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE)?tr("Private"):tr("Public")) + "<br/>" ;
-			lobby_description_string += "<b>"+tr("Peers: ")+"</b>\t" + QString::number((*it).total_number_of_peers) + "<br/>" ;
-
-			lobby_description_string += "<br/><br/>"+tr("You're not subscribed to this lobby; Double click-it to enter and chat.") ;
-
-			_lobby_blank_page->setText(lobby_description_string) ;
+			lobbyname_lineEdit->setText( RsHtml::plainText(it->lobby_name) );
+			lobbyid_lineEdit->setText( QString::number((*it).lobby_id,16) );
+			lobbytopic_lineEdit->setText( RsHtml::plainText(it->lobby_topic) );
+			lobbytype_lineEdit->setText( (( (*it).lobby_privacy_level == RS_CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE)?tr("Private"):tr("Public")) );
+			lobbypeers_lineEdit->setText( QString::number((*it).total_number_of_peers) );
+			
+			lobbyinfo_label->setText(tr("You're not subscribed to this lobby; Double click-it to enter and chat.") );
+			
 			return ;
 		}
+		
+	lobbyname_lineEdit->clear();	
+	lobbyid_lineEdit->clear();	
+	lobbytopic_lineEdit->clear();	
+	lobbytype_lineEdit->clear();	
+	lobbypeers_lineEdit->clear();	
 
-	QString text = tr("No lobby selected. \n\nSelect lobbies at left to show details.\n\nDouble click lobbies to enter and chat.") ;
-	_lobby_blank_page->setText(text) ;
+	QString text = tr("No lobby selected. \nSelect lobbies at left to show details.\nDouble click lobbies to enter and chat.") ;
+	lobbyinfo_label->setText(text) ;
+		
 }
 void ChatLobbyWidget::subscribeItem()
 {

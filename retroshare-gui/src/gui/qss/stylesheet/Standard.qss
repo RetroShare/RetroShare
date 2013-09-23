@@ -107,6 +107,34 @@ CreateMsgLinkDialog QLabel#distantchatinfo_label
 
 /* Chat lobby */
 
+ChatLobbyWidget QLabel#lobbyinfo_label
+{
+	border: 1px solid #DCDC41;
+	border-radius: 6px;
+	background: #FFFFD7;
+	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFD7, stop:1 #FFFFB2);
+}
+
+ChatLobbyWidget QGroupBox#lobbyinfo_groupBox
+{ 
+
+	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+	stop:0 #FEFEFE, stop:1 #E8E8E8);
+	border-radius: 6px;
+	border: 1px solid #CCCCCC;
+
+	padding: 14 6px;
+	font-size: 12px;
+	font-weight: bold;
+
+}
+
+ChatLobbyWidget QGroupBox::title#lobbyinfo_groupBox 
+{
+  padding: 4 12px;
+	background: transparent; 
+}
+
 ChatLobbyDialog QFrame#participantsFrame {
 	border: transparent;
 }
