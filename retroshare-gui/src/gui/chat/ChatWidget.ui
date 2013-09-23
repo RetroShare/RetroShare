@@ -212,7 +212,7 @@ border-image: url(:/images/closepressed.png)
      <property name="childrenCollapsible">
       <bool>false</bool>
      </property>
-     <widget class="LinkTextBrowser" name="textBrowser">
+     <widget class="RSTextBrowser" name="textBrowser">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
         <horstretch>0</horstretch>
@@ -707,9 +707,9 @@ border-image: url(:/images/closepressed.png)
  </widget>
  <customwidgets>
   <customwidget>
-   <class>LinkTextBrowser</class>
+   <class>RSTextBrowser</class>
    <extends>QTextBrowser</extends>
-   <header>gui/common/LinkTextBrowser.h</header>
+   <header>gui/common/RSTextBrowser.h</header>
   </customwidget>
   <customwidget>
    <class>HashBox</class>

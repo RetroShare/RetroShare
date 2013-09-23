@@ -656,7 +656,7 @@
              <property name="childrenCollapsible">
               <bool>false</bool>
              </property>
-             <widget class="LinkTextBrowser" name="msgText">
+             <widget class="RSTextBrowser" name="msgText">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                 <horstretch>0</horstretch>
@@ -837,9 +837,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>LinkTextBrowser</class>
+   <class>RSTextBrowser</class>
    <extends>QTextBrowser</extends>
-   <header>gui/common/LinkTextBrowser.h</header>
+   <header>gui/common/RSTextBrowser.h</header>
   </customwidget>
   <customwidget>
    <class>AvatarWidget</class>

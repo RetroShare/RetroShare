@@ -135,6 +135,8 @@ MessageWidget::MessageWidget(bool controlled, QWidget *parent, Qt::WFlags flags)
 	connect(NotifyQt::getInstance(), SIGNAL(messagesTagsChanged()), this, SLOT(messagesTagsChanged()));
 	connect(NotifyQt::getInstance(), SIGNAL(messagesChanged()), this, SLOT(messagesChanged()));
 
+	ui.msgText->setImageBlockWidget(ui.imageBlockWidget);
+
 	/* hide the Tree +/- */
 	ui.msgList->setRootIsDecorated( false );
 	ui.msgList->setSelectionMode( QAbstractItemView::ExtendedSelection );
@@ -452,6 +454,7 @@ void MessageWidget::fill(const std::string &msgId)
 		ui.subjectText->setText("");
 		ui.msgList->clear();
 		ui.msgText->clear();
+		ui.msgText->resetImagesStatus(false);
 
 		clearTagLabels();
 
@@ -557,6 +560,7 @@ void MessageWidget::fill(const std::string &msgId)
 	ui.subjectText->setText(QString::fromStdWString(msgInfo.title));
 
 	text = RsHtmlMsg(msgInfo.msgflags).formatText(ui.msgText->document(), QString::fromStdWString(msgInfo.msg), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_REPLACE_LINKS);
+	ui.msgText->resetImagesStatus(Settings->getMsgLoadEmbeddedImages());
 	ui.msgText->setHtml(text);
 
 	ui.filesText->setText(QString("(%1 %2)").arg(msgInfo.count).arg(msgInfo.count == 1 ? tr("File") : tr("Files")));

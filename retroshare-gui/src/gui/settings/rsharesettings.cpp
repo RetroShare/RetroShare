@@ -703,6 +703,16 @@ void RshareSettings::setMsgSetToReadOnActivate (bool value)
     setValueToGroup("MessageDialog", "SetMsgToReadOnActivate", value);
 }
 
+bool RshareSettings::getMsgLoadEmbeddedImages()
+{
+    return valueFromGroup("MessageDialog", "LoadEmbeddedImages", false).toBool();
+}
+
+void RshareSettings::setMsgLoadEmbeddedImages(bool value)
+{
+    setValueToGroup("MessageDialog", "LoadEmbeddedImages", value);
+}
+
 RshareSettings::enumMsgOpen RshareSettings::getMsgOpen()
 {
     enumMsgOpen value = (enumMsgOpen) valueFromGroup("MessageDialog", "msgOpen", MSG_OPEN_TAB).toInt();
@@ -774,4 +784,14 @@ void RshareSettings::setMaxTimeBeforeIdle(uint nValue)
 {
     m_maxTimeBeforeIdle = nValue;
     setValue("maxTimeBeforeIdle", nValue);
+}
+
+bool RshareSettings::getForumLoadEmbeddedImages()
+{
+    return valueFromGroup("ForumDialog", "LoadEmbeddedImages", false).toBool();
+}
+
+void RshareSettings::setForumLoadEmbeddedImages(bool value)
+{
+    setValueToGroup("ForumDialog", "LoadEmbeddedImages", value);
 }

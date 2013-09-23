@@ -25,7 +25,7 @@
 
 #include "UIStateHelper.h"
 #include "RSTreeWidget.h"
-#include "LinkTextBrowser.h"
+#include "RSTextBrowser.h"
 
 class UIStateHelperObject
 {
@@ -45,10 +45,10 @@ public:
 		init();
 		mTreeWidget = widget;
 	}
-	UIStateHelperObject(LinkTextBrowser *widget)
+	UIStateHelperObject(RSTextBrowser *widget)
 	{
 		init();
-		mLinkTextBrowser = widget;
+		mRSTextBrowser = widget;
 	}
 
 	void setPlaceholder(bool loading, const QString &text, bool clear) const
@@ -77,12 +77,12 @@ public:
 			mTreeWidget->setPlaceholderText(text);
 		}
 
-		if (mLinkTextBrowser) {
+		if (mRSTextBrowser) {
 			if (loading && clear) {
-				mLinkTextBrowser->clear();
+				mRSTextBrowser->clear();
 			}
 
-			mLinkTextBrowser->setPlaceholderText(text);
+			mRSTextBrowser->setPlaceholderText(text);
 		}
 	}
 
@@ -100,8 +100,8 @@ public:
 			mTreeWidget->clear();
 		}
 
-		if (mLinkTextBrowser) {
-			mLinkTextBrowser->clear();
+		if (mRSTextBrowser) {
+			mRSTextBrowser->clear();
 		}
 	}
 
@@ -119,8 +119,8 @@ public:
 			return mTreeWidget;
 		}
 
-		if (mLinkTextBrowser) {
-			return mLinkTextBrowser;
+		if (mRSTextBrowser) {
+			return mRSTextBrowser;
 		}
 
 		return NULL;
@@ -140,7 +140,7 @@ public:
 			return true;
 		}
 
-		if (mLinkTextBrowser == widget) {
+		if (mRSTextBrowser == widget) {
 			return true;
 		}
 
@@ -152,7 +152,7 @@ public:
 		if (mLabel == data.mLabel &&
 			mLineEdit == data.mLineEdit &&
 			mTreeWidget == data.mTreeWidget &&
-			mLinkTextBrowser == data.mLinkTextBrowser) {
+			mRSTextBrowser == data.mRSTextBrowser) {
 			return true;
 		}
 
@@ -164,7 +164,7 @@ public:
 		if (mLabel < data.mLabel ||
 			mLineEdit < data.mLineEdit ||
 			mTreeWidget < data.mTreeWidget ||
-			mLinkTextBrowser < data.mLinkTextBrowser) {
+			mRSTextBrowser < data.mRSTextBrowser) {
 			return true;
 		}
 
@@ -177,14 +177,14 @@ private:
 		mLabel = NULL;
 		mLineEdit = NULL;
 		mTreeWidget = NULL;
-		mLinkTextBrowser = NULL;
+		mRSTextBrowser = NULL;
 	}
 
 private:
 	QLabel *mLabel;
 	QLineEdit *mLineEdit;
 	RSTreeWidget *mTreeWidget;
-	LinkTextBrowser *mLinkTextBrowser;
+	RSTextBrowser *mRSTextBrowser;
 };
 
 class UIStateHelperData
@@ -258,7 +258,7 @@ void UIStateHelper::addLoadPlaceholder(int index, RSTreeWidget *widget, bool cle
 	data->mLoad.insert(UIStateHelperObject(widget), QPair<QString, bool>(text.isEmpty() ? tr("Loading") : text, clear));
 }
 
-void UIStateHelper::addLoadPlaceholder(int index, LinkTextBrowser *widget, bool clear, const QString &text)
+void UIStateHelper::addLoadPlaceholder(int index, RSTextBrowser *widget, bool clear, const QString &text)
 {
 	UIStateHelperData *data = findData(index, true);
 	data->mLoad.insert(UIStateHelperObject(widget), QPair<QString, bool>(text.isEmpty() ? tr("Loading") : text, clear));
@@ -291,7 +291,7 @@ void UIStateHelper::addClear(int index, RSTreeWidget *widget)
 	data->mClear.push_back(UIStateHelperObject(widget));
 }
 
-void UIStateHelper::addClear(int index, LinkTextBrowser *widget)
+void UIStateHelper::addClear(int index, RSTextBrowser *widget)
 {
 	UIStateHelperData *data = findData(index, true);
 	if (data->mClear.contains(widget)) {

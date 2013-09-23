@@ -30,7 +30,7 @@ class QLabel;
 class QLineEdit;
 class RSTreeWidget;
 class UIStateHelperData;
-class LinkTextBrowser;
+class RSTextBrowser;
 
 enum UIState // State is untouched when bit is not set
 {
@@ -61,11 +61,11 @@ public:
 	void addLoadPlaceholder(int index, QLabel *widget, bool clear = true, const QString &text = "" /* ="Loading" */);
 	void addLoadPlaceholder(int index, QLineEdit *widget, bool clear = true, const QString &text = "" /* ="Loading" */);
 	void addLoadPlaceholder(int index, RSTreeWidget *widget, bool clear = true, const QString &text = "" /* ="Loading" */);
-	void addLoadPlaceholder(int index, LinkTextBrowser *widget, bool clear = true, const QString &text = "" /* ="Loading" */);
+	void addLoadPlaceholder(int index, RSTextBrowser *widget, bool clear = true, const QString &text = "" /* ="Loading" */);
 	void addClear(int index, QLabel *widget);
 	void addClear(int index, QLineEdit *widget);
 	void addClear(int index, RSTreeWidget *widget);
-	void addClear(int index, LinkTextBrowser *widget);
+	void addClear(int index, RSTextBrowser *widget);
 
 	/* Set state */
 	void setLoading(int index, bool loading);

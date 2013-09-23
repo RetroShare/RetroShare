@@ -139,6 +139,8 @@ ForumsDialog::ForumsDialog(QWidget *parent)
 
     connect(NotifyQt::getInstance(), SIGNAL(forumMsgReadSatusChanged(QString,QString,int)), this, SLOT(forumMsgReadSatusChanged(QString,QString,int)));
 
+    ui.postText->setImageBlockWidget(ui.imageBlockWidget);
+
     /* Set initial size the splitter */
     QList<int> sizes;
     sizes << 300 << width(); // Qt calculates the right sizes
@@ -888,6 +890,7 @@ void ForumsDialog::insertThreads()
     ui.newthreadButton->setEnabled (false);
 
     ui.postText->clear();
+    ui.postText->resetImagesStatus(false);
     ui.threadTitle->clear();
 
     if (mCurrForumId.empty())
@@ -1133,6 +1136,7 @@ void ForumsDialog::insertPost()
     if (mCurrForumId.empty())
     {
         ui.postText->setText("");
+        ui.postText->resetImagesStatus(false);
         ui.threadTitle->setText("");
         ui.previousButton->setEnabled(false);
         ui.nextButton->setEnabled(false);
@@ -1149,10 +1153,12 @@ void ForumsDialog::insertPost()
         ForumInfo fi;
         if (!rsForums->getForumInfo(mCurrForumId, fi)) {
             ui.postText->setText("");
+            ui.postText->resetImagesStatus(false);
             ui.threadTitle->setText("");
             return;
         }
         ui.threadTitle->setText(tr("Forum Description"));
+        ui.postText->resetImagesStatus(false);
         ui.postText->setText(QString::fromStdWString(fi.forumDesc));
         return;
     }
@@ -1177,6 +1183,7 @@ void ForumsDialog::insertPost()
     ForumMsgInfo msg;
     if (!rsForums->getForumMessage(mCurrForumId, mCurrThreadId, msg))
     {
+        ui.postText->resetImagesStatus(false);
         ui.postText->setText("");
         return;
     }
@@ -1203,6 +1210,7 @@ void ForumsDialog::insertPost()
 
     QString extraTxt = RsHtml().formatText(ui.postText->document(), messageFromInfo(msg), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS);
 
+    ui.postText->resetImagesStatus(Settings->getForumLoadEmbeddedImages());
     ui.postText->setHtml(extraTxt);
     ui.threadTitle->setText(titleFromInfo(msg));
 }

@@ -450,7 +450,8 @@ HEADERS +=  rshare.h \
             gui/common/HashBox.h \
             gui/common/LineEditClear.h \
             gui/common/DropLineEdit.h \
-            gui/common/LinkTextBrowser.h \
+            gui/common/RSTextBrowser.h \
+            gui/common/RSImageBlockWidget.h \
             gui/common/FeedNotify.h \
             gui/common/UserNotify.h \
             gui/common/HeaderFrame.h \
@@ -593,6 +594,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/common/FriendList.ui \
             gui/common/FriendSelectionWidget.ui \
             gui/common/HashBox.ui \
+            gui/common/RSImageBlockWidget.ui \
             gui/common/RsCollectionDialog.ui \
             gui/common/HeaderFrame.ui \
             gui/style/StyleDialog.ui \
@@ -729,7 +731,8 @@ SOURCES +=  main.cpp \
             gui/common/HashBox.cpp \
             gui/common/LineEditClear.cpp \
             gui/common/DropLineEdit.cpp \
-            gui/common/LinkTextBrowser.cpp \
+            gui/common/RSTextBrowser.cpp \
+            gui/common/RSImageBlockWidget.cpp \
             gui/common/FeedNotify.cpp \
             gui/common/UserNotify.cpp \
             gui/common/HeaderFrame.cpp \

@@ -238,6 +238,8 @@ public:
   /* Messages */
   bool getMsgSetToReadOnActivate();
   void setMsgSetToReadOnActivate(bool value);
+  bool getMsgLoadEmbeddedImages();
+  void setMsgLoadEmbeddedImages(bool value);
 
   enumMsgOpen getMsgOpen();
   void setMsgOpen(enumMsgOpen value);
@@ -249,6 +251,8 @@ public:
   void setForumExpandNewMessages(bool value);
   bool getForumOpenAllInNewTab();
   void setForumOpenAllInNewTab(bool value);
+  bool getForumLoadEmbeddedImages();
+  void setForumLoadEmbeddedImages(bool value);
 
   /* time before idle */
   uint getMaxTimeBeforeIdle();

@@ -67,6 +67,7 @@ bool
 MessagePage::save(QString &/*errmsg*/)
 {
     Settings->setMsgSetToReadOnActivate(ui.setMsgToReadOnActivate->isChecked());
+    Settings->setMsgLoadEmbeddedImages(ui.loadEmbeddedImages->isChecked());
     Settings->setMsgOpen((RshareSettings::enumMsgOpen) ui.openComboBox->itemData(ui.openComboBox->currentIndex()).toInt());
 
     std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator Tag;
@@ -95,6 +96,7 @@ void
 MessagePage::load()
 {
     ui.setMsgToReadOnActivate->setChecked(Settings->getMsgSetToReadOnActivate());
+    ui.loadEmbeddedImages->setChecked(Settings->getMsgLoadEmbeddedImages());
     ui.openComboBox->setCurrentIndex(ui.openComboBox->findData(Settings->getMsgOpen()));
 
 	 ui.encryptedMsgs_CB->setChecked(rsMsgs->distantMessagingEnabled()) ;

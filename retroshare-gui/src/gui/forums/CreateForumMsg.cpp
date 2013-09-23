@@ -27,6 +27,7 @@
 #include <QDesktopWidget>
 #include <QDropEvent>
 #include <QPushButton>
+#include <QTextDocumentFragment>
 
 #include <retroshare/rsforums.h>
 #include <retroshare/rspeers.h>
@@ -66,6 +67,7 @@ CreateForumMsg::CreateForumMsg(const std::string &fId, const std::string &pId)
     connect( ui.buttonBox, SIGNAL(rejected()), this, SLOT(close()));
     connect( ui.emoticonButton, SIGNAL(clicked()), this, SLOT(smileyWidgetForums()));
     connect( ui.attachFileButton, SIGNAL(clicked() ), this , SLOT(addFile()));
+    connect(ui.attachPictureButton, SIGNAL(clicked()), this, SLOT(addPicture()));
     connect( ui.pastersButton, SIGNAL(clicked() ), this , SLOT(pasteLink()));
 
     setAcceptDrops(true);
@@ -210,6 +212,19 @@ void CreateForumMsg::addFile()
     QStringList files;
     if (misc::getOpenFileNames(this, RshareSettings::LASTDIR_EXTRAFILE, tr("Add Extra File"), "", files)) {
         ui.hashBox->addAttachments(files,RS_FILE_REQ_ANONYMOUS_ROUTING);
+    }
+}
+
+void CreateForumMsg::addPicture()
+{
+    // select a picture file
+    QString file;
+    if (misc::getOpenFileName(window(), RshareSettings::LASTDIR_IMAGES, tr("Load Picture File"), "Pictures (*.png *.xpm *.jpg)", file)) {
+        QString encodedImage;
+        if (RsHtml::makeEmbeddedImage(file, encodedImage, 640*480)) {
+            QTextDocumentFragment fragment = QTextDocumentFragment::fromHtml(encodedImage);
+            ui.forumMessage->textCursor().insertFragment(fragment);
+        }
     }
 }
 

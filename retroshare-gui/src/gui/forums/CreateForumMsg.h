@@ -48,6 +48,7 @@ private slots:
     void smileyWidgetForums();
     void addSmileys();
     void addFile();
+    void addPicture();
 
 protected:
     void closeEvent (QCloseEvent * event);

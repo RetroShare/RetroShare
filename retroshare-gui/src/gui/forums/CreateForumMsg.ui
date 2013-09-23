@@ -101,9 +101,6 @@
            <property name="toolTip">
             <string>Attach File</string>
            </property>
-           <property name="text">
-            <string/>
-           </property>
            <property name="icon">
             <iconset resource="../images.qrc">
              <normaloff>:/images/add-share24.png</normaloff>:/images/add-share24.png</iconset>
@@ -120,12 +117,32 @@
           </widget>
          </item>
          <item>
-          <widget class="QToolButton" name="emoticonButton">
+          <widget class="QToolButton" name="attachPictureButton">
            <property name="focusPolicy">
             <enum>Qt::NoFocus</enum>
            </property>
-           <property name="text">
-            <string/>
+           <property name="toolTip">
+            <string>Attach a Picture</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../images.qrc">
+             <normaloff>:/images/add_image24.png</normaloff>:/images/add_image24.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="autoRaise">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="emoticonButton">
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
            </property>
            <property name="icon">
             <iconset resource="../images.qrc">
@@ -186,9 +203,6 @@
            <property name="toolTip">
             <string>Paste RetroShare Link</string>
            </property>
-           <property name="text">
-            <string/>
-           </property>
            <property name="icon">
             <iconset resource="../images.qrc">
              <normaloff>:/images/pasterslink.png</normaloff>:/images/pasterslink.png</iconset>
@@ -208,7 +222,7 @@
         </property>
         <layout class="QGridLayout" name="gridLayout">
          <item row="0" column="0">
-          <widget class="QTextEdit" name="forumMessage">
+          <widget class="MimeTextEdit" name="forumMessage">
            <property name="contextMenuPolicy">
             <enum>Qt::CustomContextMenu</enum>
            </property>
@@ -217,7 +231,7 @@
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
           </widget>
          </item>
@@ -263,15 +277,20 @@ p, li { white-space: pre-wrap; }
  </widget>
  <customwidgets>
   <customwidget>
-   <class>HeaderFrame</class>
-   <extends>QFrame</extends>
-   <header>gui/common/HeaderFrame.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>HashBox</class>
    <extends>QScrollArea</extends>
    <header location="global">gui/common/HashBox.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>MimeTextEdit</class>
+   <extends>QTextEdit</extends>
+   <header location="global">gui/common/MimeTextEdit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>HeaderFrame</class>
+   <extends>QFrame</extends>
+   <header>gui/common/HeaderFrame.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

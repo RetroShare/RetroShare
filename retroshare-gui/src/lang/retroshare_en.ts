@@ -1411,6 +1411,30 @@ Double click lobbies to enter and chat.</source>
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Chat Lobbies&lt;/h1&gt;                              		  &lt;p&gt;Chat lobbies are distributed chat rooms, and work pretty much like IRC.                                      		  They allow you to talk anonymously with tons of people without the need to make friends.&lt;/p&gt;                    		  &lt;p&gt;A chat lobby can be public (your friends see it) or private (your friends can&apos;t see it, unless you           		  invite them with &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). Once you have been invited to a private lobby, you will be able to see it when your friends   		  are using it.&lt;/p&gt;                                                                                               		  &lt;p&gt;The list at left shows                                                                                     		  chat lobbies your friends are participating in. You can either                                 		  &lt;ul&gt;                                                                                                            			  &lt;li&gt;Right click to create a new chat lobby&lt;/li&gt;                                                              		     &lt;li&gt;Double click a chat lobby to enter, chat, and show it to your friends&lt;/li&gt;                      		  &lt;/ul&gt; 		  Note: For the chat lobbies to work properly, your computer needs be on time.  So check your system clock!		  &lt;/p&gt;                                      		</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Subscribed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> Column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Columns</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Yes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ChatMsgItem</name>
@@ -3823,6 +3847,14 @@ p, li { white-space: pre-wrap; }
         <source>Add Extra File</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Attach a Picture</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Load Picture File</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>CreateGroup</name>
@@ -5375,6 +5407,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Forum</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Load embedded images</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8918,6 +8954,10 @@ Do you want to save message ?</source>
         <source>Accept encrypted distant messages from everyone</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Load embedded images</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MessageToaster</name>
@@ -10704,15 +10744,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PostedGroupDialog</name>
     <message>
-        <source>Create New Posted Topic</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Posted Topic</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Edit Posted Topic</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -10723,15 +10755,19 @@ p, li { white-space: pre-wrap; }
         <source>Select Topic Admins</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Create New Topic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit Topic</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>PostedItem</name>
     <message>
         <source>0</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>\/</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -10763,11 +10799,11 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Vote Up</source>
+        <source>I like this</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Vote Down</source>
+        <source>I dislike this</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -11651,6 +11687,21 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Warning!</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>RSImageBlockWidget</name>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The loading of embedded images is blocked.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Load images</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
