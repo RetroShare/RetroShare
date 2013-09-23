@@ -24,6 +24,8 @@
 
 #include "ui_GenCertDialog.h"
 
+class QMouseEvent ;
+
 class GenCertDialog : public QDialog
 {
 	Q_OBJECT
@@ -32,11 +34,14 @@ public:
 	/** Default constructor */
 	GenCertDialog(bool onlyGenerateIdentity, QWidget *parent = 0);
 
+	virtual ~GenCertDialog() ;
+	virtual void mouseMoveEvent(QMouseEvent *e) ;
 private slots:
 	void genPerson();
 	void importIdentity();
 	void exportIdentity();
 	void newGPGKeyGenUiSetup();
+	void grabMouse();
 
 private:
 	void init();
@@ -46,6 +51,8 @@ private:
 
 	bool genNewGPGKey;
 	bool mOnlyGenerateIdentity;
+
+	QTimer *entropy_timer ;
 };
 
 #endif

@@ -51,6 +51,7 @@
 #include <dirent.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <openssl/rand.h>
 #include <fcntl.h>
 
 #if (defined(__unix__) || defined(unix)) && !defined(USG)
@@ -1217,6 +1218,12 @@ bool RsInit::SelectGPGAccount(const std::string& gpgId)
 	return retVal;
 }
 
+bool RsInit::collectEntropy(uint32_t n)
+{
+	RAND_seed(&n,4) ;
+
+	return true ;
+}
 
 bool     RsInit::GeneratePGPCertificate(const std::string& name, const std::string& email, const std::string& passwd, std::string &pgpId, std::string &errString)
 {

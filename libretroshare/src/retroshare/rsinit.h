@@ -41,6 +41,7 @@
 
 #define RS_USE_PGPSSL 1
 
+#include <stdint.h>
 #include <list>
 #include <map>
 #include <vector>
@@ -88,6 +89,7 @@ class RsInit
 		/*!
 		 *  Generating GPGme Account
 		 */
+		static bool collectEntropy(uint32_t bytes) ;
 		static int 	GetPGPLogins(std::list<std::string> &pgpIds);
 		static int 	GetPGPLoginDetails(const std::string& id, std::string &name, std::string &email);
 		static bool	GeneratePGPCertificate(const std::string&, const std::string& email, const std::string& passwd, std::string &pgpId, std::string &errString);
