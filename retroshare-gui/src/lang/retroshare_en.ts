@@ -1344,22 +1344,6 @@ Please choose one of it to chat with.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Lobby name: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Lobby Id: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Topic: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Type: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Private</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1368,19 +1352,7 @@ Please choose one of it to chat with.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Peers: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>You&apos;re not subscribed to this lobby; Double click-it to enter and chat.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>No lobby selected. 
-
-Select lobbies at left to show details.
-
-Double click lobbies to enter and chat.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1433,6 +1405,36 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>No</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lobby Name:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lobby Id:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Topic:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Type:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Peers:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>TextLabel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No lobby selected. 
+Select lobbies at left to show details.
+Double click lobbies to enter and chat.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5671,6 +5673,10 @@ p, li { white-space: pre-wrap; }
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Forums&lt;/h1&gt;                                  &lt;p&gt;Retroshare Forums look like internet forums, but they work in a decentralized way:                         You see forums your friends are subscribed to, and you forward subscribed forums to                          your friends. This automatically promotes interesting forums in the network.&lt;/p&gt;                         &lt;p&gt;Forums are either Authenticated (&lt;img src=&quot;:/images/konv_message2.png&quot; width=&quot;12&quot;/&gt;) in which case you need to cryptographically sign                          your posts, or anonymous (&lt;img src=&quot;:/images/konversation.png&quot; width=&quot;12&quot;/&gt;). The former class is more resistant to spamming.&lt;/p&gt;                     &lt;p&gt;Forum posts propagate from friend to friend using small cache file exchanges. When you first connect to a new friend, it&apos;s likely     you will receive many such cache files, and new forums will appear.     &lt;/p&gt;                                        </source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Load images always for this message</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ForumsFillThread</name>
@@ -6270,10 +6276,6 @@ anonymous, you can use a fake email.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Put a meaningful location. ex : home, laptop, etc. This field will be used to differentiate different installations with the same identity (PGP key).</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Create new identity</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6421,6 +6423,28 @@ Fill in your PGP password when asked, to sign your new key.</source>
     </message>
     <message>
         <source>Failed to Generate your new Certificate, maybe PGP password is wrong!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Password (check)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Before proceeding, move your mouse around to help Retroshare collect as much randomness as possible. Filling the progressbar to 20% is needed, 100% is advised.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>[Required] Type the same password again here.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Put a meaningful location. ex : home, laptop, etc. 
+This field will be used to differentiate different installations with
+the same identity (PGP key).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Passwords to not match</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9073,6 +9097,10 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>HTML-Files (*.htm *.html);;All Files (*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Load images always for this message</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

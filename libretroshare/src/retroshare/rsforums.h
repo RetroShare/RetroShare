@@ -34,9 +34,10 @@
 #include "rstypes.h"
 #include "rsdistrib.h" /* For FLAGS */
 
-#define FORUM_MSG_STATUS_MASK           0x000f
-#define FORUM_MSG_STATUS_READ           0x0001
-#define FORUM_MSG_STATUS_UNREAD_BY_USER 0x0002
+#define FORUM_MSG_STATUS_MASK                 0x000f
+#define FORUM_MSG_STATUS_READ                 0x0001
+#define FORUM_MSG_STATUS_UNREAD_BY_USER       0x0002
+#define FORUM_MSG_STATUS_LOAD_EMBEDDED_IMAGES 0x0004
 
 class ForumInfo 
 {

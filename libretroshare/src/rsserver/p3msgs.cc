@@ -169,6 +169,11 @@ bool p3Msgs::MessageForwarded(const std::string &mid, bool forwarded)
 	return mMsgSrv->setMsgFlag(mid, forwarded ? RS_MSG_FLAGS_FORWARDED : 0, RS_MSG_FLAGS_FORWARDED);
 }
 
+bool p3Msgs::MessageLoadEmbeddedImages(const std::string &mid, bool load)
+{
+	return mMsgSrv->setMsgFlag(mid, load ? RS_MSG_FLAGS_LOAD_EMBEDDED_IMAGES : 0, RS_MSG_FLAGS_LOAD_EMBEDDED_IMAGES);
+}
+
 bool 	p3Msgs::getMessageTagTypes(MsgTagType& tags)
 {
 	return mMsgSrv->getMessageTagTypes(tags);

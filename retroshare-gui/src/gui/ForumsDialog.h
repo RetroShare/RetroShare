@@ -128,6 +128,8 @@ private slots:
 
     void shareKey();
 
+    void loadImagesAlways();
+
 private:
     void insertForums();
     void insertThreads();

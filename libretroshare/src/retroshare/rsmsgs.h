@@ -61,6 +61,7 @@
 #define RS_MSG_ENCRYPTED             0x1000	 /* message is encrypted */
 #define RS_MSG_SIGNATURE_CHECKS      0x2000	 /* message was signed, and signature checked */
 #define RS_MSG_SIGNED                0x4000	 /* message was signed and signature didn't check */
+#define RS_MSG_LOAD_EMBEDDED_IMAGES  0x8000  /* load embedded images */
 
 #define RS_CHAT_LOBBY_EVENT_PEER_LEFT   				0x01
 #define RS_CHAT_LOBBY_EVENT_PEER_STATUS 				0x02
@@ -264,6 +265,7 @@ virtual bool MessageRead(const std::string &mid, bool unreadByUser) = 0;
 virtual bool MessageReplied(const std::string &mid, bool replied) = 0;
 virtual bool MessageForwarded(const std::string &mid, bool forwarded) = 0;
 virtual bool MessageStar(const std::string &mid, bool mark) = 0;
+virtual bool MessageLoadEmbeddedImages(const std::string &mid, bool load) = 0;
 
 /* message tagging */
 

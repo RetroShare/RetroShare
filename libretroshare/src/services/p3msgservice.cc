@@ -1539,6 +1539,10 @@ void p3MsgService::initRsMI(RsMsgItem *msg, MessageInfo &mi)
 	{
 		mi.msgflags |= RS_MSG_FRIEND_RECOMMENDATION;
 	}
+	if (msg->msgFlags & RS_MSG_FLAGS_LOAD_EMBEDDED_IMAGES)
+	{
+		mi.msgflags |= RS_MSG_LOAD_EMBEDDED_IMAGES;
+	}
 
 	mi.ts = msg->sendTime;
 	mi.srcId = msg->PeerId();
@@ -1652,6 +1656,10 @@ void p3MsgService::initRsMIS(RsMsgItem *msg, MsgInfoSummary &mis)
 	{
 		mis.msgflags |= RS_MSG_FRIEND_RECOMMENDATION;
 	}
+	if (msg->msgFlags & RS_MSG_FLAGS_LOAD_EMBEDDED_IMAGES)
+	{
+		mis.msgflags |= RS_MSG_LOAD_EMBEDDED_IMAGES;
+	}
 
 	mis.srcId = msg->PeerId();
 	{
@@ -1725,6 +1733,9 @@ RsMsgItem *p3MsgService::initMIRsMsg(MessageInfo &info, const std::string &to)
 
 	if (info.msgflags & RS_MSG_SIGNED)
 		msg->msgFlags |= RS_MSG_FLAGS_SIGNED;
+
+	/* load embedded images from own messages */
+	msg->msgFlags |= RS_MSG_FLAGS_LOAD_EMBEDDED_IMAGES;
 
 	// See if we need to encrypt this message.  If so, we replace the msg text
 	// by the whole message serialized and binary encrypted, so as to obfuscate

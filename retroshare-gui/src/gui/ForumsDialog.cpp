@@ -139,6 +139,7 @@ ForumsDialog::ForumsDialog(QWidget *parent)
 
     connect(NotifyQt::getInstance(), SIGNAL(forumMsgReadSatusChanged(QString,QString,int)), this, SLOT(forumMsgReadSatusChanged(QString,QString,int)));
 
+    ui.imageBlockWidget->addButtonAction(tr("Load images always for this message"), this, SLOT(loadImagesAlways()), true);
     ui.postText->setImageBlockWidget(ui.imageBlockWidget);
 
     /* Set initial size the splitter */
@@ -481,11 +482,11 @@ void ForumsDialog::togglethreadview()
 void ForumsDialog::togglethreadview_internal()
 {
     if (ui.expandButton->isChecked()) {
-        ui.postText->setVisible(true);
+        ui.postFrame->setVisible(true);
         ui.expandButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
         ui.expandButton->setToolTip(tr("Hide"));
     } else  {
-        ui.postText->setVisible(false);
+        ui.postFrame->setVisible(false);
         ui.expandButton->setIcon(QIcon(QString(":/images/edit_add24.png")));
         ui.expandButton->setToolTip(tr("Expand"));
     }
@@ -1210,7 +1211,16 @@ void ForumsDialog::insertPost()
 
     QString extraTxt = RsHtml().formatText(ui.postText->document(), messageFromInfo(msg), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS);
 
-    ui.postText->resetImagesStatus(Settings->getForumLoadEmbeddedImages());
+    bool loadEmbeddedImages = Settings->getForumLoadEmbeddedImages();
+    if (!loadEmbeddedImages) {
+        uint32_t status = 0;
+        rsForums->getMessageStatus(mCurrForumId, mCurrThreadId, status);
+        if (status & FORUM_MSG_STATUS_LOAD_EMBEDDED_IMAGES) {
+            loadEmbeddedImages = true;
+       }
+    }
+
+    ui.postText->resetImagesStatus(loadEmbeddedImages);
     ui.postText->setHtml(extraTxt);
     ui.threadTitle->setText(titleFromInfo(msg));
 }
@@ -2118,4 +2128,13 @@ void ForumsFillThread::run()
 #ifdef DEBUG_FORUMS
     std::cerr << "ForumsFillThread::run() stopped: " << (wasStopped() ? "yes" : "no") << std::endl;
 #endif
+}
+
+void ForumsDialog::loadImagesAlways()
+{
+    if (mCurrForumId.empty() || mCurrThreadId.empty()) {
+        return;
+    }
+
+    rsForums->setMessageStatus(mCurrForumId, mCurrThreadId, FORUM_MSG_STATUS_LOAD_EMBEDDED_IMAGES, FORUM_MSG_STATUS_LOAD_EMBEDDED_IMAGES);
 }

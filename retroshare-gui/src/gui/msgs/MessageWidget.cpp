@@ -135,6 +135,7 @@ MessageWidget::MessageWidget(bool controlled, QWidget *parent, Qt::WFlags flags)
 	connect(NotifyQt::getInstance(), SIGNAL(messagesTagsChanged()), this, SLOT(messagesTagsChanged()));
 	connect(NotifyQt::getInstance(), SIGNAL(messagesChanged()), this, SLOT(messagesChanged()));
 
+	ui.imageBlockWidget->addButtonAction(tr("Load images always for this message"), this, SLOT(loadImagesAlways()), true);
 	ui.msgText->setImageBlockWidget(ui.imageBlockWidget);
 
 	/* hide the Tree +/- */
@@ -560,7 +561,7 @@ void MessageWidget::fill(const std::string &msgId)
 	ui.subjectText->setText(QString::fromStdWString(msgInfo.title));
 
 	text = RsHtmlMsg(msgInfo.msgflags).formatText(ui.msgText->document(), QString::fromStdWString(msgInfo.msg), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_REPLACE_LINKS);
-	ui.msgText->resetImagesStatus(Settings->getMsgLoadEmbeddedImages());
+	ui.msgText->resetImagesStatus(Settings->getMsgLoadEmbeddedImages() || (msgInfo.msgflags & RS_MSG_LOAD_EMBEDDED_IMAGES));
 	ui.msgText->setHtml(text);
 
 	ui.filesText->setText(QString("(%1 %2)").arg(msgInfo.count).arg(msgInfo.count == 1 ? tr("File") : tr("Files")));
@@ -712,4 +713,13 @@ void MessageWidget::anchorClicked(const QUrl &url)
 	QList<RetroShareLink> links;
 	links.append(link);
 	RetroShareLink::process(links);
+}
+
+void MessageWidget::loadImagesAlways()
+{
+	if (currMsgId.empty()) {
+		return;
+	}
+
+	rsMsgs->MessageLoadEmbeddedImages(currMsgId, true);
 }

@@ -362,7 +362,7 @@ bool p3Forums::ForumMessageSend(ForumMsgInfo &info)
 	// return id
 	info.msgId = mId;
 
-	return setMessageStatus(info.forumId, mId, FORUM_MSG_STATUS_READ, FORUM_MSG_STATUS_MASK);
+	return setMessageStatus(info.forumId, mId, FORUM_MSG_STATUS_READ | FORUM_MSG_STATUS_LOAD_EMBEDDED_IMAGES, FORUM_MSG_STATUS_MASK);
 }
 
 bool p3Forums::setMessageStatus(const std::string& fId,const std::string& mId,const uint32_t status, const uint32_t statusMask)

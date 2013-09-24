@@ -67,6 +67,7 @@ class p3Msgs: public RsMsgs
 	  virtual bool MessageReplied(const std::string &mid, bool replied);
 	  virtual bool MessageForwarded(const std::string &mid, bool forwarded);
 	  virtual bool MessageStar(const std::string &mid, bool star);
+	  virtual bool MessageLoadEmbeddedImages(const std::string &mid, bool load);
 	  virtual bool getMsgParentId(const std::string &msgId, std::string &msgParentId);
 
 	  virtual bool getMessageTagTypes(MsgTagType& tags);

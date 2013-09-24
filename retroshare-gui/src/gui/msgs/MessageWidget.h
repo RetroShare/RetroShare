@@ -78,6 +78,8 @@ private slots:
 
 	void anchorClicked(const QUrl &url);
 
+	void loadImagesAlways();
+
 private:
 	void clearTagLabels();
 	void showTagLabels();
