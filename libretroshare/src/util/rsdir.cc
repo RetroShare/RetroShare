@@ -642,7 +642,7 @@ bool 	RsDirUtil::cleanupDirectoryFaster(const std::string& cleandir, const std::
 		if (fit->first < *kit)  // fit is not in keep list;
 		{
 #ifdef WINDOWS_SYS
-			_wremove(fit->second..c_str());
+			_wremove(fit->second.c_str());
 #else
 			remove(fit->second.c_str());
 #endif
@@ -663,7 +663,7 @@ bool 	RsDirUtil::cleanupDirectoryFaster(const std::string& cleandir, const std::
 	while(fit != fileMap.end())
 	{
 #ifdef WINDOWS_SYS
-		_wremove(fit->second..c_str());
+		_wremove(fit->second.c_str());
 #else
 		remove(fit->second.c_str());
 #endif
