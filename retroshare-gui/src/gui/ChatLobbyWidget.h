@@ -79,7 +79,6 @@ private:
 	ChatTabWidget *tabWidget ;
 
 	std::map<ChatLobbyId,ChatLobbyInfoStruct> _lobby_infos ;
-	QTextBrowser *_lobby_blank_page ;
 
 	std::map<QTreeWidgetItem*,time_t> _icon_changed_map ;
 

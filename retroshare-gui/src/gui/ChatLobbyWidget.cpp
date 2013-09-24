@@ -550,7 +550,7 @@ void ChatLobbyWidget::showBlankPage(ChatLobbyId id)
 {
 	// show the default blank page.
 	stackedWidget->setCurrentWidget(_lobby_blank_page) ;
-	
+
 	// Update information
 	std::vector<VisibleChatLobbyRecord> lobbies;
 	rsMsgs->getListOfNearbyChatLobbies(lobbies);
@@ -565,20 +565,20 @@ void ChatLobbyWidget::showBlankPage(ChatLobbyId id)
 			lobbypeers_lineEdit->setText( QString::number((*it).total_number_of_peers) );
 			
 			lobbyinfo_label->setText(tr("You're not subscribed to this lobby; Double click-it to enter and chat.") );
-			
+
 			return ;
 		}
-		
-	lobbyname_lineEdit->clear();	
-	lobbyid_lineEdit->clear();	
-	lobbytopic_lineEdit->clear();	
-	lobbytype_lineEdit->clear();	
-	lobbypeers_lineEdit->clear();	
+
+	lobbyname_lineEdit->clear();
+	lobbyid_lineEdit->clear();
+	lobbytopic_lineEdit->clear();
+	lobbytype_lineEdit->clear();
+	lobbypeers_lineEdit->clear();
 
 	QString text = tr("No lobby selected. \nSelect lobbies at left to show details.\nDouble click lobbies to enter and chat.") ;
 	lobbyinfo_label->setText(text) ;
-		
 }
+
 void ChatLobbyWidget::subscribeItem()
 {
 	subscribeLobby(lobbyTreeWidget->currentItem());
