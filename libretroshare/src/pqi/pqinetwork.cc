@@ -946,9 +946,34 @@ int unix_fcntl_nonblock(int fd)
 }
 
 
-int unix_connect(int fd, const struct sockaddr *serv_addr, socklen_t addrlen)
+int unix_connect(int fd, const struct sockaddr *serv_addr, socklen_t socklen)
 {
-	int ret = connect(fd, serv_addr, addrlen);
+	std::cerr << "unix_connect()";
+	std::cerr << std::endl;
+
+	const struct sockaddr_storage *ss_addr = (struct sockaddr_storage *) serv_addr;
+	socklen_t len = socklen;
+
+	switch (ss_addr->ss_family)
+	{
+		case AF_INET:
+			len = sizeof(struct sockaddr_in);
+			break;
+		case AF_INET6:
+			len = sizeof(struct sockaddr_in6);
+			break;
+	}
+
+	if (len > socklen)
+	{
+		std::cerr << "unix_connect() ERROR len > socklen";
+		std::cerr << std::endl;
+
+		len = socklen;
+		//return EINVAL;
+	}
+
+	int ret = connect(fd, serv_addr, len);
 
 /******************* WINDOWS SPECIFIC PART ******************/
 #ifdef WINDOWS_SYS // WINDOWS

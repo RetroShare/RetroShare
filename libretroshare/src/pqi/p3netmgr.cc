@@ -135,6 +135,12 @@ p3NetMgrIMPL::p3NetMgrIMPL()
 		mOldNatHole = RSNET_NATHOLE_UNKNOWN;
 		sockaddr_storage_clear(mLocalAddr);
 		sockaddr_storage_clear(mExtAddr);
+
+		// force to IPv4 for the moment.
+		mLocalAddr.ss_family = AF_INET;
+		mExtAddr.ss_family = AF_INET;
+
+
 		mVisState = 0 ;
 	}
 	

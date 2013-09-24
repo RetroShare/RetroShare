@@ -2110,22 +2110,16 @@ int RsServer::StartupRetroShare()
 
 	// NOW WE BUILD THE SECOND STACK.
 	// Create the Second UdpStack... Port should be random (but openable!).
-
-	//#define MIN_RANDOM_PORT 30000
-	//#define MAX_RANDOM_PORT 50000
+	// We do this by binding to xx.xx.xx.xx:0 which which gives us a random port.
 
 	struct sockaddr_in sndladdr;
 	sockaddr_clear(&sndladdr);
 
-	// #ifdef LOCALNET_TESTING
+#ifdef LOCALNET_TESTING
+
 	// 	// HACK Proxy Port near Dht Port - For Relay Testing.
 	// 	uint16_t rndport = RsInitConfig::port + 3;
 	// 	sndladdr.sin_port = htons(rndport);
-	// #else
-	// 	uint16_t rndport = MIN_RANDOM_PORT + RSRandom::random_u32() % (MAX_RANDOM_PORT - MIN_RANDOM_PORT);
-	// #endif
-
-#ifdef LOCALNET_TESTING
 
 	rsFixedUdpStack *mProxyStack = new rsFixedUdpStack(UDP_TEST_RESTRICTED_LAYER, sndladdr);
 

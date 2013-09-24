@@ -182,15 +182,19 @@ int	pqissllistenbase::setuplisten()
 #ifdef OPEN_UNIVERSAL_PORT
 	struct sockaddr_storage tmpaddr = laddr;
 	sockaddr_storage_zeroip(tmpaddr);
-	if (0 != (err = bind(lsock, (struct sockaddr *) &tmpaddr, sizeof(tmpaddr))))
+	if (0 != (err = universal_bind(lsock, (struct sockaddr *) &tmpaddr, sizeof(tmpaddr))))
 #else
-	if (0 != (err = bind(lsock, (struct sockaddr *) &laddr, sizeof(laddr))))
+	if (0 != (err = universal_bind(lsock, (struct sockaddr *) &laddr, sizeof(laddr))))
 #endif
 	{
 		std::string out = "pqissllistenbase::setuplisten()  Cannot Bind to Local Address!\n";
 		showSocketError(out);
 		pqioutput(PQL_ALERT, pqissllistenzone, out);
 		std::cerr << out << std::endl;
+		std::cerr << "laddr: " << sockaddr_storage_tostring(laddr) << std::endl;
+#ifdef OPEN_UNIVERSAL_PORT
+		std::cerr << "Zeroed tmpaddr: " << sockaddr_storage_tostring(tmpaddr) << std::endl;
+#endif
 
 		exit(1); 
 		return -1;

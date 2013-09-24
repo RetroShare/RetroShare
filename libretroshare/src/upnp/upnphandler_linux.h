@@ -36,8 +36,8 @@ class upnphandler: public pqiNetAssistFirewall
 
 	    virtual void    setInternalPort(unsigned short iport_in);
 	    virtual void    setExternalPort(unsigned short eport_in);
-	    virtual bool    getInternalAddress(struct sockaddr_in &addr);
-	    virtual bool    getExternalAddress(struct sockaddr_in &addr);
+	    virtual bool    getInternalAddress(struct sockaddr_storage &addr);
+	    virtual bool    getExternalAddress(struct sockaddr_storage &addr);
 
             /* TO IMPLEMENT: New Port Forward interface to support as many ports as necessary */
 	    virtual bool    requestPortForward(const PortForwardParams &params) { return false; }

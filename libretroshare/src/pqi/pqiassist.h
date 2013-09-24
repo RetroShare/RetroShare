@@ -74,8 +74,8 @@ class PortForwardParams
 	uint32_t fwdId;
 	uint32_t status;
 	uint32_t typeFlags;
-	struct sockaddr_in intAddr;
-	struct sockaddr_in extaddr;
+	struct sockaddr_storage intAddr;
+	struct sockaddr_storage extaddr;
 };
 
 class pqiNetAssistFirewall: public pqiNetAssist

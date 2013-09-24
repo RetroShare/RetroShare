@@ -753,8 +753,9 @@ int 	pqissl::Initiate_Connection()
 		waiting = WAITING_FAIL_INTERFACE;
 
 		rslog(RSL_WARNING, pqisslzone, out);
+
 		// extra output for the moment.
-		//std::cerr << out.str();
+		std::cerr << out;
 
 		return -1;
 	}

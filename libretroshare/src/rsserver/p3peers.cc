@@ -999,12 +999,14 @@ bool 	p3Peers::loadDetailsFromStringCert(const std::string &certstr, RsPeerDetai
 		pd.isOnlyGPGdetail = pd.id.empty();
 		pd.service_perm_flags = RS_SERVICE_PERM_ALL ;
 
-		if (pd.isHiddenNode)
+		if (!cert.hidden_node_string().empty())
 		{
+			pd.isHiddenNode = true;
 			pd.hiddenNodeAddress = cert.hidden_node_string();
 		}
 		else
 		{
+			pd.isHiddenNode = false;
 			pd.localAddr = cert.loc_ip_string();
 			pd.localPort = cert.loc_port_us();
 			pd.extAddr = cert.ext_ip_string();
