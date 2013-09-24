@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>691</width>
-    <height>584</height>
+    <height>442</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -271,12 +271,18 @@ anonymous, you can use a fake email.</string>
              <height>26</height>
             </size>
            </property>
+           <property name="font">
+            <font>
+             <family>Arial</family>
+             <weight>50</weight>
+             <bold>false</bold>
+            </font>
+           </property>
+           <property name="styleSheet">
+            <string notr="true"/>
+           </property>
            <property name="text">
             <string>Create new identity</string>
-           </property>
-           <property name="icon">
-            <iconset resource="images.qrc">
-             <normaloff>:/images/contact_new.png</normaloff>:/images/contact_new.png</iconset>
            </property>
           </widget>
          </item>
@@ -299,7 +305,20 @@ anonymous, you can use a fake email.</string>
         </property>
        </widget>
       </item>
-      <item row="3" column="0">
+      <item row="4" column="0">
+       <spacer name="verticalSpacer">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>1</width>
+          <height>1</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="1" column="0">
        <widget class="QLabel" name="genprofileinfo_label">
         <property name="font">
          <font>
@@ -314,19 +333,6 @@ anonymous, you can use a fake email.</string>
          <bool>true</bool>
         </property>
        </widget>
-      </item>
-      <item row="4" column="0">
-       <spacer name="verticalSpacer">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>1</width>
-          <height>1</height>
-         </size>
-        </property>
-       </spacer>
       </item>
      </layout>
     </widget>

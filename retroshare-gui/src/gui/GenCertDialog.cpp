@@ -253,6 +253,8 @@ void GenCertDialog::newGPGKeyGenUiSetup() {
 		setWindowTitle(tr("Create new Identity"));
 		ui.genButton->setText(tr("Generate new Identity"));
 		ui.headerFrame->setHeaderText(tr("Create a new Identity"));
+		ui.genprofileinfo_label->hide();
+		ui.header_label->show();
 	} else {
 		genNewGPGKey = false;
 		ui.name_label->hide();
@@ -271,6 +273,8 @@ void GenCertDialog::newGPGKeyGenUiSetup() {
 		setWindowTitle(tr("Create new Location"));
 		ui.genButton->setText(tr("Generate new Location"));
 		ui.headerFrame->setHeaderText(tr("Create a new Location"));
+		ui.genprofileinfo_label->show();
+		ui.header_label->hide();
 	}
 }
 
