@@ -961,8 +961,8 @@ bool CacheStrapper::loadList(std::list<RsItem *>& load)
 	//mPeerMgr->getOwnNetStatus(ownState);
 	//std::string ownName = ownState.name+" ("+ownState.location+")";
 
-	std::map<std::string, std::list<std::string> > saveFiles;
-	std::map<std::string, std::list<std::string> >::iterator sit;
+	std::map<std::string, std::set<std::string> > saveFiles;
+	std::map<std::string, std::set<std::string> >::iterator sit;
 
 	for(it = load.begin(); it != load.end(); it++)
 	{
@@ -1001,7 +1001,7 @@ bool CacheStrapper::loadList(std::list<RsItem *>& load)
 			cd.recvd = rscc->recvd;
 
 			/* store files that we want to keep */
-			(saveFiles[cd.path]).push_back(cd.name);
+			(saveFiles[cd.path]).insert(cd.name);
 
 			std::map<uint16_t, CachePair>::iterator it2;
 			if (caches.end() == (it2 = caches.find(cd.cid.type)))
@@ -1107,7 +1107,7 @@ bool CacheStrapper::loadList(std::list<RsItem *>& load)
 	}
 #endif
 
-	std::list<std::string> emptyList;
+	std::set<std::string> emptySet;
 	for(dit = cacheDirs.begin(); dit != cacheDirs.end(); dit++)
 	{
 #ifdef CS_DEBUG 
@@ -1122,14 +1122,14 @@ bool CacheStrapper::loadList(std::list<RsItem *>& load)
 				std::cerr << "CacheStrapper::loadList() Keeping File: " << *fit << std::endl;
 			}
 #endif
-			RsDirUtil::cleanupDirectory(*dit, sit->second);
+			RsDirUtil::cleanupDirectoryFaster(*dit, sit->second);
 		}
 		else
 		{
 #ifdef CS_DEBUG 
 			std::cerr << "CacheStrapper::loadList() No Files to save here!" << std::endl;
 #endif
-			RsDirUtil::cleanupDirectory(*dit, emptyList);
+			RsDirUtil::cleanupDirectoryFaster(*dit, emptySet);
 		}
 	}
 

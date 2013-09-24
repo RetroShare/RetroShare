@@ -30,6 +30,7 @@
 
 #include <string>
 #include <list>
+#include <set>
 #include <stdint.h>
 
 class RsThread;
@@ -85,7 +86,9 @@ bool 		fileExists(const std::string& file);
 bool    	checkFile(const std::string& filename,bool disallow_empty_file = false);
 bool    	checkDirectory(const std::string& dir);
 bool    	checkCreateDirectory(const std::string& dir);
-bool    	cleanupDirectory(const std::string& dir, const std::list<std::string> &keepFiles);
+
+bool    	cleanupDirectory(const std::string& dir, const std::set<std::string> &keepFiles);
+bool    	cleanupDirectoryFaster(const std::string& dir, const std::set<std::string> &keepFiles);
 
 bool 		hashFile(const std::string& filepath,   std::string &name, std::string &hash, uint64_t &size);
 bool 		getFileHash(const std::string& filepath,std::string &hash, uint64_t &size, RsThread *thread = NULL);

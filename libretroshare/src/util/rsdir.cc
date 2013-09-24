@@ -487,7 +487,8 @@ bool	RsDirUtil::checkCreateDirectory(const std::string& dir)
 	return 1;
 }
 
-bool 	RsDirUtil::cleanupDirectory(const std::string& cleandir, const std::list<std::string> &keepFiles)
+
+bool 	RsDirUtil::cleanupDirectory(const std::string& cleandir, const std::set<std::string> &keepFiles)
 {
 
 	/* check for the dir existance */
@@ -499,7 +500,6 @@ bool 	RsDirUtil::cleanupDirectory(const std::string& cleandir, const std::list<s
 	DIR *dir = opendir(cleandir.c_str());
 #endif
 
-	std::list<std::string>::const_iterator it;
 
 	if (!dir)
 	{
@@ -541,7 +541,7 @@ bool 	RsDirUtil::cleanupDirectory(const std::string& cleandir, const std::list<s
 				librs::util::ConvertUtf16ToUtf8(wfname, fname);
 #endif
 				/* check if we should keep it */
-				if (keepFiles.end() == (it = std::find(keepFiles.begin(), keepFiles.end(), fname)))
+				if (keepFiles.end() == std::find(keepFiles.begin(), keepFiles.end(), fname))
 				{
 					/* can remove */
 #ifdef WINDOWS_SYS
@@ -563,6 +563,126 @@ bool 	RsDirUtil::cleanupDirectory(const std::string& cleandir, const std::list<s
 
 	return true;
 }
+
+
+
+/* faster cleanup - first construct two sets - then iterate over together */
+bool 	RsDirUtil::cleanupDirectoryFaster(const std::string& cleandir, const std::set<std::string> &keepFiles)
+{
+
+	/* check for the dir existance */
+#ifdef WINDOWS_SYS
+	std::map<std::string, std::wstring> fileMap;
+	std::map<std::string, std::wstring>::const_iterator fit;
+
+	std::wstring wcleandir;
+	librs::util::ConvertUtf8ToUtf16(cleandir, wcleandir);
+	_WDIR *dir = _wopendir(wcleandir.c_str());
+#else
+	std::map<std::string, std::string> fileMap;
+	std::map<std::string, std::string>::const_iterator fit;
+
+	DIR *dir = opendir(cleandir.c_str());
+#endif
+
+	if (!dir)
+	{
+		return false;
+	}
+
+#ifdef WINDOWS_SYS
+	struct _wdirent *dent;
+	struct _stat buf;
+
+	while(NULL != (dent = _wreaddir(dir)))
+	{
+		const std::wstring &wfname = dent -> d_name;
+		std::wstring wfullname = wcleandir + L"/" + wfname;
+
+		if (-1 != _wstat(wfullname.c_str(), &buf)) 
+		{ 
+			/* only worry about files */
+			if (S_ISREG(buf.st_mode))
+			{
+				std::string fname;
+				librs::util::ConvertUtf16ToUtf8(wfname, fname);
+				fileMap[fname] = wfullname;
+			}
+		}
+	}
+#else
+	struct dirent *dent;
+	struct stat buf;
+
+	while(NULL != (dent = readdir(dir)))
+	{
+		const std::string &fname = dent -> d_name;
+		std::string fullname = cleandir + "/" + fname;
+
+		if (-1 != stat(fullname.c_str(), &buf))
+		{ 
+			/* only worry about files */
+			if (S_ISREG(buf.st_mode))
+			{
+				fileMap[fname] = fullname;
+			}
+		}
+	}
+#endif
+
+
+
+	std::set<std::string>::const_iterator kit;
+
+	fit = fileMap.begin();
+	kit = keepFiles.begin();
+
+	while(fit != fileMap.end() && kit != keepFiles.end())
+	{
+		if (fit->first < *kit)  // fit is not in keep list;
+		{
+#ifdef WINDOWS_SYS
+			_wremove(fit->second..c_str());
+#else
+			remove(fit->second.c_str());
+#endif
+			++fit;
+		}
+		else if (*kit < fit->first) // keepitem doesn't exist.
+		{
+			++kit;
+		}
+		else // in keep list.
+		{
+			++fit;
+			++kit;
+		}
+	}
+
+	// cleanup extra that aren't in keep list.
+	while(fit != fileMap.end())
+	{
+#ifdef WINDOWS_SYS
+		_wremove(fit->second..c_str());
+#else
+		remove(fit->second.c_str());
+#endif
+		++fit;
+	}
+
+	/* close directory */
+#ifdef WINDOWS_SYS
+	_wclosedir(dir);
+#else
+	closedir(dir);
+#endif
+
+	return true;
+}
+
+
+
+
 
 /* slightly nicer helper function */
 bool RsDirUtil::hashFile(const std::string& filepath, 
