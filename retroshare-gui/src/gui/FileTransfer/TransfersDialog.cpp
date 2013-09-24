@@ -695,11 +695,11 @@ void TransfersDialog::downloadListCustomPopupMenu( QPoint /*point*/ )
 				if(info.downloadStatus == FT_STATE_QUEUED)
                     {
                         atLeastOne_Queued = true;
-			}
+						  }
                     if (info.downloadStatus == FT_STATE_PAUSED)
                     {
                         atLeastOne_Paused = true;
-		}
+						  }
 
                     size_t pos = info.fname.find_last_of('.');
                     /* check if the file is a media file */
@@ -707,10 +707,10 @@ void TransfersDialog::downloadListCustomPopupMenu( QPoint /*point*/ )
                     {
                         if (misc::isPreviewable(info.fname.substr(pos + 1).c_str()))
                         {
-                            add_PlayOption = (info.downloadStatus != FT_STATE_COMPLETE);
-                            add_PreviewOption = !add_PlayOption;
-			}
-		}
+                            add_PreviewOption = (info.downloadStatus != FT_STATE_COMPLETE);
+                            add_PlayOption = !add_PreviewOption;
+								}
+						  }
 
                 }//if (rsFiles->FileDetails(lst[i].data(COLUMN_ID), RS_FILE_HINTS_DOWNLOAD, info))
             }//if (lst[i].column() == 0)
