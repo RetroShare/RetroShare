@@ -339,8 +339,11 @@ QVariant Node::itemChange(GraphicsItemChange change, const QVariant &value)
 
 void Node::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-	_selected_node = this ;
-	graph->forceRedraw() ;
+	if(event->button() == Qt::LeftButton)
+	{
+		_selected_node = this ;
+		graph->forceRedraw() ;
+	}
 
 	update();
 	QGraphicsItem::mousePressEvent(event);
