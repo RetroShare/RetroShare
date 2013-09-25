@@ -49,6 +49,7 @@
 #define IMAGE_STAR_ON          ":/images/star-on-16.png"
 #define IMAGE_STAR_OFF         ":/images/star-off-16.png"
 #define IMAGE_SYSTEM           ":/images/user/user_request16.png"
+#define IMAGE_DECRYPTMESSAGE  ":/images/decrypt-mail.png"
 
 #define COLUMN_STAR          0
 #define COLUMN_ATTACHEMENTS  1
@@ -608,7 +609,7 @@ void MessagesDialog::messageslistWidgetCustomPopupMenu( QPoint /*point*/ )
     }
 
 	 if(nCount==1 && (msgInfo.msgflags & RS_MSG_ENCRYPTED))
-		 action = contextMnu.addAction(QIcon(IMAGE_SYSTEM), tr("Decrypt Message"), this, SLOT(decryptSelectedMsg()));
+		 action = contextMnu.addAction(QIcon(IMAGE_DECRYPTMESSAGE), tr("Decrypt Message"), this, SLOT(decryptSelectedMsg()));
 
     int listrow = ui.listWidget->currentRow();
     if (listrow == ROW_TRASHBOX) {
@@ -1137,6 +1138,7 @@ void MessagesDialog::insertMessages()
             // Subject
 				if(it->msgflags & RS_MSG_ENCRYPTED)
 					text = tr("Encrypted message. Right-click to decrypt it.") ;
+
 				else
 					text = QString::fromStdWString(it->title);
 
@@ -1218,6 +1220,7 @@ void MessagesDialog::insertMessages()
 				{
 					item[COLUMN_SIGNATURE]->setIcon(QIcon(":/images/blue_lock.png")) ;
 					item[COLUMN_SIGNATURE]->setToolTip(tr("This message is encrypted. Right click to decrypt it.")) ;
+					item[COLUMN_SUBJECT]->setIcon(QIcon(":/images/mail-encrypted-full.png")) ;
 				}
 				else 
 					if(it->msgflags & RS_MSG_SIGNED) 

@@ -1,6 +1,8 @@
 <RCC>
     <qresource prefix="/" >
         <file>images/add_chat24.png</file>
+        <file>images/mail-encrypted-full.png</file>
+        <file>images/decrypt-mail.png</file>
         <file>images/inbox_22.png</file>
         <file>images/blue_lock.png</file>
         <file>images/d-chat64.png</file>
@@ -271,6 +273,7 @@
         <file>images/hot_4.png</file>
         <file>images/hot_5.png</file>
         <file>images/image16.png</file>
+        <file>images/imageblocked_24.png</file>
         <file>images/info16.png</file>
         <file>images/im-user.png</file>
         <file>images/im-user-offline.png</file>
