@@ -62,6 +62,8 @@
 #define IMAGE_TRUSTED        ":/images/rs-2.png"
 #define IMAGE_MAKEFRIEND     ":/images/user/add_user16.png"
 
+Node *Node::_selected_node = NULL ;
+
 Node::Node(const std::string& node_string,GraphWidget::NodeType type,GraphWidget::AuthType auth,GraphWidget *graphWidget,const std::string& ssl_id,const std::string& gpg_id)
     : graph(graphWidget),_desc_string(node_string),_type(type),_auth(auth),_ssl_id(ssl_id),_gpg_id(gpg_id)
 {
@@ -259,7 +261,26 @@ void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
 {
 	static QColor type_color[4] = { QColor(Qt::yellow), QColor(Qt::green), QColor(Qt::cyan), QColor(Qt::black) } ;
 
-	QColor col0(type_color[_type]) ;
+	QColor col0 ;
+
+	if(_selected_node == NULL)
+		col0 = type_color[_type] ;
+	else if(_selected_node == this)
+		col0 = type_color[0] ;
+	else 
+	{
+		bool found = false ;
+		for(QList<Edge*>::const_iterator it(edgeList.begin());it!=edgeList.end();++it)
+			if( (*it)->sourceNode() == _selected_node || (*it)->destNode() == _selected_node)
+			{
+				col0 = type_color[1] ;
+				found = true ;
+				break ;
+			}
+
+		if(!found)
+			col0= type_color[2] ;
+	}
 
 	painter->setPen(Qt::NoPen);
 	painter->setBrush(Qt::darkGray);
@@ -318,6 +339,9 @@ QVariant Node::itemChange(GraphicsItemChange change, const QVariant &value)
 
 void Node::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
+	_selected_node = this ;
+	graph->forceRedraw() ;
+
 	update();
 	QGraphicsItem::mousePressEvent(event);
 }
@@ -354,6 +378,10 @@ void Node::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 
 void Node::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
+	 _selected_node = NULL ;
+	graph->forceRedraw() ;
+
     update();
     QGraphicsItem::mouseReleaseEvent(event);
 }
+

@@ -136,8 +136,6 @@ GraphWidget::GraphWidget(QWidget *)
     setResizeAnchor(AnchorViewCenter);
 	 _friction_factor = 1.0f ;
 
-
-
     scale(qreal(0.8), qreal(0.8));
 }
 
@@ -384,6 +382,11 @@ void GraphWidget::setEdgeLength(uint32_t l)
 	}
 }
 
+void GraphWidget::forceRedraw()
+{
+	for(uint32_t i=0;i<_nodes.size();++i)
+		_nodes[i]->update(_nodes[i]->boundingRect()) ;
+}
 void GraphWidget::wheelEvent(QWheelEvent *event)
 {
     scaleView(pow((double)2, -event->delta() / 240.0));

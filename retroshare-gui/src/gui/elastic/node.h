@@ -106,6 +106,8 @@ private:
 	 bool mDeterminedBB ;
 	 int mBBWidth ;
 
+	 static Node *_selected_node ;
+
 	 std::string _ssl_id ;
 	 std::string _gpg_id ;
 

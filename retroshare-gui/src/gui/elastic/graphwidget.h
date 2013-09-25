@@ -83,6 +83,7 @@ public:
 	 void setEdgeLength(uint32_t l) ;
 	 uint32_t edgeLength() const { return _edge_length ; }
 
+	 void forceRedraw() ;
 protected:
     void keyPressEvent(QKeyEvent *event);
     void timerEvent(QTimerEvent *event);
@@ -102,6 +103,7 @@ private:
 
 	 uint32_t _edge_length ;
 	 float _friction_factor ;
+	 NodeId _current_node ;
 };
 
 #endif
