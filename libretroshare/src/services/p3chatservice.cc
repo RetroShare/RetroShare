@@ -2463,7 +2463,9 @@ void p3ChatService::sendConnectionChallenge(ChatLobbyId lobby_id)
 
 	if(msg_id == 0)
 	{
-		std::cerr << "  No suitable message found in cache. Weird !!" << std::endl;
+#ifdef CHAT_DEBUG
+		std::cerr << "  No suitable message found in cache. Probably not enough activity !!" << std::endl;
+#endif
 		return ;
 	}
 
