@@ -168,7 +168,7 @@ int 	pqisslproxy::Proxy_Send_Method()
 #endif
 
 	/* send hello to proxy server */
-	uint8_t method_hello_data[3] = { 0x05, 0x01, 0x00 };  // [ Ver | nMethods (1) | No Auth Method ]
+	char method_hello_data[3] = { 0x05, 0x01, 0x00 };  // [ Ver | nMethods (1) | No Auth Method ]
 
 	int sent = send(sockfd, method_hello_data, 3, 0);
 	if (sent != 3)
@@ -201,7 +201,7 @@ int 	pqisslproxy::Proxy_Method_Response()
 
 	/* get response from proxy server */
 
-	uint8_t method_response[2];
+	char method_response[2];
 
 	// read from the socket.
 	int recvd = recv(sockfd, method_response, 2, MSG_WAITALL);
@@ -276,7 +276,7 @@ int 	pqisslproxy::Proxy_Send_Address()
 		return ret; // Method Response not complete.
 	}
 
-	uint8_t socks_request[MAX_SOCKS_REQUEST_LEN] = 
+	char socks_request[MAX_SOCKS_REQUEST_LEN] =
 		{ 0x05, // SOCKS VERSION.
 		0x01, // CONNECT (Tor doesn't support BIND or UDP).
 		0x00, // RESERVED.
@@ -332,7 +332,7 @@ int 	pqisslproxy::Proxy_Connection_Complete()
 	/* get response from proxy server */
 	/* response is similar format to request - with variable length data */
 
-	uint8_t socks_response[MAX_SOCKS_REQUEST_LEN];
+	char socks_response[MAX_SOCKS_REQUEST_LEN];
 
 	int recvd = recv(sockfd, socks_response, 5, MSG_WAITALL); 
 	if (recvd != 5)

@@ -28,8 +28,6 @@
 #ifndef MRK_PQI_SSL_HEADER
 #define MRK_PQI_SSL_HEADER
 
-#include <openssl/ssl.h>
-
 // operating system specific network header.
 #include "pqi/pqinetwork.h"
 
@@ -159,9 +157,9 @@ void getCryptoParams(RsPeerCryptoParams& params) ;
 protected:
 
 	//protected internal fns that are overloaded for udp case.
-virtual int net_internal_close(int fd) { return unix_close(fd); }
-virtual int net_internal_SSL_set_fd(SSL *ssl, int fd) { return SSL_set_fd(ssl, fd); }
-virtual int net_internal_fcntl_nonblock(int fd) { return unix_fcntl_nonblock(fd);}
+virtual int net_internal_close(int fd);
+virtual int net_internal_SSL_set_fd(SSL *ssl, int fd);
+virtual int net_internal_fcntl_nonblock(int fd);
 
 
 	/* data */

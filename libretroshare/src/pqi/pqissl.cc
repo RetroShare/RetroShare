@@ -1859,3 +1859,17 @@ std::string pqissl::gethash()
 /********** End of Implementation of BinInterface ******************/
 
 
+int pqissl::net_internal_close(int fd)
+{
+	return unix_close(fd);
+}
+
+int pqissl::net_internal_SSL_set_fd(SSL *ssl, int fd)
+{
+	return SSL_set_fd(ssl, fd);
+}
+
+int pqissl::net_internal_fcntl_nonblock(int fd)
+{
+	return unix_fcntl_nonblock(fd);
+}

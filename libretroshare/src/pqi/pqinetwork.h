@@ -45,12 +45,7 @@
 
 #else
 
-
 #include "util/rsnet.h" /* more generic networking header */
-
-#include <winsock2.h>
-typedef int socklen_t;
-//typedef unsigned long in_addr_t;
 
 // Some Network functions that are missing from windows.
 

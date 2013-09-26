@@ -30,7 +30,7 @@
 #include "tcponudp/bio_tou.h"
 
 #include <errno.h>
-#include <openssl/err.h>
+#include <openssl/ssl.h>
 
 
 #include "util/rsdebug.h"

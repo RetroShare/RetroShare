@@ -27,6 +27,7 @@
 #include <QMessageBox>
 #include <QIcon>
 #include <QObject>
+#include <time.h>
 
 #include "RetroShareLink.h"
 #include "MainWindow.h"

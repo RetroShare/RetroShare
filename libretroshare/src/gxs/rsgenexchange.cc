@@ -26,11 +26,6 @@
 
 #include <unistd.h>
 
-#include <openssl/err.h>
-#include <openssl/ssl.h>
-#include <openssl/evp.h>
-#include <openssl/rsa.h>
-
 #include "pqi/pqihash.h"
 #include "rsgenexchange.h"
 #include "gxssecurity.h"

@@ -46,11 +46,8 @@
 /******************** notify of new Cert **************************/
 #include "pqinotify.h"
 
-#include <openssl/err.h>
-//#include <openssl/evp.h>
-//#include <openssl/pem.h>
 #include <openssl/rand.h>
-#include <openssl/x509.h>
+#include <openssl/ssl.h>
 
 #include <iomanip>
 

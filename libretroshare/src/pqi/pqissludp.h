@@ -28,8 +28,6 @@
 #ifndef MRK_PQI_SSL_UDP_HEADER
 #define MRK_PQI_SSL_UDP_HEADER
 
-#include <openssl/ssl.h>
-
 // operating system specific network header.
 #include "pqi/pqinetwork.h"
 

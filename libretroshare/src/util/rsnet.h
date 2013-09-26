@@ -44,14 +44,13 @@
 
 #else
 
-
-#include <winsock2.h>
-
-#include <stdio.h> /* for ssize_t */
-//typedef uint32_t socklen_t;
+#include <ws2tcpip.h>
 typedef uint32_t in_addr_t;
 
 int inet_aton(const char *name, struct in_addr *addr);
+
+// Missing defines in MinGW
+#define MSG_WAITALL  8
 
 #endif
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/

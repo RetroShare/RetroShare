@@ -60,6 +60,8 @@
 // for blocking signals
 #include <signal.h>
 
+#include <openssl/ssl.h>
+
 #include "pqi/authssl.h"
 #include "pqi/sslfns.h"
 #include "pqi/authgpg.h"
