@@ -2261,7 +2261,7 @@ int RsServer::StartupRetroShare()
         if(!priorGxsDir.empty())
             cleanUpGxsDir = RsDirUtil::checkDirectory(priorGxsDir);
 
-        std::list<std::string> filesToKeep;
+        std::set<std::string> filesToKeep;
         bool cleanUpSuccess = RsDirUtil::cleanupDirectory(priorGxsDir, filesToKeep);
 
         if(!cleanUpSuccess)
