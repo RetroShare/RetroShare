@@ -1191,21 +1191,24 @@ void p3turtle::sendTurtleData(const std::string& virtual_peer_id,RsTurtleGeneric
 	item->tunnel_id = tunnel_id ;	// we should randomly select a tunnel, or something more clever.
 
 	std::string ownid = mLinkMgr->getOwnId() ;
+	uint32_t ss = item->serial_size() ;
 
 	if(item->shouldStampTunnel())
 		tunnel.time_stamp = time(NULL) ;
+
+	tunnel.transfered_bytes += ss ;
 
 	if(tunnel.local_src == ownid)
 	{
 		item->setTravelingDirection(RsTurtleGenericTunnelItem::DIRECTION_SERVER) ;	
 		item->PeerId(tunnel.local_dst) ;
-		_traffic_info_buffer.data_dn_Bps += item->serial_size() ;
+		_traffic_info_buffer.data_dn_Bps += ss ;
 	}
 	else if(tunnel.local_dst == ownid)
 	{
 		item->setTravelingDirection(RsTurtleGenericTunnelItem::DIRECTION_CLIENT) ;	
 		item->PeerId(tunnel.local_src) ;
-		_traffic_info_buffer.data_up_Bps += item->serial_size() ;
+		_traffic_info_buffer.data_up_Bps += ss ;
 	}
 	else
 	{
