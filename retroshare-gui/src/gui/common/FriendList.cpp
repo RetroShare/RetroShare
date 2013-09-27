@@ -403,14 +403,14 @@ void FriendList::peerTreeWidgetCostumPopupMenu()
                  if (type == TYPE_SSL) {
                      contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy certificate link"), this, SLOT(copyFullCertificate()));
                  }
-                 if (type == TYPE_GPG) {
-                     contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyLink()));
-                 }
+                 //if (type == TYPE_GPG) {
+                 //    contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyLink()));
+                 //}
 
-                 QAction *action = contextMnu.addAction(QIcon(IMAGE_PASTELINK), tr("Paste Friend Link"), this, SLOT(pastePerson()));
-                 if (RSLinkClipboard::empty(RetroShareLink::TYPE_PERSON) && RSLinkClipboard::empty(RetroShareLink::TYPE_CERTIFICATE)) {
+                 QAction *action = contextMnu.addAction(QIcon(IMAGE_PASTELINK), tr("Paste certificate link"), this, SLOT(pastePerson()));
+
+                 if (/*RSLinkClipboard::empty(RetroShareLink::TYPE_PERSON) &&*/ RSLinkClipboard::empty(RetroShareLink::TYPE_CERTIFICATE)) 
                      action->setDisabled(true);
-                 }
 
                  if (type == TYPE_GPG) {
                      contextMnu.addAction(QIcon(IMAGE_DENYFRIEND), tr("Deny Friend"), this, SLOT(removefriend()));
@@ -519,8 +519,8 @@ void FriendList::peerTreeWidgetCostumPopupMenu()
 //             }
 //         }
      } else {
-        QAction *action = contextMnu.addAction(QIcon(IMAGE_PASTELINK), tr("Paste Friend Link"), this, SLOT(pastePerson()));
-        if (RSLinkClipboard::empty(RetroShareLink::TYPE_PERSON) && RSLinkClipboard::empty(RetroShareLink::TYPE_CERTIFICATE)) {
+        QAction *action = contextMnu.addAction(QIcon(IMAGE_PASTELINK), tr("Paste certificate link"), this, SLOT(pastePerson()));
+        if (/*RSLinkClipboard::empty(RetroShareLink::TYPE_PERSON) &&*/ RSLinkClipboard::empty(RetroShareLink::TYPE_CERTIFICATE)) {
             action->setDisabled(true);
         }
     }
@@ -1338,7 +1338,7 @@ void FriendList::recommendfriend()
 
 void FriendList::pastePerson()
 {
-    RSLinkClipboard::process(RetroShareLink::TYPE_PERSON);
+    //RSLinkClipboard::process(RetroShareLink::TYPE_PERSON);
     RSLinkClipboard::process(RetroShareLink::TYPE_CERTIFICATE);
 }
 
@@ -1356,22 +1356,22 @@ void FriendList::copyFullCertificate()
 	RSLinkClipboard::copyLinks(urls);
 }
 
-void FriendList::copyLink()
-{
-    QTreeWidgetItem *c = getCurrentPeer();
-
-    if (c == NULL) {
-        return;
-    }
-
-    QList<RetroShareLink> urls;
-    RetroShareLink link;
-    if (link.createPerson(getRsId(c))) {
-        urls.push_back(link);
-    }
-
-    RSLinkClipboard::copyLinks(urls);
-}
+// void FriendList::copyLink()
+// {
+//     QTreeWidgetItem *c = getCurrentPeer();
+// 
+//     if (c == NULL) {
+//         return;
+//     }
+// 
+//     QList<RetroShareLink> urls;
+//     RetroShareLink link;
+//     if (link.createPerson(getRsId(c))) {
+//         urls.push_back(link);
+//     }
+// 
+//     RSLinkClipboard::copyLinks(urls);
+// }
 
 /**
  * Find out which group is selected
