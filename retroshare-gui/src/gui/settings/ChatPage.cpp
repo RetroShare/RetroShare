@@ -266,12 +266,15 @@ ChatPage::save(QString &/*errmsg*/)
 
     Settings->setPublicChatHistoryCount(ui.publicChatLoadCount->value());
     Settings->setPrivateChatHistoryCount(ui.privateChatLoadCount->value());
+    Settings->setLobbyChatHistoryCount(ui.lobbyChatLoadCount->value());
 
-    rsHistory->setEnable(true, ui.publicChatEnable->isChecked());
-    rsHistory->setEnable(false, ui.privateChatEnable->isChecked());
+    rsHistory->setEnable(RS_HISTORY_TYPE_PUBLIC , ui.publicChatEnable->isChecked());
+    rsHistory->setEnable(RS_HISTORY_TYPE_PRIVATE, ui.privateChatEnable->isChecked());
+    rsHistory->setEnable(RS_HISTORY_TYPE_LOBBY  , ui.lobbyChatEnable->isChecked());
 
-    rsHistory->setSaveCount(true, ui.publicChatSaveCount->value());
-    rsHistory->setSaveCount(false, ui.privateChatSaveCount->value());
+    rsHistory->setSaveCount(RS_HISTORY_TYPE_PUBLIC , ui.publicChatSaveCount->value());
+    rsHistory->setSaveCount(RS_HISTORY_TYPE_PRIVATE, ui.privateChatSaveCount->value());
+    rsHistory->setSaveCount(RS_HISTORY_TYPE_LOBBY  , ui.lobbyChatSaveCount->value());
 
     rsMsgs->setDefaultNickNameForChatLobby(ui.chatLobbyNick_LE->text().toUtf8().constData()) ;
 
@@ -302,6 +305,8 @@ ChatPage::save(QString &/*errmsg*/)
             NotifyQt::getInstance()->notifyChatStyleChanged(ChatStyle::TYPE_HISTORY);
         }
     }
+
+	 rsHistory->setMaxStorageDuration(ui.max_storage_period->value() * 86400) ;
 
     uint chatflags   = 0;
 
@@ -346,15 +351,20 @@ ChatPage::load()
 
     ui.publicChatLoadCount->setValue(Settings->getPublicChatHistoryCount());
     ui.privateChatLoadCount->setValue(Settings->getPrivateChatHistoryCount());
+    ui.lobbyChatLoadCount->setValue(Settings->getLobbyChatHistoryCount());
 
-    ui.publicChatEnable->setChecked(rsHistory->getEnable(true));
-    ui.privateChatEnable->setChecked(rsHistory->getEnable(false));
+    ui.publicChatEnable->setChecked(rsHistory->getEnable(RS_HISTORY_TYPE_PUBLIC));
+    ui.privateChatEnable->setChecked(rsHistory->getEnable(RS_HISTORY_TYPE_PRIVATE));
+    ui.lobbyChatEnable->setChecked(rsHistory->getEnable(RS_HISTORY_TYPE_LOBBY));
 
-    ui.publicChatSaveCount->setValue(rsHistory->getSaveCount(true));
-    ui.privateChatSaveCount->setValue(rsHistory->getSaveCount(false));
+    ui.publicChatSaveCount->setValue(rsHistory->getSaveCount(RS_HISTORY_TYPE_PUBLIC));
+    ui.privateChatSaveCount->setValue(rsHistory->getSaveCount(RS_HISTORY_TYPE_PRIVATE));
+    ui.lobbyChatSaveCount->setValue(rsHistory->getSaveCount(RS_HISTORY_TYPE_LOBBY));
 
     ui.labelChatFontPreview->setText(fontTempChat.rawName());
     ui.labelChatFontPreview->setFont(fontTempChat);
+
+	 ui.max_storage_period->setValue(rsHistory->getMaxStorageDuration()/86400) ;
 
     /* Load styles */
     publicStylePath = loadStyleInfo(ChatStyle::TYPE_PUBLIC, ui.publicList, ui.publicComboBoxVariant, publicStyleVariant);

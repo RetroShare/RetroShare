@@ -36,6 +36,14 @@ p3History::~p3History()
 {
 }
 
+void p3History::setMaxStorageDuration(uint32_t seconds)
+{
+	mHistoryMgr->setMaxStorageDuration(seconds) ;
+}
+uint32_t p3History::getMaxStorageDuration()
+{
+	return mHistoryMgr->getMaxStorageDuration() ;
+}
 bool p3History::getMessages(const std::string &chatPeerId, std::list<HistoryMsg> &msgs, const uint32_t loadCount)
 {
 	return mHistoryMgr->getMessages(chatPeerId, msgs, loadCount);
@@ -56,22 +64,22 @@ void p3History::clear(const std::string &chatPeerId)
 	mHistoryMgr->clear(chatPeerId);
 }
 
-bool p3History::getEnable(bool ofPublic)
+bool p3History::getEnable(uint32_t chat_type)
 {
-	return mHistoryMgr->getEnable(ofPublic);
+	return mHistoryMgr->getEnable(chat_type);
 }
 
-void p3History::setEnable(bool forPublic, bool enable)
+void p3History::setEnable(uint32_t chat_type, bool enable)
 {
-	mHistoryMgr->setEnable(forPublic, enable);
+	mHistoryMgr->setEnable(chat_type, enable);
 }
 
-uint32_t p3History::getSaveCount(bool ofPublic)
+uint32_t p3History::getSaveCount(uint32_t chat_type)
 {
-	return mHistoryMgr->getSaveCount(ofPublic);
+	return mHistoryMgr->getSaveCount(chat_type);
 }
 
-void p3History::setSaveCount(bool forPublic, uint32_t count)
+void p3History::setSaveCount(uint32_t chat_type, uint32_t count)
 {
-	mHistoryMgr->setSaveCount(forPublic, count);
+	mHistoryMgr->setSaveCount(chat_type, count);
 }

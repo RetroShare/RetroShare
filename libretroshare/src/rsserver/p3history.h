@@ -45,10 +45,12 @@ public:
 	virtual bool getMessage(uint32_t msgId, HistoryMsg &msg);
 	virtual void removeMessages(const std::list<uint32_t> &msgIds);
 	virtual void clear(const std::string &chatPeerId);
-	virtual bool getEnable(bool ofPublic);
-	virtual void setEnable(bool forPublic, bool enable);
-	virtual uint32_t getSaveCount(bool ofPublic);
-	virtual void setSaveCount(bool forPublic, uint32_t count);
+	virtual bool getEnable(uint32_t chat_type);
+	virtual void setEnable(uint32_t chat_type, bool enable);
+	virtual uint32_t getSaveCount(uint32_t chat_type);
+	virtual void setSaveCount(uint32_t chat_type, uint32_t count);
+	virtual void setMaxStorageDuration(uint32_t seconds) ;
+	virtual uint32_t getMaxStorageDuration() ;
 
 private:
 	p3HistoryMgr* mHistoryMgr;

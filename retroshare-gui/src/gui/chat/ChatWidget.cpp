@@ -202,17 +202,21 @@ void ChatWidget::init(const std::string &peerId, const QString &title)
 		updateTitle();
 	}
 
-	if (rsHistory->getEnable(false)) {
+	uint32_t hist_chat_type = isChatLobby?RS_HISTORY_TYPE_LOBBY:RS_HISTORY_TYPE_PRIVATE ;
+	int messageCount = isChatLobby?(Settings->getLobbyChatHistoryCount()):(Settings->getPrivateChatHistoryCount());
+
+	if (rsHistory->getEnable(hist_chat_type)) 
+	{
 		// get chat messages from history
 		std::list<HistoryMsg> historyMsgs;
-		int messageCount = Settings->getPrivateChatHistoryCount();
-		if (messageCount > 0) {
+
+		if (messageCount > 0) 
+		{
 			rsHistory->getMessages(peerId, historyMsgs, messageCount);
 
 			std::list<HistoryMsg>::iterator historyIt;
-			for (historyIt = historyMsgs.begin(); historyIt != historyMsgs.end(); historyIt++) {
+			for (historyIt = historyMsgs.begin(); historyIt != historyMsgs.end(); historyIt++) 
 				addChatMsg(historyIt->incoming, QString::fromUtf8(historyIt->peerName.c_str()), QDateTime::fromTime_t(historyIt->sendTime), QDateTime::fromTime_t(historyIt->recvTime), QString::fromUtf8(historyIt->message.c_str()), TYPE_HISTORY);
-			}
 		}
 	}
 

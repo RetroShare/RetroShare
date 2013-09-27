@@ -462,7 +462,15 @@ void RshareSettings::setHistoryChatStyle(const QString &stylePath, const QString
     setValueToGroup("Chat", "StyleHistory", stylePath);
     setValueToGroup("Chat", "StylePrivateVariant", styleVariant);
 }
+int RshareSettings::getLobbyChatHistoryCount()
+{
+    return valueFromGroup("Chat", "LobbyChatHistoryCount", 0).toInt();
+}
 
+void RshareSettings::setLobbyChatHistoryCount(int value)
+{
+    setValueToGroup("Chat", "LobbyChatHistoryCount", value);
+}
 int RshareSettings::getPublicChatHistoryCount()
 {
     return valueFromGroup("Chat", "PublicChatHistoryCount", 0).toInt();

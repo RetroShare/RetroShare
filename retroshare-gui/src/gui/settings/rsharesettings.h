@@ -216,6 +216,9 @@ public:
   int  getPrivateChatHistoryCount();
   void setPrivateChatHistoryCount(int value);
 
+  int  getLobbyChatHistoryCount();
+  void setLobbyChatHistoryCount(int value);
+
   //! Save placement, state and size information of a window.
   void saveWidgetInformation(QWidget *widget);
 

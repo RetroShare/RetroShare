@@ -56,10 +56,13 @@ public:
 	bool getMessage(uint32_t msgId, HistoryMsg &msg);
 	void clear(const std::string &chatPeerId);
 	void removeMessages(const std::list<uint32_t> &msgIds);
-	bool getEnable(bool ofPublic);
-	void setEnable(bool forPublic, bool enable);
-	uint32_t getSaveCount(bool ofPublic);
-	void setSaveCount(bool forPublic, uint32_t count);
+
+	virtual bool getEnable(uint32_t chat_type);
+	virtual void setEnable(uint32_t chat_type, bool enable);
+	virtual uint32_t getSaveCount(uint32_t chat_type);
+	virtual void setSaveCount(uint32_t chat_type, uint32_t count);
+	virtual void setMaxStorageDuration(uint32_t seconds) ;
+	virtual uint32_t getMaxStorageDuration() ;
 
 	/********* p3config ************/
 
@@ -72,11 +75,21 @@ private:
 	uint32_t nextMsgId;
 	std::map<std::string, std::map<uint32_t, RsHistoryMsgItem*> > mMessages;
 
+	// Removes messages stored for more than mMaxMsgStorageDurationSeconds seconds.
+	// This avoids the stored list to grow crazy with time.
+	//
+	void cleanOldMessages() ;
+
 	bool mPublicEnable;
+	bool mLobbyEnable;
 	bool mPrivateEnable;
 
 	uint32_t mPublicSaveCount;
+	uint32_t mLobbySaveCount;
 	uint32_t mPrivateSaveCount;
+
+	uint32_t mMaxStorageDurationSeconds ;
+	time_t mLastCleanTime ;
 
 	std::list<RsItem*> saveCleanupList; /* TEMPORARY LIST WHEN SAVING */
 

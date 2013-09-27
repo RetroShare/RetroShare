@@ -38,6 +38,10 @@ extern RsHistory *rsHistory;
 /*!
  * data object used for message history
  */
+static const uint32_t RS_HISTORY_TYPE_PUBLIC  = 0 ;
+static const uint32_t RS_HISTORY_TYPE_PRIVATE = 1 ;
+static const uint32_t RS_HISTORY_TYPE_LOBBY   = 2 ;
+
 class HistoryMsg
 {
 public:
@@ -72,12 +76,14 @@ public:
 	virtual void removeMessages(const std::list<uint32_t> &msgIds) = 0;
 	virtual void clear(const std::string &chatPeerId) = 0;
 
-	virtual bool getEnable(bool ofPublic) = 0;
-	virtual void setEnable(bool forPublic, bool enable) = 0;
+	virtual bool getEnable(uint32_t chat_type) = 0;
+	virtual void setEnable(uint32_t chat_type, bool enable) = 0;
+	virtual uint32_t getMaxStorageDuration() = 0 ;
+	virtual void setMaxStorageDuration(uint32_t seconds) = 0 ;
 
 	// 0 = no limit, >0 count of saved messages
-	virtual uint32_t getSaveCount(bool ofPublic) = 0;
-	virtual void     setSaveCount(bool forPublic, uint32_t count) = 0;
+	virtual uint32_t getSaveCount(uint32_t chat_type) = 0;
+	virtual void     setSaveCount(uint32_t chat_type, uint32_t count) = 0;
 };
 
 #endif

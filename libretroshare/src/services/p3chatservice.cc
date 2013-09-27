@@ -1151,12 +1151,12 @@ void p3ChatService::handleRecvChatAvatarItem(RsChatAvatarItem *ca)
 bool p3ChatService::checkForMessageSecurity(RsChatMsgItem *ci)
 {
 	// Remove too big messages
-	if (ci->message.length() > 2000 && (ci->chatFlags & RS_CHAT_FLAG_LOBBY))
+	if (ci->message.length() > 6000 && (ci->chatFlags & RS_CHAT_FLAG_LOBBY))
 	{
 		wchar_t tmp[300];
 		mbstowcs(tmp, rsPeers->getPeerName(ci->PeerId()).c_str(), 299);
 
-		ci->message = std::wstring(L"**** Security warning: Message bigger than 2000 characters, coming from id ") + tmp + L", dropped. ****";
+		ci->message = std::wstring(L"**** Security warning: Message bigger than 6000 characters, forwarded to you by ") + tmp + L", dropped. ****";
 		return false;
 	}
 
@@ -2892,7 +2892,7 @@ void p3ChatService::unsubscribeChatLobby(const ChatLobbyId& id)
 
 		// remove history
 
-		mHistoryMgr->clear(it->second.virtual_peer_id);
+		//mHistoryMgr->clear(it->second.virtual_peer_id);
 
 		// remove lobby information
 
