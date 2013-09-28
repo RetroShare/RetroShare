@@ -358,8 +358,7 @@ HEADERS +=	pqi/authssl.h \
 
 #			pqi/p3dhtmgr.h \
 
-HEADERS +=	rsserver/p3discovery.h \
-			rsserver/p3face.h \
+HEADERS +=	rsserver/p3face.h \
 			rsserver/p3history.h \
 			rsserver/p3msgs.h \
 			rsserver/p3peers.h \
@@ -369,7 +368,6 @@ HEADERS +=	rsserver/p3discovery.h \
 HEADERS +=	serialiser/rsbaseitems.h \
 			serialiser/rsbaseserial.h \
 			serialiser/rsconfigitems.h \
-			serialiser/rsdiscitems.h \
 			serialiser/rshistoryitems.h \
 			serialiser/rsmsgitems.h \
 			serialiser/rsserial.h \
@@ -387,17 +385,18 @@ HEADERS +=	serialiser/rsbaseitems.h \
 			serialiser/rstlvbanlist.h \
 			serialiser/rsbanlistitems.h \
 			serialiser/rsbwctrlitems.h \
+			serialiser/rsdiscovery2items.h \
+			serialiser/rsheartbeatitems.h \
 
 HEADERS +=	services/p3chatservice.h \
-			services/p3disc.h \
 			services/p3msgservice.h \
 			services/p3service.h \
 			services/p3statusservice.h \
 			services/p3dsdv.h \
 			services/p3banlist.h \
-			services/p3bwctrl.h 
-		
-#			services/p3discovery2.h \
+			services/p3bwctrl.h \
+			services/p3discovery2.h \
+			services/p3heartbeat.h \
 
 HEADERS +=	turtle/p3turtle.h \
 			turtle/rsturtleitem.h \
@@ -477,8 +476,7 @@ SOURCES +=	pqi/authgpg.cc \
 
 #			pqi/p3dhtmgr.cc \
 
-SOURCES +=	rsserver/p3discovery.cc \
-			rsserver/p3face-config.cc \
+SOURCES += 		rsserver/p3face-config.cc \
 			rsserver/p3face-msgs.cc \
 			rsserver/p3face-server.cc \
 			rsserver/p3history.cc \
@@ -497,7 +495,6 @@ SOURCES += plugins/pluginmanager.cc \
 SOURCES +=	serialiser/rsbaseitems.cc \
 			serialiser/rsbaseserial.cc \
 			serialiser/rsconfigitems.cc \
-			serialiser/rsdiscitems.cc \
 			serialiser/rshistoryitems.cc \
 			serialiser/rsmsgitems.cc \
 			serialiser/rsserial.cc \
@@ -515,18 +512,18 @@ SOURCES +=	serialiser/rsbaseitems.cc \
 			serialiser/rstlvbanlist.cc \
 			serialiser/rsbanlistitems.cc \
 			serialiser/rsbwctrlitems.cc \
+			serialiser/rsdiscovery2items.cc \
+			serialiser/rsheartbeatitems.cc \
 
 SOURCES +=	services/p3chatservice.cc \
-			services/p3disc.cc \
 			services/p3msgservice.cc \
 			services/p3service.cc \
 			services/p3statusservice.cc \
 			services/p3dsdv.cc \
 			services/p3banlist.cc \
 			services/p3bwctrl.cc \
-
-
-#			services/p3discovery2.cc \
+			services/p3discovery2.cc \
+			services/p3heartbeat.cc \
 
 SOURCES +=	turtle/p3turtle.cc \
 				turtle/rsturtleitem.cc 

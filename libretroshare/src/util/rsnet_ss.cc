@@ -25,6 +25,7 @@
 
 #include "util/rsnet.h"
 #include "util/rsstring.h"
+#include "pqi/pqinetwork.h"
 
 /***************************** Internal Helper Fns ******************************/
 
@@ -173,8 +174,10 @@ bool sockaddr_storage_copyip(struct sockaddr_storage &dst, const struct sockaddr
 
 uint16_t sockaddr_storage_port(const struct sockaddr_storage &addr)
 {
+#ifdef SS_DEBUG
 	std::cerr << "sockaddr_storage_port()";
 	std::cerr << std::endl;
+#endif
 	switch(addr.ss_family)
 	{
 		case AF_INET:
@@ -629,8 +632,10 @@ bool sockaddr_storage_ipv4_copyip(struct sockaddr_storage &dst, const struct soc
 
 uint16_t sockaddr_storage_ipv4_port(const struct sockaddr_storage &addr)
 {
+#ifdef SS_DEBUG
 	std::cerr << "sockaddr_storage_ipv4_port()";
 	std::cerr << std::endl;
+#endif
 
 	const struct sockaddr_in *ipv4_ptr = to_const_ipv4_ptr(addr);
 	uint16_t port = ntohs(ipv4_ptr->sin_port);
@@ -740,7 +745,10 @@ bool sockaddr_storage_ipv4_samenet(const struct sockaddr_storage &addr, const st
 	std::cerr << "sockaddr_storage_ipv4_samenet()";
 	std::cerr << std::endl;
 
-	return false;
+
+	const struct sockaddr_in *ptr1 = to_const_ipv4_ptr(addr);
+	const struct sockaddr_in *ptr2 = to_const_ipv4_ptr(addr2);
+	return sameNet(&(ptr1->sin_addr),&(ptr2->sin_addr));
 }
 
 bool sockaddr_storage_ipv4_samesubnet(const struct sockaddr_storage &addr, const struct sockaddr_storage &addr2)
@@ -748,10 +756,12 @@ bool sockaddr_storage_ipv4_samesubnet(const struct sockaddr_storage &addr, const
 	(void) addr;
 	(void) addr2;
 		
-	std::cerr << "sockaddr_storage_ipv4_samesubnet()";
+	std::cerr << "sockaddr_storage_ipv4_samesubnet() using pqinetwork::isSameSubnet()";
 	std::cerr << std::endl;
 
-	return false;
+	const struct sockaddr_in *ptr1 = to_const_ipv4_ptr(addr);
+	const struct sockaddr_in *ptr2 = to_const_ipv4_ptr(addr2);
+	return isSameSubnet((struct in_addr *) &(ptr1->sin_addr),(struct in_addr *) &(ptr2->sin_addr));
 }
 
 // IPV6

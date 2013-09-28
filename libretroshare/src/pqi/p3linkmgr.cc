@@ -1085,7 +1085,8 @@ void    p3LinkMgrIMPL::peerStatus(std::string id, const pqiIpAddrSet &addrs,
 	details.ts      = now;
 	
 	bool updateNetConfig = (source == RS_CB_PERSON);	
-	uint32_t peerVisibility = 0;
+	uint32_t peer_vs_disc = 0;
+	uint32_t peer_vs_dht = 0;
 	uint32_t peerNetMode = 0;
 
 	uint32_t ownNetMode = mNetMgr->getNetworkMode();
@@ -1219,20 +1220,20 @@ void    p3LinkMgrIMPL::peerStatus(std::string id, const pqiIpAddrSet &addrs,
 		/* always update VIS status */
 		if (flags & RS_NET_FLAGS_USE_DISC)
 		{
-			peerVisibility &= (~RS_VIS_STATE_NODISC);
+			peer_vs_disc = RS_VS_DISC_FULL;
 		}
 		else
 		{
-			peerVisibility |= RS_VIS_STATE_NODISC;
+			peer_vs_disc = RS_VS_DISC_OFF;
 		}
 
 		if (flags & RS_NET_FLAGS_USE_DHT)
 		{
-			peerVisibility &= (~RS_VIS_STATE_NODHT);
+			peer_vs_dht = RS_VS_DHT_FULL;
 		}
 		else
 		{
-			peerVisibility |= RS_VIS_STATE_NODHT;
+			peer_vs_dht = RS_VS_DHT_OFF;
 		}
 
 		
@@ -1303,7 +1304,7 @@ void    p3LinkMgrIMPL::peerStatus(std::string id, const pqiIpAddrSet &addrs,
 	bool newAddrs = mPeerMgr->updateAddressList(id, addrs);
 	if (updateNetConfig)
 	{
-		mPeerMgr -> setVisState(id, peerVisibility);
+		mPeerMgr -> setVisState(id, peer_vs_disc, peer_vs_dht);
 		mPeerMgr -> setNetworkMode(id, peerNetMode);
 	}
 

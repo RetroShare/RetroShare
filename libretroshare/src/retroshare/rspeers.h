@@ -58,8 +58,13 @@ const uint32_t RS_NETMODE_HIDDEN	= 0x0004;
 const uint32_t RS_NETMODE_UNREACHABLE	= 0x0005;
 
 /* Visibility */
-const uint32_t RS_VS_DHT_ON		= 0x0001;
-const uint32_t RS_VS_DISC_ON		= 0x0002;
+const uint32_t RS_VS_DISC_OFF		= 0x0000;
+const uint32_t RS_VS_DISC_MINIMAL	= 0x0001;
+const uint32_t RS_VS_DISC_FULL		= 0x0002;
+
+const uint32_t RS_VS_DHT_OFF		= 0x0000;
+const uint32_t RS_VS_DHT_PASSIVE	= 0x0001;
+const uint32_t RS_VS_DHT_FULL		= 0x0002;
 
 /* State */
 const uint32_t RS_PEER_STATE_FRIEND	= 0x0001;
@@ -219,7 +224,9 @@ class RsPeerDetails
 	std::list<std::string>  ipAddressList;
 
 	uint32_t		netMode;
-	uint32_t		visState;
+	/* vis State */
+	uint16_t		vs_disc;
+	uint16_t		vs_dht;
 
 	/* basic stats */
 	uint32_t		lastConnect;           /* how long ago */
@@ -321,7 +328,7 @@ class RsPeers
 		virtual	bool setExtAddress(  const std::string &ssl_id, const std::string &addr, uint16_t port) = 0;
 		virtual	bool setDynDNS(const std::string &id, const std::string &addr) = 0;
 		virtual	bool setNetworkMode(const std::string &ssl_id, uint32_t netMode) 	= 0;
-		virtual bool setVisState(const std::string &ssl_id, uint32_t vis)		= 0;
+		virtual bool setVisState(const std::string &ssl_id, uint16_t vs_disc, uint16_t vs_dht)	= 0;
 
 		virtual void getIPServersList(std::list<std::string>& ip_servers) = 0;
 		virtual void allowServerIPDetermination(bool) = 0;

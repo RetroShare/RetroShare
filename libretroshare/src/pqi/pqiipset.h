@@ -51,7 +51,7 @@ class pqiIpAddrList
 	bool 	updateIpAddressList(const pqiIpAddress &addr);
 	void 	printIpAddressList(std::string &out) const;
 	void    extractFromTlv(const RsTlvIpAddrSet &tlvAddrs);
-	void    loadTlv(RsTlvIpAddrSet &tlvAddrs);
+	void    loadTlv(RsTlvIpAddrSet &tlvAddrs) const;
 
 	// sorted list... based on seen time.
 	std::list<pqiIpAddress> mAddrs;

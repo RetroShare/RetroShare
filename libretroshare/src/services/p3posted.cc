@@ -560,7 +560,7 @@ bool p3Posted::generatePost(uint32_t &token, const RsGxsGroupId &grpId)
 
 	uint32_t idx = (uint32_t) (ownIds.size() * RSRandom::random_f32());
 	uint32_t i = 0;
-	for(it = ownIds.begin(); (it != ownIds.end()) && (i < idx); it++, i++);
+	for(it = ownIds.begin(); (it != ownIds.end()) && (i < idx); it++, i++) ;
 
 	if (it != ownIds.end())
 	{
@@ -605,7 +605,7 @@ bool p3Posted::generateComment(uint32_t &token, const RsGxsGroupId &grpId, const
 
 	uint32_t idx = (uint32_t) (ownIds.size() * RSRandom::random_f32());
 	uint32_t i = 0;
-	for(it = ownIds.begin(); (it != ownIds.end()) && (i < idx); it++, i++);
+	for(it = ownIds.begin(); (it != ownIds.end()) && (i < idx); it++, i++) ;
 
 	if (it != ownIds.end())
 	{

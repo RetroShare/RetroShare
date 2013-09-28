@@ -500,7 +500,7 @@ int p3ZeroConf::checkLocationResults()
 	std::cerr << std::endl;
 
 	time_t now = time(NULL);
-	mPeerMgr->addFriend(lr.sslId, lr.gpgId, RS_NET_MODE_UDP, RS_VIS_STATE_STD, now);
+	mPeerMgr->addFriend(lr.sslId, lr.gpgId, RS_NET_MODE_UDP, RS_VS_DISC_FULL, RS_VS_DHT_FULL, now);
 	return 1;
 }
 

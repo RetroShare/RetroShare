@@ -46,6 +46,7 @@ const uint16_t RS_SERVICE_TYPE_CHAT        = 0x0012;
 const uint16_t RS_SERVICE_TYPE_MSG         = 0x0013;
 const uint16_t RS_SERVICE_TYPE_TURTLE      = 0x0014;
 const uint16_t RS_SERVICE_TYPE_TUNNEL      = 0x0015;
+const uint16_t RS_SERVICE_TYPE_HEARTBEAT   = 0x0016;
 
 /* BanList Still Testing at the moment - Service Only */
 const uint16_t RS_SERVICE_TYPE_BANLIST     = 0x0101;

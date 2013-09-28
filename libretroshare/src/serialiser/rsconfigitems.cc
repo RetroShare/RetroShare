@@ -780,11 +780,15 @@ void RsPeerNetItem::clear()
         gpg_id.clear();
         location.clear();
 	netMode = 0;
-	visState = 0;
+	vs_disc = 0;
+	vs_dht = 0;
 	lastContact = 0;
 
-	localAddr.TlvClear();
-	extAddr.TlvClear();
+	localAddrV4.TlvClear();
+	extAddrV4.TlvClear();
+	localAddrV6.TlvClear();
+	extAddrV6.TlvClear();
+
 	dyndns.clear();
 
 	localAddrList.TlvClear();
@@ -812,19 +816,29 @@ std::ostream &RsPeerNetItem::print(std::ostream &out, uint16_t indent)
 	out << "netMode: " << netMode << std::endl;
 
 	printIndent(out, int_Indent);
-	out << "visState: " << visState << std::endl;
+	out << "vs_disc: " << vs_disc << std::endl;
+	
+	printIndent(out, int_Indent);
+	out << "vs_dht: " << vs_dht << std::endl;
 	
 	printIndent(out, int_Indent);
 	out << "lastContact: " << lastContact << std::endl;
 
 	printIndent(out, int_Indent);
-	out << "localAddr: " << std::endl;
-	localAddr.print(out, int_Indent);
+	out << "localAddrV4: " << std::endl;
+	localAddrV4.print(out, int_Indent);
 
 	printIndent(out, int_Indent);
-	out << "extAddr: " << std::endl;
-	extAddr.print(out, int_Indent);
-	
+	out << "extAddrV4: " << std::endl;
+	extAddrV4.print(out, int_Indent);
+
+	printIndent(out, int_Indent);
+	out << "localAddrV6: " << std::endl;
+	localAddrV6.print(out, int_Indent);
+
+	printIndent(out, int_Indent);
+	out << "extAddrV6: " << std::endl;
+	extAddrV6.print(out, int_Indent);
 
 	printIndent(out, int_Indent);
 	out << "DynDNS: " << dyndns << std::endl;
@@ -845,10 +859,15 @@ uint32_t RsPeerConfigSerialiser::sizeNet(RsPeerNetItem *i)
         s += GetTlvStringSize(i->gpg_id);
         s += GetTlvStringSize(i->location);
         s += 4; /* netMode */
-	s += 4; /* visState */
+	s += 2; /* vs_disc */
+	s += 2; /* vs_dht */
 	s += 4; /* lastContact */
-	s += i->localAddr.TlvSize(); /* localaddr */ 
-	s += i->extAddr.TlvSize(); /* remoteaddr */ 
+
+	s += i->localAddrV4.TlvSize(); /* localaddr */ 
+	s += i->extAddrV4.TlvSize(); /* remoteaddr */ 
+	s += i->localAddrV6.TlvSize(); /* localaddr */ 
+	s += i->extAddrV6.TlvSize(); /* remoteaddr */ 
+
 	s += GetTlvStringSize(i->dyndns);
 
 	//add the size of the ip list
@@ -900,10 +919,14 @@ bool RsPeerConfigSerialiser::serialiseNet(RsPeerNetItem *item, void *data, uint3
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_GPGID, item->gpg_id); /* Mandatory */
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_LOCATION, item->location); /* Mandatory */
 	ok &= setRawUInt32(data, tlvsize, &offset, item->netMode); /* Mandatory */
-	ok &= setRawUInt32(data, tlvsize, &offset, item->visState); /* Mandatory */
+	ok &= setRawUInt16(data, tlvsize, &offset, item->vs_disc); /* Mandatory */
+	ok &= setRawUInt16(data, tlvsize, &offset, item->vs_dht); /* Mandatory */
 	ok &= setRawUInt32(data, tlvsize, &offset, item->lastContact); /* Mandatory */
-	ok &= item->localAddr.SetTlv(data, tlvsize, &offset); 
-	ok &= item->extAddr.SetTlv(data, tlvsize, &offset);
+
+	ok &= item->localAddrV4.SetTlv(data, tlvsize, &offset); 
+	ok &= item->extAddrV4.SetTlv(data, tlvsize, &offset);
+	ok &= item->localAddrV6.SetTlv(data, tlvsize, &offset); 
+	ok &= item->extAddrV6.SetTlv(data, tlvsize, &offset);
 	
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_DYNDNS, item->dyndns);
 
@@ -974,11 +997,14 @@ RsPeerNetItem *RsPeerConfigSerialiser::deserialiseNet(void *data, uint32_t *size
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_GPGID, item->gpg_id); /* Mandatory */
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_LOCATION, item->location); /* Mandatory */
 	ok &= getRawUInt32(data, rssize, &offset, &(item->netMode)); /* Mandatory */
-	ok &= getRawUInt32(data, rssize, &offset, &(item->visState)); /* Mandatory */
+	ok &= getRawUInt16(data, rssize, &offset, &(item->vs_disc)); /* Mandatory */
+	ok &= getRawUInt16(data, rssize, &offset, &(item->vs_dht)); /* Mandatory */
 	ok &= getRawUInt32(data, rssize, &offset, &(item->lastContact)); /* Mandatory */
 	
-	ok &= item->localAddr.GetTlv(data, rssize, &offset); 
-	ok &= item->extAddr.GetTlv(data, rssize, &offset);
+	ok &= item->localAddrV4.GetTlv(data, rssize, &offset); 
+	ok &= item->extAddrV4.GetTlv(data, rssize, &offset);
+	ok &= item->localAddrV6.GetTlv(data, rssize, &offset); 
+	ok &= item->extAddrV6.GetTlv(data, rssize, &offset);
 
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_DYNDNS, item->dyndns); 
 	ok &= item->localAddrList.GetTlv(data, rssize, &offset);

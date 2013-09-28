@@ -140,8 +140,10 @@ p3NetMgrIMPL::p3NetMgrIMPL()
 		mLocalAddr.ss_family = AF_INET;
 		mExtAddr.ss_family = AF_INET;
 
+		// default to full.
+		mVsDisc = RS_VS_DISC_FULL;
+		mVsDht = RS_VS_DHT_FULL;
 
-		mVisState = 0 ;
 	}
 	
 #ifdef NETMGR_DEBUG
@@ -570,10 +572,10 @@ void p3NetMgrIMPL::netDhtInit()
 	uint32_t vs = 0;
 	{
 		RsStackMutex stack(mNetMtx); /*********** LOCKED MUTEX ************/
-		vs = mVisState;
+		vs = mVsDht;
 	}
 	
-	enableNetAssistConnect(!(vs & RS_VIS_STATE_NODHT));
+	enableNetAssistConnect(vs != RS_VS_DHT_OFF);
 }
 
 
@@ -1167,15 +1169,16 @@ bool    p3NetMgrIMPL::setNetworkMode(uint32_t netMode)
 }
 
 
-bool    p3NetMgrIMPL::setVisState(uint32_t visState)
+bool    p3NetMgrIMPL::setVisState(uint16_t vs_disc, uint16_t vs_dht)
 {
 	RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
-	mVisState = visState;
+	mVsDisc = vs_disc;
+	mVsDht = vs_dht;
 
 	/* if we've started up - then tweak Dht On/Off */
 	if (mNetStatus != RS_NET_UNKNOWN)
 	{
-		enableNetAssistConnect(!(mVisState & RS_VIS_STATE_NODHT));
+		enableNetAssistConnect(mVsDht != RS_VS_DHT_OFF);
 	}
 
 	return true;

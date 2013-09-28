@@ -26,7 +26,6 @@
 #include "pqi/pqi.h"
 #include "pqi/pqiperson.h"
 #include "pqi/pqipersongrp.h"
-#include "services/p3disc.h"
 
 const int pqipersonzone = 82371;
 #include "util/rsdebug.h"

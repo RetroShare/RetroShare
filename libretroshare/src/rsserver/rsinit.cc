@@ -289,7 +289,6 @@ void RsInit::InitRsConfig()
 	//setZoneLevel(PQL_DEBUG_BASIC, 82371); // pqiperson.
 	//setZoneLevel(PQL_DEBUG_BASIC, 34283); // pqihandler.
 	//setZoneLevel(PQL_DEBUG_BASIC, 44863); // discItems.
-	//setZoneLevel(PQL_DEBUG_BASIC, 2482); // p3disc
 	//setZoneLevel(PQL_DEBUG_BASIC, 1728); // pqi/p3proxy
 	//setZoneLevel(PQL_DEBUG_BASIC, 1211); // sslroot.
 	//setZoneLevel(PQL_DEBUG_BASIC, 37714); // pqissl.
@@ -1780,8 +1779,9 @@ RsTurtle *rsTurtle = NULL ;
 		#include "upnp/upnphandler_miniupnp.h"
         #endif
 #endif
-
-#include "services/p3disc.h"
+	
+#include "services/p3heartbeat.h"
+#include "services/p3discovery2.h"
 #include "services/p3msgservice.h"
 #include "services/p3chatservice.h"
 #include "services/p3statusservice.h"
@@ -1815,7 +1815,6 @@ RsTurtle *rsTurtle = NULL ;
 #include "rsserver/p3face.h"
 #include "rsserver/p3peers.h"
 #include "rsserver/p3msgs.h"
-#include "rsserver/p3discovery.h"
 #include "rsserver/p3status.h"
 #include "rsserver/p3history.h"
 #include "rsserver/p3serverconfig.h"
@@ -2238,7 +2237,8 @@ int RsServer::StartupRetroShare()
 	mPluginsManager->setInterfaces(interfaces);
 
 	/* create Services */
-	ad = new p3disc(mPeerMgr, mLinkMgr, mNetMgr, pqih);
+	mDisc = new p3discovery2(mPeerMgr, mLinkMgr, mNetMgr);
+	mHeart = new p3heartbeat(mLinkMgr, pqih);
 	msgSrv = new p3MsgService(mLinkMgr);
 	chatSrv = new p3ChatService(mLinkMgr, mHistoryMgr);
 	mStatusSrv = new p3StatusService(mLinkMgr);
@@ -2251,7 +2251,8 @@ int RsServer::StartupRetroShare()
 	chatSrv->connectToTurtleRouter(tr) ;
 	msgSrv->connectToTurtleRouter(tr) ;
 
-	pqih -> addService(ad);
+	pqih -> addService(mHeart);
+	pqih -> addService(mDisc);
 	pqih -> addService(msgSrv);
 	pqih -> addService(chatSrv);
 	pqih ->addService(mStatusSrv);
@@ -2503,7 +2504,7 @@ int RsServer::StartupRetroShare()
 	/* need to Monitor too! */
 	mLinkMgr->addMonitor(pqih);
 	mLinkMgr->addMonitor(mCacheStrapper);
-	//mLinkMgr->addMonitor(ad);
+	mLinkMgr->addMonitor(mDisc);
 	mLinkMgr->addMonitor(msgSrv);
 	mLinkMgr->addMonitor(mStatusSrv);
 	mLinkMgr->addMonitor(chatSrv);
@@ -2529,7 +2530,6 @@ int RsServer::StartupRetroShare()
 	mConfigMgr->addConfiguration("p3History.cfg", mHistoryMgr);
 	mConfigMgr->addConfiguration("p3Status.cfg", mStatusSrv);
 	mConfigMgr->addConfiguration("turtle.cfg", tr);
-	//mConfigMgr->addConfiguration("p3disc.cfg", ad);
 
 #ifdef RS_USE_BITDHT
 	mConfigMgr->addConfiguration("bitdht.cfg", mBitDht);
@@ -2583,7 +2583,7 @@ int RsServer::StartupRetroShare()
 	if (RsInitConfig::forceExtPort)
 	{
 		mPeerMgr->setOwnNetworkMode(RS_NET_MODE_EXT);
-		mPeerMgr->setOwnVisState(RS_VIS_STATE_STD);
+		mPeerMgr->setOwnVisState(RS_VS_DISC_FULL, RS_VS_DHT_FULL);
 
 	}
 
@@ -2633,7 +2633,7 @@ int RsServer::StartupRetroShare()
 	/* Add AuthGPG services */
 	/**************************************************************************/
 
-	AuthGPG::getAuthGPG()->addService(ad);
+	AuthGPG::getAuthGPG()->addService(mDisc);
 
 	/**************************************************************************/
 	/* Force Any Last Configuration Options */
@@ -2701,7 +2701,7 @@ int RsServer::StartupRetroShare()
 
 	/* Setup GUI Interfaces. */
 
-	rsDisc  = new p3Discovery(ad);
+	rsDisc  = mDisc;
 	rsBandwidthControl = mBwCtrl;
 	rsConfig = serverConfig;
 

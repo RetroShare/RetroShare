@@ -90,7 +90,7 @@ virtual	bool setLocalAddress(const std::string &id, const std::string &addr, uin
 virtual	bool setExtAddress(const std::string &id, const std::string &addr, uint16_t port);
 virtual	bool setDynDNS(const std::string &id, const std::string &dyndns);
 virtual	bool setNetworkMode(const std::string &id, uint32_t netMode);
-virtual bool setVisState(const std::string &id, uint32_t mode); 
+virtual bool setVisState(const std::string &id, uint16_t vs_disc, uint16_t vs_dht);
 
 virtual void getIPServersList(std::list<std::string>& ip_servers) ;
 virtual void allowServerIPDetermination(bool) ;

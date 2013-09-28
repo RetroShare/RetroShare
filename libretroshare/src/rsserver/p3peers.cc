@@ -373,18 +373,8 @@ bool	p3Peers::getPeerDetails(const std::string &id, RsPeerDetails &d)
 			break;
 	}
 
-	d.visState	= 0;
-	if (!(ps.visState & RS_VIS_STATE_NODISC))
-	{
-		d.visState |= RS_VS_DISC_ON;
-	}
-
-	if (!(ps.visState & RS_VIS_STATE_NODHT))
-	{
-		d.visState |= RS_VS_DHT_ON;
-	}
-
-
+	d.vs_disc = ps.vs_disc;
+	d.vs_dht = ps.vs_dht;
 
 
 	/* Translate */
@@ -645,7 +635,7 @@ bool 	p3Peers::addFriend(const std::string &ssl_id, const std::string &gpg_id,Se
 	 * This will cause the SSL certificate to be retained for 30 days... and give the person a chance to connect!
 	 *  */
 	time_t now = time(NULL);
-	return mPeerMgr->addFriend(ssl_id, gpg_id, RS_NET_MODE_UDP, RS_VIS_STATE_STD, now, perm_flags);
+	return mPeerMgr->addFriend(ssl_id, gpg_id, RS_NET_MODE_UDP, RS_VS_DISC_FULL, RS_VS_DHT_FULL, now, perm_flags);
 }
 
 bool 	p3Peers::removeKeysFromPGPKeyring(const std::list<std::string>& pgp_ids,std::string& backup_file,uint32_t& error_code)
@@ -875,20 +865,15 @@ bool 	p3Peers::setNetworkMode(const std::string &id, uint32_t extNetMode)
 
 
 bool
-p3Peers::setVisState(const std::string &id, uint32_t extVisState)
+p3Peers::setVisState(const std::string &id, uint16_t vs_disc, uint16_t vs_dht)
 {
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::setVisState() " << id << std::endl;
 #endif
-        std::cerr << "p3Peers::setVisState() " << id << " " << extVisState << std::endl;
+	std::cerr << "p3Peers::setVisState() " << id << " DISC: " << vs_disc;
+	std::cerr << " DHT: " << vs_dht << std::endl;
 
-	uint32_t visState = 0;
-	if (!(extVisState & RS_VS_DHT_ON))
-		visState |= RS_VIS_STATE_NODHT;
-	if (!(extVisState & RS_VS_DISC_ON))
-		visState |= RS_VIS_STATE_NODISC;
-
-	return mPeerMgr->setVisState(id, visState);
+	return mPeerMgr->setVisState(id, vs_disc, vs_dht);
 }
 
 //===========================================================================
@@ -1242,7 +1227,7 @@ RsPeerDetails::RsPeerDetails()
 	org(""),issuer(""),fpr(""),authcode(""),
 		  trustLvl(0), validLvl(0),ownsign(false), 
 	hasSignedMe(false),accept_connection(false),
-	state(0),localAddr(""),localPort(0),extAddr(""),extPort(0),netMode(0),visState(0),
+	state(0),localAddr(""),localPort(0),extAddr(""),extPort(0),netMode(0),vs_disc(0), vs_dht(0),
 	lastConnect(0),connectState(0),connectStateString(""),connectPeriod(0),foundDHT(false), 
 	wasDeniedConnection(false), deniedTS(0)
 {

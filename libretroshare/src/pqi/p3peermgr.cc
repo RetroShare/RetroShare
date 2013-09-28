@@ -78,7 +78,7 @@ void  printConnectState(std::ostream &out, peerState &peer);
 peerState::peerState()
 	:id("unknown"), 
          gpg_id("unknown"),
-	 netMode(RS_NET_MODE_UNKNOWN), visState(RS_VIS_STATE_STD), lastcontact(0), 
+	 netMode(RS_NET_MODE_UNKNOWN), vs_disc(RS_VS_DISC_FULL), vs_dht(RS_VS_DHT_FULL), lastcontact(0), 
 	 hiddenNode(false), hiddenPort(0) 
 {
         sockaddr_storage_clear(localaddr);
@@ -91,7 +91,7 @@ std::string textPeerConnectState(peerState &state)
 {
 	std::string out = "Id: " + state.id + "\n";
 	rs_sprintf_append(out, "NetMode: %lu\n", state.netMode);
-	rs_sprintf_append(out, "VisState: %lu\n", state.visState);
+	rs_sprintf_append(out, "VisState: Disc: %u Dht: %u\n", state.vs_disc, state.vs_dht);
 	
 	out += "laddr: ";
 	out += sockaddr_storage_tostring(state.localaddr);
@@ -122,7 +122,8 @@ p3PeerMgrIMPL::p3PeerMgrIMPL(	const std::string& ssl_own_id,
 		mOwnState.name = gpg_own_name ;
 		mOwnState.location = ssl_own_location ;
 		mOwnState.netMode = RS_NET_MODE_UPNP; // Default to UPNP.
-		mOwnState.visState = 0;
+		mOwnState.vs_disc = RS_VS_DISC_FULL;
+		mOwnState.vs_dht = RS_VS_DHT_FULL;
 	
 		lastGroupId = 1;
 
@@ -163,7 +164,7 @@ bool p3PeerMgrIMPL::setupHiddenNode(const std::string &hiddenAddress, const uint
 	mOwnState.hiddenDomain = hiddenAddress;
 
 	// switch off DHT too.
-	setOwnVisState(RS_VIS_STATE_GRAY);
+	setOwnVisState(mOwnState.vs_disc, RS_VS_DHT_OFF);
 
 	// Force the Port.
 	struct sockaddr_storage loopback;
@@ -206,29 +207,32 @@ bool p3PeerMgrIMPL::setOwnNetworkMode(uint32_t netMode)
 	return changed;
 }
 
-bool p3PeerMgrIMPL::setOwnVisState(uint32_t visState)
+bool p3PeerMgrIMPL::setOwnVisState(uint16_t vs_disc, uint16_t vs_dht)
 {
 	bool changed = false;
 	{
 		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
 		std::string out;
-		rs_sprintf(out, "p3PeerMgr::setOwnVisState() Existing vis: %lu Input vis: %lu", mOwnState.visState, visState);
+		rs_sprintf(out, "p3PeerMgr::setOwnVisState() Existing vis: %u/%u Input vis: %u/%u", 
+				   mOwnState.vs_disc, mOwnState.vs_dht, vs_disc, vs_dht);
 		rslog(RSL_WARNING, p3peermgrzone, out);
 
 #ifdef PEER_DEBUG
 		std::cerr << out.c_str() << std::endl;
 #endif
 
-		if (mOwnState.visState != visState) {
-			mOwnState.visState = visState;
+		if (mOwnState.vs_disc != vs_disc || mOwnState.vs_dht != vs_dht) 
+		{
+			mOwnState.vs_disc = vs_disc;
+			mOwnState.vs_dht = vs_dht;
 			changed = true;
 			IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 		}
 	}
 	
 	// Pass on Flags to NetMgr.
-	mNetMgr->setVisState(visState);
+	mNetMgr->setVisState(vs_disc, vs_dht);
 
 	return changed;
 }
@@ -594,7 +598,7 @@ bool    p3PeerMgrIMPL::haveOnceConnected()
 /*******************************************************************/
 /*******************************************************************/
 
-bool p3PeerMgrIMPL::addFriend(const std::string& input_id, const std::string& input_gpg_id, uint32_t netMode, uint32_t visState, time_t lastContact,ServicePermissionFlags service_flags)
+bool p3PeerMgrIMPL::addFriend(const std::string& input_id, const std::string& input_gpg_id, uint32_t netMode, uint16_t vs_disc, uint16_t vs_dht, time_t lastContact,ServicePermissionFlags service_flags)
 {
 	bool notifyLinkMgr = false;
 	std::string id = input_id ;
@@ -670,7 +674,9 @@ bool p3PeerMgrIMPL::addFriend(const std::string& input_id, const std::string& in
 			it = mFriendList.find(id);
 
 			/* setup connectivity parameters */
-			it->second.visState = visState;
+			it->second.vs_disc = vs_disc;
+			it->second.vs_dht = vs_dht;
+			
 			it->second.netMode  = netMode;
 			it->second.lastcontact = lastContact;
 
@@ -693,7 +699,8 @@ bool p3PeerMgrIMPL::addFriend(const std::string& input_id, const std::string& in
 			pstate.gpg_id = gpg_id;
 			pstate.name = AuthGPG::getAuthGPG()->getGPGName(gpg_id);
 			
-			pstate.visState = visState;
+			pstate.vs_disc = vs_disc;
+			pstate.vs_dht = vs_dht;
 			pstate.netMode = netMode;
 			pstate.lastcontact = lastContact;
 
@@ -711,7 +718,7 @@ bool p3PeerMgrIMPL::addFriend(const std::string& input_id, const std::string& in
 
 	if (notifyLinkMgr)
 	{
-		mLinkMgr->addFriend(id, !(visState & RS_VIS_STATE_NODHT));
+		mLinkMgr->addFriend(id, vs_dht != RS_VS_DHT_OFF);
 	}
 
 	service_flags &= servicePermissionFlags(gpg_id) ; // Always reduce the permissions. 
@@ -1327,20 +1334,19 @@ bool    p3PeerMgrIMPL::setLocation(const std::string &id, const std::string &loc
         return changed;
 }
 
-bool    p3PeerMgrIMPL::setVisState(const std::string &id, uint32_t visState)
+bool    p3PeerMgrIMPL::setVisState(const std::string &id, uint16_t vs_disc, uint16_t vs_dht)
 {
 	{
 		std::string out;
-		rs_sprintf(out, "p3PeerMgr::setVisState(%s, %lu)", id.c_str(), visState);
+		rs_sprintf(out, "p3PeerMgr::setVisState(%s, %u, %u)", id.c_str(), vs_disc, vs_dht);
 		rslog(RSL_WARNING, p3peermgrzone, out);
 	}
 
 	if (id == AuthSSL::getAuthSSL()->OwnId())
 	{
-		return setOwnVisState(visState);
+		return setOwnVisState(vs_disc, vs_dht);
 	}
 
-	bool dht_state ;
 	bool isFriend = false;
 	bool changed = false;
 	{
@@ -1361,53 +1367,47 @@ bool    p3PeerMgrIMPL::setVisState(const std::string &id, uint32_t visState)
 		}
 
 		/* "it" points to peer */
-		if (it->second.visState != visState) {
-			it->second.visState = visState;
+		if ((it->second.vs_disc != vs_disc) || (it->second.vs_dht = vs_dht))
+		{
+			it->second.vs_disc = vs_disc;
+			it->second.vs_dht = vs_dht;
 			changed = true;
 
-			dht_state = it->second.visState & RS_VIS_STATE_NODHT ;
-
-			std::cerr << "p3PeerMgrIMPL::setVisState(" << id << ", " << std::hex << visState << std::dec << ") ";
+			std::cerr << "p3PeerMgrIMPL::setVisState(" << id << ", DISC: " << vs_disc << " DHT: " << vs_dht << ") ";
 			std::cerr << " NAME: " << it->second.name;
 
-			if (it->second.visState & RS_VIS_STATE_NODHT)
+			switch(it->second.vs_disc)
 			{
-				std::cerr << " NO-DHT ";
+				default:
+				case RS_VS_DISC_OFF:
+					std::cerr << " NO-DISC ";
+					break;
+				case RS_VS_DISC_MINIMAL:
+					std::cerr << " MIN-DISC ";
+					break;
+				case RS_VS_DISC_FULL:
+					std::cerr << " FULL-DISC ";
+					break;
 			}
-			else
+			switch(it->second.vs_dht)
 			{
-				std::cerr << " DHT-OK ";
-			}
-			if (it->second.visState & RS_VIS_STATE_NODISC)
-			{
-				std::cerr << " NO-DISC ";
-			}
-			else
-			{
-				std::cerr << " DISC-OK ";
+				default:
+				case RS_VS_DHT_OFF:
+					std::cerr << " NO-DHT ";
+					break;
+				case RS_VS_DHT_PASSIVE:
+					std::cerr << " PASSIVE-DHT ";
+					break;
+				case RS_VS_DHT_FULL:
+					std::cerr << " FULL-DHT ";
+					break;
 			}
 			std::cerr << std::endl;
 		}
 	}
 	if(isFriend && changed)
 	{
-		/* toggle DHT state */
-		if(dht_state)
-		{
-
-			std::cerr << "p3PeerMgrIMPL::setVisState() setFriendVisibility => false";
-			std::cerr << std::endl;
-
-			/* hidden from DHT world */
-			mLinkMgr->setFriendVisibility(id, false);
-		}
-		else
-		{
-			std::cerr << "p3PeerMgrIMPL::setVisState() setFriendVisibility => true";
-			std::cerr << std::endl;
-
-			mLinkMgr->setFriendVisibility(id, true);
-		}
+		mLinkMgr->setFriendVisibility(id, vs_dht != RS_VS_DHT_OFF);
 	}
 
 	if (changed) {
@@ -1471,11 +1471,16 @@ bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 #endif
 	item->netMode = mOwnState.netMode;
 
-	item->visState = mOwnState.visState;
+	item->vs_disc = mOwnState.vs_disc;
+	item->vs_dht = mOwnState.vs_dht;
+	
 	item->lastContact = mOwnState.lastcontact;
 
-	item->localAddr.addr = mOwnState.localaddr;
-	item->extAddr.addr = mOwnState.serveraddr;
+	item->localAddrV4.addr = mOwnState.localaddr;
+	item->extAddrV4.addr = mOwnState.serveraddr;
+	sockaddr_storage_clear(item->localAddrV6.addr);
+	sockaddr_storage_clear(item->extAddrV6.addr);
+	
 	item->dyndns = mOwnState.dyndns;
 	mOwnState.ipAddrs.mLocal.loadTlv(item->localAddrList);
 	mOwnState.ipAddrs.mExt.loadTlv(item->extAddrList);
@@ -1502,10 +1507,17 @@ bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 		item->gpg_id = (it->second).gpg_id;
 		item->location = (it->second).location;
 		item->netMode = (it->second).netMode;
-		item->visState = (it->second).visState;
+		item->vs_disc = (it->second).vs_disc;
+		item->vs_dht = (it->second).vs_dht;
+
 		item->lastContact = (it->second).lastcontact;
-		item->localAddr.addr = (it->second).localaddr;
-		item->extAddr.addr = (it->second).serveraddr;
+		
+		item->localAddrV4.addr = (it->second).localaddr;
+		item->extAddrV4.addr = (it->second).serveraddr;
+		sockaddr_storage_clear(item->localAddrV6.addr);
+		sockaddr_storage_clear(item->extAddrV6.addr);
+		
+		
 		item->dyndns = (it->second).dyndns;
 		(it->second).ipAddrs.mLocal.loadTlv(item->localAddrList);
 		(it->second).ipAddrs.mExt.loadTlv(item->extAddrList);
@@ -1613,7 +1625,7 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 #endif
 				/* add ownConfig */
 				setOwnNetworkMode(pitem->netMode);
-				setOwnVisState(pitem->visState);
+				setOwnVisState(pitem->vs_disc, pitem->vs_dht);
 				
 				mOwnState.gpg_id = AuthGPG::getAuthGPG()->getGPGOwnId();
 				mOwnState.location = AuthSSL::getAuthSSL()->getOwnLocation();
@@ -1626,7 +1638,7 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 				std::cerr << std::endl;
 #endif
 				/* ************* */
-				addFriend(pitem->pid, pitem->gpg_id, pitem->netMode, pitem->visState, pitem->lastContact, RS_SERVICE_PERM_ALL);
+				addFriend(pitem->pid, pitem->gpg_id, pitem->netMode, pitem->vs_disc, pitem->vs_dht, pitem->lastContact, RS_SERVICE_PERM_ALL);
 				setLocation(pitem->pid, pitem->location);
 			}
 
@@ -1638,8 +1650,8 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 			}
 			else
 			{
-				setLocalAddress(pitem->pid, pitem->localAddr.addr);
-				setExtAddress(pitem->pid, pitem->extAddr.addr);
+				setLocalAddress(pitem->pid, pitem->localAddrV4.addr);
+				setExtAddress(pitem->pid, pitem->extAddrV4.addr);
 				setDynDNS (pitem->pid, pitem->dyndns);
 
 				/* convert addresses */

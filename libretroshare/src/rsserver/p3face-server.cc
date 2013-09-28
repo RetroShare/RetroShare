@@ -65,7 +65,8 @@ RsServer::RsServer(NotifyBase &callback)
 	mPluginsManager = NULL;
 
 	/* services */
-	ad = NULL;
+	mHeart = NULL;
+	mDisc = NULL;
 	msgSrv = NULL;
 	chatSrv = NULL;
 	mStatusSrv = NULL;

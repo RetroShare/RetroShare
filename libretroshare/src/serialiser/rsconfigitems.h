@@ -76,11 +76,15 @@ std::ostream &print(std::ostream &out, uint16_t indent = 0);
         std::string gpg_id;                          /* Mandatory */
         std::string location;                          /* not Mandatory */
         uint32_t    netMode;                      /* Mandatory */
-	uint32_t    visState;                     /* Mandatory */
+	uint16_t    vs_disc;                      /* Mandatory */
+	uint16_t    vs_dht;                       /* Mandatory */
 	uint32_t    lastContact;                  /* Mandatory */
 
-	RsTlvIpAddress localAddr;             /* Mandatory */
-	RsTlvIpAddress extAddr;            /* Mandatory */
+	RsTlvIpAddress localAddrV4;            	/* Mandatory */
+	RsTlvIpAddress extAddrV4;           	/* Mandatory */
+	RsTlvIpAddress localAddrV6;            	/* Mandatory */
+	RsTlvIpAddress extAddrV6;            	/* Mandatory */
+
         std::string dyndns;
 
 	RsTlvIpAddrSet localAddrList;

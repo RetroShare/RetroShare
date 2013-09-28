@@ -37,10 +37,12 @@
 #include "retroshare/rstypes.h"
 #include "util/rsthreads.h"
 
-#include "services/p3disc.h"
 #include "services/p3msgservice.h"
 #include "services/p3chatservice.h"
 #include "services/p3statusservice.h"
+
+class p3heartbeat;
+class p3discovery2;
 
 /* GXS Classes - just declare the classes.
    so we don't have to totally recompile to switch */
@@ -171,7 +173,8 @@ class RsServer: public RsControl, public RsThread
 		//sslroot *sslr;
 
 		/* services */
-		p3disc *ad;
+		p3heartbeat *mHeart;
+		p3discovery2 *mDisc;
 		p3MsgService  *msgSrv;
 		p3ChatService *chatSrv;
 		p3StatusService *mStatusSrv;

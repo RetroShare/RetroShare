@@ -33,6 +33,8 @@
 
 #include <string>
 #include <list>
+#include <map>
+
 #include <stdlib.h>
 #include <stdint.h>
 
@@ -243,6 +245,29 @@ virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); /* deseria
 virtual std::ostream &print(std::ostream &out, uint16_t indent);
 
 	std::list<RsTlvKeyValue> pairs; /// For use in hash tables 
+};
+
+
+class RsTlvIntStringMap: public RsTlvItem
+{
+	public:
+	 RsTlvIntStringMap() { return; }
+virtual ~RsTlvIntStringMap() { return; }
+virtual uint32_t TlvSize();
+virtual void	 TlvClear();
+virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset); /* serialise   */
+virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); /* deserialise */
+virtual std::ostream &print(std::ostream &out, uint16_t indent);
+
+	uint32_t mapType;
+	std::map<uint32_t, std::string> map; 
+};
+
+
+class RsTlvServiceIdMap: public RsTlvIntStringMap
+{
+	public:
+	RsTlvServiceIdMap();
 };
 
 

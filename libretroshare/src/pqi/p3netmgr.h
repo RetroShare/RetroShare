@@ -115,7 +115,7 @@ virtual ~p3NetMgr() { return; }
 
 	// Setup Network State.
 virtual bool 	setNetworkMode(uint32_t netMode) = 0;
-virtual bool 	setVisState(uint32_t visState) = 0;
+virtual bool 	setVisState(uint16_t vs_disc, uint16_t vs_dht) = 0;
 
 	// Switch DHT On/Off.
 virtual bool netAssistFriend(const std::string &id, bool on) = 0;
@@ -171,7 +171,7 @@ class p3NetMgrIMPL: public p3NetMgr
 
 	// Setup Network State.
 virtual bool 	setNetworkMode(uint32_t netMode);
-virtual bool 	setVisState(uint32_t visState);
+virtual bool 	setVisState(uint16_t vs_disc, uint16_t vs_dht);
 
 	// Switch DHT On/Off.
 virtual bool netAssistFriend(const std::string &id, bool on);
@@ -330,7 +330,8 @@ void 	netStatusReset_locked();
 	struct sockaddr_storage mExtAddr;
 
 	uint32_t mNetMode;
-	uint32_t mVisState;
+	uint16_t mVsDisc;
+	uint16_t mVsDht;
 
 	time_t   mNetInitTS;
 	uint32_t mNetStatus;

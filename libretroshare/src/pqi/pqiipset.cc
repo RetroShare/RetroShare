@@ -175,9 +175,9 @@ void    pqiIpAddrList::extractFromTlv(const RsTlvIpAddrSet &tlvAddrs)
 	}
 }
 
-void    pqiIpAddrList::loadTlv(RsTlvIpAddrSet &tlvAddrs)
+void    pqiIpAddrList::loadTlv(RsTlvIpAddrSet &tlvAddrs) const
 {
-	std::list<pqiIpAddress>::iterator it;
+	std::list<pqiIpAddress>::const_iterator it;
 
 	for(it = mAddrs.begin(); it != mAddrs.end() ; ++it)
 	{
