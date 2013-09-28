@@ -182,7 +182,7 @@ bool upnphandler::start_upnp()
 	bool res = cUPnPControlPoint->AddPortMappings(upnpPortMapping1);
 	bool res2 = cUPnPControlPoint->AddPortMappings(upnpPortMapping2);
 
-	struct sockaddr_in extAddr;
+	struct sockaddr_storage extAddr;
 	bool extAddrResult = getExternalAddress(extAddr);
 
 	{
