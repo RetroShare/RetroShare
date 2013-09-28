@@ -490,3 +490,12 @@ ShareManager QLabel#labelInstructions {
 	background: #FFFFD7;
 	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFD7, stop:1 #FFFFB2);
 }
+
+/* MessageWidget */
+
+MessageWidget QFrame#decryptFrame {
+	border: 1px solid #50FF5B;
+	border-radius: 6px;
+	background: #CCFFCC;
+	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #CCFFCC, stop:1 #AAFFAA);
+}

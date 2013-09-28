@@ -727,7 +727,7 @@ void MessagesDialog::changeBox(int)
     listMode = LIST_BOX;
 
     insertMessages();
-    insertMsgTxtAndFiles();
+    insertMsgTxtAndFiles(ui.messagestreeView->currentIndex());
 
     inChange = false;
 }
@@ -749,7 +749,7 @@ void MessagesDialog::changeQuickView(int newrow)
     listMode = LIST_QUICKVIEW;
 
     insertMessages();
-    insertMsgTxtAndFiles();
+    insertMsgTxtAndFiles(ui.messagestreeView->currentIndex());
 
     inChange = false;
 }
@@ -1516,33 +1516,15 @@ void MessagesDialog::insertMsgTxtAndFiles(QModelIndex Index, bool bSetToRead)
 
 void MessagesDialog::decryptSelectedMsg()
 {
-    MessageInfo msgInfo;
+    if (!MessageWidget::decryptMsg(mCurrMsgId)) {
+        return;
+    }
 
-    if (!rsMsgs->getMessage(mCurrMsgId, msgInfo)) 
-		 return ;
+    // Force refill
+    mCurrMsgId.clear();
+    msgWidget->fill("");
 
-	 if(!msgInfo.msgflags & RS_MSG_ENCRYPTED)
-	 {
-		 QMessageBox::warning(NULL,tr("Decryption failed!"),tr("This message is not encrypted. Cannot decrypt!")) ;
-		 return ;
-	 }
-
-	 if(!rsMsgs->decryptMessage(mCurrMsgId) )
-		 QMessageBox::warning(NULL,tr("Decryption failed!"),tr("This message could not be decrypted.")) ;
-
-	 //setMsgAsReadUnread(currentIndex.row(), true);
-    timer->start();
-
-	 updateMessageSummaryList();
-
-	 //QModelIndex currentIndex = ui.messagestreeView->currentIndex();
-	 //QModelIndex index = ui.messagestreeView->model()->index(currentIndex.row(), COLUMN_UNREAD, currentIndex.parent());
-	 //currentChanged(index);
-
-    MessagesModel->removeRows (0, MessagesModel->rowCount());
-
-    insertMessages();
-    insertMsgTxtAndFiles();
+    insertMsgTxtAndFiles(ui.messagestreeView->currentIndex());
 }
 
 bool MessagesDialog::getCurrentMsg(std::string &cid, std::string &mid)

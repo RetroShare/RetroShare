@@ -1564,22 +1564,6 @@ Double click lobbies to enter and chat.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Group Chat</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Number of saved messages (0 = unlimited)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Load number of messages (0 = off)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Style</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1693,6 +1677,30 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Private chat invite to </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;In this tab you can setup how many chat messages Retroshare will keep saved on the disc and how much of the previous conversation it will display, for the different chat systems. The max storage period allows to discard old messages and prevents the chat history from filling up with volatile chat (e.g. chat lobbies and distant chat).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Chatlobbies</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enabled:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Saved messages (0 = unlimited):</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Number of messages restored  (0 = off):</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Maximum storage period, in days:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5816,14 +5824,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Copy RetroShare Link</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Paste Friend Link</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Deny Friend</source>
         <translation type="unfinished"></translation>
     </message>
@@ -5893,6 +5893,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Display</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Paste certificate link</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9103,6 +9107,30 @@ Do you want to save message ?</source>
         <source>Load images always for this message</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>This messages is encrypted. Click the right button to decrypt it.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Decrypt</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Encrypted message</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Decryption failed!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This message is not encrypted. Cannot decrypt!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This message could not be decrypted.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MessageWindow</name>
@@ -9502,14 +9530,6 @@ Do you want to save message ?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Decryption failed!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This message could not be decrypted.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Messages</source>
         <translation type="unfinished"></translation>
     </message>
@@ -9527,10 +9547,6 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>This message was signed but the signature doesn&apos;t check</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This message is not encrypted. Cannot decrypt!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -12598,18 +12614,6 @@ The default value is 20.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;This is a list of shared folders. You can add and remove folders using the buttons at the bottom.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;When you add a new folder, intially all files in that folder are shared.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;You can separately setup share flags for each shared directory:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Browsable&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: files are browsable from your direct friends.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Network Wide&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: files can be downloaded by anybody through anonymous tunnels.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Directory</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12679,6 +12683,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Directory not found or directory name not accepted.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This is a list of shared folders. You can add and remove folders using the buttons at the bottom. When you add a new folder, intially all files in that folder are shared. You can separately setup share flags for each shared directory.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

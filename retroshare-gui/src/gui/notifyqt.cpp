@@ -780,7 +780,7 @@ void NotifyQt::UpdateGUI()
 
 					if (popupflags & RS_POPUP_MSG)
 					{
-						toaster = new Toaster(new MessageToaster(std::string(), tr("Unknown title"), QString("[%1]").arg(tr("Encrypted message"))));
+						toaster = new Toaster(new MessageToaster(std::string(), tr("Encrypted message"), QString("[%1]").arg(tr("Encrypted message"))));
 					}
 					break;
 				case RS_POPUP_MSG:

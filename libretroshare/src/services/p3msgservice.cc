@@ -2044,6 +2044,7 @@ bool p3MsgService::decryptMessage(const std::string& mId)
 	delete item ;
 
 	IndicateConfigChanged() ;
+	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_MOD);
 
 	return true ;
 }
