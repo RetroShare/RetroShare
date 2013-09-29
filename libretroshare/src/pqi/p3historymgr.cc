@@ -157,22 +157,25 @@ void p3HistoryMgr::cleanOldMessages()
 
 	for(std::map<std::string, std::map<uint32_t, RsHistoryMsgItem*> >::iterator mit = mMessages.begin(); mit != mMessages.end();) 
 	{
-		for(std::map<uint32_t, RsHistoryMsgItem*>::iterator lit = mit->second.begin();lit!=mit->second.end();)
-			if(mMaxStorageDurationSeconds > 0 && lit->second->recvTime + mMaxStorageDurationSeconds < now)
-			{
-				std::map<uint32_t, RsHistoryMsgItem*>::iterator lit2 = lit ;
-				++lit2 ;
+		if (mMaxStorageDurationSeconds > 0)
+		{
+			for(std::map<uint32_t, RsHistoryMsgItem*>::iterator lit = mit->second.begin();lit!=mit->second.end();)
+				if(lit->second->recvTime + mMaxStorageDurationSeconds < now)
+				{
+					std::map<uint32_t, RsHistoryMsgItem*>::iterator lit2 = lit ;
+					++lit2 ;
 
-				std::cerr << "   removing msg id " << lit->first << ", for peer id " << mit->first << std::endl;
-				delete lit->second ;
+					std::cerr << "   removing msg id " << lit->first << ", for peer id " << mit->first << std::endl;
+					delete lit->second ;
 
-				mit->second.erase(lit) ;
-				lit = lit2 ;
+					mit->second.erase(lit) ;
+					lit = lit2 ;
 
-				changed = true ;
-			}	
-			else
-				++lit ;
+					changed = true ;
+				}
+				else
+					++lit ;
+		}
 
 		if(mit->second.empty())
 		{
