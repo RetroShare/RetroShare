@@ -65,7 +65,7 @@
 #define SHOW_RTT_STATISTICS		1
 
 #ifdef SHOW_RTT_STATISTICS
-	#include "RttStatistics.h"
+	#include "gui/RttStatistics.h"
 #endif
 
 /* Images for context menu icons */
