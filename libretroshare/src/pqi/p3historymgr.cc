@@ -158,7 +158,7 @@ void p3HistoryMgr::cleanOldMessages()
 	for(std::map<std::string, std::map<uint32_t, RsHistoryMsgItem*> >::iterator mit = mMessages.begin(); mit != mMessages.end();) 
 	{
 		for(std::map<uint32_t, RsHistoryMsgItem*>::iterator lit = mit->second.begin();lit!=mit->second.end();)
-			if(lit->second->recvTime + mMaxStorageDurationSeconds < now)
+			if(mMaxStorageDurationSeconds > 0 && lit->second->recvTime + mMaxStorageDurationSeconds < now)
 			{
 				std::map<uint32_t, RsHistoryMsgItem*>::iterator lit2 = lit ;
 				++lit2 ;

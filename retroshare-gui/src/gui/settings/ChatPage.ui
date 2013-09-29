@@ -662,7 +662,7 @@
             <item>
              <widget class="QLabel" name="label_3">
               <property name="text">
-               <string>Maximum storage period, in days:</string>
+               <string>Maximum storage period, in days (0=keep all):</string>
               </property>
              </widget>
             </item>
