@@ -1842,9 +1842,17 @@ RsTurtle *rsTurtle = NULL ;
 
 /****
  * #define RS_RELEASE 		1
+ * #define RS_RTT           1
 ****/
 
-#define RS_RELEASE 	1
+#define RS_RELEASE      1
+#define RS_RTT          1
+
+
+#ifdef RS_RTT
+#include "services/p3rtt.h"
+#endif
+
 
 #include "services/p3banlist.h"
 #include "services/p3bwctrl.h"
@@ -2452,10 +2460,10 @@ int RsServer::StartupRetroShare()
 #endif // RS_ENABLE_GXS.
 
 
-#ifdef RS_VOIPTEST
-	p3VoRS *mVoipTest = new p3VoRS(mLinkMgr);
-	pqih -> addService(mVoipTest);
-	rsVoip = mVoipTest;
+#ifdef RS_RTT
+	p3rtt *mRtt = new p3rtt(mLinkMgr);
+	pqih -> addService(mRtt);
+	rsRtt = mRtt;
 #endif
 
 	// new services to test.

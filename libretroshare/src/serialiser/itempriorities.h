@@ -87,9 +87,9 @@ const uint8_t QOS_PRIORITY_RS_CHAT_AVATAR_ITEM       	= 2 ;
 const uint8_t QOS_PRIORITY_RS_MSG_ITEM               	= 2 ;
 const uint8_t QOS_PRIORITY_RS_STATUS_ITEM     			= 2 ;
 
-// VOIP
+// RTT
 //
-const uint8_t QOS_PRIORITY_RS_VOIP_PING               = 9 ;
+const uint8_t QOS_PRIORITY_RS_RTT_PING               = 9 ;
 
 // BanList
 //

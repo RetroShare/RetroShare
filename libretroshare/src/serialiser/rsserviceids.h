@@ -104,9 +104,12 @@ const uint16_t RS_SERVICE_TYPE_PROXY       = 0xf030;
 
 /* DSDV Testing at the moment - Service Only */
 const uint16_t RS_SERVICE_TYPE_DSDV        = 0xf050;
+/* Latency RTT Measurements */
+const uint16_t RS_SERVICE_TYPE_RTT         = 0xf051;
 
 /* Bandwidth Testing at the moment - Service Only */
 const uint16_t RS_SERVICE_TYPE_BWCTRL      = 0xf060;
+
 
 
 

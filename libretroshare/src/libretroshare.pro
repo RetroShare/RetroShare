@@ -3,7 +3,6 @@ CONFIG += staticlib bitdht
 CONFIG -= qt
 TARGET = retroshare
 
-CONFIG += test_voip 
 
 #GXS Stuff.
 # This should be disabled for releases until further notice.
@@ -91,6 +90,7 @@ PUBLIC_HEADERS =	retroshare/rsdisc.h \
 					retroshare/rstypes.h \
 					retroshare/rsdht.h \
 					retroshare/rsdsdv.h \
+					retroshare/rsrtt.h \
 					retroshare/rsconfig.h
 
 
@@ -387,6 +387,7 @@ HEADERS +=	serialiser/rsbaseitems.h \
 			serialiser/rsbwctrlitems.h \
 			serialiser/rsdiscovery2items.h \
 			serialiser/rsheartbeatitems.h \
+			serialiser/rsrttitems.h \
 
 HEADERS +=	services/p3chatservice.h \
 			services/p3msgservice.h \
@@ -397,6 +398,7 @@ HEADERS +=	services/p3chatservice.h \
 			services/p3bwctrl.h \
 			services/p3discovery2.h \
 			services/p3heartbeat.h \
+			services/p3rtt.h \
 
 HEADERS +=	turtle/p3turtle.h \
 			turtle/rsturtleitem.h \
@@ -514,6 +516,7 @@ SOURCES +=	serialiser/rsbaseitems.cc \
 			serialiser/rsbwctrlitems.cc \
 			serialiser/rsdiscovery2items.cc \
 			serialiser/rsheartbeatitems.cc \
+			serialiser/rsrttitems.cc \
 
 SOURCES +=	services/p3chatservice.cc \
 			services/p3msgservice.cc \
@@ -524,6 +527,7 @@ SOURCES +=	services/p3chatservice.cc \
 			services/p3bwctrl.cc \
 			services/p3discovery2.cc \
 			services/p3heartbeat.cc \
+			services/p3rtt.cc \
 
 SOURCES +=	turtle/p3turtle.cc \
 				turtle/rsturtleitem.cc 

@@ -1,0 +1,118 @@
+/*
+ * libretroshare/src/services/p3rtt.h
+ *
+ * Round Trip Time Measurement for RetroShare.
+ *
+ * Copyright 2011-2013 by Robert Fernie.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License Version 2.1 as published by the Free Software Foundation.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+ * USA.
+ *
+ * Please report all bugs and problems to "retroshare@lunamutt.com".
+ *
+ */
+
+
+#ifndef SERVICE_RSRTT_HEADER
+#define SERVICE_RSRTT_HEADER
+
+#include <list>
+#include <string>
+
+#include "serialiser/rsrttitems.h"
+#include "services/p3service.h"
+#include "retroshare/rsrtt.h"
+
+class p3LinkMgr;
+
+class RttPeerInfo
+{
+	public:
+
+	bool initialisePeerInfo(std::string id);
+
+	std::string mId;
+	double mCurrentPingTS;
+	double mCurrentPingCounter;
+	bool   mCurrentPongRecvd;
+
+	uint32_t mLostPongs;
+	uint32_t mSentPings;
+
+	std::list<RsRttPongResult> mPongResults;
+};
+
+
+//!The RS Rtt Test service.
+ /**
+  *
+  * Used to test Latency.
+  */
+
+class p3rtt: public RsRtt, public p3Service
+{
+	public:
+		p3rtt(p3LinkMgr *cm);
+
+		/***** overloaded from rsRtt *****/
+
+virtual uint32_t getPongResults(std::string id, int n, std::list<RsRttPongResult> &results);
+
+		/***** overloaded from p3Service *****/
+
+		virtual int   tick();
+		virtual int   status();
+
+
+		int     sendPackets();
+		void 	sendPingMeasurements();
+		int 	processIncoming();
+
+		int 	handlePing(RsItem *item);
+		int 	handlePong(RsItem *item);
+
+		int 	storePingAttempt(std::string id, double ts, uint32_t mCounter);
+		int 	storePongResult(std::string id, uint32_t counter, double ts, double rtt, double offset);
+
+
+		/*!
+		 * This retrieves all public chat msg items
+		 */
+		//bool getPublicChatQueue(std::list<ChatInfo> &chats);
+
+		/*************** pqiMonitor callback ***********************/
+		//virtual void statusChange(const std::list<pqipeer> &plist);
+
+
+		/************* from p3Config *******************/
+		//virtual RsSerialiser *setupSerialiser() ;
+		//virtual bool saveList(bool& cleanup, std::list<RsItem*>&) ;
+		//virtual void saveDone();
+		//virtual bool loadList(std::list<RsItem*>& load) ;
+
+	private:
+		RsMutex mRttMtx;
+
+		RttPeerInfo *locked_GetPeerInfo(std::string id);
+
+		std::map<std::string, RttPeerInfo> mPeerInfo;
+		time_t mSentPingTime;
+		uint32_t mCounter;
+
+		p3LinkMgr *mLinkMgr;
+
+};
+
+#endif // SERVICE_RSRTT_HEADER
+
