@@ -123,32 +123,40 @@ void QuickStartWizard::on_pushButtonConnectionNext_clicked()
         rsPeers->setNetworkMode(rsPeers->getOwnId(), netMode);
 
         /* Check if vis has changed */
-        uint32_t visState = 0;
-        switch(ui.discoveryComboBox->currentIndex())
-        {
-            case 0:
-                visState |= (RS_VS_DISC_ON | RS_VS_DHT_ON);
-                break;
-            case 1:
-                visState |= RS_VS_DISC_ON;
-                break;
-            case 2:
-                visState |= RS_VS_DHT_ON;
-                break;
-            case 3:
-            default:
-            break;
-        }
+		uint16_t vs_disc = 0;
+		uint16_t vs_dht = 0;
+		switch(ui.discoveryComboBox->currentIndex())
+		{
+			case 0:
+				vs_disc = RS_VS_DISC_FULL;
+				vs_dht = RS_VS_DHT_FULL;
+				break;
+			case 1:
+				vs_disc = RS_VS_DISC_FULL;
+				vs_dht = RS_VS_DHT_OFF;
+				break;
+			case 2:
+				vs_disc = RS_VS_DISC_OFF;
+				vs_dht = RS_VS_DHT_FULL;
+				break;
+			case 3:
+			default:
+				vs_disc = RS_VS_DISC_OFF;
+				vs_dht = RS_VS_DHT_OFF;
+				break;
+		}
+	
 
         RsPeerDetails detail;
         if (!rsPeers->getPeerDetails(rsPeers->getOwnId(), detail))
         {
                 return;
         }
-        if (visState != detail.visState)
-        {
-                rsPeers->setVisState(rsPeers->getOwnId(), visState);
-        }
+		if ((vs_disc != detail.vs_disc) || (vs_dht != detail.vs_dht))
+		{
+			rsPeers->setVisState(rsPeers->getOwnId(), vs_disc, vs_dht);
+		}
+	
         rsConfig->SetMaxDataRates( ui.doubleSpinBoxDownloadSpeed->value(), ui.doubleSpinBoxUploadSpeed->value() );
 
         ui.pagesWizard->setCurrentIndex(2);
@@ -425,9 +433,9 @@ void QuickStartWizard::loadNetwork()
 	 */
 
 	netIndex = 3; // NONE.
-	if (detail.visState & RS_VS_DHT_ON)
+	if (detail.vs_dht != RS_VS_DISC_OFF)
 	{
-		if (detail.visState & RS_VS_DISC_ON)
+		if (detail.vs_disc != RS_VS_DISC_OFF)
 		{
 			netIndex = 0; // PUBLIC
 		}
@@ -438,7 +446,7 @@ void QuickStartWizard::loadNetwork()
 	}
 	else
 	{
-		if (detail.visState & RS_VS_DISC_ON)
+		if (detail.vs_disc != RS_VS_DISC_OFF)
 		{
 			netIndex = 1; // PRIVATE
 		}
@@ -450,7 +458,7 @@ void QuickStartWizard::loadNetwork()
 	
 	ui.discoveryComboBox->setCurrentIndex(netIndex);
 
-        int dlrate = 0;
+	int dlrate = 0;
         int ulrate = 0;
         rsConfig->GetMaxDataRates(dlrate, ulrate);
         ui.doubleSpinBoxDownloadSpeed->setValue(dlrate);
@@ -494,28 +502,34 @@ void QuickStartWizard::saveChanges()
     
 	rsPeers->setNetworkMode(ownId, netMode);
 
-    uint32_t visState = 0;
-    /* Check if vis has changed */
-    switch(ui.discoveryComboBox->currentIndex())
-    {
-        case 0:
-            visState |= (RS_VS_DISC_ON | RS_VS_DHT_ON);
-            break;
-        case 1:
-            visState |= RS_VS_DISC_ON;
-            break;
-        case 2:
-            visState |= RS_VS_DHT_ON;
-            break;
-        case 3:
-        default:
-        break;
-    }
-
-    if (visState != detail.visState)
-    {
-        rsPeers->setVisState(ownId, visState);
-    }
+	/* Check if vis has changed */
+	uint16_t vs_disc = 0;
+	uint16_t vs_dht = 0;
+	switch(ui.discoveryComboBox->currentIndex())
+	{
+		case 0:
+			vs_disc = RS_VS_DISC_FULL;
+			vs_dht = RS_VS_DHT_FULL;
+			break;
+		case 1:
+			vs_disc = RS_VS_DISC_FULL;
+			vs_dht = RS_VS_DHT_OFF;
+			break;
+		case 2:
+			vs_disc = RS_VS_DISC_OFF;
+			vs_dht = RS_VS_DHT_FULL;
+			break;
+		case 3:
+		default:
+			vs_disc = RS_VS_DISC_OFF;
+			vs_dht = RS_VS_DHT_OFF;
+			break;
+	}
+		
+	if ((vs_disc != detail.vs_disc) || (vs_dht != detail.vs_dht))
+	{
+		rsPeers->setVisState(ownId, vs_disc, vs_dht);
+	}
 
 	/*if (0 != netIndex)
 	{

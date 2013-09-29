@@ -78,13 +78,9 @@ void CryptoPage::showEvent ( QShowEvent * /*event*/ )
         ui.pgpid->setText(QString::fromStdString(detail.gpg_id));
 
         /* set retroshare version */
-        std::map<std::string, std::string>::iterator vit;
-        std::map<std::string, std::string> versions;
-        bool retv = rsDisc->getDiscVersions(versions);
-        if (retv && versions.end() != (vit = versions.find(detail.id)))
-        {
-            ui.version->setText(QString::fromStdString(vit->second));
-        }
+        std::string version;
+        rsDisc->getPeerVersion(detail.id, version);
+		ui.version->setText(QString::fromStdString(version));
 
         std::list<std::string> ids;
         ids.clear();

@@ -176,7 +176,7 @@ void  NetworkView::updateDisplay()
 		}
 
 		std::list<std::string> friendList;
-		rsDisc->getDiscGPGFriends(info.gpg_id, friendList);
+		rsDisc->getDiscPgpFriends(info.gpg_id, friendList);
 
 #ifdef DEBUG_NETWORKVIEW
 		std::cerr << "  Got a list of " << friendList.size() << " friends for this peer." << std::endl ;
@@ -204,7 +204,7 @@ void  NetworkView::updateDisplay()
 	{
 		std::list<std::string> friendList ;
 
-		if(rsDisc->getDiscGPGFriends(it->first,friendList)) 
+		if(rsDisc->getDiscPgpFriends(it->first,friendList)) 
 			for(std::list<std::string>::const_iterator sit(friendList.begin()); sit != friendList.end(); sit++)
 			{
 #ifdef DEBUG_NETWORKVIEW

@@ -195,11 +195,9 @@ void ConfCertDialog::load()
         ui.lastcontact->setText(DateTime::formatLongDateTime(detail.lastConnect));
 
         /* set retroshare version */
-        std::map<std::string, std::string>::iterator vit;
-        std::map<std::string, std::string> versions;
-        bool retv = rsDisc->getDiscVersions(versions);
-        if (retv && versions.end() != (vit = versions.find(detail.id)))
-            ui.version->setText(QString::fromStdString(vit->second));
+        std::string version;
+        rsDisc->getPeerVersion(detail.id, version);
+		ui.version->setText(QString::fromStdString(version));
 
 		  RsPeerCryptoParams cdet ;
 		  if(rsicontrol->getPeerCryptoDetails(detail.id,cdet) && cdet.connexion_state!=0)

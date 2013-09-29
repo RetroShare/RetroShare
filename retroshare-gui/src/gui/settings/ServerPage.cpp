@@ -171,9 +171,9 @@ void ServerPage::load()
 	 */
 
 	netIndex = 3; // NONE.
-	if (detail.visState & RS_VS_DHT_ON)
+	if (detail.vs_dht != RS_VS_DISC_OFF)
 	{
-		if (detail.visState & RS_VS_DISC_ON)
+		if (detail.vs_disc != RS_VS_DISC_OFF)
 		{
 			netIndex = 0; // PUBLIC
 		}
@@ -184,7 +184,7 @@ void ServerPage::load()
 	}
 	else
 	{
-		if (detail.visState & RS_VS_DISC_ON)
+		if (detail.vs_disc != RS_VS_DISC_OFF)
 		{
 			netIndex = 1; // PRIVATE
 		}
@@ -342,26 +342,32 @@ void ServerPage::saveAddresses()
 	if (detail.netMode != netMode)
 		rsPeers->setNetworkMode(ownId, netMode);
 
-	uint32_t visState = 0;
+	uint16_t vs_disc = 0;
+	uint16_t vs_dht = 0;
 	/* Check if vis has changed */
 	switch(ui.discComboBox->currentIndex())
 	{
 		case 0:
-			visState |= (RS_VS_DISC_ON | RS_VS_DHT_ON);
+			vs_disc = RS_VS_DISC_FULL;
+			vs_dht = RS_VS_DHT_FULL;
 			break;
 		case 1:
-			visState |= RS_VS_DISC_ON;
+			vs_disc = RS_VS_DISC_FULL;
+			vs_dht = RS_VS_DHT_OFF;
 			break;
 		case 2:
-			visState |= RS_VS_DHT_ON;
+			vs_disc = RS_VS_DISC_OFF;
+			vs_dht = RS_VS_DHT_FULL;
 			break;
 		case 3:
 		default:
+			vs_disc = RS_VS_DISC_OFF;
+			vs_dht = RS_VS_DHT_OFF;
 			break;
 	}
 
-	if (visState != detail.visState)
-		rsPeers->setVisState(ownId, visState);
+	if ((vs_disc != detail.vs_disc) || (vs_dht != detail.vs_dht))
+		rsPeers->setVisState(ownId, vs_disc, vs_dht);
 
 	if (0 != netIndex)
 		saveAddr = true;

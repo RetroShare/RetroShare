@@ -193,7 +193,8 @@ macx {
 
         gxs {
                 LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
-                LIBS += -lsqlite3
+		LIBS += ../../../lib/libsqlcipher.a
+                #LIBS += -lsqlite3
         }
 
 
@@ -479,7 +480,8 @@ HEADERS +=  rshare.h \
             gui/dht/DhtWindow.h \
             gui/bwctrl/BwCtrlWindow.h \
             gui/channels/ShareKey.h \
-            gui/GetStartedDialog.h
+            gui/GetStartedDialog.h \
+            gui/RttStatistics.h \
 
 #            gui/ForumsDialog.h \
 #            gui/forums/ForumDetails.h \
@@ -585,7 +587,8 @@ FORMS +=    gui/StartDialog.ui \
             gui/dht/DhtWindow.ui \
             gui/bwctrl/BwCtrlWindow.ui \
             gui/channels/ShareKey.ui \
-            gui/GetStartedDialog.ui
+            gui/GetStartedDialog.ui \
+            gui/RttStatistics.ui \
 
 #            gui/ForumsDialog.ui \
 #            gui/forums/CreateForum.ui \
@@ -787,7 +790,8 @@ SOURCES +=  main.cpp \
             gui/dht/DhtWindow.cpp \
             gui/bwctrl/BwCtrlWindow.cpp \
             gui/channels/ShareKey.cpp \
-            gui/GetStartedDialog.cpp
+            gui/GetStartedDialog.cpp \
+            gui/RttStatistics.cpp \
 
 #            gui/ForumsDialog.cpp \
 #            gui/forums/ForumDetails.cpp \

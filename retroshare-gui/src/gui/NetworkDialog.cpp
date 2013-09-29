@@ -121,11 +121,10 @@ NetworkDialog::NetworkDialog(QWidget *parent)
     ui.onlyTrustedKeys->setMinimumWidth(20);
      
     QString version = "-";
-    std::map<std::string, std::string>::iterator vit;
-    std::map<std::string, std::string> versions;
-    bool retv = rsDisc->getDiscVersions(versions);
-    if (retv && versions.end() != (vit = versions.find(rsPeers->getOwnId()))) {
-    	version	= QString::fromStdString(vit->second);
+    std::string rsversion;
+    if (rsDisc->getPeerVersion(rsPeers->getOwnId(), rsversion))
+	{
+    	version	= QString::fromStdString(rsversion);
     }
       
     QMenu *menu = new QMenu();
