@@ -93,6 +93,8 @@ int p3heartbeat::tick()
 
 		delete item;
 	}
+
+	return nhandled ;
 }
 
 void p3heartbeat::sendHeartbeat(const std::string &toId)
