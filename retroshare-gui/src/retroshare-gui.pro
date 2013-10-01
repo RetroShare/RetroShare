@@ -150,7 +150,7 @@ win32 {
 
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
 	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
-	LIBS += -L"../../../lib"
+	LIBS += -L"$$PWD/../../../lib"
 
 	gxs {
 		LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a

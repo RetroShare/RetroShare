@@ -52,7 +52,7 @@ win32 {
 	PRE_TARGETDEPS += ../../retroshare-gui/src/lib/libretroshare-gui.a
 	LIBS += -L"../../retroshare-gui/src/lib" -lretroshare-gui
 
-	LIBS += -L"../../../lib"
+	LIBS += -L"$$PWD/../../../lib"
 	LIBS += -lssl -lcrypto -lpthreadGC2d -lminiupnpc -lz
 # added after bitdht
 	LIBS += -luuid -lole32 -liphlpapi -lcrypt32-cygwin -lgdi32
