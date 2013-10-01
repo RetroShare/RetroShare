@@ -157,7 +157,7 @@ void ChatWidget::setDefaultExtraFileFlags(TransferRequestFlags fl)
 
 void ChatWidget::addChatBarWidget(QWidget *w)
 {
-	ui->toolBarFrame->layout()->addWidget(w) ;
+	ui->pluginButtonFrame->layout()->addWidget(w) ;
 }
 
 void ChatWidget::init(const std::string &peerId, const QString &title)
