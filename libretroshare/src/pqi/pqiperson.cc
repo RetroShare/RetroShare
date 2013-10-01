@@ -172,7 +172,7 @@ int	pqiperson::tick()
 // callback function for the child - notify of a change.
 // This is only used for out-of-band info....
 // otherwise could get dangerous loops.
-int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
+int 	pqiperson::notifyEvent(NetInterface *ni, int newState, const struct sockaddr_storage &remote_peer_address)
 {
 	{
 		std::string out = "pqiperson::notifyEvent() Id: " + PeerId() + "\n";
@@ -218,8 +218,6 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
 
 		/* notify */
                 if (pqipg) {
-                        struct sockaddr_storage remote_peer_address;
-                        pqi->getConnectAddress(remote_peer_address);
                         pqipg->notifyConnect(PeerId(), type, true, remote_peer_address);
                 }
 
@@ -288,9 +286,7 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
 		/* notify up */
 		if (pqipg)
 		{
-			struct sockaddr_storage raddr;
-			sockaddr_storage_clear(raddr);
-			pqipg->notifyConnect(PeerId(), type, false, raddr);
+			pqipg->notifyConnect(PeerId(), type, false, remote_peer_address);
 		}
 
 		return 1;

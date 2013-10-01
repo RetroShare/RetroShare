@@ -52,7 +52,7 @@ virtual int	senddata(void *data, int len);
 virtual int	readdata(void *data, int len);
 virtual int	netstatus() { return 1;}
 virtual int	isactive()  { return (buf != NULL);}
-virtual bool	moretoread() 
+virtual bool	moretoread(uint32_t /* usec */ ) 
 	{ 
 		if ((buf) && (bin_flags | BIN_FLAGS_READABLE))
 		{
@@ -65,7 +65,10 @@ virtual bool	moretoread()
 	}
 
 virtual int	close();
-virtual bool 	cansend() { return (bin_flags | BIN_FLAGS_WRITEABLE);   }
+virtual bool 	cansend(uint32_t /* usec */) 
+	{ 
+		return (bin_flags | BIN_FLAGS_WRITEABLE);   
+	}
 virtual bool    bandwidthLimited() { return false; }
 
 //! if HASHing is switched on
@@ -118,7 +121,7 @@ public:
 	int	close();
 
 	uint64_t bytecount();
-	bool	moretoread();
+	bool	moretoread(uint32_t usec);
 
 private:
 
@@ -156,7 +159,7 @@ virtual int	senddata(void *data, int len);
 virtual int	readdata(void *data, int len);
 virtual int	netstatus() { return 1; }
 virtual int	isactive()  { return 1; }
-virtual bool	moretoread() 
+virtual bool	moretoread(uint32_t /* usec */) 
 	{ 
 		if ((buf) && (bin_flags | BIN_FLAGS_READABLE ))
 		{
@@ -169,7 +172,10 @@ virtual bool	moretoread()
 	}
 
 virtual int	close();
-virtual bool 	cansend()    { return (bin_flags | BIN_FLAGS_WRITEABLE); }
+virtual bool 	cansend(uint32_t /* usec */)    
+	{ 
+		return (bin_flags | BIN_FLAGS_WRITEABLE); 
+	}
 virtual bool    bandwidthLimited() { return false; }
 
 virtual std::string gethash();
@@ -217,8 +223,8 @@ virtual int     senddata(void *data, int len);
 virtual int     readdata(void *data, int len);
 virtual int     netstatus();
 virtual int     isactive();
-virtual bool    moretoread();
-virtual bool    cansend();
+virtual bool    moretoread(uint32_t usec);
+virtual bool    cansend(uint32_t usec);
 virtual int	close();
 
 virtual std::string gethash();

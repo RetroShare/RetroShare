@@ -62,7 +62,7 @@ int pqipersongrp::tickServiceRecv()
 	RsRawItem *pqi = NULL;
 	int i = 0;
 
-	pqioutput(PQL_DEBUG_ALL, pqipersongrpzone, "pqipersongrp::tickTunnelServer()");
+	pqioutput(PQL_DEBUG_ALL, pqipersongrpzone, "pqipersongrp::tickServiceRecv()");
 
 	//p3ServiceServer::tick();
 
@@ -70,8 +70,8 @@ int pqipersongrp::tickServiceRecv()
 	{
 		++i;
 		pqioutput(PQL_DEBUG_BASIC, pqipersongrpzone, 
-			"pqipersongrp::tickTunnelServer() Incoming TunnelItem");
-		incoming(pqi);
+			"pqipersongrp::tickServiceRecv() Incoming TunnelItem");
+		recvItem(pqi);
 	}
 
 	if (0 < i)
@@ -82,6 +82,11 @@ int pqipersongrp::tickServiceRecv()
 }
 
 // handle the tunnel services.
+
+// Improvements:
+// This function is no longer necessary, and data is pushed directly to pqihandler.
+
+#if 0
 int pqipersongrp::tickServiceSend()
 {
         RsRawItem *pqi = NULL;
@@ -106,10 +111,12 @@ int pqipersongrp::tickServiceSend()
 	return 0;
 }
 
+#endif
+
 
 	// init
 pqipersongrp::pqipersongrp(SecurityPolicy *glob, unsigned long flags)
-	:pqihandler(glob), pqil(NULL), initFlags(flags)
+	:pqihandler(glob), p3ServiceServer(this), pqil(NULL), initFlags(flags)
 {
 }
 
@@ -130,6 +137,7 @@ int	pqipersongrp::tick()
 
 	int i = 0;
 
+#if 0
 	if (tickServiceSend())
 	{
 		i = 1;
@@ -137,14 +145,18 @@ int	pqipersongrp::tick()
                 std::cerr << "pqipersongrp::tick() moreToTick from tickServiceSend()" << std::endl;
 #endif
 	}
+#endif
 
-	if (pqihandler::tick()) /* does actual Send/Recv */
+
+#if 0
+	if (pqihandler::tick()) /* does Send/Recv */
 	{
 		i = 1;
 #ifdef PGRP_DEBUG
                 std::cerr << "pqipersongrp::tick() moreToTick from pqihandler::tick()" << std::endl;
 #endif
 	}
+#endif
 
 
 	if (tickServiceRecv())
@@ -154,6 +166,19 @@ int	pqipersongrp::tick()
                 std::cerr << "pqipersongrp::tick() moreToTick from tickServiceRecv()" << std::endl;
 #endif
 	}
+
+	p3ServiceServer::tick(); 
+
+#if 1
+	if (pqihandler::tick()) /* does Send/Recv */
+	{
+		i = 1;
+#ifdef PGRP_DEBUG
+                std::cerr << "pqipersongrp::tick() moreToTick from pqihandler::tick()" << std::endl;
+#endif
+	}
+
+#endif
 
 	return i;
 }

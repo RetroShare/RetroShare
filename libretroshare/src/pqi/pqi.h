@@ -65,5 +65,20 @@ virtual RsRawItem *GetRsRawItem() = 0;
 
 };
 
+
+/* interface to allow outgoing messages to be sent directly 
+ * through to the pqiperson, rather than being queued
+ */
+
+class pqiPublisher
+{
+        public:
+virtual ~pqiPublisher() { return; }
+virtual bool sendItem(RsRawItem *item) = 0;
+
+};
+
+
+
 #endif // PQI_TOP_HEADER
 

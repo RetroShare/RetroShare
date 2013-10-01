@@ -239,7 +239,7 @@ int	pqiarchive::writePkt(RsItem *pqi)
 	}
 
 
-	if (!(bio->cansend()))
+	if (!(bio->cansend(0)))
 	{
 		std::string out = "pqiarchive::writePkt() BIO cannot write!\nDiscarding:\n";
 		pqi -> print_string(out);
@@ -321,7 +321,7 @@ int	pqiarchive::readPkt(RsItem **item_out, long *ts_out)
 {
 	pqioutput(PQL_DEBUG_ALL, pqiarchivezone, "pqiarchive::readPkt()");
 
-	if ((!(bio->isactive())) || (!(bio->moretoread())))
+	if ((!(bio->isactive())) || (!(bio->moretoread(0))))
 	{
 		return 0;
 	}

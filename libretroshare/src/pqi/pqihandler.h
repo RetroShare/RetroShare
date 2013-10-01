@@ -46,10 +46,17 @@ class SearchModule
 // Presents a P3 Face to the world!
 // and funnels data through to a PQInterface.
 //
-class pqihandler: public P3Interface
+class pqihandler: public P3Interface, public pqiPublisher
 {
 	public:
 		pqihandler(SecurityPolicy *Global);
+
+		/**** Overloaded from pqiPublisher ****/
+		virtual bool sendItem(RsRawItem *item)
+		{
+			return SendRsRawItem(item);
+		}
+
 		bool	AddSearchModule(SearchModule *mod);
 		bool	RemoveSearchModule(SearchModule *mod);
 

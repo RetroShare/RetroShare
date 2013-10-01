@@ -219,10 +219,11 @@ class PQInterface: public RateInterface
 		virtual std::string PeerId() { return peerId; }
 
 		// the callback from NetInterface Connection Events.
-		virtual int	notifyEvent(NetInterface *ni, int event) 
+		virtual int	notifyEvent(NetInterface *ni, int event, const struct sockaddr_storage &remote_peer_address) 
 		{ 
 			(void) ni; /* remove unused parameter warnings */
 			(void) event; /* remove unused parameter warnings */
+			(void) remote_peer_address;
 			return 0; 
 		}
 
@@ -278,11 +279,13 @@ virtual int	readdata(void *data, int len) = 0;
 
 /**
  * Is more particular the case of the sending data through a socket (internet)
+ * moretoread and candsend, take a microsec timeout argument.
+ *
  */
 virtual int	netstatus() = 0;
 virtual int	isactive() = 0;
-virtual bool	moretoread() = 0;
-virtual bool 	cansend() = 0;
+virtual bool	moretoread(uint32_t usec) = 0;
+virtual bool 	cansend(uint32_t usec) = 0;
 
 /**
  *  method for streamer to shutdown bininterface

@@ -37,7 +37,10 @@ int pqiQoSstreamer::getQueueSize(bool in)
 	if(in)
 		return pqistreamer::getQueueSize(in) ;
 	else
+	{
+		RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
 		return qos_queue_size() ;
+	}
 }
 
 void pqiQoSstreamer::locked_storeInOutputQueue(void *ptr,int priority)

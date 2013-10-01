@@ -302,7 +302,7 @@ uint64_t BinEncryptedFileInterface::bytecount()
 	return cpyCount;
 }
 
-bool BinEncryptedFileInterface::moretoread()
+bool BinEncryptedFileInterface::moretoread(uint32_t /* usec */)
 {
 	if(haveData)
 		return (cpyCount < sizeData);
@@ -545,7 +545,8 @@ int NetBinDummy::connect(const struct sockaddr_storage &raddr)
 		std::cerr << std::endl; 
 		if (parent())
 		{
-			parent()->notifyEvent(this, CONNECT_FAILED);
+			struct sockaddr_storage addr = raddr;
+			parent()->notifyEvent(this, CONNECT_FAILED, raddr);
 		}
 	}
 	else if (!dummyConnected)
@@ -595,7 +596,10 @@ int NetBinDummy::disconnect()
 
 	if (parent())
 	{
-		parent()->notifyEvent(this, CONNECT_FAILED);
+		struct sockaddr_storage addr;
+		sockaddr_storage_clear(addr);
+		
+		parent()->notifyEvent(this, CONNECT_FAILED, addr);
 	}
 
 	return 1;
@@ -627,7 +631,12 @@ int     NetBinDummy::tick()
 			dummyConnected = true;
 			toConnect = false;
 			if (parent())
-				parent()->notifyEvent(this, CONNECT_SUCCESS);
+			{
+				struct sockaddr_storage addr;
+				sockaddr_storage_clear(addr);
+
+				parent()->notifyEvent(this, CONNECT_SUCCESS, addr);
+			}
 		}
 		else
 		{
@@ -681,7 +690,7 @@ int     NetBinDummy::isactive()
 	return dummyConnected;
 }
 
-bool    NetBinDummy::moretoread()
+bool    NetBinDummy::moretoread(uint32_t /* usec */)
 {
 	std::cerr << "NetBinDummy::moretoread() ";
 	printNetBinID(std::cerr, PeerId(), type);
@@ -690,7 +699,7 @@ bool    NetBinDummy::moretoread()
 	return false;
 }
 
-bool    NetBinDummy::cansend()
+bool    NetBinDummy::cansend(uint32_t /* usec */)
 {
 	std::cerr << "NetBinDummy::cansend() ";
 	printNetBinID(std::cerr, PeerId(), type);

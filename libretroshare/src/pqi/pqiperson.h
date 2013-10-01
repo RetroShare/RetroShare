@@ -135,7 +135,7 @@ virtual int 	status();
 virtual int	tick();
 
 // overloaded callback function for the child - notify of a change.
-int 	notifyEvent(NetInterface *ni, int event);
+virtual int 	notifyEvent(NetInterface *ni, int event, const struct sockaddr_storage &addr);
 
 // PQInterface for rate control overloaded....
 virtual int     getQueueSize(bool in);

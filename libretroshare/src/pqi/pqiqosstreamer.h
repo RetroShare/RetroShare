@@ -37,7 +37,7 @@ class pqiQoSstreamer: public pqistreamer, public pqiQoS
 		static const float    PQI_QOS_STREAMER_ALPHA      = 2.0 ;
 
 		virtual void locked_storeInOutputQueue(void *ptr,int priority) ;
-		virtual int out_queue_size() const { return _total_item_count ; }
+		virtual int locked_out_queue_size() const { return _total_item_count ; }
 		virtual void locked_clear_out_queue() ;
 		virtual int locked_compute_out_pkt_size() const { return _total_item_size ; }
 		virtual void *locked_pop_out_data() ;

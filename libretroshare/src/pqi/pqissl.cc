@@ -93,6 +93,7 @@ static const int PQISSL_SSL_CONNECT_TIMEOUT = 30;
 
 pqissl::pqissl(pqissllistener *l, PQInterface *parent, p3LinkMgr *lm)
 	:NetBinInterface(parent, parent->PeerId()), 
+	mSslMtx("pqissl"),
 	waiting(WAITING_NOT), active(false), certvalid(false), 
 	sslmode(PQISSL_ACTIVE), ssl_connection(NULL), sockfd(-1), 
 	pqil(l),  // no init for remote_addr.
@@ -100,9 +101,11 @@ pqissl::pqissl(pqissllistener *l, PQInterface *parent, p3LinkMgr *lm)
 	attempt_ts(0),
 	sameLAN(false), n_read_zero(0), mReadZeroTS(0), 
 	mConnectDelay(0), mConnectTS(0),
-        mConnectTimeout(0), mTimeoutTS(0), mLinkMgr(lm)
+	mConnectTimeout(0), mTimeoutTS(0), mLinkMgr(lm)
 
 {
+	RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
+
 	/* set address to zero */
         sockaddr_storage_clear(remote_addr);
 
@@ -144,6 +147,8 @@ pqissl::pqissl(pqissllistener *l, PQInterface *parent, p3LinkMgr *lm)
 
 int	pqissl::connect(const struct sockaddr_storage &raddr)
 {
+	RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
+
 	// reset failures
 	remote_addr = raddr;
 
@@ -175,10 +180,13 @@ int 	pqissl::disconnect()
 	return reset();
 }
 
-int pqissl::getConnectAddress(struct sockaddr_storage &raddr) {
-    raddr = remote_addr;
-    // TODO.
-    return (!sockaddr_storage_isnull(remote_addr));
+int pqissl::getConnectAddress(struct sockaddr_storage &raddr) 
+{
+	RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
+
+	raddr = remote_addr;
+	// TODO.
+	return (!sockaddr_storage_isnull(remote_addr));
 }
 
 /* BinInterface version of reset() for pqistreamer */
@@ -191,8 +199,17 @@ int 	pqissl::close()
 // put back on the listening queue.
 int 	pqissl::reset()
 {
-	std::string outLog;
+	RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
 
+	return reset_locked();
+}
+
+int 	pqissl::reset_locked()
+{
+	std::string outLog;
+	bool neededReset = false;
+
+	
 	/* a reset shouldn't cause us to stop listening 
 	 * only reasons for stoplistening() are;
 	 *
@@ -211,7 +228,6 @@ int 	pqissl::reset()
 	outLog += "\n";
 #endif
 
-	bool neededReset = false;
 
 	if (ssl_connection != NULL)
 	{
@@ -259,7 +275,9 @@ int 	pqissl::reset()
 		// clean up the streamer 
 		if (parent())
 		{
-		  parent() -> notifyEvent(this, NET_CONNECT_FAILED);
+			struct sockaddr_storage addr;
+			sockaddr_storage_clear(addr);
+			parent() -> notifyEvent(this, NET_CONNECT_FAILED, addr);
 		}
 	}
 	return 1;
@@ -267,6 +285,8 @@ int 	pqissl::reset()
 
 bool 	pqissl::connect_parameter(uint32_t type, const std::string &value)
 {
+	RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
+
 	(void) value;
 	return false;
 }
@@ -274,6 +294,8 @@ bool 	pqissl::connect_parameter(uint32_t type, const std::string &value)
 
 bool 	pqissl::connect_parameter(uint32_t type, uint32_t value)
 {
+	RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
+
 #ifdef PQISSL_LOG_DEBUG 
 	{
 		std::string out = "pqissl::connect_parameter() Peer: " + PeerId();
@@ -319,6 +341,8 @@ bool 	pqissl::connect_parameter(uint32_t type, uint32_t value)
 
 void pqissl::getCryptoParams(RsPeerCryptoParams& params)
 {
+	RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
+
 	if(active)
 	{
 		params.connexion_state = 1 ;
@@ -350,6 +374,7 @@ void pqissl::getCryptoParams(RsPeerCryptoParams& params)
 
 int 	pqissl::status()
 {
+	RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
 
 #ifdef PQISSL_LOG_DEBUG 
 	std::string out = "pqissl::status()";
@@ -388,6 +413,8 @@ int 	pqissl::status()
 	// tick......
 int	pqissl::tick()
 {
+	RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
+
 	//pqistreamer::tick();
 
 	// continue existing connection attempt.
@@ -480,7 +507,7 @@ int 	pqissl::ConnectAttempt()
   	  		rslog(RSL_ALERT, pqisslzone, 
 		 "pqissl::ConnectAttempt() STATE = Unknown - calling reset()");
 
-			reset();
+			reset_locked();
 			break;
 	}
   	rslog(RSL_ALERT, pqisslzone, "pqissl::ConnectAttempt() Unknown");
@@ -510,8 +537,11 @@ int 	pqissl::Failed_Connection()
 
 	if (parent())
 	{
-		parent() -> notifyEvent(this, NET_CONNECT_UNREACHABLE);
+		struct sockaddr_storage addr;
+		sockaddr_storage_clear(addr);
+		parent() -> notifyEvent(this, NET_CONNECT_UNREACHABLE, addr);
 	}
+
 	waiting = WAITING_NOT;
 
 	return 1;
@@ -810,7 +840,7 @@ int 	pqissl::Basic_Connection_Complete()
 		/* as sockfd is valid, this should close it all up */
 		
 		rslog(RSL_ALERT, pqisslzone, "pqissl::Basic_Connection_Complete() -> calling reset()");
-		reset();
+		reset_locked();
 		return -1;
 	}
 
@@ -827,7 +857,7 @@ int 	pqissl::Basic_Connection_Complete()
                 rslog(RSL_ALERT, pqisslzone,
                         "pqissl::Basic_Connection_Complete() problem with the socket descriptor. Aborting");
 		rslog(RSL_ALERT, pqisslzone, "pqissl::Basic_Connection_Complete() -> calling reset()");
-                reset();
+                reset_locked();
                 return -1;
         }
 
@@ -1128,7 +1158,7 @@ int 	pqissl::SSL_Connection_Complete()
 		Extract_Failed_SSL_Certificate();
 
 		rslog(RSL_ALERT, pqisslzone, "pqissl::SSL_Connection_Complete() -> calling reset()");
-		reset();
+		reset_locked();
 		waiting = WAITING_FAIL_INTERFACE;
 
 		return -1;
@@ -1207,7 +1237,7 @@ int 	pqissl::Authorise_SSL_Connection()
 			"pqissl::Authorise_SSL_Connection() Connection Timed Out!");
 	        /* as sockfd is valid, this should close it all up */
 		rslog(RSL_ALERT, pqisslzone, "pqissl::Authorise_Connection_Complete() -> calling reset()");
-	        reset();
+	        reset_locked();
 	}
 
 	int err;
@@ -1233,7 +1263,7 @@ int 	pqissl::Authorise_SSL_Connection()
 
 		rslog(RSL_ALERT, pqisslzone, "pqissl::Authorise_Connection_Complete() -> calling reset()");
 		// Failed completely
-		reset();
+		reset_locked();
 		return -1;
 	}
 
@@ -1245,7 +1275,7 @@ int 	pqissl::Authorise_SSL_Connection()
 
 		rslog(RSL_ALERT, pqisslzone, "pqissl::Authorise_Connection_Complete() -> calling reset()");
                 // Failed completely
-                reset();
+                reset_locked();
                 return -1;
         }
 
@@ -1269,7 +1299,7 @@ int 	pqissl::Authorise_SSL_Connection()
 		// then okay...
 		rslog(RSL_WARNING, pqisslzone, "pqissl::Authorise_SSL_Connection() Accepting Conn. Peer: " + PeerId());
 
-		accept(ssl_connection, sockfd, remote_addr);
+		accept_locked(ssl_connection, sockfd, remote_addr);
 		return 1;
 	}
 
@@ -1278,11 +1308,20 @@ int 	pqissl::Authorise_SSL_Connection()
 	// else shutdown ssl connection.
 	rslog(RSL_ALERT, pqisslzone, "pqissl::Authorise_Connection_Complete() -> calling reset()");
 
-	reset();
+	reset_locked();
 	return 0;
 }
 
+
+/* This function is public, and callable from pqilistener - so must be mutex protected */
 int	pqissl::accept(SSL *ssl, int fd, const struct sockaddr_storage &foreign_addr) // initiate incoming connection.
+{
+	RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
+
+	return accept_locked(ssl, fd, foreign_addr);
+}
+
+int	pqissl::accept_locked(SSL *ssl, int fd, const struct sockaddr_storage &foreign_addr) // initiate incoming connection.
 {
 	if (waiting != WAITING_NOT)
 	{
@@ -1340,7 +1379,7 @@ int	pqissl::accept(SSL *ssl, int fd, const struct sockaddr_storage &foreign_addr
 		 		"pqissl::accept() STATE = Unknown - ignore?");
 
 			rslog(RSL_ALERT, pqisslzone, "pqissl::accept() -> calling reset()");
-			reset();
+			reset_locked();
 			break;
 		}
 
@@ -1421,7 +1460,7 @@ int	pqissl::accept(SSL *ssl, int fd, const struct sockaddr_storage &foreign_addr
 		waiting = WAITING_FAIL_INTERFACE;
 		// failed completely.
 		rslog(RSL_ALERT, pqisslzone, "pqissl::accept() -> calling reset()");
-		reset();
+		reset_locked();
 		return -1;
 	}
 	else
@@ -1440,18 +1479,22 @@ int	pqissl::accept(SSL *ssl, int fd, const struct sockaddr_storage &foreign_addr
 	// Notify the pqiperson.... (Both Connect/Receive)
 	if (parent())
 	{
-	  parent() -> notifyEvent(this, NET_CONNECT_SUCCESS);
+		struct sockaddr_storage addr = remote_addr;
+		parent() -> notifyEvent(this, NET_CONNECT_SUCCESS, addr);
 	}
 	return 1;
 }
 
 /********** Implementation of BinInterface **************************
  * All the rest of the BinInterface.
+ * This functions much be Mutex protected.
  *
  */
 
 int 	pqissl::senddata(void *data, int len)
 {
+	RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
+
 	int tmppktlen ;
 
 #ifdef PQISSL_DEBUG
@@ -1493,7 +1536,7 @@ int 	pqissl::senddata(void *data, int len)
 			}
 
 			rslog(RSL_ALERT, pqisslzone, "pqissl::senddata() -> calling reset()");
-			reset();
+			reset_locked();
 			return -1;
 		}
 		else if (err == SSL_ERROR_WANT_WRITE)
@@ -1518,7 +1561,7 @@ int 	pqissl::senddata(void *data, int len)
 			rslog(RSL_ALERT, pqisslzone, out);
 
 			rslog(RSL_ALERT, pqisslzone, "pqissl::senddata() -> calling reset()");
-			reset();
+			reset_locked();
 			return -1;
 		}
 	}
@@ -1527,6 +1570,8 @@ int 	pqissl::senddata(void *data, int len)
 
 int 	pqissl::readdata(void *data, int len)
 {
+	RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
+
 #ifdef PQISSL_DEBUG
 	std::cout << "Reading data thread=" << pthread_self() << ", ssl=" << (void*)this << std::endl ;
 #endif
@@ -1598,7 +1643,7 @@ int 	pqissl::readdata(void *data, int len)
 					rs_sprintf_append(out, " ReadZero Age: %ld", time(NULL) - mReadZeroTS);
 
 					rslog(RSL_ALERT, pqisslzone, "pqissl::readdata() -> calling reset()");
-					reset();
+					reset_locked();
 				}
 
 				rslog(RSL_ALERT, pqisslzone, out);
@@ -1635,7 +1680,7 @@ int 	pqissl::readdata(void *data, int len)
 				}
 
 				rslog(RSL_ALERT, pqisslzone, "pqissl::readdata() -> calling reset()");
-				reset();
+				reset_locked();
 				std::cerr << out << std::endl ;
 				return -1;
 			}
@@ -1666,7 +1711,7 @@ int 	pqissl::readdata(void *data, int len)
 				std::cerr << out << std::endl ;
 
 				rslog(RSL_ALERT, pqisslzone, "pqissl::readdata() -> calling reset()");
-				reset();
+				reset_locked();
 				return -1;
 			}
 
@@ -1702,11 +1747,15 @@ int 	pqissl::netstatus()
 
 int 	pqissl::isactive()
 {
+	RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
+
 	return active;
 }
 
-bool 	pqissl::moretoread()
+bool 	pqissl::moretoread(uint32_t usec)
 {
+	RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
+
 #ifdef PQISSL_DEBUG
 	{
 		std::string out;
@@ -1726,7 +1775,7 @@ bool 	pqissl::moretoread()
 
 	struct timeval timeout;
 	timeout.tv_sec = 0; 
-	timeout.tv_usec = 0; 
+	timeout.tv_usec = usec; 
 
 	if (select(sockfd + 1, &ReadFDs, &WriteFDs, &ExceptFDs, &timeout) < 0) 
 	{
@@ -1744,7 +1793,7 @@ bool 	pqissl::moretoread()
 		// this is a definite bad socket!.
 		// reset.
 		rslog(RSL_ALERT, pqisslzone, "pqissl::moretoread() -> calling reset()");
-		reset();
+		reset_locked();
 		return 0;
 	}
 
@@ -1784,8 +1833,10 @@ bool 	pqissl::moretoread()
 
 }
 
-bool 	pqissl::cansend()
+bool 	pqissl::cansend(uint32_t usec)
 {
+	RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
+
 #ifdef PQISSL_DEBUG
 	rslog(RSL_DEBUG_ALL, pqisslzone, 
 		"pqissl::cansend() polling socket!");
@@ -1804,7 +1855,8 @@ bool 	pqissl::cansend()
 
 	struct timeval timeout;
 	timeout.tv_sec = 0; 
-	timeout.tv_usec = 0; 
+	timeout.tv_usec = usec; 
+	
 
 	if (select(sockfd + 1, &ReadFDs, &WriteFDs, &ExceptFDs, &timeout) < 0) 
 	{
@@ -1824,7 +1876,7 @@ bool 	pqissl::cansend()
 		// this is a definite bad socket!.
 		// reset.
 		rslog(RSL_ALERT, pqisslzone, "pqissl::cansend() -> calling reset()");
-		reset();
+		reset_locked();
 		return 0;
 	}
 

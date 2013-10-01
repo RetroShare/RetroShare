@@ -3,11 +3,11 @@
  *
  * 3P/PQI network interface for RetroShare.
  *
- * Copyright 2004-2008 by Robert Fernie.
+ * Copyright 2004-2013 by Robert Fernie.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
+ * License Version 2.1 as published by the Free Software Foundation.
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -32,18 +32,14 @@
  * #define SERV_DEBUG 1
  ****/
 
-void    p3Service::addSerialType(RsSerialType *st)
-{
-	rsSerialiser->addSerialType(st);
-}
+
 
 RsItem *p3Service::recvItem()
 {
-	srvMtx.lock();   /*****   LOCK MUTEX *****/
+	RsStackMutex stack(srvMtx);  /*****   LOCK MUTEX *****/
 
 	if (recv_queue.size() == 0)
 	{
-		srvMtx.unlock(); /***** UNLOCK MUTEX *****/
 		return NULL; /* nothing there! */
 	}
 
@@ -51,75 +47,81 @@ RsItem *p3Service::recvItem()
 	RsItem *item = recv_queue.front();
 	recv_queue.pop_front();
 
-	srvMtx.unlock(); /***** UNLOCK MUTEX *****/
 	return item;
 }
 
 
 bool    p3Service::receivedItems()
 {
-	srvMtx.lock();   /*****   LOCK MUTEX *****/
+	RsStackMutex stack(srvMtx);  /*****   LOCK MUTEX *****/
 
-	bool moreData = (recv_queue.size() != 0);
-
-	srvMtx.unlock(); /***** UNLOCK MUTEX *****/
-
-	return moreData;
+	return (!recv_queue.empty());
 }
 
 
-int p3Service::sendItem(RsItem *item)
+bool p3Service::recvItem(RsItem *item)
 {
-	srvMtx.lock();   /*****   LOCK MUTEX *****/
+	if (item)
+	{
+		RsStackMutex stack(srvMtx);  /*****   LOCK MUTEX *****/
 
-	send_queue.push_back(item);
-
-	srvMtx.unlock(); /***** UNLOCK MUTEX *****/
-
-	return 1;
+		recv_queue.push_back(item);
+	}
 }
+
+
+
+
+
+void    p3FastService::addSerialType(RsSerialType *st)
+{
+	rsSerialiser->addSerialType(st);
+}
+
 
 	// overloaded pqiService interface.
-int	p3Service::receive(RsRawItem *raw)
+bool p3FastService::recv(RsRawItem *raw)
 {
-	srvMtx.lock();   /*****   LOCK MUTEX *****/
-
-#ifdef SERV_DEBUG 
-	std::cerr << "p3Service::receive()";
-	std::cerr << std::endl;
-#endif
-
-	/* convert to RsServiceItem */
-	uint32_t size = raw->getRawLength();
-	RsItem *item = rsSerialiser->deserialise(raw->getRawData(), &size);
-	if ((!item) || (size != raw->getRawLength()))
+	RsItem *item = NULL;
 	{
-		/* error in conversion */
-#ifdef SERV_DEBUG 
-		std::cerr << "p3Service::receive() Error" << std::endl;
-		std::cerr << "p3Service::receive() Size: " << size << std::endl;
-		std::cerr << "p3Service::receive() RawLength: " << raw->getRawLength() << std::endl;
-#endif
-
-		if (item)
+		RsStackMutex stack(srvMtx);  /*****   LOCK MUTEX *****/
+	
+	#ifdef SERV_DEBUG 
+		std::cerr << "p3Service::recv()";
+		std::cerr << std::endl;
+	#endif
+	
+		/* convert to RsServiceItem */
+		uint32_t size = raw->getRawLength();
+		item = rsSerialiser->deserialise(raw->getRawData(), &size);
+		if ((!item) || (size != raw->getRawLength()))
 		{
-#ifdef SERV_DEBUG 
-			std::cerr << "p3Service::receive() Bad Item:";
-			std::cerr << std::endl;
-			item->print(std::cerr, 0);
-			std::cerr << std::endl;
-#endif
-			delete item;
-			item=NULL ;
+			/* error in conversion */
+	#ifdef SERV_DEBUG 
+			std::cerr << "p3Service::recv() Error" << std::endl;
+			std::cerr << "p3Service::recv() Size: " << size << std::endl;
+			std::cerr << "p3Service::recv() RawLength: " << raw->getRawLength() << std::endl;
+	#endif
+	
+			if (item)
+			{
+	#ifdef SERV_DEBUG 
+				std::cerr << "p3Service::recv() Bad Item:";
+				std::cerr << std::endl;
+				item->print(std::cerr, 0);
+				std::cerr << std::endl;
+	#endif
+				delete item;
+				item=NULL ;
+			}
 		}
 	}
-
-
+	
 	/* if we have something - pass it on */
 	if (item)
 	{
 #ifdef SERV_DEBUG 
-		std::cerr << "p3Service::receive() item:";
+		std::cerr << "p3Service::recv() item:";
 		std::cerr << std::endl;
 		item->print(std::cerr, 0);
 		std::cerr << std::endl;
@@ -127,33 +129,22 @@ int	p3Service::receive(RsRawItem *raw)
 
 		/* ensure PeerId is transferred */
 		item->PeerId(raw->PeerId());
-		recv_queue.push_back(item);
+		recvItem(item);
 	}
 
 	/* cleanup input */
 	delete raw;
-
-	srvMtx.unlock(); /***** UNLOCK MUTEX *****/
-
 	return (item != NULL);
 }
 
-RsRawItem *p3Service::send()
+
+
+int p3FastService::sendItem(RsItem *si)
 {
-	srvMtx.lock();   /*****   LOCK MUTEX *****/
-
-	if (send_queue.size() == 0)
-	{
-		srvMtx.unlock(); /***** UNLOCK MUTEX *****/
-		return NULL; /* nothing there! */
-	}
-
-	/* get something off front */
-	RsItem *si = send_queue.front();
-	send_queue.pop_front();
+	RsStackMutex stack(srvMtx);  /*****   LOCK MUTEX *****/
 
 #ifdef SERV_DEBUG 
-	std::cerr << "p3Service::send() Sending item:";
+	std::cerr << "p3Service::sendItem() Sending item:";
 	std::cerr << std::endl;
 	si->print(std::cerr, 0);
 	std::cerr << std::endl;
@@ -170,8 +161,7 @@ RsRawItem *p3Service::send()
 
 		/* can't convert! */
 		delete si;
-		srvMtx.unlock(); /***** UNLOCK MUTEX *****/
-		return NULL;
+		return 0;
 	}
 
 	RsRawItem *raw = new RsRawItem(si->PacketId(), size);
@@ -203,7 +193,7 @@ RsRawItem *p3Service::send()
 		if(si->priority_level() == QOS_PRIORITY_UNKNOWN)
 		{
 			std::cerr << "************************************************************" << std::endl;
-			std::cerr << "********** Warning: p3service::send()               ********" << std::endl;
+			std::cerr << "********** Warning: p3Service::send()              ********" << std::endl;
 			std::cerr << "********** Warning: caught a RsItem with undefined  ********" << std::endl;
 			std::cerr << "**********          priority level. That should not ********" << std::endl;
 			std::cerr << "**********          happen. Please fix your items!  ********" << std::endl;
@@ -215,38 +205,11 @@ RsRawItem *p3Service::send()
 	/* cleanup */
 	delete si;
 
-	srvMtx.unlock(); /***** UNLOCK MUTEX *****/
 #ifdef SERV_DEBUG
-                std::cerr << "p3Service::send() returning RawItem.";
-                std::cerr << std::endl;
+	std::cerr << "p3Service::send() returning RawItem.";
+	std::cerr << std::endl;
 #endif
-	return raw;
+	return pqiService::send(raw);	
 }
 
-
-std::string generateRandomServiceId()
-{
-	std::string out;
-
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-#ifndef WINDOWS_SYS
-	/* 4 bytes per random number: 4 x 4 = 16 bytes */
-	for(int i = 0; i < 4; i++)
-	{
-		uint32_t rint = random();
-		rs_sprintf_append(out, "%08x", rint);
-	}
-#else
-	srand(time(NULL));
-	/* 2 bytes per random number: 8 x 2 = 16 bytes */
-	for(int i = 0; i < 8; i++)
-	{
-		uint16_t rint = rand(); /* only gives 16 bits */
-		rs_sprintf_append(out, "%04x", rint);
-	}
-#endif
-/********************************** WINDOWS/UNIX SPECIFIC PART ******************/
-	return out;
-}
-	
 

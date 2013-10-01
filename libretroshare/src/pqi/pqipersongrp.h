@@ -114,9 +114,9 @@ virtual int checkOutgoingRsItem(RsItem *item, int global)
 
 	private:
 
-	// The tunnelserver operation.
+	// The serviceserver operation.
 	int tickServiceRecv();
-	int tickServiceSend();
+	//int tickServiceSend();
 
 	pqilistener *pqil;
 	unsigned long initFlags;

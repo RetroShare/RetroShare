@@ -67,69 +67,71 @@ class pqistreamer: public PQInterface
 		// These methods are redefined in pqiQoSstreamer
 		//
 		virtual void locked_storeInOutputQueue(void *ptr,int priority) ;
-		virtual int out_queue_size() const ;
+		virtual int locked_out_queue_size() const ;
 		virtual void locked_clear_out_queue() ;
 		virtual int locked_compute_out_pkt_size() const ;
 		virtual void *locked_pop_out_data() ;
 
+
+	protected:
+		RsMutex mStreamerMtx ; // Protects data, fns below, protected so pqiqos can use it too.
+
 	private:
-		// to filter functions - detect filecancel/data and act!
-		int queue_outpqi(RsItem *i,uint32_t& serialized_size);
-		int handleincomingitem(RsItem *i);
+		int queue_outpqi_locked(RsItem *i,uint32_t& serialized_size);
+		int handleincomingitem_locked(RsItem *i);
 
 		// ticked regularly (manages out queues and sending
 		// via above interfaces.
-		virtual int	handleoutgoing();
-		virtual int	handleincoming();
+		virtual int	handleoutgoing_locked();
+		virtual int	handleincoming_locked();
 
 		// Bandwidth/Streaming Management.
-		float	outTimeSlice();
+		float	outTimeSlice_locked();
 
-		int	outAllowedBytes();
-		void	outSentBytes(int );
+		int	outAllowedBytes_locked();
+		void	outSentBytes_locked(int );
 
-		int	inAllowedBytes();
-		void	inReadBytes(int );
+		int	inAllowedBytes_locked();
+		void	inReadBytes_locked(int );
+
+
 
 		// RsSerialiser - determines which packets can be serialised.
-		RsSerialiser *rsSerialiser;
+		RsSerialiser *mRsSerialiser;
 		// Binary Interface for IO, initialisated at startup.
-		BinInterface *bio;
-		unsigned int  bio_flags; // BIN_FLAGS_NO_CLOSE | BIN_FLAGS_NO_DELETE
+		BinInterface *mBio;
+		unsigned int  mBio_flags; // BIN_FLAGS_NO_CLOSE | BIN_FLAGS_NO_DELETE
 
-		void *pkt_wpending; // storage for pending packet to write.
-		int   pkt_rpend_size; // size of pkt_rpending.
-		void *pkt_rpending; // storage for read in pending packets.
+		void *mPkt_wpending; // storage for pending packet to write.
+		int   mPkt_rpend_size; // size of pkt_rpending.
+		void *mPkt_rpending; // storage for read in pending packets.
 
 		enum {reading_state_packet_started=1,
 			reading_state_initial=0 } ;
 
-		int   reading_state ;
-		int   failed_read_attempts ;
+		int   mReading_state ;
+		int   mFailed_read_attempts ;
 
 		// Temp Storage for transient data.....
-		std::list<void *> out_pkt; // Cntrl / Search / Results queue
-		std::list<RsItem *> incoming;
+		std::list<void *> mOutPkts; // Cntrl / Search / Results queue
+		std::list<RsItem *> mIncoming;
 
 		// data for network stats.
-		int totalRead;
-		int totalSent;
+		int mTotalRead;
+		int mTotalSent;
 
 		// these are representative (but not exact)
-		int currRead;
-		int currSent;
-		int currReadTS; // TS from which these are measured.
-		int currSentTS;
+		int mCurrRead;
+		int mCurrSent;
+		int mCurrReadTS; // TS from which these are measured.
+		int mCurrSentTS;
 
-		int avgLastUpdate; // TS from which these are measured.
-		float avgReadCount;
-		float avgSentCount;
+		int mAvgLastUpdate; // TS from which these are measured.
+		float mAvgReadCount;
+		float mAvgSentCount;
 
 		time_t mLastIncomingTs;
 	
-		RsMutex streamerMtx ; 	// WHAT IS THIS PROTECTING. XXX
-		//	pthread_t thread_id;A
-
 
 };
 

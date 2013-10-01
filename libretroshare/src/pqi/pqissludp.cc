@@ -54,6 +54,8 @@ pqissludp::pqissludp(PQInterface *parent, p3LinkMgr *lm)
         :pqissl(NULL, parent, lm), tou_bio(NULL),
 	listen_checktime(0), mConnectPeriod(PQI_SSLUDP_DEF_CONN_PERIOD)
 {
+	RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
+
 	sockaddr_storage_clear(remote_addr);
 	return;
 }
@@ -74,6 +76,8 @@ pqissludp::~pqissludp()
         stoplistening(); /* remove from p3proxy listenqueue */
 	reset(); 
 
+	RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
+
 	if (tou_bio) // this should be in the reset?
 	{
 		BIO_free(tou_bio);
@@ -81,12 +85,13 @@ pqissludp::~pqissludp()
 	return;
 }
 
-int pqissludp::reset()
+int pqissludp::reset_locked()
 {
 	/* reset for next time.*/
 	mConnectFlags = 0;
 	mConnectPeriod = PQI_SSLUDP_DEF_CONN_PERIOD;
-	return pqissl::reset();
+
+	return pqissl::reset_locked();
 }
 
 
@@ -216,7 +221,7 @@ int 	pqissludp::Initiate_Connection()
 		rslog(RSL_WARNING, pqissludpzone, "pqissludp::Initiate_Connection() Invalid (0.0.0.0) Remote Address, Aborting Connect.");
 		waiting = WAITING_FAIL_INTERFACE;
 
-		reset();
+		reset_locked();
 		return -1;
 	}
 
@@ -322,7 +327,7 @@ int 	pqissludp::Initiate_Connection()
 
 		rslog(RSL_WARNING, pqissludpzone, out);
 
-		reset();
+		reset_locked();
 
 		return -1;
 	}
@@ -356,7 +361,7 @@ int 	pqissludp::Basic_Connection_Complete()
 
 		/* as sockfd is valid, this should close it all up */
 
-		reset();
+		reset_locked();
 		return -1;
 	}
 
@@ -387,7 +392,7 @@ int 	pqissludp::Basic_Connection_Complete()
 			rs_sprintf_append(out, "Error: Connection Failed: %d - %s", err, socket_errorType(err).c_str());
 			rslog(RSL_DEBUG_BASIC, pqissludpzone, out);
 
-			reset();
+			reset_locked();
 
 			// Then send unreachable message.
 			waiting = WAITING_FAIL_INTERFACE;
@@ -478,73 +483,90 @@ int pqissludp::stoplistening()
 
 bool 	pqissludp::connect_parameter(uint32_t type, uint32_t value)
 {
-	//std::cerr << "pqissludp::connect_parameter() type: " << type << "value: " << value << std::endl;
-	if (type == NET_PARAM_CONNECT_PERIOD)
 	{
-		std::string out;
-		rs_sprintf(out, "pqissludp::connect_parameter() Peer: %s PERIOD: %lu", PeerId().c_str(), value);
-		rslog(RSL_WARNING, pqissludpzone, out);
-
-		mConnectPeriod = value;
-		std::cerr << out << std::endl;
-		return true;
+		RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
+	
+		//std::cerr << "pqissludp::connect_parameter() type: " << type << "value: " << value << std::endl;
+		if (type == NET_PARAM_CONNECT_PERIOD)
+		{
+			std::string out;
+			rs_sprintf(out, "pqissludp::connect_parameter() Peer: %s PERIOD: %lu", PeerId().c_str(), value);
+			rslog(RSL_WARNING, pqissludpzone, out);
+	
+			mConnectPeriod = value;
+			std::cerr << out << std::endl;
+			return true;
+		}
+		else if (type == NET_PARAM_CONNECT_FLAGS)
+		{
+			std::string out;
+			rs_sprintf(out, "pqissludp::connect_parameter() Peer: %s FLAGS: %lu", PeerId().c_str(), value);
+			rslog(RSL_WARNING, pqissludpzone, out);
+	
+			mConnectFlags = value;
+			std::cerr << out<< std::endl;
+			return true;
+		}
+		else if (type == NET_PARAM_CONNECT_BANDWIDTH)
+		{
+			std::string out;
+			rs_sprintf(out, "pqissludp::connect_parameter() Peer: %s BANDWIDTH: %lu", PeerId().c_str(), value);
+			rslog(RSL_WARNING, pqissludpzone, out);
+	
+			mConnectBandwidth = value;
+			std::cerr << out << std::endl;
+			return true;
+		}
 	}
-	else if (type == NET_PARAM_CONNECT_FLAGS)
-	{
-		std::string out;
-		rs_sprintf(out, "pqissludp::connect_parameter() Peer: %s FLAGS: %lu", PeerId().c_str(), value);
-		rslog(RSL_WARNING, pqissludpzone, out);
 
-		mConnectFlags = value;
-		std::cerr << out<< std::endl;
-		return true;
-	}
-	else if (type == NET_PARAM_CONNECT_BANDWIDTH)
-	{
-		std::string out;
-		rs_sprintf(out, "pqissludp::connect_parameter() Peer: %s BANDWIDTH: %lu", PeerId().c_str(), value);
-		rslog(RSL_WARNING, pqissludpzone, out);
-
-		mConnectBandwidth = value;
-		std::cerr << out << std::endl;
-		return true;
-	}
 	return pqissl::connect_parameter(type, value);
 }
 
 bool pqissludp::connect_additional_address(uint32_t type, const struct sockaddr_storage &addr)
 {
-	if (type == NET_PARAM_CONNECT_PROXY)
 	{
-		std::string out;
-		rs_sprintf(out, "pqissludp::connect_additional_address() Peer: %s PROXYADDR: ", PeerId().c_str());
-		out += sockaddr_storage_tostring(addr);
-		rslog(RSL_WARNING, pqissludpzone, out);
-
-		mConnectProxyAddr = addr;
-
-		std::cerr << out << std::endl;
-		return true;
-	}
-	else if (type == NET_PARAM_CONNECT_SOURCE)
-	{
-		std::string out;
-		rs_sprintf(out, "pqissludp::connect_additional_address() Peer: %s SRCADDR: ", PeerId().c_str());
-		out += sockaddr_storage_tostring(addr);
-		rslog(RSL_WARNING, pqissludpzone, out);
-
-		mConnectSrcAddr = addr;
-
-		std::cerr << out << std::endl;
-		return true;
+		RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
+		
+		if (type == NET_PARAM_CONNECT_PROXY)
+		{
+			std::string out;
+			rs_sprintf(out, "pqissludp::connect_additional_address() Peer: %s PROXYADDR: ", PeerId().c_str());
+			out += sockaddr_storage_tostring(addr);
+			rslog(RSL_WARNING, pqissludpzone, out);
+	
+			mConnectProxyAddr = addr;
+	
+			std::cerr << out << std::endl;
+			return true;
+		}
+		else if (type == NET_PARAM_CONNECT_SOURCE)
+		{
+			std::string out;
+			rs_sprintf(out, "pqissludp::connect_additional_address() Peer: %s SRCADDR: ", PeerId().c_str());
+			out += sockaddr_storage_tostring(addr);
+			rslog(RSL_WARNING, pqissludpzone, out);
+	
+			mConnectSrcAddr = addr;
+	
+			std::cerr << out << std::endl;
+			return true;
+		}
 	}
 	return pqissl::connect_additional_address(type, addr);
 }
 
 /********** PQI STREAMER OVERLOADING *********************************/
 
-bool 	pqissludp::moretoread()
+bool 	pqissludp::moretoread(uint32_t usec)
 {
+	RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
+		
+	if (usec)
+	{
+		std::cerr << "pqissludp::moretoread() usec parameter not implemented";
+		std::cerr << std::endl;
+	}
+
 	{
 		std::string out = "pqissludp::moretoread()";
 		rs_sprintf_append(out, "  polling socket (%d)", sockfd);
@@ -590,7 +612,7 @@ bool 	pqissludp::moretoread()
 			rslog(RSL_WARNING, pqissludpzone, out);
 		}
 
-		reset();
+		reset_locked();
 		return 0;
 	}
 
@@ -603,8 +625,16 @@ bool 	pqissludp::moretoread()
 
 }
 
-bool 	pqissludp::cansend()
+bool 	pqissludp::cansend(uint32_t usec)
 {
+	RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
+
+	if (usec)
+	{
+		std::cerr << "pqissludp::cansend() usec parameter not implemented";
+		std::cerr << std::endl;
+	}
+
 	rslog(RSL_DEBUG_ALL, pqissludpzone, 
 		"pqissludp::cansend() polling socket!");
 
