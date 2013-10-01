@@ -85,7 +85,6 @@ void RsServer::rsGlobalShutDown()
 	mNetMgr->shutdown(); /* Handles UPnP */
 
 	join();
-	ftserver->StopThreads();
 
 	mPluginsManager->stopPlugins();
 

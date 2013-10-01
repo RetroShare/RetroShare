@@ -65,10 +65,6 @@ class ftDataSend
 		virtual bool sendChunkMap(const std::string& peer_id,const std::string& hash,const CompressedChunkMap& cmap,bool is_client) = 0;
 
 		/// Send a request for a chunk crc map
-		virtual bool sendCRC32MapRequest(const std::string& peer_id,const std::string& hash) = 0;
-		/// Send a chunk crc map
-		virtual bool sendCRC32Map(const std::string& peer_id,const std::string& hash,const CRC32Map& crc_map) = 0;
-		/// Send a request for a chunk crc map
 		virtual bool sendSingleChunkCRCRequest(const std::string& peer_id,const std::string& hash,uint32_t chunk_number) = 0;
 		/// Send a chunk crc map
 		virtual bool sendSingleChunkCRC(const std::string& peer_id,const std::string& hash,uint32_t chunk_number,const Sha1CheckSum& crc) = 0;
@@ -94,11 +90,6 @@ class ftDataRecv
 
 		/// Send a chunk map
 		virtual bool recvChunkMap(const std::string& peer_id,const std::string& hash,const CompressedChunkMap& cmap,bool is_client) = 0;
-		/// Send a request for a chunk map
-		virtual bool recvCRC32MapRequest(const std::string& peer_id,const std::string& hash) = 0;
-
-		/// Send a chunk map
-		virtual bool recvCRC32Map(const std::string& peer_id,const std::string& hash,const CRC32Map& crcmap) = 0;
 
 		virtual bool recvSingleChunkCRCRequest(const std::string& peer_id,const std::string& hash,uint32_t chunk_id) = 0;
 		virtual bool recvSingleChunkCRC(const std::string& peer_id,const std::string& hash,uint32_t chunk_id,const Sha1CheckSum& sum) = 0;

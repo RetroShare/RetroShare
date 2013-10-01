@@ -2177,8 +2177,7 @@ int RsServer::StartupRetroShare()
 	//pqih = new pqipersongrpDummy(none, flags);
 
 	/****** New Ft Server **** !!! */
-	ftserver = new ftServer(mPeerMgr, mLinkMgr);
-	ftserver->setP3Interface(pqih);
+	ftServer *ftserver = new ftServer(mPeerMgr, mLinkMgr);
 	ftserver->setConfigDirectory(RsInitConfig::configDir);
 
 	ftserver->SetupFtServer(&(getNotify()));
@@ -2254,6 +2253,7 @@ int RsServer::StartupRetroShare()
 	p3turtle *tr = new p3turtle(mLinkMgr) ;
 	rsTurtle = tr ;
 	pqih -> addService(tr);
+	pqih -> addService(ftserver);
 
 	ftserver->connectToTurtleRouter(tr) ;
 	chatSrv->connectToTurtleRouter(tr) ;

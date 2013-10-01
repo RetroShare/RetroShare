@@ -226,8 +226,6 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor, publi
 		void handleRecvChatAvatarItem(RsChatAvatarItem *item) ;
 		void handleRecvChatLobbyListRequest(RsChatLobbyListRequestItem *item) ;
 		void handleRecvChatLobbyList(RsChatLobbyListItem *item) ;
-		void handleRecvChatLobbyList(RsChatLobbyListItem_deprecated *item) ;
-		void handleRecvChatLobbyList(RsChatLobbyListItem_deprecated2 *item) ;
 		void handleRecvChatLobbyEventItem(RsChatLobbyEventItem *item) ;
 
 		/// Sends a request for an avatar to the peer of given id

@@ -54,7 +54,7 @@ int rsserverzone = 101;
 RsServer::RsServer(NotifyBase &callback)
 	:RsControl(callback), coreMutex("RsServer")
 {
-	ftserver = NULL;
+	//ftserver = NULL;
 
 	mPeerMgr = NULL;
 	mLinkMgr = NULL;
@@ -163,7 +163,8 @@ void 	RsServer::run()
 			/******************************** RUN SERVER *****************/
 			lockRsCore();
 
-			int moreToTick = ftserver -> tick();
+			//int moreToTick = ftserver -> tick();
+			int moreToTick = pqih->tick();
 
 #ifdef	DEBUG_TICK
 			std::cerr << "RsServer::run() ftserver->tick(): moreToTick: " << moreToTick << std::endl;

@@ -159,7 +159,7 @@ class RsServer: public RsControl, public RsThread
 		// The real Server Parts.
 
 		//filedexserver *server;
-		ftServer *ftserver;
+		//ftServer *ftserver;
 
 		p3PeerMgrIMPL *mPeerMgr;
 		p3LinkMgrIMPL *mLinkMgr;

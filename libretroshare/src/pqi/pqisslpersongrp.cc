@@ -23,6 +23,7 @@
  *
  */
 
+#include "serialiser/rsserviceserialiser.h"
 #include "util/rsdebug.h"
 
 #include "pqi/pqisslpersongrp.h"
@@ -92,8 +93,6 @@ pqiperson * pqisslpersongrp::locked_createPerson(std::string id, pqilistener *li
 		ssl_tunnels[id] = pqis ;	// keeps for getting crypt info per peer.
 	
 		RsSerialiser *rss = new RsSerialiser();
-		rss->addSerialType(new RsFileItemSerialiser());
-		rss->addSerialType(new RsCacheItemSerialiser());
 		rss->addSerialType(new RsServiceSerialiser());
 	
 		pqiconnect *pqisc = new pqiconnect(rss, pqis);
@@ -117,8 +116,6 @@ pqiperson * pqisslpersongrp::locked_createPerson(std::string id, pqilistener *li
 		ssl_tunnels[id] = pqis ;	// keeps for getting crypt info per peer.
 	
 		RsSerialiser *rss = new RsSerialiser();
-		rss->addSerialType(new RsFileItemSerialiser());
-		rss->addSerialType(new RsCacheItemSerialiser());
 		rss->addSerialType(new RsServiceSerialiser());
 	
 		pqiconnect *pqisc = new pqiconnect(rss, pqis);
@@ -129,8 +126,6 @@ pqiperson * pqisslpersongrp::locked_createPerson(std::string id, pqilistener *li
 		pqissludp *pqius 	= new pqissludp(pqip, mLinkMgr);
 	
 		RsSerialiser *rss2 = new RsSerialiser();
-		rss2->addSerialType(new RsFileItemSerialiser());
-		rss2->addSerialType(new RsCacheItemSerialiser());
 		rss2->addSerialType(new RsServiceSerialiser());
 		
 		pqiconnect *pqiusc 	= new pqiconnect(rss2, pqius);

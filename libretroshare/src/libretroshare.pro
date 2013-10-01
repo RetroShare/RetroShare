@@ -365,8 +365,9 @@ HEADERS +=	rsserver/p3face.h \
 			rsserver/p3status.h \
 			rsserver/p3serverconfig.h
 
-HEADERS +=	serialiser/rsbaseitems.h \
-			serialiser/rsbaseserial.h \
+HEADERS +=	serialiser/rsbaseserial.h \
+			serialiser/rsfiletransferitems.h \
+			serialiser/rsserviceserialiser.h \
 			serialiser/rsconfigitems.h \
 			serialiser/rshistoryitems.h \
 			serialiser/rsmsgitems.h \
@@ -494,8 +495,9 @@ SOURCES += plugins/pluginmanager.cc \
 				plugins/dlfcn_win32.cc \
 				serialiser/rspluginitems.cc
 
-SOURCES +=	serialiser/rsbaseitems.cc \
-			serialiser/rsbaseserial.cc \
+SOURCES +=	serialiser/rsbaseserial.cc \
+			serialiser/rsfiletransferitems.cc \
+			serialiser/rsserviceserialiser.cc \
 			serialiser/rsconfigitems.cc \
 			serialiser/rshistoryitems.cc \
 			serialiser/rsmsgitems.cc \

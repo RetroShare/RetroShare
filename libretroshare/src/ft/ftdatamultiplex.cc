@@ -59,7 +59,7 @@ const uint32_t FT_DATA						= 0x0001;		// data cuhnk to be stored
 const uint32_t FT_DATA_REQ					= 0x0002;		// data request to be treated
 const uint32_t FT_CLIENT_CHUNK_MAP_REQ	= 0x0003;		// chunk map request to be treated by client
 const uint32_t FT_SERVER_CHUNK_MAP_REQ	= 0x0004;		// chunk map request to be treated by server
-const uint32_t FT_CRC32MAP_REQ        	= 0x0005;		// crc32 map request to be treated by server
+//const uint32_t FT_CRC32MAP_REQ        	= 0x0005;		// crc32 map request to be treated by server
 const uint32_t FT_CLIENT_CHUNK_CRC_REQ	= 0x0006;		// chunk sha1 crc request to be treated
 
 ftRequest::ftRequest(uint32_t type, std::string peerId, std::string hash, uint64_t size, uint64_t offset, uint32_t chunk, void *data)
@@ -272,19 +272,6 @@ bool	ftDataMultiplex::recvChunkMapRequest(const std::string& peerId, const std::
 	return true;
 }
 
-bool	ftDataMultiplex::recvCRC32MapRequest(const std::string& peerId, const std::string& hash)
-{
-#ifdef MPLEX_DEBUG
-	std::cerr << "ftDataMultiplex::recvChunkMapRequest() Server Recv";
-	std::cerr << std::endl;
-#endif
-	/* Store in Queue */
-	RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
-
-	mRequestQueue.push_back(ftRequest(FT_CRC32MAP_REQ,peerId,hash,0,0,0,NULL));
-
-	return true;
-}
 bool	ftDataMultiplex::recvSingleChunkCRCRequest(const std::string& peerId, const std::string& hash,uint32_t chunk_number)
 {
 #ifdef MPLEX_DEBUG
@@ -298,27 +285,6 @@ bool	ftDataMultiplex::recvSingleChunkCRCRequest(const std::string& peerId, const
 
 	return true;
 }
-class CRC32Thread: public RsThread
-{
-	public:
-		CRC32Thread(ftDataMultiplex *dataplex,const std::string& peerId,const std::string& hash) 
-			: _plex(dataplex),_finished(false),_peerId(peerId),_hash(hash) {}
-
-		virtual void run()
-		{
-#ifdef MPLEX_DEBUG
-			std::cerr << "CRC32Thread is running for file " << _hash << std::endl;
-#endif
-			_plex->computeAndSendCRC32Map(_peerId,_hash) ;
-			_finished = true ;
-		}
-		bool finished() { return _finished ; }
-	private:
-		ftDataMultiplex *_plex ;
-		bool _finished ;
-		std::string _peerId ;
-		std::string _hash ;
-};
 
 /*********** BACKGROUND THREAD OPERATIONS ***********/
 bool 	ftDataMultiplex::workQueued()
@@ -340,7 +306,6 @@ bool 	ftDataMultiplex::workQueued()
 bool 	ftDataMultiplex::doWork()
 {
 	bool doRequests = true;
-	time_t now = time(NULL) ;
 
 	/* Handle All the current Requests */		
 	while(doRequests)
@@ -395,14 +360,6 @@ bool 	ftDataMultiplex::doWork()
 				handleRecvServerChunkMapRequest(req.mPeerId,req.mHash) ;
 				break ;
 
-			case FT_CRC32MAP_REQ:
-#ifdef MPLEX_DEBUG
-				std::cerr << "ftDataMultiplex::doWork() Handling FT_CLIENT_CRC32_MAP_REQ";
-				std::cerr << std::endl;
-#endif
-				handleRecvCRC32MapRequest(req.mPeerId,req.mHash) ;
-				break ;
-
 			case FT_CLIENT_CHUNK_CRC_REQ:
 #ifdef MPLEX_DEBUG
 				std::cerr << "ftDataMultiplex::doWork() Handling FT_CLIENT_CHUNK_CRC_REQ";
@@ -418,47 +375,6 @@ bool 	ftDataMultiplex::doWork()
 #endif
 				break;
 		}
-	}
-
-	// Look for potentially finished CRC32Map threads, and destroys them.
-
-	{
-		RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
-
-		for(std::list<CRC32Thread*>::iterator lit(_crc32map_threads.begin());lit!=_crc32map_threads.end();)
-			if((*lit)->finished())
-			{
-				std::cerr << "ftDataMultiplex::doWork: thread " << *lit << " ended. Deleting it." << std::endl;
-				(*lit)->join() ;
-				delete (*lit) ;
-				std::list<CRC32Thread*>::iterator tmp(lit) ;
-				++lit ;
-				_crc32map_threads.erase(tmp) ;
-			}
-			else
-			{
-				std::cerr << "ftDataMultiplex::doWork: thread " << *lit << " still working. Not quitting it." << std::endl;
-				++lit ;
-			}
-
-		// Take the opportunity to cleanup the list, so that it cannot grow indefinitely
-#ifdef MPLEX_DEBUG
-		std::cerr << "ftDataMultiplex::doWork: Cleaning up list of cached maps." << std::endl ;
-#endif
-
-		// Keep CRC32 maps in cache for 30 mins max.
-		//
-		for(std::map<std::string,std::pair<time_t,CRC32Map> >::iterator it = _cached_crc32maps.begin();it!=_cached_crc32maps.end();)
-			if(it->second.first + 30*60 < now)
-			{
-				std::cerr << "Removing cached map for file " << it->first << " that was kept for too long now." << std::endl;
-
-				std::map<std::string,std::pair<time_t,CRC32Map> >::iterator tmp(it) ;
-				++it ;
-				_cached_crc32maps.erase(tmp) ;
-			}
-			else
-				++it ;
 	}
 
 	/* Only Handle One Search Per Period.... 
@@ -582,27 +498,6 @@ bool ftDataMultiplex::dispatchReceivedChunkCheckSum()
 	return true ;
 }
 
-bool ftDataMultiplex::recvCRC32Map(const std::string& /*peerId*/, const std::string& hash,const CRC32Map& crc_map)
-{
-	RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
-
-	std::map<std::string, ftClient>::iterator it = mClients.find(hash);
-
-	if(it == mClients.end())
-	{
-		std::cerr << "ftDataMultiplex::recvCRCMap() ERROR: No matching Client for CRC32map. This is an error. " << hash << " !" << std::endl;
-		/* error */
-		return false;
-	}
-
-#ifdef MPLEX_DEBUG
-	std::cerr << "ftDataMultiplex::recvCRCMap() Passing crc map of file " << hash << ", to FT Module" << std::endl;
-#endif
-
-	(it->second).mModule->addCRC32Map(crc_map);
-	return true ;
-}
-
 // A chunk map has arrived. It can be two different situations:
 // - an uploader has sent his chunk map, so we need to store it in the corresponding ftFileProvider
 // - a source for a download has sent his chunk map, so we need to send it to the corresponding ftFileCreator.
@@ -651,152 +546,6 @@ bool ftDataMultiplex::recvChunkMap(const std::string& peerId, const std::string&
 	}
 
 	return false;
-}
-
-
-bool ftDataMultiplex::handleRecvCRC32MapRequest(const std::string& peerId, const std::string& hash)
-{
-	bool found = false ;
-	CRC32Map cmap ;
-
-	// 1 - look into cache
-
-#ifdef MPLEX_DEBUG
-	std::cerr << "ftDataMultiplex::handleRecvChunkMapReq() : source " << peerId << " asked for CRC32 map for file " << hash << std::endl;
-#endif
-	{
-		RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
-		std::map<std::string,std::pair<time_t,CRC32Map> >::iterator it = _cached_crc32maps.find(hash) ;
-
-		if(it != _cached_crc32maps.end())
-		{
-			cmap = it->second.second ;
-			it->second.first = time(NULL) ; // update time stamp
-			found = true ;
-#ifdef MPLEX_DEBUG
-			std::cerr << "ftDataMultiplex::handleRecvChunkMapReq() : CRC32 map found in cache !!" << std::endl;
-#endif
-
-		}
-	}
-
-	if(found)
-	{
-#ifdef MPLEX_DEBUG
-		std::cerr << "File CRC32 map was obtained successfully. Sending it." << std::endl ;
-#endif
-
-		mDataSend->sendCRC32Map(peerId,hash,cmap);
-		return true ;
-	}
-	else
-	{
-		std::cerr << "File CRC32 Not found. Computing it." << std::endl ;
-
-		{
-			RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
-			if(_crc32map_threads.size() > 1)
-			{
-				std::cerr << "Too many threads already computing CRC32Maps (2 is the current maximum)! Giving up." << std::endl;
-				return false ;
-			}
-		}
-
-		CRC32Thread *thread = new CRC32Thread(this,peerId,hash);
-
-		{
-			RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
-			_crc32map_threads.push_back(thread) ;
-		}
-		thread->start() ;
-		return true ;
-	}
-}
-
-bool ftDataMultiplex::computeAndSendCRC32Map(const std::string& peerId, const std::string& hash)
-{
-	bool found ;
-	std::map<std::string, ftFileProvider *>::iterator it ;
-	std::string filename ;
-	uint64_t filesize =0;
-
-	// 1 - look into the list of servers
-	{
-		RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
-
-		it = mServers.find(hash) ;
-
-		if(it == mServers.end())
-			found = false ;
-	}
-
-	// 2 - if not found, create a server.
-	//
-	if(!found)
-	{
-#ifdef MPLEX_DEBUG
-		std::cerr << "ftDataMultiplex::handleRecvChunkMapReq() ERROR: No matching file Provider for hash " << hash ;
-		std::cerr << std::endl;
-#endif
-		if(!handleSearchRequest(peerId,hash))	
-			return false ;
-
-#ifdef MPLEX_DEBUG
-		std::cerr << "ftDataMultiplex::handleRecvChunkMapReq() A new file Provider has been made up for hash " << hash ;
-		std::cerr << std::endl;
-#endif
-	}
-
-	{
-		RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
-		it = mServers.find(hash) ;
-
-		if(it == mServers.end())	// handleSearchRequest should have filled mServers[hash], but we have been off-mutex since,
-		{
-				std::cerr << "Could definitely not find a provider for file " << hash << ". Maybe the file does not exist?" << std::endl;
-				return false ;				// so it's safer to check again.
-		}
-		else
-		{
-			filesize = it->second->fileSize() ;
-			filename = it->second->fileName() ;
-		}
-	}
-
-#ifdef MPLEX_DEBUG
-	std::cerr << "Computing CRC32Map for file " << filename << ", hash=" << hash << ", size=" << filesize << std::endl;
-#endif
-
-	FILE *fd = RsDirUtil::rs_fopen(filename.c_str(),"rb") ;
-
-	if(fd == NULL)
-	{
-		std::cerr << "Could not open file " << filename << " for read!! CRC32Map computation cancelled." << std::endl ;
-		return false ;
-	}
-
-	CRC32Map cmap ;
-	if(!RsDirUtil::crc32File(fd,filesize,ChunkMap::CHUNKMAP_FIXED_CHUNK_SIZE,cmap))
-	{
-		std::cerr << "CRC32Map computation failed." << std::endl ;
-		fclose(fd) ;
-		return false ;
-	}
-	fclose(fd) ;
-
-	{
-		RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
-		std::cerr << "File CRC32 was successfully computed. Storing it into cache." << std::endl ;
-
-		_cached_crc32maps[hash] = std::pair<time_t,CRC32Map>(time(NULL),cmap) ;
-	}
-
-#ifdef MPLEX_DEBUG
-	std::cerr << "File CRC32 was successfully computed. Sending it." << std::endl ;
-#endif
-	mDataSend->sendCRC32Map(peerId,hash,cmap);
-
-	return true ;
 }
 
 bool ftDataMultiplex::handleRecvClientChunkMapRequest(const std::string& peerId, const std::string& hash)
@@ -1150,10 +899,6 @@ bool ftDataMultiplex::getClientChunkMap(const std::string& upload_hash,const std
 bool ftDataMultiplex::sendChunkMapRequest(const std::string& peer_id,const std::string& hash,bool is_client)
 {
 	return mDataSend->sendChunkMapRequest(peer_id,hash,is_client);
-}
-bool ftDataMultiplex::sendCRC32MapRequest(const std::string& peer_id,const std::string& hash)
-{
-	return mDataSend->sendCRC32MapRequest(peer_id,hash);
 }
 bool ftDataMultiplex::sendSingleChunkCRCRequests(const std::string& hash, const std::vector<uint32_t>& to_ask)
 {

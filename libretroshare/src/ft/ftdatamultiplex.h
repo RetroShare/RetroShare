@@ -36,7 +36,6 @@ class ftTransferModule;
 class ftFileProvider;
 class ftFileCreator;
 class ftSearch;
-class CRC32Thread;
 
 #include <string>
 #include <list>
@@ -121,11 +120,6 @@ class ftDataMultiplex: public ftDataRecv, public RsQueueThread
 		/* Server/client Send */
 		bool	sendChunkMapRequest(const std::string& peerId, const std::string& hash,bool is_client) ;
 
-		/* Client Send */
-		bool	sendCRC32MapRequest(const std::string& peerId, const std::string& hash) ;
-
-		/* called from a separate thread */
-		bool computeAndSendCRC32Map(const std::string& peerId, const std::string& hash) ;
 
 		/* called from a separate thread */
 		bool sendSingleChunkCRCRequests(const std::string& hash, const std::vector<uint32_t>& to_ask) ;
@@ -143,10 +137,6 @@ class ftDataMultiplex: public ftDataRecv, public RsQueueThread
 		virtual bool recvChunkMapRequest(const std::string& peer_id,const std::string& hash,bool is_client) ;
 		/// Receive a chunk map
 		virtual bool recvChunkMap(const std::string& peer_id,const std::string& hash,const CompressedChunkMap& cmap,bool is_client) ;
-		/// Receive a CRC map
-		virtual bool recvCRC32Map(const std::string& peer_id,const std::string& hash,const CRC32Map& crc_map) ;
-		/// Receive a CRC map request
-		virtual bool recvCRC32MapRequest(const std::string& peer_id,const std::string& hash) ;
 
 		virtual bool recvSingleChunkCRCRequest(const std::string& peer_id,const std::string& hash,uint32_t chunk_id) ;
 		virtual bool recvSingleChunkCRC(const std::string& peer_id,const std::string& hash,uint32_t chunk_id,const Sha1CheckSum& sum) ;
@@ -170,7 +160,6 @@ class ftDataMultiplex: public ftDataRecv, public RsQueueThread
 		bool handleSearchRequest(const std::string& peerId, const std::string& hash);
 		bool handleRecvClientChunkMapRequest(const std::string& peerId, const std::string& hash) ;
 		bool handleRecvServerChunkMapRequest(const std::string& peerId, const std::string& hash) ;
-		bool handleRecvCRC32MapRequest(const std::string& peerId, const std::string& hash) ;
 		bool handleRecvChunkCrcRequest(const std::string& peerId, const std::string& hash,uint32_t chunk_id) ;
 
 		/* We end up doing the actual server job here */
@@ -184,9 +173,6 @@ class ftDataMultiplex: public ftDataRecv, public RsQueueThread
 		std::list<ftRequest> mRequestQueue;
 		std::list<ftRequest> mSearchQueue;
 //		std::map<std::string, time_t> mUnknownHashs;
-
-		std::list<CRC32Thread *> _crc32map_threads ;
-		std::map<std::string,std::pair<time_t,CRC32Map> > _cached_crc32maps ;
 
 		std::map<std::string,Sha1CacheEntry> _cached_sha1maps ;						// one cache entry per file hash. Handled dynamically.
 

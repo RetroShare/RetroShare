@@ -33,7 +33,6 @@
 #include "pqi/pqinotify.h"
 
 #include "serialiser/rsserial.h" 
-#include "serialiser/rsbaseitems.h"  /***** For RsFileData *****/
 
 const int pqistreamerzone = 8221;
 

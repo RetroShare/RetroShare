@@ -49,6 +49,7 @@ const int ftserverzone = 29539;
 #include "pqi/pqi.h"
 #include "pqi/p3linkmgr.h"
 
+#include "serialiser/rsfiletransferitems.h"
 #include "serialiser/rsserviceids.h"
 
 /***
@@ -56,16 +57,19 @@ const int ftserverzone = 29539;
  * #define DEBUG_TICK   1
  ***/
 
+static const time_t FILE_TRANSFER_LOW_PRIORITY_TASKS_PERIOD = 5 ; // low priority tasks handling every 5 seconds
+
 	/* Setup */
 ftServer::ftServer(p3PeerMgr *pm, p3LinkMgr *lm)
-        :       mP3iface(NULL), mPeerMgr(pm),
+        :       p3Service(RS_SERVICE_TYPE_FILE_TRANSFER),
+					 mPeerMgr(pm),
                 mLinkMgr(lm),
 		mCacheStrapper(NULL),
 		mFiStore(NULL), mFiMon(NULL),
 		mFtController(NULL), mFtExtra(NULL),
 		mFtDataplex(NULL), mFtSearch(NULL), srvMutex("ftServer")
 {
-        mCacheStrapper = new ftCacheStrapper(lm);
+	mCacheStrapper = new ftCacheStrapper(lm);
 }
 
 void	ftServer::setConfigDirectory(std::string path)
@@ -83,11 +87,6 @@ void	ftServer::setConfigDirectory(std::string path)
 	RsDirUtil::checkCreateDirectory(basecachedir) ;
 	RsDirUtil::checkCreateDirectory(localcachedir) ;
 	RsDirUtil::checkCreateDirectory(remotecachedir) ;
-}
-
-void	ftServer::setP3Interface(P3Interface *pqi)
-{
-	mP3iface = pqi;
 }
 
 	/* Control Interface */
@@ -179,16 +178,10 @@ void    ftServer::StartupThreads()
 
 	/* Dataplex */
 	mFtDataplex->start();
-
-	/* start own thread */
-	start();
 }
 
 void ftServer::StopThreads()
 {
-	/* stop own thread */
-	join();
-
 	/* stop Dataplex */
 	mFtDataplex->join();
 
@@ -225,30 +218,21 @@ CacheTransfer *ftServer::getCacheTransfer()
 	return mFtController;
 }
 
-void	ftServer::run()
+
+/***************************************************************/
+/********************** RsFiles Interface **********************/
+/***************************************************************/
+
+/***************************************************************/
+/********************** Controller Access **********************/
+/***************************************************************/
+
+bool	ftServer::ResumeTransfers()
 {
-	while(isRunning())
-	{
-		mFtDataplex->deleteUnusedServers() ;
-		mFtDataplex->handlePendingCrcRequests() ;
-		mFtDataplex->dispatchReceivedChunkCheckSum() ;
-#ifdef WIN32
-		Sleep(5000);
-#else
-		sleep(5);
-#endif
-	}
+	mFtController->activate();
+
+	return true;
 }
-
-
-	/***************************************************************/
-	/********************** RsFiles Interface **********************/
-	/***************************************************************/
-
-
-	/***************************************************************/
-	/********************** Controller Access **********************/
-	/***************************************************************/
 
 bool ftServer::checkHash(const std::string& hash,std::string& error_string)
 {
@@ -897,7 +881,7 @@ bool	ftServer::sendDataRequest(const std::string& peerId, const std::string& has
 	{
 		/* create a packet */
 		/* push to networking part */
-		RsFileRequest *rfi = new RsFileRequest();
+		RsFileTransferDataRequestItem *rfi = new RsFileTransferDataRequestItem();
 
 		/* id */
 		rfi->PeerId(peerId);
@@ -910,7 +894,7 @@ bool	ftServer::sendDataRequest(const std::string& peerId, const std::string& has
 		rfi->fileoffset = offset; /* ftr->offset; */
 		rfi->chunksize  = chunksize; /* ftr->chunk; */
 
-		mP3iface->SendFileRequest(rfi);
+		sendItem(rfi);
 	}
 
 	return true;
@@ -927,7 +911,7 @@ bool ftServer::sendChunkMapRequest(const std::string& peerId,const std::string& 
 	{
 		/* create a packet */
 		/* push to networking part */
-		RsFileChunkMapRequest *rfi = new RsFileChunkMapRequest();
+		RsFileTransferChunkMapRequestItem *rfi = new RsFileTransferChunkMapRequestItem();
 
 		/* id */
 		rfi->PeerId(peerId);
@@ -936,7 +920,7 @@ bool ftServer::sendChunkMapRequest(const std::string& peerId,const std::string& 
 		rfi->hash = hash; /* ftr->hash; */
 		rfi->is_client = is_client ;
 
-		mP3iface->SendFileChunkMapRequest(rfi);
+		sendItem(rfi);
 	}
 
 	return true ;
@@ -954,7 +938,7 @@ bool ftServer::sendChunkMap(const std::string& peerId,const std::string& hash,co
 	{
 		/* create a packet */
 		/* push to networking part */
-		RsFileChunkMap *rfi = new RsFileChunkMap();
+		RsFileTransferChunkMapItem *rfi = new RsFileTransferChunkMapItem();
 
 		/* id */
 		rfi->PeerId(peerId);
@@ -964,36 +948,12 @@ bool ftServer::sendChunkMap(const std::string& peerId,const std::string& hash,co
 		rfi->is_client = is_client; /* ftr->hash; */
 		rfi->compressed_map = map; /* ftr->hash; */
 
-		mP3iface->SendFileChunkMap(rfi);
+		sendItem(rfi);
 	}
 
 	return true ;
 }
-bool ftServer::sendCRC32MapRequest(const std::string& peerId,const std::string& hash)
-{
-	if(mTurtleRouter->isTurtlePeer(peerId))
-	{
-		RsTurtleFileCrcRequestItem *item = new RsTurtleFileCrcRequestItem;
 
-		mTurtleRouter->sendTurtleData(peerId,item) ;
-	}
-	else
-	{
-		/* create a packet */
-		/* push to networking part */
-		RsFileCRC32MapRequest *rfi = new RsFileCRC32MapRequest();
-
-		/* id */
-		rfi->PeerId(peerId);
-
-		/* file info */
-		rfi->hash = hash; /* ftr->hash; */
-
-		mP3iface->SendFileCRC32MapRequest(rfi);
-	}
-
-	return true ;
-}
 bool ftServer::sendSingleChunkCRCRequest(const std::string& peerId,const std::string& hash,uint32_t chunk_number)
 {
 	if(mTurtleRouter->isTurtlePeer(peerId))
@@ -1007,7 +967,7 @@ bool ftServer::sendSingleChunkCRCRequest(const std::string& peerId,const std::st
 	{
 		/* create a packet */
 		/* push to networking part */
-		RsFileSingleChunkCrcRequest *rfi = new RsFileSingleChunkCrcRequest();
+		RsFileTransferSingleChunkCrcRequestItem *rfi = new RsFileTransferSingleChunkCrcRequestItem();
 
 		/* id */
 		rfi->PeerId(peerId);
@@ -1016,39 +976,12 @@ bool ftServer::sendSingleChunkCRCRequest(const std::string& peerId,const std::st
 		rfi->hash = hash; /* ftr->hash; */
 		rfi->chunk_number = chunk_number ;
 
-		mP3iface->SendFileSingleChunkCrcRequest(rfi);
+		sendItem(rfi);
 	}
 
 	return true ;
 }
 
-bool ftServer::sendCRC32Map(const std::string& peerId,const std::string& hash,const CRC32Map& crcmap)
-{
-	if(mTurtleRouter->isTurtlePeer(peerId))
-	{
-		RsTurtleFileCrcItem *item = new RsTurtleFileCrcItem ;
-		item->crc_map = crcmap ;
-
-		mTurtleRouter->sendTurtleData(peerId,item) ;
-	}
-	else
-	{
-		/* create a packet */
-		/* push to networking part */
-		RsFileCRC32Map *rfi = new RsFileCRC32Map();
-
-		/* id */
-		rfi->PeerId(peerId);
-
-		/* file info */
-		rfi->hash = hash; /* ftr->hash; */
-		rfi->crc_map = crcmap; /* ftr->hash; */
-
-		mP3iface->SendFileCRC32Map(rfi);
-	}
-
-	return true ;
-}
 bool ftServer::sendSingleChunkCRC(const std::string& peerId,const std::string& hash,uint32_t chunk_number,const Sha1CheckSum& crc)
 {
 	if(mTurtleRouter->isTurtlePeer(peerId))
@@ -1063,7 +996,7 @@ bool ftServer::sendSingleChunkCRC(const std::string& peerId,const std::string& h
 	{
 		/* create a packet */
 		/* push to networking part */
-		RsFileSingleChunkCrc *rfi = new RsFileSingleChunkCrc();
+		RsFileTransferSingleChunkCrcItem *rfi = new RsFileTransferSingleChunkCrcItem();
 
 		/* id */
 		rfi->PeerId(peerId);
@@ -1073,15 +1006,11 @@ bool ftServer::sendSingleChunkCRC(const std::string& peerId,const std::string& h
 		rfi->check_sum = crc; 
 		rfi->chunk_number = chunk_number; 
 
-		mP3iface->SendFileSingleChunkCrc(rfi);
+		sendItem(rfi);
 	}
 
 	return true ;
 }
-
-//const uint32_t	MAX_FT_CHUNK  = 32 * 1024; /* 32K */
-//const uint32_t	MAX_FT_CHUNK  = 16 * 1024; /* 16K */
-const uint32_t	MAX_FT_CHUNK  = 8 * 1024; /* 16K */
 
 	/* Server Send */
 bool	ftServer::sendData(const std::string& peerId, const std::string& hash, uint64_t size, uint64_t baseoffset, uint32_t chunksize, void *data)
@@ -1103,6 +1032,11 @@ bool	ftServer::sendData(const std::string& peerId, const std::string& hash, uint
 
 	while(tosend > 0)
 	{
+		//static const uint32_t	MAX_FT_CHUNK  = 32 * 1024; /* 32K */
+		//static const uint32_t	MAX_FT_CHUNK  = 16 * 1024; /* 16K */
+		//
+		static const uint32_t	MAX_FT_CHUNK  = 8 * 1024; /* 16K */
+
 		/* workout size */
 		chunk = MAX_FT_CHUNK;
 		if (chunk > tosend)
@@ -1132,7 +1066,7 @@ bool	ftServer::sendData(const std::string& peerId, const std::string& hash, uint
 		}
 		else
 		{
-			RsFileData *rfd = new RsFileData();
+			RsFileTransferDataItem *rfd = new RsFileTransferDataItem();
 
 			/* set id */
 			rfd->PeerId(peerId);
@@ -1150,7 +1084,7 @@ bool	ftServer::sendData(const std::string& peerId, const std::string& hash, uint
 			/* file data */
 			rfd->fd.binData.setBinData( &(((uint8_t *) data)[offset]), chunk);
 
-			mP3iface->SendFileData(rfd);
+			sendItem(rfd);
 
 			/* print the data pointer */
 #ifdef SERVER_DEBUG
@@ -1173,6 +1107,8 @@ bool	ftServer::sendData(const std::string& peerId, const std::string& hash, uint
 	return true;
 }
 
+// Dont delete the item. The client (p3turtle) is doing it after calling this.
+//
 void ftServer::receiveTurtleData(RsTurtleGenericTunnelItem *i,
 											const std::string& hash,
 											const std::string& virtual_peer_id,
@@ -1207,21 +1143,8 @@ void ftServer::receiveTurtleData(RsTurtleGenericTunnelItem *i,
 
 		case RS_TURTLE_SUBTYPE_FILE_MAP_REQUEST:	
 			{
-				RsTurtleFileMapRequestItem *item = dynamic_cast<RsTurtleFileMapRequestItem *>(i) ;
+				//RsTurtleFileMapRequestItem *item = dynamic_cast<RsTurtleFileMapRequestItem *>(i) ;
 				getMultiplexer()->recvChunkMapRequest(virtual_peer_id,hash,direction == RsTurtleGenericTunnelItem::DIRECTION_CLIENT) ;
-			}
-			break ;
-
-		case RS_TURTLE_SUBTYPE_FILE_CRC : 			
-			{
-				RsTurtleFileCrcItem *item = dynamic_cast<RsTurtleFileCrcItem *>(i) ;
-				getMultiplexer()->recvCRC32Map(virtual_peer_id,hash,item->crc_map) ;
-			}
-			break ;
-
-		case RS_TURTLE_SUBTYPE_FILE_CRC_REQUEST:
-			{
-				getMultiplexer()->recvCRC32MapRequest(virtual_peer_id,hash) ;
 			}
 			break ;
 
@@ -1243,358 +1166,180 @@ void ftServer::receiveTurtleData(RsTurtleGenericTunnelItem *i,
 	}
 }
 
-
 /* NB: The rsCore lock must be activated before calling this.
  * This Lock should be moved lower into the system...
  * most likely destination is in ftServer.
  */
 int	ftServer::tick()
 {
-	rslog(RSL_DEBUG_BASIC, ftserverzone,
-		"filedexserver::tick()");
+	bool moreToTick = false ;
 
-	if (mP3iface == NULL)
+	moreToTick = handleIncoming()  || moreToTick ;	// order is important!!
+	moreToTick = handleCacheData() || moreToTick ;
+
+	static time_t last_law_priority_tasks_handling_time = 0 ;
+	time_t now = time(NULL) ;
+
+	if(last_law_priority_tasks_handling_time + FILE_TRANSFER_LOW_PRIORITY_TASKS_PERIOD < now)
 	{
-#ifdef SERVER_DEBUG
-		std::cerr << "ftServer::tick() ERROR: mP3iface == NULL";
-#endif
+		last_law_priority_tasks_handling_time = now ;
 
-		rslog(RSL_DEBUG_BASIC, ftserverzone,
-			"filedexserver::tick() Invalid Interface()");
-
-		return 1;
+		mFtDataplex->deleteUnusedServers() ;
+		mFtDataplex->handlePendingCrcRequests() ;
+		mFtDataplex->dispatchReceivedChunkCheckSum() ;
 	}
-
-	int moreToTick = 0;
-
-	if (0 < mP3iface -> tick())
-	{
-		moreToTick = 1;
-#ifdef DEBUG_TICK
-		std::cerr << "filedexserver::tick() moreToTick from mP3iface" << std::endl;
-#endif
-	}
-
-	if (0 < handleInputQueues())
-	{
-		moreToTick = 1;
-#ifdef DEBUG_TICK
-		std::cerr << "filedexserver::tick() moreToTick from InputQueues" << std::endl;
-#endif
-	}
-	return moreToTick;
-}
-
-
-// This function needs to be divided up.
-bool    ftServer::handleInputQueues()
-{
-	bool moreToTick = false;
-
-	if (handleCacheData())
-		moreToTick = true;
-
-	if (handleFileData())
-		moreToTick = true;
 
 	return moreToTick;
 }
 
-bool     ftServer::handleCacheData()
+bool ftServer::handleCacheData()
 {
-	// get all the incoming results.. and print to the screen.
-	RsCacheRequest *cr;
-	RsCacheItem    *ci;
+	std::list<std::pair<RsPeerId, CacheData> > cacheUpdates;
+	std::list<std::pair<RsPeerId, CacheData> >::iterator it;
+	int i=0 ;
 
-	// Loop through Search Results.
-	int i = 0;
-	int i_init = 0;
-
-#ifdef SERVER_DEBUG
-	//std::cerr << "ftServer::handleCacheData()" << std::endl;
-#endif
-	while((ci = mP3iface -> GetSearchResult()) != NULL)
+	mCacheStrapper->getCacheUpdates(cacheUpdates);
+	for(it = cacheUpdates.begin(); it != cacheUpdates.end(); it++)
 	{
+		/* construct reply */
+		RsFileTransferCacheItem *ci = new RsFileTransferCacheItem();
+
+		/* id from incoming */
+		ci -> PeerId(it->first);
+
+		ci -> file.hash = (it->second).hash;
+		ci -> file.name = (it->second).name;
+		ci -> file.path = ""; // (it->second).path;
+		ci -> file.filesize = (it->second).size;
+		ci -> cacheType  = (it->second).cid.type;
+		ci -> cacheSubId =  (it->second).cid.subid;
 
 #ifdef SERVER_DEBUG
-		std::cerr << "ftServer::handleCacheData() Recvd SearchResult (CacheResponse!)" << std::endl;
-		std::string out;
-		if (i++ == i_init)
-		{
-			out += "Recieved Search Results:\n";
-		}
-		ci -> print_string(out);
-		rslog(RSL_DEBUG_BASIC, ftserverzone, out);
+		std::string out2 = "Outgoing CacheStrapper Update -> RsCacheItem:\n";
+		ci -> print_string(out2);
+		std::cerr << out2 << std::endl;
 #endif
 
-		/* these go to the CacheStrapper! */
-		CacheData data;
-		data.pid = ci->PeerId();
-		data.cid = CacheId(ci->cacheType, ci->cacheSubId);
-		data.path = ci->file.path;
-		data.name = ci->file.name;
-		data.hash = ci->file.hash;
-		data.size = ci->file.filesize;
-		data.recvd = time(NULL) ;
+		sendItem(ci);
 
-		mCacheStrapper->recvCacheResponse(data, time(NULL));
-
-		delete ci;
+		i++;
 	}
 
-	// now requested Searches.
-	i_init = i;
-	while((cr = mP3iface -> RequestedSearch()) != NULL)
-	{
-#ifdef SERVER_DEBUG
-		/* just delete these */
-		std::string out = "Requested Search:\n";
-		cr -> print_string(out);
-		rslog(RSL_DEBUG_BASIC, ftserverzone, out);
-#endif
-		delete cr;
-	}
-
-
-	// Now handle it replacement (pushed cache results)
-	{
-		std::list<std::pair<RsPeerId, CacheData> > cacheUpdates;
-		std::list<std::pair<RsPeerId, CacheData> >::iterator it;
-
-		mCacheStrapper->getCacheUpdates(cacheUpdates);
-		for(it = cacheUpdates.begin(); it != cacheUpdates.end(); it++)
-		{
-			/* construct reply */
-			RsCacheItem *ci = new RsCacheItem();
-
-			/* id from incoming */
-			ci -> PeerId(it->first);
-
-			ci -> file.hash = (it->second).hash;
-			ci -> file.name = (it->second).name;
-			ci -> file.path = ""; // (it->second).path;
-			ci -> file.filesize = (it->second).size;
-			ci -> cacheType  = (it->second).cid.type;
-			ci -> cacheSubId =  (it->second).cid.subid;
-
-#ifdef SERVER_DEBUG
-			std::string out2 = "Outgoing CacheStrapper Update -> RsCacheItem:\n";
-			ci -> print_string(out2);
-			std::cerr << out2 << std::endl;
-#endif
-
-			//rslog(RSL_DEBUG_BASIC, ftserverzone, out2.str());
-			mP3iface -> SendSearchResult(ci);
-
-			i++;
-		}
-	}
-	return (i > 0);
+	return i>0 ;
 }
 
-
-bool    ftServer::handleFileData()
+int ftServer::handleIncoming()
 {
 	// now File Input.
-	RsFileRequest *fr;
-	RsFileData *fd;
-	RsFileChunkMapRequest *fcmr;
-	RsFileChunkMap *fcm;
-	RsFileCRC32MapRequest *fccrcmr;
-	RsFileCRC32Map *fccrcm;
-	RsFileSingleChunkCrcRequest *fscrcr;
-	RsFileSingleChunkCrc *fscrc;
+	int nhandled = 0 ;
 
-	int i_init = 0;
-	int i = 0;
+	RsItem *item = NULL ;
 
-	i_init = i;
-	while((fr = mP3iface -> GetFileRequest()) != NULL )
+	while(NULL != (item = recvItem()))
 	{
-#ifdef SERVER_DEBUG
-		std::cerr << "ftServer::handleFileData() Recvd ftFiler Request" << std::endl;
-		std::string out;
-		if (i == i_init)
+		nhandled++ ;
+
+		switch(item->PacketSubType())
 		{
-			out += "Incoming(Net) File Item:\n";
-		}
-		fr -> print_string(out);
-		rslog(RSL_DEBUG_BASIC, ftserverzone, out);
-#endif
-
-		i++; /* count */
-		mFtDataplex->recvDataRequest(fr->PeerId(),
-				fr->file.hash,  fr->file.filesize,
-				fr->fileoffset, fr->chunksize);
-
-FileInfo(ffr);
-		delete fr;
-	}
-
-	// now File Data.
-	i_init = i;
-	while((fd = mP3iface -> GetFileData()) != NULL )
-	{
+			case RS_PKT_SUBTYPE_FT_DATA_REQUEST: 
+				{
+					RsFileTransferDataRequestItem *f = dynamic_cast<RsFileTransferDataRequestItem*>(item) ;
 #ifdef SERVER_DEBUG
-		std::cerr << "ftServer::handleFileData() Recvd ftFiler Data" << std::endl;
-		std::cerr << "hash: " << fd->fd.file.hash;
-		std::cerr << " length: " << fd->fd.binData.bin_len;
-		std::cerr << " data: " << fd->fd.binData.bin_data;
-		std::cerr << std::endl;
-
-		std::string out;
-		if (i == i_init)
-		{
-			out += "Incoming(Net) File Data:\n";
-		}
-		fd -> print_string(out);
-		rslog(RSL_DEBUG_BASIC, ftserverzone, out);
+					std::cerr << "ftServer::handleIncoming: received data request for hash " << f->file.hash << ", offset=" << f->fileoffset << ", chunk size=" << f->chunksize << std::endl;
 #endif
-		i++; /* count */
+					mFtDataplex->recvDataRequest(f->PeerId(), f->file.hash,  f->file.filesize, f->fileoffset, f->chunksize);
+				}
+				break ;
 
-		/* incoming data */
-		mFtDataplex->recvData(fd->PeerId(),
-				 fd->fd.file.hash,  fd->fd.file.filesize,
-				fd->fd.file_offset,
-				fd->fd.binData.bin_len,
-				fd->fd.binData.bin_data);
-
-		/* we've stolen the data part -> so blank before delete
-		 */
-		fd->fd.binData.TlvShallowClear();
-		delete fd;
-	}
-	// now file chunkmap requests
-	i_init = i;
-	while((fcmr = mP3iface -> GetFileChunkMapRequest()) != NULL )
-	{
+			case RS_PKT_SUBTYPE_FT_DATA:
+				{
+					RsFileTransferDataItem *f = dynamic_cast<RsFileTransferDataItem*>(item) ;
 #ifdef SERVER_DEBUG
-		std::cerr << "ftServer::handleFileData() Recvd ChunkMap request" << std::endl;
-		std::string out;
-		if (i == i_init)
-		{
-			out += "Incoming(Net) File Data:\n";
-		}
-		fcmr -> print_string(out);
-		rslog(RSL_DEBUG_BASIC, ftserverzone, out);
+					std::cerr << "ftServer::handleIncoming: received data for hash " << f->fd.file.hash << ", offset=" << f->fd.file_offset << ", chunk size=" << f->fd.binData.bin_len << std::endl;
 #endif
-		i++; /* count */
+					mFtDataplex->recvData(f->PeerId(), f->fd.file.hash,  f->fd.file.filesize, f->fd.file_offset, f->fd.binData.bin_len, f->fd.binData.bin_data);
 
-		/* incoming data */
-		mFtDataplex->recvChunkMapRequest(fcmr->PeerId(), fcmr->hash,fcmr->is_client) ;
+					/* we've stolen the data part -> so blank before delete
+					 */
+					f->fd.binData.TlvShallowClear();
+				}
+				break ;
 
-		delete fcmr;
-	}
-	// now file chunkmaps 
-	i_init = i;
-	while((fcm = mP3iface -> GetFileChunkMap()) != NULL )
-	{
+			case RS_PKT_SUBTYPE_FT_CHUNK_MAP_REQUEST:
+				{
+					RsFileTransferChunkMapRequestItem *f = dynamic_cast<RsFileTransferChunkMapRequestItem*>(item) ;
 #ifdef SERVER_DEBUG
-		std::cerr << "ftServer::handleFileData() Recvd ChunkMap request" << std::endl;
-		std::string out;
-		if (i == i_init)
-		{
-			out += "Incoming(Net) File Data:\n";
-		}
-		fcm -> print_string(out);
-		rslog(RSL_DEBUG_BASIC, ftserverzone, out);
+					std::cerr << "ftServer::handleIncoming: received chunkmap request for hash " << f->hash << ", client=" << f->is_client << std::endl;
 #endif
-		i++; /* count */
+					mFtDataplex->recvChunkMapRequest(f->PeerId(), f->hash,f->is_client) ;
+				}
+				break ;
 
-		/* incoming data */
-		mFtDataplex->recvChunkMap(fcm->PeerId(), fcm->hash,fcm->compressed_map,fcm->is_client) ;
-
-		delete fcm;
-	}
-	// now file chunkmap requests
-	i_init = i;
-	while((fccrcmr = mP3iface -> GetFileCRC32MapRequest()) != NULL )
-	{
+			case RS_PKT_SUBTYPE_FT_CHUNK_MAP:
+				{
+					RsFileTransferChunkMapItem *f = dynamic_cast<RsFileTransferChunkMapItem*>(item) ;
 #ifdef SERVER_DEBUG
-		std::cerr << "ftServer::handleFileData() Recvd ChunkMap request" << std::endl;
-		std::string out;
-		if (i == i_init)
-		{
-			out += "Incoming(Net) File Data:\n";
-		}
-		fccrcmr -> print_string(out);
-		rslog(RSL_DEBUG_BASIC, ftserverzone, out);
+					std::cerr << "ftServer::handleIncoming: received chunkmap for hash " << f->hash << ", client=" << f->is_client << ", map=" << f->compressed_map << std::endl;
 #endif
-		i++; /* count */
+					mFtDataplex->recvChunkMap(f->PeerId(), f->hash,f->compressed_map,f->is_client) ;
+				}
+				break ;
 
-		/* incoming data */
-		mFtDataplex->recvCRC32MapRequest(fccrcmr->PeerId(), fccrcmr->hash) ;
-
-		delete fccrcmr;
-	}
-	// now file chunkmaps 
-	i_init = i;
-	while((fccrcm = mP3iface -> GetFileCRC32Map()) != NULL )
-	{
+			case RS_PKT_SUBTYPE_FT_CHUNK_CRC_REQUEST:
+				{
+					RsFileTransferSingleChunkCrcRequestItem *f = dynamic_cast<RsFileTransferSingleChunkCrcRequestItem*>(item) ;
 #ifdef SERVER_DEBUG
-		std::cerr << "ftServer::handleFileData() Recvd ChunkMap request" << std::endl;
-		std::string out;
-		if (i == i_init)
-		{
-			out += "Incoming(Net) File Data:\n";
-		}
-		fccrcm -> print_string(out);
-		rslog(RSL_DEBUG_BASIC, ftserverzone, out);
+					std::cerr << "ftServer::handleIncoming: received single chunk crc req for hash " << f->hash << ", chunk number=" << f->chunk_number << std::endl;
 #endif
-		i++; /* count */
+					mFtDataplex->recvSingleChunkCRCRequest(f->PeerId(), f->hash,f->chunk_number) ;
+				}
+				break ;
 
-		/* incoming data */
-		mFtDataplex->recvCRC32Map(fccrcm->PeerId(), fccrcm->hash,fccrcm->crc_map); 
-
-		delete fccrcm;
-	}
-	// now file chunk crc requests
-	i_init = i;
-	while((fscrcr = mP3iface -> GetFileSingleChunkCrcRequest()) != NULL )
-	{
+			case RS_PKT_SUBTYPE_FT_CHUNK_CRC:
+				{
+					RsFileTransferSingleChunkCrcItem *f = dynamic_cast<RsFileTransferSingleChunkCrcItem *>(item) ;
 #ifdef SERVER_DEBUG
-		std::cerr << "ftServer::handleFileData() Recvd ChunkMap request" << std::endl;
-		std::string out;
-		if (i == i_init)
-		{
-			out += "Incoming(Net) File CRC Request:\n";
-		}
-		fscrcr -> print_string(out);
-		rslog(RSL_DEBUG_BASIC, ftserverzone, out);
+					std::cerr << "ftServer::handleIncoming: received single chunk crc req for hash " << f->hash << ", chunk number=" << f->chunk_number << ", checksum = " << f->check_sum << std::endl;
 #endif
-		i++; /* count */
+					mFtDataplex->recvSingleChunkCRC(f->PeerId(), f->hash,f->chunk_number,f->check_sum); 
+				}
+				break ;
 
-		/* incoming data */
-		mFtDataplex->recvSingleChunkCRCRequest(fscrcr->PeerId(), fscrcr->hash,fscrcr->chunk_number) ;
-
-		delete fscrcr;
-	}
-	// now file chunkmaps 
-	i_init = i;
-	while((fscrc = mP3iface -> GetFileSingleChunkCrc()) != NULL )
-	{
+			case RS_PKT_SUBTYPE_FT_CACHE_ITEM:
+				{
+					RsFileTransferCacheItem *ci = dynamic_cast<RsFileTransferCacheItem*>(item) ;
 #ifdef SERVER_DEBUG
-		std::cerr << "ftServer::handleFileData() Recvd ChunkMap request" << std::endl;
-		std::string out;
-		if (i == i_init)
-		{
-			out += "Incoming(Net) File Data:\n";
-		}
-		fscrc -> print_string(out);
-		rslog(RSL_DEBUG_BASIC, ftserverzone, out);
+					std::cerr << "ftServer::handleIncoming: received cache item hash=" << ci->file.hash << ". from peer " << ci->PeerId() << std::ednl;
 #endif
-		i++; /* count */
+					/* these go to the CacheStrapper! */
+					CacheData data;
+					data.pid = ci->PeerId();
+					data.cid = CacheId(ci->cacheType, ci->cacheSubId);
+					data.path = ci->file.path;
+					data.name = ci->file.name;
+					data.hash = ci->file.hash;
+					data.size = ci->file.filesize;
+					data.recvd = time(NULL) ;
 
-		/* incoming data */
-		mFtDataplex->recvSingleChunkCRC(fscrc->PeerId(), fscrc->hash,fscrc->chunk_number,fscrc->check_sum); 
+					mCacheStrapper->recvCacheResponse(data, time(NULL));
+				}
+				break ;
 
-		delete fscrcr;
+			case RS_PKT_SUBTYPE_FT_CACHE_REQUEST:
+				{
+					// do nothing
+					RsFileTransferCacheRequestItem *cr = dynamic_cast<RsFileTransferCacheRequestItem*>(item) ;
+#ifdef SERVER_DEBUG
+					std::cerr << "ftServer::handleIncoming: received cache request from peer " << cr->PeerId() << std::ednl;
+#endif
+				}
+				break ;
+		}
+
+		delete item ;
 	}
-	if (i > 0)
-	{
-		return 1;
-	}
-	return 0;
+
+	return nhandled;
 }
 
 /**********************************
@@ -1610,13 +1355,6 @@ bool    ftServer::addConfiguration(p3ConfigMgr *cfgmgr)
 	cfgmgr->addConfiguration("ft_shared.cfg", mFiMon);
 	cfgmgr->addConfiguration("ft_extra.cfg", mFtExtra);
 	cfgmgr->addConfiguration("ft_transfers.cfg", mFtController);
-
-	return true;
-}
-
-bool	ftServer::ResumeTransfers()
-{
-	mFtController->activate();
 
 	return true;
 }
