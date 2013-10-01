@@ -1410,6 +1410,8 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 			res_item->tunnel_id = item->partial_tunnel_id ^ generatePersonalFilePrint(item->file_hash,_random_bias,false) ;
 			res_item->PeerId(item->PeerId()) ;
 
+			TurtleTunnelId t_id = res_item->tunnel_id ;	// save it because sendItem deletes the item
+
 			sendItem(res_item) ;
 
 			// Note in the tunnels list that we have an ending tunnel here.
@@ -1421,11 +1423,11 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 			tt.transfered_bytes = 0 ;
 			tt.speed_Bps = 0.0f ;
 
-			_local_tunnels[res_item->tunnel_id] = tt ;
+			_local_tunnels[t_id] = tt ;
 
 			// We add a virtual peer for that tunnel+hash combination.
 			//
-			locked_addDistantPeer(item->file_hash,res_item->tunnel_id) ;
+			locked_addDistantPeer(item->file_hash,t_id) ;
 
 			// Store some info string about the tunnel.
 			//
@@ -1433,7 +1435,7 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 
 			// Notify the client service that there's a new virtual peer id available as a client.
 			//
-			service->addVirtualPeer(item->file_hash,_local_tunnels[res_item->tunnel_id].vpid,RsTurtleGenericTunnelItem::DIRECTION_CLIENT) ;
+			service->addVirtualPeer(item->file_hash,_local_tunnels[t_id].vpid,RsTurtleGenericTunnelItem::DIRECTION_CLIENT) ;
 
 			// We return straight, because when something is found, there's no need to digg a tunnel further.
 			//
