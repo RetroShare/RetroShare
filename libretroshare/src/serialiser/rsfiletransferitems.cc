@@ -56,7 +56,6 @@ RsFileTransferItem *RsFileTransferSerialiser::deserialise(void *data, uint32_t *
 
 	switch(getRsItemSubType(rstype))
 	{
-		case RS_PKT_SUBTYPE_FT_CACHE_REQUEST:     return deserialise_RsFileTransferCacheRequestItem(data, *pktsize);
 		case RS_PKT_SUBTYPE_FT_CACHE_ITEM:        return deserialise_RsFileTransferCacheItem(data, *pktsize);
 		case RS_PKT_SUBTYPE_FT_DATA_REQUEST:      return deserialise_RsFileTransferDataRequestItem(data, *pktsize);
 		case RS_PKT_SUBTYPE_FT_DATA:              return deserialise_RsFileTransferDataItem(data, *pktsize);
@@ -65,6 +64,7 @@ RsFileTransferItem *RsFileTransferSerialiser::deserialise(void *data, uint32_t *
 		case RS_PKT_SUBTYPE_FT_CHUNK_CRC_REQUEST: return deserialise_RsFileTransferSingleChunkCrcRequestItem(data,*pktsize) ;
 		case RS_PKT_SUBTYPE_FT_CHUNK_CRC:         return deserialise_RsFileTransferSingleChunkCrcItem(data,*pktsize) ;
 		default:
+																std::cerr << "RsFileTransferSerialiser::deserialise(): Could not de-serialise item. SubPacket id = " << std::hex << getRsItemSubType(rstype) << " id = " << rstype << std::dec << std::endl;
 			return NULL;
 	}
 	return NULL;
@@ -73,17 +73,6 @@ RsFileTransferItem *RsFileTransferSerialiser::deserialise(void *data, uint32_t *
 /**********************************************************************************************/
 /*                                          OUTPUTS                                           */
 /**********************************************************************************************/
-
-std::ostream& RsFileTransferCacheRequestItem::print(std::ostream &out, uint16_t indent)
-{
-	printRsItemBase(out, "RsFileTransferCacheRequestItem", indent);
-	uint16_t int_Indent = indent + 2;
-	printIndent(out, int_Indent);
-	out << "CacheId: " << cacheType << "/" << cacheSubId << std::endl;
-	file.print(out, int_Indent);
-	printRsItemEnd(out, "RsFileTransferCacheRequestItem", indent);
-	return out;
-}
 
 std::ostream& RsFileTransferCacheItem::print(std::ostream &out, uint16_t indent)
 {
@@ -183,14 +172,6 @@ uint32_t    RsFileTransferDataItem::serial_size()
 
 	return s;
 }
-uint32_t RsFileTransferCacheRequestItem::serial_size()
-{
-	uint32_t s = 8; /* header */
-	s += 4; /* type/subid */
-	s += file.TlvSize();
-
-	return s;
-}
 uint32_t RsFileTransferChunkMapRequestItem::serial_size()
 {
 	uint32_t s = 8; /* header  */
@@ -245,13 +226,7 @@ void RsFileTransferDataItem::clear()
 {
 	fd.TlvClear();
 }
-void RsFileTransferCacheRequestItem::clear()
-{
-	cacheType  = 0;
-	cacheSubId = 0;
-	file.TlvClear();
-}
-
+ 
 /**********************************************************************************************/
 /*                                         SERIALISATION                                      */
 /**********************************************************************************************/
@@ -373,29 +348,6 @@ bool RsFileTransferChunkMapItem::serialise(void *data, uint32_t& pktsize)
 }
 
 /* serialise the data to the buffer */
-bool RsFileTransferCacheRequestItem::serialise(void *data, uint32_t& pktsize)
-{
-	uint32_t tlvsize,offset=0;
-	bool ok = true;
-	
-	if(!serialise_header(data,pktsize,tlvsize,offset))
-		return false ;
-
-	/* add mandatory parts first */
-	ok &= setRawUInt16(data, tlvsize, &offset, cacheType);
-	ok &= setRawUInt16(data, tlvsize, &offset, cacheSubId);
-	ok &= file.SetTlv(data, tlvsize, &offset);
-
-	if (offset != tlvsize)
-	{
-		ok = false;
-		std::cerr << "RsFileItemSerialiser::serialiseReq() Size Error! " << std::endl;
-	}
-
-	return ok;
-}
-
-/* serialise the data to the buffer */
 bool RsFileTransferDataItem::serialise(void *data, uint32_t& pktsize)
 {
 	uint32_t tlvsize,offset=0;
@@ -481,58 +433,6 @@ bool RsFileTransferCacheItem::serialise(void *data, uint32_t& pktsize)
 /**********************************************************************************************/
 /*                                       DESERIALISATION                                      */
 /**********************************************************************************************/
-
-RsFileTransferItem *RsFileTransferSerialiser::deserialise_RsFileTransferCacheRequestItem(void *data, uint32_t pktsize)
-{
-	/* get the type and size */
-	uint32_t rstype = getRsItemId(data);
-	uint32_t rssize = getRsItemSize(data);
-
-	uint32_t offset = 0;
-
-
-	if(RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype) || RS_SERVICE_TYPE_FILE_TRANSFER  != getRsItemType(rstype) || RS_PKT_SUBTYPE_FT_CACHE_REQUEST != getRsItemSubType(rstype))
-	{
-		std::cerr << "RsFileTransferSerialiser::deserialise_RsFileTransferCacheRequest(): wong subtype!" << std::endl;
-		return NULL; /* wrong type */
-	}
-
-	if (pktsize < rssize)    /* check size */
-	{
-		std::cerr << "RsFileTransferSerialiser::deserialise_RsFileTransferCacheRequest(): size inconsistency!" << std::endl;
-		return NULL; /* not enough data */
-	}
-
-	bool ok = true;
-
-	/* ready to load */
-	RsFileTransferCacheRequestItem *item = new RsFileTransferCacheRequestItem();
-	item->clear();
-
-	/* skip the header */
-	offset += 8;
-
-	/* get mandatory parts first */
-	ok &= getRawUInt16(data, rssize, &offset, &(item->cacheType));
-	ok &= getRawUInt16(data, rssize, &offset, &(item->cacheSubId));
-	ok &= item->file.GetTlv(data, rssize, &offset);
-
-	if (offset != rssize)
-	{
-		/* error */
-		delete item;
-		return NULL;
-	}
-
-	if (!ok)
-	{
-		delete item;
-		return NULL;
-	}
-
-	return item;
-}
-
 
 RsFileTransferItem *RsFileTransferSerialiser::deserialise_RsFileTransferCacheItem(void *data, uint32_t pktsize)
 {

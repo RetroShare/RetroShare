@@ -194,26 +194,6 @@ class RsFileTransferSingleChunkCrcItem: public RsFileTransferItem
 		Sha1CheckSum check_sum ; // CRC32 map of the file.
 };
 
-class RsFileTransferCacheRequestItem: public RsFileTransferItem
-{
-	public:
-		RsFileTransferCacheRequestItem() :RsFileTransferItem(RS_PKT_SUBTYPE_FT_CACHE_REQUEST)
-		{ 
-			setPriorityLevel(QOS_PRIORITY_RS_CACHE_REQUEST); 
-		}
-		virtual ~RsFileTransferCacheRequestItem() {}
-		virtual bool serialise(void *data,uint32_t& size) ;	
-		virtual uint32_t serial_size() ; 						
-		virtual void clear();
-		std::ostream &print(std::ostream &out, uint16_t indent = 0);
-
-		// private part
-		//
-		uint16_t cacheType;
-		uint16_t cacheSubId;
-		RsTlvFileItem file;   /* file information */
-};
-
 class RsFileTransferCacheItem: public RsFileTransferItem
 {
 	public:
@@ -256,7 +236,6 @@ class RsFileTransferSerialiser: public RsSerialType
 		virtual RsFileTransferItem *deserialise(void *data, uint32_t *size);
 
 	private:
-		RsFileTransferItem *deserialise_RsFileTransferCacheRequestItem(void *data, uint32_t pktsize);
 		RsFileTransferItem *deserialise_RsFileTransferCacheItem(void *data, uint32_t pktsize);
 		RsFileTransferItem *deserialise_RsFileTransferChunkMapRequestItem(void *data, uint32_t pktsize);
 		RsFileTransferItem *deserialise_RsFileTransferChunkMapItem(void *data, uint32_t pktsize);

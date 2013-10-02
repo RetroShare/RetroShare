@@ -36,7 +36,6 @@ RsDisc *rsDisc = NULL;
  * #define P3DISC_DEBUG	1
  ****/
 
-
 bool populateContactInfo(const peerState &detail, RsDiscContactItem *pkt)
 {
 	pkt->clear();

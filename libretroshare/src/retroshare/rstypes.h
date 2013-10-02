@@ -70,6 +70,8 @@ class Sha1CheckSum
 		std::string toStdString() const ;
 
 		bool operator==(const Sha1CheckSum& s) const ;
+
+		friend std::ostream& operator<<(std::ostream& out,const Sha1CheckSum& sum) { return out << sum.toStdString() ; }
 //	private:
 		uint32_t fourbytes[5] ;
 };

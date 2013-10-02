@@ -53,8 +53,8 @@ const int ftserverzone = 29539;
 #include "serialiser/rsserviceids.h"
 
 /***
- * #define SERVER_DEBUG 1
- * #define DEBUG_TICK   1
+ * #define SERVER_DEBUG       1
+ * #define SERVER_DEBUG_CACHE 1
  ***/
 
 static const time_t FILE_TRANSFER_LOW_PRIORITY_TASKS_PERIOD = 5 ; // low priority tasks handling every 5 seconds
@@ -70,6 +70,8 @@ ftServer::ftServer(p3PeerMgr *pm, p3LinkMgr *lm)
 		mFtDataplex(NULL), mFtSearch(NULL), srvMutex("ftServer")
 {
 	mCacheStrapper = new ftCacheStrapper(lm);
+
+	addSerialType(new RsFileTransferSerialiser()) ;
 }
 
 void	ftServer::setConfigDirectory(std::string path)
@@ -446,15 +448,11 @@ RsTurtleGenericTunnelItem *ftServer::deserialiseItem(void *data,uint32_t size) c
 #ifdef SERVER_DEBUG
 	std::cerr << "p3turtle: deserialising packet: " << std::endl ;
 #endif
-#ifdef SERVER_DEBUG
 	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) || (RS_SERVICE_TYPE_TURTLE != getRsItemService(rstype))) 
 	{
-#ifdef SERVER_DEBUG
 		std::cerr << "  Wrong type !!" << std::endl ;
-#endif
 		return NULL; /* wrong type */
 	}
-#endif
 
 	switch(getRsItemSubType(rstype))
 	{
@@ -838,10 +836,15 @@ bool ftServer::shareDownloadDirectory(bool share)
 	/**************** Config Interface *****************************/
 	/***************************************************************/
 
-        /* Key Functions to be overloaded for Full Configuration */
+/* Key Functions to be overloaded for Full Configuration */
 RsSerialiser *ftServer::setupSerialiser()
 {
-	return NULL;
+	RsSerialiser *rss = new RsSerialiser ;
+	rss->addSerialType(new RsFileTransferSerialiser) ;
+
+	//rss->addSerialType(new RsGeneralConfigSerialiser());
+
+	return rss ;
 }
 
 bool ftServer::saveList(bool &/*cleanup*/, std::list<RsItem *>& /*list*/)
@@ -868,6 +871,9 @@ bool  ftServer::loadConfigMap(std::map<std::string, std::string> &/*configMap*/)
 	/* Client Send */
 bool	ftServer::sendDataRequest(const std::string& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunksize)
 {
+#ifdef SERVER_DEBUG
+	std::cerr << "ftServer::sendDataRequest() to peer " << peerId << " for hash " << hash << ", offset=" << offset << ", chunk size="<< chunksize << std::endl;
+#endif
 	if(mTurtleRouter->isTurtlePeer(peerId))
 	{
 		RsTurtleFileRequestItem *item = new RsTurtleFileRequestItem ;
@@ -879,6 +885,7 @@ bool	ftServer::sendDataRequest(const std::string& peerId, const std::string& has
 	}
 	else
 	{
+		std::cerr << "ftServer::sendDataRequest() " <<std::endl;
 		/* create a packet */
 		/* push to networking part */
 		RsFileTransferDataRequestItem *rfi = new RsFileTransferDataRequestItem();
@@ -902,6 +909,9 @@ bool	ftServer::sendDataRequest(const std::string& peerId, const std::string& has
 
 bool ftServer::sendChunkMapRequest(const std::string& peerId,const std::string& hash,bool is_client)
 {
+#ifdef SERVER_DEBUG
+	std::cerr << "ftServer::sendChunkMapRequest() to peer " << peerId << " for hash " << hash << std::endl;
+#endif
 	if(mTurtleRouter->isTurtlePeer(peerId))
 	{
 		RsTurtleFileMapRequestItem *item = new RsTurtleFileMapRequestItem ;
@@ -928,6 +938,9 @@ bool ftServer::sendChunkMapRequest(const std::string& peerId,const std::string& 
 
 bool ftServer::sendChunkMap(const std::string& peerId,const std::string& hash,const CompressedChunkMap& map,bool is_client)
 {
+#ifdef SERVER_DEBUG
+	std::cerr << "ftServer::sendChunkMap() to peer " << peerId << " for hash " << hash << std::endl;
+#endif
 	if(mTurtleRouter->isTurtlePeer(peerId))
 	{
 		RsTurtleFileMapItem *item = new RsTurtleFileMapItem ;
@@ -956,6 +969,9 @@ bool ftServer::sendChunkMap(const std::string& peerId,const std::string& hash,co
 
 bool ftServer::sendSingleChunkCRCRequest(const std::string& peerId,const std::string& hash,uint32_t chunk_number)
 {
+#ifdef SERVER_DEBUG
+	std::cerr << "ftServer::sendSingleCRCRequest() to peer " << peerId << " for hash " << hash << ", chunk number=" << chunk_number << std::endl;
+#endif
 	if(mTurtleRouter->isTurtlePeer(peerId))
 	{
 		RsTurtleChunkCrcRequestItem *item = new RsTurtleChunkCrcRequestItem;
@@ -984,6 +1000,9 @@ bool ftServer::sendSingleChunkCRCRequest(const std::string& peerId,const std::st
 
 bool ftServer::sendSingleChunkCRC(const std::string& peerId,const std::string& hash,uint32_t chunk_number,const Sha1CheckSum& crc)
 {
+#ifdef SERVER_DEBUG
+	std::cerr << "ftServer::sendSingleCRC() to peer " << peerId << " for hash " << hash << ", chunk number=" << chunk_number << std::endl;
+#endif
 	if(mTurtleRouter->isTurtlePeer(peerId))
 	{
 		RsTurtleChunkCrcItem *item = new RsTurtleChunkCrcItem;
@@ -1119,6 +1138,9 @@ void ftServer::receiveTurtleData(RsTurtleGenericTunnelItem *i,
 		case RS_TURTLE_SUBTYPE_FILE_REQUEST: 		
 			{
 				RsTurtleFileRequestItem *item = dynamic_cast<RsTurtleFileRequestItem *>(i) ;
+#ifdef SERVER_DEBUG
+				std::cerr << "ftServer::receiveTurtleData(): received file data request for " << hash << " from peer " << virtual_peer_id << std::endl;
+#endif
 				getMultiplexer()->recvDataRequest(virtual_peer_id,hash,0,item->chunk_offset,item->chunk_size) ;
 			}
 			break ;
@@ -1126,6 +1148,9 @@ void ftServer::receiveTurtleData(RsTurtleGenericTunnelItem *i,
 		case RS_TURTLE_SUBTYPE_FILE_DATA : 	
 			{
 				RsTurtleFileDataItem *item = dynamic_cast<RsTurtleFileDataItem *>(i) ;
+#ifdef SERVER_DEBUG
+				std::cerr << "ftServer::receiveTurtleData(): received file data for " << hash << " from peer " << virtual_peer_id << std::endl;
+#endif
 				getMultiplexer()->recvData(virtual_peer_id,hash,0,item->chunk_offset,item->chunk_size,item->chunk_data) ;
 
 				item->chunk_data = NULL ;	// this prevents deletion in the destructor of RsFileDataItem, because data will be deleted
@@ -1137,6 +1162,9 @@ void ftServer::receiveTurtleData(RsTurtleGenericTunnelItem *i,
 		case RS_TURTLE_SUBTYPE_FILE_MAP : 	
 			{
 				RsTurtleFileMapItem *item = dynamic_cast<RsTurtleFileMapItem *>(i) ;
+#ifdef SERVER_DEBUG
+				std::cerr << "ftServer::receiveTurtleData(): received chunk map for hash " << hash << " from peer " << virtual_peer_id << std::endl;
+#endif
 				getMultiplexer()->recvChunkMap(virtual_peer_id,hash,item->compressed_map,direction == RsTurtleGenericTunnelItem::DIRECTION_CLIENT) ;
 			}
 			break ;
@@ -1144,6 +1172,9 @@ void ftServer::receiveTurtleData(RsTurtleGenericTunnelItem *i,
 		case RS_TURTLE_SUBTYPE_FILE_MAP_REQUEST:	
 			{
 				//RsTurtleFileMapRequestItem *item = dynamic_cast<RsTurtleFileMapRequestItem *>(i) ;
+#ifdef SERVER_DEBUG
+				std::cerr << "ftServer::receiveTurtleData(): received chunkmap request for hash " << hash << " from peer " << virtual_peer_id << std::endl;
+#endif
 				getMultiplexer()->recvChunkMapRequest(virtual_peer_id,hash,direction == RsTurtleGenericTunnelItem::DIRECTION_CLIENT) ;
 			}
 			break ;
@@ -1151,6 +1182,9 @@ void ftServer::receiveTurtleData(RsTurtleGenericTunnelItem *i,
 		case RS_TURTLE_SUBTYPE_CHUNK_CRC : 			
 			{
 				RsTurtleChunkCrcItem *item = dynamic_cast<RsTurtleChunkCrcItem *>(i) ;
+#ifdef SERVER_DEBUG
+				std::cerr << "ftServer::receiveTurtleData(): received single chunk CRC for hash " << hash << " from peer " << virtual_peer_id << std::endl;
+#endif
 				getMultiplexer()->recvSingleChunkCRC(virtual_peer_id,hash,item->chunk_number,item->check_sum) ;
 			}
 			break ;
@@ -1158,6 +1192,9 @@ void ftServer::receiveTurtleData(RsTurtleGenericTunnelItem *i,
 		case RS_TURTLE_SUBTYPE_CHUNK_CRC_REQUEST:	
 			{
 				RsTurtleChunkCrcRequestItem *item = dynamic_cast<RsTurtleChunkCrcRequestItem *>(i) ;
+#ifdef SERVER_DEBUG
+				std::cerr << "ftServer::receiveTurtleData(): received single chunk CRC request for hash " << hash << " from peer " << virtual_peer_id << std::endl;
+#endif
 				getMultiplexer()->recvSingleChunkCRCRequest(virtual_peer_id,hash,item->chunk_number) ;
 			}
 			break ;
@@ -1174,8 +1211,11 @@ int	ftServer::tick()
 {
 	bool moreToTick = false ;
 
-	moreToTick = handleIncoming()  || moreToTick ;	// order is important!!
-	moreToTick = handleCacheData() || moreToTick ;
+	if(handleIncoming())
+		moreToTick = true;	
+
+	if(handleCacheData())
+		moreToTick = true;	
 
 	static time_t last_law_priority_tasks_handling_time = 0 ;
 	time_t now = time(NULL) ;
@@ -1198,6 +1238,9 @@ bool ftServer::handleCacheData()
 	std::list<std::pair<RsPeerId, CacheData> >::iterator it;
 	int i=0 ;
 
+#ifdef SERVER_DEBUG_CACHE
+	std::cerr << "handleCacheData() " << std::endl;
+#endif
 	mCacheStrapper->getCacheUpdates(cacheUpdates);
 	for(it = cacheUpdates.begin(); it != cacheUpdates.end(); it++)
 	{
@@ -1214,7 +1257,7 @@ bool ftServer::handleCacheData()
 		ci -> cacheType  = (it->second).cid.type;
 		ci -> cacheSubId =  (it->second).cid.subid;
 
-#ifdef SERVER_DEBUG
+#ifdef SERVER_DEBUG_CACHE
 		std::string out2 = "Outgoing CacheStrapper Update -> RsCacheItem:\n";
 		ci -> print_string(out2);
 		std::cerr << out2 << std::endl;
@@ -1234,6 +1277,9 @@ int ftServer::handleIncoming()
 	int nhandled = 0 ;
 
 	RsItem *item = NULL ;
+#ifdef SERVER_DEBUG
+	std::cerr << "ftServer::handleIncoming() " << std::endl;
+#endif
 
 	while(NULL != (item = recvItem()))
 	{
@@ -1279,7 +1325,7 @@ int ftServer::handleIncoming()
 				{
 					RsFileTransferChunkMapItem *f = dynamic_cast<RsFileTransferChunkMapItem*>(item) ;
 #ifdef SERVER_DEBUG
-					std::cerr << "ftServer::handleIncoming: received chunkmap for hash " << f->hash << ", client=" << f->is_client << ", map=" << f->compressed_map << std::endl;
+					std::cerr << "ftServer::handleIncoming: received chunkmap for hash " << f->hash << ", client=" << f->is_client << /*", map=" << f->compressed_map <<*/ std::endl;
 #endif
 					mFtDataplex->recvChunkMap(f->PeerId(), f->hash,f->compressed_map,f->is_client) ;
 				}
@@ -1308,8 +1354,8 @@ int ftServer::handleIncoming()
 			case RS_PKT_SUBTYPE_FT_CACHE_ITEM:
 				{
 					RsFileTransferCacheItem *ci = dynamic_cast<RsFileTransferCacheItem*>(item) ;
-#ifdef SERVER_DEBUG
-					std::cerr << "ftServer::handleIncoming: received cache item hash=" << ci->file.hash << ". from peer " << ci->PeerId() << std::ednl;
+#ifdef SERVER_DEBUG_CACHE
+					std::cerr << "ftServer::handleIncoming: received cache item hash=" << ci->file.hash << ". from peer " << ci->PeerId() << std::endl;
 #endif
 					/* these go to the CacheStrapper! */
 					CacheData data;
@@ -1325,15 +1371,15 @@ int ftServer::handleIncoming()
 				}
 				break ;
 
-			case RS_PKT_SUBTYPE_FT_CACHE_REQUEST:
-				{
-					// do nothing
-					RsFileTransferCacheRequestItem *cr = dynamic_cast<RsFileTransferCacheRequestItem*>(item) ;
-#ifdef SERVER_DEBUG
-					std::cerr << "ftServer::handleIncoming: received cache request from peer " << cr->PeerId() << std::ednl;
-#endif
-				}
-				break ;
+//			case RS_PKT_SUBTYPE_FT_CACHE_REQUEST:
+//				{
+//					// do nothing
+//					RsFileTransferCacheRequestItem *cr = dynamic_cast<RsFileTransferCacheRequestItem*>(item) ;
+//#ifdef SERVER_DEBUG_CACHE
+//					std::cerr << "ftServer::handleIncoming: received cache request from peer " << cr->PeerId() << std::endl;
+//#endif
+//				}
+//				break ;
 		}
 
 		delete item ;

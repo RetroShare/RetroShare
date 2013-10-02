@@ -45,7 +45,6 @@ const int PQISTREAM_ABS_MAX = 100000000; /* 100 MB/sec (actually per loop) */
 #define DEBUG_PQISTREAMER 1
  ***/
 
-
 #ifdef DEBUG_TRANSFERS
 	#include "util/rsprint.h"
 #endif

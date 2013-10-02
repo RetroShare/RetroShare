@@ -70,6 +70,7 @@ int	p3ServiceServer::addService(pqiService *ts)
 	it = services.find(ts -> getType());
 	if (it != services.end())
 	{
+		std::cerr << "p3ServiceServer::addService(): Service already added with id " << ts->getType() << "!" << std::endl;
 		// it exists already!
 		return -1;
 	}

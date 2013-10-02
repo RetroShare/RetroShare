@@ -23,8 +23,6 @@
  *
  */
 
-//#define P3TURTLE_DEBUG 
-
 #include <unistd.h>
 #include <stdexcept>
 #include <stdlib.h>
@@ -1103,7 +1101,7 @@ bool p3turtle::getTunnelServiceInfo(TurtleTunnelId tunnel_id,std::string& vpid,s
 	if(it2 == _local_tunnels.end())
 	{
 #ifdef P3TURTLE_DEBUG
-		std::cerr << "p3turtle: unknown tunnel id " << (void*)item->tunnelId() << std::endl ;
+		std::cerr << "p3turtle: unknown tunnel id " << (void*)tunnel_id << std::endl ;
 #endif
 		return false;
 	}
@@ -1450,6 +1448,8 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 			res_item->tunnel_id = item->partial_tunnel_id ^ generatePersonalFilePrint(item->file_hash,false) ;
 			res_item->PeerId(item->PeerId()) ;
 
+			TurtleTunnelId t_id = res_item->tunnel_id ;
+
 			sendItem(res_item) ;
 
 			// Note in the tunnels list that we have an ending tunnel here.
@@ -1461,11 +1461,11 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 			tt.transfered_bytes = 0 ;
 			tt.speed_Bps = 0.0f ;
 
-			_local_tunnels[res_item->tunnel_id] = tt ;
+			_local_tunnels[t_id] = tt ;
 
 			// We add a virtual peer for that tunnel+hash combination.
 			//
-			locked_addDistantPeer(item->file_hash,res_item->tunnel_id) ;
+			locked_addDistantPeer(item->file_hash,t_id) ;
 
 			// Store some info string about the tunnel.
 			//
@@ -1473,7 +1473,7 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 
 			// Notify the client service that there's a new virtual peer id available as a client.
 			//
-			service->addVirtualPeer(item->file_hash,_local_tunnels[res_item->tunnel_id].vpid,RsTurtleGenericTunnelItem::DIRECTION_CLIENT) ;
+			service->addVirtualPeer(item->file_hash,_local_tunnels[t_id].vpid,RsTurtleGenericTunnelItem::DIRECTION_CLIENT) ;
 
 			// We return straight, because when something is found, there's no need to digg a tunnel further.
 			//
@@ -2093,7 +2093,7 @@ void p3turtle::dumpState()
 		//std::cerr << ", last_req=" << (void*)it->second.last_request << ", time_stamp = " << it->second.time_stamp << "(" << now-it->second.time_stamp << " secs ago)" << std::endl ;
 	}
 	std::cerr << "  Active outgoing file hashes: " << _outgoing_file_hashes.size() << std::endl ;
-	for(std::map<TurtleFileHash,std::string>::const_iterator it(_outgoing_file_hashes.begin());it!=_outgoing_file_hashes.end();++it)
+	for(std::map<TurtleFileHash,RsTurtleClientService*>::const_iterator it(_outgoing_file_hashes.begin());it!=_outgoing_file_hashes.end();++it)
 		std::cerr << "    hash=0x" << it->first << std::endl ;
 
 	std::cerr << "  Local tunnels:" << std::endl ;
