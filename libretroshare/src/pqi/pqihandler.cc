@@ -295,8 +295,6 @@ int     pqihandler::SendRsRawItem(RsRawItem *ns)
 	return queueOutRsItem(ns) ;
 }
 
-
-
 // inputs. This is a very basic
 // system that is completely biased and slow...
 // someone please fix.

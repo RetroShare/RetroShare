@@ -352,6 +352,7 @@ HEADERS +=	pqi/authssl.h \
 			pqi/pqisslproxy.h \
 			pqi/pqistore.h \
 			pqi/pqistreamer.h \
+			pqi/pqithreadstreamer.h \
 			pqi/pqiqosstreamer.h \
 			pqi/sslfns.h \
 			pqi/pqinetstatebox.h 
@@ -473,6 +474,7 @@ SOURCES +=	pqi/authgpg.cc \
 			pqi/pqisslproxy.cc \
 			pqi/pqistore.cc \
 			pqi/pqistreamer.cc \
+			pqi/pqithreadstreamer.cc \
 			pqi/pqiqosstreamer.cc \
 			pqi/sslfns.cc \
 			pqi/pqinetstatebox.cc 

@@ -210,6 +210,7 @@ class PQInterface: public RateInterface
 		 * Retrieve RsItem from a facility
 		 */
 		virtual RsItem *GetItem() = 0;
+		virtual bool RecvItem(RsItem *item)  { return false; }  /* alternative for for GetItem(), when we want to push */
 
 		/**
 		 * also there are  tick + person id  functions.

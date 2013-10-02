@@ -561,16 +561,22 @@ bool 	pqissludp::moretoread(uint32_t usec)
 {
 	RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
 		
-	if (usec)
-	{
-		std::cerr << "pqissludp::moretoread() usec parameter not implemented";
-		std::cerr << std::endl;
-	}
-
 	{
 		std::string out = "pqissludp::moretoread()";
 		rs_sprintf_append(out, "  polling socket (%d)", sockfd);
 		rslog(RSL_DEBUG_ALL, pqissludpzone, out);
+	}
+
+	if (usec)
+	{
+		std::cerr << "pqissludp::moretoread() usec parameter: " << usec;
+		std::cerr << std::endl;
+
+		if (0 < tou_maxread(sockfd))
+		{
+			return true;
+		}
+		usleep(usec);
 	}
 
 	/* check for more to read first ... if nothing... check error
@@ -631,8 +637,15 @@ bool 	pqissludp::cansend(uint32_t usec)
 
 	if (usec)
 	{
-		std::cerr << "pqissludp::cansend() usec parameter not implemented";
+		std::cerr << "pqissludp::cansend() usec parameter: " << usec;
 		std::cerr << std::endl;
+
+		if (0 < tou_maxwrite(sockfd))
+		{
+			return true;
+		}
+
+		usleep(usec);
 	}
 
 	rslog(RSL_DEBUG_ALL, pqissludpzone, 

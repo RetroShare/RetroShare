@@ -60,7 +60,7 @@ class RttPeerInfo
   * Used to test Latency.
   */
 
-class p3rtt: public RsRtt, public p3Service
+class p3rtt: public RsRtt, public p3FastService
 {
 	public:
 		p3rtt(p3LinkMgr *cm);
@@ -74,10 +74,10 @@ virtual uint32_t getPongResults(std::string id, int n, std::list<RsRttPongResult
 		virtual int   tick();
 		virtual int   status();
 
-
 		int     sendPackets();
 		void 	sendPingMeasurements();
-		int 	processIncoming();
+
+virtual bool recvItem(RsItem *item); // Overloaded from p3FastService.
 
 		int 	handlePing(RsItem *item);
 		int 	handlePong(RsItem *item);

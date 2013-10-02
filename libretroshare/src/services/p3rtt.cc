@@ -118,7 +118,7 @@ static double convert64bitsToTs(uint64_t bits)
 
 
 p3rtt::p3rtt(p3LinkMgr *lm)
-	:p3Service(RS_SERVICE_TYPE_RTT), /* p3Config(CONFIG_TYPE_RTT), */ mRttMtx("p3rtt"), mLinkMgr(lm) 
+	:p3FastService(RS_SERVICE_TYPE_RTT), mRttMtx("p3rtt"), mLinkMgr(lm) 
 {
 	addSerialType(new RsRttSerialiser());
 
@@ -130,7 +130,6 @@ p3rtt::p3rtt(p3LinkMgr *lm)
 
 int	p3rtt::tick()
 {
-	processIncoming();
 	sendPackets();
 
 	return 0;
@@ -212,56 +211,29 @@ void p3rtt::sendPingMeasurements()
 }
 
 
-
-
-int	p3rtt::processIncoming()
+bool p3rtt::recvItem(RsItem *item)
 {
-	/* for each packet - pass to specific handler */
-	RsItem *item = NULL;
-	while(NULL != (item = recvItem()))
+	switch(item->PacketSubType())
 	{
-		switch(item->PacketSubType())
+		default:
+			break;
+		case RS_PKT_SUBTYPE_RTT_PING:
 		{
-			default:
-				break;
-			case RS_PKT_SUBTYPE_RTT_PING:
-			{
-				handlePing(item);
-			}
-				break;
-			case RS_PKT_SUBTYPE_RTT_PONG:
-			{
-				handlePong(item);
-			}
-				break;
-
-#if 0
-			/* THESE ARE ALL FUTURISTIC DATA TYPES */
-			case RS_DATA_ITEM:
-			{
-				handleData(item);
-			}
-				break;
-
-			case RS_BANDWIDTH_PING_ITEM:
-			{
-				handleBandwidthPing(item);
-			}
-				break;
-
-			case RS_BANDWIDTH_PONG_ITEM:
-			{
-				handleBandwidthPong(item);
-			}
-				break;
-#endif
+			handlePing(item);
 		}
-
-		/* clean up */
-		delete item;
+			break;
+		case RS_PKT_SUBTYPE_RTT_PONG:
+		{
+			handlePong(item);
+		}
+			break;
 	}
+
+	/* clean up */
+	delete item;
 	return true ;
 } 
+
 
 int p3rtt::handlePing(RsItem *item)
 {

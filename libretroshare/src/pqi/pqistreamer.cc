@@ -45,7 +45,6 @@ const int PQISTREAM_ABS_MAX = 100000000; /* 100 MB/sec (actually per loop) */
 #define DEBUG_PQISTREAMER 1
  ***/
 
-#define DEBUG_PQISTREAMER 	1
 
 #ifdef DEBUG_TRANSFERS
 	#include "util/rsprint.h"
@@ -54,7 +53,7 @@ const int PQISTREAM_ABS_MAX = 100000000; /* 100 MB/sec (actually per loop) */
 
 pqistreamer::pqistreamer(RsSerialiser *rss, std::string id, BinInterface *bio_in, int bio_flags_in)
 	:PQInterface(id), mStreamerMtx("pqistreamer"),
-	mRsSerialiser(rss), mBio(bio_in), mBio_flags(bio_flags_in), 
+	mBio(bio_in), mBio_flags(bio_flags_in), mRsSerialiser(rss), 
 	mPkt_wpending(NULL), 
 	mTotalRead(0), mTotalSent(0),
 	mCurrRead(0), mCurrSent(0),
@@ -171,10 +170,10 @@ RsItem *pqistreamer::GetItem()
 // // PQInterface
 int	pqistreamer::tick()
 {
-	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
 
 #ifdef DEBUG_PQISTREAMER
 	{
+		RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
 		std::string out = "pqistreamer::tick()\n" + PeerId();
 		rs_sprintf_append(out, ": currRead/Sent: %d/%d", mCurrRead, mCurrSent);
 
@@ -182,22 +181,15 @@ int	pqistreamer::tick()
 	}
 #endif
 
-	mBio->tick();
-
-	/* short circuit everything is bio isn't active */
-	if (!(mBio->isactive()))
+	if (!tick_bio())
 	{
 		return 0;
 	}
 
+	tick_recv(0);
+	tick_send(0);
 
-	/* must do both, as outgoing will catch some bad sockets, 
-	 * that incoming will not 
-	 */
-
-	handleincoming_locked();
-	handleoutgoing_locked();
-
+	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
 #ifdef DEBUG_PQISTREAMER
 	/* give details of the packets */
 	{
@@ -232,6 +224,49 @@ int	pqistreamer::tick()
 		return 1;
 	}
 	return 0;
+}
+
+int 	pqistreamer::tick_bio()
+{
+	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
+	mBio->tick();
+	
+	/* short circuit everything is bio isn't active */
+	if (!(mBio->isactive()))
+	{
+		return 0;
+	}
+	return 1;
+}
+
+
+int 	pqistreamer::tick_recv(uint32_t timeout)
+{
+	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
+
+	if (mBio->moretoread(timeout))
+	{
+		handleincoming_locked();
+	}
+	return 1;
+}
+
+
+int 	pqistreamer::tick_send(uint32_t timeout)
+{
+	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
+
+	/* short circuit everything is bio isn't active */
+	if (!(mBio->isactive()))
+	{
+		return 0;
+	}
+
+	if (mBio->cansend(timeout))
+	{
+		handleoutgoing_locked();
+	}
+	return 1;
 }
 
 int	pqistreamer::status()

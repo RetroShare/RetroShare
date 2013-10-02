@@ -67,6 +67,7 @@ bool p3Service::recvItem(RsItem *item)
 
 		recv_queue.push_back(item);
 	}
+	return true;
 }
 
 

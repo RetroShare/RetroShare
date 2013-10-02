@@ -30,6 +30,7 @@
 
 
 #include "pqi/pqi.h"
+#include "util/rsnet.h"
 
 #include <list>
 
@@ -44,12 +45,13 @@ static const int CONNECT_FAILED       = 5;
 static const int HEARTBEAT_REPEAT_TIME = 5;
 
 #include "pqi/pqiqosstreamer.h"
+#include "pqi/pqithreadstreamer.h"
 
 class pqiconnect: public pqiQoSstreamer, public NetInterface
 {
 public:
-	pqiconnect(RsSerialiser *rss, NetBinInterface *ni_in)
-			:pqiQoSstreamer(rss, ni_in->PeerId(), ni_in, 0),  // pqistreamer will cleanup NetInterface.
+	pqiconnect(PQInterface *parent, RsSerialiser *rss, NetBinInterface *ni_in)
+			:pqiQoSstreamer(parent, rss, ni_in->PeerId(), ni_in, 0),  // pqistreamer will cleanup NetInterface.
 			 NetInterface(NULL, ni_in->PeerId()), // No need for callback
 	 		 ni(ni_in) 
 	{ 
@@ -73,7 +75,6 @@ virtual int 	disconnect() 		{ return ni -> reset(); }
 virtual bool 	connect_parameter(uint32_t type, uint32_t value) { return ni -> connect_parameter(type, value);}
 virtual bool 	connect_parameter(uint32_t type, std::string value) { return ni -> connect_parameter(type, value);}
 virtual bool 	connect_additional_address(uint32_t type, const struct sockaddr_storage &addr) { return ni -> connect_additional_address(type, addr);}
-
 
 
 virtual int     getConnectAddress(struct sockaddr_storage &raddr){ return ni->getConnectAddress(raddr); }
@@ -101,6 +102,25 @@ protected:
 
 class pqipersongrp;
 
+
+class NotifyData
+{
+	public:
+	NotifyData()
+	:mNi(NULL), mState(0)
+	{
+		sockaddr_storage_clear(mAddr);
+	}
+
+	NotifyData(NetInterface *ni, int state, const struct sockaddr_storage &addr)
+	:mNi(ni), mState(state), mAddr(addr) { return; }
+
+	NetInterface *mNi;
+	int mState;
+	struct sockaddr_storage mAddr;
+};
+
+
 class pqiperson: public PQInterface
 {
 public:
@@ -117,6 +137,8 @@ int	connect(uint32_t type, const struct sockaddr_storage &raddr,
 				uint32_t delay, uint32_t period, uint32_t timeout, uint32_t flags, uint32_t bandwidth,
                                 const std::string &domain_addr, uint16_t domain_port);
 
+int 	fullstopthreads();
+
 int     receiveHeartbeat();
 	// add in connection method.
 int	addChildInterface(uint32_t type, pqiconnect *pqi);
@@ -130,6 +152,7 @@ virtual int     SendItem(RsItem *item)
 	return SendItem(item,serialized_size) ;
 }
 virtual RsItem *GetItem();
+virtual bool RecvItem(RsItem *item);
 	
 virtual int 	status();
 virtual int	tick();
@@ -144,9 +167,19 @@ virtual float   getRate(bool in);
 virtual void    setMaxRate(bool in, float val);
 virtual void    setRateCap(float val_in, float val_out);
 
-pqiconnect *getKid(uint32_t type);
 
 	private:
+
+void    processNotifyEvents();
+int     handleNotifyEvent_locked(NetInterface *ni, int event, const struct sockaddr_storage &addr);
+
+	RsMutex mNotifyMtx; /**** LOCKS Notify Queue ****/
+
+	std::list<NotifyData> mNotifyQueue;
+
+	RsMutex mPersonMtx; /**** LOCKS below ****/
+
+void    setRateCap_locked(float val_in, float val_out);
 
 	std::map<uint32_t, pqiconnect *> kids;
 	bool active;

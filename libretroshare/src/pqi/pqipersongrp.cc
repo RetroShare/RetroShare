@@ -56,6 +56,21 @@ static std::list<std::string> waitingIds;
  *  pqilistener and when accessing pqihandlers data.
  */
 
+
+	// New speedy recv.
+bool pqipersongrp::RecvRsRawItem(RsRawItem *item)
+{
+	std::cerr << "pqipersongrp::RecvRsRawItem()";
+	std::cerr << std::endl;
+
+	p3ServiceServer::recvItem(item);
+
+	return true;
+}
+
+
+
+
 // handle the tunnel services.
 int pqipersongrp::tickServiceRecv()
 {
@@ -433,6 +448,7 @@ int     pqipersongrp::removePeer(std::string id)
 		p -> stoplistening();
 		pqioutput(PQL_WARNING, pqipersongrpzone, "pqipersongrp::removePeer() => reset() called before deleting person");
 		p -> reset();
+		p -> fullstopthreads();
 		delete p;
 		mods.erase(it);
 	}
@@ -679,7 +695,7 @@ pqiperson * pqipersongrpDummy::locked_createPerson(std::string id, pqilistener *
 	RsSerialiser *rss = new RsSerialiser();
 	rss->addSerialType(new RsServiceSerialiser());
 
-	pqiconnect *pqic = new pqiconnect(rss, d1);
+	pqiconnect *pqic = new pqiconnect(pqip, rss, d1);
 
 	pqip -> addChildInterface(PQI_CONNECT_TCP, pqic);
 
@@ -689,7 +705,7 @@ pqiperson * pqipersongrpDummy::locked_createPerson(std::string id, pqilistener *
 	RsSerialiser *rss2 = new RsSerialiser();
 	rss2->addSerialType(new RsServiceSerialiser());
 
-	pqiconnect *pqic2 	= new pqiconnect(rss2, d2);
+	pqiconnect *pqic2 	= new pqiconnect(pqip, rss2, d2);
 
 	pqip -> addChildInterface(PQI_CONNECT_UDP, pqic2);
 

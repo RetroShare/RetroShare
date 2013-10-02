@@ -80,6 +80,10 @@ int     connectPeer(std::string id
 #endif
 					);
 
+	// New speedy recv.
+virtual bool RecvRsRawItem(RsRawItem *item);
+
+
 	/* Work-around to dodgy pointer stuff */
 int	tagHeartbeatRecvd(std::string id);
 

@@ -1316,6 +1316,9 @@ int 	pqissl::Authorise_SSL_Connection()
 /* This function is public, and callable from pqilistener - so must be mutex protected */
 int	pqissl::accept(SSL *ssl, int fd, const struct sockaddr_storage &foreign_addr) // initiate incoming connection.
 {
+	std::cerr << "pqissl::accept()";
+	std::cerr << std::endl;
+
 	RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
 
 	return accept_locked(ssl, fd, foreign_addr);
@@ -1475,6 +1478,9 @@ int	pqissl::accept_locked(SSL *ssl, int fd, const struct sockaddr_storage &forei
 
 	active = true;
 	waiting = WAITING_NOT;
+
+	std::cerr << "pqissl::accept_locked() connection complete - notifying parent";
+	std::cerr << std::endl;
 
 	// Notify the pqiperson.... (Both Connect/Receive)
 	if (parent())
@@ -1770,7 +1776,7 @@ bool 	pqissl::moretoread(uint32_t usec)
 	FD_ZERO(&ExceptFDs);
 
 	FD_SET(sockfd, &ReadFDs);
-	FD_SET(sockfd, &WriteFDs);
+	// Dont set WriteFDs.
 	FD_SET(sockfd, &ExceptFDs);
 
 	struct timeval timeout;
@@ -1797,22 +1803,6 @@ bool 	pqissl::moretoread(uint32_t usec)
 		return 0;
 	}
 
-	if (FD_ISSET(sockfd, &WriteFDs))
-	{
-#ifdef PQISSL_DEBUG 
-		// write can work.
-		rslog(RSL_DEBUG_ALL, pqisslzone, 
-			"pqissl::moretoread() Can Write!");
-#endif
-	}
-	else
-	{
-#ifdef PQISSL_DEBUG 
-		// write can work.
-		rslog(RSL_DEBUG_BASIC, pqisslzone, 
-			"pqissl::moretoread() Can *NOT* Write!");
-#endif
-	}
 
 	if (FD_ISSET(sockfd, &ReadFDs))
 	{
@@ -1849,7 +1839,7 @@ bool 	pqissl::cansend(uint32_t usec)
 	FD_ZERO(&WriteFDs);
 	FD_ZERO(&ExceptFDs);
 
-	FD_SET(sockfd, &ReadFDs);
+	// Dont Set ReadFDs.
 	FD_SET(sockfd, &WriteFDs);
 	FD_SET(sockfd, &ExceptFDs);
 

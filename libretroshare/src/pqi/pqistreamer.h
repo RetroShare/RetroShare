@@ -62,6 +62,11 @@ class pqistreamer: public PQInterface
 		virtual void    getRates(RsBwRates &rates);
 		virtual int     getQueueSize(bool in); // extracting data.
 	protected:
+
+		int tick_bio();
+		int tick_send(uint32_t timeout);
+		int tick_recv(uint32_t timeout);
+
 		/* Implementation */
 
 		// These methods are redefined in pqiQoSstreamer
@@ -75,6 +80,10 @@ class pqistreamer: public PQInterface
 
 	protected:
 		RsMutex mStreamerMtx ; // Protects data, fns below, protected so pqiqos can use it too.
+
+		// Binary Interface for IO, initialisated at startup.
+		BinInterface *mBio;
+		unsigned int  mBio_flags; // BIN_FLAGS_NO_CLOSE | BIN_FLAGS_NO_DELETE
 
 	private:
 		int queue_outpqi_locked(RsItem *i,uint32_t& serialized_size);
@@ -98,9 +107,6 @@ class pqistreamer: public PQInterface
 
 		// RsSerialiser - determines which packets can be serialised.
 		RsSerialiser *mRsSerialiser;
-		// Binary Interface for IO, initialisated at startup.
-		BinInterface *mBio;
-		unsigned int  mBio_flags; // BIN_FLAGS_NO_CLOSE | BIN_FLAGS_NO_DELETE
 
 		void *mPkt_wpending; // storage for pending packet to write.
 		int   mPkt_rpend_size; // size of pkt_rpending.
