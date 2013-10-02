@@ -10,8 +10,6 @@
 
 //#define DEBUG_RSCERTIFICATE 
 
-//#define V_06_USE_CHECKSUM
-
 static const std::string PGP_CERTIFICATE_START     ( "-----BEGIN PGP PUBLIC KEY BLOCK-----" );
 static const std::string PGP_CERTIFICATE_END       ( "-----END PGP PUBLIC KEY BLOCK-----" );
 static const std::string EXTERNAL_IP_BEGIN_SECTION ( "--EXT--" );
@@ -93,7 +91,7 @@ std::string RsCertificate::toStdString() const
 		addPacket( CERTIFICATE_PTAG_NAME_SECTION        , (unsigned char *)location_name.c_str() ,location_name.length()   , buf, p, BS ) ;
 		addPacket( CERTIFICATE_PTAG_SSLID_SECTION       , location_id.toByteArray()              ,location_id.SIZE_IN_BYTES, buf, p, BS ) ;
 	}
-#ifdef V_06_USE_CHECKSUM
+
 	uint32_t computed_crc = PGPKeyManagement::compute24bitsCRC(buf,p) ;
 
 	// handle endian issues.
@@ -103,7 +101,7 @@ std::string RsCertificate::toStdString() const
 	mem[2] = (computed_crc >> 16) & 0xff ;
 
 	addPacket( CERTIFICATE_PTAG_CHECKSUM_SECTION,mem,3,buf,p,BS) ;
-#endif
+
 	std::string out_string ;
 
 	Radix64::encode((char *)buf, p, out_string) ;
@@ -333,13 +331,12 @@ bool RsCertificate::initFromString(const std::string& instr,uint32_t& err_code)
 
 		total_s += s ;
 	}
-#ifdef V_06_USE_CHECKSUM
+
 	if(!checksum_check_passed)
 	{
 		err_code = CERTIFICATE_PARSING_ERROR_MISSING_CHECKSUM ;
 		return false ;
 	}
-#endif
 
 	if(total_s != size)	
 		std::cerr << "(EE) Certificate contains trailing characters. Weird." << std::endl;
