@@ -323,7 +323,19 @@ void RttStatisticsWidget::updateRttStatistics(const std::map<std::string, std::l
 
 	// round up RTT to nearest	
 	double roundedRTT = maxRTT;
-	if (maxRTT < 0.15)
+	if (maxRTT < 0.018)
+	{
+		roundedRTT = 0.02;
+	}
+	else if (maxRTT < 0.045)
+	{
+		roundedRTT = 0.05;
+	}
+	else if (maxRTT < 0.09)
+	{
+		roundedRTT = 0.1;
+	}
+	else if (maxRTT < 0.18)
 	{
 		roundedRTT = 0.2;
 	}
