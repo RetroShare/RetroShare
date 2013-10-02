@@ -155,10 +155,8 @@ int p3FastService::sendItem(RsItem *si)
 	uint32_t size = rsSerialiser->size(si);
 	if (!size)
 	{
-#ifdef SERV_DEBUG 
 		std::cerr << "p3Service::send() ERROR size == 0";
 		std::cerr << std::endl;
-#endif
 
 		/* can't convert! */
 		delete si;
@@ -168,20 +166,18 @@ int p3FastService::sendItem(RsItem *si)
 	RsRawItem *raw = new RsRawItem(si->PacketId(), size);
 	if (!rsSerialiser->serialise(si, raw->getRawData(), &size))
 	{
-#ifdef SERV_DEBUG 
 		std::cerr << "p3Service::send() ERROR serialise failed";
 		std::cerr << std::endl;
-#endif
+
 		delete raw;
 		raw = NULL;
 	}
 
 	if ((raw) && (size != raw->getRawLength()))
 	{
-#ifdef SERV_DEBUG 
 		std::cerr << "p3Service::send() ERROR serialise size mismatch";
 		std::cerr << std::endl;
-#endif
+
 		delete raw;
 		raw = NULL;
 	}
