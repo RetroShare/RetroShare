@@ -168,7 +168,7 @@ int	p3VoRS::tick()
 	std::cerr << "ticking p3VoRS" << std::endl;
 #endif
 
-	processIncoming();
+	//processIncoming();
 	sendPackets();
 
 	return 0;
@@ -393,44 +393,46 @@ bool p3VoRS::getIncomingData(const std::string& peer_id,std::vector<RsVoipDataCh
 	return true ;
 }
 
-int	p3VoRS::processIncoming()
+bool	p3VoRS::recvItem(RsItem *item)
 {
-	/* for each packet - pass to specific handler */
-	RsItem *item = NULL;
-	while(NULL != (item = recvItem()))
+	/* pass to specific handler */
+	bool keep = false ;
+
+	switch(item->PacketSubType())
 	{
-		bool keep = false ;
+		case RS_PKT_SUBTYPE_VOIP_PING: 
+			handlePing(dynamic_cast<RsVoipPingItem*>(item));
+			break;
 
-		switch(item->PacketSubType())
-		{
-			case RS_PKT_SUBTYPE_VOIP_PING: handlePing(dynamic_cast<RsVoipPingItem*>(item));
-													 break;
+		case RS_PKT_SUBTYPE_VOIP_PONG: 
+			handlePong(dynamic_cast<RsVoipPongItem*>(item));
+			break;
 
-			case RS_PKT_SUBTYPE_VOIP_PONG: handlePong(dynamic_cast<RsVoipPongItem*>(item));
-													 break;
+		case RS_PKT_SUBTYPE_VOIP_PROTOCOL: 
+			handleProtocol(dynamic_cast<RsVoipProtocolItem*>(item)) ;
+			break ;
 
-			case RS_PKT_SUBTYPE_VOIP_PROTOCOL: handleProtocol(dynamic_cast<RsVoipProtocolItem*>(item)) ;
-														  break ;
-
-			case RS_PKT_SUBTYPE_VOIP_DATA: handleData(dynamic_cast<RsVoipDataItem*>(item));
-													 keep = true ;
-													 break;
+		case RS_PKT_SUBTYPE_VOIP_DATA: 
+			handleData(dynamic_cast<RsVoipDataItem*>(item));
+			keep = true ;
+			break;
 #if 0
 													 /* THESE ARE ALL FUTURISTIC DATA TYPES */
-			case RS_BANDWIDTH_PING_ITEM:	 handleBandwidthPing(item);
-													 break;
+		case RS_BANDWIDTH_PING_ITEM:	 
+			handleBandwidthPing(item);
+			break;
 
-			case RS_BANDWIDTH_PONG_ITEM:	 handleBandwidthPong(item);
-													 break;
+		case RS_BANDWIDTH_PONG_ITEM:
+			handleBandwidthPong(item);
+			 break;
 #endif
-			default:
-													 break;
-		}
-
-		/* clean up */
-		if(!keep)
-			delete item;
+		default:
+			break;
 	}
+
+	/* clean up */
+	if(!keep)
+		delete item;
 	return true ;
 } 
 

@@ -22,7 +22,7 @@
 
 #define SAMPLING_RATE 16000 //must be the same as the speex setted mode (speex_wb_mode)
 #define FRAME_SIZE 320 //must be the same as the speex setted mode (speex_wb_mode)
-#define ECHOTAILSIZE  25
+#define ECHOTAILSIZE  10
 
 class SpeexBits;
 
