@@ -417,9 +417,9 @@ uint32_t RsTlvFileSet::TlvSize()
 	/* now add comment and title length of this tlv object */
 
 	if (title.length() > 0)
-		s += GetTlvWideStringSize(title); 
+		s += GetTlvStringSize(title); 
 	if (comment.length() > 0)
-		s += GetTlvWideStringSize(comment);
+		s += GetTlvStringSize(comment);
 
 	return s;
 }
@@ -454,9 +454,9 @@ bool     RsTlvFileSet::SetTlv(void *data, uint32_t size, uint32_t *offset) /* se
 
 	/* now optional ones */
 	if (title.length() > 0)
-		ok &= SetTlvWideString(data, tlvend, offset, TLV_TYPE_WSTR_TITLE, title);
+		ok &= SetTlvString(data, tlvend, offset, TLV_TYPE_STR_TITLE, title);
 	if (comment.length() > 0)
-		ok &= SetTlvWideString(data, tlvend, offset, TLV_TYPE_WSTR_COMMENT, comment); 
+		ok &= SetTlvString(data, tlvend, offset, TLV_TYPE_STR_COMMENT, comment); 
 	
 	return ok;
 
@@ -500,15 +500,15 @@ bool     RsTlvFileSet::GetTlv(void *data, uint32_t size, uint32_t *offset)
 				items.push_back(newitem);
 			}
 		}
-		else if (tlvsubtype == TLV_TYPE_WSTR_TITLE)
+		else if (tlvsubtype == TLV_TYPE_STR_TITLE)
 		{
-			ok &= GetTlvWideString(data, tlvend, offset, 
-					TLV_TYPE_WSTR_TITLE, title);
+			ok &= GetTlvString(data, tlvend, offset, 
+					TLV_TYPE_STR_TITLE, title);
 		}
-		else if (tlvsubtype == TLV_TYPE_WSTR_COMMENT)
+		else if (tlvsubtype == TLV_TYPE_STR_COMMENT)
 		{
-			ok &= GetTlvWideString(data, tlvend, offset, 
-					TLV_TYPE_WSTR_COMMENT, comment);
+			ok &= GetTlvString(data, tlvend, offset, 
+					TLV_TYPE_STR_COMMENT, comment);
 		}
 		else
 		{

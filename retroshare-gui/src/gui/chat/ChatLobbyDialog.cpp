@@ -284,7 +284,7 @@ void ChatLobbyDialog::addIncomingChatMsg(const ChatInfo& info)
 {
 	QDateTime sendTime = QDateTime::fromTime_t(info.sendTime);
 	QDateTime recvTime = QDateTime::fromTime_t(info.recvTime);
-	QString message = QString::fromStdWString(info.msg);
+	QString message = QString::fromUtf8(info.msg.c_str());
 	QString name = QString::fromUtf8(info.peer_nickname.c_str());
 	QString rsid = QString::fromUtf8(info.rsid.c_str());
 

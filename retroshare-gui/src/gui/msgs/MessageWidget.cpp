@@ -554,9 +554,9 @@ void MessageWidget::fill(const std::string &msgId)
 		ui.fromText->setToolTip(PeerDefs::rsidFromId(srcId));
 	}
 
-	ui.subjectText->setText(QString::fromStdWString(msgInfo.title));
+	ui.subjectText->setText(QString::fromUtf8(msgInfo.title.c_str()));
 
-	text = RsHtmlMsg(msgInfo.msgflags).formatText(ui.msgText->document(), QString::fromStdWString(msgInfo.msg), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_REPLACE_LINKS);
+	text = RsHtmlMsg(msgInfo.msgflags).formatText(ui.msgText->document(), QString::fromUtf8(msgInfo.msg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_REPLACE_LINKS);
 	ui.msgText->setHtml(text);
 
 	ui.filesText->setText(QString("(%1 %2)").arg(msgInfo.count).arg(msgInfo.count == 1 ? tr("File") : tr("Files")));

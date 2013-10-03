@@ -187,8 +187,8 @@ virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); /* deseria
 virtual std::ostream &print(std::ostream &out, uint16_t indent);
 
 	std::list<RsTlvFileItem> items; /// Mandatory 
-	std::wstring title;   		/// Optional: title of file set
-	std::wstring comment; 		/// Optional: comments for file
+	std::string title;   		/// Optional: title of file set
+	std::string comment; 		/// Optional: comments for file
 };
 
 

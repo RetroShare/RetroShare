@@ -87,7 +87,8 @@ void p3HistoryMgr::addMessage(bool incoming, const std::string &chatPeerId, cons
 			item->saveToDisc = false;
 		}
 
-		librs::util::ConvertUtf16ToUtf8(chatItem->message, item->message);
+		item->message = chatItem->message ;
+		//librs::util::ConvertUtf16ToUtf8(chatItem->message, item->message);
 
 		std::map<std::string, std::map<uint32_t, RsHistoryMsgItem*> >::iterator mit = mMessages.find(item->chatPeerId);
 		if (mit != mMessages.end()) {

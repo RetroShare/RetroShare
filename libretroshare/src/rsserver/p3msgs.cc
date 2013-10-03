@@ -121,7 +121,7 @@ bool p3Msgs::getDistantMessageHash(const std::string& pgp_id,std::string& hash)
 	return mMsgSrv->getDistantMessageHash(pgp_id,hash);
 }
 
-bool p3Msgs::SystemMessage(const std::wstring &title, const std::wstring &message, uint32_t systemFlag)
+bool p3Msgs::SystemMessage(const std::string &title, const std::string &message, uint32_t systemFlag)
 {
 	return mMsgSrv->SystemMessage(title, message, systemFlag);
 }
@@ -207,13 +207,13 @@ bool    p3Msgs::resetMessageStandardTagTypes(MsgTagType& tags)
 
 /****************************************/
 /****************************************/
-bool 	p3Msgs::sendPublicChat(const std::wstring& msg)
+bool 	p3Msgs::sendPublicChat(const std::string& msg)
 {
 	/* send a message to all for now */
 	return mChatSrv -> sendPublicChat(msg);
 }
 
-bool 	p3Msgs::sendPrivateChat(const std::string& id, const std::wstring& msg)
+bool 	p3Msgs::sendPrivateChat(const std::string& id, const std::string& msg)
 {
 	/* send a message to peer */
 	return mChatSrv -> sendPrivateChat(id, msg);

@@ -141,7 +141,7 @@ int	p3ChatService::status()
 
 /***************** Chat Stuff **********************/
 
-int     p3ChatService::sendPublicChat(const std::wstring &msg)
+int     p3ChatService::sendPublicChat(const std::string &msg)
 {
 	/* go through all the peers */
 
@@ -460,7 +460,7 @@ bool p3ChatService::isOnline(const std::string& id)
 	return true ;
 }
 
-bool     p3ChatService::sendPrivateChat(const std::string &id, const std::wstring &msg)
+bool     p3ChatService::sendPrivateChat(const std::string &id, const std::string &msg)
 {
 	// look into ID. Is it a peer, or a chat lobby?
 
@@ -643,7 +643,7 @@ bool p3ChatService::locked_checkAndRebuildPartialMessage(RsChatLobbyMsgItem *ci)
 #ifdef CHAT_DEBUG
 			std::cerr << "  Message is complete ! Re-forming it and returning true." << std::endl;
 #endif
-			std::wstring msg ;
+			std::string msg ;
 			uint32_t flags = 0 ;
 
 			for(uint32_t i=0;i<it->second.size();++i)
@@ -998,20 +998,18 @@ bool p3ChatService::checkForMessageSecurity(RsChatMsgItem *ci)
 	// https://en.wikipedia.org/wiki/Billion_laughs
 	// This should be done for all incoming HTML messages (also in forums
 	// etc.) so this should be a function in some other file.
-	wchar_t tmp[10];
-	mbstowcs(tmp, "<!", 9);
 
-	if (ci->message.find(tmp) != std::string::npos)
+	if (ci->message.find("<!") != std::string::npos)
 	{
 		// Drop any message with "<!doctype" or "<!entity"...
 		// TODO: check what happens with partial messages
 		//
-		std::wcout << "handleRecvChatMsgItem: " << ci->message << std::endl;
-		std::wcout << "**********" << std::endl;
-		std::wcout << "********** entity attack by " << ci->PeerId().c_str() << std::endl;
-		std::wcout << "**********" << std::endl;
+		std::cout << "handleRecvChatMsgItem: " << ci->message << std::endl;
+		std::cout << "**********" << std::endl;
+		std::cout << "********** entity attack by " << ci->PeerId().c_str() << std::endl;
+		std::cout << "**********" << std::endl;
 
-		ci->message = L"**** This message has been removed because it breaks security rules.****" ;
+		ci->message = "**** This message has been removed because it breaks security rules.****" ;
 		return false;
 	}
 	// For a future whitelist:
@@ -1146,8 +1144,9 @@ bool p3ChatService::handleRecvChatMsgItem(RsChatMsgItem *ci)
 			ci->chatFlags |= RS_CHAT_FLAG_AVATAR_AVAILABLE ;
 		}
 
-		std::string message;
-		librs::util::ConvertUtf16ToUtf8(ci->message, message);
+		std::string message = ci->message;
+		//librs::util::ConvertUtf16ToUtf8(ci->message, message);
+
 		if (ci->chatFlags & RS_CHAT_FLAG_PRIVATE) {
 			/* notify private chat message */
 			getPqiNotify()->AddPopupMessage(popupChatFlag, ci->PeerId(), name, message);
@@ -1691,7 +1690,7 @@ void p3ChatService::sendAvatarJpegData(const std::string& peer_id)
 		RsChatAvatarItem *ci = makeOwnAvatarItem();
 		ci->PeerId(peer_id);
 
-		// take avatar, and embed it into a std::wstring.
+		// take avatar, and embed it into a std::string.
 		//
 #ifdef CHAT_DEBUG
 		std::cerr << "p3ChatService::sending avatar image to peer" << peer_id << ", image size = " << ci->image_size << std::endl ;
@@ -2142,7 +2141,7 @@ void p3ChatService::locked_initLobbyBouncableObject(const ChatLobbyId& lobby_id,
 	item.nick = lobby.nick_name ;
 }
 
-bool p3ChatService::sendLobbyChat(const std::string &id, const std::wstring& msg, const ChatLobbyId& lobby_id)
+bool p3ChatService::sendLobbyChat(const std::string &id, const std::string& msg, const ChatLobbyId& lobby_id)
 {
 #ifdef CHAT_DEBUG
 	std::cerr << "Sending chat lobby message to lobby " << std::hex << lobby_id << std::dec << std::endl;
@@ -2461,7 +2460,7 @@ bool p3ChatService::acceptLobbyInvite(const ChatLobbyId& lobby_id)
 		item->lobby_id = entry.lobby_id ;
 		item->msg_id = 0 ;
 		item->nick = "Lobby management" ;
-		item->message = std::wstring(L"Welcome to chat lobby") ;
+		item->message = std::string("Welcome to chat lobby") ;
 		item->PeerId(entry.virtual_peer_id) ;
 		item->chatFlags = RS_CHAT_FLAG_PRIVATE | RS_CHAT_FLAG_LOBBY ;
 

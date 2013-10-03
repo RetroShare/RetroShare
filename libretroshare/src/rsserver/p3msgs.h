@@ -59,7 +59,7 @@ class p3Msgs: public RsMsgs
 
 	  virtual bool MessageSend(MessageInfo &info);
 	  virtual bool decryptMessage(const std::string& mid);
-	  virtual bool SystemMessage(const std::wstring &title, const std::wstring &message, uint32_t systemFlag);
+	  virtual bool SystemMessage(const std::string &title, const std::string &message, uint32_t systemFlag);
 	  virtual bool MessageToDraft(MessageInfo &info, const std::string &msgParentId);
 	  virtual bool MessageToTrash(const std::string &mid, bool bTrash);
 	  virtual bool MessageDelete(const std::string &mid);
@@ -120,13 +120,13 @@ class p3Msgs: public RsMsgs
 	  /*!
 	   * public chat sent to all peers
 	   */
-	  virtual	bool	sendPublicChat(const std::wstring& msg);
+	  virtual	bool	sendPublicChat(const std::string& msg);
 
 	  /*!
 	   * chat is sent to specifc peer
 	   * @param id peer to send chat msg to
 	   */
-	  virtual	bool	sendPrivateChat(const std::string& id, const std::wstring& msg);
+	  virtual	bool	sendPrivateChat(const std::string& id, const std::string& msg);
 
 	  /*!
 	   * returns the count of messages in public or private queue
