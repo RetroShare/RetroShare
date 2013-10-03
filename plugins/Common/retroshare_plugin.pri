@@ -43,7 +43,6 @@ win32 {
 	SOURCES += upnp/upnputil.c
 
 	UPNPC_DIR = ../../../lib/miniupnpc-1.3
-	PTHREADS_DIR = ../../../lib/pthreads-w32-2-8-0-release
 	ZLIB_DIR = ../../../lib/zlib-1.2.3
 	SSL_DIR = ../../../openssl-1.0.1c
 
@@ -53,7 +52,7 @@ win32 {
 	LIBS += -L"../../retroshare-gui/src/lib" -lretroshare-gui
 
 	LIBS += -L"$$PWD/../../../lib"
-	LIBS += -lssl -lcrypto -lpthreadGC2d -lminiupnpc -lz
+	LIBS += -lssl -lcrypto -lpthread -lminiupnpc -lz
 # added after bitdht
 	LIBS += -luuid -lole32 -liphlpapi -lcrypt32-cygwin -lgdi32
 	LIBS += -lole32 -lwinmm

@@ -77,8 +77,8 @@ win32 {
 
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
 	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
-	LIBS += -L"$$PWD/../../../lib" -lssl -lcrypto -lpthreadGC2d -lminiupnpc -lz
-	LIBS += -lssl -lcrypto -lpthreadGC2d -lminiupnpc -lz
+	LIBS += -L"$$PWD/../../../lib"
+	LIBS += -lssl -lcrypto -lminiupnpc -lz
 # added after bitdht
 #	LIBS += -lws2_32
 	LIBS += -luuid -lole32 -liphlpapi -lcrypt32-cygwin -lgdi32

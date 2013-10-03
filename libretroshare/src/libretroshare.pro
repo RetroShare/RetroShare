@@ -225,12 +225,11 @@ win32 {
 
 	UPNPC_DIR = ../../../miniupnpc-1.3
 
-	PTHREADS_DIR = ../../../pthreads-w32-2-8-0-release
 	ZLIB_DIR = ../../../zlib-1.2.3
 	SSL_DIR = ../../../openssl-1.0.1c
 	OPENPGPSDK_DIR = ../../openpgpsdk/src
 
-	INCLUDEPATH += . $${SSL_DIR}/include $${UPNPC_DIR} $${PTHREADS_DIR} $${ZLIB_DIR} $${OPENPGPSDK_DIR}
+	INCLUDEPATH += . $${SSL_DIR}/include $${UPNPC_DIR} $${ZLIB_DIR} $${OPENPGPSDK_DIR}
 
 	# SQLite include path is required to compile GXS.
 	gxs {

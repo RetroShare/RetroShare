@@ -157,7 +157,7 @@ win32 {
 		LIBS += -lsqlcipher
 	}
 
-	LIBS += -lssl -lcrypto -lpthreadGC2d -lminiupnpc -lz
+	LIBS += -lssl -lcrypto -lpthread -lminiupnpc -lz
 # added after bitdht
 #	LIBS += -lws2_32
 	LIBS += -luuid -lole32 -liphlpapi -lcrypt32-cygwin -lgdi32
