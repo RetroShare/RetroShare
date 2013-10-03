@@ -7,7 +7,7 @@ CONFIG -= qt xml gui
 
 # if you are linking against the libretroshare with gxs.
 # this option links against the required sqlite library.
-#CONFIG += gxs
+CONFIG += gxs
 
 #CONFIG += debug
 debug {
