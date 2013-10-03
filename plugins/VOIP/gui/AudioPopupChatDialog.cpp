@@ -5,6 +5,9 @@
 #include "interface/rsvoip.h"
 #include "gui/SoundManager.h"
 
+#define CALL_START ":/images/call-start-22.png"
+#define CALL_STOP ":/images/call-stop-22.png"
+
 AudioPopupChatDialog::AudioPopupChatDialog(QWidget *parent)
 	: PopupChatDialog(parent)
 {
@@ -32,14 +35,14 @@ AudioPopupChatDialog::AudioPopupChatDialog(QWidget *parent)
 	audioMuteCaptureToggleButton->setMinimumSize(QSize(28,28)) ;
 	audioMuteCaptureToggleButton->setMaximumSize(QSize(28,28)) ;
 	audioMuteCaptureToggleButton->setText(QString()) ;
-	audioMuteCaptureToggleButton->setToolTip(tr("Deafen yourself"));
+	audioMuteCaptureToggleButton->setToolTip(tr("Start Call"));
 
 	QIcon icon2 ;
-        icon2.addPixmap(QPixmap(":/images/muted_self.svg")) ;
-	icon2.addPixmap(QPixmap(":/images/talking_off.svg"),QIcon::Normal,QIcon::On) ;
-	icon2.addPixmap(QPixmap(":/images/talking_off.svg"),QIcon::Disabled,QIcon::On) ;
-	icon2.addPixmap(QPixmap(":/images/talking_off.svg"),QIcon::Active,QIcon::On) ;
-        icon2.addPixmap(QPixmap(":/images/talking_off.svg"),QIcon::Selected,QIcon::On) ;
+        icon2.addPixmap(QPixmap(":/images/call-start-22.png")) ;
+	icon2.addPixmap(QPixmap(":/images/call-stop-22.png"),QIcon::Normal,QIcon::On) ;
+	icon2.addPixmap(QPixmap(":/images/call-stop-22.png"),QIcon::Disabled,QIcon::On) ;
+	icon2.addPixmap(QPixmap(":/images/call-stop-22.png"),QIcon::Active,QIcon::On) ;
+        icon2.addPixmap(QPixmap(":/images/call-stop-22.png"),QIcon::Selected,QIcon::On) ;
 
 	audioMuteCaptureToggleButton->setIcon(icon2) ;
 	audioMuteCaptureToggleButton->setIconSize(QSize(22,22)) ;
@@ -78,6 +81,7 @@ void AudioPopupChatDialog::toggleAudioMuteCapture()
     if (audioMuteCaptureToggleButton->isChecked()) {
         //activate audio output
         audioListenToggleButton->setChecked(true);
+        audioMuteCaptureToggleButton->setToolTip(tr("Stop Call"));
 
         //activate audio input
         if (!inputProcessor) {
@@ -97,20 +101,21 @@ void AudioPopupChatDialog::toggleAudioMuteCapture()
         if (inputDevice) {
             inputDevice->stop();
         }
+        audioMuteCaptureToggleButton->setToolTip(tr("Start Call"));
     }
 
 }
 
 void AudioPopupChatDialog::addAudioData(const QString name, QByteArray* array) 
 {
-    if (!audioListenToggleButton->isChecked()) {
+    if (!audioMuteCaptureToggleButton->isChecked()) {
         //launch an animation. Don't launch it if already animating
-        if (!audioListenToggleButton->graphicsEffect() ||
-            (audioListenToggleButton->graphicsEffect()->inherits("QGraphicsOpacityEffect") &&
-                ((QGraphicsOpacityEffect*)audioListenToggleButton->graphicsEffect())->opacity() == 1)
+        if (!audioMuteCaptureToggleButton->graphicsEffect() ||
+            (audioMuteCaptureToggleButton->graphicsEffect()->inherits("QGraphicsOpacityEffect") &&
+                ((QGraphicsOpacityEffect*)audioMuteCaptureToggleButton->graphicsEffect())->opacity() == 1)
             ) {
             QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(audioListenToggleButton);
-            audioListenToggleButton->setGraphicsEffect(effect);
+            audioMuteCaptureToggleButton->setGraphicsEffect(effect);
             QPropertyAnimation *anim = new QPropertyAnimation(effect, "opacity");
             anim->setStartValue(1);
             anim->setKeyValueAt(0.5,0);
@@ -120,6 +125,8 @@ void AudioPopupChatDialog::addAudioData(const QString name, QByteArray* array)
         }
 
 //        soundManager->play(VOIP_SOUND_INCOMING_CALL);
+
+        audioMuteCaptureToggleButton->setToolTip(tr("Answer"));
 
         //TODO make a toaster and a sound for the incoming call
         return;

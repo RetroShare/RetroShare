@@ -5,6 +5,8 @@
 		<file>images/self_undeafened.svg</file>
 		<file>images/talking_on.svg</file>
 		<file>images/talking_off.svg</file>
+		<file>images/call-start-22.png</file>
+		<file>images/call-stop-22.png</file>
 	</qresource>
 </RCC>
 
