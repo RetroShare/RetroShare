@@ -1,4 +1,4 @@
-#include <QPushButton>
+#include <QToolButton>
 #include <QPropertyAnimation>
 #include <QIcon>
 #include "AudioPopupChatDialog.h"
@@ -11,7 +11,7 @@
 AudioPopupChatDialog::AudioPopupChatDialog(QWidget *parent)
 	: PopupChatDialog(parent)
 {
-	audioListenToggleButton = new QPushButton ;
+	audioListenToggleButton = new QToolButton ;
 	audioListenToggleButton->setMinimumSize(QSize(28,28)) ;
 	audioListenToggleButton->setMaximumSize(QSize(28,28)) ;
 	audioListenToggleButton->setText(QString()) ;
@@ -20,34 +20,34 @@ AudioPopupChatDialog::AudioPopupChatDialog(QWidget *parent)
 	std::cerr << "****** VOIPLugin: Creating new AudioPopupChatDialog !!" << std::endl;
 
 	QIcon icon ;
-        icon.addPixmap(QPixmap(":/images/deafened_self.svg")) ;
+	icon.addPixmap(QPixmap(":/images/deafened_self.svg")) ;
 	icon.addPixmap(QPixmap(":/images/self_undeafened.svg"),QIcon::Normal,QIcon::On) ;
 	icon.addPixmap(QPixmap(":/images/self_undeafened.svg"),QIcon::Disabled,QIcon::On) ;
 	icon.addPixmap(QPixmap(":/images/self_undeafened.svg"),QIcon::Active,QIcon::On) ;
-        icon.addPixmap(QPixmap(":/images/self_undeafened.svg"),QIcon::Selected,QIcon::On) ;
+	icon.addPixmap(QPixmap(":/images/self_undeafened.svg"),QIcon::Selected,QIcon::On) ;
 
 	audioListenToggleButton->setIcon(icon) ;
 	audioListenToggleButton->setIconSize(QSize(22,22)) ;
-	audioListenToggleButton->setFlat(true) ;
-        audioListenToggleButton->setCheckable(true);
+	audioListenToggleButton->setAutoRaise(true) ;
+	audioListenToggleButton->setCheckable(true);
 
-	audioMuteCaptureToggleButton = new QPushButton ;
+	audioMuteCaptureToggleButton = new QToolButton ;
 	audioMuteCaptureToggleButton->setMinimumSize(QSize(28,28)) ;
 	audioMuteCaptureToggleButton->setMaximumSize(QSize(28,28)) ;
 	audioMuteCaptureToggleButton->setText(QString()) ;
 	audioMuteCaptureToggleButton->setToolTip(tr("Start Call"));
 
 	QIcon icon2 ;
-        icon2.addPixmap(QPixmap(":/images/call-start-22.png")) ;
+	icon2.addPixmap(QPixmap(":/images/call-start-22.png")) ;
 	icon2.addPixmap(QPixmap(":/images/call-stop-22.png"),QIcon::Normal,QIcon::On) ;
 	icon2.addPixmap(QPixmap(":/images/call-stop-22.png"),QIcon::Disabled,QIcon::On) ;
 	icon2.addPixmap(QPixmap(":/images/call-stop-22.png"),QIcon::Active,QIcon::On) ;
-        icon2.addPixmap(QPixmap(":/images/call-stop-22.png"),QIcon::Selected,QIcon::On) ;
+	icon2.addPixmap(QPixmap(":/images/call-stop-22.png"),QIcon::Selected,QIcon::On) ;
 
 	audioMuteCaptureToggleButton->setIcon(icon2) ;
 	audioMuteCaptureToggleButton->setIconSize(QSize(22,22)) ;
-	audioMuteCaptureToggleButton->setFlat(true) ;
-        audioMuteCaptureToggleButton->setCheckable(true) ;
+	audioMuteCaptureToggleButton->setAutoRaise(true) ;
+	audioMuteCaptureToggleButton->setCheckable(true) ;
 
 	connect(audioListenToggleButton, SIGNAL(clicked()), this , SLOT(toggleAudioListen()));
 	connect(audioMuteCaptureToggleButton, SIGNAL(clicked()), this , SLOT(toggleAudioMuteCapture()));

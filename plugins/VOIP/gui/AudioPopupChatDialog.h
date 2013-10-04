@@ -4,7 +4,7 @@
 #include <gui/chat/PopupChatDialog.h>
 #include <gui/audiodevicehelper.h>
 
-class QPushButton;
+class QToolButton;
 
 #define VOIP_SOUND_INCOMING_CALL "VOIP_incoming_call"
 
@@ -37,7 +37,7 @@ class AudioPopupChatDialog: public PopupChatDialog
 
 		virtual void updateStatus(int status) ;
 
-		QPushButton *audioListenToggleButton ;
-		QPushButton *audioMuteCaptureToggleButton ;
+		QToolButton *audioListenToggleButton ;
+		QToolButton *audioMuteCaptureToggleButton ;
 };
 

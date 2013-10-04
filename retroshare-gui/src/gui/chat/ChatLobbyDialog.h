@@ -26,6 +26,8 @@
 #include "ui_ChatLobbyDialog.h"
 #include "ChatDialog.h"
 
+class QToolButton;
+
 class ChatLobbyDialog: public ChatDialog
 {
 	Q_OBJECT 
@@ -85,8 +87,8 @@ private:
 	QString _lobby_name ;
 	time_t lastUpdateListTime;
 
-	QPushButton *inviteFriendsButton ;
-	QPushButton *unsubscribeButton ;
+	QToolButton *inviteFriendsButton ;
+	QToolButton *unsubscribeButton ;
 
 	/** Qt Designer generated object */
 	Ui::ChatLobbyDialog ui;

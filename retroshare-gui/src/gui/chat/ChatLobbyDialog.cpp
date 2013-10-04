@@ -66,10 +66,11 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::WF
 
 	// Add a button to invite friends.
 	//
-	inviteFriendsButton = new QPushButton ;
+	inviteFriendsButton = new QToolButton ;
 	inviteFriendsButton->setMinimumSize(QSize(28,28)) ;
 	inviteFriendsButton->setMaximumSize(QSize(28,28)) ;
 	inviteFriendsButton->setText(QString()) ;
+	inviteFriendsButton->setAutoRaise(true) ;
 	inviteFriendsButton->setToolTip(tr("Invite friends to this lobby"));
 
 	{
@@ -83,10 +84,11 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::WF
 
 	getChatWidget()->addChatBarWidget(inviteFriendsButton) ;
 
-	unsubscribeButton = new QPushButton ;
+	unsubscribeButton = new QToolButton ;
 	unsubscribeButton->setMinimumSize(QSize(28,28)) ;
 	unsubscribeButton->setMaximumSize(QSize(28,28)) ;
 	unsubscribeButton->setText(QString()) ;
+	unsubscribeButton->setAutoRaise(true) ;
 	unsubscribeButton->setToolTip(tr("Leave this lobby (Unsubscribe)"));
 
 	{
