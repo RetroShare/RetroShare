@@ -97,6 +97,9 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
 	/* disable not used pages */
 	ui->foffRadioButton->hide();
 	ui->rsidRadioButton->hide();
+
+	connect(ui->acceptNoSignGPGCheckBox,SIGNAL(toggled(bool)), ui->optionsFrame,SLOT(setEnabled(bool))) ;
+	connect(ui->addKeyToKeyring_CB,SIGNAL(toggled(bool)), ui->acceptNoSignGPGCheckBox,SLOT(setChecked(bool))) ;
 }
 
 QString ConnectFriendWizard::getErrorString(uint32_t error_code)
@@ -250,6 +253,17 @@ void ConnectFriendWizard::initializePage(int id)
 			ui->_discovery_CB_2        ->setChecked(peerDetails.service_perm_flags & RS_SERVICE_PERM_DISCOVERY) ;
 			ui->_forums_channels_CB_2  ->setChecked(peerDetails.service_perm_flags & RS_SERVICE_PERM_DISTRIB) ;
 			ui->_direct_transfer_CB_2  ->setChecked(peerDetails.service_perm_flags & RS_SERVICE_PERM_DIRECT_DL) ;
+
+			RsPeerDetails tmp_det ;
+			bool already_in_keyring = rsPeers->getPeerDetails(peerDetails.gpg_id, tmp_det) ;
+
+			ui->addKeyToKeyring_CB->setChecked(true) ;
+			ui->addKeyToKeyring_CB->setEnabled(!already_in_keyring) ;
+
+			if(already_in_keyring)
+				ui->addKeyToKeyring_CB->setToolTip(tr("This key is already in your keyring")) ;
+			else
+				ui->addKeyToKeyring_CB->setToolTip(tr("Check this to add the key to your keyring\nThis might be useful for sending\ndistant messages to this peer\neven if you don't make friends.")) ;
 
 			//set the radio button to sign the GPG key
 			if (peerDetails.accept_connection && !peerDetails.ownsign) {
@@ -607,12 +621,14 @@ void ConnectFriendWizard::accept()
 {
 	bool sign = false;
 	bool accept_connection = false;
+	bool add_key_to_keyring = false;
 
 	if (hasVisitedPage(Page_Conclusion)) {
 		std::cerr << "ConnectFriendWizard::accept() called with page conclusion visited" << std::endl;
 
 		sign = ui->signGPGCheckBox->isChecked();
 		accept_connection = ui->acceptNoSignGPGCheckBox->isChecked();
+		add_key_to_keyring = ui->addKeyToKeyring_CB->isChecked() ;
 	} else if (hasVisitedPage(Page_FriendRequest)) {
 		std::cerr << "ConnectFriendWizard::accept() called with page friend request visited" << std::endl;
 
@@ -623,7 +639,7 @@ void ConnectFriendWizard::accept()
 		return;
 	}
 
-	if (!mCertificate.empty() && (accept_connection || sign))
+	if (!mCertificate.empty() && add_key_to_keyring)
 	{
 		std::string pgp_id,ssl_id,error_string ;
 
@@ -635,29 +651,26 @@ void ConnectFriendWizard::accept()
 	}
 
 	bool runProgressDialog = false;
-	if (!peerDetails.gpg_id.empty()) {
-		if (sign) {
+
+	if(accept_connection && !peerDetails.gpg_id.empty()) 
+	{
+		std::cerr << "ConclusionPage::validatePage() accepting GPG key for connection." << std::endl;
+		rsPeers->addFriend(peerDetails.id, peerDetails.gpg_id,serviceFlags()) ;
+		rsPeers->setServicePermissionFlags(peerDetails.gpg_id,serviceFlags()) ;
+
+		if(sign)
+		{
 			std::cerr << "ConclusionPage::validatePage() signing GPG key." << std::endl;
 			rsPeers->signGPGCertificate(peerDetails.gpg_id); //bye default sign set accept_connection to true;
 			rsPeers->setServicePermissionFlags(peerDetails.gpg_id,serviceFlags()) ;
-			runProgressDialog = true;
+		} 
 
-		} else if (accept_connection) {
-			std::cerr << "ConclusionPage::validatePage() accepting GPG key for connection." << std::endl;
-			rsPeers->addFriend("", peerDetails.gpg_id,serviceFlags()) ;
-			rsPeers->setServicePermissionFlags(peerDetails.gpg_id,serviceFlags()) ;
-			runProgressDialog = true;
-		}
-
-		if (!groupId.isEmpty()) {
+		if (!groupId.isEmpty()) 
 			rsPeers->assignPeerToGroup(groupId.toStdString(), peerDetails.gpg_id, true);
-		}
 	}
 
-	if (peerDetails.id != "") {
-		rsPeers->addFriend(peerDetails.id, peerDetails.gpg_id,serviceFlags()) ;
-		runProgressDialog = true;
-
+	if(accept_connection) 
+	{
 		//let's check if there is ip adresses in the wizard.
 		if (!peerDetails.extAddr.empty() && peerDetails.extPort) {
 			std::cerr << "ConnectFriendWizard::accept() : setting ip ext address." << std::endl;
@@ -675,6 +688,7 @@ void ConnectFriendWizard::accept()
 			std::cerr << "ConnectFriendWizard::accept() : setting peerLocation." << std::endl;
 			rsPeers->setLocation(peerDetails.id, peerDetails.location);
 		}
+		runProgressDialog = true;
 	}
 		
 	if (runProgressDialog)
