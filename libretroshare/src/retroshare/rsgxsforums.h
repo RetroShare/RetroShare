@@ -90,7 +90,7 @@ virtual bool createMsg(uint32_t &token, RsGxsForumMsg &msg) = 0;
  * @param group group to be updated, groupId element must be set or will be rejected
  * @return false groupId not set, true if set and accepted (still check token for completion)
  */
-virtual bool updateGroup(uint32_t &token, RsGxsGroupUpdateMeta&, RsGxsForumGroup &group);
+virtual bool updateGroup(uint32_t &token, RsGxsGroupUpdateMeta&, RsGxsForumGroup &group) = 0;
 
 };
 
