@@ -128,7 +128,6 @@ public:
 class GxsGroupStatistic
 {
 public:
-
 	/// number of message
 	RsGxsGroupId mGrpId;
 	uint32_t mNumMsgs;
@@ -145,6 +144,69 @@ public:
 	uint32_t mSizeOfGrps;
 	uint32_t mNumGrpsSubscribed;
 	uint32_t mSizeStore;
+};
+
+class UpdateItem
+{
+public:
+    virtual ~UpdateItem() { }
+};
+
+class StringUpdateItem : public UpdateItem
+{
+public:
+    StringUpdateItem(const std::string update) : mUpdate(update) {}
+    const std::string& getUpdate() const { return mUpdate; }
+
+private:
+    std::string mUpdate;
+};
+
+class RsGxsGroupUpdateMeta
+{
+public:
+
+    // expand as support is added for other utypes
+    enum UpdateType { DESCRIPTION, NAME };
+
+    RsGxsGroupUpdateMeta(const std::string& groupId);
+    ~RsGxsGroupUpdateMeta()
+    {
+        GxsMetaUpdate::iterator mit = mUpdates.begin();
+        for(; mit != mUpdates.end(); mit++)
+            delete mit->second;
+    }
+
+    typedef std::map<UpdateType, UpdateItem*> GxsMetaUpdate;
+
+    /*!
+     * Only one item of a utype can exist
+     * @param utype the type of meta update
+     * @param item update item containing the change value
+     */
+    void setMetaUpdate(UpdateType utype, UpdateItem* item)
+    {
+        GxsMetaUpdate::iterator mit;
+        if ((mit = mUpdates.find(utype)) != mUpdates.end())
+            mUpdates[utype] = item;
+        else
+            delete mUpdates[utype];
+    }
+
+    /*!
+     * @param utype update type to remove
+     * @return false if update did not exist, true if update successfully removed
+     */
+    bool removeUpdateType(UpdateType utype){ return mUpdates.erase(utype) == 1; }
+
+    const GxsMetaUpdate* getUpdate() { return &mUpdates; }
+
+    const std::string& getGroupId() { return mGroupId; }
+
+private:
+
+    GxsMetaUpdate mUpdates;
+    std::string mGroupId;
 };
 
 #endif /* RSGXSIFACETYPES_H_ */

@@ -74,6 +74,13 @@ virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgI
 virtual bool createGroup(uint32_t &token, RsGxsForumGroup &group);
 virtual bool createMsg(uint32_t &token, RsGxsForumMsg &msg);
 
+/*!
+ * To update forum group with new information
+ * @param token the token used to check completion status of update
+ * @param group group to be updated, groupId element must be set or will be rejected
+ * @return false groupId not set, true if set and accepted (still check token for completion)
+ */
+virtual bool updateGroup(uint32_t &token, RsGxsGroupUpdateMeta& meta, RsGxsForumGroup &group);
 
 
 	private:

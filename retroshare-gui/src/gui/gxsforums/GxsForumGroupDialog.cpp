@@ -52,6 +52,13 @@ const uint32_t ForumCreateDefaultsFlags = ( GXS_GROUP_DEFAULTS_DISTRIB_PUBLIC   
 			GXS_GROUP_DEFAULTS_COMMENTS_NO          |
 			0);
 
+
+const uint32_t ForumEditEnabledFlags = ( GXS_GROUP_FLAGS_ICON        |
+                        GXS_GROUP_FLAGS_DESCRIPTION   |
+                        0);
+
+const uint32_t ForumEditDefaultsFlags = 0;
+
 GxsForumGroupDialog::GxsForumGroupDialog(TokenQueue *tokenQueue, QWidget *parent)
 	:GxsGroupDialog(tokenQueue, ForumCreateEnabledFlags, ForumCreateDefaultsFlags, parent)
 {

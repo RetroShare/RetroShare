@@ -202,6 +202,7 @@ private:
 	void setupVisibility();
 	void clearForm();
 	void createGroup();
+        void editGroup();
 	void sendShareList(std::string forumId);
 	void loadNewGroupId(const uint32_t &token);
 

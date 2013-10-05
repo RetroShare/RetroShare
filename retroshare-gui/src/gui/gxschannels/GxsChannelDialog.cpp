@@ -23,6 +23,7 @@
 #include <QMessageBox>
 
 #include <iostream>
+#include <algorithm>
 
 #include "GxsChannelDialog.h"
 #include "gui/feeds/GxsChannelPostItem.h"

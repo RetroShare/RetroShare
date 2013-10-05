@@ -1366,6 +1366,7 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
 	}
 
 	std::map<std::string, RsGxsGrpMetaData*> grpMetaMap;
+	std::map<std::string, RsGxsGrpMetaData*>::const_iterator metaIter;
 	mDataStore->retrieveGxsGrpMetaData(grpMetaMap);
 
 	// now do compare and add loop
@@ -1380,8 +1381,14 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
 	{
 		RsNxsSyncGrpItem*& grpSyncItem = *llit;
 		const std::string& grpId = grpSyncItem->grpId;
+		metaIter = grpMetaMap.find(grpId);
+		bool haveItem = metaIter != grpMetaMap.end();
+		bool latestItem = false;
 
-		if(grpMetaMap.find(grpId) == grpMetaMap.end()){
+		if(!haveItem)
+			latestItem = grpSyncItem->publishTs > metaIter->second->mPublishTs;
+
+		if(haveItem && latestItem){
 
 			// determine if you need to check reputation
 			bool checkRep = !grpSyncItem->authorId.empty();

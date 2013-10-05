@@ -1370,11 +1370,11 @@ void RsGenExchange::publishGroup(uint32_t& token, RsGxsGrpItem *grpItem)
 }
 
 
-void RsGenExchange::updateGroup(uint32_t& token, RsGxsGrpItem* grpItem)
+void RsGenExchange::updateGroup(uint32_t& token, RsGxsGroupUpdateMeta& updateMeta, RsGxsGrpItem* grpItem)
 {
 	RsStackMutex stack(mGenMtx);
 	token = mDataAccess->generatePublicToken();
-	mGroupUpdatePublish.push_back(GroupUpdatePublish(grpItem, token));
+        mGroupUpdatePublish.push_back(GroupUpdatePublish(grpItem, updateMeta, token));
 
 #ifdef GEN_EXCH_DEBUG
     std::cerr << "RsGenExchange::updateGroup() token: " << token;
@@ -1828,7 +1828,9 @@ void RsGenExchange::processGroupUpdatePublish()
 		const RsGxsGroupId& groupId = gup.grpItem->meta.mGroupId;
 		RsGxsGrpMetaData* meta = grpMeta[groupId];
 
-		GxsGrpPendingSign ggps(ggps.mItem, ggps.mToken);
+                gup.grpItem->meta = *meta;
+                assignMetaUpdates(gup.grpItem->meta, gup.mUpdateMeta);
+                GxsGrpPendingSign ggps(gup.grpItem, ggps.mToken);
 
 		bool split = splitKeys(meta->keys, ggps.mPrivateKeys, ggps.mPublicKeys);
 
@@ -1847,6 +1849,27 @@ void RsGenExchange::processGroupUpdatePublish()
 	}
 
 	mGroupUpdatePublish.clear();
+}
+
+void RsGenExchange::assignMetaUpdates(RsGroupMetaData& meta, const RsGxsGroupUpdateMeta metaUpdate) const
+{
+    const RsGxsGroupUpdateMeta::GxsMetaUpdate* updates;
+    RsGxsGroupUpdateMeta::GxsMetaUpdate::const_iterator mit = updates->begin();
+    for(; mit != updates->end(); mit++)
+    {
+        const UpdateItem* item = mit->second;
+        RsGxsGroupUpdateMeta::UpdateType utype = mit->first;
+
+        if(utype == RsGxsGroupUpdateMeta::NAME)
+        {
+            const StringUpdateItem* sitem = NULL;
+
+            if((sitem = dynamic_cast<const StringUpdateItem*>(item)) != NULL)
+            {
+                meta.mGroupName = sitem->getUpdate();
+            }
+        }
+    }
 }
 
 bool RsGenExchange::splitKeys(const RsTlvSecurityKeySet& keySet, RsTlvSecurityKeySet& privateKeySet, RsTlvSecurityKeySet& publicKeySet)

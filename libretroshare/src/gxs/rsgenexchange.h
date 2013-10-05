@@ -527,12 +527,12 @@ protected:
 
     /*!
      * Updates an existing group item \n
-	 * This will induce a related change message \n
-	 * Ownership of item passes to this rsgenexchange \n
-	 * @param token
-	 * @param grpItem
-	 */
-	void updateGroup(uint32_t& token, RsGxsGrpItem* grpItem);
+     * This will induce a related change message \n
+     * Ownership of item passes to this rsgenexchange \n
+     * @param token
+     * @param grpItem
+     */
+    void updateGroup(uint32_t& token, RsGxsGroupUpdateMeta& updateMeta, RsGxsGrpItem* grpItem);
 
 public:
     /*!
@@ -762,7 +762,20 @@ private:
      */
     bool updateValid(RsGxsGrpMetaData& oldGrp, RsNxsGrp& newGrp) const;
 
-    bool splitKeys(const RsTlvSecurityKeySet& keySet, RsTlvSecurityKeySet& privateKeySet, RsTlvSecurityKeySet& publicKeySet);
+    /*!
+     * convenience function for splitting key sets into private and public
+     * @param keySet The keys set to split into a private and public set
+     * @param privateKeySet contains the publish and admin private keys
+     * @param publicKeySet contains the publish and admin public keys
+     * @return false, if 2 private and public keys are not found in keySet
+     */
+    bool splitKeys(const RsTlvSecurityKeySet& keySet, RsTlvSecurityKeySet& privateKeySet,
+                   RsTlvSecurityKeySet& publicKeySet);
+
+    /*!
+     * Convenience function for assigning the meta update items to the actual group meta
+     */
+    void assignMetaUpdates(RsGroupMetaData& meta, const RsGxsGroupUpdateMeta metaUpdate) const;
 
 private:
 
