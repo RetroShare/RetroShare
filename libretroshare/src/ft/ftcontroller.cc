@@ -1017,7 +1017,7 @@ bool	ftController::handleAPendingRequest()
 	std::cerr << "Requesting pending hash " << req.mHash << std::endl ;
 #endif
 
-	FileRequest(req.mName, req.mHash, req.mSize, req.mDest, TransferRequestFlags(req.mFlags), req.mSrcIds);
+	FileRequest(req.mName, req.mHash, req.mSize, req.mDest, TransferRequestFlags(req.mFlags), req.mSrcIds, req.mState);
 
 	{ 
 		// See whether there is a pendign chunk map recorded for this hash.
@@ -1045,6 +1045,7 @@ bool	ftController::handleAPendingRequest()
 #endif
 				(fit->second)->mCreator->setAvailabilityMap(rsft->compressed_chunk_map) ;
 				(fit->second)->mCreator->setChunkStrategy((FileChunksInfo::ChunkStrategy)(rsft->chunk_strategy)) ;
+				(fit->second)->mState=rsft->state;
 			}
 
 			delete rsft ;
@@ -1074,7 +1075,7 @@ bool ftController::alreadyHaveFile(const std::string& hash, FileInfo &info)
 
 bool 	ftController::FileRequest(const std::string& fname, const std::string& hash,
 			uint64_t size, const std::string& dest, TransferRequestFlags flags,
-			const std::list<std::string> &_srcIds)
+																const std::list<std::string> &_srcIds, uint16_t state)
 {
 	std::list<std::string> srcIds(_srcIds) ;
 
@@ -1129,7 +1130,7 @@ bool 	ftController::FileRequest(const std::string& fname, const std::string& has
 		if (!mFtActive)
 		{
 			/* store in pending queue */
-			ftPendingRequest req(fname, hash, size, dest, flags, srcIds);
+			ftPendingRequest req(fname, hash, size, dest, flags, srcIds,state);
 			mPendingRequests.push_back(req);
 			return true;
 		}
@@ -1488,6 +1489,8 @@ bool 	ftController::FileControl(const std::string& hash, uint32_t flags)
 		default:
 			return false;
 	}
+	IndicateConfigChanged() ;
+
 	return true;
 }
 
@@ -2109,6 +2112,7 @@ bool ftController::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 				rft->file.filesize = pit->mSize;
 				RsDirUtil::removeTopDir(pit->mDest, rft->file.path); /* remove fname */
 				rft->flags = pit->mFlags.toUInt32();
+				rft->state = pit->mState;
 				rft->allPeerIds.ids = pit->mSrcIds;
 			}
 
@@ -2178,7 +2182,7 @@ bool ftController::loadList(std::list<RsItem *>& load)
 #ifdef CONTROL_DEBUG
 			std::cerr << "ftController::loadList(): requesting " << rsft->file.name << ", " << rsft->file.hash << ", " << rsft->file.filesize << std::endl ;
 #endif
-			FileRequest(rsft->file.name, rsft->file.hash, rsft->file.filesize, rsft->file.path, TransferRequestFlags(rsft->flags), rsft->allPeerIds.ids);
+			FileRequest(rsft->file.name, rsft->file.hash, rsft->file.filesize, rsft->file.path, TransferRequestFlags(rsft->flags), rsft->allPeerIds.ids, rsft->state);
 
 			{
 				RsStackMutex mtx(ctrlMutex) ;

@@ -96,11 +96,11 @@ class ftPendingRequest
         public:
         ftPendingRequest(const std::string& fname, const std::string& hash,
                         uint64_t size, const std::string& dest, TransferRequestFlags flags,
-                        const std::list<std::string> &srcIds)
+									 const std::list<std::string> &srcIds, uint16_t state)
         : mName(fname), mHash(hash), mSize(size),
-        mDest(dest), mFlags(flags),mSrcIds(srcIds) { return; }
+			mDest(dest), mFlags(flags), mSrcIds(srcIds), mState(state) { return; }
 
-        ftPendingRequest() : mSize(0), mFlags(0) { return; }
+	ftPendingRequest() : mSize(0), mFlags(0), mState(0) { return; }
 
         std::string mName;
         std::string mHash;
@@ -108,6 +108,7 @@ class ftPendingRequest
         std::string mDest;
         TransferRequestFlags mFlags;
         std::list<std::string> mSrcIds;
+	uint16_t mState;
 };
 
 
@@ -132,7 +133,7 @@ class ftController: public CacheTransfer, public RsThread, public pqiMonitor, pu
 
 		bool 	FileRequest(const std::string& fname, const std::string& hash,
 				uint64_t size, const std::string& dest, TransferRequestFlags flags,
-				const std::list<std::string> &sourceIds);
+										const std::list<std::string> &sourceIds, uint16_t state = ftFileControl::DOWNLOADING);
 
 		/// Do we already have this file, either in download or in file lists ?
 		bool  alreadyHaveFile(const std::string& hash, FileInfo &info);
@@ -192,7 +193,7 @@ class ftController: public CacheTransfer, public RsThread, public pqiMonitor, pu
 
 	protected:
 
-		virtual bool RequestCacheFile(RsPeerId id, std::string path, std::string hash, uint64_t size);
+	virtual bool RequestCacheFile(RsPeerId id, std::string path, std::string hash, uint64_t size);
 		virtual bool CancelCacheFile(RsPeerId id, std::string path, std::string hash, uint64_t size);
 
 		void cleanCacheDownloads() ;
