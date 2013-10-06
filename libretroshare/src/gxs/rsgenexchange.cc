@@ -118,6 +118,8 @@ void RsGenExchange::tick()
 
 	publishMsgs();
 
+        processGroupUpdatePublish();
+
 	processRecvdData();
 
 	if(!mNotifications.empty())
@@ -275,6 +277,54 @@ void RsGenExchange::generateGroupKeys(RsTlvSecurityKeySet& privatekeySet,
 
         RSA_free(rsa_publish);
         RSA_free(rsa_publish_pub);
+    }
+}
+
+void RsGenExchange::generatePublicFromPrivateKeys(const RsTlvSecurityKeySet &privatekeySet,
+                                                  RsTlvSecurityKeySet &publickeySet)
+{
+
+    // actually just copy settings of one key except mark its key flags public
+
+    typedef std::map<std::string, RsTlvSecurityKey> keyMap;
+    const keyMap& allKeys = privatekeySet.keys;
+    keyMap::const_iterator cit = allKeys.begin();
+    bool adminFound = false, publishFound = false;
+    for(; cit != allKeys.end(); cit++)
+    {
+        const RsTlvSecurityKey& privKey = cit->second;
+        if(privKey.keyFlags & RSTLV_KEY_TYPE_FULL)
+        {
+            RsTlvSecurityKey pubKey;
+
+            pubKey = privKey;
+
+            RSA *rsaPrivKey = NULL, *rsaPubKey = NULL;
+
+            rsaPrivKey = GxsSecurity::extractPrivateKey(privKey);
+
+            if(rsaPrivKey)
+                rsaPubKey = RSAPublicKey_dup(rsaPrivKey);
+
+            if(rsaPrivKey && rsaPubKey)
+            {
+                GxsSecurity::setRSAPublicKey(pubKey, rsaPubKey);
+
+                if(pubKey.keyFlags & RSTLV_KEY_DISTRIB_ADMIN)
+                    pubKey.keyFlags = RSTLV_KEY_DISTRIB_ADMIN | RSTLV_KEY_TYPE_PUBLIC_ONLY;
+
+                if(pubKey.keyFlags & RSTLV_KEY_DISTRIB_PRIVATE)
+                    pubKey.keyFlags = RSTLV_KEY_DISTRIB_PRIVATE | RSTLV_KEY_TYPE_PUBLIC_ONLY;
+
+                publickeySet.keys.insert(std::make_pair(pubKey.keyId, pubKey));
+            }
+
+            if(rsaPrivKey)
+                RSA_free(rsaPrivKey);
+
+            if(rsaPubKey)
+                RSA_free(rsaPubKey);
+        }
     }
 }
 
@@ -1818,6 +1868,9 @@ void RsGenExchange::processGroupUpdatePublish()
 		grpMeta.insert(std::make_pair(groupId, (RsGxsGrpMetaData*)(NULL)));
 	}
 
+        if(grpMeta.empty())
+            return;
+
 	mDataStore->retrieveGxsGrpMetaData(grpMeta);
 
 	// now
@@ -1832,20 +1885,23 @@ void RsGenExchange::processGroupUpdatePublish()
                 assignMetaUpdates(gup.grpItem->meta, gup.mUpdateMeta);
                 GxsGrpPendingSign ggps(gup.grpItem, ggps.mToken);
 
-		bool split = splitKeys(meta->keys, ggps.mPrivateKeys, ggps.mPublicKeys);
+                bool publishAndAdminPrivatePresent = checkKeys(meta->keys);
 
-		if(split)
+                if(publishAndAdminPrivatePresent)
 		{
-			ggps.mHaveKeys = true;
-			ggps.mStartTS = time(NULL);
-			ggps.mLastAttemptTS = 0;
-			mGrpsToPublish.push_back(ggps);
+                    ggps.mPrivateKeys = meta->keys;
+                    generatePublicFromPrivateKeys(ggps.mPrivateKeys, ggps.mPublicKeys);
+                    ggps.mHaveKeys = true;
+                    ggps.mStartTS = time(NULL);
+                    ggps.mLastAttemptTS = 0;
+                    ggps.mIsUpdate = true;
+                    mGrpsToPublish.push_back(ggps);
 		}else
 		{
-			delete gup.grpItem;
-			mDataAccess->updatePublicRequestStatus(gup.mToken, RsTokenService::GXS_REQUEST_V2_STATUS_FAILED);
+                    delete gup.grpItem;
+                    mDataAccess->updatePublicRequestStatus(gup.mToken, RsTokenService::GXS_REQUEST_V2_STATUS_FAILED);
 		}
-
+                delete meta;
 	}
 
 	mGroupUpdatePublish.clear();
@@ -1853,43 +1909,39 @@ void RsGenExchange::processGroupUpdatePublish()
 
 void RsGenExchange::assignMetaUpdates(RsGroupMetaData& meta, const RsGxsGroupUpdateMeta metaUpdate) const
 {
-    const RsGxsGroupUpdateMeta::GxsMetaUpdate* updates;
+    const RsGxsGroupUpdateMeta::GxsMetaUpdate* updates = metaUpdate.getUpdates();
     RsGxsGroupUpdateMeta::GxsMetaUpdate::const_iterator mit = updates->begin();
     for(; mit != updates->end(); mit++)
     {
-        const UpdateItem* item = mit->second;
-        RsGxsGroupUpdateMeta::UpdateType utype = mit->first;
 
-        if(utype == RsGxsGroupUpdateMeta::NAME)
-        {
-            const StringUpdateItem* sitem = NULL;
-
-            if((sitem = dynamic_cast<const StringUpdateItem*>(item)) != NULL)
-            {
-                meta.mGroupName = sitem->getUpdate();
-            }
-        }
+        if(mit->first == RsGxsGroupUpdateMeta::NAME)
+                meta.mGroupName = mit->second;
     }
 }
 
-bool RsGenExchange::splitKeys(const RsTlvSecurityKeySet& keySet, RsTlvSecurityKeySet& privateKeySet, RsTlvSecurityKeySet& publicKeySet)
+bool RsGenExchange::checkKeys(const RsTlvSecurityKeySet& keySet)
 {
 
 	typedef std::map<std::string, RsTlvSecurityKey> keyMap;
 	const keyMap& allKeys = keySet.keys;
 	keyMap::const_iterator cit = allKeys.begin();
-
+        bool adminFound = false, publishFound = false;
 	for(; cit != allKeys.end(); cit++)
 	{
-		const RsTlvSecurityKey& key = cit->second;
-		if(key.keyFlags & RSTLV_KEY_TYPE_PUBLIC_ONLY)
-			publicKeySet.keys.insert(std::make_pair(key.keyId, key));
-		else if(key.keyFlags & RSTLV_KEY_TYPE_FULL)
-			privateKeySet.keys.insert(std::make_pair(key.keyId, key));
+                const RsTlvSecurityKey& key = cit->second;
+                if(key.keyFlags & RSTLV_KEY_TYPE_FULL)
+                {
+                    if(key.keyFlags & RSTLV_KEY_DISTRIB_ADMIN)
+                        adminFound = true;
+
+                    if(key.keyFlags & RSTLV_KEY_DISTRIB_PRIVATE)
+                        publishFound = true;
+
+                }
 	}
 
 	// user must have both private and public parts of publish and admin keys
-	return (privateKeySet.keys.size() == 2) && (publicKeySet.keys.size() == 2);
+        return adminFound && publishFound;
 }
 
 void RsGenExchange::publishGrps()
@@ -1961,10 +2013,6 @@ void RsGenExchange::publishGrps()
         {
 		    // get group id from private admin key id
 			grpItem->meta.mGroupId = grp->grpId = privAdminKey.keyId;
-
-			// what!? this will remove the private keys!
-			privatekeySet.keys.insert(publicKeySet.keys.begin(),
-					publicKeySet.keys.end());
 
 			ServiceCreate_Return ret = service_CreateGroup(grpItem, privatekeySet);
 

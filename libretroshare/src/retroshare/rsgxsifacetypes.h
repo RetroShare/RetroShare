@@ -169,28 +169,18 @@ public:
     // expand as support is added for other utypes
     enum UpdateType { DESCRIPTION, NAME };
 
-    RsGxsGroupUpdateMeta(const std::string& groupId);
-    ~RsGxsGroupUpdateMeta()
-    {
-        GxsMetaUpdate::iterator mit = mUpdates.begin();
-        for(; mit != mUpdates.end(); mit++)
-            delete mit->second;
-    }
+    RsGxsGroupUpdateMeta(const std::string& groupId) : mGroupId(groupId) {}
 
-    typedef std::map<UpdateType, UpdateItem*> GxsMetaUpdate;
+    typedef std::map<UpdateType, std::string> GxsMetaUpdate;
 
     /*!
      * Only one item of a utype can exist
      * @param utype the type of meta update
      * @param item update item containing the change value
      */
-    void setMetaUpdate(UpdateType utype, UpdateItem* item)
+    void setMetaUpdate(UpdateType utype, const std::string& update)
     {
-        GxsMetaUpdate::iterator mit;
-        if ((mit = mUpdates.find(utype)) != mUpdates.end())
-            mUpdates[utype] = item;
-        else
-            delete mUpdates[utype];
+        mUpdates[utype] = update;
     }
 
     /*!
@@ -199,9 +189,8 @@ public:
      */
     bool removeUpdateType(UpdateType utype){ return mUpdates.erase(utype) == 1; }
 
-    const GxsMetaUpdate* getUpdate() { return &mUpdates; }
-
-    const std::string& getGroupId() { return mGroupId; }
+    const GxsMetaUpdate* getUpdates() const { return &mUpdates; }
+    const std::string& getGroupId() const { return mGroupId; }
 
 private:
 

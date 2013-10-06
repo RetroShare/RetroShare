@@ -712,10 +712,19 @@ private:
     /*!
      * Generate a set of keys that can define a GXS group
      * @param privatekeySet contains private generated keys
-     * @param privatekeySet contains public generated keys (counterpart of private)
+     * @param publickeySet contains public generated keys (counterpart of private)
      * @param genPublicKeys should publish key pair also be generated
      */
     void generateGroupKeys(RsTlvSecurityKeySet& privatekeySet, RsTlvSecurityKeySet& publickeySet, bool genPublishKeys);
+
+    /*!
+     * Generate public set of keys from their private counterparts
+     * No keys will be generated if one fails
+     * @param privatekeySet contains private generated keys
+     * @param publickeySet contains public generated keys (counterpart of private)
+     * @return false if key gen failed for a key set
+     */
+    void generatePublicFromPrivateKeys(const RsTlvSecurityKeySet& privatekeySet, RsTlvSecurityKeySet& publickeySet);
 
     /*!
      * Attempts to validate msg signatures
@@ -763,14 +772,11 @@ private:
     bool updateValid(RsGxsGrpMetaData& oldGrp, RsNxsGrp& newGrp) const;
 
     /*!
-     * convenience function for splitting key sets into private and public
+     * convenience function for checking private publish and admin keys are present
      * @param keySet The keys set to split into a private and public set
-     * @param privateKeySet contains the publish and admin private keys
-     * @param publicKeySet contains the publish and admin public keys
-     * @return false, if 2 private and public keys are not found in keySet
+     * @return false, if private admin and publish keys cannot be found, true otherwise
      */
-    bool splitKeys(const RsTlvSecurityKeySet& keySet, RsTlvSecurityKeySet& privateKeySet,
-                   RsTlvSecurityKeySet& publicKeySet);
+    bool checkKeys(const RsTlvSecurityKeySet& keySet);
 
     /*!
      * Convenience function for assigning the meta update items to the actual group meta

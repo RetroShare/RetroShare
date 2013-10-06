@@ -38,7 +38,7 @@ GxsSecurity::~GxsSecurity()
 {
 }
 
-RSA *GxsSecurity::extractPublicKey(RsTlvSecurityKey& key)
+RSA *GxsSecurity::extractPublicKey(const RsTlvSecurityKey& key)
 {
         const unsigned char *keyptr = (const unsigned char *) key.keyData.bin_data;
         long keylen = key.keyData.bin_len;
@@ -489,7 +489,7 @@ void GxsSecurity::setRSAPrivateKey(RsTlvSecurityKey & key, RSA *rsa_priv)
         key.keyId = keyId;
 }
 
-RSA *GxsSecurity::extractPrivateKey(RsTlvSecurityKey & key)
+RSA *GxsSecurity::extractPrivateKey(const RsTlvSecurityKey & key)
 {
         const unsigned char *keyptr = (const unsigned char *) key.keyData.bin_data;
         long keylen = key.keyData.bin_len;

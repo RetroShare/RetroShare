@@ -95,8 +95,17 @@ bool GxsForumGroupDialog::service_CreateGroup(uint32_t &token, const RsGroupMeta
 	// Specific Function.
 	RsGxsForumGroup grp;
 	grp.mMeta = meta;
-	//grp.mDescription = std::string(desc.toUtf8());
+        grp.mDescription = std::string(ui.groupDesc->toPlainText().toUtf8());
 
 	rsGxsForums->createGroup(token, grp);
 	return true;
+}
+
+bool GxsForumGroupDialog::service_EditGroup(uint32_t &token, RsGxsGroupUpdateMeta &updateMeta)
+{
+    RsGxsForumGroup grp;
+    grp.mDescription = std::string(ui.groupDesc->toPlainText().toUtf8());
+
+    rsGxsForums->updateGroup(token, updateMeta, grp);
+    return true;
 }

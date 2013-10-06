@@ -343,15 +343,10 @@ void GxsGroupDialog::editGroup()
     }
 
     uint32_t token;
-    RsGroupMetaData meta;
+    RsGxsGroupUpdateMeta updateMeta(mGrpMeta.mGroupId);
+    updateMeta.setMetaUpdate(RsGxsGroupUpdateMeta::NAME, std::string(name.toUtf8()));
 
-    // Fill in the MetaData as best we can.
-    meta.mGroupName = std::string(name.toUtf8());
-
-    meta.mGroupFlags = flags;
-    meta.mSignFlags = getGroupSignFlags();
-
-    if (service_CreateGroup(token, meta))
+    if (service_EditGroup(token, updateMeta))
     {
             // get the Queue to handle response.
             if(mTokenQueue != NULL)

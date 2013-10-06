@@ -219,12 +219,13 @@ bool p3GxsForums::updateGroup(uint32_t &token, RsGxsGroupUpdateMeta& meta, RsGxs
 {
 	std::cerr << "p3GxsForums::createGroup()" << std::endl;
 
-	if(group.mMeta.mGroupId.empty())
+        if(meta.getGroupId().empty())
 		return false;
 
 	RsGxsForumGroupItem* grpItem = new RsGxsForumGroupItem();
 	grpItem->mGroup = group;
-	grpItem->meta = group.mMeta;
+        grpItem->meta = group.mMeta;
+        grpItem->meta.mGroupId = meta.getGroupId();
 
         RsGenExchange::updateGroup(token, meta, grpItem);
 	return true;
