@@ -408,6 +408,7 @@ HEADERS +=	turtle/p3turtle.h \
 
 HEADERS +=	util/folderiterator.h \
 			util/rsdebug.h \
+			util/rscompress.h \
 			util/smallobject.h \
 			util/rsdir.h \
 			util/rsdiscspace.h \
@@ -542,6 +543,7 @@ SOURCES +=	turtle/p3turtle.cc \
 
 SOURCES +=	util/folderiterator.cc \
 			util/rsdebug.cc \
+			util/rscompress.cc \
 			util/smallobject.cc \
 			util/rsdir.cc \
 			util/rsdiscspace.cc \

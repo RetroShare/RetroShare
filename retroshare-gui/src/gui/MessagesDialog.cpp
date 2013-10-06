@@ -1138,7 +1138,7 @@ void MessagesDialog::insertMessages()
 				if(it->msgflags & RS_MSG_ENCRYPTED)
 					text = tr("Encrypted message. Right-click to decrypt it.") ;
 				else
-					text = QString::fromStdString(it->title);
+					text = QString::fromUtf8(it->title.c_str());
 
             item[COLUMN_SUBJECT]->setText(text);
             item[COLUMN_SUBJECT]->setData(text + dateString, ROLE_SORT);
@@ -1206,7 +1206,7 @@ void MessagesDialog::insertMessages()
                 if (gotInfo || rsMsgs->getMessage(it->msgId, msgInfo)) {
                     gotInfo = true;
                     QTextDocument doc;
-                    doc.setHtml(QString::fromStdString(msgInfo.msg));
+                    doc.setHtml(QString::fromUtf8(msgInfo.msg.c_str()));
                     item[COLUMN_CONTENT]->setText(doc.toPlainText().replace(QString("\n"), QString(" ")));
                 } else {
                     std::cerr << "MessagesDialog::insertMsgTxtAndFiles() Couldn't find Msg" << std::endl;

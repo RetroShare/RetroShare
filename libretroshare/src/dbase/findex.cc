@@ -26,6 +26,7 @@
 #include "retroshare/rsexpr.h"
 #include "util/rsdir.h"
 #include "util/rsstring.h"
+#include "util/rscompress.h"
 
 #include <assert.h>
 #include <stdlib.h>
@@ -746,9 +747,10 @@ int     FileIndex::printFileIndex(std::string &out)
 	return 1;
 }
 
-int FileIndex::loadIndex(const std::string& filename, const std::string& expectedHash, uint64_t /*size*/)
+int FileIndex::loadIndex(const std::string& filename, const std::string& expectedHash, uint64_t size)
 {
-	std::ifstream file (filename.c_str(), std::ifstream::binary);
+	FILE *file = RsDirUtil::rs_fopen(filename.c_str(),"rb") ;
+
 	if (!file)
 	{
 #ifdef FI_DEBUG
@@ -759,28 +761,36 @@ int FileIndex::loadIndex(const std::string& filename, const std::string& expecte
 	}
 
 	/* load file into memory, close file */
-	char ibuf[512];
-	std::string s;
-	while(!file.eof())
-	{
-		file.read(ibuf, 512);
-		s.append(ibuf, file.gcount());
-	}
-	file.close();
+	uint8_t *compressed_data = new uint8_t[size] ;
 
-	/* calculate hash */
-	unsigned char sha_buf[SHA_DIGEST_LENGTH];
-	SHA_CTX *sha_ctx = new SHA_CTX;
-	SHA1_Init(sha_ctx);
-	SHA1_Update(sha_ctx, s.c_str(), s.length());
-	SHA1_Final(&sha_buf[0], sha_ctx);
-	delete sha_ctx;
-
-	std::string tmpout;
-	for(int i = 0; i < SHA_DIGEST_LENGTH; i++)
+	if(compressed_data == NULL)
 	{
-		rs_sprintf_append(tmpout, "%02x", (unsigned int) (sha_buf[i]));
+		std::cerr << "FileIndex::loadIndex(): can't allocate memory for " << size << " bytes." << std::endl;
+		return 0 ;
 	}
+	int bytesread = 0 ;
+	if(size != (bytesread = fread(compressed_data,1,size,file)))
+	{
+		std::cerr << "FileIndex::loadIndex(): can't read " << size << " bytes from file " << filename << ". Only " << bytesread << " actually read." << std::endl;
+		return 0 ;
+	}
+	fclose(file) ;
+
+	std::string tmpout = RsDirUtil::sha1sum((unsigned char *)(compressed_data),size).toStdString() ;
+
+//	/* calculate hash */
+//	unsigned char sha_buf[SHA_DIGEST_LENGTH];
+//	SHA_CTX *sha_ctx = new SHA_CTX;
+//	SHA1_Init(sha_ctx);
+//	SHA1_Update(sha_ctx, s.c_str(), s.length());
+//	SHA1_Final(&sha_buf[0], sha_ctx);
+//	delete sha_ctx;
+//
+//	std::string tmpout;
+//	for(int i = 0; i < SHA_DIGEST_LENGTH; i++)
+//	{
+//		rs_sprintf_append(tmpout, "%02x", (unsigned int) (sha_buf[i]));
+//	}
 
 	if (expectedHash != "" && expectedHash != tmpout)
 	{
@@ -791,6 +801,21 @@ int FileIndex::loadIndex(const std::string& filename, const std::string& expecte
 #endif
 		return 0;
 	}
+	// now uncompress the string
+	//
+	
+	uint8_t *uncompressed_data = NULL ;
+	unsigned int uncompressed_data_size = 0 ;
+
+	if(!RsCompress::uncompress_memory_chunk(compressed_data,size,uncompressed_data,uncompressed_data_size))
+	{
+		std::cerr << "FileIndex::loadIndex() Decompression failed! Fileindex can't be read." << std::endl;
+		return 0 ;
+	}
+	std::string s((char *)uncompressed_data,uncompressed_data_size) ;
+
+	delete[] compressed_data ;
+	free(uncompressed_data) ;
 
 #define FIND_NEXT(s,start,end,c) end = s.find(c, start); if (end == std::string::npos) end = s.length();
 
@@ -966,7 +991,6 @@ int FileIndex::saveIndex(const std::string& filename, std::string &fileHash, uin
 	std::string s;
 
 	size = 0 ;
-	fileHash = "" ;
 
 	/* print version and header */
 	s += "# FileIndex version 0.1\n";
@@ -1003,17 +1027,36 @@ int FileIndex::saveIndex(const std::string& filename, std::string &fileHash, uin
 	/* signal to pop directory from stack in loadIndex() */
 	s += "-\n";
 
-	/* calculate sha1 hash */
-	SHA_CTX *sha_ctx = new SHA_CTX;
-	SHA1_Init(sha_ctx);
-	SHA1_Update(sha_ctx, s.c_str(), s.length());
-	SHA1_Final(&sha_buf[0], sha_ctx);
-	delete sha_ctx;
+	// now compress the data.
+	
+	std::cerr << "FileIndex::saveIndex(): compressign data." << std::endl;
 
-	for(int i = 0; i < SHA_DIGEST_LENGTH; i++)
+	uint8_t *compressed_data = NULL ;
+	uint32_t compressed_data_size = 0 ;
+
+	if(!RsCompress::compress_memory_chunk((unsigned char *)s.c_str(),s.length(),compressed_data,compressed_data_size))
 	{
-		rs_sprintf_append(fileHash, "%02x", (unsigned int) (sha_buf[i]));
+		std::cerr << "(EE) ERROR in file list compression ! file list can't be saved" << std::endl;
+		return false ;
 	}
+
+	fileHash = RsDirUtil::sha1sum((unsigned char *)compressed_data,compressed_data_size).toStdString() ;
+
+	std::cerr << "   old size = " << s.length() << std::endl;
+	std::cerr << "   new size = " << compressed_data_size << std::endl;
+	std::cerr << "   hash     = " << fileHash << std::endl;
+
+//	/* calculate sha1 hash */
+//	SHA_CTX *sha_ctx = new SHA_CTX;
+//	SHA1_Init(sha_ctx);
+//	SHA1_Update(sha_ctx, s.c_str(), s.length());
+//	SHA1_Final(&sha_buf[0], sha_ctx);
+//	delete sha_ctx;
+//
+//	for(int i = 0; i < SHA_DIGEST_LENGTH; i++)
+//	{
+//		rs_sprintf_append(fileHash, "%02x", (unsigned int) (sha_buf[i]));
+//	}
 
 	/* finally, save to file */
 
@@ -1023,9 +1066,16 @@ int FileIndex::saveIndex(const std::string& filename, std::string &fileHash, uin
 		std::cerr << "FileIndex::saveIndex error opening file for writting: " << filename << ". Giving up." << std::endl;
 		return 0;
 	}
-	fprintf(file,"%s",s.c_str()) ;
+	int outwritten ;
+
+	if(compressed_data_size != (outwritten=fwrite(compressed_data,1,compressed_data_size,file)))
+	{
+		std::cerr << "FileIndex::saveIndex error. File not entirely written. Only " << outwritten << " bytes wrote out of " << compressed_data_size <<  " check for disk full, or disk quotas." << std::endl;
+		return 0;
+	}
 
 	fclose(file);
+	free(compressed_data) ;
 
 	// Use a temp file name so that the file is never half saved.
 	//
