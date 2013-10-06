@@ -39,6 +39,7 @@
 
 #include <algorithm>
 #include <limits>
+#include <math.h>
 
 #include "TransfersDialog.h"
 #include <gui/RetroShareLink.h>
@@ -1051,8 +1052,8 @@ int TransfersDialog::addItem(int row, const FileInfo &fileInfo, const std::map<s
 		}
 	}
 
-	QString sources = QString("%1 (%2)").arg(active).arg(fileInfo.peers.size());
-    DLListModel->setData(DLListModel->index(row, COLUMN_SOURCES), QVariant(sources));
+	float fltSources = active + (float)fileInfo.peers.size()/1000;
+	DLListModel->setData(DLListModel->index(row, COLUMN_SOURCES), fltSources);
 
 	// This is not optimal, but we deal with a small number of elements. The reverse order is really important,
 	// because rows after the deleted rows change positions !
@@ -2019,7 +2020,10 @@ qlonglong TransfersDialog::getPath(int row, QStandardItemModel *model)
 
 QString TransfersDialog::getSources(int row, QStandardItemModel *model)
 {
-    return model->data(model->index(row, COLUMN_SOURCES), Qt::DisplayRole).toString();
+	double dblValue =  model->data(model->index(row, COLUMN_SOURCES), Qt::DisplayRole).toDouble();
+	QString temp = QString("%1 (%2)").arg((int)dblValue).arg((int)((fmod(dblValue,1)*1000)+0.5));
+
+	return temp;
 }
 
 void TransfersDialog::openCollection()

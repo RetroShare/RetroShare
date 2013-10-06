@@ -27,6 +27,7 @@
 #include <QApplication>
 #include <QDateTime>
 #include <limits>
+#include <math.h>
 
 #include "DLListDelegate.h"
 
@@ -185,6 +186,14 @@ void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & opti
 				painter->restore() ;
 			}
 			painter->drawText(option.rect, Qt::AlignCenter, newopt.text);
+			break;
+	case COLUMN_SOURCES:
+	{
+		double dblValue = index.data().toDouble();
+
+		temp = dblValue!=0 ? QString("%1 (%2)").arg((int)dblValue).arg((int)((fmod(dblValue,1)*1000)+0.5)) : "";
+		painter->drawText(option.rect, Qt::AlignCenter, temp);
+	}
 			break;
         case COLUMN_DOWNLOADTIME:
 			downloadtime = index.data().toLongLong();
