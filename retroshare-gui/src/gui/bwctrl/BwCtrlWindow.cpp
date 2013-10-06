@@ -33,6 +33,137 @@
 #include "retroshare/rsconfig.h"
 #include "retroshare/rspeers.h"
 
+#include <QModelIndex>
+#include <QPainter>
+#include <limits>
+
+BWListDelegate::BWListDelegate(QObject *parent) : QAbstractItemDelegate(parent)
+{
+	;
+}
+
+BWListDelegate::~BWListDelegate(void)
+{
+	;
+}
+
+void BWListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const
+{
+	QString strNA = tr("N/A");
+	QStyleOptionViewItem opt = option;
+
+	QString temp ;
+	float flValue;
+	qint64 qi64Value;
+
+	// prepare
+	painter->save();
+	painter->setClipRect(opt.rect);
+
+	//set text color
+	QVariant value = index.data(Qt::TextColorRole);
+	if(value.isValid() && qvariant_cast<QColor>(value).isValid()) {
+		opt.palette.setColor(QPalette::Text, qvariant_cast<QColor>(value));
+	}
+	QPalette::ColorGroup cg = option.state & QStyle::State_Enabled ? QPalette::Normal : QPalette::Disabled;
+	if(option.state & QStyle::State_Selected){
+		painter->setPen(opt.palette.color(cg, QPalette::HighlightedText));
+	} else {
+		painter->setPen(opt.palette.color(cg, QPalette::Text));
+	}
+
+	// draw the background color
+	if(option.showDecorationSelected && (option.state & QStyle::State_Selected)) {
+		if(cg == QPalette::Normal && !(option.state & QStyle::State_Active)) {
+			cg = QPalette::Inactive;
+		}
+		painter->fillRect(option.rect, option.palette.brush(cg, QPalette::Highlight));
+	} else {
+		value = index.data(Qt::BackgroundRole);
+		if(value.isValid() && qvariant_cast<QColor>(value).isValid()) {
+			painter->fillRect(option.rect, qvariant_cast<QColor>(value));
+		}
+	}
+
+	switch(index.column()) {
+	case COLUMN_IN_RATE:
+		temp.sprintf("%.3f ", index.data().toFloat());
+		//temp=QString::number(index.data().toFloat());
+		painter->drawText(option.rect, Qt::AlignRight, temp);
+		break;
+	case COLUMN_IN_MAX:
+		temp.sprintf("%.3f ", index.data().toFloat());
+		//temp=QString::number(index.data().toFloat());
+		painter->drawText(option.rect, Qt::AlignRight, temp);
+		break;
+	case COLUMN_IN_QUEUE:
+		temp=QString::number(index.data().toInt());
+		painter->drawText(option.rect, Qt::AlignRight, temp);
+		break;
+	case COLUMN_IN_ALLOC:
+		flValue = index.data().toFloat();
+		if (flValue < std::numeric_limits<float>::max()){
+			temp.sprintf("%.3f ", flValue);
+		} else {
+			temp=strNA;
+		}
+		painter->drawText(option.rect, Qt::AlignRight, temp);
+		break;
+	case COLUMN_IN_ALLOC_SENT:
+		qi64Value = index.data().value<qint64>();
+		if (qi64Value < std::numeric_limits<qint64>::max()){
+			temp= QString::number(qi64Value);
+		} else {
+			temp = strNA;
+		}
+		painter->drawText(option.rect, Qt::AlignRight, temp);
+		break;
+	case COLUMN_OUT_RATE:
+		temp.sprintf("%.3f ", index.data().toFloat());
+		//temp=QString::number(index.data().toFloat());
+		painter->drawText(option.rect, Qt::AlignRight, temp);
+		break;
+	case COLUMN_OUT_MAX:
+		temp.sprintf("%.3f ", index.data().toFloat());
+		//temp=QString::number(index.data().toFloat());
+		painter->drawText(option.rect, Qt::AlignRight, temp);
+		break;
+	case COLUMN_OUT_QUEUE:
+		temp=QString::number(index.data().toInt());
+		painter->drawText(option.rect, Qt::AlignRight, temp);
+		break;
+	case COLUMN_OUT_ALLOC:
+		flValue = index.data().toFloat();
+		if (flValue < std::numeric_limits<float>::max()){
+			temp=QString::number(flValue);
+		} else {
+			temp = strNA;
+		}
+		painter->drawText(option.rect, Qt::AlignRight, temp);
+		break;
+	case COLUMN_OUT_ALLOC_SENT:
+		qi64Value = index.data().value<qint64>();
+		if (qi64Value < std::numeric_limits<qint64>::max()){
+			temp= QString::number(qi64Value);
+		} else {
+			temp = strNA;
+		}
+		painter->drawText(option.rect, Qt::AlignRight, temp);
+		break;
+	default:
+		painter->drawText(option.rect, Qt::AlignLeft, index.data().toString());
+	}
+
+	// done
+	painter->restore();
+}
+
+QSize BWListDelegate::sizeHint(const QStyleOptionViewItem & /*option*/, const QModelIndex & /*index*/) const
+{
+	return QSize(50,17);
+}
+
+/**************************************************************************************************/
 /********************************************** STATIC WINDOW *************************************/
 BwCtrlWindow * BwCtrlWindow::mInstance = NULL;
 
@@ -69,6 +200,10 @@ BwCtrlWindow::BwCtrlWindow(QWidget *parent) :
     ui->setupUi(this);
 
     setAttribute ( Qt::WA_DeleteOnClose, true );
+
+	BWDelegate = new BWListDelegate();
+	ui->bwTreeWidget->setItemDelegate(BWDelegate);
+
 
 	// tick for gui update.
     QTimer *timer = new QTimer(this);
@@ -133,21 +268,6 @@ void BwCtrlWindow::updateBandwidth()
 {
 	QTreeWidget *peerTreeWidget = ui->bwTreeWidget;
 
-#define PTW_COL_RSNAME			0
-#define PTW_COL_PEERID			1
-
-#define PTW_COL_IN_RATE			2
-#define PTW_COL_IN_MAX			3
-#define PTW_COL_IN_QUEUE		4
-#define PTW_COL_IN_ALLOC		5
-#define PTW_COL_IN_ALLOC_SENT		6
-
-#define PTW_COL_OUT_RATE		7
-#define PTW_COL_OUT_MAX			8
-#define PTW_COL_OUT_QUEUE		9
-#define PTW_COL_OUT_ALLOC		10
-#define PTW_COL_OUT_ALLOC_SENT		11
-
 	peerTreeWidget->clear();
 
 	RsConfigDataRates totalRates;
@@ -162,20 +282,20 @@ void BwCtrlWindow::updateBandwidth()
 	peerTreeWidget->addTopLevelItem(item);
 
 	/* do Totals */
-	item -> setData(PTW_COL_PEERID, Qt::DisplayRole, QString("TOTALS"));
-	item -> setData(PTW_COL_RSNAME, Qt::DisplayRole, QString("Totals"));
+	item -> setData(COLUMN_PEERID, Qt::DisplayRole, QString("TOTALS"));
+	item -> setData(COLUMN_RSNAME, Qt::DisplayRole, QString("Totals"));
 
-	item -> setData(PTW_COL_IN_RATE, Qt::DisplayRole, QString::number(totalRates.mRateIn));
-	item -> setData(PTW_COL_IN_MAX, Qt::DisplayRole, QString::number(totalRates.mRateMaxIn));
-	item -> setData(PTW_COL_IN_QUEUE, Qt::DisplayRole, QString::number(totalRates.mQueueIn));
-	item -> setData(PTW_COL_IN_ALLOC, Qt::DisplayRole, QString("N/A"));
-	item -> setData(PTW_COL_IN_ALLOC_SENT, Qt::DisplayRole, QString("N/A"));
+	item -> setData(COLUMN_IN_RATE, Qt::DisplayRole, totalRates.mRateIn);
+	item -> setData(COLUMN_IN_MAX, Qt::DisplayRole,totalRates.mRateMaxIn);
+	item -> setData(COLUMN_IN_QUEUE, Qt::DisplayRole, totalRates.mQueueIn);
+	item -> setData(COLUMN_IN_ALLOC, Qt::DisplayRole, std::numeric_limits<float>::max());
+	item -> setData(COLUMN_IN_ALLOC_SENT, Qt::DisplayRole, std::numeric_limits<qint64>::max());
 
-	item -> setData(PTW_COL_OUT_RATE, Qt::DisplayRole, QString::number(totalRates.mRateOut));
-	item -> setData(PTW_COL_OUT_MAX, Qt::DisplayRole, QString::number(totalRates.mRateMaxOut));
-	item -> setData(PTW_COL_OUT_QUEUE, Qt::DisplayRole, QString::number(totalRates.mQueueOut));
-	item -> setData(PTW_COL_OUT_ALLOC, Qt::DisplayRole, QString("N/A"));
-	item -> setData(PTW_COL_OUT_ALLOC_SENT, Qt::DisplayRole, QString("N/A"));
+	item -> setData(COLUMN_OUT_RATE, Qt::DisplayRole, totalRates.mRateOut);
+	item -> setData(COLUMN_OUT_MAX, Qt::DisplayRole, totalRates.mRateMaxOut);
+	item -> setData(COLUMN_OUT_QUEUE, Qt::DisplayRole, totalRates.mQueueOut);
+	item -> setData(COLUMN_OUT_ALLOC, Qt::DisplayRole, std::numeric_limits<float>::max());
+	item -> setData(COLUMN_OUT_ALLOC_SENT, Qt::DisplayRole, std::numeric_limits<qint64>::max());
 
 	time_t now = time(NULL);
 	for(it = rateMap.begin(); it != rateMap.end(); it++)
@@ -188,7 +308,7 @@ void BwCtrlWindow::updateBandwidth()
 		for (int nIndex = 0; nIndex < itemCount; nIndex++) 
 		{
 			QTreeWidgetItem *tmp_item = peerTreeWidget->topLevelItem(nIndex);
-			if (tmp_item->data(PTW_COL_PEERID, Qt::DisplayRole).toString() == qpeerid) 
+			if (tmp_item->data(COLUMN_PEERID, Qt::DisplayRole).toString() == qpeerid)
 			{
 				peer_item = tmp_item;
 				break;
@@ -205,27 +325,27 @@ void BwCtrlWindow::updateBandwidth()
 
 		std::string name = rsPeers->getPeerName(it->first);
 
-		peer_item -> setData(PTW_COL_PEERID, Qt::DisplayRole, QString::fromStdString(it->first));
-		peer_item -> setData(PTW_COL_RSNAME, Qt::DisplayRole, QString::fromStdString(name));
+		peer_item -> setData(COLUMN_PEERID, Qt::DisplayRole, QString::fromStdString(it->first));
+		peer_item -> setData(COLUMN_RSNAME, Qt::DisplayRole, QString::fromStdString(name));
 
-		peer_item -> setData(PTW_COL_IN_RATE, Qt::DisplayRole, QString::number(it->second.mRateIn));
-		peer_item -> setData(PTW_COL_IN_MAX, Qt::DisplayRole, QString::number(it->second.mRateMaxIn));
-		peer_item -> setData(PTW_COL_IN_QUEUE, Qt::DisplayRole, QString::number(it->second.mQueueIn));
-		peer_item -> setData(PTW_COL_IN_ALLOC, Qt::DisplayRole, QString::number(it->second.mAllocIn));
-		peer_item -> setData(PTW_COL_IN_ALLOC_SENT, Qt::DisplayRole, QString::number(now - it->second.mAllocTs));
+		peer_item -> setData(COLUMN_IN_RATE, Qt::DisplayRole, it->second.mRateIn);
+		peer_item -> setData(COLUMN_IN_MAX, Qt::DisplayRole, it->second.mRateMaxIn);
+		peer_item -> setData(COLUMN_IN_QUEUE, Qt::DisplayRole, it->second.mQueueIn);
+		peer_item -> setData(COLUMN_IN_ALLOC, Qt::DisplayRole, it->second.mAllocIn);
+		peer_item -> setData(COLUMN_IN_ALLOC_SENT, Qt::DisplayRole, qint64(now - it->second.mAllocTs));
 
-		peer_item -> setData(PTW_COL_OUT_RATE, Qt::DisplayRole, QString::number(it->second.mRateOut));
-		peer_item -> setData(PTW_COL_OUT_MAX, Qt::DisplayRole, QString::number(it->second.mRateMaxOut));
-		peer_item -> setData(PTW_COL_OUT_QUEUE, Qt::DisplayRole, QString::number(it->second.mQueueOut));
+		peer_item -> setData(COLUMN_OUT_RATE, Qt::DisplayRole, it->second.mRateOut);
+		peer_item -> setData(COLUMN_OUT_MAX, Qt::DisplayRole, it->second.mRateMaxOut);
+		peer_item -> setData(COLUMN_OUT_QUEUE, Qt::DisplayRole, it->second.mQueueOut);
 		if (it->second.mAllowedTs != 0)
 		{
-			peer_item -> setData(PTW_COL_OUT_ALLOC, Qt::DisplayRole, QString::number(it->second.mAllowedOut));
-			peer_item -> setData(PTW_COL_OUT_ALLOC_SENT, Qt::DisplayRole, QString::number(now - it->second.mAllowedTs));
+			peer_item -> setData(COLUMN_OUT_ALLOC, Qt::DisplayRole, it->second.mAllowedOut);
+			peer_item -> setData(COLUMN_OUT_ALLOC_SENT, Qt::DisplayRole,qint64(now - it->second.mAllowedTs));
 		}
 		else
 		{
-			peer_item -> setData(PTW_COL_OUT_ALLOC, Qt::DisplayRole, QString("N/A"));
-			peer_item -> setData(PTW_COL_OUT_ALLOC_SENT, Qt::DisplayRole, QString("N/A"));
+			peer_item -> setData(COLUMN_OUT_ALLOC, Qt::DisplayRole, std::numeric_limits<float>::max());
+			peer_item -> setData(COLUMN_OUT_ALLOC_SENT, Qt::DisplayRole, std::numeric_limits<qint64>::max());
 		}
 
 
@@ -236,29 +356,29 @@ void BwCtrlWindow::updateBandwidth()
 			{	
 				/* RED */
 				QColor bc("#ff4444"); // red
-				peer_item -> setBackground(PTW_COL_OUT_RATE,QBrush(bc));
+				peer_item -> setBackground(COLUMN_OUT_RATE,QBrush(bc));
 	
 			}
 			else if (it->second.mAllowedOut < it->second.mRateMaxOut)
 			{
 				/* YELLOW */
 				QColor bc("#ffff66"); // yellow
-				peer_item -> setBackground(PTW_COL_OUT_MAX,QBrush(bc));
+				peer_item -> setBackground(COLUMN_OUT_MAX,QBrush(bc));
 	
 			}
 			else
 			{
 				/* GREEN */
 				QColor bc("#44ff44");//bright green
-				peer_item -> setBackground(PTW_COL_OUT_ALLOC,QBrush(bc));
+				peer_item -> setBackground(COLUMN_OUT_ALLOC,QBrush(bc));
 			}
 		}
 		else
 		{
 			/* GRAY */
 			QColor bc("#444444");// gray
-			peer_item -> setBackground(PTW_COL_OUT_ALLOC,QBrush(bc));
-			peer_item -> setBackground(PTW_COL_OUT_ALLOC_SENT,QBrush(bc));
+			peer_item -> setBackground(COLUMN_OUT_ALLOC,QBrush(bc));
+			peer_item -> setBackground(COLUMN_OUT_ALLOC_SENT,QBrush(bc));
 
 		}
 
@@ -271,28 +391,28 @@ void BwCtrlWindow::updateBandwidth()
 		{	
 			/* RED */
 			QColor bc("#ff4444"); // red
-			peer_item -> setBackground(PTW_COL_OUT_QUEUE,QBrush(bc));
+			peer_item -> setBackground(COLUMN_OUT_QUEUE,QBrush(bc));
 	
 		}
 		else if (it->second.mQueueOut > QUEUE_ORANGE)
 		{
 			/* ORANGE */
 			QColor bc("#ff9900"); //orange
-			peer_item -> setBackground(PTW_COL_OUT_QUEUE,QBrush(bc));
+			peer_item -> setBackground(COLUMN_OUT_QUEUE,QBrush(bc));
 
 		}
 		else if (it->second.mQueueOut > QUEUE_YELLOW)
 		{
 			/* YELLOW */
 			QColor bc("#ffff66"); // yellow
-			peer_item -> setBackground(PTW_COL_OUT_QUEUE,QBrush(bc));
+			peer_item -> setBackground(COLUMN_OUT_QUEUE,QBrush(bc));
 
 		}
 		else
 		{
 			/* GREEN */
 			QColor bc("#44ff44");//bright green
-			peer_item -> setBackground(PTW_COL_OUT_QUEUE,QBrush(bc));
+			peer_item -> setBackground(COLUMN_OUT_QUEUE,QBrush(bc));
 		}
 	}
 }
