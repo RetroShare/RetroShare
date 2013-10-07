@@ -402,8 +402,32 @@ ChatPage::load()
 		if(invites[i].encrypted_radix64_string.empty())
 		{
 			QListWidgetItem *item = new QListWidgetItem;
-			item->setData(Qt::DisplayRole,tr("Private chat invite from ")+QString::fromStdString(detail.name)+" ("+QString::fromStdString(invites[i].destination_pgp_id)+", " + QString::fromStdString(detail.name) + ", valid until " + QDateTime::fromTime_t(invites[i].time_of_validity).toString() + ")") ;
+			item->setData(Qt::DisplayRole,tr("Private chat invite from ")+QString::fromUtf8(detail.name.c_str())) ;
+
+			QString tt ;
+			tt +=        tr("Name : ") + QString::fromStdString(detail.name) ;
+			tt += "\n" + QString("PGP id : ") + QString::fromStdString(invites[i].destination_pgp_id) ;
+			tt += "\n" + QString("Valid until : ") + QDateTime::fromTime_t(invites[i].time_of_validity).toString() ;
+
+			if(invites[i].invite_flags & RS_DISTANT_CHAT_FLAG_SIGNED)
+				if(invites[i].invite_flags & RS_DISTANT_CHAT_FLAG_SIGNATURE_OK)
+				{
+					tt += "\n"+tr("Authentified signature") ;
+					item->setIcon(QIcon(":images/stock_signature_ok.png")) ;
+				}
+				else
+				{
+					tt += "\n"+tr("Signed with key not in keyring") ;
+					item->setIcon(QIcon(":images/stock_signature_unverified.png")) ;
+				}
+			else
+			{
+				tt += "\n"+tr("Not signed.") ;
+				item->setIcon(QIcon(":images/stock_signature_missing.png")) ;
+			}
+
 			item->setData(Qt::UserRole,QString::fromStdString(invites[i].hash)) ;
+			item->setToolTip(tt) ;
 
 			ui._collected_contacts_LW->insertItem(0,item) ;
 		}

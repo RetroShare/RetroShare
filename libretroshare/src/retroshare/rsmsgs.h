@@ -163,6 +163,9 @@ public:
 #define RS_DISTANT_CHAT_ERROR_UNKNOWN_KEY         0x0003 
 #define RS_DISTANT_CHAT_ERROR_UNKNOWN_HASH        0x0004 
 
+#define RS_DISTANT_CHAT_FLAG_SIGNED               0x0001 
+#define RS_DISTANT_CHAT_FLAG_SIGNATURE_OK         0x0002 
+
 class ChatInfo
 {
 	public:
@@ -220,6 +223,7 @@ struct DistantChatInviteInfo
 	std::string encrypted_radix64_string ;				// encrypted radix string used to for the chat link
 	std::string destination_pgp_id ;						// pgp is of the destination of the chat link
 	time_t 		time_of_validity ;   					// time when te invite becomes unusable
+	uint32_t    invite_flags ;								// used to keep track of wether signature was ok or not.
 };
 
 std::ostream &operator<<(std::ostream &out, const MessageInfo &info);

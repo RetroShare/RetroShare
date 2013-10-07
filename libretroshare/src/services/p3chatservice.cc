@@ -1989,6 +1989,7 @@ bool p3ChatService::loadList(std::list<RsItem*>& load)
 			invite.destination_pgp_id = ditem->destination_pgp_id ;
 			invite.time_of_validity = ditem->time_of_validity ;
 			invite.last_hit_time = ditem->last_hit_time ;
+			invite.flags = ditem->flags ;
 
 			_distant_chat_invites[ditem->hash] = invite ;
 
@@ -2075,6 +2076,7 @@ bool p3ChatService::saveList(bool& cleanup, std::list<RsItem*>& list)
 		ei->destination_pgp_id = it->second.destination_pgp_id ;
 		ei->time_of_validity = it->second.time_of_validity ;
 		ei->last_hit_time = it->second.last_hit_time ;
+		ei->flags = it->second.flags ;
 
 		list.push_back(ei) ;
 	}
@@ -3573,11 +3575,8 @@ bool p3ChatService::initiateDistantChatConnexion(const std::string& encrypted_st
 		return false ;
 	}
 
-	if(!AuthGPG::getAuthGPG()->VerifySignBin(data,header_size,data+header_size,data_size-header_size,fingerprint.toStdString()))
-	{
-		error_code = RS_DISTANT_CHAT_ERROR_SIGNATURE_MISMATCH ;
-		return false ;
-	}
+	bool signature_checked = AuthGPG::getAuthGPG()->VerifySignBin(data,header_size,data+header_size,data_size-header_size,fingerprint.toStdString()) ;
+	
 #ifdef DEBUG_DISTANT_CHAT
 	std::cerr << "Signature successfuly verified!" << std::endl;
 #endif
@@ -3593,6 +3592,7 @@ bool p3ChatService::initiateDistantChatConnexion(const std::string& encrypted_st
 	dinvite.destination_pgp_id = pgp_id.toStdString() ;
 	dinvite.time_of_validity = time_of_validity ;
 	dinvite.last_hit_time = time(NULL) ;
+	dinvite.flags = RS_DISTANT_CHAT_FLAG_SIGNED | (signature_checked ? RS_DISTANT_CHAT_FLAG_SIGNATURE_OK : 0) ;
 	memcpy(dinvite.aes_key,data+DISTANT_CHAT_HASH_SIZE,DISTANT_CHAT_AES_KEY_SIZE) ;
 	
 	{
@@ -3610,7 +3610,8 @@ bool p3ChatService::initiateDistantChatConnexion(const std::string& encrypted_st
 
 	// And notify about chatting.
 
-	error_code = RS_DISTANT_CHAT_ERROR_NO_ERROR ;
+	error_code = signature_checked ? RS_DISTANT_CHAT_ERROR_NO_ERROR : RS_DISTANT_CHAT_ERROR_UNKNOWN_KEY;
+
 	getPqiNotify()->AddPopupMessage(RS_POPUP_CHAT, hash, "Distant peer", "Conversation starts...");
 
 	// Save config, since a new invite was added.
@@ -3713,6 +3714,7 @@ bool p3ChatService::getDistantChatInviteList(std::vector<DistantChatInviteInfo>&
 		info.encrypted_radix64_string = it->second.encrypted_radix64_string ;
 		info.time_of_validity = it->second.time_of_validity ;
 		info.destination_pgp_id = it->second.destination_pgp_id ;
+		info.invite_flags = it->second.flags ;
 
 		invites.push_back(info);
 	}

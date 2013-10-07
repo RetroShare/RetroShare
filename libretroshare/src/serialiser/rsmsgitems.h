@@ -338,6 +338,7 @@ class RsPrivateChatDistantInviteConfigItem: public RsChatItem
 		std::string destination_pgp_id ;
 		uint32_t time_of_validity ;
 		uint32_t last_hit_time ;
+		uint32_t flags ;
 };
 class RsChatLobbyConfigItem: public RsChatItem
 {

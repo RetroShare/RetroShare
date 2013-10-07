@@ -208,6 +208,9 @@ std::ostream& RsPrivateChatDistantInviteConfigItem::print(std::ostream &out, uin
 	printIndent(out, int_Indent);
 	out << "time of last hit:  " << last_hit_time  << std::endl;
 
+	printIndent(out, int_Indent);
+	out << "flags:  " << flags  << std::endl;
+
 	printRsItemEnd(out, "RsPrivateChatDistantInviteConfigItem", indent);
 	return out;
 }
@@ -432,6 +435,7 @@ uint32_t RsPrivateChatDistantInviteConfigItem::serial_size()
 	s += 16; /* aes_key */
 	s += 4; /* time_of_validity */
 	s += 4; /* last_hit_time  */
+	s += 4; /* flags  */
 
 	return s;
 }
@@ -849,6 +853,7 @@ bool RsPrivateChatDistantInviteConfigItem::serialise(void *data, uint32_t& pktsi
 
 	ok &= setRawUInt32(data, tlvsize, &offset, time_of_validity);
 	ok &= setRawUInt32(data, tlvsize, &offset, last_hit_time);
+	ok &= setRawUInt32(data, tlvsize, &offset, flags);
 
 	if (offset != tlvsize)
 	{
@@ -1255,6 +1260,11 @@ RsPrivateChatDistantInviteConfigItem::RsPrivateChatDistantInviteConfigItem(void 
 
 	ok &= getRawUInt32(data, rssize, &offset, &time_of_validity);
 	ok &= getRawUInt32(data, rssize, &offset, &last_hit_time);
+
+	if(offset+4 == rssize)												// flags are optional for retro-compatibility.
+		ok &= getRawUInt32(data, rssize, &offset, &flags);
+	else
+		flags = 0 ;
 
 #ifdef CHAT_DEBUG
 	std::cerr << "Building new chat msg config item." << std::endl ;

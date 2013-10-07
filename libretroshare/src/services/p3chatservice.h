@@ -344,6 +344,7 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor, publi
 			std::string destination_pgp_id ;
 			time_t time_of_validity ;
 			time_t last_hit_time ;
+			uint32_t flags ;
 		};
 		struct DistantChatPeerInfo 
 		{
