@@ -76,6 +76,7 @@ void CryptoPage::showEvent ( QShowEvent * /*event*/ )
 
         ui.peerid->setText(QString::fromStdString(detail.id));
         ui.pgpid->setText(QString::fromStdString(detail.gpg_id));
+        ui.pgpfingerprint->setText(QString::fromStdString(detail.fpr));
 
         /* set retroshare version */
         std::map<std::string, std::string>::iterator vit;

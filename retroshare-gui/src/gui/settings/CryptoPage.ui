@@ -233,7 +233,7 @@
              </size>
             </property>
             <property name="text">
-             <string>Identity ID:</string>
+             <string>Identity ID</string>
             </property>
            </widget>
           </item>
@@ -253,6 +253,26 @@
             </property>
             <property name="text">
              <string notr="true">TextLabel</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1">
+           <widget class="QLabel" name="pgpfingerprint">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>TextLabel</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0">
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>PGP fingerprint:</string>
             </property>
            </widget>
           </item>
