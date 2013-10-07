@@ -40,6 +40,12 @@ win32 {
 		QMAKE_CFLAGS_RELEASE += -O0
 
 		CONFIG += dummy_glib 
+
+		DEFINES *= _USE_32BIT_TIME_T
+
+		# With GCC package 4.8, including io.h either directly or indirectly causes off64_t not to be defined when compiling with -ansi switch
+		DEFINES *= off64_t=_off64_t
+		DEFINES *= off_t=_off_t
 }
 
 ################################# MacOSX ##########################################

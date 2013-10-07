@@ -21,6 +21,7 @@
 
 #include <windows.h>
 #include <stdio.h>
+#include <malloc.h>
 
 #include "dlfcn_win32.h"
 

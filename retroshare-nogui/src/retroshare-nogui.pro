@@ -80,15 +80,15 @@ win32 {
 	LIBS += -L"$$PWD/../../../lib"
 	LIBS += -lssl -lcrypto -lminiupnpc -lz
 # added after bitdht
-#	LIBS += -lws2_32
-	LIBS += -luuid -lole32 -liphlpapi -lcrypt32-cygwin -lgdi32
+#	LIBS += -lcrypto -lws2_32 -lgdi32
+	LIBS += -luuid -lole32 -liphlpapi -lcrypt32-cygwin
 	LIBS += -lole32 -lwinmm
 
 	PROTOCPATH=$$PWD/../../../lib/bin/
 
 	RC_FILE = resources/retroshare_win.rc
 
-	DEFINES *= WINDOWS_SYS
+	DEFINES *= WINDOWS_SYS _USE_32BIT_TIME_T
 
 	SSL_DIR = ../../../openssl-1.0.1c
 
@@ -325,5 +325,5 @@ protorpc {
 }
 win32 {
 # must be added after ssh
-	LIBS += -lws2_32 -lcrypto	
+	LIBS += -lcrypto -lws2_32 -lgdi32
 }

@@ -1,14 +1,14 @@
 TEMPLATE = lib
-CONFIG = staticlib debug
+CONFIG += staticlib debug
 
 DEFINES *= OPENSSL_NO_IDEA 
 
-QMAKE_CXXFLAGS *= -Wall -Werror -W 
+QMAKE_CXXFLAGS *= -Wall -Werror -W
 
 TARGET = ops
 DESTDIR = lib
 DEPENDPATH += .
-INCLUDEPATH += . 
+INCLUDEPATH += .
 
 #################################### Windows #####################################
 
@@ -17,6 +17,8 @@ linux-* {
 }
 
 win32 {
+	DEFINES *= WIN32_LEAN_AND_MEAN _USE_32BIT_TIME_T
+
 	# Switch off optimization for release version
 	QMAKE_CXXFLAGS_RELEASE -= -O2
 	QMAKE_CXXFLAGS_RELEASE += -O0

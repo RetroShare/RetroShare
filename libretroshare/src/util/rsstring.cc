@@ -23,6 +23,7 @@
 
 #ifdef WINDOWS_SYS
 #include <windows.h>
+#include <malloc.h>
 #else
 #include <vector>
 #include <stdarg.h>

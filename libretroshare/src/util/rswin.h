@@ -28,16 +28,7 @@
 #ifndef RSWIN_H_
 #define RSWIN_H_
 
-
 #ifdef WINDOWS_SYS
-
-#ifdef _WIN32_WINNT
-#error "Please include \"util/rswin.h\" *before* any other one as _WIN32_WINNT needs to predefined"
-#endif
-
-// This defines the platform to be WinXP or later and is needed for getaddrinfo
-// It must be declared before pthread.h includes windows.h
-#define _WIN32_WINNT 0x0501
 
 #include <windows.h>
 #include <string>
