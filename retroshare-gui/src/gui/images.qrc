@@ -44,6 +44,9 @@
         <file>images/btn_27_hover.png</file>
         <file>images/btn_blue.png</file>
         <file>images/btn_blue_hover.png</file>
+        <file>images/btn_green.png</file>
+        <file>images/btn_green_hover.png</file>
+        <file>images/btn_green_pressed.png</file>
         <file>images/connect_established.png</file>
         <file>images/connect_established_low.png</file>
         <file>images/connect_creating.png</file>
