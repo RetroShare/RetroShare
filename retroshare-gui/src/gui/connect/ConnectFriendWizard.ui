@@ -782,6 +782,22 @@
    </attribute>
    <layout class="QVBoxLayout" name="verticalLayout_18">
     <item>
+     <widget class="QLabel" name="makefriend_infolabel">
+      <property name="font">
+       <font>
+        <family>Tahoma</family>
+        <pointsize>11</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Please note that RetroShare will require excessive amounts of bandwidth, memory and CPU if you add to many friends. You can add as many friends as you like, but more than 40 will probably require too much resources.</string>
+      </property>
+      <property name="wordWrap">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
      <widget class="QGroupBox" name="peerDetailsFrame">
       <property name="title">
        <string>Peer details</string>
@@ -1058,6 +1074,7 @@
   </customwidget>
  </customwidgets>
  <resources>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>
