@@ -48,6 +48,7 @@ public:
 
 	virtual QPixmap iconPixmap() const { return QPixmap(":/images/FeedReader.png") ; }
 	virtual QString pageName() const { return tr("FeedReader") ; }
+	virtual QString helpText() const { return ""; }
 
 private slots:
 	void useProxyToggled();

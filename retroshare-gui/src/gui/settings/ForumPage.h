@@ -40,6 +40,7 @@ public:
 
 	 virtual QPixmap iconPixmap() const { return QPixmap(":/images/konversation.png") ; }
 	 virtual QString pageName() const { return tr("Forum") ; }
+	 virtual QString helpText() const { return ""; }
 
 private:
     Ui::ForumPage ui;

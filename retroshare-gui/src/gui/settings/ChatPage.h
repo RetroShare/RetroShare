@@ -42,6 +42,7 @@ class ChatPage : public ConfigPage
 
 		virtual QPixmap iconPixmap() const { return QPixmap(":/images/chat_24.png") ; }
 		virtual QString pageName() const { return tr("Chat") ; }
+		virtual QString helpText() const { return ""; }
 
   private slots:
       void on_historyComboBoxVariant_currentIndexChanged(int index);
@@ -80,4 +81,3 @@ class ChatPage : public ConfigPage
 };
 
 #endif
-

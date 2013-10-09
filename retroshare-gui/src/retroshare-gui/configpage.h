@@ -49,6 +49,10 @@ class ConfigPage : public QWidget
 		//
 		virtual QString pageName() const = 0 ;
 
+		// Text to be used to display in the help browser
+		//
+		virtual QString helpText() const = 0;
+
 	protected:
 		virtual void showEvent(QShowEvent * /*event*/)
 		{

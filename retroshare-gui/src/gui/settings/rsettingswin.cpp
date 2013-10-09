@@ -40,6 +40,7 @@
 #include "PluginsPage.h"
 #include "rsharesettings.h"
 #include "gui/notifyqt.h"
+#include "gui/common/FloatingHelpBrowser.h"
 
 #define IMAGE_GENERAL       ":/images/kcmsystem24.png"
 
@@ -54,6 +55,9 @@ RSettingsWin::RSettingsWin(QWidget *parent)
     setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose, true);
     setModal(false);
+
+    /* Initialize help browser */
+    mHelpBrowser = new FloatingHelpBrowser(this, helpButton);
 
     initStackedWidget();
 
@@ -160,9 +164,12 @@ RSettingsWin::setNewPage(int page)
 {
 	ConfigPage *pagew = dynamic_cast<ConfigPage*>(stackedWidget->widget(page)) ;
 
+	mHelpBrowser->hide();
+
 	if(pagew == NULL)
 	{
 		std::cerr << "Error in RSettingsWin::setNewPage(): widget is not a ConfigPage!" << std::endl;
+		mHelpBrowser->clear();
 		return ;
 	}
 	pageName->setText(pagew->pageName());
@@ -170,6 +177,8 @@ RSettingsWin::setNewPage(int page)
 
 	stackedWidget->setCurrentIndex(page);
 	listWidget->setCurrentRow(page);
+
+	mHelpBrowser->setHelpText(pagew->helpText());
 }
 
 /** Saves changes made to settings. */

@@ -41,6 +41,7 @@ class CryptoPage : public ConfigPage
 
 		virtual QPixmap iconPixmap() const { return QPixmap(":/images/encrypted32.png") ; }
 		virtual QString pageName() const { return tr("Profile") ; }
+		virtual QString helpText() const { return ""; }
 
   private slots:
       virtual void load();

@@ -45,6 +45,7 @@ public:
 
 	virtual QPixmap iconPixmap() const { return QPixmap(":/images/sound.png") ; }
 	virtual QString pageName() const { return tr("Sound") ; }
+	virtual QString helpText() const { return ""; }
 
 private slots:
 	void eventChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous);

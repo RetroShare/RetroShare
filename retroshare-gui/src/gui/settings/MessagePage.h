@@ -44,6 +44,7 @@ public:
 
 	 virtual QPixmap iconPixmap() const { return QPixmap(":/images/evolution.png") ; }
 	 virtual QString pageName() const { return tr("Message") ; }
+	 virtual QString helpText() const { return ""; }
 
 
 private slots:

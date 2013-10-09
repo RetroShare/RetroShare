@@ -28,6 +28,7 @@
 
 class UserNotify;
 class QAbstractButton ;
+class FloatingHelpBrowser;
 
 class MainPage : public QWidget
 {
@@ -45,11 +46,8 @@ class MainPage : public QWidget
 		//
 		void registerHelpButton(QAbstractButton *button, const QString& help_html_text) ;
 
-	private slots:
-		void showHelp(bool b) ;
-
 	private:
-		QTextBrowser *help_browser ;
+		FloatingHelpBrowser *mHelpBrowser ;
 };
 
 #endif

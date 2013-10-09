@@ -42,6 +42,7 @@ class TransferPage: public ConfigPage
 
 		virtual QPixmap iconPixmap() const { return QPixmap(":/images/ktorrent32.png") ; }
 		virtual QString pageName() const { return tr("Transfer") ; }
+		virtual QString helpText() const { return ""; }
 
 	public slots:
 		void updateQueueSize(int) ;

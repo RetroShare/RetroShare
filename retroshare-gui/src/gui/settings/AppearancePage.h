@@ -40,6 +40,7 @@ public:
 
 	virtual QPixmap iconPixmap() const { return QPixmap(":/images/looknfeel.png") ; }
 	virtual QString pageName() const { return tr("Appearance") ; }
+	virtual QString helpText() const { return ""; }
 
 private slots:
 	void loadStyleSheet(int index);

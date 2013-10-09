@@ -39,6 +39,7 @@ public:
 
 	 virtual QPixmap iconPixmap() const { return QPixmap(":/images/folder_doments.png") ; }
 	 virtual QString pageName() const { return tr("Directories") ; }
+	 virtual QString helpText() const { return ""; }
 
 private slots:
     void editDirectories() ;

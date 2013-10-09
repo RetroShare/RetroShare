@@ -42,6 +42,7 @@ public:
 
 	 virtual QPixmap iconPixmap() const { return QPixmap(":/images/server_24x24.png") ; }
 	 virtual QString pageName() const { return tr("Server") ; }
+	 virtual QString helpText() const { return ""; }
 
 public slots:
     void updateStatus();

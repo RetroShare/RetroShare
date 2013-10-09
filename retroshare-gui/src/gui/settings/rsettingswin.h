@@ -26,6 +26,8 @@
 #include <retroshare-gui/configpage.h>
 #include "ui_settings.h"
 
+class FloatingHelpBrowser;
+
 class RSettingsWin: public QDialog, private Ui::Settings
 {
 	Q_OBJECT
@@ -56,6 +58,7 @@ private:
 	void initStackedWidget();
 
 private:
+	FloatingHelpBrowser *mHelpBrowser;
 	static RSettingsWin *_instance;
 	static int lastPage;
 };

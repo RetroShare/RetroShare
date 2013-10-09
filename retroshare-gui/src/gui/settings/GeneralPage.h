@@ -43,6 +43,7 @@ public:
 
   virtual QPixmap iconPixmap() const { return QPixmap(":/images/kcmsystem24.png") ; }
   virtual QString pageName() const { return tr("General") ; }
+  virtual QString helpText() const { return ""; }
 
   public slots:
 	  void runStartWizard() ;
