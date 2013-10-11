@@ -5,9 +5,6 @@
 #include "ui_ChatLobbyWidget.h"
 #include "RsAutoUpdatePage.h"
 
-class QModelIndex;
-class QPainter;
-
 class RSTreeWidgetItemCompareRole;
 class ChatTabWidget ;
 class ChatLobbyDialog ;
@@ -39,7 +36,6 @@ public:
 protected slots:
 	void lobbyChanged();
 	void lobbyTreeWidgetCustomPopupMenu(QPoint);
-    void lobbyTreeWidgetHeaderCustomPopupMenu( QPoint point );
 	void createChatLobby();
 	void subscribeItem();
 	void unsubscribeItem();
@@ -74,6 +70,8 @@ private:
 	RSTreeWidgetItemCompareRole *compareRole;
 	QTreeWidgetItem *privateLobbyItem;
 	QTreeWidgetItem *publicLobbyItem;
+    QTreeWidgetItem *privateSubLobbyItem;
+    QTreeWidgetItem *publicSubLobbyItem;
 	QTreeWidgetItem *getTreeWidgetItem(ChatLobbyId);
 
 	ChatTabWidget *tabWidget ;
@@ -89,5 +87,6 @@ private:
     QAction* showUserCountAct;
     QAction* showTopicAct;
     QAction* showSubscribeAct;
+    int getNumColVisible();
 };
 
