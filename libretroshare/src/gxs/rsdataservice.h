@@ -42,8 +42,8 @@ class MsgUpdate
 {
 public:
 
-	MsgUpdate(){}
-	MsgUpdate(const MsgUpdate& ){}
+    //MsgUpdate(){}
+    //MsgUpdate(const MsgUpdate& ){}//hier müsste ein echter constructor sein
 	RsGxsMessageId msgId;
 	ContentValue cv;
 };

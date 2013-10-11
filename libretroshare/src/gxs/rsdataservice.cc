@@ -1092,26 +1092,26 @@ int RsDataService::removeMsgs(const GxsMsgReq& msgIds)
 
 		std::vector<MsgOffset>::iterator vit = msgOffsets.begin();
 
-		uint32_t maxSize = 0;
+        uint32_t maxSize = 0;// größe aller msgs, newbuf könnte aber kleiner sein, weil msgs weggehen
 		for(; vit != msgOffsets.end(); vit++)
 			maxSize += vit->msgLen;
 
 		// may be preferable to determine file len reality
 		// from file? corrupt db?
-		dataBuff.resize(maxSize);
-		newBuffer.resize(maxSize);
+        dataBuff.reserve(maxSize);// dataBuff.resize(maxSize);
+        newBuffer.reserve(maxSize);// newBuffer.resize(maxSize);
 
 		dataBuff.insert(dataBuff.end(),
 				std::istreambuf_iterator<char>(in),
 				std::istreambuf_iterator<char>());
 
 		in.close();
-
+        uint32_t newOffset = 0;// am anfang der liste ist offset=0, jetzt gehen wir die msgs liste durch
 		for(std::vector<MsgOffset>::size_type i = 0; i < msgOffsets.size(); i++)
 		{
 			const MsgOffset& m = msgOffsets[i];
 
-			uint32_t newOffset = 0;
+            //uint32_t newOffset = 0;//hier ist es zu spät, offset muss hochgezählt werden
 			if(std::find(msgIdV.begin(), msgIdV.end(), m.msgId) == msgIdV.end())
 			{
 				MsgUpdate up;

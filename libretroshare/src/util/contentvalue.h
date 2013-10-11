@@ -51,7 +51,7 @@ public:
      * makes a deep copy of raw data
      * @param from ContentValue instance to copy key value set from
      */
-    ContentValue(ContentValue& from);
+    ContentValue(const ContentValue& from);//const damit die äußere klasse einen konstruktor com compielr bekommt
 
     /*!
      *

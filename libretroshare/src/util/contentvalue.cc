@@ -51,7 +51,7 @@ ContentValue::~ContentValue(){
     clearData();
 }
 
-ContentValue::ContentValue(ContentValue &from){
+ContentValue::ContentValue(const ContentValue &from){
 
     std::map<std::string, uint8_t> keyTypeMap;
     from.getKeyTypeMap(keyTypeMap);
