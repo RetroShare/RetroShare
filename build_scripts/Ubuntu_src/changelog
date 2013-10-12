@@ -1,5 +1,82 @@
 retroshare (0.5.5-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
+  * Improvements
+     Optimisations/compilation:
+      - re-wrote cleanupDirectory() function. As this a cause of the slow startup.  Startup time is massively improved!
+      - Fixed compile of the libraries with MinGW 4.8 on Windows.
+      - Removed the external library pthreads 2.8.0 on Windows build and used the library of MinGW (version 2.8.0 too). 
+        This fixes header mixup of bo th versions.
+      - Switched to the release version of pthread so the name of the dll changes from pthreadGC2d.dll to pthreadGC2.dll. 
+        The new dll can be found in the bin directory of MinGW.
+      - Optimized p3HistoryMgr::cleanOldMessages
+
+     File Transfer:
+      - restore file state when restart (Modified patch from Phenom)
+      - Enabled multi-tunneling by consistently perturbating partial tunnel id in TRs.
+        This causes tunnels with a different route to have different ids and therefore
+        coexist as different sources for a given transfer.
+        This should cause file transfers to have more tunnels and therefore a better balance
+        of bandwidth over intermediate peers. This needs to be evaluated on a large scale network.
+      - included random bias in tunnel ID computation to make them impossible to correlate to the end points
+
+     Distant chat/lobbies/chat:
+      - added the possibility to distant chat with unverified identities, while warning the user about it. Should help distant chatting.
+      - removed warning that happens when lobby has no activity
+
+     Key creation
+      - added entropy collection system based on mouse movement to location/identity creation, to make keys less predictable
+
+     Connectivity:
+      - Made connection progress dialog only show up when really making friend
+
+     Security:
+      - Enabled PFS for SSH connections, based on a 4096 bits safe prime. This is retro-compatible, meaning that 
+        old peers will connect to the new one using PFS if they act as a client (meaning they request the connection)
+      - added limit to posts on chat lobbies to 6000 characters, removing the risk of enormous posts crafted to kill the msg history
+      - added filter to take care of svg bombs that can be hidden in the strings in lobbies,forums,channels and chat
+      - added control for suspicious message activity in chat lobbies. Lobby items are not bounced if coming 
+        from a peer that sends more messages per seconds than a given limit. The limit is adaptive and depends on lobby count
+      - added limit in number of chat lobby ids sent by a peer
+      - added filter to remove xml bombs in all std::wstrings. 
+
+     Various gui stuff:
+      - added a "Load Images" system to messages.
+      - added new delegate for BW statistics window. Changed column names to more appropriate values (Patch from Phenom)
+      - Added proper sorting of DL files according to sources (Patch from Phenom)
+      - changed the connect wizard so that we can add someone key to keyring without making friend. 
+      - fixed image resizing for channel thumbnails. Apparently there is a bug in Qt preventing 
+        Qt::KeepAspectRatioByExpanding to work correctly
+      - Changed the additional buttons of ChatLobbyDialog and AudioPopupChatDialog to QToolButton.
+      - added some sound files
+      - changed the voip icons and the tooltips
+      - added fingerprint to cryptopage
+      - added tree items for chat lobbies. 
+      - moved help browser from MainPage to new base class FloatingHelpBrowser
+      - added warning info label to MakeFriendWizard
+      - Added info widget for encrypted messages in MessageWidget
+      - removed copy/paste of links of type PERSON in friendlist. This caused confusion and did not provide 
+        anything useful since the creation of the full certificate links
+      - changed default header text and context menu icons
+      - changed the default style layout of profile creation dialog
+      - highlight peers in network graph according to friendship distance from selected node
+
+     Chat lobbies
+      - added history parameters for chat lobbies
+      - added max storage time for items in chat history. Avoids filling up the history with chat from volatile peers.
+      - worked out the layout in config->ChatPage in a more compact design and added help
+
+  * Bug fixes
+      - fixed missing update of transferred bytes count, that caused tunnels to not show a correct speed estimate on server side
+      - fixed bug in turtle router, causing potential memory access error in rare occasions (sendItem does not 
+        delete items fast enough, normally).
+      - added missing setPeerState that caused tunnels to get stuck to default minimum rate unless 
+        the list of connected peers change
+      - fixed bug showing play for unfinished files and preview for finished ones
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Sat, 12 Oct 2013 15:00:00 +0100
+
+retroshare (0.5.5-0.6732~precise) precise; urgency=low
+
   * Notes
   		This is the final release of the 0.5 brand. 
 
