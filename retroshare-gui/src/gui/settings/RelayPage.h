@@ -42,7 +42,7 @@ class RelayPage: public ConfigPage
 
 		virtual QPixmap iconPixmap() const { return QPixmap(":/images/server_24x24.png") ; }
 	 virtual QString pageName() const { return tr("Relay") ; }
-		virtual QString helpText() const { return ""; }
+		virtual QString helpText() const ;
 
 	public slots:
 		void updateRelayOptions();

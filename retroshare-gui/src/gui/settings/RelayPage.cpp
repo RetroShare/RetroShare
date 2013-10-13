@@ -59,6 +59,19 @@ RelayPage::RelayPage(QWidget * parent, Qt::WFlags flags)
 #endif
 }
 
+QString RelayPage::helpText() const
+{
+   return tr("<h1><img width=\"24\" src=\":/images/64px_help.png\">&nbsp;&nbsp;Relays</h1>                   \
+              <p>By activating relays, you allow your Retroshare node to act as a bridge between Retroshare  \
+				  users who cannot connect directly, e.g. because they're firewalled.</p>                        \
+				  <p>You may choose to act as a relay by checking <i>enable relay connections</i>, or simply     \
+				  benefit from other peers acting as relay, by checking <i>use relay servers</i>. For the former,\
+				  you may specify the bandwidth allocated when acting as a relay for friends of you, for friends \
+				  of your friends, or anyone in the Retroshare network.</p>                                      \
+				  <p>In any case, a Retroshare node acting as a relay cannot see the relayed traffic, since it   \
+				  is encrypted and authenticated by the two relayed nodes.</p>") ;
+}
+
 	/** Saves the changes on this page */
 bool RelayPage::save(QString &/*errmsg*/)
 {
