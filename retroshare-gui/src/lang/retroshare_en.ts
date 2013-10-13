@@ -484,6 +484,13 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>BWListDelegate</name>
+    <message>
+        <source>N/A</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>BandwidthGraph</name>
     <message>
         <source>RetroShare Bandwidth Usage</source>
@@ -1437,6 +1444,14 @@ Select lobbies at left to show details.
 Double click lobbies to enter and chat.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Private Subscribed Lobbies</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Public Subscribed Lobbies</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ChatMsgItem</name>
@@ -1700,7 +1715,23 @@ Double click lobbies to enter and chat.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Maximum storage period, in days:</source>
+        <source>Maximum storage period, in days (0=keep all):</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Name : </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Authentified signature</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Signed with key not in keyring</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Not signed.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -2700,6 +2731,25 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Please select at least one friend as recipient.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please note that RetroShare will require excessive amounts of bandwidth, memory and CPU if you add to many friends. You can add as many friends as you like, but more than 40 will probably require too much resources.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add key to keyring</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This key is already in your keyring</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Check this to add the key to your keyring
+This might be useful for sending
+distant messages to this peer
+even if you don&apos;t make friends.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -4250,10 +4300,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Identity ID:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Number of Friends:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4319,6 +4365,18 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>RetroShare Certificate (*.rsc );;All Files (*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Identity ID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>TextLabel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PGP fingerprint:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6448,7 +6506,7 @@ the same identity (PGP key).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Passwords to not match</source>
+        <source>Passwords do not match</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10126,6 +10184,10 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <source>Notify</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Notify&lt;/h1&gt; 		  &lt;p&gt;Retroshare will notify you about what happens in your network.         		  Depending on your usage, you may want to enable or disable some of the    		  notifications. This page is designed for that!&lt;/p&gt;                        		  </source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>NotifyQt</name>
@@ -10668,6 +10730,10 @@ malicious behavior of crafted plugins.</source>
     </message>
     <message>
         <source>Plugins</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Plugins&lt;/h1&gt;                   &lt;p&gt;Plugins are loaded from the directories listed in the bottom list.&lt;/p&gt;                       &lt;p&gt;For security reasons, accepted plugins load automatically until                              the main Retroshare executable or the plugin library changes. In                                such a case, the user needs to confirm them again.                                              After the program is started, you can enable a plugin manually by clicking on the               &quot;Enable&quot; button and then restart Retroshare.&lt;/p&gt;                                              &lt;p&gt;If you want to develop your own plugins, contact the developpers team                        they will be happy to help you out!&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -11550,6 +11616,15 @@ Reported error is:
 %2</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Chat connection is unauthentified</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Signature check failed!
+Make sure you know who you&apos;re talking to.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QuickStartWizard</name>
@@ -11835,6 +11910,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Relay</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Relays&lt;/h1&gt;                                 &lt;p&gt;By activating relays, you allow your Retroshare node to act as a bridge between Retroshare  				  users who cannot connect directly, e.g. because they&apos;re firewalled.&lt;/p&gt;                        				  &lt;p&gt;You may choose to act as a relay by checking &lt;i&gt;enable relay connections&lt;/i&gt;, or simply     				  benefit from other peers acting as relay, by checking &lt;i&gt;use relay servers&lt;/i&gt;. For the former,				  you may specify the bandwidth allocated when acting as a relay for friends of you, for friends 				  of your friends, or anyone in the Retroshare network.&lt;/p&gt;                                      				  &lt;p&gt;In any case, a Retroshare node acting as a relay cannot see the relayed traffic, since it   				  is encrypted and authenticated by the two relayed nodes.&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -12449,15 +12528,7 @@ behind a firewall or a VPN.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Download (KB/s) </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>kB/s</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Upload (KB/s) </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -12500,6 +12571,22 @@ The default value is 20.</source>
     </message>
     <message>
         <source>Server</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Download when active (KB/s) </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Upload when active (KB/s) </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Download when idle (KB/s) </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Upload when idle (KB/s) </source>
         <translation type="unfinished"></translation>
     </message>
 </context>
