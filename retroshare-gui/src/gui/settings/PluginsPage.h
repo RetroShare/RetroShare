@@ -39,7 +39,7 @@ class PluginsPage : public ConfigPage
 
 		virtual QPixmap iconPixmap() const { return QPixmap(":/images/extension_32.png") ; }
 		virtual QString pageName() const { return tr("Plugins") ; }
-		virtual QString helpText() const { return ""; }
+		virtual QString helpText() const ;
 
 
 	public slots:
