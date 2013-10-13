@@ -316,6 +316,8 @@ void RsGenExchange::generatePublicFromPrivateKeys(const RsTlvSecurityKeySet &pri
                 if(pubKey.keyFlags & RSTLV_KEY_DISTRIB_PRIVATE)
                     pubKey.keyFlags = RSTLV_KEY_DISTRIB_PRIVATE | RSTLV_KEY_TYPE_PUBLIC_ONLY;
 
+                pubKey.endTS = pubKey.startTS + 60 * 60 * 24 * 365 * 5; /* approx 5 years */
+
                 publickeySet.keys.insert(std::make_pair(pubKey.keyId, pubKey));
             }
 
@@ -2384,14 +2386,14 @@ void RsGenExchange::processRecvdGroups()
 				meta->mGroupStatus = GXS_SERV::GXS_GRP_STATUS_UNPROCESSED | GXS_SERV::GXS_GRP_STATUS_UNREAD;
 				meta->mSubscribeFlags = GXS_SERV::GROUP_SUBSCRIBE_NOT_SUBSCRIBED;
 
-				if(meta->mCircleType == GXS_CIRCLE_TYPE_YOUREYESONLY)
-					meta->mOriginator = grp->PeerId();
-
 				computeHash(grp->grp, meta->mHash);
 
 				// now check if group already existss
 				if(std::find(existingGrpIds.begin(), existingGrpIds.end(), grp->grpId) == existingGrpIds.end())
 				{
+					if(meta->mCircleType == GXS_CIRCLE_TYPE_YOUREYESONLY)
+						meta->mOriginator = grp->PeerId();
+
 					grps.insert(std::make_pair(grp, meta));
 					grpIds.push_back(grp->grpId);
 				}
@@ -2455,6 +2457,9 @@ void RsGenExchange::processRecvdGroups()
 
 void RsGenExchange::performUpdateValidation()
 {
+
+	RsStackMutex stack(mGenMtx);
+
 #ifdef GXS_GENX_DEBUG
 	std::cerr << "RsGenExchange::performUpdateValidation() " << std::endl;
 #endif
@@ -2492,7 +2497,19 @@ void RsGenExchange::performUpdateValidation()
 	for(; vit != mGroupUpdates.end(); vit++)
 	{
 		GroupUpdate& gu = *vit;
-		grps.insert(std::make_pair(gu.newGrp, gu.newGrp->metaData));
+
+		if(gu.validUpdate)
+		{
+			if(gu.newGrp->metaData->mCircleType == GXS_CIRCLE_TYPE_YOUREYESONLY)
+				gu.newGrp->metaData->mOriginator = gu.newGrp->PeerId();
+
+			grps.insert(std::make_pair(gu.newGrp, gu.newGrp->metaData));
+		}
+		else
+		{
+			delete gu.newGrp;
+		}
+
 		delete gu.oldGrpMeta;
 	}
 

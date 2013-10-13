@@ -1383,12 +1383,11 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
 		const std::string& grpId = grpSyncItem->grpId;
 		metaIter = grpMetaMap.find(grpId);
 		bool haveItem = metaIter != grpMetaMap.end();
-		bool latestItem = false;
+		bool latestVersion = false;
 
-		if(!haveItem)
-			latestItem = grpSyncItem->publishTs > metaIter->second->mPublishTs;
+		latestVersion = grpSyncItem->publishTs > metaIter->second->mPublishTs;
 
-		if(haveItem && latestItem){
+		if(!haveItem || (haveItem && latestVersion) ){
 
 			// determine if you need to check reputation
 			bool checkRep = !grpSyncItem->authorId.empty();
