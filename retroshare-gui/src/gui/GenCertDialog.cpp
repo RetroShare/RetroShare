@@ -363,7 +363,7 @@ void GenCertDialog::genPerson()
 		{
 			QMessageBox::warning(this,
 								 tr("Generate PGP key Failure"),
-								 tr("Passwords to not match"),
+								 tr("Passwords do not match"),
 								 QMessageBox::Ok);
 			return;
 		}
