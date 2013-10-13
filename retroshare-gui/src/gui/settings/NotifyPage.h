@@ -69,7 +69,7 @@ public:
 
 	 virtual QPixmap iconPixmap() const { return QPixmap(":/images/status_unknown.png") ; }
 	 virtual QString pageName() const { return tr("Notify") ; }
-	 virtual QString helpText() const { return ""; }
+	 virtual QString helpText() const ;
 
 private slots:
 	void notifyToggled();
