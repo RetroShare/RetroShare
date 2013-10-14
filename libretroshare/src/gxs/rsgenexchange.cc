@@ -2532,7 +2532,7 @@ bool RsGenExchange::updateValid(RsGxsGrpMetaData& oldGrpMeta, RsNxsGrp& newGrp) 
 		return false;
 	}
 
-	RsTlvKeySignature& adminSign = mit->second;
+	RsTlvKeySignature adminSign = mit->second;
 
 	std::map<std::string, RsTlvSecurityKey>& keys = oldGrpMeta.keys.keys;
 	std::map<std::string, RsTlvSecurityKey>::iterator keyMit = keys.find(oldGrpMeta.mGroupId);
