@@ -412,7 +412,7 @@ ChatPage::load()
 			if(invites[i].invite_flags & RS_DISTANT_CHAT_FLAG_SIGNED)
 				if(invites[i].invite_flags & RS_DISTANT_CHAT_FLAG_SIGNATURE_OK)
 				{
-					tt += "\n"+tr("Authentified signature") ;
+					tt += "\n"+tr("Authenticated signature") ;
 					item->setIcon(QIcon(":images/stock_signature_ok.png")) ;
 				}
 				else
