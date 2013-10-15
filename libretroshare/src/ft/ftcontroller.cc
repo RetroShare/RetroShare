@@ -164,23 +164,21 @@ void ftController::addFileSource(const std::string& hash,const std::string& peer
 {
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
-	std::map<std::string, ftFileControl*>::iterator it;
-	std::map<std::string, ftFileControl*> currentDownloads = *(&mDownloads);
+	std::map<std::string, ftFileControl*>::iterator it = mDownloads.find(hash);
 
 #ifdef CONTROL_DEBUG
 	std::cerr << "ftController: Adding source " << peer_id << " to current download hash=" << hash ;
 #endif
-	for(it = currentDownloads.begin(); it != currentDownloads.end(); it++)
-		if(it->first == hash)
-		{
-			it->second->mTransfer->addFileSource(peer_id);
-			setPeerState(it->second->mTransfer, peer_id, FT_CNTRL_STANDARD_RATE, mLinkMgr->isOnline( peer_id ));
+	if(it != mDownloads.end())
+	{
+		it->second->mTransfer->addFileSource(peer_id);
+		setPeerState(it->second->mTransfer, peer_id, FT_CNTRL_STANDARD_RATE, mLinkMgr->isOnline( peer_id ));
 
 #ifdef CONTROL_DEBUG
-			std::cerr << "... added." << std::endl ;
+		std::cerr << "... added." << std::endl ;
 #endif
-			return ;
-		}
+		return ;
+	}
 #ifdef CONTROL_DEBUG
 	std::cerr << "... not added: hash not found." << std::endl ;
 #endif
@@ -189,23 +187,21 @@ void ftController::removeFileSource(const std::string& hash,const std::string& p
 {
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
-	std::map<std::string, ftFileControl*>::iterator it;
-	std::map<std::string, ftFileControl*> currentDownloads = *(&mDownloads);
+	std::map<std::string, ftFileControl*>::iterator it = mDownloads.find(hash);
 
 #ifdef CONTROL_DEBUG
 	std::cerr << "ftController: Adding source " << peer_id << " to current download hash=" << hash ;
 #endif
-	for(it = currentDownloads.begin(); it != currentDownloads.end(); it++)
-		if(it->first == hash)
-		{
-			it->second->mTransfer->removeFileSource(peer_id);
-			it->second->mCreator->removeFileSource(peer_id);
+	if(it != mDownloads.end())
+	{
+		it->second->mTransfer->removeFileSource(peer_id);
+		it->second->mCreator->removeFileSource(peer_id);
 
 #ifdef CONTROL_DEBUG
-			std::cerr << "... added." << std::endl ;
+		std::cerr << "... added." << std::endl ;
 #endif
-			return ;
-		}
+		return ;
+	}
 #ifdef CONTROL_DEBUG
 	std::cerr << "... not added: hash not found." << std::endl ;
 #endif
@@ -1819,6 +1815,7 @@ void    ftController::statusChange(const std::list<pqipeer> &plist)
 #endif
 
 	for(it = mDownloads.begin(); it != mDownloads.end(); it++)
+		if(it->second->mState == ftFileControl::DOWNLOADING)
 	{
 #ifdef CONTROL_DEBUG
 		std::cerr << "ftController::statusChange() Updating Hash:";
