@@ -723,35 +723,35 @@ void TransfersDialog::downloadListCustomPopupMenu( QPoint /*point*/ )
     if(atLeastOne_Queued)
 			contextMnu.addMenu(&priorityQueueMenu) ;
 
-    if(!atLeastOne_Queued && !items.empty())
-		{
-			contextMnu.addMenu( &chunkMenu);
+    if( (!items.empty()) && (atLeastOne_Downloading || atLeastOne_Queued || atLeastOne_Waiting || atLeastOne_Paused))
+	 {
+		 contextMnu.addMenu( &chunkMenu);
 
-			if(single)
-				contextMnu.addAction(renameFileAct) ;
+		 if(single)
+			 contextMnu.addAction(renameFileAct) ;
 
-			QMenu *directoryMenu = contextMnu.addMenu(QIcon(IMAGE_OPENFOLDER),tr("Set destination directory")) ;
-			directoryMenu->addAction(specifyDestinationDirectoryAct);
+		 QMenu *directoryMenu = contextMnu.addMenu(QIcon(IMAGE_OPENFOLDER),tr("Set destination directory")) ;
+		 directoryMenu->addAction(specifyDestinationDirectoryAct);
 
-			// Now get the list of existing directories.
+		 // Now get the list of existing directories.
 
-			std::list<SharedDirInfo> dirs ;
-			rsFiles->getSharedDirectories(dirs) ;
+		 std::list<SharedDirInfo> dirs ;
+		 rsFiles->getSharedDirectories(dirs) ;
 
-			for(std::list<SharedDirInfo>::const_iterator it(dirs.begin());it!=dirs.end();++it)
-			{
-				// check for existence of directory name
-				QFile directory(QString::fromUtf8((*it).filename.c_str())) ;
+		 for(std::list<SharedDirInfo>::const_iterator it(dirs.begin());it!=dirs.end();++it)
+		 {
+			 // check for existence of directory name
+			 QFile directory(QString::fromUtf8((*it).filename.c_str())) ;
 
-				if(!directory.exists()) continue ;
-				if(!(directory.permissions() & QFile::WriteOwner)) continue ;
+			 if(!directory.exists()) continue ;
+			 if(!(directory.permissions() & QFile::WriteOwner)) continue ;
 
-				QAction *act = new QAction(QString::fromUtf8((*it).virtualname.c_str()),directoryMenu) ;
-				act->setData(QString::fromUtf8((*it).filename.c_str())) ;
-				connect(act,SIGNAL(triggered()),this,SLOT(setDestinationDirectory())) ;
-				directoryMenu->addAction(act) ;
-			}
-		}
+			 QAction *act = new QAction(QString::fromUtf8((*it).virtualname.c_str()),directoryMenu) ;
+			 act->setData(QString::fromUtf8((*it).filename.c_str())) ;
+			 connect(act,SIGNAL(triggered()),this,SLOT(setDestinationDirectory())) ;
+			 directoryMenu->addAction(act) ;
+		 }
+	 }
 
     if(atLeastOne_Paused)
 				contextMnu.addAction( resumeAct);
