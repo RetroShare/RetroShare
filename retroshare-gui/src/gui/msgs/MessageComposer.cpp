@@ -1630,11 +1630,21 @@ void MessageComposer::addRecipient(enumType type, const std::string &id, bool gr
             return;
         }
 
-        if (detail.isOnlyGPGdetail) {
-            if (!rsPeers->getAssociatedSSLIds(id, sslIds)) {
-                return;
-            }
-        } else {
+        if (detail.isOnlyGPGdetail) 
+		  {
+            if(!rsPeers->getAssociatedSSLIds(id, sslIds)) 
+				{
+					std::string hash ;
+					if(rsMsgs->getDistantMessageHash(id,hash))
+						addRecipient(type, hash, id);
+					else
+					{
+						QMessageBox::warning(this,tr("PGP key unknown"),tr("You dont have the PGP key of the message sender. So you cannot respond!"),QMessageBox::Ok) ;
+						return;
+					}
+				}
+        } 
+		  else {
             sslIds.push_back(id);
         }
     }
