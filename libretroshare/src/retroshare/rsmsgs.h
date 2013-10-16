@@ -48,20 +48,21 @@
 #define RS_MSG_OUTBOX          0x03     /* Outbox */
 #define RS_MSG_DRAFTBOX        0x05     /* Draftbox */
 
-#define RS_MSG_NEW                   0x0010   /* New */
-#define RS_MSG_TRASH                 0x0020   /* Trash */
-#define RS_MSG_UNREAD_BY_USER        0x0040   /* Unread by user */
-#define RS_MSG_REPLIED               0x0080   /* Message is replied */
-#define RS_MSG_FORWARDED             0x0100   /* Message is forwarded */
-#define RS_MSG_STAR                  0x0200   /* Message is marked with a star */
+#define RS_MSG_NEW                   0x000010   /* New */
+#define RS_MSG_TRASH                 0x000020   /* Trash */
+#define RS_MSG_UNREAD_BY_USER        0x000040   /* Unread by user */
+#define RS_MSG_REPLIED               0x000080   /* Message is replied */
+#define RS_MSG_FORWARDED             0x000100   /* Message is forwarded */
+#define RS_MSG_STAR                  0x000200   /* Message is marked with a star */
 // system message
-#define RS_MSG_USER_REQUEST          0x0400   /* user request */
-#define RS_MSG_FRIEND_RECOMMENDATION 0x0800   /* friend recommendation */
+#define RS_MSG_USER_REQUEST          0x000400   /* user request */
+#define RS_MSG_FRIEND_RECOMMENDATION 0x000800   /* friend recommendation */
 #define RS_MSG_SYSTEM                (RS_MSG_USER_REQUEST | RS_MSG_FRIEND_RECOMMENDATION)
-#define RS_MSG_ENCRYPTED             0x1000	 /* message is encrypted */
-#define RS_MSG_SIGNATURE_CHECKS      0x2000	 /* message was signed, and signature checked */
-#define RS_MSG_SIGNED                0x4000	 /* message was signed and signature didn't check */
-#define RS_MSG_LOAD_EMBEDDED_IMAGES  0x8000  /* load embedded images */
+#define RS_MSG_ENCRYPTED             0x001000	/* message is encrypted */
+#define RS_MSG_SIGNATURE_CHECKS      0x002000	/* message was signed, and signature checked */
+#define RS_MSG_SIGNED                0x004000	/* message was signed and signature didn't check */
+#define RS_MSG_LOAD_EMBEDDED_IMAGES  0x008000   /* load embedded images */
+#define RS_MSG_DECRYPTED             0x010000	/* message was previously encrypted, and is now decrypted */
 
 #define RS_CHAT_LOBBY_EVENT_PEER_LEFT   				0x01
 #define RS_CHAT_LOBBY_EVENT_PEER_STATUS 				0x02

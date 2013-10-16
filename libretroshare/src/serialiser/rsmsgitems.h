@@ -433,6 +433,7 @@ const uint32_t RS_MSG_FLAGS_DISTANT               = 0x00008000;
 const uint32_t RS_MSG_FLAGS_SIGNATURE_CHECKS      = 0x00010000;
 const uint32_t RS_MSG_FLAGS_SIGNED                = 0x00020000;
 const uint32_t RS_MSG_FLAGS_LOAD_EMBEDDED_IMAGES  = 0x00040000;
+const uint32_t RS_MSG_FLAGS_DECRYPTED             = 0x00080000;
 
 class RsMessageItem: public RsItem
 {

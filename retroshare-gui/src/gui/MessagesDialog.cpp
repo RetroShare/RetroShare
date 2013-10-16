@@ -1222,7 +1222,12 @@ void MessagesDialog::insertMessages()
 					item[COLUMN_SIGNATURE]->setToolTip(tr("This message is encrypted. Right click to decrypt it.")) ;
 					item[COLUMN_SUBJECT]->setIcon(QIcon(":/images/mail-encrypted-full.png")) ;
 				}
-				else 
+				else if(it->msgflags & RS_MSG_DECRYPTED)
+				{
+					item[COLUMN_SIGNATURE]->setIcon(QIcon(":/images/blue_lock_open.png")) ;
+					item[COLUMN_SIGNATURE]->setToolTip(tr("This message has been successfully decrypted, and is unsigned.")) ;
+					item[COLUMN_SUBJECT]->setIcon(QIcon(":/images/mail-decrypted-full.png")) ;
+
 					if(it->msgflags & RS_MSG_SIGNED) 
 						if(it->msgflags & RS_MSG_SIGNATURE_CHECKS)
 						{
@@ -1234,8 +1239,9 @@ void MessagesDialog::insertMessages()
 							item[COLUMN_SIGNATURE]->setIcon(QIcon(":/images/stock_signature_bad.png")) ;
 							item[COLUMN_SIGNATURE]->setToolTip(tr("This message was signed but the signature doesn't check")) ;
 						}
-					else
-						item[COLUMN_SIGNATURE]->setIcon(QIcon()) ;
+				}
+				else
+					item[COLUMN_SIGNATURE]->setIcon(QIcon()) ;
 
 				if (bInsert) {
                 /* add to the list */

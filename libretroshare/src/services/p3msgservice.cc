@@ -1511,6 +1511,9 @@ void p3MsgService::initRsMI(RsMsgItem *msg, MessageInfo &mi)
 	if (msg->msgFlags & RS_MSG_FLAGS_ENCRYPTED)
 		mi.msgflags |= RS_MSG_ENCRYPTED ;
 
+	if (msg->msgFlags & RS_MSG_FLAGS_DECRYPTED)
+		mi.msgflags |= RS_MSG_DECRYPTED ;
+
 	if (msg->msgFlags & RS_MSG_FLAGS_TRASH)
 	{
 		mi.msgflags |= RS_MSG_TRASH;
@@ -1602,6 +1605,9 @@ void p3MsgService::initRsMIS(RsMsgItem *msg, MsgInfoSummary &mis)
 
 	if (msg->msgFlags & RS_MSG_FLAGS_ENCRYPTED)
 		mis.msgflags |= RS_MSG_ENCRYPTED ;
+
+	if (msg->msgFlags & RS_MSG_FLAGS_DECRYPTED)
+		mis.msgflags |= RS_MSG_DECRYPTED ;
 
 	if (msg->msgFlags & RS_MSG_FLAGS_SIGNED)
 		mis.msgflags |= RS_MSG_SIGNED ;
@@ -2007,6 +2013,7 @@ bool p3MsgService::decryptMessage(const std::string& mId)
 		msgi = *item ;											// copy everything
 		msgi.msgId = msgId ;									// restore the correct message id, to make it consistent
 		msgi.msgFlags &= ~RS_MSG_FLAGS_ENCRYPTED ;	// just in case.
+		msgi.msgFlags |=  RS_MSG_FLAGS_DECRYPTED ;	// previousy encrypted msg is now decrypted
 		msgi.PeerId(senders_id.toStdString()) ;
 
 		for(std::list<std::string>::iterator it(msgi.msgto.ids.begin());it!=msgi.msgto.ids.end();++it) if(*it == own_hash) *it = own_pgp_id ;
