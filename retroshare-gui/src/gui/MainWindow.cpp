@@ -627,6 +627,9 @@ void MainWindow::updateStatus()
 
 void MainWindow::updateFriends()
 {
+	if(RsAutoUpdatePage::eventsLocked())
+		return ;
+
     unsigned int friendCount = 0;
     rsPeers->getPeerCount (&friendCount, &onlineCount, false);
 
