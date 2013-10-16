@@ -1632,7 +1632,7 @@ void MessageComposer::addRecipient(enumType type, const std::string &id, bool gr
 
         if (detail.isOnlyGPGdetail) 
 		  {
-            if(!rsPeers->getAssociatedSSLIds(id, sslIds)) 
+            if( (!rsPeers->getAssociatedSSLIds(id, sslIds)) || sslIds.empty()) 
 				{
 					std::string hash ;
 					if(rsMsgs->getDistantMessageHash(id,hash))
