@@ -1220,7 +1220,9 @@ bool p3ChatService::checkForMessageSecurity(RsChatMsgItem *ci)
 	
 	uint32_t fl = ci->chatFlags & (RS_CHAT_FLAG_PRIVATE | RS_CHAT_FLAG_PUBLIC | RS_CHAT_FLAG_LOBBY) ;
 
+#ifdef CHAT_DEBUG
 	std::cerr << "Checking msg flags: " << std::hex << fl << std::endl;
+#endif
 
 	if(dynamic_cast<RsChatLobbyMsgItem*>(ci) != NULL)
 	{

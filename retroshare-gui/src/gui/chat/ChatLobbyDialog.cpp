@@ -290,7 +290,7 @@ void ChatLobbyDialog::addIncomingChatMsg(const ChatInfo& info)
 	QString name = QString::fromUtf8(info.peer_nickname.c_str());
 	QString rsid = QString::fromUtf8(info.rsid.c_str());
 
-	std::cerr << "message from rsid " << info.rsid.c_str() << std::endl;
+	//std::cerr << "message from rsid " << info.rsid.c_str() << std::endl;
 	
 	if(!isParticipantMuted(name)) {
 	  ui.chatWidget->addChatMsg(true, name, sendTime, recvTime, message, ChatWidget::TYPE_NORMAL);
