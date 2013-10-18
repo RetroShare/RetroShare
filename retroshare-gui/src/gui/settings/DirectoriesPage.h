@@ -30,7 +30,7 @@ class DirectoriesPage: public ConfigPage
   Q_OBJECT
 
 public:
-    DirectoriesPage(QWidget * parent = 0, Qt::WFlags flags = 0);
+    DirectoriesPage(QWidget * parent = 0, Qt::WindowFlags flags = 0);
 
     /** Saves the changes on this page */
     virtual bool save(QString &errmsg);

@@ -29,7 +29,7 @@
 #include "rsharesettings.h"
 
 /** Constructor */
-AppearancePage::AppearancePage(QWidget * parent, Qt::WFlags flags)
+AppearancePage::AppearancePage(QWidget * parent, Qt::WindowFlags flags)
 	: ConfigPage(parent, flags)
 {
 	/* Invoke the Qt Designer generated object setup routine */

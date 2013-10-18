@@ -39,7 +39,7 @@
 
 static std::map<std::string, ChatDialog*> chatDialogs;
 
-ChatDialog::ChatDialog(QWidget *parent, Qt::WFlags flags) :
+ChatDialog::ChatDialog(QWidget *parent, Qt::WindowFlags flags) :
 	QWidget(parent, flags)
 {
 	setAttribute(Qt::WA_DeleteOnClose, true);

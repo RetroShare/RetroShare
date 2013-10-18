@@ -37,7 +37,7 @@
 #include <retroshare/rsdisc.h> //for rsPeers variable
 
 /** Constructor */
-CryptoPage::CryptoPage(QWidget * parent, Qt::WFlags flags)
+CryptoPage::CryptoPage(QWidget * parent, Qt::WindowFlags flags)
     : ConfigPage(parent, flags)
 {
   /* Invoke the Qt Designer generated object setup routine */

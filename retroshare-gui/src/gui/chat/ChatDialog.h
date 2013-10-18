@@ -74,7 +74,7 @@ private slots:
 	void chatNewMessage(ChatWidget*);
 
 protected:
-	explicit ChatDialog(QWidget *parent = 0, Qt::WFlags flags = 0);
+	explicit ChatDialog(QWidget *parent = 0, Qt::WindowFlags flags = 0);
 	virtual ~ChatDialog();
 
 	void closeEvent(QCloseEvent *event);

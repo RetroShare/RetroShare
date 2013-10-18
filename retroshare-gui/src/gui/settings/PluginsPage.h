@@ -29,7 +29,7 @@ class PluginsPage : public ConfigPage
 	Q_OBJECT
 
 	public:
-		PluginsPage(QWidget * parent = 0, Qt::WFlags flags = 0);
+		PluginsPage(QWidget * parent = 0, Qt::WindowFlags flags = 0);
 		~PluginsPage();
 
 		/** Saves the changes on this page */

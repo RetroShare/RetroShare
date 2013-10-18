@@ -27,11 +27,11 @@
 #include <retroshare/rspeers.h>
 #include "settings/rsharesettings.h"
 
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QPainter>
-#include <QtGui/QBrush>
-#include <QtGui/QMessageBox>
-#include <QtGui/QStyle>
+#include <QHBoxLayout>
+#include <QPainter>
+#include <QBrush>
+#include <QMessageBox>
+#include <QStyle>
 #include <assert.h>
 
 AboutDialog::AboutDialog(QWidget* parent)

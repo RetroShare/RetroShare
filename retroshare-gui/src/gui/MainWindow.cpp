@@ -176,7 +176,7 @@
 }
 
 /** Constructor */
-MainWindow::MainWindow(QWidget* parent, Qt::WFlags flags)
+MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     : RWindow("MainWindow", parent, flags), ui(new Ui::MainWindow)
 {
     /* Invoke the Qt Designer generated QObject setup routine */

@@ -24,9 +24,9 @@
 
 #include <util/rsqtutildll.h>
 
-#include <QtGui/QLabel>
-#include <QtGui/QPixmap>
-#include <QtGui/QColor>
+#include <QLabel>
+#include <QPixmap>
+#include <QColor>
 
 
 class RSQTUTIL_API RetroStyleLabel : public QLabel {

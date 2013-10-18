@@ -22,8 +22,8 @@
 #ifndef _QUICKSTARTWIZARD_H
 #define _QUICKSTARTWIZARD_H
 
-#include <QtGui/QDialog>
-#include <QtGui/QWizard>
+#include <QDialog>
+#include <QWizard>
 
 #include "ui_QuickStartWizard.h"
 

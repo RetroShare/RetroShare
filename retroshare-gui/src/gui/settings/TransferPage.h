@@ -22,7 +22,7 @@
 #ifndef TRANSFERPAGE_H
 # define TRANSFERPAGE_H
 
-# include <QtGui/QWidget>
+# include <QWidget>
 
 #include <retroshare-gui/configpage.h>
 #include "ui_TransferPage.h"
@@ -32,7 +32,7 @@ class TransferPage: public ConfigPage
 	Q_OBJECT
 
 	public:
-		TransferPage(QWidget * parent = 0, Qt::WFlags flags = 0);
+		TransferPage(QWidget * parent = 0, Qt::WindowFlags flags = 0);
 		~TransferPage() {}
 
 		/** Saves the changes on this page */

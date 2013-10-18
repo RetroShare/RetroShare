@@ -959,7 +959,7 @@ bool RetroShareLink::checkSSLId(const QString& ssl_id)
     if(ssl_id.length() != 32)
         return false ;
 
-    QByteArray qb(ssl_id.toAscii()) ;
+    QByteArray qb(ssl_id.toLatin1()) ;
 
     for(int i=0;i<qb.length();++i)
     {
@@ -976,7 +976,7 @@ bool RetroShareLink::checkPGPId(const QString& pgp_id)
     if(pgp_id.length() != 16)
         return false ;
 
-    QByteArray qb(pgp_id.toAscii()) ;
+    QByteArray qb(pgp_id.toLatin1()) ;
 
     for(int i=0;i<qb.length();++i)
     {
@@ -990,7 +990,7 @@ bool RetroShareLink::checkPGPId(const QString& pgp_id)
 }
 bool RetroShareLink::checkRadix64(const QString& s)
 {
-	QByteArray qb(s.toAscii()) ;
+	QByteArray qb(s.toLatin1()) ;
 
     for(int i=0;i<qb.length();++i)
     {
@@ -1011,7 +1011,7 @@ bool RetroShareLink::checkHash(const QString& hash)
     if(hash.length() != 40)
         return false ;
 
-    QByteArray qb(hash.toAscii()) ;
+    QByteArray qb(hash.toLatin1()) ;
 
     for(int i=0;i<qb.length();++i)
     {

@@ -25,7 +25,7 @@
 #include "interface/rsFeedReader.h"
 
 /** Constructor */
-FeedReaderConfig::FeedReaderConfig(QWidget *parent, Qt::WFlags flags)
+FeedReaderConfig::FeedReaderConfig(QWidget *parent, Qt::WindowFlags flags)
 	: ConfigPage(parent, flags), ui(new Ui::FeedReaderConfig)
 {
 	/* Invoke the Qt Designer generated object setup routine */

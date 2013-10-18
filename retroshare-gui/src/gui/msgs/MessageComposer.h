@@ -45,7 +45,7 @@ public:
 public:
     /** Default Constructor */
 
-    MessageComposer(QWidget *parent = 0, Qt::WFlags flags = 0);
+    MessageComposer(QWidget *parent = 0, Qt::WindowFlags flags = 0);
     ~MessageComposer();
 
     static void msgFriend(const std::string &id, bool group);

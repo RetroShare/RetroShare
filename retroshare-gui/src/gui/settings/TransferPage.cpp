@@ -29,7 +29,7 @@
 #include <retroshare/rsfiles.h>
 #include <retroshare/rspeers.h>
 
-TransferPage::TransferPage(QWidget * parent, Qt::WFlags flags)
+TransferPage::TransferPage(QWidget * parent, Qt::WindowFlags flags)
     : ConfigPage(parent, flags)
 {
   /* Invoke the Qt Designer generated object setup routine */

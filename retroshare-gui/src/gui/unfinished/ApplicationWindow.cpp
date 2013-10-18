@@ -68,7 +68,7 @@
 
 
 /** Constructor */
-ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
+ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WindowFlags flags)
     : QMainWindow(parent, flags)
 {
     /* Invoke the Qt Designer generated QObject setup routine */

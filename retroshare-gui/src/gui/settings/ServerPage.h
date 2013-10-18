@@ -32,7 +32,7 @@ class ServerPage: public ConfigPage
     Q_OBJECT
 
 public:
-    ServerPage(QWidget * parent = 0, Qt::WFlags flags = 0);
+    ServerPage(QWidget * parent = 0, Qt::WindowFlags flags = 0);
     ~ServerPage() {}
 
     /** Saves the changes on this page */

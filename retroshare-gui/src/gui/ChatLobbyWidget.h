@@ -23,7 +23,7 @@ class ChatLobbyWidget : public RsAutoUpdatePage, Ui::ChatLobbyWidget
 
 public:
 	/** Default constructor */
-	ChatLobbyWidget(QWidget *parent = 0, Qt::WFlags flags = 0);
+	ChatLobbyWidget(QWidget *parent = 0, Qt::WindowFlags flags = 0);
 
 	/** Default destructor */
 	~ChatLobbyWidget();

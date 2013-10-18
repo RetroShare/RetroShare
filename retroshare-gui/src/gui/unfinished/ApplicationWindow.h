@@ -33,7 +33,7 @@ class ApplicationWindow : public QMainWindow
 
 public:
     /** Default Constructor */
-    ApplicationWindow(QWidget *parent = 0, Qt::WFlags flags = 0);
+    ApplicationWindow(QWidget *parent = 0, Qt::WindowFlags flags = 0);
     
     /** Destructor. */
     ~ApplicationWindow();

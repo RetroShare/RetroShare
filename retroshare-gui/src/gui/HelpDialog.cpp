@@ -26,8 +26,8 @@
 
 #include <iostream>
 
-#include <QtCore/QFile>
-#include <QtCore/QTextStream>
+#include <QFile>
+#include <QTextStream>
 
 /* Images for context menu icons */
 #define IMAGE_DOWNLOAD       ":/images/start.png"

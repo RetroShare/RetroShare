@@ -53,7 +53,7 @@
 
 //============================================================================
 
-FileAssociationsPage::FileAssociationsPage(QWidget * parent, Qt::WFlags flags)
+FileAssociationsPage::FileAssociationsPage(QWidget * parent, Qt::WindowFlags flags)
     : ConfigPage(parent, flags)
 //:QFrame()
 {

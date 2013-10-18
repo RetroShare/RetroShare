@@ -32,7 +32,7 @@
 
 
 /** Default constructor. */
-RWindow::RWindow(QString name, QWidget *parent, Qt::WFlags flags)
+RWindow::RWindow(QString name, QWidget *parent, Qt::WindowFlags flags)
  : QMainWindow(parent, flags)
 {
   _name     = name;

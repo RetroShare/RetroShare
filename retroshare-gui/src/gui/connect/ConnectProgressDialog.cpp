@@ -54,7 +54,7 @@ ConnectProgressDialog *ConnectProgressDialog::instance(const std::string& peer_i
 	return d;
 }
 
-ConnectProgressDialog::ConnectProgressDialog(const std::string& id, QWidget *parent, Qt::WFlags flags)
+ConnectProgressDialog::ConnectProgressDialog(const std::string& id, QWidget *parent, Qt::WindowFlags flags)
 	:QDialog(parent, flags), mId(id), ui(new Ui::ConnectProgressDialog)
 {
 	ui->setupUi(this);

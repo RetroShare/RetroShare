@@ -39,7 +39,7 @@ PopupDistantChatDialog::~PopupDistantChatDialog()
 	delete _update_timer ;
 }
 
-PopupDistantChatDialog::PopupDistantChatDialog(QWidget *parent, Qt::WFlags flags)
+PopupDistantChatDialog::PopupDistantChatDialog(QWidget *parent, Qt::WindowFlags flags)
 	: PopupChatDialog(parent,flags)
 {
 	_status_label = new QLabel ;

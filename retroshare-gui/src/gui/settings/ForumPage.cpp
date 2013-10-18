@@ -26,7 +26,7 @@
 #include "../MainWindow.h"
 #include "../ForumsDialog.h"
 
-ForumPage::ForumPage(QWidget * parent, Qt::WFlags flags)
+ForumPage::ForumPage(QWidget * parent, Qt::WindowFlags flags)
     : ConfigPage(parent, flags)
 {
     ui.setupUi(this);

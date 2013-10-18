@@ -33,7 +33,7 @@ class ProfileWidget : public QWidget
 
 public:
     /** Default constructor */
-    ProfileWidget(QWidget *parent = 0, Qt::WFlags flags = 0);
+    ProfileWidget(QWidget *parent = 0, Qt::WindowFlags flags = 0);
 
 private slots:
     void showEvent ( QShowEvent * event );

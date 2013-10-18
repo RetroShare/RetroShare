@@ -22,7 +22,7 @@
 #ifndef RELAYPAGE_H
 #define RELAYPAGE_H
 
-# include <QtGui/QWidget>
+# include <QWidget>
 
 #include <retroshare-gui/configpage.h>
 #include "ui_RelayPage.h"
@@ -32,7 +32,7 @@ class RelayPage: public ConfigPage
 	Q_OBJECT
 
 	public:
-		RelayPage(QWidget * parent = 0, Qt::WFlags flags = 0);
+		RelayPage(QWidget * parent = 0, Qt::WindowFlags flags = 0);
 		~RelayPage() {}
 
 		/** Saves the changes on this page */

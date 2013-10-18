@@ -35,7 +35,7 @@
 #include <QDateTime>
 
 /** Default constructor */
-ProfileWidget::ProfileWidget(QWidget *parent, Qt::WFlags flags)
+ProfileWidget::ProfileWidget(QWidget *parent, Qt::WindowFlags flags)
   : QWidget(parent, flags)
 {
     /* Invoke Qt Designer generated QObject setup routine */

@@ -22,7 +22,7 @@
 #ifndef LOGOBAR_H
 #define LOGOBAR_H
 
-#include <QtGui/QFrame>
+#include <QFrame>
 
 #include <string>
 

@@ -48,7 +48,7 @@ class FileAssociationsPage : public ConfigPage
     Q_OBJECT
 
 public:
-    FileAssociationsPage(QWidget * parent = 0, Qt::WFlags flags = 0);
+    FileAssociationsPage(QWidget * parent = 0, Qt::WindowFlags flags = 0);
     virtual ~FileAssociationsPage();
 
     virtual void load();

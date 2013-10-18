@@ -25,7 +25,7 @@
 #include <QColorDialog>
 
 /** Default constructor */
-NewTag::NewTag(MsgTagType &Tags, uint32_t nId /* = 0*/, QWidget *parent, Qt::WFlags flags)
+NewTag::NewTag(MsgTagType &Tags, uint32_t nId /* = 0*/, QWidget *parent, Qt::WindowFlags flags)
   : QDialog(parent, flags), m_Tags(Tags)
 {
     /* Invoke Qt Designer generated QObject setup routine */

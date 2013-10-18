@@ -31,7 +31,7 @@ class ChatPage : public ConfigPage
 
   public:
       /** Default Constructor */
-      ChatPage(QWidget * parent = 0, Qt::WFlags flags = 0);
+      ChatPage(QWidget * parent = 0, Qt::WindowFlags flags = 0);
       /** Default Destructor */
       ~ChatPage() {}
 

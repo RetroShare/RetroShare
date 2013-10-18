@@ -35,7 +35,7 @@ class PopupDistantChatDialog: public PopupChatDialog
 
 	protected:
 	/** Default constructor */
-	PopupDistantChatDialog(QWidget *parent = 0, Qt::WFlags flags = 0);
+	PopupDistantChatDialog(QWidget *parent = 0, Qt::WindowFlags flags = 0);
 	/** Default destructor */
 	virtual ~PopupDistantChatDialog();
 

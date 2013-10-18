@@ -37,7 +37,7 @@ class FeedReaderConfig : public ConfigPage
 
 public:
 	/** Default Constructor */
-	FeedReaderConfig(QWidget *parent = 0, Qt::WFlags flags = 0);
+	FeedReaderConfig(QWidget *parent = 0, Qt::WindowFlags flags = 0);
 	/** Default Destructor */
 	virtual ~FeedReaderConfig();
 

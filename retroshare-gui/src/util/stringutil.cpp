@@ -310,7 +310,7 @@ bool
 string_is_hex(const QString &str)
 {
   for (int i = 0; i < str.length(); i++) {
-    char c = str[i].toUpper().toAscii();
+    char c = str[i].toUpper().toLatin1();
     if ((c < 'A' || c > 'F') && (c < '0' || c > '9'))
       return false;
   }

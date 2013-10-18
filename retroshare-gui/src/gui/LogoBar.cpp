@@ -25,7 +25,7 @@
 #include <util/MouseEventFilter.h>
 
 
-#include <QtGui/QtGui>
+#include <QtGui>
 
 LogoBar::LogoBar(QWidget * parent)
 	: QFrame(parent) {

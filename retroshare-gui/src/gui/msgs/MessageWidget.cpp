@@ -117,7 +117,7 @@ MessageWidget *MessageWidget::openMsg(const std::string &msgId, bool window)
 }
 
 /** Constructor */
-MessageWidget::MessageWidget(bool controlled, QWidget *parent, Qt::WFlags flags)
+MessageWidget::MessageWidget(bool controlled, QWidget *parent, Qt::WindowFlags flags)
 : QWidget(parent, flags)
 {
 	/* Invoke the Qt Designer generated object setup routine */

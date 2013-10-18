@@ -111,7 +111,7 @@ public:
 };
 
 /** Constructor */
-MessageComposer::MessageComposer(QWidget *parent, Qt::WFlags flags)
+MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
 : QMainWindow(parent, flags)
 {
     /* Invoke the Qt Designer generated object setup routine */

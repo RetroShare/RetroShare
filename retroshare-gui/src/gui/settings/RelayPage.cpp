@@ -32,7 +32,7 @@
 
 #include <QTimer>
 
-RelayPage::RelayPage(QWidget * parent, Qt::WFlags flags)
+RelayPage::RelayPage(QWidget * parent, Qt::WindowFlags flags)
     : ConfigPage(parent, flags)
 {
   /* Invoke the Qt Designer generated object setup routine */

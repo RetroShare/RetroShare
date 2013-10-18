@@ -43,7 +43,7 @@
 #define GRAPHWIDGET_H
 
 #include <map>
-#include <QtGui/QGraphicsView>
+#include <QGraphicsView>
 #include <stdint.h>
 
 class Node;

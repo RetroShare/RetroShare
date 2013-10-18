@@ -42,7 +42,7 @@ class BandwidthGraph : public RWindow
 
 public:
   /** Default constructor */
-  BandwidthGraph(QWidget *parent = 0, Qt::WFlags flags = 0);
+  BandwidthGraph(QWidget *parent = 0, Qt::WindowFlags flags = 0);
 
 public slots:
   /** Overloaded QWidget.show */

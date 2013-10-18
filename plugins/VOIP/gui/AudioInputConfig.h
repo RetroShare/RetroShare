@@ -59,7 +59,7 @@ class AudioInputConfig : public ConfigPage
 
 	public:
 		/** Default Constructor */
-		AudioInputConfig(QWidget * parent = 0, Qt::WFlags flags = 0);
+		AudioInputConfig(QWidget * parent = 0, Qt::WindowFlags flags = 0);
 		/** Default Destructor */
 		~AudioInputConfig();
 

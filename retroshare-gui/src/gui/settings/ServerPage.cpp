@@ -34,7 +34,7 @@
 
 #include <QTimer>
 
-ServerPage::ServerPage(QWidget * parent, Qt::WFlags flags)
+ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
     : ConfigPage(parent, flags)
 {
   /* Invoke the Qt Designer generated object setup routine */

@@ -36,7 +36,7 @@
 #define TYPE_ITEM       1
 
 /** Constructor */
-SoundPage::SoundPage(QWidget * parent, Qt::WFlags flags)
+SoundPage::SoundPage(QWidget * parent, Qt::WindowFlags flags)
     : ConfigPage(parent, flags)
 {
 	/* Invoke the Qt Designer generated object setup routine */

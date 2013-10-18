@@ -33,7 +33,7 @@ class BlogDetails : public QDialog
 	public:  
 	
 	/** Default constructor */
-  BlogDetails(QWidget *parent = 0, Qt::WFlags flags = 0);
+  BlogDetails(QWidget *parent = 0, Qt::WindowFlags flags = 0);
   /** Default destructor */
 	
 	void 	showDetails(std::string mChannelId);

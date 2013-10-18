@@ -43,7 +43,7 @@ class CreateBlogMsg : public QMainWindow
 
 public:
   /** Default Constructor */
-  CreateBlogMsg(std::string cId, QWidget *parent = 0, Qt::WFlags flags = 0);
+  CreateBlogMsg(std::string cId, QWidget *parent = 0, Qt::WindowFlags flags = 0);
   /** Default Destructor */
 
 	void addAttachment(std::string path);

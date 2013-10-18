@@ -28,7 +28,7 @@
 #include <retroshare/rsmsgs.h>
 
 /** Constructor */
-MessageWindow::MessageWindow(QWidget *parent, Qt::WFlags flags)
+MessageWindow::MessageWindow(QWidget *parent, Qt::WindowFlags flags)
 : RWindow("MessageWindow", parent, flags)
 {
     /* Invoke the Qt Designer generated object setup routine */

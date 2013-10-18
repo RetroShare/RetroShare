@@ -52,7 +52,7 @@
 
 
 /** Default constructor */
-BandwidthGraph::BandwidthGraph(QWidget *parent, Qt::WFlags flags)
+BandwidthGraph::BandwidthGraph(QWidget *parent, Qt::WindowFlags flags)
   : RWindow("BandwidthGraph", parent, flags)
 {
   /* Invoke Qt Designer generated QObject setup routine */

@@ -38,7 +38,7 @@
 #define WINDOW(This) dynamic_cast<PopupChatWindow*>(This->window())
 
 /** Default constructor */
-PopupChatDialog::PopupChatDialog(QWidget *parent, Qt::WFlags flags)
+PopupChatDialog::PopupChatDialog(QWidget *parent, Qt::WindowFlags flags)
   : ChatDialog(parent, flags)
 {
 	/* Invoke Qt Designer generated QObject setup routine */

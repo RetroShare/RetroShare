@@ -22,7 +22,7 @@
 #include "NetworkPage.h"
 #include "rshare.h"
 
-NetworkPage::NetworkPage(QWidget * parent, Qt::WFlags flags)
+NetworkPage::NetworkPage(QWidget * parent, Qt::WindowFlags flags)
     : ConfigPage(parent, flags)
 {
     ui.setupUi(this);

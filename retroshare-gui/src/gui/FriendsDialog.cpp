@@ -394,7 +394,7 @@ void FriendsDialog::updateStatusString(const QString& peer_id, const QString& st
     std::cerr << "FriendsDialog: received group chat typing info. updating gui." << std::endl ;
 #endif
 
-    QString status = QString::fromUtf8(rsPeers->getPeerName(peer_id.toStdString()).c_str()) + " " + tr(status_string.toAscii());
+    QString status = QString::fromUtf8(rsPeers->getPeerName(peer_id.toStdString()).c_str()) + " " + tr(status_string.toLatin1());
     ui.statusStringLabel->setText(status) ; // displays info for 5 secs.
 
     QTimer::singleShot(5000,this,SLOT(resetStatusBar())) ;

@@ -36,7 +36,7 @@ class NewTag : public QDialog
 
 public:
     /** Default constructor */
-    NewTag(MsgTagType &Tags, uint32_t nId = 0, QWidget *parent = 0, Qt::WFlags flags = 0);
+    NewTag(MsgTagType &Tags, uint32_t nId = 0, QWidget *parent = 0, Qt::WindowFlags flags = 0);
 
     uint32_t m_nId;
 

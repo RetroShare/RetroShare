@@ -740,7 +740,7 @@ bool RsHtml::makeEmbeddedImage(const QString &fileName, QString &embeddedImage, 
 	QImage image;
 
 	if (image.load (fileName) == false) {
-		fprintf (stderr, "RsHtml::makeEmbeddedImage() - image \"%s\" can't be load", fileName.toAscii().constData());
+		fprintf (stderr, "RsHtml::makeEmbeddedImage() - image \"%s\" can't be load", fileName.toLatin1().constData());
 		return false;
 	}
 	return RsHtml::makeEmbeddedImage(image, embeddedImage, maxPixels);

@@ -94,7 +94,7 @@ static QString loadStyleInfo(ChatStyle::enumStyleType type, QListWidget *listWid
 }
 
 /** Constructor */
-ChatPage::ChatPage(QWidget * parent, Qt::WFlags flags)
+ChatPage::ChatPage(QWidget * parent, Qt::WindowFlags flags)
     : ConfigPage(parent, flags)
 {
     /* Invoke the Qt Designer generated object setup routine */

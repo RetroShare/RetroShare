@@ -37,7 +37,7 @@ class RWindow : public QMainWindow
 
 public:
   /** Default constructor. */
-  RWindow(QString name, QWidget *parent = 0, Qt::WFlags flags = 0);
+  RWindow(QString name, QWidget *parent = 0, Qt::WindowFlags flags = 0);
   /** Destructor. */
   ~RWindow();
   

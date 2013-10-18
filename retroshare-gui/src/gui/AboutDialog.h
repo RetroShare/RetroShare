@@ -25,14 +25,14 @@
 
 #include "ui_AboutDialog.h"
 
-#include <QtCore/QBasicTimer>
-#include <QtCore/QPointer>
+#include <QBasicTimer>
+#include <QPointer>
 
-#include <QtGui/QDialog>
-#include <QtGui/QLabel>
-#include <QtGui/QPaintEvent>
-#include <QtGui/QKeyEvent>
-#include <QtGui/QMouseEvent>
+#include <QDialog>
+#include <QLabel>
+#include <QPaintEvent>
+#include <QKeyEvent>
+#include <QMouseEvent>
 
 
 class AWidget;

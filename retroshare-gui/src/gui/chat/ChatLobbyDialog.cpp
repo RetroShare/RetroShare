@@ -46,7 +46,7 @@
 #define COLUMN_COUNT     3
 
 /** Default constructor */
-ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::WFlags flags)
+ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::WindowFlags flags)
 	: ChatDialog(parent, flags), lobbyId(lid)
 {
 	/* Invoke Qt Designer generated QObject setup routine */

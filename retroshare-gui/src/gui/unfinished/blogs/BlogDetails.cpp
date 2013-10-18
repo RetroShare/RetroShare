@@ -34,7 +34,7 @@
 
 
 /** Default constructor */
-BlogDetails::BlogDetails(QWidget *parent, Qt::WFlags flags)
+BlogDetails::BlogDetails(QWidget *parent, Qt::WindowFlags flags)
   : QDialog(parent, flags)
 {
   /* Invoke Qt Designer generated QObject setup routine */

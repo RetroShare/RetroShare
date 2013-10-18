@@ -32,7 +32,7 @@
 
 #include "../MainWindow.h"
 
-PluginsPage::PluginsPage(QWidget * parent, Qt::WFlags flags)
+PluginsPage::PluginsPage(QWidget * parent, Qt::WindowFlags flags)
     : ConfigPage(parent, flags)
 {
     ui.setupUi(this);

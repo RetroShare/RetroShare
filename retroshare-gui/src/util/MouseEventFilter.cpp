@@ -21,8 +21,8 @@
 
 #include <util/MouseEventFilter.h>
 
-#include <QtCore/QEvent>
-#include <QtGui/QMouseEvent>
+#include <QEvent>
+#include <QMouseEvent>
 
 #include <exception>
 #include <typeinfo>

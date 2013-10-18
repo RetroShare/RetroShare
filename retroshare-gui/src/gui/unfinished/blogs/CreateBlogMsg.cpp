@@ -40,7 +40,7 @@
 #include <retroshare/rsblogs.h>
 
 /** Constructor */
-CreateBlogMsg::CreateBlogMsg(std::string cId ,QWidget* parent, Qt::WFlags flags)
+CreateBlogMsg::CreateBlogMsg(std::string cId ,QWidget* parent, Qt::WindowFlags flags)
 : mBlogId(cId), QMainWindow (parent, flags)
 {
 	/* Invoke the Qt Designer generated object setup routine */

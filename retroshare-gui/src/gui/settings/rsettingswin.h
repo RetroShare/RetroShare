@@ -22,7 +22,7 @@
 #ifndef RSETTINGSWIN_HPP_
 #define RSETTINGSWIN_HPP_
 
-#include <QtGui/QDialog>
+#include <QDialog>
 #include <retroshare-gui/configpage.h>
 #include "ui_settings.h"
 

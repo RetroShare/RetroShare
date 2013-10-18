@@ -310,12 +310,12 @@ QString ChatStyle::formatMessage(enumFormatMessage type, const QString &name, co
         // Calculate color from the name
 //        uint hash = 0x73ffe23a;
 //        for (int i = 0; i < name.length(); ++i) {
-//            hash = (hash ^ 0x28594888) + ((uint32_t) name[i].toAscii() << (i % 4));
+//            hash = (hash ^ 0x28594888) + ((uint32_t) name[i].toLatin1() << (i % 4));
 //        }
 
         uint hash = 0;
         for (int i = 0; i < name.length(); ++i) {
-            hash = (((hash << 1) + (hash >> 14)) ^ ((int) name[i].toAscii())) & 0x3fff;
+            hash = (((hash << 1) + (hash >> 14)) ^ ((int) name[i].toLatin1())) & 0x3fff;
         }
 
         color.setHsv(hash, 255, 150);

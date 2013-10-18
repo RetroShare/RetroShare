@@ -26,7 +26,7 @@
 
 #include <util/NonCopyable.h>
 
-#include <QtCore/QObject>
+#include <QObject>
 
 class QEvent;
 

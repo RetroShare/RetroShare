@@ -45,7 +45,7 @@ public:
 
 protected:
 	/** Default constructor */
-	PopupChatWindow(bool tabbed, QWidget *parent = 0, Qt::WFlags flags = 0);
+	PopupChatWindow(bool tabbed, QWidget *parent = 0, Qt::WindowFlags flags = 0);
 	/** Default destructor */
 	~PopupChatWindow();
 

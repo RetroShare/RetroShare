@@ -59,7 +59,7 @@ ConfCertDialog *ConfCertDialog::instance(const std::string& peer_id)
 }
 
 /** Default constructor */
-ConfCertDialog::ConfCertDialog(const std::string& id, QWidget *parent, Qt::WFlags flags)
+ConfCertDialog::ConfCertDialog(const std::string& id, QWidget *parent, Qt::WindowFlags flags)
   : QDialog(parent, flags), mId(id)
 {
     /* Invoke Qt Designer generated QObject setup routine */

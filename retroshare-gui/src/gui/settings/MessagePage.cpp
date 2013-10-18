@@ -28,7 +28,7 @@
 #include <algorithm>
 #include "NewTag.h"
 
-MessagePage::MessagePage(QWidget * parent, Qt::WFlags flags)
+MessagePage::MessagePage(QWidget * parent, Qt::WindowFlags flags)
     : ConfigPage(parent, flags)
 {
     ui.setupUi(this);

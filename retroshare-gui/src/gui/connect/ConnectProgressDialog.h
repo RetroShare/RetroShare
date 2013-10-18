@@ -38,7 +38,7 @@ public:
     static void showProgress(const std::string& id);
 
 private:
-    ConnectProgressDialog(const std::string& id, QWidget *parent = 0, Qt::WFlags flags = 0);
+    ConnectProgressDialog(const std::string& id, QWidget *parent = 0, Qt::WindowFlags flags = 0);
     ~ConnectProgressDialog();
 
     static ConnectProgressDialog *instance(const std::string& peer_id);

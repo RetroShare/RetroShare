@@ -63,7 +63,7 @@ static PopupChatWindow *instance = NULL;
 }
 
 /** Default constructor */
-PopupChatWindow::PopupChatWindow(bool tabbed, QWidget *parent, Qt::WFlags flags) : QMainWindow(parent, flags)
+PopupChatWindow::PopupChatWindow(bool tabbed, QWidget *parent, Qt::WindowFlags flags) : QMainWindow(parent, flags)
 {
 	/* Invoke Qt Designer generated QObject setup routine */
 	ui.setupUi(this);

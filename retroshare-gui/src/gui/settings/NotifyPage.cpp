@@ -33,7 +33,7 @@
 #include "gui/NewsFeed.h"
 
 /** Constructor */
-NotifyPage::NotifyPage(QWidget * parent, Qt::WFlags flags)
+NotifyPage::NotifyPage(QWidget * parent, Qt::WindowFlags flags)
   : ConfigPage(parent, flags)
 {
   /* Invoke the Qt Designer generated object setup routine */

@@ -45,7 +45,7 @@
 #define IMAGE_MESSAGE	        ":images/chat.png" 
 #define IMAGE_AUTOSUBSCRIBE   ":images/accepted16.png"
 
-ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WFlags flags)
+ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 	: RsAutoUpdatePage(5000, parent, flags)
 {
 	setupUi(this);

@@ -21,7 +21,7 @@
 
 #include <util/Widget.h>
 
-#include <QtGui/QtGui>
+#include <QtGui>
 
 QGridLayout * Widget::createLayout(QWidget * parent) {
 	QGridLayout * layout = new QGridLayout(parent);

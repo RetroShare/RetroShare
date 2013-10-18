@@ -92,7 +92,7 @@ void MessengerWindow::releaseInstance()
 }
 
 /** Constructor */
-MessengerWindow::MessengerWindow(QWidget* parent, Qt::WFlags flags)
+MessengerWindow::MessengerWindow(QWidget* parent, Qt::WindowFlags flags)
     : 	RWindow("MessengerWindow", parent, flags)
 {
     /* Invoke the Qt Designer generated object setup routine */

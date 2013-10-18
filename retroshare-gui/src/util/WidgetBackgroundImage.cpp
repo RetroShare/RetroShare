@@ -21,11 +21,11 @@
 
 #include <util/WidgetBackgroundImage.h>
 
-#include <QtCore/QString>
-#include <QtGui/QWidget>
-#include <QtGui/QPixmap>
-#include <QtGui/QPalette>
-#include <QtGui/QBrush>
+#include <QString>
+#include <QWidget>
+#include <QPixmap>
+#include <QPalette>
+#include <QBrush>
 
 void WidgetBackgroundImage::setBackgroundImage(QWidget * widget, const char * imageFile, WidgetBackgroundImage::AdjustMode adjustMode) {
 	widget->setAutoFillBackground(true);

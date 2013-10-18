@@ -21,7 +21,7 @@
 
 #include <util/EventFilter.h>
 
-#include <QtCore/QEvent>
+#include <QEvent>
 
 EventFilter::EventFilter(QObject * receiver, const char * member)
 	: QObject() {

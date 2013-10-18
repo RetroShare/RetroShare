@@ -50,7 +50,7 @@ void AudioInputDialog::showEvent(QShowEvent *) {
 }*/
 
 /** Constructor */
-AudioInputConfig::AudioInputConfig(QWidget * parent, Qt::WFlags flags)
+AudioInputConfig::AudioInputConfig(QWidget * parent, Qt::WindowFlags flags)
     : ConfigPage(parent, flags)
 {
     /* Invoke the Qt Designer generated object setup routine */

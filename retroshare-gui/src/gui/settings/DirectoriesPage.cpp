@@ -28,7 +28,7 @@
 
 #include <algorithm>
 
-DirectoriesPage::DirectoriesPage(QWidget * parent, Qt::WFlags flags)
+DirectoriesPage::DirectoriesPage(QWidget * parent, Qt::WindowFlags flags)
     : ConfigPage(parent, flags)
 {
     ui.setupUi(this);

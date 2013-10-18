@@ -32,7 +32,7 @@
 #include <gui/QuickStartWizard.h>
 
 /** Constructor */
-GeneralPage::GeneralPage(QWidget * parent, Qt::WFlags flags)
+GeneralPage::GeneralPage(QWidget * parent, Qt::WindowFlags flags)
 : ConfigPage(parent, flags)
 {
     /* Invoke the Qt Designer generated object setup routine */
