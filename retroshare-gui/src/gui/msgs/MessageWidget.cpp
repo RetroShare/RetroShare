@@ -564,6 +564,7 @@ void MessageWidget::fill(const std::string &msgId)
 
 	if (msgInfo.msgflags & RS_MSG_ENCRYPTED) {
 		ui.subjectText->setText(tr("Encrypted message"));
+		ui.fromText->setText(tr("Unknown (needs decryption)")) ;
 	} else {
 		ui.subjectText->setText(QString::fromStdWString(msgInfo.title));
 	}

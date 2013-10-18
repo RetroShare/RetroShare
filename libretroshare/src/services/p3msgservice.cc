@@ -2392,12 +2392,12 @@ void p3MsgService::receiveTurtleData(RsTurtleGenericTunnelItem *gitem,const std:
 	}
 		
 	RsItem *itm = _serialiser->deserialise(item->data_bytes,&item->data_size) ;
-
 	RsMsgItem *mitm = dynamic_cast<RsMsgItem*>(itm) ;
 
 	if(mitm != NULL)
 	{
 		mitm->PeerId(hash) ;
+		mitm->msgto.ids.push_back(rsPeers->getGPGOwnId()) ;
 		handleIncomingItem(mitm) ;
 	}
 	else
