@@ -1723,15 +1723,15 @@ Double click lobbies to enter and chat.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Authentified signature</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Signed with key not in keyring</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Not signed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Authenticated signature</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -8973,6 +8973,14 @@ Do you want to save message ?</source>
         <source>Only show people you trusted</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>PGP key unknown</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You dont have the PGP key of the message sender. So you cannot respond!</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>MessagePage</name>
@@ -9187,6 +9195,10 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>This message could not be decrypted.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown (needs decryption)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -9609,6 +9621,10 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Messages&lt;/h1&gt;                          &lt;p&gt;Messages are like &lt;b&gt;e-mail&lt;/b&gt;: you send/receive them from your friends when both of you are connected.&lt;/p&gt;  &lt;p&gt;It is also possible to send messages to non friends, using tunnels. Such messages are always encrypted. It is  recommended to cryptographically sign distant messages, as a proof of your identity, using the &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; button  in the message composer window. Distant messages are not guarrantied to arrive, since this requires the distant peer to accept them (You need yourself to switch this on in Config-Messages).&lt;/p&gt; &lt;p&gt;Some additional features allow you to exchange data in messages: you may recommend files to your friends by pasting file links,  or recommend friends-to-be to other friends, in order to streathen your network.&lt;/p&gt;                    </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This message has been successfully decrypted, and is unsigned.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -12574,19 +12590,11 @@ The default value is 20.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Download when active (KB/s) </source>
+        <source>Download (KB/s) </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Upload when active (KB/s) </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Download when idle (KB/s) </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Upload when idle (KB/s) </source>
+        <source>Upload (KB/s) </source>
         <translation type="unfinished"></translation>
     </message>
 </context>

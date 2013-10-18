@@ -193,8 +193,11 @@ AWidget::AWidget() {
     {
         QString version = QString("RetroShare %1 : \n%2").arg(tr("version"), QString::fromStdString(vit->second));
         p.drawText(QRect(10, 10, width()-10, 60), version);
-          
     }
+
+    /* Draw Qt's version number */
+    p.drawText(QRect(10, 50, width()-10, 60), QString("Qt %1 : \n%2").arg(tr("version"), QT_VERSION_STR));
+
     p.end();
 
     image1 = image2 = image;

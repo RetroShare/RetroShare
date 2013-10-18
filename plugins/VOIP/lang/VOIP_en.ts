@@ -171,13 +171,24 @@
 <context>
     <name>AudioPopupChatDialog</name>
     <message>
-        <location filename="../gui/AudioPopupChatDialog.cpp" line="15"/>
+        <location filename="../gui/AudioPopupChatDialog.cpp" line="18"/>
         <source>Mute yourself</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/AudioPopupChatDialog.cpp" line="35"/>
-        <source>Deafen yourself</source>
+        <location filename="../gui/AudioPopupChatDialog.cpp" line="38"/>
+        <location filename="../gui/AudioPopupChatDialog.cpp" line="104"/>
+        <source>Start Call</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/AudioPopupChatDialog.cpp" line="84"/>
+        <source>Stop Call</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/AudioPopupChatDialog.cpp" line="129"/>
+        <source>Answer</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
