@@ -101,14 +101,15 @@ cd $workdir
 #for i in wheezy; do
 #for i in sid ; do
 #for i in precise; do
-for i in lucid precise quantal raring; do
+#for i in lucid precise quantal raring; do
+for i in wheezy squeeze lucid precise quantal raring saucy; do
 #for i in sid squeeze; do
 	echo copying changelog for $i
 	cat ../changelog | sed -e s/XXXXXX/"$svn"/g | sed -e s/YYYYYY/"$i"/g > debian/changelog
 
 	if test "$i" = "lucid" ; then
 		cp ../control.ubuntu_lucid debian/control
-	elif test "$bubba3" = "Y" ; then
+	elif test "$i" = "squeeze" ; then
 		cp ../control.squeeze_bubba3 debian/control
 	else
 		cp ../debian/control debian/control
