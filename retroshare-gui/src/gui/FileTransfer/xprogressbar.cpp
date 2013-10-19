@@ -235,6 +235,52 @@ void xProgressBar::paint()
 	if(ss > 1)	// for small files we use a more progressive display
 	{
 		if(!_pinfo.cmap._map.empty())
+		{
+			if (ss > width)
+				for(uint32_t i=0;i<width;++i)
+				{
+					int first_chunk_in_pixel = (int)rint(ss*i/width);
+					int last_chunk_in_pixel = (int)rint(ss*(i+1)/width)-1; 
+					
+					if (last_chunk_in_pixel<first_chunk_in_pixel)
+						last_chunk_in_pixel=first_chunk_in_pixel;
+
+					int c = 0;
+					bool all_done = true; // will be set to false when the first incomplete chunk is encountered
+					int j;
+
+					//loop through all chunks represented by the pixel at position i and count the completed chunks
+					//if no incomplete chunk is encountered in this range, continue to count the row of completed chunks
+					//to see whether more than 1 pixel can be drawn at once.
+					for(j=first_chunk_in_pixel;((j<=last_chunk_in_pixel) || (all_done && (j<ss)));++j)
+						if (_pinfo.cmap[j])
+							++c;
+						else
+							all_done = false;
+					//after the loop has completed, we either need c (for opacity) or j (for width), because either:
+					// I: if the first range was completely completed, j > last_chunk_in_pixel
+					//II: if not, c < last_chunk_in_pixel-first_chunk_in_pixel
+
+					if (c==0) // not even a single chunk found
+						continue;
+
+					//we now check for case I.
+					//if the loop above has checked more than 1 pixel, increment i as long as j is in its range
+					int x0 = i;
+					while (j >= rint(ss*(i+2)/width)-1)
+						++i;
+
+					//case  I.: c >= last_chunk_in_pixel - first_chunk_in_pixel    ===> o  = 1
+					//case II.: c <= last_chunk_in_pixel - first_chunk_in_pixel    ===> o <= 1
+					float o = std::min(1.0f,(float)c / (last_chunk_in_pixel - first_chunk_in_pixel + 1));
+					
+					if (o>0)
+					{
+						painter->setOpacity(o);
+						painter->drawRect(rect.x() + hSpan + x0, rect.y() + vSpan, i - x0 + 1, rect.height() - 1 - vSpan * 2);
+					}
+				}
+			else
 			for(uint32_t i=0;i<ss;++i)
 			{
 				uint32_t j=0 ;
@@ -251,6 +297,7 @@ void xProgressBar::paint()
 
 				i += j ;
 			}
+		}
 
 		overPaintSelectedChunks( _pinfo.chunks_in_progress , QColor(170, 20,9), QColor(223,121,123), width,ss) ;
 		overPaintSelectedChunks( _pinfo.chunks_in_checking , QColor(186,143,0), QColor(223,196, 61), width,ss) ;
