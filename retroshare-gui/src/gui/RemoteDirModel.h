@@ -73,6 +73,9 @@ class RetroshareDirModel : public QAbstractItemModel
 		virtual QMimeData * mimeData ( const QModelIndexList & indexes ) const;
 		virtual QStringList mimeTypes () const;
 		virtual QVariant data(const QModelIndex &index, int role) const;
+#if QT_VERSION >= QT_VERSION_CHECK (5, 0, 0)
+		virtual Qt::DropActions supportedDragActions() const;
+#endif
 
 	protected:
 		bool _visible ;

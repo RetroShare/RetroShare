@@ -795,10 +795,18 @@ bool RsHtml::makeEmbeddedImage(const QImage &originalImage, QString &embeddedIma
 
 QString RsHtml::plainText(const QString &text)
 {
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+	return text.toHtmlEscaped();
+#else
 	return Qt::escape(text);
+#endif
 }
 
 QString RsHtml::plainText(const std::string &text)
 {
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+	return QString::fromUtf8(text.c_str()).toHtmlEscaped();
+#else
 	return Qt::escape(QString::fromUtf8(text.c_str()));
+#endif
 }

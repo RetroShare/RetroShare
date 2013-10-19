@@ -115,7 +115,13 @@ void SoundManager::setEventFilename(const QString &event, const QString &filenam
 
 void SoundManager::play(const QString &event)
 {
-	if (isMute() || !QSound::isAvailable() || !eventEnabled(event)) {
+#if QT_VERSION < QT_VERSION_CHECK (5, 0, 0)
+	if (!QSound::isAvailable()) {
+		return;
+	}
+#endif
+
+	if (isMute() || !eventEnabled(event)) {
 		return;
 	}
 

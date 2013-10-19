@@ -27,6 +27,10 @@
 #include <QTextStream>
 #include <QTextCodec>
 
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+#include <QUrlQuery>
+#endif
+
 #include "ConnectFriendWizard.h"
 #include "ui_ConnectFriendWizard.h"
 #include "gui/common/PeerDefs.h"
@@ -435,8 +439,19 @@ static void sendMail(QString sAddress, QString sSubject, QString sBody)
 #endif
 
 	QUrl url = QUrl("mailto:" + sAddress);
-	url.addEncodedQueryItem("subject", QUrl::toPercentEncoding(sSubject));
-	url.addEncodedQueryItem("body", QUrl::toPercentEncoding(sBody));
+
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+	QUrlQuery urlQuery;
+#else
+	QUrl &urlQuery(url);
+#endif
+
+	urlQuery.addQueryItem("subject", sSubject);
+	urlQuery.addQueryItem("body", sBody);
+
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+	url.setQuery(urlQuery);
+#endif
 
 	std::cerr << "MAIL STRING:" << (std::string)url.toEncoded().constData() << std::endl;
 

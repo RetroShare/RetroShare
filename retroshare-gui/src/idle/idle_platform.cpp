@@ -131,7 +131,12 @@ bool IdlePlatform::init()
 {
 	if(d->lib)
 		return true;
+
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+	QFunctionPointer p;
+#else
 	void *p;
+#endif
 
 	// try to find the built-in Windows 2000 function
 	d->lib = new QLibrary("user32");

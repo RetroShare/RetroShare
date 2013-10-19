@@ -51,9 +51,19 @@ RetroshareDirModel::RetroshareDirModel(bool mode, QObject *parent)
 {
 	_visible = false ;
 	_needs_update = true ;
+#if QT_VERSION < QT_VERSION_CHECK (5, 0, 0)
 	setSupportedDragActions(Qt::CopyAction);
+#endif
 	treeStyle();
 }
+
+// QAbstractItemModel::setSupportedDragActions() was replaced by virtual QAbstractItemModel::supportedDragActions()
+#if QT_VERSION >= QT_VERSION_CHECK (5, 0, 0)
+Qt::DropActions RetroshareDirModel::supportedDragActions() const
+{
+	return Qt::CopyAction;
+}
+#endif
 
 void RetroshareDirModel::update()
 {
@@ -528,7 +538,7 @@ QVariant RetroshareDirModel::data(const QModelIndex &index, int role) const
 	if (role == Qt::TextColorRole)
 	{
 		if(details.min_age > ageIndicator)
-			return Qt::gray ;
+			return QVariant(QColor(Qt::gray)) ;
 		else
 			return QVariant() ; // standard
 	} /* end of TextColorRole */

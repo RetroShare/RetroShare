@@ -28,6 +28,10 @@
 #include <QIcon>
 #include <QObject>
 
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+#include <QUrlQuery>
+#endif
+
 #include "RetroShareLink.h"
 #include "MainWindow.h"
 #include "ForumsDialog.h"
@@ -163,6 +167,12 @@ void RetroShareLink::fromString(const QString& url)
 
 void RetroShareLink::fromUrl(const QUrl& url)
 {
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+    const QUrlQuery urlQuery(url);
+#else
+    const QUrl &urlQuery(url);
+#endif
+
     clear();
 
     // parse
@@ -180,9 +190,9 @@ void RetroShareLink::fromUrl(const QUrl& url)
         bool ok ;
 
         _type = TYPE_FILE;
-        _name = url.queryItemValue(FILE_NAME);
-        _size = url.queryItemValue(FILE_SIZE).toULongLong(&ok);
-        _hash = url.queryItemValue(FILE_HASH).left(40);	// normally not necessary, but it's a security.
+        _name = urlQuery.queryItemValue(FILE_NAME);
+        _size = urlQuery.queryItemValue(FILE_SIZE).toULongLong(&ok);
+        _hash = urlQuery.queryItemValue(FILE_HASH).left(40);	// normally not necessary, but it's a security.
 
         if (ok) {
 #ifdef DEBUG_RSLINK
@@ -200,9 +210,9 @@ void RetroShareLink::fromUrl(const QUrl& url)
 	 {
 		 bool ok ;
 		 _type = TYPE_PRIVATE_CHAT ;
-		 _time_stamp = url.queryItemValue(PRIVATE_CHAT_TIME_STAMP).toUInt(&ok) ;
-		 _encrypted_chat_info = url.queryItemValue(PRIVATE_CHAT_STRING) ;
-		 _GPGid = url.queryItemValue(PRIVATE_CHAT_GPG_ID) ;
+		 _time_stamp = urlQuery.queryItemValue(PRIVATE_CHAT_TIME_STAMP).toUInt(&ok) ;
+		 _encrypted_chat_info = urlQuery.queryItemValue(PRIVATE_CHAT_STRING) ;
+		 _GPGid = urlQuery.queryItemValue(PRIVATE_CHAT_GPG_ID) ;
 
 		 check() ;
             return;
@@ -211,9 +221,9 @@ void RetroShareLink::fromUrl(const QUrl& url)
 	 {
 		 bool ok ;
 		 _type = TYPE_PUBLIC_MSG ;
-		 _hash = url.queryItemValue(PUBLIC_MSG_HASH) ;
-		 _time_stamp = url.queryItemValue(PUBLIC_MSG_TIME_STAMP).toUInt(&ok) ;
-		 _GPGid = url.queryItemValue(PUBLIC_MSG_SRC_PGP_ID) ;
+		 _hash = urlQuery.queryItemValue(PUBLIC_MSG_HASH) ;
+		 _time_stamp = urlQuery.queryItemValue(PUBLIC_MSG_TIME_STAMP).toUInt(&ok) ;
+		 _GPGid = urlQuery.queryItemValue(PUBLIC_MSG_SRC_PGP_ID) ;
 
 		 check() ;
             return;
@@ -223,10 +233,10 @@ void RetroShareLink::fromUrl(const QUrl& url)
         bool ok ;
 
         _type = TYPE_EXTRAFILE;
-        _name = url.queryItemValue(FILE_NAME);
-        _size = url.queryItemValue(FILE_SIZE).toULongLong(&ok);
-        _hash = url.queryItemValue(FILE_HASH).left(40);	// normally not necessary, but it's a security.
-		  _SSLid = url.queryItemValue(FILE_SOURCE);
+        _name = urlQuery.queryItemValue(FILE_NAME);
+        _size = urlQuery.queryItemValue(FILE_SIZE).toULongLong(&ok);
+        _hash = urlQuery.queryItemValue(FILE_HASH).left(40);	// normally not necessary, but it's a security.
+		  _SSLid = urlQuery.queryItemValue(FILE_SOURCE);
 
         if (ok) {
 #ifdef DEBUG_RSLINK
@@ -242,55 +252,55 @@ void RetroShareLink::fromUrl(const QUrl& url)
     }
     if (url.host() == HOST_PERSON) {
         _type = TYPE_PERSON;
-        _name = url.queryItemValue(PERSON_NAME);
-        _hash = url.queryItemValue(PERSON_HASH).left(40);	// normally not necessary, but it's a security.
+        _name = urlQuery.queryItemValue(PERSON_NAME);
+        _hash = urlQuery.queryItemValue(PERSON_HASH).left(40);	// normally not necessary, but it's a security.
         check();
         return;
     }
 
     if (url.host() == HOST_FORUM) {
         _type = TYPE_FORUM;
-        _name = url.queryItemValue(FORUM_NAME);
-        _hash = url.queryItemValue(FORUM_ID);
-        _msgId = url.queryItemValue(FORUM_MSGID);
+        _name = urlQuery.queryItemValue(FORUM_NAME);
+        _hash = urlQuery.queryItemValue(FORUM_ID);
+        _msgId = urlQuery.queryItemValue(FORUM_MSGID);
         check();
         return;
     }
 
     if (url.host() == HOST_CHANNEL) {
         _type = TYPE_CHANNEL;
-        _name = url.queryItemValue(CHANNEL_NAME);
-        _hash = url.queryItemValue(CHANNEL_ID);
-        _msgId = url.queryItemValue(CHANNEL_MSGID);
+        _name = urlQuery.queryItemValue(CHANNEL_NAME);
+        _hash = urlQuery.queryItemValue(CHANNEL_ID);
+        _msgId = urlQuery.queryItemValue(CHANNEL_MSGID);
         check();
         return;
     }
 
     if (url.host() == HOST_SEARCH) {
         _type = TYPE_SEARCH;
-        _name = url.queryItemValue(SEARCH_KEYWORDS);
+        _name = urlQuery.queryItemValue(SEARCH_KEYWORDS);
         check();
         return;
     }
 
     if (url.host() == HOST_MESSAGE) {
         _type = TYPE_MESSAGE;
-        std::string id = url.queryItemValue(MESSAGE_ID).toStdString();
-        createMessage(id, url.queryItemValue(MESSAGE_SUBJECT));
+        std::string id = urlQuery.queryItemValue(MESSAGE_ID).toStdString();
+        createMessage(id, urlQuery.queryItemValue(MESSAGE_SUBJECT));
         return;
     }
 
 	 if (url.host() == HOST_CERTIFICATE) {
         _type = TYPE_CERTIFICATE;
-		  _SSLid = url.queryItemValue(CERTIFICATE_SSLID);
-		  _name = url.queryItemValue(CERTIFICATE_NAME);
-		  _location = url.queryItemValue(CERTIFICATE_LOCATION);
-		  _GPGBase64String = url.queryItemValue(CERTIFICATE_GPG_BASE64);
-		  _GPGid = url.queryItemValue(CERTIFICATE_GPG_ID);
-		  _GPGBase64CheckSum = url.queryItemValue(CERTIFICATE_GPG_CHECKSUM);
-		  _ext_ip_port = url.queryItemValue(CERTIFICATE_EXT_IPPORT);
-		  _loc_ip_port = url.queryItemValue(CERTIFICATE_LOC_IPPORT);
-		  _dyndns_name = url.queryItemValue(CERTIFICATE_DYNDNS);
+		  _SSLid = urlQuery.queryItemValue(CERTIFICATE_SSLID);
+		  _name = urlQuery.queryItemValue(CERTIFICATE_NAME);
+		  _location = urlQuery.queryItemValue(CERTIFICATE_LOCATION);
+		  _GPGBase64String = urlQuery.queryItemValue(CERTIFICATE_GPG_BASE64);
+		  _GPGid = urlQuery.queryItemValue(CERTIFICATE_GPG_ID);
+		  _GPGBase64CheckSum = urlQuery.queryItemValue(CERTIFICATE_GPG_CHECKSUM);
+		  _ext_ip_port = urlQuery.queryItemValue(CERTIFICATE_EXT_IPPORT);
+		  _loc_ip_port = urlQuery.queryItemValue(CERTIFICATE_LOC_IPPORT);
+		  _dyndns_name = urlQuery.queryItemValue(CERTIFICATE_DYNDNS);
 		  std::cerr << "Got a certificate link!!" << std::endl;
 		  check() ;
         return;
@@ -728,143 +738,132 @@ static QString encodeItem(QString item)
 
 QString RetroShareLink::toString() const
 {
+    QUrl url;
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+    QUrlQuery urlQuery;
+#else
+    QUrl &urlQuery(url);
+#endif
+
     switch (_type) {
     case TYPE_UNKNOWN:
-        break;
+        return "";
+
     case TYPE_FILE:
-        {
-            QUrl url;
-            url.setScheme(RSLINK_SCHEME);
-            url.setHost(HOST_FILE);
-            url.addQueryItem(FILE_NAME, encodeItem(_name));
-            url.addQueryItem(FILE_SIZE, QString::number(_size));
-            url.addQueryItem(FILE_HASH, _hash);
+        url.setScheme(RSLINK_SCHEME);
+        url.setHost(HOST_FILE);
+        urlQuery.addQueryItem(FILE_NAME, encodeItem(_name));
+        urlQuery.addQueryItem(FILE_SIZE, QString::number(_size));
+        urlQuery.addQueryItem(FILE_HASH, _hash);
 
-            return url.toString();
-        }
+        break;
+
 	 case TYPE_PRIVATE_CHAT:
-		  {
-			  QUrl url;
-			  url.setScheme(RSLINK_SCHEME) ;
-			  url.setHost(HOST_PRIVATE_CHAT) ;
-			  url.addQueryItem(PRIVATE_CHAT_TIME_STAMP,QString::number(_time_stamp)) ;
-			  url.addQueryItem(PRIVATE_CHAT_GPG_ID,_GPGid) ;
-			  url.addQueryItem(PRIVATE_CHAT_STRING,_encrypted_chat_info) ;
+		  url.setScheme(RSLINK_SCHEME) ;
+		  url.setHost(HOST_PRIVATE_CHAT) ;
+		  urlQuery.addQueryItem(PRIVATE_CHAT_TIME_STAMP,QString::number(_time_stamp)) ;
+		  urlQuery.addQueryItem(PRIVATE_CHAT_GPG_ID,_GPGid) ;
+		  urlQuery.addQueryItem(PRIVATE_CHAT_STRING,_encrypted_chat_info) ;
 
-			  return url.toString() ;
-		  }
+		  break;
+
 	 case TYPE_PUBLIC_MSG:
-		  {
-			  QUrl url;
-			  url.setScheme(RSLINK_SCHEME) ;
-			  url.setHost(HOST_PUBLIC_MSG) ;
-			  url.addQueryItem(PUBLIC_MSG_TIME_STAMP,QString::number(_time_stamp)) ;
-			  url.addQueryItem(PUBLIC_MSG_HASH,_hash) ;
-			  url.addQueryItem(PUBLIC_MSG_SRC_PGP_ID,_GPGid) ;
+		  url.setScheme(RSLINK_SCHEME) ;
+		  url.setHost(HOST_PUBLIC_MSG) ;
+		  urlQuery.addQueryItem(PUBLIC_MSG_TIME_STAMP,QString::number(_time_stamp)) ;
+		  urlQuery.addQueryItem(PUBLIC_MSG_HASH,_hash) ;
+		  urlQuery.addQueryItem(PUBLIC_MSG_SRC_PGP_ID,_GPGid) ;
 
-			  return url.toString() ;
-		  }
+		  break;
 
 	 case TYPE_EXTRAFILE:
-        {
-            QUrl url;
-            url.setScheme(RSLINK_SCHEME);
-            url.setHost(HOST_EXTRAFILE);
-            url.addQueryItem(FILE_NAME, encodeItem(_name));
-            url.addQueryItem(FILE_SIZE, QString::number(_size));
-            url.addQueryItem(FILE_HASH, _hash);
-            url.addQueryItem(FILE_SOURCE, _SSLid);
+		url.setScheme(RSLINK_SCHEME);
+		url.setHost(HOST_EXTRAFILE);
+		urlQuery.addQueryItem(FILE_NAME, encodeItem(_name));
+		urlQuery.addQueryItem(FILE_SIZE, QString::number(_size));
+		urlQuery.addQueryItem(FILE_HASH, _hash);
+		urlQuery.addQueryItem(FILE_SOURCE, _SSLid);
 
-            return url.toString();
-        }
+		break;
 
     case TYPE_PERSON:
-        {
-            QUrl url;
-            url.setScheme(RSLINK_SCHEME);
-            url.setHost(HOST_PERSON);
-            url.addQueryItem(PERSON_NAME, encodeItem(_name));
-            url.addQueryItem(PERSON_HASH, _hash);
+        url.setScheme(RSLINK_SCHEME);
+        url.setHost(HOST_PERSON);
+        urlQuery.addQueryItem(PERSON_NAME, encodeItem(_name));
+        urlQuery.addQueryItem(PERSON_HASH, _hash);
 
-            return url.toString();
-        }
+        break;
+
     case TYPE_FORUM:
-        {
-            QUrl url;
-            url.setScheme(RSLINK_SCHEME);
-            url.setHost(HOST_FORUM);
-            url.addQueryItem(FORUM_NAME, encodeItem(_name));
-            url.addQueryItem(FORUM_ID, _hash);
-            if (!_msgId.isEmpty()) {
-                url.addQueryItem(FORUM_MSGID, _msgId);
-            }
-
-            return url.toString();
+        url.setScheme(RSLINK_SCHEME);
+        url.setHost(HOST_FORUM);
+        urlQuery.addQueryItem(FORUM_NAME, encodeItem(_name));
+        urlQuery.addQueryItem(FORUM_ID, _hash);
+        if (!_msgId.isEmpty()) {
+            urlQuery.addQueryItem(FORUM_MSGID, _msgId);
         }
+
+        break;
+
     case TYPE_CHANNEL:
-        {
-            QUrl url;
-            url.setScheme(RSLINK_SCHEME);
-            url.setHost(HOST_CHANNEL);
-            url.addQueryItem(CHANNEL_NAME, encodeItem(_name));
-            url.addQueryItem(CHANNEL_ID, _hash);
-            if (!_msgId.isEmpty()) {
-                url.addQueryItem(CHANNEL_MSGID, _msgId);
-            }
-
-            return url.toString();
+        url.setScheme(RSLINK_SCHEME);
+        url.setHost(HOST_CHANNEL);
+        urlQuery.addQueryItem(CHANNEL_NAME, encodeItem(_name));
+        urlQuery.addQueryItem(CHANNEL_ID, _hash);
+        if (!_msgId.isEmpty()) {
+            urlQuery.addQueryItem(CHANNEL_MSGID, _msgId);
         }
+
+        break;
+
     case TYPE_SEARCH:
-        {
-            QUrl url;
-            url.setScheme(RSLINK_SCHEME);
-            url.setHost(HOST_SEARCH);
-            url.addQueryItem(SEARCH_KEYWORDS, encodeItem(_name));
+        url.setScheme(RSLINK_SCHEME);
+        url.setHost(HOST_SEARCH);
+        urlQuery.addQueryItem(SEARCH_KEYWORDS, encodeItem(_name));
 
-            return url.toString();
-        }
+        break;
+
     case TYPE_MESSAGE:
-        {
-            QUrl url;
-            url.setScheme(RSLINK_SCHEME);
-            url.setHost(HOST_MESSAGE);
-            url.addQueryItem(MESSAGE_ID, _hash);
-            if (_subject.isEmpty() == false) {
-               url.addQueryItem(MESSAGE_SUBJECT, encodeItem(_subject));
-            }
-
-            return url.toString();
+        url.setScheme(RSLINK_SCHEME);
+        url.setHost(HOST_MESSAGE);
+        urlQuery.addQueryItem(MESSAGE_ID, _hash);
+        if (_subject.isEmpty() == false) {
+           urlQuery.addQueryItem(MESSAGE_SUBJECT, encodeItem(_subject));
         }
-	 case TYPE_CERTIFICATE:
-		  {
-			  QUrl url ;
-			  url.setScheme(RSLINK_SCHEME);
-			  url.setHost(HOST_CERTIFICATE) ;
-			  if (!_SSLid.isEmpty()) {
-				  url.addQueryItem(CERTIFICATE_SSLID, _SSLid);
-			  }
-			  url.addQueryItem(CERTIFICATE_GPG_ID, _GPGid);
-			  url.addQueryItem(CERTIFICATE_GPG_BASE64, _GPGBase64String);
-			  url.addQueryItem(CERTIFICATE_GPG_CHECKSUM, _GPGBase64CheckSum);
-			  if (!_location.isEmpty()) {
-				  url.addQueryItem(CERTIFICATE_LOCATION, encodeItem(_location));
-			  }
-			  url.addQueryItem(CERTIFICATE_NAME, encodeItem(_name));
-			  if (!_loc_ip_port.isEmpty()) {
-				  url.addQueryItem(CERTIFICATE_LOC_IPPORT, encodeItem(_loc_ip_port));
-			  }
-			  if (!_ext_ip_port.isEmpty()) {
-				  url.addQueryItem(CERTIFICATE_EXT_IPPORT, encodeItem(_ext_ip_port));
-			  }
-			  if (!_dyndns_name.isEmpty()) {
-				  url.addQueryItem(CERTIFICATE_DYNDNS, encodeItem(_dyndns_name));
-			  }
 
-			  return url.toString();
+        break;
+
+	 case TYPE_CERTIFICATE:
+		  url.setScheme(RSLINK_SCHEME);
+		  url.setHost(HOST_CERTIFICATE) ;
+		  if (!_SSLid.isEmpty()) {
+			  urlQuery.addQueryItem(CERTIFICATE_SSLID, _SSLid);
 		  }
+		  urlQuery.addQueryItem(CERTIFICATE_GPG_ID, _GPGid);
+		  urlQuery.addQueryItem(CERTIFICATE_GPG_BASE64, _GPGBase64String);
+		  urlQuery.addQueryItem(CERTIFICATE_GPG_CHECKSUM, _GPGBase64CheckSum);
+		  if (!_location.isEmpty()) {
+			  urlQuery.addQueryItem(CERTIFICATE_LOCATION, encodeItem(_location));
+		  }
+		  urlQuery.addQueryItem(CERTIFICATE_NAME, encodeItem(_name));
+		  if (!_loc_ip_port.isEmpty()) {
+			  urlQuery.addQueryItem(CERTIFICATE_LOC_IPPORT, encodeItem(_loc_ip_port));
+		  }
+		  if (!_ext_ip_port.isEmpty()) {
+			  urlQuery.addQueryItem(CERTIFICATE_EXT_IPPORT, encodeItem(_ext_ip_port));
+		  }
+		  if (!_dyndns_name.isEmpty()) {
+			  urlQuery.addQueryItem(CERTIFICATE_DYNDNS, encodeItem(_dyndns_name));
+		  }
+
+          break;
     }
 
-    return "";
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
+    url.setQuery(urlQuery);
+#endif
+
+    return url.toString();
 }
 
 QString RetroShareLink::niceName() const
