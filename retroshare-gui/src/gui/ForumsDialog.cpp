@@ -43,6 +43,7 @@
 #include "notifyqt.h"
 #include "util/HandleRichText.h"
 #include "util/DateTime.h"
+#include "util/QtVersion.h"
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsmsgs.h>
@@ -154,7 +155,7 @@ ForumsDialog::ForumsDialog(QWidget *parent)
 
     /* Set header resize modes and initial section sizes */
     QHeaderView * ttheader = ui.threadTreeWidget->header () ;
-    ttheader->setResizeMode (COLUMN_THREAD_TITLE, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeMode(ttheader, COLUMN_THREAD_TITLE, QHeaderView::Interactive);
     ttheader->resizeSection (COLUMN_THREAD_DATE,  140);
     ttheader->resizeSection (COLUMN_THREAD_TITLE, 290);
 
@@ -191,7 +192,7 @@ ForumsDialog::ForumsDialog(QWidget *parent)
 
     /* Set header sizes for the fixed columns and resize modes, must be set after processSettings */
     ttheader->resizeSection (COLUMN_THREAD_READ,  24);
-    ttheader->setResizeMode (COLUMN_THREAD_READ, QHeaderView::Fixed);
+    QHeaderView_setSectionResizeMode(ttheader, COLUMN_THREAD_READ, QHeaderView::Fixed);
     ttheader->hideSection (COLUMN_THREAD_CONTENT);
 
     ui.progressBar->hide();
@@ -1278,7 +1279,7 @@ void ForumsDialog::nextUnreadMessage()
 {
     QTreeWidgetItem *currentItem = ui.threadTreeWidget->currentItem();
 
-    while (TRUE) {
+    while (true) {
         QTreeWidgetItemIterator itemIterator = currentItem ? QTreeWidgetItemIterator(currentItem, QTreeWidgetItemIterator::NotHidden) : QTreeWidgetItemIterator(ui.threadTreeWidget, QTreeWidgetItemIterator::NotHidden);
 
         QTreeWidgetItem *item;

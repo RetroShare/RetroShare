@@ -103,11 +103,11 @@ void GenCertDialog::grabMouse()
 
 	RsInit::collectEntropy(E+(F << 16)) ;
 }
-static bool MyEventFilter(void *message, long *result)
-{
-	std::cerr << "Event called " << message << std::endl;
-	return false ;
-}
+//static bool MyEventFilter(void *message, long *result)
+//{
+//	std::cerr << "Event called " << message << std::endl;
+//	return false ;
+//}
 /** Default constructor */
 GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 	: QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint), mOnlyGenerateIdentity(onlyGenerateIdentity)

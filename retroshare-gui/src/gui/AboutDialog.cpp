@@ -221,7 +221,7 @@ void AWidget::timerEvent(QTimerEvent* e) {
     page ^= 1;
 
     if (qrand()  % 128 == 0) {
-        int r = 3 + qRound(qrand() * 4 / RAND_MAX);
+        int r = 3 + qRound((double) qrand() * 4 / RAND_MAX);
         int h = 300 + qrand() * 200 / RAND_MAX;
         int x = 1 + r + qrand()%(image1.width() -2*r-1);
         int y = 1 + r + qrand()%(image1.height()-2*r-1);

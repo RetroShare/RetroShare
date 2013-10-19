@@ -11,6 +11,7 @@
 #include "notifyqt.h"
 #include "chat/ChatLobbyDialog.h"
 #include "util/HandleRichText.h"
+#include "util/QtVersion.h"
 #include <gui/settings/rsharesettings.h>
 
 #include "retroshare/rsmsgs.h"
@@ -83,10 +84,10 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
     headerItem->setTextAlignment(COLUMN_SUBSCRIBED, Qt::AlignHCenter | Qt::AlignVCenter);
 
 	QHeaderView *header = lobbyTreeWidget->header();
-	header->setResizeMode(COLUMN_NAME, QHeaderView::Interactive);
-	header->setResizeMode(COLUMN_USER_COUNT, QHeaderView::Interactive);
-    header->setResizeMode(COLUMN_TOPIC, QHeaderView::Interactive);
-    header->setResizeMode(COLUMN_SUBSCRIBED, QHeaderView::Interactive);
+	QHeaderView_setSectionResizeMode(header, COLUMN_NAME, QHeaderView::Interactive);
+	QHeaderView_setSectionResizeMode(header, COLUMN_USER_COUNT, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeMode(header, COLUMN_TOPIC, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeMode(header, COLUMN_SUBSCRIBED, QHeaderView::Interactive);
 
     privateSubLobbyItem = new RSTreeWidgetItem(compareRole, TYPE_FOLDER);
     privateSubLobbyItem->setText(COLUMN_NAME, tr("Private Subscribed Lobbies"));

@@ -33,7 +33,7 @@
 #include <retroshare/rspeers.h>
 #include <retroshare/rstypes.h>
 #include "settings/rsharesettings.h"
-
+#include "util/QtVersion.h"
 
 QuickStartWizard::QuickStartWizard(QWidget *parent) :
     QDialog(parent)
@@ -59,8 +59,8 @@ QuickStartWizard::QuickStartWizard(QWidget *parent) :
 //	  bool b = rsPeers->getAllowTunnelConnection() ;
 //    ui.checkBoxTunnelConnection->setChecked(b) ;
     
-    ui.shareddirList->horizontalHeader()->setResizeMode( 0,QHeaderView::Stretch);
-    ui.shareddirList->horizontalHeader()->setResizeMode( 2,QHeaderView::Interactive); 
+    QHeaderView_setSectionResizeMode(ui.shareddirList->horizontalHeader(), 0, QHeaderView::Stretch);
+    QHeaderView_setSectionResizeMode(ui.shareddirList->horizontalHeader(), 2, QHeaderView::Interactive);
  
     ui.shareddirList->horizontalHeader()->resizeSection( 0, 360 );
     ui.shareddirList->horizontalHeader()->setStretchLastSection(false);

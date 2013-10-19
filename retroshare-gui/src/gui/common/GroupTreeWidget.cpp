@@ -29,6 +29,7 @@
 #include "PopularityDefs.h"
 #include "gui/settings/rsharesettings.h"
 #include "RSTreeWidgetItem.h"
+#include "util/QtVersion.h"
 
 #include <stdint.h>
 
@@ -86,9 +87,9 @@ GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
 
 	/* Set header resize modes and initial section sizes */
 	QHeaderView *header = ui->treeWidget->header ();
-	header->setResizeMode(COLUMN_NAME, QHeaderView::Stretch);
+	QHeaderView_setSectionResizeMode(header, COLUMN_NAME, QHeaderView::Stretch);
 	header->resizeSection(COLUMN_NAME, 170);
-	header->setResizeMode(COLUMN_POPULARITY, QHeaderView::Fixed);
+	QHeaderView_setSectionResizeMode(header, COLUMN_POPULARITY, QHeaderView::Fixed);
 	header->resizeSection(COLUMN_POPULARITY, 25);
 
 	/* add filter actions */

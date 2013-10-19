@@ -25,6 +25,7 @@
 #include <QHeaderView>
 #include <QMessageBox>
 #include <QUrl>
+#include <QMimeData>
 
 #include <retroshare/rsfiles.h>
 #include <retroshare/rstypes.h>
@@ -36,6 +37,7 @@
 #include <gui/common/GroupFlagsWidget.h>
 #include "gui/common/GroupDefs.h"
 #include "gui/notifyqt.h"
+#include "util/QtVersion.h"
 
 /* Images for context menu icons */
 #define IMAGE_CANCEL               ":/images/delete.png"
@@ -77,7 +79,7 @@ ShareManager::ShareManager()
     ui.removeButton->setEnabled(false);
 
     QHeaderView* header = ui.shareddirList->horizontalHeader();
-    header->setResizeMode( COLUMN_PATH, QHeaderView::Stretch);
+    QHeaderView_setSectionResizeMode(header, COLUMN_PATH, QHeaderView::Stretch);
 
     //header->setResizeMode(COLUMN_NETWORKWIDE, QHeaderView::Fixed);
     //header->setResizeMode(COLUMN_BROWSABLE, QHeaderView::Fixed);

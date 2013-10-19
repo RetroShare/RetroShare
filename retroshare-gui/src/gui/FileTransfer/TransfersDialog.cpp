@@ -54,6 +54,7 @@
 #include "util/misc.h"
 #include <gui/common/RsCollectionFile.h>
 #include "TransferUserNotify.h"
+#include "util/QtVersion.h"
 
 #include <retroshare/rsfiles.h>
 #include <retroshare/rspeers.h>
@@ -236,19 +237,19 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 
     /* Set header resize modes and initial section sizes Downloads TreeView*/
     QHeaderView * _header = ui.downloadList->header () ;
-    _header->setResizeMode (COLUMN_NAME, QHeaderView::Interactive);
-    _header->setResizeMode (COLUMN_SIZE, QHeaderView::Interactive);
-    _header->setResizeMode (COLUMN_COMPLETED, QHeaderView::Interactive);
-    _header->setResizeMode (COLUMN_DLSPEED, QHeaderView::Interactive);
-    _header->setResizeMode (COLUMN_PROGRESS, QHeaderView::Interactive);
-    _header->setResizeMode (COLUMN_SOURCES, QHeaderView::Interactive);
-    _header->setResizeMode (COLUMN_STATUS, QHeaderView::Interactive);
-    _header->setResizeMode (COLUMN_PRIORITY, QHeaderView::Interactive);
-    _header->setResizeMode (COLUMN_REMAINING, QHeaderView::Interactive);
-    _header->setResizeMode (COLUMN_DOWNLOADTIME, QHeaderView::Interactive);
-    _header->setResizeMode (COLUMN_ID, QHeaderView::Interactive);
-    _header->setResizeMode (COLUMN_LASTDL, QHeaderView::Interactive);
-    _header->setResizeMode (COLUMN_PATH, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeMode(_header, COLUMN_NAME, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeMode(_header, COLUMN_SIZE, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeMode(_header, COLUMN_COMPLETED, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeMode(_header, COLUMN_DLSPEED, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeMode(_header, COLUMN_PROGRESS, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeMode(_header, COLUMN_SOURCES, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeMode(_header, COLUMN_STATUS, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeMode(_header, COLUMN_PRIORITY, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeMode(_header, COLUMN_REMAINING, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeMode(_header, COLUMN_DOWNLOADTIME, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeMode(_header, COLUMN_ID, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeMode(_header, COLUMN_LASTDL, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeMode(_header, COLUMN_PATH, QHeaderView::Interactive);
 
     _header->resizeSection ( COLUMN_NAME, 170 );
     _header->resizeSection ( COLUMN_SIZE, 70 );
@@ -299,13 +300,13 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 
     /* Set header resize modes and initial section sizes Uploads TreeView*/
     QHeaderView * upheader = ui.uploadsList->header () ;
-    upheader->setResizeMode (COLUMN_UNAME, QHeaderView::Interactive);
-    upheader->setResizeMode (COLUMN_USIZE, QHeaderView::Interactive);
-    upheader->setResizeMode (COLUMN_UTRANSFERRED, QHeaderView::Interactive);
-    upheader->setResizeMode (COLUMN_ULSPEED, QHeaderView::Interactive);
-    upheader->setResizeMode (COLUMN_UPROGRESS, QHeaderView::Interactive);
-    upheader->setResizeMode (COLUMN_USTATUS, QHeaderView::Interactive);
-    upheader->setResizeMode (COLUMN_USERNAME, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeMode(upheader, COLUMN_UNAME, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeMode(upheader, COLUMN_USIZE, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeMode(upheader, COLUMN_UTRANSFERRED, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeMode(upheader, COLUMN_ULSPEED, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeMode(upheader, COLUMN_UPROGRESS, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeMode(upheader, COLUMN_USTATUS, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeMode(upheader, COLUMN_USERNAME, QHeaderView::Interactive);
 
     upheader->resizeSection ( COLUMN_UNAME, 190 );
     upheader->resizeSection ( COLUMN_USIZE, 70 );

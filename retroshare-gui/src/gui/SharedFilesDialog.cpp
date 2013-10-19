@@ -39,6 +39,7 @@
 #include "RemoteDirModel.h"
 #include "ShareDialog.h"
 #include "common/PeerDefs.h"
+#include "util/QtVersion.h"
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsfiles.h>
@@ -330,7 +331,7 @@ void SharedFilesDialog::changeCurrentViewModel(int c)
 	ui.dirTreeView->update();
 
 	QHeaderView * header = ui.dirTreeView->header () ;
-	header->setResizeMode (0, QHeaderView::Interactive);
+	QHeaderView_setSectionResizeMode(header, 0, QHeaderView::Interactive);
 
 	ui.dirTreeView->header()->headerDataChanged(Qt::Horizontal,0,4) ;
 

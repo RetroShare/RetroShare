@@ -1,4 +1,13 @@
-CONFIG += qt gui uic qrc resources uitools idle bitdht
+QT     += network xml script
+CONFIG += qt gui uic qrc resources idle bitdht
+
+greaterThan(QT_MAJOR_VERSION, 4) {
+	# Qt 5
+	QT     += uitools widgets multimedia printsupport
+} else {
+	# Qt 4
+	CONFIG += uitools
+}
 
 # Below is for GXS services.
 # Should be disabled for releases.
@@ -25,9 +34,6 @@ gxs {
 # Other Disabled Bits.
 #CONFIG += framecatcher
 #CONFIG += blogs
-
-
-QT     += network xml script 
 
 TEMPLATE = app
 TARGET = RetroShare
@@ -361,6 +367,7 @@ HEADERS +=  rshare.h \
             util/misc.h \
             util/HandleRichText.h \
             util/ObjectPainter.h \
+            util/QtVersion.h \
             gui/bwgraph/bwgraph.h \
             gui/profile/ProfileWidget.h \
             gui/profile/ProfileManager.h \

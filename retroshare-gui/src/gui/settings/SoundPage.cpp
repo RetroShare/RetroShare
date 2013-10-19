@@ -53,7 +53,11 @@ SoundPage::SoundPage(QWidget * parent, Qt::WindowFlags flags)
 	headerItem->setText(COLUMN_NAME, tr("Event"));
 	headerItem->setText(COLUMN_FILENAME, tr("Filename"));
 
+#if QT_VERSION >= QT_VERSION_CHECK (5, 0, 0)
+	ui.eventTreeWidget->header()->setSectionResizeMode(QHeaderView::Fixed);
+#else
 	ui.eventTreeWidget->header()->setResizeMode(QHeaderView::Fixed);
+#endif
 	ui.eventTreeWidget->setTextElideMode(Qt::ElideMiddle);
 
 	/* Hide platform specific features */

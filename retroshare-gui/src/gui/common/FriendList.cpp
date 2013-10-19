@@ -48,6 +48,7 @@
 #include "StatusDefs.h"
 #include "util/misc.h"
 #include "vmessagebox.h"
+#include "util/QtVersion.h"
 
 #include "gui/connect/ConnectProgressDialog.h"
 
@@ -283,13 +284,13 @@ void FriendList::initializeHeader(bool afterLoadSettings)
 {
     // set column size
     QHeaderView *header = ui->peerTreeWidget->header();
-    header->setMovable(true);
-    //header->setResizeMode(COLUMN_NAME, QHeaderView::Stretch);
-    header->setResizeMode(COLUMN_NAME, QHeaderView::Interactive);
-    header->setResizeMode(COLUMN_STATE, QHeaderView::Interactive);
-    header->setResizeMode(COLUMN_LAST_CONTACT, QHeaderView::Interactive);
-    header->setResizeMode(COLUMN_IP, QHeaderView::Interactive);
-    header->setResizeMode(COLUMN_AVATAR, QHeaderView::Fixed);
+    QHeaderView_setSectionsMovable(header, true);
+    //QHeaderView_setSectionResizeMode(header, COLUMN_NAME, QHeaderView::Stretch);
+    QHeaderView_setSectionResizeMode(header, COLUMN_NAME, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeMode(header, COLUMN_STATE, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeMode(header, COLUMN_LAST_CONTACT, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeMode(header, COLUMN_IP, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeMode(header, COLUMN_AVATAR, QHeaderView::Fixed);
 
 /*    if (!afterLoadSettings) {
         header->resizeSection(COLUMN_NAME, 150);

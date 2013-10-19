@@ -37,6 +37,7 @@
 #include "common/RSItemDelegate.h"
 #include "util/DateTime.h"
 #include "util/RsProtectedTimer.h"
+#include "util/QtVersion.h"
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsmsgs.h>
@@ -210,7 +211,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     msgwheader->resizeSection (COLUMN_DATE,         140);
     msgwheader->resizeSection (COLUMN_STAR,         16);
 
-    msgwheader->setResizeMode (COLUMN_STAR, QHeaderView::Fixed);
+    QHeaderView_setSectionResizeMode(msgwheader, COLUMN_STAR, QHeaderView::Fixed);
     msgwheader->resizeSection (COLUMN_STAR, 24);
 
     ui.forwardmessageButton->setToolTip(tr("Forward selected Message"));
@@ -243,14 +244,14 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     processSettings(true);
 
     /* Set header sizes for the fixed columns and resize modes, must be set after processSettings */
-    msgwheader->setResizeMode (COLUMN_ATTACHEMENTS, QHeaderView::Fixed);
-    msgwheader->setResizeMode (COLUMN_DATE, QHeaderView::Interactive);
-    msgwheader->setResizeMode (COLUMN_UNREAD, QHeaderView::Fixed);
-    msgwheader->setResizeMode (COLUMN_SIGNATURE, QHeaderView::Fixed);
+    QHeaderView_setSectionResizeMode(msgwheader, COLUMN_ATTACHEMENTS, QHeaderView::Fixed);
+    QHeaderView_setSectionResizeMode(msgwheader, COLUMN_DATE, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeMode(msgwheader, COLUMN_UNREAD, QHeaderView::Fixed);
+    QHeaderView_setSectionResizeMode(msgwheader, COLUMN_SIGNATURE, QHeaderView::Fixed);
     msgwheader->resizeSection (COLUMN_UNREAD, 24);
     msgwheader->resizeSection (COLUMN_SIGNATURE, 24);
     msgwheader->resizeSection (COLUMN_STAR, 24);
-    msgwheader->setResizeMode (COLUMN_STAR, QHeaderView::Fixed);
+    QHeaderView_setSectionResizeMode(msgwheader, COLUMN_STAR, QHeaderView::Fixed);
     msgwheader->setStretchLastSection(false);
 
     // fill folder list

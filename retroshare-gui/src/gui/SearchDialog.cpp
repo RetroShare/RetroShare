@@ -36,6 +36,7 @@
 #include "settings/rsharesettings.h"
 #include "advsearch/advancedsearchdialog.h"
 #include "common/RSTreeWidgetItem.h"
+#include "util/QtVersion.h"
 
 #include <retroshare/rsfiles.h>
 #include <retroshare/rsturtle.h>
@@ -146,17 +147,17 @@ SearchDialog::SearchDialog(QWidget *parent)
     ui.searchSummaryWidget->setColumnHidden ( 2, true);
 
     QHeaderView * _smheader = ui.searchSummaryWidget->header () ;
-    _smheader->setResizeMode (0, QHeaderView::Interactive);
-    _smheader->setResizeMode (1, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeMode(_smheader, 0, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeMode(_smheader, 1, QHeaderView::Interactive);
 
     _smheader->resizeSection ( 0, 160 );
     _smheader->resizeSection ( 1, 50 );
 
     ui.searchResultWidget->setColumnCount(6);
     _smheader = ui.searchResultWidget->header () ;
-    _smheader->setResizeMode (0, QHeaderView::Interactive);
-    _smheader->setResizeMode (1, QHeaderView::Interactive);
-    _smheader->setResizeMode (2, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeMode(_smheader, 0, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeMode(_smheader, 1, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeMode(_smheader, 2, QHeaderView::Interactive);
 
     _smheader->resizeSection ( 0, 240 );
     _smheader->resizeSection ( 1, 75 );

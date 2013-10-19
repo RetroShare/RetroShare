@@ -60,6 +60,7 @@
 #include "gui/common/TagDefs.h"
 #include "gui/connect/ConfCertDialog.h"
 #include "util/HandleRichText.h"
+#include "util/QtVersion.h"
 
 #define IMAGE_GROUP16    ":/images/user/group16.png"
 #define IMAGE_FRIENDINFO ":/images/peerdetails_16x16.png"
@@ -286,9 +287,9 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     QHeaderView *header = ui.recipientWidget->horizontalHeader();
     header->resizeSection(COLUMN_RECIPIENT_TYPE, 50);
     header->resizeSection(COLUMN_RECIPIENT_ICON, 22);
-    header->setResizeMode(COLUMN_RECIPIENT_TYPE, QHeaderView::Fixed);
-    header->setResizeMode(COLUMN_RECIPIENT_ICON, QHeaderView::Fixed);
-    header->setResizeMode(COLUMN_RECIPIENT_NAME, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeMode(header, COLUMN_RECIPIENT_TYPE, QHeaderView::Fixed);
+    QHeaderView_setSectionResizeMode(header, COLUMN_RECIPIENT_ICON, QHeaderView::Fixed);
+    QHeaderView_setSectionResizeMode(header, COLUMN_RECIPIENT_NAME, QHeaderView::Interactive);
     header->setStretchLastSection(true);
 
     /* Set own item delegate */

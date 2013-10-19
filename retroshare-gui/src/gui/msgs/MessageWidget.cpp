@@ -42,6 +42,7 @@
 #include "util/printpreview.h"
 #include "util/HandleRichText.h"
 #include "util/DateTime.h"
+#include "util/QtVersion.h"
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsfiles.h>
@@ -146,9 +147,9 @@ MessageWidget::MessageWidget(bool controlled, QWidget *parent, Qt::WindowFlags f
 
 	/* Set header resize modes and initial section sizes */
 	QHeaderView * msglheader = ui.msgList->header () ;
-	msglheader->setResizeMode (COLUMN_FILE_NAME, QHeaderView::Interactive);
-	msglheader->setResizeMode (COLUMN_FILE_SIZE, QHeaderView::Interactive);
-	msglheader->setResizeMode (COLUMN_FILE_HASH, QHeaderView::Interactive);
+	QHeaderView_setSectionResizeMode(msglheader, COLUMN_FILE_NAME, QHeaderView::Interactive);
+	QHeaderView_setSectionResizeMode(msglheader, COLUMN_FILE_SIZE, QHeaderView::Interactive);
+	QHeaderView_setSectionResizeMode(msglheader, COLUMN_FILE_HASH, QHeaderView::Interactive);
 
 	msglheader->resizeSection (COLUMN_FILE_NAME, 200);
 	msglheader->resizeSection (COLUMN_FILE_SIZE, 100);
