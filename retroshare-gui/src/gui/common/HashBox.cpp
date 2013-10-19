@@ -25,6 +25,7 @@
 #include <QDropEvent>
 #include <QUrl>
 #include <QTimer>
+#include <QMimeData>
 
 #include <iostream>
 

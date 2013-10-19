@@ -24,8 +24,7 @@
 #include <util/RetroStyleLabel.h>
 #include <util/MouseEventFilter.h>
 
-
-#include <QtGui>
+#include <QGridLayout>
 
 LogoBar::LogoBar(QWidget * parent)
 	: QFrame(parent) {

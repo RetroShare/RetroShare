@@ -32,8 +32,8 @@ IMHistoryItemDelegate::IMHistoryItemDelegate(QWidget *parent)
 
 void IMHistoryItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    if (qVariantCanConvert<IMHistoryItemPainter>(index.data())) {
-        IMHistoryItemPainter itemPainter = qVariantValue<IMHistoryItemPainter>(index.data());
+    if (index.data().canConvert<IMHistoryItemPainter>()) {
+        IMHistoryItemPainter itemPainter = index.data().value<IMHistoryItemPainter>();
         itemPainter.paint(painter, option, IMHistoryItemPainter::ReadOnly);
     } else {
         QItemDelegate::paint(painter, option, index);
@@ -42,8 +42,8 @@ void IMHistoryItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem 
 
 QSize IMHistoryItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    if (qVariantCanConvert<IMHistoryItemPainter>(index.data())) {
-        IMHistoryItemPainter painter = qVariantValue<IMHistoryItemPainter>(index.data());
+    if (index.data().canConvert<IMHistoryItemPainter>()) {
+        IMHistoryItemPainter painter = index.data().value<IMHistoryItemPainter>();
         return painter.sizeHint();
     } else {
         return QItemDelegate::sizeHint(option, index);

@@ -23,6 +23,7 @@
 #include <QDropEvent>
 #include <QUrl>
 #include <QFileInfo>
+#include <QMimeData>
 
 #include "DropLineEdit.h"
 

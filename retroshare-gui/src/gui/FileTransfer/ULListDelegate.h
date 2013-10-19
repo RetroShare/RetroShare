@@ -41,9 +41,6 @@
 
 class QModelIndex;
 class QPainter;
-class QStyleOptionProgressBarV2;
-class QProgressBar;
-class QApplication;
 
 
 class ULListDelegate: public QAbstractItemDelegate {

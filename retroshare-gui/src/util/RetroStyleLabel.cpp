@@ -21,7 +21,8 @@
 
 #include <util/RetroStyleLabel.h>
 
-#include <QtGui>
+#include <QPainter>
+#include <QMouseEvent>
 
 RetroStyleLabel::RetroStyleLabel(QWidget * parent, Mode mode, Qt::AlignmentFlag hAlign)
 	: QLabel(parent), _mode(mode) {

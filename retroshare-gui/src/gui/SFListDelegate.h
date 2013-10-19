@@ -28,17 +28,10 @@
 #define FNAME 0
 #define FSIZE 1
 
-
-
-
 #define MAX_CHAR_TMP 128
 
 class QModelIndex;
 class QPainter;
-class QStyleOptionProgressBarV2;
-class QProgressBar;
-class QApplication;
-
 
 class SFListDelegate: public QAbstractItemDelegate {
 
@@ -57,4 +50,3 @@ class SFListDelegate: public QAbstractItemDelegate {
 	signals:
 };
 #endif
-

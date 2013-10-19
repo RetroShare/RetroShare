@@ -764,7 +764,7 @@ bool RsHtml::makeEmbeddedImage(const QImage &originalImage, QString &embeddedIma
 
 			// ask user
 			QMessageBox msgBox;
-			msgBox.setText(QString(QApplication::translate("RsHtml", "Image is oversized for transmission.\nReducing image to %1x%2 pixels?", 0, QApplication::UnicodeUTF8)).arg(newSize.width()).arg(newSize.height()));
+			msgBox.setText(QString(QApplication::translate("RsHtml", "Image is oversized for transmission.\nReducing image to %1x%2 pixels?")).arg(newSize.width()).arg(newSize.height()));
 			msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
 			msgBox.setDefaultButton(QMessageBox::Ok);
 			if (msgBox.exec() != QMessageBox::Ok) {

@@ -43,8 +43,6 @@ CreateChannel::CreateChannel()
 	ui.headerFrame->setHeaderImage(QPixmap(":/images/add_channel64.png"));
 	ui.headerFrame->setHeaderText(tr("New Channel"));
 
-	picture = NULL;
-
 	// connect up the buttons.
 	connect( ui.buttonBox, SIGNAL(accepted()), this, SLOT(createChannel()));
 	connect( ui.buttonBox, SIGNAL(rejected()), this, SLOT(close()));

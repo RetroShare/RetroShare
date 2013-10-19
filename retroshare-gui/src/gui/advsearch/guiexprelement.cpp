@@ -361,28 +361,28 @@ QString ExprParamElement::toString()
     } else 
     {
         if (searchType ==  DateSearch) {
-            QDateEdit * dateEdit =  qFindChild<QDateEdit *> (internalframe, "param1");
+            QDateEdit * dateEdit =  internalframe->findChild<QDateEdit *> ("param1");
             str = dateEdit->text();
             if (inRangedConfig)
             {
                 str += QString(" ") + tr("to") + QString(" ");
-                dateEdit = qFindChild<QDateEdit *> (internalframe, "param2");
+                dateEdit = internalframe->findChild<QDateEdit *> ("param2");
                 str += dateEdit->text();
             }
         } else if (searchType == SizeSearch) 
         {
-            QLineEdit * lineEditSize =  qFindChild<QLineEdit*>(internalframe, "param1");
+            QLineEdit * lineEditSize =  internalframe->findChild<QLineEdit*>("param1");
             str = ("" == lineEditSize->text()) ? "0"
                                                : lineEditSize->text();
-            QComboBox * cb = qFindChild<QComboBox*> (internalframe, "unitsCb1");
+            QComboBox * cb = internalframe->findChild<QComboBox*> ("unitsCb1");
             str += QString(" ") + cb->itemText(cb->currentIndex());
             if (inRangedConfig)
             {
                 str += QString(" ") + tr("to") + QString(" ");
-                lineEditSize =  qFindChild<QLineEdit*>(internalframe, "param2");
+                lineEditSize =  internalframe->findChild<QLineEdit*>("param2");
                 str += ("" == lineEditSize->text()) ? "0"
                                                     : lineEditSize->text();
-                cb = qFindChild<QComboBox*> (internalframe, "unitsCb2");
+                cb = internalframe->findChild<QComboBox*> ("unitsCb2");
                 str += QString(" ") + cb->itemText(cb->currentIndex());
             }
         }
@@ -401,7 +401,7 @@ void ExprParamElement::adjustForSearchType(ExprSearchType type)
     hexValidator = new QRegExpValidator(hexRegExp, this);
     
     // remove all elements
-    QList<QWidget*> children = qFindChildren<QWidget*>(internalframe);
+    QList<QWidget*> children = internalframe->findChildren<QWidget*>();
     QWidget* child;
     QLayout * lay_out = internalframe->layout();
      while (!children.isEmpty())
@@ -555,7 +555,7 @@ void ExprParamElement::setRangedSearch(bool ranged)
 bool ExprParamElement::ignoreCase()
 {    
     return (isStringSearchExpression()
-            && (qFindChild<QCheckBox*>(internalframe, "ignoreCaseCB"))
+            && (internalframe->findChild<QCheckBox*>("ignoreCaseCB"))
                                                 ->checkState()==Qt::Checked);
 }
 
@@ -563,7 +563,7 @@ QString ExprParamElement::getStrSearchValue()
 {
     if (!isStringSearchExpression()) return "";
 
-    QLineEdit * lineEdit = qFindChild<QLineEdit*>(internalframe, "param1");
+    QLineEdit * lineEdit = internalframe->findChild<QLineEdit*>("param1");
     return lineEdit->displayText();
 }
 
@@ -579,19 +579,19 @@ uint64_t ExprParamElement::getIntValueFromField(QString fieldName, bool isToFiel
     {
         case DateSearch:
         {
-            QDateEdit * dateEdit =  qFindChild<QDateEdit *> (internalframe, (fieldName + suffix));
+            QDateEdit * dateEdit = internalframe->findChild<QDateEdit *> (fieldName + suffix);
             QDateTime * time = new QDateTime(dateEdit->date());
             val = (uint64_t)time->toTime_t();
             break;
         }   
         case SizeSearch:
         {
-            QLineEdit * lineEditSize =  qFindChild<QLineEdit*>(internalframe, (fieldName + suffix));
+            QLineEdit * lineEditSize = internalframe->findChild<QLineEdit*>(fieldName + suffix);
             bool ok2 = false;
             val = (lineEditSize->displayText()).toULongLong(&ok2);
             if (ok2) 
 				{
-                QComboBox * cb = qFindChild<QComboBox*> (internalframe, (QString("unitsCb") + suffix));
+				QComboBox * cb = internalframe->findChild<QComboBox*>((QString("unitsCb") + suffix));
                 QVariant data = cb->itemData(cb->currentIndex());
                 val *= data.toULongLong();
             } 
