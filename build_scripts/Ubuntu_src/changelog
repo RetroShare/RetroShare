@@ -1,4 +1,18 @@
 retroshare (0.5.5-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
+   * Improvements
+      - code fixed up for Qt5,added display of Qt version in AboutDialog
+      - fixed GUI for encrypted messages. Now showing correct To/From, added icon for decrypted msg, correct To when reply
+      - allow change destination directory for queued files (modified patch from Phenom)
+      - remove three costly loops in ftController
+      - added help strings in some config pages (relays, notify, plugins)
+      - added warning label in MakeFriendWizard to warn against too many friends
+
+   * Bugs
+      - removed potential deadlock in notifyQt
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Sat, 19 Oct 2013 15:00:00 +0100
+
+retroshare (0.5.5-0.6804~precise) precise; urgency=low
 
   * Improvements
      Optimisations/compilation:
