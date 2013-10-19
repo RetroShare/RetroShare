@@ -144,12 +144,6 @@ signals:
   /** Global timer every second */
   void secondTick();
 
-protected:
-#if defined(Q_OS_WIN)
-  /** Filters Windows events, looking for events of interest */
-  bool winEventFilter(MSG *msg, long *result);
-#endif
-
 private slots:
   /** Called when the application's main event loop has started. This method
    * will emit the running() signal to indicate that the application's event
@@ -160,9 +154,6 @@ private slots:
 private:
   /** customize the date format (defaultlongformat) */
   static void customizeDateFormat();
-  /** Catches debugging messages from Qt and sends them to 
-   * RetroShare's logs. */
-  static void qt_msg_handler(QtMsgType type, const char *msg);
 
   /** Parse the list of command-line arguments. */
   void parseArguments(QStringList args);

@@ -19,7 +19,7 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include <QFileDialog>
+#include <QFileInfo>
 
 #include "ULListDelegate.h"
 #include "xprogressbar.h"

@@ -758,7 +758,7 @@ void SetForegroundWindowInternal(HWND hWnd)
     _instance->raise();
 
 #ifdef WINDOWS_SYS
-    SetForegroundWindowInternal(_instance->winId());
+    SetForegroundWindowInternal((HWND) _instance->winId());
 #endif
 }
 

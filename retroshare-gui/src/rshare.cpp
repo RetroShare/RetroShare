@@ -66,22 +66,24 @@ QDateTime Rshare::mStartupTime;
 /** Catches debugging messages from Qt and sends them to RetroShare's logs. If Qt
  * emits a QtFatalMsg, we will write the message to the log and then abort().
  */
-void
-Rshare::qt_msg_handler(QtMsgType type, const char *s)
+#if QT_VERSION >= QT_VERSION_CHECK (5, 0, 0)
+void qt_msg_handler(QtMsgType type, const QMessageLogContext &, const QString &msg)
+#else
+void qt_msg_handler(QtMsgType type, const char *msg)
+#endif
 {
-  QString msg(s);
   switch (type) {
     case QtDebugMsg:
-      rDebug("QtDebugMsg: %1").arg(msg);
+      rDebug(QString("QtDebugMsg: %1").arg(msg));
       break;
     case QtWarningMsg:
-      rNotice("QtWarningMsg: %1").arg(msg);
+      rNotice(QString("QtWarningMsg: %1").arg(msg));
       break;
     case QtCriticalMsg:
-      rWarn("QtCriticalMsg: %1").arg(msg);
+      rWarn(QString("QtCriticalMsg: %1").arg(msg));
       break;
     case QtFatalMsg:
-      rError("QtFatalMsg: %1").arg(msg);
+      rError(QString("QtFatalMsg: %1").arg(msg));
       break;
   }
   if (type == QtFatalMsg) {
@@ -98,7 +100,11 @@ Rshare::Rshare(QStringList args, int &argc, char **argv, const QString &dir)
 {
   mStartupTime = QDateTime::currentDateTime();
 
+#if QT_VERSION >= QT_VERSION_CHECK (5, 0, 0)
+  qInstallMessageHandler(qt_msg_handler);
+#else
   qInstallMsgHandler(qt_msg_handler);
+#endif
 
 #ifndef __APPLE__
 
@@ -178,19 +184,6 @@ Rshare::onEventLoopStarted()
 {
   emit running();
 }
-
-#if defined(Q_OS_WIN)
-/** On Windows, we need to catch the WM_QUERYENDSESSION message
- * so we know that it is time to shutdown. */
-bool
-Rshare::winEventFilter(MSG *msg, long *result)
-{
-  if (msg->message == WM_QUERYENDSESSION) {
-    emit shutdown();
-  }
-  return QApplication::winEventFilter(msg, result);
-}
-#endif
 
 /** Display usage information regarding command-line arguments. */
 /*void

@@ -20,8 +20,6 @@
  ****************************************************************/
 #include "EditChanDetails.h"
 
-#include <QFileDialog>
-
 #include <retroshare/rschannels.h>
 
 #include "util/misc.h"

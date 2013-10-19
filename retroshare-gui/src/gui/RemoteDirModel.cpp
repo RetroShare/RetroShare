@@ -24,7 +24,6 @@
 #include <QUrl>
 #include <QMimeData>
 #include <QTimer>
-#include <QFileDialog>
 
 #include <retroshare-gui/RsAutoUpdatePage.h>
 #include <gui/common/RsCollectionFile.h>
