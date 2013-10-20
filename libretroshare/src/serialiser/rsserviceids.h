@@ -149,6 +149,8 @@ const uint16_t RS_SERVICE_GXSV3_TYPE_POSTED      = 0xf326;
 const uint16_t RS_SERVICE_GXSV3_TYPE_CHANNELS    = 0xf327;
 const uint16_t RS_SERVICE_GXSV3_TYPE_GXSCIRCLE   = 0xf328;
 
+const uint16_t RS_SERVICE_TYPE_GXS_RECOGN        = 0xf331;
+
 /***************** IDS ALLOCATED FOR PLUGINS ******************/
 
 const uint16_t RS_SERVICE_TYPE_PLUGIN_ARADO_TEST_ID1   = 0xf401;

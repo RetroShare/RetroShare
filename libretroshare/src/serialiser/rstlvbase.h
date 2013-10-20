@@ -201,6 +201,7 @@ const uint16_t TLV_TYPE_WKEYVALUESET  = 0x1013;
 const uint16_t TLV_TYPE_STRINGSET     = 0x1020; /* dummy non-existant */
 const uint16_t TLV_TYPE_PEERSET       = 0x1021;
 const uint16_t TLV_TYPE_HASHSET       = 0x1022;
+const uint16_t TLV_TYPE_RECOGNSET     = 0x1023; 
 const uint16_t TLV_TYPE_SERVICESET    = 0x1030; 
 
 const uint16_t TLV_TYPE_SECURITYKEY   = 0x1040;

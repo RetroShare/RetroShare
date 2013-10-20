@@ -137,6 +137,22 @@ virtual std::ostream &print(std::ostream &out, uint16_t indent);
 };
 
 
+class RsTlvStringSetRef: public RsTlvItem
+{
+	public:
+	 RsTlvStringSetRef(uint16_t type, std::list<std::string> &refids);
+virtual ~RsTlvStringSetRef() { return; }
+virtual uint32_t TlvSize();
+virtual void	 TlvClear();
+virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset); /* serialise   */
+virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); /* deserialise */
+virtual std::ostream &print(std::ostream &out, uint16_t indent);
+
+	uint16_t mType;
+	std::list<std::string> &ids; /* Mandatory */
+};
+
+
 /**** MORE TLV *****
  *
  * File Items/Data.

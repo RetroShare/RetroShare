@@ -217,7 +217,7 @@ bool p3GxsForums::createGroup(uint32_t &token, RsGxsForumGroup &group)
 
 bool p3GxsForums::updateGroup(uint32_t &token, RsGxsGroupUpdateMeta& meta, RsGxsForumGroup &group)
 {
-	std::cerr << "p3GxsForums::createGroup()" << std::endl;
+	std::cerr << "p3GxsForums::updateGroup()" << std::endl;
 
         if(meta.getGroupId().empty())
 		return false;

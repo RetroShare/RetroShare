@@ -7,7 +7,7 @@ CONFIG += test_voip
 
 #GXS Stuff.
 # This should be disabled for releases until further notice.
-#CONFIG += gxs debug
+CONFIG += gxs debug
 
 # Beware: All data of the stripped services are lost
 DEFINES *= PQI_DISABLE_TUNNEL
@@ -387,6 +387,7 @@ HEADERS +=	serialiser/rsbaseitems.h \
 			serialiser/rstlvbanlist.h \
 			serialiser/rsbanlistitems.h \
 			serialiser/rsbwctrlitems.h \
+			serialiser/rsgxsrecognitems.h \
 			serialiser/rstunnelitems.h
 
 HEADERS +=	services/p3channels.h \
@@ -430,6 +431,7 @@ HEADERS +=	util/folderiterator.h \
 			util/pugiconfig.h \  
 			util/rsmemcache.h \
 			util/rstickevent.h \
+			util/rsrecogn.h \
 
 SOURCES +=	dbase/cachestrapper.cc \
 			dbase/fimonitor.cc \
@@ -529,6 +531,7 @@ SOURCES +=	serialiser/rsbaseitems.cc \
 			serialiser/rstlvbanlist.cc \
 			serialiser/rsbanlistitems.cc \
 			serialiser/rsbwctrlitems.cc \
+			serialiser/rsgxsrecognitems.cc \
 			serialiser/rstunnelitems.cc
 
 SOURCES +=	services/p3channels.cc \
@@ -571,6 +574,7 @@ SOURCES +=	util/folderiterator.cc \
 			util/rsaes.cc \
 			util/rsrandom.cc \
 			util/rstickevent.cc \
+			util/rsrecogn.cc \
 
 
 upnp_miniupnpc {

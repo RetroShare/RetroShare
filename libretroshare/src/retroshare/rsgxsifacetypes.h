@@ -47,7 +47,7 @@ public:
             mGroupStatus = 0;
             mCircleType = 0;
 
-            //mPublishTs = 0;
+            mPublishTs = 0;
     }
 
     void operator =(const RsGxsGrpMetaData& rGxsMeta);

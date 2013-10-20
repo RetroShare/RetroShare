@@ -40,7 +40,6 @@
 /****
  * #define POSTED_DEBUG 1
  ****/
-#define POSTED_DEBUG 1
 
 RsPosted *rsPosted = NULL;
 

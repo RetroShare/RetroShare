@@ -52,7 +52,8 @@
 
 std::ostream &operator<<(std::ostream &out, const RsGroupMetaData &meta)
 {
-        out << "[ GroupId: " << meta.mGroupId << " Name: " << meta.mGroupName << " ]";
+        out << "[ GroupId: " << meta.mGroupId << " Name: " << meta.mGroupName;
+        out << " PublishTs: " << meta.mPublishTs << " ]";
         return out;
 }
 

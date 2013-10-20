@@ -38,8 +38,11 @@
 
 #include "util/rsmemcache.h"
 #include "util/rstickevent.h"
+#include "util/rsrecogn.h"
 
 #include "pqi/authgpg.h"
+
+#include "serialiser/rsgxsrecognitems.h"
 
 /* 
  * Identity Service
@@ -72,6 +75,27 @@ virtual	std::string save() const;
 	uint32_t checkAttempts;
 	std::string pgpId;
 };
+
+class SSGxsIdRecognTags: public SSBit 
+{
+	public:
+	SSGxsIdRecognTags()
+	:tagFlags(0), publishTs(0), lastCheckTs(0) { return; }
+
+virtual	bool load(const std::string &input);
+virtual	std::string save() const;
+
+	void setTags(bool processed, bool pending, uint32_t flags);
+
+	bool tagsProcessed() const;  // have we processed?
+	bool tagsPending() const;    // should we reprocess?
+	bool tagValid(int i) const;
+
+	time_t publishTs;
+	time_t lastCheckTs;
+	uint32_t tagFlags;
+};
+
 
 class SSGxsIdScore: public SSBit 
 {
@@ -113,11 +137,14 @@ virtual	std::string save() const;
 	// pgphash status
 	SSGxsIdPgp pgp;
 
+	// recogTags.
+	SSGxsIdRecognTags recogntags;	
+
 	// reputation score.	
 	SSGxsIdScore    score;
 	SSGxsIdCumulator opinion;
 	SSGxsIdCumulator reputation;
-	
+
 };
 
 #define ID_LOCAL_STATUS_FULL_CALC_FLAG	0x00010000
@@ -133,9 +160,13 @@ class RsGxsIdCache
 {
 	public:
 	RsGxsIdCache();
-	RsGxsIdCache(const RsGxsIdGroupItem *item, const RsTlvSecurityKey &in_pkey);
+	RsGxsIdCache(const RsGxsIdGroupItem *item, const RsTlvSecurityKey &in_pkey, 
+		const std::list<RsRecognTag> &tagList);
 
 void	updateServiceString(std::string serviceString);
+
+	time_t mPublishTs;
+	std::list<RsRecognTag> mRecognTags; // Only partially validated.
 
 	RsIdentityDetails details;
 	RsTlvSecurityKey pubkey;
@@ -175,6 +206,7 @@ virtual bool getMsgData(const uint32_t &token, std::vector<RsGxsIdOpinion> &opin
 
 	// These are local - and not exposed via RsIdentity.
 virtual bool createGroup(uint32_t& token, RsGxsIdGroup &group);
+virtual bool updateGroup(uint32_t& token, RsGxsIdGroup &group);
 virtual bool createMsg(uint32_t& token, RsGxsIdOpinion &opinion);
 
 	/**************** RsIdentity External Interface.
@@ -196,6 +228,13 @@ virtual bool  getOwnIds(std::list<RsGxsId> &ownIds);
         // 
 virtual bool submitOpinion(uint32_t& token, RsIdOpinion &opinion);
 virtual bool createIdentity(uint32_t& token, RsIdentityParameters &params);
+
+virtual bool updateIdentity(uint32_t& token, RsGxsIdGroup &group);
+
+virtual bool parseRecognTag(const RsGxsId &id, const std::string &nickname,
+                        const std::string &tag, RsRecognTagDetails &details);
+virtual bool getRecognTagRequest(const RsGxsId &id, const std::string &comment, 
+			uint16_t tag_class, uint16_t tag_type, std::string &tag);
 
 
 	/**************** RsGixs Implementation 
@@ -302,6 +341,32 @@ virtual void handle_event(uint32_t event_type, const std::string &elabel);
 
 	std::map<PGPIdType, PGPFingerprintType> mPgpFingerprintMap;
 	std::list<RsGxsIdGroup> mGroupsToProcess;
+
+/************************************************************************
+ * recogn processing.
+ *
+ */
+	bool recogn_start();
+	bool recogn_handlerequest(uint32_t token);
+	bool recogn_process();
+
+	// helper functions.
+	bool recogn_extract_taginfo(const RsGxsIdGroupItem *item, std::list<RsGxsRecognTagItem *> &tagItems);
+	bool cache_process_recogntaginfo(const RsGxsIdGroupItem *item, std::list<RsRecognTag> &tagList);
+
+	bool recogn_checktag(const RsGxsId &id, const std::string &nickname, RsGxsRecognTagItem *item, bool doSignCheck, bool &isPending);
+
+	void loadRecognKeys();
+
+	/* MUTEX PROTECTED DATA (mIdMtx - maybe should use a 2nd?) */
+
+	bool checkRecognSignature_locked(std::string encoded, RSA &key, std::string signature);
+	bool getRecognKey_locked(std::string signer, RSA &key);
+
+	std::list<RsGxsGroupId> mRecognGroupIds;
+	std::list<RsGxsIdGroupItem *> mRecognGroupsToProcess;
+	std::map<std::string, RsGxsRecognSignerItem *> mRecognSignKeys;
+	std::map<std::string, uint32_t> mRecognOldSignKeys;
 
 /************************************************************************
  * Below is the background task for processing opinions => reputations 
