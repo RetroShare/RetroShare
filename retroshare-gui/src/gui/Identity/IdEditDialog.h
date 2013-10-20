@@ -29,6 +29,7 @@
 #include <inttypes.h>
 
 #include "util/TokenQueue.h"
+#include <retroshare/rsidentity.h>
 
 class UIStateHelper;
 
@@ -46,16 +47,33 @@ public:
 
 private slots:
 	void idTypeToggled(bool checked);
-	void updateId();
+	void submit();
+
+	void addRecognTag();
+	void checkNewTag();
+	void rmTag1();
+	void rmTag2();
+	void rmTag3();
+	void rmTag4();
+	void rmTag5();
 
 private:
+	void createId();
+	void updateId();
 	void updateIdType(bool pseudo);
 	void loadExistingId(uint32_t token);
 
+	void loadRecognTags();
+	// extract details.
+	bool tagDetails(const std::string &id, const std::string &name, const std::string &tag, QString &desc);
+	void rmTag(int idx);
+	
 protected:
 	Ui::IdEditDialog ui;
 	bool mIsNew;
 	UIStateHelper *mStateHelper;
+	
+	RsGxsIdGroup mEditGroup;
 
 	TokenQueue *mIdQueue;
 };

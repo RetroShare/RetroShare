@@ -71,6 +71,16 @@ static bool MakeIdDesc(const RsGxsId &id, QString &str)
 
 	str = QString::fromUtf8(details.mNickname.c_str());
 
+	std::list<RsRecognTag>::iterator it;
+	for(it = details.mRecognTags.begin(); it != details.mRecognTags.end(); it++)
+	{
+		str += " (";
+		str += QString::number(it->tag_class);
+		str += ":";
+		str += QString::number(it->tag_type);
+		str += ")";
+	}
+
 	bool addCode = true;
 	if (details.mPgpLinked)
 	{

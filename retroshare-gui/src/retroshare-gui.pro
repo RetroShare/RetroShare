@@ -2,7 +2,7 @@ CONFIG += qt gui uic qrc resources uitools idle bitdht
 
 # Below is for GXS services.
 # Should be disabled for releases.
-#CONFIG += gxs debug
+CONFIG += gxs debug
 
 gxs {
 	
@@ -193,7 +193,10 @@ macx {
 
         gxs {
                 LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
-                LIBS += -lsqlite3
+		LIBS += ../../../lib/libsqlcipher.a
+		#LIBS += ../../../lib/sqlcipher/.libs/libsqlcipher.a
+                #LIBS += -lsqlite3
+                #LIBS += -lsqlcipher
         }
 
 
