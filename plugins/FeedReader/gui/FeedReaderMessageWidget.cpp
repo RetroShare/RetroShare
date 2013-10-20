@@ -15,6 +15,7 @@
 #include "gui/common/RSTreeWidgetItem.h"
 #include "gui/settings/rsharesettings.h"
 #include "util/HandleRichText.h"
+#include "util/QtVersion.h"
 
 #include "retroshare/rsiface.h"
 
@@ -78,7 +79,7 @@ FeedReaderMessageWidget::FeedReaderMessageWidget(const std::string &feedId, RsFe
 
 	/* set header resize modes and initial section sizes */
 	QHeaderView *header = ui->msgTreeWidget->header();
-	header->setResizeMode(COLUMN_MSG_TITLE, QHeaderView::Interactive);
+	QHeaderView_setSectionResizeMode(header, COLUMN_MSG_TITLE, QHeaderView::Interactive);
 	header->resizeSection(COLUMN_MSG_TITLE, 350);
 	header->resizeSection(COLUMN_MSG_PUBDATE, 140);
 	header->resizeSection(COLUMN_MSG_AUTHOR, 150);
@@ -98,7 +99,7 @@ FeedReaderMessageWidget::FeedReaderMessageWidget(const std::string &feedId, RsFe
 
 	/* Set header sizes for the fixed columns and resize modes, must be set after processSettings */
 	header->resizeSection(COLUMN_MSG_READ, 24);
-	header->setResizeMode(COLUMN_MSG_READ, QHeaderView::Fixed);
+	QHeaderView_setSectionResizeMode(header, COLUMN_MSG_READ, QHeaderView::Fixed);
 
 	/* build menu for link button */
 	QMenu *menu = new QMenu(this);

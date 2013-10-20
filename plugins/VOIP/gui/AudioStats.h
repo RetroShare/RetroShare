@@ -31,8 +31,7 @@
 #ifndef _AUDIOSTATS_H
 #define _AUDIOSTATS_H
 
-#include <QtCore>
-#include <QtGui>
+#include <QWidget>
 
 //#include "mumble_pch.hpp"
 

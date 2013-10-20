@@ -8,8 +8,13 @@ AudioDeviceHelper::AudioDeviceHelper()
 QAudioInput* AudioDeviceHelper::getDefaultInputDevice() 
 {
     QAudioFormat fmt;
+#if QT_VERSION >= QT_VERSION_CHECK (5, 0, 0)
+    fmt.setSampleRate(16000);
+    fmt.setChannelCount(1);
+#else
     fmt.setFrequency(16000);
     fmt.setChannels(1);
+#endif
     fmt.setSampleSize(16);
     fmt.setSampleType(QAudioFormat::SignedInt);
     fmt.setByteOrder(QAudioFormat::LittleEndian);
@@ -45,8 +50,13 @@ QAudioInput* AudioDeviceHelper::getPreferedInputDevice() {
 
 QAudioOutput* AudioDeviceHelper::getDefaultOutputDevice() {
     QAudioFormat fmt;
+#if QT_VERSION >= QT_VERSION_CHECK (5, 0, 0)
+    fmt.setSampleRate(16000);
+    fmt.setChannelCount(1);
+#else
     fmt.setFrequency(16000);
     fmt.setChannels(1);
+#endif
     fmt.setSampleSize(16);
     fmt.setSampleType(QAudioFormat::SignedInt);
     fmt.setByteOrder(QAudioFormat::LittleEndian);

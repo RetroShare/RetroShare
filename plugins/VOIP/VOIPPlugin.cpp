@@ -5,6 +5,7 @@
 #include <QApplication>
 #include <QString>
 #include <QIcon>
+#include <QMessageBox>
 
 #include "VOIPPlugin.h"
 #include "interface/rsvoip.h"

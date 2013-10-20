@@ -28,6 +28,8 @@
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#include <QTimer>
+
 #include "AudioWizard.h"
 //#include "AudioInput.h"
 //#include "Global.h"

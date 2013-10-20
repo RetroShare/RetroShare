@@ -40,6 +40,9 @@
 
 #include "ui_AudioWizard.h"
 
+class QGraphicsScene;
+class QGraphicsItem;
+
 class AudioWizard: public QWizard, public Ui::AudioWizard {
 	private:
 		Q_OBJECT

@@ -1,5 +1,10 @@
 !include("../Common/retroshare_plugin.pri"): error("Could not include file ../Common/retroshare_plugin.pri")
 
+greaterThan(QT_MAJOR_VERSION, 4) {
+	# Qt 5
+	QT += widgets
+}
+
 exists($$[QMAKE_MKSPECS]/features/mobility.prf) {
   CONFIG += mobility
 } else {

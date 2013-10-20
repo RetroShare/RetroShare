@@ -10,8 +10,10 @@ linux-g++-64 {
 }
 
 win32 {
-	# from Qt 4.7.4 and 4.8+ the mkspecs has changed making dyn libs unusable anymore on windows : QMAKE_LFLAGS =
-	QMAKE_LFLAGS = -enable-stdcall-fixup -Wl,-enable-auto-import -Wl,-enable-runtime-pseudo-reloc
+	lessThan(QT_MAJOR_VERSION, 5) {
+		# from Qt 4.7.4 and 4.8+ the mkspecs has changed making dyn libs unusable anymore on windows : QMAKE_LFLAGS =
+		QMAKE_LFLAGS = -enable-stdcall-fixup -Wl,-enable-auto-import -Wl,-enable-runtime-pseudo-reloc
+	}
 
 	# Switch on extra warnings
 	QMAKE_CFLAGS += -Wextra
@@ -22,7 +24,7 @@ win32 {
 	RCC_DIR = temp/qrc
 	UI_DIR  = temp/ui
 
-	DEFINES += WINDOWS_SYS WIN32 STATICLIB MINGW
+	DEFINES += WINDOWS_SYS WIN32 STATICLIB MINGW WIN32_LEAN_AND_MEAN _USE_32BIT_TIME_T
 	DEFINES += MINIUPNPC_VERSION=13
 #	DESTDIR = lib
 

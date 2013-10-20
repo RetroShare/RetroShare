@@ -29,6 +29,8 @@
    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+#include <QTimer>
+
 //#include "AudioInput.h"
 //#include "AudioOutput.h"
 #include "AudioStats.h"

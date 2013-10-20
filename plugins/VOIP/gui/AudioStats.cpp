@@ -30,6 +30,8 @@
 
 #define iroundf(x) ( static_cast<int>(x) )
 
+#include <QPainter>
+
 #include "AudioStats.h"
 #include "AudioInputConfig.h"
 //#include "Global.h"

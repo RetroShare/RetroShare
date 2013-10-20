@@ -2,6 +2,11 @@
 
 CONFIG += qt uic qrc resources
 
+greaterThan(QT_MAJOR_VERSION, 4) {
+	# Qt 5
+	QT += widgets
+}
+
 SOURCES = p3ranking.cc LinksDialog.cpp rsrankitems.cc AddLinksDialog.cpp LinksCloudPlugin.cpp
 HEADERS = rsrank.h p3ranking.h LinksDialog.h rsrankitems.h AddLinksDialog.h LinksCloudPlugin.h
 FORMS   = LinksDialog.ui AddLinksDialog.ui

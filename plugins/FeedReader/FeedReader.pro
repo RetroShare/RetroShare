@@ -2,6 +2,11 @@
 
 CONFIG += qt uic qrc resources
 
+greaterThan(QT_MAJOR_VERSION, 4) {
+	# Qt 5
+	QT += widgets
+}
+
 SOURCES =	FeedReaderPlugin.cpp \
 			services/p3FeedReader.cc \
 			services/p3FeedReaderThread.cc \

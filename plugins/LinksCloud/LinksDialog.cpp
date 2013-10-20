@@ -28,6 +28,7 @@
 #include <gui/RetroShareLink.h>
 #include "AddLinksDialog.h"
 #include "rsrank.h"
+#include "util/QtVersion.h"
 
 #include <sstream>
 
@@ -81,9 +82,9 @@ LinksDialog::LinksDialog(RsPeers *peers, RsFiles *files, QWidget *parent)
 
     /* Set header resize modes and initial section sizes */
 	QHeaderView * _header = ui.linkTreeWidget->header () ;
-  _header->setResizeMode (0, QHeaderView::Interactive);
-	_header->setResizeMode (1, QHeaderView::Interactive);
-	_header->setResizeMode (2, QHeaderView::Interactive);
+	QHeaderView_setSectionResizeMode(_header, 0, QHeaderView::Interactive);
+	QHeaderView_setSectionResizeMode(_header, 1, QHeaderView::Interactive);
+	QHeaderView_setSectionResizeMode(_header, 2, QHeaderView::Interactive);
 
 	_header->resizeSection ( 0, 400 );
 	_header->resizeSection ( 1, 60 );
