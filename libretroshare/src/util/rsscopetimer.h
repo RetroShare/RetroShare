@@ -31,22 +31,29 @@
 //     callToMeasure() ;
 // }
 //
+#include <sys/time.h>
+
 class RsScopeTimer
 {
 	public:
 		RsScopeTimer(const std::string& name)
 		{
-			_t = clock() ;
+			timeval tv ;
+			gettimeofday(&tv,NULL) ;
+			_seconds = (tv.tv_sec % 10000) + tv.tv_usec/1000000.0f ;	// the %1000 is here to allow double precision to cover the decimals.
 			_name = name ;
 		}
 
 		~RsScopeTimer()
 		{
-			clock_t s = clock() ;
-			std::cerr << "Time for \"" << _name << "\": " << (s-_t)/(float)CLOCKS_PER_SEC << " secs" << std::endl;
+			timeval tv ;
+			gettimeofday(&tv,NULL) ;
+			double ss = (tv.tv_sec % 10000) + tv.tv_usec/1000000.0f ;
+
+			std::cerr << "Time for \"" << _name << "\": " << ss - _seconds << std::endl;
 		}
 
 	private:
-		clock_t _t ;
 		std::string _name ;
+		double _seconds ;
 };
