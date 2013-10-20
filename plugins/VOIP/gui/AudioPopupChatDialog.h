@@ -25,6 +25,8 @@ class AudioPopupChatDialog: public PopupChatDialog
 	private slots:
 		void toggleAudioListen();
 		void toggleAudioMuteCapture();
+    void hangupCall() ;
+
 
 	public slots:
 		void sendAudioData();
@@ -39,5 +41,7 @@ class AudioPopupChatDialog: public PopupChatDialog
 
 		QToolButton *audioListenToggleButton ;
 		QToolButton *audioMuteCaptureToggleButton ;
+		QToolButton *hangupButton ;
+
 };
 

@@ -4,9 +4,14 @@
 #include "AudioPopupChatDialog.h"
 #include "interface/rsvoip.h"
 #include "gui/SoundManager.h"
+#include "util/HandleRichText.h"
+#include "gui/common/StatusDefs.h"
+#include <retroshare/rsstatus.h>
 
 #define CALL_START ":/images/call-start-22.png"
-#define CALL_STOP ":/images/call-stop-22.png"
+#define CALL_STOP  ":/images/call-stop-22.png"
+#define CALL_HOLD  ":/images/call-hold-22.png"
+
 
 AudioPopupChatDialog::AudioPopupChatDialog(QWidget *parent)
 	: PopupChatDialog(parent)
@@ -20,11 +25,11 @@ AudioPopupChatDialog::AudioPopupChatDialog(QWidget *parent)
 	std::cerr << "****** VOIPLugin: Creating new AudioPopupChatDialog !!" << std::endl;
 
 	QIcon icon ;
-	icon.addPixmap(QPixmap(":/images/deafened_self.svg")) ;
-	icon.addPixmap(QPixmap(":/images/self_undeafened.svg"),QIcon::Normal,QIcon::On) ;
-	icon.addPixmap(QPixmap(":/images/self_undeafened.svg"),QIcon::Disabled,QIcon::On) ;
-	icon.addPixmap(QPixmap(":/images/self_undeafened.svg"),QIcon::Active,QIcon::On) ;
-	icon.addPixmap(QPixmap(":/images/self_undeafened.svg"),QIcon::Selected,QIcon::On) ;
+	icon.addPixmap(QPixmap(":/images/audio-volume-muted-22.png")) ;
+	icon.addPixmap(QPixmap(":/images/audio-volume-medium-22.png"),QIcon::Normal,QIcon::On) ;
+	icon.addPixmap(QPixmap(":/images/audio-volume-medium-22.png"),QIcon::Disabled,QIcon::On) ;
+	icon.addPixmap(QPixmap(":/images/audio-volume-medium-22.png"),QIcon::Active,QIcon::On) ;
+	icon.addPixmap(QPixmap(":/images/audio-volume-medium-22.png"),QIcon::Selected,QIcon::On) ;
 
 	audioListenToggleButton->setIcon(icon) ;
 	audioListenToggleButton->setIconSize(QSize(22,22)) ;
@@ -39,21 +44,33 @@ AudioPopupChatDialog::AudioPopupChatDialog(QWidget *parent)
 
 	QIcon icon2 ;
 	icon2.addPixmap(QPixmap(":/images/call-start-22.png")) ;
-	icon2.addPixmap(QPixmap(":/images/call-stop-22.png"),QIcon::Normal,QIcon::On) ;
-	icon2.addPixmap(QPixmap(":/images/call-stop-22.png"),QIcon::Disabled,QIcon::On) ;
-	icon2.addPixmap(QPixmap(":/images/call-stop-22.png"),QIcon::Active,QIcon::On) ;
-	icon2.addPixmap(QPixmap(":/images/call-stop-22.png"),QIcon::Selected,QIcon::On) ;
+	icon2.addPixmap(QPixmap(":/images/call-hold-22.png"),QIcon::Normal,QIcon::On) ;
+	icon2.addPixmap(QPixmap(":/images/call-hold-22.png"),QIcon::Disabled,QIcon::On) ;
+	icon2.addPixmap(QPixmap(":/images/call-hold-22.png"),QIcon::Active,QIcon::On) ;
+	icon2.addPixmap(QPixmap(":/images/call-hold-22.png"),QIcon::Selected,QIcon::On) ;
 
 	audioMuteCaptureToggleButton->setIcon(icon2) ;
 	audioMuteCaptureToggleButton->setIconSize(QSize(22,22)) ;
 	audioMuteCaptureToggleButton->setAutoRaise(true) ;
 	audioMuteCaptureToggleButton->setCheckable(true) ;
+	
+	hangupButton = new QToolButton ;
+	hangupButton->setIcon(QIcon(":/images/call-stop-22.png")) ;
+	hangupButton->setIconSize(QSize(22,22)) ;
+	hangupButton->setMinimumSize(QSize(28,28)) ;
+	hangupButton->setMaximumSize(QSize(28,28)) ;
+	hangupButton->setCheckable(false) ;
+	hangupButton->setAutoRaise(true) ;		
+	hangupButton->setText(QString()) ;
+	hangupButton->setToolTip(tr("Hangup Call"));
 
 	connect(audioListenToggleButton, SIGNAL(clicked()), this , SLOT(toggleAudioListen()));
 	connect(audioMuteCaptureToggleButton, SIGNAL(clicked()), this , SLOT(toggleAudioMuteCapture()));
+	connect(hangupButton, SIGNAL(clicked()), this , SLOT(hangupCall()));
 
 	addChatBarWidget(audioListenToggleButton) ;
 	addChatBarWidget(audioMuteCaptureToggleButton) ;
+	addChatBarWidget(hangupButton) ;
 
 	//ui.chatWidget->resetStatusBar();
 
@@ -67,12 +84,29 @@ void AudioPopupChatDialog::toggleAudioListen()
 {
 	std::cerr << "******** VOIPLugin: Toggling audio listen!" << std::endl;
     if (audioListenToggleButton->isChecked()) {
+        audioListenToggleButton->setToolTip(tr("Mute yourself"));
     } else {
+        audioListenToggleButton->setToolTip(tr("Unmute yourself"));
         //audioListenToggleButton->setChecked(false);
         /*if (outputDevice) {
             outputDevice->stop();
         }*/
     }
+}
+
+void AudioPopupChatDialog::hangupCall() 
+{
+	std::cerr << "******** VOIPLugin: Hangup call!" << std::endl;
+
+        disconnect(inputProcessor, SIGNAL(networkPacketReady()), this, SLOT(sendAudioData()));
+        if (inputDevice) {
+            inputDevice->stop();
+        }        
+        if (outputDevice) {
+            outputDevice->stop();
+        }
+        audioListenToggleButton->setChecked(false);
+        audioMuteCaptureToggleButton->setChecked(false);
 }
 
 void AudioPopupChatDialog::toggleAudioMuteCapture() 
@@ -81,7 +115,9 @@ void AudioPopupChatDialog::toggleAudioMuteCapture()
     if (audioMuteCaptureToggleButton->isChecked()) {
         //activate audio output
         audioListenToggleButton->setChecked(true);
-        audioMuteCaptureToggleButton->setToolTip(tr("Stop Call"));
+        audioMuteCaptureToggleButton->setToolTip(tr("Hold Call"));
+                
+        ChatWidget *cw = getChatWidget();
 
         //activate audio input
         if (!inputProcessor) {
@@ -96,12 +132,19 @@ void AudioPopupChatDialog::toggleAudioMuteCapture()
         }
         connect(inputProcessor, SIGNAL(networkPacketReady()), this, SLOT(sendAudioData()));
         inputDevice->start(inputProcessor);
+        
+        if (cw) {
+         cw->addChatMsg(true, tr("VoIP Status"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("Outgoing Call is started..."), ChatWidget::TYPE_SYSTEM);
+        }
+        
     } else {
         disconnect(inputProcessor, SIGNAL(networkPacketReady()), this, SLOT(sendAudioData()));
         if (inputDevice) {
             inputDevice->stop();
         }
-        audioMuteCaptureToggleButton->setToolTip(tr("Start Call"));
+        audioMuteCaptureToggleButton->setToolTip(tr("Resume Call"));
+        
+
     }
 
 }
@@ -179,6 +222,15 @@ void AudioPopupChatDialog::updateStatus(int status)
 {
 	audioListenToggleButton->setEnabled(true);
 	audioMuteCaptureToggleButton->setEnabled(true);
+	hangupButton->setEnabled(true);	
+	
+	switch (status) {
+		case RS_STATUS_OFFLINE:
+			audioListenToggleButton->setEnabled(false);
+      audioMuteCaptureToggleButton->setEnabled(false);	
+      hangupButton->setEnabled(false);	
+		break;
+		}
 
 	PopupChatDialog::updateStatus(status) ;
 }

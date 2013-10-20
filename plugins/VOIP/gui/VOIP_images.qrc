@@ -1,12 +1,13 @@
 <RCC>
 	<qresource prefix="/">
-		<file>images/deafened_self.svg</file>
+		<file>images/audio-volume-medium-22.png</file>
 		<file>images/muted_self.svg</file>
-		<file>images/self_undeafened.svg</file>
+		<file>images/audio-volume-muted-22.png</file>
 		<file>images/talking_on.svg</file>
 		<file>images/talking_off.svg</file>
 		<file>images/call-start-22.png</file>
 		<file>images/call-stop-22.png</file>
+		<file>images/call-hold-22.png</file>
 	</qresource>
 </RCC>
 
