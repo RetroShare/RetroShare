@@ -194,15 +194,15 @@ LanguageSupport::translate(const QString &languageCode)
   QTranslator *systemQtTranslator = new QTranslator(rApp);
   Q_CHECK_PTR(systemQtTranslator);
 
-  if (systemQtTranslator->load(QLibraryInfo::location(QLibraryInfo::TranslationsPath) + "/qt_" + languageCode + ".qm")) {
+  if (systemQtTranslator->load("qt_" + languageCode + ".qm", QLibraryInfo::location(QLibraryInfo::TranslationsPath))) {
     QApplication::installTranslator(systemQtTranslator);
   } else {
     /* Attempt to load the translations for Qt's internal widgets from the translations directory in the exe dir. */
-    if (systemQtTranslator->load(QCoreApplication::applicationDirPath() + "/translations/qt_" + languageCode + ".qm")) {
+    if (systemQtTranslator->load("qt_" + languageCode + ".qm", QCoreApplication::applicationDirPath() + "/translations")) {
       QApplication::installTranslator(systemQtTranslator);
     } else {
       /* Attempt to load the translations for Qt's internal widgets from the translations directory in the data dir. */
-      if (systemQtTranslator->load(EXTERNAL_TRANSLATION_DIR + "/translations/qt_" + languageCode + ".qm")) {
+      if (systemQtTranslator->load("qt_" + languageCode + ".qm", EXTERNAL_TRANSLATION_DIR + "/translations")) {
         QApplication::installTranslator(systemQtTranslator);
       } else {
         delete systemQtTranslator;
@@ -216,7 +216,7 @@ LanguageSupport::translate(const QString &languageCode)
 
   bool result = true;
 
-  if (retroshareTranslator->load(EXTERNAL_TRANSLATION_DIR + "/translations/retroshare_" + languageCode + ".qm")) {
+  if (retroshareTranslator->load("retroshare_" + languageCode + ".qm", EXTERNAL_TRANSLATION_DIR + "/translations")) {
     QApplication::installTranslator(retroshareTranslator);
   } else if (retroshareTranslator->load(":/lang/retroshare_" + languageCode + ".qm")) {
     QApplication::installTranslator(retroshareTranslator);
