@@ -1857,7 +1857,9 @@ void    ftController::statusChange(const std::list<pqipeer> &plist)
 		std::list<pqipeer> vlist ;
 		mTurtle->getSourceVirtualPeersList(it->first,vlist) ;
 
+#ifdef CONTROL_DEBUG
 		std::cerr << "vlist.size() = " << vlist.size() << std::endl;
+#endif
 
 		for(pit = vlist.begin(); pit != vlist.end(); pit++)
 		{
