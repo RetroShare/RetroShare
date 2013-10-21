@@ -1806,9 +1806,6 @@ void    ftController::statusChange(const std::list<pqipeer> &plist)
 	std::map<std::string, ftFileControl*>::iterator it;
 	std::list<pqipeer>::const_iterator pit;
 
-	std::list<pqipeer> vlist ;
-	mTurtle->getVirtualPeersList(vlist) ;
-
 #ifdef CONTROL_DEBUG
 	std::cerr << "ftController::statusChange()";
 	std::cerr << std::endl;
@@ -1856,6 +1853,11 @@ void    ftController::statusChange(const std::list<pqipeer> &plist)
 
 		// Now also look at turtle virtual peers.
 		//
+		std::list<pqipeer> vlist ;
+		mTurtle->getSourceVirtualPeersList(it->first,vlist) ;
+
+		std::cerr << "vlist.size() = " << vlist.size() << std::endl;
+
 		for(pit = vlist.begin(); pit != vlist.end(); pit++)
 		{
 #ifdef CONTROL_DEBUG

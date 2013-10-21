@@ -272,21 +272,31 @@ void p3turtle::locked_addDistantPeer(const TurtleFileHash&,TurtleTunnelId tid)
 	_local_tunnels[tid].vpid = TurtleVirtualPeerId(buff) ;
 }
 
-void p3turtle::getVirtualPeersList(std::list<pqipeer>& list)
+void p3turtle::getSourceVirtualPeersList(const TurtleFileHash& hash,std::list<pqipeer>& list)
 {
 	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 
 	list.clear() ;
 
-	for(std::map<TurtleVirtualPeerId,TurtleTunnelId>::const_iterator it(_virtual_peers.begin());it!=_virtual_peers.end();++it)
-	{
-		pqipeer vp ;
-		vp.id = it->first ;
-		vp.name = "Virtual (distant) peer" ;
-		vp.state = RS_PEER_S_CONNECTED ;
-		vp.actions = RS_PEER_CONNECTED ;
-		list.push_back(vp) ;
-	}
+	std::map<TurtleFileHash,TurtleHashInfo>::const_iterator it = _incoming_file_hashes.find(hash) ;
+
+	if(it != _incoming_file_hashes.end())
+		for(uint32_t i=0;i<it->second.tunnels.size();++i)
+		{
+			std::map<TurtleTunnelId,TurtleTunnel>::const_iterator it2 = _local_tunnels.find( it->second.tunnels[i] ) ;
+
+			if(it2 != _local_tunnels.end())
+			{
+				pqipeer vp ;
+				vp.id = it2->second.vpid ;
+				vp.name = "Virtual (distant) peer" ;
+				vp.state = RS_PEER_S_CONNECTED ;
+				vp.actions = RS_PEER_CONNECTED ;
+				list.push_back(vp) ;
+			}
+			else
+				std::cerr << "(EE) getSourceVirtualPeersList(): no tunnels for incoming file hash  " << hash << ": weird!"<< std::endl;
+		}
 }
 
 // This method handles digging new tunnels as needed.
@@ -581,6 +591,11 @@ void p3turtle::locked_closeTunnel(TurtleTunnelId tid,std::vector<std::pair<RsTur
 			sources_to_remove.push_back(std::pair<RsTurtleClientService*,std::pair<TurtleFileHash,TurtleVirtualPeerId> >(itHash->second,hash_vpid)) ;
 
 			_outgoing_file_hashes.erase(itHash) ;
+
+			// Also remove the associated virtual peer
+			//
+			if(_virtual_peers.find(vpid) != _virtual_peers.end())  
+				_virtual_peers.erase(_virtual_peers.find(vpid)) ;
 		}
 	}
 

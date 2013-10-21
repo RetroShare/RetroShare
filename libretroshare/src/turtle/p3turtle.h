@@ -305,7 +305,7 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 		std::string getTurtlePeerId(TurtleTunnelId tid) const ;
 	
 		/// returns the list of virtual peers for all tunnels.
-		void getVirtualPeersList(std::list<pqipeer>& list) ;
+		void getSourceVirtualPeersList(const TurtleFileHash& hash,std::list<pqipeer>& list) ;
 
 		/// Send a data request into the correct tunnel for the given file hash
 		void sendTurtleData(const std::string& virtual_peer_id, RsTurtleGenericTunnelItem *item) ;
