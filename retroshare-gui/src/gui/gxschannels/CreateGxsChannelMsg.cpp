@@ -24,6 +24,7 @@
 #include <QBuffer>
 #include <QMenu>
 #include <QDir>
+#include <QMimeData>
 
 #include <gui/RetroShareLink.h>
 #include "CreateGxsChannelMsg.h"

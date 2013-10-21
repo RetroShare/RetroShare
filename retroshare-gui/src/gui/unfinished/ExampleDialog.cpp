@@ -37,6 +37,7 @@
 #include <QMessageBox>
 #include <QHeaderView>
 
+#include "util/QtVersion.h"
 
 /* Images for context menu icons */
 #define IMAGE_REMOVEFRIEND       ":/images/removefriend16.png"
@@ -60,19 +61,19 @@ ExampleDialog::ExampleDialog(QWidget *parent)
   
     /* Set header resize modes and initial section sizes */
 	QHeaderView * _header = ui.peertreeWidget->header () ;
-   	_header->setResizeMode (0, QHeaderView::Custom);
-	_header->setResizeMode (1, QHeaderView::Interactive);
-	_header->setResizeMode (2, QHeaderView::Interactive);
-	_header->setResizeMode (3, QHeaderView::Interactive);
-	_header->setResizeMode (4, QHeaderView::Interactive);
-	_header->setResizeMode (5, QHeaderView::Interactive);
-	_header->setResizeMode (6, QHeaderView::Interactive);
-	_header->setResizeMode (7, QHeaderView::Interactive);
-	_header->setResizeMode (8, QHeaderView::Interactive);
-	_header->setResizeMode (9, QHeaderView::Interactive);
-	_header->setResizeMode (10, QHeaderView::Interactive);
-	_header->setResizeMode (11, QHeaderView::Interactive);
-    
+	QHeaderView_setSectionResizeMode(_header, 0, QHeaderView::Custom);
+	QHeaderView_setSectionResizeMode(_header, 1, QHeaderView::Interactive);
+	QHeaderView_setSectionResizeMode(_header, 2, QHeaderView::Interactive);
+	QHeaderView_setSectionResizeMode(_header, 3, QHeaderView::Interactive);
+	QHeaderView_setSectionResizeMode(_header, 4, QHeaderView::Interactive);
+	QHeaderView_setSectionResizeMode(_header, 5, QHeaderView::Interactive);
+	QHeaderView_setSectionResizeMode(_header, 6, QHeaderView::Interactive);
+	QHeaderView_setSectionResizeMode(_header, 7, QHeaderView::Interactive);
+	QHeaderView_setSectionResizeMode(_header, 8, QHeaderView::Interactive);
+	QHeaderView_setSectionResizeMode(_header, 9, QHeaderView::Interactive);
+	QHeaderView_setSectionResizeMode(_header, 10, QHeaderView::Interactive);
+	QHeaderView_setSectionResizeMode(_header, 11, QHeaderView::Interactive);
+
 	_header->resizeSection ( 0, 25 );
 	_header->resizeSection ( 1, 100 );
 	_header->resizeSection ( 2, 100 );
