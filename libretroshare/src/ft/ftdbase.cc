@@ -396,7 +396,7 @@ bool ftCacheStrapper::search(const std::string &hash, FileSearchFlags hintflags,
 	std::cerr << std::endl;
 #endif
 
-	CacheData data;
+	RsCacheData data;
 	if (findCache(hash, data))
 	{
 #ifdef DB_DEBUG

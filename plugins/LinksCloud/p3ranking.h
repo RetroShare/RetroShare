@@ -71,10 +71,10 @@ class p3Ranking: public RsCacheService, public RsRanks
 		/******************************* CACHE SOURCE / STORE Interface *********************/
 
 		/* overloaded functions from Cache Source */
-		virtual bool    loadLocalCache(const CacheData &data);
+		virtual bool    loadLocalCache(const RsCacheData &data);
 
 		/* overloaded functions from Cache Store */
-		virtual int    loadCache(const CacheData &data);
+		virtual int    loadCache(const RsCacheData &data);
 
 		/******************************* CACHE SOURCE / STORE Interface *********************/
 

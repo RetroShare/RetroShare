@@ -93,7 +93,7 @@ int main(int argc, char **argv)
 	sc3.addCachePair(cp3);
 
 	/* add in a cache to sc2 */
-	CacheData cdata;
+	RsCacheData cdata;
 
 	cdata.pid = pid1;
 	cdata.cid = cid1;
@@ -191,8 +191,8 @@ void handleQuery(CacheStrapper *csp, RsPeerId pid,
 		std::map<RsPeerId, CacheStrapper *>::iterator sit;
 		if (strappers.end() != (sit = strappers.find(*pit)))
 		{
-			std::map<CacheId, CacheData> hashs;
-			std::map<CacheId, CacheData>::iterator hit;
+			std::map<CacheId, RsCacheData> hashs;
+			std::map<CacheId, RsCacheData>::iterator hit;
 			(sit -> second) -> handleCacheQuery(pid, hashs);
 			for(hit = hashs.begin(); hit != hashs.end(); hit++)
 			{

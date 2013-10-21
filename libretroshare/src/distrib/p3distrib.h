@@ -207,7 +207,7 @@ const uint32_t GRP_SUBSCRIBED   = 0x0005;
 const uint32_t GRP_UNSUBSCRIBED = 0x0006;
 
 
-typedef std::map<std::string, std::list<CacheData> > CacheOptData;
+typedef std::map<std::string, std::list<RsCacheData> > CacheOptData;
 
 
 //! Cache based service to implement group messaging
@@ -250,8 +250,8 @@ class CacheDataPending
 {
 	public:
 
-	CacheDataPending(const CacheData &data, bool local, bool historical);
-	CacheData mData;
+	CacheDataPending(const RsCacheData &data, bool local, bool historical);
+	RsCacheData mData;
 	bool	  mLocal;
 	bool      mHistorical;
 };
@@ -275,8 +275,8 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 
 	public:
 
-		virtual bool   loadLocalCache(const CacheData &data); /// overloaded from Cache Source
-		virtual int    loadCache(const CacheData &data); /// overloaded from Cache Store
+		virtual bool   loadLocalCache(const RsCacheData &data); /// overloaded from Cache Source
+		virtual int    loadCache(const RsCacheData &data); /// overloaded from Cache Store
 
 
 		/* From RsThread */
@@ -297,11 +297,11 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
 		std::list<CacheDataPending> mPendingCaches;
 
 		/* top level load */
-		int  	loadAnyCache(const CacheData &data, bool local, bool historical);
+		int  	loadAnyCache(const RsCacheData &data, bool local, bool historical);
 
 			/* load cache files */
 		void	loadFileGroups(const std::string &filename, const std::string &src, bool local, bool historical);
-		void	loadFileMsgs(const std::string &filename, const CacheData& , bool local, bool historical);
+		void	loadFileMsgs(const std::string &filename, const RsCacheData& , bool local, bool historical);
 		bool backUpKeys(const std::list<RsDistribGrpKey* > &keysToBackUp, std::string grpId);
 		void locked_sharePubKey();
 
@@ -318,7 +318,7 @@ class p3GroupDistrib: public CacheSource, public CacheStore, public p3Config, pu
           * Simply load cache opt messages
           * @param data
           */
-         void loadCacheOptMsgs(const CacheData& data, const std::string& grpId);
+         void loadCacheOptMsgs(const RsCacheData& data, const std::string& grpId);
 
 	protected:
 

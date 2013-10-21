@@ -125,8 +125,8 @@ class FileIndexMonitor: public CacheSource, public RsThread
 
 		/* Interacting with CacheSource */
 		/* overloaded from CacheSource */
-		virtual bool loadLocalCache(const CacheData &data);  /* called with stored data */
-		bool 	updateCache(const CacheData &data,const std::set<std::string>& dest_peers);     /* we call when we have a new cache for others */
+		virtual bool loadLocalCache(const RsCacheData &data);  /* called with stored data */
+		bool 	updateCache(const RsCacheData &data,const std::set<std::string>& dest_peers);     /* we call when we have a new cache for others */
 
 
 		/* the FileIndexMonitor inner workings */
@@ -152,7 +152,7 @@ class FileIndexMonitor: public CacheSource, public RsThread
 		/* util fns */
 
 		// from CacheSource
-		virtual bool cachesAvailable(RsPeerId /* pid */, std::map<CacheId, CacheData> &ids) ;
+		virtual bool cachesAvailable(RsPeerId /* pid */, std::map<CacheId, RsCacheData> &ids) ;
 
 	protected:
 		// Sets/gets the duration period within which already hashed files are remembered.
@@ -207,7 +207,7 @@ class FileIndexMonitor: public CacheSource, public RsThread
 		HashCache hashCache ;
 		bool useHashCache ;
 
-		std::map<RsPeerId,CacheData> _cache_items_per_peer ;	// stored the cache items to be sent to each peer.
+		std::map<RsPeerId,RsCacheData> _cache_items_per_peer ;	// stored the cache items to be sent to each peer.
 };
 
 

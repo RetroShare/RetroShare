@@ -47,7 +47,7 @@ bool operator<(const CachePair &a, const CachePair &b)
 }
 
 
-std::ostream &operator<<(std::ostream &out, const CacheData &d)
+std::ostream &operator<<(std::ostream &out, const RsCacheData &d)
 {
 	out << "[ p: " << d.pid << " id: <" << d.cid.type << "," << d.cid.subid;
 	out << "> #" << d.hash << " size: " << d.size;
@@ -86,13 +86,13 @@ void    CacheSource::unlockData() const
 }
 	
 	/* to be overloaded for inherited Classes */
-bool    CacheSource::loadLocalCache(const CacheData &data)
+bool    CacheSource::loadLocalCache(const RsCacheData &data)
 {
 	return refreshCache(data);
 }
 	
         /* control Caches available */
-bool CacheSource::refreshCache(const CacheData &data,const std::set<std::string>& destination_peers)
+bool CacheSource::refreshCache(const RsCacheData &data,const std::set<std::string>& destination_peers)
 {
 	bool ret = false;
 	{
@@ -133,7 +133,7 @@ bool CacheSource::refreshCache(const CacheData &data,const std::set<std::string>
 
 	return ret;
 }
-bool    CacheSource::refreshCache(const CacheData &data)
+bool    CacheSource::refreshCache(const RsCacheData &data)
 {
 	bool ret = false;
 	{
@@ -179,7 +179,7 @@ bool    CacheSource::refreshCache(const CacheData &data)
 
 }
 
-// bool    CacheSource::refreshCache(const CacheData &data)
+// bool    CacheSource::refreshCache(const RsCacheData &data)
 // {
 // 	bool ret = false;
 // 	{
@@ -232,7 +232,7 @@ bool    CacheSource::clearCache(CacheId id)
 	return ret;
 }
 		
-bool    CacheSource::cachesAvailable(RsPeerId pid, std::map<CacheId, CacheData> &ids)
+bool    CacheSource::cachesAvailable(RsPeerId pid, std::map<CacheId, RsCacheData> &ids)
 {
 	if(!isPeerAcceptedAsCacheReceiver(pid))
 		return false ;
@@ -253,7 +253,7 @@ bool    CacheSource::cachesAvailable(RsPeerId pid, std::map<CacheId, CacheData> 
 }
 
 
-bool    CacheSource::findCache(std::string hash, CacheData &data) const
+bool    CacheSource::findCache(std::string hash, RsCacheData &data) const
 {
 	lockData(); /* LOCK MUTEX */
 
@@ -271,7 +271,7 @@ bool    CacheSource::findCache(std::string hash, CacheData &data) const
 
 	if (!found)
 	{
-		std::map<std::string, CacheData>::const_iterator oit;
+		std::map<std::string, RsCacheData>::const_iterator oit;
 		oit = mOldCaches.find(hash);
 		if (oit != mOldCaches.end())
 		{
@@ -357,9 +357,9 @@ void    CacheStore::listCaches(std::ostream &out)
 }
 
 
-	/* look for stored data. using pic/cid in CacheData
+	/* look for stored data. using pic/cid in RsCacheData
 	 */
-bool	CacheStore::getStoredCache(CacheData &data)
+bool	CacheStore::getStoredCache(RsCacheData &data)
 {
 	lockData(); /* LOCK MUTEX */
 
@@ -370,7 +370,7 @@ bool	CacheStore::getStoredCache(CacheData &data)
 }
 
 
-bool	CacheStore::locked_getStoredCache(CacheData &data)
+bool	CacheStore::locked_getStoredCache(RsCacheData &data)
 {
 	if (data.cid.type != getCacheType())
 	{
@@ -410,7 +410,7 @@ bool	CacheStore::locked_getStoredCache(CacheData &data)
 
 
 
-bool	CacheStore::getAllStoredCaches(std::list<CacheData> &data)
+bool	CacheStore::getAllStoredCaches(std::list<RsCacheData> &data)
 {
 	lockData(); /* LOCK MUTEX */
 
@@ -437,7 +437,7 @@ bool	CacheStore::getAllStoredCaches(std::list<CacheData> &data)
 	 * determine the new name/path
 	 * then request it.
 	 */
-void	CacheStore::availableCache(const CacheData &data)
+void	CacheStore::availableCache(const RsCacheData &data)
 {
 #ifdef CS_DEBUG
 	std::cerr << "CacheStore::availableCache() :" << data << std::endl;
@@ -463,7 +463,7 @@ void	CacheStore::availableCache(const CacheData &data)
 		return; /* ignore it */
 	}
 
-	CacheData rData = data;
+	RsCacheData rData = data;
 
 	/* get new name */
 	if (!nameCache(rData))
@@ -482,7 +482,7 @@ void	CacheStore::availableCache(const CacheData &data)
 
 
 	/* called when the download is completed ... updates internal data */
-void 	CacheStore::downloadedCache(const CacheData &data)
+void 	CacheStore::downloadedCache(const RsCacheData &data)
 {
 #ifdef CS_DEBUG
 	std::cerr << "CacheStore::downloadedCache() :" << data << std::endl;
@@ -495,7 +495,7 @@ void 	CacheStore::downloadedCache(const CacheData &data)
 	}
 }
 	/* called when the download is completed ... updates internal data */
-void 	CacheStore::failedCache(const CacheData &data)
+void 	CacheStore::failedCache(const RsCacheData &data)
 {
 	(void) data;
 #ifdef CS_DEBUG
@@ -507,14 +507,14 @@ void 	CacheStore::failedCache(const CacheData &data)
 
 
 	/* virtual function overloaded by cache implementor */
-bool    CacheStore::fetchCache(const CacheData &data)
+bool    CacheStore::fetchCache(const RsCacheData &data)
 {
 	/* should we fetch it? */
 #ifdef CS_DEBUG
 	std::cerr << "CacheStore::fetchCache() tofetch?:" << data << std::endl;
 #endif
 
-	CacheData incache = data;
+	RsCacheData incache = data;
 
 	lockData(); /* LOCK MUTEX */
 
@@ -538,7 +538,7 @@ bool    CacheStore::fetchCache(const CacheData &data)
 }
 
 
-int     CacheStore::nameCache(CacheData &data)
+int     CacheStore::nameCache(RsCacheData &data)
 {
 	/* name it... */
 	lockData(); /* LOCK MUTEX */
@@ -560,7 +560,7 @@ int     CacheStore::nameCache(CacheData &data)
 }
 
 
-int     CacheStore::loadCache(const CacheData &data)
+int     CacheStore::loadCache(const RsCacheData &data)
 {
 	/* attempt to load -> dummy function */
 #ifdef CS_DEBUG
@@ -582,7 +582,7 @@ int     CacheStore::loadCache(const CacheData &data)
  * It doesn't lock itself -> to avoid race conditions 
  */
 
-void 	CacheStore::locked_storeCacheEntry(const CacheData &data)
+void 	CacheStore::locked_storeCacheEntry(const RsCacheData &data)
 {
 	/* store what we loaded - overwriting if necessary */
 	std::map<RsPeerId, CacheSet>::iterator pit;
@@ -642,8 +642,8 @@ void    CacheStrapper::statusChange(const std::list<pqipeer> &plist)
 		{
 			/* grab all the cache ids and add */
 
-			std::map<CacheId,CacheData> hashs;
-			std::map<CacheId,CacheData>::iterator cit;
+			std::map<CacheId,RsCacheData> hashs;
+			std::map<CacheId,RsCacheData>::iterator cit;
 
 			handleCacheQuery(it->id, hashs);
 
@@ -658,7 +658,7 @@ void    CacheStrapper::statusChange(const std::list<pqipeer> &plist)
 
         /**************** from pqimonclient ********************/
 
-void	CacheStrapper::refreshCache(const CacheData &data,const std::set<std::string>& destination_peers)
+void	CacheStrapper::refreshCache(const RsCacheData &data,const std::set<std::string>& destination_peers)
 {
 	/* we've received an update 
 	 * send to all online peers + self intersected with online peers.
@@ -684,7 +684,7 @@ void	CacheStrapper::refreshCache(const CacheData &data,const std::set<std::strin
 	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 }
 
-// void	CacheStrapper::refreshCache(const CacheData &data)
+// void	CacheStrapper::refreshCache(const RsCacheData &data)
 // {
 // 	/* we've received an update 
 // 	 * send to all online peers + self
@@ -707,14 +707,14 @@ void	CacheStrapper::refreshCache(const CacheData &data,const std::set<std::strin
 // 	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 // }
 
-void	CacheStrapper::refreshCacheStore(const CacheData & /* data */ )
+void	CacheStrapper::refreshCacheStore(const RsCacheData & /* data */ )
 {
 	/* indicate to save data */
 	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
 }
 
-bool	CacheStrapper::getCacheUpdates(std::list<std::pair<RsPeerId, CacheData> > &updates)
+bool	CacheStrapper::getCacheUpdates(std::list<std::pair<RsPeerId, RsCacheData> > &updates)
 {
 	RsStackMutex stack(csMtx); /******* LOCK STACK MUTEX *********/
 	updates = mCacheUpdates;
@@ -726,7 +726,7 @@ bool	CacheStrapper::getCacheUpdates(std::list<std::pair<RsPeerId, CacheData> > &
 
 
 	/* pass to correct CacheSet */
-void	CacheStrapper::recvCacheResponse(CacheData &data, time_t /* ts */)
+void	CacheStrapper::recvCacheResponse(RsCacheData &data, time_t /* ts */)
 {
 	/* find cache store */
 	std::map<uint16_t, CachePair>::iterator it2;
@@ -762,7 +762,7 @@ bool    CacheStrapper::sendCacheQuery(std::list<RsPeerId> &id, time_t ts)
 #endif
 
 
-void    CacheStrapper::handleCacheQuery(RsPeerId id, std::map<CacheId,CacheData> &hashs)
+void    CacheStrapper::handleCacheQuery(RsPeerId id, std::map<CacheId,RsCacheData> &hashs)
 {
 	/* basic version just iterates through ....
 	 * more complex could decide who gets what!
@@ -816,7 +816,7 @@ void    CacheStrapper::listPeerStatus(std::ostream & /* out */)
 }
 
 
-bool    CacheStrapper::findCache(std::string hash, CacheData &data) const
+bool    CacheStrapper::findCache(std::string hash, RsCacheData &data) const
 {
 	/* can overwrite for more control! */
 	std::map<uint16_t, CachePair>::const_iterator it;
@@ -830,7 +830,7 @@ bool    CacheStrapper::findCache(std::string hash, CacheData &data) const
 	return false;
 }
 	
-bool CacheStrapper::CacheExist(CacheData& data){
+bool CacheStrapper::CacheExist(RsCacheData& data){
 	
 	std::string filename = data.path + "/" + data.name;
 	FILE* file = NULL;
@@ -872,16 +872,16 @@ bool CacheStrapper::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 
 	/* iterate through the Caches (local first) */
 
-	std::list<CacheData>::iterator cit;
-	std::list<CacheData> ownCaches;
-	std::list<CacheData> remoteCaches;
+	std::list<RsCacheData>::iterator cit;
+	std::list<RsCacheData> ownCaches;
+	std::list<RsCacheData> remoteCaches;
 	std::string ownId = mLinkMgr->getOwnId();
 
 	std::map<uint16_t, CachePair>::iterator it;
 	for(it = caches.begin(); it != caches.end(); it++)
 	{
-		std::map<CacheId, CacheData>::iterator tit;
-		std::map<CacheId, CacheData> ownTmp;
+		std::map<CacheId, RsCacheData>::iterator tit;
+		std::map<CacheId, RsCacheData> ownTmp;
 		(it->second).source -> cachesAvailable(ownId, ownTmp);
 		(it->second).store -> getAllStoredCaches(remoteCaches);
 
@@ -953,8 +953,8 @@ bool CacheStrapper::loadList(std::list<RsItem *>& load)
 	std::cerr << "CacheStrapper::loadList() Item Count: " << load.size();
 	std::cerr << std::endl;
 #endif
-	std::list<CacheData> ownCaches;
-	std::list<CacheData> remoteCaches;
+	std::list<RsCacheData> ownCaches;
+	std::list<RsCacheData> remoteCaches;
 	std::string ownId = mLinkMgr->getOwnId();
 
 	//peerConnectState ownState;
@@ -975,7 +975,7 @@ bool CacheStrapper::loadList(std::list<RsItem *>& load)
 			rscc->print(std::cerr, 10);
 			std::cerr << std::endl;
 #endif
-			CacheData cd;
+			RsCacheData cd;
 
 			cd.pid = rscc->pid;
 
@@ -1145,7 +1145,7 @@ bool CacheStrapper::loadList(std::list<RsItem *>& load)
 
 
 /* request from CacheStore */
-bool CacheTransfer::RequestCache(CacheData &data, CacheStore *cbStore)
+bool CacheTransfer::RequestCache(RsCacheData &data, CacheStore *cbStore)
 {
 	/* check for a previous request -> and cancel 
 	 *
@@ -1153,7 +1153,7 @@ bool CacheTransfer::RequestCache(CacheData &data, CacheStore *cbStore)
 	 * - if duplicate hash -> Fail Transfer
 	 */
 
-	std::map<std::string, CacheData>::iterator dit;
+	std::map<std::string, RsCacheData>::iterator dit;
 	std::map<std::string, CacheStore *>::iterator sit;
 
 	for(dit = cbData.begin(); dit != cbData.end(); dit++)
@@ -1259,7 +1259,7 @@ bool CacheTransfer::CancelCacheFile(RsPeerId id, std::string path, std::string h
 /* internal completion -> does cb */
 bool CacheTransfer::CompletedCache(std::string hash)
 {
-	std::map<std::string, CacheData>::iterator dit;
+	std::map<std::string, RsCacheData>::iterator dit;
 	std::map<std::string, CacheStore *>::iterator sit;
 
 #ifdef CS_DEBUG
@@ -1298,7 +1298,7 @@ bool CacheTransfer::CompletedCache(std::string hash)
 /* internal completion -> does cb */
 bool CacheTransfer::FailedCache(std::string hash)
 {
-	std::map<std::string, CacheData>::iterator dit;
+	std::map<std::string, RsCacheData>::iterator dit;
 	std::map<std::string, CacheStore *>::iterator sit;
 
 	/* find in store.... */
@@ -1323,7 +1323,7 @@ bool CacheTransfer::FailedCache(std::string hash)
 
 bool    CacheTransfer::FindCacheFile(std::string hash, std::string &path, uint64_t &size)
 {
-	CacheData data;
+	RsCacheData data;
 	if (strapper->findCache(hash, data))
 	{
 		path = data.path + "/" + data.name;

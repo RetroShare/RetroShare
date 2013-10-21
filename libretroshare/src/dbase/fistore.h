@@ -69,7 +69,7 @@ class FileIndexStore: public CacheStore
 virtual ~FileIndexStore();
 
 	/* virtual functions overloaded by cache implementor */
-virtual int loadCache(const CacheData &data);	  /* actual load, once data available */
+virtual int loadCache(const RsCacheData &data);	  /* actual load, once data available */
 
 	/* Search Interface - For FileTransfer Lookup */
 	int SearchHash(std::string hash, std::list<FileDetail> &results) const;

@@ -66,7 +66,7 @@ p3Ranking::p3Ranking(RsPluginHandler* pgHandler)
 	mSortType = RS_RANK_ALG;
 }
 
-bool    p3Ranking::loadLocalCache(const CacheData &data)
+bool    p3Ranking::loadLocalCache(const RsCacheData &data)
 {
 	std::string filename = data.path + '/' + data.name;
 	std::string hash = data.hash;
@@ -100,7 +100,7 @@ bool    p3Ranking::loadLocalCache(const CacheData &data)
 	return true;
 }
 
-int    p3Ranking::loadCache(const CacheData &data)
+int    p3Ranking::loadCache(const RsCacheData &data)
 {
 	std::string filename = data.path + '/' + data.name;
 	std::string hash = data.hash;
@@ -356,7 +356,7 @@ void p3Ranking::publishMsgs(bool own)
      } 	/********** STACK LOCKED MTX ******/
 
 	/* flag as new info */
-	CacheData data;
+	RsCacheData data;
 
      { 	RsStackMutex stack(mRankMtx); /********** STACK LOCKED MTX ******/
 	data.pid = mOwnId;

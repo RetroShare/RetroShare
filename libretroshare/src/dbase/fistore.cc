@@ -49,7 +49,7 @@ FileIndexStore::~FileIndexStore()
  **/
 
 	  /* actual load, once data available */
-int FileIndexStore::loadCache(const CacheData &data)
+int FileIndexStore::loadCache(const RsCacheData &data)
 {
 
 #ifdef FIS_DEBUG2

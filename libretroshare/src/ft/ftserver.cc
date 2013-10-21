@@ -1329,7 +1329,7 @@ bool     ftServer::handleCacheData()
 #endif
 
 		/* these go to the CacheStrapper! */
-		CacheData data;
+		RsCacheData data;
 		data.pid = ci->PeerId();
 		data.cid = CacheId(ci->cacheType, ci->cacheSubId);
 		data.path = ci->file.path;
@@ -1359,8 +1359,8 @@ bool     ftServer::handleCacheData()
 
 	// Now handle it replacement (pushed cache results)
 	{
-		std::list<std::pair<RsPeerId, CacheData> > cacheUpdates;
-		std::list<std::pair<RsPeerId, CacheData> >::iterator it;
+		std::list<std::pair<RsPeerId, RsCacheData> > cacheUpdates;
+		std::list<std::pair<RsPeerId, RsCacheData> >::iterator it;
 
 		mCacheStrapper->getCacheUpdates(cacheUpdates);
 		for(it = cacheUpdates.begin(); it != cacheUpdates.end(); it++)

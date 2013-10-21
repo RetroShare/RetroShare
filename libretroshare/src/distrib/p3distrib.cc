@@ -198,7 +198,7 @@ int	p3GroupDistrib::tick()
 /***************************************************************************************/
 /***************************************************************************************/
 
-int    p3GroupDistrib::loadCache(const CacheData &data)
+int    p3GroupDistrib::loadCache(const RsCacheData &data)
 {
 #ifdef DISTRIB_DEBUG
 	std::cerr << "p3GroupDistrib::loadCache()";
@@ -226,7 +226,7 @@ int    p3GroupDistrib::loadCache(const CacheData &data)
 	return 1;
 }
 
-bool 	p3GroupDistrib::loadLocalCache(const CacheData &data)
+bool 	p3GroupDistrib::loadLocalCache(const RsCacheData &data)
 {
 #ifdef DISTRIB_DEBUG
 	std::cerr << "p3GroupDistrib::loadLocalCache()";
@@ -255,7 +255,7 @@ bool 	p3GroupDistrib::loadLocalCache(const CacheData &data)
 
 
 /* Handle the Cache Pending Setup */
-CacheDataPending::CacheDataPending(const CacheData &data, bool local, bool historical)
+CacheDataPending::CacheDataPending(const RsCacheData &data, bool local, bool historical)
 	:mData(data), mLocal(local), mHistorical(historical)
 {
 	return;
@@ -290,7 +290,7 @@ void p3GroupDistrib::run() /* called once the thread is started */
 #ifdef DISTRIB_DUMMYMSG_DEBUG
 	int printed = 0;
 #endif
-	CacheData cache;
+	RsCacheData cache;
 	while(isRunning())
 	{
 		/* */
@@ -354,7 +354,7 @@ void p3GroupDistrib::run() /* called once the thread is started */
 
 
 
-int     p3GroupDistrib::loadAnyCache(const CacheData &data, bool local, bool historical)
+int     p3GroupDistrib::loadAnyCache(const RsCacheData &data, bool local, bool historical)
 {
 	/* if subtype = 1 -> FileGroup, else -> FileMsgs */
 
@@ -449,7 +449,7 @@ void	p3GroupDistrib::loadFileGroups(const std::string &filename, const std::stri
 	return;
 }
 
-void	p3GroupDistrib::loadFileMsgs(const std::string &filename, const CacheData& data, bool local, bool historical)
+void	p3GroupDistrib::loadFileMsgs(const std::string &filename, const RsCacheData& data, bool local, bool historical)
 {
 
 #ifdef DISTRIB_DEBUG
@@ -578,7 +578,7 @@ bool p3GroupDistrib::processCacheOptReq(const std::string &grpId)
 	}
 
 	bool ok;
-	std::list<CacheData> cList;
+	std::list<RsCacheData> cList;
 
 	{
 		RsStackMutex stack(distribMtx);
@@ -589,7 +589,7 @@ bool p3GroupDistrib::processCacheOptReq(const std::string &grpId)
 
 	if(ok)
 	{
-		std::list<CacheData>::iterator sit = cList.begin();
+		std::list<RsCacheData>::iterator sit = cList.begin();
 
 		for(;sit != cList.end(); sit++)
 			loadCacheOptMsgs(*sit, grpId);
@@ -605,7 +605,7 @@ bool p3GroupDistrib::processCacheOptReq(const std::string &grpId)
 	return true;
 }
 
-void p3GroupDistrib::loadCacheOptMsgs(const CacheData& data, const std::string& grpId)
+void p3GroupDistrib::loadCacheOptMsgs(const RsCacheData& data, const std::string& grpId)
 {
 	std::string filename = data.path;
 	filename += "/";
@@ -1128,7 +1128,7 @@ void 	p3GroupDistrib::locked_publishPendingMsgs()
 	std::cerr << std::endl;
 #endif
 	/* get the next message id */
-	CacheData newCache;
+	RsCacheData newCache;
 	time_t now = time(NULL);
 
 	bool ok = true; // hass msg/cache file been written successfully
@@ -1230,7 +1230,7 @@ void 	p3GroupDistrib::publishDistribGroups()
 #endif
 
 	/* set subid = 1 */	
-	CacheData newCache;
+	RsCacheData newCache;
 
 	newCache.pid = mOwnId;
 	newCache.cid.type = CacheSource::getCacheType();

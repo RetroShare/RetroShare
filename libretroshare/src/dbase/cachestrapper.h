@@ -87,7 +87,7 @@ bool operator<(const CacheId &a, const CacheId &b);
  * note: this does not actual store the data but serves to locate on network (via hash attribute,
  * and on file via path)
  */
-class CacheData
+class RsCacheData
 {
 	public:
 
@@ -102,7 +102,7 @@ class CacheData
 };
 
 
-std::ostream &operator<<(std::ostream &out, const CacheData &d);
+std::ostream &operator<<(std::ostream &out, const RsCacheData &d);
 
 /***************************** CacheTransfer *****************************/
 
@@ -125,7 +125,7 @@ class CacheTransfer
 		 * At the download side RequestCache() => overloaded RequestCacheFile()
 		 * the class should then call CompletedCache() or FailedCache()
 		 */
-		bool RequestCache(CacheData &data, CacheStore *cbStore); /* request from CacheStore */
+		bool RequestCache(RsCacheData &data, CacheStore *cbStore); /* request from CacheStore */
 
 	protected:
 
@@ -142,7 +142,7 @@ class CacheTransfer
 
 	CacheStrapper *strapper;
 
-	std::map<std::string, CacheData>    cbData;
+	std::map<std::string, RsCacheData>    cbData;
 	std::map<std::string, CacheStore *> cbStores;
 };
 
@@ -150,7 +150,7 @@ class CacheTransfer
 
 /************************ CacheSource/CacheStore *************************/
 
-typedef std::map<uint16_t, CacheData> CacheSet;
+typedef std::map<uint16_t, RsCacheData> CacheSet;
 
 /*!
  * Implements features needed for a service to act as a cachesource and allow pushing a of cache data from service to strapper
@@ -172,18 +172,18 @@ class CacheSource
 		 *  called to determine available cache for peer -
 		 * default acceptable (returns all)
 		 */
-		virtual bool 	cachesAvailable(RsPeerId pid, std::map<CacheId, CacheData> &ids);
+		virtual bool 	cachesAvailable(RsPeerId pid, std::map<CacheId, RsCacheData> &ids);
 
 		/*!
 		 * function called at startup to load from
 		 * configuration file....
 		 * to be overloaded by inherited class
 		 */
-		virtual bool    loadLocalCache(const CacheData &data);
+		virtual bool    loadLocalCache(const RsCacheData &data);
 
 			/* control Caches available */
-		bool  refreshCache(const CacheData &data,const std::set<std::string>& destination_peers);
-		bool  refreshCache(const CacheData &data);
+		bool  refreshCache(const RsCacheData &data,const std::set<std::string>& destination_peers);
+		bool  refreshCache(const RsCacheData &data);
 		bool 	clearCache(CacheId id);
 
 		/* controls if peer is an accepted receiver for cache items. Default is yes. To be overloaded. */
@@ -198,7 +198,7 @@ class CacheSource
 		void 	listCaches(std::ostream &out);
 
 			/* search */
-		bool    findCache(std::string hash, CacheData &data) const;
+		bool    findCache(std::string hash, RsCacheData &data) const;
 
 	protected:
 
@@ -211,7 +211,7 @@ class CacheSource
 		void	unlockData() const;
 
 		CacheSet caches; /// all local cache data stored here
-                std::map<std::string, CacheData> mOldCaches; /// replaced/cleared caches are pushed here (in case requested)
+                std::map<std::string, RsCacheData> mOldCaches; /// replaced/cleared caches are pushed here (in case requested)
 
 		private:
 
@@ -249,29 +249,29 @@ class CacheStore
 		 * @param data returns cache data for pid/cid set in data itself
 		 * @return false is unsuccessful and vice versa
 		 */
-		bool 	getStoredCache(CacheData &data); /* use pid/cid in data */
+		bool 	getStoredCache(RsCacheData &data); /* use pid/cid in data */
 
 		/*!
 		 *
 		 * @param data all cache store by cachestore is store here
 		 * @return false not returned, only true at the moment
 		 */
-		bool 	getAllStoredCaches(std::list<CacheData> &data); /* use pid/cid in data */
+		bool 	getAllStoredCaches(std::list<RsCacheData> &data); /* use pid/cid in data */
 
 		/*!
 		 *  input from CacheStrapper -> store can then download new data
 		 */
-		void	availableCache(const CacheData &data);
+		void	availableCache(const RsCacheData &data);
 
 		/*!
 		 * should be called when the download is completed ... cache data is loaded
 		 */
-		void 	downloadedCache(const CacheData &data);
+		void 	downloadedCache(const RsCacheData &data);
 
 		/*!
 		 *  called if the download fails, TODO: nothing done yet
 		 */
-		void 	failedCache(const CacheData &data);
+		void 	failedCache(const RsCacheData &data);
 
 			/* virtual functions overloaded by cache implementor */
 
@@ -282,9 +282,9 @@ class CacheStore
 		 * @param data cache data is stored here
 		 * @return false is failed (cache does not exist), otherwise true
 		 */
-		virtual bool fetchCache(const CacheData &data);   /* a question? */
-		virtual int nameCache(CacheData &data);           /* fill in the name/path */
-		virtual int loadCache(const CacheData &data);	  /* actual load, once data available */
+		virtual bool fetchCache(const RsCacheData &data);   /* a question? */
+		virtual int nameCache(RsCacheData &data);           /* fill in the name/path */
+		virtual int loadCache(const RsCacheData &data);	  /* actual load, once data available */
 
 		/* get private data */
 
@@ -314,14 +314,14 @@ class CacheStore
 		 *
 		 * It doesn't lock itself -> to avoid race conditions
 		 */
-		void    locked_storeCacheEntry(const CacheData &data);
+		void    locked_storeCacheEntry(const RsCacheData &data);
 
 		/*! This function is called to store Cache Entry in the CacheStore Table.
 		 * it must be called from within a Mutex Lock....
 		 *
 		 * It doesn't lock itself -> to avoid race conditions
 		 */
-		bool    locked_getStoredCache(CacheData &data);
+		bool    locked_getStoredCache(RsCacheData &data);
 
 		private:
 
@@ -406,20 +406,20 @@ virtual void statusChange(const std::list<pqipeer> &plist);
  * @param data
  *
  */
-void 	refreshCache(const CacheData &data);
-void 	refreshCache(const CacheData &data,const std::set<std::string>& destination_peers);	// specify a particular list of destination peers (self not added!)
+void 	refreshCache(const RsCacheData &data);
+void 	refreshCache(const RsCacheData &data,const std::set<std::string>& destination_peers);	// specify a particular list of destination peers (self not added!)
 
 /*!
  * forces config savelist
  * @param data
  * @see saveList()
  */
-void 	refreshCacheStore(const CacheData &data);
+void 	refreshCacheStore(const RsCacheData &data);
 
 /*!
  *  list of Caches to send out
  */
-bool    getCacheUpdates(std::list<std::pair<RsPeerId, CacheData> > &updates);
+bool    getCacheUpdates(std::list<std::pair<RsPeerId, RsCacheData> > &updates);
 
 /*!
  * add to strapper's cachepair set so a related service's store and source can be maintained
@@ -428,15 +428,15 @@ bool    getCacheUpdates(std::list<std::pair<RsPeerId, CacheData> > &updates);
 void	addCachePair(CachePair pair);
 
 	/*** I/O (2) ***/
-void	recvCacheResponse(CacheData &data, time_t ts);  
-void    handleCacheQuery(RsPeerId id, std::map<CacheId, CacheData> &data); 
+void	recvCacheResponse(RsCacheData &data, time_t ts);  
+void    handleCacheQuery(RsPeerId id, std::map<CacheId, RsCacheData> &data); 
 
 
 /*!
  *  search through CacheSources.
  *  @return false if cachedate mapping to hash not found
  */
-bool    findCache(std::string hash, CacheData &data) const;
+bool    findCache(std::string hash, RsCacheData &data) const;
 
 	/* display */
 void 	listCaches(std::ostream &out);
@@ -453,7 +453,7 @@ void 	listPeerStatus(std::ostream &out);
  * @param data
  * @return whether it exists or not
  */
-bool 	CacheExist(CacheData& data);
+bool 	CacheExist(RsCacheData& data);
 
 	/* Config */
         protected:
@@ -472,7 +472,7 @@ virtual bool    loadList(std::list<RsItem *>& load);
 
 	RsMutex csMtx; /* protect below */
 
-	std::list<std::pair<RsPeerId, CacheData> > mCacheUpdates;
+	std::list<std::pair<RsPeerId, RsCacheData> > mCacheUpdates;
 };
 
 

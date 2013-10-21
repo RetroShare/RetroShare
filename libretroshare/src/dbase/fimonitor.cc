@@ -433,7 +433,7 @@ bool    FileIndexMonitor::convertSharedFilePath(std::string path, std::string &f
 }
 
 
-bool FileIndexMonitor::loadLocalCache(const CacheData &data)  /* called with stored data */
+bool FileIndexMonitor::loadLocalCache(const RsCacheData &data)  /* called with stored data */
 {
 	bool ok = false;
 
@@ -484,7 +484,7 @@ bool FileIndexMonitor::loadLocalCache(const CacheData &data)  /* called with sto
 	return false;
 }
 
-bool FileIndexMonitor::updateCache(const CacheData &data,const std::set<std::string>& destination_peers)  /* we call this one */
+bool FileIndexMonitor::updateCache(const RsCacheData &data,const std::set<std::string>& destination_peers)  /* we call this one */
 {
 	return refreshCache(data,destination_peers);
 }
@@ -1124,7 +1124,7 @@ void FileIndexMonitor::locked_saveFileIndexes(bool update_cache)
 			/* should clean up the previous cache.... */
 
 			/* flag as new info */
-			CacheData data;
+			RsCacheData data;
 			data.pid = fi.root->id;
 			data.cid.type  = getCacheType();
 			data.cid.subid = n;
@@ -1150,7 +1150,7 @@ void FileIndexMonitor::locked_saveFileIndexes(bool update_cache)
 #endif
 }
 
-bool FileIndexMonitor::cachesAvailable(RsPeerId pid,std::map<CacheId, CacheData> &ids)
+bool FileIndexMonitor::cachesAvailable(RsPeerId pid,std::map<CacheId, RsCacheData> &ids)
 {
 	lockData() ;
 #ifdef FIM_DEBUG
@@ -1160,7 +1160,7 @@ bool FileIndexMonitor::cachesAvailable(RsPeerId pid,std::map<CacheId, CacheData>
 	// Go through the list of saved cache items for that particular peer.
 	//
 	ids.clear() ;
-	std::map<RsPeerId,CacheData>::const_iterator it(_cache_items_per_peer.find(pid)) ;
+	std::map<RsPeerId,RsCacheData>::const_iterator it(_cache_items_per_peer.find(pid)) ;
 	std::string ownId = rsPeers->getOwnId() ;
 
 	if(it != _cache_items_per_peer.end())
