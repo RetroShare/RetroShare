@@ -64,9 +64,14 @@ extern int errno; /* Define extern errno, to duplicate unix behaviour */
  * NB. we should make the same, but not necessary
  */
 #define EAGAIN          11
-#define EWOULDBLOCK     EAGAIN
 
 #define EUSERS          87
+
+#define EHOSTDOWN       112
+
+#ifndef __MINGW64_VERSION_MAJOR
+#define EWOULDBLOCK     EAGAIN
+
 #define ENOTSOCK        88
 
 #define EOPNOTSUPP      95
@@ -80,10 +85,10 @@ extern int errno; /* Define extern errno, to duplicate unix behaviour */
 
 #define ETIMEDOUT       10060 // value from pthread.h
 #define ECONNREFUSED    111
-#define EHOSTDOWN       112
 #define EHOSTUNREACH    113
 #define EALREADY        114
 #define EINPROGRESS     115
+#endif
 
 #endif
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/

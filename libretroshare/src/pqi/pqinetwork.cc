@@ -362,7 +362,7 @@ bool getLocalInterfaces(struct in_addr &routeAddr, std::list<struct in_addr> &ad
 		addr.s_addr = ipaddr.dwAddr;
 		rs_sprintf(out, "Iface(%ld) => %s\n", ipaddr.dwIndex, rs_inet_ntoa(addr).c_str());
 
-#if __MINGW_MAJOR_VERSION <= 3
+#if __MINGW_MAJOR_VERSION <= 3 && !defined(__MINGW64_VERSION_MAJOR)
 		unsigned short wType = ipaddr.unused2; // should be wType
 #else
 		unsigned short wType = ipaddr.wType;

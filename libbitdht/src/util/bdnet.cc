@@ -276,13 +276,13 @@ int bdnet_inet_aton(const char *name, struct in_addr *addr)
         return (((*addr).s_addr = inet_addr(name)) != INADDR_NONE);
 }
 
-
-
+#ifndef __MINGW64_VERSION_MAJOR
 int sleep(unsigned int sec)
 { 
 	Sleep(sec * 1000); 
 	return 0;
 }
+#endif
 
 int usleep(unsigned int usec)
 { 

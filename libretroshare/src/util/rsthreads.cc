@@ -35,6 +35,10 @@
 #include <stdio.h>
 #endif
 
+#if defined(WINDOWS_SYS) && defined(__MINGW64_VERSION_MAJOR)
+#include <windows.h> // for Sleep
+#endif
+
 /*******
  * #define DEBUG_THREADS 1
  * #define RSMUTEX_ABORT 1  // Catch wrong pthreads mode.

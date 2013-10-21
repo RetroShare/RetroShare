@@ -131,9 +131,13 @@ std::string bdnet_inet_ntoa(struct in_addr in);
  */
 
 #define EAGAIN          11
+#define EUSERS          87
+
+#define EHOSTDOWN       112
+
+#ifndef __MINGW64_VERSION_MAJOR
 #define EWOULDBLOCK     EAGAIN
 
-#define EUSERS          87
 #define ENOTSOCK        88
 
 #define EOPNOTSUPP      95 
@@ -147,10 +151,10 @@ std::string bdnet_inet_ntoa(struct in_addr in);
 
 #define ETIMEDOUT       10060 // value from pthread.h
 #define ECONNREFUSED    111
-#define EHOSTDOWN       112
 #define EHOSTUNREACH    113
 #define EALREADY        114
 #define EINPROGRESS     115
+#endif
 
 int     bdnet_w2u_errno(int error);
 
@@ -158,7 +162,9 @@ int     bdnet_w2u_errno(int error);
  * ms uses millisecs.
  * void Sleep(int ms);
  */
+#ifndef __MINGW64_VERSION_MAJOR
 int sleep(unsigned int sec);
+#endif
 int usleep(unsigned int usec);
 
 #endif // END of WINDOWS defines.
