@@ -31,6 +31,7 @@
 #include <iomanip>
 #include <string.h>
 #include <stdlib.h>
+#include <time.h>
 
 /***
  * #define UDP_ENABLE_BROADCAST		1
