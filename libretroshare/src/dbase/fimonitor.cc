@@ -45,6 +45,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <fstream>
+#include <time.h>
 
 //***********
 //#define FIM_DEBUG 1

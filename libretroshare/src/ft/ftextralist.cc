@@ -34,6 +34,7 @@
 #include "util/rsdir.h"
 #include <stdio.h>
 #include <unistd.h>		/* for (u)sleep() */
+#include <time.h>
 
 /******
  * #define DEBUG_ELIST	1

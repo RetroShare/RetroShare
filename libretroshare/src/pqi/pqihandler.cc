@@ -28,6 +28,7 @@
 #include "util/rsdebug.h"
 #include "util/rsstring.h"
 #include <stdlib.h>
+#include <time.h>
 const int pqihandlerzone = 34283;
 
 static const int PQI_HANDLER_NB_PRIORITY_LEVELS = 10 ;

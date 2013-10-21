@@ -25,6 +25,7 @@
 
 #include <unistd.h>		/* for (u)sleep() */
 #include <iostream>
+#include <time.h>
 #include "util/rsdebug.h"
 #include "util/rsdir.h"
 #include "retroshare/rstypes.h"

@@ -27,6 +27,7 @@
 #include <iomanip>
 #include <stdio.h>
 #include <openssl/sha.h>
+#include <time.h>
 
 #include "pqi/p3dhtmgr.h"
 #include "pqi/p3peermgr.h"

@@ -18,6 +18,7 @@
  ***************************************************************************/
 
 #include <iostream>
+#include <time.h>
 #include <QStringList>
 #include <QRegExp>
 #include <QApplication>

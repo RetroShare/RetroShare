@@ -27,6 +27,8 @@
  * #define FT_DEBUG 1
  *****/
 
+#include <time.h>
+
 #include "retroshare/rsturtle.h"
 #include "fttransfermodule.h"
 

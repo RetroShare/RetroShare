@@ -62,6 +62,7 @@
 #include "serialiser/rsconfigitems.h"
 #include <stdio.h>
 #include <unistd.h>		/* for (u)sleep() */
+#include <time.h>
 
 /******
  * #define CONTROL_DEBUG 1

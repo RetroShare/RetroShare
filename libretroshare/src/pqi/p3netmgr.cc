@@ -23,6 +23,8 @@
  *
  */
 
+#include <time.h>
+
 #include "pqi/p3netmgr.h"
 
 #include "pqi/p3peermgr.h"

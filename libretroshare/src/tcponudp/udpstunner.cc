@@ -25,6 +25,7 @@
 
 #include "tcponudp/udpstunner.h"
 #include <iostream>
+#include <time.h>
 
 #include "util/rsrandom.h"
 #include "util/rsprint.h"

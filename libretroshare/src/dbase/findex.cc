@@ -36,6 +36,7 @@
 #include <fstream>
 #include <sys/stat.h>
 #include <errno.h>
+#include <time.h>
 
 #include <openssl/sha.h>
 #include <util/rsthreads.h>

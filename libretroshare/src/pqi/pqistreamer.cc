@@ -26,6 +26,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <time.h>
 #include "util/rsdebug.h"
 #include "util/rsstring.h"
 

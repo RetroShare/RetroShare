@@ -92,7 +92,7 @@ static void locking_function(int mode, int n, const char */*file*/, int /*line*/
  */
 static unsigned long id_function(void)
 {
-#ifdef WINDOWS_SYS
+#if defined( WINDOWS_SYS) && !defined(WIN_PTHREADS_H)
 	return (unsigned long) pthread_self().p;
 #else
 	return (unsigned long) pthread_self();

@@ -28,6 +28,10 @@
 #include "services/p3service.h"
 #include <iomanip>
 
+#ifdef WINDOWS_SYS
+#include <time.h>
+#endif
+
 /*****
  * #define SERV_DEBUG 1
  ****/

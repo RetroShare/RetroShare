@@ -25,6 +25,7 @@
 
 #include <iostream>
 #include <stdexcept>
+#include <time.h>
 #include "retroshare/rsfiles.h"
 #include "retroshare/rsiface.h"
 #include "retroshare/rsinit.h"
@@ -32,6 +33,8 @@
 #include <util/rsthreads.h>
 #ifndef WIN32
 #include <sys/statvfs.h>
+#else
+#include <wtypes.h>
 #endif
 
 #define DELAY_BETWEEN_CHECKS 2 

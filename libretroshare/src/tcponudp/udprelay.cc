@@ -25,6 +25,7 @@
 
 #include "udprelay.h"
 #include <iostream>
+#include <time.h>
 
 /*
  * #define DEBUG_UDP_RELAY 		1

@@ -29,7 +29,7 @@
 #include <unistd.h>    /* for usleep() */
 #include <errno.h>    /* for usleep() */
 #include <iostream>
-
+#include <time.h>
 
 #ifdef RSMUTEX_DEBUG
 #include <stdio.h>

@@ -13,6 +13,7 @@
 #include <vector>
 #include <algorithm>
 #include <stdio.h>
+#include <time.h>
 
 const time_t MAX_TIME_BEFORE_RETRY 	=	300 ; /* seconds before retrying an ip address */
 const time_t MAX_KEEP_DNS_ENTRY 		= 3600 ; /* seconds during which a DNS entry is considered valid */

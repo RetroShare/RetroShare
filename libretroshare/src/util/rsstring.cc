@@ -28,8 +28,8 @@
 #include <vector>
 #include <stdarg.h>
 #include <stdlib.h>
-#include <stdint.h>
 #endif
+#include <stdint.h>
 #include <stdio.h>
 
 namespace librs { namespace util {

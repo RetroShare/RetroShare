@@ -14,6 +14,7 @@
 #include <vector>
 #include <algorithm>
 #include <stdio.h>
+#include <time.h>
 
 const uint32_t MAX_IP_STORE =	300; /* seconds ip address timeout */
 

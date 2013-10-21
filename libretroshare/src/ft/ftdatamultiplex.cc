@@ -36,6 +36,7 @@
 #include "ft/ftsearch.h"
 #include "util/rsdir.h"
 #include <retroshare/rsturtle.h>
+#include <time.h>
 
 /* For Thread Behaviour */
 const uint32_t DMULTIPLEX_MIN	= 10; /* 1ms sleep */

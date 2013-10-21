@@ -29,6 +29,7 @@
 
 #include <map>
 #include <stdio.h>
+#include <time.h>
 
 const int RS_DEBUG_STDERR 	= 1;  /* stuff goes to stderr */
 const int RS_DEBUG_LOGFILE 	= 2;  /* stuff goes to logfile */

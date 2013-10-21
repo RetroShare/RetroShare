@@ -31,6 +31,7 @@
 #include <map>
 #include <list>
 #include <string>
+#include <time.h>
 
 #include "pqi/p3linkmgr.h"
 

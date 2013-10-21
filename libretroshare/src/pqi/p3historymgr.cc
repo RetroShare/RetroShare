@@ -23,6 +23,8 @@
  *
  */
 
+#include <time.h>
+
 #include "p3historymgr.h"
 #include "serialiser/rshistoryitems.h"
 #include "serialiser/rsconfigitems.h"

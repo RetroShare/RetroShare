@@ -8,6 +8,7 @@
 #include "util/rsdir.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <time.h>
 
 /********
 * #define DEBUG_FT_FILE_PROVIDER 1

@@ -1,6 +1,7 @@
 #include "ftfilecreator.h"
 #include <errno.h>
 #include <stdio.h>
+#include <time.h>
 #include <util/rsdiscspace.h>
 #include <util/rsdir.h>
 

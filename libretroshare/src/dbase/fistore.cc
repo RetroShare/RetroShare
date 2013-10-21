@@ -21,6 +21,8 @@
  *
  */
 
+#include <time.h>
+
 #include "dbase/fistore.h"
 #include "retroshare/rsexpr.h"
 #include "retroshare/rsfiles.h"
