@@ -108,6 +108,11 @@ MessengerWindow QFrame#logoFrame {
 	border: 1px solid #CCCCCC;
 }
 
+MessengerWindow QFrame#messengerframetop{	
+  background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #9BDBF9, stop:1 #1592CD);
+	border: 0px;
+}
+
 /* Create Distant Chat Invite */
 
 CreateMsgLinkDialog QLabel#distantchatinfo_label
@@ -201,6 +206,11 @@ ChatWidget QPushButton#sendButton:pressed {
 	border-image: url(:/images/btn_green_pressed.png) 4;
 
 
+}
+
+PopupChatWindow QToolBar#chattoolBar{
+  background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #9BDBF9, stop:1 #1592CD);
+	border: 0px;
 }
 
 /* Messages */

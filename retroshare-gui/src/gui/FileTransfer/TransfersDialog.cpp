@@ -93,6 +93,8 @@
 #define IMAGE_COLLAPSE              ":/images/edit_remove24.png"
 #define IMAGE_FRIENDSFILES          ":/images/fileshare16.png"
 #define IMAGE_MYFILES               ":images/my_documents_16.png"
+#define IMAGE_RENAMEFILE            ":images/filecomments.png"
+#define IMAGE_STREAMING             ":images/streaming.png"
 
 Q_DECLARE_METATYPE(FileProgressInfo) 
 
@@ -413,7 +415,7 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 	connect(queueTopAct, SIGNAL(triggered()), this, SLOT(priorityQueueTop()));
 	queueBottomAct = new QAction(QIcon(":/images/go-bottom.png"), tr("Bottom"), this);
 	connect(queueBottomAct, SIGNAL(triggered()), this, SLOT(priorityQueueBottom()));
-	chunkStreamingAct = new QAction(QIcon(IMAGE_PRIORITYAUTO), tr("Streaming"), this);
+	chunkStreamingAct = new QAction(QIcon(IMAGE_STREAMING), tr("Streaming"), this);
 	connect(chunkStreamingAct, SIGNAL(triggered()), this, SLOT(chunkStreaming()));
 	prioritySlowAct = new QAction(QIcon(IMAGE_PRIORITYLOW), tr("Slower"), this);
 	connect(prioritySlowAct, SIGNAL(triggered()), this, SLOT(speedSlow()));
@@ -427,7 +429,7 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 	connect(chunkProgressiveAct, SIGNAL(triggered()), this, SLOT(chunkProgressive()));
 	playAct = new QAction(QIcon(IMAGE_PLAY), tr( "Play" ), this );
 	connect( playAct , SIGNAL( triggered() ), this, SLOT( openTransfer() ) );
-	renameFileAct = new QAction(QIcon(IMAGE_PRIORITYNORMAL), tr("Rename file..."), this);
+	renameFileAct = new QAction(QIcon(IMAGE_RENAMEFILE), tr("Rename file..."), this);
 	connect(renameFileAct, SIGNAL(triggered()), this, SLOT(renameFile()));
 	specifyDestinationDirectoryAct = new QAction(QIcon(IMAGE_SEARCH),tr("Specify..."),this) ;
 	connect(specifyDestinationDirectoryAct,SIGNAL(triggered()),this,SLOT(chooseDestinationDirectory())) ;
