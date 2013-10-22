@@ -663,7 +663,7 @@ int RsDataService::updateGroup(std::map<RsNxsGrp *, RsGxsGrpMetaData *> &grp)
         if(!validSize(grpPtr)) continue;
 
         std::string grpFile = mServiceDir + "/" + grpPtr->grpId;
-        std::fstream ostrm(grpFile.c_str(), std::ios::binary | std::ios::trunc);
+        std::ofstream ostrm(grpFile.c_str(), std::ios::binary | std::ios::trunc);
         uint32_t offset = 0; // get file offset
 
         /*!
@@ -1058,34 +1058,33 @@ int RsDataService::retrieveGxsGrpMetaData(std::map<RsGxsGroupId, RsGxsGrpMetaDat
 
     }else
     {
-
         std::map<RsGxsGroupId, RsGxsGrpMetaData *>::iterator mit = grp.begin();
 
-        for(; mit != grp.end(); mit++)
-        {
-            const RsGxsGroupId& grpId = mit->first;
-            RetroCursor* c = mDb->sqlQuery(GRP_TABLE_NAME, grpMetaColumns, "grpId='" + grpId + "'", "");
+          for(; mit != grp.end(); mit++)
+          {
+              const RsGxsGroupId& grpId = mit->first;
+              RetroCursor* c = mDb->sqlQuery(GRP_TABLE_NAME, grpMetaColumns, "grpId='" + grpId + "'", "");
 
-            if(c)
-            {
-                bool valid = c->moveToFirst();
+              if(c)
+              {
+                  bool valid = c->moveToFirst();
 
-                while(valid)
-                {
-                    RsGxsGrpMetaData* g = locked_getGrpMeta(*c);
+                  while(valid)
+                  {
+                      RsGxsGrpMetaData* g = locked_getGrpMeta(*c);
 
-                    if(g)
-                    {
-                        grp[g->mGroupId] = g;
-                    }
-                    valid = c->moveToNext();
-                }
-                delete c;
-            }
+                      if(g)
+                      {
+                          grp[g->mGroupId] = g;
+                      }
+                      valid = c->moveToNext();
+                  }
+                  delete c;
+              }
 
-        }
+          }
 
-    }
+      }
 
 
     return 1;
@@ -1104,21 +1103,21 @@ int RsDataService::resetDataStore()
     std::map<std::string, RsNxsGrp*>::iterator mit
             = grps.begin();
 
-
-    // remove all grp msgs files from service dir
-    for(; mit != grps.end(); mit++){
-        std::string file = mServiceDir + "/" + mit->first;
-        std::string msgFile = file + "-msgs";
-        remove(file.c_str()); // remove group file
-        remove(msgFile.c_str()); // and remove messages file
-        delete mit->second;
-    }
     {
         RsStackMutex stack(mDbMutex);
-        mDb->closeDb();
-    }
 
-    remove(mDbName.c_str()); // remove db file
+        // remove all grp msgs files from service dir
+        for(; mit != grps.end(); mit++){
+            std::string file = mServiceDir + "/" + mit->first;
+            std::string msgFile = file + "-msgs";
+            remove(file.c_str()); // remove group file
+            remove(msgFile.c_str()); // and remove messages file
+            delete mit->second;
+        }
+
+        mDb->execSQL("DROP TABLE " + MSG_TABLE_NAME);
+        mDb->execSQL("DROP TABLE " + GRP_TABLE_NAME);
+    }
 
     // recreate database
     initialise();

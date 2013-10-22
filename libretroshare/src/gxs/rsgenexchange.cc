@@ -1881,7 +1881,20 @@ void RsGenExchange::processGroupUpdatePublish()
 	{
 		GroupUpdatePublish& gup = *vit;
 		const RsGxsGroupId& groupId = gup.grpItem->meta.mGroupId;
-		RsGxsGrpMetaData* meta = grpMeta[groupId];
+                std::map<std::string, RsGxsGrpMetaData*>::iterator mit = grpMeta.find(groupId);
+
+                RsGxsGrpMetaData* meta = NULL;
+                if(mit == grpMeta.end())
+                {
+                    std::cerr << "Error! could not find meta of old group to update!" << std::endl;
+                    mDataAccess->updatePublicRequestStatus(gup.mToken, RsTokenService::GXS_REQUEST_V2_STATUS_FAILED);
+                    delete gup.grpItem;
+                    continue;
+                }else
+                {
+                    meta = mit->second;
+                }
+
 
                 gup.grpItem->meta = *meta;
                 assignMetaUpdates(gup.grpItem->meta, gup.mUpdateMeta);
@@ -1897,6 +1910,7 @@ void RsGenExchange::processGroupUpdatePublish()
                     ggps.mStartTS = time(NULL);
                     ggps.mLastAttemptTS = 0;
                     ggps.mIsUpdate = true;
+                    ggps.mToken = gup.mToken;
                     mGrpsToPublish.push_back(ggps);
 		}else
 		{

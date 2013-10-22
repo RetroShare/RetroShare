@@ -56,7 +56,9 @@ linux-* {
 	LIBS += ../../../lib/libretroshare.a
 	LIBS += ../../../../../libbitdht/src/lib/libbitdht.a	
 	LIBS += ../../../../../openpgpsdk/src/lib/libops.a	
-	LIBS += -lssl -lgpgme -lupnp -lixml  -lgnome-keyring -lsqlite3 -lbz2
+	LIBS += -lssl -lgpgme -lupnp -lixml  -lgnome-keyring  -lbz2
+	# We need a explicit path here, to force using the home version of sqlite3 that really encrypts the database.
+	LIBS += /home/crispy/Development/retroshare/sqlcipher/sqlcipher/.libs/libsqlite3.a
 	LIBS *= -rdynamic -frtti
 	DEFINES *= HAVE_XSS # for idle time, libx screensaver extensions
 	DEFINES *= UBUNTU

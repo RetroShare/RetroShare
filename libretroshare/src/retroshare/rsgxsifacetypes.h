@@ -46,6 +46,7 @@ public:
 
             mGroupStatus = 0;
             mCircleType = 0;
+            mAuthenFlags = 0;
 
             mPublishTs = 0;
     }

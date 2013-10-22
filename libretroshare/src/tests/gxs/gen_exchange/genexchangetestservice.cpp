@@ -17,6 +17,11 @@ void GenExchangeTestService::publishDummyGrp(uint32_t &token, RsDummyGrp *grp)
     publishGroup(token, grp);
 }
 
+void GenExchangeTestService::updateDummyGrp(uint32_t &token, RsGxsGroupUpdateMeta &updateMeta, RsDummyGrp *group)
+{
+    updateGroup(token, updateMeta, group);
+}
+
 void GenExchangeTestService::publishDummyMsg(uint32_t &token, RsDummyMsg *msg)
 {
     publishMsg(token, msg);

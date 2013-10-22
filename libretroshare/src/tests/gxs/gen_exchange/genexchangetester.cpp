@@ -159,8 +159,9 @@ void GenExchangeTest::setUp()
 
 void GenExchangeTest::breakDown()
 {
-	mTestService->join();
-	clearAllData();
+    mDataService->resetDataStore();
+    mTestService->join();
+    clearAllData();
 }
 
 bool msgDataSort(const RsDummyMsg* m1, const RsDummyMsg* m2)

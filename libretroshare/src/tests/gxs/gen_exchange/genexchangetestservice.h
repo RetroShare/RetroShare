@@ -15,6 +15,7 @@ public:
     void notifyChanges(std::vector<RsGxsNotify*>& changes);
 
     void publishDummyGrp(uint32_t& token, RsDummyGrp* grp);
+    void updateDummyGrp(uint32_t &token, RsGxsGroupUpdateMeta& meta, RsDummyGrp *group);
     void publishDummyMsg(uint32_t& token, RsDummyMsg* msg);
 
     /*!
