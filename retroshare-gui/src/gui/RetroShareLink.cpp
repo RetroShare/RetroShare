@@ -1276,7 +1276,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 					else
 					{
 						if(error_code == RS_DISTANT_CHAT_ERROR_UNKNOWN_KEY)
-							QMessageBox::information(NULL,QObject::tr("Chat connection is unauthentified"),QObject::tr("Signature check failed!\nMake sure you know who you're talking to.")) ;
+							QMessageBox::information(NULL,QObject::tr("Chat connection is unauthenticated"),QObject::tr("Signature check failed!\nMake sure you know who you're talking to.")) ;
 
 						ChatDialog::chatFriend(hash);
 					}
