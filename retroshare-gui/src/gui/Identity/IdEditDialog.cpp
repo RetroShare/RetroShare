@@ -244,6 +244,13 @@ void IdEditDialog::checkNewTag()
 	bool ok = tagDetails(id, name, tag, desc);
 	ui.label_TagCheck->setText(desc);
 
+	// hack to allow add invalid tags (for testing).
+	if (!tag.empty())
+	{
+		ok = true;
+	}
+
+
 	if (mEditGroup.mRecognTags.size() >= MAX_RECOGN_TAGS)
 	{
 		ok = false;
