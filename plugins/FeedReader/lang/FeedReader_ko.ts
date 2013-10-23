@@ -350,59 +350,59 @@
         <translation>비활성화</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="521"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="524"/>
         <source>No name</source>
         <translation>이름 없음</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="733"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="736"/>
         <source>Add new folder</source>
         <translation>새 폴더 추가</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="734"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="737"/>
         <source>Please enter a name for the folder</source>
         <translation>폴더 이름을 입력하십시오</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="740"/>
-        <location filename="../gui/FeedReaderDialog.cpp" line="793"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="743"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="796"/>
         <source>Create folder</source>
         <translation>폴더 만들기</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="740"/>
-        <location filename="../gui/FeedReaderDialog.cpp" line="793"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="743"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="796"/>
         <source>Cannot create folder.</source>
         <translation>폴더를 만들 수 없습니다.</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="766"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="769"/>
         <source>Remove folder</source>
         <translation>폴더 제거</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="766"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="769"/>
         <source>Remove feed</source>
         <translation>피드 제거</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="766"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="769"/>
         <source>Do you want to remove the folder %1?</source>
         <translation>%1 폴더를 제거하시겠습니까?</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="766"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="769"/>
         <source>Do you want to remove the feed %1?</source>
         <translation>%1 피드를 제거하시겠습니까?</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="786"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="789"/>
         <source>Edit folder</source>
         <translation>폴더 편집</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="787"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="790"/>
         <source>Please enter a new name for the folder</source>
         <translation>폴더의 새 이름을 입력하십시오</translation>
     </message>

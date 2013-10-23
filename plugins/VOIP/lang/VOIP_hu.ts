@@ -131,32 +131,32 @@
 <context>
     <name>AudioInputConfig</name>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="98"/>
+        <location filename="../gui/AudioInputConfig.cpp" line="100"/>
         <source>Continuous</source>
         <translation>Folyamatos</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="99"/>
+        <location filename="../gui/AudioInputConfig.cpp" line="101"/>
         <source>Voice Activity</source>
         <translation>Beszéd észlelése</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="100"/>
+        <location filename="../gui/AudioInputConfig.cpp" line="102"/>
         <source>Push To Talk</source>
         <translation>Nyomd meg a beszédhez</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="202"/>
+        <location filename="../gui/AudioInputConfig.cpp" line="204"/>
         <source>%1 s</source>
         <translation>%1 m</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="210"/>
+        <location filename="../gui/AudioInputConfig.cpp" line="212"/>
         <source>Off</source>
         <translation>Ki</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="213"/>
+        <location filename="../gui/AudioInputConfig.cpp" line="215"/>
         <source>-%1 dB</source>
         <translation>-%1 dB</translation>
     </message>
@@ -169,14 +169,50 @@
 <context>
     <name>AudioPopupChatDialog</name>
     <message>
-        <location filename="../gui/AudioPopupChatDialog.cpp" line="15"/>
+        <location filename="../gui/AudioPopupChatDialog.cpp" line="23"/>
+        <location filename="../gui/AudioPopupChatDialog.cpp" line="87"/>
         <source>Mute yourself</source>
         <translation>Némítsd magadat</translation>
     </message>
     <message>
-        <location filename="../gui/AudioPopupChatDialog.cpp" line="35"/>
-        <source>Deafen yourself</source>
-        <translation>Némítsd a partnert</translation>
+        <location filename="../gui/AudioPopupChatDialog.cpp" line="43"/>
+        <source>Start Call</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/AudioPopupChatDialog.cpp" line="65"/>
+        <source>Hangup Call</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/AudioPopupChatDialog.cpp" line="89"/>
+        <source>Unmute yourself</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/AudioPopupChatDialog.cpp" line="118"/>
+        <source>Hold Call</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/AudioPopupChatDialog.cpp" line="137"/>
+        <source>VoIP Status</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/AudioPopupChatDialog.cpp" line="137"/>
+        <source>Outgoing Call is started...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/AudioPopupChatDialog.cpp" line="145"/>
+        <source>Resume Call</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/AudioPopupChatDialog.cpp" line="172"/>
+        <source>Answer</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -466,42 +502,42 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="93"/>
+        <location filename="../VOIPPlugin.cpp" line="94"/>
         <source>&lt;h3&gt;RetroShare VOIP plugin&lt;/h3&gt;&lt;br/&gt;   * Contributors: Cyril Soler, Josselin Jacquard&lt;br/&gt;</source>
         <translation>&lt;h3&gt;RetroShare VOIP beépülő&lt;/h3&gt;&lt;br/&gt;   * Fejlesztők: Cyril Soler, Josselin Jacquard&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="94"/>
+        <location filename="../VOIPPlugin.cpp" line="95"/>
         <source>&lt;br/&gt;The VOIP plugin adds VOIP to the private chat window of RetroShare. to use it, proceed as follows:&lt;UL&gt;</source>
         <translation>&lt;br/&gt;A VOIP beépülő a RetroShare privát beszélgetéseinél használható. Kipróbáláshoz a következőket kell tenned:&lt;UL&gt;</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="95"/>
+        <location filename="../VOIPPlugin.cpp" line="96"/>
         <source>&lt;li&gt; setup microphone levels using the configuration panel&lt;/li&gt;</source>
         <translation>&lt;li&gt; állítsd be a mikrofon adatait a beállítási panelen&lt;/li&gt;</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="96"/>
+        <location filename="../VOIPPlugin.cpp" line="97"/>
         <source>&lt;li&gt; check your microphone by looking at the VU-metters&lt;/li&gt;</source>
         <translation>&lt;li&gt; ellenőrízd a mikrofonodat a VU-mércék segítségével&lt;/li&gt;</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="97"/>
+        <location filename="../VOIPPlugin.cpp" line="98"/>
         <source>&lt;li&gt; in the private chat, enable sound input/output by clicking on the two VOIP icons&lt;/li&gt;&lt;/ul&gt;</source>
         <translation>&lt;li&gt; a privát beszélgetésben engedélyezd a hang be-kimenetet a VOIP ikonok segítségével&lt;/li&gt;&lt;/ul&gt;</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="98"/>
+        <location filename="../VOIPPlugin.cpp" line="99"/>
         <source>Your friend needs to run the plugin to talk/listen to you, or course.</source>
         <translation>Természetesen a barátodnak is rendelkeznie kell a VOIP beépülővel, hogy hallhasson téged, illetve beszélhessen hozzád.</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="99"/>
+        <location filename="../VOIPPlugin.cpp" line="100"/>
         <source>&lt;br/&gt;&lt;br/&gt;This is an experimental feature. Don&apos;t hesitate to send comments and suggestion to the RS dev team.</source>
         <translation>&lt;br/&gt;&lt;br/&gt;Ez egy kísérleti funkció. Ne tétovázz! Bátran küldj javaslatokat és hibajelentéseket a RetroShare fejlesztői csapatának.</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="117"/>
+        <location filename="../VOIPPlugin.cpp" line="118"/>
         <source>RTT Statistics</source>
         <translation>RTT statisztika</translation>
     </message>
@@ -531,7 +567,7 @@
 <context>
     <name>VOIP</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="153"/>
+        <location filename="../VOIPPlugin.cpp" line="154"/>
         <source>This plugin provides voice communication between friends in RetroShare.</source>
         <translation>A beépülő hangbeszélgetést tesz lehetővé a barátaiddal.</translation>
     </message>
@@ -539,7 +575,7 @@
 <context>
     <name>VOIPPlugin</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="158"/>
+        <location filename="../VOIPPlugin.cpp" line="159"/>
         <source>VOIP</source>
         <translation>VOIP</translation>
     </message>

@@ -499,6 +499,13 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>BWListDelegate</name>
+    <message>
+        <source>N/A</source>
+        <translation>N/A</translation>
+    </message>
+</context>
+<context>
     <name>BandwidthGraph</name>
     <message>
         <source>RetroShare Bandwidth Usage</source>
@@ -1390,22 +1397,6 @@ Please choose one of it to chat with.</translation>
         <translation>Kiválasztott csevegőszoba adatai</translation>
     </message>
     <message>
-        <source>Lobby name: </source>
-        <translation>Csevegőszoba neve:</translation>
-    </message>
-    <message>
-        <source>Lobby Id: </source>
-        <translation>Csevegőszoba Id:</translation>
-    </message>
-    <message>
-        <source>Topic: </source>
-        <translation>Téma:</translation>
-    </message>
-    <message>
-        <source>Type: </source>
-        <translation>Típus:</translation>
-    </message>
-    <message>
         <source>Private</source>
         <translation>Privát</translation>
     </message>
@@ -1414,24 +1405,8 @@ Please choose one of it to chat with.</translation>
         <translation>Publikus</translation>
     </message>
     <message>
-        <source>Peers: </source>
-        <translation>Résztvevők:</translation>
-    </message>
-    <message>
         <source>You&apos;re not subscribed to this lobby; Double click-it to enter and chat.</source>
         <translation>Nem iratkoztál fel erre a csevegőszobára. Kattints duplán a belépéshez.</translation>
-    </message>
-    <message>
-        <source>No lobby selected. 
-
-Select lobbies at left to show details.
-
-Double click lobbies to enter and chat.</source>
-        <translation>Nincs csevegőszoba kiválasztva. 
-
-Válassz ki bal oldalt egy csevegőszobát a részletek mutatásához.
-
-Kattints duplán a csevegőszobára, hogy belépj és beszélgethess.</translation>
     </message>
     <message>
         <source>Invitation to chat lobby</source>
@@ -1459,6 +1434,72 @@ Kattints duplán a csevegőszobára, hogy belépj és beszélgethess.</translati
     </message>
     <message>
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Chat Lobbies&lt;/h1&gt;                              		  &lt;p&gt;Chat lobbies are distributed chat rooms, and work pretty much like IRC.                                      		  They allow you to talk anonymously with tons of people without the need to make friends.&lt;/p&gt;                    		  &lt;p&gt;A chat lobby can be public (your friends see it) or private (your friends can&apos;t see it, unless you           		  invite them with &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). Once you have been invited to a private lobby, you will be able to see it when your friends   		  are using it.&lt;/p&gt;                                                                                               		  &lt;p&gt;The list at left shows                                                                                     		  chat lobbies your friends are participating in. You can either                                 		  &lt;ul&gt;                                                                                                            			  &lt;li&gt;Right click to create a new chat lobby&lt;/li&gt;                                                              		     &lt;li&gt;Double click a chat lobby to enter, chat, and show it to your friends&lt;/li&gt;                      		  &lt;/ul&gt; 		  Note: For the chat lobbies to work properly, your computer needs be on time.  So check your system clock!		  &lt;/p&gt;                                      		</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Subscribed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show </source>
+        <translation>Mutatás</translation>
+    </message>
+    <message>
+        <source> Column</source>
+        <translation>Oszlop</translation>
+    </message>
+    <message>
+        <source>Columns</source>
+        <translation>Oszlopok</translation>
+    </message>
+    <message>
+        <source>Yes</source>
+        <translation>Igen</translation>
+    </message>
+    <message>
+        <source>No</source>
+        <translation>Nem</translation>
+    </message>
+    <message>
+        <source>Lobby Name:</source>
+        <translation>Chatszoba neve:</translation>
+    </message>
+    <message>
+        <source>Lobby Id:</source>
+        <translation>Chatszoba Id:</translation>
+    </message>
+    <message>
+        <source>Topic:</source>
+        <translation>Téma:</translation>
+    </message>
+    <message>
+        <source>Type:</source>
+        <translation>Típus:</translation>
+    </message>
+    <message>
+        <source>Peers:</source>
+        <translation>Partnerek:</translation>
+    </message>
+    <message>
+        <source>TextLabel</source>
+        <translation>Szövegcímke</translation>
+    </message>
+    <message>
+        <source>No lobby selected. 
+Select lobbies at left to show details.
+Double click lobbies to enter and chat.</source>
+        <translation>Nincs csevegőszoba kiválasztva. 
+
+Válassz ki bal oldalt egy csevegőszobát a részletek mutatásához.
+
+Kattints duplán a csevegőszobára, hogy belépj és beszélgethess.</translation>
+    </message>
+    <message>
+        <source>Private Subscribed Lobbies</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Public Subscribed Lobbies</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -1588,22 +1629,6 @@ Kattints duplán a csevegőszobára, hogy belépj és beszélgethess.</translati
         <translation>Előzmények</translation>
     </message>
     <message>
-        <source>Group Chat</source>
-        <translation>Csoportos csevegés</translation>
-    </message>
-    <message>
-        <source>Enable</source>
-        <translation>Engedélyezés</translation>
-    </message>
-    <message>
-        <source>Number of saved messages (0 = unlimited)</source>
-        <translation>Elmentett üzenetek száma (0 = végtelen)</translation>
-    </message>
-    <message>
-        <source>Load number of messages (0 = off)</source>
-        <translation>Üzenetek betöltése (0 = kikapcsolva)</translation>
-    </message>
-    <message>
         <source>Style</source>
         <translation>Stílus</translation>
     </message>
@@ -1718,6 +1743,46 @@ Kattints duplán a csevegőszobára, hogy belépj és beszélgethess.</translati
     <message>
         <source>Private chat invite to </source>
         <translation>Privát beszélgetés meghívás neki</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;In this tab you can setup how many chat messages Retroshare will keep saved on the disc and how much of the previous conversation it will display, for the different chat systems. The max storage period allows to discard old messages and prevents the chat history from filling up with volatile chat (e.g. chat lobbies and distant chat).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Chatlobbies</source>
+        <translation>Csevegőszobák</translation>
+    </message>
+    <message>
+        <source>Enabled:</source>
+        <translation>Engedélyezve:</translation>
+    </message>
+    <message>
+        <source>Saved messages (0 = unlimited):</source>
+        <translation>Elmentett üzenetek (0 = végtelen):</translation>
+    </message>
+    <message>
+        <source>Number of messages restored  (0 = off):</source>
+        <translation>Helyreállított üzenetek száma (0 = kikapcsolva):</translation>
+    </message>
+    <message>
+        <source>Maximum storage period, in days (0=keep all):</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Name : </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Signed with key not in keyring</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Not signed.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Authenticated signature</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2727,6 +2792,25 @@ Némely szolgáltatás (Felfedező, névtelen forgalmazás) kikapcsolható glob�
     <message>
         <source>Please select at least one friend as recipient.</source>
         <translation>Kérlek, válassz ki legalább egy barátot címzettnek.</translation>
+    </message>
+    <message>
+        <source>Please note that RetroShare will require excessive amounts of bandwidth, memory and CPU if you add to many friends. You can add as many friends as you like, but more than 40 will probably require too much resources.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Add key to keyring</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This key is already in your keyring</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Check this to add the key to your keyring
+This might be useful for sending
+distant messages to this peer
+even if you don&apos;t make friends.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -3894,6 +3978,14 @@ p, li { white-space: pre-wrap; }
         <source>Add Extra File</source>
         <translation>Extra fájl hozzáadása</translation>
     </message>
+    <message>
+        <source>Attach a Picture</source>
+        <translation>Kép csatolása</translation>
+    </message>
+    <message>
+        <source>Load Picture File</source>
+        <translation>Kép betöltése</translation>
+    </message>
 </context>
 <context>
     <name>CreateGroup</name>
@@ -4285,10 +4377,6 @@ p, li { white-space: pre-wrap; }
         <translation>Helyszín ID:</translation>
     </message>
     <message>
-        <source>Identity ID:</source>
-        <translation>Személyazonosság ID:</translation>
-    </message>
-    <message>
         <source>Number of Friends:</source>
         <translation>Barátok száma:</translation>
     </message>
@@ -4355,6 +4443,18 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>RetroShare Certificate (*.rsc );;All Files (*)</source>
         <translation>RetroShare tanúsítvány (*.rsc );;Minden fájl (*)</translation>
+    </message>
+    <message>
+        <source>Identity ID</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>TextLabel</source>
+        <translation>Szövegcímke</translation>
+    </message>
+    <message>
+        <source>PGP fingerprint:</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -5459,6 +5559,10 @@ p, li { white-space: pre-wrap; }
         <source>Forum</source>
         <translation>Fórum</translation>
     </message>
+    <message>
+        <source>Load embedded images</source>
+        <translation>Beágyazott képek megjelenítése</translation>
+    </message>
 </context>
 <context>
     <name>ForumUserNotify</name>
@@ -5717,6 +5821,10 @@ p, li { white-space: pre-wrap; }
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Forums&lt;/h1&gt;                                  &lt;p&gt;Retroshare Forums look like internet forums, but they work in a decentralized way:                         You see forums your friends are subscribed to, and you forward subscribed forums to                          your friends. This automatically promotes interesting forums in the network.&lt;/p&gt;                         &lt;p&gt;Forums are either Authenticated (&lt;img src=&quot;:/images/konv_message2.png&quot; width=&quot;12&quot;/&gt;) in which case you need to cryptographically sign                          your posts, or anonymous (&lt;img src=&quot;:/images/konversation.png&quot; width=&quot;12&quot;/&gt;). The former class is more resistant to spamming.&lt;/p&gt;                     &lt;p&gt;Forum posts propagate from friend to friend using small cache file exchanges. When you first connect to a new friend, it&apos;s likely     you will receive many such cache files, and new forums will appear.     &lt;/p&gt;                                        </source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>Load images always for this message</source>
+        <translation>Ezen üzenethez mindig töltse be a képeket</translation>
+    </message>
 </context>
 <context>
     <name>ForumsFillThread</name>
@@ -5856,14 +5964,6 @@ p, li { white-space: pre-wrap; }
         <translation>Tanúsítvány hivatkozásának másolása</translation>
     </message>
     <message>
-        <source>Copy RetroShare Link</source>
-        <translation>RetroShare hivatkozás másolása</translation>
-    </message>
-    <message>
-        <source>Paste Friend Link</source>
-        <translation>Barát hivatkozásának beillesztése</translation>
-    </message>
-    <message>
         <source>Deny Friend</source>
         <translation>Barát elutasítása</translation>
     </message>
@@ -5934,6 +6034,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Display</source>
         <translation>Megjelenítés beállításai</translation>
+    </message>
+    <message>
+        <source>Paste certificate link</source>
+        <translation>Tanúsítvány beillesztése</translation>
     </message>
 </context>
 <context>
@@ -6321,10 +6425,6 @@ hogy névtelen maradj.</translation>
         <translation>Hely</translation>
     </message>
     <message>
-        <source>Put a meaningful location. ex : home, laptop, etc. This field will be used to differentiate different installations with the same identity (PGP key).</source>
-        <translation>Adj meg egy helyszínt. pl: otthoni gép, noti, stb. Ezen helszínek arra szolgálnak, hogy elkülöníthessék a számítógépeket egy személyazonosságon (PGP kulcs) belül.</translation>
-    </message>
-    <message>
         <source>Create new identity</source>
         <translation>Új személyazonosság létrehozása</translation>
     </message>
@@ -6477,6 +6577,28 @@ Mikor majd arra kér, írd be a PGP jelszavad, hogy aláírd az új kulcsodat.</
     <message>
         <source>Failed to Generate your new Certificate, maybe PGP password is wrong!</source>
         <translation>Az új tanúsítványod létrehozása sikertelen. Talán rossz a PGP jelszó.</translation>
+    </message>
+    <message>
+        <source>Password (check)</source>
+        <translation>Jelszó (ellenőrzés)</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Before proceeding, move your mouse around to help Retroshare collect as much randomness as possible. Filling the progressbar to 20% is needed, 100% is advised.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Mozgasd az egeredet, hogy a RetroShare a lehető legtöbb véletlenszerűséget összegyűjthesse. A folyamatsávban 20%-os feltöltésére mindenképpen szükség van, de 100% elérése a javasolt.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>[Required] Type the same password again here.</source>
+        <translation>[Szükséges] Írd be mégegyszer a jelszavadat.</translation>
+    </message>
+    <message>
+        <source>Put a meaningful location. ex : home, laptop, etc. 
+This field will be used to differentiate different installations with
+the same identity (PGP key).</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Passwords do not match</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -8004,44 +8126,6 @@ p, li { white-space: pre-wrap; }
         <translation>Fordítás</translation>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;RetroShare Translators:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;French&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;:Temet&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Polish: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Jarek&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Serbian&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;: Kunalagon Umuhanik &amp;lt;kunalagon@gmail.com&amp;gt;&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Spanish:  &lt;/span&gt;&lt;span style=&quot; font-family:'Courier New,courier';&quot;&gt;Manuel Montero &amp;lt;Senpai&amp;gt; &lt;/span&gt;&lt;a href=&quot;http://pagina.de/senpai&amp;amp;gt&quot;&gt;&lt;span style=&quot; font-family:'Courier New,courier'; text-decoration: underline; color:#0000ff;&quot;&gt;http://pagina.de/senpai&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Swedish:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; dnylander&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;RetroShare Website Translators:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt; font-weight:600;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Swedish: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Daniel Wester&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; &amp;lt;&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;wester@speedmail.se&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;German: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Jan&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Keller&lt;/span&gt; &amp;lt;&lt;span style=&quot; font-size:8pt;&quot;&gt;trilarion@users.sourceforge.net&lt;/span&gt;&amp;gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Polish: &lt;/span&gt;Maciej Mrug&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;RetroShare Fordítók:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;French&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;:Temet&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Polish: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Jarek&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Serbian&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;: Kunalagon Umuhanik &amp;lt;kunalagon@gmail.com&amp;gt;&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Spanish:  &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Courier New,courier&apos;;&quot;&gt;Manuel Montero &amp;lt;Senpai&amp;gt; &lt;/span&gt;&lt;a href=&quot;http://pagina.de/senpai&amp;amp;gt&quot;&gt;&lt;span style=&quot; font-family:&apos;Courier New,courier&apos;; text-decoration: underline; color:#0000ff;&quot;&gt;http://pagina.de/senpai&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Swedish:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; dnylander&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;RetroShare weboldal fordítók:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt; font-weight:600;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Swedish: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Daniel Wester&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; &amp;lt;&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;wester@speedmail.se&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;German: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Jan&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Keller&lt;/span&gt; &amp;lt;&lt;span style=&quot; font-size:8pt;&quot;&gt;trilarion@users.sourceforge.net&lt;/span&gt;&amp;gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Polish: &lt;/span&gt;Maciej Mrug&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
         <source>License Agreement</source>
         <translation>Licencszerződés</translation>
     </message>
@@ -8056,6 +8140,23 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Névjegy&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;RetroShare Translations:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net/wiki/index.php/Translation&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;http://retroshare.sourceforge.net/wiki/index.php/Translation&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; text-decoration: underline; color:#0000ff;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;RetroShare Website Translators:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt; font-weight:600;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Swedish: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Daniel Wester&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; &amp;lt;&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;wester@speedmail.se&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;German: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Jan&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Keller&lt;/span&gt; &amp;lt;&lt;span style=&quot; font-size:8pt;&quot;&gt;trilarion@users.sourceforge.net&lt;/span&gt;&amp;gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Polish: &lt;/span&gt;Maciej Mrug&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -9046,6 +9147,14 @@ Szeretnéd menteni az üzenetet?</translation>
         <source>Only show people you trusted</source>
         <translation>Csak az általad megbízhatónak jelölt partnereket mutassa</translation>
     </message>
+    <message>
+        <source>PGP key unknown</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You dont have the PGP key of the message sender. So you cannot respond!</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>MessagePage</name>
@@ -9112,6 +9221,10 @@ Szeretnéd menteni az üzenetet?</translation>
     <message>
         <source>Accept encrypted distant messages from everyone</source>
         <translation>Titkosított távoli üzenetek elfogadása mindenkitől</translation>
+    </message>
+    <message>
+        <source>Load embedded images</source>
+        <translation>Beágyazott képek megjelenítése</translation>
     </message>
 </context>
 <context>
@@ -9229,6 +9342,38 @@ Szeretnéd menteni az üzenetet?</translation>
     <message>
         <source>HTML-Files (*.htm *.html);;All Files (*)</source>
         <translation>Html-Fájlok (*.htm *.html);;Összes fájl (*)</translation>
+    </message>
+    <message>
+        <source>Load images always for this message</source>
+        <translation>Ezen üzenethez mindig töltse be a képeket</translation>
+    </message>
+    <message>
+        <source>This messages is encrypted. Click the right button to decrypt it.</source>
+        <translation>Az üzenet titkosítva van. Kattins jobb gombbal, hogy visszafejtsd.</translation>
+    </message>
+    <message>
+        <source>Decrypt</source>
+        <translation>Visszafejtés</translation>
+    </message>
+    <message>
+        <source>Encrypted message</source>
+        <translation>Titkosított üzenet</translation>
+    </message>
+    <message>
+        <source>Decryption failed!</source>
+        <translation>Dekódolás sikertelen!</translation>
+    </message>
+    <message>
+        <source>This message is not encrypted. Cannot decrypt!</source>
+        <translation>Az üzenet nincs titkosítva. Nincs mit dekódolni.</translation>
+    </message>
+    <message>
+        <source>This message could not be decrypted.</source>
+        <translation>Az üzenet nem dekódolható.</translation>
+    </message>
+    <message>
+        <source>Unknown (needs decryption)</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -9629,14 +9774,6 @@ Szeretnéd menteni az üzenetet?</translation>
         <translation>Titkosított üzenet. Kattints jobb gombbal a dekódoláshoz.</translation>
     </message>
     <message>
-        <source>Decryption failed!</source>
-        <translation>Dekódolás sikertelen!</translation>
-    </message>
-    <message>
-        <source>This message could not be decrypted.</source>
-        <translation>Az üzenet nem dekódolható.</translation>
-    </message>
-    <message>
         <source>Messages</source>
         <translation>Üzenetek</translation>
     </message>
@@ -9657,11 +9794,11 @@ Szeretnéd menteni az üzenetet?</translation>
         <translation>Az üzenet aláírást tartalmazott, de az értéke nem egyezik meg</translation>
     </message>
     <message>
-        <source>This message is not encrypted. Cannot decrypt!</source>
-        <translation>Az üzenet nincs titkosítva. Nincs mit dekódolni.</translation>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Messages&lt;/h1&gt;                          &lt;p&gt;Messages are like &lt;b&gt;e-mail&lt;/b&gt;: you send/receive them from your friends when both of you are connected.&lt;/p&gt;  &lt;p&gt;It is also possible to send messages to non friends, using tunnels. Such messages are always encrypted. It is  recommended to cryptographically sign distant messages, as a proof of your identity, using the &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; button  in the message composer window. Distant messages are not guarrantied to arrive, since this requires the distant peer to accept them (You need yourself to switch this on in Config-Messages).&lt;/p&gt; &lt;p&gt;Some additional features allow you to exchange data in messages: you may recommend files to your friends by pasting file links,  or recommend friends-to-be to other friends, in order to streathen your network.&lt;/p&gt;                    </source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Messages&lt;/h1&gt;                          &lt;p&gt;Messages are like &lt;b&gt;e-mail&lt;/b&gt;: you send/receive them from your friends when both of you are connected.&lt;/p&gt;  &lt;p&gt;It is also possible to send messages to non friends, using tunnels. Such messages are always encrypted. It is  recommended to cryptographically sign distant messages, as a proof of your identity, using the &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; button  in the message composer window. Distant messages are not guarrantied to arrive, since this requires the distant peer to accept them (You need yourself to switch this on in Config-Messages).&lt;/p&gt; &lt;p&gt;Some additional features allow you to exchange data in messages: you may recommend files to your friends by pasting file links,  or recommend friends-to-be to other friends, in order to streathen your network.&lt;/p&gt;                    </source>
+        <source>This message has been successfully decrypted, and is unsigned.</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -10247,6 +10384,10 @@ Kattints rá jobb gombbal, majd választ ki a &apos;barátság kezdeményezése&
         <source>Notify</source>
         <translation>Értesítés</translation>
     </message>
+    <message>
+        <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Notify&lt;/h1&gt; 		  &lt;p&gt;Retroshare will notify you about what happens in your network.         		  Depending on your usage, you may want to enable or disable some of the    		  notifications. This page is designed for that!&lt;/p&gt;                        		  </source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>NotifyQt</name>
@@ -10812,6 +10953,10 @@ a kártevőként működő beépülők használatától.</translation>
         <source>Plugins</source>
         <translation>Beépülők</translation>
     </message>
+    <message>
+        <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Plugins&lt;/h1&gt;                   &lt;p&gt;Plugins are loaded from the directories listed in the bottom list.&lt;/p&gt;                       &lt;p&gt;For security reasons, accepted plugins load automatically until                              the main Retroshare executable or the plugin library changes. In                                such a case, the user needs to confirm them again.                                              After the program is started, you can enable a plugin manually by clicking on the               &quot;Enable&quot; button and then restart Retroshare.&lt;/p&gt;                                              &lt;p&gt;If you want to develop your own plugins, contact the developpers team                        they will be happy to help you out!&lt;/p&gt;</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>PopularityDefs</name>
@@ -10938,16 +11083,8 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PostedGroupDialog</name>
     <message>
-        <source>Create New Posted Topic</source>
-        <translation>Új téma létrehozása</translation>
-    </message>
-    <message>
         <source>Posted Topic</source>
         <translation>Beküldött téma</translation>
-    </message>
-    <message>
-        <source>Edit Posted Topic</source>
-        <translation>Beküldött téma szerkesztése</translation>
     </message>
     <message>
         <source>Add Topic Admins</source>
@@ -10957,16 +11094,20 @@ p, li { white-space: pre-wrap; }
         <source>Select Topic Admins</source>
         <translation>Téma adminok kiválasztása</translation>
     </message>
+    <message>
+        <source>Create New Topic</source>
+        <translation>Új téma létrehozása</translation>
+    </message>
+    <message>
+        <source>Edit Topic</source>
+        <translation>Téma szerkesztése</translation>
+    </message>
 </context>
 <context>
     <name>PostedItem</name>
     <message>
         <source>0</source>
         <translation>0</translation>
-    </message>
-    <message>
-        <source>\/</source>
-        <translation>\/</translation>
     </message>
     <message>
         <source>This is a very very very very loooooooooooooooonnnnnnnnnnnnnnnnng title don&apos;t you think? Yes it is and should wrap around I hope</source>
@@ -10997,12 +11138,12 @@ p, li { white-space: pre-wrap; }
         <translation>Hozzászólás</translation>
     </message>
     <message>
-        <source>Vote Up</source>
-        <translation>Szavazás mellette</translation>
+        <source>I like this</source>
+        <translation>Tetszik</translation>
     </message>
     <message>
-        <source>Vote Down</source>
-        <translation>Szavazás ellene</translation>
+        <source>I dislike this</source>
+        <translation>Nem tetszik</translation>
     </message>
 </context>
 <context>
@@ -11716,6 +11857,15 @@ A hibajelentés:
 
 %2</translation>
     </message>
+    <message>
+        <source>Signature check failed!
+Make sure you know who you&apos;re talking to.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Chat connection is unauthenticated</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>QuickStartWizard</name>
@@ -11937,6 +12087,21 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>RSImageBlockWidget</name>
+    <message>
+        <source>Form</source>
+        <translation>Forma</translation>
+    </message>
+    <message>
+        <source>The loading of embedded images is blocked.</source>
+        <translation>A beágyazott képek megjelenítése tiltva van.</translation>
+    </message>
+    <message>
+        <source>Load images</source>
+        <translation>Képek betöltése</translation>
+    </message>
+</context>
+<context>
     <name>RSettingsWin</name>
     <message>
         <source>Error Saving Configuration on page </source>
@@ -12023,6 +12188,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Relay</source>
         <translation>Relay</translation>
+    </message>
+    <message>
+        <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Relays&lt;/h1&gt;                                 &lt;p&gt;By activating relays, you allow your Retroshare node to act as a bridge between Retroshare  				  users who cannot connect directly, e.g. because they&apos;re firewalled.&lt;/p&gt;                        				  &lt;p&gt;You may choose to act as a relay by checking &lt;i&gt;enable relay connections&lt;/i&gt;, or simply     				  benefit from other peers acting as relay, by checking &lt;i&gt;use relay servers&lt;/i&gt;. For the former,				  you may specify the bandwidth allocated when acting as a relay for friends of you, for friends 				  of your friends, or anyone in the Retroshare network.&lt;/p&gt;                                      				  &lt;p&gt;In any case, a Retroshare node acting as a relay cannot see the relayed traffic, since it   				  is encrypted and authenticated by the two relayed nodes.&lt;/p&gt;</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -12648,16 +12817,8 @@ behind a firewall or a VPN.</source>
         <translation>Maximális átviteli sebességek</translation>
     </message>
     <message>
-        <source>Download (KB/s) </source>
-        <translation>Letöltés (KB/s)</translation>
-    </message>
-    <message>
         <source>kB/s</source>
         <translation>KB/s</translation>
-    </message>
-    <message>
-        <source>Upload (KB/s) </source>
-        <translation>Feltöltés (KB/s)</translation>
     </message>
     <message>
         <source>If you uncheck this, RetroShare will not use tunnel connection between peers that are firewalled and cannot connect directly. This is independent from F2F routing (turtle router).</source>
@@ -12703,6 +12864,14 @@ Az alapértelmezett érték 20.</translation>
     <message>
         <source>Server</source>
         <translation>Kiszolgáló</translation>
+    </message>
+    <message>
+        <source>Download (KB/s) </source>
+        <translation>Letöltés (KB/s)</translation>
+    </message>
+    <message>
+        <source>Upload (KB/s) </source>
+        <translation>Feltöltés (KB/s)</translation>
     </message>
 </context>
 <context>
@@ -12816,26 +12985,6 @@ Az alapértelmezett érték 20.</translation>
         <translation>Megosztáskezelő</translation>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;This is a list of shared folders. You can add and remove folders using the buttons at the bottom.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;When you add a new folder, intially all files in that folder are shared.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-size:8pt;&quot;&gt;You can separately setup share flags for each shared directory:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-size:8pt; font-weight:600;&quot;&gt;Browsable&lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:8pt;&quot;&gt;: files are browsable from your direct friends.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Network Wide&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: files can be downloaded by anybody through anonymous tunnels.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Ez a megosztott mappáid listája. A lenti gombok segítségével hozzáadhatsz vagy eltávolíthatsz mappákat.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Egy új mappa hozzáadásakor az ott található összes fájl megosztásra kerül.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;Minden egyes mappához testreszabhatod a megosztás típusát:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Böngészhető&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: a fájlok böngészhetőek a barátaid számára.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Egész hálózat&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: névtelen alagutak használatával akárki letölheti a fájlokat.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
         <source>Directory</source>
         <translation>Mappa</translation>
     </message>
@@ -12906,6 +13055,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Directory not found or directory name not accepted.</source>
         <translation>Nem található mappa, vagy a neve nem elfogadható.</translation>
+    </message>
+    <message>
+        <source>This is a list of shared folders. You can add and remove folders using the buttons at the bottom. When you add a new folder, intially all files in that folder are shared. You can separately setup share flags for each shared directory.</source>
+        <translation>Ezen listán a megosztott mappákat láthatod. Hozzáadhatsz újakat vagy eltávolíthatsz már megosztottakat az alul található gombok használatával.  Mikor egy új mappát adsz hozzá, az összes benne található fájl meg lesz osztva. Megosztási módokat egyenként testreszabhatod ki a listán szereplő mappákra.</translation>
     </message>
 </context>
 <context>

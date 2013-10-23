@@ -350,59 +350,59 @@
         <translation>Disattivare</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="521"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="524"/>
         <source>No name</source>
         <translation>Nessun nome</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="733"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="736"/>
         <source>Add new folder</source>
         <translation>Aggiungi nuova cartella</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="734"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="737"/>
         <source>Please enter a name for the folder</source>
         <translation>Si prega di inserire un nome per la cartella</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="740"/>
-        <location filename="../gui/FeedReaderDialog.cpp" line="793"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="743"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="796"/>
         <source>Create folder</source>
         <translation>Creare la cartella</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="740"/>
-        <location filename="../gui/FeedReaderDialog.cpp" line="793"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="743"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="796"/>
         <source>Cannot create folder.</source>
         <translation>Impossibile creare la cartella.</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="766"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="769"/>
         <source>Remove folder</source>
         <translation>Rimuovere cartella</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="766"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="769"/>
         <source>Remove feed</source>
         <translation>Rimuovere dispaccio</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="766"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="769"/>
         <source>Do you want to remove the folder %1?</source>
         <translation>Si desidera rimuovere la cartella %1?</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="766"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="769"/>
         <source>Do you want to remove the feed %1?</source>
         <translation>Si desidera rimuovere il dispaccio %1?</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="786"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="789"/>
         <source>Edit folder</source>
         <translation>Modifica cartella</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="787"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="790"/>
         <source>Please enter a new name for the folder</source>
         <translation>Si prega di inserire un nuovo nome per la cartella</translation>
     </message>

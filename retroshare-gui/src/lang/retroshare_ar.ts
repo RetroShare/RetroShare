@@ -10,35 +10,35 @@
     <name>AboutDialog</name>
     <message>
         <source>About RetroShare</source>
-        <translation type="unfinished"/>
+        <translation>حول ريتروشير</translation>
     </message>
     <message>
         <source>About</source>
-        <translation type="unfinished"/>
+        <translation>حول</translation>
     </message>
     <message>
         <source>close</source>
-        <translation type="unfinished"/>
+        <translation>إنهاء</translation>
     </message>
     <message>
         <source>About RetroShare %1</source>
-        <translation type="unfinished"/>
+        <translation>حول ريتروشير %1</translation>
     </message>
     <message>
         <source>Max score: %1</source>
-        <translation type="unfinished"/>
+        <translation>النتيجة العظمى: %1</translation>
     </message>
     <message>
         <source>Score: %1</source>
-        <translation type="unfinished"/>
+        <translation>النتيجة: %1</translation>
     </message>
     <message>
         <source>Level: %1</source>
-        <translation type="unfinished"/>
+        <translation>المستوى: %1</translation>
     </message>
     <message>
         <source>Have fun ;-)</source>
-        <translation type="unfinished"/>
+        <translation>استمتع ;-)</translation>
     </message>
 </context>
 <context>
@@ -52,59 +52,59 @@
     <name>AddFileAssociationDialog</name>
     <message>
         <source>File type(extension):</source>
-        <translation type="unfinished"/>
+        <translation>نوع الملف (اللاحقة):</translation>
     </message>
     <message>
         <source>Use default command</source>
-        <translation type="unfinished"/>
+        <translation>استخدم التعليمة الافتراضية</translation>
     </message>
     <message>
         <source>Command</source>
-        <translation type="unfinished"/>
+        <translation>تعليمة</translation>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished"/>
+        <translation>ريتروشير</translation>
     </message>
     <message>
         <source>Sorry, can't determine system default command for this file
 </source>
-        <translation type="unfinished"/>
+        <translation>للأسف، لا بمكن تحديد تعليمة النظام الافتراضية لهذا الملف</translation>
     </message>
 </context>
 <context>
     <name>AdvancedSearchDialog</name>
     <message>
         <source>RetroShare: Advanced Search</source>
-        <translation type="unfinished"/>
+        <translation>ريتروشير: بحث متقدم</translation>
     </message>
     <message>
         <source>Search Criteria</source>
-        <translation type="unfinished"/>
+        <translation>معايير البحث</translation>
     </message>
     <message>
         <source>Add a further search criterion.</source>
-        <translation type="unfinished"/>
+        <translation>إضافة معيار بحث إضافي.</translation>
     </message>
     <message>
         <source>Reset the search criteria.</source>
-        <translation type="unfinished"/>
+        <translation>إلغاء معيار البحث.</translation>
     </message>
     <message>
         <source>Cancels the search.</source>
-        <translation type="unfinished"/>
+        <translation>إلغاء البحث.</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>إلغي</translation>
+        <translation>إلغاء</translation>
     </message>
     <message>
         <source>Perform the advanced search.</source>
-        <translation type="unfinished"/>
+        <translation>القيام ببحث متقدم.</translation>
     </message>
     <message>
         <source>Search</source>
-        <translation type="unfinished"/>
+        <translation>بحث</translation>
     </message>
 </context>
 <context>
@@ -127,11 +127,11 @@
     </message>
     <message>
         <source>Family</source>
-        <translation type="unfinished"/>
+        <translation>العائلة</translation>
     </message>
     <message>
         <source>Friends</source>
-        <translation type="unfinished"/>
+        <translation>أصدقاء</translation>
     </message>
     <message>
         <source>Flowers</source>
@@ -179,7 +179,7 @@
     </message>
     <message>
         <source>Description:</source>
-        <translation type="unfinished"/>
+        <translation>الوصف:</translation>
     </message>
     <message>
         <source>Share Options</source>
@@ -203,7 +203,7 @@
     </message>
     <message>
         <source>Public</source>
-        <translation type="unfinished"/>
+        <translation>عام</translation>
     </message>
     <message>
         <source>Restricted</source>
@@ -247,7 +247,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Back</source>
-        <translation type="unfinished"/>
+        <translation>عودة</translation>
     </message>
     <message>
         <source>Add Photos</source>
@@ -314,7 +314,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Description:</source>
-        <translation type="unfinished"/>
+        <translation>الوصف:</translation>
     </message>
     <message>
         <source>Share Options</source>
@@ -322,7 +322,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Comments</source>
-        <translation type="unfinished"/>
+        <translation>تعليقات</translation>
     </message>
     <message>
         <source>Publish Identity</source>
@@ -361,7 +361,7 @@ p, li { white-space: pre-wrap; }
     <name>AlbumItem</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"/>
+        <translation>من</translation>
     </message>
     <message>
         <source>TextLabel</source>
@@ -388,7 +388,7 @@ p, li { white-space: pre-wrap; }
     <name>AppearancePage</name>
     <message>
         <source>Language</source>
-        <translation type="unfinished"/>
+        <translation>اللغة</translation>
     </message>
     <message>
         <source>Changes to language will only take effect after restarting RetroShare!</source>
@@ -400,7 +400,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Style</source>
-        <translation type="unfinished"/>
+        <translation>نمط</translation>
     </message>
     <message>
         <source>Choose RetroShare&apos;s interface style</source>
@@ -408,18 +408,18 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Style Sheet</source>
-        <translation type="unfinished"/>
+        <translation>ورقة الأنماط</translation>
     </message>
     <message>
         <source>Appearance</source>
-        <translation type="unfinished"/>
+        <translation>الهيئة</translation>
     </message>
 </context>
 <context>
     <name>ApplicationWindow</name>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished"/>
+        <translation>ريتروشير</translation>
     </message>
     <message>
         <source> Warning: The services here are experimental. Please help us test them. 
@@ -463,21 +463,28 @@ p, li { white-space: pre-wrap; }
     <name>AttachFileItem</name>
     <message>
         <source>%p Kb</source>
-        <translation type="unfinished"/>
+        <translation>%p كيلوبت</translation>
     </message>
     <message>
         <source>Cancel Download</source>
-        <translation type="unfinished"/>
+        <translation>إلغاء التحميل</translation>
     </message>
     <message>
         <source>[ERROR])</source>
-        <translation type="unfinished"/>
+        <translation>[خطأ])</translation>
     </message>
 </context>
 <context>
     <name>AvatarWidget</name>
     <message>
         <source>Click to change your avatar</source>
+        <translation>إنقر لتغيير صورتك الرمزية</translation>
+    </message>
+</context>
+<context>
+    <name>BWListDelegate</name>
+    <message>
+        <source>N/A</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -485,43 +492,43 @@ p, li { white-space: pre-wrap; }
     <name>BandwidthGraph</name>
     <message>
         <source>RetroShare Bandwidth Usage</source>
-        <translation type="unfinished"/>
+        <translation>عرض الحزمة المستخدم من ريتروشير</translation>
     </message>
     <message>
         <source>Show Settings</source>
-        <translation>خيارات</translation>
+        <translation>إظهار الإعدادات</translation>
     </message>
     <message>
         <source>Reset</source>
-        <translation type="unfinished"/>
+        <translation>إعادة الضبط</translation>
     </message>
     <message>
         <source>Receive Rate</source>
-        <translation type="unfinished"/>
+        <translation>معدل الاستقبال</translation>
     </message>
     <message>
         <source>Send Rate</source>
-        <translation type="unfinished"/>
+        <translation>معدل الإرسال</translation>
     </message>
     <message>
         <source>Always on Top</source>
-        <translation type="unfinished"/>
+        <translation>دائما في الأعلى</translation>
     </message>
     <message>
         <source>Style</source>
-        <translation type="unfinished"/>
+        <translation>نمط</translation>
     </message>
     <message>
         <source>Changes the transparency of the Bandwidth Graph</source>
-        <translation type="unfinished"/>
+        <translation>تغيير شفافية مخطط عرض الحزمة</translation>
     </message>
     <message>
         <source>100</source>
-        <translation type="unfinished"/>
+        <translation>100</translation>
     </message>
     <message>
         <source>% Opaque</source>
-        <translation type="unfinished"/>
+        <translation>% معتم</translation>
     </message>
     <message>
         <source>Save</source>
@@ -533,42 +540,42 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Since:</source>
-        <translation type="unfinished"/>
+        <translation>منذ:</translation>
     </message>
     <message>
         <source>Hide Settings</source>
-        <translation type="unfinished"/>
+        <translation>إخفاء الإعدادات</translation>
     </message>
 </context>
 <context>
     <name>BlogDetails</name>
     <message>
         <source>Blog Details</source>
-        <translation type="unfinished"/>
+        <translation>تفاصيل المدونة</translation>
     </message>
     <message>
         <source>Blog Info</source>
-        <translation type="unfinished"/>
+        <translation>معلومات المدونة</translation>
     </message>
     <message>
         <source>Blog Name</source>
-        <translation type="unfinished"/>
+        <translation>عنوان المدونة</translation>
     </message>
     <message>
         <source>Popularity</source>
-        <translation type="unfinished"/>
+        <translation>الشعبية</translation>
     </message>
     <message>
         <source>Last Post</source>
-        <translation type="unfinished"/>
+        <translation>آخر مساهمة</translation>
     </message>
     <message>
         <source>Blog ID</source>
-        <translation type="unfinished"/>
+        <translation>معرف المدونة</translation>
     </message>
     <message>
         <source>Blog Description</source>
-        <translation type="unfinished"/>
+        <translation>وصف المدونة</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -576,53 +583,53 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>OK</source>
-        <translation type="unfinished"/>
+        <translation>موافق</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation type="unfinished"/>
+        <translation>إغلاق</translation>
     </message>
 </context>
 <context>
     <name>BlogMsgItem</name>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished"/>
+        <translation>إزالة عنصر</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished"/>
+        <translation>توسيع</translation>
     </message>
     <message>
         <source>Subject</source>
-        <translation type="unfinished"/>
+        <translation>الموضوع</translation>
     </message>
     <message>
         <source>Play Media</source>
-        <translation type="unfinished"/>
+        <translation>شغل الوسيط</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"/>
+        <translation>إخفاء</translation>
     </message>
 </context>
 <context>
     <name>BlogNewItem</name>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished"/>
+        <translation>إزالة عنصر</translation>
     </message>
     <message>
         <source>Subscribe to Blog</source>
-        <translation type="unfinished"/>
+        <translation>اشترك بالمدونة</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished"/>
+        <translation>توسيع</translation>
     </message>
     <message>
         <source>Blog Description</source>
-        <translation type="unfinished"/>
+        <translation>وصف المدونة</translation>
     </message>
     <message>
         <source>Unknown Blog</source>
@@ -638,14 +645,14 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"/>
+        <translation>إخفاء</translation>
     </message>
 </context>
 <context>
     <name>BlogsDialog</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"/>
+        <translation>من</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -657,7 +664,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add</source>
-        <translation type="unfinished"/>
+        <translation>إضافة</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -685,7 +692,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Unsubscribe</source>
-        <translation type="unfinished"/>
+        <translation>إلغاء الاشتراك</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -697,19 +704,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Subscribe</source>
-        <translation type="unfinished"/>
+        <translation>اشتراك</translation>
     </message>
     <message>
         <source>Create New Blog</source>
-        <translation type="unfinished"/>
+        <translation>إنشاء مدونة جديدة</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>اسم</translation>
     </message>
     <message>
         <source>ID</source>
-        <translation type="unfinished"/>
+        <translation>معرف</translation>
     </message>
     <message>
         <source>My Blogs</source>
@@ -717,35 +724,35 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Subscribed Blogs</source>
-        <translation type="unfinished"/>
+        <translation>المدونات المشترك بها</translation>
     </message>
     <message>
         <source>Popular Blogs</source>
-        <translation type="unfinished"/>
+        <translation>مدونات ذات شعبية</translation>
     </message>
     <message>
         <source>Other Blogs</source>
-        <translation type="unfinished"/>
+        <translation>مدونات أخرى</translation>
     </message>
     <message>
         <source>Post to Blog</source>
-        <translation type="unfinished"/>
+        <translation>إنشر على المدونة</translation>
     </message>
     <message>
         <source>Subscribe to Blog</source>
-        <translation type="unfinished"/>
+        <translation>اشترك بالمدونة</translation>
     </message>
     <message>
         <source>Unsubscribe to Blog</source>
-        <translation type="unfinished"/>
+        <translation>إلغاء الاشتراك في المدونة</translation>
     </message>
     <message>
         <source>Show Blog Details</source>
-        <translation type="unfinished"/>
+        <translation>إظهار تفاصيل المدونة</translation>
     </message>
     <message>
         <source>Create a new Blog</source>
-        <translation type="unfinished"/>
+        <translation>إنشاء مدونة جديدة</translation>
     </message>
     <message>
         <source>Popularity: %1
@@ -758,7 +765,7 @@ Available: %3</source>
     <name>BlogsMsgItem</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"/>
+        <translation>من</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -778,15 +785,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished"/>
+        <translation>توسيع</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished"/>
+        <translation>إزالة عنصر</translation>
     </message>
     <message>
         <source>Unsubscribe From Channel</source>
-        <translation type="unfinished"/>
+        <translation>إلغاء الاشتراك من القناة</translation>
     </message>
     <message>
         <source>Comments here</source>
@@ -794,11 +801,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Comment</source>
-        <translation type="unfinished"/>
+        <translation>تعليق</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"/>
+        <translation>إخفاء</translation>
     </message>
 </context>
 <context>
@@ -813,11 +820,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>اسم</translation>
     </message>
     <message>
         <source>ID</source>
-        <translation type="unfinished"/>
+        <translation>معرف</translation>
     </message>
     <message>
         <source>In (KB/s)</source>
@@ -864,27 +871,27 @@ p, li { white-space: pre-wrap; }
     <name>CalDialog</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"/>
+        <translation>من</translation>
     </message>
     <message>
         <source>Local Calendars</source>
-        <translation type="unfinished"/>
+        <translation>تقاويم محلية</translation>
     </message>
     <message>
         <source>Shared Calendar List</source>
-        <translation type="unfinished"/>
+        <translation>قائمة التقويم المشتركة</translation>
     </message>
     <message>
         <source>Share Details</source>
-        <translation type="unfinished"/>
+        <translation>مشاركة التفاصيل</translation>
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished"/>
+        <translation>الاسم:</translation>
     </message>
     <message>
         <source>Location:</source>
-        <translation type="unfinished"/>
+        <translation>الموقع:</translation>
     </message>
     <message>
         <source>...</source>
@@ -892,19 +899,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Status:</source>
-        <translation type="unfinished"/>
+        <translation>الحالة:</translation>
     </message>
     <message>
         <source>Private</source>
-        <translation type="unfinished"/>
+        <translation>خاص</translation>
     </message>
     <message>
         <source>Public</source>
-        <translation type="unfinished"/>
+        <translation>عام</translation>
     </message>
     <message>
         <source>Allow List:</source>
-        <translation type="unfinished"/>
+        <translation>قائمة السماحية:</translation>
     </message>
     <message>
         <source>&lt;Disabled&gt;</source>
@@ -912,11 +919,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add</source>
-        <translation type="unfinished"/>
+        <translation>إضافة</translation>
     </message>
     <message>
         <source>Remove</source>
-        <translation type="unfinished"/>
+        <translation>إزالة</translation>
     </message>
     <message>
         <source>Peer Calendars</source>
@@ -931,27 +938,27 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>New</source>
-        <translation type="unfinished"/>
+        <translation>جديد</translation>
     </message>
     <message>
         <source>Download</source>
-        <translation type="unfinished"/>
+        <translation>تحميل</translation>
     </message>
     <message>
         <source>Play</source>
-        <translation type="unfinished"/>
+        <translation>تشغيل</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>نسخ رابط ريتروشير</translation>
     </message>
     <message>
         <source>Unsubscribe From Channel</source>
-        <translation type="unfinished"/>
+        <translation>إلغاء الاشتراك من القناة</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished"/>
+        <translation>توسيع</translation>
     </message>
     <message>
         <source>Set as read and remove item</source>
@@ -959,7 +966,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished"/>
+        <translation>إزالة عنصر</translation>
     </message>
     <message>
         <source>Channel Feed</source>
@@ -967,7 +974,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Files</source>
-        <translation type="unfinished"/>
+        <translation>ملفات</translation>
     </message>
     <message>
         <source>Warning! You have less than %1 hours and %2 minute before this file is deleted Consider saving it.</source>
@@ -975,77 +982,77 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"/>
+        <translation>إخفاء</translation>
     </message>
 </context>
 <context>
     <name>ChanNewItem</name>
     <message>
         <source>Subscribe to Channel</source>
-        <translation type="unfinished"/>
+        <translation>اشتراك بالقناة</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished"/>
+        <translation>توسيع</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished"/>
+        <translation>إزالة عنصر</translation>
     </message>
     <message>
         <source>Channel Description</source>
-        <translation type="unfinished"/>
+        <translation>وصف القناة</translation>
     </message>
     <message>
         <source>Unknown Channel</source>
-        <translation type="unfinished"/>
+        <translation>قناة غير معروفة</translation>
     </message>
     <message>
         <source>New Channel</source>
-        <translation type="unfinished"/>
+        <translation>قناة جديدة</translation>
     </message>
     <message>
         <source>Updated Channel</source>
-        <translation type="unfinished"/>
+        <translation>قناة محدثة</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"/>
+        <translation>إخفاء</translation>
     </message>
 </context>
 <context>
     <name>ChannelDetails</name>
     <message>
         <source>Channel Details</source>
-        <translation type="unfinished"/>
+        <translation>تفاصيل القناة</translation>
     </message>
     <message>
         <source>Channel Info</source>
-        <translation type="unfinished"/>
+        <translation>معلومات القتاة</translation>
     </message>
     <message>
         <source>Channel Name</source>
-        <translation type="unfinished"/>
+        <translation>اسم القناة</translation>
     </message>
     <message>
         <source>Popularity</source>
-        <translation type="unfinished"/>
+        <translation>الشعبية</translation>
     </message>
     <message>
         <source>Last Post</source>
-        <translation type="unfinished"/>
+        <translation>آخر مساهمة</translation>
     </message>
     <message>
         <source>Channel ID</source>
-        <translation type="unfinished"/>
+        <translation>معرف القناة</translation>
     </message>
     <message>
         <source>Channel Description</source>
-        <translation type="unfinished"/>
+        <translation>وصف القناة</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished"/>
+        <translation>النوع</translation>
     </message>
     <message>
         <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
@@ -1067,19 +1074,19 @@ p, li { white-space: pre-wrap; }
     <name>ChannelFeed</name>
     <message>
         <source>Channels</source>
-        <translation type="unfinished"/>
+        <translation>قنوات</translation>
     </message>
     <message>
         <source>Create Channel</source>
-        <translation type="unfinished"/>
+        <translation>إنشاء قناة</translation>
     </message>
     <message>
         <source>Loading</source>
-        <translation type="unfinished"/>
+        <translation>جاري التحميل</translation>
     </message>
     <message>
         <source>Post to Channel</source>
-        <translation type="unfinished"/>
+        <translation>إنشر على القناة</translation>
     </message>
     <message>
         <source>Set all as read</source>
@@ -1087,7 +1094,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Enable Auto-Download</source>
-        <translation type="unfinished"/>
+        <translation>تفعيل التحميل التقائي</translation>
     </message>
     <message>
         <source>My Channels</source>
@@ -1095,43 +1102,43 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Subscribed Channels</source>
-        <translation type="unfinished"/>
+        <translation>القنوات الشترك بها</translation>
     </message>
     <message>
         <source>Popular Channels</source>
-        <translation type="unfinished"/>
+        <translation>قنوات ذات شعبية</translation>
     </message>
     <message>
         <source>Other Channels</source>
-        <translation type="unfinished"/>
+        <translation>قنوات أخرى</translation>
     </message>
     <message>
         <source>Subscribe to Channel</source>
-        <translation type="unfinished"/>
+        <translation>اشترك بالقناة</translation>
     </message>
     <message>
         <source>Unsubscribe to Channel</source>
-        <translation type="unfinished"/>
+        <translation>إلغاء الاشتراك من القناة</translation>
     </message>
     <message>
         <source>Disable Auto-Download</source>
-        <translation type="unfinished"/>
+        <translation>تعطيل التحميل التلقائي</translation>
     </message>
     <message>
         <source>Show Channel Details</source>
-        <translation type="unfinished"/>
+        <translation>إظهار تفاصيل القناة</translation>
     </message>
     <message>
         <source>Restore Publish Rights for Channel</source>
-        <translation type="unfinished"/>
+        <translation>استعادة صلاحية النشر الخاصة بالقناة</translation>
     </message>
     <message>
         <source>Edit Channel Details</source>
-        <translation type="unfinished"/>
+        <translation>تعديل تفاصيل القناة</translation>
     </message>
     <message>
         <source>Share Channel</source>
-        <translation type="unfinished"/>
+        <translation>مشاركة القناة</translation>
     </message>
     <message>
         <source>Set destination directory</source>
@@ -1147,7 +1154,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>نسخ رابط ريتروشير</translation>
     </message>
     <message>
         <source>Select channel destination directory</source>
@@ -1171,7 +1178,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>No Channel Selected</source>
-        <translation type="unfinished"/>
+        <translation>لم يتم اختيار أية قناة</translation>
     </message>
     <message>
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Channels&lt;/h1&gt;                                                             &lt;p&gt;Channels allow you to post data (e.g. movies, music) that will spread in the network                                                    among people who subscribed your channel.  If you activate auto-download on a channel, files attached to each post will start      downloading automatically when the post is received.&lt;/p&gt;                                                                                   &lt;p&gt;You see channels your friends are subscribed to, and forward subscribed channels to                                                    your friends. This promotes good channels in the network.                                                         When you first connect to a new friend, it&apos;s likely     you will receive many such cache files, and new channels will appear.                                                                      &lt;/p&gt;                                                                                                                                       &lt;p&gt;Only the channel&apos;s creator can post on that channel. Other peers                           in the network can only read from it, unless the channel is private. You can however share the posting rights or the reading rights     with your friends.&lt;/p&gt;                                </source>
@@ -1190,7 +1197,8 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Your friend has more than one locations.
 Please choose one of it to chat with.</source>
-        <translation type="unfinished"/>
+        <translation>لصديقك أكثر من موقع.
+يرجى إختيار إحداها للدردشة معه.</translation>
     </message>
     <message>
         <source>Talking to </source>
@@ -1205,7 +1213,7 @@ Please choose one of it to chat with.</source>
     </message>
     <message>
         <source>Change nick name</source>
-        <translation type="unfinished"/>
+        <translation>تغيير اللقلب</translation>
     </message>
     <message>
         <source>Mute participant</source>
@@ -1233,11 +1241,11 @@ Please choose one of it to chat with.</source>
     </message>
     <message>
         <source>Topic: %1</source>
-        <translation type="unfinished"/>
+        <translation>الموضوع: %1</translation>
     </message>
     <message>
         <source>Please enter your new nick name</source>
-        <translation type="unfinished"/>
+        <translation>من فضلك أدخل لقبك الجديد</translation>
     </message>
     <message>
         <source>Lobby chat</source>
@@ -1257,7 +1265,7 @@ Please choose one of it to chat with.</source>
     </message>
     <message>
         <source>%1 changed his name to: %2</source>
-        <translation type="unfinished"/>
+        <translation>%1 بدل اسمه إلى: %2</translation>
     </message>
     <message>
         <source>Unsubscribe to lobby</source>
@@ -1269,11 +1277,11 @@ Please choose one of it to chat with.</source>
     </message>
     <message>
         <source>Hide Participants</source>
-        <translation type="unfinished"/>
+        <translation>إخفاء المشاركين</translation>
     </message>
     <message>
         <source>Show Participants</source>
-        <translation type="unfinished"/>
+        <translation>إظهار المشاركين</translation>
     </message>
     <message>
         <source>Right click to mute/unmute participants&lt;br/&gt;Double click to address this person&lt;br/&gt;</source>
@@ -1285,7 +1293,7 @@ Please choose one of it to chat with.</source>
     </message>
     <message>
         <source> seconds</source>
-        <translation type="unfinished"/>
+        <translation>ثواني</translation>
     </message>
 </context>
 <context>
@@ -1303,7 +1311,7 @@ Please choose one of it to chat with.</source>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>اسم</translation>
     </message>
     <message>
         <source>Count</source>
@@ -1327,11 +1335,11 @@ Please choose one of it to chat with.</source>
     </message>
     <message>
         <source>Unsubscribe</source>
-        <translation type="unfinished"/>
+        <translation>إلغاء الاشتراك</translation>
     </message>
     <message>
         <source>Subscribe</source>
-        <translation type="unfinished"/>
+        <translation>اشتراك</translation>
     </message>
     <message>
         <source>[No topic provided]</source>
@@ -1342,43 +1350,15 @@ Please choose one of it to chat with.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Lobby name: </source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Lobby Id: </source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Topic: </source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Type: </source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Private</source>
-        <translation type="unfinished"/>
+        <translation>خاص</translation>
     </message>
     <message>
         <source>Public</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Peers: </source>
-        <translation type="unfinished"/>
+        <translation>عام</translation>
     </message>
     <message>
         <source>You&apos;re not subscribed to this lobby; Double click-it to enter and chat.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>No lobby selected. 
-
-Select lobbies at left to show details.
-
-Double click lobbies to enter and chat.</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -1409,32 +1389,94 @@ Double click lobbies to enter and chat.</source>
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Chat Lobbies&lt;/h1&gt;                              		  &lt;p&gt;Chat lobbies are distributed chat rooms, and work pretty much like IRC.                                      		  They allow you to talk anonymously with tons of people without the need to make friends.&lt;/p&gt;                    		  &lt;p&gt;A chat lobby can be public (your friends see it) or private (your friends can&apos;t see it, unless you           		  invite them with &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). Once you have been invited to a private lobby, you will be able to see it when your friends   		  are using it.&lt;/p&gt;                                                                                               		  &lt;p&gt;The list at left shows                                                                                     		  chat lobbies your friends are participating in. You can either                                 		  &lt;ul&gt;                                                                                                            			  &lt;li&gt;Right click to create a new chat lobby&lt;/li&gt;                                                              		     &lt;li&gt;Double click a chat lobby to enter, chat, and show it to your friends&lt;/li&gt;                      		  &lt;/ul&gt; 		  Note: For the chat lobbies to work properly, your computer needs be on time.  So check your system clock!		  &lt;/p&gt;                                      		</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>Subscribed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source> Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Columns</source>
+        <translation>أعمدة</translation>
+    </message>
+    <message>
+        <source>Yes</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Lobby Name:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Lobby Id:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Topic:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Type:</source>
+        <translation>النوع:</translation>
+    </message>
+    <message>
+        <source>Peers:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>TextLabel</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No lobby selected. 
+Select lobbies at left to show details.
+Double click lobbies to enter and chat.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Private Subscribed Lobbies</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Public Subscribed Lobbies</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>ChatMsgItem</name>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished"/>
+        <translation>إزالة عنصر</translation>
     </message>
     <message>
         <source>Write a quick Message</source>
-        <translation type="unfinished"/>
+        <translation>كتابة رسالة مختصرة</translation>
     </message>
     <message>
         <source>Send Mail</source>
-        <translation type="unfinished"/>
+        <translation>إرسال البريد</translation>
     </message>
     <message>
         <source>Write Message</source>
-        <translation type="unfinished"/>
+        <translation>كتابة رسالة</translation>
     </message>
     <message>
         <source>Start Chat</source>
-        <translation type="unfinished"/>
+        <translation>ابدأ الدردشة</translation>
     </message>
     <message>
         <source>Send</source>
-        <translation type="unfinished"/>
+        <translation>إرسال</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -1442,18 +1484,18 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Quick Message</source>
-        <translation type="unfinished"/>
+        <translation>رسالة مختصرة</translation>
     </message>
 </context>
 <context>
     <name>ChatPage</name>
     <message>
         <source>General</source>
-        <translation type="unfinished"/>
+        <translation>عا</translation>
     </message>
     <message>
         <source>Chat Settings</source>
-        <translation type="unfinished"/>
+        <translation>إعدادات الدردشة</translation>
     </message>
     <message>
         <source>Enable Emoticons Private Chat</source>
@@ -1485,7 +1527,7 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Send message with Ctrl+Return</source>
-        <translation type="unfinished"/>
+        <translation>ارسل الرسالة باستخدام Ctrl+Return</translation>
     </message>
     <message>
         <source>Chat Lobby</source>
@@ -1501,7 +1543,7 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Private Chat</source>
-        <translation type="unfinished"/>
+        <translation>دردشة خاصة</translation>
     </message>
     <message>
         <source>Open Window for new chat</source>
@@ -1521,43 +1563,27 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Chat Font</source>
-        <translation type="unfinished"/>
+        <translation>خط الدردشة</translation>
     </message>
     <message>
         <source>Change Chat Font</source>
-        <translation type="unfinished"/>
+        <translation>تغيير خط الدردشة</translation>
     </message>
     <message>
         <source>Chat Font:</source>
-        <translation type="unfinished"/>
+        <translation>خط الدردشة:</translation>
     </message>
     <message>
         <source>History</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Group Chat</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Enable</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Number of saved messages (0 = unlimited)</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Load number of messages (0 = off)</source>
-        <translation type="unfinished"/>
+        <translation>التاريخ</translation>
     </message>
     <message>
         <source>Style</source>
-        <translation type="unfinished"/>
+        <translation>نمط</translation>
     </message>
     <message>
         <source>Group chat</source>
-        <translation type="unfinished"/>
+        <translation>دردشة جماعية</translation>
     </message>
     <message>
         <source>Variant</source>
@@ -1569,19 +1595,19 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Description:</source>
-        <translation type="unfinished"/>
+        <translation>الوصف:</translation>
     </message>
     <message>
         <source>Private chat</source>
-        <translation type="unfinished"/>
+        <translation>دردشة خاصة</translation>
     </message>
     <message>
         <source>Incoming</source>
-        <translation type="unfinished"/>
+        <translation>الوارد</translation>
     </message>
     <message>
         <source>Outgoing</source>
-        <translation type="unfinished"/>
+        <translation>الصادر</translation>
     </message>
     <message>
         <source>Incoming message in history</source>
@@ -1593,11 +1619,11 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Incoming message</source>
-        <translation type="unfinished"/>
+        <translation>رسالة واردة</translation>
     </message>
     <message>
         <source>Outgoing message</source>
-        <translation type="unfinished"/>
+        <translation>رسالة صادرة</translation>
     </message>
     <message>
         <source>Outgoing offline message</source>
@@ -1605,15 +1631,15 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>System</source>
-        <translation type="unfinished"/>
+        <translation>نظام</translation>
     </message>
     <message>
         <source>System message</source>
-        <translation type="unfinished"/>
+        <translation>رسالة نظام</translation>
     </message>
     <message>
         <source>Chat</source>
-        <translation type="unfinished"/>
+        <translation>دردشة</translation>
     </message>
     <message>
         <source>Distant chat</source>
@@ -1667,6 +1693,46 @@ Double click lobbies to enter and chat.</source>
         <source>Private chat invite to </source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;In this tab you can setup how many chat messages Retroshare will keep saved on the disc and how much of the previous conversation it will display, for the different chat systems. The max storage period allows to discard old messages and prevents the chat history from filling up with volatile chat (e.g. chat lobbies and distant chat).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Chatlobbies</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Enabled:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Saved messages (0 = unlimited):</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Number of messages restored  (0 = off):</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Maximum storage period, in days (0=keep all):</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Name : </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Signed with key not in keyring</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Not signed.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Authenticated signature</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>ChatStyle</name>
@@ -1699,53 +1765,53 @@ Double click lobbies to enter and chat.</source>
     <name>ChatToaster</name>
     <message>
         <source>Show Chat</source>
-        <translation type="unfinished"/>
+        <translation>إظهار الدردشة</translation>
     </message>
 </context>
 <context>
     <name>ChatUserNotify</name>
     <message>
         <source>Private Chat</source>
-        <translation type="unfinished"/>
+        <translation>دردشة خاصة</translation>
     </message>
 </context>
 <context>
     <name>ChatWidget</name>
     <message>
         <source>Close</source>
-        <translation type="unfinished"/>
+        <translation>إغلاق</translation>
     </message>
     <message>
         <source>Send</source>
-        <translation type="unfinished"/>
+        <translation>إرسال</translation>
     </message>
     <message>
         <source>Bold</source>
-        <translation type="unfinished"/>
+        <translation>غامق</translation>
     </message>
     <message>
         <source>Underline</source>
-        <translation type="unfinished"/>
+        <translation>تسطير</translation>
     </message>
     <message>
         <source>Italic</source>
-        <translation type="unfinished"/>
+        <translation>مائل</translation>
     </message>
     <message>
         <source>Font</source>
-        <translation type="unfinished"/>
+        <translation>خط</translation>
     </message>
     <message>
         <source>Text Color</source>
-        <translation type="unfinished"/>
+        <translation>لون النص</translation>
     </message>
     <message>
         <source>Attach a Picture</source>
-        <translation type="unfinished"/>
+        <translation>إرفاق صورة</translation>
     </message>
     <message>
         <source>Add a File for your Friend</source>
-        <translation type="unfinished"/>
+        <translation>إضافة ملف لصديقك</translation>
     </message>
     <message>
         <source>Strike</source>
@@ -1781,7 +1847,7 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Choose font</source>
-        <translation type="unfinished"/>
+        <translation>اختر الخط</translation>
     </message>
     <message>
         <source>Reset font to default</source>
@@ -1789,7 +1855,7 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>لصق رابط ريتروشير</translation>
     </message>
     <message>
         <source>Paste my certificate link</source>
@@ -1797,7 +1863,7 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>is typing...</source>
-        <translation type="unfinished"/>
+        <translation>يـكتب...</translation>
     </message>
     <message>
         <source>Do you really want to physically delete the history?</source>
@@ -1805,19 +1871,19 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Add Extra File</source>
-        <translation type="unfinished"/>
+        <translation>إضافة ملف إضافي</translation>
     </message>
     <message>
         <source>Load Picture File</source>
-        <translation type="unfinished"/>
+        <translation>تحميل ملف صورة</translation>
     </message>
     <message>
         <source>Save as...</source>
-        <translation type="unfinished"/>
+        <translation>حفظ باسم...</translation>
     </message>
     <message>
         <source>Text File (*.txt );;All Files (*)</source>
-        <translation type="unfinished"/>
+        <translation>ملف نصي (txt.*);;جميع الملفات (*)</translation>
     </message>
     <message>
         <source>appears to be Offline.</source>
@@ -1825,19 +1891,19 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Messages you send will be delivered after Friend is again Online</source>
-        <translation type="unfinished"/>
+        <translation>الرسائل التي ارسلتها سيتم ايصالها لدى اتصال صديقك مجددا</translation>
     </message>
     <message>
         <source>is Idle and may not reply</source>
-        <translation type="unfinished"/>
+        <translation>إنه غير نشط و قد لا يرد</translation>
     </message>
     <message>
         <source>is Away and may not reply</source>
-        <translation type="unfinished"/>
+        <translation>غير متواجد و قد لا يرد</translation>
     </message>
     <message>
         <source>is Busy and may not reply</source>
-        <translation type="unfinished"/>
+        <translation>إنه مشغول و قد لا يرد</translation>
     </message>
 </context>
 <context>
@@ -1852,7 +1918,7 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>اسم</translation>
     </message>
     <message>
         <source>IDs</source>
@@ -1876,11 +1942,11 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>ID</source>
-        <translation type="unfinished"/>
+        <translation>معرف</translation>
     </message>
     <message>
         <source>Friends</source>
-        <translation type="unfinished"/>
+        <translation>أصدقاء</translation>
     </message>
     <message>
         <source>Friends of Friends</source>
@@ -1947,11 +2013,11 @@ Double click lobbies to enter and chat.</source>
     <name>ConfCertDialog</name>
     <message>
         <source>Friend Details</source>
-        <translation type="unfinished"/>
+        <translation>تفاصيل الصديق</translation>
     </message>
     <message>
         <source>Details</source>
-        <translation type="unfinished"/>
+        <translation>التفاصيل</translation>
     </message>
     <message>
         <source>Peer Info</source>
@@ -1959,7 +2025,7 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>اسم</translation>
     </message>
     <message>
         <source>Peer ID</source>
@@ -1967,7 +2033,7 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>RetroShare ID</source>
-        <translation type="unfinished"/>
+        <translation>معرف ريتروشير</translation>
     </message>
     <message>
         <source>Other info</source>
@@ -1987,7 +2053,7 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Version</source>
-        <translation type="unfinished"/>
+        <translation>الإصدار</translation>
     </message>
     <message>
         <source>Peer Address</source>
@@ -1995,23 +2061,23 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Local Address</source>
-        <translation type="unfinished"/>
+        <translation>عنوان محلي</translation>
     </message>
     <message>
         <source>External Address</source>
-        <translation type="unfinished"/>
+        <translation>عنوان خارجي</translation>
     </message>
     <message>
         <source>Dynamic DNS</source>
-        <translation type="unfinished"/>
+        <translation>نظام اسماء نطاقات ديناميكي</translation>
     </message>
     <message>
         <source>Port</source>
-        <translation type="unfinished"/>
+        <translation>منفذ</translation>
     </message>
     <message>
         <source>Addresses list</source>
-        <translation type="unfinished"/>
+        <translation>قائمة العناوين</translation>
     </message>
     <message>
         <source>Trust </source>
@@ -2065,7 +2131,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Deny Friend</source>
-        <translation type="unfinished"/>
+        <translation>رفض صديق</translation>
     </message>
     <message>
         <source>Make Friend</source>
@@ -2073,11 +2139,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Certificate</source>
-        <translation type="unfinished"/>
+        <translation>شهادة</translation>
     </message>
     <message>
         <source>Include signatures</source>
-        <translation type="unfinished"/>
+        <translation>إدراج تواقيع</translation>
     </message>
     <message>
         <source>Use old key format</source>
@@ -2111,11 +2177,11 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Chat</source>
-        <translation type="unfinished"/>
+        <translation>دردشة</translation>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished"/>
+        <translation>ريتروشير</translation>
     </message>
     <message>
         <source>Error : cannot get peer details.</source>
@@ -2164,11 +2230,11 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Signature Failure</source>
-        <translation type="unfinished"/>
+        <translation>فشل في التوقيع</translation>
     </message>
     <message>
         <source>Maybe password is wrong</source>
-        <translation type="unfinished"/>
+        <translation>ربما كلمة المرور خاطئة</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling anonymous routing will suppress all sending/retrieval of tunnel and anonymous search requests from/to this user. This user will not be able to transfer anonymously through you.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
@@ -2252,7 +2318,7 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Include signatures</source>
-        <translation type="unfinished"/>
+        <translation>إدراج تواقيع</translation>
     </message>
     <message>
         <source>Copy your Cert to Clipboard</source>
@@ -2296,7 +2362,7 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Browse</source>
-        <translation type="unfinished"/>
+        <translation>استعرض</translation>
     </message>
     <message>
         <source>Friends of friends</source>
@@ -2316,7 +2382,7 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>RetroShare ID</source>
-        <translation type="unfinished"/>
+        <translation>معرف ريتروشير</translation>
     </message>
     <message>
         <source>Use RetroShare ID for adding a Friend which is available in your network.</source>
@@ -2352,7 +2418,7 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Subject:</source>
-        <translation type="unfinished"/>
+        <translation>الموضوع:</translation>
     </message>
     <message>
         <source>Friend request</source>
@@ -2368,7 +2434,7 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished"/>
+        <translation>الاسم:</translation>
     </message>
     <message>
         <source>Email:</source>
@@ -2376,7 +2442,7 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Location:</source>
-        <translation type="unfinished"/>
+        <translation>الموقع:</translation>
     </message>
     <message>
         <source>Options</source>
@@ -2480,7 +2546,7 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Certificate Load Failed</source>
-        <translation type="unfinished"/>
+        <translation>فشل تحميل الشهادة</translation>
     </message>
     <message>
         <source>Cannot get peer details of PGP key %1</source>
@@ -2512,7 +2578,7 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>RetroShare Invitation</source>
-        <translation type="unfinished"/>
+        <translation>دعوة ريتروشير</translation>
     </message>
     <message>
         <source>Ultimate</source>
@@ -2600,7 +2666,7 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Save as...</source>
-        <translation type="unfinished"/>
+        <translation>حفظ باسم...</translation>
     </message>
     <message>
         <source>RetroShare Certificate (*.rsc );;All Files (*)</source>
@@ -2656,7 +2722,7 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>To</source>
-        <translation type="unfinished"/>
+        <translation>إلى</translation>
     </message>
     <message>
         <source>Please select at least one friend for recommendation.</source>
@@ -2664,6 +2730,25 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Please select at least one friend as recipient.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Please note that RetroShare will require excessive amounts of bandwidth, memory and CPU if you add to many friends. You can add as many friends as you like, but more than 40 will probably require too much resources.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Add key to keyring</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This key is already in your keyring</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Check this to add the key to your keyring
+This might be useful for sending
+distant messages to this peer
+even if you don&apos;t make friends.</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -2735,7 +2820,7 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Offline</source>
-        <translation type="unfinished"/>
+        <translation>غير متصل</translation>
     </message>
     <message>
         <source>Behind Symmetric NAT</source>
@@ -3050,7 +3135,7 @@ p, li { white-space: pre-wrap; }
     <name>CreateBlog</name>
     <message>
         <source>Create new Blog</source>
-        <translation type="unfinished"/>
+        <translation>إنشاء مدونة جديدة</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -3062,15 +3147,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>اسم</translation>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"/>
+        <translation>الوصف</translation>
     </message>
     <message>
         <source>Type:</source>
-        <translation type="unfinished"/>
+        <translation>النوع:</translation>
     </message>
     <message>
         <source>Public - Anyone can read and publish (Shared Publish Key)</source>
@@ -3086,23 +3171,23 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Allowed Messages</source>
-        <translation type="unfinished"/>
+        <translation>الرسائل المسموحة</translation>
     </message>
     <message>
         <source>Authenticated Messages</source>
-        <translation type="unfinished"/>
+        <translation>رسائل مستوثقة</translation>
     </message>
     <message>
         <source>Anonymous Messages</source>
-        <translation type="unfinished"/>
+        <translation>الرسائل المجهولة</translation>
     </message>
     <message>
         <source>Blog Logo</source>
-        <translation type="unfinished"/>
+        <translation>شعار المدونة</translation>
     </message>
     <message>
         <source>Add Blog Logo</source>
-        <translation type="unfinished"/>
+        <translation>إضافة شعار المدونة</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -3110,23 +3195,23 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Create</source>
-        <translation type="unfinished"/>
+        <translation>إنشاء</translation>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished"/>
+        <translation>ريتروشير</translation>
     </message>
     <message>
         <source>Please add a Name</source>
-        <translation type="unfinished"/>
+        <translation>يرجى إضافة اسم</translation>
     </message>
     <message>
         <source>Load File</source>
-        <translation type="unfinished"/>
+        <translation>تحميل ملف</translation>
     </message>
     <message>
         <source>Pictures (*.png *.xpm *.jpg)</source>
-        <translation type="unfinished"/>
+        <translation>صور (*.png *.xpm *.jpg)</translation>
     </message>
 </context>
 <context>
@@ -3145,7 +3230,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Visual Editor</source>
-        <translation type="unfinished"/>
+        <translation>محرر مرئي</translation>
     </message>
     <message>
         <source>Blog Message</source>
@@ -3153,19 +3238,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Subject :</source>
-        <translation type="unfinished"/>
+        <translation>الموضوع:</translation>
     </message>
     <message>
         <source>Html Editor</source>
-        <translation type="unfinished"/>
+        <translation>محرر Html</translation>
     </message>
     <message>
         <source>toolBar</source>
-        <translation type="unfinished"/>
+        <translation>شريط الأدوات</translation>
     </message>
     <message>
         <source>toolBar_2</source>
-        <translation type="unfinished"/>
+        <translation>شريط الأدوات_2</translation>
     </message>
     <message>
         <source>blockquote</source>
@@ -3173,35 +3258,35 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Increase font Size</source>
-        <translation type="unfinished"/>
+        <translation>تكبير الخط</translation>
     </message>
     <message>
         <source>Decrease font size</source>
-        <translation type="unfinished"/>
+        <translation>تصغير الخط</translation>
     </message>
     <message>
         <source>Bold</source>
-        <translation type="unfinished"/>
+        <translation>غامق</translation>
     </message>
     <message>
         <source>Underline</source>
-        <translation type="unfinished"/>
+        <translation>تسطير</translation>
     </message>
     <message>
         <source>Italic</source>
-        <translation type="unfinished"/>
+        <translation>مائل</translation>
     </message>
     <message>
         <source>Publish</source>
-        <translation type="unfinished"/>
+        <translation>نشر</translation>
     </message>
     <message>
         <source>New</source>
-        <translation type="unfinished"/>
+        <translation>جديد</translation>
     </message>
     <message>
         <source>Code</source>
-        <translation type="unfinished"/>
+        <translation>رمز</translation>
     </message>
     <message>
         <source>splitPost</source>
@@ -3209,43 +3294,43 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Ordered List</source>
-        <translation type="unfinished"/>
+        <translation>قائمة مرتبة</translation>
     </message>
     <message>
         <source>Unordered List</source>
-        <translation type="unfinished"/>
+        <translation>قائمة غير مرتبة</translation>
     </message>
     <message>
         <source>Clipboard</source>
-        <translation type="unfinished"/>
+        <translation>حافظة</translation>
     </message>
     <message>
         <source>Undo</source>
-        <translation type="unfinished"/>
+        <translation>تراجع</translation>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished"/>
+        <translation>ريتروشير</translation>
     </message>
     <message>
         <source>Please add a Subject</source>
-        <translation type="unfinished"/>
+        <translation>يرجى إضافة موضوع</translation>
     </message>
     <message>
         <source>&amp;File</source>
-        <translation type="unfinished"/>
+        <translation>&amp;ملف</translation>
     </message>
     <message>
         <source>&amp;New</source>
-        <translation type="unfinished"/>
+        <translation>&amp;جديد</translation>
     </message>
     <message>
         <source>&amp;Open...</source>
-        <translation type="unfinished"/>
+        <translation>ا&amp;فتح...</translation>
     </message>
     <message>
         <source>&amp;Save</source>
-        <translation type="unfinished"/>
+        <translation>ا&amp;حفظ</translation>
     </message>
     <message>
         <source>Save &amp;As...</source>
@@ -3253,55 +3338,55 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>&amp;Print...</source>
-        <translation type="unfinished"/>
+        <translation>ا&amp;طبع...</translation>
     </message>
     <message>
         <source>Print Preview...</source>
-        <translation type="unfinished"/>
+        <translation>معاينة ما قبل الطباعة...</translation>
     </message>
     <message>
         <source>&amp;Export PDF...</source>
-        <translation type="unfinished"/>
+        <translation>&amp;صدر PDF...</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
-        <translation type="unfinished"/>
+        <translation>ا&amp;خرج</translation>
     </message>
     <message>
         <source>&amp;Edit</source>
-        <translation type="unfinished"/>
+        <translation>ت&amp;حرير</translation>
     </message>
     <message>
         <source>&amp;Undo</source>
-        <translation type="unfinished"/>
+        <translation>ت&amp;راجع</translation>
     </message>
     <message>
         <source>&amp;Redo</source>
-        <translation type="unfinished"/>
+        <translation>أ&amp;عد</translation>
     </message>
     <message>
         <source>Cu&amp;t</source>
-        <translation type="unfinished"/>
+        <translation>&amp;قص</translation>
     </message>
     <message>
         <source>&amp;Copy</source>
-        <translation type="unfinished"/>
+        <translation>ا&amp;نسخ</translation>
     </message>
     <message>
         <source>&amp;Paste</source>
-        <translation type="unfinished"/>
+        <translation>أ&amp;لصق</translation>
     </message>
     <message>
         <source>&amp;View</source>
-        <translation type="unfinished"/>
+        <translation>&amp;عرض</translation>
     </message>
     <message>
         <source>&amp;Insert</source>
-        <translation type="unfinished"/>
+        <translation>أ&amp;درج</translation>
     </message>
     <message>
         <source>&amp;Image</source>
-        <translation type="unfinished"/>
+        <translation>&amp;صورة</translation>
     </message>
     <message>
         <source>F&amp;ormat</source>
@@ -3341,24 +3426,25 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Application</source>
-        <translation type="unfinished"/>
+        <translation>تطبيق</translation>
     </message>
     <message>
         <source>The document has been modified.
 Do you want to save your changes?</source>
-        <translation type="unfinished"/>
+        <translation>تم تعديل المستند
+هل تريد حفظ تعديلاتك؟</translation>
     </message>
     <message>
         <source>Open File...</source>
-        <translation type="unfinished"/>
+        <translation>فتح ملف...</translation>
     </message>
     <message>
         <source>HTML-Files (*.htm *.html);;All Files (*)</source>
-        <translation type="unfinished"/>
+        <translation>ملفات HTML (*.htm *.html);;جميع الملفات (*)</translation>
     </message>
     <message>
         <source>Save as...</source>
-        <translation type="unfinished"/>
+        <translation>حفظ باسم...</translation>
     </message>
     <message>
         <source>ODF files (*.odt);;HTML-Files (*.htm *.html);;All Files (*)</source>
@@ -3366,30 +3452,30 @@ Do you want to save your changes?</source>
     </message>
     <message>
         <source>Print Document</source>
-        <translation type="unfinished"/>
+        <translation>طباعة مستند</translation>
     </message>
     <message>
         <source>Export PDF</source>
-        <translation type="unfinished"/>
+        <translation>صدر PDF</translation>
     </message>
     <message>
         <source>Choose Image</source>
-        <translation type="unfinished"/>
+        <translation>اختر صورة</translation>
     </message>
     <message>
         <source>Image Files supported (*.png *.jpeg *.jpg *.gif)</source>
-        <translation type="unfinished"/>
+        <translation>ملفات الصور المدعومة (*.png *.jpeg *.jpg *.gif)</translation>
     </message>
 </context>
 <context>
     <name>CreateChannel</name>
     <message>
         <source>Create a new Channel</source>
-        <translation type="unfinished"/>
+        <translation>إنشاء قناة جديدة</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>اسم</translation>
     </message>
     <message>
         <source>check peers you would like to share private publish key with</source>
@@ -3397,15 +3483,15 @@ Do you want to save your changes?</source>
     </message>
     <message>
         <source>Share Key With</source>
-        <translation type="unfinished"/>
+        <translation>شارك المفتاح مع</translation>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"/>
+        <translation>الوصف</translation>
     </message>
     <message>
         <source>Type:</source>
-        <translation type="unfinished"/>
+        <translation>النوع:</translation>
     </message>
     <message>
         <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
@@ -3417,19 +3503,19 @@ Do you want to save your changes?</source>
     </message>
     <message>
         <source>Allowed Messages</source>
-        <translation type="unfinished"/>
+        <translation>الرسائل المسموحة</translation>
     </message>
     <message>
         <source>Anonymous Messages</source>
-        <translation type="unfinished"/>
+        <translation>الرسائل المجهولة</translation>
     </message>
     <message>
         <source>Authenticated Messages</source>
-        <translation type="unfinished"/>
+        <translation>رسائل مستوثقة</translation>
     </message>
     <message>
         <source>Key Sharing</source>
-        <translation type="unfinished"/>
+        <translation>مشاركة المفتاح</translation>
     </message>
     <message>
         <source>Key recipients can publish to restricted-type channels, and can view and publish  for private-type channels</source>
@@ -3441,15 +3527,15 @@ Do you want to save your changes?</source>
     </message>
     <message>
         <source>Channel Logo</source>
-        <translation type="unfinished"/>
+        <translation>شعارة القناة</translation>
     </message>
     <message>
         <source>Add Channel Logo</source>
-        <translation type="unfinished"/>
+        <translation>إضافة شعار القناة</translation>
     </message>
     <message>
         <source>New Channel</source>
-        <translation type="unfinished"/>
+        <translation>قناة جديدة</translation>
     </message>
     <message>
         <source>Contacts:</source>
@@ -3457,11 +3543,11 @@ Do you want to save your changes?</source>
     </message>
     <message>
         <source>Please add a Name</source>
-        <translation type="unfinished"/>
+        <translation>يرجى إضافة اسم</translation>
     </message>
     <message>
         <source>Load channel logo</source>
-        <translation type="unfinished"/>
+        <translation>تحميل شعار القناة</translation>
     </message>
 </context>
 <context>
@@ -3490,23 +3576,23 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add File to Attach</source>
-        <translation type="unfinished"/>
+        <translation>إضافة ملف إلى المرفقات</translation>
     </message>
     <message>
         <source>Add Channel Thumbnail</source>
-        <translation type="unfinished"/>
+        <translation>إضافة مصغرة للقناة</translation>
     </message>
     <message>
         <source>Message</source>
-        <translation type="unfinished"/>
+        <translation>رسالة</translation>
     </message>
     <message>
         <source>Subject :</source>
-        <translation type="unfinished"/>
+        <translation>الموضوع:</translation>
     </message>
     <message>
         <source>Attachments</source>
-        <translation type="unfinished"/>
+        <translation>المرفقات</translation>
     </message>
     <message>
         <source>Allow channels to get frame for message thumbnail from movie media attachments or not</source>
@@ -3518,15 +3604,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Drag and Drop Files from Search Results</source>
-        <translation type="unfinished"/>
+        <translation>إسحب و أفلت الملفات من نتائج البحث</translation>
     </message>
     <message>
         <source>Paste RetroShare Links</source>
-        <translation type="unfinished"/>
+        <translation>لصق روابط ريتروشير</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>لصق رابط ريتروشير</translation>
     </message>
     <message>
         <source>You are about to add files you&apos;re not actually sharing. Do you still want this to happen?</source>
@@ -3546,15 +3632,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>File not found or file name not accepted.</source>
-        <translation type="unfinished"/>
+        <translation>لم يعضر على الملف أو اسم الملف غير مقبول.</translation>
     </message>
     <message>
         <source>Add Extra File</source>
-        <translation type="unfinished"/>
+        <translation>إضافة ملف إضافي</translation>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished"/>
+        <translation>ريتروشير</translation>
     </message>
     <message>
         <source>File already Added and Hashed</source>
@@ -3562,7 +3648,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Please add a Subject</source>
-        <translation type="unfinished"/>
+        <translation>يرجى إضافة موضوع</translation>
     </message>
     <message>
         <source>Load thumbnail picture</source>
@@ -3577,7 +3663,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>اسم</translation>
     </message>
     <message>
         <source>Creator</source>
@@ -3589,7 +3675,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Public</source>
-        <translation type="unfinished"/>
+        <translation>عام</translation>
     </message>
     <message>
         <source>Self-Restricted</source>
@@ -3637,15 +3723,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>ID</source>
-        <translation type="unfinished"/>
+        <translation>معرف</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished"/>
+        <translation>النوع</translation>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished"/>
+        <translation>ريتروشير</translation>
     </message>
     <message>
         <source>Please set a name for your Circle</source>
@@ -3684,11 +3770,11 @@ p, li { white-space: pre-wrap; }
     <name>CreateForum</name>
     <message>
         <source>Create new Forum</source>
-        <translation type="unfinished"/>
+        <translation>إنشاء منتدى جديد</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>اسم</translation>
     </message>
     <message>
         <source>check peers you would like to share private publish key with</source>
@@ -3696,15 +3782,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Share Key With</source>
-        <translation type="unfinished"/>
+        <translation>شارك المفتاح مع</translation>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"/>
+        <translation>الوصف</translation>
     </message>
     <message>
         <source>Type:</source>
-        <translation type="unfinished"/>
+        <translation>النوع:</translation>
     </message>
     <message>
         <source>Public - Anyone can read and publish (Shared Publish Key)</source>
@@ -3720,7 +3806,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Key Sharing</source>
-        <translation type="unfinished"/>
+        <translation>مشاركة المفتاح</translation>
     </message>
     <message>
         <source>Key recipients can publish to restricted-type channels, and can view and publish  for private-type channels</source>
@@ -3732,19 +3818,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Allowed Messages</source>
-        <translation type="unfinished"/>
+        <translation>الرسائل المسموحة</translation>
     </message>
     <message>
         <source>Authenticated Messages</source>
-        <translation type="unfinished"/>
+        <translation>رسائل مستوثقة</translation>
     </message>
     <message>
         <source>Anonymous Messages</source>
-        <translation type="unfinished"/>
+        <translation>الرسائل المجهولة</translation>
     </message>
     <message>
         <source>New Forum</source>
-        <translation type="unfinished"/>
+        <translation>منتدى جديد</translation>
     </message>
     <message>
         <source>Contacts:</source>
@@ -3752,7 +3838,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Please add a Name</source>
-        <translation type="unfinished"/>
+        <translation>يرجى إضافة اسم</translation>
     </message>
 </context>
 <context>
@@ -3763,23 +3849,23 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Forum</source>
-        <translation type="unfinished"/>
+        <translation>منتدى</translation>
     </message>
     <message>
         <source>Subject</source>
-        <translation type="unfinished"/>
+        <translation>الموضوع</translation>
     </message>
     <message>
         <source>Attach File</source>
-        <translation type="unfinished"/>
+        <translation>إرفاق ملف</translation>
     </message>
     <message>
         <source>Sign Message</source>
-        <translation type="unfinished"/>
+        <translation>وقع رسالة</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>لصق رابط ريتروشير</translation>
     </message>
     <message>
         <source>Forum Post</source>
@@ -3787,11 +3873,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Attach files via drag and drop</source>
-        <translation type="unfinished"/>
+        <translation>أرفق الملفات بواسطة السحب و الإفلات</translation>
     </message>
     <message>
         <source>You can attach files via drag and drop here in this window</source>
-        <translation type="unfinished"/>
+        <translation>يمكنك إرفاق الملفات بواسطة السحب و الإفلات هنا في هذه النافذة</translation>
     </message>
     <message>
         <source>Start New Thread</source>
@@ -3799,7 +3885,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Paste full RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>لصق رابط ريتروشير كامل</translation>
     </message>
     <message>
         <source>Paste my certificate link</source>
@@ -3811,7 +3897,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished"/>
+        <translation>ريتروشير</translation>
     </message>
     <message>
         <source>Please set a Forum Subject and Forum Message</source>
@@ -3819,30 +3905,38 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add Extra File</source>
-        <translation type="unfinished"/>
+        <translation>إضافة ملف إضافي</translation>
+    </message>
+    <message>
+        <source>Attach a Picture</source>
+        <translation>إرفاق صورة</translation>
+    </message>
+    <message>
+        <source>Load Picture File</source>
+        <translation>تحميل ملف صورة</translation>
     </message>
 </context>
 <context>
     <name>CreateGroup</name>
     <message>
         <source>Create a Group</source>
-        <translation type="unfinished"/>
+        <translation>إنشاء مجموعة</translation>
     </message>
     <message>
         <source>Group Name</source>
-        <translation type="unfinished"/>
+        <translation>اسم المجموعة</translation>
     </message>
     <message>
         <source>Enter a name for your group</source>
-        <translation type="unfinished"/>
+        <translation>أدخل اسم لمجموعتك</translation>
     </message>
     <message>
         <source>Friends</source>
-        <translation type="unfinished"/>
+        <translation>أصدقاء</translation>
     </message>
     <message>
         <source>Edit Group</source>
-        <translation type="unfinished"/>
+        <translation>تعديل المجموعة</translation>
     </message>
 </context>
 <context>
@@ -3871,23 +3965,23 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add File to Attach</source>
-        <translation type="unfinished"/>
+        <translation>إضافة ملف إلى المرفقات</translation>
     </message>
     <message>
         <source>Add Channel Thumbnail</source>
-        <translation type="unfinished"/>
+        <translation>إضافة مصغرة للقناة</translation>
     </message>
     <message>
         <source>Message</source>
-        <translation type="unfinished"/>
+        <translation>رسالة</translation>
     </message>
     <message>
         <source>Subject :</source>
-        <translation type="unfinished"/>
+        <translation>الموضوع:</translation>
     </message>
     <message>
         <source>Attachments</source>
-        <translation type="unfinished"/>
+        <translation>المرفقات</translation>
     </message>
     <message>
         <source>Allow channels to get frame for message thumbnail from movie media attachments or not</source>
@@ -3899,7 +3993,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Drag and Drop Files from Search Results</source>
-        <translation type="unfinished"/>
+        <translation>إسحب و أفلت الملفات من نتائج البحث</translation>
     </message>
     <message>
         <source>New GxsChannel Post</source>
@@ -3907,11 +4001,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Paste RetroShare Links</source>
-        <translation type="unfinished"/>
+        <translation>لصق روابط ريتروشير</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>لصق رابط ريتروشير</translation>
     </message>
     <message>
         <source>GxsChannel security policy prevents you from posting files that you don&apos;t have. If you have these files, you need to share them before, or attach them explicitly:</source>
@@ -3931,15 +4025,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>File not found or file name not accepted.</source>
-        <translation type="unfinished"/>
+        <translation>لم يعضر على الملف أو اسم الملف غير مقبول.</translation>
     </message>
     <message>
         <source>Add Extra File</source>
-        <translation type="unfinished"/>
+        <translation>إضافة ملف إضافي</translation>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished"/>
+        <translation>ريتروشير</translation>
     </message>
     <message>
         <source>File already Added and Hashed</source>
@@ -3947,7 +4041,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Please add a Subject</source>
-        <translation type="unfinished"/>
+        <translation>يرجى إضافة موضوع</translation>
     </message>
     <message>
         <source>Load thumbnail picture</source>
@@ -3966,23 +4060,23 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Forum</source>
-        <translation type="unfinished"/>
+        <translation>منتدى</translation>
     </message>
     <message>
         <source>Subject</source>
-        <translation type="unfinished"/>
+        <translation>الموضوع</translation>
     </message>
     <message>
         <source>Attach File</source>
-        <translation type="unfinished"/>
+        <translation>إرفاق ملف</translation>
     </message>
     <message>
         <source>Sign Message</source>
-        <translation type="unfinished"/>
+        <translation>وقع رسالة</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>لصق رابط ريتروشير</translation>
     </message>
     <message>
         <source>Forum Post</source>
@@ -3990,11 +4084,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Attach files via drag and drop</source>
-        <translation type="unfinished"/>
+        <translation>أرفق الملفات بواسطة السحب و الإفلات</translation>
     </message>
     <message>
         <source>You can attach files via drag and drop here in this window</source>
-        <translation type="unfinished"/>
+        <translation>يمكنك إرفاق الملفات بواسطة السحب و الإفلات هنا في هذه النافذة</translation>
     </message>
     <message>
         <source>Start New Thread</source>
@@ -4002,7 +4096,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Paste full RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>لصق رابط ريتروشير كامل</translation>
     </message>
     <message>
         <source>Paste my certificate link</source>
@@ -4018,7 +4112,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished"/>
+        <translation>ريتروشير</translation>
     </message>
     <message>
         <source>Please set a Forum Subject and Forum Message</source>
@@ -4034,7 +4128,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add Extra File</source>
-        <translation type="unfinished"/>
+        <translation>إضافة ملف إضافي</translation>
     </message>
     <message>
         <source>Generate mass data</source>
@@ -4061,11 +4155,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Your nick name:</source>
-        <translation type="unfinished"/>
+        <translation>لقبك:</translation>
     </message>
     <message>
         <source>Security policy:</source>
-        <translation type="unfinished"/>
+        <translation>سياسة أمنية:</translation>
     </message>
     <message>
         <source>Public (Visible by friends)</source>
@@ -4081,7 +4175,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Invited friends</source>
-        <translation type="unfinished"/>
+        <translation>الأصدقاء المدعوين</translation>
     </message>
     <message>
         <source>Put a sensible lobby name here</source>
@@ -4104,7 +4198,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Private chat</source>
-        <translation type="unfinished"/>
+        <translation>دردشة خاصة</translation>
     </message>
     <message>
         <source>Validity time :</source>
@@ -4195,18 +4289,14 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished"/>
+        <translation>الاسم:</translation>
     </message>
     <message>
         <source>Location:</source>
-        <translation type="unfinished"/>
+        <translation>الموقع:</translation>
     </message>
     <message>
         <source>Location ID:</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Identity ID:</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -4227,11 +4317,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Certificate</source>
-        <translation type="unfinished"/>
+        <translation>شهادة</translation>
     </message>
     <message>
         <source>Include signatures</source>
-        <translation type="unfinished"/>
+        <translation>إدراج تواقيع</translation>
     </message>
     <message>
         <source>Use old key format</source>
@@ -4247,15 +4337,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Save Key</source>
-        <translation type="unfinished"/>
+        <translation>حفظ مفتاح</translation>
     </message>
     <message>
         <source>A RetroShare link with your Public Key is copied to Clipboard, paste and send it to your friend via email or some other way</source>
-        <translation type="unfinished"/>
+        <translation>تم نسخ رابط ريتروشير متضمن مفتاحك العام إلى الحافظة، بإمكانك لصقه و إرساله إلى صديقك بواسطة البريد الإلكتروني أو بوسيلة أخرى</translation>
     </message>
     <message>
         <source>Error</source>
-        <translation type="unfinished"/>
+        <translation>خطأ</translation>
     </message>
     <message>
         <source>Your certificate could not be parsed correctly. Please contact the developers.</source>
@@ -4263,18 +4353,30 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished"/>
+        <translation>ريتروشير</translation>
     </message>
     <message>
         <source>Your Public Key is copied to Clipboard, paste and send it to your friend via email or some other way</source>
-        <translation type="unfinished"/>
+        <translation>تم نسخ مفتاحك العام إلى الحافظة، يمكنك لصقه و إرساله إلى صديقك بواسطة البريد الإلكتروني أو بوسيلة أخرى</translation>
     </message>
     <message>
         <source>Save as...</source>
-        <translation type="unfinished"/>
+        <translation>حفظ باسم...</translation>
     </message>
     <message>
         <source>RetroShare Certificate (*.rsc );;All Files (*)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Identity ID</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>TextLabel</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP fingerprint:</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -4309,19 +4411,19 @@ p, li { white-space: pre-wrap; }
     <name>DLListDelegate</name>
     <message>
         <source>B</source>
-        <translation type="unfinished"/>
+        <translation>بايت</translation>
     </message>
     <message>
         <source>KB</source>
-        <translation type="unfinished"/>
+        <translation>كيلوبايت</translation>
     </message>
     <message>
         <source>MB</source>
-        <translation type="unfinished"/>
+        <translation>ميغابايت</translation>
     </message>
     <message>
         <source>GB</source>
-        <translation type="unfinished"/>
+        <translation>غيغابايت</translation>
     </message>
     <message>
         <source>File Never Seen</source>
@@ -4332,11 +4434,11 @@ p, li { white-space: pre-wrap; }
     <name>DetailsDialog</name>
     <message>
         <source>Details</source>
-        <translation type="unfinished"/>
+        <translation>التفاصيل</translation>
     </message>
     <message>
         <source>General</source>
-        <translation type="unfinished"/>
+        <translation>عا</translation>
     </message>
     <message>
         <source>Done</source>
@@ -4356,7 +4458,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>retroshare link(s)</source>
-        <translation type="unfinished"/>
+        <translation>روابط ريتروشير</translation>
     </message>
     <message>
         <source>retroshare link</source>
@@ -4368,15 +4470,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Rating</source>
-        <translation type="unfinished"/>
+        <translation>التقييم</translation>
     </message>
     <message>
         <source>Comments</source>
-        <translation type="unfinished"/>
+        <translation>تعليقات</translation>
     </message>
     <message>
         <source>File Name</source>
-        <translation type="unfinished"/>
+        <translation>اسم الملف</translation>
     </message>
 </context>
 <context>
@@ -4391,15 +4493,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Net Status</source>
-        <translation type="unfinished"/>
+        <translation>حالة الشبكة</translation>
     </message>
     <message>
         <source>Connect Options</source>
-        <translation type="unfinished"/>
+        <translation>خيارات الاتصال</translation>
     </message>
     <message>
         <source>Network Mode</source>
-        <translation type="unfinished"/>
+        <translation>نمط الشبكة</translation>
     </message>
     <message>
         <source>Nat Type</source>
@@ -4423,7 +4525,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>اسم</translation>
     </message>
     <message>
         <source>PeerId</source>
@@ -4463,11 +4565,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>IP:Port</source>
-        <translation type="unfinished"/>
+        <translation>IP:منفذ</translation>
     </message>
     <message>
         <source>Key</source>
-        <translation type="unfinished"/>
+        <translation>مفتاح</translation>
     </message>
     <message>
         <source>Status Flags</source>
@@ -4479,15 +4581,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Last Sent</source>
-        <translation type="unfinished"/>
+        <translation>آخر إرسال</translation>
     </message>
     <message>
         <source>Last Recv</source>
-        <translation type="unfinished"/>
+        <translation>آخر استقبال</translation>
     </message>
     <message>
         <source>Relay Mode</source>
-        <translation type="unfinished"/>
+        <translation>نمط الدارة</translation>
     </message>
     <message>
         <source>Source</source>
@@ -4495,7 +4597,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Proxy</source>
-        <translation type="unfinished"/>
+        <translation>وسيط</translation>
     </message>
     <message>
         <source>Destination</source>
@@ -4511,7 +4613,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Bandwidth</source>
-        <translation type="unfinished"/>
+        <translation>عرض الحزمة</translation>
     </message>
     <message>
         <source>Unknown NetState</source>
@@ -4519,7 +4621,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Offline</source>
-        <translation type="unfinished"/>
+        <translation>غير متصل</translation>
     </message>
     <message>
         <source>Local Net</source>
@@ -4683,7 +4785,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Unknown</source>
-        <translation type="unfinished"/>
+        <translation>مجهول</translation>
     </message>
     <message>
         <source>#Peers: </source>
@@ -4762,11 +4864,11 @@ p, li { white-space: pre-wrap; }
     <name>DirectoriesPage</name>
     <message>
         <source>Incoming Directory</source>
-        <translation type="unfinished"/>
+        <translation>مجلد الوارد</translation>
     </message>
     <message>
         <source>Browse</source>
-        <translation type="unfinished"/>
+        <translation>استعرض</translation>
     </message>
     <message>
         <source>Partials Directory</source>
@@ -4774,15 +4876,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Shared Directories</source>
-        <translation type="unfinished"/>
+        <translation>مجلدات المشاركة</translation>
     </message>
     <message>
         <source>Automatically share incoming directory (Recommended)</source>
-        <translation type="unfinished"/>
+        <translation>مشاركة تلقائية للمجلدات الواردة (مستحسن)</translation>
     </message>
     <message>
         <source>Edit Share</source>
-        <translation type="unfinished"/>
+        <translation>تعديل المشاركة</translation>
     </message>
     <message>
         <source>Remember file hashes even if not shared. 
@@ -4797,7 +4899,7 @@ you plug it in.</source>
     </message>
     <message>
         <source> days</source>
-        <translation type="unfinished"/>
+        <translation>أيام</translation>
     </message>
     <message>
         <source>Forget any hashed file that is not anymore shared.</source>
@@ -4809,11 +4911,11 @@ you plug it in.</source>
     </message>
     <message>
         <source>Auto-check shared directories every </source>
-        <translation type="unfinished"/>
+        <translation>تحقق تلقائي من المجلدات المشتركة كل</translation>
     </message>
     <message>
         <source> minute(s)</source>
-        <translation type="unfinished"/>
+        <translation>دقائق</translation>
     </message>
     <message>
         <source>Cache cleaning confirmation</source>
@@ -4825,7 +4927,7 @@ you plug it in.</source>
     </message>
     <message>
         <source>Set Incoming Directory</source>
-        <translation type="unfinished"/>
+        <translation>تعين مجلد الوارد</translation>
     </message>
     <message>
         <source>Set Partials Directory</source>
@@ -4833,7 +4935,7 @@ you plug it in.</source>
     </message>
     <message>
         <source>Directories</source>
-        <translation type="unfinished"/>
+        <translation>المجلدات</translation>
     </message>
 </context>
 <context>
@@ -4858,54 +4960,54 @@ you plug it in.</source>
     <name>EditChanDetails</name>
     <message>
         <source>Channel Details</source>
-        <translation type="unfinished"/>
+        <translation>تفاصيل القناة</translation>
     </message>
     <message>
         <source>Edit Channel Details</source>
-        <translation type="unfinished"/>
+        <translation>تعديل تفاصيل القناة</translation>
     </message>
     <message>
         <source>Channel Info</source>
-        <translation type="unfinished"/>
+        <translation>معلومات القتاة</translation>
     </message>
     <message>
         <source>Channel Name</source>
-        <translation type="unfinished"/>
+        <translation>اسم القناة</translation>
     </message>
     <message>
         <source>Channel Description</source>
-        <translation type="unfinished"/>
+        <translation>وصف القناة</translation>
     </message>
     <message>
         <source>Add Channel Logo</source>
-        <translation type="unfinished"/>
+        <translation>إضافة شعار القناة</translation>
     </message>
     <message>
         <source>Load channel logo</source>
-        <translation type="unfinished"/>
+        <translation>تحميل شعار القناة</translation>
     </message>
 </context>
 <context>
     <name>EditForumDetails</name>
     <message>
         <source>Forum Details</source>
-        <translation type="unfinished"/>
+        <translation>تفاصيل المنتدى</translation>
     </message>
     <message>
         <source>Edit Forum Details</source>
-        <translation type="unfinished"/>
+        <translation>تعديل تفاصيل المنتدى</translation>
     </message>
     <message>
         <source>Forum Info</source>
-        <translation type="unfinished"/>
+        <translation>معلومات عن المنتدى</translation>
     </message>
     <message>
         <source>Forum Name</source>
-        <translation type="unfinished"/>
+        <translation>اسم المنتدى</translation>
     </message>
     <message>
         <source>Forum Description</source>
-        <translation type="unfinished"/>
+        <translation>وصف المنتدى</translation>
     </message>
 </context>
 <context>
@@ -4919,7 +5021,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>#</source>
-        <translation type="unfinished"/>
+        <translation>#</translation>
     </message>
     <message>
         <source>Status</source>
@@ -4927,15 +5029,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Person</source>
-        <translation type="unfinished"/>
+        <translation>شخص</translation>
     </message>
     <message>
         <source>Auto Connect</source>
-        <translation type="unfinished"/>
+        <translation>اتصال تلقائي</translation>
     </message>
     <message>
         <source>Trust Level</source>
-        <translation type="unfinished"/>
+        <translation>مستوى الثقة</translation>
     </message>
     <message>
         <source>Peer Address</source>
@@ -4951,11 +5053,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Location</source>
-        <translation type="unfinished"/>
+        <translation>الموقع</translation>
     </message>
     <message>
         <source>Country</source>
-        <translation type="unfinished"/>
+        <translation>الدولة</translation>
     </message>
     <message>
         <source>Person Id</source>
@@ -4978,11 +5080,11 @@ p, li { white-space: pre-wrap; }
     <name>ExprParamElement</name>
     <message>
         <source>to</source>
-        <translation type="unfinished"/>
+        <translation>إلى</translation>
     </message>
     <message>
         <source>ignore case</source>
-        <translation type="unfinished"/>
+        <translation>تجاهل الحالة</translation>
     </message>
     <message>
         <source>dd.MM.yyyy</source>
@@ -4990,15 +5092,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>KB</source>
-        <translation type="unfinished"/>
+        <translation>كيلوبايت</translation>
     </message>
     <message>
         <source>MB</source>
-        <translation type="unfinished"/>
+        <translation>ميغابايت</translation>
     </message>
     <message>
         <source>GB</source>
-        <translation type="unfinished"/>
+        <translation>غيغابايت</translation>
     </message>
 </context>
 <context>
@@ -5009,14 +5111,14 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Delete this expression</source>
-        <translation type="unfinished"/>
+        <translation>إحذف هذه الصيفة</translation>
     </message>
 </context>
 <context>
     <name>FileAssociationsPage</name>
     <message>
         <source>&amp;New</source>
-        <translation type="unfinished"/>
+        <translation>&amp;جديد</translation>
     </message>
     <message>
         <source>Add new Association</source>
@@ -5024,7 +5126,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>&amp;Edit</source>
-        <translation type="unfinished"/>
+        <translation>ت&amp;حرير</translation>
     </message>
     <message>
         <source>Edit this Association</source>
@@ -5040,11 +5142,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>File type</source>
-        <translation type="unfinished"/>
+        <translation>نوع الملف</translation>
     </message>
     <message>
         <source> Friend Help</source>
-        <translation type="unfinished"/>
+        <translation>مساعدة صديق</translation>
     </message>
     <message>
         <source>You  this</source>
@@ -5075,7 +5177,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>File info</source>
-        <translation type="unfinished"/>
+        <translation>معلومات الملف </translation>
     </message>
     <message>
         <source>File name</source>
@@ -5091,11 +5193,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>File size</source>
-        <translation type="unfinished"/>
+        <translation>حجم الملف</translation>
     </message>
     <message>
         <source>bytes</source>
-        <translation type="unfinished"/>
+        <translation>بايتات</translation>
     </message>
     <message>
         <source>Chunk size</source>
@@ -5111,11 +5213,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Remaining</source>
-        <translation type="unfinished"/>
+        <translation>المتبقي</translation>
     </message>
     <message>
         <source>Number of sources</source>
-        <translation type="unfinished"/>
+        <translation>عدد المصادر</translation>
     </message>
     <message>
         <source>Chunk strategy</source>
@@ -5123,7 +5225,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Transfer type</source>
-        <translation type="unfinished"/>
+        <translation>نوع النقل</translation>
     </message>
     <message>
         <source>Anonymous F2F</source>
@@ -5138,31 +5240,31 @@ p, li { white-space: pre-wrap; }
     <name>FilesDefs</name>
     <message>
         <source>Picture</source>
-        <translation type="unfinished"/>
+        <translation>صورة</translation>
     </message>
     <message>
         <source>Video</source>
-        <translation type="unfinished"/>
+        <translation>فيديو</translation>
     </message>
     <message>
         <source>Audio</source>
-        <translation type="unfinished"/>
+        <translation>صوت</translation>
     </message>
     <message>
         <source>Archive</source>
-        <translation type="unfinished"/>
+        <translation>أرشيف</translation>
     </message>
     <message>
         <source>Program</source>
-        <translation type="unfinished"/>
+        <translation>برنامج</translation>
     </message>
     <message>
         <source>CD/DVD-Image</source>
-        <translation type="unfinished"/>
+        <translation>صورة عن سي دي/دي في دي</translation>
     </message>
     <message>
         <source>Document</source>
-        <translation type="unfinished"/>
+        <translation>مستند</translation>
     </message>
     <message>
         <source>RetroShare collection file</source>
@@ -5181,15 +5283,15 @@ p, li { white-space: pre-wrap; }
     <name>FlatStyle_RDM</name>
     <message>
         <source>Friends Directories</source>
-        <translation type="unfinished"/>
+        <translation>مجلدات الأصدقاء</translation>
     </message>
     <message>
         <source>My Directories</source>
-        <translation type="unfinished"/>
+        <translation>مجلداتي</translation>
     </message>
     <message>
         <source>Size</source>
-        <translation type="unfinished"/>
+        <translation>الحجم</translation>
     </message>
     <message>
         <source>Age</source>
@@ -5197,7 +5299,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Friend</source>
-        <translation type="unfinished"/>
+        <translation>صديق</translation>
     </message>
     <message>
         <source>Share Flags</source>
@@ -5205,73 +5307,73 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Directory</source>
-        <translation type="unfinished"/>
+        <translation>مجلد</translation>
     </message>
 </context>
 <context>
     <name>ForumDetails</name>
     <message>
         <source>Forum Details</source>
-        <translation type="unfinished"/>
+        <translation>تفاصيل المنتدى</translation>
     </message>
     <message>
         <source>Forum Info</source>
-        <translation type="unfinished"/>
+        <translation>معلومات عن المنتدى</translation>
     </message>
     <message>
         <source>Forum Name</source>
-        <translation type="unfinished"/>
+        <translation>اسم المنتدى</translation>
     </message>
     <message>
         <source>Popularity</source>
-        <translation type="unfinished"/>
+        <translation>الشعبية</translation>
     </message>
     <message>
         <source>Last Post</source>
-        <translation type="unfinished"/>
+        <translation>آخر مساهمة</translation>
     </message>
     <message>
         <source>Forum ID</source>
-        <translation type="unfinished"/>
+        <translation>معرف المنتدى</translation>
     </message>
     <message>
         <source>Forum Description</source>
-        <translation type="unfinished"/>
+        <translation>وصف المنتدى</translation>
     </message>
     <message>
         <source>Security</source>
-        <translation type="unfinished"/>
+        <translation>الأمن</translation>
     </message>
     <message>
         <source>Allowed Messages</source>
-        <translation type="unfinished"/>
+        <translation>الرسائل المسموحة</translation>
     </message>
     <message>
         <source>Authenticated Messages</source>
-        <translation type="unfinished"/>
+        <translation>رسائل مستوثقة</translation>
     </message>
     <message>
         <source>Anonymous Messages</source>
-        <translation type="unfinished"/>
+        <translation>الرسائل المجهولة</translation>
     </message>
 </context>
 <context>
     <name>ForumMsgItem</name>
     <message>
         <source>Subject: </source>
-        <translation type="unfinished"/>
+        <translation>الموضوع:</translation>
     </message>
     <message>
         <source>Unsubscribe To Forum</source>
-        <translation type="unfinished"/>
+        <translation>إلغاء الاشتراك في المنتدى</translation>
     </message>
     <message>
         <source>Reply</source>
-        <translation type="unfinished"/>
+        <translation>رد</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished"/>
+        <translation>توسيع</translation>
     </message>
     <message>
         <source>Set as read and remove item</source>
@@ -5279,15 +5381,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished"/>
+        <translation>إزالة عنصر</translation>
     </message>
     <message>
         <source>Send</source>
-        <translation type="unfinished"/>
+        <translation>إرسال</translation>
     </message>
     <message>
         <source>Signed</source>
-        <translation type="unfinished"/>
+        <translation>موقع</translation>
     </message>
     <message>
         <source>Forum Post</source>
@@ -5299,7 +5401,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Anonymous</source>
-        <translation type="unfinished"/>
+        <translation>مجهول</translation>
     </message>
     <message>
         <source>In Reply to</source>
@@ -5307,30 +5409,30 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"/>
+        <translation>إخفاء</translation>
     </message>
     <message>
         <source>Please give a Text Message</source>
-        <translation type="unfinished"/>
+        <translation>من فضلك أدخل رسالة نصية</translation>
     </message>
 </context>
 <context>
     <name>ForumNewItem</name>
     <message>
         <source>Subscribe to Forum</source>
-        <translation type="unfinished"/>
+        <translation>اشتراك بالمنتدى</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished"/>
+        <translation>توسيع</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished"/>
+        <translation>إزالة عنصر</translation>
     </message>
     <message>
         <source>Forum Description</source>
-        <translation type="unfinished"/>
+        <translation>وصف المنتدى</translation>
     </message>
     <message>
         <source>Unknown Forum</source>
@@ -5338,7 +5440,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>New Forum</source>
-        <translation type="unfinished"/>
+        <translation>منتدى جديد</translation>
     </message>
     <message>
         <source>Updated Forum</source>
@@ -5346,7 +5448,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"/>
+        <translation>إخفاء</translation>
     </message>
 </context>
 <context>
@@ -5373,6 +5475,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Forum</source>
+        <translation>منتدى</translation>
+    </message>
+    <message>
+        <source>Load embedded images</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -5387,19 +5493,19 @@ p, li { white-space: pre-wrap; }
     <name>ForumsDialog</name>
     <message>
         <source>Forums</source>
-        <translation type="unfinished"/>
+        <translation>منتديات</translation>
     </message>
     <message>
         <source>Create Forum</source>
-        <translation type="unfinished"/>
+        <translation>إنشاء منتدى</translation>
     </message>
     <message>
         <source>Forum:</source>
-        <translation type="unfinished"/>
+        <translation>منتدى:</translation>
     </message>
     <message>
         <source>Last Post</source>
-        <translation type="unfinished"/>
+        <translation>آخر مساهمة</translation>
     </message>
     <message>
         <source>Threaded View</source>
@@ -5411,19 +5517,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Title</source>
-        <translation type="unfinished"/>
+        <translation>عنوان</translation>
     </message>
     <message>
         <source>Date</source>
-        <translation type="unfinished"/>
+        <translation>التاريخ</translation>
     </message>
     <message>
         <source>Author</source>
-        <translation type="unfinished"/>
+        <translation>المؤلف</translation>
     </message>
     <message>
         <source>Signed</source>
-        <translation type="unfinished"/>
+        <translation>موقع</translation>
     </message>
     <message>
         <source>Thread:</source>
@@ -5439,7 +5545,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Download all files</source>
-        <translation type="unfinished"/>
+        <translation>تحميل كل الملفات</translation>
     </message>
     <message>
         <source>Next unread</source>
@@ -5451,19 +5557,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Reply Message</source>
-        <translation type="unfinished"/>
+        <translation>الرد على الرسالة</translation>
     </message>
     <message>
         <source>Loading</source>
-        <translation type="unfinished"/>
+        <translation>جاري التحميل</translation>
     </message>
     <message>
         <source>Print</source>
-        <translation type="unfinished"/>
+        <translation>طباعة</translation>
     </message>
     <message>
         <source>PrintPreview</source>
-        <translation type="unfinished"/>
+        <translation>معاينة الطباعة</translation>
     </message>
     <message>
         <source>My Forums</source>
@@ -5471,15 +5577,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Subscribed Forums</source>
-        <translation type="unfinished"/>
+        <translation>المنتديات المشترك بها</translation>
     </message>
     <message>
         <source>Popular Forums</source>
-        <translation type="unfinished"/>
+        <translation>منتديات ذات شعبية</translation>
     </message>
     <message>
         <source>Other Forums</source>
-        <translation type="unfinished"/>
+        <translation>منتديات أخرى</translation>
     </message>
     <message>
         <source>Search Title</source>
@@ -5495,7 +5601,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Content</source>
-        <translation type="unfinished"/>
+        <translation>المحتوى</translation>
     </message>
     <message>
         <source>Search Content</source>
@@ -5503,35 +5609,35 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Subscribe to Forum</source>
-        <translation type="unfinished"/>
+        <translation>اشترك بمنتدى</translation>
     </message>
     <message>
         <source>Unsubscribe to Forum</source>
-        <translation type="unfinished"/>
+        <translation>إلغاء الاشتراك بالمنتدى</translation>
     </message>
     <message>
         <source>New Forum</source>
-        <translation type="unfinished"/>
+        <translation>منتدى جديد</translation>
     </message>
     <message>
         <source>Show Forum Details</source>
-        <translation type="unfinished"/>
+        <translation>إظهار تفاصيل المنتدى</translation>
     </message>
     <message>
         <source>Edit Forum Details</source>
-        <translation type="unfinished"/>
+        <translation>تعديل تفاصيل المنتدى</translation>
     </message>
     <message>
         <source>Share Forum</source>
-        <translation type="unfinished"/>
+        <translation>مشاركة المنتدى</translation>
     </message>
     <message>
         <source>Restore Publish Rights for Forum</source>
-        <translation type="unfinished"/>
+        <translation>استعادة صلاحية النشر الخاصة بالمنتدى</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>نسخ رابط ريتروشير</translation>
     </message>
     <message>
         <source>Mark all as read</source>
@@ -5543,7 +5649,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Reply</source>
-        <translation type="unfinished"/>
+        <translation>رد</translation>
     </message>
     <message>
         <source>Start New Thread</source>
@@ -5551,7 +5657,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Reply to Author</source>
-        <translation type="unfinished"/>
+        <translation>رد على المؤلف</translation>
     </message>
     <message>
         <source>Expand all</source>
@@ -5575,11 +5681,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"/>
+        <translation>إخفاء</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished"/>
+        <translation>توسيع</translation>
     </message>
     <message>
         <source>AUTHD</source>
@@ -5587,7 +5693,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>[ ... Missing Message ... ]</source>
-        <translation type="unfinished"/>
+        <translation>[ ... رسالة مفقودة ... ]</translation>
     </message>
     <message>
         <source>Placeholder for missing Message</source>
@@ -5595,27 +5701,27 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished"/>
+        <translation>ريتروشير</translation>
     </message>
     <message>
         <source>No Forum Selected!</source>
-        <translation type="unfinished"/>
+        <translation>لم يتم اختيار أي منتدى!</translation>
     </message>
     <message>
         <source>Original Message</source>
-        <translation type="unfinished"/>
+        <translation>الرسالة الأصلية</translation>
     </message>
     <message>
         <source>From</source>
-        <translation type="unfinished"/>
+        <translation>من</translation>
     </message>
     <message>
         <source>Sent</source>
-        <translation type="unfinished"/>
+        <translation>إرسال</translation>
     </message>
     <message>
         <source>Subject</source>
-        <translation type="unfinished"/>
+        <translation>الموضوع</translation>
     </message>
     <message>
         <source>On %1, %2 wrote:</source>
@@ -5627,10 +5733,14 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Forum Description</source>
-        <translation type="unfinished"/>
+        <translation>وصف المنتدى</translation>
     </message>
     <message>
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Forums&lt;/h1&gt;                                  &lt;p&gt;Retroshare Forums look like internet forums, but they work in a decentralized way:                         You see forums your friends are subscribed to, and you forward subscribed forums to                          your friends. This automatically promotes interesting forums in the network.&lt;/p&gt;                         &lt;p&gt;Forums are either Authenticated (&lt;img src=&quot;:/images/konv_message2.png&quot; width=&quot;12&quot;/&gt;) in which case you need to cryptographically sign                          your posts, or anonymous (&lt;img src=&quot;:/images/konversation.png&quot; width=&quot;12&quot;/&gt;). The former class is more resistant to spamming.&lt;/p&gt;                     &lt;p&gt;Forum posts propagate from friend to friend using small cache file exchanges. When you first connect to a new friend, it&apos;s likely     you will receive many such cache files, and new forums will appear.     &lt;/p&gt;                                        </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Load images always for this message</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -5638,15 +5748,15 @@ p, li { white-space: pre-wrap; }
     <name>ForumsFillThread</name>
     <message>
         <source>Unknown</source>
-        <translation type="unfinished"/>
+        <translation>مجهول</translation>
     </message>
     <message>
         <source>Anonymous</source>
-        <translation type="unfinished"/>
+        <translation>مجهول</translation>
     </message>
     <message>
         <source>signed</source>
-        <translation type="unfinished"/>
+        <translation>موقع</translation>
     </message>
     <message>
         <source>none</source>
@@ -5657,7 +5767,7 @@ p, li { white-space: pre-wrap; }
     <name>FriendList</name>
     <message>
         <source>Friends</source>
-        <translation type="unfinished"/>
+        <translation>أصدقاء</translation>
     </message>
     <message>
         <source>Status</source>
@@ -5669,11 +5779,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Avatar</source>
-        <translation type="unfinished"/>
+        <translation>صورة رمزية</translation>
     </message>
     <message>
         <source>Hide Offline Friends</source>
-        <translation type="unfinished"/>
+        <translation>إخفاء الأصدقاء غير المتصلين</translation>
     </message>
     <message>
         <source>State</source>
@@ -5681,31 +5791,31 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Sort by State</source>
-        <translation type="unfinished"/>
+        <translation>الترتيب وفق الحالة</translation>
     </message>
     <message>
         <source>Hide State</source>
-        <translation type="unfinished"/>
+        <translation>إخفاء الحالة</translation>
     </message>
     <message>
         <source>Sort Descending Order</source>
-        <translation type="unfinished"/>
+        <translation>ترتيب تنازلي</translation>
     </message>
     <message>
         <source>Sort Ascending Order</source>
-        <translation type="unfinished"/>
+        <translation>ترتيب تصاعدي</translation>
     </message>
     <message>
         <source>Show Avatar Column</source>
-        <translation type="unfinished"/>
+        <translation>إظهار عمود الصورة الرمزية</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>اسم</translation>
     </message>
     <message>
         <source>Sort by Name</source>
-        <translation type="unfinished"/>
+        <translation>التريب وفق الاسم</translation>
     </message>
     <message>
         <source>Sort by last contact</source>
@@ -5725,87 +5835,79 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Show Groups</source>
-        <translation type="unfinished"/>
+        <translation>إظهار المجموعات</translation>
     </message>
     <message>
         <source>Group</source>
-        <translation type="unfinished"/>
+        <translation>المجموعة</translation>
     </message>
     <message>
         <source>Friend</source>
-        <translation type="unfinished"/>
+        <translation>صديق</translation>
     </message>
     <message>
         <source>Location</source>
-        <translation type="unfinished"/>
+        <translation>الموقع</translation>
     </message>
     <message>
         <source>Message Group</source>
-        <translation type="unfinished"/>
+        <translation>راسل مجموعة</translation>
     </message>
     <message>
         <source>Edit Group</source>
-        <translation type="unfinished"/>
+        <translation>تعديل المجموعة</translation>
     </message>
     <message>
         <source>Remove Group</source>
-        <translation type="unfinished"/>
+        <translation>إزالة المجموعة</translation>
     </message>
     <message>
         <source>Chat</source>
-        <translation type="unfinished"/>
+        <translation>دردشة</translation>
     </message>
     <message>
         <source>Message Friend</source>
-        <translation type="unfinished"/>
+        <translation>راسل صديق</translation>
     </message>
     <message>
         <source>Friend Details</source>
-        <translation type="unfinished"/>
+        <translation>تفاصيل الصديق</translation>
     </message>
     <message>
         <source>Recommend this Friend to...</source>
-        <translation type="unfinished"/>
+        <translation>إنصح هذا الصديق بأن...</translation>
     </message>
     <message>
         <source>Copy certificate link</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Copy RetroShare Link</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Paste Friend Link</source>
-        <translation type="unfinished"/>
+        <translation>نسخ رابط الشهادة</translation>
     </message>
     <message>
         <source>Deny Friend</source>
-        <translation type="unfinished"/>
+        <translation>رفض صديق</translation>
     </message>
     <message>
         <source>Remove Friend Location</source>
-        <translation type="unfinished"/>
+        <translation>إزالة موقع الصديق</translation>
     </message>
     <message>
         <source>Add to group</source>
-        <translation type="unfinished"/>
+        <translation>أضف إلى المجموعة</translation>
     </message>
     <message>
         <source>Move to group</source>
-        <translation type="unfinished"/>
+        <translation>إنقل إلى المجموعة</translation>
     </message>
     <message>
         <source>Groups</source>
-        <translation type="unfinished"/>
+        <translation>مجموعات</translation>
     </message>
     <message>
         <source>Remove from group</source>
-        <translation type="unfinished"/>
+        <translation>إزالة من المجموعة</translation>
     </message>
     <message>
         <source>Remove from all groups</source>
-        <translation type="unfinished"/>
+        <translation>إزالة من كافة المجموعات</translation>
     </message>
     <message>
         <source>Expand all</source>
@@ -5817,15 +5919,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Available</source>
-        <translation type="unfinished"/>
+        <translation>متاح</translation>
     </message>
     <message>
         <source>Do you want to remove this Friend?</source>
-        <translation type="unfinished"/>
+        <translation>هل تريد إزالة هذا الصديق؟</translation>
     </message>
     <message>
         <source>Columns</source>
-        <translation type="unfinished"/>
+        <translation>أعمدة</translation>
     </message>
     <message>
         <source>IP</source>
@@ -5849,6 +5951,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Display</source>
+        <translation>عرض</translation>
+    </message>
+    <message>
+        <source>Paste certificate link</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -5856,15 +5962,15 @@ p, li { white-space: pre-wrap; }
     <name>FriendRequestToaster</name>
     <message>
         <source>Confirm Friend Request</source>
-        <translation type="unfinished"/>
+        <translation>الموافقة على طلب الصداقة</translation>
     </message>
     <message>
         <source>wants to be friend with you on RetroShare</source>
-        <translation type="unfinished"/>
+        <translation>يريد أن يكون صديقك ضمن ريتروشير</translation>
     </message>
     <message>
         <source>Unknown (Incoming) Connect Attempt</source>
-        <translation type="unfinished"/>
+        <translation>محاولة اتصال (وارد) مجهولة</translation>
     </message>
 </context>
 <context>
@@ -5883,7 +5989,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>اسم</translation>
     </message>
     <message>
         <source>Search Friends</source>
@@ -5894,7 +6000,7 @@ p, li { white-space: pre-wrap; }
     <name>FriendsDialog</name>
     <message>
         <source>Friends</source>
-        <translation type="unfinished"/>
+        <translation>أصدقاء</translation>
     </message>
     <message>
         <source>Edit status message</source>
@@ -5906,35 +6012,35 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Bold</source>
-        <translation type="unfinished"/>
+        <translation>غامق</translation>
     </message>
     <message>
         <source>Underline</source>
-        <translation type="unfinished"/>
+        <translation>تسطير</translation>
     </message>
     <message>
         <source>Italic</source>
-        <translation type="unfinished"/>
+        <translation>مائل</translation>
     </message>
     <message>
         <source>Font</source>
-        <translation type="unfinished"/>
+        <translation>خط</translation>
     </message>
     <message>
         <source>Text Color</source>
-        <translation type="unfinished"/>
+        <translation>لون النص</translation>
     </message>
     <message>
         <source>Attach File</source>
-        <translation type="unfinished"/>
+        <translation>إرفاق ملف</translation>
     </message>
     <message>
         <source>Send</source>
-        <translation type="unfinished"/>
+        <translation>إرسال</translation>
     </message>
     <message>
         <source>Messages entered here are sent to all connected friends</source>
-        <translation type="unfinished"/>
+        <translation>الرسائل المدخلة هنا قد تم ارسالها إلى كافة الأصدقاء المتصلين</translation>
     </message>
     <message>
         <source>Clear Chat History</source>
@@ -5942,11 +6048,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add Friend</source>
-        <translation type="unfinished"/>
+        <translation>إضافة صديق</translation>
     </message>
     <message>
         <source>Add your Avatar Picture</source>
-        <translation type="unfinished"/>
+        <translation>أضف صورتك الرمزية</translation>
     </message>
     <message>
         <source>A</source>
@@ -5974,7 +6080,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add a new Group</source>
-        <translation type="unfinished"/>
+        <translation>إضافة مجموعة جديدة</translation>
     </message>
     <message>
         <source>Delete Chat History</source>
@@ -5990,7 +6096,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Choose Font</source>
-        <translation type="unfinished"/>
+        <translation>اختر الخط</translation>
     </message>
     <message>
         <source>Reset font to default</source>
@@ -6002,11 +6108,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Paste RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>لصق رابط ريتروشير</translation>
     </message>
     <message>
         <source>is typing...</source>
-        <translation type="unfinished"/>
+        <translation>يـكتب...</translation>
     </message>
     <message>
         <source>New group chat</source>
@@ -6018,15 +6124,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add Extra File</source>
-        <translation type="unfinished"/>
+        <translation>إضافة ملف إضافي</translation>
     </message>
     <message>
         <source>Save as...</source>
-        <translation type="unfinished"/>
+        <translation>حفظ باسم...</translation>
     </message>
     <message>
         <source>Text File (*.txt );;All Files (*)</source>
-        <translation type="unfinished"/>
+        <translation>ملف نصي (txt.*);;جميع الملفات (*)</translation>
     </message>
     <message>
         <source>Keyring</source>
@@ -6038,11 +6144,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Attach a Picture</source>
-        <translation type="unfinished"/>
+        <translation>إرفاق صورة</translation>
     </message>
     <message>
         <source>Load Picture File</source>
-        <translation type="unfinished"/>
+        <translation>تحميل ملف صورة</translation>
     </message>
     <message>
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Friends&lt;/h1&gt;                                       &lt;p&gt;The Friends tab shows...your friends: the list of persons you have accepted to connect to.                       &lt;/p&gt;                                                       &lt;p&gt;You can group friends together to allow a finer level of information access, for instance to only allow          some friends to see some files.&lt;/p&gt;     &lt;p&gt;On the right, you will find 3 useful tabs:                                                                       &lt;ul&gt;                                                                                                                &lt;li&gt;Broadcast sends messages to all connected friends at once&lt;/li&gt;                                   &lt;li&gt;Local Network shows the network around you, including friends of your friends&lt;/li&gt;                       &lt;li&gt;Keyring contains keys you collected, mostly forwarded to you by your friends&lt;/li&gt;                                  &lt;/ul&gt; &lt;/p&gt;                                                                                                        </source>
@@ -6053,7 +6159,7 @@ p, li { white-space: pre-wrap; }
     <name>GamesDialog</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"/>
+        <translation>من</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
@@ -6064,7 +6170,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Game:</source>
-        <translation type="unfinished"/>
+        <translation>اللعبة:</translation>
     </message>
     <message>
         <source>GameType: 0. Want to Add your Game here?</source>
@@ -6080,23 +6186,23 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Title / Comment</source>
-        <translation type="unfinished"/>
+        <translation>العنوان / التعليق</translation>
     </message>
     <message>
         <source>Create New Game</source>
-        <translation type="unfinished"/>
+        <translation>إنشاء لعبة جديدة</translation>
     </message>
     <message>
         <source>Invite All Friends</source>
-        <translation type="unfinished"/>
+        <translation>ادعوا جميع الأصدقاء</translation>
     </message>
     <message>
         <source>Game Type</source>
-        <translation type="unfinished"/>
+        <translation>نوع اللعبة</translation>
     </message>
     <message>
         <source>Server</source>
-        <translation type="unfinished"/>
+        <translation>المخدم</translation>
     </message>
     <message>
         <source>Status</source>
@@ -6104,27 +6210,27 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Comment</source>
-        <translation type="unfinished"/>
+        <translation>تعليق</translation>
     </message>
     <message>
         <source>GameID</source>
-        <translation type="unfinished"/>
+        <translation>معرف اللعبة</translation>
     </message>
     <message>
         <source>Player</source>
-        <translation type="unfinished"/>
+        <translation>اللاعب</translation>
     </message>
     <message>
         <source>Invite</source>
-        <translation type="unfinished"/>
+        <translation>ادعو</translation>
     </message>
     <message>
         <source>Interested</source>
-        <translation type="unfinished"/>
+        <translation>مهتم</translation>
     </message>
     <message>
         <source>Accept</source>
-        <translation type="unfinished"/>
+        <translation>قبول</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -6132,15 +6238,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Move Player</source>
-        <translation type="unfinished"/>
+        <translation>نقل اللاعب</translation>
     </message>
     <message>
         <source>Play Game</source>
-        <translation type="unfinished"/>
+        <translation>إلعب اللعبة</translation>
     </message>
     <message>
         <source>Cancel Game</source>
-        <translation type="unfinished"/>
+        <translation>إلغاء اللعبة</translation>
     </message>
     <message>
         <source>Add to Invite List</source>
@@ -6152,15 +6258,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Interested in Playing</source>
-        <translation type="unfinished"/>
+        <translation>مهتم باللعب</translation>
     </message>
     <message>
         <source>Not Interested in Game</source>
-        <translation type="unfinished"/>
+        <translation>غير مهتم باللعبة</translation>
     </message>
     <message>
         <source>Not Interested</source>
-        <translation type="unfinished"/>
+        <translation>غير مهتم</translation>
     </message>
     <message>
         <source>Confirm Peer in Game</source>
@@ -6172,18 +6278,18 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Interested in Game</source>
-        <translation type="unfinished"/>
+        <translation>مهتم بالعبة</translation>
     </message>
     <message>
         <source>Quit Game</source>
-        <translation type="unfinished"/>
+        <translation>الخروج من اللعبة</translation>
     </message>
 </context>
 <context>
     <name>GenCertDialog</name>
     <message>
         <source>Create new Profile</source>
-        <translation type="unfinished"/>
+        <translation>إنشاء ملف شخصي جديد</translation>
     </message>
     <message>
         <source>You can install retroshare on different locations using the same identity. For this, just export the selected identity, and import it on the new computer, then create a new location with it.</source>
@@ -6199,7 +6305,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>اسم</translation>
     </message>
     <message>
         <source>Enter your nickname here</source>
@@ -6207,7 +6313,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Email</source>
-        <translation type="unfinished"/>
+        <translation>البريد الإلكتروني</translation>
     </message>
     <message>
         <source>Be careful: this email will be visible to your friends and friends 
@@ -6221,7 +6327,7 @@ anonymous, you can use a fake email.</source>
     </message>
     <message>
         <source>Password</source>
-        <translation type="unfinished"/>
+        <translation>كلمة السر</translation>
     </message>
     <message>
         <source>Put a strong password here. This password protects your PGP key.</source>
@@ -6229,11 +6335,7 @@ anonymous, you can use a fake email.</source>
     </message>
     <message>
         <source>Location</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Put a meaningful location. ex : home, laptop, etc. This field will be used to differentiate different installations with the same identity (PGP key).</source>
-        <translation type="unfinished"/>
+        <translation>الموقع</translation>
     </message>
     <message>
         <source>Create new identity</source>
@@ -6269,15 +6371,15 @@ anonymous, you can use a fake email.</source>
     </message>
     <message>
         <source>[Optional] Visible to your friends, and friends of friends.</source>
-        <translation type="unfinished"/>
+        <translation>[إختياري] ظاهر لأصدقائك و أصدقاء أصدقائك.</translation>
     </message>
     <message>
         <source>[Required] Examples: Home, Laptop,...</source>
-        <translation type="unfinished"/>
+        <translation>[مطلوب] أمثلة: المنزل، الحاسب المحمول،...</translation>
     </message>
     <message>
         <source>[Required] Visible to your friends, and friends of friends.</source>
-        <translation type="unfinished"/>
+        <translation>[مطلوب] ظاهر لأصدقائك و أصدقاء أصدقائك.</translation>
     </message>
     <message>
         <source>[Required] This password protects your PGP key.</source>
@@ -6285,7 +6387,7 @@ anonymous, you can use a fake email.</source>
     </message>
     <message>
         <source>Create new Location</source>
-        <translation type="unfinished"/>
+        <translation>إنشاء موقع جديد</translation>
     </message>
     <message>
         <source>Generate new Location</source>
@@ -6293,7 +6395,7 @@ anonymous, you can use a fake email.</source>
     </message>
     <message>
         <source>Create a new Location</source>
-        <translation type="unfinished"/>
+        <translation>إنشاء موقع جديد</translation>
     </message>
     <message>
         <source>Create new Identity</source>
@@ -6365,11 +6467,11 @@ and use the import button to load it</source>
     </message>
     <message>
         <source>Location field is required with a minimum of 3 characters</source>
-        <translation type="unfinished"/>
+        <translation>حقل الموقع مطلوب و يجب أن يحتوي على 3 محارف على الأقل</translation>
     </message>
     <message>
         <source>All fields are required with a minimum of 3 characters</source>
-        <translation type="unfinished"/>
+        <translation>جميع الحثول مطلوبة و يجب أن تحتوي على 3 محارف على الأقل</translation>
     </message>
     <message>
         <source>Generating new PGP key, please be patient: this process needs generating large prime numbers, and can take some minutes on slow computers. 
@@ -6385,6 +6487,28 @@ Fill in your PGP password when asked, to sign your new key.</source>
         <source>Failed to Generate your new Certificate, maybe PGP password is wrong!</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>Password (check)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Before proceeding, move your mouse around to help Retroshare collect as much randomness as possible. Filling the progressbar to 20% is needed, 100% is advised.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>[Required] Type the same password again here.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Put a meaningful location. ex : home, laptop, etc. 
+This field will be used to differentiate different installations with
+the same identity (PGP key).</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Passwords do not match</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>GeneralPage</name>
@@ -6394,19 +6518,19 @@ Fill in your PGP password when asked, to sign your new key.</source>
     </message>
     <message>
         <source>Start RetroShare when my system starts</source>
-        <translation type="unfinished"/>
+        <translation>تشغيل ريتروشير عند إقلاع نظامي</translation>
     </message>
     <message>
         <source>Start minimized</source>
-        <translation type="unfinished"/>
+        <translation>تشغيل مصغر</translation>
     </message>
     <message>
         <source>Start minimized on system start</source>
-        <translation type="unfinished"/>
+        <translation>تشغيل مصغر لدى بدء تشغيل النظام</translation>
     </message>
     <message>
         <source>For Advanced Users </source>
-        <translation type="unfinished"/>
+        <translation>للمستخدمين المتقدمين</translation>
     </message>
     <message>
         <source>Enable Advanced Mode (Restart Required)</source>
@@ -6422,7 +6546,7 @@ Fill in your PGP password when asked, to sign your new key.</source>
     </message>
     <message>
         <source>Auto Login</source>
-        <translation type="unfinished"/>
+        <translation>تسجيل دخول تلقائي</translation>
     </message>
     <message>
         <source>Register retroshare:// as URL protocol (Restart required)</source>
@@ -6430,19 +6554,19 @@ Fill in your PGP password when asked, to sign your new key.</source>
     </message>
     <message>
         <source>You need administrator rights to change this option.</source>
-        <translation type="unfinished"/>
+        <translation>أنت بحاجة لصلاحية المدير لتعديل هذا الخيار.</translation>
     </message>
     <message>
         <source>Idle</source>
-        <translation type="unfinished"/>
+        <translation>خامل</translation>
     </message>
     <message>
         <source>Idle Time</source>
-        <translation type="unfinished"/>
+        <translation>مدة الخمول</translation>
     </message>
     <message>
         <source> seconds</source>
-        <translation type="unfinished"/>
+        <translation>ثواني</translation>
     </message>
     <message>
         <source>Launch startup wizard</source>
@@ -6450,19 +6574,19 @@ Fill in your PGP password when asked, to sign your new key.</source>
     </message>
     <message>
         <source>Error</source>
-        <translation type="unfinished"/>
+        <translation>خطأ</translation>
     </message>
     <message>
         <source>Could not add retroshare:// as protocol.</source>
-        <translation type="unfinished"/>
+        <translation>لا يمكن إضافة //:retroshare كبروتوكول.</translation>
     </message>
     <message>
         <source>Could not remove retroshare:// protocol.</source>
-        <translation type="unfinished"/>
+        <translation>لا يمكن إزالة بروتوكول //:retroshare .</translation>
     </message>
     <message>
         <source>General</source>
-        <translation type="unfinished"/>
+        <translation>عا</translation>
     </message>
     <message>
         <source>Minimize to Tray Icon</source>
@@ -6477,7 +6601,7 @@ Fill in your PGP password when asked, to sign your new key.</source>
     </message>
     <message>
         <source>Invite Friends</source>
-        <translation type="unfinished"/>
+        <translation>ادعوا الأصدقاء</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -6494,11 +6618,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add Your Friends to RetroShare</source>
-        <translation type="unfinished"/>
+        <translation>أضف أصدقائك إلى ريتروشير</translation>
     </message>
     <message>
         <source> Add Friends </source>
-        <translation type="unfinished"/>
+        <translation>إضافة الاصدقاء</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -6512,7 +6636,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Connect To Friends</source>
-        <translation type="unfinished"/>
+        <translation>الاتصال بالأصدقاء</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -6534,7 +6658,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Advanced: Open Firewall Port</source>
-        <translation type="unfinished"/>
+        <translation>متقدم: فتح منفذ ضمن الجدار الناري</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -6554,7 +6678,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Further Help and Support</source>
-        <translation type="unfinished"/>
+        <translation>مساعدة و دعم إضافيين</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -6581,7 +6705,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Open FAQ Wiki</source>
-        <translation type="unfinished"/>
+        <translation>افتح ويكي الاسئلة المتكررة</translation>
     </message>
     <message>
         <source>Open Online Forums</source>
@@ -6589,7 +6713,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Email Support</source>
-        <translation type="unfinished"/>
+        <translation>الدعم بواسطة البريد الإلكتروني</translation>
     </message>
     <message>
         <source>Email Feedback</source>
@@ -6597,27 +6721,27 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>RetroShare Invitation</source>
-        <translation type="unfinished"/>
+        <translation>دعوة ريتروشير</translation>
     </message>
     <message>
         <source>Your friend has installed RetroShare, and would like you to try it out.</source>
-        <translation type="unfinished"/>
+        <translation>قام صديقك بتنصيب ريتروشير و يود منك لو قمت بتجريبه.</translation>
     </message>
     <message>
         <source>You can get RetroShare here: %1</source>
-        <translation type="unfinished"/>
+        <translation>يمكنك الحصول على ريتروشير هنا:%1</translation>
     </message>
     <message>
         <source>RetroShare is a private Friend-2-Friend sharing network.</source>
-        <translation type="unfinished"/>
+        <translation>ريتروشيرهي شبكة تشارك خاصة من نوع، من صديق إلى صديق.</translation>
     </message>
     <message>
         <source>It has many features, including built-in chat, messaging, </source>
-        <translation type="unfinished"/>
+        <translation>تحتوي على العديد من الميزات المدمجة من ضمنها الدردشة و الرسائل</translation>
     </message>
     <message>
         <source>forums and channels, all of which are as secure as the file-sharing.</source>
-        <translation type="unfinished"/>
+        <translation>و المنتديات و القنوات و هي جميعها آمنة مثل مشاركة الملفات.</translation>
     </message>
     <message>
         <source>Here is your friends ID Certificate.</source>
@@ -6625,7 +6749,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Cut and paste the text below into your RetroShare client</source>
-        <translation type="unfinished"/>
+        <translation>قص و ألصق النص في الاسفل ضمن برنامج ريتروشير</translation>
     </message>
     <message>
         <source>and send them your ID Certificate to get securely connected.</source>
@@ -6641,34 +6765,34 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>RetroShare Support</source>
-        <translation type="unfinished"/>
+        <translation>دعم ريتروشير</translation>
     </message>
 </context>
 <context>
     <name>GraphFrame</name>
     <message>
         <source>Recv: </source>
-        <translation type="unfinished"/>
+        <translation>استقبل:</translation>
     </message>
     <message>
         <source>%1 KB/s</source>
-        <translation type="unfinished"/>
+        <translation>%1 ك. بايت/ثا</translation>
     </message>
     <message>
         <source>Sent: </source>
-        <translation type="unfinished"/>
+        <translation>أرسل:</translation>
     </message>
     <message>
         <source>%1 KB</source>
-        <translation type="unfinished"/>
+        <translation>%1 كيلوبايت</translation>
     </message>
     <message>
         <source>%1 MB</source>
-        <translation type="unfinished"/>
+        <translation>%1 ميغابايت</translation>
     </message>
     <message>
         <source>%1 GB</source>
-        <translation type="unfinished"/>
+        <translation>%1 غيغابايت</translation>
     </message>
 </context>
 <context>
@@ -6689,15 +6813,15 @@ p, li { white-space: pre-wrap; }
     <name>GroupDefs</name>
     <message>
         <source>Friends</source>
-        <translation type="unfinished"/>
+        <translation>أصدقاء</translation>
     </message>
     <message>
         <source>Family</source>
-        <translation type="unfinished"/>
+        <translation>العائلة</translation>
     </message>
     <message>
         <source>Co-Workers</source>
-        <translation type="unfinished"/>
+        <translation>زملاء العمل</translation>
     </message>
     <message>
         <source>Other Contacts</source>
@@ -6775,7 +6899,7 @@ p, li { white-space: pre-wrap; }
     <name>GroupTreeWidget</name>
     <message>
         <source>Title</source>
-        <translation type="unfinished"/>
+        <translation>عنوان</translation>
     </message>
     <message>
         <source>Search Title</source>
@@ -6783,7 +6907,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"/>
+        <translation>الوصف</translation>
     </message>
     <message>
         <source>Search Description</source>
@@ -6791,42 +6915,42 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Sort by Name</source>
-        <translation type="unfinished"/>
+        <translation>التريب وفق الاسم</translation>
     </message>
     <message>
         <source>Sort by Popularity</source>
-        <translation type="unfinished"/>
+        <translation>الترتيب وفق الشعبية</translation>
     </message>
     <message>
         <source>Sort by Last Post</source>
-        <translation type="unfinished"/>
+        <translation>الترتيب وفق آخر مساهمة</translation>
     </message>
     <message>
         <source>Private Key Available</source>
-        <translation type="unfinished"/>
+        <translation>المفتاح الخاص متوفر</translation>
     </message>
     <message>
         <source>Display</source>
-        <translation type="unfinished"/>
+        <translation>عرض</translation>
     </message>
 </context>
 <context>
     <name>GuiExprElement</name>
     <message>
         <source>and</source>
-        <translation type="unfinished"/>
+        <translation>و</translation>
     </message>
     <message>
         <source>and / or</source>
-        <translation type="unfinished"/>
+        <translation>و / أو</translation>
     </message>
     <message>
         <source>or</source>
-        <translation type="unfinished"/>
+        <translation>أو</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>اسم</translation>
     </message>
     <message>
         <source>Path</source>
@@ -6842,70 +6966,70 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Date</source>
-        <translation type="unfinished"/>
+        <translation>التاريخ</translation>
     </message>
     <message>
         <source>Size</source>
-        <translation type="unfinished"/>
+        <translation>الحجم</translation>
     </message>
     <message>
         <source>Popularity</source>
-        <translation type="unfinished"/>
+        <translation>الشعبية</translation>
     </message>
     <message>
         <source>contains</source>
-        <translation type="unfinished"/>
+        <translation>يحتوي على</translation>
     </message>
     <message>
         <source>contains all</source>
-        <translation type="unfinished"/>
+        <translation>يحتوي على الجميع</translation>
     </message>
     <message>
         <source>is</source>
-        <translation type="unfinished"/>
+        <translation>يطابق</translation>
     </message>
     <message>
         <source>less than</source>
-        <translation type="unfinished"/>
+        <translation>أصغر من</translation>
     </message>
     <message>
         <source>less than or equal</source>
-        <translation type="unfinished"/>
+        <translation>أصغر من أو يساوي</translation>
     </message>
     <message>
         <source>equals</source>
-        <translation type="unfinished"/>
+        <translation>يساوي</translation>
     </message>
     <message>
         <source>greater than or equal</source>
-        <translation type="unfinished"/>
+        <translation>أكبر من أو يساوي</translation>
     </message>
     <message>
         <source>greater than</source>
-        <translation type="unfinished"/>
+        <translation>أكبر من</translation>
     </message>
     <message>
         <source>is in range</source>
-        <translation type="unfinished"/>
+        <translation>ضمن المجال</translation>
     </message>
 </context>
 <context>
     <name>GxsChannelDialog</name>
     <message>
         <source>Channels</source>
-        <translation type="unfinished"/>
+        <translation>قنوات</translation>
     </message>
     <message>
         <source>Create Channel</source>
-        <translation type="unfinished"/>
+        <translation>إنشاء قناة</translation>
     </message>
     <message>
         <source>Loading</source>
-        <translation type="unfinished"/>
+        <translation>جاري التحميل</translation>
     </message>
     <message>
         <source>Post to Channel</source>
-        <translation type="unfinished"/>
+        <translation>إنشر على القناة</translation>
     </message>
     <message>
         <source>Set all as read</source>
@@ -6913,7 +7037,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Enable Auto-Download</source>
-        <translation type="unfinished"/>
+        <translation>تفعيل التحميل التقائي</translation>
     </message>
     <message>
         <source>My Channels</source>
@@ -6921,47 +7045,47 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Subscribed Channels</source>
-        <translation type="unfinished"/>
+        <translation>القنوات الشترك بها</translation>
     </message>
     <message>
         <source>Popular Channels</source>
-        <translation type="unfinished"/>
+        <translation>قنوات ذات شعبية</translation>
     </message>
     <message>
         <source>Other Channels</source>
-        <translation type="unfinished"/>
+        <translation>قنوات أخرى</translation>
     </message>
     <message>
         <source>Disable Auto-Download</source>
-        <translation type="unfinished"/>
+        <translation>تعطيل التحميل التلقائي</translation>
     </message>
     <message>
         <source>Unsubscribe to Channel</source>
-        <translation type="unfinished"/>
+        <translation>إلغاء الاشتراك من القناة</translation>
     </message>
     <message>
         <source>Subscribe to Channel</source>
-        <translation type="unfinished"/>
+        <translation>اشترك بالقناة</translation>
     </message>
     <message>
         <source>Edit Channel Details</source>
-        <translation type="unfinished"/>
+        <translation>تعديل تفاصيل القناة</translation>
     </message>
     <message>
         <source>Show Channel Details</source>
-        <translation type="unfinished"/>
+        <translation>إظهار تفاصيل القناة</translation>
     </message>
     <message>
         <source>Restore Publish Rights for Channel</source>
-        <translation type="unfinished"/>
+        <translation>استعادة صلاحية النشر الخاصة بالقناة</translation>
     </message>
     <message>
         <source>Share Channel</source>
-        <translation type="unfinished"/>
+        <translation>مشاركة القناة</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>نسخ رابط ريتروشير</translation>
     </message>
     <message>
         <source>Publish rights restored.</source>
@@ -6981,7 +7105,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>No Channel Selected</source>
-        <translation type="unfinished"/>
+        <translation>لم يتم اختيار أية قناة</translation>
     </message>
     <message>
         <source>Todo</source>
@@ -7019,27 +7143,27 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Download</source>
-        <translation type="unfinished"/>
+        <translation>تحميل</translation>
     </message>
     <message>
         <source>Play</source>
-        <translation type="unfinished"/>
+        <translation>تشغيل</translation>
     </message>
     <message>
         <source>Comments</source>
-        <translation type="unfinished"/>
+        <translation>تعليقات</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>نسخ رابط ريتروشير</translation>
     </message>
     <message>
         <source>Unsubscribe From Channel</source>
-        <translation type="unfinished"/>
+        <translation>إلغاء الاشتراك من القناة</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished"/>
+        <translation>توسيع</translation>
     </message>
     <message>
         <source>Set as read and remove item</source>
@@ -7047,7 +7171,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished"/>
+        <translation>إزالة عنصر</translation>
     </message>
     <message>
         <source>Channel Feed</source>
@@ -7055,7 +7179,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Files</source>
-        <translation type="unfinished"/>
+        <translation>ملفات</translation>
     </message>
     <message>
         <source>Warning! You have less than %1 hours and %2 minute before this file is deleted Consider saving it.</source>
@@ -7063,7 +7187,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"/>
+        <translation>إخفاء</translation>
     </message>
 </context>
 <context>
@@ -7077,7 +7201,7 @@ p, li { white-space: pre-wrap; }
     <name>GxsCommentDialog</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"/>
+        <translation>من</translation>
     </message>
     <message>
         <source>Hot</source>
@@ -7085,7 +7209,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>New</source>
-        <translation type="unfinished"/>
+        <translation>جديد</translation>
     </message>
     <message>
         <source>Top</source>
@@ -7101,15 +7225,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Comment</source>
-        <translation type="unfinished"/>
+        <translation>تعليق</translation>
     </message>
     <message>
         <source>Author</source>
-        <translation type="unfinished"/>
+        <translation>المؤلف</translation>
     </message>
     <message>
         <source>Date</source>
-        <translation type="unfinished"/>
+        <translation>التاريخ</translation>
     </message>
     <message>
         <source>Score</source>
@@ -7203,7 +7327,7 @@ before you can comment</source>
     </message>
     <message>
         <source>Forum</source>
-        <translation type="unfinished"/>
+        <translation>منتدى</translation>
     </message>
     <message>
         <source>Edit Forum</source>
@@ -7214,7 +7338,7 @@ before you can comment</source>
     <name>GxsForumThreadWidget</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"/>
+        <translation>من</translation>
     </message>
     <message>
         <source>Start new Thread for Selected Forum</source>
@@ -7226,7 +7350,7 @@ before you can comment</source>
     </message>
     <message>
         <source>Last Post</source>
-        <translation type="unfinished"/>
+        <translation>آخر مساهمة</translation>
     </message>
     <message>
         <source>Threaded View</source>
@@ -7238,27 +7362,27 @@ before you can comment</source>
     </message>
     <message>
         <source>Title</source>
-        <translation type="unfinished"/>
+        <translation>عنوان</translation>
     </message>
     <message>
         <source>Date</source>
-        <translation type="unfinished"/>
+        <translation>التاريخ</translation>
     </message>
     <message>
         <source>Author</source>
-        <translation type="unfinished"/>
+        <translation>المؤلف</translation>
     </message>
     <message>
         <source>Signed</source>
-        <translation type="unfinished"/>
+        <translation>موقع</translation>
     </message>
     <message>
         <source>Loading</source>
-        <translation type="unfinished"/>
+        <translation>جاري التحميل</translation>
     </message>
     <message>
         <source>Reply Message</source>
-        <translation type="unfinished"/>
+        <translation>الرد على الرسالة</translation>
     </message>
     <message>
         <source>Previous Thread</source>
@@ -7270,7 +7394,7 @@ before you can comment</source>
     </message>
     <message>
         <source>Download all files</source>
-        <translation type="unfinished"/>
+        <translation>تحميل كل الملفات</translation>
     </message>
     <message>
         <source>Next unread</source>
@@ -7290,7 +7414,7 @@ before you can comment</source>
     </message>
     <message>
         <source>Content</source>
-        <translation type="unfinished"/>
+        <translation>المحتوى</translation>
     </message>
     <message>
         <source>Search Content</source>
@@ -7302,7 +7426,7 @@ before you can comment</source>
     </message>
     <message>
         <source>Reply</source>
-        <translation type="unfinished"/>
+        <translation>رد</translation>
     </message>
     <message>
         <source>Start New Thread</source>
@@ -7310,7 +7434,7 @@ before you can comment</source>
     </message>
     <message>
         <source>Reply to Author</source>
-        <translation type="unfinished"/>
+        <translation>رد على المؤلف</translation>
     </message>
     <message>
         <source>Expand all</source>
@@ -7334,23 +7458,23 @@ before you can comment</source>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>نسخ رابط ريتروشير</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"/>
+        <translation>إخفاء</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished"/>
+        <translation>توسيع</translation>
     </message>
     <message>
         <source>Anonymous</source>
-        <translation type="unfinished"/>
+        <translation>مجهول</translation>
     </message>
     <message>
         <source>signed</source>
-        <translation type="unfinished"/>
+        <translation>موقع</translation>
     </message>
     <message>
         <source>none</source>
@@ -7358,7 +7482,7 @@ before you can comment</source>
     </message>
     <message>
         <source>[ ... Missing Message ... ]</source>
-        <translation type="unfinished"/>
+        <translation>[ ... رسالة مفقودة ... ]</translation>
     </message>
     <message>
         <source>By</source>
@@ -7366,11 +7490,11 @@ before you can comment</source>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished"/>
+        <translation>ريتروشير</translation>
     </message>
     <message>
         <source>No Forum Selected!</source>
-        <translation type="unfinished"/>
+        <translation>لم يتم اختيار أي منتدى!</translation>
     </message>
     <message>
         <source>You cant reply to a non-existant Message</source>
@@ -7382,11 +7506,11 @@ before you can comment</source>
     </message>
     <message>
         <source>Forum Description</source>
-        <translation type="unfinished"/>
+        <translation>وصف المنتدى</translation>
     </message>
     <message>
         <source>Forum:</source>
-        <translation type="unfinished"/>
+        <translation>منتدى:</translation>
     </message>
     <message>
         <source>Thread:</source>
@@ -7397,19 +7521,19 @@ before you can comment</source>
     <name>GxsForumsDialog</name>
     <message>
         <source>Forums</source>
-        <translation type="unfinished"/>
+        <translation>منتديات</translation>
     </message>
     <message>
         <source>Create Forum</source>
-        <translation type="unfinished"/>
+        <translation>إنشاء منتدى</translation>
     </message>
     <message>
         <source>Print</source>
-        <translation type="unfinished"/>
+        <translation>طباعة</translation>
     </message>
     <message>
         <source>PrintPreview</source>
-        <translation type="unfinished"/>
+        <translation>معاينة الطباعة</translation>
     </message>
     <message>
         <source>My Forums</source>
@@ -7417,23 +7541,23 @@ before you can comment</source>
     </message>
     <message>
         <source>Subscribed Forums</source>
-        <translation type="unfinished"/>
+        <translation>المنتديات المشترك بها</translation>
     </message>
     <message>
         <source>Popular Forums</source>
-        <translation type="unfinished"/>
+        <translation>منتديات ذات شعبية</translation>
     </message>
     <message>
         <source>Other Forums</source>
-        <translation type="unfinished"/>
+        <translation>منتديات أخرى</translation>
     </message>
     <message>
         <source>Subscribe to Forum</source>
-        <translation type="unfinished"/>
+        <translation>اشترك بمنتدى</translation>
     </message>
     <message>
         <source>Unsubscribe to Forum</source>
-        <translation type="unfinished"/>
+        <translation>إلغاء الاشتراك بالمنتدى</translation>
     </message>
     <message>
         <source>Open in new tab</source>
@@ -7441,27 +7565,27 @@ before you can comment</source>
     </message>
     <message>
         <source>New Forum</source>
-        <translation type="unfinished"/>
+        <translation>منتدى جديد</translation>
     </message>
     <message>
         <source>Show Forum Details</source>
-        <translation type="unfinished"/>
+        <translation>إظهار تفاصيل المنتدى</translation>
     </message>
     <message>
         <source>Edit Forum Details</source>
-        <translation type="unfinished"/>
+        <translation>تعديل تفاصيل المنتدى</translation>
     </message>
     <message>
         <source>Share Forum</source>
-        <translation type="unfinished"/>
+        <translation>مشاركة المنتدى</translation>
     </message>
     <message>
         <source>Restore Publish Rights for Forum</source>
-        <translation type="unfinished"/>
+        <translation>استعادة صلاحية النشر الخاصة بالمنتدى</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>نسخ رابط ريتروشير</translation>
     </message>
     <message>
         <source>Mark all as read</source>
@@ -7477,19 +7601,19 @@ before you can comment</source>
     </message>
     <message>
         <source>Original Message</source>
-        <translation type="unfinished"/>
+        <translation>الرسالة الأصلية</translation>
     </message>
     <message>
         <source>From</source>
-        <translation type="unfinished"/>
+        <translation>من</translation>
     </message>
     <message>
         <source>Sent</source>
-        <translation type="unfinished"/>
+        <translation>إرسال</translation>
     </message>
     <message>
         <source>Subject</source>
-        <translation type="unfinished"/>
+        <translation>الموضوع</translation>
     </message>
     <message>
         <source>On %1, %2 wrote:</source>
@@ -7512,7 +7636,7 @@ before you can comment</source>
     </message>
     <message>
         <source>Loading</source>
-        <translation type="unfinished"/>
+        <translation>جاري التحميل</translation>
     </message>
 </context>
 <context>
@@ -7523,7 +7647,7 @@ before you can comment</source>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>اسم</translation>
     </message>
     <message>
         <source>Add Icon</source>
@@ -7543,11 +7667,11 @@ before you can comment</source>
     </message>
     <message>
         <source>Share Key With</source>
-        <translation type="unfinished"/>
+        <translation>شارك المفتاح مع</translation>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"/>
+        <translation>الوصف</translation>
     </message>
     <message>
         <source>Message Distribution</source>
@@ -7555,7 +7679,7 @@ before you can comment</source>
     </message>
     <message>
         <source>Public</source>
-        <translation type="unfinished"/>
+        <translation>عام</translation>
     </message>
     <message>
         <source>Restricted to Group</source>
@@ -7603,7 +7727,7 @@ before you can comment</source>
     </message>
     <message>
         <source>Comments</source>
-        <translation type="unfinished"/>
+        <translation>تعليقات</translation>
     </message>
     <message>
         <source>Allow Comments</source>
@@ -7623,7 +7747,7 @@ before you can comment</source>
     </message>
     <message>
         <source>Please add a Name</source>
-        <translation type="unfinished"/>
+        <translation>يرجى إضافة اسم</translation>
     </message>
     <message>
         <source>Load Group Logo</source>
@@ -7638,7 +7762,7 @@ before you can comment</source>
     <name>GxsIdChooser</name>
     <message>
         <source>Loading</source>
-        <translation type="unfinished"/>
+        <translation>جاري التحميل</translation>
     </message>
     <message>
         <source>Not found</source>
@@ -7661,34 +7785,34 @@ before you can comment</source>
     </message>
     <message>
         <source>File not found or file name not accepted.</source>
-        <translation type="unfinished"/>
+        <translation>لم يعضر على الملف أو اسم الملف غير مقبول.</translation>
     </message>
 </context>
 <context>
     <name>HelpBrowser</name>
     <message>
         <source>RetroShare Help</source>
-        <translation type="unfinished"/>
+        <translation>مساعدة ريتروشير</translation>
     </message>
     <message>
         <source>Find:</source>
-        <translation type="unfinished"/>
+        <translation>بحث:</translation>
     </message>
     <message>
         <source>Find Previous</source>
-        <translation type="unfinished"/>
+        <translation>إبحث عن السابق</translation>
     </message>
     <message>
         <source>Find Next</source>
-        <translation type="unfinished"/>
+        <translation>إبحث عن التالي</translation>
     </message>
     <message>
         <source>Case sensitive</source>
-        <translation type="unfinished"/>
+        <translation>حساس لحالة الاحرف (لاتيني)</translation>
     </message>
     <message>
         <source>Whole words only</source>
-        <translation type="unfinished"/>
+        <translation>كلمات كاملة فقط</translation>
     </message>
     <message>
         <source>Contents</source>
@@ -7700,23 +7824,23 @@ before you can comment</source>
     </message>
     <message>
         <source>Search</source>
-        <translation type="unfinished"/>
+        <translation>بحث</translation>
     </message>
     <message>
         <source>Searching for:</source>
-        <translation type="unfinished"/>
+        <translation>البحث عن:</translation>
     </message>
     <message>
         <source>Found Documents</source>
-        <translation type="unfinished"/>
+        <translation>المستندات التي تم العثور عليها</translation>
     </message>
     <message>
         <source>Back</source>
-        <translation type="unfinished"/>
+        <translation>عودة</translation>
     </message>
     <message>
         <source>Move to previous page (Backspace)</source>
-        <translation type="unfinished"/>
+        <translation>إنتقل إلى الصفحة السابقة (Backspace)</translation>
     </message>
     <message>
         <source>Backspace</source>
@@ -7724,11 +7848,11 @@ before you can comment</source>
     </message>
     <message>
         <source>Forward</source>
-        <translation type="unfinished"/>
+        <translation>للأمام</translation>
     </message>
     <message>
         <source>Move to next page (Shift+Backspace)</source>
-        <translation type="unfinished"/>
+        <translation>إنتقل إلى الصفحة التالية (Shift+Backspace)</translation>
     </message>
     <message>
         <source>Shift+Backspace</source>
@@ -7760,7 +7884,7 @@ before you can comment</source>
     </message>
     <message>
         <source>Close</source>
-        <translation type="unfinished"/>
+        <translation>إغلاق</translation>
     </message>
     <message>
         <source>Close Vidalia Help</source>
@@ -7799,7 +7923,7 @@ before you can comment</source>
     <name>HelpDialog</name>
     <message>
         <source>About</source>
-        <translation type="unfinished"/>
+        <translation>حول</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -7834,27 +7958,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;RetroShare Translators:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;French&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;:Temet&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Polish: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Jarek&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Serbian&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;: Kunalagon Umuhanik &amp;lt;kunalagon@gmail.com&amp;gt;&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Spanish:  &lt;/span&gt;&lt;span style=&quot; font-family:'Courier New,courier';&quot;&gt;Manuel Montero &amp;lt;Senpai&amp;gt; &lt;/span&gt;&lt;a href=&quot;http://pagina.de/senpai&amp;amp;gt&quot;&gt;&lt;span style=&quot; font-family:'Courier New,courier'; text-decoration: underline; color:#0000ff;&quot;&gt;http://pagina.de/senpai&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Swedish:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; dnylander&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;RetroShare Website Translators:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt; font-weight:600;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Swedish: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Daniel Wester&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; &amp;lt;&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;wester@speedmail.se&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;German: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Jan&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Keller&lt;/span&gt; &amp;lt;&lt;span style=&quot; font-size:8pt;&quot;&gt;trilarion@users.sourceforge.net&lt;/span&gt;&amp;gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Polish: &lt;/span&gt;Maciej Mrug&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>License Agreement</source>
         <translation type="unfinished"/>
     </message>
@@ -7864,6 +7967,23 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;About RetroShare&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;RetroShare Translations:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net/wiki/index.php/Translation&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;http://retroshare.sourceforge.net/wiki/index.php/Translation&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; text-decoration: underline; color:#0000ff;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;RetroShare Website Translators:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt; font-weight:600;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Swedish: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Daniel Wester&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; &amp;lt;&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;wester@speedmail.se&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;German: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Jan&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Keller&lt;/span&gt; &amp;lt;&lt;span style=&quot; font-size:8pt;&quot;&gt;trilarion@users.sourceforge.net&lt;/span&gt;&amp;gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Polish: &lt;/span&gt;Maciej Mrug&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -7934,7 +8054,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished"/>
+        <translation>النوع</translation>
     </message>
     <message>
         <source>Delete ID</source>
@@ -7954,11 +8074,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Friend</source>
-        <translation type="unfinished"/>
+        <translation>صديق</translation>
     </message>
     <message>
         <source>Friend of Friend</source>
-        <translation type="unfinished"/>
+        <translation>صديق لصديق</translation>
     </message>
     <message>
         <source>Other</source>
@@ -8002,11 +8122,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Rating</source>
-        <translation type="unfinished"/>
+        <translation>التقييم</translation>
     </message>
     <message>
         <source>Comment</source>
-        <translation type="unfinished"/>
+        <translation>تعليق</translation>
     </message>
     <message>
         <source>Local Reputation</source>
@@ -8022,7 +8142,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Search</source>
-        <translation type="unfinished"/>
+        <translation>بحث</translation>
     </message>
     <message>
         <source>PGP Linked Id</source>
@@ -8128,7 +8248,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Remove</source>
-        <translation type="unfinished"/>
+        <translation>إزالة</translation>
     </message>
     <message>
         <source>Mark all</source>
@@ -8144,7 +8264,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Send</source>
-        <translation type="unfinished"/>
+        <translation>إرسال</translation>
     </message>
 </context>
 <context>
@@ -8190,7 +8310,7 @@ p, li { white-space: pre-wrap; }
     <name>MainWindow</name>
     <message>
         <source>Add Friend</source>
-        <translation type="unfinished"/>
+        <translation>إضافة صديق</translation>
     </message>
     <message>
         <source>Add a Friend Wizard</source>
@@ -8210,7 +8330,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>About</source>
-        <translation type="unfinished"/>
+        <translation>حول</translation>
     </message>
     <message>
         <source>SMPlayer</source>
@@ -8234,7 +8354,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Friends</source>
-        <translation type="unfinished"/>
+        <translation>أصدقاء</translation>
     </message>
     <message>
         <source>File sharing</source>
@@ -8246,19 +8366,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Messages</source>
-        <translation type="unfinished"/>
+        <translation>رسائل</translation>
     </message>
     <message>
         <source>Channels</source>
-        <translation type="unfinished"/>
+        <translation>قنوات</translation>
     </message>
     <message>
         <source>Blogs</source>
-        <translation type="unfinished"/>
+        <translation>مدونات</translation>
     </message>
     <message>
         <source>Forums</source>
-        <translation type="unfinished"/>
+        <translation>منتديات</translation>
     </message>
     <message>
         <source>Plugins</source>
@@ -8342,11 +8462,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>&amp;Quit</source>
-        <translation type="unfinished"/>
+        <translation>ا&amp;خرج</translation>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished"/>
+        <translation>ريتروشير</translation>
     </message>
     <message>
         <source>%1 new message</source>
@@ -8386,7 +8506,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"/>
+        <translation>إخفاء</translation>
     </message>
     <message>
         <source>Show</source>
@@ -8421,7 +8541,7 @@ p, li { white-space: pre-wrap; }
     <name>MessageComposer</name>
     <message>
         <source>Compose</source>
-        <translation type="unfinished"/>
+        <translation>أكتب</translation>
     </message>
     <message>
         <source>Contacts</source>
@@ -8481,15 +8601,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Decrease font size</source>
-        <translation type="unfinished"/>
+        <translation>تصغير الخط</translation>
     </message>
     <message>
         <source>Bold</source>
-        <translation type="unfinished"/>
+        <translation>غامق</translation>
     </message>
     <message>
         <source>Italic</source>
-        <translation type="unfinished"/>
+        <translation>مائل</translation>
     </message>
     <message>
         <source>Select Color</source>
@@ -8509,19 +8629,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Underline</source>
-        <translation type="unfinished"/>
+        <translation>تسطير</translation>
     </message>
     <message>
         <source>Subject:</source>
-        <translation type="unfinished"/>
+        <translation>الموضوع:</translation>
     </message>
     <message>
         <source>Tags:</source>
-        <translation type="unfinished"/>
+        <translation>الوسوم:</translation>
     </message>
     <message>
         <source>Tags</source>
-        <translation type="unfinished"/>
+        <translation>وسوم</translation>
     </message>
     <message>
         <source>Recommended Files</source>
@@ -8529,11 +8649,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>File Name</source>
-        <translation type="unfinished"/>
+        <translation>اسم الملف</translation>
     </message>
     <message>
         <source>Size</source>
-        <translation type="unfinished"/>
+        <translation>الحجم</translation>
     </message>
     <message>
         <source>Hash</source>
@@ -8541,7 +8661,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Send</source>
-        <translation type="unfinished"/>
+        <translation>إرسال</translation>
     </message>
     <message>
         <source>Send this message now</source>
@@ -8549,7 +8669,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Reply</source>
-        <translation type="unfinished"/>
+        <translation>رد</translation>
     </message>
     <message>
         <source>Toggle Contacts View</source>
@@ -8569,7 +8689,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Attach File</source>
-        <translation type="unfinished"/>
+        <translation>إرفاق ملف</translation>
     </message>
     <message>
         <source>Quote</source>
@@ -8609,19 +8729,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>This friend is suggested by</source>
-        <translation type="unfinished"/>
+        <translation>هذا الصديق قد تم اقتراحه من قبل</translation>
     </message>
     <message>
         <source>Thanks, &lt;br&gt;The RetroShare Team</source>
-        <translation type="unfinished"/>
+        <translation>شكراً، &lt;br&gt;فريق ريتروشير</translation>
     </message>
     <message>
         <source>wants to be friends with you on RetroShare</source>
-        <translation type="unfinished"/>
+        <translation>يريدون أن يكونوا أصدقائك ضمن ريتروشير</translation>
     </message>
     <message>
         <source>Hi %1,&lt;br&gt;&lt;br&gt;%2 wants to be friends with you on RetroShare.&lt;br&gt;&lt;br&gt;Respond now:&lt;br&gt;%3&lt;br&gt;&lt;br&gt;Thanks,&lt;br&gt;The RetroShare Team</source>
-        <translation type="unfinished"/>
+        <translation>مرحبا %1،&lt;br&gt;&lt;br&gt;%2 يريدون أن يكونوا أصدقائك ضمن ريتروشير. &lt;br&gt;&lt;br&gt;رد الآن:&lt;br&gt;%3&lt;br&gt;&lt;br&gt;شكراً،&lt;br&gt;فريق ريتروشير</translation>
     </message>
     <message>
         <source>Save Message</source>
@@ -8634,7 +8754,7 @@ Do you want to save message to draft box?</source>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>لصق رابط ريتروشير</translation>
     </message>
     <message>
         <source>Add to &quot;To&quot;</source>
@@ -8654,19 +8774,19 @@ Do you want to save message to draft box?</source>
     </message>
     <message>
         <source>Friend Details</source>
-        <translation type="unfinished"/>
+        <translation>تفاصيل الصديق</translation>
     </message>
     <message>
         <source>Original Message</source>
-        <translation type="unfinished"/>
+        <translation>الرسالة الأصلية</translation>
     </message>
     <message>
         <source>From</source>
-        <translation type="unfinished"/>
+        <translation>من</translation>
     </message>
     <message>
         <source>To</source>
-        <translation type="unfinished"/>
+        <translation>إلى</translation>
     </message>
     <message>
         <source>Cc</source>
@@ -8674,11 +8794,11 @@ Do you want to save message to draft box?</source>
     </message>
     <message>
         <source>Sent</source>
-        <translation type="unfinished"/>
+        <translation>إرسال</translation>
     </message>
     <message>
         <source>Subject</source>
-        <translation type="unfinished"/>
+        <translation>الموضوع</translation>
     </message>
     <message>
         <source>On %1, %2 wrote:</source>
@@ -8694,7 +8814,7 @@ Do you want to save message to draft box?</source>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished"/>
+        <translation>ريتروشير</translation>
     </message>
     <message>
         <source>Do you want to send the message without a subject ?</source>
@@ -8710,75 +8830,75 @@ Do you want to save message to draft box?</source>
     </message>
     <message>
         <source>Unknown</source>
-        <translation type="unfinished"/>
+        <translation>مجهول</translation>
     </message>
     <message>
         <source>Unknown friend</source>
-        <translation type="unfinished"/>
+        <translation>صديق غير معروف</translation>
     </message>
     <message>
         <source>&amp;File</source>
-        <translation type="unfinished"/>
+        <translation>&amp;ملف</translation>
     </message>
     <message>
         <source>&amp;New</source>
-        <translation type="unfinished"/>
+        <translation>&amp;جديد</translation>
     </message>
     <message>
         <source>&amp;Open...</source>
-        <translation type="unfinished"/>
+        <translation>ا&amp;فتح...</translation>
     </message>
     <message>
         <source>&amp;Save</source>
-        <translation type="unfinished"/>
+        <translation>احف&amp;ظ</translation>
     </message>
     <message>
         <source>Save &amp;As File</source>
-        <translation type="unfinished"/>
+        <translation>احفظ &amp;كملف</translation>
     </message>
     <message>
         <source>Save &amp;As Draft</source>
-        <translation type="unfinished"/>
+        <translation>احفظ كم&amp;سودة</translation>
     </message>
     <message>
         <source>&amp;Print...</source>
-        <translation type="unfinished"/>
+        <translation>ا&amp;طبع...</translation>
     </message>
     <message>
         <source>&amp;Export PDF...</source>
-        <translation type="unfinished"/>
+        <translation>&amp;صدر PDF...</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
-        <translation type="unfinished"/>
+        <translation>ا&amp;خرج</translation>
     </message>
     <message>
         <source>&amp;Edit</source>
-        <translation type="unfinished"/>
+        <translation>ت&amp;حرير</translation>
     </message>
     <message>
         <source>&amp;Undo</source>
-        <translation type="unfinished"/>
+        <translation>ت&amp;راجع</translation>
     </message>
     <message>
         <source>&amp;Redo</source>
-        <translation type="unfinished"/>
+        <translation>أ&amp;عد</translation>
     </message>
     <message>
         <source>Cu&amp;t</source>
-        <translation type="unfinished"/>
+        <translation>&amp;قص</translation>
     </message>
     <message>
         <source>&amp;Copy</source>
-        <translation type="unfinished"/>
+        <translation>ا&amp;نسخ</translation>
     </message>
     <message>
         <source>&amp;Paste</source>
-        <translation type="unfinished"/>
+        <translation>أ&amp;لصق</translation>
     </message>
     <message>
         <source>&amp;View</source>
-        <translation type="unfinished"/>
+        <translation>&amp;عرض</translation>
     </message>
     <message>
         <source>&amp;Contacts Sidebar</source>
@@ -8786,56 +8906,57 @@ Do you want to save message to draft box?</source>
     </message>
     <message>
         <source>&amp;Insert</source>
-        <translation type="unfinished"/>
+        <translation>أ&amp;درج</translation>
     </message>
     <message>
         <source>&amp;Image</source>
-        <translation type="unfinished"/>
+        <translation>&amp;صورة</translation>
     </message>
     <message>
         <source>&amp;Horizontal Line</source>
-        <translation type="unfinished"/>
+        <translation>خط أفقي</translation>
     </message>
     <message>
         <source>&amp;Format</source>
-        <translation type="unfinished"/>
+        <translation>تنسيق</translation>
     </message>
     <message>
         <source>Open File...</source>
-        <translation type="unfinished"/>
+        <translation>فتح ملف...</translation>
     </message>
     <message>
         <source>HTML-Files (*.htm *.html);;All Files (*)</source>
-        <translation type="unfinished"/>
+        <translation>ملفات HTML (*.htm *.html);;جميع الملفات (*)</translation>
     </message>
     <message>
         <source>Save as...</source>
-        <translation type="unfinished"/>
+        <translation>حفظ باسم...</translation>
     </message>
     <message>
         <source>Print Document</source>
-        <translation type="unfinished"/>
+        <translation>طباعة مستند</translation>
     </message>
     <message>
         <source>Export PDF</source>
-        <translation type="unfinished"/>
+        <translation>صدر PDF</translation>
     </message>
     <message>
         <source>Message has not been Sent.
 Do you want to save message ?</source>
-        <translation type="unfinished"/>
+        <translation>لم ترسل الرسالة.
+هل تريد حفظ الرسالة؟</translation>
     </message>
     <message>
         <source>Choose Image</source>
-        <translation type="unfinished"/>
+        <translation>اختر صورة</translation>
     </message>
     <message>
         <source>Image Files supported (*.png *.jpeg *.jpg *.gif)</source>
-        <translation type="unfinished"/>
+        <translation>ملفات الصور المدعومة (*.png *.jpeg *.jpg *.gif)</translation>
     </message>
     <message>
         <source>Add Extra File</source>
-        <translation type="unfinished"/>
+        <translation>إضافة ملف إضافي</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Cryptographically sign message to distant peers. This is prevents intermediate peers to spoof your identity.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
@@ -8847,6 +8968,14 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Only show people you trusted</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP key unknown</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You dont have the PGP key of the message sender. So you cannot respond!</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -8862,23 +8991,23 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Open messages in</source>
-        <translation type="unfinished"/>
+        <translation>افتح الرسائل في</translation>
     </message>
     <message>
         <source>Tags</source>
-        <translation type="unfinished"/>
+        <translation>وسوم</translation>
     </message>
     <message>
         <source>Tags can be used to categorize and prioritize your messages</source>
-        <translation type="unfinished"/>
+        <translation>يمكن استخدام الوسوم لتصنيف الرسائل و تحديد أولويتها</translation>
     </message>
     <message>
         <source>Add</source>
-        <translation type="unfinished"/>
+        <translation>إضافة</translation>
     </message>
     <message>
         <source>Edit</source>
-        <translation type="unfinished"/>
+        <translation>تحرير</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -8886,23 +9015,23 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Default</source>
-        <translation type="unfinished"/>
+        <translation>قياسي</translation>
     </message>
     <message>
         <source>A new tab</source>
-        <translation type="unfinished"/>
+        <translation>لسان جديد</translation>
     </message>
     <message>
         <source>A new window</source>
-        <translation type="unfinished"/>
+        <translation>نافذة جديدة</translation>
     </message>
     <message>
         <source>Edit Tag</source>
-        <translation type="unfinished"/>
+        <translation>تعديل وسم</translation>
     </message>
     <message>
         <source>Message</source>
-        <translation type="unfinished"/>
+        <translation>رسالة</translation>
     </message>
     <message>
         <source>Distant messages:</source>
@@ -8914,6 +9043,10 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Accept encrypted distant messages from everyone</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Load embedded images</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -8928,7 +9061,7 @@ Do you want to save message ?</source>
     <name>MessageUserNotify</name>
     <message>
         <source>Message</source>
-        <translation type="unfinished"/>
+        <translation>رسالة</translation>
     </message>
 </context>
 <context>
@@ -8939,11 +9072,11 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Download all Recommended Files</source>
-        <translation type="unfinished"/>
+        <translation>تنزيل كل الملفات الموصى بها</translation>
     </message>
     <message>
         <source>Subject:</source>
-        <translation type="unfinished"/>
+        <translation>الموضوع:</translation>
     </message>
     <message>
         <source>From:</source>
@@ -8963,15 +9096,15 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Tags:</source>
-        <translation type="unfinished"/>
+        <translation>الوسوم:</translation>
     </message>
     <message>
         <source>File Name</source>
-        <translation type="unfinished"/>
+        <translation>اسم الملف</translation>
     </message>
     <message>
         <source>Size</source>
-        <translation type="unfinished"/>
+        <translation>الحجم</translation>
     </message>
     <message>
         <source>Hash</source>
@@ -8979,11 +9112,11 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Print</source>
-        <translation type="unfinished"/>
+        <translation>طباعة</translation>
     </message>
     <message>
         <source>Print Preview</source>
-        <translation type="unfinished"/>
+        <translation>معاينة ما قبل الطباعة</translation>
     </message>
     <message>
         <source>Confirm %1 as friend</source>
@@ -8991,46 +9124,78 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Add %1 as friend</source>
-        <translation type="unfinished"/>
+        <translation>أضف %1 كصديق</translation>
     </message>
     <message>
         <source>No subject</source>
-        <translation type="unfinished"/>
+        <translation>لا يوجد موضوع</translation>
     </message>
     <message>
         <source>Download</source>
-        <translation type="unfinished"/>
+        <translation>تحميل</translation>
     </message>
     <message>
         <source>Download all</source>
-        <translation type="unfinished"/>
+        <translation>تنزيل الكل</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"/>
+        <translation>إخفاء</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished"/>
+        <translation>توسيع</translation>
     </message>
     <message>
         <source>File</source>
-        <translation type="unfinished"/>
+        <translation>ملف</translation>
     </message>
     <message>
         <source>Files</source>
-        <translation type="unfinished"/>
+        <translation>ملفات</translation>
     </message>
     <message>
         <source>Print Document</source>
-        <translation type="unfinished"/>
+        <translation>طباعة مستند</translation>
     </message>
     <message>
         <source>Save as...</source>
-        <translation type="unfinished"/>
+        <translation>حفظ باسم...</translation>
     </message>
     <message>
         <source>HTML-Files (*.htm *.html);;All Files (*)</source>
+        <translation>ملفات HTML (*.htm *.html);;جميع الملفات (*)</translation>
+    </message>
+    <message>
+        <source>Load images always for this message</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This messages is encrypted. Click the right button to decrypt it.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Decrypt</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Encrypted message</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Decryption failed!</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This message is not encrypted. Cannot decrypt!</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This message could not be decrypted.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown (needs decryption)</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -9038,19 +9203,19 @@ Do you want to save message ?</source>
     <name>MessageWindow</name>
     <message>
         <source>New Message</source>
-        <translation type="unfinished"/>
+        <translation>رسالة جديدة</translation>
     </message>
     <message>
         <source>Compose</source>
-        <translation type="unfinished"/>
+        <translation>أكتب</translation>
     </message>
     <message>
         <source>Reply to selected message</source>
-        <translation type="unfinished"/>
+        <translation>الرد على الرسالة المحددة</translation>
     </message>
     <message>
         <source>Reply</source>
-        <translation type="unfinished"/>
+        <translation>رد</translation>
     </message>
     <message>
         <source>Reply all to selected message</source>
@@ -9066,11 +9231,11 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Forward</source>
-        <translation type="unfinished"/>
+        <translation>للأمام</translation>
     </message>
     <message>
         <source>Remove selected message</source>
-        <translation type="unfinished"/>
+        <translation>إزالة الرسالة المحددة</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -9078,23 +9243,23 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Print selected message</source>
-        <translation type="unfinished"/>
+        <translation>طباعة الرسالة المحددة</translation>
     </message>
     <message>
         <source>Print</source>
-        <translation type="unfinished"/>
+        <translation>طباعة</translation>
     </message>
     <message>
         <source>Display</source>
-        <translation type="unfinished"/>
+        <translation>عرض</translation>
     </message>
     <message>
         <source>Tags</source>
-        <translation type="unfinished"/>
+        <translation>وسوم</translation>
     </message>
     <message>
         <source>Print Preview</source>
-        <translation type="unfinished"/>
+        <translation>معاينة ما قبل الطباعة</translation>
     </message>
     <message>
         <source>Buttons Icon Only</source>
@@ -9118,42 +9283,42 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>&amp;File</source>
-        <translation type="unfinished"/>
+        <translation>&amp;ملف</translation>
     </message>
     <message>
         <source>Save &amp;As File</source>
-        <translation type="unfinished"/>
+        <translation>احفظ &amp;كملف</translation>
     </message>
     <message>
         <source>&amp;Print...</source>
-        <translation type="unfinished"/>
+        <translation>ا&amp;طبع...</translation>
     </message>
     <message>
         <source>Print Preview...</source>
-        <translation type="unfinished"/>
+        <translation>معاينة ما قبل الطباعة...</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
-        <translation type="unfinished"/>
+        <translation>ا&amp;خرج</translation>
     </message>
 </context>
 <context>
     <name>MessagesDialog</name>
     <message>
         <source>New Message</source>
-        <translation type="unfinished"/>
+        <translation>رسالة جديدة</translation>
     </message>
     <message>
         <source>Compose</source>
-        <translation type="unfinished"/>
+        <translation>أكتب</translation>
     </message>
     <message>
         <source>Reply to selected message</source>
-        <translation type="unfinished"/>
+        <translation>الرد على الرسالة المحددة</translation>
     </message>
     <message>
         <source>Reply</source>
-        <translation type="unfinished"/>
+        <translation>رد</translation>
     </message>
     <message>
         <source>Reply all to selected message</source>
@@ -9173,7 +9338,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Remove selected message</source>
-        <translation type="unfinished"/>
+        <translation>إزالة الرسالة المحددة</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -9181,35 +9346,35 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Print selected message</source>
-        <translation type="unfinished"/>
+        <translation>طباعة الرسالة المحددة</translation>
     </message>
     <message>
         <source>Print</source>
-        <translation type="unfinished"/>
+        <translation>طباعة</translation>
     </message>
     <message>
         <source>Display</source>
-        <translation type="unfinished"/>
+        <translation>عرض</translation>
     </message>
     <message>
         <source>Tags</source>
-        <translation type="unfinished"/>
+        <translation>وسوم</translation>
     </message>
     <message>
         <source>Inbox</source>
-        <translation type="unfinished"/>
+        <translation>الوارد</translation>
     </message>
     <message>
         <source>Outbox</source>
-        <translation type="unfinished"/>
+        <translation>الصادر</translation>
     </message>
     <message>
         <source>Draft</source>
-        <translation type="unfinished"/>
+        <translation>مسودة</translation>
     </message>
     <message>
         <source>Sent</source>
-        <translation type="unfinished"/>
+        <translation>إرسال</translation>
     </message>
     <message>
         <source>Trash</source>
@@ -9221,19 +9386,19 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Folders</source>
-        <translation type="unfinished"/>
+        <translation>المجلدات</translation>
     </message>
     <message>
         <source>Quick View</source>
-        <translation type="unfinished"/>
+        <translation>عرض سريع</translation>
     </message>
     <message>
         <source>Print...</source>
-        <translation type="unfinished"/>
+        <translation>إطبع...</translation>
     </message>
     <message>
         <source>Print Preview</source>
-        <translation type="unfinished"/>
+        <translation>معاينة ما قبل الطباعة</translation>
     </message>
     <message>
         <source>Buttons Icon Only</source>
@@ -9257,11 +9422,11 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Save As...</source>
-        <translation type="unfinished"/>
+        <translation>حفظ باسم...</translation>
     </message>
     <message>
         <source>Reply to Message</source>
-        <translation type="unfinished"/>
+        <translation>الرد على رسالة</translation>
     </message>
     <message>
         <source>Reply to All</source>
@@ -9273,27 +9438,27 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Subject</source>
-        <translation type="unfinished"/>
+        <translation>الموضوع</translation>
     </message>
     <message>
         <source>From</source>
-        <translation type="unfinished"/>
+        <translation>من</translation>
     </message>
     <message>
         <source>Date</source>
-        <translation type="unfinished"/>
+        <translation>التاريخ</translation>
     </message>
     <message>
         <source>Content</source>
-        <translation type="unfinished"/>
+        <translation>المحتوى</translation>
     </message>
     <message>
         <source>Click to sort by attachments</source>
-        <translation type="unfinished"/>
+        <translation>إنقر للترتيب وفق المرفقات</translation>
     </message>
     <message>
         <source>Click to sort by subject</source>
-        <translation type="unfinished"/>
+        <translation>إنقر للترتيب وفق الموضوع</translation>
     </message>
     <message>
         <source>Click to sort by read</source>
@@ -9305,11 +9470,11 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Click to sort by date</source>
-        <translation type="unfinished"/>
+        <translation>إنقر للترتيب وفق التاريخ</translation>
     </message>
     <message>
         <source>Click to sort by tags</source>
-        <translation type="unfinished"/>
+        <translation>إنقر للترتيب وفق الوسوم</translation>
     </message>
     <message>
         <source>Click to sort by star</source>
@@ -9341,7 +9506,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Attachments</source>
-        <translation type="unfinished"/>
+        <translation>المرفقات</translation>
     </message>
     <message>
         <source>Search Attachments</source>
@@ -9353,15 +9518,15 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>System</source>
-        <translation type="unfinished"/>
+        <translation>نظام</translation>
     </message>
     <message>
         <source>Open in a new window</source>
-        <translation type="unfinished"/>
+        <translation>إفتح في نافذة جديدة</translation>
     </message>
     <message>
         <source>Open in a new tab</source>
-        <translation type="unfinished"/>
+        <translation>إفتح في لسان جديد</translation>
     </message>
     <message>
         <source>Mark as read</source>
@@ -9373,11 +9538,11 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Add Star</source>
-        <translation type="unfinished"/>
+        <translation>أضف نجمة</translation>
     </message>
     <message>
         <source>Edit</source>
-        <translation type="unfinished"/>
+        <translation>تحرير</translation>
     </message>
     <message>
         <source>Edit as new</source>
@@ -9385,15 +9550,15 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Remove Messages</source>
-        <translation type="unfinished"/>
+        <translation>إزالة الرسائل</translation>
     </message>
     <message>
         <source>Remove Message</source>
-        <translation type="unfinished"/>
+        <translation>إزالة الرسالة</translation>
     </message>
     <message>
         <source>Undelete</source>
-        <translation type="unfinished"/>
+        <translation>تراجع عن الحذف</translation>
     </message>
     <message>
         <source>Empty trash</source>
@@ -9401,7 +9566,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Drafts</source>
-        <translation type="unfinished"/>
+        <translation>مسودات</translation>
     </message>
     <message>
         <source>No starred messages available. Stars let you give messages a special status to make them easier to find. To star a message, click on the light gray star beside any message.</source>
@@ -9409,11 +9574,11 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>No system messages available.</source>
-        <translation type="unfinished"/>
+        <translation>لا توجد رسائل نظام</translation>
     </message>
     <message>
         <source>To</source>
-        <translation type="unfinished"/>
+        <translation>إلى</translation>
     </message>
     <message>
         <source>Click to sort by to</source>
@@ -9432,16 +9597,8 @@ Do you want to save message ?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Decryption failed!</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>This message could not be decrypted.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Messages</source>
-        <translation type="unfinished"/>
+        <translation>رسائل</translation>
     </message>
     <message>
         <source>Click to sort by signature</source>
@@ -9460,11 +9617,11 @@ Do you want to save message ?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>This message is not encrypted. Cannot decrypt!</source>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Messages&lt;/h1&gt;                          &lt;p&gt;Messages are like &lt;b&gt;e-mail&lt;/b&gt;: you send/receive them from your friends when both of you are connected.&lt;/p&gt;  &lt;p&gt;It is also possible to send messages to non friends, using tunnels. Such messages are always encrypted. It is  recommended to cryptographically sign distant messages, as a proof of your identity, using the &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; button  in the message composer window. Distant messages are not guarrantied to arrive, since this requires the distant peer to accept them (You need yourself to switch this on in Config-Messages).&lt;/p&gt; &lt;p&gt;Some additional features allow you to exchange data in messages: you may recommend files to your friends by pasting file links,  or recommend friends-to-be to other friends, in order to streathen your network.&lt;/p&gt;                    </source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Messages&lt;/h1&gt;                          &lt;p&gt;Messages are like &lt;b&gt;e-mail&lt;/b&gt;: you send/receive them from your friends when both of you are connected.&lt;/p&gt;  &lt;p&gt;It is also possible to send messages to non friends, using tunnels. Such messages are always encrypted. It is  recommended to cryptographically sign distant messages, as a proof of your identity, using the &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; button  in the message composer window. Distant messages are not guarrantied to arrive, since this requires the distant peer to accept them (You need yourself to switch this on in Config-Messages).&lt;/p&gt; &lt;p&gt;Some additional features allow you to exchange data in messages: you may recommend files to your friends by pasting file links,  or recommend friends-to-be to other friends, in order to streathen your network.&lt;/p&gt;                    </source>
+        <source>This message has been successfully decrypted, and is unsigned.</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -9476,7 +9633,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Add a Friend</source>
-        <translation type="unfinished"/>
+        <translation>إضافة صديق</translation>
     </message>
     <message>
         <source>Share files for your friends</source>
@@ -9487,31 +9644,31 @@ Do you want to save message ?</source>
     <name>MsgItem</name>
     <message>
         <source>Reply to Message</source>
-        <translation type="unfinished"/>
+        <translation>الرد على رسالة</translation>
     </message>
     <message>
         <source>Reply Message</source>
-        <translation type="unfinished"/>
+        <translation>الرد على الرسالة</translation>
     </message>
     <message>
         <source>Delete Message</source>
-        <translation type="unfinished"/>
+        <translation>حذف رسالة</translation>
     </message>
     <message>
         <source>Play Media</source>
-        <translation type="unfinished"/>
+        <translation>شغل الوسيط</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished"/>
+        <translation>توسيع</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished"/>
+        <translation>إزالة عنصر</translation>
     </message>
     <message>
         <source>Message From</source>
-        <translation type="unfinished"/>
+        <translation>رسالة من</translation>
     </message>
     <message>
         <source>Sent Msg</source>
@@ -9527,7 +9684,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"/>
+        <translation>إخفاء</translation>
     </message>
     <message>
         <source>Encrypted message</source>
@@ -9538,15 +9695,15 @@ Do you want to save message ?</source>
     <name>NATStatus</name>
     <message>
         <source>&lt;strong&gt;NAT:&lt;/strong&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;strong&gt;NAT:&lt;/strong&gt;</translation>
     </message>
     <message>
         <source>Network Status Unknown</source>
-        <translation type="unfinished"/>
+        <translation>حالة الشبكة مجهولة</translation>
     </message>
     <message>
         <source>Offline</source>
-        <translation type="unfinished"/>
+        <translation>غير متصل</translation>
     </message>
     <message>
         <source>Nasty Firewall</source>
@@ -9558,11 +9715,11 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Network Restarting</source>
-        <translation type="unfinished"/>
+        <translation>إعادة تشغيل الشبكة</translation>
     </message>
     <message>
         <source>Behind Firewall</source>
-        <translation type="unfinished"/>
+        <translation>خلف جدار ناري</translation>
     </message>
     <message>
         <source>DHT Disabled</source>
@@ -9570,7 +9727,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>RetroShare Server</source>
-        <translation type="unfinished"/>
+        <translation>مخدم ريتروشير</translation>
     </message>
     <message>
         <source>Forwarded Port</source>
@@ -9578,19 +9735,19 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>OK | RetroShare Server</source>
-        <translation type="unfinished"/>
+        <translation>موافق | مخدم ريتروشير</translation>
     </message>
     <message>
         <source>Internet connection</source>
-        <translation type="unfinished"/>
+        <translation>اتصال انترنت</translation>
     </message>
     <message>
         <source>No internet connection</source>
-        <translation type="unfinished"/>
+        <translation>لا يوجد اتصال بالانترنت</translation>
     </message>
     <message>
         <source>No local network</source>
-        <translation type="unfinished"/>
+        <translation>لا يوجد شبكة محلية</translation>
     </message>
 </context>
 <context>
@@ -9605,7 +9762,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>اسم</translation>
     </message>
     <message>
         <source>Did I authenticated peer</source>
@@ -9629,23 +9786,23 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Clear</source>
-        <translation type="unfinished"/>
+        <translation>مسح</translation>
     </message>
     <message>
         <source>Set Tabs Right</source>
-        <translation type="unfinished"/>
+        <translation>ضبط الألسنة نحو اليمين</translation>
     </message>
     <message>
         <source>Set Tabs North</source>
-        <translation type="unfinished"/>
+        <translation>ضبط الألسنة نحو الشمال</translation>
     </message>
     <message>
         <source>Set Tabs South</source>
-        <translation type="unfinished"/>
+        <translation>ضبط الألسنة نحو الجنوب</translation>
     </message>
     <message>
         <source>Set Tabs Left</source>
-        <translation type="unfinished"/>
+        <translation>ضبط الألسنة نحو اليسار</translation>
     </message>
     <message>
         <source>Set Tabs Rounded</source>
@@ -9657,23 +9814,23 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Add Friend</source>
-        <translation type="unfinished"/>
+        <translation>إضافة صديق</translation>
     </message>
     <message>
         <source>Copy My Key to Clipboard</source>
-        <translation type="unfinished"/>
+        <translation>إنسخ مفتاحي إلى الحافظة</translation>
     </message>
     <message>
         <source>Export My Key</source>
-        <translation type="unfinished"/>
+        <translation>صدر مفتاحي</translation>
     </message>
     <message>
         <source>Create New Profile</source>
-        <translation type="unfinished"/>
+        <translation>إنشاء ملف شخصي جديد</translation>
     </message>
     <message>
         <source>Create a new Profile</source>
-        <translation type="unfinished"/>
+        <translation>إنشاء ملف شخصي جديد</translation>
     </message>
     <message>
         <source>Search Name</source>
@@ -9689,7 +9846,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Deny friend</source>
-        <translation type="unfinished"/>
+        <translation>رفض صديق</translation>
     </message>
     <message>
         <source>Make friend</source>
@@ -9705,7 +9862,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>نسخ رابط ريتروشير</translation>
     </message>
     <message>
         <source>Remove unused keys...</source>
@@ -9754,7 +9911,7 @@ Reported error: </source>
     </message>
     <message>
         <source>Personal signature</source>
-        <translation type="unfinished"/>
+        <translation>توقيع شخصي</translation>
     </message>
     <message>
         <source>PGP key signed by you</source>
@@ -9778,7 +9935,7 @@ Reported error: </source>
     </message>
     <message>
         <source>Unknown</source>
-        <translation type="unfinished"/>
+        <translation>مجهول</translation>
     </message>
     <message>
         <source>Last hour</source>
@@ -9842,7 +9999,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     <name>NetworkPage</name>
     <message>
         <source>Network</source>
-        <translation type="unfinished"/>
+        <translation>شبكة</translation>
     </message>
 </context>
 <context>
@@ -9853,7 +10010,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Friendship level:</source>
-        <translation type="unfinished"/>
+        <translation>مستوى الصداقة:</translation>
     </message>
     <message>
         <source>Edge length:</source>
@@ -9864,19 +10021,19 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     <name>NewTag</name>
     <message>
         <source>New Tag</source>
-        <translation type="unfinished"/>
+        <translation>وسم جديد</translation>
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished"/>
+        <translation>الاسم:</translation>
     </message>
     <message>
         <source>Choose color</source>
-        <translation type="unfinished"/>
+        <translation>اختر لون</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="unfinished"/>
+        <translation>موافق</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -9895,7 +10052,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Remove All</source>
-        <translation type="unfinished"/>
+        <translation>إزالة الكل</translation>
     </message>
     <message>
         <source>This is a test.</source>
@@ -9918,27 +10075,27 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Channels</source>
-        <translation type="unfinished"/>
+        <translation>قنوات</translation>
     </message>
     <message>
         <source>Forums</source>
-        <translation type="unfinished"/>
+        <translation>منتديات</translation>
     </message>
     <message>
         <source>Blogs</source>
-        <translation type="unfinished"/>
+        <translation>مدونات</translation>
     </message>
     <message>
         <source>Messages</source>
-        <translation type="unfinished"/>
+        <translation>رسائل</translation>
     </message>
     <message>
         <source>Chat</source>
-        <translation type="unfinished"/>
+        <translation>دردشة</translation>
     </message>
     <message>
         <source>Security</source>
-        <translation type="unfinished"/>
+        <translation>الأمن</translation>
     </message>
     <message>
         <source>Add feeds at end</source>
@@ -9954,11 +10111,11 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Message</source>
-        <translation type="unfinished"/>
+        <translation>رسالة</translation>
     </message>
     <message>
         <source>Connect attempt</source>
-        <translation type="unfinished"/>
+        <translation>محاولة اتصال</translation>
     </message>
     <message>
         <source>Toasters</source>
@@ -9970,19 +10127,19 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>New Message</source>
-        <translation type="unfinished"/>
+        <translation>رسالة جديدة</translation>
     </message>
     <message>
         <source>Download completed</source>
-        <translation type="unfinished"/>
+        <translation>اكتمل التنزيل</translation>
     </message>
     <message>
         <source>Private Chat</source>
-        <translation type="unfinished"/>
+        <translation>دردشة خاصة</translation>
     </message>
     <message>
         <source>Group Chat</source>
-        <translation type="unfinished"/>
+        <translation>دردشة جماعبة</translation>
     </message>
     <message>
         <source>Chat Lobby</source>
@@ -9994,11 +10151,11 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>X Margin</source>
-        <translation type="unfinished"/>
+        <translation>هامش X</translation>
     </message>
     <message>
         <source>Y Margin</source>
-        <translation type="unfinished"/>
+        <translation>هامش Y</translation>
     </message>
     <message>
         <source>Systray message</source>
@@ -10006,7 +10163,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Group chat</source>
-        <translation type="unfinished"/>
+        <translation>دردشة جماعية</translation>
     </message>
     <message>
         <source>Chat lobbies</source>
@@ -10014,7 +10171,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Combined</source>
-        <translation type="unfinished"/>
+        <translation>مركب</translation>
     </message>
     <message>
         <source>Blink</source>
@@ -10022,22 +10179,26 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Top Left</source>
-        <translation type="unfinished"/>
+        <translation>أعلى لليسار</translation>
     </message>
     <message>
         <source>Top Right</source>
-        <translation type="unfinished"/>
+        <translation>أعلى لليمين</translation>
     </message>
     <message>
         <source>Bottom Left</source>
-        <translation type="unfinished"/>
+        <translation>أسفل لليسار</translation>
     </message>
     <message>
         <source>Bottom Right</source>
-        <translation type="unfinished"/>
+        <translation>أسفل لليمين</translation>
     </message>
     <message>
         <source>Notify</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Notify&lt;/h1&gt; 		  &lt;p&gt;Retroshare will notify you about what happens in your network.         		  Depending on your usage, you may want to enable or disable some of the    		  notifications. This page is designed for that!&lt;/p&gt;                        		  </source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -10049,7 +10210,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Wrong password !</source>
-        <translation type="unfinished"/>
+        <translation>كلمة المرور خاطئة!</translation>
     </message>
     <message>
         <source>Unregistered plugin/executable</source>
@@ -10069,7 +10230,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Examining shared files...</source>
-        <translation type="unfinished"/>
+        <translation>فحص الملفات المشتركة...</translation>
     </message>
     <message>
         <source>Hashing file</source>
@@ -10100,7 +10261,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     <name>OnlineToaster</name>
     <message>
         <source>Friend Online</source>
-        <translation type="unfinished"/>
+        <translation>صديق متصل</translation>
     </message>
 </context>
 <context>
@@ -10133,30 +10294,30 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     <name>PeerDefs</name>
     <message>
         <source>Unknown</source>
-        <translation type="unfinished"/>
+        <translation>مجهول</translation>
     </message>
 </context>
 <context>
     <name>PeerItem</name>
     <message>
         <source>Write a quick Message</source>
-        <translation type="unfinished"/>
+        <translation>كتابة رسالة مختصرة</translation>
     </message>
     <message>
         <source>Chat</source>
-        <translation type="unfinished"/>
+        <translation>دردشة</translation>
     </message>
     <message>
         <source>Start Chat</source>
-        <translation type="unfinished"/>
+        <translation>ابدأ الدردشة</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished"/>
+        <translation>توسيع</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished"/>
+        <translation>إزالة عنصر</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -10164,11 +10325,11 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Send</source>
-        <translation type="unfinished"/>
+        <translation>إرسال</translation>
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished"/>
+        <translation>الاسم:</translation>
     </message>
     <message>
         <source>Peer ID:</source>
@@ -10176,81 +10337,81 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Trust: </source>
-        <translation type="unfinished"/>
+        <translation>ثقة:</translation>
     </message>
     <message>
         <source>Location:</source>
-        <translation type="unfinished"/>
+        <translation>الموقع:</translation>
     </message>
     <message>
         <source>IP Address:</source>
-        <translation type="unfinished"/>
+        <translation>عنوان IP:</translation>
     </message>
     <message>
         <source>Connection Method:</source>
-        <translation type="unfinished"/>
+        <translation>طريقة الاتصال:</translation>
     </message>
     <message>
         <source>Status:</source>
-        <translation type="unfinished"/>
+        <translation>الحالة:</translation>
     </message>
     <message>
         <source>Write Message</source>
-        <translation type="unfinished"/>
+        <translation>كتابة رسالة</translation>
     </message>
     <message>
         <source>Friend</source>
-        <translation type="unfinished"/>
+        <translation>صديق</translation>
     </message>
     <message>
         <source>Friend Connected</source>
-        <translation type="unfinished"/>
+        <translation>صديق متصل</translation>
     </message>
     <message>
         <source>Connect Attempt</source>
-        <translation type="unfinished"/>
+        <translation>محاولة اتصال</translation>
     </message>
     <message>
         <source>Friend of Friend</source>
-        <translation type="unfinished"/>
+        <translation>صديق لصديق</translation>
     </message>
     <message>
         <source>Peer</source>
-        <translation type="unfinished"/>
+        <translation>نظير</translation>
     </message>
     <message>
         <source>Unknown Peer</source>
-        <translation type="unfinished"/>
+        <translation>نظير مجهول</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"/>
+        <translation>إخفاء</translation>
     </message>
     <message>
         <source>Quick Message</source>
-        <translation type="unfinished"/>
+        <translation>رسالة مختصرة</translation>
     </message>
 </context>
 <context>
     <name>PeerStatus</name>
     <message>
         <source>Friends: 0/0</source>
-        <translation type="unfinished"/>
+        <translation>أصدقاء: 0/0</translation>
     </message>
     <message>
         <source>Online Friends/Total Friends</source>
-        <translation type="unfinished"/>
+        <translation>أصدقاء متصلين/كل الأصدقاء</translation>
     </message>
     <message>
         <source>Friends</source>
-        <translation type="unfinished"/>
+        <translation>أصدقاء</translation>
     </message>
 </context>
 <context>
     <name>PhotoCommentItem</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"/>
+        <translation>من</translation>
     </message>
 </context>
 <context>
@@ -10269,7 +10430,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Comment</source>
-        <translation type="unfinished"/>
+        <translation>تعليق</translation>
     </message>
     <message>
         <source>Summary</source>
@@ -10308,7 +10469,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     <name>PhotoItem</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"/>
+        <translation>من</translation>
     </message>
     <message>
         <source>TextLabel</source>
@@ -10343,7 +10504,7 @@ p, li { white-space: pre-wrap; }
     <name>PhotoShare</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"/>
+        <translation>من</translation>
     </message>
     <message>
         <source>Create Album</source>
@@ -10415,7 +10576,7 @@ requesting to edit it!</source>
     </message>
     <message>
         <source>Close</source>
-        <translation type="unfinished"/>
+        <translation>إغلاق</translation>
     </message>
     <message>
         <source>Start</source>
@@ -10434,7 +10595,7 @@ requesting to edit it!</source>
     <name>PluginFrame</name>
     <message>
         <source>Remove</source>
-        <translation type="unfinished"/>
+        <translation>إزالة</translation>
     </message>
 </context>
 <context>
@@ -10461,7 +10622,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Enable</source>
-        <translation type="unfinished"/>
+        <translation>تمكين</translation>
     </message>
     <message>
         <source>Disable this plugin (restart required)</source>
@@ -10481,11 +10642,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>About</source>
-        <translation type="unfinished"/>
+        <translation>حول</translation>
     </message>
     <message>
         <source>File name: </source>
-        <translation type="unfinished"/>
+        <translation>اسم الملف:</translation>
     </message>
     <message>
         <source>File hash:</source>
@@ -10493,7 +10654,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Status: </source>
-        <translation type="unfinished"/>
+        <translation>الحالة:</translation>
     </message>
     <message>
         <source>will be enabled after your restart RetroShare.</source>
@@ -10559,7 +10720,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Unknown status.</source>
-        <translation type="unfinished"/>
+        <translation>الحالة مجهولة.</translation>
     </message>
     <message>
         <source>Title unavailable</source>
@@ -10567,7 +10728,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Description unavailable</source>
-        <translation type="unfinished"/>
+        <translation>الوصف غير متاح</translation>
     </message>
     <message>
         <source>Unknown version</source>
@@ -10584,12 +10745,16 @@ malicious behavior of crafted plugins.</source>
         <source>Plugins</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Plugins&lt;/h1&gt;                   &lt;p&gt;Plugins are loaded from the directories listed in the bottom list.&lt;/p&gt;                       &lt;p&gt;For security reasons, accepted plugins load automatically until                              the main Retroshare executable or the plugin library changes. In                                such a case, the user needs to confirm them again.                                              After the program is started, you can enable a plugin manually by clicking on the               &quot;Enable&quot; button and then restart Retroshare.&lt;/p&gt;                                              &lt;p&gt;If you want to develop your own plugins, contact the developpers team                        they will be happy to help you out!&lt;/p&gt;</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>PopularityDefs</name>
     <message>
         <source>Popularity</source>
-        <translation type="unfinished"/>
+        <translation>الشعبية</translation>
     </message>
 </context>
 <context>
@@ -10611,7 +10776,7 @@ malicious behavior of crafted plugins.</source>
     <name>PopupChatWindow</name>
     <message>
         <source>Avatar</source>
-        <translation type="unfinished"/>
+        <translation>صورة رمزية</translation>
     </message>
     <message>
         <source>Set your Avatar Picture</source>
@@ -10685,7 +10850,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished"/>
+        <translation>ريتروشير</translation>
     </message>
     <message>
         <source>Please create or choose a Signing Id first</source>
@@ -10702,15 +10867,7 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PostedGroupDialog</name>
     <message>
-        <source>Create New Posted Topic</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Posted Topic</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Edit Posted Topic</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -10721,6 +10878,14 @@ p, li { white-space: pre-wrap; }
         <source>Select Topic Admins</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>Create New Topic</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Edit Topic</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>PostedItem</name>
@@ -10729,20 +10894,16 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>\/</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>This is a very very very very loooooooooooooooonnnnnnnnnnnnnnnnng title don&apos;t you think? Yes it is and should wrap around I hope</source>
         <translation type="unfinished"/>
     </message>
     <message>
         <source>Date</source>
-        <translation type="unfinished"/>
+        <translation>التاريخ</translation>
     </message>
     <message>
         <source>From</source>
-        <translation type="unfinished"/>
+        <translation>من</translation>
     </message>
     <message>
         <source>Site</source>
@@ -10754,18 +10915,18 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Comments</source>
-        <translation type="unfinished"/>
+        <translation>تعليقات</translation>
     </message>
     <message>
         <source>Comment</source>
+        <translation>تعليق</translation>
+    </message>
+    <message>
+        <source>I like this</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Vote Up</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Vote Down</source>
+        <source>I dislike this</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -10773,7 +10934,7 @@ p, li { white-space: pre-wrap; }
     <name>PostedListDialog</name>
     <message>
         <source>Form</source>
-        <translation type="unfinished"/>
+        <translation>من</translation>
     </message>
     <message>
         <source>Hot</source>
@@ -10781,7 +10942,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>New</source>
-        <translation type="unfinished"/>
+        <translation>جديد</translation>
     </message>
     <message>
         <source>Top</source>
@@ -10841,11 +11002,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Subscribe</source>
-        <translation type="unfinished"/>
+        <translation>اشتراك</translation>
     </message>
     <message>
         <source>Unsubscribe</source>
-        <translation type="unfinished"/>
+        <translation>إلغاء الاشتراك</translation>
     </message>
     <message>
         <source>Showing</source>
@@ -10853,7 +11014,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished"/>
+        <translation>ريتروشير</translation>
     </message>
     <message>
         <source>Please create or choose a Signing Id before Voting</source>
@@ -10872,11 +11033,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Print</source>
-        <translation type="unfinished"/>
+        <translation>طباعة</translation>
     </message>
     <message>
         <source>&amp;Print...</source>
-        <translation type="unfinished"/>
+        <translation>ا&amp;طبع...</translation>
     </message>
     <message>
         <source>Page Setup...</source>
@@ -10907,11 +11068,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>اسم</translation>
     </message>
     <message>
         <source>Email</source>
-        <translation type="unfinished"/>
+        <translation>البريد الإلكتروني</translation>
     </message>
     <message>
         <source>GID</source>
@@ -11014,11 +11175,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished"/>
+        <translation>الاسم:</translation>
     </message>
     <message>
         <source>Location:</source>
-        <translation type="unfinished"/>
+        <translation>الموقع:</translation>
     </message>
     <message>
         <source>Peer ID:</source>
@@ -11062,7 +11223,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished"/>
+        <translation>ريتروشير</translation>
     </message>
     <message>
         <source>Sorry, create certificate failed</source>
@@ -11124,11 +11285,11 @@ p, li { white-space: pre-wrap; }
     <name>PulseItem</name>
     <message>
         <source>From</source>
-        <translation type="unfinished"/>
+        <translation>من</translation>
     </message>
     <message>
         <source>Date</source>
-        <translation type="unfinished"/>
+        <translation>التاريخ</translation>
     </message>
     <message>
         <source>...</source>
@@ -11139,7 +11300,7 @@ p, li { white-space: pre-wrap; }
     <name>QObject</name>
     <message>
         <source>Subject: </source>
-        <translation type="unfinished"/>
+        <translation>الموضوع:</translation>
     </message>
     <message>
         <source>Participants: </source>
@@ -11318,7 +11479,7 @@ Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replace
     </message>
     <message>
         <source>Deny friend</source>
-        <translation type="unfinished"/>
+        <translation>رفض صديق</translation>
     </message>
     <message>
         <source>Make friend</source>
@@ -11355,7 +11516,7 @@ Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replace
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished"/>
+        <translation>ريتروشير</translation>
     </message>
     <message>
         <source>Initialization failed. Wrong or missing installation of PGP.</source>
@@ -11391,7 +11552,7 @@ Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replace
     </message>
     <message>
         <source>Maybe password is wrong</source>
-        <translation type="unfinished"/>
+        <translation>ربما كلمة المرور خاطئة</translation>
     </message>
     <message>
         <source>Start with a RetroShare link is only supported for Windows.</source>
@@ -11466,6 +11627,15 @@ Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replace
 Reported error is: 
 
 %2</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Signature check failed!
+Make sure you know who you&apos;re talking to.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Chat connection is unauthenticated</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -11572,7 +11742,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Directory</source>
-        <translation type="unfinished"/>
+        <translation>مجلد</translation>
     </message>
     <message>
         <source>Network Wide</source>
@@ -11584,15 +11754,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add</source>
-        <translation type="unfinished"/>
+        <translation>إضافة</translation>
     </message>
     <message>
         <source>Remove</source>
-        <translation type="unfinished"/>
+        <translation>إزالة</translation>
     </message>
     <message>
         <source>Automatically share incoming directory (Recommended)</source>
-        <translation type="unfinished"/>
+        <translation>مشاركة تلقائية للمجلدات الواردة (مستحسن)</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -11629,7 +11799,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Start minimized on system start</source>
-        <translation type="unfinished"/>
+        <translation>تشغيل مصغر لدى بدء تشغيل النظام</translation>
     </message>
     <message>
         <source>Finish</source>
@@ -11649,6 +11819,21 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Warning!</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>RSImageBlockWidget</name>
+    <message>
+        <source>Form</source>
+        <translation>من</translation>
+    </message>
+    <message>
+        <source>The loading of embedded images is blocked.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Load images</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -11702,7 +11887,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Friends</source>
-        <translation type="unfinished"/>
+        <translation>أصدقاء</translation>
     </message>
     <message>
         <source>kB/s</source>
@@ -11714,7 +11899,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>General</source>
-        <translation type="unfinished"/>
+        <translation>عا</translation>
     </message>
     <message>
         <source>Total:</source>
@@ -11740,12 +11925,16 @@ p, li { white-space: pre-wrap; }
         <source>Relay</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Relays&lt;/h1&gt;                                 &lt;p&gt;By activating relays, you allow your Retroshare node to act as a bridge between Retroshare  				  users who cannot connect directly, e.g. because they&apos;re firewalled.&lt;/p&gt;                        				  &lt;p&gt;You may choose to act as a relay by checking &lt;i&gt;enable relay connections&lt;/i&gt;, or simply     				  benefit from other peers acting as relay, by checking &lt;i&gt;use relay servers&lt;/i&gt;. For the former,				  you may specify the bandwidth allocated when acting as a relay for friends of you, for friends 				  of your friends, or anyone in the Retroshare network.&lt;/p&gt;                                      				  &lt;p&gt;In any case, a Retroshare node acting as a relay cannot see the relayed traffic, since it   				  is encrypted and authenticated by the two relayed nodes.&lt;/p&gt;</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>RemoteSharedFilesDialog</name>
     <message>
         <source>Download</source>
-        <translation type="unfinished"/>
+        <translation>تحميل</translation>
     </message>
     <message>
         <source>Recommend in a message to</source>
@@ -11795,11 +11984,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>File</source>
-        <translation type="unfinished"/>
+        <translation>ملف</translation>
     </message>
     <message>
         <source>Size</source>
-        <translation type="unfinished"/>
+        <translation>الحجم</translation>
     </message>
     <message>
         <source>Hash</source>
@@ -11912,19 +12101,19 @@ Reducing image to %1x%2 pixels?</source>
     <name>SFListDelegate</name>
     <message>
         <source>B</source>
-        <translation type="unfinished"/>
+        <translation>بايت</translation>
     </message>
     <message>
         <source>KB</source>
-        <translation type="unfinished"/>
+        <translation>كيلوبايت</translation>
     </message>
     <message>
         <source>MB</source>
-        <translation type="unfinished"/>
+        <translation>ميغابايت</translation>
     </message>
     <message>
         <source>GB</source>
-        <translation type="unfinished"/>
+        <translation>غيغابايت</translation>
     </message>
 </context>
 <context>
@@ -11939,7 +12128,7 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Search</source>
-        <translation type="unfinished"/>
+        <translation>بحث</translation>
     </message>
     <message>
         <source>Advanced Search</source>
@@ -11980,7 +12169,7 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Clear</source>
-        <translation type="unfinished"/>
+        <translation>مسح</translation>
     </message>
     <message>
         <source>KeyWords</source>
@@ -12000,7 +12189,7 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Size</source>
-        <translation type="unfinished"/>
+        <translation>الحجم</translation>
     </message>
     <message>
         <source>Sources</source>
@@ -12008,7 +12197,7 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished"/>
+        <translation>النوع</translation>
     </message>
     <message>
         <source>Age</source>
@@ -12036,11 +12225,11 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Archive</source>
-        <translation type="unfinished"/>
+        <translation>أرشيف</translation>
     </message>
     <message>
         <source>Audio</source>
-        <translation type="unfinished"/>
+        <translation>صوت</translation>
     </message>
     <message>
         <source>CD-Image</source>
@@ -12048,23 +12237,23 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Document</source>
-        <translation type="unfinished"/>
+        <translation>مستند</translation>
     </message>
     <message>
         <source>Picture</source>
-        <translation type="unfinished"/>
+        <translation>صورة</translation>
     </message>
     <message>
         <source>Program</source>
-        <translation type="unfinished"/>
+        <translation>برنامج</translation>
     </message>
     <message>
         <source>Video</source>
-        <translation type="unfinished"/>
+        <translation>فيديو</translation>
     </message>
     <message>
         <source>Directory</source>
-        <translation type="unfinished"/>
+        <translation>مجلد</translation>
     </message>
     <message>
         <source>Download Selected</source>
@@ -12076,15 +12265,15 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>File Name</source>
-        <translation type="unfinished"/>
+        <translation>اسم الملف</translation>
     </message>
     <message>
         <source>Download</source>
-        <translation type="unfinished"/>
+        <translation>تحميل</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>نسخ رابط ريتروشير</translation>
     </message>
     <message>
         <source>Send RetroShare Link</source>
@@ -12112,11 +12301,11 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Remove</source>
-        <translation type="unfinished"/>
+        <translation>إزالة</translation>
     </message>
     <message>
         <source>Remove All</source>
-        <translation type="unfinished"/>
+        <translation>إزالة الكل</translation>
     </message>
     <message>
         <source>Folder</source>
@@ -12135,7 +12324,7 @@ Reducing image to %1x%2 pixels?</source>
     <name>SecurityItem</name>
     <message>
         <source>wants to be friend with you on RetroShare</source>
-        <translation type="unfinished"/>
+        <translation>يريد أن يكون صديقك ضمن ريتروشير</translation>
     </message>
     <message>
         <source>Accept Friend Request</source>
@@ -12147,27 +12336,27 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Deny friend</source>
-        <translation type="unfinished"/>
+        <translation>رفض صديق</translation>
     </message>
     <message>
         <source>Write a quick Message</source>
-        <translation type="unfinished"/>
+        <translation>كتابة رسالة مختصرة</translation>
     </message>
     <message>
         <source>Chat</source>
-        <translation type="unfinished"/>
+        <translation>دردشة</translation>
     </message>
     <message>
         <source>Start Chat</source>
-        <translation type="unfinished"/>
+        <translation>ابدأ الدردشة</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation type="unfinished"/>
+        <translation>توسيع</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation type="unfinished"/>
+        <translation>إزالة عنصر</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -12175,11 +12364,11 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Send</source>
-        <translation type="unfinished"/>
+        <translation>إرسال</translation>
     </message>
     <message>
         <source>Name:</source>
-        <translation type="unfinished"/>
+        <translation>الاسم:</translation>
     </message>
     <message>
         <source>Peer ID:</source>
@@ -12187,31 +12376,31 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Trust: </source>
-        <translation type="unfinished"/>
+        <translation>ثقة:</translation>
     </message>
     <message>
         <source>Location:</source>
-        <translation type="unfinished"/>
+        <translation>الموقع:</translation>
     </message>
     <message>
         <source>IP Address:</source>
-        <translation type="unfinished"/>
+        <translation>عنوان IP:</translation>
     </message>
     <message>
         <source>Connection Method:</source>
-        <translation type="unfinished"/>
+        <translation>طريقة الاتصال:</translation>
     </message>
     <message>
         <source>Status:</source>
-        <translation type="unfinished"/>
+        <translation>الحالة:</translation>
     </message>
     <message>
         <source>Write Message</source>
-        <translation type="unfinished"/>
+        <translation>كتابة رسالة</translation>
     </message>
     <message>
         <source>Connect Attempt</source>
-        <translation type="unfinished"/>
+        <translation>محاولة اتصال</translation>
     </message>
     <message>
         <source>Connection refused by remote peer</source>
@@ -12219,7 +12408,7 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Unknown (Incoming) Connect Attempt</source>
-        <translation type="unfinished"/>
+        <translation>محاولة اتصال (وارد) مجهولة</translation>
     </message>
     <message>
         <source>Unknown (Outgoing) Connect Attempt</source>
@@ -12231,19 +12420,19 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Unknown Peer</source>
-        <translation type="unfinished"/>
+        <translation>نظير مجهول</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation type="unfinished"/>
+        <translation>إخفاء</translation>
     </message>
     <message>
         <source>Do you want to remove this Friend?</source>
-        <translation type="unfinished"/>
+        <translation>هل تريد إزالة هذا الصديق؟</translation>
     </message>
     <message>
         <source>Quick Message</source>
-        <translation type="unfinished"/>
+        <translation>رسالة مختصرة</translation>
     </message>
 </context>
 <context>
@@ -12294,15 +12483,15 @@ peers still need to trust each other to allow connection. </source>
     </message>
     <message>
         <source>Local Address</source>
-        <translation type="unfinished"/>
+        <translation>عنوان محلي</translation>
     </message>
     <message>
         <source>External Address</source>
-        <translation type="unfinished"/>
+        <translation>عنوان خارجي</translation>
     </message>
     <message>
         <source>Dynamic DNS</source>
-        <translation type="unfinished"/>
+        <translation>نظام اسماء نطاقات ديناميكي</translation>
     </message>
     <message>
         <source>Port:</source>
@@ -12345,22 +12534,14 @@ behind a firewall or a VPN.</source>
     </message>
     <message>
         <source>Bandwidth</source>
-        <translation type="unfinished"/>
+        <translation>عرض الحزمة</translation>
     </message>
     <message>
         <source>Max Transfer Rates</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Download (KB/s) </source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>kB/s</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Upload (KB/s) </source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -12403,6 +12584,14 @@ The default value is 20.</source>
     </message>
     <message>
         <source>Server</source>
+        <translation>المخدم</translation>
+    </message>
+    <message>
+        <source>Download (KB/s) </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Upload (KB/s) </source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -12456,7 +12645,7 @@ The default value is 20.</source>
     </message>
     <message>
         <source>Browse</source>
-        <translation type="unfinished"/>
+        <translation>استعرض</translation>
     </message>
     <message>
         <source>Virtual Folder</source>
@@ -12483,7 +12672,7 @@ The default value is 20.</source>
     <name>ShareKey</name>
     <message>
         <source>Share Channel</source>
-        <translation type="unfinished"/>
+        <translation>مشاركة القناة</translation>
     </message>
     <message>
         <source>check peers you would like to share private publish key with</source>
@@ -12517,20 +12706,8 @@ The default value is 20.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;This is a list of shared folders. You can add and remove folders using the buttons at the bottom.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;When you add a new folder, intially all files in that folder are shared.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-size:8pt;&quot;&gt;You can separately setup share flags for each shared directory:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-size:8pt; font-weight:600;&quot;&gt;Browsable&lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:8pt;&quot;&gt;: files are browsable from your direct friends.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Network Wide&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: files can be downloaded by anybody through anonymous tunnels.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Directory</source>
-        <translation type="unfinished"/>
+        <translation>مجلد</translation>
     </message>
     <message>
         <source>Virtual Folder</source>
@@ -12542,7 +12719,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Groups</source>
-        <translation type="unfinished"/>
+        <translation>مجموعات</translation>
     </message>
     <message>
         <source>Add a Share Directory</source>
@@ -12550,7 +12727,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add</source>
-        <translation type="unfinished"/>
+        <translation>إضافة</translation>
     </message>
     <message>
         <source>Stop sharing selected Directory</source>
@@ -12558,7 +12735,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Remove</source>
-        <translation type="unfinished"/>
+        <translation>إزالة</translation>
     </message>
     <message>
         <source>Apply and close</source>
@@ -12570,7 +12747,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Edit</source>
-        <translation type="unfinished"/>
+        <translation>تحرير</translation>
     </message>
     <message>
         <source>Share Manager</source>
@@ -12600,12 +12777,16 @@ p, li { white-space: pre-wrap; }
         <source>Directory not found or directory name not accepted.</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>This is a list of shared folders. You can add and remove folders using the buttons at the bottom. When you add a new folder, intially all files in that folder are shared. You can separately setup share flags for each shared directory.</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>SharedFilesDialog</name>
     <message>
         <source>Files</source>
-        <translation type="unfinished"/>
+        <translation>ملفات</translation>
     </message>
     <message>
         <source>Search files</source>
@@ -12617,7 +12798,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Reset</source>
-        <translation type="unfinished"/>
+        <translation>إعادة الضبط</translation>
     </message>
     <message>
         <source>Tree view</source>
@@ -12653,7 +12834,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Download</source>
-        <translation type="unfinished"/>
+        <translation>تحميل</translation>
     </message>
     <message>
         <source>Copy retroshare Links to Clipboard</source>
@@ -12696,7 +12877,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Browse</source>
-        <translation type="unfinished"/>
+        <translation>استعرض</translation>
     </message>
     <message>
         <source>Event</source>
@@ -12708,7 +12889,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Friend</source>
-        <translation type="unfinished"/>
+        <translation>صديق</translation>
     </message>
     <message>
         <source>go Online</source>
@@ -12724,7 +12905,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Message</source>
-        <translation type="unfinished"/>
+        <translation>رسالة</translation>
     </message>
     <message>
         <source>Message arrived</source>
@@ -12732,7 +12913,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Download</source>
-        <translation type="unfinished"/>
+        <translation>تحميل</translation>
     </message>
     <message>
         <source>Download complete</source>
@@ -12777,7 +12958,7 @@ p, li { white-space: pre-wrap; }
     <name>StartDialog</name>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished"/>
+        <translation>ريتروشير</translation>
     </message>
     <message>
         <source>Login</source>
@@ -12850,7 +13031,7 @@ This choice can be reverted in settings.</source>
     <name>StatusDefs</name>
     <message>
         <source>Offline</source>
-        <translation type="unfinished"/>
+        <translation>غير متصل</translation>
     </message>
     <message>
         <source>Away</source>
@@ -12866,7 +13047,7 @@ This choice can be reverted in settings.</source>
     </message>
     <message>
         <source>Idle</source>
-        <translation type="unfinished"/>
+        <translation>خامل</translation>
     </message>
     <message>
         <source>Friend is offline</source>
@@ -12898,7 +13079,7 @@ This choice can be reverted in settings.</source>
     </message>
     <message>
         <source>Available</source>
-        <translation type="unfinished"/>
+        <translation>متاح</translation>
     </message>
     <message>
         <source>Neighbor</source>
@@ -12972,7 +13153,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Choose color</source>
-        <translation type="unfinished"/>
+        <translation>اختر لون</translation>
     </message>
     <message>
         <source>Color 2</source>
@@ -12984,7 +13165,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Style</source>
-        <translation type="unfinished"/>
+        <translation>نمط</translation>
     </message>
     <message>
         <source>None</source>
@@ -13003,11 +13184,11 @@ p, li { white-space: pre-wrap; }
     <name>SubFileItem</name>
     <message>
         <source>%p Kb</source>
-        <translation type="unfinished"/>
+        <translation>%p كيلوبت</translation>
     </message>
     <message>
         <source>Cancel Download</source>
-        <translation type="unfinished"/>
+        <translation>إلغاء التحميل</translation>
     </message>
     <message>
         <source>Download File</source>
@@ -13015,7 +13196,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Download</source>
-        <translation type="unfinished"/>
+        <translation>تحميل</translation>
     </message>
     <message>
         <source>Play File</source>
@@ -13023,7 +13204,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Play</source>
-        <translation type="unfinished"/>
+        <translation>تشغيل</translation>
     </message>
     <message>
         <source>Save File</source>
@@ -13187,7 +13368,7 @@ p, li { white-space: pre-wrap; }
     <name>TransferUserNotify</name>
     <message>
         <source>Download completed</source>
-        <translation type="unfinished"/>
+        <translation>اكتمل التنزيل</translation>
     </message>
     <message>
         <source>You have %1 completed downloads</source>
@@ -13219,12 +13400,12 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Name</source>
         <comment>i.e: file name</comment>
-        <translation type="unfinished"/>
+        <translation>اسم</translation>
     </message>
     <message>
         <source>Size</source>
         <comment>i.e: file size</comment>
-        <translation type="unfinished"/>
+        <translation>الحجم</translation>
     </message>
     <message>
         <source>Completed</source>
@@ -13255,7 +13436,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Remaining</source>
-        <translation type="unfinished"/>
+        <translation>المتبقي</translation>
     </message>
     <message>
         <source>Download time</source>
@@ -13265,7 +13446,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Peer</source>
         <comment>i.e: user name</comment>
-        <translation type="unfinished"/>
+        <translation>نظير</translation>
     </message>
     <message>
         <source>Progress</source>
@@ -13287,7 +13468,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Search</source>
-        <translation type="unfinished"/>
+        <translation>بحث</translation>
     </message>
     <message>
         <source>Friends files</source>
@@ -13343,11 +13524,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>نسخ رابط ريتروشير</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>لصق رابط ريتروشير</translation>
     </message>
     <message>
         <source>Down</source>
@@ -13391,7 +13572,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Play</source>
-        <translation type="unfinished"/>
+        <translation>تشغيل</translation>
     </message>
     <message>
         <source>Rename file...</source>
@@ -13455,7 +13636,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Unknown</source>
-        <translation type="unfinished"/>
+        <translation>مجهول</translation>
     </message>
     <message>
         <source>If the hash of the downloaded data does
@@ -13488,7 +13669,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>RetroShare</source>
-        <translation type="unfinished"/>
+        <translation>ريتروشير</translation>
     </message>
     <message>
         <source>File preview</source>
@@ -13545,7 +13726,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Size</source>
-        <translation type="unfinished"/>
+        <translation>الحجم</translation>
     </message>
     <message>
         <source>Show Size Column</source>
@@ -13613,7 +13794,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Columns</source>
-        <translation type="unfinished"/>
+        <translation>أعمدة</translation>
     </message>
     <message>
         <source>File Transfers</source>
@@ -13649,11 +13830,11 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Files</source>
-        <translation type="unfinished"/>
+        <translation>ملفات</translation>
     </message>
     <message>
         <source>File</source>
-        <translation type="unfinished"/>
+        <translation>ملف</translation>
     </message>
     <message>
         <source>DIR</source>
@@ -13661,15 +13842,15 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Friends Directories</source>
-        <translation type="unfinished"/>
+        <translation>مجلدات الأصدقاء</translation>
     </message>
     <message>
         <source>My Directories</source>
-        <translation type="unfinished"/>
+        <translation>مجلداتي</translation>
     </message>
     <message>
         <source>Size</source>
-        <translation type="unfinished"/>
+        <translation>الحجم</translation>
     </message>
     <message>
         <source>Age</source>
@@ -13677,7 +13858,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Friend</source>
-        <translation type="unfinished"/>
+        <translation>صديق</translation>
     </message>
     <message>
         <source>Share Flags</source>
@@ -13689,7 +13870,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Groups</source>
-        <translation type="unfinished"/>
+        <translation>مجموعات</translation>
     </message>
 </context>
 <context>
@@ -13817,7 +13998,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Unknown Peer</source>
-        <translation type="unfinished"/>
+        <translation>نظير مجهول</translation>
     </message>
 </context>
 <context>
@@ -13863,26 +14044,26 @@ Try to be patient!</source>
     <name>UIStateHelper</name>
     <message>
         <source>Loading</source>
-        <translation type="unfinished"/>
+        <translation>جاري التحميل</translation>
     </message>
 </context>
 <context>
     <name>ULListDelegate</name>
     <message>
         <source>B</source>
-        <translation type="unfinished"/>
+        <translation>بايت</translation>
     </message>
     <message>
         <source>KB</source>
-        <translation type="unfinished"/>
+        <translation>كيلوبايت</translation>
     </message>
     <message>
         <source>MB</source>
-        <translation type="unfinished"/>
+        <translation>ميغابايت</translation>
     </message>
     <message>
         <source>GB</source>
-        <translation type="unfinished"/>
+        <translation>غيغابايت</translation>
     </message>
 </context>
 <context>
@@ -13908,7 +14089,7 @@ Try to be patient!</source>
     <name>VMessageBox</name>
     <message>
         <source>OK</source>
-        <translation type="unfinished"/>
+        <translation>موافق</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -13948,7 +14129,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Browse</source>
-        <translation type="unfinished"/>
+        <translation>استعرض</translation>
     </message>
 </context>
 <context>
@@ -13975,11 +14156,11 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Friends</source>
-        <translation type="unfinished"/>
+        <translation>أصدقاء</translation>
     </message>
     <message>
         <source>Family</source>
-        <translation type="unfinished"/>
+        <translation>العائلة</translation>
     </message>
     <message>
         <source>Work</source>
@@ -13991,7 +14172,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Description:</source>
-        <translation type="unfinished"/>
+        <translation>الوصف:</translation>
     </message>
     <message>
         <source>Share Options</source>
@@ -13999,7 +14180,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Public</source>
-        <translation type="unfinished"/>
+        <translation>عام</translation>
     </message>
     <message>
         <source>All Friends</source>
@@ -14086,7 +14267,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Edit</source>
-        <translation type="unfinished"/>
+        <translation>تحرير</translation>
     </message>
     <message>
         <source>New Page</source>
@@ -14098,7 +14279,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Search</source>
-        <translation type="unfinished"/>
+        <translation>بحث</translation>
     </message>
     <message>
         <source>My Groups</source>
@@ -14177,7 +14358,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Tags</source>
-        <translation type="unfinished"/>
+        <translation>وسوم</translation>
     </message>
     <message>
         <source>Show Edit History</source>
@@ -14271,7 +14452,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>New</source>
-        <translation type="unfinished"/>
+        <translation>جديد</translation>
     </message>
     <message>
         <source>from</source>
@@ -14303,7 +14484,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Friends</source>
-        <translation type="unfinished"/>
+        <translation>أصدقاء</translation>
     </message>
     <message>
         <source>Following</source>
@@ -14339,7 +14520,7 @@ Try to be patient!</source>
     <message>
         <source>Unknown</source>
         <comment>Unknown (size)</comment>
-        <translation type="unfinished"/>
+        <translation>مجهول</translation>
     </message>
     <message>
         <source> B</source>
@@ -14373,7 +14554,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Unknown</source>
-        <translation type="unfinished"/>
+        <translation>مجهول</translation>
     </message>
     <message>
         <source>&lt; 1m</source>

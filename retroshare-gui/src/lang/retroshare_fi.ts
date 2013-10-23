@@ -499,6 +499,13 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>BWListDelegate</name>
+    <message>
+        <source>N/A</source>
+        <translation>Ei sovellu</translation>
+    </message>
+</context>
+<context>
     <name>BandwidthGraph</name>
     <message>
         <source>RetroShare Bandwidth Usage</source>
@@ -1390,22 +1397,6 @@ Ole hyvä ja valitse niistä yksi keskustellaksesi.</translation>
         <translation>Tietoja valitusta aulasta</translation>
     </message>
     <message>
-        <source>Lobby name: </source>
-        <translation>Aulan nimi:</translation>
-    </message>
-    <message>
-        <source>Lobby Id: </source>
-        <translation>Aulan tunniste:</translation>
-    </message>
-    <message>
-        <source>Topic: </source>
-        <translation>Aihe:</translation>
-    </message>
-    <message>
-        <source>Type: </source>
-        <translation>Tyyppi:</translation>
-    </message>
-    <message>
         <source>Private</source>
         <translation>Yksityinen</translation>
     </message>
@@ -1414,24 +1405,8 @@ Ole hyvä ja valitse niistä yksi keskustellaksesi.</translation>
         <translation>Julkinen</translation>
     </message>
     <message>
-        <source>Peers: </source>
-        <translation>Vertaiset:</translation>
-    </message>
-    <message>
         <source>You&apos;re not subscribed to this lobby; Double click-it to enter and chat.</source>
         <translation>Et ole tilannut aulaa: kaksoisnapauta siirtyäksesi keskustelemaan</translation>
-    </message>
-    <message>
-        <source>No lobby selected. 
-
-Select lobbies at left to show details.
-
-Double click lobbies to enter and chat.</source>
-        <translation>Aulaa ei ole valittu. 
-
-Valitse auloja vasemmalta nähdäksesi tietoja.
-
-Kaksoisnapauta auloja siirtyäksesi keskustelemaan.</translation>
     </message>
     <message>
         <source>Invitation to chat lobby</source>
@@ -1459,7 +1434,71 @@ Kaksoisnapauta auloja siirtyäksesi keskustelemaan.</translation>
     </message>
     <message>
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Chat Lobbies&lt;/h1&gt;                              		  &lt;p&gt;Chat lobbies are distributed chat rooms, and work pretty much like IRC.                                      		  They allow you to talk anonymously with tons of people without the need to make friends.&lt;/p&gt;                    		  &lt;p&gt;A chat lobby can be public (your friends see it) or private (your friends can&apos;t see it, unless you           		  invite them with &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). Once you have been invited to a private lobby, you will be able to see it when your friends   		  are using it.&lt;/p&gt;                                                                                               		  &lt;p&gt;The list at left shows                                                                                     		  chat lobbies your friends are participating in. You can either                                 		  &lt;ul&gt;                                                                                                            			  &lt;li&gt;Right click to create a new chat lobby&lt;/li&gt;                                                              		     &lt;li&gt;Double click a chat lobby to enter, chat, and show it to your friends&lt;/li&gt;                      		  &lt;/ul&gt; 		  Note: For the chat lobbies to work properly, your computer needs be on time.  So check your system clock!		  &lt;/p&gt;                                      		</source>
-        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Keskusteluaulat&lt;/h1&gt; &lt;p&gt;Keskusteluaulat ovat hajautettuja chat-huoneita ja toimivat kuten IRC.   Niiden avulla voit keskustella nimettömänä lukuisten ihmisten kanssa ilman, että sinun tarvitsee ystävystyä heidän kanssaan&lt;/p&gt; &lt;p&gt;Keskusteluaula voi olla julkinen (ystäväsi näkevät sen) tai yksityinen (ystäväsi eivät näe sitä,  ellet kutsu heitä &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). Kun sinut on kutsuttu yksityiseen aulaan, näet sen, kun ystäväsi   käyttävät sitä.&lt;/p&gt;  &lt;p&gt;Vasemmalla oleva luettelo näyttää keskusteluaulat, joissa on ystäviäsi. Voit joko &lt;ul&gt;   &lt;li&gt;luoda uuden aulan painamalla hiiren kakkospainiketta&lt;/li&gt; &lt;li&gt;kaksoisnapauttaa jotakin aulaa siirtyäksesi sinne&lt;/li&gt;  &lt;/ul&gt; Huom.: tietokoneesi on oltava oikeassa ajassa, jotta keskusteluaulat toimivat oikein, joten tarkista järjestelmäsi kello!   &lt;/p&gt; </translation>
+        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Keskusteluaulat&lt;/h1&gt; &lt;p&gt;Keskusteluaulat ovat hajautettuja chat-huoneita ja toimivat kuten IRC.   Niiden avulla voit keskustella nimettömänä lukuisten ihmisten kanssa ilman, että sinun tarvitsee ystävystyä heidän kanssaan&lt;/p&gt; &lt;p&gt;Keskusteluaula voi olla julkinen (ystäväsi näkevät sen) tai yksityinen (ystäväsi eivät näe sitä,  ellet kutsu heitä &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). Kun sinut on kutsuttu yksityiseen aulaan, näet sen, kun ystäväsi   käyttävät sitä.&lt;/p&gt;  &lt;p&gt;Vasemmalla oleva luettelo näyttää keskusteluaulat, joissa on ystäviäsi. Voit joko &lt;ul&gt;   &lt;li&gt;luoda uuden aulan painamalla hiiren oikeaa painiketta&lt;/li&gt; &lt;li&gt;kaksoisnapauttaa jotakin aulaa siirtyäksesi sinne&lt;/li&gt;  &lt;/ul&gt; Huom.: tietokoneesi on oltava oikeassa ajassa, jotta keskusteluaulat toimivat oikein, joten tarkista järjestelmäsi kello!   &lt;/p&gt; </translation>
+    </message>
+    <message>
+        <source>Subscribed</source>
+        <translation>Tilattu</translation>
+    </message>
+    <message>
+        <source>Show </source>
+        <translation>Näytä </translation>
+    </message>
+    <message>
+        <source> Column</source>
+        <translation> Sarake</translation>
+    </message>
+    <message>
+        <source>Columns</source>
+        <translation>Sarakkeet</translation>
+    </message>
+    <message>
+        <source>Yes</source>
+        <translation>Kyllä</translation>
+    </message>
+    <message>
+        <source>No</source>
+        <translation>Ei</translation>
+    </message>
+    <message>
+        <source>Lobby Name:</source>
+        <translation>Aulan nimi:</translation>
+    </message>
+    <message>
+        <source>Lobby Id:</source>
+        <translation>Aulan tunniste:</translation>
+    </message>
+    <message>
+        <source>Topic:</source>
+        <translation>Aihe:</translation>
+    </message>
+    <message>
+        <source>Type:</source>
+        <translation>Tyyppi:</translation>
+    </message>
+    <message>
+        <source>Peers:</source>
+        <translation>Vertaiset:</translation>
+    </message>
+    <message>
+        <source>TextLabel</source>
+        <translation>TekstiMerkki</translation>
+    </message>
+    <message>
+        <source>No lobby selected. 
+Select lobbies at left to show details.
+Double click lobbies to enter and chat.</source>
+        <translation>Aulaa ei valittuna. 
+Valitse auloja vasemmalta nähdäksesi tietoja.
+Kaksoisnapauta auloja siirtyäksesi keskustelemaan.</translation>
+    </message>
+    <message>
+        <source>Private Subscribed Lobbies</source>
+        <translation>Yksityiset tilatut aulat</translation>
+    </message>
+    <message>
+        <source>Public Subscribed Lobbies</source>
+        <translation>Julkiset tilatut aulat</translation>
     </message>
 </context>
 <context>
@@ -1588,22 +1627,6 @@ Kaksoisnapauta auloja siirtyäksesi keskustelemaan.</translation>
         <translation>Historia</translation>
     </message>
     <message>
-        <source>Group Chat</source>
-        <translation>Ryhmäkeskustelu</translation>
-    </message>
-    <message>
-        <source>Enable</source>
-        <translation>Ota käyttöön</translation>
-    </message>
-    <message>
-        <source>Number of saved messages (0 = unlimited)</source>
-        <translation>Tallennettavien viestien lkm (0 = rajoittamaton)</translation>
-    </message>
-    <message>
-        <source>Load number of messages (0 = off)</source>
-        <translation>Avattavien viestien lkm (0 = pois)</translation>
-    </message>
-    <message>
         <source>Style</source>
         <translation>Tyyli</translation>
     </message>
@@ -1718,6 +1741,46 @@ Kaksoisnapauta auloja siirtyäksesi keskustelemaan.</translation>
     <message>
         <source>Private chat invite to </source>
         <translation>Kutsu yksityiseen keskusteluun henkilölle</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;In this tab you can setup how many chat messages Retroshare will keep saved on the disc and how much of the previous conversation it will display, for the different chat systems. The max storage period allows to discard old messages and prevents the chat history from filling up with volatile chat (e.g. chat lobbies and distant chat).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Tässä välilehdessä voit määrittää, kuinka monta chat-viestiä RetroShare pitää tallennettuna kiintolevylle ja kuinka paljon edellisestä keskustelusta näytetään eri keskustelutoiminnoissa. Säilytyksen enimmäisaika mahdollistaa vanhojen viestien poisheittämisen ja estää keskusteluhistorian täyttymisen (esim. keskusteluaulat ja etäiset keskustelut).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Chatlobbies</source>
+        <translation>Keskusteluaulat</translation>
+    </message>
+    <message>
+        <source>Enabled:</source>
+        <translation>Käytössä:</translation>
+    </message>
+    <message>
+        <source>Saved messages (0 = unlimited):</source>
+        <translation>Tallennettavien viestien lkm (0 = rajoittamaton):</translation>
+    </message>
+    <message>
+        <source>Number of messages restored  (0 = off):</source>
+        <translation>Palautettavien viestien lkm (0 = ei käytössä):</translation>
+    </message>
+    <message>
+        <source>Maximum storage period, in days (0=keep all):</source>
+        <translation>Varastoinnin enimmäisaika, päivinä (0=pidä kaikki):</translation>
+    </message>
+    <message>
+        <source>Name : </source>
+        <translation>Nimi:</translation>
+    </message>
+    <message>
+        <source>Signed with key not in keyring</source>
+        <translation>Allekirjoitettu avaimella, jota ei ole avainnipussa</translation>
+    </message>
+    <message>
+        <source>Not signed.</source>
+        <translation>Ei allekirjoitettu.</translation>
+    </message>
+    <message>
+        <source>Authenticated signature</source>
+        <translation>Vahvistettu allekirjoitus</translation>
     </message>
 </context>
 <context>
@@ -2726,6 +2789,28 @@ Jotkut palvelut (etsintä, nimetön reititys) voi kytkeä pois yleisellä tasoll
     <message>
         <source>Please select at least one friend as recipient.</source>
         <translation>Ole hyvä ja valitse ainakin yksi ystävä vastaanottajaksi.</translation>
+    </message>
+    <message>
+        <source>Please note that RetroShare will require excessive amounts of bandwidth, memory and CPU if you add to many friends. You can add as many friends as you like, but more than 40 will probably require too much resources.</source>
+        <translation>Huomioithan, että RetroShare edellyttää kohtuuttomia määriä tietoliikennekaistaa, muistia ja prosessoritehoa, jos lisäät paljon ystäviä. Voit lisätä niin monta ystävää kuin haluat, mutta yli 40 luultavasti vaatii liikaa resursseja.</translation>
+    </message>
+    <message>
+        <source>Add key to keyring</source>
+        <translation>Lisää avain avainnippuun</translation>
+    </message>
+    <message>
+        <source>This key is already in your keyring</source>
+        <translation>Tämä avain on jo avainnipussasi</translation>
+    </message>
+    <message>
+        <source>Check this to add the key to your keyring
+This might be useful for sending
+distant messages to this peer
+even if you don&apos;t make friends.</source>
+        <translation>Rastita tämä lisätäksesi avaimen avainnippuusi
+Tästä voi olla hyötyä etäisten viestien
+lähettämiseen tälle vertaiselle,
+vaikkette ystävystyisikään.</translation>
     </message>
 </context>
 <context>
@@ -3901,6 +3986,14 @@ p, li { white-space: pre-wrap; }
         <source>Add Extra File</source>
         <translation>Lisää ylimääräinen tiedosto</translation>
     </message>
+    <message>
+        <source>Attach a Picture</source>
+        <translation>Liitä kuva</translation>
+    </message>
+    <message>
+        <source>Load Picture File</source>
+        <translation>Lataa kuvatiedosto</translation>
+    </message>
 </context>
 <context>
     <name>CreateGroup</name>
@@ -4292,10 +4385,6 @@ p, li { white-space: pre-wrap; }
         <translation>Sijaintitunniste:</translation>
     </message>
     <message>
-        <source>Identity ID:</source>
-        <translation>Henkilöllisyystunniste:</translation>
-    </message>
-    <message>
         <source>Number of Friends:</source>
         <translation>Ystävien lkm:</translation>
     </message>
@@ -4362,6 +4451,18 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>RetroShare Certificate (*.rsc );;All Files (*)</source>
         <translation>RetroSharen varmenne (*.rsc );;Kaikki tiedostot (*)</translation>
+    </message>
+    <message>
+        <source>Identity ID</source>
+        <translation>Henkilöllisyystunniste</translation>
+    </message>
+    <message>
+        <source>TextLabel</source>
+        <translation>TekstiMerkki</translation>
+    </message>
+    <message>
+        <source>PGP fingerprint:</source>
+        <translation>PGP-sormenjälki:</translation>
     </message>
 </context>
 <context>
@@ -5467,6 +5568,10 @@ p, li { white-space: pre-wrap; }
         <source>Forum</source>
         <translation>Foorumi</translation>
     </message>
+    <message>
+        <source>Load embedded images</source>
+        <translation>Lataa upotetut kuvat</translation>
+    </message>
 </context>
 <context>
     <name>ForumUserNotify</name>
@@ -5725,6 +5830,10 @@ p, li { white-space: pre-wrap; }
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Forums&lt;/h1&gt;                                  &lt;p&gt;Retroshare Forums look like internet forums, but they work in a decentralized way:                         You see forums your friends are subscribed to, and you forward subscribed forums to                          your friends. This automatically promotes interesting forums in the network.&lt;/p&gt;                         &lt;p&gt;Forums are either Authenticated (&lt;img src=&quot;:/images/konv_message2.png&quot; width=&quot;12&quot;/&gt;) in which case you need to cryptographically sign                          your posts, or anonymous (&lt;img src=&quot;:/images/konversation.png&quot; width=&quot;12&quot;/&gt;). The former class is more resistant to spamming.&lt;/p&gt;                     &lt;p&gt;Forum posts propagate from friend to friend using small cache file exchanges. When you first connect to a new friend, it&apos;s likely     you will receive many such cache files, and new forums will appear.     &lt;/p&gt;                                        </source>
         <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Foorumit&lt;/h1&gt; &lt;p&gt;Retrosharen foorumit toimivat hajautetusti: Näet foorumit, jotka ystäväsi ovat tilanneet ja vastaavasti välität tilaamasi foorumit ystävillesi. Tällä tavoin kiinnostavien foorumeiden näkyvyys lisääntyy automaattisesti.&lt;/p&gt; &lt;p&gt;Foorumit ovat joko varmennettuja, (&lt;img src=&quot;:/images/konv_message2.png&quot; width=&quot;12&quot;/&gt;) jolloin sinun on allekirjoitettava viestisi salausavaimella tai nimettömiä (&lt;img src=&quot;:/images/konversation.png&quot; width=&quot;12&quot;/&gt;). Ensinmainittu on vastustuskykyisempi roskapostittamiselle.&lt;/p&gt; &lt;p&gt;Foorumiviestit leviävät ystävältä toiselle pieniä välimuistitiedostoja vaihtamalla. Kun otat ensimmäisen kerran yhteyden uuteen ystävään, on todennäköistä, että vastaanotat useita välimuistitiedostoja ja uusia foorumeita ilmestyy saatavillesi. &lt;/p&gt;</translation>
     </message>
+    <message>
+        <source>Load images always for this message</source>
+        <translation>Lataa kuvat aina tämän viestin osalta</translation>
+    </message>
 </context>
 <context>
     <name>ForumsFillThread</name>
@@ -5864,14 +5973,6 @@ p, li { white-space: pre-wrap; }
         <translation>Kopioi varmennelinkki</translation>
     </message>
     <message>
-        <source>Copy RetroShare Link</source>
-        <translation>Kopioi RetroShare-linkki</translation>
-    </message>
-    <message>
-        <source>Paste Friend Link</source>
-        <translation>Liitä ystävälinkki</translation>
-    </message>
-    <message>
         <source>Deny Friend</source>
         <translation>Torju ystävä</translation>
     </message>
@@ -5942,6 +6043,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Display</source>
         <translation>Näytä</translation>
+    </message>
+    <message>
+        <source>Paste certificate link</source>
+        <translation>Liitä varmennelinkki</translation>
     </message>
 </context>
 <context>
@@ -6329,10 +6434,6 @@ pysyäksesi voit käyttää tekaistua osoitetta.</translation>
         <translation>Sijainti</translation>
     </message>
     <message>
-        <source>Put a meaningful location. ex : home, laptop, etc. This field will be used to differentiate different installations with the same identity (PGP key).</source>
-        <translation>Kirjoita jokin asiaankuuluva sijainti, esim. koti, kannettava jne. Tämän kentän avulla erotetaan asennukset eri kohteissa, mutta samalla henkilöllisyydellä (PGP-avain).</translation>
-    </message>
-    <message>
         <source>Create new identity</source>
         <translation>Luo uusi henkilöllisyys</translation>
     </message>
@@ -6487,6 +6588,30 @@ Anna PGP-salasanasi kysyttäessä allekirjoittaaksesi uuden avaimesi.</translati
     <message>
         <source>Failed to Generate your new Certificate, maybe PGP password is wrong!</source>
         <translation>Uuden varmenteesi luominen epäonnistui, PGP-salasana saattaa olla väärin!</translation>
+    </message>
+    <message>
+        <source>Password (check)</source>
+        <translation>Salasana (tarkistus)</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Before proceeding, move your mouse around to help Retroshare collect as much randomness as possible. Filling the progressbar to 20% is needed, 100% is advised.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Ennen kuin siirryt eteenpäin, liikuttele hiirtäsi ympäriinsä, jolloin autat Retrosharea keräämään satunnaisuutta. Edistymistä ilmaiseva palkki tulisi saada vähintään 20%, mutta 100% on suositeltava lukema.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>[Required] Type the same password again here.</source>
+        <translation>[Vaaditaan] Kirjoita sama salasana uudelleen tähän.</translation>
+    </message>
+    <message>
+        <source>Put a meaningful location. ex : home, laptop, etc. 
+This field will be used to differentiate different installations with
+the same identity (PGP key).</source>
+        <translation>Kirjoita jokin asiaankuuluva sijainti, esim. koti, kannettava jne.
+Tämän kentän avulla erotetaan asennukset eri kohteissa, mutta samalla
+henkilöllisyydellä (PGP-avain).</translation>
+    </message>
+    <message>
+        <source>Passwords do not match</source>
+        <translation>Salasanat eivät täsmää</translation>
     </message>
 </context>
 <context>
@@ -8013,44 +8138,6 @@ p, li { white-space: pre-wrap; }
         <translation>Käännös</translation>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;RetroShare Translators:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;French&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;:Temet&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Polish: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Jarek&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Serbian&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;: Kunalagon Umuhanik &amp;lt;kunalagon@gmail.com&amp;gt;&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Spanish:  &lt;/span&gt;&lt;span style=&quot; font-family:'Courier New,courier';&quot;&gt;Manuel Montero &amp;lt;Senpai&amp;gt; &lt;/span&gt;&lt;a href=&quot;http://pagina.de/senpai&amp;amp;gt&quot;&gt;&lt;span style=&quot; font-family:'Courier New,courier'; text-decoration: underline; color:#0000ff;&quot;&gt;http://pagina.de/senpai&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Swedish:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; dnylander&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;RetroShare Website Translators:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt; font-weight:600;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Swedish: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Daniel Wester&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; &amp;lt;&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;wester@speedmail.se&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;German: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Jan&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Keller&lt;/span&gt; &amp;lt;&lt;span style=&quot; font-size:8pt;&quot;&gt;trilarion@users.sourceforge.net&lt;/span&gt;&amp;gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Polish: &lt;/span&gt;Maciej Mrug&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;RetroSharen kääntäjät:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Ranska&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;:Temet&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Puola: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Jarek&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Serbia&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;: Kunalagon Umuhanik &amp;lt;kunalagon@gmail.com&amp;gt;&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Espanja:  &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Courier New,courier&apos;;&quot;&gt;Manuel Montero &amp;lt;Senpai&amp;gt; &lt;/span&gt;&lt;a href=&quot;http://pagina.de/senpai&amp;amp;gt&quot;&gt;&lt;span style=&quot; font-family:&apos;Courier New,courier&apos;; text-decoration: underline; color:#0000ff;&quot;&gt;http://pagina.de/senpai&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Ruotsi:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; dnylander&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;RetroSharen verkkosivujen kääntäjät:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt; font-weight:600;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Ruotsi: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Daniel Wester&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; &amp;lt;&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;wester@speedmail.se&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Saksa: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Jan&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Keller&lt;/span&gt; &amp;lt;&lt;span style=&quot; font-size:8pt;&quot;&gt;trilarion@users.sourceforge.net&lt;/span&gt;&amp;gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Puola: &lt;/span&gt;Maciej Mrug&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
         <source>License Agreement</source>
         <translation>Lisenssisopimus</translation>
     </message>
@@ -8065,6 +8152,23 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Tietoja RetroSharesta&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;RetroShare Translations:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net/wiki/index.php/Translation&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;http://retroshare.sourceforge.net/wiki/index.php/Translation&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; text-decoration: underline; color:#0000ff;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;RetroShare Website Translators:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt; font-weight:600;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Swedish: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Daniel Wester&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; &amp;lt;&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;wester@speedmail.se&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;German: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Jan&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Keller&lt;/span&gt; &amp;lt;&lt;span style=&quot; font-size:8pt;&quot;&gt;trilarion@users.sourceforge.net&lt;/span&gt;&amp;gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Polish: &lt;/span&gt;Maciej Mrug&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -9055,6 +9159,14 @@ Haluatko tallentaa viestin?</translation>
         <source>Only show people you trusted</source>
         <translation>Näytä vain henkilöt, joihin luotat</translation>
     </message>
+    <message>
+        <source>PGP key unknown</source>
+        <translation>Tuntematon PGP-avain</translation>
+    </message>
+    <message>
+        <source>You dont have the PGP key of the message sender. So you cannot respond!</source>
+        <translation>Sinulla ei ole viestin lähettäjän PGP-avainta, joten et voi vastata!</translation>
+    </message>
 </context>
 <context>
     <name>MessagePage</name>
@@ -9121,6 +9233,10 @@ Haluatko tallentaa viestin?</translation>
     <message>
         <source>Accept encrypted distant messages from everyone</source>
         <translation>Hyväksy salatut etäiset viestit kaikilta</translation>
+    </message>
+    <message>
+        <source>Load embedded images</source>
+        <translation>Lataa upotetut kuvat</translation>
     </message>
 </context>
 <context>
@@ -9238,6 +9354,38 @@ Haluatko tallentaa viestin?</translation>
     <message>
         <source>HTML-Files (*.htm *.html);;All Files (*)</source>
         <translation>HTML-tiedostot (*.htm *.html);;Kaikki tiedostot (*)</translation>
+    </message>
+    <message>
+        <source>Load images always for this message</source>
+        <translation>Lataa kuvat aina tämän viestin osalta</translation>
+    </message>
+    <message>
+        <source>This messages is encrypted. Click the right button to decrypt it.</source>
+        <translation>Tämä viesti on salattu. Pura salaus napsauttamalla hiiren oikeaa painiketta.</translation>
+    </message>
+    <message>
+        <source>Decrypt</source>
+        <translation>Pura salaus</translation>
+    </message>
+    <message>
+        <source>Encrypted message</source>
+        <translation>Salattu viesti</translation>
+    </message>
+    <message>
+        <source>Decryption failed!</source>
+        <translation>Salauksen purkaminen epäonnistui!</translation>
+    </message>
+    <message>
+        <source>This message is not encrypted. Cannot decrypt!</source>
+        <translation>Tämä viesti ei ole salattu. Ei voida purkaa!</translation>
+    </message>
+    <message>
+        <source>This message could not be decrypted.</source>
+        <translation>Tämän viestin salausta ei voitu purkaa.</translation>
+    </message>
+    <message>
+        <source>Unknown (needs decryption)</source>
+        <translation>Tuntematon (salaus täytyy purkaa)</translation>
     </message>
 </context>
 <context>
@@ -9635,15 +9783,7 @@ Haluatko tallentaa viestin?</translation>
     </message>
     <message>
         <source>Encrypted message. Right-click to decrypt it.</source>
-        <translation>Salattu viesti. Pura napsauttamalla hiiren kakkospainiketta.</translation>
-    </message>
-    <message>
-        <source>Decryption failed!</source>
-        <translation>Salauksen purkaminen epäonnistui!</translation>
-    </message>
-    <message>
-        <source>This message could not be decrypted.</source>
-        <translation>Tämän viestin salausta ei voitu purkaa.</translation>
+        <translation>Salattu viesti. Pura napsauttamalla hiiren oikeaa painiketta.</translation>
     </message>
     <message>
         <source>Messages</source>
@@ -9655,7 +9795,7 @@ Haluatko tallentaa viestin?</translation>
     </message>
     <message>
         <source>This message is encrypted. Right click to decrypt it.</source>
-        <translation>Tämä viesti on salattu. Pura salaus napsauttamalla hiiren kakkospainiketta.</translation>
+        <translation>Tämä viesti on salattu. Pura salaus napsauttamalla hiiren oikeaa painiketta.</translation>
     </message>
     <message>
         <source>This message was signed and the signature checks</source>
@@ -9666,12 +9806,12 @@ Haluatko tallentaa viestin?</translation>
         <translation>Tämä viesti on allekirjoitettu, mutta allekirjoitus ei täsmää</translation>
     </message>
     <message>
-        <source>This message is not encrypted. Cannot decrypt!</source>
-        <translation>Tämä viesti ei ole salattu. Ei voida purkaa!</translation>
-    </message>
-    <message>
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Messages&lt;/h1&gt;                          &lt;p&gt;Messages are like &lt;b&gt;e-mail&lt;/b&gt;: you send/receive them from your friends when both of you are connected.&lt;/p&gt;  &lt;p&gt;It is also possible to send messages to non friends, using tunnels. Such messages are always encrypted. It is  recommended to cryptographically sign distant messages, as a proof of your identity, using the &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; button  in the message composer window. Distant messages are not guarrantied to arrive, since this requires the distant peer to accept them (You need yourself to switch this on in Config-Messages).&lt;/p&gt; &lt;p&gt;Some additional features allow you to exchange data in messages: you may recommend files to your friends by pasting file links,  or recommend friends-to-be to other friends, in order to streathen your network.&lt;/p&gt;                    </source>
         <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Viestit&lt;/h1&gt;                         			 &lt;p&gt;Viestit ovat kuten &lt;b&gt;sähköposti&lt;/b&gt;: lähetät niitä ystävillesi ja päinvastoin, kun kumpikin teistä	on linjoilla.&lt;/p&gt; 			 &lt;p&gt;On myös mahdollista lähettää viestejä henkilöille, jotka eivät ole ystäviäsi. Tämä tapahtuu tunneleita käyttämällä ja tällaiset viestit ovat aina salattuja. Etäiset 			 viestit on suositeltavaa allekirjoittaa kryptografisesti, jotta henkilöllisyytesi voidaan todentaa, käyttämällä &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; -painiketta 			 viestinkirjoitusikkunassa. Etäiset viestit eivät välttämättä saavu perille, koska etäisen vertaisen on hyväksyttävä ne erikseen (sinun tulee kytkeä tämä päälle kohdasta Asetukset - Viesti).&lt;/p&gt;			 &lt;p&gt;Lisäominaisuudet mahdollistavat datan vaihtamisen viesteissä: voit suositella tiedostoja ystävillesi liittämällä tiedostolinkkejä 			 tai suositella potentiaalisia ystäviä muille ystävillesi verkostosi vahvistamiseksi.&lt;/p&gt;	                   			 </translation>
+    </message>
+    <message>
+        <source>This message has been successfully decrypted, and is unsigned.</source>
+        <translation>Tämän viestin salaus on purettu onnistuneesti ja sitä ei ole allekirjoitettu.</translation>
     </message>
 </context>
 <context>
@@ -10255,6 +10395,10 @@ Paina hiiren oikeaa nappia ja valitse &quot;ystävysty&quot; saadaksesi yhteyden
         <source>Notify</source>
         <translation>Huomauta</translation>
     </message>
+    <message>
+        <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Notify&lt;/h1&gt; 		  &lt;p&gt;Retroshare will notify you about what happens in your network.         		  Depending on your usage, you may want to enable or disable some of the    		  notifications. This page is designed for that!&lt;/p&gt;                        		  </source>
+        <translation>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Ilmoita&lt;/h1&gt; 		  &lt;p&gt;Retroshare ilmoittaa uusista tapahtumista verkostossasi.         		  Käyttötavoistasi riippuen saatat haluta ottaa käyttöön tai pois käytöstä joitakin    		  ilmoituksia. Tämä osio on sitä varten!&lt;/p&gt;                        		  </translation>
+    </message>
 </context>
 <context>
     <name>NotifyQt</name>
@@ -10822,6 +10966,10 @@ vahingoittamistarkoituksessa tehdyiltä lisäosilta.</translation>
         <source>Plugins</source>
         <translation>Lisäosat</translation>
     </message>
+    <message>
+        <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Plugins&lt;/h1&gt;                   &lt;p&gt;Plugins are loaded from the directories listed in the bottom list.&lt;/p&gt;                       &lt;p&gt;For security reasons, accepted plugins load automatically until                              the main Retroshare executable or the plugin library changes. In                                such a case, the user needs to confirm them again.                                              After the program is started, you can enable a plugin manually by clicking on the               &quot;Enable&quot; button and then restart Retroshare.&lt;/p&gt;                                              &lt;p&gt;If you want to develop your own plugins, contact the developpers team                        they will be happy to help you out!&lt;/p&gt;</source>
+        <translation>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Lisäosat&lt;/h1&gt; &lt;p&gt;Lisäosat ladataan alla luetteloiduista hakemistoista.&lt;/p&gt; &lt;p&gt;Turvallisuussyistä, hyväksytyt lisäosat ladataan automaattisesti, kunnes Retrosharen käynnistystiedosto tai lisäosakirjasto muuttuu. Tällaisessa tilanteessa käyttäjän on hyväksyttävä ne uudestaan. Kun ohjelma on käynnistynyt, voit ottaa lisäosan käyttöön manuaalisesti painamalla &quot;Ota käyttöön&quot; -painiketta ja käynnistämällä Retrosharen uudelleen.&lt;/p&gt; &lt;p&gt;Jos haluat kehittää omia lisäosia, ota yhteyttä kehittäjiin, jotka auttavat sinua mielellään!&lt;/p&gt;</translation>
+    </message>
 </context>
 <context>
     <name>PopularityDefs</name>
@@ -10948,16 +11096,8 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PostedGroupDialog</name>
     <message>
-        <source>Create New Posted Topic</source>
-        <translation>Luo uusi aihe</translation>
-    </message>
-    <message>
         <source>Posted Topic</source>
         <translation>Aihe</translation>
-    </message>
-    <message>
-        <source>Edit Posted Topic</source>
-        <translation>Muokkaa aihetta</translation>
     </message>
     <message>
         <source>Add Topic Admins</source>
@@ -10967,16 +11107,20 @@ p, li { white-space: pre-wrap; }
         <source>Select Topic Admins</source>
         <translation>Valitse viestiketjujen ylläpitäjiä</translation>
     </message>
+    <message>
+        <source>Create New Topic</source>
+        <translation>Luo uusi aihe</translation>
+    </message>
+    <message>
+        <source>Edit Topic</source>
+        <translation>Muokkaa aihetta</translation>
+    </message>
 </context>
 <context>
     <name>PostedItem</name>
     <message>
         <source>0</source>
         <translation>0</translation>
-    </message>
-    <message>
-        <source>\/</source>
-        <translation>\/</translation>
     </message>
     <message>
         <source>This is a very very very very loooooooooooooooonnnnnnnnnnnnnnnnng title don&apos;t you think? Yes it is and should wrap around I hope</source>
@@ -11007,12 +11151,12 @@ p, li { white-space: pre-wrap; }
         <translation>Kommentti</translation>
     </message>
     <message>
-        <source>Vote Up</source>
-        <translation>Äänestä ylös</translation>
+        <source>I like this</source>
+        <translation>Pidän tästä</translation>
     </message>
     <message>
-        <source>Vote Down</source>
-        <translation>Äänestä alas</translation>
+        <source>I dislike this</source>
+        <translation>En pidä tästä</translation>
     </message>
 </context>
 <context>
@@ -11737,6 +11881,16 @@ Virhe:
 
 %2</translation>
     </message>
+    <message>
+        <source>Signature check failed!
+Make sure you know who you&apos;re talking to.</source>
+        <translation>Allekirjoituksen tarkistus epäonnistui!
+Varmista, että tiedät, kenen kanssa keskustelet.</translation>
+    </message>
+    <message>
+        <source>Chat connection is unauthenticated</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>QuickStartWizard</name>
@@ -11958,6 +12112,21 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>RSImageBlockWidget</name>
+    <message>
+        <source>Form</source>
+        <translation>Lomake</translation>
+    </message>
+    <message>
+        <source>The loading of embedded images is blocked.</source>
+        <translation>Upotettujen kuvien lataaminen on estetty.</translation>
+    </message>
+    <message>
+        <source>Load images</source>
+        <translation>Lataa kuvat</translation>
+    </message>
+</context>
+<context>
     <name>RSettingsWin</name>
     <message>
         <source>Error Saving Configuration on page </source>
@@ -12044,6 +12213,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Relay</source>
         <translation>Välitys</translation>
+    </message>
+    <message>
+        <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Relays&lt;/h1&gt;                                 &lt;p&gt;By activating relays, you allow your Retroshare node to act as a bridge between Retroshare  				  users who cannot connect directly, e.g. because they&apos;re firewalled.&lt;/p&gt;                        				  &lt;p&gt;You may choose to act as a relay by checking &lt;i&gt;enable relay connections&lt;/i&gt;, or simply     				  benefit from other peers acting as relay, by checking &lt;i&gt;use relay servers&lt;/i&gt;. For the former,				  you may specify the bandwidth allocated when acting as a relay for friends of you, for friends 				  of your friends, or anyone in the Retroshare network.&lt;/p&gt;                                      				  &lt;p&gt;In any case, a Retroshare node acting as a relay cannot see the relayed traffic, since it   				  is encrypted and authenticated by the two relayed nodes.&lt;/p&gt;</source>
+        <translation>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Välitys&lt;/h1&gt;&lt;p&gt;Kun otat välityksen käyttöön, oma Retrosharesi toimii siltana palomuurin takana olevien tai muiden yhteysongelmien vaivaamien käyttäjien välillä.&lt;/p&gt;&lt;p&gt;Voit alkaa toimia välittäjänä rastittamalla &lt;i&gt;Ota käyttöön välitetyt yhteydet&lt;/i&gt; tai sitten vain hyötyä muista vertaisista rastittamalla &lt;i&gt;Käytä välityspalvelimia&lt;/i&gt;. Edellisen osalta voit määritellä, miten paljon kaistanleveyttä annetaan välittämisen käyttöön.&lt;/p&gt;&lt;p&gt;Välittäjänä toimiva Retroshare-solmu ei voi nähdä välitettyä liikennettä, koska se on salattu ja kahden välitetyn solmun vahvistama.&lt;/p&gt;</translation>
     </message>
 </context>
 <context>
@@ -12675,16 +12848,8 @@ vähän ystäviä. Tämä auttaa myös, jos olet palomuurin tai VPN:n takana.</t
         <translation>Maksimisiirtonopeudet</translation>
     </message>
     <message>
-        <source>Download (KB/s) </source>
-        <translation>Lataus (kB/s)</translation>
-    </message>
-    <message>
         <source>kB/s</source>
         <translation>kB/s</translation>
-    </message>
-    <message>
-        <source>Upload (KB/s) </source>
-        <translation>Lähetys (kB/s)</translation>
     </message>
     <message>
         <source>If you uncheck this, RetroShare will not use tunnel connection between peers that are firewalled and cannot connect directly. This is independent from F2F routing (turtle router).</source>
@@ -12733,6 +12898,14 @@ Oletusarvo on 20.</translation>
     <message>
         <source>Server</source>
         <translation>Palvelin</translation>
+    </message>
+    <message>
+        <source>Download (KB/s) </source>
+        <translation>Lataus (kB/s)</translation>
+    </message>
+    <message>
+        <source>Upload (KB/s) </source>
+        <translation>Lähetys (kB/s)</translation>
     </message>
 </context>
 <context>
@@ -12846,26 +13019,6 @@ Oletusarvo on 20.</translation>
         <translation>Jaettujen kansioiden hallinta</translation>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;This is a list of shared folders. You can add and remove folders using the buttons at the bottom.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;When you add a new folder, intially all files in that folder are shared.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-size:8pt;&quot;&gt;You can separately setup share flags for each shared directory:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-size:8pt; font-weight:600;&quot;&gt;Browsable&lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:8pt;&quot;&gt;: files are browsable from your direct friends.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Network Wide&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: files can be downloaded by anybody through anonymous tunnels.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Tämä on luettelo jaetuista kansioista. Voit lisätä ja poistaa kansioita käyttämällä alaosan painikkeita.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Kun lisäät uuden kansion, alussa kaikki sen tiedostot tulevat jaetuiksi.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;Voit määrittää erikseen jakoilmaisimia jokaiselle jaetulle hakemistolle:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Selattavissa&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: suorat ystäväsi voivat selata tiedostoja.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Verkon laajuinen&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: ketkä tahansa voivat ladata tiedostoja nimettömien tunneleiden kautta.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
         <source>Directory</source>
         <translation>Hakemisto</translation>
     </message>
@@ -12936,6 +13089,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Directory not found or directory name not accepted.</source>
         <translation>Hakemistoa ei löydy tai nimeä ei hyväksytty.</translation>
+    </message>
+    <message>
+        <source>This is a list of shared folders. You can add and remove folders using the buttons at the bottom. When you add a new folder, intially all files in that folder are shared. You can separately setup share flags for each shared directory.</source>
+        <translation>Tämä on luettelo jaetuista kansioista. Voit lisätä ja poistaa kansioita alareunan painikkeiden avulla. Kun lisäät uuden kansion, aluksi kaikki kyseisen kansion tiedostot jaetaan. Voit erikseen määritellä jakomerkkejä kullekin jaetulle kansiolle.</translation>
     </message>
 </context>
 <context>

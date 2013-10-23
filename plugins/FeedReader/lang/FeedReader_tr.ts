@@ -350,59 +350,59 @@
         <translation>Devre dışı bırakın</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="521"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="524"/>
         <source>No name</source>
         <translation>Adsız</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="733"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="736"/>
         <source>Add new folder</source>
         <translation>Klasör ekleyin</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="734"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="737"/>
         <source>Please enter a name for the folder</source>
         <translation>Klasörün adını yazın</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="740"/>
-        <location filename="../gui/FeedReaderDialog.cpp" line="793"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="743"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="796"/>
         <source>Create folder</source>
         <translation>Klasör oluşturun</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="740"/>
-        <location filename="../gui/FeedReaderDialog.cpp" line="793"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="743"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="796"/>
         <source>Cannot create folder.</source>
         <translation>Klasör oluşturulamıyor.</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="766"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="769"/>
         <source>Remove folder</source>
         <translation>Klasörü silin</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="766"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="769"/>
         <source>Remove feed</source>
         <translation>Akışı silin</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="766"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="769"/>
         <source>Do you want to remove the folder %1?</source>
         <translation>%1 klasörünü silmek istiyor musunuz?</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="766"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="769"/>
         <source>Do you want to remove the feed %1?</source>
         <translation>%1 akışını silmek istiyor musunuz?</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="786"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="789"/>
         <source>Edit folder</source>
         <translation>Klasörü düzenleyin</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="787"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="790"/>
         <source>Please enter a new name for the folder</source>
         <translation>Klasörün yeni adını yazın</translation>
     </message>

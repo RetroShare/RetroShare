@@ -350,59 +350,59 @@
         <translation>Deactiveren</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="521"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="524"/>
         <source>No name</source>
         <translation>Geen naam</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="733"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="736"/>
         <source>Add new folder</source>
         <translation>Voeg een nieuwe map toe</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="734"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="737"/>
         <source>Please enter a name for the folder</source>
         <translation>Geef een naam voor de map</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="740"/>
-        <location filename="../gui/FeedReaderDialog.cpp" line="793"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="743"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="796"/>
         <source>Create folder</source>
         <translation>Maak een map</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="740"/>
-        <location filename="../gui/FeedReaderDialog.cpp" line="793"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="743"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="796"/>
         <source>Cannot create folder.</source>
         <translation>Kan geen map maken.</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="766"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="769"/>
         <source>Remove folder</source>
         <translation>Verwijder map</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="766"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="769"/>
         <source>Remove feed</source>
         <translation>Verwijder feed</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="766"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="769"/>
         <source>Do you want to remove the folder %1?</source>
         <translation>Wilt u map %1 verwijderen?</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="766"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="769"/>
         <source>Do you want to remove the feed %1?</source>
         <translation>Wilt u feed %1 verwijderen?</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="786"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="789"/>
         <source>Edit folder</source>
         <translation>Bewerk map</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="787"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="790"/>
         <source>Please enter a new name for the folder</source>
         <translation>Geef een nieuwe naam voor de map</translation>
     </message>

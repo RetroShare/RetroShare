@@ -3,7 +3,7 @@
     <name>AWidget</name>
     <message>
         <source>version</source>
-        <translation type="unfinished"/>
+        <translation>版本</translation>
     </message>
 </context>
 <context>
@@ -497,6 +497,13 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Click to change your avatar</source>
         <translation>点击更改您的头像</translation>
+    </message>
+</context>
+<context>
+    <name>BWListDelegate</name>
+    <message>
+        <source>N/A</source>
+        <translation>不适用</translation>
     </message>
 </context>
 <context>
@@ -1330,7 +1337,7 @@ Please choose one of it to chat with.</source>
     </message>
     <message>
         <source>This participant is not active since:</source>
-        <translation type="unfinished"/>
+        <translation>此用户没有活动始于：</translation>
     </message>
     <message>
         <source> seconds</source>
@@ -1391,22 +1398,6 @@ Please choose one of it to chat with.</source>
         <translation>所选聊天室信息</translation>
     </message>
     <message>
-        <source>Lobby name: </source>
-        <translation>聊天室名称:</translation>
-    </message>
-    <message>
-        <source>Lobby Id: </source>
-        <translation>聊天室 ID:</translation>
-    </message>
-    <message>
-        <source>Topic: </source>
-        <translation>主题:</translation>
-    </message>
-    <message>
-        <source>Type: </source>
-        <translation>类型:</translation>
-    </message>
-    <message>
         <source>Private</source>
         <translation>私人</translation>
     </message>
@@ -1415,24 +1406,8 @@ Please choose one of it to chat with.</source>
         <translation>公开</translation>
     </message>
     <message>
-        <source>Peers: </source>
-        <translation>节点:</translation>
-    </message>
-    <message>
         <source>You&apos;re not subscribed to this lobby; Double click-it to enter and chat.</source>
         <translation>您尚未订阅此聊天室；双击聊天室名称可进入聊天。</translation>
-    </message>
-    <message>
-        <source>No lobby selected. 
-
-Select lobbies at left to show details.
-
-Double click lobbies to enter and chat.</source>
-        <translation>未选择聊天室。 
-
-选择左侧的聊天室，单击查看聊天室信息。
-
-双击可进入聊天。</translation>
     </message>
     <message>
         <source>Invitation to chat lobby</source>
@@ -1452,7 +1427,7 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Search Chat lobbies</source>
-        <translation type="unfinished"/>
+        <translation>搜索聊天室</translation>
     </message>
     <message>
         <source>Search Name</source>
@@ -1460,6 +1435,68 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Chat Lobbies&lt;/h1&gt;                              		  &lt;p&gt;Chat lobbies are distributed chat rooms, and work pretty much like IRC.                                      		  They allow you to talk anonymously with tons of people without the need to make friends.&lt;/p&gt;                    		  &lt;p&gt;A chat lobby can be public (your friends see it) or private (your friends can&apos;t see it, unless you           		  invite them with &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). Once you have been invited to a private lobby, you will be able to see it when your friends   		  are using it.&lt;/p&gt;                                                                                               		  &lt;p&gt;The list at left shows                                                                                     		  chat lobbies your friends are participating in. You can either                                 		  &lt;ul&gt;                                                                                                            			  &lt;li&gt;Right click to create a new chat lobby&lt;/li&gt;                                                              		     &lt;li&gt;Double click a chat lobby to enter, chat, and show it to your friends&lt;/li&gt;                      		  &lt;/ul&gt; 		  Note: For the chat lobbies to work properly, your computer needs be on time.  So check your system clock!		  &lt;/p&gt;                                      		</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Subscribed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source> Column</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Columns</source>
+        <translation>列</translation>
+    </message>
+    <message>
+        <source>Yes</source>
+        <translation>是</translation>
+    </message>
+    <message>
+        <source>No</source>
+        <translation>否</translation>
+    </message>
+    <message>
+        <source>Lobby Name:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Lobby Id:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Topic:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Type:</source>
+        <translation>类型:</translation>
+    </message>
+    <message>
+        <source>Peers:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>TextLabel</source>
+        <translation>文本标签</translation>
+    </message>
+    <message>
+        <source>No lobby selected. 
+Select lobbies at left to show details.
+Double click lobbies to enter and chat.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Private Subscribed Lobbies</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Public Subscribed Lobbies</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -1589,22 +1626,6 @@ Double click lobbies to enter and chat.</source>
         <translation>历史</translation>
     </message>
     <message>
-        <source>Group Chat</source>
-        <translation>群聊</translation>
-    </message>
-    <message>
-        <source>Enable</source>
-        <translation>启用</translation>
-    </message>
-    <message>
-        <source>Number of saved messages (0 = unlimited)</source>
-        <translation>保存记录数量(0=无限制)</translation>
-    </message>
-    <message>
-        <source>Load number of messages (0 = off)</source>
-        <translation>载入记录数量(0=无)</translation>
-    </message>
-    <message>
         <source>Style</source>
         <translation>样式</translation>
     </message>
@@ -1720,6 +1741,46 @@ Double click lobbies to enter and chat.</source>
     <message>
         <source>Private chat invite to </source>
         <translation>私人聊天邀请，发给</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;In this tab you can setup how many chat messages Retroshare will keep saved on the disc and how much of the previous conversation it will display, for the different chat systems. The max storage period allows to discard old messages and prevents the chat history from filling up with volatile chat (e.g. chat lobbies and distant chat).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Chatlobbies</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Enabled:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Saved messages (0 = unlimited):</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Number of messages restored  (0 = off):</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Maximum storage period, in days (0=keep all):</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Name : </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Signed with key not in keyring</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Not signed.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Authenticated signature</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -2264,7 +2325,7 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Peer Addresses</source>
-        <translation type="unfinished"/>
+        <translation>节点地址</translation>
     </message>
 </context>
 <context>
@@ -2705,7 +2766,7 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Recommend many friends to each others</source>
-        <translation type="unfinished"/>
+        <translation>批量互荐好友</translation>
     </message>
     <message>
         <source>Friend Recommendations</source>
@@ -2730,6 +2791,25 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     <message>
         <source>Please select at least one friend as recipient.</source>
         <translation>请选择至少一个好友以接收。</translation>
+    </message>
+    <message>
+        <source>Please note that RetroShare will require excessive amounts of bandwidth, memory and CPU if you add to many friends. You can add as many friends as you like, but more than 40 will probably require too much resources.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Add key to keyring</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This key is already in your keyring</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Check this to add the key to your keyring
+This might be useful for sending
+distant messages to this peer
+even if you don&apos;t make friends.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -3088,27 +3168,27 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>UNVERIFIABLE FORWARD!</source>
-        <translation type="unfinished"/>
+        <translation>端口转发状态无法确认！</translation>
     </message>
     <message>
         <source>UNVERIFIABLE FORWARD &amp; NO DHT</source>
-        <translation type="unfinished"/>
+        <translation>端口转发状态无法确定，无 DHT！</translation>
     </message>
     <message>
         <source>Searching</source>
-        <translation type="unfinished"/>
+        <translation>正在搜索</translation>
     </message>
     <message>
         <source>UDP Connect Timeout</source>
-        <translation type="unfinished"/>
+        <translation>UDP 连接超时</translation>
     </message>
     <message>
         <source>Only Advanced Retroshare users should switch off the DHT.</source>
-        <translation type="unfinished"/>
+        <translation>只建议高级 Retroshare 用户关闭 DHT 。</translation>
     </message>
     <message>
         <source>Retroshare cannot connect without this information</source>
-        <translation type="unfinished"/>
+        <translation>缺少此信息 Retroshare 无法连接。</translation>
     </message>
 </context>
 <context>
@@ -3748,11 +3828,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Create New Personal Circle</source>
-        <translation type="unfinished"/>
+        <translation>新建私人圈子</translation>
     </message>
     <message>
         <source>Create New External Circle</source>
-        <translation type="unfinished"/>
+        <translation>新建公共圈子</translation>
     </message>
 </context>
 <context>
@@ -3895,6 +3975,14 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Add Extra File</source>
         <translation>添加额外文件</translation>
+    </message>
+    <message>
+        <source>Attach a Picture</source>
+        <translation>附加图片</translation>
+    </message>
+    <message>
+        <source>Load Picture File</source>
+        <translation>载入图片文件</translation>
     </message>
 </context>
 <context>
@@ -4259,7 +4347,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Create distant chat</source>
-        <translation type="unfinished"/>
+        <translation>创建</translation>
     </message>
 </context>
 <context>
@@ -4287,10 +4375,6 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Location ID:</source>
         <translation>地点 ID：</translation>
-    </message>
-    <message>
-        <source>Identity ID:</source>
-        <translation>身份 ID：</translation>
     </message>
     <message>
         <source>Number of Friends:</source>
@@ -4360,6 +4444,18 @@ p, li { white-space: pre-wrap; }
         <source>RetroShare Certificate (*.rsc );;All Files (*)</source>
         <translation>RetroShare 证书 (*.rsc );;所有文件 (*)</translation>
     </message>
+    <message>
+        <source>Identity ID</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>TextLabel</source>
+        <translation>文本标签</translation>
+    </message>
+    <message>
+        <source>PGP fingerprint:</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>DHTStatus</name>
@@ -4408,7 +4504,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>File Never Seen</source>
-        <translation type="unfinished"/>
+        <translation>以前从未发现此文件</translation>
     </message>
 </context>
 <context>
@@ -4490,7 +4586,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Nat Hole</source>
-        <translation>NAT钻洞</translation>
+        <translation>NAT打洞</translation>
     </message>
     <message>
         <source>Peer Address</source>
@@ -4598,7 +4694,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Unknown NetState</source>
-        <translation type="unfinished"/>
+        <translation>未知网络状态</translation>
     </message>
     <message>
         <source>Offline</source>
@@ -4606,7 +4702,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Local Net</source>
-        <translation type="unfinished"/>
+        <translation>局域网</translation>
     </message>
     <message>
         <source>Behind NAT</source>
@@ -4614,15 +4710,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>External IP</source>
-        <translation type="unfinished"/>
+        <translation>公网 IP</translation>
     </message>
     <message>
         <source>UNKNOWN NAT STATE</source>
-        <translation type="unfinished"/>
+        <translation>NAT 状态未知</translation>
     </message>
     <message>
         <source>SYMMETRIC NAT</source>
-        <translation type="unfinished"/>
+        <translation>线性 NAT</translation>
     </message>
     <message>
         <source>DETERMINISTIC SYM NAT</source>
@@ -4638,59 +4734,59 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>OTHER NAT</source>
-        <translation type="unfinished"/>
+        <translation>其他 NAT 类型</translation>
     </message>
     <message>
         <source>NO NAT</source>
-        <translation type="unfinished"/>
+        <translation>无 NAT</translation>
     </message>
     <message>
         <source>UNKNOWN NAT HOLE STATUS</source>
-        <translation type="unfinished"/>
+        <translation>未知 NAT 穿墙状态</translation>
     </message>
     <message>
         <source>NO NAT HOLE</source>
-        <translation type="unfinished"/>
+        <translation>无 NAT 穿墙</translation>
     </message>
     <message>
         <source>UPNP FORWARD</source>
-        <translation type="unfinished"/>
+        <translation>UPNP 转发</translation>
     </message>
     <message>
         <source>NATPMP FORWARD</source>
-        <translation type="unfinished"/>
+        <translation>NATMP 转发</translation>
     </message>
     <message>
         <source>MANUAL FORWARD</source>
-        <translation type="unfinished"/>
+        <translation>手动转发</translation>
     </message>
     <message>
         <source>NET BAD: Unknown State</source>
-        <translation type="unfinished"/>
+        <translation>网络不佳：未知状态</translation>
     </message>
     <message>
         <source>NET BAD: Offline</source>
-        <translation type="unfinished"/>
+        <translation>网络不佳：离线</translation>
     </message>
     <message>
         <source>NET BAD: Behind Symmetric NAT</source>
-        <translation type="unfinished"/>
+        <translation>网络不佳：发现线性 NAT</translation>
     </message>
     <message>
         <source>NET BAD: Behind NAT &amp; No DHT</source>
-        <translation type="unfinished"/>
+        <translation>网络不佳：发现 NAT，没有 DHT</translation>
     </message>
     <message>
         <source>NET WARNING: NET Restart</source>
-        <translation type="unfinished"/>
+        <translation>网络警告：网络重启</translation>
     </message>
     <message>
         <source>NET WARNING: Behind NAT</source>
-        <translation type="unfinished"/>
+        <translation>网络警告：发现 NAT</translation>
     </message>
     <message>
         <source>NET WARNING: No DHT</source>
-        <translation type="unfinished"/>
+        <translation>网络警告：无 DHT</translation>
     </message>
     <message>
         <source>NET STATE GOOD!</source>
@@ -4710,7 +4806,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Searching</source>
-        <translation type="unfinished"/>
+        <translation>正在搜索</translation>
     </message>
     <message>
         <source>Failed</source>
@@ -5464,6 +5560,10 @@ p, li { white-space：pre-wrap；}
         <source>Forum</source>
         <translation>论坛</translation>
     </message>
+    <message>
+        <source>Load embedded images</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>ForumUserNotify</name>
@@ -5722,6 +5822,10 @@ p, li { white-space：pre-wrap；}
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Forums&lt;/h1&gt;                                  &lt;p&gt;Retroshare Forums look like internet forums, but they work in a decentralized way:                         You see forums your friends are subscribed to, and you forward subscribed forums to                          your friends. This automatically promotes interesting forums in the network.&lt;/p&gt;                         &lt;p&gt;Forums are either Authenticated (&lt;img src=&quot;:/images/konv_message2.png&quot; width=&quot;12&quot;/&gt;) in which case you need to cryptographically sign                          your posts, or anonymous (&lt;img src=&quot;:/images/konversation.png&quot; width=&quot;12&quot;/&gt;). The former class is more resistant to spamming.&lt;/p&gt;                     &lt;p&gt;Forum posts propagate from friend to friend using small cache file exchanges. When you first connect to a new friend, it&apos;s likely     you will receive many such cache files, and new forums will appear.     &lt;/p&gt;                                        </source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>Load images always for this message</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>ForumsFillThread</name>
@@ -5861,14 +5965,6 @@ p, li { white-space：pre-wrap；}
         <translation>复制证书链接</translation>
     </message>
     <message>
-        <source>Copy RetroShare Link</source>
-        <translation>复制 RetroShare 链接</translation>
-    </message>
-    <message>
-        <source>Paste Friend Link</source>
-        <translation>粘贴好友链接</translation>
-    </message>
-    <message>
         <source>Deny Friend</source>
         <translation>拒绝好友</translation>
     </message>
@@ -5939,6 +6035,10 @@ p, li { white-space：pre-wrap；}
     <message>
         <source>Display</source>
         <translation>显示</translation>
+    </message>
+    <message>
+        <source>Paste certificate link</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -6325,10 +6425,6 @@ PGP要求填写此信息，但为了保持匿名，您可以填写假地址。</
         <translation>位置</translation>
     </message>
     <message>
-        <source>Put a meaningful location. ex : home, laptop, etc. This field will be used to differentiate different installations with the same identity (PGP key).</source>
-        <translation>请输入一个有意义的地点，例如：家、本本、等，地点被用来区分同一身份(PGP密钥)安装的不同副本。</translation>
-    </message>
-    <message>
         <source>Create new identity</source>
         <translation>创建新身份</translation>
     </message>
@@ -6483,6 +6579,28 @@ Fill in your PGP password when asked, to sign your new key.</source>
     <message>
         <source>Failed to Generate your new Certificate, maybe PGP password is wrong!</source>
         <translation>新证书生成失败，可能您的 PGP 密码有误! </translation>
+    </message>
+    <message>
+        <source>Password (check)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Before proceeding, move your mouse around to help Retroshare collect as much randomness as possible. Filling the progressbar to 20% is needed, 100% is advised.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>[Required] Type the same password again here.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Put a meaningful location. ex : home, laptop, etc. 
+This field will be used to differentiate different installations with
+the same identity (PGP key).</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Passwords do not match</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7159,11 +7277,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add Channel Admins</source>
-        <translation type="unfinished"/>
+        <translation>添加频道管理员</translation>
     </message>
     <message>
         <source>Select Channel Admins</source>
-        <translation type="unfinished"/>
+        <translation>选择频道管理员</translation>
     </message>
 </context>
 <context>
@@ -8009,45 +8127,6 @@ p, li { white-space: pre-wrap; }
         <translation>翻译</translation>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;RetroShare Translators:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;French&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;:Temet&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Polish: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Jarek&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Serbian&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;: Kunalagon Umuhanik &amp;lt;kunalagon@gmail.com&amp;gt;&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Spanish:  &lt;/span&gt;&lt;span style=&quot; font-family:'Courier New,courier';&quot;&gt;Manuel Montero &amp;lt;Senpai&amp;gt; &lt;/span&gt;&lt;a href=&quot;http://pagina.de/senpai&amp;amp;gt&quot;&gt;&lt;span style=&quot; font-family:'Courier New,courier'; text-decoration: underline; color:#0000ff;&quot;&gt;http://pagina.de/senpai&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Swedish:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; dnylander&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;RetroShare Website Translators:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt; font-weight:600;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Swedish: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Daniel Wester&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; &amp;lt;&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;wester@speedmail.se&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;German: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Jan&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Keller&lt;/span&gt; &amp;lt;&lt;span style=&quot; font-size:8pt;&quot;&gt;trilarion@users.sourceforge.net&lt;/span&gt;&amp;gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Polish: &lt;/span&gt;Maciej Mrug&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;RetroShare 翻译人员:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Chinese:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; xtoaster&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;French&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;:Temet&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Polish: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Jarek&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Serbian&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;: Kunalagon Umuhanik &amp;lt;kunalagon@gmail.com&amp;gt;&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Spanish:  &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Courier New,courier&apos;;&quot;&gt;Manuel Montero &amp;lt;Senpai&amp;gt; &lt;/span&gt;&lt;a href=&quot;http://pagina.de/senpai&amp;amp;gt&quot;&gt;&lt;span style=&quot; font-family:&apos;Courier New,courier&apos;; text-decoration: underline; color:#0000ff;&quot;&gt;http://pagina.de/senpai&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Swedish:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; dnylander&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;RetroShare 网站翻译人员:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt; font-weight:600;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Swedish: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Daniel Wester&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; &amp;lt;&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;wester@speedmail.se&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;German: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Jan&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Keller&lt;/span&gt; &amp;lt;&lt;span style=&quot; font-size:8pt;&quot;&gt;trilarion@users.sourceforge.net&lt;/span&gt;&amp;gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Polish: &lt;/span&gt;Maciej Mrug&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
         <source>License Agreement</source>
         <translation>许可协议</translation>
     </message>
@@ -8062,6 +8141,23 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;关于 RetroShare&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;RetroShare Translations:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net/wiki/index.php/Translation&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;http://retroshare.sourceforge.net/wiki/index.php/Translation&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; text-decoration: underline; color:#0000ff;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;RetroShare Website Translators:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt; font-weight:600;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Swedish: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Daniel Wester&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; &amp;lt;&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;wester@speedmail.se&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;German: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Jan&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Keller&lt;/span&gt; &amp;lt;&lt;span style=&quot; font-size:8pt;&quot;&gt;trilarion@users.sourceforge.net&lt;/span&gt;&amp;gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Polish: &lt;/span&gt;Maciej Mrug&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -8243,7 +8339,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Delete Identity</source>
-        <translation type="unfinished"/>
+        <translation>删除身份</translation>
     </message>
 </context>
 <context>
@@ -8310,7 +8406,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Create New Identity</source>
-        <translation type="unfinished"/>
+        <translation>创建新身份</translation>
     </message>
 </context>
 <context>
@@ -8611,11 +8707,11 @@ RetroShare 将暂停对此目录的访问。
     </message>
     <message>
         <source>ServicePermissions</source>
-        <translation type="unfinished"/>
+        <translation>服务权限</translation>
     </message>
     <message>
         <source>Service permissions matrix</source>
-        <translation type="unfinished"/>
+        <translation>服务权限列表</translation>
     </message>
 </context>
 <context>
@@ -9052,6 +9148,14 @@ Do you want to save message ?</source>
         <source>Only show people you trusted</source>
         <translation>只显示您信任的用户</translation>
     </message>
+    <message>
+        <source>PGP key unknown</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You dont have the PGP key of the message sender. So you cannot respond!</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>MessagePage</name>
@@ -9117,6 +9221,10 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Accept encrypted distant messages from everyone</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Load embedded images</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -9235,6 +9343,38 @@ Do you want to save message ?</source>
     <message>
         <source>HTML-Files (*.htm *.html);;All Files (*)</source>
         <translation>HTML 文件 (*.htm *.html);;所有文件 (*)</translation>
+    </message>
+    <message>
+        <source>Load images always for this message</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>This messages is encrypted. Click the right button to decrypt it.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Decrypt</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Encrypted message</source>
+        <translation>加密消息</translation>
+    </message>
+    <message>
+        <source>Decryption failed!</source>
+        <translation>解密失败! </translation>
+    </message>
+    <message>
+        <source>This message is not encrypted. Cannot decrypt!</source>
+        <translation>消息未加密，因此无法解密! </translation>
+    </message>
+    <message>
+        <source>This message could not be decrypted.</source>
+        <translation>消息无法解密。</translation>
+    </message>
+    <message>
+        <source>Unknown (needs decryption)</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -9635,14 +9775,6 @@ Do you want to save message ?</source>
         <translation>消息已加密。右键单击以解密。</translation>
     </message>
     <message>
-        <source>Decryption failed!</source>
-        <translation>解密失败! </translation>
-    </message>
-    <message>
-        <source>This message could not be decrypted.</source>
-        <translation>消息无法解密。</translation>
-    </message>
-    <message>
         <source>Messages</source>
         <translation>邮件</translation>
     </message>
@@ -9663,11 +9795,11 @@ Do you want to save message ?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>This message is not encrypted. Cannot decrypt!</source>
-        <translation>消息未加密，因此无法解密! </translation>
+        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Messages&lt;/h1&gt;                          &lt;p&gt;Messages are like &lt;b&gt;e-mail&lt;/b&gt;: you send/receive them from your friends when both of you are connected.&lt;/p&gt;  &lt;p&gt;It is also possible to send messages to non friends, using tunnels. Such messages are always encrypted. It is  recommended to cryptographically sign distant messages, as a proof of your identity, using the &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; button  in the message composer window. Distant messages are not guarrantied to arrive, since this requires the distant peer to accept them (You need yourself to switch this on in Config-Messages).&lt;/p&gt; &lt;p&gt;Some additional features allow you to exchange data in messages: you may recommend files to your friends by pasting file links,  or recommend friends-to-be to other friends, in order to streathen your network.&lt;/p&gt;                    </source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Messages&lt;/h1&gt;                          &lt;p&gt;Messages are like &lt;b&gt;e-mail&lt;/b&gt;: you send/receive them from your friends when both of you are connected.&lt;/p&gt;  &lt;p&gt;It is also possible to send messages to non friends, using tunnels. Such messages are always encrypted. It is  recommended to cryptographically sign distant messages, as a proof of your identity, using the &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; button  in the message composer window. Distant messages are not guarrantied to arrive, since this requires the distant peer to accept them (You need yourself to switch this on in Config-Messages).&lt;/p&gt; &lt;p&gt;Some additional features allow you to exchange data in messages: you may recommend files to your friends by pasting file links,  or recommend friends-to-be to other friends, in order to streathen your network.&lt;/p&gt;                    </source>
+        <source>This message has been successfully decrypted, and is unsigned.</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -9734,7 +9866,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Encrypted message</source>
-        <translation type="unfinished"/>
+        <translation>加密信息</translation>
     </message>
 </context>
 <context>
@@ -10027,7 +10159,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Send Message</source>
-        <translation type="unfinished"/>
+        <translation>发送消息</translation>
     </message>
     <message>
         <source> If I accept connection from peer</source>
@@ -10252,6 +10384,10 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <source>Notify</source>
         <translation>提示</translation>
     </message>
+    <message>
+        <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Notify&lt;/h1&gt; 		  &lt;p&gt;Retroshare will notify you about what happens in your network.         		  Depending on your usage, you may want to enable or disable some of the    		  notifications. This page is designed for that!&lt;/p&gt;                        		  </source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>NotifyQt</name>
@@ -10301,11 +10437,11 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Unknown title</source>
-        <translation type="unfinished"/>
+        <translation>未知标题</translation>
     </message>
     <message>
         <source>Encrypted message</source>
-        <translation type="unfinished"/>
+        <translation>加密消息</translation>
     </message>
 </context>
 <context>
@@ -10818,6 +10954,10 @@ malicious behavior of crafted plugins.</source>
         <source>Plugins</source>
         <translation>插件</translation>
     </message>
+    <message>
+        <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Plugins&lt;/h1&gt;                   &lt;p&gt;Plugins are loaded from the directories listed in the bottom list.&lt;/p&gt;                       &lt;p&gt;For security reasons, accepted plugins load automatically until                              the main Retroshare executable or the plugin library changes. In                                such a case, the user needs to confirm them again.                                              After the program is started, you can enable a plugin manually by clicking on the               &quot;Enable&quot; button and then restart Retroshare.&lt;/p&gt;                                              &lt;p&gt;If you want to develop your own plugins, contact the developpers team                        they will be happy to help you out!&lt;/p&gt;</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>PopularityDefs</name>
@@ -10944,16 +11084,8 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PostedGroupDialog</name>
     <message>
-        <source>Create New Posted Topic</source>
-        <translation>创建新主题</translation>
-    </message>
-    <message>
         <source>Posted Topic</source>
         <translation>已发表主题</translation>
-    </message>
-    <message>
-        <source>Edit Posted Topic</source>
-        <translation>编辑主题</translation>
     </message>
     <message>
         <source>Add Topic Admins</source>
@@ -10963,16 +11095,20 @@ p, li { white-space: pre-wrap; }
         <source>Select Topic Admins</source>
         <translation>选择主题管理员</translation>
     </message>
+    <message>
+        <source>Create New Topic</source>
+        <translation>创建新话题</translation>
+    </message>
+    <message>
+        <source>Edit Topic</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>PostedItem</name>
     <message>
         <source>0</source>
         <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>\/</source>
-        <translation>\/</translation>
     </message>
     <message>
         <source>This is a very very very very loooooooooooooooonnnnnnnnnnnnnnnnng title don&apos;t you think? Yes it is and should wrap around I hope</source>
@@ -11003,12 +11139,12 @@ p, li { white-space: pre-wrap; }
         <translation>评论</translation>
     </message>
     <message>
-        <source>Vote Up</source>
-        <translation>赞</translation>
+        <source>I like this</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Vote Down</source>
-        <translation>踩</translation>
+        <source>I dislike this</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -11103,7 +11239,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Create New Topic</source>
-        <translation type="unfinished"/>
+        <translation>创建新话题</translation>
     </message>
 </context>
 <context>
@@ -11733,6 +11869,18 @@ Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replace
 Reported error is: 
 
 %2</source>
+        <translation>无法打开集合文件 %1 。
+收到错误：
+
+%2</translation>
+    </message>
+    <message>
+        <source>Signature check failed!
+Make sure you know who you&apos;re talking to.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Chat connection is unauthenticated</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -11956,6 +12104,21 @@ p, li { white-space：pre-wrap；}
     </message>
 </context>
 <context>
+    <name>RSImageBlockWidget</name>
+    <message>
+        <source>Form</source>
+        <translation>表单</translation>
+    </message>
+    <message>
+        <source>The loading of embedded images is blocked.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Load images</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>RSettingsWin</name>
     <message>
         <source>Error Saving Configuration on page </source>
@@ -12042,6 +12205,10 @@ p, li { white-space：pre-wrap；}
     <message>
         <source>Relay</source>
         <translation>中继</translation>
+    </message>
+    <message>
+        <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Relays&lt;/h1&gt;                                 &lt;p&gt;By activating relays, you allow your Retroshare node to act as a bridge between Retroshare  				  users who cannot connect directly, e.g. because they&apos;re firewalled.&lt;/p&gt;                        				  &lt;p&gt;You may choose to act as a relay by checking &lt;i&gt;enable relay connections&lt;/i&gt;, or simply     				  benefit from other peers acting as relay, by checking &lt;i&gt;use relay servers&lt;/i&gt;. For the former,				  you may specify the bandwidth allocated when acting as a relay for friends of you, for friends 				  of your friends, or anyone in the Retroshare network.&lt;/p&gt;                                      				  &lt;p&gt;In any case, a Retroshare node acting as a relay cannot see the relayed traffic, since it   				  is encrypted and authenticated by the two relayed nodes.&lt;/p&gt;</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -12147,7 +12314,9 @@ Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replace
         <source>This file contains the string &quot;%1&quot; and is therefore an invalid collection file. 
 
 If you believe it is correct, remove the corresponding line from the file and re-open it with Retroshare.</source>
-        <translation type="unfinished"/>
+        <translation>文件包含字串 &quot;%1&quot; 因此不是有效的集合文件。
+
+如果您认为它是有效文件请从文件中删除这一行，然后用 Retroshare 重新打开。</translation>
     </message>
 </context>
 <context>
@@ -12667,16 +12836,8 @@ behind a firewall or a VPN.</source>
         <translation>最大传输速度</translation>
     </message>
     <message>
-        <source>Download (KB/s) </source>
-        <translation>下载(KB/s)</translation>
-    </message>
-    <message>
         <source>kB/s</source>
         <translation>kB/s</translation>
-    </message>
-    <message>
-        <source>Upload (KB/s) </source>
-        <translation>上传(KB/s)</translation>
     </message>
     <message>
         <source>If you uncheck this, RetroShare will not use tunnel connection between peers that are firewalled and cannot connect directly. This is independent from F2F routing (turtle router).</source>
@@ -12725,6 +12886,14 @@ The default value is 20.</source>
     <message>
         <source>Server</source>
         <translation>服务器</translation>
+    </message>
+    <message>
+        <source>Download (KB/s) </source>
+        <translation>下载(KB/s)</translation>
+    </message>
+    <message>
+        <source>Upload (KB/s) </source>
+        <translation>上传(KB/s)</translation>
     </message>
 </context>
 <context>
@@ -12838,26 +13007,6 @@ The default value is 20.</source>
         <translation>共享文件夹管理器</translation>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;This is a list of shared folders. You can add and remove folders using the buttons at the bottom.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;When you add a new folder, intially all files in that folder are shared.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-size:8pt;&quot;&gt;You can separately setup share flags for each shared directory:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-size:8pt; font-weight:600;&quot;&gt;Browsable&lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:8pt;&quot;&gt;: files are browsable from your direct friends.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Network Wide&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: files can be downloaded by anybody through anonymous tunnels.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space：pre-wrap；}
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;这里是共享文件列表。您可以通过底部的按钮添加或删除文件夹。&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;当您添加共享文件夹时，默认会共享其中所有子文件夹。&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;您可以单独设置各文件夹的共享属性：&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;直系好友可见&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;：只有您的直系好友可以浏览这些文件。&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;全网匿名可见&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;：任意用户均可通过匿名隧道您的文件。&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
         <source>Directory</source>
         <translation>目录</translation>
     </message>
@@ -12928,6 +13077,10 @@ p, li { white-space：pre-wrap；}
     <message>
         <source>Directory not found or directory name not accepted.</source>
         <translation>目录未找到或目录名称不可接受。</translation>
+    </message>
+    <message>
+        <source>This is a list of shared folders. You can add and remove folders using the buttons at the bottom. When you add a new folder, intially all files in that folder are shared. You can separately setup share flags for each shared directory.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -14002,7 +14155,7 @@ RetroShare 将向数据源请求详细的校验
     </message>
     <message>
         <source>Show Path Column</source>
-        <translation type="unfinished"/>
+        <translation>显示路径栏</translation>
     </message>
     <message>
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;File Transfer&lt;/h1&gt;                                                             &lt;p&gt;Retroshare brings two ways of transferring files: direct transfers from your friends, and                                         distant anonymous tunnelled transfers. In addition, file transfer is multi-source and allows swarming                                          (you can be a source while downloading)&lt;/p&gt;                                         &lt;p&gt;You can share files using the &lt;img src=&quot;:/images/directoryadd_24x24_shadow.png&quot; width=16 /&gt; icon from the left side bar.     These files will be listed in the My Files tab. You can decide for each friend group whether they can or not see these files     in their Friends Files tab&lt;/p&gt;    &lt;p&gt;The search tab reports files from your friends&apos; file lists, and distant files that can be reached     anonymously using the multi-hop tunnelling system.&lt;/p&gt;     </source>

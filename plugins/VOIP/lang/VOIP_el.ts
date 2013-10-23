@@ -131,32 +131,32 @@
 <context>
     <name>AudioInputConfig</name>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="98"/>
+        <location filename="../gui/AudioInputConfig.cpp" line="100"/>
         <source>Continuous</source>
         <translation>Συνεχής</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="99"/>
+        <location filename="../gui/AudioInputConfig.cpp" line="101"/>
         <source>Voice Activity</source>
         <translation>Φωνή δραστηριότητας</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="100"/>
+        <location filename="../gui/AudioInputConfig.cpp" line="102"/>
         <source>Push To Talk</source>
         <translation>Push To Talk</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="202"/>
+        <location filename="../gui/AudioInputConfig.cpp" line="204"/>
         <source>%1 s</source>
         <translation>%1 s</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="210"/>
+        <location filename="../gui/AudioInputConfig.cpp" line="212"/>
         <source>Off</source>
         <translation>Μακριά</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="213"/>
+        <location filename="../gui/AudioInputConfig.cpp" line="215"/>
         <source>-%1 dB</source>
         <translation>-%1 dB</translation>
     </message>
@@ -169,14 +169,50 @@
 <context>
     <name>AudioPopupChatDialog</name>
     <message>
-        <location filename="../gui/AudioPopupChatDialog.cpp" line="15"/>
+        <location filename="../gui/AudioPopupChatDialog.cpp" line="23"/>
+        <location filename="../gui/AudioPopupChatDialog.cpp" line="87"/>
         <source>Mute yourself</source>
         <translation>Σίγαση στον εαυτό σας</translation>
     </message>
     <message>
-        <location filename="../gui/AudioPopupChatDialog.cpp" line="35"/>
-        <source>Deafen yourself</source>
-        <translation>Deafen στον εαυτό σας</translation>
+        <location filename="../gui/AudioPopupChatDialog.cpp" line="43"/>
+        <source>Start Call</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/AudioPopupChatDialog.cpp" line="65"/>
+        <source>Hangup Call</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/AudioPopupChatDialog.cpp" line="89"/>
+        <source>Unmute yourself</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/AudioPopupChatDialog.cpp" line="118"/>
+        <source>Hold Call</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/AudioPopupChatDialog.cpp" line="137"/>
+        <source>VoIP Status</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/AudioPopupChatDialog.cpp" line="137"/>
+        <source>Outgoing Call is started...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/AudioPopupChatDialog.cpp" line="145"/>
+        <source>Resume Call</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/AudioPopupChatDialog.cpp" line="172"/>
+        <source>Answer</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -466,42 +502,42 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="93"/>
+        <location filename="../VOIPPlugin.cpp" line="94"/>
         <source>&lt;h3&gt;RetroShare VOIP plugin&lt;/h3&gt;&lt;br/&gt;   * Contributors: Cyril Soler, Josselin Jacquard&lt;br/&gt;</source>
         <translation>&lt;h3&gt;RetroShare VOIP plugin&lt;/h3&gt;&lt;br/&gt; * Συντελεστές: Cyril Soler, ζακάρ Josselin &lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="94"/>
+        <location filename="../VOIPPlugin.cpp" line="95"/>
         <source>&lt;br/&gt;The VOIP plugin adds VOIP to the private chat window of RetroShare. to use it, proceed as follows:&lt;UL&gt;</source>
         <translation>&lt;br/&gt; Το VOIP plugin προσθέτει VOIP στο παράθυρο ιδιωτικων συνομιλίων του RetroShare. Για να το χρησιμοποιήσετε, ακολουθήστε τα εξής: &lt;UL&gt;</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="95"/>
+        <location filename="../VOIPPlugin.cpp" line="96"/>
         <source>&lt;li&gt; setup microphone levels using the configuration panel&lt;/li&gt;</source>
         <translation>&lt;li&gt;εγκατάσταση μικρόφωνου επίπεδων, χρησιμοποιώντας τον πίνακα &quot;ρυθμίσεις&quot;&lt;/li&gt;</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="96"/>
+        <location filename="../VOIPPlugin.cpp" line="97"/>
         <source>&lt;li&gt; check your microphone by looking at the VU-metters&lt;/li&gt;</source>
         <translation>&lt;li&gt;Ελέγξτε το μικρόφωνό σας με την εξέταση το VU-τετρα&lt;/li&gt;</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="97"/>
+        <location filename="../VOIPPlugin.cpp" line="98"/>
         <source>&lt;li&gt; in the private chat, enable sound input/output by clicking on the two VOIP icons&lt;/li&gt;&lt;/ul&gt;</source>
         <translation>&lt;li&gt;σε ιδιωτική συνομιλία, Ενεργοποίηση ήχου εισόδου/εξόδου, κάνοντας κλικ στα εικονίδια δύο VOIP&lt;/li&gt;&lt;/ul&gt;</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="98"/>
+        <location filename="../VOIPPlugin.cpp" line="99"/>
         <source>Your friend needs to run the plugin to talk/listen to you, or course.</source>
         <translation>Ο φίλος σας χρειάζεται για να τρέξει το plugin για να του μιλήσετε/τον ακούσετε, φυσικα.</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="99"/>
+        <location filename="../VOIPPlugin.cpp" line="100"/>
         <source>&lt;br/&gt;&lt;br/&gt;This is an experimental feature. Don&apos;t hesitate to send comments and suggestion to the RS dev team.</source>
         <translation>&lt;br/&gt; &lt;br/&gt;Αυτό είναι ένα πειραματικό χαρακτηριστικό γνώρισμα. Μη διστάσετε να στείλετε τα σχόλια και τις προτάσεις στην ομάδα dev RS.</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="117"/>
+        <location filename="../VOIPPlugin.cpp" line="118"/>
         <source>RTT Statistics</source>
         <translation>Στατιστικές RTT</translation>
     </message>
@@ -531,7 +567,7 @@
 <context>
     <name>VOIP</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="153"/>
+        <location filename="../VOIPPlugin.cpp" line="154"/>
         <source>This plugin provides voice communication between friends in RetroShare.</source>
         <translation>Αυτό το plugin παρέχει φωνητική επικοινωνία μεταξύ φίλων στο RetroShare.</translation>
     </message>
@@ -539,7 +575,7 @@
 <context>
     <name>VOIPPlugin</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="158"/>
+        <location filename="../VOIPPlugin.cpp" line="159"/>
         <source>VOIP</source>
         <translation>VOIP</translation>
     </message>

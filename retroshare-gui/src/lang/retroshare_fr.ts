@@ -500,6 +500,13 @@ Mais rappelez-vous : Toutes les données *SERONT* perdus quand nous mettrons à 
     </message>
 </context>
 <context>
+    <name>BWListDelegate</name>
+    <message>
+        <source>N/A</source>
+        <translation>N/A</translation>
+    </message>
+</context>
+<context>
     <name>BandwidthGraph</name>
     <message>
         <source>RetroShare Bandwidth Usage</source>
@@ -1223,7 +1230,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Channels&lt;/h1&gt;                                                             &lt;p&gt;Channels allow you to post data (e.g. movies, music) that will spread in the network                                                    among people who subscribed your channel.  If you activate auto-download on a channel, files attached to each post will start      downloading automatically when the post is received.&lt;/p&gt;                                                                                   &lt;p&gt;You see channels your friends are subscribed to, and forward subscribed channels to                                                    your friends. This promotes good channels in the network.                                                         When you first connect to a new friend, it&apos;s likely     you will receive many such cache files, and new channels will appear.                                                                      &lt;/p&gt;                                                                                                                                       &lt;p&gt;Only the channel&apos;s creator can post on that channel. Other peers                           in the network can only read from it, unless the channel is private. You can however share the posting rights or the reading rights     with your friends.&lt;/p&gt;                                </source>
-        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Chaînes &lt;/h1&gt; &lt;p&gt;Les chaînes vous permettent d&apos;afficher des données (par exemple, films, musique) qui seront répartis dans le réseau parmi les personnes qui ont souscrit votre chaîne. Si vous activez le téléchargement automatique sur une chaîne, les fichiers attachés à chaque poste vont commencer à se télécharger automatiquement lorsque le message est reçu.&lt;/p&gt; &lt;p&gt;Vous voyez les chaînes auxquelles vos amis sont abonnés ainsi que leur ancien abonnement. Cela favorise les bonnes chaînes dans le réseau. Lorsque vous vous connectez avec un nouveau ami, il est probable que vous recevrez beaucoup de &quot;fichiers de cache&quot; et de nouvelles chaînes apparaitront. &lt;/p&gt; &lt;p&gt;Seul le créateur de la chaîne peut poster sur cette chaîne. Les autres contacts dans le réseau peuvent que les lire, sauf si la chaîne est privée. Vous pouvez cependant partager les droits de publication ou les droits de lecture avec vos amis.&lt;/p&gt; </translation>
+        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Chaînes &lt;/h1&gt; &lt;p&gt;Les chaînes vous permettent d&apos;afficher des données (p. ex., films, musique) qui seront répartis dans le réseau parmi les personnes qui ont souscrit votre chaîne. Si vous activez le téléchargement automatique sur une chaîne, les fichiers attachés à chaque poste vont commencer à se télécharger automatiquement lorsque le message est reçu.&lt;/p&gt; &lt;p&gt;Vous voyez les chaînes auxquelles vos amis sont abonnés ainsi que leur ancien abonnement. Cela favorise les bonnes chaînes dans le réseau. Lorsque vous vous connectez avec un nouvel ami, il est probable que vous recevrez beaucoup de &quot;fichiers de cache&quot; et de nouvelles chaînes apparaîtront. &lt;/p&gt; &lt;p&gt;Seul le créateur de la chaîne peut publier sur cette chaîne. Les autres contacts dans le réseau ne peuvent que les lire, sauf si la chaîne est privée. Vous pouvez cependant partager les droits de publication ou les droits de lecture avec vos amis.&lt;/p&gt; </translation>
     </message>
 </context>
 <context>
@@ -1388,23 +1395,7 @@ Choisissez celui avec lequel vous voulez tchater.</translation>
     </message>
     <message>
         <source>Selected lobby info</source>
-        <translation>Info du salon séléctionné</translation>
-    </message>
-    <message>
-        <source>Lobby name: </source>
-        <translation>Nom du salon :</translation>
-    </message>
-    <message>
-        <source>Lobby Id: </source>
-        <translation>Id du salon :</translation>
-    </message>
-    <message>
-        <source>Topic: </source>
-        <translation>Sujet :</translation>
-    </message>
-    <message>
-        <source>Type: </source>
-        <translation>Type :</translation>
+        <translation>Info du salon sélectionné</translation>
     </message>
     <message>
         <source>Private</source>
@@ -1415,24 +1406,8 @@ Choisissez celui avec lequel vous voulez tchater.</translation>
         <translation>Public</translation>
     </message>
     <message>
-        <source>Peers: </source>
-        <translation>Contacts :</translation>
-    </message>
-    <message>
         <source>You&apos;re not subscribed to this lobby; Double click-it to enter and chat.</source>
         <translation>Vous n&apos;êtes pas abonné à ce salon. Double cliquer dessus pour y accéder et discuter.</translation>
-    </message>
-    <message>
-        <source>No lobby selected. 
-
-Select lobbies at left to show details.
-
-Double click lobbies to enter and chat.</source>
-        <translation>Aucun salon sélectionné. 
-
-Sélectionner un salon à gauche pour afficher ses détails .
-
-Double cliquer sur le salon pour y accéder et discuter.</translation>
     </message>
     <message>
         <source>Invitation to chat lobby</source>
@@ -1461,6 +1436,70 @@ Double cliquer sur le salon pour y accéder et discuter.</translation>
     <message>
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Chat Lobbies&lt;/h1&gt;                              		  &lt;p&gt;Chat lobbies are distributed chat rooms, and work pretty much like IRC.                                      		  They allow you to talk anonymously with tons of people without the need to make friends.&lt;/p&gt;                    		  &lt;p&gt;A chat lobby can be public (your friends see it) or private (your friends can&apos;t see it, unless you           		  invite them with &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). Once you have been invited to a private lobby, you will be able to see it when your friends   		  are using it.&lt;/p&gt;                                                                                               		  &lt;p&gt;The list at left shows                                                                                     		  chat lobbies your friends are participating in. You can either                                 		  &lt;ul&gt;                                                                                                            			  &lt;li&gt;Right click to create a new chat lobby&lt;/li&gt;                                                              		     &lt;li&gt;Double click a chat lobby to enter, chat, and show it to your friends&lt;/li&gt;                      		  &lt;/ul&gt; 		  Note: For the chat lobbies to work properly, your computer needs be on time.  So check your system clock!		  &lt;/p&gt;                                      		</source>
         <translation>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Salons de chat&lt;/h1&gt;   &lt;p&gt;Les salons de chat sont des espaces de discussions, et fonctionnent un peu comme IRC. Ils vous permettent de parler anonymement avec de nombreuses personnes sans avoir besoin de s&apos;en faire des amis. &lt;/p&gt; &lt;p&gt;Un salon peut être public (vos amis le voit) ou privés (vos amis ne peuvent pas le voir , à moins que vous les y invitiez &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). Une fois que vous avez été invité à un salon privé, vous serez en mesure de voir quand vos amis l&apos;utilise.&lt;/p&gt; &lt;p&gt;La liste de gauche affiche les salons auxquels vos amis participent. Vous pouvez soit &lt;ul&gt; &lt;li&gt;Avec un clic droit créer un nouveau salon de chat&lt;/li&gt; &lt;li&gt;Double cliquez sur un salon de chat pour y entrer, discuter, et l&apos;afficher à vos amis &lt;/li &gt; &lt;/ul&gt; Remarque : Pour que les salons fonctionnent correctement, votre ordinateur doit être à l&apos;heure. Alors vérifiez votre horloge système !   &lt;/p&gt; </translation>
+    </message>
+    <message>
+        <source>Subscribed</source>
+        <translation>Abonné</translation>
+    </message>
+    <message>
+        <source>Show </source>
+        <translation>Afficher</translation>
+    </message>
+    <message>
+        <source> Column</source>
+        <translation>Colonne</translation>
+    </message>
+    <message>
+        <source>Columns</source>
+        <translation>Colonnes</translation>
+    </message>
+    <message>
+        <source>Yes</source>
+        <translation>Oui</translation>
+    </message>
+    <message>
+        <source>No</source>
+        <translation>Non</translation>
+    </message>
+    <message>
+        <source>Lobby Name:</source>
+        <translation>Nom du salon :</translation>
+    </message>
+    <message>
+        <source>Lobby Id:</source>
+        <translation>Id du salon :</translation>
+    </message>
+    <message>
+        <source>Topic:</source>
+        <translation>Sujet :</translation>
+    </message>
+    <message>
+        <source>Type:</source>
+        <translation>Type :</translation>
+    </message>
+    <message>
+        <source>Peers:</source>
+        <translation>Contacts :</translation>
+    </message>
+    <message>
+        <source>TextLabel</source>
+        <translation>Etiquette</translation>
+    </message>
+    <message>
+        <source>No lobby selected. 
+Select lobbies at left to show details.
+Double click lobbies to enter and chat.</source>
+        <translation>Aucun salon sélectionné.
+Sélectionner un salon à gauche pour afficher ses détails.
+Double cliquer sur le salon pour y accéder et discuter.</translation>
+    </message>
+    <message>
+        <source>Private Subscribed Lobbies</source>
+        <translation>Salons abonnés privés</translation>
+    </message>
+    <message>
+        <source>Public Subscribed Lobbies</source>
+        <translation>Salons abonnés publics</translation>
     </message>
 </context>
 <context>
@@ -1589,22 +1628,6 @@ Double cliquer sur le salon pour y accéder et discuter.</translation>
         <translation>Historique</translation>
     </message>
     <message>
-        <source>Group Chat</source>
-        <translation>Chat public</translation>
-    </message>
-    <message>
-        <source>Enable</source>
-        <translation>Activer</translation>
-    </message>
-    <message>
-        <source>Number of saved messages (0 = unlimited)</source>
-        <translation>Nombre de messages sauvegardés (0 = illimité)</translation>
-    </message>
-    <message>
-        <source>Load number of messages (0 = off)</source>
-        <translation>Nombre de messages visibles (0 = aucun)</translation>
-    </message>
-    <message>
         <source>Style</source>
         <translation>Style</translation>
     </message>
@@ -1719,6 +1742,46 @@ Double cliquer sur le salon pour y accéder et discuter.</translation>
     <message>
         <source>Private chat invite to </source>
         <translation>Invitation au chat privé pour</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;In this tab you can setup how many chat messages Retroshare will keep saved on the disc and how much of the previous conversation it will display, for the different chat systems. The max storage period allows to discard old messages and prevents the chat history from filling up with volatile chat (e.g. chat lobbies and distant chat).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Dans cet onglet, vous pouvez configurer le nombre de messages de chat que Retroshare gardera sauvegardé sur le disque et combien de la conversation précédente, elle affiche, pour les différents systèmes de discussions. La période de stockage max permet de supprimer les anciens messages et empêche l&apos;historique des conversations de remplir les chats volatiles (par exemple, les salons de chat et chat à distance).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Chatlobbies</source>
+        <translation>Salons de chat</translation>
+    </message>
+    <message>
+        <source>Enabled:</source>
+        <translation>Activé :</translation>
+    </message>
+    <message>
+        <source>Saved messages (0 = unlimited):</source>
+        <translation>Nombre de messages sauvegardés (0 = illimité)</translation>
+    </message>
+    <message>
+        <source>Number of messages restored  (0 = off):</source>
+        <translation>Nombre de messages visibles (0 = arrêté)</translation>
+    </message>
+    <message>
+        <source>Maximum storage period, in days (0=keep all):</source>
+        <translation>Période maximale de stockage, en jours (0=garde tout):</translation>
+    </message>
+    <message>
+        <source>Name : </source>
+        <translation>Nom :</translation>
+    </message>
+    <message>
+        <source>Signed with key not in keyring</source>
+        <translation>Signé avec une clé inconnue</translation>
+    </message>
+    <message>
+        <source>Not signed.</source>
+        <translation>Non signé.</translation>
+    </message>
+    <message>
+        <source>Authenticated signature</source>
+        <translation>Signature authentifié</translation>
     </message>
 </context>
 <context>
@@ -2726,6 +2789,28 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     <message>
         <source>Please select at least one friend as recipient.</source>
         <translation>S&apos;il vous plaît sélectionner au moins un destinataire.</translation>
+    </message>
+    <message>
+        <source>Please note that RetroShare will require excessive amounts of bandwidth, memory and CPU if you add to many friends. You can add as many friends as you like, but more than 40 will probably require too much resources.</source>
+        <translation>Veuillez noter que RetroShare nécessitera des quantités excessives de bande passante, mémoire et CPU si vous ajoutez à de nombreux amis. Vous pouvez ajouter autant d&apos;amis que vous le souhaitez, mais avec plus de 40 vous aurez probablement besoin de trop de ressources.</translation>
+    </message>
+    <message>
+        <source>Add key to keyring</source>
+        <translation>Ajouter la clé au trousseau</translation>
+    </message>
+    <message>
+        <source>This key is already in your keyring</source>
+        <translation>Cette clé est déjà dans votre trousseau</translation>
+    </message>
+    <message>
+        <source>Check this to add the key to your keyring
+This might be useful for sending
+distant messages to this peer
+even if you don&apos;t make friends.</source>
+        <translation>Cochez ceci pour ajouter la clé à votre
+trousseau, cela peut être utile pour
+l&apos;envoi de messages lointains à ce
+contact même si vous n&apos;êtes pas amis.</translation>
     </message>
 </context>
 <context>
@@ -3901,6 +3986,14 @@ p, li { white-space: pre-wrap; }
         <source>Add Extra File</source>
         <translation>Ajouter un fichier supplémentaire</translation>
     </message>
+    <message>
+        <source>Attach a Picture</source>
+        <translation>Joindre une image</translation>
+    </message>
+    <message>
+        <source>Load Picture File</source>
+        <translation>Charger le fichier image</translation>
+    </message>
 </context>
 <context>
     <name>CreateGroup</name>
@@ -4292,10 +4385,6 @@ p, li { white-space: pre-wrap; }
         <translation>ID de l&apos;emplacement :</translation>
     </message>
     <message>
-        <source>Identity ID:</source>
-        <translation>ID de l&apos;identité :</translation>
-    </message>
-    <message>
         <source>Number of Friends:</source>
         <translation>Nombre d&apos;amis :</translation>
     </message>
@@ -4362,6 +4451,18 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>RetroShare Certificate (*.rsc );;All Files (*)</source>
         <translation>Certificat Retroshare (*.rsc );;Tous les fichiers (*)</translation>
+    </message>
+    <message>
+        <source>Identity ID</source>
+        <translation>ID de l&apos;identité :</translation>
+    </message>
+    <message>
+        <source>TextLabel</source>
+        <translation>Etiquette</translation>
+    </message>
+    <message>
+        <source>PGP fingerprint:</source>
+        <translation>Empreinte PGP :</translation>
     </message>
 </context>
 <context>
@@ -4797,7 +4898,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>,#proxy:</source>
-        <translation>,#proxy:</translation>
+        <translation>,#proxy :</translation>
     </message>
     <message>
         <source>,#relay:</source>
@@ -5467,6 +5568,10 @@ p, li { white-space: pre-wrap; }
         <source>Forum</source>
         <translation>Forum</translation>
     </message>
+    <message>
+        <source>Load embedded images</source>
+        <translation>Charger les images incorporées</translation>
+    </message>
 </context>
 <context>
     <name>ForumUserNotify</name>
@@ -5723,7 +5828,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Forums&lt;/h1&gt;                                  &lt;p&gt;Retroshare Forums look like internet forums, but they work in a decentralized way:                         You see forums your friends are subscribed to, and you forward subscribed forums to                          your friends. This automatically promotes interesting forums in the network.&lt;/p&gt;                         &lt;p&gt;Forums are either Authenticated (&lt;img src=&quot;:/images/konv_message2.png&quot; width=&quot;12&quot;/&gt;) in which case you need to cryptographically sign                          your posts, or anonymous (&lt;img src=&quot;:/images/konversation.png&quot; width=&quot;12&quot;/&gt;). The former class is more resistant to spamming.&lt;/p&gt;                     &lt;p&gt;Forum posts propagate from friend to friend using small cache file exchanges. When you first connect to a new friend, it&apos;s likely     you will receive many such cache files, and new forums will appear.     &lt;/p&gt;                                        </source>
-        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Forums&lt;/h1&gt; &lt;p&gt;Les forums Retroshare ressemblent à des forums internet, mais ils fonctionnent de manière décentralisée : Vous pouvez voir les forums auxquels vos amis ont souscrits, et vous transférez vos souscriptions à vos amis. Cela favorise automatiquement les forums intéressants dans le réseau.&lt;/p&gt; &lt;p&gt;Les forums sont soit authentifiés (&lt;img src=&quot;:/images/konv_message2.png&quot; width=&quot;12&quot;/&gt;) auquel cas vous devez signer  vos messages, ou anonyme (&lt;img src=&quot;:/images/konversation.png&quot; width=&quot;12&quot;/&gt;). La première catégorie est plus résistant au spam.&lt;/p&gt; &lt;p&gt;L&apos;activité sur le forum se propage d&apos;ami en ami à l&apos;aide de petits échanges de fichiers cache. Lorsque vous vous connectez à un nouvel ami, il est probable que vous recevrez beaucoup de ces fichiers de cache, et de nouveaux forums apparaîtront. &lt;/p&gt; </translation>
+        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Forums&lt;/h1&gt; &lt;p&gt;Les forums Retroshare ressemblent à des forums internet, mais ils fonctionnent de manière décentralisée : Vous pouvez voir les forums auxquels vos amis ont souscrits, et vous transférez vos souscriptions à vos amis. Cela favorise automatiquement les forums intéressants dans le réseau.&lt;/p&gt; &lt;p&gt;Les forums sont soit authentifiés (&lt;img src=&quot;:/images/konv_message2.png&quot; width=&quot;12&quot;/&gt;) auquel cas vous devez signer vos messages, ou anonyme (&lt;img src=&quot;:/images/konversation.png&quot; width=&quot;12&quot;/&gt;). La première catégorie est plus résistante au spam.&lt;/p&gt; &lt;p&gt;L&apos;activité sur le forum se propage d&apos;ami en ami en échangeant de petits fichiers cache. Lorsque vous vous connectez à un nouvel ami, il est probable que vous recevrez beaucoup de ces fichiers de cache, et de nouveaux forums apparaîtront. &lt;/p&gt; </translation>
+    </message>
+    <message>
+        <source>Load images always for this message</source>
+        <translation>Toujours charger les images pour ce message</translation>
     </message>
 </context>
 <context>
@@ -5864,14 +5973,6 @@ p, li { white-space: pre-wrap; }
         <translation>Copier le lien Retroshare</translation>
     </message>
     <message>
-        <source>Copy RetroShare Link</source>
-        <translation>Copier le lien Retroshare</translation>
-    </message>
-    <message>
-        <source>Paste Friend Link</source>
-        <translation>Coller le lien de l&apos;ami</translation>
-    </message>
-    <message>
         <source>Deny Friend</source>
         <translation>Ignorer cet ami</translation>
     </message>
@@ -5942,6 +6043,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Display</source>
         <translation>Affichage</translation>
+    </message>
+    <message>
+        <source>Paste certificate link</source>
+        <translation>Collez le lien de votre certificat</translation>
     </message>
 </context>
 <context>
@@ -6138,7 +6243,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Friends&lt;/h1&gt;                                       &lt;p&gt;The Friends tab shows...your friends: the list of persons you have accepted to connect to.                       &lt;/p&gt;                                                       &lt;p&gt;You can group friends together to allow a finer level of information access, for instance to only allow          some friends to see some files.&lt;/p&gt;     &lt;p&gt;On the right, you will find 3 useful tabs:                                                                       &lt;ul&gt;                                                                                                                &lt;li&gt;Broadcast sends messages to all connected friends at once&lt;/li&gt;                                   &lt;li&gt;Local Network shows the network around you, including friends of your friends&lt;/li&gt;                       &lt;li&gt;Keyring contains keys you collected, mostly forwarded to you by your friends&lt;/li&gt;                                  &lt;/ul&gt; &lt;/p&gt;                                                                                                        </source>
-        <translation>h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Friends&lt;/h1&gt; &lt;p&gt;L&apos;onglet Amis affiche... vos amis : la liste des personnes à laquelle vous avez accepté de vous connecter. &lt;/p&gt; &lt;p&gt;Vous pouvez regrouper des amis pour permettre un niveau plus fin de l&apos;accès à l&apos;information, par exemple pour autoriser uniquement quelques amis à voir certains fichiers.&lt;/p&gt; &lt;p&gt;A droite, vous trouverez 3 onglets utiles : &lt;ul&gt; &lt;li&gt; &lt;u&gt;Le chat entre ami&lt;/u&gt; envoie des messages à tous les amis qui sont connectés en une fois&lt;/li&gt; &lt;li&gt;Le &lt;u&gt;Réseau local&lt;/u&gt; montre le réseau autour de vous, y compris les amis de vos amis&lt;/li&gt; &lt;li&gt;Le &lt;u&gt;Trousseau&lt;/u&gt; contient les clés que vous avez collectées, principalement transmises par vos amis&lt;/li&gt; &lt;/ul&gt; &lt;/p&gt;</translation>
+        <translation>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Amis&lt;/h1&gt; &lt;p&gt;L&apos;onglet Amis affiche... vos amis : la liste des personnes à laquelle vous avez accepté de vous connecter. &lt;/p&gt; &lt;p&gt;Vous pouvez regrouper des amis pour permettre un niveau plus fin de l&apos;accès à l&apos;information, par exemple pour autoriser uniquement quelques amis à voir certains fichiers.&lt;/p&gt; &lt;p&gt;A droite, vous trouverez 3 onglets utiles : &lt;ul&gt; &lt;li&gt; Le &lt;u&gt;chat entre ami&lt;/u&gt; envoie des messages à tous les amis qui sont connectés en une fois&lt;/li&gt; &lt;li&gt;Le &lt;u&gt;Réseau local&lt;/u&gt; montre le réseau autour de vous, y compris les amis de vos amis&lt;/li&gt; &lt;li&gt;Le &lt;u&gt;Trousseau&lt;/u&gt; contient les clés que vous avez collectées, principalement transmises par vos amis&lt;/li&gt; &lt;/ul&gt; &lt;/p&gt;</translation>
     </message>
 </context>
 <context>
@@ -6329,10 +6434,6 @@ mais pour rester anonyme, vous pouvez utiliser un faux courrier électronique.</
         <translation>Emplacement</translation>
     </message>
     <message>
-        <source>Put a meaningful location. ex : home, laptop, etc. This field will be used to differentiate different installations with the same identity (PGP key).</source>
-        <translation>Indiquez un emplacement porteur de sens p. ex : maison, portable, bureau, etc.. Cela permettra de différencier vos différentes installations utilisant le même profil (clé PGP). </translation>
-    </message>
-    <message>
         <source>Create new identity</source>
         <translation>Générer une nouvelle identité</translation>
     </message>
@@ -6485,6 +6586,29 @@ Fill in your PGP password when asked, to sign your new key.</source>
     <message>
         <source>Failed to Generate your new Certificate, maybe PGP password is wrong!</source>
         <translation>Impossible de générer votre nouveau certificat, veuillez vérifier votre mot de passe !</translation>
+    </message>
+    <message>
+        <source>Password (check)</source>
+        <translation>Mot de passe (contrôle)</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Before proceeding, move your mouse around to help Retroshare collect as much randomness as possible. Filling the progressbar to 20% is needed, 100% is advised.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Avant de continuer, déplacez votre souris pour aider Retroshare à recueillir autant de données aléatoires que possible. Remplir la barre de progression jusqu&apos;à 20&amp;#37; est nécessaire, 100&amp;#37; est conseillé.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>[Required] Type the same password again here.</source>
+        <translation>[Obligatoire] Tapez le même mot de passe ici.</translation>
+    </message>
+    <message>
+        <source>Put a meaningful location. ex : home, laptop, etc. 
+This field will be used to differentiate different installations with
+the same identity (PGP key).</source>
+        <translation>Mettez un emplacement significatif. ex: maison, ordinateur portable, etc.
+Ce champ sera utilisé pour différencier vos différentes installations avec la même identité (clé PGP).</translation>
+    </message>
+    <message>
+        <source>Passwords do not match</source>
+        <translation>Les mots de passe ne correspondent pas</translation>
     </message>
 </context>
 <context>
@@ -8008,44 +8132,6 @@ p, li { white-space: pre-wrap; }
         <translation>Traduction</translation>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;RetroShare Translators:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;French&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;:Temet&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Polish: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Jarek&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Serbian&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;: Kunalagon Umuhanik &amp;lt;kunalagon@gmail.com&amp;gt;&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Spanish:  &lt;/span&gt;&lt;span style=&quot; font-family:'Courier New,courier';&quot;&gt;Manuel Montero &amp;lt;Senpai&amp;gt; &lt;/span&gt;&lt;a href=&quot;http://pagina.de/senpai&amp;amp;gt&quot;&gt;&lt;span style=&quot; font-family:'Courier New,courier'; text-decoration: underline; color:#0000ff;&quot;&gt;http://pagina.de/senpai&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Swedish:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; dnylander&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;RetroShare Website Translators:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt; font-weight:600;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Swedish: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Daniel Wester&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; &amp;lt;&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;wester@speedmail.se&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;German: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Jan&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Keller&lt;/span&gt; &amp;lt;&lt;span style=&quot; font-size:8pt;&quot;&gt;trilarion@users.sourceforge.net&lt;/span&gt;&amp;gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Polish: &lt;/span&gt;Maciej Mrug&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Traducteurs de Retroshare&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Français&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;: FxB&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Polonais : &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Jarek&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Serbe&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;: Kunalagon Umuhanik &amp;lt;kunalagon@gmail.com&amp;gt;&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Espagnol :  &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Courier New,courier&apos;;&quot;&gt;Manuel Montero &amp;lt;Senpai&amp;gt; &lt;/span&gt;&lt;a href=&quot;http://pagina.de/senpai&amp;amp;gt&quot;&gt;&lt;span style=&quot; font-family:&apos;Courier New,courier&apos;; text-decoration: underline; color:#0000ff;&quot;&gt;http://pagina.de/senpai&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Suédois :&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; dnylander&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;RetroShare Website Translators:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt; font-weight:600;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Suédois : &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Daniel Wester&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; &amp;lt;&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;wester@speedmail.se&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Allemand : &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Jan&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Keller&lt;/span&gt; &amp;lt;&lt;span style=&quot; font-size:8pt;&quot;&gt;trilarion@users.sourceforge.net&lt;/span&gt;&amp;gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Polonais : &lt;/span&gt;Maciej Mrug&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
         <source>License Agreement</source>
         <translation>Accord de licence</translation>
     </message>
@@ -8060,6 +8146,23 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;À propos de Retroshare&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;RetroShare Translations:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net/wiki/index.php/Translation&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;http://retroshare.sourceforge.net/wiki/index.php/Translation&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; text-decoration: underline; color:#0000ff;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;RetroShare Website Translators:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt; font-weight:600;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Swedish: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Daniel Wester&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; &amp;lt;&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;wester@speedmail.se&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;German: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Jan&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Keller&lt;/span&gt; &amp;lt;&lt;span style=&quot; font-size:8pt;&quot;&gt;trilarion@users.sourceforge.net&lt;/span&gt;&amp;gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Polish: &lt;/span&gt;Maciej Mrug&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -8425,7 +8528,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>News feed</source>
-        <translation>Fils d&apos;actualité</translation>
+        <translation>Fil d&apos;actualité</translation>
     </message>
     <message>
         <source>Friends</source>
@@ -8613,7 +8716,7 @@ Veuillez libérer de l&apos;espace disque et cliquer sur Ok.</translation>
     </message>
     <message>
         <source>Service permissions matrix</source>
-        <translation>Matrice de service des droits</translation>
+        <translation>Matrice des autorisations des services</translation>
     </message>
 </context>
 <context>
@@ -9050,6 +9153,14 @@ Voulez-vous enregistrer votre message ?</translation>
         <source>Only show people you trusted</source>
         <translation>Afficher uniquement les personnes de confiance</translation>
     </message>
+    <message>
+        <source>PGP key unknown</source>
+        <translation>Clé PGP inconnue</translation>
+    </message>
+    <message>
+        <source>You dont have the PGP key of the message sender. So you cannot respond!</source>
+        <translation>Vous n&apos;avez pas la clé PGP de l&apos;expéditeur du message. Donc vous ne pouvez pas répondre!</translation>
+    </message>
 </context>
 <context>
     <name>MessagePage</name>
@@ -9116,6 +9227,10 @@ Voulez-vous enregistrer votre message ?</translation>
     <message>
         <source>Accept encrypted distant messages from everyone</source>
         <translation>Accepter les messages cryptés distants de tout le monde</translation>
+    </message>
+    <message>
+        <source>Load embedded images</source>
+        <translation>Charger les images incorporées</translation>
     </message>
 </context>
 <context>
@@ -9233,6 +9348,38 @@ Voulez-vous enregistrer votre message ?</translation>
     <message>
         <source>HTML-Files (*.htm *.html);;All Files (*)</source>
         <translation>Fichiers HTML (*.htm *.html);;tous les fichiers (*)</translation>
+    </message>
+    <message>
+        <source>Load images always for this message</source>
+        <translation>Toujours charger les images pour ce message</translation>
+    </message>
+    <message>
+        <source>This messages is encrypted. Click the right button to decrypt it.</source>
+        <translation>Ce message est crypté. Clic droit pour le décrypter.</translation>
+    </message>
+    <message>
+        <source>Decrypt</source>
+        <translation>Décrypter</translation>
+    </message>
+    <message>
+        <source>Encrypted message</source>
+        <translation>Message encrypté</translation>
+    </message>
+    <message>
+        <source>Decryption failed!</source>
+        <translation>Échec du décryptage !</translation>
+    </message>
+    <message>
+        <source>This message is not encrypted. Cannot decrypt!</source>
+        <translation>Ce message n&apos;est pas crypté. Il ne peut être décrypté !</translation>
+    </message>
+    <message>
+        <source>This message could not be decrypted.</source>
+        <translation>Ce message ne peut être décrypté.</translation>
+    </message>
+    <message>
+        <source>Unknown (needs decryption)</source>
+        <translation>Inconnu (besoin décryptage)</translation>
     </message>
 </context>
 <context>
@@ -9633,14 +9780,6 @@ Voulez-vous enregistrer votre message ?</translation>
         <translation>Message encrypté. Click droit pour le décrypter.</translation>
     </message>
     <message>
-        <source>Decryption failed!</source>
-        <translation>Échec du décryptage !</translation>
-    </message>
-    <message>
-        <source>This message could not be decrypted.</source>
-        <translation>Ce message ne peut être décrypté.</translation>
-    </message>
-    <message>
         <source>Messages</source>
         <translation>Messages</translation>
     </message>
@@ -9661,12 +9800,12 @@ Voulez-vous enregistrer votre message ?</translation>
         <translation>Ce message a été signé mais la signature n&apos;a pas été vérifiée</translation>
     </message>
     <message>
-        <source>This message is not encrypted. Cannot decrypt!</source>
-        <translation>Ce message n&apos;est pas crypté. Il ne peut être décrypté !</translation>
-    </message>
-    <message>
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Messages&lt;/h1&gt;                          &lt;p&gt;Messages are like &lt;b&gt;e-mail&lt;/b&gt;: you send/receive them from your friends when both of you are connected.&lt;/p&gt;  &lt;p&gt;It is also possible to send messages to non friends, using tunnels. Such messages are always encrypted. It is  recommended to cryptographically sign distant messages, as a proof of your identity, using the &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; button  in the message composer window. Distant messages are not guarrantied to arrive, since this requires the distant peer to accept them (You need yourself to switch this on in Config-Messages).&lt;/p&gt; &lt;p&gt;Some additional features allow you to exchange data in messages: you may recommend files to your friends by pasting file links,  or recommend friends-to-be to other friends, in order to streathen your network.&lt;/p&gt;                    </source>
         <translation>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Messagerie&lt;/h1&gt; &lt;p&gt;Les messages sont comme des &lt;b&gt;e-mails&lt;/b&gt; : vous les envoyez à et recevez de vos amis lorsque vous et eux sont connectés&lt;/p&gt; &lt;p&gt; il est également possible d&apos;envoyer des messages à des personnes autres que vos amis, en utilisant les tunnels. Ces messages sont toujours cryptées. Il est recommandé de signer les messages distants, comme preuve de votre identité, en utilisant le bouton &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; dans la fenêtre de composition de message. Les messages distants ne sont pas assurés d&apos;arriver, puisque cela nécessite que le contact distant l&apos;accepte (Vous devez vous-même activer cela dans la configuration de la messagerie). &lt;/p&gt; &lt;p&gt;Certaines fonctionnalités supplémentaires vous permettent d&apos;échanger des données dans les messages : vous pouvez recommander des fichiers à vos amis en collant les liens des fichiers, ou recommander des amis à d&apos;autres amis, pour agrandir votre réseau.&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <source>This message has been successfully decrypted, and is unsigned.</source>
+        <translation>Ce message a été déchiffré avec succès, et n&apos;est pas signé.</translation>
     </message>
 </context>
 <context>
@@ -10098,7 +10237,7 @@ Clic droit et sélectionnez &apos;Devenir ami&apos; pour vous connecter.</transl
     <name>NewsFeed</name>
     <message>
         <source>News Feed</source>
-        <translation>Fils d&apos;actualité</translation>
+        <translation>Fil d&apos;actualité</translation>
     </message>
     <message>
         <source>Options</source>
@@ -10114,14 +10253,14 @@ Clic droit et sélectionnez &apos;Devenir ami&apos; pour vous connecter.</transl
     </message>
     <message>
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;News Feed&lt;/h1&gt;                                                             &lt;p&gt;The News Feed displays the last events on your network, sorted by the time you received them.                   This gives you a summary of the activity of your friends.                                                          You can configure which events to show by pressing on &lt;b&gt;Options&lt;/b&gt;. &lt;/p&gt;                                         &lt;p&gt;The various events shown are:                                                                                   &lt;ul&gt;                                                                                                            &lt;li&gt;Connection attempts (useful to make friends with new people and control who&apos;s trying to reach you)&lt;/li&gt;    &lt;li&gt;Channel and Forum posts&lt;/li&gt;                                                                               &lt;li&gt;New Channels and Forums you can subscribe to&lt;/li&gt;                                                          &lt;li&gt;Private messages from your friends&lt;/li&gt;                                                                    &lt;/ul&gt; &lt;/p&gt;                                                                                                       </source>
-        <translation>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Fils d&apos;actualité&lt;/h1&gt; &lt;p&gt;Le fil d&apos;actualité affiche les derniers évènements survenus sur votre réseau, triés selon le moment où vous les avez reçus. Il vous donne un résumé de l&apos;activité de vos amis. Vous pouvez configurer les évènements à afficher en cliquant sur &lt;b&gt;Options&lt;/ b&gt;. &lt;/p&gt; &lt;p&gt; Les différents événements affichés sont : &lt;ul&gt; &lt;li&gt;Les tentatives de connexion (utile pour ajouter de nouveaux amis et savoir qui essaie de vous contacter) &lt;/li&gt; &lt;li&gt; Les articles des chaînes et des forums&lt;/li&gt; &lt;li&gt;Les nouvelles chaînes et forums auxquels vous pouvez vous abonner&lt;/li&gt; &lt;li&gt;Les messages privés de vos amis &lt;/li&gt; &lt;/ul&gt; &lt;/p&gt;</translation>
+        <translation>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Fils d&apos;actualité&lt;/h1&gt; &lt;p&gt;Le fil d&apos;actualité affiche les derniers évènements survenus sur votre réseau, triés selon le moment où vous les avez reçus. Il vous donne un résumé de l&apos;activité de vos amis. Vous pouvez configurer les évènements à afficher en cliquant sur &lt;b&gt;Options&lt;/ b&gt;. &lt;/p&gt; &lt;p&gt; Les différents évènements affichés sont : &lt;ul&gt; &lt;li&gt;Les tentatives de connexion (utile pour ajouter de nouveaux amis et savoir qui essaie de vous contacter) &lt;/li&gt; &lt;li&gt; Les articles des chaînes et des forums&lt;/li&gt; &lt;li&gt;Les nouvelles chaînes et forums auxquels vous pouvez vous abonner&lt;/li&gt; &lt;li&gt;Les messages privés de vos amis &lt;/li&gt; &lt;/ul&gt; &lt;/p&gt;</translation>
     </message>
 </context>
 <context>
     <name>NotifyPage</name>
     <message>
         <source>News Feed</source>
-        <translation>Fils d&apos;actualité</translation>
+        <translation>Fil d&apos;actualité</translation>
     </message>
     <message>
         <source>Peers</source>
@@ -10250,6 +10389,11 @@ Clic droit et sélectionnez &apos;Devenir ami&apos; pour vous connecter.</transl
     <message>
         <source>Notify</source>
         <translation>Notifications</translation>
+    </message>
+    <message>
+        <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Notify&lt;/h1&gt; 		  &lt;p&gt;Retroshare will notify you about what happens in your network.         		  Depending on your usage, you may want to enable or disable some of the    		  notifications. This page is designed for that!&lt;/p&gt;                        		  </source>
+        <translation>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Notifications&lt;/h1&gt;
+&lt;p&gt;Retroshare vous informe sur ce qui se passe dans votre réseau. En fonction de votre utilisation, vous pouvez activer ou désactiver une partie des notifications. Cette page est conçue pour ça!&lt;/p&gt;</translation>
     </message>
 </context>
 <context>
@@ -10818,6 +10962,10 @@ comportements malveillants des extensions.</translation>
         <source>Plugins</source>
         <translation>Extensions</translation>
     </message>
+    <message>
+        <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Plugins&lt;/h1&gt;                   &lt;p&gt;Plugins are loaded from the directories listed in the bottom list.&lt;/p&gt;                       &lt;p&gt;For security reasons, accepted plugins load automatically until                              the main Retroshare executable or the plugin library changes. In                                such a case, the user needs to confirm them again.                                              After the program is started, you can enable a plugin manually by clicking on the               &quot;Enable&quot; button and then restart Retroshare.&lt;/p&gt;                                              &lt;p&gt;If you want to develop your own plugins, contact the developpers team                        they will be happy to help you out!&lt;/p&gt;</source>
+        <translation>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Extensions&lt;/h1&gt; &lt;p&gt;Les extensions sont chargés depuis les répertoires listés dans la liste du bas.&lt;/p&gt; &lt;p&gt;Pour des raisons de sécurité, les extensions reconnues sont chargées automatiquement jusqu&apos;à ce que l&apos;exécutable principal Retroshare ou que de la bibliothèque de plug-in changent. Dans un tel cas, l&apos;utilisateur doit confirmer à nouveau. Après le démarrage du programme, vous pouvez activer un plugin manuellement en cliquant sur ​​le bouton &quot;Activer&quot; puis redémarrez Retroshare.&lt;/p&gt; &lt;p&gt;Si vous voulez développer vos propres extensions, contactez l&apos;équipe de développeurs, ils seront heureux de vous aider!&lt;/p&gt;</translation>
+    </message>
 </context>
 <context>
     <name>PopularityDefs</name>
@@ -10944,16 +11092,8 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>PostedGroupDialog</name>
     <message>
-        <source>Create New Posted Topic</source>
-        <translation>Créer un nouveau sujet</translation>
-    </message>
-    <message>
         <source>Posted Topic</source>
         <translation>Sujet publié</translation>
-    </message>
-    <message>
-        <source>Edit Posted Topic</source>
-        <translation>Modifier sujet publié</translation>
     </message>
     <message>
         <source>Add Topic Admins</source>
@@ -10963,16 +11103,20 @@ p, li { white-space: pre-wrap; }
         <source>Select Topic Admins</source>
         <translation>Selectionner les admins</translation>
     </message>
+    <message>
+        <source>Create New Topic</source>
+        <translation>Créer un nouveau sujet</translation>
+    </message>
+    <message>
+        <source>Edit Topic</source>
+        <translation>Éditer le sujet</translation>
+    </message>
 </context>
 <context>
     <name>PostedItem</name>
     <message>
         <source>0</source>
         <translation>0</translation>
-    </message>
-    <message>
-        <source>\/</source>
-        <translation>\/</translation>
     </message>
     <message>
         <source>This is a very very very very loooooooooooooooonnnnnnnnnnnnnnnnng title don&apos;t you think? Yes it is and should wrap around I hope</source>
@@ -11003,12 +11147,12 @@ p, li { white-space: pre-wrap; }
         <translation>Commentaire</translation>
     </message>
     <message>
-        <source>Vote Up</source>
-        <translation>Voter +</translation>
+        <source>I like this</source>
+        <translation>J&apos;aime ça</translation>
     </message>
     <message>
-        <source>Vote Down</source>
-        <translation>Voter -</translation>
+        <source>I dislike this</source>
+        <translation>Je n&apos;aime pas ça</translation>
     </message>
 </context>
 <context>
@@ -11732,6 +11876,16 @@ L&apos;erreur reportée est : ⏎
 ⏎
 %2 </translation>
     </message>
+    <message>
+        <source>Signature check failed!
+Make sure you know who you&apos;re talking to.</source>
+        <translation>Vérification de signature échouée!
+Assurez-vous que vous savez à qui vous parlez.</translation>
+    </message>
+    <message>
+        <source>Chat connection is unauthenticated</source>
+        <translation>La connexion au chat n&apos;est pas authentifiée</translation>
+    </message>
 </context>
 <context>
     <name>QuickStartWizard</name>
@@ -11953,6 +12107,21 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>RSImageBlockWidget</name>
+    <message>
+        <source>Form</source>
+        <translation>Formulaire</translation>
+    </message>
+    <message>
+        <source>The loading of embedded images is blocked.</source>
+        <translation>Le chargement des images intégrées est bloqué.</translation>
+    </message>
+    <message>
+        <source>Load images</source>
+        <translation>Charger les images</translation>
+    </message>
+</context>
+<context>
     <name>RSettingsWin</name>
     <message>
         <source>Error Saving Configuration on page </source>
@@ -12039,6 +12208,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Relay</source>
         <translation>Relais</translation>
+    </message>
+    <message>
+        <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Relays&lt;/h1&gt;                                 &lt;p&gt;By activating relays, you allow your Retroshare node to act as a bridge between Retroshare  				  users who cannot connect directly, e.g. because they&apos;re firewalled.&lt;/p&gt;                        				  &lt;p&gt;You may choose to act as a relay by checking &lt;i&gt;enable relay connections&lt;/i&gt;, or simply     				  benefit from other peers acting as relay, by checking &lt;i&gt;use relay servers&lt;/i&gt;. For the former,				  you may specify the bandwidth allocated when acting as a relay for friends of you, for friends 				  of your friends, or anyone in the Retroshare network.&lt;/p&gt;                                      				  &lt;p&gt;In any case, a Retroshare node acting as a relay cannot see the relayed traffic, since it   				  is encrypted and authenticated by the two relayed nodes.&lt;/p&gt;</source>
+        <translation>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Relais&lt;/h1&gt; &lt;p&gt;En activant les relais, vous permettez à votre Retroshare d&apos;agir comme un pont entre les utilisateurs qui ne peuvent pas se connecter directement, par exemple lorsqu&apos;ils sont derrière un Firewall.&lt;/p&gt; &lt;p&gt;Vous pouvez choisir de servir de relais en cochant &lt;i&gt;Activer les connexions relais&lt;/i&gt;, ou tout simplement profiter d&apos;autres serveurs relais en cochant &lt;i&gt;Utiliser les serveurs relais&lt;/i&gt;. Pour les premiers, vous pouvez spécifier la bande passante allouée lorsqu&apos;il agit comme un relais pour les amis à vous, pour les amis de vous amis, ou n&apos;importe qui dans le réseau Retroshare.&lt;/p&gt; &lt;p&gt;Dans tous les cas, un nœud Retroshare agissant comme un relais ne peut pas voir le trafic relayé, car elle est cryptée et authentifiée par les deux nœuds relayés.&lt;/p&gt;</translation>
     </message>
 </context>
 <context>
@@ -12668,16 +12841,8 @@ derrière un pare-feu ou un VPN (virtual private network).</translation>
         <translation>Vitesses de transfert max</translation>
     </message>
     <message>
-        <source>Download (KB/s) </source>
-        <translation>Téléchargement (Ko/s) </translation>
-    </message>
-    <message>
         <source>kB/s</source>
         <translation>Ko/s</translation>
-    </message>
-    <message>
-        <source>Upload (KB/s) </source>
-        <translation>Envoi (Ko/s) </translation>
     </message>
     <message>
         <source>If you uncheck this, RetroShare will not use tunnel connection between peers that are firewalled and cannot connect directly. This is independent from F2F routing (turtle router).</source>
@@ -12726,6 +12891,14 @@ La valeur par défaut est de 20.</translation>
     <message>
         <source>Server</source>
         <translation>Serveur</translation>
+    </message>
+    <message>
+        <source>Download (KB/s) </source>
+        <translation>Téléchargement (Ko/s) </translation>
+    </message>
+    <message>
+        <source>Upload (KB/s) </source>
+        <translation>Envoi (Ko/s) </translation>
     </message>
 </context>
 <context>
@@ -12839,26 +13012,6 @@ La valeur par défaut est de 20.</translation>
         <translation>Gestionnaire des dossiers partagés</translation>
     </message>
     <message>
-        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;This is a list of shared folders. You can add and remove folders using the buttons at the bottom.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;When you add a new folder, intially all files in that folder are shared.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-size:8pt;&quot;&gt;You can separately setup share flags for each shared directory:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-size:8pt; font-weight:600;&quot;&gt;Browsable&lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:8pt;&quot;&gt;: files are browsable from your direct friends.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Network Wide&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: files can be downloaded by anybody through anonymous tunnels.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Voici la liste des dossiers partagés. Vous pouvez ajouter ou supprimer de nouveaux dossiers en utilisant les boutons &quot;Ajouter&quot; et &quot;Supprimer&quot;.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Quand vous ajoutez un nouveau dossier, tous les fichiers présents dans ce dossier sont partagés.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;Vous pouvez paramétrer séparément la méthode de partage pour chacun des dossiers :&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Partage public &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: votre liste de fichiers est visible par vos amis.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Partage anonyme &lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: vos fichiers seront accessibles par n&apos;importe qui par l&apos;intermédiaire d&apos;un tunnel anonyme.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
         <source>Directory</source>
         <translation>Dossier</translation>
     </message>
@@ -12929,6 +13082,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Directory not found or directory name not accepted.</source>
         <translation>Le dossier n&apos;a pas été trouvé ou le nom du dossier n&apos;est pas accepté.</translation>
+    </message>
+    <message>
+        <source>This is a list of shared folders. You can add and remove folders using the buttons at the bottom. When you add a new folder, intially all files in that folder are shared. You can separately setup share flags for each shared directory.</source>
+        <translation>Il s&apos;agit d&apos;une liste des dossiers partagés. Vous pouvez ajouter et supprimer des dossiers en utilisant les boutons en bas. Lorsque vous ajoutez un nouveau dossier, initialement tous les fichiers contenus dans ce dossier sont partagés. Vous pouvez configurer séparément le type de partage pour chaque répertoire sélectionné.</translation>
     </message>
 </context>
 <context>

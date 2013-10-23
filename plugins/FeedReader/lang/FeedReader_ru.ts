@@ -124,7 +124,7 @@
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="361"/>
         <source>Misc</source>
-        <translation type="unfinished"/>
+        <translation>Разное</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="367"/>
@@ -259,7 +259,7 @@
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="118"/>
         <source>Misc</source>
-        <translation type="unfinished"/>
+        <translation>Разное</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="131"/>
@@ -350,59 +350,59 @@
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="521"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="524"/>
         <source>No name</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="733"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="736"/>
         <source>Add new folder</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="734"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="737"/>
         <source>Please enter a name for the folder</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="740"/>
-        <location filename="../gui/FeedReaderDialog.cpp" line="793"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="743"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="796"/>
         <source>Create folder</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="740"/>
-        <location filename="../gui/FeedReaderDialog.cpp" line="793"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="743"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="796"/>
         <source>Cannot create folder.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="766"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="769"/>
         <source>Remove folder</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="766"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="769"/>
         <source>Remove feed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="766"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="769"/>
         <source>Do you want to remove the folder %1?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="766"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="769"/>
         <source>Do you want to remove the feed %1?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="786"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="789"/>
         <source>Edit folder</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../gui/FeedReaderDialog.cpp" line="787"/>
+        <location filename="../gui/FeedReaderDialog.cpp" line="790"/>
         <source>Please enter a new name for the folder</source>
         <translation type="unfinished"/>
     </message>
@@ -527,12 +527,12 @@
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="91"/>
         <source>Search Title</source>
-        <translation type="unfinished"/>
+        <translation>Поиск названия</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="92"/>
         <source>Search Date</source>
-        <translation type="unfinished"/>
+        <translation>Поиск даты</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="93"/>
@@ -820,7 +820,7 @@
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="262"/>
         <source>Next</source>
-        <translation type="unfinished"/>
+        <translation>Следующий</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="282"/>

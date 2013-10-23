@@ -131,32 +131,32 @@
 <context>
     <name>AudioInputConfig</name>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="98"/>
+        <location filename="../gui/AudioInputConfig.cpp" line="100"/>
         <source>Continuous</source>
         <translation>连续</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="99"/>
+        <location filename="../gui/AudioInputConfig.cpp" line="101"/>
         <source>Voice Activity</source>
         <translation>语音检测</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="100"/>
+        <location filename="../gui/AudioInputConfig.cpp" line="102"/>
         <source>Push To Talk</source>
         <translation>按键送话</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="202"/>
+        <location filename="../gui/AudioInputConfig.cpp" line="204"/>
         <source>%1 s</source>
         <translation>%1 s</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="210"/>
+        <location filename="../gui/AudioInputConfig.cpp" line="212"/>
         <source>Off</source>
         <translation>关闭</translation>
     </message>
     <message>
-        <location filename="../gui/AudioInputConfig.cpp" line="213"/>
+        <location filename="../gui/AudioInputConfig.cpp" line="215"/>
         <source>-%1 dB</source>
         <translation>-%1 dB</translation>
     </message>
@@ -169,14 +169,50 @@
 <context>
     <name>AudioPopupChatDialog</name>
     <message>
-        <location filename="../gui/AudioPopupChatDialog.cpp" line="15"/>
+        <location filename="../gui/AudioPopupChatDialog.cpp" line="23"/>
+        <location filename="../gui/AudioPopupChatDialog.cpp" line="87"/>
         <source>Mute yourself</source>
         <translation>关闭麦克风</translation>
     </message>
     <message>
-        <location filename="../gui/AudioPopupChatDialog.cpp" line="35"/>
-        <source>Deafen yourself</source>
-        <translation>关闭扬声器</translation>
+        <location filename="../gui/AudioPopupChatDialog.cpp" line="43"/>
+        <source>Start Call</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/AudioPopupChatDialog.cpp" line="65"/>
+        <source>Hangup Call</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/AudioPopupChatDialog.cpp" line="89"/>
+        <source>Unmute yourself</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/AudioPopupChatDialog.cpp" line="118"/>
+        <source>Hold Call</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/AudioPopupChatDialog.cpp" line="137"/>
+        <source>VoIP Status</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/AudioPopupChatDialog.cpp" line="137"/>
+        <source>Outgoing Call is started...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/AudioPopupChatDialog.cpp" line="145"/>
+        <source>Resume Call</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/AudioPopupChatDialog.cpp" line="172"/>
+        <source>Answer</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -467,42 +503,42 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="93"/>
+        <location filename="../VOIPPlugin.cpp" line="94"/>
         <source>&lt;h3&gt;RetroShare VOIP plugin&lt;/h3&gt;&lt;br/&gt;   * Contributors: Cyril Soler, Josselin Jacquard&lt;br/&gt;</source>
         <translation>&lt;h3&gt;RetroShare VOIP 插件&lt;/h3&gt;&lt;br/&gt;   * Contributors: Cyril Soler, Josselin Jacquard&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="94"/>
+        <location filename="../VOIPPlugin.cpp" line="95"/>
         <source>&lt;br/&gt;The VOIP plugin adds VOIP to the private chat window of RetroShare. to use it, proceed as follows:&lt;UL&gt;</source>
         <translation>&lt;br/&gt; VOIP 插件为 RetroShare 私聊窗口提供 VOIP 功能，请按如下方法使用：&lt;UL&gt;</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="95"/>
+        <location filename="../VOIPPlugin.cpp" line="96"/>
         <source>&lt;li&gt; setup microphone levels using the configuration panel&lt;/li&gt;</source>
         <translation>&lt;li&gt; 通过配置面板，设置麦克风音量等级&lt;/li&gt;</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="96"/>
+        <location filename="../VOIPPlugin.cpp" line="97"/>
         <source>&lt;li&gt; check your microphone by looking at the VU-metters&lt;/li&gt;</source>
         <translation>&lt;li&gt; 您可以通过观察音量指示可检查麦克风是否工作正常。&lt;/li&gt;</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="97"/>
+        <location filename="../VOIPPlugin.cpp" line="98"/>
         <source>&lt;li&gt; in the private chat, enable sound input/output by clicking on the two VOIP icons&lt;/li&gt;&lt;/ul&gt;</source>
         <translation>&lt;li&gt; 私聊中，点击这两个口形和耳机状的 VOIP 图标即可启用音频的输入输出。&lt;/li&gt;&lt;/ul&gt;</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="98"/>
+        <location filename="../VOIPPlugin.cpp" line="99"/>
         <source>Your friend needs to run the plugin to talk/listen to you, or course.</source>
         <translation>当然，您的好友需要启用此插件才能与您接收和发送语音。</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="99"/>
+        <location filename="../VOIPPlugin.cpp" line="100"/>
         <source>&lt;br/&gt;&lt;br/&gt;This is an experimental feature. Don&apos;t hesitate to send comments and suggestion to the RS dev team.</source>
         <translation>&lt;br/&gt;&lt;br/&gt;这是一项实验性功能。您有任何意见建议请发送给 RS 开发小组。</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="117"/>
+        <location filename="../VOIPPlugin.cpp" line="118"/>
         <source>RTT Statistics</source>
         <translation>RTT 统计</translation>
     </message>
@@ -532,7 +568,7 @@
 <context>
     <name>VOIP</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="153"/>
+        <location filename="../VOIPPlugin.cpp" line="154"/>
         <source>This plugin provides voice communication between friends in RetroShare.</source>
         <translation>本插件为 RetroShare 好友间提供语音通信支持。</translation>
     </message>
@@ -540,7 +576,7 @@
 <context>
     <name>VOIPPlugin</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="158"/>
+        <location filename="../VOIPPlugin.cpp" line="159"/>
         <source>VOIP</source>
         <translation>语音</translation>
     </message>
