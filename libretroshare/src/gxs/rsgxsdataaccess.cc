@@ -23,6 +23,8 @@
  *
  */
 
+#include <time.h>
+
 #include "rsgxsdataaccess.h"
 
 // This bit will be filled out over time.

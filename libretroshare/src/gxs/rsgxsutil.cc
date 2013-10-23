@@ -23,6 +23,8 @@
  *
  */
 
+#include <time.h>
+
 #include "rsgxsutil.h"
 #include "retroshare/rsgxsflags.h"
 #include "pqi/pqihash.h"

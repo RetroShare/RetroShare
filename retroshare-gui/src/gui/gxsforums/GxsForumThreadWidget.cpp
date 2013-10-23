@@ -1296,7 +1296,7 @@ void GxsForumThreadWidget::nextUnreadMessage()
 {
 	QTreeWidgetItem *currentItem = ui->threadTreeWidget->currentItem();
 
-	while (TRUE) {
+	while (true) {
 		QTreeWidgetItemIterator itemIterator = currentItem ? QTreeWidgetItemIterator(currentItem, QTreeWidgetItemIterator::NotHidden) : QTreeWidgetItemIterator(ui->threadTreeWidget, QTreeWidgetItemIterator::NotHidden);
 
 		QTreeWidgetItem *item;
