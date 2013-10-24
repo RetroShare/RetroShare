@@ -182,32 +182,32 @@
     <message>
         <location filename="../gui/AudioPopupChatDialog.cpp" line="65"/>
         <source>Hangup Call</source>
-        <translation type="unfinished"/>
+        <translation>Anruf beenden</translation>
     </message>
     <message>
         <location filename="../gui/AudioPopupChatDialog.cpp" line="89"/>
         <source>Unmute yourself</source>
-        <translation type="unfinished"/>
+        <translation>Deine Stummschaltung aufheben</translation>
     </message>
     <message>
         <location filename="../gui/AudioPopupChatDialog.cpp" line="118"/>
         <source>Hold Call</source>
-        <translation type="unfinished"/>
+        <translation>Anruf halten</translation>
     </message>
     <message>
         <location filename="../gui/AudioPopupChatDialog.cpp" line="137"/>
         <source>VoIP Status</source>
-        <translation type="unfinished"/>
+        <translation>VoIP-Status</translation>
     </message>
     <message>
         <location filename="../gui/AudioPopupChatDialog.cpp" line="137"/>
         <source>Outgoing Call is started...</source>
-        <translation type="unfinished"/>
+        <translation>Ausgehender Anruf hat begonnen...</translation>
     </message>
     <message>
         <location filename="../gui/AudioPopupChatDialog.cpp" line="145"/>
         <source>Resume Call</source>
-        <translation type="unfinished"/>
+        <translation>Anruf fortsetzen</translation>
     </message>
     <message>
         <location filename="../gui/AudioPopupChatDialog.cpp" line="172"/>
