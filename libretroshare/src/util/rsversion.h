@@ -6,13 +6,11 @@
  */
 
 #include <string>
-
-#define LIB_VERSION "0.5.5b"
-#define SVN_REVISION "Revision 6722"
-#define SVN_REVISION_NUMBER  6722
+#include <inttypes.h>
 
 namespace RsUtil {
 
+	uint32_t retroshareRevision();
 	std::string retroshareVersion();
 
 }

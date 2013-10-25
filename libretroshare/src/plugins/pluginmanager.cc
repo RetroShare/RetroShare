@@ -306,7 +306,7 @@ bool RsPluginManager::loadPlugin(const std::string& plugin_name)
 
 	std::cerr << "    -> plugin revision number: " << pinfo.svn_revision << std::endl;
 	std::cerr << "       plugin API number     : " << std::hex << pinfo.API_version << std::dec << std::endl;
-	std::cerr << "       retroshare svn  number: " << SVN_REVISION_NUMBER << std::endl;
+	std::cerr << "       retroshare svn  number: " << RsUtil::retroshareRevision() << std::endl;
 
 	// Check that the plugin provides a svn revision number and a API number
 	//

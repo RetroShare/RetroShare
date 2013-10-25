@@ -19,12 +19,6 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-
-#define GUI_VERSION "0.5.5b"
-
-#define GUI_REVISION "Revision: 6722"
-
-
 #include <QString>
 
 QString retroshareVersion();
