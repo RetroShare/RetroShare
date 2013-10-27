@@ -121,7 +121,7 @@ void fourn(double data[],unsigned long nn[],unsigned long ndim,int isign)
 #undef SWAP
 
 GraphWidget::GraphWidget(QWidget *)
-    : timerId(0)
+    : timerId(0), mIsFrozen(false)
 {
 //    QGraphicsScene *scene = new QGraphicsScene(QRectF(0,0,500,500),this);
 //    scene->setItemIndexMethod(QGraphicsScene::NoIndex);
@@ -305,6 +305,12 @@ void GraphWidget::timerEvent(QTimerEvent *event)
 	 if(!isVisible())
 		 return ;
 
+	if (mIsFrozen)
+	{
+		update();
+		return;
+	}
+
 	 static const int S = 256 ;
 	 static double *forceMap = new double[2*S*S] ;
 
@@ -436,4 +442,14 @@ void GraphWidget::scaleView(qreal scaleFactor)
         return;
 
     scale(scaleFactor, scaleFactor);
+}
+
+void GraphWidget::setFreeze(bool freeze)
+{
+    mIsFrozen = freeze;
+}
+
+bool GraphWidget::isFrozen() const
+{
+	return mIsFrozen;
 }

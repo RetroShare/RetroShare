@@ -78,6 +78,10 @@ public:
 	 void snapshotNodesPositions() ;
 	 void clearNodesPositions() ;
 	 void clearGraph() ;
+
+	void setFreeze(bool freeze);
+	bool isFrozen() const;
+
     virtual void itemMoved();
 
 	 void setEdgeLength(uint32_t l) ;
@@ -96,6 +100,7 @@ private:
     int timerId;
     //Node *centerNode;
 	 bool mDeterminedBB ;
+	bool mIsFrozen;
 
 	 std::vector<Node *> _nodes ;
 	 std::map<std::pair<NodeId,NodeId>,Edge *> _edges ;

@@ -91,6 +91,13 @@
        </property>
       </widget>
      </item>
+     <item row="0" column="6">
+      <widget class="QCheckBox" name="freezeCheckBox">
+       <property name="text">
+        <string>Freeze</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
   </layout>

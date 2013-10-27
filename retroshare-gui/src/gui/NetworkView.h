@@ -49,6 +49,8 @@ class NetworkView : public RsAutoUpdatePage
 		void changedFoFCheckBox( );
 		void redraw();
 
+		void setFreezeState(bool);
+
 	private:
 
 		void  clear();

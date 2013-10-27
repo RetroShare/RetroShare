@@ -57,6 +57,7 @@ NetworkView::NetworkView(QWidget *parent)
   /* Hide Settings frame */
   connect( ui.maxFriendLevelSB, SIGNAL(valueChanged(int)), this, SLOT(setMaxFriendLevel(int)));
   connect( ui.edgeLengthSB, SIGNAL(valueChanged(int)), this, SLOT(setEdgeLength(int)));
+  connect( ui.freezeCheckBox, SIGNAL(toggled(bool)), this, SLOT(setFreezeState(bool)));
 
   _should_update = true ;
 }
@@ -94,6 +95,15 @@ void  NetworkView::clear()
 	ui.graphicsView->clearGraph() ;
 	_node_ids.clear() ;
 	update() ;
+}
+
+void NetworkView::setFreezeState(bool freeze)
+{
+#ifdef DEBUG_NETWORKVIEW
+	std::cerr << "  NetworkView::setFreezeState(" << freeze << ")" << std::endl;
+#endif
+
+	ui.graphicsView->setFreeze(freeze);
 }
 
 class NodeInfo
