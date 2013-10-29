@@ -111,6 +111,7 @@ struct ops_parse_info
     ops_crypt_t decrypt;
     ops_crypt_info_t cryptinfo;
     size_t nhashes;
+	 size_t recursive_compression_depth ;
     ops_parse_hash_info_t *hashes;
     ops_boolean_t reading_v3_secret:1;
     ops_boolean_t reading_mpi_length:1;

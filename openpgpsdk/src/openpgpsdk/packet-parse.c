@@ -53,6 +53,7 @@
 #include <openpgpsdk/final.h>
 
 static int debug=0;
+static const size_t MAX_RECURSIVE_COMPRESSION_DEPTH = 32 ;
 
 /**
  * limited_read_data reads the specified amount of the subregion's data 
@@ -1955,8 +1956,16 @@ static int parse_compressed(ops_region_t *region,ops_parse_info_t *pinfo)
     unsigned char c[1]="";
     ops_parser_content_t content;
 
+    if(pinfo->recursive_compression_depth > MAX_RECURSIVE_COMPRESSION_DEPTH)
+    {
+       fprintf(stderr,"Recursive compression down to depth 32. This is weird. Probably a packet crafted to crash PGP. Will be dropped!\n") ;
+       return 0 ;
+    }
+
     if(!limited_read(c,1,region,pinfo))
 	return 0;
+
+pinfo->recursive_compression_depth++ ;
 
     C.compressed.type=c[0];
 
@@ -1965,7 +1974,11 @@ static int parse_compressed(ops_region_t *region,ops_parse_info_t *pinfo)
     /* The content of a compressed data packet is more OpenPGP packets
        once decompressed, so recursively handle them */
 
-    return ops_decompress(region,pinfo,C.compressed.type);
+    int res = ops_decompress(region,pinfo,C.compressed.type);
+
+pinfo->recursive_compression_depth-- ;
+
+    return res ;
     }
 
 /**
@@ -3122,11 +3135,11 @@ int ops_parse(ops_parse_info_t *pinfo)
 */
 
 int ops_parse_and_print_errors(ops_parse_info_t *pinfo)
-    {
-    ops_parse(pinfo);
-    ops_print_errors(pinfo->errors);
-    return pinfo->errors ? 0 : 1;
-    }
+{
+   ops_parse(pinfo);
+   ops_print_errors(pinfo->errors);
+   return pinfo->errors ? 0 : 1;
+}
 
 /**
  * \ingroup Core_ReadPackets
