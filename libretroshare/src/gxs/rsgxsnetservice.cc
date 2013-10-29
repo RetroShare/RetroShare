@@ -766,6 +766,8 @@ void RsGxsNetService::run(){
         // vetting of id and circle info
         runVetting();
 
+        processExplicitGroupRequests();
+
     }
 }
 
@@ -2063,3 +2065,40 @@ void RsGxsNetService::setSyncAge(uint32_t age)
 
 }
 
+int RsGxsNetService::requestGrp(const std::list<RsGxsGroupId>& grpId, const std::string& peerId)
+{
+	RsStackMutex stack(mNxsMutex);
+	mExplicitRequest[peerId].assign(grpId.begin(), grpId.end());
+	return 1;
+}
+
+void RsGxsNetService::processExplicitGroupRequests()
+{
+	RsStackMutex stack(mNxsMutex);
+
+	std::map<std::string, std::list<RsGxsGroupId> >::const_iterator cit = mExplicitRequest.begin();
+
+	for(; cit != mExplicitRequest.end(); cit++)
+	{
+		const std::string& peerId = cit->first;
+		const std::list<RsGxsGroupId>& groupIdList = cit->second;
+
+		std::list<RsNxsItem*> grpSyncItems;
+		std::list<RsGxsGroupId>::const_iterator git = groupIdList.begin();
+		uint32_t transN = locked_getTransactionId();
+		for(; git != groupIdList.end(); git++)
+		{
+			RsNxsSyncGrpItem* item = new RsNxsSyncGrpItem(mServType);
+			item->grpId = *git;
+			item->PeerId(peerId);
+			item->flag = RsNxsSyncGrpItem::FLAG_REQUEST;
+			item->transactionNumber = transN;
+			grpSyncItems.push_back(item);
+		}
+
+		if(!grpSyncItems.empty())
+			locked_pushGrpTransactionFromList(grpSyncItems, peerId, transN);
+	}
+
+	mExplicitRequest.clear();
+}

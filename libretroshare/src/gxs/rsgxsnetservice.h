@@ -115,7 +115,7 @@ public:
      * @param msgId the messages to retrieve
      * @return request token to be redeemed
      */
-    int requestMsg(const std::string& msgId, uint8_t hops){ return 0;}
+    int requestMsg(const RsGxsGrpMsgIdPair& msgId){ return 0;}
 
     /*!
      * Request for this group is sent through to peers on your network
@@ -123,7 +123,7 @@ public:
      * @param enabled set to false to disable pause, and true otherwise
      * @return request token to be redeemed
      */
-    int requestGrp(const std::list<std::string>& grpId, uint8_t hops){ return 0;}
+    int requestGrp(const std::list<RsGxsGroupId>& grpId, const std::string& peerId);
 
     /* p3Config methods */
 
@@ -322,6 +322,8 @@ private:
 
     bool locked_canReceive(const RsGxsGrpMetaData * const grpMeta, const std::string& peerId);
 
+    void processExplicitGroupRequests();
+
 private:
 
     typedef std::vector<RsNxsGrp*> GrpFragments;
@@ -422,6 +424,8 @@ private:
     // need to be verfied
     std::vector<AuthorPending*> mPendingResp;
     std::vector<GrpCircleVetting*> mPendingCircleVets;
+
+    std::map<std::string, std::list<RsGxsGroupId> > mExplicitRequest;
 };
 
 #endif // RSGXSNETSERVICE_H

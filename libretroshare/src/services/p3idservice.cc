@@ -140,7 +140,7 @@ p3IdService::p3IdService(RsGeneralDataService *gds, RsNetworkExchangeService *ne
 	: RsGxsIdExchange(gds, nes, new RsGxsIdSerialiser(), RS_SERVICE_GXSV2_TYPE_GXSID, idAuthenPolicy()), 
 	RsIdentity(this), GxsTokenQueue(this), RsTickEvent(), mIdMtx("p3IdService"),
 	mPublicKeyCache(DEFAULT_MEM_CACHE_SIZE, "GxsIdPublicKeyCache"), 
-	mPrivateKeyCache(DEFAULT_MEM_CACHE_SIZE, "GxsIdPrivateKeyCache")
+	mPrivateKeyCache(DEFAULT_MEM_CACHE_SIZE, "GxsIdPrivateKeyCache"), mNes(nes)
 {
 	mBgSchedule_Mode = 0;
 	mBgSchedule_Active = false;
@@ -1366,6 +1366,9 @@ bool p3IdService::cache_start_load()
 	
 		RsGenExchange::getTokenService()->requestGroupInfo(token, ansType, opts, groupIds);
 		GxsTokenQueue::queueRequest(token, GXSIDREQ_CACHELOAD);	
+		std::set<RsGxsGroupId> groupIdSet;
+		groupIdSet.insert(groupIds.begin(), groupIds.end());
+		mGroupsToCache.insert(std::make_pair(token, groupIdSet));
 	}
 	return 1;
 }
@@ -1401,10 +1404,29 @@ bool p3IdService::cache_load_for_token(uint32_t token)
 			std::cerr << std::endl;
 #endif // DEBUG_IDS
 
+
+			{
+				// remove identities that are present
+				RsStackMutex stack(mIdMtx);
+				mGroupsToCache[token].erase(item->meta.mGroupId);
+			}
+
 			/* cache the data */
 			cache_store(item);
 			delete item;
 		}
+
+		{
+			// now store identities that aren't present
+			RsStackMutex stack(mIdMtx);
+			const std::set<RsGxsGroupId>& groupIdSet = mGroupsToCache[token];
+
+			if(!groupIdSet.empty())
+				mGroupNotPresent[token].assign(groupIdSet.begin(), groupIdSet.end());
+
+			mGroupsToCache.erase(token);
+		}
+
 	}
 	else
 	{
@@ -3601,7 +3623,13 @@ std::ostream &operator<<(std::ostream &out, const RsGxsIdOpinion &opinion)
 
 
 
+void p3IdService::checkPeerForIdentities()
+{
+	RsStackMutex stack(mIdMtx);
 
+	// crud, i needed peers instead!
+	mGroupNotPresent.clear();
+}
 
 
 // Overloaded from GxsTokenQueue for Request callbacks.

@@ -358,6 +358,12 @@ virtual void handle_event(uint32_t event_type, const std::string &elabel);
 
 	void loadRecognKeys();
 
+	/************************************************************************
+	 * for getting identities that are not present
+	 *
+	 */
+	void checkPeerForIdentities();
+
 	/* MUTEX PROTECTED DATA (mIdMtx - maybe should use a 2nd?) */
 
 	bool checkRecognSignature_locked(std::string encoded, RSA &key, std::string signature);
@@ -413,6 +419,11 @@ std::string genRandomId(int len = 20);
 	std::vector<RsGxsGroupChange*> mGroupChange;
 	std::vector<RsGxsMsgChange*> mMsgChange;
 
+	private:
+
+	std::map<uint32_t, std::set<RsGxsGroupId> > mGroupsToCache;
+	std::map<uint32_t, std::list<RsGxsGroupId> > mGroupNotPresent;
+	RsNetworkExchangeService* mNes;
 };
 
 #endif // P3_IDENTITY_SERVICE_HEADER

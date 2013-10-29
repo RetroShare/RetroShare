@@ -69,21 +69,6 @@ public:
     virtual void setSyncAge(uint32_t age) = 0;
 
     /*!
-     * Explicitly requests all the groups contained by a peer
-     * Circumvents polling of peers for message
-     * @param peerId id of peer
-     */
-    virtual void requestGroupsOfPeer(const std::string& peerId) = 0;
-
-    /*!
-     * get messages of a peer for a given group id, this circumvents the normal
-     * polling of peers for messages of given group id
-     * @param peerId Id of peer
-     * @param grpId id of group to request messages for
-     */
-    virtual void requestMessagesOfPeer(const std::string& peerId, const std::string& grpId) = 0;
-
-    /*!
      * Initiates a search through the network
      * This returns messages which contains the search terms set in RsGxsSearch
      * @param search contains search terms of requested from service
@@ -116,7 +101,7 @@ public:
      * @param msgId the messages to retrieve
      * @return request token to be redeemed
      */
-    virtual int requestMsg(const std::string& msgId, uint8_t hops) = 0;
+    virtual int requestMsg(const RsGxsGrpMsgIdPair& msgId) = 0;
 
     /*!
      * Request for this group is sent through to peers on your network
@@ -124,7 +109,7 @@ public:
      * @param enabled set to false to disable pause, and true otherwise
      * @return request token to be redeemed
      */
-    virtual int requestGrp(const std::list<std::string>& grpId, uint8_t hops) = 0;
+    virtual int requestGrp(const std::list<RsGxsGroupId>& grpId, const std::string& peerId) = 0;
 
 
 };
