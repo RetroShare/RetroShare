@@ -1368,6 +1368,8 @@ bool p3IdService::cache_start_load()
 		GxsTokenQueue::queueRequest(token, GXSIDREQ_CACHELOAD);	
 		std::set<RsGxsGroupId> groupIdSet;
 		groupIdSet.insert(groupIds.begin(), groupIds.end());
+
+		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 		mGroupsToCache.insert(std::make_pair(token, groupIdSet));
 	}
 	return 1;
