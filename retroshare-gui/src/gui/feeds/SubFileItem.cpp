@@ -29,6 +29,7 @@
 #include <gui/common/RsUrlHandler.h>
 #include <retroshare/rsfiles.h>
 #include "util/misc.h"
+#include "gui/RetroShareLink.h"
 
 
 /****
@@ -98,6 +99,7 @@ void SubFileItem::Setup()
   connect( playButton, SIGNAL( clicked( void ) ), this, SLOT( play ( void ) ) );
   connect( downloadButton, SIGNAL( clicked( void ) ), this, SLOT( download ( void ) ) );
   connect( cancelButton, SIGNAL( clicked( void ) ), this, SLOT( cancel ( void ) ) );
+  connect( copyLinkButton, SIGNAL( clicked( void ) ), this, SLOT( copyLink ( void ) ) );
   connect( saveButton, SIGNAL( clicked( void ) ), this, SLOT( save ( void ) ) );
 
   /* once off check - if remote, check if we have it 
@@ -691,4 +693,18 @@ void SubFileItem::mediatype()
 	/* check if the file is not a media file and change text */
 	playButton->setText(tr("Open"));
 	playButton->setToolTip(tr("Open File"));
+}
+
+void SubFileItem::copyLink()
+{
+	if (mFileName.empty() || mFileHash.empty()) {
+		return;
+	}
+
+	RetroShareLink link;
+	if (link.createFile(QString::fromUtf8(mFileName.c_str()), mFileSize, QString::fromStdString(mFileHash))) {
+		QList<RetroShareLink> urls;
+		urls.push_back(link);
+		RSLinkClipboard::copyLinks(urls);
+	}
 }

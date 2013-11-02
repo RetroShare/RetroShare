@@ -159,6 +159,32 @@
           </property>
          </widget>
         </item>
+            <item>
+             <widget class="QPushButton" name="copyLinkButton">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>24</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
+              </property>
+              <property name="toolTip">
+               <string>Copy RetroShare Link</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../images.qrc">
+                <normaloff>:/images/copyrslink.png</normaloff>:/images/copyrslink.png</iconset>
+              </property>
+             </widget>
+            </item>
         <item>
          <widget class="QPushButton" name="saveButton">
           <property name="sizePolicy">
