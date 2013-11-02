@@ -27,6 +27,7 @@
 #include <stdlib.h>	/* Included because GCC4.4 wants it */
 #include <string.h> 	/* Included because GCC4.4 wants it */
 
+#include "retroshare/rstypes.h"
 #include "serialiser/rsbaseserial.h"
 #include "util/rsnet.h"
 
@@ -186,7 +187,75 @@ bool setRawUInt64(void *data, uint32_t size, uint32_t *offset, uint64_t in)
 	return true;
 }
 
+bool getRawUFloat32(void *data,uint32_t size,uint32_t *offset,float& f)
+{
+	uint32_t n ;
+	if(!getRawUInt32(data, size, offset, &n) )
+		return false ;
 
+	f = 1.0f/ ( n/(float)(~(uint32_t)0)) - 1.0f ;
+
+	return true ;
+}
+
+bool setRawUFloat32(void *data,uint32_t size,uint32_t *offset,float f)
+{
+	if(f < 0.0f)
+	{
+		std::cerr << "(EE) Cannot serialise invalid negative float value " << f << " in " << __PRETTY_FUNCTION__ << std::endl;
+		return false ;
+	}
+
+	// This serialisation is quite accurate. The max relative error is approx.
+	// 0.01% and most of the time less than 1e-05% The error is well distributed
+	// over numbers also.
+	//
+	uint32_t n = (uint32_t)( (1.0f/(1.0f+f) * (~(uint32_t)0))) ;
+
+	return setRawUInt32(data, size, offset, n);
+}
+
+bool getRawSha1(void *data,uint32_t size,uint32_t *offset,Sha1CheckSum& cs)
+{
+	uint32_t len = 20 ; // SHA1 length in bytes
+
+	/* check there is space for string */
+	if (size < *offset + len)
+	{
+		std::cerr << "getRawSha1() not enough size" << std::endl;
+		return false;
+	}
+	bool ok = true ;
+
+	ok = ok && getRawUInt32(data, size, offset, &cs.fourbytes[0]) ;
+	ok = ok && getRawUInt32(data, size, offset, &cs.fourbytes[1]) ;
+	ok = ok && getRawUInt32(data, size, offset, &cs.fourbytes[2]) ;
+	ok = ok && getRawUInt32(data, size, offset, &cs.fourbytes[3]) ;
+	ok = ok && getRawUInt32(data, size, offset, &cs.fourbytes[4]) ;
+
+	return ok ;
+}
+
+bool setRawSha1(void *data,uint32_t size,uint32_t *offset,const Sha1CheckSum& cs)
+{
+	uint32_t len = 20 ; // SHA1 length in bytes
+
+	if (size < *offset + len)
+	{
+		std::cerr << "setRawSha1() Not enough size" << std::endl;
+		return false;
+	}
+
+	bool ok = true ;
+	/* pack it in */
+	ok = ok && setRawUInt32(data, size, offset, cs.fourbytes[0]);
+	ok = ok && setRawUInt32(data, size, offset, cs.fourbytes[1]);
+	ok = ok && setRawUInt32(data, size, offset, cs.fourbytes[2]);
+	ok = ok && setRawUInt32(data, size, offset, cs.fourbytes[3]);
+	ok = ok && setRawUInt32(data, size, offset, cs.fourbytes[4]);
+
+	return true ;
+}
 
 bool getRawString(void *data, uint32_t size, uint32_t *offset, std::string &outStr)
 {

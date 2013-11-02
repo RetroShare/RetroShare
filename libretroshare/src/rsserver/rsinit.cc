@@ -65,6 +65,10 @@
 #include "pqi/sslfns.h"
 #include "pqi/authgpg.h"
 
+#ifdef GROUTER
+#include "grouter/p3grouter.h"
+#endif
+
 #include "tcponudp/udpstunner.h"
 
 // #define GPG_DEBUG
@@ -1740,6 +1744,9 @@ void RsInit::setAutoLogin(bool autoLogin){
 RsControl *rsicontrol = NULL;
 RsFiles *rsFiles = NULL;
 RsTurtle *rsTurtle = NULL ;
+#ifdef GROUTER
+RsGRouter *rsGRouter = NULL ;
+#endif
 
 #include "pqi/pqipersongrp.h"
 #include "pqi/pqisslpersongrp.h"
@@ -2205,6 +2212,12 @@ int RsServer::StartupRetroShare()
 	p3tunnel *tn = new p3tunnel(mConnMgr, pqih);
 	pqih -> addService(tn);
 	mConnMgr->setP3tunnel(tn);
+#endif
+
+#ifdef GROUTER
+	p3GRouter *gr = new p3GRouter(mLinkMgr) ;
+	rsGRouter = gr ;
+	pqih->addService(gr) ;
 #endif
 
 	p3turtle *tr = new p3turtle(mLinkMgr) ;

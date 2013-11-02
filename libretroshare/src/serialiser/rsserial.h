@@ -88,7 +88,7 @@ class RsItem: public RsMemoryManagement::SmallObject
 		void        PeerId(const std::string& id) { peerId = id; }
 
 		/* complete id */
-		uint32_t PacketId();
+		uint32_t PacketId() const;
 
 		/* id parts */
 		uint8_t  PacketVersion();
@@ -122,7 +122,7 @@ virtual	uint32_t    size(RsItem *);
 virtual	bool        serialise  (RsItem *item, void *data, uint32_t *size);
 virtual	RsItem *    deserialise(void *data, uint32_t *size);
 	
-uint32_t    PacketId();
+uint32_t    PacketId() const;
 	private:
 uint32_t type;
 };

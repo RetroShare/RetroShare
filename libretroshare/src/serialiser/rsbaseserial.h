@@ -47,6 +47,7 @@
  *
  ******************************************************************/
 
+class Sha1CheckSum ;
 
 bool getRawUInt8(void *data, uint32_t size, uint32_t *offset, uint8_t *out);
 bool setRawUInt8(void *data, uint32_t size, uint32_t *offset, uint8_t in);
@@ -60,8 +61,14 @@ bool setRawUInt32(void *data, uint32_t size, uint32_t *offset, uint32_t in);
 bool getRawUInt64(void *data, uint32_t size, uint32_t *offset, uint64_t *out);
 bool setRawUInt64(void *data, uint32_t size, uint32_t *offset, uint64_t in);
 
+bool getRawUFloat32(void *data, uint32_t size, uint32_t *offset, float& out);
+bool setRawUFloat32(void *data, uint32_t size, uint32_t *offset, float in);
+
 bool getRawString(void *data, uint32_t size, uint32_t *offset, std::string &outStr);
 bool setRawString(void *data, uint32_t size, uint32_t *offset, const std::string &inStr);
+
+bool getRawSha1(void *data, uint32_t size, uint32_t *offset, Sha1CheckSum& outStr);
+bool setRawSha1(void *data, uint32_t size, uint32_t *offset, const Sha1CheckSum& inStr);
 
 #endif
 

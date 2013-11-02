@@ -133,7 +133,7 @@ void RsItem::print_string(std::string &out, uint16_t indent)
 
 	out += stream.str();
 }
-uint32_t    RsItem::PacketId()
+uint32_t    RsItem::PacketId() const
 {
 	return type;
 }
@@ -226,7 +226,7 @@ RsItem *    RsSerialType::deserialise(void */*data*/, uint32_t */*size*/)
 	return NULL;
 }
 
-uint32_t    RsSerialType::PacketId()
+uint32_t    RsSerialType::PacketId() const
 {
 	return type;
 }

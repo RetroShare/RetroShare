@@ -8,6 +8,7 @@ CONFIG += test_voip
 #GXS Stuff.
 # This should be disabled for releases until further notice.
 #CONFIG += gxs debug
+#CONFIG += grouter
 
 # Beware: All data of the stripped services are lost
 DEFINES *= PQI_DISABLE_TUNNEL
@@ -37,6 +38,22 @@ debug {
         QMAKE_CXXFLAGS *= -g -fno-omit-frame-pointer
 }
 
+grouter {
+DEFINES *= GROUTER
+
+HEADERS +=  grouter/groutercache.h \
+				grouter/rsgrouter.h \
+				grouter/grouteritems.h \
+				grouter/p3grouter.h \
+				grouter/rsgroutermatrix.h \
+				grouter/rsgrouterclient.h 
+
+SOURCES +=  grouter/p3grouter.cc \
+				grouter/grouteritems.cc \ 
+				grouter/groutermatrix.cc 
+#				grouter/groutercache.cc \
+#				grouter/rsgrouterclient.cc 
+}
 
 bitdht {
 

@@ -789,7 +789,16 @@ bool Sha1CheckSum::operator==(const Sha1CheckSum& s) const
 			return false ;
 	return true ;
 }
+bool Sha1CheckSum::operator<(const Sha1CheckSum& s) const
+{
+	for(int i=0;i<5;++i)
+		if(fourbytes[i] < s.fourbytes[i])
+			return true ;
+		else if(fourbytes[i] > s.fourbytes[i])
+			return false ;
 
+	return false ;
+}
 std::string Sha1CheckSum::toStdString() const
 {
 	static const char outl[16] = { '0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f' } ;
