@@ -36,16 +36,16 @@
 #define GIXS_CUT_OFF 0
 
 #define SYNC_PERIOD 12 // in microseconds every 10 seconds (1 second for testing)
-#define TRANSAC_TIMEOUT 5 // 5 seconds
+#define TRANSAC_TIMEOUT 10 // 10 seconds
 
  const uint32_t RsGxsNetService::FRAGMENT_SIZE = 150000;
 
 RsGxsNetService::RsGxsNetService(uint16_t servType, RsGeneralDataService *gds,
-                                 RsNxsNetMgr *netMgr, RsNxsObserver *nxsObs, RsGixsReputation* reputations, RsGcxs* circles)
+                                 RsNxsNetMgr *netMgr, RsNxsObserver *nxsObs, RsGixsReputation* reputations, RsGcxs* circles, bool grpAutoSync)
                                      : p3Config(servType), p3ThreadedService(servType),
                                        mTransactionTimeOut(TRANSAC_TIMEOUT), mServType(servType), mDataStore(gds), mTransactionN(0),
                                        mObserver(nxsObs), mNxsMutex("RsGxsNetService"), mNetMgr(netMgr), mSYNC_PERIOD(SYNC_PERIOD),
-                                       mSyncTs(0), mReputations(reputations), mCircles(circles)
+                                       mSyncTs(0), mReputations(reputations), mCircles(circles), mGrpAutoSync(grpAutoSync)
 
 {
 	addSerialType(new RsNxsSerialiser(mServType));
@@ -85,13 +85,16 @@ void RsGxsNetService::syncWithPeers()
 
 	std::set<std::string>::iterator sit = peers.begin();
 
-	// for now just grps
-	for(; sit != peers.end(); sit++)
+	if(mGrpAutoSync)
 	{
-			RsNxsSyncGrp *grp = new RsNxsSyncGrp(mServType);
-			grp->clear();
-			grp->PeerId(*sit);
-			sendItem(grp);
+		// for now just grps
+		for(; sit != peers.end(); sit++)
+		{
+				RsNxsSyncGrp *grp = new RsNxsSyncGrp(mServType);
+				grp->clear();
+				grp->PeerId(*sit);
+				sendItem(grp);
+		}
 	}
 
 #ifdef GXS_ENABLE_SYNC_MSGS
@@ -773,8 +776,7 @@ void RsGxsNetService::run(){
 
 bool RsGxsNetService::locked_checkTransacTimedOut(NxsTransaction* tr)
 {
-   //return tr->mTimeOut < ((uint32_t) time(NULL));
-     return false;
+   return tr->mTimeOut < ((uint32_t) time(NULL));
 }
 
 void RsGxsNetService::processTransactions(){

@@ -2268,7 +2268,8 @@ int RsServer::StartupRetroShare()
         // create GXS photo service
         RsGxsNetService* gxsid_ns = new RsGxsNetService(
                         RS_SERVICE_GXSV2_TYPE_GXSID, gxsid_ds, nxsMgr,
-                        mGxsIdService, mGxsIdService, mGxsCircles);
+                        mGxsIdService, mGxsIdService, mGxsCircles,
+                        false); // don't synchronise group automatic (need explicit group request)
 
         /**** GxsCircle service ****/
 
@@ -2652,7 +2653,6 @@ int RsServer::StartupRetroShare()
 	createThread(*wire_ns);
 	createThread(*gxsforums_ns);
 	createThread(*gxschannels_ns);
-
 
 #endif // RS_ENABLE_GXS
 

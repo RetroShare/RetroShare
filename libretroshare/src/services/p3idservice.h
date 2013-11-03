@@ -284,16 +284,20 @@ virtual void handle_event(uint32_t event_type, const std::string &elabel);
  */
 	int  cache_tick();
 
-	bool cache_request_load(const RsGxsId &id);
+	bool cache_request_load(const RsGxsId &id, const std::list<std::string>& peers = std::list<std::string>());
 	bool cache_start_load();
 	bool cache_load_for_token(uint32_t token);
 
 	bool cache_store(const RsGxsIdGroupItem *item);
 	bool cache_update_if_cached(const RsGxsId &id, std::string serviceString);
 
+	bool isPendingNetworkRequest(const RsGxsId& gxsId) const;
+	void requestIdsFromNet();
+
 	// Mutex protected.
 
-	std::list<RsGxsId> mCacheLoad_ToCache;
+	//std::list<RsGxsId> mCacheLoad_ToCache;
+	std::map<RsGxsId, std::list<std::string> > mCacheLoad_ToCache, mPendingCache;
 
 	// Switching to RsMemCache for Key Caching.
 	RsMemCache<RsGxsId, RsGxsIdCache> mPublicKeyCache;
@@ -421,8 +425,9 @@ std::string genRandomId(int len = 20);
 
 	private:
 
-	std::map<uint32_t, std::set<RsGxsGroupId> > mGroupsToCache;
+	std::map<uint32_t, std::set<RsGxsGroupId> > mIdsPendingCache;
 	std::map<uint32_t, std::list<RsGxsGroupId> > mGroupNotPresent;
+	std::map<RsGxsId, std::list<std::string> > mIdsNotPresent;
 	RsNetworkExchangeService* mNes;
 };
 

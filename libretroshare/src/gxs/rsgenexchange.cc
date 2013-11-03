@@ -820,6 +820,7 @@ int RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, RsTlvSecu
             }else
             {
                 std::list<std::string> peers;
+                peers.push_back(msg->PeerId());
                 mGixs->requestKey(metaData.mAuthorId, peers);
                 return VALIDATE_FAIL_TRY_LATER;
             }
@@ -893,6 +894,7 @@ int RsGenExchange::validateGrp(RsNxsGrp* grp, RsTlvSecurityKeySet& grpKeySet)
 			}else
 			{
 				std::list<std::string> peers;
+				peers.push_back(grp->PeerId());
 				mGixs->requestKey(metaData.mAuthorId, peers);
 				return VALIDATE_FAIL_TRY_LATER;
 			}

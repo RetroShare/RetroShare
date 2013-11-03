@@ -112,6 +112,7 @@ RsIdentity *rsIdentity = NULL;
 #define GXSID_EVENT_DUMMY_PGPID		0x2002
 #define GXSID_EVENT_DUMMY_UNKNOWN_PGPID	0x2003
 #define GXSID_EVENT_DUMMY_PSEUDOID	0x2004
+#define GXSID_EVENT_REQUEST_IDS     0x2005
 
 
 /* delays */
@@ -411,7 +412,24 @@ bool p3IdService::requestKey(const RsGxsId &id, const std::list<PeerId> &peers)
 {
 	if (haveKey(id))
 		return true;
+	else
+	{
+		if(isPendingNetworkRequest(id))
+			return true;
+	}
+
+
 	return cache_request_load(id);
+}
+
+bool p3IdService::isPendingNetworkRequest(const RsGxsId& gxsId) const
+{
+	// if ids has beens confirmed as not physically present return
+	// immediately, id will be removed from list if found by auto nxs net search
+	if(mIdsNotPresent.find(gxsId) != mIdsNotPresent.end())
+		return true;
+
+	return false;
 }
 
 int  p3IdService::getKey(const RsGxsId &id, RsTlvSecurityKey &key)
@@ -1298,7 +1316,7 @@ bool p3IdService::cache_store(const RsGxsIdGroupItem *item)
 
 #define MIN_CYCLE_GAP	2
 
-bool p3IdService::cache_request_load(const RsGxsId &id)
+bool p3IdService::cache_request_load(const RsGxsId &id, const std::list<std::string>& peers)
 {
 #ifdef DEBUG_IDS
 	std::cerr << "p3IdService::cache_request_load(" << id << ")";
@@ -1307,7 +1325,7 @@ bool p3IdService::cache_request_load(const RsGxsId &id)
 
 	{
 		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-		mCacheLoad_ToCache.push_back(id);
+		mCacheLoad_ToCache.insert(std::make_pair(id, peers));
 	}
 
 	if (RsTickEvent::event_count(GXSID_EVENT_CACHELOAD) > 0)
@@ -1339,16 +1357,17 @@ bool p3IdService::cache_start_load()
 		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 
 		/* now we process the modGroupList -> a map so we can use it easily later, and create id list too */
-		std::list<RsGxsId>::iterator it;
+		std::map<RsGxsId, std::list<std::string> >::iterator it;
 		for(it = mCacheLoad_ToCache.begin(); it != mCacheLoad_ToCache.end(); it++)
 		{
 #ifdef DEBUG_IDS
-			std::cerr << "p3IdService::cache_start_load() GroupId: " << *it;
+			std::cerr << "p3IdService::cache_start_load() GroupId: " << it->first;
 			std::cerr << std::endl;
 #endif // DEBUG_IDS
-			groupIds.push_back(*it); // might need conversion?
+			groupIds.push_back(it->first); // might need conversion?
 		}
 
+            //    mPendingCache.insert(mCacheLoad_ToCache.begin(), mCacheLoad_ToCache.end());
 		mCacheLoad_ToCache.clear();
 	}
 
@@ -1365,12 +1384,7 @@ bool p3IdService::cache_start_load()
 		uint32_t token = 0;
 	
 		RsGenExchange::getTokenService()->requestGroupInfo(token, ansType, opts, groupIds);
-		GxsTokenQueue::queueRequest(token, GXSIDREQ_CACHELOAD);	
-		std::set<RsGxsGroupId> groupIdSet;
-		groupIdSet.insert(groupIds.begin(), groupIds.end());
-
-		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-		mGroupsToCache.insert(std::make_pair(token, groupIdSet));
+		GxsTokenQueue::queueRequest(token, GXSIDREQ_CACHELOAD);
 	}
 	return 1;
 }
@@ -1410,7 +1424,7 @@ bool p3IdService::cache_load_for_token(uint32_t token)
 			{
 				// remove identities that are present
 				RsStackMutex stack(mIdMtx);
-				mGroupsToCache[token].erase(item->meta.mGroupId);
+				mPendingCache.erase(item->meta.mGroupId);
 			}
 
 			/* cache the data */
@@ -1420,13 +1434,13 @@ bool p3IdService::cache_load_for_token(uint32_t token)
 
 		{
 			// now store identities that aren't present
+
 			RsStackMutex stack(mIdMtx);
-			const std::set<RsGxsGroupId>& groupIdSet = mGroupsToCache[token];
+			mIdsNotPresent.insert(mPendingCache.begin(), mPendingCache.end());
+			mPendingCache.clear();
 
-			if(!groupIdSet.empty())
-				mGroupNotPresent[token].assign(groupIdSet.begin(), groupIdSet.end());
-
-			mGroupsToCache.erase(token);
+                        if(!mIdsNotPresent.empty())
+                            schedule_now(GXSID_EVENT_REQUEST_IDS);
 		}
 
 	}
@@ -1438,6 +1452,39 @@ bool p3IdService::cache_load_for_token(uint32_t token)
 		return false;
 	}
 	return true;
+}
+
+void p3IdService::requestIdsFromNet()
+{
+	RsStackMutex stack(mIdMtx);
+
+	std::map<RsGxsId, std::list<std::string> >::const_iterator cit;
+	std::map<std::string, std::list<RsGxsId> > requests;
+
+	// transform to appropriate structure (<peer, std::list<RsGxsId> > map) to make request to nes
+	for(cit = mIdsNotPresent.begin(); cit != mIdsNotPresent.end(); cit++)
+	{
+		{
+#ifdef DEBUG_IDS
+				std::cerr << "p3IdService::requestIdsFromNet() Id not found, deferring for net request: ";
+							std::cerr << cit->first;
+							std::cerr << std::endl;
+#endif // DEBUG_IDS
+
+		}
+
+		const std::list<std::string>& peers = cit->second;
+		std::list<std::string>::const_iterator cit2;
+		for(cit2 = peers.begin(); cit2 != peers.end(); cit2++)
+			requests[*cit2].push_back(cit->first);
+	}
+
+	std::map<std::string, std::list<RsGxsId> >::const_iterator cit2;
+
+	for(cit2 = requests.begin(); cit2 != requests.end(); cit2++)
+		mNes->requestGrp(cit2->second, cit2->first);
+
+	mIdsNotPresent.clear();
 }
 
 bool p3IdService::cache_update_if_cached(const RsGxsId &id, std::string serviceString)
@@ -2483,7 +2530,7 @@ bool p3IdService::recogn_process()
 	bool isDone = false;
 	{
 		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-		if (!mRecognGroupsToProcess.empty())
+		if (!mRecognGroupsToProcess.empty() && !mGroupsToProcess.empty())
 		{
 			item = mRecognGroupsToProcess.front();
 			mGroupsToProcess.pop_front();
@@ -3735,6 +3782,10 @@ void p3IdService::handle_event(uint32_t event_type, const std::string &elabel)
 		case GXSID_EVENT_DUMMY_PSEUDOID:
 			generateDummy_UnknownPseudo();
 			break;
+		case GXSID_EVENT_REQUEST_IDS:
+			requestIdsFromNet();
+			break;
+
 
 		default:
 			/* error */
