@@ -1263,6 +1263,9 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
 
 	MsgAuthorV toVet;
 
+	std::list<std::string> peers;
+	peers.push_back(tr->mTransaction->PeerId());
+
 	for(; llit != msgItemL.end(); llit++)
 	{
 		RsNxsSyncMsgItem*& syncItem = *llit;
@@ -1289,7 +1292,7 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
 			else
 			{
 				// preload for speed
-				mReputations->loadReputation(syncItem->authorId);
+				mReputations->loadReputation(syncItem->authorId, peers);
 				MsgAuthEntry entry;
 				entry.mAuthorId = syncItem->authorId;
 				entry.mGrpId = syncItem->grpId;
@@ -1380,6 +1383,8 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
 	uint32_t transN = locked_getTransactionId();
 
 	GrpAuthorV toVet;
+	std::list<std::string> peers;
+	peers.push_back(tr->mTransaction->PeerId());
 
 	for(; llit != grpItemL.end(); llit++)
 	{
@@ -1413,7 +1418,7 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
 				else
 				{
 					// preload reputation for later
-					mReputations->loadReputation(grpSyncItem->authorId);
+					mReputations->loadReputation(grpSyncItem->authorId, peers);
 					GrpAuthEntry entry;
 					entry.mAuthorId = grpSyncItem->authorId;
 					entry.mGrpId = grpSyncItem->grpId;

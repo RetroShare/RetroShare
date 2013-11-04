@@ -176,7 +176,7 @@ class RsGixsReputation
 public:
 	// get Reputation.
     virtual bool haveReputation(const RsGxsId &id) = 0;
-    virtual bool loadReputation(const RsGxsId &id) = 0;
+    virtual bool loadReputation(const RsGxsId &id, const std::list<std::string>& peers) = 0;
     virtual bool getReputation(const RsGxsId &id, GixsReputation &rep) = 0;
 };
 

@@ -141,7 +141,7 @@ protected:
 	 * @param authorId reputation to get
 	 * @return true if successfully retrieve repution
 	 */
-	bool getAuthorRep(GixsReputation& rep, const std::string& authorId);
+        bool getAuthorRep(GixsReputation& rep, const std::string& authorId, const std::string& peerId);
 
 private:
 

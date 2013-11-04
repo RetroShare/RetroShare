@@ -164,6 +164,11 @@ p3IdService::p3IdService(RsGeneralDataService *gds, RsNetworkExchangeService *ne
 	loadRecognKeys();
 }
 
+void p3IdService::setNes(RsNetworkExchangeService *nes)
+{
+    RsStackMutex stack(mIdMtx);
+    mNes = nes;
+}
 
 uint32_t p3IdService::idAuthenPolicy()
 {
@@ -419,7 +424,7 @@ bool p3IdService::requestKey(const RsGxsId &id, const std::list<PeerId> &peers)
 	}
 
 
-	return cache_request_load(id);
+	return cache_request_load(id, peers);
 }
 
 bool p3IdService::isPendingNetworkRequest(const RsGxsId& gxsId) const
@@ -473,11 +478,18 @@ bool p3IdService::haveReputation(const RsGxsId &id)
 	return haveKey(id);
 }
 
-bool p3IdService::loadReputation(const RsGxsId &id)
+bool p3IdService::loadReputation(const RsGxsId &id, const std::list<std::string>& peers)
 {
 	if (haveKey(id))
 		return true;
-	return cache_request_load(id);
+	else
+	{
+		if(isPendingNetworkRequest(id))
+			return true;
+	}
+
+
+	return cache_request_load(id, peers);
 }
 
 bool p3IdService::getReputation(const RsGxsId &id, GixsReputation &rep)
@@ -1367,7 +1379,7 @@ bool p3IdService::cache_start_load()
 			groupIds.push_back(it->first); // might need conversion?
 		}
 
-            //    mPendingCache.insert(mCacheLoad_ToCache.begin(), mCacheLoad_ToCache.end());
+                mPendingCache.insert(mCacheLoad_ToCache.begin(), mCacheLoad_ToCache.end());
 		mCacheLoad_ToCache.clear();
 	}
 
@@ -1482,7 +1494,10 @@ void p3IdService::requestIdsFromNet()
 	std::map<std::string, std::list<RsGxsId> >::const_iterator cit2;
 
 	for(cit2 = requests.begin(); cit2 != requests.end(); cit2++)
+        {
+            if(mNes)
 		mNes->requestGrp(cit2->second, cit2->first);
+        }
 
 	mIdsNotPresent.clear();
 }

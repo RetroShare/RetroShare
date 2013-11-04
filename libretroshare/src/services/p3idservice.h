@@ -196,6 +196,12 @@ static	uint32_t idAuthenPolicy();
 	virtual void service_tick(); // needed for background processing.
 
 
+        /*!
+         * Design hack, id service must be constructed first as it
+         * is need for construction of subsequent net services
+         */
+        void setNes(RsNetworkExchangeService* nes);
+
 	/* General Interface is provided by RsIdentity / RsGxsIfaceImpl. */
 
 	/* Data Specific Interface */
@@ -258,7 +264,7 @@ virtual int  getPrivateKey(const RsGxsId &id, RsTlvSecurityKey &key);
 
         // get Reputation.
 virtual bool haveReputation(const RsGxsId &id);
-virtual bool loadReputation(const RsGxsId &id);
+virtual bool loadReputation(const RsGxsId &id, const std::list<std::string>& peers);
 virtual bool getReputation(const RsGxsId &id, GixsReputation &rep);
 
 
