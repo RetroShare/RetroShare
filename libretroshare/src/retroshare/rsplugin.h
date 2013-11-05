@@ -148,7 +148,7 @@ class RsPlugin
 		//
 		//  All these items appear in the config->plugins tab, as a description of the plugin.
 		//
-	uint32_t getSvnRevision() const { return RsUtil::retroshareRevision(); }	// This is read from libretroshare/util/rsversion.h
+	uint32_t getSvnRevision() const { return SVN_REVISION_NUMBER ; } 	// This is read from libretroshare/util/rsversion.h
 
 		virtual std::string getShortPluginDescription() const = 0 ;
 		virtual std::string getPluginName() const = 0 ;

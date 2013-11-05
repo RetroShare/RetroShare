@@ -8,6 +8,12 @@
 #include <string>
 #include <inttypes.h>
 
+// These versioning parameters are in the header because plugin versioning requires it.
+// Please use the functions below, and don't refer directly to the #defines.
+
+#define SVN_REVISION "Revision 6890"
+#define SVN_REVISION_NUMBER  6890
+
 namespace RsUtil {
 
 	uint32_t retroshareRevision();
