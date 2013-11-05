@@ -109,7 +109,7 @@ class p3GRouter: public RsGRouter, public p3Service, public p3Config
 		//
 		virtual bool getRoutingCacheInfo(RoutingCacheInfo& info) { return false ;} 
 
-	private:
+	protected:
 		//===================================================//
 		//         Routing method handling                   //
 		//===================================================//
@@ -121,10 +121,12 @@ class p3GRouter: public RsGRouter, public p3Service, public p3Config
 		//
 		virtual int tick() ; 
 
+	private:
 		void autoWash() ;
 		void routeObjects() ;
 		void handleIncoming() ;
 		void publishKeys() ;
+		void debugDump() ;
 
 		//===================================================//
 		//                  p3Config methods                 //

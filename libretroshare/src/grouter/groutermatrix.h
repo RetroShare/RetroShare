@@ -35,21 +35,16 @@
 //
 struct RoutingMatrixHitEntry
 {
+	uint32_t friend_id ;			// not the full key. Gets too big otherwise!
 	float weight ;
 	time_t time_stamp ;
-};
-
-// The map indexes for each friend the list of recent routing clues received.
-//
-struct RoutingMatrixFriendKeyData
-{
-	std::list<RoutingMatrixHitEntry> routing_clues ;
-	float probability ;
 };
 
 class GRouterMatrix
 {
 	public:
+		GRouterMatrix() ;
+
 		// Computes the routing probabilities for this id  for the given list of friends.
 		// the computation accounts for the time at which the info was received and the
 		// weight of each routing hit record.
@@ -69,13 +64,27 @@ class GRouterMatrix
 		//
 		bool addRoutingClue(const GRouterKeyId& id,const GRouterServiceId& sid,float distance,const std::string& desc_string,const SSLIdType& source_friend) ;
 
+		// Dump info in terminal.
+		//
+		void debugDump() const ;
+
 	private:
+		uint32_t getFriendId(const SSLIdType& id) ;
+
 		// List of events received and computed routing probabilities
 		//
-		std::map<GRouterKeyId, RoutingMatrixFriendKeyData> _routing_info ;
+		std::map<GRouterKeyId, std::list<RoutingMatrixHitEntry> > _routing_clues ;
+		std::map<GRouterKeyId, std::vector<float> > _time_combined_hits ; // hit matrix after time-convolution filter
 
 		// This is used to avoid re-computing probas when new events have been received.
 		//
 		bool _proba_need_updating ;
+
+		// Routing weights. These are the result of a time convolution of the routing clues and weights
+		// recorded in _routing_clues.
+		//
+		std::map<SSLIdType,uint32_t> _friend_indices ;	// index for each friend to lookup in the routing matrix Not saved.
+		std::vector<SSLIdType> _reverse_friend_indices ;// SSLid corresponding to each friend index. Saved.
+
 };
 

@@ -210,7 +210,7 @@ bool setRawUFloat32(void *data,uint32_t size,uint32_t *offset,float f)
 	// 0.01% and most of the time less than 1e-05% The error is well distributed
 	// over numbers also.
 	//
-	uint32_t n = (uint32_t)( (1.0f/(1.0f+f) * (~(uint32_t)0))) ;
+	uint32_t n = (f < 1e-7)?(~(uint32_t)0): ((uint32_t)( (1.0f/(1.0f+f) * (~(uint32_t)0)))) ;
 
 	return setRawUInt32(data, size, offset, n);
 }

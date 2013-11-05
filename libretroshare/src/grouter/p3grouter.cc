@@ -30,44 +30,65 @@
 #include "p3grouter.h"
 #include "grouteritems.h"
 
+static const time_t RS_GROUTER_DEBUG_OUTPUT_PERIOD       =       20 ; // Output everything
 static const time_t RS_GROUTER_AUTOWASH_PERIOD           =       60 ; // Autowash every minute. Not a costly operation.
-static const time_t RS_GROUTER_PUBLISH_CAMPAIGN_PERIOD   =    10*60 ; // Check for key advertising every 10 minutes
-static const time_t RS_GROUTER_PUBLISH_KEY_TIME_INTERVAL = 24*60*60 ; // Advertise each key once a day at most.
+//static const time_t RS_GROUTER_PUBLISH_CAMPAIGN_PERIOD   =    10*60 ; // Check for key advertising every 10 minutes
+//static const time_t RS_GROUTER_PUBLISH_KEY_TIME_INTERVAL = 24*60*60 ; // Advertise each key once a day at most.
+static const time_t RS_GROUTER_PUBLISH_CAMPAIGN_PERIOD   =    1 *60 ; // Check for key advertising every 10 minutes
+static const time_t RS_GROUTER_PUBLISH_KEY_TIME_INTERVAL =    2 *60 ; // Advertise each key once a day at most.
 
 p3GRouter::p3GRouter(p3LinkMgr *lm)
 	: p3Service(RS_SERVICE_TYPE_GROUTER), p3Config(CONFIG_TYPE_GROUTER), mLinkMgr(lm), grMtx("GRouter")
 {
 	addSerialType(new RsGRouterSerialiser()) ;
+
+	// Debug stuff. Create a random key and register it.
+	      uint8_t random_hash_buff[20] ;
+	      RSRandom::random_bytes(random_hash_buff,20) ;
+	      GRouterKeyId key(random_hash_buff) ;
+	      static GRouterServiceId client_id = 0x0300ae15 ;
+	      static std::string description = "Test string for debug purpose" ;
+
+	      registerKey(key,client_id,description) ;
 }
 
 int p3GRouter::tick()
 {
 	static time_t last_autowash_time = 0 ;
 	static time_t last_publish_campaign_time = 0 ;
+	static time_t last_debug_output_time = 0 ;
 
 	time_t now = time(NULL) ;
 
 	if(now > last_autowash_time + RS_GROUTER_AUTOWASH_PERIOD)
 	{
+		// route pending objects
+		//
+		routeObjects() ;
+
 		last_autowash_time = now ;
 		autoWash() ;
 	}
-	// handle incoming items
+	// Handle incoming items
 	// 
 	handleIncoming() ;
 	
-	// route pending objects
-	//
-	routeObjects() ;
-
-	// advertise published keys
+	// Advertise published keys
 	//
 	if(now > last_publish_campaign_time + RS_GROUTER_PUBLISH_CAMPAIGN_PERIOD)
 	{
 		last_publish_campaign_time = now ;
 		publishKeys() ;
+		_routing_matrix.updateRoutingProbabilities() ;
 	}
 
+	// Debug dump everything
+	//
+	if(now > last_debug_output_time + RS_GROUTER_DEBUG_OUTPUT_PERIOD)
+	{
+		last_debug_output_time = now ;
+		debugDump() ;
+	}
 	return 0 ;
 }
 
@@ -114,17 +135,24 @@ void p3GRouter::publishKeys()
 		{
 			// publish this key
 
+			std::cerr << "Publishing this key: " << std::endl;
+			std::cerr << "   Key id          : " << it->first.toStdString() << std::endl;
+			std::cerr << "   Service id      : " << std::hex << info.service_id << std::dec << std::endl;
+			std::cerr << "   Description     : " << info.description_string << std::endl;
+
 			RsGRouterPublishKeyItem item ;
 			item.diffusion_id = RSRandom::random_u32() ;
 			item.published_key = it->first ;
 			item.service_id = info.service_id ;
-			item.randomized_distance = 0 ;
+			item.randomized_distance = drand48() ;
 			item.description_string = info.description_string ;
 
 			// get list of connected friends, and broadcast to all of them
 			//
 			for(std::list<std::string>::const_iterator it(connected_peers.begin());it!=connected_peers.end();++it)
 			{
+				std::cerr << "    sending to " << (*it) << std::endl; 
+
 				RsGRouterPublishKeyItem *itm = new RsGRouterPublishKeyItem(item) ;
 				itm->PeerId(*it) ;
 
@@ -132,6 +160,7 @@ void p3GRouter::publishKeys()
 
 				sendItem(itm) ;
 			}
+			info.last_published_time = now ;
 		}
 	}
 }
@@ -147,6 +176,11 @@ bool p3GRouter::registerKey(const GRouterKeyId& key,const GRouterServiceId& clie
 	info.last_published_time = 0 ; 	// means never published, se it will be re-published soon.
 
 	_owned_key_ids[key] = info ;
+
+	std::cerr << "Registered the following key: " << std::endl;
+	std::cerr << "   Key id      : " << key.toStdString() << std::endl;
+	std::cerr << "   Client id   : " << std::hex << client_id << std::dec << std::endl;
+	std::cerr << "   Description : " << description << std::endl;
 
 	return true ;
 }
@@ -250,5 +284,47 @@ bool p3GRouter::saveList(bool&,std::list<RsItem*>& items)
 	std::cerr << "(WW) " << __PRETTY_FUNCTION__ << ": not implemented." << std::endl;
 	return false ;
 }
+
+// Dump everything
+//
+void p3GRouter::debugDump()
+{
+	time_t now = time(NULL) ;
+
+	std::cerr << "Full dump of Global Router state: " << std::endl; 
+	std::cerr << "  Owned keys : " << std::endl;
+
+	for(std::map<GRouterKeyId, GRouterPublishedKeyInfo>::const_iterator it(_owned_key_ids.begin());it!=_owned_key_ids.end();++it)
+	{
+		std::cerr << "    Key id          : " << it->first.toStdString() << std::endl;
+		std::cerr << "      Service id    : " << std::hex << it->second.service_id << std::dec << std::endl;
+		std::cerr << "      Description   : " << it->second.description_string << std::endl;
+		std::cerr << "      Last published: " << now - it->second.last_published_time << " secs ago" << std::endl;
+	}
+
+	std::cerr << "  Registered services: " << std::endl;
+
+	for(std::map<GRouterServiceId,GRouterClientService *>::const_iterator it(_registered_services.begin() );it!=_registered_services.end();++it)
+		std::cerr << "    " << std::hex << it->first << "   " << std::dec << (void*)it->second << std::endl;
+
+	std::cerr << "  Key diffusion cache: " << std::endl;
+
+	for(std::map<GRouterKeyPropagationId,time_t>::const_iterator it(_key_diffusion_time_stamps.begin() );it!=_key_diffusion_time_stamps.end();++it)
+		std::cerr << "    " << std::hex << it->first << "   " << std::dec << now - it->second << " secs ago" << std::endl;
+
+	std::cerr << "  Key diffusion items: " << std::endl;
+	std::cerr << "    [Not shown yet]    " << std::endl;
+
+	std::cerr << "  Data items: " << std::endl;
+	std::cerr << "    [Not shown yet]    " << std::endl;
+
+	std::cerr << "  Routing matrix: " << std::endl;
+
+	_routing_matrix.debugDump() ;
+
+	std::cerr << "  Routing probabilities: " << std::endl;
+}
+
+
 
 
