@@ -6,13 +6,17 @@
  */
 
 #include <string>
+#include <inttypes.h>
 
-#define LIB_VERSION "0.5.5b"
+// These versioning parameters are in the header because plugin versioning requires it.
+// Please use the functions below, and don't refer directly to the #defines.
+
 #define SVN_REVISION "Revision $WCREV$"
 #define SVN_REVISION_NUMBER  $WCREV$
 
 namespace RsUtil {
 
+	uint32_t retroshareRevision();
 	std::string retroshareVersion();
 
 }

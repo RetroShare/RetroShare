@@ -1,2 +1,2 @@
 @echo off
-"D:\Programme\TortoiseSVN\bin\SubWCRev" . util\rsversion.in util\rsversion.h 
+"D:\Programme\TortoiseSVN\bin\SubWCRev" . util\rsguiversion.in util\rsguiversion.cpp

@@ -19,16 +19,16 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#include "rsguiversion.h"
+
 
 #define GUI_VERSION "0.5.5b"
-
 #define GUI_REVISION "Revision: $WCREV$"
 
+QString retroshareVersion() {
+	return QString(GUI_VERSION);
+}
 
-#include <QString>
-
-QString retroshareVersion();
-
-QString retroshareRevision();
-
-
+QString retroshareRevision() {
+	return QString(GUI_REVISION);
+}
