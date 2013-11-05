@@ -356,6 +356,7 @@ virtual void handle_event(uint32_t event_type, const std::string &elabel);
  * recogn processing.
  *
  */
+	bool recogn_schedule();
 	bool recogn_start();
 	bool recogn_handlerequest(uint32_t token);
 	bool recogn_process();

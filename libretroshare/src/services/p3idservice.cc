@@ -148,7 +148,6 @@ p3IdService::p3IdService(RsGeneralDataService *gds, RsNetworkExchangeService *ne
 
 	// Kick off Cache Testing, + Others.
 	RsTickEvent::schedule_in(GXSID_EVENT_PGPHASH, PGPHASH_PERIOD);
-	RsTickEvent::schedule_in(GXSID_EVENT_RECOGN, RECOGN_PERIOD);
 	RsTickEvent::schedule_in(GXSID_EVENT_REPUTATION, REPUTATION_PERIOD);
 	RsTickEvent::schedule_now(GXSID_EVENT_CACHEOWNIDS);
 
@@ -1232,6 +1231,7 @@ bool p3IdService::cache_process_recogntaginfo(const RsGxsIdGroupItem *item, std:
 		std::cerr << std::endl;
 #endif // DEBUG_RECOGN
 
+		recogn_schedule();
 	}
 
 	return true;
@@ -2054,8 +2054,6 @@ bool p3IdService::pgphash_start()
 	std::cerr << std::endl;
 #endif // DEBUG_IDS
 
-	getPgpIdList();
-
 	// ACTUALLY only need summary - but have written code for data.
 	// Also need to use opts.groupFlags to filter stuff properly to REALID's only.
 	// TODO
@@ -2089,7 +2087,7 @@ bool p3IdService::pgphash_handlerequest(uint32_t token)
 	// We Will do this later!
 
 	std::vector<RsGxsIdGroup> groups;
-	std::vector<RsGxsIdGroup> groupsToProcess;
+	bool groupsToProcess = false;
 	bool ok = getGroupData(token, groups);
 
 	if(ok)
@@ -2162,12 +2160,19 @@ bool p3IdService::pgphash_handlerequest(uint32_t token)
 
 			RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 			mGroupsToProcess.push_back(*vit);
+			groupsToProcess = true;
 		}
 	}
 	else
 	{
 		std::cerr << "p3IdService::pgphash_request() getGroupData ERROR";
 		std::cerr << std::endl;
+	}
+
+	if (groupsToProcess)
+	{
+		// update PgpIdList -> if there are groups to process.
+		getPgpIdList();
 	}
 
 	// Schedule Processing.
@@ -2431,6 +2436,37 @@ void calcPGPHash(const RsGxsId &id, const PGPFingerprintType &pgp, GxsIdPgpHash 
  * Info to be stored in GroupServiceString + Cache.
  **/
 
+bool p3IdService::recogn_schedule()
+{
+	std::cerr << "p3IdService::recogn_schedule()";
+	std::cerr << std::endl;
+
+	int32_t age = 0;
+	int32_t next_event = 0;
+
+	if (RsTickEvent::event_count(GXSID_EVENT_RECOGN) > 0)
+	{
+		std::cerr << "p3IdService::recogn_schedule() Skipping GXSIS_EVENT_RECOGN already scheduled";
+		std::cerr << std::endl;
+		return false;
+	}
+
+	if (RsTickEvent::prev_event_ago(GXSID_EVENT_RECOGN, age))
+	{
+		std::cerr << "p3IdService::recogn_schedule() previous event " << age << " secs ago";
+		std::cerr << std::endl;
+
+		next_event = RECOGN_PERIOD - age;
+		if (next_event < 0)
+		{
+			next_event = 0;
+		}
+	}
+
+	RsTickEvent::schedule_in(GXSID_EVENT_RECOGN, next_event);
+	return true;
+}
+
 
 bool p3IdService::recogn_start()
 {
@@ -2446,9 +2482,7 @@ bool p3IdService::recogn_start()
 		return false;
 	}
 
-	// SCHEDULE NEXT ONE.
-	RsTickEvent::schedule_in(GXSID_EVENT_RECOGN, RECOGN_PERIOD);
-
+	// NEXT EVENT is scheduled via recogn_schedule.
 
 #ifdef DEBUG_RECOGN
 	std::cerr << "p3IdService::recogn_start() making request";
@@ -2545,10 +2579,10 @@ bool p3IdService::recogn_process()
 	bool isDone = false;
 	{
 		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-		if (!mRecognGroupsToProcess.empty() && !mGroupsToProcess.empty())
+		if (!mRecognGroupsToProcess.empty())
 		{
 			item = mRecognGroupsToProcess.front();
-			mGroupsToProcess.pop_front();
+			mRecognGroupsToProcess.pop_front();
 
 #ifdef DEBUG_RECOGN
 			std::cerr << "p3IdService::recogn_process() Popped Group: " << item->meta.mGroupId;

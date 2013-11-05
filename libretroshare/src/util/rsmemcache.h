@@ -204,6 +204,7 @@ template<class Key, class Value> bool RsMemCache<Key, Value>::erase(const Key &k
 	// remove from lru.
 	mDataMap.erase(it);
         update_lrumap(key, old_ts, new_ts);
+	mDataCount--;
 
 	mStats_access++;
 	return true;
@@ -361,6 +362,12 @@ template<class Key, class Value> bool RsMemCache<Key, Value>::resize()
 		{
 			// ERROR.
 			std::cerr << "RsMemCache::resize() CONSISTENCY ERROR";
+			std::cerr << std::endl;
+			std::cerr << "\tmDataMap.size() = " << mDataMap.size();
+			std::cerr << std::endl;
+			std::cerr << "\tmLruMap.size() = " << mLruMap.size();
+			std::cerr << std::endl;
+			std::cerr << "\tmDataCount = " << mDataCount;
 			std::cerr << std::endl;
 		}
 	
