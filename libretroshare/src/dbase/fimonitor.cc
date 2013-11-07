@@ -58,6 +58,7 @@ FileIndexMonitor::FileIndexMonitor(CacheStrapper *cs, NotifyBase *cb_in,std::str
 
 {
 	updatePeriod = 15 * 60; // 15 minutes
+	reference_time = 0 ;
 }
 
 bool FileIndexMonitor::autoCheckEnabled() const
@@ -457,6 +458,31 @@ bool FileIndexMonitor::loadLocalCache(const RsCacheData &data)  /* called with s
 #endif
 			fi.root->row = 0;
 			fi.root->name = data.pid; // XXX Hack here - TODO
+
+			std::string fname_browsable = data.path + '/' + name ;
+			struct stat64 buf;
+
+#ifdef WINDOWS_SYS
+			std::wstring wfullname;
+			librs::util::ConvertUtf8ToUtf16(fname_browsable, wfullname);
+			if ( 0 == _wstati64(wfullname.c_str(), &buf))
+#else
+			if ( 0 == stat64(fname_browsable.c_str(), &buf))
+#endif
+			{
+				reference_time = buf.st_mtime ;
+#ifdef FIM_DEBUG
+				std::cerr << "Read new reference time of created file " << fname_browsable << ", to " << reference_time << std::endl;
+#endif
+			}
+			else
+			{
+				std::cerr << "(EE) Error. Cannot get the proper modification time for file " << fname_browsable << " errno=" << errno << std::endl;
+				reference_time = 0 ;
+			}
+#ifdef FIM_DEBUG
+			std::cerr << "Current reference time is now : " << reference_time << std::endl;
+#endif
 		}
 		else
 		{
@@ -464,10 +490,15 @@ bool FileIndexMonitor::loadLocalCache(const RsCacheData &data)  /* called with s
 			std::cerr << "FileIndexMonitor::loadCache() Failed!";
 			std::cerr << std::endl;
 #endif
+			reference_time = 0 ;
 		}
 
 		fi.updateMaxModTime() ;
 
+		// The index is re-saved. 
+		// - we might have new friends
+		// - the cache system removes old cache items so we need to re-create it.
+		//
 		locked_saveFileIndexes(false) ;
 	}
 #ifdef FIM_DEBUG
@@ -561,6 +592,9 @@ void 	FileIndexMonitor::updateCycle()
 {
 	time_t startstamp = time(NULL);
 
+#ifdef FIM_DEBUG
+	std::cerr << "Checking directory for new/modified files. Reference time is " << reference_time << std::endl;
+#endif
 	/* iterate through all out-of-date directories */
 	bool moretodo = true;
 	bool fiMods = false;
@@ -579,7 +613,8 @@ void 	FileIndexMonitor::updateCycle()
 		RsStackMutex mtx(fiMutex) ;
 		cache_is_new = useHashCache && hashCache.empty() ;
 	}
-			
+	struct stat64 buf;
+		
 	while(isRunning() && moretodo)
 	{
 		/* sleep a bit for each loop */
@@ -595,6 +630,7 @@ void 	FileIndexMonitor::updateCycle()
 /********************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
 		/* check if directories have been updated */
+
 		if (internal_setSharedDirectories()) /* reset start time */
 			startstamp = time(NULL);
 
@@ -689,8 +725,6 @@ void 	FileIndexMonitor::updateCycle()
 		 * files checked to see if they have changed. (rehashed)
 		 */
 
-		struct stat64 buf;
-
 		to_hash.push_back(DirContentToHash()) ;
 		to_hash.back().realpath = realpath ;
 		to_hash.back().dirpath = dirpath ;
@@ -760,7 +794,11 @@ void 	FileIndexMonitor::updateCycle()
 					else
 					{
 						/* check size / modtime are the same */
-						if ((fe.size != (fit->second)->size) || (fe.modtime != (fit->second)->modtime))
+						// if reference_time was not inited, we revert to the old method: we test the saved mod time for the file
+						// versus the measured mod time. If reference is inited (this is what should always happen) we compare the measured 
+						// mod time with the reference time.
+						//
+						if ((fe.size != (fit->second)->size) || (reference_time==0 && fe.modtime != (fit->second)->modtime) || fe.modtime > reference_time) //(fit->second)->modtime))
 						{
 #ifdef FIM_DEBUG
 							std::cerr << "File ModTime/Size changed:" << fname << std::endl;
@@ -845,7 +883,12 @@ void 	FileIndexMonitor::updateCycle()
 		}
 
 		if (fiMods)
-			locked_saveFileIndexes(true) ;
+		{
+			reference_time = locked_saveFileIndexes(true) ;
+#ifdef FIM_DEBUG
+			std::cerr << "Index saved. New reference time is " << reference_time << std::endl;
+#endif
+		}
 
 		fi.updateHashIndex() ;	// update hash map that is used to accelerate search.
 		fi.updateMaxModTime() ;	// Update modification times for proper display.
@@ -988,7 +1031,9 @@ void FileIndexMonitor::hashFiles(const std::vector<DirContentToHash>& to_hash)
 #endif
 
 			// Save the hashing result every 60 seconds, so has to save what is already hashed.
+#ifdef FIM_DEBUG
 			std::cerr << "size - last_save_size = " << hashed_size - last_save_size << ", max=" << MAX_SIZE_WITHOUT_SAVING << std::endl ;
+#endif
 
 			if(hashed_size > last_save_size + MAX_SIZE_WITHOUT_SAVING)
 			{
@@ -1017,7 +1062,7 @@ void FileIndexMonitor::hashFiles(const std::vector<DirContentToHash>& to_hash)
 }
 
 
-void FileIndexMonitor::locked_saveFileIndexes(bool update_cache)
+time_t FileIndexMonitor::locked_saveFileIndexes(bool update_cache)
 {
 	/* store to the cacheDirectory */
 
@@ -1086,6 +1131,7 @@ void FileIndexMonitor::locked_saveFileIndexes(bool update_cache)
 
 	int n=0 ;
 	time_t now = time(NULL) ;
+	time_t mod_time = 0 ;
 
 	for(std::map<std::set<std::string>, std::set<std::string> >::const_iterator it(peers_per_directory_combination.begin());
 			it!=peers_per_directory_combination.end();++it,++n)
@@ -1113,6 +1159,9 @@ void FileIndexMonitor::locked_saveFileIndexes(bool update_cache)
 		std::string hash ;
 		uint64_t size ;
 
+#ifdef FIM_DEBUG
+		std::cerr << "writing file " << fname_browsable << std::endl;
+#endif
 		fi.saveIndex(fname_browsable, hash, size,it->first);		// save only browsable files
 
 		if(size > 0)
@@ -1142,12 +1191,36 @@ void FileIndexMonitor::locked_saveFileIndexes(bool update_cache)
 			if(update_cache)
 				updateCache(data,it->second);
 		}
+
+		if(it->first.empty())
+		{
+			// Computes the reference time.
+			//
+			struct stat64 buf;
+
+#ifdef WINDOWS_SYS
+			std::wstring wfullname;
+			librs::util::ConvertUtf8ToUtf16(fname_browsable, wfullname);
+			if ( 0 == _wstati64(wfullname.c_str(), &buf))
+#else
+			if ( 0 == stat64(fname_browsable.c_str(), &buf))
+#endif
+			{
+				mod_time = buf.st_mtime ;
+			}
+			else
+			{
+				std::cerr << "(EE) Error. Cannot get the proper modification time for file " << fname_browsable << " errno=" << errno << std::endl;
+				mod_time = 0 ;
+			}
+		}
 	}
 
 #ifdef FIM_DEBUG
 	std::cerr << "FileIndexMonitor::updateCycle() called updateCache()";
 	std::cerr <<  std::endl;
 #endif
+	return mod_time ;
 }
 
 bool FileIndexMonitor::cachesAvailable(RsPeerId pid,std::map<CacheId, RsCacheData> &ids)

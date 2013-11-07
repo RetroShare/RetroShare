@@ -171,8 +171,10 @@ class FileIndexMonitor: public CacheSource, public RsThread
 	private:
 		/* the mutex should be locked before calling these 3. */
 
-		// saves file indexs and update the cache.
-		void locked_saveFileIndexes(bool update_cache) ;
+		// Saves file indexs and update the cache.  Returns the name of the main
+		// file index, which becomes the new reference file for mod times.
+		//
+		time_t locked_saveFileIndexes(bool update_cache) ;
 
 		// Finds the share flags associated with this file entry.
 		void locked_findShareFlagsAndParentGroups(FileEntry *fe,FileStorageFlags& shareflags,std::list<std::string>& parent_groups) const ;
@@ -208,6 +210,11 @@ class FileIndexMonitor: public CacheSource, public RsThread
 		bool useHashCache ;
 
 		std::map<RsPeerId,RsCacheData> _cache_items_per_peer ;	// stored the cache items to be sent to each peer.
+
+		// This file is the location of the current index file. When checking for new files, we compare the modification time
+		// of this file to the mod time of the files on the disk. This allows to now account for time-shift in the computer.
+		//
+		time_t reference_time ;	
 };
 
 
