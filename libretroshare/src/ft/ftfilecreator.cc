@@ -265,11 +265,13 @@ int ftFileCreator::locked_initializeFileAttrs()
 
 	if (!fd)
 	{
+#ifdef FILE_DEBUG
 		std::cerr << "ftFileCreator::initializeFileAttrs() Failed to open (r+b): ";
 		std::cerr << file_name << ", errno = " << errno << std::endl;
 
 		std::cerr << "ftFileCreator::initializeFileAttrs() opening w+b";
 		std::cerr << std::endl;
+#endif
 
 		/* try opening for write */
 		fd = RsDirUtil::rs_fopen(file_name.c_str(), "w+b");
