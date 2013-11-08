@@ -29,13 +29,7 @@
 
 #include "p3grouter.h"
 #include "grouteritems.h"
-
-static const time_t RS_GROUTER_DEBUG_OUTPUT_PERIOD       =       20 ; // Output everything
-static const time_t RS_GROUTER_AUTOWASH_PERIOD           =       60 ; // Autowash every minute. Not a costly operation.
-//static const time_t RS_GROUTER_PUBLISH_CAMPAIGN_PERIOD   =    10*60 ; // Check for key advertising every 10 minutes
-//static const time_t RS_GROUTER_PUBLISH_KEY_TIME_INTERVAL = 24*60*60 ; // Advertise each key once a day at most.
-static const time_t RS_GROUTER_PUBLISH_CAMPAIGN_PERIOD   =    1 *60 ; // Check for key advertising every 10 minutes
-static const time_t RS_GROUTER_PUBLISH_KEY_TIME_INTERVAL =    2 *60 ; // Advertise each key once a day at most.
+#include "groutertypes.h"
 
 p3GRouter::p3GRouter(p3LinkMgr *lm)
 	: p3Service(RS_SERVICE_TYPE_GROUTER), p3Config(CONFIG_TYPE_GROUTER), mLinkMgr(lm), grMtx("GRouter")
@@ -321,8 +315,6 @@ void p3GRouter::debugDump()
 	std::cerr << "  Routing matrix: " << std::endl;
 
 	_routing_matrix.debugDump() ;
-
-	std::cerr << "  Routing probabilities: " << std::endl;
 }
 
 

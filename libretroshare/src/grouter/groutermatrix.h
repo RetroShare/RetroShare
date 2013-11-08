@@ -49,11 +49,7 @@ class GRouterMatrix
 		// the computation accounts for the time at which the info was received and the
 		// weight of each routing hit record.
 		//
-		bool computeRoutingProbabilities(const GRouterKeyId& id, const std::vector<SSLIdType>& friends, std::vector<float>& probas) const ;
-
-		// Remove oldest entries.
-		//
-		bool autoWash() ;
+		bool computeRoutingProbabilities(const GRouterKeyId& id, const std::list<SSLIdType>& friends, std::map<SSLIdType,float>& probas) const ;
 
 		// Update routing probabilities for each key, accounting for all received events, but without
 		// activity information 
@@ -69,12 +65,18 @@ class GRouterMatrix
 		void debugDump() const ;
 
 	private:
+		// returns the friend id, possibly creating a new id.
+		//
 		uint32_t getFriendId(const SSLIdType& id) ;
+
+		// returns the friend id. If not exist, returns _reverse_friend_indices.size()
+		//
+		uint32_t getFriendId_const(const SSLIdType& id) const;
 
 		// List of events received and computed routing probabilities
 		//
 		std::map<GRouterKeyId, std::list<RoutingMatrixHitEntry> > _routing_clues ;
-		std::map<GRouterKeyId, std::vector<float> > _time_combined_hits ; // hit matrix after time-convolution filter
+		std::map<GRouterKeyId, std::vector<float> > 					 _time_combined_hits ; // hit matrix after time-convolution filter
 
 		// This is used to avoid re-computing probas when new events have been received.
 		//

@@ -23,6 +23,7 @@
  *
  */
 
+#include "groutertypes.h"
 #include "groutermatrix.h"
 
 GRouterMatrix::GRouterMatrix()
@@ -46,12 +47,43 @@ bool GRouterMatrix::addRoutingClue(	const GRouterKeyId& key_id,const GRouterServ
 	rc.time_stamp = now ;
 	rc.friend_id = fid ;
 
-	_routing_clues[key_id].push_front(rc) ;	// create it if necessary
+	std::list<RoutingMatrixHitEntry>& lst( _routing_clues[key_id] ) ;
+
+	// Prevent flooding. Happens in two scenarii:
+	//  1 - a user restarts RS very often => keys get republished for some reason
+	//  2 - a user intentionnaly floods a key 
+	//
+	if(!lst.empty() && lst.front().time_stamp + RS_GROUTER_MATRIX_MIN_TIME_BETWEEN_HITS > now)
+	{
+		std::cerr << "GRouterMatrix::addRoutingClue(): too clues for key " << key_id.toStdString() << " in a small interval of " << now - lst.front().time_stamp << " seconds. Flooding?" << std::endl;
+		return false ;
+	}
+
+	lst.push_front(rc) ;								// create it if necessary
+
+	// Remove older elements
+	//
+	uint32_t sz = lst.size() ; // O(n)!
+
+	for(uint32_t i=RS_GROUTER_MATRIX_MAX_HIT_ENTRIES;i<sz;++i)
+	{
+		lst.pop_back() ;
+		std::cerr << "Poped one entry" << std::endl;
+	}
+
 	_proba_need_updating = true ; 				// always, since we added new clues.
 
 	return true ;
 }
+uint32_t GRouterMatrix::getFriendId_const(const SSLIdType& source_friend) const
+{
+	std::map<SSLIdType,uint32_t>::const_iterator it = _friend_indices.find(source_friend) ;
 
+	if(it == _friend_indices.end())
+		return _reverse_friend_indices.size() ;
+	else
+		return it->second ;
+}
 uint32_t GRouterMatrix::getFriendId(const SSLIdType& source_friend)
 {
 	std::map<SSLIdType,uint32_t>::const_iterator it = _friend_indices.find(source_friend) ;
@@ -73,6 +105,7 @@ uint32_t GRouterMatrix::getFriendId(const SSLIdType& source_friend)
 void GRouterMatrix::debugDump() const
 {
 	std::cerr << "    Proba needs up: " << _proba_need_updating << std::endl;
+	std::cerr << "    Known keys:     " << _time_combined_hits.size() << std::endl;
 	std::cerr << "    Routing events: " << std::endl;
 	time_t now = time(NULL) ;
 
@@ -84,7 +117,7 @@ void GRouterMatrix::debugDump() const
 
 		std::cerr << std::endl;
 	}
-	std::cerr << "    Routing probabilities: " << std::endl;
+	std::cerr << "    Routing values: " << std::endl;
 
 	for(std::map<GRouterKeyId, std::vector<float> >::const_iterator it(_time_combined_hits.begin());it!=_time_combined_hits.end();++it)
 	{
@@ -96,7 +129,7 @@ void GRouterMatrix::debugDump() const
 	}
 }
 
-bool GRouterMatrix::computeRoutingProbabilities(const GRouterKeyId& id, const std::vector<SSLIdType>& friends, std::vector<float>& probas) const
+bool GRouterMatrix::computeRoutingProbabilities(const GRouterKeyId& key_id, const std::list<SSLIdType>& friends, std::map<SSLIdType,float>& probas) const
 {
 	// Routing probabilities are computed according to routing clues
 	//
@@ -107,6 +140,38 @@ bool GRouterMatrix::computeRoutingProbabilities(const GRouterKeyId& id, const st
 	//	Then for a given list of online friends, the weights are computed into probabilities, 
 	//	that always sum up to 1.
 	//
+	if(_proba_need_updating)
+		std::cerr << "GRouterMatrix::computeRoutingProbabilities(): matrix is not up to date. Not a real problem, but still..." << std::endl;
+
+	probas.clear() ;
+	float total = 0.0f ;
+
+	std::map<GRouterKeyId,std::vector<float> >::const_iterator it2 = _time_combined_hits.find(key_id) ;
+
+	if(it2 == _time_combined_hits.end())
+	{
+		std::cerr << "GRouterMatrix::computeRoutingProbabilities(): key id " << key_id.toStdString() << " does not exist!" << std::endl;
+		return  false ;
+	}
+	const std::vector<float>& w(it2->second) ;
+	
+	for(std::list<SSLIdType>::const_iterator it(friends.begin());it!=friends.end();++it)
+	{
+		uint32_t findex = getFriendId_const(*it) ;
+
+		if(findex >= w.size())
+			probas[*it] = 0.0f ;
+		else
+		{
+			probas[*it] = w[findex] ;
+			total += w[findex] ;
+		}
+	}
+
+	if(total > 0.0f)
+		for(std::map<SSLIdType,float>::iterator it(probas.begin());it!=probas.end();++it)
+			it->second /= total ;
+
 	return true ;
 }
 
