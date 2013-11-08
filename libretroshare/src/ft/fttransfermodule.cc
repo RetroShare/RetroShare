@@ -48,11 +48,11 @@
  *
  */
 
-const double 	FT_TM_MAX_PEER_RATE 		       = 10 * 1024 * 1024; /* 10MB/s */
+const double 	FT_TM_MAX_PEER_RATE 		       = 100 * 1024 * 1024; /* 100MB/s */
 const uint32_t FT_TM_MAX_RESETS  		       = 5;
 const uint32_t FT_TM_MINIMUM_CHUNK 		       = 1024; /* ie 1Kb / sec */
 const uint32_t FT_TM_RESTART_DOWNLOAD 	       = 20; /* 20 seconds */
-const uint32_t FT_TM_DOWNLOAD_TIMEOUT 	       = 20; /* 10 seconds */
+const uint32_t FT_TM_DOWNLOAD_TIMEOUT 	       = 10; /* 10 seconds */
 const uint32_t FT_TM_CRC_MAP_MAX_WAIT_PER_GIG = 20; /* 20 seconds per gigabyte */
 
 // const double FT_TM_MAX_INCREASE = 1.00;
@@ -898,8 +898,14 @@ bool ftTransferModule::locked_tickPeerTransfer(peerInfo &info)
 	std::cerr << "locked_tickPeerTransfer() actual rate (before): " << info.actualRate << ", lastTransfers=" << info.lastTransfers << std::endl ;
 #endif
 	/* update rate */
-	info.actualRate = info.actualRate * 0.75 + 0.25 * info.lastTransfers;
-	info.lastTransfers = 0;
+	std::cerr << mHash<< " - actual rate: " << info.actualRate << " lastTransfers=" << info.lastTransfers << ". AgeReq = " << ageReq << std::endl;
+
+	if(info.lastTransfers > 0 || ageReq > 2)
+	{
+		info.actualRate = info.actualRate * 0.75 + 0.25 * info.lastTransfers / (float)ageReq;
+		info.lastTransfers = 0;
+		info.lastTS = ts;
+	}
 
 	/****************
 	 * NOTE: If we continually increase the request rate thus: ...
@@ -970,8 +976,6 @@ bool ftTransferModule::locked_tickPeerTransfer(peerInfo &info)
 		std::cerr << std::endl;
 #endif
 	}
-
-	info.lastTS = ts;
 
 #ifdef FT_DEBUG
 	std::cerr << "locked_tickPeerTransfer() desired  next_req: " << next_req;

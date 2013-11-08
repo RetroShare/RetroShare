@@ -10,7 +10,7 @@
  ******/
 
 #define CHUNK_MAX_AGE           120
-#define MAX_FTCHUNKS_PER_PEER   5
+#define MAX_FTCHUNKS_PER_PEER    20
 
 /***********************************************************
 *

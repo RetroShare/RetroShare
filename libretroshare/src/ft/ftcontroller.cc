@@ -77,8 +77,8 @@ static const int32_t TIMOUT_CACHE_FILE_TRANSFER 	= 800 ; // time after which cac
 static const int32_t FT_FILECONTROL_QUEUE_ADD_END 			= 0 ;
 static const int32_t FT_FILECONTROL_QUEUE_ADD_AFTER_CACHE 	= 1 ;
 
-const uint32_t FT_CNTRL_STANDARD_RATE = 1024 * 1024;
-const uint32_t FT_CNTRL_SLOW_RATE     = 10   * 1024;
+const uint32_t FT_CNTRL_STANDARD_RATE = 10 * 1024 * 1024;
+const uint32_t FT_CNTRL_SLOW_RATE     = 100   * 1024;
 
 ftFileControl::ftFileControl()
 	:mTransfer(NULL), mCreator(NULL),
