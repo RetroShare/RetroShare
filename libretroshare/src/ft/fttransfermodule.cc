@@ -896,9 +896,9 @@ bool ftTransferModule::locked_tickPeerTransfer(peerInfo &info)
 	}
 #ifdef FT_DEBUG
 	std::cerr << "locked_tickPeerTransfer() actual rate (before): " << info.actualRate << ", lastTransfers=" << info.lastTransfers << std::endl ;
+	std::cerr << mHash<< " - actual rate: " << info.actualRate << " lastTransfers=" << info.lastTransfers << ". AgeReq = " << ageReq << std::endl;
 #endif
 	/* update rate */
-	std::cerr << mHash<< " - actual rate: " << info.actualRate << " lastTransfers=" << info.lastTransfers << ". AgeReq = " << ageReq << std::endl;
 
 	if(info.lastTransfers > 0 || ageReq > 2)
 	{
