@@ -104,6 +104,8 @@ class misc : public QObject
 
     static bool isPreviewable(QString extension);
 
+	 static QString fingerPrintStyleSplit(const QString& in) ;
+
     // return qBittorrent config path
     static QString qBittorrentPath();
 

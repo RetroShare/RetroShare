@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>635</width>
-    <height>549</height>
+    <height>643</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -110,7 +110,7 @@
              <item row="1" column="0">
               <widget class="QLabel" name="label_id">
                <property name="text">
-                <string>Peer ID</string>
+                <string>Location ID</string>
                </property>
               </widget>
              </item>
@@ -157,13 +157,48 @@
               </widget>
              </item>
              <item row="3" column="0">
+              <widget class="QLabel" name="pgpfingerprint_label">
+               <property name="text">
+                <string>PGP fingerprint</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1">
+              <widget class="RSTextBrowser" name="pgpfingerprint">
+               <property name="enabled">
+                <bool>true</bool>
+               </property>
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>20</height>
+                </size>
+               </property>
+               <property name="verticalScrollBarPolicy">
+                <enum>Qt::ScrollBarAlwaysOff</enum>
+               </property>
+               <property name="horizontalScrollBarPolicy">
+                <enum>Qt::ScrollBarAlwaysOff</enum>
+               </property>
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0">
               <widget class="QLabel" name="crypto_label">
                <property name="text">
                 <string>Encryption</string>
                </property>
               </widget>
              </item>
-             <item row="3" column="1">
+             <item row="4" column="1">
               <widget class="QLineEdit" name="crypto_info"/>
              </item>
             </layout>

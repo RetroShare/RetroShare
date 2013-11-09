@@ -42,6 +42,7 @@
 #include "gui/MainWindow.h"
 #include "mainpage.h"
 #include "util/DateTime.h"
+#include "util/misc.h"
 
 static QMap<std::string, ConfCertDialog*> instances;
 
@@ -185,6 +186,7 @@ void ConfCertDialog::load()
     link.createPerson(detail.id);
 
     ui.rsid->setText(link.toHtml());
+    ui.pgpfingerprint->setText(misc::fingerPrintStyleSplit(QString::fromStdString(detail.fpr)));
     ui.rsid->setToolTip(link.title());
 
     if (!detail.isOnlyGPGdetail) {
@@ -242,11 +244,17 @@ void ConfCertDialog::load()
         ui.tabWidget->show();
         ui.rsid->hide();
         ui.label_rsid->hide();
+        ui.pgpfingerprint->show();
+        ui.pgpfingerprint_label->show();
     } else {
         ui.avatar->setId(mId, true);
 
         ui.rsid->show();
+        ui.peerid->hide();
+        ui.label_id->hide();
         ui.label_rsid->show();
+        ui.pgpfingerprint->show();
+        ui.pgpfingerprint_label->show();
         ui.loc->hide();
         ui.label_loc->hide();
         ui.statusline->hide();

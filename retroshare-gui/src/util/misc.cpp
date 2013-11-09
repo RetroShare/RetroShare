@@ -47,6 +47,20 @@ QString misc::friendlyUnit(float val)
     return  QString(QByteArray::number(val, 'f', 1)) + tr(" TB", "terabytes (1024 gigabytes)");
 }
 
+QString misc::fingerPrintStyleSplit(const QString& in)
+{
+	QString rest = in ;
+	QString res ;
+
+	if(in.isNull())
+		return in ;
+
+	for(int i=0;i<in.length();i+=4)
+		res += rest.mid(i,4)+' ' ;
+
+	return res.left(res.length()-1) ;
+}
+
 bool misc::isPreviewable(QString extension)
 {
     extension = extension.toUpper();
