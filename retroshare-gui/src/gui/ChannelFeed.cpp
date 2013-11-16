@@ -310,13 +310,13 @@ void ChannelFeed::chooseDestinationDirectory()
 	if (!rsChannels->getChannelInfo(mChannelId, ci)) 
 		return;
 
-	QString dirname = QFileDialog::getExistingDirectory(NULL,tr("Select channel destination directory"),QString::fromStdString(ci.destination_directory),QFileDialog::ShowDirsOnly) ;
+	QString dirname = QFileDialog::getExistingDirectory(NULL,tr("Select channel destination directory"),QString::fromUtf8(ci.destination_directory.c_str()),QFileDialog::ShowDirsOnly) ;
 
 	if(dirname.isNull())
 		return ;
 
 	std::cerr << "Setting new directory " << dirname.toStdString() << " to channel " << mChannelId << std::endl;
-	rsChannels->channelSetDestinationDirectory(mChannelId,dirname.toStdString()) ;
+	rsChannels->channelSetDestinationDirectory(mChannelId, dirname.toUtf8().constData()) ;
 }
 void ChannelFeed::createChannel()
 {

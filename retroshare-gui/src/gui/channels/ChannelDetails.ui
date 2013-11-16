@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>455</width>
-    <height>408</height>
+    <height>417</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -46,7 +46,11 @@
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QLineEdit" name="nameline"/>
+           <widget class="QLineEdit" name="nameline">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
           </item>
           <item row="1" column="0">
            <widget class="QLabel" name="label_10">
@@ -84,7 +88,11 @@
            </widget>
           </item>
           <item row="3" column="1">
-           <widget class="QLineEdit" name="IDline"/>
+           <widget class="QLineEdit" name="IDline">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
           </item>
           <item row="5" column="0" colspan="2">
            <widget class="QGroupBox" name="groupBox">
@@ -93,7 +101,11 @@
             </property>
             <layout class="QGridLayout">
              <item row="0" column="0">
-              <widget class="QTextEdit" name="DescriptiontextEdit"/>
+              <widget class="QTextEdit" name="DescriptiontextEdit">
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
+              </widget>
              </item>
              <item row="1" column="0">
               <widget class="QGroupBox" name="groupBox_3">
@@ -121,6 +133,20 @@
             </layout>
            </widget>
           </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string>Destination directory</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QLineEdit" name="destinationDirectoryLineEdit">
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
@@ -141,6 +167,18 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>stabWidget</tabstop>
+  <tabstop>nameline</tabstop>
+  <tabstop>popline</tabstop>
+  <tabstop>postline</tabstop>
+  <tabstop>IDline</tabstop>
+  <tabstop>destinationDirectoryLineEdit</tabstop>
+  <tabstop>DescriptiontextEdit</tabstop>
+  <tabstop>typePrivate</tabstop>
+  <tabstop>typeEncrypted</tabstop>
+  <tabstop>buttonBox</tabstop>
+ </tabstops>
  <resources>
   <include location="../images.qrc"/>
  </resources>

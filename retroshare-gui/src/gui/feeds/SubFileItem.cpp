@@ -31,6 +31,7 @@
 #include "util/misc.h"
 #include "gui/RetroShareLink.h"
 
+#include <retroshare/rschannels.h>
 
 /****
  * #define DEBUG_ITEM 1
@@ -599,6 +600,14 @@ void SubFileItem::download()
 
 	std::list<std::string> sources ;
 
+	std::string destination;
+	if (!mChannelId.empty() && mType == SFI_TYPE_CHANNEL) {
+		ChannelInfo ci;
+		if (rsChannels->getChannelInfo(mChannelId, ci)) {
+			destination = ci.destination_directory;
+		}
+	}
+
 	// Add possible direct sources.
 	//
 	FileInfo finfo ;
@@ -614,7 +623,7 @@ void SubFileItem::download()
 	if (mSrcId != "")
 		sources.push_back(mSrcId);
 	
-	rsFiles->FileRequest(mFileName, mFileHash, mFileSize, "", RS_FILE_REQ_ANONYMOUS_ROUTING, sources);
+	rsFiles->FileRequest(mFileName, mFileHash, mFileSize, destination, RS_FILE_REQ_ANONYMOUS_ROUTING, sources);
 
 	downloadButton->setEnabled(false);
 

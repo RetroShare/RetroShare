@@ -43,12 +43,6 @@ ChannelDetails::ChannelDetails(QWidget *parent)
 
   connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(close()));
 
-  ui.nameline ->setReadOnly(true);
-  ui.popline ->setReadOnly(true);
-  ui.postline ->setReadOnly(true);
-  ui.IDline ->setReadOnly(true);
-  ui.DescriptiontextEdit ->setReadOnly(true);
-  
   ui.typeEncrypted->setEnabled(false);
   ui.typePrivate->setEnabled(false);
 }
@@ -114,4 +108,7 @@ void ChannelDetails::loadChannel()
 		ui.typeEncrypted->setChecked(true);
         ui.typePrivate->setChecked(false);
 	}
+
+	// Set destination directory
+	ui.destinationDirectoryLineEdit->setText(QString::fromUtf8(ci.destination_directory.c_str()));
 }
