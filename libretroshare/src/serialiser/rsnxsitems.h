@@ -100,7 +100,8 @@ public:
     virtual std::ostream &print(std::ostream &out, uint16_t indent);
 
     uint8_t flag; // advises whether to use sync hash
-    uint32_t syncAge; // how far back to sync data
+    uint32_t createdSince; // how far back to sync data
+    uint32_t updateTS; // time of last group update
     std::string syncHash; // use to determine if changes that have occured since last hash
 
 
@@ -146,6 +147,9 @@ public:
 
     uint16_t transactFlag;
     uint32_t nItems;
+    uint32_t updateTS;
+
+    // not serialised
     uint32_t timestamp;
 };
 
@@ -235,7 +239,8 @@ public:
 
     std::string grpId;
     uint8_t flag;
-    uint32_t syncAge;
+    uint32_t createdSince;
+    uint32_t updateTS; // time of last update
     std::string syncHash;
 };
 

@@ -388,7 +388,8 @@ HEADERS +=	serialiser/rsbaseitems.h \
 			serialiser/rsbanlistitems.h \
 			serialiser/rsbwctrlitems.h \
 			serialiser/rsgxsrecognitems.h \
-			serialiser/rstunnelitems.h
+                        serialiser/rstunnelitems.h \
+                        serialiser/rsgxsupdateitems.h
 
 HEADERS +=	services/p3channels.h \
 			services/p3chatservice.h \
@@ -532,7 +533,8 @@ SOURCES +=	serialiser/rsbaseitems.cc \
 			serialiser/rsbanlistitems.cc \
 			serialiser/rsbwctrlitems.cc \
 			serialiser/rsgxsrecognitems.cc \
-			serialiser/rstunnelitems.cc
+                        serialiser/rstunnelitems.cc \
+                        serialiser/rsgxsupdateitems.cc
 
 SOURCES +=	services/p3channels.cc \
 			services/p3chatservice.cc \

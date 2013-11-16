@@ -24,15 +24,11 @@
  */
 
 #include "rsgxsupdateitems.h"
+#include "rsbaseserial.h"
 
 
 
 
-RsGxsGrpUpdateItem::RsGxsGrpUpdateItem() {
-}
-
-RsGxsGrpUpdateItem::~RsGxsGrpUpdateItem() {
-}
 
 void RsGxsGrpUpdateItem::clear()
 {
@@ -45,12 +41,7 @@ std::ostream& RsGxsGrpUpdateItem::print(std::ostream& out, uint16_t indent)
 
 }
 
-RsGxsMsgUpdateItem::RsGxsMsgUpdateItem()
-{
-}
 
-RsGxsMsgUpdateItem::~RsGxsMsgUpdateItem() {
-}
 
 void RsGxsMsgUpdateItem::clear()
 {
@@ -66,12 +57,20 @@ uint32_t RsGxsUpdateSerialiser::size(RsItem* item)
 {
 	RsGxsMsgUpdateItem* mui = NULL;
 	RsGxsGrpUpdateItem* gui = NULL;
+        RsGxsServerGrpUpdateItem* gsui = NULL;
+        RsGxsServerMsgUpdateItem* msui = NULL;
 
     if((mui = dynamic_cast<RsGxsMsgUpdateItem*>(item))  != NULL)
     {
         return sizeGxsMsgUpdate(mui);
     }else if(( gui = dynamic_cast<RsGxsGrpUpdateItem*>(item)) != NULL){
         return sizeGxsGrpUpdate(gui);
+    }else if((gsui = dynamic_cast<RsGxsServerGrpUpdateItem*>(item)) != NULL)
+    {
+        return sizeGxsServerGrpUpdate(gsui);
+    }else if((msui = dynamic_cast<RsGxsServerMsgUpdateItem*>(item)) != NULL)
+    {
+        return sizeGxsServerMsgUpdate(msui);
     }else
     {
 #ifdef RSSERIAL_DEBUG
@@ -85,19 +84,41 @@ uint32_t RsGxsUpdateSerialiser::size(RsItem* item)
 bool RsGxsUpdateSerialiser::serialise(RsItem* item, void* data,
 		uint32_t* size)
 {
+    RsGxsMsgUpdateItem* mui;
+    RsGxsGrpUpdateItem* gui;
+    RsGxsServerGrpUpdateItem* gsui;
+    RsGxsServerMsgUpdateItem* msui;
+
+    if((mui = dynamic_cast<RsGxsMsgUpdateItem*>(item)) != NULL)
+        return serialiseGxsMsgUpdate(mui, data, size);
+    else if((gui = dynamic_cast<RsGxsGrpUpdateItem*>(item)) != NULL)
+        return serialiseGxsGrpUpdate(gui, data, size);
+    else if((msui = dynamic_cast<RsGxsServerMsgUpdateItem*>(item)) != NULL)
+        return serialiseGxsServerMsgUpdate(msui, data, size);
+    else if((gsui = dynamic_cast<RsGxsServerGrpUpdateItem*>(item)) != NULL)
+        return serialiseGxsServerGrpUpdate(gsui, data, size);
+    else
+    {
+#ifdef RSSERIAL_DEBUG
+    std::cerr << "RsGxsUpdateSerialiser::serialise() item does not caste to known type"
+              << std::endl;
+#endif
+
+    return false;
+    }
 }
 
 RsItem* RsGxsUpdateSerialiser::deserialise(void* data, uint32_t* size)
 {
 
 #ifdef RSSERIAL_DEBUG
-	std::cerr << "RsNxsSerialiser::deserialise()" << std::endl;
+        std::cerr << "RsGxsUpdateSerialiser::deserialise()" << std::endl;
 #endif
 	/* get the type and size */
 	uint32_t rstype = getRsItemId(data);
 
 	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-			(SERVICE_TYPE != getRsItemService(rstype)))
+                        (SERVICE_TYPE != getRsItemService(rstype)))
 	{
 			return NULL; /* wrong type */
 	}
@@ -109,6 +130,10 @@ RsItem* RsGxsUpdateSerialiser::deserialise(void* data, uint32_t* size)
 		return deserialGxsMsgUpdate(data, size);
 	case RS_PKT_SUBTYPE_GXS_GRP_UPDATE:
 		return deserialGxsGrpUpddate(data, size);
+        case RS_PKT_SUBTYPE_GXS_SERVER_GRP_UPDATE:
+                return deserialGxsServerGrpUpddate(data, size);
+        case RS_PKT_SUBTYPE_GXS_SERVER_MSG_UPDATE:
+                return deserialGxsServerMsgUpdate(data, size);
 	default:
 		{
 #ifdef RSSERIAL_DEBUG
@@ -127,6 +152,13 @@ uint32_t RsGxsUpdateSerialiser::sizeGxsGrpUpdate(RsGxsGrpUpdateItem* item)
 	s += GetTlvStringSize(item->peerId);
 	s += 4;
 	return s;
+}
+
+uint32_t RsGxsUpdateSerialiser::sizeGxsServerGrpUpdate(RsGxsServerGrpUpdateItem* item)
+{
+        uint32_t s = 8; // header size
+        s += 4; // time stamp
+        return s;
 }
 
 bool RsGxsUpdateSerialiser::serialiseGxsGrpUpdate(RsGxsGrpUpdateItem* item,
@@ -155,7 +187,7 @@ bool RsGxsUpdateSerialiser::serialiseGxsGrpUpdate(RsGxsGrpUpdateItem* item,
     /* skip the header */
     offset += 8;
 
-    /* RsNxsSyncm */
+    /* RsGxsGrpUpdateItem */
 
 
     ok &= SetTlvString(data, *size, &offset, TLV_TYPE_STR_PEERID, item->peerId);
@@ -178,10 +210,182 @@ bool RsGxsUpdateSerialiser::serialiseGxsGrpUpdate(RsGxsGrpUpdateItem* item,
     return ok;
 }
 
+bool RsGxsUpdateSerialiser::serialiseGxsServerGrpUpdate(RsGxsServerGrpUpdateItem* item,
+                void* data, uint32_t* size)
+{
+#ifdef RSSERIAL_DEBUG
+    std::cerr << "RsGxsUpdateSerialiser::serialiseGxsServerGrpUpdate()" << std::endl;
+#endif
+
+    uint32_t tlvsize = sizeGxsServerGrpUpdate(item);
+    uint32_t offset = 0;
+
+    if(*size < tlvsize){
+#ifdef RSSERIAL_DEBUG
+        std::cerr << "RsGxsUpdateSerialiser::serialiseGxsServerGrpUpdate() size do not match" << std::endl;
+#endif
+        return false;
+    }
+
+    *size = tlvsize;
+
+    bool ok = true;
+
+    ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
+
+    /* skip the header */
+    offset += 8;
+
+    /* RsGxsServerGrpUpdateItem */
+
+    ok &= setRawUInt32(data, *size, &offset, item->grpUpdateTS);
+
+    if(offset != tlvsize){
+#ifdef RSSERIAL_DEBUG
+        std::cerr << "RsGxsUpdateSerialiser::serialiseGxsServerGrpUpdate() FAIL Size Error! " << std::endl;
+#endif
+        ok = false;
+    }
+
+#ifdef RSSERIAL_DEBUG
+    if (!ok)
+    {
+        std::cerr << "RsGxsUpdateSerialiser::serialiseGxsServerGrpUpdate() NOK" << std::endl;
+    }
+#endif
+
+    return ok;
+}
+
 RsGxsGrpUpdateItem* RsGxsUpdateSerialiser::deserialGxsGrpUpddate(void* data,
 		uint32_t* size)
 {
+#ifdef RSSERIAL_DEBUG
+    std::cerr << "RsGxsUpdateSerialiser::deserialGxsServerGrpUpdate()" << std::endl;
+#endif
+    /* get the type and size */
+    uint32_t rstype = getRsItemId(data);
+    uint32_t rssize = getRsItemSize(data);
 
+    uint32_t offset = 0;
+
+
+    if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
+            (SERVICE_TYPE != getRsItemService(rstype)) ||
+            (RS_PKT_SUBTYPE_GXS_GRP_UPDATE != getRsItemSubType(rstype)))
+    {
+#ifdef RSSERIAL_DEBUG
+            std::cerr << "RsGxsUpdateSerialiser::deserialGxsGrpUpdate() FAIL wrong type" << std::endl;
+#endif
+            return NULL; /* wrong type */
+    }
+
+    if (*size < rssize)    /* check size */
+    {
+#ifdef RSSERIAL_DEBUG
+            std::cerr << "RsGxsUpdateSerialiser::deserialGxsGrpUpdate() FAIL wrong size" << std::endl;
+#endif
+            return NULL; /* not enough data */
+    }
+
+    /* set the packet length */
+    *size = rssize;
+
+    bool ok = true;
+
+    RsGxsGrpUpdateItem* item = new RsGxsGrpUpdateItem(getRsItemService(rstype));
+
+    /* skip the header */
+    offset += 8;
+
+    ok &= getRawUInt32(data, *size, &offset, &(item->grpUpdateTS));
+    ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_PEERID, item->peerId);
+
+    if (offset != rssize)
+    {
+#ifdef RSSERIAL_DEBUG
+            std::cerr << "RsGxsUpdateSerialiser::deserialGxxGrpUpdate() FAIL size mismatch" << std::endl;
+#endif
+            /* error */
+            delete item;
+            return NULL;
+    }
+
+    if (!ok)
+    {
+#ifdef RSSERIAL_DEBUG
+            std::cerr << "RsGxsUpdateSerialiser::deserialGxsGrpUpdate() NOK" << std::endl;
+#endif
+            delete item;
+            return NULL;
+    }
+
+    return item;
+}
+
+RsGxsServerGrpUpdateItem* RsGxsUpdateSerialiser::deserialGxsServerGrpUpddate(void* data,
+                uint32_t* size)
+{
+#ifdef RSSERIAL_DEBUG
+    std::cerr << "RsGxsUpdateSerialiser::deserialGxsServerGrpUpdate()" << std::endl;
+#endif
+    /* get the type and size */
+    uint32_t rstype = getRsItemId(data);
+    uint32_t rssize = getRsItemSize(data);
+
+    uint32_t offset = 0;
+
+
+    if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
+            (SERVICE_TYPE != getRsItemService(rstype)) ||
+            (RS_PKT_SUBTYPE_GXS_SERVER_GRP_UPDATE != getRsItemSubType(rstype)))
+    {
+#ifdef RSSERIAL_DEBUG
+            std::cerr << "RsGxsUpdateSerialiser::deserialGxsServerGrpUpdate() FAIL wrong type" << std::endl;
+#endif
+            return NULL; /* wrong type */
+    }
+
+    if (*size < rssize)    /* check size */
+    {
+#ifdef RSSERIAL_DEBUG
+            std::cerr << "RsGxsUpdateSerialiser::deserialGxsServerGrpUpdate() FAIL wrong size" << std::endl;
+#endif
+            return NULL; /* not enough data */
+    }
+
+    /* set the packet length */
+    *size = rssize;
+
+    bool ok = true;
+
+    RsGxsServerGrpUpdateItem* item = new RsGxsServerGrpUpdateItem(getRsItemService(rstype));
+
+    /* skip the header */
+    offset += 8;
+
+    ok &= getRawUInt32(data, *size, &offset, &(item->grpUpdateTS));
+
+    if (offset != rssize)
+    {
+#ifdef RSSERIAL_DEBUG
+            std::cerr << "RsGxsUpdateSerialiser::deserialGxsServerGrpUpdate() FAIL size mismatch" << std::endl;
+#endif
+            /* error */
+            delete item;
+            return NULL;
+    }
+
+    if (!ok)
+    {
+#ifdef RSSERIAL_DEBUG
+            std::cerr << "RsGxsUpdateSerialiser::deserialGxsServerGrpUpdate() NOK" << std::endl;
+#endif
+            delete item;
+            return NULL;
+    }
+
+    return item;
 }
 
 uint32_t RsGxsUpdateSerialiser::sizeGxsMsgUpdate(RsGxsMsgUpdateItem* item)
@@ -201,6 +405,15 @@ uint32_t RsGxsUpdateSerialiser::sizeGxsMsgUpdate(RsGxsMsgUpdateItem* item)
         s += 4; // number of map items
 
 	return s;
+}
+
+uint32_t RsGxsUpdateSerialiser::sizeGxsServerMsgUpdate(RsGxsServerMsgUpdateItem* item)
+{
+        uint32_t s = 8; // header size
+        s += GetTlvStringSize(item->grpId);
+        s += 4; // grp TS
+
+        return s;
 }
 
 bool RsGxsUpdateSerialiser::serialiseGxsMsgUpdate(RsGxsMsgUpdateItem* item,
@@ -229,7 +442,7 @@ bool RsGxsUpdateSerialiser::serialiseGxsMsgUpdate(RsGxsMsgUpdateItem* item,
     /* skip the header */
     offset += 8;
 
-    /* RsNxsSyncm */
+    /* RsGxsMsgUpdateItem */
 
 
     ok &= SetTlvString(data, *size, &offset, TLV_TYPE_STR_PEERID, item->peerId);
@@ -263,6 +476,55 @@ bool RsGxsUpdateSerialiser::serialiseGxsMsgUpdate(RsGxsMsgUpdateItem* item,
     return ok;
 }
 
+bool RsGxsUpdateSerialiser::serialiseGxsServerMsgUpdate(RsGxsServerMsgUpdateItem* item,
+                void* data, uint32_t* size)
+{
+#ifdef RSSERIAL_DEBUG
+    std::cerr << "RsGxsUpdateSerialiser::serialiseGxsServerMsgUpdate()" << std::endl;
+#endif
+
+    uint32_t tlvsize = sizeGxsServerMsgUpdate(item);
+    uint32_t offset = 0;
+
+    if(*size < tlvsize){
+#ifdef RSSERIAL_DEBUG
+        std::cerr << "RsGxsUpdateSerialiser::serialiseGxsServerMsgUpdate() size do not match" << std::endl;
+#endif
+        return false;
+    }
+
+    *size = tlvsize;
+
+    bool ok = true;
+
+    ok &= setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize);
+
+    /* skip the header */
+    offset += 8;
+
+    /* RsNxsSyncm */
+
+
+    ok &= SetTlvString(data, *size, &offset, TLV_TYPE_STR_GROUPID, item->grpId);
+    ok &= setRawUInt32(data, *size, &offset, item->msgUpdateTS);
+
+    if(offset != tlvsize){
+#ifdef RSSERIAL_DEBUG
+        std::cerr << "RsGxsUpdateSerialiser::serialiseGxsServerMsgUpdate() FAIL Size Error! " << std::endl;
+#endif
+        ok = false;
+    }
+
+#ifdef RSSERIAL_DEBUG
+    if (!ok)
+    {
+        std::cerr << "RsGxsUpdateSerialiser::serialiseGxsServerMsgUpdate() NOK" << std::endl;
+    }
+#endif
+
+    return ok;
+}
+
 RsGxsMsgUpdateItem* RsGxsUpdateSerialiser::deserialGxsMsgUpdate(void* data,
 		uint32_t* size)
 {
@@ -278,7 +540,7 @@ RsGxsMsgUpdateItem* RsGxsUpdateSerialiser::deserialGxsMsgUpdate(void* data,
 
     if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
             (SERVICE_TYPE != getRsItemService(rstype)) ||
-            (RS_PKT_SUBTYPE_NXS_SYNC_MSG != getRsItemSubType(rstype)))
+            (RS_PKT_SUBTYPE_GXS_MSG_UPDATE != getRsItemSubType(rstype)))
     {
 #ifdef RSSERIAL_DEBUG
             std::cerr << "RsGxsUpdateSerialiser::deserialGxsMsgUpdate() FAIL wrong type" << std::endl;
@@ -304,10 +566,10 @@ RsGxsMsgUpdateItem* RsGxsUpdateSerialiser::deserialGxsMsgUpdate(void* data,
     /* skip the header */
     offset += 8;
 
-    ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_HASH_SHA1, item->peerId);
+    ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_PEERID, item->peerId);
     uint32_t numUpdateItems;
     ok &= getRawUInt32(data, *size, &offset, &(numUpdateItems));
-    std::map<std::string, uint32_t>& msgUpdateItem = item->grpUpdateTS;
+    std::map<std::string, uint32_t>& msgUpdateItem = item->msgUpdateTS;
     std::string grpId;
     uint32_t updateTS;
     for(uint32_t i; i < numUpdateItems; i++)
@@ -346,3 +608,70 @@ RsGxsMsgUpdateItem* RsGxsUpdateSerialiser::deserialGxsMsgUpdate(void* data,
 
     return item;
 }
+
+RsGxsServerMsgUpdateItem* RsGxsUpdateSerialiser::deserialGxsServerMsgUpdate(void* data,
+                uint32_t* size)
+{
+#ifdef RSSERIAL_DEBUG
+    std::cerr << "RsGxsUpdateSerialiser::deserialGxsServerMsgUpdate()" << std::endl;
+#endif
+    /* get the type and size */
+    uint32_t rstype = getRsItemId(data);
+    uint32_t rssize = getRsItemSize(data);
+
+    uint32_t offset = 0;
+
+
+    if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
+            (SERVICE_TYPE != getRsItemService(rstype)) ||
+            (RS_PKT_SUBTYPE_GXS_SERVER_MSG_UPDATE != getRsItemSubType(rstype)))
+    {
+#ifdef RSSERIAL_DEBUG
+            std::cerr << "RsGxsUpdateSerialiser::deserialGxsServerMsgUpdate() FAIL wrong type" << std::endl;
+#endif
+            return NULL; /* wrong type */
+    }
+
+    if (*size < rssize)    /* check size */
+    {
+#ifdef RSSERIAL_DEBUG
+            std::cerr << "RsGxsUpdateSerialiser::deserialGxsServerMsgUpdate() FAIL wrong size" << std::endl;
+#endif
+            return NULL; /* not enough data */
+    }
+
+    /* set the packet length */
+    *size = rssize;
+
+    bool ok = true;
+
+    RsGxsServerMsgUpdateItem* item = new RsGxsServerMsgUpdateItem(getRsItemService(rstype));
+
+    /* skip the header */
+    offset += 8;
+
+    ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_GROUPID, item->grpId);
+    ok &= getRawUInt32(data, *size, &offset, &(item->msgUpdateTS));
+
+    if (offset != rssize)
+    {
+#ifdef RSSERIAL_DEBUG
+            std::cerr << "RsGxsUpdateSerialiser::deserialGxsServerMsgUpdate() FAIL size mismatch" << std::endl;
+#endif
+            /* error */
+            delete item;
+            return NULL;
+    }
+
+    if (!ok)
+    {
+#ifdef RSSERIAL_DEBUG
+            std::cerr << "RsGxsUpdateSerialiser::deserialGxsServerMsgUpdate() NOK" << std::endl;
+#endif
+            delete item;
+            return NULL;
+    }
+
+    return item;
+}
+

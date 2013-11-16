@@ -34,6 +34,7 @@
 #include "rsnxsobserver.h"
 #include "pqi/p3linkmgr.h"
 #include "serialiser/rsnxsitems.h"
+#include "serialiser/rsgxsupdateitems.h"
 #include "rsgxsnetutils.h"
 #include "pqi/p3cfgmgr.h"
 #include "rsgixs.h"
@@ -323,6 +324,8 @@ private:
     bool locked_canReceive(const RsGxsGrpMetaData * const grpMeta, const std::string& peerId);
 
     void processExplicitGroupRequests();
+    
+    void locked_doMsgUpdateWork(const RsNxsTransac* nxsTrans, const std::string& grpId);
 
 private:
 
@@ -427,6 +430,23 @@ private:
     std::vector<GrpCircleVetting*> mPendingCircleVets;
 
     std::map<std::string, std::list<RsGxsGroupId> > mExplicitRequest;
+
+    // nxs sync optimisation
+    // can pull dynamically the latest timestamp for each message
+
+public:
+
+    typedef std::map<std::string, RsGxsMsgUpdateItem*> ClientMsgMap;
+    typedef std::map<std::string, RsGxsServerMsgUpdateItem*> ServerMsgMap;
+    typedef std::map<std::string, RsGxsGrpUpdateItem*> ClientGrpMap;
+
+private:
+
+    ClientMsgMap mClientMsgUpdateMap;
+    ServerMsgMap mServerMsgUpdateMap;
+    ClientGrpMap mClientGrpUpdateMap;
+
+    RsGxsServerGrpUpdateItem* mGrpServerUpdateItem;
 };
 
 #endif // RSGXSNETSERVICE_H

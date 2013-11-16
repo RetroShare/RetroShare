@@ -37,13 +37,17 @@
 #include "gxs/rsgxsdata.h"
 
 
-const uint8_t RS_PKT_SUBTYPE_GXS_GRP_UPDATE      = 0x0001;
-const uint8_t RS_PKT_SUBTYPE_GXS_MSG_UPDATE      = 0x0002;
+const uint8_t RS_PKT_SUBTYPE_GXS_GRP_UPDATE             = 0x0001;
+const uint8_t RS_PKT_SUBTYPE_GXS_MSG_UPDATE             = 0x0002;
+const uint8_t RS_PKT_SUBTYPE_GXS_SERVER_GRP_UPDATE      = 0x0004;
+const uint8_t RS_PKT_SUBTYPE_GXS_SERVER_MSG_UPDATE      = 0x0008;
 
 class RsGxsGrpUpdateItem : public RsItem {
 public:
-	RsGxsGrpUpdateItem();
-	virtual ~RsGxsGrpUpdateItem();
+    RsGxsGrpUpdateItem(uint16_t servType) : RsItem(RS_PKT_VERSION_SERVICE, servType,
+                                                   RS_PKT_SUBTYPE_GXS_GRP_UPDATE)
+    {}
+            virtual ~RsGxsGrpUpdateItem() {}
 
 	virtual void clear();
 	virtual std::ostream &print(std::ostream &out, uint16_t indent);
@@ -52,10 +56,24 @@ public:
 	uint32_t grpUpdateTS;
 };
 
+class RsGxsServerGrpUpdateItem : public RsItem {
+public:
+    RsGxsServerGrpUpdateItem(uint16_t servType) : RsItem(RS_PKT_VERSION_SERVICE, servType,
+                                                         RS_PKT_SUBTYPE_GXS_SERVER_GRP_UPDATE)
+        {}
+        virtual ~RsGxsServerGrpUpdateItem();
+
+        virtual void clear();
+        virtual std::ostream &print(std::ostream &out, uint16_t indent);
+
+        uint32_t grpUpdateTS;
+};
+
 class RsGxsMsgUpdateItem : public RsItem
 {
 public:
-	RsGxsMsgUpdateItem();
+    RsGxsMsgUpdateItem(uint16_t servType) : RsItem(RS_PKT_VERSION_SERVICE, servType, RS_PKT_SUBTYPE_GXS_MSG_UPDATE)
+    {}
 	virtual ~RsGxsMsgUpdateItem();
 
 	virtual void clear();
@@ -65,6 +83,20 @@ public:
 	std::map<std::string, uint32_t> msgUpdateTS;
 };
 
+class RsGxsServerMsgUpdateItem : public RsItem
+{
+public:
+    RsGxsServerMsgUpdateItem(uint16_t servType) : RsItem(RS_PKT_VERSION_SERVICE,
+                                                         servType, RS_PKT_SUBTYPE_GXS_SERVER_MSG_UPDATE)
+    {}
+        virtual ~RsGxsServerMsgUpdateItem();
+
+        virtual void clear();
+        virtual std::ostream &print(std::ostream &out, uint16_t indent);
+
+        std::string grpId;
+        uint32_t msgUpdateTS; // the last time this group received a new msg
+};
 
 
 class RsGxsUpdateSerialiser : public RsSerialType
@@ -89,11 +121,23 @@ private:
     virtual bool serialiseGxsGrpUpdate(RsGxsGrpUpdateItem *item, void *data, uint32_t *size);
     virtual RsGxsGrpUpdateItem* deserialGxsGrpUpddate(void *data, uint32_t *size);
 
-    /* for RS_PKT_SUBTYPE_GXS_ */
+    /* for RS_PKT_SUBTYPE_GRP_SERVER_UPDATE_ITEM */
+
+    virtual uint32_t sizeGxsServerGrpUpdate(RsGxsServerGrpUpdateItem* item);
+    virtual bool serialiseGxsServerGrpUpdate(RsGxsServerGrpUpdateItem *item, void *data, uint32_t *size);
+    virtual RsGxsServerGrpUpdateItem* deserialGxsServerGrpUpddate(void *data, uint32_t *size);
+
+    /* for RS_PKT_SUBTYPE_GXS_MSG_UPDATE_ITEM */
 
     virtual uint32_t sizeGxsMsgUpdate(RsGxsMsgUpdateItem* item);
     virtual bool serialiseGxsMsgUpdate(RsGxsMsgUpdateItem *item, void *data, uint32_t *size);
     virtual RsGxsMsgUpdateItem* deserialGxsMsgUpdate(void *data, uint32_t *size);
+
+    /* for RS_PKT_SUBTYPE_GXS_SERVER_UPDATE_ITEM */
+
+    virtual uint32_t sizeGxsServerMsgUpdate(RsGxsServerMsgUpdateItem* item);
+    virtual bool serialiseGxsServerMsgUpdate(RsGxsServerMsgUpdateItem *item, void *data, uint32_t *size);
+    virtual RsGxsServerMsgUpdateItem* deserialGxsServerMsgUpdate(void *data, uint32_t *size);
 
 private:
 
