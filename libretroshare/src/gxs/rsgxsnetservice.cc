@@ -45,7 +45,7 @@ RsGxsNetService::RsGxsNetService(uint16_t servType, RsGeneralDataService *gds,
                                      : p3Config(servType), p3ThreadedService(servType),
                                        mTransactionTimeOut(TRANSAC_TIMEOUT), mServType(servType), mDataStore(gds), mTransactionN(0),
                                        mObserver(nxsObs), mNxsMutex("RsGxsNetService"), mNetMgr(netMgr), mSYNC_PERIOD(SYNC_PERIOD),
-                                       mSyncTs(0), mReputations(reputations), mCircles(circles), mGrpAutoSync(grpAutoSync)
+                                       mSyncTs(0), mReputations(reputations), mCircles(circles), mGrpAutoSync(grpAutoSync), mGrpServerUpdateItem(NULL)
 
 {
 	addSerialType(new RsNxsSerialiser(mServType));
@@ -1972,8 +1972,11 @@ void RsGxsNetService::handleRecvSyncGroup(RsNxsSyncGrp* item)
 	std::string peer = item->PeerId();
 
         // don't sync if you have no new updates for this peer
+	if(mGrpServerUpdateItem)
+	{
         if(item->updateTS >= mGrpServerUpdateItem->grpUpdateTS && item->updateTS != 0)
             return;
+	}
 
 	std::map<std::string, RsGxsGrpMetaData*> grp;
 	mDataStore->retrieveGxsGrpMetaData(grp);

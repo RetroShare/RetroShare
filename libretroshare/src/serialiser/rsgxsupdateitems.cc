@@ -51,7 +51,34 @@ void RsGxsMsgUpdateItem::clear()
 
 std::ostream& RsGxsMsgUpdateItem::print(std::ostream& out, uint16_t indent)
 {
+
 }
+
+
+
+void RsGxsServerMsgUpdateItem::clear()
+{
+    msgUpdateTS = 0;
+    grpId.clear();
+}
+
+std::ostream& RsGxsServerMsgUpdateItem::print(std::ostream& out, uint16_t indent)
+{
+
+}
+
+
+void RsGxsServerGrpUpdateItem::clear()
+{
+    grpUpdateTS = 0;
+}
+
+std::ostream& RsGxsServerGrpUpdateItem::print(std::ostream& out, uint16_t indent)
+{
+
+}
+
+
 
 uint32_t RsGxsUpdateSerialiser::size(RsItem* item)
 {

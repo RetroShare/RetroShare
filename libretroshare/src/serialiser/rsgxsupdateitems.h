@@ -61,7 +61,7 @@ public:
     RsGxsServerGrpUpdateItem(uint16_t servType) : RsItem(RS_PKT_VERSION_SERVICE, servType,
                                                          RS_PKT_SUBTYPE_GXS_SERVER_GRP_UPDATE)
         {}
-        virtual ~RsGxsServerGrpUpdateItem();
+    virtual ~RsGxsServerGrpUpdateItem() {}
 
         virtual void clear();
         virtual std::ostream &print(std::ostream &out, uint16_t indent);
@@ -74,7 +74,7 @@ class RsGxsMsgUpdateItem : public RsItem
 public:
     RsGxsMsgUpdateItem(uint16_t servType) : RsItem(RS_PKT_VERSION_SERVICE, servType, RS_PKT_SUBTYPE_GXS_MSG_UPDATE)
     {}
-	virtual ~RsGxsMsgUpdateItem();
+    virtual ~RsGxsMsgUpdateItem() {}
 
 	virtual void clear();
 	virtual std::ostream &print(std::ostream &out, uint16_t indent);
@@ -89,7 +89,7 @@ public:
     RsGxsServerMsgUpdateItem(uint16_t servType) : RsItem(RS_PKT_VERSION_SERVICE,
                                                          servType, RS_PKT_SUBTYPE_GXS_SERVER_MSG_UPDATE)
     {}
-        virtual ~RsGxsServerMsgUpdateItem();
+    virtual ~RsGxsServerMsgUpdateItem() {}
 
         virtual void clear();
         virtual std::ostream &print(std::ostream &out, uint16_t indent);
