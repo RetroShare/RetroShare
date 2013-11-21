@@ -78,6 +78,8 @@ ChannelFeed::ChannelFeed(QWidget *parent)
 
     connect(treeWidget, SIGNAL(treeCustomContextMenuRequested(QPoint)), this, SLOT( channelListCustomPopupMenu( QPoint ) ) );
     connect(treeWidget, SIGNAL(treeCurrentItemChanged(QString)), this, SLOT(selectChannel(QString)));
+    
+    connect( subscribeButton , SIGNAL( clicked() ), this, SLOT( subscribeChannel() ) );
 
     mChannelId.clear();
 
@@ -107,6 +109,9 @@ ChannelFeed::ChannelFeed(QWidget *parent)
     updateChannelList();
     
     nameLabel->setMinimumWidth(20);
+    
+    unsubscribechannelAct = new QAction(QIcon(":/images/cancel.png"), tr( "Unsubscribe to Channel" ), this );
+    connect( unsubscribechannelAct , SIGNAL( triggered() ), this, SLOT( unsubscribeChannel() ) );
 
     /* load settings */
     processSettings(true);
@@ -184,9 +189,6 @@ void ChannelFeed::channelListCustomPopupMenu( QPoint /*point*/ )
 
     QAction *subscribechannelAct = new QAction(QIcon(":/images/edit_add24.png"), tr( "Subscribe to Channel" ), &contextMnu);
     connect( subscribechannelAct , SIGNAL( triggered() ), this, SLOT( subscribeChannel() ) );
-
-    QAction *unsubscribechannelAct = new QAction(QIcon(":/images/cancel.png"), tr( "Unsubscribe to Channel" ), &contextMnu);
-    connect( unsubscribechannelAct , SIGNAL( triggered() ), this, SLOT( unsubscribeChannel() ) );
 
     QAction *setallasreadchannelAct = new QAction(QIcon(":/images/message-mail-read.png"), tr( "Set all as read" ), &contextMnu);
     connect( setallasreadchannelAct , SIGNAL( triggered() ), this, SLOT( setAllAsReadClicked() ) );
@@ -589,6 +591,8 @@ void ChannelFeed::updateChannelMsgs()
         delete (*mit);
     }
     mChanMsgItems.clear();
+    
+    QMenu *subscribemenu = new QMenu();
 
     ChannelInfo ci;
     if (!rsChannels->getChannelInfo(mChannelId, ci)) {
@@ -596,9 +600,15 @@ void ChannelFeed::updateChannelMsgs()
         nameLabel->setText(tr("No Channel Selected"));
         logoLabel->setPixmap(QPixmap(":/images/channels.png"));
         logoLabel->setEnabled(false);
+        
+        subscribeButton->setEnabled(false);
+        subscribeButton->setPopupMode(QToolButton::InstantPopup);
+        subscribeButton->setMenu(NULL);
+        subscribeButton->setIcon(QIcon(""));
+        subscribeButton->setText(tr("Subscribe"));
         return;
     }
-
+    
     QPixmap chanImage;
     if (ci.pngImageLen != 0) {
         chanImage.loadFromData(ci.pngChanImage, ci.pngImageLen, "PNG");
@@ -619,8 +629,25 @@ void ChannelFeed::updateChannelMsgs()
 
     if (ci.channelFlags & RS_DISTRIB_SUBSCRIBED) {
         actionEnable_Auto_Download->setEnabled(true);
+        
+        subscribeButton->setEnabled(true);
+        subscribeButton->setPopupMode(QToolButton::MenuButtonPopup);
+        subscribeButton->setIcon(QIcon(":/images/accepted16.png"));
+        subscribeButton->setText(tr("Subscribed"));
+        
+        //subscribemenu->addAction(autochannelAct );
+        subscribemenu->addSeparator();
+        subscribemenu->addAction(unsubscribechannelAct);
+        subscribeButton->setMenu(subscribemenu);
+        
     } else {
         actionEnable_Auto_Download->setEnabled(false);
+        
+        subscribeButton->setEnabled(true);
+        subscribeButton->setPopupMode(QToolButton::InstantPopup);
+        subscribeButton->setMenu(NULL);
+        subscribeButton->setIcon(QIcon(""));
+        subscribeButton->setText(tr("Subscribe"));
     }
 
 #ifdef USE_THREAD

@@ -106,12 +106,17 @@ private:
     QList<ChanMsgItem *> mChanMsgItems;
     std::map<std::string, uint32_t> mChanSearchScore; //chanId, score
 
-	QTreeWidgetItem *ownChannels;
-	QTreeWidgetItem *subcribedChannels;
-	QTreeWidgetItem *popularChannels;
-	QTreeWidgetItem *otherChannels;
+    QTreeWidgetItem *ownChannels;
+    QTreeWidgetItem *subcribedChannels;
+    QTreeWidgetItem *popularChannels;
+    QTreeWidgetItem *otherChannels;
 
-	ChannelFillThread *fillThread;
+    ChannelFillThread *fillThread;
+    
+    /** Defines the actions for the context menu */
+    QAction* unsubscribechannelAct;
+
+
 };
 
 class ChannelFillThread : public QThread
