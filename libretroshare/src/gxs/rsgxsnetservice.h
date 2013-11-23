@@ -327,6 +327,8 @@ private:
     
     void locked_doMsgUpdateWork(const RsNxsTransac* nxsTrans, const std::string& grpId);
 
+    void updateServerSyncTS();
+
 private:
 
     typedef std::vector<RsNxsGrp*> GrpFragments;

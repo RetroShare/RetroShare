@@ -1789,6 +1789,7 @@ void RsGenExchange::publishMsgs()
 				msg->metaData->mMsgStatus = GXS_SERV::GXS_MSG_STATUS_UNPROCESSED | GXS_SERV::GXS_MSG_STATUS_UNREAD;
 				msgId = msg->msgId;
 				grpId = msg->grpId;
+				msg->metaData->recvTS = time(NULL);
 				computeHash(msg->msg, msg->metaData->mHash);
 				mDataAccess->addMsgData(msg);
 				msgChangeMap[grpId].push_back(msgId);
@@ -2079,6 +2080,7 @@ void RsGenExchange::publishGrps()
 					{
 						grpId = grp->grpId;
 						computeHash(grp->grp, grp->metaData->mHash);
+						grp->metaData->mRecvTS = time(NULL);
 
 						if(ggps.mIsUpdate)
 							mDataAccess->updateGroupData(grp);
@@ -2407,6 +2409,7 @@ void RsGenExchange::processRecvdGroups()
 				// now check if group already existss
 				if(std::find(existingGrpIds.begin(), existingGrpIds.end(), grp->grpId) == existingGrpIds.end())
 				{
+					meta->mRecvTS = time(NULL);
 					if(meta->mCircleType == GXS_CIRCLE_TYPE_YOUREYESONLY)
 						meta->mOriginator = grp->PeerId();
 

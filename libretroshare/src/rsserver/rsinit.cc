@@ -2227,7 +2227,7 @@ int RsServer::StartupRetroShare()
 	std::string currGxsDir = RsInitConfig::configDir + "/GXS_phase2";
 
 #ifdef GXS_DEV_TESTNET // Different Directory for testing.
-	currGxsDir += "_TESTNET5";
+	currGxsDir += "_TESTNET6";
 #endif
 
         bool cleanUpGxsDir = false;

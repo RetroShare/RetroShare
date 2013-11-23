@@ -74,6 +74,7 @@ void RsGxsGrpMetaData::clear(){
     mOriginator.clear();
     mCircleType = 0;
     mAuthenFlags = 0;
+    mRecvTS = 0;
 
 }
 
@@ -196,6 +197,7 @@ void RsGxsMsgMetaData::clear()
     mMsgFlags = 0;
     mMsgStatus = 0;
     mChildTs = 0;
+    recvTS = 0;
 }
 
 bool RsGxsMsgMetaData::serialise(void *data, uint32_t *size)
