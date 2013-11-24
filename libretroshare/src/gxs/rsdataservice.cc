@@ -250,10 +250,10 @@ void RsDataService::initialise(){
                  KEY_SIGN_SET + " BLOB);");
 
     mDb->execSQL("CREATE TRIGGER " + GRP_LAST_POST_UPDATE_TRIGGER +
-    		"UPDATE OF " + KEY_RECV_TS + " ON " + MSG_TABLE_NAME +
-    		std::string("BEGIN ") +
-    		"UPDATE " + GRP_TABLE_NAME + "SET " + KEY_GRP_LAST_POST + "= new."
-    		+ KEY_RECV_TS + ";"
+    		" UPDATE OF " + KEY_RECV_TS + " ON " + MSG_TABLE_NAME +
+    		std::string(" BEGIN ") +
+    		" UPDATE " + GRP_TABLE_NAME + " SET " + KEY_GRP_LAST_POST + "= new."
+    		+ KEY_RECV_TS + " WHERE " + KEY_GRP_ID + "=old." + KEY_GRP_ID + ";"
     		+ std::string("END;"));
 }
 

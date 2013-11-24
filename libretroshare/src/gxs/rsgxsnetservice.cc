@@ -868,6 +868,7 @@ void RsGxsNetService::run(){
 
 
     double timeDelta = 0.2;
+    int updateCounter = 0;
 
     while(isRunning()){
 
@@ -877,7 +878,13 @@ void RsGxsNetService::run(){
         Sleep((int) (timeDelta * 1000));
 #endif
 
-        updateServerSyncTS();
+        if(updateCounter == 3)
+        {
+        	updateServerSyncTS();
+        	updateCounter = 0;
+        }
+        else
+        	updateCounter++;
 
         // process active transactions
         processTransactions();
@@ -1729,12 +1736,15 @@ void RsGxsNetService::locked_genSendGrpsTransaction(NxsTransaction* tr)
 		return;
 	}
 
+	uint32_t updateTS = 0;
+	if(mGrpServerUpdateItem)
+		updateTS = mGrpServerUpdateItem->grpUpdateTS;
 
 	RsNxsTransac* ntr = new RsNxsTransac(mServType);
 	ntr->transactionNumber = transN;
 	ntr->transactFlag = RsNxsTransac::FLAG_BEGIN_P1 |
 			RsNxsTransac::FLAG_TYPE_GRPS;
-        ntr->updateTS = time(NULL);
+        ntr->updateTS = updateTS;
 	ntr->nItems = grps.size();
 	ntr->PeerId(tr->mTransaction->PeerId());
 
@@ -1850,12 +1860,17 @@ void RsGxsNetService::locked_genSendMsgsTransaction(NxsTransaction* tr)
 		return;
 	}
 
+	std::string grpId = "";
+
 	for(;lit != tr->mItems.end(); lit++)
 	{
 		RsNxsSyncMsgItem* item = dynamic_cast<RsNxsSyncMsgItem*>(*lit);
 		if (item)
 		{
 			msgIds[item->grpId].push_back(item->msgId);
+
+			if(grpId.empty())
+				grpId = item->grpId;
 		}
 		else
 		{
@@ -1912,11 +1927,18 @@ void RsGxsNetService::locked_genSendMsgsTransaction(NxsTransaction* tr)
 		return;
 	}
 
+	uint32_t updateTS = 0;
+
+	ServerMsgMap::const_iterator cit = mServerMsgUpdateMap.find(grpId);
+
+	if(cit != mServerMsgUpdateMap.end())
+		updateTS = cit->second->msgUpdateTS;
+
 	RsNxsTransac* ntr = new RsNxsTransac(mServType);
 	ntr->transactionNumber = transN;
 	ntr->transactFlag = RsNxsTransac::FLAG_BEGIN_P1 |
 			RsNxsTransac::FLAG_TYPE_MSGS;
-        ntr->updateTS = time(NULL);
+        ntr->updateTS = updateTS;
 	ntr->nItems = msgSize;
 	ntr->PeerId(peerId);
 
@@ -2003,7 +2025,9 @@ void RsGxsNetService::handleRecvSyncGroup(RsNxsSyncGrp* item)
 	if(mGrpServerUpdateItem)
 	{
         if(item->updateTS >= mGrpServerUpdateItem->grpUpdateTS && item->updateTS != 0)
+        {
             return;
+        }
 	}
 
 	std::map<std::string, RsGxsGrpMetaData*> grp;
