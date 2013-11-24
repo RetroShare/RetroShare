@@ -46,7 +46,7 @@ class RsGxsGrpUpdateItem : public RsItem {
 public:
     RsGxsGrpUpdateItem(uint16_t servType) : RsItem(RS_PKT_VERSION_SERVICE, servType,
                                                    RS_PKT_SUBTYPE_GXS_GRP_UPDATE)
-    {}
+    {clear();}
             virtual ~RsGxsGrpUpdateItem() {}
 
 	virtual void clear();
@@ -60,7 +60,7 @@ class RsGxsServerGrpUpdateItem : public RsItem {
 public:
     RsGxsServerGrpUpdateItem(uint16_t servType) : RsItem(RS_PKT_VERSION_SERVICE, servType,
                                                          RS_PKT_SUBTYPE_GXS_SERVER_GRP_UPDATE)
-        {}
+        { clear();}
     virtual ~RsGxsServerGrpUpdateItem() {}
 
         virtual void clear();
@@ -73,7 +73,7 @@ class RsGxsMsgUpdateItem : public RsItem
 {
 public:
     RsGxsMsgUpdateItem(uint16_t servType) : RsItem(RS_PKT_VERSION_SERVICE, servType, RS_PKT_SUBTYPE_GXS_MSG_UPDATE)
-    {}
+    { clear();}
     virtual ~RsGxsMsgUpdateItem() {}
 
 	virtual void clear();
@@ -88,7 +88,7 @@ class RsGxsServerMsgUpdateItem : public RsItem
 public:
     RsGxsServerMsgUpdateItem(uint16_t servType) : RsItem(RS_PKT_VERSION_SERVICE,
                                                          servType, RS_PKT_SUBTYPE_GXS_SERVER_MSG_UPDATE)
-    {}
+    { clear();}
     virtual ~RsGxsServerMsgUpdateItem() {}
 
         virtual void clear();
