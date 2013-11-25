@@ -1503,7 +1503,7 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
 				GixsReputation rep;
 				mReputations->getReputation(syncItem->authorId, rep);
 
-				if(rep.score > GIXS_CUT_OFF)
+				if(rep.score > GIXS_CUT_OFF || syncItem->authorId.empty())
 				{
 					RsNxsSyncMsgItem* msgItem = new RsNxsSyncMsgItem(mServType);
 					msgItem->grpId = grpId;
@@ -2014,21 +2014,31 @@ void RsGxsNetService::locked_pushGrpRespFromList(std::list<RsNxsItem*>& respList
 	locked_addTransaction(tr);
 }
 
+bool RsGxsNetService::locked_CanReceiveUpdate(const RsNxsSyncGrp *item)
+{
+    // don't sync if you have no new updates for this peer
+    if(mGrpServerUpdateItem)
+    {
+        if(item->updateTS >= mGrpServerUpdateItem->grpUpdateTS && item->updateTS != 0)
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 void RsGxsNetService::handleRecvSyncGroup(RsNxsSyncGrp* item)
 {
 
 	RsStackMutex stack(mNxsMutex);
 
+        if(!locked_CanReceiveUpdate(item))
+            return;
+
 	std::string peer = item->PeerId();
 
-        // don't sync if you have no new updates for this peer
-	if(mGrpServerUpdateItem)
-	{
-        if(item->updateTS >= mGrpServerUpdateItem->grpUpdateTS && item->updateTS != 0)
-        {
-            return;
-        }
-	}
+
 
 	std::map<std::string, RsGxsGrpMetaData*> grp;
 	mDataStore->retrieveGxsGrpMetaData(grp);
@@ -2082,6 +2092,8 @@ void RsGxsNetService::handleRecvSyncGroup(RsNxsSyncGrp* item)
 
 	return;
 }
+
+
 
 bool RsGxsNetService::canSendGrpId(const std::string& sslId, RsGxsGrpMetaData& grpMeta, std::vector<GrpIdCircleVet>& toVet)
 {
@@ -2138,21 +2150,27 @@ bool RsGxsNetService::canSendGrpId(const std::string& sslId, RsGxsGrpMetaData& g
 	return true;
 }
 
+bool RsGxsNetService::locked_CanReceiveUpdate(const RsNxsSyncMsg *item)
+{
+    ServerMsgMap::const_iterator cit = mServerMsgUpdateMap.find(item->grpId);
+
+    if(cit != mServerMsgUpdateMap.end())
+    {
+        const RsGxsServerMsgUpdateItem *msui = cit->second;
+
+        if(item->updateTS >= msui->msgUpdateTS && item->updateTS != 0)
+            return false;
+    }
+    return true;
+}
 void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsg* item)
 {
 	RsStackMutex stack(mNxsMutex);
 
+        if(!locked_CanReceiveUpdate(item))
+            return;
+
 	const std::string& peer = item->PeerId();
-
-        ServerMsgMap::const_iterator cit = mServerMsgUpdateMap.find(item->grpId);
-
-        if(cit != mServerMsgUpdateMap.end())
-        {
-            const RsGxsServerMsgUpdateItem *msui = cit->second;
-
-            if(item->updateTS > msui->msgUpdateTS && item->updateTS != 0)
-                return;
-        }
 
 	GxsMsgMetaResult metaResult;
 	GxsMsgReq req;

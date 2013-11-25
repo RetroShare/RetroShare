@@ -505,6 +505,7 @@ bool RsNxsSerialiser::serialiseNxsSyncMsg(RsNxsSyncMsg *item, void *data, uint32
     ok &= setRawUInt32(data, *size, &offset, item->createdSince);
     ok &= SetTlvString(data, *size, &offset, TLV_TYPE_STR_HASH_SHA1, item->syncHash);
     ok &= SetTlvString(data, *size, &offset, TLV_TYPE_STR_GROUPID, item->grpId);
+    ok &= setRawUInt32(data, *size, &offset, item->updateTS);
 
     if(offset != tlvsize){
 #ifdef RSSERIAL_DEBUG

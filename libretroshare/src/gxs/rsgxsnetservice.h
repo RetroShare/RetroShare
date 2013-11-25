@@ -329,6 +329,9 @@ private:
 
     void updateServerSyncTS();
 
+    bool locked_CanReceiveUpdate(const RsNxsSyncGrp* item);
+    bool locked_CanReceiveUpdate(const RsNxsSyncMsg* item);
+
 private:
 
     typedef std::vector<RsNxsGrp*> GrpFragments;
