@@ -1179,26 +1179,27 @@ bool 	ftController::FileRequest(const std::string& fname, const std::string& has
 			 */
 
 			for(it = srcIds.begin(); it != srcIds.end(); it++)
-			{
-				uint32_t i, j;
-				if ((dit->second)->mTransfer->getPeerState(*it, i, j))
+				if(rsPeers->servicePermissionFlags_sslid(*it) & RS_SERVICE_PERM_DIRECT_DL)
 				{
+					uint32_t i, j;
+					if ((dit->second)->mTransfer->getPeerState(*it, i, j))
+					{
 #ifdef CONTROL_DEBUG
-					std::cerr << "ftController::FileRequest() Peer Existing";
+						std::cerr << "ftController::FileRequest() Peer Existing";
+						std::cerr << std::endl;
+#endif
+						continue; /* already added peer */
+					}
+
+#ifdef CONTROL_DEBUG
+					std::cerr << "ftController::FileRequest() Adding Peer: " << *it;
 					std::cerr << std::endl;
 #endif
-					continue; /* already added peer */
+					(dit->second)->mTransfer->addFileSource(*it);
+					setPeerState(dit->second->mTransfer, *it, rate, mLinkMgr->isOnline(*it));
+
+					IndicateConfigChanged(); /* new peer for transfer -> save */
 				}
-
-#ifdef CONTROL_DEBUG
-				std::cerr << "ftController::FileRequest() Adding Peer: " << *it;
-				std::cerr << std::endl;
-#endif
-				(dit->second)->mTransfer->addFileSource(*it);
-				setPeerState(dit->second->mTransfer, *it, rate, mLinkMgr->isOnline(*it));
-
-				IndicateConfigChanged(); /* new peer for transfer -> save */
-			}
 
 			if (srcIds.size() == 0)
 			{
