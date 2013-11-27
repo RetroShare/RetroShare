@@ -693,6 +693,11 @@ bool PGPHandler::getGPGDetailsFromBinaryBlock(const unsigned char *mem_block,siz
 		std::cerr << "No or incomplete/invalid key in supplied pgp block." << std::endl;
 		return false ;
 	}
+	if(tmp_keyring->keys[0].uids == NULL)
+	{
+		std::cerr << "No uid in supplied key." << std::endl;
+		return false ;
+	}
 
 	key_id = PGPIdType(tmp_keyring->keys[0].key_id).toStdString() ;
 	name = std::string((char *)tmp_keyring->keys[0].uids[0].user_id) ;
