@@ -937,21 +937,8 @@ int TransfersDialog::addItem(int row, const FileInfo &fileInfo, const std::map<s
 	qlonglong completed = fileInfo.transfered;
 	qlonglong remaining = fileInfo.size - fileInfo.transfered;
 	qlonglong downloadtime = (fileInfo.size - fileInfo.transfered) / (fileInfo.tfRate * 1024.0);
-    qint64 qi64LastDL = std::numeric_limits<qint64>::max();
+    qint64 qi64LastDL = fileInfo.lastTS ; //std::numeric_limits<qint64>::max();
 
-    {
-    QFileInfo file;
-
-    if (fileInfo.downloadStatus == FT_STATE_COMPLETE) {
-        file = QFileInfo(QString::fromUtf8(fileInfo.path.c_str()), QString::fromUtf8(fileInfo.fname.c_str()));
-    } else {
-        file = QFileInfo(QString::fromUtf8(rsFiles->getPartialsDirectory().c_str()), QString::fromUtf8(fileInfo.hash.c_str()));
-    }
-    /*Get Last Access on File */
-    if (file.exists()) {
-            qi64LastDL = file.lastModified().toTime_t();
-    }
-    }
     QString strPath = QString::fromUtf8(fileInfo.path.c_str());
     QString strPathAfterDL = strPath;
     strPathAfterDL.replace(QString::fromUtf8(rsFiles->getDownloadDirectory().c_str()),"");
