@@ -2303,6 +2303,7 @@ void RsGenExchange::processRecvdMessages()
                 if(validated_entry != mMsgPendingValidate.end()) mMsgPendingValidate.erase(validated_entry);
 
                 computeHash(msg->msg, meta->mHash);
+                meta->recvTS = time(NULL);
             }
         }
         else
