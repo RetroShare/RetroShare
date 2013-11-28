@@ -566,10 +566,10 @@ bool GetTlvWideString(void *data, uint32_t size, uint32_t *offset,
 	
 	static const int number_of_suspiscious_strings = 4 ;
 	static const std::wstring err_in = L"**** String removed (SVG bomb?) ****" ;
-	static std::wstring suspiscious_strings[number_of_suspiscious_strings] = { L"<!e",       // base ingredient of xml bombs
+	static std::wstring suspiscious_strings[number_of_suspiscious_strings] = { L"<!e",     // base ingredient of xml bombs
                       			                                                L"<!E",
-		                       			                                          L"PD94bWwg", // this is the base64 encoding of <?xml
-		                             			                                    L"PHN2Zy" 	// this is the base64 encoding of <svg
+		                       			                                          L"PD94bW",  // this is the base64 encoding of <?xml*
+		                             			                                    L"PHN2Zy" 	// this is the base64 encoding of <svg*
 	} ;
 
 #ifdef TLV_BASE_DEBUG
