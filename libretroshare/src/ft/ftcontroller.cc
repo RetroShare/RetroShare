@@ -167,9 +167,9 @@ void ftController::addFileSource(const std::string& hash,const std::string& peer
 
 	std::map<std::string, ftFileControl*>::iterator it = mDownloads.find(hash);
 
-#ifdef CONTROL_DEBUG
+//#ifdef CONTROL_DEBUG
 	std::cerr << "ftController: Adding source " << peer_id << " to current download hash=" << hash ;
-#endif
+//#endif
 	if(it != mDownloads.end())
 	{
 		it->second->mTransfer->addFileSource(peer_id);
@@ -1133,6 +1133,20 @@ bool 	ftController::FileRequest(const std::string& fname, const std::string& has
 		}
 	}
 
+	// remove the sources from the list, if they don't have clearance for direct transfer. This happens only for non cache files.
+	//
+	if(!(flags & RS_FILE_REQ_CACHE))
+		for(std::list<std::string>::iterator it = srcIds.begin(); it != srcIds.end(); )
+			if(!(rsPeers->servicePermissionFlags_sslid(*it) & RS_SERVICE_PERM_DIRECT_DL))
+			{
+				std::list<std::string>::iterator tmp(it) ;
+				++tmp ;
+				srcIds.erase(it) ;
+				it = tmp ;
+			}
+			else
+				++it ;
+	
 	std::list<std::string>::const_iterator it;
 	std::list<TransferInfo>::const_iterator pit;
 
@@ -1212,6 +1226,7 @@ bool 	ftController::FileRequest(const std::string& fname, const std::string& has
 			return true;
 		}
 	} /******* UNLOCKED ********/
+
 
 	if(!(flags & RS_FILE_REQ_NO_SEARCH))
 	{
