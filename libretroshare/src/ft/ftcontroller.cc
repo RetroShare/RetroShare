@@ -1685,7 +1685,6 @@ bool 	ftController::FileDetails(const std::string &hash, FileInfo &info)
 	/* extract details */
 	info.hash = hash;
 	info.fname = it->second->mName;
-	info.lastTS = it->second->mCreator->lastRecvTimeStamp();
 	info.storage_permission_flags.clear() ;
 	info.transfer_info_flags = it->second->mFlags ;
 	info.priority = SPEED_NORMAL ;
@@ -1703,7 +1702,10 @@ bool 	ftController::FileDetails(const std::string &hash, FileInfo &info)
 	{
 		it->second->mTransfer->getFileSources(peerIds);
 		info.priority = it->second->mTransfer->downloadPriority() ;
+		info.lastTS = it->second->mCreator->lastRecvTimeStamp();
 	}
+	else
+		info.lastTS = 0; 
 
 	double totalRate = 0;
 	uint32_t tfRate = 0;
