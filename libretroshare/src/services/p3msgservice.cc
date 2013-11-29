@@ -45,6 +45,7 @@
 #include <iomanip>
 #include <map>
 
+//#define MSG_DEBUG 1
 //#define DEBUG_DISTANT_MSG
 //#define DISABLE_DISTANT_MESSAGES 
 
@@ -181,9 +182,9 @@ bool p3MsgService::checkAndRebuildPartialMessage(RsMsgItem *ci)
 
 	if(it != _pendingPartialMessages.end())
 	{
-//#ifdef CHAT_DEBUG
-		std::cerr << "Pending message found. Happending it." << std::endl;
-//#endif
+#ifdef MSG_DEBUG
+		std::cerr << "Pending message found. Appending it." << std::endl;
+#endif
 		// Yes, there is. Append the item to ci.
 
 		ci->message = it->second->message + ci->message ;
@@ -197,9 +198,9 @@ bool p3MsgService::checkAndRebuildPartialMessage(RsMsgItem *ci)
 
 	if(ci_is_partial)
 	{
-//#ifdef CHAT_DEBUG
+#ifdef MSG_DEBUG
 		std::cerr << "Message is partial, storing for later." << std::endl;
-//#endif
+#endif
 		// The item is a partial message. Push it, and wait for the rest.
 		//
 		_pendingPartialMessages[ci->PeerId()] = ci ;
@@ -207,9 +208,9 @@ bool p3MsgService::checkAndRebuildPartialMessage(RsMsgItem *ci)
 	}
 	else
 	{
-//#ifdef CHAT_DEBUG
+#ifdef MSG_DEBUG
 		std::cerr << "Message is complete, using it now." << std::endl;
-//#endif
+#endif
 		return true ;
 	}
 }
@@ -585,7 +586,7 @@ bool    p3MsgService::loadList(std::list<RsItem*>& load)
 			for(std::list<RsTlvKeyValue>::const_iterator kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); ++kit) 
 				if(kit->key == "DISTANT_MESSAGES_ENABLED")
 				{
-#ifdef CHAT_DEBUG
+#ifdef MSG_DEBUG
 					std::cerr << "Loaded config default nick name for distant chat: " << kit->value << std::endl ;
 #endif
 					enableDistantMessaging(kit->value == "YES") ;
@@ -1762,7 +1763,7 @@ bool p3MsgService::encryptMessage(const std::string& pgp_id,RsMsgItem *item)
 	std::cerr << "Encrypting message with public key " << pgp_id << " in place." << std::endl;
 #endif
 
-	// 0 - happend own id to the data.
+	// 0 - append own id to the data.
 	//
 	uint32_t rssize = _serialiser->size(item) ;
 	unsigned char *data = (unsigned char *)malloc(1+rssize+KEY_ID_SIZE) ;
@@ -1818,7 +1819,7 @@ bool p3MsgService::encryptMessage(const std::string& pgp_id,RsMsgItem *item)
 #ifdef DEBUG_DISTANT_MSG
 	std::cerr << "  total decrypted size = " << KEY_ID_SIZE + 1 + rssize + signature_length << std::endl;
 #endif
-	// 3 - happend the signature to the serialized data.
+	// 3 - append the signature to the serialized data.
 
 	if(signature_length > 0)
 	{

@@ -530,13 +530,11 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 
 	if (0 == sigaction(SIGPIPE, &sigact, NULL))
 	{
-		std::cerr << "RetroShare:: Successfully Installed";
-		std::cerr << "the SIGPIPE Block" << std::endl;
+		std::cerr << "RetroShare:: Successfully installed the SIGPIPE Block" << std::endl;
 	}
 	else
 	{
-		std::cerr << "RetroShare:: Failed to Install";
-		std::cerr << "the SIGPIPE Block" << std::endl;
+		std::cerr << "RetroShare:: Failed to install the SIGPIPE Block" << std::endl;
 	}
 #endif
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/

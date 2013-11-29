@@ -578,7 +578,7 @@ bool p3ChatService::locked_checkAndRebuildPartialMessage_deprecated(RsChatMsgIte
 	if(it != _pendingPartialMessages.end())
 	{
 #ifdef CHAT_DEBUG
-		std::cerr << "Pending message found. Happending it." << std::endl;
+		std::cerr << "Pending message found. Appending it." << std::endl;
 #endif
 		// Yes, there is. Append the item to ci.
 
@@ -623,7 +623,7 @@ bool p3ChatService::locked_checkAndRebuildPartialMessage(RsChatLobbyMsgItem *ci)
 	if(it != _pendingPartialLobbyMessages.end())
 	{
 #ifdef CHAT_DEBUG
-		std::cerr << "  Pending message found. Happending it." << std::endl;
+		std::cerr << "  Pending message found. Aappending it." << std::endl;
 #endif
 		// Yes, there is. Add the item to the list of stored sub-items
 
@@ -659,7 +659,7 @@ bool p3ChatService::locked_checkAndRebuildPartialMessage(RsChatLobbyMsgItem *ci)
 					delete it->second[i] ;
 			}
 			_pendingPartialLobbyMessages.erase(it) ;
-
+  
 			ci->chatFlags = flags ;
 			ci->message = msg ;
 			ci->chatFlags &= ~RS_CHAT_FLAG_PARTIAL_MESSAGE ;	// remove partial flag form message.
