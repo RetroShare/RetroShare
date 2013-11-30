@@ -373,6 +373,16 @@ bool	p3Peers::getPeerDetails(const std::string &id, RsPeerDetails &d)
 	std::cerr << "p3Peers::getPeerDetails() got a SSL id and is returning SSL and GPG details for id : " << id << std::endl;
 #endif
 
+	if (pcs.state & RS_PEER_S_CONNECTED)
+	{
+		d.connectAddr = rs_inet_ntoa(pcs.connectaddr.sin_addr) ;
+		d.connectPort = pcs.connectaddr.sin_port ;
+	}
+	else
+	{
+		d.connectAddr = ""; 
+		d.connectPort = 0 ;
+	}
 
 	d.state		= 0;
 	if (pcs.state & RS_PEER_S_FRIEND)

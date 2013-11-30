@@ -271,6 +271,7 @@ bool    p3LinkMgrIMPL::getFriendNetStatus(const std::string &id, peerConnectStat
 	}
 
 	state = it->second;
+
 	return true;
 }
 
@@ -856,6 +857,7 @@ bool p3LinkMgrIMPL::connectResult(const std::string &id, bool success, uint32_t 
 			it->second.state |= RS_PEER_S_CONNECTED;
 			it->second.actions |= RS_PEER_CONNECTED;
 			it->second.connecttype = flags;
+			it->second.connectaddr = remote_peer_address;
 
 			updateLastContact = true; /* time of connect */
 

@@ -108,6 +108,8 @@ class peerConnectState
 	peerAddrInfo		disc;
 	peerAddrInfo		peer;
 
+	sockaddr_in 		connectaddr ; 	// current connection address. Can be local or external.
+
 	/* a list of connect attempts to make (in order) */
 	bool inConnAttempt;
 	peerConnectAddress currentConnAddrAttempt;

@@ -207,6 +207,8 @@ class RsPeerDetails
 	/* Network details (only valid if friend) */
 	uint32_t		state;
 
+	std::string					connectAddr ; // current address if connected.
+	uint16_t						connectPort ;
 	std::string             localAddr;
 	uint16_t                localPort;
 	std::string             extAddr;
