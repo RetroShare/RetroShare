@@ -29,7 +29,6 @@
 #include "keyring_local.h"
 #include "parse_local.h"
 #include <openpgpsdk/signature.h>
-#include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -88,7 +87,6 @@ static ops_parse_cb_return_t accumulate_cb(const ops_parser_content_t *content_,
 				OPS_ERROR(cbinfo->errors,OPS_E_P_NO_USERID, "No user id found");
 				return OPS_KEEP_MEMORY;
 			}
-			//	assert(cur);
 			ops_add_userid_to_keydata(cur, &content->user_id);
 			free(content->user_id.user_id);
 			return OPS_KEEP_MEMORY;
@@ -102,7 +100,6 @@ static ops_parse_cb_return_t accumulate_cb(const ops_parser_content_t *content_,
 
 		case OPS_PARSER_ERROR:
 			fprintf(stderr,"Error: %s\n",content->error.error);
-			//assert(0);
 			break;
 
 		case OPS_PARSER_ERRCODE:
@@ -110,7 +107,6 @@ static ops_parse_cb_return_t accumulate_cb(const ops_parser_content_t *content_,
 			{
 				default:
 					fprintf(stderr,"parse error: %s\n", ops_errcode(content->errcode.errcode));
-					//assert(0);
 			}
 			break;
 
@@ -141,7 +137,12 @@ int ops_parse_and_accumulate(ops_keyring_t *keyring,
 
     accumulate_arg_t arg;
 
-    assert(!parse_info->rinfo.accumulate);
+	 if(parse_info->rinfo.accumulate)
+	 {
+		 fprintf(stderr,"Structural error: parse_info->rinfo.accumulate should be ops_false" ) ;
+		 return 0 ;	// error
+	 }
+    //assert(!parse_info->rinfo.accumulate);
 
     memset(&arg,'\0',sizeof arg);
 
