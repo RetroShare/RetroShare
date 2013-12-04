@@ -96,6 +96,8 @@ ftTransferModule::ftTransferModule(ftFileCreator *fc, ftDataMultiplex *dm, ftCon
 	_crcmap_last_asked_time = 0 ;
 	_crcmap_last_tunnel_keepup = 0 ;
 	_crcreq_source = "";
+
+	_last_activity_time_stamp = time(NULL) ;
 }
 
 ftTransferModule::~ftTransferModule()
@@ -286,7 +288,16 @@ uint32_t ftTransferModule::getDataRate(const std::string& peerId)
   else
     return (uint32_t) (mit->second).actualRate;
 }
-
+void ftTransferModule::resetActvTimeStamp()
+{
+	RsStackMutex stack(tfMtx); /******* STACK LOCKED ******/
+	_last_activity_time_stamp = time(NULL);
+}
+time_t ftTransferModule::lastActvTimeStamp()
+{
+	RsStackMutex stack(tfMtx); /******* STACK LOCKED ******/
+	return _last_activity_time_stamp ;
+}
 
   //interface to client module
 bool ftTransferModule::recvFileData(const std::string& peerId, uint64_t offset, uint32_t chunk_size, void *data)
@@ -318,6 +329,8 @@ bool ftTransferModule::recvFileData(const std::string& peerId, uint64_t offset, 
 	ok = locked_recvPeerData(mit->second, offset, chunk_size, data);
 
 	locked_storeData(offset, chunk_size, data);
+
+	_last_activity_time_stamp = time(NULL) ;
 
 	free(data) ;
 	return ok;

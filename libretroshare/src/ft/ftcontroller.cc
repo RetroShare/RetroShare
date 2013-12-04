@@ -426,17 +426,17 @@ void ftController::checkDownloadQueue()
 	for(std::map<std::string,ftFileControl*>::const_iterator it(mDownloads.begin());it!=mDownloads.end() && nb_moved <= _max_active_downloads;++it)
 		if(	it->second->mState != ftFileControl::QUEUED 
                 && (it->second->mState == ftFileControl::PAUSED
-                    || now > it->second->mCreator->lastRecvTimeStamp() + (time_t)MAX_TIME_INACTIVE_REQUEUED))
+                    || now > it->second->mTransfer->lastActvTimeStamp() + (time_t)MAX_TIME_INACTIVE_REQUEUED))
 		{
 #ifdef DEBUG_DWLQUEUE
-			std::cerr << "  - Inactive file " << it->second->mName << " at position " << it->second->mQueuePosition << " moved to end of the queue. mState=" << it->second->mState << ", time lapse=" << now - it->second->mCreator->lastRecvTimeStamp()  << std::endl ;
+			std::cerr << "  - Inactive file " << it->second->mName << " at position " << it->second->mQueuePosition << " moved to end of the queue. mState=" << it->second->mState << ", time lapse=" << now - it->second->mCreator->lastActvTimeStamp()  << std::endl ;
 #endif
 			locked_bottomQueue(it->second->mQueuePosition) ;
 #ifdef DEBUG_DWLQUEUE
 			std::cerr << "  new position: " << it->second->mQueuePosition << std::endl ;
 			std::cerr << "  new state: " << it->second->mState << std::endl ;
 #endif
-			it->second->mCreator->resetRecvTimeStamp() ;	// very important!
+			it->second->mTransfer->resetActvTimeStamp() ;	// very important!
 			++nb_moved ;
 		}
 
@@ -640,7 +640,7 @@ void ftController::locked_checkQueueElement(uint32_t pos)
 	if(pos < _max_active_downloads && _queue[pos]->mState != ftFileControl::PAUSED)
 	{
 		if(_queue[pos]->mState == ftFileControl::QUEUED)
-			_queue[pos]->mCreator->resetRecvTimeStamp() ;
+			_queue[pos]->mTransfer->resetActvTimeStamp() ;
 
 		_queue[pos]->mState = ftFileControl::DOWNLOADING ;
 
@@ -1717,7 +1717,7 @@ bool 	ftController::FileDetails(const std::string &hash, FileInfo &info)
 	{
 		it->second->mTransfer->getFileSources(peerIds);
 		info.priority = it->second->mTransfer->downloadPriority() ;
-		info.lastTS = it->second->mCreator->lastRecvTimeStamp();
+		info.lastTS = it->second->mCreator->lastRecvTimeStamp();	// last time the file was actually written
 	}
 	else
 		info.lastTS = 0; 

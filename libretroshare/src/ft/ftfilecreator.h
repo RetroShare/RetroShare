@@ -113,7 +113,6 @@ class ftFileCreator: public ftFileProvider
 
 		// Returns resets the time stamp of the last data receive.
 		time_t lastRecvTimeStamp() ;
-		void resetRecvTimeStamp() ;
 		time_t creationTimeStamp() ;
 
 		// actually store data in the file, and update chunks info

@@ -158,6 +158,10 @@ public:
   DwlSpeed downloadPriority() const { return mPriority ; }
   void setDownloadPriority(DwlSpeed p) { mPriority =p ; }
 
+  // read/reset the last time the transfer module was active (either wrote data, or was solicitaded by clients)
+  time_t lastActvTimeStamp() ;
+  void resetActvTimeStamp() ;
+
 private:
 
   bool locked_tickPeerTransfer(peerInfo &info);
@@ -189,6 +193,8 @@ private:
   time_t   _crcmap_last_asked_time ;
   time_t   _crcmap_last_tunnel_keepup ;
   std::string _crcreq_source ;
+
+  time_t _last_activity_time_stamp ;
 
   ftFileStatus mFileStatus; //used for pause/resume file transfer
 

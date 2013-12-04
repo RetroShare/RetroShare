@@ -2,6 +2,7 @@
 #include <errno.h>
 #include <stdio.h>
 #include <time.h>
+#include <sys/stat.h>
 #include <util/rsdiscspace.h>
 #include <util/rsdir.h>
 
@@ -37,8 +38,26 @@ ftFileCreator::ftFileCreator(const std::string& path, uint64_t size, const std::
 #endif
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
 	time_t now = time(NULL) ;
-	_last_recv_time_t = now ;
 	_creation_time = now ;
+
+	struct stat64 buf;
+
+	// Initialise last recv time stamp to last modification time for the partial file.
+	//
+#ifdef WINDOWS_SYS
+	std::wstring wfullname;
+	librs::util::ConvertUtf8ToUtf16(file_name, wfullname);
+	if ( 0 == _wstati64(wfullname.c_str(), &buf))
+#else
+	if ( 0 == stat64(file_name.c_str(), &buf))
+#endif
+		_last_recv_time_t = buf.st_mtime ;
+	else
+		_last_recv_time_t = now ;
+
+#ifdef FILE_DEBUG
+	std::cerr << "Inited last modification time for hash " << hash << " to " << _last_recv_time_t << std::endl;
+#endif
 }
 
 bool ftFileCreator::getFileData(const std::string& peer_id,uint64_t offset, uint32_t &chunk_size, void *data)
@@ -76,11 +95,6 @@ time_t ftFileCreator::lastRecvTimeStamp()
 {
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
 	return _last_recv_time_t ;
-}
-void ftFileCreator::resetRecvTimeStamp() 
-{
-	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
-	_last_recv_time_t = time(NULL) ;
 }
 
 void ftFileCreator::closeFile()
