@@ -1008,13 +1008,33 @@ void FileIndexMonitor::hashFiles(const std::vector<DirContentToHash>& to_hash)
 				/* update fileIndex with new time */
 				/* update with new time */
 
-				fi.updateFileEntry(to_hash[i].dirpath,fe,stamp);
+				// Check again that the hashed file hasn't been modified since the beginning of the hashing process.
+				// If so, drop it.
+				//
+				struct stat64 buf;
 
-				hashed_size += to_hash[i].fentries[j].size ;
+#ifdef WINDOWS_SYS
+				std::wstring wfullname;
+				librs::util::ConvertUtf8ToUtf16(real_path, wfullname);
+				if ( 0 == _wstati64(wfullname.c_str(), &buf))
+#else
+				if ( 0 == stat64(real_path.c_str(), &buf))
+#endif
+				{
+					if(buf.st_mtime != fe.modtime) 
+						std::cerr << "File " << real_path << " has been modified while being hashed. It will be dropped to avoid data inconsistency" << std::endl;
+					else
+					{
+						fi.updateFileEntry(to_hash[i].dirpath,fe,stamp);
 
-				// Update the hash cache
-				if(useHashCache)
-					hashCache.insert(real_path,fe.size,fe.modtime,fe.hash) ;
+						hashed_size += to_hash[i].fentries[j].size ;
+
+						// Update the hash cache
+						//
+						if(useHashCache)
+							hashCache.insert(real_path,fe.size,fe.modtime,fe.hash) ;
+					}
+				}
 			}
 			else
 				std::cerr << "Failed to Hash File " << fe.name << std::endl;
