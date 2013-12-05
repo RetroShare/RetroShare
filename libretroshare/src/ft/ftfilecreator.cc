@@ -1,3 +1,8 @@
+#ifdef WINDOWS_SYS
+#include "util/rsstring.h"
+#include "util/rswin.h"
+#endif
+
 #include "ftfilecreator.h"
 #include <errno.h>
 #include <stdio.h>
