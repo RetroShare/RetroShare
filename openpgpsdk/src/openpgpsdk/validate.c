@@ -30,7 +30,6 @@
 #include <openpgpsdk/memory.h>
 #include <openpgpsdk/validate.h>
 #include <openpgpsdk/readerwriter.h>
-#include <assert.h>
 #include <string.h>
 
 #include <openpgpsdk/final.h>
@@ -108,12 +107,23 @@ static int keydata_reader(void *dest,size_t length,ops_error_t **errors,
 		return 0;
 
 	// we should never be asked to cross a packet boundary in a single read
-	assert(arg->key->packets[arg->packet].length >= arg->offset+length);
+	//
+	if(arg->key->packets[arg->packet].length >= arg->offset+length)
+	{
+		memcpy(dest,&arg->key->packets[arg->packet].raw[arg->offset],length);
+		arg->offset+=length;
 
-	memcpy(dest,&arg->key->packets[arg->packet].raw[arg->offset],length);
-	arg->offset+=length;
+		return length;
+	}
+	else
+	{
+		// If that happens, we set the offet to the total length and return 0.
+		//
+		fprintf(stderr,"WARNING: keydata_reader: packet length %lu goes beyond actual data size %lu. Consistency error!",arg->offset+length,arg->key->packets[arg->packet].length) ;
 
-	return length;
+		arg->offset = arg->key->packets[arg->packet].length ;
+		return 0 ;
+	}
 }
 
 static void free_signature_info(ops_signature_info_t *sig,int n)
@@ -134,7 +144,6 @@ static void copy_signature_info(ops_signature_info_t* dst, const ops_signature_i
 static void add_sig_to_valid_list(ops_validate_result_t * result, const ops_signature_info_t* sig)
 {
 	size_t newsize;
-	size_t start;
 
 	// increment count
 	++result->valid_count;
@@ -153,7 +162,6 @@ static void add_sig_to_valid_list(ops_validate_result_t * result, const ops_sign
 static void add_sig_to_invalid_list(ops_validate_result_t * result, const ops_signature_info_t *sig)
 {
 	size_t newsize;
-	size_t start;
 
 	// increment count
 	++result->invalid_count;
@@ -172,7 +180,6 @@ static void add_sig_to_invalid_list(ops_validate_result_t * result, const ops_si
 static void add_sig_to_unknown_list(ops_validate_result_t * result, const ops_signature_info_t *sig)
 {
 	size_t newsize;
-	size_t start;
 
 	// increment count
 	++result->unknown_signer_count;
@@ -203,7 +210,11 @@ ops_validate_key_cb(const ops_parser_content_t *content_,ops_parse_cb_info_t *cb
 	switch(content_->tag)
 	{
 		case OPS_PTAG_CT_PUBLIC_KEY:
-			assert(arg->pkey.version == 0);
+			if(arg->pkey.version != 0)
+			{
+				fprintf(stderr,"arg->pkey.version should be 0! It's %d. Giving up.",arg->pkey.version) ;
+				return OPS_RELEASE_MEMORY ;
+			}
 			arg->pkey=content->public_key;
 			return OPS_KEEP_MEMORY;
 
@@ -226,7 +237,11 @@ ops_validate_key_cb(const ops_parser_content_t *content_,ops_parse_cb_info_t *cb
 			return OPS_KEEP_MEMORY;
 
 		case OPS_PTAG_CT_USER_ATTRIBUTE:
-			assert(content->user_attribute.data.len);
+			if(!content->user_attribute.data.len)
+			{
+				fprintf(stderr,"User attribute length is 0. Not possible! Giving up.") ;
+				return OPS_RELEASE_MEMORY ;
+			}
 			printf("user attribute, length=%d\n",(int)content->user_attribute.data.len);
 			if(arg->user_attribute.data.len)
 				ops_user_attribute_free(&arg->user_attribute);
