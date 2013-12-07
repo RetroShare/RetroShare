@@ -954,12 +954,51 @@ bool PGPHandler::LoadCertificateFromString(const std::string& pgp_cert,PGPIdType
 	free(mem) ;
 	error_string.clear() ;
 
+	// Check that there is exactly one key in this data packet.
+	//
+	if(tmp_keyring->nkeys != 1)
+	{
+		std::cerr << "Loaded certificate contains more than one PGP key. This is not allowed." << std::endl;
+		error_string = "Loaded certificate contains more than one PGP key. This is not allowed." ;
+		return false ;
+	}
+
+	// Check that the key is correctly self-signed.
+	//
+	const ops_keydata_t *keydata = ops_keyring_get_key_by_index(tmp_keyring,0);
+
+	ops_validate_result_t* result=(ops_validate_result_t*)ops_mallocz(sizeof *result);
+
+	if(!ops_validate_key_signatures(result,keydata,tmp_keyring,cb_get_passphrase)) 
+	{
+		std::cerr << "Cannot validate self-signature for this certificate. Format error?" << std::endl;
+		error_string = "Cannot validate self signature for this certificate. Format error?" ;
+		return false ;
+	}
+
+	bool found = false ;
+
+	for(uint32_t i=0;i<result->valid_count;++i)
+		if(!memcmp((unsigned char*)result->valid_sigs[i].signer_id,keydata->key_id,KEY_ID_SIZE)) 
+		{
+			found = true ;
+			break ;
+		}
+
+	if(!found)
+	{
+		error_string = "This key is not self-signed. This is required by Retroshare." ;
+		std::cerr <<   "This key is not self-signed. This is required by Retroshare." << std::endl;
+		ops_validate_result_free(result);
+		return false ;
+	}
+	ops_validate_result_free(result);
+
 #ifdef DEBUG_PGPHANDLER
 	std::cerr << "  Key read correctly: " << std::endl;
-#endif
 	ops_keyring_list(tmp_keyring) ;
+#endif
 
-	const ops_keydata_t *keydata = NULL ;
 	int i=0 ;
 
 	while( (keydata = ops_keyring_get_key_by_index(tmp_keyring,i++)) != NULL )

@@ -85,6 +85,7 @@ int main(int argc,char *argv[])
 		std::string name ;
 		std::list<std::string> signers ;
 
+		PGPHandler::setPassphraseCallback(pgp_pwd_cb) ;
 		PGPHandler handler("toto1","toto2","toto3","toto4") ;
 		handler.getGPGDetailsFromBinaryBlock(cert.pgp_key(),cert.pgp_key_size(),key_id,name,signers) ;
 
@@ -114,10 +115,7 @@ int main(int argc,char *argv[])
 		std::string error_string ;
 		PGPIdType found_id ;
 
-		PGPHandler::setPassphraseCallback(pgp_pwd_cb) ;
-		PGPHandler pgph("pubring.pgp","secring.pgp","trustdb.pgp","lock") ;
-
-		bool result = pgph.LoadCertificateFromString(res,found_id,error_string) ;
+		bool result = handler.LoadCertificateFromString(res,found_id,error_string) ;
 
 		if(!result)
 			std::cerr << "Certificate error: " << error_string << std::endl;
