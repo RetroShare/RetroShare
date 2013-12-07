@@ -10,6 +10,18 @@
 
 INITTEST() ;
 
+static std::string pgp_pwd_cb(void * /*hook*/, const char *uid_hint, const char * /*passphrase_info*/, int prev_was_bad)
+{
+#define GPG_DEBUG2
+#ifdef GPG_DEBUG2
+	fprintf(stderr, "pgp_pwd_callback() called.\n");
+#endif
+	std::string password;
+
+	std::cerr << "SHould not be called!" << std::endl;
+	return password ;
+}
+
 int main(int argc,char *argv[])
 {
 	try
@@ -94,6 +106,25 @@ int main(int argc,char *argv[])
 				found = true ;
 		}
 		CHECK(found) ;
+
+		// try to load the certificate.
+
+		std::cerr << "Checking that the certificate is imported correctly" << std::endl;
+
+		std::string error_string ;
+		PGPIdType found_id ;
+
+		PGPHandler::setPassphraseCallback(pgp_pwd_cb) ;
+		PGPHandler pgph("pubring.pgp","secring.pgp","trustdb.pgp","lock") ;
+
+		bool result = pgph.LoadCertificateFromString(res,found_id,error_string) ;
+
+		if(!result)
+			std::cerr << "Certificate error: " << error_string << std::endl;
+		else
+			std::cerr << "Certificate loaded correctly. Id = " << found_id.toStdString() << std::endl;
+
+		CHECK(result) ;
 
 		FINALREPORT("Test certificate parsing") ;
 
