@@ -42,6 +42,8 @@ int main(int argc,char *argv[])
 
 		bool res = handler.importGPGKeyPair(idfile,imported_key_id,import_error_string) ;
 
+		handler.syncDatabase() ;
+
 		if(!res)
 			std::cerr << "Identity Import error: " << import_error_string << std::endl;
 

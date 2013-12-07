@@ -835,7 +835,18 @@ bool PGPHandler::importGPGKeyPair(const std::string& filename,PGPIdType& importe
 
 	ops_validate_key_signatures(result, const_cast<ops_keydata_t*>(pubkey), &dummy_keyring, cb_get_passphrase) ;
 	
-	if(result->valid_count != 1 || memcmp((unsigned char*)result->valid_sigs[0].signer_id,pubkey->key_id,KEY_ID_SIZE)) 
+	// Check that signatures contain at least one certification from the user id.
+	//
+	bool found = false ;
+
+	for(uint32_t i=0;i<result->valid_count;++i)
+		if(!memcmp((unsigned char*)result->valid_sigs[i].signer_id,pubkey->key_id,KEY_ID_SIZE)) 
+		{
+			found = true ;
+			break ;
+		}
+
+	if(!found)
 	{
 		import_error = "Cannot validate self signature for the imported key. Sorry." ;
 		return false ;
