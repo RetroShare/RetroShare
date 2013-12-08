@@ -333,6 +333,37 @@ void RsHtml::embedHtml(QTextDocument *textDocument, QDomDocument& doc, QDomEleme
 	}
 }
 
+/**
+ * Save space and tab out of bracket that XML loose.
+ *
+ * @param[in] text The text to save space.
+ * @return Text with space saved.
+ */
+static QString saveSpace(const QString text)
+{
+	QString savedSpaceText=text;
+	bool outBrackets=false, echapChar=false;
+	
+	for(int i=0;i<savedSpaceText.length();i++){
+		
+		QChar cursChar=savedSpaceText.at(i);
+		if(cursChar==QLatin1Char('>'))         {
+			if(!echapChar && i>0) outBrackets=true;
+		} else if(cursChar==QLatin1Char('\t')) {
+			if(outBrackets) savedSpaceText.replace(i, 1, "&nbsp;&nbsp;");
+		} else if(cursChar==QLatin1Char(' '))  {
+			if(outBrackets) savedSpaceText.replace(i, 1, "&nbsp;");
+		} else if(cursChar==QLatin1Char('<'))  {
+			if(!echapChar) outBrackets=false;
+		}
+			
+		echapChar=(cursChar==QLatin1Char('\\'));
+		
+	}
+	
+	return savedSpaceText;
+}
+
 QString RsHtml::formatText(QTextDocument *textDocument, const QString &text, ulong flag, const QColor &backgroundColor, qreal desiredContrast)
 {
 	if (flag == 0 || text.isEmpty()) {
@@ -340,12 +371,24 @@ QString RsHtml::formatText(QTextDocument *textDocument, const QString &text, ulo
 		return text;
 	}
 
+	QString formattedText=text;
+	//remove all prepend char that make doc.setContent() fail
+	formattedText.remove(0,text.indexOf("<"));
+	// Save Space and Tab because doc loose it.
+	formattedText=saveSpace(formattedText);
+
+	QString errorMsg; int errorLine; int errorColumn;
+
 	QDomDocument doc;
-	if (doc.setContent(text) == false) {
+		if (doc.setContent(formattedText, &errorMsg, &errorLine, &errorColumn) == false) {
+
 		// convert text with QTextBrowser
 		QTextBrowser textBrowser;
 		textBrowser.setText(text);
-		doc.setContent(textBrowser.toHtml());
+		formattedText=textBrowser.toHtml();
+		formattedText.remove(0,formattedText.indexOf("<"));
+		formattedText=saveSpace(formattedText);
+		doc.setContent(formattedText, &errorMsg, &errorLine, &errorColumn);
 	}
 
 	QDomElement body = doc.documentElement();
@@ -357,7 +400,7 @@ QString RsHtml::formatText(QTextDocument *textDocument, const QString &text, ulo
 		embedHtml(textDocument, doc, body, defEmbedAhref, flag);
 	}
 
-	QString formattedText = doc.toString(-1);  // -1 removes any annoying carriage return misinterpreted by QTextEdit
+	formattedText = doc.toString(-1);  // -1 removes any annoying carriage return misinterpreted by QTextEdit
 
 	if (flag & RSHTML_OPTIMIZEHTML_MASK) {
 		optimizeHtml(formattedText, flag & RSHTML_OPTIMIZEHTML_MASK, backgroundColor, desiredContrast);
@@ -396,12 +439,13 @@ static void findElements(QDomDocument& doc, QDomElement& currentElement, const Q
 
 bool RsHtml::findAnchors(const QString &text, QStringList& urls)
 {
+	QString errorMsg; int errorLine; int errorColumn;
 	QDomDocument doc;
-	if (doc.setContent(text) == false) {
+	if (doc.setContent(text, &errorMsg, &errorLine, &errorColumn) == false) {
 		// convert text with QTextBrowser
 		QTextBrowser textBrowser;
 		textBrowser.setText(text);
-		doc.setContent(textBrowser.toHtml());
+		doc.setContent(textBrowser.toHtml(), &errorMsg, &errorLine, &errorColumn);
 	}
 
 	QDomElement body = doc.documentElement();
@@ -708,9 +752,14 @@ void RsHtml::optimizeHtml(QString &text, unsigned int flag, const QColor &backgr
 
 	// remove doctype
 	text.remove(QRegExp("<!DOCTYPE[^>]*>"));
+	//remove all prepend char that make doc.setContent() fail
+	text.remove(0,text.indexOf("<"));
+	// Save Space and Tab because doc loose it.
+	text=saveSpace(text);
 
+	QString errorMsg; int errorLine; int errorColumn;
 	QDomDocument doc;
-	if (doc.setContent(text) == false) {
+	if (doc.setContent(text, &errorMsg, &errorLine, &errorColumn) == false) {
 		return;
 	}
 

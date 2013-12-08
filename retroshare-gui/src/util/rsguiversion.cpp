@@ -21,10 +21,6 @@
 
 #include "rsguiversion.h"
 
-
-#define GUI_VERSION "0.5.5b"
-#define GUI_REVISION "Revision: 6877"
-
 QString retroshareVersion() {
 	return QString(GUI_VERSION);
 }
