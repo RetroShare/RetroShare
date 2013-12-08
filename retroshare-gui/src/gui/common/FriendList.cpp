@@ -957,7 +957,8 @@ void  FriendList::insertPeers()
 
                 /* IP */
 					 
-                QString sslItemIP = (sslDetail.state & RS_PEER_STATE_CONNECTED)?QString(sslDetail.extAddr.c_str()):QString("---");
+                QString sslItemIP = (sslDetail.state & RS_PEER_STATE_CONNECTED)?QString(sslDetail.connectAddr.c_str()):QString("---");
+
                 sslItem->setData(COLUMN_IP, Qt::DisplayRole, QVariant(sslItemIP));
                 sslItem->setData(COLUMN_IP, ROLE_SORT, sslItemIP);
                 if (sslItemIP != itemIP) {
