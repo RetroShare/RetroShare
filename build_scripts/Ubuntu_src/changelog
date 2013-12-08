@@ -1,14 +1,79 @@
 retroshare (0.5.5-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
+
+   * Improvements
+
+      - fixed up some debug text (patch from H.Morgan)
+      - reduced string for lol bomb filtering, to filter out <\?xml* instead of <\?xml\ *
+      - Added freeze option in NetworkView (Modified patch from K. Eisentraut)
+      - Updated languages from Transifex
+      - fixed up compatibility with Qt5
+
+     PGP
+      - added restriction to only accept self-signed certificates for friend keys
+      - added test program for identity import
+      - removed asserts from validate.c, and signature.c in openpgp-sdk
+        it will not be shared until re-hashed. Should prevent chunks error in files that get hashed while being copied.
+      - do not accept keys without a uid. Previously this was crashing RS
+      - added check over recursive compression depth. Fixes CVE-2013-4402
+
+     Channels:
+      - Added back the Subscribe Button to Channels
+      - Use destination directory when manually downloading a file from a channel
+      - Show destination directory in channel details
+      - Fixed utf8 issue when choosing the destination directory
+
+     GUI
+      - show fingerprint in ConfCertDialog, and splitted the string with spaces. Removed 
+        the use of the ambiguous peer id for both pgp and locations ids
+
+     Global router (Not active yet. Is a replacement to tunnels for messaging. Wil allow offline anonymous distant messages)
+      - squeleton code for the whole system
+      - computation/update of routing probabilities
+
+     File Transfer (Speed changes according to experiments from jolavilette. Brings the max LAN speed from 1.3MB/s to approx 13MB/s)
+      - set desiredRate of peers to 10MB/s instead of 1MB/s
+      - maximum number of active chunks per peer is now 20 (that was a serious limiting factor)
+      - ticks that bring no data are not accounted for in the speed estimate anymore. The data is averaged over all ticks 
+        since the previous non zero data chunk -> this brings much more stability to sources and removes lots of oscillation.
+      - added post-hash check for file modification. If the file has been modified while being hashed, 
+      - removed false warning that come up when openning a non existing file in ftFileCreator.
+
+     Shared Files
+      - changed re-hashign strategy. Now uses in priority the system time of the index file as a reference for new files. This automatically
+        accounts for changes in system time and fixes the re-hashing bug for daylight changing time. In case the reference time cannot be
+        establishd, the comparison reverts to the old method. This change is backward compatible and should not cause a re-hash.
+
+   * Bug fixing
+      - fixed import of retroshare identities that have multiple signatures from the same key ID. Fixed bug reported by claude37
+      - split lastRecvTimeStamp into two different time stamps: one for last
+        time the file is wrote (or data is received) and one for last activity
+        that is used (and sometimes reset) by ftcontroller when queuing files
+      - fixed display of correct IP for connected friends. Only the external IP was shown previously. Port is not 
+        shown because it is random and could be misleading. 
+      - filter out disallowed direct sources from file request source list. Should systematically prevent unwanted direct transfers
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Sat, 08 Dec 2013 12:00:00 +0100
+
+retroshare (0.5.5-0.6864~precise) precise; urgency=low
+
    * Improvements
       - code fixed up for Qt5,added display of Qt version in AboutDialog
+      - fixed up compilation for MinGW-w64
+      - Added new options to retroshare-gui.pro for Qt 5
+      - Added new file QtVersion.h with macros to compile with Qt 4 and Qt 5
       - fixed GUI for encrypted messages. Now showing correct To/From, added icon for decrypted msg, correct To when reply
       - allow change destination directory for queued files (modified patch from Phenom)
       - remove three costly loops in ftController
       - added help strings in some config pages (relays, notify, plugins)
       - added warning label in MakeFriendWizard to warn against too many friends
+      - changed the voip icons, disable the voip buttons when friend is offline.
+      - added scope timer to measure times conveniently
 
    * Bugs
       - removed potential deadlock in notifyQt
+      - fixed bug that would cause virtual peers list for outgoing files to never get cleanred up. Also improved 
+        cost of updating the status of virtual peers. Many thanks to Jolavillette for finding this out!
+
 
  -- Cyril Soler <csoler@users.sourceforge.net>  Sat, 19 Oct 2013 15:00:00 +0100
 
