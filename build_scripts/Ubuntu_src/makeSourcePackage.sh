@@ -82,10 +82,10 @@ echo \#define SVN_REVISION \"Revision: "$version"  date : `date`\" >> /tmp/toto2
 echo \#define SVN_REVISION_NUMBER $svn >> /tmp/toto2342
 cp /tmp/toto2342 $workdir/src/libretroshare/src/util/rsversion.h
 
-cat $workdir/src/retroshare-gui/src/util/rsguiversion.cc | grep -v GUI_REVISION | grep -v SVN_REVISION_NUMBER > /tmp/toto4463
+cat $workdir/src/retroshare-gui/src/util/rsguiversion.h | grep -v GUI_REVISION | grep -v GUI_VERSION > /tmp/toto4463
 echo \#define GUI_REVISION \"Revision: "$version"  date : `date`\" >> /tmp/toto4463
-echo \#define SVN_REVISION_NUMBER $svn >> /tmp/toto4463
-cp /tmp/toto4463 $workdir/src/retroshare-gui/src/util/rsguiversion.cpp
+echo \#define GUI_VERSION \"Revision: "$svn"\" >> /tmp/toto4463
+cp /tmp/toto4463 $workdir/src/retroshare-gui/src/util/rsguiversion.h
 
 # Various cleaning
 
