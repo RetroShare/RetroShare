@@ -36,9 +36,9 @@
 #include "ftchunkmap.h"
 #include <time.h>
 
-static const uint32_t SOURCE_CHUNK_MAP_UPDATE_PERIOD	=  60 ; //! TTL for chunkmap info
-static const uint32_t INACTIVE_CHUNK_TIME_LAPSE 		= 300 ; //! TTL for an inactive chunk
-static const uint32_t FT_CHUNKMAP_MAX_CHUNK_JUMP		=  50 ; //! Maximum chunk jump in progressive DL mode
+static const uint32_t SOURCE_CHUNK_MAP_UPDATE_PERIOD	=   60 ; //! TTL for chunkmap info
+static const uint32_t INACTIVE_CHUNK_TIME_LAPSE 		= 3600 ; //! TTL for an inactive chunk
+static const uint32_t FT_CHUNKMAP_MAX_CHUNK_JUMP		=   50 ; //! Maximum chunk jump in progressive DL mode
 
 std::ostream& operator<<(std::ostream& o,const ftChunk& c)
 {
