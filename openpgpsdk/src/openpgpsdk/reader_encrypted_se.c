@@ -21,7 +21,6 @@
 
 #include <openpgpsdk/crypto.h>
 #include <string.h>
-#include <assert.h>
 #include <openssl/cast.h>
 #ifndef OPENSSL_NO_IDEA
 #include <openssl/idea.h>
@@ -63,116 +62,126 @@ typedef struct
 static int encrypted_data_reader(void *dest,size_t length,ops_error_t **errors,
 				 ops_reader_info_t *rinfo,
 				 ops_parse_cb_info_t *cbinfo)
-    {
-    encrypted_arg_t *arg=ops_reader_get_arg(rinfo);
-    int saved=length;
+{
+	encrypted_arg_t *arg=ops_reader_get_arg(rinfo);
+	int saved=length;
 
-    // V3 MPIs have the count plain and the cipher is reset after each count
-    if(arg->prev_read_was_plain && !rinfo->pinfo->reading_mpi_length)
+	// V3 MPIs have the count plain and the cipher is reset after each count
+	if(arg->prev_read_was_plain && !rinfo->pinfo->reading_mpi_length)
 	{
-	assert(rinfo->pinfo->reading_v3_secret);
-	arg->decrypt->decrypt_resync(arg->decrypt);
-	arg->prev_read_was_plain=ops_false;
+		if(!(rinfo->pinfo->reading_v3_secret)) // ASSERT(rinfo->pinfo->reading_v3_secret);
+		{
+			fprintf(stderr,"encrypted_data_reader: Expected non null value for rinfo->pinfo->reading_v3_secret") ;
+			return -1 ;
+		}
+		arg->decrypt->decrypt_resync(arg->decrypt);
+		arg->prev_read_was_plain=ops_false;
 	}
-    else if(rinfo->pinfo->reading_v3_secret
-	    && rinfo->pinfo->reading_mpi_length)
-        {
-	arg->prev_read_was_plain=ops_true;
-        }
-
-    while(length > 0)
+	else if(rinfo->pinfo->reading_v3_secret
+			&& rinfo->pinfo->reading_mpi_length)
 	{
-	if(arg->decrypted_count)
-	    {
-
-	    unsigned n;
-
-	    // if we are reading v3 we should never read more than
-	    // we're asked for
-	    assert(length >= arg->decrypted_count
-		   || (!rinfo->pinfo->reading_v3_secret
-		       && !rinfo->pinfo->exact_read));
-
-	    if(length > arg->decrypted_count)
-		n=arg->decrypted_count;
-	    else
-		n=length;
-
-	    memcpy(dest,arg->decrypted+arg->decrypted_offset,n);
-	    arg->decrypted_count-=n;
-	    arg->decrypted_offset+=n;
-	    length-=n;
-        dest+=n;
-	    }
-	else
-	    {
-	    unsigned n=arg->region->length;
-	    unsigned char buffer[1024];
-
-	    if(!n)
-            {
-		return -1;
-            }
-
-	    if(!arg->region->indeterminate)
-		{
-		n-=arg->region->length_read;
-		if(n == 0)
-		    return saved-length;
-		if(n > sizeof buffer)
-		    n=sizeof buffer;
-		}
-	    else
-            {
-		n=sizeof buffer;
-            }
-
-	    // we can only read as much as we're asked for in v3 keys
-	    // because they're partially unencrypted!
-	    if((rinfo->pinfo->reading_v3_secret || rinfo->pinfo->exact_read)
-	       && n > length)
-		n=length;
-
-	    if(!ops_stacked_limited_read(buffer,n,arg->region,errors,rinfo,
-					 cbinfo))
-            {
-		return -1;
-            }
-
-	    if(!rinfo->pinfo->reading_v3_secret
-	       || !rinfo->pinfo->reading_mpi_length)
-                {
-                arg->decrypted_count=ops_decrypt_se_ip(arg->decrypt,
-                                  arg->decrypted,
-                                  buffer,n);
-
-                if (debug)
-                    {
-                    fprintf(stderr,"READING:\nencrypted: ");
-                    int i=0;
-                    for (i=0; i<16; i++)
-                        fprintf(stderr,"%2x ", buffer[i]);
-                    fprintf(stderr,"\n");
-                    fprintf(stderr,"decrypted:   ");
-                    for (i=0; i<16; i++)
-                        fprintf(stderr,"%2x ", arg->decrypted[i]);
-                    fprintf(stderr,"\n");
-                    }
-                }
-	    else
-		{
-		memcpy(arg->decrypted,buffer,n);
-		arg->decrypted_count=n;
-		}
-
-	    assert(arg->decrypted_count > 0);
-
-	    arg->decrypted_offset=0;
-	    }
+		arg->prev_read_was_plain=ops_true;
 	}
 
-    return saved;
-    }
+	while(length > 0)
+	{
+		if(arg->decrypted_count)
+		{
+
+			unsigned n;
+
+			// if we are reading v3 we should never read more than
+			// we're asked for
+			if(!(length >= arg->decrypted_count || (!rinfo->pinfo->reading_v3_secret && !rinfo->pinfo->exact_read))) // ASSERT(length >= arg->decrypted_count || (!rinfo->pinfo->reading_v3_secret && !rinfo->pinfo->exact_read));
+			{
+				fprintf(stderr,"encrypted_data_reader: inconsistency in packet sizes") ;
+				return -1 ;
+			}
+
+			if(length > arg->decrypted_count)
+				n=arg->decrypted_count;
+			else
+				n=length;
+
+			memcpy(dest,arg->decrypted+arg->decrypted_offset,n);
+			arg->decrypted_count-=n;
+			arg->decrypted_offset+=n;
+			length-=n;
+			dest+=n;
+		}
+		else
+		{
+			unsigned n=arg->region->length;
+			unsigned char buffer[1024];
+
+			if(!n)
+			{
+				return -1;
+			}
+
+			if(!arg->region->indeterminate)
+			{
+				n-=arg->region->length_read;
+				if(n == 0)
+					return saved-length;
+				if(n > sizeof buffer)
+					n=sizeof buffer;
+			}
+			else
+			{
+				n=sizeof buffer;
+			}
+
+			// we can only read as much as we're asked for in v3 keys
+			// because they're partially unencrypted!
+			if((rinfo->pinfo->reading_v3_secret || rinfo->pinfo->exact_read)
+					&& n > length)
+				n=length;
+
+			if(!ops_stacked_limited_read(buffer,n,arg->region,errors,rinfo,
+						cbinfo))
+			{
+				return -1;
+			}
+
+			if(!rinfo->pinfo->reading_v3_secret
+					|| !rinfo->pinfo->reading_mpi_length)
+			{
+				arg->decrypted_count=ops_decrypt_se_ip(arg->decrypt,
+						arg->decrypted,
+						buffer,n);
+
+				if (debug)
+				{
+					fprintf(stderr,"READING:\nencrypted: ");
+					int i=0;
+					for (i=0; i<16; i++)
+						fprintf(stderr,"%2x ", buffer[i]);
+					fprintf(stderr,"\n");
+					fprintf(stderr,"decrypted:   ");
+					for (i=0; i<16; i++)
+						fprintf(stderr,"%2x ", arg->decrypted[i]);
+					fprintf(stderr,"\n");
+				}
+			}
+			else
+			{
+				memcpy(arg->decrypted,buffer,n);
+				arg->decrypted_count=n;
+			}
+
+			if(!(arg->decrypted_count > 0)) // ASSERT(arg->decrypted_count > 0);
+			{
+				fprintf(stderr,"encrypted_data_reader: inconsistency in decrypted count") ;
+				return -1 ;
+			}
+
+			arg->decrypted_offset=0;
+		}
+	}
+
+	return saved;
+}
 
 static void encrypted_data_destroyer(ops_reader_info_t *rinfo)
     { free(ops_reader_get_arg(rinfo)); }

@@ -40,7 +40,6 @@
 
 #include "parse_local.h"
 
-#include <assert.h>
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
@@ -192,7 +191,11 @@ static int se_ip_data_reader(void *dest_, size_t len, ops_error_t **errors,
 
         // all done with the checks
         // now can start reading from the plaintext
-        assert(!arg->plaintext);
+        if(arg->plaintext) // ASSERT(!arg->plaintext);
+		  {
+			  fprintf(stderr,"se_ip_data_reader: consistency error\n");
+			  return -1 ;
+		  }
         arg->plaintext=ops_mallocz(sz_plaintext);
         memcpy(arg->plaintext, plaintext, sz_plaintext);
         arg->plaintext_available=sz_plaintext;

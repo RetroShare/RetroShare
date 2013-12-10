@@ -26,7 +26,6 @@
 #else
 #include <direct.h>
 #endif
-#include <assert.h>
 #include <string.h>
 #include <stdio.h>
 
@@ -352,7 +351,11 @@ callback_pk_session_key(const ops_parser_content_t *content_,ops_parse_cb_info_t
         {
     case OPS_PTAG_CT_PK_SESSION_KEY:
 		//	printf ("OPS_PTAG_CT_PK_SESSION_KEY\n");
-        assert(cbinfo->cryptinfo.keyring);
+        if(!(cbinfo->cryptinfo.keyring))	// ASSERT(cbinfo->cryptinfo.keyring);
+		  {
+			  fprintf(stderr,"No keyring supplied!") ;
+			  return 0 ;
+		  }
         cbinfo->cryptinfo.keydata=ops_keyring_find_key_by_id(cbinfo->cryptinfo.keyring,
                                              content->pk_session_key.key_id);
         if(!cbinfo->cryptinfo.keydata)
@@ -414,7 +417,7 @@ callback_cmd_get_secret_key(const ops_parser_content_t *content_,ops_parse_cb_in
 					if (!cbinfo->cryptinfo.passphrase)
 					{
 						fprintf(stderr,"can't get passphrase\n");
-						assert(0);
+						return 0 ;	// ASSERT(0);
 					}
 				}
 				/* then it must be encrypted */
