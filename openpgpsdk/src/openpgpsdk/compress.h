@@ -31,4 +31,4 @@ ops_boolean_t ops_write_compressed(const unsigned char* data,
                                    const unsigned int len,
                                    ops_create_info_t *cinfo);
 
-void ops_writer_push_compressed(ops_create_info_t *cinfo);
+ops_boolean_t ops_writer_push_compressed(ops_create_info_t *cinfo);

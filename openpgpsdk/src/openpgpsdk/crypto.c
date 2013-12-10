@@ -253,22 +253,27 @@ ops_boolean_t ops_encrypt_file(const char* input_filename,
     ops_create_info_delete(info);
    \endcode
 */
-extern void ops_encrypt_stream(ops_create_info_t* cinfo,
+extern ops_boolean_t ops_encrypt_stream(ops_create_info_t* cinfo,
                                const ops_keydata_t* public_key,
                                const ops_secret_key_t* secret_key,
                                const ops_boolean_t compress,
                                const ops_boolean_t use_armour)
-    {
-    if (use_armour)
-	ops_writer_push_armoured_message(cinfo);
-    ops_writer_push_stream_encrypt_se_ip(cinfo, public_key);
-    if (compress)
-	ops_writer_push_compressed(cinfo);
-    if (secret_key != NULL)
-	ops_writer_push_signed(cinfo, OPS_SIG_BINARY, secret_key);
-    else
-	ops_writer_push_literal(cinfo);
-    }
+{
+	if (use_armour)
+		ops_writer_push_armoured_message(cinfo);
+
+	ops_writer_push_stream_encrypt_se_ip(cinfo, public_key);
+
+	if(! (compress && ops_writer_push_compressed(cinfo)))
+		return ops_false ;
+
+	if (secret_key != NULL)
+		ops_writer_push_signed(cinfo, OPS_SIG_BINARY, secret_key);
+	else
+		ops_writer_push_literal(cinfo);
+
+	return ops_true ;
+}
 
 /**
    \ingroup HighLevel_Crypto

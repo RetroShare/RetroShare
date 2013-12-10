@@ -25,7 +25,6 @@
 
 #include <zlib.h>
 #include <bzlib.h>
-#include <assert.h>
 #include <string.h>
 
 #include <openpgpsdk/compress.h>
@@ -77,171 +76,190 @@ static int zlib_compressed_data_reader(void *dest,size_t length,
 				       ops_error_t **errors,
 				       ops_reader_info_t *rinfo,
 				       ops_parse_cb_info_t *cbinfo)
-    {
-    z_decompress_arg_t *arg=ops_reader_get_arg(rinfo);
-    assert(arg->type==OPS_C_ZIP || arg->type==OPS_C_ZLIB);
+{
+	z_decompress_arg_t *arg=ops_reader_get_arg(rinfo);
 
-    //ops_parser_content_t content;
-    int saved=length;
-
-    if(/*arg->region->indeterminate && */ arg->inflate_ret == Z_STREAM_END
-       && arg->zstream.next_out == &arg->out[arg->offset])
-        return 0;
-
-    if(arg->region->length_read == arg->region->length)
-        {
-        if(arg->inflate_ret != Z_STREAM_END)
-            OPS_ERROR(cbinfo->errors, OPS_E_P_DECOMPRESSION_ERROR,
-		      "Compressed data didn't end when region ended.");
-        /*
-          else
-          return 0;
-          www.zlib.org
-        */
-        }
-
-    while(length > 0)
+	if(! (arg->type==OPS_C_ZIP || arg->type==OPS_C_ZLIB) ) // ASSERT(arg->type==OPS_C_ZIP || arg->type==OPS_C_ZLIB);
 	{
-	unsigned len;
-
-	if(&arg->out[arg->offset] == arg->zstream.next_out)
-	    {
-	    int ret;
-
-	    arg->zstream.next_out=arg->out;
-	    arg->zstream.avail_out=sizeof arg->out;
-	    arg->offset=0;
-	    if(arg->zstream.avail_in == 0)
-		{
-		unsigned n=arg->region->length;
-
-		if(!arg->region->indeterminate)
-		    {
-		    n-=arg->region->length_read;
-		    if(n > sizeof arg->in)
-			n=sizeof arg->in;
-		    }
-		else
-		    n=sizeof arg->in;
-
-		if(!ops_stacked_limited_read(arg->in,n,arg->region,
-					     errors,rinfo,cbinfo))
-		    return -1;
-
-		arg->zstream.next_in=arg->in;
-		arg->zstream.avail_in=arg->region->indeterminate
-		    ? arg->region->last_read : n;
-		}
-
-	    ret=inflate(&arg->zstream,Z_SYNC_FLUSH);
-	    if(ret == Z_STREAM_END)
-		{
-		if(!arg->region->indeterminate
-		   && arg->region->length_read != arg->region->length)
-		    OPS_ERROR(cbinfo->errors,OPS_E_P_DECOMPRESSION_ERROR,
-			      "Compressed stream ended before packet end.");
-		}
-	    else if(ret != Z_OK)
-		{
-		fprintf(stderr,"ret=%d\n",ret);
-		OPS_ERROR(cbinfo->errors,OPS_E_P_DECOMPRESSION_ERROR, arg->zstream.msg);
-		}
-	    arg->inflate_ret=ret;
-	    }
-	assert(arg->zstream.next_out > &arg->out[arg->offset]);
-	len=arg->zstream.next_out-&arg->out[arg->offset];
-	if(len > length)
-	    len=length;
-	memcpy(dest,&arg->out[arg->offset],len);
-	arg->offset+=len;
-	length-=len;
+		fprintf(stderr,"zlib_compressed_data_reader: unexpected compress format %d\n",arg->type) ;
+		return -1 ;
 	}
 
-    return saved;
-    }
+	//ops_parser_content_t content;
+	int saved=length;
+
+	if(/*arg->region->indeterminate && */ arg->inflate_ret == Z_STREAM_END
+			&& arg->zstream.next_out == &arg->out[arg->offset])
+		return 0;
+
+	if(arg->region->length_read == arg->region->length)
+	{
+		if(arg->inflate_ret != Z_STREAM_END)
+			OPS_ERROR(cbinfo->errors, OPS_E_P_DECOMPRESSION_ERROR,
+					"Compressed data didn't end when region ended.");
+		/*
+			else
+			return 0;
+			www.zlib.org
+		 */
+	}
+
+	while(length > 0)
+	{
+		unsigned len;
+
+		if(&arg->out[arg->offset] == arg->zstream.next_out)
+		{
+			int ret;
+
+			arg->zstream.next_out=arg->out;
+			arg->zstream.avail_out=sizeof arg->out;
+			arg->offset=0;
+			if(arg->zstream.avail_in == 0)
+			{
+				unsigned n=arg->region->length;
+
+				if(!arg->region->indeterminate)
+				{
+					n-=arg->region->length_read;
+					if(n > sizeof arg->in)
+						n=sizeof arg->in;
+				}
+				else
+					n=sizeof arg->in;
+
+				if(!ops_stacked_limited_read(arg->in,n,arg->region,
+							errors,rinfo,cbinfo))
+					return -1;
+
+				arg->zstream.next_in=arg->in;
+				arg->zstream.avail_in=arg->region->indeterminate
+					? arg->region->last_read : n;
+			}
+
+			ret=inflate(&arg->zstream,Z_SYNC_FLUSH);
+			if(ret == Z_STREAM_END)
+			{
+				if(!arg->region->indeterminate
+						&& arg->region->length_read != arg->region->length)
+					OPS_ERROR(cbinfo->errors,OPS_E_P_DECOMPRESSION_ERROR,
+							"Compressed stream ended before packet end.");
+			}
+			else if(ret != Z_OK)
+			{
+				fprintf(stderr,"ret=%d\n",ret);
+				OPS_ERROR(cbinfo->errors,OPS_E_P_DECOMPRESSION_ERROR, arg->zstream.msg);
+			}
+			arg->inflate_ret=ret;
+		}
+
+		if(!(arg->zstream.next_out > &arg->out[arg->offset])) // ASSERT(arg->zstream.next_out > &arg->out[arg->offset]);
+		{
+			fprintf(stderr,"decompression error: next packet is too large.\n");
+			return -1 ;
+		}
+		len=arg->zstream.next_out-&arg->out[arg->offset];
+		if(len > length)
+			len=length;
+		memcpy(dest,&arg->out[arg->offset],len);
+		arg->offset+=len;
+		length-=len;
+	}
+
+	return saved;
+}
 
 // \todo remove code duplication between this and zlib_compressed_data_reader
 static int bzip2_compressed_data_reader(void *dest,size_t length,
 					ops_error_t **errors,
 					ops_reader_info_t *rinfo,
 					ops_parse_cb_info_t *cbinfo)
-    {
-    bz_decompress_arg_t *arg=ops_reader_get_arg(rinfo);
-    assert(arg->type==OPS_C_BZIP2);
+{
+	bz_decompress_arg_t *arg=ops_reader_get_arg(rinfo);
 
-    //ops_parser_content_t content;
-    int saved=length;
-
-    if(arg->inflate_ret == BZ_STREAM_END
-       && arg->bzstream.next_out == &arg->out[arg->offset])
-        return 0;
-
-    if(arg->region->length_read == arg->region->length)
-        {
-        if(arg->inflate_ret != BZ_STREAM_END)
-            OPS_ERROR(cbinfo->errors, OPS_E_P_DECOMPRESSION_ERROR,
-		      "Compressed data didn't end when region ended.");
-        }
-
-    while(length > 0)
+	if(!(arg->type==OPS_C_BZIP2)) // ASSERT(arg->type==OPS_C_BZIP2);
 	{
-	unsigned len;
-
-	if(&arg->out[arg->offset] == arg->bzstream.next_out)
-	    {
-	    int ret;
-
-	    arg->bzstream.next_out=(char *) arg->out;
-	    arg->bzstream.avail_out=sizeof arg->out;
-	    arg->offset=0;
-	    if(arg->bzstream.avail_in == 0)
-		{
-		unsigned n=arg->region->length;
-
-		if(!arg->region->indeterminate)
-		    {
-		    n-=arg->region->length_read;
-		    if(n > sizeof arg->in)
-			n=sizeof arg->in;
-		    }
-		else
-		    n=sizeof arg->in;
-
-		if(!ops_stacked_limited_read(arg->in, n, arg->region, errors,
-					     rinfo, cbinfo))
-		    return -1;
-
-		arg->bzstream.next_in=arg->in;
-		arg->bzstream.avail_in=arg->region->indeterminate
-		    ? arg->region->last_read : n;
-		}
-
-	    ret=BZ2_bzDecompress(&arg->bzstream);
-	    if(ret == BZ_STREAM_END)
-		{
-		if(!arg->region->indeterminate
-		   && arg->region->length_read != arg->region->length)
-		    OPS_ERROR(cbinfo->errors, OPS_E_P_DECOMPRESSION_ERROR,
-			      "Compressed stream ended before packet end.");
-		}
-	    else if(ret != BZ_OK)
-		{
-                OPS_ERROR_1(cbinfo->errors, OPS_E_P_DECOMPRESSION_ERROR,
-			    "Invalid return %d from BZ2_bzDecompress", ret);
-		}
-	    arg->inflate_ret=ret;
-	    }
-	assert(arg->bzstream.next_out > &arg->out[arg->offset]);
-	len=arg->bzstream.next_out-&arg->out[arg->offset];
-	if(len > length)
-	    len=length;
-	memcpy(dest,&arg->out[arg->offset],len);
-	arg->offset+=len;
-	length-=len;
+		fprintf(stderr,"bzip2_compressed_data_reader: unexpected compress format %d\n",arg->type) ;
+		return -1 ;
 	}
 
-    return saved;
-    }
+	//ops_parser_content_t content;
+	int saved=length;
+
+	if(arg->inflate_ret == BZ_STREAM_END
+			&& arg->bzstream.next_out == &arg->out[arg->offset])
+		return 0;
+
+	if(arg->region->length_read == arg->region->length)
+	{
+		if(arg->inflate_ret != BZ_STREAM_END)
+			OPS_ERROR(cbinfo->errors, OPS_E_P_DECOMPRESSION_ERROR,
+					"Compressed data didn't end when region ended.");
+	}
+
+	while(length > 0)
+	{
+		unsigned len;
+
+		if(&arg->out[arg->offset] == arg->bzstream.next_out)
+		{
+			int ret;
+
+			arg->bzstream.next_out=(char *) arg->out;
+			arg->bzstream.avail_out=sizeof arg->out;
+			arg->offset=0;
+			if(arg->bzstream.avail_in == 0)
+			{
+				unsigned n=arg->region->length;
+
+				if(!arg->region->indeterminate)
+				{
+					n-=arg->region->length_read;
+					if(n > sizeof arg->in)
+						n=sizeof arg->in;
+				}
+				else
+					n=sizeof arg->in;
+
+				if(!ops_stacked_limited_read(arg->in, n, arg->region, errors,
+							rinfo, cbinfo))
+					return -1;
+
+				arg->bzstream.next_in=arg->in;
+				arg->bzstream.avail_in=arg->region->indeterminate
+					? arg->region->last_read : n;
+			}
+
+			ret=BZ2_bzDecompress(&arg->bzstream);
+			if(ret == BZ_STREAM_END)
+			{
+				if(!arg->region->indeterminate
+						&& arg->region->length_read != arg->region->length)
+					OPS_ERROR(cbinfo->errors, OPS_E_P_DECOMPRESSION_ERROR,
+							"Compressed stream ended before packet end.");
+			}
+			else if(ret != BZ_OK)
+			{
+				OPS_ERROR_1(cbinfo->errors, OPS_E_P_DECOMPRESSION_ERROR,
+						"Invalid return %d from BZ2_bzDecompress", ret);
+			}
+			arg->inflate_ret=ret;
+		}
+		if(!(arg->bzstream.next_out > &arg->out[arg->offset])) // ASSERT(arg->bzstream.next_out > &arg->out[arg->offset]);
+		{
+			fprintf(stderr,"bzip2_compressed_data_reader: unexpected size in compressed packet.\n") ;
+			return -1 ;
+		}
+		len=arg->bzstream.next_out-&arg->out[arg->offset];
+		if(len > length)
+			len=length;
+		memcpy(dest,&arg->out[arg->offset],len);
+		arg->offset+=len;
+		length-=len;
+	}
+
+	return saved;
+}
 
 /**
  * \ingroup Core_Compress
@@ -371,55 +389,71 @@ int ops_decompress(ops_region_t *region,ops_parse_info_t *parse_info,
 ops_boolean_t ops_write_compressed(const unsigned char *data,
                                    const unsigned int len,
                                    ops_create_info_t *cinfo)
-    {
-    int r=0;
-    int sz_in=0;
-    int sz_out=0;
-    compress_arg_t* compress=ops_mallocz(sizeof *compress);
+{
+	int r=0;
+	int sz_in=0;
+	int sz_out=0;
+	compress_arg_t* compress=ops_mallocz(sizeof *compress);
 
-    // compress the data
-    const int level=Z_DEFAULT_COMPRESSION; // \todo allow varying levels
-    compress->stream.zalloc=Z_NULL;
-    compress->stream.zfree=Z_NULL;
-    compress->stream.opaque=NULL;
+	// compress the data
+	const int level=Z_DEFAULT_COMPRESSION; // \todo allow varying levels
+	compress->stream.zalloc=Z_NULL;
+	compress->stream.zfree=Z_NULL;
+	compress->stream.opaque=NULL;
 
-    // all other fields set to zero by use of ops_mallocz
+	// all other fields set to zero by use of ops_mallocz
 
-    if (deflateInit(&compress->stream,level) != Z_OK)
-        {
-        // can't initialise
-        assert(0);
-        }
+	if (deflateInit(&compress->stream,level) != Z_OK)
+	{
+		// can't initialise
 
-    // do necessary transformation
-    // copy input to maintain const'ness of src
-    assert(compress->src==NULL);
-    assert(compress->dst==NULL);
+		fprintf(stderr,"ops_write_compressed: can't initialise compression engine\n") ;
+		return ops_false ;
+	}
 
-    sz_in=len * sizeof (unsigned char);
-    sz_out= (sz_in * 1.01) + 12; // from zlib webpage
-    compress->src=ops_mallocz(sz_in);
-    compress->dst=ops_mallocz(sz_out);
-    memcpy(compress->src,data,len);
+	// do necessary transformation
+	// copy input to maintain const'ness of src
 
-    // setup stream
-    compress->stream.next_in=compress->src;
-    compress->stream.avail_in=sz_in;
-    compress->stream.total_in=0;
+	if(!(compress->src==NULL)) // ASSERT(compress->src==NULL);
+	{
+		fprintf(stderr,"ops_write_compressed: compress->src should be NULL\n") ;
+		return ops_false ;
+	}
+	if(!(compress->dst==NULL)) // ASSERT(compress->dst==NULL);
+	{
+		fprintf(stderr,"ops_write_compressed: compress->dst should be NULL\n") ;
+		return ops_false ;
+	}
 
-    compress->stream.next_out=compress->dst;
-    compress->stream.avail_out=sz_out;
-    compress->stream.total_out=0;
+	sz_in=len * sizeof (unsigned char);
+	sz_out= (sz_in * 1.01) + 12; // from zlib webpage
+	compress->src=ops_mallocz(sz_in);
+	compress->dst=ops_mallocz(sz_out);
+	memcpy(compress->src,data,len);
 
-    r=deflate(&compress->stream, Z_FINISH);
-    assert(r==Z_STREAM_END); // need to loop if not
+	// setup stream
+	compress->stream.next_in=compress->src;
+	compress->stream.avail_in=sz_in;
+	compress->stream.total_in=0;
 
-    // write it out
-    return (ops_write_ptag(OPS_PTAG_CT_COMPRESSED, cinfo)
-            && ops_write_length(1+compress->stream.total_out, cinfo)
-            && ops_write_scalar(OPS_C_ZLIB,1,cinfo)
-            && ops_write(compress->dst, compress->stream.total_out,cinfo));
-    }
+	compress->stream.next_out=compress->dst;
+	compress->stream.avail_out=sz_out;
+	compress->stream.total_out=0;
+
+	r=deflate(&compress->stream, Z_FINISH);
+
+	if(!(r==Z_STREAM_END)) // ASSERT(r==Z_STREAM_END); // need to loop if not
+	{
+		fprintf(stderr,"ops_write_compressed: compression failed.\n") ;
+		return ops_false ;
+	}
+
+	// write it out
+	return (ops_write_ptag(OPS_PTAG_CT_COMPRESSED, cinfo)
+			&& ops_write_length(1+compress->stream.total_out, cinfo)
+			&& ops_write_scalar(OPS_C_ZLIB,1,cinfo)
+			&& ops_write(compress->dst, compress->stream.total_out,cinfo));
+}
 
 
 // Writes out the header for the compressed packet. Invoked by the
@@ -545,34 +579,36 @@ static void stream_compress_destroyer(ops_writer_info_t *winfo)
        will be encoded as a compressed packet.
 \param cinfo Write settings
 */
-void ops_writer_push_compressed(ops_create_info_t *cinfo)
-    {
-    // This is a streaming writer, so we don't know the length in
-    // advance. Use a partial writer to handle the partial body
-    // packet lengths.
-    ops_writer_push_partial(COMPRESS_BUFFER,
-			    cinfo, OPS_PTAG_CT_COMPRESSED,
-			    write_compressed_header, NULL);
+ops_boolean_t ops_writer_push_compressed(ops_create_info_t *cinfo)
+{
+	// This is a streaming writer, so we don't know the length in
+	// advance. Use a partial writer to handle the partial body
+	// packet lengths.
+	ops_writer_push_partial(COMPRESS_BUFFER,
+			cinfo, OPS_PTAG_CT_COMPRESSED,
+			write_compressed_header, NULL);
 
-    // Create arg to be used with this writer
-    // Remember to free this in the destroyer
-    compress_arg_t *compress = ops_mallocz(sizeof *compress);
+	// Create arg to be used with this writer
+	// Remember to free this in the destroyer
+	compress_arg_t *compress = ops_mallocz(sizeof *compress);
 
-    compress->dst = malloc(COMPRESS_BUFFER);
-    const int level=Z_DEFAULT_COMPRESSION; // \todo allow varying levels
-    compress->stream.zalloc=Z_NULL;
-    compress->stream.zfree=Z_NULL;
-    compress->stream.opaque=NULL;
-    compress->stream.avail_out = COMPRESS_BUFFER;
-    // all other fields set to zero by use of ops_mallocz
+	compress->dst = malloc(COMPRESS_BUFFER);
+	const int level=Z_DEFAULT_COMPRESSION; // \todo allow varying levels
+	compress->stream.zalloc=Z_NULL;
+	compress->stream.zfree=Z_NULL;
+	compress->stream.opaque=NULL;
+	compress->stream.avail_out = COMPRESS_BUFFER;
+	// all other fields set to zero by use of ops_mallocz
 
-    if (deflateInit(&compress->stream, level) != Z_OK)
-	// can't initialise. Is there a better way to handle this?
-	assert(0);
+	if (deflateInit(&compress->stream, level) != Z_OK)
+		// can't initialise. Is there a better way to handle this?
+		return ops_false ;
 
-    // And push writer on stack
-    ops_writer_push(cinfo, stream_compress_writer, stream_compress_finaliser,
-		    stream_compress_destroyer, compress);
-    }
+	// And push writer on stack
+	ops_writer_push(cinfo, stream_compress_writer, stream_compress_finaliser,
+			stream_compress_destroyer, compress);
+
+	return ops_true ;
+}
 
 // EOF

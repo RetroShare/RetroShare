@@ -1139,7 +1139,12 @@ bool PGPHandler::encryptTextToFile(const PGPIdType& key_id,const std::string& te
 		return false ;
 	}
 
-	ops_encrypt_stream(info, public_key, NULL, ops_false, ops_true);
+	if(!ops_encrypt_stream(info, public_key, NULL, ops_false, ops_true))
+	{
+		std::cerr << "PGPHandler::encryptTextToFile(): ERROR: encryption failed." << std::endl;
+		return false ;
+	}
+
 	ops_write(text.c_str(), text.length(), info);
 	ops_teardown_file_write(info, fd);
 

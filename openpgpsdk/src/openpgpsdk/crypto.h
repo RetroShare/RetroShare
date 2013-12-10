@@ -172,7 +172,7 @@ void ops_writer_push_encrypt(ops_create_info_t *info,
 
 ops_boolean_t ops_encrypt_file(const char* input_filename, const char* output_filename, const ops_keydata_t *pub_key, const ops_boolean_t use_armour, const ops_boolean_t allow_overwrite);
 ops_boolean_t ops_decrypt_file(const char* input_filename, const char* output_filename, ops_keyring_t *keyring, const ops_boolean_t use_armour, const ops_boolean_t allow_overwrite,ops_parse_cb_t* cb_get_passphrase);
-extern void ops_encrypt_stream(ops_create_info_t* cinfo, const ops_keydata_t* public_key, const ops_secret_key_t* secret_key, const ops_boolean_t compress, const ops_boolean_t use_armour);
+extern ops_boolean_t ops_encrypt_stream(ops_create_info_t* cinfo, const ops_keydata_t* public_key, const ops_secret_key_t* secret_key, const ops_boolean_t compress, const ops_boolean_t use_armour);
 ops_boolean_t ops_decrypt_memory(const unsigned char *encrypted_memory,int em_length, unsigned char **decrypted_memory,int *out_length, ops_keyring_t* keyring, const ops_boolean_t use_armour, ops_parse_cb_t* cb_get_passphrase) ;
 // Keys
 ops_boolean_t ops_rsa_generate_keypair(const int numbits, const unsigned long e, ops_keydata_t* keydata);
