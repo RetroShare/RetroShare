@@ -38,7 +38,6 @@
 #include "parse_local.h"
 
 #include <string.h>
-#include <assert.h>
 
 #include <openpgpsdk/final.h>
 
@@ -112,17 +111,16 @@ typedef struct
     ops_headers_t headers;
     } dearmour_arg_t;
 
-static void push_back(dearmour_arg_t *arg,const unsigned char *buf,
-		      unsigned length)
-    {
-    unsigned n;
+static void push_back(dearmour_arg_t *arg,const unsigned char *buf, unsigned length)
+{
+	unsigned n;
 
-    assert(!arg->pushed_back);
-    arg->pushed_back=malloc(length);
-    for(n=0 ; n < length ; ++n)
-	arg->pushed_back[n]=buf[length-n-1];
-    arg->npushed_back=length;
-    }
+	//ASSERT(!arg->pushed_back); // in the least, there will be a memory leak. Not a big issue.
+	arg->pushed_back=malloc(length);
+	for(n=0 ; n < length ; ++n)
+		arg->pushed_back[n]=buf[length-n-1];
+	arg->npushed_back=length;
+}
     
 static int set_lastseen_headerline(dearmour_arg_t* arg, char* buf, ops_error_t **errors)
     {
@@ -350,107 +348,119 @@ void ops_dup_headers(ops_headers_t *dest,const ops_headers_t *src)
 static int process_dash_escaped(dearmour_arg_t *arg,ops_error_t **errors,
 				ops_reader_info_t *rinfo,
 				ops_parse_cb_info_t *cbinfo)
-    {
-    ops_parser_content_t content;
-    ops_parser_content_t content2;
-    ops_signed_cleartext_body_t	*body=&content.content.signed_cleartext_body;
-    ops_signed_cleartext_trailer_t *trailer
-	=&content2.content.signed_cleartext_trailer;
-    const char *hashstr;
-    ops_hash_t *hash;
-    int total;
+{
+	ops_parser_content_t content;
+	ops_parser_content_t content2;
+	ops_signed_cleartext_body_t	*body=&content.content.signed_cleartext_body;
+	ops_signed_cleartext_trailer_t *trailer
+		=&content2.content.signed_cleartext_trailer;
+	const char *hashstr;
+	ops_hash_t *hash;
+	int total;
 
-    hash=malloc(sizeof *hash);
-    hashstr=ops_find_header(&arg->headers,"Hash");
-    if(hashstr)
+	hash=malloc(sizeof *hash);
+	hashstr=ops_find_header(&arg->headers,"Hash");
+	if(hashstr)
 	{
-	ops_hash_algorithm_t alg;
+		ops_hash_algorithm_t alg;
 
-	alg=ops_hash_algorithm_from_text(hashstr);
-    
-	if(!ops_is_hash_alg_supported(&alg))
-	    {
-	    free(hash);
-	    OPS_ERROR_1(errors,OPS_E_R_BAD_FORMAT,"Unsupported hash algorithm '%s'",hashstr);
-        return -1;
-	    }
-	if(alg == OPS_HASH_UNKNOWN)
-	    {
-	    free(hash);
-	    OPS_ERROR_1(errors,OPS_E_R_BAD_FORMAT,"Unknown hash algorithm '%s'",hashstr);
-        return -1;
-	    }
-	ops_hash_any(hash,alg);
-	}
-    else
-	ops_hash_md5(hash);
+		alg=ops_hash_algorithm_from_text(hashstr);
 
-    hash->init(hash);
-
-    body->length=0;
-    total=0;
-    for( ; ; )
-	{
-	int c;
-	unsigned count;
-
-	if((c=read_char(arg,errors,rinfo,cbinfo,ops_true)) < 0)
-	    return -1;
-	if(arg->prev_nl && c == '-')
-	    {
-	    if((c=read_char(arg,errors,rinfo,cbinfo,ops_false)) < 0)
-		return -1;
-	    if(c != ' ')
+		if(!ops_is_hash_alg_supported(&alg))
 		{
-		/* then this had better be a trailer! */
-		if(c != '-')
-		    OPS_ERROR(errors,OPS_E_R_BAD_FORMAT,"Bad dash-escaping");
-		for(count=2 ; count < 5 ; ++count)
-		    {
-		    if((c=read_char(arg,errors,rinfo,cbinfo,ops_false)) < 0)
+			free(hash);
+			OPS_ERROR_1(errors,OPS_E_R_BAD_FORMAT,"Unsupported hash algorithm '%s'",hashstr);
 			return -1;
-		    if(c != '-')
-                OPS_ERROR(errors,OPS_E_R_BAD_FORMAT,"Bad dash-escaping (2)");
-		    }
-		arg->state=AT_TRAILER_NAME;
-		break;
 		}
-	    /* otherwise we read the next character */
-	    if((c=read_char(arg,errors,rinfo,cbinfo,ops_false)) < 0)
-		return -1;
-	    }
-	if(c == '\n' && body->length)
-	    {
-	    assert(memchr(body->data+1,'\n',body->length-1) == NULL);
-	    if(body->data[0] == '\n')
-		hash->add(hash,(unsigned char *)"\r",1);
-	    hash->add(hash,body->data,body->length);
-            if (debug)
-                { fprintf(stderr,"Got body:\n%s\n",body->data); }
-	    CB(cbinfo,OPS_PTAG_CT_SIGNED_CLEARTEXT_BODY,&content);
-	    body->length=0;
-	    }
-		
-	body->data[body->length++]=c;
-	++total;
-	if(body->length == sizeof body->data)
-	    {
-            if (debug)
-                { fprintf(stderr,"Got body (2):\n%s\n",body->data); }
-	    CB(cbinfo,OPS_PTAG_CT_SIGNED_CLEARTEXT_BODY,&content);
-	    body->length=0;
-	    }
+		if(alg == OPS_HASH_UNKNOWN)
+		{
+			free(hash);
+			OPS_ERROR_1(errors,OPS_E_R_BAD_FORMAT,"Unknown hash algorithm '%s'",hashstr);
+			return -1;
+		}
+		ops_hash_any(hash,alg);
+	}
+	else
+		ops_hash_md5(hash);
+
+	hash->init(hash);
+
+	body->length=0;
+	total=0;
+	for( ; ; )
+	{
+		int c;
+		unsigned count;
+
+		if((c=read_char(arg,errors,rinfo,cbinfo,ops_true)) < 0)
+			return -1;
+		if(arg->prev_nl && c == '-')
+		{
+			if((c=read_char(arg,errors,rinfo,cbinfo,ops_false)) < 0)
+				return -1;
+			if(c != ' ')
+			{
+				/* then this had better be a trailer! */
+				if(c != '-')
+					OPS_ERROR(errors,OPS_E_R_BAD_FORMAT,"Bad dash-escaping");
+				for(count=2 ; count < 5 ; ++count)
+				{
+					if((c=read_char(arg,errors,rinfo,cbinfo,ops_false)) < 0)
+						return -1;
+					if(c != '-')
+						OPS_ERROR(errors,OPS_E_R_BAD_FORMAT,"Bad dash-escaping (2)");
+				}
+				arg->state=AT_TRAILER_NAME;
+				break;
+			}
+			/* otherwise we read the next character */
+			if((c=read_char(arg,errors,rinfo,cbinfo,ops_false)) < 0)
+				return -1;
+		}
+		if(c == '\n' && body->length)
+		{
+			if(!(memchr(body->data+1,'\n',body->length-1) == NULL)) // ASSERT(memchr(body->data+1,'\n',body->length-1) == NULL);
+			{
+				fprintf(stderr,"no \\n in armoured file.") ;
+				return -1 ;
+			}
+			if(body->data[0] == '\n')
+				hash->add(hash,(unsigned char *)"\r",1);
+			hash->add(hash,body->data,body->length);
+			if (debug)
+			{ fprintf(stderr,"Got body:\n%s\n",body->data); }
+			CB(cbinfo,OPS_PTAG_CT_SIGNED_CLEARTEXT_BODY,&content);
+			body->length=0;
+		}
+
+		body->data[body->length++]=c;
+		++total;
+		if(body->length == sizeof body->data)
+		{
+			if (debug)
+			{ fprintf(stderr,"Got body (2):\n%s\n",body->data); }
+			CB(cbinfo,OPS_PTAG_CT_SIGNED_CLEARTEXT_BODY,&content);
+			body->length=0;
+		}
 	}
 
-    assert(body->data[0] == '\n');
-    assert(body->length == 1);
-    /* don't send that one character, because its part of the trailer. */
+	if(!(body->data[0] == '\n'))	// ASSERT(body->data[0] == '\n');
+	{
+		fprintf(stderr,"Body should end with \\n\n"); 
+		return -1 ;
+	}
+	if(!(body->length == 1))	// ASSERT(body->length == 1);
+	{
+		fprintf(stderr,"Body length error\n"); 
+		return -1 ;
+	}
+	/* don't send that one character, because its part of the trailer. */
 
-    trailer->hash=hash;
-    CB(cbinfo,OPS_PTAG_CT_SIGNED_CLEARTEXT_TRAILER,&content2);
+	trailer->hash=hash;
+	CB(cbinfo,OPS_PTAG_CT_SIGNED_CLEARTEXT_TRAILER,&content2);
 
-    return total;
-    }
+	return total;
+}
 
 static int add_header(dearmour_arg_t *arg,const char *key,const char
 		       *value)
@@ -479,96 +489,100 @@ static int add_header(dearmour_arg_t *arg,const char *key,const char
 /* \todo what does a return value of 0 indicate? 1 is good, -1 is bad */
 static int parse_headers(dearmour_arg_t *arg,ops_error_t **errors,
 			 ops_reader_info_t *rinfo,ops_parse_cb_info_t *cbinfo)
-    {
-    int rtn=1;
-    char *buf;
-    unsigned nbuf;
-    unsigned size;
-    ops_boolean_t first=ops_true;
-    //ops_parser_content_t content;
+{
+	int rtn=1;
+	char *buf;
+	unsigned nbuf;
+	unsigned size;
+	ops_boolean_t first=ops_true;
+	//ops_parser_content_t content;
 
-    buf=NULL;
-    nbuf=size=0;
+	buf=NULL;
+	nbuf=size=0;
 
-    for( ;  ; )
+	for( ;  ; )
 	{
-	int c;
+		int c;
 
-	if((c=read_char(arg,errors,rinfo,cbinfo,ops_true)) < 0)
-        {
-        OPS_ERROR(errors,OPS_E_R_BAD_FORMAT,"Unexpected EOF");
-        rtn=-1;
-        break;
-        }
+		if((c=read_char(arg,errors,rinfo,cbinfo,ops_true)) < 0)
+		{
+			OPS_ERROR(errors,OPS_E_R_BAD_FORMAT,"Unexpected EOF");
+			rtn=-1;
+			break;
+		}
 
-	if(c == '\n')
-	    {
-	    char *s;
+		if(c == '\n')
+		{
+			char *s;
 
-	    if(nbuf == 0)
-		break;
+			if(nbuf == 0)
+				break;
 
-	    assert(nbuf < size);
-	    buf[nbuf]='\0';
+			if(!(nbuf < size)) // ASSERT(nbuf < size);
+			{
+				OPS_ERROR(errors,OPS_E_R_BAD_FORMAT,"Size error in armour header");
+				return -1 ;
+			}
+			buf[nbuf]='\0';
 
-	    s=strchr(buf,':');
-	    if(!s)
-		if(!first && !arg->allow_headers_without_gap)
-            {
-		    // then we have seriously malformed armour
-		    OPS_ERROR(errors,OPS_E_R_BAD_FORMAT,"No colon in armour header");
-            rtn=-1;
-            break;
-            }
+			s=strchr(buf,':');
+			if(!s)
+				if(!first && !arg->allow_headers_without_gap)
+				{
+					// then we have seriously malformed armour
+					OPS_ERROR(errors,OPS_E_R_BAD_FORMAT,"No colon in armour header");
+					rtn=-1;
+					break;
+				}
+				else
+				{
+					if(first &&
+							!(arg->allow_headers_without_gap || arg->allow_no_gap))
+					{
+						OPS_ERROR(errors,OPS_E_R_BAD_FORMAT,"No colon in armour header (2)");
+						// then we have a nasty armoured block with no
+						// headers, not even a blank line.
+						buf[nbuf]='\n';
+						push_back(arg,(unsigned char *)buf,nbuf+1);
+						rtn=-1;
+						break;
+					}
+				}
+			else
+			{
+				*s='\0';
+				if(s[1] != ' ')
+				{
+					OPS_ERROR(errors,OPS_E_R_BAD_FORMAT,"No space in armour header");
+					rtn=-1;
+					goto end;
+				}
+				if (!add_header(arg,buf,s+2))
+				{
+					OPS_ERROR_1(errors,OPS_E_R_BAD_FORMAT,"Invalid header %s", buf);
+					rtn=-1;
+					goto end;
+				}
+				nbuf=0;
+			}
+			first=ops_false;
+		}
 		else
-		    {
-		    if(first &&
-		       !(arg->allow_headers_without_gap || arg->allow_no_gap))
-                {
-                OPS_ERROR(errors,OPS_E_R_BAD_FORMAT,"No colon in armour header (2)");
-                // then we have a nasty armoured block with no
-                // headers, not even a blank line.
-                buf[nbuf]='\n';
-                push_back(arg,(unsigned char *)buf,nbuf+1);
-                rtn=-1;
-                break;
-                }
-		    }
-	    else
 		{
-		*s='\0';
-		if(s[1] != ' ')
-            {
-		    OPS_ERROR(errors,OPS_E_R_BAD_FORMAT,"No space in armour header");
-            rtn=-1;
-            goto end;
-            }
-        if (!add_header(arg,buf,s+2))
-            {
-            OPS_ERROR_1(errors,OPS_E_R_BAD_FORMAT,"Invalid header %s", buf);
-            rtn=-1;
-            goto end;
-            }
-		nbuf=0;
+			if(size <= nbuf+1)
+			{
+				size+=size+80;
+				buf=realloc(buf,size);
+			}
+			buf[nbuf++]=c;
 		}
-	    first=ops_false;
-	    }
-	else
-	    {
-	    if(size <= nbuf+1)
-		{
-		size+=size+80;
-		buf=realloc(buf,size);
-		}
-	    buf[nbuf++]=c;
-	    }
 	}
 
- end:
-    free(buf);
+end:
+	free(buf);
 
-    return rtn;
-    }
+	return rtn;
+}
 
 static int read4(dearmour_arg_t *arg,ops_error_t **errors,
 		 ops_reader_info_t *rinfo,ops_parse_cb_info_t *cbinfo,
@@ -630,139 +644,159 @@ unsigned ops_crc24(unsigned checksum,unsigned char c)
 
 static int decode64(dearmour_arg_t *arg,ops_error_t **errors,
 		    ops_reader_info_t *rinfo,ops_parse_cb_info_t *cbinfo)
-    {
-    unsigned n;
-    int n2;
-    unsigned long l;
-    int c;
-    int ret;
+{
+	unsigned n;
+	int n2;
+	unsigned long l;
+	int c;
+	int ret;
 
-    assert(arg->buffered == 0);
-
-    ret=read4(arg,errors,rinfo,cbinfo,&c,&n,&l);
-    if(ret < 0)
-        {
-        OPS_ERROR(errors,OPS_E_R_BAD_FORMAT,"Badly formed base64");
-        return 0;
-        }
-
-    if(n == 3)
+	if(!(arg->buffered == 0))		// ASSERT(arg->buffered == 0);
 	{
-	if(c != '=')
-        {
-	    OPS_ERROR(errors,OPS_E_R_BAD_FORMAT,"Badly terminated base64 (2)");
-        return 0;
-        }
-	arg->buffered=2;
-	arg->eof64=ops_true;
-	l >>= 2;
-	}
-    else if(n == 2)
-	{
-	if(c != '=')
-        {
-	    OPS_ERROR(errors,OPS_E_R_BAD_FORMAT,"Badly terminated base64 (3)");
-        return 0;
-        }
-	arg->buffered=1;
-	arg->eof64=ops_true;
-	l >>= 4;
-	c=read_char(arg,errors,rinfo,cbinfo,ops_false);
-	if(c != '=')
-        {
-	    OPS_ERROR(errors,OPS_E_R_BAD_FORMAT,"Badly terminated base64");
-        return 0;
-        }
-	}
-    else if(n == 0)
-	{
-	if(!arg->prev_nl || c != '=')
-        {
-	    OPS_ERROR(errors,OPS_E_R_BAD_FORMAT,"Badly terminated base64 (4)");
-        return 0;
-        }
-	arg->buffered=0;
-	}
-    else
-	{
-	assert(n == 4);
-	arg->buffered=3;
-	assert(c != '-' && c != '=');
+		OPS_ERROR(errors,OPS_E_R_BAD_FORMAT,"Badly formed base64");
+		return 0;
 	}
 
-    if(arg->buffered < 3 && arg->buffered > 0)
+	ret=read4(arg,errors,rinfo,cbinfo,&c,&n,&l);
+	if(ret < 0)
 	{
-	// then we saw padding
-	assert(c == '=');
-	c=read_and_eat_whitespace(arg,errors,rinfo,cbinfo,ops_true);
-	if(c != '\n')
-        {
-	    OPS_ERROR(errors,OPS_E_R_BAD_FORMAT,"No newline at base64 end");
-        return 0;
-        }
-	c=read_char(arg,errors,rinfo,cbinfo,ops_false);
-	if(c != '=')
-        {
-	    OPS_ERROR(errors,OPS_E_R_BAD_FORMAT,"No checksum at base64 end");
-        return 0;
-        }
+		OPS_ERROR(errors,OPS_E_R_BAD_FORMAT,"Badly formed base64");
+		return 0;
 	}
 
-    if(c == '=')
+	if(n == 3)
 	{
-	// now we are at the checksum
-	ret=read4(arg,errors,rinfo,cbinfo,&c,&n,&arg->read_checksum);
-	if(ret < 0 || n != 4)
-        {
-	    OPS_ERROR(errors,OPS_E_R_BAD_FORMAT,"Error in checksum");
-        return 0;
-        }
-	c=read_char(arg,errors,rinfo,cbinfo,ops_true);
-	if(arg->allow_trailing_whitespace)
-	    c=eat_whitespace(c,arg,errors,rinfo,cbinfo,ops_true);
-	if(c != '\n')
-        {
-	    OPS_ERROR(errors,OPS_E_R_BAD_FORMAT,"Badly terminated checksum");
-        return 0;
-        }
-	c=read_char(arg,errors,rinfo,cbinfo,ops_false);
-	if(c != '-')
-        {
-	    OPS_ERROR(errors,OPS_E_R_BAD_FORMAT,"Bad base64 trailer (2)");
-        return 0;
-        }
+		if(c != '=')
+		{
+			OPS_ERROR(errors,OPS_E_R_BAD_FORMAT,"Badly terminated base64 (2)");
+			return 0;
+		}
+		arg->buffered=2;
+		arg->eof64=ops_true;
+		l >>= 2;
+	}
+	else if(n == 2)
+	{
+		if(c != '=')
+		{
+			OPS_ERROR(errors,OPS_E_R_BAD_FORMAT,"Badly terminated base64 (3)");
+			return 0;
+		}
+		arg->buffered=1;
+		arg->eof64=ops_true;
+		l >>= 4;
+		c=read_char(arg,errors,rinfo,cbinfo,ops_false);
+		if(c != '=')
+		{
+			OPS_ERROR(errors,OPS_E_R_BAD_FORMAT,"Badly terminated base64");
+			return 0;
+		}
+	}
+	else if(n == 0)
+	{
+		if(!arg->prev_nl || c != '=')
+		{
+			OPS_ERROR(errors,OPS_E_R_BAD_FORMAT,"Badly terminated base64 (4)");
+			return 0;
+		}
+		arg->buffered=0;
+	}
+	else
+	{
+		if(n != 4) // ASSERT(n == 4);
+		{
+			OPS_ERROR(errors,OPS_E_R_BAD_FORMAT,"n should be  4");
+			return 0;
+		}
+		arg->buffered=3;
+
+		if(!(c != '-' && c != '=')) // ASSERT(c != '-' && c != '=');
+		{
+			OPS_ERROR(errors,OPS_E_R_BAD_FORMAT,"Badly terminated Base64 chunk");
+			return 0;
+		}
 	}
 
-    if(c == '-')
+	if(arg->buffered < 3 && arg->buffered > 0)
 	{
-	for(n=0 ; n < 4 ; ++n)
-	    if(read_char(arg,errors,rinfo,cbinfo,ops_false) != '-')
-            {
-            OPS_ERROR(errors,OPS_E_R_BAD_FORMAT,"Bad base64 trailer");
-            return 0;
-            }
-	arg->eof64=ops_true;
+		// then we saw padding
+		if(!(c == '='))	// ASSERT(c == '=');
+		{
+			OPS_ERROR(errors,OPS_E_R_BAD_FORMAT,"Badly terminated Base64 chunk");
+			return 0;
+		}
+		c=read_and_eat_whitespace(arg,errors,rinfo,cbinfo,ops_true);
+		if(c != '\n')
+		{
+			OPS_ERROR(errors,OPS_E_R_BAD_FORMAT,"No newline at base64 end");
+			return 0;
+		}
+		c=read_char(arg,errors,rinfo,cbinfo,ops_false);
+		if(c != '=')
+		{
+			OPS_ERROR(errors,OPS_E_R_BAD_FORMAT,"No checksum at base64 end");
+			return 0;
+		}
 	}
-    else
-	assert(arg->buffered);
 
-    for(n=0 ; n < arg->buffered ; ++n)
+	if(c == '=')
 	{
-	arg->buffer[n]=l;
-	l >>= 8;
+		// now we are at the checksum
+		ret=read4(arg,errors,rinfo,cbinfo,&c,&n,&arg->read_checksum);
+		if(ret < 0 || n != 4)
+		{
+			OPS_ERROR(errors,OPS_E_R_BAD_FORMAT,"Error in checksum");
+			return 0;
+		}
+		c=read_char(arg,errors,rinfo,cbinfo,ops_true);
+		if(arg->allow_trailing_whitespace)
+			c=eat_whitespace(c,arg,errors,rinfo,cbinfo,ops_true);
+		if(c != '\n')
+		{
+			OPS_ERROR(errors,OPS_E_R_BAD_FORMAT,"Badly terminated checksum");
+			return 0;
+		}
+		c=read_char(arg,errors,rinfo,cbinfo,ops_false);
+		if(c != '-')
+		{
+			OPS_ERROR(errors,OPS_E_R_BAD_FORMAT,"Bad base64 trailer (2)");
+			return 0;
+		}
 	}
 
-    for(n2=arg->buffered-1 ; n2 >= 0 ; --n2)
-	arg->checksum=ops_crc24(arg->checksum,arg->buffer[n2]);
+	if(c == '-')
+	{
+		for(n=0 ; n < 4 ; ++n)
+			if(read_char(arg,errors,rinfo,cbinfo,ops_false) != '-')
+			{
+				OPS_ERROR(errors,OPS_E_R_BAD_FORMAT,"Bad base64 trailer");
+				return 0;
+			}
+		arg->eof64=ops_true;
+	}
+	else if(!(arg->buffered))	// ASSERT(arg->buffered);
+	{
+		OPS_ERROR(errors,OPS_E_R_BAD_FORMAT,"Buffer error");
+		return 0;
+	}
 
-    if(arg->eof64 && arg->read_checksum != arg->checksum)
-        {
-        OPS_ERROR(errors,OPS_E_R_BAD_FORMAT,"Checksum mismatch");
-        return 0;
-        }
+	for(n=0 ; n < arg->buffered ; ++n)
+	{
+		arg->buffer[n]=l;
+		l >>= 8;
+	}
 
-    return 1;
-    }
+	for(n2=arg->buffered-1 ; n2 >= 0 ; --n2)
+		arg->checksum=ops_crc24(arg->checksum,arg->buffer[n2]);
+
+	if(arg->eof64 && arg->read_checksum != arg->checksum)
+	{
+		OPS_ERROR(errors,OPS_E_R_BAD_FORMAT,"Checksum mismatch");
+		return 0;
+	}
+
+	return 1;
+}
 
 static void base64(dearmour_arg_t *arg)
     {
@@ -779,212 +813,224 @@ static void base64(dearmour_arg_t *arg)
 static int armoured_data_reader(void *dest_,size_t length,ops_error_t **errors,
 				ops_reader_info_t *rinfo,
 				ops_parse_cb_info_t *cbinfo)
-     {
-     dearmour_arg_t *arg=ops_reader_get_arg(rinfo);
-     ops_parser_content_t content;
-     int ret;
-     ops_boolean_t first;
-     unsigned char *dest=dest_;
-     int saved=length;
+{
+	dearmour_arg_t *arg=ops_reader_get_arg(rinfo);
+	ops_parser_content_t content;
+	int ret;
+	ops_boolean_t first;
+	unsigned char *dest=dest_;
+	int saved=length;
 
-     if(arg->eof64 && !arg->buffered)
-	 assert(arg->state == OUTSIDE_BLOCK || arg->state == AT_TRAILER_NAME);
-
-     while(length > 0)
-	 {
-	 unsigned count;
-	 unsigned n;
-	 char buf[1024];
-	 int c;
-
-	 flush(arg,cbinfo);
-	 switch(arg->state)
-	     {
-	 case OUTSIDE_BLOCK:
-	     /* This code returns EOF rather than EARLY_EOF because if
-		we don't see a header line at all, then it is just an
-		EOF (and not a BLOCK_END) */
-	     while(!arg->seen_nl)
-		 if((c=unarmoured_read_char(arg,errors,rinfo,cbinfo,ops_true)) < 0)
-		     return 0;
-
-	     /* flush at this point so we definitely have room for the
-		header, and so we can easily erase it from the buffer */
-	     flush(arg,cbinfo);
-	     /* Find and consume the 5 leading '-' */
-	     for(count=0 ; count < 5 ; ++count)
-		 {
-		 if((c=unarmoured_read_char(arg,errors,rinfo,cbinfo,ops_false)) < 0)
-		     return 0;
-		 if(c != '-')
-		     goto reloop;
-		 }
-
-	     /* Now find the block type */
-	     for(n=0 ; n < sizeof buf-1 ; )
-		 {
-		 if((c=unarmoured_read_char(arg,errors,rinfo,cbinfo,ops_false)) < 0)
-		     return 0;
-		 if(c == '-')
-		     goto got_minus;
-		 buf[n++]=c;
-		 }
-	     /* then I guess this wasn't a proper header */
-	     break;
-
-	 got_minus:
-	     buf[n]='\0';
-
-	     /* Consume trailing '-' */
-	     for(count=1 ; count < 5 ; ++count)
-		 {
-		 if((c=unarmoured_read_char(arg,errors,rinfo,cbinfo,ops_false)) < 0)
-		     return 0;
-		 if(c != '-')
-		     /* wasn't a header after all */
-		     goto reloop;
-		 }
-
-	     /* Consume final NL */
-	     if((c=unarmoured_read_char(arg,errors,rinfo,cbinfo,ops_true)) < 0)
-		 return 0;
-	     if(arg->allow_trailing_whitespace)
-		 if((c=eat_whitespace(c,arg,errors,rinfo,cbinfo,
-				      ops_true)) < 0)
-		    return 0;
-	     if(c != '\n')
-		 /* wasn't a header line after all */
-		 break;
-
-	     /* Now we've seen the header, scrub it from the buffer */
-	     arg->num_unarmoured=0;
-
-	     /* But now we've seen a header line, then errors are
-		EARLY_EOF */
-	     if((ret=parse_headers(arg,errors,rinfo,cbinfo)) <= 0)
-		 return -1;
-
-         if (!set_lastseen_headerline(arg,buf,errors))
-             return -1;
-
-	     if(!strcmp(buf,"BEGIN PGP SIGNED MESSAGE"))
-		 {
-		 ops_dup_headers(&content.content.signed_cleartext_header.headers,&arg->headers);
-		 CB(cbinfo,OPS_PTAG_CT_SIGNED_CLEARTEXT_HEADER,&content);
-		 ret=process_dash_escaped(arg,errors,rinfo,cbinfo);
-		 if(ret <= 0)
-		     return ret;
-		 }
-	     else
-		 {
-		 content.content.armour_header.type=buf;
-		 content.content.armour_header.headers=arg->headers;
-		 memset(&arg->headers,'\0',sizeof arg->headers);
-		 CB(cbinfo,OPS_PTAG_CT_ARMOUR_HEADER,&content);
-		 base64(arg);
-		 }
-	     break;
-
-	 case BASE64:
-	     first=ops_true;
-	     while(length > 0)
-		 {
-		 if(!arg->buffered)
-		     {
-		     if(!arg->eof64)
-			 {
-			 ret=decode64(arg,errors,rinfo,cbinfo);
-			 if(ret <= 0)
-			     return ret;
-			 }
-		     if(!arg->buffered)
-			 {
-			 assert(arg->eof64);
-			 if(first)
-			     {
-			     arg->state=AT_TRAILER_NAME;
-			     goto reloop;
-			     }
-			 return -1;
-			 }
-		     }
-
-		 assert(arg->buffered);
-		 *dest=arg->buffer[--arg->buffered];
-		 ++dest;
-		 --length;
-		 first=ops_false;
-		 }
-	     if(arg->eof64 && !arg->buffered)
-		 arg->state=AT_TRAILER_NAME;
-	     break;
-
-	 case AT_TRAILER_NAME:
-	     for(n=0 ; n < sizeof buf-1 ; )
-		 {
-		 if((c=read_char(arg,errors,rinfo,cbinfo,ops_false)) < 0)
-		     return -1;
-		 if(c == '-')
-		     goto got_minus2;
-		 buf[n++]=c;
-		 }
-	     /* then I guess this wasn't a proper trailer */
-	     OPS_ERROR(errors,OPS_E_R_BAD_FORMAT,"Bad ASCII armour trailer");
-	     break;
-
-	 got_minus2:
-	     buf[n]='\0';
-
-         if (!set_lastseen_headerline(arg,buf,errors))
-             return -1;
-
-	     /* Consume trailing '-' */
-	     for(count=1 ; count < 5 ; ++count)
-		 {
-		 if((c=read_char(arg,errors,rinfo,cbinfo,ops_false)) < 0)
-		     return -1;
-		 if(c != '-')
-		     /* wasn't a trailer after all */
-		     OPS_ERROR(errors, OPS_E_R_BAD_FORMAT,"Bad ASCII armour trailer (2)");
-		 }
-
-	     /* Consume final NL */
-	     if((c=read_char(arg,errors,rinfo,cbinfo,ops_true)) < 0)
-		 return -1;
-	     if(arg->allow_trailing_whitespace)
-		 if((c=eat_whitespace(c,arg,errors,rinfo,cbinfo,
-				      ops_true)) < 0)
-		    return 0;
-	     if(c != '\n')
-		 /* wasn't a trailer line after all */
-		 OPS_ERROR(errors,OPS_E_R_BAD_FORMAT,"Bad ASCII armour trailer (3)");
-
-	     if(!strncmp(buf,"BEGIN ",6))
-		 {
-         if (!set_lastseen_headerline(arg,buf,errors))
-             return -1;
-		 if((ret=parse_headers(arg,errors,rinfo,cbinfo)) <= 0)
-		     return ret;
-		 content.content.armour_header.type=buf;
-		 content.content.armour_header.headers=arg->headers;
-		 memset(&arg->headers,'\0',sizeof arg->headers);
-		 CB(cbinfo,OPS_PTAG_CT_ARMOUR_HEADER,&content);
-		 base64(arg);
-		 }
-	     else
-		 {
-		 content.content.armour_trailer.type=buf;
-		 CB(cbinfo,OPS_PTAG_CT_ARMOUR_TRAILER,&content);
-		arg->state=OUTSIDE_BLOCK;
+	if(arg->eof64 && !arg->buffered)
+		if(!(arg->state == OUTSIDE_BLOCK || arg->state == AT_TRAILER_NAME))	//  ASSERT(arg->state == OUTSIDE_BLOCK || arg->state == AT_TRAILER_NAME);
+		{
+			OPS_ERROR(errors,OPS_E_R_BAD_FORMAT,"Outside block or trailer name expected");
+			return -1 ;
 		}
-	    break;
-	    }
-    reloop:
-	continue;
+
+	while(length > 0)
+	{
+		unsigned count;
+		unsigned n;
+		char buf[1024];
+		int c;
+
+		flush(arg,cbinfo);
+		switch(arg->state)
+		{
+			case OUTSIDE_BLOCK:
+				/* This code returns EOF rather than EARLY_EOF because if
+					we don't see a header line at all, then it is just an
+					EOF (and not a BLOCK_END) */
+				while(!arg->seen_nl)
+					if((c=unarmoured_read_char(arg,errors,rinfo,cbinfo,ops_true)) < 0)
+						return 0;
+
+				/* flush at this point so we definitely have room for the
+					header, and so we can easily erase it from the buffer */
+				flush(arg,cbinfo);
+				/* Find and consume the 5 leading '-' */
+				for(count=0 ; count < 5 ; ++count)
+				{
+					if((c=unarmoured_read_char(arg,errors,rinfo,cbinfo,ops_false)) < 0)
+						return 0;
+					if(c != '-')
+						goto reloop;
+				}
+
+				/* Now find the block type */
+				for(n=0 ; n < sizeof buf-1 ; )
+				{
+					if((c=unarmoured_read_char(arg,errors,rinfo,cbinfo,ops_false)) < 0)
+						return 0;
+					if(c == '-')
+						goto got_minus;
+					buf[n++]=c;
+				}
+				/* then I guess this wasn't a proper header */
+				break;
+
+got_minus:
+				buf[n]='\0';
+
+				/* Consume trailing '-' */
+				for(count=1 ; count < 5 ; ++count)
+				{
+					if((c=unarmoured_read_char(arg,errors,rinfo,cbinfo,ops_false)) < 0)
+						return 0;
+					if(c != '-')
+						/* wasn't a header after all */
+						goto reloop;
+				}
+
+				/* Consume final NL */
+				if((c=unarmoured_read_char(arg,errors,rinfo,cbinfo,ops_true)) < 0)
+					return 0;
+				if(arg->allow_trailing_whitespace)
+					if((c=eat_whitespace(c,arg,errors,rinfo,cbinfo,
+									ops_true)) < 0)
+						return 0;
+				if(c != '\n')
+					/* wasn't a header line after all */
+					break;
+
+				/* Now we've seen the header, scrub it from the buffer */
+				arg->num_unarmoured=0;
+
+				/* But now we've seen a header line, then errors are
+					EARLY_EOF */
+				if((ret=parse_headers(arg,errors,rinfo,cbinfo)) <= 0)
+					return -1;
+
+				if (!set_lastseen_headerline(arg,buf,errors))
+					return -1;
+
+				if(!strcmp(buf,"BEGIN PGP SIGNED MESSAGE"))
+				{
+					ops_dup_headers(&content.content.signed_cleartext_header.headers,&arg->headers);
+					CB(cbinfo,OPS_PTAG_CT_SIGNED_CLEARTEXT_HEADER,&content);
+					ret=process_dash_escaped(arg,errors,rinfo,cbinfo);
+					if(ret <= 0)
+						return ret;
+				}
+				else
+				{
+					content.content.armour_header.type=buf;
+					content.content.armour_header.headers=arg->headers;
+					memset(&arg->headers,'\0',sizeof arg->headers);
+					CB(cbinfo,OPS_PTAG_CT_ARMOUR_HEADER,&content);
+					base64(arg);
+				}
+				break;
+
+			case BASE64:
+				first=ops_true;
+				while(length > 0)
+				{
+					if(!arg->buffered)
+					{
+						if(!arg->eof64)
+						{
+							ret=decode64(arg,errors,rinfo,cbinfo);
+							if(ret <= 0)
+								return ret;
+						}
+						if(!arg->buffered)
+						{
+							if(!(arg->eof64))	// ASSERT(arg->eof64);
+							{
+								OPS_ERROR(errors,OPS_E_R_BAD_FORMAT,"Format error");
+								return -1 ;
+							}
+							if(first)
+							{
+								arg->state=AT_TRAILER_NAME;
+								goto reloop;
+							}
+							return -1;
+						}
+					}
+
+					if(!(arg->buffered))		// ASSERT(arg->buffered);
+					{
+						OPS_ERROR(errors,OPS_E_R_BAD_FORMAT,"Format error");
+						return -1 ;
+					}
+					*dest=arg->buffer[--arg->buffered];
+					++dest;
+					--length;
+					first=ops_false;
+				}
+				if(arg->eof64 && !arg->buffered)
+					arg->state=AT_TRAILER_NAME;
+				break;
+
+			case AT_TRAILER_NAME:
+				for(n=0 ; n < sizeof buf-1 ; )
+				{
+					if((c=read_char(arg,errors,rinfo,cbinfo,ops_false)) < 0)
+						return -1;
+					if(c == '-')
+						goto got_minus2;
+					buf[n++]=c;
+				}
+				/* then I guess this wasn't a proper trailer */
+				OPS_ERROR(errors,OPS_E_R_BAD_FORMAT,"Bad ASCII armour trailer");
+				break;
+
+got_minus2:
+				buf[n]='\0';
+
+				if (!set_lastseen_headerline(arg,buf,errors))
+					return -1;
+
+				/* Consume trailing '-' */
+				for(count=1 ; count < 5 ; ++count)
+				{
+					if((c=read_char(arg,errors,rinfo,cbinfo,ops_false)) < 0)
+						return -1;
+					if(c != '-')
+						/* wasn't a trailer after all */
+						OPS_ERROR(errors, OPS_E_R_BAD_FORMAT,"Bad ASCII armour trailer (2)");
+				}
+
+				/* Consume final NL */
+				if((c=read_char(arg,errors,rinfo,cbinfo,ops_true)) < 0)
+					return -1;
+				if(arg->allow_trailing_whitespace)
+					if((c=eat_whitespace(c,arg,errors,rinfo,cbinfo,
+									ops_true)) < 0)
+						return 0;
+				if(c != '\n')
+					/* wasn't a trailer line after all */
+					OPS_ERROR(errors,OPS_E_R_BAD_FORMAT,"Bad ASCII armour trailer (3)");
+
+				if(!strncmp(buf,"BEGIN ",6))
+				{
+					if (!set_lastseen_headerline(arg,buf,errors))
+						return -1;
+					if((ret=parse_headers(arg,errors,rinfo,cbinfo)) <= 0)
+						return ret;
+					content.content.armour_header.type=buf;
+					content.content.armour_header.headers=arg->headers;
+					memset(&arg->headers,'\0',sizeof arg->headers);
+					CB(cbinfo,OPS_PTAG_CT_ARMOUR_HEADER,&content);
+					base64(arg);
+				}
+				else
+				{
+					content.content.armour_trailer.type=buf;
+					CB(cbinfo,OPS_PTAG_CT_ARMOUR_TRAILER,&content);
+					arg->state=OUTSIDE_BLOCK;
+				}
+				break;
+		}
+reloop:
+		continue;
 	}
 
-    return saved;
-    }
+	return saved;
+}
 
 static void armoured_data_destroyer(ops_reader_info_t *rinfo)
     { free(ops_reader_get_arg(rinfo)); }
