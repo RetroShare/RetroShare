@@ -1182,21 +1182,28 @@ bool PGPHandler::encryptDataBin(const PGPIdType& key_id,const void *data, const 
 	ops_create_info_t *info;
 	ops_memory_t *buf = NULL ;
    ops_setup_memory_write(&info, &buf, 0);
+	bool res = true;
 
-	ops_encrypt_stream(info, public_key, NULL, ops_false, ops_false);
+	if(!ops_encrypt_stream(info, public_key, NULL, ops_false, ops_false))
+	{
+		std::cerr << "Encryption failed." << std::endl;
+		res = false ;
+	}
 
 	ops_write(data,len,info);
 	ops_writer_close(info);
 	ops_create_info_delete(info);
 
 	int tlen = ops_memory_get_length(buf) ;
-	bool res ;
 
 	if( (int)*encrypted_data_len >= tlen)
 	{
-		memcpy(encrypted_data,ops_memory_get_data(buf),tlen) ;
-		*encrypted_data_len = tlen ;
-		res = true ;
+		if(res)
+		{
+			memcpy(encrypted_data,ops_memory_get_data(buf),tlen) ;
+			*encrypted_data_len = tlen ;
+			res = true ;
+		}
 	}
 	else
 	{
