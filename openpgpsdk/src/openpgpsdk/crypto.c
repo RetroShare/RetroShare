@@ -264,8 +264,9 @@ extern ops_boolean_t ops_encrypt_stream(ops_create_info_t* cinfo,
 
 	ops_writer_push_stream_encrypt_se_ip(cinfo, public_key);
 
-	if(! (compress && ops_writer_push_compressed(cinfo)))
-		return ops_false ;
+	if(compress)
+	   if(!ops_writer_push_compressed(cinfo))
+		  return ops_false ;
 
 	if (secret_key != NULL)
 		ops_writer_push_signed(cinfo, OPS_SIG_BINARY, secret_key);
