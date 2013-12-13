@@ -59,6 +59,7 @@ RESOURCES = gui/FeedReader_images.qrc \
 			lang/FeedReader_lang.qrc
 			
 TRANSLATIONS +=  \
+			lang/FeedReader_ca_ES.ts \
 			lang/FeedReader_cs.ts \
 			lang/FeedReader_da.ts \
 			lang/FeedReader_de.ts \

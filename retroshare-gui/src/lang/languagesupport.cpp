@@ -42,6 +42,7 @@ LanguageSupport::languages()
     //languages.insert("af",    "Afrikaans");
     //languages.insert("bg",    "Bulgarien");
     //languages.insert("cy",    "Welsh");
+    languages.insert("ca_ES",    QString::fromUtf8("Catal\303\240"));
     languages.insert("cs",    QString::fromUtf8("\304\214esky"));
     languages.insert("de",    "Deutsch");
     languages.insert("da",    "Dansk");
@@ -75,6 +76,7 @@ LanguageSupport::locales()
     //locales.insert("af", QLocale(QLocale::Afrikaans, QLocale::SouthAfrica));
     //locales.insert("bg", QLocale(QLocale::Bulgarian, QLocale::Bulgaria),);
     //locales.insert("cy", QLocale(QLocale::Welsh, QLocale::UnitedKingdom));
+    locales.insert("ca", QLocale(QLocale::Catalan, QLocale::Spain));
     locales.insert("cs", QLocale(QLocale::Czech, QLocale::CzechRepublic));
     locales.insert("de", QLocale(QLocale::German, QLocale::Germany));
     locales.insert("da", QLocale(QLocale::Danish, QLocale::Denmark));

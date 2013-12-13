@@ -1495,11 +1495,11 @@ Haga doble clic en las salas para entrar y charlar.</translation>
     </message>
     <message>
         <source>Private Subscribed Lobbies</source>
-        <translation type="unfinished"/>
+        <translation>Salas suscritas privadas</translation>
     </message>
     <message>
         <source>Public Subscribed Lobbies</source>
-        <translation type="unfinished"/>
+        <translation>Salas suscritas públicas</translation>
     </message>
 </context>
 <context>
@@ -1765,19 +1765,19 @@ Haga doble clic en las salas para entrar y charlar.</translation>
     </message>
     <message>
         <source>Maximum storage period, in days (0=keep all):</source>
-        <translation type="unfinished"/>
+        <translation>Máximo periodo de almacenamiento, en días (0=mantener todo):</translation>
     </message>
     <message>
         <source>Name : </source>
-        <translation type="unfinished"/>
+        <translation>Nombre :</translation>
     </message>
     <message>
         <source>Signed with key not in keyring</source>
-        <translation type="unfinished"/>
+        <translation>Firmado con una clave externa al grupo de claves (&apos;keyring&apos;)</translation>
     </message>
     <message>
         <source>Not signed.</source>
-        <translation type="unfinished"/>
+        <translation>No firmado.</translation>
     </message>
     <message>
         <source>Authenticated signature</source>
@@ -2794,22 +2794,25 @@ Algunos servicios (Descubrimiento, enrutado anónimo) se pueden desactivar de ma
     </message>
     <message>
         <source>Please note that RetroShare will require excessive amounts of bandwidth, memory and CPU if you add to many friends. You can add as many friends as you like, but more than 40 will probably require too much resources.</source>
-        <translation type="unfinished"/>
+        <translation>Por favor observer que RetroShare requerirá cantidades excesivas de ancho de banda, memoria y CPU si añade demasiados amigos. Puede añadir tantos amigos como qujiera, pero más de 40 probablemente requerirán demasiados recursos.</translation>
     </message>
     <message>
         <source>Add key to keyring</source>
-        <translation type="unfinished"/>
+        <translation>Añadir al grupo de claves (&apos;keyring&apos;)</translation>
     </message>
     <message>
         <source>This key is already in your keyring</source>
-        <translation type="unfinished"/>
+        <translation>Esta clave ya está en su grupo de claves (&apos;keyring&apos;)</translation>
     </message>
     <message>
         <source>Check this to add the key to your keyring
 This might be useful for sending
 distant messages to this peer
 even if you don&apos;t make friends.</source>
-        <translation type="unfinished"/>
+        <translation>Compruebe esto para añadir la clave a su grupo de claves (&apos;keyring&apos;)
+Esto podría ser útil para enviar
+mensajes distantes a su par
+incluso si no hace amigos.</translation>
     </message>
 </context>
 <context>
@@ -4453,7 +4456,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Identity ID</source>
-        <translation type="unfinished"/>
+        <translation>Identidad ID</translation>
     </message>
     <message>
         <source>TextLabel</source>
@@ -4461,7 +4464,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>PGP fingerprint:</source>
-        <translation type="unfinished"/>
+        <translation>Huella de validación PGP:</translation>
     </message>
 </context>
 <context>

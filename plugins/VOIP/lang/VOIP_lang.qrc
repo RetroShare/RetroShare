@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="/lang">
+    <file>VOIP_ca_ES.qm</file>
     <file>VOIP_cs.qm</file>
     <file>VOIP_da.qm</file>
     <file>VOIP_de.qm</file>

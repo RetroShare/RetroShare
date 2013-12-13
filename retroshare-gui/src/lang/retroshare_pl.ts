@@ -1328,7 +1328,7 @@ Wybierz, z którą chcesz rozmawiać.</translation>
     </message>
     <message>
         <source> seconds</source>
-        <translation type="unfinished"/>
+        <translation>sekundy</translation>
     </message>
 </context>
 <context>
@@ -1438,7 +1438,7 @@ Wybierz, z którą chcesz rozmawiać.</translation>
     </message>
     <message>
         <source>Columns</source>
-        <translation type="unfinished"/>
+        <translation>Kolumny</translation>
     </message>
     <message>
         <source>Yes</source>
@@ -1826,11 +1826,11 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Underline</source>
-        <translation type="unfinished"/>
+        <translation>Podkreślenie</translation>
     </message>
     <message>
         <source>Italic</source>
-        <translation type="unfinished"/>
+        <translation>Pochylenie</translation>
     </message>
     <message>
         <source>Font</source>
@@ -1906,7 +1906,7 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Add Extra File</source>
-        <translation type="unfinished"/>
+        <translation>Dodaj dodatkowy plik</translation>
     </message>
     <message>
         <source>Load Picture File</source>
@@ -2084,7 +2084,7 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Last Contact</source>
-        <translation type="unfinished"/>
+        <translation>Ostatni kontakt</translation>
     </message>
     <message>
         <source>Version</source>
@@ -2092,7 +2092,7 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Peer Address</source>
-        <translation type="unfinished"/>
+        <translation>Adres Peera</translation>
     </message>
     <message>
         <source>Local Address</source>
@@ -2398,7 +2398,7 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Browse</source>
-        <translation type="unfinished"/>
+        <translation>Przeglądaj</translation>
     </message>
     <message>
         <source>Friends of friends</source>
@@ -2614,7 +2614,7 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>RetroShare Invitation</source>
-        <translation type="unfinished"/>
+        <translation>Zaproszenie RetroShare</translation>
     </message>
     <message>
         <source>Ultimate</source>
@@ -2758,7 +2758,7 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>To</source>
-        <translation type="unfinished"/>
+        <translation>Do</translation>
     </message>
     <message>
         <source>Please select at least one friend for recommendation.</source>
@@ -3298,7 +3298,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Decrease font size</source>
-        <translation type="unfinished"/>
+        <translation>Zmniejsz rozmiar czcionki</translation>
     </message>
     <message>
         <source>Bold</source>
@@ -3306,11 +3306,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Underline</source>
-        <translation type="unfinished"/>
+        <translation>Podkreślenie</translation>
     </message>
     <message>
         <source>Italic</source>
-        <translation type="unfinished"/>
+        <translation>Pochylenie</translation>
     </message>
     <message>
         <source>Publish</source>
@@ -3354,19 +3354,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>&amp;File</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Plik</translation>
     </message>
     <message>
         <source>&amp;New</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Nowe</translation>
     </message>
     <message>
         <source>&amp;Open...</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Otwórz</translation>
     </message>
     <message>
         <source>&amp;Save</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Zapisz</translation>
     </message>
     <message>
         <source>Save &amp;As...</source>
@@ -3374,55 +3374,55 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>&amp;Print...</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Drukuj...</translation>
     </message>
     <message>
         <source>Print Preview...</source>
-        <translation type="unfinished"/>
+        <translation>Podgląd Wydruku...</translation>
     </message>
     <message>
         <source>&amp;Export PDF...</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Eksportuj PDF...</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Zamknij</translation>
     </message>
     <message>
         <source>&amp;Edit</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Edycja</translation>
     </message>
     <message>
         <source>&amp;Undo</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Cofnij</translation>
     </message>
     <message>
         <source>&amp;Redo</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Ponów</translation>
     </message>
     <message>
         <source>Cu&amp;t</source>
-        <translation type="unfinished"/>
+        <translation>Wytni&amp;j</translation>
     </message>
     <message>
         <source>&amp;Copy</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Kopiuj</translation>
     </message>
     <message>
         <source>&amp;Paste</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Wklej</translation>
     </message>
     <message>
         <source>&amp;View</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Zobacz</translation>
     </message>
     <message>
         <source>&amp;Insert</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Wstaw</translation>
     </message>
     <message>
         <source>&amp;Image</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Obraz</translation>
     </message>
     <message>
         <source>F&amp;ormat</source>
@@ -3442,15 +3442,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>&amp;Left</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Lewo</translation>
     </message>
     <message>
         <source>C&amp;enter</source>
-        <translation type="unfinished"/>
+        <translation>Ś&amp;rodek</translation>
     </message>
     <message>
         <source>&amp;Right</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Prawo</translation>
     </message>
     <message>
         <source>&amp;Justify</source>
@@ -3471,15 +3471,15 @@ Do you want to save your changes?</source>
     </message>
     <message>
         <source>Open File...</source>
-        <translation type="unfinished"/>
+        <translation>Otwórz Plik...</translation>
     </message>
     <message>
         <source>HTML-Files (*.htm *.html);;All Files (*)</source>
-        <translation type="unfinished"/>
+        <translation>Pliki HTML (*.htm *.html);;Wszystkie pliki (*)</translation>
     </message>
     <message>
         <source>Save as...</source>
-        <translation type="unfinished"/>
+        <translation>Zapisz jako...</translation>
     </message>
     <message>
         <source>ODF files (*.odt);;HTML-Files (*.htm *.html);;All Files (*)</source>
@@ -3487,19 +3487,19 @@ Do you want to save your changes?</source>
     </message>
     <message>
         <source>Print Document</source>
-        <translation type="unfinished"/>
+        <translation>Drukuj Dokument</translation>
     </message>
     <message>
         <source>Export PDF</source>
-        <translation type="unfinished"/>
+        <translation>Eksport PDF</translation>
     </message>
     <message>
         <source>Choose Image</source>
-        <translation type="unfinished"/>
+        <translation>Wybierz Obraz</translation>
     </message>
     <message>
         <source>Image Files supported (*.png *.jpeg *.jpg *.gif)</source>
-        <translation type="unfinished"/>
+        <translation>Wspierane Pliki Obrazów (*.png *.jpeg *.jpg *.gif)</translation>
     </message>
 </context>
 <context>
@@ -3522,7 +3522,7 @@ Do you want to save your changes?</source>
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"/>
+        <translation>Opis</translation>
     </message>
     <message>
         <source>Type:</source>
@@ -3542,7 +3542,7 @@ Do you want to save your changes?</source>
     </message>
     <message>
         <source>Anonymous Messages</source>
-        <translation type="unfinished"/>
+        <translation>Anonimowe Wiadomości</translation>
     </message>
     <message>
         <source>Authenticated Messages</source>
@@ -3566,7 +3566,7 @@ Do you want to save your changes?</source>
     </message>
     <message>
         <source>Add Channel Logo</source>
-        <translation type="unfinished"/>
+        <translation>Dodaj Logo Kanału</translation>
     </message>
     <message>
         <source>New Channel</source>
@@ -3582,7 +3582,7 @@ Do you want to save your changes?</source>
     </message>
     <message>
         <source>Load channel logo</source>
-        <translation type="unfinished"/>
+        <translation>Wczytaj logo kanału</translation>
     </message>
 </context>
 <context>
@@ -3627,7 +3627,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Attachments</source>
-        <translation type="unfinished"/>
+        <translation>Załączniki</translation>
     </message>
     <message>
         <source>Allow channels to get frame for message thumbnail from movie media attachments or not</source>
@@ -3667,11 +3667,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>File not found or file name not accepted.</source>
-        <translation type="unfinished"/>
+        <translation>Plik nie znaleziony lub nieakceptowalna nazwa pliku.</translation>
     </message>
     <message>
         <source>Add Extra File</source>
-        <translation type="unfinished"/>
+        <translation>Dodaj dodatkowy plik</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -3821,7 +3821,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"/>
+        <translation>Opis</translation>
     </message>
     <message>
         <source>Type:</source>
@@ -3861,7 +3861,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Anonymous Messages</source>
-        <translation type="unfinished"/>
+        <translation>Anonimowe Wiadomości</translation>
     </message>
     <message>
         <source>New Forum</source>
@@ -3892,7 +3892,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Attach File</source>
-        <translation type="unfinished"/>
+        <translation>Załącz Plik</translation>
     </message>
     <message>
         <source>Sign Message</source>
@@ -3928,7 +3928,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>In Reply to</source>
-        <translation type="unfinished"/>
+        <translation>W Odpowiedzi do</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -3940,7 +3940,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add Extra File</source>
-        <translation type="unfinished"/>
+        <translation>Dodaj dodatkowy plik</translation>
     </message>
     <message>
         <source>Attach a Picture</source>
@@ -3971,7 +3971,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Edit Group</source>
-        <translation type="unfinished"/>
+        <translation>Edytuj Grupę</translation>
     </message>
 </context>
 <context>
@@ -4016,7 +4016,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Attachments</source>
-        <translation type="unfinished"/>
+        <translation>Załączniki</translation>
     </message>
     <message>
         <source>Allow channels to get frame for message thumbnail from movie media attachments or not</source>
@@ -4060,11 +4060,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>File not found or file name not accepted.</source>
-        <translation type="unfinished"/>
+        <translation>Plik nie znaleziony lub nieakceptowalna nazwa pliku.</translation>
     </message>
     <message>
         <source>Add Extra File</source>
-        <translation type="unfinished"/>
+        <translation>Dodaj dodatkowy plik</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -4163,7 +4163,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add Extra File</source>
-        <translation type="unfinished"/>
+        <translation>Dodaj dodatkowy plik</translation>
     </message>
     <message>
         <source>Generate mass data</source>
@@ -4380,7 +4380,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Error</source>
-        <translation type="unfinished"/>
+        <translation>Błąd</translation>
     </message>
     <message>
         <source>Your certificate could not be parsed correctly. Please contact the developers.</source>
@@ -4396,7 +4396,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Save as...</source>
-        <translation type="unfinished"/>
+        <translation>Zapisz jako...</translation>
     </message>
     <message>
         <source>RetroShare Certificate (*.rsc );;All Files (*)</source>
@@ -4450,15 +4450,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>KB</source>
-        <translation type="unfinished"/>
+        <translation>KB</translation>
     </message>
     <message>
         <source>MB</source>
-        <translation type="unfinished"/>
+        <translation> MB</translation>
     </message>
     <message>
         <source>GB</source>
-        <translation type="unfinished"/>
+        <translation> GB</translation>
     </message>
     <message>
         <source>File Never Seen</source>
@@ -4513,14 +4513,14 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>File Name</source>
-        <translation type="unfinished"/>
+        <translation>Nazwa pliku</translation>
     </message>
 </context>
 <context>
     <name>DhtWindow</name>
     <message>
         <source>DHT Details</source>
-        <translation type="unfinished"/>
+        <translation>Szczegóły DHT</translation>
     </message>
     <message>
         <source>Peer Details</source>
@@ -4548,7 +4548,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Peer Address</source>
-        <translation type="unfinished"/>
+        <translation>Adres Peera</translation>
     </message>
     <message>
         <source>Extra Label</source>
@@ -4640,11 +4640,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Class</source>
-        <translation type="unfinished"/>
+        <translation>Klasa</translation>
     </message>
     <message>
         <source>Age</source>
-        <translation type="unfinished"/>
+        <translation>Wielk</translation>
     </message>
     <message>
         <source>Bandwidth</source>
@@ -4903,7 +4903,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Browse</source>
-        <translation type="unfinished"/>
+        <translation>Przeglądaj</translation>
     </message>
     <message>
         <source>Partials Directory</source>
@@ -4911,7 +4911,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Shared Directories</source>
-        <translation type="unfinished"/>
+        <translation>Współdzielone katalogi</translation>
     </message>
     <message>
         <source>Automatically share incoming directory (Recommended)</source>
@@ -4919,46 +4919,49 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Edit Share</source>
-        <translation type="unfinished"/>
+        <translation>Edytuj udział</translation>
     </message>
     <message>
         <source>Remember file hashes even if not shared. 
 This might be useful if you're sharing an 
 external HD, to avoid re-hashing files when 
 you plug it in.</source>
-        <translation type="unfinished"/>
+        <translation>Pamiętaj hasze plików, nawet jeśli nie są współdzielone.
+Może to być użyteczne gdy udostępniasz 
+zewnętrzny napęd, by uniknąć ponownego hashowania
+plików gdy go podłączysz.</translation>
     </message>
     <message>
         <source>Remember hashed files for </source>
-        <translation type="unfinished"/>
+        <translation>Pamiętaj hashe plików przez</translation>
     </message>
     <message>
         <source> days</source>
-        <translation type="unfinished"/>
+        <translation>dni</translation>
     </message>
     <message>
         <source>Forget any hashed file that is not anymore shared.</source>
-        <translation type="unfinished"/>
+        <translation>Zapomnij hashe plików które nie są już udostępniane.</translation>
     </message>
     <message>
         <source>Clean Hash Cache</source>
-        <translation type="unfinished"/>
+        <translation>Wyczyść pamięć podręczą Hashy</translation>
     </message>
     <message>
         <source>Auto-check shared directories every </source>
-        <translation type="unfinished"/>
+        <translation>Automatycznie sprawdzaj udostępnione katalogi co</translation>
     </message>
     <message>
         <source> minute(s)</source>
-        <translation type="unfinished"/>
+        <translation>minut(y)</translation>
     </message>
     <message>
         <source>Cache cleaning confirmation</source>
-        <translation type="unfinished"/>
+        <translation>Potwierdzenie czyszczenia pamięci podręcznej</translation>
     </message>
     <message>
         <source>This will forget any former hash of non shared files. Do you confirm ?</source>
-        <translation type="unfinished"/>
+        <translation>To zapomni jakiekolwiek pozostałe hashe niewspółdzielonych plików. Potwierdzasz ?</translation>
     </message>
     <message>
         <source>Set Incoming Directory</source>
@@ -4970,7 +4973,7 @@ you plug it in.</source>
     </message>
     <message>
         <source>Directories</source>
-        <translation type="unfinished"/>
+        <translation>Katalogi</translation>
     </message>
 </context>
 <context>
@@ -5015,34 +5018,34 @@ you plug it in.</source>
     </message>
     <message>
         <source>Add Channel Logo</source>
-        <translation type="unfinished"/>
+        <translation>Dodaj Logo Kanału</translation>
     </message>
     <message>
         <source>Load channel logo</source>
-        <translation type="unfinished"/>
+        <translation>Wczytaj logo kanału</translation>
     </message>
 </context>
 <context>
     <name>EditForumDetails</name>
     <message>
         <source>Forum Details</source>
-        <translation type="unfinished"/>
+        <translation>Szczegóły Forum</translation>
     </message>
     <message>
         <source>Edit Forum Details</source>
-        <translation type="unfinished"/>
+        <translation>Edytuj Szczegóły Forum</translation>
     </message>
     <message>
         <source>Forum Info</source>
-        <translation type="unfinished"/>
+        <translation>Informacje o Forum</translation>
     </message>
     <message>
         <source>Forum Name</source>
-        <translation type="unfinished"/>
+        <translation>Nazwa Forum</translation>
     </message>
     <message>
         <source>Forum Description</source>
-        <translation type="unfinished"/>
+        <translation>Opis Forum</translation>
     </message>
 </context>
 <context>
@@ -5059,7 +5062,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>#</source>
-        <translation type="unfinished"/>
+        <translation>#</translation>
     </message>
     <message>
         <source>Status</source>
@@ -5067,7 +5070,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Person</source>
-        <translation type="unfinished"/>
+        <translation>Osoba</translation>
     </message>
     <message>
         <source>Auto Connect</source>
@@ -5075,15 +5078,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Trust Level</source>
-        <translation type="unfinished"/>
+        <translation>Poziom Zaufania</translation>
     </message>
     <message>
         <source>Peer Address</source>
-        <translation type="unfinished"/>
+        <translation>Adres Peera</translation>
     </message>
     <message>
         <source>Last Contact</source>
-        <translation type="unfinished"/>
+        <translation>Ostatni kontakt</translation>
     </message>
     <message>
         <source>Organization</source>
@@ -5091,27 +5094,27 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Location</source>
-        <translation type="unfinished"/>
+        <translation>Lokalizacja</translation>
     </message>
     <message>
         <source>Country</source>
-        <translation type="unfinished"/>
+        <translation>Kraj</translation>
     </message>
     <message>
         <source>Person Id</source>
-        <translation type="unfinished"/>
+        <translation>ID osoby</translation>
     </message>
     <message>
         <source>Auth Code</source>
-        <translation type="unfinished"/>
+        <translation>Kod autentykacji</translation>
     </message>
     <message>
         <source>Vote Up</source>
-        <translation type="unfinished"/>
+        <translation>Głosuj Za</translation>
     </message>
     <message>
         <source>Vote Down</source>
-        <translation type="unfinished"/>
+        <translation>Głosuj przeciw</translation>
     </message>
 </context>
 <context>
@@ -5126,19 +5129,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>dd.MM.yyyy</source>
-        <translation type="unfinished"/>
+        <translation>dd.MM.rrrr</translation>
     </message>
     <message>
         <source>KB</source>
-        <translation type="unfinished"/>
+        <translation>KB</translation>
     </message>
     <message>
         <source>MB</source>
-        <translation type="unfinished"/>
+        <translation> MB</translation>
     </message>
     <message>
         <source>GB</source>
-        <translation type="unfinished"/>
+        <translation> GB</translation>
     </message>
 </context>
 <context>
@@ -5156,7 +5159,7 @@ p, li { white-space: pre-wrap; }
     <name>FileAssociationsPage</name>
     <message>
         <source>&amp;New</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Nowe</translation>
     </message>
     <message>
         <source>Add new Association</source>
@@ -5164,7 +5167,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>&amp;Edit</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Edycja</translation>
     </message>
     <message>
         <source>Edit this Association</source>
@@ -5172,7 +5175,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>&amp;Remove</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Usuń</translation>
     </message>
     <message>
         <source>Remove this Association</source>
@@ -5180,7 +5183,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>File type</source>
-        <translation type="unfinished"/>
+        <translation>Typ pliku</translation>
     </message>
     <message>
         <source> Friend Help</source>
@@ -5227,15 +5230,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>File hash</source>
-        <translation type="unfinished"/>
+        <translation>Hash pliku</translation>
     </message>
     <message>
         <source>File size</source>
-        <translation type="unfinished"/>
+        <translation>Rozmiar pliku</translation>
     </message>
     <message>
         <source>bytes</source>
-        <translation type="unfinished"/>
+        <translation>bajty</translation>
     </message>
     <message>
         <source>Chunk size</source>
@@ -5251,11 +5254,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Remaining</source>
-        <translation type="unfinished"/>
+        <translation>Pozostałe</translation>
     </message>
     <message>
         <source>Number of sources</source>
-        <translation type="unfinished"/>
+        <translation>Ilość źródeł</translation>
     </message>
     <message>
         <source>Chunk strategy</source>
@@ -5263,11 +5266,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Transfer type</source>
-        <translation type="unfinished"/>
+        <translation>Typ transferu</translation>
     </message>
     <message>
         <source>Anonymous F2F</source>
-        <translation type="unfinished"/>
+        <translation>Anonimowe F2F</translation>
     </message>
     <message>
         <source>Direct friend transfer / Availability assumed</source>
@@ -5278,15 +5281,15 @@ p, li { white-space: pre-wrap; }
     <name>FilesDefs</name>
     <message>
         <source>Picture</source>
-        <translation type="unfinished"/>
+        <translation>Obraz</translation>
     </message>
     <message>
         <source>Video</source>
-        <translation type="unfinished"/>
+        <translation>Wideo</translation>
     </message>
     <message>
         <source>Audio</source>
-        <translation type="unfinished"/>
+        <translation>Audio</translation>
     </message>
     <message>
         <source>Archive</source>
@@ -5294,15 +5297,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Program</source>
-        <translation type="unfinished"/>
+        <translation>Program</translation>
     </message>
     <message>
         <source>CD/DVD-Image</source>
-        <translation type="unfinished"/>
+        <translation>Obraz CD/DVD</translation>
     </message>
     <message>
         <source>Document</source>
-        <translation type="unfinished"/>
+        <translation>Dokument</translation>
     </message>
     <message>
         <source>RetroShare collection file</source>
@@ -5310,7 +5313,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Subtitles</source>
-        <translation type="unfinished"/>
+        <translation>Napisy</translation>
     </message>
     <message>
         <source>Nintendo DS Rom</source>
@@ -5321,23 +5324,23 @@ p, li { white-space: pre-wrap; }
     <name>FlatStyle_RDM</name>
     <message>
         <source>Friends Directories</source>
-        <translation type="unfinished"/>
+        <translation>Katalogi Przyjaciół</translation>
     </message>
     <message>
         <source>My Directories</source>
-        <translation type="unfinished"/>
+        <translation>Moje Katalogi</translation>
     </message>
     <message>
         <source>Size</source>
-        <translation type="unfinished"/>
+        <translation>Rozmiar</translation>
     </message>
     <message>
         <source>Age</source>
-        <translation type="unfinished"/>
+        <translation>Wiek</translation>
     </message>
     <message>
         <source>Friend</source>
-        <translation type="unfinished"/>
+        <translation>Przyjaciel</translation>
     </message>
     <message>
         <source>Share Flags</source>
@@ -5345,22 +5348,22 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Directory</source>
-        <translation type="unfinished"/>
+        <translation>Katalog</translation>
     </message>
 </context>
 <context>
     <name>ForumDetails</name>
     <message>
         <source>Forum Details</source>
-        <translation type="unfinished"/>
+        <translation>Szczegóły Forum</translation>
     </message>
     <message>
         <source>Forum Info</source>
-        <translation type="unfinished"/>
+        <translation>Informacje o Forum</translation>
     </message>
     <message>
         <source>Forum Name</source>
-        <translation type="unfinished"/>
+        <translation>Nazwa Forum</translation>
     </message>
     <message>
         <source>Popularity</source>
@@ -5376,11 +5379,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Forum Description</source>
-        <translation type="unfinished"/>
+        <translation>Opis Forum</translation>
     </message>
     <message>
         <source>Security</source>
-        <translation type="unfinished"/>
+        <translation>Bezpieczeństwo</translation>
     </message>
     <message>
         <source>Allowed Messages</source>
@@ -5392,14 +5395,14 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Anonymous Messages</source>
-        <translation type="unfinished"/>
+        <translation>Anonimowe Wiadomości</translation>
     </message>
 </context>
 <context>
     <name>ForumMsgItem</name>
     <message>
         <source>Subject: </source>
-        <translation type="unfinished"/>
+        <translation>Temat:</translation>
     </message>
     <message>
         <source>Unsubscribe To Forum</source>
@@ -5407,7 +5410,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Reply</source>
-        <translation type="unfinished"/>
+        <translation>Odpowiedz</translation>
     </message>
     <message>
         <source>Expand</source>
@@ -5427,7 +5430,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Signed</source>
-        <translation type="unfinished"/>
+        <translation>Podpisane</translation>
     </message>
     <message>
         <source>Forum Post</source>
@@ -5439,11 +5442,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Anonymous</source>
-        <translation type="unfinished"/>
+        <translation>Anonim</translation>
     </message>
     <message>
         <source>In Reply to</source>
-        <translation type="unfinished"/>
+        <translation>W Odpowiedzi do</translation>
     </message>
     <message>
         <source>Hide</source>
@@ -5458,7 +5461,7 @@ p, li { white-space: pre-wrap; }
     <name>ForumNewItem</name>
     <message>
         <source>Subscribe to Forum</source>
-        <translation type="unfinished"/>
+        <translation>Zasubskrybuj Forum</translation>
     </message>
     <message>
         <source>Expand</source>
@@ -5470,7 +5473,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Forum Description</source>
-        <translation type="unfinished"/>
+        <translation>Opis Forum</translation>
     </message>
     <message>
         <source>Unknown Forum</source>
@@ -5501,7 +5504,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Expand new messages</source>
-        <translation type="unfinished"/>
+        <translation>Rozszerz nowe wiadomości</translation>
     </message>
     <message>
         <source>New forum</source>
@@ -5535,11 +5538,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Create Forum</source>
-        <translation type="unfinished"/>
+        <translation>Utwórz Forum</translation>
     </message>
     <message>
         <source>Forum:</source>
-        <translation type="unfinished"/>
+        <translation>Forum:</translation>
     </message>
     <message>
         <source>Last Post</source>
@@ -5551,7 +5554,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Flat View</source>
-        <translation type="unfinished"/>
+        <translation>Widok Płaski</translation>
     </message>
     <message>
         <source>Title</source>
@@ -5567,31 +5570,31 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Signed</source>
-        <translation type="unfinished"/>
+        <translation>Podpisane</translation>
     </message>
     <message>
         <source>Thread:</source>
-        <translation type="unfinished"/>
+        <translation>Wątek:</translation>
     </message>
     <message>
         <source>Previous Thread</source>
-        <translation type="unfinished"/>
+        <translation>Poprzedni Wątek</translation>
     </message>
     <message>
         <source>Next Thread</source>
-        <translation type="unfinished"/>
+        <translation>Następny Wątek</translation>
     </message>
     <message>
         <source>Download all files</source>
-        <translation type="unfinished"/>
+        <translation>Pobierz wszystkie pliki</translation>
     </message>
     <message>
         <source>Next unread</source>
-        <translation type="unfinished"/>
+        <translation>Następne nieprzeczytane</translation>
     </message>
     <message>
         <source>Start new Thread for Selected Forum</source>
-        <translation type="unfinished"/>
+        <translation>Rozpocznij nowy Wątek dla Wybranego Forum</translation>
     </message>
     <message>
         <source>Reply Message</source>
@@ -5603,11 +5606,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Print</source>
-        <translation type="unfinished"/>
+        <translation>Drukuj</translation>
     </message>
     <message>
         <source>PrintPreview</source>
-        <translation type="unfinished"/>
+        <translation>Podgląd wydruku</translation>
     </message>
     <message>
         <source>My Forums</source>
@@ -5615,15 +5618,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Subscribed Forums</source>
-        <translation type="unfinished"/>
+        <translation>Subskrybowane Fora</translation>
     </message>
     <message>
         <source>Popular Forums</source>
-        <translation type="unfinished"/>
+        <translation>Popularne Fora</translation>
     </message>
     <message>
         <source>Other Forums</source>
-        <translation type="unfinished"/>
+        <translation>Inne Fora</translation>
     </message>
     <message>
         <source>Search Title</source>
@@ -5639,7 +5642,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Content</source>
-        <translation type="unfinished"/>
+        <translation>Zawartość</translation>
     </message>
     <message>
         <source>Search Content</source>
@@ -5647,31 +5650,31 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Subscribe to Forum</source>
-        <translation type="unfinished"/>
+        <translation>Zasubskrybuj Forum</translation>
     </message>
     <message>
         <source>Unsubscribe to Forum</source>
-        <translation type="unfinished"/>
+        <translation>Odsubskrybuj Forum</translation>
     </message>
     <message>
         <source>New Forum</source>
-        <translation type="unfinished"/>
+        <translation>Nowe Forum</translation>
     </message>
     <message>
         <source>Show Forum Details</source>
-        <translation type="unfinished"/>
+        <translation>Pokaż Szczegóły Forum</translation>
     </message>
     <message>
         <source>Edit Forum Details</source>
-        <translation type="unfinished"/>
+        <translation>Edytuj Szczegóły Forum</translation>
     </message>
     <message>
         <source>Share Forum</source>
-        <translation type="unfinished"/>
+        <translation>Współdziel Forum</translation>
     </message>
     <message>
         <source>Restore Publish Rights for Forum</source>
-        <translation type="unfinished"/>
+        <translation>Przywróć Prawa Publikacji dla Forum</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
@@ -5683,27 +5686,27 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Mark all as unread</source>
-        <translation type="unfinished"/>
+        <translation>Oznacz wszystkie jako nieprzeczytane</translation>
     </message>
     <message>
         <source>Reply</source>
-        <translation type="unfinished"/>
+        <translation>Odpowiedz</translation>
     </message>
     <message>
         <source>Start New Thread</source>
-        <translation type="unfinished"/>
+        <translation>Rozpocznij Nowy Wątek</translation>
     </message>
     <message>
         <source>Reply to Author</source>
-        <translation type="unfinished"/>
+        <translation>Odpowiedz Autorowi</translation>
     </message>
     <message>
         <source>Expand all</source>
-        <translation type="unfinished"/>
+        <translation>Rozwiń wszystkie</translation>
     </message>
     <message>
         <source>Collapse all</source>
-        <translation type="unfinished"/>
+        <translation>Zwiń wszystkie</translation>
     </message>
     <message>
         <source>Mark as read</source>
@@ -5711,7 +5714,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>with children</source>
-        <translation type="unfinished"/>
+        <translation>z dziećmi</translation>
     </message>
     <message>
         <source>Mark as unread</source>
@@ -5731,7 +5734,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>[ ... Missing Message ... ]</source>
-        <translation type="unfinished"/>
+        <translation>[ ... Brakująca Wiadomość ... ]</translation>
     </message>
     <message>
         <source>Placeholder for missing Message</source>
@@ -5743,11 +5746,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>No Forum Selected!</source>
-        <translation type="unfinished"/>
+        <translation>Nie zaznaczono Forum!</translation>
     </message>
     <message>
         <source>Original Message</source>
-        <translation type="unfinished"/>
+        <translation>Oryginalna Wiadomość</translation>
     </message>
     <message>
         <source>From</source>
@@ -5755,7 +5758,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Sent</source>
-        <translation type="unfinished"/>
+        <translation>Wysłane</translation>
     </message>
     <message>
         <source>Subject</source>
@@ -5771,7 +5774,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Forum Description</source>
-        <translation type="unfinished"/>
+        <translation>Opis Forum</translation>
     </message>
     <message>
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Forums&lt;/h1&gt;                                  &lt;p&gt;Retroshare Forums look like internet forums, but they work in a decentralized way:                         You see forums your friends are subscribed to, and you forward subscribed forums to                          your friends. This automatically promotes interesting forums in the network.&lt;/p&gt;                         &lt;p&gt;Forums are either Authenticated (&lt;img src=&quot;:/images/konv_message2.png&quot; width=&quot;12&quot;/&gt;) in which case you need to cryptographically sign                          your posts, or anonymous (&lt;img src=&quot;:/images/konversation.png&quot; width=&quot;12&quot;/&gt;). The former class is more resistant to spamming.&lt;/p&gt;                     &lt;p&gt;Forum posts propagate from friend to friend using small cache file exchanges. When you first connect to a new friend, it&apos;s likely     you will receive many such cache files, and new forums will appear.     &lt;/p&gt;                                        </source>
@@ -5790,22 +5793,22 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Anonymous</source>
-        <translation type="unfinished"/>
+        <translation>Anonim</translation>
     </message>
     <message>
         <source>signed</source>
-        <translation type="unfinished"/>
+        <translation>podpisane</translation>
     </message>
     <message>
         <source>none</source>
-        <translation type="unfinished"/>
+        <translation>brak</translation>
     </message>
 </context>
 <context>
     <name>FriendList</name>
     <message>
         <source>Friends</source>
-        <translation type="unfinished"/>
+        <translation>Przyjaciele</translation>
     </message>
     <message>
         <source>Status</source>
@@ -5813,15 +5816,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Last Contact</source>
-        <translation type="unfinished"/>
+        <translation>Ostatni kontakt</translation>
     </message>
     <message>
         <source>Avatar</source>
-        <translation type="unfinished"/>
+        <translation>Awatar</translation>
     </message>
     <message>
         <source>Hide Offline Friends</source>
-        <translation type="unfinished"/>
+        <translation>Ukryj niepodłączonych Przyjaciół</translation>
     </message>
     <message>
         <source>State</source>
@@ -5829,11 +5832,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Sort by State</source>
-        <translation type="unfinished"/>
+        <translation>Sortuj według Stanu</translation>
     </message>
     <message>
         <source>Hide State</source>
-        <translation type="unfinished"/>
+        <translation>Ukryj Stan</translation>
     </message>
     <message>
         <source>Sort Descending Order</source>
@@ -5853,11 +5856,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Sort by Name</source>
-        <translation type="unfinished"/>
+        <translation>Sortuj według Nazwy</translation>
     </message>
     <message>
         <source>Sort by last contact</source>
-        <translation type="unfinished"/>
+        <translation>Sortuj według ostatniego kontaktu</translation>
     </message>
     <message>
         <source>Show Last Contact Column</source>
@@ -5873,19 +5876,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Show Groups</source>
-        <translation type="unfinished"/>
+        <translation>Pokaż Grupy</translation>
     </message>
     <message>
         <source>Group</source>
-        <translation type="unfinished"/>
+        <translation>Grupa</translation>
     </message>
     <message>
         <source>Friend</source>
-        <translation type="unfinished"/>
+        <translation>Przyjaciel</translation>
     </message>
     <message>
         <source>Location</source>
-        <translation type="unfinished"/>
+        <translation>Lokalizacja</translation>
     </message>
     <message>
         <source>Message Group</source>
@@ -5893,15 +5896,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Edit Group</source>
-        <translation type="unfinished"/>
+        <translation>Edytuj Grupę</translation>
     </message>
     <message>
         <source>Remove Group</source>
-        <translation type="unfinished"/>
+        <translation>Usuń Grupę</translation>
     </message>
     <message>
         <source>Chat</source>
-        <translation type="unfinished"/>
+        <translation>Chat</translation>
     </message>
     <message>
         <source>Message Friend</source>
@@ -5909,15 +5912,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Friend Details</source>
-        <translation type="unfinished"/>
+        <translation>Szczegóły Przyjaciela</translation>
     </message>
     <message>
         <source>Recommend this Friend to...</source>
-        <translation type="unfinished"/>
+        <translation>Rekomenduj tego Przyjaciela dla...</translation>
     </message>
     <message>
         <source>Copy certificate link</source>
-        <translation type="unfinished"/>
+        <translation>Kopjuj link certyfikatu</translation>
     </message>
     <message>
         <source>Deny Friend</source>
@@ -5925,15 +5928,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Remove Friend Location</source>
-        <translation type="unfinished"/>
+        <translation>Usuń Lokalizację Przyjaciela</translation>
     </message>
     <message>
         <source>Add to group</source>
-        <translation type="unfinished"/>
+        <translation>Dodaj do grupy</translation>
     </message>
     <message>
         <source>Move to group</source>
-        <translation type="unfinished"/>
+        <translation>Przenieś do grupy</translation>
     </message>
     <message>
         <source>Groups</source>
@@ -5941,31 +5944,31 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Remove from group</source>
-        <translation type="unfinished"/>
+        <translation>Usuń z grupy</translation>
     </message>
     <message>
         <source>Remove from all groups</source>
-        <translation type="unfinished"/>
+        <translation>Usuń ze wszystkich grup</translation>
     </message>
     <message>
         <source>Expand all</source>
-        <translation type="unfinished"/>
+        <translation>Rozwiń wszystkie</translation>
     </message>
     <message>
         <source>Collapse all</source>
-        <translation type="unfinished"/>
+        <translation>Zwiń wszystkie</translation>
     </message>
     <message>
         <source>Available</source>
-        <translation type="unfinished"/>
+        <translation>Dostępne</translation>
     </message>
     <message>
         <source>Do you want to remove this Friend?</source>
-        <translation type="unfinished"/>
+        <translation>Czy chcesz usunąć tego Przyjaciela?</translation>
     </message>
     <message>
         <source>Columns</source>
-        <translation type="unfinished"/>
+        <translation>Kolumny</translation>
     </message>
     <message>
         <source>IP</source>
@@ -6004,11 +6007,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>wants to be friend with you on RetroShare</source>
-        <translation type="unfinished"/>
+        <translation>chce być przyjacielem z tobą na RetroShare</translation>
     </message>
     <message>
         <source>Unknown (Incoming) Connect Attempt</source>
-        <translation type="unfinished"/>
+        <translation>Nieznana (Przychodząca) Próba Połączenia</translation>
     </message>
 </context>
 <context>
@@ -6031,7 +6034,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Search Friends</source>
-        <translation type="unfinished"/>
+        <translation>Szukaj Przyjaciół</translation>
     </message>
 </context>
 <context>
@@ -6054,23 +6057,23 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Underline</source>
-        <translation type="unfinished"/>
+        <translation>Podkreślenie</translation>
     </message>
     <message>
         <source>Italic</source>
-        <translation type="unfinished"/>
+        <translation>Pochylenie</translation>
     </message>
     <message>
         <source>Font</source>
-        <translation type="unfinished"/>
+        <translation>Czcionka</translation>
     </message>
     <message>
         <source>Text Color</source>
-        <translation type="unfinished"/>
+        <translation>Kolor Tekstu</translation>
     </message>
     <message>
         <source>Attach File</source>
-        <translation type="unfinished"/>
+        <translation>Załącz Plik</translation>
     </message>
     <message>
         <source>Send</source>
@@ -6078,23 +6081,23 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Messages entered here are sent to all connected friends</source>
-        <translation type="unfinished"/>
+        <translation>Wiadomości wpisane tutaj są wysyłane do wszystkich podłączonych przyjaciół</translation>
     </message>
     <message>
         <source>Clear Chat History</source>
-        <translation type="unfinished"/>
+        <translation>Wyczyść Historię Chatu</translation>
     </message>
     <message>
         <source>Add Friend</source>
-        <translation type="unfinished"/>
+        <translation>Dodaj Przyjaciela</translation>
     </message>
     <message>
         <source>Add your Avatar Picture</source>
-        <translation type="unfinished"/>
+        <translation>Dodaj swój Avatar</translation>
     </message>
     <message>
         <source>A</source>
-        <translation type="unfinished"/>
+        <translation>A</translation>
     </message>
     <message>
         <source>Set your status message</source>
@@ -6106,27 +6109,27 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Browse Message History</source>
-        <translation type="unfinished"/>
+        <translation>Przeglądaj Historię Wiadomości</translation>
     </message>
     <message>
         <source>Browse History</source>
-        <translation type="unfinished"/>
+        <translation>Przeglądaj Historię</translation>
     </message>
     <message>
         <source>Save Chat History</source>
-        <translation type="unfinished"/>
+        <translation>Zapisz Historię Chatu</translation>
     </message>
     <message>
         <source>Add a new Group</source>
-        <translation type="unfinished"/>
+        <translation>Dodaj nową Grupę</translation>
     </message>
     <message>
         <source>Delete Chat History</source>
-        <translation type="unfinished"/>
+        <translation>Usuń Historię Chatu</translation>
     </message>
     <message>
         <source>Deletes all stored and displayed chat history</source>
-        <translation type="unfinished"/>
+        <translation>Usuń całą przechowywaną i wyświetlaną historię chatu</translation>
     </message>
     <message>
         <source>Create new Chat lobby</source>
@@ -6134,11 +6137,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Choose Font</source>
-        <translation type="unfinished"/>
+        <translation>Wybierz Czcionkę</translation>
     </message>
     <message>
         <source>Reset font to default</source>
-        <translation type="unfinished"/>
+        <translation>Zresetuj czcionkę do domyślnej</translation>
     </message>
     <message>
         <source>Local network</source>
@@ -6150,27 +6153,27 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>is typing...</source>
-        <translation type="unfinished"/>
+        <translation>pisze...</translation>
     </message>
     <message>
         <source>New group chat</source>
-        <translation type="unfinished"/>
+        <translation>Nowy chat grupowy</translation>
     </message>
     <message>
         <source>Do you really want to physically delete the history?</source>
-        <translation type="unfinished"/>
+        <translation>Czy naprawdę chcesz fizycznie usunąć historię?</translation>
     </message>
     <message>
         <source>Add Extra File</source>
-        <translation type="unfinished"/>
+        <translation>Dodaj dodatkowy plik</translation>
     </message>
     <message>
         <source>Save as...</source>
-        <translation type="unfinished"/>
+        <translation>Zapisz jako...</translation>
     </message>
     <message>
         <source>Text File (*.txt );;All Files (*)</source>
-        <translation type="unfinished"/>
+        <translation>Plik Tekstowy (*.txt );;Wszystkie Pliki (*)</translation>
     </message>
     <message>
         <source>Keyring</source>
@@ -6208,7 +6211,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Game:</source>
-        <translation type="unfinished"/>
+        <translation>Gra:</translation>
     </message>
     <message>
         <source>GameType: 0. Want to Add your Game here?</source>
@@ -6232,7 +6235,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Invite All Friends</source>
-        <translation type="unfinished"/>
+        <translation>Zaproś Wszystkich Przyjaciół</translation>
     </message>
     <message>
         <source>Game Type</source>
@@ -6256,11 +6259,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Player</source>
-        <translation type="unfinished"/>
+        <translation>Gracz</translation>
     </message>
     <message>
         <source>Invite</source>
-        <translation type="unfinished"/>
+        <translation>Zaproś</translation>
     </message>
     <message>
         <source>Interested</source>
@@ -6268,7 +6271,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Accept</source>
-        <translation type="unfinished"/>
+        <translation>Akceptuj</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -6320,14 +6323,14 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Quit Game</source>
-        <translation type="unfinished"/>
+        <translation>Wyjdź z Gry</translation>
     </message>
 </context>
 <context>
     <name>GenCertDialog</name>
     <message>
         <source>Create new Profile</source>
-        <translation type="unfinished"/>
+        <translation>Utwórz nowy Profil</translation>
     </message>
     <message>
         <source>You can install retroshare on different locations using the same identity. For this, just export the selected identity, and import it on the new computer, then create a new location with it.</source>
@@ -6351,7 +6354,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Email</source>
-        <translation type="unfinished"/>
+        <translation>Email</translation>
     </message>
     <message>
         <source>Be careful: this email will be visible to your friends and friends 
@@ -6373,7 +6376,7 @@ anonymous, you can use a fake email.</source>
     </message>
     <message>
         <source>Location</source>
-        <translation type="unfinished"/>
+        <translation>Lokalizacja</translation>
     </message>
     <message>
         <source>Create new identity</source>
@@ -6409,31 +6412,31 @@ anonymous, you can use a fake email.</source>
     </message>
     <message>
         <source>[Optional] Visible to your friends, and friends of friends.</source>
-        <translation type="unfinished"/>
+        <translation>[Opcjonalne] Widoczny dla twoich przyjaciół i przyjaciół przyjaciół.</translation>
     </message>
     <message>
         <source>[Required] Examples: Home, Laptop,...</source>
-        <translation type="unfinished"/>
+        <translation>[Wymagane] Przykłady: Dom, Laptop,...</translation>
     </message>
     <message>
         <source>[Required] Visible to your friends, and friends of friends.</source>
-        <translation type="unfinished"/>
+        <translation>[Wymagane] Widoczny dla twoich przyjaciół i przyjaciół przyjaciół.</translation>
     </message>
     <message>
         <source>[Required] This password protects your PGP key.</source>
-        <translation type="unfinished"/>
+        <translation>[Wymagane] To hasło ochrania twój klucz PGP.</translation>
     </message>
     <message>
         <source>Create new Location</source>
-        <translation type="unfinished"/>
+        <translation>Utwórz nową Lokalozację</translation>
     </message>
     <message>
         <source>Generate new Location</source>
-        <translation type="unfinished"/>
+        <translation>Generuj nową Lokalizację</translation>
     </message>
     <message>
         <source>Create a new Location</source>
-        <translation type="unfinished"/>
+        <translation>Stwórz nową Lokalizację</translation>
     </message>
     <message>
         <source>Create new Identity</source>
@@ -6558,23 +6561,23 @@ the same identity (PGP key).</source>
     </message>
     <message>
         <source>Start RetroShare when my system starts</source>
-        <translation type="unfinished"/>
+        <translation>Uruchom RetroShare podczas startu systemu</translation>
     </message>
     <message>
         <source>Start minimized</source>
-        <translation type="unfinished"/>
+        <translation>Uruchom zminimalizowane</translation>
     </message>
     <message>
         <source>Start minimized on system start</source>
-        <translation type="unfinished"/>
+        <translation>Uruchom zminimalizowane podczas startu systemu</translation>
     </message>
     <message>
         <source>For Advanced Users </source>
-        <translation type="unfinished"/>
+        <translation>Dla Zaawansowanych Użytkowników</translation>
     </message>
     <message>
         <source>Enable Advanced Mode (Restart Required)</source>
-        <translation type="unfinished"/>
+        <translation>Odblokuj Tryb Zaawansowany (Wymagany Restart)</translation>
     </message>
     <message>
         <source>Misc</source>
@@ -6586,7 +6589,7 @@ the same identity (PGP key).</source>
     </message>
     <message>
         <source>Auto Login</source>
-        <translation type="unfinished"/>
+        <translation>Automatyczne Logowanie</translation>
     </message>
     <message>
         <source>Register retroshare:// as URL protocol (Restart required)</source>
@@ -6594,19 +6597,19 @@ the same identity (PGP key).</source>
     </message>
     <message>
         <source>You need administrator rights to change this option.</source>
-        <translation type="unfinished"/>
+        <translation>Potrzebujesz uprawnień administratora by zmienić tą opcję.</translation>
     </message>
     <message>
         <source>Idle</source>
-        <translation type="unfinished"/>
+        <translation>Bezczynne</translation>
     </message>
     <message>
         <source>Idle Time</source>
-        <translation type="unfinished"/>
+        <translation>Czas Bezczynności</translation>
     </message>
     <message>
         <source> seconds</source>
-        <translation type="unfinished"/>
+        <translation>sekundy</translation>
     </message>
     <message>
         <source>Launch startup wizard</source>
@@ -6614,15 +6617,15 @@ the same identity (PGP key).</source>
     </message>
     <message>
         <source>Error</source>
-        <translation type="unfinished"/>
+        <translation>Błąd</translation>
     </message>
     <message>
         <source>Could not add retroshare:// as protocol.</source>
-        <translation type="unfinished"/>
+        <translation>Nie można dodać jako protokół retroshare:// .</translation>
     </message>
     <message>
         <source>Could not remove retroshare:// protocol.</source>
-        <translation type="unfinished"/>
+        <translation>Nie można usunąć protokołu retroshare:// .</translation>
     </message>
     <message>
         <source>General</source>
@@ -6637,11 +6640,11 @@ the same identity (PGP key).</source>
     <name>GetStartedDialog</name>
     <message>
         <source>Getting Started</source>
-        <translation type="unfinished"/>
+        <translation>Pierwsze kroki</translation>
     </message>
     <message>
         <source>Invite Friends</source>
-        <translation type="unfinished"/>
+        <translation>Zaproś Przyjaciół</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -6662,7 +6665,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source> Add Friends </source>
-        <translation type="unfinished"/>
+        <translation>Dodaj Przyjaciół</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -6698,7 +6701,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Advanced: Open Firewall Port</source>
-        <translation type="unfinished"/>
+        <translation>Zaawansowane: Otwórz Port Firewalla</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -6718,7 +6721,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Further Help and Support</source>
-        <translation type="unfinished"/>
+        <translation>Dalsza Pomoc i Wsparcie</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -6741,11 +6744,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Open RS Website</source>
-        <translation type="unfinished"/>
+        <translation>Otwórz stronę RS</translation>
     </message>
     <message>
         <source>Open FAQ Wiki</source>
-        <translation type="unfinished"/>
+        <translation>Otwórz FAQ Wiki</translation>
     </message>
     <message>
         <source>Open Online Forums</source>
@@ -6753,23 +6756,23 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Email Support</source>
-        <translation type="unfinished"/>
+        <translation>Wsparcie Email</translation>
     </message>
     <message>
         <source>Email Feedback</source>
-        <translation type="unfinished"/>
+        <translation>Opinia Email</translation>
     </message>
     <message>
         <source>RetroShare Invitation</source>
-        <translation type="unfinished"/>
+        <translation>Zaproszenie RetroShare</translation>
     </message>
     <message>
         <source>Your friend has installed RetroShare, and would like you to try it out.</source>
-        <translation type="unfinished"/>
+        <translation>Twój przyjaciel zainstalował RetroShare i chciałby byś je wypróbował(a).</translation>
     </message>
     <message>
         <source>You can get RetroShare here: %1</source>
-        <translation type="unfinished"/>
+        <translation>Możesz pozyskać RetroShare tutaj: %1</translation>
     </message>
     <message>
         <source>RetroShare is a private Friend-2-Friend sharing network.</source>
@@ -6777,11 +6780,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>It has many features, including built-in chat, messaging, </source>
-        <translation type="unfinished"/>
+        <translation>Ma wiele funkcji, włączając wbudowany chat, wiadomości,</translation>
     </message>
     <message>
         <source>forums and channels, all of which are as secure as the file-sharing.</source>
-        <translation type="unfinished"/>
+        <translation>fora i kanały, wszystkie będące zabezpieczone jak współdzielenie plików.</translation>
     </message>
     <message>
         <source>Here is your friends ID Certificate.</source>
@@ -6789,11 +6792,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Cut and paste the text below into your RetroShare client</source>
-        <translation type="unfinished"/>
+        <translation>Wytnij i wklej tekst poniżej do twojego klienta RetroShare</translation>
     </message>
     <message>
         <source>and send them your ID Certificate to get securely connected.</source>
-        <translation type="unfinished"/>
+        <translation>i wyślij im swój Certyfikat ID by bezpiecznie się połączyć.</translation>
     </message>
     <message>
         <source>Cut Below Here</source>
@@ -6801,11 +6804,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>RetroShare Feedback</source>
-        <translation type="unfinished"/>
+        <translation>Opinia o RetroShare</translation>
     </message>
     <message>
         <source>RetroShare Support</source>
-        <translation type="unfinished"/>
+        <translation>Wsparcie RetroShare</translation>
     </message>
 </context>
 <context>
@@ -6816,23 +6819,23 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>%1 KB/s</source>
-        <translation type="unfinished"/>
+        <translation>%1 KB/s</translation>
     </message>
     <message>
         <source>Sent: </source>
-        <translation type="unfinished"/>
+        <translation>Wysłano:</translation>
     </message>
     <message>
         <source>%1 KB</source>
-        <translation type="unfinished"/>
+        <translation>%1 KB</translation>
     </message>
     <message>
         <source>%1 MB</source>
-        <translation type="unfinished"/>
+        <translation>%1 MB</translation>
     </message>
     <message>
         <source>%1 GB</source>
-        <translation type="unfinished"/>
+        <translation>%1 GB</translation>
     </message>
 </context>
 <context>
@@ -6846,30 +6849,30 @@ p, li { white-space: pre-wrap; }
     <name>GroupChatToaster</name>
     <message>
         <source>Show Group Chat</source>
-        <translation type="unfinished"/>
+        <translation>Pokaż Chat Grupy</translation>
     </message>
 </context>
 <context>
     <name>GroupDefs</name>
     <message>
         <source>Friends</source>
-        <translation type="unfinished"/>
+        <translation>Przyjaciele</translation>
     </message>
     <message>
         <source>Family</source>
-        <translation type="unfinished"/>
+        <translation>Rodzina</translation>
     </message>
     <message>
         <source>Co-Workers</source>
-        <translation type="unfinished"/>
+        <translation>Współpracownicy</translation>
     </message>
     <message>
         <source>Other Contacts</source>
-        <translation type="unfinished"/>
+        <translation>Inne Kontakry</translation>
     </message>
     <message>
         <source>Favorites</source>
-        <translation type="unfinished"/>
+        <translation>Ulubione</translation>
     </message>
 </context>
 <context>
@@ -6947,7 +6950,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Description</source>
-        <translation type="unfinished"/>
+        <translation>Opis</translation>
     </message>
     <message>
         <source>Search Description</source>
@@ -6955,19 +6958,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Sort by Name</source>
-        <translation type="unfinished"/>
+        <translation>Sortuj według Nazwy</translation>
     </message>
     <message>
         <source>Sort by Popularity</source>
-        <translation type="unfinished"/>
+        <translation>Sortuj według Popularności</translation>
     </message>
     <message>
         <source>Sort by Last Post</source>
-        <translation type="unfinished"/>
+        <translation>Sortuj według Ostatniego Postu</translation>
     </message>
     <message>
         <source>Private Key Available</source>
-        <translation type="unfinished"/>
+        <translation>Dostępny Prywatny Klucz</translation>
     </message>
     <message>
         <source>Display</source>
@@ -6978,15 +6981,15 @@ p, li { white-space: pre-wrap; }
     <name>GuiExprElement</name>
     <message>
         <source>and</source>
-        <translation type="unfinished"/>
+        <translation>i</translation>
     </message>
     <message>
         <source>and / or</source>
-        <translation type="unfinished"/>
+        <translation>i / lub</translation>
     </message>
     <message>
         <source>or</source>
-        <translation type="unfinished"/>
+        <translation>lub</translation>
     </message>
     <message>
         <source>Name</source>
@@ -6998,11 +7001,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Extension</source>
-        <translation type="unfinished"/>
+        <translation>Rozszerzenie</translation>
     </message>
     <message>
         <source>Hash</source>
-        <translation type="unfinished"/>
+        <translation>Hash</translation>
     </message>
     <message>
         <source>Date</source>
@@ -7010,7 +7013,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Size</source>
-        <translation type="unfinished"/>
+        <translation>Rozmiar</translation>
     </message>
     <message>
         <source>Popularity</source>
@@ -7018,39 +7021,39 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>contains</source>
-        <translation type="unfinished"/>
+        <translation>zawiera</translation>
     </message>
     <message>
         <source>contains all</source>
-        <translation type="unfinished"/>
+        <translation>zawiera wszystkie</translation>
     </message>
     <message>
         <source>is</source>
-        <translation type="unfinished"/>
+        <translation>jest</translation>
     </message>
     <message>
         <source>less than</source>
-        <translation type="unfinished"/>
+        <translation>mniej niż</translation>
     </message>
     <message>
         <source>less than or equal</source>
-        <translation type="unfinished"/>
+        <translation>mniej niż lub równe</translation>
     </message>
     <message>
         <source>equals</source>
-        <translation type="unfinished"/>
+        <translation>równe</translation>
     </message>
     <message>
         <source>greater than or equal</source>
-        <translation type="unfinished"/>
+        <translation>większe od lub równe</translation>
     </message>
     <message>
         <source>greater than</source>
-        <translation type="unfinished"/>
+        <translation>większe od</translation>
     </message>
     <message>
         <source>is in range</source>
-        <translation type="unfinished"/>
+        <translation>jest w zakresie</translation>
     </message>
 </context>
 <context>
@@ -7304,11 +7307,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Vote Up</source>
-        <translation type="unfinished"/>
+        <translation>Głosuj Za</translation>
     </message>
     <message>
         <source>Vote Down</source>
-        <translation type="unfinished"/>
+        <translation>Głosuj przeciw</translation>
     </message>
     <message>
         <source>Reputation</source>
@@ -7521,7 +7524,7 @@ before you can comment</source>
     </message>
     <message>
         <source>none</source>
-        <translation type="unfinished"/>
+        <translation>brak</translation>
     </message>
     <message>
         <source>[ ... Missing Message ... ]</source>
@@ -7549,15 +7552,15 @@ before you can comment</source>
     </message>
     <message>
         <source>Forum Description</source>
-        <translation type="unfinished"/>
+        <translation>Opis Forum</translation>
     </message>
     <message>
         <source>Forum:</source>
-        <translation type="unfinished"/>
+        <translation>Forum:</translation>
     </message>
     <message>
         <source>Thread:</source>
-        <translation type="unfinished"/>
+        <translation>Wątek:</translation>
     </message>
 </context>
 <context>
@@ -7620,11 +7623,11 @@ before you can comment</source>
     </message>
     <message>
         <source>Share Forum</source>
-        <translation type="unfinished"/>
+        <translation>Współdziel Forum</translation>
     </message>
     <message>
         <source>Restore Publish Rights for Forum</source>
-        <translation type="unfinished"/>
+        <translation>Przywróć Prawa Publikacji dla Forum</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
@@ -7828,26 +7831,26 @@ before you can comment</source>
     </message>
     <message>
         <source>File not found or file name not accepted.</source>
-        <translation type="unfinished"/>
+        <translation>Plik nie znaleziony lub nieakceptowalna nazwa pliku.</translation>
     </message>
 </context>
 <context>
     <name>HelpBrowser</name>
     <message>
         <source>RetroShare Help</source>
-        <translation type="unfinished"/>
+        <translation>Pomoc RetroShare</translation>
     </message>
     <message>
         <source>Find:</source>
-        <translation type="unfinished"/>
+        <translation>Znajdź:</translation>
     </message>
     <message>
         <source>Find Previous</source>
-        <translation type="unfinished"/>
+        <translation>Znajdź Poprzedni</translation>
     </message>
     <message>
         <source>Find Next</source>
-        <translation type="unfinished"/>
+        <translation>Znajdź Następny</translation>
     </message>
     <message>
         <source>Case sensitive</source>
@@ -7855,15 +7858,15 @@ before you can comment</source>
     </message>
     <message>
         <source>Whole words only</source>
-        <translation type="unfinished"/>
+        <translation>Tylko całe wyrazy</translation>
     </message>
     <message>
         <source>Contents</source>
-        <translation type="unfinished"/>
+        <translation>Zawartość</translation>
     </message>
     <message>
         <source>Help Topics</source>
-        <translation type="unfinished"/>
+        <translation>Tematy Pomocy</translation>
     </message>
     <message>
         <source>Search</source>
@@ -7875,19 +7878,19 @@ before you can comment</source>
     </message>
     <message>
         <source>Found Documents</source>
-        <translation type="unfinished"/>
+        <translation>Znalezione Dokumenty</translation>
     </message>
     <message>
         <source>Back</source>
-        <translation type="unfinished"/>
+        <translation>Wstecz</translation>
     </message>
     <message>
         <source>Move to previous page (Backspace)</source>
-        <translation type="unfinished"/>
+        <translation>Przejdź do poprzedniej strony (Backspace)</translation>
     </message>
     <message>
         <source>Backspace</source>
-        <translation type="unfinished"/>
+        <translation>Backspace</translation>
     </message>
     <message>
         <source>Forward</source>
@@ -7895,11 +7898,11 @@ before you can comment</source>
     </message>
     <message>
         <source>Move to next page (Shift+Backspace)</source>
-        <translation type="unfinished"/>
+        <translation>Przejdź do następnej strony (Shift + Backspace)</translation>
     </message>
     <message>
         <source>Shift+Backspace</source>
-        <translation type="unfinished"/>
+        <translation>Shift+Backspace</translation>
     </message>
     <message>
         <source>Home</source>
@@ -7907,23 +7910,23 @@ before you can comment</source>
     </message>
     <message>
         <source>Move to the Home page (Ctrl+H)</source>
-        <translation type="unfinished"/>
+        <translation>Przejdź do strony głównej (Ctrl + H)</translation>
     </message>
     <message>
         <source>Ctrl+H</source>
-        <translation type="unfinished"/>
+        <translation>Ctrl+H</translation>
     </message>
     <message>
         <source>Find</source>
-        <translation type="unfinished"/>
+        <translation>Znajdź</translation>
     </message>
     <message>
         <source>Search for a word or phrase on current page (Ctrl+F)</source>
-        <translation type="unfinished"/>
+        <translation>Szukaj wyrazu lub frazy na bieżącej stronie (Ctrl + F)</translation>
     </message>
     <message>
         <source>Ctrl+F</source>
-        <translation type="unfinished"/>
+        <translation>Ctrl+F</translation>
     </message>
     <message>
         <source>Close</source>
@@ -7935,11 +7938,11 @@ before you can comment</source>
     </message>
     <message>
         <source>Esc</source>
-        <translation type="unfinished"/>
+        <translation>Esc</translation>
     </message>
     <message>
         <source>Error Loading Help Contents: </source>
-        <translation type="unfinished"/>
+        <translation>Błąd wczytywania zawartości Pomocy:</translation>
     </message>
     <message>
         <source>Supplied XML file is not a valid Contents document.</source>
@@ -7947,19 +7950,19 @@ before you can comment</source>
     </message>
     <message>
         <source>Search reached end of document</source>
-        <translation type="unfinished"/>
+        <translation>Wyszukiwanie dotarło do końca dokumentu</translation>
     </message>
     <message>
         <source>Search reached start of document</source>
-        <translation type="unfinished"/>
+        <translation>Wyszukiwanie dotarło do początku dokumentu</translation>
     </message>
     <message>
         <source>Text not found in document</source>
-        <translation type="unfinished"/>
+        <translation>Nie znaleziono tekstu w dokumencie</translation>
     </message>
     <message>
         <source>Found %1 results</source>
-        <translation type="unfinished"/>
+        <translation>Znaleziono %1 wyników</translation>
     </message>
 </context>
 <context>
@@ -7990,15 +7993,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Authors</source>
-        <translation type="unfinished"/>
+        <translation>Autorzy</translation>
     </message>
     <message>
         <source>Thanks to</source>
-        <translation type="unfinished"/>
+        <translation>Podziękowania dla</translation>
     </message>
     <message>
         <source>Translation</source>
-        <translation type="unfinished"/>
+        <translation>Tłumaczenie</translation>
     </message>
     <message>
         <source>License Agreement</source>
@@ -8038,27 +8041,27 @@ p, li { white-space: pre-wrap; }
     <name>HelpTextBrowser</name>
     <message>
         <source>Error opening help file: </source>
-        <translation type="unfinished"/>
+        <translation>Wystąpił błąd podczas otwierania pliku pomocy: </translation>
     </message>
     <message>
         <source>Opening External Link</source>
-        <translation type="unfinished"/>
+        <translation>Otwarcie linku zewnętrznego</translation>
     </message>
     <message>
         <source>RetroShare can open the link you selected in your default Web browser. If your browser is not currently configured to use Tor then the request will not be anonymous.</source>
-        <translation type="unfinished"/>
+        <translation>RetroShare może otworzyć wybrany przez ciebie link w twojej domyślnej przeglądarce internetowej. Jeśli twoja przeglądarka nie jest skonfigurowana do używania Tora, żądanie nie będzie anonimowe.</translation>
     </message>
     <message>
         <source>Do you want Retroshare to open the link in your Web browser?</source>
-        <translation type="unfinished"/>
+        <translation>Czy chcesz by RetroShare otworzył link w przeglądarce internetowej?</translation>
     </message>
     <message>
         <source>Unable to Open Link</source>
-        <translation type="unfinished"/>
+        <translation>Nie można otworzyć linku</translation>
     </message>
     <message>
         <source>RetroShare was unable to open the selected link in your Web browser. You can still copy the URL and paste it into your browser.</source>
-        <translation type="unfinished"/>
+        <translation>RetroShare nie mógł otworzyć wybranego linku w twojej przeglądarce internetowej. Wciąż możesz skopiować URL i wkleić go w twojej przeglądarce.</translation>
     </message>
 </context>
 <context>
@@ -8287,7 +8290,7 @@ p, li { white-space: pre-wrap; }
     <name>ImHistoryBrowser</name>
     <message>
         <source>Message History</source>
-        <translation type="unfinished"/>
+        <translation>Historia wiadomości</translation>
     </message>
     <message>
         <source>Copy</source>
@@ -8299,7 +8302,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Mark all</source>
-        <translation type="unfinished"/>
+        <translation>Zaznacz wszystkie</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -8307,7 +8310,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Clear history</source>
-        <translation type="unfinished"/>
+        <translation>Wyczyść historię</translation>
     </message>
     <message>
         <source>Send</source>
@@ -8357,15 +8360,15 @@ p, li { white-space: pre-wrap; }
     <name>MainWindow</name>
     <message>
         <source>Add Friend</source>
-        <translation type="unfinished"/>
+        <translation>Dodaj Przyjaciela</translation>
     </message>
     <message>
         <source>Add a Friend Wizard</source>
-        <translation type="unfinished"/>
+        <translation>Kreator dodawania Przyjaciela</translation>
     </message>
     <message>
         <source>Add Share</source>
-        <translation type="unfinished"/>
+        <translation>Dodaj udział</translation>
     </message>
     <message>
         <source>Options</source>
@@ -8381,15 +8384,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>SMPlayer</source>
-        <translation type="unfinished"/>
+        <translation>SMPlayer</translation>
     </message>
     <message>
         <source>Quit</source>
-        <translation type="unfinished"/>
+        <translation>Zamknij</translation>
     </message>
     <message>
         <source>Quick Start Wizard</source>
-        <translation type="unfinished"/>
+        <translation>Kreator szybkiego startu</translation>
     </message>
     <message>
         <source>RetroShare %1 a secure decentralized communication platform</source>
@@ -8401,7 +8404,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Friends</source>
-        <translation type="unfinished"/>
+        <translation>Przyjaciele</translation>
     </message>
     <message>
         <source>File sharing</source>
@@ -8413,7 +8416,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Messages</source>
-        <translation type="unfinished"/>
+        <translation>Wiadomości</translation>
     </message>
     <message>
         <source>Channels</source>
@@ -8421,7 +8424,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Blogs</source>
-        <translation type="unfinished"/>
+        <translation>Blogi</translation>
     </message>
     <message>
         <source>Forums</source>
@@ -8429,27 +8432,27 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Plugins</source>
-        <translation type="unfinished"/>
+        <translation>Wtyczki</translation>
     </message>
     <message>
         <source>Getting Started</source>
-        <translation type="unfinished"/>
+        <translation>Pierwsze kroki</translation>
     </message>
     <message>
         <source>Unfinished</source>
-        <translation type="unfinished"/>
+        <translation>Niedokończone</translation>
     </message>
     <message>
         <source>Low disk space warning</source>
-        <translation type="unfinished"/>
+        <translation>Ostrzeżenie o małej ilości miejsca na dysku</translation>
     </message>
     <message>
         <source>The disk space in your </source>
-        <translation type="unfinished"/>
+        <translation>Miejsce na dysku w twojej</translation>
     </message>
     <message>
         <source> directory is running low (current limit is </source>
-        <translation type="unfinished"/>
+        <translation>katalogu jest mało (obecny limit to</translation>
     </message>
     <message>
         <source>MB). 
@@ -8461,7 +8464,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Show/Hide</source>
-        <translation type="unfinished"/>
+        <translation>Pokaż/Ukryj</translation>
     </message>
     <message>
         <source>Status</source>
@@ -8469,7 +8472,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Notify</source>
-        <translation type="unfinished"/>
+        <translation>Powiadom</translation>
     </message>
     <message>
         <source>Open Messenger</source>
@@ -8485,7 +8488,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>DHT Details</source>
-        <translation type="unfinished"/>
+        <translation>Szczegóły DHT</translation>
     </message>
     <message>
         <source>Bandwidth Details</source>
@@ -8493,7 +8496,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Applications</source>
-        <translation type="unfinished"/>
+        <translation>Aplikacje</translation>
     </message>
     <message>
         <source>Help</source>
@@ -8501,15 +8504,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Minimize</source>
-        <translation type="unfinished"/>
+        <translation>Minimalizuj</translation>
     </message>
     <message>
         <source>Maximize</source>
-        <translation type="unfinished"/>
+        <translation>Maksymalizuj</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Zamknij</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -8517,11 +8520,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>%1 new message</source>
-        <translation type="unfinished"/>
+        <translation>%1 nowa wiadomość</translation>
     </message>
     <message>
         <source>%1 new messages</source>
-        <translation type="unfinished"/>
+        <translation>%1 nowych wiadomości</translation>
     </message>
     <message>
         <source>Down: %1 (kB/s)</source>
@@ -8533,23 +8536,23 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>%1 friend connected</source>
-        <translation type="unfinished"/>
+        <translation>%1 przyjaciel połączony</translation>
     </message>
     <message>
         <source>%1 friends connected</source>
-        <translation type="unfinished"/>
+        <translation>%1 przyjaciół połączonych</translation>
     </message>
     <message>
         <source>Do you really want to exit RetroShare ?</source>
-        <translation type="unfinished"/>
+        <translation>Czy naprawczę chcesz wyjść z RetroShare ?</translation>
     </message>
     <message>
         <source>Really quit ? </source>
-        <translation type="unfinished"/>
+        <translation>Naprawdę zamknąć ?</translation>
     </message>
     <message>
         <source>Internal Error</source>
-        <translation type="unfinished"/>
+        <translation>Błąd wewnętrzny</translation>
     </message>
     <message>
         <source>Hide</source>
@@ -8569,7 +8572,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>It seems to be an old RetroShare link. Please use copy instead.</source>
-        <translation type="unfinished"/>
+        <translation>To wygląda na stary link RetroShare. Zamiast tego proszę użyć kopii.</translation>
     </message>
     <message>
         <source>The file link is malformed.</source>
@@ -8592,11 +8595,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Contacts</source>
-        <translation type="unfinished"/>
+        <translation>Kontakty</translation>
     </message>
     <message>
         <source>&gt;&gt; To</source>
-        <translation type="unfinished"/>
+        <translation>&gt;&gt; Do</translation>
     </message>
     <message>
         <source>&gt;&gt; Cc</source>
@@ -8608,11 +8611,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>&gt;&gt; Recommend</source>
-        <translation type="unfinished"/>
+        <translation>&gt;&gt; Poleć</translation>
     </message>
     <message>
         <source>Paragraph</source>
-        <translation type="unfinished"/>
+        <translation>Paragraf</translation>
     </message>
     <message>
         <source>Heading 1</source>
@@ -8644,11 +8647,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Increase font size</source>
-        <translation type="unfinished"/>
+        <translation>Zwiększ rozmiar czcionki</translation>
     </message>
     <message>
         <source>Decrease font size</source>
-        <translation type="unfinished"/>
+        <translation>Zmniejsz rozmiar czcionki</translation>
     </message>
     <message>
         <source>Bold</source>
@@ -8656,15 +8659,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Italic</source>
-        <translation type="unfinished"/>
+        <translation>Pochylenie</translation>
     </message>
     <message>
         <source>Select Color</source>
-        <translation type="unfinished"/>
+        <translation>Wybierz kolor</translation>
     </message>
     <message>
         <source>Alignment</source>
-        <translation type="unfinished"/>
+        <translation>Wyrównanie</translation>
     </message>
     <message>
         <source>Add an Image</source>
@@ -8676,35 +8679,35 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Underline</source>
-        <translation type="unfinished"/>
+        <translation>Podkreślenie</translation>
     </message>
     <message>
         <source>Subject:</source>
-        <translation type="unfinished"/>
+        <translation>Temat:</translation>
     </message>
     <message>
         <source>Tags:</source>
-        <translation type="unfinished"/>
+        <translation>Tagi:</translation>
     </message>
     <message>
         <source>Tags</source>
-        <translation type="unfinished"/>
+        <translation>Tagi</translation>
     </message>
     <message>
         <source>Recommended Files</source>
-        <translation type="unfinished"/>
+        <translation>Polecane pliki</translation>
     </message>
     <message>
         <source>File Name</source>
-        <translation type="unfinished"/>
+        <translation>Nazwa pliku</translation>
     </message>
     <message>
         <source>Size</source>
-        <translation type="unfinished"/>
+        <translation>Rozmiar</translation>
     </message>
     <message>
         <source>Hash</source>
-        <translation type="unfinished"/>
+        <translation>Hash</translation>
     </message>
     <message>
         <source>Send</source>
@@ -8712,11 +8715,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Send this message now</source>
-        <translation type="unfinished"/>
+        <translation>Wyślij teraz tą wiadomość</translation>
     </message>
     <message>
         <source>Reply</source>
-        <translation type="unfinished"/>
+        <translation>Odpowiedz</translation>
     </message>
     <message>
         <source>Toggle Contacts View</source>
@@ -8728,19 +8731,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Save this message</source>
-        <translation type="unfinished"/>
+        <translation>Zapisz tą wiadomośc</translation>
     </message>
     <message>
         <source>Attach</source>
-        <translation type="unfinished"/>
+        <translation>Załącz</translation>
     </message>
     <message>
         <source>Attach File</source>
-        <translation type="unfinished"/>
+        <translation>Załącz Plik</translation>
     </message>
     <message>
         <source>Quote</source>
-        <translation type="unfinished"/>
+        <translation>Cytat</translation>
     </message>
     <message>
         <source>Add Blockquote</source>
@@ -8748,19 +8751,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Send To:</source>
-        <translation type="unfinished"/>
+        <translation>Wyślij do:</translation>
     </message>
     <message>
         <source>&amp;Left</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Lewo</translation>
     </message>
     <message>
         <source>C&amp;enter</source>
-        <translation type="unfinished"/>
+        <translation>Ś&amp;rodek</translation>
     </message>
     <message>
         <source>&amp;Right</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Prawo</translation>
     </message>
     <message>
         <source>&amp;Justify</source>
@@ -8772,7 +8775,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>You have a friend recommendation</source>
-        <translation type="unfinished"/>
+        <translation>Masz polecenie przyjaciela</translation>
     </message>
     <message>
         <source>This friend is suggested by</source>
@@ -8784,7 +8787,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>wants to be friends with you on RetroShare</source>
-        <translation type="unfinished"/>
+        <translation>chce być twoim przyjacielem na RetroShare</translation>
     </message>
     <message>
         <source>Hi %1,&lt;br&gt;&lt;br&gt;%2 wants to be friends with you on RetroShare.&lt;br&gt;&lt;br&gt;Respond now:&lt;br&gt;%3&lt;br&gt;&lt;br&gt;Thanks,&lt;br&gt;The RetroShare Team</source>
@@ -8792,12 +8795,13 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Save Message</source>
-        <translation type="unfinished"/>
+        <translation>Zapisz wiadomość</translation>
     </message>
     <message>
         <source>Message has not been Sent.
 Do you want to save message to draft box?</source>
-        <translation type="unfinished"/>
+        <translation>Wiadomość nie została wysłana.
+Czy chcesz zapisać wiadomość do wersji roboczych?</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
@@ -8805,7 +8809,7 @@ Do you want to save message to draft box?</source>
     </message>
     <message>
         <source>Add to &quot;To&quot;</source>
-        <translation type="unfinished"/>
+        <translation>Dodaj do &quot;Do&quot;</translation>
     </message>
     <message>
         <source>Add to &quot;CC&quot;</source>
@@ -8817,15 +8821,15 @@ Do you want to save message to draft box?</source>
     </message>
     <message>
         <source>Add as Recommend</source>
-        <translation type="unfinished"/>
+        <translation>Dodaj jako Polecane</translation>
     </message>
     <message>
         <source>Friend Details</source>
-        <translation type="unfinished"/>
+        <translation>Szczegóły Przyjaciela</translation>
     </message>
     <message>
         <source>Original Message</source>
-        <translation type="unfinished"/>
+        <translation>Oryginalna Wiadomość</translation>
     </message>
     <message>
         <source>From</source>
@@ -8833,7 +8837,7 @@ Do you want to save message to draft box?</source>
     </message>
     <message>
         <source>To</source>
-        <translation type="unfinished"/>
+        <translation>Do</translation>
     </message>
     <message>
         <source>Cc</source>
@@ -8841,11 +8845,11 @@ Do you want to save message to draft box?</source>
     </message>
     <message>
         <source>Sent</source>
-        <translation type="unfinished"/>
+        <translation>Wysłane</translation>
     </message>
     <message>
         <source>Subject</source>
-        <translation>Tytuł</translation>
+        <translation>Temat</translation>
     </message>
     <message>
         <source>On %1, %2 wrote:</source>
@@ -8853,11 +8857,11 @@ Do you want to save message to draft box?</source>
     </message>
     <message>
         <source>Re:</source>
-        <translation type="unfinished"/>
+        <translation>Re:</translation>
     </message>
     <message>
         <source>Fwd:</source>
-        <translation type="unfinished"/>
+        <translation>Fwd:</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -8865,11 +8869,11 @@ Do you want to save message to draft box?</source>
     </message>
     <message>
         <source>Do you want to send the message without a subject ?</source>
-        <translation type="unfinished"/>
+        <translation>Czy chcesz wysłać tą wiadomość bez tematu ?</translation>
     </message>
     <message>
         <source>Please insert at least one recipient.</source>
-        <translation type="unfinished"/>
+        <translation>Proszę dodaj przynajmniej jednego odbiorcę.</translation>
     </message>
     <message>
         <source>Bcc</source>
@@ -8881,71 +8885,71 @@ Do you want to save message to draft box?</source>
     </message>
     <message>
         <source>Unknown friend</source>
-        <translation type="unfinished"/>
+        <translation>Nieznany przyjaciel</translation>
     </message>
     <message>
         <source>&amp;File</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Plik</translation>
     </message>
     <message>
         <source>&amp;New</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Nowe</translation>
     </message>
     <message>
         <source>&amp;Open...</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Otwórz</translation>
     </message>
     <message>
         <source>&amp;Save</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Zapisz</translation>
     </message>
     <message>
         <source>Save &amp;As File</source>
-        <translation type="unfinished"/>
+        <translation>Zapisz &amp;Jako Plik</translation>
     </message>
     <message>
         <source>Save &amp;As Draft</source>
-        <translation type="unfinished"/>
+        <translation>Zapisz &amp;Jako Szkic</translation>
     </message>
     <message>
         <source>&amp;Print...</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Drukuj...</translation>
     </message>
     <message>
         <source>&amp;Export PDF...</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Eksportuj PDF...</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Zamknij</translation>
     </message>
     <message>
         <source>&amp;Edit</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Edycja</translation>
     </message>
     <message>
         <source>&amp;Undo</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Cofnij</translation>
     </message>
     <message>
         <source>&amp;Redo</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Ponów</translation>
     </message>
     <message>
         <source>Cu&amp;t</source>
-        <translation type="unfinished"/>
+        <translation>Wytni&amp;j</translation>
     </message>
     <message>
         <source>&amp;Copy</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Kopiuj</translation>
     </message>
     <message>
         <source>&amp;Paste</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Wklej</translation>
     </message>
     <message>
         <source>&amp;View</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Zobacz</translation>
     </message>
     <message>
         <source>&amp;Contacts Sidebar</source>
@@ -8953,15 +8957,15 @@ Do you want to save message to draft box?</source>
     </message>
     <message>
         <source>&amp;Insert</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Wstaw</translation>
     </message>
     <message>
         <source>&amp;Image</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Obraz</translation>
     </message>
     <message>
         <source>&amp;Horizontal Line</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Pozioma linia</translation>
     </message>
     <message>
         <source>&amp;Format</source>
@@ -8969,40 +8973,41 @@ Do you want to save message to draft box?</source>
     </message>
     <message>
         <source>Open File...</source>
-        <translation type="unfinished"/>
+        <translation>Otwórz Plik...</translation>
     </message>
     <message>
         <source>HTML-Files (*.htm *.html);;All Files (*)</source>
-        <translation type="unfinished"/>
+        <translation>Pliki HTML (*.htm *.html);;Wszystkie pliki (*)</translation>
     </message>
     <message>
         <source>Save as...</source>
-        <translation type="unfinished"/>
+        <translation>Zapisz jako...</translation>
     </message>
     <message>
         <source>Print Document</source>
-        <translation type="unfinished"/>
+        <translation>Drukuj Dokument</translation>
     </message>
     <message>
         <source>Export PDF</source>
-        <translation type="unfinished"/>
+        <translation>Eksport PDF</translation>
     </message>
     <message>
         <source>Message has not been Sent.
 Do you want to save message ?</source>
-        <translation type="unfinished"/>
+        <translation>Wiadomość nie została wysłana.
+Czy chcesz zapisać wiadomość ?</translation>
     </message>
     <message>
         <source>Choose Image</source>
-        <translation type="unfinished"/>
+        <translation>Wybierz Obraz</translation>
     </message>
     <message>
         <source>Image Files supported (*.png *.jpeg *.jpg *.gif)</source>
-        <translation type="unfinished"/>
+        <translation>Wspierane Pliki Obrazów (*.png *.jpeg *.jpg *.gif)</translation>
     </message>
     <message>
         <source>Add Extra File</source>
-        <translation type="unfinished"/>
+        <translation>Dodaj dodatkowy plik</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Cryptographically sign message to distant peers. This is prevents intermediate peers to spoof your identity.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
@@ -9041,7 +9046,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Tags</source>
-        <translation type="unfinished"/>
+        <translation>Tagi</translation>
     </message>
     <message>
         <source>Tags can be used to categorize and prioritize your messages</source>
@@ -9065,15 +9070,15 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>A new tab</source>
-        <translation type="unfinished"/>
+        <translation>Nowa karta</translation>
     </message>
     <message>
         <source>A new window</source>
-        <translation type="unfinished"/>
+        <translation>Nowe okno</translation>
     </message>
     <message>
         <source>Edit Tag</source>
-        <translation type="unfinished"/>
+        <translation>Edytuj Tag</translation>
     </message>
     <message>
         <source>Message</source>
@@ -9118,11 +9123,11 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Download all Recommended Files</source>
-        <translation type="unfinished"/>
+        <translation>Pobierz wszystkie Polecane Pliki</translation>
     </message>
     <message>
         <source>Subject:</source>
-        <translation type="unfinished"/>
+        <translation>Temat:</translation>
     </message>
     <message>
         <source>From:</source>
@@ -9142,39 +9147,39 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Tags:</source>
-        <translation type="unfinished"/>
+        <translation>Tagi:</translation>
     </message>
     <message>
         <source>File Name</source>
-        <translation type="unfinished"/>
+        <translation>Nazwa pliku</translation>
     </message>
     <message>
         <source>Size</source>
-        <translation type="unfinished"/>
+        <translation>Rozmiar</translation>
     </message>
     <message>
         <source>Hash</source>
-        <translation type="unfinished"/>
+        <translation>Hash</translation>
     </message>
     <message>
         <source>Print</source>
-        <translation type="unfinished"/>
+        <translation>Drukuj</translation>
     </message>
     <message>
         <source>Print Preview</source>
-        <translation type="unfinished"/>
+        <translation>Podgląd Wydruku</translation>
     </message>
     <message>
         <source>Confirm %1 as friend</source>
-        <translation type="unfinished"/>
+        <translation>Zatwierdź %1 jako przyjaciela</translation>
     </message>
     <message>
         <source>Add %1 as friend</source>
-        <translation type="unfinished"/>
+        <translation>Dodaj %1 jako przyjaciela</translation>
     </message>
     <message>
         <source>No subject</source>
-        <translation type="unfinished"/>
+        <translation>Brak tematu</translation>
     </message>
     <message>
         <source>Download</source>
@@ -9182,7 +9187,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Download all</source>
-        <translation type="unfinished"/>
+        <translation>Pobierz wszystkie</translation>
     </message>
     <message>
         <source>Hide</source>
@@ -9194,7 +9199,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>File</source>
-        <translation type="unfinished"/>
+        <translation>Plik</translation>
     </message>
     <message>
         <source>Files</source>
@@ -9202,15 +9207,15 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Print Document</source>
-        <translation type="unfinished"/>
+        <translation>Drukuj Dokument</translation>
     </message>
     <message>
         <source>Save as...</source>
-        <translation type="unfinished"/>
+        <translation>Zapisz jako...</translation>
     </message>
     <message>
         <source>HTML-Files (*.htm *.html);;All Files (*)</source>
-        <translation type="unfinished"/>
+        <translation>Pliki HTML (*.htm *.html);;Wszystkie pliki (*)</translation>
     </message>
     <message>
         <source>Load images always for this message</source>
@@ -9249,7 +9254,7 @@ Do you want to save message ?</source>
     <name>MessageWindow</name>
     <message>
         <source>New Message</source>
-        <translation type="unfinished"/>
+        <translation>Nowa Wiadmość</translation>
     </message>
     <message>
         <source>Compose</source>
@@ -9257,15 +9262,15 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Reply to selected message</source>
-        <translation type="unfinished"/>
+        <translation>Odpowiedz na wybraną wiadomość</translation>
     </message>
     <message>
         <source>Reply</source>
-        <translation type="unfinished"/>
+        <translation>Odpowiedz</translation>
     </message>
     <message>
         <source>Reply all to selected message</source>
-        <translation type="unfinished"/>
+        <translation>Odpowiedz na wszystkie wybrane wiadomości</translation>
     </message>
     <message>
         <source>Reply all</source>
@@ -9273,7 +9278,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Forward selected message</source>
-        <translation type="unfinished"/>
+        <translation>Prześlij dalej wybraną wiadomość</translation>
     </message>
     <message>
         <source>Forward</source>
@@ -9281,7 +9286,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Remove selected message</source>
-        <translation type="unfinished"/>
+        <translation>Usuń wybraną wiadomość</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -9289,11 +9294,11 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Print selected message</source>
-        <translation type="unfinished"/>
+        <translation>Drukuj wybraną wiadomość</translation>
     </message>
     <message>
         <source>Print</source>
-        <translation type="unfinished"/>
+        <translation>Drukuj</translation>
     </message>
     <message>
         <source>Display</source>
@@ -9301,58 +9306,58 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Tags</source>
-        <translation type="unfinished"/>
+        <translation>Tagi</translation>
     </message>
     <message>
         <source>Print Preview</source>
-        <translation type="unfinished"/>
+        <translation>Podgląd Wydruku</translation>
     </message>
     <message>
         <source>Buttons Icon Only</source>
-        <translation type="unfinished"/>
+        <translation>Tylko przyciski ikon</translation>
     </message>
     <message>
         <source>Buttons Text Beside Icon</source>
-        <translation type="unfinished"/>
+        <translation>Tekst obok przycisków ikon</translation>
     </message>
     <message>
         <source>Buttons with Text</source>
-        <translation type="unfinished"/>
+        <translation>Przyciski z tekstem</translation>
     </message>
     <message>
         <source>Buttons Text Under Icon</source>
-        <translation type="unfinished"/>
+        <translation>Tekst przycisków pod ikonami</translation>
     </message>
     <message>
         <source>Set Text Under Icon</source>
-        <translation type="unfinished"/>
+        <translation>Ustaw tekst pod ikoną</translation>
     </message>
     <message>
         <source>&amp;File</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Plik</translation>
     </message>
     <message>
         <source>Save &amp;As File</source>
-        <translation type="unfinished"/>
+        <translation>Zapisz &amp;Jako Plik</translation>
     </message>
     <message>
         <source>&amp;Print...</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Drukuj...</translation>
     </message>
     <message>
         <source>Print Preview...</source>
-        <translation type="unfinished"/>
+        <translation>Podgląd Wydruku...</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Zamknij</translation>
     </message>
 </context>
 <context>
     <name>MessagesDialog</name>
     <message>
         <source>New Message</source>
-        <translation type="unfinished"/>
+        <translation>Nowa Wiadmość</translation>
     </message>
     <message>
         <source>Compose</source>
@@ -9360,15 +9365,15 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Reply to selected message</source>
-        <translation type="unfinished"/>
+        <translation>Odpowiedz na wybraną wiadomość</translation>
     </message>
     <message>
         <source>Reply</source>
-        <translation type="unfinished"/>
+        <translation>Odpowiedz</translation>
     </message>
     <message>
         <source>Reply all to selected message</source>
-        <translation type="unfinished"/>
+        <translation>Odpowiedz na wszystkie wybrane wiadomości</translation>
     </message>
     <message>
         <source>Reply all</source>
@@ -9376,7 +9381,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Forward selected message</source>
-        <translation type="unfinished"/>
+        <translation>Prześlij dalej wybraną wiadomość</translation>
     </message>
     <message>
         <source>Foward</source>
@@ -9384,7 +9389,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Remove selected message</source>
-        <translation type="unfinished"/>
+        <translation>Usuń wybraną wiadomość</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -9392,11 +9397,11 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Print selected message</source>
-        <translation type="unfinished"/>
+        <translation>Drukuj wybraną wiadomość</translation>
     </message>
     <message>
         <source>Print</source>
-        <translation type="unfinished"/>
+        <translation>Drukuj</translation>
     </message>
     <message>
         <source>Display</source>
@@ -9404,27 +9409,27 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Tags</source>
-        <translation type="unfinished"/>
+        <translation>Tagi</translation>
     </message>
     <message>
         <source>Inbox</source>
-        <translation type="unfinished"/>
+        <translation>Przychodzące</translation>
     </message>
     <message>
         <source>Outbox</source>
-        <translation type="unfinished"/>
+        <translation>Wychodzące</translation>
     </message>
     <message>
         <source>Draft</source>
-        <translation type="unfinished"/>
+        <translation>Szkic</translation>
     </message>
     <message>
         <source>Sent</source>
-        <translation type="unfinished"/>
+        <translation>Wysłane</translation>
     </message>
     <message>
         <source>Trash</source>
-        <translation type="unfinished"/>
+        <translation>Kosz</translation>
     </message>
     <message>
         <source>Total Inbox:</source>
@@ -9432,39 +9437,39 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Folders</source>
-        <translation type="unfinished"/>
+        <translation>Foldery</translation>
     </message>
     <message>
         <source>Quick View</source>
-        <translation type="unfinished"/>
+        <translation>Szybki podgląd</translation>
     </message>
     <message>
         <source>Print...</source>
-        <translation type="unfinished"/>
+        <translation>Drukuj...</translation>
     </message>
     <message>
         <source>Print Preview</source>
-        <translation type="unfinished"/>
+        <translation>Podgląd Wydruku</translation>
     </message>
     <message>
         <source>Buttons Icon Only</source>
-        <translation type="unfinished"/>
+        <translation>Tylko ikony przycisków</translation>
     </message>
     <message>
         <source>Buttons Text Beside Icon</source>
-        <translation type="unfinished"/>
+        <translation>Tekst obok przycisków ikon</translation>
     </message>
     <message>
         <source>Buttons with Text</source>
-        <translation type="unfinished"/>
+        <translation>Przyciski z tekstem</translation>
     </message>
     <message>
         <source>Buttons Text Under Icon</source>
-        <translation type="unfinished"/>
+        <translation>Tekst przycisków pod ikonami</translation>
     </message>
     <message>
         <source>Set Text Under Icon</source>
-        <translation type="unfinished"/>
+        <translation>Ustaw tekst pod ikoną</translation>
     </message>
     <message>
         <source>Save As...</source>
@@ -9496,7 +9501,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Content</source>
-        <translation type="unfinished"/>
+        <translation>Zawartość</translation>
     </message>
     <message>
         <source>Click to sort by attachments</source>
@@ -9552,7 +9557,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Attachments</source>
-        <translation type="unfinished"/>
+        <translation>Załączniki</translation>
     </message>
     <message>
         <source>Search Attachments</source>
@@ -9624,7 +9629,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>To</source>
-        <translation type="unfinished"/>
+        <translation>Do</translation>
     </message>
     <message>
         <source>Click to sort by to</source>
@@ -9644,7 +9649,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Messages</source>
-        <translation type="unfinished"/>
+        <translation>Wiadomości</translation>
     </message>
     <message>
         <source>Click to sort by signature</source>
@@ -9860,7 +9865,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Add Friend</source>
-        <translation type="unfinished"/>
+        <translation>Dodaj Przyjaciela</translation>
     </message>
     <message>
         <source>Copy My Key to Clipboard</source>
@@ -10129,19 +10134,19 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Blogs</source>
-        <translation type="unfinished"/>
+        <translation>Blogi</translation>
     </message>
     <message>
         <source>Messages</source>
-        <translation type="unfinished"/>
+        <translation>Wiadomości</translation>
     </message>
     <message>
         <source>Chat</source>
-        <translation type="unfinished"/>
+        <translation>Chat</translation>
     </message>
     <message>
         <source>Security</source>
-        <translation type="unfinished"/>
+        <translation>Bezpieczeństwo</translation>
     </message>
     <message>
         <source>Add feeds at end</source>
@@ -10173,7 +10178,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>New Message</source>
-        <translation type="unfinished"/>
+        <translation>Nowa Wiadmość</translation>
     </message>
     <message>
         <source>Download completed</source>
@@ -10241,7 +10246,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Notify</source>
-        <translation type="unfinished"/>
+        <translation>Powiadom</translation>
     </message>
     <message>
         <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Notify&lt;/h1&gt; 		  &lt;p&gt;Retroshare will notify you about what happens in your network.         		  Depending on your usage, you may want to enable or disable some of the    		  notifications. This page is designed for that!&lt;/p&gt;                        		  </source>
@@ -10351,7 +10356,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Chat</source>
-        <translation type="unfinished"/>
+        <translation>Chat</translation>
     </message>
     <message>
         <source>Start Chat</source>
@@ -10407,7 +10412,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Friend</source>
-        <translation type="unfinished"/>
+        <translation>Przyjaciel</translation>
     </message>
     <message>
         <source>Friend Connected</source>
@@ -10450,7 +10455,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Friends</source>
-        <translation type="unfinished"/>
+        <translation>Przyjaciele</translation>
     </message>
 </context>
 <context>
@@ -10801,7 +10806,7 @@ malicious behavior of crafted plugins.</source>
     </message>
     <message>
         <source>Plugins</source>
-        <translation type="unfinished"/>
+        <translation>Wtyczki</translation>
     </message>
     <message>
         <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Plugins&lt;/h1&gt;                   &lt;p&gt;Plugins are loaded from the directories listed in the bottom list.&lt;/p&gt;                       &lt;p&gt;For security reasons, accepted plugins load automatically until                              the main Retroshare executable or the plugin library changes. In                                such a case, the user needs to confirm them again.                                              After the program is started, you can enable a plugin manually by clicking on the               &quot;Enable&quot; button and then restart Retroshare.&lt;/p&gt;                                              &lt;p&gt;If you want to develop your own plugins, contact the developpers team                        they will be happy to help you out!&lt;/p&gt;</source>
@@ -10834,7 +10839,7 @@ malicious behavior of crafted plugins.</source>
     <name>PopupChatWindow</name>
     <message>
         <source>Avatar</source>
-        <translation type="unfinished"/>
+        <translation>Awatar</translation>
     </message>
     <message>
         <source>Set your Avatar Picture</source>
@@ -11095,11 +11100,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Print</source>
-        <translation type="unfinished"/>
+        <translation>Drukuj</translation>
     </message>
     <message>
         <source>&amp;Print...</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Drukuj...</translation>
     </message>
     <message>
         <source>Page Setup...</source>
@@ -11362,7 +11367,7 @@ p, li { white-space: pre-wrap; }
     <name>QObject</name>
     <message>
         <source>Subject: </source>
-        <translation type="unfinished"/>
+        <translation>Temat:</translation>
     </message>
     <message>
         <source>Participants: </source>
@@ -11706,7 +11711,7 @@ Make sure you know who you&apos;re talking to.</source>
     <name>QuickStartWizard</name>
     <message>
         <source>Quick Start Wizard</source>
-        <translation type="unfinished"/>
+        <translation>Kreator szybkiego startu</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -11810,7 +11815,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Directory</source>
-        <translation type="unfinished"/>
+        <translation>Katalog</translation>
     </message>
     <message>
         <source>Network Wide</source>
@@ -11867,7 +11872,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Start minimized on system start</source>
-        <translation type="unfinished"/>
+        <translation>Uruchom zminimalizowane podczas startu systemu</translation>
     </message>
     <message>
         <source>Finish</source>
@@ -11955,7 +11960,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Friends</source>
-        <translation type="unfinished"/>
+        <translation>Przyjaciele</translation>
     </message>
     <message>
         <source>kB/s</source>
@@ -12052,15 +12057,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>File</source>
-        <translation type="unfinished"/>
+        <translation>Plik</translation>
     </message>
     <message>
         <source>Size</source>
-        <translation type="unfinished"/>
+        <translation>Rozmiar</translation>
     </message>
     <message>
         <source>Hash</source>
-        <translation type="unfinished"/>
+        <translation>Hash</translation>
     </message>
     <message>
         <source>Bad filenames have been cleaned</source>
@@ -12175,15 +12180,15 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>KB</source>
-        <translation type="unfinished"/>
+        <translation>KB</translation>
     </message>
     <message>
         <source>MB</source>
-        <translation type="unfinished"/>
+        <translation> MB</translation>
     </message>
     <message>
         <source>GB</source>
-        <translation type="unfinished"/>
+        <translation> GB</translation>
     </message>
 </context>
 <context>
@@ -12259,7 +12264,7 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Size</source>
-        <translation type="unfinished"/>
+        <translation>Rozmiar</translation>
     </message>
     <message>
         <source>Sources</source>
@@ -12271,11 +12276,11 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Age</source>
-        <translation type="unfinished"/>
+        <translation>Wielk</translation>
     </message>
     <message>
         <source>Hash</source>
-        <translation type="unfinished"/>
+        <translation>Hash</translation>
     </message>
     <message>
         <source>Filter:</source>
@@ -12299,7 +12304,7 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Audio</source>
-        <translation type="unfinished"/>
+        <translation>Audio</translation>
     </message>
     <message>
         <source>CD-Image</source>
@@ -12307,23 +12312,23 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Document</source>
-        <translation type="unfinished"/>
+        <translation>Dokument</translation>
     </message>
     <message>
         <source>Picture</source>
-        <translation type="unfinished"/>
+        <translation>Obraz</translation>
     </message>
     <message>
         <source>Program</source>
-        <translation type="unfinished"/>
+        <translation>Program</translation>
     </message>
     <message>
         <source>Video</source>
-        <translation type="unfinished"/>
+        <translation>Wideo</translation>
     </message>
     <message>
         <source>Directory</source>
-        <translation type="unfinished"/>
+        <translation>Katalog</translation>
     </message>
     <message>
         <source>Download Selected</source>
@@ -12335,7 +12340,7 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>File Name</source>
-        <translation type="unfinished"/>
+        <translation>Nazwa pliku</translation>
     </message>
     <message>
         <source>Download</source>
@@ -12394,7 +12399,7 @@ Reducing image to %1x%2 pixels?</source>
     <name>SecurityItem</name>
     <message>
         <source>wants to be friend with you on RetroShare</source>
-        <translation type="unfinished"/>
+        <translation>chce być przyjacielem z tobą na RetroShare</translation>
     </message>
     <message>
         <source>Accept Friend Request</source>
@@ -12414,7 +12419,7 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Chat</source>
-        <translation type="unfinished"/>
+        <translation>Chat</translation>
     </message>
     <message>
         <source>Start Chat</source>
@@ -12478,7 +12483,7 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Unknown (Incoming) Connect Attempt</source>
-        <translation type="unfinished"/>
+        <translation>Nieznana (Przychodząca) Próba Połączenia</translation>
     </message>
     <message>
         <source>Unknown (Outgoing) Connect Attempt</source>
@@ -12498,7 +12503,7 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Do you want to remove this Friend?</source>
-        <translation type="unfinished"/>
+        <translation>Czy chcesz usunąć tego Przyjaciela?</translation>
     </message>
     <message>
         <source>Quick Message</source>
@@ -12715,7 +12720,7 @@ The default value is 20.</source>
     </message>
     <message>
         <source>Browse</source>
-        <translation type="unfinished"/>
+        <translation>Przeglądaj</translation>
     </message>
     <message>
         <source>Virtual Folder</source>
@@ -12777,7 +12782,7 @@ The default value is 20.</source>
     </message>
     <message>
         <source>Directory</source>
-        <translation type="unfinished"/>
+        <translation>Katalog</translation>
     </message>
     <message>
         <source>Virtual Folder</source>
@@ -12947,7 +12952,7 @@ The default value is 20.</source>
     </message>
     <message>
         <source>Browse</source>
-        <translation type="unfinished"/>
+        <translation>Przeglądaj</translation>
     </message>
     <message>
         <source>Event</source>
@@ -12959,7 +12964,7 @@ The default value is 20.</source>
     </message>
     <message>
         <source>Friend</source>
-        <translation type="unfinished"/>
+        <translation>Przyjaciel</translation>
     </message>
     <message>
         <source>go Online</source>
@@ -13117,7 +13122,7 @@ This choice can be reverted in settings.</source>
     </message>
     <message>
         <source>Idle</source>
-        <translation type="unfinished"/>
+        <translation>Bezczynne</translation>
     </message>
     <message>
         <source>Friend is offline</source>
@@ -13149,7 +13154,7 @@ This choice can be reverted in settings.</source>
     </message>
     <message>
         <source>Available</source>
-        <translation type="unfinished"/>
+        <translation>Dostępne</translation>
     </message>
     <message>
         <source>Neighbor</source>
@@ -13479,7 +13484,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Size</source>
         <comment>i.e: file size</comment>
-        <translation type="unfinished"/>
+        <translation>Rozmiar</translation>
     </message>
     <message>
         <source>Completed</source>
@@ -13510,7 +13515,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Remaining</source>
-        <translation type="unfinished"/>
+        <translation>Pozostałe</translation>
     </message>
     <message>
         <source>Download time</source>
@@ -13538,7 +13543,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Hash</source>
-        <translation type="unfinished"/>
+        <translation>Hash</translation>
     </message>
     <message>
         <source>Search</source>
@@ -13792,15 +13797,15 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Expand all</source>
-        <translation type="unfinished"/>
+        <translation>Rozwiń wszystkie</translation>
     </message>
     <message>
         <source>Collapse all</source>
-        <translation type="unfinished"/>
+        <translation>Zwiń wszystkie</translation>
     </message>
     <message>
         <source>Size</source>
-        <translation type="unfinished"/>
+        <translation>Rozmiar</translation>
     </message>
     <message>
         <source>Show Size Column</source>
@@ -13868,7 +13873,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Columns</source>
-        <translation type="unfinished"/>
+        <translation>Kolumny</translation>
     </message>
     <message>
         <source>File Transfers</source>
@@ -13908,7 +13913,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>File</source>
-        <translation type="unfinished"/>
+        <translation>Plik</translation>
     </message>
     <message>
         <source>DIR</source>
@@ -13916,23 +13921,23 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Friends Directories</source>
-        <translation type="unfinished"/>
+        <translation>Katalogi Przyjaciół</translation>
     </message>
     <message>
         <source>My Directories</source>
-        <translation type="unfinished"/>
+        <translation>Moje Katalogi</translation>
     </message>
     <message>
         <source>Size</source>
-        <translation type="unfinished"/>
+        <translation>Rozmiar</translation>
     </message>
     <message>
         <source>Age</source>
-        <translation type="unfinished"/>
+        <translation>Wielk</translation>
     </message>
     <message>
         <source>Friend</source>
-        <translation type="unfinished"/>
+        <translation>Przyjaciel</translation>
     </message>
     <message>
         <source>Share Flags</source>
@@ -14129,15 +14134,15 @@ Try to be patient!</source>
     </message>
     <message>
         <source>KB</source>
-        <translation type="unfinished"/>
+        <translation>KB</translation>
     </message>
     <message>
         <source>MB</source>
-        <translation type="unfinished"/>
+        <translation> MB</translation>
     </message>
     <message>
         <source>GB</source>
-        <translation type="unfinished"/>
+        <translation> GB</translation>
     </message>
 </context>
 <context>
@@ -14199,11 +14204,11 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Quit</source>
-        <translation type="unfinished"/>
+        <translation>Zamknij</translation>
     </message>
     <message>
         <source>Browse</source>
-        <translation type="unfinished"/>
+        <translation>Przeglądaj</translation>
     </message>
 </context>
 <context>

@@ -1,83 +1,81 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.0" language="en_US">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="ca_ES" version="2.0">
 <context>
     <name>AddLinksDialog</name>
     <message>
         <location filename="../AddLinksDialog.ui" line="14"/>
         <location filename="../AddLinksDialog.ui" line="56"/>
         <source>Add Link</source>
-        <translation type="unfinished"></translation>
+        <translation>Afegir enllaç</translation>
     </message>
     <message>
         <location filename="../AddLinksDialog.ui" line="49"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Cancel·la</translation>
     </message>
     <message>
         <location filename="../AddLinksDialog.ui" line="82"/>
         <source>Add a new Link</source>
-        <translation type="unfinished"></translation>
+        <translation>Afegir un nou enllaç</translation>
     </message>
     <message>
         <location filename="../AddLinksDialog.ui" line="95"/>
         <source>Title:</source>
-        <translation type="unfinished"></translation>
+        <translation>Títol:</translation>
     </message>
     <message>
         <location filename="../AddLinksDialog.ui" line="102"/>
         <source>Url:</source>
-        <translation type="unfinished"></translation>
+        <translation>URL:</translation>
     </message>
     <message>
         <location filename="../AddLinksDialog.ui" line="139"/>
         <source>Add Anonymous Link</source>
-        <translation type="unfinished"></translation>
+        <translation>Afegir enllaç anònim</translation>
     </message>
     <message>
         <location filename="../AddLinksDialog.ui" line="147"/>
         <source>+2 Great!</source>
-        <translation type="unfinished"></translation>
+        <translation>+2 Fantàstic!</translation>
     </message>
     <message>
         <location filename="../AddLinksDialog.ui" line="156"/>
         <source>+1 Good</source>
-        <translation type="unfinished"></translation>
+        <translation>+1 Molt bo</translation>
     </message>
     <message>
         <location filename="../AddLinksDialog.ui" line="165"/>
         <source>0 Okay</source>
-        <translation type="unfinished"></translation>
+        <translation>0 Està bé</translation>
     </message>
     <message>
         <location filename="../AddLinksDialog.ui" line="174"/>
         <source>-1 Sux</source>
-        <translation type="unfinished"></translation>
+        <translation>-1 És dolent</translation>
     </message>
     <message>
         <location filename="../AddLinksDialog.ui" line="183"/>
         <source>-2 Bad Link</source>
-        <translation type="unfinished"></translation>
+        <translation>-2 Enllaç dolent</translation>
     </message>
     <message>
         <location filename="../AddLinksDialog.cpp" line="44"/>
         <source>Add Link to Cloud</source>
-        <translation type="unfinished"></translation>
+        <translation>Afegir enllaç al núvol</translation>
     </message>
     <message>
         <location filename="../AddLinksDialog.cpp" line="61"/>
         <source>New Link</source>
-        <translation type="unfinished"></translation>
+        <translation>Nou enllaç</translation>
     </message>
     <message>
         <location filename="../AddLinksDialog.cpp" line="89"/>
         <source>Add Link Failure</source>
-        <translation type="unfinished"></translation>
+        <translation>Afegir enllaç que falla</translation>
     </message>
     <message>
         <location filename="../AddLinksDialog.cpp" line="89"/>
         <source>Missing Link and/or Title</source>
-        <translation type="unfinished"></translation>
+        <translation>Enllaç i/o títol perdut</translation>
     </message>
 </context>
 <context>
@@ -85,12 +83,12 @@
     <message>
         <location filename="../LinksCloudPlugin.cpp" line="93"/>
         <source>This plugin provides a set of cached links, and a voting system to promote them.</source>
-        <translation type="unfinished"></translation>
+        <translation>Aquest complement proporciona un conjunt d&apos;enllaços en cau i un sistema de votar-los i promocionar-los.</translation>
     </message>
     <message>
         <location filename="../LinksCloudPlugin.cpp" line="98"/>
         <source>LinksCloud</source>
-        <translation type="unfinished"></translation>
+        <translation>NúvolEnllaços</translation>
     </message>
 </context>
 <context>
@@ -98,234 +96,234 @@
     <message>
         <location filename="../LinksDialog.ui" line="45"/>
         <source>Title / Comment</source>
-        <translation type="unfinished"></translation>
+        <translation>Títol / Comentari</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="50"/>
         <source>Score</source>
-        <translation type="unfinished"></translation>
+        <translation>Puntuació</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="55"/>
         <source>Peer / Link</source>
-        <translation type="unfinished"></translation>
+        <translation>Contacte / Enllaç</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="93"/>
         <source>Sort by</source>
-        <translation type="unfinished"></translation>
+        <translation>Ordenat per</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="101"/>
         <source>Combo</source>
-        <translation type="unfinished"></translation>
+        <translation>Combinació</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="106"/>
         <source>Time</source>
-        <translation type="unfinished"></translation>
+        <translation>Temps</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="115"/>
         <source>Ranking</source>
-        <translation type="unfinished"></translation>
+        <translation>Classificació</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="146"/>
         <source>In last</source>
-        <translation type="unfinished"></translation>
+        <translation>En l&apos;últim</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="154"/>
         <source>Month</source>
-        <translation type="unfinished"></translation>
+        <translation>Mes</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="163"/>
         <source>Week</source>
-        <translation type="unfinished"></translation>
+        <translation>Setmana</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="172"/>
         <source>Day</source>
-        <translation type="unfinished"></translation>
+        <translation>Dia</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="203"/>
         <source>From</source>
-        <translation type="unfinished"></translation>
+        <translation>Des de</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="211"/>
         <source>All Peers</source>
-        <translation type="unfinished"></translation>
+        <translation>Tots els contactes</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="220"/>
         <source>Own Links</source>
-        <translation type="unfinished"></translation>
+        <translation>Enllaços propis</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="251"/>
         <source>Show</source>
-        <translation type="unfinished"></translation>
+        <translation>Mostra</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="259"/>
         <source>Top 100</source>
-        <translation type="unfinished"></translation>
+        <translation>Top 100</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="268"/>
         <source>101-200</source>
-        <translation type="unfinished"></translation>
+        <translation>101-200</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="273"/>
         <source>201-300</source>
-        <translation type="unfinished"></translation>
+        <translation>201-300</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="278"/>
         <source>301-400</source>
-        <translation type="unfinished"></translation>
+        <translation>301-400</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="283"/>
         <source>401-500</source>
-        <translation type="unfinished"></translation>
+        <translation>401-500</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="288"/>
         <source>Bottom 100</source>
-        <translation type="unfinished"></translation>
+        <translation>Els últims 100</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="318"/>
         <source>Link:</source>
-        <translation type="unfinished"></translation>
+        <translation>Enllaç:</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="350"/>
         <source>Add Anonymous Link</source>
-        <translation type="unfinished"></translation>
+        <translation>Afegir enllaç anònim</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="357"/>
         <source>Add Link/Comment</source>
-        <translation type="unfinished"></translation>
+        <translation>Afegir Enllaç/Comentari</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="368"/>
         <source>Title:</source>
-        <translation type="unfinished"></translation>
+        <translation>Títol:</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="384"/>
         <source>Score:</source>
-        <translation type="unfinished"></translation>
+        <translation>Puntuació:</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="392"/>
-        <location filename="../LinksDialog.cpp" line="145"/>
+        <location filename="../LinksDialog.cpp" line="144"/>
         <source>+2 Great!</source>
-        <translation type="unfinished"></translation>
+        <translation>+2 Fantàstic!</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="401"/>
-        <location filename="../LinksDialog.cpp" line="148"/>
+        <location filename="../LinksDialog.cpp" line="147"/>
         <source>+1 Good</source>
-        <translation type="unfinished"></translation>
+        <translation>+1 Molt bo</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="410"/>
-        <location filename="../LinksDialog.cpp" line="151"/>
+        <location filename="../LinksDialog.cpp" line="150"/>
         <source>0 Okay</source>
-        <translation type="unfinished"></translation>
+        <translation>0 Està bé</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="419"/>
-        <location filename="../LinksDialog.cpp" line="154"/>
+        <location filename="../LinksDialog.cpp" line="153"/>
         <source>-1 Sux</source>
-        <translation type="unfinished"></translation>
+        <translation>-1 És dolent</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="428"/>
-        <location filename="../LinksDialog.cpp" line="157"/>
+        <location filename="../LinksDialog.cpp" line="156"/>
         <source>-2 Bad Link</source>
-        <translation type="unfinished"></translation>
+        <translation>-2 Enllaç dolent</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="444"/>
         <source>Url:</source>
-        <translation type="unfinished"></translation>
+        <translation>URL:</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="531"/>
         <source>Links Cloud</source>
-        <translation type="unfinished"></translation>
+        <translation>Núvol d&apos;enllaços</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="551"/>
         <source>Add new link</source>
-        <translation type="unfinished"></translation>
+        <translation>Afegir nou enllaç</translation>
     </message>
     <message>
-        <location filename="../LinksDialog.cpp" line="138"/>
+        <location filename="../LinksDialog.cpp" line="137"/>
         <source>Share Link Anonymously</source>
-        <translation type="unfinished"></translation>
+        <translation>Compartir enllaç anònimament</translation>
     </message>
     <message>
-        <location filename="../LinksDialog.cpp" line="142"/>
+        <location filename="../LinksDialog.cpp" line="141"/>
         <source>Vote on Link</source>
-        <translation type="unfinished"></translation>
+        <translation>Votar un enllaç</translation>
     </message>
     <message>
-        <location filename="../LinksDialog.cpp" line="161"/>
+        <location filename="../LinksDialog.cpp" line="160"/>
         <source>Download</source>
-        <translation type="unfinished"></translation>
+        <translation>Descarregar</translation>
     </message>
     <message>
-        <location filename="../LinksDialog.cpp" line="708"/>
-        <location filename="../LinksDialog.cpp" line="736"/>
-        <location filename="../LinksDialog.cpp" line="744"/>
+        <location filename="../LinksDialog.cpp" line="707"/>
+        <location filename="../LinksDialog.cpp" line="735"/>
+        <location filename="../LinksDialog.cpp" line="743"/>
         <source>Add Link Failure</source>
-        <translation type="unfinished"></translation>
+        <translation>Afegir enllaç que falla</translation>
     </message>
     <message>
-        <location filename="../LinksDialog.cpp" line="708"/>
+        <location filename="../LinksDialog.cpp" line="707"/>
         <source>Missing Link and/or Title</source>
-        <translation type="unfinished"></translation>
+        <translation>Enllaç i/o títol perdut</translation>
     </message>
     <message>
-        <location filename="../LinksDialog.cpp" line="736"/>
+        <location filename="../LinksDialog.cpp" line="735"/>
         <source>Missing Link Data</source>
-        <translation type="unfinished"></translation>
+        <translation>Dades d&apos;enllaç perdudes</translation>
     </message>
     <message>
-        <location filename="../LinksDialog.cpp" line="744"/>
+        <location filename="../LinksDialog.cpp" line="743"/>
         <source>Missing Comment</source>
-        <translation type="unfinished"></translation>
+        <translation>Comentari perdut</translation>
     </message>
     <message>
-        <location filename="../LinksDialog.cpp" line="759"/>
+        <location filename="../LinksDialog.cpp" line="758"/>
         <source>Link Title Not Changed</source>
-        <translation type="unfinished"></translation>
+        <translation>Títol d&apos;enllaç no canviat</translation>
     </message>
     <message>
-        <location filename="../LinksDialog.cpp" line="759"/>
+        <location filename="../LinksDialog.cpp" line="758"/>
         <source>Do you want to continue?</source>
-        <translation type="unfinished"></translation>
+        <translation>Vols continuar?</translation>
     </message>
     <message>
-        <location filename="../LinksDialog.cpp" line="814"/>
+        <location filename="../LinksDialog.cpp" line="813"/>
         <source>Expand</source>
-        <translation type="unfinished"></translation>
+        <translation>Ampliar</translation>
     </message>
     <message>
-        <location filename="../LinksDialog.cpp" line="821"/>
+        <location filename="../LinksDialog.cpp" line="820"/>
         <source>Hide</source>
-        <translation type="unfinished"></translation>
+        <translation>Amagar</translation>
     </message>
 </context>
 </TS>

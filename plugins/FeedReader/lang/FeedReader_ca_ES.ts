@@ -1,90 +1,90 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="de" version="2.0">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="ca_ES" version="2.0">
 <context>
     <name>AddFeedDialog</name>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="14"/>
         <source>Create new feed</source>
-        <translation>Neuen Feed erstellen</translation>
+        <translation>Crear nova font</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="106"/>
         <source>Authentication (not yet supported)</source>
-        <translation>Authentifizierung (noch nicht unterstützt)</translation>
+        <translation>Autenticació (Encara no suportat)</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="112"/>
         <source>Feed needs authentication</source>
-        <translation>Feed benötigt Authentifizierung</translation>
+        <translation>La font necessita autenticació</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="119"/>
         <source>User</source>
-        <translation>Benutzer</translation>
+        <translation>Usuari</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="126"/>
         <source>Password</source>
-        <translation>Passwort</translation>
+        <translation>Contrasenya</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="222"/>
         <source>Update interval</source>
-        <translation>Updateintervall</translation>
+        <translation>Interval d&apos;actualització</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="228"/>
         <source>Use standard update interval</source>
-        <translation>Standardupdateintervall benutzen</translation>
+        <translation>Utilitzar interval d&apos;actualització estàndard</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="235"/>
         <source>Interval in minutes (0 = manual)</source>
-        <translation>Intervall in Minuten (0 = manuell)</translation>
+        <translation>Interval en minuts (0 = manual)</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="254"/>
         <source>Last update</source>
-        <translation>Letztes Update</translation>
+        <translation>Última actualització</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="267"/>
         <source>Never</source>
-        <translation>Nie</translation>
+        <translation>Mai</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="388"/>
         <source>Embed images</source>
-        <translation>Bilder einbetten</translation>
+        <translation>Incrustar imatges</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="146"/>
         <source>Storage time</source>
-        <translation>Speicherzeit</translation>
+        <translation>Temps d&apos;emmagatzematge</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="152"/>
         <source>Use standard storage time</source>
-        <translation>Standardspeicherzeit benutzen</translation>
+        <translation>Utilitza temps estandard d&apos;emmagatzematge</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="159"/>
         <source>Days (0 = off)</source>
-        <translation>Tage (0 = aus)</translation>
+        <translation>Dies (0 = apagat)</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="182"/>
         <source>Proxy</source>
-        <translation>Proxy</translation>
+        <translation>Servidor intermediari</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="188"/>
         <source>Use standard proxy</source>
-        <translation>Standardproxy benutzen</translation>
+        <translation>Utilitza servidor intermediari estàndard</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="195"/>
         <source>Server</source>
-        <translation>Server</translation>
+        <translation>Servidor</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="205"/>
@@ -94,119 +94,119 @@
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="51"/>
         <source>Type</source>
-        <translation>Typ</translation>
+        <translation>Tipus</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="71"/>
         <source>Forum</source>
-        <translation>Forum</translation>
+        <translation>Fòrum</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="96"/>
         <source>Local Feed</source>
-        <translation>Lokaler Feed</translation>
+        <translation>Font local</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="328"/>
         <source>Transformation</source>
-        <translation>Transformation</translation>
+        <translation>Transformació</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="336"/>
         <source>Transformation type</source>
-        <translation>Transformationstyp</translation>
+        <translation>Tipus de transformació</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="349"/>
         <source>Preview &amp;&amp; Transformation</source>
-        <translation>Vorschau &amp;&amp; Transformation</translation>
+        <translation>Pre-visualitzar &amp;&amp; Transformació</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="361"/>
         <source>Misc</source>
-        <translation>Verschiedenes</translation>
+        <translation>Miscel·lània</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="367"/>
         <source>Activated</source>
-        <translation>Aktiviert</translation>
+        <translation>Activat</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="374"/>
         <source>Use name and description from feed</source>
-        <translation>Name und Beschreibung aus dem Feed benutzen</translation>
+        <translation>Utilitza nom i descripció a la font</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="381"/>
         <source>Update forum information</source>
-        <translation>Foruminformation auffrischen</translation>
+        <translation>Actualitzar informació del fòrum</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="395"/>
         <source>Save complete web page (experimental for local feeds)</source>
-        <translation>Komplette Webseite speichern (experimentell für lokale Feeds)</translation>
+        <translation>Desar pàgina web completa (Experimental per fonts locals)</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="292"/>
         <source>Description:</source>
-        <translation>Beschreibung</translation>
+        <translation>Descripció:</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="306"/>
         <source>RSS-Feed-URL:</source>
-        <translation>RSS-Feed-URL:</translation>
+        <translation>RSS-Font-URL:</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.ui" line="316"/>
         <source>Name:</source>
-        <translation>Name:</translation>
+        <translation>Nom:</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.cpp" line="63"/>
         <source>Feed Details</source>
-        <translation>Feeddetails</translation>
+        <translation>Detalls de la font</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.cpp" line="96"/>
         <source>Create a new anonymous public forum</source>
-        <translation>Ein neues anonymes öffentliches Forum erstellen</translation>
+        <translation>Crear un nou fòrum públic anònim</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.cpp" line="212"/>
         <location filename="../gui/AddFeedDialog.cpp" line="325"/>
         <location filename="../gui/AddFeedDialog.cpp" line="340"/>
         <source>Edit feed</source>
-        <translation>Feed bearbeiten</translation>
+        <translation>Editar font</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.cpp" line="237"/>
         <source>Not yet created</source>
-        <translation>Noch nicht erstellt</translation>
+        <translation>Encara no creat</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.cpp" line="243"/>
         <source>Unknown forum</source>
-        <translation>unbekanntes Forum</translation>
+        <translation>Fòrum desconegut</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.cpp" line="325"/>
         <source>Can&apos;t edit feed. Feed does not exist.</source>
-        <translation>Kann Feed nicht bearbeiten: Feed existiert nicht.</translation>
+        <translation>No es pot editar la font. No existeix.</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.cpp" line="335"/>
         <source>Create feed</source>
-        <translation>Feed erstellen</translation>
+        <translation>Crear font</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.cpp" line="335"/>
         <source>Cannot create feed.</source>
-        <translation>Kann Feed nicht erstellen.</translation>
+        <translation>No es pot crear font.</translation>
     </message>
     <message>
         <location filename="../gui/AddFeedDialog.cpp" line="340"/>
         <source>Cannot change feed.</source>
-        <translation>Kann Feed nicht ändern</translation>
+        <translation>No es pot canviar font.</translation>
     </message>
 </context>
 <context>
@@ -214,42 +214,42 @@
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="14"/>
         <source>Form</source>
-        <translation>Formular</translation>
+        <translation>Formulari</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="20"/>
         <source>Update</source>
-        <translation>Update</translation>
+        <translation>Actualitza</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="26"/>
         <source>Interval in minutes (0 = manual)</source>
-        <translation>Intervall in Minuten (0 = manuell)</translation>
+        <translation>Interval en minuts (0 = manual)</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="49"/>
         <source>Storage time</source>
-        <translation>Speicherzeit</translation>
+        <translation>Temps d&apos;emmagatzematge</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="55"/>
         <source>Days (0 = off)</source>
-        <translation>Tage (0 = aus)</translation>
+        <translation>Dies (0 = apagat)</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="78"/>
         <source>Proxy</source>
-        <translation>Proxy</translation>
+        <translation>Servidor intermediari</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="84"/>
         <source>Use proxy</source>
-        <translation>Proxy benutzen</translation>
+        <translation>Utilitza servidor intermediari</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="91"/>
         <source>Server</source>
-        <translation>Server</translation>
+        <translation>Servidor</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="108"/>
@@ -259,27 +259,27 @@
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="118"/>
         <source>Misc</source>
-        <translation>Verschiedenes</translation>
+        <translation>Miscel·lània</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="131"/>
         <source>Set message to read on activate</source>
-        <translation>Beitrag beim Aktivieren als gelesen markieren</translation>
+        <translation>Missatge a llegir quan estiguis actiu</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="138"/>
         <source>Save configuration in background (for slow systems, more memory needed)</source>
-        <translation>Konfiguration im Hintergrund speichern (für langsame Systeme, benötigt mehr Speicher)</translation>
+        <translation>Desar configuració en segon pla (per equips lents, es necessita més memòria)</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.ui" line="124"/>
         <source>Open all feeds in new tab</source>
-        <translation>Alle Feeds in neuem Reiter öffnen</translation>
+        <translation>Obrir totes les fonts en pestanyes noves</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderConfig.h" line="50"/>
         <source>FeedReader</source>
-        <translation>FeedReader</translation>
+        <translation>LectorFonts</translation>
     </message>
 </context>
 <context>
@@ -287,124 +287,124 @@
     <message>
         <location filename="../gui/FeedReaderDialog.ui" line="68"/>
         <source>Feeds</source>
-        <translation>Feeds</translation>
+        <translation>Fonts</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.ui" line="91"/>
         <source>Add new feed</source>
-        <translation>Neuen Feed hinzufügen</translation>
+        <translation>Afegir nova font</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.ui" line="108"/>
         <source>Update feed</source>
-        <translation>Feed auffrischen</translation>
+        <translation>Actualitzar font</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="94"/>
         <source>Message Folders</source>
-        <translation>Nachrichtenordner</translation>
+        <translation>Carpetes de missatges</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="288"/>
         <source>New</source>
-        <translation>Neu</translation>
+        <translation>Nou</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="289"/>
         <source>Feed</source>
-        <translation>Feed</translation>
+        <translation>Font</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="293"/>
         <source>Folder</source>
-        <translation>Ordner</translation>
+        <translation>Directori</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="301"/>
         <source>Open in new tab</source>
-        <translation>In neuem Reiter öffnen</translation>
+        <translation>Obrir en una pestanya nova</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="309"/>
         <source>Edit</source>
-        <translation>Bearbeiten</translation>
+        <translation>Editar</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="314"/>
         <source>Delete</source>
-        <translation>Löschen</translation>
+        <translation>Esborrat</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="326"/>
         <source>Update</source>
-        <translation>Update</translation>
+        <translation>Actualitza</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="329"/>
         <source>Activate</source>
-        <translation>Aktivieren</translation>
+        <translation>Activar</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="329"/>
         <source>Deactivate</source>
-        <translation>Deaktivieren</translation>
+        <translation>Desactivar</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="524"/>
         <source>No name</source>
-        <translation>Kein Name</translation>
+        <translation>Sense nom</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="736"/>
         <source>Add new folder</source>
-        <translation>Neuen Ordner hinzufügen</translation>
+        <translation>Afegir nou directori</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="737"/>
         <source>Please enter a name for the folder</source>
-        <translation>Bitte einen Namen für den Ordner eingeben</translation>
+        <translation>Si us plau introdueix un nom pel directori</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="743"/>
         <location filename="../gui/FeedReaderDialog.cpp" line="796"/>
         <source>Create folder</source>
-        <translation>Ordner erstellen</translation>
+        <translation>Crear directori</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="743"/>
         <location filename="../gui/FeedReaderDialog.cpp" line="796"/>
         <source>Cannot create folder.</source>
-        <translation>Kann Ordner nicht erstellen</translation>
+        <translation>No es pot crear directori.</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="769"/>
         <source>Remove folder</source>
-        <translation>Ordner entfernen</translation>
+        <translation>Esborrar directori</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="769"/>
         <source>Remove feed</source>
-        <translation>Feed entfernen</translation>
+        <translation>Treure font</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="769"/>
         <source>Do you want to remove the folder %1?</source>
-        <translation>Willst du den Ordner %1 entfernen?</translation>
+        <translation>Vols treure el directori %1?</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="769"/>
         <source>Do you want to remove the feed %1?</source>
-        <translation>Willst du den Feed %1 entfernen?</translation>
+        <translation>Vols treure la font %1?</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="789"/>
         <source>Edit folder</source>
-        <translation>Ordner bearbeiten</translation>
+        <translation>Editar directori</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="790"/>
         <source>Please enter a new name for the folder</source>
-        <translation>Bitte einen neuen Namen für den Ordner eingeben</translation>
+        <translation>Si us plau introdueix un nou nom pel directori</translation>
     </message>
 </context>
 <context>
@@ -413,32 +413,32 @@
         <location filename="../gui/FeedReaderFeedItem.ui" line="196"/>
         <location filename="../gui/FeedReaderFeedItem.cpp" line="109"/>
         <source>Expand</source>
-        <translation>Erweitern</translation>
+        <translation>Ampliar</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderFeedItem.ui" line="222"/>
         <source>Set as read and remove item</source>
-        <translation>Als gelesen markieren und Eintrag entfernen</translation>
+        <translation>Marcar com llegit i eliminar l&apos;element</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderFeedItem.ui" line="248"/>
         <source>Remove Item</source>
-        <translation>Element entfernen</translation>
+        <translation>Eliminar l&apos;element</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderFeedItem.cpp" line="80"/>
         <source>Open link in browser</source>
-        <translation>Verknüpfung im Browser öffnen</translation>
+        <translation>Obrir enllaç al navegador</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderFeedItem.cpp" line="81"/>
         <source>Copy link to clipboard</source>
-        <translation>Verknüpfung in die Zwischenablage kopieren</translation>
+        <translation>Copiar enllaç al porta-retalls</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderFeedItem.cpp" line="103"/>
         <source>Hide</source>
-        <translation>Verbergen</translation>
+        <translation>Amagar</translation>
     </message>
 </context>
 <context>
@@ -446,7 +446,7 @@
     <message>
         <location filename="../gui/FeedReaderFeedNotify.cpp" line="47"/>
         <source>Feed Reader</source>
-        <translation>Feedreader</translation>
+        <translation>Lector de fonts</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderFeedNotify.cpp" line="125"/>
@@ -456,12 +456,12 @@
     <message>
         <location filename="../gui/FeedReaderFeedNotify.cpp" line="136"/>
         <source>Test message</source>
-        <translation>Testnachricht</translation>
+        <translation>Missatge de test</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderFeedNotify.cpp" line="137"/>
         <source>This is a test message.</source>
-        <translation>Dies ist eine Testnachricht</translation>
+        <translation>Això és un missatge de test.</translation>
     </message>
 </context>
 <context>
@@ -469,54 +469,54 @@
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="14"/>
         <source>Form</source>
-        <translation>Formular</translation>
+        <translation>Formulari</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="66"/>
         <source>Mark messages as read</source>
-        <translation>Nachricht als gelesen markieren</translation>
+        <translation>Marcar missatge com a llegit</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="69"/>
         <source>...</source>
-        <translation> …</translation>
+        <translation>...</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="86"/>
         <source>Mark messages as unread</source>
-        <translation>Nachricht als ungelesen markieren</translation>
+        <translation>Marcar missatge com a no llegit</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="103"/>
         <source>Mark all messages as read</source>
-        <translation>Alle Nachrichten als gelesen markieren</translation>
+        <translation>Marcar tots els missatges com a llegits</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="120"/>
         <source>Remove messages</source>
-        <translation>Nachrichten entfernen</translation>
+        <translation>Esborrar missatges</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="137"/>
         <source>Update feed</source>
-        <translation>Feed auffrischen</translation>
+        <translation>Actualitzar font</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="151"/>
         <source>Search forums</source>
-        <translation>Foren durchsuchen</translation>
+        <translation>Cercar fòrums</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="182"/>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="91"/>
         <source>Title</source>
-        <translation>Titel</translation>
+        <translation>Títol</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="196"/>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="92"/>
         <source>Date</source>
-        <translation>Datum</translation>
+        <translation>Data</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="201"/>
@@ -527,77 +527,77 @@
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="91"/>
         <source>Search Title</source>
-        <translation>Titel durchsuchen</translation>
+        <translation>Cerca títol</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="92"/>
         <source>Search Date</source>
-        <translation>Datum durchsuchen</translation>
+        <translation>Data de cerca</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="93"/>
         <source>Search Author</source>
-        <translation>Autor durchsuchen</translation>
+        <translation>Cerca autor</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="105"/>
         <source>Open link in browser</source>
-        <translation>Verknüpfung im Browser öffnen</translation>
+        <translation>Obrir enllaç al navegador</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="106"/>
         <source>Copy link to clipboard</source>
-        <translation>Verknüpfung in die Zwischenablage kopieren</translation>
+        <translation>Copiar enllaç al porta-retalls</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="228"/>
         <source>The messages will be added to the forum</source>
-        <translation>Die Nachrichten werden dem Forum hinzugefügt</translation>
+        <translation>El missatge s&apos;afegirà al fòrum</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="243"/>
         <source>No name</source>
-        <translation>Kein Name</translation>
+        <translation>Sense nom</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="304"/>
         <source>Mark as read</source>
-        <translation>Als gelesen markieren</translation>
+        <translation>Marca com llegit</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="307"/>
         <source>Mark as unread</source>
-        <translation>Als ungelesen markieren</translation>
+        <translation>Marca com no llegit</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="310"/>
         <source>Mark all as read</source>
-        <translation>Alle als gelesen markieren</translation>
+        <translation>Marca tot com a llegit</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="315"/>
         <source>Copy link</source>
-        <translation>Verknüpfung kopieren</translation>
+        <translation>Copiar enllaç</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="318"/>
         <source>Remove</source>
-        <translation>Entfernen</translation>
+        <translation>Treure</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="323"/>
         <source>Retransform</source>
-        <translation>Retransformieren</translation>
+        <translation>Re-transformar</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="697"/>
         <source>Hide</source>
-        <translation>Verbergen</translation>
+        <translation>Amagar</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.cpp" line="701"/>
         <source>Expand</source>
-        <translation>Erweitern</translation>
+        <translation>Ampliar</translation>
     </message>
 </context>
 <context>
@@ -605,12 +605,12 @@
     <message>
         <location filename="../FeedReaderPlugin.cpp" line="159"/>
         <source>This plugin provides a Feedreader.</source>
-        <translation>Dieses Plug-in stellt einen Feedreader bereit.</translation>
+        <translation>Aquest complement proporciona un lector de fonts.</translation>
     </message>
     <message>
         <location filename="../FeedReaderPlugin.cpp" line="164"/>
         <source>FeedReader</source>
-        <translation>FeedReader</translation>
+        <translation>LectorFonts</translation>
     </message>
 </context>
 <context>
@@ -618,158 +618,158 @@
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="36"/>
         <source>Feed not found.</source>
-        <translation>Feed nicht gefunden.</translation>
+        <translation>Font no trobada.</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="39"/>
         <source>Parent not found.</source>
-        <translation>Übergeordnetes Objekt nicht gefunden.</translation>
+        <translation>Pare no trobat.</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="42"/>
         <source>Parent is no folder.</source>
-        <translation>Übergeordnetes Objekt ist kein Ordner.</translation>
+        <translation>El pare no és un directori.</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="45"/>
         <source>Feed is a folder.</source>
-        <translation>Feed ist ein Ordner.</translation>
+        <translation>La font és un directori.</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="48"/>
         <source>Feed is no folder.</source>
-        <translation>Feed ist kein Ordner.</translation>
+        <translation>La font no és un directori.</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="51"/>
         <source>Unknown error occured.</source>
-        <translation>Unbekannter Fehler aufgetreten</translation>
+        <translation>Ha ocorregut un error desconegut.</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="65"/>
         <source>Waiting for download</source>
-        <translation>Warte auf Download</translation>
+        <translation>Esperant la descarrega</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="67"/>
         <source>Downloading</source>
-        <translation>Ladend</translation>
+        <translation>Descarregant</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="69"/>
         <source>Waiting for process</source>
-        <translation>Warte auf Verarbeitung</translation>
+        <translation>Esperant al procés</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="71"/>
         <source>Processing</source>
-        <translation>Verarbeite</translation>
+        <translation>Processant</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="74"/>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="170"/>
         <source>Unknown</source>
-        <translation>Unbekannt</translation>
+        <translation>Desconegut</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="91"/>
         <source>Internal download error</source>
-        <translation>Interner Fehler beim Herunterladen</translation>
+        <translation>Error intern de descarrega</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="94"/>
         <source>Download error</source>
-        <translation>Fehler beim Herunterladen</translation>
+        <translation>Error de descarrega</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="97"/>
         <source>Unknown content type</source>
-        <translation>Typ des Inhalts unbekannt</translation>
+        <translation>Tipus de contingut desconegut</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="100"/>
         <source>Download not found</source>
-        <translation>Download nicht gefunden</translation>
+        <translation>Descarrega no trobada</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="103"/>
         <source>Unknown response code</source>
-        <translation>Unbekannter Antwortcode</translation>
+        <translation>Codi de resposta desconegut</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="108"/>
         <source>Internal process error</source>
-        <translation>Interner Verarbeitungsfehler</translation>
+        <translation>Error del procés intern</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="111"/>
         <source>Unknown XML format</source>
-        <translation>Unbekanntes XML-Format</translation>
+        <translation>Format XML desconegut</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="114"/>
         <source>Can&apos;t create forum</source>
-        <translation>Kann Forum nicht erstellen</translation>
+        <translation>No es pot crear fòrum</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="117"/>
         <source>Forum not found</source>
-        <translation>Forum nicht gefunden</translation>
+        <translation>Fòrum no trobat</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="120"/>
         <source>You are not admin of the forum</source>
-        <translation>Du bist nicht der Administrator des Forums</translation>
+        <translation>No ets administrador del fòrum</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="123"/>
         <source>The forum is no anonymous forum</source>
-        <translation>Das Forum ist kein anonymes Forum</translation>
+        <translation>El fòrum no és un fòrum anònim</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="127"/>
         <source>Can&apos;t read html</source>
-        <translation>Kann Html nicht lesen</translation>
+        <translation>No es pot llegir HTML</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="130"/>
         <source>Internal XPath error</source>
-        <translation>Interner XPath-Fehler</translation>
+        <translation>Error intern de l&apos;XPath</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="133"/>
         <source>Wrong XPath expression</source>
-        <translation>Fehlerhafter XPath-Ausdruck</translation>
+        <translation>Expressió XPath incorrecta</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="136"/>
         <source>Empty XPath result</source>
-        <translation>Leeres XPath-Resultat</translation>
+        <translation>Resultat d&apos;Xpath buit</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="139"/>
         <source>XSLT format error</source>
-        <translation>XSLT-Formatierungsfehler</translation>
+        <translation>Error al format XSLT</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="142"/>
         <source>XSLT transformation error</source>
-        <translation>XSLT-Transformationsfehler</translation>
+        <translation>Error a la transformació XSLT</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="145"/>
         <source>Empty XSLT result</source>
-        <translation>Leeres XSLT-Ergebnis</translation>
+        <translation>Resultat XSLT buit</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="149"/>
         <source>Unknown error</source>
-        <translation>Unbekannter Fehler</translation>
+        <translation>Error desconegut</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="163"/>
         <source>No transformation</source>
-        <translation>Keine Transformation</translation>
+        <translation>Sense transformació</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="165"/>
@@ -787,7 +787,7 @@
     <message>
         <location filename="../gui/FeedReaderUserNotify.cpp" line="40"/>
         <source>FeedReader Message</source>
-        <translation>FeedReader-Nachricht</translation>
+        <translation>Missatge del LectorFont</translation>
     </message>
 </context>
 <context>
@@ -795,22 +795,22 @@
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="14"/>
         <source>Preview</source>
-        <translation>Vorschau</translation>
+        <translation>Visualització prèvia</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="61"/>
         <source>Name:</source>
-        <translation>Name:</translation>
+        <translation>Nom:</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="68"/>
         <source>Feed name</source>
-        <translation>Feedname</translation>
+        <translation>Nom de font</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="204"/>
         <source>Previous</source>
-        <translation>Vorherige</translation>
+        <translation>Previ</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="233"/>
@@ -820,74 +820,74 @@
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="262"/>
         <source>Next</source>
-        <translation>Nächstes</translation>
+        <translation>Següent</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="282"/>
         <source>Transformation type</source>
-        <translation>Transformationstyp</translation>
+        <translation>Tipus de transformació</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="308"/>
         <source>Structure</source>
-        <translation>Struktur</translation>
+        <translation>Estructura</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="328"/>
         <source>Title:</source>
-        <translation>Titel:</translation>
+        <translation>Títol:</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="520"/>
         <source>XPath use</source>
-        <translation>XPath-Nodes benutzen</translation>
+        <translation>Utilitza XPath</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.ui" line="541"/>
         <source>XPath remove</source>
-        <translation>XPath-Nodes entfernen</translation>
+        <translation>Treu XPath</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.cpp" line="179"/>
         <source>Cannot create preview</source>
-        <translation>Kann Vorschau nicht erstellen</translation>
+        <translation>No es pot crear visualització previa</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.cpp" line="166"/>
         <source>XSLT is used on focus lost or when Ctrl+Enter is pressed</source>
-        <translation>XSLT wird angewendet sobald das Feld verlassen wird oder Strg+Eingabe gedrückt wird</translation>
+        <translation>L&apos;XSLT s&apos;utilitza quan es perd el focus o quan es prem Ctrl+Enter</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.cpp" line="423"/>
         <source>Add</source>
-        <translation>Hinzufügen</translation>
+        <translation>Afegir</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.cpp" line="426"/>
         <source>Edit</source>
-        <translation>Bearbeiten</translation>
+        <translation>Editar</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.cpp" line="432"/>
         <source>Delete</source>
-        <translation>Löschen</translation>
+        <translation>Esborrar</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.cpp" line="547"/>
         <source>No name</source>
-        <translation>Kein Name</translation>
+        <translation>Sense nom</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.cpp" line="642"/>
         <location filename="../gui/PreviewFeedDialog.cpp" line="661"/>
         <source>Error getting content</source>
-        <translation>Fehler beim Besorgen des Inhalts</translation>
+        <translation>Error obtenint contingut</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.cpp" line="772"/>
         <location filename="../gui/PreviewFeedDialog.cpp" line="793"/>
         <source>Error parsing document</source>
-        <translation>Fehler bei der Bearbeitung des Dokuments</translation>
+        <translation>Error interpretant document</translation>
     </message>
 </context>
 </TS>

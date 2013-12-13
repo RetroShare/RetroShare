@@ -177,42 +177,42 @@
     <message>
         <location filename="../gui/AudioPopupChatDialog.cpp" line="43"/>
         <source>Start Call</source>
-        <translation type="unfinished"/>
+        <translation>Çağrı Başlatın</translation>
     </message>
     <message>
         <location filename="../gui/AudioPopupChatDialog.cpp" line="65"/>
         <source>Hangup Call</source>
-        <translation type="unfinished"/>
+        <translation>Çağrıyı Sonlandırın</translation>
     </message>
     <message>
         <location filename="../gui/AudioPopupChatDialog.cpp" line="89"/>
         <source>Unmute yourself</source>
-        <translation type="unfinished"/>
+        <translation>Sesinizi Açın</translation>
     </message>
     <message>
         <location filename="../gui/AudioPopupChatDialog.cpp" line="118"/>
         <source>Hold Call</source>
-        <translation type="unfinished"/>
+        <translation>Çağrıyı Bekletin</translation>
     </message>
     <message>
         <location filename="../gui/AudioPopupChatDialog.cpp" line="137"/>
         <source>VoIP Status</source>
-        <translation type="unfinished"/>
+        <translation>VoIP Durumu</translation>
     </message>
     <message>
         <location filename="../gui/AudioPopupChatDialog.cpp" line="137"/>
         <source>Outgoing Call is started...</source>
-        <translation type="unfinished"/>
+        <translation>Giden Çağrı Başlatıldı...</translation>
     </message>
     <message>
         <location filename="../gui/AudioPopupChatDialog.cpp" line="145"/>
         <source>Resume Call</source>
-        <translation type="unfinished"/>
+        <translation>Çağrıyı Sürdürün</translation>
     </message>
     <message>
         <location filename="../gui/AudioPopupChatDialog.cpp" line="172"/>
         <source>Answer</source>
-        <translation type="unfinished"/>
+        <translation>Yanıtlayın</translation>
     </message>
 </context>
 <context>

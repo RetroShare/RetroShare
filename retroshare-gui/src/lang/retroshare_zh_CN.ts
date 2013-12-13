@@ -1333,7 +1333,7 @@ Please choose one of it to chat with.</source>
     </message>
     <message>
         <source>Right click to mute/unmute participants&lt;br/&gt;Double click to address this person&lt;br/&gt;</source>
-        <translation type="unfinished"/>
+        <translation>右键单击可以取消/忽略发言者 &lt;br/&gt; 双击对此人说话 &lt;br/&gt;</translation>
     </message>
     <message>
         <source>This participant is not active since:</source>
@@ -1439,15 +1439,15 @@ Please choose one of it to chat with.</source>
     </message>
     <message>
         <source>Subscribed</source>
-        <translation type="unfinished"/>
+        <translation>已订阅</translation>
     </message>
     <message>
         <source>Show </source>
-        <translation type="unfinished"/>
+        <translation>显示</translation>
     </message>
     <message>
         <source> Column</source>
-        <translation type="unfinished"/>
+        <translation>列</translation>
     </message>
     <message>
         <source>Columns</source>
@@ -1463,15 +1463,15 @@ Please choose one of it to chat with.</source>
     </message>
     <message>
         <source>Lobby Name:</source>
-        <translation type="unfinished"/>
+        <translation>聊天室名称:</translation>
     </message>
     <message>
         <source>Lobby Id:</source>
-        <translation type="unfinished"/>
+        <translation>聊天室ID:</translation>
     </message>
     <message>
         <source>Topic:</source>
-        <translation type="unfinished"/>
+        <translation>话题:</translation>
     </message>
     <message>
         <source>Type:</source>
@@ -1479,7 +1479,7 @@ Please choose one of it to chat with.</source>
     </message>
     <message>
         <source>Peers:</source>
-        <translation type="unfinished"/>
+        <translation>节点:</translation>
     </message>
     <message>
         <source>TextLabel</source>
@@ -1489,15 +1489,17 @@ Please choose one of it to chat with.</source>
         <source>No lobby selected. 
 Select lobbies at left to show details.
 Double click lobbies to enter and chat.</source>
-        <translation type="unfinished"/>
+        <translation>未选择聊天室。
+从左侧单击聊天室查看聊天室信息。
+双击进入聊天。</translation>
     </message>
     <message>
         <source>Private Subscribed Lobbies</source>
-        <translation type="unfinished"/>
+        <translation>订阅的私聊聊天室</translation>
     </message>
     <message>
         <source>Public Subscribed Lobbies</source>
-        <translation type="unfinished"/>
+        <translation>订阅的公共聊天室</translation>
     </message>
 </context>
 <context>
@@ -1748,39 +1750,39 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Chatlobbies</source>
-        <translation type="unfinished"/>
+        <translation>聊天室</translation>
     </message>
     <message>
         <source>Enabled:</source>
-        <translation type="unfinished"/>
+        <translation>已启用:</translation>
     </message>
     <message>
         <source>Saved messages (0 = unlimited):</source>
-        <translation type="unfinished"/>
+        <translation>已保存消息(0=无限制)</translation>
     </message>
     <message>
         <source>Number of messages restored  (0 = off):</source>
-        <translation type="unfinished"/>
+        <translation>恢复的消息数量 (0 = 关闭) : </translation>
     </message>
     <message>
         <source>Maximum storage period, in days (0=keep all):</source>
-        <translation type="unfinished"/>
+        <translation>最长存储时间，天数 (0 = 保持全部):</translation>
     </message>
     <message>
         <source>Name : </source>
-        <translation type="unfinished"/>
+        <translation>名称: </translation>
     </message>
     <message>
         <source>Signed with key not in keyring</source>
-        <translation type="unfinished"/>
+        <translation>签署用密钥不在钥匙环中</translation>
     </message>
     <message>
         <source>Not signed.</source>
-        <translation type="unfinished"/>
+        <translation>未签署。</translation>
     </message>
     <message>
         <source>Authenticated signature</source>
-        <translation type="unfinished"/>
+        <translation>验证成功的签名</translation>
     </message>
 </context>
 <context>
@@ -2798,11 +2800,11 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Add key to keyring</source>
-        <translation type="unfinished"/>
+        <translation>将密钥添加到钥匙环中</translation>
     </message>
     <message>
         <source>This key is already in your keyring</source>
-        <translation type="unfinished"/>
+        <translation>密钥已存在于您的钥匙环中</translation>
     </message>
     <message>
         <source>Check this to add the key to your keyring
@@ -4446,7 +4448,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Identity ID</source>
-        <translation type="unfinished"/>
+        <translation>身份 ID</translation>
     </message>
     <message>
         <source>TextLabel</source>
@@ -4454,7 +4456,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>PGP fingerprint:</source>
-        <translation type="unfinished"/>
+        <translation>PGP 指纹: </translation>
     </message>
 </context>
 <context>
@@ -4802,7 +4804,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Not Active (Maybe Connected!)</source>
-        <translation type="unfinished"/>
+        <translation>非活动 (或许可连接!)</translation>
     </message>
     <message>
         <source>Searching</source>
@@ -4814,7 +4816,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>offline</source>
-        <translation type="unfinished"/>
+        <translation>离线</translation>
     </message>
     <message>
         <source>Unreachable</source>
@@ -4822,19 +4824,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>ONLINE</source>
-        <translation type="unfinished"/>
+        <translation>在线</translation>
     </message>
     <message>
         <source>Direct</source>
-        <translation type="unfinished"/>
+        <translation>直连</translation>
     </message>
     <message>
         <source>Proxy VIA </source>
-        <translation type="unfinished"/>
+        <translation>代理通过</translation>
     </message>
     <message>
         <source>Relay VIA </source>
-        <translation type="unfinished"/>
+        <translation>中继通过</translation>
     </message>
     <message>
         <source>None</source>
@@ -4842,11 +4844,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Disconnected</source>
-        <translation type="unfinished"/>
+        <translation>已断开</translation>
     </message>
     <message>
         <source>Udp Started</source>
-        <translation type="unfinished"/>
+        <translation>UDP已启动</translation>
     </message>
     <message>
         <source>Connected</source>
@@ -4854,11 +4856,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Request Active</source>
-        <translation type="unfinished"/>
+        <translation>活动请求</translation>
     </message>
     <message>
         <source>No Request</source>
-        <translation type="unfinished"/>
+        <translation>无请求</translation>
     </message>
     <message>
         <source>Unknown</source>
@@ -4866,35 +4868,35 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>#Peers: </source>
-        <translation type="unfinished"/>
+        <translation>节点数:</translation>
     </message>
     <message>
         <source> DHT: (#off:</source>
-        <translation type="unfinished"/>
+        <translation>DHT:(关闭: </translation>
     </message>
     <message>
         <source>,unreach:</source>
-        <translation type="unfinished"/>
+        <translation>,不可达: </translation>
     </message>
     <message>
         <source>,online:</source>
-        <translation type="unfinished"/>
+        <translation>,在线: </translation>
     </message>
     <message>
         <source>) Connections: (#dis:</source>
-        <translation type="unfinished"/>
+        <translation>)连接:(#dis:</translation>
     </message>
     <message>
         <source>,#dir:</source>
-        <translation type="unfinished"/>
+        <translation>,直连:</translation>
     </message>
     <message>
         <source>,#proxy:</source>
-        <translation type="unfinished"/>
+        <translation>,代理:</translation>
     </message>
     <message>
         <source>,#relay:</source>
-        <translation type="unfinished"/>
+        <translation>,中继:</translation>
     </message>
     <message>
         <source>RELAY END</source>
@@ -4918,23 +4920,23 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>RELAY PROXY</source>
-        <translation type="unfinished"/>
+        <translation>中继代理</translation>
     </message>
     <message>
         <source>%1 secs ago</source>
-        <translation type="unfinished"/>
+        <translation>%1 秒前</translation>
     </message>
     <message>
         <source>%1B/s</source>
-        <translation type="unfinished"/>
+        <translation>%1B/s</translation>
     </message>
     <message>
         <source>0x%1 EX:0x%2</source>
-        <translation type="unfinished"/>
+        <translation>0x%1 EX:0x%2</translation>
     </message>
     <message>
         <source>never</source>
-        <translation type="unfinished"/>
+        <translation>从未</translation>
     </message>
 </context>
 <context>
@@ -5562,7 +5564,7 @@ p, li { white-space：pre-wrap；}
     </message>
     <message>
         <source>Load embedded images</source>
-        <translation type="unfinished"/>
+        <translation>载入内置图像</translation>
     </message>
 </context>
 <context>
@@ -5824,7 +5826,7 @@ p, li { white-space：pre-wrap；}
     </message>
     <message>
         <source>Load images always for this message</source>
-        <translation type="unfinished"/>
+        <translation>此消息中总是载入图像</translation>
     </message>
 </context>
 <context>
@@ -6038,7 +6040,7 @@ p, li { white-space：pre-wrap；}
     </message>
     <message>
         <source>Paste certificate link</source>
-        <translation type="unfinished"/>
+        <translation>粘贴证书链接</translation>
     </message>
 </context>
 <context>
@@ -6582,7 +6584,7 @@ Fill in your PGP password when asked, to sign your new key.</source>
     </message>
     <message>
         <source>Password (check)</source>
-        <translation type="unfinished"/>
+        <translation>密码(检查)</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Before proceeding, move your mouse around to help Retroshare collect as much randomness as possible. Filling the progressbar to 20% is needed, 100% is advised.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
@@ -6590,7 +6592,7 @@ Fill in your PGP password when asked, to sign your new key.</source>
     </message>
     <message>
         <source>[Required] Type the same password again here.</source>
-        <translation type="unfinished"/>
+        <translation>[必需]再次输入相同密码。</translation>
     </message>
     <message>
         <source>Put a meaningful location. ex : home, laptop, etc. 
@@ -6600,7 +6602,7 @@ the same identity (PGP key).</source>
     </message>
     <message>
         <source>Passwords do not match</source>
-        <translation type="unfinished"/>
+        <translation>密码不符</translation>
     </message>
 </context>
 <context>
@@ -9150,11 +9152,11 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>PGP key unknown</source>
-        <translation type="unfinished"/>
+        <translation>PGP 密钥未知</translation>
     </message>
     <message>
         <source>You dont have the PGP key of the message sender. So you cannot respond!</source>
-        <translation type="unfinished"/>
+        <translation>您没有消息发送者的 PGP 密钥。因此无法回复！</translation>
     </message>
 </context>
 <context>
@@ -9225,7 +9227,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Load embedded images</source>
-        <translation type="unfinished"/>
+        <translation>载入内置图像</translation>
     </message>
 </context>
 <context>
@@ -9346,15 +9348,15 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Load images always for this message</source>
-        <translation type="unfinished"/>
+        <translation>此消息总是载入图像</translation>
     </message>
     <message>
         <source>This messages is encrypted. Click the right button to decrypt it.</source>
-        <translation type="unfinished"/>
+        <translation>此消息已被加密。单击右边的按钮解密。</translation>
     </message>
     <message>
         <source>Decrypt</source>
-        <translation type="unfinished"/>
+        <translation>解密</translation>
     </message>
     <message>
         <source>Encrypted message</source>
@@ -9374,7 +9376,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Unknown (needs decryption)</source>
-        <translation type="unfinished"/>
+        <translation>未知 (需要解密)</translation>
     </message>
 </context>
 <context>
@@ -9800,7 +9802,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>This message has been successfully decrypted, and is unsigned.</source>
-        <translation type="unfinished"/>
+        <translation>消息解密成功，并但消息未签名。</translation>
     </message>
 </context>
 <context>
@@ -10167,19 +10169,19 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Name of peer</source>
-        <translation type="unfinished"/>
+        <translation>节点名称</translation>
     </message>
     <message>
         <source>Did peer sign mine PGP key</source>
-        <translation type="unfinished"/>
+        <translation>节点是否对我的PGP密钥签名</translation>
     </message>
     <message>
         <source>Peer&apos;s Certificat ID</source>
-        <translation type="unfinished"/>
+        <translation>节点的证书ID</translation>
     </message>
     <message>
         <source>Since when I use this Certificat</source>
-        <translation type="unfinished"/>
+        <translation>我何时开始使用此证书</translation>
     </message>
 </context>
 <context>
@@ -11101,7 +11103,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Edit Topic</source>
-        <translation type="unfinished"/>
+        <translation>编辑话题</translation>
     </message>
 </context>
 <context>
@@ -11140,11 +11142,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>I like this</source>
-        <translation type="unfinished"/>
+        <translation>赞</translation>
     </message>
     <message>
         <source>I dislike this</source>
-        <translation type="unfinished"/>
+        <translation>踩</translation>
     </message>
 </context>
 <context>
@@ -11877,11 +11879,11 @@ Reported error is:
     <message>
         <source>Signature check failed!
 Make sure you know who you&apos;re talking to.</source>
-        <translation type="unfinished"/>
+        <translation>签名检查失败 ！请确认您的谈话对象身份真实。</translation>
     </message>
     <message>
         <source>Chat connection is unauthenticated</source>
-        <translation type="unfinished"/>
+        <translation>聊天连接未进行身份验证</translation>
     </message>
 </context>
 <context>
@@ -12111,11 +12113,11 @@ p, li { white-space：pre-wrap；}
     </message>
     <message>
         <source>The loading of embedded images is blocked.</source>
-        <translation type="unfinished"/>
+        <translation>已阻止内置图像加载</translation>
     </message>
     <message>
         <source>Load images</source>
-        <translation type="unfinished"/>
+        <translation>加载图像</translation>
     </message>
 </context>
 <context>
@@ -13080,7 +13082,7 @@ The default value is 20.</source>
     </message>
     <message>
         <source>This is a list of shared folders. You can add and remove folders using the buttons at the bottom. When you add a new folder, intially all files in that folder are shared. You can separately setup share flags for each shared directory.</source>
-        <translation type="unfinished"/>
+        <translation>这是一个共享文件夹的列表。您可以使用底部的按钮添加和删除文件夹。当您添加新文件夹时，该文件夹中所有文件都会被共享。您可以单独设置每个共享文件夹的共享标志。</translation>
     </message>
 </context>
 <context>

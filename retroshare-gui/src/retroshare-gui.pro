@@ -817,6 +817,7 @@ SOURCES +=  main.cpp \
 RESOURCES += gui/images.qrc lang/lang.qrc gui/help/content/content.qrc
 
 TRANSLATIONS +=  \
+            lang/retroshare_ca_ES.ts \
             lang/retroshare_cs.ts \
             lang/retroshare_da.ts \
             lang/retroshare_de.ts \

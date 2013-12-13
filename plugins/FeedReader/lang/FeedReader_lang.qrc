@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="/lang">
+    <file>FeedReader_ca_ES.qm</file>
     <file>FeedReader_cs.qm</file>
     <file>FeedReader_da.qm</file>
     <file>FeedReader_de.qm</file>

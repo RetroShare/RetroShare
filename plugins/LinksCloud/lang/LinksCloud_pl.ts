@@ -106,12 +106,12 @@
     <message>
         <location filename="../LinksDialog.ui" line="55"/>
         <source>Peer / Link</source>
-        <translation type="unfinished"/>
+        <translation>Peer / Link</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="93"/>
         <source>Sort by</source>
-        <translation type="unfinished"/>
+        <translation>Sortuj według</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="101"/>
@@ -196,7 +196,7 @@
     <message>
         <location filename="../LinksDialog.ui" line="288"/>
         <source>Bottom 100</source>
-        <translation type="unfinished"/>
+        <translation>Ostatnie 100</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="318"/>
@@ -211,7 +211,7 @@
     <message>
         <location filename="../LinksDialog.ui" line="357"/>
         <source>Add Link/Comment</source>
-        <translation type="unfinished"/>
+        <translation>Dodaj Link/komentarz</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="368"/>

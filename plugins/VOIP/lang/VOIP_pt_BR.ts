@@ -177,42 +177,42 @@
     <message>
         <location filename="../gui/AudioPopupChatDialog.cpp" line="43"/>
         <source>Start Call</source>
-        <translation type="unfinished"/>
+        <translation>Iniciar chamada</translation>
     </message>
     <message>
         <location filename="../gui/AudioPopupChatDialog.cpp" line="65"/>
         <source>Hangup Call</source>
-        <translation type="unfinished"/>
+        <translation>Desligar chamada</translation>
     </message>
     <message>
         <location filename="../gui/AudioPopupChatDialog.cpp" line="89"/>
         <source>Unmute yourself</source>
-        <translation type="unfinished"/>
+        <translation>Retirar mudo</translation>
     </message>
     <message>
         <location filename="../gui/AudioPopupChatDialog.cpp" line="118"/>
         <source>Hold Call</source>
-        <translation type="unfinished"/>
+        <translation>Colocar chamada em espera</translation>
     </message>
     <message>
         <location filename="../gui/AudioPopupChatDialog.cpp" line="137"/>
         <source>VoIP Status</source>
-        <translation type="unfinished"/>
+        <translation>Estado do VoIP</translation>
     </message>
     <message>
         <location filename="../gui/AudioPopupChatDialog.cpp" line="137"/>
         <source>Outgoing Call is started...</source>
-        <translation type="unfinished"/>
+        <translation>Chamada de saída foi iniciada...</translation>
     </message>
     <message>
         <location filename="../gui/AudioPopupChatDialog.cpp" line="145"/>
         <source>Resume Call</source>
-        <translation type="unfinished"/>
+        <translation>Continuar chamada</translation>
     </message>
     <message>
         <location filename="../gui/AudioPopupChatDialog.cpp" line="172"/>
         <source>Answer</source>
-        <translation type="unfinished"/>
+        <translation>Responder</translation>
     </message>
 </context>
 <context>

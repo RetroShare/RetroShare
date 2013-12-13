@@ -1,66 +1,66 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="fi" version="2.0">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="ca_ES" version="2.0">
 <context>
     <name>AWidget</name>
     <message>
         <source>version</source>
-        <translation>versio</translation>
+        <translation>versió</translation>
     </message>
 </context>
 <context>
     <name>AboutDialog</name>
     <message>
         <source>About RetroShare</source>
-        <translation>Tietoja RetroSharesta</translation>
+        <translation>Sobre RetroShare</translation>
     </message>
     <message>
         <source>About</source>
-        <translation>Tietoja</translation>
+        <translation>Sobre</translation>
     </message>
     <message>
         <source>close</source>
-        <translation>sulje</translation>
+        <translation>tancar</translation>
     </message>
     <message>
         <source>About RetroShare %1</source>
-        <translation>Tietoja RetroSharesta %1</translation>
+        <translation>Sobre RetroShare %1</translation>
     </message>
     <message>
         <source>Max score: %1</source>
-        <translation>Maksimipisteet: %1</translation>
+        <translation>Puntuació màxima: %1</translation>
     </message>
     <message>
         <source>Score: %1</source>
-        <translation>Pisteet: %1</translation>
+        <translation>Puntuació: %1</translation>
     </message>
     <message>
         <source>Level: %1</source>
-        <translation>Taso: %1</translation>
+        <translation>Nivell: %1</translation>
     </message>
     <message>
         <source>Have fun ;-)</source>
-        <translation>Pidä hauskaa ;-)</translation>
+        <translation>Passa-t&apos;ho bé ;-)</translation>
     </message>
 </context>
 <context>
     <name>AddCommentDialog</name>
     <message>
         <source>Add Comment</source>
-        <translation>Lisää kommentti</translation>
+        <translation>Afegir comentari</translation>
     </message>
 </context>
 <context>
     <name>AddFileAssociationDialog</name>
     <message>
         <source>File type(extension):</source>
-        <translation>Tiedostomuoto (-pääte):</translation>
+        <translation>Tipus d&apos;arxiu(extensions):</translation>
     </message>
     <message>
         <source>Use default command</source>
-        <translation>Käytä oletuskomentoa</translation>
+        <translation>Utilitzeu l&apos;ordre per defecte</translation>
     </message>
     <message>
         <source>Command</source>
-        <translation>Komento</translation>
+        <translation>Ordre</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -69,173 +69,173 @@
     <message>
         <source>Sorry, can't determine system default command for this file
 </source>
-        <translation>Järjestelmän oletuskomentoa tälle tiedostolle ei voitu selvittää</translation>
+        <translation>Ho sentim, no es pot determinar l&apos;ordre de sistema per defecte per a aquest fitxer\n</translation>
     </message>
 </context>
 <context>
     <name>AdvancedSearchDialog</name>
     <message>
         <source>RetroShare: Advanced Search</source>
-        <translation>Retroshare: tarkennettu haku</translation>
+        <translation>RetroShare: Cerca Avançada</translation>
     </message>
     <message>
         <source>Search Criteria</source>
-        <translation>Hakuehdot</translation>
+        <translation>Criteris de Cerca</translation>
     </message>
     <message>
         <source>Add a further search criterion.</source>
-        <translation>Lisää hakuehto.</translation>
+        <translation>Afegeix un altre criteri de cerca.</translation>
     </message>
     <message>
         <source>Reset the search criteria.</source>
-        <translation>Tyhjennä hakuehdot.</translation>
+        <translation>Reinicialitzar els criteris de cerca.</translation>
     </message>
     <message>
         <source>Cancels the search.</source>
-        <translation>Peruu haun.</translation>
+        <translation>Cancel·la la cerca.</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Peru</translation>
+        <translation>Cancel·la</translation>
     </message>
     <message>
         <source>Perform the advanced search.</source>
-        <translation>Suorita tarkennettu haku.</translation>
+        <translation>Realitzar cerca avançada.</translation>
     </message>
     <message>
         <source>Search</source>
-        <translation>Etsi</translation>
+        <translation>Cerca</translation>
     </message>
 </context>
 <context>
     <name>AlbumCreateDialog</name>
     <message>
         <source>Create Album</source>
-        <translation>Luo albumi</translation>
+        <translation>Crear àlbum</translation>
     </message>
     <message>
         <source>Album Name:</source>
-        <translation>Albumin nimi:</translation>
+        <translation>Nom d&apos;àlbum:</translation>
     </message>
     <message>
         <source>Category:</source>
-        <translation>Luokka:</translation>
+        <translation>Categoria:</translation>
     </message>
     <message>
         <source>Animals</source>
-        <translation>Eläimet</translation>
+        <translation>Animals</translation>
     </message>
     <message>
         <source>Family</source>
-        <translation>Sukulaiset</translation>
+        <translation>Família</translation>
     </message>
     <message>
         <source>Friends</source>
-        <translation>Ystävät</translation>
+        <translation>Amics</translation>
     </message>
     <message>
         <source>Flowers</source>
-        <translation>Kukat</translation>
+        <translation>Flors</translation>
     </message>
     <message>
         <source>Holiday</source>
-        <translation>Loma</translation>
+        <translation>Vacances</translation>
     </message>
     <message>
         <source>Landscapes</source>
-        <translation>Maisemat</translation>
+        <translation>Paisatges</translation>
     </message>
     <message>
         <source>Pets</source>
-        <translation>Lemmikit</translation>
+        <translation>Mascotes</translation>
     </message>
     <message>
         <source>Portraits</source>
-        <translation>Muotokuvat</translation>
+        <translation>Retrats</translation>
     </message>
     <message>
         <source>Travel</source>
-        <translation>Matkustaminen</translation>
+        <translation>Viatges</translation>
     </message>
     <message>
         <source>Work</source>
-        <translation>Työ</translation>
+        <translation>Treball</translation>
     </message>
     <message>
         <source>Random</source>
-        <translation>Satunnainen</translation>
+        <translation>Aleatori</translation>
     </message>
     <message>
         <source>Caption:</source>
-        <translation>Kuvateksti:</translation>
+        <translation>Llegenda:</translation>
     </message>
     <message>
         <source>Where:</source>
-        <translation>Missä:</translation>
+        <translation>On:</translation>
     </message>
     <message>
         <source>Photographer:</source>
-        <translation>Valokuvaaja:</translation>
+        <translation>Fotògraf:</translation>
     </message>
     <message>
         <source>Description:</source>
-        <translation>Kuvaus:</translation>
+        <translation>Descripció:</translation>
     </message>
     <message>
         <source>Share Options</source>
-        <translation>Jakoasetukset</translation>
+        <translation>Opcions de compartició:</translation>
     </message>
     <message>
         <source>Policy:</source>
-        <translation>Käytänne:</translation>
+        <translation>Política:</translation>
     </message>
     <message>
         <source>Quality:</source>
-        <translation>Laatu:</translation>
+        <translation>Qualitat:</translation>
     </message>
     <message>
         <source>Comments:</source>
-        <translation>Kommentit:</translation>
+        <translation>Comentari:</translation>
     </message>
     <message>
         <source>Identity:</source>
-        <translation>Henkilöllisyys:</translation>
+        <translation>Identitat:</translation>
     </message>
     <message>
         <source>Public</source>
-        <translation>Julkinen</translation>
+        <translation>Públic</translation>
     </message>
     <message>
         <source>Restricted</source>
-        <translation>Rajoitettu</translation>
+        <translation>Restringit</translation>
     </message>
     <message>
         <source>Resize Images (&lt; 1Mb)</source>
-        <translation>Muuta kuvien kokoa (&lt; 1Mb)</translation>
+        <translation>Redimensionar imatges (&lt; 1Mb)</translation>
     </message>
     <message>
         <source>Resize Images (&lt; 10Mb)</source>
-        <translation>Muuta kuvien kokoa (&lt; 10Mb)</translation>
+        <translation>Redimensionar imatges (&lt; 10Mb)</translation>
     </message>
     <message>
         <source>Send Original Images</source>
-        <translation>Lähetä alkuperäiset kuvat</translation>
+        <translation>Enviar imatges originals</translation>
     </message>
     <message>
         <source>No Comments Allowed</source>
-        <translation>Kommentteja ei sallittu</translation>
+        <translation>No es permeten els comentaris</translation>
     </message>
     <message>
         <source>Authenticated Comments</source>
-        <translation>Varmennetut kommentit</translation>
+        <translation>Comentaris autenticats</translation>
     </message>
     <message>
         <source>Any Comments Allowed</source>
-        <translation>Kaikki kommentit sallittu</translation>
+        <translation>Qualsevol comentari permès</translation>
     </message>
     <message>
         <source>Publish with Identity</source>
-        <translation>Julkaise henkilöllisyyden kera</translation>
+        <translation>Publicar amb identitat</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -243,98 +243,98 @@
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; Drag &amp;amp; Drop to insert pictures. Click on a picture to edit details below.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; Vedä ja pudota lisätäksesi kuvia. Paina kuvaa muokataksesi tietoja alhaalla.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
+p, li { white-space: pre-wrap; }⏎
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; Arrosegar i deixar per inserir imatges. Clica en una imatge per editar-ne els detalls a sota.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Back</source>
-        <translation>Takaisin</translation>
+        <translation>Enrere</translation>
     </message>
     <message>
         <source>Add Photos</source>
-        <translation>Lisää kuvia</translation>
+        <translation>Afegir fotos.</translation>
     </message>
     <message>
         <source>Publish Album</source>
-        <translation>Julkaise albumi</translation>
+        <translation>Publicar àlbum</translation>
     </message>
     <message>
         <source>Untitle Album</source>
-        <translation>Nimetön albumi</translation>
+        <translation>Àlbum sense títol</translation>
     </message>
     <message>
         <source>Say something about this album...</source>
-        <translation>Kirjoita tietoja albumista</translation>
+        <translation>Digues alguna cosa sobre aquest àlbum...</translation>
     </message>
     <message>
         <source>Where were these taken?</source>
-        <translation>Missä nämä on otettu?</translation>
+        <translation>On ha anat a parar això?</translation>
     </message>
     <message>
         <source>Load Album Thumbnail</source>
-        <translation>Lataa albumin näytekuva</translation>
+        <translation>Carrega la miniatura de l&apos;àlbum</translation>
     </message>
 </context>
 <context>
     <name>AlbumDialog</name>
     <message>
         <source>Album</source>
-        <translation>Albumi</translation>
+        <translation>Àlbum</translation>
     </message>
     <message>
         <source>Album Thumbnail</source>
-        <translation>Albumin näytekuva</translation>
+        <translation>Miniatura de l&apos;àlbum</translation>
     </message>
     <message>
         <source>TextLabel</source>
-        <translation>TekstiMerkki</translation>
+        <translation>EtiquetaTexte</translation>
     </message>
     <message>
         <source>Summary</source>
-        <translation>Yhteenveto</translation>
+        <translation>Resum</translation>
     </message>
     <message>
         <source>Album Title:</source>
-        <translation>Albumin nimi:</translation>
+        <translation>Títol de l&apos;àlbum:</translation>
     </message>
     <message>
         <source>Category:</source>
-        <translation>Luokka:</translation>
+        <translation>Categoria:</translation>
     </message>
     <message>
         <source>Caption</source>
-        <translation>Kuvateksti</translation>
+        <translation>Llegenda</translation>
     </message>
     <message>
         <source>Where:</source>
-        <translation>Missä:</translation>
+        <translation>On:</translation>
     </message>
     <message>
         <source>When</source>
-        <translation>Milloin</translation>
+        <translation>Quan</translation>
     </message>
     <message>
         <source>Description:</source>
-        <translation>Kuvaus:</translation>
+        <translation>Descripció:</translation>
     </message>
     <message>
         <source>Share Options</source>
-        <translation>Jakoasetukset</translation>
+        <translation>Opcions de compartició:</translation>
     </message>
     <message>
         <source>Comments</source>
-        <translation>Kommentit</translation>
+        <translation>Comentaris</translation>
     </message>
     <message>
         <source>Publish Identity</source>
-        <translation>Julkaise henkilöllisyys</translation>
+        <translation>Publicar identitat</translation>
     </message>
     <message>
         <source>Visibility</source>
-        <translation>Näkyvyys</translation>
+        <translation>Visibilitat</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -342,38 +342,38 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; Drag &amp;amp; Drop to insert pictures. Click on a picture to edit details below.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; Vedä ja pudota lisätäksesi kuvia. Paina kuvaa muokataksesi tietoja alhaalla.&lt;/san&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
+p, li { white-space: pre-wrap; }⏎
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; Drag &amp;amp; Drop to insert pictures. Click on a picture to edit details below.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Add Photo</source>
-        <translation>Lisää kuva</translation>
+        <translation>Afegir foto</translation>
     </message>
     <message>
         <source>Edit Photo</source>
-        <translation>Muokkaa kuvaa</translation>
+        <translation>Editar foto</translation>
     </message>
     <message>
         <source>Delete Photo</source>
-        <translation>Poista kuva</translation>
+        <translation>Eliminar foto</translation>
     </message>
     <message>
         <source>Publish Photos</source>
-        <translation>Julkaise kuvat</translation>
+        <translation>Publicar fotos</translation>
     </message>
 </context>
 <context>
     <name>AlbumItem</name>
     <message>
         <source>Form</source>
-        <translation>Lomake</translation>
+        <translation>Formulari</translation>
     </message>
     <message>
         <source>TextLabel</source>
-        <translation>Tekstiselite</translation>
+        <translation>EtiquetaTexte</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -381,11 +381,11 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Album Title :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Albumin nimi :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
+p, li { white-space: pre-wrap; }⏎
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Títol de l&apos;àlbum :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -393,42 +393,42 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Photographer :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Valokuvaaja :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
+p, li { white-space: pre-wrap; }⏎
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Fotògraf :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
     <name>AppearancePage</name>
     <message>
         <source>Language</source>
-        <translation>Kieli</translation>
+        <translation>Llengua</translation>
     </message>
     <message>
         <source>Changes to language will only take effect after restarting RetroShare!</source>
-        <translation>Kielimuutokset tulevat voimaan vasta käynnistettyäsi RetroSharen uudelleen!</translation>
+        <translation>Canvis a l&apos;idioma tindran lloc només quan reiniciïs el RetroShare!</translation>
     </message>
     <message>
         <source>Choose the language used in RetroShare</source>
-        <translation>Valitse RetroSharessa käytettävä kieli</translation>
+        <translation>Escull l&apos;idioma utilitzat al RetroShare</translation>
     </message>
     <message>
         <source>Style</source>
-        <translation>Tyyli</translation>
+        <translation>Estil</translation>
     </message>
     <message>
         <source>Choose RetroShare&apos;s interface style</source>
-        <translation>Valitse RetroSharen käyttöliittymän tyyli</translation>
+        <translation>Escull l&apos;estil d&apos;interficie de RetroShare</translation>
     </message>
     <message>
         <source>Style Sheet</source>
-        <translation>Tyylitiedosto</translation>
+        <translation>Full d&apos;estil</translation>
     </message>
     <message>
         <source>Appearance</source>
-        <translation>Ulkoasu</translation>
+        <translation>Aparença</translation>
     </message>
 </context>
 <context>
@@ -440,104 +440,104 @@ p, li { white-space: pre-wrap; }
     <message>
         <source> Warning: The services here are experimental. Please help us test them. 
  But Remember: Any data here *WILL* be lost when we upgrade the protocols.</source>
-        <translation> Varoitus: nämä palvelut ovat kokeellisia. Auta meitä niiden testaamisessa. 
- HUOM.: kaikki tiedot menetetään, kun protokollat päivitettään.</translation>
+        <translation>Avís: Els serveis aquí esmentat són experimentals. Si us plau, ajuda&apos;ns a testejar-los. ⏎
+Però recorda: Totes les dades generades aquí *SERAN* perdudes quan actualitzem els protocols.</translation>
     </message>
     <message>
         <source>Identities</source>
-        <translation>Henkilöllisyydet</translation>
+        <translation>Identitats</translation>
     </message>
     <message>
         <source>Circles</source>
-        <translation>Piirit</translation>
+        <translation>Cercles</translation>
     </message>
     <message>
         <source>Photo Share</source>
-        <translation>Kuvan jakaminen</translation>
+        <translation>Compartir foto</translation>
     </message>
     <message>
         <source>Posted Links</source>
-        <translation>Lähetetyt linkit</translation>
+        <translation>Enllaços publicats</translation>
     </message>
     <message>
         <source>Wiki Pages</source>
-        <translation>Wikisivut</translation>
+        <translation>Pàgines wiki</translation>
     </message>
     <message>
         <source>GxsForums</source>
-        <translation>Gxs-foorumit</translation>
+        <translation>FòrumsGxs</translation>
     </message>
     <message>
         <source>GxsChannels</source>
-        <translation>GxsKanavat</translation>
+        <translation>CanalsGxs</translation>
     </message>
     <message>
         <source>The Wire</source>
-        <translation>Lennätin</translation>
+        <translation>The Wire</translation>
     </message>
 </context>
 <context>
     <name>AttachFileItem</name>
     <message>
         <source>%p Kb</source>
-        <translation>%p Kb</translation>
+        <translation>%p kb</translation>
     </message>
     <message>
         <source>Cancel Download</source>
-        <translation>Peru lataus</translation>
+        <translation>Cancel·lar baixada</translation>
     </message>
     <message>
         <source>[ERROR])</source>
-        <translation>[VIRHE])</translation>
+        <translation>[ERROR])</translation>
     </message>
 </context>
 <context>
     <name>AvatarWidget</name>
     <message>
         <source>Click to change your avatar</source>
-        <translation>Paina vaihtaaksesi avatarkuvasi</translation>
+        <translation>Feu clic per canviar l&apos;avatar</translation>
     </message>
 </context>
 <context>
     <name>BWListDelegate</name>
     <message>
         <source>N/A</source>
-        <translation>Ei sovellu</translation>
+        <translation>N/A</translation>
     </message>
 </context>
 <context>
     <name>BandwidthGraph</name>
     <message>
         <source>RetroShare Bandwidth Usage</source>
-        <translation>RetroSharen kaistanleveyden käyttö</translation>
+        <translation>Ús d&apos;ampla de banda del RetroShare</translation>
     </message>
     <message>
         <source>Show Settings</source>
-        <translation>Näytä asetukset</translation>
+        <translation>Mostra la configuració</translation>
     </message>
     <message>
         <source>Reset</source>
-        <translation>Palauta asetukset</translation>
+        <translation>Restablir</translation>
     </message>
     <message>
         <source>Receive Rate</source>
-        <translation>Vastaanottonopeus</translation>
+        <translation>Taxa de Recepció</translation>
     </message>
     <message>
         <source>Send Rate</source>
-        <translation>Lähetysnopeus</translation>
+        <translation>Taxa d&apos;enviament</translation>
     </message>
     <message>
         <source>Always on Top</source>
-        <translation>Aina päällimmäisenä</translation>
+        <translation>Sempre per damunt</translation>
     </message>
     <message>
         <source>Style</source>
-        <translation>Tyyli</translation>
+        <translation>Estil</translation>
     </message>
     <message>
         <source>Changes the transparency of the Bandwidth Graph</source>
-        <translation>Muuttaa siirtonopeuskuvaajan läpinäkyvyyttä</translation>
+        <translation>Canvia la transparència de la gràfica d&apos;ample de banda</translation>
     </message>
     <message>
         <source>100</source>
@@ -545,131 +545,131 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>% Opaque</source>
-        <translation>% näkyvä</translation>
+        <translation>% Opac</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation>Tallenna</translation>
+        <translation>Desa</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Peru</translation>
+        <translation>Cancel·la</translation>
     </message>
     <message>
         <source>Since:</source>
-        <translation>Alkaen:</translation>
+        <translation>Des de:</translation>
     </message>
     <message>
         <source>Hide Settings</source>
-        <translation>Piilota asetukset</translation>
+        <translation>Amagar opcions</translation>
     </message>
 </context>
 <context>
     <name>BlogDetails</name>
     <message>
         <source>Blog Details</source>
-        <translation>Blogin tiedot</translation>
+        <translation>Detalls del bloc</translation>
     </message>
     <message>
         <source>Blog Info</source>
-        <translation>Tietoja blogista</translation>
+        <translation>Informació del bloc</translation>
     </message>
     <message>
         <source>Blog Name</source>
-        <translation>Blogin nimi</translation>
+        <translation>Nom de bloc</translation>
     </message>
     <message>
         <source>Popularity</source>
-        <translation>Suosio</translation>
+        <translation>Popularitat</translation>
     </message>
     <message>
         <source>Last Post</source>
-        <translation>Viimeisin teksti</translation>
+        <translation>Darrer missatge</translation>
     </message>
     <message>
         <source>Blog ID</source>
-        <translation>Blogin tunniste</translation>
+        <translation>ID de Bloc</translation>
     </message>
     <message>
         <source>Blog Description</source>
-        <translation>Blogin kuvaus</translation>
+        <translation>Descripció del blog</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Peru</translation>
+        <translation>Cancel·la</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation>OK</translation>
+        <translation>CORRECTE</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation>Sulje</translation>
+        <translation>Tancar</translation>
     </message>
 </context>
 <context>
     <name>BlogMsgItem</name>
     <message>
         <source>Remove Item</source>
-        <translation>Poista kohde</translation>
+        <translation>Eliminar l&apos;element</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation>Laajenna</translation>
+        <translation>Ampliar</translation>
     </message>
     <message>
         <source>Subject</source>
-        <translation>Aihe</translation>
+        <translation>Assumpte</translation>
     </message>
     <message>
         <source>Play Media</source>
-        <translation>Toista media</translation>
+        <translation>Reproduir Medi</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation>Piilota</translation>
+        <translation>Amagar</translation>
     </message>
 </context>
 <context>
     <name>BlogNewItem</name>
     <message>
         <source>Remove Item</source>
-        <translation>Poista kohde</translation>
+        <translation>Eliminar l&apos;element</translation>
     </message>
     <message>
         <source>Subscribe to Blog</source>
-        <translation>Tilaa blogi</translation>
+        <translation>Subscriure&apos;s al Bloc</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation>Laajenna</translation>
+        <translation>Ampliar</translation>
     </message>
     <message>
         <source>Blog Description</source>
-        <translation>Blogin kuvaus</translation>
+        <translation>Descripció del bloc</translation>
     </message>
     <message>
         <source>Unknown Blog</source>
-        <translation>Tuntematon blogi</translation>
+        <translation>Bloc desconegut</translation>
     </message>
     <message>
         <source>New Blog</source>
-        <translation>Uusi blogi</translation>
+        <translation>Nou bloc</translation>
     </message>
     <message>
         <source>Updated Blog</source>
-        <translation>Päivitetty blogi</translation>
+        <translation>Actualitza bloc</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation>Piilota</translation>
+        <translation>Amagar</translation>
     </message>
 </context>
 <context>
     <name>BlogsDialog</name>
     <message>
         <source>Form</source>
-        <translation>Lomake</translation>
+        <translation>Formulari</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -677,15 +677,15 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:600;&quot;&gt;Blogs&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:600;&quot;&gt;Blogit&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
+p, li { white-space: pre-wrap; }⏎
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:10pt; font-weight:600;&quot;&gt;Blocs&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Add</source>
-        <translation>Lisää</translation>
+        <translation>Afegir</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -693,11 +693,11 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Post To Blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Kirjoita blogiin&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
+p, li { white-space: pre-wrap; }⏎
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Publica al bloc&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -705,11 +705,11 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:600; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:14pt; color:#ffffff;&quot;&gt;Blog Name&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:600; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:14pt; color:#ffffff;&quot;&gt;Blogin nimi&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
+p, li { white-space: pre-wrap; }⏎
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:600; font-style:normal;&quot;&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:14pt; color:#ffffff;&quot;&gt;Nom del bloc&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -717,15 +717,15 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Unsubscribe To Blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Peru blogin tilaus&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
+p, li { white-space: pre-wrap; }⏎
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:400; font-style:normal;&quot;&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Donar-se de baixa del bloc&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Unsubscribe</source>
-        <translation>Lopeta tilaus</translation>
+        <translation>Donar de baixa</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -733,78 +733,78 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Subscribe To Blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Tilaa blogi&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
+p, li { white-space: pre-wrap; }⏎
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:400; font-style:normal;&quot;&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt;&quot;&gt;Subscriure&apos;s a bloc&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Subscribe</source>
-        <translation>Aloita tilaus</translation>
+        <translation>Subscriure&apos;s</translation>
     </message>
     <message>
         <source>Create New Blog</source>
-        <translation>Luo uusi blogi</translation>
+        <translation>Crear nou bloc</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation>Nimi</translation>
+        <translation>Nom</translation>
     </message>
     <message>
         <source>ID</source>
-        <translation>Tunniste</translation>
+        <translation>ID</translation>
     </message>
     <message>
         <source>My Blogs</source>
-        <translation>Blogini</translation>
+        <translation>El meu bloc</translation>
     </message>
     <message>
         <source>Subscribed Blogs</source>
-        <translation>Tilatut blogit</translation>
+        <translation>Blocs subscrits</translation>
     </message>
     <message>
         <source>Popular Blogs</source>
-        <translation>Suositut blogit</translation>
+        <translation>Blocs populars</translation>
     </message>
     <message>
         <source>Other Blogs</source>
-        <translation>Muut blogit</translation>
+        <translation>Altres Blocs</translation>
     </message>
     <message>
         <source>Post to Blog</source>
-        <translation>Kirjoita blogiin</translation>
+        <translation>Publica al Bloc</translation>
     </message>
     <message>
         <source>Subscribe to Blog</source>
-        <translation>Tilaa blogi</translation>
+        <translation>Subscriure&apos;s al bloc</translation>
     </message>
     <message>
         <source>Unsubscribe to Blog</source>
-        <translation>Lopeta blogin tilaus</translation>
+        <translation>Donar de baixa de bloc</translation>
     </message>
     <message>
         <source>Show Blog Details</source>
-        <translation>Näytä blogin tiedot</translation>
+        <translation>Mostrar detalls de bloc</translation>
     </message>
     <message>
         <source>Create a new Blog</source>
-        <translation>Luo uusi blogi</translation>
+        <translation>Crear un nou bloc</translation>
     </message>
     <message>
         <source>Popularity: %1
 Fetches: %2
 Available: %3</source>
-        <translation>Suosio: %1
-Hakukerrat: %2
-Saatavilla: %3</translation>
+        <translation>Popularitat: %1⏎
+Orígens: %2⏎
+Disponibilitat: %3</translation>
     </message>
 </context>
 <context>
     <name>BlogsMsgItem</name>
     <message>
         <source>Form</source>
-        <translation>Lomake</translation>
+        <translation>Formulari</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -812,11 +812,11 @@ Saatavilla: %3</translation>
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:11pt; font-weight:600; font-style:italic;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#656565;&quot;&gt;Blog Subject&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:11pt; font-weight:600; font-style:italic;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#656565;&quot;&gt;Blogin aihe&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
+p, li { white-space: pre-wrap; }⏎
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:11pt; font-weight:600; font-style:italic;&quot;&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#656565;&quot;&gt;Tema del bloc&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -824,121 +824,121 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:600; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;DateTime&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:600; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;Päiväys ja aika&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
+p, li { white-space: pre-wrap; }⏎
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:600; font-style:normal;&quot;&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;DataHora&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation>Laajenna</translation>
+        <translation>Ampliar</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation>Poista kohde</translation>
+        <translation>Eliminar l&apos;element</translation>
     </message>
     <message>
         <source>Unsubscribe From Channel</source>
-        <translation>Lopeta kanavan tilaus</translation>
+        <translation>Donar de baixa del canal</translation>
     </message>
     <message>
         <source>Comments here</source>
-        <translation>Kommentit tähän</translation>
+        <translation>Comentaris aquí</translation>
     </message>
     <message>
         <source>Comment</source>
-        <translation>Kommentti</translation>
+        <translation>Comentari</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation>Piilota</translation>
+        <translation>Amagar</translation>
     </message>
 </context>
 <context>
     <name>BwCtrlWindow</name>
     <message>
         <source>Bandwidth Control Window</source>
-        <translation>Kaistanleveyden hallintaikkuna</translation>
+        <translation>Finestra de control de l&apos;ample de banda</translation>
     </message>
     <message>
         <source>Bandwidth Measurements</source>
-        <translation>Kaistanleveyden mittaus</translation>
+        <translation>Mesures d&apos;ample de banda</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation>Nimi</translation>
+        <translation>Nom</translation>
     </message>
     <message>
         <source>ID</source>
-        <translation>Tunniste</translation>
+        <translation>ID</translation>
     </message>
     <message>
         <source>In (KB/s)</source>
-        <translation>Tuleva (kB/s)</translation>
+        <translation>Entrant (kB/s)</translation>
     </message>
     <message>
         <source>InMax (KB/s)</source>
-        <translation>TulevaMax (kB/s)</translation>
+        <translation>Màxim entrant (kB/s)</translation>
     </message>
     <message>
         <source>InQueue</source>
-        <translation>TulevaJono</translation>
+        <translation>Cua d&apos;entrada</translation>
     </message>
     <message>
         <source>InAllocated (KB/s)</source>
-        <translation>TulevaMyönnetty (kB/s)</translation>
+        <translation>Capacitat entrant (kB/s)</translation>
     </message>
     <message>
         <source>Allocated Sent</source>
-        <translation>Lähteville myönnetty</translation>
+        <translation>Capacitat enviada</translation>
     </message>
     <message>
         <source>Out (KB/s)</source>
-        <translation>Lähtevä (kB/s)</translation>
+        <translation>Sortint (kB/s)</translation>
     </message>
     <message>
         <source>OutMax (KB/s)</source>
-        <translation>LähteväMax (kB/s)</translation>
+        <translation>Màxim sortint (kB/s)</translation>
     </message>
     <message>
         <source>OutQueue</source>
-        <translation>LähteväJono</translation>
+        <translation>Cua de sortida</translation>
     </message>
     <message>
         <source>OutAllowed (KB/s)</source>
-        <translation>LähteväSallittu (kB/s)</translation>
+        <translation>Sortida permesa (kB/s)</translation>
     </message>
     <message>
         <source>Allowed Recvd</source>
-        <translation>Sallittu vastaanotettu</translation>
+        <translation>Recepció permesa</translation>
     </message>
 </context>
 <context>
     <name>CalDialog</name>
     <message>
         <source>Form</source>
-        <translation>Lomake</translation>
+        <translation>Formulari</translation>
     </message>
     <message>
         <source>Local Calendars</source>
-        <translation>Paikalliset kalenterit</translation>
+        <translation>Calendaris locals</translation>
     </message>
     <message>
         <source>Shared Calendar List</source>
-        <translation>Luettelo jaetuista kalenterista</translation>
+        <translation>Compartir llista de calendari</translation>
     </message>
     <message>
         <source>Share Details</source>
-        <translation>Jakamisen tiedot</translation>
+        <translation>Compartir els detalls</translation>
     </message>
     <message>
         <source>Name:</source>
-        <translation>Nimi:</translation>
+        <translation>Nom:</translation>
     </message>
     <message>
         <source>Location:</source>
-        <translation>Sijainti:</translation>
+        <translation>Ubicació:</translation>
     </message>
     <message>
         <source>...</source>
@@ -946,297 +946,297 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Status:</source>
-        <translation>Tila:</translation>
+        <translation>Estat:</translation>
     </message>
     <message>
         <source>Private</source>
-        <translation>Yksityinen</translation>
+        <translation>Privat</translation>
     </message>
     <message>
         <source>Public</source>
-        <translation>Julkinen</translation>
+        <translation>Públic</translation>
     </message>
     <message>
         <source>Allow List:</source>
-        <translation>Sallittujen luettelo:</translation>
+        <translation>Llista de permesos:</translation>
     </message>
     <message>
         <source>&lt;Disabled&gt;</source>
-        <translation>&lt;Ei käytössä&gt;</translation>
+        <translation>&lt;Disabled&gt;</translation>
     </message>
     <message>
         <source>Add</source>
-        <translation>Lisää</translation>
+        <translation>Afegir</translation>
     </message>
     <message>
         <source>Remove</source>
-        <translation>Poista</translation>
+        <translation>Treure</translation>
     </message>
     <message>
         <source>Peer Calendars</source>
-        <translation>Vertaiskalenterit</translation>
+        <translation>Calendaris dels contactes</translation>
     </message>
 </context>
 <context>
     <name>ChanMsgItem</name>
     <message>
         <source>Toggle Message Read Status</source>
-        <translation>Vaihda viestin tila luetuksi tai päinvastoin</translation>
+        <translation>Canvia l&apos;estat dels missatges llegits</translation>
     </message>
     <message>
         <source>New</source>
-        <translation>Uusi</translation>
+        <translation>Nou</translation>
     </message>
     <message>
         <source>Download</source>
-        <translation>Lataa</translation>
+        <translation>Descarregar</translation>
     </message>
     <message>
         <source>Play</source>
-        <translation>Toista</translation>
+        <translation>Reproduir</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation>Kopioi RetroShare-linkki</translation>
+        <translation>Copia l&apos;enllaç RetroShare</translation>
     </message>
     <message>
         <source>Unsubscribe From Channel</source>
-        <translation>Lopeta kanavan tilaus</translation>
+        <translation>Donar de baixa del canal</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation>Laajenna</translation>
+        <translation>Ampliar</translation>
     </message>
     <message>
         <source>Set as read and remove item</source>
-        <translation>Aseta luetuksi ja poista kohde</translation>
+        <translation>Marcar com llegit i eliminar l&apos;element</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation>Poista kohde</translation>
+        <translation>Eliminar l&apos;element</translation>
     </message>
     <message>
         <source>Channel Feed</source>
-        <translation>Kanavan syöte</translation>
+        <translation>Font del canal</translation>
     </message>
     <message>
         <source>Files</source>
-        <translation>Tiedostot</translation>
+        <translation>Arxius</translation>
     </message>
     <message>
         <source>Warning! You have less than %1 hours and %2 minute before this file is deleted Consider saving it.</source>
-        <translation>Varoitus! Sinulla on alle %1 tuntia ja %2 minuuttia aikaa, ennen kuin tämä tiedosto poistetaan. Harkitse sen tallentamista.</translation>
+        <translation>Avís! Tens menys de %1 hores i %2 minuts abans que aquest arxiu sigui esborrat. Considera desar-lo.</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation>Piilota</translation>
+        <translation>Amagar</translation>
     </message>
 </context>
 <context>
     <name>ChanNewItem</name>
     <message>
         <source>Subscribe to Channel</source>
-        <translation>Tilaa kanava</translation>
+        <translation>Subscriu-te al canal</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation>Laajenna</translation>
+        <translation>Ampliar</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation>Poista kohde</translation>
+        <translation>Eliminar l&apos;element</translation>
     </message>
     <message>
         <source>Channel Description</source>
-        <translation>Kanavan kuvaus</translation>
+        <translation>Descripció del canal</translation>
     </message>
     <message>
         <source>Unknown Channel</source>
-        <translation>Tuntematon kanava</translation>
+        <translation>Canal desconegut</translation>
     </message>
     <message>
         <source>New Channel</source>
-        <translation>Uusi kanava</translation>
+        <translation>Nou canal</translation>
     </message>
     <message>
         <source>Updated Channel</source>
-        <translation>Päivitetty kanava</translation>
+        <translation>Canal actualitzat</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation>Piilota</translation>
+        <translation>Amagar</translation>
     </message>
 </context>
 <context>
     <name>ChannelDetails</name>
     <message>
         <source>Channel Details</source>
-        <translation>Kanavan tiedot</translation>
+        <translation>Detalls del canal</translation>
     </message>
     <message>
         <source>Channel Info</source>
-        <translation>Kanavan tiedot</translation>
+        <translation>Informació del canal</translation>
     </message>
     <message>
         <source>Channel Name</source>
-        <translation>Kanavan nimi</translation>
+        <translation>Nom del canal</translation>
     </message>
     <message>
         <source>Popularity</source>
-        <translation>Suosio</translation>
+        <translation>Popularitat</translation>
     </message>
     <message>
         <source>Last Post</source>
-        <translation>Viimeisin teksti</translation>
+        <translation>Darrer missatge</translation>
     </message>
     <message>
         <source>Channel ID</source>
-        <translation>Kanavan tunniste</translation>
+        <translation>ID del canal</translation>
     </message>
     <message>
         <source>Channel Description</source>
-        <translation>Kanavan kuvaus</translation>
+        <translation>Descripció del canal</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation>Tyyppi</translation>
+        <translation>Tipus</translation>
     </message>
     <message>
         <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation>Rajoitettu - kaikki voivat lukea, julkaisu rajoitettu (yksityinen julkaisuavain)</translation>
+        <translation>Restringit - Tothom pot llegir, publicació limitada (clau de publicació privada)</translation>
     </message>
     <message>
         <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation>Yksityinen - (Viestien lukemiseen tarvitaan yksityinen julkaisuavain)</translation>
+        <translation>Privat - (clau de publicació privada necessària per visualitzar els missatges)</translation>
     </message>
 </context>
 <context>
     <name>ChannelDialog</name>
     <message>
         <source>GxsChannels</source>
-        <translation>GxsKanavat</translation>
+        <translation>CanalsGxs</translation>
     </message>
 </context>
 <context>
     <name>ChannelFeed</name>
     <message>
         <source>Channels</source>
-        <translation>Kanavat</translation>
+        <translation>Canals</translation>
     </message>
     <message>
         <source>Create Channel</source>
-        <translation>Luo kanava</translation>
+        <translation>Crear canal</translation>
     </message>
     <message>
         <source>Loading</source>
-        <translation>Ladataan</translation>
+        <translation>Carregant</translation>
     </message>
     <message>
         <source>Post to Channel</source>
-        <translation>Lähetä viesti kanavaan</translation>
+        <translation>Publica al canal</translation>
     </message>
     <message>
         <source>Set all as read</source>
-        <translation>Aseta kaikki luetuiksi</translation>
+        <translation>Posar tot com a llegit</translation>
     </message>
     <message>
         <source>Enable Auto-Download</source>
-        <translation>Ota käyttöön automaattinen lataus</translation>
+        <translation>Activar auto-descàrrega</translation>
     </message>
     <message>
         <source>My Channels</source>
-        <translation>Kanavani</translation>
+        <translation>Els meus canals</translation>
     </message>
     <message>
         <source>Subscribed Channels</source>
-        <translation>Tilatut kanavat</translation>
+        <translation>Canals subscrits</translation>
     </message>
     <message>
         <source>Popular Channels</source>
-        <translation>Suositut kanavat</translation>
+        <translation>Canals populars</translation>
     </message>
     <message>
         <source>Other Channels</source>
-        <translation>Muut kanavat</translation>
+        <translation>Altres canals</translation>
     </message>
     <message>
         <source>Subscribe to Channel</source>
-        <translation>Tilaa kanava</translation>
+        <translation>Subscriu-te al canal</translation>
     </message>
     <message>
         <source>Unsubscribe to Channel</source>
-        <translation>Lopeta kanavan tilaus</translation>
+        <translation>Donar-te de baixa del canal</translation>
     </message>
     <message>
         <source>Disable Auto-Download</source>
-        <translation>Ota automaattinen lataus pois käytöstä</translation>
+        <translation>Desactivar auto-descàrrega</translation>
     </message>
     <message>
         <source>Show Channel Details</source>
-        <translation>Näytä kanavan tiedot</translation>
+        <translation>Mostra detalls del canal</translation>
     </message>
     <message>
         <source>Restore Publish Rights for Channel</source>
-        <translation>Palauta kanavan julkaisuoikeudet</translation>
+        <translation>Restaurar els drets de publicació del canal</translation>
     </message>
     <message>
         <source>Edit Channel Details</source>
-        <translation>Muokkaa kanavan tietoja</translation>
+        <translation>Edita detalls del canal</translation>
     </message>
     <message>
         <source>Share Channel</source>
-        <translation>Jaa kanava</translation>
+        <translation>Compartir canal</translation>
     </message>
     <message>
         <source>Set destination directory</source>
-        <translation>Määritä kohdehakemisto</translation>
+        <translation>Establir directori de destí</translation>
     </message>
     <message>
         <source>Other...</source>
-        <translation>Muu...</translation>
+        <translation>Altre...</translation>
     </message>
     <message>
         <source>[Default]</source>
-        <translation>[Oletus]</translation>
+        <translation>[Per defecte]</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation>Kopioi RetroShare-linkki</translation>
+        <translation>Copia l&apos;enllaç RetroShare</translation>
     </message>
     <message>
         <source>Select channel destination directory</source>
-        <translation>Valitse kanavan kohdehakemisto</translation>
+        <translation>Selecciona el directori destí del canal</translation>
     </message>
     <message>
         <source>Publish rights restored.</source>
-        <translation>Julkaisuoikeudet palautettu.</translation>
+        <translation>Drets de publicació restablerts.</translation>
     </message>
     <message>
         <source>Publish rights have been restored for this channel.</source>
-        <translation>Julkaisuoikeudet kanavalle palautettu.</translation>
+        <translation>Els drets de publicació han sigut restablerts per aquest canal.</translation>
     </message>
     <message>
         <source>Publish not restored.</source>
-        <translation>Julkaisuoikeuksia ei palautettu.</translation>
+        <translation>Publicació no restablerta.</translation>
     </message>
     <message>
         <source>Publish rights can&apos;t be restored for this channel.&lt;br/&gt;You&apos;re not the creator of this channel.</source>
-        <translation>Julkaisuoikeuksia kanavalle ei voitu palauttaa.&lt;br/&gt;Et ole kanavan luoja.</translation>
+        <translation>Els drets de publicació per aquest canal no poden ser restablerts.&lt;br/&gt;No ets el creador del canal.</translation>
     </message>
     <message>
         <source>No Channel Selected</source>
-        <translation>Ei kanavaa valittuna</translation>
+        <translation>No hi ha canal seleccionat</translation>
     </message>
     <message>
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Channels&lt;/h1&gt;                                                             &lt;p&gt;Channels allow you to post data (e.g. movies, music) that will spread in the network                                                    among people who subscribed your channel.  If you activate auto-download on a channel, files attached to each post will start      downloading automatically when the post is received.&lt;/p&gt;                                                                                   &lt;p&gt;You see channels your friends are subscribed to, and forward subscribed channels to                                                    your friends. This promotes good channels in the network.                                                         When you first connect to a new friend, it&apos;s likely     you will receive many such cache files, and new channels will appear.                                                                      &lt;/p&gt;                                                                                                                                       &lt;p&gt;Only the channel&apos;s creator can post on that channel. Other peers                           in the network can only read from it, unless the channel is private. You can however share the posting rights or the reading rights     with your friends.&lt;/p&gt;                                </source>
-        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Kanavat&lt;/h1&gt; &lt;p&gt;Kanavien avulla voit julkaista dataa (kuten elokuvia, musiikkia), joka leviää verkostossa niiden ihmisten välillä, jotka ovat tilanneet kanavasi.  Jos otat käyttöön automaattisen latauksen kanavalla, kanavaviestiin liitetyt tiedostot alkavat latautua automaattisesti, kun viesti on saatu.&lt;/p&gt; &lt;p&gt;Näet kanavat, jotka ystäväsi ovat tilanneet ja vastaavasti välität tilaamasi kanavat ystävillesi. Tämä edistää laadukkaiden kanavien leviämistä verkostossa. Kun otat ensimmäisen kerran yhteyden uuteen ystävään, on todennäköistä, että vastaanotat useita välimuistitiedostoja ja uusia kanavia ilmestyy saatavillesi. &lt;/p&gt; &lt;p&gt;Vain kanavan luoja voi lähettää viestejä kanavalle. Muut vertaiset voivat ainoastaan lukea sitä, ellei kanava ole yksityinen Voit kuitenkin antaa viestien lähetys- tai lukuoikeuksia ystävillesi.&lt;/p&gt;</translation>
+        <translation>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Canals&lt;/h1&gt; ⇥⇥ &lt;p&gt;Els canals et permeten publicar continguts (per ex. pel·lícules, música) que es distribuiran a la xarxa⇥⇥ entre la gent que s&apos;hagi subscrit al canal. Si has activat l&apos;auto-descarrega en un canal els adjunts a cada entrada començaran ⇥⇥ a descarregar-se automàticament quan es rebi l&apos;entrada.&lt;/p&gt; ⇥⇥ &lt;p&gt;Veuràs canals als que s&apos;han subscrit els teus amics i reenvies els canals subscrits ⇥⇥ als teus amics. Això promociona els canals bons a la xarxa. ⇥⇥ Quan et connectes per primer cop a un amic, és probable ⇥⇥ que rebis molts arxius cau i apareguin nous canals. ⇥⇥ &lt;/p&gt; ⇥⇥ &lt;p&gt;Només el creador del canal pot publicar en aquests canals. Els altres contactes ⇥⇥ a la xarxa només poden llegir-lo si és que el canal no és privat. No obstant, pots compartir els teus permisos de publicació o lectura ⇥⇥ amb els teus amics.&lt;/p&gt; ⇥⇥</translation>
     </message>
 </context>
 <context>
     <name>ChannelUserNotify</name>
     <message>
         <source>Channel Post</source>
-        <translation>Kanavakirjoitus</translation>
+        <translation>Entrada al canal</translation>
     </message>
 </context>
 <context>
@@ -1244,925 +1244,925 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Your friend has more than one locations.
 Please choose one of it to chat with.</source>
-        <translation>Ystävälläsi on useita sijainteja.
-Ole hyvä ja valitse niistä yksi keskustellaksesi.</translation>
+        <translation>El seu amic té més d&apos;una ubicació.⏎
+Si us plau, escull-ne una.</translation>
     </message>
     <message>
         <source>Talking to </source>
-        <translation>Puhutaan henkilölle</translation>
+        <translation>Parlant amb </translation>
     </message>
 </context>
 <context>
     <name>ChatLobbyDialog</name>
     <message>
         <source>Participants</source>
-        <translation>Osallistujat</translation>
+        <translation>Participants</translation>
     </message>
     <message>
         <source>Change nick name</source>
-        <translation>Vaihda nimimerkki</translation>
+        <translation>Canviar sobrenom</translation>
     </message>
     <message>
         <source>Mute participant</source>
-        <translation>Mykistä osanottaja</translation>
+        <translation>Silencia participant</translation>
     </message>
     <message>
         <source>Invite friends to this lobby</source>
-        <translation>Kutsu ystäviä keskusteluaulaan</translation>
+        <translation>Invitar amics a aquesta sala</translation>
     </message>
     <message>
         <source>Leave this lobby (Unsubscribe)</source>
-        <translation>Poistu aulasta</translation>
+        <translation>Abandonar la sala (Dessubscriure&apos;s)</translation>
     </message>
     <message>
         <source>Invite friends</source>
-        <translation>Kutsu ystäviä</translation>
+        <translation>Invitar amics</translation>
     </message>
     <message>
         <source>Select friends to invite:</source>
-        <translation>Valitse kutsuttavat ystävät:</translation>
+        <translation>Seleccionar els amics a invitar:</translation>
     </message>
     <message>
         <source>Welcome to lobby %1</source>
-        <translation>Tervetuloa aulaan %1</translation>
+        <translation>Benvinguts a la sala de xat %1</translation>
     </message>
     <message>
         <source>Topic: %1</source>
-        <translation>Aihe: %1</translation>
+        <translation>Tema: %1</translation>
     </message>
     <message>
         <source>Please enter your new nick name</source>
-        <translation>Anna uusi nimimerkkisi</translation>
+        <translation>Si us plau, introdueix el teu nou sobrenom</translation>
     </message>
     <message>
         <source>Lobby chat</source>
-        <translation>Aulakeskustelu</translation>
+        <translation>Sala de xat</translation>
     </message>
     <message>
         <source>Lobby management</source>
-        <translation>Aulan hallinta</translation>
+        <translation>Control de sales de xat</translation>
     </message>
     <message>
         <source>%1 has left the lobby.</source>
-        <translation>%1 on poistunut aulasta.</translation>
+        <translation>%1 ha deixat la sala.</translation>
     </message>
     <message>
         <source>%1 joined the lobby.</source>
-        <translation>%1 on saapunut aulaan.</translation>
+        <translation>%1 ha entrat a la sala.</translation>
     </message>
     <message>
         <source>%1 changed his name to: %2</source>
-        <translation>%1 vaihtoi nimekseen %2</translation>
+        <translation>%1 ha canviat el seu nom a: %2</translation>
     </message>
     <message>
         <source>Unsubscribe to lobby</source>
-        <translation>Poistu aulasta</translation>
+        <translation>Donar-te de baixa de la sala</translation>
     </message>
     <message>
         <source>Do you want to unsubscribe to this chat lobby?</source>
-        <translation>Haluatko varmasti poistua tästä keskusteluaulasta?</translation>
+        <translation>Voleu cancel·lar la subscripció a aquesta sala de xat?</translation>
     </message>
     <message>
         <source>Hide Participants</source>
-        <translation>Piilota osallistujat</translation>
+        <translation>Amaga els participants</translation>
     </message>
     <message>
         <source>Show Participants</source>
-        <translation>Näytä osallistujat</translation>
+        <translation>Mostra els participants</translation>
     </message>
     <message>
         <source>Right click to mute/unmute participants&lt;br/&gt;Double click to address this person&lt;br/&gt;</source>
-        <translation>Käytä hiiren oikeaa painiketta mykistääksesi osanottajan tai päinvastoin&lt;br/&gt;Kaksoisnapauta kohdistaaksesi viestisi tietylle henkilölle&lt;br/&gt;</translation>
+        <translation>Clic amb el botó dret per silenciar participants&lt;br/&gt;feu doble clic per adreçar-t&apos;hi directament&lt;br/&gt;</translation>
     </message>
     <message>
         <source>This participant is not active since:</source>
-        <translation>Osanottaja ei ole ollut aktiivinen sitten:</translation>
+        <translation>Aquest participant no és actiu des de:</translation>
     </message>
     <message>
         <source> seconds</source>
-        <translation> sekuntia</translation>
+        <translation> segons</translation>
     </message>
 </context>
 <context>
     <name>ChatLobbyToaster</name>
     <message>
         <source>Show Chat Lobby</source>
-        <translation>Näytä keskusteluaula</translation>
+        <translation>Mostra el xat de sala</translation>
     </message>
 </context>
 <context>
     <name>ChatLobbyWidget</name>
     <message>
         <source>Chat lobbies</source>
-        <translation>Keskusteluaulat</translation>
+        <translation>Sales de xat</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation>Nimi</translation>
+        <translation>Nom</translation>
     </message>
     <message>
         <source>Count</source>
-        <translation>Lkm</translation>
+        <translation>Comte</translation>
     </message>
     <message>
         <source>Topic</source>
-        <translation>Aihe</translation>
+        <translation>Tema</translation>
     </message>
     <message>
         <source>Private Lobbies</source>
-        <translation>Yksityiset aulat</translation>
+        <translation>Sales privades</translation>
     </message>
     <message>
         <source>Public Lobbies</source>
-        <translation>Julkiset aulat</translation>
+        <translation>Sales públiques</translation>
     </message>
     <message>
         <source>Create chat lobby</source>
-        <translation>Luo keskusteluaula</translation>
+        <translation>Crear sala de xat</translation>
     </message>
     <message>
         <source>Unsubscribe</source>
-        <translation>Lopeta tilaus</translation>
+        <translation>Donar de baixa</translation>
     </message>
     <message>
         <source>Subscribe</source>
-        <translation>Aloita tilaus</translation>
+        <translation>Subscriure&apos;s</translation>
     </message>
     <message>
         <source>[No topic provided]</source>
-        <translation>[Ei aihetta]</translation>
+        <translation>[No s&apos;ha proporcionat cap assumpte]</translation>
     </message>
     <message>
         <source>Selected lobby info</source>
-        <translation>Tietoja valitusta aulasta</translation>
+        <translation>Informació de la sala seleccionada</translation>
     </message>
     <message>
         <source>Private</source>
-        <translation>Yksityinen</translation>
+        <translation>Privat</translation>
     </message>
     <message>
         <source>Public</source>
-        <translation>Julkinen</translation>
+        <translation>Públic</translation>
     </message>
     <message>
         <source>You&apos;re not subscribed to this lobby; Double click-it to enter and chat.</source>
-        <translation>Et ole tilannut aulaa: kaksoisnapauta siirtyäksesi keskustelemaan</translation>
+        <translation>No estàs subscrit a aquesta sala; Fes doble clic per entrar-hi i xatejar.</translation>
     </message>
     <message>
         <source>Invitation to chat lobby</source>
-        <translation>Kutsu keskusteluaulaan</translation>
+        <translation>Invitació a la sala de xat</translation>
     </message>
     <message>
         <source>Remove Auto Subscribe</source>
-        <translation>Poista automaattinen tilaus</translation>
+        <translation>Eliminar auto-subscripció</translation>
     </message>
     <message>
         <source>Add Auto Subscribe</source>
-        <translation>Lisää automaattinen tilaus</translation>
+        <translation>Afegir auto-subscripció</translation>
     </message>
     <message>
         <source>%1 invites you to chat lobby named %2</source>
-        <translation>%1 kutsuu sinut keskusteluaulaan nimeltä %2</translation>
+        <translation>%1 t&apos;invita a una sala de xat anomenada %2</translation>
     </message>
     <message>
         <source>Search Chat lobbies</source>
-        <translation>Hae keskusteluauloista</translation>
+        <translation>Cercar sales de xat</translation>
     </message>
     <message>
         <source>Search Name</source>
-        <translation>Hae nimeä</translation>
+        <translation>Cercar nom</translation>
     </message>
     <message>
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Chat Lobbies&lt;/h1&gt;                              		  &lt;p&gt;Chat lobbies are distributed chat rooms, and work pretty much like IRC.                                      		  They allow you to talk anonymously with tons of people without the need to make friends.&lt;/p&gt;                    		  &lt;p&gt;A chat lobby can be public (your friends see it) or private (your friends can&apos;t see it, unless you           		  invite them with &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). Once you have been invited to a private lobby, you will be able to see it when your friends   		  are using it.&lt;/p&gt;                                                                                               		  &lt;p&gt;The list at left shows                                                                                     		  chat lobbies your friends are participating in. You can either                                 		  &lt;ul&gt;                                                                                                            			  &lt;li&gt;Right click to create a new chat lobby&lt;/li&gt;                                                              		     &lt;li&gt;Double click a chat lobby to enter, chat, and show it to your friends&lt;/li&gt;                      		  &lt;/ul&gt; 		  Note: For the chat lobbies to work properly, your computer needs be on time.  So check your system clock!		  &lt;/p&gt;                                      		</source>
-        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Keskusteluaulat&lt;/h1&gt; &lt;p&gt;Keskusteluaulat ovat hajautettuja chat-huoneita ja toimivat kuten IRC.   Niiden avulla voit keskustella nimettömänä lukuisten ihmisten kanssa ilman, että sinun tarvitsee ystävystyä heidän kanssaan&lt;/p&gt; &lt;p&gt;Keskusteluaula voi olla julkinen (ystäväsi näkevät sen) tai yksityinen (ystäväsi eivät näe sitä,  ellet kutsu heitä &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). Kun sinut on kutsuttu yksityiseen aulaan, näet sen, kun ystäväsi   käyttävät sitä.&lt;/p&gt;  &lt;p&gt;Vasemmalla oleva luettelo näyttää keskusteluaulat, joissa on ystäviäsi. Voit joko &lt;ul&gt;   &lt;li&gt;luoda uuden aulan painamalla hiiren oikeaa painiketta&lt;/li&gt; &lt;li&gt;kaksoisnapauttaa jotakin aulaa siirtyäksesi sinne&lt;/li&gt;  &lt;/ul&gt; Huom.: tietokoneesi on oltava oikeassa ajassa, jotta keskusteluaulat toimivat oikein, joten tarkista järjestelmäsi kello!   &lt;/p&gt; </translation>
+        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Sales de xat&lt;/h1&gt;   &lt;p&gt;Les sales de xat són sales distribuïdes que funcionen molt semblant a les de IRC.   Et permeten parlar anònimament amb moltíssima gent sense haver-los de fer amics.&lt;/p&gt;   &lt;p&gt;Una sala de xat pot ser pública (els teus amics la veuen ) o privades (els teus amics no poden veure-la si no   els invites amb &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). Un cop has sigut invitat a una sala privada podràs veure quan els teus amics   la estan usant.&lt;/p&gt;   &lt;p&gt;La llista de l&apos;esquerra mostra   sales de xat en que participen els teus amics. Pots o bé   &lt;ul&gt; &lt;li&gt;fer clic dret per crear una sala de xat nova&lt;/li&gt;   &lt;li&gt;fer doble clic per entrar a una sala, xatejar, i que els teus amics ho vegin&lt;/li&gt;   &lt;/ul&gt;   Nota: Per a que les sales de xat funcionin correctament el teu ordinador a d&apos;anar a l&apos;hora. Comprova-ho!   &lt;/p&gt;  </translation>
     </message>
     <message>
         <source>Subscribed</source>
-        <translation>Tilattu</translation>
+        <translation>Subscrit</translation>
     </message>
     <message>
         <source>Show </source>
-        <translation>Näytä </translation>
+        <translation>Mostra</translation>
     </message>
     <message>
         <source> Column</source>
-        <translation> Sarake</translation>
+        <translation>Columna</translation>
     </message>
     <message>
         <source>Columns</source>
-        <translation>Sarakkeet</translation>
+        <translation>Columnes</translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation>Kyllä</translation>
+        <translation>Sí</translation>
     </message>
     <message>
         <source>No</source>
-        <translation>Ei</translation>
+        <translation>No</translation>
     </message>
     <message>
         <source>Lobby Name:</source>
-        <translation>Aulan nimi:</translation>
+        <translation>Nom de la sala:</translation>
     </message>
     <message>
         <source>Lobby Id:</source>
-        <translation>Aulan tunniste:</translation>
+        <translation>Id de sala:</translation>
     </message>
     <message>
         <source>Topic:</source>
-        <translation>Aihe:</translation>
+        <translation>Tema:</translation>
     </message>
     <message>
         <source>Type:</source>
-        <translation>Tyyppi:</translation>
+        <translation>Tipus:</translation>
     </message>
     <message>
         <source>Peers:</source>
-        <translation>Vertaiset:</translation>
+        <translation>Contactes:</translation>
     </message>
     <message>
         <source>TextLabel</source>
-        <translation>TekstiMerkki</translation>
+        <translation>EtiquetaText</translation>
     </message>
     <message>
         <source>No lobby selected. 
 Select lobbies at left to show details.
 Double click lobbies to enter and chat.</source>
-        <translation>Aulaa ei valittuna. 
-Valitse auloja vasemmalta nähdäksesi tietoja.
-Kaksoisnapauta auloja siirtyäksesi keskustelemaan.</translation>
+        <translation>Cap sala seleccionada⏎
+Selecciona entre les sales de la esquerra per mostrar-ne els detalls.⏎
+Fes doble clic a les sales per entrar-hi i xatejar.</translation>
     </message>
     <message>
         <source>Private Subscribed Lobbies</source>
-        <translation>Yksityiset tilatut aulat</translation>
+        <translation>Sales privades subscrites</translation>
     </message>
     <message>
         <source>Public Subscribed Lobbies</source>
-        <translation>Julkiset tilatut aulat</translation>
+        <translation>Sales públiques subscrites</translation>
     </message>
 </context>
 <context>
     <name>ChatMsgItem</name>
     <message>
         <source>Remove Item</source>
-        <translation>Poista kohde</translation>
+        <translation>Eliminar l&apos;element</translation>
     </message>
     <message>
         <source>Write a quick Message</source>
-        <translation>Kirjoita pikaviesti</translation>
+        <translation>Escriure un missatge ràpid</translation>
     </message>
     <message>
         <source>Send Mail</source>
-        <translation>Lähetä postia</translation>
+        <translation>Enviar correu</translation>
     </message>
     <message>
         <source>Write Message</source>
-        <translation>Kirjoita viesti</translation>
+        <translation>Escriure missatge</translation>
     </message>
     <message>
         <source>Start Chat</source>
-        <translation>Aloita keskustelu</translation>
+        <translation>Inicia xat</translation>
     </message>
     <message>
         <source>Send</source>
-        <translation>Lähetä</translation>
+        <translation>Enviar</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Peru</translation>
+        <translation>Cancel·la</translation>
     </message>
     <message>
         <source>Quick Message</source>
-        <translation>Pikaviesti</translation>
+        <translation>Missatge ràpid</translation>
     </message>
 </context>
 <context>
     <name>ChatPage</name>
     <message>
         <source>General</source>
-        <translation>Yleiset</translation>
+        <translation>General</translation>
     </message>
     <message>
         <source>Chat Settings</source>
-        <translation>Keskusteluasetukset</translation>
+        <translation>Configuració xat</translation>
     </message>
     <message>
         <source>Enable Emoticons Private Chat</source>
-        <translation>Ota hymiöt käyttöön yksityiskeskustelussa</translation>
+        <translation>Activa les emoticones al xat privat</translation>
     </message>
     <message>
         <source>Enable Emoticons Group Chat</source>
-        <translation>Ota hymiöt käyttöön ryhmäkeskustelussa</translation>
+        <translation>Activa emoticones pels xats en grup</translation>
     </message>
     <message>
         <source>Enable custom fonts</source>
-        <translation>Käytä omia kirjasimia</translation>
+        <translation>Activa tipus de lletra personalitzats</translation>
     </message>
     <message>
         <source>Enable custom font size</source>
-        <translation>Käytä mukautettjua kirjasinkokoja</translation>
+        <translation>Activa mida de lletra personalitzat</translation>
     </message>
     <message>
         <source>Enable bold</source>
-        <translation>Käytä korostusta</translation>
+        <translation>Activa negreta</translation>
     </message>
     <message>
         <source>Enable italics</source>
-        <translation>Käytä kursiivia</translation>
+        <translation>Activa cursiva</translation>
     </message>
     <message>
         <source>Minimum text contrast</source>
-        <translation>Tekstin vähimmäiskontrasti</translation>
+        <translation>Contrast de text mínim</translation>
     </message>
     <message>
         <source>Send message with Ctrl+Return</source>
-        <translation>Lähetä viesti painamalla Ctrl ja Enter</translation>
+        <translation>Enviar missatge amb Ctrl+Retorn</translation>
     </message>
     <message>
         <source>Chat Lobby</source>
-        <translation>Keskusteluaula</translation>
+        <translation>Sala de xat</translation>
     </message>
     <message>
         <source>Blink tab icon</source>
-        <translation>Vilkuta välilehtikuvaketta</translation>
+        <translation>Icona de pestanya parpellejant</translation>
     </message>
     <message>
         <source>Default nickname for chat lobbies:</source>
-        <translation>Oletusnimimerkki keskusteluauloihin:</translation>
+        <translation>Sobrenom per defecte a les sales de xat:</translation>
     </message>
     <message>
         <source>Private Chat</source>
-        <translation>Yksityinen keskustelu</translation>
+        <translation>Xat privat</translation>
     </message>
     <message>
         <source>Open Window for new chat</source>
-        <translation>Avaa ikkuna uutta keskustelua varten</translation>
+        <translation>Obrir finestra per xat nou</translation>
     </message>
     <message>
         <source>Grab Focus when chat arrives</source>
-        <translation>Kohdista keskusteluun, kun se alkaa</translation>
+        <translation>Captura el focus quan arriba un xat</translation>
     </message>
     <message>
         <source>Use a single tabbed window</source>
-        <translation>Käytä välilehdellistä ikkunaa</translation>
+        <translation>Utilitza una finestra amb només una pestanya</translation>
     </message>
     <message>
         <source>Blink window/tab icon</source>
-        <translation>Vilkuta ikkuna- tai välilehtikuvaketta</translation>
+        <translation>Icona de pestanya/finestra parpellejant</translation>
     </message>
     <message>
         <source>Chat Font</source>
-        <translation>Keskustelun kirjasin</translation>
+        <translation>Tipus de lletra pel xat</translation>
     </message>
     <message>
         <source>Change Chat Font</source>
-        <translation>Vaihda keskustelun kirjasin</translation>
+        <translation>Canviar tipografia pel xat</translation>
     </message>
     <message>
         <source>Chat Font:</source>
-        <translation>Keskustelun kirjasin:</translation>
+        <translation>Tipus de lletra pel xat:</translation>
     </message>
     <message>
         <source>History</source>
-        <translation>Historia</translation>
+        <translation>Històric</translation>
     </message>
     <message>
         <source>Style</source>
-        <translation>Tyyli</translation>
+        <translation>Estil</translation>
     </message>
     <message>
         <source>Group chat</source>
-        <translation>Ryhmäkeskustelu</translation>
+        <translation>Xat en grup</translation>
     </message>
     <message>
         <source>Variant</source>
-        <translation>Muunnelma</translation>
+        <translation>Variant</translation>
     </message>
     <message>
         <source>Author:</source>
-        <translation>Kirjoittaja:</translation>
+        <translation>Autor:</translation>
     </message>
     <message>
         <source>Description:</source>
-        <translation>Kuvaus:</translation>
+        <translation>Descripció:</translation>
     </message>
     <message>
         <source>Private chat</source>
-        <translation>Yksityinen keskustelu</translation>
+        <translation>Xat privat</translation>
     </message>
     <message>
         <source>Incoming</source>
-        <translation>Saapuva</translation>
+        <translation>Entrants</translation>
     </message>
     <message>
         <source>Outgoing</source>
-        <translation>Lähtevä</translation>
+        <translation>Sortints</translation>
     </message>
     <message>
         <source>Incoming message in history</source>
-        <translation>Saapuva viesti historiassa</translation>
+        <translation>Missatge entrant a l&apos;històrial</translation>
     </message>
     <message>
         <source>Outgoing message in history</source>
-        <translation>Lähtevä viesti historiassa</translation>
+        <translation>Missatge sortint a l&apos;històrial</translation>
     </message>
     <message>
         <source>Incoming message</source>
-        <translation>Saapuva viesti</translation>
+        <translation>Missatge entrant</translation>
     </message>
     <message>
         <source>Outgoing message</source>
-        <translation>Lähtevä viesti</translation>
+        <translation>Missatge sortint</translation>
     </message>
     <message>
         <source>Outgoing offline message</source>
-        <translation>Lähtevä viesti offline-tilassa</translation>
+        <translation>Missatge sortint fora de línia</translation>
     </message>
     <message>
         <source>System</source>
-        <translation>Järjestelmä</translation>
+        <translation>Sistema</translation>
     </message>
     <message>
         <source>System message</source>
-        <translation>Järjestelmäviesti</translation>
+        <translation>Missatge de sistema</translation>
     </message>
     <message>
         <source>Chat</source>
-        <translation>Keskustelu</translation>
+        <translation>Xat</translation>
     </message>
     <message>
         <source>Distant chat</source>
-        <translation>Etäinen keskustelu</translation>
+        <translation>Xat distant</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Retroshare allows you to anonymously chat to nearby people beyond your friends in the network, using encrypted tunnels. In your personal invites list you keep chat links for people to contact you. In the &amp;quot;collected contacts&amp;quot; list, you keep such chat links that people sent you to contact them.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Retrosharen avulla voit keskustella nimettömänä ystäviesi ystävien kanssa salattuja tunneleita hyödyntäen. Henkilökohtaisten kutsujen luetteloon kerätään yhteydenottotarkoituksessa lähettämäsi keskustelulinkit. &amp;quot;Kerätyt kontaktit&amp;quot;-luetteloon kerätään sinulle yhteydenottotarkoituksessa lähetetyt keskustelulinkit.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;El RetroShare et permet xatejar anònimament amb gent propera a més a més dels teus amics a la xarxa, tot això utilitzant túnels encriptats. A la llista d&apos;invitacions personals apareixen enllaços de xat perquè la gent pugui contactar-te. A la llista de &quot;Contactes col·leccionats&quot; hi queden els enllaços de xat de la gent que t&apos;ha contactat a tu.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Your personal invites</source>
-        <translation>Henkilökohtaiset kutsusi</translation>
+        <translation>Les teves invitacions personals</translation>
     </message>
     <message>
         <source>Collected contacts</source>
-        <translation>Kerätyt kontaktit</translation>
+        <translation>Contactes col·leccionats</translation>
     </message>
     <message>
         <source>Open secured chat tunnel</source>
-        <translation>Avaa suojattu keskustelutunneli</translation>
+        <translation>Obrir túnel de xat segur</translation>
     </message>
     <message>
         <source>Delete this invite</source>
-        <translation>Poista tämä kutsu</translation>
+        <translation>Esborrar aquesta invitació</translation>
     </message>
     <message>
         <source>Can&apos;t open distant chat</source>
-        <translation>Etäisen keskustelun avaaminen ei onnistu</translation>
+        <translation>No es pot obrir xat distant</translation>
     </message>
     <message>
         <source>Cannot open distant chat. Error code=</source>
-        <translation>Etäisen keskustelun avaaminen ei onnistu. Virhekoodi=</translation>
+        <translation>No es pot obrir xat distant. Codi d&apos;error=</translation>
     </message>
     <message>
         <source>Cannot remove distant chat invite.</source>
-        <translation>Kutsua etäiseen keskusteluun ei voida poistaa</translation>
+        <translation>No es pot esborrar invitació a xat distant.</translation>
     </message>
     <message>
         <source>Create a chat invitation</source>
-        <translation>Luo keskustelukutsu</translation>
+        <translation>Crear una invitació de xat</translation>
     </message>
     <message>
         <source>Copy link to clipboard</source>
-        <translation>Kopioi linkki leikepöydälle</translation>
+        <translation>Copiar enllaç al porta-retalls</translation>
     </message>
     <message>
         <source>Private chat invite from </source>
-        <translation>Kutsu yksityiseen keskusteluun henkilöltä</translation>
+        <translation>Invitació a xat privat de</translation>
     </message>
     <message>
         <source>Private chat invite to </source>
-        <translation>Kutsu yksityiseen keskusteluun henkilölle</translation>
+        <translation>Invitar a un xat privat a</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;In this tab you can setup how many chat messages Retroshare will keep saved on the disc and how much of the previous conversation it will display, for the different chat systems. The max storage period allows to discard old messages and prevents the chat history from filling up with volatile chat (e.g. chat lobbies and distant chat).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Tässä välilehdessä voit määrittää, kuinka monta chat-viestiä RetroShare pitää tallennettuna kiintolevylle ja kuinka paljon edellisestä keskustelusta näytetään eri keskustelutoiminnoissa. Säilytyksen enimmäisaika mahdollistaa vanhojen viestien poisheittämisen ja estää keskusteluhistorian täyttymisen (esim. keskusteluaulat ja etäiset keskustelut).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;En aquesta pestanya pots modificar quants missatges de xat el RetroShare mantindrà emmagatzemats en disc i quantes de les converses prèvies mostrarà pels diferents sistemes de xat. El període màxim d&apos;emmagatzematge et permet descartar missatges vells i impedeix que l&apos;historial de xat s&apos;ompli amb xats esporàdics (per ex. sales de xat i xats distants).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Chatlobbies</source>
-        <translation>Keskusteluaulat</translation>
+        <translation>Salesxat</translation>
     </message>
     <message>
         <source>Enabled:</source>
-        <translation>Käytössä:</translation>
+        <translation>Activat:</translation>
     </message>
     <message>
         <source>Saved messages (0 = unlimited):</source>
-        <translation>Tallennettavien viestien lkm (0 = rajoittamaton):</translation>
+        <translation>Missatges emmagatzemats (0 = il·limitat):</translation>
     </message>
     <message>
         <source>Number of messages restored  (0 = off):</source>
-        <translation>Palautettavien viestien lkm (0 = ei käytössä):</translation>
+        <translation>Nombre de missatges restaurats (0 = apagat):</translation>
     </message>
     <message>
         <source>Maximum storage period, in days (0=keep all):</source>
-        <translation>Varastoinnin enimmäisaika, päivinä (0=pidä kaikki):</translation>
+        <translation>Període màxim d&apos;emmagatzemat, en dies (0=Il·limitat):</translation>
     </message>
     <message>
         <source>Name : </source>
-        <translation>Nimi:</translation>
+        <translation>Nom:</translation>
     </message>
     <message>
         <source>Signed with key not in keyring</source>
-        <translation>Allekirjoitettu avaimella, jota ei ole avainnipussa</translation>
+        <translation>Signat amb una clau que no és a l&apos;anell de claus</translation>
     </message>
     <message>
         <source>Not signed.</source>
-        <translation>Ei allekirjoitettu.</translation>
+        <translation>Sense signar.</translation>
     </message>
     <message>
         <source>Authenticated signature</source>
-        <translation>Vahvistettu allekirjoitus</translation>
+        <translation>Signatura autentificada</translation>
     </message>
 </context>
 <context>
     <name>ChatStyle</name>
     <message>
         <source>Standard style for group chat</source>
-        <translation>Vakiotyyli ryhmäkeskustelulle</translation>
+        <translation>Estil estàndard per al xat en grup</translation>
     </message>
     <message>
         <source>Compact style for group chat</source>
-        <translation>Tiivis tyyli ryhmäkeskustelulle</translation>
+        <translation>Estil compacte pel xat en grup</translation>
     </message>
     <message>
         <source>Standard style for private chat</source>
-        <translation>Vakiotyyli yksityiselle keskustelulle</translation>
+        <translation>Estil estàndard pel xat privat</translation>
     </message>
     <message>
         <source>Compact style for private chat</source>
-        <translation>Tiivis tyyli yksityiselle keskustelulle</translation>
+        <translation>Estil compacte pel xat privat</translation>
     </message>
     <message>
         <source>Standard style for history</source>
-        <translation>Vakiotyyli historialle</translation>
+        <translation>Estil estàndard per a l&apos;històrial</translation>
     </message>
     <message>
         <source>Compact style for history</source>
-        <translation>Tiivis tyyli historialle</translation>
+        <translation>Estil compacte per a l&apos;històrial</translation>
     </message>
 </context>
 <context>
     <name>ChatToaster</name>
     <message>
         <source>Show Chat</source>
-        <translation>Näytä keskustelu</translation>
+        <translation>Mostra xat</translation>
     </message>
 </context>
 <context>
     <name>ChatUserNotify</name>
     <message>
         <source>Private Chat</source>
-        <translation>Yksityinen keskustelu</translation>
+        <translation>Xat privat</translation>
     </message>
 </context>
 <context>
     <name>ChatWidget</name>
     <message>
         <source>Close</source>
-        <translation>Sulje</translation>
+        <translation>Tancar</translation>
     </message>
     <message>
         <source>Send</source>
-        <translation>Lähetä</translation>
+        <translation>Enviar</translation>
     </message>
     <message>
         <source>Bold</source>
-        <translation>Lihavointi</translation>
+        <translation>Negreta</translation>
     </message>
     <message>
         <source>Underline</source>
-        <translation>Alleviivaus</translation>
+        <translation>Subratllat</translation>
     </message>
     <message>
         <source>Italic</source>
-        <translation>Kursivointi</translation>
+        <translation>Cursiva</translation>
     </message>
     <message>
         <source>Font</source>
-        <translation>Kirjasin</translation>
+        <translation>Tipus de lletra</translation>
     </message>
     <message>
         <source>Text Color</source>
-        <translation>Tekstin väri</translation>
+        <translation>Color del text</translation>
     </message>
     <message>
         <source>Attach a Picture</source>
-        <translation>Liitä kuva</translation>
+        <translation>Adjunta una imatge</translation>
     </message>
     <message>
         <source>Add a File for your Friend</source>
-        <translation>Lisää tiedosto ystävällesi</translation>
+        <translation>Afegeix un fitxer per al teu amic</translation>
     </message>
     <message>
         <source>Strike</source>
-        <translation>Yliviivaus</translation>
+        <translation>Vaga</translation>
     </message>
     <message>
         <source>Clear Chat History</source>
-        <translation>Tyhjennä keskusteluhistoria</translation>
+        <translation>Esborrar l&apos;historial de xat</translation>
     </message>
     <message>
         <source>Disable Emoticons</source>
-        <translation>Kytke hymiöt pois</translation>
+        <translation>Desactiva emoticones</translation>
     </message>
     <message>
         <source>Save Chat History</source>
-        <translation>Tallenna keskusteluhistoria</translation>
+        <translation>Desa historial de xat</translation>
     </message>
     <message>
         <source>Browse Message History</source>
-        <translation>Selaa viestihistoriaa</translation>
+        <translation>Navega per l&apos;Historial de missatges</translation>
     </message>
     <message>
         <source>Browse History</source>
-        <translation>Selaa historiaa</translation>
+        <translation>Navega per l&apos;historial</translation>
     </message>
     <message>
         <source>Delete Chat History</source>
-        <translation>Tuhoa keskusteluhistoria</translation>
+        <translation>Esborra l&apos;historial de xat</translation>
     </message>
     <message>
         <source>Deletes all stored and displayed chat history</source>
-        <translation>Tuhoaa kaikki tallennetut ja näkyvät keskusteluhistoriat</translation>
+        <translation>Esborra tots l&apos;historial de xat mostrat o desat</translation>
     </message>
     <message>
         <source>Choose font</source>
-        <translation>Valitse kirjasin</translation>
+        <translation>Escull el tipus de lletra</translation>
     </message>
     <message>
         <source>Reset font to default</source>
-        <translation>Palauta oletuskirjasin</translation>
+        <translation>Restablir tipografia per defecte</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
-        <translation>Liitä RetroShare-linkki</translation>
+        <translation>Enganxa l&apos;enllaç RetroShare</translation>
     </message>
     <message>
         <source>Paste my certificate link</source>
-        <translation>Liitä varmennelinkkini</translation>
+        <translation>Enganxar el meu enllaç de certificat</translation>
     </message>
     <message>
         <source>is typing...</source>
-        <translation>kirjoittaa...</translation>
+        <translation>està escrivint...</translation>
     </message>
     <message>
         <source>Do you really want to physically delete the history?</source>
-        <translation>Haluatko todella tuhota historian pysyvästi?</translation>
+        <translation>Realment vols eliminar físicament l&apos;historial?</translation>
     </message>
     <message>
         <source>Add Extra File</source>
-        <translation>Lisää ylimääräinen tiedosto</translation>
+        <translation>Afegir arxiu extra</translation>
     </message>
     <message>
         <source>Load Picture File</source>
-        <translation>Lataa kuvatiedosto</translation>
+        <translation>Carrega arxiu d&apos;imatge</translation>
     </message>
     <message>
         <source>Save as...</source>
-        <translation>Tallenna nimellä...</translation>
+        <translation>Desa com...</translation>
     </message>
     <message>
         <source>Text File (*.txt );;All Files (*)</source>
-        <translation>Tekstitiedosto (*.txt );;Kaikki tiedostot (*)</translation>
+        <translation>Arxiu de text (*.txt );;Tots els arxius (*)</translation>
     </message>
     <message>
         <source>appears to be Offline.</source>
-        <translation>näyttää olevan poissa linjoilta.</translation>
+        <translation>sembla que està fora de línia.</translation>
     </message>
     <message>
         <source>Messages you send will be delivered after Friend is again Online</source>
-        <translation>Lähettämäsi viestit toimitetaan kunhan ystäväsi palaa jälleen linjoille</translation>
+        <translation>Els missatges s&apos;entregaran quan l&apos;amic sigui altra vegada en línia</translation>
     </message>
     <message>
         <source>is Idle and may not reply</source>
-        <translation>on jouten, eikä välttämättä vastaa</translation>
+        <translation>és en espera i pot no respondre</translation>
     </message>
     <message>
         <source>is Away and may not reply</source>
-        <translation>on poissa, eikä välttämättä vastaa</translation>
+        <translation>és absent i no pot respondre</translation>
     </message>
     <message>
         <source>is Busy and may not reply</source>
-        <translation>on kiireinen, eikä välttämättä vastaa</translation>
+        <translation>està ocupat i pot no respondre</translation>
     </message>
 </context>
 <context>
     <name>CirclesDialog</name>
     <message>
         <source>Showing details: </source>
-        <translation>Näytetään tietoja:</translation>
+        <translation>Mostrant detalls:</translation>
     </message>
     <message>
         <source>Membership</source>
-        <translation>Jäsenyys</translation>
+        <translation>Pertinença</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation>Nimi</translation>
+        <translation>Nom</translation>
     </message>
     <message>
         <source>IDs</source>
-        <translation>Tunnisteet</translation>
+        <translation>Ids</translation>
     </message>
     <message>
         <source>Personal Circles</source>
-        <translation>Henkilökohtaiset piirit</translation>
+        <translation>Cercles personals</translation>
     </message>
     <message>
         <source>Public Circles</source>
-        <translation>Julkiset piirit</translation>
+        <translation>Cercles públics</translation>
     </message>
     <message>
         <source>Peers</source>
-        <translation>Vertaiset</translation>
+        <translation>Contactes</translation>
     </message>
     <message>
         <source>Status</source>
-        <translation>Tila</translation>
+        <translation>Estat</translation>
     </message>
     <message>
         <source>ID</source>
-        <translation>Tunniste</translation>
+        <translation>ID</translation>
     </message>
     <message>
         <source>Friends</source>
-        <translation>Ystävät</translation>
+        <translation>Amics</translation>
     </message>
     <message>
         <source>Friends of Friends</source>
-        <translation>Ystävien ystävät</translation>
+        <translation>Amics d&apos;amics</translation>
     </message>
     <message>
         <source>Others</source>
-        <translation>Muut</translation>
+        <translation>Altres</translation>
     </message>
     <message>
         <source>Permissions</source>
-        <translation>Käyttöoikeudet</translation>
+        <translation>Permisos</translation>
     </message>
     <message>
         <source>Anon Transfers</source>
-        <translation>Nimettömät siirrot</translation>
+        <translation>Transferències anònimes</translation>
     </message>
     <message>
         <source>Discovery</source>
-        <translation>Etsintä</translation>
+        <translation>Descobriment</translation>
     </message>
     <message>
         <source>Share Category</source>
-        <translation>Jakokategoria</translation>
+        <translation>Categoria dels compartits</translation>
     </message>
     <message>
         <source>Create Personal Circle</source>
-        <translation>Luo henkilökohtainen piiri</translation>
+        <translation>Crear cercle personal</translation>
     </message>
     <message>
         <source>Create External Circle</source>
-        <translation>Luo ulkoinen piiri</translation>
+        <translation>Crear cercle extern</translation>
     </message>
     <message>
         <source>Edit Circle</source>
-        <translation>Muokkaa piiriä</translation>
+        <translation>Editar cercle</translation>
     </message>
     <message>
         <source>Todo</source>
-        <translation>Tehtävät</translation>
+        <translation>Pendent</translation>
     </message>
     <message>
         <source>Friends Of Friends</source>
-        <translation>Ystävien ystävät</translation>
+        <translation>Amics dels amics</translation>
     </message>
     <message>
         <source>External Circles (Admin)</source>
-        <translation>Ulkoiset piirit (Ylläpito)</translation>
+        <translation>Cercles externs (Admin)</translation>
     </message>
     <message>
         <source>External Circles (Subscribed)</source>
-        <translation>Ulkoiset piirit (Tilattu)</translation>
+        <translation>Cercles externs (Subscrits)</translation>
     </message>
     <message>
         <source>External Circles (Other)</source>
-        <translation>Ulkoiset piirit (Muu)</translation>
+        <translation>Cercles externs (Altres)</translation>
     </message>
     <message>
         <source>Circles</source>
-        <translation>Piirit</translation>
+        <translation>Cercles</translation>
     </message>
 </context>
 <context>
     <name>ConfCertDialog</name>
     <message>
         <source>Friend Details</source>
-        <translation>Ystävän tiedot</translation>
+        <translation>Detalls de l&apos;amic</translation>
     </message>
     <message>
         <source>Details</source>
-        <translation>Tiedot</translation>
+        <translation>Detalls</translation>
     </message>
     <message>
         <source>Peer Info</source>
-        <translation>Vertaisen tiedot</translation>
+        <translation>Informació del contacte</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation>Nimi</translation>
+        <translation>Nom</translation>
     </message>
     <message>
         <source>Peer ID</source>
-        <translation>Vertaisen tunniste</translation>
+        <translation>ID del contacte</translation>
     </message>
     <message>
         <source>RetroShare ID</source>
-        <translation>RetroSharen tunniste</translation>
+        <translation>ID RetroShare</translation>
     </message>
     <message>
         <source>Other info</source>
-        <translation>Muut tiedot</translation>
+        <translation>Altra informació</translation>
     </message>
     <message>
         <source>Loc</source>
-        <translation>Sijainti</translation>
+        <translation>Loc</translation>
     </message>
     <message>
         <source>Status</source>
-        <translation>Tila</translation>
+        <translation>Estat</translation>
     </message>
     <message>
         <source>Last Contact</source>
-        <translation>Viimeisin kontakti</translation>
+        <translation>Últim missatge</translation>
     </message>
     <message>
         <source>Version</source>
-        <translation>Versio</translation>
+        <translation>Versió</translation>
     </message>
     <message>
         <source>Peer Address</source>
-        <translation>Vertaisen osoite</translation>
+        <translation>Adreça del contacte</translation>
     </message>
     <message>
         <source>Local Address</source>
-        <translation>Paikallinen osoite</translation>
+        <translation>Adreça local</translation>
     </message>
     <message>
         <source>External Address</source>
-        <translation>Ulkoinen osoite</translation>
+        <translation>Adreça externa</translation>
     </message>
     <message>
         <source>Dynamic DNS</source>
-        <translation>Dynaaminen nimipalvelin</translation>
+        <translation>DNS dinàmic</translation>
     </message>
     <message>
         <source>Port</source>
-        <translation>Portti</translation>
+        <translation>Port</translation>
     </message>
     <message>
         <source>Addresses list</source>
-        <translation>Osoiteluettelo</translation>
+        <translation>Llista d&apos;adreces</translation>
     </message>
     <message>
         <source>Trust </source>
-        <translation>Luottamus</translation>
+        <translation>Confiança </translation>
     </message>
     <message>
         <source>Your trust in this peer is:</source>
-        <translation>Luottamuksesi vertaiseen on:</translation>
+        <translation>La confiança amb el contacte és:</translation>
     </message>
     <message>
         <source>None </source>
-        <translation>Nolla</translation>
+        <translation>Cap </translation>
     </message>
     <message>
         <source>Marginal </source>
-        <translation>Rajallinen</translation>
+        <translation>Marginal </translation>
     </message>
     <message>
         <source>Full </source>
-        <translation>Täysi</translation>
+        <translation>Completa </translation>
     </message>
     <message>
         <source>PGP Key</source>
-        <translation>PGP-avain</translation>
+        <translation>Clau PGP</translation>
     </message>
     <message>
         <source>Peer has signed my PGP key</source>
-        <translation>Vertainen on allekirjoittanut PGP-avaimeni</translation>
+        <translation>El contacte ha signat la meva clau PGP</translation>
     </message>
     <message>
         <source>Show Help for Trust Settings and Signing</source>
-        <translation>Näytä ohje luottamusasetuksille ja allekirjoittamiselle</translation>
+        <translation>Mostrar l&apos;ajuda per a la configuració de confiança i signatures</translation>
     </message>
     <message>
         <source>Peer key is signed by :</source>
-        <translation>Vertaisen avaimen on allekirjoittanut:</translation>
+        <translation>Clau del contacte signada per:</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -2172,68 +2172,69 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a friend's key is a way to express your trust into this friend, to your other friends. Besides, only signed peers will receive information about your other trusted friends.&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signing a key cannot be undone, so do it wisely.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Ystävän avaimen allekirjoittaminen on tapa ilmaista muille ystävillesi, että luotat tähän henkilöön . Huomioi myös, että ainoastaan allekirjoitetut vertaiset voivat saada tietoja muista luotetuista ystävistäsi.&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Avaimen allekirjoittamista ei voi perua, joten käytä harkintaasi.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
+p, li { white-space: pre-wrap; }⏎
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;⏎
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Signar la clau d&apos;un amic és una forma de demostrar la confiança amb aquest amic, als teus altres amics. A més a més, només els contactes amb claus signades rebran informació sobre els teus altres amics de confiança.&lt;/p&gt;⏎
+&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;/p&gt;⏎
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;No es pot desfer una signatura, fes-ho només si n&apos;estàs segur.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Sign PGP key</source>
-        <translation>Allekirjoita PGP-avain</translation>
+        <translation>Signa clau PGP</translation>
     </message>
     <message>
         <source>Deny Friend</source>
-        <translation>Torju ystävä</translation>
+        <translation>Negar l&apos;amic</translation>
     </message>
     <message>
         <source>Make Friend</source>
-        <translation>Tee ystäväksi</translation>
+        <translation>Fer amic</translation>
     </message>
     <message>
         <source>Certificate</source>
-        <translation>Varmenne</translation>
+        <translation>Certificat</translation>
     </message>
     <message>
         <source>Include signatures</source>
-        <translation>Sisällytä allekirjoitukset</translation>
+        <translation>Inclou les signatures</translation>
     </message>
     <message>
         <source>Use old key format</source>
-        <translation>Käytä vanhaa avainformaattia</translation>
+        <translation>Utilitza el format antic de clau</translation>
     </message>
     <message>
         <source>Services</source>
-        <translation>Palvelut</translation>
+        <translation>Serveis</translation>
     </message>
     <message>
         <source>User service permissions</source>
-        <translation>Käyttäjän palvelujen käyttöoikeudet</translation>
+        <translation>Permisos del servei de l&apos;usuari</translation>
     </message>
     <message>
         <source>This tab allows you to finely tune which services each of your contacts is allowed to use with you.
 
 Some services (Discovery, anonymous routing) can be switched off globally, which always overrides the settings per-user.</source>
-        <translation>Tällä välilehdellä voit määritellä tarkasti, mitä palveluja kukin ystäväsi voi käyttää kanssasi
-Jotkut palvelut (etsintä, nimetön reititys) voi kytkeä pois yleisellä tasolla, jolloin käyttäjäkohtaiset asetukset ohitetaan.</translation>
+        <translation>Aquesta pestanya et permet afinar quins serveis de cada un dels teus contactes té permès utilitzar amb tu.
+
+Alguns serveis (Descobriment, encaminat anònim) poden desactivar-se globalment, això té preferència sobre el que s&apos;especifiqui per cada usuari.</translation>
     </message>
     <message>
         <source>Anonymous routing</source>
-        <translation>Nimetön reitittäminen</translation>
+        <translation>Encaminament anònim</translation>
     </message>
     <message>
         <source>Discovery</source>
-        <translation>Etsintä</translation>
+        <translation>Descobriment</translation>
     </message>
     <message>
         <source>Forums/Channels</source>
-        <translation>Foorumit/Kanavat</translation>
+        <translation>Fòrums/Canals</translation>
     </message>
     <message>
         <source>Chat</source>
-        <translation>Keskustelu</translation>
+        <translation>Xat</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -2241,915 +2242,915 @@ Jotkut palvelut (etsintä, nimetön reititys) voi kytkeä pois yleisellä tasoll
     </message>
     <message>
         <source>Error : cannot get peer details.</source>
-        <translation>Virhe: vertaisen yksityiskohtia ei saatu.</translation>
+        <translation>Error: no es poden obtenir detalls del contacte.</translation>
     </message>
     <message>
         <source>The supplied key algorithm is not supported by RetroShare
 (Only RSA keys are supported at the moment)</source>
-        <translation>RetroShare ei tue antamaasi avainalgoritmia
-(Tällä hetkellä vain RSA-avaimet käyvät)</translation>
+        <translation>L&apos;algorisme de la clau proporcionada no és suportada pel RetroShare⏎
+(Només suporta claus RSA per ara)</translation>
     </message>
     <message>
         <source>My key is signed by : </source>
-        <translation>Avaimeni on allekirjoittanut :</translation>
+        <translation>La meva clau està signada per:</translation>
     </message>
     <message>
         <source>Peer key is signed by : </source>
-        <translation>Vertaisen avaimen on allekirjoittanut:</translation>
+        <translation>Clau del contacte signada per:</translation>
     </message>
     <message>
         <source>Your trust in this peer is ultimate, it&apos;s probably a key you own.</source>
-        <translation>Luottamuksesi tähän vertaiseen on äärimmäinen, se on luultavasti oma avaimesi.</translation>
+        <translation>La confiança en aquest contacte és completa, probablement siguis propietari d&apos;aquesta clau.</translation>
     </message>
     <message>
         <source>Your trust in this peer is full.</source>
-        <translation>Luottamuksesi tähän vertaiseen on täysi.</translation>
+        <translation>La confiança en aquest contacte és plena.</translation>
     </message>
     <message>
         <source>Your trust in this peer is marginal.</source>
-        <translation>Luottamuksesi tähän vertaiseen on rajallinen.</translation>
+        <translation>La confiança en aquest contacte és marginal.</translation>
     </message>
     <message>
         <source>Your trust in this peer is none.</source>
-        <translation>Luottamuksesi tähän vertaiseen on nolla.</translation>
+        <translation>La confiança en aquest contacte és nula.</translation>
     </message>
     <message>
         <source>Your trust in this peer is not set.</source>
-        <translation>Luottamustasi tähän vertaiseen ei ole asetettu.</translation>
+        <translation>La confiança en aquest contacte no està definida.</translation>
     </message>
     <message>
         <source>Peer has authenticated me as a friend and did sign my PGP key</source>
-        <translation>Vertainen on varmentanut minut ystäväkseen ja allekirjoittanut PGP-avaimeni</translation>
+        <translation>El contacte m&apos;ha autenticat com a amic i signat la clau PGP</translation>
     </message>
     <message>
         <source>Peer has not authenticated me as a friend and did not sign my PGP key</source>
-        <translation>Vertainen ei ole varmentanut minua ystäväkseen, eikä allekirjoittanut PGP-avaimeni</translation>
+        <translation>El contacte no m&apos;ha autenticat com amic ni signat la clau PGP</translation>
     </message>
     <message>
         <source>Signature Failure</source>
-        <translation>Virhe allekirjoitettaessa</translation>
+        <translation>Fracàs en la signatura</translation>
     </message>
     <message>
         <source>Maybe password is wrong</source>
-        <translation>Salasana saattaa olla väärä</translation>
+        <translation>Potser la contrasenya sigui incorrecta</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling anonymous routing will suppress all sending/retrieval of tunnel and anonymous search requests from/to this user. This user will not be able to transfer anonymously through you.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&gt;Nimettömän reitittämisen poiskytkeminen estää kaikki tunneleita käyttävien ja nimettömien hakutulosten pyynnöt tältä/tälle käyttäjältä/-lle. Tämä käyttäjä ei täten voi käyttää nimettömiä siirtoja kauttasi.&lt;/p&gt;&lt;p align=&quot;justify&gt;Mene palvelinasetuksiin, jos haluat ottaa poiskytkemisen käyttöön yleisesti.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Desactivar l&apos;encaminament anònim evitarà tot l&apos;enviament i recepció de peticions de túnels i cerques anònimes per aquest usuari. Aquest usuari no podrà fer transferències anònimes a través teu.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;Si el que volies era la opció global mira al panell de configuració.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling discovery removes the sending of public keys of your own friends to this user. Discovery information from this friend will be dropped as well.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Etsinnän poiskytkeminen estää ystäviesi julkisten avainten lähettämisen tälle käyttäjälle. Myös käyttäjän itsensä lähettämät etsintätiedot ohitetaan.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;Mene palvelinasetuksiin, jos haluat ottaa poiskytkemisen käyttöön yleisesti.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling discovery removes the sending of public keys of your own friends to this user. Discovery information from this friend will be dropped as well.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling this means that forums and channels posts will not be passed from you to this friend, and items coming from this friend will be dropped.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Poiskytkeminen aiheuttaa sen, että foorumit ja kanavaviestit eivät kulje kauttasi tälle ystävälle ja tältä ystävältä tulevat nimikkeet ohitetaan.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Desactivar això vol dir que les publicacions a fòrums i canals no passaran de tu a aquest amic, i els elements procedents de l&apos;amic seran descartats.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Use as direct source, when available</source>
-        <translation>Käytä suorana lähteenä, kun saatavilla</translation>
+        <translation>Utilitza com a font directa quan estigui disponible</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Retroshare periodically checks your friend lists for browsable files matching your transfers, to establish a direct transfer. In this case, your friend knows you&apos;re downloading the file.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;To prevent this behavior for this friend only, uncheck this box. You can still perform a direct transfer if you explicitly ask for it, by e.g. downloading from your friend&apos;s file list. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Retroshare käy ajoittain läpi ystäväluettelosi siirtojasi vastaavien selattavien tiedostojen varalta, jotta voitaisiin muodostaa suora siirtoyhteys. Tällaisessa tapauksessa ystäväsi tietää, että lataat tiedostoa.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;Estääksesi toiminnan tämän ystävän tapauksessa, poista rasti tästä ruudusta. Voit silti muodostaa suoran siirtoyhteyden halutessasi, esim. lataamalla suoraan ystäväsi tiedostoluettelosta. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;El RetroShare periòdicament comprova la teva llista d&apos;amics per arxius navegables que coincideixin amb els mateixos que estàs descarregant, per establis una transferència directa. En aquest cas els teus amics sabran que descarregues.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;Si no vols que això passi per algun amic en concret, desmarca aquesta casekka. Encara podràs realitzar transferències directes si ho demanes explicitament, per exemple descarregant de la llista del teu amic directament.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Encryption</source>
-        <translation>Salaus</translation>
+        <translation>Encriptació</translation>
     </message>
     <message>
         <source>Not connected</source>
-        <translation>Ei yhteyttä</translation>
+        <translation>No connectat</translation>
     </message>
     <message>
         <source>Peer Addresses</source>
-        <translation>Vertaisten osoitteet</translation>
+        <translation>Adreces del contacte</translation>
     </message>
 </context>
 <context>
     <name>ConnectFriendWizard</name>
     <message>
         <source>Connect Friend Wizard</source>
-        <translation>Ohjattu toiminto ystävän yhdistämiseksi</translation>
+        <translation>Auxiliar de connexió amb amic</translation>
     </message>
     <message>
         <source>Add a new Friend</source>
-        <translation>Lisää uusi ystävä</translation>
+        <translation>Afegir un nou amic</translation>
     </message>
     <message>
         <source>This wizard will help you to connect to your friend(s) to RetroShare network.&lt;br&gt;These ways are possible to do this:</source>
-        <translation>Tämä aputoiminto auttaa sinua ottamaan yhteyden ystäviisi RetroShare-verkossa.&lt;br&gt;Asian voi hoitaa seuraavilla tavoilla:</translation>
+        <translation>Aquest assistent ajudarà a connectar-te als teus amics de la xarxa RetroShare.&lt;br&gt;Hi ha disponibles els següent mètodes:</translation>
     </message>
     <message>
         <source>&amp;Enter the certificate manually</source>
-        <translation>&amp;Anna varmenne manuaalisesti</translation>
+        <translation>&amp;Introdueix certificat manualment</translation>
     </message>
     <message>
         <source>&amp;You get a certificate file from your friend</source>
-        <translation>&amp;Saat varmenteen ystävältäsi</translation>
+        <translation>&amp;El teu amic et proporciona un arxiu de certificat</translation>
     </message>
     <message>
         <source>&amp;Make friend with selected friends of my friends</source>
-        <translation>&amp;Ystävysty valitsemieni ystävien ystävien kanssa</translation>
+        <translation>&amp;Fes-te amic dels amics seleccionats dels teus amics</translation>
     </message>
     <message>
         <source>&amp;Enter RetroShare ID manually</source>
-        <translation>A&amp;nna RetroSharen tunniste manuaalisesti</translation>
+        <translation>&amp;Introdueix l&apos;Id de RetroShare manualment</translation>
     </message>
     <message>
         <source>&amp;Send an Invitation by Email 
  (She/He receives an email with instructions how to to download RetroShare)</source>
-        <translation>&amp;Lähetä kutsu sähköpostilla
- (Hän vastaanottaa sähköpostin, joka sisältää ohjeet RetroSharen lataamiseksi)</translation>
+        <translation>&amp;Envia una invitació per correu electrònic ⏎
+(Rebrà un correu electrònic amb instruccions sobre com descarregar el RetroShare)</translation>
     </message>
     <message>
         <source>Text certificate</source>
-        <translation>Tekstivarmenne</translation>
+        <translation>Certificat en text</translation>
     </message>
     <message>
         <source>Use text representation of the PGP certificates.</source>
-        <translation>Näytä PGP-varmenteet tekstimuotoisina.</translation>
+        <translation>Utilitza text representatiu dels certificats PGP.</translation>
     </message>
     <message>
         <source>The text below is your PGP certificate. You have to provide it to your friend</source>
-        <translation>Allaoleva teksti on PGP-varmenteesi. Sinun tulee antaa se ystävällesi</translation>
+        <translation>El text inferior es el teu certificat PGP. L&apos;has de proporcionar al teu amic</translation>
     </message>
     <message>
         <source>Include signatures</source>
-        <translation>Sisällytä allekirjoitukset</translation>
+        <translation>Inclou les signatures</translation>
     </message>
     <message>
         <source>Copy your Cert to Clipboard</source>
-        <translation>Kopioi varmenteesi leikepöydälle</translation>
+        <translation>Copiar el teu certificat al porta-retalls</translation>
     </message>
     <message>
         <source>Save your Cert into a File</source>
-        <translation>Tallenna varmenteesi tiedostoon</translation>
+        <translation>Desar el teu certificar en un arxiu</translation>
     </message>
     <message>
         <source>Run Email program</source>
-        <translation>Käynnistä sähköpostiohjelma</translation>
+        <translation>Executa el programa de correu electrònic</translation>
     </message>
     <message>
         <source>Please, paste your friends PGP certificate into the box below</source>
-        <translation>Ole hyvä ja liitä ystäväsi PGP-varmenne allaolevaan laatikkoon</translation>
+        <translation>Si us plau, enganxa el certificat PGP dels teus amics a la caixa inferior</translation>
     </message>
     <message>
         <source>Certificate files</source>
-        <translation>Varmennetiedostot</translation>
+        <translation>Arxiu de certificat</translation>
     </message>
     <message>
         <source>Use PGP certificates saved in files.</source>
-        <translation>Käytä tiedostoihin tallennettuja PGP-varmenteita.</translation>
+        <translation>Utilitza certificats PGP desat en arxius.</translation>
     </message>
     <message>
         <source>Import friend&apos;s certificate...</source>
-        <translation>Tuo ystävän varmenne...</translation>
+        <translation>Importa certificats d&apos;amics...</translation>
     </message>
     <message>
         <source>You have to generate a file with your certificate and give it to your friend. Also, you can use a file generated before.</source>
-        <translation>Sinun tulee luoda tiedosto, joka sisältää varmenteesi ja antaa se ystävällesi. Voit myös käyttää aiemmin luotua tiedostoa.</translation>
+        <translation>Has de generar un arxiu amb el teu certificat i donar-lo al teu amic. També pots utilitzar un arxiu generat anteriorment.</translation>
     </message>
     <message>
         <source>Export my certificate...</source>
-        <translation>Vie varmenteeni...</translation>
+        <translation>Exportar el meu certificat...</translation>
     </message>
     <message>
         <source>Drag and Drop your friends&apos;s certificate in this Window or specify path in the box below</source>
-        <translation>Vedä ja pudota ystäväsi varmenne tähän ikkunaan tai määritä polku allaolevaan laatikkoon</translation>
+        <translation>Arrossega i deixa el certificat dels teus amics a aquesta finestra o especifica una ubicació a la part inferior</translation>
     </message>
     <message>
         <source>Browse</source>
-        <translation>Selaa</translation>
+        <translation>Navegar</translation>
     </message>
     <message>
         <source>Friends of friends</source>
-        <translation>Ystävien ystäviä</translation>
+        <translation>Amics d&apos;amics</translation>
     </message>
     <message>
         <source>Select now who you want to make friends with.</source>
-        <translation>Valitse nyt, kenen kanssa haluat ystävystyä.</translation>
+        <translation>Selecciona amb qui et vols fer amic ara.</translation>
     </message>
     <message>
         <source>Show me:</source>
-        <translation>Näytä:</translation>
+        <translation>Mostra-m&apos;ho:</translation>
     </message>
     <message>
         <source>Make friend with these peers</source>
-        <translation>Ystävysty näiden vertaisten kanssa</translation>
+        <translation>Fer-se amic amb aquests contactes</translation>
     </message>
     <message>
         <source>RetroShare ID</source>
-        <translation>RetroSharen tunniste</translation>
+        <translation>ID RetroShare</translation>
     </message>
     <message>
         <source>Use RetroShare ID for adding a Friend which is available in your network.</source>
-        <translation>Käytä RetroShare-tunnistetta verkossasi olevan ystävän lisäämiseen.</translation>
+        <translation>Utilitza la Id de RetroShare per afegir un amic que es troba disponible a la xarxa.</translation>
     </message>
     <message>
         <source>Add Friends RetroShare ID...</source>
-        <translation>Lisää ystävän RetroShare-tunniste...</translation>
+        <translation>Afegir amics utilitzant la Id de RetroShare...</translation>
     </message>
     <message>
         <source>Paste Friends RetroShare ID in the box below</source>
-        <translation>Liitä ystävän RetroShare-tunniste allaolevaan laatikkoon</translation>
+        <translation>Enganxar Id de RetroShare de l&apos;amic a la casella inferior</translation>
     </message>
     <message>
         <source>Enter the RetroShare ID of your Friend, e.g. Peer@BDE8D16A46D938CF</source>
-        <translation>Anna ystäväsi RetroShare-tunniste, tyyliin Vertainen@BDE8D16A46D938CF</translation>
+        <translation>Introdueix el Id de RetroShare del teu amic, ex. Contacte@BDE8D16A46D938CF</translation>
     </message>
     <message>
         <source>Invite Friends by Email</source>
-        <translation>Kutsu ystäviä sähköpostilla</translation>
+        <translation>Convidar amics per correu electrònic</translation>
     </message>
     <message>
         <source>Enter your friends&apos; email addresses (separate each one with a semicolon)</source>
-        <translation>Kirjoita ystäviesi sähköpostiosoitteet (erottele ne puolipisteellä)</translation>
+        <translation>Introdueix l&apos;adreça de correu electrònic dels teus amics (Separa-les amb un punt i coma)</translation>
     </message>
     <message>
         <source>Your friends&apos; email addresses:</source>
-        <translation>Ystäviesi sähköpostiosoitteet:</translation>
+        <translation>L&apos;adreça de correu electrònic dels teus amics:</translation>
     </message>
     <message>
         <source>Enter Friends Email addresses</source>
-        <translation>Kirjoita ystäviesi sähköpostiosoitteet</translation>
+        <translation>Introdueix les adreces de correu electrònic dels teus amics</translation>
     </message>
     <message>
         <source>Subject:</source>
-        <translation>Aihe:</translation>
+        <translation>Assumpte:</translation>
     </message>
     <message>
         <source>Friend request</source>
-        <translation>Ystäväpyyntö</translation>
+        <translation>Petició d&apos;amic</translation>
     </message>
     <message>
         <source>Details about the request</source>
-        <translation>Tietoja pyynnöstä</translation>
+        <translation>Detalls sobre la petició</translation>
     </message>
     <message>
         <source>Peer details</source>
-        <translation>Vertaisen tiedot</translation>
+        <translation>Detalls del contacte</translation>
     </message>
     <message>
         <source>Name:</source>
-        <translation>Nimi:</translation>
+        <translation>Nom:</translation>
     </message>
     <message>
         <source>Email:</source>
-        <translation>Sähköposti:</translation>
+        <translation>Correu electrònic:</translation>
     </message>
     <message>
         <source>Location:</source>
-        <translation>Sijainti:</translation>
+        <translation>Ubicació:</translation>
     </message>
     <message>
         <source>Options</source>
-        <translation>Asetukset</translation>
+        <translation>Opcions</translation>
     </message>
     <message>
         <source>Add friend to group:</source>
-        <translation>Lisää ystävä ryhmään:</translation>
+        <translation>Afegir amic al grup:</translation>
     </message>
     <message>
         <source>Authenticate friend (Sign PGP Key)</source>
-        <translation>Varmenna ystävä (allekirjoita PGP-avain)</translation>
+        <translation>Autentica amic (Signa clau PGP)</translation>
     </message>
     <message>
         <source>Add as friend to connect with</source>
-        <translation>Lisää ystäväksi, johon otat yhteyden</translation>
+        <translation>Afegir com amic amb qui connectar</translation>
     </message>
     <message>
         <source>Service permissions</source>
-        <translation>Palvelujen käyttöoikeudet</translation>
+        <translation>Permisos del servei</translation>
     </message>
     <message>
         <source>Anonymous routing</source>
-        <translation>Nimetön reitittäminen</translation>
+        <translation>Encaminament anònim</translation>
     </message>
     <message>
         <source>Discovery</source>
-        <translation>Etsintä</translation>
+        <translation>Descobriment</translation>
     </message>
     <message>
         <source>Forums/channels</source>
-        <translation>Foorumit/kanavat</translation>
+        <translation>Fòrums/Canals</translation>
     </message>
     <message>
         <source>To accept the Friend Request, click the Finish button.</source>
-        <translation>Paina Valmis-painiketta hyväksyäksesi ystäväpyynnön</translation>
+        <translation>Per acceptar la petició de l&apos;amic, clica al botó acabar.</translation>
     </message>
     <message>
         <source>Sorry, some error appeared</source>
-        <translation>Valitettavasti on tapahtunut jokin virhe</translation>
+        <translation>Ho sentim, ha aparegut algun error</translation>
     </message>
     <message>
         <source>Here is the error message:</source>
-        <translation>Virheviesti:</translation>
+        <translation>Aquí tens el missatge d&apos;error:</translation>
     </message>
     <message>
         <source>Make Friend</source>
-        <translation>Tee ystäväksi</translation>
+        <translation>Fer amic</translation>
     </message>
     <message>
         <source>Details about your friend:</source>
-        <translation>Tietoja ystävästäsi:</translation>
+        <translation>Detalls sobre el teu amic:</translation>
     </message>
     <message>
         <source>Key validity:</source>
-        <translation>Avaimen kelpoisuus:</translation>
+        <translation>Validesa de la clau:</translation>
     </message>
     <message>
         <source>Signers</source>
-        <translation>Allekirjoittajat</translation>
+        <translation>Signants</translation>
     </message>
     <message>
         <source>This peer is already on your friend list. Adding it might just set it&apos;s ip address.</source>
-        <translation>Tämä vertainen on jo ystäväluettelossasi. Hänen lisäämisensä saattaa ainoastaan määrittää uuden IP-osoitteen.</translation>
+        <translation>Aquest contacte ja és a la llista d&apos;amics. Afegir-lo potser només actualitzi la seva adreça IP.</translation>
     </message>
     <message>
         <source>Abnormal size read is bigger than memory block.</source>
-        <translation>Epänormaali koko luettu, suurempi kuin muistilohko.</translation>
+        <translation>Mida de lectura anormal és major que el bloc de memòria.</translation>
     </message>
     <message>
         <source>Invalid location id.</source>
-        <translation>Virheellinen sijaintitunniste.</translation>
+        <translation>Id d&apos;ubicació invàlid.</translation>
     </message>
     <message>
         <source>Invalid external IP.</source>
-        <translation>Virheellinen ulkoinen IP.</translation>
+        <translation>IP externa invàlida.</translation>
     </message>
     <message>
         <source>Invalid local IP.</source>
-        <translation>Virheellinen paikallinen IP.</translation>
+        <translation>IP local invàlida.</translation>
     </message>
     <message>
         <source>Invalid checksum section.</source>
-        <translation>Virheellinen tarkistussummaosio.</translation>
+        <translation>Secció amb suma de validació invàlida.</translation>
     </message>
     <message>
         <source>Checksum mismatch. Certificate is corrupted.</source>
-        <translation>Tarkistussumma ei täsmää. Varmenne on vioittunut.</translation>
+        <translation>La suma de validació no coincideix. Certificat corrumput.</translation>
     </message>
     <message>
         <source>Unknown section type found (Certificate might be corrupted).</source>
-        <translation>Havaittiin tuntematon osiotyyppi (varmenne saattaa olla vioittunut).</translation>
+        <translation>S&apos;ha trobat un tipus de secció desconegut (El certificat pot estar corromput).</translation>
     </message>
     <message>
         <source>Missing checksum.</source>
-        <translation>Puuttuva tarkistussumma.</translation>
+        <translation>Falta la suma de validació.</translation>
     </message>
     <message>
         <source>Unknown certificate error</source>
-        <translation>Tuntematon varmennevirhe.</translation>
+        <translation>Error de certificat desconegut</translation>
     </message>
     <message>
         <source>Certificate Load Failed</source>
-        <translation>Varmenteen lataus epäonnistui</translation>
+        <translation>Càrrega de certificat fallida</translation>
     </message>
     <message>
         <source>Cannot get peer details of PGP key %1</source>
-        <translation>Vertaistietoja ei kyetty hakemaan PGP-avaimelle %1</translation>
+        <translation>No es poden aconseguir els detalls del contacte de la clau PGP %1</translation>
     </message>
     <message>
         <source>Any peer I&apos;ve not signed</source>
-        <translation>Kaikki vertaiset, joita en ole allekirjoittanut</translation>
+        <translation>Qualsevol contacte que no he signat</translation>
     </message>
     <message>
         <source>Friends of my friends who already trust me</source>
-        <translation>Ystävieni ystävät, jotka jo luottavat minuun</translation>
+        <translation>Amics dels meus amics que ja confien en mi</translation>
     </message>
     <message>
         <source>Signed peers showing as denied</source>
-        <translation>Allekirjoitetut vertaiset, jotka näkyvät torjuttuina</translation>
+        <translation>Contactes signats mostrats com denegats</translation>
     </message>
     <message>
         <source>Peer name</source>
-        <translation>Vertaisen nimi</translation>
+        <translation>Nom del contacte</translation>
     </message>
     <message>
         <source>Also signed by</source>
-        <translation>Muita allekirjoittaneita</translation>
+        <translation>També signat per</translation>
     </message>
     <message>
         <source>Peer id</source>
-        <translation>Vertaisen tunniste</translation>
+        <translation>Id contacte</translation>
     </message>
     <message>
         <source>RetroShare Invitation</source>
-        <translation>Retroshare-kutsu</translation>
+        <translation>Invitació al RetroShare</translation>
     </message>
     <message>
         <source>Ultimate</source>
-        <translation>Äärimmäinen</translation>
+        <translation>Definitiu</translation>
     </message>
     <message>
         <source>Full</source>
-        <translation>Täysi</translation>
+        <translation>Completa</translation>
     </message>
     <message>
         <source>Marginal</source>
-        <translation>Rajallinen</translation>
+        <translation>Marginal</translation>
     </message>
     <message>
         <source>None</source>
-        <translation>Ei mikään</translation>
+        <translation>Cap</translation>
     </message>
     <message>
         <source>No Trust</source>
-        <translation>Ei luottamusta</translation>
+        <translation>Sense confiança</translation>
     </message>
     <message>
         <source>You have a friend request from</source>
-        <translation>Sinulle on ystäväpyyntö, lähettäjä</translation>
+        <translation>Tens una petició d&apos;amic de</translation>
     </message>
     <message>
         <source>Certificate Load Failed:can&apos;t read from file %1 </source>
-        <translation>Varmenteen avaaminen epäonnistui: ei voitu lukea tiedostosta %1 </translation>
+        <translation>Carrega de certificat fallada: no es pot llegir de l&apos;arxiu %1</translation>
     </message>
     <message>
         <source>Certificate Load Failed:something is wrong with %1 </source>
-        <translation>Varmenteen avaaminen epäonnistui. Tässä on jotakin vikaa: %1</translation>
+        <translation>Carrega de certificat fallada: Hi ha alguna cosa malament amb %1</translation>
     </message>
     <message>
         <source>Certificate Load Failed:file %1 not found</source>
-        <translation>Varmenteen avaaminen epäonnistui: tiedostoa %1 ei löydy</translation>
+        <translation>Carrega de certificat fallada: No es troba l&apos;arxiu %1</translation>
     </message>
     <message>
         <source>This Peer %1 is not available in your Network</source>
-        <translation>Vertainen %1 ei ole verkossasi</translation>
+        <translation>El contacte %1 no està disponible a la teva xarxa</translation>
     </message>
     <message>
         <source>Use new certificate format (safer, more robust)</source>
-        <translation>Käytä uutta varmenneformaattia (turvallisempi ja vakaampi)</translation>
+        <translation>Utilitza el format nou de certificat (més robust i segur)</translation>
     </message>
     <message>
         <source>Use old (backward compatible) certificate format</source>
-        <translation>Käytä vanhaa (takaisinpäin yhteensopivaa) varmenneformaattia</translation>
+        <translation>Utilitza el format de certificat antic (Compatible amb versions anteriors)</translation>
     </message>
     <message>
         <source>Remove signatures</source>
-        <translation>Poista allekirjoitukset</translation>
+        <translation>Elimina signatures</translation>
     </message>
     <message>
         <source>RetroShare Invite</source>
-        <translation>RetroShare-kutsu</translation>
+        <translation>Invita al RetroShare</translation>
     </message>
     <message>
         <source>No or misspelled BEGIN tag found</source>
-        <translation>BEGIN-merkkausta ei ole tai siinä on virhe</translation>
+        <translation>No hi és o està mal escrita l&apos;etiqueta BEGIN</translation>
     </message>
     <message>
         <source>No or misspelled END tag found</source>
-        <translation>END-merkkausta ei ole tai siinä on virhe</translation>
+        <translation>No hi és o està mal escrita l&apos;etiqueta END</translation>
     </message>
     <message>
         <source>No checksum found (the last 5 chars should be separated by a &apos;=&apos; char), or no newline after tag line (e.g. line beginning with Version:)</source>
-        <translation>Ei tarkistussummaa (viimeiset 5 merkkiä tulisi olla erotettu &apos;=&apos;-merkillä) tai ei rivinvaihtoa merkkausrivin jälkeen (rivin, joka alkaa Versio:)</translation>
+        <translation>No s&apos;ha trobat la suma de comprovació (Els últims 5 caràcters haurien d&apos;estar separats per un &apos;=&apos;), o no hi ha un salt de línia després de l&apos;etiqueta (ex. La línia que comença amb &apos;Version:&apos;)</translation>
     </message>
     <message>
         <source>Unknown error. Your cert is probably not even a certificate.</source>
-        <translation>Tuntematon virhe. Varmenteesi ei todennäköisesti edes ole varmenne.</translation>
+        <translation>Error desconegut. El teu certificat no sembla un certificat.</translation>
     </message>
     <message>
         <source>Connect Friend Help</source>
-        <translation>Ohje ystävän yhdistämisestä</translation>
+        <translation>Ajuda de connectar amic</translation>
     </message>
     <message>
         <source>You can copy this text and send it to your friend via email or some other way</source>
-        <translation>Voit kopioida tämän tekstin ja lähettää sen ystävällesi sähköpostilla tai muulla tavoin</translation>
+        <translation>Pots copiar aquest text i enviar-lo al teu amic per correu electrònic a un altre mètode</translation>
     </message>
     <message>
         <source>Your Cert is copied to Clipboard, paste and send it to your friend via email or some other way</source>
-        <translation>Varmenteesi on kopioitu leikepöydälle, liitä ja lähetä se ystävällesi sähköpostilla tai muulla tavoin</translation>
+        <translation>S&apos;ha copiat el teu certificat al porta-retalls, enganxa&apos;l i envia&apos;l al teu amic per correu </translation>
     </message>
     <message>
         <source>Save as...</source>
-        <translation>Tallenna nimellä...</translation>
+        <translation>Desa com...</translation>
     </message>
     <message>
         <source>RetroShare Certificate (*.rsc );;All Files (*)</source>
-        <translation>RetroSharen varmenne (*.rsc );;Kaikki tiedostot (*)</translation>
+        <translation>Certificat RetroShare (*.rsc );;Tots els arxius (*)</translation>
     </message>
     <message>
         <source>Select Certificate</source>
-        <translation>Valitse varmenne</translation>
+        <translation>Selecciona certificat</translation>
     </message>
     <message>
         <source>Sorry, create certificate failed</source>
-        <translation>Varmenteen luominen epäonnistui</translation>
+        <translation>Ho sentim, ha fallat la creació del certificat</translation>
     </message>
     <message>
         <source>Please choose a filename</source>
-        <translation>Ole hyvä ja valitse tiedostonimi</translation>
+        <translation>Si us plau, escull un nom d&apos;arxiu</translation>
     </message>
     <message>
         <source>Certificate file successfully created</source>
-        <translation>Varmennetiedosto luotiin</translation>
+        <translation>Èxit creant l&apos;arxiu de certificat</translation>
     </message>
     <message>
         <source>Sorry, certificate file creation failed</source>
-        <translation>Varmennetiedoston luominen epäonnistui</translation>
+        <translation>Ho sentim, la creació de l&apos;arxiu de certificat ha fallat</translation>
     </message>
     <message>
         <source>*** None ***</source>
-        <translation>*** Ei mitään ***</translation>
+        <translation>*** Cap ***</translation>
     </message>
     <message>
         <source>Use as direct source, when available</source>
-        <translation>Käytä suorana lähteenä, kun saatavilla</translation>
+        <translation>Utilitza com a font directa quan estigui disponible</translation>
     </message>
     <message>
         <source>Direct source</source>
-        <translation>Suora lähde</translation>
+        <translation>Font directa</translation>
     </message>
     <message>
         <source>Recommend many friends to each others</source>
-        <translation>Suosittele monia ystäviä toisilleen</translation>
+        <translation>Recomanar molts amics els uns als altres</translation>
     </message>
     <message>
         <source>Friend Recommendations</source>
-        <translation>Ystäväsuositukset</translation>
+        <translation>Recomanacions de l&apos;amic</translation>
     </message>
     <message>
         <source>Message:</source>
-        <translation>Viesti:</translation>
+        <translation>Missatge:</translation>
     </message>
     <message>
         <source>Recommend friends</source>
-        <translation>Suosittele ystäviä</translation>
+        <translation>Recomanar amics</translation>
     </message>
     <message>
         <source>To</source>
-        <translation>Vastaanottaja</translation>
+        <translation>A</translation>
     </message>
     <message>
         <source>Please select at least one friend for recommendation.</source>
-        <translation>Ole hyvä ja valitse ainakin yksi ystävä suositeltavaksi.</translation>
+        <translation>Si us plau, escull almenys un amic per recomanació.</translation>
     </message>
     <message>
         <source>Please select at least one friend as recipient.</source>
-        <translation>Ole hyvä ja valitse ainakin yksi ystävä vastaanottajaksi.</translation>
+        <translation>Si us plau seleccioni almenys un amic com a destinatari.</translation>
     </message>
     <message>
         <source>Please note that RetroShare will require excessive amounts of bandwidth, memory and CPU if you add to many friends. You can add as many friends as you like, but more than 40 will probably require too much resources.</source>
-        <translation>Huomioithan, että RetroShare edellyttää kohtuuttomia määriä tietoliikennekaistaa, muistia ja prosessoritehoa, jos lisäät paljon ystäviä. Voit lisätä niin monta ystävää kuin haluat, mutta yli 40 luultavasti vaatii liikaa resursseja.</translation>
+        <translation>Si us plau, tingues en compte que RetroShare necessitarà una quantitat excessiva d&apos;ample de banda, memòria i CPU si afegeixes masses amics. Pots afegir tants amics com vulguis, però més de 40 sigui probablement excessiu.</translation>
     </message>
     <message>
         <source>Add key to keyring</source>
-        <translation>Lisää avain avainnippuun</translation>
+        <translation>Afegeix clau a l&apos;anell de claus</translation>
     </message>
     <message>
         <source>This key is already in your keyring</source>
-        <translation>Tämä avain on jo avainnipussasi</translation>
+        <translation>Aquesta claus ja és a l&apos;anell de claus</translation>
     </message>
     <message>
         <source>Check this to add the key to your keyring
 This might be useful for sending
 distant messages to this peer
 even if you don&apos;t make friends.</source>
-        <translation>Rastita tämä lisätäksesi avaimen avainnippuusi
-Tästä voi olla hyötyä etäisten viestien
-lähettämiseen tälle vertaiselle,
-vaikkette ystävystyisikään.</translation>
+        <translation>Marca aquí per afegir la clau al teu anell de claus
+Això pot ser útil per enviar
+missatges distants a aquest contacte
+encara que no sigueu amics.</translation>
     </message>
 </context>
 <context>
     <name>ConnectProgressDialog</name>
     <message>
         <source>Connection Progress</source>
-        <translation>Yhteyden edistyminen</translation>
+        <translation>Progrés de la connexió</translation>
     </message>
     <message>
         <source>Connecting to:</source>
-        <translation>Yhdistetään:</translation>
+        <translation>Connectant amb:</translation>
     </message>
     <message>
         <source>TextLabel</source>
-        <translation>TekstiMerkki</translation>
+        <translation>EtiquetaText</translation>
     </message>
     <message>
         <source>Network </source>
-        <translation>Verkko</translation>
+        <translation>Xarxa</translation>
     </message>
     <message>
         <source>Net Result</source>
-        <translation>Verkon tulos</translation>
+        <translation>Resultat de xarxa</translation>
     </message>
     <message>
         <source>Connect Status</source>
-        <translation>Yhteyden tila</translation>
+        <translation>Estat de connexió</translation>
     </message>
     <message>
         <source>Contact Result</source>
-        <translation>Kontaktin tulos</translation>
+        <translation>Resultat de connexió</translation>
     </message>
     <message>
         <source>DHT Startup</source>
-        <translation>DHT:n käynnistys</translation>
+        <translation>Inici de DHT</translation>
     </message>
     <message>
         <source>DHT Result</source>
-        <translation>DHT:n tulos</translation>
+        <translation>Resultat de DHT</translation>
     </message>
     <message>
         <source>Peer Lookup</source>
-        <translation>Vertaishaku</translation>
+        <translation>Cerca de contacte</translation>
     </message>
     <message>
         <source>Peer Result</source>
-        <translation>Vertaisen tulos</translation>
+        <translation>Resulta de contacte</translation>
     </message>
     <message>
         <source>UDP Setup</source>
-        <translation>UDP:n asetukset</translation>
+        <translation>Configuració UDP</translation>
     </message>
     <message>
         <source>UDP Result</source>
-        <translation>UDP:n tulos</translation>
+        <translation>Resultat UDP</translation>
     </message>
     <message>
         <source>Connection Assistant</source>
-        <translation>Yhteysavustaja</translation>
+        <translation>Auxiliar de connexió</translation>
     </message>
     <message>
         <source>Invalid Peer ID</source>
-        <translation>Väärä vertaistunniste</translation>
+        <translation>Id contacte invàlida</translation>
     </message>
     <message>
         <source>Unknown State</source>
-        <translation>Tuntematon tila</translation>
+        <translation>Estat desconegut</translation>
     </message>
     <message>
         <source>Offline</source>
-        <translation>Ei yhteyttä</translation>
+        <translation>Fora de línia</translation>
     </message>
     <message>
         <source>Behind Symmetric NAT</source>
-        <translation>Symmetrisen NAT:in takana</translation>
+        <translation>Darrera NAT simètric</translation>
     </message>
     <message>
         <source>Behind NAT &amp; No DHT</source>
-        <translation>NAT:in takana &amp; ilman DHT:tä</translation>
+        <translation>Darrera NAT i sense DHT</translation>
     </message>
     <message>
         <source>NET Restart</source>
-        <translation>Verkon uudelleenkäynnistys</translation>
+        <translation>Reiniciar xarxa</translation>
     </message>
     <message>
         <source>Behind NAT</source>
-        <translation>NAT:in takana</translation>
+        <translation>Darrera NAT</translation>
     </message>
     <message>
         <source>No DHT</source>
-        <translation>Ei DHT:tä</translation>
+        <translation>Sense DHT</translation>
     </message>
     <message>
         <source>NET STATE GOOD!</source>
-        <translation>VERKON TILA HYVÄ!</translation>
+        <translation>ESTAT DE LA XARXA BO!</translation>
     </message>
     <message>
         <source>DHT Failed</source>
-        <translation>DHT epäonnistui</translation>
+        <translation>DHT Fallat</translation>
     </message>
     <message>
         <source>DHT Disabled</source>
-        <translation>Ei DHT:tä</translation>
+        <translation>DHT desactivat</translation>
     </message>
     <message>
         <source>DHT Okay</source>
-        <translation>DHT ok</translation>
+        <translation>DHT Ok</translation>
     </message>
     <message>
         <source>Finding RS Peers</source>
-        <translation>Haetaan Retroshare-vertaisia</translation>
+        <translation>Trobant contactes RS</translation>
     </message>
     <message>
         <source>Lookup requires DHT</source>
-        <translation>Haku vaatii DHT:tä</translation>
+        <translation>Descobriment requereix DHT</translation>
     </message>
     <message>
         <source>Searching DHT</source>
-        <translation>Haetaan DHT:tä</translation>
+        <translation>Cercant DHT</translation>
     </message>
     <message>
         <source>Lookup Timeout</source>
-        <translation>Haku aikakatkaistiin</translation>
+        <translation>Temps d&apos;espera per descobriment esgotat</translation>
     </message>
     <message>
         <source>Peer DHT NOT ACTIVE</source>
-        <translation>Vertaisen DHT EI KÄYTÖSSÄ</translation>
+        <translation>DHT del contacte NO ACTIVAT</translation>
     </message>
     <message>
         <source>Lookup Failure</source>
-        <translation>Haku epäonnistui</translation>
+        <translation>Fallo en el descobriment</translation>
     </message>
     <message>
         <source>Peer Offline</source>
-        <translation>Vertainen ei linjoilla</translation>
+        <translation>Contacte fora de línia</translation>
     </message>
     <message>
         <source>Peer Firewalled</source>
-        <translation>Vertainen palomuurin takana</translation>
+        <translation>Contacte darrera tallafocs</translation>
     </message>
     <message>
         <source>Peer Online</source>
-        <translation>Vertainen linjoilla</translation>
+        <translation>Contacte en línia</translation>
     </message>
     <message>
         <source>Connection In Progress</source>
-        <translation>Yhdistyminen käynnissä</translation>
+        <translation>Connexió en progrés</translation>
     </message>
     <message>
         <source>Initial connections can take a while, please be patient</source>
-        <translation>Alustava yhdistyminen voi viedä hetken, ole hyvä ja odota</translation>
+        <translation>Les connexions inicials poder trigar una mica, sigues pacient</translation>
     </message>
     <message>
         <source>If an error is detected it will be displayed here</source>
-        <translation>Jos havaitaan ongelma, se näkyy täällä</translation>
+        <translation>Si es detecta un error es mostrarà aquí</translation>
     </message>
     <message>
         <source>You can close this dialog at any time</source>
-        <translation>Voit sulkea tämän ikkunan milloin tahansa</translation>
+        <translation>Pots tancar aquest diàleg en qualsevol moment</translation>
     </message>
     <message>
         <source>Retroshare will continue connecting in the background</source>
-        <translation>RetroShare jatkaa yhdistämistä taustalla</translation>
+        <translation>El RetroShare continuarà connectant-se en segon pla</translation>
     </message>
     <message>
         <source>Connection Timeout</source>
-        <translation>Yhdistäminen aikakatkaistiin</translation>
+        <translation>Temps d&apos;espera de connexió esgotat</translation>
     </message>
     <message>
         <source>Connection Attempt has taken too long</source>
-        <translation>Yhdistäminen on kestänyt liian kauan</translation>
+        <translation>L&apos;intent de connexió ha trigat massa</translation>
     </message>
     <message>
         <source>But no error has been detected</source>
-        <translation>Mutta ongelmia ei ole havaittu</translation>
+        <translation>Però no s&apos;ha detectat cap error</translation>
     </message>
     <message>
         <source>Try again shortly, Retroshare will continue connecting in the background</source>
-        <translation>Kokeile pian uudestaan, Retroshare jatkaa yhdistämistä taustalla</translation>
+        <translation>Torna-ho a intentar en breu, RetroShare continuarà connectant-se en segon pla</translation>
     </message>
     <message>
         <source>If you continue to get this message, please contact developers</source>
-        <translation>Jos saat tämä viestin jatkuvasti, ole hyvä ja ota yhteyttä kehittäjiin</translation>
+        <translation>Si continues rebent aquest missatge contacta amb els desenvolupadors</translation>
     </message>
     <message>
         <source>DHT Lookup Timeout</source>
-        <translation>DHT-haku aikakatkaistiin</translation>
+        <translation>Temps d&apos;espera per descobriment DHT esgotat</translation>
     </message>
     <message>
         <source>DHT Lookup has taken too long</source>
-        <translation>DHT-haku on kestänyt liian kauan</translation>
+        <translation>El descobriment per DHT ha trigat massa</translation>
     </message>
     <message>
         <source>UDP Connection Timeout</source>
-        <translation>UDP-yhdistäminen aikakatkaistiin</translation>
+        <translation>La connexió UDP ha exhaurit el temps d&apos;espera</translation>
     </message>
     <message>
         <source>UDP Connection has taken too long</source>
-        <translation>UDP:hen yhdistäminen on kestänyt liian kauan</translation>
+        <translation>La connexió UDP ha trigat massa</translation>
     </message>
     <message>
         <source>UDP Connection Failed</source>
-        <translation>UDP-yhteys epäonnistui</translation>
+        <translation>La connexió UDP ha fallat</translation>
     </message>
     <message>
         <source>We are continually working to improve connectivity.</source>
-        <translation>Työskentelemme jatkuvasti yhdistämisen toimintavarmuuden parantamiseksi.</translation>
+        <translation>Estem treballant per millorar la connectivitat.</translation>
     </message>
     <message>
         <source>In this case the UDP connection attempt has failed.</source>
-        <translation>Tässä tapauksessa UDP-yhteysyritys epäonnistui.</translation>
+        <translation>En aquest cas l&apos;intent de connexió UDP ha fallat.</translation>
     </message>
     <message>
         <source>Improve connectivity by opening a Port in your Firewall.</source>
-        <translation>Paranna yhdistämisen toimintavarmuutta avaamalla portti palomuuriisi.</translation>
+        <translation>Millora la connectivitat obrint un port en el teu tallafocs.</translation>
     </message>
     <message>
         <source>Connected</source>
-        <translation>Yhteydessä</translation>
+        <translation>Connectat</translation>
     </message>
     <message>
         <source>Congratulations, you are connected</source>
-        <translation>Onnittelut, olet yhteydessä</translation>
+        <translation>Enhorabona, estàs connectat</translation>
     </message>
     <message>
         <source>DHT startup Failed</source>
-        <translation>DHT:n käynnistys epäonnistui</translation>
+        <translation>Inicialització DHT fallada</translation>
     </message>
     <message>
         <source>Your DHT has not started properly</source>
-        <translation>DHT:si ei ole käynnistynyt oikein</translation>
+        <translation>El teu DHT no s&apos;ha iniciat com cal</translation>
     </message>
     <message>
         <source>Common causes of this problem are:</source>
-        <translation>Yleisiä tämän ongelman syitä ovat:</translation>
+        <translation>Causes comuns per aquest problema són:</translation>
     </message>
     <message>
         <source>     - You are not connected to the Internet</source>
-        <translation>-Et ole yhteydessä Internetiin</translation>
+        <translation>- No estàs connectat a Internet</translation>
     </message>
     <message>
         <source>     - You have a missing or out-of-date DHT bootstrap file (bdboot.txt)</source>
-        <translation>- DHT:n esilataustiedostosi (bdboot.txt) puuttuu tai se on vanhentunut</translation>
+        <translation>- No tens l&apos;arxiu inicial de nodes DHT (bdboot.txt) o està antiquat</translation>
     </message>
     <message>
         <source>DHT is Disabled</source>
-        <translation>DHT kytketty pois</translation>
+        <translation>El DHT està desactivat</translation>
     </message>
     <message>
         <source>The DHT is OFF, so Retroshare cannot find your Friends.</source>
-        <translation>DHT on kytketty pois päältä, joten Retroshare ei voi löytää ystäviäsi.</translation>
+        <translation>El DHT està APAGAT per tan, el RS no pot trobar els teus amics.</translation>
     </message>
     <message>
         <source>Retroshare has tried All Known Addresses, with no success</source>
-        <translation>RetroShare on kokeillut kaikkia tunnettuja osoitteita tuloksetta</translation>
+        <translation>El RetroShare ha provat totes les adreces conegudes, sense èxit</translation>
     </message>
     <message>
         <source>The DHT is needed if your friends have Dynamic IP Addresses.</source>
-        <translation>DHT on tarpeen, jos ystäviesi IP-osoitteet ovat dynaamisia.</translation>
+        <translation>EL DHT és necessari si els teus amics tenen una adreça IP dinàmica.</translation>
     </message>
     <message>
         <source>Go to Settings-&gt;Server and change config to &quot;Public: DHT and Discovery&quot;</source>
-        <translation>Mene Asetukset -&gt; Palvelin ja ota käyttöön asetus &quot;Julkinen: DHT &amp; etsintä&quot;</translation>
+        <translation>Ves a Configuració-&gt;Servidor i canvia l&apos;opció a &quot;Pública: DHT i descobriment&quot;</translation>
     </message>
     <message>
         <source>Peer Denied Connection</source>
-        <translation>Vertainen torjui yhteyden</translation>
+        <translation>El contacte ha negar la conexió</translation>
     </message>
     <message>
         <source>We successfully reached your Friend.</source>
-        <translation>Yhdistäminen ystävääsi onnistui.</translation>
+        <translation>Hem contactat amb èxit amb el teu amic.</translation>
     </message>
     <message>
         <source>but they have not added you as a Friend.</source>
-        <translation>mutta he eivät ole lisänneet sinua ystäväkseen.</translation>
+        <translation>però ells no t&apos;han afegit com a amic.</translation>
     </message>
     <message>
         <source>Please contact them to add your Certificate</source>
-        <translation>Ota heihin yhteyttä ja pyydä lisäämään varmenteesi</translation>
+        <translation>Si us plau, contacta amb ells perquè afegeixin el teu certificat</translation>
     </message>
     <message>
         <source>Your Retroshare Node is configured Okay</source>
-        <translation>Retroshare-solmusi on määritetty oikein</translation>
+        <translation>El teu node de RetroShare està configurat correctament</translation>
     </message>
     <message>
         <source>We successfully reached your Friend via UDP.</source>
-        <translation>Yhdistäminen ystävääsi UDP:n kautta onnistui.</translation>
+        <translation>Hem contactat amb el teu amic via UDP.</translation>
     </message>
     <message>
         <source>Please contact them to add your Full Certificate</source>
-        <translation>Ota heihin yhteyttä ja pyydä lisäämään koko varmenteesi</translation>
+        <translation>Si us plau, contacta amb ells perquè afegeixin el teu certificat complet</translation>
     </message>
     <message>
         <source>They need a Certificate + Location for UDP connections to succeed</source>
-        <translation>He tarvitsevat varmenteen ja sijainnin, jotta UDP-yhteyksien luominen onnistuu</translation>
+        <translation>Necessiten un certificat + ubicació perquè les connexions per UDP tinguin èxit</translation>
     </message>
     <message>
         <source>We Cannot find your Friend.</source>
-        <translation>Ystävääsi ei löydy.</translation>
+        <translation>No podem trobar el teu amic.</translation>
     </message>
     <message>
         <source>They are either offline or their DHT is Off</source>
-        <translation>He ovat joko poissa linjoilta tai DHT pois kytkettynä</translation>
+        <translation>O estan fora de línia o tenen el DHT apagat</translation>
     </message>
     <message>
         <source>Peer DHT is Disabled</source>
-        <translation>Vertaisen DHT on kytketty pois</translation>
+        <translation>El DHT del contacte està desactivat</translation>
     </message>
     <message>
         <source>Your Friend has configured Retroshare with DHT Disabled.</source>
-        <translation>Ystäväsi on kytkenyt Retrosharen DHT:n pois.</translation>
+        <translation>El teu amic ha configurat el RetroShare amb el DHT desactivat.</translation>
     </message>
     <message>
         <source>You have previously connected to this Friend</source>
-        <translation>Olet aiemmin yhdistänyt tähän ystävään</translation>
+        <translation>T&apos;has connectat amb anterioritat a aquest amic</translation>
     </message>
     <message>
         <source>Retroshare has determined that they have DHT switched off</source>
-        <translation>RetroShare havaitsi, että heillä on DHT kytkettynä pois</translation>
+        <translation>El RetroShare ha determinat que tenen el DHT apagat</translation>
     </message>
     <message>
         <source>Without the DHT it is hard for Retroshare to locate your friend</source>
-        <translation>Retrosharen on vaikea löytää ystävääsi ilman DHT:tä</translation>
+        <translation>Sense el DHT es complicat pel RetroShare localitzar el teu amic</translation>
     </message>
     <message>
         <source>Try importing a fresh Certificate to get up-to-date connection information</source>
-        <translation>Kokeile tuoda tuore varmenne saadaksesi ajantasaiset tiedot yhdistämisestä</translation>
+        <translation>Intenta important un certificat &quot;fresc&quot; per refrescar la informació de connexió</translation>
     </message>
     <message>
         <source>Incomplete Friend Details</source>
-        <translation>Epätäydelliset ystävän tiedot</translation>
+        <translation>Detalls d&apos;amic incomplets</translation>
     </message>
     <message>
         <source>You have imported an incomplete Certificate</source>
-        <translation>Olet tuonut epätäydellisen varmenteen</translation>
+        <translation>Has importat un certificat incomplet</translation>
     </message>
     <message>
         <source>Please retry importing the full Certificate</source>
-        <translation>Yritä tuoda täydellinen varmenne uudelleen</translation>
+        <translation>Si us plau, intenta-ho important un certificat complet</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -3161,50 +3162,50 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Lucida Grande'; font-size:13pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Lucida Grande'; font-size:13pt;&quot;&gt;If you are an expert RS user, or trust that RS will do the right thing&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Lucida Grande&apos;; font-size:13pt;&quot;&gt;you can close it.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Lucida Grande&apos;; font-size:13pt;&quot;&gt;Tämä ikkunaelementti näyttää yhdistymisen uuteen vertaiseesi edistymisen.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Lucida Grande&apos;; font-size:13pt;&quot;&gt;Se on hyödyllinen ratkaistaessa ongelmia.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Lucida Grande&apos;; font-size:13pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Lucida Grande&apos;; font-size:13pt;&quot;&gt;Jos olet asiantunteva RS-käyttäjä tai luotat siihen, että RS tekee oikeat ratkaisut,&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Lucida Grande&apos;; font-size:13pt;&quot;&gt;voit sulkea sen.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
+p, li { white-space: pre-wrap; }⏎
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Lucida Grande&apos;; font-size:13pt;&quot;&gt;Aquest control mostra el progrés de la connexió amb el teu nou contacte.&lt;/span&gt;&lt;/p&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Lucida Grande&apos;; font-size:13pt;&quot;&gt;És molt útil per solucionar problemes.&lt;/span&gt;&lt;/p&gt;⏎
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Lucida Grande&apos;; font-size:13pt;&quot;&gt;&lt;/p&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Lucida Grande&apos;; font-size:13pt;&quot;&gt;Si ets un usuari expert de RS o confies en que el RS farà el correcte&lt;/span&gt;&lt;/p&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Lucida Grande&apos;; font-size:13pt;&quot;&gt;pots tancar-lo.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>N/A</source>
-        <translation>Ei sovellu</translation>
+        <translation>N/A</translation>
     </message>
     <message>
         <source>UNVERIFIABLE FORWARD!</source>
-        <translation>VARMISTAMATON VÄLITYS!</translation>
+        <translation>REENVIAMENT NO VERIFICABLE!</translation>
     </message>
     <message>
         <source>UNVERIFIABLE FORWARD &amp; NO DHT</source>
-        <translation>VARMISTAMATON VÄLITYS EIKÄ DHT:TÄ!</translation>
+        <translation>REENVIAMENT NO VERIFICABLE I SENSE DHT</translation>
     </message>
     <message>
         <source>Searching</source>
-        <translation>Haetaan</translation>
+        <translation>Cercant</translation>
     </message>
     <message>
         <source>UDP Connect Timeout</source>
-        <translation>UDP-yhdistäminen aikakatkaistiin</translation>
+        <translation>Temps d&apos;espera per connexió UDP esgotat</translation>
     </message>
     <message>
         <source>Only Advanced Retroshare users should switch off the DHT.</source>
-        <translation>DHT:n pois kytkemistä suositellaan vain kokeneille Retrosharen käyttäjille.</translation>
+        <translation>Només els usuaris avançat de RetroShare haurien d&apos;apagar el DHT.</translation>
     </message>
     <message>
         <source>Retroshare cannot connect without this information</source>
-        <translation>Retroshare ei voi yhdistää ilman näitä tietoja</translation>
+        <translation>El RetroShare no es pot connectar sense aquest informació</translation>
     </message>
 </context>
 <context>
     <name>CreateBlog</name>
     <message>
         <source>Create new Blog</source>
-        <translation>Luo uusi blogi</translation>
+        <translation>Crear bloc nou</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -3212,63 +3213,63 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:24pt; font-weight:600; color:#ffffff;&quot;&gt;New Blog&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:24pt; font-weight:600; color:#ffffff;&quot;&gt;Uusi blogi&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
+p, li { white-space: pre-wrap; }⏎
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:24pt; font-weight:600; color:#ffffff;&quot;&gt;Bloc nou&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation>Nimi</translation>
+        <translation>Nom</translation>
     </message>
     <message>
         <source>Description</source>
-        <translation>Kuvaus</translation>
+        <translation>Descripció</translation>
     </message>
     <message>
         <source>Type:</source>
-        <translation>Tyyppi:</translation>
+        <translation>Tipus:</translation>
     </message>
     <message>
         <source>Public - Anyone can read and publish (Shared Publish Key)</source>
-        <translation>Julkinen - kaikki voivat lukea ja julkaista (jaettu julkaisuavain)</translation>
+        <translation>Públic - Tothom pot llegir i publicar (Clau de publicació compartida)</translation>
     </message>
     <message>
         <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation>Rajoitettu - kaikki voivat lukea, julkaisu rajoitettu (yksityinen julkaisuavain)</translation>
+        <translation>Restringit - Tothom pot llegir, publicació limitada (Clau de publicació privada)</translation>
     </message>
     <message>
         <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation>Yksityinen - (Viestien lukemiseen tarvitaan yksityinen julkaisuavain)</translation>
+        <translation>Privat - (Clau de publicació privada necessària per visualitzar els missatges)</translation>
     </message>
     <message>
         <source>Allowed Messages</source>
-        <translation>Sallitut viestit</translation>
+        <translation>Missatges permesos</translation>
     </message>
     <message>
         <source>Authenticated Messages</source>
-        <translation>Varmennetut viestit</translation>
+        <translation>Missatges autenticats</translation>
     </message>
     <message>
         <source>Anonymous Messages</source>
-        <translation>Nimettömät viestit</translation>
+        <translation>Missatges anònims</translation>
     </message>
     <message>
         <source>Blog Logo</source>
-        <translation>Blogin logo</translation>
+        <translation>Logotip de bloc</translation>
     </message>
     <message>
         <source>Add Blog Logo</source>
-        <translation>Lisää logo blogille</translation>
+        <translation>Afegir logotip del bloc</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Peru</translation>
+        <translation>Cancel·la</translation>
     </message>
     <message>
         <source>Create</source>
-        <translation>Luo</translation>
+        <translation>Crear</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -3276,110 +3277,110 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Please add a Name</source>
-        <translation>Ole hyvä ja lisää nimi</translation>
+        <translation>Si us plau afegeix un nom</translation>
     </message>
     <message>
         <source>Load File</source>
-        <translation>Avaa tiedosto</translation>
+        <translation>Carrega un arxiu</translation>
     </message>
     <message>
         <source>Pictures (*.png *.xpm *.jpg)</source>
-        <translation>Kuvat (*.png *.xpm *.jpg)</translation>
+        <translation>Imatges (*.png *.xpm *. jpg)</translation>
     </message>
 </context>
 <context>
     <name>CreateBlogMsg</name>
     <message>
         <source>New Blog Post</source>
-        <translation>Uusi blogiteksti</translation>
+        <translation>Nova entrada al bloc</translation>
     </message>
     <message>
         <source>Blog Post</source>
-        <translation>Blogiteksti</translation>
+        <translation>Entrada al bloc</translation>
     </message>
     <message>
         <source>Blog Post to:</source>
-        <translation>Blogiteksti vastaanottajalle:</translation>
+        <translation>Entrada de bloc a:</translation>
     </message>
     <message>
         <source>Visual Editor</source>
-        <translation>Visuaalinen muokkaustyökalu</translation>
+        <translation>Editor visual</translation>
     </message>
     <message>
         <source>Blog Message</source>
-        <translation>Blogiviesti</translation>
+        <translation>Missatge del bloc</translation>
     </message>
     <message>
         <source>Subject :</source>
-        <translation>Aihe:</translation>
+        <translation>Assumpte:</translation>
     </message>
     <message>
         <source>Html Editor</source>
-        <translation>Html-editori</translation>
+        <translation>Editor d&apos;HTML</translation>
     </message>
     <message>
         <source>toolBar</source>
-        <translation>Työkalupalkki</translation>
+        <translation>barra d&apos;eines</translation>
     </message>
     <message>
         <source>toolBar_2</source>
-        <translation>Työkalupalkki_2</translation>
+        <translation>Barra d&apos;eines_2</translation>
     </message>
     <message>
         <source>blockquote</source>
-        <translation>lainauslohko</translation>
+        <translation>citació</translation>
     </message>
     <message>
         <source>Increase font Size</source>
-        <translation>Suurenna kirjasimen kokoa</translation>
+        <translation>Augmenta la mida del tipus de lletra</translation>
     </message>
     <message>
         <source>Decrease font size</source>
-        <translation>Pienennä kirjasimen kokoa</translation>
+        <translation>Disminueix la mida del tipus de lletra</translation>
     </message>
     <message>
         <source>Bold</source>
-        <translation>Lihavointi</translation>
+        <translation>Negreta</translation>
     </message>
     <message>
         <source>Underline</source>
-        <translation>Alleviivaus</translation>
+        <translation>Subratllat</translation>
     </message>
     <message>
         <source>Italic</source>
-        <translation>Kursivointi</translation>
+        <translation>Cursiva</translation>
     </message>
     <message>
         <source>Publish</source>
-        <translation>Julkaise</translation>
+        <translation>Publicar</translation>
     </message>
     <message>
         <source>New</source>
-        <translation>Uusi</translation>
+        <translation>Nou</translation>
     </message>
     <message>
         <source>Code</source>
-        <translation>Koodi</translation>
+        <translation>Codi</translation>
     </message>
     <message>
         <source>splitPost</source>
-        <translation>Halkaise viesti</translation>
+        <translation>entradaPartida</translation>
     </message>
     <message>
         <source>Ordered List</source>
-        <translation>Järjestetty lista (ol)</translation>
+        <translation>Llista ordenada</translation>
     </message>
     <message>
         <source>Unordered List</source>
-        <translation>Järjestämätön lista (ul)</translation>
+        <translation>Llista desordenada</translation>
     </message>
     <message>
         <source>Clipboard</source>
-        <translation>Leikepöytä</translation>
+        <translation>Porta-retalls</translation>
     </message>
     <message>
         <source>Undo</source>
-        <translation>Kumoa</translation>
+        <translation>Desfer</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -3387,255 +3388,255 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Please add a Subject</source>
-        <translation>Ole hyvä ja lisää aihe</translation>
+        <translation>Si us plau afegeix un assumpte</translation>
     </message>
     <message>
         <source>&amp;File</source>
-        <translation>&amp;Tiedosto</translation>
+        <translation>&amp;Arxiu</translation>
     </message>
     <message>
         <source>&amp;New</source>
-        <translation>&amp;Uusi</translation>
+        <translation>&amp;Nou</translation>
     </message>
     <message>
         <source>&amp;Open...</source>
-        <translation>&amp;Avaa...</translation>
+        <translation>&amp;Obrir...</translation>
     </message>
     <message>
         <source>&amp;Save</source>
-        <translation>&amp;Tallenna</translation>
+        <translation>&amp;Desar</translation>
     </message>
     <message>
         <source>Save &amp;As...</source>
-        <translation>Tallenna ni&amp;mellä...</translation>
+        <translation>Desa &amp;com...</translation>
     </message>
     <message>
         <source>&amp;Print...</source>
-        <translation>Tu&amp;losta...</translation>
+        <translation>&amp;Impressió...</translation>
     </message>
     <message>
         <source>Print Preview...</source>
-        <translation>Tulostuksen esikatselu...</translation>
+        <translation>Prèvia d&apos;impressió...</translation>
     </message>
     <message>
         <source>&amp;Export PDF...</source>
-        <translation>&amp;Vie PDF...</translation>
+        <translation>&amp;Exportació a PDF...</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
-        <translation>Lo&amp;peta</translation>
+        <translation>&amp;Sortir</translation>
     </message>
     <message>
         <source>&amp;Edit</source>
-        <translation>&amp;Muokkaa</translation>
+        <translation>&amp;Editar</translation>
     </message>
     <message>
         <source>&amp;Undo</source>
-        <translation>K&amp;umoa</translation>
+        <translation>&amp;Desfer</translation>
     </message>
     <message>
         <source>&amp;Redo</source>
-        <translation>To&amp;ista</translation>
+        <translation>&amp;Refer</translation>
     </message>
     <message>
         <source>Cu&amp;t</source>
-        <translation>&amp;Leikkaa</translation>
+        <translation>&amp;Tallar</translation>
     </message>
     <message>
         <source>&amp;Copy</source>
-        <translation>K&amp;opioi</translation>
+        <translation>&amp;Copiar</translation>
     </message>
     <message>
         <source>&amp;Paste</source>
-        <translation>Lii&amp;tä</translation>
+        <translation>&amp;Enganxar</translation>
     </message>
     <message>
         <source>&amp;View</source>
-        <translation>&amp;Näytä</translation>
+        <translation>&amp;Visualitza</translation>
     </message>
     <message>
         <source>&amp;Insert</source>
-        <translation>Lis&amp;ää</translation>
+        <translation>&amp;Inserir</translation>
     </message>
     <message>
         <source>&amp;Image</source>
-        <translation>&amp;Kuva</translation>
+        <translation>&amp;Imatge</translation>
     </message>
     <message>
         <source>F&amp;ormat</source>
-        <translation>Muotoil&amp;e</translation>
+        <translation>F&amp;ormat</translation>
     </message>
     <message>
         <source>&amp;Bold</source>
-        <translation>Liha&amp;vointi</translation>
+        <translation>&amp;Negreta</translation>
     </message>
     <message>
         <source>&amp;Italic</source>
-        <translation>Kur&amp;sivointi</translation>
+        <translation>&amp;Cursiva</translation>
     </message>
     <message>
         <source>&amp;Underline</source>
-        <translation>Allev&amp;iivaus</translation>
+        <translation>&amp;Subratllat</translation>
     </message>
     <message>
         <source>&amp;Left</source>
-        <translation>Tas&amp;aa vasemmalle</translation>
+        <translation>&amp;Esquerra</translation>
     </message>
     <message>
         <source>C&amp;enter</source>
-        <translation>&amp;Keskitä</translation>
+        <translation>C&amp;entre</translation>
     </message>
     <message>
         <source>&amp;Right</source>
-        <translation>Tasaa &amp;oikealle</translation>
+        <translation>&amp;Dreta</translation>
     </message>
     <message>
         <source>&amp;Justify</source>
-        <translation>Tasaa &amp;molemmat reunat</translation>
+        <translation>&amp;Justificat</translation>
     </message>
     <message>
         <source>&amp;Text Color...</source>
-        <translation>&amp;Tekstin väri...</translation>
+        <translation>&amp;Color del text...</translation>
     </message>
     <message>
         <source>Application</source>
-        <translation>Sovellus</translation>
+        <translation>Aplicació</translation>
     </message>
     <message>
         <source>The document has been modified.
 Do you want to save your changes?</source>
-        <translation>Asiakirjaa on muokattu.
-Haluatko tallentaa sen?</translation>
+        <translation>El document s&apos;ha modificat.⏎
+Vols guardar-ne els canvis?</translation>
     </message>
     <message>
         <source>Open File...</source>
-        <translation>Avaa tiedosto...</translation>
+        <translation>Obrir arxiu...</translation>
     </message>
     <message>
         <source>HTML-Files (*.htm *.html);;All Files (*)</source>
-        <translation>HTML-tiedostot (*.htm *.html);;Kaikki tiedostot (*)</translation>
+        <translation>Arxius-HTML (*.htm *.html);;Tots els arxius (*)</translation>
     </message>
     <message>
         <source>Save as...</source>
-        <translation>Tallenna nimellä...</translation>
+        <translation>Desa com...</translation>
     </message>
     <message>
         <source>ODF files (*.odt);;HTML-Files (*.htm *.html);;All Files (*)</source>
-        <translation>ODF-tiedostot (*.odt);;HTML-tiedostot (*.htm *.html);;Kaikki tiedostot (*)</translation>
+        <translation>Arxius ODF (*.odt);;Arxius-HTML (*.htm *.html);;Tots els arxius (*)</translation>
     </message>
     <message>
         <source>Print Document</source>
-        <translation>Tulosta asiakirja</translation>
+        <translation>Imprimir document</translation>
     </message>
     <message>
         <source>Export PDF</source>
-        <translation>Vie PDF</translation>
+        <translation>Exportar a PDF</translation>
     </message>
     <message>
         <source>Choose Image</source>
-        <translation>Valitse kuva</translation>
+        <translation>Triar imatge</translation>
     </message>
     <message>
         <source>Image Files supported (*.png *.jpeg *.jpg *.gif)</source>
-        <translation>Tuetut kuvatiedostot (*.png *.jpeg *.jpg *.gif)</translation>
+        <translation>Arxius d&apos;imatge (*.png *.jpeg *.jpg *.gif) suportades</translation>
     </message>
 </context>
 <context>
     <name>CreateChannel</name>
     <message>
         <source>Create a new Channel</source>
-        <translation>Luo uusi kanava</translation>
+        <translation>Crear un canal nou</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation>Nimi</translation>
+        <translation>Nom</translation>
     </message>
     <message>
         <source>check peers you would like to share private publish key with</source>
-        <translation>rastita vertaiset, joiden kanssa haluat jakaa yksityisen julkaisuavaimesi</translation>
+        <translation>comprovar els contactes amb qui t&apos;agradaria compartir les claus de publicació</translation>
     </message>
     <message>
         <source>Share Key With</source>
-        <translation>Jaa avain</translation>
+        <translation>Compartir clau amb</translation>
     </message>
     <message>
         <source>Description</source>
-        <translation>Kuvaus</translation>
+        <translation>Descripció</translation>
     </message>
     <message>
         <source>Type:</source>
-        <translation>Tyyppi:</translation>
+        <translation>Tipus:</translation>
     </message>
     <message>
         <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation>Rajoitettu - kaikki voivat lukea, julkaisu rajoitettu (yksityinen julkaisuavain)</translation>
+        <translation>Restringit - Tothom pot llegir, publicació limitada (clau de publicació privada)</translation>
     </message>
     <message>
         <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation>Yksityinen - (Viestien lukemiseen tarvitaan yksityinen julkaisuavain)</translation>
+        <translation>Privat - (clau de publicació privada necessària per visualitzar els missatges)</translation>
     </message>
     <message>
         <source>Allowed Messages</source>
-        <translation>Sallitut viestit</translation>
+        <translation>Missatges permesos</translation>
     </message>
     <message>
         <source>Anonymous Messages</source>
-        <translation>Nimettömät viestit</translation>
+        <translation>Missatges anònims</translation>
     </message>
     <message>
         <source>Authenticated Messages</source>
-        <translation>Varmennetut viestit</translation>
+        <translation>Missatges autenticats</translation>
     </message>
     <message>
         <source>Key Sharing</source>
-        <translation>Avaimen jakaminen</translation>
+        <translation>Compartició de claus</translation>
     </message>
     <message>
         <source>Key recipients can publish to restricted-type channels, and can view and publish  for private-type channels</source>
-        <translation>Avainten vastaanottajat voivat julkaista rajoitetuilla kanavilla ja lukea sekä julkaista  yksityisillä kanavilla</translation>
+        <translation>Els destinataris de les claus poden publicar en canals restringits, i poden veure i publicar en canals privats</translation>
     </message>
     <message>
         <source>Share Private Publish Key</source>
-        <translation>Jaa yksityinen julkaisuavain</translation>
+        <translation>Compartir clau privada de publicació</translation>
     </message>
     <message>
         <source>Channel Logo</source>
-        <translation>Kanavan logo</translation>
+        <translation>Logotip del canal</translation>
     </message>
     <message>
         <source>Add Channel Logo</source>
-        <translation>Lisää kanavan logo</translation>
+        <translation>Afegir logotip del canal</translation>
     </message>
     <message>
         <source>New Channel</source>
-        <translation>Uusi kanava</translation>
+        <translation>Nou canal</translation>
     </message>
     <message>
         <source>Contacts:</source>
-        <translation>Kontaktit:</translation>
+        <translation>Contactes:</translation>
     </message>
     <message>
         <source>Please add a Name</source>
-        <translation>Ole hyvä ja lisää nimi</translation>
+        <translation>Si us plau afegeix un nom</translation>
     </message>
     <message>
         <source>Load channel logo</source>
-        <translation>Lataa kanavan logo</translation>
+        <translation>Carrega logotip del canal</translation>
     </message>
 </context>
 <context>
     <name>CreateChannelMsg</name>
     <message>
         <source>New Channel Post</source>
-        <translation>Uusi kirjoitus kanavalle</translation>
+        <translation>Nova entrada al canal</translation>
     </message>
     <message>
         <source>Channel Post</source>
-        <translation>Kirjoitus kanavalle</translation>
+        <translation>Entrada al canal</translation>
     </message>
     <message>
         <source>Channel Post to:</source>
-        <translation>Kirjoitus kanavalle:</translation>
+        <translation>Entrada al canal a:</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -3645,77 +3646,77 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&quot;&gt;Attachments:&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt; Use Drag and Drop / Add Files button, to Hash new files.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt; Copy/Paste RetroShare links from your shares&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Liitetiedostot:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt; Vedä ja pudota ja paina Lisää tiedostoja -painiketta uusien tiedostojen hash-arvojen laskemiseksi.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt; Kopioi ja liitä RetroShare-linkkejä jaetuista tiedostoistasi.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
+p, li { white-space: pre-wrap; }⏎
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Adjunts:&lt;/span&gt;&lt;/p&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt; Fes arrossegar i deixar / Botó d&apos;afegir arxius per calcular el número de hash d&apos;arxius nous.&lt;/span&gt;&lt;/p&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt; Copiar/Enganxar enllaços RetroShare dels teus compartits&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Add File to Attach</source>
-        <translation>Lisää liitettävä tiedosto</translation>
+        <translation>Afegir arxiu per adjuntar</translation>
     </message>
     <message>
         <source>Add Channel Thumbnail</source>
-        <translation>Lisää kanavan näytekuva</translation>
+        <translation>Afegir miniatura del canal</translation>
     </message>
     <message>
         <source>Message</source>
-        <translation>Viesti</translation>
+        <translation>Missatge</translation>
     </message>
     <message>
         <source>Subject :</source>
-        <translation>Aihe:</translation>
+        <translation>Assumpte:</translation>
     </message>
     <message>
         <source>Attachments</source>
-        <translation>Liitetiedostot</translation>
+        <translation>Adjunts</translation>
     </message>
     <message>
         <source>Allow channels to get frame for message thumbnail from movie media attachments or not</source>
-        <translation>Salli kanavien ottaa viestin näytekuva videoliitetiedostosta tai älä</translation>
+        <translation>Permet als canals prendre un fotograma com a miniatura dels vídeos adjuntats o no</translation>
     </message>
     <message>
         <source>Auto Thumbnail</source>
-        <translation>Automaattinen näytekuva</translation>
+        <translation>Miniatura automàtica</translation>
     </message>
     <message>
         <source>Drag and Drop Files from Search Results</source>
-        <translation>Vedä ja pudota tiedostoja hakutuloksista</translation>
+        <translation>Arrossegar i deixar arxius dels resultats de la cerca</translation>
     </message>
     <message>
         <source>Paste RetroShare Links</source>
-        <translation>Liitä RetroShare-linkit</translation>
+        <translation>Enganxar enllaços RetroShare</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
-        <translation>Liitä RetroShare-linkki</translation>
+        <translation>Enganxa enllaç RetroShare</translation>
     </message>
     <message>
         <source>You are about to add files you&apos;re not actually sharing. Do you still want this to happen?</source>
-        <translation>Olet aikeissa lisätä tiedostoja, joita et todellisuudessa jaa. Haluatko silti tehdä tämän?</translation>
+        <translation>Estàs a punt d&apos;afegir arxius que ara mateix no comparteixes. Segur que ho vols fer?</translation>
     </message>
     <message>
         <source>About to post un-owned files to a channel.</source>
-        <translation>Olet aikeissa lähettää kanavalle tiedostoja, jota et omista.</translation>
+        <translation>Apunt de publicar arxius no propis a un canal.</translation>
     </message>
     <message>
         <source>Drop file error.</source>
-        <translation>Virhe pudotettaessa tiedostoa.</translation>
+        <translation>Error al deixar l&apos;arxiu.</translation>
     </message>
     <message>
         <source>Directory can&apos;t be dropped, only files are accepted.</source>
-        <translation>Hakemistoa ei voi pudottaa, ainostaan tiedostot käyvät.</translation>
+        <translation>No es poden deixar anar directoris, només arxius.</translation>
     </message>
     <message>
         <source>File not found or file name not accepted.</source>
-        <translation>Tiedostoa ei löytynyt tai tiedoston nimi ei kelpaa.</translation>
+        <translation>Arxiu no trobat o nom d&apos;arxiu no acceptat.</translation>
     </message>
     <message>
         <source>Add Extra File</source>
-        <translation>Lisää ylimääräinen tiedosto</translation>
+        <translation>Afegir arxiu extra</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -3723,90 +3724,90 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>File already Added and Hashed</source>
-        <translation>Tiedosto on jo lisätty ja tiivistetty (hash)</translation>
+        <translation>Arxiu ja afegit i hash calculat</translation>
     </message>
     <message>
         <source>Please add a Subject</source>
-        <translation>Ole hyvä ja lisää aihe</translation>
+        <translation>Si us plau afegeix un assumpte</translation>
     </message>
     <message>
         <source>Load thumbnail picture</source>
-        <translation>Lataa näytekuva</translation>
+        <translation>Carrega miniatura</translation>
     </message>
 </context>
 <context>
     <name>CreateCircleDialog</name>
     <message>
         <source>Circle Details</source>
-        <translation>Piirin tiedot</translation>
+        <translation>Detalls del cercle</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation>Nimi</translation>
+        <translation>Nom</translation>
     </message>
     <message>
         <source>Creator</source>
-        <translation>Luoja</translation>
+        <translation>Creador</translation>
     </message>
     <message>
         <source>Distribution</source>
-        <translation>Jakelu</translation>
+        <translation>Distribució</translation>
     </message>
     <message>
         <source>Public</source>
-        <translation>Julkinen</translation>
+        <translation>Públic</translation>
     </message>
     <message>
         <source>Self-Restricted</source>
-        <translation>Itserajoitettu</translation>
+        <translation>Auto-restringit</translation>
     </message>
     <message>
         <source>Restricted to:</source>
-        <translation>Rajoitettu näihin:</translation>
+        <translation>Restringit a:</translation>
     </message>
     <message>
         <source>Circle Membership</source>
-        <translation>Piirin jäsenyys</translation>
+        <translation>Membres del cercle</translation>
     </message>
     <message>
         <source>IDs</source>
-        <translation>Tunnisteet</translation>
+        <translation>Ids</translation>
     </message>
     <message>
         <source>&lt;&lt; Add</source>
-        <translation>&lt;&lt; Lisää</translation>
+        <translation>&lt;&lt; Afegir</translation>
     </message>
     <message>
         <source>&gt;&gt; Remove </source>
-        <translation>&gt;&gt; Poista</translation>
+        <translation>&gt;&gt; Treure</translation>
     </message>
     <message>
         <source>Known Identities</source>
-        <translation>Tiedetyt henkilöllisyydet</translation>
+        <translation>Identitats conegudes</translation>
     </message>
     <message>
         <source>All PGP IDs</source>
-        <translation>Kaikki PGP-tunnisteet</translation>
+        <translation>Totes les Ids PGP</translation>
     </message>
     <message>
         <source>Known PGP IDs</source>
-        <translation>Tiedetyt PGP-tunnisteet</translation>
+        <translation>Ids PGP conegudes</translation>
     </message>
     <message>
         <source>Filter</source>
-        <translation>Suodata</translation>
+        <translation>Filtre</translation>
     </message>
     <message>
         <source>Nickname</source>
-        <translation>Nimimerkki</translation>
+        <translation>Sobrenom</translation>
     </message>
     <message>
         <source>ID</source>
-        <translation>Tunniste</translation>
+        <translation>ID</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation>Tyyppi</translation>
+        <translation>Tipus</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -3814,165 +3815,165 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Please set a name for your Circle</source>
-        <translation>Anna piirillesi nimi</translation>
+        <translation>Si us plau, introdueix un nom pel teu cercle</translation>
     </message>
     <message>
         <source>Personal Circle Details</source>
-        <translation>Henkilökohtaisen piirin tiedot</translation>
+        <translation>Detalls del cercle personal</translation>
     </message>
     <message>
         <source>External Circle Details</source>
-        <translation>Ulkoisen piirin tiedot</translation>
+        <translation>Detalls del cercle extern</translation>
     </message>
     <message>
         <source>Cannot Edit Existing Circles Yet</source>
-        <translation>Et voi vielä muokata ulkoisia piirejä</translation>
+        <translation>No es pot editar cercles existents encara</translation>
     </message>
     <message>
         <source>No Restriction Circle Selected</source>
-        <translation>Rajoituspiiriä ei valittuna</translation>
+        <translation>No s&apos;ha seleccionat cap cercle de restricció</translation>
     </message>
     <message>
         <source>No Circle Limitations Selected</source>
-        <translation>Piirien rajoituksia ei valittuna</translation>
+        <translation>No s&apos;ha seleccionat cap cercle de limitacions</translation>
     </message>
     <message>
         <source>Create New Personal Circle</source>
-        <translation>Luo uusi henkilökohtainen piiri</translation>
+        <translation>Crear nou cercle personal</translation>
     </message>
     <message>
         <source>Create New External Circle</source>
-        <translation>Luo uusi ulkoinen piiri</translation>
+        <translation>Crear nou cercle extern</translation>
     </message>
 </context>
 <context>
     <name>CreateForum</name>
     <message>
         <source>Create new Forum</source>
-        <translation>Luo uusi foorumi</translation>
+        <translation>Crear fòrum nou</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation>Nimi</translation>
+        <translation>Nom</translation>
     </message>
     <message>
         <source>check peers you would like to share private publish key with</source>
-        <translation>rastita vertaiset, joiden kanssa haluat jakaa yksityisen julkaisuavaimesi</translation>
+        <translation>comprovar els contactes amb qui t&apos;agradaria compartir les claus de publicació</translation>
     </message>
     <message>
         <source>Share Key With</source>
-        <translation>Jaa avain</translation>
+        <translation>Compartir clau amb</translation>
     </message>
     <message>
         <source>Description</source>
-        <translation>Kuvaus</translation>
+        <translation>Descripció</translation>
     </message>
     <message>
         <source>Type:</source>
-        <translation>Tyyppi:</translation>
+        <translation>Tipus:</translation>
     </message>
     <message>
         <source>Public - Anyone can read and publish (Shared Publish Key)</source>
-        <translation>Julkinen - kaikki voivat lukea ja julkaista (jaettu julkaisuavain)</translation>
+        <translation>Públic - Tothom pot llegir i publicar (Clau de publicació compartida)</translation>
     </message>
     <message>
         <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation>Rajoitettu - kaikki voivat lukea, julkaisu rajoitettu (yksityinen julkaisuavain)</translation>
+        <translation>Restringit - Tothom pot llegir, publicació limitada (clau de publicació privada)</translation>
     </message>
     <message>
         <source>Private - (Private Publish Key required to view Messages)</source>
-        <translation>Yksityinen - (Viestien lukemiseen tarvitaan yksityinen julkaisuavain)</translation>
+        <translation>Privat - (clau de publicació privada necessària per visualitzar els missatges)</translation>
     </message>
     <message>
         <source>Key Sharing</source>
-        <translation>Avaimen jakaminen</translation>
+        <translation>Compartició de claus</translation>
     </message>
     <message>
         <source>Key recipients can publish to restricted-type channels, and can view and publish  for private-type channels</source>
-        <translation>Avaimen vastaanottajat voivat julkaista rajoitetuille kanaville ja voivat nähdä sekä julkaista  yksityisille kanaville</translation>
+        <translation>Els destinataris de les claus poden publicar en canals restringits, i poden veure i publicar en canals privats</translation>
     </message>
     <message>
         <source>Share Private Publish Key</source>
-        <translation>Jaa yksityinen julkaisuavain</translation>
+        <translation>Compartir clau privada de publicació</translation>
     </message>
     <message>
         <source>Allowed Messages</source>
-        <translation>Sallitut viestit</translation>
+        <translation>Missatges permesos</translation>
     </message>
     <message>
         <source>Authenticated Messages</source>
-        <translation>Varmennetut viestit</translation>
+        <translation>Missatges autenticats</translation>
     </message>
     <message>
         <source>Anonymous Messages</source>
-        <translation>Nimettömät viestit</translation>
+        <translation>Missatges anònims</translation>
     </message>
     <message>
         <source>New Forum</source>
-        <translation>Uusi foorumi</translation>
+        <translation>Nou fòrum</translation>
     </message>
     <message>
         <source>Contacts:</source>
-        <translation>Kontaktit:</translation>
+        <translation>Contactes:</translation>
     </message>
     <message>
         <source>Please add a Name</source>
-        <translation>Ole hyvä ja lisää nimi</translation>
+        <translation>Si us plau afegeix un nom</translation>
     </message>
 </context>
 <context>
     <name>CreateForumMsg</name>
     <message>
         <source>Post Forum Message</source>
-        <translation>Lähetä viesti foorumiin</translation>
+        <translation>Publica missatge al fòrum</translation>
     </message>
     <message>
         <source>Forum</source>
-        <translation>Foorumi</translation>
+        <translation>Fòrum</translation>
     </message>
     <message>
         <source>Subject</source>
-        <translation>Aihe</translation>
+        <translation>Assumpte</translation>
     </message>
     <message>
         <source>Attach File</source>
-        <translation>Liitä tiedosto</translation>
+        <translation>Adjuntar arxiu</translation>
     </message>
     <message>
         <source>Sign Message</source>
-        <translation>Allekirjoita viesti</translation>
+        <translation>Signar missatge</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
-        <translation>Liitä RetroShare-linkki</translation>
+        <translation>Enganxar enllaç RetroShare</translation>
     </message>
     <message>
         <source>Forum Post</source>
-        <translation>Foorumiviesti</translation>
+        <translation>Entrada al fòrum</translation>
     </message>
     <message>
         <source>Attach files via drag and drop</source>
-        <translation>Liitä tiedostoja vetämällä ja pudottamalla</translation>
+        <translation>Adjuntar arxius arrossegant i deixant anar</translation>
     </message>
     <message>
         <source>You can attach files via drag and drop here in this window</source>
-        <translation>Voit liittää tiedostoja vetämällä ja pudottamalla niitä tähän ikkunaan</translation>
+        <translation>Podeu adjuntar arxius arrossegant i deixant anar en aquesta finestra</translation>
     </message>
     <message>
         <source>Start New Thread</source>
-        <translation>Aloita uusi viestiketju</translation>
+        <translation>Començar nova conversa</translation>
     </message>
     <message>
         <source>Paste full RetroShare Link</source>
-        <translation>Liitä kokonainen RetroShare-linkki</translation>
+        <translation>Enganxar enllaç RetroShare sencer</translation>
     </message>
     <message>
         <source>Paste my certificate link</source>
-        <translation>Liitä varmennelinkkini</translation>
+        <translation>Enganxar el meu enllaç de certificat</translation>
     </message>
     <message>
         <source>In Reply to</source>
-        <translation>Vastauksena</translation>
+        <translation>En resposta a</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -3980,57 +3981,57 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Please set a Forum Subject and Forum Message</source>
-        <translation>Ole hyvä ja aseta foorumin aihe ja foorumiviesti</translation>
+        <translation>Si us plau, escull un assumpte pel fòrum i un missatge pel fòrum</translation>
     </message>
     <message>
         <source>Add Extra File</source>
-        <translation>Lisää ylimääräinen tiedosto</translation>
+        <translation>Afegir arxiu extra</translation>
     </message>
     <message>
         <source>Attach a Picture</source>
-        <translation>Liitä kuva</translation>
+        <translation>Adjunta una imatge</translation>
     </message>
     <message>
         <source>Load Picture File</source>
-        <translation>Lataa kuvatiedosto</translation>
+        <translation>Carrega arxiu d&apos;imatge</translation>
     </message>
 </context>
 <context>
     <name>CreateGroup</name>
     <message>
         <source>Create a Group</source>
-        <translation>Luo ryhmä</translation>
+        <translation>Crear grup</translation>
     </message>
     <message>
         <source>Group Name</source>
-        <translation>Ryhmän nimi</translation>
+        <translation>Nom del grup</translation>
     </message>
     <message>
         <source>Enter a name for your group</source>
-        <translation>Anna ryhmälle nimi</translation>
+        <translation>Introdueix un nom pel grup</translation>
     </message>
     <message>
         <source>Friends</source>
-        <translation>Ystävät</translation>
+        <translation>Amics</translation>
     </message>
     <message>
         <source>Edit Group</source>
-        <translation>Muokkaa ryhmää</translation>
+        <translation>Editar grup</translation>
     </message>
 </context>
 <context>
     <name>CreateGxsChannelMsg</name>
     <message>
         <source>New Channel Post</source>
-        <translation>Uusi kirjoitus kanavalle</translation>
+        <translation>Nova entrada al canal</translation>
     </message>
     <message>
         <source>Channel Post</source>
-        <translation>Kanavakirjoitus</translation>
+        <translation>Entrada al canal</translation>
     </message>
     <message>
         <source>Channel Post to:</source>
-        <translation>Kirjoitus kanavalle:</translation>
+        <translation>Entrada al canal a:</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -4040,81 +4041,81 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&quot;&gt;Attachments:&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt; Use Drag and Drop / Add Files button, to Hash new files.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt; Copy/Paste RetroShare links from your shares&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Liitetiedostot:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt; Vedä ja pudota ja paina Lisää tiedostoja -painiketta uusien tiedostojen hash-arvojen laskemiseksi.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt; Kopioi ja liitä RetroShare-linkkejä jaetuista tiedostoistasi.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
+p, li { white-space: pre-wrap; }⏎
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Adjunts:&lt;/span&gt;&lt;/p&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt; Fes arrossegar i deixar / Botó d&apos;afegir arxius per calcular el número de hash d&apos;arxius nous.&lt;/span&gt;&lt;/p&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt; Copiar/Enganxar enllaços RetroShare dels teus compartits&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Add File to Attach</source>
-        <translation>Lisää liitettävä tiedosto</translation>
+        <translation>Afegir arxiu per adjuntar</translation>
     </message>
     <message>
         <source>Add Channel Thumbnail</source>
-        <translation>Lisää kanavan näytekuva</translation>
+        <translation>Afegir miniatura del canal</translation>
     </message>
     <message>
         <source>Message</source>
-        <translation>Viesti</translation>
+        <translation>Missatge</translation>
     </message>
     <message>
         <source>Subject :</source>
-        <translation>Aihe:</translation>
+        <translation>Assumpte:</translation>
     </message>
     <message>
         <source>Attachments</source>
-        <translation>Liitetiedostot</translation>
+        <translation>Adjunts</translation>
     </message>
     <message>
         <source>Allow channels to get frame for message thumbnail from movie media attachments or not</source>
-        <translation>Salli kanavien ottaa viestin näytekuva videoliitetiedostosta tai älä</translation>
+        <translation>Permet als canals prendre un fotograma com a miniatura dels vídeos adjuntats o no</translation>
     </message>
     <message>
         <source>Auto Thumbnail</source>
-        <translation>Automaattinen näytekuva</translation>
+        <translation>Miniatura automàtica</translation>
     </message>
     <message>
         <source>Drag and Drop Files from Search Results</source>
-        <translation>Vedä ja pudota tiedostoja hakutuloksista</translation>
+        <translation>Arrossegar i deixar arxius dels resultats de la cerca</translation>
     </message>
     <message>
         <source>New GxsChannel Post</source>
-        <translation>Uusi kirjoitus kanavalle käyttäen Gxs:ää</translation>
+        <translation>Nova entrada al CanalGxs</translation>
     </message>
     <message>
         <source>Paste RetroShare Links</source>
-        <translation>Liitä RetroShare-linkit</translation>
+        <translation>Enganxar enllaços RetroShare</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
-        <translation>Liitä RetroShare-linkki</translation>
+        <translation>Enganxa l&apos;enllaç RetroShare</translation>
     </message>
     <message>
         <source>GxsChannel security policy prevents you from posting files that you don&apos;t have. If you have these files, you need to share them before, or attach them explicitly:</source>
-        <translation>GxsKanavan turvallisuuspolitiikka estää sinua lähettämästä tiedostoja, joita sinulla ei ole. Tiedostot tulee jakaa etukäteen tai liittää varta vasten:</translation>
+        <translation>La política de seguretat dels canalsGxs impedeix que puguis publicar arxius que no tens. Si els tens, els has de compartir abans o adjuntar-los explicitament:</translation>
     </message>
     <message>
         <source>You can only post files that you do have</source>
-        <translation>Voit lähettää ainoastaan tiedostoja, joita sinulla jo on</translation>
+        <translation>Només pots publicar arxius que tinguis</translation>
     </message>
     <message>
         <source>Drop file error.</source>
-        <translation>Virhe pudotettaessa tiedostoa.</translation>
+        <translation>Error al deixar l&apos;arxiu.</translation>
     </message>
     <message>
         <source>Directory can&apos;t be dropped, only files are accepted.</source>
-        <translation>Hakemistoa ei voi pudottaa, ainostaan tiedostoja.</translation>
+        <translation>No es poden deixar anar directoris, només arxius.</translation>
     </message>
     <message>
         <source>File not found or file name not accepted.</source>
-        <translation>Tiedostoa ei löytynyt tai tiedoston nimi ei kelpaa.</translation>
+        <translation>Arxiu no trobat o nom d&apos;arxiu no acceptat.</translation>
     </message>
     <message>
         <source>Add Extra File</source>
-        <translation>Lisää ylimääräinen tiedosto</translation>
+        <translation>Afegir arxiu extra</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -4122,78 +4123,78 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>File already Added and Hashed</source>
-        <translation>Tiedosto on jo lisätty ja tiivistetty (hash)</translation>
+        <translation>Arxiu ja afegit i hash calculat</translation>
     </message>
     <message>
         <source>Please add a Subject</source>
-        <translation>Ole hyvä ja lisää aihe</translation>
+        <translation>Si us plau afegeix un assumpte</translation>
     </message>
     <message>
         <source>Load thumbnail picture</source>
-        <translation>Lataa näytekuva</translation>
+        <translation>Carrega miniatura</translation>
     </message>
     <message>
         <source>Generate mass data</source>
-        <translation>Luo massatietoja</translation>
+        <translation>Generar dades en massa</translation>
     </message>
 </context>
 <context>
     <name>CreateGxsForumMsg</name>
     <message>
         <source>Post Forum Message</source>
-        <translation>Lähetä viesti foorumiin</translation>
+        <translation>Publica missatge al fòrum</translation>
     </message>
     <message>
         <source>Forum</source>
-        <translation>Foorumi</translation>
+        <translation>Fòrum</translation>
     </message>
     <message>
         <source>Subject</source>
-        <translation>Aihe</translation>
+        <translation>Assumpte</translation>
     </message>
     <message>
         <source>Attach File</source>
-        <translation>Liitä tiedosto</translation>
+        <translation>Adjuntar arxiu</translation>
     </message>
     <message>
         <source>Sign Message</source>
-        <translation>Allekirjoita viesti</translation>
+        <translation>Signar missatge</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
-        <translation>Liitä RetroShare-linkki</translation>
+        <translation>Enganxa l&apos;enllaç RetroShare</translation>
     </message>
     <message>
         <source>Forum Post</source>
-        <translation>Foorumiviesti</translation>
+        <translation>Entrada al fòrum</translation>
     </message>
     <message>
         <source>Attach files via drag and drop</source>
-        <translation>Liitä tiedostoja vetämällä ja pudottamalla</translation>
+        <translation>Adjuntar arxius arrossegant i deixant anar</translation>
     </message>
     <message>
         <source>You can attach files via drag and drop here in this window</source>
-        <translation>Voit liittää tiedostoja vetämällä ja pudottamalla niitä tähän ikkunaan</translation>
+        <translation>Podeu adjuntar arxius arrossegant i deixant anar en aquesta finestra</translation>
     </message>
     <message>
         <source>Start New Thread</source>
-        <translation>Aloita uusi viestiketju</translation>
+        <translation>Començar nova conversa</translation>
     </message>
     <message>
         <source>Paste full RetroShare Link</source>
-        <translation>Liitä kokonainen RetroShare-linkki</translation>
+        <translation>Enganxar enllaç RetroShare sencer</translation>
     </message>
     <message>
         <source>Paste my certificate link</source>
-        <translation>Liitä varmennelinkkini</translation>
+        <translation>Enganxar el meu enllaç de certificat</translation>
     </message>
     <message>
         <source>No Forum</source>
-        <translation>Ei foorumia</translation>
+        <translation>Sense fòrum</translation>
     </message>
     <message>
         <source>In Reply to</source>
-        <translation>Vastauksena</translation>
+        <translation>En resposta a</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -4201,240 +4202,240 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Please set a Forum Subject and Forum Message</source>
-        <translation>Ole hyvä ja aseta foorumin aihe ja foorumiviesti</translation>
+        <translation>Si us plau, escull un assumpte pel fòrum i un missatge pel fòrum</translation>
     </message>
     <message>
         <source>Please choose Signing Id</source>
-        <translation>Valitse allekirjoitustunniste</translation>
+        <translation>Si us plau escull l&apos;Id signant</translation>
     </message>
     <message>
         <source>Please choose Signing Id, it is required</source>
-        <translation>Valitse allekirjoitustunniste, se on pakollinen</translation>
+        <translation>Si us plau escull l&apos;Id signant, és un requisit</translation>
     </message>
     <message>
         <source>Add Extra File</source>
-        <translation>Lisää ylimääräinen tiedosto</translation>
+        <translation>Afegir arxiu extra</translation>
     </message>
     <message>
         <source>Generate mass data</source>
-        <translation>Luo massatietoja</translation>
+        <translation>Generar dades en massa</translation>
     </message>
 </context>
 <context>
     <name>CreateLobbyDialog</name>
     <message>
         <source>Create Chat Lobby</source>
-        <translation>Luo keskusteluaula</translation>
+        <translation>Crear sala de xat</translation>
     </message>
     <message>
         <source>A chat lobby is a decentralized and anonymous chat group. All participants receive all messages. Once the lobby is created you can invite other friends from the Friends tab.</source>
-        <translation>Keskusteluaula on hajautettu ja nimetön keskusteluryhmä. Kaikki osallistujat näkevät kaikki viestit. Kun aula on luotu, voit kutsua muita ystäviäsi Ystävät-välilehdeltä</translation>
+        <translation>Un sala de xat és un grup de xat descentralitzat i anònim. Tots els participants reben tots els missatges. Un cop la sala és creada pots invitar altres amics de la pestanya d&apos;amics.</translation>
     </message>
     <message>
         <source>Lobby name:</source>
-        <translation>Aulan nimi:</translation>
+        <translation>Nom de la sala:</translation>
     </message>
     <message>
         <source>Lobby topic:</source>
-        <translation>Aulan aihe:</translation>
+        <translation>Assumpte de la sala:</translation>
     </message>
     <message>
         <source>Your nick name:</source>
-        <translation>Nimimerkkisi:</translation>
+        <translation>El teu sobrenom:</translation>
     </message>
     <message>
         <source>Security policy:</source>
-        <translation>Tietoturva:</translation>
+        <translation>Política de seguretat:</translation>
     </message>
     <message>
         <source>Public (Visible by friends)</source>
-        <translation>Julkinen (ystävät näkevät)</translation>
+        <translation>Públic (Visible pels amics)</translation>
     </message>
     <message>
         <source>Private (Works on invitation only)</source>
-        <translation>Yksityinen (perustuu kutsuihin)</translation>
+        <translation>Privat (Funciona només per invitació)</translation>
     </message>
     <message>
         <source>Select the Friends with which you want to group chat.</source>
-        <translation>Valitse ystävät ryhmäkeskusteluun.</translation>
+        <translation>Escull els amics amb qui vols fer un xat en grup.</translation>
     </message>
     <message>
         <source>Invited friends</source>
-        <translation>Kutsutut ystävät</translation>
+        <translation>Amics convidats</translation>
     </message>
     <message>
         <source>Put a sensible lobby name here</source>
-        <translation>Kirjoita tähän järkevä nimi aulalle</translation>
+        <translation>Escriu un nom adient per la sala</translation>
     </message>
     <message>
         <source>Your nickname for this lobby (Change default name in options-&gt;chat)</source>
-        <translation>Nimimerkkisi tässä aulassa (vaihda oletusnimeä kohdasta asetukset-&gt;keskustelu)</translation>
+        <translation>El teu sobrenom per la sala (Canvia el per defecte a opcions-&gt;xat)</translation>
     </message>
     <message>
         <source>Contacts:</source>
-        <translation>Kontaktit:</translation>
+        <translation>Contactes:</translation>
     </message>
 </context>
 <context>
     <name>CreateMsgLinkDialog</name>
     <message>
         <source>Invite type:</source>
-        <translation>Kutsun tyyppi:</translation>
+        <translation>Tipus d&apos;invitació:</translation>
     </message>
     <message>
         <source>Private chat</source>
-        <translation>Yksityinen keskustelu</translation>
+        <translation>Xat privat</translation>
     </message>
     <message>
         <source>Validity time :</source>
-        <translation>Voimassaoloaika:</translation>
+        <translation>Temps de validesa:</translation>
     </message>
     <message>
         <source>hour</source>
-        <translation>tunti</translation>
+        <translation>hora</translation>
     </message>
     <message>
         <source>day</source>
-        <translation>päivä</translation>
+        <translation>dia</translation>
     </message>
     <message>
         <source>week</source>
-        <translation>viikko</translation>
+        <translation>setmana</translation>
     </message>
     <message>
         <source>month</source>
-        <translation>kuukausi</translation>
+        <translation>mes</translation>
     </message>
     <message>
         <source>year</source>
-        <translation>vuosi</translation>
+        <translation>any</translation>
     </message>
     <message>
         <source>Create!</source>
-        <translation>Luo!</translation>
+        <translation>Crear!</translation>
     </message>
     <message>
         <source>Private chat invite creation failed</source>
-        <translation>Kutsun luominen yksityiskeskusteluun epäonnistui</translation>
+        <translation>La creació d&apos;invitació a xat privat ha fallat</translation>
     </message>
     <message>
         <source>The creation of the chat invite failed</source>
-        <translation>Kutsun luominen keskusteluun epäonnistui</translation>
+        <translation>La creació d&apos;invitació al xat ha fallat</translation>
     </message>
     <message>
         <source>Private chat invite created</source>
-        <translation>Luotiin kutsu yksityiskeskusteluun</translation>
+        <translation>Invitació a xat privat creada</translation>
     </message>
     <message>
         <source>Create distant chat invite</source>
-        <translation>Luo kutsu etäiseen keskusteluun</translation>
+        <translation>Crear una invitació a xat distant</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;To create a private chat invite for a non-friend person, select his key below and a validity time for your invite, then press &amp;quot;Create&amp;quot;. The invite will contain the  information required to open a tunnel to chat with you. &lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;The invite is encrypted, and does not reveal your identity. Only the selected peer can decrypt the link, and use it to contact you.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Kun haluat kutsua ei-ystävän yksityiseen keskusteluun, valitse hänen avaimensa ja määritä kutsulle voimassaoloaika. Paina lopuksi &amp;quot;Luo&amp;quot;. Kutsu sisältää tarvittavat tiedot keskustelutunnelin avaamiseen kanssasi. &lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;Kutsu on salattu, eikä paljasta henkilöllisyyttäsi. Vain valittu vertainen voi purkaa linkin salauksen ja käyttää sitä yhteydenottoon.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Per crear una invitació a xat privat per una persona no-amiga, selecciona la seva clau a sota i dona un temps de validesa a la teva invitació i prem &quot;Crear&quot;. La invitació contindrà la informació necessària per obrir un túnel per xatejar amb tu. &lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;La invitació és encriptada, no desvela la teva identitat. Només el contacte seleccionat pot desencriptar l&apos;enllaç i utilitzar-lo per contactar-te.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Your new chat invite has been created. You can now copy/paste it as a Retroshare link.</source>
-        <translation>Uusi keskustelukutsusi on luotu. Voit nyt kopioida/liittää sen Retroshare-linkkinä.</translation>
+        <translation>S&apos;ha creat la teva nova invitació a xat. Pots copiar-la i enganxa-la, és un enllaç de RetroShare.</translation>
     </message>
     <message>
         <source>Messaging invite creation failed</source>
-        <translation>Keskustelukutsun luominen epäonnistui</translation>
+        <translation>Ha fallat la creació d&apos;invitació a missatgeria</translation>
     </message>
     <message>
         <source>The creation of the messaging invite failed</source>
-        <translation>Keskustelukutsun luominen epäonnistui</translation>
+        <translation>Ha fallat la creació d&apos;invitació a missatgeria</translation>
     </message>
     <message>
         <source>Messaging invite created</source>
-        <translation>Keskustelukutsu luotiin</translation>
+        <translation>Invitació a missatgeria creada</translation>
     </message>
     <message>
         <source>Your new messaging chat invite has been copied to clipboard. You can now paste it as a Retroshare link.</source>
-        <translation>Uusi keskustelukutsu on kopioitu leikepöydälle. Voit nyt liittää sen Retroshare-linkkinä.</translation>
+        <translation>La teva nova invitació a missatgeria instantània s&apos;ha copiat al porta-retalls. Ara podràs enganxar-la com un enllaç de RetroShare.</translation>
     </message>
     <message>
         <source>Create distant chat</source>
-        <translation>Luo etäinen keskustelu</translation>
+        <translation>Crear xat distant</translation>
     </message>
 </context>
 <context>
     <name>CryptoPage</name>
     <message>
         <source>Profile</source>
-        <translation>Profiili</translation>
+        <translation>Perfil</translation>
     </message>
     <message>
         <source>Profile Manager</source>
-        <translation>Profiilin hallinta</translation>
+        <translation>Directori de perfils</translation>
     </message>
     <message>
         <source>Public Information</source>
-        <translation>Julkiset tiedot</translation>
+        <translation>Informació pública</translation>
     </message>
     <message>
         <source>Name:</source>
-        <translation>Nimi:</translation>
+        <translation>Nom:</translation>
     </message>
     <message>
         <source>Location:</source>
-        <translation>Sijainti:</translation>
+        <translation>Ubicació:</translation>
     </message>
     <message>
         <source>Location ID:</source>
-        <translation>Sijaintitunniste:</translation>
+        <translation>Id d&apos;ubicació:</translation>
     </message>
     <message>
         <source>Number of Friends:</source>
-        <translation>Ystävien lkm:</translation>
+        <translation>Nombre d&apos;amics:</translation>
     </message>
     <message>
         <source>Software Version:</source>
-        <translation>Ohjelmiston versio:</translation>
+        <translation>Versió de programari:</translation>
     </message>
     <message>
         <source>Online since:</source>
-        <translation>Linjoilla alkaen:</translation>
+        <translation>En línia des de:</translation>
     </message>
     <message>
         <source>Other Information</source>
-        <translation>Muita tietoja</translation>
+        <translation>Altra informació</translation>
     </message>
     <message>
         <source>Certificate</source>
-        <translation>Varmenne</translation>
+        <translation>Certificat</translation>
     </message>
     <message>
         <source>Include signatures</source>
-        <translation>Sisällytä allekirjoitukset</translation>
+        <translation>Inclou les signatures</translation>
     </message>
     <message>
         <source>Use old key format</source>
-        <translation>Käytä vanhaa avainformaattia</translation>
+        <translation>Utilitza el format antic de clau</translation>
     </message>
     <message>
         <source>Copy link to clipboard</source>
-        <translation>Kopioi linkki leikepöydälle</translation>
+        <translation>Copiar enllaç al porta-retalls</translation>
     </message>
     <message>
         <source>Save Key into a file</source>
-        <translation>Tallenna avain tiedostoon</translation>
+        <translation>Desa la clau a un arxiu</translation>
     </message>
     <message>
         <source>Save Key</source>
-        <translation>Tallenna avain</translation>
+        <translation>Desar clau</translation>
     </message>
     <message>
         <source>A RetroShare link with your Public Key is copied to Clipboard, paste and send it to your friend via email or some other way</source>
-        <translation>RetroShare-linkki, joka sisältää julkisen avaimesi kopioitiin leikepöydälle. Voit liittää sen esim. sähköpostiviestiin tai muulla keinoin lähettää sen ystävällesi.</translation>
+        <translation>Un enllaç RetroShare amb la teva clau pública s&apos;ha copiat al porta-retalls, enganxa&apos;l i envia&apos;l al teu amic per correu electrònic o una altra manera</translation>
     </message>
     <message>
         <source>Error</source>
-        <translation>Virhe</translation>
+        <translation>Error</translation>
     </message>
     <message>
         <source>Your certificate could not be parsed correctly. Please contact the developers.</source>
-        <translation>Varmenteesi jäsentäminen epäonnistui. Ota yhteyttä kehittäjiin.</translation>
+        <translation>El teu certificat no s&apos;ha pogut interpretar correctament. Si us plau, contacta amb els desenvolupadors.</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -4442,27 +4443,27 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Your Public Key is copied to Clipboard, paste and send it to your friend via email or some other way</source>
-        <translation>Julkinen avaimesi kopioitiin leikepöydälle. Liitä ja lähetä se ystävällesi sähköpostilla tai muulla tavoin</translation>
+        <translation>La teva clau pública s&apos;ha copiat al porta-retalls, enganxa-la i envia-la al teu amic per correu electrònic o una altra manera</translation>
     </message>
     <message>
         <source>Save as...</source>
-        <translation>Tallenna nimellä...</translation>
+        <translation>Desa com...</translation>
     </message>
     <message>
         <source>RetroShare Certificate (*.rsc );;All Files (*)</source>
-        <translation>RetroSharen varmenne (*.rsc );;Kaikki tiedostot (*)</translation>
+        <translation>Certificat RetroShare (*.rsc );;Tots els arxius (*)</translation>
     </message>
     <message>
         <source>Identity ID</source>
-        <translation>Henkilöllisyystunniste</translation>
+        <translation>Id d&apos;identitat</translation>
     </message>
     <message>
         <source>TextLabel</source>
-        <translation>TekstiMerkki</translation>
+        <translation>EtiquetaText</translation>
     </message>
     <message>
         <source>PGP fingerprint:</source>
-        <translation>PGP-sormenjälki:</translation>
+        <translation>fingerprint PGP:</translation>
     </message>
 </context>
 <context>
@@ -4473,23 +4474,23 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>DHT Off</source>
-        <translation>DHT pois päältä</translation>
+        <translation>DHT desactivat</translation>
     </message>
     <message>
         <source>DHT Searching for RetroShare Peers</source>
-        <translation>DHT etsii RetroShare-vertaisia</translation>
+        <translation>DHT buscant contactes del RetroShare</translation>
     </message>
     <message>
         <source>RetroShare users in DHT (Total DHT users)</source>
-        <translation>RetroSharen käyttäjiä DHT:ssä (Kaikki DHT:n käyttäjät)</translation>
+        <translation>Usuaris de RetroShare en DHT (Total d&apos;usuaris DHT)</translation>
     </message>
     <message>
         <source>DHT Good</source>
-        <translation>DHT hyvä</translation>
+        <translation>DHT Correcte</translation>
     </message>
     <message>
         <source>DHT Error</source>
-        <translation>Virhe DHT:ssä</translation>
+        <translation>Error DHT</translation>
     </message>
 </context>
 <context>
@@ -4512,133 +4513,133 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>File Never Seen</source>
-        <translation>Tiedostoa ei ole nähty ikinä</translation>
+        <translation>Arxiu mai vist</translation>
     </message>
 </context>
 <context>
     <name>DetailsDialog</name>
     <message>
         <source>Details</source>
-        <translation>Tiedot</translation>
+        <translation>Detalls</translation>
     </message>
     <message>
         <source>General</source>
-        <translation>Yleiset</translation>
+        <translation>General</translation>
     </message>
     <message>
         <source>Done</source>
-        <translation>Valmis</translation>
+        <translation>Fet</translation>
     </message>
     <message>
         <source>Active</source>
-        <translation>Aktiivinen</translation>
+        <translation>Actiu</translation>
     </message>
     <message>
         <source>Outstanding</source>
-        <translation>Suorittamaton</translation>
+        <translation>Pendents</translation>
     </message>
     <message>
         <source>Needs checking</source>
-        <translation>Tarkistuksen tarpeessa</translation>
+        <translation>Necessiten comprovació</translation>
     </message>
     <message>
         <source>retroshare link(s)</source>
-        <translation>RetroSharen linkki/linkit</translation>
+        <translation>enllaç(os) retroshare</translation>
     </message>
     <message>
         <source>retroshare link</source>
-        <translation>RetroSharen linkki</translation>
+        <translation>Enllaç RetroShare</translation>
     </message>
     <message>
         <source>Copy link to clipboard</source>
-        <translation>Kopioi linkki leikepöydälle</translation>
+        <translation>copiar enllaç al porta-retalls</translation>
     </message>
     <message>
         <source>Rating</source>
-        <translation>Arvostelu</translation>
+        <translation>Qualificació</translation>
     </message>
     <message>
         <source>Comments</source>
-        <translation>Kommentit</translation>
+        <translation>Comentaris</translation>
     </message>
     <message>
         <source>File Name</source>
-        <translation>Tiedoston nimi</translation>
+        <translation>Nom d&apos;arxiu</translation>
     </message>
 </context>
 <context>
     <name>DhtWindow</name>
     <message>
         <source>DHT Details</source>
-        <translation>DHT:n tiedot</translation>
+        <translation>Detalls DHT</translation>
     </message>
     <message>
         <source>Peer Details</source>
-        <translation>Vertaisen tiedot</translation>
+        <translation>Detalls del contacte</translation>
     </message>
     <message>
         <source>Net Status</source>
-        <translation>Verkon tila</translation>
+        <translation>Estat de la xarxa</translation>
     </message>
     <message>
         <source>Connect Options</source>
-        <translation>Yhteysasetukset</translation>
+        <translation>Opcions de conexió</translation>
     </message>
     <message>
         <source>Network Mode</source>
-        <translation>Verkon toimintatapa</translation>
+        <translation>Mode de xarxa</translation>
     </message>
     <message>
         <source>Nat Type</source>
-        <translation>NAT:in tyyppi</translation>
+        <translation>Tipus de NAT</translation>
     </message>
     <message>
         <source>Nat Hole</source>
-        <translation>NAT-reikä</translation>
+        <translation>Forat del NAT</translation>
     </message>
     <message>
         <source>Peer Address</source>
-        <translation>Vertaisen osoite</translation>
+        <translation>Adreça del contacte</translation>
     </message>
     <message>
         <source>Extra Label</source>
-        <translation>Ylimääräinen merkki</translation>
+        <translation>Etiqueta extra</translation>
     </message>
     <message>
         <source>TextLabel</source>
-        <translation>TekstiMerkki</translation>
+        <translation>EtiquetaTexte</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation>Nimi</translation>
+        <translation>Nom</translation>
     </message>
     <message>
         <source>PeerId</source>
-        <translation>Vertaistunniste</translation>
+        <translation>IdContacte</translation>
     </message>
     <message>
         <source>DHT Status</source>
-        <translation>DHT:n tila</translation>
+        <translation>Estat DHT</translation>
     </message>
     <message>
         <source>ConnectLogic</source>
-        <translation>YhteysLogiikka</translation>
+        <translation>LogicaConnexió</translation>
     </message>
     <message>
         <source>Connect Status</source>
-        <translation>Yhteyden tila</translation>
+        <translation>Estat de la connexió</translation>
     </message>
     <message>
         <source>Connect Mode</source>
-        <translation>Yhteyden toimintatapa</translation>
+        <translation>Mode de connexió</translation>
     </message>
     <message>
         <source>Request Status</source>
-        <translation>Pyynnön tila</translation>
+        <translation>Estat de la petició</translation>
     </message>
     <message>
         <source>Cb Status</source>
-        <translation>Cb:n tila</translation>
+        <translation>Estat Cb</translation>
     </message>
     <message>
         <source>RsId</source>
@@ -4646,291 +4647,291 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Bucket</source>
-        <translation>Sanko</translation>
+        <translation>Cub</translation>
     </message>
     <message>
         <source>IP:Port</source>
-        <translation>IP:Portti</translation>
+        <translation>IP:Port</translation>
     </message>
     <message>
         <source>Key</source>
-        <translation>Avain</translation>
+        <translation>Clau</translation>
     </message>
     <message>
         <source>Status Flags</source>
-        <translation>Tilailmaisimet</translation>
+        <translation>Indicador d&apos;estat</translation>
     </message>
     <message>
         <source>Found</source>
-        <translation>Löydetty</translation>
+        <translation>Trobat</translation>
     </message>
     <message>
         <source>Last Sent</source>
-        <translation>Viimeksi lähetetty</translation>
+        <translation>Últims enviats</translation>
     </message>
     <message>
         <source>Last Recv</source>
-        <translation>Viimeksi vast.otettu</translation>
+        <translation>Últims Rebuts</translation>
     </message>
     <message>
         <source>Relay Mode</source>
-        <translation>Välitystapa</translation>
+        <translation>Mode de repetició</translation>
     </message>
     <message>
         <source>Source</source>
-        <translation>Lähde</translation>
+        <translation>Font</translation>
     </message>
     <message>
         <source>Proxy</source>
-        <translation>Välityspalvelin</translation>
+        <translation>Servidor intermediari</translation>
     </message>
     <message>
         <source>Destination</source>
-        <translation>Kohde</translation>
+        <translation>Destinació</translation>
     </message>
     <message>
         <source>Class</source>
-        <translation>Luokka</translation>
+        <translation>Classe</translation>
     </message>
     <message>
         <source>Age</source>
-        <translation>Ikä</translation>
+        <translation>Edat</translation>
     </message>
     <message>
         <source>Bandwidth</source>
-        <translation>Kaistanleveys</translation>
+        <translation>Ample de banda</translation>
     </message>
     <message>
         <source>Unknown NetState</source>
-        <translation>Tuntematon verkon tila</translation>
+        <translation>EstatXarxa desconegut</translation>
     </message>
     <message>
         <source>Offline</source>
-        <translation>Ei yhteyttä</translation>
+        <translation>Fora de línia</translation>
     </message>
     <message>
         <source>Local Net</source>
-        <translation>Paikallinen verkko</translation>
+        <translation>Xarxa local</translation>
     </message>
     <message>
         <source>Behind NAT</source>
-        <translation>NAT:in takana</translation>
+        <translation>Darrera NAT</translation>
     </message>
     <message>
         <source>External IP</source>
-        <translation>Ulkoinen IP</translation>
+        <translation>IP externa</translation>
     </message>
     <message>
         <source>UNKNOWN NAT STATE</source>
-        <translation>TUNTEMATON NAT-TILA</translation>
+        <translation>ESTAT DEL NAT DESCONEGUT</translation>
     </message>
     <message>
         <source>SYMMETRIC NAT</source>
-        <translation>SYMMETRINEN NAT</translation>
+        <translation>NAT SIMÈTRIC</translation>
     </message>
     <message>
         <source>DETERMINISTIC SYM NAT</source>
-        <translation>DETERMINISTINEN SYM NAT</translation>
+        <translation>NAT SIM DETERMINISTA</translation>
     </message>
     <message>
         <source>RESTRICTED CONE NAT</source>
-        <translation>RAJOITETTU CONE NAT</translation>
+        <translation>CONUS NAT RESTRINGIT</translation>
     </message>
     <message>
         <source>FULL CONE NAT</source>
-        <translation>TÄYSI CONE NAT</translation>
+        <translation>CONUS NAT COMPLET</translation>
     </message>
     <message>
         <source>OTHER NAT</source>
-        <translation>MUU NAT</translation>
+        <translation>ALTRE NAT</translation>
     </message>
     <message>
         <source>NO NAT</source>
-        <translation>EI NAT:IA</translation>
+        <translation>SENSE NAT</translation>
     </message>
     <message>
         <source>UNKNOWN NAT HOLE STATUS</source>
-        <translation>NAT-REIÄN TILA TUNTEMATON</translation>
+        <translation>ESTAT DEL FORAT DEL NAT DESCONEGUT</translation>
     </message>
     <message>
         <source>NO NAT HOLE</source>
-        <translation>EI NAT-REIKÄÄ</translation>
+        <translation>SENSE FORAT AL NAT</translation>
     </message>
     <message>
         <source>UPNP FORWARD</source>
-        <translation>UPNP-VÄLITYS</translation>
+        <translation>REENVIAMENT UPNP</translation>
     </message>
     <message>
         <source>NATPMP FORWARD</source>
-        <translation>NATPMP-VÄLITYS</translation>
+        <translation>REENVIAMENT NATPMP</translation>
     </message>
     <message>
         <source>MANUAL FORWARD</source>
-        <translation>MANUAALINEN VÄLITYS</translation>
+        <translation>REENVIAMENT MANUAL</translation>
     </message>
     <message>
         <source>NET BAD: Unknown State</source>
-        <translation>VERKKOVIRHE: Tuntematon tila</translation>
+        <translation>XARXA MALAMENT: Estat desconegut</translation>
     </message>
     <message>
         <source>NET BAD: Offline</source>
-        <translation>VERKKOVIRHE: Offline-tila</translation>
+        <translation>XARXA MALAMENT: Fora de línia</translation>
     </message>
     <message>
         <source>NET BAD: Behind Symmetric NAT</source>
-        <translation>VERKKOVIRHE: Symmetrisen NAT:in takana</translation>
+        <translation>XARXA MALAMENT: Darrera NAT simètric</translation>
     </message>
     <message>
         <source>NET BAD: Behind NAT &amp; No DHT</source>
-        <translation>VERKKOVIRHE: NAT:in takana eikä DHT:tä</translation>
+        <translation>XARXA MALAMENT: Darrera NAT i sense DHT</translation>
     </message>
     <message>
         <source>NET WARNING: NET Restart</source>
-        <translation>VERKKOVAROITUS: Verkon uudelleenkäynnistys</translation>
+        <translation>AVÍS XARXA: Reiniciar xarxa</translation>
     </message>
     <message>
         <source>NET WARNING: Behind NAT</source>
-        <translation>VERKKOVAROITUS: NAT:in takana</translation>
+        <translation>AVÍS XARXA: Darrera NAT</translation>
     </message>
     <message>
         <source>NET WARNING: No DHT</source>
-        <translation>VERKKOVAROITUS: Ei DHT:tä</translation>
+        <translation>AVÍS XARXA: Sense DHT</translation>
     </message>
     <message>
         <source>NET STATE GOOD!</source>
-        <translation>VERKON TILA HYVÄ!</translation>
+        <translation>ESTAT DE LA XARXA BO!</translation>
     </message>
     <message>
         <source>CAUTION: UNVERIFIABLE FORWARD!</source>
-        <translation>VAROITUS: VARMISTAMATON VÄLITYS!</translation>
+        <translation>PRECAUCIÓ: REENVIAMENT NO VERIFICABLE!</translation>
     </message>
     <message>
         <source>CAUTION: UNVERIFIABLE FORWARD &amp; NO DHT</source>
-        <translation>VAROITUS: VARMISTAMATON VÄLITYS EIKÄ DHT:TÄ!</translation>
+        <translation>PRECAUCIÓ: REENVIAMENT NO VERIFICABLE I SENSE DHT</translation>
     </message>
     <message>
         <source>Not Active (Maybe Connected!)</source>
-        <translation>Ei aktiivinen (ehkä yhdistyneenä!)</translation>
+        <translation>No actiu (Pot estar connectat!)</translation>
     </message>
     <message>
         <source>Searching</source>
-        <translation>Haetaan</translation>
+        <translation>Cercant</translation>
     </message>
     <message>
         <source>Failed</source>
-        <translation>Epäonnistunut</translation>
+        <translation>Fallat</translation>
     </message>
     <message>
         <source>offline</source>
-        <translation>Ei yhteyttä</translation>
+        <translation>fora de línia</translation>
     </message>
     <message>
         <source>Unreachable</source>
-        <translation>Tavoittamattomissa</translation>
+        <translation>Fora d&apos;abast</translation>
     </message>
     <message>
         <source>ONLINE</source>
-        <translation>LINJOILLA</translation>
+        <translation>EN LÍNIA</translation>
     </message>
     <message>
         <source>Direct</source>
-        <translation>Suora</translation>
+        <translation>Directe</translation>
     </message>
     <message>
         <source>Proxy VIA </source>
-        <translation>Välityspalvelimen kautta</translation>
+        <translation>VIA servidor intermediari</translation>
     </message>
     <message>
         <source>Relay VIA </source>
-        <translation>Välityksen kautta</translation>
+        <translation>VIA repetidor</translation>
     </message>
     <message>
         <source>None</source>
-        <translation>Ei mikään</translation>
+        <translation>Cap</translation>
     </message>
     <message>
         <source>Disconnected</source>
-        <translation>Yhteys katkaistu</translation>
+        <translation>Desconnectat</translation>
     </message>
     <message>
         <source>Udp Started</source>
-        <translation>UDP käynnissä</translation>
+        <translation>UDP iniciat</translation>
     </message>
     <message>
         <source>Connected</source>
-        <translation>Yhteydessä</translation>
+        <translation>Connectat</translation>
     </message>
     <message>
         <source>Request Active</source>
-        <translation>Pyyntä aktiivinen</translation>
+        <translation>Petició activa</translation>
     </message>
     <message>
         <source>No Request</source>
-        <translation>Ei pyyntöä</translation>
+        <translation>Cap petició</translation>
     </message>
     <message>
         <source>Unknown</source>
-        <translation>Tuntematon</translation>
+        <translation>Desconegut</translation>
     </message>
     <message>
         <source>#Peers: </source>
-        <translation>#Vertaiset:</translation>
+        <translation>#Contactes:</translation>
     </message>
     <message>
         <source> DHT: (#off:</source>
-        <translation> DHT: (#pois:</translation>
+        <translation>DHT: (#apagat:</translation>
     </message>
     <message>
         <source>,unreach:</source>
-        <translation>.tavoittamattomissa:</translation>
+        <translation>,no abastable:</translation>
     </message>
     <message>
         <source>,online:</source>
-        <translation>.linjoilla.</translation>
+        <translation>,en línia:</translation>
     </message>
     <message>
         <source>) Connections: (#dis:</source>
-        <translation>) Yhteydet: (#ei yht:</translation>
+        <translation>) Connexions: (#des:</translation>
     </message>
     <message>
         <source>,#dir:</source>
-        <translation>,#suora:</translation>
+        <translation>,#dir:</translation>
     </message>
     <message>
         <source>,#proxy:</source>
-        <translation>,#välityspalvelin:</translation>
+        <translation>,#intermediari:</translation>
     </message>
     <message>
         <source>,#relay:</source>
-        <translation>,#välitys:</translation>
+        <translation>,#repetidor:</translation>
     </message>
     <message>
         <source>RELAY END</source>
-        <translation>VÄLITYKSEN LOPPU</translation>
+        <translation>FINAL REPETIDOR</translation>
     </message>
     <message>
         <source>Yourself</source>
-        <translation>Sinä itse</translation>
+        <translation>Tu mateix</translation>
     </message>
     <message>
         <source>unknown</source>
-        <translation>tuntematon</translation>
+        <translation>desconegut</translation>
     </message>
     <message>
         <source>unlimited</source>
-        <translation>rajoittamaton</translation>
+        <translation>ilimitat</translation>
     </message>
     <message>
         <source>Own Relay</source>
-        <translation>Oma välitys</translation>
+        <translation>Repetidor propi</translation>
     </message>
     <message>
         <source>RELAY PROXY</source>
-        <translation>VÄLITYKSEN VÄLITYSPALVELIN</translation>
+        <translation>SERVIDOR INTERMEDIARI REPETIDOR</translation>
     </message>
     <message>
         <source>%1 secs ago</source>
-        <translation>%1 sek sitten</translation>
+        <translation>fa %1 seg</translation>
     </message>
     <message>
         <source>%1B/s</source>
@@ -4942,160 +4943,161 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>never</source>
-        <translation>ei ikinä</translation>
+        <translation>mai</translation>
     </message>
 </context>
 <context>
     <name>DirectoriesPage</name>
     <message>
         <source>Incoming Directory</source>
-        <translation>Saapuvien hakemisto</translation>
+        <translation>Directori entrant</translation>
     </message>
     <message>
         <source>Browse</source>
-        <translation>Selaa</translation>
+        <translation>Navegar</translation>
     </message>
     <message>
         <source>Partials Directory</source>
-        <translation>Keskeneräisten hakemisto</translation>
+        <translation>Directori de parcials</translation>
     </message>
     <message>
         <source>Shared Directories</source>
-        <translation>Jaetut hakemistot</translation>
+        <translation>Directoris compartits</translation>
     </message>
     <message>
         <source>Automatically share incoming directory (Recommended)</source>
-        <translation>Jaa saapuvien hakemisto automaattisesti (suositeltavaa)</translation>
+        <translation>Compartir automàticament directori entrant (recomanat)</translation>
     </message>
     <message>
         <source>Edit Share</source>
-        <translation>Muokkaa jakoa</translation>
+        <translation>Editar compartits</translation>
     </message>
     <message>
         <source>Remember file hashes even if not shared. 
 This might be useful if you're sharing an 
 external HD, to avoid re-hashing files when 
 you plug it in.</source>
-        <translation>Muista tiedostojen tiivisteet (hash), vaikka ne eivät 
-olisi jaossa. Tämä voi olla hyödyllistä, jos jaat ulkoiselta 
-kiintolevyltä, jolloin voit välttyä tekemästä tiivisteitä 
-tiedostoille uudelleen, kun kytket sen kiiinni.</translation>
+        <translation>Recorda els números de hash dels arxius⏎
+encara que no estiguin compartits.⏎
+Això serà útil si estàs compartint un disc ⏎
+extern, recordarà el número de hash dels⏎
+seus arxius quan el tornis a endollar.</translation>
     </message>
     <message>
         <source>Remember hashed files for </source>
-        <translation>Muista tiivistetyt (hashed) tiedostot</translation>
+        <translation>Recorda els arxius amb hash durant</translation>
     </message>
     <message>
         <source> days</source>
-        <translation> päivää</translation>
+        <translation>dies</translation>
     </message>
     <message>
         <source>Forget any hashed file that is not anymore shared.</source>
-        <translation>Unohda kaikki tiivistetyt (hashed) tiedostot, jotka eivät ole enää jaossa.</translation>
+        <translation>Oblida els números de hash d&apos;arxius ja no compartits.</translation>
     </message>
     <message>
         <source>Clean Hash Cache</source>
-        <translation>Tyhjennä tiivisteiden (hash) välimuisti</translation>
+        <translation>Netejar la memòria cau dels números de hash</translation>
     </message>
     <message>
         <source>Auto-check shared directories every </source>
-        <translation>Tarkista jaetut hakemistot automaattisesti joka</translation>
+        <translation>Auto-comprova els directoris compartits cada</translation>
     </message>
     <message>
         <source> minute(s)</source>
-        <translation>. minuutti</translation>
+        <translation>minut(s)</translation>
     </message>
     <message>
         <source>Cache cleaning confirmation</source>
-        <translation>Vahvista välimuistin tyhjennys</translation>
+        <translation>Confirmació de neteja de la memòria cau</translation>
     </message>
     <message>
         <source>This will forget any former hash of non shared files. Do you confirm ?</source>
-        <translation>Tämä toiminto unohtaa kaikki jakamattomien tiedostojen entiset tiivisteet (hash). Haluatko varmasti suorittaa toiminnon?</translation>
+        <translation>Això farà que s&apos;oblidin tots els números de hash d&apos;arxius ja no compartits. Ho confirmes?</translation>
     </message>
     <message>
         <source>Set Incoming Directory</source>
-        <translation>Määritä saapuvien hakemisto</translation>
+        <translation>Establir el directori entrant</translation>
     </message>
     <message>
         <source>Set Partials Directory</source>
-        <translation>Määritä keskeneräisten hakemisto</translation>
+        <translation>Establir directori parcials</translation>
     </message>
     <message>
         <source>Directories</source>
-        <translation>Hakemistot</translation>
+        <translation>Directoris</translation>
     </message>
 </context>
 <context>
     <name>DiscStatus</name>
     <message>
         <source>Waiting outgoing discovery operations</source>
-        <translation>Odotetaan lähteviä löytämisoperaatioita</translation>
+        <translation>Esperant que acabi el descobriment d&apos;operacions sortints</translation>
     </message>
     <message>
         <source>Waiting incoming discovery operations</source>
-        <translation>Odotetaan saapuvia löytämisoperaatioita</translation>
+        <translation>Esperant que acabi el descobriment d&apos;operacions entrants</translation>
     </message>
 </context>
 <context>
     <name>DownloadToaster</name>
     <message>
         <source>Start file</source>
-        <translation>Käynnistä tiedosto</translation>
+        <translation>Arxiu d&apos;inici</translation>
     </message>
 </context>
 <context>
     <name>EditChanDetails</name>
     <message>
         <source>Channel Details</source>
-        <translation>Kanavan tiedot</translation>
+        <translation>Detalls del canal</translation>
     </message>
     <message>
         <source>Edit Channel Details</source>
-        <translation>Muokkaa kanavan tietoja</translation>
+        <translation>Edita detalls del canal</translation>
     </message>
     <message>
         <source>Channel Info</source>
-        <translation>Kanavan tiedot</translation>
+        <translation>Informació del canal</translation>
     </message>
     <message>
         <source>Channel Name</source>
-        <translation>Kanavan nimi</translation>
+        <translation>Nom del canal</translation>
     </message>
     <message>
         <source>Channel Description</source>
-        <translation>Kanavan kuvaus</translation>
+        <translation>Descripció del canal</translation>
     </message>
     <message>
         <source>Add Channel Logo</source>
-        <translation>Lisää kanavalle logo</translation>
+        <translation>Afegir logotip del canal</translation>
     </message>
     <message>
         <source>Load channel logo</source>
-        <translation>Lataa kanavan logo</translation>
+        <translation>Carrega logotip del canal</translation>
     </message>
 </context>
 <context>
     <name>EditForumDetails</name>
     <message>
         <source>Forum Details</source>
-        <translation>Foorumin tiedot</translation>
+        <translation>Detalls del fòrum</translation>
     </message>
     <message>
         <source>Edit Forum Details</source>
-        <translation>Muokkaa foorumin tietoja</translation>
+        <translation>Edita detalls del fòrum</translation>
     </message>
     <message>
         <source>Forum Info</source>
-        <translation>Foorumin tiedot</translation>
+        <translation>Informació del fòrum</translation>
     </message>
     <message>
         <source>Forum Name</source>
-        <translation>Foorumin nimi</translation>
+        <translation>Nom del fòrum</translation>
     </message>
     <message>
         <source>Forum Description</source>
-        <translation>Foorumin kuvaus</translation>
+        <translation>Descripció del fòrum</translation>
     </message>
 </context>
 <context>
@@ -5105,10 +5107,10 @@ tiedostoille uudelleen, kun kytket sen kiiinni.</translation>
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Friends&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Ystävät&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
+p, li { white-space: pre-wrap; }⏎
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Amics&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>#</source>
@@ -5116,70 +5118,70 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Status</source>
-        <translation>Tila</translation>
+        <translation>Estat</translation>
     </message>
     <message>
         <source>Person</source>
-        <translation>Henkilö</translation>
+        <translation>Persona</translation>
     </message>
     <message>
         <source>Auto Connect</source>
-        <translation>Yhdistä automaattisesti</translation>
+        <translation>Auto connectar-se</translation>
     </message>
     <message>
         <source>Trust Level</source>
-        <translation>Luottamustaso</translation>
+        <translation>Nivell de confiança</translation>
     </message>
     <message>
         <source>Peer Address</source>
-        <translation>Vertaisen osoite</translation>
+        <translation>Adreça del contacte</translation>
     </message>
     <message>
         <source>Last Contact</source>
-        <translation>Viimeisin kontakti</translation>
+        <translation>Últim missatge</translation>
     </message>
     <message>
         <source>Organization</source>
-        <translation>Järjestely</translation>
+        <translation>Organització</translation>
     </message>
     <message>
         <source>Location</source>
-        <translation>Sijainti</translation>
+        <translation>Localització</translation>
     </message>
     <message>
         <source>Country</source>
-        <translation>Maa</translation>
+        <translation>País</translation>
     </message>
     <message>
         <source>Person Id</source>
-        <translation>Henkilön tunniste</translation>
+        <translation>Id de la persona</translation>
     </message>
     <message>
         <source>Auth Code</source>
-        <translation>Varmennekoodi</translation>
+        <translation>Codi d&apos;autenticació</translation>
     </message>
     <message>
         <source>Vote Up</source>
-        <translation>Äänestä ylös</translation>
+        <translation>Votar positiu</translation>
     </message>
     <message>
         <source>Vote Down</source>
-        <translation>Äänestä alas</translation>
+        <translation>Votar negatiu</translation>
     </message>
 </context>
 <context>
     <name>ExprParamElement</name>
     <message>
         <source>to</source>
-        <translation>vastaanottajalle</translation>
+        <translation>a</translation>
     </message>
     <message>
         <source>ignore case</source>
-        <translation>sivuuta kirjainkoko</translation>
+        <translation>ignora majúscules/minúscules</translation>
     </message>
     <message>
         <source>dd.MM.yyyy</source>
-        <translation>pp.KK.vvvv</translation>
+        <translation>dd.mm.aaaa</translation>
     </message>
     <message>
         <source>KB</source>
@@ -5198,597 +5200,597 @@ p, li { white-space: pre-wrap; }
     <name>ExpressionWidget</name>
     <message>
         <source>Expression Widget</source>
-        <translation>Lausekepienohjelma</translation>
+        <translation>Giny d&apos;expressió</translation>
     </message>
     <message>
         <source>Delete this expression</source>
-        <translation>Poista tämä lauseke</translation>
+        <translation>Suprimir aquesta expressió</translation>
     </message>
 </context>
 <context>
     <name>FileAssociationsPage</name>
     <message>
         <source>&amp;New</source>
-        <translation>&amp;Uusi</translation>
+        <translation>&amp;Nou</translation>
     </message>
     <message>
         <source>Add new Association</source>
-        <translation>Lisää uusi sidos</translation>
+        <translation>Afegir nova associació</translation>
     </message>
     <message>
         <source>&amp;Edit</source>
-        <translation>&amp;Muokkaa</translation>
+        <translation>&amp;Editar</translation>
     </message>
     <message>
         <source>Edit this Association</source>
-        <translation>Muokkaa tätä sidosta</translation>
+        <translation>Editar aquesta associació</translation>
     </message>
     <message>
         <source>&amp;Remove</source>
-        <translation>&amp;Poista</translation>
+        <translation>&amp;Treure</translation>
     </message>
     <message>
         <source>Remove this Association</source>
-        <translation>Poista tämä sidos</translation>
+        <translation>Treure aquesta associació</translation>
     </message>
     <message>
         <source>File type</source>
-        <translation>Tiedostotyyppi</translation>
+        <translation>Tipus d&apos;arxiu</translation>
     </message>
     <message>
         <source> Friend Help</source>
-        <translation>Ystäväohje</translation>
+        <translation> Ajuda per Amics</translation>
     </message>
     <message>
         <source>You  this</source>
-        <translation>Sinä  tästä</translation>
+        <translation>Això</translation>
     </message>
     <message>
         <source>Associations</source>
-        <translation>Sidokset</translation>
+        <translation>Associacions</translation>
     </message>
 </context>
 <context>
     <name>FileTransferInfoWidget</name>
     <message>
         <source>Chunk map</source>
-        <translation>Palojen kartta</translation>
+        <translation>Mapa de trossos</translation>
     </message>
     <message>
         <source>Active chunks</source>
-        <translation>Aktiiviset palat</translation>
+        <translation>Trossos actius</translation>
     </message>
     <message>
         <source>Availability map (%1 active source)</source>
-        <translation>Saatavuuskartta (%1 aktiivinen lähde)</translation>
+        <translation>Mapa de disponibilitat (%1 fonts actius)</translation>
     </message>
     <message>
         <source>Availability map (%1 active sources)</source>
-        <translation>Saatavuuskartta (%1 aktiivisia lähteitä)</translation>
+        <translation>Mapa de disponibilitat (%1 fonts actius)</translation>
     </message>
     <message>
         <source>File info</source>
-        <translation>Tietoja tiedostosta</translation>
+        <translation>Informació d&apos;arxiu</translation>
     </message>
     <message>
         <source>File name</source>
-        <translation>Tiedoston nimi</translation>
+        <translation>Nom d&apos;arxiu</translation>
     </message>
     <message>
         <source>Destination folder</source>
-        <translation>Kohdekansio</translation>
+        <translation>Directori de destí</translation>
     </message>
     <message>
         <source>File hash</source>
-        <translation>Tiedoston tiiviste (hash)</translation>
+        <translation>Número de hash d&apos;arxiu</translation>
     </message>
     <message>
         <source>File size</source>
-        <translation>Tiedostokoko</translation>
+        <translation>Mida d&apos;arxiu</translation>
     </message>
     <message>
         <source>bytes</source>
-        <translation>tavua</translation>
+        <translation>bytes</translation>
     </message>
     <message>
         <source>Chunk size</source>
-        <translation>Palasten koko</translation>
+        <translation>Mida del tros</translation>
     </message>
     <message>
         <source>Number of chunks</source>
-        <translation>Palasten lkm</translation>
+        <translation>Número de trossos</translation>
     </message>
     <message>
         <source>Transferred</source>
-        <translation>Siirretty</translation>
+        <translation>Transferit</translation>
     </message>
     <message>
         <source>Remaining</source>
-        <translation>Jäljellä</translation>
+        <translation>Restant</translation>
     </message>
     <message>
         <source>Number of sources</source>
-        <translation>Lähteiden lkm</translation>
+        <translation>Nombre de fonts</translation>
     </message>
     <message>
         <source>Chunk strategy</source>
-        <translation>Palasten strategia</translation>
+        <translation>Estratègia pels trossos</translation>
     </message>
     <message>
         <source>Transfer type</source>
-        <translation>Siirron tyyppi</translation>
+        <translation>Tipus de transferència </translation>
     </message>
     <message>
         <source>Anonymous F2F</source>
-        <translation>Nimetön F2F</translation>
+        <translation>F2F anònim</translation>
     </message>
     <message>
         <source>Direct friend transfer / Availability assumed</source>
-        <translation>Suora ystäväsiirto / Saatavuus ennakko-oletuksena</translation>
+        <translation>Transferència directa amb amic / Disponibilitat assumida</translation>
     </message>
 </context>
 <context>
     <name>FilesDefs</name>
     <message>
         <source>Picture</source>
-        <translation>Kuva</translation>
+        <translation>Imatge</translation>
     </message>
     <message>
         <source>Video</source>
-        <translation>Video</translation>
+        <translation>Vídeo</translation>
     </message>
     <message>
         <source>Audio</source>
-        <translation>Ääni</translation>
+        <translation>Àudio</translation>
     </message>
     <message>
         <source>Archive</source>
-        <translation>Pakattu tiedosto</translation>
+        <translation>Arxiu</translation>
     </message>
     <message>
         <source>Program</source>
-        <translation>Ohjelma</translation>
+        <translation>Programa</translation>
     </message>
     <message>
         <source>CD/DVD-Image</source>
-        <translation>CD/DVD-kuva</translation>
+        <translation>Imatge CD/DVD</translation>
     </message>
     <message>
         <source>Document</source>
-        <translation>Dokumentti</translation>
+        <translation>Document</translation>
     </message>
     <message>
         <source>RetroShare collection file</source>
-        <translation>RetroShare-kokoelmatiedosto</translation>
+        <translation>Arxiu de col·lecció RetroShare</translation>
     </message>
     <message>
         <source>Subtitles</source>
-        <translation>Kuvatekstit</translation>
+        <translation>Subtítols</translation>
     </message>
     <message>
         <source>Nintendo DS Rom</source>
-        <translation>Nintendo DS -rom-tiedosto</translation>
+        <translation>ROM de Nintendo DS</translation>
     </message>
 </context>
 <context>
     <name>FlatStyle_RDM</name>
     <message>
         <source>Friends Directories</source>
-        <translation>Ystävien hakemistot</translation>
+        <translation>Directoris dels amics</translation>
     </message>
     <message>
         <source>My Directories</source>
-        <translation>Omat hakemistoni</translation>
+        <translation>Els meus directoris</translation>
     </message>
     <message>
         <source>Size</source>
-        <translation>Koko</translation>
+        <translation>Mida</translation>
     </message>
     <message>
         <source>Age</source>
-        <translation>Ikä</translation>
+        <translation>Edat</translation>
     </message>
     <message>
         <source>Friend</source>
-        <translation>Ystävä</translation>
+        <translation>Amic</translation>
     </message>
     <message>
         <source>Share Flags</source>
-        <translation>Jakoilmaisimet</translation>
+        <translation>Indicadors dels compartits</translation>
     </message>
     <message>
         <source>Directory</source>
-        <translation>Hakemisto</translation>
+        <translation>Directori</translation>
     </message>
 </context>
 <context>
     <name>ForumDetails</name>
     <message>
         <source>Forum Details</source>
-        <translation>Foorumin tiedot</translation>
+        <translation>Detalls del fòrum</translation>
     </message>
     <message>
         <source>Forum Info</source>
-        <translation>Foorumin tiedot</translation>
+        <translation>Informació del fòrum</translation>
     </message>
     <message>
         <source>Forum Name</source>
-        <translation>Foorumin nimi</translation>
+        <translation>Nom del fòrum</translation>
     </message>
     <message>
         <source>Popularity</source>
-        <translation>Suosio</translation>
+        <translation>Popularitat</translation>
     </message>
     <message>
         <source>Last Post</source>
-        <translation>Viimeisin viesti</translation>
+        <translation>Darrer missatge</translation>
     </message>
     <message>
         <source>Forum ID</source>
-        <translation>Foorumin tunniste</translation>
+        <translation>ID del fòrum</translation>
     </message>
     <message>
         <source>Forum Description</source>
-        <translation>Foorumin kuvaus</translation>
+        <translation>Descripció del fòrum</translation>
     </message>
     <message>
         <source>Security</source>
-        <translation>Tietoturva</translation>
+        <translation>Seguretat</translation>
     </message>
     <message>
         <source>Allowed Messages</source>
-        <translation>Sallitut viestit</translation>
+        <translation>Missatges permesos</translation>
     </message>
     <message>
         <source>Authenticated Messages</source>
-        <translation>Varmennetut viestit</translation>
+        <translation>Missatges autenticats</translation>
     </message>
     <message>
         <source>Anonymous Messages</source>
-        <translation>Nimettömät viestit</translation>
+        <translation>Missatges anònims</translation>
     </message>
 </context>
 <context>
     <name>ForumMsgItem</name>
     <message>
         <source>Subject: </source>
-        <translation>Aihe:</translation>
+        <translation>Assumpte:</translation>
     </message>
     <message>
         <source>Unsubscribe To Forum</source>
-        <translation>Lopeta foorumin tilaus</translation>
+        <translation>Donar de baixa del fòrum</translation>
     </message>
     <message>
         <source>Reply</source>
-        <translation>Vastaa</translation>
+        <translation>Resposta</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation>Laajenna</translation>
+        <translation>Ampliar</translation>
     </message>
     <message>
         <source>Set as read and remove item</source>
-        <translation>Merkitse luetuksi ja poista kohde</translation>
+        <translation>Marcar com llegit i eliminar l&apos;element</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation>Poista kohde</translation>
+        <translation>Eliminar l&apos;element</translation>
     </message>
     <message>
         <source>Send</source>
-        <translation>Lähetä</translation>
+        <translation>Enviar</translation>
     </message>
     <message>
         <source>Signed</source>
-        <translation>Allekirjoitettu</translation>
+        <translation>Signat</translation>
     </message>
     <message>
         <source>Forum Post</source>
-        <translation>Foorumikirjoitus</translation>
+        <translation>Entrada al fòrum</translation>
     </message>
     <message>
         <source>Unknown Forum Post</source>
-        <translation>Tuntematon foorumikirjoitus</translation>
+        <translation>Entrada al fòrum desconeguda</translation>
     </message>
     <message>
         <source>Anonymous</source>
-        <translation>Nimetön</translation>
+        <translation>Anònim</translation>
     </message>
     <message>
         <source>In Reply to</source>
-        <translation>Vastauksena viestiin</translation>
+        <translation>En resposta a</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation>Piilota</translation>
+        <translation>Amagar</translation>
     </message>
     <message>
         <source>Please give a Text Message</source>
-        <translation>Ole hyvä ja kirjoita tekstiä</translation>
+        <translation>Si us plau, escriu un missatge de text</translation>
     </message>
 </context>
 <context>
     <name>ForumNewItem</name>
     <message>
         <source>Subscribe to Forum</source>
-        <translation>Tilaa foorumi</translation>
+        <translation>Subscriure&apos;s al fòrum</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation>Laajenna</translation>
+        <translation>Ampliar</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation>Poista kohde</translation>
+        <translation>Eliminar l&apos;element</translation>
     </message>
     <message>
         <source>Forum Description</source>
-        <translation>Foorumin kuvaus</translation>
+        <translation>Descripció del fòrum</translation>
     </message>
     <message>
         <source>Unknown Forum</source>
-        <translation>Tuntematon foorumi</translation>
+        <translation>Fòrum desconegut</translation>
     </message>
     <message>
         <source>New Forum</source>
-        <translation>Uusi foorumi</translation>
+        <translation>Nou fòrum</translation>
     </message>
     <message>
         <source>Updated Forum</source>
-        <translation>Päivitetty foorumi</translation>
+        <translation>Fòrum actualitzat</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation>Piilota</translation>
+        <translation>Amagar</translation>
     </message>
 </context>
 <context>
     <name>ForumPage</name>
     <message>
         <source>Misc</source>
-        <translation>Sekalaiset</translation>
+        <translation>Miscel·lània</translation>
     </message>
     <message>
         <source>Set message to read on activate</source>
-        <translation>Merkitse viesti luetuksi aktivoitaessa</translation>
+        <translation>Missatge a llegir quan estiguis actiu</translation>
     </message>
     <message>
         <source>Expand new messages</source>
-        <translation>Laajenna uudet viestit</translation>
+        <translation>Expandeix missatges nous</translation>
     </message>
     <message>
         <source>New forum</source>
-        <translation>Uusi foorumi</translation>
+        <translation>Nou fòrum</translation>
     </message>
     <message>
         <source>Open all forums in new tab</source>
-        <translation>Avaa kaikki foorumit uudessa välilehdessä</translation>
+        <translation>Obrir tots els nous fòrum en una pestanya nova</translation>
     </message>
     <message>
         <source>Forum</source>
-        <translation>Foorumi</translation>
+        <translation>Fòrum</translation>
     </message>
     <message>
         <source>Load embedded images</source>
-        <translation>Lataa upotetut kuvat</translation>
+        <translation>Carrega imatges incrustades</translation>
     </message>
 </context>
 <context>
     <name>ForumUserNotify</name>
     <message>
         <source>Forum Post</source>
-        <translation>Foorumikirjoitus</translation>
+        <translation>Entrada al fòrum</translation>
     </message>
 </context>
 <context>
     <name>ForumsDialog</name>
     <message>
         <source>Forums</source>
-        <translation>Foorumit</translation>
+        <translation>Fòrums</translation>
     </message>
     <message>
         <source>Create Forum</source>
-        <translation>Luo foorumi</translation>
+        <translation>Crear fòrum</translation>
     </message>
     <message>
         <source>Forum:</source>
-        <translation>Foorumi:</translation>
+        <translation>Fòrum:</translation>
     </message>
     <message>
         <source>Last Post</source>
-        <translation>Viimeisin viesti</translation>
+        <translation>Darrer missatge</translation>
     </message>
     <message>
         <source>Threaded View</source>
-        <translation>Ketjunäkymä</translation>
+        <translation>Vista per conversa</translation>
     </message>
     <message>
         <source>Flat View</source>
-        <translation>Tasanäkymä</translation>
+        <translation>Vista plana</translation>
     </message>
     <message>
         <source>Title</source>
-        <translation>Otsikko</translation>
+        <translation>Títol</translation>
     </message>
     <message>
         <source>Date</source>
-        <translation>Päiväys</translation>
+        <translation>Data</translation>
     </message>
     <message>
         <source>Author</source>
-        <translation>Kirjoittaja</translation>
+        <translation>Autor</translation>
     </message>
     <message>
         <source>Signed</source>
-        <translation>Allekirjoitettu</translation>
+        <translation>Signat</translation>
     </message>
     <message>
         <source>Thread:</source>
-        <translation>Viestiketju:</translation>
+        <translation>Conversa:</translation>
     </message>
     <message>
         <source>Previous Thread</source>
-        <translation>Edellinen viestiketju</translation>
+        <translation>Conversa previa:</translation>
     </message>
     <message>
         <source>Next Thread</source>
-        <translation>Seuraava viestiketju</translation>
+        <translation>Conversa següent:</translation>
     </message>
     <message>
         <source>Download all files</source>
-        <translation>Lataa kaikki tiedostot</translation>
+        <translation>Descarregar tots els arxius</translation>
     </message>
     <message>
         <source>Next unread</source>
-        <translation>Seuraava lukematon</translation>
+        <translation>Següent no llegit</translation>
     </message>
     <message>
         <source>Start new Thread for Selected Forum</source>
-        <translation>Aloita uusi viestiketju valitussa foorumissa</translation>
+        <translation>Comença nova conversa al fòrum seleccionat</translation>
     </message>
     <message>
         <source>Reply Message</source>
-        <translation>Vastaa viestiin</translation>
+        <translation>Respondre missatge</translation>
     </message>
     <message>
         <source>Loading</source>
-        <translation>Ladataan</translation>
+        <translation>Carregant</translation>
     </message>
     <message>
         <source>Print</source>
-        <translation>Tulosta</translation>
+        <translation>Impressió</translation>
     </message>
     <message>
         <source>PrintPreview</source>
-        <translation>Tulostuksen esikatselu</translation>
+        <translation>PreviaImpressió</translation>
     </message>
     <message>
         <source>My Forums</source>
-        <translation>Foorumini</translation>
+        <translation>Els meus fòrums</translation>
     </message>
     <message>
         <source>Subscribed Forums</source>
-        <translation>Tilatut foorumit</translation>
+        <translation>Fòrums subscrits</translation>
     </message>
     <message>
         <source>Popular Forums</source>
-        <translation>Suositut foorumit</translation>
+        <translation>Fòrums populars</translation>
     </message>
     <message>
         <source>Other Forums</source>
-        <translation>Muut foorumit</translation>
+        <translation>Altres fòrums</translation>
     </message>
     <message>
         <source>Search Title</source>
-        <translation>Hae otsikkoa</translation>
+        <translation>Cerca títol</translation>
     </message>
     <message>
         <source>Search Date</source>
-        <translation>Hae päivämäärää</translation>
+        <translation>Cerca data</translation>
     </message>
     <message>
         <source>Search Author</source>
-        <translation>Hae kirjoittajaa</translation>
+        <translation>Cerca autor</translation>
     </message>
     <message>
         <source>Content</source>
-        <translation>Sisältö</translation>
+        <translation>Contingut</translation>
     </message>
     <message>
         <source>Search Content</source>
-        <translation>Hae sisältöä</translation>
+        <translation>Cerca contingut</translation>
     </message>
     <message>
         <source>Subscribe to Forum</source>
-        <translation>Tilaa foorumi</translation>
+        <translation>Subscriure&apos;s al fòrum</translation>
     </message>
     <message>
         <source>Unsubscribe to Forum</source>
-        <translation>Lopeta foorumin tilaus</translation>
+        <translation>Donar de baixa fòrum</translation>
     </message>
     <message>
         <source>New Forum</source>
-        <translation>Uusi foorumi</translation>
+        <translation>Nou fòrum</translation>
     </message>
     <message>
         <source>Show Forum Details</source>
-        <translation>Näytä foorumin tiedot</translation>
+        <translation>Mostra detalls del fòrum</translation>
     </message>
     <message>
         <source>Edit Forum Details</source>
-        <translation>Muokkaa foorumin tietoja</translation>
+        <translation>Edita detalls del fòrum</translation>
     </message>
     <message>
         <source>Share Forum</source>
-        <translation>Jaa foorumi</translation>
+        <translation>Comparteix fòrum</translation>
     </message>
     <message>
         <source>Restore Publish Rights for Forum</source>
-        <translation>Palauta julkaisuoikeudet foorumiin</translation>
+        <translation>Restaura drets de publicació pel fòrum</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation>Kopioi RetroShare-linkki</translation>
+        <translation>Copia l&apos;enllaç RetroShare</translation>
     </message>
     <message>
         <source>Mark all as read</source>
-        <translation>Merkitse kaikki luetuiksi</translation>
+        <translation>Marca tot com a llegit</translation>
     </message>
     <message>
         <source>Mark all as unread</source>
-        <translation>Merkitse kaikki lukemattomiksi</translation>
+        <translation>Marca tot com no llegit</translation>
     </message>
     <message>
         <source>Reply</source>
-        <translation>Vastaa</translation>
+        <translation>Resposta</translation>
     </message>
     <message>
         <source>Start New Thread</source>
-        <translation>Aloita uusi viestiketju</translation>
+        <translation>Començar nova conversa</translation>
     </message>
     <message>
         <source>Reply to Author</source>
-        <translation>Vastaa kirjoittajalle</translation>
+        <translation>Respondre a l&apos;autor</translation>
     </message>
     <message>
         <source>Expand all</source>
-        <translation>Laajenna kaikki</translation>
+        <translation>Expandeix tot</translation>
     </message>
     <message>
         <source>Collapse all</source>
-        <translation>Kutista kaikki</translation>
+        <translation>Contreure tot</translation>
     </message>
     <message>
         <source>Mark as read</source>
-        <translation>Merkitse luetuksi</translation>
+        <translation>Marca com llegit</translation>
     </message>
     <message>
         <source>with children</source>
-        <translation>lasten kanssa</translation>
+        <translation>amb fills</translation>
     </message>
     <message>
         <source>Mark as unread</source>
-        <translation>Merkitse lukemattomaksi</translation>
+        <translation>Marca com no llegit</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation>Piilota</translation>
+        <translation>Amagar</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation>Laajenna</translation>
+        <translation>Ampliar</translation>
     </message>
     <message>
         <source>AUTHD</source>
-        <translation>VAHVST</translation>
+        <translation>AUTHD</translation>
     </message>
     <message>
         <source>[ ... Missing Message ... ]</source>
-        <translation>[ ... Puuttuva viesti ... ]</translation>
+        <translation>[ ... Missatge perdut ... ]</translation>
     </message>
     <message>
         <source>Placeholder for missing Message</source>
-        <translation>Puuttuvan viestin paikkamerkki</translation>
+        <translation>Contenidor per missatge perdut</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -5796,77 +5798,77 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>No Forum Selected!</source>
-        <translation>Ei valittua foorumia!</translation>
+        <translation>Cap fòrum seleccionat!</translation>
     </message>
     <message>
         <source>Original Message</source>
-        <translation>Alkuperäinen viesti</translation>
+        <translation>Missatge original</translation>
     </message>
     <message>
         <source>From</source>
-        <translation>Lähettäjä</translation>
+        <translation>Des de</translation>
     </message>
     <message>
         <source>Sent</source>
-        <translation>Lähetetyt</translation>
+        <translation>Enviat</translation>
     </message>
     <message>
         <source>Subject</source>
-        <translation>Aihe</translation>
+        <translation>Assumpte</translation>
     </message>
     <message>
         <source>On %1, %2 wrote:</source>
-        <translation>%2 kirjoitti %1:</translation>
+        <translation>A % 1, %2 va escriure:</translation>
     </message>
     <message>
         <source>You can&apos;t reply an Anonymous Author</source>
-        <translation>Et voi vastata nimettömälle kirjoittajalle</translation>
+        <translation>No pots respondre a un autor anònim</translation>
     </message>
     <message>
         <source>Forum Description</source>
-        <translation>Foorumin kuvaus</translation>
+        <translation>Descripció del fòrum</translation>
     </message>
     <message>
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Forums&lt;/h1&gt;                                  &lt;p&gt;Retroshare Forums look like internet forums, but they work in a decentralized way:                         You see forums your friends are subscribed to, and you forward subscribed forums to                          your friends. This automatically promotes interesting forums in the network.&lt;/p&gt;                         &lt;p&gt;Forums are either Authenticated (&lt;img src=&quot;:/images/konv_message2.png&quot; width=&quot;12&quot;/&gt;) in which case you need to cryptographically sign                          your posts, or anonymous (&lt;img src=&quot;:/images/konversation.png&quot; width=&quot;12&quot;/&gt;). The former class is more resistant to spamming.&lt;/p&gt;                     &lt;p&gt;Forum posts propagate from friend to friend using small cache file exchanges. When you first connect to a new friend, it&apos;s likely     you will receive many such cache files, and new forums will appear.     &lt;/p&gt;                                        </source>
-        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Foorumit&lt;/h1&gt; &lt;p&gt;Retrosharen foorumit toimivat hajautetusti: Näet foorumit, jotka ystäväsi ovat tilanneet ja vastaavasti välität tilaamasi foorumit ystävillesi. Tällä tavoin kiinnostavien foorumeiden näkyvyys lisääntyy automaattisesti.&lt;/p&gt; &lt;p&gt;Foorumit ovat joko varmennettuja, (&lt;img src=&quot;:/images/konv_message2.png&quot; width=&quot;12&quot;/&gt;) jolloin sinun on allekirjoitettava viestisi salausavaimella tai nimettömiä (&lt;img src=&quot;:/images/konversation.png&quot; width=&quot;12&quot;/&gt;). Ensinmainittu on vastustuskykyisempi roskapostittamiselle.&lt;/p&gt; &lt;p&gt;Foorumiviestit leviävät ystävältä toiselle pieniä välimuistitiedostoja vaihtamalla. Kun otat ensimmäisen kerran yhteyden uuteen ystävään, on todennäköistä, että vastaanotat useita välimuistitiedostoja ja uusia foorumeita ilmestyy saatavillesi. &lt;/p&gt;</translation>
+        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Fòrums&lt;/h1&gt; ⇥⇥ &lt;p&gt;Els fòrum de RetroShare semblen com fòrums d&apos;Internet normals, però funcionen de forma descentralitzada: ⇥⇥ Veus fòrums als que els teus amics estan subscrits i tu reenvies fòrums als que estàs subscrits als ⇥⇥ teus amics. Això promociona automàticament els fòrums interessant a la xarxa.&lt;/p&gt; ⇥⇥ &lt;p&gt;Els fòrums són o bé autenticats (&lt;img src=&quot;:/images/konv_message2.png&quot; width=&quot;12&quot;/&gt;) que implica que les teves publicacions han de ser signades criptogràficament ⇥⇥ o anònimes (&lt;img src=&quot;:/images/konversation.png&quot; width=&quot;12&quot;/&gt;). La forma autenticada és més resistent a la pràctica de l&apos;&quot;spamming&quot;.&lt;/p&gt; ⇥⇥ &lt;p&gt;Les publicacions als fòrums es propaguen d&apos;amic a amic utilitzant fitxer cau d&apos;intercanvi petits. Quan et connectes per primera vegada a un amic és probable⇥⇥ que rebis molts d&apos;aquests arxius i apareguin nous fòrums&lt;/p&gt; ⇥⇥</translation>
     </message>
     <message>
         <source>Load images always for this message</source>
-        <translation>Lataa kuvat aina tämän viestin osalta</translation>
+        <translation>Carregar sempre les imatges per aquest missatge</translation>
     </message>
 </context>
 <context>
     <name>ForumsFillThread</name>
     <message>
         <source>Unknown</source>
-        <translation>Tuntematon</translation>
+        <translation>Desconegut</translation>
     </message>
     <message>
         <source>Anonymous</source>
-        <translation>Nimetön</translation>
+        <translation>Anònim</translation>
     </message>
     <message>
         <source>signed</source>
-        <translation>allekirjoitettu</translation>
+        <translation>signat</translation>
     </message>
     <message>
         <source>none</source>
-        <translation>ei mitään</translation>
+        <translation>cap</translation>
     </message>
 </context>
 <context>
     <name>FriendList</name>
     <message>
         <source>Friends</source>
-        <translation>Ystävät</translation>
+        <translation>Amics</translation>
     </message>
     <message>
         <source>Status</source>
-        <translation>Tila</translation>
+        <translation>Estat</translation>
     </message>
     <message>
         <source>Last Contact</source>
-        <translation>Viimeisin kontakti</translation>
+        <translation>Últim missatge</translation>
     </message>
     <message>
         <source>Avatar</source>
@@ -5874,151 +5876,151 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Hide Offline Friends</source>
-        <translation>Piilota offline-ystävät</translation>
+        <translation>Amagar amics fora de línia</translation>
     </message>
     <message>
         <source>State</source>
-        <translation>Tila</translation>
+        <translation>Estat</translation>
     </message>
     <message>
         <source>Sort by State</source>
-        <translation>Järjestä tilan mukaan</translation>
+        <translation>Ordena per estat</translation>
     </message>
     <message>
         <source>Hide State</source>
-        <translation>Piilota tila</translation>
+        <translation>Oculta estat</translation>
     </message>
     <message>
         <source>Sort Descending Order</source>
-        <translation>Laskeva järjestys</translation>
+        <translation>Ordena en ordre descendent</translation>
     </message>
     <message>
         <source>Sort Ascending Order</source>
-        <translation>Nouseva järjestys</translation>
+        <translation>Ordena en ordre ascendent</translation>
     </message>
     <message>
         <source>Show Avatar Column</source>
-        <translation>Näytä avatar-sarake</translation>
+        <translation>Mostra columna &quot;Avatar&quot;</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation>Nimi</translation>
+        <translation>Nom</translation>
     </message>
     <message>
         <source>Sort by Name</source>
-        <translation>Järjestä nimen mukaan</translation>
+        <translation>Ordena per nom</translation>
     </message>
     <message>
         <source>Sort by last contact</source>
-        <translation>Järjestä viimeisen kontaktin mukaan</translation>
+        <translation>Ordena per l&apos;últim contacte</translation>
     </message>
     <message>
         <source>Show Last Contact Column</source>
-        <translation>Näytä viimeisen kontaktin sarake</translation>
+        <translation>Mostra la columna &quot;últim contacte&quot;</translation>
     </message>
     <message>
         <source>Set root is Decorated</source>
-        <translation>Aseta puunäkymä</translation>
+        <translation>Establir que l&apos;arrel és decorada</translation>
     </message>
     <message>
         <source>Set Root Decorated</source>
-        <translation>Aseta puunäkymä</translation>
+        <translation>Establir arrel com decorada</translation>
     </message>
     <message>
         <source>Show Groups</source>
-        <translation>Näytä ryhmät</translation>
+        <translation>Mostra grups</translation>
     </message>
     <message>
         <source>Group</source>
-        <translation>Ryhmä</translation>
+        <translation>Grup</translation>
     </message>
     <message>
         <source>Friend</source>
-        <translation>Ystävä</translation>
+        <translation>Amic</translation>
     </message>
     <message>
         <source>Location</source>
-        <translation>Sijainti</translation>
+        <translation>Localització</translation>
     </message>
     <message>
         <source>Message Group</source>
-        <translation>Viestiryhmä</translation>
+        <translation>Missatge de grup</translation>
     </message>
     <message>
         <source>Edit Group</source>
-        <translation>Muokkaa ryhmää</translation>
+        <translation>Editar grup</translation>
     </message>
     <message>
         <source>Remove Group</source>
-        <translation>Poista ryhmä</translation>
+        <translation>Elimina grup</translation>
     </message>
     <message>
         <source>Chat</source>
-        <translation>Keskustelu</translation>
+        <translation>Xat</translation>
     </message>
     <message>
         <source>Message Friend</source>
-        <translation>Lähetä viesti ystävälle</translation>
+        <translation>Missatge per amic</translation>
     </message>
     <message>
         <source>Friend Details</source>
-        <translation>Ystävän tiedot</translation>
+        <translation>Detalls de l&apos;amic</translation>
     </message>
     <message>
         <source>Recommend this Friend to...</source>
-        <translation>Suosittele tätä ystävää...</translation>
+        <translation>Recomanar aquest amic a...</translation>
     </message>
     <message>
         <source>Copy certificate link</source>
-        <translation>Kopioi varmennelinkki</translation>
+        <translation>Copia enllaç del certificat</translation>
     </message>
     <message>
         <source>Deny Friend</source>
-        <translation>Torju ystävä</translation>
+        <translation>Negar l&apos;amic</translation>
     </message>
     <message>
         <source>Remove Friend Location</source>
-        <translation>Poista ystävän sijainti</translation>
+        <translation>Treure ubicació de l&apos;amic</translation>
     </message>
     <message>
         <source>Add to group</source>
-        <translation>Lisää ryhmään</translation>
+        <translation>Afegir al grup</translation>
     </message>
     <message>
         <source>Move to group</source>
-        <translation>Siirrä ryhmään</translation>
+        <translation>Moure al grup</translation>
     </message>
     <message>
         <source>Groups</source>
-        <translation>Ryhmät</translation>
+        <translation>Grups</translation>
     </message>
     <message>
         <source>Remove from group</source>
-        <translation>Poista ryhmästä</translation>
+        <translation>Eliminar del grup</translation>
     </message>
     <message>
         <source>Remove from all groups</source>
-        <translation>Poista kaikista ryhmistä</translation>
+        <translation>Treure de tots els grups</translation>
     </message>
     <message>
         <source>Expand all</source>
-        <translation>Laajenna kaikki</translation>
+        <translation>Expandeix tot</translation>
     </message>
     <message>
         <source>Collapse all</source>
-        <translation>Kutista kaikki</translation>
+        <translation>Contreure tot</translation>
     </message>
     <message>
         <source>Available</source>
-        <translation>Saatavilla</translation>
+        <translation>Disponible</translation>
     </message>
     <message>
         <source>Do you want to remove this Friend?</source>
-        <translation>Haluatko poistaa tämän ystävän?</translation>
+        <translation>Voleu suprimir aquest amic?</translation>
     </message>
     <message>
         <source>Columns</source>
-        <translation>Sarakkeet</translation>
+        <translation>Columnes</translation>
     </message>
     <message>
         <source>IP</source>
@@ -6026,124 +6028,124 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Sort by IP</source>
-        <translation>Järjestä IP:n mukaan</translation>
+        <translation>Ordena per IP</translation>
     </message>
     <message>
         <source>Show IP Column</source>
-        <translation>Näytä IP-sarake</translation>
+        <translation>Ordena per columna d&apos;IP</translation>
     </message>
     <message>
         <source>Attempt to connect</source>
-        <translation>Yritä muodostaa yhteys</translation>
+        <translation>Intent de connexió</translation>
     </message>
     <message>
         <source>Create new group</source>
-        <translation>Luo uusi ryhmä</translation>
+        <translation>Crear nou grup</translation>
     </message>
     <message>
         <source>Display</source>
-        <translation>Näytä</translation>
+        <translation>Mostra</translation>
     </message>
     <message>
         <source>Paste certificate link</source>
-        <translation>Liitä varmennelinkki</translation>
+        <translation>Enganxa enllaç certificat</translation>
     </message>
 </context>
 <context>
     <name>FriendRequestToaster</name>
     <message>
         <source>Confirm Friend Request</source>
-        <translation>Vahvista ystäväpyyntö</translation>
+        <translation>Confirma la petició d&apos;amic</translation>
     </message>
     <message>
         <source>wants to be friend with you on RetroShare</source>
-        <translation>haluaa olla ystäväsi RetroSharessa</translation>
+        <translation>vol ser amic teu al RetroShare</translation>
     </message>
     <message>
         <source>Unknown (Incoming) Connect Attempt</source>
-        <translation>Tuntematon (saapuva) yhteydenottoyritys</translation>
+        <translation>Intent de connexió (Entrant) desconegut</translation>
     </message>
 </context>
 <context>
     <name>FriendSelectionWidget</name>
     <message>
         <source>Search :</source>
-        <translation>Etsi :</translation>
+        <translation>Cercar:</translation>
     </message>
     <message>
         <source>All</source>
-        <translation>Kaikki</translation>
+        <translation>Tot</translation>
     </message>
     <message>
         <source>None</source>
-        <translation>Ei mikään</translation>
+        <translation>Cap</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation>Nimi</translation>
+        <translation>Nom</translation>
     </message>
     <message>
         <source>Search Friends</source>
-        <translation>Etsi ystäviä</translation>
+        <translation>Busca als amics</translation>
     </message>
 </context>
 <context>
     <name>FriendsDialog</name>
     <message>
         <source>Friends</source>
-        <translation>Ystävät</translation>
+        <translation>Amics</translation>
     </message>
     <message>
         <source>Edit status message</source>
-        <translation>Muokkaa tilaviestiä</translation>
+        <translation>Editar missatge d&apos;estat</translation>
     </message>
     <message>
         <source>Broadcast</source>
-        <translation>Kuulutus</translation>
+        <translation>Difusió</translation>
     </message>
     <message>
         <source>Bold</source>
-        <translation>Lihavointi</translation>
+        <translation>Negreta</translation>
     </message>
     <message>
         <source>Underline</source>
-        <translation>Alleviivaus</translation>
+        <translation>Subratllat</translation>
     </message>
     <message>
         <source>Italic</source>
-        <translation>Kursivointi</translation>
+        <translation>Cursiva</translation>
     </message>
     <message>
         <source>Font</source>
-        <translation>Kirjasin</translation>
+        <translation>Tipus de lletra</translation>
     </message>
     <message>
         <source>Text Color</source>
-        <translation>Tekstin väri</translation>
+        <translation>Color del text</translation>
     </message>
     <message>
         <source>Attach File</source>
-        <translation>Liitä tiedosto</translation>
+        <translation>Adjuntar arxiu</translation>
     </message>
     <message>
         <source>Send</source>
-        <translation>Lähetä</translation>
+        <translation>Enviar</translation>
     </message>
     <message>
         <source>Messages entered here are sent to all connected friends</source>
-        <translation>Tähän kirjoitetut viestit lähtevät kaikille ystäville, joihin olet yhteydessä</translation>
+        <translation>Els missatges inserits aquí s&apos;envien a tots els amics connectats</translation>
     </message>
     <message>
         <source>Clear Chat History</source>
-        <translation>Tyhjennä keskusteluhistoria</translation>
+        <translation>Esborrar l&apos;historial de xat</translation>
     </message>
     <message>
         <source>Add Friend</source>
-        <translation>Lisää ystävä</translation>
+        <translation>Afegeix amic</translation>
     </message>
     <message>
         <source>Add your Avatar Picture</source>
-        <translation>Lisää avatarkuva</translation>
+        <translation>Afegeix la teva foto d&apos;avatar</translation>
     </message>
     <message>
         <source>A</source>
@@ -6151,375 +6153,375 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Set your status message</source>
-        <translation>Aseta tilaviestisi</translation>
+        <translation>Establir el teu missatge d&apos;estat</translation>
     </message>
     <message>
         <source>Edit your status message</source>
-        <translation>Muokkaa tilaviestiäsi</translation>
+        <translation>Editar el teu missatge d&apos;estat</translation>
     </message>
     <message>
         <source>Browse Message History</source>
-        <translation>Selaa viestihistoriaa</translation>
+        <translation>Navega per l&apos;Historial de missatges</translation>
     </message>
     <message>
         <source>Browse History</source>
-        <translation>Selaa historiaa</translation>
+        <translation>Navega per l&apos;historial</translation>
     </message>
     <message>
         <source>Save Chat History</source>
-        <translation>Tallenna keskusteluhistoria</translation>
+        <translation>Desa historial de xat</translation>
     </message>
     <message>
         <source>Add a new Group</source>
-        <translation>Lisää uusi ryhmä</translation>
+        <translation>Afegir un nou grup</translation>
     </message>
     <message>
         <source>Delete Chat History</source>
-        <translation>Tuhoa keskusteluhistoria</translation>
+        <translation>Esborra l&apos;historial de xat</translation>
     </message>
     <message>
         <source>Deletes all stored and displayed chat history</source>
-        <translation>Tuhoaa sekä tallennetun, että näkyvissä olevan keskusteluhistorian</translation>
+        <translation>Esborra tots l&apos;historial de xat mostrat o desat</translation>
     </message>
     <message>
         <source>Create new Chat lobby</source>
-        <translation>Luo uusi keskusteluaula</translation>
+        <translation>Crear nova sala de xat</translation>
     </message>
     <message>
         <source>Choose Font</source>
-        <translation>Valitse kirjasin</translation>
+        <translation>Escull el tipus de lletra</translation>
     </message>
     <message>
         <source>Reset font to default</source>
-        <translation>Palauta oletuskirjasin</translation>
+        <translation>Restablir tipografia per defecte</translation>
     </message>
     <message>
         <source>Local network</source>
-        <translation>Paikallinen verkko</translation>
+        <translation>Xarxa local</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
-        <translation>Liitä RetroShare-linkki</translation>
+        <translation>Enganxa l&apos;enllaç RetroShare</translation>
     </message>
     <message>
         <source>is typing...</source>
-        <translation>kirjoittaa...</translation>
+        <translation>està escrivint...</translation>
     </message>
     <message>
         <source>New group chat</source>
-        <translation>Uusi ryhmäkeskustelu</translation>
+        <translation>Nou xat en grup</translation>
     </message>
     <message>
         <source>Do you really want to physically delete the history?</source>
-        <translation>Haluatko todella lopullisesti tuhota historian?</translation>
+        <translation>Realment vols eliminar físicament l&apos;historial?</translation>
     </message>
     <message>
         <source>Add Extra File</source>
-        <translation>Lisää ylimääräinen tiedosto</translation>
+        <translation>Afegir arxiu extra</translation>
     </message>
     <message>
         <source>Save as...</source>
-        <translation>Tallenna nimellä...</translation>
+        <translation>Desa com...</translation>
     </message>
     <message>
         <source>Text File (*.txt );;All Files (*)</source>
-        <translation>Tekstitiedosto (*.txt );;Kaikki tiedostot (*)</translation>
+        <translation>Arxiu de text (*.txt );;Tots els arxius (*)</translation>
     </message>
     <message>
         <source>Keyring</source>
-        <translation>Avainnippu</translation>
+        <translation>Anell de claus</translation>
     </message>
     <message>
         <source>Retroshare broadcast chat: messages are sent to all connected friends.</source>
-        <translation>Retrosharen kuulutus: viestit lähetetään kaikille linjoilla oleville ystäville.</translation>
+        <translation>Xat de difusió del RetroShare: Els missatges són enviats a tots els amics connectats.</translation>
     </message>
     <message>
         <source>Attach a Picture</source>
-        <translation>Liitä kuva</translation>
+        <translation>Adjunta una imatge</translation>
     </message>
     <message>
         <source>Load Picture File</source>
-        <translation>Lataa kuvatiedosto</translation>
+        <translation>Carrega arxiu d&apos;imatge</translation>
     </message>
     <message>
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Friends&lt;/h1&gt;                                       &lt;p&gt;The Friends tab shows...your friends: the list of persons you have accepted to connect to.                       &lt;/p&gt;                                                       &lt;p&gt;You can group friends together to allow a finer level of information access, for instance to only allow          some friends to see some files.&lt;/p&gt;     &lt;p&gt;On the right, you will find 3 useful tabs:                                                                       &lt;ul&gt;                                                                                                                &lt;li&gt;Broadcast sends messages to all connected friends at once&lt;/li&gt;                                   &lt;li&gt;Local Network shows the network around you, including friends of your friends&lt;/li&gt;                       &lt;li&gt;Keyring contains keys you collected, mostly forwarded to you by your friends&lt;/li&gt;                                  &lt;/ul&gt; &lt;/p&gt;                                                                                                        </source>
-        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Ystävät&lt;/h1&gt;                                   		  &lt;p&gt;Ystävät-näkymä näyttää ystäväsi: luettelon henkilöistä, joihin yhdistämisen olet hyväksynyt.                   		  &lt;/p&gt;                                                   		  &lt;p&gt;Voit ryhmitellä ystäviäsi ja näin hienosäätää pääsyä tietoihisi. Voit esimerkiksi      		  sallia vain tiettyjen ystävien nähdä tietyt tiedostot.&lt;/p&gt; 		  &lt;p&gt;Oikealla näet kolme hyödyllistä välilehteä:                                                                   		  &lt;ul&gt;	                                                                                                         		  		&lt;li&gt;Kuulutus lähettää viestejä kaikille linjoilla oleville ystävillesi samanaikaisesti&lt;/li&gt;                             		  		&lt;li&gt;Paikallinen verkko näyttää sinua ympäröivän verkoston, mukaanlukien ystäviesi ystävät&lt;/li&gt;                 		  		&lt;li&gt;Avainnippu sisältää keräämäsi avaimet, joista useimmat ovat ystäviesi välittämiä&lt;/li&gt;                              		  &lt;/ul&gt; &lt;/p&gt;                                                                                                      		</translation>
+        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Amics&lt;/h1&gt; ⇥⇥ &lt;p&gt;La pestanya Amics mostra... els teus amics: La llista de les persones amb qui has acceptat connetar-te. ⇥⇥ &lt;/p&gt; ⇥⇥ &lt;p&gt;Pots agrupar els amics en grups per millorar el control de l&apos;accés a les dades, per permetre⇥⇥ només a alguns amics veure alguns arxius.&lt;/p&gt; ⇥⇥ &lt;p&gt;A la dreta, trobaràs 3 útils pestanyes: ⇥⇥ &lt;ul&gt;⇥ ⇥⇥ ⇥⇥&lt;li&gt;Difusió envia missatges a tots els amics connectats a la vegada&lt;/li&gt; ⇥⇥ ⇥⇥&lt;li&gt;Xarxa local la xarxa propera, incloent amics i amics d&apos;amics&lt;/li&gt; ⇥⇥ ⇥⇥&lt;li&gt;Anell de claus conté les claus que tens, principalment les reenviades dels teus amics cap a tu&lt;/li&gt; ⇥⇥ &lt;/ul&gt; &lt;/p&gt; ⇥⇥</translation>
     </message>
 </context>
 <context>
     <name>GamesDialog</name>
     <message>
         <source>Form</source>
-        <translation>Lomake</translation>
+        <translation>Formulari</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Games Launcher&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Pelien käynnistys&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
+p, li { white-space: pre-wrap; }⏎
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Executar jocs&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Game:</source>
-        <translation>Peli:</translation>
+        <translation>Joc:</translation>
     </message>
     <message>
         <source>GameType: 0. Want to Add your Game here?</source>
-        <translation>Pelityyppi: 0. Haluatko lisätä pelisi tähän?</translation>
+        <translation>Tipus de joc: 0. Vols afegir el joc aquí?</translation>
     </message>
     <message>
         <source>GameType: 1. Get In Touch with the developers</source>
-        <translation>Pelityyppi: 1. Ota yhteyttä kehittäjiin</translation>
+        <translation>Tipus de joc: 1. Contacta amb els desenvolupadors</translation>
     </message>
     <message>
         <source>GameType: 2.</source>
-        <translation>Pelityyppi: 2.</translation>
+        <translation>Tipus de joc: 2.</translation>
     </message>
     <message>
         <source>Title / Comment</source>
-        <translation>Otsikko / Kommentti</translation>
+        <translation>Títol / Comentari</translation>
     </message>
     <message>
         <source>Create New Game</source>
-        <translation>Luo uusi peli</translation>
+        <translation>Crear joc nou</translation>
     </message>
     <message>
         <source>Invite All Friends</source>
-        <translation>Kutsu kaikki ystävät</translation>
+        <translation>Convidar tots els amics</translation>
     </message>
     <message>
         <source>Game Type</source>
-        <translation>Pelityyppi</translation>
+        <translation>Tipus de joc</translation>
     </message>
     <message>
         <source>Server</source>
-        <translation>Palvelin</translation>
+        <translation>Servidor</translation>
     </message>
     <message>
         <source>Status</source>
-        <translation>Tila</translation>
+        <translation>Estat</translation>
     </message>
     <message>
         <source>Comment</source>
-        <translation>Kommentti</translation>
+        <translation>Comentari</translation>
     </message>
     <message>
         <source>GameID</source>
-        <translation>Pelitunniste</translation>
+        <translation>IdJoc</translation>
     </message>
     <message>
         <source>Player</source>
-        <translation>Pelaaja</translation>
+        <translation>Jugador</translation>
     </message>
     <message>
         <source>Invite</source>
-        <translation>Kutsu</translation>
+        <translation>Convidar</translation>
     </message>
     <message>
         <source>Interested</source>
-        <translation>Kiinnostunut</translation>
+        <translation>Interessat</translation>
     </message>
     <message>
         <source>Accept</source>
-        <translation>Hyväksy</translation>
+        <translation>Acceptat</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation>Tuhoa</translation>
+        <translation>Esborrar</translation>
     </message>
     <message>
         <source>Move Player</source>
-        <translation>Siirrä pelaajaa</translation>
+        <translation>Moure el jugador</translation>
     </message>
     <message>
         <source>Play Game</source>
-        <translation>Pelaa</translation>
+        <translation>Jugar joc</translation>
     </message>
     <message>
         <source>Cancel Game</source>
-        <translation>Peru peli</translation>
+        <translation>Cancel·lar joc</translation>
     </message>
     <message>
         <source>Add to Invite List</source>
-        <translation>Lisää kutsuluetteloon</translation>
+        <translation>Afegir a la llista de convidats</translation>
     </message>
     <message>
         <source>Remove from Invite List</source>
-        <translation>Poista kutsuluettelosta</translation>
+        <translation>Treure de la llista de convidats</translation>
     </message>
     <message>
         <source>Interested in Playing</source>
-        <translation>Kiinnostunut pelaamaan</translation>
+        <translation>Interessat en jugar</translation>
     </message>
     <message>
         <source>Not Interested in Game</source>
-        <translation>Ei kiinnostunut pelaamaan</translation>
+        <translation>No interessat en el joc</translation>
     </message>
     <message>
         <source>Not Interested</source>
-        <translation>Ei kiinnostunut</translation>
+        <translation>No interessat</translation>
     </message>
     <message>
         <source>Confirm Peer in Game</source>
-        <translation>Hyväksy vertainen peliin</translation>
+        <translation>Confirmar contacte pel joc</translation>
     </message>
     <message>
         <source>Remove Peer from Game</source>
-        <translation>Poista vertainen pelistä</translation>
+        <translation>Eliminar contacte del joc</translation>
     </message>
     <message>
         <source>Interested in Game</source>
-        <translation>Kiinnostunut pelaamaan</translation>
+        <translation>Interessat en el joc</translation>
     </message>
     <message>
         <source>Quit Game</source>
-        <translation>Poistu pelistä</translation>
+        <translation>Sortir del joc</translation>
     </message>
 </context>
 <context>
     <name>GenCertDialog</name>
     <message>
         <source>Create new Profile</source>
-        <translation>Luo uusi profiili</translation>
+        <translation>Crear perfil nou</translation>
     </message>
     <message>
         <source>You can install retroshare on different locations using the same identity. For this, just export the selected identity, and import it on the new computer, then create a new location with it.</source>
-        <translation>Voit asentaa RetroSharen eri laitteisiin käyttämällä samaa henkilöllisyyttä. Vie valittu henkilöllisyys ja tuo se toisen tietokoneen RetroShare-asennukseen ja luo uusi sijainti.</translation>
+        <translation>Pots instal·lar RetroShare en diferents ubicacions amb la mateixa identitat. Per fer-ho només has d&apos;exportar la identitat que vulguis, importar-la al nou ordinador i després crear la nova ubicació.</translation>
     </message>
     <message>
         <source>It looks like you don&apos;t own any profile (PGP keys). Please fill in the form below to create one, or import an existing profile.</source>
-        <translation>Näyttää siltä, ettei sinulla ole profiilia (PGP-avaimia). Täytä allaoleva lomake luodaksesi sellaisen tai tuo olemassaoleva profiili.</translation>
+        <translation>Sembla que no tens cap perfil (Clau PGP). Si us plau omple el formulari inferior per crear-ne un, o importa&apos;n un existent.</translation>
     </message>
     <message>
         <source>Your profile is associated with a PGP key. RetroShare currently ignores DSA keys.</source>
-        <translation>Profiilisi on kytketty PGP-avaimeen. RetroShare ohittaa DSA-avaimet.</translation>
+        <translation>El teu perfil està associat a una clau PGP. RetroShare ara mateix ignora les claus DSA.</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation>Nimi</translation>
+        <translation>Nom</translation>
     </message>
     <message>
         <source>Enter your nickname here</source>
-        <translation>Kirjoita nimimerkkisi tähän</translation>
+        <translation>Introdueix el teu sobrenom aquí</translation>
     </message>
     <message>
         <source>Email</source>
-        <translation>Sähköposti</translation>
+        <translation>Correu electrònic</translation>
     </message>
     <message>
         <source>Be careful: this email will be visible to your friends and friends 
 of your friends. This information is required by PGP, but to stay 
 anonymous, you can use a fake email.</source>
-        <translation>Ole huolellinen: tämä sähköposti näkyy ystävillesi ja heidän
-ystävilleen. PGP tarvitsee tämän tiedon, mutta nimettömänä
-pysyäksesi voit käyttää tekaistua osoitetta.</translation>
+        <translation>Ves amb compte: aquest correu electrònic serà visible pels teus amic ⏎
+i amics d&apos;amics. Aquesta informació és necessaria pel PGP, però no 
+per continuar sent anònim, pots utilitzar un correu electrònic fals.</translation>
     </message>
     <message>
         <source>This Password is for PGP</source>
-        <translation>Tämä salasana on PGP:tä varten</translation>
+        <translation>Aquesta contrasenya és pel PGP</translation>
     </message>
     <message>
         <source>Password</source>
-        <translation>Salasana</translation>
+        <translation>Contrasenya</translation>
     </message>
     <message>
         <source>Put a strong password here. This password protects your PGP key.</source>
-        <translation>Anna hyvä salasana. Salasana suojelee PGP-avaintasi.</translation>
+        <translation>Utilitza una contrasenya forta aquí. Aquesta contrasenya protegeix la teva clau PGP.</translation>
     </message>
     <message>
         <source>Location</source>
-        <translation>Sijainti</translation>
+        <translation>Localització</translation>
     </message>
     <message>
         <source>Create new identity</source>
-        <translation>Luo uusi henkilöllisyys</translation>
+        <translation>Crear nova identitat</translation>
     </message>
     <message>
         <source>Use identity</source>
-        <translation>Käytä henkilöllisyyttä</translation>
+        <translation>Utilitzar identitat</translation>
     </message>
     <message>
         <source>Your profile is associated with a PGP key</source>
-        <translation>Profiilisi on kytketty PGP-avaimeen</translation>
+        <translation>El teu perfil està associat a una clau PGP</translation>
     </message>
     <message>
         <source>Create a new identity</source>
-        <translation>Luo uusi henkilöllisyys</translation>
+        <translation>Crear una nova identitat</translation>
     </message>
     <message>
         <source>Import new identity</source>
-        <translation>Tuo uusi henkilöllisyys</translation>
+        <translation>Importar una nova identitat</translation>
     </message>
     <message>
         <source>Export selected identity</source>
-        <translation>Vie valittu henkilöllisyys</translation>
+        <translation>Exportar identitat seleccionada</translation>
     </message>
     <message>
         <source>Create a new Identity</source>
-        <translation>Luo uusi henkilöllisyys</translation>
+        <translation>Crear una nova identitat</translation>
     </message>
     <message>
         <source>RetroShare uses PGP keys for identity management.</source>
-        <translation>RetroShare käyttää PGP-avaimia henkilöllisyyksien hallintaan.</translation>
+        <translation>El RetroShare utilitza claus PGP per controlar les identitats.</translation>
     </message>
     <message>
         <source>[Optional] Visible to your friends, and friends of friends.</source>
-        <translation>[Valinnainen] Näkyy ystävillesi ja heidän ystävilleen.</translation>
+        <translation>[Opcional] Visible als teus amics i als amics d&apos;amics.</translation>
     </message>
     <message>
         <source>[Required] Examples: Home, Laptop,...</source>
-        <translation>[Pakollinen] Esim.: Koti, Läppäri,...</translation>
+        <translation>[Requerit] Exemples: Casa, portàtils,...</translation>
     </message>
     <message>
         <source>[Required] Visible to your friends, and friends of friends.</source>
-        <translation>[Pakollinen] Näkyy ystävillesi ja heidän ystävilleen.</translation>
+        <translation>[Requerit] Visible als teus amics i als amics d&apos;amics.</translation>
     </message>
     <message>
         <source>[Required] This password protects your PGP key.</source>
-        <translation>[Pakollinen] Tämä salasana suojaa PGP-avaintasi.</translation>
+        <translation>[Requerit] Aquesta contrasenya protegeix la teva clau PGP.</translation>
     </message>
     <message>
         <source>Create new Location</source>
-        <translation>Luo uusi sijainti</translation>
+        <translation>Crear nova ubicació</translation>
     </message>
     <message>
         <source>Generate new Location</source>
-        <translation>Luo uusi sijainti</translation>
+        <translation>Generar nova ubicació</translation>
     </message>
     <message>
         <source>Create a new Location</source>
-        <translation>Luo uusi sijainti</translation>
+        <translation>Crear una nova ubicació</translation>
     </message>
     <message>
         <source>Create new Identity</source>
-        <translation>Luo uusi henkilöllisyys</translation>
+        <translation>Crear nova identitat</translation>
     </message>
     <message>
         <source>Generate new Identity</source>
-        <translation>Luo uusi henkilöllisyys</translation>
+        <translation>Generar una nova identitat</translation>
     </message>
     <message>
         <source>You can create a new identity with this form.</source>
-        <translation>Voit luoda uuden henkilöllisyyden tällä lomakkeella.</translation>
+        <translation>Pots crear una nova identitat amb aquest formulari.</translation>
     </message>
     <message>
         <source>You can use an existing identity (i.e. a PGP key pair), from the list below, or create a new one with this form.</source>
-        <translation>Voit käyttää olemassaolevaa henkilöllisyyttä (eli PGP-avainparia) allaolevasta luettelosta tai luoda uuden tällä lomakkeella.</translation>
+        <translation>Pots utilitzar una identitat existent (ex. un parell de clau PGP) de la llista inferior o crear-ne un de nou amb aquest formulari.</translation>
     </message>
     <message>
         <source>Export Identity</source>
-        <translation>Vie henkilöllisyys</translation>
+        <translation>Exportar identitat</translation>
     </message>
     <message>
         <source>RetroShare Identity files (*.asc)</source>
-        <translation>RetroSharen henkilöllisyystiedostot (*.asc)</translation>
+        <translation>Arxius d&apos;identitat del RetroShare (*.asc)</translation>
     </message>
     <message>
         <source>Identity saved</source>
-        <translation>Henkilöllisyys tallennettu</translation>
+        <translation>Identitat desada</translation>
     </message>
     <message>
         <source>Your identity was successfully saved
@@ -6527,185 +6529,185 @@ It is encrypted
 
 You can now copy it to another computer
 and use the import button to load it</source>
-        <translation>Henkilöllisyytesi on tallennettu
-Se on salattu
-
-Voit nyt kopioida sen toiselle koneelle
-ja käyttää &quot;Tuo&quot;-painiketta ladataksesi sen</translation>
+        <translation>La teva identitat s&apos;ha desat amb èxit⏎
+Està encriptada⏎
+⏎
+Ara ho podràs copiar a un altre ordenador⏎
+i utilitzar el botó d&apos;importació per carregar-lo</translation>
     </message>
     <message>
         <source>Identity not saved</source>
-        <translation>Henkilöllisyyttä ei tallennettu</translation>
+        <translation>Identitat no desada</translation>
     </message>
     <message>
         <source>Your identity was not saved. An error occurred.</source>
-        <translation>Henkilöllisyyttäsi ei tallennettu. Tapahtui virhe.</translation>
+        <translation>La teva identitat no s&apos;ha desat. Hi ha hagut un error.</translation>
     </message>
     <message>
         <source>Identity not loaded</source>
-        <translation>Henkilöllisyyttä ei ladattu</translation>
+        <translation>Identitat no carregada</translation>
     </message>
     <message>
         <source>Your identity was not loaded properly:</source>
-        <translation>Henkilöllisyyttäsi ei kyetty lataamaan kunnolla:</translation>
+        <translation>La teva identitat no s&apos;ha carregat correctament:</translation>
     </message>
     <message>
         <source>New identity imported</source>
-        <translation>Uusi henkilöllisyys tuotu</translation>
+        <translation>Nova identitat importada</translation>
     </message>
     <message>
         <source>Your identity was imported successfully:</source>
-        <translation>Henkilöllisyytesi tuominen onnistui:</translation>
+        <translation>La teva identitat s&apos;ha importat amb èxit:</translation>
     </message>
     <message>
         <source>You can use it now to create a new location.</source>
-        <translation>Nyt voit käyttää sitä luodaksesi uuden sijainnin.</translation>
+        <translation>Ara pots utilitzar-la per crear una nova ubicació.</translation>
     </message>
     <message>
         <source>Generate PGP key Failure</source>
-        <translation>Virhe luotaessa PGP-avainta</translation>
+        <translation>Fracàs al generar clau PGP</translation>
     </message>
     <message>
         <source>Location field is required with a minimum of 3 characters</source>
-        <translation>Sijaintikenttä on pakollinen ja minimissään kolme merkkiä</translation>
+        <translation>El camp ubicació és necessari amb un mínim de 3 caràcters</translation>
     </message>
     <message>
         <source>All fields are required with a minimum of 3 characters</source>
-        <translation>Kaikki kentät ovat pakollisia ja minimissään kolme merkkiä</translation>
+        <translation>Tots els camps són obligatoris amb un mínim de 3 caràcters</translation>
     </message>
     <message>
         <source>Generating new PGP key, please be patient: this process needs generating large prime numbers, and can take some minutes on slow computers. 
 
 Fill in your PGP password when asked, to sign your new key.</source>
-        <translation>Luodaan PGP-avainta, ole kärsivällinen: tämä prosessi luo suuria alkulukuja ja voi kestää joitakin minuutteja hitailla tietokoneilla.
-
-Anna PGP-salasanasi kysyttäessä allekirjoittaaksesi uuden avaimesi.</translation>
+        <translation>Generant nova clau PGP, si us plau, tingues paciència: aquest procés necessita generar un nombre primer gran i pot trigar uns minuts en un ordinador lent. ⏎
+⏎
+Introdueix la teva contrasenya PGP quan t&apos;ho pregunti per signar la nova clau.</translation>
     </message>
     <message>
         <source>Generate ID Failure</source>
-        <translation>Virhe luotaessa tunnistetta</translation>
+        <translation>Fracàs al generar ID</translation>
     </message>
     <message>
         <source>Failed to Generate your new Certificate, maybe PGP password is wrong!</source>
-        <translation>Uuden varmenteesi luominen epäonnistui, PGP-salasana saattaa olla väärin!</translation>
+        <translation>Ha fallat la generació del teu nou certificat, potser la contrasenya PGP sigui incorrecta!</translation>
     </message>
     <message>
         <source>Password (check)</source>
-        <translation>Salasana (tarkistus)</translation>
+        <translation>Contrasenya (marca)</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Before proceeding, move your mouse around to help Retroshare collect as much randomness as possible. Filling the progressbar to 20% is needed, 100% is advised.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Ennen kuin siirryt eteenpäin, liikuttele hiirtäsi ympäriinsä, jolloin autat Retrosharea keräämään satunnaisuutta. Edistymistä ilmaiseva palkki tulisi saada vähintään 20%, mutta 100% on suositeltava lukema.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Abans de continuar, mou el ratolí una mica per ajudar al RetroShare a captar tanta aleatorietat com sigui possible. Omplir la barra de progrés fins el 20% és necessari, fins al 100% recomanat.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>[Required] Type the same password again here.</source>
-        <translation>[Vaaditaan] Kirjoita sama salasana uudelleen tähän.</translation>
+        <translation>[Requerit] Escriu la mateixa contrasenya altre cop aquí.</translation>
     </message>
     <message>
         <source>Put a meaningful location. ex : home, laptop, etc. 
 This field will be used to differentiate different installations with
 the same identity (PGP key).</source>
-        <translation>Kirjoita jokin asiaankuuluva sijainti, esim. koti, kannettava jne.
-Tämän kentän avulla erotetaan asennukset eri kohteissa, mutta samalla
-henkilöllisyydellä (PGP-avain).</translation>
+        <translation>Introdueix una ubicació amb sentit. Ex: casa, portàtil, etc. ⏎
+Aquest camp serà utilitzat per diferenciar instal·lacions amb⏎
+la mateixa identitat (Clau PGP).</translation>
     </message>
     <message>
         <source>Passwords do not match</source>
-        <translation>Salasanat eivät täsmää</translation>
+        <translation>Les contrasenyes no coincideixen</translation>
     </message>
 </context>
 <context>
     <name>GeneralPage</name>
     <message>
         <source>Startup</source>
-        <translation>Käynnistys</translation>
+        <translation>Posada en marxa</translation>
     </message>
     <message>
         <source>Start RetroShare when my system starts</source>
-        <translation>Käynnistä RetroShare yhtäaikaa järjestelmän kanssa</translation>
+        <translation>Executa RetroShare quan arrenca el sistema</translation>
     </message>
     <message>
         <source>Start minimized</source>
-        <translation>Käynnistä pienennettynä</translation>
+        <translation>Inicia minimitzat</translation>
     </message>
     <message>
         <source>Start minimized on system start</source>
-        <translation>Käynnistä pienennettynä järjestelmän käynnistyessä</translation>
+        <translation>Inicia minimitzat al arrencar el sistema</translation>
     </message>
     <message>
         <source>For Advanced Users </source>
-        <translation>Edistyneille käyttäjille</translation>
+        <translation>Per a usuaris avançats </translation>
     </message>
     <message>
         <source>Enable Advanced Mode (Restart Required)</source>
-        <translation>Ota käyttöön Vaativa tila (uudelleenkäynnistettävä)</translation>
+        <translation>Activa el mode avançat (cal reiniciar)</translation>
     </message>
     <message>
         <source>Misc</source>
-        <translation>Sekalaiset</translation>
+        <translation>Miscel·lània</translation>
     </message>
     <message>
         <source>Do not show the Quit RetroShare MessageBox</source>
-        <translation>Älä näytä viestilaatikkoa RetroSharea suljettaessa</translation>
+        <translation>No demanis confirmació al tancar el RetroShare</translation>
     </message>
     <message>
         <source>Auto Login</source>
-        <translation>Automaattinen kirjautuminen</translation>
+        <translation>Auto validar-se</translation>
     </message>
     <message>
         <source>Register retroshare:// as URL protocol (Restart required)</source>
-        <translation>Rekisteröi retroshare:// URL-protokollaksi (vaatii uudelleenkäynnistyksen)</translation>
+        <translation>Registrar retroshare:// com un protocol d&apos;URL (Cal reiniciar)</translation>
     </message>
     <message>
         <source>You need administrator rights to change this option.</source>
-        <translation>Sinun tulee olla ylläpitäjä muuttaaksesi tätä asetusta.</translation>
+        <translation>Necessites drets d&apos;administrador per canviar aquesta opció.</translation>
     </message>
     <message>
         <source>Idle</source>
-        <translation>Jouten</translation>
+        <translation>Inactiu</translation>
     </message>
     <message>
         <source>Idle Time</source>
-        <translation>Joutenoloaika</translation>
+        <translation>Temps d&apos;inactivitat</translation>
     </message>
     <message>
         <source> seconds</source>
-        <translation> sekuntia</translation>
+        <translation> segons</translation>
     </message>
     <message>
         <source>Launch startup wizard</source>
-        <translation>Käynnistä ohjattu aloitus</translation>
+        <translation>Executar auxiliar d&apos;inici</translation>
     </message>
     <message>
         <source>Error</source>
-        <translation>Virhe</translation>
+        <translation>Error</translation>
     </message>
     <message>
         <source>Could not add retroshare:// as protocol.</source>
-        <translation>retroshare:// -protokollan lisääminen epäonnistui.</translation>
+        <translation>No s&apos;ha pogut afegir retroshare:// com a protocol.</translation>
     </message>
     <message>
         <source>Could not remove retroshare:// protocol.</source>
-        <translation>retroshare:// -protokollan poistaminen epäonnistui.</translation>
+        <translation>No s&apos;ha pogut suprimir retroshare:// com a protocol.</translation>
     </message>
     <message>
         <source>General</source>
-        <translation>Yleiset</translation>
+        <translation>General</translation>
     </message>
     <message>
         <source>Minimize to Tray Icon</source>
-        <translation>Pienennä ilmaisinalueelle</translation>
+        <translation>Minimitzar a l&apos;àrea de notificació</translation>
     </message>
 </context>
 <context>
     <name>GetStartedDialog</name>
     <message>
         <source>Getting Started</source>
-        <translation>Aloittaminen</translation>
+        <translation>Començant</translation>
     </message>
     <message>
         <source>Invite Friends</source>
-        <translation>Kutsu ystäviä</translation>
+        <translation>Convidar amics</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -6718,24 +6720,24 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Be sure to get their invitation back as well... &lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;You can only connect with friends if you have both added each other.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;RetroShare ei ole mitään ilman ystäviä. Paina nappia aloittaaksesi prosessin.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Lähetä ystävillesi kutsu ja &amp;quot;varmennetunnisteesi&amp;quot; sähköpostilla.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Pyydä myös heiltä vastaava kutsu... &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Saat yhteyden ystävääsi vain, jos lisäätte toisenne varmenteet.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
+p, li { white-space: pre-wrap; }⏎
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;El RetroShare és res sense els teus amics. Clica en el botó per començar el procés.&lt;/span&gt;&lt;/p&gt;⏎
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Envia una invitació per correu electrònic amb el teu &quot;Id de Certificat&quot; al teus amics.&lt;/span&gt;&lt;/p&gt;⏎
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Assegurat de rebre la seva invitació també... &lt;/span&gt;&lt;/p&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Només pots connectar-te amb els teus amics si tots dos us heu afegit com amics.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Add Your Friends to RetroShare</source>
-        <translation>Lisää ystäviäsi RetroShareen</translation>
+        <translation>Afegir els teus amics al RetroShare</translation>
     </message>
     <message>
         <source> Add Friends </source>
-        <translation>Lisää ystäviä</translation>
+        <translation> Afegir amics </translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -6745,17 +6747,17 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;When your friends send you a their invitations, Click to open the Add Friends window.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Cut and Paste your Friend&apos;s &amp;quot;ID Certificates&amp;quot; into the window and add them as friends.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Kun ystäväsi lähettävät sinulle kutsunsa, klikkaa avataksesi Lisää ystäviä -ikkuna.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Kopioi ja liitä ystäväsi &amp;quot;varmennetunniste&amp;quot; ikkunaan ja lisää hänet ystäväksesi.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
+p, li { white-space: pre-wrap; }⏎
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Quan els teus amics t&apos;envien la seva invitació, clica per obrir la finestra d&apos;afegir amics.&lt;/span&gt;&lt;/p&gt;⏎
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Talla i enganxa l&apos;ID de certificat dels teus amics a la finestra i afegeix-los com amics.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Connect To Friends</source>
-        <translation>Ota yhteys ystäviin</translation>
+        <translation>Connectar-se als amics</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -6773,25 +6775,25 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;If it remains Red, then you have a Nasty Firewall, that RetroShare struggles to connect through.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Look in the Further Help section for more advice about connecting.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Kun olette linjoilla samanaikaisesti, RetroShare yhdistää teidät automaattisesti.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Ohjelman on löydettävä RetroShare-verkko, jotta yhteyksien luominen on mahdollista.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Tämä vie 5-30 minuuttia, kun käynnistät RetroSharen ensimmäistä kertaa.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;DHT-merkki tilarivillä muuttuu vihreäksi, kun yhteyksien luominen on mahdollista.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Muutaman minuutin jälkeen NAT-merkki (myös tilarivillä) vaihtuu keltaisesta vihreään.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Jos se pysyy punaisena, sinulla on palomuuri, jonka läpi RetroShare ei pääse.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Katso Lisäapua-osiosta neuvoja yhteyden luomiseksi.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
+p, li { white-space: pre-wrap; }⏎
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Estigueu en línia els dos a la vegada i el RetroShare us connectarà automàticament!&lt;/span&gt;&lt;/p&gt;⏎
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;El teu client ha de trobar la xarxa de RetroShare abans de poder fer connexions.&lt;/span&gt;&lt;/p&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;This takes 5-30 minutes the first time you start up RetroShare&lt;/span&gt;&lt;/p&gt;⏎
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;L&apos;indicador de DHT (A la barra d&apos;estat) es posa en verd quan pot fer connexions.&lt;/span&gt;&lt;/p&gt;⏎
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Al cap d&apos;un parell de minuts, l&apos;indicador NAT (També a la barra d&apos;estat) canviarà a groc o verd.&lt;/span&gt;&lt;/p&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Si continua vermell llavors tens un tallafocs problemàtic i el RetroShare té problemes per connectar-se a través d&apos;ell.&lt;/span&gt;&lt;/p&gt;⏎
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Busca a la secció &quot;Més ajuda&quot; per consells sobre com connectar-se.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Advanced: Open Firewall Port</source>
-        <translation>Vaativa: Avaa palomuurin portti</translation>
+        <translation>Avançat: Obrir port del tallafocs</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -6807,23 +6809,23 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;If none of this makes sense, don't worry about it Retroshare will still work.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Voit parantaa RetroSharen suorituskykyä avaamalla ulkoisen portin. &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Tämä nopeuttaa yhteyksiä ja sallii useampien käyttäjien olla yhteydessä sinuun &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Helpoin tapa on ottaa UPnP käyttöön langattoman tukiasemasi tai reitittimesi asetuksissa.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Jokainen reititin on erilainen, joten etsi ohjeet reitittimellesi internetin hakukoneilla.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Jos et ymmärrä edellisestä mitään, älä huoli, koska RetroShare toimii joka tapauksessa.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
+p, li { white-space: pre-wrap; }⏎
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Pots millorar el rendiment del RetroShare obrint un port extern. &lt;/span&gt;&lt;/p&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Això accelerarà les connexions i permetrà més gent connectar amb tu &lt;/span&gt;&lt;/p&gt;⏎
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;La forma més senzilla de fer això és activar el UPnP en el teu encaminador o equip sense fils.&lt;/span&gt;&lt;/p&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Com que cada encaminador és diferent necessites trobar el model d&apos;encaminador i buscar a Internet les instruccions.&lt;/span&gt;&lt;/p&gt;⏎
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Si no saps de que va, tranquil el Retroshare funcionarà igualment.&lt;/span&gt;&lt;/p&gt;⏎
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;⏎
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Further Help and Support</source>
-        <translation>Lisää ohjeita ja tukea</translation>
+        <translation>Més ajuda i suport</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -6842,97 +6844,97 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;4) If you are still stuck. Email us.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Enjoy Retrosharing&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Onko sinulla ongelmia päästä Retrosharen kanssa alkuun?&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;1) katso usein kysytyt kysymykset (FAQ Wiki). Se on hieman vanhentunut, yritämme ajantasaistaa sitä.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;2) tutustu keskustelupalstaamme. Kysele tai keskustele ominaisuuksista.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;3) kokeile Retrosharen sisäisiä keskustelupalstoja &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;	- Nämä ilmestyvät näkyviin, kun olet saanut yhteyden ystäviisi.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;4) jos olet edelleen jumissa, lähetä meille sähköpostia.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Arial&apos;; font-size:12pt;&quot;&gt;Nauti Retrosharetuksesta&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
+p, li { white-space: pre-wrap; }⏎
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Tens problemes començant a utilitzar el RetroShare?&lt;/span&gt;&lt;/p&gt;⏎
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;1) Busca a la wiki de PMF. És una mica vella, estem intentant posar-la al dia.&lt;/span&gt;&lt;/p&gt;⏎
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;2) Mira a fòrums en línia. Fes preguntes i comenta característiques.&lt;/span&gt;&lt;/p&gt;⏎
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;3) proba el fòrums interns del RetroShare.&lt;/span&gt;&lt;/p&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;⇥- Es poden començar a utilitzar a la que t&apos;has connectat amb amics.&lt;/span&gt;&lt;/p&gt;⏎
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;4) Si encara estàs encallat. Envia&apos;ns un correu electrònic.&lt;/span&gt;&lt;/p&gt;⏎
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Disfruta Retrosharejant&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;⏎</translation>
     </message>
     <message>
         <source>Open RS Website</source>
-        <translation>Avaa RS-verkkosivu</translation>
+        <translation>Obrir lloc web del RS</translation>
     </message>
     <message>
         <source>Open FAQ Wiki</source>
-        <translation>Avaa usein kysytyt kysymykset</translation>
+        <translation>Obrir wiki PMF</translation>
     </message>
     <message>
         <source>Open Online Forums</source>
-        <translation>Avaa keskustelufoorumi</translation>
+        <translation>Obrir fòrums en línia</translation>
     </message>
     <message>
         <source>Email Support</source>
-        <translation>Sähköpostituki</translation>
+        <translation>Suport de correu electrònic</translation>
     </message>
     <message>
         <source>Email Feedback</source>
-        <translation>Sähköpostipalaute</translation>
+        <translation>Resposta de correu electrònic</translation>
     </message>
     <message>
         <source>RetroShare Invitation</source>
-        <translation>Retroshare-kutsu</translation>
+        <translation>Invitació al RetroShare</translation>
     </message>
     <message>
         <source>Your friend has installed RetroShare, and would like you to try it out.</source>
-        <translation>Ystäväsi on asentanut Retrosharen ja toivoo sinunkin kokeilevan sitä.</translation>
+        <translation>El teu amic ha instal·lat RetroShare i vol que tu també el provis.</translation>
     </message>
     <message>
         <source>You can get RetroShare here: %1</source>
-        <translation>Saat Retrosharen täältä: %1</translation>
+        <translation>Pots obtenir el RetroShare aquí: %1</translation>
     </message>
     <message>
         <source>RetroShare is a private Friend-2-Friend sharing network.</source>
-        <translation>Retroshare on yksityinen &quot;ystävältä ystävälle&quot; -tyyppinen jakamisverkosto.</translation>
+        <translation>RetroShare és una xarxa de compartició privada F-2-F, d&apos;amic a amic.</translation>
     </message>
     <message>
         <source>It has many features, including built-in chat, messaging, </source>
-        <translation>Sillä on monia ominaisuuksia, mukaanlukien keskustelu, viestit, </translation>
+        <translation>Té múltiples utilitats, incloent-hi xat, missatgeria, </translation>
     </message>
     <message>
         <source>forums and channels, all of which are as secure as the file-sharing.</source>
-        <translation>foorumit ja kanavat, jotka kaikki ovat yhtä tietoturvallisia kuin tiedostojen jakaminen.</translation>
+        <translation>fòrums i canals, tots ells igual de segurs que la compartició d&apos;arxius.</translation>
     </message>
     <message>
         <source>Here is your friends ID Certificate.</source>
-        <translation>Tässä on ystäväsi varmenne.</translation>
+        <translation>Aquí tens l&apos;ID del certificat de l&apos;amic.</translation>
     </message>
     <message>
         <source>Cut and paste the text below into your RetroShare client</source>
-        <translation>Leikkaa ja liitä allaoleva teksti Retroshare-ohjelmaasi</translation>
+        <translation>Talla i enganxa el text a continuació al teu client de RetroShare</translation>
     </message>
     <message>
         <source>and send them your ID Certificate to get securely connected.</source>
-        <translation>ja lähetä heille varmenteesi ottaaksesi turvallisen yhteyden.</translation>
+        <translation>i envia-li el teu ID de certificat per estar connectats de forma segura.</translation>
     </message>
     <message>
         <source>Cut Below Here</source>
-        <translation>Leikkaa allaoleva</translation>
+        <translation>Talla a partir d&apos;aquí</translation>
     </message>
     <message>
         <source>RetroShare Feedback</source>
-        <translation>Palaute Retrosharelle</translation>
+        <translation>Resposta per RetroShare</translation>
     </message>
     <message>
         <source>RetroShare Support</source>
-        <translation>Retrosharen tuki</translation>
+        <translation>Suport del RetroShare</translation>
     </message>
 </context>
 <context>
     <name>GraphFrame</name>
     <message>
         <source>Recv: </source>
-        <translation>Vast: </translation>
+        <translation>Rebut: </translation>
     </message>
     <message>
         <source>%1 KB/s</source>
@@ -6940,11 +6942,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Sent: </source>
-        <translation>Läh: </translation>
+        <translation>Enviat: </translation>
     </message>
     <message>
         <source>%1 KB</source>
-        <translation>%1 kt</translation>
+        <translation>%1 kB</translation>
     </message>
     <message>
         <source>%1 MB</source>
@@ -6959,503 +6961,503 @@ p, li { white-space: pre-wrap; }
     <name>GraphWidget</name>
     <message>
         <source>Click and drag the nodes around, and zoom with the mouse wheel or the &apos;+&apos; and &apos;-&apos; keys</source>
-        <translation>Paina ja vedä solmuja paikasta toiseen ja suurenna hiiren rullalla tai &apos;+&apos; ja &apos;-&apos; -näppäimillä</translation>
+        <translation>Fes clic i arrossega els cercles al voltant i fes zoom amb la roda del ratolí o les tecles &apos;+&apos; i &apos;-&apos;</translation>
     </message>
 </context>
 <context>
     <name>GroupChatToaster</name>
     <message>
         <source>Show Group Chat</source>
-        <translation>Näytä ryhmäkeskustelu</translation>
+        <translation>Mostra xat en grup</translation>
     </message>
 </context>
 <context>
     <name>GroupDefs</name>
     <message>
         <source>Friends</source>
-        <translation>Ystävät</translation>
+        <translation>Amics</translation>
     </message>
     <message>
         <source>Family</source>
-        <translation>Sukulaiset</translation>
+        <translation>Família</translation>
     </message>
     <message>
         <source>Co-Workers</source>
-        <translation>Työtoverit</translation>
+        <translation>Companys de feina</translation>
     </message>
     <message>
         <source>Other Contacts</source>
-        <translation>Muut kontaktit</translation>
+        <translation>Altres contactes</translation>
     </message>
     <message>
         <source>Favorites</source>
-        <translation>Suosikit</translation>
+        <translation>Favorits</translation>
     </message>
 </context>
 <context>
     <name>GroupFlagsWidget</name>
     <message>
         <source>Directory is browsable for friends from groups</source>
-        <translation>Hakemisto on ryhmissä olevien ystävien selattavissa</translation>
+        <translation>El directori és navegable pels amics dels grups</translation>
     </message>
     <message>
         <source>Directory is NOT browsable for friends from groups</source>
-        <translation>Hakemisto EI ole ryhmissä olevien ystävien selattavissa</translation>
+        <translation>El directori NO és navegable pels amics dels grups</translation>
     </message>
     <message>
         <source>Directory is accessible by anonymous tunnels from friends from groups</source>
-        <translation>Hakemisto on ryhmissä olevien ystävien selattavissa nimettömien tunneleiden kautta</translation>
+        <translation>El directori és accessible utilitzant túnels anònims dels amics dels grups</translation>
     </message>
     <message>
         <source>Directory is NOT accessible by anonymous tunnels from friends from groups</source>
-        <translation>Hakemisto EI ole ryhmissä olevien ystävien selattavissa nimettömien tunneleiden kautta</translation>
+        <translation>El directori NO és accessible utilitzant túnels anònims dels amics dels grups</translation>
     </message>
     <message>
         <source>Directory is browsable for any friend</source>
-        <translation>Hakemisto on minkä hyvänsä ystävän selattavissa.</translation>
+        <translation>El directori és navegable per qualsevol amic</translation>
     </message>
     <message>
         <source>Directory is NOT browsable for any friend</source>
-        <translation>Hakemisto EI ole minkä hyvänsä ystävän selattavissa.</translation>
+        <translation>El directori NO és navegable per cap amic</translation>
     </message>
     <message>
         <source>Directory is accessible by anonymous tunnels from any friend</source>
-        <translation>Hakemisto on minkä hyvänsä ystävän selattavissa nimettömien tunneleiden kautta.</translation>
+        <translation>El directori és accessible utilitzant túnels anònims de qualsevol amic</translation>
     </message>
     <message>
         <source>Directory is NOT accessible by anonymous tunnels from any friend</source>
-        <translation>Hakemisto EI ole minkä hyvänsä ystävän selattavissa nimettömien tunneleiden kautta.</translation>
+        <translation>El directori NO és accessible utilitzant túnels anònims de cap amic</translation>
     </message>
     <message>
         <source>All your friends can browse this directory</source>
-        <translation>Kaikki ystäväsi voivat selata tätä hakemistoa</translation>
+        <translation>Tots els teus amics poden navegar per aquest directori</translation>
     </message>
     <message>
         <source>Only friends in groups %1 can browse this directory</source>
-        <translation>Vain ystävät ryhmissä %1 voivat selata tätä hakemistoa</translation>
+        <translation>Només els amics en els grups %1 poden navegar per aquest directori</translation>
     </message>
     <message>
         <source>No one can browse this directory</source>
-        <translation>Kukaan ei voi selata tätä hakemistoa</translation>
+        <translation>Ningú pot navegar per aquest directori</translation>
     </message>
     <message>
         <source>All your friends can relay anonymous tunnels to this directory</source>
-        <translation>Kaikki ystäväsi voivat välittää nimettömiä tunneleita tähän hakemistoon</translation>
+        <translation>Tots els teus amics poden fer túnels anònims a aquest directori</translation>
     </message>
     <message>
         <source>Only friends in groups </source>
-        <translation>Vain ryhmissä olevat ystävät</translation>
+        <translation>Només els amics a grups</translation>
     </message>
     <message>
         <source> can relay anonymous tunnels to this directory</source>
-        <translation> voi välittää nimettömiä tunneleita tähän hakemistoon</translation>
+        <translation>poden fer túnels anònims a aquest directori</translation>
     </message>
     <message>
         <source>No one can anonymously access this directory.</source>
-        <translation>Kukaan ei voi selata tätä hakemistoa nimettömänä.</translation>
+        <translation>Ningú pot accedir anònimament a aquest directori.</translation>
     </message>
 </context>
 <context>
     <name>GroupTreeWidget</name>
     <message>
         <source>Title</source>
-        <translation>Otsikko</translation>
+        <translation>Títol</translation>
     </message>
     <message>
         <source>Search Title</source>
-        <translation>Hae otsikkoa</translation>
+        <translation>Cerca títol</translation>
     </message>
     <message>
         <source>Description</source>
-        <translation>Kuvaus</translation>
+        <translation>Descripció</translation>
     </message>
     <message>
         <source>Search Description</source>
-        <translation>Hae kuvausta</translation>
+        <translation>Descripció de cerca</translation>
     </message>
     <message>
         <source>Sort by Name</source>
-        <translation>Järjestä nimen mukaan</translation>
+        <translation>Ordena per nom</translation>
     </message>
     <message>
         <source>Sort by Popularity</source>
-        <translation>Järjestä suosion mukaan</translation>
+        <translation>Ordena per popularitat</translation>
     </message>
     <message>
         <source>Sort by Last Post</source>
-        <translation>Järjestä viimeisimmän viestin mukaan</translation>
+        <translation>Ordena per darrer missatge</translation>
     </message>
     <message>
         <source>Private Key Available</source>
-        <translation>Yksityinen avain saatavilla</translation>
+        <translation>Clau privada disponible</translation>
     </message>
     <message>
         <source>Display</source>
-        <translation>Näytä</translation>
+        <translation>Mostra</translation>
     </message>
 </context>
 <context>
     <name>GuiExprElement</name>
     <message>
         <source>and</source>
-        <translation>ja</translation>
+        <translation>i</translation>
     </message>
     <message>
         <source>and / or</source>
-        <translation>ja / tai</translation>
+        <translation>i / o</translation>
     </message>
     <message>
         <source>or</source>
-        <translation>tai</translation>
+        <translation>o</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation>Nimi</translation>
+        <translation>Nom</translation>
     </message>
     <message>
         <source>Path</source>
-        <translation>Polku</translation>
+        <translation>Ruta</translation>
     </message>
     <message>
         <source>Extension</source>
-        <translation>Pääte</translation>
+        <translation>Extensió</translation>
     </message>
     <message>
         <source>Hash</source>
-        <translation>Tiiviste (hash)</translation>
+        <translation>Hash</translation>
     </message>
     <message>
         <source>Date</source>
-        <translation>Päiväys</translation>
+        <translation>Data</translation>
     </message>
     <message>
         <source>Size</source>
-        <translation>Koko</translation>
+        <translation>Mida</translation>
     </message>
     <message>
         <source>Popularity</source>
-        <translation>Suosio</translation>
+        <translation>Popularitat</translation>
     </message>
     <message>
         <source>contains</source>
-        <translation>sisältää</translation>
+        <translation>conté</translation>
     </message>
     <message>
         <source>contains all</source>
-        <translation>sisältää kaikki</translation>
+        <translation>conté tots</translation>
     </message>
     <message>
         <source>is</source>
-        <translation>on</translation>
+        <translation>és</translation>
     </message>
     <message>
         <source>less than</source>
-        <translation>pienempi kuin</translation>
+        <translation>menys que</translation>
     </message>
     <message>
         <source>less than or equal</source>
-        <translation>pienempi tai yhtä suuri kuin</translation>
+        <translation>inferior o igual</translation>
     </message>
     <message>
         <source>equals</source>
-        <translation>yhtä suuri kuin</translation>
+        <translation>és igual a</translation>
     </message>
     <message>
         <source>greater than or equal</source>
-        <translation>suurempi tai yhtä suuri kuin</translation>
+        <translation>igual o superior</translation>
     </message>
     <message>
         <source>greater than</source>
-        <translation>suurempi kuin</translation>
+        <translation>més gran que</translation>
     </message>
     <message>
         <source>is in range</source>
-        <translation>on välillä</translation>
+        <translation>està en el rang</translation>
     </message>
 </context>
 <context>
     <name>GxsChannelDialog</name>
     <message>
         <source>Channels</source>
-        <translation>Kanavat</translation>
+        <translation>Canals</translation>
     </message>
     <message>
         <source>Create Channel</source>
-        <translation>Luo kanava</translation>
+        <translation>Crear canal</translation>
     </message>
     <message>
         <source>Loading</source>
-        <translation>Ladataan</translation>
+        <translation>Carregant</translation>
     </message>
     <message>
         <source>Post to Channel</source>
-        <translation>Lähetä viesti kanavalle</translation>
+        <translation>Publica al canal</translation>
     </message>
     <message>
         <source>Set all as read</source>
-        <translation>Aseta kaikki luetuiksi</translation>
+        <translation>Posar tot com a llegit</translation>
     </message>
     <message>
         <source>Enable Auto-Download</source>
-        <translation>Ota käyttöön automaattinen lataus</translation>
+        <translation>Activa l&apos;auto-descàrrega</translation>
     </message>
     <message>
         <source>My Channels</source>
-        <translation>Kanavani</translation>
+        <translation>Els meus canals</translation>
     </message>
     <message>
         <source>Subscribed Channels</source>
-        <translation>Tilatut kanavat</translation>
+        <translation>Canals subscrits</translation>
     </message>
     <message>
         <source>Popular Channels</source>
-        <translation>Suositut kanavat</translation>
+        <translation>Canals populars</translation>
     </message>
     <message>
         <source>Other Channels</source>
-        <translation>Muut kanavat</translation>
+        <translation>Altres canals</translation>
     </message>
     <message>
         <source>Disable Auto-Download</source>
-        <translation>Ota automaattinen lataus pois käytöstä</translation>
+        <translation>Desactivar auto-descàrrega</translation>
     </message>
     <message>
         <source>Unsubscribe to Channel</source>
-        <translation>Lopeta kanavan tilaus</translation>
+        <translation>Donar-te de baixa del canal</translation>
     </message>
     <message>
         <source>Subscribe to Channel</source>
-        <translation>Tilaa kanava</translation>
+        <translation>Subscriu-te al canal</translation>
     </message>
     <message>
         <source>Edit Channel Details</source>
-        <translation>Muokkaa kanavan tietoja</translation>
+        <translation>Edita detalls del canal</translation>
     </message>
     <message>
         <source>Show Channel Details</source>
-        <translation>Näytä kanavan tiedot</translation>
+        <translation>Mostra detalls del canal</translation>
     </message>
     <message>
         <source>Restore Publish Rights for Channel</source>
-        <translation>Palauta kanavan julkaisuoikeudet</translation>
+        <translation>Restaurar els drets de publicació del canal</translation>
     </message>
     <message>
         <source>Share Channel</source>
-        <translation>Jaa kanava</translation>
+        <translation>Compartir canal</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation>Kopioi RetroShare-linkki</translation>
+        <translation>Copia l&apos;enllaç RetroShare</translation>
     </message>
     <message>
         <source>Publish rights restored.</source>
-        <translation>Julkaisuoikeudet palautettu.</translation>
+        <translation>Drets de publicació restablerts.</translation>
     </message>
     <message>
         <source>Publish rights have been restored for this channel.</source>
-        <translation>Julkaisuoikeudet kanavalle palautettu.</translation>
+        <translation>Els drets de publicació han sigut restablerts per aquest canal.</translation>
     </message>
     <message>
         <source>Publish not restored.</source>
-        <translation>Julkaisuoikeuksia ei palautettu.</translation>
+        <translation>Publicació no restablerta.</translation>
     </message>
     <message>
         <source>Publish rights can&apos;t be restored for this channel.&lt;br/&gt;You&apos;re not the creator of this channel.</source>
-        <translation>Julkaisuoikeuksia kanavalle ei voitu palauttaa.&lt;br/&gt;Et ole kanavan luoja.</translation>
+        <translation>Els drets de publicació per aquest canal no poden ser restablerts.&lt;br/&gt;No ets el creador del canal.</translation>
     </message>
     <message>
         <source>No Channel Selected</source>
-        <translation>Ei kanavaa valittuna</translation>
+        <translation>No hi ha canal seleccionat</translation>
     </message>
     <message>
         <source>Todo</source>
-        <translation>Tehtävät</translation>
+        <translation>Pendent</translation>
     </message>
 </context>
 <context>
     <name>GxsChannelGroupDialog</name>
     <message>
         <source>Create New Channel</source>
-        <translation>Luo uusi kanava</translation>
+        <translation>Crear nou canal</translation>
     </message>
     <message>
         <source>Channel</source>
-        <translation>Kanava</translation>
+        <translation>Canal</translation>
     </message>
     <message>
         <source>Edit Channel</source>
-        <translation>Muokkaa kanavaa</translation>
+        <translation>Editar canal</translation>
     </message>
     <message>
         <source>Add Channel Admins</source>
-        <translation>Lisää ylläpitäjiä kanavalle</translation>
+        <translation>Afegir administradors del canal</translation>
     </message>
     <message>
         <source>Select Channel Admins</source>
-        <translation>Valitse ylläpitäjiä kanavalle</translation>
+        <translation>Seleccionar administradors del canal</translation>
     </message>
 </context>
 <context>
     <name>GxsChannelPostItem</name>
     <message>
         <source>Toggle Message Read Status</source>
-        <translation>Vaihda viestin tila luetuksi tai päinvastoin</translation>
+        <translation>Canvia l&apos;estat dels missatges llegits</translation>
     </message>
     <message>
         <source>Download</source>
-        <translation>Lataa</translation>
+        <translation>Descarregar</translation>
     </message>
     <message>
         <source>Play</source>
-        <translation>Toista</translation>
+        <translation>Reproduir</translation>
     </message>
     <message>
         <source>Comments</source>
-        <translation>Kommentit</translation>
+        <translation>Comentaris</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation>Kopioi RetroShare-linkki</translation>
+        <translation>Copia l&apos;enllaç RetroShare</translation>
     </message>
     <message>
         <source>Unsubscribe From Channel</source>
-        <translation>Lopeta kanavan tilaus</translation>
+        <translation>Donar de baixa del canal</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation>Laajenna</translation>
+        <translation>Ampliar</translation>
     </message>
     <message>
         <source>Set as read and remove item</source>
-        <translation>Merkitse luetuksi ja poista kohde</translation>
+        <translation>Marcar com llegit i eliminar l&apos;element</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation>Poista kohde</translation>
+        <translation>Eliminar l&apos;element</translation>
     </message>
     <message>
         <source>Channel Feed</source>
-        <translation>Kanavan syöte</translation>
+        <translation>Origen del canal</translation>
     </message>
     <message>
         <source>Files</source>
-        <translation>Tiedostot</translation>
+        <translation>Arxius</translation>
     </message>
     <message>
         <source>Warning! You have less than %1 hours and %2 minute before this file is deleted Consider saving it.</source>
-        <translation>Varoitus! Sinulla on alle %1 tuntia ja %2 minuuttia aikaa, ennen kuin tämä tiedosto poistetaan. Harkitse sen tallentamista.</translation>
+        <translation>Avís! Tens menys de %1 hores i %2 minuts abans que aquest arxiu sigui esborrat. Considera desar-lo.</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation>Piilota</translation>
+        <translation>Amagar</translation>
     </message>
 </context>
 <context>
     <name>GxsCommentContainer</name>
     <message>
         <source>Comment Container</source>
-        <translation>Kommenttisäiliö</translation>
+        <translation>Contenidor de comentari</translation>
     </message>
 </context>
 <context>
     <name>GxsCommentDialog</name>
     <message>
         <source>Form</source>
-        <translation>Lomake</translation>
+        <translation>Formulari</translation>
     </message>
     <message>
         <source>Hot</source>
-        <translation>Suosittu</translation>
+        <translation>Calent</translation>
     </message>
     <message>
         <source>New</source>
-        <translation>Uusi</translation>
+        <translation>Nou</translation>
     </message>
     <message>
         <source>Top</source>
-        <translation>Ylimmäiseksi</translation>
+        <translation>Capdamunt</translation>
     </message>
     <message>
         <source>Voter ID:</source>
-        <translation>Äänestäjän tunniste:</translation>
+        <translation>Id votant:</translation>
     </message>
     <message>
         <source>Refresh</source>
-        <translation>Päivitä</translation>
+        <translation>Refrescar</translation>
     </message>
     <message>
         <source>Comment</source>
-        <translation>Kommentti</translation>
+        <translation>Comentari</translation>
     </message>
     <message>
         <source>Author</source>
-        <translation>Kirjoittaja</translation>
+        <translation>Autor</translation>
     </message>
     <message>
         <source>Date</source>
-        <translation>Päiväys</translation>
+        <translation>Data</translation>
     </message>
     <message>
         <source>Score</source>
-        <translation>Pisteet</translation>
+        <translation>Puntuació</translation>
     </message>
     <message>
         <source>UpVotes</source>
-        <translation>Äänet ylös</translation>
+        <translation>VotsPositius</translation>
     </message>
     <message>
         <source>DownVotes</source>
-        <translation>Äänet alas</translation>
+        <translation>VotsNegatius</translation>
     </message>
     <message>
         <source>OwnVote</source>
-        <translation>Oma ääni</translation>
+        <translation>Vots propis</translation>
     </message>
 </context>
 <context>
     <name>GxsCommentTreeWidget</name>
     <message>
         <source>Reply to Comment</source>
-        <translation>Vastaa kommenttiin</translation>
+        <translation>Resposta al comentari</translation>
     </message>
     <message>
         <source>Submit Comment</source>
-        <translation>Lähetä kommentti</translation>
+        <translation>Enviar un comentari</translation>
     </message>
     <message>
         <source>Vote Up</source>
-        <translation>Äänestä ylös</translation>
+        <translation>Votar positiu</translation>
     </message>
     <message>
         <source>Vote Down</source>
-        <translation>Äänestä alas</translation>
+        <translation>Votar negatiu</translation>
     </message>
     <message>
         <source>Reputation</source>
-        <translation>Maine</translation>
+        <translation>Reputació</translation>
     </message>
     <message>
         <source>Show Reputation</source>
-        <translation>Näytä maine</translation>
+        <translation>Mostrar reputació</translation>
     </message>
     <message>
         <source>Interesting User</source>
-        <translation>Kiinnostava käyttäjä</translation>
+        <translation>Usuari interessant</translation>
     </message>
     <message>
         <source>Mark Spammy</source>
-        <translation>Merkitse roskapostiksi</translation>
+        <translation>Marcar com &apos;spamer&apos;</translation>
     </message>
     <message>
         <source>Ban User</source>
-        <translation>Estä käyttäjä</translation>
+        <translation>Fer fora l&apos;usuari</translation>
     </message>
 </context>
 <context>
     <name>GxsCreateCommentDialog</name>
     <message>
         <source>Make Comment</source>
-        <translation>Lisää kommentti</translation>
+        <translation>Fer comentari</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -7463,195 +7465,195 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Comment&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Kommentti&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
+p, li { white-space: pre-wrap; }⏎
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Comentari&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Signed by</source>
-        <translation>Allekirjoittaja</translation>
+        <translation>Signat per</translation>
     </message>
     <message>
         <source>Comment Signing Error</source>
-        <translation>Virhe allekirjoitettaessa kommenttia</translation>
+        <translation>Error signant el comentari</translation>
     </message>
     <message>
         <source>You need to create an Identity
 before you can comment</source>
-        <translation>Sinun on luotava identiteetti, ennen
-kuin voit kommentoida</translation>
+        <translation>Necessites crear una identitat
+abans de poder comentar</translation>
     </message>
 </context>
 <context>
     <name>GxsForumGroupDialog</name>
     <message>
         <source>Create New Forum</source>
-        <translation>Luo uusi foorumi</translation>
+        <translation>Crear nou fòrum</translation>
     </message>
     <message>
         <source>Forum</source>
-        <translation>Foorumi</translation>
+        <translation>Fòrum</translation>
     </message>
     <message>
         <source>Edit Forum</source>
-        <translation>Muokkaa foorumia</translation>
+        <translation>Editar fòrum</translation>
     </message>
 </context>
 <context>
     <name>GxsForumThreadWidget</name>
     <message>
         <source>Form</source>
-        <translation>Lomake</translation>
+        <translation>Formulari</translation>
     </message>
     <message>
         <source>Start new Thread for Selected Forum</source>
-        <translation>Aloita uusi viestiketju valitussa foorumissa</translation>
+        <translation>Comença nova conversa al fòrum seleccionat</translation>
     </message>
     <message>
         <source>Search forums</source>
-        <translation>Etsi foorumeista</translation>
+        <translation>Cercar fòrums</translation>
     </message>
     <message>
         <source>Last Post</source>
-        <translation>Viimeisin viesti</translation>
+        <translation>Darrer missatge</translation>
     </message>
     <message>
         <source>Threaded View</source>
-        <translation>Ketjunäkymä</translation>
+        <translation>Vista per conversa</translation>
     </message>
     <message>
         <source>Flat View</source>
-        <translation>Tasanäkymä</translation>
+        <translation>Vista plana</translation>
     </message>
     <message>
         <source>Title</source>
-        <translation>Otsikko</translation>
+        <translation>Títol</translation>
     </message>
     <message>
         <source>Date</source>
-        <translation>Päiväys</translation>
+        <translation>Data</translation>
     </message>
     <message>
         <source>Author</source>
-        <translation>Kirjoittaja</translation>
+        <translation>Autor</translation>
     </message>
     <message>
         <source>Signed</source>
-        <translation>Allekirjoitettu</translation>
+        <translation>Signat</translation>
     </message>
     <message>
         <source>Loading</source>
-        <translation>Ladataan</translation>
+        <translation>Carregant</translation>
     </message>
     <message>
         <source>Reply Message</source>
-        <translation>Vastaa viestiin</translation>
+        <translation>Respondre missatge</translation>
     </message>
     <message>
         <source>Previous Thread</source>
-        <translation>Edellinen viestiketju</translation>
+        <translation>Conversa previa:</translation>
     </message>
     <message>
         <source>Next Thread</source>
-        <translation>Seuraava viestiketju</translation>
+        <translation>Conversa següent:</translation>
     </message>
     <message>
         <source>Download all files</source>
-        <translation>Lataa kaikki tiedostot</translation>
+        <translation>Descarregar tots els arxius</translation>
     </message>
     <message>
         <source>Next unread</source>
-        <translation>Seuraava lukematon</translation>
+        <translation>Següent no llegit</translation>
     </message>
     <message>
         <source>Search Title</source>
-        <translation>Hae otsikkoa</translation>
+        <translation>Cerca títol</translation>
     </message>
     <message>
         <source>Search Date</source>
-        <translation>Hae päivämäärää</translation>
+        <translation>Data de cerca</translation>
     </message>
     <message>
         <source>Search Author</source>
-        <translation>Hae kirjoittajaa</translation>
+        <translation>Cerca autor</translation>
     </message>
     <message>
         <source>Content</source>
-        <translation>Sisältö</translation>
+        <translation>Contingut</translation>
     </message>
     <message>
         <source>Search Content</source>
-        <translation>Hae sisältöä</translation>
+        <translation>Cerca contingut</translation>
     </message>
     <message>
         <source>No name</source>
-        <translation>Ei nimeä</translation>
+        <translation>Sense nom</translation>
     </message>
     <message>
         <source>Reply</source>
-        <translation>Vastaa</translation>
+        <translation>Resposta</translation>
     </message>
     <message>
         <source>Start New Thread</source>
-        <translation>Aloita uusi viestiketju</translation>
+        <translation>Començar nova conversa</translation>
     </message>
     <message>
         <source>Reply to Author</source>
-        <translation>Vastaa kirjoittajalle</translation>
+        <translation>Respondre a l&apos;autor</translation>
     </message>
     <message>
         <source>Expand all</source>
-        <translation>Laajenna kaikki</translation>
+        <translation>Expandeix tot</translation>
     </message>
     <message>
         <source>Collapse all</source>
-        <translation>Kutista kaikki</translation>
+        <translation>Contreure tot</translation>
     </message>
     <message>
         <source>Mark as read</source>
-        <translation>Merkitse luetuksi</translation>
+        <translation>Marca com llegit</translation>
     </message>
     <message>
         <source>with children</source>
-        <translation>lasten kanssa</translation>
+        <translation>amb fills</translation>
     </message>
     <message>
         <source>Mark as unread</source>
-        <translation>Merkitse lukemattomaksi</translation>
+        <translation>Marca com no llegit</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation>Kopioi RetroShare-linkki</translation>
+        <translation>Copia l&apos;enllaç RetroShare</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation>Piilota</translation>
+        <translation>Amagar</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation>Laajenna</translation>
+        <translation>Ampliar</translation>
     </message>
     <message>
         <source>Anonymous</source>
-        <translation>Nimetön</translation>
+        <translation>Anònim</translation>
     </message>
     <message>
         <source>signed</source>
-        <translation>allekirjoitettu</translation>
+        <translation>signat</translation>
     </message>
     <message>
         <source>none</source>
-        <translation>ei mitään</translation>
+        <translation>cap</translation>
     </message>
     <message>
         <source>[ ... Missing Message ... ]</source>
-        <translation>[ ... Puuttuva viesti ... ]</translation>
+        <translation>[ ... Missatge perdut ... ]</translation>
     </message>
     <message>
         <source>By</source>
-        <translation>käyttäjältä</translation>
+        <translation>Per</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -7659,377 +7661,377 @@ kuin voit kommentoida</translation>
     </message>
     <message>
         <source>No Forum Selected!</source>
-        <translation>Ei valittua foorumia!</translation>
+        <translation>Cap fòrum seleccionat!</translation>
     </message>
     <message>
         <source>You cant reply to a non-existant Message</source>
-        <translation>Et voi vastata olemattomaan viestiin</translation>
+        <translation>No pots respondre a un missatge inexistent</translation>
     </message>
     <message>
         <source>You cant reply to an Anonymous Author</source>
-        <translation>Et voi vastata nimettömälle kirjoittajalle</translation>
+        <translation>No pots respondre a un autor anònim</translation>
     </message>
     <message>
         <source>Forum Description</source>
-        <translation>Foorumin kuvaus</translation>
+        <translation>Descripció del fòrum</translation>
     </message>
     <message>
         <source>Forum:</source>
-        <translation>Foorumi:</translation>
+        <translation>Fòrum:</translation>
     </message>
     <message>
         <source>Thread:</source>
-        <translation>Viestiketju:</translation>
+        <translation>Conversa:</translation>
     </message>
 </context>
 <context>
     <name>GxsForumsDialog</name>
     <message>
         <source>Forums</source>
-        <translation>Foorumi</translation>
+        <translation>Fòrums</translation>
     </message>
     <message>
         <source>Create Forum</source>
-        <translation>Luo foorumi</translation>
+        <translation>Crear fòrum</translation>
     </message>
     <message>
         <source>Print</source>
-        <translation>Tulosta</translation>
+        <translation>Impressió</translation>
     </message>
     <message>
         <source>PrintPreview</source>
-        <translation>Tulostuksen esikatselu</translation>
+        <translation>PreviaImpressió</translation>
     </message>
     <message>
         <source>My Forums</source>
-        <translation>Foorumini</translation>
+        <translation>Els meus fòrums</translation>
     </message>
     <message>
         <source>Subscribed Forums</source>
-        <translation>Tilatut foorumit</translation>
+        <translation>Fòrums subscrits</translation>
     </message>
     <message>
         <source>Popular Forums</source>
-        <translation>Suositut foorumit</translation>
+        <translation>Fòrums populars</translation>
     </message>
     <message>
         <source>Other Forums</source>
-        <translation>Muut foorumit</translation>
+        <translation>Altres fòrums</translation>
     </message>
     <message>
         <source>Subscribe to Forum</source>
-        <translation>Tilaa foorumi</translation>
+        <translation>Subscriure&apos;s al fòrum</translation>
     </message>
     <message>
         <source>Unsubscribe to Forum</source>
-        <translation>Lopeta foorumin tilaus</translation>
+        <translation>Donar de baixa fòrum</translation>
     </message>
     <message>
         <source>Open in new tab</source>
-        <translation>Avaa uudessa välilehdessä</translation>
+        <translation>Obrir en una pestanya nova</translation>
     </message>
     <message>
         <source>New Forum</source>
-        <translation>Uusi foorumi</translation>
+        <translation>Nou fòrum</translation>
     </message>
     <message>
         <source>Show Forum Details</source>
-        <translation>Näytä foorumin tiedot</translation>
+        <translation>Mostra detalls del fòrum</translation>
     </message>
     <message>
         <source>Edit Forum Details</source>
-        <translation>Muokkaa foorumin tietoja</translation>
+        <translation>Edita detalls del fòrum</translation>
     </message>
     <message>
         <source>Share Forum</source>
-        <translation>Jaa foorumi</translation>
+        <translation>Comparteix fòrum</translation>
     </message>
     <message>
         <source>Restore Publish Rights for Forum</source>
-        <translation>Palauta julkaisuoikeudet foorumiin</translation>
+        <translation>Restaura drets de publicació pel fòrum</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation>Kopioi RetroShare-linkki</translation>
+        <translation>Copia l&apos;enllaç RetroShare</translation>
     </message>
     <message>
         <source>Mark all as read</source>
-        <translation>Merkitse kaikki luetuiksi</translation>
+        <translation>Marca tot com a llegit</translation>
     </message>
     <message>
         <source>Mark all as unread</source>
-        <translation>Merkitse kaikki lukemattomiksi</translation>
+        <translation>Marca tot com no llegit</translation>
     </message>
     <message>
         <source>AUTHD</source>
-        <translation>VAHVST</translation>
+        <translation>AUTHD</translation>
     </message>
     <message>
         <source>Original Message</source>
-        <translation>Alkuperäinen viesti</translation>
+        <translation>Missatge original</translation>
     </message>
     <message>
         <source>From</source>
-        <translation>Lähettäjä</translation>
+        <translation>Des de</translation>
     </message>
     <message>
         <source>Sent</source>
-        <translation>Lähetetyt</translation>
+        <translation>Enviat</translation>
     </message>
     <message>
         <source>Subject</source>
-        <translation>Aihe</translation>
+        <translation>Assumpte</translation>
     </message>
     <message>
         <source>On %1, %2 wrote:</source>
-        <translation>%1, %2 kirjoitti:</translation>
+        <translation>A % 1, %2 va escriure:</translation>
     </message>
     <message>
         <source>Todo</source>
-        <translation>Tehtävät</translation>
+        <translation>Pendent</translation>
     </message>
 </context>
 <context>
     <name>GxsForumsFillThread</name>
     <message>
         <source>Waiting</source>
-        <translation>Odotetaan</translation>
+        <translation>Esperant</translation>
     </message>
     <message>
         <source>Retrieving</source>
-        <translation>Noudetaan</translation>
+        <translation>Recuperant</translation>
     </message>
     <message>
         <source>Loading</source>
-        <translation>Ladataan</translation>
+        <translation>Carregant</translation>
     </message>
 </context>
 <context>
     <name>GxsGroupDialog</name>
     <message>
         <source>Create New</source>
-        <translation>Luo uusi</translation>
+        <translation>Crear nou</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation>Nimi</translation>
+        <translation>Nom</translation>
     </message>
     <message>
         <source>Add Icon</source>
-        <translation>Lisää kuvake</translation>
+        <translation>Afegir icona</translation>
     </message>
     <message>
         <source>Key recipients can publish to restricted-type group and can view and publish for private-type channels</source>
-        <translation>Avaimen vastaanottajat voivat julkaista rajoitetuille ryhmille ja voivat nähdä sekä julkaista yksityisille kanaville</translation>
+        <translation>Els destinataris de les claus poden publicar en grups restringits, i poden veure i publicar en canals privats</translation>
     </message>
     <message>
         <source>Share Publish Key</source>
-        <translation>Jaa julkaisuavain</translation>
+        <translation>Compartir clau pública</translation>
     </message>
     <message>
         <source>check peers you would like to share private publish key with</source>
-        <translation>rastita vertaiset, joiden kanssa haluat jakaa yksityisen julkaisuavaimesi</translation>
+        <translation>comprovar els contactes amb qui t&apos;agradaria compartir les claus de publicació</translation>
     </message>
     <message>
         <source>Share Key With</source>
-        <translation>Jaa avain</translation>
+        <translation>Compartir clau amb</translation>
     </message>
     <message>
         <source>Description</source>
-        <translation>Kuvaus</translation>
+        <translation>Descripció</translation>
     </message>
     <message>
         <source>Message Distribution</source>
-        <translation>Viestin leviäminen</translation>
+        <translation>Distribució de missatge</translation>
     </message>
     <message>
         <source>Public</source>
-        <translation>Julkinen</translation>
+        <translation>Públic</translation>
     </message>
     <message>
         <source>Restricted to Group</source>
-        <translation>Rajattu ryhmään</translation>
+        <translation>Restringit al grup</translation>
     </message>
     <message>
         <source>Only For Your Friends</source>
-        <translation>Vain ystävillesi</translation>
+        <translation>Només per als teus amics</translation>
     </message>
     <message>
         <source>Publish Signatures</source>
-        <translation>Julkaisuallekirjoitukset</translation>
+        <translation>Publicar signatures</translation>
     </message>
     <message>
         <source>Open</source>
-        <translation>Avaa</translation>
+        <translation>Obrir</translation>
     </message>
     <message>
         <source>New Thread</source>
-        <translation>Uusi viestiketju</translation>
+        <translation>Nova conversa</translation>
     </message>
     <message>
         <source>Required</source>
-        <translation>Vaaditaan</translation>
+        <translation>Requerit</translation>
     </message>
     <message>
         <source>Encrypted Msgs</source>
-        <translation>Salatut viestit</translation>
+        <translation>Encriptar missatge</translation>
     </message>
     <message>
         <source>Personal Signatures</source>
-        <translation>Henkilökohtaiset allekirjoitukset</translation>
+        <translation>Signatures personals</translation>
     </message>
     <message>
         <source>PGP Required</source>
-        <translation>PGP vaaditaan</translation>
+        <translation>PGP requerit</translation>
     </message>
     <message>
         <source>Signature Required</source>
-        <translation>Allekirjoitus vaaditaan</translation>
+        <translation>Signatura requerida</translation>
     </message>
     <message>
         <source>If No Publish Signature</source>
-        <translation>Jos ei julkaisuallekirjoitusta</translation>
+        <translation>Signatura per no publicar</translation>
     </message>
     <message>
         <source>Comments</source>
-        <translation>Kommentit</translation>
+        <translation>Comentaris</translation>
     </message>
     <message>
         <source>Allow Comments</source>
-        <translation>Salli kommentit</translation>
+        <translation>Permetre comentaris</translation>
     </message>
     <message>
         <source>No Comments</source>
-        <translation>Ei kommentteja</translation>
+        <translation>Sense comentaris</translation>
     </message>
     <message>
         <source>Contacts:</source>
-        <translation>Kontaktit:</translation>
+        <translation>Contactes:</translation>
     </message>
     <message>
         <source>Create Group</source>
-        <translation>Luo ryhmä</translation>
+        <translation>Crear grup</translation>
     </message>
     <message>
         <source>Please add a Name</source>
-        <translation>Ole hyvä ja lisää nimi</translation>
+        <translation>Si us plau afegeix un nom</translation>
     </message>
     <message>
         <source>Load Group Logo</source>
-        <translation>Lataa ryhmän logo</translation>
+        <translation>Carrega logotip del grup</translation>
     </message>
     <message>
         <source>Invalid Circle Selection - Personal disabled for now</source>
-        <translation>Virheellinen piirivalinta - henkilökohtainen toistaiseksi pois käytöstä</translation>
+        <translation>Selecció de cercle invàlida - El personal està deshabilitat per ara</translation>
     </message>
 </context>
 <context>
     <name>GxsIdChooser</name>
     <message>
         <source>Loading</source>
-        <translation>Ladataan</translation>
+        <translation>Carregant</translation>
     </message>
     <message>
         <source>Not found</source>
-        <translation>Ei löydy</translation>
+        <translation>No trobat</translation>
     </message>
     <message>
         <source>No Signature</source>
-        <translation>Ei allekirjoitusta</translation>
+        <translation>Sense signatura</translation>
     </message>
 </context>
 <context>
     <name>HashBox</name>
     <message>
         <source>Drop file error.</source>
-        <translation>Virhe pudotettaessa tiedostoa.</translation>
+        <translation>Error al deixar l&apos;arxiu.</translation>
     </message>
     <message>
         <source>Directory can&apos;t be dropped, only files are accepted.</source>
-        <translation>Hakemistoa ei voi pudottaa, ainoastaan tiedostoja.</translation>
+        <translation>No es poden deixar anar directoris, només arxius.</translation>
     </message>
     <message>
         <source>File not found or file name not accepted.</source>
-        <translation>Tiedostoa ei löytynyt tai tiedoston nimeä ei hyväksytty.</translation>
+        <translation>Arxiu no trobat o nom d&apos;arxiu no acceptat.</translation>
     </message>
 </context>
 <context>
     <name>HelpBrowser</name>
     <message>
         <source>RetroShare Help</source>
-        <translation>RetroSharen ohje</translation>
+        <translation>Ajuda RetroShare</translation>
     </message>
     <message>
         <source>Find:</source>
-        <translation>Etsi:</translation>
+        <translation>Trobar:</translation>
     </message>
     <message>
         <source>Find Previous</source>
-        <translation>Etsi edellinen</translation>
+        <translation>Trobar anterior</translation>
     </message>
     <message>
         <source>Find Next</source>
-        <translation>Etsi seuraava</translation>
+        <translation>Trobar següent</translation>
     </message>
     <message>
         <source>Case sensitive</source>
-        <translation>Merkkikokoriippuvainen</translation>
+        <translation>Diferenciar majúscules/minúscules</translation>
     </message>
     <message>
         <source>Whole words only</source>
-        <translation>Vain kokonaisia sanoja</translation>
+        <translation>Només paraules senceres</translation>
     </message>
     <message>
         <source>Contents</source>
-        <translation>Sisältö</translation>
+        <translation>Continguts</translation>
     </message>
     <message>
         <source>Help Topics</source>
-        <translation>Ohjeen aiheet</translation>
+        <translation>Temes d&apos;ajuda</translation>
     </message>
     <message>
         <source>Search</source>
-        <translation>Etsi</translation>
+        <translation>Cerca</translation>
     </message>
     <message>
         <source>Searching for:</source>
-        <translation>Haetaan:</translation>
+        <translation>Cercant:</translation>
     </message>
     <message>
         <source>Found Documents</source>
-        <translation>Löydetyt asiakirjat</translation>
+        <translation>Documents trobats</translation>
     </message>
     <message>
         <source>Back</source>
-        <translation>Takaisin</translation>
+        <translation>Enrere</translation>
     </message>
     <message>
         <source>Move to previous page (Backspace)</source>
-        <translation>Siirry edelliselle sivulle (askelpalautin)</translation>
+        <translation>Anar a la pàgina anterior (retrocés)</translation>
     </message>
     <message>
         <source>Backspace</source>
-        <translation>Askelpalautin</translation>
+        <translation>Retrocés</translation>
     </message>
     <message>
         <source>Forward</source>
-        <translation>Eteenpäin</translation>
+        <translation>Endavant</translation>
     </message>
     <message>
         <source>Move to next page (Shift+Backspace)</source>
-        <translation>Siirry seuraavalle sivulle (Shift+askelpalautin)</translation>
+        <translation>Anar a la pàgina següent (Shift + Backspace)</translation>
     </message>
     <message>
         <source>Shift+Backspace</source>
-        <translation>Shift+askelpalautin</translation>
+        <translation>Majúscules+Retrocés</translation>
     </message>
     <message>
         <source>Home</source>
-        <translation>Koti</translation>
+        <translation>Casa</translation>
     </message>
     <message>
         <source>Move to the Home page (Ctrl+H)</source>
-        <translation>Siirry kotisivulle (Ctrl+H)</translation>
+        <translation>Anar a la pàgina d&apos;inici (Ctrl+H)</translation>
     </message>
     <message>
         <source>Ctrl+H</source>
@@ -8037,11 +8039,11 @@ kuin voit kommentoida</translation>
     </message>
     <message>
         <source>Find</source>
-        <translation>Etsi</translation>
+        <translation>Trobar</translation>
     </message>
     <message>
         <source>Search for a word or phrase on current page (Ctrl+F)</source>
-        <translation>Etsi sanaa tai lausetta tältä sivulta (Ctrl+F)</translation>
+        <translation>Cercar una paraula o frase a la pàgina actual (Ctrl+F)</translation>
     </message>
     <message>
         <source>Ctrl+F</source>
@@ -8049,11 +8051,11 @@ kuin voit kommentoida</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation>Sulje</translation>
+        <translation>Tancar</translation>
     </message>
     <message>
         <source>Close Vidalia Help</source>
-        <translation>Sulje Vidalia-ohje</translation>
+        <translation>Tancar Ajuda Vidalia</translation>
     </message>
     <message>
         <source>Esc</source>
@@ -8061,34 +8063,34 @@ kuin voit kommentoida</translation>
     </message>
     <message>
         <source>Error Loading Help Contents: </source>
-        <translation>Virhe ladattaessa ohjeen sisältöä:</translation>
+        <translation>Error carregant el contingut de l&apos;ajuda:</translation>
     </message>
     <message>
         <source>Supplied XML file is not a valid Contents document.</source>
-        <translation>Tarjottu XML-tiedosto ei ole toimiva sisältöasiakirja.</translation>
+        <translation>L&apos;arxiu XML proporcionat no és un document de continguts vàlid</translation>
     </message>
     <message>
         <source>Search reached end of document</source>
-        <translation>Haku päättyi asiakirjan loppuun</translation>
+        <translation>La cerca ha arribat al final del document</translation>
     </message>
     <message>
         <source>Search reached start of document</source>
-        <translation>Haku päättyi asiakirjan alkuun</translation>
+        <translation>La cerca ha arribat a l&apos;inici del document</translation>
     </message>
     <message>
         <source>Text not found in document</source>
-        <translation>Tekstiä ei löydetty asiakirjasta</translation>
+        <translation>Text no trobat en el document</translation>
     </message>
     <message>
         <source>Found %1 results</source>
-        <translation>Löydettiin %1 tulosta</translation>
+        <translation>Trobats %1 resultats</translation>
     </message>
 </context>
 <context>
     <name>HelpDialog</name>
     <message>
         <source>About</source>
-        <translation>Tietoja</translation>
+        <translation>Sobre</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -8108,38 +8110,39 @@ p, li { white-space: pre-wrap; }
 &lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;Retroshare Project Page&lt;/a&gt;&lt;/li&gt;
 &lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;RetroShare Team Blog&lt;/a&gt;&lt;/li&gt;
 &lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;RetroShare Dev Twiter&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;RetroShare on &lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;yksityinen ja tietoturvallinen hajautettu kommunikointialusta, joka toimii eri käyttöjärjestelmissä. RetroSharen lähdekoodi on avoin.&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Sen avulla voit turvallisesti jakaa asioita ystäviesi kanssa &lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;käyttäen luottamusverkkoa vertaisten todentamiseen ja OpenSSL-protokollaa kommunikaation salaamiseen. &lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;RetroShare tarjoaa tiedostojen jakamisen, keskustelun, viestit ja kanavat&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Hyödyllisiä linkkejä:&lt;/span&gt;&lt;/p&gt;
-&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Retrosharen verkkosivut&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
-&lt;li style=&quot; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net/wiki/index.php/Main_Page&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Retrosharen Wiki&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
-&lt;li style=&quot; font-size:8pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net/forum/&quot;&gt;RetroSharen keskustelupalsta&lt;/a&gt;&lt;/li&gt;
-&lt;li style=&quot; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://sourceforge.net/projects/retroshare/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Retrosharen projektisivu&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
-&lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;RetroSharen tiimin blogi&lt;/a&gt;&lt;/li&gt;⏎ &lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;RetroSharen Twitter&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
+p, li { white-space: pre-wrap; }⏎
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;⏎
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;RetroShare és una plataforma descentralitzada&lt;/span&gt;&lt;/p&gt;⏎
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;segura i privada de comunicacions, de codi obert i multi-plataforma.⇥&lt;/span&gt;&lt;/p&gt;⏎
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Permet compartir tot el que vulguis amb seguretat amb amics &lt;/span&gt;&lt;/p&gt;⏎
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; utilitzant certificats per autenticar els contactes i OpenSSL per encriptar les comunicacions.&lt;/span&gt;&lt;/p&gt;⏎
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;RetroShare proporciona compartició d&apos;arxius, xat, missatgeria i canals.&lt;/span&gt;&lt;/p&gt;⏎
+&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Enllaços externs útils amb més informació:&lt;/span&gt;&lt;/p&gt;⏎
+&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;&lt;span style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot;&gt;Pàgina web del RetroShare&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;⏎
+&lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;Wiki del RetroShare&lt;/a&gt;&lt;/li&gt;⏎
+&lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;Fòrum del RetroShare&lt;/a&gt;&lt;/li&gt;⏎
+&lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;Plana de projecte del RetroShare&lt;/a&gt;&lt;/li&gt;⏎
+&lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;Bloc de l&apos;equip del RetroShare&lt;/a&gt;&lt;/li&gt;⏎
+&lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Authors</source>
-        <translation>Tekijät</translation>
+        <translation>Autors</translation>
     </message>
     <message>
         <source>Thanks to</source>
-        <translation>Kiitokset</translation>
+        <translation>Gràcies a</translation>
     </message>
     <message>
         <source>Translation</source>
-        <translation>Käännös</translation>
+        <translation>Traducció</translation>
     </message>
     <message>
         <source>License Agreement</source>
-        <translation>Lisenssisopimus</translation>
+        <translation>Acord de llicència</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -8147,11 +8150,11 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;About RetroShare&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Arial&apos;; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Tietoja RetroSharesta&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
+p, li { white-space: pre-wrap; }⏎
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-size:8pt; font-weight:400; font-style:normal;&quot;&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Sobre RetroShare&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -8168,366 +8171,366 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Swedish: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Daniel Wester&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; &amp;lt;&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;wester@speedmail.se&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;German: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Jan&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Keller&lt;/span&gt; &amp;lt;&lt;span style=&quot; font-size:8pt;&quot;&gt;trilarion@users.sourceforge.net&lt;/span&gt;&amp;gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Polish: &lt;/span&gt;Maciej Mrug&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;RetroSharen käännökset:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net/wiki/index.php/Translation&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;http://retroshare.sourceforge.net/wiki/index.php/Translation&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; text-decoration: underline; color:#0000ff;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;RetroSharen verkkosivuston kääntäjät:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt; font-weight:600;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Ruotsi: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Daniel Wester&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; &amp;lt;&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;wester@speedmail.se&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Saksa: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Jan&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Keller&lt;/span&gt; &amp;lt;&lt;span style=&quot; font-size:8pt;&quot;&gt;trilarion@users.sourceforge.net&lt;/span&gt;&amp;gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Puola: &lt;/span&gt;Maciej Mrug&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
+p, li { white-space: pre-wrap; }⏎
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Traducció RetroShare:&lt;/span&gt;&lt;/p&gt;⏎
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net/wiki/index.php/Translation&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;http://retroshare.sourceforge.net/wiki/index.php/Translation&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;⏎
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; text-decoration: underline; color:#0000ff;&quot;&gt;&lt;/p&gt;⏎
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Plana web traductors RetroShare:&lt;/span&gt;&lt;/p&gt;⏎
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt; font-weight:600;&quot;&gt;&lt;/p&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Suec: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Daniel Wester&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; &amp;lt;&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;wester@speedmail.se&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Alemany: &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Jan&lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Keller&lt;/span&gt; &amp;lt;&lt;span style=&quot; font-size:8pt;&quot;&gt;trilarion@users.sourceforge.net&lt;/span&gt;&amp;gt;&lt;/p&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Polac: &lt;/span&gt;Maciej Mrug&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
     <name>HelpTextBrowser</name>
     <message>
         <source>Error opening help file: </source>
-        <translation>Virhe avattaessa ohjetiedostoa:</translation>
+        <translation>Error obrint l&apos;arxiu d&apos;ajuda: </translation>
     </message>
     <message>
         <source>Opening External Link</source>
-        <translation>Avataan ulkoista linkkiä</translation>
+        <translation>Obrint enllaç extern</translation>
     </message>
     <message>
         <source>RetroShare can open the link you selected in your default Web browser. If your browser is not currently configured to use Tor then the request will not be anonymous.</source>
-        <translation>RetroShare voi avata valitsemasi linkin verkkoselaimessasi. Jos selaimesi ei ole säädetty käyttämään Tor-verkkoa, linkin avaaminen ei tapahdu nimettömänä.</translation>
+        <translation>RetroShare pot obrir l&apos;enllaç seleccionat en el teu navegador web per defecte. Si el teu navegador no està configurat per utilitzar Tor la petició a l&apos;enllaç no serà anònima.</translation>
     </message>
     <message>
         <source>Do you want Retroshare to open the link in your Web browser?</source>
-        <translation>Haluatko, että RetroShare avaa linkin verkkoselaimessasi?</translation>
+        <translation>Vols que Retroshare obri l&apos;enllaç al teu navegador web?</translation>
     </message>
     <message>
         <source>Unable to Open Link</source>
-        <translation>Linkin avaaminen epäonnistui</translation>
+        <translation>No es pot obrir l&apos;enllaç</translation>
     </message>
     <message>
         <source>RetroShare was unable to open the selected link in your Web browser. You can still copy the URL and paste it into your browser.</source>
-        <translation>RetroShare ei onnistunut avaamaan valitsemaasi linkkiä verkkoselaimessasi. Voit silti kopioda linkin osoitteen ja liittää sen selaimeesi.</translation>
+        <translation>RetroShare no ha pogut obrir l&apos;enllaç seleccionat en el teu navegador web. Si vols, copia la URL i enganxa-la al teu navegador.</translation>
     </message>
 </context>
 <context>
     <name>IdDialog</name>
     <message>
         <source>Identities</source>
-        <translation>Henkilöllisyydet</translation>
+        <translation>Identitats</translation>
     </message>
     <message>
         <source>New ID</source>
-        <translation>Uusi tunniste</translation>
+        <translation>Nova Id</translation>
     </message>
     <message>
         <source>Yourself</source>
-        <translation>Sinä itse</translation>
+        <translation>Tu mateix</translation>
     </message>
     <message>
         <source>Friends / Friends of Friends</source>
-        <translation>Ystävät / Ystävien ystävät</translation>
+        <translation>Amics / Amics d&apos;amics</translation>
     </message>
     <message>
         <source>Others</source>
-        <translation>Muut</translation>
+        <translation>Altres</translation>
     </message>
     <message>
         <source>Pseudonyms</source>
-        <translation>Nimimerkit</translation>
+        <translation>Pseudònims</translation>
     </message>
     <message>
         <source>All</source>
-        <translation>Kaikki</translation>
+        <translation>Tot</translation>
     </message>
     <message>
         <source>Nickname</source>
-        <translation>Nimimerkki</translation>
+        <translation>Sobrenom</translation>
     </message>
     <message>
         <source>KeyId</source>
-        <translation>Avaintunniste</translation>
+        <translation>IdClau</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation>Tyyppi</translation>
+        <translation>Tipus</translation>
     </message>
     <message>
         <source>Delete ID</source>
-        <translation>Tuhoa tunniste</translation>
+        <translation>Esborra Id</translation>
     </message>
     <message>
         <source>Edit Reputation</source>
-        <translation>Muokkaa mainetta</translation>
+        <translation>Editar reputació</translation>
     </message>
     <message>
         <source>Edit ID</source>
-        <translation>Muokkaa tunnistetta</translation>
+        <translation>Editar Id</translation>
     </message>
     <message>
         <source>Identity Type</source>
-        <translation>Henkilöllisyyden tyyppi</translation>
+        <translation>Tipus d&apos;identitat</translation>
     </message>
     <message>
         <source>Friend</source>
-        <translation>Ystävä</translation>
+        <translation>Amic</translation>
     </message>
     <message>
         <source>Friend of Friend</source>
-        <translation>Ystävän ystävä</translation>
+        <translation>Amic d&apos;amic</translation>
     </message>
     <message>
         <source>Other</source>
-        <translation>Muu</translation>
+        <translation>Altre</translation>
     </message>
     <message>
         <source>Pseudonym</source>
-        <translation>Nimimerkki</translation>
+        <translation>Pseudònim</translation>
     </message>
     <message>
         <source>Key ID</source>
-        <translation>Avaintunniste</translation>
+        <translation>Id de clau</translation>
     </message>
     <message>
         <source>PGP Name</source>
-        <translation>PGP-nimi</translation>
+        <translation>Nom PGP</translation>
     </message>
     <message>
         <source>PGP Id</source>
-        <translation>PGP-tunniste</translation>
+        <translation>Id PGP</translation>
     </message>
     <message>
         <source>PGP Hash</source>
-        <translation>PGP-tiiviste (hash)</translation>
+        <translation>Hash PGP</translation>
     </message>
     <message>
         <source>Reputation</source>
-        <translation>Maine</translation>
+        <translation>Reputació</translation>
     </message>
     <message>
         <source>Your Rating</source>
-        <translation>Sinun arviosi</translation>
+        <translation>La teva qualificació</translation>
     </message>
     <message>
         <source>Overall Rating</source>
-        <translation>Arvio kaikenkaikkiaan</translation>
+        <translation>Qualificació global</translation>
     </message>
     <message>
         <source>Implicit Score</source>
-        <translation>Epäsuorat pisteet</translation>
+        <translation>Puntuació implicita</translation>
     </message>
     <message>
         <source>Rating</source>
-        <translation>Arvostelu</translation>
+        <translation>Qualificació</translation>
     </message>
     <message>
         <source>Comment</source>
-        <translation>Kommentti</translation>
+        <translation>Comentari</translation>
     </message>
     <message>
         <source>Local Reputation</source>
-        <translation>Paikallinen maine</translation>
+        <translation>Reputació local</translation>
     </message>
     <message>
         <source>Todo</source>
-        <translation>Tehtävät</translation>
+        <translation>Pendent</translation>
     </message>
     <message>
         <source>Show:</source>
-        <translation>Näytä:</translation>
+        <translation>Mostra:</translation>
     </message>
     <message>
         <source>Search</source>
-        <translation>Etsi</translation>
+        <translation>Cerca</translation>
     </message>
     <message>
         <source>PGP Linked Id</source>
-        <translation>PGP:n linkitetty tunniste</translation>
+        <translation>Id enllaç PGP</translation>
     </message>
     <message>
         <source>Anon Id</source>
-        <translation>Nimetön tunniste</translation>
+        <translation>Id anonima</translation>
     </message>
     <message>
         <source>Unknown real name</source>
-        <translation>Tuntematon oikea nimi</translation>
+        <translation>Nom real desconegut</translation>
     </message>
     <message>
         <source>Anonymous Id</source>
-        <translation>Nimetön tunniste</translation>
+        <translation>Id anònim</translation>
     </message>
     <message>
         <source>Create new Identity</source>
-        <translation>Luo uusi henkilöllisyys</translation>
+        <translation>Crear nova identitat</translation>
     </message>
     <message>
         <source>Delete Identity</source>
-        <translation>Poista henkilöllisyys</translation>
+        <translation>Esborrar identitat</translation>
     </message>
 </context>
 <context>
     <name>IdEditDialog</name>
     <message>
         <source>Nickname</source>
-        <translation>Nimimerkki</translation>
+        <translation>Sobrenom</translation>
     </message>
     <message>
         <source>Key ID</source>
-        <translation>Avaintunniste</translation>
+        <translation>Id de clau</translation>
     </message>
     <message>
         <source>PGP Name</source>
-        <translation>PGP-nimi</translation>
+        <translation>Nom PGP</translation>
     </message>
     <message>
         <source>PGP Hash</source>
-        <translation>PGP-tiiviste (hash)</translation>
+        <translation>Hash PGP</translation>
     </message>
     <message>
         <source>PGP Id</source>
-        <translation>PGP-tunniste</translation>
+        <translation>Id PGP</translation>
     </message>
     <message>
         <source>PGP Associated ID</source>
-        <translation>PGP:n kytketty tunniste</translation>
+        <translation>Id associat al PGP</translation>
     </message>
     <message>
         <source>Pseudonym</source>
-        <translation>Nimimerkki</translation>
+        <translation>Pseudònim</translation>
     </message>
     <message>
         <source>New identity</source>
-        <translation>Uusi henkilöllisyys</translation>
+        <translation>Nova identitat</translation>
     </message>
     <message>
         <source>To be generated</source>
-        <translation>Luodaan</translation>
+        <translation>A ser generat</translation>
     </message>
     <message>
         <source>N/A</source>
-        <translation>Ei sovellu</translation>
+        <translation>N/A</translation>
     </message>
     <message>
         <source>Edit identity</source>
-        <translation>Muokkaa henkilöllisyyttä</translation>
+        <translation>Editar identitat</translation>
     </message>
     <message>
         <source>Error getting key!</source>
-        <translation>Virhe haettaessa avainta!</translation>
+        <translation>Error obtenint clau!</translation>
     </message>
     <message>
         <source>Error KeyID invalid</source>
-        <translation>Virhe: viallinen avaimen tunniste</translation>
+        <translation>Error de IDClau invàlida</translation>
     </message>
     <message>
         <source>Unknown GpgId</source>
-        <translation>Tuntematon GPG-tunniste</translation>
+        <translation>IdGPG desconegut</translation>
     </message>
     <message>
         <source>Unknown real name</source>
-        <translation>Tuntematon oikea nimi</translation>
+        <translation>Nom real desconegut</translation>
     </message>
     <message>
         <source>Create New Identity</source>
-        <translation>Luo uusi henkilöllisyys</translation>
+        <translation>Crear nova identitat</translation>
     </message>
 </context>
 <context>
     <name>ImHistoryBrowser</name>
     <message>
         <source>Message History</source>
-        <translation>Viestihistoria</translation>
+        <translation>Historial de missatges</translation>
     </message>
     <message>
         <source>Copy</source>
-        <translation>Kopioi</translation>
+        <translation>Copiar</translation>
     </message>
     <message>
         <source>Remove</source>
-        <translation>Poista</translation>
+        <translation>Treure</translation>
     </message>
     <message>
         <source>Mark all</source>
-        <translation>Merkitse kaikki</translation>
+        <translation>Marcar totes</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation>Tuhoa</translation>
+        <translation>Esborrar</translation>
     </message>
     <message>
         <source>Clear history</source>
-        <translation>Tyhjennä historia</translation>
+        <translation>Esborra l&apos;historial</translation>
     </message>
     <message>
         <source>Send</source>
-        <translation>Lähetä</translation>
+        <translation>Enviar</translation>
     </message>
 </context>
 <context>
     <name>LocalSharedFilesDialog</name>
     <message>
         <source>Create collection file</source>
-        <translation>Luo kokoelmatiedosto</translation>
+        <translation>Crear arxiu de col·lecció</translation>
     </message>
     <message>
         <source>Open File</source>
-        <translation>Avaa tiedosto</translation>
+        <translation>Obrir arxiu</translation>
     </message>
     <message>
         <source>Open Folder</source>
-        <translation>Avaa kansio</translation>
+        <translation>Obrir directori</translation>
     </message>
     <message>
         <source>Edit Share Permissions</source>
-        <translation>Muokkaa jakooikeuksia</translation>
+        <translation>Editar permisos de compartició</translation>
     </message>
     <message>
         <source>Checking...</source>
-        <translation>Tarkistaa...</translation>
+        <translation>Comprovant...</translation>
     </message>
     <message>
         <source>Check files</source>
-        <translation>Tarkista tiedostot</translation>
+        <translation>comprovar arxius</translation>
     </message>
     <message>
         <source>Edit Shared Folder</source>
-        <translation>Muokkaa jaettua kansiota</translation>
+        <translation>Editar directoris compartits</translation>
     </message>
     <message>
         <source>Recommend in a message to</source>
-        <translation>Suosittele viestissä vastaanottajalle</translation>
+        <translation>Recomanar en un missatge a</translation>
     </message>
     <message>
         <source>Set command for opening this file</source>
-        <translation>Määritä komento tämän tiedoston avaamiseksi</translation>
+        <translation>Especifica una comanda per obrir aquest arxiu</translation>
     </message>
 </context>
 <context>
     <name>MainWindow</name>
     <message>
         <source>Add Friend</source>
-        <translation>Lisää ystävä</translation>
+        <translation>Afegeix amic</translation>
     </message>
     <message>
         <source>Add a Friend Wizard</source>
-        <translation>Ohjattu toiminto ystävän lisäämiseksi</translation>
+        <translation>Auxiliar per afegir un amic</translation>
     </message>
     <message>
         <source>Add Share</source>
-        <translation>Lisää jako</translation>
+        <translation>Afegir recurs compartit</translation>
     </message>
     <message>
         <source>Options</source>
-        <translation>Asetukset</translation>
+        <translation>Opcions</translation>
     </message>
     <message>
         <source>Messenger</source>
-        <translation>Pikaviestin</translation>
+        <translation>Missatgeria</translation>
     </message>
     <message>
         <source>About</source>
-        <translation>Tietoja</translation>
+        <translation>Sobre</translation>
     </message>
     <message>
         <source>SMPlayer</source>
@@ -8535,71 +8538,71 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Quit</source>
-        <translation>Lopeta</translation>
+        <translation>Sortir</translation>
     </message>
     <message>
         <source>Quick Start Wizard</source>
-        <translation>Ohjattu nopea käynnistys</translation>
+        <translation>Auxiliar d&apos;inici ràpid</translation>
     </message>
     <message>
         <source>RetroShare %1 a secure decentralized communication platform</source>
-        <translation>RetroShare %1 turvallinen hajautettu kommunikaatioalusta</translation>
+        <translation>RetroShare %1 és una plataforma de comunicació segura descentralitzada</translation>
     </message>
     <message>
         <source>News feed</source>
-        <translation>Uutissyöte</translation>
+        <translation>Origen de noticies</translation>
     </message>
     <message>
         <source>Friends</source>
-        <translation>Ystävät</translation>
+        <translation>Amics</translation>
     </message>
     <message>
         <source>File sharing</source>
-        <translation>Tiedostojen jakaminen</translation>
+        <translation>Compartició d&apos;arxius</translation>
     </message>
     <message>
         <source>Chat Lobbies</source>
-        <translation>Keskusteluaulat</translation>
+        <translation>Sales de xat</translation>
     </message>
     <message>
         <source>Messages</source>
-        <translation>Viestit</translation>
+        <translation>Missatges</translation>
     </message>
     <message>
         <source>Channels</source>
-        <translation>Kanavat</translation>
+        <translation>Canals</translation>
     </message>
     <message>
         <source>Blogs</source>
-        <translation>Blogit</translation>
+        <translation>Blocs</translation>
     </message>
     <message>
         <source>Forums</source>
-        <translation>Foorumit</translation>
+        <translation>Fòrums</translation>
     </message>
     <message>
         <source>Plugins</source>
-        <translation>Lisäosat</translation>
+        <translation>Complements</translation>
     </message>
     <message>
         <source>Getting Started</source>
-        <translation>Aloittaminen</translation>
+        <translation>Començant</translation>
     </message>
     <message>
         <source>Unfinished</source>
-        <translation>Kesken</translation>
+        <translation>Inacabat</translation>
     </message>
     <message>
         <source>Low disk space warning</source>
-        <translation>Varoitus: levytila vähissä</translation>
+        <translation>Avís d&apos;espai de disc baix</translation>
     </message>
     <message>
         <source>The disk space in your </source>
-        <translation>Levytila hakemistossa </translation>
+        <translation>L&apos;espai de disc en el teu</translation>
     </message>
     <message>
         <source> directory is running low (current limit is </source>
-        <translation>on käymässä vähiin (tämänhetkinen raja on </translation>
+        <translation>directori s&apos;està acabant (L&apos;actual límit és</translation>
     </message>
     <message>
         <source>MB). 
@@ -8607,63 +8610,63 @@ p, li { white-space: pre-wrap; }
  RetroShare will now safely suspend any disk access to this directory. 
 
  Please make some free space and click Ok.</source>
-        <translation>MB). 
-
- RetroShare pysäyttää nyt turvallisesti kaiken tähän hakemistoon tulevan dataliikenteen.
-
- Ole hyvä ja vapauta tilaa ja paina Ok.</translation>
+        <translation>MB). ⏎
+⏎
+RetroShare suspendrà a partir d&apos;ara qualsevol accés a aquest directori. ⏎
+⏎
+Si us plau, allibera una mica d&apos;espai i clica Ok.</translation>
     </message>
     <message>
         <source>Show/Hide</source>
-        <translation>Piilota/Näytä</translation>
+        <translation>Mostra/Amaga</translation>
     </message>
     <message>
         <source>Status</source>
-        <translation>Tila</translation>
+        <translation>Estat</translation>
     </message>
     <message>
         <source>Notify</source>
-        <translation>Huomauta</translation>
+        <translation>Notificar</translation>
     </message>
     <message>
         <source>Open Messenger</source>
-        <translation>Avaa pikaviestin</translation>
+        <translation>Obrir Missatgeria</translation>
     </message>
     <message>
         <source>Open Messages</source>
-        <translation>Avaa viestit</translation>
+        <translation>Obrir Missatges</translation>
     </message>
     <message>
         <source>Bandwidth Graph</source>
-        <translation>Siirtonopeuskuvaaja</translation>
+        <translation>Gràfic d&apos;ample de banda</translation>
     </message>
     <message>
         <source>DHT Details</source>
-        <translation>DHT:n tiedot</translation>
+        <translation>Detalls DHT</translation>
     </message>
     <message>
         <source>Bandwidth Details</source>
-        <translation>Kaistanleveystiedot</translation>
+        <translation>Detalls de l&apos;ample de banda</translation>
     </message>
     <message>
         <source>Applications</source>
-        <translation>Ohjelmat</translation>
+        <translation>Aplicacions</translation>
     </message>
     <message>
         <source>Help</source>
-        <translation>Ohje</translation>
+        <translation>Ajuda</translation>
     </message>
     <message>
         <source>Minimize</source>
-        <translation>Pienennä</translation>
+        <translation>Minimitzar</translation>
     </message>
     <message>
         <source>Maximize</source>
-        <translation>Suurenna</translation>
+        <translation>Maximitzar</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
-        <translation>Lo&amp;peta</translation>
+        <translation>&amp;Sortir</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -8671,348 +8674,348 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>%1 new message</source>
-        <translation>%1 uusi viesti</translation>
+        <translation>%1 missatges nous</translation>
     </message>
     <message>
         <source>%1 new messages</source>
-        <translation>%1 kpl uusia viestejä</translation>
+        <translation>%1 missatges nous</translation>
     </message>
     <message>
         <source>Down: %1 (kB/s)</source>
-        <translation>Lataus: %1 (kB/s)</translation>
+        <translation>Baixat: %1 (kB/s)</translation>
     </message>
     <message>
         <source>Up: %1 (kB/s)</source>
-        <translation>Lähetys: %1 (kB/s)</translation>
+        <translation>Pujat: %1 (kB/s)</translation>
     </message>
     <message>
         <source>%1 friend connected</source>
-        <translation>%1 ystävä yhdistettynä</translation>
+        <translation>%1 amic connectat</translation>
     </message>
     <message>
         <source>%1 friends connected</source>
-        <translation>%1 ystävää yhdistettynä</translation>
+        <translation>%1 amics connectats</translation>
     </message>
     <message>
         <source>Do you really want to exit RetroShare ?</source>
-        <translation>Haluatko todella poistua RetroSharesta?</translation>
+        <translation>Realment vols sortir del RetroShare?</translation>
     </message>
     <message>
         <source>Really quit ? </source>
-        <translation>Lopeta?</translation>
+        <translation>Segur que vols sortir? </translation>
     </message>
     <message>
         <source>Internal Error</source>
-        <translation>Sisäinen virhe</translation>
+        <translation>Error intern</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation>Piilota</translation>
+        <translation>Amagar</translation>
     </message>
     <message>
         <source>Show</source>
-        <translation>Näytä</translation>
+        <translation>Mostra</translation>
     </message>
     <message>
         <source>Make sure this link has not been forged to drag you to a malicious website.</source>
-        <translation>Varmista, että tämä linkki ei ole huijaus, joka johtaa haitalliselle sivustolle.</translation>
+        <translation>Assegura&apos;t de que aquest enllaç no ha estat modificat per portar-te a un lloc web malicios.</translation>
     </message>
     <message>
         <source>Don&apos;t ask me again</source>
-        <translation>Älä kysy uudestaan</translation>
+        <translation>No m&apos;ho tornis a preguntar</translation>
     </message>
     <message>
         <source>It seems to be an old RetroShare link. Please use copy instead.</source>
-        <translation>Tämä näyttäisi olevan vanha RetroShare-linkki. Käytä mielummin kopiointia.</translation>
+        <translation>Sembla un enllaç de RetroShare vell. Si us plau, utilitza copiar i enganxar en el seu lloc.</translation>
     </message>
     <message>
         <source>The file link is malformed.</source>
-        <translation>Linkki on virheellinen.</translation>
+        <translation>L&apos;enllaç a l&apos;arxiu té un format incorrecte.</translation>
     </message>
     <message>
         <source>ServicePermissions</source>
-        <translation>Palveluiden käyttöoikeudet</translation>
+        <translation>PermisosServei</translation>
     </message>
     <message>
         <source>Service permissions matrix</source>
-        <translation>Palveluiden käyttöoikeudet</translation>
+        <translation>Matriu de permisos dels serveis</translation>
     </message>
 </context>
 <context>
     <name>MessageComposer</name>
     <message>
         <source>Compose</source>
-        <translation>Kirjoita viesti</translation>
+        <translation>Redacta</translation>
     </message>
     <message>
         <source>Contacts</source>
-        <translation>Kontaktit</translation>
+        <translation>Contactes</translation>
     </message>
     <message>
         <source>&gt;&gt; To</source>
-        <translation>&gt;&gt; Vastaanottaja</translation>
+        <translation>&gt;&gt; A</translation>
     </message>
     <message>
         <source>&gt;&gt; Cc</source>
-        <translation>&gt;&gt; Kopio</translation>
+        <translation>&gt;&gt; Cc</translation>
     </message>
     <message>
         <source>&gt;&gt; Bcc</source>
-        <translation>&gt;&gt; Piilokopio</translation>
+        <translation>&gt;&gt; C/o</translation>
     </message>
     <message>
         <source>&gt;&gt; Recommend</source>
-        <translation>&gt;&gt; Suosittele</translation>
+        <translation>&gt;&gt; Recomana</translation>
     </message>
     <message>
         <source>Paragraph</source>
-        <translation>Kappale</translation>
+        <translation>Paràgraf</translation>
     </message>
     <message>
         <source>Heading 1</source>
-        <translation>Otsikko 1</translation>
+        <translation>Capçalera 1</translation>
     </message>
     <message>
         <source>Heading 2</source>
-        <translation>Otsikko 2</translation>
+        <translation>Capçalera 2</translation>
     </message>
     <message>
         <source>Heading 3</source>
-        <translation>Otsikko 3</translation>
+        <translation>Capçalera 3</translation>
     </message>
     <message>
         <source>Heading 4</source>
-        <translation>Otsikko 4</translation>
+        <translation>Capçalera 4</translation>
     </message>
     <message>
         <source>Heading 5</source>
-        <translation>Otsikko 5</translation>
+        <translation>Capçalera 5</translation>
     </message>
     <message>
         <source>Heading 6</source>
-        <translation>Otsikko 6</translation>
+        <translation>Capçalera 6</translation>
     </message>
     <message>
         <source>Font size</source>
-        <translation>Kirjasinkoko</translation>
+        <translation>Mida del tipus de lletra</translation>
     </message>
     <message>
         <source>Increase font size</source>
-        <translation>Suurenna kirjasinkokoa</translation>
+        <translation>Augmentar la mida del tipus de lletra</translation>
     </message>
     <message>
         <source>Decrease font size</source>
-        <translation>Pienennä kirjasinkokoa</translation>
+        <translation>Disminueix la mida del tipus de lletra</translation>
     </message>
     <message>
         <source>Bold</source>
-        <translation>Lihavointi</translation>
+        <translation>Negreta</translation>
     </message>
     <message>
         <source>Italic</source>
-        <translation>Kursivointi</translation>
+        <translation>Cursiva</translation>
     </message>
     <message>
         <source>Select Color</source>
-        <translation>Valitse väri</translation>
+        <translation>Escull el Color</translation>
     </message>
     <message>
         <source>Alignment</source>
-        <translation>Asettelu</translation>
+        <translation>Alineació</translation>
     </message>
     <message>
         <source>Add an Image</source>
-        <translation>Lisää kuva</translation>
+        <translation>Afegir una imatge</translation>
     </message>
     <message>
         <source>Sets text font to code style</source>
-        <translation>Asettaa tekstin kirjasinlajin koodityyliseksi</translation>
+        <translation>Posa el tipus de lletra del text com si fos codi</translation>
     </message>
     <message>
         <source>Underline</source>
-        <translation>Alleviivaus</translation>
+        <translation>Subratllat</translation>
     </message>
     <message>
         <source>Subject:</source>
-        <translation>Aihe:</translation>
+        <translation>Assumpte:</translation>
     </message>
     <message>
         <source>Tags:</source>
-        <translation>Merkkaukset:</translation>
+        <translation>Etiquetes:</translation>
     </message>
     <message>
         <source>Tags</source>
-        <translation>Merkkaukset</translation>
+        <translation>Etiquetes</translation>
     </message>
     <message>
         <source>Recommended Files</source>
-        <translation>Suositellut tiedostot</translation>
+        <translation>Arxius recomanats</translation>
     </message>
     <message>
         <source>File Name</source>
-        <translation>Tiedoston nimi</translation>
+        <translation>Nom d&apos;arxiu</translation>
     </message>
     <message>
         <source>Size</source>
-        <translation>Koko</translation>
+        <translation>Mida</translation>
     </message>
     <message>
         <source>Hash</source>
-        <translation>Tiiviste (hash)</translation>
+        <translation>Hash</translation>
     </message>
     <message>
         <source>Send</source>
-        <translation>Lähetä</translation>
+        <translation>Enviar</translation>
     </message>
     <message>
         <source>Send this message now</source>
-        <translation>Lähetä tämä viesti</translation>
+        <translation>Envia aquest missatge ara</translation>
     </message>
     <message>
         <source>Reply</source>
-        <translation>Vastaa</translation>
+        <translation>Resposta</translation>
     </message>
     <message>
         <source>Toggle Contacts View</source>
-        <translation>Kontaktinäkymän vaihto</translation>
+        <translation>Commuta la visualització de contactes</translation>
     </message>
     <message>
         <source>Save</source>
-        <translation>Tallenna</translation>
+        <translation>Desa</translation>
     </message>
     <message>
         <source>Save this message</source>
-        <translation>Tallenna tämä viesti</translation>
+        <translation>Desar aquest missatge</translation>
     </message>
     <message>
         <source>Attach</source>
-        <translation>Liitä</translation>
+        <translation>Adjuntar</translation>
     </message>
     <message>
         <source>Attach File</source>
-        <translation>Liitä tiedosto</translation>
+        <translation>Adjuntar arxiu</translation>
     </message>
     <message>
         <source>Quote</source>
-        <translation>Lainaa</translation>
+        <translation>Cita</translation>
     </message>
     <message>
         <source>Add Blockquote</source>
-        <translation>Lisää lainauslohko (blockquote)</translation>
+        <translation>Afegir citació</translation>
     </message>
     <message>
         <source>Send To:</source>
-        <translation>Lähetä:</translation>
+        <translation>Enviar a:</translation>
     </message>
     <message>
         <source>&amp;Left</source>
-        <translation>Tas&amp;aa vasemmalle</translation>
+        <translation>&amp;Esquerra</translation>
     </message>
     <message>
         <source>C&amp;enter</source>
-        <translation>&amp;Keskitä</translation>
+        <translation>C&amp;entre</translation>
     </message>
     <message>
         <source>&amp;Right</source>
-        <translation>Tasaa &amp;oikealle</translation>
+        <translation>&amp;Dreta</translation>
     </message>
     <message>
         <source>&amp;Justify</source>
-        <translation>Tasaa &amp;molemmat reunat</translation>
+        <translation>&amp;Justificat</translation>
     </message>
     <message>
         <source>Hello,&lt;br&gt;I recommend a good friend of mine; you can trust them too when you trust me. &lt;br&gt;</source>
-        <translation>Hei,&lt;br&gt;suosittelen ystävääni; voit luottaa häneen, kuten luotat minuun.&lt;br&gt;</translation>
+        <translation>Hola,&lt;br&gt;Et recomano un bon amic meu; pots confiar en ell si confies en mi. &lt;br&gt;</translation>
     </message>
     <message>
         <source>You have a friend recommendation</source>
-        <translation>Olet saanut ystäväsuosituksen</translation>
+        <translation>Tens la recomanació d&apos;un amic</translation>
     </message>
     <message>
         <source>This friend is suggested by</source>
-        <translation>Tätä ystävää suosittelee</translation>
+        <translation>Aquest amic és suggerit per</translation>
     </message>
     <message>
         <source>Thanks, &lt;br&gt;The RetroShare Team</source>
-        <translation>Kiittäen,&lt;br&gt;RetroShare-tiimi.</translation>
+        <translation>Gràcies, &lt;br&gt;l&apos;equip RetroShare</translation>
     </message>
     <message>
         <source>wants to be friends with you on RetroShare</source>
-        <translation>haluaa olla ystäväsi RetroSharessa</translation>
+        <translation>vol ser amic teu al RetroShare</translation>
     </message>
     <message>
         <source>Hi %1,&lt;br&gt;&lt;br&gt;%2 wants to be friends with you on RetroShare.&lt;br&gt;&lt;br&gt;Respond now:&lt;br&gt;%3&lt;br&gt;&lt;br&gt;Thanks,&lt;br&gt;The RetroShare Team</source>
-        <translation>Hei %1,&lt;br&gt;&lt;br&gt;%2 haluaa olla ystäväsi RetroSharessa.&lt;br&gt;&lt;br&gt;Vastaa nyt:&lt;br&gt;%3&lt;br&gt;&lt;br&gt;Kiittäen,&lt;br&gt;RetroShare-tiimi.</translation>
+        <translation>Hola %1, &lt;br&gt;&lt;br&gt;%2 vol ser amic teu al RetroShare.&lt;br&gt;&lt;br&gt;Respondre ara:&lt;br&gt;%3 &lt;br&gt;&lt;br&gt;Gràcies,&lt;br&gt;L&apos;equip RetroShare</translation>
     </message>
     <message>
         <source>Save Message</source>
-        <translation>Tallenna viesti</translation>
+        <translation>Desar el missatge</translation>
     </message>
     <message>
         <source>Message has not been Sent.
 Do you want to save message to draft box?</source>
-        <translation>Viestiä ei ole lähetetty.
-Haluatko tallentaa viestin luonnoslaatikkoon?</translation>
+        <translation>El missatge no s&apos;ha enviat.⏎
+Vols desar el missatge a la bústia d&apos;esborranys?</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
-        <translation>Liitä RetroShare-linkki</translation>
+        <translation>Enganxa l&apos;enllaç RetroShare</translation>
     </message>
     <message>
         <source>Add to &quot;To&quot;</source>
-        <translation>Lisää vastaanottajiin</translation>
+        <translation>Afegir a &quot;A&quot;</translation>
     </message>
     <message>
         <source>Add to &quot;CC&quot;</source>
-        <translation>Lisää kopioihin (CC)</translation>
+        <translation>Afegir a &quot;CC&quot;</translation>
     </message>
     <message>
         <source>Add to &quot;BCC&quot;</source>
-        <translation>Lisää piilokopioihin (BCC)</translation>
+        <translation>Afegir a &quot;C/o&quot;</translation>
     </message>
     <message>
         <source>Add as Recommend</source>
-        <translation>Lisää suosituksena</translation>
+        <translation>Afegir com a recomanat</translation>
     </message>
     <message>
         <source>Friend Details</source>
-        <translation>Ystävän tiedot</translation>
+        <translation>Detalls de l&apos;amic</translation>
     </message>
     <message>
         <source>Original Message</source>
-        <translation>Alkuperäinen viesti</translation>
+        <translation>Missatge original</translation>
     </message>
     <message>
         <source>From</source>
-        <translation>Lähettäjä</translation>
+        <translation>Des de</translation>
     </message>
     <message>
         <source>To</source>
-        <translation>Vastaanottaja</translation>
+        <translation>A</translation>
     </message>
     <message>
         <source>Cc</source>
-        <translation>Kopio</translation>
+        <translation>CC</translation>
     </message>
     <message>
         <source>Sent</source>
-        <translation>Lähetetyt</translation>
+        <translation>Enviat</translation>
     </message>
     <message>
         <source>Subject</source>
-        <translation>Aihe</translation>
+        <translation>Assumpte</translation>
     </message>
     <message>
         <source>On %1, %2 wrote:</source>
-        <translation>%1, %2 kirjoitti:</translation>
+        <translation>A %1, %2 va escriure:</translation>
     </message>
     <message>
         <source>Re:</source>
-        <translation>Vs:</translation>
+        <translation>Re:</translation>
     </message>
     <message>
         <source>Fwd:</source>
-        <translation>Vl:</translation>
+        <translation>Reenvia:</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -9020,877 +9023,877 @@ Haluatko tallentaa viestin luonnoslaatikkoon?</translation>
     </message>
     <message>
         <source>Do you want to send the message without a subject ?</source>
-        <translation>Haluatko lähettää viestin ilman otsikkoa?</translation>
+        <translation>Vols enviar el missatge sense especificar un assumpte?</translation>
     </message>
     <message>
         <source>Please insert at least one recipient.</source>
-        <translation>Ole hyvä ja lisää ainakin yksi vastaanottaja.</translation>
+        <translation>Si us plau, introdueix almenys un destinatari.</translation>
     </message>
     <message>
         <source>Bcc</source>
-        <translation>Piilokopio</translation>
+        <translation>C/o</translation>
     </message>
     <message>
         <source>Unknown</source>
-        <translation>Tuntematon</translation>
+        <translation>Desconegut</translation>
     </message>
     <message>
         <source>Unknown friend</source>
-        <translation>Tuntematon ystävä</translation>
+        <translation>Amic desconegut</translation>
     </message>
     <message>
         <source>&amp;File</source>
-        <translation>&amp;Tiedosto</translation>
+        <translation>&amp;Arxiu</translation>
     </message>
     <message>
         <source>&amp;New</source>
-        <translation>&amp;Uusi</translation>
+        <translation>&amp;Nou</translation>
     </message>
     <message>
         <source>&amp;Open...</source>
-        <translation>&amp;Avaa...</translation>
+        <translation>&amp;Obrir...</translation>
     </message>
     <message>
         <source>&amp;Save</source>
-        <translation>&amp;Tallenna</translation>
+        <translation>&amp;Desar</translation>
     </message>
     <message>
         <source>Save &amp;As File</source>
-        <translation>Tallenna t&amp;iedostona</translation>
+        <translation>Desa &amp;com arxiu</translation>
     </message>
     <message>
         <source>Save &amp;As Draft</source>
-        <translation>Tallenna &amp;luonnoksena</translation>
+        <translation>Desa &amp;com esborrany</translation>
     </message>
     <message>
         <source>&amp;Print...</source>
-        <translation>Tu&amp;losta...</translation>
+        <translation>&amp;Impressió...</translation>
     </message>
     <message>
         <source>&amp;Export PDF...</source>
-        <translation>&amp;Vie PDF...</translation>
+        <translation>&amp;Exportació a PDF...</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
-        <translation>Lo&amp;peta</translation>
+        <translation>&amp;Sortir</translation>
     </message>
     <message>
         <source>&amp;Edit</source>
-        <translation>&amp;Muokkaa</translation>
+        <translation>&amp;Editar</translation>
     </message>
     <message>
         <source>&amp;Undo</source>
-        <translation>K&amp;umoa</translation>
+        <translation>&amp;Desfer</translation>
     </message>
     <message>
         <source>&amp;Redo</source>
-        <translation>To&amp;ista</translation>
+        <translation>&amp;Refer</translation>
     </message>
     <message>
         <source>Cu&amp;t</source>
-        <translation>&amp;Leikkaa</translation>
+        <translation>&amp;Tallar</translation>
     </message>
     <message>
         <source>&amp;Copy</source>
-        <translation>K&amp;opioi</translation>
+        <translation>&amp;Copiar</translation>
     </message>
     <message>
         <source>&amp;Paste</source>
-        <translation>Lii&amp;tä</translation>
+        <translation>&amp;Enganxar</translation>
     </message>
     <message>
         <source>&amp;View</source>
-        <translation>&amp;Näytä</translation>
+        <translation>&amp;Visualitza</translation>
     </message>
     <message>
         <source>&amp;Contacts Sidebar</source>
-        <translation>&amp;Kontaktit sivupalkissa</translation>
+        <translation>&amp;Barra lateral de contactes</translation>
     </message>
     <message>
         <source>&amp;Insert</source>
-        <translation>Lis&amp;ää</translation>
+        <translation>&amp;Inserir</translation>
     </message>
     <message>
         <source>&amp;Image</source>
-        <translation>Ku&amp;va</translation>
+        <translation>&amp;Imatge</translation>
     </message>
     <message>
         <source>&amp;Horizontal Line</source>
-        <translation>V&amp;aakaviiva</translation>
+        <translation>&amp;Línia horitzontal</translation>
     </message>
     <message>
         <source>&amp;Format</source>
-        <translation>Muotoil&amp;e</translation>
+        <translation>&amp;Format</translation>
     </message>
     <message>
         <source>Open File...</source>
-        <translation>Avaa tiedosto...</translation>
+        <translation>Obrir arxiu...</translation>
     </message>
     <message>
         <source>HTML-Files (*.htm *.html);;All Files (*)</source>
-        <translation>HTML-tiedostot (*.htm *.html);;Kaikki tiedostot (*)</translation>
+        <translation>Arxius HTML (*.htm *.html);;Tots els arxius (*)</translation>
     </message>
     <message>
         <source>Save as...</source>
-        <translation>Tallenna nimellä...</translation>
+        <translation>Desa com...</translation>
     </message>
     <message>
         <source>Print Document</source>
-        <translation>Tulosta asiakirja</translation>
+        <translation>Imprimir document</translation>
     </message>
     <message>
         <source>Export PDF</source>
-        <translation>Vie PDF</translation>
+        <translation>Exportar a PDF</translation>
     </message>
     <message>
         <source>Message has not been Sent.
 Do you want to save message ?</source>
-        <translation>Viestiä ei ole lähetetty.
-Haluatko tallentaa viestin?</translation>
+        <translation>El missatge no s&apos;ha enviat.
+Voleu desar el missatge?</translation>
     </message>
     <message>
         <source>Choose Image</source>
-        <translation>Valitse kuva</translation>
+        <translation>Triar imatge</translation>
     </message>
     <message>
         <source>Image Files supported (*.png *.jpeg *.jpg *.gif)</source>
-        <translation>Tuetut kuvatiedostot (*.png *.jpeg *.jpg *.gif)</translation>
+        <translation>Arxius d&apos;imatge (*.png *.jpeg *.jpg *.gif) suportades</translation>
     </message>
     <message>
         <source>Add Extra File</source>
-        <translation>Lisää ylimääräinen tiedosto</translation>
+        <translation>Afegir arxiu extra</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Cryptographically sign message to distant peers. This is prevents intermediate peers to spoof your identity.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Allekirjoita viesti etäisille vertaisille kryptografisesti. Tämä estää välissä olevia vertaisia tekeytymästä sinuksi.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Signar missatges criptogràficament per contactes distants. Això evita que els contactes intermediaris puguin veure la teva identitat.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Distant peer (name: %2, PGP key: %1)</source>
-        <translation>Etäinen vertainen (nimi: %2, PGP-avain: %1)</translation>
+        <translation>Contacte distant (nom: %2, clau PGP: %1)</translation>
     </message>
     <message>
         <source>Only show people you trusted</source>
-        <translation>Näytä vain henkilöt, joihin luotat</translation>
+        <translation>Mostrar només gent de confiança</translation>
     </message>
     <message>
         <source>PGP key unknown</source>
-        <translation>Tuntematon PGP-avain</translation>
+        <translation>Clau PGP desconeguda</translation>
     </message>
     <message>
         <source>You dont have the PGP key of the message sender. So you cannot respond!</source>
-        <translation>Sinulla ei ole viestin lähettäjän PGP-avainta, joten et voi vastata!</translation>
+        <translation>No tens la clau PGP del remitent del missatge. No podràs respondre!</translation>
     </message>
 </context>
 <context>
     <name>MessagePage</name>
     <message>
         <source>Reading</source>
-        <translation>Lukeminen</translation>
+        <translation>Llegint</translation>
     </message>
     <message>
         <source>Set message to read on activate</source>
-        <translation>Aseta viesti luetuksi aktivoitaessa</translation>
+        <translation>Missatge a llegir quan estiguis actiu</translation>
     </message>
     <message>
         <source>Open messages in</source>
-        <translation>Avaa viestit</translation>
+        <translation>Obre missatges a</translation>
     </message>
     <message>
         <source>Tags</source>
-        <translation>Merkkaukset</translation>
+        <translation>Etiquetes</translation>
     </message>
     <message>
         <source>Tags can be used to categorize and prioritize your messages</source>
-        <translation>Merkkauksilla voit luokitella viestejä ja järjestää niitä tärkeyden mukaan</translation>
+        <translation>Amb les etiquetes pots classificar i prioritzar els missatges</translation>
     </message>
     <message>
         <source>Add</source>
-        <translation>Lisää</translation>
+        <translation>Afegir</translation>
     </message>
     <message>
         <source>Edit</source>
-        <translation>Muokkaa</translation>
+        <translation>Editar</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation>Tuhoa</translation>
+        <translation>Esborrar</translation>
     </message>
     <message>
         <source>Default</source>
-        <translation>Oletus</translation>
+        <translation>Per defecte</translation>
     </message>
     <message>
         <source>A new tab</source>
-        <translation>Uudessa välilehdessä</translation>
+        <translation>Una pestanya nova</translation>
     </message>
     <message>
         <source>A new window</source>
-        <translation>Uudessa ikkunassa</translation>
+        <translation>Una finestra nova</translation>
     </message>
     <message>
         <source>Edit Tag</source>
-        <translation>Muokkaa merkkausta</translation>
+        <translation>Editar etiqueta</translation>
     </message>
     <message>
         <source>Message</source>
-        <translation>Viesti</translation>
+        <translation>Missatge</translation>
     </message>
     <message>
         <source>Distant messages:</source>
-        <translation>Etäiset viestit:</translation>
+        <translation>Missatges distants:</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;The link below allows people in the network to send encrypted messages to you, using tunnels. To do that, they need your public PGP key, which they will get using the Retroshare discovery system. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Allaolevaa linkkiä käyttäen verkostossa olevat ihmiset voivat lähettää sinulle salattuja viestejä tunneleiden kautta. Tätä varten he tarvitsevat julkisen PGP-avaimesi, jonka he saavat Retrosharen etsintäjärjestelmän avulla.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;L&apos;enllaç inferior permet a la gent a la xarxa enviar-te missatges utilitzant túnels. Per fer-ho necessiten la teva clau PGP pública, que obtindran del sistema de descobriment del RetroShare. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Accept encrypted distant messages from everyone</source>
-        <translation>Hyväksy salatut etäiset viestit kaikilta</translation>
+        <translation>Acceptar missatges distants encriptats de tothom</translation>
     </message>
     <message>
         <source>Load embedded images</source>
-        <translation>Lataa upotetut kuvat</translation>
+        <translation>Carrega imatges incrustades</translation>
     </message>
 </context>
 <context>
     <name>MessageToaster</name>
     <message>
         <source>Sub:</source>
-        <translation>Aih:</translation>
+        <translation>Sub:</translation>
     </message>
 </context>
 <context>
     <name>MessageUserNotify</name>
     <message>
         <source>Message</source>
-        <translation>Viesti</translation>
+        <translation>Missatge</translation>
     </message>
 </context>
 <context>
     <name>MessageWidget</name>
     <message>
         <source>Recommended Files</source>
-        <translation>Suositellut tiedostot</translation>
+        <translation>Arxius recomanats</translation>
     </message>
     <message>
         <source>Download all Recommended Files</source>
-        <translation>Lataa kaikki suositellut tiedostot</translation>
+        <translation>Descarregar tots els arxius recomanats</translation>
     </message>
     <message>
         <source>Subject:</source>
-        <translation>Aihe:</translation>
+        <translation>Assumpte:</translation>
     </message>
     <message>
         <source>From:</source>
-        <translation>Lähettäjä:</translation>
+        <translation>De:</translation>
     </message>
     <message>
         <source>To:</source>
-        <translation>Vastaanottaja:</translation>
+        <translation>A:</translation>
     </message>
     <message>
         <source>Cc:</source>
-        <translation>Kopio:</translation>
+        <translation>CC:</translation>
     </message>
     <message>
         <source>Bcc:</source>
-        <translation>Piilokopio:</translation>
+        <translation>C/o:</translation>
     </message>
     <message>
         <source>Tags:</source>
-        <translation>Merkkaukset:</translation>
+        <translation>Etiquetes:</translation>
     </message>
     <message>
         <source>File Name</source>
-        <translation>Tiedoston nimi</translation>
+        <translation>Nom d&apos;arxiu</translation>
     </message>
     <message>
         <source>Size</source>
-        <translation>Koko</translation>
+        <translation>Mida</translation>
     </message>
     <message>
         <source>Hash</source>
-        <translation>Tiiviste (hash)</translation>
+        <translation>Hash</translation>
     </message>
     <message>
         <source>Print</source>
-        <translation>Tulosta</translation>
+        <translation>Impressió</translation>
     </message>
     <message>
         <source>Print Preview</source>
-        <translation>Tulostuksen esikatselu</translation>
+        <translation>Prèvia d&apos;impressió</translation>
     </message>
     <message>
         <source>Confirm %1 as friend</source>
-        <translation>Hyväksy %1 ystäväksesi</translation>
+        <translation>Confirma %1 com amic</translation>
     </message>
     <message>
         <source>Add %1 as friend</source>
-        <translation>Lisää %1 ystäväksi</translation>
+        <translation>Afegeix %1 com amic</translation>
     </message>
     <message>
         <source>No subject</source>
-        <translation>Ei aihetta</translation>
+        <translation>Sense assumpte</translation>
     </message>
     <message>
         <source>Download</source>
-        <translation>Lataa</translation>
+        <translation>Descarregar</translation>
     </message>
     <message>
         <source>Download all</source>
-        <translation>Lataa kaikki</translation>
+        <translation>Descarregar tot</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation>Piilota</translation>
+        <translation>Amagar</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation>Laajenna</translation>
+        <translation>Ampliar</translation>
     </message>
     <message>
         <source>File</source>
-        <translation>Tiedosto</translation>
+        <translation>Arxiu</translation>
     </message>
     <message>
         <source>Files</source>
-        <translation>Tiedostot</translation>
+        <translation>Arxius</translation>
     </message>
     <message>
         <source>Print Document</source>
-        <translation>Tulosta asiakirja</translation>
+        <translation>Imprimir document</translation>
     </message>
     <message>
         <source>Save as...</source>
-        <translation>Tallenna nimellä...</translation>
+        <translation>Desa com...</translation>
     </message>
     <message>
         <source>HTML-Files (*.htm *.html);;All Files (*)</source>
-        <translation>HTML-tiedostot (*.htm *.html);;Kaikki tiedostot (*)</translation>
+        <translation>Arxius-HTML (*.htm *.html);;Tots els arxius (*)</translation>
     </message>
     <message>
         <source>Load images always for this message</source>
-        <translation>Lataa kuvat aina tämän viestin osalta</translation>
+        <translation>Carregar sempre les imatges per aquest missatge</translation>
     </message>
     <message>
         <source>This messages is encrypted. Click the right button to decrypt it.</source>
-        <translation>Tämä viesti on salattu. Pura salaus napsauttamalla hiiren oikeaa painiketta.</translation>
+        <translation>Aquest missatge està encriptat. Fes botó dret per desencriptar-lo.</translation>
     </message>
     <message>
         <source>Decrypt</source>
-        <translation>Pura salaus</translation>
+        <translation>Desencriptar</translation>
     </message>
     <message>
         <source>Encrypted message</source>
-        <translation>Salattu viesti</translation>
+        <translation>Missatge encriptat</translation>
     </message>
     <message>
         <source>Decryption failed!</source>
-        <translation>Salauksen purkaminen epäonnistui!</translation>
+        <translation>Ha fallat la desencriptació!</translation>
     </message>
     <message>
         <source>This message is not encrypted. Cannot decrypt!</source>
-        <translation>Tämä viesti ei ole salattu. Ei voida purkaa!</translation>
+        <translation>Aquest missatge no està encriptat. No es pot desencriptar!</translation>
     </message>
     <message>
         <source>This message could not be decrypted.</source>
-        <translation>Tämän viestin salausta ei voitu purkaa.</translation>
+        <translation>Aquest missatge no es pot desencriptar.</translation>
     </message>
     <message>
         <source>Unknown (needs decryption)</source>
-        <translation>Tuntematon (salaus täytyy purkaa)</translation>
+        <translation>Desconegut (Necessita desencriptar)</translation>
     </message>
 </context>
 <context>
     <name>MessageWindow</name>
     <message>
         <source>New Message</source>
-        <translation>Uusi viesti</translation>
+        <translation>Missatge nou</translation>
     </message>
     <message>
         <source>Compose</source>
-        <translation>Kirjoita</translation>
+        <translation>Redacta</translation>
     </message>
     <message>
         <source>Reply to selected message</source>
-        <translation>Vastaa valittuun viestiin</translation>
+        <translation>Respon al missatge seleccionat</translation>
     </message>
     <message>
         <source>Reply</source>
-        <translation>Vastaa</translation>
+        <translation>Resposta</translation>
     </message>
     <message>
         <source>Reply all to selected message</source>
-        <translation>Vastaa kaikkiin valittuihin viesteihin</translation>
+        <translation>Respondre a tothom del missatge seleccionat</translation>
     </message>
     <message>
         <source>Reply all</source>
-        <translation>Vastaa kaikille</translation>
+        <translation>Respon a tothom</translation>
     </message>
     <message>
         <source>Forward selected message</source>
-        <translation>Välitä valittu viesti</translation>
+        <translation>Reenviar missatge seleccionat</translation>
     </message>
     <message>
         <source>Forward</source>
-        <translation>Eteenpäin</translation>
+        <translation>Endavant</translation>
     </message>
     <message>
         <source>Remove selected message</source>
-        <translation>Poista valittu viesti</translation>
+        <translation>Esborra el missatge seleccionat</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation>Tuhoa</translation>
+        <translation>Esborrar</translation>
     </message>
     <message>
         <source>Print selected message</source>
-        <translation>Tulosta valittu viesti</translation>
+        <translation>Imprimir el missatge seleccionat</translation>
     </message>
     <message>
         <source>Print</source>
-        <translation>Tulosta</translation>
+        <translation>Impressió</translation>
     </message>
     <message>
         <source>Display</source>
-        <translation>Näytä</translation>
+        <translation>Mostra</translation>
     </message>
     <message>
         <source>Tags</source>
-        <translation>Merkkaukset</translation>
+        <translation>Etiquetes</translation>
     </message>
     <message>
         <source>Print Preview</source>
-        <translation>Tulostuksen esikatselu</translation>
+        <translation>Prèvia d&apos;impressió</translation>
     </message>
     <message>
         <source>Buttons Icon Only</source>
-        <translation>Painikkeet vain kuvakkeella</translation>
+        <translation>Botons: Només icona</translation>
     </message>
     <message>
         <source>Buttons Text Beside Icon</source>
-        <translation>Painikkeet tekstillä kuvakkeen vieressä</translation>
+        <translation>Botons: Text al costat de la icona</translation>
     </message>
     <message>
         <source>Buttons with Text</source>
-        <translation>Painikkeet tekstillä</translation>
+        <translation>Botons: amb text</translation>
     </message>
     <message>
         <source>Buttons Text Under Icon</source>
-        <translation>Painikkeet tekstillä kuvakkeen alla</translation>
+        <translation>Botons: Text sota la icona</translation>
     </message>
     <message>
         <source>Set Text Under Icon</source>
-        <translation>Aseta teksti kuvakkeen alle</translation>
+        <translation>Escull text sota la icona</translation>
     </message>
     <message>
         <source>&amp;File</source>
-        <translation>&amp;Tiedosto</translation>
+        <translation>&amp;Arxiu</translation>
     </message>
     <message>
         <source>Save &amp;As File</source>
-        <translation>Tallenna t&amp;iedostona</translation>
+        <translation>Desa &amp;com arxiu</translation>
     </message>
     <message>
         <source>&amp;Print...</source>
-        <translation>Tu&amp;losta...</translation>
+        <translation>&amp;Impressió...</translation>
     </message>
     <message>
         <source>Print Preview...</source>
-        <translation>Tulostuksen esikatselu...</translation>
+        <translation>Prèvia d&apos;impressió...</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
-        <translation>Lo&amp;peta</translation>
+        <translation>&amp;Sortir</translation>
     </message>
 </context>
 <context>
     <name>MessagesDialog</name>
     <message>
         <source>New Message</source>
-        <translation>Uusi viesti</translation>
+        <translation>Missatge nou</translation>
     </message>
     <message>
         <source>Compose</source>
-        <translation>Kirjoita viesti</translation>
+        <translation>Redacta</translation>
     </message>
     <message>
         <source>Reply to selected message</source>
-        <translation>Vastaa valittuun viestiin</translation>
+        <translation>Respon al missatge seleccionat</translation>
     </message>
     <message>
         <source>Reply</source>
-        <translation>Vastaa</translation>
+        <translation>Resposta</translation>
     </message>
     <message>
         <source>Reply all to selected message</source>
-        <translation>Vastaa kaikkiin valittuihin viesteihin</translation>
+        <translation>Respon a tothom del missatge seleccionat</translation>
     </message>
     <message>
         <source>Reply all</source>
-        <translation>Vastaa kaikille</translation>
+        <translation>Respon a tothom</translation>
     </message>
     <message>
         <source>Forward selected message</source>
-        <translation>Välitä valittu viesti</translation>
+        <translation>Reenviar missatge seleccionat</translation>
     </message>
     <message>
         <source>Foward</source>
-        <translation>Välitä</translation>
+        <translation>Reenvia</translation>
     </message>
     <message>
         <source>Remove selected message</source>
-        <translation>Poista valittu viesti</translation>
+        <translation>Esborra el missatge seleccionat</translation>
     </message>
     <message>
         <source>Delete</source>
-        <translation>Tuhoa</translation>
+        <translation>Esborrar</translation>
     </message>
     <message>
         <source>Print selected message</source>
-        <translation>Tulosta valittu viesti</translation>
+        <translation>Imprimir el missatge seleccionat</translation>
     </message>
     <message>
         <source>Print</source>
-        <translation>Tulosta</translation>
+        <translation>Impressió</translation>
     </message>
     <message>
         <source>Display</source>
-        <translation>Näytä</translation>
+        <translation>Mostra</translation>
     </message>
     <message>
         <source>Tags</source>
-        <translation>Merkkaukset</translation>
+        <translation>Etiquetes</translation>
     </message>
     <message>
         <source>Inbox</source>
-        <translation>Saapuneet</translation>
+        <translation>Safata d&apos;entrada</translation>
     </message>
     <message>
         <source>Outbox</source>
-        <translation>Lähtevät</translation>
+        <translation>Safata de sortida</translation>
     </message>
     <message>
         <source>Draft</source>
-        <translation>Luonnokset</translation>
+        <translation>Esborrany</translation>
     </message>
     <message>
         <source>Sent</source>
-        <translation>Lähetetyt</translation>
+        <translation>Enviat</translation>
     </message>
     <message>
         <source>Trash</source>
-        <translation>Roskat</translation>
+        <translation>Paperera</translation>
     </message>
     <message>
         <source>Total Inbox:</source>
-        <translation>Saapuneet yhteensä:</translation>
+        <translation>Total safata d&apos;entrada:</translation>
     </message>
     <message>
         <source>Folders</source>
-        <translation>Kansiot</translation>
+        <translation>Carpetes</translation>
     </message>
     <message>
         <source>Quick View</source>
-        <translation>Pikanäkymä</translation>
+        <translation>Vista ràpida</translation>
     </message>
     <message>
         <source>Print...</source>
-        <translation>Tulosta...</translation>
+        <translation>Impressió...</translation>
     </message>
     <message>
         <source>Print Preview</source>
-        <translation>Tulostuksen esikatselu</translation>
+        <translation>Prèvia d&apos;impressió</translation>
     </message>
     <message>
         <source>Buttons Icon Only</source>
-        <translation>Painikkeet vain kuvakkeilla</translation>
+        <translation>Botons: Només icona</translation>
     </message>
     <message>
         <source>Buttons Text Beside Icon</source>
-        <translation>Painikkeet tekstillä kuvakkeiden vieressä</translation>
+        <translation>Botons: Text al costat de la icona</translation>
     </message>
     <message>
         <source>Buttons with Text</source>
-        <translation>Painikkeet tekstillä</translation>
+        <translation>Botons: amb text</translation>
     </message>
     <message>
         <source>Buttons Text Under Icon</source>
-        <translation>Painikkeet tekstillä kuvakkeiden alla</translation>
+        <translation>Botons: Text sota la icona</translation>
     </message>
     <message>
         <source>Set Text Under Icon</source>
-        <translation>Aseta teksti kuvakkeen alle</translation>
+        <translation>Establir text sota la icona</translation>
     </message>
     <message>
         <source>Save As...</source>
-        <translation>Tallenna nimellä...</translation>
+        <translation>Desa com...</translation>
     </message>
     <message>
         <source>Reply to Message</source>
-        <translation>Vastaa viestiin</translation>
+        <translation>Respon al missatge</translation>
     </message>
     <message>
         <source>Reply to All</source>
-        <translation>Vastaa kaikille</translation>
+        <translation>Respon a tots</translation>
     </message>
     <message>
         <source>Forward Message</source>
-        <translation>Välitä viesti</translation>
+        <translation>Reenviar missatge</translation>
     </message>
     <message>
         <source>Subject</source>
-        <translation>Aihe</translation>
+        <translation>Assumpte</translation>
     </message>
     <message>
         <source>From</source>
-        <translation>Lähettäjä</translation>
+        <translation>Des de</translation>
     </message>
     <message>
         <source>Date</source>
-        <translation>Päiväys</translation>
+        <translation>Data</translation>
     </message>
     <message>
         <source>Content</source>
-        <translation>Sisältö</translation>
+        <translation>Contingut</translation>
     </message>
     <message>
         <source>Click to sort by attachments</source>
-        <translation>Järjestä liitetiedostojen mukaan</translation>
+        <translation>Clica per ordenar pels fitxers adjunts</translation>
     </message>
     <message>
         <source>Click to sort by subject</source>
-        <translation>Järjestä otsikon mukaan</translation>
+        <translation>Clica per ordenar per assumptes</translation>
     </message>
     <message>
         <source>Click to sort by read</source>
-        <translation>Järjestä luettujen mukaan</translation>
+        <translation>Clica per ordenar per llegits</translation>
     </message>
     <message>
         <source>Click to sort by from</source>
-        <translation>Järjestä lähettäjän mukaan</translation>
+        <translation>Clica per ordenar pel remitent</translation>
     </message>
     <message>
         <source>Click to sort by date</source>
-        <translation>Järjestä ajan mukaan</translation>
+        <translation>Clica per ordenar per data</translation>
     </message>
     <message>
         <source>Click to sort by tags</source>
-        <translation>Järjestä merkkausten mukaan</translation>
+        <translation>Clica per ordenar per etiquetes</translation>
     </message>
     <message>
         <source>Click to sort by star</source>
-        <translation>Järjestä tähtien mukaan</translation>
+        <translation>Clica per ordenar per marcats</translation>
     </message>
     <message>
         <source>Forward selected Message</source>
-        <translation>Välitä valittu viesti</translation>
+        <translation>Reenviar missatge seleccionat</translation>
     </message>
     <message>
         <source>Search Subject</source>
-        <translation>Hae aihetta</translation>
+        <translation>Assumpte de la cerca</translation>
     </message>
     <message>
         <source>Search From</source>
-        <translation>Hae lähettäjää</translation>
+        <translation>Cerca de</translation>
     </message>
     <message>
         <source>Search Date</source>
-        <translation>Hae päivämäärää</translation>
+        <translation>Data de cerca</translation>
     </message>
     <message>
         <source>Search Content</source>
-        <translation>Hae sisältöä</translation>
+        <translation>Cerca contingut</translation>
     </message>
     <message>
         <source>Search Tags</source>
-        <translation>Hae merkkausta</translation>
+        <translation>Cerca etiquetes</translation>
     </message>
     <message>
         <source>Attachments</source>
-        <translation>Liitetiedostot</translation>
+        <translation>Adjunts</translation>
     </message>
     <message>
         <source>Search Attachments</source>
-        <translation>Hae liitetiedostoja</translation>
+        <translation>Cerca adjunts</translation>
     </message>
     <message>
         <source>Starred</source>
-        <translation>Tähditetty</translation>
+        <translation>Marcat</translation>
     </message>
     <message>
         <source>System</source>
-        <translation>Järjestelmä</translation>
+        <translation>Sistema</translation>
     </message>
     <message>
         <source>Open in a new window</source>
-        <translation>Avaa uudessa ikkunassa</translation>
+        <translation>Obrir en una finestra nova</translation>
     </message>
     <message>
         <source>Open in a new tab</source>
-        <translation>Avaa uudessa välilehdessä</translation>
+        <translation>Obrir en una pestanya nova</translation>
     </message>
     <message>
         <source>Mark as read</source>
-        <translation>Merkitse luetuksi</translation>
+        <translation>Marca com llegit</translation>
     </message>
     <message>
         <source>Mark as unread</source>
-        <translation>Merkitse lukemattomaksi</translation>
+        <translation>Marca com no llegit</translation>
     </message>
     <message>
         <source>Add Star</source>
-        <translation>Lisää tähti</translation>
+        <translation>Afegeix marca</translation>
     </message>
     <message>
         <source>Edit</source>
-        <translation>Muokkaa</translation>
+        <translation>Editar</translation>
     </message>
     <message>
         <source>Edit as new</source>
-        <translation>Muokkaa uutena</translation>
+        <translation>Editar com nou</translation>
     </message>
     <message>
         <source>Remove Messages</source>
-        <translation>Poista viestit</translation>
+        <translation>Esborrar missatges</translation>
     </message>
     <message>
         <source>Remove Message</source>
-        <translation>Poista viesti</translation>
+        <translation>Esborrar missatge</translation>
     </message>
     <message>
         <source>Undelete</source>
-        <translation>Kumoa tuhoaminen</translation>
+        <translation>Desfer esborrat</translation>
     </message>
     <message>
         <source>Empty trash</source>
-        <translation>Tyhjennä roskat</translation>
+        <translation>Buidar paperera</translation>
     </message>
     <message>
         <source>Drafts</source>
-        <translation>Luonnokset</translation>
+        <translation>Esborranys</translation>
     </message>
     <message>
         <source>No starred messages available. Stars let you give messages a special status to make them easier to find. To star a message, click on the light gray star beside any message.</source>
-        <translation>Ei tähdellä merkittyjä viestejä. Tähtien avulla voit antaa viesteille erikoisaseman ja helpottaa löytämistä. Antaaksesi viestille tähden, paina vaaleanharmaata tähteä viestin vieressä.</translation>
+        <translation>No hi ha missatges marcats. Les marques et permeten donar als missatges un estat especial per trobar-los fàcilment. Per marcar un missatge clica a l&apos;estrella gris al costat del missatge.</translation>
     </message>
     <message>
         <source>No system messages available.</source>
-        <translation>Ei järjestelmäviestejä.</translation>
+        <translation>No hi ha missatges de sistema disponibles.</translation>
     </message>
     <message>
         <source>To</source>
-        <translation>Vastaanottaja</translation>
+        <translation>A</translation>
     </message>
     <message>
         <source>Click to sort by to</source>
-        <translation>Järjestä vastaanottajan mukaan</translation>
+        <translation>Clica per ordenar per destinatari</translation>
     </message>
     <message>
         <source>Total:</source>
-        <translation>Yhteensä:</translation>
+        <translation>Total:</translation>
     </message>
     <message>
         <source>Decrypt Message</source>
-        <translation>Pura viestin salaus</translation>
+        <translation>Desencriptar missatge</translation>
     </message>
     <message>
         <source>Encrypted message. Right-click to decrypt it.</source>
-        <translation>Salattu viesti. Pura napsauttamalla hiiren oikeaa painiketta.</translation>
+        <translation>Missatge encriptat. Clic amb el botó dret per desencriptar-lo.</translation>
     </message>
     <message>
         <source>Messages</source>
-        <translation>Viestit</translation>
+        <translation>Missatges</translation>
     </message>
     <message>
         <source>Click to sort by signature</source>
-        <translation>Järjestä allekirjoituksen mukaan</translation>
+        <translation>Clica per ordenar per signatura</translation>
     </message>
     <message>
         <source>This message is encrypted. Right click to decrypt it.</source>
-        <translation>Tämä viesti on salattu. Pura salaus napsauttamalla hiiren oikeaa painiketta.</translation>
+        <translation>Aquest missatge està encriptat. Clic amb el botó dret per desencriptar-lo.</translation>
     </message>
     <message>
         <source>This message was signed and the signature checks</source>
-        <translation>Tämä viesti on allekirjoitettu ja allekirjoitus täsmää</translation>
+        <translation>Aquest missatge és firmat i la signatura vàlida</translation>
     </message>
     <message>
         <source>This message was signed but the signature doesn&apos;t check</source>
-        <translation>Tämä viesti on allekirjoitettu, mutta allekirjoitus ei täsmää</translation>
+        <translation>Aquest missatge està signat però la signatura no és vàlida</translation>
     </message>
     <message>
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Messages&lt;/h1&gt;                          &lt;p&gt;Messages are like &lt;b&gt;e-mail&lt;/b&gt;: you send/receive them from your friends when both of you are connected.&lt;/p&gt;  &lt;p&gt;It is also possible to send messages to non friends, using tunnels. Such messages are always encrypted. It is  recommended to cryptographically sign distant messages, as a proof of your identity, using the &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; button  in the message composer window. Distant messages are not guarrantied to arrive, since this requires the distant peer to accept them (You need yourself to switch this on in Config-Messages).&lt;/p&gt; &lt;p&gt;Some additional features allow you to exchange data in messages: you may recommend files to your friends by pasting file links,  or recommend friends-to-be to other friends, in order to streathen your network.&lt;/p&gt;                    </source>
-        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Viestit&lt;/h1&gt;                         			 &lt;p&gt;Viestit ovat kuten &lt;b&gt;sähköposti&lt;/b&gt;: lähetät niitä ystävillesi ja päinvastoin, kun kumpikin teistä	on linjoilla.&lt;/p&gt; 			 &lt;p&gt;On myös mahdollista lähettää viestejä henkilöille, jotka eivät ole ystäviäsi. Tämä tapahtuu tunneleita käyttämällä ja tällaiset viestit ovat aina salattuja. Etäiset 			 viestit on suositeltavaa allekirjoittaa kryptografisesti, jotta henkilöllisyytesi voidaan todentaa, käyttämällä &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; -painiketta 			 viestinkirjoitusikkunassa. Etäiset viestit eivät välttämättä saavu perille, koska etäisen vertaisen on hyväksyttävä ne erikseen (sinun tulee kytkeä tämä päälle kohdasta Asetukset - Viesti).&lt;/p&gt;			 &lt;p&gt;Lisäominaisuudet mahdollistavat datan vaihtamisen viesteissä: voit suositella tiedostoja ystävillesi liittämällä tiedostolinkkejä 			 tai suositella potentiaalisia ystäviä muille ystävillesi verkostosi vahvistamiseksi.&lt;/p&gt;	                   			 </translation>
+        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Missatges&lt;/h1&gt; ⇥⇥⇥ &lt;p&gt;Els missatges són com el &lt;b&gt;correu electrònic&lt;/b&gt;: envies/reps dels teus amics quan els dos ⇥esteu connectats.&lt;/p&gt; ⇥⇥⇥ &lt;p&gt;També és possible enviar missatges a no amics mitjançant túnels. Aquests missatges sempre seran encriptats. Es ⇥⇥⇥ recomana signar criptogràficament els missatges distants, com a proba de la teva identitat, utilitzant el botó &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; ⇥⇥⇥ a la finestra de composició del missatge. Els missatges distants no tenen garantia d&apos;entrega, ja que implica que el contacte remot accepti el missatge (Tu també ho hauries d&apos;activar a la configuració de missatges).&lt;/p&gt;⇥⇥⇥ &lt;p&gt;Utilitzant missatges pots també compartir dades d&apos;altre tipus: pots recomanar arxius proporcionant els enllaços, ⇥⇥⇥ o recomanar nous amics a altres amics per enfortir la teva xarxa.&lt;/p&gt;⇥ ⇥⇥⇥ </translation>
     </message>
     <message>
         <source>This message has been successfully decrypted, and is unsigned.</source>
-        <translation>Tämän viestin salaus on purettu onnistuneesti ja sitä ei ole allekirjoitettu.</translation>
+        <translation>Aquest missatge s&apos;ha desencriptat amb èxit i no està signat.</translation>
     </message>
 </context>
 <context>
     <name>MessengerWindow</name>
     <message>
         <source>RetroShare Messenger</source>
-        <translation>RetroSharen pikaviestin</translation>
+        <translation>Missatgeria del RetroShare</translation>
     </message>
     <message>
         <source>Add a Friend</source>
-        <translation>Lisää ystävä</translation>
+        <translation>Afegir un amic</translation>
     </message>
     <message>
         <source>Share files for your friends</source>
-        <translation>Jaa tiedostoja ystävillesi</translation>
+        <translation>Arxius compartits per als teus amics</translation>
     </message>
 </context>
 <context>
     <name>MsgItem</name>
     <message>
         <source>Reply to Message</source>
-        <translation>Vastaa viestiin</translation>
+        <translation>Respon al missatge</translation>
     </message>
     <message>
         <source>Reply Message</source>
-        <translation>Vastaa viestiin</translation>
+        <translation>Respondre missatge</translation>
     </message>
     <message>
         <source>Delete Message</source>
-        <translation>Tuhoa viesti</translation>
+        <translation>Esborrar missatge</translation>
     </message>
     <message>
         <source>Play Media</source>
-        <translation>Toista media</translation>
+        <translation>Reproduir Medi</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation>Laajenna</translation>
+        <translation>Ampliar</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation>Poista kohde</translation>
+        <translation>Eliminar l&apos;element</translation>
     </message>
     <message>
         <source>Message From</source>
-        <translation>Viestin lähettäjä</translation>
+        <translation>Missatge de</translation>
     </message>
     <message>
         <source>Sent Msg</source>
-        <translation>Lähetetty viesti</translation>
+        <translation>Envia Msg</translation>
     </message>
     <message>
         <source>Draft Msg</source>
-        <translation>Luonnosviesti</translation>
+        <translation>Msg Esborrany</translation>
     </message>
     <message>
         <source>Pending Msg</source>
-        <translation>Odottava viesti</translation>
+        <translation>Msg pendent</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation>Piilota</translation>
+        <translation>Amagar</translation>
     </message>
     <message>
         <source>Encrypted message</source>
-        <translation>Salattu viesti</translation>
+        <translation>Missatge encriptat</translation>
     </message>
 </context>
 <context>
@@ -9901,178 +9904,178 @@ Haluatko tallentaa viestin?</translation>
     </message>
     <message>
         <source>Network Status Unknown</source>
-        <translation>Verkon tila tuntematon</translation>
+        <translation>Estat de la xarxa desconegut</translation>
     </message>
     <message>
         <source>Offline</source>
-        <translation>Ei yhteyttä</translation>
+        <translation>Fora de línia</translation>
     </message>
     <message>
         <source>Nasty Firewall</source>
-        <translation>Palomuuri</translation>
+        <translation>Tallafocs problemàtic</translation>
     </message>
     <message>
         <source>DHT Disabled and Firewalled</source>
-        <translation>Ei DHT:tä ja palomuuri</translation>
+        <translation>DHT desactivat i amb tallafocs</translation>
     </message>
     <message>
         <source>Network Restarting</source>
-        <translation>Verkko käynnistyy uudelleen</translation>
+        <translation>Xarxa reiniciant-se</translation>
     </message>
     <message>
         <source>Behind Firewall</source>
-        <translation>Palomuurin takana</translation>
+        <translation>Darrera de tallafocs</translation>
     </message>
     <message>
         <source>DHT Disabled</source>
-        <translation>Ei DHT:tä</translation>
+        <translation>DHT desactivat</translation>
     </message>
     <message>
         <source>RetroShare Server</source>
-        <translation>RetroShare-palvelin</translation>
+        <translation>Servidor RetroShare</translation>
     </message>
     <message>
         <source>Forwarded Port</source>
-        <translation>Uudelleenohjattu portti</translation>
+        <translation>Port reenviat</translation>
     </message>
     <message>
         <source>OK | RetroShare Server</source>
-        <translation>OK | RetroShare-palvelin</translation>
+        <translation>OK | Servidor RetroShare</translation>
     </message>
     <message>
         <source>Internet connection</source>
-        <translation>Internetyhteys</translation>
+        <translation>Connexió a Internet</translation>
     </message>
     <message>
         <source>No internet connection</source>
-        <translation>Ei internetyhteyttä</translation>
+        <translation>Sense connexió a Internet</translation>
     </message>
     <message>
         <source>No local network</source>
-        <translation>Ei paikallista verkkoa</translation>
+        <translation>Sense xarxa local</translation>
     </message>
 </context>
 <context>
     <name>NetworkDialog</name>
     <message>
         <source>Filter:</source>
-        <translation>Suodin:</translation>
+        <translation>Filtre:</translation>
     </message>
     <message>
         <source>Search Network</source>
-        <translation>Etsi verkosta</translation>
+        <translation>Cerca xarxa</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation>Nimi</translation>
+        <translation>Nom</translation>
     </message>
     <message>
         <source>Did I authenticated peer</source>
-        <translation>Varmensin vertaisen</translation>
+        <translation>He autenticat el contacte</translation>
     </message>
     <message>
         <source>Did I sign his PGP key</source>
-        <translation>Allekirjoitinko hänen PGP-avaimensa</translation>
+        <translation>He signat aquesta clau PGP</translation>
     </message>
     <message>
         <source>Did peer authenticated me</source>
-        <translation>Vertainen varmensi minut</translation>
+        <translation>El contacte m&apos;ha autenticat a mi</translation>
     </message>
     <message>
         <source>Cert Id</source>
-        <translation>Varmennetunniste</translation>
+        <translation>Id Cert</translation>
     </message>
     <message>
         <source>Last used</source>
-        <translation>Viimeksi käytetty</translation>
+        <translation>Últim utilitzat</translation>
     </message>
     <message>
         <source>Clear</source>
-        <translation>Tyhjennä</translation>
+        <translation>Neteja</translation>
     </message>
     <message>
         <source>Set Tabs Right</source>
-        <translation>Aseta välilehdet oikealle</translation>
+        <translation>Tabuladors a la dreta</translation>
     </message>
     <message>
         <source>Set Tabs North</source>
-        <translation>Aseta välilehdet pohjoiseen</translation>
+        <translation>Tabuladors al nord</translation>
     </message>
     <message>
         <source>Set Tabs South</source>
-        <translation>Aseta välilehdet etelään</translation>
+        <translation>Tabuladors al sud</translation>
     </message>
     <message>
         <source>Set Tabs Left</source>
-        <translation>Aseta välilehdet vasemmalle</translation>
+        <translation>Tabuladors a l&apos;esquerra</translation>
     </message>
     <message>
         <source>Set Tabs Rounded</source>
-        <translation>Aseta välilehdet pyöristetyiksi</translation>
+        <translation>Tabuladors arrodonits</translation>
     </message>
     <message>
         <source>Set Tabs Triangular</source>
-        <translation>Aseta välilehdet kolmikulmaisiksi</translation>
+        <translation>Tabuladors triangulars</translation>
     </message>
     <message>
         <source>Add Friend</source>
-        <translation>Lisää ystävä</translation>
+        <translation>Afegeix amic</translation>
     </message>
     <message>
         <source>Copy My Key to Clipboard</source>
-        <translation>Kopioi avaimeni leikepöydälle</translation>
+        <translation>Copiar la meva clau al porta-retalls</translation>
     </message>
     <message>
         <source>Export My Key</source>
-        <translation>Vie avaimeni</translation>
+        <translation>Exportar la meva clau</translation>
     </message>
     <message>
         <source>Create New Profile</source>
-        <translation>Luo uusi profiili</translation>
+        <translation>Crear perfil nou</translation>
     </message>
     <message>
         <source>Create a new Profile</source>
-        <translation>Luo uusi profiili</translation>
+        <translation>Crear un nou perfil</translation>
     </message>
     <message>
         <source>Search Name</source>
-        <translation>Hae nimeä</translation>
+        <translation>Cerca nom</translation>
     </message>
     <message>
         <source>Peer ID</source>
-        <translation>Vertaisen tunniste</translation>
+        <translation>ID del contacte</translation>
     </message>
     <message>
         <source>Search Peer ID</source>
-        <translation>Hae vertaisen tunnistetta</translation>
+        <translation>Cerca Id contacte</translation>
     </message>
     <message>
         <source>Deny friend</source>
-        <translation>Torju ystävä</translation>
+        <translation>Negar l&apos;amic</translation>
     </message>
     <message>
         <source>Make friend</source>
-        <translation>Ystävysty</translation>
+        <translation>Fer amic</translation>
     </message>
     <message>
         <source>Export my certificate...</source>
-        <translation>Vie varmenteeni...</translation>
+        <translation>Exportar el meu certificat...</translation>
     </message>
     <message>
         <source>Peer details...</source>
-        <translation>Vertaisen tiedot...</translation>
+        <translation>Detalls del contacte...</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation>Kopioi RetroShare-linkki</translation>
+        <translation>Copia l&apos;enllaç RetroShare</translation>
     </message>
     <message>
         <source>Remove unused keys...</source>
-        <translation>Poista käyttämättömät avaimet...</translation>
+        <translation>Eliminar claus no utilitzades...</translation>
     </message>
     <message>
         <source>Clean keyring</source>
-        <translation>Tyhjennä avainnippu</translation>
+        <translation>Neteja l&apos;anell de claus</translation>
     </message>
     <message>
         <source>The selected keys below haven't been used in the last 3 months. 
@@ -10080,237 +10083,237 @@ Do you want to delete them permanently ?
 
 Notes: Your old keyring will be backed up.
     The removal may fail when running multiple Retroshare instances on the same machine.</source>
-        <translation>Valittuja avaimia ei ole käytetty kolmeen kuukauteen.
-Haluatko poistaa ne pysyvästi? 
-
-Huom.: vanha avainnippusi varmuuskopioidaan.
-Poisto voi epäonnistua, jos koneessasi on käynnissä useita Retroshareja samanaikaisesti.</translation>
+        <translation>Les claus seleccionades a sota no s&apos;han utilitzat en els últims 3 mesos.⏎
+Vols esborrar-les permanentment?⏎
+⏎
+Notes: Es guardarà una copia de seguretat del teu anell de claus antic.⏎
+L&apos;eliminació potser falli si tens múltiples instancies de RetroShare a la mateixa màquina.</translation>
     </message>
     <message>
         <source>Keyring info</source>
-        <translation>Avainnipun tiedot</translation>
+        <translation>Informació de l&apos;anell de claus</translation>
     </message>
     <message>
         <source>%1 keys have been deleted from your keyring. 
 For security, your keyring was previously backed-up to file 
 
 </source>
-        <translation>%1 avainta on poistettu avainipustasi. 
-Avainippusi varmuuskopioitiin tiedostoon ennen poistoa. 
+        <translation>S&apos;ha esborrat %1 claus del teu anell de claus.⏎
+Per seguretat, s&apos;ha fet una copia de seguretat del teu anell de claus⏎
 </translation>
     </message>
     <message>
         <source>Unknown error</source>
-        <translation>Tuntematon virhe</translation>
+        <translation>Error desconegut</translation>
     </message>
     <message>
         <source>Cannot delete secret keys</source>
-        <translation>Salausavaimia ei voi poistaa</translation>
+        <translation>No es poden esborrar claus secretes</translation>
     </message>
     <message>
         <source>Cannot create backup file. Check for permissions in pgp directory, disk space, etc.</source>
-        <translation>Varmuuskopiotiedoston luominen epäonnistui. Tarkista käyttöoikeudet pgp-hakemistoon, levytila jne.</translation>
+        <translation>No es pot crear la copia de seguretat. Comprova els permisos en el directori del PGP, espai lliure, etc.</translation>
     </message>
     <message>
         <source>Key removal has failed. Your keyring remains intact.
 
 Reported error: </source>
-        <translation>Avaimen poistaminen epäonnistui. Avainnippusi säilyy ennallaan.
+        <translation>Ha fallat esborrar la clau. El teu anell de claus continua intacte.
 
-Virhe: </translation>
+Reporta l&apos;error:</translation>
     </message>
     <message>
         <source>Personal signature</source>
-        <translation>Henkilökohtainen allekirjoitus</translation>
+        <translation>Signatura personal</translation>
     </message>
     <message>
         <source>PGP key signed by you</source>
-        <translation>Olet allekirjoittanut PGP-avaimen</translation>
+        <translation>Clau PGP signada per tu</translation>
     </message>
     <message>
         <source>Marginally trusted peer</source>
-        <translation>Rajallisesti luotettu vertainen</translation>
+        <translation>Contacte de poca confiança</translation>
     </message>
     <message>
         <source>Fully trusted peer</source>
-        <translation>Täysin luotettu vertainen</translation>
+        <translation>Contacte de confiança plena</translation>
     </message>
     <message>
         <source>Untrusted peer</source>
-        <translation>Ei-luotettu vertainen</translation>
+        <translation>Contacte no de confiança</translation>
     </message>
     <message>
         <source>Has authenticated me</source>
-        <translation>On varmentanut minut</translation>
+        <translation>M&apos;ha autenticat</translation>
     </message>
     <message>
         <source>Unknown</source>
-        <translation>Tuntematon</translation>
+        <translation>Desconegut</translation>
     </message>
     <message>
         <source>Last hour</source>
-        <translation>Viime tuntina</translation>
+        <translation>Última hora</translation>
     </message>
     <message>
         <source>Today</source>
-        <translation>Tänään</translation>
+        <translation>Avui</translation>
     </message>
     <message>
         <source>Never</source>
-        <translation>Ei koskaan</translation>
+        <translation>Mai</translation>
     </message>
     <message>
         <source>%1 days ago</source>
-        <translation>%1 päivää sitten</translation>
+        <translation>fa %1 dies</translation>
     </message>
     <message>
         <source> has authenticated you. 
 Right-click and select &apos;make friend&apos; to be able to connect.</source>
-        <translation>on varmentanut sinut.
-Paina hiiren oikeaa nappia ja valitse &quot;ystävysty&quot; saadaksesi yhteyden.</translation>
+        <translation>t&apos;ha autenticat. ⏎
+Botó dret i selecciona &apos;fer amic&apos; per poder connectar-hi.</translation>
     </message>
     <message>
         <source>yourself</source>
-        <translation>sinä itse</translation>
+        <translation>tu mateix</translation>
     </message>
     <message>
         <source>Data inconsistency in the keyring. This is most probably a bug. Please contact the developers.</source>
-        <translation>Tietojen epäjohdonmukaisuus avainnipussa. Tämä on todennäköisesti bugi. Ota yhteyttä kehittäjiin.</translation>
+        <translation>Inconsistència de dades a l&apos;anell de claus. Això és probablement un bug. Si us plau, contacta amb els desenvolupadors.</translation>
     </message>
     <message>
         <source>Only show people you trusted</source>
-        <translation>Näytä vain henkilöt, joihin luotat</translation>
+        <translation>Mostrar només gent de confiança</translation>
     </message>
     <message>
         <source>Send Message</source>
-        <translation>Lähetä viesti</translation>
+        <translation>Enviar missatge</translation>
     </message>
     <message>
         <source> If I accept connection from peer</source>
-        <translation> Jos hyväksyn yhteyden vertaiselta</translation>
+        <translation>Si accepto la connexió del contacte</translation>
     </message>
     <message>
         <source>Name of peer</source>
-        <translation>Vertaisen nimi</translation>
+        <translation>Nom del contacte</translation>
     </message>
     <message>
         <source>Did peer sign mine PGP key</source>
-        <translation>Allekirjoittiko vertainen PGP-avaimeni</translation>
+        <translation>El contacte ha signat la meva clau PGP</translation>
     </message>
     <message>
         <source>Peer&apos;s Certificat ID</source>
-        <translation>Vertaisen varmennetunniste</translation>
+        <translation>ID del certificat del contacte</translation>
     </message>
     <message>
         <source>Since when I use this Certificat</source>
-        <translation>Mistä lähtien olen käyttänyt varmennetta</translation>
+        <translation>Des de quan utilitzo aquest certificat</translation>
     </message>
 </context>
 <context>
     <name>NetworkPage</name>
     <message>
         <source>Network</source>
-        <translation>Verkko</translation>
+        <translation>Xarxa</translation>
     </message>
 </context>
 <context>
     <name>NetworkView</name>
     <message>
         <source>Redraw</source>
-        <translation>Päivitä näkymä</translation>
+        <translation>Redibuixar</translation>
     </message>
     <message>
         <source>Friendship level:</source>
-        <translation>Ystävyystaso:</translation>
+        <translation>Nivell d&apos;amistat:</translation>
     </message>
     <message>
         <source>Edge length:</source>
-        <translation>Reunan pituus:</translation>
+        <translation>Límit de llargada:</translation>
     </message>
 </context>
 <context>
     <name>NewTag</name>
     <message>
         <source>New Tag</source>
-        <translation>Uusi merkkaus</translation>
+        <translation>Nova etiqueta</translation>
     </message>
     <message>
         <source>Name:</source>
-        <translation>Nimi:</translation>
+        <translation>Nom:</translation>
     </message>
     <message>
         <source>Choose color</source>
-        <translation>Valitse väri</translation>
+        <translation>Escull el color</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation>OK</translation>
+        <translation>CORRECTE</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Peru</translation>
+        <translation>Cancel·la</translation>
     </message>
 </context>
 <context>
     <name>NewsFeed</name>
     <message>
         <source>News Feed</source>
-        <translation>Uutissyöte</translation>
+        <translation>Font de noticies</translation>
     </message>
     <message>
         <source>Options</source>
-        <translation>Asetukset</translation>
+        <translation>Opcions</translation>
     </message>
     <message>
         <source>Remove All</source>
-        <translation>Poista kaikki</translation>
+        <translation>Suprimeix-ho tot</translation>
     </message>
     <message>
         <source>This is a test.</source>
-        <translation>This is a test.</translation>
+        <translation>Això és un test.</translation>
     </message>
     <message>
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;News Feed&lt;/h1&gt;                                                             &lt;p&gt;The News Feed displays the last events on your network, sorted by the time you received them.                   This gives you a summary of the activity of your friends.                                                          You can configure which events to show by pressing on &lt;b&gt;Options&lt;/b&gt;. &lt;/p&gt;                                         &lt;p&gt;The various events shown are:                                                                                   &lt;ul&gt;                                                                                                            &lt;li&gt;Connection attempts (useful to make friends with new people and control who&apos;s trying to reach you)&lt;/li&gt;    &lt;li&gt;Channel and Forum posts&lt;/li&gt;                                                                               &lt;li&gt;New Channels and Forums you can subscribe to&lt;/li&gt;                                                          &lt;li&gt;Private messages from your friends&lt;/li&gt;                                                                    &lt;/ul&gt; &lt;/p&gt;                                                                                                       </source>
-        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Uutissyöte&lt;/h1&gt;                                                          		  &lt;p&gt;Uutissyöte näyttää uusimmat tapahtumat verkostossasi vastaanottohetken mukaan järjestettynä.                		  Näin saat yhteenvedon ystäviesi toiminnasta.                                                       		  Voit määrittää näytettävät tapahtumat &lt;b&gt;Asetuksista&lt;/b&gt;. &lt;/p&gt;                                      		  &lt;p&gt;Näytettäviä tapahtumia:                                                                                		  &lt;ul&gt;	                                                                                                         		  		&lt;li&gt;Yhteydenottoyritykset (hyödyllisiä ystävien hankkimiseen ja yhteydenottojen hallintaan)&lt;/li&gt; 		  		&lt;li&gt;Viestit kanaville ja foorumeille&lt;/li&gt;                                                                            		  		&lt;li&gt;Uudet kanavat ja foorumit, jotka ovat tilattavissasi&lt;/li&gt;                                                       		  		&lt;li&gt;Yksityisviestit ystäviltäsi&lt;/li&gt;                                                                 		  &lt;/ul&gt; &lt;/p&gt;                                                                                                      		</translation>
+        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Font de noticies&lt;/h1&gt; ⇥⇥ &lt;p&gt;La font de noticies mostra els últims esdeveniments a la xarxa ordenats per hora de recepció. ⇥⇥ Això et proporciona un resum de l&apos;activitat dels teus amics. ⇥⇥ Pots triar quins esdeveniments es mostren a &lt;b&gt;Opcions&lt;/b&gt;. &lt;/p&gt; ⇥⇥ &lt;p&gt;Els esdeveniments mostrats són: ⇥⇥ &lt;ul&gt;⇥ ⇥⇥ ⇥⇥&lt;li&gt;Intents de connexió (útil per fer amics amb gent nova i controlar qui està intentant connectar-te)&lt;/li&gt; ⇥⇥ ⇥⇥&lt;li&gt;Publicacions a canals i fòrums&lt;/li&gt; ⇥⇥ ⇥⇥&lt;li&gt;Nous canals i fòrums als que et pots subscriure&lt;/li&gt; ⇥⇥ ⇥⇥&lt;li&gt;Missatges privats dels teus amics&lt;/li&gt; ⇥⇥ &lt;/ul&gt; &lt;/p&gt; ⇥⇥</translation>
     </message>
 </context>
 <context>
     <name>NotifyPage</name>
     <message>
         <source>News Feed</source>
-        <translation>Uutissyöte</translation>
+        <translation>Origen de noticies</translation>
     </message>
     <message>
         <source>Peers</source>
-        <translation>Vertaiset</translation>
+        <translation>Contactes</translation>
     </message>
     <message>
         <source>Channels</source>
-        <translation>Kanavat</translation>
+        <translation>Canals</translation>
     </message>
     <message>
         <source>Forums</source>
-        <translation>Foorumit</translation>
+        <translation>Fòrums</translation>
     </message>
     <message>
         <source>Blogs</source>
-        <translation>Blogit</translation>
+        <translation>Blocs</translation>
     </message>
     <message>
         <source>Messages</source>
-        <translation>Viestit</translation>
+        <translation>Missatges</translation>
     </message>
     <message>
         <source>Chat</source>
-        <translation>Keskustelu</translation>
+        <translation>Xat</translation>
     </message>
     <message>
         <source>Security</source>
-        <translation>Turvallisuus</translation>
+        <translation>Seguretat</translation>
     </message>
     <message>
         <source>Add feeds at end</source>
-        <translation>Lisää syötteet loppuun</translation>
+        <translation>Afegeix fonts al final</translation>
     </message>
     <message>
         <source>Test</source>
@@ -10318,138 +10321,138 @@ Paina hiiren oikeaa nappia ja valitse &quot;ystävysty&quot; saadaksesi yhteyden
     </message>
     <message>
         <source>Systray Icon</source>
-        <translation>Ilmaisinalueen kuvake</translation>
+        <translation>Icona de l&apos;àrea de notificació</translation>
     </message>
     <message>
         <source>Message</source>
-        <translation>Viesti</translation>
+        <translation>Missatge</translation>
     </message>
     <message>
         <source>Connect attempt</source>
-        <translation>Yhteydenottoyritys</translation>
+        <translation>Intent de connexió</translation>
     </message>
     <message>
         <source>Toasters</source>
-        <translation>Ponnahdusviestit</translation>
+        <translation>Torradores</translation>
     </message>
     <message>
         <source>Friend Connect</source>
-        <translation>Yhteys ystävään</translation>
+        <translation>Connexió amb amic</translation>
     </message>
     <message>
         <source>New Message</source>
-        <translation>Uusi viesti</translation>
+        <translation>Missatge nou</translation>
     </message>
     <message>
         <source>Download completed</source>
-        <translation>Lataus suoritettu</translation>
+        <translation>Descarrega completa</translation>
     </message>
     <message>
         <source>Private Chat</source>
-        <translation>Yksityinen keskustelu</translation>
+        <translation>Xat privat</translation>
     </message>
     <message>
         <source>Group Chat</source>
-        <translation>Ryhmäkeskustelu</translation>
+        <translation>Xat en grup</translation>
     </message>
     <message>
         <source>Chat Lobby</source>
-        <translation>Keskusteluaula</translation>
+        <translation>Sala de xat</translation>
     </message>
     <message>
         <source>Position</source>
-        <translation>Sijainti</translation>
+        <translation>Posició</translation>
     </message>
     <message>
         <source>X Margin</source>
-        <translation>X-reuna</translation>
+        <translation>Marge X</translation>
     </message>
     <message>
         <source>Y Margin</source>
-        <translation>Y-reuna</translation>
+        <translation>Marge Y</translation>
     </message>
     <message>
         <source>Systray message</source>
-        <translation>Ilmaisinalueen viesti</translation>
+        <translation>Missatge de l&apos;area de notificació</translation>
     </message>
     <message>
         <source>Group chat</source>
-        <translation>Ryhmäkeskustelu</translation>
+        <translation>Xat de grup</translation>
     </message>
     <message>
         <source>Chat lobbies</source>
-        <translation>Keskusteluaulat</translation>
+        <translation>Sales de xat</translation>
     </message>
     <message>
         <source>Combined</source>
-        <translation>Yhdistetty</translation>
+        <translation>Combinat</translation>
     </message>
     <message>
         <source>Blink</source>
-        <translation>Vilkuta</translation>
+        <translation>Parpellejar</translation>
     </message>
     <message>
         <source>Top Left</source>
-        <translation>Ylävasen</translation>
+        <translation>Superior esquerra</translation>
     </message>
     <message>
         <source>Top Right</source>
-        <translation>Yläoikea</translation>
+        <translation>Superior dret</translation>
     </message>
     <message>
         <source>Bottom Left</source>
-        <translation>Alavasen</translation>
+        <translation>Inferior esquerra</translation>
     </message>
     <message>
         <source>Bottom Right</source>
-        <translation>Alaoikea</translation>
+        <translation>Inferior dreta</translation>
     </message>
     <message>
         <source>Notify</source>
-        <translation>Huomauta</translation>
+        <translation>Notificar</translation>
     </message>
     <message>
         <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Notify&lt;/h1&gt; 		  &lt;p&gt;Retroshare will notify you about what happens in your network.         		  Depending on your usage, you may want to enable or disable some of the    		  notifications. This page is designed for that!&lt;/p&gt;                        		  </source>
-        <translation>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Ilmoita&lt;/h1&gt; 		  &lt;p&gt;Retroshare ilmoittaa uusista tapahtumista verkostossasi.         		  Käyttötavoistasi riippuen saatat haluta ottaa käyttöön tai pois käytöstä joitakin    		  ilmoituksia. Tämä osio on sitä varten!&lt;/p&gt;                        		  </translation>
+        <translation>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Notificacions&lt;/h1&gt; ⇥⇥ &lt;p&gt;El RetroShare t&apos;avisarà de que passa a la teva xarxa.  ⇥⇥ En funció del teu ús, pots voler activar o desactivar alguna de les ⇥⇥ notificacions. Aquesta plana està dissenyada per això.&lt;/p&gt; ⇥⇥</translation>
     </message>
 </context>
 <context>
     <name>NotifyQt</name>
     <message>
         <source>PGP key passphrase</source>
-        <translation>PGP-avaimen tunnuslause</translation>
+        <translation>Contrasenya de clau PGP</translation>
     </message>
     <message>
         <source>Wrong password !</source>
-        <translation>Väärä salasana!</translation>
+        <translation>Contrasenya incorrecta !</translation>
     </message>
     <message>
         <source>Unregistered plugin/executable</source>
-        <translation>Rekisteröimätön lisäosa/suoritettava tiedosto</translation>
+        <translation>Complement/Executable no registrat</translation>
     </message>
     <message>
         <source>RetroShare has detected an unregistered plugin. This happens in two cases:&lt;UL&gt;&lt;LI&gt;Your RetroShare executable has changed.&lt;/LI&gt;&lt;LI&gt;The plugin has changed&lt;/LI&gt;&lt;/UL&gt;Click on Yes to authorize this plugin, or No to deny it. You can change your mind later in Options -&gt; Plugins, then restart.</source>
-        <translation>RetroShare on havainnut rekisteröimättömän lisäosan. Tämä voi tapahtua kahdesta syystä:&lt;UL&gt;&lt;LI&gt;RetroSharen käynnistystiedosto on muuttunut.&lt;/LI&gt;&lt;LI&gt;Lisäosa on muuttunut&lt;/LI&gt;&lt;/UL&gt;Paina Kyllä hyväksyäksesi lisäosan tai Ei estääksesi sen. Voit muuttaa asetuksen myöhemmin menemällä Asetukset -&gt; Lisäosat, ja käynnistämällä RS:n uudelleen.</translation>
+        <translation>El RetroShare ha detectat un complement no registrat. Això passa en dos casos:&lt;UL&gt;&lt;LI&gt;Ha canviat l&apos;executable del RetroShare.&lt;/LI&gt;&lt;LI&gt;El complement ha canviat&lt;/LI&gt;&lt;/UL&gt;Clica aquí per autoritzar aquest complement o no per negar-lo. Pots canviar-ho més tard a Opcions -&gt; Complements i després reiniciar.</translation>
     </message>
     <message>
         <source>For the chat lobbies to work properly, the time of your computer needs to be correct. Please check that this is the case (A possible time shift of several minutes was detected with your friends). </source>
-        <translation>Keskusteluaulojen toiminnan varmistamiseksi tietokoneesi ajan on oltava oikeassa. Tarkista, että näin on (mahdollinen useiden minuuttien aikasiirtymä havaittiin ystävilläsi). </translation>
+        <translation>Perquè aquestes sales de xat funcionin l&apos;hora en el teu ordinador ha de ser correcta. Si us plau, comprova que és el cas (És possible que una variació de varis minuts s&apos;hagi detectat respecte els teus amics).</translation>
     </message>
     <message>
         <source>Please check your system clock.</source>
-        <translation>Tarkista järjestelmän kello.</translation>
+        <translation>Si us plau comprova l&apos;hora del sistema.</translation>
     </message>
     <message>
         <source>Examining shared files...</source>
-        <translation>Tarkastellaan jaettuja tiedostoja...</translation>
+        <translation>Examinant arxius compartits...</translation>
     </message>
     <message>
         <source>Hashing file</source>
-        <translation>Luodaan tiivistettä (hash) tiedostolle</translation>
+        <translation>Calculant número de hash</translation>
     </message>
     <message>
         <source>Saving file index...</source>
-        <translation>Tallennetaan tiedostoluetteloa...</translation>
+        <translation>Desant índex de l&apos;arxiu...</translation>
     </message>
     <message>
         <source>Test</source>
@@ -10457,175 +10460,175 @@ Paina hiiren oikeaa nappia ja valitse &quot;ystävysty&quot; saadaksesi yhteyden
     </message>
     <message>
         <source>This is a test.</source>
-        <translation>This is a test.</translation>
+        <translation>Això és un test.</translation>
     </message>
     <message>
         <source>Unknown title</source>
-        <translation>Tuntematon otsikko</translation>
+        <translation>Títol desconegut</translation>
     </message>
     <message>
         <source>Encrypted message</source>
-        <translation>Salattu viesti</translation>
+        <translation>Missatge encriptat</translation>
     </message>
 </context>
 <context>
     <name>OnlineToaster</name>
     <message>
         <source>Friend Online</source>
-        <translation>Ystävä linjoilla</translation>
+        <translation>Amic en línia</translation>
     </message>
 </context>
 <context>
     <name>OpModeStatus</name>
     <message>
         <source>Normal Mode</source>
-        <translation>Normaalitila</translation>
+        <translation>Mode normal</translation>
     </message>
     <message>
         <source>No Anon D/L</source>
-        <translation>Ei nimet. lat.</translation>
+        <translation>No descarrega anònima</translation>
     </message>
     <message>
         <source>Gaming Mode</source>
-        <translation>Pelitila</translation>
+        <translation>Mode per jocs</translation>
     </message>
     <message>
         <source>Low Traffic</source>
-        <translation>Vähäinen liikenne</translation>
+        <translation>Tràfic baix</translation>
     </message>
     <message>
         <source>Use this DropList to quickly change Retroshare's behaviour
  No Anon D/L: switches off file forwarding
  Gaming Mode: 25% standard traffic and TODO: reduced popups
  Low Traffic: 10% standard traffic and TODO: pauses all file-transfers</source>
-        <translation>Käytä tätä luettelovalikkoa vaihtaaksesi nopeasti RetroSharen toimintaa
- Ei nimet. lat.: kytkee pois tiedostojen välittämisen
- Pelitila: 25% normaalista liikenteestä ja TODO: vähentää ponnahdusikkunoita
- Vähäinen liikenne: 10% normaalista liikenteestä ja TODO: tiedostonsiirrot tauolle</translation>
+        <translation>Usa aquesta llista de selecció per triar el comportament del RetroShare⏎
+Sense descarrega anònima: Desactiva el reenviament d&apos;arxius⏎
+Mode joc: 25 %s del tràfic estàndard i PENDENT: missatges emergents reduïts⏎
+Tràfic baix: 10 %s del tràfic estàndard i PENDENT: posar en pausa totes les transferències d&apos;arxius</translation>
     </message>
 </context>
 <context>
     <name>PeerDefs</name>
     <message>
         <source>Unknown</source>
-        <translation>Tuntematon</translation>
+        <translation>Desconegut</translation>
     </message>
 </context>
 <context>
     <name>PeerItem</name>
     <message>
         <source>Write a quick Message</source>
-        <translation>Kirjoita pikaviesti</translation>
+        <translation>Escriure un missatge ràpid</translation>
     </message>
     <message>
         <source>Chat</source>
-        <translation>Keskustelu</translation>
+        <translation>Xat</translation>
     </message>
     <message>
         <source>Start Chat</source>
-        <translation>Aloita keskustelu</translation>
+        <translation>Inicia xat</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation>Laajenna</translation>
+        <translation>Ampliar</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation>Poista kohde</translation>
+        <translation>Eliminar l&apos;element</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Peru</translation>
+        <translation>Cancel·la</translation>
     </message>
     <message>
         <source>Send</source>
-        <translation>Lähetä</translation>
+        <translation>Enviar</translation>
     </message>
     <message>
         <source>Name:</source>
-        <translation>Nimi:</translation>
+        <translation>Nom:</translation>
     </message>
     <message>
         <source>Peer ID:</source>
-        <translation>Vertaisen tunniste:</translation>
+        <translation>ID del contacte:</translation>
     </message>
     <message>
         <source>Trust: </source>
-        <translation>Luottamus:</translation>
+        <translation>Confiança:</translation>
     </message>
     <message>
         <source>Location:</source>
-        <translation>Sijainti:</translation>
+        <translation>Ubicació:</translation>
     </message>
     <message>
         <source>IP Address:</source>
-        <translation>IP-osoite:</translation>
+        <translation>Adreça IP:</translation>
     </message>
     <message>
         <source>Connection Method:</source>
-        <translation>Yhteys:</translation>
+        <translation>Mètode de connexió:</translation>
     </message>
     <message>
         <source>Status:</source>
-        <translation>Tila:</translation>
+        <translation>Estat:</translation>
     </message>
     <message>
         <source>Write Message</source>
-        <translation>Kirjoita viesti</translation>
+        <translation>Escriure missatge</translation>
     </message>
     <message>
         <source>Friend</source>
-        <translation>Ystävä</translation>
+        <translation>Amic</translation>
     </message>
     <message>
         <source>Friend Connected</source>
-        <translation>Ystävä yhdistyneenä</translation>
+        <translation>Amic connectat</translation>
     </message>
     <message>
         <source>Connect Attempt</source>
-        <translation>Yhteydenottoyritys</translation>
+        <translation>Intent de connexió</translation>
     </message>
     <message>
         <source>Friend of Friend</source>
-        <translation>Ystävän ystävä</translation>
+        <translation>Amic d&apos;amic</translation>
     </message>
     <message>
         <source>Peer</source>
-        <translation>Vertainen</translation>
+        <translation>Contacte</translation>
     </message>
     <message>
         <source>Unknown Peer</source>
-        <translation>Tuntematon vertainen</translation>
+        <translation>Contacte desconegut</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation>Piilota</translation>
+        <translation>Amagar</translation>
     </message>
     <message>
         <source>Quick Message</source>
-        <translation>Pikaviesti</translation>
+        <translation>Missatge ràpid</translation>
     </message>
 </context>
 <context>
     <name>PeerStatus</name>
     <message>
         <source>Friends: 0/0</source>
-        <translation>Ystävät: 0/0</translation>
+        <translation>Amics: 0/0</translation>
     </message>
     <message>
         <source>Online Friends/Total Friends</source>
-        <translation>Ystäviä linjoilla / Ystäviä yhteensä</translation>
+        <translation>Amics en línia/Amics en total </translation>
     </message>
     <message>
         <source>Friends</source>
-        <translation>Ystävät</translation>
+        <translation>Amics</translation>
     </message>
 </context>
 <context>
     <name>PhotoCommentItem</name>
     <message>
         <source>Form</source>
-        <translation>Lomake</translation>
+        <translation>Formulari</translation>
     </message>
 </context>
 <context>
@@ -10636,35 +10639,35 @@ Paina hiiren oikeaa nappia ja valitse &quot;ystävysty&quot; saadaksesi yhteyden
     </message>
     <message>
         <source>Photo</source>
-        <translation>Valokuva</translation>
+        <translation>Foto</translation>
     </message>
     <message>
         <source>TextLabel</source>
-        <translation>TekstiMerkki</translation>
+        <translation>EtiquetaTexte</translation>
     </message>
     <message>
         <source>Comment</source>
-        <translation>Kommentti</translation>
+        <translation>Comentari</translation>
     </message>
     <message>
         <source>Summary</source>
-        <translation>Yhteenveto</translation>
+        <translation>Resum</translation>
     </message>
     <message>
         <source>Caption</source>
-        <translation>Kuvateksti</translation>
+        <translation>Llegenda</translation>
     </message>
     <message>
         <source>Where:</source>
-        <translation>Missä:</translation>
+        <translation>On:</translation>
     </message>
     <message>
         <source>Photo Title:</source>
-        <translation>Valokuvan otsikko:</translation>
+        <translation>Títol de la foto:</translation>
     </message>
     <message>
         <source>When</source>
-        <translation>Milloin</translation>
+        <translation>Quan</translation>
     </message>
     <message>
         <source>...</source>
@@ -10672,22 +10675,22 @@ Paina hiiren oikeaa nappia ja valitse &quot;ystävysty&quot; saadaksesi yhteyden
     </message>
     <message>
         <source>Add Comment</source>
-        <translation>Lisää kommentti</translation>
+        <translation>Afegir comentari</translation>
     </message>
     <message>
         <source>Write a comment...</source>
-        <translation>Kirjoita kommentti...</translation>
+        <translation>Escriure un comentari...</translation>
     </message>
 </context>
 <context>
     <name>PhotoItem</name>
     <message>
         <source>Form</source>
-        <translation>Lomake</translation>
+        <translation>Formulari</translation>
     </message>
     <message>
         <source>TextLabel</source>
-        <translation>TekstiMerkki</translation>
+        <translation>EtiquetaTexte</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -10695,11 +10698,11 @@ Paina hiiren oikeaa nappia ja valitse &quot;ystävysty&quot; saadaksesi yhteyden
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Photo Title :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Kuvan otsikko :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
+p, li { white-space: pre-wrap; }⏎
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Títol de la foto :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -10707,11 +10710,11 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Photographer :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Valokuvaaja :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
+p, li { white-space: pre-wrap; }⏎
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Fotògraf :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -10719,50 +10722,50 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Author :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Kirjoittaja :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
+p, li { white-space: pre-wrap; }⏎
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Autor :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
     <name>PhotoShare</name>
     <message>
         <source>Form</source>
-        <translation>Lomake</translation>
+        <translation>Formulari</translation>
     </message>
     <message>
         <source>Create Album</source>
-        <translation>Luo albumi</translation>
+        <translation>Crear àlbum</translation>
     </message>
     <message>
         <source>View Album</source>
-        <translation>Näytä albumi</translation>
+        <translation>Veure àlbum</translation>
     </message>
     <message>
         <source>Subscribe To Album</source>
-        <translation>Tilaa albumi</translation>
+        <translation>Subscriure&apos;s al àlbum</translation>
     </message>
     <message>
         <source>Slide Show</source>
-        <translation>Diaesitys</translation>
+        <translation>Presentació de diapositives</translation>
     </message>
     <message>
         <source>My Albums</source>
-        <translation>Albumini</translation>
+        <translation>Els meus àlbums</translation>
     </message>
     <message>
         <source>Subscribed Albums</source>
-        <translation>Tilatut albumit</translation>
+        <translation>Àlbums subscrits</translation>
     </message>
     <message>
         <source>Shared Albums</source>
-        <translation>Jaetut albumit</translation>
+        <translation>Àlbums compartits</translation>
     </message>
     <message>
         <source>View Photo</source>
-        <translation>Näytä kuva</translation>
+        <translation>Veure foto</translation>
     </message>
     <message>
         <source>PhotoShare</source>
@@ -10771,23 +10774,23 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Please select an album before
 requesting to edit it!</source>
-        <translation>Valitse albumi ennen kuin
-yrität muokata sitä!</translation>
+        <translation>Si us plau, selecciona un àlbum ⏎
+abans de demanar editar-lo!</translation>
     </message>
 </context>
 <context>
     <name>PhotoSlideShow</name>
     <message>
         <source>Album Name</source>
-        <translation>Albumin nimi</translation>
+        <translation>Nom d&apos;àlbum</translation>
     </message>
     <message>
         <source>Image</source>
-        <translation>Kuva</translation>
+        <translation>Imatge</translation>
     </message>
     <message>
         <source>Show/Hide Details</source>
-        <translation>Näytä/piilota tiedot</translation>
+        <translation>Mostra/Amaga detalls</translation>
     </message>
     <message>
         <source>&lt;&lt;</source>
@@ -10795,7 +10798,7 @@ yrität muokata sitä!</translation>
     </message>
     <message>
         <source>Stop</source>
-        <translation>Pysäytä</translation>
+        <translation>Atura</translation>
     </message>
     <message>
         <source>&gt;&gt;</source>
@@ -10803,37 +10806,37 @@ yrität muokata sitä!</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation>Sulje</translation>
+        <translation>Tancar</translation>
     </message>
     <message>
         <source>Start</source>
-        <translation>Käynnistä</translation>
+        <translation>Comença</translation>
     </message>
     <message>
         <source>Start Slide Show</source>
-        <translation>Aloita diaesitys</translation>
+        <translation>Començar presentació de diapositives</translation>
     </message>
     <message>
         <source>Stop Slide Show</source>
-        <translation>Pysäytä diaesitys</translation>
+        <translation>Atura presentació de diapositives</translation>
     </message>
 </context>
 <context>
     <name>PluginFrame</name>
     <message>
         <source>Remove</source>
-        <translation>Poista</translation>
+        <translation>Treure</translation>
     </message>
 </context>
 <context>
     <name>PluginItem</name>
     <message>
         <source>TextLabel</source>
-        <translation>TekstiMerkki</translation>
+        <translation>EtiquetaTexte</translation>
     </message>
     <message>
         <source>Show more details about this plugin</source>
-        <translation>Näytä lisätietoja lisäosasta</translation>
+        <translation>Mostra més detalls sobre aquest complement</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -10841,169 +10844,170 @@ yrität muokata sitä!</translation>
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;more&quot;&gt;&lt;span style=&quot; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;More&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;more&quot;&gt;&lt;span style=&quot; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Lisää&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
+p, li { white-space: pre-wrap; }⏎
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;more&quot;&gt;&lt;span style=&quot; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Més&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Enable this plugin (restart required)</source>
-        <translation>Ota tämä lisäosa käyttöön (vaatii uudelleenkäynnistyksen)</translation>
+        <translation>Habilita aquest complement (Cal reiniciar)</translation>
     </message>
     <message>
         <source>Enable</source>
-        <translation>Ota käyttöön</translation>
+        <translation>Activa</translation>
     </message>
     <message>
         <source>Disable this plugin (restart required)</source>
-        <translation>Ota tämä lisäosa pois käytöstä (vaatii uudelleenkäynnistyksen)</translation>
+        <translation>Deshabilita aquest complement (Cal reiniciar)</translation>
     </message>
     <message>
         <source>Disable</source>
-        <translation>Ota pois käytöstä</translation>
+        <translation>Desactiva</translation>
     </message>
     <message>
         <source>Launch configuration panel, if provided by the plugin</source>
-        <translation>Käynnistä asetusruutu, jos lisäosalla sellainen on</translation>
+        <translation>Llançar el panell de configuració, si el proporciona el complement</translation>
     </message>
     <message>
         <source>Configure</source>
-        <translation>Asetukset</translation>
+        <translation>Configurar</translation>
     </message>
     <message>
         <source>About</source>
-        <translation>Tietoja</translation>
+        <translation>Sobre</translation>
     </message>
     <message>
         <source>File name: </source>
-        <translation>Tiedoston nimi:</translation>
+        <translation>Nom d&apos;arxiu: </translation>
     </message>
     <message>
         <source>File hash:</source>
-        <translation>Tiiviste (hash):</translation>
+        <translation>Número de hash d&apos;arxiu:</translation>
     </message>
     <message>
         <source>Status: </source>
-        <translation>Tila:</translation>
+        <translation>Estat:</translation>
     </message>
     <message>
         <source>will be enabled after your restart RetroShare.</source>
-        <translation>otetaan käyttöön, kun olet käynnistänyt RetroSharen uudelleen.</translation>
+        <translation>serà habilitat quan reiniciïs el RetroShare.</translation>
     </message>
 </context>
 <context>
     <name>PluginManagerWidget</name>
     <message>
         <source>Install New Plugin...</source>
-        <translation>Asenna uusi lisäosa...</translation>
+        <translation>Instal·lar complement nou...</translation>
     </message>
     <message>
         <source>Open Plugin to install</source>
-        <translation>Avaa asennettava lisäosa</translation>
+        <translation>Obrir complement per instal·lar-lo</translation>
     </message>
     <message>
         <source>Plugins (*.so *.dll)</source>
-        <translation>Lisäosat (*.so *.dll)</translation>
+        <translation>Complements (*.so *.dll)</translation>
     </message>
 </context>
 <context>
     <name>PluginsPage</name>
     <message>
         <source>Authorize all plugins</source>
-        <translation>Hyväksy kaikki lisäosat</translation>
+        <translation>Autoritzar tots els complements</translation>
     </message>
     <message>
         <source>Loaded plugins</source>
-        <translation>Ladatut lisäosat</translation>
+        <translation>Complements carregats</translation>
     </message>
     <message>
         <source>Plugin look-up directories</source>
-        <translation>Lisäosien hakemistot</translation>
+        <translation>Directoris on buscar complements</translation>
     </message>
     <message>
         <source>Hash rejected. Enable it manually and restart, if you need.</source>
-        <translation>Tiiviste hylätty. Ota se käyttöön manuaalisesti ja käynnistä uudelleen, jos on tarve.</translation>
+        <translation>Hash rebutjat. Habilita&apos;l manualment i reinicia, si vols.</translation>
     </message>
     <message>
         <source>No API number supplied. Please read plugin development manual.</source>
-        <translation>API-numeroa ei annettu. Ole hyvä ja lue ohje lisäosien kehittämisestä.</translation>
+        <translation>No s&apos;ha proporcionat número d&apos;API. Si us plau, llegeix el manual de desenvolupament de complements.</translation>
     </message>
     <message>
         <source>No SVN number supplied. Please read plugin development manual.</source>
-        <translation>SVN-numeroa ei annettu. Ole hyvä ja lue ohje lisäosien kehittämisestä.</translation>
+        <translation>No s&apos;ha proporcionat número d&apos;SVN. Si us plau, llegeix el manual de desenvolupament de complements.</translation>
     </message>
     <message>
         <source>Loading error.</source>
-        <translation>Virhe ladattaessa.</translation>
+        <translation>Error carregant.</translation>
     </message>
     <message>
         <source>Missing symbol. Wrong version?</source>
-        <translation>Puuttuva merkki. Väärä versio?</translation>
+        <translation>Falten símbols. Versió equivocada?</translation>
     </message>
     <message>
         <source>No plugin object</source>
-        <translation>Ei lisäosaobjektia</translation>
+        <translation>Sense objecte del complement</translation>
     </message>
     <message>
         <source>Plugins is loaded.</source>
-        <translation>Lisäosat ladattu.</translation>
+        <translation>Complement carregat.</translation>
     </message>
     <message>
         <source>Unknown status.</source>
-        <translation>Tila tuntematon.</translation>
+        <translation>Estat desconegut.</translation>
     </message>
     <message>
         <source>Title unavailable</source>
-        <translation>Otsikko puuttuu</translation>
+        <translation>Títol no disponible</translation>
     </message>
     <message>
         <source>Description unavailable</source>
-        <translation>Kuvaus puuttuu</translation>
+        <translation>Descripció no disponible</translation>
     </message>
     <message>
         <source>Unknown version</source>
-        <translation>Tuntematon versio</translation>
+        <translation>Versió desconeguda</translation>
     </message>
     <message>
         <source>Check this for developing plugins. They will not
 be checked for the hash. However, in normal
 times, checking the hash protects you from
 malicious behavior of crafted plugins.</source>
-        <translation>Rastita tämä lisäosien kehittämisen yhteydessä. Tiivistettä (hash)
-ei tällöin tarkasteta. Tavanomaisessa käytössä
-tiivisteen tarkistaminen suojelee sinua
-vahingoittamistarkoituksessa tehdyiltä lisäosilta.</translation>
+        <translation>Activa pels complements en desenvolupament.⏎
+No se&apos;ls comprovarà el hash. No obstant, en ⏎
+circumstancies normals, comprovar el hash et⏎
+protegeix de l&apos;acció maliciosa de complements ⏎
+modificats.</translation>
     </message>
     <message>
         <source>Plugins</source>
-        <translation>Lisäosat</translation>
+        <translation>Complements</translation>
     </message>
     <message>
         <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Plugins&lt;/h1&gt;                   &lt;p&gt;Plugins are loaded from the directories listed in the bottom list.&lt;/p&gt;                       &lt;p&gt;For security reasons, accepted plugins load automatically until                              the main Retroshare executable or the plugin library changes. In                                such a case, the user needs to confirm them again.                                              After the program is started, you can enable a plugin manually by clicking on the               &quot;Enable&quot; button and then restart Retroshare.&lt;/p&gt;                                              &lt;p&gt;If you want to develop your own plugins, contact the developpers team                        they will be happy to help you out!&lt;/p&gt;</source>
-        <translation>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Lisäosat&lt;/h1&gt; &lt;p&gt;Lisäosat ladataan alla luetteloiduista hakemistoista.&lt;/p&gt; &lt;p&gt;Turvallisuussyistä, hyväksytyt lisäosat ladataan automaattisesti, kunnes Retrosharen käynnistystiedosto tai lisäosakirjasto muuttuu. Tällaisessa tilanteessa käyttäjän on hyväksyttävä ne uudestaan. Kun ohjelma on käynnistynyt, voit ottaa lisäosan käyttöön manuaalisesti painamalla &quot;Ota käyttöön&quot; -painiketta ja käynnistämällä Retrosharen uudelleen.&lt;/p&gt; &lt;p&gt;Jos haluat kehittää omia lisäosia, ota yhteyttä kehittäjiin, jotka auttavat sinua mielellään!&lt;/p&gt;</translation>
+        <translation>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Complements&lt;/h1&gt; &lt;p&gt;Els complements es carreguen dels directoris del llistat inferior.&lt;/p&gt; &lt;p&gt; Per raons de seguretat, els complements acceptats es carreguen automàticament mentre l&apos;executable principal del RetroShare o els complements no canviïn. En tal cas, l&apos;usuari haurà de confirmar-ho altre cop. Un cop el programa s&apos;ha iniciat, pots habilitar un complement manualment fent clic al botó &quot;Activa&quot; i després reiniciant el RetroShare.&lt;/p&gt; &lt;p&gt;Si vols desenvolupar els teus propis complements contacta amb els desenvolupadors i estaran contents d&apos;ajudar-te!&lt;/p&gt;</translation>
     </message>
 </context>
 <context>
     <name>PopularityDefs</name>
     <message>
         <source>Popularity</source>
-        <translation>Suosio</translation>
+        <translation>Popularitat</translation>
     </message>
 </context>
 <context>
     <name>PopupChatDialog</name>
     <message>
         <source>Clear offline messages</source>
-        <translation>Tyhjennä offline-viestit</translation>
+        <translation>Netejar missatges fora de línia</translation>
     </message>
     <message>
         <source>Hide Avatar</source>
-        <translation>Piilota avatar</translation>
+        <translation>Amagar l&apos;avatar</translation>
     </message>
     <message>
         <source>Show Avatar</source>
-        <translation>Näytä avatar</translation>
+        <translation>Mostra l&apos;avatar</translation>
     </message>
 </context>
 <context>
@@ -11014,49 +11018,49 @@ vahingoittamistarkoituksessa tehdyiltä lisäosilta.</translation>
     </message>
     <message>
         <source>Set your Avatar Picture</source>
-        <translation>Aseta avatarkuvasi</translation>
+        <translation>Tria la fotografia del teu avatar</translation>
     </message>
     <message>
         <source>Dock tab</source>
-        <translation>Telakoi välilehti</translation>
+        <translation>Fixar la pestanya</translation>
     </message>
     <message>
         <source>Undock tab</source>
-        <translation>Irrota välilehti</translation>
+        <translation>Alliberar la pestanya</translation>
     </message>
     <message>
         <source>Set Chat Window Color</source>
-        <translation>Määritä keskusteluikkunan väri</translation>
+        <translation>Establir color de la finestra de xat</translation>
     </message>
     <message>
         <source>Set window on top</source>
-        <translation>Aseta ikkuna päällimmäiseksi</translation>
+        <translation>Posar la finestra per damunt</translation>
     </message>
 </context>
 <context>
     <name>PopupDistantChatDialog</name>
     <message>
         <source>Distant chat terminated</source>
-        <translation>Etäinen keskustelu lopetettiin</translation>
+        <translation>Xat distant finalitzat</translation>
     </message>
     <message>
         <source>The person you&apos;re talking to has deleted the secured chat tunnel. You may remove the chat window now.</source>
-        <translation>Keskustelukumppanisi poisti suojatun keskustelutunnelin. Voit sulkea keskusteluikkunan.</translation>
+        <translation>La persona amb qui estaves parlant ha esborrat el túnel segur de xat. Ja pots tancar la finestra de xat.</translation>
     </message>
     <message>
         <source>Closing this window will end the conversation, notify the peer and remove the encrypted tunnel.</source>
-        <translation>Tämän ikkunan sulkeminen lopettaa keskustelun, ilmoittaa vertaiselle ja poistaa salatun tunnelin.</translation>
+        <translation>Tancar aquesta finestra finalitzarà la conversa, notifica-ho al contacte i esborra el túnel encriptat.</translation>
     </message>
     <message>
         <source>Kill the tunnel?</source>
-        <translation>Suljetaanko tunneli?</translation>
+        <translation>Matar el túnel?</translation>
     </message>
 </context>
 <context>
     <name>PostedCreatePostDialog</name>
     <message>
         <source>Create Post</source>
-        <translation>Luo teksti</translation>
+        <translation>Crear entrada</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -11064,11 +11068,11 @@ vahingoittamistarkoituksessa tehdyiltä lisäosilta.</translation>
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Title&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Otsikko&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
+p, li { white-space: pre-wrap; }⏎
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Títol&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -11076,19 +11080,19 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:12pt; font-weight:600;&quot;&gt;Link&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:12pt; font-weight:600;&quot;&gt;Linkki&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
+p, li { white-space: pre-wrap; }⏎
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:12pt; font-weight:600;&quot;&gt;Enllaç&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Signed by: </source>
-        <translation>Allekirjoitettu:</translation>
+        <translation>Signat per:</translation>
     </message>
     <message>
         <source>Notes</source>
-        <translation>Huomiot</translation>
+        <translation>Notes</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -11096,37 +11100,37 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Please create or choose a Signing Id first</source>
-        <translation>Luo tai valitse ensin allekirjoitustunniste</translation>
+        <translation>Si us plau, crea o escull un Id signant abans</translation>
     </message>
 </context>
 <context>
     <name>PostedDialog</name>
     <message>
         <source>Posted Links</source>
-        <translation>Lähetetyt linkit</translation>
+        <translation>Enllaços publicats</translation>
     </message>
 </context>
 <context>
     <name>PostedGroupDialog</name>
     <message>
         <source>Posted Topic</source>
-        <translation>Aihe</translation>
+        <translation>Tema publicat</translation>
     </message>
     <message>
         <source>Add Topic Admins</source>
-        <translation>Lisää viestiketjujen ylläpitäjiä</translation>
+        <translation>Afegir administradors de tema</translation>
     </message>
     <message>
         <source>Select Topic Admins</source>
-        <translation>Valitse viestiketjujen ylläpitäjiä</translation>
+        <translation>Seleccionar administradors de tema</translation>
     </message>
     <message>
         <source>Create New Topic</source>
-        <translation>Luo uusi aihe</translation>
+        <translation>Crear nou tema</translation>
     </message>
     <message>
         <source>Edit Topic</source>
-        <translation>Muokkaa aihetta</translation>
+        <translation>Editar tema</translation>
     </message>
 </context>
 <context>
@@ -11137,122 +11141,123 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>This is a very very very very loooooooooooooooonnnnnnnnnnnnnnnnng title don&apos;t you think? Yes it is and should wrap around I hope</source>
-        <translation>Title this is a very very very very loooooooooooooooonnnnnnnnnnnnnnnnng title dont you think? yes it is and should wrap around I hope</translation>
+        <translation>Això és un títol molt molt molt molt llaaaaaaaaaaaaaaaaaaaaaarrrrrrrrrrrrrrrrrrg, no creus?
+Si que ho és i hauria de partir-se tot sol, espero</translation>
     </message>
     <message>
         <source>Date</source>
-        <translation>Päiväys</translation>
+        <translation>Data</translation>
     </message>
     <message>
         <source>From</source>
-        <translation>Lähettäjä</translation>
+        <translation>Des de</translation>
     </message>
     <message>
         <source>Site</source>
-        <translation>Sivusto</translation>
+        <translation>Lloc</translation>
     </message>
     <message>
         <source>View Comments</source>
-        <translation>Näytä kommentit</translation>
+        <translation>Veure comentaris</translation>
     </message>
     <message>
         <source>Comments</source>
-        <translation>Kommentit</translation>
+        <translation>Comentaris</translation>
     </message>
     <message>
         <source>Comment</source>
-        <translation>Kommentti</translation>
+        <translation>Comentari</translation>
     </message>
     <message>
         <source>I like this</source>
-        <translation>Pidän tästä</translation>
+        <translation>M&apos;agrada</translation>
     </message>
     <message>
         <source>I dislike this</source>
-        <translation>En pidä tästä</translation>
+        <translation>No m&apos;agrada</translation>
     </message>
 </context>
 <context>
     <name>PostedListDialog</name>
     <message>
         <source>Form</source>
-        <translation>Lomake</translation>
+        <translation>Formulari</translation>
     </message>
     <message>
         <source>Hot</source>
-        <translation>Suosittu</translation>
+        <translation>Calent</translation>
     </message>
     <message>
         <source>New</source>
-        <translation>Uusi</translation>
+        <translation>Nou</translation>
     </message>
     <message>
         <source>Top</source>
-        <translation>Ylimmäiseksi</translation>
+        <translation>Capdamunt</translation>
     </message>
     <message>
         <source>Today</source>
-        <translation>Tänään</translation>
+        <translation>Avui</translation>
     </message>
     <message>
         <source>Yesterday</source>
-        <translation>Eilen</translation>
+        <translation>Ahir</translation>
     </message>
     <message>
         <source>This Week</source>
-        <translation>Tällä viikolla</translation>
+        <translation>Aquesta setmana</translation>
     </message>
     <message>
         <source>This Month</source>
-        <translation>Tässä kuussa</translation>
+        <translation>Aquest mes</translation>
     </message>
     <message>
         <source>This Year</source>
-        <translation>Tänä vuonna</translation>
+        <translation>Aquest any</translation>
     </message>
     <message>
         <source>Submit Post</source>
-        <translation>Lähetä viesti</translation>
+        <translation>Publica entrada</translation>
     </message>
     <message>
         <source>Showing 1-100</source>
-        <translation>Näytetään 1-100</translation>
+        <translation>Mostra 1-100</translation>
     </message>
     <message>
         <source>Prev</source>
-        <translation>Edell.</translation>
+        <translation>Previ</translation>
     </message>
     <message>
         <source>Next</source>
-        <translation>Seur.</translation>
+        <translation>Següent</translation>
     </message>
     <message>
         <source>My Topics</source>
-        <translation>Aiheeni</translation>
+        <translation>Els meus temes</translation>
     </message>
     <message>
         <source>Subscribed Topics</source>
-        <translation>Tilatut viestiketjut</translation>
+        <translation>Temes subscrits</translation>
     </message>
     <message>
         <source>Popular Topics</source>
-        <translation>Suositut viestiketjut</translation>
+        <translation>Temes populars</translation>
     </message>
     <message>
         <source>Other Topics</source>
-        <translation>Muut viestiketjut</translation>
+        <translation>Altres temes</translation>
     </message>
     <message>
         <source>Subscribe</source>
-        <translation>Aloita tilaus</translation>
+        <translation>Subscriure&apos;s</translation>
     </message>
     <message>
         <source>Unsubscribe</source>
-        <translation>Lopeta tilaus</translation>
+        <translation>Donar de baixa</translation>
     </message>
     <message>
         <source>Showing</source>
-        <translation>Näyttää</translation>
+        <translation>Mostrant</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -11260,81 +11265,81 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Please create or choose a Signing Id before Voting</source>
-        <translation>Luo tai valitse allekirjoitustunniste ennen äänestämistä</translation>
+        <translation>Si us plau, crea o escull una Id signant abans de votar</translation>
     </message>
     <message>
         <source>Create New Topic</source>
-        <translation>Luo uusi aihe</translation>
+        <translation>Crear nou tema</translation>
     </message>
 </context>
 <context>
     <name>PrintPreview</name>
     <message>
         <source>RetroShare Message - Print Preview</source>
-        <translation>RetroShare-viesti - Tulostuksen esikatselu</translation>
+        <translation>Missatge del RetroShare - Prèvia d&apos;impressió</translation>
     </message>
     <message>
         <source>Print</source>
-        <translation>Tulosta</translation>
+        <translation>Impressió</translation>
     </message>
     <message>
         <source>&amp;Print...</source>
-        <translation>Tu&amp;losta...</translation>
+        <translation>&amp;Impressió...</translation>
     </message>
     <message>
         <source>Page Setup...</source>
-        <translation>Sivun asetukset...</translation>
+        <translation>Format de pàgina...</translation>
     </message>
     <message>
         <source>Zoom In</source>
-        <translation>Suurenna</translation>
+        <translation>Ampliar</translation>
     </message>
     <message>
         <source>Zoom Out</source>
-        <translation>Pienennä</translation>
+        <translation>Allunyar</translation>
     </message>
     <message>
         <source>&amp;Close</source>
-        <translation>&amp;Sulje</translation>
+        <translation>&amp;Tancar</translation>
     </message>
 </context>
 <context>
     <name>ProfileManager</name>
     <message>
         <source>Profile Manager</source>
-        <translation>Profiilin hallinta</translation>
+        <translation>Directori de perfils</translation>
     </message>
     <message>
         <source>Identities</source>
-        <translation>Henkilöllisyydet</translation>
+        <translation>Identitats</translation>
     </message>
     <message>
         <source>Name</source>
-        <translation>Nimi</translation>
+        <translation>Nom</translation>
     </message>
     <message>
         <source>Email</source>
-        <translation>Sähköposti</translation>
+        <translation>Correu electrònic</translation>
     </message>
     <message>
         <source>GID</source>
-        <translation>Ryhmätunnus (GID)</translation>
+        <translation>GID</translation>
     </message>
     <message>
         <source>Export selected identity</source>
-        <translation>Vie valittu henkilöllisyys</translation>
+        <translation>Exportar identitat seleccionada</translation>
     </message>
     <message>
         <source>Export Identity</source>
-        <translation>Vie henkilöllisyys</translation>
+        <translation>Exportar identitat</translation>
     </message>
     <message>
         <source>RetroShare Identity files (*.asc)</source>
-        <translation>RetroSharen henkilöllisyystiedostot (*.asc)</translation>
+        <translation>Arxius d&apos;identitat del RetroShare (*.asc)</translation>
     </message>
     <message>
         <source>Identity saved</source>
-        <translation>Henkilöllisyys tallennettu</translation>
+        <translation>Identitat desada</translation>
     </message>
     <message>
         <source>Your identity was successfully saved
@@ -11342,51 +11347,51 @@ It is encrypted
 
 You can now copy it to another computer
 and use the import button to load it</source>
-        <translation>Henkilöllisyytesi on tallennettu
-Se on salattu
-
-Voit nyt kopioida sen toiselle koneelle
-ja käyttää &quot;Tuo&quot;-painiketta ladataksesi sen</translation>
+        <translation>La teva identitat s&apos;ha desat amb èxit⏎
+Està encriptada⏎
+⏎
+Ara ho podràs copiar a un altre ordenador⏎
+i utilitzar el botó d&apos;importació per carregar-lo</translation>
     </message>
     <message>
         <source>Identity not saved</source>
-        <translation>Henkilöllisyyttä ei tallennettu</translation>
+        <translation>Identitat no desada</translation>
     </message>
     <message>
         <source>Your identity was not saved. An error occurred.</source>
-        <translation>Henkilöllisyyttäsi ei tallennettu. Tapahtui virhe.</translation>
+        <translation>La teva identitat no s&apos;ha desat. Hi ha hagut un error.</translation>
     </message>
     <message>
         <source>Import Identity</source>
-        <translation>Tuo henkilöllisyys</translation>
+        <translation>Importar identitat</translation>
     </message>
     <message>
         <source>Identity not loaded</source>
-        <translation>Henkilöllisyyttä ei ladattu</translation>
+        <translation>Identitat no carregada</translation>
     </message>
     <message>
         <source>Your identity was not loaded properly:</source>
-        <translation>Henkilöllisyyttäsi ei kyetty lataamaan kunnolla:</translation>
+        <translation>La teva identitat no s&apos;ha carregat correctament:</translation>
     </message>
     <message>
         <source>New identity imported</source>
-        <translation>Uusi henkilöllisyys tuotu</translation>
+        <translation>Nova identitat importada</translation>
     </message>
     <message>
         <source>Your identity was imported successfully:</source>
-        <translation>Henkilöllisyytesi tuominen onnistui:</translation>
+        <translation>La teva identitat s&apos;ha importat amb èxit:</translation>
     </message>
     <message>
         <source>You can use it now to create a new location.</source>
-        <translation>Nyt voit käyttää sitä luodaksesi uuden sijainnin.</translation>
+        <translation>Ara pots utilitzar-la per crear una nova ubicació.</translation>
     </message>
     <message>
         <source>Select Trusted Friend</source>
-        <translation>Valitse luotettu ystävä</translation>
+        <translation>Selecciona un amic de confiança</translation>
     </message>
     <message>
         <source>Certificates (*.pqi *.pem)</source>
-        <translation>Varmenteet (*.pqi *.pem)</translation>
+        <translation>Certificats (*.pqi *.pem)</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -11398,82 +11403,82 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Ubuntu'; font-size:11pt;&quot;&gt;To use it on a different computer,  select the identity manager in the login window. From there you can import the identity file and create a new location for that identity. &lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Ubuntu'; font-size:11pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;When keeping the same identity for your new  location, your friends will automatically accept you.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;Valitse luettelosta identiteetti, jota haluat käyttää toisessa tietokoneessa ja paina &amp;quot;Vie valittu identiteetti&amp;quot;&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;Käyttääksesi sitä toisessa tietokoneessa, valitse identiteettien hallinta kirjautumisikkunassa. Sieltä voit tuoda identiteettitiedoston ja luoda uuden sijainnin identiteetille.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;Kun käytät samaa identiteettiä uudessa sijainnissa, ystäväsi hyväksyvät sinut automaattisesti.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
+p, li { white-space: pre-wrap; }⏎
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;Selecciona una identitat de la llista inferior per ser usada en un altre ordinador i després prem &quot;Exportar identitat seleccionada&quot;&lt;/span&gt;&lt;/p&gt;⏎
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;&lt;/p&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;Per utilitzar-la en un ordinador diferent selecciona el controlador d&apos;identitats a la finestra de validació. Des d&apos;allà pots importar-la i crear una nova ubicació per l&apos;identitat. &lt;/span&gt;&lt;/p&gt;⏎
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;&lt;/p&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt;&quot;&gt;Quan el que facis sigui mantenir la mateix identitat per una nova ubicació els teus amics t&apos;acceptaran automàticament.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
     <name>ProfileWidget</name>
     <message>
         <source>Edit status message</source>
-        <translation>Muokkaa tilaviestiä</translation>
+        <translation>Editar missatge d&apos;estat</translation>
     </message>
     <message>
         <source>Copy Certificate</source>
-        <translation>Kopioi varmenne</translation>
+        <translation>Copiar certificat</translation>
     </message>
     <message>
         <source>Profile Manager</source>
-        <translation>Profiilin hallinta</translation>
+        <translation>Directori de perfils</translation>
     </message>
     <message>
         <source>Public Information</source>
-        <translation>Julkiset tiedot</translation>
+        <translation>Informació pública</translation>
     </message>
     <message>
         <source>Name:</source>
-        <translation>Nimi:</translation>
+        <translation>Nom:</translation>
     </message>
     <message>
         <source>Location:</source>
-        <translation>Sijainti:</translation>
+        <translation>Ubicació:</translation>
     </message>
     <message>
         <source>Peer ID:</source>
-        <translation>Vertaisen tunniste:</translation>
+        <translation>ID del contacte:</translation>
     </message>
     <message>
         <source>Number of Friends:</source>
-        <translation>Ystävien lkm:</translation>
+        <translation>Nombre d&apos;amics:</translation>
     </message>
     <message>
         <source>Version:</source>
-        <translation>Versio:</translation>
+        <translation>Versió:</translation>
     </message>
     <message>
         <source>Online since:</source>
-        <translation>Linjoilla alkaen:</translation>
+        <translation>En línia des de:</translation>
     </message>
     <message>
         <source>Other Information</source>
-        <translation>Muita tietoja</translation>
+        <translation>Altra informació</translation>
     </message>
     <message>
         <source>My Address</source>
-        <translation>Osoitteeni</translation>
+        <translation>La meva adreça</translation>
     </message>
     <message>
         <source>Local Address:</source>
-        <translation>Paikallinen osoite:</translation>
+        <translation>Adreça local:</translation>
     </message>
     <message>
         <source>External Address:</source>
-        <translation>Ulkoinen osoite:</translation>
+        <translation>Adreça externa:</translation>
     </message>
     <message>
         <source>Dynamic DNS:</source>
-        <translation>Dynaaminen nimipalvelin:</translation>
+        <translation>DNS dinàmic:</translation>
     </message>
     <message>
         <source>Addresses list:</source>
-        <translation>Osoiteluettelo:</translation>
+        <translation>Llista d&apos;adreces:</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -11481,46 +11486,46 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Sorry, create certificate failed</source>
-        <translation>Varmenteen luominen epäonnistui</translation>
+        <translation>Ho sentim, ha fallat la creació del certificat</translation>
     </message>
     <message>
         <source>Your Cert is copied to Clipboard, paste and send it to your friend via email or some other way</source>
-        <translation>Varmenteesi on kopioitu leikepöydälle, liitä ja lähetä se ystävällesi sähköpostilla tai muulla tavoin</translation>
+        <translation>S&apos;ha copiat el teu certificat al porta-retalls, enganxa&apos;l i envia&apos;l al teu amic per correu </translation>
     </message>
 </context>
 <context>
     <name>PulseAddDialog</name>
     <message>
         <source>Post From:</source>
-        <translation>Lähettäjä</translation>
+        <translation>Entrada de:</translation>
     </message>
     <message>
         <source>Account 1</source>
-        <translation>Tili 1</translation>
+        <translation>Compte 1</translation>
     </message>
     <message>
         <source>Account 2</source>
-        <translation>Tili 2</translation>
+        <translation>Compte 2</translation>
     </message>
     <message>
         <source>Account 3</source>
-        <translation>Tili 3</translation>
+        <translation>Compte 3</translation>
     </message>
     <message>
         <source>Add to Pulse</source>
-        <translation>Lisää pulssiin</translation>
+        <translation>Afegir al Pols</translation>
     </message>
     <message>
         <source>filter</source>
-        <translation>suodata</translation>
+        <translation>filtre</translation>
     </message>
     <message>
         <source>URL Adder</source>
-        <translation>Linkin lisääjä</translation>
+        <translation>Afegidor d&apos;URL</translation>
     </message>
     <message>
         <source>Display As</source>
-        <translation>Näytä muodossa</translation>
+        <translation>Mostra com</translation>
     </message>
     <message>
         <source>URL</source>
@@ -11528,22 +11533,22 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Peru</translation>
+        <translation>Cancel·la</translation>
     </message>
     <message>
         <source>Post Pulse to Wire</source>
-        <translation>Lähetä pulssi lennättimeen</translation>
+        <translation>Publica Pols a Wire</translation>
     </message>
 </context>
 <context>
     <name>PulseItem</name>
     <message>
         <source>From</source>
-        <translation>Lähettäjä</translation>
+        <translation>Des de</translation>
     </message>
     <message>
         <source>Date</source>
-        <translation>Päiväys</translation>
+        <translation>Data</translation>
     </message>
     <message>
         <source>...</source>
@@ -11554,223 +11559,222 @@ p, li { white-space: pre-wrap; }
     <name>QObject</name>
     <message>
         <source>Subject: </source>
-        <translation>Aihe:</translation>
+        <translation>Assumpte:</translation>
     </message>
     <message>
         <source>Participants: </source>
-        <translation>Osallistujat:</translation>
+        <translation>Participants: </translation>
     </message>
     <message>
         <source>Confirmation</source>
-        <translation>Vahvistus</translation>
+        <translation>Confirmació</translation>
     </message>
     <message>
         <source>Do you want this link to be handled by your system?</source>
-        <translation>Haluatko, että järjestelmäsi käsittelee linkin?</translation>
+        <translation>Vols que aquest enllaç el manipuli el teu sistema?</translation>
     </message>
     <message>
         <source>Click to add this RetroShare cert to your PGP keyring
 and open the Make Friend Wizard.
 </source>
-        <translation>Napsauta lisätäksesi tämä RetroShare-varmenne PGP-avainnippuusi
-ja avataksesi aputoiminnon ystävän lisäämiseksi
+        <translation>Clica per afegir aquest certificat de RetroShare al teu ⏎
+anell de claus PGP i obrir l&apos;assistent de fer amic.⏎
 </translation>
     </message>
     <message>
         <source>Add file</source>
-        <translation>Lisää tiedosto</translation>
+        <translation>Afegir arxiu</translation>
     </message>
     <message>
         <source>Add files</source>
-        <translation>Lisää tiedostoja</translation>
+        <translation>Afegir arxius</translation>
     </message>
     <message>
         <source>Add friend</source>
-        <translation>Lisää ystävä</translation>
+        <translation>Afegir amic</translation>
     </message>
     <message>
         <source>Add friends</source>
-        <translation>Lisää ystäviä</translation>
+        <translation>Afegir amics</translation>
     </message>
     <message>
         <source>Do you want to process the link ?</source>
-        <translation>Haluatko käsitellä linkin?</translation>
+        <translation>Vols processar l&apos;enllaç?</translation>
     </message>
     <message>
         <source>Do you want to process %1 links ?</source>
-        <translation>Haluatko käsitellä %1 kpl linkkejä?</translation>
+        <translation>Vols processar %1 enllaços?</translation>
     </message>
     <message>
         <source>%1 of %2 RetroShare link processed.</source>
-        <translation>%1 RetroShare-linkistä käsitelty, %2 jäljellä.</translation>
+        <translation>%1 de %2 enllaç de RetroShare processat.</translation>
     </message>
     <message>
         <source>%1 of %2 RetroShare links processed.</source>
-        <translation>%1 RetroShare-linkeistä käsitelty, %2 jäljellä.</translation>
+        <translation>%1 de %2 enllaços de RetroShare processats.</translation>
     </message>
     <message>
         <source>File added</source>
-        <translation>Tiedosto lisätty</translation>
+        <translation>Arxiu afegit</translation>
     </message>
     <message>
         <source>Files added</source>
-        <translation>Tiedostot lisätty</translation>
+        <translation>Arxius afegits</translation>
     </message>
     <message>
         <source>File exist</source>
-        <translation>Tiedosto on olemassa</translation>
+        <translation>Arxiu existent</translation>
     </message>
     <message>
         <source>Files exist</source>
-        <translation>Tiedostot ovat olemassa</translation>
+        <translation>Arxius existent</translation>
     </message>
     <message>
         <source>Friend added</source>
-        <translation>Ystävä lisätty</translation>
+        <translation>Amic afegit</translation>
     </message>
     <message>
         <source>Friends added</source>
-        <translation>Ystävät lisätty</translation>
+        <translation>Amics afegits</translation>
     </message>
     <message>
         <source>Friend exist</source>
-        <translation>Ystävä on olemassa</translation>
+        <translation>Amic existent</translation>
     </message>
     <message>
         <source>Friends exist</source>
-        <translation>Ystävät ovat olemassa</translation>
+        <translation>Amics exsitents</translation>
     </message>
     <message>
         <source>Friend not added</source>
-        <translation>Ystävää ei lisätty</translation>
+        <translation>Amic no afegit</translation>
     </message>
     <message>
         <source>Friends not added</source>
-        <translation>Ystäviä ei lisätty</translation>
+        <translation>Amics no afegits</translation>
     </message>
     <message>
         <source>Friend not found</source>
-        <translation>Ystävää ei löydetty</translation>
+        <translation>Amic no trobat</translation>
     </message>
     <message>
         <source>Friends not found</source>
-        <translation>Ystäviä ei löydetty</translation>
+        <translation>Amics no trobats</translation>
     </message>
     <message>
         <source>Forum not found</source>
-        <translation>Foorumia ei löydetty</translation>
+        <translation>Fòrum no trobat</translation>
     </message>
     <message>
         <source>Forums not found</source>
-        <translation>Foorumeja ei löydetty</translation>
+        <translation>Fòrums no trobats</translation>
     </message>
     <message>
         <source>Forum message not found</source>
-        <translation>Foorumiviestiä ei löydetty</translation>
+        <translation>Missatge de fòrum no trobat</translation>
     </message>
     <message>
         <source>Forum messages not found</source>
-        <translation>Foorumiviestejä ei löydetty</translation>
+        <translation>Missatges de fòrum no trobats</translation>
     </message>
     <message>
         <source>Channel not found</source>
-        <translation>Kanavaa ei löydetty</translation>
+        <translation>Canal no trobat</translation>
     </message>
     <message>
         <source>Channels not found</source>
-        <translation>Kanavia ei löydetty</translation>
+        <translation>Canals no trobats</translation>
     </message>
     <message>
         <source>Channel message not found</source>
-        <translation>Kanavaviestiä ei löydetty</translation>
+        <translation>Missatge de canal no trobat</translation>
     </message>
     <message>
         <source>Channel messages not found</source>
-        <translation>Kanavaviestejä ei löydetty</translation>
+        <translation>Missatges de canal no trobats</translation>
     </message>
     <message>
         <source>Recipient not accepted</source>
-        <translation>Vastaanottajaa ei hyväksytty</translation>
+        <translation>Destinatari no acceptat</translation>
     </message>
     <message>
         <source>Recipients not accepted</source>
-        <translation>Vastaanottajia ei hyväksytty</translation>
+        <translation>Destinataris no acceptats</translation>
     </message>
     <message>
         <source>Unkown recipient</source>
-        <translation>Tuntematon vastaanottaja</translation>
+        <translation>Destinatari desconegut</translation>
     </message>
     <message>
         <source>Unkown recipients</source>
-        <translation>Tuntemattomat vastaanottajat</translation>
+        <translation>Destinataris desconeguts</translation>
     </message>
     <message>
         <source>Malformed links</source>
-        <translation>Virheellisiä linkkejä</translation>
+        <translation>Enllaços incorrectes</translation>
     </message>
     <message>
         <source>Invalid links</source>
-        <translation>Viallisia linkkejä</translation>
+        <translation>Enllaços invàlids</translation>
     </message>
     <message>
         <source>Warning: forbidden characters found in filenames. 
 Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replaced by &apos;_&apos;.</source>
-        <translation>Varoitus: kiellettyjä merkkejä tiedostonimissä. 
-Merkit &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; korvataan merkillä &apos;_&apos;.</translation>
+        <translation>Avís: S&apos;han trobat caràcters no permesos en els noms d&apos;arxius.
+Els caràcters &lt;b&gt;&quot;,|,/,\,&amp;lt;&amp;gt;,*,?&lt;/b&gt; es substituiran per &apos;_&apos;.</translation>
     </message>
     <message>
         <source>Result</source>
-        <translation>Tulos</translation>
+        <translation>Resultat</translation>
     </message>
     <message>
         <source>Unable to make path</source>
-        <translation>Polun luominen epäonnistui</translation>
+        <translation>Incapaç de crear ruta</translation>
     </message>
     <message>
         <source>Unable to make path:</source>
-        <translation>Polun luominen epäonnistui:</translation>
+        <translation>Incapaç de crear ruta:</translation>
     </message>
     <message>
         <source>Failed to process collection file</source>
-        <translation>Kokoelmatiedoston käsittely epäonnistui</translation>
+        <translation>No s&apos;ha pogut processar l&apos;arxiu de col·lecció</translation>
     </message>
     <message>
         <source>Deny friend</source>
-        <translation>Torju ystävä</translation>
+        <translation>Negar l&apos;amic</translation>
     </message>
     <message>
         <source>Make friend</source>
-        <translation>Ystävysty</translation>
+        <translation>Fer amic</translation>
     </message>
     <message>
         <source>Peer details</source>
-        <translation>Vertaisen tiedot</translation>
+        <translation>Detalls del contacte</translation>
     </message>
     <message>
         <source>File Request canceled</source>
-        <translation>Tiedostopyyntö peruttu</translation>
+        <translation>Petició d&apos;arxiu cancel·lada</translation>
     </message>
     <message>
         <source>The following has not been added to your download list, because you already have it:
     </source>
-        <translation>Seuraavaa ei lisätty latauslistaasi, koska sinulla on se jo:
-</translation>
+        <translation>El següent no s&apos;ha afegit a la llista de descarregues perquè ja hi era:⏎</translation>
     </message>
     <message>
         <source>You appear to have locations associated to DSA keys:</source>
-        <translation>Sinulla näyttäisi olevan sijainteja kytkettyinä DSA-avaimiin:</translation>
+        <translation>Sembla que tens ubicacions associades a les claus DSA:</translation>
     </message>
     <message>
         <source>DSA keys are not yet supported by this version of RetroShare. All these locations will be unusable. We&apos;re very sorry for that.</source>
-        <translation>RetroShare ei tällä hetkellä tue DSA-avaimia. Et voi käyttää näitä sijainteja. Olemme pahoillamme.</translation>
+        <translation>Les claus DSA encara no són suportades en aquesta versió de RetroShare. Totes aquestes ubicacions no es podran utilitzar. Ho sentim molt.</translation>
     </message>
     <message>
         <source>This version of RetroShare is using OpenPGP-SDK. As a side effect, it&apos;s not using the system shared PGP keyring, but has it&apos;s own keyring shared by all RetroShare instances. &lt;br&gt;&lt;br&gt;You do not appear to have such a keyring, although PGP keys are mentioned by existing RetroShare accounts, probably because you just changed to this new version of the software.</source>
-        <translation>Tämä RetroSharen versio käyttää OpenPGP-SDK:ta. Tämän takia se ei käytä järjestelmäjaettua PGP-avainketjua, vaan sillä on oma avainketjunsa jaettuna kaikkien käynnissä olevien RetroSharejen kanssa.&lt;br&gt;&lt;br&gt;Sinulla ei näytä olevan tällaista avainketjua, vaikka olemassaolevissa RetroShare-tileissä mainitaan PGP-avaimet. Tämä johtuu todennäköisesti siitä, että siirryit juuri ohjelman uudempaan versioon.</translation>
+        <translation>Aquesta versió de RetroShare utilitza l&apos;OpenPGP-SDK. Com a efecte secundari no utilitza l&apos;anell de claus PGP del sistema, sinó un anell de claus compartit per totes les instancies de RetroShare. &lt;br&gt;&lt;br&gt;No sembla que tinguis aquest anell de claus, tot i que tens claus PGP als comptes existents de RetroShare, probablement perquè acabes de canviar a aquesta nova versió del programa.</translation>
     </message>
     <message>
         <source>Choose between:&lt;br&gt;&lt;ul&gt;&lt;li&gt;&lt;b&gt;Ok&lt;/b&gt; to copy the existing keyring from gnupg (safest bet), or &lt;/li&gt;&lt;li&gt;&lt;b&gt;Close without saving&lt;/b&gt; to start fresh with an empty keyring (you will be asked to create a new PGP key to work with RetroShare, or import a previously saved pgp keypair). &lt;/li&gt;&lt;li&gt;&lt;b&gt;Cancel&lt;/b&gt; to quit and forge a keyring by yourself (needs some PGP skills)&lt;/li&gt;&lt;/ul&gt;</source>
-        <translation>Valitse:&lt;br&gt;&lt;ul&gt;&lt;li&gt;&lt;b&gt;Ok&lt;/b&gt; kopioidaksesi olemassaolevan avainnipun gnupg:stä (varmin tapa) &lt;/li&gt;&lt;li&gt;&lt;b&gt;Sulje tallentamatta&lt;/b&gt; aloittaaksesi tyhjästä uudella avainnipulla (ohjelma pyytää sinua luomaan uuden PGP-avaimen tai tuomaan aiemmin tallennetun PGP-avainparin). &lt;/li&gt;&lt;li&gt;&lt;b&gt;Peru&lt;/b&gt; lopettaaksesi ja takoaksesi avainnipun itse (tarvitset PGP-taitoja)&lt;/li&gt;&lt;/ul&gt;</translation>
+        <translation>Escull entre:&lt;br&gt;&lt;ul&gt;&lt;li&gt;&lt;b&gt;Ok&lt;/b&gt;per tal de copiar l&apos;anell de claus existent de gnupg (el més segur), o&lt;/li&gt;&lt;li&gt;&lt;b&gt;Tanca sense desar&lt;/b&gt; per començar de zero amb un anell buit (Se&apos;t demanarà que creis una nova clau PGP per treballar amb el RetroShare, o importis una clau PGP desada previament.&lt;/li&gt;&lt;li&gt;&lt;b&gt;Cancel·lar&lt;/b&gt; per tancar i crear un anell de claus per tu mateix (Es necessiten alguns coneixements de PGP)</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -11778,138 +11782,136 @@ Merkit &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; korvataan merkillä
     </message>
     <message>
         <source>Initialization failed. Wrong or missing installation of PGP.</source>
-        <translation>Käynnistys epäonnistui. Väärä tai puuttuva PGP:n asennus.</translation>
+        <translation>Inicialització fallada. Instal·lació incorrecta o no trobada del PGP.</translation>
     </message>
     <message>
         <source>An unexpected error occurred. Please report &apos;RsInit::InitRetroShare unexpected return code %1&apos;.</source>
-        <translation>Odottamaton virhe. Ole hyvä ja raportoi &apos;RsInit::InitRetroShare unexpected return code %1&apos;.</translation>
+        <translation>Hi ha hagut error inesperat. Si us plau, informa &apos;RsInit::InitRetroShare unexpected return code %1&apos;.</translation>
     </message>
     <message>
         <source>An unexpected error occured. Please report &apos;RsInit::InitRetroShare unexpected return code %1&apos;.</source>
-        <translation>Odottamaton virhe. Ole hyvä ja raportoi &apos;RsInit::InitRetroShare unexpected return code %1&apos;.</translation>
+        <translation>S&apos;ha produït un error inesperat. Si us plau, informa &apos;RsInit::InitRetroShare unexpected return code %1&apos;.</translation>
     </message>
     <message>
         <source>Multiple instances</source>
-        <translation>Useita instansseja</translation>
+        <translation>Múltiples instancies</translation>
     </message>
     <message>
         <source>Another RetroShare using the same profile is already running on your system. Please close that instance first
  Lock file:
 </source>
-        <translation>Koneellasi on jo käynnissä samaa profiilia käyttävä RetroShare-ohjelma. Ole hyvä ja sulje ohjelma ensin
-Lukitustiedosto:
-</translation>
+        <translation>Ja tens en funcionament un altre RetroShare utilitzant el mateix perfil. Si us plau, tanca primer l&apos;altra instancia⏎
+Arxiu bloquejant:\n</translation>
     </message>
     <message>
         <source>An unexpected error occurred when Retroshare tried to acquire the single instance lock
  Lock file:
 </source>
-        <translation>Virhe haettaessa lukitusta
-Lukitustiedosto:
-</translation>
+        <translation>Hi ha hagut un error inesperat quan el RetroShare intentava obtenir el bloqueig d&apos;instància única⏎
+Arxiu de bloqueig:\n</translation>
     </message>
     <message>
         <source>Login Failure</source>
-        <translation>Kirjautuminen epäonnistui</translation>
+        <translation>Fracàs en la validació</translation>
     </message>
     <message>
         <source>Maybe password is wrong</source>
-        <translation>Ehkä salasana on väärä</translation>
+        <translation>Potser la contrasenya sigui incorrecta</translation>
     </message>
     <message>
         <source>Start with a RetroShare link is only supported for Windows.</source>
-        <translation>Käynnistys RetroShare-linkistä on mahdollinen ainoastaan Windowsia käytettäessä.</translation>
+        <translation>Engegar el RetroShare amb un enllaç només és suportat per Windows.</translation>
     </message>
     <message>
         <source>Select who can contact you:</source>
-        <translation>Valitse, ketkä voivat ottaa sinuun yhteyttä:</translation>
+        <translation>Selecció qui pot contactar amb tu:</translation>
     </message>
     <message>
         <source>Chat link is expired</source>
-        <translation>Keskustelulinkki on vanhentunut</translation>
+        <translation>Enllaç de xat caducat</translation>
     </message>
     <message>
         <source>This chat link is expired. The destination peer will not answer.</source>
-        <translation>Keskustelulinkki on vanhentunut. Kohteena oleva vertainen ei vastaa.</translation>
+        <translation>Aquest enllaç de xat ha caducat. El contacte de destí no respondrà.</translation>
     </message>
     <message>
         <source>Chat link cannot be decrypted</source>
-        <translation>Keskustelulinkin salausta ei voi purkaa</translation>
+        <translation>L&apos;enllaç de xat no es pot desencriptar</translation>
     </message>
     <message>
         <source>The link could not be decrypted.</source>
-        <translation>Linkin salausta ei voitu purkaa.</translation>
+        <translation>L&apos;enllaç no es pot desencriptar.</translation>
     </message>
     <message>
         <source>The link signature cannot be checked.</source>
-        <translation>Linkin allekirjoitusta ei voi tarkistaa.</translation>
+        <translation>La signatura de l&apos;enllaç no s&apos;ha pogut comprovar</translation>
     </message>
     <message>
         <source>The link is signed by an unknown key.</source>
-        <translation>Linkki on allekirjoitettu tuntemattomalla avaimella.</translation>
+        <translation>L&apos;enllaç és signat per una clau desconeguda.</translation>
     </message>
     <message>
         <source>Hash error</source>
-        <translation>Tiivistevirhe</translation>
+        <translation>Error de número de hash</translation>
     </message>
     <message>
         <source>Distant peer has closed the chat</source>
-        <translation>Etäinen vertainen sulki keskustelun.</translation>
+        <translation>El contacte distant ha tancat el xat</translation>
     </message>
     <message>
         <source>Tunnel is pending...</source>
-        <translation>Tunneli odottaa...</translation>
+        <translation>Túnel pendent...</translation>
     </message>
     <message>
         <source>Messaging link is expired</source>
-        <translation>Keskustelulinkki on vanhentunut</translation>
+        <translation>L&apos;enllaç de missatgeria ha caducat</translation>
     </message>
     <message>
         <source>This Messaging link is expired. The destination peer will not receive it.</source>
-        <translation>Keskustelulinkki on vanhentunut. Kohteena oleva vertainen ei vastaanota sitä.</translation>
+        <translation>L&apos;enllaç de missatgeria ha caducat. El contacte de destí no el rebrà.</translation>
     </message>
     <message>
         <source>This chat link is encrypted with a key that is not yours. You can&apos;t use it. Key ID = </source>
-        <translation>Keskustelulinkki on salattu avaimella, joka ei ole sinun. Et voi käyttää sitä. Avaintunniste = </translation>
+        <translation>Aquest enllaç de xat està encriptat amb una clau que no és nostra. No la pots utilitzar. Id clau =</translation>
     </message>
     <message>
         <source>Chat connection is not possible</source>
-        <translation>Keskusteluyhteyden muodostaminen ei onnistu</translation>
+        <translation>Connexió de xat impossible</translation>
     </message>
     <message>
         <source>Secured tunnel established. Waiting for ACK...</source>
-        <translation>Suojattu tunneli toiminnassa. Odotetaan ACK-pakettia....</translation>
+        <translation>Túnel segur establert. Esperant confirmació...</translation>
     </message>
     <message>
         <source>Secured tunnel is working. You can talk!</source>
-        <translation>Suojattu tunneli toimii. Voit puhua!</translation>
+        <translation>Túnel segur establert. Podeu parlar!</translation>
     </message>
     <message>
         <source>The collection file %1 could not be opened.
 Reported error is: 
 
 %2</source>
-        <translation>Kokoelmatiedostoa %1 ei kyetty avaamaan.
-Virhe: 
+        <translation>L&apos;arxiu de col·lecció %1 no es pot obrir.
+L&apos;error reportat és:
 
 %2</translation>
     </message>
     <message>
         <source>Signature check failed!
 Make sure you know who you&apos;re talking to.</source>
-        <translation>Allekirjoituksen tarkistus epäonnistui!
-Varmista, että tiedät, kenen kanssa keskustelet.</translation>
+        <translation>Comprovació de signatura fallada!⏎
+Assegura&apos;t de saber amb qui estàs parlant.</translation>
     </message>
     <message>
         <source>Chat connection is unauthenticated</source>
-        <translation>Keskusteluyhteys on vahvistamaton</translation>
+        <translation>Connexió de xat no autentificada</translation>
     </message>
 </context>
 <context>
     <name>QuickStartWizard</name>
     <message>
         <source>Quick Start Wizard</source>
-        <translation>Ohjattu pika-aloitus</translation>
+        <translation>Auxiliar d&apos;inici ràpid</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -11929,87 +11931,87 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;    &lt;/span&gt;&lt;img src=&quot;:/images/list_bullet_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;  Choose which files you share.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;    &lt;/span&gt;&lt;img src=&quot;:/images/list_bullet_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;  Get started using RetroShare.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Tervetuloa RetroShareen!&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Tämä ohjattu pika-aloitus auttaa sinua määrittämään RetroSharen asetukset muutamalla yksinkertaisella askeleella.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Jos olet edistyneempi käyttäjä, voit päästä käsiksi RetroSharen täysimittaisiin asetuksiin Työkalupalkin kautta. Paina Lopeta sulkeaksesi ohjatun toiminnon milloin tahansa.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Tämä ohjattu toiminto auttaa sinua:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;    &lt;/span&gt;&lt;img src=&quot;:/images/list_bullet_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;  Kertomaan RetroSharelle internetyhteydestäsi.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;    &lt;/span&gt;&lt;img src=&quot;:/images/list_bullet_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;  Valitsemaan, mitä tiedostoja haluat jakaa.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;    &lt;/span&gt;&lt;img src=&quot;:/images/list_bullet_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;  Pääsemään alkuun RetroSharen käyttämisessä.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
+p, li { white-space: pre-wrap; }⏎
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Benvingut a RetroShare!&lt;/span&gt;&lt;/p&gt;⏎
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Aquest assistent ràpid t&apos;ajudarà a configurar el RetroShare en uns pocs passos.&lt;/span&gt;&lt;/p&gt;⏎
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Si ets un usuari avançat, pots accedir a les funcions avançades a la barra d&apos;eines. Clica Sortir per tancar l&apos;assistent quan vulguis.&lt;/span&gt;&lt;/p&gt;⏎
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;L&apos;assistent t&apos;ajudarà a:&lt;/span&gt;&lt;/p&gt;⏎
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;img src=&quot;:/images/list_bullet_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Descriure al RetroShare la teva conneció a Internet.&lt;/span&gt;&lt;/p&gt;⏎
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;img src=&quot;:/images/list_bullet_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Escollir quins arxius vols compartir.&lt;/span&gt;&lt;/p&gt;⏎
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;img src=&quot;:/images/list_bullet_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Començar a utilitzar RetroShare.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Next &gt;</source>
-        <translation>Seuraava &gt;</translation>
+        <translation>Següent &gt;</translation>
     </message>
     <message>
         <source>Exit</source>
-        <translation>Lopeta</translation>
+        <translation>Sortir</translation>
     </message>
     <message>
         <source>For best performance, RetroShare needs to know a little about your connection to the internet.</source>
-        <translation>Varmistaakseen tehokkaan toimivuuden, RetroSharen tulee tietää hieman internetyhteydestäsi.</translation>
+        <translation>Per funcionar millor, RetroShare necessita saber una mica més de com et connectes a Internet.</translation>
     </message>
     <message>
         <source>Choose your download speed limit: </source>
-        <translation>Valitse latausnopeutesi yläraja: </translation>
+        <translation>Quin és el teu limit de descarrega:</translation>
     </message>
     <message>
         <source> KB/s</source>
-        <translation> kB/s</translation>
+        <translation>kB/s</translation>
     </message>
     <message>
         <source>Choose your upload speed limit: </source>
-        <translation>Valitse lähetysnopeutesi yläraja: </translation>
+        <translation>Quin és el teu límit de pujada:</translation>
     </message>
     <message>
         <source>Connection :</source>
-        <translation>Yhteys:</translation>
+        <translation>Connexió :</translation>
     </message>
     <message>
         <source>Automatic (UPnP)</source>
-        <translation>Automaattinen (UPnP)</translation>
+        <translation>Automàtic (UPnP)</translation>
     </message>
     <message>
         <source>Firewalled</source>
-        <translation>Palomuuri</translation>
+        <translation>Darrera tallafocs</translation>
     </message>
     <message>
         <source>Manually forwarded port</source>
-        <translation>Portti avattu käsin</translation>
+        <translation>Port reenviat manualment</translation>
     </message>
     <message>
         <source>Discovery :</source>
-        <translation>Etsintä:</translation>
+        <translation>Descobriment :</translation>
     </message>
     <message>
         <source>Public: DHT &amp; Discovery</source>
-        <translation>Julkinen: DHT &amp; etsintä</translation>
+        <translation>Públic: DHT i descobriment</translation>
     </message>
     <message>
         <source>Private: Discovery Only</source>
-        <translation>Yksityinen: Vain etsintä</translation>
+        <translation>Privat: Només descobriment</translation>
     </message>
     <message>
         <source>Inverted: DHT Only</source>
-        <translation>Käänteinen: Vain DHT</translation>
+        <translation>Invertit: Només DHT</translation>
     </message>
     <message>
         <source>Dark Net: None</source>
-        <translation>Darknet: ei mitään</translation>
+        <translation>Dark Net: Cap</translation>
     </message>
     <message>
         <source>&lt; Back</source>
-        <translation>&lt; Takaisin</translation>
+        <translation>&lt; Enrere</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -12020,38 +12022,38 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-size:8pt;&quot;&gt;You can separately setup share flags for each shared directory:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-size:8pt; font-weight:600;&quot;&gt;Browsable by friends&lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:8pt;&quot;&gt;: files are browsable from your direct friends.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Anonymously shared&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: files can be downloaded by anybody through anonymous tunnels.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Tämä on luettelo jaetuista tiedostoista. Voit lisätä ja poistaa hakemistoja käyttämällä vasemmalla sijaitsevaa painiketta. Lisätessäsi uusia hakemistoja kaikki tiedostot tulevat alussa jaetuiksi.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;Voit määrittää erikseen jakoilmaisimia jokaiselle jaetulle hakemistolle:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Ystävien selattavissa&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: välittömät ystäväsi voivat selata tiedostoja.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Nimettömästi jaetut&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: ketkä tahansa voivat ladata tiedostoja nimettömien tunneleiden kautta.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
+p, li { white-space: pre-wrap; }⏎
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Això és un llistat de directoris compartits. Pots afegir-ne i treure&apos;n utilitzant els botons a l&apos;esquerra. Quan afegeixes un nou directori tots els arxius en ell són compartits.&lt;/span&gt;&lt;/p&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;Pots escollir per separat els permisos de compartició per cada directori compartit:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;⏎
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Navegable pels amics&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: Els arxius són navegables pels amics directes.&lt;/span&gt;&lt;/p&gt;⏎
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Compartits anònimament&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: Els arxius els pots descarregar qualsevol utilitzant túnels anònims&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Directory</source>
-        <translation>Hakemisto</translation>
+        <translation>Directori</translation>
     </message>
     <message>
         <source>Network Wide</source>
-        <translation>Verkon laajuinen</translation>
+        <translation>Tota la xarxa</translation>
     </message>
     <message>
         <source>Browseable</source>
-        <translation>Selattavissa</translation>
+        <translation>Navegable</translation>
     </message>
     <message>
         <source>Add</source>
-        <translation>Lisää</translation>
+        <translation>Afegir</translation>
     </message>
     <message>
         <source>Remove</source>
-        <translation>Poista</translation>
+        <translation>Treure</translation>
     </message>
     <message>
         <source>Automatically share incoming directory (Recommended)</source>
-        <translation>Jaa saapuvien hakemisto automaattisesti (suositeltavaa)</translation>
+        <translation>Compartir automàticament directori entrant (recomanat)</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -12061,13 +12063,13 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;Enjoy using RetroShare!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;Toivomme, että nautit RetroSharen käytöstä!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
+p, li { white-space: pre-wrap; }⏎
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;⏎
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;⏎
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;Diverteix-te utilitzant el RetroShare!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -12078,118 +12080,118 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;These settings configure how and when RetroShare starts .&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Vielä yksi askel! Olet lähes säätänyt RetroSharen toimimaan koneellasi.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Nämä asetukset määrittävät milloin ja miten RetroShare käynnistyy.&lt;/span&gt;&lt;/p&gt;
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
+p, li { white-space: pre-wrap; }⏎
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Només falta un pas! Gairebé ja has configurat el Retroshare pel teu ordinador.&lt;/span&gt;&lt;/p&gt;⏎
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Aquests paràmetres determinen com i quan s&apos;inicia el Retroshare.&lt;/span&gt;&lt;/p&gt;⏎
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Do not show a message when Closing RetroShare</source>
-        <translation>Älä näytä viestiä RetroSharea suljettaessa</translation>
+        <translation>No mostris cap missatge quan tanquis el RetroShare</translation>
     </message>
     <message>
         <source>Start Minimized</source>
-        <translation>Käynnistä pienennettynä</translation>
+        <translation>Inicia minimitzat</translation>
     </message>
     <message>
         <source>Start RetroShare when my System Starts.</source>
-        <translation>Käynnistä RetroShare järjestelmän käynnistyessä.</translation>
+        <translation>Inicia el RetroShare quan s&apos;iniciï el sistema.</translation>
     </message>
     <message>
         <source>Start minimized on system start</source>
-        <translation>Käynnistä pienennettynä järjestelmän käynnistyessä</translation>
+        <translation>Inicia minimitzat al arrencar el sistema</translation>
     </message>
     <message>
         <source>Finish</source>
-        <translation>Valmis</translation>
+        <translation>Acabar</translation>
     </message>
     <message>
         <source>Select A Folder To Share</source>
-        <translation>Valitse hakemisto jaettavaksi</translation>
+        <translation>Selecciona un directori a compartir</translation>
     </message>
     <message>
         <source>Shared Directory Added!</source>
-        <translation>Jaettu hakemisto lisätty!</translation>
+        <translation>Directori compartit afegit!</translation>
     </message>
     <message>
         <source>Do you really want to stop sharing this directory ? </source>
-        <translation>Haluatko todella lopettaa tämän hakemiston jakamisen?</translation>
+        <translation>Estàs segur de voler deixar de compartir aquest directori?</translation>
     </message>
     <message>
         <source>Warning!</source>
-        <translation>Varoitus!</translation>
+        <translation>Avís!</translation>
     </message>
 </context>
 <context>
     <name>RSImageBlockWidget</name>
     <message>
         <source>Form</source>
-        <translation>Lomake</translation>
+        <translation>Formulari</translation>
     </message>
     <message>
         <source>The loading of embedded images is blocked.</source>
-        <translation>Upotettujen kuvien lataaminen on estetty.</translation>
+        <translation>La càrrega d&apos;imatges incrustades està bloquejada.</translation>
     </message>
     <message>
         <source>Load images</source>
-        <translation>Lataa kuvat</translation>
+        <translation>Carrega imatges</translation>
     </message>
 </context>
 <context>
     <name>RSettingsWin</name>
     <message>
         <source>Error Saving Configuration on page </source>
-        <translation>Virhe tallennettaessa asetuksia sivulle</translation>
+        <translation>Error desant configuració a la pàgina</translation>
     </message>
 </context>
 <context>
     <name>RatesStatus</name>
     <message>
         <source>&lt;strong&gt;Down:&lt;/strong&gt; 0.00 (kB/s) | &lt;strong&gt;Up:&lt;/strong&gt; 0.00 (kB/s) </source>
-        <translation>&lt;strong&gt;Lataus:&lt;/strong&gt; 0.00 (kB/s) | &lt;strong&gt;Lähetys:&lt;/strong&gt; 0.00 (kB/s) </translation>
+        <translation>&lt;strong&gt;Descarrega:&lt;/strong&gt; 0.00 (kB/s) | &lt;strong&gt;Pujada:&lt;/strong&gt; 0.00 (kB/s) </translation>
     </message>
     <message>
         <source>Down</source>
-        <translation>Sisään</translation>
+        <translation>Descarrega</translation>
     </message>
     <message>
         <source>Up</source>
-        <translation>Ulos</translation>
+        <translation>Pujada</translation>
     </message>
 </context>
 <context>
     <name>RelayPage</name>
     <message>
         <source>Enable Relay Connections</source>
-        <translation>Ota käyttöön välitetyt yhteydet</translation>
+        <translation>Activa les connexions de repetidor</translation>
     </message>
     <message>
         <source>Use Relay Servers</source>
-        <translation>Käytä välityspalvelimia</translation>
+        <translation>Utilitza servidors de repetició</translation>
     </message>
     <message>
         <source>Relay options</source>
-        <translation>Välitysasetukset</translation>
+        <translation>Opcions repetició</translation>
     </message>
     <message>
         <source>Number</source>
-        <translation>Luku</translation>
+        <translation>Número</translation>
     </message>
     <message>
         <source>Bandwidth per link</source>
-        <translation>Kaista per linkki</translation>
+        <translation>Ample de banda per enllaç</translation>
     </message>
     <message>
         <source>Total Bandwidth</source>
-        <translation>Kaistanleveys</translation>
+        <translation>Ample de banda total</translation>
     </message>
     <message>
         <source>Friends</source>
-        <translation>Ystävät</translation>
+        <translation>Amics</translation>
     </message>
     <message>
         <source>kB/s</source>
@@ -12197,147 +12199,147 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Friends of Friends</source>
-        <translation>Ystävien ystävät</translation>
+        <translation>Amics d&apos;amics</translation>
     </message>
     <message>
         <source>General</source>
-        <translation>Yleiset</translation>
+        <translation>General</translation>
     </message>
     <message>
         <source>Total:</source>
-        <translation>Yhteensä:</translation>
+        <translation>Total:</translation>
     </message>
     <message>
         <source>Relay Server Setup</source>
-        <translation>Välityspalvelimen asetukset</translation>
+        <translation>Configuració de servidor de repetició</translation>
     </message>
     <message>
         <source>Add Server</source>
-        <translation>Lisää palvelin</translation>
+        <translation>Afegir servidor</translation>
     </message>
     <message>
         <source>Server DHT Key</source>
-        <translation>Palvelimen DHT-avain</translation>
+        <translation>Clau DHT del servidor</translation>
     </message>
     <message>
         <source>Remove Server</source>
-        <translation>Poista palvelin</translation>
+        <translation>Eliminar servidor</translation>
     </message>
     <message>
         <source>Relay</source>
-        <translation>Välitys</translation>
+        <translation>Repetidor</translation>
     </message>
     <message>
         <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Relays&lt;/h1&gt;                                 &lt;p&gt;By activating relays, you allow your Retroshare node to act as a bridge between Retroshare  				  users who cannot connect directly, e.g. because they&apos;re firewalled.&lt;/p&gt;                        				  &lt;p&gt;You may choose to act as a relay by checking &lt;i&gt;enable relay connections&lt;/i&gt;, or simply     				  benefit from other peers acting as relay, by checking &lt;i&gt;use relay servers&lt;/i&gt;. For the former,				  you may specify the bandwidth allocated when acting as a relay for friends of you, for friends 				  of your friends, or anyone in the Retroshare network.&lt;/p&gt;                                      				  &lt;p&gt;In any case, a Retroshare node acting as a relay cannot see the relayed traffic, since it   				  is encrypted and authenticated by the two relayed nodes.&lt;/p&gt;</source>
-        <translation>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Välitys&lt;/h1&gt;&lt;p&gt;Kun otat välityksen käyttöön, oma Retrosharesi toimii siltana palomuurin takana olevien tai muiden yhteysongelmien vaivaamien käyttäjien välillä.&lt;/p&gt;&lt;p&gt;Voit alkaa toimia välittäjänä rastittamalla &lt;i&gt;Ota käyttöön välitetyt yhteydet&lt;/i&gt; tai sitten vain hyötyä muista vertaisista rastittamalla &lt;i&gt;Käytä välityspalvelimia&lt;/i&gt;. Edellisen osalta voit määritellä, miten paljon kaistanleveyttä annetaan välittämisen käyttöön.&lt;/p&gt;&lt;p&gt;Välittäjänä toimiva Retroshare-solmu ei voi nähdä välitettyä liikennettä, koska se on salattu ja kahden välitetyn solmun vahvistama.&lt;/p&gt;</translation>
+        <translation>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Repetidors&lt;/h1&gt; &lt;p&gt;Activant els repetidors permets al teu node de RetroShare actuar com un pont entre usuaris de RetroShare que no poden connectar directament, per exemple per trobar-se darrera d&apos;un tallafocs.&lt;/p&gt;  ⇥⇥⇥⇥ &lt;p&gt;Pots escollir funcionar com un repetidor marcant &lt;i&gt;activar connexions de repetidor&lt;/i&gt; o simplement ⇥⇥⇥⇥ beneficiar-te d&apos;altres contactes que actuïn de repetidor marcant &lt;i&gt;utilitza servidors repetidors&lt;/i&gt;. Tingues en compte que ⇥⇥⇥⇥ pots especificar quan ample de banda dediques a fer de repetidor per amics teus, amics ⇥⇥⇥⇥ dels teus amics o qualsevol de la xarxa RetroShare.&lt;/p&gt;  ⇥⇥⇥⇥ &lt;p&gt;En qualsevol cas, un node de RetroShare funcionant com a repetidor no pot veure el tràfic que repeteix, ja que ⇥⇥⇥⇥ està encriptat i autenticat pels dos nodes interessats.&lt;/p&gt;</translation>
     </message>
 </context>
 <context>
     <name>RemoteSharedFilesDialog</name>
     <message>
         <source>Download</source>
-        <translation>Lataa</translation>
+        <translation>Descarregar</translation>
     </message>
     <message>
         <source>Recommend in a message to</source>
-        <translation>Suosittele viestissä vastaanottajalle</translation>
+        <translation>Recomanar en un missatge a</translation>
     </message>
 </context>
 <context>
     <name>RetroshareDirModel</name>
     <message>
         <source>NEW</source>
-        <translation>UUSI</translation>
+        <translation>NOU</translation>
     </message>
 </context>
 <context>
     <name>RsCollectionDialog</name>
     <message>
         <source>Collection</source>
-        <translation>Kokoelma</translation>
+        <translation>Col·lecció</translation>
     </message>
     <message>
         <source>File name :</source>
-        <translation>Tiedoston nimi :</translation>
+        <translation>Nom d&apos;arxiu:</translation>
     </message>
     <message>
         <source>Total size :</source>
-        <translation>Koko :</translation>
+        <translation>Mida total:</translation>
     </message>
     <message>
         <source>Selected files:</source>
-        <translation>Valitut tiedostot:</translation>
+        <translation>Arxius seleccionats:</translation>
     </message>
     <message>
         <source>Select all</source>
-        <translation>Valitse kaikki</translation>
+        <translation>Selecciona-ho tot</translation>
     </message>
     <message>
         <source>Deselect all</source>
-        <translation>Tyhjennä valinta</translation>
+        <translation>De-selecciona-ho tot</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Peru</translation>
+        <translation>Cancel·la</translation>
     </message>
     <message>
         <source>Download!</source>
-        <translation>Lataa!</translation>
+        <translation>Descarrega!</translation>
     </message>
     <message>
         <source>File</source>
-        <translation>Tiedosto</translation>
+        <translation>Arxiu</translation>
     </message>
     <message>
         <source>Size</source>
-        <translation>Koko</translation>
+        <translation>Mida</translation>
     </message>
     <message>
         <source>Hash</source>
-        <translation>Tiiviste (hash)</translation>
+        <translation>Hash</translation>
     </message>
     <message>
         <source>Bad filenames have been cleaned</source>
-        <translation>Virheelliset tiedostonimet muutettu</translation>
+        <translation>S&apos;han netejat noms d&apos;arxiu no permesos</translation>
     </message>
     <message>
         <source>Some filenames or directory names contained forbidden characters.
 Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replaced by '_'.
  Concerned files are listed in red.</source>
-        <translation>Joissakin tiedostonimissä tai hakemistojen nimissä on kiellettyjä merkkejä.
-Merkit &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; korvataan merkillä &apos;_&apos;.
- Kyseenalaiset tiedostot on väritetty punaisella.</translation>
+        <translation>Alguns noms d&apos;arxius o directoris contenien caràcters prohibits.⏎
+Els caràcters &lt;b&gt;&quot;,|,/,\,&amp;lt;&amp;gt;,*,?&lt;/b&gt; es substituiran per &apos;_&apos;.
+Els arxius afectats es llisten en vermell.</translation>
     </message>
 </context>
 <context>
     <name>RsCollectionFile</name>
     <message>
         <source>Cannot open file %1</source>
-        <translation>Tiedoston %1 avaaminen epäonnistui</translation>
+        <translation>No es pot obrir l&apos;arxiu %1</translation>
     </message>
     <message>
         <source>Error parsing xml file</source>
-        <translation>Virhe XML-tiedoston tulkinnassa</translation>
+        <translation>Error interpretant arxiu XML</translation>
     </message>
     <message>
         <source>Open collection file</source>
-        <translation>Avaa kokoelmatiedosto</translation>
+        <translation>Obrir arxiu de col·lecció</translation>
     </message>
     <message>
         <source>Collection files</source>
-        <translation>Kokoelmatiedostot</translation>
+        <translation>Arxiu de col·lecció</translation>
     </message>
     <message>
         <source>Create collection file</source>
-        <translation>Luo kokoelmatiedosto</translation>
+        <translation>Crear arxiu de col·lecció</translation>
     </message>
     <message>
         <source>This file contains the string &quot;%1&quot; and is therefore an invalid collection file. 
 
 If you believe it is correct, remove the corresponding line from the file and re-open it with Retroshare.</source>
-        <translation>Tiedosto sisältää tekstin &quot;%1&quot; ja on täten viallinen kokoelmatiedosto. 
+        <translation>Aquest arxiu conté la cadena &quot;%1&quot; i es per tan un arxiu de col·lecció invàlid.
 
-Jos se on mielestäsi kunnollinen, poista mainittu rivi tiedostosta ja avaa se uudelleen Retrosharessa.</translation>
+Si creus que és correcta, treu la línia corresponent de l&apos;arxiu i torna&apos;l a obrir amb el RetroShare.</translation>
     </message>
 </context>
 <context>
@@ -12345,63 +12347,63 @@ Jos se on mielestäsi kunnollinen, poista mainittu rivi tiedostosta ja avaa se u
     <message>
         <source>Image is oversized for transmission.
 Reducing image to %1x%2 pixels?</source>
-        <translation>Kuva on liian suuri siirron kannalta.
-Pienennetäänkö kuva kokoon %1x%2 pikseliä?</translation>
+        <translation>La imatge és massa gran per la transmissió.⏎
+Reduir la imatge a %1x%2 pixels?</translation>
     </message>
 </context>
 <context>
     <name>Rshare</name>
     <message>
         <source>Resets ALL stored RetroShare settings.</source>
-        <translation>Palauttaa KAIKKI tallennetut RetroSharen asetukset.</translation>
+        <translation>Reinicialitza TOTS les valors de configuració del RetroShare.</translation>
     </message>
     <message>
         <source>Sets the directory RetroShare uses for data files.</source>
-        <translation>Asettaa hakemiston, jota RetroShare käyttää datatiedostoille.</translation>
+        <translation>Especifica el directori que el RetroShare utilitza per arxius de dades.</translation>
     </message>
     <message>
         <source>Sets the name and location of RetroShare&apos;s logfile.</source>
-        <translation>Asettaa RetroSharen lokitiedoston nimen ja sijainnin.</translation>
+        <translation>Especifica el nom i ubicació del arxius de registre del RetroShare.</translation>
     </message>
     <message>
         <source>Sets the verbosity of RetroShare&apos;s logging.</source>
-        <translation>Asettaa RetroSharen lokin runsassanaisuuden.</translation>
+        <translation>Especifica la verbositat del registre del RetroShare.</translation>
     </message>
     <message>
         <source>Sets RetroShare&apos;s interface style.</source>
-        <translation>Asettaa RetroSharen käyttöliittymän tyylin.</translation>
+        <translation>Defineix l&apos;estil de la interfície del RetroShare.</translation>
     </message>
     <message>
         <source>Sets RetroShare&apos;s interface stylesheets.</source>
-        <translation>Asettaa RetroSharen käyttöliittymän tyylitiedostot.</translation>
+        <translation>Defineix els fulls d&apos;estil de la interfície del RetroShare.</translation>
     </message>
     <message>
         <source>Sets RetroShare&apos;s language.</source>
-        <translation>Asettaa RetroSharen kielen.</translation>
+        <translation>Defineix la llengua del RetroShare.</translation>
     </message>
     <message>
         <source>RetroShare Usage Information</source>
-        <translation>RetroSharen käyttötiedot</translation>
+        <translation>Informació d&apos;ús del RetroShare</translation>
     </message>
     <message>
         <source>Invalid language code specified: </source>
-        <translation>Määritelty kielikoodi on virheellinen: </translation>
+        <translation>El codi d&apos;idioma especificat no és vàlid: </translation>
     </message>
     <message>
         <source>Invalid GUI style specified: </source>
-        <translation>Määritelty käyttöliittymän tyyli on virheellinen: </translation>
+        <translation>L&apos;estil d&apos;interfície gràfica d&apos;usuari no és vàlid:</translation>
     </message>
     <message>
         <source>Invalid log level specified: </source>
-        <translation>Virheellinen lokitaso määritelty: </translation>
+        <translation>El nivell de verbositat del registre no és vàlid:</translation>
     </message>
     <message>
         <source>Unable to open log file &apos;%1&apos;: %2</source>
-        <translation>Lokitiedoston &apos;%1&apos;: %2 avaaminen epäonnistui</translation>
+        <translation>Incapaç d&apos;obrir l&apos;arxiu de registre &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <source>built-in</source>
-        <translation>sisäänrakennettu</translation>
+        <translation>inclòs</translation>
     </message>
 </context>
 <context>
@@ -12427,339 +12429,339 @@ Pienennetäänkö kuva kokoon %1x%2 pikseliä?</translation>
     <name>SearchDialog</name>
     <message>
         <source>Enter a keyword here (at least 3 char long)</source>
-        <translation>Anna hakusana (vähintään 3 merkkiä)</translation>
+        <translation>Inserir una paraula clau aquí (com a mínim 3 caràcters de longitud)</translation>
     </message>
     <message>
         <source>Start Search</source>
-        <translation>Aloita haku</translation>
+        <translation>Iniciar cerca</translation>
     </message>
     <message>
         <source>Search</source>
-        <translation>Etsi</translation>
+        <translation>Cerca</translation>
     </message>
     <message>
         <source>Advanced Search</source>
-        <translation>Tarkennettu haku</translation>
+        <translation>Cerca avançada</translation>
     </message>
     <message>
         <source>Advanced</source>
-        <translation>Tarkennettu</translation>
+        <translation>Avançat</translation>
     </message>
     <message>
         <source>Search inside &quot;browsable&quot; files of your friends</source>
-        <translation>Etsi ystäviesi &quot;selattavien&quot; tiedostojen joukosta</translation>
+        <translation>Cercar dins dels arxius &quot;navegables&quot; dels teus amics</translation>
     </message>
     <message>
         <source>Browsable files</source>
-        <translation>Selattavat tiedostot</translation>
+        <translation>Arxius navegables</translation>
     </message>
     <message>
         <source>Multi-hop search at distance 6 in the network 
 (always reports available files)</source>
-        <translation>Usean hypyn haku verkossa etäisyydellä 6
-(näyttää aina saatavilla olevat tiedostot)</translation>
+        <translation>Cerca multi-salt a una distancia de 6 a la xarxa ⏎
+(sempre avisar dels arxius disponibles)</translation>
     </message>
     <message>
         <source>Distant</source>
-        <translation>Etäinen</translation>
+        <translation>Llunyà</translation>
     </message>
     <message>
         <source>Include files from your own file list in the search result</source>
-        <translation>Sisällytä hakutuloksiin oman tiedostoluettelosi tiedostot</translation>
+        <translation>Incloure arxius propis als resultats de la cerca</translation>
     </message>
     <message>
         <source>Own files</source>
-        <translation>Omat tiedostot</translation>
+        <translation>Arxius propis</translation>
     </message>
     <message>
         <source>Close all Search Results</source>
-        <translation>Sulje kaikki hakutulokset</translation>
+        <translation>Tancar tots els resultats de cerques</translation>
     </message>
     <message>
         <source>Clear</source>
-        <translation>Tyhjennä</translation>
+        <translation>Neteja</translation>
     </message>
     <message>
         <source>KeyWords</source>
-        <translation>Hakusanat</translation>
+        <translation>Paraules Clau</translation>
     </message>
     <message>
         <source>Results</source>
-        <translation>Tulokset</translation>
+        <translation>Resultats</translation>
     </message>
     <message>
         <source>Search Id</source>
-        <translation>Hakutunniste</translation>
+        <translation>Id cerca</translation>
     </message>
     <message>
         <source>Filename</source>
-        <translation>Tiedostonimi</translation>
+        <translation>Nom d&apos;arxiu</translation>
     </message>
     <message>
         <source>Size</source>
-        <translation>Koko</translation>
+        <translation>Mida</translation>
     </message>
     <message>
         <source>Sources</source>
-        <translation>Lähteet</translation>
+        <translation>Fonts</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation>Tyyppi</translation>
+        <translation>Tipus</translation>
     </message>
     <message>
         <source>Age</source>
-        <translation>Ikä</translation>
+        <translation>Edat</translation>
     </message>
     <message>
         <source>Hash</source>
-        <translation>Tiiviste (hash)</translation>
+        <translation>Hash</translation>
     </message>
     <message>
         <source>Filter:</source>
-        <translation>Suodin:</translation>
+        <translation>Filtre:</translation>
     </message>
     <message>
         <source>Filter Search Result</source>
-        <translation>Suodata hakutulokset</translation>
+        <translation>Filtrar resultats de la cerca</translation>
     </message>
     <message>
         <source>Max results:</source>
-        <translation>Maksimitulokset:</translation>
+        <translation>Resultats màxims:</translation>
     </message>
     <message>
         <source>Any</source>
-        <translation>Mikä tahansa</translation>
+        <translation>Qualsevol</translation>
     </message>
     <message>
         <source>Archive</source>
-        <translation>Pakattu tiedosto</translation>
+        <translation>Arxiu</translation>
     </message>
     <message>
         <source>Audio</source>
-        <translation>Äänite</translation>
+        <translation>Àudio</translation>
     </message>
     <message>
         <source>CD-Image</source>
-        <translation>CD-levykuva</translation>
+        <translation>Imatge CD</translation>
     </message>
     <message>
         <source>Document</source>
-        <translation>Dokumentti</translation>
+        <translation>Document</translation>
     </message>
     <message>
         <source>Picture</source>
-        <translation>Kuva</translation>
+        <translation>Imatge</translation>
     </message>
     <message>
         <source>Program</source>
-        <translation>Ohjelma</translation>
+        <translation>Programa</translation>
     </message>
     <message>
         <source>Video</source>
-        <translation>Video</translation>
+        <translation>Vídeo</translation>
     </message>
     <message>
         <source>Directory</source>
-        <translation>Hakemisto</translation>
+        <translation>Directori</translation>
     </message>
     <message>
         <source>Download Selected</source>
-        <translation>Lataa valitut</translation>
+        <translation>Descarregar seleccionats</translation>
     </message>
     <message>
         <source>Download selected</source>
-        <translation>Lataa valitut</translation>
+        <translation>Descarregar seleccionats</translation>
     </message>
     <message>
         <source>File Name</source>
-        <translation>Tiedoston nimi</translation>
+        <translation>Nom d&apos;arxiu</translation>
     </message>
     <message>
         <source>Download</source>
-        <translation>Lataa</translation>
+        <translation>Descarregar</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation>Kopioi RetroShare-linkki</translation>
+        <translation>Copia l&apos;enllaç RetroShare</translation>
     </message>
     <message>
         <source>Send RetroShare Link</source>
-        <translation>Lähetä RetroShare-linkki</translation>
+        <translation>Enviar enllaç RetroShare</translation>
     </message>
     <message>
         <source>Download Notice</source>
-        <translation>Lataushuomautus</translation>
+        <translation>Avís de descarrega</translation>
     </message>
     <message>
         <source>Skipping Local Files</source>
-        <translation>Paikallisten tiedostojen ohittaminen</translation>
+        <translation>Evitant arxius locals</translation>
     </message>
     <message>
         <source>Sorry</source>
-        <translation>Anteeksi</translation>
+        <translation>Ho sentim</translation>
     </message>
     <message>
         <source>This function is not yet implemented.</source>
-        <translation>Tätä toimintoa ei ole vielä otettu käyttöön.</translation>
+        <translation>Aquesta funcionalitat encara no està implementada.</translation>
     </message>
     <message>
         <source>Search again</source>
-        <translation>Hae uudestaan</translation>
+        <translation>Cerca altre cop</translation>
     </message>
     <message>
         <source>Remove</source>
-        <translation>Poista</translation>
+        <translation>Treure</translation>
     </message>
     <message>
         <source>Remove All</source>
-        <translation>Poista kaikki</translation>
+        <translation>Suprimeix-ho tot</translation>
     </message>
     <message>
         <source>Folder</source>
-        <translation>Kansio</translation>
+        <translation>Directori</translation>
     </message>
     <message>
         <source>New RetroShare Link(s)</source>
-        <translation>Uusi RetroShare-linkki/-linkit</translation>
+        <translation>Enllaç(os) RetroShare nou(s)</translation>
     </message>
     <message>
         <source>Open Folder</source>
-        <translation>Avaa kansio</translation>
+        <translation>Obrir directori</translation>
     </message>
 </context>
 <context>
     <name>SecurityItem</name>
     <message>
         <source>wants to be friend with you on RetroShare</source>
-        <translation>haluaa olla ystäväsi RetroSharessa</translation>
+        <translation>vol ser amic teu al RetroShare</translation>
     </message>
     <message>
         <source>Accept Friend Request</source>
-        <translation>Hyväksy ystäväpyyntö</translation>
+        <translation>Acceptar petició d&apos;amistat</translation>
     </message>
     <message>
         <source>Peer details</source>
-        <translation>Vertaisen tiedot</translation>
+        <translation>Detalls del contacte</translation>
     </message>
     <message>
         <source>Deny friend</source>
-        <translation>Torju ystävä</translation>
+        <translation>Negar l&apos;amic</translation>
     </message>
     <message>
         <source>Write a quick Message</source>
-        <translation>Kirjoita pikaviesti</translation>
+        <translation>Escriure un missatge ràpid</translation>
     </message>
     <message>
         <source>Chat</source>
-        <translation>Keskustelu</translation>
+        <translation>Xat</translation>
     </message>
     <message>
         <source>Start Chat</source>
-        <translation>Aloita keskustelu</translation>
+        <translation>Inicia xat</translation>
     </message>
     <message>
         <source>Expand</source>
-        <translation>Laajenna</translation>
+        <translation>Ampliar</translation>
     </message>
     <message>
         <source>Remove Item</source>
-        <translation>Poista kohde</translation>
+        <translation>Eliminar l&apos;element</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Peru</translation>
+        <translation>Cancel·la</translation>
     </message>
     <message>
         <source>Send</source>
-        <translation>Lähetä</translation>
+        <translation>Enviar</translation>
     </message>
     <message>
         <source>Name:</source>
-        <translation>Nimi:</translation>
+        <translation>Nom:</translation>
     </message>
     <message>
         <source>Peer ID:</source>
-        <translation>Vertaisen tunniste:</translation>
+        <translation>ID del contacte:</translation>
     </message>
     <message>
         <source>Trust: </source>
-        <translation>Luottamus:</translation>
+        <translation>Confiança:</translation>
     </message>
     <message>
         <source>Location:</source>
-        <translation>Sijainti:</translation>
+        <translation>Ubicació:</translation>
     </message>
     <message>
         <source>IP Address:</source>
-        <translation>IP-osoite:</translation>
+        <translation>Adreça IP:</translation>
     </message>
     <message>
         <source>Connection Method:</source>
-        <translation>Yhteys:</translation>
+        <translation>Mètode de connexió:</translation>
     </message>
     <message>
         <source>Status:</source>
-        <translation>Tila:</translation>
+        <translation>Estat:</translation>
     </message>
     <message>
         <source>Write Message</source>
-        <translation>Kirjoita viesti</translation>
+        <translation>Escriure missatge</translation>
     </message>
     <message>
         <source>Connect Attempt</source>
-        <translation>Yhteydenottoyritys</translation>
+        <translation>Intent de connexió</translation>
     </message>
     <message>
         <source>Connection refused by remote peer</source>
-        <translation>Vertainen torjui yhteyden</translation>
+        <translation>Connexió refusada pel contacte remot</translation>
     </message>
     <message>
         <source>Unknown (Incoming) Connect Attempt</source>
-        <translation>Tuntematon (saapuva) yhteydenottoyritys</translation>
+        <translation>Intent de connexió (Entrant) desconegut</translation>
     </message>
     <message>
         <source>Unknown (Outgoing) Connect Attempt</source>
-        <translation>Tuntematon (lähtevä) yhteydenottoyritys</translation>
+        <translation>Intent de connexió (Sortint) desconegut</translation>
     </message>
     <message>
         <source>Unknown Security Issue</source>
-        <translation>Tuntematon tietoturvaongelma</translation>
+        <translation>Problema de seguretat desconegut</translation>
     </message>
     <message>
         <source>Unknown Peer</source>
-        <translation>Tuntematon vertainen</translation>
+        <translation>Contacte desconegut</translation>
     </message>
     <message>
         <source>Hide</source>
-        <translation>Piilota</translation>
+        <translation>Amagar</translation>
     </message>
     <message>
         <source>Do you want to remove this Friend?</source>
-        <translation>Haluatko poistaa tämän ystävän?</translation>
+        <translation>Voleu suprimir aquest amic?</translation>
     </message>
     <message>
         <source>Quick Message</source>
-        <translation>Pikaviesti</translation>
+        <translation>Missatge ràpid</translation>
     </message>
 </context>
 <context>
     <name>ServerPage</name>
     <message>
         <source>Network Configuration</source>
-        <translation>Verkon asetukset</translation>
+        <translation>Configuració de xarxa</translation>
     </message>
     <message>
         <source>Automatic (UPnP)</source>
-        <translation>Automaattinen (UPnP)</translation>
+        <translation>Automàtic (UPnP)</translation>
     </message>
     <message>
         <source>Firewalled</source>
-        <translation>Palomuuri</translation>
+        <translation>Darrera tallafocs</translation>
     </message>
     <message>
         <source>Manually Forwarded Port</source>
-        <translation>Portti avattu käsin</translation>
+        <translation>Port reenviat manualment</translation>
     </message>
     <message>
         <source>The DHT allows you to answer connection 
@@ -12771,60 +12773,59 @@ identities of your trusted contacts to connected
 peers, to help them choose new friends. 
 The friendship is never automatic however, and both 
 peers still need to trust each other to allow connection. </source>
-        <translation>DHT sallii sinun vastata ystäviesi
-yhteyspyyntöihin käyttäen BitTorrentin DHT:tä.
-Se parantaa yhteydenpitoa huomattavasti.
-
-Etsintäpalvelu lähettää luotettujen ystäviesi
-sijainteja ja PGP-identiteettejä yhteydessä oleville
-vertaisille auttaakseen heitä valitsemaan uusia ystäviä.
-Ystävystyminen ei ole ikinä automaattista ja
-molempien vertaisten tulee luottaa toisiinsa,
-jotta yhteys voi syntyä.</translation>
+        <translation>El DHT et permet respondre les peticions ⏎
+de connexió dels teus amics utilitzant el protocol⏎
+ DHT de BitTorrent. Millora molt la connectivitat.⏎
+⏎
+El servei de descobriment envia la ubicació i identitat⏎
+PGP dels teus contactes de confiança als contactes⏎
+connectats, per ajudar a que escullin nous amics.⏎
+L&apos;amistat no és mai automàtica, i tots dos contactes⏎
+ han de confiar l&apos;un amb l&apos;altre per permetre la connexió.</translation>
     </message>
     <message>
         <source>Public: DHT &amp; Discovery</source>
-        <translation>Julkinen: DHT &amp; etsintä</translation>
+        <translation>Públic: DHT i descobriment</translation>
     </message>
     <message>
         <source>Private: Discovery Only</source>
-        <translation>Yksityinen: Vain etsintä</translation>
+        <translation>Privat: Només descobriment</translation>
     </message>
     <message>
         <source>Inverted: DHT Only</source>
-        <translation>Käänteinen: Vain DHT</translation>
+        <translation>Invertit: Només DHT</translation>
     </message>
     <message>
         <source>Dark Net: None</source>
-        <translation>Darknet: ei mitään</translation>
+        <translation>Dark Net: Cap</translation>
     </message>
     <message>
         <source>Local Address</source>
-        <translation>Paikallinen osoite</translation>
+        <translation>Adreça local</translation>
     </message>
     <message>
         <source>External Address</source>
-        <translation>Ulkoinen osoite</translation>
+        <translation>Adreça externa</translation>
     </message>
     <message>
         <source>Dynamic DNS</source>
-        <translation>Dynaaminen nimipalvelin</translation>
+        <translation>DNS dinàmic</translation>
     </message>
     <message>
         <source>Port:</source>
-        <translation>Portti:</translation>
+        <translation>Port:</translation>
     </message>
     <message>
         <source>Acceptable ports range from 1024 to 65535. Ports below 1024 are reserved by your system.</source>
-        <translation>Hyväksyttävä porttiavaruus on välillä 1024-65535. Portit ennen 1024 ovat järjestelmäsi käyttöön varattuja.</translation>
+        <translation>El rang de ports acceptables va de 1024 a 65535. Els ports per sota 1024 estan reservats pel teu sistema.</translation>
     </message>
     <message>
         <source>Local network</source>
-        <translation>Paikallinen verkko</translation>
+        <translation>Xarxa local</translation>
     </message>
     <message>
         <source>External ip address finder</source>
-        <translation>Ulkoisen IP-osoitteen paikallistaminen</translation>
+        <translation>Cercador d&apos;adreça IP externa</translation>
     </message>
     <message>
         <source>UPnP</source>
@@ -12832,33 +12833,33 @@ jotta yhteys voi syntyä.</translation>
     </message>
     <message>
         <source>Known / Previous IPs:</source>
-        <translation>Tunnetut / aiemmat IP:t:</translation>
+        <translation>Conegudes / IPs previes:</translation>
     </message>
     <message>
         <source>Show Discovery information in statusbar</source>
-        <translation>Näytä etsintätiedot tilarivillä</translation>
+        <translation>Mostra informació de descobriment a la barra d&apos;estat</translation>
     </message>
     <message>
         <source>If you uncheck this, RetroShare can only determine your IP 
 when you connect to somebody. Leaving this checked helps 
 connecting when you have few friends. It also helps if you're 
 behind a firewall or a VPN.</source>
-        <translation>Jos poistat tästä rastin, RetroShare voi määritellä 
-IP-osoitteesi ainoastaan, kun olet yhteydessä johonkuhun. Tämän 
-jättäminen päälle helpottaa yhteydenottoa, kun sinulla on 
-vähän ystäviä. Tämä auttaa myös, jos olet palomuurin tai VPN:n takana.</translation>
+        <translation>Si desactives això el RetroShare només pot determinar la teva IP ⏎
+quan et connectes amb algú. Deixant això activat ajuda a ⏎
+connectar-te quan tens pocs amics. També ajuda si estàs darrera ⏎
+d&apos;un tallafocs o una VPN.</translation>
     </message>
     <message>
         <source>Allow RetroShare to ask my ip to these websites:</source>
-        <translation>Salli RetroSharen kysyä IP:täni näiltä verkkosivuilta:</translation>
+        <translation>Permet que el RetroShare pregunti la meva IP a aquests llocs web:</translation>
     </message>
     <message>
         <source>Bandwidth</source>
-        <translation>Kaistanleveys</translation>
+        <translation>Ample de banda</translation>
     </message>
     <message>
         <source>Max Transfer Rates</source>
-        <translation>Maksimisiirtonopeudet</translation>
+        <translation>Tassa de transferència màxima</translation>
     </message>
     <message>
         <source>kB/s</source>
@@ -12866,31 +12867,31 @@ vähän ystäviä. Tämä auttaa myös, jos olet palomuurin tai VPN:n takana.</t
     </message>
     <message>
         <source>If you uncheck this, RetroShare will not use tunnel connection between peers that are firewalled and cannot connect directly. This is independent from F2F routing (turtle router).</source>
-        <translation>Jos poistat tästä rastin, RetroShare ei käytä tunneliyhteyttä palomuuria käyttävien vertaisten välillä, jotka eivät voi ottaa suoraa yhteyttä. Tämä ei riipu F2F-reitittämisestä (kilpikonnareititin).</translation>
+        <translation>Si desactives això el RetroShare no utilitzarà túnels de connexió entre contactes que estiguin darrera tallafocs i no es puguin connectar directament. Això és independent de l&apos;encaminament F2F (Encaminador Turtle).</translation>
     </message>
     <message>
         <source>Allow Tunnel Connection</source>
-        <translation>Salli tunneliyhteys</translation>
+        <translation>Permet connexions túnel</translation>
     </message>
     <message>
         <source>Turtle router</source>
-        <translation>Kilpikonnareititin</translation>
+        <translation>Encaminador Turtle</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Unchecking this disables all anonymous routing activity, except cache cleaning. Incoming tunnel requests are discarded, and no tunnel requests are sent to anyone.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Rastin poistaminen tästä ottaa pois käytöstä kaiken nimettömän reitittämisen, paitsi välimuistin tyhjentämisen. Sisääntulevat tunnelipyynnön hylätään, eikä tunnelipyyntöjä lähetetä.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Desmarcant això deshabilites tota l&apos;activitat d&apos;encaminament anònim, excepte la neteja de la cau. Les peticions entrants de túnels s&apos;ignoren i no s&apos;envien peticions de túnel a ningú.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Enabled</source>
-        <translation>Käytössä</translation>
+        <translation>Activat</translation>
     </message>
     <message>
         <source>Show routing info</source>
-        <translation>Näytä reititystiedot</translation>
+        <translation>Mostrar informació d&apos;encaminament</translation>
     </message>
     <message>
         <source>Max. tunnel req. forwarded per second:</source>
-        <translation>Välitettyjen tunnelipyyntöjen maksimimäärä per sekunti:</translation>
+        <translation>Màxim de peticions de túnels reenviades per segon:</translation>
     </message>
     <message>
         <source>This value controls how many tunnel request your peer can forward per second. 
@@ -12900,384 +12901,384 @@ statistically longer tunnels to pass. Be very careful though, since this generat
 many small packets that can significantly slow down your own file transfer. 
 
 The default value is 20.</source>
-        <translation>Tämä arvo määrittää, kuinka monta tunnelipyyntöä vertaisesi voi välittää sekunnin aikana.
-
-Jos sinulla on paljon internetkaistaa, voit nostaa tämän lukemaan 30-40 antaaksesi
-pitemmille tunneleille kulkumahdollisuuden. Ole silti varovainen, koska tämä luo
-paljon pieniä pakettejä, jotka voivat hidastaa omia tiedostojensiirtojasi huomattavasti.
-
-Oletusarvo on 20.</translation>
+        <translation>Aquest valor controla quantes peticions de túnel el teu contacte pot reenviar per segon.⏎
+⏎
+Si tens molt ample de banda pots augmentar-lo fins a 30-40, per permetre que túnels ⏎
+estadísticament més llargs puguin passar. Ves amb compte, això generar molts paquets⏎
+petits que poden alentir significativament les teves pròpies transferències.⏎
+⏎
+El valor per defecte és 20.</translation>
     </message>
     <message>
         <source>Server</source>
-        <translation>Palvelin</translation>
+        <translation>Servidor</translation>
     </message>
     <message>
         <source>Download (KB/s) </source>
-        <translation>Lataus (kB/s)</translation>
+        <translation>Descarrega (kB/s)</translation>
     </message>
     <message>
         <source>Upload (KB/s) </source>
-        <translation>Lähetys (kB/s)</translation>
+        <translation>Pujada (kB/s)</translation>
     </message>
 </context>
 <context>
     <name>ServicePermissionDialog</name>
     <message>
         <source>Service permissions</source>
-        <translation>Palvelujen käyttöoikeudet</translation>
+        <translation>Permisos del servei</translation>
     </message>
     <message>
         <source>Anonymous routing</source>
-        <translation>Nimetön reitittäminen</translation>
+        <translation>Encaminament anònim</translation>
     </message>
     <message>
         <source>Discovery</source>
-        <translation>Etsintä</translation>
+        <translation>Descobriment</translation>
     </message>
     <message>
         <source>Forums/Channels</source>
-        <translation>Foorumit/Kanavat</translation>
+        <translation>Fòrums/Canals</translation>
     </message>
     <message>
         <source>Service Permissions</source>
-        <translation>Palvelujen käyttöoikeudet</translation>
+        <translation>Permisos del servei</translation>
     </message>
     <message>
         <source>Use as direct source, when available</source>
-        <translation>Käytä suorana lähteenä, kun saatavilla</translation>
+        <translation>Utilitza com a font directa quan estigui disponible</translation>
     </message>
 </context>
 <context>
     <name>Settings</name>
     <message>
         <source>Options</source>
-        <translation>Asetukset</translation>
+        <translation>Opcions</translation>
     </message>
 </context>
 <context>
     <name>ShareDialog</name>
     <message>
         <source>RetroShare Share Folder</source>
-        <translation>RetroSharen jakokansio</translation>
+        <translation>Directori compartit del RetroShare</translation>
     </message>
     <message>
         <source>Share Folder</source>
-        <translation>Jaa kansio</translation>
+        <translation>Directori compartit</translation>
     </message>
     <message>
         <source>Local Path</source>
-        <translation>Paikallinen polku</translation>
+        <translation>Ubicació local</translation>
     </message>
     <message>
         <source>Browse</source>
-        <translation>Selaa</translation>
+        <translation>Navegar</translation>
     </message>
     <message>
         <source>Virtual Folder</source>
-        <translation>Virtuaalinen kansio</translation>
+        <translation>Directori virtual</translation>
     </message>
     <message>
         <source>Share Flags</source>
-        <translation>Jakoilmaisimet</translation>
+        <translation>Indicadors dels compartits</translation>
     </message>
     <message>
         <source>Share flags and groups: </source>
-        <translation>Jakoilmaisimet ja ryhmät:</translation>
+        <translation>Permisos de compartició i grups:</translation>
     </message>
     <message>
         <source>Edit Shared Folder</source>
-        <translation>Muokkaa jaettua kansiota</translation>
+        <translation>Editar directoris compartits</translation>
     </message>
     <message>
         <source>Select A Folder To Share</source>
-        <translation>Valitse kansio jaettavaksi</translation>
+        <translation>Selecciona un directori a compartir</translation>
     </message>
 </context>
 <context>
     <name>ShareKey</name>
     <message>
         <source>Share Channel</source>
-        <translation>Jaa kanava</translation>
+        <translation>Compartir canal</translation>
     </message>
     <message>
         <source>check peers you would like to share private publish key with</source>
-        <translation>rastita vertaiset, joiden kanssa haluat jakaa yksityisen julkaisuavaimesi</translation>
+        <translation>comprovar els contactes amb qui t&apos;agradaria compartir les claus de publicació</translation>
     </message>
     <message>
         <source>Share for Friend</source>
-        <translation>Jaa ystävälle</translation>
+        <translation>Compartit amb els amics</translation>
     </message>
     <message>
         <source>Select the Friends with which you want to Share your Channel.</source>
-        <translation>Valitse ystävät, joille haluat jakaa kanavasi</translation>
+        <translation>Seleccionar els amics com vols compartir el teu canal.</translation>
     </message>
     <message>
         <source>Contacts:</source>
-        <translation>Kontaktit:</translation>
+        <translation>Contactes:</translation>
     </message>
     <message>
         <source>Please select at least one peer</source>
-        <translation>Valitse ainakin yksi vertainen</translation>
+        <translation>Si us plau, escull com a mínim un contacte</translation>
     </message>
 </context>
 <context>
     <name>ShareManager</name>
     <message>
         <source>RetroShare Share Manager</source>
-        <translation>RetroSharen jakamisten hallinta</translation>
+        <translation>Directori de compartits del RetroShare</translation>
     </message>
     <message>
         <source>Shared Folder Manager</source>
-        <translation>Jaettujen kansioiden hallinta</translation>
+        <translation>Directori de directoris compartits</translation>
     </message>
     <message>
         <source>Directory</source>
-        <translation>Hakemisto</translation>
+        <translation>Directori</translation>
     </message>
     <message>
         <source>Virtual Folder</source>
-        <translation>Virtuaalinen kansio</translation>
+        <translation>Directori virtual</translation>
     </message>
     <message>
         <source>Share flags</source>
-        <translation>Jakoilmaisimet</translation>
+        <translation>Permisos de compartició</translation>
     </message>
     <message>
         <source>Groups</source>
-        <translation>Ryhmät</translation>
+        <translation>Grups</translation>
     </message>
     <message>
         <source>Add a Share Directory</source>
-        <translation>Lisää jaettava hakemisto</translation>
+        <translation>Afegeix un directori compartit</translation>
     </message>
     <message>
         <source>Add</source>
-        <translation>Lisää</translation>
+        <translation>Afegir</translation>
     </message>
     <message>
         <source>Stop sharing selected Directory</source>
-        <translation>Lopeta valitun hakemiston jakaminen</translation>
+        <translation>Deixa de compartir el directori seleccionat</translation>
     </message>
     <message>
         <source>Remove</source>
-        <translation>Poista</translation>
+        <translation>Treure</translation>
     </message>
     <message>
         <source>Apply and close</source>
-        <translation>Käytä ja sulje</translation>
+        <translation>Aplicar i tancar</translation>
     </message>
     <message>
         <source>Edit selected Shared Directory</source>
-        <translation>Muokkaa valittua jaettua hakemistoa</translation>
+        <translation>Editar directori compartit seleccionat</translation>
     </message>
     <message>
         <source>Edit</source>
-        <translation>Muokkaa</translation>
+        <translation>Editar</translation>
     </message>
     <message>
         <source>Share Manager</source>
-        <translation>Jakamisen hallinta</translation>
+        <translation>Directori de compartits</translation>
     </message>
     <message>
         <source>Edit Shared Folder</source>
-        <translation>Muokkaa jaettua kansiota</translation>
+        <translation>Editar directoris compartits</translation>
     </message>
     <message>
         <source>Warning!</source>
-        <translation>Varoitus!</translation>
+        <translation>Avís!</translation>
     </message>
     <message>
         <source>Do you really want to stop sharing this directory ?</source>
-        <translation>Haluatko todella lopettaa tämän hakemiston jakamisen?</translation>
+        <translation>Segur que vols deixar de compartir aquest directori?</translation>
     </message>
     <message>
         <source>Drop file error.</source>
-        <translation>Virhe pudotettaessa tiedostoa.</translation>
+        <translation>Error al deixar l&apos;arxiu.</translation>
     </message>
     <message>
         <source>File can&apos;t be dropped, only directories are accepted.</source>
-        <translation>Tiedostoa ei voi pudottaa, vain hakemistot käyvät.</translation>
+        <translation>No es pot deixar anar arxius, només directoris.</translation>
     </message>
     <message>
         <source>Directory not found or directory name not accepted.</source>
-        <translation>Hakemistoa ei löydy tai nimeä ei hyväksytty.</translation>
+        <translation>Directori no trobat o nom del directori no acceptat.</translation>
     </message>
     <message>
         <source>This is a list of shared folders. You can add and remove folders using the buttons at the bottom. When you add a new folder, intially all files in that folder are shared. You can separately setup share flags for each shared directory.</source>
-        <translation>Tämä on luettelo jaetuista kansioista. Voit lisätä ja poistaa kansioita alareunan painikkeiden avulla. Kun lisäät uuden kansion, aluksi kaikki kyseisen kansion tiedostot jaetaan. Voit erikseen määritellä jakomerkkejä kullekin jaetulle kansiolle.</translation>
+        <translation>Aquesta és una llista dels directoris compartits. Pots afegir-ne i treure&apos;n utilitzant els botons a la part inferior. Quan afegeixes un nou directori inicialment tots els seus arxius es comparteixen. Pots especificar permisos específics per cada directori.</translation>
     </message>
 </context>
 <context>
     <name>SharedFilesDialog</name>
     <message>
         <source>Files</source>
-        <translation>Tiedostot</translation>
+        <translation>Arxius</translation>
     </message>
     <message>
         <source>Search files</source>
-        <translation>Etsi tiedostoja</translation>
+        <translation>Cercar arxius</translation>
     </message>
     <message>
         <source>Start Search</source>
-        <translation>Aloita etsintä</translation>
+        <translation>Iniciar cerca</translation>
     </message>
     <message>
         <source>Reset</source>
-        <translation>Palauta näkymä</translation>
+        <translation>Restablir</translation>
     </message>
     <message>
         <source>Tree view</source>
-        <translation>Puunäkymä</translation>
+        <translation>Vista d&apos;arbre</translation>
     </message>
     <message>
         <source>Flat view</source>
-        <translation>Tasanäkymä</translation>
+        <translation>Vista plana</translation>
     </message>
     <message>
         <source>All</source>
-        <translation>Kaikki</translation>
+        <translation>Tot</translation>
     </message>
     <message>
         <source>One day old</source>
-        <translation>Päivän vanhat</translation>
+        <translation>Un dia d&apos;edat</translation>
     </message>
     <message>
         <source>One Week old</source>
-        <translation>Viikon vanhat</translation>
+        <translation>Un setmana d&apos;edat</translation>
     </message>
     <message>
         <source>One month old</source>
-        <translation>Kuukauden vanhat</translation>
+        <translation>Un mes d&apos;edat</translation>
     </message>
     <message>
         <source>check files</source>
-        <translation>tarkista tiedostot</translation>
+        <translation>comprovar arxius</translation>
     </message>
     <message>
         <source>Download selected</source>
-        <translation>Lataa valitut</translation>
+        <translation>Descarregar seleccionats</translation>
     </message>
     <message>
         <source>Download</source>
-        <translation>Lataa</translation>
+        <translation>Descarregar</translation>
     </message>
     <message>
         <source>Copy retroshare Links to Clipboard</source>
-        <translation>Kopioi RetroShare-linkit leikepöydälle</translation>
+        <translation>Copiar enllaç RetroShare al porta-retalls</translation>
     </message>
     <message>
         <source>Copy retroshare Links to Clipboard (HTML)</source>
-        <translation>Kopioi RetroShare-linkit leikepöydälle (HTML)</translation>
+        <translation>Copiar enllaç RetroShare al porta-retalls (HTML)</translation>
     </message>
     <message>
         <source>Send retroshare Links</source>
-        <translation>Lähetä RetroShare-linkit</translation>
+        <translation>Enviar enllaç RetroShare</translation>
     </message>
     <message>
         <source>Send retroshare Links to Cloud</source>
-        <translation>Lähetä RetroShare-linkit pilveen</translation>
+        <translation>Enviar enllaç RetroShare al núvol</translation>
     </message>
     <message>
         <source>Add Links to Cloud</source>
-        <translation>Lisää linkit pilveen</translation>
+        <translation>Afegir enllaços al núvol</translation>
     </message>
     <message>
         <source>RetroShare Link</source>
-        <translation>RetroShare-linkki</translation>
+        <translation>Enllaç RetroShare</translation>
     </message>
     <message>
         <source>Recommendation(s)</source>
-        <translation>Suositukset</translation>
+        <translation>Consell(s)</translation>
     </message>
 </context>
 <context>
     <name>SoundPage</name>
     <message>
         <source>Event:</source>
-        <translation>Tapahtuma:</translation>
+        <translation>Esdeveniment:</translation>
     </message>
     <message>
         <source>Filename:</source>
-        <translation>Tiedosto:</translation>
+        <translation>Nom d&apos;arxiu:</translation>
     </message>
     <message>
         <source>Browse</source>
-        <translation>Selaa</translation>
+        <translation>Navegar</translation>
     </message>
     <message>
         <source>Event</source>
-        <translation>Tapahtuma</translation>
+        <translation>Esdeveniment</translation>
     </message>
     <message>
         <source>Filename</source>
-        <translation>Tiedostonimi</translation>
+        <translation>Nom d&apos;arxiu</translation>
     </message>
     <message>
         <source>Friend</source>
-        <translation>Ystävä</translation>
+        <translation>Amic</translation>
     </message>
     <message>
         <source>go Online</source>
-        <translation>tulee linjoille</translation>
+        <translation>posar-se en línia</translation>
     </message>
     <message>
         <source>Chatmessage</source>
-        <translation>Keskusteluviesti</translation>
+        <translation>missatge de xat</translation>
     </message>
     <message>
         <source>New Msg</source>
-        <translation>Uusi viesti</translation>
+        <translation>Mstg nou</translation>
     </message>
     <message>
         <source>Message</source>
-        <translation>Viesti</translation>
+        <translation>Missatge</translation>
     </message>
     <message>
         <source>Message arrived</source>
-        <translation>Viesti saapunut</translation>
+        <translation>El missatge ha arribat</translation>
     </message>
     <message>
         <source>Download</source>
-        <translation>Lataa</translation>
+        <translation>Descarregar</translation>
     </message>
     <message>
         <source>Download complete</source>
-        <translation>Lataus suoritettu</translation>
+        <translation>Descarrega completa</translation>
     </message>
     <message>
         <source>Open File</source>
-        <translation>Avaa tiedosto</translation>
+        <translation>Obrir arxiu</translation>
     </message>
     <message>
         <source>Sound</source>
-        <translation>Ääni</translation>
+        <translation>So</translation>
     </message>
 </context>
 <context>
     <name>SoundStatus</name>
     <message>
         <source>Sound on</source>
-        <translation>Äänet päälle</translation>
+        <translation>So activat</translation>
     </message>
     <message>
         <source>Sound off</source>
-        <translation>Äänet pois</translation>
+        <translation>So desactivat</translation>
     </message>
 </context>
 <context>
     <name>SplashScreen</name>
     <message>
         <source>Load profile</source>
-        <translation>Avaa profiili</translation>
+        <translation>Carrega perfil</translation>
     </message>
     <message>
         <source>Load configuration</source>
-        <translation>Avataan asetuksia</translation>
+        <translation>Carrega configuració</translation>
     </message>
     <message>
         <source>Create interface</source>
-        <translation>Luodaan käyttöliittymää</translation>
+        <translation>Crear interfície</translation>
     </message>
 </context>
 <context>
@@ -13288,27 +13289,27 @@ Oletusarvo on 20.</translation>
     </message>
     <message>
         <source>Login</source>
-        <translation>Kirjaudu</translation>
+        <translation>Validació</translation>
     </message>
     <message>
         <source>Name (PGP Id) - location:</source>
-        <translation>Nimi (PGP-tunniste) - sijainti:</translation>
+        <translation>Nom (PGP Id) - ubicació:</translation>
     </message>
     <message>
         <source>Remember Password</source>
-        <translation>Tallenna salasana</translation>
+        <translation>Recordar contrasenya</translation>
     </message>
     <message>
         <source>Log In</source>
-        <translation>Kirjaudu sisään</translation>
+        <translation>Validar-se</translation>
     </message>
     <message>
         <source>Opens a dialog for creating a new profile or 
 adding locations to an existing profile. 
 The current identities/locations will not be affected.</source>
-        <translation>Avaa ikkunan uuden profiilin luomiseksi tai
-sijaintien lisäämiseksi olemassaolevaan profiiliin.
-Ei vaikuta nykyisiin identiteetteihin/sijainteihin.</translation>
+        <translation>Obre una finestra de diàleg per crear un nou perfil o ⏎
+afegir una nova ubicació a un perfil ja existent. ⏎
+La identitat i ubicació actuals no es veuran afectades.</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -13316,23 +13317,23 @@ Ei vaikuta nykyisiin identiteetteihin/sijainteihin.</translation>
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Manage profiles and locations...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Hallitse profiileja ja sijainteja...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
+p, li { white-space: pre-wrap; }⏎
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Controlar perfils i ubicacions...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Load Person Failure</source>
-        <translation>Henkilön lataaminen epäonnistui</translation>
+        <translation>Carrega de persona fallada</translation>
     </message>
     <message>
         <source>Missing PGP Certificate</source>
-        <translation>Puuttuva PGP-varmenne</translation>
+        <translation>Falta certificat PGP</translation>
     </message>
     <message>
         <source>Warning</source>
-        <translation>Varoitus</translation>
+        <translation>Avís</translation>
     </message>
     <message>
         <source>The password to your SSL certificate (your location) will be stored encrypted in your Gnome Keyring. 
@@ -13340,11 +13341,11 @@ p, li { white-space: pre-wrap; }
  Your PGP passwd will not be stored.
 
 This choice can be reverted in settings.</source>
-        <translation>SSL-varmenteesi (sijaintisi) salasana tallennetaan salattuna Gnome-avainnippuusi.
-
-PGP-salasanaasi ei tallenneta.
-
-Tämä valinta voidaan kumota asetuksista.</translation>
+        <translation>La contrasenya del teu certificat SSL (per la teva ubicació) es desarà encriptat a l&apos;anell de claus de Gnome. ⏎
+⏎
+No és desarà la teva contrasenya de PGP.⏎
+⏎
+Això es pot canviar a les opcions de configuració.</translation>
     </message>
     <message>
         <source>The password to your SSL certificate (your location) will be stored encrypted in your Keychain. 
@@ -13352,11 +13353,11 @@ Tämä valinta voidaan kumota asetuksista.</translation>
  Your PGP passwd will not be stored.
 
 This choice can be reverted in settings.</source>
-        <translation>SSL-varmenteesi (sijaintisi) salasana tallennetaan salattuna avainnippuusi.
-
-PGP-salasanaasi ei tallenneta.
-
-Tämä valinta voidaan kumota asetuksista.</translation>
+        <translation>La contrasenya del teu certificat SSL (per la teva ubicació) es desarà encriptada al teu anell de claus.⏎
+⏎
+No és desarà la teva contrasenya de PGP.⏎
+⏎
+Això es pot canviar a les opcions de configuració.</translation>
     </message>
     <message>
         <source>The password to your SSL certificate (your location) will be stored encrypted in the keys/help.dta file. This is not secure. 
@@ -13364,113 +13365,113 @@ Tämä valinta voidaan kumota asetuksista.</translation>
  Your PGP password will not be stored.
 
 This choice can be reverted in settings.</source>
-        <translation>SSL-varmenteesi (sijaintisi) salasana tallennetaan salattuna keys/help.dta-tiedostoon. Tämä ei ole turvallista.
-
-PGP-salasanaasi ei tallenneta.
-
-Tämä valinta voidaan kumota asetuksista.</translation>
+        <translation>La contrasenya del teu certificat SSL (per la teva ubicació) es desarà encriptada a l&apos;arxiu keys/help.dta. Això no es considera segur.⏎
+⏎
+No és desarà la teva contrasenya de PGP.⏎
+⏎
+Això es pot canviar a les opcions de configuració.</translation>
     </message>
 </context>
 <context>
     <name>StatusDefs</name>
     <message>
         <source>Offline</source>
-        <translation>Offline</translation>
+        <translation>Fora de línia</translation>
     </message>
     <message>
         <source>Away</source>
-        <translation>Poissa</translation>
+        <translation>Absent</translation>
     </message>
     <message>
         <source>Busy</source>
-        <translation>Kiireinen</translation>
+        <translation>Ocupat</translation>
     </message>
     <message>
         <source>Online</source>
-        <translation>Linjoilla</translation>
+        <translation>En línia</translation>
     </message>
     <message>
         <source>Idle</source>
-        <translation>Jouten</translation>
+        <translation>Inactiu</translation>
     </message>
     <message>
         <source>Friend is offline</source>
-        <translation>Ystävä on offline</translation>
+        <translation>L&apos;amic no està connectat</translation>
     </message>
     <message>
         <source>Friend is away</source>
-        <translation>Ystävä on poissa</translation>
+        <translation>L&apos;amic és absent</translation>
     </message>
     <message>
         <source>Friend is busy</source>
-        <translation>Ystävä on kiireinen</translation>
+        <translation>L&apos;amic està ocupat</translation>
     </message>
     <message>
         <source>Friend is online</source>
-        <translation>Ystävä on linjoilla</translation>
+        <translation>L&apos;amic és en línia</translation>
     </message>
     <message>
         <source>Friend is idle</source>
-        <translation>Ystävä on jouten</translation>
+        <translation>L&apos;amic està inactiu</translation>
     </message>
     <message>
         <source>Connected</source>
-        <translation>Yhteydessä</translation>
+        <translation>Connectat</translation>
     </message>
     <message>
         <source>Unreachable</source>
-        <translation>Tavoittamattomissa</translation>
+        <translation>Fora d&apos;abast</translation>
     </message>
     <message>
         <source>Available</source>
-        <translation>Saatavilla</translation>
+        <translation>Disponible</translation>
     </message>
     <message>
         <source>Neighbor</source>
-        <translation>Naapuri</translation>
+        <translation>Veí</translation>
     </message>
     <message>
         <source>Trying tunnel connection</source>
-        <translation>Yritetään tunneliyhteyttä</translation>
+        <translation>Intentat connexió túnel</translation>
     </message>
     <message>
         <source>Trying TCP</source>
-        <translation>Yritetään TCP:tä</translation>
+        <translation>Intentant TCP</translation>
     </message>
     <message>
         <source>Trying UDP</source>
-        <translation>Yritetään UDP:tä</translation>
+        <translation>Intentant UDP</translation>
     </message>
     <message>
         <source>Connected: TCP</source>
-        <translation>Yhdistetty: TCP</translation>
+        <translation>Connectat: TCP</translation>
     </message>
     <message>
         <source>Connected: UDP</source>
-        <translation>Yhdistetty: UDP</translation>
+        <translation>Connectat: UDP</translation>
     </message>
     <message>
         <source>Connected: Tunnel</source>
-        <translation>Yhdistetty: Tunneli</translation>
+        <translation>Connectat: Túnel</translation>
     </message>
     <message>
         <source>Connected: Unknown</source>
-        <translation>Yhdistetty: Tuntematon</translation>
+        <translation>Connectat: Desconegut</translation>
     </message>
     <message>
         <source>DHT: Contact</source>
-        <translation>DHT: yhteys</translation>
+        <translation>DHT: Contacte</translation>
     </message>
 </context>
 <context>
     <name>StatusMessage</name>
     <message>
         <source>Status message</source>
-        <translation>Tilaviesti</translation>
+        <translation>Missatge d&apos;estat</translation>
     </message>
     <message>
         <source>Message:</source>
-        <translation>Viesti:</translation>
+        <translation>Missatge:</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -13478,11 +13479,11 @@ Tämä valinta voidaan kumota asetuksista.</translation>
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;Status message&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;Tilaviesti&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
+p, li { white-space: pre-wrap; }⏎
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;Missatge d&apos;estat&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -13490,189 +13491,189 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;Enter your message&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Kirjoita tilaviestisi&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
+p, li { white-space: pre-wrap; }⏎
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; color:#666666;&quot;&gt;Introdueix el teu missatge&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
     <name>StyleDialog</name>
     <message>
         <source>Define Style</source>
-        <translation>Määritä tyyli</translation>
+        <translation>Defineix estil</translation>
     </message>
     <message>
         <source>Choose color</source>
-        <translation>Valitse väri</translation>
+        <translation>Escull el color</translation>
     </message>
     <message>
         <source>Color 2</source>
-        <translation>Väri 2</translation>
+        <translation>Color 2</translation>
     </message>
     <message>
         <source>Color 1</source>
-        <translation>Väri 1</translation>
+        <translation>Color 1</translation>
     </message>
     <message>
         <source>Style</source>
-        <translation>Tyyli</translation>
+        <translation>Estil</translation>
     </message>
     <message>
         <source>None</source>
-        <translation>Ei mikään</translation>
+        <translation>Cap</translation>
     </message>
     <message>
         <source>Solid</source>
-        <translation>Tasainen</translation>
+        <translation>Sòlit</translation>
     </message>
     <message>
         <source>Gradient</source>
-        <translation>Liukuväri</translation>
+        <translation>Degradat</translation>
     </message>
 </context>
 <context>
     <name>SubFileItem</name>
     <message>
         <source>%p Kb</source>
-        <translation>%p Kb</translation>
+        <translation>%p kb</translation>
     </message>
     <message>
         <source>Cancel Download</source>
-        <translation>Peru lataus</translation>
+        <translation>Cancel·lar baixada</translation>
     </message>
     <message>
         <source>Download File</source>
-        <translation>Lataa tiedosto</translation>
+        <translation>Descarregar arxiu</translation>
     </message>
     <message>
         <source>Download</source>
-        <translation>Lataa</translation>
+        <translation>Descarregar</translation>
     </message>
     <message>
         <source>Play File</source>
-        <translation>Toista tiedosto</translation>
+        <translation>Reproduir arxiu</translation>
     </message>
     <message>
         <source>Play</source>
-        <translation>Toista</translation>
+        <translation>Reproduir</translation>
     </message>
     <message>
         <source>Save File</source>
-        <translation>Tallenna tiedosto</translation>
+        <translation>Desar arxiu</translation>
     </message>
     <message>
         <source>ERROR</source>
-        <translation>VIRHE</translation>
+        <translation>ERROR</translation>
     </message>
     <message>
         <source>EXTRA</source>
-        <translation>YLIMÄÄRÄINEN</translation>
+        <translation>EXTRA</translation>
     </message>
     <message>
         <source>REMOTE</source>
-        <translation>ETÄ</translation>
+        <translation>REMOT</translation>
     </message>
     <message>
         <source>DOWNLOAD</source>
-        <translation>LATAUS</translation>
+        <translation>DESCARREGAR</translation>
     </message>
     <message>
         <source>LOCAL</source>
-        <translation>PAIKALLINEN</translation>
+        <translation>LOCAL</translation>
     </message>
     <message>
         <source>UPLOAD</source>
-        <translation>LÄHETYS</translation>
+        <translation>PUJADA</translation>
     </message>
     <message>
         <source>Remove Attachment</source>
-        <translation>Poista liite</translation>
+        <translation>Eliminar adjunt</translation>
     </message>
     <message>
         <source>File %1 does not exist at location.</source>
-        <translation>Tiedostoa %1 ei löydy sijainnista.</translation>
+        <translation>L&apos;arxiu %1 no existeix a la ruta.</translation>
     </message>
     <message>
         <source>File %1 is not completed.</source>
-        <translation>Tiedosto %1 ei ole valmistunut.</translation>
+        <translation>L&apos;arxiu %1 no s&apos;ha completat.</translation>
     </message>
     <message>
         <source>Save Channel File</source>
-        <translation>Tallenna kanavatiedosto</translation>
+        <translation>Desar arxiu de canal</translation>
     </message>
     <message>
         <source>Open</source>
-        <translation>Avaa</translation>
+        <translation>Obrir</translation>
     </message>
     <message>
         <source>Open File</source>
-        <translation>Avaa tiedosto</translation>
+        <translation>Obrir arxiu</translation>
     </message>
 </context>
 <context>
     <name>TBoard</name>
     <message>
         <source>Pause</source>
-        <translation>Tauko</translation>
+        <translation>Pausa</translation>
     </message>
 </context>
 <context>
     <name>TagDefs</name>
     <message>
         <source>Important</source>
-        <translation>Tärkeä</translation>
+        <translation>Important</translation>
     </message>
     <message>
         <source>Work</source>
-        <translation>Työ</translation>
+        <translation>Treball</translation>
     </message>
     <message>
         <source>Personal</source>
-        <translation>Henkilökohtainen</translation>
+        <translation>Personal</translation>
     </message>
     <message>
         <source>Todo</source>
-        <translation>Tehtävät</translation>
+        <translation>Pendent</translation>
     </message>
     <message>
         <source>Later</source>
-        <translation>Myöhemmin</translation>
+        <translation>Més tard</translation>
     </message>
 </context>
 <context>
     <name>TagsMenu</name>
     <message>
         <source>Remove All Tags</source>
-        <translation>Poista kaikki merkkaukset</translation>
+        <translation>Eliminar totes les etiquetes</translation>
     </message>
     <message>
         <source>New tag ...</source>
-        <translation>Uusi merkkaus...</translation>
+        <translation>Nova etiqueta...</translation>
     </message>
 </context>
 <context>
     <name>TransferPage</name>
     <message>
         <source>Transfer options</source>
-        <translation>Siirtoasetukset</translation>
+        <translation>Opcions de transferència</translation>
     </message>
     <message>
         <source>Maximum simultaneous downloads:</source>
-        <translation>Samanaikaisten latausten maksimimäärä:</translation>
+        <translation>Màxim de descarregues simultànies:</translation>
     </message>
     <message>
         <source>Slots reserved for non-cache transfers:</source>
-        <translation>Muille kuin välimuistin siirroille varatut paikat:</translation>
+        <translation>Ranures reservades per transferències normals:</translation>
     </message>
     <message>
         <source>Default chunk strategy:</source>
-        <translation>Palasten oletusstrategia:</translation>
+        <translation>Estratègia de descarrega per defecte:</translation>
     </message>
     <message>
         <source>Safety disk space limit :</source>
-        <translation>Kiintolevytilan turvallisuusrajoitus:</translation>
+        <translation>Límit de seguretat d&apos;espai lliure al disc:</translation>
     </message>
     <message>
         <source>You can use this to force RetroShare to download your files rather 
@@ -13681,28 +13682,28 @@ to be equal to the queue size above will always prioritize your files
 over cache. 
 
 It is however recommended to leave at least a few slots for cache files.</source>
-        <translation>Voit käyttää tätä pakottaaksesi RetroSharen lataamaan tiedostosi sen sijaan,
-että se loisi välimuistitiedostoja pyydetyille latauspaikoille. Luvun asettaminen
-samaksi kuin jonon koko varmistaa, että tiedostot ovat aina
-tärkeysjärjestyksessä välimuistia edellä.
-
-On kuitenkin suositeltavaa jättää ainakin muutama paikka välimuistitiedostoja varten.</translation>
+        <translation>Pots forçar que el RetroShare descarregui arxius teus en lloc de ⏎
+arxius de cau per tantes ranures com sol·licitis. Posant aquest valor⏎
+al mateix que la mida de la cua de sobre farà que sempre tinguin ⏎
+prioritat els arxius en descarrega per sobre del de cau. ⏎
+⏎
+No obstant, es recomana deixar algunes ranures lliures pels arxius cau.</translation>
     </message>
     <message>
         <source>Streaming</source>
-        <translation>Suoratoisto</translation>
+        <translation>En flux</translation>
     </message>
     <message>
         <source>Progressive</source>
-        <translation>Etenevä</translation>
+        <translation>Progressiu</translation>
     </message>
     <message>
         <source>Random</source>
-        <translation>Satunnainen</translation>
+        <translation>Aleatori</translation>
     </message>
     <message>
         <source> MB</source>
-        <translation> MB</translation>
+        <translation>MB</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -13714,294 +13715,294 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-size:8pt;&quot;&gt;You can separately setup share flags for each shared directory in the shared files dialog to be:&lt;/span&gt;&lt;/p&gt;
 &lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-family:'Sans'; font-size:8pt;&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Browsable by friends&lt;/span&gt;: files are seen by your friends.&lt;/li&gt;
 &lt;li style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Anonymously shared&lt;/span&gt;: files are anonymously reachable through distant F2F tunnels.&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;RetroShare&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt; pystyy siirtämään dataa ja hakutuloksia myös sellaisten vertaisten välillä, jotka eivät ole ystäviä. Tämä liikenne tapahtuu kuitenkin vain kytköksissä olevien ystävien kautta ja on anonyymiä.&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;Voit määritellä erikseen jakamismerkinnät jokaiselle jaetulle hakemistolle:&lt;/span&gt;&lt;/p&gt;
-&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Ystävien selattavissa&lt;/span&gt;: tiedostot näkyvät ystävillesi.&lt;/li&gt;
-&lt;li style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Nimettömästi jaettu&lt;/span&gt;: tiedostoihin pääsee käsiksi nimettömänä etäisten F2F-tunneleiden kautta.&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;⏎
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;⏎
+p, li { white-space: pre-wrap; }⏎
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;RetroShare&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt; és capaç de transferir dades i peticions de cerca entre contactes que no necessariament siguin amics. No obstant, aquest tràfic només passa entre els amics connectats i és anònima.&lt;/span&gt;&lt;/p&gt;⏎
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;⏎
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;Pots especificar per separat els permisos de compartició per cada directori compartit a la finestra d&apos;arxius compartits:&lt;/span&gt;&lt;/p&gt;⏎
+&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Navegables pels amics:&lt;/span&gt;: Els arxius són vistos pels teus amics.&lt;/li&gt;⏎
+&lt;li style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Compartits anònimament&lt;/span&gt;: Els arxius es poden descarregar a través de túnels anònims.&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Transfer</source>
-        <translation>Siirto</translation>
+        <translation>Transferencia</translation>
     </message>
 </context>
 <context>
     <name>TransferUserNotify</name>
     <message>
         <source>Download completed</source>
-        <translation>Lataus suoritettu</translation>
+        <translation>Descarrega completa</translation>
     </message>
     <message>
         <source>You have %1 completed downloads</source>
-        <translation>Sinulla on %1 kpl valmiita latauksia</translation>
+        <translation>Tens %1 descarregues completes</translation>
     </message>
     <message>
         <source>You have %1 completed download</source>
-        <translation>Sinulla on %1 valmis lataus</translation>
+        <translation>Tens %1 descarrega completa</translation>
     </message>
     <message>
         <source>%1 completed downloads</source>
-        <translation>%1 kpl valmiita latauksia</translation>
+        <translation>%1 descarregues completades</translation>
     </message>
     <message>
         <source>%1 completed download</source>
-        <translation>%1 valmis lataus</translation>
+        <translation>%1 descarrega completada</translation>
     </message>
 </context>
 <context>
     <name>TransfersDialog</name>
     <message>
         <source>Downloads</source>
-        <translation>Lataukset</translation>
+        <translation>Descarregues</translation>
     </message>
     <message>
         <source>Uploads</source>
-        <translation>Lähetykset</translation>
+        <translation>Pujades</translation>
     </message>
     <message>
         <source>Name</source>
         <comment>i.e: file name</comment>
-        <translation>Nimi</translation>
+        <translation>Nom</translation>
     </message>
     <message>
         <source>Size</source>
         <comment>i.e: file size</comment>
-        <translation>Koko</translation>
+        <translation>Mida</translation>
     </message>
     <message>
         <source>Completed</source>
-        <translation>Valmis</translation>
+        <translation>Completat</translation>
     </message>
     <message>
         <source>Speed</source>
         <comment>i.e: Download speed</comment>
-        <translation>Nopeus</translation>
+        <translation>Velocitat</translation>
     </message>
     <message>
         <source>Progress / Availability</source>
         <comment>i.e: % downloaded</comment>
-        <translation>Edistyminen / saatavuus</translation>
+        <translation>Progrés / Disponibilitat</translation>
     </message>
     <message>
         <source>Sources</source>
         <comment>i.e: Sources</comment>
-        <translation>Lähteet</translation>
+        <translation>Fonts</translation>
     </message>
     <message>
         <source>Status</source>
-        <translation>Tila</translation>
+        <translation>Estat</translation>
     </message>
     <message>
         <source>Speed / Queue position</source>
-        <translation>Nopeus / paikka jonossa</translation>
+        <translation>Velocitat / Posició a la cua</translation>
     </message>
     <message>
         <source>Remaining</source>
-        <translation>Jäljellä</translation>
+        <translation>Restant</translation>
     </message>
     <message>
         <source>Download time</source>
         <comment>i.e: Estimated Time of Arrival / Time left</comment>
-        <translation>Latausaika</translation>
+        <translation>Temps de descarrega</translation>
     </message>
     <message>
         <source>Peer</source>
         <comment>i.e: user name</comment>
-        <translation>Vertainen</translation>
+        <translation>Contacte</translation>
     </message>
     <message>
         <source>Progress</source>
         <comment>i.e: % uploaded</comment>
-        <translation>Edistyminen</translation>
+        <translation>Progrés</translation>
     </message>
     <message>
         <source>Speed</source>
         <comment>i.e: upload speed</comment>
-        <translation>Nopeus</translation>
+        <translation>Velocitat</translation>
     </message>
     <message>
         <source>Transferred</source>
-        <translation>Siirretty</translation>
+        <translation>Transferit</translation>
     </message>
     <message>
         <source>Hash</source>
-        <translation>Tiiviste (hash)</translation>
+        <translation>Hash</translation>
     </message>
     <message>
         <source>Search</source>
-        <translation>Etsi</translation>
+        <translation>Cerca</translation>
     </message>
     <message>
         <source>Friends files</source>
-        <translation>Ystävien tiedostot</translation>
+        <translation>Arxius d&apos;amics</translation>
     </message>
     <message>
         <source>My files</source>
-        <translation>Omat tiedostoni</translation>
+        <translation>Els meus arxius</translation>
     </message>
     <message>
         <source>Show cache transfers</source>
-        <translation>Näytä välimuistisiirrot</translation>
+        <translation>Mostra les transferencies cau</translation>
     </message>
     <message>
         <source>Download from collection file...</source>
-        <translation>Lataa kokoelmatiedostosta...</translation>
+        <translation>Descarregar d&apos;arxiu de col·lecció...</translation>
     </message>
     <message>
         <source>Pause</source>
-        <translation>Tauko</translation>
+        <translation>Pausar</translation>
     </message>
     <message>
         <source>Resume</source>
-        <translation>Jatka</translation>
+        <translation>Continuar</translation>
     </message>
     <message>
         <source>Force Check</source>
-        <translation>Pakota tarkistus</translation>
+        <translation>Forçar comprovació</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Peru</translation>
+        <translation>Cancel·la</translation>
     </message>
     <message>
         <source>Open Folder</source>
-        <translation>Avaa kansio</translation>
+        <translation>Obrir directori</translation>
     </message>
     <message>
         <source>Open File</source>
-        <translation>Avaa tiedosto</translation>
+        <translation>Obrir arxiu</translation>
     </message>
     <message>
         <source>Preview File</source>
-        <translation>Esikatsele tiedostoa</translation>
+        <translation>Vista prèvia d&apos;arxiu</translation>
     </message>
     <message>
         <source>Details...</source>
-        <translation>Tiedot...</translation>
+        <translation>Detalls...</translation>
     </message>
     <message>
         <source>Clear Completed</source>
-        <translation>Tyhjennä valmistuneet</translation>
+        <translation>Netejar completats</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
-        <translation>Kopioi RetroShare-linkki</translation>
+        <translation>Copia l&apos;enllaç RetroShare</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
-        <translation>Liitä RetroShare-linkki</translation>
+        <translation>Enganxa l&apos;enllaç RetroShare</translation>
     </message>
     <message>
         <source>Down</source>
-        <translation>Sisään</translation>
+        <translation>Descarrega</translation>
     </message>
     <message>
         <source>Up</source>
-        <translation>Ulos</translation>
+        <translation>Pujada</translation>
     </message>
     <message>
         <source>Top</source>
-        <translation>Ylimmäiseksi</translation>
+        <translation>Capdamunt</translation>
     </message>
     <message>
         <source>Bottom</source>
-        <translation>Alimmaiseksi</translation>
+        <translation>Capdavall</translation>
     </message>
     <message>
         <source>Streaming</source>
-        <translation>Suoratoisto</translation>
+        <translation>En flux</translation>
     </message>
     <message>
         <source>Slower</source>
-        <translation>Hitaammin</translation>
+        <translation>Més lenta</translation>
     </message>
     <message>
         <source>Average</source>
-        <translation>Keskivertonopeudella</translation>
+        <translation>Mitjana</translation>
     </message>
     <message>
         <source>Faster</source>
-        <translation>Nopeammin</translation>
+        <translation>Més ràpida</translation>
     </message>
     <message>
         <source>Random</source>
-        <translation>Satunnainen</translation>
+        <translation>Aleatori</translation>
     </message>
     <message>
         <source>Progressive</source>
-        <translation>Etenevä</translation>
+        <translation>Progressiu</translation>
     </message>
     <message>
         <source>Play</source>
-        <translation>Toista</translation>
+        <translation>Reproduir</translation>
     </message>
     <message>
         <source>Rename file...</source>
-        <translation>Nimeä tiedosto uudelleen...</translation>
+        <translation>Canviar el nom d&apos;arxiu...</translation>
     </message>
     <message>
         <source>Specify...</source>
-        <translation>Määritä...</translation>
+        <translation>Especificar...</translation>
     </message>
     <message>
         <source>Move in Queue...</source>
-        <translation>Siirrä jonossa...</translation>
+        <translation>Moure a la cua...</translation>
     </message>
     <message>
         <source>Priority (Speed)...</source>
-        <translation>Tärkeysjärjestys (nopeus)...</translation>
+        <translation>Prioritat (Velocitat)...</translation>
     </message>
     <message>
         <source>Chunk strategy</source>
-        <translation>Palasten strategia</translation>
+        <translation>Estratègia pels trossos</translation>
     </message>
     <message>
         <source>Set destination directory</source>
-        <translation>Määritä kohdehakemisto</translation>
+        <translation>Establir directori de destí</translation>
     </message>
     <message>
         <source>Choose directory</source>
-        <translation>Valitse hakemisto</translation>
+        <translation>Escull directori</translation>
     </message>
     <message>
         <source>Failed</source>
-        <translation>Epäonnistunut</translation>
+        <translation>Fallat</translation>
     </message>
     <message>
         <source>Okay</source>
-        <translation>OK</translation>
+        <translation>Correcte</translation>
     </message>
     <message>
         <source>Waiting</source>
-        <translation>Odotetaan</translation>
+        <translation>Esperant</translation>
     </message>
     <message>
         <source>Downloading</source>
-        <translation>Ladataan</translation>
+        <translation>Descarregant</translation>
     </message>
     <message>
         <source>Complete</source>
-        <translation>Valmis</translation>
+        <translation>Complet</translation>
     </message>
     <message>
         <source>Queued</source>
-        <translation>Jonossa</translation>
+        <translation>En cua</translation>
     </message>
     <message>
         <source>Paused</source>
-        <translation>Tauolla</translation>
+        <translation>Pausat</translation>
     </message>
     <message>
         <source>Checking...</source>
-        <translation>Tarkistaa...</translation>
+        <translation>Comprovant...</translation>
     </message>
     <message>
         <source>Unknown</source>
-        <translation>Tuntematon</translation>
+        <translation>Desconegut</translation>
     </message>
     <message>
         <source>If the hash of the downloaded data does
@@ -14014,32 +14015,32 @@ map of the data; it will compare and invalidate
 bad blocks, and download them again
 
 Try to be patient!</source>
-        <translation>Jos ladatun tiedon tiiviste (hash) ei
-vastaa lähteen
-ilmoittamaa, tiedot ovat
-todennäköisesti vioittuneet.
-
-RetroShare pyytää lähteeltä yksityiskohtaista
-karttaa tiedosta; se vertaa ja poistaa
-huonoja kohtia ja lataa ne uudestaan
-
-Kärsivällisyyttä!</translation>
+        <translation>Si el número de hash de les dades descarregades⏎
+no es correspon amb l&apos;anunciat per la font de⏎
+l&apos;arxiu és probable que les dades siguin ⏎
+corruptes.⏎
+⏎
+El RetroShare demanarà a la font un mapa ⏎
+detallat de les dades; Compararà i invalidarà ⏎
+els trossos dolents i els tornarà a descarregar.⏎
+⏎
+Tingues paciència!</translation>
     </message>
     <message>
         <source>version: </source>
-        <translation>versio:</translation>
+        <translation>versió:</translation>
     </message>
     <message>
         <source>Transferring</source>
-        <translation>Siirretään</translation>
+        <translation>Transferint</translation>
     </message>
     <message>
         <source>Uploading</source>
-        <translation>Lähetetään</translation>
+        <translation>Pujant</translation>
     </message>
     <message>
         <source>Are you sure that you want to cancel and delete these files?</source>
-        <translation>Oletko varma, että haluat perua ja tuhota nämä tiedostot?</translation>
+        <translation>Segur que vols cancel·lar i esborrar aquest arxiu?</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -14047,378 +14048,378 @@ Kärsivällisyyttä!</translation>
     </message>
     <message>
         <source>File preview</source>
-        <translation>Tiedoston esikatselu</translation>
+        <translation>Prèvia de l&apos;arxiu</translation>
     </message>
     <message>
         <source>Can&apos;t create link for file %1.</source>
-        <translation>Linkin luonti tiedostolle %1 epäonnistui.</translation>
+        <translation>No es pot crear l&apos;enllaç per l&apos;arxiu %1.</translation>
     </message>
     <message>
         <source>File %1 preview failed.</source>
-        <translation>Tiedoston %1 esikatselu epäonnistui.</translation>
+        <translation>La vista prèvia de l&apos;arxiu %1 ha fallat.</translation>
     </message>
     <message>
         <source>Click OK when program terminates!</source>
-        <translation>Paina OK kun ohjelma lopettaa!</translation>
+        <translation>Clica OK quan el programa acabi!</translation>
     </message>
     <message>
         <source>Open Transfer</source>
-        <translation>Avaa siirto</translation>
+        <translation>Obrir transferencia</translation>
     </message>
     <message>
         <source>File %1 is not completed. If it is a media file, try to preview it.</source>
-        <translation>Tiedosto %1 ei ole valmis. Jos se on mediatiedosto, voit yrittää esikatsella sitä.</translation>
+        <translation>L&apos;arxiu %1 no s&apos;ha completat. Si es un fitxer multimèdia intenta una prèvia.</translation>
     </message>
     <message>
         <source>Change file name</source>
-        <translation>Muuta tiedostonimeä</translation>
+        <translation>Canviar el nom de l&apos;arxiu</translation>
     </message>
     <message>
         <source>Please enter a new file name</source>
-        <translation>Kirjoita uusi tiedostonimi</translation>
+        <translation>Si us plau, introdueix un nou nom d&apos;arxiu</translation>
     </message>
     <message>
         <source>Please enter a new--and valid--filename</source>
-        <translation>Kirjoita uusi ja validi tiedostonimi</translation>
+        <translation>Si us plau, introdueix un nou--i vàlid--nom d&apos;arxiu</translation>
     </message>
     <message>
         <source>Last Time Seen</source>
         <comment>i.e: Last Time Receiced Data</comment>
-        <translation>Viimeksi nähty</translation>
+        <translation>Vist per última vegada</translation>
     </message>
     <message>
         <source>UserID</source>
-        <translation>Käyttäjätunniste</translation>
+        <translation>IdUsuari</translation>
     </message>
     <message>
         <source>Expand all</source>
-        <translation>Laajenna kaikki</translation>
+        <translation>Expandeix tot</translation>
     </message>
     <message>
         <source>Collapse all</source>
-        <translation>Kutista kaikki</translation>
+        <translation>Contreure tot</translation>
     </message>
     <message>
         <source>Size</source>
-        <translation>Koko</translation>
+        <translation>Mida</translation>
     </message>
     <message>
         <source>Show Size Column</source>
-        <translation>Näytä Koko-sarake</translation>
+        <translation>Mostra Columna de mida</translation>
     </message>
     <message>
         <source>Show Completed Column</source>
-        <translation>Näytä Valmis-sarake</translation>
+        <translation>Mostra columna de completats</translation>
     </message>
     <message>
         <source>Speed</source>
-        <translation>Nopeus</translation>
+        <translation>Velocitat</translation>
     </message>
     <message>
         <source>Show Speed Column</source>
-        <translation>Näytä Nopeus-sarake</translation>
+        <translation>Mostra columna de velocitat</translation>
     </message>
     <message>
         <source>Progress / Availability</source>
-        <translation>Edistyminen / saatavuus</translation>
+        <translation>Progrés / Disponibilitat</translation>
     </message>
     <message>
         <source>Show Progress / Availability Column</source>
-        <translation>Näytä Edistyminen- / Saatavuus-sarake</translation>
+        <translation>Mostra columna de progrés / disponibilitat</translation>
     </message>
     <message>
         <source>Sources</source>
-        <translation>Lähteet</translation>
+        <translation>Fonts</translation>
     </message>
     <message>
         <source>Show Sources Column</source>
-        <translation>Näytä Lähteet-sarake</translation>
+        <translation>Mostra columna de fonts</translation>
     </message>
     <message>
         <source>Show Status Column</source>
-        <translation>Näytä Tila-sarake</translation>
+        <translation>Mostra columna d&apos;estat</translation>
     </message>
     <message>
         <source>Show Speed / Queue position Column</source>
-        <translation>Näytä Nopeus- / paikka jonossa -sarake</translation>
+        <translation>Mostra columna de velocitat / posició a la cua</translation>
     </message>
     <message>
         <source>Show Remaining Column</source>
-        <translation>Näytä Jäljellä-sarake</translation>
+        <translation>Mostra columna de restant</translation>
     </message>
     <message>
         <source>Download time</source>
-        <translation>Latausaika</translation>
+        <translation>Temps de descarrega</translation>
     </message>
     <message>
         <source>Show Download time Column</source>
-        <translation>Näytä Latausaika-sarake</translation>
+        <translation>Mostra columna de temps de descarrega</translation>
     </message>
     <message>
         <source>Show Hash Column</source>
-        <translation>Näytä Tiiviste-sarake</translation>
+        <translation>Mostra columna de número de hash</translation>
     </message>
     <message>
         <source>Last Time Seen</source>
-        <translation>Viimeksi nähty</translation>
+        <translation>Vist per última vegada</translation>
     </message>
     <message>
         <source>Show Last Time Seen Column</source>
-        <translation>Näytä Viimeksi nähty -sarake</translation>
+        <translation>Mostra columna de vist per última vegada</translation>
     </message>
     <message>
         <source>Columns</source>
-        <translation>Sarakkeet</translation>
+        <translation>Columnes</translation>
     </message>
     <message>
         <source>File Transfers</source>
-        <translation>Tiedostojen siirrot</translation>
+        <translation>Transferències d&apos;axius</translation>
     </message>
     <message>
         <source>Path</source>
         <comment>i.e: Where file is saved</comment>
-        <translation>Polku</translation>
+        <translation>Ruta</translation>
     </message>
     <message>
         <source>Path</source>
-        <translation>Polku</translation>
+        <translation>Ruta</translation>
     </message>
     <message>
         <source>Show Path Column</source>
-        <translation>Näytä Polku-sarake</translation>
+        <translation>Mostra columna de ruta</translation>
     </message>
     <message>
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;File Transfer&lt;/h1&gt;                                                             &lt;p&gt;Retroshare brings two ways of transferring files: direct transfers from your friends, and                                         distant anonymous tunnelled transfers. In addition, file transfer is multi-source and allows swarming                                          (you can be a source while downloading)&lt;/p&gt;                                         &lt;p&gt;You can share files using the &lt;img src=&quot;:/images/directoryadd_24x24_shadow.png&quot; width=16 /&gt; icon from the left side bar.     These files will be listed in the My Files tab. You can decide for each friend group whether they can or not see these files     in their Friends Files tab&lt;/p&gt;    &lt;p&gt;The search tab reports files from your friends&apos; file lists, and distant files that can be reached     anonymously using the multi-hop tunnelling system.&lt;/p&gt;     </source>
-        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Tiedostojen siirto&lt;/h1&gt;                                                         			 &lt;p&gt;Retroshare tarjoaa kaksi tapaa tiedostojen siirtoon: suorat siirrot ystäviltäsi ja                                     			 etäiset nimettömästi tunneloidut siirrot. Lisäksi, tiedostojen siirto tukee useita lähteitä ja parven hyödyntämistä                                      			 (olet lähde tiedostolle jo ladatessasi sitä)&lt;/p&gt;                                     			 &lt;p&gt;Voit jakaa tiedostoja käyttäen &lt;img src=&quot;:/images/directoryadd_24x24_shadow.png&quot; width=16 /&gt; -kuvaketta vasemmassa sivupalkissa. 				Nämä tiedostot on luetteloitu Omat tiedostoni -välilehdellä. Voit päättää jokaisen ystäväryhmän kohdalla, näkevätkö he tiedostosi. 				Ystävien tiedostot -välilehdellään&lt;/p&gt;			 &lt;p&gt;Etsi-välilehteä käyttäen voit löytää tiedostoja ystäviesi luetteloista sekä 			 etäisiä tiedostoja, joihin pääset käsiksi nimettömästi usean loikan tunnelointijärjestelmän avulla.&lt;/p&gt; 			 </translation>
+        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Transferència d&apos;arxiu&lt;/h1&gt; ⇥⇥⇥ &lt;p&gt;Retroshare contempla dues formes de fer això: transferències directes dels teus amics, i ⇥⇥⇥ transferències distants amb túnels anònims. A més amés, les transferències d&apos;arxius són multi-origen i permet fer-les en eixam ⇥⇥⇥ (pots ser origen mentre descarregues)&lt;/p&gt; ⇥⇥⇥ &lt;p&gt;Pots compartir arxius amb &lt;img src=&quot;:/images/directoryadd_24x24_shadow.png&quot; width=16 /&gt; la icona de la barra lateral esquerra. ⇥⇥⇥⇥Aquests arxius es llistaran a la pestanya els meus arxius. Pots triar per cada grup d&apos;amics si poden o no veure&apos;l ⇥⇥⇥⇥a la pestanya arxius d&apos;amics.&lt;/p&gt;⇥⇥⇥ &lt;p&gt;La pestanya cerca dona resultats pels arxius del teus amics i arxius que es poden accedir distants ⇥⇥⇥ anònimament utilitzant el sistema de túnels multi-salt.&lt;/p&gt; ⇥⇥⇥ </translation>
     </message>
 </context>
 <context>
     <name>TreeStyle_RDM</name>
     <message>
         <source>My files</source>
-        <translation>Omat tiedostoni</translation>
+        <translation>Els meus arxius</translation>
     </message>
     <message>
         <source>FILE</source>
-        <translation>TIEDOSTO</translation>
+        <translation>ARXIU</translation>
     </message>
     <message>
         <source>Files</source>
-        <translation>Tiedostot</translation>
+        <translation>Arxius</translation>
     </message>
     <message>
         <source>File</source>
-        <translation>Tiedosto</translation>
+        <translation>Arxiu</translation>
     </message>
     <message>
         <source>DIR</source>
-        <translation>HAK</translation>
+        <translation>DIR</translation>
     </message>
     <message>
         <source>Friends Directories</source>
-        <translation>Ystävien hakemistot</translation>
+        <translation>Directoris dels amics</translation>
     </message>
     <message>
         <source>My Directories</source>
-        <translation>Omat hakemistoni</translation>
+        <translation>Els meus directoris</translation>
     </message>
     <message>
         <source>Size</source>
-        <translation>Koko</translation>
+        <translation>Mida</translation>
     </message>
     <message>
         <source>Age</source>
-        <translation>Ikä</translation>
+        <translation>Edat</translation>
     </message>
     <message>
         <source>Friend</source>
-        <translation>Ystävä</translation>
+        <translation>Amic</translation>
     </message>
     <message>
         <source>Share Flags</source>
-        <translation>Jakoilmaisimet</translation>
+        <translation>Indicadors dels compartits</translation>
     </message>
     <message>
         <source>What&apos;s new</source>
-        <translation>Uudet</translation>
+        <translation>Que hi ha de nou</translation>
     </message>
     <message>
         <source>Groups</source>
-        <translation>Ryhmät</translation>
+        <translation>Grups</translation>
     </message>
 </context>
 <context>
     <name>TrustView</name>
     <message>
         <source>Zoom :</source>
-        <translation>Koko:</translation>
+        <translation>Zoom :</translation>
     </message>
     <message>
         <source>Update</source>
-        <translation>Päivitä</translation>
+        <translation>Actualitza</translation>
     </message>
     <message>
         <source>Showing: whole network</source>
-        <translation>Näyttää: koko verkon</translation>
+        <translation>Mostrant: tota la xarxa</translation>
     </message>
     <message>
         <source>This table normally auto-updates every 10 seconds.</source>
-        <translation>Tämä taulukko päivittää itsensä tavallisesti joka kymmenes sekunti.</translation>
+        <translation>Aquesta taula normalment s&apos;auto-actualitza cada 10 segons.</translation>
     </message>
     <message>
         <source>Self</source>
-        <translation>Itse</translation>
+        <translation>Tu mateix</translation>
     </message>
     <message>
         <source>Trust</source>
-        <translation>Luottamus</translation>
+        <translation>Confiança</translation>
     </message>
     <message>
         <source> is authenticated (one way) by </source>
-        <translation>on varmennettu (yksisuuntaisesti)</translation>
+        <translation>està autenticat (un sentit) per</translation>
     </message>
     <message>
         <source>Half</source>
-        <translation>Puolet</translation>
+        <translation>Mig</translation>
     </message>
     <message>
         <source> authenticated himself</source>
-        <translation>varmensi itsensä</translation>
+        <translation> autenticat ell mateix</translation>
     </message>
     <message>
         <source> authenticated each other</source>
-        <translation>varmensivat toisensa</translation>
+        <translation>autenticat un a l&apos;altre</translation>
     </message>
     <message>
         <source>Full</source>
-        <translation>Täysi</translation>
+        <translation>Completa</translation>
     </message>
     <message>
         <source> is authenticated by </source>
-        <translation>on varmennettu</translation>
+        <translation>està autenticat per</translation>
     </message>
     <message>
         <source> peers, including him(her)self.</source>
-        <translation>vertaisen toimesta, mukaanlukien hänen itsensä.</translation>
+        <translation>contactes, incloent ella(ella) mateix(a).</translation>
     </message>
     <message>
         <source> authenticated </source>
-        <translation>varmennettu</translation>
+        <translation>autenticat</translation>
     </message>
     <message>
         <source>Showing: peers connected to </source>
-        <translation>Näyttää: vertaiset yhteydessä</translation>
+        <translation>Mostrant: contactes connectats a</translation>
     </message>
 </context>
 <context>
     <name>TurtleRouterDialog</name>
     <message>
         <source>Search requests</source>
-        <translation>Hakupyynnöt</translation>
+        <translation>Peticions de cerca</translation>
     </message>
     <message>
         <source>Tunnel requests</source>
-        <translation>Tunnelointipyynnöt</translation>
+        <translation>Peticions túnel</translation>
     </message>
     <message>
         <source>Unknown hashes</source>
-        <translation>Tuntemattomat tiivisteet (hash)</translation>
+        <translation>Hash desconegut</translation>
     </message>
     <message>
         <source>Tunnel id</source>
-        <translation>Tunnelitunniste</translation>
+        <translation>Id túnel</translation>
     </message>
     <message>
         <source>last transfer</source>
-        <translation>viimeisin siirto</translation>
+        <translation>Última transferència</translation>
     </message>
     <message>
         <source>Speed</source>
-        <translation>Nopeus</translation>
+        <translation>Velocitat</translation>
     </message>
     <message>
         <source>Request id: %1	 from [%2]	 %3 secs ago</source>
-        <translation>Tunnistetta pyydetty: %1» [%2] taholta» %3 sek sitten</translation>
+        <translation>Id petició: %1  de [%2]  fa %3 segons</translation>
     </message>
 </context>
 <context>
     <name>TurtleRouterDialogForm</name>
     <message>
         <source>Router Statistics</source>
-        <translation>Reitittimen tilastot</translation>
+        <translation>Estadistiques d&apos;encaminador</translation>
     </message>
     <message>
         <source>F2F router information</source>
-        <translation>F2F-reitittimen tiedot</translation>
+        <translation>Informació d&apos;encaminador F2F</translation>
     </message>
 </context>
 <context>
     <name>TurtleRouterStatistics</name>
     <message>
         <source>Router Statistics</source>
-        <translation>Reitittimen tilastot</translation>
+        <translation>Estadístiques d&apos;encaminador</translation>
     </message>
     <message>
         <source>Age in seconds</source>
-        <translation>Ikä sekunteina</translation>
+        <translation>Edat en segons</translation>
     </message>
     <message>
         <source>Depth</source>
-        <translation>Etäisyys</translation>
+        <translation>Profunditat</translation>
     </message>
     <message>
         <source>total</source>
-        <translation>yhteensä</translation>
+        <translation>total</translation>
     </message>
     <message>
         <source>Unknown Peer</source>
-        <translation>Tuntematon vertainen</translation>
+        <translation>Contacte desconegut</translation>
     </message>
 </context>
 <context>
     <name>TurtleRouterStatisticsWidget</name>
     <message>
         <source>Search requests repartition</source>
-        <translation>Hakupyyntöjen uudelleenjärjestely</translation>
+        <translation>Repartir petició de cerca</translation>
     </message>
     <message>
         <source>Tunnel requests repartition</source>
-        <translation>Tunnelointipyyntöjen uudelleenjärjestely</translation>
+        <translation>Repartir petició de túnel</translation>
     </message>
     <message>
         <source>Turtle router traffic</source>
-        <translation>Kilpikonnareitittimen liikenne</translation>
+        <translation>Tràfic d&apos;encaminador Turtle</translation>
     </message>
     <message>
         <source>Tunnel requests Up</source>
-        <translation>Tunnelointipyynnöt ulos</translation>
+        <translation>Peticions de túnel actives</translation>
     </message>
     <message>
         <source>Tunnel requests Dn</source>
-        <translation>Tunnelointipyynnöt sisään</translation>
+        <translation>Peticions de túnel no actives</translation>
     </message>
     <message>
         <source>Incoming file data</source>
-        <translation>Saapuva tiedostodata</translation>
+        <translation>Arxiu de dades entrant</translation>
     </message>
     <message>
         <source>Outgoing file data</source>
-        <translation>Lähtevä tiedostodata</translation>
+        <translation>Arxiu de dades sortint</translation>
     </message>
     <message>
         <source>Forwarded data    </source>
-        <translation>Välitetty data</translation>
+        <translation>Dades reenviades</translation>
     </message>
     <message>
         <source>TR Forward probabilities</source>
-        <translation>T.pyyntöjen välitysten todennäköisyys</translation>
+        <translation>Probabilitats TR reenviades</translation>
     </message>
 </context>
 <context>
     <name>UIStateHelper</name>
     <message>
         <source>Loading</source>
-        <translation>Ladataan</translation>
+        <translation>Carregant</translation>
     </message>
 </context>
 <context>
@@ -14444,188 +14445,188 @@ Kärsivällisyyttä!</translation>
     <name>UserNotify</name>
     <message>
         <source>You have %1 new messages</source>
-        <translation>Sinulle on uusia viestejä %1 kpl</translation>
+        <translation>Tens %1 nous missatges</translation>
     </message>
     <message>
         <source>You have %1 new message</source>
-        <translation>Sinulle on %1 uusi viesti</translation>
+        <translation>Tens %1 nou missatge</translation>
     </message>
     <message>
         <source>%1 new messages</source>
-        <translation>%1 kpl uusia viestejä</translation>
+        <translation>%1 missatges nous</translation>
     </message>
     <message>
         <source>%1 new message</source>
-        <translation>%1 uusi viesti</translation>
+        <translation>%1 missatges nous</translation>
     </message>
 </context>
 <context>
     <name>VMessageBox</name>
     <message>
         <source>OK</source>
-        <translation>OK</translation>
+        <translation>CORRECTE</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Peru</translation>
+        <translation>Cancel·la</translation>
     </message>
     <message>
         <source>Yes</source>
-        <translation>Kyllä</translation>
+        <translation>Sí</translation>
     </message>
     <message>
         <source>No</source>
-        <translation>Ei</translation>
+        <translation>No</translation>
     </message>
     <message>
         <source>Help</source>
-        <translation>Ohje</translation>
+        <translation>Ajuda</translation>
     </message>
     <message>
         <source>Retry</source>
-        <translation>Yritä uudelleen</translation>
+        <translation>Tornar-hi</translation>
     </message>
     <message>
         <source>Show Log</source>
-        <translation>Näytä loki</translation>
+        <translation>Mostra registre</translation>
     </message>
     <message>
         <source>Show Settings</source>
-        <translation>Näytä asetukset</translation>
+        <translation>Mostra la configuració</translation>
     </message>
     <message>
         <source>Continue</source>
-        <translation>Jatka</translation>
+        <translation>Continuar</translation>
     </message>
     <message>
         <source>Quit</source>
-        <translation>Lopeta</translation>
+        <translation>Sortir</translation>
     </message>
     <message>
         <source>Browse</source>
-        <translation>Selaa</translation>
+        <translation>Navegar</translation>
     </message>
 </context>
 <context>
     <name>WikiAddDialog</name>
     <message>
         <source>Basic Details</source>
-        <translation>Perustiedot</translation>
+        <translation>Detalls bàsics</translation>
     </message>
     <message>
         <source>Group Name:</source>
-        <translation>Ryhmän nimi:</translation>
+        <translation>Nom del grup:</translation>
     </message>
     <message>
         <source>Category:</source>
-        <translation>Luokitus:</translation>
+        <translation>Categoria:</translation>
     </message>
     <message>
         <source>Travel</source>
-        <translation>Matkailu</translation>
+        <translation>Viatges</translation>
     </message>
     <message>
         <source>Holiday</source>
-        <translation>Loma</translation>
+        <translation>Vacances</translation>
     </message>
     <message>
         <source>Friends</source>
-        <translation>Ystävät</translation>
+        <translation>Amics</translation>
     </message>
     <message>
         <source>Family</source>
-        <translation>Sukulaiset</translation>
+        <translation>Família</translation>
     </message>
     <message>
         <source>Work</source>
-        <translation>Työ</translation>
+        <translation>Treball</translation>
     </message>
     <message>
         <source>Random</source>
-        <translation>Satunnainen</translation>
+        <translation>Aleatori</translation>
     </message>
     <message>
         <source>Description:</source>
-        <translation>Kuvaus:</translation>
+        <translation>Descripció:</translation>
     </message>
     <message>
         <source>Share Options</source>
-        <translation>Jakoasetukset</translation>
+        <translation>Opcions de compartició:</translation>
     </message>
     <message>
         <source>Public</source>
-        <translation>Julkinen</translation>
+        <translation>Públic</translation>
     </message>
     <message>
         <source>All Friends</source>
-        <translation>Kaikki ystävät</translation>
+        <translation>Tots els amics</translation>
     </message>
     <message>
         <source>Restricted</source>
-        <translation>Rajoitettu</translation>
+        <translation>Restringits</translation>
     </message>
     <message>
         <source>N/A</source>
-        <translation>Ei sovellu</translation>
+        <translation>N/A</translation>
     </message>
     <message>
         <source>University Friends</source>
-        <translation>Yliopistokaverit</translation>
+        <translation>Amics de la Universitat</translation>
     </message>
     <message>
         <source>This List Contains</source>
-        <translation>Tämä luettelo sisältää</translation>
+        <translation>Aquesta llista conté</translation>
     </message>
     <message>
         <source>All your Groups</source>
-        <translation>Kaikki ryhmäsi</translation>
+        <translation>Tots els teus grups</translation>
     </message>
     <message>
         <source>No Comments Allowed</source>
-        <translation>Kommentointi estetty</translation>
+        <translation>No es permeten els comentaris</translation>
     </message>
     <message>
         <source>Authenticated Comments</source>
-        <translation>Varmennetut kommentit</translation>
+        <translation>Comentaris autenticats</translation>
     </message>
     <message>
         <source>Any Comments Allowed</source>
-        <translation>Kaikki kommentit sallittu</translation>
+        <translation>Qualsevol comentari permès</translation>
     </message>
     <message>
         <source>Publish with XXX Key</source>
-        <translation>Julkaise avaimella XXX</translation>
+        <translation>Publica amb la clau XXX</translation>
     </message>
     <message>
         <source>Cancel </source>
-        <translation>Peru</translation>
+        <translation>Cancel·lar</translation>
     </message>
     <message>
         <source>Create Group</source>
-        <translation>Luo ryhmä</translation>
+        <translation>Crear grup</translation>
     </message>
 </context>
 <context>
     <name>WikiDialog</name>
     <message>
         <source>Wiki Pages</source>
-        <translation>Wikisivut</translation>
+        <translation>Pàgines wiki</translation>
     </message>
     <message>
         <source>New Group</source>
-        <translation>Uusi ryhmä</translation>
+        <translation>Nou grup</translation>
     </message>
     <message>
         <source>Page Name</source>
-        <translation>Sivun nimi</translation>
+        <translation>Nom de pàgina</translation>
     </message>
     <message>
         <source>Page Id</source>
-        <translation>Sivun tunniste</translation>
+        <translation>Id de pàgina</translation>
     </message>
     <message>
         <source>Orig Id</source>
-        <translation>Alkup. tunniste</translation>
+        <translation>Id d&apos;origen</translation>
     </message>
     <message>
         <source>&lt;&lt;</source>
@@ -14637,78 +14638,78 @@ Kärsivällisyyttä!</translation>
     </message>
     <message>
         <source>Republish</source>
-        <translation>Julkaise uudelleen</translation>
+        <translation>Torna a publicar</translation>
     </message>
     <message>
         <source>Edit</source>
-        <translation>Muokkaa</translation>
+        <translation>Editar</translation>
     </message>
     <message>
         <source>New Page</source>
-        <translation>Uusi sivu</translation>
+        <translation>Nova pàgina</translation>
     </message>
     <message>
         <source>Refresh</source>
-        <translation>Päivitä</translation>
+        <translation>Refrescar</translation>
     </message>
     <message>
         <source>Search</source>
-        <translation>Etsi</translation>
+        <translation>Cercar</translation>
     </message>
     <message>
         <source>My Groups</source>
-        <translation>Omat ryhmäni</translation>
+        <translation>Els meus grups</translation>
     </message>
     <message>
         <source>Subscribed Groups</source>
-        <translation>Tilatut ryhmät</translation>
+        <translation>Grups subscrits</translation>
     </message>
     <message>
         <source>Popular Groups</source>
-        <translation>Suositut ryhmät</translation>
+        <translation>Grups populars</translation>
     </message>
     <message>
         <source>Other Groups</source>
-        <translation>Muut ryhmät</translation>
+        <translation>Altres grups</translation>
     </message>
     <message>
         <source>Subscribe to Group</source>
-        <translation>Tilaa ryhmä</translation>
+        <translation>Subscriure&apos;s al grup</translation>
     </message>
     <message>
         <source>Unsubscribe to Group</source>
-        <translation>Lopeta ryhmän tilaus</translation>
+        <translation>Donar-te de baixa del grup</translation>
     </message>
 </context>
 <context>
     <name>WikiEditDialog</name>
     <message>
         <source>Page Edit History</source>
-        <translation>Muokkaushistoria</translation>
+        <translation>Historial d&apos;edició de la pàgina</translation>
     </message>
     <message>
         <source>Enable Obsolete Edits</source>
-        <translation>Ota käyttöön vanhentuneet muokkaukset</translation>
+        <translation>Activa edicions obsoletes</translation>
     </message>
     <message>
         <source>Choose for Merge</source>
-        <translation>Valitse yhdistämistä varten</translation>
+        <translation>Escull per la combinació</translation>
     </message>
     <message>
         <source>Merge for Republish (TODO)</source>
-        <translation>Sulauta uudelleenjulkaisua varten</translation>
+        <translation>Mescla per tornar a publicar (PENDENT) </translation>
     </message>
     <message>
         <source>Publish Date</source>
-        <translation>Julkaisupäivä</translation>
+        <translation>Data de publicació</translation>
     </message>
     <message>
         <source>By</source>
-        <translation>Käyttäjältä</translation>
+        <translation>Per</translation>
     </message>
     <message>
         <source>PageId</source>
-        <translation>PageId</translation>
+        <translation>IdPàgina</translation>
     </message>
     <message>
         <source>\/</source>
@@ -14720,173 +14721,173 @@ Kärsivällisyyttä!</translation>
     </message>
     <message>
         <source>Wiki Group:</source>
-        <translation>Wikiryhmä:</translation>
+        <translation>Grup de wiki:</translation>
     </message>
     <message>
         <source>Page Name:</source>
-        <translation>Sivun nimi:</translation>
+        <translation>Nom de pàgina:</translation>
     </message>
     <message>
         <source>Previous Version</source>
-        <translation>Edellinen versio</translation>
+        <translation>Versió previa</translation>
     </message>
     <message>
         <source>Tags</source>
-        <translation>Merkkaukset</translation>
+        <translation>Etiquetes</translation>
     </message>
     <message>
         <source>Show Edit History</source>
-        <translation>Näytä muokkaushistoria</translation>
+        <translation>Mostra historial d&apos;edició</translation>
     </message>
     <message>
         <source>Status</source>
-        <translation>Tila</translation>
+        <translation>Estat</translation>
     </message>
     <message>
         <source>Preview</source>
-        <translation>Esikatselu</translation>
+        <translation>Visualització prèvia</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Peru</translation>
+        <translation>Cancel·la</translation>
     </message>
     <message>
         <source>Revert</source>
-        <translation>Palauta</translation>
+        <translation>Desfés</translation>
     </message>
     <message>
         <source>Submit</source>
-        <translation>Lähetä</translation>
+        <translation>Publica</translation>
     </message>
     <message>
         <source>Hide Edit History</source>
-        <translation>Piilota muokkaushistoria</translation>
+        <translation>Amagar l&apos;historial d&apos;edició</translation>
     </message>
     <message>
         <source>Edit Page</source>
-        <translation>Muokkaa sivua</translation>
+        <translation>Editar pàgina</translation>
     </message>
     <message>
         <source>Create New Wiki Page</source>
-        <translation>Luo uusi wikisivu</translation>
+        <translation>Crear nova pàgina wiki</translation>
     </message>
     <message>
         <source>Republish</source>
-        <translation>Julkaise uudelleen</translation>
+        <translation>Tornar a publicar</translation>
     </message>
     <message>
         <source>Edit Wiki Page</source>
-        <translation>Muokkaa wikisivua</translation>
+        <translation>Editar pàgina wiki</translation>
     </message>
 </context>
 <context>
     <name>WikiGroupDialog</name>
     <message>
         <source>Create New Wiki Group</source>
-        <translation>Luo uusi wikiryhmä</translation>
+        <translation>Crear nou grup wiki</translation>
     </message>
     <message>
         <source>Wiki Group</source>
-        <translation>Wikiryhmä</translation>
+        <translation>Grup wiki</translation>
     </message>
     <message>
         <source>Edit Wiki Group</source>
-        <translation>Muokkaa wikiryhmää</translation>
+        <translation>Editar grup wiki</translation>
     </message>
     <message>
         <source>Add Wiki Moderators</source>
-        <translation>Lisää wikimoderaattoreita</translation>
+        <translation>Afegir moderador wiki</translation>
     </message>
     <message>
         <source>Select Wiki Moderators</source>
-        <translation>Valitse wikimoderaattoreita</translation>
+        <translation>Escollir moderador wiki</translation>
     </message>
 </context>
 <context>
     <name>WireDialog</name>
     <message>
         <source>TimeRange</source>
-        <translation>Aikaväli</translation>
+        <translation>Rang de temps</translation>
     </message>
     <message>
         <source>All</source>
-        <translation>Kaikki</translation>
+        <translation>Tot</translation>
     </message>
     <message>
         <source>Last Month</source>
-        <translation>Viime kuussa</translation>
+        <translation>L&apos;últim mes</translation>
     </message>
     <message>
         <source>Last Week</source>
-        <translation>Viime viikolla</translation>
+        <translation>L&apos;ultima setmana</translation>
     </message>
     <message>
         <source>Today</source>
-        <translation>Tänään</translation>
+        <translation>Avui</translation>
     </message>
     <message>
         <source>New</source>
-        <translation>Uusi</translation>
+        <translation>Nou</translation>
     </message>
     <message>
         <source>from</source>
-        <translation>alkaen</translation>
+        <translation>des de</translation>
     </message>
     <message>
         <source>until</source>
-        <translation>päättyen</translation>
+        <translation>fins</translation>
     </message>
     <message>
         <source>Search/Filter</source>
-        <translation>Haku/suodatus</translation>
+        <translation>Cercar/Filtrar</translation>
     </message>
     <message>
         <source>Network Wide</source>
-        <translation>Verkon laajuinen</translation>
+        <translation>Tota la xarxa</translation>
     </message>
     <message>
         <source>Manage Accounts</source>
-        <translation>Hallitse tilejä</translation>
+        <translation>Controlar comptes</translation>
     </message>
     <message>
         <source>Showing:</source>
-        <translation>Näyttää:</translation>
+        <translation>Mostrant:</translation>
     </message>
     <message>
         <source>Yourself</source>
-        <translation>Sinä itse</translation>
+        <translation>Tu mateix</translation>
     </message>
     <message>
         <source>Friends</source>
-        <translation>Ystävät</translation>
+        <translation>Amics</translation>
     </message>
     <message>
         <source>Following</source>
-        <translation>Seurataan</translation>
+        <translation>Seguint</translation>
     </message>
     <message>
         <source>Custom</source>
-        <translation>Räätälöity</translation>
+        <translation>Personalitzat</translation>
     </message>
     <message>
         <source>Account 1</source>
-        <translation>Tili 1</translation>
+        <translation>Compte 1</translation>
     </message>
     <message>
         <source>Account 2</source>
-        <translation>Tili 2</translation>
+        <translation>Compte 2</translation>
     </message>
     <message>
         <source>Account 3</source>
-        <translation>Tili 3</translation>
+        <translation>Compte 3</translation>
     </message>
     <message>
         <source>CheckBox</source>
-        <translation>Valintaruutu</translation>
+        <translation>Casella de selecció</translation>
     </message>
     <message>
         <source>Post Pulse to Wire</source>
-        <translation>Lähetä pulssi lennättimeen</translation>
+        <translation>Publica Pols a Wire</translation>
     </message>
 </context>
 <context>
@@ -14894,7 +14895,7 @@ Kärsivällisyyttä!</translation>
     <message>
         <source>Unknown</source>
         <comment>Unknown (size)</comment>
-        <translation>Tuntematon</translation>
+        <translation>Desconegut</translation>
     </message>
     <message>
         <source> B</source>
@@ -14909,7 +14910,7 @@ Kärsivällisyyttä!</translation>
     <message>
         <source> MB</source>
         <comment>megabytes (1024 kilobytes)</comment>
-        <translation> MB</translation>
+        <translation>MB</translation>
     </message>
     <message>
         <source> GB</source>
@@ -14919,41 +14920,41 @@ Kärsivällisyyttä!</translation>
     <message>
         <source> TB,</source>
         <comment>terabytes (1024 gigabytes)</comment>
-        <translation> TB,</translation>
+        <translation>TB,</translation>
     </message>
     <message>
         <source> TB</source>
         <comment>terabytes (1024 gigabytes)</comment>
-        <translation> TB</translation>
+        <translation>TB</translation>
     </message>
     <message>
         <source>Unknown</source>
-        <translation>Tuntematon</translation>
+        <translation>Desconegut</translation>
     </message>
     <message>
         <source>&lt; 1m</source>
         <comment>&lt; 1 minute</comment>
-        <translation>&lt; 1 min</translation>
+        <translation>&lt; 1 m</translation>
     </message>
     <message>
         <source>%1 minutes</source>
         <comment>e.g: 10minutes</comment>
-        <translation>%1 minuuttia</translation>
+        <translation>%1 minuts</translation>
     </message>
     <message>
         <source>%1h %2m</source>
         <comment>e.g: 3hours 5minutes</comment>
-        <translation>%1h %2min</translation>
+        <translation>%1 h %2 min</translation>
     </message>
     <message>
         <source>%1d %2h</source>
         <comment>e.g: 2days 10hours</comment>
-        <translation>%1d %2h </translation>
+        <translation>%1d %2 h</translation>
     </message>
     <message>
         <source>%1y %2d</source>
         <comment>e.g: 2 years 2days </comment>
-        <translation>%1y %2d</translation>
+        <translation>%1y any %2d</translation>
     </message>
     <message>
         <source>k</source>
@@ -14977,11 +14978,11 @@ Kärsivällisyyttä!</translation>
     </message>
     <message>
         <source>Load avatar image</source>
-        <translation>Lataa avatarkuva</translation>
+        <translation>Carrega la imatge d&apos;avatar</translation>
     </message>
     <message>
         <source>Pictures (*.png *.xpm *.jpg *.tiff *.gif)</source>
-        <translation>Kuvat (*.png *.xpm *.jpg *.tiff *.gif)</translation>
+        <translation>Imatges (*.png *.xpm *.jpg *.tiff *.gif)</translation>
     </message>
 </context>
 </TS>

@@ -16,6 +16,7 @@ TARGET = LinksCloud
 RESOURCES = LinksCloud_images.qrc lang/LinksCloud_lang.qrc
 
 TRANSLATIONS +=  \
+			lang/LinksCloud_ca_ES.ts \
 			lang/LinksCloud_cs.ts \
 			lang/LinksCloud_da.ts \
 			lang/LinksCloud_de.ts \

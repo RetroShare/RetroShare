@@ -61,6 +61,7 @@ TARGET = VOIP
 RESOURCES = gui/VOIP_images.qrc lang/VOIP_lang.qrc
 
 TRANSLATIONS +=  \
+            lang/VOIP_ca_ES.ts \
             lang/VOIP_cs.ts \
             lang/VOIP_da.ts \
             lang/VOIP_de.ts \

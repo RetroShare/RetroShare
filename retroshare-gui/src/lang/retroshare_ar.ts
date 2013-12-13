@@ -758,7 +758,9 @@ p, li { white-space: pre-wrap; }
         <source>Popularity: %1
 Fetches: %2
 Available: %3</source>
-        <translation type="unfinished"/>
+        <translation>شعبية: %1
+استجلاب: %2
+متاح: %3</translation>
     </message>
 </context>
 <context>
@@ -797,7 +799,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Comments here</source>
-        <translation type="unfinished"/>
+        <translation>التعليقات هنا</translation>
     </message>
     <message>
         <source>Comment</source>
@@ -927,7 +929,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Peer Calendars</source>
-        <translation type="unfinished"/>
+        <translation>تقاويم نظيرة</translation>
     </message>
 </context>
 <context>

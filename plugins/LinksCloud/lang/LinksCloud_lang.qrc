@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="/lang">
+    <file>LinksCloud_ca_ES.qm</file>
     <file>LinksCloud_cs.qm</file>
     <file>LinksCloud_da.qm</file>
     <file>LinksCloud_de.qm</file>
