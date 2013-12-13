@@ -963,10 +963,19 @@ bool PGPHandler::LoadCertificateFromString(const std::string& pgp_cert,PGPIdType
 		return false ;
 	}
 
-	// Check that the key is correctly self-signed.
-	//
 	const ops_keydata_t *keydata = ops_keyring_get_key_by_index(tmp_keyring,0);
 
+	// Check that the key is a version 4 key
+	//
+	if(keydata->key.pkey.version != 4)
+	{
+		error_string = "Public key is not version 4. Rejected!" ;
+		std::cerr << "Received a key with unhandled version number (" << keydata->key.pkey.version << ")" << std::endl;
+		return false ;
+	}
+
+	// Check that the key is correctly self-signed.
+	//
 	ops_validate_result_t* result=(ops_validate_result_t*)ops_mallocz(sizeof *result);
 
 	if(!ops_validate_key_signatures(result,keydata,tmp_keyring,cb_get_passphrase)) 
