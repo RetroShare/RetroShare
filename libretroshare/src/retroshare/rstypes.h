@@ -194,7 +194,6 @@ class FileInfo
 
 		uint64_t size;
 		uint64_t avail; /* how much we have */
-		int status;
 
 		double rank;
 		int age;
@@ -203,7 +202,7 @@ class FileInfo
 		/* Transfer Stuff */
 		uint64_t transfered;
 		double   tfRate; /* in kbytes */
-		uint32_t  downloadStatus; /* 0 = Err, 1 = Ok, 2 = Done */
+		uint32_t  downloadStatus; 	// FT_STATE_DOWNLOADING & co. See rstypes.h
 		std::list<TransferInfo> peers;
 
 		DwlSpeed priority ;

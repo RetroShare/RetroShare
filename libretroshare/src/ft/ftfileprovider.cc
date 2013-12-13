@@ -75,7 +75,7 @@ bool    ftFileProvider::FileDetails(FileInfo &info)
 
 	info.transfered = 0 ; // unused
 	info.lastTS = 0;
-	info.status = FT_STATE_DOWNLOADING ;
+	info.downloadStatus = FT_STATE_DOWNLOADING ;
 
 	info.peers.clear() ;
 	float total_transfer_rate = 0.0f ;
