@@ -325,8 +325,8 @@ RsGxsGrpUpdateItem* RsGxsUpdateSerialiser::deserialGxsGrpUpddate(void* data,
     /* skip the header */
     offset += 8;
 
-    ok &= getRawUInt32(data, *size, &offset, &(item->grpUpdateTS));
     ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_PEERID, item->peerId);
+    ok &= getRawUInt32(data, *size, &offset, &(item->grpUpdateTS));
 
     if (offset != rssize)
     {
@@ -482,7 +482,7 @@ bool RsGxsUpdateSerialiser::serialiseGxsMsgUpdate(RsGxsMsgUpdateItem* item,
 
     for(; cit != msgUpdateTS.end(); cit++)
     {
-        ok &= SetTlvString(data, *size, &offset, TLV_TYPE_STR_PEERID, cit->first);
+        ok &= SetTlvString(data, *size, &offset, TLV_TYPE_STR_GROUPID, cit->first);
         ok &= setRawUInt32(data, *size, &offset, cit->second);
     }
 
@@ -599,7 +599,7 @@ RsGxsMsgUpdateItem* RsGxsUpdateSerialiser::deserialGxsMsgUpdate(void* data,
     std::map<std::string, uint32_t>& msgUpdateItem = item->msgUpdateTS;
     std::string grpId;
     uint32_t updateTS;
-    for(uint32_t i; i < numUpdateItems; i++)
+    for(uint32_t i = 0; i < numUpdateItems; i++)
     {
         ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_GROUPID, grpId);
 

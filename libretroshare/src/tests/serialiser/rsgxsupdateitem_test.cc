@@ -15,7 +15,7 @@ RsSerialType* init_item(RsGxsGrpUpdateItem& i)
 	i.clear();
 	i.grpUpdateTS = rand()%2424;
 	randString(SHORT_STR, i.peerId);
-	return new RsGxsUpdateSerialiser(0);
+	return new RsGxsUpdateSerialiser(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
 }
 
 RsSerialType* init_item(RsGxsMsgUpdateItem& i)
@@ -31,7 +31,7 @@ RsSerialType* init_item(RsGxsMsgUpdateItem& i)
 		i.msgUpdateTS.insert(std::make_pair(peer, rand()%45));
 	}
 
-	return new RsGxsUpdateSerialiser(0);
+	return new RsGxsUpdateSerialiser(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
 }
 
 RsSerialType* init_item(RsGxsServerGrpUpdateItem& i)
@@ -39,7 +39,7 @@ RsSerialType* init_item(RsGxsServerGrpUpdateItem& i)
 	i.clear();
 	i.grpUpdateTS = rand()%2424;
 
-	return new RsGxsUpdateSerialiser(0);
+	return new RsGxsUpdateSerialiser(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
 }
 
 RsSerialType* init_item(RsGxsServerMsgUpdateItem& i)
@@ -47,7 +47,7 @@ RsSerialType* init_item(RsGxsServerMsgUpdateItem& i)
 	i.clear();
 	randString(SHORT_STR, i.grpId);
 	i.msgUpdateTS = rand()%4252;
-	return new RsGxsUpdateSerialiser(0);
+	return new RsGxsUpdateSerialiser(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
 }
 
 bool operator ==(const RsGxsGrpUpdateItem& l, const RsGxsGrpUpdateItem& r)
