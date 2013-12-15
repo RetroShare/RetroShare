@@ -26,6 +26,7 @@
 #pragma once
 
 #include <time.h>
+#include <string.h>
 #include <stdint.h>
 #include <string>
 #include <vector>
@@ -37,6 +38,10 @@ class RsPluginHandler ;
 extern RsPluginHandler *rsPlugins ;
 
 class p3Service ;
+class RsTurtle ;
+class RsDht ;
+class RsDisc ;
+class RsMsgs ;
 class p3LinkMgr ;
 class MainPage ;
 class QIcon ;
@@ -82,10 +87,16 @@ class RsPlugInInterfaces {
 
 public:
 
-    RsPlugInInterfaces() { mPeers = NULL; mFiles = NULL; }
-    RsPeers* mPeers;
-    RsFiles* mFiles;
-
+    RsPlugInInterfaces() 
+	 { 
+		 memset(this,0,sizeof(RsPlugInInterfaces)) ;	// zero all pointers.
+	 }
+    RsPeers  *mPeers;
+    RsFiles  *mFiles;
+    RsMsgs   *mMsgs;
+    RsTurtle *mTurtle;
+    RsDisc   *mDisc;
+    RsDht    *mDht;
 };
 
 class RsPlugin
