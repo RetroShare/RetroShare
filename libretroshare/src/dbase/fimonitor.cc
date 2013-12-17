@@ -48,7 +48,7 @@
 #include <time.h>
 
 //***********
-//#define FIM_DEBUG 1
+#define FIM_DEBUG 1
 // ***********/
 
 FileIndexMonitor::FileIndexMonitor(CacheStrapper *cs, NotifyBase *cb_in,std::string cachedir, std::string pid,const std::string& config_dir)
@@ -135,7 +135,11 @@ HashCache::HashCache(const std::string& path)
 		f.getline(buff,max_line_size,'\n') ; //if(sscanf(buff,"%llu",&info.size) != 1) break ;
 
 		info.size = 0 ;
+#ifdef WINDOWS_SYS
 		sscanf(buff, UINT64FMT, &info.size);
+#else
+		sscanf(buff, "%lu", &info.size);
+#endif
 
 		f.getline(buff,max_line_size,'\n') ; if(sscanf(buff,"%ld",&info.time_stamp) != 1) break ;
 		f.getline(buff,max_line_size,'\n') ; if(sscanf(buff,"%ld",&info.modf_stamp) != 1) break ;
