@@ -1302,6 +1302,12 @@ static int parse_user_id(ops_region_t *region,ops_parse_info_t *pinfo)
 
    C.user_id.user_id=malloc(region->length+1);  /* XXX should we not like check malloc's return value? */
 
+   if(C.user_id.user_id==NULL)
+   {
+      fprintf(stderr,"malloc failed in parse_user_id") ;
+      return 0 ;
+   }
+
    if(region->length && !limited_read(C.user_id.user_id,region->length,region,
 	    pinfo))
       return 0;
@@ -1518,6 +1524,12 @@ static int parse_one_signature_subpacket(ops_signature_t *sig,
 	C.ss_raw.tag=content.tag;
 	C.ss_raw.length=subregion.length-1;
 	C.ss_raw.raw=malloc(C.ss_raw.length);
+
+	if(C.ss_raw.raw==NULL)
+	{
+	   fprintf(stderr,"malloc failed in parse_signature_subpackets") ;
+	   return 0 ;
+	}
 	if(!limited_read(C.ss_raw.raw,C.ss_raw.length,&subregion,pinfo))
 	    return 0;
 	CBP(pinfo,OPS_PTAG_RAW_SS,&content);
