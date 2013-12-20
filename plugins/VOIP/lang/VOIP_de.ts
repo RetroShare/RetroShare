@@ -202,7 +202,7 @@
     <message>
         <location filename="../gui/AudioPopupChatDialog.cpp" line="137"/>
         <source>Outgoing Call is started...</source>
-        <translation>Ausgehender Anruf hat begonnen …</translation>
+        <translation>Ausgehender Anruf hat begonnen...</translation>
     </message>
     <message>
         <location filename="../gui/AudioPopupChatDialog.cpp" line="145"/>

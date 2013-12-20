@@ -1109,6 +1109,10 @@ p, li { white-space: pre-wrap; }⏎
         <source>Private - (Private Publish Key required to view Messages)</source>
         <translation>Privat - (clau de publicació privada necessària per visualitzar els missatges)</translation>
     </message>
+    <message>
+        <source>Destination directory</source>
+        <translation>Directori de destí</translation>
+    </message>
 </context>
 <context>
     <name>ChannelDialog</name>
@@ -1230,6 +1234,18 @@ p, li { white-space: pre-wrap; }⏎
     <message>
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Channels&lt;/h1&gt;                                                             &lt;p&gt;Channels allow you to post data (e.g. movies, music) that will spread in the network                                                    among people who subscribed your channel.  If you activate auto-download on a channel, files attached to each post will start      downloading automatically when the post is received.&lt;/p&gt;                                                                                   &lt;p&gt;You see channels your friends are subscribed to, and forward subscribed channels to                                                    your friends. This promotes good channels in the network.                                                         When you first connect to a new friend, it&apos;s likely     you will receive many such cache files, and new channels will appear.                                                                      &lt;/p&gt;                                                                                                                                       &lt;p&gt;Only the channel&apos;s creator can post on that channel. Other peers                           in the network can only read from it, unless the channel is private. You can however share the posting rights or the reading rights     with your friends.&lt;/p&gt;                                </source>
         <translation>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Canals&lt;/h1&gt; ⇥⇥ &lt;p&gt;Els canals et permeten publicar continguts (per ex. pel·lícules, música) que es distribuiran a la xarxa⇥⇥ entre la gent que s&apos;hagi subscrit al canal. Si has activat l&apos;auto-descarrega en un canal els adjunts a cada entrada començaran ⇥⇥ a descarregar-se automàticament quan es rebi l&apos;entrada.&lt;/p&gt; ⇥⇥ &lt;p&gt;Veuràs canals als que s&apos;han subscrit els teus amics i reenvies els canals subscrits ⇥⇥ als teus amics. Això promociona els canals bons a la xarxa. ⇥⇥ Quan et connectes per primer cop a un amic, és probable ⇥⇥ que rebis molts arxius cau i apareguin nous canals. ⇥⇥ &lt;/p&gt; ⇥⇥ &lt;p&gt;Només el creador del canal pot publicar en aquests canals. Els altres contactes ⇥⇥ a la xarxa només poden llegir-lo si és que el canal no és privat. No obstant, pots compartir els teus permisos de publicació o lectura ⇥⇥ amb els teus amics.&lt;/p&gt; ⇥⇥</translation>
+    </message>
+    <message>
+        <source>Subscribe</source>
+        <translation>Subscriure&apos;s</translation>
+    </message>
+    <message>
+        <source>Post</source>
+        <translation>Publicar</translation>
+    </message>
+    <message>
+        <source>Subscribed</source>
+        <translation>Subscrit</translation>
     </message>
 </context>
 <context>
@@ -2077,10 +2093,6 @@ Fes doble clic a les sales per entrar-hi i xatejar.</translation>
         <translation>Nom</translation>
     </message>
     <message>
-        <source>Peer ID</source>
-        <translation>ID del contacte</translation>
-    </message>
-    <message>
         <source>RetroShare ID</source>
         <translation>ID RetroShare</translation>
     </message>
@@ -2325,6 +2337,14 @@ Alguns serveis (Descobriment, encaminat anònim) poden desactivar-se globalment,
     <message>
         <source>Peer Addresses</source>
         <translation>Adreces del contacte</translation>
+    </message>
+    <message>
+        <source>Location ID</source>
+        <translation>Id d&apos;ubicació</translation>
+    </message>
+    <message>
+        <source>PGP fingerprint</source>
+        <translation>Fingerprint PGP</translation>
     </message>
 </context>
 <context>
@@ -10230,6 +10250,10 @@ Botó dret i selecciona &apos;fer amic&apos; per poder connectar-hi.</translatio
         <source>Edge length:</source>
         <translation>Límit de llargada:</translation>
     </message>
+    <message>
+        <source>Freeze</source>
+        <translation>Atura</translation>
+    </message>
 </context>
 <context>
     <name>NewTag</name>
@@ -13610,6 +13634,10 @@ p, li { white-space: pre-wrap; }⏎
     <message>
         <source>Open File</source>
         <translation>Obrir arxiu</translation>
+    </message>
+    <message>
+        <source>Copy RetroShare Link</source>
+        <translation>Copia l&apos;enllaç RetroShare</translation>
     </message>
 </context>
 <context>

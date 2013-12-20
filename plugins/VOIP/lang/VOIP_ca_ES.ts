@@ -420,7 +420,7 @@
     <message>
         <location filename="../gui/AudioWizard.ui" line="59"/>
         <source>Tuning microphone hardware volume to optimal settings.</source>
-        <translation type="unfinished"/>
+        <translation>Calibrant el volum de maquinari del micròfon a nivells òptims.</translation>
     </message>
     <message>
         <location filename="../gui/AudioWizard.ui" line="70"/>
@@ -441,7 +441,7 @@
     <message>
         <location filename="../gui/AudioWizard.ui" line="150"/>
         <source>Apply some high contrast optimizations for visually impaired users</source>
-        <translation type="unfinished"/>
+        <translation>Aplicar algunes millores de contrast per persones amb visió reduida</translation>
     </message>
     <message>
         <location filename="../gui/AudioWizard.ui" line="153"/>

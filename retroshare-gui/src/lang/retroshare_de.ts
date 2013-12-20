@@ -212,11 +212,11 @@
     </message>
     <message>
         <source>Resize Images (&lt; 1Mb)</source>
-        <translation>Bildgröße ändern (&lt; 1Mbit)</translation>
+        <translation>Bildgröße ändern (&lt; 1Mb)</translation>
     </message>
     <message>
         <source>Resize Images (&lt; 10Mb)</source>
-        <translation>Bildgröße ändern (&lt; 10Mbit)</translation>
+        <translation>Bildgröße ändern (&lt; 10Mb)</translation>
     </message>
     <message>
         <source>Send Original Images</source>
@@ -268,7 +268,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Say something about this album...</source>
-        <translation>Etwas über dieses Album sagen …</translation>
+        <translation>Sage etwas über dieses Album...</translation>
     </message>
     <message>
         <source>Where were these taken?</source>
@@ -481,11 +481,11 @@ Aber denke daran, dass alle Daten hier VERLOREN gehen werden, wenn wir die Proto
     <name>AttachFileItem</name>
     <message>
         <source>%p Kb</source>
-        <translation>%p kbit</translation>
+        <translation>%p KiB</translation>
     </message>
     <message>
         <source>Cancel Download</source>
-        <translation>Herunterladen abbrechen</translation>
+        <translation>Download abbrechen</translation>
     </message>
     <message>
         <source>[ERROR])</source>
@@ -589,7 +589,7 @@ Aber denke daran, dass alle Daten hier VERLOREN gehen werden, wenn wir die Proto
     </message>
     <message>
         <source>Blog ID</source>
-        <translation>Blog-Kennung</translation>
+        <translation>Blog-ID</translation>
     </message>
     <message>
         <source>Blog Description</source>
@@ -876,11 +876,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>In (KB/s)</source>
-        <translation>Eingehend (kB/s)</translation>
+        <translation>Eingehend (KiB/s)</translation>
     </message>
     <message>
         <source>InMax (KB/s)</source>
-        <translation>Max. eingehend (kB/s)</translation>
+        <translation>Max. eingehend (KiB/s)</translation>
     </message>
     <message>
         <source>InQueue</source>
@@ -888,7 +888,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>InAllocated (KB/s)</source>
-        <translation>InAllocated (kB/s)</translation>
+        <translation>InAllocated (KiB/s)</translation>
     </message>
     <message>
         <source>Allocated Sent</source>
@@ -896,11 +896,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Out (KB/s)</source>
-        <translation>Ausgehend (kB/s)</translation>
+        <translation>Ausgehend (KiB/s)</translation>
     </message>
     <message>
         <source>OutMax (KB/s)</source>
-        <translation>Max. ausgehend (kB/s)</translation>
+        <translation>Max. ausgehend (KiB/s)</translation>
     </message>
     <message>
         <source>OutQueue</source>
@@ -908,7 +908,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>OutAllowed (KB/s)</source>
-        <translation>Erlaubt ausgehend (kB/s)</translation>
+        <translation>Erlaubt ausgehend (KiB/s)</translation>
     </message>
     <message>
         <source>Allowed Recvd</source>
@@ -943,7 +943,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>...</source>
-        <translation> …</translation>
+        <translation>...</translation>
     </message>
     <message>
         <source>Status:</source>
@@ -1092,7 +1092,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Channel ID</source>
-        <translation>Kanalkennung</translation>
+        <translation>Kanal-ID</translation>
     </message>
     <message>
         <source>Channel Description</source>
@@ -1104,11 +1104,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Restricted - Anyone can read, limited publishing (Private Publish Key)</source>
-        <translation>Beschränkt - Jeder kann lesen, aber nicht jeder kann schreiben (Privater Veröffentlichungsschlüssel)</translation>
+        <translation>Beschränkt - Jeder kann lesen, aber nicht jeder schreiben (Privater Veröffentlichungsschlüssel)</translation>
     </message>
     <message>
         <source>Private - (Private Publish Key required to view Messages)</source>
         <translation>Privat - (Privater Veröffentlichungsschlüssel erforderlich, um Nachrichten zu lesen)</translation>
+    </message>
+    <message>
+        <source>Destination directory</source>
+        <translation>Zielordner</translation>
     </message>
 </context>
 <context>
@@ -1142,7 +1146,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Enable Auto-Download</source>
-        <translation>Automatisch Herunterladen aktivieren</translation>
+        <translation>Auto-Download aktivieren</translation>
     </message>
     <message>
         <source>My Channels</source>
@@ -1170,7 +1174,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Disable Auto-Download</source>
-        <translation>Automatisch Herunterladen deaktivieren</translation>
+        <translation>Auto-Download deaktivieren</translation>
     </message>
     <message>
         <source>Show Channel Details</source>
@@ -1194,7 +1198,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Other...</source>
-        <translation>Andere …</translation>
+        <translation>Andere...</translation>
     </message>
     <message>
         <source>[Default]</source>
@@ -1231,6 +1235,18 @@ p, li { white-space: pre-wrap; }
     <message>
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Channels&lt;/h1&gt;                                                             &lt;p&gt;Channels allow you to post data (e.g. movies, music) that will spread in the network                                                    among people who subscribed your channel.  If you activate auto-download on a channel, files attached to each post will start      downloading automatically when the post is received.&lt;/p&gt;                                                                                   &lt;p&gt;You see channels your friends are subscribed to, and forward subscribed channels to                                                    your friends. This promotes good channels in the network.                                                         When you first connect to a new friend, it&apos;s likely     you will receive many such cache files, and new channels will appear.                                                                      &lt;/p&gt;                                                                                                                                       &lt;p&gt;Only the channel&apos;s creator can post on that channel. Other peers                           in the network can only read from it, unless the channel is private. You can however share the posting rights or the reading rights     with your friends.&lt;/p&gt;                                </source>
         <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Kanäle&lt;/h1&gt;                                                         		  &lt;p&gt;Kanäle erlauben es dir Daten (z.B. Filme, Musik) zu veröffentlichen, die sich im Netz unter den Leuten die deinen Kanal abonniert haben verbreiten werden. Wenn du bei einem Kanal Auto-Download aktivierst, werden die Dateien, die an jeden Beitrag angehängt sind automatisch heruntergeladen, sobald der Beitrag eingeht.&lt;/p&gt;&lt;p&gt;Du siehst die Kanäle, die deine Freunde abonniert haben und leitest die von dir abonnierten Kanäle an deine Freunde weiter. Dies fördert gute Kanäle im Netz. Wenn du dich zum ersten Mal mit einem neuen Freund verbindest, wirst du wahrscheinlich viele Cachedateien empfangen und neue Kanäle werden auftauchen.&lt;/p&gt;&lt;p&gt;Nur der Ersteller eines Kanals kann Beiträge in dem Kanal veröffentlichen. Andere Netzwerkteilnehmer können nur lesend darauf zugreifen außer der Kanal ist privat. Du kannst deinen Freunden allerdings die Veröffentlichungsrechte gewähren.&lt;/p&gt;                            		  </translation>
+    </message>
+    <message>
+        <source>Subscribe</source>
+        <translation>Abonnieren</translation>
+    </message>
+    <message>
+        <source>Post</source>
+        <translation>Nachricht</translation>
+    </message>
+    <message>
+        <source>Subscribed</source>
+        <translation>Abonniert</translation>
     </message>
 </context>
 <context>
@@ -1913,7 +1929,7 @@ Doppelklicke auf Lobbys um sie zu betreten und zu chatten.</translation>
     </message>
     <message>
         <source>is typing...</source>
-        <translation>am tippen …</translation>
+        <translation>tippt...</translation>
     </message>
     <message>
         <source>Do you really want to physically delete the history?</source>
@@ -1929,7 +1945,7 @@ Doppelklicke auf Lobbys um sie zu betreten und zu chatten.</translation>
     </message>
     <message>
         <source>Save as...</source>
-        <translation>Speichern unter …</translation>
+        <translation>Speichern unter...</translation>
     </message>
     <message>
         <source>Text File (*.txt );;All Files (*)</source>
@@ -2076,10 +2092,6 @@ Doppelklicke auf Lobbys um sie zu betreten und zu chatten.</translation>
     <message>
         <source>Name</source>
         <translation>Name</translation>
-    </message>
-    <message>
-        <source>Peer ID</source>
-        <translation>Nachbar-ID</translation>
     </message>
     <message>
         <source>RetroShare ID</source>
@@ -2327,6 +2339,14 @@ Einige Dienste (Discovery, anonymer Datenverkehr) können global ausgeschaltet w
         <source>Peer Addresses</source>
         <translation>Adressen des Nachbarn</translation>
     </message>
+    <message>
+        <source>Location ID</source>
+        <translation>Standortkennung</translation>
+    </message>
+    <message>
+        <source>PGP fingerprint</source>
+        <translation>PGP-Fingerabdruck</translation>
+    </message>
 </context>
 <context>
     <name>ConnectFriendWizard</name>
@@ -2407,7 +2427,7 @@ Die folgenden Wege sind möglich:</translation>
     </message>
     <message>
         <source>Import friend&apos;s certificate...</source>
-        <translation>Zertifikat eines Freundes importieren …</translation>
+        <translation>Zertifikat eines Freundes importieren...</translation>
     </message>
     <message>
         <source>You have to generate a file with your certificate and give it to your friend. Also, you can use a file generated before.</source>
@@ -2451,7 +2471,7 @@ Die folgenden Wege sind möglich:</translation>
     </message>
     <message>
         <source>Add Friends RetroShare ID...</source>
-        <translation>Die RetroShare-Kennung des Freundes hinzufügen …</translation>
+        <translation>Füge die RetroShare-ID des Freundes ein...</translation>
     </message>
     <message>
         <source>Paste Friends RetroShare ID in the box below</source>
@@ -2471,7 +2491,7 @@ Die folgenden Wege sind möglich:</translation>
     </message>
     <message>
         <source>Your friends&apos; email addresses:</source>
-        <translation>E-Mail-Adresse Ihres Freundes:</translation>
+        <translation>E-Mail-Adresse deines Freundes:</translation>
     </message>
     <message>
         <source>Enter Friends Email addresses</source>
@@ -2667,7 +2687,7 @@ Die folgenden Wege sind möglich:</translation>
     </message>
     <message>
         <source>Certificate Load Failed:can&apos;t read from file %1 </source>
-        <translation>Fehler beim Laden des Zertifikates: Datei %1 konnte nicht gelesen werden</translation>
+        <translation>Fehler beim Laden des Zertifikats: Datei %1 konnte nicht gelesen werden</translation>
     </message>
     <message>
         <source>Certificate Load Failed:something is wrong with %1 </source>
@@ -2727,7 +2747,7 @@ Die folgenden Wege sind möglich:</translation>
     </message>
     <message>
         <source>Save as...</source>
-        <translation>Speichern unter …</translation>
+        <translation>Speichern unter...</translation>
     </message>
     <message>
         <source>RetroShare Certificate (*.rsc );;All Files (*)</source>
@@ -3400,7 +3420,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>&amp;Open...</source>
-        <translation>Ö&amp;ffnen …</translation>
+        <translation>Ö&amp;ffnen...</translation>
     </message>
     <message>
         <source>&amp;Save</source>
@@ -3408,19 +3428,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Save &amp;As...</source>
-        <translation>Speichern &amp;als …</translation>
+        <translation>Speichern &amp;als...</translation>
     </message>
     <message>
         <source>&amp;Print...</source>
-        <translation>&amp;Drucken …</translation>
+        <translation>&amp;Drucken...</translation>
     </message>
     <message>
         <source>Print Preview...</source>
-        <translation>Druckvorschau …</translation>
+        <translation>Druckvorschau...</translation>
     </message>
     <message>
         <source>&amp;Export PDF...</source>
-        <translation>PDF &amp;exportieren …</translation>
+        <translation>PDF &amp;exportieren...</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
@@ -3496,7 +3516,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>&amp;Text Color...</source>
-        <translation>&amp;Textfarbe …</translation>
+        <translation>&amp;Textfarbe...</translation>
     </message>
     <message>
         <source>Application</source>
@@ -3510,7 +3530,7 @@ Möchtest du die Änderungen speichern?</translation>
     </message>
     <message>
         <source>Open File...</source>
-        <translation>Datei öffnen …</translation>
+        <translation>Datei öffnen...</translation>
     </message>
     <message>
         <source>HTML-Files (*.htm *.html);;All Files (*)</source>
@@ -3518,7 +3538,7 @@ Möchtest du die Änderungen speichern?</translation>
     </message>
     <message>
         <source>Save as...</source>
-        <translation>Speichern unter …</translation>
+        <translation>Speichern unter...</translation>
     </message>
     <message>
         <source>ODF files (*.odt);;HTML-Files (*.htm *.html);;All Files (*)</source>
@@ -3708,7 +3728,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Directory can&apos;t be dropped, only files are accepted.</source>
-        <translation>Ordner können nicht abgelegt werden, nur Dateien werden akzeptiert.</translation>
+        <translation>Ordner können nicht für Drag&apos;n&apos;Drop genutzt werden. Nur Dateien werden akzeptiert.</translation>
     </message>
     <message>
         <source>File not found or file name not accepted.</source>
@@ -4447,7 +4467,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Save as...</source>
-        <translation>Speichern unter …</translation>
+        <translation>Speichern unter...</translation>
     </message>
     <message>
         <source>RetroShare Certificate (*.rsc );;All Files (*)</source>
@@ -4501,15 +4521,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>KB</source>
-        <translation>kB</translation>
+        <translation>KiB</translation>
     </message>
     <message>
         <source>MB</source>
-        <translation>MB</translation>
+        <translation>MiB</translation>
     </message>
     <message>
         <source>GB</source>
-        <translation>GB</translation>
+        <translation>GiB</translation>
     </message>
     <message>
         <source>File Never Seen</source>
@@ -5182,15 +5202,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>KB</source>
-        <translation>kB</translation>
+        <translation>KiB</translation>
     </message>
     <message>
         <source>MB</source>
-        <translation>MB</translation>
+        <translation>MiB</translation>
     </message>
     <message>
         <source>GB</source>
-        <translation>GB</translation>
+        <translation>GiB</translation>
     </message>
 </context>
 <context>
@@ -5965,7 +5985,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Recommend this Friend to...</source>
-        <translation>Freund weiterempfehlen …</translation>
+        <translation>Freund weiterempfehlen...</translation>
     </message>
     <message>
         <source>Copy certificate link</source>
@@ -6202,7 +6222,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>is typing...</source>
-        <translation>am tippen …</translation>
+        <translation>tippt...</translation>
     </message>
     <message>
         <source>New group chat</source>
@@ -6218,7 +6238,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Save as...</source>
-        <translation>Speichern unter …</translation>
+        <translation>Speichern unter...</translation>
     </message>
     <message>
         <source>Text File (*.txt );;All Files (*)</source>
@@ -6259,7 +6279,7 @@ p, li { white-space: pre-wrap; }
         <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Spielestarter&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Spiele-Starter&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Game:</source>
@@ -6933,7 +6953,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>%1 KB/s</source>
-        <translation>%1 kB/s</translation>
+        <translation>%1 KiB/s</translation>
     </message>
     <message>
         <source>Sent: </source>
@@ -6941,22 +6961,22 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>%1 KB</source>
-        <translation>%1 kB</translation>
+        <translation>%1 KiB</translation>
     </message>
     <message>
         <source>%1 MB</source>
-        <translation>%1 MB</translation>
+        <translation>%1 MiB</translation>
     </message>
     <message>
         <source>%1 GB</source>
-        <translation>%1 GB</translation>
+        <translation>%1 GiB</translation>
     </message>
 </context>
 <context>
     <name>GraphWidget</name>
     <message>
         <source>Click and drag the nodes around, and zoom with the mouse wheel or the &apos;+&apos; and &apos;-&apos; keys</source>
-        <translation>Klicken und die Knoten umherziehen, Größenänderung mit dem Mausrad oder den Tasten »+« und »+«</translation>
+        <translation>Klicke und ziehe die Knoten umher, Zoome mit dem Mausrad oder den Tasten &apos;+&apos; und &apos;-&apos;</translation>
     </message>
 </context>
 <context>
@@ -7194,7 +7214,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Enable Auto-Download</source>
-        <translation>Automatisches Herunterladen aktivieren</translation>
+        <translation>Auto-Download aktivieren</translation>
     </message>
     <message>
         <source>My Channels</source>
@@ -7214,7 +7234,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Disable Auto-Download</source>
-        <translation>Automatisches Herunterladen deaktivieren</translation>
+        <translation>Auto-Download deaktivieren</translation>
     </message>
     <message>
         <source>Unsubscribe to Channel</source>
@@ -7943,7 +7963,7 @@ bevor du kommentieren kannst.</translation>
     </message>
     <message>
         <source>Directory can&apos;t be dropped, only files are accepted.</source>
-        <translation>Ordner können nicht abgelegt werden, nur Dateien werden akzeptiert.</translation>
+        <translation>Ordner können nicht für Drag&apos;n&apos;Drop genutzt werden. Nur Dateien werden akzeptiert.</translation>
     </message>
     <message>
         <source>File not found or file name not accepted.</source>
@@ -8481,7 +8501,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Checking...</source>
-        <translation>Überprüfen …</translation>
+        <translation>Überprüfe...</translation>
     </message>
     <message>
         <source>Check files</source>
@@ -8544,7 +8564,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>News feed</source>
-        <translation>Neuigkeiten</translation>
+        <translation>Info</translation>
     </message>
     <message>
         <source>Friends</source>
@@ -8604,7 +8624,7 @@ p, li { white-space: pre-wrap; }
  RetroShare will now safely suspend any disk access to this directory. 
 
  Please make some free space and click Ok.</source>
-        <translation>MB).
+        <translation>MiB).
 
 Normalerweise stoppt RetroShare jetzt sicher alle Festplattenzugriffe auf den Ordner.
 
@@ -8676,11 +8696,11 @@ Bitte gib etwas Speicher frei und drücke OK.</translation>
     </message>
     <message>
         <source>Down: %1 (kB/s)</source>
-        <translation>Herunter: %1 (kB/s)</translation>
+        <translation>Herunter: %1 KiB/s</translation>
     </message>
     <message>
         <source>Up: %1 (kB/s)</source>
-        <translation>Hoch: %1 (kB/s)</translation>
+        <translation>Hoch: %1 KiB/s</translation>
     </message>
     <message>
         <source>%1 friend connected</source>
@@ -9045,7 +9065,7 @@ Möchtest du die Nachricht in den Entwürfen speichern?</translation>
     </message>
     <message>
         <source>&amp;Open...</source>
-        <translation>Ö&amp;ffnen …</translation>
+        <translation>Ö&amp;ffnen...</translation>
     </message>
     <message>
         <source>&amp;Save</source>
@@ -9061,11 +9081,11 @@ Möchtest du die Nachricht in den Entwürfen speichern?</translation>
     </message>
     <message>
         <source>&amp;Print...</source>
-        <translation>&amp;Drucken …</translation>
+        <translation>&amp;Drucken...</translation>
     </message>
     <message>
         <source>&amp;Export PDF...</source>
-        <translation>PDF &amp;exportieren …</translation>
+        <translation>PDF &amp;exportieren...</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
@@ -9121,7 +9141,7 @@ Möchtest du die Nachricht in den Entwürfen speichern?</translation>
     </message>
     <message>
         <source>Open File...</source>
-        <translation>Datei öffnen …</translation>
+        <translation>Datei öffnen...</translation>
     </message>
     <message>
         <source>HTML-Files (*.htm *.html);;All Files (*)</source>
@@ -9129,7 +9149,7 @@ Möchtest du die Nachricht in den Entwürfen speichern?</translation>
     </message>
     <message>
         <source>Save as...</source>
-        <translation>Speichern unter …</translation>
+        <translation>Speichern unter...</translation>
     </message>
     <message>
         <source>Print Document</source>
@@ -9359,7 +9379,7 @@ Möchtest du die Nachricht speichern ?</translation>
     </message>
     <message>
         <source>Save as...</source>
-        <translation>Speichern unter …</translation>
+        <translation>Speichern unter...</translation>
     </message>
     <message>
         <source>HTML-Files (*.htm *.html);;All Files (*)</source>
@@ -9490,11 +9510,11 @@ Möchtest du die Nachricht speichern ?</translation>
     </message>
     <message>
         <source>&amp;Print...</source>
-        <translation>&amp;Drucken …</translation>
+        <translation>&amp;Drucken...</translation>
     </message>
     <message>
         <source>Print Preview...</source>
-        <translation>Druckvorschau …</translation>
+        <translation>Druckvorschau...</translation>
     </message>
     <message>
         <source>&amp;Quit</source>
@@ -9593,7 +9613,7 @@ Möchtest du die Nachricht speichern ?</translation>
     </message>
     <message>
         <source>Print...</source>
-        <translation>Drucken …</translation>
+        <translation>Drucken...</translation>
     </message>
     <message>
         <source>Print Preview</source>
@@ -9621,7 +9641,7 @@ Möchtest du die Nachricht speichern ?</translation>
     </message>
     <message>
         <source>Save As...</source>
-        <translation>Speichern unter …</translation>
+        <translation>Speichern unter...</translation>
     </message>
     <message>
         <source>Reply to Message</source>
@@ -10053,11 +10073,11 @@ Möchtest du die Nachricht speichern ?</translation>
     </message>
     <message>
         <source>Export my certificate...</source>
-        <translation>Mein Zertifikat exportieren …</translation>
+        <translation>Mein Zertifikat exportieren...</translation>
     </message>
     <message>
         <source>Peer details...</source>
-        <translation>Nachbardetails …</translation>
+        <translation>Nachbardetails...</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
@@ -10065,7 +10085,7 @@ Möchtest du die Nachricht speichern ?</translation>
     </message>
     <message>
         <source>Remove unused keys...</source>
-        <translation>Unbenutzte Schlüssel entfernen …</translation>
+        <translation>Unbenutzte Schlüssel entfernen...</translation>
     </message>
     <message>
         <source>Clean keyring</source>
@@ -10164,7 +10184,7 @@ Reported error: </source>
     <message>
         <source> has authenticated you. 
 Right-click and select &apos;make friend&apos; to be able to connect.</source>
-        <translation>hat mich authentifiziert. 
+        <translation> hat mich authentifiziert. 
 Rechtsklick und als Freund hinzufügen um zu verbinden.</translation>
     </message>
     <message>
@@ -10225,6 +10245,10 @@ Rechtsklick und als Freund hinzufügen um zu verbinden.</translation>
         <source>Edge length:</source>
         <translation>Kantenlänge:</translation>
     </message>
+    <message>
+        <source>Freeze</source>
+        <translation>Einfrieren</translation>
+    </message>
 </context>
 <context>
     <name>NewTag</name>
@@ -10277,7 +10301,7 @@ Welche Ereignisse angezeigt werden sollen kannst du durch klicken auf &lt;b&gt;O
     <name>NotifyPage</name>
     <message>
         <source>News Feed</source>
-        <translation>Neuigkeiten</translation>
+        <translation>News Feed</translation>
     </message>
     <message>
         <source>Peers</source>
@@ -10341,7 +10365,7 @@ Welche Ereignisse angezeigt werden sollen kannst du durch klicken auf &lt;b&gt;O
     </message>
     <message>
         <source>Download completed</source>
-        <translation>Herunterladen abgeschlossen</translation>
+        <translation>Download fertig</translation>
     </message>
     <message>
         <source>Private Chat</source>
@@ -10409,7 +10433,7 @@ Welche Ereignisse angezeigt werden sollen kannst du durch klicken auf &lt;b&gt;O
     </message>
     <message>
         <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Notify&lt;/h1&gt; 		  &lt;p&gt;Retroshare will notify you about what happens in your network.         		  Depending on your usage, you may want to enable or disable some of the    		  notifications. This page is designed for that!&lt;/p&gt;                        		  </source>
-        <translation>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Meldungen&lt;/h1&gt;&lt;p&gt;Retroshare wird dich darüber informieren was in deinem Netz geschieht. Je nach deiner Nutzung möchtest du vielleicht eigene dieser Meldungen (de)aktivieren. Dafür ist diese Seite gedacht!&lt;/p&gt;                        		  </translation>
+        <translation>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Meldungen&lt;/h1&gt;&lt;p&gt;Retroshare wird dich darüber informieren was in deinem Netz geschieht. Je nach deiner Nutzung möchtest du vielleicht eige dieser Meldungen (de)aktivieren. Dafür ist diese Seite gedacht!&lt;/p&gt;                        		  </translation>
     </message>
 </context>
 <context>
@@ -10440,7 +10464,7 @@ Welche Ereignisse angezeigt werden sollen kannst du durch klicken auf &lt;b&gt;O
     </message>
     <message>
         <source>Examining shared files...</source>
-        <translation>Freigegebene Dateien werden geprüft …</translation>
+        <translation>Prüfe freigegebene Dateien...</translation>
     </message>
     <message>
         <source>Hashing file</source>
@@ -10448,7 +10472,7 @@ Welche Ereignisse angezeigt werden sollen kannst du durch klicken auf &lt;b&gt;O
     </message>
     <message>
         <source>Saving file index...</source>
-        <translation>Dateiindex wird gespeichert …</translation>
+        <translation>Speichere Dateiindex...</translation>
     </message>
     <message>
         <source>Test</source>
@@ -10667,7 +10691,7 @@ Minimalmodus: 10% vom Standarddatenaufkommen und (unfertig) pausiert alle Datei�
     </message>
     <message>
         <source>...</source>
-        <translation> …</translation>
+        <translation>...</translation>
     </message>
     <message>
         <source>Add Comment</source>
@@ -10675,7 +10699,7 @@ Minimalmodus: 10% vom Standarddatenaufkommen und (unfertig) pausiert alle Datei�
     </message>
     <message>
         <source>Write a comment...</source>
-        <translation>Einen Kommentar schreiben …</translation>
+        <translation>Schreibe einen Kommentar...</translation>
     </message>
 </context>
 <context>
@@ -10895,7 +10919,7 @@ p, li { white-space: pre-wrap; }
     <name>PluginManagerWidget</name>
     <message>
         <source>Install New Plugin...</source>
-        <translation>Neue Erweiterung installieren …</translation>
+        <translation>Neues Plug-in installieren...</translation>
     </message>
     <message>
         <source>Open Plugin to install</source>
@@ -11277,11 +11301,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>&amp;Print...</source>
-        <translation>&amp;Drucken …</translation>
+        <translation>&amp;Drucken...</translation>
     </message>
     <message>
         <source>Page Setup...</source>
-        <translation>Seiteneinstellung …</translation>
+        <translation>Seiteneinstellung...</translation>
     </message>
     <message>
         <source>Zoom In</source>
@@ -11545,7 +11569,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>...</source>
-        <translation> …</translation>
+        <translation>…</translation>
     </message>
 </context>
 <context>
@@ -11784,7 +11808,7 @@ Die Zeichen &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; werden durch &
     </message>
     <message>
         <source>An unexpected error occured. Please report &apos;RsInit::InitRetroShare unexpected return code %1&apos;.</source>
-        <translation>Ein unerwarteter Fehler ist aufgetreten. Bitte melde »RsInit::InitRetroShare unexpected return code %1«.</translation>
+        <translation>Ein unerwarteter Fehler ist aufgetreten. Bitte melde &apos;RsInit::InitRetroShare unexpected return code %1&apos;.</translation>
     </message>
     <message>
         <source>Multiple instances</source>
@@ -11874,7 +11898,7 @@ Lockdatei:
     </message>
     <message>
         <source>Secured tunnel established. Waiting for ACK...</source>
-        <translation>Gesicherter Tunnel hergestellt. Auf ACK warten …</translation>
+        <translation>Gesicherter Tunnel hergestellt. Warte auf ACK...</translation>
     </message>
     <message>
         <source>Secured tunnel is working. You can talk!</source>
@@ -11931,11 +11955,11 @@ p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Willkommen bei RetroShare!&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Dieser Schnellstartassistent hilft Ihnen RetroShare in ein paar Schritten zu konfigurieren.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Dieser Schnellstart Assistent hilft dir RetroShare in ein paar Schritten zu konfigurieren.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Wenn Sie ein erfahrener Benutzer sind, können Sie die kompletten Einstellungen über Optionen in der Werkzeugleiste erreichen. Sie können den Assistent jederzeit beenden.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Wenn du ein erfahrener Benutzer bist, kannst du die kompletten Einstellungen über Optionen im Toolbar erreichen. Du kannst den Assistent jederzeit beenden.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Diese Assistent hilft Ihnen bei:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Diese Assistent hilft dir bei:&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;    &lt;/span&gt;&lt;img src=&quot;:/images/list_bullet_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;  der Einrichtung der Internetverbindung.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
@@ -11961,7 +11985,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source> KB/s</source>
-        <translation>kB/s</translation>
+        <translation> KiB/s</translation>
     </message>
     <message>
         <source>Choose your upload speed limit: </source>
@@ -12147,7 +12171,7 @@ p, li { white-space: pre-wrap; }
     <name>RatesStatus</name>
     <message>
         <source>&lt;strong&gt;Down:&lt;/strong&gt; 0.00 (kB/s) | &lt;strong&gt;Up:&lt;/strong&gt; 0.00 (kB/s) </source>
-        <translation>&lt;strong&gt;Herunter:&lt;/strong&gt; 0.00 (kB/s) | &lt;strong&gt;Hoch:&lt;/strong&gt; 0.00 (kB/s)</translation>
+        <translation>&lt;strong&gt;Herunter:&lt;/strong&gt; 0.00 KiB/s | &lt;strong&gt;Hoch:&lt;/strong&gt; 0.00 KiB/s</translation>
     </message>
     <message>
         <source>Down</source>
@@ -12190,7 +12214,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>kB/s</source>
-        <translation>kB/s</translation>
+        <translation>KiB/s</translation>
     </message>
     <message>
         <source>Friends of Friends</source>
@@ -12358,23 +12382,23 @@ Bild auf %1x%2 Pixel reduzieren?</translation>
     </message>
     <message>
         <source>Sets the name and location of RetroShare&apos;s logfile.</source>
-        <translation>Stellt den Namen und den Ort der Protokolldatei ein.</translation>
+        <translation>Setzt den Ort und Namen der Logdatei.</translation>
     </message>
     <message>
         <source>Sets the verbosity of RetroShare&apos;s logging.</source>
-        <translation>Stellt die Ausgaben der RetroShare Protokolldatei ein.</translation>
+        <translation>Setzt die Ausgaben der RetroShare Logdatei.</translation>
     </message>
     <message>
         <source>Sets RetroShare&apos;s interface style.</source>
-        <translation>Stellt den RetroShare Oberflächenstil ein.</translation>
+        <translation>Setzt den RetroShare Interface Stil.</translation>
     </message>
     <message>
         <source>Sets RetroShare&apos;s interface stylesheets.</source>
-        <translation>Stellt die Stylesheets der RetroShare-Oberflächen ein.</translation>
+        <translation>Setzt das RetroShare Stylesheet.</translation>
     </message>
     <message>
         <source>Sets RetroShare&apos;s language.</source>
-        <translation>Stellt die Sprache von RetroShare ein.</translation>
+        <translation>Setzt die Sprache.</translation>
     </message>
     <message>
         <source>RetroShare Usage Information</source>
@@ -12394,7 +12418,7 @@ Bild auf %1x%2 Pixel reduzieren?</translation>
     </message>
     <message>
         <source>Unable to open log file &apos;%1&apos;: %2</source>
-        <translation>Protokolldatei kann nicht geöffnet werden »%1«: %2</translation>
+        <translation>Kann Logdatei nicht öffnen &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <source>built-in</source>
@@ -12409,7 +12433,7 @@ Bild auf %1x%2 Pixel reduzieren?</translation>
     </message>
     <message>
         <source>KB</source>
-        <translation>kB</translation>
+        <translation>KiB</translation>
     </message>
     <message>
         <source>MB</source>
@@ -12417,7 +12441,7 @@ Bild auf %1x%2 Pixel reduzieren?</translation>
     </message>
     <message>
         <source>GB</source>
-        <translation>GB</translation>
+        <translation>GiB</translation>
     </message>
 </context>
 <context>
@@ -12858,7 +12882,7 @@ Es hilft auch, wenn du dich hinter einer Firewall/VPN befindest.</translation>
     </message>
     <message>
         <source>kB/s</source>
-        <translation>kB/s</translation>
+        <translation>KiB/s</translation>
     </message>
     <message>
         <source>If you uncheck this, RetroShare will not use tunnel connection between peers that are firewalled and cannot connect directly. This is independent from F2F routing (turtle router).</source>
@@ -12910,11 +12934,11 @@ Voreinstellung ist 20.</translation>
     </message>
     <message>
         <source>Download (KB/s) </source>
-        <translation>Herunterladen (kB/s) </translation>
+        <translation>Download (KiB/s) </translation>
     </message>
     <message>
         <source>Upload (KB/s) </source>
-        <translation>Upload (kB/s)</translation>
+        <translation>Upload (KiB/s) </translation>
     </message>
 </context>
 <context>
@@ -13093,7 +13117,7 @@ Voreinstellung ist 20.</translation>
     </message>
     <message>
         <source>File can&apos;t be dropped, only directories are accepted.</source>
-        <translation>Dateien können nicht abgelegt werden, nur Ordner werden akzeptiert.</translation>
+        <translation>Dateien können nicht für Drag&apos;n&apos;Drop genutzt werden. Nur Ordner werden akzeptiert.</translation>
     </message>
     <message>
         <source>Directory not found or directory name not accepted.</source>
@@ -13239,7 +13263,7 @@ Voreinstellung ist 20.</translation>
     </message>
     <message>
         <source>Download complete</source>
-        <translation>Herunterladen komplett</translation>
+        <translation>Download fertig</translation>
     </message>
     <message>
         <source>Open File</source>
@@ -13316,7 +13340,7 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Profile und Orte verwalten …&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Verwalte Profile und Orte...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Load Person Failure</source>
@@ -13532,11 +13556,11 @@ p, li { white-space: pre-wrap; }
     <name>SubFileItem</name>
     <message>
         <source>%p Kb</source>
-        <translation>%p kbit</translation>
+        <translation>%p KiB</translation>
     </message>
     <message>
         <source>Cancel Download</source>
-        <translation>Herunterladen abbrechen</translation>
+        <translation>Download abbrechen</translation>
     </message>
     <message>
         <source>Download File</source>
@@ -13572,7 +13596,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>DOWNLOAD</source>
-        <translation>HERUNTERLADEN</translation>
+        <translation>DOWNLOAD</translation>
     </message>
     <message>
         <source>LOCAL</source>
@@ -13605,6 +13629,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Open File</source>
         <translation>Datei öffnen</translation>
+    </message>
+    <message>
+        <source>Copy RetroShare Link</source>
+        <translation>RetroShare-Verweis kopieren</translation>
     </message>
 </context>
 <context>
@@ -13645,7 +13673,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>New tag ...</source>
-        <translation>Neues Schlagwort …</translation>
+        <translation>Neues Schlagwort...</translation>
     </message>
 </context>
 <context>
@@ -13656,7 +13684,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Maximum simultaneous downloads:</source>
-        <translation>Maximal gleichzeitiges herunterladen:</translation>
+        <translation>Maximale gleichzeitige Downloads:</translation>
     </message>
     <message>
         <source>Slots reserved for non-cache transfers:</source>
@@ -13696,7 +13724,7 @@ Es wird jedoch empfohlen, mindestens einige Slots für Cache-Dateien freizulasse
     </message>
     <message>
         <source> MB</source>
-        <translation>MB</translation>
+        <translation>MiB</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -13727,7 +13755,7 @@ p, li { white-space: pre-wrap; }
     <name>TransferUserNotify</name>
     <message>
         <source>Download completed</source>
-        <translation>Herunterladen abgeschlossen</translation>
+        <translation>Download fertig</translation>
     </message>
     <message>
         <source>You have %1 completed downloads</source>
@@ -13739,11 +13767,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>%1 completed downloads</source>
-        <translation>%1 fertig heruntergeladen</translation>
+        <translation>%1 fertige Downloads</translation>
     </message>
     <message>
         <source>%1 completed download</source>
-        <translation>%1 fertig heruntergeladen</translation>
+        <translation>%1 fertiger Download</translation>
     </message>
 </context>
 <context>
@@ -13875,7 +13903,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Details...</source>
-        <translation>Details …</translation>
+        <translation>Details...</translation>
     </message>
     <message>
         <source>Clear Completed</source>
@@ -13935,19 +13963,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Rename file...</source>
-        <translation>Datei umbenennen …</translation>
+        <translation>Datei umbenennen...</translation>
     </message>
     <message>
         <source>Specify...</source>
-        <translation>Spezifizieren …</translation>
+        <translation>Spezifiziere</translation>
     </message>
     <message>
         <source>Move in Queue...</source>
-        <translation>In Warteschlange verschieben …</translation>
+        <translation>In Warteschlange verschieben...</translation>
     </message>
     <message>
         <source>Priority (Speed)...</source>
-        <translation>Priorität (Geschwindigkeit) …</translation>
+        <translation>Priorität (Geschwindigkeit)...</translation>
     </message>
     <message>
         <source>Chunk strategy</source>
@@ -13991,7 +14019,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Checking...</source>
-        <translation>Überprüfen …</translation>
+        <translation>Überprüfe...</translation>
     </message>
     <message>
         <source>Unknown</source>
@@ -14032,7 +14060,7 @@ Bitte habe etwas Geduld!</translation>
     </message>
     <message>
         <source>Are you sure that you want to cancel and delete these files?</source>
-        <translation>Soll dieses Herunterladen wirklich abgebrochen und gelöscht werden?</translation>
+        <translation>Soll dieser Download wirklich abgebrochen und gelöscht werden?</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -14044,7 +14072,7 @@ Bitte habe etwas Geduld!</translation>
     </message>
     <message>
         <source>Can&apos;t create link for file %1.</source>
-        <translation>Verknüpfung für Datei %1 konnte nicht erstellt werden.</translation>
+        <translation>Konnte Verknüpfung für Datei %1 nicht erstellen.</translation>
     </message>
     <message>
         <source>File %1 preview failed.</source>
@@ -14422,15 +14450,15 @@ Bitte habe etwas Geduld!</translation>
     </message>
     <message>
         <source>KB</source>
-        <translation>kB</translation>
+        <translation>KiB</translation>
     </message>
     <message>
         <source>MB</source>
-        <translation>MB</translation>
+        <translation>MiB</translation>
     </message>
     <message>
         <source>GB</source>
-        <translation>GB</translation>
+        <translation>GiB</translation>
     </message>
 </context>
 <context>
@@ -14875,7 +14903,7 @@ Bitte habe etwas Geduld!</translation>
     </message>
     <message>
         <source>CheckBox</source>
-        <translation>Auswahlfeld</translation>
+        <translation>CheckBox</translation>
     </message>
     <message>
         <source>Post Pulse to Wire</source>
@@ -14897,27 +14925,27 @@ Bitte habe etwas Geduld!</translation>
     <message>
         <source> KB</source>
         <comment>kilobytes (1024 bytes)</comment>
-        <translation>kB</translation>
+        <translation>KiB</translation>
     </message>
     <message>
         <source> MB</source>
         <comment>megabytes (1024 kilobytes)</comment>
-        <translation>MB</translation>
+        <translation>MiB</translation>
     </message>
     <message>
         <source> GB</source>
         <comment>gigabytes (1024 megabytes)</comment>
-        <translation>GB</translation>
+        <translation>GiB</translation>
     </message>
     <message>
         <source> TB,</source>
         <comment>terabytes (1024 gigabytes)</comment>
-        <translation>TB,</translation>
+        <translation>TiB,</translation>
     </message>
     <message>
         <source> TB</source>
         <comment>terabytes (1024 gigabytes)</comment>
-        <translation>TB</translation>
+        <translation>TiB</translation>
     </message>
     <message>
         <source>Unknown</source>

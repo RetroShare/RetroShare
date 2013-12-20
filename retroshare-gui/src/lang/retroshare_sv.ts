@@ -1109,6 +1109,10 @@ p, li { white-space: pre-wrap; }
         <source>Private - (Private Publish Key required to view Messages)</source>
         <translation>Privat - Privat publiceringsnyckel krävs för att visa meddelanden</translation>
     </message>
+    <message>
+        <source>Destination directory</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>ChannelDialog</name>
@@ -1230,6 +1234,18 @@ p, li { white-space: pre-wrap; }
     <message>
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Channels&lt;/h1&gt;                                                             &lt;p&gt;Channels allow you to post data (e.g. movies, music) that will spread in the network                                                    among people who subscribed your channel.  If you activate auto-download on a channel, files attached to each post will start      downloading automatically when the post is received.&lt;/p&gt;                                                                                   &lt;p&gt;You see channels your friends are subscribed to, and forward subscribed channels to                                                    your friends. This promotes good channels in the network.                                                         When you first connect to a new friend, it&apos;s likely     you will receive many such cache files, and new channels will appear.                                                                      &lt;/p&gt;                                                                                                                                       &lt;p&gt;Only the channel&apos;s creator can post on that channel. Other peers                           in the network can only read from it, unless the channel is private. You can however share the posting rights or the reading rights     with your friends.&lt;/p&gt;                                </source>
         <translation>§</translation>
+    </message>
+    <message>
+        <source>Subscribe</source>
+        <translation>Prenumerera</translation>
+    </message>
+    <message>
+        <source>Post</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Subscribed</source>
+        <translation>Prenumererat</translation>
     </message>
 </context>
 <context>
@@ -2078,10 +2094,6 @@ Dubbelklicka lobbyer för att chatta.</translation>
         <translation>Namn</translation>
     </message>
     <message>
-        <source>Peer ID</source>
-        <translation>Användar-ID</translation>
-    </message>
-    <message>
         <source>RetroShare ID</source>
         <translation>RetroShare-ID</translation>
     </message>
@@ -2325,6 +2337,14 @@ Vissa tjänster (Upptäckt, anonym routning) kan stängas av lokalt, vilket allt
     <message>
         <source>Peer Addresses</source>
         <translation>Klientadresser</translation>
+    </message>
+    <message>
+        <source>Location ID</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP fingerprint</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -10206,6 +10226,10 @@ Högerklicka och välj &apos;Skapa kontakt&apos; för att kunna ansluta.</transl
         <source>Edge length:</source>
         <translation>Linjelängd:</translation>
     </message>
+    <message>
+        <source>Freeze</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>NewTag</name>
@@ -13582,6 +13606,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Open File</source>
         <translation>Öppna fil</translation>
+    </message>
+    <message>
+        <source>Copy RetroShare Link</source>
+        <translation>Kopiera RetroShare-länk</translation>
     </message>
 </context>
 <context>

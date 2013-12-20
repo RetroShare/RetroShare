@@ -1109,6 +1109,10 @@ p, li { white-space: pre-wrap; }
         <source>Private - (Private Publish Key required to view Messages)</source>
         <translation>Yksityinen - (Viestien lukemiseen tarvitaan yksityinen julkaisuavain)</translation>
     </message>
+    <message>
+        <source>Destination directory</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>ChannelDialog</name>
@@ -1230,6 +1234,18 @@ p, li { white-space: pre-wrap; }
     <message>
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Channels&lt;/h1&gt;                                                             &lt;p&gt;Channels allow you to post data (e.g. movies, music) that will spread in the network                                                    among people who subscribed your channel.  If you activate auto-download on a channel, files attached to each post will start      downloading automatically when the post is received.&lt;/p&gt;                                                                                   &lt;p&gt;You see channels your friends are subscribed to, and forward subscribed channels to                                                    your friends. This promotes good channels in the network.                                                         When you first connect to a new friend, it&apos;s likely     you will receive many such cache files, and new channels will appear.                                                                      &lt;/p&gt;                                                                                                                                       &lt;p&gt;Only the channel&apos;s creator can post on that channel. Other peers                           in the network can only read from it, unless the channel is private. You can however share the posting rights or the reading rights     with your friends.&lt;/p&gt;                                </source>
         <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Kanavat&lt;/h1&gt; &lt;p&gt;Kanavien avulla voit julkaista dataa (kuten elokuvia, musiikkia), joka leviää verkostossa niiden ihmisten välillä, jotka ovat tilanneet kanavasi.  Jos otat käyttöön automaattisen latauksen kanavalla, kanavaviestiin liitetyt tiedostot alkavat latautua automaattisesti, kun viesti on saatu.&lt;/p&gt; &lt;p&gt;Näet kanavat, jotka ystäväsi ovat tilanneet ja vastaavasti välität tilaamasi kanavat ystävillesi. Tämä edistää laadukkaiden kanavien leviämistä verkostossa. Kun otat ensimmäisen kerran yhteyden uuteen ystävään, on todennäköistä, että vastaanotat useita välimuistitiedostoja ja uusia kanavia ilmestyy saatavillesi. &lt;/p&gt; &lt;p&gt;Vain kanavan luoja voi lähettää viestejä kanavalle. Muut vertaiset voivat ainoastaan lukea sitä, ellei kanava ole yksityinen Voit kuitenkin antaa viestien lähetys- tai lukuoikeuksia ystävillesi.&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <source>Subscribe</source>
+        <translation>Aloita tilaus</translation>
+    </message>
+    <message>
+        <source>Post</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Subscribed</source>
+        <translation>Tilattu</translation>
     </message>
 </context>
 <context>
@@ -2077,10 +2093,6 @@ Kaksoisnapauta auloja siirtyäksesi keskustelemaan.</translation>
         <translation>Nimi</translation>
     </message>
     <message>
-        <source>Peer ID</source>
-        <translation>Vertaisen tunniste</translation>
-    </message>
-    <message>
         <source>RetroShare ID</source>
         <translation>RetroSharen tunniste</translation>
     </message>
@@ -2324,6 +2336,14 @@ Jotkut palvelut (etsintä, nimetön reititys) voi kytkeä pois yleisellä tasoll
     <message>
         <source>Peer Addresses</source>
         <translation>Vertaisten osoitteet</translation>
+    </message>
+    <message>
+        <source>Location ID</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP fingerprint</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -10227,6 +10247,10 @@ Paina hiiren oikeaa nappia ja valitse &quot;ystävysty&quot; saadaksesi yhteyden
         <source>Edge length:</source>
         <translation>Reunan pituus:</translation>
     </message>
+    <message>
+        <source>Freeze</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>NewTag</name>
@@ -13609,6 +13633,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Open File</source>
         <translation>Avaa tiedosto</translation>
+    </message>
+    <message>
+        <source>Copy RetroShare Link</source>
+        <translation>Kopioi RetroShare-linkki</translation>
     </message>
 </context>
 <context>

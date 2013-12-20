@@ -1089,6 +1089,10 @@ p, li { white-space: pre-wrap; }
         <source>Private - (Private Publish Key required to view Messages)</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>Destination directory</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>ChannelDialog</name>
@@ -1209,6 +1213,18 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Channels&lt;/h1&gt;                                                             &lt;p&gt;Channels allow you to post data (e.g. movies, music) that will spread in the network                                                    among people who subscribed your channel.  If you activate auto-download on a channel, files attached to each post will start      downloading automatically when the post is received.&lt;/p&gt;                                                                                   &lt;p&gt;You see channels your friends are subscribed to, and forward subscribed channels to                                                    your friends. This promotes good channels in the network.                                                         When you first connect to a new friend, it&apos;s likely     you will receive many such cache files, and new channels will appear.                                                                      &lt;/p&gt;                                                                                                                                       &lt;p&gt;Only the channel&apos;s creator can post on that channel. Other peers                           in the network can only read from it, unless the channel is private. You can however share the posting rights or the reading rights     with your friends.&lt;/p&gt;                                </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Subscribe</source>
+        <translation>Пријави ме</translation>
+    </message>
+    <message>
+        <source>Post</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Subscribed</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -2054,10 +2070,6 @@ Double click lobbies to enter and chat.</source>
         <translation>Назив</translation>
     </message>
     <message>
-        <source>Peer ID</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>RetroShare ID</source>
         <translation type="unfinished"/>
     </message>
@@ -2292,6 +2304,14 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Peer Addresses</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Location ID</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PGP fingerprint</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -10040,6 +10060,10 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
         <source>Edge length:</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>Freeze</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>NewTag</name>
@@ -13280,6 +13304,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Open File</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Copy RetroShare Link</source>
         <translation type="unfinished"/>
     </message>
 </context>
