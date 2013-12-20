@@ -2502,6 +2502,19 @@ int RsServer::StartupRetroShare()
 	mConfigMgr->addConfiguration("bitdht.cfg", mBitDht);
 #endif
 
+#ifdef RS_ENABLE_GXS
+
+	mConfigMgr->addConfiguration("identity.cfg", gxsid_ns);
+	mConfigMgr->addConfiguration("gxsforums.cfg", gxsforums_ns);
+	mConfigMgr->addConfiguration("gxschannels.cfg", gxschannels_ns);
+	mConfigMgr->addConfiguration("gxscircles.cfg", gxscircles_ns);
+	mConfigMgr->addConfiguration("posted.cfg", posted_ns);
+	mConfigMgr->addConfiguration("wire.cfg", wire_ns);
+	mConfigMgr->addConfiguration("wiki.cfg", wiki_ns);
+	mConfigMgr->addConfiguration("photo.cfg", photo_ns);
+
+#endif
+
 	mPluginsManager->addConfigurations(mConfigMgr) ;
 
 	ftserver->addConfiguration(mConfigMgr);

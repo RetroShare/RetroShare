@@ -566,7 +566,7 @@ class StoreHere
 {
 public:
 
-    StoreHere(RsGxsNetService::ClientGrpMap& cgm, RsGxsNetService::ClientMsgMap cmm,
+    StoreHere(RsGxsNetService::ClientGrpMap& cgm, RsGxsNetService::ClientMsgMap& cmm,
               RsGxsNetService::ServerMsgMap& smm,
               RsGxsServerGrpUpdateItem*& sgm) : mClientGrpMap(cgm), mClientMsgMap(cmm),
     mServerMsgMap(smm), mServerGrpUpdateItem(sgm)
@@ -587,7 +587,7 @@ public:
             mServerMsgMap.insert(std::make_pair(msui->grpId, msui));
         else if((gsui = dynamic_cast<RsGxsServerGrpUpdateItem*>(item)) != NULL)
         {
-            if(mServerGrpUpdateItem)
+            if(mServerGrpUpdateItem == NULL)
             {
                 mServerGrpUpdateItem = gsui;
             }
@@ -619,6 +619,7 @@ bool RsGxsNetService::loadList(std::list<RsItem *> &load)
 {
     std::for_each(load.begin(), load.end(), StoreHere(mClientGrpUpdateMap, mClientMsgUpdateMap,
                                                       mServerMsgUpdateMap, mGrpServerUpdateItem));
+
     return true;
 }
 
@@ -648,6 +649,9 @@ bool RsGxsNetService::saveList(bool& cleanup, std::list<RsItem*>& save)
                    std::back_inserter(save), get_second<ServerMsgMap>());
 
     save.push_back(mGrpServerUpdateItem);
+
+    cleanup = false;
+    return true;
 }
 
 RsSerialiser *RsGxsNetService::setupSerialiser()
@@ -916,6 +920,8 @@ void RsGxsNetService::updateServerSyncTS()
 		mGrpServerUpdateItem = new RsGxsServerGrpUpdateItem(mServType);
 	}
 
+	bool change = false;
+
 	for(; mit != gxsMap.end(); mit++)
 	{
 		const RsGxsGroupId& grpId = mit->first;
@@ -933,15 +939,27 @@ void RsGxsNetService::updateServerSyncTS()
 			msui = mapIT->second;
 		}
 
-		msui->msgUpdateTS = grpMeta->mLastPost;
+		if(grpMeta->mLastPost > msui->msgUpdateTS )
+		{
+			change = true;
+			msui->msgUpdateTS = grpMeta->mLastPost;
+		}
 
 		// this might be very inefficient with time
 		if(grpMeta->mRecvTS > mGrpServerUpdateItem->grpUpdateTS)
+		{
 			mGrpServerUpdateItem->grpUpdateTS = grpMeta->mRecvTS;
+			change = true;
+		}
 	}
+
+	// actual change in config settings, then save configuration
+	if(change)
+		IndicateConfigChanged();
 
 	freeAndClearContainerResource<std::map<RsGxsGroupId, RsGxsGrpMetaData*>,
 		RsGxsGrpMetaData*>(gxsMap);
+
 }
 bool RsGxsNetService::locked_checkTransacTimedOut(NxsTransaction* tr)
 {
@@ -1229,6 +1247,8 @@ void RsGxsNetService::locked_processCompletedIncomingTrans(NxsTransaction* tr)
 					item->grpUpdateTS = updateTS;
 					item->peerId = peerFrom;
 
+					IndicateConfigChanged();
+
 
 				}else if(flag & RsNxsTransac::FLAG_TYPE_MSGS)
 				{
@@ -1310,6 +1330,7 @@ void RsGxsNetService::locked_doMsgUpdateWork(const RsNxsTransac *nxsTrans, const
     mui->msgUpdateTS[grpId] = nxsTrans->updateTS;
     mui->peerId = peerFrom;
 
+    IndicateConfigChanged();
 }
 
 void RsGxsNetService::locked_processCompletedOutgoingTrans(NxsTransaction* tr)
@@ -2159,7 +2180,12 @@ bool RsGxsNetService::locked_CanReceiveUpdate(const RsNxsSyncMsg *item)
         const RsGxsServerMsgUpdateItem *msui = cit->second;
 
         if(item->updateTS >= msui->msgUpdateTS && item->updateTS != 0)
+        {
+#ifdef	NXS_NET_DEBUG
+        	std::cerr << "RsGxsNetService::locked_CanReceiveUpdate(): Msgs up to date" << std::endl;
+#endif
             return false;
+        }
     }
     return true;
 }
