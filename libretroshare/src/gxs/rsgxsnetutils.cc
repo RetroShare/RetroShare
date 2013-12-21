@@ -47,14 +47,16 @@ bool AuthorPending::expired() const
 }
 
 bool AuthorPending::getAuthorRep(GixsReputation& rep,
-		const std::string& authorId)
+                                 const std::string& authorId, const std::string& peerId)
 {
 	if(mRep->haveReputation(authorId))
 	{
 		return mRep->getReputation(authorId, rep);
 	}
 
-	mRep->loadReputation(authorId);
+        std::list<std::string> peers;
+        peers.push_back(peerId);
+        mRep->loadReputation(authorId, peers);
 	return false;
 
 }
@@ -94,7 +96,7 @@ bool MsgRespPending::accepted()
 		if(!entry.mPassedVetting)
 		{
 			GixsReputation rep;
-			if(getAuthorRep(rep, entry.mAuthorId))
+                        if(getAuthorRep(rep, entry.mAuthorId, mPeerId))
 			{
 				if(rep.score > mCutOff)
 				{
@@ -129,7 +131,7 @@ bool GrpRespPending::accepted()
 		{
 			GixsReputation rep;
 
-			if(getAuthorRep(rep, entry.mAuthorId))
+                        if(getAuthorRep(rep, entry.mAuthorId, mPeerId))
 			{
 				if(rep.score > mCutOff)
 				{

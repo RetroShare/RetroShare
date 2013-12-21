@@ -193,8 +193,10 @@ macx {
 
         gxs {
                 LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
+
 		LIBS += ../../../lib/libsqlcipher.a
                 #LIBS += -lsqlite3
+
         }
 
 

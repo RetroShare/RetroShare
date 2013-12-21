@@ -34,6 +34,7 @@
 #include "rsnxsobserver.h"
 #include "pqi/p3linkmgr.h"
 #include "serialiser/rsnxsitems.h"
+#include "serialiser/rsgxsupdateitems.h"
 #include "rsgxsnetutils.h"
 #include "pqi/p3cfgmgr.h"
 #include "rsgixs.h"
@@ -73,7 +74,7 @@ public:
      * arrive
      */
     RsGxsNetService(uint16_t servType, RsGeneralDataService* gds, RsNxsNetMgr* netMgr,
-    		RsNxsObserver* nxsObs = NULL, RsGixsReputation* repuations = NULL, RsGcxs* circles = NULL);
+    		RsNxsObserver* nxsObs = NULL, RsGixsReputation* repuations = NULL, RsGcxs* circles = NULL, bool grpAutoSync = true);
 
     virtual ~RsGxsNetService();
 
@@ -115,7 +116,7 @@ public:
      * @param msgId the messages to retrieve
      * @return request token to be redeemed
      */
-    int requestMsg(const std::string& msgId, uint8_t hops){ return 0;}
+    int requestMsg(const RsGxsGrpMsgIdPair& msgId){ return 0;}
 
     /*!
      * Request for this group is sent through to peers on your network
@@ -123,7 +124,7 @@ public:
      * @param enabled set to false to disable pause, and true otherwise
      * @return request token to be redeemed
      */
-    int requestGrp(const std::list<std::string>& grpId, uint8_t hops){ return 0;}
+    int requestGrp(const std::list<RsGxsGroupId>& grpId, const std::string& peerId);
 
     /* p3Config methods */
 
@@ -322,6 +323,15 @@ private:
 
     bool locked_canReceive(const RsGxsGrpMetaData * const grpMeta, const std::string& peerId);
 
+    void processExplicitGroupRequests();
+    
+    void locked_doMsgUpdateWork(const RsNxsTransac* nxsTrans, const std::string& grpId);
+
+    void updateServerSyncTS();
+
+    bool locked_CanReceiveUpdate(const RsNxsSyncGrp* item);
+    bool locked_CanReceiveUpdate(const RsNxsSyncMsg* item);
+
 private:
 
     typedef std::vector<RsNxsGrp*> GrpFragments;
@@ -418,10 +428,30 @@ private:
 
     RsGcxs* mCircles;
     RsGixsReputation* mReputations;
+    bool mGrpAutoSync;
 
     // need to be verfied
     std::vector<AuthorPending*> mPendingResp;
     std::vector<GrpCircleVetting*> mPendingCircleVets;
+
+    std::map<std::string, std::list<RsGxsGroupId> > mExplicitRequest;
+
+    // nxs sync optimisation
+    // can pull dynamically the latest timestamp for each message
+
+public:
+
+    typedef std::map<std::string, RsGxsMsgUpdateItem*> ClientMsgMap;
+    typedef std::map<std::string, RsGxsServerMsgUpdateItem*> ServerMsgMap;
+    typedef std::map<std::string, RsGxsGrpUpdateItem*> ClientGrpMap;
+
+private:
+
+    ClientMsgMap mClientMsgUpdateMap;
+    ServerMsgMap mServerMsgUpdateMap;
+    ClientGrpMap mClientGrpUpdateMap;
+
+    RsGxsServerGrpUpdateItem* mGrpServerUpdateItem;
 };
 
 #endif // RSGXSNETSERVICE_H

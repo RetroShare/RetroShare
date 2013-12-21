@@ -390,6 +390,9 @@ HEADERS +=	serialiser/rsbaseserial.h \
 			serialiser/rsdiscovery2items.h \
 			serialiser/rsheartbeatitems.h \
 			serialiser/rsrttitems.h \
+			serialiser/rsgxsrecognitems.h \
+                        serialiser/rstunnelitems.h \
+                        serialiser/rsgxsupdateitems.h
 
 HEADERS +=	services/p3chatservice.h \
 			services/p3msgservice.h \
@@ -425,6 +428,7 @@ HEADERS +=	util/folderiterator.h \
 			util/pugiconfig.h \  
 			util/rsmemcache.h \
 			util/rstickevent.h \
+			util/rsrecogn.h \
 
 SOURCES +=	dbase/cachestrapper.cc \
 			dbase/fimonitor.cc \
@@ -522,6 +526,9 @@ SOURCES +=	serialiser/rsbaseserial.cc \
 			serialiser/rsdiscovery2items.cc \
 			serialiser/rsheartbeatitems.cc \
 			serialiser/rsrttitems.cc \
+			serialiser/rsgxsrecognitems.cc \
+                        serialiser/rstunnelitems.cc \
+                        serialiser/rsgxsupdateitems.cc
 
 SOURCES +=	services/p3chatservice.cc \
 			services/p3msgservice.cc \
@@ -559,6 +566,7 @@ SOURCES +=	util/folderiterator.cc \
 			util/rsaes.cc \
 			util/rsrandom.cc \
 			util/rstickevent.cc \
+			util/rsrecogn.cc \
 
 
 upnp_miniupnpc {

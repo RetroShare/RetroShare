@@ -80,6 +80,7 @@ void	RsTickEvent::tick_events()
 			mEvents.erase(it);
 
 			count_adjust_locked(event_type, -1);
+			note_event_locked(event_type);
 		}
 	}
 

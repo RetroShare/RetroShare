@@ -71,13 +71,14 @@ class GxsGrpPendingSign
 public:
 
 	GxsGrpPendingSign(RsGxsGrpItem* item, uint32_t token): mLastAttemptTS(0), mStartTS(time(NULL)), mToken(token),
-		mItem(item), mHaveKeys(false)
+		mItem(item), mHaveKeys(false), mIsUpdate(false)
 	{}
 
 	time_t mLastAttemptTS, mStartTS;
 	uint32_t mToken;
 	RsGxsGrpItem* mItem;
 	bool mHaveKeys; // mKeys->first == true if key present
+	bool mIsUpdate;
 	RsTlvSecurityKeySet mPrivateKeys;
 	RsTlvSecurityKeySet mPublicKeys;
 };
@@ -516,13 +517,22 @@ protected:
 
     /*!
      * Enables publication of a group item \n
-     * If the item exists already this is simply versioned \n
      * This will induce a related change message \n
      * Ownership of item passes to this rsgenexchange \n
      * @param token
      * @param grpItem
      */
     void publishGroup(uint32_t& token, RsGxsGrpItem* grpItem);
+
+
+    /*!
+     * Updates an existing group item \n
+     * This will induce a related change message \n
+     * Ownership of item passes to this rsgenexchange \n
+     * @param token
+     * @param grpItem
+     */
+    void updateGroup(uint32_t& token, RsGxsGroupUpdateMeta& updateMeta, RsGxsGrpItem* grpItem);
 
 public:
     /*!
@@ -629,6 +639,8 @@ private:
 
     void publishGrps();
 
+    void processGroupUpdatePublish();
+
     void publishMsgs();
 
     /*!
@@ -700,10 +712,19 @@ private:
     /*!
      * Generate a set of keys that can define a GXS group
      * @param privatekeySet contains private generated keys
-     * @param privatekeySet contains public generated keys (counterpart of private)
+     * @param publickeySet contains public generated keys (counterpart of private)
      * @param genPublicKeys should publish key pair also be generated
      */
     void generateGroupKeys(RsTlvSecurityKeySet& privatekeySet, RsTlvSecurityKeySet& publickeySet, bool genPublishKeys);
+
+    /*!
+     * Generate public set of keys from their private counterparts
+     * No keys will be generated if one fails
+     * @param privatekeySet contains private generated keys
+     * @param publickeySet contains public generated keys (counterpart of private)
+     * @return false if key gen failed for a key set
+     */
+    void generatePublicFromPrivateKeys(const RsTlvSecurityKeySet& privatekeySet, RsTlvSecurityKeySet& publickeySet);
 
     /*!
      * Attempts to validate msg signatures
@@ -735,6 +756,32 @@ private:
     void  groupShareKeys(std::list<std::string> peers);
 
     static void computeHash(const RsTlvBinaryData& data, std::string& hash);
+
+    /*!
+     * Checks validation of recently received groups to be
+     * updated
+     */
+    void performUpdateValidation();
+
+    /*!
+     * Checks if the update is valid (i.e. the new admin signature is by the old admin key)
+     * @param oldGrp the old group to be updated (must have meta data member initialised)
+     * @param newGrp the new group that updates the old group (must have meta data member initialised)
+     * @return
+     */
+    bool updateValid(RsGxsGrpMetaData& oldGrp, RsNxsGrp& newGrp) const;
+
+    /*!
+     * convenience function for checking private publish and admin keys are present
+     * @param keySet The keys set to split into a private and public set
+     * @return false, if private admin and publish keys cannot be found, true otherwise
+     */
+    bool checkKeys(const RsTlvSecurityKeySet& keySet);
+
+    /*!
+     * Convenience function for assigning the meta update items to the actual group meta
+     */
+    void assignMetaUpdates(RsGroupMetaData& meta, const RsGxsGroupUpdateMeta metaUpdate) const;
 
 private:
 
@@ -798,6 +845,13 @@ private:
     const uint8_t CREATE_FAIL, CREATE_SUCCESS, CREATE_FAIL_TRY_LATER, SIGN_MAX_ATTEMPTS;
     const uint8_t SIGN_FAIL, SIGN_SUCCESS, SIGN_FAIL_TRY_LATER;
     const uint8_t VALIDATE_FAIL, VALIDATE_SUCCESS, VALIDATE_FAIL_TRY_LATER, VALIDATE_MAX_ATTEMPTS;
+
+private:
+
+    std::vector<GroupUpdate> mGroupUpdates, mPeersGroupUpdate;
+
+    std::vector<GroupUpdatePublish> mGroupUpdatePublish;
+
 };
 
 #endif // RSGENEXCHANGE_H

@@ -30,16 +30,16 @@ INITTEST();
 int main()
 {
 
-    RsGeneralDataService* dataStore = new RsDataService("./", "testServiceDb", RS_SERVICE_TYPE_DUMMY, NULL);
+    RsGeneralDataService* dataStore = new RsDataService("./", "testServiceDb", RS_SERVICE_TYPE_DUMMY, NULL, "");
 
     // we want to use default authentication which is NO authentication :)
     GenExchangeTestService testService(dataStore, NULL, NULL);
 
-    //GxsPublishGroupTest testGrpPublishing(&testService, dataStore);
-    //testGrpPublishing.runTests();
+    GxsPublishGroupTest testGrpPublishing(&testService, dataStore);
+    testGrpPublishing.runTests();
 
-    GxsPublishMsgTest testMsgPublishing(&testService, dataStore);
-    testMsgPublishing.runTests();
+    //GxsPublishMsgTest testMsgPublishing(&testService, dataStore);
+    //testMsgPublishing.runTests();
 
     FINALREPORT("RsGenExchangeTest");
 

@@ -122,10 +122,13 @@ void RsGxsIdGroupItem::clear()
 	group.mPgpIdHash.clear();
 	group.mPgpIdSign.clear();
 
+	group.mRecognTags.clear();
+
         group.mPgpKnown = false;
         group.mPgpId.clear();
 
 }
+
 
 std::ostream& RsGxsIdGroupItem::print(std::ostream& out, uint16_t indent)
 {
@@ -133,9 +136,16 @@ std::ostream& RsGxsIdGroupItem::print(std::ostream& out, uint16_t indent)
 	uint16_t int_Indent = indent + 2;
 
 	printIndent(out, int_Indent);
+	out << "MetaData: " << meta << std::endl;
+	printIndent(out, int_Indent);
 	out << "PgpIdHash: " << group.mPgpIdHash << std::endl;
 	printIndent(out, int_Indent);
 	out << "PgpIdSign: " << group.mPgpIdSign << std::endl;
+	printIndent(out, int_Indent);
+	out << "RecognTags:" << std::endl;
+
+	RsTlvStringSetRef set(TLV_TYPE_RECOGNSET, group.mRecognTags);
+	set.print(out, int_Indent + 2);
   
 	printRsItemEnd(out ,"RsGxsIdGroupItem", indent);
 	return out;
@@ -150,6 +160,9 @@ uint32_t RsGxsIdSerialiser::sizeGxsIdGroupItem(RsGxsIdGroupItem *item)
 
 	s += GetTlvStringSize(group.mPgpIdHash);
 	s += GetTlvStringSize(group.mPgpIdSign);
+
+	RsTlvStringSetRef set(TLV_TYPE_RECOGNSET, item->group.mRecognTags);
+	s += set.TlvSize();
 
 	return s;
 }
@@ -181,6 +194,9 @@ bool RsGxsIdSerialiser::serialiseGxsIdGroupItem(RsGxsIdGroupItem *item, void *da
 	/* GxsIdGroupItem */
 	ok &= SetTlvString(data, tlvsize, &offset, 1, item->group.mPgpIdHash);
 	ok &= SetTlvString(data, tlvsize, &offset, 1, item->group.mPgpIdSign);
+
+	RsTlvStringSetRef set(TLV_TYPE_RECOGNSET, item->group.mRecognTags);
+	ok &= set.SetTlv(data, tlvsize, &offset);
 	
 	if(offset != tlvsize)
 	{
@@ -238,6 +254,10 @@ RsGxsIdGroupItem* RsGxsIdSerialiser::deserialiseGxsIdGroupItem(void *data, uint3
 	
 	ok &= GetTlvString(data, rssize, &offset, 1, item->group.mPgpIdHash);
 	ok &= GetTlvString(data, rssize, &offset, 1, item->group.mPgpIdSign);
+
+	RsTlvStringSetRef set(TLV_TYPE_RECOGNSET, item->group.mRecognTags);
+	ok &= set.GetTlv(data, rssize, &offset);
+	
 	
 	if (offset != rssize)
 	{

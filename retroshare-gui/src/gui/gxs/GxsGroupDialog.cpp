@@ -148,13 +148,13 @@ void GxsGroupDialog::initMode()
 		{
 			ui.buttonBox->setStandardButtons(QDialogButtonBox::Close);
 		}
-		break;
-//TODO
-//		case MODE_EDIT:
-//		{
-//			ui.createButton->setText(tr("Submit Changes"));
-//		}
-//		break;
+                break;
+                case MODE_EDIT:
+                {
+                    ui.buttonBox->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+                    ui.buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Submit Group Changes"));
+                }
+                break;
 	}
 }
 
@@ -320,12 +320,40 @@ void GxsGroupDialog::submitGroup()
 		break;
 
 		case MODE_EDIT:
-		{
-			/* TEMP: just close if down */
-			cancelDialog();
+                {
+
+                        editGroup();
 		}
 		break;
 	}
+}
+
+void GxsGroupDialog::editGroup()
+{
+    std::cerr << "GxsGroupDialog::editGroup()" << std::endl;
+
+    QString name = misc::removeNewLine(ui.groupName->text());
+    uint32_t flags = GXS_SERV::FLAG_PRIVACY_PUBLIC;
+
+    if(name.isEmpty())
+    {
+                    /* error message */
+                    QMessageBox::warning(this, "RetroShare", tr("Please add a Name"), QMessageBox::Ok, QMessageBox::Ok);
+                    return; //Don't add  a empty name!!
+    }
+
+    uint32_t token;
+    RsGxsGroupUpdateMeta updateMeta(mGrpMeta.mGroupId);
+    updateMeta.setMetaUpdate(RsGxsGroupUpdateMeta::NAME, std::string(name.toUtf8()));
+
+    if (service_EditGroup(token, updateMeta))
+    {
+            // get the Queue to handle response.
+            if(mTokenQueue != NULL)
+                    mTokenQueue->queueRequest(token, TOKENREQ_GROUPINFO, RS_TOKREQ_ANSTYPE_ACK, GXSGROUP_NEWGROUPID);
+    }
+
+    close();
 }
 
 void GxsGroupDialog::createGroup()

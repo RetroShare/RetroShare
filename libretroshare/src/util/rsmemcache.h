@@ -65,6 +65,7 @@ template<class Key, class Value> class RsMemCache
 	bool fetch(const Key &key, Value &data);
 	Value &ref(const Key &key);	// like map[] installs empty one if non-existent.
 	bool store(const Key &key, const Value &data);
+	bool erase(const Key &key); // clean up cache.
 
 	bool resize(); // should be called periodically to cleanup old entries.
 
@@ -167,6 +168,48 @@ template<class Key, class Value> bool RsMemCache<Key, Value>::fetch(const Key &k
 	mStats_access++;
 	return true;
 }
+
+
+template<class Key, class Value> bool RsMemCache<Key, Value>::erase(const Key &key)
+{
+#ifdef DEBUG_RSMEMCACHE
+	std::cerr << "RsMemCache::erase()";
+	std::cerr << std::endl;
+	printStats(std::cerr);
+#endif // DEBUG_RSMEMCACHE
+
+	typename std::map<Key, cache_data>::iterator it;
+	it = mDataMap.find(key);
+	if (it == mDataMap.end())
+	{
+#ifdef DEBUG_RSMEMCACHE
+		std::cerr << "RsMemCache::erase(" << key << ") false";
+		std::cerr << std::endl;
+#endif // DEBUG_RSMEMCACHE
+
+		mStats_accessmiss++;
+		return false;
+	}
+	
+#ifdef DEBUG_RSMEMCACHE
+	std::cerr << "RsMemCache::erase(" << key << ") OK";
+	std::cerr << std::endl;
+#endif // DEBUG_RSMEMCACHE
+
+
+	/* get timestamps */
+        time_t old_ts = it->second.ts;
+        time_t new_ts = 0;
+
+	// remove from lru.
+	mDataMap.erase(it);
+        update_lrumap(key, old_ts, new_ts);
+	mDataCount--;
+
+	mStats_access++;
+	return true;
+}
+
 
 
 template<class Key, class Value> Value &RsMemCache<Key, Value>::ref(const Key &key)
@@ -319,6 +362,12 @@ template<class Key, class Value> bool RsMemCache<Key, Value>::resize()
 		{
 			// ERROR.
 			std::cerr << "RsMemCache::resize() CONSISTENCY ERROR";
+			std::cerr << std::endl;
+			std::cerr << "\tmDataMap.size() = " << mDataMap.size();
+			std::cerr << std::endl;
+			std::cerr << "\tmLruMap.size() = " << mLruMap.size();
+			std::cerr << std::endl;
+			std::cerr << "\tmDataCount = " << mDataCount;
 			std::cerr << std::endl;
 		}
 	

@@ -1487,7 +1487,14 @@ bool RsGxsDataAccess::addGroupData(RsNxsGrp* grp) {
 	return mDataStore->storeGroup(grpM);
 }
 
+bool RsGxsDataAccess::updateGroupData(RsNxsGrp* grp) {
 
+	RsStackMutex stack(mDataMutex);
+
+	std::map<RsNxsGrp*, RsGxsGrpMetaData*> grpM;
+	grpM.insert(std::make_pair(grp, grp->metaData));
+	return mDataStore->updateGroup(grpM);
+}
 
 bool RsGxsDataAccess::addMsgData(RsNxsMsg* msg) {
 

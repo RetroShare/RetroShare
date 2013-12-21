@@ -52,6 +52,13 @@ const uint32_t ForumCreateDefaultsFlags = ( GXS_GROUP_DEFAULTS_DISTRIB_PUBLIC   
 			GXS_GROUP_DEFAULTS_COMMENTS_NO          |
 			0);
 
+
+const uint32_t ForumEditEnabledFlags = ( GXS_GROUP_FLAGS_ICON        |
+                        GXS_GROUP_FLAGS_DESCRIPTION   |
+                        0);
+
+const uint32_t ForumEditDefaultsFlags = 0;
+
 GxsForumGroupDialog::GxsForumGroupDialog(TokenQueue *tokenQueue, QWidget *parent)
 	:GxsGroupDialog(tokenQueue, ForumCreateEnabledFlags, ForumCreateDefaultsFlags, parent)
 {
@@ -88,8 +95,17 @@ bool GxsForumGroupDialog::service_CreateGroup(uint32_t &token, const RsGroupMeta
 	// Specific Function.
 	RsGxsForumGroup grp;
 	grp.mMeta = meta;
-	//grp.mDescription = std::string(desc.toUtf8());
+        grp.mDescription = std::string(ui.groupDesc->toPlainText().toUtf8());
 
 	rsGxsForums->createGroup(token, grp);
 	return true;
+}
+
+bool GxsForumGroupDialog::service_EditGroup(uint32_t &token, RsGxsGroupUpdateMeta &updateMeta)
+{
+    RsGxsForumGroup grp;
+    grp.mDescription = std::string(ui.groupDesc->toPlainText().toUtf8());
+
+    rsGxsForums->updateGroup(token, updateMeta, grp);
+    return true;
 }

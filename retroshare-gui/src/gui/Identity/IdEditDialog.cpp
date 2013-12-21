@@ -61,10 +61,19 @@ IdEditDialog::IdEditDialog(QWidget *parent)
 	/* Connect signals */
 	connect(ui.radioButton_GpgId, SIGNAL(toggled(bool)), this, SLOT(idTypeToggled(bool)));
 	connect(ui.radioButton_Pseudo, SIGNAL(toggled(bool)), this, SLOT(idTypeToggled(bool)));
-	connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(updateId()));
+	connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(submit()));
 	connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(close()));
 
+	connect(ui.plainTextEdit_Tag, SIGNAL(textChanged()), this, SLOT(checkNewTag()));
+	connect(ui.pushButton_Tag, SIGNAL(clicked(bool)), this, SLOT(addRecognTag()));
+	connect(ui.toolButton_Tag1, SIGNAL(clicked(bool)), this, SLOT(rmTag1()));
+	connect(ui.toolButton_Tag2, SIGNAL(clicked(bool)), this, SLOT(rmTag2()));
+	connect(ui.toolButton_Tag3, SIGNAL(clicked(bool)), this, SLOT(rmTag3()));
+	connect(ui.toolButton_Tag4, SIGNAL(clicked(bool)), this, SLOT(rmTag4()));
+	connect(ui.toolButton_Tag5, SIGNAL(clicked(bool)), this, SLOT(rmTag5()));
+
 	mIdQueue = new TokenQueue(rsIdentity->getTokenService(), this);
+	ui.pushButton_Tag->setEnabled(false);
 }
 
 void IdEditDialog::setupNewId(bool pseudo)
@@ -89,6 +98,10 @@ void IdEditDialog::setupNewId(bool pseudo)
 
 	// force - incase it wasn't triggered.
 	idTypeToggled(true);
+
+	ui.frame_Tags->setHidden(true);
+	ui.radioButton_GpgId->setEnabled(true);
+	ui.radioButton_Pseudo->setEnabled(true);
 }
 
 void IdEditDialog::idTypeToggled(bool checked)
@@ -144,7 +157,6 @@ void IdEditDialog::loadExistingId(uint32_t token)
 	mStateHelper->setLoading(IDEDITDIALOG_LOADID, false);
 
 	/* get details from libretroshare */
-	RsGxsIdGroup data;
 	std::vector<RsGxsIdGroup> datavector;
 	if (!rsIdentity->getGroupData(token, datavector))
 	{
@@ -166,9 +178,9 @@ void IdEditDialog::loadExistingId(uint32_t token)
 		return;
 	}
 
-	data = datavector[0];
+	mEditGroup = datavector[0];
 
-	bool realid = (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID);
+	bool realid = (mEditGroup.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID);
 
 	if (realid)
 	{
@@ -178,25 +190,28 @@ void IdEditDialog::loadExistingId(uint32_t token)
 	{
 		ui.radioButton_Pseudo->setChecked(true);
 	}
+	// these are not editable for existing Id.
+	ui.radioButton_GpgId->setEnabled(false);
+	ui.radioButton_Pseudo->setEnabled(false);
 
 	// DOES THIS TRIGGER ALREADY???
 	// force - incase it wasn't triggered.
 	idTypeToggled(true);
 
-	ui.lineEdit_Nickname->setText(QString::fromUtf8(data.mMeta.mGroupName.c_str()));
-	ui.lineEdit_KeyId->setText(QString::fromStdString(data.mMeta.mGroupId));
+	ui.lineEdit_Nickname->setText(QString::fromUtf8(mEditGroup.mMeta.mGroupName.c_str()));
+	ui.lineEdit_KeyId->setText(QString::fromStdString(mEditGroup.mMeta.mGroupId));
 
 	if (realid)
 	{
-		ui.lineEdit_GpgHash->setText(QString::fromStdString(data.mPgpIdHash));
+		ui.lineEdit_GpgHash->setText(QString::fromStdString(mEditGroup.mPgpIdHash));
 
-		if (data.mPgpKnown)
+		if (mEditGroup.mPgpKnown)
 		{
 			RsPeerDetails details;
-			rsPeers->getGPGDetails(data.mPgpId, details);
+			rsPeers->getGPGDetails(mEditGroup.mPgpId, details);
 			ui.lineEdit_GpgName->setText(QString::fromUtf8(details.name.c_str()));
 
-			ui.lineEdit_GpgId->setText(QString::fromStdString(data.mPgpId));
+			ui.lineEdit_GpgId->setText(QString::fromStdString(mEditGroup.mPgpId));
 		}
 		else
 		{
@@ -210,53 +225,216 @@ void IdEditDialog::loadExistingId(uint32_t token)
 		ui.lineEdit_GpgId->setText(tr("N/A"));
 		ui.lineEdit_GpgName->setText(tr("N/A"));
 	}
+
+	// RecognTags.
+	ui.frame_Tags->setHidden(false);
+
+	loadRecognTags();
 }
 
-void IdEditDialog::updateId()
+#define MAX_RECOGN_TAGS 	5
+
+void IdEditDialog::checkNewTag()
 {
-	RsGxsIdGroup rid;
-	// Must set, Nickname, KeyId(if existing), mIdType, GpgId.
+	std::string tag = ui.plainTextEdit_Tag->toPlainText().toStdString();
+	std::string id = ui.lineEdit_KeyId->text().toStdString();
+	std::string name = ui.lineEdit_Nickname->text().toUtf8().data();
 
-	rid.mMeta.mGroupName = ui.lineEdit_Nickname->text().toUtf8().constData();
+	QString desc;
+	bool ok = tagDetails(id, name, tag, desc);
+	ui.label_TagCheck->setText(desc);
 
-	if (rid.mMeta.mGroupName.size() < 2)
+	// hack to allow add invalid tags (for testing).
+	if (!tag.empty())
 	{
-		std::cerr << "IdEditDialog::updateId() Nickname too short";
+		ok = true;
+	}
+
+
+	if (mEditGroup.mRecognTags.size() >= MAX_RECOGN_TAGS)
+	{
+		ok = false;
+	}
+
+	ui.pushButton_Tag->setEnabled(ok);
+}
+
+void IdEditDialog::addRecognTag()
+{
+	std::string tag = ui.plainTextEdit_Tag->toPlainText().toStdString();
+	if (mEditGroup.mRecognTags.size() >= MAX_RECOGN_TAGS)
+	{
+		std::cerr << "IdEditDialog::addRecognTag() Too many Tags, delete one first";
+		std::cerr << std::endl;
+	}
+
+	mEditGroup.mRecognTags.push_back(tag);
+	loadRecognTags();
+}
+
+void IdEditDialog::rmTag1()
+{
+	rmTag(0);
+}
+
+void IdEditDialog::rmTag2()
+{
+	rmTag(1);
+}
+
+void IdEditDialog::rmTag3()
+{
+	rmTag(2);
+}
+
+void IdEditDialog::rmTag4()
+{
+	rmTag(3);
+}
+
+void IdEditDialog::rmTag5()
+{
+	rmTag(4);
+}
+	
+void IdEditDialog::rmTag(int idx)
+{
+	std::list<std::string>::iterator it;
+	int i = 0;
+	for(it = mEditGroup.mRecognTags.begin(); it != mEditGroup.mRecognTags.end() && (idx < i); it++, i++) ;
+
+	if (it != mEditGroup.mRecognTags.end())
+	{
+		mEditGroup.mRecognTags.erase(it);
+	}
+	loadRecognTags();
+}
+
+bool IdEditDialog::tagDetails(const std::string &id, const std::string &name, const std::string &tag, QString &desc)
+{
+	if (tag.empty())
+	{
+		desc += "Empty Tag";
+		return false;
+	}
+		
+	/* extract details for each tag */
+	RsRecognTagDetails tagDetails;
+
+	bool ok = false;
+	if (rsIdentity->parseRecognTag(id, name, tag, tagDetails))
+	{
+		desc += QString::number(tagDetails.tag_class);
+		desc += ":";
+		desc += QString::number(tagDetails.tag_type);
+
+		if (tagDetails.is_valid)
+		{
+			ok = true;
+			desc += " Valid";
+		}
+		else
+		{
+			desc += " Invalid";
+		}
+
+		if (tagDetails.is_pending)
+		{
+			ok = true;
+			desc += " Pending";
+		}
+	}
+	else
+	{
+		desc += "Unparseable";
+	}
+	return ok;
+}
+
+
+void IdEditDialog::loadRecognTags()
+{
+	std::cerr << "IdEditDialog::loadRecognTags()";
+	std::cerr << std::endl;
+
+	// delete existing items.
+	ui.label_Tag1->setHidden(true);
+	ui.label_Tag2->setHidden(true);
+	ui.label_Tag3->setHidden(true);
+	ui.label_Tag4->setHidden(true);
+	ui.label_Tag5->setHidden(true);
+	ui.toolButton_Tag1->setHidden(true);
+	ui.toolButton_Tag2->setHidden(true);
+	ui.toolButton_Tag3->setHidden(true);
+	ui.toolButton_Tag4->setHidden(true);
+	ui.toolButton_Tag5->setHidden(true);
+	ui.plainTextEdit_Tag->setPlainText("");
+
+	int i = 0;
+	std::list<std::string>::const_iterator it;
+	for(it = mEditGroup.mRecognTags.begin(); it != mEditGroup.mRecognTags.end(); it++, i++)
+	{
+		QString recognTag;
+		tagDetails(mEditGroup.mMeta.mGroupId, mEditGroup.mMeta.mGroupName, *it, recognTag);
+
+		switch(i)
+		{
+			default:
+			case 0:
+				ui.label_Tag1->setText(recognTag);
+				ui.label_Tag1->setHidden(false);
+				ui.toolButton_Tag1->setHidden(false);
+				break;
+			case 1:
+				ui.label_Tag2->setText(recognTag);
+				ui.label_Tag2->setHidden(false);
+				ui.toolButton_Tag2->setHidden(false);
+				break;
+			case 2:
+				ui.label_Tag3->setText(recognTag);
+				ui.label_Tag3->setHidden(false);
+				ui.toolButton_Tag3->setHidden(false);
+				break;
+			case 3:
+				ui.label_Tag4->setText(recognTag);
+				ui.label_Tag4->setHidden(false);
+				ui.toolButton_Tag4->setHidden(false);
+				break;
+			case 4:
+				ui.label_Tag5->setText(recognTag);
+				ui.label_Tag5->setHidden(false);
+				ui.toolButton_Tag5->setHidden(false);
+				break;
+		}
+	}
+}
+
+void IdEditDialog::submit()
+{
+	if (mIsNew)
+	{
+		createId();
+	}
+	else
+	{
+		updateId();
+	}
+}
+
+
+void IdEditDialog::createId()
+{
+	std::string groupname = ui.lineEdit_Nickname->text().toUtf8().constData();
+
+	if (groupname.size() < 2)
+	{
+		std::cerr << "IdEditDialog::createId() Nickname too short";
 		std::cerr << std::endl;
 		return;
 	}
 
-	//rid.mIdType = RSID_RELATION_YOURSELF;
-	if (mIsNew)
-	{
-		rid.mMeta.mGroupId = "";
-	}
-	else
-	{
-		rid.mMeta.mGroupId = ui.lineEdit_KeyId->text().toStdString();
-	}
-
-	if (ui.radioButton_GpgId->isChecked())
-	{
-		//rid.mIdType |= RSID_TYPE_REALID;
-
-		//rid.mGpgId = ui.lineEdit_GpgId->text().toStdString();
-		rid.mPgpIdHash = ui.lineEdit_GpgHash->text().toStdString();
-		//rid.mGpgName = ui.lineEdit_GpgName->text().toUtf8().constData();
-	}
-	else
-	{
-		//rid.mIdType |= RSID_TYPE_PSEUDONYM;
-
-		//rid.mGpgId = "";
-		rid.mPgpIdHash = "";
-		//rid.mGpgName = "";
-		//rid.mGpgEmail = "";
-	}
-
-	// Can only create Identities for the moment!
 	RsIdentityParameters params;
-	params.nickname = rid.mMeta.mGroupName;
+	params.nickname = groupname;
 	params.isPgpLinked = (ui.radioButton_GpgId->isChecked());
 
 	uint32_t dummyToken = 0;
@@ -264,6 +442,30 @@ void IdEditDialog::updateId()
 
 	close();
 }
+
+
+void IdEditDialog::updateId()
+{
+	/* submit updated details */
+	std::string groupname = ui.lineEdit_Nickname->text().toUtf8().constData();
+
+	if (groupname.size() < 2)
+	{
+		std::cerr << "IdEditDialog::updateId() Nickname too short";
+		std::cerr << std::endl;
+		return;
+	}
+
+	mEditGroup.mMeta.mGroupName = groupname;
+
+	uint32_t dummyToken = 0;
+	rsIdentity->updateIdentity(dummyToken, mEditGroup);
+
+	close();
+}
+
+
+
 
 void IdEditDialog::loadRequest(const TokenQueue */*queue*/, const TokenRequest &req)
 {

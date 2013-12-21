@@ -39,7 +39,7 @@ RsSerialType* init_item(RsNxsSyncGrp& rsg)
 {
     rsg.clear();
     rsg.flag = RsNxsSyncGrp::FLAG_USE_SYNC_HASH;
-    rsg.syncAge = rand()%2423;
+    rsg.createdSince = rand()%2423;
     randString(3124,rsg.syncHash);
 
     return new RsNxsSerialiser(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
@@ -50,7 +50,7 @@ RsSerialType* init_item(RsNxsSyncMsg& rsgm)
     rsgm.clear();
 
     rsgm.flag = RsNxsSyncMsg::FLAG_USE_SYNC_HASH;
-    rsgm.syncAge = rand()%24232;
+    rsgm.createdSince = rand()%24232;
     rsgm.transactionNumber = rand()%23;
     randString(SHORT_STR, rsgm.grpId);
     randString(SHORT_STR, rsgm.syncHash);
@@ -120,7 +120,7 @@ bool operator==(const RsNxsSyncGrp& l, const RsNxsSyncGrp& r)
 
     if(l.syncHash != r.syncHash) return false;
     if(l.flag != r.flag) return false;
-    if(l.syncAge != r.syncAge) return false;
+    if(l.createdSince != r.createdSince) return false;
     if(l.transactionNumber != r.transactionNumber) return false;
 
     return true;
@@ -130,7 +130,7 @@ bool operator==(const RsNxsSyncMsg& l, const RsNxsSyncMsg& r)
 {
 
     if(l.flag != r.flag) return false;
-    if(l.syncAge != r.syncAge) return false;
+    if(l.createdSince != r.createdSince) return false;
     if(l.syncHash != r.syncHash) return false;
     if(l.grpId != r.grpId) return false;
     if(l.transactionNumber != r.transactionNumber) return false;

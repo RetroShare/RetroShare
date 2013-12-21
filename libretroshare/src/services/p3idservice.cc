@@ -29,6 +29,7 @@
 #include "retroshare/rsiface.h"
 #include "util/rsrandom.h"
 #include "util/rsstring.h"
+#include "util/radix64.h"
 
 #include "pqi/authgpg.h"
 
@@ -39,10 +40,13 @@
 
 /****
  * #define DEBUG_IDS	1
+ * #define DEBUG_RECOGN	1
  * #define GXSID_GEN_DUMMY_DATA	1
  * #define ENABLE_PGP_SIGNATURES 1
  ****/
 
+#define DEBUG_IDS	1
+#define DEBUG_RECOGN	1
 #define ENABLE_PGP_SIGNATURES 	1
 
 
@@ -76,14 +80,16 @@ RsIdentity *rsIdentity = NULL;
 #define RSGXSID_MAX_SERVICE_STRING 1024
 
 #define BG_PGPHASH 	1
-#define BG_REPUTATION 	2
+#define BG_RECOGN 	2
+#define BG_REPUTATION 	3
 
 
 #define GXSIDREQ_CACHELOAD	0x0001
 #define GXSIDREQ_CACHEOWNIDS	0x0002
 
 #define GXSIDREQ_PGPHASH 	0x0010
-#define GXSIDREQ_REPUTATION 	0x0020
+#define GXSIDREQ_RECOGN 	0x0020
+#define GXSIDREQ_REPUTATION 	0x0030
 
 #define GXSIDREQ_CACHETEST 	0x1000
 
@@ -94,7 +100,10 @@ RsIdentity *rsIdentity = NULL;
 #define GXSID_EVENT_PGPHASH 		0x0010
 #define GXSID_EVENT_PGPHASH_PROC 	0x0011
 
-#define GXSID_EVENT_REPUTATION 		0x0020
+#define GXSID_EVENT_RECOGN 		0x0020
+#define GXSID_EVENT_RECOGN_PROC 	0x0021
+
+#define GXSID_EVENT_REPUTATION 		0x0030
 
 #define GXSID_EVENT_CACHETEST 		0x1000
 
@@ -103,6 +112,7 @@ RsIdentity *rsIdentity = NULL;
 #define GXSID_EVENT_DUMMY_PGPID		0x2002
 #define GXSID_EVENT_DUMMY_UNKNOWN_PGPID	0x2003
 #define GXSID_EVENT_DUMMY_PSEUDOID	0x2004
+#define GXSID_EVENT_REQUEST_IDS     0x2005
 
 
 /* delays */
@@ -115,6 +125,10 @@ RsIdentity *rsIdentity = NULL;
 #define PGPHASH_RETRY_PERIOD		11
 #define PGPHASH_PROC_PERIOD		1
 
+#define RECOGN_PERIOD			90
+#define RECOGN_RETRY_PERIOD		17
+#define RECOGN_PROC_PERIOD		1
+
 #define REPUTATION_PERIOD		60
 #define REPUTATION_RETRY_PERIOD		13
 #define REPUTATION_PROC_PERIOD		1
@@ -126,8 +140,8 @@ RsIdentity *rsIdentity = NULL;
 p3IdService::p3IdService(RsGeneralDataService *gds, RsNetworkExchangeService *nes)
 	: RsGxsIdExchange(gds, nes, new RsGxsIdSerialiser(), RS_SERVICE_GXSV2_TYPE_GXSID, idAuthenPolicy()), 
 	RsIdentity(this), GxsTokenQueue(this), RsTickEvent(), mIdMtx("p3IdService"),
-        mPublicKeyCache(DEFAULT_MEM_CACHE_SIZE, "GxsIdPublicKeyCache"), 
-        mPrivateKeyCache(DEFAULT_MEM_CACHE_SIZE, "GxsIdPrivateKeyCache")
+	mPublicKeyCache(DEFAULT_MEM_CACHE_SIZE, "GxsIdPublicKeyCache"), 
+	mPrivateKeyCache(DEFAULT_MEM_CACHE_SIZE, "GxsIdPrivateKeyCache"), mNes(nes)
 {
 	mBgSchedule_Mode = 0;
 	mBgSchedule_Active = false;
@@ -146,8 +160,14 @@ p3IdService::p3IdService(RsGeneralDataService *gds, RsNetworkExchangeService *ne
   #endif
 #endif
 
+	loadRecognKeys();
 }
 
+void p3IdService::setNes(RsNetworkExchangeService *nes)
+{
+    RsStackMutex stack(mIdMtx);
+    mNes = nes;
+}
 
 uint32_t p3IdService::idAuthenPolicy()
 {
@@ -300,6 +320,81 @@ bool p3IdService::createIdentity(uint32_t& token, RsIdentityParameters &params)
 	return true;
 }
 
+bool p3IdService::updateIdentity(uint32_t& token, RsGxsIdGroup &group)
+{
+	std::cerr << "p3IdService::updateIdentity()";
+	std::cerr << std::endl;
+
+	updateGroup(token, group);
+
+	return false;
+}
+
+
+bool p3IdService::parseRecognTag(const RsGxsId &id, const std::string &nickname, 
+			const std::string &tag, RsRecognTagDetails &details)
+{
+	std::cerr << "p3IdService::parseRecognTag()";
+	std::cerr << std::endl;
+
+	RsGxsRecognTagItem *tagitem = RsRecogn::extractTag(tag);
+	if (!tagitem)
+	{
+		return false;
+	}
+
+	bool isPending = false;
+	bool isValid = recogn_checktag(id, nickname, tagitem, true, isPending);
+
+	details.valid_from = tagitem->valid_from;
+	details.valid_to = tagitem->valid_to;
+	details.tag_class = tagitem->tag_class;
+	details.tag_type = tagitem->tag_type;
+	details.signer = tagitem->sign.keyId;
+
+	details.is_valid = isValid;
+	details.is_pending = isPending;
+
+	delete tagitem;
+
+	return true;
+}
+
+bool p3IdService::getRecognTagRequest(const RsGxsId &id, const std::string &comment, uint16_t tag_class, uint16_t tag_type, std::string &tag)
+{
+	std::cerr << "p3IdService::getRecognTagRequest()";
+	std::cerr << std::endl;
+
+	if (!havePrivateKey(id))
+	{
+		std::cerr << "p3IdService::getRecognTagRequest() Dont have private key";
+		std::cerr << std::endl;
+		// attempt to load it.
+		cache_request_load(id);
+		return false;
+	}
+
+	RsTlvSecurityKey key;
+	std::string nickname;
+
+	{
+		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+		RsGxsIdCache data;
+		if (!mPrivateKeyCache.fetch(id, data))
+		{
+			std::cerr << "p3IdService::getRecognTagRequest() Cache failure";
+			std::cerr << std::endl;
+			return false;
+		}
+
+		key = data.pubkey;
+		nickname = data.details.mNickname;
+	}
+
+	return RsRecogn::createTagRequest(key, id, nickname, tag_class, tag_type, comment,  tag);
+}
+
+
 
 /********************************************************************************/
 /******************* RsGixs Interface     ***************************************/
@@ -321,7 +416,24 @@ bool p3IdService::requestKey(const RsGxsId &id, const std::list<PeerId> &peers)
 {
 	if (haveKey(id))
 		return true;
-	return cache_request_load(id);
+	else
+	{
+		if(isPendingNetworkRequest(id))
+			return true;
+	}
+
+
+	return cache_request_load(id, peers);
+}
+
+bool p3IdService::isPendingNetworkRequest(const RsGxsId& gxsId) const
+{
+	// if ids has beens confirmed as not physically present return
+	// immediately, id will be removed from list if found by auto nxs net search
+	if(mIdsNotPresent.find(gxsId) != mIdsNotPresent.end())
+		return true;
+
+	return false;
 }
 
 int  p3IdService::getKey(const RsGxsId &id, RsTlvSecurityKey &key)
@@ -365,11 +477,18 @@ bool p3IdService::haveReputation(const RsGxsId &id)
 	return haveKey(id);
 }
 
-bool p3IdService::loadReputation(const RsGxsId &id)
+bool p3IdService::loadReputation(const RsGxsId &id, const std::list<std::string>& peers)
 {
 	if (haveKey(id))
 		return true;
-	return cache_request_load(id);
+	else
+	{
+		if(isPendingNetworkRequest(id))
+			return true;
+	}
+
+
+	return cache_request_load(id, peers);
 }
 
 bool p3IdService::getReputation(const RsGxsId &id, GixsReputation &rep)
@@ -409,6 +528,12 @@ bool p3IdService::getGroupData(const uint32_t &token, std::vector<RsGxsIdGroup> 
 			RsGxsIdGroupItem* item = dynamic_cast<RsGxsIdGroupItem*>(*vit);
 			if (item)
 			{
+#ifdef DEBUG_IDS
+				std::cerr << "p3IdService::getGroupData() Item is:";
+				std::cerr << std::endl;
+				item->print(std::cerr);
+				std::cerr << std::endl;
+#endif // DEBUG_IDS
 				RsGxsIdGroup group = item->group;
 				group.mMeta = item->meta;
 
@@ -493,20 +618,64 @@ bool p3IdService::getMsgData(const uint32_t &token, std::vector<RsGxsIdOpinion> 
 
 bool 	p3IdService::createGroup(uint32_t& token, RsGxsIdGroup &group)
 {
-    RsGxsIdGroupItem* item = new RsGxsIdGroupItem();
-    item->group = group;
-    item->meta = group.mMeta;
-    RsGenExchange::publishGroup(token, item);
-    return true;
+	RsGxsIdGroupItem* item = new RsGxsIdGroupItem();
+	item->group = group;
+	item->meta = group.mMeta;
+	RsGenExchange::publishGroup(token, item);
+	return true;
+}
+
+bool 	p3IdService::updateGroup(uint32_t& token, RsGxsIdGroup &group)
+{
+	RsGxsId id = group.mMeta.mGroupId;
+	RsGxsIdGroupItem* item = new RsGxsIdGroupItem();
+	item->group = group;
+	item->meta = group.mMeta;
+
+	std::cerr << "p3IdService::updateGroup() Updating RsGxsId: " << id;
+	std::cerr << std::endl;
+	
+	//RsGenExchange::updateGroup(token, item);
+
+	RsGxsGroupUpdateMeta updateMeta(id);
+	RsGenExchange::updateGroup(token, updateMeta, item);
+
+	// if its in the cache - clear it.
+	{
+		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+		if (mPublicKeyCache.erase(id))
+		{
+			std::cerr << "p3IdService::updateGroup() Removed from PublicKeyCache";
+			std::cerr << std::endl;
+		}
+		else
+		{
+			std::cerr << "p3IdService::updateGroup() Not in PublicKeyCache";
+			std::cerr << std::endl;
+		}
+	
+		if (mPrivateKeyCache.erase(id))
+		{
+			std::cerr << "p3IdService::updateGroup() Removed from PrivateKeyCache";
+			std::cerr << std::endl;
+		}
+		else
+		{
+			std::cerr << "p3IdService::updateGroup() Not in PrivateKeyCache";
+			std::cerr << std::endl;
+		}
+	}
+
+	return true;
 }
 
 bool 	p3IdService::createMsg(uint32_t& token, RsGxsIdOpinion &opinion)
 {
-    RsGxsIdOpinionItem* item = new RsGxsIdOpinionItem();
-    item->opinion = opinion;
-    item->meta = opinion.mMeta;
-    RsGenExchange::publishMsg(token, item);
-    return true;
+	RsGxsIdOpinionItem* item = new RsGxsIdOpinionItem();
+	item->opinion = opinion;
+	item->meta = opinion.mMeta;
+	RsGenExchange::publishMsg(token, item);
+	return true;
 }
 
 /************************************************************************************/
@@ -558,6 +727,85 @@ std::string SSGxsIdPgp::save() const
 	return output;
 }
 
+
+/* Encoding / Decoding Group Service String stuff
+ *
+ * RecognTags.
+ */
+
+bool SSGxsIdRecognTags::load(const std::string &input)
+{
+	char pgpline[RSGXSID_MAX_SERVICE_STRING];
+	int pubTs = 0;
+	int lastTs = 0;
+	uint32_t flags = 0;
+
+	if (3 == sscanf(input.c_str(), "F:%u P:%d T:%d", &flags, &pubTs, &lastTs))
+	{
+		publishTs = pubTs;
+		lastCheckTs = lastTs;
+		tagFlags = flags;
+	}
+	else
+	{
+		return false;
+	}	
+	return true;
+}
+
+std::string SSGxsIdRecognTags::save() const
+{
+	std::string output;
+	rs_sprintf(output, "F:%u P:%d T:%d", tagFlags, publishTs, lastCheckTs);
+	return output;
+}
+
+bool SSGxsIdRecognTags::tagsProcessed() const
+{
+	return (tagFlags & 0x1000);
+}
+
+bool SSGxsIdRecognTags::tagsPending() const
+{
+	return (tagFlags & 0x2000);
+}
+
+bool SSGxsIdRecognTags::tagValid(int i) const
+{
+	uint32_t idx = 0x01 << i;
+
+#ifdef DEBUG_RECOGN
+	std::cerr << "SSGxsIdRecognTags::tagValid(" << i << ") idx: " << idx;
+	std::cerr << " result: " << (tagFlags & idx);
+	std::cerr << std::endl;
+#endif // DEBUG_RECOGN
+
+	return (tagFlags & idx);
+}
+
+void SSGxsIdRecognTags::setTags(bool processed, bool pending, uint32_t flags)
+{
+	flags &= 0x00ff; // clear top bits;
+	if (processed)
+	{
+		flags |= 0x1000;
+	}
+	if (pending)
+	{
+		flags |= 0x2000;
+	}
+
+#ifdef DEBUG_RECOGN
+	std::cerr << "SSGxsIdRecognTags::setTags(" << processed << "," << pending << "," << flags << ")";
+	std::cerr << " tagFlags: " << tagFlags;
+	std::cerr << std::endl;
+#endif // DEBUG_RECOGN
+
+	tagFlags = flags;
+}
+
+
+
 bool SSGxsIdScore::load(const std::string &input)
 {
 	return (1 == sscanf(input.c_str(), "%d", &score));
@@ -585,12 +833,13 @@ std::string SSGxsIdCumulator::save() const
 bool SSGxsIdGroup::load(const std::string &input)
 {
 	char pgpstr[RSGXSID_MAX_SERVICE_STRING];
+	char recognstr[RSGXSID_MAX_SERVICE_STRING];
 	char scorestr[RSGXSID_MAX_SERVICE_STRING];
 	char opinionstr[RSGXSID_MAX_SERVICE_STRING];
 	char repstr[RSGXSID_MAX_SERVICE_STRING];
 	
-	// split into two parts.
-	if (4 != sscanf(input.c_str(), "v1 {P:%[^}]} {Y:%[^}]} {O:%[^}]} {R:%[^}]}", pgpstr, scorestr, opinionstr, repstr))
+	// split into parts.
+	if (5 != sscanf(input.c_str(), "v1 {P:%[^}]} {T:%[^}]} {Y:%[^}]} {O:%[^}]} {R:%[^}]}", pgpstr, recognstr, scorestr, opinionstr, repstr))
 	{
 #ifdef DEBUG_IDS
 		std::cerr << "SSGxsIdGroup::load() Failed to extract 4 Parts";
@@ -613,6 +862,22 @@ bool SSGxsIdGroup::load(const std::string &input)
 		std::cerr << "SSGxsIdGroup::load() Invalid pgpstr: " << pgpstr;
 		std::cerr << std::endl;
 #endif // DEBUG_IDS
+		ok = false;
+	}
+
+	if (recogntags.load(recognstr))
+	{
+#ifdef DEBUG_RECOGN
+		std::cerr << "SSGxsIdGroup::load() recognstr: " << recognstr;
+		std::cerr << std::endl;
+#endif // DEBUG_RECOGN
+	}
+	else
+	{
+#ifdef DEBUG_RECOGN
+		std::cerr << "SSGxsIdGroup::load() Invalid recognstr: " << recognstr;
+		std::cerr << std::endl;
+#endif // DEBUG_RECOGN
 		ok = false;
 	}
 
@@ -682,6 +947,10 @@ std::string SSGxsIdGroup::save() const
 	output += pgp.save();
 	output += "}";
 
+	output += "{T:";
+	output += recogntags.save();
+	output += "}";
+
 	output += "{Y:";
 	output += score.save();
 	output += "}";
@@ -725,10 +994,16 @@ RsGxsIdCache::RsGxsIdCache()
 	return; 
 }
 
-RsGxsIdCache::RsGxsIdCache(const RsGxsIdGroupItem *item, const RsTlvSecurityKey &in_pkey)
+RsGxsIdCache::RsGxsIdCache(const RsGxsIdGroupItem *item, const RsTlvSecurityKey &in_pkey, const std::list<RsRecognTag> &tagList)
 {
 	// Save Keys.
 	pubkey = in_pkey;
+
+	// Save Time for ServiceString comparisions.
+	mPublishTs = item->meta.mPublishTs;
+	
+	// Save RecognTags.
+	mRecognTags = tagList;
 
 	// Fill in Details.
 	details.mNickname = item->meta.mGroupName;
@@ -749,6 +1024,8 @@ RsGxsIdCache::RsGxsIdCache(const RsGxsIdGroupItem *item, const RsTlvSecurityKey 
 
 void RsGxsIdCache::updateServiceString(std::string serviceString)
 {
+	details.mRecognTags.clear();
+
 	SSGxsIdGroup ssdata;
 	if (ssdata.load(serviceString))
 	{
@@ -765,6 +1042,54 @@ void RsGxsIdCache::updateServiceString(std::string serviceString)
 			}
 		}
 
+
+		// process RecognTags.
+		if (ssdata.recogntags.tagsProcessed())
+		{
+#ifdef DEBUG_RECOGN
+			std::cerr << "RsGxsIdCache::updateServiceString() updating recogntags";
+			std::cerr << std::endl;
+#endif // DEBUG_RECOGN
+			if (ssdata.recogntags.publishTs == mPublishTs)
+			{
+				std::list<RsRecognTag>::iterator it;
+				int i = 0;
+				for(it = mRecognTags.begin(); it != mRecognTags.end(); it++, i++)
+				{
+					if (ssdata.recogntags.tagValid(i) && it->valid)
+					{
+#ifdef DEBUG_RECOGN
+						std::cerr << "RsGxsIdCache::updateServiceString() Valid Tag: " << it->tag_class << ":" << it->tag_type;
+						std::cerr << std::endl;
+#endif // DEBUG_RECOGN
+						details.mRecognTags.push_back(*it);
+					}
+					else
+					{
+#ifdef DEBUG_RECOGN
+						std::cerr << "RsGxsIdCache::updateServiceString() Invalid Tag: " << it->tag_class << ":" << it->tag_type;
+						std::cerr << std::endl;
+#endif // DEBUG_RECOGN
+					}
+				}
+			}
+			else
+			{
+#ifdef DEBUG_RECOGN
+				std::cerr << "RsGxsIdCache::updateServiceString() recogntags old publishTs";
+				std::cerr << std::endl;
+#endif // DEBUG_RECOGN
+			}
+
+		}
+		else
+		{
+#ifdef DEBUG_RECOGN
+				std::cerr << "RsGxsIdCache::updateServiceString() recogntags unprocessed";
+				std::cerr << std::endl;
+#endif // DEBUG_RECOGN
+		}
+
 		details.mOpinion    = 0;
 		details.mReputation = ssdata.score.score;
 	}
@@ -779,9 +1104,138 @@ void RsGxsIdCache::updateServiceString(std::string serviceString)
 }
 
 
+bool p3IdService::recogn_extract_taginfo(const RsGxsIdGroupItem *item, std::list<RsGxsRecognTagItem *> &tagItems)
+{
+#ifdef DEBUG_RECOGN
+	std::cerr << "p3IdService::recogn_extract_taginfo()";
+	std::cerr << std::endl;
+#endif // DEBUG_RECOGN
+
+	/* process Recogn Tags */
+
+	std::list<std::string>::const_iterator rit;
+	int count = 0;
+	for(rit = item->group.mRecognTags.begin(); rit != item->group.mRecognTags.end(); rit++)
+	{
+		if (++count > RSRECOGN_MAX_TAGINFO)
+		{
+#ifdef DEBUG_RECOGN
+			std::cerr << "p3IdService::recogn_extract_taginfo() Too many tags.";
+			std::cerr << std::endl;
+#endif // DEBUG_RECOGN
+
+			return true;
+		}
+
+		RsGxsRecognTagItem *tagitem = RsRecogn::extractTag(*rit);
+
+		if (!tagitem)
+		{
+			continue;
+		}
+
+#ifdef DEBUG_RECOGN
+		std::cerr << "p3IdService::recogn_extract_taginfo() Got TagItem: ";
+		std::cerr << std::endl;
+		tagitem->print(std::cerr);
+#endif // DEBUG_RECOGN
+
+		tagItems.push_back(tagitem);
+	}
+	return true;
+}
 
 
+bool p3IdService::cache_process_recogntaginfo(const RsGxsIdGroupItem *item, std::list<RsRecognTag> &tagList)
+{
+	/* ServiceString decode */
+	SSGxsIdGroup ssdata;
+	bool recognProcess = false;
+	if (ssdata.load(item->meta.mServiceString))
+	{
+		if (!ssdata.recogntags.tagsProcessed())
+		{
+#ifdef DEBUG_RECOGN
+			std::cerr << "p3IdService::cache_process_recogntaginfo() tags not processed";
+			std::cerr << std::endl;
+#endif // DEBUG_RECOGN
 
+			/* we need to reprocess it */
+			recognProcess = true;
+		}
+		else 
+		{
+			if (item->meta.mPublishTs != ssdata.recogntags.publishTs)
+			{
+#ifdef DEBUG_RECOGN
+				std::cerr << "p3IdService::cache_process_recogntaginfo() publishTs old";
+				std::cerr << std::endl;
+#endif // DEBUG_RECOGN
+				recognProcess = true;
+			}
+			else if (ssdata.recogntags.tagsPending())
+			{
+#ifdef DEBUG_RECOGN
+				std::cerr << "p3IdService::cache_process_recogntaginfo() tagsPending";
+				std::cerr << std::endl;
+#endif // DEBUG_RECOGN
+				/* reprocess once a day */
+				recognProcess = true;
+			}
+		}
+	}
+	else
+	{
+#ifdef DEBUG_RECOGN
+		std::cerr << "p3IdService::cache_process_recogntaginfo() ServiceString invalid";
+		std::cerr << std::endl;
+#endif // DEBUG_RECOGN
+		recognProcess = true;
+	}
+
+	std::list<RsGxsRecognTagItem *> tagItems;
+	std::list<RsGxsRecognTagItem *>::iterator it;
+
+	recogn_extract_taginfo(item, tagItems);
+
+	time_t now = time(NULL);
+	for(it = tagItems.begin(); it != tagItems.end(); it++)
+	{
+		RsRecognTag info((*it)->tag_class, (*it)->tag_type, false);
+		bool isPending = false;
+		if (recogn_checktag(item->meta.mGroupId, item->meta.mGroupName, *it, false, isPending))
+		{
+			info.valid = true;
+		}
+#ifdef DEBUG_RECOGN
+		std::cerr << "p3IdService::cache_process_recogntaginfo() Adding Tag: ";
+		std::cerr << info.tag_class << ":";
+		std::cerr << info.tag_type << ":";
+		std::cerr << info.valid;
+		std::cerr << std::endl;
+#endif // DEBUG_RECOGN
+
+		tagList.push_back(info);
+		delete *it;
+	}
+
+
+	if (recognProcess)
+	{
+		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+		mRecognGroupIds.push_back(item->meta.mGroupId);
+
+#ifdef DEBUG_RECOGN
+		std::cerr << "p3IdService::cache_process_recogntaginfo() Reprocessing groupId: ";
+		std::cerr << item->meta.mGroupId;
+		std::cerr << std::endl;
+#endif // DEBUG_RECOGN
+
+		recogn_schedule();
+	}
+
+	return true;
+}
 
 
 bool p3IdService::cache_store(const RsGxsIdGroupItem *item)
@@ -793,7 +1247,7 @@ bool p3IdService::cache_store(const RsGxsIdGroupItem *item)
 	//item->print(std::cerr, 0); NEEDS CONST!!!! TODO
 	//std::cerr << std::endl;
 
-        /* extract key from keys */
+	/* extract key from keys */
     	RsTlvSecurityKeySet keySet;
     	RsTlvSecurityKey    pubkey;
     	RsTlvSecurityKey    fullkey;
@@ -814,9 +1268,9 @@ bool p3IdService::cache_store(const RsGxsIdGroupItem *item)
 	//std::cerr << "p3IdService::cache_store() KeySet is:";
 	//keySet.print(std::cerr, 10);
 
-        for (kit = keySet.keys.begin(); kit != keySet.keys.end(); kit++)
-        {
-                if (kit->second.keyFlags & RSTLV_KEY_DISTRIB_ADMIN)
+	for (kit = keySet.keys.begin(); kit != keySet.keys.end(); kit++)
+	{
+		if (kit->second.keyFlags & RSTLV_KEY_DISTRIB_ADMIN)
 		{
 #ifdef DEBUG_IDS
 			std::cerr << "p3IdService::cache_store() Found Admin Key";
@@ -824,7 +1278,7 @@ bool p3IdService::cache_store(const RsGxsIdGroupItem *item)
 #endif // DEBUG_IDS
 
 			/* save full key - if we have it */
-                        if (kit->second.keyFlags & RSTLV_KEY_TYPE_FULL)
+			if (kit->second.keyFlags & RSTLV_KEY_TYPE_FULL)
 			{
 				fullkey = kit->second;
 				full_key_ok = true;
@@ -847,16 +1301,20 @@ bool p3IdService::cache_store(const RsGxsIdGroupItem *item)
 		return false;
 	}
 
+	// extract tags.
+	std::list<RsRecognTag> tagList;
+	cache_process_recogntaginfo(item, tagList);
+
 	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 
 	// Create Cache Data.
-	RsGxsIdCache pubcache(item, pubkey);
+	RsGxsIdCache pubcache(item, pubkey, tagList);
 	mPublicKeyCache.store(id, pubcache);
 	mPublicKeyCache.resize();
 
 	if (full_key_ok)
 	{
-		RsGxsIdCache fullcache(item, fullkey);
+		RsGxsIdCache fullcache(item, fullkey, tagList);
 		mPrivateKeyCache.store(id, fullcache);
 		mPrivateKeyCache.resize();
 	}
@@ -870,7 +1328,7 @@ bool p3IdService::cache_store(const RsGxsIdGroupItem *item)
 
 #define MIN_CYCLE_GAP	2
 
-bool p3IdService::cache_request_load(const RsGxsId &id)
+bool p3IdService::cache_request_load(const RsGxsId &id, const std::list<std::string>& peers)
 {
 #ifdef DEBUG_IDS
 	std::cerr << "p3IdService::cache_request_load(" << id << ")";
@@ -879,7 +1337,7 @@ bool p3IdService::cache_request_load(const RsGxsId &id)
 
 	{
 		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-		mCacheLoad_ToCache.push_back(id);
+		mCacheLoad_ToCache.insert(std::make_pair(id, peers));
 	}
 
 	if (RsTickEvent::event_count(GXSID_EVENT_CACHELOAD) > 0)
@@ -911,16 +1369,17 @@ bool p3IdService::cache_start_load()
 		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 
 		/* now we process the modGroupList -> a map so we can use it easily later, and create id list too */
-		std::list<RsGxsId>::iterator it;
+		std::map<RsGxsId, std::list<std::string> >::iterator it;
 		for(it = mCacheLoad_ToCache.begin(); it != mCacheLoad_ToCache.end(); it++)
 		{
 #ifdef DEBUG_IDS
-			std::cerr << "p3IdService::cache_start_load() GroupId: " << *it;
+			std::cerr << "p3IdService::cache_start_load() GroupId: " << it->first;
 			std::cerr << std::endl;
 #endif // DEBUG_IDS
-			groupIds.push_back(*it); // might need conversion?
+			groupIds.push_back(it->first); // might need conversion?
 		}
 
+                mPendingCache.insert(mCacheLoad_ToCache.begin(), mCacheLoad_ToCache.end());
 		mCacheLoad_ToCache.clear();
 	}
 
@@ -932,12 +1391,12 @@ bool p3IdService::cache_start_load()
 #endif // DEBUG_IDS
 
 		uint32_t ansType = RS_TOKREQ_ANSTYPE_DATA; 
-	        RsTokReqOptions opts;
-        	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+		RsTokReqOptions opts;
+		opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
 		uint32_t token = 0;
 	
 		RsGenExchange::getTokenService()->requestGroupInfo(token, ansType, opts, groupIds);
-		GxsTokenQueue::queueRequest(token, GXSIDREQ_CACHELOAD);	
+		GxsTokenQueue::queueRequest(token, GXSIDREQ_CACHELOAD);
 	}
 	return 1;
 }
@@ -973,10 +1432,29 @@ bool p3IdService::cache_load_for_token(uint32_t token)
 			std::cerr << std::endl;
 #endif // DEBUG_IDS
 
+
+			{
+				// remove identities that are present
+				RsStackMutex stack(mIdMtx);
+				mPendingCache.erase(item->meta.mGroupId);
+			}
+
 			/* cache the data */
 			cache_store(item);
 			delete item;
 		}
+
+		{
+			// now store identities that aren't present
+
+			RsStackMutex stack(mIdMtx);
+			mIdsNotPresent.insert(mPendingCache.begin(), mPendingCache.end());
+			mPendingCache.clear();
+
+                        if(!mIdsNotPresent.empty())
+                            schedule_now(GXSID_EVENT_REQUEST_IDS);
+		}
+
 	}
 	else
 	{
@@ -986,6 +1464,42 @@ bool p3IdService::cache_load_for_token(uint32_t token)
 		return false;
 	}
 	return true;
+}
+
+void p3IdService::requestIdsFromNet()
+{
+	RsStackMutex stack(mIdMtx);
+
+	std::map<RsGxsId, std::list<std::string> >::const_iterator cit;
+	std::map<std::string, std::list<RsGxsId> > requests;
+
+	// transform to appropriate structure (<peer, std::list<RsGxsId> > map) to make request to nes
+	for(cit = mIdsNotPresent.begin(); cit != mIdsNotPresent.end(); cit++)
+	{
+		{
+#ifdef DEBUG_IDS
+				std::cerr << "p3IdService::requestIdsFromNet() Id not found, deferring for net request: ";
+							std::cerr << cit->first;
+							std::cerr << std::endl;
+#endif // DEBUG_IDS
+
+		}
+
+		const std::list<std::string>& peers = cit->second;
+		std::list<std::string>::const_iterator cit2;
+		for(cit2 = peers.begin(); cit2 != peers.end(); cit2++)
+			requests[*cit2].push_back(cit->first);
+	}
+
+	std::map<std::string, std::list<RsGxsId> >::const_iterator cit2;
+
+	for(cit2 = requests.begin(); cit2 != requests.end(); cit2++)
+        {
+            if(mNes)
+		mNes->requestGrp(cit2->second, cit2->first);
+        }
+
+	mIdsNotPresent.clear();
 }
 
 bool p3IdService::cache_update_if_cached(const RsGxsId &id, std::string serviceString)
@@ -1041,8 +1555,8 @@ bool p3IdService::cache_request_ownids()
 
 	uint32_t ansType = RS_TOKREQ_ANSTYPE_DATA; 
 	RsTokReqOptions opts;
-        opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
-        //opts.mSubscribeFlags = GXS_SERV::GROUP_SUBSCRIBE_ADMIN;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+	//opts.mSubscribeFlags = GXS_SERV::GROUP_SUBSCRIBE_ADMIN;
 
 	uint32_t token = 0;
 	
@@ -1132,8 +1646,8 @@ bool p3IdService::cachetest_getlist()
 #endif // DEBUG_IDS
 
 	uint32_t ansType = RS_TOKREQ_ANSTYPE_LIST; 
-        RsTokReqOptions opts;
-        opts.mReqType = GXS_REQUEST_TYPE_GROUP_IDS;
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_IDS;
 	uint32_t token = 0;
 	
 	RsGenExchange::getTokenService()->requestGroupInfo(token, ansType, opts);
@@ -1154,11 +1668,11 @@ bool p3IdService::cachetest_handlerequest(uint32_t token)
        	std::list<RsGxsId> grpIds;
        	bool ok = RsGenExchange::getGroupList(token, grpIds);
 
-        if(ok)
-        {
-                std::list<RsGxsId>::iterator vit = grpIds.begin();
-                for(; vit != grpIds.end(); vit++)
-                {
+	if(ok)
+	{
+		std::list<RsGxsId>::iterator vit = grpIds.begin();
+		for(; vit != grpIds.end(); vit++)
+		{
 			/* 5% chance of checking it! */
 			if (RSRandom::random_f32() < 0.25)
 			{
@@ -1189,7 +1703,7 @@ bool p3IdService::cachetest_handlerequest(uint32_t token)
 #endif // DEBUG_IDS
 
 						// success!
-        						seckey.print(std::cerr, 10);
+							seckey.print(std::cerr, 10);
 						std::cerr << std::endl;
 
 
@@ -1229,7 +1743,7 @@ bool p3IdService::cachetest_handlerequest(uint32_t token)
 				}
 			}
 		}
-        }
+	}
 	else
 	{
 		std::cerr << "p3IdService::cache_load_for_token() ERROR no data";
@@ -1245,13 +1759,13 @@ bool p3IdService::cachetest_handlerequest(uint32_t token)
 /************************************************************************************/
 
 /*
- * We have two background tasks that use the ServiceString: PGPHash & Reputation.
+ * We have three background tasks that use the ServiceString: PGPHash & Reputation & Recogn
  *
  * Only one task can be run at a time - otherwise potential overwrite issues.
  * So this part coordinates that part of the code.
  *
- * 
- *
+ * We are going to have a "fetcher task", which gets all the UNPROCESSED / UPDATED GROUPS.
+ * and sets the CHECK_PGP, CHECK_RECOGN, etc... this will reduce the "Get All" calls.
  *
  */
 
@@ -1263,7 +1777,7 @@ bool	p3IdService::CacheArbitration(uint32_t mode)
 	if (!mBgSchedule_Active)
 	{
 #ifdef DEBUG_IDS
-		std::cerr << "p3IdService::CacheArbitration() Okay";
+		std::cerr << "p3IdService::CacheArbitration() Okay: mode " << mode;
 		std::cerr << std::endl;
 #endif // DEBUG_IDS
 
@@ -1273,7 +1787,7 @@ bool	p3IdService::CacheArbitration(uint32_t mode)
 	}
 
 #ifdef DEBUG_IDS
-	std::cerr << "p3IdService::CacheArbitration() Is busy...";
+	std::cerr << "p3IdService::CacheArbitration() Is busy in mode: " << mBgSchedule_Mode;
 	std::cerr << std::endl;
 #endif // DEBUG_IDS
 
@@ -1346,6 +1860,13 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
 		std::cerr << std::endl;
 		return SERVICE_CREATE_FAIL;
 	}
+
+#ifdef DEBUG_IDS
+	std::cerr << "p3IdService::service_CreateGroup() Item is:";
+	std::cerr << std::endl;
+	item->print(std::cerr);
+	std::cerr << std::endl;
+#endif // DEBUG_IDS
 
 	/********************* TEMP HACK UNTIL GXS FILLS IN GROUP_ID *****************/	
 	// find private admin key
@@ -1533,17 +2054,13 @@ bool p3IdService::pgphash_start()
 	std::cerr << std::endl;
 #endif // DEBUG_IDS
 
-	getPgpIdList();
-
 	// ACTUALLY only need summary - but have written code for data.
 	// Also need to use opts.groupFlags to filter stuff properly to REALID's only.
 	// TODO
 
-	//uint32_t ansType = RS_TOKREQ_ANSTYPE_SUMMARY;
 	uint32_t ansType = RS_TOKREQ_ANSTYPE_DATA;
-        RsTokReqOptions opts;
-        //opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
-        opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
 	uint32_t token = 0;
 	
 	RsGenExchange::getTokenService()->requestGroupInfo(token, ansType, opts);
@@ -1570,7 +2087,7 @@ bool p3IdService::pgphash_handlerequest(uint32_t token)
 	// We Will do this later!
 
 	std::vector<RsGxsIdGroup> groups;
-	std::vector<RsGxsIdGroup> groupsToProcess;
+	bool groupsToProcess = false;
 	bool ok = getGroupData(token, groups);
 
 	if(ok)
@@ -1643,12 +2160,19 @@ bool p3IdService::pgphash_handlerequest(uint32_t token)
 
 			RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 			mGroupsToProcess.push_back(*vit);
+			groupsToProcess = true;
 		}
 	}
 	else
 	{
 		std::cerr << "p3IdService::pgphash_request() getGroupData ERROR";
 		std::cerr << std::endl;
+	}
+
+	if (groupsToProcess)
+	{
+		// update PgpIdList -> if there are groups to process.
+		getPgpIdList();
 	}
 
 	// Schedule Processing.
@@ -1711,29 +2235,6 @@ bool p3IdService::pgphash_process()
 		ssdata.pgp.idKnown = true;
 		ssdata.pgp.pgpId = pgpId.toStdString();
 
-// SHOULD BE PUSHED TO CACHE!
-#if 0
-				id.mGpgIdKnown = true;
-			
-				id.mGpgId = *it;
-				id.mGpgName = details.name;
-				id.mGpgEmail = details.email;
-
-				if (*it == ownId)
-				{
-					id.mIdType |= RSID_RELATION_YOURSELF;
-				}
-				else if (rsPeers->isGPGAccepted(*it))
-				{
-					id.mIdType |= RSID_RELATION_FRIEND;
-				}
-				else
-				{
-					id.mIdType |= RSID_RELATION_OTHER;
-				}
-				
-#endif
-
 	}
 	else
 	{
@@ -1768,7 +2269,7 @@ bool p3IdService::checkId(const RsGxsIdGroup &grp, PGPIdType &pgpId)
 	std::cerr << std::endl;
 #endif // DEBUG_IDS
 
-        /* some sanity checking... make sure hash is the right size */
+	/* some sanity checking... make sure hash is the right size */
 
 #ifdef DEBUG_IDS
 	std::cerr << "p3IdService::checkId() PgpIdHash is: " << grp.mPgpIdHash;
@@ -1903,13 +2404,13 @@ void calcPGPHash(const RsGxsId &id, const PGPFingerprintType &pgp, GxsIdPgpHash 
 {
 	unsigned char signature[SHA_DIGEST_LENGTH];
 	/* hash id + pubkey => pgphash */
-        SHA_CTX *sha_ctx = new SHA_CTX;
-        SHA1_Init(sha_ctx);
+	SHA_CTX *sha_ctx = new SHA_CTX;
+	SHA1_Init(sha_ctx);
 
-        SHA1_Update(sha_ctx, id.c_str(), id.length()); // TO FIX ONE DAY.
-        SHA1_Update(sha_ctx, pgp.toByteArray(), pgp.SIZE_IN_BYTES);
-        SHA1_Final(signature, sha_ctx);
-        hash = GxsIdPgpHash(signature);
+	SHA1_Update(sha_ctx, id.c_str(), id.length()); // TO FIX ONE DAY.
+	SHA1_Update(sha_ctx, pgp.toByteArray(), pgp.SIZE_IN_BYTES);
+	SHA1_Final(signature, sha_ctx);
+	hash = GxsIdPgpHash(signature);
 
 #ifdef DEBUG_IDS
 	std::cerr << "calcPGPHash():";
@@ -1922,8 +2423,353 @@ void calcPGPHash(const RsGxsId &id, const PGPFingerprintType &pgp, GxsIdPgpHash 
 	std::cerr << std::endl;
 #endif // DEBUG_IDS
 
-        delete sha_ctx;
+	delete sha_ctx;
 }
+
+/************************************************************************************/
+/************************************************************************************/
+/************************************************************************************/
+/************************************************************************************/
+
+/* Task to validate Recogn Tags.
+ *
+ * Info to be stored in GroupServiceString + Cache.
+ **/
+
+bool p3IdService::recogn_schedule()
+{
+	std::cerr << "p3IdService::recogn_schedule()";
+	std::cerr << std::endl;
+
+	int32_t age = 0;
+	int32_t next_event = 0;
+
+	if (RsTickEvent::event_count(GXSID_EVENT_RECOGN) > 0)
+	{
+		std::cerr << "p3IdService::recogn_schedule() Skipping GXSIS_EVENT_RECOGN already scheduled";
+		std::cerr << std::endl;
+		return false;
+	}
+
+	if (RsTickEvent::prev_event_ago(GXSID_EVENT_RECOGN, age))
+	{
+		std::cerr << "p3IdService::recogn_schedule() previous event " << age << " secs ago";
+		std::cerr << std::endl;
+
+		next_event = RECOGN_PERIOD - age;
+		if (next_event < 0)
+		{
+			next_event = 0;
+		}
+	}
+
+	RsTickEvent::schedule_in(GXSID_EVENT_RECOGN, next_event);
+	return true;
+}
+
+
+bool p3IdService::recogn_start()
+{
+	if (!CacheArbitration(BG_RECOGN))
+	{
+#ifdef DEBUG_RECOGN
+		std::cerr << "p3IdService::recogn_start() Other Events running... Rescheduling";
+		std::cerr << std::endl;
+#endif // DEBUG_RECOGN
+
+		/* reschedule in a bit */
+		RsTickEvent::schedule_in(GXSID_EVENT_RECOGN, RECOGN_RETRY_PERIOD);
+		return false;
+	}
+
+	// NEXT EVENT is scheduled via recogn_schedule.
+
+#ifdef DEBUG_RECOGN
+	std::cerr << "p3IdService::recogn_start() making request";
+	std::cerr << std::endl;
+#endif // DEBUG_RECOGN
+
+	std::list<RsGxsGroupId> recognList;
+	{
+		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+
+		recognList = mRecognGroupIds;
+		mRecognGroupIds.clear();
+	}
+
+	if (recognList.empty())
+	{
+#ifdef DEBUG_RECOGN
+		std::cerr << "p3IdService::recogn_start() List is Empty, cancelling";
+		std::cerr << std::endl;
+#endif // DEBUG_RECOGN
+
+		// FINISHED.
+		CacheArbitrationDone(BG_RECOGN);
+		return false;
+	}
+
+	uint32_t ansType = RS_TOKREQ_ANSTYPE_DATA;
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+	uint32_t token = 0;
+	
+	RsGenExchange::getTokenService()->requestGroupInfo(token, ansType, opts, recognList);
+	GxsTokenQueue::queueRequest(token, GXSIDREQ_RECOGN);	
+	return true;
+
+}
+
+
+bool p3IdService::recogn_handlerequest(uint32_t token)
+{
+#ifdef DEBUG_RECOGN
+	std::cerr << "p3IdService::recogn_handlerequest(" << token << ")";
+	std::cerr << std::endl;
+#endif // DEBUG_RECOGN
+
+	std::vector<RsGxsGrpItem*> grpData;
+	bool ok = RsGenExchange::getGroupData(token, grpData);
+	
+	if(ok)
+	{
+#ifdef DEBUG_RECOGN
+		std::cerr << "p3IdService::recogn_request() Have " << grpData.size() << " Groups";
+		std::cerr << std::endl;
+#endif // DEBUG_RECOGN
+		
+		std::vector<RsGxsGrpItem*>::iterator vit = grpData.begin();
+		
+		for(; vit != grpData.end(); vit++)
+		{
+			RsGxsIdGroupItem* item = dynamic_cast<RsGxsIdGroupItem*>(*vit);
+			if (item)
+			{
+
+#ifdef DEBUG_RECOGN
+				std::cerr << "p3IdService::recogn_request() Group Id: " << item->meta.mGroupId;
+				std::cerr << std::endl;
+#endif // DEBUG_RECOGN
+
+				RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+				mRecognGroupsToProcess.push_back(item);
+			}
+			else 
+			{
+				delete (*vit);
+			}
+		}
+	}
+	else
+	{
+		std::cerr << "p3IdService::recogn_request() getGroupData ERROR";
+		std::cerr << std::endl;
+	}
+
+	// Schedule Processing.
+	RsTickEvent::schedule_in(GXSID_EVENT_RECOGN_PROC, RECOGN_PROC_PERIOD);
+	return true;
+}
+
+
+bool p3IdService::recogn_process()
+{
+	/* each time this is called - process one Id from mGroupsToProcess */
+	RsGxsIdGroupItem *item;
+	bool isDone = false;
+	{
+		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+		if (!mRecognGroupsToProcess.empty())
+		{
+			item = mRecognGroupsToProcess.front();
+			mRecognGroupsToProcess.pop_front();
+
+#ifdef DEBUG_RECOGN
+			std::cerr << "p3IdService::recogn_process() Popped Group: " << item->meta.mGroupId;
+			std::cerr << std::endl;
+#endif // DEBUG_RECOGN
+		}
+		else
+		{
+			isDone = true;
+		}
+	}
+
+	if (isDone)
+	{
+#ifdef DEBUG_RECOGN
+		std::cerr << "p3IdService::recogn_process() List Empty... Done";
+		std::cerr << std::endl;
+#endif // DEBUG_RECOGN
+		// FINISHED.
+		CacheArbitrationDone(BG_RECOGN);
+		return true;
+	}
+	
+
+
+	std::list<RsGxsRecognTagItem *> tagItems;
+	std::list<RsGxsRecognTagItem *>::iterator it;
+
+	recogn_extract_taginfo(item, tagItems);
+
+	bool isPending = false;
+	int i = 1;
+	uint32_t tagValidFlags = 0;
+	for(it = tagItems.begin(); it != tagItems.end(); it++)
+	{
+		bool isTagPending = false;
+		bool isTagOk = recogn_checktag(item->meta.mGroupId, item->meta.mGroupName, *it, true, isPending);
+		if (isTagOk)
+		{
+			tagValidFlags |= i;
+		}
+		else 
+		{
+			isPending |= isTagPending;
+		}
+
+		delete *it;
+		i *= 2;		
+	}
+
+#ifdef DEBUG_RECOGN
+	std::cerr << "p3IdService::recogn_process() Tags Checked, saving";
+	std::cerr << std::endl;
+#endif // DEBUG_RECOGN
+
+	SSGxsIdGroup ssdata;
+	ssdata.load(item->meta.mServiceString); // attempt load - okay if fails.
+
+	ssdata.recogntags.setTags(true, isPending, tagValidFlags);
+	ssdata.recogntags.lastCheckTs = time(NULL);
+	ssdata.recogntags.publishTs = item->meta.mPublishTs;
+
+	/* set new Group ServiceString */
+	uint32_t dummyToken = 0;
+	std::string serviceString = ssdata.save();
+	setGroupServiceString(dummyToken, item->meta.mGroupId, serviceString);
+
+	cache_update_if_cached(item->meta.mGroupId, serviceString);
+
+	delete item;
+	
+	// Schedule Next Processing.
+	RsTickEvent::schedule_in(GXSID_EVENT_RECOGN_PROC, RECOGN_PROC_PERIOD);
+	return false; // as there are more items on the queue to process.
+}
+
+
+bool p3IdService::recogn_checktag(const RsGxsId &id, const std::string &nickname, RsGxsRecognTagItem *item, bool doSignCheck, bool &isPending)
+{
+
+#ifdef DEBUG_RECOGN
+		std::cerr << "p3IdService::recogn_checktag() groupId: " << id;
+		std::cerr << std::endl;
+		std::cerr << "p3IdService::recogn_checktag() nickname: " << nickname;
+		std::cerr << std::endl;
+		std::cerr << "p3IdService::recogn_checktag() item: ";
+		std::cerr << std::endl;
+		((RsGxsRecognTagItem *) item)->print(std::cerr);
+#endif // DEBUG_RECOGN
+
+	// To check:
+	// -------------------
+	// date range.
+	// id matches.
+	// nickname matches.
+	// signer is valid.
+	// ------ 
+	// signature is valid.  (only if doSignCheck == true)
+	
+	time_t now = time(NULL);
+	isPending = false;
+	
+	// check date range.
+	if ((item->valid_from > now) || (item->valid_to < now))
+	{
+#ifdef DEBUG_RECOGN
+		std::cerr << "p3IdService::recogn_checktag() failed timestamp";
+		std::cerr << std::endl;
+#endif // DEBUG_RECOGN
+
+		return false;
+	}
+	
+	// id match.
+	if (id != item->identity)
+	{
+#ifdef DEBUG_RECOGN
+		std::cerr << "p3IdService::recogn_checktag() failed identity";
+		std::cerr << std::endl;
+#endif // DEBUG_RECOGN
+		return false;
+	}
+	
+	// nickname match.
+	if (nickname != item->nickname)
+	{
+#ifdef DEBUG_RECOGN
+		std::cerr << "p3IdService::recogn_checktag() failed nickname";
+		std::cerr << std::endl;
+#endif // DEBUG_RECOGN
+		return false;
+	}
+	
+	
+	
+	{
+		/* check they validity of the Tag */
+		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+
+		
+		std::map<std::string, RsGxsRecognSignerItem *>::iterator it;
+		it = mRecognSignKeys.find(item->sign.keyId);
+		if (it == mRecognSignKeys.end())
+		{
+#ifdef DEBUG_RECOGN
+			std::cerr << "p3IdService::recogn_checktag() failed to find signkey";
+			std::cerr << std::endl;
+#endif // DEBUG_RECOGN
+
+			// If OldKey, then we don't want to reprocess.
+			if (mRecognOldSignKeys.end() != 
+				mRecognOldSignKeys.find(item->sign.keyId))
+			{
+				isPending = true; // need to reprocess later with new key
+			}
+			return false;
+		}
+		
+		// Check tag_class is okay for signer.
+		if (it->second->signing_classes.ids.end() == 
+			std::find(it->second->signing_classes.ids.begin(), it->second->signing_classes.ids.end(), item->tag_class))
+		{
+#ifdef DEBUG_RECOGN
+			std::cerr << "p3IdService::recogn_checktag() failed signing_class check";
+			std::cerr << std::endl;
+#endif // DEBUG_RECOGN
+			return false;
+		}
+		
+		// ALL Okay, just signature to check.
+		if (!doSignCheck)
+		{
+			return true;
+		}
+
+		return RsRecogn::validateTagSignature(it->second, item);
+	}
+}
+
+
+void p3IdService::loadRecognKeys()
+{
+	RsStackMutex stack(mIdMtx); /**** LOCKED MUTEX ****/
+
+	RsRecogn::loadSigningKeys(mRecognSignKeys);
+}
+
 
 
 /************************************************************************************/
@@ -2003,13 +2849,13 @@ void p3IdService::generateDummy_OwnIds()
 	for(i = 0; i < nIds; i++)
 	{
 		RsGxsIdGroup id;
-               	RsPeerDetails details;
+	       	RsPeerDetails details;
 
 		id.mMeta.mGroupFlags = RSGXSID_GROUPFLAG_REALID;
 
 		// HACK FOR DUMMY GENERATION.
 		id.mMeta.mAuthorId = ownId;
-               	if (rsPeers->getPeerDetails(ownId, details))
+	       	if (rsPeers->getPeerDetails(ownId, details))
 		{
 			std::ostringstream out;
 			out << details.name << "_" << i + 1;
@@ -2339,7 +3185,7 @@ bool p3IdService::background_checkTokenRequest()
 	uint32_t anstype;
 	time_t ts;
 
-        
+	
 	status = RsGenExchange::getTokenService()->requestStatus(token);
 	//checkRequestStatus(token, status, reqtype, anstype, ts);
 	
@@ -2390,7 +3236,7 @@ bool p3IdService::background_requestGroups()
 	}
 
 	uint32_t ansType = RS_TOKREQ_ANSTYPE_SUMMARY;
-        RsTokReqOptions opts;
+	RsTokReqOptions opts;
 	std::list<std::string> groupIds;
 
 /**
@@ -2445,7 +3291,7 @@ bool p3IdService::background_requestNewMessages()
 		for(it = modGroupList.begin(); it != modGroupList.end(); it++)
 		{
 			/*** TODO
-                        uint32_t dummyToken = 0;
+			uint32_t dummyToken = 0;
 			setGroupStatusFlags(dummyToken, it->mGroupId, 0, RSGXS_GROUP_STATUS_NEWMSG);
 			***/
 
@@ -2455,7 +3301,7 @@ bool p3IdService::background_requestNewMessages()
 	}
 
 	uint32_t ansType = RS_TOKREQ_ANSTYPE_SUMMARY; 
-        RsTokReqOptions opts;
+	RsTokReqOptions opts;
 	token = 0;
 
 	/* TODO 
@@ -2501,7 +3347,7 @@ bool p3IdService::background_processNewMessages()
 	 * and flag these items as modified - so we rewrite them to the db later.
 	 *
 	 * If a message is not an original -> store groupId for requiring full analysis later.
-         */
+	 */
 
 	std::map<std::string, RsGroupMetaData>::iterator mit;
 
@@ -2639,7 +3485,7 @@ bool p3IdService::background_processNewMessages()
 #endif // DEBUG_IDS
 
 				/* set Cache */
-                                uint32_t dummyToken = 0;
+				uint32_t dummyToken = 0;
 				setGroupServiceString(dummyToken, mit->second.mGroupId, mit->second.mServiceString);
 			}
 			else
@@ -2688,7 +3534,7 @@ bool p3IdService::background_FullCalcRequest()
 	/* request the summary info from the parents */
 	uint32_t ansType = RS_TOKREQ_ANSTYPE_DATA; 
 	uint32_t token = 0;
-        RsTokReqOptions opts;
+	RsTokReqOptions opts;
 	opts.mOptions = RS_TOKREQOPT_MSG_LATEST;
 
 	RsGenExchange::getTokenService()->requestMsgInfo(token, ansType, opts, groupIds);
@@ -2727,10 +3573,10 @@ bool p3IdService::background_processFullCalc()
 	double   rep_sum = 0;
 	double   rep_sumsq = 0;
 
-        std::vector<RsGxsIdOpinion> opinions;
-        std::vector<RsGxsIdOpinion>::iterator vit;
+	std::vector<RsGxsIdOpinion> opinions;
+	std::vector<RsGxsIdOpinion>::iterator vit;
 
-        if (!getMsgData(mBgToken, opinions))
+	if (!getMsgData(mBgToken, opinions))
 	{
 		std::cerr << "p3IdService::background_processFullCalc() ERROR Failed to get Opinions";
 		std::cerr << std::endl;
@@ -2739,7 +3585,7 @@ bool p3IdService::background_processFullCalc()
 	}
 
 	std::string groupId;
-        for(vit = opinions.begin(); vit != opinions.end(); vit++)
+	for(vit = opinions.begin(); vit != opinions.end(); vit++)
 	{
 		RsGxsIdOpinion &opinion = *vit;
 
@@ -2875,10 +3721,16 @@ std::ostream &operator<<(std::ostream &out, const RsGxsIdOpinion &opinion)
 
 
 
+void p3IdService::checkPeerForIdentities()
+{
+	RsStackMutex stack(mIdMtx);
+
+	// crud, i needed peers instead!
+	mGroupNotPresent.clear();
+}
 
 
-
-        // Overloaded from GxsTokenQueue for Request callbacks.
+// Overloaded from GxsTokenQueue for Request callbacks.
 void p3IdService::handleResponse(uint32_t token, uint32_t req_type)
 {
 #ifdef DEBUG_IDS
@@ -2897,6 +3749,9 @@ void p3IdService::handleResponse(uint32_t token, uint32_t req_type)
 			break;
 		case GXSIDREQ_PGPHASH:
 			pgphash_handlerequest(token);
+			break;
+		case GXSIDREQ_RECOGN:
+			recogn_handlerequest(token);
 			break;
 		case GXSIDREQ_CACHETEST:
 			cachetest_handlerequest(token);
@@ -2949,6 +3804,14 @@ void p3IdService::handle_event(uint32_t event_type, const std::string &elabel)
 			pgphash_process();
 			break;
 
+		case GXSID_EVENT_RECOGN:
+			recogn_start();
+			break;
+
+		case GXSID_EVENT_RECOGN_PROC:
+			recogn_process();
+			break;
+
 		case GXSID_EVENT_DUMMYDATA:
 			generateDummyData();
 			break;
@@ -2968,6 +3831,10 @@ void p3IdService::handle_event(uint32_t event_type, const std::string &elabel)
 		case GXSID_EVENT_DUMMY_PSEUDOID:
 			generateDummy_UnknownPseudo();
 			break;
+		case GXSID_EVENT_REQUEST_IDS:
+			requestIdsFromNet();
+			break;
+
 
 		default:
 			/* error */

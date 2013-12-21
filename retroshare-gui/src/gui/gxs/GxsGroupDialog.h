@@ -163,12 +163,20 @@ protected:
 	void setUiText(UiType uiType, const QString &text);
 
 	/*!
-	 * Main purpose is to help tansfer meta data to service
-	 *
+         * It is up to the service to do the actual group creation
+         * Service can also modify initial meta going into group
 	 * @param token This should be set to the token retrieved
 	 * @param meta The deriving GXS service should set their grp meta to this value
 	 */
 	virtual bool service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta) = 0;
+
+        /*!
+         * It is up to the service to do the actual group editing
+         * TODO: make pure virtual
+         * @param token This should be set to the token retrieved
+         * @param meta The deriving GXS service should set their grp meta to this value
+         */
+        virtual bool service_EditGroup(uint32_t &token, RsGxsGroupUpdateMeta &updateMeta) {}
 
 	/*!
 	 * This returns a group logo from the ui \n
@@ -202,6 +210,7 @@ private:
 	void setupVisibility();
 	void clearForm();
 	void createGroup();
+        void editGroup();
 	void sendShareList(std::string forumId);
 	void loadNewGroupId(const uint32_t &token);
 
@@ -214,6 +223,8 @@ private:
 	uint32_t mEnabledFlags;
 	uint32_t mReadonlyFlags;
 	uint32_t mDefaultsFlags;
+
+    protected:
 
 	/** Qt Designer generated object */
 	Ui::GxsGroupDialog ui;

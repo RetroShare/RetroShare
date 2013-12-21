@@ -2282,7 +2282,7 @@ int RsServer::StartupRetroShare()
 	std::string currGxsDir = RsInitConfig::configDir + "/GXS_phase2";
 
 #ifdef GXS_DEV_TESTNET // Different Directory for testing.
-	currGxsDir += "_TESTNET5";
+	currGxsDir += "_TESTNET6";
 #endif
 
         bool cleanUpGxsDir = false;
@@ -2323,8 +2323,10 @@ int RsServer::StartupRetroShare()
         // create GXS photo service
         RsGxsNetService* gxsid_ns = new RsGxsNetService(
                         RS_SERVICE_GXSV2_TYPE_GXSID, gxsid_ds, nxsMgr,
-                        mGxsIdService, mGxsIdService, mGxsCircles);
+                        mGxsIdService, mGxsIdService, mGxsCircles,
+                        false); // don't synchronise group automatic (need explicit group request)
 
+        mGxsIdService->setNes(gxsid_ns);
         /**** GxsCircle service ****/
 
 
@@ -2543,6 +2545,19 @@ int RsServer::StartupRetroShare()
 	mConfigMgr->addConfiguration("bitdht.cfg", mBitDht);
 #endif
 
+#ifdef RS_ENABLE_GXS
+
+	mConfigMgr->addConfiguration("identity.cfg", gxsid_ns);
+	mConfigMgr->addConfiguration("gxsforums.cfg", gxsforums_ns);
+	mConfigMgr->addConfiguration("gxschannels.cfg", gxschannels_ns);
+	mConfigMgr->addConfiguration("gxscircles.cfg", gxscircles_ns);
+	mConfigMgr->addConfiguration("posted.cfg", posted_ns);
+	mConfigMgr->addConfiguration("wire.cfg", wire_ns);
+	mConfigMgr->addConfiguration("wiki.cfg", wiki_ns);
+	mConfigMgr->addConfiguration("photo.cfg", photo_ns);
+
+#endif
+
 	mPluginsManager->addConfigurations(mConfigMgr) ;
 
 	ftserver->addConfiguration(mConfigMgr);
@@ -2682,7 +2697,6 @@ int RsServer::StartupRetroShare()
 	createThread(*wire_ns);
 	createThread(*gxsforums_ns);
 	createThread(*gxschannels_ns);
-
 
 #endif // RS_ENABLE_GXS
 

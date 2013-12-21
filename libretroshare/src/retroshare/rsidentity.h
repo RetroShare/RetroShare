@@ -55,6 +55,8 @@ extern RsIdentity *rsIdentity;
 #define RSID_RELATION_OTHER   	0x0008
 #define RSID_RELATION_UNKNOWN 	0x0010
 
+#define RSRECOGN_MAX_TAGINFO	5
+
 std::string rsIdTypeToString(uint32_t idtype);
 
 class RsGxsIdGroup
@@ -81,6 +83,9 @@ class RsGxsIdGroup
 
 	std::string mPgpIdHash; 
 	std::string mPgpIdSign;   // Need a signature as proof - otherwise anyone could add others Hashes.
+
+	// Recognition Strings. MAX# defined above.
+	std::list<std::string> mRecognTags;
 
 	// Not Serialised - for GUI's benefit.
 	bool mPgpKnown;
@@ -163,6 +168,36 @@ class RsIdOpinion
 
 typedef std::string RsGxsId; // TMP. => 
 
+class RsRecognTag
+{
+	public:
+	RsRecognTag(uint16_t tc, uint16_t tt, bool v)
+	:tag_class(tc), tag_type(tt), valid(v) { return; }
+	uint16_t tag_class;
+	uint16_t tag_type;
+	bool valid;
+};
+
+
+class RsRecognTagDetails
+{
+	public:
+	RsRecognTagDetails()
+	:valid_from(0), valid_to(0), tag_class(0), tag_type(0), 
+	is_valid(false), is_pending(false) { return; }
+	
+	time_t valid_from;
+	time_t valid_to;
+	uint16_t tag_class;
+	uint16_t tag_type;
+	
+	std::string signer;
+	
+	bool is_valid;
+	bool is_pending;
+};
+
+
 class RsIdentityDetails
 {
 	public:
@@ -180,6 +215,9 @@ class RsIdentityDetails
 	bool mPgpLinked;
 	bool mPgpKnown;
 	std::string mPgpId;
+
+	// Recogn details.
+	std::list<RsRecognTag> mRecognTags;
 
 	// reputation details.
 	double mOpinion;	
@@ -229,6 +267,13 @@ virtual bool  getOwnIds(std::list<RsGxsId> &ownIds) = 0;
 	// 
 virtual bool submitOpinion(uint32_t& token, RsIdOpinion &opinion) = 0;
 virtual bool createIdentity(uint32_t& token, RsIdentityParameters &params) = 0;
+
+virtual bool updateIdentity(uint32_t& token, RsGxsIdGroup &group) = 0;
+
+virtual bool parseRecognTag(const RsGxsId &id, const std::string &nickname,
+                        const std::string &tag, RsRecognTagDetails &details) = 0;
+virtual bool getRecognTagRequest(const RsGxsId &id, const std::string &comment,
+                        uint16_t tag_class, uint16_t tag_type, std::string &tag) = 0;
 
 	// Specific RsIdentity Functions....
         /* Specific Service Data */

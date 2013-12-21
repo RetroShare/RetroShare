@@ -26,6 +26,7 @@ private:
     bool testSpecificGrpRetrieval();
     bool testGrpIdRetrieval();
     bool testGrpMetaRetrieval();
+    bool testUpdateGroup();
 
 
 private:

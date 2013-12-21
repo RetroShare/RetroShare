@@ -354,8 +354,9 @@ bool RsNxsSerialiser::serialiseNxsSyncGrp(RsNxsSyncGrp *item, void *data, uint32
 
     ok &= setRawUInt32(data, *size, &offset, item->transactionNumber);
     ok &= setRawUInt8(data, *size, &offset, item->flag);
-    ok &= setRawUInt32(data, *size, &offset, item->syncAge);
+    ok &= setRawUInt32(data, *size, &offset, item->createdSince);
     ok &= SetTlvString(data, *size, &offset, TLV_TYPE_STR_HASH_SHA1, item->syncHash);
+    ok &= setRawUInt32(data, *size, &offset, item->updateTS);
 
     if(offset != tlvsize){
 #ifdef RSSERIAL_DEBUG
@@ -403,7 +404,7 @@ bool RsNxsSerialiser::serialiseNxsTrans(RsNxsTransac *item, void *data, uint32_t
     ok &= setRawUInt32(data, *size, &offset, item->transactionNumber);
     ok &= setRawUInt16(data, *size, &offset, item->transactFlag);
     ok &= setRawUInt32(data, *size, &offset, item->nItems);
-    ok &= setRawUInt32(data, *size, &offset, item->timestamp);
+    ok &= setRawUInt32(data, *size, &offset, item->updateTS);
 
 
 
@@ -501,9 +502,10 @@ bool RsNxsSerialiser::serialiseNxsSyncMsg(RsNxsSyncMsg *item, void *data, uint32
 
     ok &= setRawUInt32(data, *size, &offset, item->transactionNumber);
     ok &= setRawUInt8(data, *size, &offset, item->flag);
-    ok &= setRawUInt32(data, *size, &offset, item->syncAge);
+    ok &= setRawUInt32(data, *size, &offset, item->createdSince);
     ok &= SetTlvString(data, *size, &offset, TLV_TYPE_STR_HASH_SHA1, item->syncHash);
     ok &= SetTlvString(data, *size, &offset, TLV_TYPE_STR_GROUPID, item->grpId);
+    ok &= setRawUInt32(data, *size, &offset, item->updateTS);
 
     if(offset != tlvsize){
 #ifdef RSSERIAL_DEBUG
@@ -710,8 +712,9 @@ RsNxsSyncGrp* RsNxsSerialiser::deserialNxsSyncGrp(void *data, uint32_t *size){
 
     ok &= getRawUInt32(data, *size, &offset, &(item->transactionNumber));
     ok &= getRawUInt8(data, *size, &offset, &(item->flag));
-    ok &= getRawUInt32(data, *size, &offset, &(item->syncAge));
+    ok &= getRawUInt32(data, *size, &offset, &(item->createdSince));
     ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_HASH_SHA1, item->syncHash);
+    ok &= getRawUInt32(data, *size, &offset, &(item->updateTS));
 
     if (offset != rssize)
     {
@@ -846,7 +849,7 @@ RsNxsTransac* RsNxsSerialiser::deserialNxsTrans(void *data, uint32_t *size){
     ok &= getRawUInt32(data, *size, &offset, &(item->transactionNumber));
     ok &= getRawUInt16(data, *size, &offset, &(item->transactFlag));
     ok &= getRawUInt32(data, *size, &offset, &(item->nItems));
-    ok &= getRawUInt32(data, *size, &offset, &(item->timestamp));
+    ok &= getRawUInt32(data, *size, &offset, &(item->updateTS));
 
     if (offset != rssize)
     {
@@ -984,9 +987,10 @@ RsNxsSyncMsg* RsNxsSerialiser::deserialNxsSyncMsg(void *data, uint32_t *size)
 
     ok &= getRawUInt32(data, *size, &offset, &(item->transactionNumber));
     ok &= getRawUInt8(data, *size, &offset, &(item->flag));
-    ok &= getRawUInt32(data, *size, &offset, &(item->syncAge));
+    ok &= getRawUInt32(data, *size, &offset, &(item->createdSince));
     ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_HASH_SHA1, item->syncHash);
     ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_GROUPID, item->grpId);
+    ok &= getRawUInt32(data, *size, &offset, &(item->updateTS));
 
     if (offset != rssize)
     {
@@ -1057,6 +1061,7 @@ uint32_t RsNxsSerialiser::sizeNxsSyncGrp(RsNxsSyncGrp *item)
     s += 1; // flag
     s += 4; // sync age
     s += GetTlvStringSize(item->syncHash);
+    s += 4; // updateTS
 
     return s;
 }
@@ -1086,6 +1091,7 @@ uint32_t RsNxsSerialiser::sizeNxsSyncMsg(RsNxsSyncMsg *item)
     s += 4; // age
     s += GetTlvStringSize(item->grpId);
     s += GetTlvStringSize(item->syncHash);
+    s += 4; // updateTS
 
     return s;
 }
@@ -1111,7 +1117,7 @@ uint32_t RsNxsSerialiser::sizeNxsTrans(RsNxsTransac *item){
     s += 4; // transaction number
     s += 2; // flag
     s += 4; // nMsgs
-    s += 4; // timeout
+    s += 4; // updateTS
 
     return s;
 }
@@ -1141,16 +1147,18 @@ void RsNxsGrp::clear()
 void RsNxsSyncGrp::clear()
 {
     flag = 0;
-    syncAge = 0;
+    createdSince = 0;
     syncHash.clear();
+    updateTS = 0;
 }
 
 void RsNxsSyncMsg::clear()
 {
     grpId.clear();
     flag = 0;
-    syncAge = 0;
+    createdSince = 0;
     syncHash.clear();
+    updateTS = 0;
 }
 
 void RsNxsSyncGrpItem::clear()
@@ -1172,6 +1180,7 @@ void RsNxsSyncMsgItem::clear()
 void RsNxsTransac::clear(){
     transactFlag = 0;
     nItems = 0;
+    updateTS = 0;
     timestamp = 0;
     transactionNumber = 0;
 }
@@ -1185,10 +1194,11 @@ std::ostream& RsNxsSyncGrp::print(std::ostream &out, uint16_t indent)
     printIndent(out , int_Indent);
     out << "Hash: " << syncHash << std::endl;
     printIndent(out , int_Indent);
-    out << "Sync Age: " << syncAge << std::endl;
+    out << "Sync Age: " << createdSince << std::endl;
     printIndent(out , int_Indent);
     out << "flag" << flag << std::endl;
-
+    printIndent(out , int_Indent);
+    out << "updateTS" << updateTS << std::endl;
 
     printRsItemEnd(out ,"RsNxsSyncGrp", indent);
 
@@ -1217,11 +1227,13 @@ std::ostream& RsNxsSyncMsg::print(std::ostream &out, uint16_t indent)
     printIndent(out , int_Indent);
     out << "GrpId: " << grpId << std::endl;
     printIndent(out , int_Indent);
-    out << "syncAge: " << syncAge << std::endl;
+    out << "createdSince: " << createdSince << std::endl;
     printIndent(out , int_Indent);
     out << "syncHash: " << syncHash << std::endl;
     printIndent(out , int_Indent);
     out << "flag: " << flag << std::endl;
+    printIndent(out , int_Indent);
+    out << "updateTS: " << updateTS << std::endl;
 
     printRsItemEnd(out, "RsNxsSyncMsg", indent);
     return out;
@@ -1315,6 +1327,8 @@ std::ostream& RsNxsTransac::print(std::ostream &out, uint16_t indent){
     out << "nItems: " << nItems << std::endl;
     printIndent(out , int_Indent);
     out << "timeout: " << timestamp << std::endl;
+    printIndent(out , int_Indent);
+    out << "updateTS: " << updateTS << std::endl;
     printIndent(out , int_Indent);
     out << "transactionNumber: " << transactionNumber << std::endl;
     printIndent(out , int_Indent);
