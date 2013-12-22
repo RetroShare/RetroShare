@@ -67,5 +67,9 @@ class GRouterCache
 		// Cache of which message is pending, waiting for an ACK, etc.
 		//
 		std::map<GRouterMessageId,GRouterCacheInfo> _cache_info ;
+
+		// debug stuff
+		//
+		void debugDump() ;
 };
 

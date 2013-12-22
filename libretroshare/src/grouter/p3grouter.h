@@ -53,6 +53,23 @@ class GRouterPublishedKeyInfo
 		time_t validity_time ;
 };
 
+struct FriendTrialRecord
+{
+	SSLIdType friend_id ;			// id of the friend
+	time_t    time_stamp ;			// time of the last tried
+};
+
+class GRouterRoutingInfo
+{
+	public:
+		RsGRouterGenericDataItem *data_item ;
+
+		uint32_t status_flags ;									// pending, waiting, etc.
+		std::list<FriendTrialRecord> tried_friends ; 	// list of friends to which the item was sent ordered with time.
+		SSLIdType origin ;										// which friend sent us that item
+		time_t received_time ;									// time at which the item was received
+};
+
 class p3GRouter: public RsGRouter, public p3Service, public p3Config
 {
 	public:
@@ -87,6 +104,11 @@ class p3GRouter: public RsGRouter, public p3Service, public p3Config
 		// the memory. That means item_data will be erase on return.
 		//
 		void sendData(const GRouterKeyId& destination, void *& item_data,uint32_t item_size) ;
+
+		// Sends an ACK to the origin of the msg. This is used to notify for 
+		// unfound route, or message correctly received, depending on the particular situation.
+		//
+		void sendACK(const SSLIdType& peer,GRouterMsgPropagationId mid, uint32_t flags) ;
 
 		//===================================================//
 		//                  Interface with RsGRouter         //
@@ -123,7 +145,7 @@ class p3GRouter: public RsGRouter, public p3Service, public p3Config
 
 	private:
 		void autoWash() ;
-		void routeObjects() ;
+		void routePendingObjects() ;
 		void handleIncoming() ;
 		void publishKeys() ;
 		void debugDump() ;
@@ -155,10 +177,11 @@ class p3GRouter: public RsGRouter, public p3Service, public p3Config
 		GRouterMatrix _routing_matrix ;
 
 		// Stores the routing events.
-		// 	- pending items
 		// 	- ongoing requests, waiting for return ACK
+		// 	- pending items
+		// Both a stored in 2 different lists, to allow a more efficient handling.
 		//
-		GRouterCache _routing_cache ;
+		std::map<GRouterMsgPropagationId, GRouterRoutingInfo> _pending_messages;// pending messages
 
 		// Stores the keys which identify the router's node. For each key, a structure holds:
 		// 	- the client service

@@ -124,6 +124,19 @@ RsGRouterItem *RsGRouterSerialiser::deserialise_RsGRouterACKItem(void *data, uin
 	return NULL ;
 }
 
+RsGRouterGenericDataItem *RsGRouterGenericDataItem::duplicate() const
+{
+	RsGRouterGenericDataItem *item = new RsGRouterGenericDataItem ;
+	*item = *this ; // copies everything.
+
+	// then duplicate the memory chunk
+
+	item->data_bytes = (uint8_t*)malloc(data_size) ;
+	memcpy(item->data_bytes,data_bytes,data_size) ;
+
+	return item ;
+}
+
 uint32_t RsGRouterGenericDataItem::serial_size() const
 {
 	std::cerr << "(II) " << __PRETTY_FUNCTION__ << " not yet implemented!" << std::endl;
@@ -167,7 +180,7 @@ std::ostream& RsGRouterACKItem::print(std::ostream& o, uint16_t)
 {
 	o << "RsGRouterACKItem:" << std::endl ;
 	o << "  direct origin: \""<< PeerId() << "\"" << std::endl ;
-	o << "  Key:            " << destination_key.toStdString() << std::endl ;
+	o << "  Mid:            " << mid << std::endl ;
 	o << "  State:          " << state << std::endl ;
 
 	return o ;

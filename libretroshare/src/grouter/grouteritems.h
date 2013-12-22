@@ -28,8 +28,6 @@
 #include "serialiser/rsserial.h"
 #include "rsgrouter.h"
 
-typedef uint32_t GRouterKeyPropagationId ;
-
 // To be put in serialiser/rsserviceids.h
 static const uint8_t RS_SERVICE_TYPE_GROUTER = 0x0016 ;
 
@@ -37,13 +35,15 @@ const uint8_t RS_PKT_SUBTYPE_GROUTER_PUBLISH_KEY	= 0x01 ;			// used to publish a
 const uint8_t RS_PKT_SUBTYPE_GROUTER_DATA          = 0x02 ;			// used to send data to a destination
 const uint8_t RS_PKT_SUBTYPE_GROUTER_ACK           = 0x03 ;			// acknowledgement of data received
 
-const uint8_t QOS_PRIORITY_RS_GROUTER_PUBLISH_KEY = 3 ;
+const uint8_t QOS_PRIORITY_RS_GROUTER_PUBLISH_KEY = 3 ;				// slow items. No need to congest the network with this.
 const uint8_t QOS_PRIORITY_RS_GROUTER_ACK         = 3 ;
 const uint8_t QOS_PRIORITY_RS_GROUTER_DATA        = 3 ;
 
 const uint32_t RS_GROUTER_ACK_STATE_RECEIVED            = 0x0001 ;		// data was received, directly
 const uint32_t RS_GROUTER_ACK_STATE_RECEIVED_INDIRECTLY = 0x0002 ;		// data was received indirectly
 const uint32_t RS_GROUTER_ACK_STATE_GIVEN_UP            = 0x0003 ;		// data was given up. No route.
+const uint32_t RS_GROUTER_ACK_STATE_NO_ROUTE            = 0x0004 ;		// data was given up. No route.
+const uint32_t RS_GROUTER_ACK_STATE_UNKNOWN             = 0x0005 ;		// unknown destination key
 
 /***********************************************************************************/
 /*                           Basic GRouter Item Class                              */
@@ -99,9 +99,13 @@ class RsGRouterGenericDataItem: public RsGRouterItem
 		virtual void clear() {} 
 		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0) ;
 
+		RsGRouterGenericDataItem *duplicate() const ;
+
 		// packet data
 		//
+		GRouterMsgPropagationId routing_id ;
 		GRouterKeyId destination_key ;
+
 		uint32_t data_size ;
 		uint8_t *data_bytes;
 };
@@ -119,7 +123,7 @@ class RsGRouterACKItem: public RsGRouterItem
 
 		// packet data
 		//
-		GRouterKeyId destination_key ;		// key that was the destination for the current ACK
+		GRouterMsgPropagationId mid ; 		// message id to which this ack is a response
 		uint32_t state ; 							// packet was delivered, not delivered, bounced, etc
 };
 

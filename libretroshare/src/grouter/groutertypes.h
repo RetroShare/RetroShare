@@ -30,6 +30,7 @@
 
 typedef uint32_t GRouterServiceId ;
 typedef uint32_t GRouterKeyPropagationId ;
+typedef uint32_t GRouterMsgPropagationId ;
 
 static const uint32_t RS_GROUTER_MATRIX_MAX_HIT_ENTRIES       = 5;
 static const uint32_t RS_GROUTER_MATRIX_MIN_TIME_BETWEEN_HITS = 60;	// can be set to up to half the publish time interval. Prevents flooding routes.
@@ -41,4 +42,7 @@ static const time_t RS_GROUTER_AUTOWASH_PERIOD           =       60 ; // Autowas
 static const time_t RS_GROUTER_PUBLISH_CAMPAIGN_PERIOD   =    1 *60 ; // Check for key advertising every 10 minutes
 static const time_t RS_GROUTER_PUBLISH_KEY_TIME_INTERVAL =    2 *60 ; // Advertise each key once a day at most.
 
-
+static const uint32_t RS_GROUTER_ROUTING_STATE_UNKN = 0x0000 ;		// unknown. Unused.
+static const uint32_t RS_GROUTER_ROUTING_STATE_PEND = 0x0001 ;		// item is pending. Should be sent asap. 
+static const uint32_t RS_GROUTER_ROUTING_STATE_SENT = 0x0002 ;		// item is sent. Waiting for answer
+static const uint32_t RS_GROUTER_ROUTING_STATE_OWND = 0x0003 ;		// item is origined here. Needed for retry policy.
