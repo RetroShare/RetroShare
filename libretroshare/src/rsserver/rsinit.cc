@@ -1847,7 +1847,10 @@ RsGRouter *rsGRouter = NULL ;
 
 #include "services/p3banlist.h"
 #include "services/p3bwctrl.h"
+
+#ifdef SERVICES_DSDV
 #include "services/p3dsdv.h"
+#endif
 
 
 RsControl *createRsControl(NotifyBase &notify)
@@ -2472,7 +2475,7 @@ int RsServer::StartupRetroShare()
 	p3BandwidthControl *mBwCtrl = new p3BandwidthControl(pqih);
 	pqih -> addService(mBwCtrl); 
 
-#ifdef RS_DSDVTEST
+#ifdef SERVICES_DSDV
 	p3Dsdv *mDsdv = new p3Dsdv(mLinkMgr);
 	pqih -> addService(mDsdv);
 	rsDsdv = mDsdv;

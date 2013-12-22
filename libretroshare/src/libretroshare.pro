@@ -9,6 +9,7 @@ CONFIG += test_voip
 # This should be disabled for releases until further notice.
 #CONFIG += gxs debug
 #CONFIG += grouter
+#CONFIG += dsdv
 
 # Beware: All data of the stripped services are lost
 DEFINES *= PQI_DISABLE_TUNNEL
@@ -55,6 +56,17 @@ SOURCES +=  grouter/p3grouter.cc \
 #				grouter/rsgrouterclient.cc 
 }
 
+dsdv {
+DEFINES *= SERVICES_DSDV
+HEADERS += services/p3dsdv.h \
+			  serialiser/rstlvdsdv.h \
+			  serialiser/rsdsdvitems.h \
+			  retroshare/rsdsdv.h 
+
+SOURCES *= serialiser/rstlvdsdv.cc \
+			  serialiser/rsdsdvitems.cc \
+		  	  services/p3dsdv.cc 
+}
 bitdht {
 
 HEADERS +=	dht/p3bitdht.h \
@@ -115,7 +127,6 @@ PUBLIC_HEADERS =	retroshare/rsblogs.h \
 					retroshare/rsturtle.h \
 					retroshare/rstypes.h \
 					retroshare/rsdht.h \
-					retroshare/rsdsdv.h \
 					retroshare/rsconfig.h
 
 HEADERS += plugins/pluginmanager.h \
@@ -416,8 +427,6 @@ HEADERS +=	serialiser/rsbaseitems.h \
 			serialiser/rstlvkvwide.h \
 			serialiser/rstlvtypes.h \
 			serialiser/rstlvutil.h \
-			serialiser/rstlvdsdv.h \
-			serialiser/rsdsdvitems.h \
 			serialiser/rstlvbanlist.h \
 			serialiser/rsbanlistitems.h \
 			serialiser/rsbwctrlitems.h \
@@ -432,7 +441,6 @@ HEADERS +=	services/p3channels.h \
 			services/p3msgservice.h \
 			services/p3service.h \
 			services/p3statusservice.h \
-			services/p3dsdv.h \
 			services/p3banlist.h \
 			services/p3bwctrl.h \
 			services/p3tunnel.h
@@ -557,8 +565,6 @@ SOURCES +=	serialiser/rsbaseitems.cc \
 			serialiser/rstlvkvwide.cc \
 			serialiser/rstlvtypes.cc \
 			serialiser/rstlvutil.cc \
-			serialiser/rstlvdsdv.cc \
-			serialiser/rsdsdvitems.cc \
 			serialiser/rstlvbanlist.cc \
 			serialiser/rsbanlistitems.cc \
 			serialiser/rsbwctrlitems.cc \
@@ -572,7 +578,6 @@ SOURCES +=	services/p3channels.cc \
 			services/p3msgservice.cc \
 			services/p3service.cc \
 			services/p3statusservice.cc \
-			services/p3dsdv.cc \
 			services/p3banlist.cc \
 			services/p3bwctrl.cc \
 
