@@ -1296,15 +1296,26 @@ static int parse_user_id(ops_region_t *region,ops_parse_info_t *pinfo)
 
    if(!(region->length_read == 0)) // ASSERT(region->length_read == 0)  /* We should not have read anything so far */
    {
-      fprintf(stderr,"parse_user_id: region read size should be 0. Corrupted data ?") ;
+      fprintf(stderr,"parse_user_id: region read size should be 0. Corrupted data ?\n") ;
       return 0 ;
    }
 
-   C.user_id.user_id=malloc(region->length+1);  /* XXX should we not like check malloc's return value? */
+   /* From gnupg parse-packet.c:
+      Cap the size of a user ID at 2k: a value absurdly large enough
+      that there is no sane user ID string (which is printable text
+      as of RFC2440bis) that won't fit in it, but yet small enough to
+      avoid allocation problems. */
+   
+   if(region->length > 2048)
+   {
+     fprintf(stderr,"parse_user_id(): invalid region length (%u)\n",region->length);
+     return 0;
+   }
+   C.user_id.user_id=malloc(region->length +1);  /* XXX should we not like check malloc's return value? */
 
    if(C.user_id.user_id==NULL)
    {
-      fprintf(stderr,"malloc failed in parse_user_id") ;
+      fprintf(stderr,"malloc failed in parse_user_id\n") ;
       return 0 ;
    }
 
