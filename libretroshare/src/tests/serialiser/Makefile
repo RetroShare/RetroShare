@@ -15,12 +15,14 @@ TESTOBJ += tlvitems_test.o tlvstack_test.o rsserial_test.o
 TESTOBJ += rstlvwidetest.o tlvrandom_test.o rsturtleitem_test.o
 TESTOBJ += tlvtypes_test.o support.o distribitem_test.o rsmsgitem_test.o  
 TESTOBJ += rsstatusitem_test.o rsconfigitem_test.o
+TESTOBJ += rsgrouteritem_test.o
 
 TESTS  = tlvbase_test tlvbase_test2 rstlvwidetest
 TESTS += tlvitems_test tlvstack_test rstunnelitem_test
 TESTS +=  tlvrandom_test rsserial_test rsturtleitem_test
 TESTS +=  tlvtypes_test distribitem_test rsmsgitem_test
 TESTS +=  rsstatusitem_test rsconfigitem_test
+TESTOBJ += rsgrouteritem_test
 
 #rsbaseitem_test
 
@@ -40,6 +42,9 @@ tlvstack_test : tlvstack_test.o
 
 rsserial_test : rsserial_test.o
 	$(CC) $(CFLAGS) -o rsserial_test rsserial_test.o $(OBJ) $(LIBS) 
+
+rsserial_test : rsgrouteritem_test.o
+	$(CC) $(CFLAGS) -o rsgrouteritem_test rsgrouteritem_test.o $(OBJ) $(LIBS) 
 
 rsbaseitem_test : rsbaseitem_test.o
 	$(CC) $(CFLAGS) -o rsbaseitem_test rsbaseitem_test.o $(OBJ) $(LIBS) 

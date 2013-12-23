@@ -92,6 +92,7 @@ class RsGRouterGenericDataItem: public RsGRouterItem
 {
 	public:
 		RsGRouterGenericDataItem() : RsGRouterItem(RS_PKT_SUBTYPE_GROUTER_DATA) { setPriorityLevel(QOS_PRIORITY_RS_GROUTER_DATA) ; }
+		virtual ~RsGRouterGenericDataItem() { free(data_bytes); data_bytes=NULL;}
 
 		virtual bool serialise(void *data,uint32_t& size) const ;	
 		virtual uint32_t serial_size() const ; 						
@@ -148,7 +149,7 @@ class RsGRouterSerialiser: public RsSerialType
 
 	private:
 		RsGRouterItem *deserialise_RsGRouterPublishKeyItem(void *data,uint32_t size) const ;
-		RsGRouterItem *deserialise_RsGRouterDataItem(void *data,uint32_t size) const ;
+		RsGRouterItem *deserialise_RsGRouterGenericDataItem(void *data,uint32_t size) const ;
 		RsGRouterItem *deserialise_RsGRouterACKItem(void *data,uint32_t size) const ;
 };
 
