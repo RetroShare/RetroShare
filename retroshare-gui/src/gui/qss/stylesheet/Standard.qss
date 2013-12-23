@@ -81,6 +81,10 @@ CreateChannelMsg QFrame#fileFrame {
 	background: white;
 }
 
+ChanMsgItem QLabel#logoLabel {
+  background-color: black;
+}
+
 /* Forums */
 
 ForumsDialog QLabel#forumName, ForumsDialog QLabel#threadTitle

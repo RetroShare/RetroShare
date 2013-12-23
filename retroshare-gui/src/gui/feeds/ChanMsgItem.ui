@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>629</width>
-    <height>172</height>
+    <height>175</height>
    </rect>
   </property>
   <layout class="QGridLayout" name="gridLayout_4">
@@ -42,11 +42,20 @@
        <layout class="QHBoxLayout" name="horizontalLayout_6">
         <item>
          <widget class="QLabel" name="logoLabel">
+          <property name="minimumSize">
+           <size>
+            <width>158</width>
+            <height>108</height>
+           </size>
+          </property>
           <property name="maximumSize">
            <size>
-            <width>156</width>
-            <height>107</height>
+            <width>158</width>
+            <height>108</height>
            </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"/>
           </property>
           <property name="text">
            <string/>
@@ -55,7 +64,13 @@
            <pixmap resource="../images.qrc">:/images/thumb-default-video.png</pixmap>
           </property>
           <property name="scaledContents">
-           <bool>true</bool>
+           <bool>false</bool>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+          <property name="margin">
+           <number>0</number>
           </property>
          </widget>
         </item>
