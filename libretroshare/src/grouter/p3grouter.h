@@ -103,7 +103,7 @@ class p3GRouter: public RsGRouter, public p3Service, public p3Config
 		// Sends an item to the given destination.  The router takes ownership of
 		// the memory. That means item_data will be erase on return.
 		//
-		void sendData(const GRouterKeyId& destination, void *& item_data,uint32_t item_size) ;
+		void sendData(const GRouterKeyId& destination, RsGRouterGenericDataItem *item) ;
 
 		// Sends an ACK to the origin of the msg. This is used to notify for 
 		// unfound route, or message correctly received, depending on the particular situation.

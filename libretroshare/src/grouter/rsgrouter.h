@@ -30,6 +30,7 @@
 
 typedef Sha1CheckSum GRouterKeyId ;	// we use sha1. Gives sufficient entropy.
 class GRouterClientService ;
+class RsGRouterGenericDataItem ;
 
 // This is the interface file for the global router service.
 //
@@ -70,7 +71,7 @@ class RsGRouter
 		//         Communication to other services.          //
 		//===================================================//
 
-		virtual void sendData(const GRouterKeyId& destination, void *& item_data,uint32_t item_size) =0;
+		virtual void sendData(const GRouterKeyId& destination, RsGRouterGenericDataItem *item) =0;
 		virtual bool registerKey(const GRouterKeyId& key,const GRouterServiceId& client_id,const std::string& description_string) =0;
 
 };

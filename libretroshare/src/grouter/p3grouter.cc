@@ -30,6 +30,7 @@
 #include "p3grouter.h"
 #include "grouteritems.h"
 #include "groutertypes.h"
+#include "grouterclientservice.h"
 
 static const uint32_t RS_GROUTER_ROUTING_WAITING_TIME = 3600 ; // time between two trial of sending a message
 
@@ -223,14 +224,14 @@ void p3GRouter::routePendingObjects()
 				ftr.time_stamp = now ;
 				ftr.friend_id = routed_friend ;
 				it->second.tried_friends.push_front(ftr) ;
-				it->second.status_flags |= RS_GROUTER_ROUTING_STATE_SENT ;
+				it->second.status_flags = RS_GROUTER_ROUTING_STATE_SENT ;
 
 				std::cerr << "  Sending..." << std::endl;
 				// send
 				new_item->PeerId(routed_friend.toStdString()) ;
 				sendItem(new_item) ;
 			}
-			else if(!(it->second.status_flags & RS_GROUTER_ROUTING_STATE_OWND) || std::find(lst.begin(),lst.end(),it->second.origin) != lst.end())
+			else if(it->second.origin.toStdString() != mLinkMgr->getOwnId() || std::find(lst.begin(),lst.end(),it->second.origin) != lst.end())
 			{
 				// There's no correct friend to send this item to. We keep it for a while. If it's too old,
 				// we discard it. For now, the procedure is to send back an ACK.
@@ -423,7 +424,7 @@ void p3GRouter::handleRecvACKItem(RsGRouterACKItem *item)
 			break ;
 	}
 
-	if(it->second.status_flags & RS_GROUTER_ROUTING_STATE_OWND)
+	if(it->second.origin.toStdString() == mLinkMgr->getOwnId())
 	{
 		// find the client service and notify it.
 		std::cerr << "  We're owner: should notify client id" << std::endl;
@@ -437,20 +438,89 @@ void p3GRouter::handleRecvACKItem(RsGRouterACKItem *item)
 
 void p3GRouter::handleRecvDataItem(RsGRouterGenericDataItem *item)
 {
-	std::cerr << "Received data item from key " << item->destination_key.toStdString() << std::endl;
+	std::cerr << "Received data item for key " << item->destination_key.toStdString() << std::endl;
 
-	// update the local cache
-	// 1 - do we have a sensible route for the item?
-	//
-	// 	1.1 - select the best guess, send the item
-	// 	1.2 - keep track of origin and update list of tried directions
-	//
-	// 2 - no route. Keep the item for a while. Will be retried later.
+	// Do we have this item in the cache already?
+	//   - if not, add in the pending items
+	//   - if yet. Ignore, or send ACK for shorter route.
+	
+	std::map<GRouterKeyId,GRouterPublishedKeyInfo>::const_iterator it = _owned_key_ids.find(item->destination_key) ;
+	std::map<GRouterMsgPropagationId,GRouterRoutingInfo>::const_iterator itr = _pending_messages.find(item->routing_id) ;
+	RsGRouterGenericDataItem *item_copy = NULL;
+
+	if(itr != _pending_messages.end())
+	{
+		std::cerr << "  Item is already there. Nothing to do. Should we update the cache?" << std::endl;
+
+		item_copy = itr->second.data_item ;
+	}
+	else		// item is now known. Store it into pending msgs. We make a copy, since the item will be deleted otherwise.
+	{
+		std::cerr << "  Item is new. Storing in cache as pending messages." << std::endl;
+
+		GRouterRoutingInfo info ;
+
+		info.data_item = item->duplicate() ;
+		item_copy = info.data_item ;
+
+		if(it != _owned_key_ids.end())
+			info.status_flags = RS_GROUTER_ROUTING_STATE_ARVD ;
+		else
+			info.status_flags = RS_GROUTER_ROUTING_STATE_PEND ;
+
+		info.origin = SSLIdType(item->PeerId()) ;
+		info.received_time = time(NULL) ;
+
+		_pending_messages[item->routing_id] = info ;
+	}
+
+	// Is the item for us? If so, find the client service and send the item back.
+
+	if(it != _owned_key_ids.end())
+		if(time(NULL) < it->second.validity_time) 
+		{
+			// test validity time. If too old, we don't forward.
+
+			std::map<GRouterServiceId,GRouterClientService*>::const_iterator its = _registered_services.find(it->second.service_id) ;
+
+			if(its != _registered_services.end())
+			{
+				std::cerr << "  Key is owned by us. Notifying service for this item." << std::endl;
+				its->second->receiveGRouterData(item_copy,it->first) ;
+			}
+			else
+				std::cerr << "  (EE) weird situation. No service registered for a key that we own. Key id = " << item->destination_key.toStdString() << ", service id = " << it->second.service_id << std::endl;
+		}
+		else
+			std::cerr << "  (WW) key is outdated. Dropping this item." << std::endl;
+	else
+		std::cerr << "  Item is not for us. Leaving in pending msgs to be routed later." << std::endl;
 }
 
-void p3GRouter::sendData(const GRouterKeyId& destination, void *& item_data,uint32_t item_size) 
+void p3GRouter::sendData(const GRouterKeyId& destination, RsGRouterGenericDataItem *item)
 {
-	std::cerr << "(WW) " << __PRETTY_FUNCTION__ << ": not implemented." << std::endl;
+	// push the item into pending messages.
+	//
+	GRouterRoutingInfo info ;
+
+	info.data_item = item ;
+	info.status_flags = RS_GROUTER_ROUTING_STATE_PEND ;
+	info.origin = SSLIdType(mLinkMgr->getOwnId()) ;
+	info.received_time = time(NULL) ;
+	
+	// Make sure we have a unique id (at least locally).
+	//
+	GRouterMsgPropagationId propagation_id ;
+	do propagation_id = RSRandom::random_u32() ; while(_pending_messages.find(propagation_id) != _pending_messages.end()) ;
+
+	std::cerr << "p3GRouter::sendGRouterData(): pushing the followign item in the msg pending list:" << std::endl;
+	std::cerr << "  data_item.size = " << info.data_item->data_size << std::endl;
+	std::cerr << "  data_item.byte = " << info.data_item->data_bytes << std::endl;
+	std::cerr << "  status         = " << info.status_flags << std::endl;
+	std::cerr << "  origin         = " << info.origin.toStdString() << std::endl;
+	std::cerr << "  Recv time      = " << info.received_time << std::endl;
+
+	_pending_messages[propagation_id] = info ;
 }
 
 void p3GRouter::sendACK(const SSLIdType& peer, GRouterMsgPropagationId mid, uint32_t ack_flags)

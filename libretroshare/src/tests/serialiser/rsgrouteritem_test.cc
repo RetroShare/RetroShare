@@ -24,6 +24,7 @@
  */
 
 #include <iostream>
+#include <math.h>
 
 #include "util/rsrandom.h"
 #include "grouter/grouteritems.h"
@@ -81,7 +82,7 @@ bool operator ==(const RsGRouterPublishKeyItem& cmiLeft,const  RsGRouterPublishK
 	if(cmiLeft.diffusion_id != cmiRight.diffusion_id) return false;
 	if(!(cmiLeft.published_key == cmiRight.published_key)) return false;
 	if(cmiLeft.service_id != cmiRight.service_id) return false;
-//	if(cmiLeft.randomized_distance != cmiRight.randomized_distance) return false;
+	if(fabs(cmiLeft.randomized_distance -  cmiRight.randomized_distance) > 0.001) return false;
 	if(cmiLeft.description_string != cmiRight.description_string) return false;
 
 	return true ;
