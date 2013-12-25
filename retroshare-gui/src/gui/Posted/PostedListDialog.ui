@@ -48,7 +48,7 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>605</width>
+            <width>745</width>
             <height>332</height>
            </rect>
           </property>
@@ -83,7 +83,7 @@
           <item>
            <widget class="QPushButton" name="submitPostButton">
             <property name="text">
-             <string>Submit Post</string>
+             <string>Create Post</string>
             </property>
             <property name="icon">
              <iconset resource="Posted_images.qrc">

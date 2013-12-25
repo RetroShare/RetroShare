@@ -106,7 +106,7 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WFlags flags)
 #ifdef RS_USE_PHOTOSHARE
     PhotoShare *photoShare = NULL;
     ui.stackPages->add(photoShare = new PhotoShare(ui.stackPages),
-                     createPageAction(QIcon(IMAGE_PHOTO), tr("Photo Share"), grp));
+                     createPageAction(QIcon(IMAGE_PHOTO), tr("Photos"), grp));
 #endif
 
     PostedDialog *postedDialog = NULL;
