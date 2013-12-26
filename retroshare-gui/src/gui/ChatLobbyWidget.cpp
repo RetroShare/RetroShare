@@ -265,7 +265,7 @@ static void updateItem(QTreeWidget *treeWidget, QTreeWidgetItem *item, ChatLobby
 	for (int column = 0; column < COLUMN_COUNT; ++column) {
 		item->setTextColor(column, color);
 	}
-	item->setToolTip(0,QObject::tr("Subject: ")+item->text(COLUMN_TOPIC)+"\n"+QObject::tr("Participants: ")+QString::number(count)) ;
+	item->setToolTip(0,QObject::tr("Subject: ")+item->text(COLUMN_TOPIC)+"\n"+QObject::tr("Participants: ")+QString::number(count)+"\n"+QObject::tr("Id: ")+QString::number(id,16)) ;
 }
 
 void ChatLobbyWidget::addChatPage(ChatLobbyDialog *d)
