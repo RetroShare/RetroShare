@@ -75,18 +75,18 @@
          <widget class="QLabel" name="iconLabel">
           <property name="minimumSize">
            <size>
-            <width>48</width>
-            <height>48</height>
+            <width>70</width>
+            <height>70</height>
            </size>
           </property>
           <property name="maximumSize">
            <size>
-            <width>48</width>
-            <height>48</height>
+            <width>70</width>
+            <height>70</height>
            </size>
           </property>
           <property name="pixmap">
-           <pixmap resource="../images.qrc">:/images/konversation.png</pixmap>
+           <pixmap resource="../images.qrc">:/images/konversation64.png</pixmap>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>

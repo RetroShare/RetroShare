@@ -120,6 +120,12 @@ void ForumMsgItem::updateItemStatic()
 	{
 		titleLabel->setText(tr("Unknown Forum Post"));
 	}
+	
+	if (fi.forumFlags & RS_DISTRIB_AUTHEN_REQ) {
+        iconLabel->setPixmap(QPixmap(":/images/konv_message64.png"));
+	} else {
+        iconLabel->setPixmap(QPixmap(":/images/konversation64.png"));
+	}
 
 	/* get actual Message */
 	ForumMsgInfo msg;

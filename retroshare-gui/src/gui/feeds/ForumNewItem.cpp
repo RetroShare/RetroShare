@@ -86,6 +86,12 @@ void ForumNewItem::updateItemStatic()
 			subscribeButton->setEnabled(true);
 			postButton->setEnabled(false);
 		}
+		
+	if (fi.forumFlags & RS_DISTRIB_AUTHEN_REQ) {
+        forumlogo_label->setPixmap(QPixmap(":/images/konv_message64.png"));
+	} else {
+        forumlogo_label->setPixmap(QPixmap(":/images/konversation64.png"));
+	}
 
 		/* should also check the other flags */
 	}
