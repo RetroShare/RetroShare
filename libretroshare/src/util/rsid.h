@@ -143,3 +143,7 @@ template<uint32_t ID_SIZE_IN_BYTES> t_RsGenericIdType<ID_SIZE_IN_BYTES>::t_RsGen
 	memcpy(bytes,mem,ID_SIZE_IN_BYTES) ;
 }
 
+static const int SSL_ID_SIZE = 16 ;
+
+typedef t_RsGenericIdType<SSL_ID_SIZE> SSLIdType ;
+

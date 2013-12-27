@@ -5,10 +5,6 @@
 
 class RsPeerDetails ;
 
-static const int SSL_ID_SIZE = 16 ;
-
-typedef t_RsGenericIdType<SSL_ID_SIZE> SSLIdType ;
-
 class RsCertificate
 {
 	public:
