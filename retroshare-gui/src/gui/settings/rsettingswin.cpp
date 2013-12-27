@@ -50,7 +50,7 @@ RSettingsWin *RSettingsWin::_instance = NULL;
 int RSettingsWin::lastPage = 0;
 
 RSettingsWin::RSettingsWin(QWidget *parent)
-    : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint)
+    : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint)
 {
     setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose, true);
