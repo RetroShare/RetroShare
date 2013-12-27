@@ -30,6 +30,7 @@
 #include <algorithm>
 #include <set>
 #include <map>
+#include <time.h>
 
 #include <retroshare/rsfiles.h>
 
@@ -852,6 +853,13 @@ bool ChannelFeed::navigate(const std::string& channelId, const std::string& msgI
 		return true;
 	}
 
+	//update channel thread
+	updateChannelMsgs();
+	//Waiting thread finished
+	time_t now=time(NULL);
+	while(fillThread && ((now+300)>time(NULL)))
+		QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+	
 	/* Search exisiting item */
 	QList<ChanMsgItem*>::iterator mit;
 	for (mit = mChanMsgItems.begin(); mit != mChanMsgItems.end(); mit++) {
