@@ -163,9 +163,9 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor, publi
 		 */
 		bool clearPrivateChatQueue(bool incoming, const std::string &id);
 
-		bool getVirtualPeerId(const ChatLobbyId&, std::string& virtual_peer_id) ;
-		bool isLobbyId(const std::string&, ChatLobbyId&) ;
-		void getChatLobbyList(std::list<ChatLobbyInfo, std::allocator<ChatLobbyInfo> >&) ;
+		bool getVirtualPeerId(const ChatLobbyId& lobby_id, std::string& virtual_peer_id) ;
+		bool isLobbyId(const std::string& virtual_peer_id, ChatLobbyId& lobby_id) ;
+		void getChatLobbyList(std::list<ChatLobbyInfo, std::allocator<ChatLobbyInfo> >& cl_infos) ;
 		bool acceptLobbyInvite(const ChatLobbyId& id) ;
 		void denyLobbyInvite(const ChatLobbyId& id) ;
 		void getPendingChatLobbyInvites(std::list<ChatLobbyInvite>& invites) ;
