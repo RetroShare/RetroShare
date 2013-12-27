@@ -724,8 +724,13 @@ bool p3ChatService::locked_bouncingObjectCheck(RsChatLobbyBouncingObject *obj,co
 
 	std::string pid = peer_id + "_" + os.str() ;
 
-	VisibleChatLobbyRecord& rec(_visible_lobbies[obj->lobby_id]) ;
-	lobby_count = rec.total_number_of_peers ;
+	std::map<ChatLobbyId,VisibleChatLobbyRecord>::const_iterator it = _visible_lobbies.find(obj->lobby_id) ;
+	if(it == _visible_lobbies.end())
+	{
+		std::cerr << "p3ChatService::locked_bouncingObjectCheck(): weird situation: cannot find lobby in visible lobbies. Dropping message. If you see this, contact the developers." << std::endl;
+		return false ;
+	}
+	lobby_count = it->second.total_number_of_peers ;
 
 	// max objects per second: lobby_count * 1/MAX_DELAY_BETWEEN_LOBBY_KEEP_ALIVE objects per second.
 	// So in cache, there is in average that number times MAX_MESSAGES_PER_SECONDS_PERIOD
@@ -3106,7 +3111,7 @@ void p3ChatService::cleanLobbyCaches()
 		// 
 
 		for(std::map<ChatLobbyId,VisibleChatLobbyRecord>::iterator it(_visible_lobbies.begin());it!=_visible_lobbies.end();)
-			if(it->second.last_report_time + MAX_KEEP_PUBLIC_LOBBY_RECORD < now)	// this lobby record is too late.
+			if(it->second.last_report_time + MAX_KEEP_PUBLIC_LOBBY_RECORD < now && _chat_lobbys.find(it->first)==_chat_lobbys.end())	// this lobby record is too late.
 			{
 #ifdef CHAT_DEBUG
 				std::cerr << "  removing old public lobby record 0x" << std::hex << it->first << ", time=" << std::dec << now - it->second.last_report_time << " secs ago" << std::endl;
