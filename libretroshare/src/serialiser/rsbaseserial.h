@@ -29,6 +29,7 @@
 #include <string>
 #include <stdlib.h>
 #include <stdint.h>
+#include <util/rsid.h>
 
 /*******************************************************************
  * This is at the lowlevel packing routines. They are usually 
@@ -69,6 +70,12 @@ bool setRawString(void *data, uint32_t size, uint32_t *offset, const std::string
 
 bool getRawSha1(void *data, uint32_t size, uint32_t *offset, Sha1CheckSum& outStr);
 bool setRawSha1(void *data, uint32_t size, uint32_t *offset, const Sha1CheckSum& inStr);
+
+bool setRawSSLId(void *data, uint32_t size, uint32_t *offset, const SSLIdType& inStr);
+bool getRawSSLId(void *data, uint32_t size, uint32_t *offset, SSLIdType& outStr);
+
+bool setRawTimeT(void *data, uint32_t size, uint32_t *offset, const time_t& inStr);
+bool getRawTimeT(void *data, uint32_t size, uint32_t *offset, time_t& outStr);
 
 #endif
 

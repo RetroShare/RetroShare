@@ -256,7 +256,38 @@ bool setRawSha1(void *data,uint32_t size,uint32_t *offset,const Sha1CheckSum& cs
 
 	return true ;
 }
+bool getRawSSLId(void *data,uint32_t size,uint32_t *offset,SSLIdType& cs)
+{
+	uint32_t len = 16 ; // SSL id type
 
+	/* check there is space for string */
+	if (size < *offset + len)
+	{
+		std::cerr << "getRawSha1() not enough size" << std::endl;
+		return false;
+	}
+	bool ok = true ;
+
+	cs = SSLIdType(&((uint8_t*)data)[*offset]) ;
+	*offset += 16 ;
+
+	return ok ;
+}
+bool setRawSSLId(void *data,uint32_t size,uint32_t *offset,const SSLIdType& cs)
+{
+	uint32_t len = 16 ; // SHA1 length in bytes
+
+	if (size < *offset + len)
+	{
+		std::cerr << "setRawSha1() Not enough size" << std::endl;
+		return false;
+	}
+
+	memcpy((void *) &(((uint8_t *) data)[*offset]), cs.toByteArray(), 16);
+	*offset += 16 ;
+
+	return true ;
+}
 bool getRawString(void *data, uint32_t size, uint32_t *offset, std::string &outStr)
 {
 	uint32_t len = 0;
@@ -309,3 +340,15 @@ bool setRawString(void *data, uint32_t size, uint32_t *offset, const std::string
 	return true;
 }
 
+bool getRawTimeT(void *data,uint32_t size,uint32_t *offset,time_t& t)
+{
+	uint64_t T ;
+	bool res = getRawUInt64(data,size,offset,&T) ;
+	t = T ;
+
+	return res ;
+}
+bool setRawTimeT(void *data,uint32_t size,uint32_t *offset,const time_t& t)
+{
+	return setRawUInt64(data,size,offset,t) ;
+}
