@@ -126,6 +126,7 @@ SearchDialog::SearchDialog(QWidget *parent)
     compareResultRole = new RSTreeWidgetItemCompareRole;
     compareResultRole->setRole(SR_SIZE_COL, ROLE_SORT);
     compareResultRole->setRole(SR_AGE_COL, ROLE_SORT);
+		compareResultRole->setRole(SR_ID_COL, ROLE_SORT);
 
     /* hide the Tree +/- */
     ui.searchResultWidget -> setRootIsDecorated( true );
@@ -799,6 +800,7 @@ void SearchDialog::insertDirectory(const QString &txt, qulonglong searchId, cons
 		child->setTextAlignment( SR_SIZE_COL, Qt::AlignRight );
 		
 		child->setText(SR_ID_COL, QString::number(1));
+		child->setData(SR_ID_COL, ROLE_SORT, 1);
 		child->setTextAlignment( SR_ID_COL, Qt::AlignRight );
 
 		child->setText(SR_SEARCH_ID_COL, sid_hexa);
@@ -823,6 +825,7 @@ void SearchDialog::insertDirectory(const QString &txt, qulonglong searchId, cons
 		child->setData(SR_AGE_COL, ROLE_SORT, dir.age);
 		child->setTextAlignment( SR_SIZE_COL, Qt::AlignRight );
 		child->setText(SR_ID_COL, QString::number(1));
+		child->setData(SR_ID_COL, ROLE_SORT, 1);
 		child->setTextAlignment( SR_ID_COL, Qt::AlignRight );
 		child->setText(SR_SEARCH_ID_COL, sid_hexa);
 		child->setText(SR_TYPE_COL, tr("Folder"));
@@ -890,6 +893,7 @@ void SearchDialog::insertDirectory(const QString &txt, qulonglong searchId, cons
     child->setData(SR_AGE_COL, ROLE_SORT, dir.min_age);
     child->setTextAlignment( SR_SIZE_COL, Qt::AlignRight );
     child->setText(SR_ID_COL, QString::number(1));
+		child->setData(SR_ID_COL, ROLE_SORT, 1);
     child->setTextAlignment( SR_ID_COL, Qt::AlignRight );
     child->setText(SR_SEARCH_ID_COL, sid_hexa);
     child->setText(SR_TYPE_COL, tr("Folder"));
@@ -1004,7 +1008,9 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 				anonymousSource = modifiedResultCount.at(1).toInt() + 1;
 			}
 			modifiedResult = QString::number(friendSource) + "/" + QString::number(anonymousSource);
+			float fltRes = friendSource + (float)anonymousSource/1000;
 			(*it)->setText(SR_ID_COL,modifiedResult);
+			(*it)->setData(SR_ID_COL, ROLE_SORT, fltRes);
 			QTreeWidgetItem *item = (*it);
 			found = true ;
 
@@ -1077,7 +1083,9 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 		}
 
 		modifiedResult =QString::number(friendSource) + "/" + QString::number(anonymousSource);
+		float fltRes = friendSource + (float)anonymousSource/1000;
 		item->setText(SR_ID_COL,modifiedResult);
+		item->setData(SR_ID_COL, ROLE_SORT, fltRes);
 		item->setTextAlignment( SR_ID_COL, Qt::AlignRight );
 		item->setText(SR_SEARCH_ID_COL, sid_hexa);
 
