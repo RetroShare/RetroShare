@@ -25,6 +25,7 @@
 
 #include "groutertypes.h"
 #include "groutermatrix.h"
+#include "grouteritems.h"
 
 GRouterMatrix::GRouterMatrix()
 {
@@ -177,8 +178,13 @@ bool GRouterMatrix::computeRoutingProbabilities(const GRouterKeyId& key_id, cons
 
 bool GRouterMatrix::updateRoutingProbabilities()
 {
+	std::cerr << "Updating routing probabilities..." << std::endl;
+
 	if(!_proba_need_updating)
+	{
+		std::cerr << "  not needed." << std::endl;
 		return false ;
+	}
 
 	time_t now = time(NULL) ;
 
@@ -196,11 +202,61 @@ bool GRouterMatrix::updateRoutingProbabilities()
 			v[(*it2).friend_id] += (*it2).weight / (time_difference_in_days*time_difference_in_days) ;
 		}
 	}
+	std::cerr << "  done." << std::endl;
+
 	_proba_need_updating = false ;
 	return true ;
 }
 
+bool GRouterMatrix::saveList(std::list<RsItem*>& items) 
+{
+	std::cerr << "  GRoutingMatrix::saveList()" << std::endl;
 
+	RsGRouterMatrixFriendListItem *item = new RsGRouterMatrixFriendListItem ;
 
+	item->reverse_friend_indices = _reverse_friend_indices ;
+	items.push_back(item) ;
 
+	for(std::map<GRouterKeyId,std::list<RoutingMatrixHitEntry> >::const_iterator it(_routing_clues.begin());it!=_routing_clues.end();++it)
+	{
+		RsGRouterMatrixCluesItem *item = new RsGRouterMatrixCluesItem ;
+
+		item->destination_key = it->first ;
+		item->clues = it->second ;
+
+		items.push_back(item) ;
+	}
+
+	return true ;
+}
+bool GRouterMatrix::loadList(std::list<RsItem*>& items) 
+{
+	RsGRouterMatrixFriendListItem *itm1 = NULL ;
+	RsGRouterMatrixCluesItem      *itm2 = NULL ;
+
+	std::cerr << "  GRoutingMatrix::loadList()" << std::endl;
+
+	for(std::list<RsItem*>::const_iterator it(items.begin());it!=items.end();++it)
+	{
+		if(NULL != (itm2 = dynamic_cast<RsGRouterMatrixCluesItem*>(*it)))
+		{
+			std::cerr << "    initing routing clues." << std::endl;
+
+			_routing_clues[itm2->destination_key] = itm2->clues ;
+			_proba_need_updating = true ;	// notifies to re-compute all the info.
+		}
+		if(NULL != (itm1 = dynamic_cast<RsGRouterMatrixFriendListItem*>(*it)))
+		{
+			_reverse_friend_indices = itm1->reverse_friend_indices ;
+			_friend_indices.clear() ;
+
+			for(uint32_t i=0;i<_reverse_friend_indices.size();++i)
+				_friend_indices[_reverse_friend_indices[i]] = i ;
+
+			_proba_need_updating = true ;	// notifies to re-compute all the info.
+		}
+	}
+
+	return true ;
+}
 

@@ -322,7 +322,7 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor, publi
 		// ===========================================================//
 
 	public:
-		void connectToTurtleRouter(p3turtle *) ;
+		virtual void connectToTurtleRouter(p3turtle *) ;
 
 		// Creates the invite if the public key of the distant peer is available.
 		// Om success, stores the invite in the map above, so that we can respond to tunnel requests.

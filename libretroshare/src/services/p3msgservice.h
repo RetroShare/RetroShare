@@ -42,12 +42,21 @@
 #include "services/p3service.h"
 #include "serialiser/rsmsgitems.h"
 #include "util/rsthreads.h"
+
+#ifdef GROUTER
+#include "grouter/p3grouter.h"
+#include "grouter/grouterclientservice.h"
+#endif
 #include "turtle/p3turtle.h"
 #include "turtle/turtleclientservice.h"
 
 class p3LinkMgr;
 
+// Temp tweak to test grouter
 class p3MsgService: public p3Service, public p3Config, public pqiMonitor, public RsTurtleClientService
+#ifdef GROUTER
+						  , public GRouterClientService
+#endif
 {
 	public:
 	p3MsgService(p3LinkMgr *lm);
@@ -102,7 +111,10 @@ int     checkOutgoingMessages();
 
 	/*** overloaded from p3turtle   ***/
 
-		void connectToTurtleRouter(p3turtle *) ;
+#ifdef GROUTER
+		virtual void connectToGlobalRouter(p3GRouter *) ;
+#endif
+		virtual void connectToTurtleRouter(p3turtle *) ;
 
 		struct DistantMessengingInvite
 		{
@@ -115,7 +127,6 @@ int     checkOutgoingMessages();
 			uint32_t status ;
 			bool pending_messages ;
 		};
-
 		bool createDistantOfflineMessengingInvite(time_t time_of_validity,TurtleFileHash& hash) ;
 		bool getDistantOfflineMessengingInvites(std::vector<DistantOfflineMessengingInvite>& invites) ;
 
@@ -136,6 +147,9 @@ int     checkOutgoingMessages();
 
 		// Overloaded from RsTurtleClientService
 
+#ifdef GROUTER
+		virtual void receiveGRouterData(RsGRouterGenericDataItem *item, const GRouterKeyId& key) ;
+#endif
 		virtual bool handleTunnelRequest(const std::string& hash,const std::string& peer_id) ;
 		virtual void receiveTurtleData(RsTurtleGenericTunnelItem *item,const std::string& hash,const std::string& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction) ;
 		void addVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&,RsTurtleGenericTunnelItem::Direction dir) ;
@@ -147,8 +161,14 @@ int     checkOutgoingMessages();
 
 		void manageDistantPeers() ;
 		void sendTurtleData(const std::string& hash,RsMsgItem *) ;
+#ifdef GROUTER
+		void sendGRouterData(const std::string& hash,RsMsgItem *) ;
+#endif
 		void handleIncomingItem(RsMsgItem *) ;
 
+#ifdef GROUTER
+		p3GRouter *mGRouter ;
+#endif
 		p3turtle *mTurtle ;
 
 uint32_t getNewUniqueMsgId();

@@ -31,6 +31,8 @@
 #include "groutertypes.h"
 #include "rsgrouter.h"
 
+class RsItem ;
+
 // The routing matrix records the event clues received from each friend
 //
 struct RoutingMatrixHitEntry
@@ -64,6 +66,9 @@ class GRouterMatrix
 		//
 		void debugDump() const ;
 
+		bool saveList(std::list<RsItem*>& items) ;
+		bool loadList(std::list<RsItem*>& items) ;
+
 	private:
 		// returns the friend id, possibly creating a new id.
 		//
@@ -75,8 +80,8 @@ class GRouterMatrix
 
 		// List of events received and computed routing probabilities
 		//
-		std::map<GRouterKeyId, std::list<RoutingMatrixHitEntry> > _routing_clues ;
-		std::map<GRouterKeyId, std::vector<float> > 					 _time_combined_hits ; // hit matrix after time-convolution filter
+		std::map<GRouterKeyId, std::list<RoutingMatrixHitEntry> > _routing_clues ;			// received routing clues. Should be saved.
+		std::map<GRouterKeyId, std::vector<float> > 					 _time_combined_hits ; 	// hit matrix after time-convolution filter
 
 		// This is used to avoid re-computing probas when new events have been received.
 		//

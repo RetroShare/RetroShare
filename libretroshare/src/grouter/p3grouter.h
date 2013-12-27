@@ -43,32 +43,8 @@
 static const uint32_t CONFIG_TYPE_GROUTER = 0x0016 ;
 
 class p3LinkMgr ;
-
-class GRouterPublishedKeyInfo
-{
-	public:
-		GRouterServiceId service_id ;
-		std::string description_string ;
-		time_t last_published_time ;
-		time_t validity_time ;
-};
-
-struct FriendTrialRecord
-{
-	SSLIdType friend_id ;			// id of the friend
-	time_t    time_stamp ;			// time of the last tried
-};
-
-class GRouterRoutingInfo
-{
-	public:
-		RsGRouterGenericDataItem *data_item ;
-
-		uint32_t status_flags ;									// pending, waiting, etc.
-		std::list<FriendTrialRecord> tried_friends ; 	// list of friends to which the item was sent ordered with time.
-		SSLIdType origin ;										// which friend sent us that item
-		time_t received_time ;									// time at which the item was received
-};
+class RsGRouterPublishKeyItem ;
+class RsGRouterACKItem ;
 
 class p3GRouter: public RsGRouter, public p3Service, public p3Config
 {
@@ -149,6 +125,7 @@ class p3GRouter: public RsGRouter, public p3Service, public p3Config
 		void handleIncoming() ;
 		void publishKeys() ;
 		void debugDump() ;
+		void locked_forwardKey(const RsGRouterPublishKeyItem&) ;
 
 		//===================================================//
 		//                  p3Config methods                 //
@@ -157,7 +134,7 @@ class p3GRouter: public RsGRouter, public p3Service, public p3Config
 		// Load/save the routing info, the pending items in transit, and the config variables.
 		//
 		virtual bool loadList(std::list<RsItem*>& items) ;
-		virtual bool saveList(bool&,std::list<RsItem*>& items) ;
+		virtual bool saveList(bool& cleanup,std::list<RsItem*>& items) ;
 
 		virtual RsSerialiser *setupSerialiser() ;
 

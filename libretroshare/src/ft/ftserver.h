@@ -100,7 +100,7 @@ class ftServer: public RsFiles, public ftDataSend, public RsTurtleClientService,
 		/* Final Setup (once everything is assigned) */
 		//void	SetupFtServer();
 		void    SetupFtServer(NotifyBase *cb);
-		void    connectToTurtleRouter(p3turtle *p) ;
+		virtual void    connectToTurtleRouter(p3turtle *p) ;
 
 		void	StartupThreads();
 		void	StopThreads();

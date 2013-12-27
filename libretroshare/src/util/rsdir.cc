@@ -32,6 +32,7 @@
 
 #include "util/rsdir.h"
 #include "util/rsstring.h"
+#include "util/rsrandom.h"
 #include "pqi/pqinotify.h"
 #include "retroshare/rstypes.h"
 #include "rsthreads.h"
@@ -799,6 +800,15 @@ bool Sha1CheckSum::operator<(const Sha1CheckSum& s) const
 
 	return false ;
 }
+Sha1CheckSum Sha1CheckSum::random()
+{
+	Sha1CheckSum s ;
+	for(int i=0;i<5;++i)
+		s.fourbytes[i] = RSRandom::random_u32() ;
+
+	return s;
+}
+
 std::string Sha1CheckSum::toStdString() const
 {
 	static const char outl[16] = { '0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f' } ;

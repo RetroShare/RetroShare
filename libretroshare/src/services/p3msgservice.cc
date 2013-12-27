@@ -34,7 +34,9 @@
 
 #include "services/p3msgservice.h"
 #include "pgp/pgpkeyutil.h"
+#include "pqi/p3cfgmgr.h"
 #include "pqi/pqinotify.h"
+#include "serialiser/rsconfigitems.h"
 
 #include "util/rsdebug.h"
 #include "util/rsdir.h"
@@ -320,9 +322,12 @@ int     p3MsgService::checkOutgoingMessages()
 			{
 				// Do we have a tunnel already?
 				//
+#ifdef GROUTER
+				tunnel_is_ok = true ;
+#else
 				const std::string& hash = mit->second->PeerId() ;
 				std::map<std::string,DistantMessengingContact>::iterator it = _messenging_contacts.find(hash) ;
-		
+
 				if(it != _messenging_contacts.end())
 				{
 					tunnel_is_ok = (it->second.status == RS_DISTANT_MSG_STATUS_TUNNEL_OK) ;
@@ -343,6 +348,7 @@ int     p3MsgService::checkOutgoingMessages()
 					contact.status = RS_DISTANT_MSG_STATUS_TUNNEL_DN ;
 					contact.pending_messages = true ;
 				}
+#endif
 			}
 
 			if(tunnel_is_ok || mLinkMgr->isOnline(pid) || pid == ownId) /* FEEDBACK Msg to Ourselves */
@@ -2057,11 +2063,19 @@ bool p3MsgService::decryptMessage(const std::string& mId)
 	return true ;
 }
 
+#ifdef GROUTER
+void p3MsgService::connectToGlobalRouter(p3GRouter *gr)
+{
+	mGRouter = gr ;
+	gr->registerClientService(RS_SERVICE_TYPE_MSG,this) ;
+}
+#endif
 void p3MsgService::connectToTurtleRouter(p3turtle *pt)
 {
 	mTurtle = pt ;
 	pt->registerTunnelService(this) ;
 }
+
 bool p3MsgService::createDistantOfflineMessengingInvite(time_t time_of_validity,TurtleFileHash& hash) 
 {
 	unsigned char hash_bytes[DISTANT_MSG_HASH_SIZE] ;
@@ -2080,6 +2094,7 @@ bool p3MsgService::createDistantOfflineMessengingInvite(time_t time_of_validity,
 
 	return true ;
 }
+
 void p3MsgService::enableDistantMessaging(bool b)
 {
 	// compute the hash
@@ -2156,6 +2171,7 @@ bool p3MsgService::getDistantMessageHash(const std::string& pgp_id,std::string& 
 	
 	return AuthGPG::getAuthGPG()->isKeySupported(pgp_id) ;
 }
+
 bool p3MsgService::getDistantOfflineMessengingInvites(std::vector<DistantOfflineMessengingInvite>& invites) 
 {
 	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
@@ -2175,6 +2191,7 @@ bool p3MsgService::getDistantOfflineMessengingInvites(std::vector<DistantOffline
 	}
 	return true ;
 }
+
 bool p3MsgService::handleTunnelRequest(const std::string& hash,const std::string& /*peer_id*/)
 {
 
@@ -2281,6 +2298,7 @@ void p3MsgService::removeVirtualPeer(const TurtleFileHash& hash, const TurtleVir
 		mTurtle->stopMonitoringTunnels(hash) ;
 	}
 }
+
 #ifdef DEBUG_DISTANT_MSG
 static void printBinaryData(void *data,uint32_t size)
 {
@@ -2351,7 +2369,6 @@ void p3MsgService::sendTurtleData(const std::string& hash,RsMsgItem *msgitem)
 
 	mTurtle->sendTurtleData(virtual_peer_id,item) ;
 }
-
 void p3MsgService::receiveTurtleData(RsTurtleGenericTunnelItem *gitem,const std::string& hash,
 												const std::string& virtual_peer_id,RsTurtleGenericTunnelItem::Direction /*direction*/)
 {
@@ -2407,17 +2424,42 @@ void p3MsgService::receiveTurtleData(RsTurtleGenericTunnelItem *gitem,const std:
 		delete itm ;
 	}
 }
+#ifdef GROUTER
+void p3MsgService::sendGRouterData(const std::string& hash,RsMsgItem *msgitem) 
+{
+	// The item is serialized and turned into a generic turtle item.
+	
+	uint32_t msg_serialized_rssize = _serialiser->size(msgitem) ;
+	unsigned char *msg_serialized_data = new unsigned char[msg_serialized_rssize] ;
+
+	if(!_serialiser->serialise(msgitem,msg_serialized_data,&msg_serialized_rssize))
+	{
+		std::cerr << "(EE) p3MsgService::sendTurtleData(): Serialization error." << std::endl;
+		delete[] msg_serialized_data ;
+		return ;
+	}
+
+	RsGRouterGenericDataItem *item = new RsGRouterGenericDataItem ;
+
+	item->data_bytes = (uint8_t*)malloc(msg_serialized_rssize) ;
+	item->data_size = msg_serialized_rssize ;
+	memcpy(item->data_bytes,msg_serialized_data,msg_serialized_rssize) ;
+
+	delete[] msg_serialized_data ;
+
+	mGRouter->sendData(GRouterKeyId(hash),item) ;
+}
+void p3MsgService::receiveGRouterData(RsGRouterGenericDataItem *gitem,const GRouterKeyId& key)
+{
+	std::cerr << "(WW) p3msgservice::receiveGRouterData(): received message. Not handled yet. Needs implementing." << std::endl; 
+}
+#endif
 
 void p3MsgService::sendPrivateMsgItem(RsMsgItem *msgitem) 
 {
 #ifdef DEBUG_DISTANT_MSG
 	std::cerr << "p3MsgService::sendDistanteMsgItem(): sending distant msg item to peer " << msgitem->PeerId() << std::endl;
-//	std::cerr << "     asking for tunnels" << std::endl;
-//	std::cerr << "     recording msg info" << std::endl;
 #endif
-//	const std::string& hash = msgitem->PeerId() ;
-//	rsTurtle->monitorTunnels(hash,this) ;					 // create a tunnel for it, and put the msg on the waiting list.
-
 	{
 		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 
@@ -2444,7 +2486,11 @@ void p3MsgService::sendPrivateMsgItem(RsMsgItem *msgitem)
 #ifdef DEBUG_DISTANT_MSG
 	std::cerr << "    Flushing msg " << msgitem->msgId << " for peer id " << msgitem->PeerId() << std::endl;
 #endif
+#ifdef GROUTER
+	sendGRouterData(msgitem->PeerId(),msgitem) ;
+#else
 	sendTurtleData(msgitem->PeerId(),msgitem) ;
+#endif
 }
 
 

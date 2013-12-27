@@ -67,6 +67,8 @@ class Sha1CheckSum
 		explicit Sha1CheckSum(const uint8_t *twenty_bytes_digest) ; 		// inits form a 20-bytes digest.
 		explicit Sha1CheckSum(const std::string& fourty_bytes_string) ; 	// inits form a 40 bytes hexadecimal string.
 
+		static Sha1CheckSum random() ;
+
 		std::string toStdString() const ;
 
 		bool operator==(const Sha1CheckSum& s) const ;

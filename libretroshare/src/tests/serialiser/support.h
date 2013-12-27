@@ -142,8 +142,15 @@ template<class T> int test_RsItem()
 
 	CHECK(outfi != NULL);
 
+	if(!(*outfi == rsfi))
+	{
+		std::cerr << "Items differ: "<< std::endl;
+		outfi->print(std::cerr,0) ;
+		rsfi.print(std::cerr,0) ;
+	}
 	if (outfi)
 		CHECK(*outfi == rsfi) ;
+
 
 	sersize2 = MAX_BUFSIZE;
 	bool done2 = srl.serialise(outfi, (void *) &(buffer[16*8]), &sersize2);

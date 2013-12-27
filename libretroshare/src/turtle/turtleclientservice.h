@@ -37,6 +37,7 @@
 #include <turtle/rsturtleitem.h>
 
 class RsItem ;
+class p3turtle ;
 
 class RsTurtleClientService
 {
@@ -81,6 +82,12 @@ class RsTurtleClientService
 		//
 		virtual void addVirtualPeer(const TurtleFileHash& hash,const TurtleVirtualPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction dir) = 0 ;
 		virtual void removeVirtualPeer(const TurtleFileHash& hash,const TurtleVirtualPeerId& virtual_peer_id) = 0 ;
+
+		// This function is mandatory. It should do two things:
+		// 	1 - keep a pointer to the turtle router, so as to be able to send data (e.g. copy pt into a local variable)
+		// 	2 - call pt->registerTunnelService(this), so that the TR knows that service and can send back information to it.
+		//
+		virtual void connectToTurtleRouter(p3turtle *pt) = 0 ;
 };
 
 

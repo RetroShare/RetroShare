@@ -16,8 +16,6 @@ bool RsGRouterItem::serialise_header(void *data,uint32_t& pktsize,uint32_t& tlvs
 
 	pktsize = tlvsize;
 
-	bool ok = true;
-
 	if(!setRsItemHeader(data, tlvsize, PacketId(), tlvsize))
 	{
 		std::cerr << "RsFileTransferItem::serialise_header(): ERROR. Not enough size!" << std::endl;
@@ -86,6 +84,9 @@ RsItem *RsGRouterSerialiser::deserialise(void *data, uint32_t *pktsize)
 		case RS_PKT_SUBTYPE_GROUTER_PUBLISH_KEY:  return deserialise_RsGRouterPublishKeyItem(data, *pktsize);
 		case RS_PKT_SUBTYPE_GROUTER_DATA:   		return deserialise_RsGRouterGenericDataItem(data, *pktsize);
 		case RS_PKT_SUBTYPE_GROUTER_ACK:    		return deserialise_RsGRouterACKItem(data, *pktsize);
+		case RS_PKT_SUBTYPE_GROUTER_MATRIX_CLUES:	return deserialise_RsGRouterMatrixCluesItem(data, *pktsize);
+		case RS_PKT_SUBTYPE_GROUTER_FRIENDS_LIST:	return deserialise_RsGRouterMatrixFriendListItem(data, *pktsize);
+		case RS_PKT_SUBTYPE_GROUTER_ROUTING_INFO:	return deserialise_RsGRouterRoutingInfoItem(data, *pktsize);
 		default:
 				std::cerr << "RsGRouterSerialiser::deserialise(): Could not de-serialise item. SubPacket id = " << std::hex << getRsItemSubType(rstype) << " id = " << rstype << std::dec << std::endl;
 			return NULL;
@@ -166,10 +167,116 @@ RsGRouterItem *RsGRouterSerialiser::deserialise_RsGRouterACKItem(void *data, uin
 	return item;
 }
 
+RsGRouterItem *RsGRouterSerialiser::deserialise_RsGRouterRoutingInfoItem(void *data, uint32_t pktsize) const
+{
+	uint32_t offset = 8; // skip the header 
+	uint32_t rssize = getRsItemSize(data);
+	bool ok = true ;
+
+	RsGRouterRoutingInfoItem *item = new RsGRouterRoutingInfoItem() ;
+
+	ok &= getRawUInt32(data, pktsize, &offset, &item->status_flags); 	
+	ok &= getRawSSLId(data, pktsize, &offset, item->origin); 	
+	ok &= getRawTimeT(data, pktsize, &offset, item->received_time); 	
+
+	uint32_t s = 0 ;
+	ok &= getRawUInt32(data, pktsize, &offset, &s) ;
+
+	for(uint32_t i=0;i<s;++i)
+	{
+		FriendTrialRecord ftr ;
+
+		ok &= getRawSSLId(data, pktsize, &offset, ftr.friend_id); 	
+		ok &= getRawTimeT(data, pktsize, &offset, ftr.time_stamp) ;
+
+		item->tried_friends.push_back(ftr) ;
+	}
+
+	item->data_item = new RsGRouterGenericDataItem ;
+
+	ok &= getRawUInt32(data, pktsize, &offset, &item->data_item->routing_id); 	
+	ok &= getRawSha1(data, pktsize, &offset, item->data_item->destination_key) ;
+	ok &= getRawUInt32(data, pktsize, &offset, &item->data_item->data_size) ;
+
+	item->data_item->data_bytes = (uint8_t*)malloc(item->data_item->data_size) ;
+	memcpy(item->data_item->data_bytes,&((uint8_t*)data)[offset],item->data_item->data_size) ;
+	offset += item->data_item->data_size ;
+
+	if (offset != rssize || !ok)
+	{
+		std::cerr << __PRETTY_FUNCTION__ << ": error while deserialising! Item will be dropped." << std::endl;
+		return NULL ;
+	}
+
+	return item;
+}
+RsGRouterItem *RsGRouterSerialiser::deserialise_RsGRouterMatrixFriendListItem(void *data, uint32_t pktsize) const
+{
+	uint32_t offset = 8; // skip the header 
+	uint32_t rssize = getRsItemSize(data);
+	bool ok = true ;
+
+	RsGRouterMatrixFriendListItem *item = new RsGRouterMatrixFriendListItem() ;
+
+	uint32_t nb_friends = 0 ;
+	ok &= getRawUInt32(data, pktsize, &offset, &nb_friends); 	// file hash
+
+	item->reverse_friend_indices.resize(nb_friends) ;
+
+	for(uint32_t i=0;ok && i<nb_friends;++i)
+		ok &= getRawSSLId(data, pktsize, &offset, item->reverse_friend_indices[i]) ;
+
+	if (offset != rssize || !ok)
+	{
+		std::cerr << __PRETTY_FUNCTION__ << ": error while deserialising! Item will be dropped." << std::endl;
+		return NULL ;
+	}
+
+	return item;
+}
+RsGRouterItem *RsGRouterSerialiser::deserialise_RsGRouterMatrixCluesItem(void *data, uint32_t pktsize) const
+{
+	uint32_t offset = 8; // skip the header 
+	uint32_t rssize = getRsItemSize(data);
+	bool ok = true ;
+
+	RsGRouterMatrixCluesItem *item = new RsGRouterMatrixCluesItem() ;
+
+	ok &= getRawSha1(data,pktsize,&offset,item->destination_key) ;
+		
+	uint32_t nb_clues = 0 ;
+	ok &= getRawUInt32(data, pktsize, &offset, &nb_clues); 	
+
+	item->clues.clear() ;
+
+	for(uint32_t j=0;j<nb_clues;++j)
+	{
+		RoutingMatrixHitEntry HitE ;
+
+		ok &= getRawUInt32(data, pktsize, &offset, &HitE.friend_id); 	
+		ok &= getRawUFloat32(data, pktsize, &offset, HitE.weight); 	
+		ok &= getRawTimeT(data, pktsize, &offset, HitE.time_stamp); 	
+
+		item->clues.push_back(HitE) ;
+	}
+
+	if (offset != rssize || !ok)
+	{
+		std::cerr << __PRETTY_FUNCTION__ << ": error while deserialising! Item will be dropped." << std::endl;
+		return NULL ;
+	}
+
+	return item;
+}
+
+
 RsGRouterGenericDataItem *RsGRouterGenericDataItem::duplicate() const
 {
 	RsGRouterGenericDataItem *item = new RsGRouterGenericDataItem ;
-	*item = *this ; // copies everything.
+
+	item->routing_id = routing_id ;
+	item->destination_key = destination_key ;
+	item->data_size = data_size ;
 
 	// then duplicate the memory chunk
 
@@ -242,6 +349,127 @@ bool RsGRouterACKItem::serialise(void *data,uint32_t& size) const
 	return ok;
 }
 
+/* serialise the data to the buffer */
+uint32_t RsGRouterMatrixCluesItem::serial_size() const
+{
+	uint32_t s = 8 ; 									// header
+
+	s += 20 ;				// Key size
+	s += 4 ; 				// list<RoutingMatrixHitEntry>::size()
+	s += (4+4+8) * clues.size() ;
+
+	return s ;
+}
+uint32_t RsGRouterMatrixFriendListItem::serial_size() const
+{
+	uint32_t s = 8 ; 									// header
+	s += 4  ; 											// reverse_friend_indices.size()
+	s += 16 * reverse_friend_indices.size() ; // sha1 for published_key
+
+	return s ;
+}
+uint32_t RsGRouterRoutingInfoItem::serial_size() const
+{
+	uint32_t s = 8 ; 									// header
+	s += 4  ; 											// status_flags
+	s += 16  ; 											// origin
+	s += 8  ; 											// received_time
+	s += 4  ; 											// tried_friends.size() ;
+
+	s += tried_friends.size() * ( 16 + 8 ) ; 	// FriendTrialRecord
+
+	s += 4;												// data_item->routing_id
+	s += 20;												// data_item->destination_key
+	s += 4;												// data_item->data_size
+	s += data_item->data_size;						// data_item->data_bytes 
+
+	return s ;
+}
+
+bool RsGRouterMatrixFriendListItem::serialise(void *data,uint32_t& size) const
+{
+	uint32_t tlvsize,offset=0;
+	bool ok = true;
+	
+	if(!serialise_header(data,size,tlvsize,offset))
+		return false ;
+
+	/* add mandatory parts first */
+	ok &= setRawUInt32(data, tlvsize, &offset, reverse_friend_indices.size());
+
+	for(uint32_t i=0;ok && i<reverse_friend_indices.size();++i)
+		ok &= setRawSSLId(data,tlvsize,&offset,reverse_friend_indices[i]) ;
+
+	if (offset != tlvsize)
+	{
+		ok = false;
+		std::cerr << "rsfileitemserialiser::serialisedata() size error! " << std::endl;
+	}
+
+	return ok;
+}
+bool RsGRouterMatrixCluesItem::serialise(void *data,uint32_t& size) const
+{
+	uint32_t tlvsize,offset=0;
+	bool ok = true;
+	
+	if(!serialise_header(data,size,tlvsize,offset))
+		return false ;
+
+	/* add mandatory parts first */
+	ok &= setRawSha1(data,tlvsize,&offset,destination_key) ;
+	ok &= setRawUInt32(data, tlvsize, &offset, clues.size());
+
+	for(std::list<RoutingMatrixHitEntry>::const_iterator it2(clues.begin());it2!=clues.end();++it2)
+	{
+		ok &= setRawUInt32(data, tlvsize, &offset,  (*it2).friend_id) ;
+		ok &= setRawUFloat32(data, tlvsize, &offset, (*it2).weight) ;
+		ok &= setRawTimeT(data, tlvsize, &offset,  (*it2).time_stamp) ;
+	}
+
+	if (offset != tlvsize)
+	{
+		ok = false;
+		std::cerr << "rsfileitemserialiser::serialisedata() size error! " << std::endl;
+	}
+
+	return ok;
+}
+bool RsGRouterRoutingInfoItem::serialise(void *data,uint32_t& size) const
+{
+	uint32_t tlvsize,offset=0;
+	bool ok = true;
+	
+	if(!serialise_header(data,size,tlvsize,offset))
+		return false ;
+
+	ok &= setRawUInt32(data, tlvsize, &offset, status_flags) ;
+	ok &= setRawSSLId(data, tlvsize, &offset, origin) ;
+	ok &= setRawTimeT(data, tlvsize, &offset, received_time) ;
+	ok &= setRawUInt32(data, tlvsize, &offset, tried_friends.size()) ;
+
+	for(std::list<FriendTrialRecord>::const_iterator it(tried_friends.begin());it!=tried_friends.end();++it)
+	{
+		ok &= setRawSSLId(data, tlvsize, &offset, (*it).friend_id) ;
+		ok &= setRawTimeT(data, tlvsize, &offset, (*it).time_stamp) ;
+	}
+
+	ok &= setRawUInt32(data, tlvsize, &offset, data_item->routing_id) ;
+	ok &= setRawSha1(data, tlvsize, &offset, data_item->destination_key) ;
+	ok &= setRawUInt32(data, tlvsize, &offset, data_item->data_size) ;
+
+	memcpy(&((uint8_t*)data)[offset],data_item->data_bytes,data_item->data_size) ;
+	offset += data_item->data_size ;
+
+	if (offset != tlvsize)
+	{
+		ok = false;
+		std::cerr << "rsfileitemserialiser::serialisedata() size error! " << std::endl;
+	}
+
+	return ok;
+}
+
 // -----------------------------------------------------------------------------------//
 // -------------------------------------  IO  --------------------------------------- // 
 // -----------------------------------------------------------------------------------//
@@ -277,3 +505,35 @@ std::ostream& RsGRouterGenericDataItem::print(std::ostream& o, uint16_t)
 	return o ;
 }
 
+std::ostream& RsGRouterRoutingInfoItem::print(std::ostream& o, uint16_t)
+{
+	o << "RsGRouterRoutingInfoItem:" << std::endl ;
+	o << "  direct origin: \""<< PeerId() << "\"" << std::endl ;
+	o << "  origin:          "<< origin.toStdString() << std::endl ;
+	o << "  recv time:       "<< received_time << std::endl ;
+	o << "  flags:           "<< std::hex << status_flags << std::dec << std::endl ;
+	o << "  Key:             "<< data_item->destination_key.toStdString() << std::endl ;
+	o << "  Data size:       "<< data_item->data_size << std::endl ;
+	o << "  Tried friends:   "<< tried_friends.size() << std::endl;
+
+	return o ;
+}
+
+std::ostream& RsGRouterMatrixCluesItem::print(std::ostream& o, uint16_t)
+{
+	o << "RsGRouterMatrixCluesItem:" << std::endl ;
+	o << "  destination k:  " << destination_key.toStdString()  << std::endl;
+	o << "  routing clues:  " << clues.size() << std::endl;
+
+	for(std::list<RoutingMatrixHitEntry>::const_iterator it(clues.begin());it!=clues.end();++it)
+		o << "    " << (*it).friend_id << " " << (*it).time_stamp << " " << (*it).weight << std::endl;
+
+	return o ;
+}
+std::ostream& RsGRouterMatrixFriendListItem::print(std::ostream& o, uint16_t)
+{
+	o << "RsGRouterMatrixCluesItem:" << std::endl ;
+	o << "  friends:  " << reverse_friend_indices.size() << std::endl;
+
+	return o ;
+}
