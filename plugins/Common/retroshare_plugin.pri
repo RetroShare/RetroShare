@@ -54,8 +54,5 @@ win32 {
 	LIBS += -L"../../retroshare-gui/src/lib" -lretroshare-gui
 
 	LIBS += -L"$$PWD/../../../lib"
-	LIBS += -lssl -lcrypto -lpthread -lminiupnpc -lz
-# added after bitdht
-	LIBS += -luuid -lole32 -liphlpapi -lcrypt32-cygwin -lgdi32
-	LIBS += -lole32 -lwinmm
+	LIBS += -lpthread
 }

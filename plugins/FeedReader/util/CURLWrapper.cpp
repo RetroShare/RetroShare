@@ -79,6 +79,7 @@ CURLcode CURLWrapper::downloadText(const std::string &link, std::string &data)
 	curl_easy_setopt(mCurl, CURLOPT_URL, link.c_str());
 	curl_easy_setopt(mCurl, CURLOPT_WRITEFUNCTION, writeFunctionString);
 	curl_easy_setopt(mCurl, CURLOPT_WRITEDATA, &data);
+	curl_easy_setopt(mCurl, CURLOPT_SSL_VERIFYPEER, false);
 
 	return curl_easy_perform(mCurl);
 }

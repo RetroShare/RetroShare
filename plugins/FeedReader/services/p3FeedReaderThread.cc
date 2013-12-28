@@ -35,7 +35,6 @@ enum FeedFormat { FORMAT_RSS, FORMAT_RDF, FORMAT_ATOM };
 /*********
  * #define FEEDREADER_DEBUG
  *********/
-#define FEEDREADER_DEBUG
 
 p3FeedReaderThread::p3FeedReaderThread(p3FeedReader *feedReader, Type type, const std::string &feedId) :
 	RsThread(), mFeedReader(feedReader), mType(type), mFeedId(feedId)
