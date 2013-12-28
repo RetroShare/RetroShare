@@ -37,6 +37,8 @@ p3GRouter::p3GRouter(p3LinkMgr *lm)
 {
 	addSerialType(new RsGRouterSerialiser()) ;
 
+	_changed = false ;
+
 	// Debug stuff. Create a random key and register it.
 	      uint8_t random_hash_buff[20] ;
 	      RSRandom::random_bytes(random_hash_buff,20) ;
@@ -52,6 +54,7 @@ int p3GRouter::tick()
 	static time_t last_autowash_time = 0 ;
 	static time_t last_publish_campaign_time = 0 ;
 	static time_t last_debug_output_time = 0 ;
+	static time_t last_config_changed = 0 ;
 
 	time_t now = time(NULL) ;
 
@@ -85,6 +88,19 @@ int p3GRouter::tick()
 		last_debug_output_time = now ;
 		debugDump() ;
 	}
+
+	// If content has changed, save config, at most every RS_GROUTER_MIN_CONFIG_SAVE_PERIOD seconds appart
+	// Otherwise, always save at least every RS_GROUTER_MAX_CONFIG_SAVE_PERIOD seconds
+	//
+	if(_changed && now > last_config_changed + RS_GROUTER_MIN_CONFIG_SAVE_PERIOD)
+	{
+		std::cerr << "p3GRouter::tick(): triggering config save." << std::endl;
+
+		_changed = false ;
+		last_config_changed = now ;
+		IndicateConfigChanged() ;
+	}
+
 	return 0 ;
 }
 
@@ -422,6 +438,8 @@ void p3GRouter::handleRecvPublishKeyItem(RsGRouterPublishKeyItem *item)
 	// Doing this we can control the amount of key propagation and avoid flooding.
 
 	locked_forwardKey(*item) ;
+
+	_changed = true ;
 }
 
 void p3GRouter::handleRecvACKItem(RsGRouterACKItem *item)
@@ -536,6 +554,8 @@ void p3GRouter::handleRecvDataItem(RsGRouterGenericDataItem *item)
 			std::cerr << "  (WW) key is outdated. Dropping this item." << std::endl;
 	else
 		std::cerr << "  Item is not for us. Leaving in pending msgs to be routed later." << std::endl;
+
+	_changed = true ;
 }
 
 bool p3GRouter::registerClientService(const GRouterServiceId& id,GRouterClientService *service)

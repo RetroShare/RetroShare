@@ -2549,6 +2549,9 @@ int RsServer::StartupRetroShare()
 	mConfigMgr->addConfiguration("p3Status.cfg", mStatusSrv);
 	mConfigMgr->addConfiguration("turtle.cfg", tr);
 	mConfigMgr->addConfiguration("p3disc.cfg", ad);
+#ifdef GROUTER
+	mConfigMgr->addConfiguration("grouter.cfg", gr);
+#endif
 
 #ifdef RS_USE_BITDHT
 	mConfigMgr->addConfiguration("bitdht.cfg", mBitDht);

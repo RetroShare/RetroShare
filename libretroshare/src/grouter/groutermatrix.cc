@@ -122,7 +122,7 @@ void GRouterMatrix::debugDump() const
 
 	for(std::map<GRouterKeyId, std::vector<float> >::const_iterator it(_time_combined_hits.begin());it!=_time_combined_hits.end();++it)
 	{
-		std::cerr << it->first.toStdString() << "  :  " ;
+		std::cerr << "      " << it->first.toStdString() << "  :  " ;
 
 		for(uint32_t i=0;i<it->second.size();++i)
 			std::cerr << it->second[i] << "   " ;

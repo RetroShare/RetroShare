@@ -38,6 +38,7 @@ typedef uint32_t GRouterMsgPropagationId ;
 
 static const uint32_t RS_GROUTER_MATRIX_MAX_HIT_ENTRIES       = 5;
 static const uint32_t RS_GROUTER_MATRIX_MIN_TIME_BETWEEN_HITS = 60;	// can be set to up to half the publish time interval. Prevents flooding routes.
+static const uint32_t RS_GROUTER_MIN_CONFIG_SAVE_PERIOD =  5;	// at most save config every 5 seconds
 
 static const time_t RS_GROUTER_DEBUG_OUTPUT_PERIOD         =       20 ; // Output everything
 static const time_t RS_GROUTER_AUTOWASH_PERIOD             =       60 ; // Autowash every minute. Not a costly operation.

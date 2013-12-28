@@ -199,6 +199,9 @@ class p3GRouter: public RsGRouter, public p3Service, public p3Config
 		// Multi-thread protection mutex.
 		//
 		RsMutex grMtx ;
+
+		// config update/save variables
+		bool _changed ;
 };
 
 
