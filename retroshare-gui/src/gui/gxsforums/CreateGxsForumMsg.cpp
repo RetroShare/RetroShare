@@ -21,7 +21,6 @@
 
 #include "CreateGxsForumMsg.h"
 
-#include <QMenu>
 #include <QMessageBox>
 #include <QFile>
 #include <QDesktopWidget>
@@ -29,7 +28,6 @@
 #include <QPushButton>
 
 #include <retroshare/rsgxsforums.h>
-#include <retroshare/rspeers.h>
 
 #include "gui/settings/rsharesettings.h"
 #include "gui/RetroShareLink.h"
@@ -83,8 +81,6 @@ CreateGxsForumMsg::CreateGxsForumMsg(const std::string &fId, const std::string &
 
 	Settings->loadWidgetInformation(this);
 
-	connect(ui.forumMessage, SIGNAL( customContextMenuRequested(QPoint)), this, SLOT(forumMessageCostumPopupMenu(QPoint)));
-
 	connect(ui.hashBox, SIGNAL(fileHashingFinished(QList<HashedFile>)), this, SLOT(fileHashingFinished(QList<HashedFile>)));
 
 	// connect up the buttons.
@@ -92,7 +88,6 @@ CreateGxsForumMsg::CreateGxsForumMsg(const std::string &fId, const std::string &
 	connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(close()));
 	connect(ui.emoticonButton, SIGNAL(clicked()), this, SLOT(smileyWidgetForums()));
 	connect(ui.attachFileButton, SIGNAL(clicked()), this, SLOT(addFile()));
-	connect(ui.pastersButton, SIGNAL(clicked()), this, SLOT(pasteLink()));
 	connect(ui.generateCheckBox, SIGNAL(toggled(bool)), ui.generateSpinBox, SLOT(setEnabled(bool)));
 
 	setAcceptDrops(true);
@@ -113,25 +108,6 @@ CreateGxsForumMsg::CreateGxsForumMsg(const std::string &fId, const std::string &
 CreateGxsForumMsg::~CreateGxsForumMsg()
 {
 	delete(mForumQueue);
-}
-
-void CreateGxsForumMsg::forumMessageCostumPopupMenu(QPoint point)
-{
-	QMenu *contextMnu = ui.forumMessage->createStandardContextMenu(point);
-
-	contextMnu->addSeparator();
-
-	QAction *pasteLinkAct = contextMnu->addAction(QIcon(":/images/pasterslink.png"), tr("Paste RetroShare Link"), this, SLOT(pasteLink()));
-	QAction *pasteLinkFullAct = contextMnu->addAction(QIcon(":/images/pasterslink.png"), tr("Paste full RetroShare Link"), this, SLOT(pasteLinkFull()));
-	contextMnu->addAction(QIcon(":/images/pasterslink.png"), tr("Paste my certificate link"), this, SLOT(pasteOwnCertificateLink()));
-
-	if (RSLinkClipboard::empty()) {
-		pasteLinkAct->setDisabled (true);
-		pasteLinkFullAct->setDisabled (true);
-	}
-
-	contextMnu->exec(QCursor::pos());
-	delete(contextMnu);
 }
 
 void  CreateGxsForumMsg::newMsg()
@@ -407,25 +383,6 @@ void CreateGxsForumMsg::fileHashingFinished(QList<HashedFile> hashedFiles)
 	}
 
 	ui.forumMessage->setFocus( Qt::OtherFocusReason );
-}
-
-void CreateGxsForumMsg::pasteLink()
-{
-	ui.forumMessage->insertHtml(RSLinkClipboard::toHtml()) ;
-}
-
-void CreateGxsForumMsg::pasteLinkFull()
-{
-	ui.forumMessage->insertHtml(RSLinkClipboard::toHtmlFull()) ;
-}
-
-void CreateGxsForumMsg::pasteOwnCertificateLink()
-{
-	RetroShareLink link ;
-	std::string ownId = rsPeers->getOwnId() ;
-	if( link.createCertificate(ownId) )	{
-		ui.forumMessage->insertHtml(link.toHtml() + " ");
-	}
 }
 
 void CreateGxsForumMsg::loadForumInfo(const uint32_t &token)

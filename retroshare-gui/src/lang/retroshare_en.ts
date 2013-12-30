@@ -1871,14 +1871,6 @@ Double click lobbies to enter and chat.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Paste RetroShare Link</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Paste my certificate link</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>is typing...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3884,10 +3876,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Paste RetroShare Link</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Forum Post</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3901,14 +3889,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Start New Thread</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Paste full RetroShare Link</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Paste my certificate link</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -4095,10 +4075,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Paste RetroShare Link</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Forum Post</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4112,14 +4088,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Start New Thread</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Paste full RetroShare Link</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Paste my certificate link</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -9660,6 +9628,17 @@ Do you want to save message ?</source>
     </message>
 </context>
 <context>
+    <name>MimeTextEdit</name>
+    <message>
+        <source>Paste RetroShare Link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Paste my certificate link</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>MsgItem</name>
     <message>
         <source>Reply to Message</source>
@@ -11659,6 +11638,10 @@ Make sure you know who you&apos;re talking to.</source>
     </message>
     <message>
         <source>Chat connection is unauthenticated</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Id: </source>
         <translation type="unfinished"></translation>
     </message>
 </context>

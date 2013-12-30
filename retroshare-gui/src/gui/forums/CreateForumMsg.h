@@ -35,15 +35,9 @@ public:
     void newMsg(); /* cleanup */
 
 private slots:
-    /** Create the context popup menu and it's submenus */
-    void forumMessageCostumPopupMenu( QPoint point );
-
     void fileHashingFinished(QList<HashedFile> hashedFiles);
     /* actions to take.... */
     void createMsg();
-    void pasteLink();
-    void pasteLinkFull();
-    void pasteOwnCertificateLink();
 
     void smileyWidgetForums();
     void addSmileys();

@@ -140,6 +140,12 @@ ChatWidget::ChatWidget(QWidget *parent) :
     ui->chatTextEdit->setCompleterKeyModifiers(Qt::ControlModifier);
     ui->chatTextEdit->setCompleterKey(Qt::Key_Space);
 
+//#ifdef ENABLE_DISTANT_CHAT_AND_MSGS
+//	contextMnu->addSeparator();
+//    QAction *action = new QAction(QIcon(":/images/pasterslink.png"), tr("Paste/Create private chat or Message link..."), this);
+//    connect(action, SIGNAL(triggered()), this, SLOT(pasteCreateMsgLink()));
+//    ui->chatTextEdit->addContextMenuAction(action);
+//#endif
 }
 
 ChatWidget::~ChatWidget()
@@ -606,43 +612,6 @@ void ChatWidget::pasteText(const QString& S)
 	//std::cerr << "In paste link" << std::endl;
 	ui->chatTextEdit->insertHtml(S);
 	setColorAndFont();
-}
-
-void ChatWidget::pasteLink()
-{
-	//std::cerr << "In paste link" << std::endl;
-	ui->chatTextEdit->insertHtml(RSLinkClipboard::toHtml());
-	setColorAndFont();
-}
-
-void ChatWidget::pasteOwnCertificateLink()
-{
-	//std::cerr << "In paste own certificate link" << std::endl;
-	RetroShareLink link ;
-	std::string ownId = rsPeers->getOwnId() ;
-
-	if( link.createCertificate(ownId) )	{
-		ui->chatTextEdit->insertHtml(link.toHtml() + " ");
-		setColorAndFont();
-	}
-}
-
-void ChatWidget::contextMenu(QPoint point)
-{
-	std::cerr << "In context menu" << std::endl;
-
-	QMenu *contextMnu = ui->chatTextEdit->createStandardContextMenu(point);
-
-	contextMnu->addSeparator();
-	QAction *action = contextMnu->addAction(QIcon(":/images/pasterslink.png"), tr("Paste RetroShare Link"), this, SLOT(pasteLink()));
-	action->setDisabled(RSLinkClipboard::empty());
-	contextMnu->addAction(QIcon(":/images/pasterslink.png"), tr("Paste my certificate link"), this, SLOT(pasteOwnCertificateLink()));
-//#ifdef ENABLE_DISTANT_CHAT_AND_MSGS
-//	contextMnu->addAction(QIcon(":/images/pasterslink.png"), tr("Paste/Create private chat or Message link..."), this, SLOT(pasteCreateMsgLink()));
-//#endif
-
-	contextMnu->exec(QCursor::pos());
-	delete(contextMnu);
 }
 
 void ChatWidget::pasteCreateMsgLink()

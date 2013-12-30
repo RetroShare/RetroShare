@@ -187,10 +187,6 @@ class RSLinkClipboard
 		//
 		static QString toHtml();
 
-		// produces a list of html links that displays the full links
-		//
-		static QString toHtmlFull();
-		
 		// produces a list of html links that displays with the file name + filesize
 		//
 		static QString toHtmlSize();		

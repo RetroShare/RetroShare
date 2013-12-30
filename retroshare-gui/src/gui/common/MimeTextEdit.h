@@ -32,34 +32,43 @@ class MimeTextEdit : public QTextEdit
 public:
 	MimeTextEdit(QWidget *parent = 0);
 
-    //Form here: http://qt-project.org/doc/qt-4.8/tools-customcompleter.html
-    void setCompleter(QCompleter *completer);
-    QCompleter *completer() const;
-    void setCompleterKeyModifiers(Qt::KeyboardModifier modifiers);
-    Qt::KeyboardModifier getCompleterKeyModifiers() const;
-    void setCompleterKey(Qt::Key key);
-    Qt::Key getCompleterKey() const;
-    void forceCompleterShowNextKeyEvent(QString startString);
+	//Form here: http://qt-project.org/doc/qt-4.8/tools-customcompleter.html
+	void setCompleter(QCompleter *completer);
+	QCompleter *completer() const;
+	void setCompleterKeyModifiers(Qt::KeyboardModifier modifiers);
+	Qt::KeyboardModifier getCompleterKeyModifiers() const;
+	void setCompleterKey(Qt::Key key);
+	Qt::Key getCompleterKey() const;
+	void forceCompleterShowNextKeyEvent(QString startString = "");
+
+	// Add QAction to context menu (action won't be deleted)
+	void addContextMenuAction(QAction *action);
+
+signals:
+	void calculateContextMenuActions();
 
 protected:
 	virtual bool canInsertFromMimeData(const QMimeData* source) const;
 	virtual void insertFromMimeData(const QMimeData* source);
-    void keyPressEvent(QKeyEvent *e);
-    void focusInEvent(QFocusEvent *e);
+	virtual void contextMenuEvent(QContextMenuEvent *e);
+	virtual void keyPressEvent(QKeyEvent *e);
+	virtual void focusInEvent(QFocusEvent *e);
 
 private slots:
-    void insertCompletion(const QString &completion);
+	void insertCompletion(const QString &completion);
+	void pasteLink();
+	void pasteOwnCertificateLink();
 
 private:
-    QString textUnderCursor() const;
+	QString textUnderCursor() const;
 
 private:
-    QCompleter *mCompleter;
-    Qt::KeyboardModifier mCompleterKeyModifiers;
-    Qt::Key mCompleterKey;
-    bool mForceCompleterShowNextKeyEvent;
-    QString mCompleterStartString;
-
+	QCompleter *mCompleter;
+	Qt::KeyboardModifier mCompleterKeyModifiers;
+	Qt::Key mCompleterKey;
+	bool mForceCompleterShowNextKeyEvent;
+	QString mCompleterStartString;
+	QList<QAction*> mContextMenuActions;
 };
 
 #endif // MIMETEXTEDIT_H

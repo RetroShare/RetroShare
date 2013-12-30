@@ -162,7 +162,6 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
 
     connect(ui.msgText, SIGNAL(currentCharFormatChanged(const QTextCharFormat &)), this, SLOT(currentCharFormatChanged(const QTextCharFormat &)));
     connect(ui.msgText, SIGNAL(cursorPositionChanged()), this, SLOT(cursorPositionChanged()));
-    connect(ui.msgText,SIGNAL(customContextMenuRequested(QPoint)),this,SLOT(contextMenu(QPoint)));
 
     connect(ui.msgText->document(), SIGNAL(modificationChanged(bool)), actionSave, SLOT(setEnabled(bool)));
     connect(ui.msgText->document(), SIGNAL(modificationChanged(bool)), this, SLOT(setWindowModified(bool)));
@@ -563,23 +562,6 @@ void MessageComposer::closeEvent (QCloseEvent * event)
     } else {
         event->ignore();
     }
-}
-
-void MessageComposer::contextMenu(QPoint point)
-{
-    QMenu *contextMnu = ui.msgText->createStandardContextMenu(point);
-
-    contextMnu->addSeparator();
-    QAction *action = contextMnu->addAction(QIcon(":/images/pasterslink.png"), tr("Paste RetroShare Link"), this, SLOT(pasteLink()));
-    action->setDisabled(RSLinkClipboard::empty());
-
-    contextMnu->exec(QCursor::pos());
-    delete(contextMnu);
-}
-
-void MessageComposer::pasteLink()
-{
-    ui.msgText->insertHtml(RSLinkClipboard::toHtml()) ;
 }
 
 void MessageComposer::contextMenuFileList(QPoint)

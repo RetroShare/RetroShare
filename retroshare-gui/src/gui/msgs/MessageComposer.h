@@ -84,8 +84,6 @@ protected:
 
 private slots:
     /* toggle Contacts DockWidget */
-    void contextMenu(QPoint);
-    void pasteLink();
     void contextMenuFileList(QPoint);
     void contextMenuMsgSendList(QPoint);
     void pasteRecommended();

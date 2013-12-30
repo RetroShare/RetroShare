@@ -1733,18 +1733,6 @@ QString RSLinkClipboard::toHtml()
     return res ;
 }
 
-QString RSLinkClipboard::toHtmlFull()
-{
-    QList<RetroShareLink> links;
-    parseClipboard(links);
-
-    QString res ;
-    for(int i = 0; i < links.size(); ++i)
-        res += links[i].toHtmlFull() + "<br>" ;
-
-    return res ;
-}
-
 bool RSLinkClipboard::empty(RetroShareLink::enumType type /* = RetroShareLink::TYPE_UNKNOWN*/)
 {
     QList<RetroShareLink> links;

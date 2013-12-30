@@ -81,6 +81,7 @@ public:
 
 public slots:
 	void updateStatus(const QString &peer_id, int status);
+
 private slots:
 	void pasteCreateMsgLink() ;
 	void clearChatHistory();
@@ -100,9 +101,6 @@ protected:
 	void updateTitle();
 
 private slots:
-	void pasteLink();
-	void pasteOwnCertificateLink();
-	void contextMenu(QPoint);
 	void contextMenuTextBrowser(QPoint);
 	void chatCharFormatChanged();
 

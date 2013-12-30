@@ -287,9 +287,6 @@ border-image: url(:/images/closepressed.png)
            <height>30</height>
           </size>
          </property>
-         <property name="contextMenuPolicy">
-          <enum>Qt::CustomContextMenu</enum>
-         </property>
         </widget>
        </item>
       </layout>
