@@ -125,14 +125,14 @@ void ChatDialog::init(const std::string &peerId, const QString &title)
 			} else {
 				RsPeerDetails sslDetails;
 				if (rsPeers->getPeerDetails(peerId, sslDetails)) {
-
-					for(int i=0;i<rsPlugins->nbPlugins();++i)
-						if(rsPlugins->plugin(i) != NULL && (cd = rsPlugins->plugin(i)->qt_allocate_new_popup_chat_dialog()) != NULL)
-							break ;
-
-					if(cd == NULL)
-						cd = new PopupChatDialog();
-
+                    PopupChatDialog* pcd = new PopupChatDialog();
+                    PopupChatDialog_WidgetsHolder *wh = NULL;
+                    for(int i=0;i<rsPlugins->nbPlugins();++i){
+                        if(rsPlugins->plugin(i) != NULL && (wh = rsPlugins->plugin(i)->qt_allocate_new_popup_chat_dialog_widgets()) != NULL){
+                            pcd->addWidgets(wh);
+                        }
+                    }
+                    cd = pcd;
 					chatDialogs[peerId] = cd;
 					cd->init(peerId, PeerDefs::nameWithLocation(sslDetails));
 				}

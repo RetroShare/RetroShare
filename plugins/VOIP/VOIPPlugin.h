@@ -18,7 +18,7 @@ class VOIPPlugin: public RsPlugin
 		virtual QDialog        *qt_about_page()         const ;
 		virtual RsAutoUpdatePage *qt_transfers_tab()    const ;
 		virtual std::string qt_transfers_tab_name()    const ;
-		virtual PopupChatDialog *qt_allocate_new_popup_chat_dialog() const ;
+        virtual PopupChatDialog_WidgetsHolder  *qt_allocate_new_popup_chat_dialog_widgets() const ;
 		
 		virtual QIcon *qt_icon() const;
 		virtual QTranslator    *qt_translator(QApplication *app, const QString& languageCode, const QString& externalDir) const;

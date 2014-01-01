@@ -106,9 +106,9 @@ QDialog *VOIPPlugin::qt_about_page() const
 	return about_dialog ;
 }
 
-PopupChatDialog *VOIPPlugin::qt_allocate_new_popup_chat_dialog() const
+PopupChatDialog_WidgetsHolder *VOIPPlugin::qt_allocate_new_popup_chat_dialog_widgets() const
 {
-	AudioPopupChatDialog *ap =	new AudioPopupChatDialog() ;
+	AudioPopupChatDialogWidgetsHolder *ap =	new AudioPopupChatDialogWidgetsHolder() ;
 
 	return ap ;
 }

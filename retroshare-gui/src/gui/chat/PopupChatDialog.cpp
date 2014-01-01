@@ -51,6 +51,14 @@ PopupChatDialog::PopupChatDialog(QWidget *parent, Qt::WindowFlags flags)
 	connect(NotifyQt::getInstance(), SIGNAL(chatStatusChanged(const QString&, const QString&, bool)), this, SLOT(chatStatusChanged(const QString&, const QString&, bool)));
 }
 
+void PopupChatDialog::addWidgets(PopupChatDialog_WidgetsHolder *wh){
+    widgetsHolders.push_back(wh);
+}
+
+std::vector<PopupChatDialog_WidgetsHolder*> PopupChatDialog::getWidgets(){
+    return widgetsHolders;
+}
+
 void PopupChatDialog::init(const std::string &peerId, const QString &title)
 {
 	connect(ui.chatWidget, SIGNAL(statusChanged(int)), this, SLOT(statusChanged(int)));
@@ -79,6 +87,18 @@ void PopupChatDialog::init(const std::string &peerId, const QString &title)
 
     // load settings
     processSettings(true);
+
+    // Add ChatBarWidgets from Plugins
+    std::vector<PopupChatDialog_WidgetsHolder*>::iterator it;
+    for(it = widgetsHolders.begin(); it != widgetsHolders.end(); ++it){
+        PopupChatDialog_WidgetsHolder *wh = *it;
+        wh->init(peerId, title, ui.chatWidget);
+        std::vector<QWidget*> widgetsVector = wh->getWidgets();
+        std::vector<QWidget*>::iterator it2;
+        for(it2 = widgetsVector.begin(); it2 != widgetsVector.end(); ++it2){
+            addChatBarWidget(*it2);
+        }
+    }
 }
 
 /** Destructor. */
@@ -86,6 +106,12 @@ PopupChatDialog::~PopupChatDialog()
 {
 	// save settings
 	processSettings(false);
+
+    std::vector<PopupChatDialog_WidgetsHolder*>::iterator it;
+    for(it = widgetsHolders.begin(); it != widgetsHolders.end(); ++it){
+        PopupChatDialog_WidgetsHolder *wh = *it;
+        delete wh;
+    }
 }
 
 ChatWidget *PopupChatDialog::getChatWidget()
@@ -239,4 +265,11 @@ void PopupChatDialog::clearOfflineMessages()
 void PopupChatDialog::statusChanged(int status)
 {
 	updateStatus(status);
+
+    // Notify Plugins
+    std::vector<PopupChatDialog_WidgetsHolder*>::iterator it;
+    for(it = widgetsHolders.begin(); it != widgetsHolders.end(); ++it){
+        PopupChatDialog_WidgetsHolder *wh = *it;
+        wh->updateStatus(status);
+    }
 }

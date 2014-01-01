@@ -8,14 +8,18 @@ class QToolButton;
 
 #define VOIP_SOUND_INCOMING_CALL "VOIP_incoming_call"
 
-class AudioPopupChatDialog: public PopupChatDialog
+class AudioPopupChatDialogWidgetsHolder: public QObject, public PopupChatDialog_WidgetsHolder
 {
 	Q_OBJECT
 
 	public:
-		AudioPopupChatDialog(QWidget *parent = NULL); 
+        AudioPopupChatDialogWidgetsHolder();
 
-		virtual ~AudioPopupChatDialog()
+        virtual void init(const std::string &peerId, const QString &title, ChatWidget* chatWidget);
+        virtual std::vector<QWidget*> getWidgets();
+        virtual void updateStatus(int status);
+
+        virtual ~AudioPopupChatDialogWidgetsHolder()
 		{
 			if(inputDevice != NULL)
 				inputDevice->stop() ;
@@ -37,7 +41,8 @@ class AudioPopupChatDialog: public PopupChatDialog
 		QtSpeex::SpeexInputProcessor* inputProcessor;
 		QtSpeex::SpeexOutputProcessor* outputProcessor;
 
-		virtual void updateStatus(int status) ;
+        std::string peerId;
+        ChatWidget* chatWidget;
 
 		QToolButton *audioListenToggleButton ;
 		QToolButton *audioMuteCaptureToggleButton ;
