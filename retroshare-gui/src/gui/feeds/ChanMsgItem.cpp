@@ -213,8 +213,16 @@ void ChanMsgItem::updateItemStatic()
 		
 		/* check if the file is a media file */
 		if (!misc::isPreviewable(QFileInfo(QString::fromUtf8(it->fname.c_str())).suffix())) 
-		  fi->mediatype();
-
+		{
+			fi->mediatype();
+			playButton->setText(tr("Open"));
+			playButton->setToolTip(tr("Open File"));
+		}
+		else
+		{
+			playButton->setText(tr("Play"));
+			playButton->setToolTip(tr("Play Media"));
+		}
 
 		QLayout *layout = expandFrame->layout();
 		layout->addWidget(fi);
