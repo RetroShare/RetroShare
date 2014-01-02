@@ -82,19 +82,18 @@ void RsServer::rsGlobalShutDown()
 	// TODO: cache should also clean up old files
 
 	ConfigFinalSave(); // save configuration before exit
+
+	mPluginsManager->stopPlugins();
+
 	mNetMgr->shutdown(); /* Handles UPnP */
 
 	join();
 	ftserver->StopThreads();
 
-	mPluginsManager->stopPlugins();
-
 	// stop the p3distrib threads
 
 	mForums->join();
 	mChannels->join();
-
-
 
 #ifdef RS_ENABLE_GXS
         //if(mGxsCircles) mGxsCircles->join();
@@ -106,9 +105,6 @@ void RsServer::rsGlobalShutDown()
         if(mWiki) mWiki->join();
         if(mWire) mWire->join();
 #endif
-
-
-
 
 #ifdef RS_USE_BLOGS
 	mBlogs->join();
