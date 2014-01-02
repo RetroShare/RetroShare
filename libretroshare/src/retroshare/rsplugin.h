@@ -55,9 +55,10 @@ class ftServer ;
 class ConfigPage ;
 class RsPQIService ;
 class RsAutoUpdatePage ;
-class PopupChatDialog_WidgetsHolder ;
 class SoundEvents;
 class FeedNotify;
+class ChatWidget;
+class ChatWidgetHolder;
 
 // Plugin API version. Not used yet, but will be in the future the
 // main value that decides for compatibility.
@@ -143,8 +144,8 @@ class RsPlugin
 		virtual std::string   		 qt_transfers_tab_name()const	{ return "Tab" ; } // Tab name
 		virtual void         		 qt_sound_events(SoundEvents &/*events*/) const	{ } // Sound events
 
-        // provide buttons for the PopupChatDialog
-        virtual PopupChatDialog_WidgetsHolder    *qt_allocate_new_popup_chat_dialog_widgets() const { return NULL ; }
+		// Provide buttons for the ChatWidget
+		virtual ChatWidgetHolder    *qt_get_chat_widget_holder(ChatWidget */*chatWidget*/) const { return NULL ; }
 
 		virtual QTranslator    *qt_translator(QApplication * /* app */, const QString& /* languageCode */, const QString& /* externalDir */ ) const	{ return NULL ; }
 

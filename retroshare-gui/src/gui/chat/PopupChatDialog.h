@@ -28,34 +28,16 @@
 
 #include <retroshare/rsmsgs.h>
 
-// a Container for the logic behind buttons in a PopupChatDialog
-// Plugins can implement this interface to provide their own buttons
-class PopupChatDialog_WidgetsHolder{
-public:
-    virtual ~PopupChatDialog_WidgetsHolder(){}
-    virtual void init(const std::string &peerId, const QString &title, ChatWidget* chatWidget) = 0;
-    virtual std::vector<QWidget*> getWidgets() = 0;
-
-    // status comes from notifyPeerStatusChanged
-    // see rststaus.h for possible values
-    virtual void updateStatus(int status) = 0;
-};
-
 class PopupChatDialog : public ChatDialog
 {
 	Q_OBJECT
 
 	friend class ChatDialog;
 
-public:
-    virtual void addWidgets(PopupChatDialog_WidgetsHolder *wh);
-    virtual std::vector<PopupChatDialog_WidgetsHolder*> getWidgets();
-
 private slots:
 	void showAvatarFrame(bool show);
 	void clearOfflineMessages();
 	void chatStatusChanged(const QString &peerId, const QString &statusString, bool isPrivateChat);
-	void statusChanged(int);
 
 protected:
 	/** Default constructor */
@@ -73,9 +55,6 @@ protected:
 
 	void processSettings(bool load);
 
-	// used by plugins 
-	void addChatBarWidget(QWidget *w) ;
-
 protected:
 	virtual void addIncomingChatMsg(const ChatInfo& info);
 	virtual void onChatChanged(int list, int type);
@@ -83,7 +62,6 @@ protected:
 private:
 	bool manualDelete;
 	std::list<ChatInfo> savedOfflineChat;
-    std::vector<PopupChatDialog_WidgetsHolder*> widgetsHolders;
 
 	/** Qt Designer generated object */
 	Ui::PopupChatDialog ui;

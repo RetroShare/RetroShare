@@ -50,7 +50,7 @@ PopupDistantChatDialog::PopupDistantChatDialog(QWidget *parent, Qt::WindowFlags 
 
 	_update_timer->start() ;
 
-	addChatBarWidget(_status_label) ;
+	getChatWidget()->addChatBarWidget(_status_label) ;
 	updateDisplay() ;
 }
 
@@ -146,11 +146,3 @@ QString PopupDistantChatDialog::getPeerName(const std::string& id) const
 	else
 		return ChatDialog::getPeerName(id) ;
 }
-
-
-
-
-
-
-
-

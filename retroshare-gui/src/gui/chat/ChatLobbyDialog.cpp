@@ -293,7 +293,7 @@ void ChatLobbyDialog::addIncomingChatMsg(const ChatInfo& info)
 	//std::cerr << "message from rsid " << info.rsid.c_str() << std::endl;
 	
 	if(!isParticipantMuted(name)) {
-	  ui.chatWidget->addChatMsg(true, name, sendTime, recvTime, message, ChatWidget::TYPE_NORMAL);
+	  ui.chatWidget->addChatMsg(true, name, sendTime, recvTime, message, ChatWidget::MSGTYPE_NORMAL);
 		emit messageReceived(id()) ;
 	}
 	
@@ -520,12 +520,12 @@ void ChatLobbyDialog::displayLobbyEvent(int event_type, const QString& nickname,
 	switch (event_type) {
 	case RS_CHAT_LOBBY_EVENT_PEER_LEFT:
         qsParticipant=str;
-		ui.chatWidget->addChatMsg(true, tr("Lobby management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("%1 has left the lobby.").arg(RsHtml::plainText(str)), ChatWidget::TYPE_SYSTEM);
+		ui.chatWidget->addChatMsg(true, tr("Lobby management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("%1 has left the lobby.").arg(RsHtml::plainText(str)), ChatWidget::MSGTYPE_SYSTEM);
 		emit peerLeft(id()) ;
 		break;
 	case RS_CHAT_LOBBY_EVENT_PEER_JOINED:
         qsParticipant=str;
-		ui.chatWidget->addChatMsg(true, tr("Lobby management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("%1 joined the lobby.").arg(RsHtml::plainText(str)), ChatWidget::TYPE_SYSTEM);
+		ui.chatWidget->addChatMsg(true, tr("Lobby management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("%1 joined the lobby.").arg(RsHtml::plainText(str)), ChatWidget::MSGTYPE_SYSTEM);
 		emit peerJoined(id()) ;
 		break;
 	case RS_CHAT_LOBBY_EVENT_PEER_STATUS:
@@ -537,7 +537,7 @@ void ChatLobbyDialog::displayLobbyEvent(int event_type, const QString& nickname,
 		break;
 	case RS_CHAT_LOBBY_EVENT_PEER_CHANGE_NICKNAME:
         qsParticipant=str;
-		ui.chatWidget->addChatMsg(true, tr("Lobby management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("%1 changed his name to: %2").arg(RsHtml::plainText(nickname), RsHtml::plainText(str)), ChatWidget::TYPE_SYSTEM);
+		ui.chatWidget->addChatMsg(true, tr("Lobby management"), QDateTime::currentDateTime(), QDateTime::currentDateTime(), tr("%1 changed his name to: %2").arg(RsHtml::plainText(nickname), RsHtml::plainText(str)), ChatWidget::MSGTYPE_SYSTEM);
 		
 		// TODO if a user was muted and changed his name, update mute list, but only, when the muted peer, dont change his name to a other peer in your chat lobby
 		if (isParticipantMuted(nickname) && !isNicknameInLobby(str)) {

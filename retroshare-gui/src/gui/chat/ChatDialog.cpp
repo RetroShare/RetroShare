@@ -35,7 +35,6 @@
 #include <retroshare/rsiface.h>
 #include <retroshare/rsnotify.h>
 #include <retroshare/rspeers.h>
-#include <retroshare/rsplugin.h>
 
 static std::map<std::string, ChatDialog*> chatDialogs;
 
@@ -125,14 +124,8 @@ void ChatDialog::init(const std::string &peerId, const QString &title)
 			} else {
 				RsPeerDetails sslDetails;
 				if (rsPeers->getPeerDetails(peerId, sslDetails)) {
-                    PopupChatDialog* pcd = new PopupChatDialog();
-                    PopupChatDialog_WidgetsHolder *wh = NULL;
-                    for(int i=0;i<rsPlugins->nbPlugins();++i){
-                        if(rsPlugins->plugin(i) != NULL && (wh = rsPlugins->plugin(i)->qt_allocate_new_popup_chat_dialog_widgets()) != NULL){
-                            pcd->addWidgets(wh);
-                        }
-                    }
-                    cd = pcd;
+					cd = new PopupChatDialog();
+
 					chatDialogs[peerId] = cd;
 					cd->init(peerId, PeerDefs::nameWithLocation(sslDetails));
 				}

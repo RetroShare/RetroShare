@@ -12,10 +12,11 @@
 
 #include "gui/VoipStatistics.h"
 #include "gui/AudioInputConfig.h"
-#include "gui/AudioPopupChatDialog.h"
+#include "gui/AudioChatWidgetHolder.h"
 #include "gui/PluginGUIHandler.h"
 #include "gui/PluginNotifier.h"
 #include "gui/SoundManager.h"
+#include "gui/chat/ChatWidget.h"
 
 #define IMAGE_VOIP ":/images/talking_on.svg"
 
@@ -106,17 +107,25 @@ QDialog *VOIPPlugin::qt_about_page() const
 	return about_dialog ;
 }
 
-PopupChatDialog_WidgetsHolder *VOIPPlugin::qt_allocate_new_popup_chat_dialog_widgets() const
+ChatWidgetHolder *VOIPPlugin::qt_get_chat_widget_holder(ChatWidget *chatWidget) const
 {
-	AudioPopupChatDialogWidgetsHolder *ap =	new AudioPopupChatDialogWidgetsHolder() ;
+	switch (chatWidget->chatType()) {
+	case ChatWidget::CHATTYPE_PRIVATE:
+		return new AudioChatWidgetHolder(chatWidget);
+	case ChatWidget::CHATTYPE_UNKNOWN:
+	case ChatWidget::CHATTYPE_LOBBY:
+	case ChatWidget::CHATTYPE_DISTANT:
+		break;
+	}
 
-	return ap ;
+	return NULL;
 }
 
 std::string VOIPPlugin::qt_transfers_tab_name() const
 {
 	return QObject::tr("RTT Statistics").toUtf8().constData() ;
 }
+
 RsAutoUpdatePage *VOIPPlugin::qt_transfers_tab() const
 {
 	return new VoipStatistics ;

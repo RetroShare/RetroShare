@@ -51,18 +51,8 @@ PopupChatDialog::PopupChatDialog(QWidget *parent, Qt::WindowFlags flags)
 	connect(NotifyQt::getInstance(), SIGNAL(chatStatusChanged(const QString&, const QString&, bool)), this, SLOT(chatStatusChanged(const QString&, const QString&, bool)));
 }
 
-void PopupChatDialog::addWidgets(PopupChatDialog_WidgetsHolder *wh){
-    widgetsHolders.push_back(wh);
-}
-
-std::vector<PopupChatDialog_WidgetsHolder*> PopupChatDialog::getWidgets(){
-    return widgetsHolders;
-}
-
 void PopupChatDialog::init(const std::string &peerId, const QString &title)
 {
-	connect(ui.chatWidget, SIGNAL(statusChanged(int)), this, SLOT(statusChanged(int)));
-
 	ChatDialog::init(peerId, title);
 
 	/* Hide or show the avatar frames */
@@ -85,20 +75,8 @@ void PopupChatDialog::init(const std::string &peerId, const QString &title)
 		window->addDialog(this);
 	}
 
-    // load settings
-    processSettings(true);
-
-    // Add ChatBarWidgets from Plugins
-    std::vector<PopupChatDialog_WidgetsHolder*>::iterator it;
-    for(it = widgetsHolders.begin(); it != widgetsHolders.end(); ++it){
-        PopupChatDialog_WidgetsHolder *wh = *it;
-        wh->init(peerId, title, ui.chatWidget);
-        std::vector<QWidget*> widgetsVector = wh->getWidgets();
-        std::vector<QWidget*>::iterator it2;
-        for(it2 = widgetsVector.begin(); it2 != widgetsVector.end(); ++it2){
-            addChatBarWidget(*it2);
-        }
-    }
+	// load settings
+	processSettings(true);
 }
 
 /** Destructor. */
@@ -106,12 +84,6 @@ PopupChatDialog::~PopupChatDialog()
 {
 	// save settings
 	processSettings(false);
-
-    std::vector<PopupChatDialog_WidgetsHolder*>::iterator it;
-    for(it = widgetsHolders.begin(); it != widgetsHolders.end(); ++it){
-        PopupChatDialog_WidgetsHolder *wh = *it;
-        delete wh;
-    }
 }
 
 ChatWidget *PopupChatDialog::getChatWidget()
@@ -163,13 +135,8 @@ void PopupChatDialog::addIncomingChatMsg(const ChatInfo& info)
 		QString message = QString::fromStdWString(info.msg);
 		QString name = getPeerName(info.rsid) ;
 
-		cw->addChatMsg(true, name, sendTime, recvTime, message, ChatWidget::TYPE_NORMAL);
+		cw->addChatMsg(true, name, sendTime, recvTime, message, ChatWidget::MSGTYPE_NORMAL);
 	}
-}
-
-void PopupChatDialog::addChatBarWidget(QWidget *w)
-{
-	getChatWidget()->addChatBarWidget(w) ;
 }
 
 void PopupChatDialog::onChatChanged(int list, int type)
@@ -204,7 +171,7 @@ void PopupChatDialog::onChatChanged(int list, int type)
 						QDateTime recvTime = QDateTime::fromTime_t(it->recvTime);
 						QString message = QString::fromStdWString(it->msg);
 
-						ui.chatWidget->addChatMsg(false, name, sendTime, recvTime, message, ChatWidget::TYPE_OFFLINE);
+						ui.chatWidget->addChatMsg(false, name, sendTime, recvTime, message, ChatWidget::MSGTYPE_OFFLINE);
 					}
 				}
 
@@ -223,7 +190,7 @@ void PopupChatDialog::onChatChanged(int list, int type)
 						QDateTime recvTime = QDateTime::fromTime_t(it->recvTime);
 						QString message = QString::fromStdWString(it->msg);
 
-						ui.chatWidget->addChatMsg(false, name, sendTime, recvTime, message, ChatWidget::TYPE_NORMAL);
+						ui.chatWidget->addChatMsg(false, name, sendTime, recvTime, message, ChatWidget::MSGTYPE_NORMAL);
 					}
 				}
 
@@ -260,16 +227,4 @@ void PopupChatDialog::clearOfflineMessages()
 	manualDelete = true;
 	rsMsgs->clearPrivateChatQueue(false, peerId);
 	manualDelete = false;
-}
-
-void PopupChatDialog::statusChanged(int status)
-{
-	updateStatus(status);
-
-    // Notify Plugins
-    std::vector<PopupChatDialog_WidgetsHolder*>::iterator it;
-    for(it = widgetsHolders.begin(); it != widgetsHolders.end(); ++it){
-        PopupChatDialog_WidgetsHolder *wh = *it;
-        wh->updateStatus(status);
-    }
 }

@@ -4,7 +4,8 @@
 #include <interface/rsvoip.h>
 #include "PluginGUIHandler.h"
 #include <gui/chat/ChatDialog.h>
-#include <gui/AudioPopupChatDialog.h>
+#include <gui/AudioChatWidgetHolder.h>
+#include "gui/chat/ChatWidget.h"
 
 void PluginGUIHandler::ReceivedInvitation(const QString& /*peer_id*/)
 {
@@ -33,31 +34,32 @@ void PluginGUIHandler::ReceivedVoipData(const QString& peer_id)
 		return ;
 	}
 
-    ChatDialog *cd = ChatDialog::getExistingChat(peer_id.toStdString()) ;
+	ChatDialog *di = ChatDialog::getExistingChat(peer_id.toStdString()) ;
+	if (di) {
+		ChatWidget *cw = di->getChatWidget();
+		if (cw) {
+			const QList<ChatWidgetHolder*> &chatWidgetHolderList = cw->chatWidgetHolderList();
 
-    PopupChatDialog *pcd = dynamic_cast<PopupChatDialog*>(cd);
+			foreach (ChatWidgetHolder *chatWidgetHolder, chatWidgetHolderList) {
+				AudioChatWidgetHolder *acwh = dynamic_cast<AudioChatWidgetHolder*>(chatWidgetHolder) ;
 
-    if(pcd != NULL)
-    {
-        std::vector<PopupChatDialog_WidgetsHolder*> whs = pcd->getWidgets();
-        for(unsigned int whIndex=0; whIndex<whs.size(); whIndex++)
-        {
-            AudioPopupChatDialogWidgetsHolder* apcdwh;
-            if((apcdwh = dynamic_cast<AudioPopupChatDialogWidgetsHolder*>(whs[whIndex])))
-            {
-                for(unsigned int chunkIndex=0; chunkIndex<chunks.size(); chunkIndex++){
-                    QByteArray qb(reinterpret_cast<const char *>(chunks[chunkIndex].data),chunks[chunkIndex].size);
-                    apcdwh->addAudioData(peer_id,&qb);
-                }
-            }
-        }
-    }
-    else
-    {
-        std::cerr << "Error: received audio data for a chat dialog that does not stand Audio (Peer id = " << peer_id.toStdString() << "!" << std::endl;
-    }
-    for(unsigned int chunkIndex=0; chunkIndex<chunks.size(); chunkIndex++){
-        free(chunks[chunkIndex].data);
-    }
+				if (acwh) {
+					for (unsigned int i = 0; i < chunks.size(); ++i) {
+						for (unsigned int chunkIndex=0; chunkIndex<chunks.size(); chunkIndex++){
+							QByteArray qb(reinterpret_cast<const char *>(chunks[chunkIndex].data),chunks[chunkIndex].size);
+							acwh->addAudioData(peer_id,&qb);
+						}
+					}
+					break;
+				}
+			}
+		}
+	} else {
+		std::cerr << "Error: received audio data for a chat dialog that does not stand Audio (Peer id = " << peer_id.toStdString() << "!" << std::endl;
+	}
+
+	for(unsigned int chunkIndex=0; chunkIndex<chunks.size(); chunkIndex++){
+		free(chunks[chunkIndex].data);
+	}
 }
 
