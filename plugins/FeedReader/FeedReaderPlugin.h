@@ -56,6 +56,7 @@ public:
 	virtual FeedNotify *qt_feedNotify();
 
 private:
+	RsPlugInInterfaces mInterfaces;
 	mutable p3FeedReader *mFeedReader;
 	mutable FeedReaderNotify *mNotify;
 	mutable RsPluginHandler *mPlugInHandler;

@@ -42,6 +42,7 @@ class RsTurtle ;
 class RsDht ;
 class RsDisc ;
 class RsMsgs ;
+class RsForums;
 class p3LinkMgr ;
 class MainPage ;
 class QIcon ;
@@ -98,6 +99,7 @@ public:
     RsTurtle *mTurtle;
     RsDisc   *mDisc;
     RsDht    *mDht;
+    RsForums *mForums;
 };
 
 class RsPlugin

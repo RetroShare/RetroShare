@@ -2222,18 +2222,6 @@ int RsServer::StartupRetroShare()
 	rsDisc  = new p3Discovery(ad);
 	rsMsgs  = new p3Msgs(msgSrv, chatSrv);
 
-	// set interfaces for plugins
-	//
-	RsPlugInInterfaces interfaces;
-	interfaces.mFiles  = rsFiles;
-	interfaces.mPeers  = rsPeers;
-	interfaces.mMsgs   = rsMsgs;
-	interfaces.mTurtle = rsTurtle;
-	interfaces.mDisc   = rsDisc;
-	interfaces.mDht    = rsDht;
-
-	mPluginsManager->setInterfaces(interfaces);
-
 	// connect components to turtle router.
 
 	ftserver->connectToTurtleRouter(tr) ;
@@ -2264,6 +2252,20 @@ int RsServer::StartupRetroShare()
 	pqih -> addService(mBlogs);  /* This must be also ticked as a service */
 
 #endif
+
+	// set interfaces for plugins
+	//
+	RsPlugInInterfaces interfaces;
+	interfaces.mFiles  = rsFiles;
+	interfaces.mPeers  = rsPeers;
+	interfaces.mMsgs   = rsMsgs;
+	interfaces.mTurtle = rsTurtle;
+	interfaces.mDisc   = rsDisc;
+	interfaces.mDht    = rsDht;
+	interfaces.mForums = mForums;
+
+	mPluginsManager->setInterfaces(interfaces);
+
 	// now add plugin objects inside the loop:
 	// 	- client services provided by plugins.
 	// 	- cache services provided by plugins.

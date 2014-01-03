@@ -83,8 +83,9 @@ FeedReaderPlugin::FeedReaderPlugin()
 	mFeedNotify = NULL;
 }
 
-void FeedReaderPlugin::setInterfaces(RsPlugInInterfaces &/*interfaces*/)
+void FeedReaderPlugin::setInterfaces(RsPlugInInterfaces &interfaces)
 {
+	mInterfaces = interfaces;
 }
 
 ConfigPage *FeedReaderPlugin::qt_config_page() const
@@ -112,7 +113,7 @@ FeedNotify *FeedReaderPlugin::qt_feedNotify()
 RsPQIService *FeedReaderPlugin::rs_pqi_service() const
 {
 	if (mFeedReader == NULL) {
-		mFeedReader = new p3FeedReader(mPlugInHandler);
+		mFeedReader = new p3FeedReader(mPlugInHandler, mInterfaces.mForums);
 		rsFeedReader = mFeedReader;
 
 		mNotify = new FeedReaderNotify();

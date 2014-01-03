@@ -33,7 +33,7 @@ class p3FeedReaderThread;
 class p3FeedReader : public RsPQIService, public RsFeedReader
 {
 public:
-	p3FeedReader(RsPluginHandler *pgHandler);
+	p3FeedReader(RsPluginHandler *pgHandler, RsForums *forums);
 
 	/****************** FeedReader Interface *************/
 	virtual void stop();
@@ -97,6 +97,7 @@ private:
 	void stopPreviewThreads_locked();
 
 	time_t   mLastClean;
+	RsForums *mForums;
 	RsFeedReaderNotify *mNotify;
 
 	RsMutex mFeedReaderMtx;

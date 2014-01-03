@@ -36,7 +36,7 @@ RsFeedReader *rsFeedReader = NULL;
  * #define FEEDREADER_DEBUG
  *********/
 
-p3FeedReader::p3FeedReader(RsPluginHandler* pgHandler)
+p3FeedReader::p3FeedReader(RsPluginHandler* pgHandler, RsForums *forums)
 	: RsPQIService(RS_SERVICE_TYPE_PLUGIN_FEEDREADER, CONFIG_TYPE_FEEDREADER, 5, pgHandler),
 	  mFeedReaderMtx("p3FeedReader"), mDownloadMutex("p3FeedReaderDownload"), mProcessMutex("p3FeedReaderProcess"), mPreviewMutex("p3FeedReaderPreview")
 {
@@ -49,6 +49,7 @@ p3FeedReader::p3FeedReader(RsPluginHandler* pgHandler)
 	mStandardUseProxy = false;
 	mStandardProxyPort = 0;
 	mLastClean = 0;
+	mForums = forums;
 	mNotify = NULL;
 	mSaveInBackground = false;
 
@@ -525,11 +526,15 @@ RsFeedAddResult p3FeedReader::setFeed(const std::string &feedId, const FeedInfo 
 	}
 
 	if (!forumId.empty()) {
-		/* name or description changed, update forum */
-		if (!rsForums->setForumInfo(forumId, forumInfo)) {
+		if (mForums) {
+			/* name or description changed, update forum */
+			if (!mForums->setForumInfo(forumId, forumInfo)) {
 #ifdef FEEDREADER_DEBUG
-			std::cerr << "p3FeedReader::setFeed - can't change forum " << forumId << std::endl;
+				std::cerr << "p3FeedReader::setFeed - can't change forum " << forumId << std::endl;
 #endif
+			}
+		} else {
+			std::cerr << "p3FeedReader::setFeed - can't change forum " << forumId << ", member mForums is not set" << std::endl;
 		}
 	}
 
@@ -1836,55 +1841,59 @@ void p3FeedReader::onProcessSuccess_addMsgs(const std::string &feedId, std::list
 		RsFeedReaderErrorState errorState = RS_FEED_ERRORSTATE_OK;
 
 		if (forum && !msgs.empty()) {
-			if (fi->forumId.empty()) {
-				/* create new forum */
-				std::wstring forumName;
-				librs::util::ConvertUtf8ToUtf16(fi->name, forumName);
-				forumName.insert(0, FEEDREADER_FORUM_PREFIX);
+			if (mForums) {
+				if (fi->forumId.empty()) {
+					/* create new forum */
+					std::wstring forumName;
+					librs::util::ConvertUtf8ToUtf16(fi->name, forumName);
+					forumName.insert(0, FEEDREADER_FORUM_PREFIX);
 
-				long todo; // search for existing forum?
+					long todo; // search for existing forum?
 
-				/* search for existing own forum */
-//				std::list<ForumInfo> forumList;
-//				if (rsForums->getForumList(forumList)) {
-//					std::wstring wName = StringToWString(name);
-//					for (std::list<ForumInfo>::iterator it = forumList.begin(); it != forumList.end(); ++it) {
-//						if (it->forumName == wName) {
-//							std::cout << "DEBUG_RSS2FORUM: Found existing forum " << it->forumId << " for " << name << std::endl;
-//							return it->forumId;
+					/* search for existing own forum */
+//					std::list<ForumInfo> forumList;
+//					if (mForums->getForumList(forumList)) {
+//						std::wstring wName = StringToWString(name);
+//						for (std::list<ForumInfo>::iterator it = forumList.begin(); it != forumList.end(); ++it) {
+//							if (it->forumName == wName) {
+//								std::cout << "DEBUG_RSS2FORUM: Found existing forum " << it->forumId << " for " << name << std::endl;
+//								return it->forumId;
+//							}
 //						}
 //					}
-//				}
 
-				std::wstring forumDescription;
-				librs::util::ConvertUtf8ToUtf16(fi->description, forumDescription);
-				/* create anonymous public forum */
-				fi->forumId = rsForums->createForum(forumName, forumDescription, RS_DISTRIB_PUBLIC | RS_DISTRIB_AUTHEN_ANON);
-				forumId = fi->forumId;
+					std::wstring forumDescription;
+					librs::util::ConvertUtf8ToUtf16(fi->description, forumDescription);
+					/* create anonymous public forum */
+					fi->forumId = mForums->createForum(forumName, forumDescription, RS_DISTRIB_PUBLIC | RS_DISTRIB_AUTHEN_ANON);
+					forumId = fi->forumId;
 
-				if (fi->forumId.empty()) {
-					errorState = RS_FEED_ERRORSTATE_PROCESS_FORUM_CREATE;
+					if (fi->forumId.empty()) {
+						errorState = RS_FEED_ERRORSTATE_PROCESS_FORUM_CREATE;
 
 #ifdef FEEDREADER_DEBUG
-					std::cerr << "p3FeedReader::onProcessSuccess_filterMsg - can't create forum for feed " << feedId << " (" << fi->name << ") - ignore all messages" << std::endl;
-				} else {
-					std::cerr << "p3FeedReader::onProcessSuccess_filterMsg - forum " << fi->forumId << " (" << fi->name << ") created" << std::endl;
-#endif
-				}
-			} else {
-				/* check forum */
-				ForumInfo forumInfo;
-				if (rsForums->getForumInfo(fi->forumId, forumInfo)) {
-					if ((forumInfo.subscribeFlags & RS_DISTRIB_ADMIN) == 0) {
-						errorState = RS_FEED_ERRORSTATE_PROCESS_FORUM_NO_ADMIN;
-					} else if ((forumInfo.forumFlags & RS_DISTRIB_AUTHEN_REQ) || (forumInfo.forumFlags & RS_DISTRIB_AUTHEN_ANON) == 0) {
-						errorState = RS_FEED_ERRORSTATE_PROCESS_FORUM_NOT_ANONYMOUS;
+						std::cerr << "p3FeedReader::onProcessSuccess_filterMsg - can't create forum for feed " << feedId << " (" << fi->name << ") - ignore all messages" << std::endl;
 					} else {
-						forumId = fi->forumId;
+						std::cerr << "p3FeedReader::onProcessSuccess_filterMsg - forum " << fi->forumId << " (" << fi->name << ") created" << std::endl;
+#endif
 					}
 				} else {
-					errorState = RS_FEED_ERRORSTATE_PROCESS_FORUM_NOT_FOUND;
+					/* check forum */
+					ForumInfo forumInfo;
+					if (mForums->getForumInfo(fi->forumId, forumInfo)) {
+						if ((forumInfo.subscribeFlags & RS_DISTRIB_ADMIN) == 0) {
+							errorState = RS_FEED_ERRORSTATE_PROCESS_FORUM_NO_ADMIN;
+						} else if ((forumInfo.forumFlags & RS_DISTRIB_AUTHEN_REQ) || (forumInfo.forumFlags & RS_DISTRIB_AUTHEN_ANON) == 0) {
+							errorState = RS_FEED_ERRORSTATE_PROCESS_FORUM_NOT_ANONYMOUS;
+						} else {
+							forumId = fi->forumId;
+						}
+					} else {
+						errorState = RS_FEED_ERRORSTATE_PROCESS_FORUM_NOT_FOUND;
+					}
 				}
+			} else {
+				std::cerr << "p3FeedReader::onProcessSuccess_addMsgs - can't process forum, member mForums is not set" << std::endl;
 			}
 		}
 
@@ -1938,31 +1947,35 @@ void p3FeedReader::onProcessSuccess_addMsgs(const std::string &feedId, std::list
 	}
 
 	if (!forumId.empty() && !forumMsgs.empty()) {
-		/* add messages as forum messages */
-		std::list<RsFeedReaderMsg>::iterator msgIt;
-		for (msgIt = forumMsgs.begin(); msgIt != forumMsgs.end(); ++msgIt) {
-			RsFeedReaderMsg &mi = *msgIt;
+		if (mForums) {
+			/* add messages as forum messages */
+			std::list<RsFeedReaderMsg>::iterator msgIt;
+			for (msgIt = forumMsgs.begin(); msgIt != forumMsgs.end(); ++msgIt) {
+				RsFeedReaderMsg &mi = *msgIt;
 
-			/* convert to forum messages */
-			ForumMsgInfo forumMsgInfo;
-			forumMsgInfo.forumId = forumId;
-			librs::util::ConvertUtf8ToUtf16(mi.title, forumMsgInfo.title);
+				/* convert to forum messages */
+				ForumMsgInfo forumMsgInfo;
+				forumMsgInfo.forumId = forumId;
+				librs::util::ConvertUtf8ToUtf16(mi.title, forumMsgInfo.title);
 
-			std::string description = mi.descriptionTransformed.empty() ? mi.description : mi.descriptionTransformed;
-			/* add link */
-			if (!mi.link.empty()) {
-				description += "<br><a href=\"" + mi.link + "\">" + mi.link + "</a>";
-			}
-			librs::util::ConvertUtf8ToUtf16(description, forumMsgInfo.msg);
+				std::string description = mi.descriptionTransformed.empty() ? mi.description : mi.descriptionTransformed;
+				/* add link */
+				if (!mi.link.empty()) {
+					description += "<br><a href=\"" + mi.link + "\">" + mi.link + "</a>";
+				}
+				librs::util::ConvertUtf8ToUtf16(description, forumMsgInfo.msg);
 
-			if (rsForums->ForumMessageSend(forumMsgInfo)) {
-				/* set to new */
-				rsForums->setMessageStatus(forumMsgInfo.forumId, forumMsgInfo.msgId, 0, FORUM_MSG_STATUS_MASK);
-			} else {
+				if (mForums->ForumMessageSend(forumMsgInfo)) {
+					/* set to new */
+					mForums->setMessageStatus(forumMsgInfo.forumId, forumMsgInfo.msgId, 0, FORUM_MSG_STATUS_MASK);
+				} else {
 #ifdef FEEDREADER_DEBUG
-				std::cerr << "p3FeedReader::onProcessSuccess_filterMsg - can't add forum message " << mi.title << " for feed " << forumId << std::endl;
+					std::cerr << "p3FeedReader::onProcessSuccess_filterMsg - can't add forum message " << mi.title << " for feed " << forumId << std::endl;
 #endif
+				}
 			}
+		} else {
+			std::cerr << "p3FeedReader::onProcessSuccess_addMsgs - can't process forum, member mForums is not set" << std::endl;
 		}
 	}
 
@@ -2070,23 +2083,27 @@ void p3FeedReader::setFeedInfo(const std::string &feedId, const std::string &nam
 	}
 
 	if (!forumId.empty()) {
-		ForumInfo forumInfo;
-		if (rsForums->getForumInfo(forumId, forumInfo)) {
-			if (forumInfo.forumName != forumInfoNew.forumName || forumInfo.forumDesc != forumInfoNew.forumDesc) {
-				/* name or description changed, update forum */
+		if (mForums) {
+			ForumInfo forumInfo;
+			if (mForums->getForumInfo(forumId, forumInfo)) {
+				if (forumInfo.forumName != forumInfoNew.forumName || forumInfo.forumDesc != forumInfoNew.forumDesc) {
+					/* name or description changed, update forum */
 #ifdef FEEDREADER_DEBUG
-				std::cerr << "p3FeedReader::setFeed - change forum " << forumId << std::endl;
+					std::cerr << "p3FeedReader::setFeed - change forum " << forumId << std::endl;
 #endif
-				if (!rsForums->setForumInfo(forumId, forumInfoNew)) {
+					if (!mForums->setForumInfo(forumId, forumInfoNew)) {
 #ifdef FEEDREADER_DEBUG
-					std::cerr << "p3FeedReader::setFeed - can't change forum " << forumId << std::endl;
+						std::cerr << "p3FeedReader::setFeed - can't change forum " << forumId << std::endl;
 #endif
+					}
 				}
+			} else {
+#ifdef FEEDREADER_DEBUG
+				std::cerr << "p3FeedReader::setFeed - can't get forum info " << forumId << std::endl;
+#endif
 			}
 		} else {
-#ifdef FEEDREADER_DEBUG
-			std::cerr << "p3FeedReader::setFeed - can't get forum info " << forumId << std::endl;
-#endif
+			std::cerr << "p3FeedReader::setFeedInfo - can't process forum, member mForums is not set" << std::endl;
 		}
 	}
 }
