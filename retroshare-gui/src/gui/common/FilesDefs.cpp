@@ -60,7 +60,10 @@ static QString getInfoFromFilename(const QString& filename, bool anyForUnknown, 
 		return image ? ":/images/FileTypeAny.png" : QApplication::translate("FilesDefs", "Subtitles");
 	} else if (ext == "nds") {
 		return image ? ":/images/FileTypeAny.png" : QApplication::translate("FilesDefs", "Nintendo DS Rom");
+	} else if (ext == "patch" || ext == "diff") {
+		return image ? ":/images/mimetypes/patch.png" : QApplication::translate("FilesDefs", "Patch");
 	}
+
 
 	if (anyForUnknown) {
 		return image ? ":/images/FileTypeAny.png" : "";
