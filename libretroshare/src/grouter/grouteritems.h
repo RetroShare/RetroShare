@@ -26,6 +26,7 @@
 #pragma once
 
 #include "serialiser/rsserial.h"
+#include "util/rsid.h"
 #include "rsgrouter.h"
 #include "p3grouter.h"
 
@@ -70,10 +71,43 @@ class RsGRouterItem: public RsItem
 };
 
 /***********************************************************************************/
+/*                                Helper base classes                              */
+/***********************************************************************************/
+
+class RsGRouterNonCopyableObject
+{
+	public:
+		RsGRouterNonCopyableObject() {}
+	private:
+		RsGRouterNonCopyableObject(const RsGRouterNonCopyableObject&) {}
+		RsGRouterNonCopyableObject operator=(const RsGRouterNonCopyableObject&) { return *this ;}
+};
+
+class RsGRouterProofOfWorkObject
+{
+	public:
+		RsGRouterProofOfWorkObject() {}
+
+		virtual bool serialise(void *data,uint32_t& size) const =0;	
+		virtual uint32_t serial_size() const =0;	
+
+		virtual bool checkProofOfWork() ;		// checks that the serialized object hashes down to a hash beginning with LEADING_BYTES_SIZE zeroes
+		virtual bool updateProofOfWork() ;		// computes the pow_bytes so that the hash starts with LEADING_BYTES_SIZE zeroes.
+
+		static bool checkProofOfWork(unsigned char *mem,uint32_t size) ;
+
+		static const int POW_PAYLOAD_SIZE = 8 ;
+		static const int PROOF_OF_WORK_REQUESTED_BYTES = 4 ;
+
+		unsigned char pow_bytes[POW_PAYLOAD_SIZE] ;  // 8 bytes to put at the beginning of the serialized packet, so that 
+												// the hash starts with a fixed number of zeroes.
+};
+
+/***********************************************************************************/
 /*                                Specific packets                                 */
 /***********************************************************************************/
 
-class RsGRouterPublishKeyItem: public RsGRouterItem
+class RsGRouterPublishKeyItem: public RsGRouterItem, public RsGRouterProofOfWorkObject
 {
 	public:
 		RsGRouterPublishKeyItem() : RsGRouterItem(RS_PKT_SUBTYPE_GROUTER_PUBLISH_KEY) { setPriorityLevel(QOS_PRIORITY_RS_GROUTER_PUBLISH_KEY) ; }
@@ -91,15 +125,8 @@ class RsGRouterPublishKeyItem: public RsGRouterItem
 		uint32_t service_id ;
 		float randomized_distance ;
 		std::string  description_string ;
-};
+		PGPFingerprintType fingerprint ;
 
-class RsGRouterNonCopyableObject
-{
-	public:
-		RsGRouterNonCopyableObject() {}
-	private:
-		RsGRouterNonCopyableObject(const RsGRouterNonCopyableObject&) {}
-		RsGRouterNonCopyableObject operator=(const RsGRouterNonCopyableObject&) { return *this ;}
 };
 
 class RsGRouterGenericDataItem: public RsGRouterItem, public RsGRouterNonCopyableObject

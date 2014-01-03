@@ -62,7 +62,7 @@ class p3GRouter: public RsGRouter, public p3Service, public p3Config
 		//
 		bool registerClientService(const GRouterServiceId& id,GRouterClientService *service) ;
 
-		// Use this method to register a new key that the global router will
+		// Use this method to register/unregister a key that the global router will
 		// forward in the network, so that is can be a possible destination for
 		// global messages.
 		//
@@ -70,7 +70,11 @@ class p3GRouter: public RsGRouter, public p3Service, public p3Config
 		// 	client_id:		id of the client service to send the traffic to.
 		// 	               To obtain a client id, the service must register using the previous method.
 		//
+		// Unregistering a key might not have an instantaneous effect, so the client is responsible for 
+		// discarding traffic that might later come for this key.
+		//
 		bool registerKey(const GRouterKeyId& key,const GRouterServiceId& client_id,const std::string& description_string) ;
+		bool unregisterKey(const GRouterKeyId& key) ;
 
 		//===================================================//
 		//         Client/server request services            //

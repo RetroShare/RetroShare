@@ -361,7 +361,6 @@ void p3GRouter::locked_forwardKey(const RsGRouterPublishKeyItem& item)
 		else
 			std::cerr << "    Not forwarding to source id " << item.PeerId() << std::endl;
 }
-
 bool p3GRouter::registerKey(const GRouterKeyId& key,const GRouterServiceId& client_id,const std::string& description) 
 {
 	RsStackMutex mtx(grMtx) ;
@@ -378,6 +377,27 @@ bool p3GRouter::registerKey(const GRouterKeyId& key,const GRouterServiceId& clie
 	std::cerr << "   Key id      : " << key.toStdString() << std::endl;
 	std::cerr << "   Client id   : " << std::hex << client_id << std::dec << std::endl;
 	std::cerr << "   Description : " << description << std::endl;
+
+	return true ;
+}
+bool p3GRouter::unregisterKey(const GRouterKeyId& key)
+{
+	RsStackMutex mtx(grMtx) ;
+
+	std::map<GRouterKeyId,GRouterPublishedKeyInfo>::iterator it = _owned_key_ids.find(key) ;
+
+	if(it == _owned_key_ids.end())
+	{
+		std::cerr << "p3GRouter::unregisterKey(): key " << key.toStdString() << " not found." << std::endl;
+		return false ;
+	}
+
+	std::cerr << "p3GRouter::unregistered the following key: " << std::endl;
+	std::cerr << "   Key id      : " << key.toStdString() << std::endl;
+	std::cerr << "   Client id   : " << std::hex << it->second.service_id << std::dec << std::endl;
+	std::cerr << "   Description : " << it->second.description_string << std::endl;
+
+	_owned_key_ids.erase(it) ;
 
 	return true ;
 }

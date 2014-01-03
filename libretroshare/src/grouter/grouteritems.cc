@@ -33,11 +33,13 @@ bool RsGRouterItem::serialise_header(void *data,uint32_t& pktsize,uint32_t& tlvs
 uint32_t RsGRouterPublishKeyItem::serial_size() const
 {
 	uint32_t s = 8 ; // header
+	s += POW_PAYLOAD_SIZE  ; // proof of work bytes
 	s += 4  ; // diffusion_id
 	s += 20 ; // sha1 for published_key
 	s += 4  ; // service id
 	s += 4  ; // randomized distance
 	s += GetTlvStringSize(description_string) ; // description
+	s += PGP_KEY_FINGERPRINT_SIZE ;		// fingerprint
 
 	return s ;
 }
@@ -49,12 +51,16 @@ bool RsGRouterPublishKeyItem::serialise(void *data, uint32_t& pktsize) const
 	if(!serialise_header(data,pktsize,tlvsize,offset))
 		return false ;
 
+	memcpy(&((uint8_t*)data)[offset],pow_bytes,POW_PAYLOAD_SIZE) ;
+	offset += 8 ;
+
 	/* add mandatory parts first */
 	ok &= setRawUInt32(data, tlvsize, &offset, diffusion_id);
 	ok &= setRawSha1(data, tlvsize, &offset, published_key);
 	ok &= setRawUInt32(data, tlvsize, &offset, service_id);
 	ok &= setRawUFloat32(data, tlvsize, &offset, randomized_distance);
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_VALUE, description_string);
+	ok &= setRawPGPFingerprint(data, tlvsize, &offset, fingerprint);
 
 	if (offset != tlvsize)
 	{
@@ -63,6 +69,77 @@ bool RsGRouterPublishKeyItem::serialise(void *data, uint32_t& pktsize) const
 	}
 
 	return ok;
+}
+
+/**********************************************************************************************/
+/*                                        PROOF OF WORK STUFF                                 */
+/**********************************************************************************************/
+
+bool RsGRouterProofOfWorkObject::checkProofOfWork()
+{
+	uint32_t size = serial_size() ;
+	unsigned char *mem = (unsigned char *)malloc(size) ;
+
+	if(mem == NULL)
+	{
+		std::cerr << "RsGRouterProofOfWorkObject: cannot allocate memory for " << size << " bytes." << std::endl;
+		return false ;
+	}
+
+	serialise(mem,size) ;
+	bool res = checkProofOfWork(mem,size) ;
+
+	free(mem) ;
+	return res ;
+}
+
+bool RsGRouterProofOfWorkObject::updateProofOfWork()
+{
+	uint32_t size = serial_size() ;
+	unsigned char *mem = (unsigned char *)malloc(size) ;
+
+	if(mem == NULL)
+	{
+		std::cerr << "RsGRouterProofOfWorkObject: cannot allocate memory for " << size << " bytes." << std::endl;
+		return false ;
+	}
+
+	serialise(mem,size) ;
+
+	memset(mem,0,POW_PAYLOAD_SIZE) ;	// init the payload
+
+	while(true)
+	{
+		if(checkProofOfWork(mem,size))
+			break ;
+
+		int k ;
+		for(k=0;k<POW_PAYLOAD_SIZE;++k)
+		{
+			++mem[k] ;
+			if(mem[k]!=0)
+				break ;
+		}
+		if(k == POW_PAYLOAD_SIZE)
+			return false ;
+	}
+	memcpy(pow_bytes,mem,POW_PAYLOAD_SIZE) ;	// copy the good bytes.
+
+	free(mem) ;
+	return true ;
+}
+
+
+bool RsGRouterProofOfWorkObject::checkProofOfWork(unsigned char *mem,uint32_t size)
+{
+	Sha1CheckSum sum = RsDirUtil::sha1sum(mem,size) ;
+
+	for(uint32_t i=0;i<(7+PROOF_OF_WORK_REQUESTED_BYTES)/4;++i)
+		for(int j=0;j<(PROOF_OF_WORK_REQUESTED_BYTES%4);++j)
+			if(sum.fourbytes[i] & (0xff << (8*(3-j))) != 0)
+				return false ;
+
+	return true ;
 }
 
 /**********************************************************************************************/
@@ -102,11 +179,15 @@ RsGRouterItem *RsGRouterSerialiser::deserialise_RsGRouterPublishKeyItem(void *da
 
 	RsGRouterPublishKeyItem *item = new RsGRouterPublishKeyItem() ;
 
+	memcpy(&((uint8_t*)data)[offset],item->pow_bytes,RsGRouterProofOfWorkObject::POW_PAYLOAD_SIZE) ;
+	offset += 8 ;
+
 	ok &= getRawUInt32(data, pktsize, &offset, &item->diffusion_id); 	// file hash
 	ok &= getRawSha1(data, pktsize, &offset, item->published_key);
 	ok &= getRawUInt32(data, pktsize, &offset, &item->service_id); 	// file hash
 	ok &= getRawUFloat32(data, pktsize, &offset, item->randomized_distance); 	// file hash
 	ok &= GetTlvString(data, pktsize, &offset, TLV_TYPE_STR_VALUE,item->description_string);
+	ok &= getRawPGPFingerprint(data,pktsize,&offset,&item->fingerprint) ;
 
 	if (offset != rssize || !ok)
 	{
@@ -477,12 +558,14 @@ bool RsGRouterRoutingInfoItem::serialise(void *data,uint32_t& size) const
 std::ostream& RsGRouterPublishKeyItem::print(std::ostream& o, uint16_t)
 {
 	o << "GRouterPublishKeyItem:" << std::endl ;
+	o << "  POW bytes    : \""<< PGPIdType(pow_bytes).toStdString() << "\"" << std::endl ;
 	o << "  direct origin: \""<< PeerId() << "\"" << std::endl ;
 	o << "  Key:            " << published_key.toStdString() << std::endl ;
 	o << "  Req. Id:        " << std::hex << diffusion_id << std::dec << std::endl ;
 	o << "  Srv. Id:        " << std::hex << service_id << std::dec << std::endl ;
 	o << "  Distance:       " << randomized_distance << std::endl ;
 	o << "  Description:    " << description_string << std::endl ;
+	o << "  Fingerprint:    " << fingerprint.toStdString() << std::endl ;
 
 	return o ;
 }
