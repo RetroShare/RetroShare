@@ -3498,14 +3498,14 @@ bool p3ChatService::createDistantChatInvite(const std::string& pgp_id,time_t tim
 	//
 	// 	retroshare://chat?time_stamp=3243242&private_data=[radix64 string]
 
-	uint32_t header_size = DISTANT_CHAT_AES_KEY_SIZE + DISTANT_CHAT_HASH_SIZE + KEY_ID_SIZE;
+	uint32_t header_size = DISTANT_CHAT_AES_KEY_SIZE + DISTANT_CHAT_HASH_SIZE + PGP_KEY_ID_SIZE;
     unsigned char *data = new unsigned char[header_size+800] ;
 
 	PGPIdType OwnId(AuthGPG::getAuthGPG()->getGPGOwnId());
 
 	memcpy(data                                                 ,hash_bytes         ,DISTANT_CHAT_HASH_SIZE) ;
 	memcpy(data+DISTANT_CHAT_HASH_SIZE                          ,invite.aes_key     ,DISTANT_CHAT_AES_KEY_SIZE) ;
-	memcpy(data+DISTANT_CHAT_HASH_SIZE+DISTANT_CHAT_AES_KEY_SIZE,OwnId.toByteArray(),KEY_ID_SIZE) ;
+	memcpy(data+DISTANT_CHAT_HASH_SIZE+DISTANT_CHAT_AES_KEY_SIZE,OwnId.toByteArray(),PGP_KEY_ID_SIZE) ;
 
 #ifdef DEBUG_DISTANT_CHAT
 	std::cerr << "Performing signature " << std::endl;
@@ -3573,7 +3573,7 @@ bool p3ChatService::initiateDistantChatConnexion(const std::string& encrypted_st
 	std::cerr << "Chat invite was successfuly decrypted!" << std::endl;
 #endif
 
-	uint32_t header_size = DISTANT_CHAT_HASH_SIZE + DISTANT_CHAT_AES_KEY_SIZE + KEY_ID_SIZE ;
+	uint32_t header_size = DISTANT_CHAT_HASH_SIZE + DISTANT_CHAT_AES_KEY_SIZE + PGP_KEY_ID_SIZE ;
 
 	PGPIdType pgp_id( data + DISTANT_CHAT_HASH_SIZE + DISTANT_CHAT_AES_KEY_SIZE ) ;
 

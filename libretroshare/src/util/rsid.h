@@ -143,7 +143,11 @@ template<uint32_t ID_SIZE_IN_BYTES> t_RsGenericIdType<ID_SIZE_IN_BYTES>::t_RsGen
 	memcpy(bytes,mem,ID_SIZE_IN_BYTES) ;
 }
 
-static const int SSL_ID_SIZE = 16 ;
+static const int SSL_ID_SIZE              = 16 ;
+static const int PGP_KEY_ID_SIZE          =  8 ;
+static const int PGP_KEY_FINGERPRINT_SIZE = 20 ;
 
-typedef t_RsGenericIdType<SSL_ID_SIZE> SSLIdType ;
+typedef t_RsGenericIdType<SSL_ID_SIZE>              SSLIdType ;
+typedef t_RsGenericIdType<PGP_KEY_ID_SIZE> 			 PGPIdType;
+typedef t_RsGenericIdType<PGP_KEY_FINGERPRINT_SIZE> PGPFingerprintType ;
 

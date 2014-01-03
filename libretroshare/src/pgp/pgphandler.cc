@@ -813,7 +813,7 @@ bool PGPHandler::importGPGKeyPair(const std::string& filename,PGPIdType& importe
 		import_error = "File does not contain a public and a private key. Sorry." ;
 		return false ;
 	}
-	if(memcmp(pubkey->fingerprint.fingerprint,seckey->fingerprint.fingerprint,KEY_FINGERPRINT_SIZE) != 0)
+	if(memcmp(pubkey->fingerprint.fingerprint,seckey->fingerprint.fingerprint,PGP_KEY_FINGERPRINT_SIZE) != 0)
 	{
 		import_error = "Public and private keys do nt have the same fingerprint. Sorry!" ;
 		return false ;
@@ -840,7 +840,7 @@ bool PGPHandler::importGPGKeyPair(const std::string& filename,PGPIdType& importe
 	bool found = false ;
 
 	for(uint32_t i=0;i<result->valid_count;++i)
-		if(!memcmp((unsigned char*)result->valid_sigs[i].signer_id,pubkey->key_id,KEY_ID_SIZE)) 
+		if(!memcmp((unsigned char*)result->valid_sigs[i].signer_id,pubkey->key_id,PGP_KEY_ID_SIZE)) 
 		{
 			found = true ;
 			break ;
@@ -988,7 +988,7 @@ bool PGPHandler::LoadCertificateFromString(const std::string& pgp_cert,PGPIdType
 	bool found = false ;
 
 	for(uint32_t i=0;i<result->valid_count;++i)
-		if(!memcmp((unsigned char*)result->valid_sigs[i].signer_id,keydata->key_id,KEY_ID_SIZE)) 
+		if(!memcmp((unsigned char*)result->valid_sigs[i].signer_id,keydata->key_id,PGP_KEY_ID_SIZE)) 
 		{
 			found = true ;
 			break ;
@@ -1065,7 +1065,7 @@ bool PGPHandler::locked_addOrMergeKey(ops_keyring_t *keyring,std::map<std::strin
 	}
 	else
 	{
-		if(memcmp(existing_key->fingerprint.fingerprint, keydata->fingerprint.fingerprint,KEY_FINGERPRINT_SIZE))
+		if(memcmp(existing_key->fingerprint.fingerprint, keydata->fingerprint.fingerprint,PGP_KEY_FINGERPRINT_SIZE))
 		{
 			std::cerr << "(EE) attempt to merge key with identical id, but different fingerprint!" << std::endl;
 			return false ;
@@ -1642,7 +1642,7 @@ bool PGPHandler::privateTrustCertificate(const PGPIdType& id,int trustlvl)
 
 struct PrivateTrustPacket
 {
-	unsigned char user_id[KEY_ID_SIZE] ;  	// pgp id in unsigned char format.
+	unsigned char user_id[PGP_KEY_ID_SIZE] ;  	// pgp id in unsigned char format.
 	uint8_t trust_level ;						// trust level. From 0 to 6.
 	uint32_t time_stamp ;						// last time the cert was ever used, in seconds since the epoch. 0 means not initialized.
 };
@@ -1706,7 +1706,7 @@ bool PGPHandler::locked_writePrivateTrustDatabase()
 
 	for(std::map<std::string,PGPCertificateInfo>::iterator it = _public_keyring_map.begin();it!=_public_keyring_map.end() ;++it)
 	{
-		memcpy(trustpacket.user_id,PGPIdType(it->first).toByteArray(),KEY_ID_SIZE) ;
+		memcpy(trustpacket.user_id,PGPIdType(it->first).toByteArray(),PGP_KEY_ID_SIZE) ;
 		trustpacket.trust_level = it->second._trustLvl ;
 		trustpacket.time_stamp = it->second._time_stamp ;
 

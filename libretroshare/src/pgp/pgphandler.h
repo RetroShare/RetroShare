@@ -16,13 +16,7 @@ extern "C" {
 #include <openpgpsdk/keyring_local.h>
 }
 
-static const int KEY_ID_SIZE          =  8 ;
-static const int KEY_FINGERPRINT_SIZE = 20 ;
-
 typedef std::string (*PassphraseCallback)(void *data, const char *uid_hint, const char *passphrase_info, int prev_was_bad) ;
-
-typedef t_RsGenericIdType<KEY_ID_SIZE> 			 PGPIdType;
-typedef t_RsGenericIdType<KEY_FINGERPRINT_SIZE>  PGPFingerprintType ;
 
 class PGPCertificateInfo
 {
