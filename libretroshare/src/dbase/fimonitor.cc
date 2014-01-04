@@ -48,7 +48,7 @@
 #include <time.h>
 
 //***********
-//#define FIM_DEBUG 1
+#define FIM_DEBUG 1
 // ***********/
 
 FileIndexMonitor::FileIndexMonitor(CacheStrapper *cs, NotifyBase *cb_in,std::string cachedir, std::string pid,const std::string& config_dir)
@@ -135,19 +135,10 @@ HashCache::HashCache(const std::string& path)
 		f.getline(buff,max_line_size,'\n') ; //if(sscanf(buff,"%llu",&info.size) != 1) break ;
 
 		info.size = 0 ;
-#ifdef WINDOWS_SYS
-		sscanf(buff, UINT64FMT, &info.size);
-#else
-		sscanf(buff, "%lu", &info.size);
-#endif
+		sscanf(buff, RsDirUtil::scanf_string_for_uint(sizeof(info.size)), &info.size);
 
-#ifdef WINDOWS_SYS
-		f.getline(buff,max_line_size,'\n') ; if(sscanf(buff,UINT64FMT,&info.time_stamp) != 1) { std::cerr << "Could not read one entry! Giving up." << std::endl; break ; }
-		f.getline(buff,max_line_size,'\n') ; if(sscanf(buff,UINT64FMT,&info.modf_stamp) != 1) { std::cerr << "Could not read one entry! Giving up." << std::endl; break ; }
-#else
-		f.getline(buff,max_line_size,'\n') ; if(sscanf(buff,"%lu",&info.time_stamp) != 1) { std::cerr << "Could not read one entry! Giving up." << std::endl; break ; }
-		f.getline(buff,max_line_size,'\n') ; if(sscanf(buff,"%lu",&info.modf_stamp) != 1) { std::cerr << "Could not read one entry! Giving up." << std::endl; break ; }
-#endif
+		f.getline(buff,max_line_size,'\n') ; if(sscanf(buff,RsDirUtil::scanf_string_for_uint(sizeof(info.time_stamp)),&info.time_stamp) != 1) { std::cerr << "Could not read one entry! Giving up." << std::endl; break ; }
+		f.getline(buff,max_line_size,'\n') ; if(sscanf(buff,RsDirUtil::scanf_string_for_uint(sizeof(info.modf_stamp)),&info.modf_stamp) != 1) { std::cerr << "Could not read one entry! Giving up." << std::endl; break ; }
 		f.getline(buff,max_line_size,'\n') ; info.hash = std::string(buff) ;
 
 		if(info.hash.length() != 40)

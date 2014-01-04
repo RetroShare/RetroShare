@@ -79,6 +79,12 @@ uint32_t rs_CRC32(const unsigned char *data,uint32_t len) ;
 //
 bool crc32File(FILE *f,uint64_t file_size,uint32_t chunk_size,CRC32Map& map) ;
 
+// Returns %u, %lu, or %llu, depending on the size of unsigned int, unsigned long and unsigned long long on the current system.
+// Use as;
+// 			sscanf(string, RsDirUtil::scanf_string_for_uint( sizeof(X) ), &X) ;
+//
+const char *scanf_string_for_uint(int bytes) ; 
+
 int     	breakupDirList(const std::string& path, std::list<std::string> &subdirs);
 
 bool 		copyFile(const std::string& source,const std::string& dest);
