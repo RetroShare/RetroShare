@@ -47,7 +47,7 @@ static QString getInfoFromFilename(const QString& filename, bool anyForUnknown, 
 		return image ? ":/images/FileTypeProgram.png" : QApplication::translate("FilesDefs", "Program");
 	} else if (ext == "iso" || ext == "nrg" || ext == "mdf" || ext == "img" || ext == "dmg" || ext == "bin" || ext == "uif") {
 		return image ? ":/images/FileTypeCDImage.png" : QApplication::translate("FilesDefs", "CD/DVD-Image");
-	} else if (ext == "txt" || ext == "cpp" || ext == "c" || ext == "h" || ext == "ui" ||
+	} else if (ext == "txt" || ext == "ui" ||
 			   ext == "doc" || ext == "rtf" || ext == "sxw" || ext == "xls" || ext == "pps" || ext == "xml" || ext == "nfo" ||
 			   ext == "reg" || ext == "sxc" || ext == "odt" || ext == "ods" || ext == "dot" || ext == "ppt" || ext == "css" || ext == "crt" ||
 			   ext == "html" || ext == "htm" || ext == "php") {
@@ -62,6 +62,12 @@ static QString getInfoFromFilename(const QString& filename, bool anyForUnknown, 
 		return image ? ":/images/FileTypeAny.png" : QApplication::translate("FilesDefs", "Nintendo DS Rom");
 	} else if (ext == "patch" || ext == "diff") {
 		return image ? ":/images/mimetypes/patch.png" : QApplication::translate("FilesDefs", "Patch");
+	} else if (ext == "cpp") {
+		return image ? ":/images/mimetypes/source_cpp.png" : QApplication::translate("FilesDefs", "C++");
+	} else if (ext == "h") {
+		return image ? ":/images/mimetypes/source_h.png" : QApplication::translate("FilesDefs", "Header");
+	} else if (ext == "c") {
+		return image ? ":/images/mimetypes/source_c.png" : QApplication::translate("FilesDefs", "C ");
 	}
 
 

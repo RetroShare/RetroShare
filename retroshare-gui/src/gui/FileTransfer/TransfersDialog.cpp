@@ -551,7 +551,7 @@ void TransfersDialog::processSettings(bool bLoad)
         ULHeader->restoreState(Settings->value("uploadList").toByteArray());
 
         // state of splitter
-//        ui.splitter->restoreState(Settings->value("Splitter").toByteArray());
+        ui.splitter->restoreState(Settings->value("Splitter").toByteArray());
 
         setShowDLSizeColumn(Settings->value("showDLSizeColumn", !ui.downloadList->isColumnHidden(COLUMN_SIZE)).toBool());
         setShowDLCompleteColumn(Settings->value("showDLCompleteColumn", !ui.downloadList->isColumnHidden(COLUMN_COMPLETED)).toBool());
@@ -579,7 +579,7 @@ void TransfersDialog::processSettings(bool bLoad)
         Settings->setValue("uploadList", ULHeader->saveState());
 
         // state of splitter
-//        Settings->setValue("Splitter", ui.splitter->saveState());
+        Settings->setValue("Splitter", ui.splitter->saveState());
 
         Settings->setValue("showDLSizeColumn", !ui.downloadList->isColumnHidden(COLUMN_SIZE));
         Settings->setValue("showDLCompleteColumn", !ui.downloadList->isColumnHidden(COLUMN_COMPLETED));

@@ -450,6 +450,9 @@
         <file>images/mimetypes/pdf.png</file>
         <file>images/mimetypes/rscollection-16.png</file>
         <file>images/mimetypes/patch.png</file>
+        <file>images/mimetypes/source_c.png</file>
+        <file>images/mimetypes/source_cpp.png</file>
+        <file>images/mimetypes/source_h.png</file>
         <file>images/view-certificate-copy-32.png</file>
         <file>images/view-certificate-export-32.png</file>
         <file>images/textedit/textbold.png</file>
