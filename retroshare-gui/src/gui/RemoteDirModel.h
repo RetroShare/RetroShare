@@ -30,6 +30,14 @@
 
 class DirDetails;
 
+class DirDetailsVector : public DirDetails
+{
+public:
+	DirDetailsVector() : DirDetails() {}
+
+	std::vector<DirStub> childrenVector; // For fast access with index (can we change the std::list on DirDetails to std::vector?)
+};
+
 static const uint32_t IND_LAST_DAY    = 3600*24 ;
 static const uint32_t IND_LAST_WEEK   = 3600*24*7 ;
 static const uint32_t IND_LAST_MONTH  = 3600*24*31	; // I know, this is approximate
@@ -66,10 +74,10 @@ class RetroshareDirModel : public QAbstractItemModel
 		void getFilePaths(const QModelIndexList &list, std::list<std::string> &fullpaths);
 		void changeAgeIndicator(uint32_t indicator) { ageIndicator = indicator; }
 
-		bool requestDirDetails(void *ref,DirDetails& details,FileSearchFlags flags) const;
+		const DirDetailsVector *requestDirDetails(void *ref, bool remote) const;
 		void update() ;
-	public:
 
+	public:
 		virtual QMimeData * mimeData ( const QModelIndexList & indexes ) const;
 		virtual QStringList mimeTypes () const;
 		virtual QVariant data(const QModelIndex &index, int role) const;
@@ -86,7 +94,7 @@ class RetroshareDirModel : public QAbstractItemModel
 		static QString getFlagsString(FileStorageFlags f) ;
 		static QString getGroupsString(const std::list<std::string>&) ;
 		QString getAgeIndicatorString(const DirDetails &) const;
-		void getAgeIndicatorRec(DirDetails &details, QString &ret) const;
+//		void getAgeIndicatorRec(const DirDetails &details, QString &ret) const;
 
 		virtual QVariant displayRole(const DirDetails&,int) const = 0 ;
 		virtual QVariant sortRole(const QModelIndex&,const DirDetails&,int) const =0;
@@ -135,6 +143,7 @@ class RetroshareDirModel : public QAbstractItemModel
 		};
 
 		bool RemoteMode;
+		QMap<void*, DirDetailsVector> mCache;
 
 		mutable int nIndex;
 		mutable std::vector<RemoteIndex> indexSet;

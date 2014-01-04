@@ -1340,7 +1340,7 @@ bool FileIndex::extractData(void *ref,DirDetails& details)
 	FileEntry *file = static_cast<FileEntry *>(ref);
 	DirEntry *dir = (file->hash.empty())?static_cast<DirEntry *>(file):NULL ; // This is a hack to avoid doing a dynamic_cast
 
-	details.children = std::list<DirStub>() ;
+	details.children.clear() ;
 	time_t now = time(NULL) ;
 
 	if (dir!=NULL) /* has children --- fill */
@@ -1351,20 +1351,24 @@ bool FileIndex::extractData(void *ref,DirDetails& details)
 		/* extract all the entries */
 		for(std::map<std::string,DirEntry*>::const_iterator dit(dir->subdirs.begin()); dit != dir->subdirs.end(); ++dit)
 		{
+			DirEntry *dirEntry = dit->second;
+
 			DirStub stub;
 			stub.type = DIR_TYPE_DIR;
-			stub.name = (dit->second) -> name;
-			stub.ref  = (dit->second);
+			stub.name = dirEntry -> name;
+			stub.ref  = dirEntry;
 
 			details.children.push_back(stub);
 		}
 
 		for(std::map<std::string,FileEntry*>::const_iterator fit(dir->files.begin()); fit != dir->files.end(); ++fit)
 		{
+			FileEntry *fileEntry = fit->second;
+
 			DirStub stub;
 			stub.type = DIR_TYPE_FILE;
-			stub.name = (fit->second) -> name;
-			stub.ref  = (fit->second);
+			stub.name = fileEntry -> name;
+			stub.ref  = fileEntry;
 
 			details.children.push_back(stub);
 		}

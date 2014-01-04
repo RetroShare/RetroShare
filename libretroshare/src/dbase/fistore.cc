@@ -247,10 +247,12 @@ int FileIndexStore::RequestDirDetails(void *ref, DirDetails &details, FileSearch
 		{
 			/*
 			 */
+			FileIndex *fileIndex = pit->second;
+
 			DirStub stub;
 			stub.type = DIR_TYPE_PERSON;
-			stub.name = (pit->second)->root->name;
-			stub.ref =  (pit->second)->root;
+			stub.name = fileIndex->root->name;
+			stub.ref =  fileIndex->root;
 
 			details.children.push_back(stub);
 		}
