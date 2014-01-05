@@ -75,7 +75,7 @@ class RetroshareDirModel : public QAbstractItemModel
 		void changeAgeIndicator(uint32_t indicator) { ageIndicator = indicator; }
 
 		const DirDetailsVector *requestDirDetails(void *ref, bool remote) const;
-		void update() ;
+		virtual void update() {} ;
 
 	public:
 		virtual QMimeData * mimeData ( const QModelIndexList & indexes ) const;
@@ -87,7 +87,6 @@ class RetroshareDirModel : public QAbstractItemModel
 
 	protected:
 		bool _visible ;
-		bool _needs_update ;
 
 		void treeStyle();
 		void downloadDirectory(const DirDetails & details, int prefixLen);
@@ -192,9 +191,12 @@ class FlatStyle_RDM: public RetroshareDirModel
 		FlatStyle_RDM(bool mode)
 			: RetroshareDirModel(mode)
 		{
+			_needs_update = true ;
 		}
 
 		virtual ~FlatStyle_RDM() ;
+
+		virtual void update() ;
 
 	protected slots:
 		void updateRefs() ;
@@ -217,6 +219,7 @@ class FlatStyle_RDM: public RetroshareDirModel
 
 		std::vector<std::pair<void *,QString> > _ref_entries ;// used to store the refs to display
 		std::vector<void *> _ref_stack ;		// used to store the refs to update
+		bool _needs_update ;
 };
 
 

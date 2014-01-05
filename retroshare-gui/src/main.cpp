@@ -372,10 +372,6 @@ int main(int argc, char *argv[])
 	QObject::connect(notify,SIGNAL(deferredSignatureHandlingRequested()),notify,SLOT(handleSignatureEvent()),Qt::QueuedConnection) ;
 	QObject::connect(notify,SIGNAL(chatLobbyTimeShift(int)),notify,SLOT(handleChatLobbyTimeShift(int)),Qt::QueuedConnection) ;
 	QObject::connect(notify,SIGNAL(diskFull(int,int))						,w                   		,SLOT(displayDiskSpaceWarning(int,int))) ;
-	QObject::connect(notify,SIGNAL(filesPreModChanged(bool))          ,w->transfersDialog->localSharedFiles			,SLOT(preModDirectories(bool)          )) ;
-	QObject::connect(notify,SIGNAL(filesPreModChanged(bool))          ,w->transfersDialog->remoteSharedFiles		,SLOT(preModDirectories(bool)          )) ;
-	QObject::connect(notify,SIGNAL(filesPostModChanged(bool))         ,w->transfersDialog->localSharedFiles			,SLOT(postModDirectories(bool)         )) ;
-	QObject::connect(notify,SIGNAL(filesPostModChanged(bool))         ,w->transfersDialog->remoteSharedFiles		,SLOT(postModDirectories(bool)         )) ;
 	QObject::connect(notify,SIGNAL(filesPostModChanged(bool))         ,w                         ,SLOT(postModDirectories(bool)         )) ;
 	QObject::connect(notify,SIGNAL(transfersChanged())                ,w->transfersDialog  		,SLOT(insertTransfers()                )) ;
 	QObject::connect(notify,SIGNAL(publicChatChanged(int))            ,w->friendsDialog      		,SLOT(publicChatChanged(int)           ));

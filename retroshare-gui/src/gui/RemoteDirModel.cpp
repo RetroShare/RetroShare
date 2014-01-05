@@ -49,7 +49,6 @@ RetroshareDirModel::RetroshareDirModel(bool mode, QObject *parent)
          RemoteMode(mode), nIndex(1), indexSet(1) /* ass zero index cant be used */
 {
 	_visible = false ;
-	_needs_update = true ;
 #if QT_VERSION < QT_VERSION_CHECK (5, 0, 0)
 	setSupportedDragActions(Qt::CopyAction);
 #endif
@@ -64,7 +63,7 @@ Qt::DropActions RetroshareDirModel::supportedDragActions() const
 }
 #endif
 
-void RetroshareDirModel::update()
+void FlatStyle_RDM::update()
 {
 	if(_needs_update)
 	{
@@ -845,34 +844,42 @@ Qt::ItemFlags RetroshareDirModel::flags( const QModelIndex & index ) const
 
 
 /* Callback from */
- void RetroshareDirModel::preMods()
- {
+void RetroshareDirModel::preMods()
+{
+	reset();
+
 #ifdef RDM_DEBUG
 	std::cerr << "RetroshareDirModel::preMods()" << std::endl;
 #endif
-	//modelAboutToBeReset();
-//	reset();
+}
+
+/* Callback from */
+void RetroshareDirModel::postMods()
+{
+	emit layoutAboutToBeChanged();
 #if QT_VERSION >= 0x040600
 	beginResetModel();
 #endif
-	layoutAboutToBeChanged();
+
+//	QModelIndexList piList = persistentIndexList();
+//	QModelIndexList empty;
+//	for (int i = 0; i < piList.size(); i++) {
+//		empty.append(QModelIndex());
+//	}
+//	changePersistentIndexList(piList, empty);
 
 	/* Clear caches */
 	mCache.clear();
- }
 
-/* Callback from */
- void RetroshareDirModel::postMods()
- {
 #ifdef RDM_DEBUG
 	std::cerr << "RetroshareDirModel::postMods()" << std::endl;
 #endif
-	//modelReset();
-	layoutChanged();
+
 #if QT_VERSION >= 0x040600
 	endResetModel();
 #endif
- }
+	emit layoutChanged();
+}
 
 const DirDetailsVector *RetroshareDirModel::requestDirDetails(void *ref, bool remote) const
 {

@@ -40,6 +40,7 @@
 #include "ShareDialog.h"
 #include "common/PeerDefs.h"
 #include "util/QtVersion.h"
+#include "notifyqt.h"
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsfiles.h>
@@ -73,7 +74,7 @@ public:
     SFDSortFilterProxyModel(RetroshareDirModel *dirModel, QObject *parent) : QSortFilterProxyModel(parent)
     {
         m_dirModel = dirModel;
-    };
+    }
 
 protected:
     virtual bool lessThan(const QModelIndex &left, const QModelIndex &right) const
@@ -98,6 +99,10 @@ SharedFilesDialog::SharedFilesDialog(RetroshareDirModel *_tree_model,RetroshareD
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
+
+	NotifyQt *notify = NotifyQt::getInstance();
+	connect(notify, SIGNAL(filesPreModChanged(bool)), this, SLOT(preModDirectories(bool)));
+	connect(notify, SIGNAL(filesPostModChanged(bool)), this, SLOT(postModDirectories(bool)));
 
 //==	connect(ui.localButton, SIGNAL(toggled(bool)), this, SLOT(showFrame(bool)));
 //==	connect(ui.remoteButton, SIGNAL(toggled(bool)), this, SLOT(showFrameRemote(bool)));
@@ -673,14 +678,26 @@ void LocalSharedFilesDialog::openfolder()
 	model->openSelected(qmil);
 }
 
-void  SharedFilesDialog::preModDirectories()
+void  SharedFilesDialog::preModDirectories(bool local)
 {
-	model->preMods();
+	if (isRemote() == local) {
+		return;
+	}
+
+	/* Notify both models, only one is visible */
+	tree_model->preMods();
+	flat_model->preMods();
 }
 
-void  SharedFilesDialog::postModDirectories()
+void  SharedFilesDialog::postModDirectories(bool local)
 {
-	model->postMods();
+	if (isRemote() == local) {
+		return;
+	}
+
+	/* Notify both models, only one is visible */
+	tree_model->postMods();
+	flat_model->postMods();
 	ui.dirTreeView->update() ;
 
 	if (ui.filterPatternLineEdit->text().isEmpty() == false) 

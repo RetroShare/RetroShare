@@ -53,8 +53,8 @@ protected slots:
 private slots:
 
 	/* For handling the model updates */
-  void  preModDirectories() ;
-  void  postModDirectories() ;
+  void  preModDirectories(bool local) ;
+  void  postModDirectories(bool local) ;
 
   /** Create the context popup menu and it's submenus */
 //  void customPopupMenu(QPoint point) ;
