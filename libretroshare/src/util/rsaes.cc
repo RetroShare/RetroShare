@@ -81,6 +81,7 @@ bool RsAES::aes_crypt_8_16(const uint8_t *input_data,uint32_t input_data_length,
 
 	output_data_length = c_len + f_len;
 
+	EVP_CIPHER_CTX_cleanup(&e_ctx) ;
 	return true;
 }
 
@@ -133,6 +134,7 @@ bool RsAES::aes_decrypt_8_16(const uint8_t *input_data,uint32_t input_data_lengt
 
 	output_data_length = c_len + f_len;
 
+	EVP_CIPHER_CTX_cleanup(&e_ctx) ;
 	return true;
 }
 
