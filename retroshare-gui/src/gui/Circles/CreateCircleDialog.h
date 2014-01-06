@@ -52,6 +52,7 @@ private slots:
 	void selectedMember(QTreeWidgetItem*, QTreeWidgetItem*);
 
 	void createCircle();
+	void filterChanged(const QString &text);
 
 private:
 	void setupForPersonalCircle();
@@ -66,6 +67,8 @@ private:
 	void requestCircle(const RsGxsGroupId &groupId);
 	void requestGxsIdentities();
 	void getPgpIdentities();
+	
+	void filterIds();
 
 	TokenQueue *mCircleQueue;
 	TokenQueue *mIdQueue;

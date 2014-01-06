@@ -61,7 +61,16 @@ CreateCircleDialog::CreateCircleDialog()
 
 	connect(ui.treeWidget_membership, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(selectedMember(QTreeWidgetItem*, QTreeWidgetItem*)));
 	connect(ui.treeWidget_IdList, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(selectedId(QTreeWidgetItem*, QTreeWidgetItem*)));
+	
+	connect(ui.IdFilter, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
 
+	/* Add filter actions */
+	QTreeWidgetItem *headerItem = ui.treeWidget_IdList->headerItem();
+	QString headerText = headerItem->text(RSCIRCLEID_COL_NICKNAME);
+	ui.IdFilter->addFilter(QIcon(), headerText, RSCIRCLEID_COL_NICKNAME, QString("%1 %2").arg(tr("Search"), headerText));
+	headerText = headerItem->text(RSCIRCLEID_COL_KEYID);
+	ui.IdFilter->addFilter(QIcon(), headerItem->text(RSCIRCLEID_COL_KEYID), RSCIRCLEID_COL_KEYID, QString("%1 %2").arg(tr("Search"), headerText));
+	
 	ui.removeButton->setEnabled(false);
 	ui.addButton->setEnabled(false);
 	ui.radioButton_ListKnownPGP->setChecked(true);
@@ -418,6 +427,8 @@ void CreateCircleDialog::getPgpIdentities()
 
 		tree->addTopLevelItem(item);
 	}
+	
+	filterIds();
 }
 
 
@@ -539,4 +550,17 @@ void CreateCircleDialog::loadRequest(const TokenQueue *queue, const TokenRequest
 				std::cerr << std::endl;
 		}
 	}
+}
+
+void CreateCircleDialog::filterChanged(const QString& /*text*/)
+{
+	filterIds();
+}
+
+void CreateCircleDialog::filterIds()
+{
+	int filterColumn = ui.IdFilter->currentFilter();
+	QString text = ui.IdFilter->text();
+
+	ui.treeWidget_IdList->filterItems(filterColumn, text);
 }

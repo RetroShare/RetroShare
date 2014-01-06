@@ -79,6 +79,14 @@ CirclesDialog::CirclesDialog(QWidget *parent)
 
 	/* Setup TokenQueue */
 	mCircleQueue = new TokenQueue(rsGxsCircles->getTokenService(), this);
+	
+	/* Set header resize modes and initial section sizes */
+  QHeaderView * membership_header = ui.treeWidget_membership->header () ;
+  membership_header->resizeSection ( CIRCLEGROUP_CIRCLE_COL_GROUPNAME, 200 );
+
+  QHeaderView * friends_header = ui.treeWidget_friends->header () ;
+  friends_header->resizeSection ( CIRCLEGROUP_FRIEND_COL_NAME, 200 );
+  
 }
 
 void CirclesDialog::todo()

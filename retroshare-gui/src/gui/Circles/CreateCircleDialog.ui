@@ -49,6 +49,9 @@
           <layout class="QVBoxLayout" name="verticalLayout_2">
            <item>
             <widget class="QTreeWidget" name="treeWidget_membership">
+             <property name="sortingEnabled">
+              <bool>true</bool>
+             </property>
              <column>
               <property name="text">
                <string>Name</string>
@@ -81,15 +84,29 @@
           </item>
           <item>
            <widget class="QPushButton" name="addButton">
+            <property name="toolTip">
+             <string>Add</string>
+            </property>
             <property name="text">
-             <string>&lt;&lt; Add</string>
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="../images.qrc">
+              <normaloff>:/images/back.png</normaloff>:/images/back.png</iconset>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QPushButton" name="removeButton">
+            <property name="toolTip">
+             <string>Remove </string>
+            </property>
             <property name="text">
-             <string>&gt;&gt; Remove </string>
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="../images.qrc">
+              <normaloff>:/images/forward.png</normaloff>:/images/forward.png</iconset>
             </property>
            </widget>
           </item>
@@ -156,12 +173,15 @@
               </widget>
              </item>
              <item>
-              <widget class="QLineEdit" name="IdFilter"/>
+              <widget class="LineEditClear" name="IdFilter"/>
              </item>
             </layout>
            </item>
            <item>
-            <widget class="QTreeWidget" name="treeWidget_IdList">
+            <widget class="RSTreeWidget" name="treeWidget_IdList">
+             <property name="sortingEnabled">
+              <bool>true</bool>
+             </property>
              <column>
               <property name="text">
                <string>Nickname</string>
@@ -305,8 +325,6 @@
        </widget>
       </item>
      </layout>
-     <zorder>buttonBox</zorder>
-     <zorder>groupBox_title</zorder>
     </widget>
    </item>
   </layout>
@@ -328,7 +346,19 @@
    <header>gui/common/HeaderFrame.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>LineEditClear</class>
+   <extends>QLineEdit</extends>
+   <header>gui/common/LineEditClear.h</header>
+  </customwidget>
+  <customwidget>
+   <class>RSTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>gui/common/RSTreeWidget.h</header>
+  </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../images.qrc"/>
+ </resources>
  <connections/>
 </ui>

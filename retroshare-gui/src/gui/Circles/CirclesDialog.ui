@@ -117,6 +117,9 @@
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
          <widget class="QTreeWidget" name="treeWidget_membership">
+          <property name="sortingEnabled">
+           <bool>true</bool>
+          </property>
           <column>
            <property name="text">
             <string>Name</string>
@@ -129,12 +132,12 @@
           </column>
           <item>
            <property name="text">
-            <string>Personal Circles</string>
+            <string>Public Circles</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>Public Circles</string>
+            <string>Personal Circles</string>
            </property>
           </item>
          </widget>
@@ -153,6 +156,9 @@
        <layout class="QVBoxLayout" name="verticalLayout">
         <item>
          <widget class="QTreeWidget" name="treeWidget_friends">
+          <property name="sortingEnabled">
+           <bool>true</bool>
+          </property>
           <column>
            <property name="text">
             <string>Name</string>
@@ -170,7 +176,7 @@
           </column>
           <item>
            <property name="text">
-            <string>Friends</string>
+            <string>Others</string>
            </property>
            <property name="text">
             <string/>
@@ -186,7 +192,7 @@
           </item>
           <item>
            <property name="text">
-            <string>Others</string>
+            <string>Friends</string>
            </property>
            <property name="text">
             <string/>
@@ -237,6 +243,7 @@
   </layout>
  </widget>
  <resources>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>
