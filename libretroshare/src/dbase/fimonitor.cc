@@ -859,6 +859,8 @@ void 	FileIndexMonitor::updateCycle()
 
 	cb->notifyHashingInfo(NOTIFY_HASHTYPE_FINISH, "") ;
 
+	int cleanedCount = 0;
+
 	{ /* LOCKED DIRS */
 		RsStackMutex stack(fiMutex); /**** LOCKED DIRS ****/
 
@@ -866,7 +868,7 @@ void 	FileIndexMonitor::updateCycle()
 		 * have not had their timestamps updated.
 		 */
 
-		fi.cleanOldEntries(startstamp) ;
+		cleanedCount = fi.cleanOldEntries(startstamp) ;
 
 #ifdef FIM_DEBUG
 		/* print out the new directory structure */
@@ -900,6 +902,11 @@ void 	FileIndexMonitor::updateCycle()
 			hashCache.clean() ;
 			hashCache.save() ;
 		}
+	}
+
+	if (cleanedCount > 0) {
+//		cb->notifyListPreChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
+		cb->notifyListChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
 	}
 }
 
