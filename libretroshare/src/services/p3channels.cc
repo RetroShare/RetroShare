@@ -25,7 +25,7 @@
 
 #include "services/p3channels.h"
 #include "util/rsdir.h"
-#include "retroshare/rsiface.h"
+#include "rsserver/p3face.h"
 
 std::ostream &operator<<(std::ostream &out, const ChannelInfo &info)
 {
@@ -342,8 +342,8 @@ bool p3Channels::setMessageStatus(const std::string& cId,const std::string& mId,
 	} /******* UNLOCKED ********/
 
 	if (changed) {
-		rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_CHANNELLIST_LOCKED, NOTIFY_TYPE_MOD);
-		rsicontrol->getNotify().notifyChannelMsgReadSatusChanged(cId, mId, newStatus);
+		RsServer::notify()->notifyListChange(NOTIFY_LIST_CHANNELLIST_LOCKED, NOTIFY_TYPE_MOD);
+		RsServer::notify()->notifyChannelMsgReadSatusChanged(cId, mId, newStatus);
 	}
 
 	return true;
@@ -898,8 +898,6 @@ bool p3Channels::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, con
 	return true;
 }
 
-#include "pqi/pqinotify.h"
-
 bool p3Channels::locked_eventNewMsg(GroupInfo *grp, RsDistribMsg *msg, const std::string& id, bool historical)
 {
 	std::string grpId = msg->grpId;
@@ -908,7 +906,7 @@ bool p3Channels::locked_eventNewMsg(GroupInfo *grp, RsDistribMsg *msg, const std
 
 	if (!historical)
 	{
-		getPqiNotify()->AddFeedItem(RS_FEED_ITEM_CHAN_MSG, grpId, msgId, nullId);
+		RsServer::notify()->AddFeedItem(RS_FEED_ITEM_CHAN_MSG, grpId, msgId, nullId);
 	}
 	
 	/* request the files 
@@ -935,9 +933,9 @@ void p3Channels::locked_notifyGroupChanged(GroupInfo &grp, uint32_t flags, bool 
                         #endif
 			if (!historical)
 			{
-				getPqiNotify()->AddFeedItem(RS_FEED_ITEM_CHAN_NEW, grpId, msgId, nullId);
+				RsServer::notify()->AddFeedItem(RS_FEED_ITEM_CHAN_NEW, grpId, msgId, nullId);
 			}
-                        rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_CHANNELLIST_LOCKED, NOTIFY_TYPE_ADD);
+			RsServer::notify()->notifyListChange(NOTIFY_LIST_CHANNELLIST_LOCKED, NOTIFY_TYPE_ADD);
 			break;
 		case GRP_UPDATE:
                         #ifdef CHANNEL_DEBUG
@@ -945,9 +943,9 @@ void p3Channels::locked_notifyGroupChanged(GroupInfo &grp, uint32_t flags, bool 
                         #endif
 			if (!historical)
 			{
-				getPqiNotify()->AddFeedItem(RS_FEED_ITEM_CHAN_UPDATE, grpId, msgId, nullId);
+				RsServer::notify()->AddFeedItem(RS_FEED_ITEM_CHAN_UPDATE, grpId, msgId, nullId);
 			}
-                        rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_CHANNELLIST_LOCKED, NOTIFY_TYPE_MOD);
+			RsServer::notify()->notifyListChange(NOTIFY_LIST_CHANNELLIST_LOCKED, NOTIFY_TYPE_MOD);
 			break;
 		case GRP_LOAD_KEY:
                         #ifdef CHANNEL_DEBUG
@@ -958,7 +956,7 @@ void p3Channels::locked_notifyGroupChanged(GroupInfo &grp, uint32_t flags, bool 
                         #ifdef CHANNEL_DEBUG
                         std::cerr << "p3Channels::locked_notifyGroupChanged() NEW MSG" << std::endl;
                         #endif
-                        rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_CHANNELLIST_LOCKED, NOTIFY_TYPE_ADD);
+								RsServer::notify()->notifyListChange(NOTIFY_LIST_CHANNELLIST_LOCKED, NOTIFY_TYPE_ADD);
                         break;
 		case GRP_SUBSCRIBED:
                         #ifdef CHANNEL_DEBUG
@@ -978,13 +976,13 @@ void p3Channels::locked_notifyGroupChanged(GroupInfo &grp, uint32_t flags, bool 
 		/* check if downloads need to be started? */
 	}
 
-                        rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_CHANNELLIST_LOCKED, NOTIFY_TYPE_ADD);
+	RsServer::notify()->notifyListChange(NOTIFY_LIST_CHANNELLIST_LOCKED, NOTIFY_TYPE_ADD);
 			break;
 		case GRP_UNSUBSCRIBED:
                         #ifdef CHANNEL_DEBUG
                         std::cerr << "p3Channels::locked_notifyGroupChanged() UNSUBSCRIBED" << std::endl;
                          #endif
-                        rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_CHANNELLIST_LOCKED, NOTIFY_TYPE_DEL);
+								RsServer::notify()->notifyListChange(NOTIFY_LIST_CHANNELLIST_LOCKED, NOTIFY_TYPE_DEL);
 
 		/* won't stop downloads... */
 

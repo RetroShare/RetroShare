@@ -48,7 +48,7 @@ class p3PeerMgr ;
 class ftFiStore: public FileIndexStore, public ftSearch
 {
 	public:
-	ftFiStore(CacheStrapper *cs, CacheTransfer *cft, NotifyBase *cb_in, p3PeerMgr *pm,
+	ftFiStore(CacheStrapper *cs, CacheTransfer *cft, p3PeerMgr *pm,
                         RsPeerId ownid, std::string cachedir);
 
 	/* overloaded search function */
@@ -58,7 +58,7 @@ virtual bool search(const std::string &hash, FileSearchFlags hintflags, FileInfo
 class ftFiMonitor: public FileIndexMonitor, public ftSearch, public p3Config
 {
 	public:
-	ftFiMonitor(CacheStrapper *cs,NotifyBase *cb_in, std::string cachedir, std::string pid,const std::string& config_dir);
+	ftFiMonitor(CacheStrapper *cs,std::string cachedir, std::string pid,const std::string& config_dir);
 
 	/* overloaded search function */
 	virtual bool search(const std::string &hash, FileSearchFlags hintflags, FileInfo &info) const;

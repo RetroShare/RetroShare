@@ -31,6 +31,7 @@
 //#include "pqi/pqissl.h"
 
 #include "pqi/p3cfgmgr.h"
+#include "pqi/p3notify.h"
 #include "pqi/pqipersongrp.h"
 
 #include "retroshare/rsiface.h"
@@ -73,27 +74,22 @@ class RsPluginManager;
 //int InitRetroShare(int argc, char **argv, RsInit *config);
 //int LoadCertificates(RsInit *config);
 
-RsControl *createRsControl(NotifyBase &notify);
-
-
 class RsServer: public RsControl, public RsThread
 {
 	public:
 		/****************************************/
 		/* p3face-startup.cc: init... */
-		virtual	int StartupRetroShare();
+		virtual int StartupRetroShare();
 
-	public:
 		/****************************************/
 		/* p3face.cc: main loop / util fns / locking. */
 
-		RsServer(NotifyBase &callback);
+		RsServer() ;
 		virtual ~RsServer();
 
 		/* Thread Fn: Run the Core */
 		virtual void run();
 
-	public: // no longer private:!!!
 		/* locking stuff */
 		void    lockRsCore() 
 		{ 
@@ -106,6 +102,8 @@ class RsServer: public RsControl, public RsThread
 			//	std::cerr << "RsServer::unlockRsCore()" << std::endl;
 			coreMutex.unlock(); 
 		}
+
+		static p3Notify *notify() { return dynamic_cast<RsServer*>(instance())->mNotify ; }
 
 	private:
 
@@ -186,19 +184,22 @@ class RsServer: public RsControl, public RsThread
 		p3Forums *mForums;
 		/* caches (that need ticking) */
 
-                /* GXS */
-                p3Wiki *mWiki;
-                p3Posted *mPosted;
-                p3PhotoService *mPhoto;
-                p3GxsCircles *mGxsCircles;
-                p3IdService *mGxsIdService;
-                p3GxsForums *mGxsForums;
-                p3GxsChannels *mGxsChannels;
-                p3Wire *mWire;
+		/* GXS */
+		p3Wiki *mWiki;
+		p3Posted *mPosted;
+		p3PhotoService *mPhoto;
+		p3GxsCircles *mGxsCircles;
+		p3IdService *mGxsIdService;
+		p3GxsForums *mGxsForums;
+		p3GxsChannels *mGxsChannels;
+		p3Wire *mWire;
 
 		/* Config */
 		p3ConfigMgr     *mConfigMgr;
 		p3GeneralConfig *mGeneralConfig;
+
+		// notify
+		p3Notify *mNotify ;
 
 		// Worker Data.....
 

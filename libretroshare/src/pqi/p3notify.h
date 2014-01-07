@@ -27,7 +27,7 @@
  */
 
 #include "retroshare/rsnotify.h"
-#include "pqi/pqinotify.h"
+#include "retroshare/rsturtle.h"
 
 #include "util/rsthreads.h"
 
@@ -62,43 +62,76 @@ class p3NotifyPopupMsg
 };
 
 
-class p3Notify: public RsNotify, public pqiNotify
+class p3Notify: public RsNotify
 {
 	public:
 
-	p3Notify() : noteMtx("p3Notify") { return; }
-virtual ~p3Notify() { return; }
+		p3Notify() : noteMtx("p3Notify") { return; }
+		virtual ~p3Notify() { return; }
 
-	/* Output for retroshare-gui */
-virtual bool NotifySysMessage(uint32_t &sysid, uint32_t &type, std::string &title, std::string &msg);
-virtual bool NotifyPopupMessage(uint32_t &ptype, std::string &name, std::string &title, std::string &msg);
-virtual bool NotifyLogMessage(uint32_t &sysid, uint32_t &type, std::string &title, std::string &msg);
+		virtual void registerNotifyClient(NotifyClient *nc) ;
 
-	/* Control over Messages */
-virtual bool GetSysMessageList(std::map<uint32_t, std::string> &list);
-virtual bool GetPopupMessageList(std::map<uint32_t, std::string> &list);
+		/* Pull output methods for retroshare-gui */
+		virtual bool NotifySysMessage(uint32_t &sysid, uint32_t &type, std::string &title, std::string &msg);
+		virtual bool NotifyPopupMessage(uint32_t &ptype, std::string &name, std::string &title, std::string &msg);
+		virtual bool NotifyLogMessage(uint32_t &sysid, uint32_t &type, std::string &title, std::string &msg);
 
-virtual bool SetSysMessageMode(uint32_t sysid, uint32_t mode);
-virtual bool SetPopupMessageMode(uint32_t ptype, uint32_t mode);
+		virtual bool GetFeedItem(RsFeedItem &item);
 
-virtual bool GetFeedItem(RsFeedItem &item);
+		/* Control over Messages */
+		bool GetSysMessageList(std::map<uint32_t, std::string> &list);
+		bool GetPopupMessageList(std::map<uint32_t, std::string> &list);
 
-	/* Overloaded from pqiNotify */
-virtual bool AddPopupMessage(uint32_t ptype, const std::string& name, const std::string& title, const std::string& msg);
-virtual bool AddSysMessage(uint32_t sysid, uint32_t type, const std::string& title, const std::string& msg);
-virtual bool AddLogMessage(uint32_t sysid, uint32_t type, const std::string& title, const std::string& msg);
-virtual bool AddFeedItem(uint32_t type, const std::string& id1, const std::string& id2, const std::string& id3);
-virtual bool AddFeedItem(uint32_t type, const std::string& id1, const std::string& id2, const std::string& id3,const std::string& id4);
-virtual bool ClearFeedItems(uint32_t type);
+		bool SetSysMessageMode(uint32_t sysid, uint32_t mode);
+		bool SetPopupMessageMode(uint32_t ptype, uint32_t mode);
+
+		/* Overloaded from pqiNotify */
+		virtual bool AddPopupMessage(uint32_t ptype, const std::string& name, const std::string& title, const std::string& msg);
+		virtual bool AddSysMessage(uint32_t sysid, uint32_t type, const std::string& title, const std::string& msg);
+		virtual bool AddLogMessage(uint32_t sysid, uint32_t type, const std::string& title, const std::string& msg);
+		virtual bool AddFeedItem(uint32_t type, const std::string& id1, const std::string& id2, const std::string& id3);
+		virtual bool AddFeedItem(uint32_t type, const std::string& id1, const std::string& id2, const std::string& id3,const std::string& id4);
+		virtual bool ClearFeedItems(uint32_t type);
+
+		// Notifications of clients. Can be called from anywhere inside libretroshare.
+		//
+		void notifyListPreChange              (int /* list */, int /* type */) ;
+		void notifyListChange                 (int /* list */, int /* type */) ;
+		void notifyErrorMsg                   (int /* list */, int /* sev  */, std::string /* msg */) ;
+		void notifyChatStatus                 (const std::string& /* peer_id  */, const std::string& /* status_string */ ,bool /* is_private */) ;
+		void notifyChatLobbyEvent             (uint64_t           /* lobby id */, uint32_t           /* event type    */ ,const std::string& /* nickname */,const std::string& /* any string */) ;
+		void notifyChatLobbyTimeShift         (int                /* time_shift*/) ;
+		void notifyCustomState                (const std::string& /* peer_id   */, const std::string&               /* status_string */) ;
+		void notifyHashingInfo                (uint32_t           /* type      */, const std::string&               /* fileinfo      */) ;
+		void notifyTurtleSearchResult         (uint32_t           /* search_id */, const std::list<TurtleFileInfo>& /* files         */) ;
+		void notifyPeerHasNewAvatar           (std::string        /* peer_id   */) ;
+		void notifyOwnAvatarChanged           () ;
+		void notifyOwnStatusMessageChanged    () ;
+		void notifyDiskFull                   (uint32_t           /* location  */, uint32_t                         /* size limit in MB */) ;
+		void notifyPeerStatusChanged          (const std::string& /* peer_id   */, uint32_t                         /* status           */) ;
+
+		void notifyPeerStatusChangedSummary   () ;
+		void notifyDiscInfoChanged            () ;
+		void notifyForumMsgReadSatusChanged   (const std::string& /* channelId */, const std::string& /* msgId */, uint32_t /* status */) ;
+		void notifyChannelMsgReadSatusChanged (const std::string& /* channelId */, const std::string& /* msgId */, uint32_t /* status */) ;
+		bool askForDeferredSelfSignature      (const void *       /* data      */, const uint32_t     /* len   */, unsigned char * /* sign */, unsigned int * /* signlen */,int& signature_result ) ;
+		void notifyDownloadComplete           (const std::string& /* fileHash  */) ;
+		void notifyDownloadCompleteCount      (uint32_t           /* count     */) ;
+		void notifyHistoryChanged             (uint32_t           /* msgId     */, int /* type */) ;
+
+		bool askForPassword                   (const std::string& /* key_details     */, bool               /* prev_is_bad */, std::string& /* password */ ) ;
+		bool askForPluginConfirmation         (const std::string& /* plugin_filename */, const std::string& /* plugin_file_hash */) ;
 
 	private:
 
-	RsMutex noteMtx;
+		RsMutex noteMtx;
 
-	std::list<p3NotifySysMsg> pendingSysMsgs;
-	std::list<p3NotifyLogMsg> pendingLogMsgs;
-	std::list<p3NotifyPopupMsg> pendingPopupMsgs;
-	std::list<RsFeedItem>  pendingNewsFeed;
+		std::list<p3NotifySysMsg> pendingSysMsgs;
+		std::list<p3NotifyLogMsg> pendingLogMsgs;
+		std::list<p3NotifyPopupMsg> pendingPopupMsgs;
+		std::list<RsFeedItem>  pendingNewsFeed;
+
+		std::list<NotifyClient*> notifyClients ;
 };
 
 

@@ -33,7 +33,6 @@
 #include "util/rsdir.h"
 #include "util/rsstring.h"
 #include "util/rsrandom.h"
-#include "pqi/pqinotify.h"
 #include "retroshare/rstypes.h"
 #include "rsthreads.h"
 #include <iostream>

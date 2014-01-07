@@ -1739,7 +1739,6 @@ void RsInit::setAutoLogin(bool autoLogin){
  * ft/ code so variable defined here.
  */
 
-RsControl *rsicontrol = NULL;
 RsFiles *rsFiles = NULL;
 RsTurtle *rsTurtle = NULL ;
 #ifdef GROUTER
@@ -1852,12 +1851,14 @@ RsGRouter *rsGRouter = NULL ;
 #include "services/p3dsdv.h"
 #endif
 
-
-RsControl *createRsControl(NotifyBase &notify)
+RsControl *RsControl::instance()
 {
-	RsServer *srv = new RsServer(notify);
-	rsicontrol = srv;
-	return srv;
+	static RsServer *rsicontrol = NULL ;
+
+	if(rsicontrol == NULL) 
+		rsicontrol = new RsServer();
+	
+	return rsicontrol;
 }
 
 /*
@@ -1921,8 +1922,6 @@ int RsServer::StartupRetroShare()
 	/**************************************************************************/
 	std::cerr << "setup classes / structures" << std::endl;
 
-
-
 	/* History Manager */
 	mHistoryMgr = new p3HistoryMgr();
 	mPeerMgr = new p3PeerMgrIMPL( AuthSSL::getAuthSSL()->OwnId(),
@@ -1933,7 +1932,6 @@ int RsServer::StartupRetroShare()
 	mLinkMgr = new p3LinkMgrIMPL(mPeerMgr, mNetMgr);
 
 	/* Setup Notify Early - So we can use it. */
-	rsNotify = new p3Notify();
 	rsPeers = new p3Peers(mLinkMgr, mPeerMgr, mNetMgr);
 
 	mPeerMgr->setManagers(mLinkMgr, mNetMgr);
@@ -2128,7 +2126,7 @@ int RsServer::StartupRetroShare()
 	ftserver->setP3Interface(pqih);
 	ftserver->setConfigDirectory(RsInitConfig::configDir);
 
-	ftserver->SetupFtServer(&(getNotify()));
+	ftserver->SetupFtServer() ;
 	CacheStrapper *mCacheStrapper = ftserver->getCacheStrapper();
 	CacheTransfer *mCacheTransfer = ftserver->getCacheTransfer();
 
@@ -2642,20 +2640,20 @@ int RsServer::StartupRetroShare()
 	/* Peer stuff is up to date */
 
 	/* Channel/Forum/Blog stuff will all come from Caches */
-	getPqiNotify()->ClearFeedItems(RS_FEED_ITEM_CHAN_NEW);
-	getPqiNotify()->ClearFeedItems(RS_FEED_ITEM_CHAN_UPDATE);
-	getPqiNotify()->ClearFeedItems(RS_FEED_ITEM_CHAN_MSG);
+	mNotify->ClearFeedItems(RS_FEED_ITEM_CHAN_NEW);
+	mNotify->ClearFeedItems(RS_FEED_ITEM_CHAN_UPDATE);
+	mNotify->ClearFeedItems(RS_FEED_ITEM_CHAN_MSG);
 
-	getPqiNotify()->ClearFeedItems(RS_FEED_ITEM_FORUM_NEW);
-	getPqiNotify()->ClearFeedItems(RS_FEED_ITEM_FORUM_UPDATE);
-	getPqiNotify()->ClearFeedItems(RS_FEED_ITEM_FORUM_MSG);
+	mNotify->ClearFeedItems(RS_FEED_ITEM_FORUM_NEW);
+	mNotify->ClearFeedItems(RS_FEED_ITEM_FORUM_UPDATE);
+	mNotify->ClearFeedItems(RS_FEED_ITEM_FORUM_MSG);
 
-	getPqiNotify()->ClearFeedItems(RS_FEED_ITEM_BLOG_NEW);
-	getPqiNotify()->ClearFeedItems(RS_FEED_ITEM_BLOG_UPDATE);
-	getPqiNotify()->ClearFeedItems(RS_FEED_ITEM_BLOG_MSG);
+	mNotify->ClearFeedItems(RS_FEED_ITEM_BLOG_NEW);
+	mNotify->ClearFeedItems(RS_FEED_ITEM_BLOG_UPDATE);
+	mNotify->ClearFeedItems(RS_FEED_ITEM_BLOG_MSG);
 
 	//getPqiNotify()->ClearFeedItems(RS_FEED_ITEM_CHAT_NEW);
-	getPqiNotify()->ClearFeedItems(RS_FEED_ITEM_MESSAGE);
+	mNotify->ClearFeedItems(RS_FEED_ITEM_MESSAGE);
 	//getPqiNotify()->ClearFeedItems(RS_FEED_ITEM_FILES_NEW);
 
 	/* flag that the basic Caches are now in the pending Queues */

@@ -37,6 +37,7 @@
 #include <algorithm>
 #include <fstream>
 
+#include "rsserver/p3face.h"
 #include "retroshare/rsdistrib.h"
 #include "distrib/p3distrib.h"
 #include "distrib/p3distribsecurity.h"
@@ -44,7 +45,6 @@
 #include "serialiser/rstlvkeys.h"
 
 #include "util/rsdir.h"
-#include "pqi/pqinotify.h"
 #include "pqi/pqibin.h"
 #include "pqi/sslfns.h"
 #include "pqi/authssl.h"
@@ -1198,7 +1198,7 @@ void 	p3GroupDistrib::locked_publishPendingMsgs()
 #else
 		rs_sprintf(errlog, "Error %d", errno);
 #endif
-		getPqiNotify()->AddSysMessage(0, RS_SYS_WARNING, "File rename error", "Error while renaming file " + filename + ": got error " + errlog);
+		RsServer::notify()->AddSysMessage(0, RS_SYS_WARNING, "File rename error", "Error while renaming file " + filename + ": got error " + errlog);
 	}
 
 	/* indicate not to save for a while */
@@ -1346,7 +1346,7 @@ void 	p3GroupDistrib::publishDistribGroups()
 #else
 		rs_sprintf(errlog, "Error %d", errno);
 #endif
-		getPqiNotify()->AddSysMessage(0, RS_SYS_WARNING, "File rename error", "Error while renaming file " + filename + ": got error " + errlog);
+		RsServer::notify()->AddSysMessage(0, RS_SYS_WARNING, "File rename error", "Error while renaming file " + filename + ": got error " + errlog);
 	}
 
 	/* push file to CacheSource */
@@ -2169,7 +2169,7 @@ bool p3GroupDistrib::backUpKeys(const std::list<RsDistribGrpKey* >& keysToBackUp
 #else
 		rs_sprintf(errlog, "Error %d", errno);
 #endif
-		getPqiNotify()->AddSysMessage(0, RS_SYS_WARNING, "File rename error", "Error while renaming file " + filename + ": got error " + errlog);
+		RsServer::notify()->AddSysMessage(0, RS_SYS_WARNING, "File rename error", "Error while renaming file " + filename + ": got error " + errlog);
 		return false;
 	}
 

@@ -35,7 +35,7 @@
 #include "services/p3msgservice.h"
 #include "pgp/pgpkeyutil.h"
 #include "pqi/p3cfgmgr.h"
-#include "pqi/pqinotify.h"
+#include "rsserver/p3face.h"
 #include "serialiser/rsconfigitems.h"
 
 #include "util/rsdebug.h"
@@ -140,7 +140,7 @@ void p3MsgService::processMsg(RsMsgItem *mi, bool incoming)
 			mi->msgFlags &= (RS_MSG_FLAGS_ENCRYPTED | RS_MSG_FLAGS_SYSTEM); // remove flags except those
 			mi->msgFlags |= RS_MSG_FLAGS_NEW;
 
-			pqiNotify *notify = getPqiNotify();
+			p3Notify *notify = RsServer::notify();
 			if (notify)
 			{
 				std::string title, message;
@@ -170,7 +170,7 @@ void p3MsgService::processMsg(RsMsgItem *mi, bool incoming)
 		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 	}
 
-	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_ADD);
+	RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_ADD);
 
 	/**** STACK UNLOCKED ***/
 }
@@ -241,7 +241,7 @@ void p3MsgService::handleIncomingItem(RsMsgItem *mi)
 		changed = true ;
 	}
 	if(changed)
-		rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_MOD);
+		RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_MOD);
 }
 
 void    p3MsgService::statusChange(const std::list<pqipeer> &/*plist*/)
@@ -409,7 +409,7 @@ int     p3MsgService::checkOutgoingMessages()
 	}
 
 	if(changed)
-		rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_MOD);
+		RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_MOD);
 
 	return 0;
 }
@@ -847,7 +847,7 @@ bool    p3MsgService::removeMsgId(const std::string &mid)
 		setMessageTag(mid, 0, false);
 		setMsgParentId(msgId, 0);
 
-		rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_MOD);
+		RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_MOD);
 	}
 
 	return changed;
@@ -890,7 +890,7 @@ bool    p3MsgService::markMsgIdRead(const std::string &mid, bool unreadByUser)
 	} /* UNLOCKED */
 
 	if (changed) {
-		rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_MOD);
+		RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_MOD);
 	}
 
 	return true;
@@ -928,7 +928,7 @@ bool    p3MsgService::setMsgFlag(const std::string &mid, uint32_t flag, uint32_t
 	} /* UNLOCKED */
 
 	if (changed) {
-		rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_MOD);
+		RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_MOD);
 	}
 
 	return true;
@@ -1021,7 +1021,7 @@ int     p3MsgService::sendMessage(RsMsgItem *item)
 
 	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
-	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_MESSAGELIST, NOTIFY_TYPE_ADD);
+	RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST, NOTIFY_TYPE_ADD);
 
 	checkOutgoingMessages();
 
@@ -1166,7 +1166,7 @@ bool p3MsgService::MessageToDraft(MessageInfo &info, const std::string &msgParen
 
         IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
-        rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_MOD);
+		  RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_MOD);
 
         return true;
     }
@@ -1236,7 +1236,7 @@ bool  	p3MsgService::setMessageTagType(uint32_t tagId, std::string& text, uint32
 	if (nNotifyType) {
 		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
-		rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_MESSAGE_TAGS, nNotifyType);
+		RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGE_TAGS, nNotifyType);
 		
 		return true;
 	}
@@ -1292,7 +1292,7 @@ bool    p3MsgService::removeMessageTagType(uint32_t tagId)
 
 	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
-	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_MESSAGE_TAGS, NOTIFY_TYPE_DEL);
+	RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGE_TAGS, NOTIFY_TYPE_DEL);
 
 	return true;
 }
@@ -1400,7 +1400,7 @@ bool 	p3MsgService::setMessageTag(const std::string &msgId, uint32_t tagId, bool
 	if (nNotifyType) {
 		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
-		rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_MESSAGE_TAGS, nNotifyType);
+		RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGE_TAGS, nNotifyType);
 
 		return true;
 	}
@@ -1467,7 +1467,7 @@ bool p3MsgService::MessageToTrash(const std::string &mid, bool bTrash)
 
         checkOutgoingMessages();
 
-        rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_MOD);
+		  RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_MOD);
     }
 
     return bFound;
@@ -2058,7 +2058,7 @@ bool p3MsgService::decryptMessage(const std::string& mId)
 	delete item ;
 
 	IndicateConfigChanged() ;
-	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_MOD);
+	RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_MOD);
 
 	return true ;
 }

@@ -26,11 +26,12 @@
 #include "util/rswin.h"
 #endif
 
+#include "rsserver/p3face.h"
 #include "dbase/fimonitor.h"
 #include "util/rsdir.h"
 #include "serialiser/rsserviceids.h"
 #include "retroshare/rsiface.h"
-#include "retroshare/rsnotify.h"
+#include "pqi/p3notify.h"
 #include "retroshare/rspeers.h"
 #include "util/folderiterator.h"
 #include <errno.h>
@@ -51,10 +52,10 @@
 //#define FIM_DEBUG 1
 // ***********/
 
-FileIndexMonitor::FileIndexMonitor(CacheStrapper *cs, NotifyBase *cb_in,std::string cachedir, std::string pid,const std::string& config_dir)
+FileIndexMonitor::FileIndexMonitor(CacheStrapper *cs, std::string cachedir, std::string pid,const std::string& config_dir)
 	:CacheSource(RS_SERVICE_TYPE_FILE_INDEX, false, cs, cachedir), fiMutex("FileIndexMonitor"), fi(pid),
 		pendingDirs(false), pendingForceCacheWrite(false),
-		mForceCheck(false), mInCheck(false),cb(cb_in), hashCache(config_dir+"/" + "file_cache.lst"),useHashCache(true)
+		mForceCheck(false), mInCheck(false), hashCache(config_dir+"/" + "file_cache.lst"),useHashCache(true)
 
 {
 	updatePeriod = 15 * 60; // 15 minutes
@@ -604,7 +605,7 @@ void 	FileIndexMonitor::updateCycle()
 		mInCheck = true;
 	}
 
-	cb->notifyHashingInfo(NOTIFY_HASHTYPE_EXAMINING_FILES, "") ;
+	RsServer::notify()->notifyHashingInfo(NOTIFY_HASHTYPE_EXAMINING_FILES, "") ;
 
 	std::vector<DirContentToHash> to_hash ;
 
@@ -857,7 +858,7 @@ void 	FileIndexMonitor::updateCycle()
 	if(isRunning() && !to_hash.empty())
 		hashFiles(to_hash) ;
 
-	cb->notifyHashingInfo(NOTIFY_HASHTYPE_FINISH, "") ;
+	RsServer::notify()->notifyHashingInfo(NOTIFY_HASHTYPE_FINISH, "") ;
 
 	int cleanedCount = 0;
 
@@ -906,7 +907,7 @@ void 	FileIndexMonitor::updateCycle()
 
 	if (cleanedCount > 0) {
 //		cb->notifyListPreChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
-		cb->notifyListChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
+		RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
 	}
 }
 
@@ -936,7 +937,7 @@ void FileIndexMonitor::hashFiles(const std::vector<DirContentToHash>& to_hash)
 	// Size interval at which we save the file lists
 	static const uint64_t MAX_SIZE_WITHOUT_SAVING = 10737418240ull ; // 10 GB
 
-	cb->notifyListPreChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
+	RsServer::notify()->notifyListPreChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
 
 	time_t stamp = time(NULL);
 
@@ -1000,7 +1001,7 @@ void FileIndexMonitor::hashFiles(const std::vector<DirContentToHash>& to_hash)
 			std::string tmpout;
 			rs_sprintf(tmpout, "%lu/%lu (%s - %d%%) : %s", cnt+1, n_files, friendlyUnit(size).c_str(), int(size/double(total_size)*100.0), fe.name.c_str()) ;
 
-			cb->notifyHashingInfo(NOTIFY_HASHTYPE_HASH_FILE, tmpout) ;
+			RsServer::notify()->notifyHashingInfo(NOTIFY_HASHTYPE_HASH_FILE, tmpout) ;
 
 			std::string real_path = RsDirUtil::makePath(to_hash[i].realpath, fe.name);
 
@@ -1064,7 +1065,7 @@ void FileIndexMonitor::hashFiles(const std::vector<DirContentToHash>& to_hash)
 
 			if(hashed_size > last_save_size + MAX_SIZE_WITHOUT_SAVING)
 			{
-				cb->notifyHashingInfo(NOTIFY_HASHTYPE_SAVE_FILE_INDEX, "") ;
+				RsServer::notify()->notifyHashingInfo(NOTIFY_HASHTYPE_SAVE_FILE_INDEX, "") ;
 #ifdef WINDOWS_SYS
 				Sleep(1000) ;
 #else
@@ -1085,7 +1086,7 @@ void FileIndexMonitor::hashFiles(const std::vector<DirContentToHash>& to_hash)
 
 	fi.updateHashIndex() ;
 
-	cb->notifyListChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
+	RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
 }
 
 
@@ -1288,7 +1289,7 @@ bool FileIndexMonitor::cachesAvailable(RsPeerId pid,std::map<CacheId, RsCacheDat
 
 void    FileIndexMonitor::updateShareFlags(const SharedDirInfo& dir)
 {
-	cb->notifyListPreChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
+	RsServer::notify()->notifyListPreChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
 
 	bool fimods = false ;
 #ifdef FIM_DEBUG
@@ -1335,12 +1336,12 @@ void    FileIndexMonitor::updateShareFlags(const SharedDirInfo& dir)
 		RsStackMutex stack(fiMutex) ;	/* LOCKED DIRS */
 		locked_saveFileIndexes(true) ;
 	}
-	cb->notifyListChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
+	RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
 }
 	/* interface */
 void    FileIndexMonitor::setSharedDirectories(const std::list<SharedDirInfo>& dirs)
 {
-	cb->notifyListPreChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
+	RsServer::notify()->notifyListPreChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
 
 	std::list<SharedDirInfo> checkeddirs;
 
@@ -1386,7 +1387,7 @@ void    FileIndexMonitor::setSharedDirectories(const std::list<SharedDirInfo>& d
 		pendingDirList = checkeddirs;
 	}
 
-	cb->notifyListChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
+	RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
 }
 
 	/* interface */

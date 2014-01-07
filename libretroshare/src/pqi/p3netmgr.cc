@@ -42,7 +42,6 @@
 const int p3netmgrzone = 7563;
 
 #include "serialiser/rsconfigitems.h"
-#include "pqi/pqinotify.h"
 #include "retroshare/rsiface.h"
 #include "retroshare/rsconfig.h"
 

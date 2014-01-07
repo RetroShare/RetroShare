@@ -31,6 +31,7 @@
 #include "retroshare/rsiface.h"
 #include "retroshare/rspeers.h"
 #include "serialiser/rsmsgitems.h"
+#include "rsserver/p3face.h"
 #include "util/rsstring.h"
 
 // clean too old messages every 5 minutes
@@ -145,7 +146,7 @@ void p3HistoryMgr::addMessage(bool incoming, const std::string &chatPeerId, cons
 	}
 
 	if (addMsgId) {
-		rsicontrol->getNotify().notifyHistoryChanged(addMsgId, NOTIFY_TYPE_ADD);
+		RsServer::notify()->notifyHistoryChanged(addMsgId, NOTIFY_TYPE_ADD);
 	}
 }
 
@@ -450,7 +451,7 @@ void p3HistoryMgr::clear(const std::string &chatPeerId)
 		IndicateConfigChanged();
 	}
 
-	rsicontrol->getNotify().notifyHistoryChanged(0, NOTIFY_TYPE_MOD);
+	RsServer::notify()->notifyHistoryChanged(0, NOTIFY_TYPE_MOD);
 }
 
 void p3HistoryMgr::removeMessages(const std::list<uint32_t> &msgIds)
@@ -492,7 +493,7 @@ void p3HistoryMgr::removeMessages(const std::list<uint32_t> &msgIds)
 		IndicateConfigChanged();
 
 		for (iit = removedIds.begin(); iit != removedIds.end(); ++iit) {
-			rsicontrol->getNotify().notifyHistoryChanged(*iit, NOTIFY_TYPE_DEL);
+			RsServer::notify()->notifyHistoryChanged(*iit, NOTIFY_TYPE_DEL);
 		}
 	}
 }

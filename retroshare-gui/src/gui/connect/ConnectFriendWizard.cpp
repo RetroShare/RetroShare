@@ -34,6 +34,7 @@
 #include "ConnectFriendWizard.h"
 #include "ui_ConnectFriendWizard.h"
 #include "gui/common/PeerDefs.h"
+#include "gui/notifyqt.h"
 #include "gui/common/GroupDefs.h"
 #include "gui/GetStartedDialog.h"
 #include "gui/msgs/MessageComposer.h"
@@ -713,7 +714,7 @@ void ConnectFriendWizard::accept()
 		ConnectProgressDialog::showProgress(ssl_id);
 	}
 
-	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_NEIGHBOURS,1) ;
+	NotifyQt::getInstance()->notifyListChange(NOTIFY_LIST_NEIGHBOURS,1) ;
 
 	QDialog::accept();
 }
@@ -1018,8 +1019,8 @@ void ConnectFriendWizard::signAllSelectedUsers()
 	ui->selectedPeersTW->setEnabled(false);
 	ui->makeFriendButton->setEnabled(false);
 
-	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_NEIGHBOURS,0);
-	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_FRIENDS,0);
+	NotifyQt::getInstance()->notifyListChange(NOTIFY_LIST_NEIGHBOURS,0);
+	NotifyQt::getInstance()->notifyListChange(NOTIFY_LIST_FRIENDS,0);
 }
 
 //============================= RsidPage =====================================

@@ -6,7 +6,7 @@
 #include <serialiser/rstlvbase.h>
 #include <serialiser/rstlvtypes.h>
 #include <serialiser/rspluginitems.h>
-#include <retroshare/rsiface.h>
+#include <rsserver/p3face.h>
 #include <util/rsdir.h>
 #include <util/folderiterator.h>
 #include <ft/ftserver.h>
@@ -267,7 +267,7 @@ bool RsPluginManager::loadPlugin(const std::string& plugin_name)
 	if(!_allow_all_plugins)
 	{
 		if(_accepted_hashes.find(pinfo.file_hash) == _accepted_hashes.end() && _rejected_hashes.find(pinfo.file_hash) == _rejected_hashes.end() )
-			if(!rsicontrol->getNotify().askForPluginConfirmation(pinfo.file_name,pinfo.file_hash))
+			if(!RsServer::notify()->askForPluginConfirmation(pinfo.file_name,pinfo.file_hash))
 				_rejected_hashes.insert(pinfo.file_hash) ;		// accepted hashes are treated at the end, for security.
 
 		if(_rejected_hashes.find(pinfo.file_hash) != _rejected_hashes.end() )

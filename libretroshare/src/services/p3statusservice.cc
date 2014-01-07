@@ -25,6 +25,7 @@
 
 #include "services/p3statusservice.h"
 #include "serialiser/rsstatusitems.h"
+#include "rsserver/p3face.h"
 #include "retroshare/rsiface.h"
 
 #include <iostream>
@@ -183,7 +184,7 @@ bool p3StatusService::sendStatus(const std::string &id, uint32_t status)
 	}
 
 	/* send notify of own status change */
-	rsicontrol->getNotify().notifyPeerStatusChanged(statusInfo.id, statusInfo.status);
+	RsServer::notify()->notifyPeerStatusChanged(statusInfo.id, statusInfo.status);
 
 	return true;
 }
@@ -242,9 +243,9 @@ void p3StatusService::receiveStatusQueue()
 	if (changed.size()) {
 		std::map<std::string, uint32_t>::iterator it;
 		for (it = changed.begin(); it != changed.end(); it++) {
-			rsicontrol->getNotify().notifyPeerStatusChanged(it->first, it->second);
+			RsServer::notify()->notifyPeerStatusChanged(it->first, it->second);
 		}
-		rsicontrol->getNotify().notifyPeerStatusChangedSummary();
+		RsServer::notify()->notifyPeerStatusChangedSummary();
 	}
 }
 
@@ -361,7 +362,7 @@ void p3StatusService::statusChange(const std::list<pqipeer> &plist)
 				} /* UNLOCKED */
 
 				changedState = true;
-				rsicontrol->getNotify().notifyPeerStatusChanged(it->id, RS_STATUS_OFFLINE);
+				RsServer::notify()->notifyPeerStatusChanged(it->id, RS_STATUS_OFFLINE);
 			}
 
 			if (it->actions & RS_PEER_CONNECTED) {
@@ -383,7 +384,7 @@ void p3StatusService::statusChange(const std::list<pqipeer> &plist)
 				} /* UNLOCKED */
 
 				changedState = true;
-				rsicontrol->getNotify().notifyPeerStatusChanged(it->id, RS_STATUS_ONLINE);
+				RsServer::notify()->notifyPeerStatusChanged(it->id, RS_STATUS_ONLINE);
 			}
 		} else if (it->actions & RS_PEER_MOVED) {
 			/* now handle remove */
@@ -394,12 +395,12 @@ void p3StatusService::statusChange(const std::list<pqipeer> &plist)
 			} /* UNLOCKED */
 
 			changedState = true;
-			rsicontrol->getNotify().notifyPeerStatusChanged(it->id, RS_STATUS_OFFLINE);
+			RsServer::notify()->notifyPeerStatusChanged(it->id, RS_STATUS_OFFLINE);
 		}
 	}
 
 	if (changedState)
 	{
-		rsicontrol->getNotify().notifyPeerStatusChangedSummary();
+		RsServer::notify()->notifyPeerStatusChangedSummary();
 	}
 }

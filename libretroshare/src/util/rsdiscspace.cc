@@ -26,6 +26,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <time.h>
+#include "rsserver/p3face.h"
 #include "retroshare/rsfiles.h"
 #include "retroshare/rsiface.h"
 #include "retroshare/rsinit.h"
@@ -194,7 +195,7 @@ bool RsDiscSpace::checkForDiscSpace(RsDiscSpace::DiscLocation loc)
 	bool res = _current_size[loc] > _size_limit_mb ;
 
 	if(_last_res[loc] && !res)
-		rsicontrol->getNotify().notifyDiskFull(loc,_size_limit_mb) ;
+		RsServer::notify()->notifyDiskFull(loc,_size_limit_mb) ;
 
 	_last_res[loc] = res ;
 

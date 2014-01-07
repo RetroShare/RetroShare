@@ -27,18 +27,16 @@
  */
 
 
+#include "retroshare/rsnotify.h"
 #include "rstypes.h"
 
 #include <map>
 
 class NotifyBase;
-class RsControl;
+class RsServer;
 class RsInit;
 class RsPeerCryptoParams;
 struct TurtleFileInfo ;
-
-/* declare single RsIface for everyone to use! */
-extern RsControl *rsicontrol;
 
 /* RsInit -> Configuration Parameters for RetroShare Startup
  */
@@ -53,32 +51,11 @@ void    CleanupRsConfig(RsInit *);
 // Called First... (handles comandline options) 
 int InitRetroShare(int argc, char **argv, RsInit *config);
 
-// This Functions are used for Login.
-bool ValidateCertificate(RsInit *config, std::string &userName);
-bool ValidateTrustedUser(RsInit *config, std::string fname, std::string &userName);
-bool LoadPassword(RsInit *config, std::string passwd);
-bool RsGenerateCertificate(RsInit *config, std::string name, std::string org,
-                        std::string loc, std::string country, std::string passwd, std::string &errString);
-
-/* Auto Login Fns */
-bool  RsTryAutoLogin(RsInit *config);
-bool  RsStoreAutoLogin(RsInit *config);
-bool  RsClearAutoLogin(std::string basedir);
-
-// Handle actual Login.
-int LoadCertificates(RsInit *config, bool autoLoginNT);
-
-RsControl *createRsControl(NotifyBase &notify);
-
-
 class RsControl /* The Main Interface Class - for controlling the server */
 {
 	public:
-
-		RsControl(NotifyBase &callback)
-			:cb(callback) { return; }
-
-		virtual ~RsControl() { return; }
+		static RsControl *instance() ;
+		static void earlyInitNotificationSystem() { instance() ; }
 
 		/* Real Startup Fn */
 		virtual int StartupRetroShare() = 0;
@@ -100,80 +77,11 @@ class RsControl /* The Main Interface Class - for controlling the server */
 
 		/****************************************/
 
-		NotifyBase & getNotify() { return cb; }
-
 		virtual bool getPeerCryptoDetails(const std::string& ssl_id,RsPeerCryptoParams& params) = 0;
 
-	private:
-		NotifyBase &cb;
+	protected:
+		RsControl() {}	// should not be used, hence it's private.
 };
 
-
-/********************** Overload this Class for callback *****************/
-
-
-class NotifyBase
-{
-	public:
-	NotifyBase() { return; }
-	virtual ~NotifyBase() { return; }
-	virtual void notifyListPreChange(int list, int type) { (void) list; (void) type; return; }
-	virtual void notifyListChange(int list, int type) { (void) list; (void) type; return; }
-	virtual void notifyErrorMsg(int list, int sev, std::string msg) { (void) list; (void) sev; (void) msg; return; }
-	virtual void notifyChatStatus(const std::string& /* peer_id */, const std::string& /* status_string */ ,bool /* is_private */) {}
-	virtual void notifyChatLobbyEvent(uint64_t /* lobby id */,uint32_t /* event type */,const std::string& /* nickname */,const std::string& /* any string */) {}
-	virtual void notifyChatLobbyTimeShift(int /* time_shift */) {}
-	virtual void notifyCustomState(const std::string& /* peer_id */, const std::string& /* status_string */) {}
-	virtual void notifyHashingInfo(uint32_t type, const std::string& fileinfo) { (void) type; (void)fileinfo; }
-	virtual void notifyTurtleSearchResult(uint32_t /* search_id */ ,const std::list<TurtleFileInfo>& files) { (void)files; }
-	virtual void notifyPeerHasNewAvatar(std::string peer_id) { (void)peer_id; }
-	virtual void notifyOwnAvatarChanged() {}
-	virtual void notifyOwnStatusMessageChanged() {}
-	virtual void notifyDiskFull(uint32_t /* location */,uint32_t /* size limit in MB */) {}
-	/* peer has changed the status */
-	virtual void notifyPeerStatusChanged(const std::string& /* peer_id */, uint32_t /* status */) {}
-	/* one or more peers has changed the states */
-	virtual void notifyPeerStatusChangedSummary() {}
-	virtual void notifyForumMsgReadSatusChanged(const std::string& /* channelId */, const std::string& /* msgId */, uint32_t /* status */) {}
-	virtual void notifyChannelMsgReadSatusChanged(const std::string& /* channelId */, const std::string& /* msgId */, uint32_t /* status */) {}
-	virtual void notifyDiscInfoChanged() {}
-	virtual void notifyDownloadComplete(const std::string& /* fileHash */) {};
-	virtual void notifyDownloadCompleteCount(uint32_t /* count */) {};
-	virtual void notifyHistoryChanged(uint32_t /* msgId */, int /* type */) {}
-
-	virtual bool askForPassword(const std::string& /* key_details */, bool /* prev_is_bad */, std::string& /* password */ ) { return false ;}
-	virtual bool askForPluginConfirmation(const std::string& /* plugin_filename */, const std::string& /* plugin_file_hash */) { return false ;}
-	virtual bool askForDeferredSelfSignature(const void * /* data */, const uint32_t /* len */, unsigned char * /* sign */, unsigned int * /* signlen */,int& signature_result ) { signature_result = false ;return true; }
-
-};
-
-const int NOTIFY_LIST_NEIGHBOURS             = 1;
-const int NOTIFY_LIST_FRIENDS                = 2;
-const int NOTIFY_LIST_SEARCHLIST             = 4;
-const int NOTIFY_LIST_MESSAGELIST            = 5;
-const int NOTIFY_LIST_CHANNELLIST            = 6;
-const int NOTIFY_LIST_TRANSFERLIST           = 7;
-const int NOTIFY_LIST_CONFIG                 = 8;
-const int NOTIFY_LIST_DIRLIST_LOCAL          = 9;
-const int NOTIFY_LIST_DIRLIST_FRIENDS        = 10;
-const int NOTIFY_LIST_FORUMLIST_LOCKED       = 11; // use connect with Qt::QueuedConnection
-const int NOTIFY_LIST_MESSAGE_TAGS           = 12;
-const int NOTIFY_LIST_PUBLIC_CHAT            = 13;
-const int NOTIFY_LIST_PRIVATE_INCOMING_CHAT  = 14;
-const int NOTIFY_LIST_PRIVATE_OUTGOING_CHAT  = 15;
-const int NOTIFY_LIST_GROUPLIST              = 16;
-const int NOTIFY_LIST_CHANNELLIST_LOCKED     = 17; // use connect with Qt::QueuedConnection
-const int NOTIFY_LIST_CHAT_LOBBY_INVITATION  = 18;
-const int NOTIFY_LIST_CHAT_LOBBY_LIST        = 19;
-
-const int NOTIFY_TYPE_SAME   = 0x01;
-const int NOTIFY_TYPE_MOD    = 0x02; /* general purpose, check all */
-const int NOTIFY_TYPE_ADD    = 0x04; /* flagged additions */
-const int NOTIFY_TYPE_DEL    = 0x08; /* flagged deletions */
-
-const uint32_t NOTIFY_HASHTYPE_EXAMINING_FILES = 1; /* Examining shared files */
-const uint32_t NOTIFY_HASHTYPE_FINISH          = 2; /* Finish */
-const uint32_t NOTIFY_HASHTYPE_HASH_FILE       = 3; /* Hashing file */
-const uint32_t NOTIFY_HASHTYPE_SAVE_FILE_INDEX = 4; /* Hashing file */
 
 #endif

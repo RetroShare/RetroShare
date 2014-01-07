@@ -52,9 +52,9 @@
 #include "turtle/p3turtle.h"
 
 #include "util/rsdir.h"
+#include "rsserver/p3face.h"
 
 #include "pqi/p3linkmgr.h"
-#include "pqi/pqinotify.h"
 
 #include "retroshare/rsiface.h"
 #include "retroshare/rspeers.h"
@@ -722,7 +722,7 @@ bool ftController::moveFile(const std::string& source,const std::string& dest)
 		return true ;
 	else
 	{
-		getPqiNotify()->AddSysMessage(0, RS_SYS_WARNING, "File erase error", "Error while removing hash file " + dest + "\nRead-only file system ?");
+		RsServer::notify()->AddSysMessage(0, RS_SYS_WARNING, "File erase error", "Error while removing hash file " + dest + "\nRead-only file system ?");
 		return false ;
 	}
 }
@@ -733,7 +733,7 @@ bool ftController::copyFile(const std::string& source,const std::string& dest)
 
 	if(in == NULL)
 	{
-		//getPqiNotify()->AddSysMessage(0, RS_SYS_WARNING, "File copy error", "Error while copying file " + dest + "\nCannot open input file "+source);
+		//RsServer::notify()->AddSysMessage(0, RS_SYS_WARNING, "File copy error", "Error while copying file " + dest + "\nCannot open input file "+source);
 		std::cerr << "******************** FT CONTROLLER ERROR ************************" << std::endl;
 		std::cerr << "Error while copying file " + dest + "\nCannot open input file "+source << std::endl;
 		std::cerr << "*****************************************************************" << std::endl;
@@ -744,7 +744,7 @@ bool ftController::copyFile(const std::string& source,const std::string& dest)
 
 	if(out == NULL)
 	{
-		getPqiNotify()->AddSysMessage(0, RS_SYS_WARNING, "File copy error", "Error while copying file " + dest + "\nCheck for disk full, or write permission ?\nOriginal file kept under the name "+source);
+		RsServer::notify()->AddSysMessage(0, RS_SYS_WARNING, "File copy error", "Error while copying file " + dest + "\nCheck for disk full, or write permission ?\nOriginal file kept under the name "+source);
 		fclose (in);
 		return false ;
 	}
@@ -764,7 +764,7 @@ bool ftController::copyFile(const std::string& source,const std::string& dest)
 
 		if(t != s)
 		{
-			getPqiNotify()->AddSysMessage(0, RS_SYS_WARNING, "File copy error", "Error while copying file " + dest + "\nIs your disc full ?\nOriginal file kept under the name "+source);
+			RsServer::notify()->AddSysMessage(0, RS_SYS_WARNING, "File copy error", "Error while copying file " + dest + "\nIs your disc full ?\nOriginal file kept under the name "+source);
 			bRet = false ;
 			break;
 		}
@@ -965,12 +965,10 @@ bool ftController::completeFile(std::string hash)
 
 	/* Notify GUI */
 	if ((flags & RS_FILE_REQ_CACHE) == 0) {
-		pqiNotify *notify = getPqiNotify();
-		if (notify) {
-			notify->AddPopupMessage(RS_POPUP_DOWNLOAD, hash, name, "");
-		}
-		rsicontrol->getNotify().notifyDownloadComplete(hash);
-		rsicontrol->getNotify().notifyDownloadCompleteCount(completeCount);
+		RsServer::notify()->AddPopupMessage(RS_POPUP_DOWNLOAD, hash, name, "");
+
+		RsServer::notify()->notifyDownloadComplete(hash);
+		RsServer::notify()->notifyDownloadCompleteCount(completeCount);
 
 		rsFiles->ForceDirectoryCheck() ;
 	}
@@ -1523,7 +1521,7 @@ bool 	ftController::FileClearCompleted()
 		IndicateConfigChanged();
 	}  /******* UNLOCKED ********/
 
-	rsicontrol->getNotify().notifyDownloadCompleteCount(0);
+	RsServer::notify()->notifyDownloadCompleteCount(0);
 
 	return false;
 }

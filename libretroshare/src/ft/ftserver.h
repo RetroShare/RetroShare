@@ -56,7 +56,7 @@ class p3ConnectMgr;
 class CacheStrapper;
 class CacheTransfer;
 
-class NotifyBase; /* needed by FiStore */
+class pqiNotify; /* needed by FiStore */
 class ftCacheStrapper;
 class ftFiStore;
 class ftFiMonitor;
@@ -98,8 +98,7 @@ class ftServer: public RsFiles, public ftDataSend, public RsTurtleClientService,
 		std::string 	OwnId();
 
 		/* Final Setup (once everything is assigned) */
-		//void	SetupFtServer();
-		void    SetupFtServer(NotifyBase *cb);
+		void    SetupFtServer() ;
 		virtual void    connectToTurtleRouter(p3turtle *p) ;
 
 		void	StartupThreads();

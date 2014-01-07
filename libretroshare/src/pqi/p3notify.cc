@@ -27,15 +27,9 @@
 #include "pqi/p3notify.h"
 #include <stdint.h>
 
-/* external reference point */
-RsNotify *rsNotify = NULL;
+RsNotify *rsNotify = NULL ;
 
-pqiNotify *getPqiNotify()
-{
-	return ((p3Notify *) rsNotify);
-}
-
-	/* Output for retroshare-gui */
+/* Output for retroshare-gui */
 bool p3Notify::NotifySysMessage(uint32_t &sysid, uint32_t &type, 
 					std::string &title, std::string &msg)
 {
@@ -228,3 +222,64 @@ bool p3Notify::ClearFeedItems(uint32_t type)
 	}
 	return true;
 }
+
+#define FOR_ALL_NOTIFY_CLIENTS for(std::list<NotifyClient*>::const_iterator it(notifyClients.begin());it!=notifyClients.end();++it)
+
+void p3Notify::notifyChatLobbyEvent(uint64_t lobby_id, uint32_t event_type,const std::string& nickname,const std::string& any_string) { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyChatLobbyEvent(lobby_id,event_type,nickname,any_string) ; }
+
+void p3Notify::notifyListPreChange(int list, int type) { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyListPreChange(list,type) ; }
+void p3Notify::notifyListChange   (int list, int type) { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyListChange   (list,type) ; }
+
+void p3Notify::notifyErrorMsg      (int list, int sev, std::string msg)                                                         { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyErrorMsg(list,sev,msg) ; }
+void p3Notify::notifyChatStatus    (const std::string& peer_id , const std::string& status_string ,bool is_private)             { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyChatStatus(peer_id,status_string,is_private) ; }
+
+void p3Notify::notifyChatLobbyTimeShift     (int                time_shift)                                                     { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyChatLobbyTimeShift(time_shift) ; }
+void p3Notify::notifyCustomState            (const std::string& peer_id   , const std::string&               status_string )    { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyCustomState       (peer_id,status_string) ; }
+void p3Notify::notifyHashingInfo            (uint32_t           type      , const std::string&               fileinfo      )    { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyHashingInfo       (type,fileinfo) ; } 
+void p3Notify::notifyTurtleSearchResult     (uint32_t           search_id , const std::list<TurtleFileInfo>& files         )    { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyTurtleSearchResult(search_id,files) ; } 
+void p3Notify::notifyPeerHasNewAvatar       (std::string        peer_id   )                                                     { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyPeerHasNewAvatar(peer_id) ; } 
+void p3Notify::notifyOwnAvatarChanged       ()                                                                                  { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyOwnAvatarChanged() ; } 
+void p3Notify::notifyOwnStatusMessageChanged()                                                                                  { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyOwnStatusMessageChanged() ; } 
+void p3Notify::notifyDiskFull               (uint32_t           location  , uint32_t                         size_limit_in_MB ) { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyDiskFull          (location,size_limit_in_MB) ; }
+void p3Notify::notifyPeerStatusChanged      (const std::string& peer_id   , uint32_t                         status           ) { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyPeerStatusChanged (peer_id,status) ; }
+
+void p3Notify::notifyPeerStatusChangedSummary   ()                                                                              { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyPeerStatusChangedSummary() ; }
+void p3Notify::notifyDiscInfoChanged            ()                                                                              { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyDiscInfoChanged         () ; } 
+
+void p3Notify::notifyForumMsgReadSatusChanged   (const std::string& channelId, const std::string& msgId, uint32_t status)       { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyForumMsgReadSatusChanged   (channelId,msgId,status) ; }
+void p3Notify::notifyChannelMsgReadSatusChanged (const std::string& channelId, const std::string& msgId, uint32_t status)       { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyChannelMsgReadSatusChanged (channelId,msgId,status) ; }
+
+void p3Notify::notifyDownloadComplete           (const std::string& fileHash )                                                  { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyDownloadComplete           (fileHash) ; }
+void p3Notify::notifyDownloadCompleteCount      (uint32_t           count    )                                                  { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyDownloadCompleteCount      (count) ; }
+void p3Notify::notifyHistoryChanged             (uint32_t           msgId    , int type)                                        { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyHistoryChanged             (msgId,type) ; }
+
+bool p3Notify::askForPassword                   (const std::string& key_details    , bool               prev_is_bad , std::string& password) 
+{
+	FOR_ALL_NOTIFY_CLIENTS
+		if( (*it)->askForPassword(key_details,prev_is_bad,password))
+			return true ;
+
+	return false ;
+}
+bool p3Notify::askForPluginConfirmation         (const std::string& plugin_filename, const std::string& plugin_file_hash) 
+{
+	FOR_ALL_NOTIFY_CLIENTS
+		if( (*it)->askForPluginConfirmation(plugin_filename,plugin_file_hash)) 
+			return true ;
+
+	return false ;
+}
+bool p3Notify::askForDeferredSelfSignature      (const void *       data     , const uint32_t     len  , unsigned char *sign, unsigned int *signlen,int& signature_result ) 
+{
+	FOR_ALL_NOTIFY_CLIENTS
+		if( (*it)->askForDeferredSelfSignature(data,len,sign,signlen,signature_result)) 
+			return true ;
+
+	return false ;
+}
+
+void p3Notify::registerNotifyClient(NotifyClient *cl)
+{
+	notifyClients.push_back(cl) ;
+}
+

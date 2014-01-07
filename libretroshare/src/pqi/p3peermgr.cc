@@ -23,6 +23,7 @@
  *
  */
 
+#include "rsserver/p3face.h"
 #include "util/rsnet.h"
 #include "pqi/authgpg.h"
 #include "pqi/authssl.h"
@@ -43,7 +44,6 @@
 const int p3peermgrzone = 9531;
 
 #include "serialiser/rsconfigitems.h"
-#include "pqi/pqinotify.h"
 
 #include "retroshare/rsiface.h" // Needed for rsicontrol (should remove this dependancy)
 #include "retroshare/rspeers.h" // Needed for Group Parameters.
@@ -1689,7 +1689,7 @@ bool p3PeerMgrIMPL::addGroup(RsGroupInfo &groupInfo)
 		groupInfo.id = groupItem->id;
 	}
 
-	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_GROUPLIST, NOTIFY_TYPE_ADD);
+	RsServer::notify()->notifyListChange(NOTIFY_LIST_GROUPLIST, NOTIFY_TYPE_ADD);
 
 	IndicateConfigChanged();
 
@@ -1725,7 +1725,7 @@ bool p3PeerMgrIMPL::editGroup(const std::string &groupId, RsGroupInfo &groupInfo
 	}
 
 	if (changed) {
-		rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_GROUPLIST, NOTIFY_TYPE_MOD);
+		RsServer::notify()->notifyListChange(NOTIFY_LIST_GROUPLIST, NOTIFY_TYPE_MOD);
 
 		IndicateConfigChanged();
 	}
@@ -1763,7 +1763,7 @@ bool p3PeerMgrIMPL::removeGroup(const std::string &groupId)
 	}
 
 	if (changed) {
-		rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_GROUPLIST, NOTIFY_TYPE_DEL);
+		RsServer::notify()->notifyListChange(NOTIFY_LIST_GROUPLIST, NOTIFY_TYPE_DEL);
 
 		IndicateConfigChanged();
 	}
@@ -1850,7 +1850,7 @@ bool p3PeerMgrIMPL::assignPeersToGroup(const std::string &groupId, const std::li
 	}
 
 	if (changed) {
-		rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_GROUPLIST, NOTIFY_TYPE_MOD);
+		RsServer::notify()->notifyListChange(NOTIFY_LIST_GROUPLIST, NOTIFY_TYPE_MOD);
 
 		IndicateConfigChanged();
 	}

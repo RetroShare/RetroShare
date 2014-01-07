@@ -31,7 +31,7 @@
 #include "util/rsstring.h"
 
 #include "pqi/pqistreamer.h"
-#include "pqi/pqinotify.h"
+#include "rsserver/p3face.h"
 
 #include "serialiser/rsserial.h" 
 #include "serialiser/rsbaseitems.h"  /***** For RsFileData *****/
@@ -550,7 +550,7 @@ continue_packet:
 		{
 			pqioutput(PQL_ALERT, pqistreamerzone, "ERROR: Read Packet too Big!");
 
-			pqiNotify *notify = getPqiNotify();
+			p3Notify *notify = RsServer::notify();
 			if (notify)
 			{
 				std::string title =
@@ -625,7 +625,7 @@ continue_packet:
 					std::cerr << out << std::endl ;
 					pqioutput(PQL_ALERT, pqistreamerzone, out);
 
-					pqiNotify *notify = getPqiNotify();
+					p3Notify *notify = RsServer::notify();
 					if (notify)
 					{
 						std::string title = "Warning: Error Completing Read";

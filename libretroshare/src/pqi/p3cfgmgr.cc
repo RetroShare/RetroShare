@@ -30,8 +30,8 @@
 #include "pqi/pqibin.h"
 #include "pqi/pqistore.h"
 #include "pqi/pqiarchive.h"
-#include "pqi/pqinotify.h"
 #include <errno.h>
+#include <rsserver/p3face.h>
 #include <util/rsdiscspace.h>
 #include "util/rsstring.h"
 
@@ -335,10 +335,10 @@ bool p3ConfigMgr::backedUpFileSave(const std::string& fname, const std::string& 
 		}
 
 		if(size_file != (int) fwrite(config_buff,1,  size_file, file))
-			getPqiNotify()->AddSysMessage(0, RS_SYS_WARNING, "Write error", "Error while writing backup configuration file " + fname_backup + "\nIs your disc full or out of quota ?");
+			RsServer::notify()->AddSysMessage(0, RS_SYS_WARNING, "Write error", "Error while writing backup configuration file " + fname_backup + "\nIs your disc full or out of quota ?");
 
 		if(size_sign != (int) fwrite(sign_buff, 1, size_sign, sign))
-			getPqiNotify()->AddSysMessage(0, RS_SYS_WARNING, "Write error", "Error while writing main signature file " + sign_fname_backup + "\nIs your disc full or out of quota ?");
+			RsServer::notify()->AddSysMessage(0, RS_SYS_WARNING, "Write error", "Error while writing main signature file " + sign_fname_backup + "\nIs your disc full or out of quota ?");
 		
 		fclose(file);
 		fclose(sign);
@@ -1146,7 +1146,7 @@ bool p3Config::backedUpFileSave(const std::string& cfg_fname, const std::string&
 
 		if(size_file != (int) fwrite(buff, 1, size_file, cfg_file))
 		{
-			getPqiNotify()->AddSysMessage(0, RS_SYS_WARNING, "Write error", "Error while writing backup configuration file " + cfg_fname_backup + "\nIs your disc full or out of quota ?");
+			RsServer::notify()->AddSysMessage(0, RS_SYS_WARNING, "Write error", "Error while writing backup configuration file " + cfg_fname_backup + "\nIs your disc full or out of quota ?");
 			fclose(cfg_file);
 			delete[] buff;
 			return false ;

@@ -24,7 +24,7 @@
  */
 
 
-#include "retroshare/rsiface.h"
+#include "rsserver/p3face.h"
 #include "retroshare/rspeers.h"
 #include "services/p3disc.h"
 
@@ -796,10 +796,10 @@ void p3disc::recvPeerDetails(RsDiscReply *item, const std::string &certGpgId)
 
 	}
 
-	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_NEIGHBOURS, NOTIFY_TYPE_MOD);
+	RsServer::notify()->notifyListChange(NOTIFY_LIST_NEIGHBOURS, NOTIFY_TYPE_MOD);
 
 	if(should_notify_discovery)
-		rsicontrol->getNotify().notifyDiscInfoChanged();
+		RsServer::notify()->notifyDiscInfoChanged();
 
 	/* cleanup (handled by caller) */
 }

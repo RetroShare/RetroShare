@@ -28,6 +28,7 @@
 #include "pqi/p3peermgr.h"
 #include "pqi/p3netmgr.h"
 
+#include "rsserver/p3face.h"
 #include "pqi/authssl.h"
 #include "pqi/p3dhtmgr.h" // Only need it for constants.
 #include "tcponudp/tou.h"
@@ -43,7 +44,6 @@
 const int p3connectzone = 3431;
 
 #include "serialiser/rsconfigitems.h"
-#include "pqi/pqinotify.h"
 
 #include "retroshare/rsiface.h"
 #include "retroshare/rspeers.h"
@@ -478,7 +478,7 @@ void p3LinkMgrIMPL::tickMonitors()
 				/* notify GUI */
 				if (peer.actions & RS_PEER_CONNECTED)
 				{
-					pqiNotify *notify = getPqiNotify();
+					p3Notify *notify = RsServer::notify();
 					if (notify)
 					{
 						notify->AddPopupMessage(RS_POPUP_CONNECT, peer.id,"", "Online: ");

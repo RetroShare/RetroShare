@@ -30,9 +30,9 @@
 
 //#define DB_DEBUG 1
 
-ftFiStore::ftFiStore(CacheStrapper *cs, CacheTransfer *cft, NotifyBase *cb_in,p3PeerMgr *pm,
+ftFiStore::ftFiStore(CacheStrapper *cs, CacheTransfer *cft, p3PeerMgr *pm,
                         RsPeerId ownid, std::string cachedir)
-	:FileIndexStore(cs, cft, cb_in, pm, ownid, cachedir)
+	:FileIndexStore(cs, cft, pm, ownid, cachedir)
 {
 	return;
 }
@@ -122,8 +122,8 @@ bool ftFiStore::search(const std::string &hash, FileSearchFlags hintflags, FileI
 }
 
 		
-ftFiMonitor::ftFiMonitor(CacheStrapper *cs,NotifyBase *cb_in, std::string cachedir, std::string pid,const std::string& config_dir)
-	:FileIndexMonitor(cs,cb_in, cachedir, pid,config_dir), p3Config(CONFIG_TYPE_FT_SHARED)
+ftFiMonitor::ftFiMonitor(CacheStrapper *cs,std::string cachedir, std::string pid,const std::string& config_dir)
+	:FileIndexMonitor(cs,cachedir, pid,config_dir), p3Config(CONFIG_TYPE_FT_SHARED)
 {
 	return;
 }

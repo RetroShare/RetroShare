@@ -23,16 +23,18 @@
 
 #include <time.h>
 
+#include "rsserver/p3face.h"
 #include "dbase/fistore.h"
 #include "retroshare/rsexpr.h"
 #include "retroshare/rsfiles.h"
 #include "serialiser/rsserviceids.h"
 #include "pqi/p3peermgr.h"
+#include "pqi/p3notify.h"
 
 FileIndexStore::FileIndexStore(CacheStrapper *cs, CacheTransfer *cft,
-		NotifyBase *cb_in,p3PeerMgr *cnmgr, RsPeerId ownid, std::string cachedir)
+		p3PeerMgr *cnmgr, RsPeerId ownid, std::string cachedir)
 	:CacheStore(RS_SERVICE_TYPE_FILE_INDEX, false, cs, cft, cachedir),
-		localId(ownid), localindex(NULL), cb(cb_in),mPeerMgr(cnmgr)
+		localId(ownid), localindex(NULL), mPeerMgr(cnmgr)
 {
 	return;
 }
@@ -442,8 +444,7 @@ int FileIndexStore::searchBoolExp(Expression * exp, std::list<DirDetails> &resul
 
 int FileIndexStore::AboutToModify()
 {
-	if (cb)
-		cb->notifyListPreChange(NOTIFY_LIST_DIRLIST_FRIENDS, 0);
+	RsServer::notify()->notifyListPreChange(NOTIFY_LIST_DIRLIST_FRIENDS, 0);
 
 	return 1;
 }
@@ -451,8 +452,7 @@ int FileIndexStore::AboutToModify()
 
 int FileIndexStore::ModCompleted()
 {
-	if (cb)
-		cb->notifyListChange(NOTIFY_LIST_DIRLIST_FRIENDS, 0);
+	RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_FRIENDS, 0);
 
 	return 1;
 }

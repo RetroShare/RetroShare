@@ -297,8 +297,6 @@ bool p3Blogs::locked_eventDuplicateMsg(GroupInfo *grp, RsDistribMsg *msg, const 
 	return true;
 }
 
-#include "pqi/pqinotify.h"
-
 bool p3Blogs::locked_eventNewMsg(GroupInfo *grp, RsDistribMsg *msg, const std::string& id, bool historical)
 {
 	std::string grpId = msg->grpId;

@@ -30,7 +30,8 @@
 #ifdef WINDOWS_SYS
 #include "retroshare/rsinit.h"
 #endif
-#include "pqi/pqinotify.h"
+#include "rsserver/p3face.h"
+#include "pqi/p3notify.h"
 #include "pgp/pgphandler.h"
 
 #include <util/rsdir.h>
@@ -92,7 +93,7 @@ std::string pgp_pwd_callback(void * /*hook*/, const char *uid_hint, const char *
 	fprintf(stderr, "pgp_pwd_callback() called.\n");
 #endif
 	std::string password;
-	rsicontrol->getNotify().askForPassword(std::string("Please enter your PGP password for key:\n    ")+uid_hint+" :", prev_was_bad, password) ;
+	RsServer::notify()->askForPassword(std::string("Please enter your PGP password for key:\n    ")+uid_hint+" :", prev_was_bad, password) ;
 
 	return password ;
 }
@@ -621,7 +622,7 @@ bool AuthGPG::AllowConnection(const std::string &gpg_id, bool accept)
 
 	IndicateConfigChanged();
 
-	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_FRIENDS, accept ? NOTIFY_TYPE_ADD : NOTIFY_TYPE_DEL);
+	RsServer::notify()->notifyListChange(NOTIFY_LIST_FRIENDS, accept ? NOTIFY_TYPE_ADD : NOTIFY_TYPE_DEL);
 
 	return true;
 }

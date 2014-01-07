@@ -60,7 +60,6 @@ std::string FileIndexMonitor::findRealRoot(std::string base);
 
 ******************************************************************************************/
 
-class NotifyBase ;
 
 class DirContentToHash
 {
@@ -107,7 +106,7 @@ class HashCache
 class FileIndexMonitor: public CacheSource, public RsThread
 {
 	public:
-		FileIndexMonitor(CacheStrapper *cs, NotifyBase *cb_in, std::string cachedir, std::string pid, const std::string& config_dir);
+		FileIndexMonitor(CacheStrapper *cs, std::string cachedir, std::string pid, const std::string& config_dir);
 		virtual ~FileIndexMonitor();
 
 		/* external interface for filetransfer */
@@ -203,8 +202,6 @@ class FileIndexMonitor: public CacheSource, public RsThread
 
 		std::list<SharedDirInfo> pendingDirList;
 		bool    internal_setSharedDirectories();
-
-		NotifyBase *cb ;
 
 		HashCache hashCache ;
 		bool useHashCache ;

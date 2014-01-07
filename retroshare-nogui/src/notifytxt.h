@@ -32,7 +32,7 @@
 
 #include <string>
 
-class NotifyTxt: public NotifyBase
+class NotifyTxt: public NotifyClient
 {
 	public:
 		NotifyTxt():mNotifyMtx("NotifyMtx") { return; }

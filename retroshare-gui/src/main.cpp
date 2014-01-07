@@ -155,8 +155,12 @@ int main(int argc, char *argv[])
 
 	Q_INIT_RESOURCE(images);
 
+	// This is needed to allocate rsNotify, so that it can be used to ask for PGP passphrase
+	//
+	RsControl::earlyInitNotificationSystem() ;
+
 	NotifyQt *notify = NotifyQt::Create();
-	createRsControl(*notify);
+	rsNotify->registerNotifyClient(notify);
 
 	/* RetroShare Core Objects */
 	RsInit::InitRsConfig();
@@ -303,7 +307,7 @@ int main(int argc, char *argv[])
 	splashScreen.showMessage(rshare.translate("SplashScreen", "Load configuration"), Qt::AlignHCenter | Qt::AlignBottom);
 
 	/* stop Retroshare if startup fails */
-	if (!rsicontrol->StartupRetroShare())
+	if (!RsControl::instance()->StartupRetroShare())
 	{
 		std::cerr << "libretroshare failed to startup!" << std::endl;
 		return 1;
@@ -419,7 +423,7 @@ int main(int argc, char *argv[])
 	RsGxsUpdateBroadcast::cleanup();
 #endif
 
-	rsicontrol->rsGlobalShutDown();
+	RsControl::instance()->rsGlobalShutDown();
 
 	delete(soundManager);
 	soundManager = NULL;

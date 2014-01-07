@@ -33,12 +33,11 @@
 #include <assert.h>
 #endif
 
-#include "retroshare/rsiface.h"
+#include "rsserver/p3face.h"
 
 #include "pqi/authssl.h"
 #include "pqi/p3linkmgr.h"
 #include "retroshare/rspeers.h"
-#include "pqi/pqinotify.h"
 
 #include "ft/ftserver.h"
 #include "ft/ftdatamultiplex.h"
@@ -1884,7 +1883,7 @@ void p3turtle::returnSearchResult(RsTurtleSearchResultItem *item)
 	std::cerr << "  Returning result for search request " << (void*)item->request_id << " upwards." << std::endl ;
 #endif
 
-	rsicontrol->getNotify().notifyTurtleSearchResult(item->request_id,item->result) ;
+	RsServer::notify()->notifyTurtleSearchResult(item->request_id,item->result) ;
 }
 
 /// Warning: this function should never be called while the turtle mutex is locked.

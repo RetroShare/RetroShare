@@ -204,7 +204,7 @@ void ConfCertDialog::load()
             ui.version->setText(QString::fromStdString(vit->second));
 
 		  RsPeerCryptoParams cdet ;
-		  if(rsicontrol->getPeerCryptoDetails(detail.id,cdet) && cdet.connexion_state!=0)
+		  if(RsControl::instance()->getPeerCryptoDetails(detail.id,cdet) && cdet.connexion_state!=0)
 		  {
 			  QString ct ;
 			  ct += QString::fromStdString(cdet.cipher_name) ;

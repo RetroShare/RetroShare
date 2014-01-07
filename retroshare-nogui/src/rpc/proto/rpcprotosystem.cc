@@ -255,7 +255,7 @@ int RpcProtoSystem::processSystemQuit(uint32_t chan_id, uint32_t /* msg_id */, u
 		}
 		case rsctrl::system::RequestSystemQuit::SHUTDOWN_RS:
 		{
-				rsicontrol->rsGlobalShutDown();
+			RsControl::instance()->rsGlobalShutDown();
 			break;
 		}
 	}

@@ -3,6 +3,7 @@
 
 #include <retroshare/rsiface.h>
 #include <retroshare/rsturtle.h>
+#include <retroshare/rsnotify.h>
 #include <QObject>
 #include <QMutex>
 #include <QPoint>
@@ -24,7 +25,7 @@ class SignatureEventData ;
 struct TurtleFileInfo;
 
 //class NotifyQt: public NotifyBase, public QObject
-class NotifyQt: public QObject, public NotifyBase
+class NotifyQt: public QObject, public NotifyClient
 {
 	Q_OBJECT
 	public:
@@ -143,47 +144,23 @@ class NotifyQt: public QObject, public NotifyBase
 
 		static NotifyQt *_instance;
 
+		/* system notifications */
+
 		void startWaitingToasters();
 
 //		QMutex waitingToasterMutex; // for lock of the waiting toaster list
 		QList<Toaster*> waitingToasterList;
 
 		QTimer *runningToasterTimer;
-//		QMutex runningToasterMutex; // for lock of the running toaster list
 		QList<Toaster*> runningToasterList;
 
 		bool _enabled ;
 		QMutex _mutex ;
 
 		std::map<std::string,SignatureEventData*> _deferred_signature_queue ;
-//		void displayNeighbours();
-//		void displayFriends();
-//		void displayDirectories();
-//		void displaySearch();
-//		void displayChat();
-//		void displayMessages();
-//		void displayChannels();
-//		void displayTransfers();
-
-//		void preDisplayNeighbours();
-//		void preDisplayFriends();
-//		void preDisplayDirectories();
-//		void preDisplaySearch();
-//		void preDisplayMessages();
-//		void preDisplayChannels();
-//		void preDisplayTransfers();
 
 		/* so we can update windows */
 		NetworkDialog *cDialog;
-//		FriendsDialog       *fDialog;
-//		SharedFilesDialog *dDialog;
-//		TransfersDialog   *tDialog;
-//		ChatDialog        *hDialog;
-//		MessagesDialog    *mDialog;
-//		ChannelsDialog    *sDialog;
-//		MessengerWindow   *mWindow;
-
-//		RsIface           *iface;
 };
 
 #endif

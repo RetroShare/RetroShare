@@ -51,9 +51,14 @@ int rsserverzone = 101;
 #define WARN_BIG_CYCLE_TIME	(0.2)
 
 
-RsServer::RsServer(NotifyBase &callback)
-	:RsControl(callback), coreMutex("RsServer")
+RsServer::RsServer()
+	: coreMutex("RsServer")
 {
+	// This is needed asap.
+	//
+	mNotify = new p3Notify() ;
+	rsNotify = mNotify ;
+
 	ftserver = NULL;
 
 	mPeerMgr = NULL;
@@ -71,23 +76,23 @@ RsServer::RsServer(NotifyBase &callback)
 	mStatusSrv = NULL;
 	mChannels = NULL;
 	mForums = NULL;
+
 	/* caches (that need ticking) */
 
 	/* Config */
 	mConfigMgr = NULL;
 	mGeneralConfig = NULL;
 
-        /* GXS - Amazingly we can still initialise these
-         * even without knowing the data-types (they are just pointers???)
+	/* GXS - Amazingly we can still initialise these
+	 * even without knowing the data-types (they are just pointers???)
 	 */
-        mPhoto = NULL;
-        mWiki = NULL;
-        mPosted = NULL;
-        mGxsCircles = NULL;
-        mGxsIdService = NULL;
-        mGxsForums = NULL;
-        mWire = NULL;
-
+	mPhoto = NULL;
+	mWiki = NULL;
+	mPosted = NULL;
+	mGxsCircles = NULL;
+	mGxsIdService = NULL;
+	mGxsForums = NULL;
+	mWire = NULL;
 }
 
 RsServer::~RsServer()

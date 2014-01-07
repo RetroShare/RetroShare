@@ -42,13 +42,11 @@
 #include "util/rsstring.h"
 
 #include "retroshare/rspeers.h" // for RsPeerDetails structure 
+#include "rsserver/p3face.h" 
 
 /******************** notify of new Cert **************************/
-#include "pqinotify.h"
 
 #include <openssl/err.h>
-//#include <openssl/evp.h>
-//#include <openssl/pem.h>
 #include <openssl/rand.h>
 #include <openssl/x509.h>
 
@@ -1395,8 +1393,8 @@ bool    AuthSSLimpl::FailedCertificate(X509 *x509, const std::string& gpgid,
 #endif
 	if (incoming)
 	{
-			getPqiNotify()->AddPopupMessage(RS_POPUP_CONNECT_ATTEMPT, gpgid, sslcn, sslid);
-		getPqiNotify()->AddFeedItem(RS_FEED_ITEM_SEC_CONNECT_ATTEMPT, gpgid, sslid, sslcn, ip_address);
+		RsServer::notify()->AddPopupMessage(RS_POPUP_CONNECT_ATTEMPT, gpgid, sslcn, sslid);
+		RsServer::notify()->AddFeedItem(RS_FEED_ITEM_SEC_CONNECT_ATTEMPT, gpgid, sslid, sslcn, ip_address);
 
 #ifdef AUTHSSL_DEBUG
 		std::cerr << " Incoming from: ";
@@ -1405,9 +1403,9 @@ bool    AuthSSLimpl::FailedCertificate(X509 *x509, const std::string& gpgid,
 	else 
 	{
 		if(authed)
-			getPqiNotify()->AddFeedItem(RS_FEED_ITEM_SEC_AUTH_DENIED, gpgid, sslid, sslcn, ip_address);
+			RsServer::notify()->AddFeedItem(RS_FEED_ITEM_SEC_AUTH_DENIED, gpgid, sslid, sslcn, ip_address);
 		else
-			getPqiNotify()->AddFeedItem(RS_FEED_ITEM_SEC_UNKNOWN_OUT, gpgid, sslid, sslcn, ip_address);
+			RsServer::notify()->AddFeedItem(RS_FEED_ITEM_SEC_UNKNOWN_OUT, gpgid, sslid, sslcn, ip_address);
 
 #ifdef AUTHSSL_DEBUG
 		std::cerr << " Outgoing to: ";

@@ -26,7 +26,7 @@
 #include "services/p3forums.h"
 #include "pqi/authssl.h"
 #include "util/rsdir.h"
-#include "retroshare/rsiface.h"
+#include "rsserver/p3face.h"
 
 uint32_t convertToInternalFlags(uint32_t extFlags);
 uint32_t convertToExternalFlags(uint32_t intFlags);
@@ -401,8 +401,8 @@ bool p3Forums::setMessageStatus(const std::string& fId,const std::string& mId,co
 	} /******* UNLOCKED ********/
 
 	if (changed) {
-		rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_FORUMLIST_LOCKED, NOTIFY_TYPE_MOD);
-		rsicontrol->getNotify().notifyForumMsgReadSatusChanged(fId, mId, newStatus);
+		RsServer::notify()->notifyListChange(NOTIFY_LIST_FORUMLIST_LOCKED, NOTIFY_TYPE_MOD);
+		RsServer::notify()->notifyForumMsgReadSatusChanged(fId, mId, newStatus);
 	}
 
 	return true;
@@ -613,8 +613,6 @@ bool p3Forums::getMessageCount(const std::string &fId, unsigned int &newCount, u
 /****************** Event Feedback (Overloaded form p3distrib) *************************/
 /***************************************************************************************/
 
-#include "pqi/pqinotify.h"
-
 void p3Forums::locked_notifyGroupChanged(GroupInfo  &grp, uint32_t flags, bool historical)
 {
 	const std::string &grpId = grp.grpId;
@@ -626,27 +624,27 @@ void p3Forums::locked_notifyGroupChanged(GroupInfo  &grp, uint32_t flags, bool h
                 case GRP_NEW_UPDATE:
 			if (!historical)
 			{
-                        	getPqiNotify()->AddFeedItem(RS_FEED_ITEM_FORUM_NEW, grpId, msgId, nullId);
+				RsServer::notify()->AddFeedItem(RS_FEED_ITEM_FORUM_NEW, grpId, msgId, nullId);
 			}
-                        rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_FORUMLIST_LOCKED, NOTIFY_TYPE_ADD);
+			RsServer::notify()->notifyListChange(NOTIFY_LIST_FORUMLIST_LOCKED, NOTIFY_TYPE_ADD);
                         break;
                 case GRP_UPDATE:
 			if (!historical)
 			{
-                        	getPqiNotify()->AddFeedItem(RS_FEED_ITEM_FORUM_UPDATE, grpId, msgId, nullId);
+				RsServer::notify()->AddFeedItem(RS_FEED_ITEM_FORUM_UPDATE, grpId, msgId, nullId);
 			}
-                        rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_FORUMLIST_LOCKED, NOTIFY_TYPE_MOD);
+			RsServer::notify()->notifyListChange(NOTIFY_LIST_FORUMLIST_LOCKED, NOTIFY_TYPE_MOD);
                         break;
                 case GRP_LOAD_KEY:
                         break;
                 case GRP_NEW_MSG:
-                        rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_FORUMLIST_LOCKED, NOTIFY_TYPE_ADD);
+								RsServer::notify()->notifyListChange(NOTIFY_LIST_FORUMLIST_LOCKED, NOTIFY_TYPE_ADD);
                         break;
                 case GRP_SUBSCRIBED:
-                        rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_FORUMLIST_LOCKED, NOTIFY_TYPE_ADD);
+								RsServer::notify()->notifyListChange(NOTIFY_LIST_FORUMLIST_LOCKED, NOTIFY_TYPE_ADD);
                         break;
                 case GRP_UNSUBSCRIBED:
-                        rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_FORUMLIST_LOCKED, NOTIFY_TYPE_DEL);
+								RsServer::notify()->notifyListChange(NOTIFY_LIST_FORUMLIST_LOCKED, NOTIFY_TYPE_DEL);
                         break;
         }
 	return p3GroupDistrib::locked_notifyGroupChanged(grp, flags, historical);
@@ -675,7 +673,7 @@ bool p3Forums::locked_eventNewMsg(GroupInfo */*grp*/, RsDistribMsg *msg, const s
 
 	if (!historical)
 	{
-		getPqiNotify()->AddFeedItem(RS_FEED_ITEM_FORUM_MSG, grpId, msgId, nullId);
+		RsServer::notify()->AddFeedItem(RS_FEED_ITEM_FORUM_MSG, grpId, msgId, nullId);
 	}
 
 	return true;

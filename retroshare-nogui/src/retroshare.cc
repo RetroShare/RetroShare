@@ -233,9 +233,12 @@ int main(int argc, char **argv)
 	 * You will need to create you own NotifyXXX class
 	 * if you want to receive notifications of events */
 
-	NotifyTxt *notify = new NotifyTxt();
-	RsControl *rsServer = createRsControl(*notify);
-	rsicontrol = rsServer ;
+	// This is needed to allocate rsNotify, so that it can be used to ask for PGP passphrase
+	//
+	RsControl::earlyInitNotificationSystem() ;
+
+	NotifyTxt *notify = new NotifyTxt() ;
+	rsNotify->registerNotifyClient(notify);
 
 	std::string preferredId, gpgId, gpgName, gpgEmail, sslName;
 	RsInit::getPreferedAccountId(preferredId);
@@ -295,7 +298,7 @@ int main(int argc, char **argv)
 #endif
 
 	/* Start-up libretroshare server threads */
-	rsServer -> StartupRetroShare();
+	RsControl::instance() -> StartupRetroShare();
 
 #ifdef RS_INTRO_SERVER
 	RsIntroServer rsIS;

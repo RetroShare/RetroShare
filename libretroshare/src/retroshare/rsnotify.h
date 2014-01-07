@@ -33,6 +33,8 @@
 #include <string>
 #include <stdint.h>
 
+#include "rsturtle.h"
+
 class RsNotify;
 extern RsNotify   *rsNotify;
 
@@ -97,50 +99,124 @@ const uint32_t RS_FEED_ITEM_FILES_NEW		 = RS_FEED_TYPE_FILES | 0x0001;
 
 const uint32_t RS_MESSAGE_CONNECT_ATTEMPT    = 0x0001;
 
+const int NOTIFY_LIST_NEIGHBOURS             = 1;
+const int NOTIFY_LIST_FRIENDS                = 2;
+const int NOTIFY_LIST_SEARCHLIST             = 4;
+const int NOTIFY_LIST_MESSAGELIST            = 5;
+const int NOTIFY_LIST_CHANNELLIST            = 6;
+const int NOTIFY_LIST_TRANSFERLIST           = 7;
+const int NOTIFY_LIST_CONFIG                 = 8;
+const int NOTIFY_LIST_DIRLIST_LOCAL          = 9;
+const int NOTIFY_LIST_DIRLIST_FRIENDS        = 10;
+const int NOTIFY_LIST_FORUMLIST_LOCKED       = 11; // use connect with Qt::QueuedConnection
+const int NOTIFY_LIST_MESSAGE_TAGS           = 12;
+const int NOTIFY_LIST_PUBLIC_CHAT            = 13;
+const int NOTIFY_LIST_PRIVATE_INCOMING_CHAT  = 14;
+const int NOTIFY_LIST_PRIVATE_OUTGOING_CHAT  = 15;
+const int NOTIFY_LIST_GROUPLIST              = 16;
+const int NOTIFY_LIST_CHANNELLIST_LOCKED     = 17; // use connect with Qt::QueuedConnection
+const int NOTIFY_LIST_CHAT_LOBBY_INVITATION  = 18;
+const int NOTIFY_LIST_CHAT_LOBBY_LIST        = 19;
+
+const int NOTIFY_TYPE_SAME   = 0x01;
+const int NOTIFY_TYPE_MOD    = 0x02; /* general purpose, check all */
+const int NOTIFY_TYPE_ADD    = 0x04; /* flagged additions */
+const int NOTIFY_TYPE_DEL    = 0x08; /* flagged deletions */
+
+const uint32_t NOTIFY_HASHTYPE_EXAMINING_FILES = 1; /* Examining shared files */
+const uint32_t NOTIFY_HASHTYPE_FINISH          = 2; /* Finish */
+const uint32_t NOTIFY_HASHTYPE_HASH_FILE       = 3; /* Hashing file */
+const uint32_t NOTIFY_HASHTYPE_SAVE_FILE_INDEX = 4; /* Hashing file */
+
 class RsFeedItem
 {
-public:
-	RsFeedItem(uint32_t type, const std::string& id1, const std::string& id2, const std::string& id3)
-	:mType(type), mId1(id1), mId2(id2), mId3(id3)
-	{
-		return;
-	}
+	public:
+		RsFeedItem(uint32_t type, const std::string& id1, const std::string& id2, const std::string& id3)
+			:mType(type), mId1(id1), mId2(id2), mId3(id3)
+		{
+			return;
+		}
 
-	RsFeedItem(uint32_t type, const std::string& id1, const std::string& id2, const std::string& id3,const std::string& id4)
-	:mType(type), mId1(id1), mId2(id2), mId3(id3), mId4(id4) {}
+		RsFeedItem(uint32_t type, const std::string& id1, const std::string& id2, const std::string& id3,const std::string& id4)
+			:mType(type), mId1(id1), mId2(id2), mId3(id3), mId4(id4) {}
 
-	RsFeedItem() :mType(0) { return; }
+		RsFeedItem() :mType(0) { return; }
 
-	uint32_t mType;
-	std::string mId1, mId2, mId3, mId4;
+		uint32_t mType;
+		std::string mId1, mId2, mId3, mId4;
 };
 
+// This class implements a generic notify client. To have your own components being notified by
+// the Retroshare library, sub-class NotifyClient, and overload the methods you want to make use of
+// (The other methods will just ignore the call), and register your ownclient into RsNotify, as:
+//
+//       	myNotifyClient: public NotifyClient
+//       	{
+//       		public:
+//       			virtual void void notifyPeerHasNewAvatar(std::string peer_id) 
+//       			{
+//       				doMyOwnThing() ;
+//       			}
+//       	}
+//      
+//       	myNotifyClient *client = new myNotifyClient() ;
+//      
+//       	rsNotify->registerNotifyClient(client) ;
+//
+// This mechanism can be used in plugins, new services, etc.
+//	
+
+class NotifyClient ;
 
 class RsNotify 
 {
 	public:
+		/* registration of notifies clients */
+		virtual void registerNotifyClient(NotifyClient *nc) = 0;
 
-	RsNotify() { return; }
-virtual ~RsNotify() { return; }
+		/* Pull methods for retroshare-gui                   */
+		/* this should probably go into a different service. */
+		 
+		virtual bool NotifySysMessage(uint32_t &sysid, uint32_t &type, std::string &title, std::string &msg) = 0;
+		virtual bool NotifyPopupMessage(uint32_t &ptype, std::string &name, std::string &title, std::string &msg) = 0;
+		virtual bool NotifyLogMessage(uint32_t &sysid, uint32_t &type, std::string &title, std::string &msg) = 0;
 
-	/* Output for retroshare-gui */
-virtual bool NotifySysMessage(uint32_t &sysid, uint32_t &type, 
-					std::string &title, std::string &msg)		= 0;
-virtual bool NotifyPopupMessage(uint32_t &ptype, std::string &name, std::string &title, std::string &msg) 	= 0;
-virtual bool NotifyLogMessage(uint32_t &sysid, uint32_t &type,
-					std::string &title, std::string &msg)		= 0;
-
-	/* Control over Messages */
-virtual bool GetSysMessageList(std::map<uint32_t, std::string> &list)  			= 0;
-virtual bool GetPopupMessageList(std::map<uint32_t, std::string> &list)			= 0;
-
-virtual bool SetSysMessageMode(uint32_t sysid, uint32_t mode)				= 0;
-virtual bool SetPopupMessageMode(uint32_t ptype, uint32_t mode)				= 0;
-
-	/* Feed Output */
-virtual bool GetFeedItem(RsFeedItem &item)						= 0;
-
+		virtual bool GetFeedItem(RsFeedItem &item) = 0;
 };
 
+class NotifyClient
+{
+	public:
+		NotifyClient() {}
+		virtual ~NotifyClient() {}
 
+		virtual void notifyListPreChange              (int /* list */, int /* type */) {}
+		virtual void notifyListChange                 (int /* list */, int /* type */) {}
+		virtual void notifyErrorMsg                   (int /* list */, int /* sev  */, std::string /* msg */) {}
+		virtual void notifyChatStatus                 (const std::string& /* peer_id  */, const std::string& /* status_string */ ,bool /* is_private */) {}
+		virtual void notifyChatLobbyEvent             (uint64_t           /* lobby id */, uint32_t           /* event type    */ ,const std::string& /* nickname */,const std::string& /* any string */) {}
+		virtual void notifyChatLobbyTimeShift         (int                /* time_shift*/) {}
+		virtual void notifyCustomState                (const std::string& /* peer_id   */, const std::string&               /* status_string */) {}
+		virtual void notifyHashingInfo                (uint32_t           /* type      */, const std::string&               /* fileinfo      */) {}
+		virtual void notifyTurtleSearchResult         (uint32_t           /* search_id */, const std::list<TurtleFileInfo>& /* files         */) {}
+		virtual void notifyPeerHasNewAvatar           (std::string        /* peer_id   */) {}
+		virtual void notifyOwnAvatarChanged           () {}
+		virtual void notifyOwnStatusMessageChanged    () {}
+		virtual void notifyDiskFull                   (uint32_t           /* location  */, uint32_t                         /* size limit in MB */) {}
+		virtual void notifyPeerStatusChanged          (const std::string& /* peer_id   */, uint32_t                         /* status           */) {}
+
+		/* one or more peers has changed the states */
+		virtual void notifyPeerStatusChangedSummary   () {}
+		virtual void notifyDiscInfoChanged            () {}
+		virtual void notifyForumMsgReadSatusChanged   (const std::string& /* channelId */, const std::string& /* msgId */, uint32_t /* status */) {}
+		virtual void notifyChannelMsgReadSatusChanged (const std::string& /* channelId */, const std::string& /* msgId */, uint32_t /* status */) {}
+		virtual bool askForDeferredSelfSignature      (const void *       /* data      */, const uint32_t     /* len   */, unsigned char * /* sign */, unsigned int * /* signlen */,int& signature_result ) { signature_result = false ;return true; }
+		virtual void notifyDownloadComplete           (const std::string& /* fileHash  */) {};
+		virtual void notifyDownloadCompleteCount      (uint32_t           /* count     */) {};
+		virtual void notifyHistoryChanged             (uint32_t           /* msgId     */, int /* type */) {}
+
+		virtual bool askForPassword                   (const std::string& /* key_details     */, bool               /* prev_is_bad */, std::string& /* password */ ) { return false ;}
+		virtual bool askForPluginConfirmation         (const std::string& /* plugin_filename */, const std::string& /* plugin_file_hash */) { return false ;}
+
+};
 #endif

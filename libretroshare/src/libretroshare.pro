@@ -382,7 +382,6 @@ HEADERS +=	pqi/authssl.h \
 			pqi/pqiloopback.h \
 			pqi/pqimonitor.h \
 			pqi/pqinetwork.h \
-			pqi/pqinotify.h \
 			pqi/pqiperson.h \
 			pqi/pqipersongrp.h \
 			pqi/pqisecurity.h \

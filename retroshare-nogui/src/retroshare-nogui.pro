@@ -29,6 +29,7 @@ linux-* {
 	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
 	LIBS += -lssl -lupnp -lixml -lgnome-keyring
 	LIBS *= -lcrypto -ldl -lz
+	LIBS *= -rdynamic
 
 	gxs {
 		# We need a explicit path here, to force using the home version of sqlite3 that really encrypts the database.

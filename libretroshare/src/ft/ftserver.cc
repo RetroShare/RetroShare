@@ -41,6 +41,8 @@ const int ftserverzone = 29539;
 #include "ft/ftdatamultiplex.h"
 //#include "ft/ftdwlqueue.h"
 #include "turtle/p3turtle.h"
+#include "pqi/p3notify.h"
+#include "rsserver/p3face.h"
 
 
 // Includes CacheStrapper / FiMonitor / FiStore for us.
@@ -108,7 +110,7 @@ std::string ftServer::OwnId()
 }
 
 	/* Final Setup (once everything is assigned) */
-void ftServer::SetupFtServer(NotifyBase *cb)
+void ftServer::SetupFtServer()
 {
 
 	/* setup FiStore/Monitor */
@@ -132,8 +134,8 @@ void ftServer::SetupFtServer(NotifyBase *cb)
 
 
 	/* Make Cache Source/Store */
-	mFiStore = new ftFiStore(mCacheStrapper, mFtController, cb, mPeerMgr, ownId, remotecachedir);
-	mFiMon = new ftFiMonitor(mCacheStrapper,cb, localcachedir, ownId,mConfigPath);
+	mFiStore = new ftFiStore(mCacheStrapper, mFtController, mPeerMgr, ownId, remotecachedir);
+	mFiMon = new ftFiMonitor(mCacheStrapper,localcachedir, ownId,mConfigPath);
 
 	/* now add the set to the cachestrapper */
 	CachePair cp(mFiMon, mFiStore, CacheId(RS_SERVICE_TYPE_FILE_INDEX, 0));
@@ -282,7 +284,7 @@ bool ftServer::FileRequest(const std::string& fname, const std::string& hash, ui
 
 	if(!checkHash(hash,error_string))
 	{
-		rsicontrol->getNotify().notifyErrorMsg(0,0,"Error handling hash \""+hash+"\". This hash appears to be invalid(Error string=\""+error_string+"\"). This is probably due an bad handling of strings.") ;
+		RsServer::notify()->notifyErrorMsg(0,0,"Error handling hash \""+hash+"\". This hash appears to be invalid(Error string=\""+error_string+"\"). This is probably due an bad handling of strings.") ;
 		return false ;
 	}
 

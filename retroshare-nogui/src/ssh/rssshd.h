@@ -71,7 +71,7 @@ class RsSshd: public RsThread, public RpcComms
 public:
 
 // NB: This must be called EARLY before all the threads are launched.
-static  RsSshd *InitRsSshd(const std::string &portstr, const std::string &rsakeyfile);
+static  RsSshd *InitRsSshd(const std::string& portStr, const std::string &rsakeyfile);
 
 
 	// Interface.

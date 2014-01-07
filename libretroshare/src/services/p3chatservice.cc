@@ -38,10 +38,10 @@
 #include "retroshare/rspeers.h"
 #include "retroshare/rsstatus.h"
 #include "pqi/pqibin.h"
-#include "pqi/pqinotify.h"
 #include "pqi/pqistore.h"
 #include "pqi/p3linkmgr.h"
 #include "pqi/p3historymgr.h"
+#include "rsserver/p3face.h"
 
 #include "services/p3chatservice.h"
 #include "serialiser/rsconfigitems.h"
@@ -499,7 +499,7 @@ bool     p3ChatService::sendPrivateChat(const std::string &id, const std::wstrin
 			privateOutgoingList.push_back(ci);
 		}
 
-		rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_PRIVATE_OUTGOING_CHAT, NOTIFY_TYPE_ADD);
+		RsServer::notify()->notifyListChange(NOTIFY_LIST_PRIVATE_OUTGOING_CHAT, NOTIFY_TYPE_ADD);
 
 		IndicateConfigChanged();
 
@@ -912,7 +912,7 @@ void p3ChatService::handleRecvChatLobbyList(RsChatLobbyListItem_deprecated *item
 		}
 	}
 
-	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_CHAT_LOBBY_LIST, NOTIFY_TYPE_ADD) ;
+	RsServer::notify()->notifyListChange(NOTIFY_LIST_CHAT_LOBBY_LIST, NOTIFY_TYPE_ADD) ;
 	_should_reset_lobby_counts = false ;
 }
 void p3ChatService::handleRecvChatLobbyList(RsChatLobbyListItem_deprecated2 *item)
@@ -944,7 +944,7 @@ void p3ChatService::handleRecvChatLobbyList(RsChatLobbyListItem_deprecated2 *ite
 		}
 	}
 
-	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_CHAT_LOBBY_LIST, NOTIFY_TYPE_ADD) ;
+	RsServer::notify()->notifyListChange(NOTIFY_LIST_CHAT_LOBBY_LIST, NOTIFY_TYPE_ADD) ;
 	_should_reset_lobby_counts = false ;
 }
 void p3ChatService::handleRecvChatLobbyList(RsChatLobbyListItem *item)
@@ -990,7 +990,7 @@ void p3ChatService::handleRecvChatLobbyList(RsChatLobbyListItem *item)
     for (it = chatLobbyToSubscribe.begin(); it != chatLobbyToSubscribe.end(); it++) 
         joinVisibleChatLobby(*it);
 
-	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_CHAT_LOBBY_LIST, NOTIFY_TYPE_ADD) ;
+	 RsServer::notify()->notifyListChange(NOTIFY_LIST_CHAT_LOBBY_LIST, NOTIFY_TYPE_ADD) ;
 	_should_reset_lobby_counts = false ;
 }
 
@@ -1037,7 +1037,7 @@ void p3ChatService::addTimeShiftStatistics(int D)
 #endif
 
 		if(expected > 9)	// if more than 20 samples
-			rsicontrol->getNotify().notifyChatLobbyTimeShift( (int)pow(2.0f,expected)) ;
+			RsServer::notify()->notifyChatLobbyTimeShift( (int)pow(2.0f,expected)) ;
 
 		total = 0.0f ;
 		log_delay_histogram.clear() ;
@@ -1144,7 +1144,7 @@ void p3ChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *item)
 #endif
 		}
 	}
-	rsicontrol->getNotify().notifyChatLobbyEvent(item->lobby_id,item->event_type,item->nick,item->string1) ;
+	RsServer::notify()->notifyChatLobbyEvent(item->lobby_id,item->event_type,item->nick,item->string1) ;
 }
 
 void p3ChatService::handleRecvChatAvatarItem(RsChatAvatarItem *ca)
@@ -1154,7 +1154,7 @@ void p3ChatService::handleRecvChatAvatarItem(RsChatAvatarItem *ca)
 #ifdef CHAT_DEBUG
 	std::cerr << "Received avatar data for peer " << ca->PeerId() << ". Notifying." << std::endl ;
 #endif
-	rsicontrol->getNotify().notifyPeerHasNewAvatar(ca->PeerId()) ;
+	RsServer::notify()->notifyPeerHasNewAvatar(ca->PeerId()) ;
 }
 
 bool p3ChatService::checkForMessageSecurity(RsChatMsgItem *ci)
@@ -1356,11 +1356,11 @@ bool p3ChatService::handleRecvChatMsgItem(RsChatMsgItem *ci)
 		librs::util::ConvertUtf16ToUtf8(ci->message, message);
 		if (ci->chatFlags & RS_CHAT_FLAG_PRIVATE) {
 			/* notify private chat message */
-			getPqiNotify()->AddPopupMessage(popupChatFlag, ci->PeerId(), name, message);
+			RsServer::notify()->AddPopupMessage(popupChatFlag, ci->PeerId(), name, message);
 		} else {
 			/* notify public chat message */
-			getPqiNotify()->AddPopupMessage(RS_POPUP_GROUPCHAT, ci->PeerId(), "", message);
-			getPqiNotify()->AddFeedItem(RS_FEED_ITEM_CHAT_NEW, ci->PeerId(), message, "");
+			RsServer::notify()->AddPopupMessage(RS_POPUP_GROUPCHAT, ci->PeerId(), "", message);
+			RsServer::notify()->AddFeedItem(RS_FEED_ITEM_CHAT_NEW, ci->PeerId(), message, "");
 		}
 
 		{
@@ -1390,10 +1390,10 @@ bool p3ChatService::handleRecvChatMsgItem(RsChatMsgItem *ci)
 	}
 
 	if (publicChanged) {
-		rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_PUBLIC_CHAT, NOTIFY_TYPE_ADD);
+		RsServer::notify()->notifyListChange(NOTIFY_LIST_PUBLIC_CHAT, NOTIFY_TYPE_ADD);
 	}
 	if (privateChanged) {
-		rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_PRIVATE_INCOMING_CHAT, NOTIFY_TYPE_ADD);
+		RsServer::notify()->notifyListChange(NOTIFY_LIST_PRIVATE_INCOMING_CHAT, NOTIFY_TYPE_ADD);
 
 		IndicateConfigChanged(); // only private chat messages are saved
 	}
@@ -1411,7 +1411,7 @@ void p3ChatService::handleRecvChatStatusItem(RsChatStatusItem *cs)
 	else if(cs->flags & RS_CHAT_FLAG_CUSTOM_STATE)		// Check if new custom string is available at peer's. 
 	{ 																	// If so, send a request to get the custom string.
 		receiveStateString(cs->PeerId(),cs->status_string) ;	// store it
-		rsicontrol->getNotify().notifyCustomState(cs->PeerId(), cs->status_string) ;
+		RsServer::notify()->notifyCustomState(cs->PeerId(), cs->status_string) ;
 	}
 	else if(cs->flags & RS_CHAT_FLAG_CUSTOM_STATE_AVAILABLE)
 	{
@@ -1422,13 +1422,13 @@ void p3ChatService::handleRecvChatStatusItem(RsChatStatusItem *cs)
 	}
 	else if(cs->flags & RS_CHAT_FLAG_PRIVATE)
 	{
-		rsicontrol->getNotify().notifyChatStatus(cs->PeerId(),cs->status_string,true) ;
+		RsServer::notify()->notifyChatStatus(cs->PeerId(),cs->status_string,true) ;
 
 		if(cs->flags & RS_CHAT_FLAG_CLOSING_DISTANT_CONNECTION)
 			markDistantChatAsClosed(cs->PeerId()) ;
 	}
 	else if(cs->flags & RS_CHAT_FLAG_PUBLIC)
-		rsicontrol->getNotify().notifyChatStatus(cs->PeerId(),cs->status_string,false) ;
+		RsServer::notify()->notifyChatStatus(cs->PeerId(),cs->status_string,false) ;
 }
 
 void p3ChatService::getListOfNearbyChatLobbies(std::vector<VisibleChatLobbyRecord>& visible_lobbies)
@@ -1499,7 +1499,7 @@ bool p3ChatService::getPublicChatQueue(std::list<ChatInfo> &chats)
 	} /* UNLOCKED */
 
 	if (changed) {
-		rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_PUBLIC_CHAT, NOTIFY_TYPE_DEL);
+		RsServer::notify()->notifyListChange(NOTIFY_LIST_PUBLIC_CHAT, NOTIFY_TYPE_DEL);
 	}
 	
 	return true;
@@ -1620,7 +1620,7 @@ bool p3ChatService::clearPrivateChatQueue(bool incoming, const std::string &id)
 	} /* UNLOCKED */
 
 	if (changed) {
-		rsicontrol->getNotify().notifyListChange(incoming ? NOTIFY_LIST_PRIVATE_INCOMING_CHAT : NOTIFY_LIST_PRIVATE_OUTGOING_CHAT, NOTIFY_TYPE_DEL);
+		RsServer::notify()->notifyListChange(incoming ? NOTIFY_LIST_PRIVATE_INCOMING_CHAT : NOTIFY_LIST_PRIVATE_OUTGOING_CHAT, NOTIFY_TYPE_DEL);
 
 		IndicateConfigChanged();
 	}
@@ -1664,7 +1664,7 @@ void p3ChatService::setOwnCustomStateString(const std::string& s)
 		mLinkMgr->getOnlineList(onlineList);
 	}
 
-	rsicontrol->getNotify().notifyOwnStatusMessageChanged() ;
+	RsServer::notify()->notifyOwnStatusMessageChanged() ;
 
 	// alert your online peers to your newly set status
 	std::list<std::string>::iterator it(onlineList.begin());
@@ -1704,7 +1704,7 @@ void p3ChatService::setOwnAvatarJpegData(const unsigned char *data,int size)
 	}
 	IndicateConfigChanged();
 
-	rsicontrol->getNotify().notifyOwnAvatarChanged() ;
+	RsServer::notify()->notifyOwnAvatarChanged() ;
 
 #ifdef CHAT_DEBUG
 	std::cerr << "p3chatservice:setOwnAvatarJpegData() done." << std::endl ;
@@ -2175,7 +2175,7 @@ void p3ChatService::statusChange(const std::list<pqipeer> &plist)
 					checkSizeAndSendMessage_deprecated(to_send[i]); // delete item
 
 				if (changed) {
-					rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_PRIVATE_OUTGOING_CHAT, NOTIFY_TYPE_DEL);
+					RsServer::notify()->notifyListChange(NOTIFY_LIST_PRIVATE_OUTGOING_CHAT, NOTIFY_TYPE_DEL);
 
 					IndicateConfigChanged();
 				}
@@ -2616,7 +2616,7 @@ void p3ChatService::handleRecvLobbyInvite(RsChatLobbyInviteItem *item)
 		_lobby_invites_queue[item->lobby_id] = invite ;
 	}
 	// 2 - notify the gui to ask the user.
-	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_CHAT_LOBBY_INVITATION, NOTIFY_TYPE_ADD);
+	RsServer::notify()->notifyListChange(NOTIFY_LIST_CHAT_LOBBY_INVITATION, NOTIFY_TYPE_ADD);
 }
 
 void p3ChatService::getPendingChatLobbyInvites(std::list<ChatLobbyInvite>& invites)
@@ -2694,8 +2694,8 @@ bool p3ChatService::acceptLobbyInvite(const ChatLobbyId& lobby_id)
 	std::cerr << "  Notifying of new recvd msg." << std::endl ;
 #endif
 
-	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_PRIVATE_INCOMING_CHAT, NOTIFY_TYPE_ADD);
-	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_CHAT_LOBBY_LIST, NOTIFY_TYPE_ADD);
+	RsServer::notify()->notifyListChange(NOTIFY_LIST_PRIVATE_INCOMING_CHAT, NOTIFY_TYPE_ADD);
+	RsServer::notify()->notifyListChange(NOTIFY_LIST_CHAT_LOBBY_LIST, NOTIFY_TYPE_ADD);
 
 	// send AKN item
 	sendLobbyStatusNewPeer(lobby_id) ;
@@ -2793,7 +2793,7 @@ bool p3ChatService::joinVisibleChatLobby(const ChatLobbyId& lobby_id)
 	for(std::list<std::string>::const_iterator it(invited_friends.begin());it!=invited_friends.end();++it)
 		invitePeerToLobby(lobby_id,*it) ;
 
-	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_CHAT_LOBBY_LIST, NOTIFY_TYPE_ADD) ;
+	RsServer::notify()->notifyListChange(NOTIFY_LIST_CHAT_LOBBY_LIST, NOTIFY_TYPE_ADD) ;
 	sendLobbyStatusNewPeer(lobby_id) ;
 
 	return true ;
@@ -2837,7 +2837,7 @@ ChatLobbyId p3ChatService::createChatLobby(const std::string& lobby_name,const s
 	for(std::list<std::string>::const_iterator it(invited_friends.begin());it!=invited_friends.end();++it)
 		invitePeerToLobby(lobby_id,*it) ;
 
-	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_CHAT_LOBBY_LIST, NOTIFY_TYPE_ADD) ;
+	RsServer::notify()->notifyListChange(NOTIFY_LIST_CHAT_LOBBY_LIST, NOTIFY_TYPE_ADD) ;
 
 	return lobby_id ;
 }
@@ -2870,7 +2870,7 @@ void p3ChatService::handleFriendUnsubscribeLobby(RsChatLobbyUnsubscribeItem *ite
 			}
 	}
 
-	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_CHAT_LOBBY_LIST, NOTIFY_TYPE_MOD) ;
+	RsServer::notify()->notifyListChange(NOTIFY_LIST_CHAT_LOBBY_LIST, NOTIFY_TYPE_MOD) ;
 }
 
 void p3ChatService::unsubscribeChatLobby(const ChatLobbyId& id)
@@ -2921,7 +2921,7 @@ void p3ChatService::unsubscribeChatLobby(const ChatLobbyId& id)
 			}
 	}
 
-	rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_CHAT_LOBBY_LIST, NOTIFY_TYPE_DEL) ;
+	RsServer::notify()->notifyListChange(NOTIFY_LIST_CHAT_LOBBY_LIST, NOTIFY_TYPE_DEL) ;
 
 	// done!
 }
@@ -3027,7 +3027,7 @@ void p3ChatService::setLobbyAutoSubscribe(const ChatLobbyId& lobby_id, const boo
 	else
 		_known_lobbies_flags[lobby_id] &= ~RS_CHAT_LOBBY_FLAGS_AUTO_SUBSCRIBE ;
     
-    rsicontrol->getNotify().notifyListChange(NOTIFY_LIST_CHAT_LOBBY_LIST, NOTIFY_TYPE_ADD) ;
+	RsServer::notify()->notifyListChange(NOTIFY_LIST_CHAT_LOBBY_LIST, NOTIFY_TYPE_ADD) ;
     IndicateConfigChanged();
 }
 
@@ -3137,7 +3137,7 @@ void p3ChatService::cleanLobbyCaches()
 
 	// update the gui
 	for(std::list<ChatLobbyId>::const_iterator it(changed_lobbies.begin());it!=changed_lobbies.end();++it)
-		rsicontrol->getNotify().notifyChatLobbyEvent(*it,RS_CHAT_LOBBY_EVENT_KEEP_ALIVE,"------------","") ;
+		RsServer::notify()->notifyChatLobbyEvent(*it,RS_CHAT_LOBBY_EVENT_KEEP_ALIVE,"------------","") ;
 
 	// send connection challenges
 	//
@@ -3245,7 +3245,7 @@ void p3ChatService::addVirtualPeer(const TurtleFileHash& hash,const TurtleVirtua
 
 	// Notify the GUI that the tunnel is up.
 	//
-	rsicontrol->getNotify().notifyChatStatus(hash,"tunnel is up again!",true) ;
+	RsServer::notify()->notifyChatStatus(hash,"tunnel is up again!",true) ;
 }
 
 void p3ChatService::removeVirtualPeer(const TurtleFileHash& hash,const TurtleVirtualPeerId& virtual_peer_id)
@@ -3263,8 +3263,8 @@ void p3ChatService::removeVirtualPeer(const TurtleFileHash& hash,const TurtleVir
 
 		it->second.status = RS_DISTANT_CHAT_STATUS_TUNNEL_DN ;
 	}
-	rsicontrol->getNotify().notifyChatStatus(hash,"tunnel is down...",true) ;
-	rsicontrol->getNotify().notifyPeerStatusChanged(hash,RS_STATUS_OFFLINE) ;
+	RsServer::notify()->notifyChatStatus(hash,"tunnel is down...",true) ;
+	RsServer::notify()->notifyPeerStatusChanged(hash,RS_STATUS_OFFLINE) ;
 }
 
 #ifdef DEBUG_DISTANT_CHAT
@@ -3366,7 +3366,7 @@ void p3ChatService::receiveTurtleData(	RsTurtleGenericTunnelItem *gitem,const st
 	// Setup the virtual peer to be the origin, and pass it on.
 	//
 	citem->PeerId(hash) ;
-	//rsicontrol->getNotify().notifyPeerStatusChanged(hash,RS_STATUS_ONLINE) ;
+	//RsServer::notify()->notifyPeerStatusChanged(hash,RS_STATUS_ONLINE) ;
 
 	handleIncomingItem(citem) ; // Treats the item, and deletes it 
 }
@@ -3625,7 +3625,7 @@ bool p3ChatService::initiateDistantChatConnexion(const std::string& encrypted_st
 
 	error_code = signature_checked ? RS_DISTANT_CHAT_ERROR_NO_ERROR : RS_DISTANT_CHAT_ERROR_UNKNOWN_KEY;
 
-	getPqiNotify()->AddPopupMessage(RS_POPUP_CHAT, hash, "Distant peer", "Conversation starts...");
+	RsServer::notify()->AddPopupMessage(RS_POPUP_CHAT, hash, "Distant peer", "Conversation starts...");
 
 	// Save config, since a new invite was added.
 	//
@@ -3656,7 +3656,7 @@ bool p3ChatService::initiateDistantChatConnexion(const std::string& hash,uint32_
 
 	startClientDistantChatConnection(hash,pgp_id,aes_key) ;
 
-	getPqiNotify()->AddPopupMessage(RS_POPUP_CHAT, hash, "Distant peer", "Conversation starts...");
+	RsServer::notify()->AddPopupMessage(RS_POPUP_CHAT, hash, "Distant peer", "Conversation starts...");
 
 	error_code = RS_DISTANT_CHAT_ERROR_NO_ERROR ;
 	return true ;
