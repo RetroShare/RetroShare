@@ -24,6 +24,8 @@
 #ifndef MRK_WIKI_DIALOG_H
 #define MRK_WIKI_DIALOG_H
 
+#include <QMessageBox>
+
 #include "retroshare-gui/mainpage.h"
 #include "ui_WikiDialog.h"
 
@@ -63,9 +65,11 @@ private slots:
 
 	// GroupTreeWidget stuff.
 	void groupListCustomPopupMenu(QPoint point);
-        void subscribeToGroup();
-        void unsubscribeToGroup();
+  void subscribeToGroup();
+  void unsubscribeToGroup();
 	void wikiGroupChanged(const QString &groupId);
+	
+	void todo();
 
 private:
 

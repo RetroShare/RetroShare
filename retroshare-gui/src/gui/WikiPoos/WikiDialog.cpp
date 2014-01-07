@@ -75,7 +75,8 @@
 #define IMAGE_NEWFORUM       ":/images/new_forum16.png"
 #define IMAGE_FORUMAUTHD     ":/images/konv_message2.png"
 #define IMAGE_COPYLINK       ":/images/copyrslink.png"
-#define IMAGE_WIKI          ":/images/wikibook_32.png"
+#define IMAGE_WIKI           ":/images/wikibook_32.png"
+#define IMAGE_EDIT           ":/images/edit_16.png"
 
 
 /** Constructor */
@@ -96,16 +97,14 @@ WikiDialog::WikiDialog(QWidget *parent)
 
 	// Usurped until Refresh works normally
 	connect( ui.toolButton_Delete, SIGNAL(clicked()), this, SLOT(insertWikiGroups()));
+	connect( ui.pushButton, SIGNAL(clicked()), this, SLOT(todo()));
 
 	connect( ui.treeWidget_Pages, SIGNAL(itemSelectionChanged()), this, SLOT(groupTreeChanged()));
 
 
 	// GroupTreeWidget.
-        connect(ui.groupTreeWidget, SIGNAL(treeCustomContextMenuRequested(QPoint)), this, SLOT(groupListCustomPopupMenu(QPoint)));
-        connect(ui.groupTreeWidget, SIGNAL(treeItemActivated(QString)), this, SLOT(wikiGroupChanged(QString)));
-
-
-
+	connect(ui.groupTreeWidget, SIGNAL(treeCustomContextMenuRequested(QPoint)), this, SLOT(groupListCustomPopupMenu(QPoint)));
+	connect(ui.groupTreeWidget, SIGNAL(treeItemActivated(QString)), this, SLOT(wikiGroupChanged(QString)));
 
 
 	QTimer *timer = new QTimer(this);
@@ -113,15 +112,17 @@ WikiDialog::WikiDialog(QWidget *parent)
 	timer->start(1000);
 
 	/* setup TokenQueue */
-        mWikiQueue = new TokenQueue(rsWiki->getTokenService(), this);
+	mWikiQueue = new TokenQueue(rsWiki->getTokenService(), this);
 
 
 	/* Setup Group Tree */
-        mYourGroups = ui.groupTreeWidget->addCategoryItem(tr("My Groups"), QIcon(IMAGE_FOLDER), true);
-        mSubscribedGroups = ui.groupTreeWidget->addCategoryItem(tr("Subscribed Groups"), QIcon(IMAGE_FOLDERRED), true);
-        mPopularGroups = ui.groupTreeWidget->addCategoryItem(tr("Popular Groups"), QIcon(IMAGE_FOLDERGREEN), false);
-        mOtherGroups = ui.groupTreeWidget->addCategoryItem(tr("Other Groups"), QIcon(IMAGE_FOLDERYELLOW), false);
+	mYourGroups = ui.groupTreeWidget->addCategoryItem(tr("My Groups"), QIcon(IMAGE_FOLDER), true);
+	mSubscribedGroups = ui.groupTreeWidget->addCategoryItem(tr("Subscribed Groups"), QIcon(IMAGE_FOLDERRED), true);
+	mPopularGroups = ui.groupTreeWidget->addCategoryItem(tr("Popular Groups"), QIcon(IMAGE_FOLDERGREEN), false);
+	mOtherGroups = ui.groupTreeWidget->addCategoryItem(tr("Other Groups"), QIcon(IMAGE_FOLDERYELLOW), false);
 
+  //Auto refresh seems not to work, temporary solution at start
+  insertWikiGroups();
 
 }
 
@@ -437,6 +438,7 @@ void WikiDialog::loadPages(const uint32_t &token)
 	std::cerr << std::endl;
 
 	clearGroupTree();
+	clearWikiPage();
 
 	QTreeWidgetItem *groupItem = NULL;
 
@@ -628,6 +630,9 @@ void WikiDialog::groupListCustomPopupMenu(QPoint /*point*/)
 	action = contextMnu.addAction(QIcon(IMAGE_UNSUBSCRIBE), tr("Unsubscribe to Group"), this, SLOT(unsubscribeToGroup()));
 	action->setEnabled (!mGroupId.empty() && IS_GROUP_SUBSCRIBED(subscribeFlags));
 
+	action = contextMnu.addAction(QIcon(IMAGE_EDIT), tr("Edit Group"), this, SLOT(editGroupDetails()));
+	action->setEnabled (!mGroupId.empty() && IS_GROUP_ADMIN(subscribeFlags));
+
 	/************** NOT ENABLED YET *****************/
 
 	//if (!Settings->getForumOpenAllInNewTab()) {
@@ -741,4 +746,11 @@ void WikiDialog::GroupMetaDataToGroupItemInfo(const RsGroupMetaData &groupInfo, 
 	groupItemInfo.icon = QIcon(IMAGE_WIKI);
 
 }
-
+void WikiDialog::todo()
+{
+	QMessageBox::information(this, "Todo",
+							 "<b>Open points:</b><ul>"
+							 "<li>Auto update Group trees"
+							 "<li>Edit Groups"
+							 "</ul>");
+}
