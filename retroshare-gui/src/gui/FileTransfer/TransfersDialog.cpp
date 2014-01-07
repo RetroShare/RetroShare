@@ -310,7 +310,7 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     QHeaderView_setSectionResizeMode(upheader, COLUMN_USTATUS, QHeaderView::Interactive);
     QHeaderView_setSectionResizeMode(upheader, COLUMN_USERNAME, QHeaderView::Interactive);
 
-    upheader->resizeSection ( COLUMN_UNAME, 190 );
+    upheader->resizeSection ( COLUMN_UNAME, 260 );
     upheader->resizeSection ( COLUMN_USIZE, 70 );
     upheader->resizeSection ( COLUMN_UTRANSFERRED, 75 );
     upheader->resizeSection ( COLUMN_ULSPEED, 75 );
