@@ -557,7 +557,7 @@ int	FileIndex::setRootDirectories(const std::list<std::string> &inlist, time_t u
 	}
 
 	/* remove all dirs with zero time (non recursive) */
-	root->removeOldEntries(utime, false);
+	int cleanedCount = root->removeOldEntries(utime, false);
 
 	/* now flag remaining directories with correct update time */
 	for(it = root->subdirs.begin(); it != root->subdirs.end(); it++)
@@ -569,7 +569,7 @@ int	FileIndex::setRootDirectories(const std::list<std::string> &inlist, time_t u
 	
 	updateHashIndex() ;
 
-	return 1;
+	return cleanedCount;
 }
 
 void FileIndex::updateHashIndex() 

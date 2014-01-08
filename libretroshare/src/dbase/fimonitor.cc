@@ -906,7 +906,6 @@ void 	FileIndexMonitor::updateCycle()
 	}
 
 	if (cleanedCount > 0) {
-//		cb->notifyListPreChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
 		RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
 	}
 }
@@ -1437,75 +1436,87 @@ bool    FileIndexMonitor::inDirectoryCheck()
 bool    FileIndexMonitor::internal_setSharedDirectories()
 {
 	int i;
-	RsStackMutex stack(fiMutex) ; /* LOCKED DIRS */
+	bool changed = false;
 
-	if (!pendingDirs)
 	{
-		if (mForceCheck)
+		RsStackMutex stack(fiMutex) ; /* LOCKED DIRS */
+
+		if (!pendingDirs)
 		{
-			mForceCheck = false;
-			return true;
-		}
-
-		return false;
-	}
-
-	mForceCheck = false;
-	pendingDirs = false;
-	pendingForceCacheWrite = true;
-
-	/* clear old directories */
-	directoryMap.clear();
-
-	/* iterate through the directories */
-	std::list<SharedDirInfo>::iterator it;
-	std::map<std::string, SharedDirInfo>::const_iterator cit;
-	for(it = pendingDirList.begin(); it != pendingDirList.end(); it++)
-	{
-		/* get the head directory */
-		std::string root_dir = (*it).filename;
-		std::string top_dir  = it->virtualname;
-		if (top_dir.empty()) {
-			top_dir = RsDirUtil::getTopDir(root_dir);
-		}
-
-		/* if unique -> add, else add modifier  */
-		bool unique = false;
-		for(i = 0; !unique; i++)
-		{
-			std::string tst_dir = top_dir;
-			if (i > 0)
+			if (mForceCheck)
 			{
-				rs_sprintf_append(tst_dir, "-%d", i);
+				mForceCheck = false;
+				return true;
 			}
-			if (directoryMap.end()== (cit=directoryMap.find(tst_dir)))
+
+			return false;
+		}
+
+		mForceCheck = false;
+		pendingDirs = false;
+		pendingForceCacheWrite = true;
+
+		/* clear old directories */
+		directoryMap.clear();
+
+		/* iterate through the directories */
+		std::list<SharedDirInfo>::iterator it;
+		std::map<std::string, SharedDirInfo>::const_iterator cit;
+		for(it = pendingDirList.begin(); it != pendingDirList.end(); it++)
+		{
+			/* get the head directory */
+			std::string root_dir = (*it).filename;
+			std::string top_dir  = it->virtualname;
+			if (top_dir.empty()) {
+				top_dir = RsDirUtil::getTopDir(root_dir);
+			}
+
+			/* if unique -> add, else add modifier  */
+			bool unique = false;
+			for(i = 0; !unique; i++)
 			{
-				unique = true;
-				/* store calculated name */
-				it->virtualname = tst_dir;
-				/* add it! */
-				directoryMap[tst_dir.c_str()] = *it;
+				std::string tst_dir = top_dir;
+				if (i > 0)
+				{
+					rs_sprintf_append(tst_dir, "-%d", i);
+				}
+				if (directoryMap.end()== (cit=directoryMap.find(tst_dir)))
+				{
+					unique = true;
+					/* store calculated name */
+					it->virtualname = tst_dir;
+					/* add it! */
+					directoryMap[tst_dir.c_str()] = *it;
 #ifdef FIM_DEBUG
-				std::cerr << "Added [" << tst_dir << "] => " << root_dir << std::endl;
+					std::cerr << "Added [" << tst_dir << "] => " << root_dir << std::endl;
 #endif
+				}
 			}
 		}
+
+		pendingDirList.clear();
+
+		/* now we've decided on the 'root' dirs set them to the
+		 * fileIndex
+		 */
+		std::list<std::string> topdirs;
+		for(cit = directoryMap.begin(); cit != directoryMap.end(); cit++)
+		{
+			topdirs.push_back(cit->first);
+		}
+
+		if (fi.setRootDirectories(topdirs, 0) > 0)
+		{
+			changed = true;
+		}
+
+		locked_saveFileIndexes(true) ;
 	}
 
-	pendingDirList.clear();
-
-	/* now we've decided on the 'root' dirs set them to the
-	 * fileIndex
-	 */
-	std::list<std::string> topdirs;
-	for(cit = directoryMap.begin(); cit != directoryMap.end(); cit++)
+	if (changed)
 	{
-		topdirs.push_back(cit->first);
+		RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
 	}
-
-	fi.setRootDirectories(topdirs, 0);
-
-	locked_saveFileIndexes(true) ;
 
 	return true;
 }
