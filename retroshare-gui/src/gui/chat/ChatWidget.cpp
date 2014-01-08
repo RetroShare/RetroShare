@@ -1015,7 +1015,7 @@ void ChatWidget::updateStatus(const QString &peer_id, int status)
 
 void ChatWidget::updateTitle()
 {
-	if (!chatType() != CHATTYPE_LOBBY) {
+	if (chatType() != CHATTYPE_LOBBY) {
 		// updateStatus is used
 		return;
 	}
