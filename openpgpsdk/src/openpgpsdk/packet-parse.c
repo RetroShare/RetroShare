@@ -2211,6 +2211,12 @@ static int parse_literal_data(ops_region_t *region,ops_parse_info_t *pinfo)
 
 		C.literal_data_body.data = (unsigned char *)malloc(l) ;
 
+		if(C.literal_data_body.data == NULL)
+		{
+		   fprintf(stderr,"parse_literal_data(): cannot malloc for requested size %d.\n",l) ;
+		   return 0 ;
+		}
+
 		if(!limited_read(C.literal_data_body.data,l,region,pinfo))
 		{
 			free(C.literal_data_body.data);
