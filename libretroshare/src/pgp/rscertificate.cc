@@ -122,6 +122,7 @@ RsCertificate::RsCertificate(const std::string& str)
 		dns_name(""),only_pgp(true)
 {
 	uint32_t err_code ;
+	binary_pgp_key = NULL ;
 
 	if(!initFromString(str,err_code) && !initFromString_oldFormat(str,err_code))
 		throw err_code ;
@@ -177,141 +178,152 @@ void RsCertificate::scan_ip(const std::string& ip_string, unsigned short port,un
 
 bool RsCertificate::initFromString(const std::string& instr,uint32_t& err_code)
 {
-	std::string str ;
-	err_code = CERTIFICATE_PARSING_ERROR_NO_ERROR ;
-
-	// 0 - clean the string and check that it is pure radix64
-	//
-	for(uint32_t i=0;i<instr.length();++i)
+	try
 	{
-		if(instr[i] == ' ' || instr[i] == '\t' || instr[i] == '\n')
-			continue ;
+		std::string str ;
+		err_code = CERTIFICATE_PARSING_ERROR_NO_ERROR ;
 
-		if(! is_acceptable_radix64Char(instr[i]))
-			return false ;
-
-		str += instr[i] ;
-	}
-#ifdef DEBUG_RSCERTIFICATE
-	std::cerr << "Decoding from:" << str << std::endl;
-#endif
-	// 1 - decode the string.
-	//
-	char *bf = NULL ;
-	size_t size ;
-	Radix64::decode(str,bf, size) ;
-
-	bool checksum_check_passed = false ;
-	unsigned char *buf = (unsigned char *)bf ;
-	size_t total_s = 0 ;
-	only_pgp = true ;
-
-	while(total_s < size)
-	{
-		uint8_t ptag = buf[0];
-		buf = &buf[1] ;
-
-		unsigned char *buf2 = buf ;
-		uint32_t s = PGPKeyParser::read_125Size(buf) ;
-
-		total_s += 1 + ((unsigned long)buf-(unsigned long)buf2) ;
-
-		if(total_s > size)
+		// 0 - clean the string and check that it is pure radix64
+		//
+		for(uint32_t i=0;i<instr.length();++i)
 		{
-			err_code = CERTIFICATE_PARSING_ERROR_SIZE_ERROR ;
-			return false ;
+			if(instr[i] == ' ' || instr[i] == '\t' || instr[i] == '\n')
+				continue ;
+
+			if(! is_acceptable_radix64Char(instr[i]))
+				return false ;
+
+			str += instr[i] ;
 		}
+#ifdef DEBUG_RSCERTIFICATE
+		std::cerr << "Decoding from:" << str << std::endl;
+#endif
+		// 1 - decode the string.
+		//
+		char *bf = NULL ;
+		size_t size ;
+		Radix64::decode(str,bf, size) ;
+
+		bool checksum_check_passed = false ;
+		unsigned char *buf = (unsigned char *)bf ;
+		size_t total_s = 0 ;
+		only_pgp = true ;
+
+		while(total_s < size)
+		{
+			uint8_t ptag = buf[0];
+			buf = &buf[1] ;
+
+			unsigned char *buf2 = buf ;
+			uint32_t s = PGPKeyParser::read_125Size(buf) ;
+
+			total_s += 1 + ((unsigned long)buf-(unsigned long)buf2) ;
+
+			if(total_s > size)
+			{
+				err_code = CERTIFICATE_PARSING_ERROR_SIZE_ERROR ;
+				return false ;
+			}
 
 #ifdef DEBUG_RSCERTIFICATE
-		std::cerr << "Packet parse: read ptag " << (int)ptag << ", size " << s << ", total_s = " << total_s << ", expected total = " << size << std::endl;
+			std::cerr << "Packet parse: read ptag " << (int)ptag << ", size " << s << ", total_s = " << total_s << ", expected total = " << size << std::endl;
 #endif
-		switch(ptag)
-		{
-			case CERTIFICATE_PTAG_PGP_SECTION: binary_pgp_key = new unsigned char[s] ;
-														  memcpy(binary_pgp_key,buf,s) ;
-														  binary_pgp_key_size = s ;
-														  buf = &buf[s] ;
-														  break ;
+			switch(ptag)
+			{
+				case CERTIFICATE_PTAG_PGP_SECTION: binary_pgp_key = new unsigned char[s] ;
+															  memcpy(binary_pgp_key,buf,s) ;
+															  binary_pgp_key_size = s ;
+															  buf = &buf[s] ;
+															  break ;
 
-			case CERTIFICATE_PTAG_NAME_SECTION: location_name = std::string((char *)buf,s) ;
-															buf = &buf[s] ;
-															break ;
+				case CERTIFICATE_PTAG_NAME_SECTION: location_name = std::string((char *)buf,s) ;
+																buf = &buf[s] ;
+																break ;
 
-			case CERTIFICATE_PTAG_SSLID_SECTION: 
-															if(s != location_id.SIZE_IN_BYTES)
-															{
-																err_code = CERTIFICATE_PARSING_ERROR_INVALID_LOCATION_ID ;
-																return false ;
-															}
+				case CERTIFICATE_PTAG_SSLID_SECTION: 
+																if(s != location_id.SIZE_IN_BYTES)
+																{
+																	err_code = CERTIFICATE_PARSING_ERROR_INVALID_LOCATION_ID ;
+																	return false ;
+																}
 
-															location_id = SSLIdType(buf) ;
-															buf = &buf[s] ;
-															only_pgp = false ;
-															break ;
+																location_id = SSLIdType(buf) ;
+																buf = &buf[s] ;
+																only_pgp = false ;
+																break ;
 
-			case CERTIFICATE_PTAG_DNS_SECTION: dns_name = std::string((char *)buf,s) ;
-															buf = &buf[s] ;
-														  break ;
+				case CERTIFICATE_PTAG_DNS_SECTION: dns_name = std::string((char *)buf,s) ;
+															  buf = &buf[s] ;
+															  break ;
 
-			case CERTIFICATE_PTAG_LOCIPANDPORT_SECTION: 
-														  if(s != 6)
-														  {
-															  err_code = CERTIFICATE_PARSING_ERROR_INVALID_LOCAL_IP;
-															  return false ;
-														  }
-
-														  memcpy(ipv4_internal_ip_and_port,buf,s) ;
-														  buf = &buf[s] ;
-														  break ;
-			case CERTIFICATE_PTAG_EXTIPANDPORT_SECTION: 
-														  if(s != 6)
-														  {
-															  err_code = CERTIFICATE_PARSING_ERROR_INVALID_EXTERNAL_IP;
-															  return false ;
-														  }
-
-														  memcpy(ipv4_external_ip_and_port,buf,s) ;
-														  buf = &buf[s] ;
-														  break ;
-			case CERTIFICATE_PTAG_CHECKSUM_SECTION: 
-														  {
-															  if(s != 3 || total_s+3 != size)
+				case CERTIFICATE_PTAG_LOCIPANDPORT_SECTION: 
+															  if(s != 6)
 															  {
-																  err_code = CERTIFICATE_PARSING_ERROR_INVALID_CHECKSUM_SECTION ;
+																  err_code = CERTIFICATE_PARSING_ERROR_INVALID_LOCAL_IP;
 																  return false ;
 															  }
-															  uint32_t computed_crc = PGPKeyManagement::compute24bitsCRC((unsigned char *)bf,size-5) ;
-															  uint32_t certificate_crc = buf[0] + (buf[1] << 8) + (buf[2] << 16) ;
 
-															  if(computed_crc != certificate_crc)
+															  memcpy(ipv4_internal_ip_and_port,buf,s) ;
+															  buf = &buf[s] ;
+															  break ;
+				case CERTIFICATE_PTAG_EXTIPANDPORT_SECTION: 
+															  if(s != 6)
 															  {
-																  err_code = CERTIFICATE_PARSING_ERROR_CHECKSUM_ERROR ;
+																  err_code = CERTIFICATE_PARSING_ERROR_INVALID_EXTERNAL_IP;
 																  return false ;
 															  }
-															  else
-																  checksum_check_passed = true ;
-														  }
-														  break ;
-			default:
-														  err_code = CERTIFICATE_PARSING_ERROR_UNKNOWN_SECTION_PTAG ;
-														  return false ;
-		}
 
-		total_s += s ;
-	}
+															  memcpy(ipv4_external_ip_and_port,buf,s) ;
+															  buf = &buf[s] ;
+															  break ;
+				case CERTIFICATE_PTAG_CHECKSUM_SECTION: 
+															  {
+																  if(s != 3 || total_s+3 != size)
+																  {
+																	  err_code = CERTIFICATE_PARSING_ERROR_INVALID_CHECKSUM_SECTION ;
+																	  return false ;
+																  }
+																  uint32_t computed_crc = PGPKeyManagement::compute24bitsCRC((unsigned char *)bf,size-5) ;
+																  uint32_t certificate_crc = buf[0] + (buf[1] << 8) + (buf[2] << 16) ;
+
+																  if(computed_crc != certificate_crc)
+																  {
+																	  err_code = CERTIFICATE_PARSING_ERROR_CHECKSUM_ERROR ;
+																	  return false ;
+																  }
+																  else
+																	  checksum_check_passed = true ;
+															  }
+															  break ;
+				default:
+															  err_code = CERTIFICATE_PARSING_ERROR_UNKNOWN_SECTION_PTAG ;
+															  return false ;
+			}
+
+			total_s += s ;
+		}
 #ifdef V_06_USE_CHECKSUM
-	if(!checksum_check_passed)
+		if(!checksum_check_passed)
+		{
+			err_code = CERTIFICATE_PARSING_ERROR_MISSING_CHECKSUM ;
+			return false ;
+		}
+#endif
+
+		if(total_s != size)	
+			std::cerr << "(EE) Certificate contains trailing characters. Weird." << std::endl;
+
+		delete[] bf ;
+		return true ;
+	}
+	catch(std::exception& e)
 	{
-		err_code = CERTIFICATE_PARSING_ERROR_MISSING_CHECKSUM ;
+		if(binary_pgp_key != NULL)
+			delete[] binary_pgp_key ;
+
+		err_code = CERTIFICATE_PARSING_ERROR_SIZE_ERROR ;
 		return false ;
 	}
-#endif
-
-	if(total_s != size)	
-		std::cerr << "(EE) Certificate contains trailing characters. Weird." << std::endl;
-
-	delete[] bf ;
-	return true ;
 }
 
 std::string RsCertificate::sslid_string() const 
