@@ -1,6 +1,76 @@
 retroshare (0.5.5-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
 
    * Improvements
+      - General
+         * Updated languages from Transifex
+         * Added language Catalan (ca_ES)
+
+      - Transfers
+         * new cache system for RemoteDirModel, which significantly speeds up the display of shared files
+         * added generic function to return the correct string for scanf for unsigned ints depending on the 
+            size of the actual variable that is scanned. Should fix the rehash bug and bugs corrupting 
+            timestamps on some 32bits systems
+         * Added few more file type icons for "cpp", "h" nd "c", "patch" and "diff" extensions
+         * Moved Uploads to Downloads Tab.
+         * Added to change the text for the Play Button, when file is not a media file.
+         * Added a custom context menu for pasting RS-links to the base class MimeTextEdit and removed 
+           the custom context menu from derived classes. Updated english translation.
+         * patch "AddSearchFilesourceSorted_6951.diff" from Phenom. Adds correct sorting for search results.
+         * extended max chunk TTL to 1 hour. A short TTL is not anymore needed since chuns are shared between sources
+
+      - Chat
+         * patch "chatdialog_allow_buttons_from_different_plugins_3" from electron. ChatDialog allows 
+           now Buttons from different Plugins.
+         * patch "Fix_ChatLobbyAutoSubscribe_6951.diff" from Phenom. Fixes request for existing lobbies 
+            when no lobby ihas been found yet. Code beautification
+         * added lobby ID as tooltip to lobby list
+
+      - Channels
+         * patch "Fix_ChannelNotificationFeedLink" from Phenom. Allows to finish loading a channel 
+           before jumping to the linked post
+         * Added a default background color for the Channel Message Logo for a better look and feel, 
+            removed stretching of the logo, set a minimum size, background is now filled black.
+
+      - Notification
+         * reworked the notification system, which is now a standalone service. Now plugins can receive notifications.
+         * Corrected the layout of the Connect Progress Dialog
+         * Changed the logo size for some news feed items to use same size for better look.
+         * Added to display blue/black forum message icons for the forum feeds, when forum is anon or signed.
+
+      - plugins
+         * Added service pointer for forums to the plugin interface
+         * FeedReader: Used the forums pointer from the plugin interface instead of the global pointer
+         * added missing services in RsPluginInterface class
+
+      - GXS
+         * Enabled the Filter Line edit for filtering friends, by nick/ID for Create Circles Dialog's 
+           Known Identities Widget.
+         * Set some minimum header sizes for some items
+         * Enabled sorting for the QTreeWidget's
+         * fixed temporary to load the Wiki Groups Tree at startup, auto update seems not to work.
+
+      - core
+         * moved PGP id and SSLid types into rsid.h, and renamed them with a more appropriate name
+         * fixed cipher list for openssl. ECDHE is not configured, so it cannot be used
+         * added serialisation methods for SSLId and time_t
+         * added an option in the pro file for dsdv, as it is compiled when not used
+         * removed status member from FileDetails. Not used => misleading
+         * removed asserts in reader_armoured.c, reader_encrypted_se.c, reader_encrypted_seip.c, readerwriter.c
+
+   * Bug fixes
+      - fixed bug due to ot sending notifications to the file lists
+      - added missign cleanup call in RsAES.cc, causing a small memory leak
+      - Changed order of the shutdown to fix a crash of the WebUI plugin. First stop the 
+        plugins then the other services.
+      - fixed ghost lobby issue (thx to thunder for spotting it out)
+      - patch from HM to avoid allocating absurdly long uids
+      - added check to only import version 4 keys in the keyring
+
+ -- Cyril Soler <csoler@users.sourceforge.net>  Thu, 09 Jan 2014 20:00:00 +0100
+
+retroshare (0.5.5-0.6933~precise) precise; urgency=low
+
+   * Improvements
 
       - fixed up some debug text (patch from H.Morgan)
       - reduced string for lol bomb filtering, to filter out <\?xml* instead of <\?xml\ *
