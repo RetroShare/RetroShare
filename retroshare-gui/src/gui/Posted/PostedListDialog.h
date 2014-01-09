@@ -130,6 +130,8 @@ private:
 	void groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo);
 
 	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
+	
+	void todo();
 
 private:
 	QTreeWidgetItem *yourTopics;

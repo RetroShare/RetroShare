@@ -71,6 +71,8 @@ PostedListDialog::PostedListDialog(QWidget *parent)
 	connect(ui.topSortButton, SIGNAL(clicked()), this, SLOT(getRankings()));
 	connect(ui.nextButton, SIGNAL(clicked()), this, SLOT(showNext()));
 	connect(ui.prevButton, SIGNAL(clicked()), this, SLOT(showPrev()));
+	
+	connect( ui.pushButton, SIGNAL(clicked()), this, SLOT(todo()));
 
 	// default sort method.
 	mSortMethod = RsPosted::HotRankType;
@@ -177,7 +179,7 @@ void PostedListDialog::groupListCustomPopupMenu(QPoint /*point*/)
 	//bool isPublisher = IS_GROUP_PUBLISHER(subscribeFlags);
 	bool isSubscribed = IS_GROUP_SUBSCRIBED(subscribeFlags);
 
-	QAction *action = contextMnu.addAction(QIcon(IMAGE_MESSAGE), tr("Submit Post"), this, SLOT(newPost()));
+	QAction *action = contextMnu.addAction(QIcon(IMAGE_MESSAGE), tr("Create Post"), this, SLOT(newPost()));
 	action->setEnabled(isSubscribed);
 	action = contextMnu.addAction(QIcon(IMAGE_SUBSCRIBE), tr("Subscribe"), this, SLOT(subscribeTopic()));
 	action->setEnabled(!isSubscribed);
@@ -995,3 +997,13 @@ void PostedListDialog::insertGroupData(const std::list<RsGroupMetaData> &groupLi
 /**************************************************************************************/
 /**************************************************************************************/
 /**************************************************************************************/
+
+void PostedListDialog::todo()
+{
+	QMessageBox::information(this, "Todo",
+							 "<b>Open points:</b><ul>"
+							 "<li>Subreddits/tags support"
+							 "<li>Edit Groups"
+							 "<li>Picture Support"
+							 "</ul>");
+}
