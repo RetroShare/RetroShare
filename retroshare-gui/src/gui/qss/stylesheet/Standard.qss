@@ -540,3 +540,11 @@ MessageWidget QFrame#decryptFrame {
 	background: #CCFFCC;
 	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #CCFFCC, stop:1 #AAFFAA);
 }
+/* Posted Links */
+
+PostedCreatePostDialog QLabel#info_label {
+	border: 1px solid #DCDC41;
+	border-radius: 6px;
+	background: #FFFFD7;
+	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFD7, stop:1 #FFFFB2);
+}

@@ -37,11 +37,11 @@ PostedCreatePostDialog::PostedCreatePostDialog(TokenQueue* tokenQ, RsPosted *pos
 {
 	ui->setupUi(this);
 
-	connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(createPost()));
+	connect(ui->submitButton, SIGNAL(clicked()), this, SLOT(createPost()));
 	connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(close()));
 	
 	ui->headerFrame->setHeaderImage(QPixmap(":/images/posted_64.png"));
-	ui->headerFrame->setHeaderText(tr("Create Post"));
+	ui->headerFrame->setHeaderText(tr("Submit a new Post"));
 
 	/* fill in the available OwnIds for signing */
 	ui->idChooser->loadIds(IDCHOOSER_ID_REQUIRED, "");
@@ -71,6 +71,12 @@ void PostedCreatePostDialog::createPost()
 	post.mNotes = std::string(ui->notesTextEdit->toPlainText().toUtf8());
 	post.mMeta.mMsgName = std::string(ui->titleEdit->text().toUtf8());
 	post.mMeta.mAuthorId = authorId;
+	
+	if(ui->titleEdit->text().isEmpty()) {
+		/* error message */
+		QMessageBox::warning(this, "RetroShare", tr("Please add a Title"), QMessageBox::Ok, QMessageBox::Ok);
+		return; //Don't add  a empty title!!
+	}
 
 	uint32_t token;
 	mPosted->createPost(token, post);

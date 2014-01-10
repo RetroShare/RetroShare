@@ -88,10 +88,10 @@ void PostedItem::setContent(const RsPostedPost &post)
 	dateLabel->setText(timestamp);
 	fromLabel->setId(post.mMeta.mAuthorId);
 	titleLabel->setText("<a href=" + QString::fromStdString(post.mLink) +
-					   "><span style=\" text-decoration: underline; color:#0000ff;\">" +
+					   "><span style=\" text-decoration: underline; color:#2255AA;\">" +
 					   QString::fromStdString(post.mMeta.mMsgName) + "</span></a>");
 	siteLabel->setText("<a href=" + QString::fromStdString(post.mLink) +
-					   "><span style=\" text-decoration: underline; color:#0000ff;\">" +
+					   "><span style=\" text-decoration: underline; color:#2255AA;\">" +
 					   QString::fromStdString(post.mLink) + "</span></a>");
 
 	//QString score = "Hot" + QString::number(post.mHotScore);

@@ -78,6 +78,8 @@ private slots:
 
 	void showNext();
 	void showPrev();
+	
+	void todo();
 
 protected:
 	virtual void updateDisplay(bool complete);
@@ -131,7 +133,6 @@ private:
 
 	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 	
-	void todo();
 
 private:
 	QTreeWidgetItem *yourTopics;
