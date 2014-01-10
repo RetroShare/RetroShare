@@ -26,7 +26,7 @@
 #include "services/p3idservice.h"
 #include "serialiser/rsgxsiditems.h"
 #include "retroshare/rsgxsflags.h"
-#include "retroshare/rsiface.h"
+#include "rsserver/p3face.h"
 #include "util/rsrandom.h"
 #include "util/rsstring.h"
 
@@ -1458,7 +1458,7 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
 		unsigned int sign_size = MAX_SIGN_SIZE;
 		int result ;
 
-		if (!rsicontrol->getNotify().askForDeferredSelfSignature((void *) hash.toByteArray(), hash.SIZE_IN_BYTES, signarray, &sign_size,result))
+		if (!RsServer::notify()->askForDeferredSelfSignature((void *) hash.toByteArray(), hash.SIZE_IN_BYTES, signarray, &sign_size,result))
 		{
 			/* error */
 			std::cerr << "p3IdService::service_CreateGroup() ERROR Signing stuff";
