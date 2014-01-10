@@ -43,6 +43,7 @@ class RsDht ;
 class RsDisc ;
 class RsMsgs ;
 class RsForums;
+class RsNotify;
 class p3LinkMgr ;
 class MainPage ;
 class QIcon ;
@@ -100,6 +101,7 @@ public:
     RsDisc   *mDisc;
     RsDht    *mDht;
     RsForums *mForums;
+    RsNotify *mNotify;
 };
 
 class RsPlugin

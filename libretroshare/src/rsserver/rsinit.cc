@@ -2261,6 +2261,7 @@ int RsServer::StartupRetroShare()
 	interfaces.mDisc   = rsDisc;
 	interfaces.mDht    = rsDht;
 	interfaces.mForums = mForums;
+	interfaces.mNotify = mNotify;
 
 	mPluginsManager->setInterfaces(interfaces);
 
