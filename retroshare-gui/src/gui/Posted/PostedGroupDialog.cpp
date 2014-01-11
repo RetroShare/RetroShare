@@ -79,6 +79,7 @@ void PostedGroupDialog::initUi()
 
 	setUiText(UITYPE_KEY_SHARE_CHECKBOX, tr("Add Topic Admins"));
 	setUiText(UITYPE_CONTACTS_DOCK, tr("Select Topic Admins"));
+	setUiText(UITYPE_BUTTONBOX_OK, tr("Create Topic"));
 }
 
 QPixmap PostedGroupDialog::serviceImage()

@@ -136,6 +136,7 @@ void WikiGroupDialog::initUi()
 
 	setUiText(UITYPE_KEY_SHARE_CHECKBOX, tr("Add Wiki Moderators"));
 	setUiText(UITYPE_CONTACTS_DOCK, tr("Select Wiki Moderators"));
+	setUiText(UITYPE_BUTTONBOX_OK, tr("Create Group"));
 }
 
 QPixmap WikiGroupDialog::serviceImage()

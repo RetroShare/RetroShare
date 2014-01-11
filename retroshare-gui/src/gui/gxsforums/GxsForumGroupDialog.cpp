@@ -26,7 +26,7 @@
 
 // To start with we only have open forums - with distribution controls.
 			
-const uint32_t ForumCreateEnabledFlags = ( GXS_GROUP_FLAGS_ICON        |
+const uint32_t ForumCreateEnabledFlags = ( //GXS_GROUP_FLAGS_ICON        |
 			GXS_GROUP_FLAGS_DESCRIPTION   |
 			GXS_GROUP_FLAGS_DISTRIBUTION  |
 			// GXS_GROUP_FLAGS_PUBLISHSIGN   |
@@ -76,6 +76,8 @@ void GxsForumGroupDialog::initUi()
 		setUiText(UITYPE_SERVICE_HEADER, tr("Edit Forum"));
 		break;
 	}
+	
+  setUiText(UITYPE_BUTTONBOX_OK, tr("Create Forum"));
 }
 
 QPixmap GxsForumGroupDialog::serviceImage()

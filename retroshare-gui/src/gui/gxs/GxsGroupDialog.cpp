@@ -129,6 +129,9 @@ void GxsGroupDialog::setUiText(UiType uiType, const QString &text)
 	case UITYPE_CONTACTS_DOCK:
 		ui.contactsdockWidget->setWindowTitle(text);
 		break;
+  case UITYPE_BUTTONBOX_OK:
+		ui.buttonBox->button(QDialogButtonBox::Ok)->setText(text);
+		break;
 	}
 }
 
@@ -139,7 +142,6 @@ void GxsGroupDialog::initMode()
 		case MODE_CREATE:
 		{
 			ui.buttonBox->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
-			ui.buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Create Group"));
 			newGroup();
 		}
 		break;

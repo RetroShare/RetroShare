@@ -79,6 +79,7 @@ void GxsChannelGroupDialog::initUi()
 	
 	setUiText(UITYPE_KEY_SHARE_CHECKBOX, tr("Add Channel Admins"));
 	setUiText(UITYPE_CONTACTS_DOCK, tr("Select Channel Admins"));
+	setUiText(UITYPE_BUTTONBOX_OK, tr("Create Channel"));
 }
 
 QPixmap GxsChannelGroupDialog::serviceImage()
