@@ -65,6 +65,8 @@ retroshare (0.5.5-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
       - fixed ghost lobby issue (thx to thunder for spotting it out)
       - patch from HM to avoid allocating absurdly long uids
       - added check to only import version 4 keys in the keyring
+      - fixed error handling in certificates that could crash RS when a bad cert is pasted
+      - fixed proper handling in failed malloc in openpgp-sdk, causing crash with deliberate bad cert.
 
  -- Cyril Soler <csoler@users.sourceforge.net>  Thu, 09 Jan 2014 20:00:00 +0100
 
