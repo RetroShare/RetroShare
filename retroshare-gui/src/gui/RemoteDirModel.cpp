@@ -846,7 +846,12 @@ Qt::ItemFlags RetroshareDirModel::flags( const QModelIndex & index ) const
 /* Callback from */
 void RetroshareDirModel::preMods()
 {
+#if QT_VERSION < 0x050000
 	reset();
+#else
+	beginResetModel();
+	endResetModel();
+#endif
 
 #ifdef RDM_DEBUG
 	std::cerr << "RetroshareDirModel::preMods()" << std::endl;
