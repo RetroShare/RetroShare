@@ -103,12 +103,12 @@ void PostedItem::setContent(const RsPostedPost &post)
 	scoreLabel->setText(score); 
 
 	// FIX THIS UP LATER.
-	//notes->setPlainText(QString::fromUtf8(post.mNotes.c_str()));
+	notes->setText(QString::fromUtf8(post.mNotes.c_str()));
 	// differences between Feed or Top of Comment.
 	if (mParent)
 	{
 		// feed.
-		//frame_notes->hide();
+		frame_notes->hide();
 		//frame_comment->show();
 		commentButton->show();
 
@@ -127,7 +127,14 @@ void PostedItem::setContent(const RsPostedPost &post)
 	else
 	{
 		// no feed.
-		//frame_notes->show();
+		if(notes->text().isEmpty())
+		{		
+      frame_notes->hide();
+		}
+		else
+		{
+      frame_notes->show();
+		}
 		//frame_comment->hide();
 		commentButton->hide();
 	}

@@ -540,6 +540,7 @@ MessageWidget QFrame#decryptFrame {
 	background: #CCFFCC;
 	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #CCFFCC, stop:1 #AAFFAA);
 }
+
 /* Posted Links */
 
 PostedCreatePostDialog QLabel#info_label {
@@ -547,4 +548,15 @@ PostedCreatePostDialog QLabel#info_label {
 	border-radius: 6px;
 	background: #FFFFD7;
 	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFD7, stop:1 #FFFFB2);
+}
+
+PostedItem QFrame#frame {
+  border: 2px solid #CCCCCC;
+  background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #EEEEEE, stop: 1 #CCCCCC);
+  border-radius: 10px
+}
+
+PostedItem QLabel#notes {
+  border: 2px solid #CCCCCC;
+  border-radius: 10px
 }
