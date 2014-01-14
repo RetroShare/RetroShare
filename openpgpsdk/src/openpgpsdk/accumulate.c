@@ -154,7 +154,7 @@ int ops_parse_and_accumulate(ops_keyring_t *keyring,
 
     parse_info->rinfo.accumulate=ops_true;
 
-    rtn=ops_parse(parse_info);
+    rtn=ops_parse(parse_info,ops_false);
     ++keyring->nkeys;
 
     return rtn;

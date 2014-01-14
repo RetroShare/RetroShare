@@ -370,7 +370,7 @@ int ops_decompress(ops_region_t *region,ops_parse_info_t *parse_info,
         return 0;
         }
 
-    ret=ops_parse(parse_info);
+    ret=ops_parse(parse_info,ops_true);
 
     ops_reader_pop(parse_info);
 

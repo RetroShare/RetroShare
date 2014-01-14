@@ -572,7 +572,7 @@ ops_boolean_t ops_validate_key_signatures(ops_validate_result_t *result,const op
 	// is never used.
 	carg.rarg=ops_reader_get_arg_from_pinfo(pinfo);
 
-	ops_parse(pinfo);
+	ops_parse(pinfo,ops_true);
 
 	ops_public_key_free(&carg.pkey);
 	if(carg.subkey.version)
@@ -693,7 +693,7 @@ ops_boolean_t ops_validate_file(ops_validate_result_t *result, const char* filen
 
 	// Do the verification
 
-	ops_parse(pinfo);
+	ops_parse(pinfo,ops_true);
 
 	if (debug)
 	{
@@ -748,7 +748,7 @@ ops_boolean_t ops_validate_mem(ops_validate_result_t *result, ops_memory_t* mem,
 
 	// Do the verification
 
-	ops_parse(pinfo);
+	ops_parse(pinfo,ops_true);
 
 	if (debug)
 	{
@@ -819,7 +819,7 @@ ops_boolean_t ops_validate_detached_signature(const void *literal_data, unsigned
 
    // Do the verification
 
-   ops_parse(pinfo);
+   ops_parse(pinfo,ops_true);
 
 	if(debug)
 		printf("valid=%d, invalid=%d, unknown=%d\n", result->valid_count, result->invalid_count, result->unknown_signer_count);

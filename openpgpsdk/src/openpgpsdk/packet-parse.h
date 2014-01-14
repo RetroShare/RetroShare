@@ -125,7 +125,7 @@ ops_parse_cb_return_t ops_parse_stacked_cb(const ops_parser_content_t *content,
 					   ops_parse_cb_info_t *cbinfo);
 ops_reader_info_t *ops_parse_get_rinfo(ops_parse_info_t *pinfo);
 
-int ops_parse(ops_parse_info_t *parse_info);
+int ops_parse(ops_parse_info_t *parse_info,ops_boolean_t limit_packets);
 int ops_parse_and_print_errors(ops_parse_info_t *parse_info);
 int ops_parse_and_save_errs(ops_parse_info_t *parse_info,ops_ulong_list_t *errs);
 int ops_parse_errs(ops_parse_info_t *parse_info,ops_ulong_list_t *errs);

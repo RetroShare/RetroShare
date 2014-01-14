@@ -368,7 +368,7 @@ ops_secret_key_t *ops_decrypt_secret_key_from_data(const ops_keydata_t *key,
     ops_parse_cb_set(pinfo,decrypt_cb,&arg);
     pinfo->rinfo.accumulate=ops_true;
 
-    ops_parse(pinfo);
+    ops_parse(pinfo,ops_false);
 
     ops_parse_info_delete(pinfo);
 
