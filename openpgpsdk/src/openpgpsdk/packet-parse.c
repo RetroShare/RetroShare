@@ -3229,19 +3229,26 @@ void example()
  */
 
 int ops_parse(ops_parse_info_t *pinfo)
-    {
-    int r;
-    unsigned long pktlen;
+{
+   int r;
+   unsigned long pktlen;
+   int n_packets = 0 ;
 
-    do
-        // Parse until we get a return code of 0 (error) or -1 (EOF)
-	{
-	r=ops_parse_one_packet(pinfo,&pktlen);
-	} while (r > 0);
+   do
+      // Parse until we get a return code of 0 (error) or -1 (EOF)
+   {
+      r=ops_parse_one_packet(pinfo,&pktlen);
 
-    return pinfo->errors ? 0 : 1;
-    return r == -1 ? 0 : 1;
-    }
+      if(++n_packets > 100)
+      {
+	 fprintf(stderr,"More than 100 packets parsed in a row. This is likely to be a buggy certificate.") ;
+	 return 0 ;
+      }
+   } while (r > 0);
+
+   return pinfo->errors ? 0 : 1;
+   return r == -1 ? 0 : 1;
+}
 
 /**
 \ingroup Core_ReadPackets
