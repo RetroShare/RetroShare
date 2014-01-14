@@ -437,10 +437,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Photo Share</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Posted Links</source>
         <translation type="unfinished"></translation>
     </message>
@@ -458,6 +454,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>The Wire</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Photos</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -984,6 +984,18 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Hide</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Play Media</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -3706,14 +3718,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;&lt; Add</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&gt;&gt; Remove </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Known Identities</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3775,6 +3779,18 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Create New External Circle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -5264,6 +5280,22 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Nintendo DS Rom</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Patch</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>C++</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Header</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>C </source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7122,6 +7154,10 @@ p, li { white-space: pre-wrap; }
         <source>Select Channel Admins</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Create Channel</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>GxsChannelPostItem</name>
@@ -7319,6 +7355,10 @@ before you can comment</source>
     </message>
     <message>
         <source>Edit Forum</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create Forum</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7727,10 +7767,6 @@ before you can comment</source>
     </message>
     <message>
         <source>Contacts:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Create Group</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -10823,10 +10859,6 @@ malicious behavior of crafted plugins.</source>
 <context>
     <name>PostedCreatePostDialog</name>
     <message>
-        <source>Create Post</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -10856,6 +10888,26 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Please create or choose a Signing Id first</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Submit Post</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>You are submitting a link. The key to a successful submission is interesting content and a descriptive title.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Submit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Submit a new Post</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please add a Title</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10888,6 +10940,10 @@ p, li { white-space: pre-wrap; }
         <source>Edit Topic</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Create Topic</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>PostedItem</name>
@@ -10900,19 +10956,11 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Date</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>From</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Site</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>View Comments</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -10924,11 +10972,19 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>I like this</source>
+        <source>Vote up</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>I dislike this</source>
+        <source>Vote down</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>\/</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Submitted</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -10968,10 +11024,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>This Year</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Submit Post</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -11024,6 +11076,14 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Create New Topic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Submit a new Post</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Todo</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -14315,6 +14375,14 @@ Try to be patient!</source>
         <source>Unsubscribe to Group</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Todo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit Group</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>WikiEditDialog</name>
@@ -14435,6 +14503,10 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Select Wiki Moderators</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Create Group</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
