@@ -367,7 +367,7 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 #endif
 
   for( i=0; i<argc; i++)
-    printf("%d: %s\n", i, argv[i]);
+    fprintf(stderr, "%d: %s\n", i, argv[i]);
 
 /* for static PThreads under windows... we need to init the library...
  */
@@ -1309,7 +1309,7 @@ bool     RsInit::GenerateSSLCertificate(const std::string& gpg_id, const std::st
 		/* Print the signed Certificate! */
 		BIO *bio_out = NULL;
 		bio_out = BIO_new(BIO_s_file());
-		BIO_set_fp(bio_out,stdout,BIO_NOCLOSE);
+		BIO_set_fp(bio_out,stderr,BIO_NOCLOSE);
 
 		/* Print it out */
 		int nmflag = 0;
@@ -1470,6 +1470,14 @@ bool     RsInit::LoadPassword(const std::string& id, const std::string& inPwd)
 	return true;
 }
 
+bool RsInit::SavePassword()
+{
+    if (RsLoginHandler::checkAndStoreSSLPasswdIntoGPGFile(RsInitConfig::preferedId,RsInitConfig::passwd) == false) {
+        std::cerr << "in RsInit::SavePassword(): RsLoginHandler::checkAndStoreSSLPasswdIntoGPGFile() Failed!";
+        return false;
+    }
+    return true;
+}
 
 /**
  * Locks the profile directory and tries to finalize the login procedure
