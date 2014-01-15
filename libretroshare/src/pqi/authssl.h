@@ -140,7 +140,7 @@ virtual bool     decrypt(void *&out, int &outlen, const void *in, int inlen) = 0
 
 
 virtual X509* 	SignX509ReqWithGPG(X509_REQ *req, long days) = 0;
-virtual bool 	AuthX509WithGPG(X509 *x509) = 0;
+virtual bool 	AuthX509WithGPG(X509 *x509,uint32_t& auth_diagnostic)=0;
 
 
 virtual int 	VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx) = 0;
@@ -211,7 +211,7 @@ virtual bool     decrypt(void *&out, int &outlen, const void *in, int inlen);
 
 
 virtual X509* 	SignX509ReqWithGPG(X509_REQ *req, long days);
-virtual bool 	AuthX509WithGPG(X509 *x509);
+virtual bool 	AuthX509WithGPG(X509 *x509,uint32_t& auth_diagnostic);
 
 
 virtual int 	VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx);

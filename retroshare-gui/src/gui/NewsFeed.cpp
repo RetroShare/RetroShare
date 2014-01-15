@@ -214,6 +214,7 @@ void NewsFeed::updateDisplay()
 					addFeedItemFilesNew(fi);
 				break;
 			default:
+				std::cerr << "(EE) Unknown type " << std::hex << fi.mType << std::dec << " in news feed." << std::endl;
 				break;
 		}
 	} else {
@@ -557,12 +558,12 @@ void	NewsFeed::addFeedItemPeerNew(RsFeedItem &fi)
 void	NewsFeed::addFeedItemSecurityConnectAttempt(RsFeedItem &fi)
 {
 	/* make new widget */
-	SecurityItem *pi = new SecurityItem(this, NEWSFEED_SECLIST, fi.mId1, fi.mId2, fi.mId3, fi.mId4, SEC_TYPE_CONNECT_ATTEMPT, false);
+	SecurityItem *pi = new SecurityItem(this, NEWSFEED_SECLIST, fi.mId1, fi.mId2, fi.mId3, fi.mId4, fi.mType, false);
 
 	/* store */
 
 	/* add to layout */
-	addFeedItemIfUnique(pi, SEC_TYPE_CONNECT_ATTEMPT, fi.mId2, false);
+	addFeedItemIfUnique(pi, fi.mType, fi.mId2, false);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemSecurityConnectAttempt()";
@@ -573,12 +574,12 @@ void	NewsFeed::addFeedItemSecurityConnectAttempt(RsFeedItem &fi)
 void	NewsFeed::addFeedItemSecurityAuthDenied(RsFeedItem &fi)
 {
 	/* make new widget */
-	SecurityItem *pi = new SecurityItem(this, NEWSFEED_SECLIST, fi.mId1, fi.mId2, fi.mId3, fi.mId4, SEC_TYPE_AUTH_DENIED, false);
+	SecurityItem *pi = new SecurityItem(this, NEWSFEED_SECLIST, fi.mId1, fi.mId2, fi.mId3, fi.mId4, fi.mType, false);
 
 	/* store */
 
 	/* add to layout */
-	addFeedItemIfUnique(pi, SEC_TYPE_AUTH_DENIED, fi.mId2, false);
+	addFeedItemIfUnique(pi, RS_FEED_ITEM_SEC_AUTH_DENIED, fi.mId2, false);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemSecurityAuthDenied()";
@@ -589,12 +590,12 @@ void	NewsFeed::addFeedItemSecurityAuthDenied(RsFeedItem &fi)
 void	NewsFeed::addFeedItemSecurityUnknownIn(RsFeedItem &fi)
 {
 	/* make new widget */
-	SecurityItem *pi = new SecurityItem(this, NEWSFEED_SECLIST, fi.mId1, fi.mId2, fi.mId3, fi.mId4, SEC_TYPE_UNKNOWN_IN, false);
+	SecurityItem *pi = new SecurityItem(this, NEWSFEED_SECLIST, fi.mId1, fi.mId2, fi.mId3, fi.mId4, RS_FEED_ITEM_SEC_UNKNOWN_IN, false);
 
 	/* store */
 
 	/* add to layout */
-	addFeedItemIfUnique(pi, SEC_TYPE_UNKNOWN_IN, fi.mId2, false);
+	addFeedItemIfUnique(pi, RS_FEED_ITEM_SEC_UNKNOWN_IN, fi.mId2, false);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemSecurityUnknownIn()";
@@ -605,12 +606,12 @@ void	NewsFeed::addFeedItemSecurityUnknownIn(RsFeedItem &fi)
 void	NewsFeed::addFeedItemSecurityUnknownOut(RsFeedItem &fi)
 {
 	/* make new widget */
-	SecurityItem *pi = new SecurityItem(this, NEWSFEED_SECLIST, fi.mId1, fi.mId2, fi.mId3, fi.mId4, SEC_TYPE_UNKNOWN_OUT, false);
+	SecurityItem *pi = new SecurityItem(this, NEWSFEED_SECLIST, fi.mId1, fi.mId2, fi.mId3, fi.mId4, RS_FEED_ITEM_SEC_UNKNOWN_OUT, false);
 
 	/* store */
 
 	/* add to layout */
-	addFeedItemIfUnique(pi, SEC_TYPE_UNKNOWN_OUT, fi.mId2, false);
+	addFeedItemIfUnique(pi, RS_FEED_ITEM_SEC_UNKNOWN_OUT, fi.mId2, false);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemSecurityUnknownOut()";

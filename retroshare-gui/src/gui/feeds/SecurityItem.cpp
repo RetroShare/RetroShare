@@ -116,23 +116,35 @@ void SecurityItem::updateItemStatic()
 
 	switch(mType)
 	{
-		case SEC_TYPE_CONNECT_ATTEMPT:
+		case RS_FEED_ITEM_SEC_CONNECT_ATTEMPT:
 			title = tr("Connect Attempt");
 			requestLabel->show();
 			avatar->setDefaultAvatar(":images/avatar_request.png");
 			break;
-		case SEC_TYPE_AUTH_DENIED:
+		case RS_FEED_ITEM_SEC_AUTH_DENIED:
 			title = tr("Connection refused by remote peer");
 			requestLabel->hide();
 			avatar->setDefaultAvatar(":images/avatar_refused.png");
 			break;
-		case SEC_TYPE_UNKNOWN_IN:
+		case RS_FEED_ITEM_SEC_UNKNOWN_IN:
 			title = tr("Unknown (Incoming) Connect Attempt");
 			requestLabel->hide();
 			avatar->setDefaultAvatar(":images/avatar_request_unknown.png");
 			break;
-		case SEC_TYPE_UNKNOWN_OUT:
+		case RS_FEED_ITEM_SEC_UNKNOWN_OUT:
 			title = tr("Unknown (Outgoing) Connect Attempt");
+			requestLabel->hide();
+			break;
+		case RS_FEED_ITEM_SEC_WRONG_SIGNATURE:
+			title = tr("Certificate has wrong signature!! Probably a forged certificate.");
+			requestLabel->hide();
+			break;
+		case RS_FEED_ITEM_SEC_BAD_CERTIFICATE:
+			title = tr("Certificate is invalid.");
+			requestLabel->hide();
+			break;
+		case RS_FEED_ITEM_SEC_INTERNAL_ERROR:
+			title = tr("Certificate caused an internal error.");
 			requestLabel->hide();
 			break;
 		default:

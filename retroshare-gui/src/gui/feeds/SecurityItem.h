@@ -25,10 +25,10 @@
 #include "ui_SecurityItem.h"
 #include <stdint.h>
 
-const uint32_t SEC_TYPE_CONNECT_ATTEMPT  = 0x0001; /* failed Connect Attempt */
-const uint32_t SEC_TYPE_AUTH_DENIED      = 0x0002; /* failed outgoing attempt */
-const uint32_t SEC_TYPE_UNKNOWN_IN       = 0x0003; /* failed incoming with unknown peer */
-const uint32_t SEC_TYPE_UNKNOWN_OUT      = 0x0004; /* failed outgoing with unknown peer */
+//const uint32_t SEC_TYPE_CONNECT_ATTEMPT  = 0x0001; /* failed Connect Attempt */
+//const uint32_t SEC_TYPE_AUTH_DENIED      = 0x0002; /* failed outgoing attempt */
+//const uint32_t SEC_TYPE_UNKNOWN_IN       = 0x0003; /* failed incoming with unknown peer */
+//const uint32_t SEC_TYPE_UNKNOWN_OUT      = 0x0004; /* failed outgoing with unknown peer */
 
 class FeedHolder;
 
