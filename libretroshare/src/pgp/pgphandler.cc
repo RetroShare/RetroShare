@@ -913,6 +913,9 @@ bool PGPHandler::importGPGKeyPair(const std::string& filename,PGPIdType& importe
 	//
 	ops_keyring_free(tmp_keyring) ;
 
+    // write public key to disk
+    syncDatabase();
+
 	return true ;
 }
 
@@ -1422,6 +1425,14 @@ void PGPHandler::updateOwnSignatureFlag(const PGPIdType& own_id)
 	RsStackMutex mtx(pgphandlerMtx) ;				// lock access to PGP memory structures.
 
 	std::string own_id_str = own_id.toStdString();
+
+    if(_public_keyring_map.find(own_id_str)==_public_keyring_map.end())
+    {
+        std::cerr << __func__ << ": key with id=" << own_id_str << " not in keyring." << std::endl;
+        // return now, because the following operation would add an entry to _public_keyring_map
+        return;
+    }
+
 	PGPCertificateInfo& own_cert(_public_keyring_map[ own_id_str ]) ;
 
 	for(std::map<std::string,PGPCertificateInfo>::iterator it=_public_keyring_map.begin();it!=_public_keyring_map.end();++it)
