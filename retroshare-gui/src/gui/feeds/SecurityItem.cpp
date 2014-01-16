@@ -127,12 +127,18 @@ void SecurityItem::updateItemStatic()
 			requestLabel->hide();
 			break;
 		case RS_FEED_ITEM_SEC_WRONG_SIGNATURE:
-			title = tr("Certificate has wrong signature!! Probably a forged certificate.");
+			title = tr("Certificate has wrong signature!! Peer is not who he claims to be.");
 			requestLabel->hide();
 			break;
 		case RS_FEED_ITEM_SEC_BAD_CERTIFICATE:
-			title = tr("Certificate is invalid. This peer is probably not who he claims to be.");
+			{
+			RsPeerDetails details ;
+			if(rsPeers->getPeerDetails(mGpgId, details))
+				title = tr("Missing/Damaged certificate. Someone is probably trying to impersonate key ") + QString::fromStdString(mGpgId);
+			else
+				title = tr("Missing/Damaged certificate. Not a real Retroshare user.");
 			requestLabel->hide();
+			}
 			break;
 		case RS_FEED_ITEM_SEC_INTERNAL_ERROR:
 			title = tr("Certificate caused an internal error.");
