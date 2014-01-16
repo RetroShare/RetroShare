@@ -145,6 +145,9 @@ void NewsFeed::updateDisplay()
 				break;
 
 			case RS_FEED_ITEM_SEC_CONNECT_ATTEMPT:
+			case RS_FEED_ITEM_SEC_WRONG_SIGNATURE:
+			case RS_FEED_ITEM_SEC_BAD_CERTIFICATE:
+			case RS_FEED_ITEM_SEC_INTERNAL_ERROR:
 				if (Settings->getMessageFlags() & RS_MESSAGE_CONNECT_ATTEMPT) {
 					MessageComposer::sendConnectAttemptMsg(fi.mId1, fi.mId2, QString::fromUtf8(fi.mId3.c_str()));
 				}

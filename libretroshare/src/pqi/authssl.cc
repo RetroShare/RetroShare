@@ -1407,7 +1407,15 @@ bool    AuthSSLimpl::FailedCertificate(X509 *x509, const std::string& gpgid,
 	rs_sprintf_append(ip_address, "%s:%u", rs_inet_ntoa(addr.sin_addr).c_str(), ntohs(addr.sin_port));
 	uint32_t auth_diagnostic = 0 ;
 
-	bool authed = (x509 != NULL && AuthX509WithGPG(x509,auth_diagnostic)) ;
+	bool authed ;
+
+	if(x509 == NULL)
+	{
+		auth_diagnostic = RS_SSL_HANDSHAKE_DIAGNOSTIC_CERTIFICATE_NOT_VALID ;
+		authed = false ;
+	}
+	else
+		authed = AuthX509WithGPG(x509,auth_diagnostic) ;
 
 	if(authed)
 		LocalStoreCert(x509);

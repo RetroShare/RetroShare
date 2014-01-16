@@ -131,7 +131,7 @@ void SecurityItem::updateItemStatic()
 			requestLabel->hide();
 			break;
 		case RS_FEED_ITEM_SEC_BAD_CERTIFICATE:
-			title = tr("Certificate is invalid.");
+			title = tr("Certificate is invalid. This peer is probably not who he claims to be.");
 			requestLabel->hide();
 			break;
 		case RS_FEED_ITEM_SEC_INTERNAL_ERROR:
