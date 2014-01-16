@@ -50,8 +50,6 @@ SecurityItem::SecurityItem(FeedHolder *parent, uint32_t feedId, const std::strin
     /* Invoke the Qt Designer generated object setup routine */
     setupUi(this);
   
-    messageframe->setVisible(false);
-    sendmsgButton->setEnabled(false);
     quickmsgButton->hide();
     chatButton->hide();
     removeFriendButton->setEnabled(false);
@@ -66,10 +64,6 @@ SecurityItem::SecurityItem(FeedHolder *parent, uint32_t feedId, const std::strin
 
     /* specific ones */
     connect( chatButton, SIGNAL( clicked( void ) ), this, SLOT( openChat ( void ) ) );
-//    connect( actionNew_Message, SIGNAL( triggered( ) ), this, SLOT( sendMsg ( void ) ) );
-
-//    connect( quickmsgButton, SIGNAL( clicked( ) ), this, SLOT( togglequickmessage() ) );
-//    connect( cancelButton, SIGNAL( clicked( ) ), this, SLOT( togglequickmessage() ) );
 
     connect( quickmsgButton, SIGNAL( clicked( ) ), this, SLOT( sendMsg() ) );
 
@@ -79,9 +73,6 @@ SecurityItem::SecurityItem(FeedHolder *parent, uint32_t feedId, const std::strin
 
     connect(NotifyQt::getInstance(), SIGNAL(friendsChanged()), this, SLOT(updateItem()));
 
-    //QMenu *msgmenu = new QMenu();
-    //msgmenu->addAction(actionNew_Message);
-    //quickmsgButton->setMenu(msgmenu);
 
     avatar->setId(mSslId, false);
 
@@ -399,44 +390,5 @@ void SecurityItem::openChat()
 	if (mParent)
 	{
 		mParent->openChat(mGpgId);
-	}
-}
-
-void SecurityItem::togglequickmessage()
-{
-	if (messageframe->isHidden())
-	{
-		messageframe->setVisible(true);
-	}
-	else
-	{
-		messageframe->setVisible(false);
-	}
-}
-
-void SecurityItem::sendMessage()
-{
-	/* construct a message */
-	MessageInfo mi;
-
-	mi.title = tr("Quick Message").toStdWString();
-	mi.msg =   quickmsgText->toHtml().toStdWString();
-	mi.msgto.push_back(mGpgId);
-
-	rsMsgs->MessageSend(mi);
-
-	quickmsgText->clear();
-	messageframe->setVisible(false);
-}
-
-void SecurityItem::on_quickmsgText_textChanged()
-{
-	if (quickmsgText->toPlainText().isEmpty())
-	{
-		sendmsgButton->setEnabled(false);
-	}
-	else
-	{
-		sendmsgButton->setEnabled(true);
 	}
 }

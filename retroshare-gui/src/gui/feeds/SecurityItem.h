@@ -57,10 +57,7 @@ private slots:
 
 	void updateItem();
 
-	void togglequickmessage();
-	void sendMessage();
 
-	void on_quickmsgText_textChanged();
 
 private:
 	FeedHolder *mParent;
