@@ -452,10 +452,22 @@ void NewsFeed::testFeed(FeedNotify *feedNotify)
 
 void NewsFeed::addFeedItem(QWidget *item)
 {
+	static const unsigned int MAX_WIDGETS_SIZE = 500 ;
+
 	item->setAttribute(Qt::WA_DeleteOnClose, true);
 
 	connect(item, SIGNAL(destroyed(QObject*)), this, SLOT(itemDestroyed(QObject*)));
-	widgets.insert(item);
+	widgets.push_back(item);
+
+	// costly, but not really a problem here
+	while(widgets.size() > MAX_WIDGETS_SIZE)
+	{
+		QWidget *item = dynamic_cast<QWidget*>(widgets.front()) ;
+		
+		if(item)
+			item->close() ;
+		widgets.pop_front() ;
+	}
 
 	sendNewsFeedChanged();
 

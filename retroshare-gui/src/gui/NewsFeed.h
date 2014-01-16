@@ -94,7 +94,7 @@ private:
 
   void sendNewsFeedChanged();
 
-  QSet<QObject*> widgets;
+  std::list<QObject*> widgets;
 
   /* lists of feedItems */
   std::list<ForumNewItem *> 	mForumNewItems;
