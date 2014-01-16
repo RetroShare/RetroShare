@@ -438,13 +438,13 @@ MsgItem QWidget#avatar {
 }
 
 SecurityItem > QFrame#frame {
-	border: 2px solid red;
-	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #FDBF7D, stop: 1 #643C35);
+	border: 2px solid #FF9412; 
+	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #FFE8A4, stop: 1 #FFB252);
 	border-radius: 10px;
 }
 
 SecurityItem QLabel#peerNameLabel, SecurityItem QLabel#requestLabel {
-	color: #990033
+	color: black;
 }
 
 SubFileItem > QFrame#frame {
