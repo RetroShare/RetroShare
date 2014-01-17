@@ -427,13 +427,12 @@ PeerItem QLabel#peerNameLabel {
 }
 
 MsgItem > QFrame#frame {
-	border: 2px solid blue; 
+	border: 2px solid #3EA2FF; 
 	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #2291E0, stop: 1 #3EB3FF);
 	border-radius: 10px;
 }
 
 MsgItem QWidget#avatar {
-	border: 2px solid blue;
 	background-color: #2291E0;
 }
 
