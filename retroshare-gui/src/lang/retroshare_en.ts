@@ -12425,14 +12425,6 @@ Reducing image to %1x%2 pixels?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Cancel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Send</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Name:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -12497,7 +12489,19 @@ Reducing image to %1x%2 pixels?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Quick Message</source>
+        <source>Certificate has wrong signature!! This peer is not who he claims to be.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Missing/Damaged SSL certificate for key </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Missing/Damaged certificate. Not a real Retroshare user.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Certificate caused an internal error.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
