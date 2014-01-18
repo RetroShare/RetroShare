@@ -9,7 +9,7 @@
 #include "rscertificate.h"
 #include "util/rsstring.h"
 
-//#define DEBUG_RSCERTIFICATE 
+#define DEBUG_RSCERTIFICATE 
 
 static const std::string PGP_CERTIFICATE_START     ( "-----BEGIN PGP PUBLIC KEY BLOCK-----" );
 static const std::string PGP_CERTIFICATE_END       ( "-----END PGP PUBLIC KEY BLOCK-----" );
@@ -27,6 +27,9 @@ static const uint8_t CERTIFICATE_PTAG_SSLID_SECTION         = 0x05 ;
 static const uint8_t CERTIFICATE_PTAG_NAME_SECTION          = 0x06 ;  
 static const uint8_t CERTIFICATE_PTAG_CHECKSUM_SECTION      = 0x07 ;  
 static const uint8_t CERTIFICATE_PTAG_HIDDENNODE_SECTION    = 0x08 ;  
+static const uint8_t CERTIFICATE_PTAG_VERSION_SECTION       = 0x09 ;  
+
+static const uint8_t CERTIFICATE_VERSION_06 = 0x06 ;
 
 static bool is_acceptable_radix64Char(char c)
 {
@@ -74,7 +77,8 @@ std::string RsCertificate::toStdString() const
 	size_t p = 0 ;
 	unsigned char *buf = new unsigned char[BS] ;
 
-	addPacket( CERTIFICATE_PTAG_PGP_SECTION         , binary_pgp_key                         , binary_pgp_key_size     , buf, p, BS ) ;
+	addPacket( CERTIFICATE_PTAG_VERSION_SECTION, &CERTIFICATE_VERSION_06 , 1              , buf, p, BS ) ;
+	addPacket( CERTIFICATE_PTAG_PGP_SECTION    , binary_pgp_key , binary_pgp_key_size     , buf, p, BS ) ;
 
 	if(!only_pgp)
 	{
@@ -132,7 +136,7 @@ RsCertificate::RsCertificate(const std::string& str)
 {
 	uint32_t err_code ;
 
-	if(!initFromString(str,err_code) && !initFromString_oldFormat(str,err_code))
+	if(!initFromString(str,err_code)) // && !initFromString_oldFormat(str,err_code))
 		throw err_code ;
 }
 
@@ -252,6 +256,7 @@ bool RsCertificate::initFromString(const std::string& instr,uint32_t& err_code)
 	unsigned char *buf = (unsigned char *)bf ;
 	size_t total_s = 0 ;
 	only_pgp = true ;
+	uint8_t certificate_version = 0x00 ;
 
 	while(total_s < size)
 	{
@@ -272,8 +277,13 @@ bool RsCertificate::initFromString(const std::string& instr,uint32_t& err_code)
 #ifdef DEBUG_RSCERTIFICATE
 		std::cerr << "Packet parse: read ptag " << (int)ptag << ", size " << s << ", total_s = " << total_s << ", expected total = " << size << std::endl;
 #endif
+
 		switch(ptag)
 		{
+			case CERTIFICATE_PTAG_VERSION_SECTION: certificate_version = buf[0] ;
+																buf = &buf[s] ;
+																break ;
+				
 			case CERTIFICATE_PTAG_PGP_SECTION: binary_pgp_key = new unsigned char[s] ;
 														  memcpy(binary_pgp_key,buf,s) ;
 														  binary_pgp_key_size = s ;
@@ -360,6 +370,15 @@ bool RsCertificate::initFromString(const std::string& instr,uint32_t& err_code)
 		return false ;
 	}
 
+	if(certificate_version != CERTIFICATE_VERSION_06)
+	{
+		err_code = CERTIFICATE_PARSING_ERROR_WRONG_VERSION ;
+		return false ;
+	}
+#ifdef DEBUG_RSCERTIFICATE
+	std::cerr << "Certificate is version " << (int)certificate_version << std::endl;
+#endif
+
 	if(total_s != size)	
 		std::cerr << "(EE) Certificate contains trailing characters. Weird." << std::endl;
 
@@ -416,11 +435,11 @@ unsigned short RsCertificate::loc_port_us() const
 
 bool RsCertificate::cleanCertificate(const std::string& input,std::string& output,Format& format,int& error_code)
 {
-	if(cleanCertificate_oldFormat(input,output,error_code))
-	{
-		format = RS_CERTIFICATE_OLD_FORMAT ;
-		return true ;
-	}
+//	if(cleanCertificate_oldFormat(input,output,error_code))
+//	{
+//		format = RS_CERTIFICATE_OLD_FORMAT ;
+//		return true ;
+//	}
 
 	if(cleanCertificate(input,output,error_code))
 	{
@@ -843,6 +862,10 @@ bool RsCertificate::cleanCertificate_oldFormat(const std::string& certstr,std::s
 
 std::string RsCertificate::toStdString_oldFormat() const
 {
+	return std::string() ;
+
+	// not supported anymore.
+	//
 	std::string res ;
 
 	res += PGPKeyManagement::makeArmouredKey(binary_pgp_key,binary_pgp_key_size,pgp_version) ;
@@ -891,6 +914,8 @@ std::string RsCertificate::toStdString_oldFormat() const
 
 bool RsCertificate::initFromString_oldFormat(const std::string& certstr,uint32_t& /*err_code*/)
 {
+	return false ; // this format is not supported anymore.
+
 	//parse the text to get ip address
 	try 
 	{

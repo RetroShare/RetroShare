@@ -108,6 +108,7 @@ QString ConnectFriendWizard::getErrorString(uint32_t error_code)
 		case CERTIFICATE_PARSING_ERROR_INVALID_LOCAL_IP: 			return tr("Invalid local IP.") ;
 		case CERTIFICATE_PARSING_ERROR_INVALID_CHECKSUM_SECTION: return tr("Invalid checksum section.") ;
 		case CERTIFICATE_PARSING_ERROR_CHECKSUM_ERROR: 				return tr("Checksum mismatch. Certificate is corrupted.") ;
+		case CERTIFICATE_PARSING_ERROR_WRONG_VERSION: 				return tr("Certificate has wrong version number. Remember that v0.6 and v0.5 networks are incompatible.") ;
 		case CERTIFICATE_PARSING_ERROR_UNKNOWN_SECTION_PTAG:		return tr("Unknown section type found (Certificate might be corrupted).") ;
 		case CERTIFICATE_PARSING_ERROR_MISSING_CHECKSUM:			return tr("Missing checksum.") ;
 
@@ -194,9 +195,10 @@ void ConnectFriendWizard::initializePage(int id)
 		cleanfriendCertTimer->setInterval(1000); // 1 second
 		connect(cleanfriendCertTimer, SIGNAL(timeout()), this, SLOT(cleanFriendCert()));
 
-		ui->userCertOldFormatButton->setChecked(true); 
+		ui->userCertOldFormatButton->setChecked(false); 
+		ui->userCertOldFormatButton->hide() ;
 
-		toggleFormatState(false);
+		toggleFormatState(true);
 		toggleSignatureState(false);
 		updateOwnCert();
 
