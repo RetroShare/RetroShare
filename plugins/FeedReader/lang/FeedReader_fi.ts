@@ -508,94 +508,94 @@
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="182"/>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="91"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="92"/>
         <source>Title</source>
         <translation>Otsikko</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="196"/>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="92"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="93"/>
         <source>Date</source>
         <translation>Päiväys</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="201"/>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="93"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="94"/>
         <source>Author</source>
         <translation>Kirjoittaja</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="91"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="92"/>
         <source>Search Title</source>
         <translation>Hae otsikolla</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="92"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="93"/>
         <source>Search Date</source>
         <translation>Hae päivämäärällä</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="93"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="94"/>
         <source>Search Author</source>
         <translation>Hae kirjoittajalla</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="105"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="106"/>
         <source>Open link in browser</source>
         <translation>Avaa linkki selaimessa</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="106"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="107"/>
         <source>Copy link to clipboard</source>
         <translation>Kopioi linkki leikepöydälle</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="228"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="229"/>
         <source>The messages will be added to the forum</source>
         <translation>Viestit lisätään foorumiin</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="243"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="244"/>
         <source>No name</source>
         <translation>Ei nimeä</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="304"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="305"/>
         <source>Mark as read</source>
         <translation>Merkitse luetuksi</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="307"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="308"/>
         <source>Mark as unread</source>
         <translation>Merkitse lukemattomaksi</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="310"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="311"/>
         <source>Mark all as read</source>
         <translation>Merkitse kaikki luetuiksi</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="315"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="316"/>
         <source>Copy link</source>
         <translation>Kopioi linkki</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="318"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="319"/>
         <source>Remove</source>
         <translation>Poista</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="323"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="324"/>
         <source>Retransform</source>
         <translation>Uusi muunnos</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="697"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="698"/>
         <source>Hide</source>
         <translation>Piilota</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="701"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="702"/>
         <source>Expand</source>
         <translation>Laajenna</translation>
     </message>
@@ -603,12 +603,12 @@
 <context>
     <name>FeedReaderPlugin</name>
     <message>
-        <location filename="../FeedReaderPlugin.cpp" line="159"/>
+        <location filename="../FeedReaderPlugin.cpp" line="160"/>
         <source>This plugin provides a Feedreader.</source>
         <translation>Tällä lisäosalla voit lukea syötteitä.</translation>
     </message>
     <message>
-        <location filename="../FeedReaderPlugin.cpp" line="164"/>
+        <location filename="../FeedReaderPlugin.cpp" line="165"/>
         <source>FeedReader</source>
         <translation>FeedReader</translation>
     </message>

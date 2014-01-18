@@ -508,94 +508,94 @@
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="182"/>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="91"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="92"/>
         <source>Title</source>
         <translation>标题</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="196"/>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="92"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="93"/>
         <source>Date</source>
         <translation>日期</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="201"/>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="93"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="94"/>
         <source>Author</source>
         <translation>作者</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="91"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="92"/>
         <source>Search Title</source>
         <translation>搜索标题</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="92"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="93"/>
         <source>Search Date</source>
         <translation>搜索日期</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="93"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="94"/>
         <source>Search Author</source>
         <translation>搜索作者</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="105"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="106"/>
         <source>Open link in browser</source>
         <translation>在浏览器中打开链接</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="106"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="107"/>
         <source>Copy link to clipboard</source>
         <translation>复制链接到剪切板</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="228"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="229"/>
         <source>The messages will be added to the forum</source>
         <translation>此信息将被添加到论坛</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="243"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="244"/>
         <source>No name</source>
         <translation>未命名</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="304"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="305"/>
         <source>Mark as read</source>
         <translation>标为已读</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="307"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="308"/>
         <source>Mark as unread</source>
         <translation>标为未读</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="310"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="311"/>
         <source>Mark all as read</source>
         <translation>全部标为已读</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="315"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="316"/>
         <source>Copy link</source>
         <translation>复制链接</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="318"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="319"/>
         <source>Remove</source>
         <translation>删除</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="323"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="324"/>
         <source>Retransform</source>
         <translation>重新转换</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="697"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="698"/>
         <source>Hide</source>
         <translation>隐藏</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="701"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="702"/>
         <source>Expand</source>
         <translation>展开</translation>
     </message>
@@ -603,12 +603,12 @@
 <context>
     <name>FeedReaderPlugin</name>
     <message>
-        <location filename="../FeedReaderPlugin.cpp" line="159"/>
+        <location filename="../FeedReaderPlugin.cpp" line="160"/>
         <source>This plugin provides a Feedreader.</source>
         <translation>此插件提供了一个 RSS 阅读器</translation>
     </message>
     <message>
-        <location filename="../FeedReaderPlugin.cpp" line="164"/>
+        <location filename="../FeedReaderPlugin.cpp" line="165"/>
         <source>FeedReader</source>
         <translation>RSS订阅</translation>
     </message>

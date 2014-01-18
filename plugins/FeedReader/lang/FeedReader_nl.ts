@@ -508,94 +508,94 @@
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="182"/>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="91"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="92"/>
         <source>Title</source>
         <translation>Titel</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="196"/>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="92"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="93"/>
         <source>Date</source>
         <translation>Datum</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderMessageWidget.ui" line="201"/>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="93"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="94"/>
         <source>Author</source>
         <translation>Auteur</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="91"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="92"/>
         <source>Search Title</source>
         <translation>Zoek Titel</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="92"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="93"/>
         <source>Search Date</source>
         <translation>Zoek Datum</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="93"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="94"/>
         <source>Search Author</source>
         <translation>Zoek Auteur</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="105"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="106"/>
         <source>Open link in browser</source>
         <translation>Open link in browser</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="106"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="107"/>
         <source>Copy link to clipboard</source>
         <translation>Kopieer link naar het klembord</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="228"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="229"/>
         <source>The messages will be added to the forum</source>
         <translation>Deze berichten worden toegevoegd aan het forum</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="243"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="244"/>
         <source>No name</source>
         <translation>Geen naam</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="304"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="305"/>
         <source>Mark as read</source>
         <translation>Merk alles als gelezen</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="307"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="308"/>
         <source>Mark as unread</source>
         <translation>Merk als ongelezen</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="310"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="311"/>
         <source>Mark all as read</source>
         <translation>Merk alles als gelezen</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="315"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="316"/>
         <source>Copy link</source>
         <translation>Kopieer link</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="318"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="319"/>
         <source>Remove</source>
         <translation>Verwijderen</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="323"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="324"/>
         <source>Retransform</source>
         <translation>Hertransformeer</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="697"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="698"/>
         <source>Hide</source>
         <translation>Verberg</translation>
     </message>
     <message>
-        <location filename="../gui/FeedReaderMessageWidget.cpp" line="701"/>
+        <location filename="../gui/FeedReaderMessageWidget.cpp" line="702"/>
         <source>Expand</source>
         <translation>Uitbreiden</translation>
     </message>
@@ -603,12 +603,12 @@
 <context>
     <name>FeedReaderPlugin</name>
     <message>
-        <location filename="../FeedReaderPlugin.cpp" line="159"/>
+        <location filename="../FeedReaderPlugin.cpp" line="160"/>
         <source>This plugin provides a Feedreader.</source>
         <translation>Deze plugin heeft een Feedraeder nodig.</translation>
     </message>
     <message>
-        <location filename="../FeedReaderPlugin.cpp" line="164"/>
+        <location filename="../FeedReaderPlugin.cpp" line="165"/>
         <source>FeedReader</source>
         <translation>Feedreader</translation>
     </message>

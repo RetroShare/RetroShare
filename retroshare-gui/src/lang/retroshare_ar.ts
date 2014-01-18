@@ -435,10 +435,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Photo Share</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Posted Links</source>
         <translation type="unfinished"/>
     </message>
@@ -456,6 +452,10 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>The Wire</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Photos</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -985,6 +985,18 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Hide</source>
         <translation>إخفاء</translation>
+    </message>
+    <message>
+        <source>Open</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Play Media</source>
+        <translation>شغل الوسيط</translation>
     </message>
 </context>
 <context>
@@ -1869,14 +1881,6 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Reset font to default</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Paste RetroShare Link</source>
-        <translation>لصق رابط ريتروشير</translation>
-    </message>
-    <message>
-        <source>Paste my certificate link</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -3716,14 +3720,6 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>&lt;&lt; Add</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>&gt;&gt; Remove </source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Known Identities</source>
         <translation type="unfinished"/>
     </message>
@@ -3786,6 +3782,18 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Create New External Circle</source>
         <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>إضافة</translation>
+    </message>
+    <message>
+        <source>Remove </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Search</source>
+        <translation>بحث</translation>
     </message>
 </context>
 <context>
@@ -3886,10 +3894,6 @@ p, li { white-space: pre-wrap; }
         <translation>وقع رسالة</translation>
     </message>
     <message>
-        <source>Paste RetroShare Link</source>
-        <translation>لصق رابط ريتروشير</translation>
-    </message>
-    <message>
         <source>Forum Post</source>
         <translation type="unfinished"/>
     </message>
@@ -3903,14 +3907,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Start New Thread</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Paste full RetroShare Link</source>
-        <translation>لصق رابط ريتروشير كامل</translation>
-    </message>
-    <message>
-        <source>Paste my certificate link</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -4097,10 +4093,6 @@ p, li { white-space: pre-wrap; }
         <translation>وقع رسالة</translation>
     </message>
     <message>
-        <source>Paste RetroShare Link</source>
-        <translation>لصق رابط ريتروشير</translation>
-    </message>
-    <message>
         <source>Forum Post</source>
         <translation type="unfinished"/>
     </message>
@@ -4114,14 +4106,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Start New Thread</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Paste full RetroShare Link</source>
-        <translation>لصق رابط ريتروشير كامل</translation>
-    </message>
-    <message>
-        <source>Paste my certificate link</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -5298,6 +5282,22 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Nintendo DS Rom</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Patch</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>C++</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Header</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>C </source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -7156,6 +7156,10 @@ p, li { white-space: pre-wrap; }
         <source>Select Channel Admins</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>Create Channel</source>
+        <translation>إنشاء قناة</translation>
+    </message>
 </context>
 <context>
     <name>GxsChannelPostItem</name>
@@ -7354,6 +7358,10 @@ before you can comment</source>
     <message>
         <source>Edit Forum</source>
         <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create Forum</source>
+        <translation>إنشاء منتدى</translation>
     </message>
 </context>
 <context>
@@ -7761,10 +7769,6 @@ before you can comment</source>
     </message>
     <message>
         <source>Contacts:</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Create Group</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -9663,6 +9667,17 @@ Do you want to save message ?</source>
     </message>
 </context>
 <context>
+    <name>MimeTextEdit</name>
+    <message>
+        <source>Paste RetroShare Link</source>
+        <translation>لصق رابط ريتروشير</translation>
+    </message>
+    <message>
+        <source>Paste my certificate link</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>MsgItem</name>
     <message>
         <source>Reply to Message</source>
@@ -10847,10 +10862,6 @@ malicious behavior of crafted plugins.</source>
 <context>
     <name>PostedCreatePostDialog</name>
     <message>
-        <source>Create Post</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
@@ -10880,6 +10891,26 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Please create or choose a Signing Id first</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Submit Post</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>You are submitting a link. The key to a successful submission is interesting content and a descriptive title.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Submit</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Submit a new Post</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Please add a Title</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -10912,6 +10943,10 @@ p, li { white-space: pre-wrap; }
         <source>Edit Topic</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>Create Topic</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>PostedItem</name>
@@ -10924,19 +10959,11 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Date</source>
-        <translation>التاريخ</translation>
-    </message>
-    <message>
         <source>From</source>
         <translation>من</translation>
     </message>
     <message>
         <source>Site</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>View Comments</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -10948,11 +10975,19 @@ p, li { white-space: pre-wrap; }
         <translation>تعليق</translation>
     </message>
     <message>
-        <source>I like this</source>
+        <source>Vote up</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>I dislike this</source>
+        <source>Vote down</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>\/</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Submitted</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -10992,10 +11027,6 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>This Year</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Submit Post</source>
         <translation type="unfinished"/>
     </message>
     <message>
@@ -11048,6 +11079,14 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Create New Topic</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Submit a new Post</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Todo</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -11662,6 +11701,10 @@ Make sure you know who you&apos;re talking to.</source>
     </message>
     <message>
         <source>Chat connection is unauthenticated</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Id: </source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -12385,14 +12428,6 @@ Reducing image to %1x%2 pixels?</source>
         <translation>إزالة عنصر</translation>
     </message>
     <message>
-        <source>Cancel</source>
-        <translation>إلغي</translation>
-    </message>
-    <message>
-        <source>Send</source>
-        <translation>إرسال</translation>
-    </message>
-    <message>
         <source>Name:</source>
         <translation>الاسم:</translation>
     </message>
@@ -12457,8 +12492,20 @@ Reducing image to %1x%2 pixels?</source>
         <translation>هل تريد إزالة هذا الصديق؟</translation>
     </message>
     <message>
-        <source>Quick Message</source>
-        <translation>رسالة مختصرة</translation>
+        <source>Certificate has wrong signature!! This peer is not who he claims to be.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Missing/Damaged SSL certificate for key </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Missing/Damaged certificate. Not a real Retroshare user.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Certificate caused an internal error.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -14335,6 +14382,14 @@ Try to be patient!</source>
         <source>Unsubscribe to Group</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>Todo</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Edit Group</source>
+        <translation>تعديل المجموعة</translation>
+    </message>
 </context>
 <context>
     <name>WikiEditDialog</name>
@@ -14455,6 +14510,10 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Select Wiki Moderators</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Create Group</source>
         <translation type="unfinished"/>
     </message>
 </context>

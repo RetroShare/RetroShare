@@ -1,5 +1,54 @@
 <?xml version="1.0" ?><!DOCTYPE TS><TS language="nl" version="2.0">
 <context>
+    <name>AudioChatWidgetHolder</name>
+    <message>
+        <location filename="../gui/AudioChatWidgetHolder.cpp" line="27"/>
+        <location filename="../gui/AudioChatWidgetHolder.cpp" line="95"/>
+        <source>Mute yourself</source>
+        <translation>Demp uzelf</translation>
+    </message>
+    <message>
+        <location filename="../gui/AudioChatWidgetHolder.cpp" line="47"/>
+        <source>Start Call</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/AudioChatWidgetHolder.cpp" line="69"/>
+        <source>Hangup Call</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/AudioChatWidgetHolder.cpp" line="97"/>
+        <source>Unmute yourself</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/AudioChatWidgetHolder.cpp" line="126"/>
+        <source>Hold Call</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/AudioChatWidgetHolder.cpp" line="143"/>
+        <source>VoIP Status</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/AudioChatWidgetHolder.cpp" line="143"/>
+        <source>Outgoing Call is started...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/AudioChatWidgetHolder.cpp" line="151"/>
+        <source>Resume Call</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../gui/AudioChatWidgetHolder.cpp" line="175"/>
+        <source>Answer</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>AudioInput</name>
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="17"/>
@@ -164,55 +213,6 @@
         <location filename="../gui/AudioInputConfig.h" line="72"/>
         <source>VOIP</source>
         <translation>VOIP</translation>
-    </message>
-</context>
-<context>
-    <name>AudioPopupChatDialog</name>
-    <message>
-        <location filename="../gui/AudioPopupChatDialog.cpp" line="23"/>
-        <location filename="../gui/AudioPopupChatDialog.cpp" line="87"/>
-        <source>Mute yourself</source>
-        <translation>Demp uzelf</translation>
-    </message>
-    <message>
-        <location filename="../gui/AudioPopupChatDialog.cpp" line="43"/>
-        <source>Start Call</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../gui/AudioPopupChatDialog.cpp" line="65"/>
-        <source>Hangup Call</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../gui/AudioPopupChatDialog.cpp" line="89"/>
-        <source>Unmute yourself</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../gui/AudioPopupChatDialog.cpp" line="118"/>
-        <source>Hold Call</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../gui/AudioPopupChatDialog.cpp" line="137"/>
-        <source>VoIP Status</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../gui/AudioPopupChatDialog.cpp" line="137"/>
-        <source>Outgoing Call is started...</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../gui/AudioPopupChatDialog.cpp" line="145"/>
-        <source>Resume Call</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../gui/AudioPopupChatDialog.cpp" line="172"/>
-        <source>Answer</source>
-        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -503,42 +503,42 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="94"/>
+        <location filename="../VOIPPlugin.cpp" line="95"/>
         <source>&lt;h3&gt;RetroShare VOIP plugin&lt;/h3&gt;&lt;br/&gt;   * Contributors: Cyril Soler, Josselin Jacquard&lt;br/&gt;</source>
         <translation>&lt;h3&gt;RetroShare VOIP plugin&lt;/h3&gt;&lt;br/&gt; * Medewerkers: Cyril Soler, Josselin Jacquard&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="95"/>
+        <location filename="../VOIPPlugin.cpp" line="96"/>
         <source>&lt;br/&gt;The VOIP plugin adds VOIP to the private chat window of RetroShare. to use it, proceed as follows:&lt;UL&gt;</source>
         <translation>&lt;br/&gt;De VOIP plugin voegt VOIP toe aan de privé chat scherm van RetroShare. Om het te gebruiken, ga door als volgt:&lt;UL&gt;</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="96"/>
+        <location filename="../VOIPPlugin.cpp" line="97"/>
         <source>&lt;li&gt; setup microphone levels using the configuration panel&lt;/li&gt;</source>
         <translation>&lt;li&gt; stel microfoon levels in via het configuratie paneel&lt;/li&gt;</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="97"/>
+        <location filename="../VOIPPlugin.cpp" line="98"/>
         <source>&lt;li&gt; check your microphone by looking at the VU-metters&lt;/li&gt;</source>
         <translation>&lt;li&gt; controleer uw microfoon door te kijken naar de VU-meters&lt;/li&gt;</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="98"/>
+        <location filename="../VOIPPlugin.cpp" line="99"/>
         <source>&lt;li&gt; in the private chat, enable sound input/output by clicking on the two VOIP icons&lt;/li&gt;&lt;/ul&gt;</source>
         <translation>&lt;li&gt; in de privé chat, schakel de geluids ingang/uitgang aan door te klikken op de twee VOIP ikoontjes&lt;/li&gt;&lt;/ul&gt;</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="99"/>
+        <location filename="../VOIPPlugin.cpp" line="100"/>
         <source>Your friend needs to run the plugin to talk/listen to you, or course.</source>
         <translation>Uw vriend heeft deze plugin nodig om met u te kunnen spreken.</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="100"/>
+        <location filename="../VOIPPlugin.cpp" line="101"/>
         <source>&lt;br/&gt;&lt;br/&gt;This is an experimental feature. Don&apos;t hesitate to send comments and suggestion to the RS dev team.</source>
         <translation>&lt;br/&gt;&lt;br/&gt;Dit is een experimentele toekomstige optie. Aarzel niet om opmerkingen en suggesties te versturen naar het RetroShare ontwikkelings team.</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="118"/>
+        <location filename="../VOIPPlugin.cpp" line="126"/>
         <source>RTT Statistics</source>
         <translation>RTT Statistieken</translation>
     </message>
@@ -568,7 +568,7 @@
 <context>
     <name>VOIP</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="154"/>
+        <location filename="../VOIPPlugin.cpp" line="163"/>
         <source>This plugin provides voice communication between friends in RetroShare.</source>
         <translation>Deze plugin levert u spraak communicatie tussen vrienden in RetroShare.</translation>
     </message>
@@ -576,7 +576,7 @@
 <context>
     <name>VOIPPlugin</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="159"/>
+        <location filename="../VOIPPlugin.cpp" line="168"/>
         <source>VOIP</source>
         <translation>VOIP</translation>
     </message>

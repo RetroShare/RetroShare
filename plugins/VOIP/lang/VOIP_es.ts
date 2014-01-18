@@ -1,5 +1,54 @@
 <?xml version="1.0" ?><!DOCTYPE TS><TS language="es" version="2.0">
 <context>
+    <name>AudioChatWidgetHolder</name>
+    <message>
+        <location filename="../gui/AudioChatWidgetHolder.cpp" line="27"/>
+        <location filename="../gui/AudioChatWidgetHolder.cpp" line="95"/>
+        <source>Mute yourself</source>
+        <translation>Silenciar</translation>
+    </message>
+    <message>
+        <location filename="../gui/AudioChatWidgetHolder.cpp" line="47"/>
+        <source>Start Call</source>
+        <translation>Iniciar llamada</translation>
+    </message>
+    <message>
+        <location filename="../gui/AudioChatWidgetHolder.cpp" line="69"/>
+        <source>Hangup Call</source>
+        <translation>Colgar llamada</translation>
+    </message>
+    <message>
+        <location filename="../gui/AudioChatWidgetHolder.cpp" line="97"/>
+        <source>Unmute yourself</source>
+        <translation>Desilenciarse a si mismo</translation>
+    </message>
+    <message>
+        <location filename="../gui/AudioChatWidgetHolder.cpp" line="126"/>
+        <source>Hold Call</source>
+        <translation>Retener llamada</translation>
+    </message>
+    <message>
+        <location filename="../gui/AudioChatWidgetHolder.cpp" line="143"/>
+        <source>VoIP Status</source>
+        <translation>Estado VoIP</translation>
+    </message>
+    <message>
+        <location filename="../gui/AudioChatWidgetHolder.cpp" line="143"/>
+        <source>Outgoing Call is started...</source>
+        <translation>La llamada saliente está inciada...</translation>
+    </message>
+    <message>
+        <location filename="../gui/AudioChatWidgetHolder.cpp" line="151"/>
+        <source>Resume Call</source>
+        <translation>Reanudar llamada</translation>
+    </message>
+    <message>
+        <location filename="../gui/AudioChatWidgetHolder.cpp" line="175"/>
+        <source>Answer</source>
+        <translation>Responder</translation>
+    </message>
+</context>
+<context>
     <name>AudioInput</name>
     <message>
         <location filename="../gui/AudioInputConfig.ui" line="17"/>
@@ -164,55 +213,6 @@
         <location filename="../gui/AudioInputConfig.h" line="72"/>
         <source>VOIP</source>
         <translation>VOIP</translation>
-    </message>
-</context>
-<context>
-    <name>AudioPopupChatDialog</name>
-    <message>
-        <location filename="../gui/AudioPopupChatDialog.cpp" line="23"/>
-        <location filename="../gui/AudioPopupChatDialog.cpp" line="87"/>
-        <source>Mute yourself</source>
-        <translation>Silenciar</translation>
-    </message>
-    <message>
-        <location filename="../gui/AudioPopupChatDialog.cpp" line="43"/>
-        <source>Start Call</source>
-        <translation>Iniciar llamada</translation>
-    </message>
-    <message>
-        <location filename="../gui/AudioPopupChatDialog.cpp" line="65"/>
-        <source>Hangup Call</source>
-        <translation>Colgar llamada</translation>
-    </message>
-    <message>
-        <location filename="../gui/AudioPopupChatDialog.cpp" line="89"/>
-        <source>Unmute yourself</source>
-        <translation>Desilenciarse a si mismo</translation>
-    </message>
-    <message>
-        <location filename="../gui/AudioPopupChatDialog.cpp" line="118"/>
-        <source>Hold Call</source>
-        <translation>Retener llamada</translation>
-    </message>
-    <message>
-        <location filename="../gui/AudioPopupChatDialog.cpp" line="137"/>
-        <source>VoIP Status</source>
-        <translation>Estado VoIP</translation>
-    </message>
-    <message>
-        <location filename="../gui/AudioPopupChatDialog.cpp" line="137"/>
-        <source>Outgoing Call is started...</source>
-        <translation>La llamada saliente está inciada...</translation>
-    </message>
-    <message>
-        <location filename="../gui/AudioPopupChatDialog.cpp" line="145"/>
-        <source>Resume Call</source>
-        <translation>Reanudar llamada</translation>
-    </message>
-    <message>
-        <location filename="../gui/AudioPopupChatDialog.cpp" line="172"/>
-        <source>Answer</source>
-        <translation>Responder</translation>
     </message>
 </context>
 <context>
@@ -503,42 +503,42 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="94"/>
+        <location filename="../VOIPPlugin.cpp" line="95"/>
         <source>&lt;h3&gt;RetroShare VOIP plugin&lt;/h3&gt;&lt;br/&gt;   * Contributors: Cyril Soler, Josselin Jacquard&lt;br/&gt;</source>
         <translation>&lt;h3&gt;Plugin VOIP de RetroShare&lt;/h3&gt;&lt;br/&gt; * Colaboradores: Cyril Soler, Josselin Jacquard&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="95"/>
+        <location filename="../VOIPPlugin.cpp" line="96"/>
         <source>&lt;br/&gt;The VOIP plugin adds VOIP to the private chat window of RetroShare. to use it, proceed as follows:&lt;UL&gt;</source>
         <translation>&lt;br/&gt;El plugin VOIP añade Voz IP a la ventana de chat privado de RetroShare. para usarlo, haga lo siguiente:&lt;UL&gt;</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="96"/>
+        <location filename="../VOIPPlugin.cpp" line="97"/>
         <source>&lt;li&gt; setup microphone levels using the configuration panel&lt;/li&gt;</source>
         <translation>&lt;li&gt; Configure el nivel del micrófono mediante el panel de configuración&lt;/li&gt;</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="97"/>
+        <location filename="../VOIPPlugin.cpp" line="98"/>
         <source>&lt;li&gt; check your microphone by looking at the VU-metters&lt;/li&gt;</source>
         <translation>&lt;li&gt; Compruebe su micrófono mirando los VU-metters&lt;/li&gt;</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="98"/>
+        <location filename="../VOIPPlugin.cpp" line="99"/>
         <source>&lt;li&gt; in the private chat, enable sound input/output by clicking on the two VOIP icons&lt;/li&gt;&lt;/ul&gt;</source>
         <translation>&lt;li&gt; en el chat privado, habilite la entrada/salida de sonido pulsando en los dos iconos de VOIP&lt;/li&gt;&lt;/ul&gt;</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="99"/>
+        <location filename="../VOIPPlugin.cpp" line="100"/>
         <source>Your friend needs to run the plugin to talk/listen to you, or course.</source>
         <translation>Por supuesto, su amigo también tiene que ejecutar el plugin para poder hablar/escuchar con usted.</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="100"/>
+        <location filename="../VOIPPlugin.cpp" line="101"/>
         <source>&lt;br/&gt;&lt;br/&gt;This is an experimental feature. Don&apos;t hesitate to send comments and suggestion to the RS dev team.</source>
         <translation>&lt;br/&gt;&lt;br/&gt;Esta es una característica experimental. No dude en enviar comentarios y sugerencias al equipo de RS dev team.</translation>
     </message>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="118"/>
+        <location filename="../VOIPPlugin.cpp" line="126"/>
         <source>RTT Statistics</source>
         <translation>Estadísticas RTT</translation>
     </message>
@@ -568,7 +568,7 @@
 <context>
     <name>VOIP</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="154"/>
+        <location filename="../VOIPPlugin.cpp" line="163"/>
         <source>This plugin provides voice communication between friends in RetroShare.</source>
         <translation>Este plugin permite la comunicación de voz entre amigos en RetroShare.</translation>
     </message>
@@ -576,7 +576,7 @@
 <context>
     <name>VOIPPlugin</name>
     <message>
-        <location filename="../VOIPPlugin.cpp" line="159"/>
+        <location filename="../VOIPPlugin.cpp" line="168"/>
         <source>VOIP</source>
         <translation>VOIP</translation>
     </message>
