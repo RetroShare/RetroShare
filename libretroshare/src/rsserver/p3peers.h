@@ -85,12 +85,16 @@ virtual bool removeFriendLocation(const std::string &sslId);
 virtual	bool connectAttempt(const std::string &id);
 virtual bool setLocation(const std::string &ssl_id, const std::string &location);//location is shown in the gui to differentiate ssl certs
 virtual bool setHiddenNode(const std::string &id, const std::string &hidden_node_address);
+virtual bool setHiddenNode(const std::string &id, const std::string &address, uint16_t port);
 
 virtual	bool setLocalAddress(const std::string &id, const std::string &addr, uint16_t port);
 virtual	bool setExtAddress(const std::string &id, const std::string &addr, uint16_t port);
 virtual	bool setDynDNS(const std::string &id, const std::string &dyndns);
 virtual	bool setNetworkMode(const std::string &id, uint32_t netMode);
 virtual bool setVisState(const std::string &id, uint16_t vs_disc, uint16_t vs_dht);
+
+virtual bool getProxyServer(std::string &addr, uint16_t &port);
+virtual bool setProxyServer(const std::string &addr, const uint16_t port);
 
 virtual void getIPServersList(std::list<std::string>& ip_servers) ;
 virtual void allowServerIPDetermination(bool) ;

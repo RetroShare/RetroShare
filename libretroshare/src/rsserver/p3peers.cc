@@ -312,9 +312,10 @@ bool	p3Peers::getPeerDetails(const std::string &id, RsPeerDetails &d)
 	if (ps.hiddenNode)
 	{
 		d.isHiddenNode = true;
-		rs_sprintf(d.hiddenNodeAddress, "%s:%u", ps.hiddenDomain.c_str(), ps.hiddenPort);
-		d.localAddr = "hidden";
-		d.localPort = 0;
+		d.hiddenNodeAddress = ps.hiddenDomain;
+		d.hiddenNodePort = ps.hiddenPort;
+		d.localAddr	= sockaddr_storage_iptostring(ps.localaddr);
+		d.localPort	= sockaddr_storage_port(ps.localaddr);
 		d.extAddr = "hidden";
 		d.extPort = 0;
 		d.dyndns = "";
@@ -323,6 +324,7 @@ bool	p3Peers::getPeerDetails(const std::string &id, RsPeerDetails &d)
 	{
 		d.isHiddenNode = false;
 		d.hiddenNodeAddress = "";
+		d.hiddenNodePort = 0;
 
 		d.localAddr	= sockaddr_storage_iptostring(ps.localaddr);
 		d.localPort	= sockaddr_storage_port(ps.localaddr);
@@ -732,6 +734,7 @@ bool 	p3Peers::setLocation(const std::string &ssl_id, const std::string &locatio
         return mPeerMgr->setLocation(ssl_id, location);
 }
 
+
 bool 	p3Peers::setHiddenNode(const std::string &id, const std::string &hidden_node_address)
 {
 #ifdef P3PEERS_DEBUG
@@ -767,6 +770,20 @@ bool 	p3Peers::setHiddenNode(const std::string &id, const std::string &hidden_no
 
 	mPeerMgr->setNetworkMode(id, RS_NET_MODE_HIDDEN);
 	mPeerMgr->setHiddenDomainPort(id, domain, (uint16_t) portint);
+	return true;
+}
+
+
+bool 	p3Peers::setHiddenNode(const std::string &id, const std::string &address, uint16_t port)
+{
+#ifdef P3PEERS_DEBUG
+        std::cerr << "p3Peers::setHiddenNode() " << id << std::endl;
+#endif
+        std::cerr << "p3Peers::setHiddenNode() Domain: " << address << " Port: " << port;
+	std::cerr << std::endl;
+
+	mPeerMgr->setNetworkMode(id, RS_NET_MODE_HIDDEN);
+	mPeerMgr->setHiddenDomainPort(id, address, port);
 	return true;
 }
 
@@ -864,8 +881,7 @@ bool 	p3Peers::setNetworkMode(const std::string &id, uint32_t extNetMode)
 }
 
 
-bool
-p3Peers::setVisState(const std::string &id, uint16_t vs_disc, uint16_t vs_dht)
+bool p3Peers::setVisState(const std::string &id, uint16_t vs_disc, uint16_t vs_dht)
 {
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::setVisState() " << id << std::endl;
@@ -875,6 +891,52 @@ p3Peers::setVisState(const std::string &id, uint16_t vs_disc, uint16_t vs_dht)
 
 	return mPeerMgr->setVisState(id, vs_disc, vs_dht);
 }
+
+bool p3Peers::getProxyServer(std::string &addr, uint16_t &port)
+{
+        std::cerr << "p3Peers::getProxyServer()" << std::endl;
+
+	struct sockaddr_storage proxy_addr;
+	mPeerMgr->getProxyServerAddress(proxy_addr);
+	addr = sockaddr_storage_iptostring(proxy_addr);
+	port = sockaddr_storage_port(proxy_addr);
+	return true;
+}
+
+bool p3Peers::setProxyServer(const std::string &addr_str, const uint16_t port)
+{
+#ifdef P3PEERS_DEBUG
+#endif
+        std::cerr << "p3Peers::setProxyServer() " << std::endl;
+
+	struct sockaddr_storage addr;
+	struct sockaddr_in *addrv4p = (struct sockaddr_in *) &addr;
+	addrv4p->sin_family = AF_INET;
+	addrv4p->sin_port = htons(port);
+
+	int ret = 1;
+/********************************** WINDOWS/UNIX SPECIFIC PART *******************/
+#ifndef WINDOWS_SYS
+	if (ret && (0 != inet_aton(addr_str.c_str(), &(addrv4p->sin_addr))))
+#else
+	addrv4p->sin_addr.s_addr = inet_addr(addr_str.c_str());
+	if (ret)
+#endif
+/********************************** WINDOWS/UNIX SPECIFIC PART *******************/
+	{
+		return mPeerMgr->setProxyServerAddress(addr);
+	}
+	else
+	{
+        	std::cerr << "p3Peers::setProxyServer() Failed to Parse Address" << std::endl;
+	}
+
+	return false;
+}
+
+
+
+
 
 //===========================================================================
 	/* Auth Stuff */
@@ -988,6 +1050,7 @@ bool 	p3Peers::loadDetailsFromStringCert(const std::string &certstr, RsPeerDetai
 		{
 			pd.isHiddenNode = true;
 			pd.hiddenNodeAddress = cert.hidden_node_string();
+			//pd.hiddenNodePort = cert.hidden_node_port();
 		}
 		else
 		{

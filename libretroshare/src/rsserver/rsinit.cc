@@ -43,7 +43,9 @@
 #include "util/rsstring.h"
 #include "retroshare/rsinit.h"
 #include "plugins/pluginmanager.h"
+
 #include "rsserver/rsloginhandler.h"
+#include "rsserver/rsaccounts.h"
 
 #include <list>
 #include <string>
@@ -72,44 +74,20 @@
 // #define AUTHSSL_DEBUG
 // #define FIM_DEBUG
 
-class accountId
-{
-	public:
-		std::string pgpId;
-		std::string pgpName;
-		std::string pgpEmail;
 
-		std::string sslId;
-                std::string location;
-};
-
-std::map<std::string,std::vector<std::string> > RsInit::unsupported_keys ;
+//std::map<std::string,std::vector<std::string> > RsInit::unsupported_keys ;
 
 class RsInitConfig 
 {
 	public:
-                /* Directories (SetupBaseDir) */
-                static std::string basedir;
-                static std::string homePath;
+
                 static std::string main_executable_hash;
+
 #ifdef WINDOWS_SYS
                 static bool portable;
                 static bool isWindowsXP;
 #endif
-
-		static std::list<accountId> accountIds;
-		static std::string preferedId;
-
-		/* for certificate creation */
-                //static std::string gpgPasswd;
-
 		static rs_lock_handle_t lockHandle;
-
-		/* These fields are needed for login */
-                static std::string loginId;
-                static std::string configDir;
-                static std::string load_cert;
-                static std::string load_key;
 
 		static std::string passwd;
 		static std::string gxs_passwd;
@@ -128,7 +106,7 @@ class RsInitConfig
                 static std::string inet ;
 
 		/* v0.6 features */
-		static bool forceApiUpgrade;
+		static bool        hiddenNodeSet;
 		static std::string hiddenNodeAddress;
 		static uint16_t    hiddenNodePort;
 
@@ -138,7 +116,6 @@ class RsInitConfig
                 static int  debugLevel;
                 static std::string logfname;
 
-                static bool firsttime_run;
                 static bool load_trustedpeer;
                 static std::string load_trustedpeer_file;
 
@@ -151,36 +128,28 @@ class RsInitConfig
 const int p3facestartupzone = 47238;
 
 // initial configuration bootstrapping...
-static const std::string configInitFile = "default_cert.txt";
-static const std::string configConfFile = "config.rs";
-static const std::string configCertDir = "friends";
-static const std::string configKeyDir = "keys";
-static const std::string configCaFile = "cacerts.pem";
+//static const std::string configInitFile = "default_cert.txt";
+//static const std::string configConfFile = "config.rs";
+//static const std::string configCertDir = "friends";
+//static const std::string configKeyDir = "keys";
+//static const std::string configCaFile = "cacerts.pem";
+//static const std::string configHelpName = "retro.htm";
+
 static const std::string configLogFileName = "retro.log";
-static const std::string configHelpName = "retro.htm";
 static const int SSLPWD_LEN = 64;
 
-std::list<accountId> RsInitConfig::accountIds;
-std::string RsInitConfig::preferedId;
 std::string RsInitConfig::main_executable_hash;
 
 rs_lock_handle_t RsInitConfig::lockHandle;
 
-std::string RsInitConfig::configDir;
-std::string RsInitConfig::load_cert;
-std::string RsInitConfig::load_key;
-
 std::string RsInitConfig::passwd;
 std::string RsInitConfig::gxs_passwd;
-//std::string RsInitConfig::gpgPasswd;
 
 bool RsInitConfig::autoLogin;  		/* autoLogin allowed */
 bool RsInitConfig::startMinimised; /* Icon or Full Window */
 std::string RsInitConfig::RetroShareLink;
 
 /* Directories */
-std::string RsInitConfig::basedir;
-std::string RsInitConfig::homePath;
 #ifdef WINDOWS_SYS
 bool RsInitConfig::portable = false;
 bool RsInitConfig::isWindowsXP = false;
@@ -193,7 +162,7 @@ unsigned short RsInitConfig::port;
 std::string RsInitConfig::inet;
 
 /* v0.6 features */
-bool RsInitConfig::forceApiUpgrade = false;
+bool RsInitConfig::hiddenNodeSet = false;
 std::string RsInitConfig::hiddenNodeAddress;
 uint16_t RsInitConfig::hiddenNodePort;
 
@@ -203,16 +172,11 @@ bool RsInitConfig::outStderr;
 int  RsInitConfig::debugLevel;
 std::string RsInitConfig::logfname;
 
-bool RsInitConfig::firsttime_run;
 bool RsInitConfig::load_trustedpeer;
 std::string RsInitConfig::load_trustedpeer_file;
 
 bool RsInitConfig::udpListenerOnly;
 
-
-/* Uses private class - so must be hidden */
-static bool getAvailableAccounts(std::list<accountId> &ids,int& failing_accounts,std::map<std::string,std::vector<std::string> >& unsupported_keys);
-static bool checkAccount(std::string accountdir, accountId &id,std::map<std::string,std::vector<std::string> >& unsupported_keys);
 
 void RsInit::InitRsConfig()
 {
@@ -224,7 +188,6 @@ void RsInit::InitRsConfig()
 
 
 	RsInitConfig::load_trustedpeer = false;
-	RsInitConfig::firsttime_run = false;
 	RsInitConfig::port = 0 ;
 	RsInitConfig::forceLocalAddr = false;
 	RsInitConfig::haveLogFile    = false;
@@ -240,7 +203,7 @@ void RsInit::InitRsConfig()
 	RsInitConfig::udpListenerOnly = false;
 
 	/* setup the homePath (default save location) */
-	RsInitConfig::homePath = getHomePath();
+//	RsInitConfig::homePath = getHomePath();
 
 #ifdef WINDOWS_SYS
 	// test for portable version
@@ -382,8 +345,9 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 #endif
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
-         int c;
-         std::string prefUserString = "";
+	int c;
+	std::string prefUserString = "";
+	std::string opt_base_dir;
 
          /* getopt info: every availiable option is listed here. if it is followed by a ':' it
             needs an argument. If it is followed by a '::' the argument is optional.
@@ -418,7 +382,7 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 			   >> parameter('w',"password"      ,RsInitConfig::passwd         ,"password"  ,"Set Login Password."                      ,false)
 			   >> parameter('i',"ip-address"    ,RsInitConfig::inet           ,"nnn.nnn.nnn.nnn", "Set IP address to use."                   ,false)
 			   >> parameter('p',"port"          ,RsInitConfig::port           ,"port", "Set listenning port to use."              ,false)
-			   >> parameter('c',"base-dir"      ,RsInitConfig::basedir        ,"directory", "Set base directory."                      ,false)
+			   >> parameter('c',"base-dir"      ,opt_base_dir                 ,"directory", "Set base directory."                      ,false)
 			   >> parameter('U',"user-id"       ,prefUserString               ,"ID", "[User Name/GPG id/SSL id] Sets Account to Use, Useful when Autologin is enabled",false)
 			   >> parameter('r',"link"          ,RsInitConfig::RetroShareLink ,"retroshare://...", "Use a given Retroshare Link"              ,false)
 #ifdef LOCALNET_TESTING
@@ -567,12 +531,11 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 	AuthSSL::getAuthSSL() -> InitAuth(NULL, NULL, NULL);
 
 	// first check config directories, and set bootstrap values.
-	if(!setupBaseDir())
+	if(!rsAccounts.setupBaseDirectory(opt_base_dir))
 		return RS_INIT_BASE_DIR_ERROR ; 
 
-	get_configinit(RsInitConfig::basedir, RsInitConfig::preferedId);
-
-	std::string pgp_dir = RsPGPDirectory() ;
+	// Setup PGP stuff.
+	std::string pgp_dir = rsAccounts.PathPGPDirectory();
 
 	if(!RsDirUtil::checkCreateDirectory(pgp_dir))
 		throw std::runtime_error("Cannot create pgp directory " + pgp_dir) ;
@@ -582,74 +545,27 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 						pgp_dir + "/retroshare_trustdb.gpg",
 						pgp_dir + "/lock");
 
-	/* Initialize AuthGPG */
-	// if (AuthGPG::getAuthGPG()->InitAuth() == false) {
-	// 	std::cerr << "AuthGPG::InitAuth failed" << std::endl;
-	// 	return RS_INIT_AUTH_FAILED;
-	// }
-
-	//std::list<accountId> ids;
-	std::list<accountId>::iterator it;
-	int failing_accounts ;
-
-	getAvailableAccounts(RsInitConfig::accountIds,failing_accounts,unsupported_keys);
-
-	if(failing_accounts > 0 && RsInitConfig::accountIds.empty())
+	// load Accounts.
+	if (!rsAccounts.loadAccounts())
+	{
 		return RS_INIT_NO_KEYRING ;
+	}
 
-	// if a different user id has been passed to cmd line check for that instead
-
-	std::string lower_case_user_string;
-	stringToLowerCase(prefUserString, lower_case_user_string) ;
-	std::string upper_case_user_string;
-	stringToUpperCase(prefUserString, upper_case_user_string) ;
-
-	bool pgpNameFound = false;
+	// choose alternative account.
 	if(prefUserString != "")
 	{
-
-		for(it = RsInitConfig::accountIds.begin() ; it!= RsInitConfig::accountIds.end() ; it++)
+		if (!rsAccounts.selectAccountByString(prefUserString))
 		{
-			std::cerr << "Checking account (gpgid = " << it->pgpId << ", name=" << it->pgpName << ", sslId=" << it->sslId << ")" << std::endl ;
-
-			if(prefUserString == it->pgpName || upper_case_user_string == it->pgpId || lower_case_user_string == it->sslId)
-			{
-				RsInitConfig::preferedId = it->sslId;
-				pgpNameFound = true;
-			}
-		}
-		if(!pgpNameFound){
-			std::cerr << "Invalid User name/GPG id/SSL id: not found in list" << std::endl;
+			std::cerr << "Invalid User name/GPG id/SSL id: not found in list";
+			std::cerr << std::endl;
 			return RS_INIT_AUTH_FAILED ;
 		}
 	}
 
+	/* check that we have selected someone */
+	std::string preferredId;
+	bool existingUser = rsAccounts.getPreferredAccountId(preferredId);
 
-
-	/* check that preferedId */
-	std::string userName;
-	std::string userId;
-	bool existingUser = false;
-	for(it = RsInitConfig::accountIds.begin(); it != RsInitConfig::accountIds.end(); it++)
-	{
-		std::cerr << "Checking Account Id: " << it->sslId << std::endl;
-		if (RsInitConfig::preferedId == it->sslId)
-		{
-			std::cerr << " * Preferred * " << std::endl;
-			userId = it->sslId;
-			userName = it->pgpName;
-			existingUser = true;
-			break;
-		}
-	}
-	if (!existingUser)
-	{
-		std::cerr << "No Existing User" << std::endl;
-		RsInitConfig::preferedId == "";
-
-	}
-
-	/* if existing user, and havePasswd .... we can skip the login prompt */
 	if (existingUser)
 	{
 		if (RsInitConfig::passwd != "")
@@ -657,9 +573,7 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 			return RS_INIT_HAVE_ACCOUNT;
 		}
 
-		RsInit::LoadPassword(RsInitConfig::preferedId, "");
-
-		if(RsLoginHandler::getSSLPassword(RsInitConfig::preferedId,false,RsInitConfig::passwd))
+		if(RsLoginHandler::getSSLPassword(preferredId,false,RsInitConfig::passwd))
 		{
 			RsInit::setAutoLogin(true);
 			std::cerr << "Autologin has succeeded" << std::endl;
@@ -669,515 +583,6 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 	return RS_INIT_OK;
 }
 
-/**************************** Access Functions for Init Data **************************/
-
-bool RsInit::exportIdentity(const std::string& fname,const std::string& id)
-{
-	return AuthGPG::getAuthGPG()->exportProfile(fname,id);
-}
-
-bool RsInit::importIdentity(const std::string& fname,std::string& id,std::string& import_error)
-{
-	return AuthGPG::getAuthGPG()->importProfile(fname,id,import_error);
-}
-
-bool RsInit::copyGnuPGKeyrings()
-{
-	std::string pgp_dir = RsPGPDirectory() ;
-
-	if(!RsDirUtil::checkCreateDirectory(pgp_dir))
-		throw std::runtime_error("Cannot create pgp directory " + pgp_dir) ;
-
-	std::string source_public_keyring;
-	std::string source_secret_keyring;
-
-#ifdef WINDOWS_SYS
-	if (RsInit::isPortable())
-	{
-		source_public_keyring = RsInit::RsConfigDirectory() + "/gnupg/pubring.gpg";
-		source_secret_keyring = RsInit::RsConfigDirectory() + "/gnupg/secring.gpg" ;
-	} else {
-		source_public_keyring = RsInitConfig::basedir + "/../gnupg/pubring.gpg" ;
-		source_secret_keyring = RsInitConfig::basedir + "/../gnupg/secring.gpg" ;
-	}
-#else
-	char *env_gnupghome = getenv("GNUPGHOME") ;
-
-	if(env_gnupghome != NULL)
-	{
-		std::cerr << "looking into $GNUPGHOME/" << std::endl;
-
-		source_public_keyring = std::string(env_gnupghome) + "/pubring.gpg" ;
-		source_secret_keyring = std::string(env_gnupghome) + "/secring.gpg" ;
-	}
-	else
-	{
-		char *env_homedir = getenv("HOME") ;
-
-		if(env_homedir != NULL)
-		{
-			std::cerr << "looking into $HOME/.gnupg/" << std::endl;
-			std::string home_dir(env_homedir) ;
-
-			// We need a specific part for MacOS and Linux as well
-			source_public_keyring = home_dir + "/.gnupg/pubring.gpg" ;
-			source_secret_keyring = home_dir + "/.gnupg/secring.gpg" ;
-		}
-		else
-			return false ;
-	}
-#endif
-
-	if(!RsDirUtil::copyFile(source_public_keyring,pgp_dir + "/retroshare_public_keyring.gpg"))
-	{
-		std::cerr << "Cannot copy pub keyring " << source_public_keyring << " to destination file " << pgp_dir + "/retroshare_public_keyring.gpg. If you believe your keyring is in a different place, please make the copy yourself." << std::endl;
-		return false ;
-	}
-	if(!RsDirUtil::copyFile(source_secret_keyring,pgp_dir + "/retroshare_secret_keyring.gpg"))
-	{
-		std::cerr << "Cannot copy sec keyring " << source_secret_keyring << " to destination file " << pgp_dir + "/retroshare_secret_keyring.gpg. your keyring is in a different place, please make the copy yourself." << std::endl;
-		return false ;
-	}
-
-	return true ;
-}
-
-bool     RsInit::getPreferedAccountId(std::string &id)
-{
-	id = RsInitConfig::preferedId;
-	return (RsInitConfig::preferedId != "");
-}
-
-bool     RsInit::getAccountIds(std::list<std::string> &ids)
-{
-	std::list<accountId>::iterator it;
-        #ifdef AUTHSSL_DEBUG
-	std::cerr << "getAccountIds:" << std::endl;
-        #endif
-
-	for(it = RsInitConfig::accountIds.begin(); it != RsInitConfig::accountIds.end(); it++)
-	{
-                #ifdef AUTHSSL_DEBUG
-                std::cerr << "SSL Id: " << it->sslId << " PGP Id " << it->pgpId;
-		std::cerr << " PGP Name: " << it->pgpName;
-		std::cerr << " PGP Email: " << it->pgpEmail;
-                std::cerr << " Location: " << it->location;
-		std::cerr << std::endl;
-                #endif
-
-		ids.push_back(it->sslId);
-	}
-	return true;
-}
-
-
-bool     RsInit::getAccountDetails(const std::string &id,
-                                std::string &gpgId, std::string &gpgName, 
-                                std::string &gpgEmail, std::string &location)
-{
-	std::list<accountId>::iterator it;
-	for(it = RsInitConfig::accountIds.begin(); it != RsInitConfig::accountIds.end(); it++)
-	{
-		if (id == it->sslId)
-		{
-			gpgId = it->pgpId;
-			gpgName = it->pgpName;
-			gpgEmail = it->pgpEmail;
-                        location = it->location;
-			return true;
-		}
-	}
-	return false;
-}
-
-/**************************** Access Functions for Init Data **************************/
-/**************************** Private Functions for InitRetroshare ********************/
-/**************************** Private Functions for InitRetroshare ********************/
-
-
-bool RsInit::setupBaseDir()
-{
-	// get the default configuration location.
-
-	if (RsInitConfig::basedir == "")
-	{
-		// v0.4.x if unix. homedir + /.pqiPGPrc
-		// v0.5.x if unix. homedir + /.retroshare
-
-/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
-#ifndef WINDOWS_SYS
-		char *h = getenv("HOME");
-		std::cerr << "retroShare::basedir() -> $HOME = ";
-		std::cerr << h << std::endl;
-		if (h == NULL)
-		{
-			std::cerr << "load_check_basedir() Fatal Error --";
-		  	std::cerr << std::endl;
-			std::cerr << "\tcannot determine $HOME dir" <<std::endl;
-			return false ;
-		}
-		RsInitConfig::basedir = h;
-		RsInitConfig::basedir += "/.retroshare6";
-#else
-		if (RsInitConfig::portable) {
-			// use directory "Data" in portable version
-			RsInitConfig::basedir = "Data";
-		} else {
-			wchar_t *wh = _wgetenv(L"APPDATA");
-			std::string h;
-			librs::util::ConvertUtf16ToUtf8(std::wstring(wh), h);
-			std::cerr << "retroShare::basedir() -> $APPDATA = ";
-			std::cerr << h << std::endl;
-			char *h2 = getenv("HOMEDRIVE");
-			std::cerr << "retroShare::basedir() -> $HOMEDRIVE = ";
-			std::cerr << h2 << std::endl;
-			wchar_t *wh3 = _wgetenv(L"HOMEPATH");
-			std::string h3;
-			librs::util::ConvertUtf16ToUtf8(std::wstring(wh3), h3);
-			std::cerr << "retroShare::basedir() -> $HOMEPATH = ";
-			std::cerr << h3 << std::endl;
-			if (h.empty())
-			{
-				// generating default
-				std::cerr << "load_check_basedir() getEnv Error --Win95/98?";
-				std::cerr << std::endl;
-
-				RsInitConfig::basedir="C:\\Retro";
-
-			}
-			else
-			{
-				RsInitConfig::basedir = h;
-			}
-
-			if (!RsDirUtil::checkCreateDirectory(RsInitConfig::basedir))
-			{
-				std::cerr << "Cannot Create BaseConfig Dir" << std::endl;
-				return false ;
-			}
-			RsInitConfig::basedir += "\\RetroShare6";
-		}
-#endif
-/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
-	}
-
-	// fatal if cannot find/create.
-	std::cerr << "Creating Root Retroshare Config Directories" << std::endl;
-	if (!RsDirUtil::checkCreateDirectory(RsInitConfig::basedir))
-	{
-		std::cerr << "Cannot Create BaseConfig Dir:" << RsInitConfig::basedir << std::endl;
-		return false ;
-	}
-	return true ;
-}
-
-
-/***********************************************************
- * This Directory is used to store data and "template" file that Retroshare requires.
- * These files will either be copied into Retroshare's configuration directory, 
- * if they are to be modified. Or used directly, if read-only.
- *
- * This will initially be used for the DHT bootstrap file.
- *
- * Please modify the code below to suit your platform!
- * 
- * WINDOWS: 
- * WINDOWS PORTABLE:
- * Linux:
- * OSX:
-
- ***********/
-
-#ifdef __APPLE__
-	/* needs CoreFoundation Framework */
-	#include <CoreFoundation/CoreFoundation.h>
-	//#include <CFURL.h>
-	//#include <CFBundle.h>
-#endif
-
-std::string RsInit::getRetroshareDataDirectory()
-{
-	std::string dataDirectory;
-
-/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
-#ifndef WINDOWS_SYS
-
-  #ifdef __APPLE__
-	/* NOTE: OSX also qualifies as BSD... so this #ifdef must be before the BSD check. */
-
-	/* For OSX, applications are Bundled in a directory...
-	 * need to get the path to the executable Bundle.
-	 * 
-	 * Code nicely supplied by Qt!
-	 */
-
-	CFURLRef pluginRef = CFBundleCopyBundleURL(CFBundleGetMainBundle());
-	CFStringRef macPath = CFURLCopyFileSystemPath(pluginRef,
-       	                                    kCFURLPOSIXPathStyle);
-	const char *pathPtr = CFStringGetCStringPtr(macPath,
-                                           CFStringGetSystemEncoding());
-	dataDirectory = pathPtr;
-	CFRelease(pluginRef);
-	CFRelease(macPath);
-
-    	dataDirectory += "/Contents/Resources";
-	std::cerr << "getRetroshareDataDirectory() OSX: " << dataDirectory;
-
-  #elif (defined(BSD) && (BSD >= 199103))
-	/* For BSD, the default is LOCALBASE which will be set
-	 * before compilation via the ports/pkg-src mechanisms.
-	 * For compilation without ports/pkg-src it is set to
-	 * /usr/local (default on Open and Free; Net has /usr/pkg)
-	 */
-	dataDirectory = "/usr/local/share/retroshare";
-	std::cerr << "getRetroshareDataDirectory() BSD: " << dataDirectory;
-
-  #else
-	/* For Linux, we have a fixed standard data directory  */
-	dataDirectory = "/usr/share/RetroShare";
-	std::cerr << "getRetroshareDataDirectory() Linux: " << dataDirectory;
-
-  #endif
-#else
-//	if (RsInitConfig::portable)
-//	{
-//		/* For Windows Portable, files must be in the data directory */
-//		dataDirectory = "Data";
-//		std::cerr << "getRetroshareDataDirectory() WINDOWS PORTABLE: " << dataDirectory;
-//		std::cerr << std::endl;
-//	}
-//	else
-//	{
-//		/* For Windows: environment variable APPDATA should be suitable */
-//		dataDirectory = getenv("APPDATA");
-//		dataDirectory += "\\RetroShare";
-//
-//		std::cerr << "getRetroshareDataDirectory() WINDOWS: " << dataDirectory;
-//		std::cerr << std::endl;
-//	}
-
-	/* Use RetroShare's exe dir */
-	dataDirectory = ".";
-#endif
-/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
-
-	/* Make sure the directory exists, else return emptyString */
-	if (!RsDirUtil::checkDirectory(dataDirectory))
-	{
-		std::cerr << "Data Directory not Found: " << dataDirectory << std::endl;
-		dataDirectory = "";
-	}
-	else
-	{
-		std::cerr << "Data Directory Found: " << dataDirectory << std::endl;
-	}
-
-	return dataDirectory;
-}
-
-
-static bool isHexaString(const std::string& s)
-{
-	for(uint32_t i=0;i<s.length();++i)
-		if(!((s[i] >= 'A' && s[i] <= 'F') || (s[i] >= '0' && s[i] <= '9') || (s[i] >= 'a' && s[i] <= 'f')))
-			return false ;
-
-	return true ;
-}
-
-/* directories with valid certificates in the expected location */
-bool getAvailableAccounts(std::list<accountId> &ids,int& failing_accounts,std::map<std::string,std::vector<std::string> >& unsupported_keys)
-{
-	failing_accounts = 0 ;
-	/* get the directories */
-	std::list<std::string> directories;
-	std::list<std::string>::iterator it;
-
-	std::cerr << "getAvailableAccounts()";
-	std::cerr << std::endl;
-
-	/* now iterate through the directory...
-	 * directories - flags as old,
-	 * files checked to see if they have changed. (rehashed)
-	 */
-
-	/* check for the dir existance */
-	librs::util::FolderIterator dirIt(RsInitConfig::basedir);
-	if (!dirIt.isValid())
-	{
-		std::cerr << "Cannot Open Base Dir - No Available Accounts" << std::endl;
-		return false ;
-	}
-
-	struct stat64 buf;
-
-	while (dirIt.readdir())
-	{
-		/* check entry type */
-		std::string fname;
-		dirIt.d_name(fname);
-		std::string fullname = RsInitConfig::basedir + "/" + fname;
-#ifdef FIM_DEBUG
-		std::cerr << "calling stats on " << fullname <<std::endl;
-#endif
-
-#ifdef WINDOWS_SYS
-		std::wstring wfullname;
-		librs::util::ConvertUtf8ToUtf16(fullname, wfullname);
-		if (-1 != _wstati64(wfullname.c_str(), &buf))
-#else
-		if (-1 != stat64(fullname.c_str(), &buf))
-#endif
-
-		{
-#ifdef FIM_DEBUG
-			std::cerr << "buf.st_mode: " << buf.st_mode <<std::endl;
-#endif
-			if (S_ISDIR(buf.st_mode))
-			{
-				if ((fname == ".") || (fname == ".."))
-				{
-#ifdef FIM_DEBUG
-					std::cerr << "Skipping:" << fname << std::endl;
-#endif
-					continue; /* skipping links */
-				}
-
-#ifdef FIM_DEBUG
-				std::cerr << "Is Directory: " << fullname << std::endl;
-#endif
-
-				/* */
-				directories.push_back(fname);
-
-			}
-		}	
-	}
-	/* close directory */
-	dirIt.closedir();
-
-	for(it = directories.begin(); it != directories.end(); it++)
-		if(isHexaString(*it) && (*it).length() == 32)
-		{
-			std::string accountdir = RsInitConfig::basedir + "/" + *it;
-#ifdef GPG_DEBUG
-			std::cerr << "getAvailableAccounts() Checking: " << *it << std::endl;
-#endif
-
-			accountId tmpId;
-			if (checkAccount(accountdir, tmpId,unsupported_keys))
-			{
-#ifdef GPG_DEBUG
-				std::cerr << "getAvailableAccounts() Accepted: " << *it << std::endl;
-#endif
-				ids.push_back(tmpId);
-			}
-			else
-				++failing_accounts ;
-		}
-#ifdef GPG_DEBUG
-		else
-			std::cerr << "Skipped non SSLid directory " << *it << std::endl;
-#endif
-	return true;
-}
-
-
-
-static bool checkAccount(std::string accountdir, accountId &id,std::map<std::string,std::vector<std::string> >& unsupported_keys)
-{
-	/* check if the cert/key file exists */
-
-	std::string subdir1 = accountdir + "/";
-	std::string subdir2 = subdir1;
-	subdir1 += configKeyDir;
-	subdir2 += configCertDir;
-
-	// Create the filename.
-	std::string basename = accountdir + "/";
-	basename += configKeyDir + "/";
-	basename += "user";
-
-	std::string cert_name = basename + "_cert.pem";
-	std::string userName, userId;
-
-#ifdef AUTHSSL_DEBUG
-	std::cerr << "checkAccount() dir: " << accountdir << std::endl;
-#endif
-	bool ret = false;
-
-	/* check against authmanagers private keys */
-	if (LoadCheckX509(cert_name.c_str(), id.pgpId, id.location, id.sslId))
-	{
-#ifdef AUTHSSL_DEBUG
-		std::cerr << "location: " << id.location << " id: " << id.sslId << std::endl;
-		std::cerr << "issuerName: " << id.pgpId << " id: " << id.sslId << std::endl;
-#endif
-
-		if(! RsInit::GetPGPLoginDetails(id.pgpId, id.pgpName, id.pgpEmail))
-			return false ;
-
-		if(!AuthGPG::getAuthGPG()->haveSecretKey(id.pgpId))
-			return false ;
-
-		if(!AuthGPG::getAuthGPG()->isKeySupported(id.pgpId))
-		{
-			std::string keystring = id.pgpId + " " + id.pgpName + "&#60;" + id.pgpEmail ;
-			unsupported_keys[keystring].push_back("Location: " + id.location + "&nbsp;&nbsp;(" + id.sslId + ")") ;
-			return false ;
-		}
-
-#ifdef GPG_DEBUG
-		std::cerr << "PGPLoginDetails: " << id.pgpId << " name: " << id.pgpName;
-		std::cerr << " email: " << id.pgpEmail << std::endl;
-#endif
-		ret = true;
-	}
-	else
-	{
-		std::cerr << "GetIssuerName FAILED!" << std::endl;
-		ret = false;
-	}
-
-	return ret;
-}
-
-
-
-
-/*****************************************************************************/
-/*****************************************************************************/
-/************************* Generating Certificates ***************************/
-/*****************************************************************************/
-/*****************************************************************************/
-
-
-                /* Generating GPGme Account */
-int      RsInit::GetPGPLogins(std::list<std::string> &pgpIds) {
-        AuthGPG::getAuthGPG()->availableGPGCertificatesWithPrivateKeys(pgpIds);
-	return 1;
-}
-
-int      RsInit::GetPGPLoginDetails(const std::string& id, std::string &name, std::string &email)
-{
-        #ifdef GPG_DEBUG
-        std::cerr << "RsInit::GetPGPLoginDetails for \"" << id << "\"" << std::endl;
-        #endif
-
-		  bool ok = true ;
-        name = AuthGPG::getAuthGPG()->getGPGName(id,&ok);
-		  if(!ok)
-			  return 0 ;
-        email = AuthGPG::getAuthGPG()->getGPGEmail(id,&ok);
-		  if(!ok)
-			  return 0 ;
-
-        if (name != "") {
-            return 1;
-        } else {
-            return 0;
-        }
-}
 
 /*
  * To prevent several running instances from using the same directory
@@ -1207,269 +612,14 @@ void	RsInit::UnlockConfigDirectory()
 }
 
 
-/* Before any SSL stuff can be loaded, the correct PGP must be selected / generated:
- **/
-
-bool RsInit::SelectGPGAccount(const std::string& gpgId)
-{
-	bool retVal = false;
-
-	if (0 < AuthGPG::getAuthGPG() -> GPGInit(gpgId))
-	{
-		retVal = true;
-		std::cerr << "PGP Auth Success!";
-	}
-	else
-		std::cerr << "PGP Auth Failed!";
-
-	std::cerr << " ID: " << gpgId << std::endl;
-
-	return retVal;
-}
-
-
-bool     RsInit::GeneratePGPCertificate(const std::string& name, const std::string& email, const std::string& passwd, std::string &pgpId, std::string &errString)
-{
-    return AuthGPG::getAuthGPG()->GeneratePGPCertificate(name, email, passwd, pgpId, errString);
-}
-
-
-                /* Create SSL Certificates */
-bool     RsInit::GenerateSSLCertificate(const std::string& gpg_id, const std::string& org, const std::string& loc, const std::string& country, const std::string& passwd, std::string &sslId, std::string &errString)
-{
-	// generate the private_key / certificate.
-	// save to file.
-	//
-	// then load as if they had entered a passwd.
-
-	// check password.
-	if (passwd.length() < 4)
-	{
-		errString = "Password is Unsatisfactory (must be 4+ chars)";
-		return false;
-	}
-
-	int nbits = 2048;
-
-	std::string name = AuthGPG::getAuthGPG()->getGPGName(gpg_id);
-
-	// Create the filename .....
-	// Temporary Directory for creating files....
-	std::string tmpdir = "TMPCFG";
-
-	std::string tmpbase = RsInitConfig::basedir + "/" + tmpdir + "/";
-	
-	if(!RsInit::setupAccount(tmpbase))
-		return false ;
-
-	/* create directory structure */
-
-	std::string basename = tmpbase + configKeyDir + "/";
-	basename += "user";
-
-	std::string key_name = basename + "_pk.pem";
-	std::string cert_name = basename + "_cert.pem";
-
-	bool gen_ok = false;
-
-	/* Extra step required for SSL + PGP, user must have selected
-	 * or generated a suitable key so the signing can happen.
-	 */
-
-	X509_REQ *req = GenerateX509Req(
-			key_name.c_str(),
-			passwd.c_str(),
-			name.c_str(),
-			"", //ui -> gen_email -> value(),
-			org.c_str(),
-			loc.c_str(),
-			"", //ui -> gen_state -> value(),
-			country.c_str(),
-			nbits, errString);
-
-	if (req == NULL)
-	{
-		fprintf(stderr,"RsGenerateCert() Couldn't create Request. Reason: %s\n", errString.c_str());
-		return false;
-	}
-
-	long days = 3000;
-	X509 *x509 = AuthSSL::getAuthSSL()->SignX509ReqWithGPG(req, days);
-
-	X509_REQ_free(req);
-	if (x509 == NULL) {
-		fprintf(stderr,"RsGenerateCert() Couldn't sign ssl certificate. Probably PGP password is wrong.\n");
-		return false;
-	}
-
-	/* save to file */
-	if (x509)
-	{	
-		gen_ok = true;
-
-		/* Print the signed Certificate! */
-		BIO *bio_out = NULL;
-		bio_out = BIO_new(BIO_s_file());
-		BIO_set_fp(bio_out,stdout,BIO_NOCLOSE);
-
-		/* Print it out */
-		int nmflag = 0;
-		int reqflag = 0;
-
-		X509_print_ex(bio_out, x509, nmflag, reqflag);
-
-		BIO_flush(bio_out);
-		BIO_free(bio_out);
-
-	}
-	else
-	{
-		gen_ok = false;
-	}
-
-	if (gen_ok)
-	{
-		/* Save cert to file */
-		// open the file.
-		FILE *out = NULL;
-		if (NULL == (out = RsDirUtil::rs_fopen(cert_name.c_str(), "w")))
-		{
-			fprintf(stderr,"RsGenerateCert() Couldn't create Cert File");
-			fprintf(stderr," : %s\n", cert_name.c_str());
-			gen_ok = false;
-		}
-
-		if (!PEM_write_X509(out,x509))
-		{
-			fprintf(stderr,"RsGenerateCert() Couldn't Save Cert");
-			fprintf(stderr," : %s\n", cert_name.c_str());
-			gen_ok = false;
-		}
-	
-		fclose(out);
-		X509_free(x509);
-	}
-
-	if (!gen_ok)
-	{
-		errString = "Generation of Certificate Failed";
-		return false;
-	}
-
-	/* try to load it, and get Id */
-
-	std::string location;
-	std::string gpgid;
-	if (LoadCheckX509(cert_name.c_str(), gpgid, location, sslId) == 0) {
-		std::cerr << "RsInit::GenerateSSLCertificate() Cannot check own signature, maybe the files are corrupted." << std::endl;
-		return false;
-	}
-
-	/* Move directory to correct id */
-	std::string finalbase = RsInitConfig::basedir + "/" + sslId + "/";
-	/* Rename Directory */
-
-	std::cerr << "Mv Config Dir from: " << tmpbase << " to: " << finalbase;
-	std::cerr << std::endl;
-
-	if (!RsDirUtil::renameFile(tmpbase, finalbase))
-	{
-		std::cerr << "rename FAILED" << std::endl;
-	}
-
-	/* Flag as first time run */
-	RsInitConfig::firsttime_run = true;
-
-	std::cerr << "RetroShare has Successfully generated a Certficate/Key" << std::endl;
-	std::cerr << "\tCert Located: " << cert_name << std::endl;
-	std::cerr << "\tLocated: " << key_name << std::endl;
-
-	return true;
-}
-
-
-/******************* PRIVATE FNS TO HELP with GEN **************/
-bool RsInit::setupAccount(const std::string& accountdir)
-{
-	/* actual config directory isd */
-
-	std::string subdir1 = accountdir + "/";
-	std::string subdir2 = subdir1;
-	subdir1 += configKeyDir;
-	subdir2 += configCertDir;
-
-	std::string subdir3 = accountdir + "/";
-	subdir3 += "cache";
-
-	std::string subdir4 = subdir3 + "/";
-	std::string subdir5 = subdir3 + "/";
-	subdir4 += "local";
-	subdir5 += "remote";
-
-	// fatal if cannot find/create.
-	std::cerr << "Checking For Directories" << std::endl;
-	if (!RsDirUtil::checkCreateDirectory(accountdir))
-	{
-		std::cerr << "Cannot Create BaseConfig Dir" << std::endl;
-		return false ;
-	}
-	if (!RsDirUtil::checkCreateDirectory(subdir1))
-	{
-		std::cerr << "Cannot Create Config/Key Dir" << std::endl;
-		return false ;
-	}
-	if (!RsDirUtil::checkCreateDirectory(subdir2))
-	{
-		std::cerr << "Cannot Create Config/Cert Dir" << std::endl;
-		return false ;
-	}
-	if (!RsDirUtil::checkCreateDirectory(subdir3))
-	{
-		std::cerr << "Cannot Create Config/Cache Dir" << std::endl;
-		return false ;
-	}
-	if (!RsDirUtil::checkCreateDirectory(subdir4))
-	{
-		std::cerr << "Cannot Create Config/Cache/local Dir" << std::endl;
-		return false ;
-	}
-	if (!RsDirUtil::checkCreateDirectory(subdir5))
-	{
-		std::cerr << "Cannot Create Config/Cache/remote Dir" << std::endl;
-		return false ;
-	}
-
-	return true;
-}
-
-
-
-
-
 
 /***************************** FINAL LOADING OF SETUP *************************/
 
 
                 /* Login SSL */
-bool     RsInit::LoadPassword(const std::string& id, const std::string& inPwd)
+bool     RsInit::LoadPassword(const std::string& inPwd)
 {
-	/* select configDir */
-
-	RsInitConfig::preferedId = id;
-	RsInitConfig::configDir = RsInitConfig::basedir + "/" + id;
 	RsInitConfig::passwd = inPwd;
-
-	//	if(inPwd != "")
-	//		RsInitConfig::havePasswd = true;
-
-	// Create the filename.
-	std::string basename = RsInitConfig::configDir + "/";
-	basename += configKeyDir + "/";
-	basename += "user";
-
-	RsInitConfig::load_key  = basename + "_pk.pem";
-	RsInitConfig::load_cert = basename + "_cert.pem";
-
 	return true;
 }
 
@@ -1485,7 +635,30 @@ bool     RsInit::LoadPassword(const std::string& id, const std::string& inPwd)
  */
 int 	RsInit::LockAndLoadCertificates(bool autoLoginNT, std::string& lockFilePath)
 {
-	int retVal = LockConfigDirectory(RsInitConfig::configDir, lockFilePath);
+	if (!rsAccounts.lockPreferredAccount())
+	{
+		return 3; // invalid PreferredAccount.
+	}
+
+	// Logic that used to be external to RsInit...
+	std::string accountId;
+	if (!rsAccounts.getPreferredAccountId(accountId))
+	{
+		return 3; // invalid PreferredAccount;
+	}
+	
+	std::string pgpId, pgpName, pgpEmail, location;
+	if (!rsAccounts.getAccountDetails(accountId, pgpId, pgpName, pgpEmail, location))
+	{
+		return 3; // invalid PreferredAccount;
+	}
+		
+	if (!rsAccounts.SelectPGPAccount(pgpId))
+	{
+		return 3; // PGP Error.
+	}
+	
+	int retVal = LockConfigDirectory(rsAccounts.PathAccountDirectory(), lockFilePath);
 	if(retVal != 0)
 		return retVal;
 
@@ -1510,13 +683,21 @@ int 	RsInit::LockAndLoadCertificates(bool autoLoginNT, std::string& lockFilePath
  */
 int RsInit::LoadCertificates(bool autoLoginNT)
 {
-	if (RsInitConfig::load_cert == "")
+	std::string preferredId;
+	if (!rsAccounts.getPreferredAccountId(preferredId))
+	{
+		std::cerr << "No Account Selected" << std::endl;
+		return 0;
+	}
+		
+	
+	if (rsAccounts.PathCertFile() == "")
 	{
 	  std::cerr << "RetroShare needs a certificate" << std::endl;
 	  return 0;
 	}
 
-	if (RsInitConfig::load_key == "")
+	if (rsAccounts.PathKeyFile() == "")
 	{
 	  std::cerr << "RetroShare needs a key" << std::endl;
 	  return 0;
@@ -1525,20 +706,20 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 	//check if password is already in memory
 	
 	if(RsInitConfig::passwd == "") {
-		if (RsLoginHandler::getSSLPassword(RsInitConfig::preferedId,true,RsInitConfig::passwd) == false) {
+		if (RsLoginHandler::getSSLPassword(preferredId,true,RsInitConfig::passwd) == false) {
 			std::cerr << "RsLoginHandler::getSSLPassword() Failed!";
 			return 0 ;
 		}
 	} else {
-		if (RsLoginHandler::checkAndStoreSSLPasswdIntoGPGFile(RsInitConfig::preferedId,RsInitConfig::passwd) == false) {
+		if (RsLoginHandler::checkAndStoreSSLPasswdIntoGPGFile(preferredId,RsInitConfig::passwd) == false) {
 			std::cerr << "RsLoginHandler::checkAndStoreSSLPasswdIntoGPGFile() Failed!";
 			return 0;
 		}
 	}
 
-	std::cerr << "RsInitConfig::load_key.c_str() : " << RsInitConfig::load_key.c_str() << std::endl;
+	std::cerr << "rsAccounts.PathKeyFile() : " << rsAccounts.PathKeyFile() << std::endl;
 
-	if(0 == AuthSSL::getAuthSSL() -> InitAuth(RsInitConfig::load_cert.c_str(), RsInitConfig::load_key.c_str(), RsInitConfig::passwd.c_str()))
+	if(0 == AuthSSL::getAuthSSL() -> InitAuth(rsAccounts.PathCertFile().c_str(), rsAccounts.PathKeyFile().c_str(), RsInitConfig::passwd.c_str()))
 	{
 		std::cerr << "SSL Auth Failed!";
 		return 0 ;
@@ -1549,7 +730,7 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 		std::cerr << "RetroShare will AutoLogin next time";
 		std::cerr << std::endl;
 
-		RsLoginHandler::enableAutoLogin(RsInitConfig::preferedId,RsInitConfig::passwd);
+		RsLoginHandler::enableAutoLogin(preferredId,RsInitConfig::passwd);
 		RsInitConfig::autoLogin = true ;
 	}
 
@@ -1559,108 +740,22 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 	// ideally gxs should have its own password
 	RsInitConfig::gxs_passwd = RsInitConfig::passwd;
 	RsInitConfig::passwd = "";
-	create_configinit(RsInitConfig::basedir, RsInitConfig::preferedId);
-      
+	
+	rsAccounts.storePreferredAccount();      
 	return 1;
 }
 
 bool RsInit::RsClearAutoLogin()
 {
-	return	RsLoginHandler::clearAutoLogin(RsInitConfig::preferedId);
+	std::string preferredId;
+	if (!rsAccounts.getPreferredAccountId(preferredId))
+	{
+		std::cerr << "RsInit::RsClearAutoLogin() No Account Selected" << std::endl;
+		return 0;
+	}
+	return	RsLoginHandler::clearAutoLogin(preferredId);
 }
 
-bool	RsInit::get_configinit(const std::string& dir, std::string &id)
-{
-	// have a config directories.
-
-	// Check for config file.
-	std::string initfile = dir + "/";
-	initfile += configInitFile;
-
-	// open and read in the lines.
-	FILE *ifd = RsDirUtil::rs_fopen(initfile.c_str(), "r");
-	char path[1024];
-	int i;
-
-	if (ifd != NULL)
-	{
-		if (NULL != fgets(path, 1024, ifd))
-		{
-			for(i = 0; (path[i] != '\0') && (path[i] != '\n'); i++) {}
-			path[i] = '\0';
-			id = path;
-		}
-		fclose(ifd);
-		return true;
-	}
-
-	// we have now
-	// 1) checked or created the config dirs.
-	// 2) loaded the config_init file - if possible.
-	return false;
-}
-
-bool	RsInit::create_configinit(const std::string& dir, const std::string& id)
-{
-	// Check for config file.
-	std::string initfile = dir + "/";
-	initfile += configInitFile;
-
-	// open and read in the lines.
-	FILE *ifd = RsDirUtil::rs_fopen(initfile.c_str(), "w");
-
-	if (ifd != NULL)
-	{
-		fprintf(ifd, "%s\n", id.c_str());
-		fclose(ifd);
-
-		std::cerr << "Creating Init File: " << initfile << std::endl;
-		std::cerr << "\tId: " << id << std::endl;
-
-		return true;
-	}
-	std::cerr << "Failed To Create Init File: " << initfile << std::endl;
-	return false;
-}
-
-std::string RsInit::getHomePath()
-{
-	std::string home;
-/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
-#ifndef WINDOWS_SYS /* UNIX */
-
-	home = getenv("HOME");
-
-#else /* Windows */
-
-	char *h2 = getenv("HOMEDRIVE");
-	std::cerr << "getHomePath() -> $HOMEDRIVE = " << h2 << std::endl;
-	char *h3 = getenv("HOMEPATH");
-	std::cerr << "getHomePath() -> $HOMEPATH = " << h3 << std::endl;
-
-	if (h2 == NULL)
-	{
-		// Might be Win95/98
-		// generate default.
-		home = "C:\\Retro";
-	}
-	else
-	{
-		home = h2;
-		home += h3;
-		home += "\\Desktop";
-	}
-
-	std::cerr << "fltkserver::getHomePath() -> " << home << std::endl;
-
-	// convert to FLTK desired format.
-	home = RsDirUtil::convertPathToUnix(home);
-#endif
-/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
-	return home;
-}
-
-/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
 bool RsInit::isPortable()
 {
@@ -1679,26 +774,7 @@ bool RsInit::isWindowsXP()
     return false;
 #endif
 }
-std::string RsInit::RsConfigKeysDirectory()
-{
-    return RsInitConfig::basedir + "/" + RsInitConfig::preferedId + "/" + configKeyDir ;
-}
-std::string RsInit::RsConfigDirectory()
-{
-	return RsInitConfig::basedir;
-}
-std::string RsInit::RsPGPDirectory()
-{
-	return RsInitConfig::basedir + "/pgp" ;
-}
-
-std::string RsInit::RsProfileConfigDirectory()
-{
-    std::string dir = RsInitConfig::basedir + "/" + RsInitConfig::preferedId;
-    //std::cerr << "RsInit::RsProfileConfigDirectory() returning : " << dir << std::endl;
-    return dir;
-}
-
+	
 bool RsInit::getStartMinimised()
 {
 	return RsInitConfig::startMinimised;
@@ -1725,6 +801,7 @@ void RsInit::setAutoLogin(bool autoLogin){
 bool RsInit::SetHiddenLocation(const std::string& hiddenaddress, uint16_t port)
 {
 	/* parse the bugger (todo) */
+	RsInitConfig::hiddenNodeSet = true;
 	RsInitConfig::hiddenNodeAddress = hiddenaddress;
 	RsInitConfig::hiddenNodePort = port;
 	return true;
@@ -1897,8 +974,8 @@ int RsServer::StartupRetroShare()
 	std::cerr << "set the debugging to crashMode." << std::endl;
 	if ((!RsInitConfig::haveLogFile) && (!RsInitConfig::outStderr))
 	{
-		std::string crashfile = RsInitConfig::basedir + "/";
-		crashfile += ownId + "/" + configLogFileName;
+		std::string crashfile = rsAccounts.PathAccountDirectory();
+		crashfile +=  "/" + configLogFileName;
 		setDebugCrashMode(crashfile.c_str());
 	}
 
@@ -1912,8 +989,8 @@ int RsServer::StartupRetroShare()
 	// Load up Certificates, and Old Configuration (if present)
 	std::cerr << "Load up Certificates, and Old Configuration (if present)." << std::endl;
 
-	std::string emergencySaveDir = RsInitConfig::configDir.c_str();
-	std::string emergencyPartialsDir = RsInitConfig::configDir.c_str();
+	std::string emergencySaveDir = rsAccounts.PathAccountDirectory();
+	std::string emergencyPartialsDir = rsAccounts.PathAccountDirectory();
 	if (emergencySaveDir != "")
 	{
 		emergencySaveDir += "/";
@@ -1927,53 +1004,13 @@ int RsServer::StartupRetroShare()
 	/**************************************************************************/
 	std::cerr << "Load Configuration" << std::endl;
 
-	mConfigMgr = new p3ConfigMgr(RsInitConfig::configDir);
+	mConfigMgr = new p3ConfigMgr(rsAccounts.PathAccountDirectory());
 	mGeneralConfig = new p3GeneralConfig();
 
-	// Add General.cfg, and load - this allows key early options.
-	mConfigMgr->addConfiguration("general.cfg", mGeneralConfig);
-	std::string dummy2("dummy");
-	mGeneralConfig->loadConfiguration(dummy2);
-
-	// NOTE: if we lose GeneralConfiguration - then RS will fail to start.
-	// as API_VERSION won't exist. Furthermore HIDDEN node status will be lost.
-	// We can potentially detect HIDDEN node cofig from "peers.cfg", 
-	// If this is lost too - in real trouble.
-
-#define RS_API_VERSION_OPT 	"RS_API"
-#define RS_API_VERSION_STRING "0.6.0"
-
-#define RS_HIDDEN_NODE_OPT 	"HIDDEN_NODE"
-#define RS_HIDDEN_NODE_YES 	"YES"
-
-	bool forceApiUpgrade = false;
-	if ((RsInitConfig::firsttime_run) || (forceApiUpgrade))
-	{
-		mGeneralConfig->setSetting(RS_API_VERSION_OPT, RS_API_VERSION_STRING);
-	}
-
-	bool setupHiddenNode = false;
-	if (!RsInitConfig::hiddenNodeAddress.empty())
-	{
-		setupHiddenNode = true;
-		mGeneralConfig->setSetting(RS_HIDDEN_NODE_OPT, RS_HIDDEN_NODE_YES);
-	}
-
-	// BASIC COMPARISION FOR NOW... can be extended later if needed.
-	std::string version = mGeneralConfig->getSetting(RS_API_VERSION_OPT);
-	if (version != RS_API_VERSION_STRING)
-	{
-		std::cerr << "Aborting: Old Retroshare Configuration";
-		std::cerr << std::endl;
-		abort();
-	}
-	bool isHiddenNode = false;
-	if (RS_HIDDEN_NODE_YES == mGeneralConfig->getSetting(RS_HIDDEN_NODE_OPT))
-	{
-		isHiddenNode = true;
-		std::cerr << "Retroshare: Hidden Node";
-		std::cerr << std::endl;
-	}
+	// Get configuration options from rsAccounts.
+	bool isHiddenNode   = false;
+	bool isFirstTimeRun = false;
+	rsAccounts.getAccountOptions(isHiddenNode, isFirstTimeRun);
 
 	/**************************************************************************/
 	/* setup classes / structures */
@@ -2047,7 +1084,7 @@ int RsServer::StartupRetroShare()
 #define BITDHT_BOOTSTRAP_FILENAME  	"bdboot.txt"
 
 
-	std::string bootstrapfile = RsInitConfig::configDir.c_str();
+	std::string bootstrapfile = rsAccounts.PathAccountDirectory();
 	if (bootstrapfile != "")
 	{
 		bootstrapfile += "/";
@@ -2063,7 +1100,7 @@ int RsServer::StartupRetroShare()
 	if (!RsDirUtil::checkFile(bootstrapfile,true))
 	{
 		std::cerr << "DHT bootstrap file not in ConfigDir: " << bootstrapfile << std::endl;
-		std::string installfile = RsInit::getRetroshareDataDirectory();
+		std::string installfile = rsAccounts.PathDataDirectory();
 		installfile += "/";
 		installfile += BITDHT_BOOTSTRAP_FILENAME;
 
@@ -2178,7 +1215,7 @@ int RsServer::StartupRetroShare()
 
 	/****** New Ft Server **** !!! */
 	ftServer *ftserver = new ftServer(mPeerMgr, mLinkMgr);
-	ftserver->setConfigDirectory(RsInitConfig::configDir);
+	ftserver->setConfigDirectory(rsAccounts.PathAccountDirectory());
 
 	ftserver->SetupFtServer(&(getNotify()));
 	CacheStrapper *mCacheStrapper = ftserver->getCacheStrapper();
@@ -2195,7 +1232,7 @@ int RsServer::StartupRetroShare()
 
 
 	/* create Cache Services */
-	std::string config_dir = RsInitConfig::configDir;
+	std::string config_dir = rsAccounts.PathAccountDirectory();
 	std::string localcachedir = config_dir + "/cache/local";
 	std::string remotecachedir = config_dir + "/cache/remote";
 
@@ -2204,7 +1241,7 @@ int RsServer::StartupRetroShare()
 #ifndef WINDOWS_SYS
 	plugins_directories.push_back(std::string("/usr/lib/retroshare/extensions/")) ;
 #endif
-	plugins_directories.push_back(RsInitConfig::basedir + "/extensions/") ;
+	plugins_directories.push_back(rsAccounts.PathBaseDirectory() + "/extensions/") ;
 #ifdef DEBUG_PLUGIN_SYSTEM
 	plugins_directories.push_back(".") ;	// this list should be saved/set to some correct value.
 	// possible entries include: /usr/lib/retroshare, ~/.retroshare/extensions/, etc.
@@ -2279,7 +1316,7 @@ int RsServer::StartupRetroShare()
         // the given ssl user id then this directory is cleaned
         // and deleted
         std::string priorGxsDir = "./" + mLinkMgr->getOwnId() + "/";
-	std::string currGxsDir = RsInitConfig::configDir + "/GXS_phase2";
+	std::string currGxsDir = rsAccounts.PathAccountDirectory() + "/GXS_phase2";
 
 #ifdef GXS_DEV_TESTNET // Different Directory for testing.
 	currGxsDir += "_TESTNET6";
@@ -2534,6 +1571,7 @@ int RsServer::StartupRetroShare()
 	mConfigMgr->loadConfiguration();
 
 	mConfigMgr->addConfiguration("peers.cfg", mPeerMgr);
+	mConfigMgr->addConfiguration("general.cfg", mGeneralConfig);
 	mConfigMgr->addConfiguration("cache.cfg", mCacheStrapper);
 	mConfigMgr->addConfiguration("msgs.cfg", msgSrv);
 	mConfigMgr->addConfiguration("chat.cfg", chatSrv);
@@ -2610,24 +1648,14 @@ int RsServer::StartupRetroShare()
 
 	}
 
-	if (setupHiddenNode)
+	if (RsInitConfig::hiddenNodeSet)
 	{
 		mPeerMgr->setupHiddenNode(RsInitConfig::hiddenNodeAddress, RsInitConfig::hiddenNodePort);
 	}
-
-
-#if 0
-	/* must load the trusted_peer before setting up the pqipersongrp */
-	if (firsttime_run)
+	else if (isHiddenNode)
 	{
-		/* at this point we want to load and start the trusted peer -> if selected */
-		if (load_trustedpeer)
-		{
-			/* sslroot does further checks */
-			sslr -> loadInitialTrustedPeer(load_trustedpeer_file);
-		}
+		mPeerMgr->forceHiddenNode();
 	}
-#endif
 
 	mNetMgr -> checkNetAddress();
 
@@ -2733,16 +1761,12 @@ int RsServer::StartupRetroShare()
 	rsHistory = new p3History(mHistoryMgr);
 
 	/* put a welcome message in! */
-	if (RsInitConfig::firsttime_run)
+	if (isFirstTimeRun)
 	{
 		msgSrv->loadWelcomeMsg();
 		ftserver->shareDownloadDirectory(true);
 		mGeneralConfig->saveConfiguration();
 	}
-
-	// load up the help page
-	std::string helppage = RsInitConfig::basedir + "/";
-	helppage += configHelpName;
 
 	/* Startup this thread! */
 	createThread(*this);

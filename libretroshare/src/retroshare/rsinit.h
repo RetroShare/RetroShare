@@ -74,68 +74,26 @@ class RsInit
 		static bool isWindowsXP();
 
 		/*!
-		 *  Account Details (Combined GPG+SSL Setup)
-		 */
-		static bool 	getPreferedAccountId(std::string &id);
-		static bool     getPGPEngineFileName(std::string &fileName);
-		static bool 	getAccountIds(std::list<std::string> &ids);
-		static bool 	getAccountDetails(const std::string &id, std::string &gpgId, std::string &gpgName, std::string &gpgEmail, std::string &sslName);
-
-		static bool	ValidateCertificate(std::string &userName) ;
-
-		static bool exportIdentity(const std::string& fname,const std::string& pgp_id) ;
-		static bool importIdentity(const std::string& fname,std::string& imported_pgp_id,std::string& import_error) ;
-
-		/*!
-		 *  Generating GPGme Account
-		 */
-		static int 	GetPGPLogins(std::list<std::string> &pgpIds);
-		static int 	GetPGPLoginDetails(const std::string& id, std::string &name, std::string &email);
-		static bool	GeneratePGPCertificate(const std::string&, const std::string& email, const std::string& passwd, std::string &pgpId, std::string &errString);
-
-		// copies existing gnupg keyrings to the new place of the OpenPGP-SDK version. Returns true on success.
-		static bool copyGnuPGKeyrings() ;
-
-
-		/*!
 		 * Setup Hidden Location;
 		 */
 		static bool 	SetHiddenLocation(const std::string& hiddenaddress, uint16_t port);
 
-		/*!
-		 * Login GGP
-		 */
-		static bool 	SelectGPGAccount(const std::string& gpgId);
-		static bool 	LoadGPGPassword(const std::string& passwd);
-
-		/*!
-		 * Create SSL Certificates
-		 */
-		static bool	GenerateSSLCertificate(const std::string& name, const std::string& org, const std::string& loc, const std::string& country, const std::string& passwd, std::string &sslId, std::string &errString);
-
-		/*!
-		 * intialises directories for passwords and ssl keys
-		 */
-		static bool	LoadPassword(const std::string& id, const std::string& passwd) ;
+		static bool	LoadPassword(const std::string& passwd) ;
 
 		/*!
 		 * Final Certificate load. This can be called if:
 		 * a) InitRetroshare() returns RS_INIT_HAVE_ACCOUNT -> autoLoad/password Set.
-		 * b) SelectGPGAccount() && LoadPassword()
+		 * b) or LoadPassword()
 		 *
-		 * This wrapper is used to lock the profile first before
-		 * finalising the login
+		 * This uses the preferredId from RsAccounts.
+		 * This wrapper also locks the profile before finalising the login
 		 */
 		static int 	LockAndLoadCertificates(bool autoLoginNT, std::string& lockFilePath);
 
 		/*!
 		 * Post Login Options
 		 */
-		static std::string 	RsConfigDirectory();
-		static std::string 	RsConfigKeysDirectory();
-		static std::string 	RsPGPDirectory();
 
-		static std::string  RsProfileConfigDirectory();
 		static bool         getStartMinimised() ;
 		static std::string  getRetroShareLink();
 
@@ -144,26 +102,15 @@ class RsInit
 		static void setAutoLogin(bool autoLogin);
 		static bool RsClearAutoLogin() ;
 
-		/* used for static install data */
-		static std::string getRetroshareDataDirectory();
-
-		static std::map<std::string,std::vector<std::string> > unsupported_keys ;
 	private:
 
-		/* PreLogin */
-		static std::string getHomePath() ;
-		static bool setupBaseDir();
-
-		/* Account Details */
-		static bool    get_configinit(const std::string& dir, std::string &id);
-		static bool    create_configinit(const std::string& dir, const std::string& id);
-
-		static bool setupAccount(const std::string& accountdir);
-
+#if 0
 		/* Auto Login */
 		static bool RsStoreAutoLogin() ;
 		static bool RsTryAutoLogin() ;
+#endif
 
+// THESE CAN BE REMOVED FROM THE CLASS TOO.
 		/* Lock/unlock profile directory */
                 static int	LockConfigDirectory(const std::string& accountDir, std::string& lockFilePath);
 		static void	UnlockConfigDirectory();
@@ -172,5 +119,44 @@ class RsInit
 		static int 	LoadCertificates(bool autoLoginNT) ;
 
 };
+
+
+
+/* Seperate Class for dealing with Accounts */
+
+namespace RsAccounts
+{
+	// Directories.
+	std::string ConfigDirectory(); // aka Base Directory. (normally ~/.retroshare)
+	std::string DataDirectory();   
+	std::string PGPDirectory();
+	std::string AccountDirectory();
+
+	// PGP Accounts.
+	int     GetPGPLogins(std::list<std::string> &pgpIds);
+	int     GetPGPLoginDetails(const std::string& id, std::string &name, std::string &email);
+	bool    GeneratePGPCertificate(const std::string&, const std::string& email, const std::string& passwd, std::string &pgpId, std::string &errString);
+
+	// PGP Support Functions.
+	bool    ExportIdentity(const std::string& fname,const std::string& pgp_id) ;
+	bool    ImportIdentity(const std::string& fname,std::string& imported_pgp_id,std::string& import_error) ;
+        void    GetUnsupportedKeys(std::map<std::string,std::vector<std::string> > &unsupported_keys);
+	bool    CopyGnuPGKeyrings() ;
+
+	// Rs Accounts
+        bool    SelectAccount(const std::string &id);
+
+	bool	GetPreferredAccountId(std::string &id);
+	bool    GetAccountIds(std::list<std::string> &ids);
+	bool	GetAccountDetails(const std::string &id,
+                        std::string &gpgId, std::string &gpgName,
+                        std::string &gpgEmail, std::string &location);
+
+	bool	GenerateSSLCertificate(const std::string& name, const std::string& org, const std::string& loc, const std::string& country, const bool ishiddenloc, const std::string& passwd, std::string &sslId, std::string &errString);
+
+};
+
+
+
 
 #endif

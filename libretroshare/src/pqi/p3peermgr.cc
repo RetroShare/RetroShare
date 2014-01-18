@@ -103,10 +103,10 @@ std::string textPeerConnectState(peerState &state)
 }
 
 
-p3PeerMgrIMPL::p3PeerMgrIMPL(	const std::string& ssl_own_id,
-										const std::string& gpg_own_id,
-										const std::string& gpg_own_name,
-										const std::string& ssl_own_location)
+p3PeerMgrIMPL::p3PeerMgrIMPL(const std::string& ssl_own_id,
+				const std::string& gpg_own_id,
+				const std::string& gpg_own_name,
+				const std::string& ssl_own_location)
 	:p3Config(CONFIG_TYPE_PEERS), mPeerMtx("p3PeerMgr"), mStatusChanged(false)
 {
 
@@ -130,11 +130,7 @@ p3PeerMgrIMPL::p3PeerMgrIMPL(	const std::string& ssl_own_id,
 		// setup default ProxyServerAddress.
 		sockaddr_storage_clear(mProxyServerAddress);
 		sockaddr_storage_ipv4_aton(mProxyServerAddress, "127.0.0.1");
-		sockaddr_storage_ipv4_setport(mProxyServerAddress, 9100);
-
-		//inet_aton("127.0.0.1", &(mProxyServerAddress.sin_addr));
-		//mProxyServerAddress.sin_port = htons(9100);
-
+		sockaddr_storage_ipv4_setport(mProxyServerAddress, 9150);
 	}
 	
 #ifdef PEER_DEBUG
@@ -151,17 +147,45 @@ void    p3PeerMgrIMPL::setManagers(p3LinkMgrIMPL *linkMgr, p3NetMgrIMPL *netMgr)
 	mNetMgr = netMgr;
 }
 
+
 bool p3PeerMgrIMPL::setupHiddenNode(const std::string &hiddenAddress, const uint16_t hiddenPort)
 {
-	std::cerr << "p3PeerMgrIMPL::setupHiddenNode()";
-	std::cerr << " Address: " << hiddenAddress;
-	std::cerr << " Port: " << hiddenPort;
-	std::cerr << std::endl;
+	{
+		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+
+		std::cerr << "p3PeerMgrIMPL::setupHiddenNode()";
+		std::cerr << " Address: " << hiddenAddress;
+		std::cerr << " Port: " << hiddenPort;
+		std::cerr << std::endl;
+
+		mOwnState.hiddenNode = true;
+		mOwnState.hiddenPort = hiddenPort;
+		mOwnState.hiddenDomain = hiddenAddress;
+	}
+
+	forceHiddenNode();
+	return true;
+}
+
+
+bool p3PeerMgrIMPL::forceHiddenNode()
+{
+	{
+		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+		if (RS_NET_MODE_HIDDEN != mOwnState.netMode)
+		{
+			std::cerr << "p3PeerMgrIMPL::forceHiddenNode() Required!";
+			std::cerr << std::endl;
+		}
+		mOwnState.hiddenNode = true;
+
+		// force external address - otherwise its invalid.
+		sockaddr_storage_clear(mOwnState.serveraddr);
+		sockaddr_storage_ipv4_aton(mOwnState.serveraddr, "0.0.0.0");
+		sockaddr_storage_ipv4_setport(mOwnState.serveraddr, 0);
+	}
 
 	setOwnNetworkMode(RS_NET_MODE_HIDDEN);
-	mOwnState.hiddenNode = true;
-	mOwnState.hiddenPort = hiddenPort;
-	mOwnState.hiddenDomain = hiddenAddress;
 
 	// switch off DHT too.
 	setOwnVisState(mOwnState.vs_disc, RS_VS_DHT_OFF);
@@ -170,13 +194,14 @@ bool p3PeerMgrIMPL::setupHiddenNode(const std::string &hiddenAddress, const uint
 	struct sockaddr_storage loopback;
 	sockaddr_storage_clear(loopback);
 	sockaddr_storage_ipv4_aton(loopback, "127.0.0.1");
-	sockaddr_storage_ipv4_setport(loopback, hiddenPort);
-
-	//inet_aton("127.0.0.1", &(loopback.sin_addr));
-	//loopback.sin_port = htons(hiddenPort);
+	uint16_t port = sockaddr_storage_port(mOwnState.localaddr); 
+	sockaddr_storage_ipv4_setport(loopback, port); 
 
 	setLocalAddress(AuthSSL::getAuthSSL()->OwnId(), loopback);
- 
+
+	mNetMgr->setIPServersEnabled(false);
+
+	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 	return true;
 }
 
@@ -357,6 +382,8 @@ bool p3PeerMgrIMPL::setHiddenDomainPort(const std::string &ssl_id, const std::st
 	std::cerr << "p3PeerMgrIMPL::setHiddenDomainPort()";
 	std::cerr << std::endl;
 
+	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+
 	if (ssl_id == AuthSSL::getAuthSSL()->OwnId()) 
 	{
 		mOwnState.hiddenNode = true;
@@ -391,6 +418,15 @@ bool p3PeerMgrIMPL::setProxyServerAddress(const struct sockaddr_storage &proxy_a
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
 	mProxyServerAddress = proxy_addr;
+	return true;
+}
+	
+
+bool p3PeerMgrIMPL::getProxyServerAddress(struct sockaddr_storage &proxy_addr)
+{
+	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+
+	proxy_addr = mProxyServerAddress;
 	return true;
 }
 	

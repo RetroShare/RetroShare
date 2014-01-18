@@ -41,7 +41,7 @@
 #include "serialiser/rsserial.h"
 
 
-#define PQI_MIN_PORT 1024
+#define PQI_MIN_PORT 10 // TO ALLOW USERS TO HAVE PORT 80! - was 1024
 #define PQI_MAX_PORT 65535
 #define PQI_DEFAULT_PORT 7812
 
@@ -210,7 +210,7 @@ class PQInterface: public RateInterface
 		 * Retrieve RsItem from a facility
 		 */
 		virtual RsItem *GetItem() = 0;
-		virtual bool RecvItem(RsItem *item)  { return false; }  /* alternative for for GetItem(), when we want to push */
+		virtual bool RecvItem(RsItem * /*item*/ )  { return false; }  /* alternative for for GetItem(), when we want to push */
 
 		/**
 		 * also there are  tick + person id  functions.

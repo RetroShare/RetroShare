@@ -214,6 +214,7 @@ class RsPeerDetails
 
 	bool 			isHiddenNode;
 	std::string		hiddenNodeAddress;
+	uint16_t		hiddenNodePort;
 
 	// Filled in for Standard Node.
 	std::string             localAddr;
@@ -322,13 +323,18 @@ class RsPeers
 		/* Network Stuff */
 		virtual	bool connectAttempt(const std::string &ssl_id)			= 0;
 		virtual bool setLocation(const std::string &ssl_id, const std::string &location) = 0;//location is shown in the gui to differentiate ssl certs
+
 		virtual bool setHiddenNode(const std::string &id, const std::string &hidden_node_address) = 0;
+		virtual bool setHiddenNode(const std::string &id, const std::string &address, uint16_t port) = 0;
 
 		virtual	bool setLocalAddress(const std::string &ssl_id, const std::string &addr, uint16_t port) = 0;
 		virtual	bool setExtAddress(  const std::string &ssl_id, const std::string &addr, uint16_t port) = 0;
 		virtual	bool setDynDNS(const std::string &id, const std::string &addr) = 0;
 		virtual	bool setNetworkMode(const std::string &ssl_id, uint32_t netMode) 	= 0;
 		virtual bool setVisState(const std::string &ssl_id, uint16_t vs_disc, uint16_t vs_dht)	= 0;
+
+		virtual bool getProxyServer(std::string &addr, uint16_t &port) = 0;
+		virtual bool setProxyServer(const std::string &addr, const uint16_t port) = 0;
 
 		virtual void getIPServersList(std::list<std::string>& ip_servers) = 0;
 		virtual void allowServerIPDetermination(bool) = 0;

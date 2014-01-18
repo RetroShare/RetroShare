@@ -183,6 +183,7 @@ virtual bool	getGpgId(const std::string &sslId, std::string &gpgId) = 0;
 virtual uint32_t getConnectionType(const std::string &sslId) = 0;
 
 virtual bool    setProxyServerAddress(const struct sockaddr_storage &proxy_addr) = 0;
+virtual bool    getProxyServerAddress(struct sockaddr_storage &proxy_addr) = 0;
 virtual bool    isHidden() = 0;
 virtual bool    isHiddenPeer(const std::string &ssl_id) = 0;
 virtual bool    getProxyAddress(const std::string &ssl_id, struct sockaddr_storage &proxy_addr, std::string &domain_addr, uint16_t &domain_port) = 0;
@@ -281,6 +282,7 @@ virtual bool	getGpgId(const std::string &sslId, std::string &gpgId);
 virtual uint32_t getConnectionType(const std::string &sslId);
 
 virtual bool    setProxyServerAddress(const struct sockaddr_storage &proxy_addr);
+virtual bool    getProxyServerAddress(struct sockaddr_storage &proxy_addr);
 virtual bool    isHidden();
 virtual bool    isHiddenPeer(const std::string &ssl_id);
 virtual bool    getProxyAddress(const std::string &ssl_id, struct sockaddr_storage &proxy_addr, std::string &domain_addr, uint16_t &domain_port);
@@ -304,6 +306,7 @@ virtual bool 	haveOnceConnected();
 
 void	setManagers(p3LinkMgrIMPL *linkMgr, p3NetMgrIMPL *netMgr);
 
+bool 	forceHiddenNode();
 bool 	setupHiddenNode(const std::string &hiddenAddress, const uint16_t hiddenPort);
 
 void 	tick();

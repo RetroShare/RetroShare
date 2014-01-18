@@ -364,6 +364,7 @@ HEADERS +=	rsserver/p3face.h \
 			rsserver/p3msgs.h \
 			rsserver/p3peers.h \
 			rsserver/p3status.h \
+			rsserver/rsaccounts.h \
 			rsserver/p3serverconfig.h
 
 HEADERS +=	serialiser/rsbaseserial.h \
@@ -391,7 +392,6 @@ HEADERS +=	serialiser/rsbaseserial.h \
 			serialiser/rsheartbeatitems.h \
 			serialiser/rsrttitems.h \
 			serialiser/rsgxsrecognitems.h \
-                        serialiser/rstunnelitems.h \
                         serialiser/rsgxsupdateitems.h
 
 HEADERS +=	services/p3chatservice.h \
@@ -494,6 +494,7 @@ SOURCES += 		rsserver/p3face-config.cc \
 			rsserver/p3peers.cc \
 			rsserver/p3status.cc \
 			rsserver/rsinit.cc \
+			rsserver/rsaccounts.cc \
 			rsserver/rsloginhandler.cc \
 			rsserver/rstypes.cc \
 			rsserver/p3serverconfig.cc
@@ -527,7 +528,6 @@ SOURCES +=	serialiser/rsbaseserial.cc \
 			serialiser/rsheartbeatitems.cc \
 			serialiser/rsrttitems.cc \
 			serialiser/rsgxsrecognitems.cc \
-                        serialiser/rstunnelitems.cc \
                         serialiser/rsgxsupdateitems.cc
 
 SOURCES +=	services/p3chatservice.cc \
