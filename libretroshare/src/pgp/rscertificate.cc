@@ -167,8 +167,28 @@ RsCertificate::RsCertificate(const RsPeerDetails& Detail, const unsigned char *b
 			hidden_node = false;
 			hidden_node_address = "";
 
-			scan_ip(Detail.localAddr,Detail.localPort,ipv4_internal_ip_and_port) ;
-			scan_ip(Detail.extAddr,Detail.extPort,ipv4_external_ip_and_port) ;
+			try
+			{
+				scan_ip(Detail.localAddr,Detail.localPort,ipv4_internal_ip_and_port) ;
+			}
+			catch(...)
+			{
+				std::cerr << "RsCertificate::Invalid LocalAddress";
+				std::cerr << std::endl;
+				memset(ipv4_internal_ip_and_port,0,6) ;
+			}
+
+
+			try
+			{
+				scan_ip(Detail.extAddr,Detail.extPort,ipv4_external_ip_and_port) ;
+			}
+			catch(...)
+			{
+				std::cerr << "RsCertificate::Invalid ExternalAddress";
+				std::cerr << std::endl;
+				memset(ipv4_external_ip_and_port,0,6) ;
+			}
 
 			dns_name = Detail.dyndns ;
 		}
