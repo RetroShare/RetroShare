@@ -99,10 +99,10 @@ void ProfileManager::fillIdentities()
 	std::list<std::string> pgpIds;
 	std::list<std::string>::iterator it;
 
-	if (RsInit::GetPGPLogins(pgpIds)) {
+	if (RsAccounts::GetPGPLogins(pgpIds)) {
 		for (it = pgpIds.begin(); it != pgpIds.end(); it++) {
 			std::string name, email;
-			RsInit::GetPGPLoginDetails(*it, name, email);
+			RsAccounts::GetPGPLoginDetails(*it, name, email);
 			std::cerr << "Adding PGPUser: " << name << " id: " << *it << std::endl;
 			QString gid = QString::fromStdString(*it);
 
@@ -138,7 +138,7 @@ void ProfileManager::exportIdentity()
 		fname += ".asc";
 	}
 
-	if (RsInit::exportIdentity(fname.toUtf8().constData(), gpgId))
+	if (RsAccounts::ExportIdentity(fname.toUtf8().constData(), gpgId))
 		QMessageBox::information(this, tr("Identity saved"), tr("Your identity was successfully saved\nIt is encrypted\n\nYou can now copy it to another computer\nand use the import button to load it"));
 	else
 		QMessageBox::information(this, tr("Identity not saved"), tr("Your identity was not saved. An error occurred."));
@@ -154,7 +154,7 @@ void ProfileManager::importIdentity()
 	std::string gpg_id ;
 	std::string err_string ;
 
-	if(!RsInit::importIdentity(fname.toUtf8().constData(),gpg_id,err_string))
+	if(!RsAccounts::ImportIdentity(fname.toUtf8().constData(),gpg_id,err_string))
 	{
 		QMessageBox::information(this,tr("Identity not loaded"),tr("Your identity was not loaded properly:")+" \n    "+QString::fromStdString(err_string)) ;
 		return ;
@@ -163,7 +163,7 @@ void ProfileManager::importIdentity()
 	{
 		std::string name,email ;
 
-		RsInit::GetPGPLoginDetails(gpg_id, name, email);
+		RsAccounts::GetPGPLoginDetails(gpg_id, name, email);
 		std::cerr << "Adding PGPUser: " << name << " id: " << gpg_id << std::endl;
 
 		QMessageBox::information(this,tr("New identity imported"),tr("Your identity was imported successfully:")+" \n"+"\nName :"+QString::fromStdString(name)+"\nemail: " + QString::fromStdString(email)+"\nKey ID: "+QString::fromStdString(gpg_id)+"\n\n"+tr("You can use it now to create a new location.")) ;

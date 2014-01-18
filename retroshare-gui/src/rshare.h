@@ -89,7 +89,7 @@ public:
   /** Recalculates matching stylesheet for widget **/
   static void refreshStyleSheet(QWidget *widget, bool processChildren);
 
-  static bool loadCertificate(const std::string &accountId, bool autoLogin, std::string gpgId = "");
+  static bool loadCertificate(const std::string &accountId, bool autoLogin);
 
   /**
    * Update Language, Style and StyleSheet.

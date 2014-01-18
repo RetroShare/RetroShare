@@ -145,7 +145,7 @@ void ChatStyle::styleChanged(int styleType)
 static QString getBaseDir()
 {
     // application path
-    QString baseDir = QString::fromUtf8(RsInit::RsConfigDirectory().c_str());
+    QString baseDir = QString::fromUtf8(RsAccounts::ConfigDirectory().c_str());
 
 #ifdef WIN32
     if (RsInit::isPortable ()) {

@@ -36,7 +36,7 @@
 #include "gui/style/RSStyle.h"
 
 /** The file in which all settings of he peers will read and written. */
-#define SETTINGS_FILE   (QString::fromUtf8(RsInit::RsProfileConfigDirectory().c_str()) + "/RSPeers.conf")
+#define SETTINGS_FILE   (QString::fromUtf8(RsAccounts::ConfigDirectory().c_str()) + "/RSPeers.conf")
 
 /* clean dead id's after these days */
 #define DAYS_TO_CLEAN   7

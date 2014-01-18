@@ -48,17 +48,17 @@ StartDialog::StartDialog(QWidget *parent)
 	std::list<std::string> accountIds;
 	std::list<std::string>::iterator it;
 	std::string preferedId;
-	RsInit::getPreferedAccountId(preferedId);
+	RsAccounts::GetPreferredAccountId(preferedId);
 	int pidx = -1;
 	int i;
 
-	if (RsInit::getAccountIds(accountIds))
+	if (RsAccounts::GetAccountIds(accountIds))
 	{
 		for(it = accountIds.begin(), i = 0; it != accountIds.end(); it++, i++)
 		{
 			const QVariant & userData = QVariant(QString::fromStdString(*it));
 			std::string gpgid, name, email, location;
-			RsInit::getAccountDetails(*it, gpgid, name, email, location);
+			RsAccounts::GetAccountDetails(*it, gpgid, name, email, location);
 			QString accountName = QString::fromUtf8(name.c_str()) + " (" + QString::fromStdString(gpgid).right(8) + ") - " + QString::fromUtf8(location.c_str());
 			ui.loadName->addItem(accountName, userData);
 
@@ -96,8 +96,6 @@ void StartDialog::loadPerson()
 
 	QVariant data = ui.loadName->itemData(pgpidx);
 	accountId = (data.toString()).toStdString();
-
-	RsInit::LoadPassword(accountId, "");
 
 	if (Rshare::loadCertificate(accountId, ui.autologin_checkbox->isChecked())) {
 		accept();

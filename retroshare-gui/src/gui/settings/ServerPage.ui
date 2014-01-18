@@ -126,14 +126,14 @@ peers still need to trust each other to allow connection. </string>
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="label_2">
+              <widget class="QLabel" name="label_extAddress">
                <property name="text">
                 <string>External Address</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="label_3">
+              <widget class="QLabel" name="label_dynDNS">
                <property name="text">
                 <string>Dynamic DNS</string>
                </property>
@@ -159,10 +159,10 @@ peers still need to trust each other to allow connection. </string>
              <item row="0" column="2">
               <widget class="QSpinBox" name="localPort">
                <property name="toolTip">
-                <string>Acceptable ports range from 1024 to 65535. Ports below 1024 are reserved by your system.</string>
+                <string>Acceptable ports range from 10 to 65535. Normally Ports below 1024 are reserved by your system.</string>
                </property>
                <property name="minimum">
-                <number>1024</number>
+                <number>10</number>
                </property>
                <property name="maximum">
                 <number>65535</number>
@@ -185,10 +185,10 @@ peers still need to trust each other to allow connection. </string>
              <item row="1" column="2">
               <widget class="QSpinBox" name="extPort">
                <property name="toolTip">
-                <string>Acceptable ports range from 1024 to 65535. Ports below 1024 are reserved by your system.</string>
+                <string>Acceptable ports range from 10 to 65535. Normally ports below 1024 are reserved by your system.</string>
                </property>
                <property name="minimum">
-                <number>1024</number>
+                <number>10</number>
                </property>
                <property name="maximum">
                 <number>65535</number>
@@ -200,6 +200,29 @@ peers still need to trust each other to allow connection. </string>
              </item>
              <item row="2" column="0">
               <widget class="QLineEdit" name="dynDNS"/>
+             </item>
+             <item row="2" column="2">
+              <widget class="QSpinBox" name="torPort">
+               <property name="toolTip">
+                <string>The Port that TOR is listening to for outgoing connections. Normally 9100 or 9150</string>
+               </property>
+               <property name="minimum">
+                <number>1024</number>
+               </property>
+               <property name="maximum">
+                <number>65535</number>
+               </property>
+               <property name="value">
+                <number>9100</number>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QLabel" name="label_2">
+               <property name="text">
+                <string>Port:</string>
+               </property>
+              </widget>
              </item>
             </layout>
            </item>
