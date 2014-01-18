@@ -1701,7 +1701,8 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 
 			if (pitem->netMode == RS_NET_MODE_HIDDEN)
 			{
-				/* set only the hidden stuff */
+				/* set only the hidden stuff & localAddress */
+				setLocalAddress(pitem->pid, pitem->localAddrV4.addr);
 				setHiddenDomainPort(pitem->pid, pitem->domain_addr, pitem->domain_port);
 
 			}

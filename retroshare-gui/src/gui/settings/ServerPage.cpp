@@ -603,8 +603,13 @@ void ServerPage::saveAddressesHiddenNode()
 		rsPeers->setVisState(ownId, vs_disc, vs_dht);
 
 	// Work out what we do with addresses!
-	//rsPeers->setLocalAddress(ownId, ui.localAddress->text().toStdString(), ui.localPort->value());
 	//rsPeers->setExtAddress(ownId, ui.extAddress->text().toStdString(), ui.extPort->value());
+
+	if (detail.localPort != ui.localPort->value())
+	{
+		// Set Local Address - force to 127.0.0.1
+		rsPeers->setLocalAddress(ownId, "127.0.0.1", ui.localPort->value());
+	}
 
 	std::string hiddenAddr = ui.extAddress->text().toStdString();
 	uint16_t    hiddenPort = ui.extPort->value();
