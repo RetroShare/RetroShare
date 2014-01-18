@@ -73,6 +73,13 @@ const uint32_t PEER_IP_CONNECT_STATE_MAX_LIST_SIZE =     	4;
 #define MAX_AVAIL_PERIOD 230 //times a peer stay in available state when not connected
 #define MIN_RETRY_PERIOD 140
 
+static const std::string kConfigDefaultProxyServerIpAddr = "127.0.0.1";
+static const uint16_t    kConfigDefaultProxyServerPort = 9050; // standard port.
+
+static const std::string kConfigKeyExtIpFinder = "USE_EXTR_IP_FINDER";
+static const std::string kConfigKeyProxyServerIpAddr = "PROXY_SERVER_IPADDR";
+static const std::string kConfigKeyProxyServerPort = "PROXY_SERVER_PORT";
+	
 void  printConnectState(std::ostream &out, peerState &peer);
 
 peerState::peerState()
@@ -129,8 +136,10 @@ p3PeerMgrIMPL::p3PeerMgrIMPL(const std::string& ssl_own_id,
 
 		// setup default ProxyServerAddress.
 		sockaddr_storage_clear(mProxyServerAddress);
-		sockaddr_storage_ipv4_aton(mProxyServerAddress, "127.0.0.1");
-		sockaddr_storage_ipv4_setport(mProxyServerAddress, 9150);
+		sockaddr_storage_ipv4_aton(mProxyServerAddress,
+				kConfigDefaultProxyServerIpAddr.c_str());
+		sockaddr_storage_ipv4_setport(mProxyServerAddress, 
+				kConfigDefaultProxyServerPort);
 	}
 	
 #ifdef PEER_DEBUG
@@ -417,7 +426,11 @@ bool p3PeerMgrIMPL::setProxyServerAddress(const struct sockaddr_storage &proxy_a
 {
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
-	mProxyServerAddress = proxy_addr;
+	if (!sockaddr_storage_same(mProxyServerAddress,proxy_addr))
+	{
+		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+		mProxyServerAddress = proxy_addr;
+	}
 	return true;
 }
 	
@@ -1483,6 +1496,10 @@ bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 	cleanup = false;
 	bool useExtAddrFinder = mNetMgr->getIPServersEnabled();
 
+	// Store Proxy Server.
+	struct sockaddr_storage proxy_addr;
+	getProxyServerAddress(proxy_addr);
+
 	mPeerMtx.lock(); /****** MUTEX LOCKED *******/ 
 
 	RsPeerNetItem *item = new RsPeerNetItem();
@@ -1586,22 +1603,24 @@ bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 	RsConfigKeyValueSet *vitem = new RsConfigKeyValueSet ;
 
 	RsTlvKeyValue kv;
-	kv.key = "USE_EXTR_IP_FINDER" ;
+	kv.key = kConfigKeyExtIpFinder;
 	kv.value = (useExtAddrFinder)?"TRUE":"FALSE" ;
 	vitem->tlvkvs.pairs.push_back(kv) ;
 
-#ifdef PEER_DEBUG
-	std::cout << "Pushing item for use_extr_addr_finder = " << useExtAddrFinder << std::endl ;
-#endif
+
+	std::cerr << "Saving proxyServerAddress: " << sockaddr_storage_tostring(proxy_addr);
+	std::cerr << std::endl;
+
+	kv.key = kConfigKeyProxyServerIpAddr;
+	kv.value = sockaddr_storage_iptostring(proxy_addr);
+	vitem->tlvkvs.pairs.push_back(kv) ;
+
+	kv.key = kConfigKeyProxyServerPort;
+	kv.value = sockaddr_storage_porttostring(proxy_addr);
+	vitem->tlvkvs.pairs.push_back(kv) ;
+	
 	saveData.push_back(vitem);
 	saveCleanupList.push_back(vitem);
-
-                // Now save config for network digging strategies
-
-        RsConfigKeyValueSet *vitem2 = new RsConfigKeyValueSet ;
-
-        saveData.push_back(vitem2);
-	saveCleanupList.push_back(vitem2);
 
 	/* save groups */
 
@@ -1633,7 +1652,9 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 
 	// DEFAULTS.
 	bool useExtAddrFinder = true;
-	
+	std::string proxyIpAddress = kConfigDefaultProxyServerIpAddr;
+	uint16_t    proxyPort = kConfigDefaultProxyServerPort;
+
         if (load.size() == 0) {
             std::cerr << "p3PeerMgrIMPL::loadList() list is empty, it may be a configuration problem."  << std::endl;
             return false;
@@ -1714,11 +1735,26 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 			std::cerr << std::endl;
 #endif
 			std::list<RsTlvKeyValue>::iterator kit;
-			for(kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); kit++) {
-				if(kit->key == "USE_EXTR_IP_FINDER") {
+			for(kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); kit++) 
+			{
+				if (kit->key == kConfigKeyExtIpFinder)
+				{
 					useExtAddrFinder = (kit->value == "TRUE");
 					std::cerr << "setting use_extr_addr_finder to " << useExtAddrFinder << std::endl ;
 				} 
+				else if (kit->key == kConfigKeyProxyServerIpAddr)
+				{
+					proxyIpAddress = kit->value;
+					std::cerr << "Loaded proxyIpAddress: " << proxyIpAddress;
+					std::cerr << std::endl ;
+					
+				}
+				else if (kit->key == kConfigKeyProxyServerPort)
+				{
+					proxyPort = atoi(kit->value.c_str());
+					std::cerr << "Loaded proxyPort: " << proxyPort;
+					std::cerr << std::endl ;
+				}
 			}
 
 			delete(*it);
@@ -1815,8 +1851,25 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 		}
 	}
 
+	// If we are hidden - don't want ExtAddrFinder - ever!
+	if (isHidden())
+	{
+		useExtAddrFinder = false;
+	}
+
 	mNetMgr->setIPServersEnabled(useExtAddrFinder);
-	
+
+	// Configure Proxy Server.
+	struct sockaddr_storage proxy_addr;
+	sockaddr_storage_clear(proxy_addr);
+	sockaddr_storage_ipv4_aton(proxy_addr, proxyIpAddress.c_str());
+	sockaddr_storage_ipv4_setport(proxy_addr, proxyPort);
+
+	if (sockaddr_storage_isValidNet(proxy_addr))
+	{
+		setProxyServerAddress(proxy_addr);
+	}
+
 	return true;
 }
 
