@@ -7,6 +7,7 @@
 #include <util/radix64.h>
 #include <pgp/pgpkeyutil.h>
 #include "rscertificate.h"
+#include "util/rsstring.h"
 
 //#define DEBUG_RSCERTIFICATE 
 
@@ -154,7 +155,8 @@ RsCertificate::RsCertificate(const RsPeerDetails& Detail, const unsigned char *b
 		if (Detail.isHiddenNode)
 		{
 			hidden_node = true;
-			hidden_node_address = Detail.hiddenNodeAddress;
+	 		hidden_node_address = Detail.hiddenNodeAddress;
+			rs_sprintf_append(hidden_node_address, ":%u", Detail.hiddenNodePort);
 
 			memset(ipv4_internal_ip_and_port,0,6) ;
 			memset(ipv4_external_ip_and_port,0,6) ;
