@@ -631,7 +631,7 @@ void ConnectFriendWizard::accept()
 		if (peerDetails.isHiddenNode)
 		{
 			std::cerr << "ConnectFriendWizard::accept() : setting hidden node." << std::endl;
-			rsPeers->setHiddenNode(peerDetails.id, peerDetails.hiddenNodeAddress);
+			rsPeers->setHiddenNode(peerDetails.id, peerDetails.hiddenNodeAddress, peerDetails.hiddenNodePort);
 		}
 		else
 		{

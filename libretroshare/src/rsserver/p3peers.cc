@@ -735,41 +735,58 @@ bool 	p3Peers::setLocation(const std::string &ssl_id, const std::string &locatio
 }
 
 
+bool 	splitAddressString(const std::string &addr, std::string &domain, uint16_t &port)
+{
+        std::cerr << "splitAddressString() Input: " << addr << std::endl;
+
+	size_t cpos = addr.rfind(':');
+	if (cpos == std::string::npos)
+	{
+        	std::cerr << "splitAddressString Failed to parse (:)";
+		std::cerr << std::endl;
+		return false;
+	}
+
+	int lenport = addr.length() - (cpos + 1); // +1 to skip over : char.
+	if (lenport <= 0)
+	{
+        	std::cerr << "splitAddressString() Missing Port ";
+		std::cerr << std::endl;
+		return false;
+	}
+
+	domain = addr.substr(0, cpos);
+	std::string portstr = addr.substr(cpos + 1, std::string::npos);
+	int portint = atoi(portstr.c_str());
+
+	if ((portint < 0) || (portint > 65535))
+	{
+        	std::cerr << "splitAddressString() Invalid Port";
+		std::cerr << std::endl;
+		return false;
+	}
+	port = portint;
+
+        std::cerr << "splitAddressString() Domain: " << domain << " Port: " << port;
+	std::cerr << std::endl;
+	return true;
+}
+
+
 bool 	p3Peers::setHiddenNode(const std::string &id, const std::string &hidden_node_address)
 {
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::setHiddenNode() " << id << std::endl;
 #endif
 
-	size_t cpos = hidden_node_address.rfind(':');
-	if (cpos == std::string::npos)
+	std::string domain;
+	uint16_t port;
+	if (!splitAddressString(hidden_node_address, domain, port))
 	{
-        	std::cerr << "p3Peers::setHiddenNode() Failed to parse (:) " << hidden_node_address << std::endl;
 		return false;
 	}
-
-	int lenport = hidden_node_address.length() - (cpos + 1); // +1 to skip over : char.
-	if (lenport <= 0)
-	{
-        	std::cerr << "p3Peers::setHiddenNode() Missing Port: " << hidden_node_address << std::endl;
-		return false;
-	}
-
-	std::string domain = hidden_node_address.substr(0, cpos);
-	std::string port = hidden_node_address.substr(cpos + 1, std::string::npos);
-	int portint = atoi(port.c_str());
-
-	if ((portint < 0) || (portint > 65535))
-	{
-        	std::cerr << "p3Peers::setHiddenNode() Invalid Port: " << hidden_node_address << std::endl;
-		return false;
-	}
-
-        std::cerr << "p3Peers::setHiddenNode() Domain: " << domain << " Port: " << portint;
-	std::cerr << std::endl;
-
 	mPeerMgr->setNetworkMode(id, RS_NET_MODE_HIDDEN);
-	mPeerMgr->setHiddenDomainPort(id, domain, (uint16_t) portint);
+	mPeerMgr->setHiddenDomainPort(id, domain, port);
 	return true;
 }
 
@@ -1049,8 +1066,14 @@ bool 	p3Peers::loadDetailsFromStringCert(const std::string &certstr, RsPeerDetai
 		if (!cert.hidden_node_string().empty())
 		{
 			pd.isHiddenNode = true;
-			pd.hiddenNodeAddress = cert.hidden_node_string();
-			//pd.hiddenNodePort = cert.hidden_node_port();
+
+			std::string domain;
+			uint16_t port;
+			if (splitAddressString(cert.hidden_node_string(), domain, port))
+			{
+				pd.hiddenNodeAddress = domain;
+				pd.hiddenNodePort = port;
+			}
 		}
 		else
 		{

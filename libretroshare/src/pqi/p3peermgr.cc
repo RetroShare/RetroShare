@@ -391,12 +391,25 @@ bool p3PeerMgrIMPL::setHiddenDomainPort(const std::string &ssl_id, const std::st
 	std::cerr << "p3PeerMgrIMPL::setHiddenDomainPort()";
 	std::cerr << std::endl;
 
+	std::string domain = domain_addr;
+	// trim whitespace!
+	size_t pos = domain.find_last_not_of(" \t\n");
+	if (std::string::npos != pos)
+	{
+		domain = domain.substr(0, pos + 1);
+	}
+	pos = domain.find_first_not_of(" \t\n");
+	if (std::string::npos != pos)
+	{
+		domain = domain.substr(pos);
+	}
+
 	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
 	if (ssl_id == AuthSSL::getAuthSSL()->OwnId()) 
 	{
 		mOwnState.hiddenNode = true;
-		mOwnState.hiddenDomain = domain_addr;
+		mOwnState.hiddenDomain = domain;
 		mOwnState.hiddenPort = domain_port;
 		std::cerr << "p3PeerMgrIMPL::setHiddenDomainPort() Set own State";
 		std::cerr << std::endl;
@@ -413,7 +426,7 @@ bool p3PeerMgrIMPL::setHiddenDomainPort(const std::string &ssl_id, const std::st
 		return false;
 	}
 
-	it->second.hiddenDomain = domain_addr;
+	it->second.hiddenDomain = domain;
 	it->second.hiddenPort = domain_port;
 	it->second.hiddenNode = true;
 	std::cerr << "p3PeerMgrIMPL::setHiddenDomainPort() Set Peers State";
