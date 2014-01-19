@@ -112,7 +112,7 @@ void
 CryptoPage::load()
 {
     /* Loads ouer default Puplickey */
-    ui.certplainTextEdit->setPlainText(QString::fromUtf8(rsPeers->GetRetroshareInvite(ui._includeSignatures_CB->isChecked(),ui._useOldFormat_CB->isChecked()).c_str()));
+    ui.certplainTextEdit->setPlainText(QString::fromUtf8(rsPeers->GetRetroshareInvite(ui._includeSignatures_CB->isChecked()).c_str()));
 }
 void
 CryptoPage::copyRSLink()

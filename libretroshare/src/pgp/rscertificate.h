@@ -15,7 +15,6 @@ class RsCertificate
 		typedef enum { RS_CERTIFICATE_OLD_FORMAT, RS_CERTIFICATE_RADIX } Format ;
 
 		// Constructs from text.
-		// 	- old format: The input string must comply with the GPG format (See RFC4880) 
 		//		- new format: The input string should only contain radix chars and spaces/LF/tabs.
 		//
 		RsCertificate(const std::string& input_string) ;
@@ -29,7 +28,6 @@ class RsCertificate
 		virtual ~RsCertificate();
 
 		// Outut to text
-		std::string toStdString_oldFormat() const ;
 		std::string toStdString() const ;
 
 		std::string ext_ip_string() const ;
@@ -51,11 +49,9 @@ class RsCertificate
 
 	private:
 		static bool cleanCertificate(const std::string& input,std::string& output,int&) ;					// new radix format
-		static bool cleanCertificate_oldFormat(const std::string& input,std::string& output,int&) ;		// old text format
 		static void scan_ip(const std::string& ip_string, unsigned short port,unsigned char *destination_memory) ;
 
 		bool initFromString(const std::string& str,uint32_t& err_code) ;
-		bool initFromString_oldFormat(const std::string& str,uint32_t& err_code) ;
 
 		static void addPacket(uint8_t ptag, const unsigned char *mem, size_t size, unsigned char *& buf, size_t& offset, size_t& buf_size) ;
 

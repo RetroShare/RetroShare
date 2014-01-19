@@ -668,7 +668,7 @@ void ConnectFriendWizard::accept()
 
 void ConnectFriendWizard::updateOwnCert()
 {
-	std::string invite = rsPeers->GetRetroshareInvite(ui->userCertIncludeSignaturesButton->isChecked(),ui->userCertOldFormatButton->isChecked());
+	std::string invite = rsPeers->GetRetroshareInvite(ui->userCertIncludeSignaturesButton->isChecked());
 
 	std::cerr << "TextPage() getting Invite: " << invite << std::endl;
 

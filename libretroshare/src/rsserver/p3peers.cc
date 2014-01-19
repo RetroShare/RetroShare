@@ -958,9 +958,9 @@ bool p3Peers::setProxyServer(const std::string &addr_str, const uint16_t port)
 //===========================================================================
 	/* Auth Stuff */
 std::string
-p3Peers::GetRetroshareInvite(bool include_signatures,bool old_format)
+p3Peers::GetRetroshareInvite(bool include_signatures)
 {
-	return GetRetroshareInvite(getOwnId(),include_signatures,old_format);
+	return GetRetroshareInvite(getOwnId(),include_signatures);
 }
 
 bool p3Peers::GetPGPBase64StringAndCheckSum(	const std::string& gpg_id,
@@ -988,7 +988,7 @@ bool p3Peers::GetPGPBase64StringAndCheckSum(	const std::string& gpg_id,
 	return true ;
 }
 
-std::string p3Peers::GetRetroshareInvite(const std::string& ssl_id,bool include_signatures,bool old_format)
+std::string p3Peers::GetRetroshareInvite(const std::string& ssl_id,bool include_signatures)
 {
 #ifdef P3PEERS_DEBUG
 	std::cerr << "p3Peers::GetRetroshareInvite()" << std::endl;
@@ -1011,10 +1011,7 @@ std::string p3Peers::GetRetroshareInvite(const std::string& ssl_id,bool include_
 
 		RsCertificate cert( Detail,mem_block,mem_block_size ) ;
 
-		if(old_format)
-			return cert.toStdString_oldFormat() ;
-		else
-			return cert.toStdString() ;
+		return cert.toStdString() ;
 
 	}
 
