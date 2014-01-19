@@ -1709,7 +1709,7 @@ bool  p3LinkMgrIMPL::locked_CheckPotentialAddr(const struct sockaddr_storage &ad
 	}
 
 	bool isValid = sockaddr_storage_isValidNet(addr);
-	//	bool isLoopback = sockaddr_storage_isLoopbackNet(addr);
+	bool isLoopback = sockaddr_storage_isLoopbackNet(addr);
 	//	bool isPrivate = sockaddr_storage_isPrivateNet(addr);
 	bool isExternal = sockaddr_storage_isExternalNet(addr);
 
@@ -1747,6 +1747,18 @@ bool  p3LinkMgrIMPL::locked_CheckPotentialAddr(const struct sockaddr_storage &ad
 	{
 #ifdef LINKMGR_DEBUG
 		std::cerr << "p3LinkMgrIMPL::locked_CheckPotentialAddr() ACCEPTING - EXTERNAL"; 
+		std::cerr << std::endl;
+#endif
+		return true;
+	}
+
+
+	/* if loopback, then okay - probably proxy connection (or local testing).
+	 */
+	if (isLoopback)
+	{
+#ifdef LINKMGR_DEBUG
+		std::cerr << "p3LinkMgrIMPL::locked_CheckPotentialAddr() ACCEPTING - LOOPBACK"; 
 		std::cerr << std::endl;
 #endif
 		return true;

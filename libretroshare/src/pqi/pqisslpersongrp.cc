@@ -76,7 +76,8 @@ pqiperson * pqisslpersongrp::locked_createPerson(std::string id, pqilistener *li
 	pqiperson *pqip = new pqiperson(id, this);
 
 	// If using proxy, then only create a proxy item, otherwise can use any.
-	if (mPeerMgr->isHiddenPeer(id))
+	// If we are a hidden node - then all connections should be via proxy.
+	if (mPeerMgr->isHiddenPeer(id) || mPeerMgr->isHidden())
 	{
 		std::cerr << "pqisslpersongrp::locked_createPerson() Is Hidden Peer!";
 		std::cerr << std::endl;
