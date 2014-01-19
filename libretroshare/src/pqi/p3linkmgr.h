@@ -51,7 +51,9 @@ const uint32_t RS_NET_CONN_TCP_HIDDEN 	       = 0x0008;
 const uint32_t RS_NET_CONN_UDP_DHT_SYNC        = 0x0010;
 const uint32_t RS_NET_CONN_UDP_PEER_SYNC       = 0x0020; /* coming soon */
 
+// These are set in pqipersongroup.
 const uint32_t RS_TCP_STD_TIMEOUT_PERIOD	= 5; /* 5 seconds! */
+const uint32_t RS_TCP_HIDDEN_TIMEOUT_PERIOD	= 30; /* 30 seconds! */
 const uint32_t RS_UDP_STD_TIMEOUT_PERIOD	= 80; /* 80 secs, allows UDP TTL to get to 40! - Plenty of time (30+80) = 110 secs */
 
 class peerAddrInfo

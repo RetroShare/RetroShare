@@ -351,20 +351,10 @@ int 	pqissludp::Basic_Connection_Complete()
 	rslog(RSL_DEBUG_BASIC, pqissludpzone, 
 	  "pqissludp::Basic_Connection_Complete()...");
 
-
-	if (time(NULL) > mTimeoutTS)
+	if (CheckConnectionTimeout())
 	{
-		std::string out = "pqissludp::Basic_Connection_Complete() Connection Timed Out. Peer: " + PeerId();
-		rs_sprintf_append(out, " Period: %lu", mConnectTimeout);
-
-		rslog(RSL_WARNING, pqissludpzone, out);
-
-		/* as sockfd is valid, this should close it all up */
-
-		reset_locked();
 		return -1;
 	}
-
 
 	if (waiting != WAITING_SOCK_CONNECT)
 	{

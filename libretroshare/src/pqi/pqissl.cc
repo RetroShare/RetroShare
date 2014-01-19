@@ -823,13 +823,8 @@ int 	pqissl::Initiate_Connection()
  *
  */
 
-int 	pqissl::Basic_Connection_Complete()
+bool  	pqissl::CheckConnectionTimeout()
 {
-#ifdef PQISSL_LOG_DEBUG 
-	rslog(RSL_DEBUG_BASIC, pqisslzone, 
-	  "pqissl::Basic_Connection_Complete()...");
-#endif
-
 	/* new TimeOut code. */
 	if (time(NULL) > mTimeoutTS)
 	{
@@ -841,9 +836,25 @@ int 	pqissl::Basic_Connection_Complete()
 		
 		rslog(RSL_ALERT, pqisslzone, "pqissl::Basic_Connection_Complete() -> calling reset()");
 		reset_locked();
+		return true;
+	}
+	return false;
+}
+
+
+
+int 	pqissl::Basic_Connection_Complete()
+{
+#ifdef PQISSL_LOG_DEBUG 
+	rslog(RSL_DEBUG_BASIC, pqisslzone, 
+	  "pqissl::Basic_Connection_Complete()...");
+#endif
+
+	if (CheckConnectionTimeout())
+	{
+		// calls reset.
 		return -1;
 	}
-
 
 	if (waiting != WAITING_SOCK_CONNECT)
 	{

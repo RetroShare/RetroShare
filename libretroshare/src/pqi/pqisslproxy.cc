@@ -96,6 +96,12 @@ int 	pqisslproxy::Basic_Connection_Complete()
 	std::cerr << std::endl;
 #endif
 
+	if (CheckConnectionTimeout())
+	{
+		// calls reset.
+		return -1;
+	}
+
 	int ret = 0;
 	switch(mProxyState)
 	{
@@ -127,6 +133,7 @@ int 	pqisslproxy::Basic_Connection_Complete()
 			std::cerr << std::endl;
 #endif
 
+			reset_locked();
 			return -1;
 	}
 
@@ -134,10 +141,10 @@ int 	pqisslproxy::Basic_Connection_Complete()
 	{
 
 #ifdef PROXY_DEBUG
-			std::cerr << "pqisslproxy::Basic_Connection_Complete() FAILED(2)";
-			std::cerr << std::endl;
+		std::cerr << "pqisslproxy::Basic_Connection_Complete() FAILED(2)";
+		std::cerr << std::endl;
 #endif
-
+		reset_locked();
 		return -1; // FAILURE.
 	}
 

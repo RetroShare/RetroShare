@@ -165,6 +165,9 @@ int Authorise_SSL_Connection();
 
 int Extract_Failed_SSL_Certificate(); // try to get cert anyway.
 
+	// check connection timeout.
+bool  	CheckConnectionTimeout();
+
 
 	//protected internal fns that are overloaded for udp case.
 virtual int net_internal_close(int fd);
