@@ -53,6 +53,8 @@ virtual int     status();
 
 std::string     gethash();
 
+bool bStopReading;
+
 protected:
 
 // Serialiser
@@ -105,6 +107,7 @@ private:
 
 	BinEncryptedFileInterface* enc_bio;
 
+	//bool bStopReading;
 
 };
 
