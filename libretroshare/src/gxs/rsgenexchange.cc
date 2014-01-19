@@ -2051,6 +2051,7 @@ void RsGenExchange::publishGrps()
 			{
 				grp->metaData = new RsGxsGrpMetaData();
 				grpItem->meta.mPublishTs = time(NULL);
+                //grpItem->meta.mParentGrpId = std::string("empty");
 				*(grp->metaData) = grpItem->meta;
 
 				// TODO: change when publish key optimisation added (public groups don't have publish key

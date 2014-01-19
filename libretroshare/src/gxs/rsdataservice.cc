@@ -44,6 +44,7 @@
 #define KEY_NXS_IDENTITY std::string("identity")
 #define KEY_GRP_ID std::string("grpId")
 #define KEY_ORIG_GRP_ID std::string("origGrpId")
+#define KEY_PARENT_GRP_ID std::string("parentGrpId")
 #define KEY_SIGN_SET std::string("signSet")
 #define KEY_TIME_STAMP std::string("timeStamp")
 #define KEY_NXS_FLAGS std::string("flags")
@@ -114,7 +115,8 @@
 #define COL_GRP_INTERN_CIRCLE 18
 #define COL_GRP_ORIGINATOR 19
 #define COL_GRP_AUTHEN_FLAGS 20
-#define COL_GRP_RECV_TS 21
+#define COL_PARENT_GRP_ID 21
+#define COL_GRP_RECV_TS 22
 
 
 // msg col numbers
@@ -173,7 +175,8 @@ RsDataService::RsDataService(const std::string &serviceDir, const std::string &d
     grpMetaColumns.push_back(KEY_GRP_LAST_POST); grpMetaColumns.push_back(KEY_ORIG_GRP_ID); grpMetaColumns.push_back(KEY_NXS_SERV_STRING);
     grpMetaColumns.push_back(KEY_GRP_SIGN_FLAGS); grpMetaColumns.push_back(KEY_GRP_CIRCLE_ID); grpMetaColumns.push_back(KEY_GRP_CIRCLE_TYPE);
     grpMetaColumns.push_back(KEY_GRP_INTERNAL_CIRCLE); grpMetaColumns.push_back(KEY_GRP_ORIGINATOR);
-    grpMetaColumns.push_back(KEY_GRP_AUTHEN_FLAGS); grpMetaColumns.push_back(KEY_RECV_TS);
+    grpMetaColumns.push_back(KEY_GRP_AUTHEN_FLAGS); grpMetaColumns.push_back(KEY_PARENT_GRP_ID); grpMetaColumns.push_back(KEY_RECV_TS); 
+    
 
     // for retrieving actual grp data
     grpColumns.push_back(KEY_GRP_ID); grpColumns.push_back(KEY_NXS_FILE); grpColumns.push_back(KEY_NXS_FILE_OFFSET);
@@ -247,6 +250,7 @@ void RsDataService::initialise(){
                  KEY_GRP_ORIGINATOR + " TEXT," +
                  KEY_NXS_HASH + " TEXT," +
                  KEY_RECV_TS + " INT," +
+                 KEY_PARENT_GRP_ID + " TEXT," +
                  KEY_SIGN_SET + " BLOB);");
 
     mDb->execSQL("CREATE TRIGGER " + GRP_LAST_POST_UPDATE_TRIGGER +
@@ -308,6 +312,8 @@ RsGxsGrpMetaData* RsDataService::locked_getGrpMeta(RetroCursor &c)
     grpMeta->mAuthenFlags = c.getInt32(COL_GRP_AUTHEN_FLAGS);
     grpMeta->mRecvTS = c.getInt32(COL_GRP_RECV_TS);
 
+
+    c.getString(COL_PARENT_GRP_ID, grpMeta->mParentGrpId);
 
     if(ok)
         return grpMeta;
@@ -613,6 +619,7 @@ int RsDataService::storeGroup(std::map<RsNxsGrp *, RsGxsGrpMetaData *> &grp)
         cv.put(KEY_GRP_INTERNAL_CIRCLE, grpMetaPtr->mInternalCircle);
         cv.put(KEY_GRP_ORIGINATOR, grpMetaPtr->mOriginator);
         cv.put(KEY_GRP_AUTHEN_FLAGS, (int32_t)grpMetaPtr->mAuthenFlags);
+        cv.put(KEY_PARENT_GRP_ID, grpMetaPtr->mParentGrpId);
         cv.put(KEY_NXS_HASH, grpMetaPtr->mHash);
         cv.put(KEY_RECV_TS, (int32_t)grpMetaPtr->mRecvTS);
 

@@ -55,6 +55,7 @@ public:
 	QString   id;
 	QString   name;
 	QString   description;
+	QString   parentId;
 	int       popularity;
 	QDateTime lastpost;
 	QIcon     icon;
@@ -85,6 +86,8 @@ public:
 	QString itemId(QTreeWidgetItem *item);
 	// Fill items of a group
 	void fillGroupItems(QTreeWidgetItem *categoryItem, const QList<GroupItemInfo> &itemList);
+	QTreeWidgetItem *recursiveIdSearch(QTreeWidgetItem *currentItem, const QString &id);
+	void checkOrphans(QList<QTreeWidgetItem *> &orphanList, QTreeWidgetItem *justInserted);
 	// Set the unread count of an item
 	void setUnreadCount(QTreeWidgetItem *item, int unreadCount);
 
@@ -120,8 +123,9 @@ private slots:
 private:
 	// Initialize the display menu for sorting
 	void initDisplayMenu(QToolButton *toolButton);
-	void calculateScore(QTreeWidgetItem *item, const QString &filterText);
-	void resort(QTreeWidgetItem *categoryItem);
+	int calculateScore(QTreeWidgetItem *item, const QString &filterText);
+	void calculateScores(const QString &filterText);
+	void resort(QTreeWidgetItem *categoryItem, Qt::SortOrder *order);
 	void updateColors();
 
 private:

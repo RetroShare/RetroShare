@@ -65,6 +65,7 @@ public:
     std::string mCircleId;
     uint32_t mCircleType;
     uint32_t mAuthenFlags;
+    std::string mParentGrpId;
 
     // BELOW HERE IS LOCAL DATA, THAT IS NOT FROM MSG.
 

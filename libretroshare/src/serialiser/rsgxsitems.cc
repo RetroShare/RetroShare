@@ -47,13 +47,16 @@
 		this->mInternalCircle = rGxsMeta.mInternalCircle;
 		this->mOriginator = rGxsMeta.mOriginator;
 		this->mAuthenFlags = rGxsMeta.mAuthenFlags;
+ //       std::cout << "rGxsMeta.mParentGrpId= " <<rGxsMeta.mParentGrpId<<"\n";
+ //       std::cout << "rGxsMeta.mParentGrpId.length()= " <<rGxsMeta.mParentGrpId.length()<<"\n";
+        //std::cout << "this->mParentGrpId= " <<this->mParentGrpId<<"\n";
+        this->mParentGrpId = rGxsMeta.mParentGrpId;
 	}
 
 
 std::ostream &operator<<(std::ostream &out, const RsGroupMetaData &meta)
 {
-        out << "[ GroupId: " << meta.mGroupId << " Name: " << meta.mGroupName;
-        out << " PublishTs: " << meta.mPublishTs << " ]";
+        out << "[ GroupId: " << meta.mGroupId << " Name: " << meta.mGroupName << " ]";
         return out;
 }
 

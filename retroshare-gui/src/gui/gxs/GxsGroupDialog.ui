@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>695</width>
-    <height>448</height>
+    <height>518</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -156,7 +156,7 @@
         </layout>
        </widget>
       </item>
-      <item row="0" column="1" rowspan="6">
+      <item row="0" column="1" rowspan="7">
        <widget class="QDockWidget" name="contactsdockWidget">
         <property name="enabled">
          <bool>true</bool>
@@ -257,7 +257,7 @@
         </item>
        </layout>
       </item>
-      <item row="2" column="0">
+      <item row="3" column="0">
        <widget class="QGroupBox" name="distribGroupBox">
         <property name="title">
          <string>Message Distribution</string>
@@ -323,7 +323,7 @@
         </layout>
        </widget>
       </item>
-      <item row="3" column="0">
+      <item row="4" column="0">
        <widget class="QGroupBox" name="publishGroupBox">
         <property name="title">
          <string>Publish Signatures</string>
@@ -366,7 +366,7 @@
         </layout>
        </widget>
       </item>
-      <item row="4" column="0">
+      <item row="5" column="0">
        <widget class="QGroupBox" name="personalGroupBox">
         <property name="title">
          <string>Personal Signatures</string>
@@ -402,7 +402,7 @@
         </layout>
        </widget>
       </item>
-      <item row="5" column="0">
+      <item row="6" column="0">
        <widget class="QGroupBox" name="commentGroupBox">
         <property name="title">
          <string>Comments</string>
@@ -431,7 +431,7 @@
         </layout>
        </widget>
       </item>
-      <item row="6" column="0" colspan="2">
+      <item row="7" column="0" colspan="2">
        <widget class="QFrame" name="extraFrame">
         <property name="frameShape">
          <enum>QFrame::StyledPanel</enum>
@@ -441,11 +441,38 @@
         </property>
        </widget>
       </item>
-      <item row="7" column="0" colspan="2">
+      <item row="8" column="0" colspan="2">
        <widget class="QDialogButtonBox" name="buttonBox">
         <property name="standardButtons">
          <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
         </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QGroupBox" name="parentGroupBox">
+        <layout class="QHBoxLayout" name="horizontalLayout_10">
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_11">
+           <item>
+            <widget class="QLabel" name="prLabel">
+             <property name="text">
+              <string>Parent: </string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="parentLabel">
+             <property name="text">
+              <string>None</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
        </widget>
       </item>
      </layout>
@@ -478,7 +505,6 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>

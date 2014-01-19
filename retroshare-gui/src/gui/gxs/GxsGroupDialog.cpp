@@ -94,6 +94,8 @@ void GxsGroupDialog::init()
 		this->resize(this->size().width() - ui.contactsdockWidget->size().width(), this->size().height());
 	}
 
+    ui.parentGroupBox->setVisible(false);
+
 	/* initialize key share list */
 	ui.keyShareList->setHeaderText(tr("Contacts:"));
 	ui.keyShareList->setModus(FriendSelectionWidget::MODUS_CHECK);
@@ -148,13 +150,13 @@ void GxsGroupDialog::initMode()
 		{
 			ui.buttonBox->setStandardButtons(QDialogButtonBox::Close);
 		}
-                break;
-                case MODE_EDIT:
-                {
-                    ui.buttonBox->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
-                    ui.buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Submit Group Changes"));
-                }
-                break;
+		break;
+//TODO
+//		case MODE_EDIT:
+//		{
+//			ui.createButton->setText(tr("Submit Changes"));
+//		}
+//		break;
 	}
 }
 
@@ -320,40 +322,17 @@ void GxsGroupDialog::submitGroup()
 		break;
 
 		case MODE_EDIT:
-                {
-
-                        editGroup();
+		{
+			/* TEMP: just close if down */
+			cancelDialog();
 		}
 		break;
 	}
 }
 
-void GxsGroupDialog::editGroup()
-{
-    std::cerr << "GxsGroupDialog::editGroup()" << std::endl;
-
-    QString name = misc::removeNewLine(ui.groupName->text());
-    uint32_t flags = GXS_SERV::FLAG_PRIVACY_PUBLIC;
-
-    if(name.isEmpty())
-    {
-                    /* error message */
-                    QMessageBox::warning(this, "RetroShare", tr("Please add a Name"), QMessageBox::Ok, QMessageBox::Ok);
-                    return; //Don't add  a empty name!!
-    }
-
-    uint32_t token;
-    RsGxsGroupUpdateMeta updateMeta(mGrpMeta.mGroupId);
-    updateMeta.setMetaUpdate(RsGxsGroupUpdateMeta::NAME, std::string(name.toUtf8()));
-
-    if (service_EditGroup(token, updateMeta))
-    {
-            // get the Queue to handle response.
-            if(mTokenQueue != NULL)
-                    mTokenQueue->queueRequest(token, TOKENREQ_GROUPINFO, RS_TOKREQ_ANSTYPE_ACK, GXSGROUP_NEWGROUPID);
-    }
-
-    close();
+void GxsGroupDialog::setParentLabel(QString parentId){
+    ui.parentGroupBox->setVisible(true);
+    ui.parentLabel->setText(parentId);
 }
 
 void GxsGroupDialog::createGroup()
@@ -361,7 +340,8 @@ void GxsGroupDialog::createGroup()
 	std::cerr << "GxsGroupDialog::createGroup()";
 	std::cerr << std::endl;
 
-	QString name = misc::removeNewLine(ui.groupName->text());
+    QString name = misc::removeNewLine(ui.groupName->text());
+    QString parentGroupId = misc::removeNewLine(ui.parentLabel->text());
 	uint32_t flags = GXS_SERV::FLAG_PRIVACY_PUBLIC;
 
 	if(name.isEmpty())
@@ -376,6 +356,8 @@ void GxsGroupDialog::createGroup()
 
 	// Fill in the MetaData as best we can.
 	meta.mGroupName = std::string(name.toUtf8());
+    if(parentGroupId.length()>10)
+        meta.mParentGrpId = parentGroupId.toStdString();
 
 	meta.mGroupFlags = flags;
 	meta.mSignFlags = getGroupSignFlags();

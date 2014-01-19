@@ -63,6 +63,7 @@ public:
 
     std::string mServiceString;
     uint32_t mAuthenFlags;
+    RsGxsGroupId mParentGrpId;
 
     // BELOW HERE IS LOCAL DATA, THAT IS NOT FROM MSG.
 

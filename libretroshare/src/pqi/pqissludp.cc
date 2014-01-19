@@ -38,6 +38,7 @@
 #include "util/rsstring.h"
 
 #include "pqi/p3linkmgr.h"
+#include <unistd.h>
 
 const int pqissludpzone = 3144;
 

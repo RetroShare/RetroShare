@@ -21,6 +21,8 @@
 
 #include <QMenu>
 #include <QToolButton>
+#include <QMutableListIterator>
+#include <QDebug>
 
 #include "GroupTreeWidget.h"
 #include "ui_GroupTreeWidget.h"
@@ -31,6 +33,7 @@
 #include "RSTreeWidgetItem.h"
 
 #include <stdint.h>
+#include <iostream>
 
 #define COLUMN_NAME        0
 #define COLUMN_POPULARITY  1
@@ -45,6 +48,7 @@
 #define ROLE_SEARCH_SCORE    Qt::UserRole + 5
 #define ROLE_SUBSCRIBE_FLAGS Qt::UserRole + 6
 #define ROLE_COLOR           Qt::UserRole + 7
+#define ROLE_PARENT_ID       Qt::UserRole + 8
 
 #define FILTER_NAME_INDEX  0
 #define FILTER_DESC_INDEX  1
@@ -299,6 +303,38 @@ QString GroupTreeWidget::itemId(QTreeWidgetItem *item)
 	return item->data(COLUMN_DATA, ROLE_ID).toString();
 }
 
+QTreeWidgetItem* GroupTreeWidget::recursiveIdSearch(QTreeWidgetItem *currentItem, const QString &id){
+	int childCount = currentItem->childCount();
+	for (int child = 0; child < childCount; child++) {
+		QTreeWidgetItem *childItem = currentItem->child(child);
+		if (childItem->data(COLUMN_DATA, ROLE_ID).toString() == id) {
+			/* Found child */
+			return childItem;
+		}
+		QTreeWidgetItem* recur = recursiveIdSearch(childItem, id);
+		if(recur) return recur;
+	}
+	return NULL;
+}
+
+void GroupTreeWidget::checkOrphans(QList<QTreeWidgetItem  *> &orphanList, QTreeWidgetItem *justInserted){
+
+	if(orphanList.length()==0)return;
+	QString newID = justInserted->data(COLUMN_DATA, ROLE_ID).toString();
+
+	QList<QTreeWidgetItem *> oList = orphanList;
+	QMutableListIterator<QTreeWidgetItem *> i(oList);
+	while (i.hasNext()) {
+		QTreeWidgetItem *orphan = i.next();
+		QString parentID = orphan->data(COLUMN_DATA, ROLE_PARENT_ID).toString();
+		if (parentID.compare(newID)==0){
+			justInserted->addChild(orphan);
+			i.remove();
+			checkOrphans(orphanList,orphan);
+		}
+	}
+}
+
 void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<GroupItemInfo> &itemList)
 {
 	if (categoryItem == NULL) {
@@ -307,28 +343,32 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 
 	QString filterText = ui->filterLineEdit->text();
 
+	QList<QTreeWidgetItem *> orphans;
+
 	/* Iterate all items */
 	QList<GroupItemInfo>::const_iterator it;
 	for (it = itemList.begin(); it != itemList.end(); it++) {
 		const GroupItemInfo &itemInfo = *it;
 
-		QTreeWidgetItem *item = NULL;
-
-		/* Search exisiting item */
-		int childCount = categoryItem->childCount();
-		for (int child = 0; child < childCount; child++) {
-			QTreeWidgetItem *childItem = categoryItem->child(child);
-			if (childItem->data(COLUMN_DATA, ROLE_ID).toString() == itemInfo.id) {
-				/* Found child */
-				item = childItem;
-				break;
-			}
-		}
+		QTreeWidgetItem *item = recursiveIdSearch(categoryItem, itemInfo.id);
 
 		if (item == NULL) {
 			item = new RSTreeWidgetItem(compareRole);
 			item->setData(COLUMN_DATA, ROLE_ID, itemInfo.id);
-			categoryItem->addChild(item);
+			item->setData(COLUMN_DATA, ROLE_PARENT_ID, itemInfo.parentId);
+
+			if(itemInfo.parentId.length()<10){
+				categoryItem->addChild(item);
+				checkOrphans(orphans,item);
+			}else{
+				QTreeWidgetItem *parentItem = recursiveIdSearch(categoryItem, itemInfo.parentId);
+				if(parentItem){
+					parentItem->addChild(item);
+					checkOrphans(orphans,item);
+				}else{
+					orphans.append(item);
+				}
+			}
 		}
 
 		item->setText(COLUMN_NAME, itemInfo.name);
@@ -371,6 +411,16 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 		calculateScore(item, filterText);
 	}
 
+	/* Add remaning topics whose parents are unknown */
+	QMutableListIterator<QTreeWidgetItem *> i(orphans);
+	while (i.hasNext()) {
+		QTreeWidgetItem *orphan = i.next();
+		categoryItem->addChild(orphan);
+		std::cerr << "adding orphan\n"<< orphan->data(COLUMN_DATA, ROLE_PARENT_ID).toString().toStdString() <<"\n";
+		std::cerr << orphan->data(COLUMN_DATA, ROLE_ID).toString().toStdString() <<"\n";
+		std::cerr << "\n";
+	}
+
 	/* Remove all items not in list */
 	int child = 0;
 	int childCount = categoryItem->childCount();
@@ -391,7 +441,7 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 		}
 	}
 
-	resort(categoryItem);
+	resort(categoryItem, NULL);
 }
 
 void GroupTreeWidget::setUnreadCount(QTreeWidgetItem *item, int unreadCount)
@@ -466,88 +516,104 @@ int GroupTreeWidget::subscribeFlags(const QString &id)
 	return item->data(COLUMN_DATA, ROLE_SUBSCRIBE_FLAGS).toInt();
 }
 
-void GroupTreeWidget::calculateScore(QTreeWidgetItem *item, const QString &filterText)
+int GroupTreeWidget::calculateScore(QTreeWidgetItem *item, const QString &filterText)
 {
-	if (item) {
-		/* Calculate one item */
-		int score;
-		if (filterText.isEmpty()) {
-			score = 0;
+
+	int score = 0;
+	if (!item) return score;
+
+	/* Calculate one item */
+	if (filterText.isEmpty()) {
+		score = 0;
+		item->setHidden(false);
+		int count = item->childCount();
+		for (int nIndex = 0; nIndex < count; ++nIndex) {
+			calculateScore(item->child(nIndex), filterText);
+		}
+	} else {
+		QString scoreString;
+
+		switch (ui->filterLineEdit->currentFilter()) {
+		case FILTER_NAME_INDEX:
+			scoreString = item->data(COLUMN_DATA, ROLE_NAME).toString();
+			break;
+		case FILTER_DESC_INDEX:
+			scoreString = item->data(COLUMN_DATA, ROLE_DESCRIPTION).toString();
+			break;
+		}
+
+		score = scoreString.count(filterText, Qt::CaseInsensitive);
+
+		int count = item->childCount();
+		for (int nIndex = 0; nIndex < count; ++nIndex) {
+			score += calculateScore(item->child(nIndex), filterText);
+		}
+
+		if (score) {
 			item->setHidden(false);
 		} else {
-			QString scoreString;
-
-			switch (ui->filterLineEdit->currentFilter()) {
-			case FILTER_NAME_INDEX:
-				scoreString = item->data(COLUMN_DATA, ROLE_NAME).toString();
-				break;
-			case FILTER_DESC_INDEX:
-				scoreString = item->data(COLUMN_DATA, ROLE_DESCRIPTION).toString();
-				break;
-			}
-
-			score = scoreString.count(filterText, Qt::CaseInsensitive);
-
-			if (score) {
-				item->setHidden(false);
-			} else {
-				item->setHidden(true);
-			}
+			item->setHidden(true);
 		}
-
-		item->setData(COLUMN_DATA, ROLE_SEARCH_SCORE, -score); // negative for correct sorting
-
-		return;
 	}
 
+	item->setData(COLUMN_DATA, ROLE_SEARCH_SCORE, -score); // negative for correct sorting
+
+	return score;
+
+}
+
+void GroupTreeWidget::calculateScores(const QString &filterText)
+{
 	/* Find out which has given word in it */
 	QTreeWidgetItemIterator itemIterator(ui->treeWidget);
-	QTreeWidgetItem *item;
-	while ((item = *itemIterator) != NULL) {
-		itemIterator++;
 
-		if (item->data(COLUMN_DATA, ROLE_ID).toString().isEmpty()) {
-			continue;
+	int count = ui->treeWidget->topLevelItemCount();
+	for (int child = 0; child < count; child++) {
+		QTreeWidgetItem *catitem = ui->treeWidget->topLevelItem(child);
+		int icount = catitem->childCount();
+		for (int nIndex = 0; nIndex < icount; ++nIndex) {
+			calculateScore(catitem->child(nIndex), filterText);
 		}
-
-		calculateScore(item, filterText);
 	}
 }
 
 void GroupTreeWidget::filterChanged()
 {
 	/* Recalculate score */
-	calculateScore(NULL, ui->filterLineEdit->text());
+	calculateScores(ui->filterLineEdit->text());
 
-	resort(NULL);
+	sort();
 }
 
-void GroupTreeWidget::resort(QTreeWidgetItem *categoryItem)
+void GroupTreeWidget::resort(QTreeWidgetItem *categoryItem, Qt::SortOrder *order)
 {
-	Qt::SortOrder order = (actionSortAscending == NULL || actionSortAscending->isChecked()) ? Qt::AscendingOrder : Qt::DescendingOrder;
+	if(order == NULL){
+		Qt::SortOrder so = (actionSortAscending == NULL || actionSortAscending->isChecked()) ? Qt::AscendingOrder : Qt::DescendingOrder;
+		order = &so;
 
-	if (ui->filterLineEdit->text().isEmpty() == false) {
-		compareRole->setRole(COLUMN_DATA, ROLE_SEARCH_SCORE);
-		compareRole->addRole(COLUMN_DATA, ROLE_LASTPOST);
-	} else if (actionSortByName && actionSortByName->isChecked()) {
-		compareRole->setRole(COLUMN_DATA, ROLE_NAME);
-	} else if (actionSortByPopularity && actionSortByPopularity->isChecked()) {
-		compareRole->setRole(COLUMN_DATA, ROLE_POPULARITY);
-	} else if (actionSortByLastPost && actionSortByLastPost->isChecked()) {
-		compareRole->setRole(COLUMN_DATA, ROLE_LASTPOST);
+		if (ui->filterLineEdit->text().isEmpty() == false) {
+			compareRole->setRole(COLUMN_DATA, ROLE_SEARCH_SCORE);
+			compareRole->addRole(COLUMN_DATA, ROLE_LASTPOST);
+		} else if (actionSortByName && actionSortByName->isChecked()) {
+			compareRole->setRole(COLUMN_DATA, ROLE_NAME);
+		} else if (actionSortByPopularity && actionSortByPopularity->isChecked()) {
+			compareRole->setRole(COLUMN_DATA, ROLE_POPULARITY);
+		} else if (actionSortByLastPost && actionSortByLastPost->isChecked()) {
+			compareRole->setRole(COLUMN_DATA, ROLE_LASTPOST);
+		}
 	}
 
-	if (categoryItem) {
-		categoryItem->sortChildren(COLUMN_DATA, order);
-	} else {
-		int count = ui->treeWidget->topLevelItemCount();
-		for (int child = 0; child < count; child++) {
-			ui->treeWidget->topLevelItem(child)->sortChildren(COLUMN_DATA, order);
-		}
+	categoryItem->sortChildren(COLUMN_DATA, *order);
+	int count = categoryItem->childCount();
+	for (int child = 0; child < count; child++) {
+		resort(categoryItem->child(child), order);
 	}
 }
 
 void GroupTreeWidget::sort()
 {
-	resort(NULL);
+	int count = ui->treeWidget->topLevelItemCount();
+	for (int child = 0; child < count; child++) {
+		resort(ui->treeWidget->topLevelItem(child), NULL);
+	}
 }
