@@ -84,7 +84,8 @@ ServerPage::ServerPage(QWidget * parent, Qt::WFlags flags)
 	ui.tabWidget->widget(2)->layout()->addItem(verticalSpacer) ;
 	ui.tabWidget->widget(2)->layout()->update() ;
 
-	ui.torPort->setVisible(false);
+	ui.torpage_incoming->setVisible(false);
+
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
 
@@ -236,6 +237,13 @@ void ServerPage::load()
 		ui.ipAddressList->clear();
 		for(std::list<std::string>::const_iterator it(detail.ipAddressList.begin());it!=detail.ipAddressList.end();++it)
 			ui.ipAddressList->addItem(QString::fromStdString(*it));
+
+	/* TOR PAGE SETTINGS - only Proxy (outgoing) */
+	std::string proxyaddr;
+	uint16_t proxyport;
+	rsPeers->getProxyServer(proxyaddr, proxyport);
+	ui.torpage_proxyAddress -> setText(QString::fromStdString(proxyaddr));
+	ui.torpage_proxyPort -> setValue(proxyport);
 }
 
 void ServerPage::toggleTurtleRouting(bool b)
@@ -412,6 +420,19 @@ void ServerPage::saveAddresses()
 	rsPeers->setDynDNS(ownId, ui.dynDNS->text().toStdString());
 	rsConfig->SetMaxDataRates( ui.totalDownloadRate->value(), ui.totalUploadRate->value() );
 
+	// HANDLE PROXY SERVER.
+	std::string orig_proxyaddr;
+	uint16_t orig_proxyport;
+	rsPeers->getProxyServer(orig_proxyaddr, orig_proxyport);
+
+	std::string new_proxyaddr = ui.torpage_proxyAddress -> text().toStdString();
+	uint16_t new_proxyport = ui.torpage_proxyPort -> value();
+
+	if ((new_proxyaddr != orig_proxyaddr) || (new_proxyport != orig_proxyport))
+	{
+		rsPeers->setProxyServer(new_proxyaddr, new_proxyport);
+	}
+
 	load();
 }
 
@@ -476,9 +497,13 @@ void ServerPage::loadHiddenNode()
 
 	// Addresses.
 	ui.localAddress->setEnabled(false);
-	ui.localPort  -> setEnabled(true);
-	ui.extAddress -> setEnabled(true);
-	ui.extPort    -> setEnabled(true);
+	ui.localPort  -> setEnabled(false);
+	ui.extAddress -> setEnabled(false);
+	ui.extPort    -> setVisible(false);
+	ui.label_dynDNS->setVisible(false);
+	ui.dynDNS      ->setVisible(false);
+
+	ui.torpage_incoming->setVisible(true);
 
 	/* Addresses must be set here - otherwise can't edit it */
 		/* set local address */
@@ -486,21 +511,7 @@ void ServerPage::loadHiddenNode()
 	ui.localPort -> setValue(detail.localPort);
 		/* set the server address */
 
-
-	ui.label_extAddress->setText(tr("TOR Onion Address"));
-	ui.extAddress->setText(QString::fromStdString(detail.hiddenNodeAddress));
-	ui.extPort -> setValue(detail.hiddenNodePort);
-
-	/* set DynDNS */
-	ui.label_dynDNS -> setText("TOR Server Port");
-
-	std::string proxyaddr;
-	uint16_t proxyport;
-	rsPeers->getProxyServer(proxyaddr, proxyport);
-
-	ui.dynDNS -> setText(QString::fromStdString(proxyaddr));
-	ui.torPort -> setVisible(true);
-	ui.torPort -> setValue(proxyport);
+	ui.extAddress->setText(tr("Hidden - See TOR Config"));
 
 	ui.showDiscStatusBar->setChecked(Settings->getStatusBarFlags() & STATUSBAR_DISC);
 
@@ -519,6 +530,33 @@ void ServerPage::loadHiddenNode()
 	ui.allowIpDeterminationCB->setChecked(false);
 	ui.allowIpDeterminationCB->setEnabled(false);
 	ui.IPServersLV->setEnabled(false);
+
+	/* TOR PAGE SETTINGS */
+
+	/* set local address */
+	ui.torpage_localAddress->setEnabled(false);
+	ui.torpage_localAddress->setText(QString::fromStdString(detail.localAddr));
+	ui.torpage_localPort -> setValue(detail.localPort);
+
+	/* set the server address */
+	ui.torpage_onionAddress->setText(QString::fromStdString(detail.hiddenNodeAddress));
+	ui.torpage_onionPort -> setValue(detail.hiddenNodePort);
+
+	std::string proxyaddr;
+	uint16_t proxyport;
+	rsPeers->getProxyServer(proxyaddr, proxyport);
+	ui.torpage_proxyAddress -> setText(QString::fromStdString(proxyaddr));
+	ui.torpage_proxyPort -> setValue(proxyport);
+
+	QString expected = "HiddenServiceDir </your/path/to/hidden/directory/service>\n";
+	expected += "HiddenServicePort ";
+	expected += QString::number(detail.hiddenNodePort);
+	expected += " ";
+	expected += QString::fromStdString(detail.localAddr);
+	expected += ":";
+	expected += QString::number(detail.localPort);
+
+	ui.torpage_configuration->setPlainText(expected);
 }
 
 /** Loads the settings for this page */
@@ -602,30 +640,26 @@ void ServerPage::saveAddressesHiddenNode()
 	if ((vs_disc != detail.vs_disc) || (vs_dht != detail.vs_dht))
 		rsPeers->setVisState(ownId, vs_disc, vs_dht);
 
-	// Work out what we do with addresses!
-	//rsPeers->setExtAddress(ownId, ui.extAddress->text().toStdString(), ui.extPort->value());
-
-	if (detail.localPort != ui.localPort->value())
+	if (detail.localPort != ui.torpage_localPort->value())
 	{
 		// Set Local Address - force to 127.0.0.1
-		rsPeers->setLocalAddress(ownId, "127.0.0.1", ui.localPort->value());
+		rsPeers->setLocalAddress(ownId, "127.0.0.1", ui.torpage_localPort->value());
 	}
 
-	std::string hiddenAddr = ui.extAddress->text().toStdString();
-	uint16_t    hiddenPort = ui.extPort->value();
+	std::string hiddenAddr = ui.torpage_onionAddress->text().toStdString();
+	uint16_t    hiddenPort = ui.torpage_onionPort->value();
 	if ((hiddenAddr != detail.hiddenNodeAddress) || (hiddenPort != detail.hiddenNodePort))
 	{
 		rsPeers->setHiddenNode(ownId, hiddenAddr, hiddenPort);
 	}
-
 
 	// HANDLE PROXY SERVER.
 	std::string orig_proxyaddr;
 	uint16_t orig_proxyport;
 	rsPeers->getProxyServer(orig_proxyaddr, orig_proxyport);
 
-	std::string new_proxyaddr = ui.dynDNS -> text().toStdString();
-	uint16_t new_proxyport = ui.torPort -> value();
+	std::string new_proxyaddr = ui.torpage_proxyAddress -> text().toStdString();
+	uint16_t new_proxyport = ui.torpage_proxyPort -> value();
 
 	if ((new_proxyaddr != orig_proxyaddr) || (new_proxyport != orig_proxyport))
 	{
