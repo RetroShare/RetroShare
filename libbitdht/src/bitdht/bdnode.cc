@@ -750,10 +750,12 @@ void bdNode::processRemoteQuery()
 			{
 				std::cerr << "bdNode::processRemoteQuery() Query from BadPeer: Discarding: ";
 			}
+#ifdef DEBUG_NODE_MSGS 
 			else
 			{
 				std::cerr << "bdNode::processRemoteQuery() Query Too Old: Discarding: ";
 			}
+#endif
 			mFns->bdPrintId(std::cerr, &(query.mId));
 			std::cerr << std::endl;
 #ifdef DEBUG_NODE_MSGS 
@@ -819,11 +821,13 @@ void    bdNode::incomingMsg(struct sockaddr_in *addr, char *msg, int len)
 		bdNodeNetMsg *bdmsg = new bdNodeNetMsg(msg, len, addr);
 		mIncomingMsgs.push_back(bdmsg);
 	}
+#ifdef DEBUG_NODE_MSGOUT
         else
         {
                 std::cerr << "bdNode::incomingMsg() Incoming Packet Filtered";
                 std::cerr << std::endl;
         }
+#endif
 }
 
 /************************************ Message Handling *****************************/
@@ -1636,11 +1640,11 @@ void    bdNode::recvPkt(char *msg, int len, struct sockaddr_in addr)
 		}
 		case BITDHT_MSG_TYPE_CONNECT:  /* a: id, src, dest, mode, status, type */     
 		{
-//#ifdef DEBUG_NODE_MSGS 
+#ifdef DEBUG_NODE_MSGS 
 			std::cerr << "bdNode::recvPkt() ConnectMsg from: ";
 			mFns->bdPrintId(std::cerr, &srcId);
 			std::cerr << std::endl;
-//#endif
+#endif
 			msgin_connect_genmsg(&srcId, &transId, connType,
 					&connSrcAddr, &connDestAddr, 
 					connMode, connParam, connStatus);
@@ -2042,6 +2046,7 @@ std::string getConnectMsgType(int msgtype)
 
 void bdNode::msgout_connect_genmsg(bdId *id, bdToken *transId, int msgtype, bdId *srcAddr, bdId *destAddr, int mode, int param, int status)
 {
+#ifdef DEBUG_NODE_MSGOUT
 	std::cerr << "bdConnectManager::msgout_connect_genmsg() Type: " << getConnectMsgType(msgtype);
 	std::cerr << " TransId: ";
 	bdPrintTransId(std::cerr, transId);
@@ -2055,7 +2060,6 @@ void bdNode::msgout_connect_genmsg(bdId *id, bdToken *transId, int msgtype, bdId
 	std::cerr << " Param: " << param;
 	std::cerr << " Status: " << status;
 	std::cerr << std::endl;
-#ifdef DEBUG_NODE_MSGOUT
 #endif
 
 	switch(msgtype)
@@ -2091,6 +2095,7 @@ void bdNode::msgin_connect_genmsg(bdId *id, bdToken *transId, int msgtype,
 {
 	std::list<bdId>::iterator it;
 
+#ifdef DEBUG_NODE_MSGS
 	std::cerr << "bdConnectManager::msgin_connect_genmsg() Type: " << getConnectMsgType(msgtype);
 	std::cerr << " TransId: ";
 	bdPrintTransId(std::cerr, transId);
@@ -2104,7 +2109,6 @@ void bdNode::msgin_connect_genmsg(bdId *id, bdToken *transId, int msgtype,
 	std::cerr << " Param: " << param;
 	std::cerr << " Status: " << status;
 	std::cerr << std::endl;
-#ifdef DEBUG_NODE_MSGS
 #else
 	(void) transId;
 #endif
@@ -2370,8 +2374,10 @@ void bdNode::dropRelayServers()
 void bdNode::pingRelayServers()
 {
 	/* if Relay's have been switched on, do search/ping to locate servers */
+#ifdef DEBUG_NODE_MSGS
 	std::cerr << "bdNode::pingRelayServers()";
 	std::cerr << std::endl;
+#endif
 
 	bool doSearch = true;
 
@@ -2387,9 +2393,11 @@ void bdNode::pingRelayServers()
 			uint32_t qflags = BITDHT_QFLAGS_INTERNAL | BITDHT_QFLAGS_DISGUISE;
 			mQueryMgr->addQuery(&(*it), qflags);
 
+#ifdef DEBUG_NODE_MSGS
 			std::cerr << "bdNode::pingRelayServers() Adding Internal Search for Relay Server: ";
 			mFns->bdPrintNodeId(std::cerr, &(*it));
 			std::cerr << std::endl;
+#endif
 
 		}
 		else

@@ -505,9 +505,9 @@ void p3turtle::autoWash()
 	
 	for(uint32_t i=0;i<services_vpids_to_remove.size();++i)
 	{
-//#ifdef P3TURTLE_DEBUG
+#ifdef P3TURTLE_DEBUG
 		std::cerr << "  removing virtual peer id " << services_vpids_to_remove[i].second.second << " for service " << services_vpids_to_remove[i].first <<", for hash " << services_vpids_to_remove[i].second.first << std::endl ;
-//#endif
+#endif
 		services_vpids_to_remove[i].first->removeVirtualPeer(services_vpids_to_remove[i].second.first,services_vpids_to_remove[i].second.second) ;
 	}
 }
