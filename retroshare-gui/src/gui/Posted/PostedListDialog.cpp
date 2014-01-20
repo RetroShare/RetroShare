@@ -86,8 +86,8 @@ PostedListDialog::PostedListDialog(QWidget *parent)
 	/* create posted tree */
 	yourTopics = ui.groupTreeWidget->addCategoryItem(tr("My Topics"), QIcon(IMAGE_FOLDER), true);
 	subscribedTopics = ui.groupTreeWidget->addCategoryItem(tr("Subscribed Topics"), QIcon(IMAGE_FOLDERRED), true);
-	allTopics = ui.groupTreeWidget->addCategoryItem(tr("All Topics"), QIcon(IMAGE_FOLDERGREEN), false);
-	//otherTopics = ui.groupTreeWidget->addCategoryItem(tr("Other Topics"), QIcon(IMAGE_FOLDERYELLOW), false);
+	popularTopics = ui.groupTreeWidget->addCategoryItem(tr("Popular Topics"), QIcon(IMAGE_FOLDERGREEN), false);
+	otherTopics = ui.groupTreeWidget->addCategoryItem(tr("Other Topics"), QIcon(IMAGE_FOLDERYELLOW), false);
 
 	ui.hotSortButton->setChecked(true);
 
@@ -180,8 +180,6 @@ void PostedListDialog::groupListCustomPopupMenu(QPoint /*point*/)
 	action = contextMnu.addAction(QIcon(IMAGE_MESSAGE), tr("Subscribe"), this, SLOT(subscribeTopic()));
 	action->setEnabled(!isSubscribed);
 	action = contextMnu.addAction(QIcon(IMAGE_MESSAGE), tr("Unsubscribe"), this, SLOT(unsubscribeTopic()));
-	action->setEnabled(isSubscribed);
-	action = contextMnu.addAction(QIcon(IMAGE_FOLDERGREEN), tr("New Child-Group"), this, SLOT(newSubTopic()));
 	action->setEnabled(isSubscribed);
 
 	contextMnu.exec(QCursor::pos());
@@ -362,23 +360,6 @@ void PostedListDialog::newTopic()
 {
 	PostedGroupDialog cf (mPostedQueue, this);
 	cf.exec ();
-}
-void PostedListDialog::newSubTopic()
-{
-    std::cerr << "mCurrTopicId: " << mCurrTopicId << std::endl;
-    PostedGroupDialog cf (mPostedQueue, this);
-    cf.setParentLabel(mCurrTopicId.c_str());
-    cf.exec ();
-/*
-    if (mCurrTopicId.empty()) {
-        return;
-    }
-    RsPostedGroup grp;
-    grp.mMeta.mParentGroupId = mCurrTopicId;
-
-    PostedGroupDialog cf (grp, this);
-    GxsForumGroupDialog cf(grp, GxsGroupDialog::MODE_SHOW, this);
-    cf.exec ();*/
 }
 	
 void PostedListDialog::showGroupDetails()
@@ -942,16 +923,17 @@ void PostedListDialog::groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo
 	groupItemInfo.popularity = groupInfo.mPop;
 	groupItemInfo.lastpost = QDateTime::fromTime_t(groupInfo.mLastPost);
 	groupItemInfo.subscribeFlags = groupInfo.mSubscribeFlags;
-    groupItemInfo.parentId = QString::fromStdString(groupInfo.mParentGrpId);
 }
 
-void PostedListDialog::insertGroupData( std::list<RsGroupMetaData> &groupList)
+void PostedListDialog::insertGroupData(const std::list<RsGroupMetaData> &groupList)
 {
 	std::list<RsGroupMetaData>::const_iterator it;
 
 	QList<GroupItemInfo> adminList;
 	QList<GroupItemInfo> subList;
-    QList<GroupItemInfo> completeList;
+	QList<GroupItemInfo> popList;
+	QList<GroupItemInfo> otherList;
+	std::multimap<uint32_t, GroupItemInfo> popMap;
 
 	for (it = groupList.begin(); it != groupList.end(); it++) 
 	{
@@ -960,8 +942,6 @@ void PostedListDialog::insertGroupData( std::list<RsGroupMetaData> &groupList)
 
 		GroupItemInfo groupItemInfo;
 		groupInfoToGroupItemInfo(*it, groupItemInfo);
-
-        completeList.push_back(groupItemInfo);
 
 		if (IS_GROUP_SUBSCRIBED(flags))
 		{
@@ -974,12 +954,40 @@ void PostedListDialog::insertGroupData( std::list<RsGroupMetaData> &groupList)
 				subList.push_back(groupItemInfo);
 			}
 		}
+		else
+		{
+			popMap.insert(std::make_pair(it->mPop, groupItemInfo));
+		}
+	}
+
+	/* iterate backwards through popMap - take the top 5 or 10% of list */
+	uint32_t popCount = 5;
+	if (popCount < popMap.size() / 10)
+	{
+		popCount = popMap.size() / 10;
+	}
+
+	uint32_t i = 0;
+	uint32_t popLimit = 0;
+	std::multimap<uint32_t, GroupItemInfo>::reverse_iterator rit;
+	for(rit = popMap.rbegin(); ((rit != popMap.rend()) && (i < popCount)); rit++, i++) ;
+	if (rit != popMap.rend()) {
+		popLimit = rit->first;
+	}
+
+	for (rit = popMap.rbegin(); rit != popMap.rend(); rit++) {
+		if (rit->second.popularity < (int) popLimit) {
+			otherList.append(rit->second);
+		} else {
+			popList.append(rit->second);
+		}
 	}
 
 	/* now we can add them in as a tree! */
 	ui.groupTreeWidget->fillGroupItems(yourTopics, adminList);
 	ui.groupTreeWidget->fillGroupItems(subscribedTopics, subList);
-	ui.groupTreeWidget->fillGroupItems(allTopics, completeList);
+	ui.groupTreeWidget->fillGroupItems(popularTopics, popList);
+	ui.groupTreeWidget->fillGroupItems(otherTopics, otherList);
 }
 
 /**************************************************************************************/

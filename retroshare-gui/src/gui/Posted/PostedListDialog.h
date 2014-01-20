@@ -66,7 +66,6 @@ private slots:
 	void changedTopic(const QString &id);
 
 	void newTopic();
-	void newSubTopic();
 	void showGroupDetails();
 	void newPost();
 
@@ -127,7 +126,7 @@ private:
 	void updateDisplayedItems(const std::vector<RsGxsMessageId>& msgIds);
 	void updateCurrentDisplayComplete(const uint32_t& token);
 
-	void insertGroupData(std::list<RsGroupMetaData> &groupList);
+	void insertGroupData(const std::list<RsGroupMetaData> &groupList);
 	void groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo);
 
 	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
@@ -135,7 +134,8 @@ private:
 private:
 	QTreeWidgetItem *yourTopics;
 	QTreeWidgetItem *subscribedTopics;
-	QTreeWidgetItem *allTopics;
+	QTreeWidgetItem *popularTopics;
+	QTreeWidgetItem *otherTopics;
 
 	int	mSortMethod;
 	int	mLastSortMethod;
