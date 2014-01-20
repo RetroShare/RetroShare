@@ -230,9 +230,9 @@ int RsIntroServer::addNewUser(std::string certGPG)
 	std::cerr << std::endl;
 
 	RsPeerDetails pd;
-	std::string error_string;
+	uint32_t error_number;
 
-	bool ok = rsPeers->loadDetailsFromStringCert(certGPG, pd,error_string);
+	bool ok = rsPeers->loadDetailsFromStringCert(certGPG, pd,error_number);
 
 	if (ok)
 	{
