@@ -129,6 +129,7 @@ private slots:
     void shareKey();
 
     void loadImagesAlways();
+		void threadTitle_elisionChanged(bool elided);
 
 private:
     void insertForums();
