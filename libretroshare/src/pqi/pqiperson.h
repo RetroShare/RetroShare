@@ -179,6 +179,8 @@ int     handleNotifyEvent_locked(NetInterface *ni, int event, const struct socka
 
 	RsMutex mPersonMtx; /**** LOCKS below ****/
 
+int 	reset_locked();
+
 void    setRateCap_locked(float val_in, float val_out);
 
 	std::map<uint32_t, pqiconnect *> kids;

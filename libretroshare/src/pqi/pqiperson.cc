@@ -151,7 +151,7 @@ int	pqiperson::tick()
 				out += " No Heartbeat & No Packets -> assume dead. calling pqissl::reset()";
 				pqioutput(PQL_WARNING, pqipersonzone, out);
 	            	
-				this->reset();
+				this->reset_locked();
 			}
 	
 		}
@@ -384,6 +384,11 @@ int 	pqiperson::reset()
 {
 	RsStackMutex stack(mPersonMtx); /**** LOCK MUTEX ****/
 
+	return reset_locked();
+}
+
+int 	pqiperson::reset_locked()
+{
 	pqioutput(PQL_WARNING, pqipersonzone, "pqiperson::reset() resetting all pqiconnect for Id: " + PeerId());
 
 	std::map<uint32_t, pqiconnect *>::iterator it;

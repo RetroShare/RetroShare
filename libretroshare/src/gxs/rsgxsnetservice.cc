@@ -1646,10 +1646,13 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
 		RsNxsSyncGrpItem*& grpSyncItem = *llit;
 		const std::string& grpId = grpSyncItem->grpId;
 		metaIter = grpMetaMap.find(grpId);
-		bool haveItem = metaIter != grpMetaMap.end();
+		bool haveItem = false;
 		bool latestVersion = false;
-
-		latestVersion = grpSyncItem->publishTs > metaIter->second->mPublishTs;
+		if (metaIter != grpMetaMap.end())
+		{
+			haveItem = true;
+			latestVersion = grpSyncItem->publishTs > metaIter->second->mPublishTs;
+		}
 
 		if(!haveItem || (haveItem && latestVersion) ){
 

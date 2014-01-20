@@ -436,11 +436,13 @@ private:
 private:
 
     RsGeneralDataService* mDataStore;
+
+    RsMutex mDataMutex; /* protecting below */
+
     uint32_t mNextToken;
     std::map<uint32_t, uint32_t> mPublicToken;
     std::map<uint32_t, GxsRequest*> mRequests;
 
-    RsMutex mDataMutex;
 
 
 };

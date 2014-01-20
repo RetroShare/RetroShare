@@ -1165,7 +1165,7 @@ bool p3GxsChannels::generateVote(uint32_t &token, const RsGxsGroupId &grpId, con
 
 	uint32_t idx = (uint32_t) (ownIds.size() * RSRandom::random_f32());
 	uint32_t i = 0;
-	for(it = ownIds.begin(); (it != ownIds.end()) && (i < idx); it++, i++);
+	for(it = ownIds.begin(); (it != ownIds.end()) && (i < idx); it++, i++) ;
 
 	if (it != ownIds.end())
 	{

@@ -93,16 +93,15 @@ static const int PQISSL_SSL_CONNECT_TIMEOUT = 30;
 
 pqissl::pqissl(pqissllistener *l, PQInterface *parent, p3LinkMgr *lm)
 	:NetBinInterface(parent, parent->PeerId()), 
+	mLinkMgr(lm), pqil(l), 
 	mSslMtx("pqissl"),
-	waiting(WAITING_NOT), active(false), certvalid(false), 
+	active(false), certvalid(false), waiting(WAITING_NOT), 
 	sslmode(PQISSL_ACTIVE), ssl_connection(NULL), sockfd(-1), 
-	pqil(l),  // no init for remote_addr.
-	readpkt(NULL), pktlen(0), 
+	readpkt(NULL), pktlen(0), total_len(0),
 	attempt_ts(0),
 	sameLAN(false), n_read_zero(0), mReadZeroTS(0), 
 	mConnectDelay(0), mConnectTS(0),
-	mConnectTimeout(0), mTimeoutTS(0), mLinkMgr(lm)
-
+	mConnectTimeout(0), mTimeoutTS(0)
 {
 	RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
 

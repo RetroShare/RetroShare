@@ -51,7 +51,7 @@ void RsGxsMsgUpdateItem::clear()
 
 std::ostream& RsGxsMsgUpdateItem::print(std::ostream& out, uint16_t indent)
 {
-
+	return out;
 }
 
 
@@ -64,7 +64,7 @@ void RsGxsServerMsgUpdateItem::clear()
 
 std::ostream& RsGxsServerMsgUpdateItem::print(std::ostream& out, uint16_t indent)
 {
-
+	return out;
 }
 
 
@@ -75,7 +75,7 @@ void RsGxsServerGrpUpdateItem::clear()
 
 std::ostream& RsGxsServerGrpUpdateItem::print(std::ostream& out, uint16_t indent)
 {
-
+	return out;
 }
 
 

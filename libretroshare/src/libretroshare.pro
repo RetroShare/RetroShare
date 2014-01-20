@@ -711,11 +711,13 @@ gxs {
 		serialiser/rswireitems.cc \
 
 	# Posted Service
-	HEADERS += services/p3posted.h \
+	HEADERS += services/p3postbase.h \
+		services/p3posted.h \
 		retroshare/rsposted.h \
 		serialiser/rsposteditems.h
 
-	SOURCES +=  services/p3posted.cc \
+	SOURCES +=  services/p3postbase.cc \ 
+		services/p3posted.cc \
 		serialiser/rsposteditems.cc
 
 	#Photo Service

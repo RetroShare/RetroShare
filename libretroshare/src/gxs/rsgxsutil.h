@@ -143,7 +143,7 @@ class GroupUpdatePublish
 {
 public:
         GroupUpdatePublish(RsGxsGrpItem* item, RsGxsGroupUpdateMeta updateMeta, uint32_t token)
-            : grpItem(item),  mToken(token), mUpdateMeta(updateMeta) {}
+            : grpItem(item), mUpdateMeta(updateMeta), mToken(token) {}
 	RsGxsGrpItem* grpItem;
         RsGxsGroupUpdateMeta mUpdateMeta;
 	uint32_t mToken;

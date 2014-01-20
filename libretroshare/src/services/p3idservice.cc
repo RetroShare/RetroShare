@@ -139,9 +139,10 @@ RsIdentity *rsIdentity = NULL;
 
 p3IdService::p3IdService(RsGeneralDataService *gds, RsNetworkExchangeService *nes)
 	: RsGxsIdExchange(gds, nes, new RsGxsIdSerialiser(), RS_SERVICE_GXSV2_TYPE_GXSID, idAuthenPolicy()), 
-	RsIdentity(this), GxsTokenQueue(this), RsTickEvent(), mIdMtx("p3IdService"),
+	RsIdentity(this), GxsTokenQueue(this), RsTickEvent(), 
 	mPublicKeyCache(DEFAULT_MEM_CACHE_SIZE, "GxsIdPublicKeyCache"), 
-	mPrivateKeyCache(DEFAULT_MEM_CACHE_SIZE, "GxsIdPrivateKeyCache"), mNes(nes)
+	mPrivateKeyCache(DEFAULT_MEM_CACHE_SIZE, "GxsIdPrivateKeyCache"), 
+	mIdMtx("p3IdService"), mNes(nes)
 {
 	mBgSchedule_Mode = 0;
 	mBgSchedule_Active = false;
@@ -2884,7 +2885,7 @@ void p3IdService::generateDummy_FriendPGP()
 
 	int idx = RSRandom::random_f32() * (gpgids.size() - 1);
 	it = gpgids.begin();
-	for(int j = 0; j < idx; j++, it++);
+	for(int j = 0; j < idx; j++, it++) ;
 
 	// HACK FOR DUMMY GENERATION.
 	id.mMeta.mAuthorId = *it;

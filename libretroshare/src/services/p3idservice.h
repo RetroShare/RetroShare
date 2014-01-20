@@ -91,9 +91,9 @@ virtual	std::string save() const;
 	bool tagsPending() const;    // should we reprocess?
 	bool tagValid(int i) const;
 
+	uint32_t tagFlags;
 	time_t publishTs;
 	time_t lastCheckTs;
-	uint32_t tagFlags;
 };
 
 
