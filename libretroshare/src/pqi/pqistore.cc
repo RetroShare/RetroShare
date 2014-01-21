@@ -308,12 +308,21 @@ int     pqistore::readPkt(RsItem **item_out)
 	int extralen = getRsItemSize(block) - blen;
 	int totallen = extralen+blen;
 	
+	// make sure that totallen is not a crazy number. If so, we drop the entire stream that might be corrupted.
+	
+	if(totallen > 1024*1024)
+	{
+		std::cerr << "pqistore: ERROR: trying to realloc memory for packet of length" << totallen <<", which exceeds the allowed limit (1MB)" << std::endl ;
+		free(block) ;
+		bStopReading=true;
+		return 0 ;
+	}
 	void *tmp = realloc(block, totallen);
 
 	if (tmp == NULL) 
 	{
 		free(block);
-		std::cerr << "pqistore: ERROR: trying to realloc memory for packet of length" << extralen+blen << std::endl ;
+		std::cerr << "pqistore: ERROR: trying to realloc memory for packet of length" << totallen << std::endl ;
 		std::cerr << "Have you got enought memory?" << std::endl ;
 		bStopReading=true;
 		return 0 ;
@@ -506,8 +515,17 @@ int     pqiSSLstore::readPkt(RsItem **item_out)
 	int extralen = getRsItemSize(block) - blen;
 	int totallen = extralen+blen;
 
+	if(totallen > 1024*1024)
+	{
+		free(block);
+		std::cerr << "pqiSSLstore: ERROR: trying to realloc memory for packet of length" << totallen << ", that exceeds the limit of 1MB" << std::endl ;
+		bStopReading=true;
+		return 0 ;
+	}
 	void *tmp = realloc(block, totallen);
-	if (tmp == NULL) {
+
+	if (tmp == NULL) 
+	{
 		free(block);
 		std::cerr << "pqiSSLstore: ERROR: trying to realloc memory for packet of length" << extralen+blen << std::endl ;
 		std::cerr << "Have you got enought memory?" << std::endl ;
