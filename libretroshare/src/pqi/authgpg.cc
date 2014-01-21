@@ -470,29 +470,37 @@ bool AuthGPG::getGPGDetails(const std::string& id, RsPeerDetails &d)
 		return false ;
 	}
 
-	const PGPCertificateInfo *pc = PGPHandler::getCertificateInfo(PGPIdType(id)) ;
+	try
+	{
+		const PGPCertificateInfo *pc = PGPHandler::getCertificateInfo(PGPIdType(id)) ;
 
-	if(pc == NULL)
+		if(pc == NULL)
+			return false ;
+
+		const PGPCertificateInfo& cert(*pc) ;
+
+		d.id = id ;
+		d.gpg_id = id ;
+		d.name = cert._name;
+		d.lastUsed = cert._time_stamp;
+		d.email = cert._email;
+		d.trustLvl = cert._trustLvl;
+		d.validLvl = cert._trustLvl;
+		d.ownsign = cert._flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_HAS_OWN_SIGNATURE;
+		d.gpgSigners.clear() ;
+
+		for(std::set<std::string>::const_iterator it(cert.signers.begin());it!=cert.signers.end();++it)
+			d.gpgSigners.push_back( *it ) ;
+
+		d.fpr = cert._fpr.toStdString();
+		d.accept_connection = cert._flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_ACCEPT_CONNEXION;
+		d.hasSignedMe = cert._flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_HAS_SIGNED_ME;
+	}
+	catch(std::exception& e)
+	{
+		std::cerr << "(EE) exception raised while constructing a PGP certificate: " << e.what() << std::endl;
 		return false ;
-
-	const PGPCertificateInfo& cert(*pc) ;
-
-	d.id = id ;
-	d.gpg_id = id ;
-	d.name = cert._name;
-	d.lastUsed = cert._time_stamp;
-	d.email = cert._email;
-	d.trustLvl = cert._trustLvl;
-	d.validLvl = cert._trustLvl;
-	d.ownsign = cert._flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_HAS_OWN_SIGNATURE;
-	d.gpgSigners.clear() ;
-	for(std::set<std::string>::const_iterator it(cert.signers.begin());it!=cert.signers.end();++it)
-		d.gpgSigners.push_back( *it ) ;
-
-	d.fpr = cert._fpr.toStdString();
-
-	d.accept_connection = cert._flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_ACCEPT_CONNEXION;
-	d.hasSignedMe = cert._flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_HAS_SIGNED_ME;
+	}
 
 	return true;
 }
