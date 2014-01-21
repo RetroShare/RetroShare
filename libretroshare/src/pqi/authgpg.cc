@@ -383,7 +383,7 @@ std::string AuthGPG::getGPGName(const std::string &id,bool *success)
 	}
 	RsStackMutex stack(gpgMtxData); /******* LOCKED ******/
 
-	const PGPCertificateInfo *info = PGPHandler::getCertificateInfo(PGPIdType(id)) ;
+	const PGPCertificateInfo *info = getCertInfoFromStdString(id) ;
 
 	if(info != NULL)
 	{
@@ -401,7 +401,7 @@ std::string AuthGPG::getGPGName(const std::string &id,bool *success)
 std::string AuthGPG::getGPGEmail(const std::string &id,bool *success)
 {
 	RsStackMutex stack(gpgMtxData); /******* LOCKED ******/
-	const PGPCertificateInfo *info = PGPHandler::getCertificateInfo(PGPIdType(id)) ;
+	const PGPCertificateInfo *info = getCertInfoFromStdString(id) ;
 
 	if(info != NULL)
 	{
@@ -440,13 +440,25 @@ bool	AuthGPG::getGPGAllList(std::list<std::string> &ids)
 
 	return true;
 }
+const PGPCertificateInfo *AuthGPG::getCertInfoFromStdString(const std::string& pgp_id) const
+{
+	try
+	{
+		return PGPHandler::getCertificateInfo(PGPIdType(pgp_id)) ;
+	}
+	catch(std::exception& e)
+	{
+		std::cerr << "(EE) exception raised while constructing a PGP certificate from id \"" << pgp_id << "\": " << e.what() << std::endl;
+		return NULL ;
+	}
+}
 bool AuthGPG::haveSecretKey(const std::string& id) const
 {
 	return PGPHandler::haveSecretKey(PGPIdType(id)) ;
 }
 bool AuthGPG::isKeySupported(const std::string& id) const
 {
-	const PGPCertificateInfo *pc = PGPHandler::getCertificateInfo(PGPIdType(id)) ;
+	const PGPCertificateInfo *pc = getCertInfoFromStdString(id) ;
 
 	if(pc == NULL)
 		return false ;
@@ -470,37 +482,29 @@ bool AuthGPG::getGPGDetails(const std::string& id, RsPeerDetails &d)
 		return false ;
 	}
 
-	try
-	{
-		const PGPCertificateInfo *pc = PGPHandler::getCertificateInfo(PGPIdType(id)) ;
+	const PGPCertificateInfo *pc = getCertInfoFromStdString(id) ;
 
-		if(pc == NULL)
-			return false ;
-
-		const PGPCertificateInfo& cert(*pc) ;
-
-		d.id = id ;
-		d.gpg_id = id ;
-		d.name = cert._name;
-		d.lastUsed = cert._time_stamp;
-		d.email = cert._email;
-		d.trustLvl = cert._trustLvl;
-		d.validLvl = cert._trustLvl;
-		d.ownsign = cert._flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_HAS_OWN_SIGNATURE;
-		d.gpgSigners.clear() ;
-
-		for(std::set<std::string>::const_iterator it(cert.signers.begin());it!=cert.signers.end();++it)
-			d.gpgSigners.push_back( *it ) ;
-
-		d.fpr = cert._fpr.toStdString();
-		d.accept_connection = cert._flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_ACCEPT_CONNEXION;
-		d.hasSignedMe = cert._flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_HAS_SIGNED_ME;
-	}
-	catch(std::exception& e)
-	{
-		std::cerr << "(EE) exception raised while constructing a PGP certificate: " << e.what() << std::endl;
+	if(pc == NULL)
 		return false ;
-	}
+
+	const PGPCertificateInfo& cert(*pc) ;
+
+	d.id = id ;
+	d.gpg_id = id ;
+	d.name = cert._name;
+	d.lastUsed = cert._time_stamp;
+	d.email = cert._email;
+	d.trustLvl = cert._trustLvl;
+	d.validLvl = cert._trustLvl;
+	d.ownsign = cert._flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_HAS_OWN_SIGNATURE;
+	d.gpgSigners.clear() ;
+
+	for(std::set<std::string>::const_iterator it(cert.signers.begin());it!=cert.signers.end();++it)
+		d.gpgSigners.push_back( *it ) ;
+
+	d.fpr = cert._fpr.toStdString();
+	d.accept_connection = cert._flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_ACCEPT_CONNEXION;
+	d.hasSignedMe = cert._flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_HAS_SIGNED_ME;
 
 	return true;
 }

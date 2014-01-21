@@ -249,6 +249,10 @@ class AuthGPG: public p3Config, public RsThread, public PGPHandler
 		/*****************************************************************/
 
 	private:
+		// Gets the certificate pointer and returns NULL if the string is invalid, or the
+		// cert was not found.
+		//
+		const PGPCertificateInfo *getCertInfoFromStdString(const std::string& ) const;
 
 		/* SKTAN */
 		//void showData(gpgme_data_t dh);
