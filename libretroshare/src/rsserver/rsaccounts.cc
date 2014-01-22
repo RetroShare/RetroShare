@@ -30,6 +30,10 @@
  *
  */
 
+#ifdef WINDOWS_SYS
+#include "util/rswin.h"
+#endif // WINDOWS_SYS
+
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -307,7 +311,7 @@ bool RsAccountsDetail::defaultBaseDirectory()
 	basedir += "/.retroshare6";
 
 #else
-	if (RsInitConfig::portable) 
+	if (RsInit::isPortable())
 	{
 		// use directory "Data" in portable version
 		basedir = "Data";
@@ -866,14 +870,8 @@ bool RsAccountsDetail::copyGnuPGKeyrings()
 	std::string source_secret_keyring;
 
 #ifdef WINDOWS_SYS
-	if (RsInit::isPortable())
-	{
-		source_public_keyring = RsInit::RsConfigDirectory() + "/gnupg/pubring.gpg";
-		source_secret_keyring = RsInit::RsConfigDirectory() + "/gnupg/secring.gpg" ;
-	} else {
-		source_public_keyring = RsInitConfig::basedir + "/../gnupg/pubring.gpg" ;
-		source_secret_keyring = RsInitConfig::basedir + "/../gnupg/secring.gpg" ;
-	}
+	source_public_keyring = mBaseDirectory + "/gnupg/pubring.gpg";
+	source_secret_keyring = mBaseDirectory + "/gnupg/secring.gpg" ;
 #else
 	char *env_gnupghome = getenv("GNUPGHOME") ;
 

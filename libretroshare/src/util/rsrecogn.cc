@@ -23,6 +23,10 @@
  *
  */
 
+#ifdef WINDOWS_SYS
+#include "util/rswin.h"
+#endif // WINDOWS_SYS
+
 #include <openssl/ssl.h>
 #include <openssl/evp.h>
 
