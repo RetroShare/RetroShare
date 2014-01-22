@@ -728,13 +728,26 @@ bool p3ChatService::locked_bouncingObjectCheck(RsChatLobbyBouncingObject *obj,co
 
 	std::string pid = peer_id + "_" + os.str() ;
 
+	// Check for the number of peers in the lobby. First look into visible lobbies, because the number
+	// of peers there is more accurate. If non existant (because it's a private lobby), take the count from
+	// the current lobby list.
+	//
 	std::map<ChatLobbyId,VisibleChatLobbyRecord>::const_iterator it = _visible_lobbies.find(obj->lobby_id) ;
-	if(it == _visible_lobbies.end())
+
+	if(it != _visible_lobbies.end())
+		lobby_count = it->second.total_number_of_peers ;
+	else
 	{
-		std::cerr << "p3ChatService::locked_bouncingObjectCheck(): weird situation: cannot find lobby in visible lobbies. Dropping message. If you see this, contact the developers." << std::endl;
-		return false ;
+		std::map<ChatLobbyId,ChatLobbyEntry>::const_iterator it = _chat_lobbys.find(obj->lobby_id) ;
+
+		if(it != _chat_lobbys.end())
+			lobby_count = it->second.nick_names.size() ;
+		else
+		{
+			std::cerr << "p3ChatService::locked_bouncingObjectCheck(): weird situation: cannot find lobby in visible lobbies nor current lobbies. Dropping message. If you see this, contact the developers." << std::endl;
+			return false ;
+		}
 	}
-	lobby_count = it->second.total_number_of_peers ;
 
 	// max objects per second: lobby_count * 1/MAX_DELAY_BETWEEN_LOBBY_KEEP_ALIVE objects per second.
 	// So in cache, there is in average that number times MAX_MESSAGES_PER_SECONDS_PERIOD
@@ -2239,7 +2252,7 @@ bool p3ChatService::bounceLobbyObject(RsChatLobbyBouncingObject *item,const std:
 		return false ;
 	}
 #ifdef CHAT_DEBUG
-	std::cerr << "  Msg already not received already. Adding in cache, and forwarding!" << std::endl ;
+	std::cerr << "  Msg not received already. Adding in cache, and forwarding!" << std::endl ;
 #endif
 
 	lobby.msg_cache[item->msg_id] = now ;
