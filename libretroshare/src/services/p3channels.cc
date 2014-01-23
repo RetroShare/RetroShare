@@ -265,8 +265,7 @@ bool p3Channels::ChannelMessageSend(ChannelMsgInfo &info)
 	if((info.thumbnail.image_thumbnail != NULL) &&
 			(info.thumbnail.im_thumbnail_size > 0)){
 
-		cmsg->thumbnail.binData.bin_data =
-				new unsigned char[info.thumbnail.im_thumbnail_size];
+		cmsg->thumbnail.binData.bin_data = (unsigned char*)malloc(info.thumbnail.im_thumbnail_size);
 
 		memcpy(cmsg->thumbnail.binData.bin_data, info.thumbnail.image_thumbnail,
 				info.thumbnail.im_thumbnail_size*sizeof(unsigned char));
