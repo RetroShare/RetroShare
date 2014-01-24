@@ -380,7 +380,7 @@ std::ostream &RsTlvSecurityKeySet::print(std::ostream &out, uint16_t indent)
 RsTlvKeySignature::RsTlvKeySignature()
 	:RsTlvItem(), signData(TLV_TYPE_SIGN_RSA_SHA1)
 {
-	return;
+	ShallowClear() ;	// avoids uninitialized memory if the fields are not initialized.
 }
 
 void RsTlvKeySignature::TlvClear()
