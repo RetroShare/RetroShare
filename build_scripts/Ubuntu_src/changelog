@@ -25,6 +25,10 @@ retroshare (0.5.5-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
             when no lobby ihas been found yet. Code beautification
          * added lobby ID as tooltip to lobby list
 
+      - Forums
+         * added ElidedLabel to be used in places where labels might be too long and therefore 
+           trigger an unwanted window resize. This is currently used as forum thread titles (Patch from Phenom)
+
       - Channels
          * patch "Fix_ChannelNotificationFeedLink" from Phenom. Allows to finish loading a channel 
            before jumping to the linked post
@@ -36,6 +40,11 @@ retroshare (0.5.5-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
          * Corrected the layout of the Connect Progress Dialog
          * Changed the logo size for some news feed items to use same size for better look.
          * Added to display blue/black forum message icons for the forum feeds, when forum is anon or signed.
+         * Added new feed item types and logic to show connection attempts from forged certificates 
+            (e.g. bad signature, bad certificate)
+         * Limit number of feed items to 500 to avoid flooding
+         * Changed the default stylesheet color for the Security Feed
+         * improved display/fixed bugs in security item
 
       - plugins
          * Added service pointer for forums to the plugin interface
@@ -56,6 +65,10 @@ retroshare (0.5.5-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
          * added an option in the pro file for dsdv, as it is compiled when not used
          * removed status member from FileDetails. Not used => misleading
          * removed asserts in reader_armoured.c, reader_encrypted_se.c, reader_encrypted_seip.c, readerwriter.c
+         * Allow loading packets of large size from config files (fixed storing of big messages), 
+           and continue on config files skipping items that cannot be deserialised (Modified patch from Phenom)
+         * put a hard limit to packet size in pqistore to avoid calling realloc with fancy numbers 
+           when the stream has been corrupted
 
    * Bug fixes
       - fixed bug due to ot sending notifications to the file lists
@@ -67,6 +80,14 @@ retroshare (0.5.5-0.XXXXXX~YYYYYY) YYYYYY; urgency=low
       - added check to only import version 4 keys in the keyring
       - fixed error handling in certificates that could crash RS when a bad cert is pasted
       - fixed proper handling in failed malloc in openpgp-sdk, causing crash with deliberate bad cert.
+      - fixed small error in pgphandler, potentially adding empty certs in database
+      - limited the number of packets to be parsed in a row, to prevent compressed 
+        data to contain an enormous number of packets. Fixes one possible attack pointed out by HM
+      - removed potential uninitialized memory read in TlvKey item.
+      - fixed mismatched free/delete in p3channels.cc
+      - fixed bug introduced in 6965 that prevented people joining private lobbies to see the messages and talk
+      - fixed potential attack by supplying non hexadecimal strings as certificate common name
+      - Fixed spaces in copy/paste of rich text (Patch from Phenom)
 
  -- Cyril Soler <csoler@users.sourceforge.net>  Thu, 09 Jan 2014 20:00:00 +0100
 
