@@ -162,7 +162,7 @@ const char *RsDirUtil::scanf_string_for_uint(int bytes)
 {
 	const char *strgs[3] = { "%u","%lu","%llu" } ;
 
-	std::cerr << "RsDirUtil::scanf_string_for_uint(): returning for bytes=" << bytes << std::endl;
+	//std::cerr << "RsDirUtil::scanf_string_for_uint(): returning for bytes=" << bytes << std::endl;
 
 	if(sizeof(unsigned int) == bytes)
 		return strgs[0] ;
