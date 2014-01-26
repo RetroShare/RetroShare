@@ -339,14 +339,12 @@ ops_boolean_t ops_decrypt_memory(const unsigned char *encrypted_memory,int em_le
     
     // Do it
 
-    ops_parse_and_print_errors(pinfo);
+	 ops_boolean_t res = ops_parse_and_print_errors(pinfo);
 
     // Unsetup
 
     if (use_armour)
         ops_reader_pop_dearmour(pinfo);
-
-	 ops_boolean_t res = ops_true ;
 
 	 // copy output memory to supplied buffer.
 	 //
