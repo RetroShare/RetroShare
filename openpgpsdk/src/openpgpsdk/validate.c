@@ -351,6 +351,7 @@ ops_validate_key_cb(const ops_parser_content_t *content_,ops_parse_cb_info_t *cb
 		default:
 			fprintf(stderr,"unexpected tag=0x%x\n",content_->tag);
 			//assert(0);
+			OPS_ERROR_1(errors, OPS_E_V_NO_SIGNATURE, "Unknown PTAG 0x%02x in validation packet\n",content_->tag);
 			break;
 	}
 	return OPS_RELEASE_MEMORY;
@@ -483,6 +484,7 @@ validate_data_cb(const ops_parser_content_t *content_,ops_parse_cb_info_t *cbinf
 		default:
 			fprintf(stderr,"unexpected tag=0x%x\n",content_->tag);
 			//assert(0);
+			OPS_ERROR_1(errors, OPS_E_V_NO_SIGNATURE, "Unknown PTAG 0x%02x in validation packet\n",content_->tag);
 			break;
 	}
 	return OPS_RELEASE_MEMORY;
