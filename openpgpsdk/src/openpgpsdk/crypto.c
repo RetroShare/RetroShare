@@ -457,7 +457,7 @@ ops_boolean_t ops_decrypt_file(const char* input_filename,
     
     // Do it
 
-    ops_parse_and_print_errors(pinfo);
+	 ops_boolean_t res = ops_parse_and_print_errors(pinfo);
 
     // Unsetup
 
@@ -468,7 +468,7 @@ ops_boolean_t ops_decrypt_file(const char* input_filename,
     ops_teardown_file_read(pinfo, fd_in);
     // \todo cleardown crypt
 
-    return ops_true;
+    return res;
 }
 static ops_parse_cb_return_t
 callback_write_parsed(const ops_parser_content_t *content_,
