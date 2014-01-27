@@ -57,10 +57,20 @@ int ops_decrypt_and_unencode_mpi(unsigned char *buf, unsigned buflen,
 
     mpisize=BN_num_bytes(encmpi);
     /* MPI can't be more than 65,536 */
-    assert(mpisize <= sizeof encmpibuf);
+
+	 if(!(mpisize <= sizeof encmpibuf)) // ASSERT(mpisize <= sizeof encmpibuf);
+	 {
+		 fprintf(stderr,"ops_decrypt_and_unencode_mpi: number size too large (%d bytes!).\n",mpisize) ;
+		 return -1 ;
+	 }
+
     BN_bn2bin(encmpi, encmpibuf);
 
-    assert(skey->public_key.algorithm == OPS_PKA_RSA);
+    if(!(skey->public_key.algorithm == OPS_PKA_RSA)) // ASSERT(skey->public_key.algorithm == OPS_PKA_RSA);
+	 {
+		 fprintf(stderr,"ops_decrypt_and_unencode_mpi: encryption algorithm %02x is not supported. Sorry.\n",skey->public_key.algorithm) ;
+		 return -1 ;
+	 }
 
     /*
     fprintf(stderr,"\nDECRYPTING\n");
@@ -72,7 +82,9 @@ int ops_decrypt_and_unencode_mpi(unsigned char *buf, unsigned buflen,
 
     n=ops_rsa_private_decrypt(mpibuf, encmpibuf, (BN_num_bits(encmpi)+7)/8,
 			      &skey->key.rsa, &skey->public_key.key.rsa);
-    assert(n != -1);
+
+//	 if(n == -1)	// assert(n != -1);
+//		 return ops_false ;
 
     /*
     fprintf(stderr,"decrypted encoded m buf     : ");
@@ -128,31 +140,33 @@ ops_boolean_t ops_rsa_encrypt_mpi(const unsigned char *encoded_m_buf,
 				  const size_t sz_encoded_m_buf,
 				  const ops_public_key_t *pkey,
 				  ops_pk_session_key_parameters_t *skp)
-    {
-    assert(sz_encoded_m_buf==(size_t) BN_num_bytes(pkey->key.rsa.n));
+{
+	if(!(sz_encoded_m_buf==(size_t) BN_num_bytes(pkey->key.rsa.n))) // ASSERT(sz_encoded_m_buf==(size_t) BN_num_bytes(pkey->key.rsa.n));
+	return ops_false ;
 
-    unsigned char encmpibuf[8192];
-    int n=0;
+	unsigned char encmpibuf[8192];
+	int n=0;
 
-    n=ops_rsa_public_encrypt(encmpibuf, encoded_m_buf, sz_encoded_m_buf,
-			     &pkey->key.rsa);
-    assert(n!=-1);
+	n=ops_rsa_public_encrypt(encmpibuf, encoded_m_buf, sz_encoded_m_buf, &pkey->key.rsa);
 
-    if(n <= 0)
-	return ops_false;
+	//if(!(n!=-1)) // ASSERT(n!=-1);
+	//	return ops_false ;
 
-    skp->rsa.encrypted_m=BN_bin2bn(encmpibuf, n, NULL);
+	if(n <= 0)
+		return ops_false;
 
-    /*
-    fprintf(stderr,"encrypted mpi buf     : ");
-    int i;
-    for (i=0; i<16; i++)
-        fprintf(stderr,"%2x ", encmpibuf[i]);
-    fprintf(stderr,"\n");
-    */
+	skp->rsa.encrypted_m=BN_bin2bn(encmpibuf, n, NULL);
 
-    return ops_true;
-    }
+	/*
+		fprintf(stderr,"encrypted mpi buf     : ");
+		int i;
+		for (i=0; i<16; i++)
+		fprintf(stderr,"%2x ", encmpibuf[i]);
+		fprintf(stderr,"\n");
+	 */
+
+	return ops_true;
+}
 
 #define MAXBUF 1024
 
@@ -207,17 +221,19 @@ ops_boolean_t ops_encrypt_file(const char* input_filename,
 
     unsigned buffer[10240];
     for (;;)
-        {
-	int n=0;
+	 {
+		 int n=0;
 
-	n=read(fd_in, buffer, sizeof buffer);
-	if (!n)
-	    break;
-	assert(n >= 0);
+		 n=read(fd_in, buffer, sizeof buffer);
+		 if (!n)
+			 break;
 
-	// FIXME: apparently writing can't fail.
-	ops_write(buffer, n, cinfo);
-        }
+		 if(n < 0)
+			 return ops_false ;
+
+		 // FIXME: apparently writing can't fail.
+		 ops_write(buffer, n, cinfo);
+	 }
 
 
     // tidy up
@@ -473,77 +489,76 @@ ops_boolean_t ops_decrypt_file(const char* input_filename,
 static ops_parse_cb_return_t
 callback_write_parsed(const ops_parser_content_t *content_,
 		      ops_parse_cb_info_t *cbinfo)
-    {
-    ops_parser_content_union_t* content
-	=(ops_parser_content_union_t *)&content_->content;
-    static ops_boolean_t skipping;
-    //    ops_boolean_t write=ops_true;
+{
+	ops_parser_content_union_t* content
+		=(ops_parser_content_union_t *)&content_->content;
+	static ops_boolean_t skipping;
+	//    ops_boolean_t write=ops_true;
 
-    OPS_USED(cbinfo);
+	OPS_USED(cbinfo);
 
-//    ops_print_packet(content_);
+	//    ops_print_packet(content_);
 
-    if(content_->tag != OPS_PTAG_CT_UNARMOURED_TEXT && skipping)
+	if(content_->tag != OPS_PTAG_CT_UNARMOURED_TEXT && skipping)
 	{
-	puts("...end of skip");
-	skipping=ops_false;
+		puts("...end of skip");
+		skipping=ops_false;
 	}
 
-    switch(content_->tag)
+	switch(content_->tag)
 	{
-    case OPS_PTAG_CT_UNARMOURED_TEXT:
-	printf("OPS_PTAG_CT_UNARMOURED_TEXT\n");
-	if(!skipping)
-	    {
-	    puts("Skipping...");
-	    skipping=ops_true;
-	    }
-	fwrite(content->unarmoured_text.data, 1,
-	       content->unarmoured_text.length, stdout);
-	break;
+		case OPS_PTAG_CT_UNARMOURED_TEXT:
+			printf("OPS_PTAG_CT_UNARMOURED_TEXT\n");
+			if(!skipping)
+			{
+				puts("Skipping...");
+				skipping=ops_true;
+			}
+			fwrite(content->unarmoured_text.data, 1,
+					content->unarmoured_text.length, stdout);
+			break;
 
-    case OPS_PTAG_CT_PK_SESSION_KEY:
-        return callback_pk_session_key(content_, cbinfo);
-        break;
+		case OPS_PTAG_CT_PK_SESSION_KEY:
+			return callback_pk_session_key(content_, cbinfo);
+			break;
 
-    case OPS_PARSER_CMD_GET_SECRET_KEY:
-        return callback_cmd_get_secret_key(content_, cbinfo);
-        break;
+		case OPS_PARSER_CMD_GET_SECRET_KEY:
+			return callback_cmd_get_secret_key(content_, cbinfo);
+			break;
 
-    case OPS_PARSER_CMD_GET_SK_PASSPHRASE:
-    case OPS_PARSER_CMD_GET_SK_PASSPHRASE_PREV_WAS_BAD:
-        //        return callback_cmd_get_secret_key_passphrase(content_,cbinfo);
-        return cbinfo->cryptinfo.cb_get_passphrase(content_, cbinfo);
-        break;
+		case OPS_PARSER_CMD_GET_SK_PASSPHRASE:
+		case OPS_PARSER_CMD_GET_SK_PASSPHRASE_PREV_WAS_BAD:
+			//        return callback_cmd_get_secret_key_passphrase(content_,cbinfo);
+			return cbinfo->cryptinfo.cb_get_passphrase(content_, cbinfo);
+			break;
 
-    case OPS_PTAG_CT_LITERAL_DATA_BODY:
-        return callback_literal_data(content_, cbinfo);
-	break;
+		case OPS_PTAG_CT_LITERAL_DATA_BODY:
+			return callback_literal_data(content_, cbinfo);
+			break;
 
-    case OPS_PTAG_CT_ARMOUR_HEADER:
-    case OPS_PTAG_CT_ARMOUR_TRAILER:
-    case OPS_PTAG_CT_ENCRYPTED_PK_SESSION_KEY:
-    case OPS_PTAG_CT_COMPRESSED:
-    case OPS_PTAG_CT_LITERAL_DATA_HEADER:
-    case OPS_PTAG_CT_SE_IP_DATA_BODY:
-    case OPS_PTAG_CT_SE_IP_DATA_HEADER:
-    case OPS_PTAG_CT_SE_DATA_BODY:
-    case OPS_PTAG_CT_SE_DATA_HEADER:
+		case OPS_PTAG_CT_ARMOUR_HEADER:
+		case OPS_PTAG_CT_ARMOUR_TRAILER:
+		case OPS_PTAG_CT_ENCRYPTED_PK_SESSION_KEY:
+		case OPS_PTAG_CT_COMPRESSED:
+		case OPS_PTAG_CT_LITERAL_DATA_HEADER:
+		case OPS_PTAG_CT_SE_IP_DATA_BODY:
+		case OPS_PTAG_CT_SE_IP_DATA_HEADER:
+		case OPS_PTAG_CT_SE_DATA_BODY:
+		case OPS_PTAG_CT_SE_DATA_HEADER:
 
-	// Ignore these packets 
-	// They're handled in ops_parse_one_packet()
-	// and nothing else needs to be done
-	break;
+			// Ignore these packets 
+			// They're handled in ops_parse_one_packet()
+			// and nothing else needs to be done
+			break;
 
-    default:
-        //        return callback_general(content_,cbinfo);
-        break;
-        //	fprintf(stderr,"Unexpected packet tag=%d (0x%x)\n",content_->tag,
-        //		content_->tag);
-        //	assert(0);
+		default:
+			//        return callback_general(content_,cbinfo);
+			break;
+			//	fprintf(stderr,"Unexpected packet tag=%d (0x%x)\n",content_->tag,
+			//		content_->tag);
 	}
 
-    return OPS_RELEASE_MEMORY;
-    }
+	return OPS_RELEASE_MEMORY;
+}
 
 // EOF
