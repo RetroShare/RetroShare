@@ -872,7 +872,7 @@ bool RsGxsNetService::locked_processTransac(RsNxsTransac* item)
 void RsGxsNetService::run(){
 
 
-    double timeDelta = 0.2;
+    double timeDelta = 0.5;
     int updateCounter = 0;
 
     while(isRunning()){
@@ -883,7 +883,7 @@ void RsGxsNetService::run(){
         Sleep((int) (timeDelta * 1000));
 #endif
 
-        if(updateCounter == 3)
+        if(updateCounter == 20)
         {
         	updateServerSyncTS();
         	updateCounter = 0;

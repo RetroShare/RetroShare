@@ -2247,6 +2247,9 @@ void RsGenExchange::processRecvdMessages()
     	}
     }
 
+    if(mReceivedMsgs.empty())
+        return;
+
     std::vector<RsNxsMsg*>::iterator vit = mReceivedMsgs.begin();
     GxsMsgReq msgIds;
     std::map<RsNxsMsg*, RsGxsMsgMetaData*> msgs;
@@ -2369,6 +2372,9 @@ void RsGenExchange::processRecvdMessages()
 void RsGenExchange::processRecvdGroups()
 {
     RsStackMutex stack(mGenMtx);
+
+    if(mReceivedGrps.empty())
+        return;
 
     NxsGrpPendValidVect::iterator vit = mReceivedGrps.begin();
     std::vector<std::string> existingGrpIds;
