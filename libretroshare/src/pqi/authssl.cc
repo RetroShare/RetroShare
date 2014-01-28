@@ -60,6 +60,7 @@ const uint32_t RS_SSL_HANDSHAKE_DIAGNOSTIC_CERTIFICATE_NOT_VALID = 0x02 ;
 const uint32_t RS_SSL_HANDSHAKE_DIAGNOSTIC_ISSUER_UNKNOWN        = 0x03 ; 
 const uint32_t RS_SSL_HANDSHAKE_DIAGNOSTIC_MALLOC_ERROR          = 0x04 ; 
 const uint32_t RS_SSL_HANDSHAKE_DIAGNOSTIC_WRONG_SIGNATURE       = 0x05 ; 
+const uint32_t RS_SSL_HANDSHAKE_DIAGNOSTIC_CERTIFICATE_MISSING   = 0x06 ; 
 
 /****
  * #define AUTHSSL_DEBUG 1
@@ -1411,7 +1412,7 @@ bool    AuthSSLimpl::FailedCertificate(X509 *x509, const std::string& gpgid,
 
 	if(x509 == NULL)
 	{
-		auth_diagnostic = RS_SSL_HANDSHAKE_DIAGNOSTIC_CERTIFICATE_NOT_VALID ;
+		auth_diagnostic = RS_SSL_HANDSHAKE_DIAGNOSTIC_CERTIFICATE_MISSING ;
 		authed = false ;
 	}
 	else
@@ -1429,6 +1430,8 @@ bool    AuthSSLimpl::FailedCertificate(X509 *x509, const std::string& gpgid,
 
 		switch(auth_diagnostic)
 		{
+			case RS_SSL_HANDSHAKE_DIAGNOSTIC_CERTIFICATE_MISSING: 	RsServer::notify()->AddFeedItem(RS_FEED_ITEM_SEC_MISSING_CERTIFICATE, gpgid, sslid, sslcn, ip_address);
+																					  	break ;
 			case RS_SSL_HANDSHAKE_DIAGNOSTIC_CERTIFICATE_NOT_VALID: 	RsServer::notify()->AddFeedItem(RS_FEED_ITEM_SEC_BAD_CERTIFICATE, gpgid, sslid, sslcn, ip_address);
 																					  	break ;
 			case RS_SSL_HANDSHAKE_DIAGNOSTIC_ISSUER_UNKNOWN: 			RsServer::notify()->AddFeedItem(RS_FEED_ITEM_SEC_UNKNOWN_IN     , gpgid, sslid, sslcn, ip_address);

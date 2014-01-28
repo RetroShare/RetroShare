@@ -130,6 +130,11 @@ void SecurityItem::updateItemStatic()
 			title = tr("Certificate has wrong signature!! This peer is not who he claims to be.");
 			requestLabel->hide();
 			break;
+		case RS_FEED_ITEM_SEC_MISSING_CERTIFICATE:
+			title = tr("Peer/location not in friendlist (PGP id=")+QString::fromStdString(mGpgId)+")";
+			avatar->setDefaultAvatar(":images/avatar_request_unknown.png");
+			requestLabel->show();
+			break;
 		case RS_FEED_ITEM_SEC_BAD_CERTIFICATE:
 			{
 			RsPeerDetails details ;
