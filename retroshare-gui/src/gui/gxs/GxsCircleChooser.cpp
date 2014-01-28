@@ -36,9 +36,10 @@ GxsCircleChooser::GxsCircleChooser(QWidget *parent)
 	return;
 }
 
-void GxsCircleChooser::loadCircles(uint32_t chooserFlags)
+void GxsCircleChooser::loadCircles(uint32_t chooserFlags, const RsGxsCircleId &defaultId)
 {
 	mFlags = chooserFlags;
+	mDefaultCircleId = defaultId;
 	loadGxsCircles();
 }
 
@@ -84,7 +85,9 @@ void GxsCircleChooser::loadGxsCircles()
 	}	
 
 	std::list<RsGxsCircleId>::iterator it;
-	for(it = ids.begin(); it != ids.end(); it++)
+	int i = 0; 
+	int def = -1;
+	for(it = ids.begin(); it != ids.end(); it++, i++)
 	{
 		/* add to Chooser */
 		QString str;
@@ -97,6 +100,16 @@ void GxsCircleChooser::loadGxsCircles()
 		QString id = QString::fromStdString(*it);
 
 		addItem(str, id);
+
+		if (mDefaultCircleId == *it)
+		{
+			def = i;
+		}
+	}
+
+	if (def >= 0)
+	{
+		setCurrentIndex(def);
 	}
 }
 

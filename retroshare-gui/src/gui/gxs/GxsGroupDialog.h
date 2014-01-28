@@ -55,13 +55,14 @@ public:
 
 /*** Group flags affect what is visually enabled that gets input into the grpMeta ***/
 
-#define GXS_GROUP_FLAGS_ICON			0x00000001
-#define GXS_GROUP_FLAGS_DESCRIPTION		0x00000002
-#define GXS_GROUP_FLAGS_DISTRIBUTION	0x00000004
-#define GXS_GROUP_FLAGS_PUBLISHSIGN		0x00000008
-#define GXS_GROUP_FLAGS_SHAREKEYS		0x00000010
-#define GXS_GROUP_FLAGS_PERSONALSIGN	0x00000020
-#define GXS_GROUP_FLAGS_COMMENTS		0x00000040
+#define GXS_GROUP_FLAGS_NAME			0x00000001
+#define GXS_GROUP_FLAGS_ICON			0x00000002
+#define GXS_GROUP_FLAGS_DESCRIPTION		0x00000004
+#define GXS_GROUP_FLAGS_DISTRIBUTION		0x00000008
+#define GXS_GROUP_FLAGS_PUBLISHSIGN		0x00000010
+#define GXS_GROUP_FLAGS_SHAREKEYS		0x00000020
+#define GXS_GROUP_FLAGS_PERSONALSIGN		0x00000040
+#define GXS_GROUP_FLAGS_COMMENTS		0x00000080
 
 #define GXS_GROUP_FLAGS_EXTRA			0x00000100
 
@@ -102,7 +103,7 @@ public:
  * The long term plan is perhap logic structure (i.e. code) will be moved into each GXS \n
  * service for better customisation of group creation, or perhaps not!
  */
-class GxsGroupDialog : public QDialog
+class GxsGroupDialog : public QDialog, public TokenResponse
 {
 	Q_OBJECT
 
@@ -131,7 +132,7 @@ public:
 	 * @param parent The parent dialog
 	 * @param mode
 	 */
-	GxsGroupDialog(TokenQueue* tokenQueue, uint32_t enableFlags, uint16_t defaultFlags, QWidget *parent = NULL);
+	GxsGroupDialog(TokenQueue* tokenQueue, uint32_t enableFlags, uint32_t defaultFlags, QWidget *parent = NULL);
 
 	/*!
 	 * Contructs a GxsGroupDialog for display a group or editing
@@ -139,9 +140,12 @@ public:
 	 * @param mode This determines whether the dialog starts in show or edit mode (Edit not supported yet)
 	 * @param parent
 	 */
-	GxsGroupDialog(const RsGroupMetaData& grpMeta, Mode mode, QWidget *parent = NULL);
+	GxsGroupDialog(TokenQueue *tokenExternalQueue, RsTokenService *tokenService, Mode mode, RsGxsGroupId groupId, uint32_t enableFlags, uint32_t defaultFlags, QWidget *parent = NULL);
 
 	uint32_t mode() { return mMode; }
+
+	// overloaded from TokenResponse
+	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 private:
 	void newGroup();
@@ -172,11 +176,14 @@ protected:
 
         /*!
          * It is up to the service to do the actual group editing
-         * TODO: make pure virtual
          * @param token This should be set to the token retrieved
          * @param meta The deriving GXS service should set their grp meta to this value
          */
-        virtual bool service_EditGroup(uint32_t &token, RsGxsGroupUpdateMeta &updateMeta) {}
+	virtual bool service_EditGroup(uint32_t &token, RsGxsGroupUpdateMeta &updateMeta) = 0;
+
+	// To be overloaded by users.
+	// use Token to retrieve from service, fill in metaData.
+	virtual bool service_loadGroup(uint32_t token, Mode mode, RsGroupMetaData& groupMetaData);
 
 	/*!
 	 * This returns a group logo from the ui \n
@@ -206,6 +213,9 @@ private:
 
 	void setGroupSignFlags(uint32_t signFlags);
 	uint32_t getGroupSignFlags();
+
+	void setAllReadonly();
+	void setupReadonly();
 	void setupDefaults();
 	void setupVisibility();
 	void clearForm();
@@ -214,12 +224,19 @@ private:
 	void sendShareList(std::string forumId);
 	void loadNewGroupId(const uint32_t &token);
 
+	// loading existing Groups.
+	void requestGroup(const RsGxsGroupId &groupId);
+	void loadGroup(uint32_t token);
+	void updateFromExistingMeta();
+
 	std::list<std::string> mShareList;
 	QPixmap picture;
-	TokenQueue *mTokenQueue;
+	RsTokenService *mTokenService;
+	TokenQueue *mExternalTokenQueue;
+	TokenQueue *mInternalTokenQueue;
 	RsGroupMetaData mGrpMeta;
 
-	uint32_t mMode;
+	Mode mMode;
 	uint32_t mEnabledFlags;
 	uint32_t mReadonlyFlags;
 	uint32_t mDefaultsFlags;

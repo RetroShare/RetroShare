@@ -26,7 +26,9 @@
 #include <retroshare/rswiki.h>
 #include <iostream>
 
-const uint32_t PostedCreateEnabledFlags = ( // GXS_GROUP_FLAGS_ICON        |
+const uint32_t PostedCreateEnabledFlags = ( 
+			  GXS_GROUP_FLAGS_NAME        |
+			  // GXS_GROUP_FLAGS_ICON        |
                           GXS_GROUP_FLAGS_DESCRIPTION   |
                           GXS_GROUP_FLAGS_DISTRIBUTION  |
                           // GXS_GROUP_FLAGS_PUBLISHSIGN   |
@@ -52,13 +54,16 @@ uint32_t PostedCreateDefaultsFlags = ( GXS_GROUP_DEFAULTS_DISTRIB_PUBLIC    |
                            GXS_GROUP_DEFAULTS_COMMENTS_NO          |
                            0);
 
+uint32_t PostedEditEnabledFlags = PostedCreateEnabledFlags;
+uint32_t PostedEditDefaultsFlags = PostedCreateDefaultsFlags;
+
 PostedGroupDialog::PostedGroupDialog(TokenQueue *tokenQueue, QWidget *parent)
 	:GxsGroupDialog(tokenQueue, PostedCreateEnabledFlags, PostedCreateDefaultsFlags, parent)
 {
 }
 
-PostedGroupDialog::PostedGroupDialog(const RsPostedGroup &group, QWidget *parent)
-	:GxsGroupDialog(group.mMeta, MODE_SHOW, parent)
+PostedGroupDialog::PostedGroupDialog(TokenQueue *tokenExternalQueue, RsTokenService *tokenService, Mode mode, RsGxsGroupId groupId, QWidget *parent)
+:GxsGroupDialog(tokenExternalQueue, tokenService, mode, groupId, PostedEditEnabledFlags, PostedEditDefaultsFlags, parent)
 {
 }
 
@@ -99,3 +104,9 @@ bool PostedGroupDialog::service_CreateGroup(uint32_t &token, const RsGroupMetaDa
 
 	return true;
 }
+
+bool PostedGroupDialog::service_EditGroup(uint32_t &token, RsGxsGroupUpdateMeta &updateMeta)
+{
+	return false;
+}
+

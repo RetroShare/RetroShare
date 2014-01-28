@@ -34,12 +34,13 @@ class WikiGroupDialog : public GxsGroupDialog
 
 public:
 	WikiGroupDialog(TokenQueue *tokenQueue, QWidget *parent);
-	WikiGroupDialog(const RsWikiCollection &collection, QWidget *parent);
+	WikiGroupDialog(TokenQueue *tokenExternalQueue, RsTokenService *tokenService, Mode mode, RsGxsGroupId groupId, QWidget *parent = NULL);
 
 protected:
 	virtual void initUi();
 	virtual QPixmap serviceImage();
 	virtual bool service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta);
+        virtual bool service_EditGroup(uint32_t &token, RsGxsGroupUpdateMeta &updateMeta);
 
 private:
 

@@ -39,6 +39,7 @@ public:
 	GxsIdChooser(QWidget *parent = NULL);
 
 	void loadIds(uint32_t chooserFlags, RsGxsId defId);
+	bool setChosenId(RsGxsId &id);
 	bool getChosenId(RsGxsId &id);
 
 private slots:

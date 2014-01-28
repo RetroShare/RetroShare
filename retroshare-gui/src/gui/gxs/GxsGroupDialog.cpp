@@ -51,22 +51,29 @@
 
 #define GXSGROUP_NEWGROUPID		1
 #define GXSGROUP_LOADGROUP		2
+#define GXSGROUP_INTERNAL_LOADGROUP	3
 
 /** Constructor */
-GxsGroupDialog::GxsGroupDialog(TokenQueue *tokenQueue, uint32_t enableFlags, uint16_t defaultFlags, QWidget *parent)
-	: QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint), mTokenQueue(tokenQueue), mMode(MODE_CREATE), mEnabledFlags(enableFlags), mReadonlyFlags(0), mDefaultsFlags(defaultFlags)
+GxsGroupDialog::GxsGroupDialog(TokenQueue *tokenExternalQueue, uint32_t enableFlags, uint32_t defaultFlags, QWidget *parent)
+	: QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint), mTokenService(NULL), mExternalTokenQueue(tokenExternalQueue), mInternalTokenQueue(NULL), mGrpMeta(), mMode(MODE_CREATE), mEnabledFlags(enableFlags), mReadonlyFlags(0), mDefaultsFlags(defaultFlags)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
+
+	mInternalTokenQueue = NULL;
 
 	init();
 }
 
-GxsGroupDialog::GxsGroupDialog(const RsGroupMetaData &grpMeta, Mode mode, QWidget *parent)
-	: QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint), mTokenQueue(NULL), mGrpMeta(grpMeta), mMode(mode), mEnabledFlags(0), mReadonlyFlags(0), mDefaultsFlags(0)
+GxsGroupDialog::GxsGroupDialog(TokenQueue *tokenExternalQueue, RsTokenService *tokenService, Mode mode, RsGxsGroupId groupId, uint32_t enableFlags, uint32_t defaultFlags, QWidget *parent)
+	: QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint), mTokenService(NULL), mExternalTokenQueue(tokenExternalQueue), mInternalTokenQueue(NULL), mGrpMeta(), mMode(mode), mEnabledFlags(enableFlags), mReadonlyFlags(0), mDefaultsFlags(defaultFlags)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
+
+	mTokenService = tokenService;
+	mInternalTokenQueue = new TokenQueue(tokenService, this);
+	mGrpMeta.mGroupId = groupId;
 
 	init();
 }
@@ -102,8 +109,8 @@ void GxsGroupDialog::init()
 	/* Setup Reasonable Defaults */
 
 	ui.idChooser->loadIds(0,"");
-	ui.circleComboBox->loadCircles(GXS_CIRCLE_CHOOSER_EXTERNAL);
-	ui.localComboBox->loadCircles(GXS_CIRCLE_CHOOSER_PERSONAL);
+	ui.circleComboBox->loadCircles(GXS_CIRCLE_CHOOSER_EXTERNAL,"");
+	ui.localComboBox->loadCircles(GXS_CIRCLE_CHOOSER_PERSONAL,"");
 
 	initMode();
 }
@@ -134,6 +141,7 @@ void GxsGroupDialog::setUiText(UiType uiType, const QString &text)
 
 void GxsGroupDialog::initMode()
 {
+	setAllReadonly();
 	switch (mode())
 	{
 		case MODE_CREATE:
@@ -146,15 +154,18 @@ void GxsGroupDialog::initMode()
 
 		case MODE_SHOW:
 		{
+			mReadonlyFlags = 0xffffffff; // Force all to readonly.
 			ui.buttonBox->setStandardButtons(QDialogButtonBox::Close);
+			requestGroup(mGrpMeta.mGroupId);
 		}
-                break;
-                case MODE_EDIT:
-                {
-                    ui.buttonBox->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
-                    ui.buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Submit Group Changes"));
-                }
-                break;
+		break;
+		case MODE_EDIT:
+		{
+			ui.buttonBox->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+			ui.buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Submit Group Changes"));
+			requestGroup(mGrpMeta.mGroupId);
+		}
+		break;
 	}
 }
 
@@ -254,6 +265,9 @@ void GxsGroupDialog::setupDefaults()
 void GxsGroupDialog::setupVisibility()
 {
 	{
+		ui.groupName->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_NAME);
+	}
+	{
 		ui.groupLogo->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_ICON);
 		ui.addLogoButton->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_ICON);
 	}
@@ -289,13 +303,111 @@ void GxsGroupDialog::setupVisibility()
 }
 
 
+void GxsGroupDialog::setAllReadonly()
+{
+	uint32_t origReadonlyFlags = mReadonlyFlags;
+	mReadonlyFlags = 0xffffffff;
+
+	setupReadonly();
+
+	mReadonlyFlags = origReadonlyFlags;
+}
+
+
+void GxsGroupDialog::setupReadonly()
+{
+	{
+		ui.groupName->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_NAME));
+	}
+	{
+		ui.groupLogo->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_ICON));
+		ui.addLogoButton->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_ICON));
+	}
+
+	{
+		ui.groupDesc->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_DESCRIPTION));
+		ui.groupDescLabel->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_DESCRIPTION));
+	}
+
+	{
+		ui.distribGroupBox->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_DISTRIBUTION));
+	}
+
+	{
+		ui.publishGroupBox->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_PUBLISHSIGN));
+	}
+
+	{
+		ui.pubKeyShare_cb->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_SHAREKEYS));
+	}
+
+	{
+		ui.personalGroupBox->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_PERSONALSIGN));
+	}
+
+	{
+		ui.commentGroupBox->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_COMMENTS));
+	}
+
+	{
+		ui.extraFrame->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_EXTRA));
+	}
+}
+
+
 void GxsGroupDialog::newGroup()
 {
 	setupDefaults();
 	setupVisibility();
+	setupReadonly();
 	clearForm();
 
 }
+
+void GxsGroupDialog::updateFromExistingMeta()
+{
+	std::cerr << "void GxsGroupDialog::updateFromExistingMeta()";
+	std::cerr << std::endl;
+
+	std::cerr << "void GxsGroupDialog::updateFromExistingMeta() mGrpMeta.mCircleType: ";
+	std::cerr << mGrpMeta.mCircleType << " Internal: " << mGrpMeta.mInternalCircle;
+	std::cerr << " External: " << mGrpMeta.mCircleId;
+	std::cerr << std::endl;
+
+	setupDefaults();
+	setupVisibility();
+	setupReadonly();
+	clearForm();
+
+	/* setup name */
+	ui.groupName->setText(QString::fromUtf8(mGrpMeta.mGroupName.c_str()));
+
+	bool isExternal = true;
+	switch(mGrpMeta.mCircleType)
+	{
+		case GXS_CIRCLE_TYPE_YOUREYESONLY:
+			ui.typeLocal->setChecked(true);
+			ui.localComboBox->loadCircles(GXS_CIRCLE_CHOOSER_PERSONAL, mGrpMeta.mInternalCircle);
+			break;
+		case GXS_CIRCLE_TYPE_PUBLIC:
+			ui.typePublic->setChecked(true);
+			break;
+		case GXS_CIRCLE_TYPE_EXTERNAL:
+			ui.typeGroup->setChecked(true);
+			ui.circleComboBox->loadCircles(GXS_CIRCLE_CHOOSER_EXTERNAL, mGrpMeta.mCircleId);
+
+			break;
+		default:
+			std::cerr << "CreateCircleDialog::updateCircleGUI() INVALID mCircleType";
+			std::cerr << std::endl;
+			break;
+	}
+    	ui.idChooser->loadIds(0, mGrpMeta.mAuthorId);
+
+
+	updateCircleOptions();
+}
+
 
 void GxsGroupDialog::submitGroup()
 {
@@ -320,9 +432,9 @@ void GxsGroupDialog::submitGroup()
 		break;
 
 		case MODE_EDIT:
-                {
+		{
 
-                        editGroup();
+			editGroup();
 		}
 		break;
 	}
@@ -337,21 +449,24 @@ void GxsGroupDialog::editGroup()
 
     if(name.isEmpty())
     {
-                    /* error message */
-                    QMessageBox::warning(this, "RetroShare", tr("Please add a Name"), QMessageBox::Ok, QMessageBox::Ok);
-                    return; //Don't add  a empty name!!
+		    /* error message */
+		    QMessageBox::warning(this, "RetroShare", tr("Please add a Name"), QMessageBox::Ok, QMessageBox::Ok);
+		    return; //Don't add  a empty name!!
     }
 
+    std::cerr << "GxsGroupDialog::editGroup() Unfinished" << std::endl;
+#if 0
     uint32_t token;
     RsGxsGroupUpdateMeta updateMeta(mGrpMeta.mGroupId);
     updateMeta.setMetaUpdate(RsGxsGroupUpdateMeta::NAME, std::string(name.toUtf8()));
 
     if (service_EditGroup(token, updateMeta))
     {
-            // get the Queue to handle response.
-            if(mTokenQueue != NULL)
-                    mTokenQueue->queueRequest(token, TOKENREQ_GROUPINFO, RS_TOKREQ_ANSTYPE_ACK, GXSGROUP_NEWGROUPID);
+	    // get the Queue to handle response.
+	    if(mExternalTokenQueue != NULL)
+		    mExternalTokenQueue->queueRequest(token, TOKENREQ_GROUPINFO, RS_TOKREQ_ANSTYPE_ACK, GXSGROUP_NEWGROUPID);
     }
+#endif
 
     close();
 }
@@ -387,14 +502,18 @@ void GxsGroupDialog::createGroup()
 			return; //Don't add with invalid circle.
 	}
 
+	std::cerr << "void GxsGroupDialog::createGroup() meta.mCircleType: ";
+	std::cerr << meta.mCircleType << " Internal: " << meta.mInternalCircle;
+	std::cerr << " External: " << meta.mCircleId;
+	std::cerr << std::endl;
 
     	ui.idChooser->getChosenId(meta.mAuthorId);
 
 	if (service_CreateGroup(token, meta))
 	{
 		// get the Queue to handle response.
-		if(mTokenQueue != NULL)
-			mTokenQueue->queueRequest(token, TOKENREQ_GROUPINFO, RS_TOKREQ_ANSTYPE_ACK, GXSGROUP_NEWGROUPID);
+		if(mExternalTokenQueue != NULL)
+			mExternalTokenQueue->queueRequest(token, TOKENREQ_GROUPINFO, RS_TOKREQ_ANSTYPE_ACK, GXSGROUP_NEWGROUPID);
 	}
 
 	close();
@@ -473,7 +592,7 @@ void GxsGroupDialog::updateCircleOptions()
 {
 	if (ui.typeGroup->isChecked())
 	{
-		ui.circleComboBox->setEnabled(true);
+		ui.circleComboBox->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_DISTRIBUTION));
 		ui.circleComboBox->setVisible(true);
 	}
 	else 
@@ -484,7 +603,7 @@ void GxsGroupDialog::updateCircleOptions()
 
 	if (ui.typeLocal->isChecked())
 	{
-		ui.localComboBox->setEnabled(true);
+		ui.circleComboBox->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_DISTRIBUTION));
 		ui.localComboBox->setVisible(true);
 	}
 	else 
@@ -585,3 +704,69 @@ void GxsGroupDialog::setShareList()
 		this->resize(this->size().width() - ui.contactsdockWidget->size().width(), this->size().height());
 	}
 }
+
+
+
+/***********************************************************************************
+  Loading Group.
+ ***********************************************************************************/
+
+void GxsGroupDialog::requestGroup(const RsGxsGroupId &groupId)
+{
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+
+	std::list<RsGxsGroupId> groupIds;
+	groupIds.push_back(groupId);
+
+	std::cerr << "GxsGroupDialog::requestGroup() Requesting Group Summary(" << groupId << ")";
+	std::cerr << std::endl;
+
+	uint32_t token;
+	mInternalTokenQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds, GXSGROUP_INTERNAL_LOADGROUP);
+}
+
+
+void GxsGroupDialog::loadGroup(uint32_t token)
+{
+	std::cerr << "GxsGroupDialog::loadGroup(" << token << ")";
+	std::cerr << std::endl;
+
+	if (service_loadGroup(token, mMode, mGrpMeta))
+	{
+		updateFromExistingMeta();
+	}
+}
+
+bool GxsGroupDialog::service_loadGroup(uint32_t token, Mode mode, RsGroupMetaData& groupMetaData)
+{
+	std::cerr << "GxsGroupDialog::service_loadGroup(" << token << ") NOT IMPLEMENTED";
+	std::cerr << std::endl;
+	return false;
+}
+
+void GxsGroupDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
+{
+	std::cerr << "GxsGroupDialog::loadRequest() UserType: " << req.mUserType;
+	std::cerr << std::endl;
+
+	if (queue == mInternalTokenQueue)
+	{
+		/* now switch on req */
+		switch(req.mUserType)
+		{
+			case GXSGROUP_INTERNAL_LOADGROUP:
+				loadGroup(req.mToken);
+				break;
+			default:
+				std::cerr << "GxsGroupDialog::loadGroup() UNKNOWN UserType ";
+				std::cerr << std::endl;
+				break;
+		}
+	}
+}
+
+
+
+
+
