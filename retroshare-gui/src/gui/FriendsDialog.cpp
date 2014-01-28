@@ -801,7 +801,7 @@ void FriendsDialog::addExtraPicture()
 {
     // select a picture file
     QString file;
-    if (misc::getOpenFileName(window(), RshareSettings::LASTDIR_IMAGES, tr("Load Picture File"), "Pictures (*.png *.xpm *.jpg)", file)) {
+    if (misc::getOpenFileName(window(), RshareSettings::LASTDIR_IMAGES, tr("Load Picture File"), "Pictures (*.png *.xpm *.jpg *.jpeg)", file)) {
         QString encodedImage;
         if (RsHtml::makeEmbeddedImage(file, encodedImage, 640*480)) {
             QTextDocumentFragment fragment = QTextDocumentFragment::fromHtml(encodedImage);
