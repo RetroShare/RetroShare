@@ -38,15 +38,6 @@ p3GRouter::p3GRouter(p3LinkMgr *lm)
 	addSerialType(new RsGRouterSerialiser()) ;
 
 	_changed = false ;
-
-	// Debug stuff. Create a random key and register it.
-	      uint8_t random_hash_buff[20] ;
-	      RSRandom::random_bytes(random_hash_buff,20) ;
-	      GRouterKeyId key(random_hash_buff) ;
-	      static GRouterServiceId client_id = 0x0300ae15 ;
-	      static std::string description = "Test string for debug purpose" ;
-
-	      registerKey(key,client_id,description) ;
 }
 
 int p3GRouter::tick()
@@ -320,12 +311,14 @@ void p3GRouter::publishKeys()
 			std::cerr << "   Key id          : " << it->first.toStdString() << std::endl;
 			std::cerr << "   Service id      : " << std::hex << info.service_id << std::dec << std::endl;
 			std::cerr << "   Description     : " << info.description_string << std::endl;
+			std::cerr << "   Fingerprint     : " << info.fpr.toStdString() << std::endl;
 
 			RsGRouterPublishKeyItem item ;
 			item.diffusion_id = RSRandom::random_u32() ;
 			item.published_key = it->first ;
 			item.service_id = info.service_id ;
 			item.randomized_distance = drand48() ;
+			item.fingerprint = info.fpr;
 			item.description_string = info.description_string ;
 			item.PeerId("") ;	// no peer id => key is forwarded to all friends.
 
@@ -361,13 +354,14 @@ void p3GRouter::locked_forwardKey(const RsGRouterPublishKeyItem& item)
 		else
 			std::cerr << "    Not forwarding to source id " << item.PeerId() << std::endl;
 }
-bool p3GRouter::registerKey(const GRouterKeyId& key,const GRouterServiceId& client_id,const std::string& description) 
+bool p3GRouter::registerKey(const GRouterKeyId& key,const PGPFingerprintType& fps,const GRouterServiceId& client_id,const std::string& description) 
 {
 	RsStackMutex mtx(grMtx) ;
 
 	GRouterPublishedKeyInfo info ;
 	info.service_id = client_id ;
-	info.description_string = description;
+	info.fpr = fps ;
+	info.description_string = description.substr(0,20);
 	info.validity_time = 0 ;			// not used yet.
 	info.last_published_time = 0 ; 	// means never published, se it will be re-published soon.
 
@@ -376,7 +370,7 @@ bool p3GRouter::registerKey(const GRouterKeyId& key,const GRouterServiceId& clie
 	std::cerr << "Registered the following key: " << std::endl;
 	std::cerr << "   Key id      : " << key.toStdString() << std::endl;
 	std::cerr << "   Client id   : " << std::hex << client_id << std::dec << std::endl;
-	std::cerr << "   Description : " << description << std::endl;
+	std::cerr << "   Description : " << info.description_string << std::endl;
 
 	return true ;
 }

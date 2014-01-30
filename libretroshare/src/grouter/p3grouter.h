@@ -66,14 +66,18 @@ class p3GRouter: public RsGRouter, public p3Service, public p3Config
 		// forward in the network, so that is can be a possible destination for
 		// global messages.
 		//
-		// 	key		: 		the key that is published
+		// 	key		: 		The key that is published
+		// 	fingerp  :     Fingerprint of the key to encrypt the data.
+		// 	desc_str :     Any fixed length string (< 20 characters) to descript the address in words.
 		// 	client_id:		id of the client service to send the traffic to.
 		// 	               To obtain a client id, the service must register using the previous method.
 		//
 		// Unregistering a key might not have an instantaneous effect, so the client is responsible for 
 		// discarding traffic that might later come for this key.
 		//
-		bool registerKey(const GRouterKeyId& key,const GRouterServiceId& client_id,const std::string& description_string) ;
+		bool registerKey(const GRouterKeyId& key,const PGPFingerprintType& pgp_fingerprint,
+								const GRouterServiceId& client_id,const std::string& description_string) ;
+
 		bool unregisterKey(const GRouterKeyId& key) ;
 
 		//===================================================//

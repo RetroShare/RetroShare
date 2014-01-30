@@ -187,7 +187,7 @@ RsGRouterItem *RsGRouterSerialiser::deserialise_RsGRouterPublishKeyItem(void *da
 	ok &= getRawUInt32(data, pktsize, &offset, &item->service_id); 	// file hash
 	ok &= getRawUFloat32(data, pktsize, &offset, item->randomized_distance); 	// file hash
 	ok &= GetTlvString(data, pktsize, &offset, TLV_TYPE_STR_VALUE,item->description_string);
-	ok &= getRawPGPFingerprint(data,pktsize,&offset,&item->fingerprint) ;
+	ok &= getRawPGPFingerprint(data,pktsize,&offset,item->fingerprint) ;
 
 	if (offset != rssize || !ok)
 	{

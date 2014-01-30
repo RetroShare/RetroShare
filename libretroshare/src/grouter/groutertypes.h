@@ -36,6 +36,8 @@ typedef uint32_t GRouterServiceId ;
 typedef uint32_t GRouterKeyPropagationId ;
 typedef uint32_t GRouterMsgPropagationId ;
 
+static const uint32_t GROUTER_CLIENT_ID_MESSAGES     = 0x1001 ;
+
 static const uint32_t RS_GROUTER_MATRIX_MAX_HIT_ENTRIES       = 5;
 static const uint32_t RS_GROUTER_MATRIX_MIN_TIME_BETWEEN_HITS = 60;	// can be set to up to half the publish time interval. Prevents flooding routes.
 static const uint32_t RS_GROUTER_MIN_CONFIG_SAVE_PERIOD =  5;	// at most save config every 5 seconds
@@ -59,6 +61,7 @@ class GRouterPublishedKeyInfo
 	public:
 		GRouterServiceId service_id ;
 		std::string description_string ;
+		PGPFingerprintType fpr ;
 		time_t last_published_time ;
 		time_t validity_time ;
 };

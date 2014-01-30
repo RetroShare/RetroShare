@@ -37,6 +37,10 @@
 #include "pqi/p3cfgmgr.h"
 #include "rsserver/p3face.h"
 #include "serialiser/rsconfigitems.h"
+#ifdef GROUTER
+#include "grouter/p3grouter.h"
+#include "grouter/groutertypes.h"
+#endif
 
 #include "util/rsdebug.h"
 #include "util/rsdir.h"
@@ -83,6 +87,25 @@ p3MsgService::p3MsgService(p3LinkMgr *lm)
 	/* Initialize standard tag types */
 	if(lm)
 		initStandardTagTypes();
+
+#ifdef GROUTER
+	// Debug stuff. Create a random key and register it.
+	std::string own_ssl_id = rsPeers->getOwnId() ;
+	std::string gpg_id = rsPeers->getGPGOwnId() ;
+
+	RsPeerDetails d;
+	rsPeers->getPeerDetails(gpg_id,d) ;
+	PGPFingerprintType fingerp( d.fpr ) ;
+
+	// Re-hash the SSL id, to make it one way. Will be replaced by proper invitations in the future.
+	//
+	GRouterKeyId key ( RsDirUtil::sha1sum( (uint8_t*)own_ssl_id.c_str(),own_ssl_id.length() ).toStdString() ) ;
+
+	static GRouterServiceId client_id = GROUTER_CLIENT_ID_MESSAGES;
+	static std::string description = "Test string for debug purpose" ;
+
+	mGRouter->registerKey(key,fingerp,client_id,description) ;
+#endif
 }
 
 uint32_t p3MsgService::getNewUniqueMsgId()
@@ -2123,10 +2146,22 @@ void p3MsgService::enableDistantMessaging(bool b)
 #ifdef GROUTER
 			std::cerr << "Notifying the global router." << std::endl;
 
-			std::string pname = rsPeers->getPeerName(mLinkMgr->getOwnId()) ;
-			Sha1CheckSum grouter_hash = RsDirUtil::sha1sum((uint8_t*)mLinkMgr->getOwnId().c_str(),16);
+			// Debug stuff. Create a random key and register it.
+			std::string own_ssl_id = rsPeers->getOwnId() ;
+			std::string gpg_id = rsPeers->getGPGOwnId() ;
 
-			mGRouter->registerKey(grouter_hash, RS_SERVICE_TYPE_MSG, std::string("Contact address for ")+pname) ;
+			RsPeerDetails d;
+			rsPeers->getPeerDetails(gpg_id,d) ;
+			PGPFingerprintType fingerp( d.fpr ) ;
+
+			// Re-hash the SSL id, to make it one way. Will be replaced by proper invitations in the future.
+			//
+			GRouterKeyId key ( RsDirUtil::sha1sum( (uint8_t*)own_ssl_id.c_str(),own_ssl_id.length() ).toStdString() ) ;
+
+			static GRouterServiceId client_id = GROUTER_CLIENT_ID_MESSAGES;
+			static std::string description = "Test string for debug purpose" ;
+
+			mGRouter->registerKey(key,fingerp,client_id,description) ;
 #endif
 			cchanged = true ;
 		}

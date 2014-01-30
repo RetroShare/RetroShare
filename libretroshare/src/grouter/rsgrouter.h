@@ -72,7 +72,7 @@ class RsGRouter
 		//===================================================//
 
 		virtual void sendData(const GRouterKeyId& destination, RsGRouterGenericDataItem *item) =0;
-		virtual bool registerKey(const GRouterKeyId& key,const GRouterServiceId& client_id,const std::string& description_string) =0;
+		virtual bool registerKey(const GRouterKeyId& key,const PGPFingerprintType& fps,const GRouterServiceId& client_id,const std::string& description_string) =0;
 
 };
 

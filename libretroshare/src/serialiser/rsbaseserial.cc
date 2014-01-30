@@ -288,6 +288,38 @@ bool setRawSSLId(void *data,uint32_t size,uint32_t *offset,const SSLIdType& cs)
 
 	return true ;
 }
+bool getRawPGPFingerprint(void *data,uint32_t size,uint32_t *offset,PGPFingerprintType& cs)
+{
+	uint32_t len = 20 ; // SSL id type
+
+	/* check there is space for string */
+	if (size < *offset + len)
+	{
+		std::cerr << "getRawPGPFingerprint() not enough size" << std::endl;
+		return false;
+	}
+	bool ok = true ;
+
+	cs = PGPFingerprintType(&((uint8_t*)data)[*offset]) ;
+	*offset += 20 ;
+
+	return ok ;
+}
+bool setRawPGPFingerprint(void *data,uint32_t size,uint32_t *offset,const PGPFingerprintType& cs)
+{
+	uint32_t len = 20 ; // SHA1 length in bytes
+
+	if (size < *offset + len)
+	{
+		std::cerr << "setRawPGPFingerprint() Not enough size" << std::endl;
+		return false;
+	}
+
+	memcpy((void *) &(((uint8_t *) data)[*offset]), cs.toByteArray(), 20);
+	*offset += 20 ;
+
+	return true ;
+}
 bool getRawString(void *data, uint32_t size, uint32_t *offset, std::string &outStr)
 {
 	uint32_t len = 0;
