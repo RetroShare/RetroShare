@@ -911,9 +911,9 @@ bool RsDirUtil::renameFile(const std::string& from, const std::string& to)
 			/* set errno? */
 			return false ;
 #ifdef WIN32
-		Sleep(100000);				/* us */
+		Sleep(200);				/* 200 milliseconds */
 #else
-		usleep(100000);				/* us */
+		usleep(100000);		/* 100000 microseconds */
 #endif
 
 		if (loops >= 30)
