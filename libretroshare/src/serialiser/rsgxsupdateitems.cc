@@ -38,6 +38,7 @@ void RsGxsGrpUpdateItem::clear()
 
 std::ostream& RsGxsGrpUpdateItem::print(std::ostream& out, uint16_t indent)
 {
+	return out ;
 
 }
 
