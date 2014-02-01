@@ -2,7 +2,7 @@ TEMPLATE = app
 TARGET = retroshare-nogui
 CONFIG += bitdht
 #CONFIG += introserver
-CONFIG += sshserver
+#CONFIG += sshserver
 CONFIG -= qt xml gui
 
 # if you are linking against the libretroshare with gxs.
@@ -106,7 +106,20 @@ macx {
     # ENABLE THIS OPTION FOR Univeral Binary BUILD.
     # CONFIG += ppc x86 
 
-    LIBS += -Wl,-search_paths_first
+	LIBS += -Wl,-search_paths_first
+
+	LIBS += ../../libretroshare/src/lib/libretroshare.a
+	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
+        LIBS += -lssl -lcrypto -lz 
+	LIBS += ../../../miniupnpc-1.0/libminiupnpc.a
+	LIBS += -framework CoreFoundation
+	LIBS += -framework Security
+
+	gxs {
+		# We need a explicit path here, to force using the home version of sqlite3 that really encrypts the database.
+	    # LIBS += ../../../lib/sqlcipher/.libs/libsqlcipher.a
+	    LIBS += ../../../lib/libsqlcipher.a
+	}
 }
 
 ##################################### FreeBSD ######################################

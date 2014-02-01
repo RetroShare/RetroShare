@@ -237,15 +237,7 @@ int main(int argc, char **argv)
 	RsControl *rsServer = createRsControl(*notify);
 	rsicontrol = rsServer ;
 
-	std::string preferredId, gpgId, gpgName, gpgEmail, sslName;
-	RsInit::getPreferedAccountId(preferredId);
-
-	if (RsInit::getAccountDetails(preferredId, gpgId, gpgName, gpgEmail, sslName))
-	{
-		RsInit::SelectGPGAccount(gpgId);
-	}
-
-	/* Key + Certificate are loaded into libretroshare */
+	/* PreferredId => Key + Certificate are loaded into libretroshare */
 
 	std::string error_string ;
 	int retVal = RsInit::LockAndLoadCertificates(false,error_string);
