@@ -28,10 +28,7 @@
 
 
 #include "retroshare/rsposted.h"
-#include "services/p3gxscommon.h"
-#include "gxs/rsgenexchange.h"
-
-#include "util/rstickevent.h"
+#include "services/p3postbase.h"
 
 #include <retroshare/rsidentity.h>
 
@@ -43,72 +40,41 @@
  *
  */
 
-
-class PostStats
-{
-	public:
-	PostStats() :up_votes(0), down_votes(0), comments(0) { return; }
-	PostStats(int up, int down, int c) :up_votes(up), down_votes(down), comments(c) { return; }
-
-	void increment(const PostStats &s) 
-	{ 
-		up_votes += s.up_votes;
-		down_votes += s.down_votes;
-		comments += s.comments;
-		return;
-	}
-
-	int up_votes;
-	int down_votes;
-	int comments;
-	std::list<RsGxsId> voters;
-};
-
-bool encodePostedCache(std::string &str, const PostStats &s);
-bool extractPostedCache(const std::string &str, PostStats &s);
-
-
-class p3Posted: public RsGenExchange, public RsPosted, 
-	public GxsTokenQueue, 
-	public RsTickEvent	/* only needed for testing - remove after */
+class p3Posted: public p3PostBase, public RsPosted
 {
 	public:
 
 	p3Posted(RsGeneralDataService* gds, RsNetworkExchangeService* nes, RsGixs* gixs);
 
-virtual void service_tick();
-
 	protected:
 
-
-virtual void notifyChanges(std::vector<RsGxsNotify*>& changes);
-
-        // Overloaded from GxsTokenQueue for Request callbacks.
-virtual void handleResponse(uint32_t token, uint32_t req_type);
-
-        // Overloaded from RsTickEvent.
-virtual void handle_event(uint32_t event_type, const std::string &elabel);
+virtual void notifyChanges(std::vector<RsGxsNotify*>& changes)
+{
+	return p3PostBase::notifyChanges(changes);
+}
 
 	public:
 
+virtual void receiveHelperChanges(std::vector<RsGxsNotify*>& changes)
+{
+	return RsGxsIfaceHelper::receiveChanges(changes);
+}
+
+	// Posted Specific DataTypes.
 virtual bool getGroupData(const uint32_t &token, std::vector<RsPostedGroup> &groups);
 virtual bool getPostData(const uint32_t &token, std::vector<RsPostedPost> &posts);
-
 virtual bool getRelatedPosts(const uint32_t &token, std::vector<RsPostedPost> &posts);
-
-        //////////////////////////////////////////////////////////////////////////////
-
-virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read);
-
-//virtual bool setMessageStatus(const std::string &msgId, const uint32_t status, const uint32_t statusMask);
-//virtual bool setGroupSubscribeFlags(const std::string &groupId, uint32_t subscribeFlags, uint32_t subscribeMask);
-
-//virtual bool groupRestoreKeys(const std::string &groupId);
-//virtual bool groupShareKeys(const std::string &groupId, std::list<std::string>& peers);
 
 virtual bool createGroup(uint32_t &token, RsPostedGroup &group);
 virtual bool createPost(uint32_t &token, RsPostedPost &post);
 
+        //////////////////////////////////////////////////////////////////////////////
+	// WRAPPERS due to the separate Interface.
+
+virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read)
+	{
+		return p3PostBase::setMessageReadStatus(token, msgId, read);
+	}
 
 
 	/* Comment service - Provide RsGxsCommentService - redirect to p3GxsCommentService */
@@ -145,82 +111,6 @@ virtual bool acknowledgeVote(const uint32_t& token, std::pair<RsGxsGroupId, RsGx
 		}
 		return acknowledgeMsg(token, msgId);
 	}
-
-
-	private:
-
-static uint32_t postedAuthenPolicy();
-
-	bool calculateScores(RsPostedPost &post, time_t ref_time);
-
-	// Background processing.
-	void background_tick();
-
-	bool background_requestAllGroups();
-	void background_loadGroups(const uint32_t &token);
-
-	void addGroupForProcessing(RsGxsGroupId grpId);
-	void background_requestUnprocessedGroup();
-
-	void background_requestGroupMsgs(const RsGxsGroupId &grpId, bool unprocessedOnly);
-	void background_loadUnprocessedMsgs(const uint32_t &token);
-	void background_loadAllMsgs(const uint32_t &token);
-	void background_loadMsgs(const uint32_t &token, bool unprocessed);
-
-
-	void background_updateVoteCounts(const uint32_t &token);
-	bool background_cleanup();
-
-
-	RsMutex mPostedMtx; 
-
-	bool mBgProcessing;
-	bool mBgIncremental;
-        std::list<RsGxsGroupId> mBgGroupList;
-        std::map<RsGxsMessageId, PostStats> mBgStatsMap; 
-
-
-
-
-// DUMMY DATA,
-virtual bool generateDummyData();
-
-std::string genRandomId();
-
-void 	dummy_tick();
-
-bool generatePost(uint32_t &token, const RsGxsGroupId &grpId);
-bool generateComment(uint32_t &token, const RsGxsGroupId &grpId, 
-		const RsGxsMessageId &parentId, const RsGxsMessageId &threadId);
-bool generateGroup(uint32_t &token, std::string groupName);
-
-	class PostedDummyRef
-	{
-		public:
-		PostedDummyRef() { return; }
-		PostedDummyRef(const RsGxsGroupId &grpId, const RsGxsMessageId &threadId, const RsGxsMessageId &msgId)
-		:mGroupId(grpId), mThreadId(threadId), mMsgId(msgId) { return; }
-
-		RsGxsGroupId mGroupId;
-		RsGxsMessageId mThreadId;
-		RsGxsMessageId mMsgId;
-	};
-
-	uint32_t mGenToken;
-	bool mGenActive;
-	int mGenCount;
-	std::vector<PostedDummyRef> mGenRefs;
-	RsGxsMessageId mGenThreadId;
-
-	p3GxsCommentService *mCommentService;	
 };
-
-
-
-
-
-
-
-
 
 #endif 

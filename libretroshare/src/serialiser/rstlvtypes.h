@@ -33,6 +33,8 @@
 
 #include <string>
 #include <list>
+#include <map>
+
 #include <stdlib.h>
 #include <stdint.h>
 
@@ -122,6 +124,12 @@ class RsTlvHashSet: public RsTlvStringSet
 	RsTlvHashSet();
 };
 
+class RsTlvPgpIdSet: public RsTlvStringSet
+{
+	public:
+	RsTlvPgpIdSet();
+};
+
 class RsTlvServiceIdSet: public RsTlvItem
 {
 	public:
@@ -134,6 +142,22 @@ virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); /* deseria
 virtual std::ostream &print(std::ostream &out, uint16_t indent);
 
 	std::list<uint32_t> ids; /* Mandatory */
+};
+
+
+class RsTlvStringSetRef: public RsTlvItem
+{
+	public:
+	 RsTlvStringSetRef(uint16_t type, std::list<std::string> &refids);
+virtual ~RsTlvStringSetRef() { return; }
+virtual uint32_t TlvSize();
+virtual void	 TlvClear();
+virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset); /* serialise   */
+virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); /* deserialise */
+virtual std::ostream &print(std::ostream &out, uint16_t indent);
+
+	uint16_t mType;
+	std::list<std::string> &ids; /* Mandatory */
 };
 
 
@@ -179,8 +203,8 @@ virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); /* deseria
 virtual std::ostream &print(std::ostream &out, uint16_t indent);
 
 	std::list<RsTlvFileItem> items; /// Mandatory 
-	std::wstring title;   		/// Optional: title of file set
-	std::wstring comment; 		/// Optional: comments for file
+	std::string title;   		/// Optional: title of file set
+	std::string comment; 		/// Optional: comments for file
 };
 
 
@@ -237,6 +261,29 @@ virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); /* deseria
 virtual std::ostream &print(std::ostream &out, uint16_t indent);
 
 	std::list<RsTlvKeyValue> pairs; /// For use in hash tables 
+};
+
+
+class RsTlvIntStringMap: public RsTlvItem
+{
+	public:
+	 RsTlvIntStringMap() { return; }
+virtual ~RsTlvIntStringMap() { return; }
+virtual uint32_t TlvSize();
+virtual void	 TlvClear();
+virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset); /* serialise   */
+virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); /* deserialise */
+virtual std::ostream &print(std::ostream &out, uint16_t indent);
+
+	uint32_t mapType;
+	std::map<uint32_t, std::string> map; 
+};
+
+
+class RsTlvServiceIdMap: public RsTlvIntStringMap
+{
+	public:
+	RsTlvServiceIdMap();
 };
 
 

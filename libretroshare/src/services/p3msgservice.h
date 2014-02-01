@@ -75,7 +75,7 @@ bool    getMsgParentId(const std::string &msgId, std::string &msgParentId);
 bool    setMsgParentId(uint32_t msgId, uint32_t msgParentId);
 
 bool    MessageSend(MessageInfo &info);
-bool    SystemMessage(const std::wstring &title, const std::wstring &message, uint32_t systemFlag);
+bool    SystemMessage(const std::string &title, const std::string &message, uint32_t systemFlag);
 bool    MessageToDraft(MessageInfo &info, const std::string &msgParentId);
 bool    MessageToTrash(const std::string &mid, bool bTrash);
 

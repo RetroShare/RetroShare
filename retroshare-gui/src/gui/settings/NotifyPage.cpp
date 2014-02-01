@@ -110,12 +110,14 @@ uint NotifyPage::getNewsFlags()
 
     if (ui.notify_Peers->isChecked())
         newsFlags |= RS_FEED_TYPE_PEER;
+#if 0
     if (ui.notify_Channels->isChecked())
         newsFlags |= RS_FEED_TYPE_CHAN;
     if (ui.notify_Forums->isChecked())
         newsFlags |= RS_FEED_TYPE_FORUM;
     if (ui.notify_Blogs->isChecked())
         newsFlags |= RS_FEED_TYPE_BLOG;
+#endif
     if (ui.notify_Messages->isChecked())
         newsFlags |= RS_FEED_TYPE_MSG;
     if (ui.notify_Chat->isChecked())
@@ -220,9 +222,11 @@ void NotifyPage::load()
     ui.popup_ConnectAttempt->setChecked(notifyflags & RS_POPUP_CONNECT_ATTEMPT);
 
     ui.notify_Peers->setChecked(newsflags & RS_FEED_TYPE_PEER);
+#if 0
     ui.notify_Channels->setChecked(newsflags & RS_FEED_TYPE_CHAN);
     ui.notify_Forums->setChecked(newsflags & RS_FEED_TYPE_FORUM);
     ui.notify_Blogs->setChecked(newsflags & RS_FEED_TYPE_BLOG);
+#endif
     ui.notify_Chat->setChecked(newsflags & RS_FEED_TYPE_CHAT);
     ui.notify_Messages->setChecked(newsflags & RS_FEED_TYPE_MSG);
     ui.notify_Chat->setChecked(newsflags & RS_FEED_TYPE_CHAT);

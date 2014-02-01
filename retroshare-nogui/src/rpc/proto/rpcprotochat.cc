@@ -1001,8 +1001,7 @@ int RpcProtoChat::processReqSendMessage(uint32_t chan_id, uint32_t /*msg_id*/, u
 	// Send the message.
 	bool priv_or_lobby = true;
 	std::string chat_id;
-        std::wstring chat_msg;
-	convertUTF8toWString(req.msg().msg(), chat_msg);
+        std::string chat_msg = req.msg().msg() ;
 
 	std::cerr << "Chat Message is: " << req.msg().msg();
 	std::cerr << std::endl;
@@ -1146,9 +1145,7 @@ int RpcProtoChat::locked_checkForEvents(uint32_t event, const std::list<RpcEvent
 			std::cerr << " name: " << it->peer_nickname;
 			std::cerr << std::endl;
 			{
-				std::string msg_utf8;
-				librs::util::ConvertUtf16ToUtf8(it->msg, msg_utf8);
-				std::cerr << " Msg: " << msg_utf8;
+				std::cerr << " Msg: " << it->msg ;
 				std::cerr << std::endl;
 			}
 
@@ -1222,9 +1219,7 @@ int RpcProtoChat::locked_checkForEvents(uint32_t event, const std::list<RpcEvent
 				std::cerr << " name: " << it->peer_nickname;
 				std::cerr << std::endl;
 				{
-					std::string msg_utf8;
-					librs::util::ConvertUtf16ToUtf8(it->msg, msg_utf8);
-					std::cerr << " Msg: " << msg_utf8;
+					std::cerr << " Msg: " << it->msg;
 					std::cerr << std::endl;
 				}
 				/* must send to all registered clients */
@@ -1427,16 +1422,7 @@ bool createQueuedEventSendMsg(const ChatInfo &chatinfo, rsctrl::chat::ChatType c
   	msg->set_chat_flags(chatinfo.chatflags);
   	msg->set_send_time(chatinfo.sendTime);
   	msg->set_recv_time(chatinfo.recvTime);
-
-	std::string msg_utf8;
-	if (!convertWStringToUTF8(chatinfo.msg, msg_utf8))
-	{
-		std::cerr << "RpcProtoChat::createQueuedEventSendMsg() ERROR Converting Msg";
-		std::cerr << std::endl;
-		return false;
-	}
-
-  	msg->set_msg(msg_utf8);
+  	msg->set_msg(chatinfo.msg);
 
 	/* DONE - Generate Reply */
 	std::string outmsg;

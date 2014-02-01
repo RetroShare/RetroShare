@@ -27,14 +27,14 @@
 #include <retroshare/rsinit.h>
 
 /** The file in which all settings will read and written. */
-#define SETTINGS_FILE   (QString::fromUtf8(RsInit::RsProfileConfigDirectory().c_str()) + "/RetroShare.conf")
+#define SETTINGS_FILE   (QString::fromUtf8(RsAccounts::AccountDirectory().c_str()) + "/RetroShare.conf")
 
 /** Constructor */
 RSettings::RSettings(const QString settingsGroup)
 : QSettings(SETTINGS_FILE, QSettings::IniFormat)
 {
     std::string sPreferedId;
-    m_bValid = RsInit::getPreferedAccountId(sPreferedId);
+    m_bValid = RsAccounts::GetPreferredAccountId(sPreferedId);
 
     if (!settingsGroup.isEmpty())
         beginGroup(settingsGroup);

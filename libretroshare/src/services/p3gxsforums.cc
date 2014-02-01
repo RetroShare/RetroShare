@@ -215,6 +215,21 @@ bool p3GxsForums::createGroup(uint32_t &token, RsGxsForumGroup &group)
 	return true;
 }
 
+bool p3GxsForums::updateGroup(uint32_t &token, RsGxsGroupUpdateMeta& meta, RsGxsForumGroup &group)
+{
+	std::cerr << "p3GxsForums::updateGroup()" << std::endl;
+
+        if(meta.getGroupId().empty())
+		return false;
+
+	RsGxsForumGroupItem* grpItem = new RsGxsForumGroupItem();
+	grpItem->mGroup = group;
+        grpItem->meta = group.mMeta;
+        grpItem->meta.mGroupId = meta.getGroupId();
+
+        RsGenExchange::updateGroup(token, meta, grpItem);
+	return true;
+}
 
 bool p3GxsForums::createMsg(uint32_t &token, RsGxsForumMsg &msg)
 {
@@ -423,7 +438,7 @@ bool p3GxsForums::generateMessage(uint32_t &token, const RsGxsGroupId &grpId, co
 
 	uint32_t idx = (uint32_t) (ownIds.size() * RSRandom::random_f32());
 	int i = 0;
-	for(it = ownIds.begin(); (it != ownIds.end()) && (i < idx); it++, i++);
+	for(it = ownIds.begin(); (it != ownIds.end()) && (i < idx); it++, i++) ;
 
 	if (it != ownIds.end())
 	{

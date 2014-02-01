@@ -41,7 +41,7 @@ class RatesStatus;
 class DiscStatus;
 class DHTStatus;
 class HashingStatus;
-class ForumsDialog;
+//class ForumsDialog;
 class FriendsDialog;
 class ChatLobbyWidget;
 class ChatDialog;
@@ -52,7 +52,7 @@ class MessagesDialog;
 class SharedFilesDialog;
 class MessengerWindow;
 class PluginsPage;
-class ChannelFeed;
+//class ChannelFeed;
 class BandwidthGraph;
 class MainPage;
 class NewsFeed;
@@ -84,8 +84,8 @@ public:
         Transfers          = 3,  /** Transfers page. */
         SharedDirectories  = 4,  /** Shared Directories page. */
         Messages           = 5,  /** Messages page. */
-        Channels           = 6,  /** Channels page. */
-        Forums             = 7,  /** Forums page. */
+ //       Channels           = 6,  /** Channels page. */
+ //       Forums             = 7,  /** Forums page. */
         Search             = 8,  /** Search page. */
 #ifdef BLOGS
         Blogs              = 9,  /** Blogs page. */
@@ -129,8 +129,8 @@ public:
     ChatLobbyWidget     *chatLobbyDialog;
     MessagesDialog    *messagesDialog;
     SharedFilesDialog *sharedfilesDialog;
-    ForumsDialog      *forumsDialog;
-    ChannelFeed       *channelFeed;
+//    ForumsDialog      *forumsDialog;
+//    ChannelFeed       *channelFeed;
     Idle              *idle;
 
 #ifdef RS_USE_LINKS

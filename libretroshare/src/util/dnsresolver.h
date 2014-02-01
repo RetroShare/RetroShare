@@ -18,7 +18,7 @@ class DNSResolver
 		DNSResolver() ;
 		~DNSResolver() ;
 
-		bool getIPAddressFromString(const std::string& server_name,struct in_addr& addr) ;
+		bool getIPAddressFromString(const std::string& server_name,struct sockaddr_storage &addr) ;
 
 		void start_request() ;
 		void reset() ;
@@ -30,7 +30,7 @@ class DNSResolver
 		{
 			uint32_t state ; 				// state: Looked-up, not found, have
 			time_t last_lookup_time ;	// last lookup time
-			struct in_addr addr ;
+			struct sockaddr_storage addr ;
 		};
 		friend void *solveDNSEntries(void *p) ;
 

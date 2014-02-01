@@ -2,12 +2,12 @@ TEMPLATE = app
 TARGET = retroshare-nogui
 CONFIG += bitdht
 #CONFIG += introserver
-CONFIG += sshserver
+#CONFIG += sshserver
 CONFIG -= qt xml gui
 
 # if you are linking against the libretroshare with gxs.
 # this option links against the required sqlite library.
-#CONFIG += gxs
+CONFIG += gxs
 
 #CONFIG += debug
 debug {
@@ -104,31 +104,29 @@ win32 {
 ##################################### MacOS ######################################
 
 macx {
-        # ENABLE THIS OPTION FOR Univeral Binary BUILD.
-        CONFIG += ppc x86 
-        QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.4
+    # ENABLE THIS OPTION FOR Univeral Binary BUILD.
+    # CONFIG += ppc x86 
 
-        CONFIG += version_detail_bash_script
-        LIBS += ../../libretroshare/src/lib/libretroshare.a
-        LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
-        LIBS += -lssl -lcrypto -lz
-        LIBS += ../../../miniupnpc-1.0/libminiupnpc.a
-        LIBS += -framework CoreFoundation
-        LIBS += -framework Security
-    	LIBS += -Wl,-search_paths_first
+	LIBS += -Wl,-search_paths_first
+	LIBS += ../../libretroshare/src/lib/libretroshare.a
+	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
+        LIBS += -lssl -lcrypto -lz 
+	LIBS += ../../../miniupnpc-1.0/libminiupnpc.a
+	LIBS += -framework CoreFoundation
+	LIBS += -framework Security
 
-        gxs {
-                LIBS += -lsqlite3
-        }
+	gxs {
+		# We need a explicit path here, to force using the home version of sqlite3 that really encrypts the database.
+	    # LIBS += ../../../lib/sqlcipher/.libs/libsqlcipher.a
+	    LIBS += ../../../lib/libsqlcipher.a
+	}
 
 	sshserver {
 		LIBS += -L../../../lib
 		#LIBS += -L../../../lib/libssh-0.6.0
 	}
 
-        INCLUDEPATH += .
-
-        QMAKE_CXXFLAGS *= -Dfseeko64=fseeko -Dftello64=ftello -Dstat64=stat -Dstatvfs64=statvfs -Dfopen64=fopen
+    QMAKE_CXXFLAGS *= -Dfseeko64=fseeko -Dftello64=ftello -Dstat64=stat -Dstatvfs64=statvfs -Dfopen64=fopen
 
 }
 
@@ -216,10 +214,7 @@ sshserver {
 		LIBS += -lssh
 		LIBS += -lssh_threads
 	} else {
-		#SSH_OK = true
-		#$$system(pkg-config --atleast-version 0.5.2 libssh && echo yes)
-		#SSH_OK = $$system(pkg-config --atleast-version 0.5.2 libssh && echo yes)
-
+		SSH_OK = $$system(pkg-config --atleast-version 0.5.4 libssh && echo yes)
 		isEmpty(SSH_OK) {
 			exists($$LIBSSH_DIR/build/src/libssh.a):exists($$LIBSSH_DIR/build/src/threads/libssh_threads.a) {
 				LIBS += $$LIBSSH_DIR/build/src/libssh.a

@@ -42,7 +42,7 @@ class BanListPeer
 {
 	public:
 	
-	struct sockaddr_in addr;
+	struct sockaddr_storage addr;
 	uint32_t reason; // Dup Self, Dup Friend
 	int level; // LOCAL, FRIEND, FoF.
 	time_t mTs;
@@ -54,7 +54,7 @@ class BanList
 	
 	std::string mPeerId; /* from */
 	time_t mLastUpdate;
-	std::map<uint32_t, BanListPeer> mBanPeers;
+	std::map<struct sockaddr_storage, BanListPeer> mBanPeers;
 };
 
 
@@ -74,7 +74,7 @@ class p3BanList: /* public RsBanList, */ public p3Service, public pqiNetAssistPe
 
 		/***** overloaded from pqiNetAssistPeerShare *****/
 
-		virtual void    updatePeer(std::string id, struct sockaddr_in addr, int type, int reason, int age);
+		virtual void    updatePeer(std::string id, const struct sockaddr_storage &addr, int type, int reason, int age);
 
 
 		/***** overloaded from p3Service *****/
@@ -93,7 +93,7 @@ class p3BanList: /* public RsBanList, */ public p3Service, public pqiNetAssistPe
 		bool 	processIncoming();
 
 		bool recvBanItem(RsBanListItem *item);
-		bool addBanEntry(const std::string &peerId, const struct sockaddr_in &addr, 
+		bool addBanEntry(const std::string &peerId, const struct sockaddr_storage &addr, 
 			int level, uint32_t reason, uint32_t age);
 		void sendBanLists();
 		int sendBanSet(std::string peerid);
@@ -123,7 +123,7 @@ class p3BanList: /* public RsBanList, */ public p3Service, public pqiNetAssistPe
 
 		time_t mSentListTime;
 		std::map<std::string, BanList> mBanSources;
-		std::map<uint32_t, BanListPeer> mBanSet;
+		std::map<struct sockaddr_storage, BanListPeer> mBanSet;
 
 		p3LinkMgr *mLinkMgr;
 		p3NetMgr *mNetMgr;

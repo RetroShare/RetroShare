@@ -35,7 +35,6 @@
 
 #include <openssl/evp.h>
 #include <openssl/x509.h>
-#include <openssl/ssl.h>
 
 #include <inttypes.h>
 #include <string>

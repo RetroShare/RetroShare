@@ -132,7 +132,7 @@ void PopupChatDialog::addIncomingChatMsg(const ChatInfo& info)
 	if (cw) {
 		QDateTime sendTime = QDateTime::fromTime_t(info.sendTime);
 		QDateTime recvTime = QDateTime::fromTime_t(info.recvTime);
-		QString message = QString::fromStdWString(info.msg);
+		QString message = QString::fromUtf8(info.msg.c_str());
 		QString name = getPeerName(info.rsid) ;
 
 		cw->addChatMsg(true, name, sendTime, recvTime, message, ChatWidget::MSGTYPE_NORMAL);
@@ -169,7 +169,7 @@ void PopupChatDialog::onChatChanged(int list, int type)
 
 						QDateTime sendTime = QDateTime::fromTime_t(it->sendTime);
 						QDateTime recvTime = QDateTime::fromTime_t(it->recvTime);
-						QString message = QString::fromStdWString(it->msg);
+						QString message = QString::fromUtf8(it->msg.c_str());
 
 						ui.chatWidget->addChatMsg(false, name, sendTime, recvTime, message, ChatWidget::MSGTYPE_OFFLINE);
 					}
@@ -188,7 +188,7 @@ void PopupChatDialog::onChatChanged(int list, int type)
 					for(it = savedOfflineChat.begin(); it != savedOfflineChat.end(); ++it) {
 						QDateTime sendTime = QDateTime::fromTime_t(it->sendTime);
 						QDateTime recvTime = QDateTime::fromTime_t(it->recvTime);
-						QString message = QString::fromStdWString(it->msg);
+						QString message = QString::fromUtf8(it->msg.c_str());
 
 						ui.chatWidget->addChatMsg(false, name, sendTime, recvTime, message, ChatWidget::MSGTYPE_NORMAL);
 					}

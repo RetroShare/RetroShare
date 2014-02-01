@@ -535,7 +535,7 @@ void    upnphandler::setExternalPort(unsigned short eport_in)
 }
 
 	/* as determined by uPnP */
-bool    upnphandler::getInternalAddress(struct sockaddr_in &addr)
+bool    upnphandler::getInternalAddress(struct sockaddr_storage &addr)
 {
 //	std::cerr << "UPnPHandler::getInternalAddress() pre Lock!" << std::endl;
 	dataMtx.lock();   /***  LOCK MUTEX  ***/
@@ -543,7 +543,10 @@ bool    upnphandler::getInternalAddress(struct sockaddr_in &addr)
 
 	std::cerr << "UPnPHandler::getInternalAddress()" << std::endl;
 
-	addr = upnp_iaddr;
+	// copy to universal addr.
+	sockaddr_storage_clear(addr);
+	sockaddr_storage_setipv4(addr, &upnp_iaddr);
+
 	bool valid = (upnpState >= RS_UPNP_S_ACTIVE);
 
 	dataMtx.unlock(); /*** UNLOCK MUTEX ***/
@@ -551,14 +554,18 @@ bool    upnphandler::getInternalAddress(struct sockaddr_in &addr)
 	return valid;
 }
 
-bool    upnphandler::getExternalAddress(struct sockaddr_in &addr)
+bool    upnphandler::getExternalAddress(struct sockaddr_storage &addr)
 {
 //	std::cerr << "UPnPHandler::getExternalAddress() pre Lock!" << std::endl;
 	dataMtx.lock();   /***  LOCK MUTEX  ***/
 //	std::cerr << "UPnPHandler::getExternalAddress() postLock!" << std::endl;
 
 	std::cerr << "UPnPHandler::getExternalAddress()" << std::endl;
-	addr = upnp_eaddr;
+
+	// copy to universal addr.
+	sockaddr_storage_clear(addr);
+	sockaddr_storage_setipv4(addr, &upnp_eaddr);
+
 	bool valid = (upnpState == RS_UPNP_S_ACTIVE);
 
 	dataMtx.unlock(); /*** UNLOCK MUTEX ***/

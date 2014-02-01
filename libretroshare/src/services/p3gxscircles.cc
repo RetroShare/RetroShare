@@ -1511,7 +1511,7 @@ void p3GxsCircles::generateDummyCircle()
 
 		int selection = (RSRandom::random_u32() % npgps);
 		std::list<RsGxsId>::iterator it = mDummyPgpLinkedIds.begin();
-		for(int j = 0; (it != mDummyPgpLinkedIds.end()) && (j < selection); j++, it++);
+		for(int j = 0; (it != mDummyPgpLinkedIds.end()) && (j < selection); j++, it++) ;
 		if (it != mDummyPgpLinkedIds.end())
 		{
 			idset.insert(*it);
@@ -1525,7 +1525,7 @@ void p3GxsCircles::generateDummyCircle()
 		int selection = (RSRandom::random_u32() % mDummyOwnIds.size());
 		std::list<RsGxsId>::iterator it = mDummyOwnIds.begin();
 					mDummyOwnIds.push_back(*it);
-		for(int j = 0; (it != mDummyOwnIds.end()) && (j < selection); j++, it++);
+		for(int j = 0; (it != mDummyOwnIds.end()) && (j < selection); j++, it++) ;
 		if (it != mDummyOwnIds.end())
 		{
 			idset.insert(*it);

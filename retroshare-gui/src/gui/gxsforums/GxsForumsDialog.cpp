@@ -546,10 +546,7 @@ void GxsForumsDialog::showForumDetails()
 		return;
 	}
 
-	RsGxsForumGroup grp;
-	grp.mMeta.mGroupId = mForumId;
-
-	GxsForumGroupDialog cf(grp, GxsGroupDialog::MODE_SHOW, this);
+	GxsForumGroupDialog cf(mForumQueue, rsGxsForums->getTokenService(), GxsGroupDialog::MODE_SHOW, mForumId, this);
 	cf.exec ();
 }
 
@@ -562,7 +559,7 @@ void GxsForumsDialog::editForumDetails()
 	RsGxsForumGroup grp;
 	grp.mMeta.mGroupId = mForumId;
 
-	GxsForumGroupDialog cf(grp, GxsGroupDialog::MODE_EDIT, this);
+	GxsForumGroupDialog cf(mForumQueue, rsGxsForums->getTokenService(), GxsGroupDialog::MODE_EDIT, mForumId, this);
 	cf.exec ();
 }
 

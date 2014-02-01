@@ -127,12 +127,12 @@ void MsgItem::updateItemStatic()
 	title += srcName;
 
 	titleLabel->setText(title);
-	subjectLabel->setText(QString::fromStdWString(mi.title));
+	subjectLabel->setText(QString::fromUtf8(mi.title.c_str()));
 		
 	if(mi.msgflags & RS_MSG_ENCRYPTED)
 		msgLabel->setText(RsHtml().formatText(NULL, QString("[%1]").arg(tr("Encrypted message")), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 	else
-		msgLabel->setText(RsHtml().formatText(NULL, QString::fromStdWString(mi.msg), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
+		msgLabel->setText(RsHtml().formatText(NULL, QString::fromUtf8(mi.msg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 
 	std::list<FileInfo>::iterator it;
 	for(it = mi.files.begin(); it != mi.files.end(); it++)

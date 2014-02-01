@@ -52,13 +52,14 @@ std::string generateRandomServiceId();
 
 //TODO : encryption and upload / download rate implementation
 
-class p3Service: public pqiService
+
+class p3FastService: public pqiService
 {
 	protected:
 
-	p3Service(uint16_t type) 
+	p3FastService(uint16_t type) 
 	:pqiService((((uint32_t) RS_PKT_VERSION_SERVICE) << 24) + (((uint32_t) type) << 8)), 
-	srvMtx("p3Service"), rsSerialiser(NULL)
+	srvMtx("p3FastService"), rsSerialiser(NULL)
 	{
 		rsSerialiser = new RsSerialiser();
 		return; 
@@ -66,33 +67,59 @@ class p3Service: public pqiService
 
 	public:
 
-virtual ~p3Service() { delete rsSerialiser; return; }
+virtual ~p3FastService() { delete rsSerialiser; return; }
 
 /*************** INTERFACE ******************************/
-        /* called from Thread/tick/GUI */
 int             sendItem(RsItem *);
-RsItem *        recvItem();
-bool		receivedItems();
-
 virtual int	tick() { return 0; }
 /*************** INTERFACE ******************************/
 
-
 	public:
 	// overloaded pqiService interface.
-virtual int		receive(RsRawItem *);
-virtual RsRawItem *	send();
+virtual bool	recv(RsRawItem *);
+
+	// called by recv().
+virtual bool	recvItem(RsItem *item) = 0;
+
 
 	protected:
 void 	addSerialType(RsSerialType *);
 
-	private:
-
-	RsMutex srvMtx;
-	/* below locked by Mutex */
+	RsMutex srvMtx; /* below locked by Mutex */
 
 	RsSerialiser *rsSerialiser;
-	std::list<RsItem *> recv_queue, send_queue;
+};
+
+
+class p3Service: public p3FastService
+{
+	protected:
+
+	p3Service(uint16_t type) 
+	:p3FastService(type)
+	{
+		return; 
+	}
+
+	public:
+
+/*************** INTERFACE ******************************/
+        /* called from Thread/tick/GUI */
+//int             sendItem(RsItem *);
+RsItem *        recvItem();
+bool		receivedItems();
+
+//virtual int	tick() { return 0; }
+/*************** INTERFACE ******************************/
+
+	public:
+	// overloaded p3FastService interface.
+virtual bool	recvItem(RsItem *item);
+
+	private:
+
+	/* below locked by srvMtx Mutex */
+	std::list<RsItem *> recv_queue;
 };
 
 
@@ -110,16 +137,17 @@ class nullService: public pqiService
 
 	public:
 	// overloaded NULL pqiService interface.
-virtual int		receive(RsRawItem *item)
+virtual bool	recv(RsRawItem *item)
 	{
 		/* drop any items */
 		delete item;
-		return 1;
+		return true;
 	}
 
-virtual RsRawItem *	send()
+virtual bool	send(RsRawItem *item)
 	{
-		return NULL;
+		delete item;
+		return true;
 	}
 
 };

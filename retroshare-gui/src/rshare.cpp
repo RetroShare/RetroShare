@@ -449,9 +449,9 @@ void Rshare::loadStyleSheet(const QString &sheetName)
             file.setFileName(":/qss/stylesheet/" + sheetName.mid(1) + ".qss");
         } else {
             /* external stylesheet */
-            file.setFileName(QString::fromUtf8(RsInit::RsConfigDirectory().c_str()) + "/qss/" + sheetName + ".qss");
+            file.setFileName(QString::fromUtf8(RsAccounts::ConfigDirectory().c_str()) + "/qss/" + sheetName + ".qss");
             if (!file.exists()) {
-                file.setFileName(QString::fromUtf8(RsInit::getRetroshareDataDirectory().c_str()) + "/qss/" + sheetName + ".qss");
+                file.setFileName(QString::fromUtf8(RsAccounts::DataDirectory().c_str()) + "/qss/" + sheetName + ".qss");
             }
         }
         if (file.open(QFile::ReadOnly)) {
@@ -481,14 +481,14 @@ void Rshare::getAvailableStyleSheets(QMap<QString, QString> &styleSheets)
 			styleSheets.insert(QString("%1 (%2)").arg(name, tr("built-in")), ":" + name);
 		}
 	}
-	fileInfoList = QDir(QString::fromUtf8(RsInit::RsConfigDirectory().c_str()) + "/qss/").entryInfoList(QStringList("*.qss"));
+	fileInfoList = QDir(QString::fromUtf8(RsAccounts::ConfigDirectory().c_str()) + "/qss/").entryInfoList(QStringList("*.qss"));
 	foreach (fileInfo, fileInfoList) {
 		if (fileInfo.isFile()) {
 			QString name = fileInfo.baseName();
 			styleSheets.insert(name, name);
 		}
 	}
-	fileInfoList = QDir(QString::fromUtf8(RsInit::getRetroshareDataDirectory().c_str()) + "/qss/").entryInfoList(QStringList("*.qss"));
+	fileInfoList = QDir(QString::fromUtf8(RsAccounts::DataDirectory().c_str()) + "/qss/").entryInfoList(QStringList("*.qss"));
 	foreach (fileInfo, fileInfoList) {
 		if (fileInfo.isFile()) {
 			QString name = fileInfo.baseName();
@@ -606,15 +606,10 @@ void Rshare::blinkTimer()
     }
 }
 
-bool Rshare::loadCertificate(const std::string &accountId, bool autoLogin, std::string gpgId)
+bool Rshare::loadCertificate(const std::string &accountId, bool autoLogin)
 {
-	if (gpgId.empty()) {
-		std::string gpgName, gpgEmail, sslName;
-		if (!RsInit::getAccountDetails(accountId, gpgId, gpgName, gpgEmail, sslName)) {
-			return false;
-		}
-	}
-	if (!RsInit::SelectGPGAccount(gpgId)) {
+	if (!RsAccounts::SelectAccount(accountId))
+	{
 		return false;
 	}
 

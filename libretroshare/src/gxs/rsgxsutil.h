@@ -129,4 +129,24 @@ private:
 
 };
 
+class GroupUpdate
+{
+public:
+	GroupUpdate() : oldGrpMeta(NULL), newGrp(NULL), validUpdate(false)
+	{}
+	RsGxsGrpMetaData* oldGrpMeta;
+	RsNxsGrp* newGrp;
+	bool validUpdate;
+};
+
+class GroupUpdatePublish
+{
+public:
+        GroupUpdatePublish(RsGxsGrpItem* item, RsGxsGroupUpdateMeta updateMeta, uint32_t token)
+            : grpItem(item), mUpdateMeta(updateMeta), mToken(token) {}
+	RsGxsGrpItem* grpItem;
+        RsGxsGroupUpdateMeta mUpdateMeta;
+	uint32_t mToken;
+};
+
 #endif /* GXSUTIL_H_ */

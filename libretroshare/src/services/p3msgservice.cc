@@ -166,14 +166,10 @@ void p3MsgService::processMsg(RsMsgItem *mi, bool incoming)
 			p3Notify *notify = RsServer::notify();
 			if (notify)
 			{
-				std::string title, message;
-				librs::util::ConvertUtf16ToUtf8(mi->subject, title);
-				librs::util::ConvertUtf16ToUtf8(mi->message, message);
-
 				if(mi->msgFlags & RS_MSG_FLAGS_ENCRYPTED)
-					notify->AddPopupMessage(RS_POPUP_ENCRYPTED_MSG, mi->PeerId(), title, message);
+					notify->AddPopupMessage(RS_POPUP_ENCRYPTED_MSG, mi->PeerId(), mi->subject, mi->message);
 				else
-					notify->AddPopupMessage(RS_POPUP_MSG, mi->PeerId(), title, message);
+					notify->AddPopupMessage(RS_POPUP_MSG, mi->PeerId(), mi->subject, mi->message);
 
 				std::string out;
 				rs_sprintf(out, "%lu", mi->msgId);
@@ -707,12 +703,12 @@ void p3MsgService::loadWelcomeMsg()
 	msg -> recvTime = time(NULL);
 	msg -> msgFlags = RS_MSG_FLAGS_NEW;
 
-	msg -> subject = L"Welcome to Retroshare";
+	msg -> subject = "Welcome to Retroshare";
 
-	msg -> message  = L"Send and receive messages with your friends...\n";
-	msg -> message += L"These can hold recommendations from your local shared files.\n\n";
-	msg -> message += L"Add recommendations through the Local Files Dialog.\n\n";
-	msg -> message += L"Enjoy.";
+	msg -> message  = "Send and receive messages with your friends...\n";
+	msg -> message += "These can hold recommendations from your local shared files.\n\n";
+	msg -> message += "Add recommendations through the Local Files Dialog.\n\n";
+	msg -> message += "Enjoy.";
 
 	msg -> msgId = getNewUniqueMsgId();
 
@@ -1110,7 +1106,7 @@ bool 	p3MsgService::MessageSend(MessageInfo &info)
 	return true;
 }
 
-bool p3MsgService::SystemMessage(const std::wstring &title, const std::wstring &message, uint32_t systemFlag)
+bool p3MsgService::SystemMessage(const std::string &title, const std::string &message, uint32_t systemFlag)
 {
 	if ((systemFlag & RS_MSG_SYSTEM) == 0) {
 		/* no flag specified */
@@ -1884,22 +1880,21 @@ bool p3MsgService::encryptMessage(const std::string& pgp_id,RsMsgItem *item)
 #endif
 	// Now turn the binary encrypted chunk into a readable radix string.
 	//
+#ifdef DEBUG_DISTANT_MSG
+	std::cerr << "  Converting to radix64" << std::endl;
+#endif
 	std::string armoured_data ;
 	Radix64::encode((char *)encrypted_data,encrypted_size,armoured_data) ;
 	delete[] encrypted_data ;
 
-	std::wstring encrypted_msg ;
-
-#ifdef DEBUG_DISTANT_MSG
-	std::cerr << "  Converting to radix64" << std::endl;
-#endif
-	if(!librs::util::ConvertUtf8ToUtf16(armoured_data,encrypted_msg)) 
-		return false;
+	//std::wstring encrypted_msg = armoured_data;
+	//if(!librs::util::ConvertUtf8ToUtf16(armoured_data,encrypted_msg)) 
+	//	return false;
 
 	// wipe the item clean and replace the message by the encrypted data.
 
-	item->message = encrypted_msg ;
-	item->subject = L"" ;
+	item->message = armoured_data ;
+	item->subject = "" ;
 	item->msgcc.ids.clear() ;
 	item->msgbcc.ids.clear() ;
 	item->msgto.ids.clear() ;
@@ -1925,11 +1920,13 @@ bool p3MsgService::decryptMessage(const std::string& mId)
 
 		std::map<uint32_t, RsMsgItem *>::iterator mit = imsg.find(msgId);
 
-		if(mit == imsg.end() || !librs::util::ConvertUtf16ToUtf8(mit->second->message,encrypted_string)) 
+		if(mit == imsg.end())
 		{
 			std::cerr << "Can't find this message in msg list. Id=" << mId << std::endl;
 			return false;
 		}
+
+		encrypted_string = mit->second->message ;
 	}
 
 	char *encrypted_data ;

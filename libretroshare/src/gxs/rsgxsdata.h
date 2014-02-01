@@ -63,6 +63,7 @@ public:
 
     std::string mServiceString;
     uint32_t mAuthenFlags;
+    RsGxsGroupId mParentGrpId;
 
     // BELOW HERE IS LOCAL DATA, THAT IS NOT FROM MSG.
 
@@ -70,15 +71,14 @@ public:
 
     uint32_t    mPop; // HOW DO WE DO THIS NOW.
     uint32_t    mMsgCount; // ???
-    time_t      mLastPost; // ???
+    uint32_t      mLastPost; // ???
 
     uint32_t    mGroupStatus;
+    uint32_t    mRecvTS;
     std::string mOriginator;
     std::string mInternalCircle;
     std::string mHash;
 };
-
-
 
 
 class RsGxsMsgMetaData
@@ -114,6 +114,7 @@ public:
 
     uint32_t    mMsgStatus;
     time_t      mChildTs;
+    uint32_t recvTS;
     std::string mHash;
     bool validated;
 

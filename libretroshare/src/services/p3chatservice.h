@@ -70,14 +70,14 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor, publi
 		/*!
 		 * public chat sent to all peers
 		 */
-		int	sendPublicChat(const std::wstring &msg);
+		int	sendPublicChat(const std::string &msg);
 
 		/********* RsMsgs ***********/
 		/*!
 		 * chat is sent to specifc peer
 		 * @param id peer to send chat msg to
 		 */
-		bool	sendPrivateChat(const std::string &id, const std::wstring &msg);
+		bool	sendPrivateChat(const std::string &id, const std::string &msg);
 
 		/*!
 		 * can be used to send 'immediate' status msgs, these status updates are meant for immediate use by peer (not saved by rs)
@@ -226,8 +226,6 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor, publi
 		void handleRecvChatAvatarItem(RsChatAvatarItem *item) ;
 		void handleRecvChatLobbyListRequest(RsChatLobbyListRequestItem *item) ;
 		void handleRecvChatLobbyList(RsChatLobbyListItem *item) ;
-		void handleRecvChatLobbyList(RsChatLobbyListItem_deprecated *item) ;
-		void handleRecvChatLobbyList(RsChatLobbyListItem_deprecated2 *item) ;
 		void handleRecvChatLobbyEventItem(RsChatLobbyEventItem *item) ;
 
 		/// Checks that the lobby object is not flooding a lobby.
@@ -249,7 +247,7 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor, publi
 
 		/// receive and handle chat lobby item
 		bool recvLobbyChat(RsChatLobbyMsgItem*,const std::string& src_peer_id) ;
-		bool sendLobbyChat(const std::string &id, const std::wstring&, const ChatLobbyId&) ;
+		bool sendLobbyChat(const std::string &id, const std::string&, const ChatLobbyId&) ;
 		void handleRecvLobbyInvite(RsChatLobbyInviteItem*) ;
 		void checkAndRedirectMsgToLobby(RsChatMsgItem*) ;
 		void handleConnectionChallenge(RsChatLobbyConnectChallengeItem *item) ;

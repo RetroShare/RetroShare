@@ -63,7 +63,6 @@ const uint32_t CONFIG_TYPE_GENERAL 	    = 0x0001;
 const uint32_t CONFIG_TYPE_PEERS 	    = 0x0002;
 const uint32_t CONFIG_TYPE_FSERVER 	    = 0x0003;
 const uint32_t CONFIG_TYPE_MSGS 	       = 0x0004;
-const uint32_t CONFIG_TYPE_CACHE_OLDID  = 0x0005;
 const uint32_t CONFIG_TYPE_AUTHGPG	 	 = 0x0006;
 
 /* new FileTransfer */
@@ -155,8 +154,6 @@ void	setHash(const std::string& h);
 
 	RsMutex cfgMtx;
 
-	static bool globalConfigType;
-
 	private:
 
 	/**
@@ -200,10 +197,8 @@ class p3ConfigMgr
 
 		/**
 		 * @param bdir base directory: where config files will be saved
-		 * @param fname file name for global configuration
-		 * @param signame file name for global signature
 		 */
-        p3ConfigMgr(std::string bdir, std::string fname, std::string signame);
+        p3ConfigMgr(std::string bdir);
 
         /**
          * checks and update all added configurations
@@ -238,31 +233,6 @@ class p3ConfigMgr
 	private:
 
 		/**
-		 * this checks for the global config file and signature and determines class's mode of operation
-		 * @return global file rs-v0.#.cfg and rs-v0.#.sgn are present
-		 * @deprecated
-		 */
-		bool 	checkForGlobalSigConfig();
-
-		/**
-		 * removes theoldconfiguration type
-		 * @deprecated
-		 */
-		void removeOldConfigType();
-
-		/**
-		 * to save old style global-signature configuration files
-		 * @deprecated
-		 */
-		void globalSaveConfig();
-
-		/**
-		 * to load up old style global-signature config files
-		 * @deprecated
-		 */
-		void globalLoadConfig();
-
-		/**
 		 * saves configuration of pqiconfigs in object configs
 		 */
 		void saveConfig();
@@ -272,33 +242,10 @@ class p3ConfigMgr
 		 */
 		void loadConfig();
 
-		/**
-		 * checks if signature and configuration file's signature matches
-		 * @return false if signature file does not match configuration file's signature
-		 */
-		bool getSignAttempt(std::string& metaConfigFname, std::string& metaSignFname, BinMemInterface* membio);
-
-		/**
-		 * takes current configuration which is stored in back-up file, and moves it to actual config file
-		 * then stores data that was in actual config file into back-up, Corresponding signatures and handled
-		 * simlarly in parallel
-		 *@param fname the name of the first configuration file checked
-		 *@param fname_backup the seconf file, backup, checked if first file does not exist or is corrupted
-		 *@param sign file name in which signature is kept
-		 *@param sign_backup  file name in which signature which correspond to backup config is kept
-		 *@param configbio to write config to file
-		 *@param signbio  to write signature config to file
-		 */
-		bool backedUpFileSave(const std::string& fname, const std::string& fname_backup,const std::string& sign,
-				const std::string& sign_backup, BinMemInterface* configbio, BinMemInterface* signbio);
-
 const std::string basedir;
-const std::string metafname;
-const std::string metasigfname;
 
 	RsMutex cfgMtx; /* below is protected */
 
-bool oldConfigType;
 bool	mConfigSaveActive;
 std::map<uint32_t, pqiConfig *> configs;
 };
@@ -351,25 +298,8 @@ virtual void    saveDone() { return; }
 
 private:
 
-/**
- * takes current configuration which is stored in back-up file, and moves it to actual config file
- * then stores data that was in actual config file into back-up, This is an rs specific solution
- * @param fname the name of the first configuration file checked
- * @param fname_backup the seconf file, backup, checked if first file does not exist or is corrupted
- */
-bool backedUpFileSave(const std::string& fname, const std::string& fname_backup, std::list<RsItem* >& toSave,
-		bool cleanup);
-
-/*
- * for retrieving hash files
- */
-bool getHashAttempt(const std::string& loadHash, std::string& hashstr, const std::string& fname, std::list<RsItem *>& load);
-
 bool loadConfig();
 bool saveConfig();
-
-bool loadGlobalConfig(std::string& hash);
-bool saveGlobalConfig();
 
 bool loadAttempt(const std::string&,const std::string&, std::list<RsItem *>& load);
 

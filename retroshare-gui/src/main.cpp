@@ -74,14 +74,17 @@
 
 static void displayWarningAboutDSAKeys()
 {
-	if(RsInit::unsupported_keys.empty())
+	std::map<std::string,std::vector<std::string> > unsupported_keys;
+	RsAccounts::GetUnsupportedKeys(unsupported_keys);
+	
+	if(unsupported_keys.empty())
 		return ;
 
 	QMessageBox msgBox;
 
 	QString txt = QObject::tr("You appear to have locations associated to DSA keys:");
 	txt += "<UL>" ;
-	for(std::map<std::string,std::vector<std::string> >::const_iterator it(RsInit::unsupported_keys.begin());it!=RsInit::unsupported_keys.end();++it)
+	for(std::map<std::string,std::vector<std::string> >::const_iterator it(unsupported_keys.begin());it!=unsupported_keys.end();++it)
 	{
 		txt += "<LI>" + QString::fromStdString(it->first) ;
 		txt += "<UL>" ;
@@ -194,7 +197,7 @@ int main(int argc, char *argv[])
 			return 0 ;
 		if(ret == QMessageBox::Ok)
 		{
-			if(!RsInit::copyGnuPGKeyrings())
+			if(!RsAccounts::CopyGnuPGKeyrings())
 				return 0 ; 
 
 			initResult = RsInit::InitRetroShare(argc, argv);
@@ -240,7 +243,7 @@ int main(int argc, char *argv[])
 
 	/* Setup The GUI Stuff */
 	Rshare rshare(args, argc, argv, 
-		QString::fromUtf8(RsInit::RsConfigDirectory().c_str()));
+		QString::fromUtf8(RsAccounts::ConfigDirectory().c_str()));
 
 	std::string url = RsInit::getRetroShareLink();
 	if (!url.empty()) {
@@ -262,7 +265,7 @@ int main(int argc, char *argv[])
 			/* check for existing Certificate */
 			bool genCert = false;
 			std::list<std::string> accountIds;
-			if (RsInit::getAccountIds(accountIds) && (accountIds.size() > 0))
+			if (RsAccounts::GetAccountIds(accountIds) && (accountIds.size() > 0))
 			{
 				StartDialog sd;
 				if (sd.exec() == QDialog::Rejected) {
@@ -294,7 +297,7 @@ int main(int argc, char *argv[])
 			splashScreen.showMessage(rshare.translate("SplashScreen", "Load profile"), Qt::AlignHCenter | Qt::AlignBottom);
 
 			std::string preferredId;
-			RsInit::getPreferedAccountId(preferredId);
+			RsAccounts::GetPreferredAccountId(preferredId);
 
 			// true: note auto-login is active
 			Rshare::loadCertificate(preferredId, true);

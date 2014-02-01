@@ -307,7 +307,7 @@ uint32_t RsChatMsgItem::serial_size()
 	uint32_t s = 8; /* header */
 	s += 4; /* chatFlags */
 	s += 4; /* sendTime  */
-	s += GetTlvWideStringSize(message);
+	s += GetTlvStringSize(message);
 
 	return s;
 }
@@ -422,7 +422,7 @@ uint32_t RsPrivateChatMsgConfigItem::serial_size()
 	s += 4; /* chatFlags */
 	s += 4; /* configFlags */
 	s += 4; /* sendTime  */
-	s += GetTlvWideStringSize(message);
+	s += GetTlvStringSize(message);
 	s += 4; /* recvTime  */
 
 	return s;
@@ -503,7 +503,7 @@ bool RsChatMsgItem::serialise(void *data, uint32_t& pktsize)
 	/* add mandatory parts first */
 	ok &= setRawUInt32(data, tlvsize, &offset, chatFlags);
 	ok &= setRawUInt32(data, tlvsize, &offset, sendTime);
-	ok &= SetTlvWideString(data, tlvsize, &offset, TLV_TYPE_WSTR_MSG, message);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_MSG, message);
 #ifdef CHAT_DEBUG
 	std::cerr << "Serialized the following message:" << std::endl;
 	std::cerr << "========== BEGIN MESSAGE =========" << std::endl;
@@ -811,7 +811,7 @@ bool RsPrivateChatMsgConfigItem::serialise(void *data, uint32_t& pktsize)
 	ok &= setRawUInt32(data, tlvsize, &offset, chatFlags);
 	ok &= setRawUInt32(data, tlvsize, &offset, configFlags);
 	ok &= setRawUInt32(data, tlvsize, &offset, sendTime);
-	ok &= SetTlvWideString(data, tlvsize, &offset, TLV_TYPE_WSTR_MSG, message);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_MSG, message);
 	ok &= setRawUInt32(data, tlvsize, &offset, recvTime);
 
 	if (offset != tlvsize)
@@ -995,7 +995,7 @@ RsChatMsgItem::RsChatMsgItem(void *data,uint32_t /*size*/,uint8_t subtype)
 	/* get mandatory parts first */
 	ok &= getRawUInt32(data, rssize, &offset, &chatFlags);
 	ok &= getRawUInt32(data, rssize, &offset, &sendTime);
-	ok &= GetTlvWideString(data, rssize, &offset, TLV_TYPE_WSTR_MSG, message);
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_MSG, message);
 
 #ifdef CHAT_DEBUG
 	std::cerr << "Building new chat msg item." << std::endl ;
@@ -1233,7 +1233,7 @@ RsPrivateChatMsgConfigItem::RsPrivateChatMsgConfigItem(void *data,uint32_t /*siz
 	ok &= getRawUInt32(data, rssize, &offset, &chatFlags);
 	ok &= getRawUInt32(data, rssize, &offset, &configFlags);
 	ok &= getRawUInt32(data, rssize, &offset, &sendTime);
-	ok &= GetTlvWideString(data, rssize, &offset, TLV_TYPE_WSTR_MSG, message);
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_MSG, message);
 	ok &= getRawUInt32(data, rssize, &offset, &recvTime);
 
 #ifdef CHAT_DEBUG
@@ -1511,8 +1511,8 @@ uint32_t    RsMsgItem::serial_size(bool m_bConfiguration)
 	s += 4; /* sendTime  */
 	s += 4; /* recvTime  */
 
-	s += GetTlvWideStringSize(subject);
-	s += GetTlvWideStringSize(message);
+	s += GetTlvStringSize(subject);
+	s += GetTlvStringSize(message);
 
 	s += msgto.TlvSize();
 	s += msgcc.TlvSize();
@@ -1555,8 +1555,8 @@ bool     RsMsgItem::serialise(void *data, uint32_t& pktsize,bool config)
 	ok &= setRawUInt32(data, tlvsize, &offset, sendTime);
 	ok &= setRawUInt32(data, tlvsize, &offset, recvTime);
 
-	ok &= SetTlvWideString(data,tlvsize,&offset,TLV_TYPE_WSTR_SUBJECT,subject);
-	ok &= SetTlvWideString(data, tlvsize, &offset, TLV_TYPE_WSTR_MSG, message);
+	ok &= SetTlvString(data,tlvsize,&offset,TLV_TYPE_STR_SUBJECT,subject);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_MSG, message);
 
 	ok &= msgto.SetTlv(data, tlvsize, &offset);
 	ok &= msgcc.SetTlv(data, tlvsize, &offset);
@@ -1612,8 +1612,8 @@ RsMsgItem *RsMsgSerialiser::deserialiseMsgItem(void *data, uint32_t *pktsize)
 	ok &= getRawUInt32(data, rssize, &offset, &(item->sendTime));
 	ok &= getRawUInt32(data, rssize, &offset, &(item->recvTime));
 
-	ok &= GetTlvWideString(data,rssize,&offset,TLV_TYPE_WSTR_SUBJECT,item->subject);
-	ok &= GetTlvWideString(data, rssize, &offset, TLV_TYPE_WSTR_MSG, item->message);
+	ok &= GetTlvString(data,rssize,&offset,TLV_TYPE_STR_SUBJECT,item->subject);
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_MSG, item->message);
 	ok &= item->msgto.GetTlv(data, rssize, &offset);
 	ok &= item->msgcc.GetTlv(data, rssize, &offset);
 	ok &= item->msgbcc.GetTlv(data, rssize, &offset);

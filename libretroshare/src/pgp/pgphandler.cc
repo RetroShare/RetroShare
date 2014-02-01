@@ -1808,8 +1808,8 @@ bool PGPHandler::locked_syncPublicKeyring()
 bool PGPHandler::locked_syncTrustDatabase()
 {
 	struct stat64 buf ;
-	std::wstring wfullname;
 #ifdef WINDOWS_SYS
+	std::wstring wfullname;
 	librs::util::ConvertUtf8ToUtf16(_trustdb_path, wfullname);
 	if(-1 == _wstati64(wfullname.c_str(), &buf))
 #else

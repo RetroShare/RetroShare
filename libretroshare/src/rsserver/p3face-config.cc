@@ -88,15 +88,10 @@ void RsServer::rsGlobalShutDown()
 	mNetMgr->shutdown(); /* Handles UPnP */
 
 	join();
-	ftserver->StopThreads();
 
-	// stop the p3distrib threads
-
-	mForums->join();
-	mChannels->join();
 
 #ifdef RS_ENABLE_GXS
-        //if(mGxsCircles) mGxsCircles->join();
+        if(mGxsCircles) mGxsCircles->join();
         if(mGxsForums) mGxsForums->join();
         if(mGxsChannels) mGxsChannels->join();
         if(mGxsIdService) mGxsIdService->join();
@@ -104,10 +99,6 @@ void RsServer::rsGlobalShutDown()
         //if(mPhoto) mPhoto->join();
         if(mWiki) mWiki->join();
         if(mWire) mWire->join();
-#endif
-
-#ifdef RS_USE_BLOGS
-	mBlogs->join();
 #endif
 
 	AuthGPG::exit();

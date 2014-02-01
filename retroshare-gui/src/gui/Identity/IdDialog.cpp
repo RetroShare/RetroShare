@@ -473,8 +473,7 @@ void IdDialog::insertIdDetails(uint32_t token)
 		mStateHelper->setWidgetEnabled(ui.toolButton_Reputation, false);
 		// No Delete Ids yet!
 		mStateHelper->setWidgetEnabled(ui.toolButton_Delete, /*true*/ false);
-		// No Editing Ids yet!
-		mStateHelper->setWidgetEnabled(ui.toolButton_EditId, /*true*/ false);
+		mStateHelper->setWidgetEnabled(ui.toolButton_EditId, true);
 	}
 	else
 	{

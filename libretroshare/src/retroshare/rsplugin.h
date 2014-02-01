@@ -42,7 +42,7 @@ class RsTurtle ;
 class RsDht ;
 class RsDisc ;
 class RsMsgs ;
-class RsForums;
+//class RsForums;
 class RsNotify;
 class p3LinkMgr ;
 class MainPage ;
@@ -100,7 +100,7 @@ public:
     RsTurtle *mTurtle;
     RsDisc   *mDisc;
     RsDht    *mDht;
-    RsForums *mForums;
+    //RsForums *mForums;
     RsNotify *mNotify;
 };
 

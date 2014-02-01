@@ -335,15 +335,7 @@ void GetStartedDialog::emailSupport()
 	{
 		RsAutoUpdatePage::lockAllEvents();
 
-		/* set retroshare version */
-		std::map<std::string, std::string>::iterator vit;
-		std::map<std::string, std::string> versions;
-		bool retv = rsDisc->getDiscVersions(versions);
-		std::string id = rsPeers->getOwnId();
-		if (retv && versions.end() != (vit = versions.find(id)))
-		{
-			versionString = vit->second;
-		}
+		rsDisc->getPeerVersion(rsPeers->getOwnId(), versionString);
 		userLevel = rsConfig->getUserLevel();
 
 		RsAutoUpdatePage::unlockAllEvents() ;

@@ -39,14 +39,7 @@
 #ifndef RS_GPG_AUTH_HEADER
 #define RS_GPG_AUTH_HEADER
 
-#include <openssl/ssl.h>
-#include <openssl/evp.h>
 #include "util/rsthreads.h"
-//#include "retroshare/rspeers.h"
-#include <string>
-#include <list>
-#include <set>
-#include <map>
 #include "pqi/p3cfgmgr.h"
 #include "pgp/pgphandler.h"
 

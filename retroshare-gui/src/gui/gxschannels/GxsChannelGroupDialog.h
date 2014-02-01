@@ -31,12 +31,14 @@ class GxsChannelGroupDialog : public GxsGroupDialog
 
 public:
 	GxsChannelGroupDialog(TokenQueue *tokenQueue, QWidget *parent);
-	GxsChannelGroupDialog(const RsGxsChannelGroup &group, Mode mode, QWidget *parent);
+	GxsChannelGroupDialog(TokenQueue *tokenExternalQueue, RsTokenService *tokenService, Mode mode, RsGxsGroupId groupId, uint32_t enableFlags, uint32_t defaultFlags, QWidget *parent = NULL);
 
 protected:
 	virtual void initUi();
 	virtual QPixmap serviceImage();
 	virtual bool service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta);
+        virtual bool service_EditGroup(uint32_t &token, RsGxsGroupUpdateMeta &updateMeta);
+
 };
 
 #endif

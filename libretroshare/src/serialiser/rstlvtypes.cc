@@ -247,6 +247,7 @@ std::ostream &RsTlvBinaryData::print(std::ostream &out, uint16_t indent)
 
 RsTlvPeerIdSet::RsTlvPeerIdSet(): RsTlvStringSet(TLV_TYPE_PEERSET) {}
 RsTlvHashSet::RsTlvHashSet(): RsTlvStringSet(TLV_TYPE_HASHSET) {}
+RsTlvPgpIdSet::RsTlvPgpIdSet(): RsTlvStringSet(TLV_TYPE_PGPIDSET) {}
 
 
 RsTlvStringSet::RsTlvStringSet(uint16_t type) :mType(type)
@@ -427,6 +428,165 @@ std::ostream &RsTlvStringSet::printHex(std::ostream &out, uint16_t indent)
 
 }
 
+
+/************************************* String Set Ref ************************************/
+/* This is exactly the same as StringSet, but it uses an alternative list.
+ */
+RsTlvStringSetRef::RsTlvStringSetRef(uint16_t type, std::list<std::string> &refids) 
+	:mType(type), ids(refids)
+{
+}
+
+void RsTlvStringSetRef::TlvClear()
+{
+	ids.clear();
+
+}
+
+uint32_t RsTlvStringSetRef::TlvSize()
+{
+
+	uint32_t s = TLV_HEADER_SIZE; /* header */
+
+	/* determine the total size of ids strings in list */
+
+	std::list<std::string>::iterator it;
+	
+	for(it = ids.begin(); it != ids.end() ; ++it)
+	{
+		if (it->length() > 0)
+			s += GetTlvStringSize(*it);
+	}
+
+	return s;
+}
+
+
+bool     RsTlvStringSetRef::SetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
+{
+	/* must check sizes */
+	uint32_t tlvsize = TlvSize();
+	uint32_t tlvend  = *offset + tlvsize;
+
+	if (size < tlvend)
+		return false; /* not enough space */
+
+	bool ok = true;
+
+	
+		/* start at data[offset] */
+	ok &= SetTlvBase(data, tlvend, offset, mType , tlvsize);
+
+	/* determine the total size of ids strings in list */
+
+	std::list<std::string>::iterator it;
+	
+	for(it = ids.begin(); it != ids.end() ; ++it)
+	{
+		if (it->length() > 0)
+			ok &= SetTlvString(data, tlvend, offset, TLV_TYPE_STR_GENID, *it); 
+	}
+
+	return ok;
+
+}
+
+
+bool     RsTlvStringSetRef::GetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
+{	
+	if (size < *offset + TLV_HEADER_SIZE)
+		return false;	
+
+	uint16_t tlvtype = GetTlvType( &(((uint8_t *) data)[*offset])  );
+	uint32_t tlvsize = GetTlvSize( &(((uint8_t *) data)[*offset])  );
+	uint32_t tlvend = *offset + tlvsize;
+
+
+
+	if (size < tlvend)    /* check size */
+		return false; /* not enough space */
+
+	if (tlvtype != mType) /* check type */
+		return false;
+
+	bool ok = true;
+
+	/* ready to load */
+	TlvClear();
+
+	/* skip the header */
+	(*offset) += TLV_HEADER_SIZE;
+
+	
+
+/* while there is TLV  */
+	while((*offset) + 2 < tlvend)
+	{
+		/* get the next type */
+		uint16_t tlvsubtype = GetTlvType( &(((uint8_t *) data)[*offset]) );
+	
+		if (tlvsubtype == TLV_TYPE_STR_GENID)
+		{
+			std::string newIds;
+			ok &= GetTlvString(data, tlvend, offset, TLV_TYPE_STR_GENID, newIds);
+			if(ok)
+			{
+				ids.push_back(newIds);
+				
+			}
+		}
+		else
+		{
+			/* Step past unknown TLV TYPE */
+			ok &= SkipUnknownTlv(data, tlvend, offset);
+		}
+
+		if (!ok)
+		{
+			break;
+		}
+	}
+	
+	/***************************************************************************
+	 * NB: extra components could be added (for future expansion of the type).
+	 *            or be present (if this code is reading an extended version).
+	 *
+	 * We must chew up the extra characters to conform with TLV specifications
+	 ***************************************************************************/
+	if (*offset != tlvend)
+	{
+#ifdef TLV_DEBUG
+		std::cerr << "RsTlvPeerIdSetRef::GetTlv() Warning extra bytes at end of item";
+		std::cerr << std::endl;
+#endif
+		*offset = tlvend;
+	}
+
+	return ok;
+}
+
+/// print to screen RsTlvStringSet contents
+std::ostream &RsTlvStringSetRef::print(std::ostream &out, uint16_t indent)
+{
+	printBase(out, "RsTlvStringSetRef", indent);
+	uint16_t int_Indent = indent + 2;
+
+	printIndent(out, int_Indent);
+	out << "type:" << mType;
+	out << std::endl;
+
+	std::list<std::string>::iterator it;
+	for(it = ids.begin(); it != ids.end() ; ++it)
+	{
+		printIndent(out, int_Indent);
+		out << "id:" << *it;
+		out << std::endl;
+	}
+
+	printEnd(out, "RsTlvStringSetRef", indent);
+	return out;
+
+}
 
 /************************************* Service Id Set ************************************/
 

@@ -28,8 +28,6 @@
 #ifndef MRK_PQI_SSL_UDP_HEADER
 #define MRK_PQI_SSL_UDP_HEADER
 
-#include <openssl/ssl.h>
-
 // operating system specific network header.
 #include "pqi/pqinetwork.h"
 
@@ -64,23 +62,24 @@ virtual ~pqissludp();
 virtual int listen();
 virtual int stoplistening();
 virtual int tick();
-virtual int reset();
 
 virtual bool connect_parameter(uint32_t type, uint32_t value);
-virtual bool connect_additional_address(uint32_t type, struct sockaddr_in *addr);
+virtual bool connect_additional_address(uint32_t type, const struct sockaddr_storage &addr);
 
 	// BinInterface.
 	// These are reimplemented.	
-virtual bool moretoread();
-virtual bool cansend();
+virtual bool moretoread(uint32_t usec);
+virtual bool cansend(uint32_t usec);
 	/* UDP always through firewalls -> always bandwidth Limited */
 virtual bool bandwidthLimited() { return true; } 
+
+protected:
 
 	// pqissludp specific.
 	// called to initiate a connection;
 int 	attach();
 
-protected:
+virtual int reset_locked();
 
 virtual int Initiate_Connection(); 
 virtual int Basic_Connection_Complete();
@@ -103,8 +102,8 @@ private:
 	uint32_t mConnectFlags;
 	uint32_t mConnectBandwidth;
 
-	struct sockaddr_in mConnectProxyAddr;
-	struct sockaddr_in mConnectSrcAddr;
+	struct sockaddr_storage mConnectProxyAddr;
+	struct sockaddr_storage mConnectSrcAddr;
 };
 
 #endif // MRK_PQI_SSL_UDP_HEADER

@@ -258,7 +258,7 @@ private:
     std::list<RsGroupMetaData> mGrpMetaDataOut, mGrpMetaDataIn;
     std::list<RsGxsGroupId> mGrpIdsOut, mGrpIdsIn;
 
-    DummyMsgMap mMsgDataOut, mMsgDataIn;
+    std::map<RsGxsGroupId, std::vector<RsDummyMsg*> > mMsgDataOut, mMsgDataIn;
     GxsMsgMetaMap mMsgMetaDataOut, mMsgMetaDataIn;
     GxsMsgIdResult mMsgIdsOut, mMsgIdsIn;
 

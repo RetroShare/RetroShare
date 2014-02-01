@@ -49,6 +49,7 @@ uint32_t RsGxsGrpMetaData::serial_size()
     s += 4; // for mCircleType
     s += GetTlvStringSize(mCircleId);
     s += 4; // mAuthenFlag
+    s += GetTlvStringSize(mParentGrpId);
 
     return s;
 }
@@ -74,6 +75,8 @@ void RsGxsGrpMetaData::clear(){
     mOriginator.clear();
     mCircleType = 0;
     mAuthenFlags = 0;
+    mParentGrpId.clear();
+    mRecvTS = 0;
 
 }
 
@@ -103,6 +106,7 @@ bool RsGxsGrpMetaData::serialise(void *data, uint32_t &pktsize)
 
     ok &= SetTlvString(data, tlvsize, &offset, 0, mGroupId);
     ok &= SetTlvString(data, tlvsize, &offset, 0, mOrigGrpId);
+    ok &= SetTlvString(data, tlvsize, &offset, 0, mParentGrpId);
     ok &= SetTlvString(data, tlvsize, &offset, 0, mGroupName);
     ok &= setRawUInt32(data, tlvsize, &offset, mGroupFlags);
     ok &= setRawUInt32(data, tlvsize, &offset, mPublishTs);
@@ -133,6 +137,7 @@ bool RsGxsGrpMetaData::deserialise(void *data, uint32_t &pktsize)
 
     ok &= GetTlvString(data, pktsize, &offset, 0, mGroupId);
     ok &= GetTlvString(data, pktsize, &offset, 0, mOrigGrpId);
+    ok &= GetTlvString(data, pktsize, &offset, 0, mParentGrpId);
     ok &= GetTlvString(data, pktsize, &offset, 0, mGroupName);
     ok &= getRawUInt32(data, pktsize, &offset, &mGroupFlags);
     ok &= getRawUInt32(data, pktsize, &offset, &mPublishTs);
@@ -196,6 +201,7 @@ void RsGxsMsgMetaData::clear()
     mMsgFlags = 0;
     mMsgStatus = 0;
     mChildTs = 0;
+    recvTS = 0;
 }
 
 bool RsGxsMsgMetaData::serialise(void *data, uint32_t *size)
@@ -284,6 +290,8 @@ void RsGxsGrpMetaData::operator =(const RsGroupMetaData& rMeta)
         this->mInternalCircle = rMeta.mInternalCircle;
         this->mOriginator = rMeta.mOriginator;
         this->mAuthenFlags = rMeta.mAuthenFlags;
+    //std::cout << "rMeta.mParentGrpId= " <<rMeta.mParentGrpId<<"\n";
+    this->mParentGrpId = rMeta.mParentGrpId;
 }
 
 void RsGxsMsgMetaData::operator =(const RsMsgMetaData& rMeta)

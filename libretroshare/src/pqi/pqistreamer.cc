@@ -34,7 +34,6 @@
 #include "rsserver/p3face.h"
 
 #include "serialiser/rsserial.h" 
-#include "serialiser/rsbaseitems.h"  /***** For RsFileData *****/
 
 const int pqistreamerzone = 8221;
 
@@ -47,29 +46,30 @@ const int PQISTREAM_ABS_MAX = 100000000; /* 100 MB/sec (actually per loop) */
 #define DEBUG_PQISTREAMER 1
  ***/
 
-
 #ifdef DEBUG_TRANSFERS
 	#include "util/rsprint.h"
 #endif
 
 
 pqistreamer::pqistreamer(RsSerialiser *rss, std::string id, BinInterface *bio_in, int bio_flags_in)
-	:PQInterface(id), rsSerialiser(rss), bio(bio_in), bio_flags(bio_flags_in), 
-	pkt_wpending(NULL), 
-	totalRead(0), totalSent(0),
-	currRead(0), currSent(0),
-	avgReadCount(0), avgSentCount(0), streamerMtx("pqistreamer")
+	:PQInterface(id), mStreamerMtx("pqistreamer"),
+	mBio(bio_in), mBio_flags(bio_flags_in), mRsSerialiser(rss), 
+	mPkt_wpending(NULL), 
+	mTotalRead(0), mTotalSent(0),
+	mCurrRead(0), mCurrSent(0),
+	mAvgReadCount(0), mAvgSentCount(0)
 {
-	avgLastUpdate = currReadTS = currSentTS = time(NULL);
+	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
+
+	mAvgLastUpdate = mCurrReadTS = mCurrSentTS = time(NULL);
 
 	/* allocated once */
-	pkt_rpend_size = getRsPktMaxSize();
-	pkt_rpending = malloc(pkt_rpend_size);
-	reading_state = reading_state_initial ;
+	mPkt_rpend_size = getRsPktMaxSize();
+	mPkt_rpending = malloc(mPkt_rpend_size);
+	mReading_state = reading_state_initial ;
 
-//	thread_id = pthread_self() ;
 	// avoid uninitialized (and random) memory read.
-	memset(pkt_rpending,0,pkt_rpend_size) ;
+	memset(mPkt_rpending,0,mPkt_rpend_size) ;
 
 	// 100 B/s (minimal)
 	setMaxRate(true, 0.1);
@@ -85,48 +85,48 @@ pqistreamer::pqistreamer(RsSerialiser *rss, std::string id, BinInterface *bio_in
 		exit(1);
 	}
 
-	failed_read_attempts = 0 ;						// reset failed read, as no packet is still read.
+	mFailed_read_attempts = 0;  // reset failed read, as no packet is still read.
 
 	return;
 }
 
 pqistreamer::~pqistreamer()
 {
-	RsStackMutex stack(streamerMtx) ;		// lock out_pkt and out_data
+	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
 
 	pqioutput(PQL_DEBUG_ALL, pqistreamerzone, "pqistreamer::~pqistreamer() Destruction!");
 
-	if (bio_flags & BIN_FLAGS_NO_CLOSE)
+	if (mBio_flags & BIN_FLAGS_NO_CLOSE)
 	{
 		pqioutput(PQL_DEBUG_ALL, pqistreamerzone, "pqistreamer::~pqistreamer() Not Closing BinInterface!");
 	}
-	else if (bio)
+	else if (mBio)
 	{
 		pqioutput(PQL_DEBUG_ALL, pqistreamerzone, "pqistreamer::~pqistreamer() Deleting BinInterface!");
 
-		delete bio;
+		delete mBio;
 	}
 
 	/* clean up serialiser */
-	if (rsSerialiser)
-		delete rsSerialiser;
+	if (mRsSerialiser)
+		delete mRsSerialiser;
 
 	// clean up outgoing. (cntrl packets)
 	locked_clear_out_queue() ;
 
-	if (pkt_wpending)
+	if (mPkt_wpending)
 	{
-		free(pkt_wpending);
-		pkt_wpending = NULL;
+		free(mPkt_wpending);
+		mPkt_wpending = NULL;
 	}
 
-	free(pkt_rpending);
+	free(mPkt_rpending);
 
 	// clean up incoming.
-	while(incoming.size() > 0)
+	while(mIncoming.size() > 0)
 	{
-		RsItem *i = incoming.front();
-		incoming.pop_front();
+		RsItem *i = mIncoming.front();
+		mIncoming.pop_front();
 		delete i;
 	}
 	return;
@@ -145,7 +145,9 @@ int	pqistreamer::SendItem(RsItem *si,uint32_t& out_size)
 	}
 #endif
 
-	return queue_outpqi(si,out_size);
+	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
+	
+	return queue_outpqi_locked(si,out_size);
 }
 
 RsItem *pqistreamer::GetItem()
@@ -154,12 +156,13 @@ RsItem *pqistreamer::GetItem()
 	pqioutput(PQL_DEBUG_ALL, pqistreamerzone, "pqistreamer::GetItem()");
 #endif
 
+	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
 
-	if(incoming.empty())
+	if(mIncoming.empty())
 		return NULL; 
 
-	RsItem *osr = incoming.front() ;
-	incoming.pop_front() ;
+	RsItem *osr = mIncoming.front() ;
+	mIncoming.pop_front() ;
 
 	return osr;
 }
@@ -167,31 +170,26 @@ RsItem *pqistreamer::GetItem()
 // // PQInterface
 int	pqistreamer::tick()
 {
+
 #ifdef DEBUG_PQISTREAMER
 	{
+		RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
 		std::string out = "pqistreamer::tick()\n" + PeerId();
-		rs_sprintf_append(out, ": currRead/Sent: %d/%d", currRead, currSent);
+		rs_sprintf_append(out, ": currRead/Sent: %d/%d", mCurrRead, mCurrSent);
 
 		pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out);
 	}
 #endif
 
-	bio->tick();
-
-	/* short circuit everything is bio isn't active */
-	if (!(bio->isactive()))
+	if (!tick_bio())
 	{
 		return 0;
 	}
 
+	tick_recv(0);
+	tick_send(0);
 
-	/* must do both, as outgoing will catch some bad sockets, 
-	 * that incoming will not 
-	 */
-
-	handleincoming();
-	handleoutgoing();
-
+	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
 #ifdef DEBUG_PQISTREAMER
 	/* give details of the packets */
 	{
@@ -199,7 +197,7 @@ int	pqistreamer::tick()
 
 		std::string out = "pqistreamer::tick() Queued Data: for " + PeerId();
 
-		if (bio->isactive())
+		if (mBio->isactive())
 		{
 			out += " (active)";
 		}
@@ -210,11 +208,10 @@ int	pqistreamer::tick()
 		out += "\n";
 
 		{
-			RsStackMutex stack(streamerMtx) ;		// lock out_pkt and out_data
-			int total = compute_out_pkt_size() ;
+			int total = locked_compute_out_pkt_size() ;
 
-			rs_sprintf_append(out, "\t Out Packets [%d] => %d bytes\n", out_queue_size(), total);
-			rs_sprintf_append(out, "\t Incoming    [%d]\n", incoming.size());
+			rs_sprintf_append(out, "\t Out Packets [%d] => %d bytes\n", locked_out_queue_size(), total);
+			rs_sprintf_append(out, "\t Incoming    [%d]\n", mIncoming.size());
 		}
 
 		pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out);
@@ -222,22 +219,68 @@ int	pqistreamer::tick()
 #endif
 
 	/* if there is more stuff in the queues */
-	if ((incoming.size() > 0) || (out_queue_size() > 0))
+	if ((mIncoming.size() > 0) || (locked_out_queue_size() > 0))
 	{
 		return 1;
 	}
 	return 0;
 }
 
+int 	pqistreamer::tick_bio()
+{
+	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
+	mBio->tick();
+	
+	/* short circuit everything is bio isn't active */
+	if (!(mBio->isactive()))
+	{
+		return 0;
+	}
+	return 1;
+}
+
+
+int 	pqistreamer::tick_recv(uint32_t timeout)
+{
+	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
+
+	if (mBio->moretoread(timeout))
+	{
+		handleincoming_locked();
+	}
+	return 1;
+}
+
+
+int 	pqistreamer::tick_send(uint32_t timeout)
+{
+	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
+
+	/* short circuit everything is bio isn't active */
+	if (!(mBio->isactive()))
+	{
+		return 0;
+	}
+
+	if (mBio->cansend(timeout))
+	{
+		handleoutgoing_locked();
+	}
+	return 1;
+}
+
 int	pqistreamer::status()
 {
+	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
+
+
 #ifdef DEBUG_PQISTREAMER
 	pqioutput(PQL_DEBUG_ALL, pqistreamerzone, "pqistreamer::status()");
 
-	if (bio->isactive())
+	if (mBio->isactive())
 	{
 		std::string out;
-		rs_sprintf(out, "Data in:%d out:%d", totalRead, totalSent);
+		rs_sprintf(out, "Data in:%d out:%d", mTotalRead, mTotalSent);
 		pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out);
 	}
 #endif
@@ -247,44 +290,32 @@ int	pqistreamer::status()
 
 void pqistreamer::locked_storeInOutputQueue(void *ptr,int)
 {
-	out_pkt.push_back(ptr);
+	mOutPkts.push_back(ptr);
 }
 //
 /**************** HANDLE OUTGOING TRANSLATION + TRANSMISSION ******/
 
-int	pqistreamer::queue_outpqi(RsItem *pqi,uint32_t& pktsize)
+int	pqistreamer::queue_outpqi_locked(RsItem *pqi,uint32_t& pktsize)
 {
 	pktsize = 0 ;
 #ifdef DEBUG_PQISTREAMER
         std::cerr << "pqistreamer::queue_outpqi() called." << std::endl;
 #endif
-        RsStackMutex stack(streamerMtx) ;		// lock out_pkt and out_data
 
-	// This is called by different threads, and by threads that are not the handleoutgoing thread,
-	// so it should be protected by a mutex !!
-	
-#ifdef DEBUG_PQISTREAMER
-	if(dynamic_cast<RsFileData*>(pqi)!=NULL && (bio_flags & BIN_FLAGS_NO_DELETE))
-	{
-		std::cerr << "Having file data with flags = " << bio_flags << std::endl ;
-	}
-
-	pqioutput(PQL_DEBUG_ALL, pqistreamerzone, "pqistreamer::queue_outpqi()");
-#endif
 
 	/* decide which type of packet it is */
 
-	pktsize = rsSerialiser->size(pqi);
+	pktsize = mRsSerialiser->size(pqi);
 	void *ptr = malloc(pktsize);
 
 #ifdef DEBUG_PQISTREAMER
 	std::cerr << "pqistreamer::queue_outpqi() serializing packet with packet size : " << pktsize << std::endl;
 #endif
-	if (rsSerialiser->serialise(pqi, ptr, &pktsize))
+	if (mRsSerialiser->serialise(pqi, ptr, &pktsize))
 	{
 		locked_storeInOutputQueue(ptr,pqi->priority_level()) ;
 
-		if (!(bio_flags & BIN_FLAGS_NO_DELETE))
+		if (!(mBio_flags & BIN_FLAGS_NO_DELETE))
 		{
 			delete pqi;
 		}
@@ -300,41 +331,42 @@ int	pqistreamer::queue_outpqi(RsItem *pqi,uint32_t& pktsize)
 	pqi -> print_string(out);
 	pqioutput(PQL_ALERT, pqistreamerzone, out);
 
-	if (!(bio_flags & BIN_FLAGS_NO_DELETE))
+	if (!(mBio_flags & BIN_FLAGS_NO_DELETE))
 	{
 		delete pqi;
 	}
 	return 1; // keep error internal.
 }
 
-int 	pqistreamer::handleincomingitem(RsItem *pqi)
+int 	pqistreamer::handleincomingitem_locked(RsItem *pqi)
 {
+
 #ifdef DEBUG_PQISTREAMER
-	pqioutput(PQL_DEBUG_ALL, pqistreamerzone, "pqistreamer::handleincomingitem()");
+	pqioutput(PQL_DEBUG_ALL, pqistreamerzone, "pqistreamer::handleincomingitem_locked()");
 #endif
 	// timestamp last received packet.
 	mLastIncomingTs = time(NULL);
 
 	// Use overloaded Contact function 
 	pqi -> PeerId(PeerId());
-	incoming.push_back(pqi);
+	mIncoming.push_back(pqi);
 	return 1;
 }
 
 time_t	pqistreamer::getLastIncomingTS()
 {
+	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
+
 	return mLastIncomingTs;
 }
 
-int	pqistreamer::handleoutgoing()
+int	pqistreamer::handleoutgoing_locked()
 {
-	RsStackMutex stack(streamerMtx) ;		// lock out_pkt and out_data
-
 #ifdef DEBUG_PQISTREAMER
-	pqioutput(PQL_DEBUG_ALL, pqistreamerzone, "pqistreamer::handleoutgoing()");
+	pqioutput(PQL_DEBUG_ALL, pqistreamerzone, "pqistreamer::handleoutgoing_locked()");
 #endif
 
-	int maxbytes = outAllowedBytes();
+	int maxbytes = outAllowedBytes_locked();
 	int sentbytes = 0;
 	int len;
 	int ss;
@@ -343,19 +375,19 @@ int	pqistreamer::handleoutgoing()
 	std::list<void *>::iterator it;
 
 	// if not connection, or cannot send anything... pause.
-	if (!(bio->isactive()))
+	if (!(mBio->isactive()))
 	{
 		/* if we are not active - clear anything in the queues. */
 		locked_clear_out_queue() ;
 
 		/* also remove the pending packets */
-		if (pkt_wpending)
+		if (mPkt_wpending)
 		{
-			free(pkt_wpending);
-			pkt_wpending = NULL;
+			free(mPkt_wpending);
+			mPkt_wpending = NULL;
 		}
 
-		outSentBytes(sentbytes);
+		outSentBytes_locked(sentbytes);
 		return 0;
 	}
 
@@ -366,41 +398,41 @@ int	pqistreamer::handleoutgoing()
 	{
 		sent = false;
 
-		if ((!(bio->cansend())) || (maxbytes < sentbytes))
+		if ((!(mBio->cansend(0))) || (maxbytes < sentbytes))
 		{
 
 #ifdef DEBUG_TRANSFERS
 			if (maxbytes < sentbytes)
 			{
-				std::cerr << "pqistreamer::handleoutgoing() Stopped sending sentbytes > maxbytes. Sent " << sentbytes << " bytes ";
+				std::cerr << "pqistreamer::handleoutgoing_locked() Stopped sending sentbytes > maxbytes. Sent " << sentbytes << " bytes ";
 				std::cerr << std::endl;
 			}
 			else
 			{
-				std::cerr << "pqistreamer::handleoutgoing() Stopped sending at cansend() is false";
+				std::cerr << "pqistreamer::handleoutgoing_locked() Stopped sending at cansend() is false";
 				std::cerr << std::endl;
 			}
 #endif
 
-			outSentBytes(sentbytes);
+			outSentBytes_locked(sentbytes);
 			return 0;
 		}
 
 		// send a out_pkt., else send out_data. unless
 		// there is a pending packet.
-		if (!pkt_wpending)
-			pkt_wpending = locked_pop_out_data() ;
+		if (!mPkt_wpending)
+			mPkt_wpending = locked_pop_out_data() ;
 
-		if (pkt_wpending)
+		if (mPkt_wpending)
 		{
 			// write packet.
-			len = getRsItemSize(pkt_wpending);
+			len = getRsItemSize(mPkt_wpending);
 
 #ifdef DEBUG_PQISTREAMER
                         std::cout << "Sending Out Pkt of size " << len << " !" << std::endl;
 #endif
 
-			if (len != (ss = bio->senddata(pkt_wpending, len)))
+			if (len != (ss = mBio->senddata(mPkt_wpending, len)))
 			{
 #ifdef DEBUG_PQISTREAMER
 				std::string out;
@@ -409,60 +441,60 @@ int	pqistreamer::handleoutgoing()
 				pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out);
 #endif
 
-				outSentBytes(sentbytes);
+				outSentBytes_locked(sentbytes);
 				// pkt_wpending will kept til next time.
 				// ensuring exactly the same data is written (openSSL requirement).
 				return -1;
 			}
 
 #ifdef DEBUG_TRANSFERS
-			std::cerr << "pqistreamer::handleoutgoing() Sent Packet len: " << len << " @ " << RsUtil::AccurateTimeString();
+			std::cerr << "pqistreamer::handleoutgoing_locked() Sent Packet len: " << len << " @ " << RsUtil::AccurateTimeString();
 			std::cerr << std::endl;
 #endif
 
-			free(pkt_wpending);
-			pkt_wpending = NULL;
+			free(mPkt_wpending);
+			mPkt_wpending = NULL;
 
 			sentbytes += len;
 			sent = true;
 		}
 	}
-	outSentBytes(sentbytes);
+	outSentBytes_locked(sentbytes);
 	return 1;
 }
 
 
 /* Handles reading from input stream.
  */
-int pqistreamer::handleincoming()
+int pqistreamer::handleincoming_locked()
 {
 	int readbytes = 0;
 	static const int max_failed_read_attempts = 2000 ;
 
 #ifdef DEBUG_PQISTREAMER
-	pqioutput(PQL_DEBUG_ALL, pqistreamerzone, "pqistreamer::handleincoming()");
+	pqioutput(PQL_DEBUG_ALL, pqistreamerzone, "pqistreamer::handleincoming_locked()");
 #endif
 
-	if(!(bio->isactive()))
+	if(!(mBio->isactive()))
 	{
-		reading_state = reading_state_initial ;
-		inReadBytes(readbytes);
+		mReading_state = reading_state_initial ;
+		inReadBytes_locked(readbytes);
 		return 0;
 	}
 
 	// enough space to read any packet.
-	int maxlen = pkt_rpend_size; 
-	void *block = pkt_rpending; 
+	int maxlen = mPkt_rpend_size; 
+	void *block = mPkt_rpending; 
 
 	// initial read size: basic packet.
 	int blen = getRsPktBaseSize();
 
-	int maxin = inAllowedBytes();
+	int maxin = inAllowedBytes_locked();
 
 #ifdef DEBUG_PQISTREAMER
-	std::cerr << "[" << (void*)pthread_self() << "] " << "reading state = " << reading_state << std::endl ;
+	std::cerr << "[" << (void*)pthread_self() << "] " << "reading state = " << mReading_state << std::endl ;
 #endif
-	switch(reading_state)
+	switch(mReading_state)
 	{
 		case reading_state_initial: 			/*std::cerr << "jumping to start" << std::endl; */ goto start_packet_read ;
 		case reading_state_packet_started:	/*std::cerr << "jumping to middle" << std::endl;*/ goto continue_packet ;
@@ -477,11 +509,11 @@ start_packet_read:
 #endif
 		memset(block,0,blen) ;	// reset the block, to avoid uninitialized memory reads.
 
-		if (blen != (tmplen = bio->readdata(block, blen)))
+		if (blen != (tmplen = mBio->readdata(block, blen)))
 		{
 			pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, "pqistreamer::handleincoming() Didn't read BasePkt!");
 
-			inReadBytes(readbytes);
+			inReadBytes_locked(readbytes);
 
 			// error.... (either blocked or failure)
 			if (tmplen == 0)
@@ -500,7 +532,7 @@ start_packet_read:
 				//
 				//pqioutput(PQL_WARNING, pqistreamerzone, "pqistreamer::handleincoming() Error in bio read");
 #ifdef DEBUG_PQISTREAMER
-					std::cerr << "[" << (void*)pthread_self() << "] " << "given up 2, state = " << reading_state << std::endl ;
+					std::cerr << "[" << (void*)pthread_self() << "] " << "given up 2, state = " << mReading_state << std::endl ;
 #endif
 				return 0;
 			}
@@ -527,8 +559,8 @@ start_packet_read:
 #endif
 
 		readbytes += blen;
-		reading_state = reading_state_packet_started ;
-		failed_read_attempts = 0 ;						// reset failed read, as the packet has been totally read.
+		mReading_state = reading_state_packet_started ;
+		mFailed_read_attempts = 0 ;						// reset failed read, as the packet has been totally read.
 	}
 continue_packet:
 	{
@@ -539,7 +571,7 @@ continue_packet:
                 std::cerr << "[" << (void*)pthread_self() << "] " << "continuing packet getRsItemSize(block) = " << getRsItemSize(block) << std::endl ;
                 std::cerr << "[" << (void*)pthread_self() << "] " << "continuing packet extralen = " << extralen << std::endl ;
 
-				std::cerr << "[" << (void*)pthread_self() << "] " << "continuing packet state=" << reading_state << std::endl ;
+				std::cerr << "[" << (void*)pthread_self() << "] " << "continuing packet state=" << mReading_state << std::endl ;
 		std::cerr << "[" << (void*)pthread_self() << "] " << "block 1 : " << (int)(((unsigned char*)block)[0]) << " " << (int)(((unsigned char*)block)[1]) << " " << (int)(((unsigned char*)block)[2]) << " " << (int)(((unsigned char*)block)[3])  << " "
 							<< (int)(((unsigned char*)block)[4]) << " "
 							<< (int)(((unsigned char*)block)[5]) << " "
@@ -590,9 +622,9 @@ continue_packet:
 				std::cerr << std::endl;
 
 			}
-			bio->close();	
-			reading_state = reading_state_initial ;	// restart at state 1.
-			failed_read_attempts = 0 ;
+			mBio->close();	
+			mReading_state = reading_state_initial ;	// restart at state 1.
+			mFailed_read_attempts = 0 ;
 			return -1;
 
 			// Used to exit now! exit(1);
@@ -611,14 +643,14 @@ continue_packet:
 			// so, don't do that:
 			//		memset( extradata,0,extralen ) ;	
 
-			if (extralen != (tmplen = bio->readdata(extradata, extralen)))
+			if (extralen != (tmplen = mBio->readdata(extradata, extralen)))
 			{
 #ifdef DEBUG_PQISTREAMER
 				if(tmplen > 0)
 					std::cerr << "[" << (void*)pthread_self() << "] " << "Incomplete packet read ! This is a real problem ;-)" << std::endl ;
 #endif
 
-				if(++failed_read_attempts > max_failed_read_attempts)
+				if(++mFailed_read_attempts > max_failed_read_attempts)
 				{
 					std::string out;
 					rs_sprintf(out, "Error Completing Read (read %d/%d)", tmplen, extralen);
@@ -655,22 +687,22 @@ continue_packet:
 						std::cerr << msgout << std::endl;
 					}
 
-					bio->close();	
-					reading_state = reading_state_initial ;	// restart at state 1.
-					failed_read_attempts = 0 ;
+					mBio->close();	
+					mReading_state = reading_state_initial ;	// restart at state 1.
+					mFailed_read_attempts = 0 ;
 					return -1;
 				}
 				else
 				{
 #ifdef DEBUG_PQISTREAMER
-					std::cerr << "[" << (void*)pthread_self() << "] " << "given up 5, state = " << reading_state << std::endl ;
+					std::cerr << "[" << (void*)pthread_self() << "] " << "given up 5, state = " << mReading_state << std::endl ;
 #endif
 					return 0 ;	// this is just a SSL_WANT_READ error. Don't panic, we'll re-try the read soon.
 									// we assume readdata() returned either -1 or the complete read size.
 				}
 			}
 #ifdef DEBUG_PQISTREAMER
-		std::cerr << "[" << (void*)pthread_self() << "] " << "continuing packet state=" << reading_state << std::endl ;
+		std::cerr << "[" << (void*)pthread_self() << "] " << "continuing packet state=" << mReading_state << std::endl ;
 		std::cerr << "[" << (void*)pthread_self() << "] " << "block 2 : " << (int)(((unsigned char*)extradata)[0]) << " " << (int)(((unsigned char*)extradata)[1]) << " " << (int)(((unsigned char*)extradata)[2]) << " " << (int)(((unsigned char*)extradata)[3])  << " "
 							<< (int)(((unsigned char*)extradata)[4]) << " "
 							<< (int)(((unsigned char*)extradata)[5]) << " "
@@ -678,7 +710,7 @@ continue_packet:
 							<< (int)(((unsigned char*)extradata)[7]) << " " << std::endl ;
 #endif
 
-			failed_read_attempts = 0 ;
+			mFailed_read_attempts = 0 ;
 			readbytes += extralen;
 		}
 
@@ -706,9 +738,9 @@ continue_packet:
 //			fclose(f) ;
 //			exit(-1) ;
 //		}
-		RsItem *pkt = rsSerialiser->deserialise(block, &pktlen);
+		RsItem *pkt = mRsSerialiser->deserialise(block, &pktlen);
 
-		if ((pkt != NULL) && (0  < handleincomingitem(pkt)))
+		if ((pkt != NULL) && (0  < handleincomingitem_locked(pkt)))
 		{
 #ifdef DEBUG_PQISTREAMER
 			pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, "Successfully Read a Packet!");
@@ -721,11 +753,11 @@ continue_packet:
 #endif
 		}
 
-		reading_state = reading_state_initial ;	// restart at state 1.
-		failed_read_attempts = 0 ;						// reset failed read, as the packet has been totally read.
+		mReading_state = reading_state_initial ;	// restart at state 1.
+		mFailed_read_attempts = 0 ;						// reset failed read, as the packet has been totally read.
 	}
 
-	if(maxin > readbytes && bio->moretoread())
+	if(maxin > readbytes && mBio->moretoread(0))
 		goto start_packet_read ;
 
 #ifdef DEBUG_TRANSFERS
@@ -736,14 +768,14 @@ continue_packet:
 	}
 #endif
 
-	inReadBytes(readbytes);
+	inReadBytes_locked(readbytes);
 	return 0;
 }
 
 
 /* BandWidth Management Assistance */
 
-float   pqistreamer::outTimeSlice()
+float   pqistreamer::outTimeSlice_locked()
 {
 #ifdef DEBUG_PQISTREAMER
 	pqioutput(PQL_DEBUG_ALL, pqistreamerzone, "pqistreamer::outTimeSlice()");
@@ -754,87 +786,87 @@ float   pqistreamer::outTimeSlice()
 }
 
 // very simple..... 
-int     pqistreamer::outAllowedBytes()
+int     pqistreamer::outAllowedBytes_locked()
 {
 	int t = time(NULL); // get current timestep.
 
 	/* allow a lot if not bandwidthLimited */
-	if (!bio->bandwidthLimited())
+	if (!mBio->bandwidthLimited())
 	{
-		currSent = 0;
-		currSentTS = t;
+		mCurrSent = 0;
+		mCurrSentTS = t;
 		return PQISTREAM_ABS_MAX;
 	}
 
-	int dt = t - currSentTS;
+	int dt = t - mCurrSentTS;
 	// limiter -> for when currSentTs -> 0.
 	if (dt > 5)
 		dt = 5;
 
 	int maxout = (int) (getMaxRate(false) * 1000.0);
-	currSent -= dt * maxout;
-	if (currSent < 0)
+	mCurrSent -= dt * maxout;
+	if (mCurrSent < 0)
 	{
-		currSent = 0;
+		mCurrSent = 0;
 	}
 
-	currSentTS = t;
+	mCurrSentTS = t;
 
 #ifdef DEBUG_PQISTREAMER
 	{
 		std::string out;
-		rs_sprintf(out, "pqistreamer::outAllowedBytes() is %d/%d", maxout - currSent, maxout);
+		rs_sprintf(out, "pqistreamer::outAllowedBytes() is %d/%d", maxout - mCurrSent, maxout);
 		pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out);
 	}
 #endif
 
 
-	return maxout - currSent;
+	return maxout - mCurrSent;
 }
 
-int     pqistreamer::inAllowedBytes()
+int     pqistreamer::inAllowedBytes_locked()
 {
 	int t = time(NULL); // get current timestep.
 
 	/* allow a lot if not bandwidthLimited */
-	if (!bio->bandwidthLimited())
+	if (!mBio->bandwidthLimited())
 	{
-		currReadTS = t;
-		currRead = 0;
+		mCurrReadTS = t;
+		mCurrRead = 0;
 		return PQISTREAM_ABS_MAX;
 	}
 
-	int dt = t - currReadTS;
+	int dt = t - mCurrReadTS;
 	// limiter -> for when currReadTs -> 0.
 	if (dt > 5)
 		dt = 5;
 
 	int maxin = (int) (getMaxRate(true) * 1000.0);
-	currRead -= dt * maxin;
-	if (currRead < 0)
+	mCurrRead -= dt * maxin;
+	if (mCurrRead < 0)
 	{
-		currRead = 0;
+		mCurrRead = 0;
 	}
 
-	currReadTS = t;
+	mCurrReadTS = t;
 
 #ifdef DEBUG_PQISTREAMER
 	{
 		std::string out;
-		rs_sprintf(out, "pqistreamer::inAllowedBytes() is %d/%d", maxin - currRead, maxin);
+		rs_sprintf(out, "pqistreamer::inAllowedBytes() is %d/%d", maxin - mCurrRead, maxin);
 		pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out);
 	}
 #endif
 
 
-	return maxin - currRead;
+	return maxin - mCurrRead;
 }
 
 
 static const float AVG_PERIOD = 5; // sec
 static const float AVG_FRAC = 0.8; // for low pass filter.
 
-void    pqistreamer::outSentBytes(int outb)
+void    pqistreamer::outSentBytes_locked(int outb)
 {
 #ifdef DEBUG_PQISTREAMER
 	{
@@ -863,29 +895,29 @@ void    pqistreamer::outSentBytes(int outb)
 
 
 
-	totalSent += outb;
-	currSent += outb;
-	avgSentCount += outb;
+	mTotalSent += outb;
+	mCurrSent += outb;
+	mAvgSentCount += outb;
 
 	int t = time(NULL); // get current timestep.
-	if (t - avgLastUpdate > AVG_PERIOD)
+	if (t - mAvgLastUpdate > AVG_PERIOD)
 	{
 		float avgReadpSec = getRate(true);
 		float avgSentpSec = getRate(false);
 
 		avgReadpSec *= AVG_FRAC;
-		avgReadpSec += (1.0 - AVG_FRAC) * avgReadCount / 
-				(1000.0 * (t - avgLastUpdate));
+		avgReadpSec += (1.0 - AVG_FRAC) * mAvgReadCount / 
+				(1000.0 * (t - mAvgLastUpdate));
 
 		avgSentpSec *= AVG_FRAC;
-		avgSentpSec += (1.0 - AVG_FRAC) * avgSentCount / 
-				(1000.0 * (t - avgLastUpdate));
+		avgSentpSec += (1.0 - AVG_FRAC) * mAvgSentCount / 
+				(1000.0 * (t - mAvgLastUpdate));
 
 	
 		/* pretend our rate is zero if we are 
 		 * not bandwidthLimited().
 		 */
-		if (bio->bandwidthLimited())
+		if (mBio->bandwidthLimited())
 		{
 			setRate(true, avgReadpSec);
 			setRate(false, avgSentpSec);
@@ -897,14 +929,14 @@ void    pqistreamer::outSentBytes(int outb)
 		}
 
 
-		avgLastUpdate = t;
-		avgReadCount = 0;
-		avgSentCount = 0;
+		mAvgLastUpdate = t;
+		mAvgReadCount = 0;
+		mAvgSentCount = 0;
 	}
 	return;
 }
 
-void    pqistreamer::inReadBytes(int inb)
+void    pqistreamer::inReadBytes_locked(int inb)
 {
 #ifdef DEBUG_PQISTREAMER
 	{
@@ -914,45 +946,50 @@ void    pqistreamer::inReadBytes(int inb)
 	}
 #endif
 
-	totalRead += inb;
-	currRead += inb;
-	avgReadCount += inb;
+	mTotalRead += inb;
+	mCurrRead += inb;
+	mAvgReadCount += inb;
 
 	return;
 }
 
 int     pqistreamer::getQueueSize(bool in)
 {
+	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
+
 	if (in)
-		return incoming.size();
-	return out_queue_size();
+		return mIncoming.size();
+	return locked_out_queue_size();
 }
 
 void    pqistreamer::getRates(RsBwRates &rates)
 {
 	RateInterface::getRates(rates);
-	rates.mQueueIn = incoming.size();	
-	rates.mQueueOut = out_queue_size();
+
+	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
+
+	rates.mQueueIn = mIncoming.size();	
+	rates.mQueueOut = locked_out_queue_size();
 }
 
-int pqistreamer::out_queue_size() const
+int pqistreamer::locked_out_queue_size() const
 {
 	// Warning: because out_pkt is a list, calling size
 	//	is O(n) ! Makign algorithms pretty inefficient. We should record how many
 	//	items get stored and discarded to have a proper size value at any time
 	//
-	return out_pkt.size() ; 
+	return mOutPkts.size() ; 
 }
 
 void pqistreamer::locked_clear_out_queue()
 {
-	for(std::list<void*>::iterator it = out_pkt.begin(); it != out_pkt.end(); )
+	for(std::list<void*>::iterator it = mOutPkts.begin(); it != mOutPkts.end(); )
 	{
 		free(*it);
-		it = out_pkt.erase(it);
+		it = mOutPkts.erase(it);
 #ifdef DEBUG_PQISTREAMER
-		std::string out = "pqistreamer::handleoutgoing() Not active -> Clearing Pkt!";
-		//			std::cerr << out ;
+		std::string out = "pqistreamer::locked_clear_out_queue() Not active -> Clearing Pkt!";
+		std::cerr << out << std::endl;
 		pqioutput(PQL_DEBUG_BASIC, pqistreamerzone, out);
 #endif
 	}
@@ -962,7 +999,7 @@ int pqistreamer::locked_compute_out_pkt_size() const
 {
 	int total = 0 ;
 
-	for(std::list<void*>::const_iterator it = out_pkt.begin(); it != out_pkt.end(); ++it)
+	for(std::list<void*>::const_iterator it = mOutPkts.begin(); it != mOutPkts.end(); ++it)
 		total += getRsItemSize(*it);
 
 	return total ;
@@ -972,12 +1009,12 @@ void *pqistreamer::locked_pop_out_data()
 {
 	void *res = NULL ;
 
-	if (!out_pkt.empty())
+	if (!mOutPkts.empty())
 	{
-		res = *(out_pkt.begin()); 
-		out_pkt.pop_front();
+		res = *(mOutPkts.begin()); 
+		mOutPkts.pop_front();
 #ifdef DEBUG_TRANSFERS
-		std::cerr << "pqistreamer::handleoutgoing() getting next pkt from out_pkt queue";
+		std::cerr << "pqistreamer::locked_pop_out_data() getting next pkt from mOutPkts queue";
 		std::cerr << std::endl;
 #endif
 	}

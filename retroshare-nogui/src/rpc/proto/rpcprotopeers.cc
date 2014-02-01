@@ -515,7 +515,7 @@ bool load_person_details(std::string pgp_id, rsctrl::core::Person *person,
 	else 
 	{
 		std::list<std::string> common_friends;
-		rsDisc->getDiscGPGFriends(pgp_id, common_friends);
+		rsDisc->getDiscPgpFriends(pgp_id, common_friends);
 		int size = common_friends.size();
 		if (size)
 		{

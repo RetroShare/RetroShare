@@ -32,6 +32,7 @@
 
 #include <map>
 #include "serialiser/rstlvtypes.h"
+#include "serialiser/rstlvaddrs.h"
 #include "util/rsnet.h"
 
 #define RSDSDV_MAX_ROUTE_TABLE	1000
@@ -47,7 +48,7 @@ virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset); /* seriali
 virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); /* deserialise */
 virtual std::ostream &print(std::ostream &out, uint16_t indent);
 
-	struct sockaddr_in addr;
+	RsTlvIpAddress addr;
 	uint32_t level;
 	uint32_t reason;
 	uint32_t age;

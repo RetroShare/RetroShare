@@ -51,14 +51,14 @@ public:
          * @param key RsTlvSecurityKey to extract public RSA key from
          * @return pointer to the public RSA key if successful, null otherwise
          */
-        static RSA *extractPublicKey(RsTlvSecurityKey &key);
+        static RSA *extractPublicKey(const RsTlvSecurityKey &key);
 
         /*!
          * extracts the public key from an RsTlvSecurityKey
          * @param key RsTlvSecurityKey to extract private RSA key from
          * @return pointer to the private RSA key if successful, null otherwise
          */
-        static RSA *extractPrivateKey(RsTlvSecurityKey &key);
+        static RSA *extractPrivateKey(const RsTlvSecurityKey &key);
 
         /*!
          * stores the rsa public key in a RsTlvSecurityKey

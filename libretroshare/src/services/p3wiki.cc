@@ -504,7 +504,7 @@ std::string chooseRandomAuthorId()
 
         uint32_t idx = (uint32_t) (ownIds.size() * RSRandom::random_f32());
         int i = 0;
-        for(it = ownIds.begin(); (it != ownIds.end()) && (i < idx); it++, i++);
+        for(it = ownIds.begin(); (it != ownIds.end()) && (i < idx); it++, i++) ;
 
 	std::string answer;
         if (it != ownIds.end())

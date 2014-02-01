@@ -41,7 +41,7 @@
 #include "serialiser/rsserial.h"
 
 
-#define PQI_MIN_PORT 1024
+#define PQI_MIN_PORT 10 // TO ALLOW USERS TO HAVE PORT 80! - was 1024
 #define PQI_MAX_PORT 65535
 #define PQI_DEFAULT_PORT 7812
 
@@ -214,6 +214,7 @@ class PQInterface: public RateInterface
 		 * Retrieve RsItem from a facility
 		 */
 		virtual RsItem *GetItem() = 0;
+		virtual bool RecvItem(RsItem * /*item*/ )  { return false; }  /* alternative for for GetItem(), when we want to push */
 
 		/**
 		 * also there are  tick + person id  functions.
@@ -223,10 +224,11 @@ class PQInterface: public RateInterface
 		virtual std::string PeerId() { return peerId; }
 
 		// the callback from NetInterface Connection Events.
-		virtual int	notifyEvent(NetInterface *ni, int event) 
+		virtual int	notifyEvent(NetInterface *ni, int event, const struct sockaddr_storage &remote_peer_address) 
 		{ 
 			(void) ni; /* remove unused parameter warnings */
 			(void) event; /* remove unused parameter warnings */
+			(void) remote_peer_address;
 			return 0; 
 		}
 
@@ -241,7 +243,7 @@ class PQInterface: public RateInterface
 
 const uint32_t PQI_CONNECT_TCP = 0x0001;
 const uint32_t PQI_CONNECT_UDP = 0x0002;
-const uint32_t PQI_CONNECT_TUNNEL = 0x0003;
+const uint32_t PQI_CONNECT_HIDDEN_TCP = 0x0004;
 
 
 #define BIN_FLAGS_NO_CLOSE  0x0001
@@ -282,11 +284,13 @@ virtual int	readdata(void *data, int len) = 0;
 
 /**
  * Is more particular the case of the sending data through a socket (internet)
+ * moretoread and candsend, take a microsec timeout argument.
+ *
  */
 virtual int	netstatus() = 0;
 virtual int	isactive() = 0;
-virtual bool	moretoread() = 0;
-virtual bool 	cansend() = 0;
+virtual bool	moretoread(uint32_t usec) = 0;
+virtual bool 	cansend(uint32_t usec) = 0;
 
 /**
  *  method for streamer to shutdown bininterface
@@ -326,6 +330,9 @@ static const uint32_t NET_PARAM_CONNECT_BANDWIDTH = 5;
 static const uint32_t NET_PARAM_CONNECT_PROXY = 6;
 static const uint32_t NET_PARAM_CONNECT_SOURCE = 7;
 
+static const uint32_t NET_PARAM_CONNECT_DOMAIN_ADDRESS = 8;
+static const uint32_t NET_PARAM_CONNECT_REMOTE_PORT = 9;
+
 
 /*!
  * ******************** Network INTERFACE ***************************
@@ -352,16 +359,17 @@ public:
 virtual ~NetInterface() 
 	{ return; }
 
-virtual int connect(struct sockaddr_in raddr) = 0; 
+virtual int connect(const struct sockaddr_storage &raddr) = 0; 
 virtual int listen() = 0; 
 virtual int stoplistening() = 0; 
 virtual int disconnect() = 0;
 virtual int reset() = 0;
 virtual std::string PeerId() { return peerId; }
-virtual int getConnectAddress(struct sockaddr_in &raddr) = 0;
+virtual int getConnectAddress(struct sockaddr_storage &raddr) = 0;
 
 virtual bool connect_parameter(uint32_t type, uint32_t value) = 0;
-virtual bool connect_additional_address(uint32_t /*type*/, struct sockaddr_in */*addr*/) { return false; } // only needed by udp.
+virtual bool connect_parameter(uint32_t /* type */ , const std::string & /* value */ ) { return false; } // not generally used.
+virtual bool connect_additional_address(uint32_t /*type*/, const struct sockaddr_storage & /*addr*/) { return false; } // only needed by udp.
 
 protected:
 PQInterface *parent() { return p; }

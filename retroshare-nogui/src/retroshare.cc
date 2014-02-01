@@ -248,15 +248,7 @@ int main(int argc, char **argv)
 	NotifyTxt *notify = new NotifyTxt() ;
 	rsNotify->registerNotifyClient(notify);
 
-	std::string preferredId, gpgId, gpgName, gpgEmail, sslName;
-	RsInit::getPreferedAccountId(preferredId);
-
-	if (RsInit::getAccountDetails(preferredId, gpgId, gpgName, gpgEmail, sslName))
-	{
-		RsInit::SelectGPGAccount(gpgId);
-	}
-
-	/* Key + Certificate are loaded into libretroshare */
+	/* PreferredId => Key + Certificate are loaded into libretroshare */
 
 	std::string error_string ;
 	int retVal = RsInit::LockAndLoadCertificates(false,error_string);

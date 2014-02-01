@@ -156,11 +156,11 @@ virtual ~pqiConnectCb() { return; }
 virtual void	peerStatus(std::string id, const pqiIpAddrSet &addrs,
 			uint32_t type, uint32_t flags, uint32_t source) = 0;
 
-virtual void    peerConnectRequest(std::string id, struct sockaddr_in raddr,  
-			struct sockaddr_in proxyaddr,  struct sockaddr_in srcaddr,  
+virtual void    peerConnectRequest(std::string id, const struct sockaddr_storage &raddr,  
+			const struct sockaddr_storage &proxyaddr,  const struct sockaddr_storage &srcaddr,  
                         uint32_t source, uint32_t flags, uint32_t delay, uint32_t bandwidth) = 0;
 
-//virtual void	stunStatus(std::string id, struct sockaddr_in raddr, uint32_t type, uint32_t flags) = 0;
+//virtual void	stunStatus(std::string id, const struct sockaddr_storage &raddr, uint32_t type, uint32_t flags) = 0;
 };
 
 
@@ -174,9 +174,9 @@ virtual void	peerStatus(std::string id, const pqiIpAddrSet &addrs,
 			uint32_t type, uint32_t mode, uint32_t source);
 
 virtual void    peerConnectRequest(std::string id,              
-                        struct sockaddr_in raddr, uint32_t source);
+                        const struct sockaddr_storage &raddr, uint32_t source);
 
-//virtual void	stunStatus(std::string id, struct sockaddr_in raddr, uint32_t type, uint32_t flags);
+//virtual void	stunStatus(std::string id, const struct sockaddr_storage &raddr, uint32_t type, uint32_t flags);
 };
 
 
@@ -184,7 +184,7 @@ virtual void    peerConnectRequest(std::string id,
 class pqiNetListener
 {
 	public:
-virtual bool resetListener(struct sockaddr_in &local) = 0;
+virtual bool resetListener(const struct sockaddr_storage &local) = 0;
 
 };
 

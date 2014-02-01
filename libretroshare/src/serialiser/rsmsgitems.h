@@ -50,24 +50,24 @@ const uint32_t RS_CHAT_FLAG_ACK_DISTANT_CONNECTION     = 0x0800;
 
 const uint32_t RS_CHATMSG_CONFIGFLAG_INCOMING 		= 0x0001;
 
-const uint8_t RS_PKT_SUBTYPE_CHAT_AVATAR           	= 0x03 ;
-const uint8_t RS_PKT_SUBTYPE_CHAT_STATUS           	= 0x04 ;	
-const uint8_t RS_PKT_SUBTYPE_PRIVATECHATMSG_CONFIG 	= 0x05 ;	
-const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_MSG_DEPRECATED= 0x06 ;	// don't use ! Deprecated
-const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE_DEPREC = 0x07 ;	// don't use ! Deprecated
-const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_ACCEPT     	= 0x08 ;
-const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_CHALLENGE  	= 0x09 ;
-const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_UNSUBSCRIBE	= 0x0A ;
-const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_EVENT_DEPREC  = 0x0B ;	// don't use ! Deprecated
-const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_MSG        	= 0x0C ;
-const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_REQUEST 	= 0x0D ;
+const uint8_t RS_PKT_SUBTYPE_CHAT_AVATAR           	  = 0x03 ;
+const uint8_t RS_PKT_SUBTYPE_CHAT_STATUS           	  = 0x04 ;	
+const uint8_t RS_PKT_SUBTYPE_PRIVATECHATMSG_CONFIG 	  = 0x05 ;	
+const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_MSG_DEPRECATED  = 0x06 ;	// don't use ! Deprecated
+const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE_DEPREC   = 0x07 ;	// don't use ! Deprecated
+const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_ACCEPT     	  = 0x08 ;
+const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_CHALLENGE  	  = 0x09 ;
+const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_UNSUBSCRIBE	  = 0x0A ;
+const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_EVENT_DEPREC    = 0x0B ;	// don't use ! Deprecated
+const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_MSG        	  = 0x0C ;
+const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_REQUEST 	  = 0x0D ;
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_deprecated = 0x0E ;	// to be removed
-const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE       	= 0x0F ;
-const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_EVENT       	= 0x10 ;
+const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE       	  = 0x0F ;
+const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_EVENT       	  = 0x10 ;
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_deprecated2	= 0x11 ;	// to be removed (deprecated since 02 Dec. 2012)
-const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_LIST         	= 0x12 ;
-const uint8_t RS_PKT_SUBTYPE_DISTANT_INVITE_CONFIG   	= 0x13 ;
-const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_CONFIG      	= 0x15 ;
+const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_LIST         	  = 0x12 ;
+const uint8_t RS_PKT_SUBTYPE_DISTANT_INVITE_CONFIG   	  = 0x13 ;
+const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_CONFIG      	  = 0x15 ;
 
 // for defining tags themselves and msg tags
 const uint8_t RS_PKT_SUBTYPE_MSG_TAG_TYPE 	= 0x03;
@@ -117,7 +117,7 @@ class RsChatMsgItem: public RsChatItem
 
 		uint32_t chatFlags;
 		uint32_t sendTime;
-		std::wstring message;
+		std::string message;
 		/* not serialised */
 		uint32_t recvTime;
 };
@@ -316,7 +316,7 @@ class RsPrivateChatMsgConfigItem: public RsChatItem
 		uint32_t chatFlags;
 		uint32_t configFlags;
 		uint32_t sendTime;
-		std::wstring message;
+		std::string message;
 		uint32_t recvTime;
 };
 class RsPrivateChatDistantInviteConfigItem: public RsChatItem
@@ -478,8 +478,8 @@ class RsMsgItem: public RsMessageItem
 		uint32_t sendTime;
 		uint32_t recvTime;
 
-		std::wstring subject;
-		std::wstring message;
+		std::string subject;
+		std::string message;
 
 		RsTlvPeerIdSet msgto;
 		RsTlvPeerIdSet msgcc;

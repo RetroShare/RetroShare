@@ -46,38 +46,19 @@ class SearchModule
 // Presents a P3 Face to the world!
 // and funnels data through to a PQInterface.
 //
-class pqihandler: public P3Interface
+class pqihandler: public P3Interface, public pqiPublisher
 {
 	public:
 		pqihandler(SecurityPolicy *Global);
+
+		/**** Overloaded from pqiPublisher ****/
+		virtual bool sendItem(RsRawItem *item)
+		{
+			return SendRsRawItem(item);
+		}
+
 		bool	AddSearchModule(SearchModule *mod);
 		bool	RemoveSearchModule(SearchModule *mod);
-
-		// P3Interface.
-		virtual int	SearchSpecific(RsCacheRequest *ns); 
-		virtual int	SendSearchResult(RsCacheItem *);
-
-		// inputs.
-		virtual RsCacheRequest *	RequestedSearch();
-		virtual RsCacheItem    * 	GetSearchResult();
-
-		// file i/o
-		virtual int     SendFileRequest(RsFileRequest *ns);
-		virtual int     SendFileData(RsFileData *ns);
-		virtual int     SendFileChunkMapRequest(RsFileChunkMapRequest *ns);
-		virtual int     SendFileChunkMap(RsFileChunkMap *ns);
-		virtual int     SendFileCRC32MapRequest(RsFileCRC32MapRequest *ns);
-		virtual int     SendFileCRC32Map(RsFileCRC32Map *ns);
-		virtual int     SendFileSingleChunkCrcRequest(RsFileSingleChunkCrcRequest *ns);
-		virtual int     SendFileSingleChunkCrc(RsFileSingleChunkCrc *ns);
-		virtual RsFileRequest         *GetFileRequest();
-		virtual RsFileData            *GetFileData();
-		virtual RsFileChunkMapRequest *GetFileChunkMapRequest();
-		virtual RsFileChunkMap        *GetFileChunkMap();
-		virtual RsFileCRC32MapRequest *GetFileCRC32MapRequest();
-		virtual RsFileCRC32Map        *GetFileCRC32Map();
-		virtual RsFileSingleChunkCrcRequest *GetFileSingleChunkCrcRequest();
-		virtual RsFileSingleChunkCrc        *GetFileSingleChunkCrc();
 
 		// Rest of P3Interface
 		virtual int 	tick();
@@ -113,8 +94,7 @@ class pqihandler: public P3Interface
 		std::map<std::string, SearchModule *> mods;
 		SecurityPolicy *globsec;
 
-		// Temporary storage...
-		std::list<RsItem *> in_result, in_search, in_request, in_data, in_service,in_chunkmap,in_chunkmap_request,in_crc32map_request,in_crc32map,in_singlechunkcrc,in_singlechunkcrc_request;
+		std::list<RsItem *> in_service;
 
 	private:
 

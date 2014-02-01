@@ -100,11 +100,11 @@ class MessageInfo
 	std::list<std::string> msgcc;
 	std::list<std::string> msgbcc;
 
-	std::wstring title;
-	std::wstring msg;
+	std::string title;
+	std::string msg;
 
-	std::wstring attach_title;
-	std::wstring attach_comment;
+	std::string attach_title;
+	std::string attach_comment;
 	std::list<FileInfo> files;
 	std::map<std::string,std::string> encryption_keys ; // for concerned ids only the public pgp key id to encrypt the message with.
 	int size;  /* total of files */
@@ -123,7 +123,7 @@ class MsgInfoSummary
 
 	uint32_t msgflags;
 
-	std::wstring title;
+	std::string title;
 	int count; /* file count     */
 	time_t ts;
 
@@ -175,7 +175,7 @@ class ChatInfo
 	unsigned int chatflags;
 	uint32_t sendTime;
 	uint32_t recvTime;
-	std::wstring msg;
+	std::string msg;
 };
 
 class ChatLobbyInvite
@@ -260,7 +260,7 @@ virtual void getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxNew, un
 virtual bool decryptMessage(const std::string& mId) = 0 ;
 
 virtual bool MessageSend(MessageInfo &info) = 0;
-virtual bool SystemMessage(const std::wstring &title, const std::wstring &message, uint32_t systemFlag) = 0;
+virtual bool SystemMessage(const std::string &title, const std::string &message, uint32_t systemFlag) = 0;
 virtual bool MessageToDraft(MessageInfo &info, const std::string &msgParentId) = 0;
 virtual bool MessageToTrash(const std::string &mid, bool bTrash)   = 0;
 virtual bool getMsgParentId(const std::string &msgId, std::string &msgParentId) = 0;
@@ -295,8 +295,8 @@ virtual bool getDistantMessageHash(const std::string& pgp_id, std::string& hash)
 /****************************************/
 /*                 Chat                 */
 /****************************************/
-virtual	bool   sendPublicChat(const std::wstring& msg) = 0;
-virtual	bool   sendPrivateChat(const std::string& id, const std::wstring& msg) = 0;
+virtual	bool   sendPublicChat(const std::string& msg) = 0;
+virtual	bool   sendPrivateChat(const std::string& id, const std::string& msg) = 0;
 virtual int     getPublicChatQueueCount() = 0;
 virtual	bool   getPublicChatQueue(std::list<ChatInfo> &chats) = 0;
 virtual int     getPrivateChatQueueCount(bool incoming) = 0;

@@ -372,8 +372,8 @@ void PostedListDialog::showGroupDetails()
 	{
 		return;
 	}
-	
-	PostedGroupDialog cf(mGroups[mCurrTopicId], this);
+
+	PostedGroupDialog cf(mPostedQueue, rsPosted->getTokenService(), GxsGroupDialog::MODE_SHOW, mCurrTopicId, this);
 	cf.exec ();
 }
 

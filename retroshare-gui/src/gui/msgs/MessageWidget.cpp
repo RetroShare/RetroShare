@@ -567,10 +567,10 @@ void MessageWidget::fill(const std::string &msgId)
 		ui.subjectText->setText(tr("Encrypted message"));
 		ui.fromText->setText(tr("Unknown (needs decryption)")) ;
 	} else {
-		ui.subjectText->setText(QString::fromStdWString(msgInfo.title));
+		ui.subjectText->setText(QString::fromUtf8(msgInfo.title.c_str()));
 	}
 
-	text = RsHtmlMsg(msgInfo.msgflags).formatText(ui.msgText->document(), QString::fromStdWString(msgInfo.msg), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_REPLACE_LINKS);
+	text = RsHtmlMsg(msgInfo.msgflags).formatText(ui.msgText->document(), QString::fromUtf8(msgInfo.msg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_REPLACE_LINKS);
 	ui.msgText->resetImagesStatus(Settings->getMsgLoadEmbeddedImages() || (msgInfo.msgflags & RS_MSG_LOAD_EMBEDDED_IMAGES));
 	ui.msgText->setHtml(text);
 

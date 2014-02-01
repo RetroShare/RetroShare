@@ -49,6 +49,9 @@ CryptoPage::CryptoPage(QWidget * parent, Qt::WindowFlags flags)
   connect(ui._copyLink_PB, SIGNAL(clicked()), this, SLOT(copyRSLink()));
   connect(ui._useOldFormat_CB, SIGNAL(toggled(bool)), this, SLOT(load()));
 
+  ui._useOldFormat_CB->setEnabled(false) ;
+  ui._useOldFormat_CB->setChecked(false) ;
+
   // hide profile manager as it causes bugs when generating a new profile.
   //ui.profile_Button->hide() ;
 
@@ -79,13 +82,9 @@ void CryptoPage::showEvent ( QShowEvent * /*event*/ )
         ui.pgpfingerprint->setText(misc::fingerPrintStyleSplit(QString::fromStdString(detail.fpr)));
 
         /* set retroshare version */
-        std::map<std::string, std::string>::iterator vit;
-        std::map<std::string, std::string> versions;
-        bool retv = rsDisc->getDiscVersions(versions);
-        if (retv && versions.end() != (vit = versions.find(detail.id)))
-        {
-            ui.version->setText(QString::fromStdString(vit->second));
-        }
+        std::string version;
+        rsDisc->getPeerVersion(detail.id, version);
+		ui.version->setText(QString::fromStdString(version));
 
         std::list<std::string> ids;
         ids.clear();
@@ -114,7 +113,7 @@ void
 CryptoPage::load()
 {
     /* Loads ouer default Puplickey */
-    ui.certplainTextEdit->setPlainText(QString::fromUtf8(rsPeers->GetRetroshareInvite(ui._includeSignatures_CB->isChecked(),ui._useOldFormat_CB->isChecked()).c_str()));
+    ui.certplainTextEdit->setPlainText(QString::fromUtf8(rsPeers->GetRetroshareInvite(ui._includeSignatures_CB->isChecked()).c_str()));
 }
 void
 CryptoPage::copyRSLink()

@@ -57,9 +57,18 @@ private slots:
 	 void toggleTurtleRouting(bool) ;
 
 private:
+
+	// Alternative Versions for HiddenNode Mode.
+	void loadHiddenNode();
+	void updateStatusHiddenNode();
+	void saveAddressesHiddenNode();
+
+
     Ui::ServerPage ui;
 
 	 TurtleRouterDialog *_routing_info_page ;
+
+	bool mIsHiddenNode;
 };
 
 #endif // !SERVERPAGE_H

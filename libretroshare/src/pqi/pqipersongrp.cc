@@ -26,6 +26,7 @@
 #include "pqi/pqipersongrp.h"
 #include "pqi/p3linkmgr.h"
 #include "util/rsdebug.h"
+#include "serialiser/rsserviceserialiser.h"
 
 #include <stdio.h>
 
@@ -43,7 +44,7 @@ static std::list<std::string> waitingIds;
 /****
  *#define PGRP_DEBUG 1
  ****/
-//#define PGRP_DEBUG 1
+#define PGRP_DEBUG 1
 
 #define DEFAULT_DOWNLOAD_KB_RATE	(200.0)
 #define DEFAULT_UPLOAD_KB_RATE		(50.0)
@@ -55,13 +56,28 @@ static std::list<std::string> waitingIds;
  *  pqilistener and when accessing pqihandlers data.
  */
 
+
+	// New speedy recv.
+bool pqipersongrp::RecvRsRawItem(RsRawItem *item)
+{
+	std::cerr << "pqipersongrp::RecvRsRawItem()";
+	std::cerr << std::endl;
+
+	p3ServiceServer::recvItem(item);
+
+	return true;
+}
+
+
+
+
 // handle the tunnel services.
 int pqipersongrp::tickServiceRecv()
 {
 	RsRawItem *pqi = NULL;
 	int i = 0;
 
-	pqioutput(PQL_DEBUG_ALL, pqipersongrpzone, "pqipersongrp::tickTunnelServer()");
+	pqioutput(PQL_DEBUG_ALL, pqipersongrpzone, "pqipersongrp::tickServiceRecv()");
 
 	//p3ServiceServer::tick();
 
@@ -69,8 +85,8 @@ int pqipersongrp::tickServiceRecv()
 	{
 		++i;
 		pqioutput(PQL_DEBUG_BASIC, pqipersongrpzone, 
-			"pqipersongrp::tickTunnelServer() Incoming TunnelItem");
-		incoming(pqi);
+			"pqipersongrp::tickServiceRecv() Incoming TunnelItem");
+		recvItem(pqi);
 	}
 
 	if (0 < i)
@@ -81,6 +97,11 @@ int pqipersongrp::tickServiceRecv()
 }
 
 // handle the tunnel services.
+
+// Improvements:
+// This function is no longer necessary, and data is pushed directly to pqihandler.
+
+#if 0
 int pqipersongrp::tickServiceSend()
 {
         RsRawItem *pqi = NULL;
@@ -105,10 +126,12 @@ int pqipersongrp::tickServiceSend()
 	return 0;
 }
 
+#endif
+
 
 	// init
 pqipersongrp::pqipersongrp(SecurityPolicy *glob, unsigned long flags)
-	:pqihandler(glob), pqil(NULL), initFlags(flags)
+	:pqihandler(glob), p3ServiceServer(this), pqil(NULL), initFlags(flags)
 {
 }
 
@@ -129,6 +152,7 @@ int	pqipersongrp::tick()
 
 	int i = 0;
 
+#if 0
 	if (tickServiceSend())
 	{
 		i = 1;
@@ -136,14 +160,18 @@ int	pqipersongrp::tick()
                 std::cerr << "pqipersongrp::tick() moreToTick from tickServiceSend()" << std::endl;
 #endif
 	}
+#endif
 
-	if (pqihandler::tick()) /* does actual Send/Recv */
+
+#if 0
+	if (pqihandler::tick()) /* does Send/Recv */
 	{
 		i = 1;
 #ifdef PGRP_DEBUG
                 std::cerr << "pqipersongrp::tick() moreToTick from pqihandler::tick()" << std::endl;
 #endif
 	}
+#endif
 
 
 	if (tickServiceRecv())
@@ -153,6 +181,19 @@ int	pqipersongrp::tick()
                 std::cerr << "pqipersongrp::tick() moreToTick from tickServiceRecv()" << std::endl;
 #endif
 	}
+
+	p3ServiceServer::tick(); 
+
+#if 1
+	if (pqihandler::tick()) /* does Send/Recv */
+	{
+		i = 1;
+#ifdef PGRP_DEBUG
+                std::cerr << "pqipersongrp::tick() moreToTick from pqihandler::tick()" << std::endl;
+#endif
+	}
+
+#endif
 
 	return i;
 }
@@ -184,7 +225,8 @@ int	pqipersongrp::init_listener()
 	{
 		/* extract details from 
 		 */
-		struct sockaddr_in laddr = mLinkMgr->getLocalAddress();
+		struct sockaddr_storage laddr;
+		mLinkMgr->getLocalAddress(laddr);
 		
 		RsStackMutex stack(coreMtx); /******* LOCKED MUTEX **********/
 		pqil = locked_createListener(laddr);
@@ -192,7 +234,7 @@ int	pqipersongrp::init_listener()
 	return 1;
 }
 
-bool    pqipersongrp::resetListener(struct sockaddr_in &local)
+bool    pqipersongrp::resetListener(const struct sockaddr_storage &local)
 {
         #ifdef PGRP_DEBUG
 	std::cerr << "pqipersongrp::resetListener()" << std::endl;
@@ -413,6 +455,7 @@ int     pqipersongrp::removePeer(std::string id)
 		p -> stoplistening();
 		pqioutput(PQL_WARNING, pqipersongrpzone, "pqipersongrp::removePeer() => reset() called before deleting person");
 		p -> reset();
+		p -> fullstopthreads();
 		delete p;
 		mods.erase(it);
 	}
@@ -543,18 +586,20 @@ int     pqipersongrp::connectPeer(std::string id
 	///////////////////////////////////////////////////////////
 #endif
 
-	struct sockaddr_in addr;
+	struct sockaddr_storage addr;
 	uint32_t delay;
 	uint32_t period;
 	uint32_t timeout;
 	uint32_t type;
 	uint32_t flags = 0 ;
 
-	struct sockaddr_in proxyaddr;
-	struct sockaddr_in srcaddr;
+	struct sockaddr_storage proxyaddr;
+	struct sockaddr_storage srcaddr;
 	uint32_t bandwidth;
+	std::string domain_addr;
+	uint16_t domain_port;
 	  	  
-	if (!mLinkMgr->connectAttempt(id, addr, proxyaddr, srcaddr, delay, period, type, flags, bandwidth))
+	if (!mLinkMgr->connectAttempt(id, addr, proxyaddr, srcaddr, delay, period, type, flags, bandwidth, domain_addr, domain_port))
 	{
 #ifdef PGRP_DEBUG
 		std::cerr << " pqipersongrp::connectPeer() No Net Address";
@@ -565,11 +610,13 @@ int     pqipersongrp::connectPeer(std::string id
 
 #ifdef PGRP_DEBUG
 	std::cerr << " pqipersongrp::connectPeer() connectAttempt data id: " << id;
-	std::cerr << " addr: " << rs_inet_ntoa(addr.sin_addr) << ":" << ntohs(addr.sin_port);
+	std::cerr << " addr: " << sockaddr_storage_tostring(addr);
 	std::cerr << " delay: " << delay;
 	std::cerr << " period: " << period;
 	std::cerr << " type: " << type;
 	std::cerr << " flags: " << flags;
+	std::cerr << " domain_addr: " << domain_addr;
+	std::cerr << " domain_port: " << domain_port;
 	std::cerr << std::endl;
 #endif
 
@@ -577,8 +624,16 @@ int     pqipersongrp::connectPeer(std::string id
 	uint32_t ptype;
 	if (type & RS_NET_CONN_TCP_ALL)
 	{
-		ptype = PQI_CONNECT_TCP;
-		timeout = RS_TCP_STD_TIMEOUT_PERIOD; 
+		if (type == RS_NET_CONN_TCP_HIDDEN)
+		{
+			ptype = PQI_CONNECT_HIDDEN_TCP;
+			timeout = RS_TCP_HIDDEN_TIMEOUT_PERIOD; 
+		}
+		else
+		{
+			ptype = PQI_CONNECT_TCP;
+			timeout = RS_TCP_STD_TIMEOUT_PERIOD; 
+		}
 #ifdef PGRP_DEBUG
 		std::cerr << " pqipersongrp::connectPeer() connecting with TCP: Timeout :" << timeout;
 		std::cerr << std::endl;
@@ -593,15 +648,6 @@ int     pqipersongrp::connectPeer(std::string id
 		std::cerr << std::endl;
 #endif
 	}
-	else if (type & RS_NET_CONN_TUNNEL)
-	{
-		ptype = PQI_CONNECT_TUNNEL;
-		timeout = period * 2;
-#ifdef PGRP_DEBUG
-		std::cerr << " pqipersongrp::connectPeer() connecting with Tunnel: Timeout :" << timeout;
-		std::cerr << std::endl;
-#endif
-	}
 	else
 	{
 #ifdef PGRP_DEBUG
@@ -611,12 +657,12 @@ int     pqipersongrp::connectPeer(std::string id
 		return 0;
 	}
 
-	p->connect(ptype, addr, proxyaddr, srcaddr, delay, period, timeout, flags, bandwidth);
+	p->connect(ptype, addr, proxyaddr, srcaddr, delay, period, timeout, flags, bandwidth, domain_addr, domain_port);
 
 	return 1;
 }
 
-bool    pqipersongrp::notifyConnect(std::string id, uint32_t ptype, bool success, struct sockaddr_in raddr)
+bool    pqipersongrp::notifyConnect(std::string id, uint32_t ptype, bool success, const struct sockaddr_storage &raddr)
 {
 	uint32_t type = 0;
 	if (ptype == PQI_CONNECT_TCP)
@@ -627,11 +673,6 @@ bool    pqipersongrp::notifyConnect(std::string id, uint32_t ptype, bool success
 	{
 		type = RS_NET_CONN_UDP_ALL;
 	}
-	else if (ptype == PQI_CONNECT_TUNNEL)
-	{
-		type = RS_NET_CONN_TUNNEL;
-	}
-
 	
 	if (mLinkMgr)
 		mLinkMgr->connectResult(id, success, type, raddr);
@@ -643,7 +684,7 @@ bool    pqipersongrp::notifyConnect(std::string id, uint32_t ptype, bool success
 
 #include "pqi/pqibin.h"
 
-pqilistener * pqipersongrpDummy::locked_createListener(struct sockaddr_in /*laddr*/)
+pqilistener * pqipersongrpDummy::locked_createListener(const struct sockaddr_storage & /*laddr*/)
 {
 	pqilistener *listener = new pqilistener();
 	return listener;
@@ -660,11 +701,9 @@ pqiperson * pqipersongrpDummy::locked_createPerson(std::string id, pqilistener *
 	NetBinDummy *d1 = new NetBinDummy(pqip, id, PQI_CONNECT_TCP);
 
 	RsSerialiser *rss = new RsSerialiser();
-	rss->addSerialType(new RsFileItemSerialiser());
-	rss->addSerialType(new RsCacheItemSerialiser());
 	rss->addSerialType(new RsServiceSerialiser());
 
-	pqiconnect *pqic = new pqiconnect(rss, d1);
+	pqiconnect *pqic = new pqiconnect(pqip, rss, d1);
 
 	pqip -> addChildInterface(PQI_CONNECT_TCP, pqic);
 
@@ -672,11 +711,9 @@ pqiperson * pqipersongrpDummy::locked_createPerson(std::string id, pqilistener *
 	NetBinDummy *d2 = new NetBinDummy(pqip, id, PQI_CONNECT_UDP);
 
 	RsSerialiser *rss2 = new RsSerialiser();
-	rss2->addSerialType(new RsFileItemSerialiser());
-	rss2->addSerialType(new RsCacheItemSerialiser());
 	rss2->addSerialType(new RsServiceSerialiser());
 
-	pqiconnect *pqic2 	= new pqiconnect(rss2, d2);
+	pqiconnect *pqic2 	= new pqiconnect(pqip, rss2, d2);
 
 	pqip -> addChildInterface(PQI_CONNECT_UDP, pqic2);
 

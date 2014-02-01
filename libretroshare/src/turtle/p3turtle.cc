@@ -1119,7 +1119,7 @@ bool p3turtle::getTunnelServiceInfo(TurtleTunnelId tunnel_id,std::string& vpid,s
 	if(it2 == _local_tunnels.end())
 	{
 #ifdef P3TURTLE_DEBUG
-		std::cerr << "p3turtle: unknown tunnel id " << (void*)item->tunnelId() << std::endl ;
+		std::cerr << "p3turtle: unknown tunnel id " << (void*)tunnel_id << std::endl ;
 #endif
 		return false;
 	}
@@ -2085,7 +2085,7 @@ void p3turtle::dumpState()
 		//std::cerr << ", last_req=" << (void*)it->second.last_request << ", time_stamp = " << it->second.time_stamp << "(" << now-it->second.time_stamp << " secs ago)" << std::endl ;
 	}
 	std::cerr << "  Active outgoing file hashes: " << _outgoing_file_hashes.size() << std::endl ;
-	for(std::map<TurtleFileHash,std::string>::const_iterator it(_outgoing_file_hashes.begin());it!=_outgoing_file_hashes.end();++it)
+	for(std::map<TurtleFileHash,RsTurtleClientService*>::const_iterator it(_outgoing_file_hashes.begin());it!=_outgoing_file_hashes.end();++it)
 		std::cerr << "    hash=0x" << it->first << std::endl ;
 
 	std::cerr << "  Local tunnels:" << std::endl ;

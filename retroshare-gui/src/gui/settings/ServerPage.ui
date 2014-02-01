@@ -6,18 +6,18 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>632</width>
-    <height>683</height>
+    <width>602</width>
+    <height>535</height>
    </rect>
   </property>
   <layout class="QGridLayout">
    <property name="margin">
     <number>6</number>
    </property>
-   <item row="1" column="0">
+   <item row="0" column="0">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>3</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -41,6 +41,11 @@
            <item>
             <property name="text">
              <string>Manually Forwarded Port</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Hidden Node</string>
             </property>
            </item>
           </widget>
@@ -121,14 +126,14 @@ peers still need to trust each other to allow connection. </string>
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="label_2">
+              <widget class="QLabel" name="label_extAddress">
                <property name="text">
                 <string>External Address</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="label_3">
+              <widget class="QLabel" name="label_dynDNS">
                <property name="text">
                 <string>Dynamic DNS</string>
                </property>
@@ -154,10 +159,10 @@ peers still need to trust each other to allow connection. </string>
              <item row="0" column="2">
               <widget class="QSpinBox" name="localPort">
                <property name="toolTip">
-                <string>Acceptable ports range from 1024 to 65535. Ports below 1024 are reserved by your system.</string>
+                <string>Acceptable ports range from 10 to 65535. Normally Ports below 1024 are reserved by your system.</string>
                </property>
                <property name="minimum">
-                <number>1024</number>
+                <number>10</number>
                </property>
                <property name="maximum">
                 <number>65535</number>
@@ -180,10 +185,10 @@ peers still need to trust each other to allow connection. </string>
              <item row="1" column="2">
               <widget class="QSpinBox" name="extPort">
                <property name="toolTip">
-                <string>Acceptable ports range from 1024 to 65535. Ports below 1024 are reserved by your system.</string>
+                <string>Acceptable ports range from 10 to 65535. Normally ports below 1024 are reserved by your system.</string>
                </property>
                <property name="minimum">
-                <number>1024</number>
+                <number>10</number>
                </property>
                <property name="maximum">
                 <number>65535</number>
@@ -369,8 +374,6 @@ behind a firewall or a VPN.</string>
       <zorder>showDiscStatusBar</zorder>
       <zorder>allowIpDeterminationCB</zorder>
       <zorder>IPServersLV</zorder>
-      <zorder>textlabel_ext</zorder>
-      <zorder>textlabel_netLimited</zorder>
       <zorder>ipAddressList</zorder>
       <zorder>label_7</zorder>
      </widget>
@@ -542,6 +545,270 @@ The default value is 20.</string>
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="TorTAB">
+      <attribute name="title">
+       <string>TOR Configuration</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_8">
+       <item>
+        <widget class="QGroupBox" name="torpage_outgoing">
+         <property name="title">
+          <string>Outgoing TOR Connections</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_5">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_8">
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_4">
+              <item>
+               <widget class="QLabel" name="label_3">
+                <property name="text">
+                 <string>TOR Socks Proxy</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="torpage_proxyAddress"/>
+              </item>
+              <item>
+               <widget class="QSpinBox" name="torpage_proxyPort">
+                <property name="minimum">
+                 <number>10</number>
+                </property>
+                <property name="maximum">
+                 <number>65535</number>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_5">
+              <item>
+               <widget class="QLabel" name="iconlabel_tor_outgoing">
+                <property name="maximumSize">
+                 <size>
+                  <width>16</width>
+                  <height>16</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="pixmap">
+                 <pixmap resource="../images.qrc">:/images/ledoff1.png</pixmap>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_9">
+                <property name="text">
+                 <string>Outgoing Okay</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QPlainTextEdit" name="plainTextEdit">
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>100</height>
+             </size>
+            </property>
+            <property name="verticalScrollBarPolicy">
+             <enum>Qt::ScrollBarAlwaysOff</enum>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+            <property name="plainText">
+             <string>TOR Socks Proxy default: 127.0.01:9050.  Set in torrc config and update here.
+
+You can connect to Hidden Nodes, even if you 
+are running a standard Node, so why not setup TOR? </string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="torpage_incoming">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="title">
+          <string>Incoming TOR Connections</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_7">
+          <item>
+           <layout class="QGridLayout" name="gridLayout">
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_10">
+              <property name="text">
+               <string>Local Address</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLineEdit" name="torpage_localAddress"/>
+            </item>
+            <item row="0" column="2">
+             <widget class="QSpinBox" name="torpage_localPort">
+              <property name="minimum">
+               <number>10</number>
+              </property>
+              <property name="maximum">
+               <number>65535</number>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="3">
+             <layout class="QHBoxLayout" name="horizontalLayout_9">
+              <item>
+               <widget class="QLabel" name="iconlabel_tor_incoming">
+                <property name="maximumSize">
+                 <size>
+                  <width>16</width>
+                  <height>16</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="pixmap">
+                 <pixmap resource="../images.qrc">:/images/ledoff1.png</pixmap>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_13">
+                <property name="text">
+                 <string>Incoming Okay</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_11">
+              <property name="text">
+               <string>Onion Address</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QLineEdit" name="torpage_onionAddress"/>
+            </item>
+            <item row="1" column="2">
+             <widget class="QSpinBox" name="torpage_onionPort">
+              <property name="minimum">
+               <number>10</number>
+              </property>
+              <property name="maximum">
+               <number>65535</number>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_6">
+            <item>
+             <widget class="QLabel" name="label_12">
+              <property name="text">
+               <string>Expected torrc Port Configuration:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPlainTextEdit" name="torpage_configuration">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>10</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>50</height>
+               </size>
+              </property>
+              <property name="verticalScrollBarPolicy">
+               <enum>Qt::ScrollBarAlwaysOff</enum>
+              </property>
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+              <property name="plainText">
+               <string>HiddenServiceDir &lt;/your/path/to/hidden/directory/service&gt;
+HiddenServicePort 9191 127.0.0.1:9191</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QPlainTextEdit" name="plainTextEdit_2">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>100</height>
+             </size>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+            <property name="plainText">
+             <string>To Receive Connections, you must first setup a TOR Hidden Service. 
+See TOR documentation for HOWTO details.
+
+Once this is done, paste the Onion Address in the box above.
+This is your external address on the TOR network.
+Finally make sure that the Ports match the TOR configuration.
+
+If you have issues connecting over TOR check the TOR logs too.</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>18</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
   </layout>
@@ -549,7 +816,6 @@ The default value is 20.</string>
  <tabstops>
   <tabstop>netModeComboBox</tabstop>
   <tabstop>discComboBox</tabstop>
-  <tabstop>tabWidget</tabstop>
   <tabstop>localAddress</tabstop>
   <tabstop>localPort</tabstop>
   <tabstop>extAddress</tabstop>

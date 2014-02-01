@@ -236,7 +236,7 @@ bool 	p3ZeroConf::dropPeer(std::string pid)
 
 	/* extract current peer status */
 bool 	p3ZeroConf::getPeerStatus(std::string id, 
-				struct sockaddr_in &/*laddr*/, struct sockaddr_in &/*raddr*/,
+				struct sockaddr_storage &/*laddr*/, struct sockaddr_storage &/*raddr*/,
 				uint32_t &/*type*/, uint32_t &/*mode*/)
 {
 	/* remove unused parameter warnings */
@@ -251,7 +251,7 @@ bool 	p3ZeroConf::getPeerStatus(std::string id,
 }
 
 #if 0
-bool 	p3ZeroConf::getExternalInterface(struct sockaddr_in &/*raddr*/,
+bool 	p3ZeroConf::getExternalInterface(struct sockaddr_storage &/*raddr*/,
 					uint32_t &/*mode*/)
 {
 
@@ -277,12 +277,12 @@ bool 	p3ZeroConf::setAttachMode(bool on)
 	return true;
 }
 
-int 	p3ZeroConf::addBadPeer(const struct sockaddr_in &addr, uint32_t reason, uint32_t flags, uint32_t age)
+int 	p3ZeroConf::addBadPeer(const struct sockaddr_storage &addr, uint32_t reason, uint32_t flags, uint32_t age)
 {
 	return 1;
 }
 
-int 	p3ZeroConf::addKnownPeer(const std::string &pid, const struct sockaddr_in &addr, uint32_t flags)
+int 	p3ZeroConf::addKnownPeer(const std::string &pid, const struct sockaddr_storage &addr, uint32_t flags)
 {
 	return 1;
 }
@@ -500,7 +500,7 @@ int p3ZeroConf::checkLocationResults()
 	std::cerr << std::endl;
 
 	time_t now = time(NULL);
-	mPeerMgr->addFriend(lr.sslId, lr.gpgId, RS_NET_MODE_UDP, RS_VIS_STATE_STD, now);
+	mPeerMgr->addFriend(lr.sslId, lr.gpgId, RS_NET_MODE_UDP, RS_VS_DISC_FULL, RS_VS_DHT_FULL, now);
 	return 1;
 }
 
@@ -563,7 +563,9 @@ int p3ZeroConf::checkQueryResults()
 	time_t now = time(NULL);
 	uint32_t flags = RS_CB_FLAG_MODE_TCP;
 	uint32_t source = RS_CB_DHT; // SHOULD ADD NEW SOURCE ZC???
-	struct sockaddr_in dummyProxyAddr, dummySrcAddr;
+	struct sockaddr_storage dummyProxyAddr, dummySrcAddr;
+	sockaddr_storage_clear(dummyProxyAddr);
+	sockaddr_storage_clear(dummySrcAddr);
 	mConnCb->peerConnectRequest(qr.sslId, qr.addr, dummyProxyAddr, dummySrcAddr, 
 						source, flags, 0, 0); 
 
@@ -1145,8 +1147,13 @@ void p3ZeroConf::callbackQueryIp( DNSServiceRef /* sdRef */, DNSServiceFlags fla
 
 	if ((rrtype == kDNSServiceType_A) && (rdlen == 4))
 	{
-		qr.addr.sin_addr.s_addr = *((uint32_t *) rdata);
-
+		// IPV4 type.
+		sockaddr_storage_clear(qr.addr);
+		struct sockaddr_in *addr = (struct sockaddr_in *) &(qr.addr);
+		addr->sin_family = AF_INET;
+		addr->sin_addr.s_addr = *((uint32_t *) rdata);
+		addr->sin_port = htons(0);
+		
 		if (locked_completeQueryResult(qr)) // Saves Query Results, and fills in Port details.
 		{
 			mQueryResults.push_back(qr);
@@ -1206,7 +1213,7 @@ int p3ZeroConf::locked_completeQueryResult(zcQueryResult &qr)
 	std::cerr << "p3ZeroConf::locked_completeQueryResults() Filling in Peer IpAddress";
 	std::cerr << std::endl;
 
-	qr.addr.sin_port = htons(lit->second.mPort);
+	sockaddr_storage_setport(qr.addr, lit->second.mPort);
 	lit->second.mAddress = qr.addr;
 	lit->second.mStatus |= ZC_STATUS_IPADDRESS;
 	lit->second.mAddrTs = time(NULL);

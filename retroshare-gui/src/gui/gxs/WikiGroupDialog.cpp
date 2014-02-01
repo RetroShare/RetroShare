@@ -26,7 +26,9 @@
 #include <retroshare/rswiki.h>
 #include <iostream>
 
-const uint32_t WikiCreateEnabledFlags = ( // GXS_GROUP_FLAGS_ICON        |
+const uint32_t WikiCreateEnabledFlags = ( 
+			  GXS_GROUP_FLAGS_NAME        |
+			  // GXS_GROUP_FLAGS_ICON        |
                           GXS_GROUP_FLAGS_DESCRIPTION   |
                           GXS_GROUP_FLAGS_DISTRIBUTION  |
                           // GXS_GROUP_FLAGS_PUBLISHSIGN   |
@@ -52,71 +54,17 @@ uint32_t WikiCreateDefaultsFlags = ( GXS_GROUP_DEFAULTS_DISTRIB_PUBLIC    |
                            GXS_GROUP_DEFAULTS_COMMENTS_NO          |
                            0);
 
+uint32_t WikiEditDefaultsFlags = WikiCreateDefaultsFlags;
+uint32_t WikiEditEnabledFlags = WikiCreateEnabledFlags;
 
 WikiGroupDialog::WikiGroupDialog(TokenQueue *tokenQueue, QWidget *parent)
 	:GxsGroupDialog(tokenQueue, WikiCreateEnabledFlags, WikiCreateDefaultsFlags, parent)
 {
-
-	// To start with we only have open forums - with distribution controls.
-#if 0
-        uint32_t enabledFlags = ( GXS_GROUP_FLAGS_ICON        |
-                                GXS_GROUP_FLAGS_DESCRIPTION   |
-                                GXS_GROUP_FLAGS_DISTRIBUTION  |
-                                // GXS_GROUP_FLAGS_PUBLISHSIGN   |
-                                GXS_GROUP_FLAGS_SHAREKEYS     |
-                                // GXS_GROUP_FLAGS_PERSONALSIGN  |
-                                // GXS_GROUP_FLAGS_COMMENTS      |
-                                0);
-
-        uint32_t readonlyFlags = 0;
-
-        uint32_t defaultsFlags = ( GXS_GROUP_DEFAULTS_DISTRIB_PUBLIC    |
-                                //GXS_GROUP_DEFAULTS_DISTRIB_GROUP        |
-                                //GXS_GROUP_DEFAULTS_DISTRIB_LOCAL        |
-
-                                GXS_GROUP_DEFAULTS_PUBLISH_OPEN         |
-                                //GXS_GROUP_DEFAULTS_PUBLISH_THREADS      |
-                                //GXS_GROUP_DEFAULTS_PUBLISH_REQUIRED     |
-                                //GXS_GROUP_DEFAULTS_PUBLISH_ENCRYPTED    |
-
-                                //GXS_GROUP_DEFAULTS_PERSONAL_GPG         |
-                                GXS_GROUP_DEFAULTS_PERSONAL_REQUIRED    |
-                                //GXS_GROUP_DEFAULTS_PERSONAL_IFNOPUB     |
-
-                                //GXS_GROUP_DEFAULTS_COMMENTS_YES         |
-                                GXS_GROUP_DEFAULTS_COMMENTS_NO          |
-                                0);
-
-	//setFlags(enabledFlags, readonlyFlags, defaultsFlags);
-	setFlags(enabledFlags, defaultsFlags);
-#endif
-
 }
 
-WikiGroupDialog::WikiGroupDialog(const RsWikiCollection &collection, QWidget *parent)
-		:GxsGroupDialog(collection.mMeta, MODE_SHOW, parent)
+WikiGroupDialog::WikiGroupDialog(TokenQueue *tokenExternalQueue, RsTokenService *tokenService, Mode mode, RsGxsGroupId groupId, QWidget *parent)
+:GxsGroupDialog(tokenExternalQueue, tokenService, mode, groupId, WikiEditEnabledFlags, WikiEditDefaultsFlags, parent)
 {
-#if 0
-
-	// To start with we only have open forums - with distribution controls.
-
-        uint32_t enabledFlags = ( GXS_GROUP_FLAGS_ICON        |
-                                GXS_GROUP_FLAGS_DESCRIPTION   |
-                                GXS_GROUP_FLAGS_DISTRIBUTION  |
-                                GXS_GROUP_FLAGS_SHAREKEYS     |
-                                0);
-
-        uint32_t readonlyFlags = 0;
-
-        uint32_t defaultsFlags = ( GXS_GROUP_DEFAULTS_DISTRIB_PUBLIC    |
-                                GXS_GROUP_DEFAULTS_PUBLISH_OPEN         |
-                                GXS_GROUP_DEFAULTS_PERSONAL_REQUIRED    |
-                                GXS_GROUP_DEFAULTS_COMMENTS_NO          |
-                                0);
-
-	setFlags(enabledFlags, defaultsFlags);
-#endif
-
 }
 
 void WikiGroupDialog::initUi()
@@ -157,3 +105,13 @@ bool WikiGroupDialog::service_CreateGroup(uint32_t &token, const RsGroupMetaData
 
 	return true;
 }
+
+bool WikiGroupDialog::service_EditGroup(uint32_t &token, RsGxsGroupUpdateMeta &updateMeta)
+{
+	std::cerr << "WikiGroupDialog::service_EditGroup() UNFINISHED";
+	std::cerr << std::endl;
+
+	return false;
+}
+
+

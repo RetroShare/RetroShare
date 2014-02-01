@@ -1,9 +1,9 @@
 #include <string>
 #include <iostream>
-#include <retroshare/rsinit.h>
 #include <pqi/authgpg.h>
 #include "rsloginhandler.h"
 #include "util/rsdir.h"
+#include "rsaccounts.h"
 
 #if defined(UBUNTU) || defined(__FreeBSD__) || defined(__OpenBSD__)
 #include <gnome-keyring-1/gnome-keyring.h>
@@ -689,11 +689,11 @@ bool RsLoginHandler::getSSLPasswdFromGPGFile(const std::string& ssl_id,std::stri
 
 std::string RsLoginHandler::getSSLPasswdFileName(const std::string& /*ssl_id*/)
 {
-	return RsInit::RsConfigKeysDirectory() + "/" + "ssl_passphrase.pgp";
+	return rsAccounts.PathAccountKeysDirectory() + "/" + "ssl_passphrase.pgp";
 }
 
 std::string RsLoginHandler::getAutologinFileName(const std::string& /*ssl_id*/)
 {
-	return RsInit::RsConfigKeysDirectory() + "/" + "help.dta" ;
+	return rsAccounts.PathAccountKeysDirectory() + "/" + "help.dta" ;
 }
 

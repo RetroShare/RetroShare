@@ -29,7 +29,7 @@
 #include "rsserver/p3face.h"
 #include "retroshare/rsfiles.h"
 #include "retroshare/rsiface.h"
-#include "retroshare/rsinit.h"
+#include "rsserver/rsaccounts.h"
 #include "rsdiscspace.h"
 #include <util/rsthreads.h>
 #ifndef WIN32
@@ -161,13 +161,13 @@ bool RsDiscSpace::checkForDiscSpace(RsDiscSpace::DiscLocation loc)
 #endif
 													break ;
 
-			case RS_CONFIG_DIRECTORY: 		rs = crossSystemDiskStats(RsInit::RsConfigDirectory().c_str(),free_blocks,block_size) ;
+			case RS_CONFIG_DIRECTORY: 		rs = crossSystemDiskStats(rsAccounts.PathAccountDirectory().c_str(),free_blocks,block_size) ;
 #ifdef DEBUG_RSDISCSPACE
 													std::cerr << "  path = " << RsInit::RsConfigDirectory() << std::endl ;
 #endif
 													break ;
 
-			case RS_PGP_DIRECTORY: 		   rs = crossSystemDiskStats(RsInit::RsPGPDirectory().c_str(),free_blocks,block_size) ;
+			case RS_PGP_DIRECTORY: 		   rs = crossSystemDiskStats(rsAccounts.PathPGPDirectory().c_str(),free_blocks,block_size) ;
 #ifdef DEBUG_RSDISCSPACE
 													std::cerr << "  path = " << RsInit::RsPGPDirectory() << std::endl ;
 #endif

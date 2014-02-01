@@ -170,6 +170,13 @@ public:
     virtual int removeGroups(const std::vector<RsGxsGroupId>& grpIds) = 0;
 
     /*!
+     * Retrieves all group ids in store
+     * @param grpIds all grpids in store is inserted into this vector
+     * @return error code
+     */
+    virtual int retrieveGroupIds(std::vector<RsGxsGroupId>& grpIds) = 0;
+
+    /*!
      * @return the cache size set for this RsGeneralDataService in bytes
      */
     virtual uint32_t cacheSize() const = 0;
@@ -193,6 +200,13 @@ public:
      */
     virtual int storeGroup(std::map<RsNxsGrp*, RsGxsGrpMetaData*>& grsp) = 0;
 
+
+    /*!
+	 * Updates group entries in Db
+	 * @param grp map of group and decoded meta data
+	 * @return error code
+	 */
+    virtual int updateGroup(std::map<RsNxsGrp*, RsGxsGrpMetaData*>& grsp) = 0;
 
     /*!
      * @param metaData

@@ -128,8 +128,8 @@ int	p3ChatService::tick()
 		if (visible_lobbies_tmp.size()==0){
 			last_req_chat_lobby_list = now-LOBBY_LIST_AUTO_UPDATE_TIME+MIN_DELAY_BETWEEN_PUBLIC_LOBBY_REQ;
 		} else {
-		last_req_chat_lobby_list = now ;
-	}
+			last_req_chat_lobby_list = now ;
+		}
 	}
 
 	// Flush items that could not be sent, probably because of a Mutex protected zone.
@@ -149,7 +149,7 @@ int	p3ChatService::status()
 
 /***************** Chat Stuff **********************/
 
-int     p3ChatService::sendPublicChat(const std::wstring &msg)
+int     p3ChatService::sendPublicChat(const std::string &msg)
 {
 	/* go through all the peers */
 
@@ -468,7 +468,7 @@ bool p3ChatService::isOnline(const std::string& id)
 	return true ;
 }
 
-bool     p3ChatService::sendPrivateChat(const std::string &id, const std::wstring &msg)
+bool     p3ChatService::sendPrivateChat(const std::string &id, const std::string &msg)
 {
 	// look into ID. Is it a peer, or a chat lobby?
 
@@ -627,7 +627,7 @@ bool p3ChatService::locked_checkAndRebuildPartialMessage(RsChatLobbyMsgItem *ci)
 	if(it != _pendingPartialLobbyMessages.end())
 	{
 #ifdef CHAT_DEBUG
-		std::cerr << "  Pending message found. Aappending it." << std::endl;
+		std::cerr << "  Pending message found. Appending it." << std::endl;
 #endif
 		// Yes, there is. Add the item to the list of stored sub-items
 
@@ -651,7 +651,7 @@ bool p3ChatService::locked_checkAndRebuildPartialMessage(RsChatLobbyMsgItem *ci)
 #ifdef CHAT_DEBUG
 			std::cerr << "  Message is complete ! Re-forming it and returning true." << std::endl;
 #endif
-			std::wstring msg ;
+			std::string msg ;
 			uint32_t flags = 0 ;
 
 			for(uint32_t i=0;i<it->second.size();++i)
@@ -705,6 +705,7 @@ void p3ChatService::receiveChatQueue()
 	while(NULL != (item=recvItem()))
 		handleIncomingItem(item) ;
 }
+
 class MsgCounter
 {
 	public:
@@ -809,7 +810,6 @@ void p3ChatService::handleIncomingItem(RsItem *item)
 			case RS_PKT_SUBTYPE_CHAT_LOBBY_UNSUBSCRIBE:  handleFriendUnsubscribeLobby  (dynamic_cast<RsChatLobbyUnsubscribeItem     *>(item)) ; break ;
 			case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_REQUEST: handleRecvChatLobbyListRequest(dynamic_cast<RsChatLobbyListRequestItem     *>(item)) ; break ;
 			case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST:         handleRecvChatLobbyList       (dynamic_cast<RsChatLobbyListItem            *>(item)) ; break ;
-			case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_deprecated: handleRecvChatLobbyList       (dynamic_cast<RsChatLobbyListItem_deprecated *>(item)) ; break ;
 		
 			default:
 																			{
@@ -870,96 +870,8 @@ void p3ChatService::handleRecvChatLobbyListRequest(RsChatLobbyListRequestItem *c
 	std::cerr << "  Sending list to " << clr->PeerId() << std::endl;
 #endif
 	sendItem(item);
-
-	// *********** Also send an item in old formats. To be removed.
-	
-	RsChatLobbyListItem_deprecated *itemd = new RsChatLobbyListItem_deprecated;
-	RsChatLobbyListItem_deprecated2 *itemd2 = new RsChatLobbyListItem_deprecated2;
-
-	for(uint32_t i=0;i<item->lobby_ids.size();++i)
-		if(item->lobby_privacy_levels[i] == RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC)
-		{
-			itemd->lobby_ids.push_back(item->lobby_ids[i]) ;
-			itemd->lobby_names.push_back(item->lobby_names[i]) ;
-			itemd->lobby_counts.push_back(item->lobby_counts[i]) ;
-
-			itemd2->lobby_ids.push_back(item->lobby_ids[i]) ;
-			itemd2->lobby_names.push_back(item->lobby_names[i]) ;
-			itemd2->lobby_counts.push_back(item->lobby_counts[i]) ;
-			itemd2->lobby_topics.push_back(item->lobby_topics[i]) ;
-		}
-
-	itemd->PeerId(clr->PeerId()) ;
-	itemd2->PeerId(clr->PeerId()) ;
-
-	sendItem(itemd) ;
-	sendItem(itemd2) ;
-
-	// End of part to remove in future versions. *************
 }
-void p3ChatService::handleRecvChatLobbyList(RsChatLobbyListItem_deprecated *item)
-{
-	if(item->lobby_ids.size() > MAX_ALLOWED_LOBBIES_IN_LIST_WARNING)
-		std::cerr << "Warning: Peer " << item->PeerId() << "(" << rsPeers->getPeerName(item->PeerId()) << ") is sending a lobby list of " << item->lobby_ids.size() << " lobbies. This is unusual, and probably a attempt to crash you." << std::endl;
 
-	{
-		time_t now = time(NULL) ;
-
-		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
-
-		for(uint32_t i=0;i<item->lobby_ids.size() && i < MAX_ALLOWED_LOBBIES_IN_LIST_WARNING;++i)
-		{
-			VisibleChatLobbyRecord& rec(_visible_lobbies[item->lobby_ids[i]]) ;
-
-			rec.lobby_id = item->lobby_ids[i] ;
-			rec.lobby_name = item->lobby_names[i] ;
-			rec.participating_friends.insert(item->PeerId()) ;
-
-			if(_should_reset_lobby_counts)
-				rec.total_number_of_peers = item->lobby_counts[i] ;
-			else
-				rec.total_number_of_peers = std::max(rec.total_number_of_peers,item->lobby_counts[i]) ;
-
-			rec.last_report_time = now ;
-			rec.lobby_privacy_level = RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC ;
-		}
-	}
-
-	RsServer::notify()->notifyListChange(NOTIFY_LIST_CHAT_LOBBY_LIST, NOTIFY_TYPE_ADD) ;
-	_should_reset_lobby_counts = false ;
-}
-void p3ChatService::handleRecvChatLobbyList(RsChatLobbyListItem_deprecated2 *item)
-{
-	if(item->lobby_ids.size() > MAX_ALLOWED_LOBBIES_IN_LIST_WARNING)
-		std::cerr << "Warning: Peer " << item->PeerId() << "(" << rsPeers->getPeerName(item->PeerId()) << ") is sending a lobby list of " << item->lobby_ids.size() << " lobbies. This is unusual, and probably a attempt to crash you." << std::endl;
-
-	{
-		time_t now = time(NULL) ;
-
-		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
-
-		for(uint32_t i=0;i<item->lobby_ids.size() && i < MAX_ALLOWED_LOBBIES_IN_LIST_WARNING;++i)
-		{
-			VisibleChatLobbyRecord& rec(_visible_lobbies[item->lobby_ids[i]]) ;
-
-			rec.lobby_id = item->lobby_ids[i] ;
-			rec.lobby_name = item->lobby_names[i] ;
-      rec.lobby_topic = item->lobby_topics[i] ;
-			rec.participating_friends.insert(item->PeerId()) ;
-
-			if(_should_reset_lobby_counts)
-				rec.total_number_of_peers = item->lobby_counts[i] ;
-			else
-				rec.total_number_of_peers = std::max(rec.total_number_of_peers,item->lobby_counts[i]) ;
-
-			rec.last_report_time = now ;
-			rec.lobby_privacy_level = RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC ;
-		}
-	}
-
-	RsServer::notify()->notifyListChange(NOTIFY_LIST_CHAT_LOBBY_LIST, NOTIFY_TYPE_ADD) ;
-	_should_reset_lobby_counts = false ;
-}
 void p3ChatService::handleRecvChatLobbyList(RsChatLobbyListItem *item)
 {
 	if(item->lobby_ids.size() > MAX_ALLOWED_LOBBIES_IN_LIST_WARNING)
@@ -1175,10 +1087,9 @@ bool p3ChatService::checkForMessageSecurity(RsChatMsgItem *ci)
 	// Remove too big messages
 	if (ci->message.length() > 6000 && (ci->chatFlags & RS_CHAT_FLAG_LOBBY))
 	{
-		wchar_t tmp[300];
-		mbstowcs(tmp, rsPeers->getPeerName(ci->PeerId()).c_str(), 299);
-
-		ci->message = std::wstring(L"**** Security warning: Message bigger than 6000 characters, forwarded to you by ") + tmp + L", dropped. ****";
+		ci->message = "**** Security warning: Message bigger than 6000 characters, forwarded to you by ";
+		ci->message += rsPeers->getPeerName(ci->PeerId());
+		ci->message += ", dropped. ****";
 		return false;
 	}
 
@@ -1212,23 +1123,18 @@ bool p3ChatService::checkForMessageSecurity(RsChatMsgItem *ci)
 	// https://en.wikipedia.org/wiki/Billion_laughs
 	// This should be done for all incoming HTML messages (also in forums
 	// etc.) so this should be a function in some other file.
-	wchar_t tmp[10];
-	mbstowcs(tmp, "<!", 9);
 
-	if (ci->message.find(tmp) != std::string::npos)
+	if (ci->message.find("<!") != std::string::npos)
 	{
 		// Drop any message with "<!doctype" or "<!entity"...
 		// TODO: check what happens with partial messages
 		//
-		std::wcout << "handleRecvChatMsgItem: " << ci->message << std::endl;
-		std::wcout << "**********" << std::endl;
-		std::wcout << "********** entity attack by " << ci->PeerId().c_str() << std::endl;
-		std::wcout << "**********" << std::endl;
+		std::cout << "handleRecvChatMsgItem: " << ci->message << std::endl;
+		std::cout << "**********" << std::endl;
+		std::cout << "********** entity attack by " << ci->PeerId().c_str() << std::endl;
+		std::cout << "**********" << std::endl;
 
-		wchar_t tmp2[300];
-		mbstowcs(tmp2, rsPeers->getPeerName(ci->PeerId()).c_str(), 299);
-
-		ci->message = std::wstring(L"**** This message (from peer id ") + tmp2 + L") has been removed because it contains the string \"<!\".****" ;
+		ci->message = "**** This message (from peer id " + rsPeers->getPeerName(ci->PeerId()) + ") has been removed because it contains the string \"<!\".****" ;
 		return false;
 	}
 	// For a future whitelist:
@@ -1365,8 +1271,9 @@ bool p3ChatService::handleRecvChatMsgItem(RsChatMsgItem *ci)
 			ci->chatFlags |= RS_CHAT_FLAG_AVATAR_AVAILABLE ;
 		}
 
-		std::string message;
-		librs::util::ConvertUtf16ToUtf8(ci->message, message);
+		std::string message = ci->message;
+		//librs::util::ConvertUtf16ToUtf8(ci->message, message);
+
 		if (ci->chatFlags & RS_CHAT_FLAG_PRIVATE) {
 			/* notify private chat message */
 			RsServer::notify()->AddPopupMessage(popupChatFlag, ci->PeerId(), name, message);
@@ -1910,7 +1817,7 @@ void p3ChatService::sendAvatarJpegData(const std::string& peer_id)
 		RsChatAvatarItem *ci = makeOwnAvatarItem();
 		ci->PeerId(peer_id);
 
-		// take avatar, and embed it into a std::wstring.
+		// take avatar, and embed it into a std::string.
 		//
 #ifdef CHAT_DEBUG
 		std::cerr << "p3ChatService::sending avatar image to peer" << peer_id << ", image size = " << ci->image_size << std::endl ;
@@ -2374,7 +2281,7 @@ bool p3ChatService::locked_initLobbyBouncableObject(const ChatLobbyId& lobby_id,
 	return true ;
 }
 
-bool p3ChatService::sendLobbyChat(const std::string &id, const std::wstring& msg, const ChatLobbyId& lobby_id)
+bool p3ChatService::sendLobbyChat(const std::string &id, const std::string& msg, const ChatLobbyId& lobby_id)
 {
 #ifdef CHAT_DEBUG
 	std::cerr << "Sending chat lobby message to lobby " << std::hex << lobby_id << std::dec << std::endl;
@@ -2697,7 +2604,7 @@ bool p3ChatService::acceptLobbyInvite(const ChatLobbyId& lobby_id)
 		item->lobby_id = entry.lobby_id ;
 		item->msg_id = 0 ;
 		item->nick = "Lobby management" ;
-		item->message = std::wstring(L"Welcome to chat lobby") ;
+		item->message = std::string("Welcome to chat lobby") ;
 		item->PeerId(entry.virtual_peer_id) ;
 		item->chatFlags = RS_CHAT_FLAG_PRIVATE | RS_CHAT_FLAG_LOBBY ;
 

@@ -11,7 +11,6 @@ class RsCertificate
 		typedef enum { RS_CERTIFICATE_OLD_FORMAT, RS_CERTIFICATE_RADIX } Format ;
 
 		// Constructs from text.
-		// 	- old format: The input string must comply with the GPG format (See RFC4880) 
 		//		- new format: The input string should only contain radix chars and spaces/LF/tabs.
 		//
 		RsCertificate(const std::string& input_string) ;
@@ -25,7 +24,6 @@ class RsCertificate
 		virtual ~RsCertificate();
 
 		// Outut to text
-		std::string toStdString_oldFormat() const ;
 		std::string toStdString() const ;
 
 		std::string ext_ip_string() const ;
@@ -33,6 +31,8 @@ class RsCertificate
 		std::string location_name_string() const { return location_name; }
 		std::string dns_string() const { return dns_name ; }
 		std::string sslid_string() const;
+		std::string hidden_node_string() const;
+
 		std::string armouredPGPKey() const ;
 
 		unsigned short ext_port_us() const ;
@@ -45,11 +45,9 @@ class RsCertificate
 
 	private:
 		static bool cleanCertificate(const std::string& input,std::string& output,int&) ;					// new radix format
-		static bool cleanCertificate_oldFormat(const std::string& input,std::string& output,int&) ;		// old text format
 		static void scan_ip(const std::string& ip_string, unsigned short port,unsigned char *destination_memory) ;
 
 		bool initFromString(const std::string& str,uint32_t& err_code) ;
-		bool initFromString_oldFormat(const std::string& str,uint32_t& err_code) ;
 
 		static void addPacket(uint8_t ptag, const unsigned char *mem, size_t size, unsigned char *& buf, size_t& offset, size_t& buf_size) ;
 
@@ -66,7 +64,9 @@ class RsCertificate
 		SSLIdType location_id ;
 		std::string pgp_version ;
 		std::string dns_name ;
+		std::string hidden_node_address;
 
 		bool only_pgp ; // does the cert contain only pgp info?
+		bool hidden_node; // IP or hidden Node Address.
 };
 

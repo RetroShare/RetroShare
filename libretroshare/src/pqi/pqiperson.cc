@@ -27,7 +27,7 @@
 #include "pqi/pqiperson.h"
 #include "pqi/pqipersongrp.h"
 #include "pqi/pqissl.h"
-#include "services/p3disc.h"
+
 
 const int pqipersonzone = 82371;
 #include "util/rsdebug.h"
@@ -35,11 +35,12 @@ const int pqipersonzone = 82371;
 #include "retroshare/rspeers.h"
 
 /****
- * #define PERSON_DEBUG
+ * #define PERSON_DEBUG 1
  ****/
 
 pqiperson::pqiperson(std::string id, pqipersongrp *pg)
-	:PQInterface(id), active(false), activepqi(NULL), 
+	:PQInterface(id), mNotifyMtx("pqiperson-notify"), mPersonMtx("pqiperson"), 
+	active(false), activepqi(NULL), 
 	inConnectAttempt(false), waittimes(0), 
 	pqipg(pg)
 {
@@ -51,6 +52,8 @@ pqiperson::pqiperson(std::string id, pqipersongrp *pg)
 
 pqiperson::~pqiperson()
 {
+	RsStackMutex stack(mPersonMtx); /**** LOCK MUTEX ****/
+
 	// clean up the children.
 	std::map<uint32_t, pqiconnect *>::iterator it;
 	for(it = kids.begin(); it != kids.end(); it++)
@@ -65,6 +68,8 @@ pqiperson::~pqiperson()
 	// The PQInterface interface.
 int     pqiperson::SendItem(RsItem *i,uint32_t& serialized_size)
 {
+	RsStackMutex stack(mPersonMtx); /**** LOCK MUTEX ****/
+
 	std::string out = "pqiperson::SendItem()";
 	if (active)
 	{
@@ -87,14 +92,27 @@ int     pqiperson::SendItem(RsItem *i,uint32_t& serialized_size)
 
 RsItem *pqiperson::GetItem()
 {
+	RsStackMutex stack(mPersonMtx); /**** LOCK MUTEX ****/
+
 	if (active)
 		return activepqi -> GetItem();
 	// else not possible.
 	return NULL;
 }
 
+bool pqiperson::RecvItem(RsItem *item)
+{
+	std::cerr << "pqiperson::RecvItem()";
+	std::cerr << std::endl;
+
+	return pqipg->recvItem((RsRawItem *) item);
+}
+
+
 int 	pqiperson::status()
 {
+	RsStackMutex stack(mPersonMtx); /**** LOCK MUTEX ****/
+
 	if (active)
 		return activepqi -> status();
 	return -1;
@@ -102,6 +120,8 @@ int 	pqiperson::status()
 
 int 	pqiperson::receiveHeartbeat()
 {
+	RsStackMutex stack(mPersonMtx); /**** LOCK MUTEX ****/
+
         pqioutput(PQL_WARNING, pqipersonzone, "pqiperson::receiveHeartbeat() from peer : " + PeerId());
         lastHeartbeatReceived = time(NULL);
 
@@ -111,61 +131,68 @@ int 	pqiperson::receiveHeartbeat()
 	// tick......
 int	pqiperson::tick()
 {
-        //if lastHeartbeatReceived is 0, it might be not activated so don't do a net reset.
-	if (active && (lastHeartbeatReceived != 0) &&
-            (time(NULL) - lastHeartbeatReceived) > HEARTBEAT_REPEAT_TIME * 5) 
+	int activeTick = 0;
 	{
-		int ageLastIncoming = time(NULL) - activepqi->getLastIncomingTS();
-		std::string out = "pqiperson::tick() WARNING No heartbeat from: " + PeerId();
-		//out << " assume dead. calling pqissl::reset(), LastHeartbeat was: ";
-		rs_sprintf_append(out, " LastHeartbeat was: %ld secs ago", time(NULL) - lastHeartbeatReceived);
-		rs_sprintf_append(out, " LastIncoming was: %d secs ago", ageLastIncoming);
-		pqioutput(PQL_WARNING, pqipersonzone, out);
-
-#define NO_PACKET_TIMEOUT 60
-		
-		if (ageLastIncoming > NO_PACKET_TIMEOUT)
+		RsStackMutex stack(mPersonMtx); /**** LOCK MUTEX ****/
+	
+	        //if lastHeartbeatReceived is 0, it might be not activated so don't do a net reset.
+		if (active && (lastHeartbeatReceived != 0) &&
+	            (time(NULL) - lastHeartbeatReceived) > HEARTBEAT_REPEAT_TIME * 5) 
 		{
-			out = "pqiperson::tick() " + PeerId();
-			out += " No Heartbeat & No Packets -> assume dead. calling pqissl::reset()";
+			int ageLastIncoming = time(NULL) - activepqi->getLastIncomingTS();
+			std::string out = "pqiperson::tick() WARNING No heartbeat from: " + PeerId();
+			//out << " assume dead. calling pqissl::reset(), LastHeartbeat was: ";
+			rs_sprintf_append(out, " LastHeartbeat was: %ld secs ago", time(NULL) - lastHeartbeatReceived);
+			rs_sprintf_append(out, " LastIncoming was: %d secs ago", ageLastIncoming);
 			pqioutput(PQL_WARNING, pqipersonzone, out);
-            	
-			this->reset();
+	
+	#define NO_PACKET_TIMEOUT 60
+			
+			if (ageLastIncoming > NO_PACKET_TIMEOUT)
+			{
+				out = "pqiperson::tick() " + PeerId();
+				out += " No Heartbeat & No Packets -> assume dead. calling pqissl::reset()";
+				pqioutput(PQL_WARNING, pqipersonzone, out);
+	            	
+				this->reset_locked();
+			}
+	
 		}
-
+	
+	
+		{
+			std::string out = "pqiperson::tick() Id: " + PeerId() + " ";
+			if (active)
+				out += "***Active***";
+			else
+				out += ">>InActive<<";
+	
+			out += "\n";
+			rs_sprintf_append(out, "Activepqi: %p inConnectAttempt: ", activepqi);
+	
+			if (inConnectAttempt)
+				out += "In Connection Attempt";
+			else
+				out += "   Not Connecting    ";
+			out += "\n";
+	
+			// tick the children.
+			std::map<uint32_t, pqiconnect *>::iterator it;
+			for(it = kids.begin(); it != kids.end(); it++)
+			{
+				if (0 < (it->second) -> tick())
+				{
+					activeTick = 1;
+				}
+				rs_sprintf_append(out, "\tTicking Child: %d\n", it->first);
+			}
+	
+			pqioutput(PQL_DEBUG_ALL, pqipersonzone, out);
+		} // end of pqioutput.
 	}
 
-	int activeTick = 0;
-
-	{
-		std::string out = "pqiperson::tick() Id: " + PeerId() + " ";
-		if (active)
-			out += "***Active***";
-		else
-			out += ">>InActive<<";
-
-		out += "\n";
-		rs_sprintf_append(out, "Activepqi: %p inConnectAttempt: ", activepqi);
-
-		if (inConnectAttempt)
-			out += "In Connection Attempt";
-		else
-			out += "   Not Connecting    ";
-		out += "\n";
-
-		// tick the children.
-		std::map<uint32_t, pqiconnect *>::iterator it;
-		for(it = kids.begin(); it != kids.end(); it++)
-		{
-			if (0 < (it->second) -> tick())
-			{
-				activeTick = 1;
-			}
-			rs_sprintf_append(out, "\tTicking Child: %d\n", it->first);
-		}
-
-		pqioutput(PQL_DEBUG_ALL, pqipersonzone, out);
-	} // end of pqioutput.
+	// handle Notify Events that were generated.
+	processNotifyEvents();
 
 	return activeTick;
 }
@@ -173,8 +200,60 @@ int	pqiperson::tick()
 // callback function for the child - notify of a change.
 // This is only used for out-of-band info....
 // otherwise could get dangerous loops.
-int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
+// - Actually, now we have - must store and process later.
+int 	pqiperson::notifyEvent(NetInterface *ni, int newState, const struct sockaddr_storage &remote_peer_address)
 {
+	if (mPersonMtx.trylock())
+	{
+		handleNotifyEvent_locked(ni, newState, remote_peer_address);
+
+		mPersonMtx.unlock();
+		
+		return 1;
+	}
+
+
+	RsStackMutex stack(mNotifyMtx); /**** LOCK MUTEX ****/
+
+	mNotifyQueue.push_back(NotifyData(ni, newState, remote_peer_address));
+
+	return 1;
+}
+
+
+void 	pqiperson::processNotifyEvents()
+{
+	NetInterface *ni;
+	int state;
+	struct sockaddr_storage addr;
+
+	while(1)
+	{
+		{
+			RsStackMutex stack(mNotifyMtx); /**** LOCK MUTEX ****/
+
+			if (mNotifyQueue.empty())
+			{
+				return;
+			}
+			NotifyData &data = mNotifyQueue.front();
+			ni = data.mNi;
+			state = data.mState;
+			addr = data.mAddr;
+
+			mNotifyQueue.pop_front();
+		}
+
+		RsStackMutex stack(mPersonMtx); /**** LOCK MUTEX ****/
+		handleNotifyEvent_locked(ni, state, addr);
+	}
+	return;
+}
+
+
+int 	pqiperson::handleNotifyEvent_locked(NetInterface *ni, int newState, const struct sockaddr_storage &remote_peer_address)
+{
+
 	{
 		std::string out = "pqiperson::notifyEvent() Id: " + PeerId() + "\n";
 		rs_sprintf_append(out, "Message: %d from: %p\n", newState, ni);
@@ -219,8 +298,6 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
 
 		/* notify */
                 if (pqipg) {
-                        struct sockaddr_in remote_peer_address;
-                        pqi->getConnectAddress(remote_peer_address);
                         pqipg->notifyConnect(PeerId(), type, true, remote_peer_address);
                 }
 
@@ -245,6 +322,8 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
                         lastHeartbeatReceived = 0;
 			activepqi = pqi;
 	  		inConnectAttempt = false;
+
+			activepqi->start();  // STARTUP THREAD.
 
 			/* reset all other children? (clear up long UDP attempt) */
 			for(it = kids.begin(); it != kids.end(); it++)
@@ -273,6 +352,7 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
 			{
 				pqioutput(PQL_WARNING, pqipersonzone, "pqiperson::notifyEvent() Id: " + PeerId() + " CONNECT_FAILED->marking so!");
 
+				activepqi->stop(); // STOP THREAD.
 				active = false;
 				activepqi = NULL;
 			}
@@ -289,9 +369,7 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
 		/* notify up */
 		if (pqipg)
 		{
-			struct sockaddr_in raddr;
-			sockaddr_clear(&raddr);
-			pqipg->notifyConnect(PeerId(), type, false, raddr);
+			pqipg->notifyConnect(PeerId(), type, false, remote_peer_address);
 		}
 
 		return 1;
@@ -307,12 +385,39 @@ int 	pqiperson::notifyEvent(NetInterface *ni, int newState)
 
 int 	pqiperson::reset()
 {
+	RsStackMutex stack(mPersonMtx); /**** LOCK MUTEX ****/
+
+	return reset_locked();
+}
+
+int 	pqiperson::reset_locked()
+{
 	pqioutput(PQL_WARNING, pqipersonzone, "pqiperson::reset() resetting all pqiconnect for Id: " + PeerId());
 
 	std::map<uint32_t, pqiconnect *>::iterator it;
 	for(it = kids.begin(); it != kids.end(); it++)
 	{
+		(it->second) -> stop(); // STOP THREAD.
 		(it->second) -> reset();
+	}		
+
+	activepqi = NULL;
+	active = false;
+	lastHeartbeatReceived = 0;
+
+	return 1;
+}
+
+int 	pqiperson::fullstopthreads()
+{
+	RsStackMutex stack(mPersonMtx); /**** LOCK MUTEX ****/
+
+	pqioutput(PQL_WARNING, pqipersonzone, "pqiperson::fullstopthreads() for Id: " + PeerId());
+
+	std::map<uint32_t, pqiconnect *>::iterator it;
+	for(it = kids.begin(); it != kids.end(); it++)
+	{
+		(it->second) -> fullstop(); // WAIT FOR THREAD TO STOP.
 	}		
 
 	activepqi = NULL;
@@ -324,6 +429,8 @@ int 	pqiperson::reset()
 
 int	pqiperson::addChildInterface(uint32_t type, pqiconnect *pqi)
 {
+	RsStackMutex stack(mPersonMtx); /**** LOCK MUTEX ****/
+
 	{
 		std::string out;
 		rs_sprintf(out, "pqiperson::addChildInterface() : Id %s %u", PeerId().c_str(), type);
@@ -340,6 +447,8 @@ int	pqiperson::addChildInterface(uint32_t type, pqiconnect *pqi)
 
 int 	pqiperson::listen()
 {
+	RsStackMutex stack(mPersonMtx); /**** LOCK MUTEX ****/
+
 	pqioutput(PQL_DEBUG_BASIC, pqipersonzone, "pqiperson::listen() Id: " + PeerId());
 
 	if (!active)
@@ -357,6 +466,8 @@ int 	pqiperson::listen()
 
 int 	pqiperson::stoplistening()
 {
+	RsStackMutex stack(mPersonMtx); /**** LOCK MUTEX ****/
+
 	pqioutput(PQL_DEBUG_BASIC, pqipersonzone, "pqiperson::stoplistening() Id: " + PeerId());
 
 	std::map<uint32_t, pqiconnect *>::iterator it;
@@ -368,18 +479,24 @@ int 	pqiperson::stoplistening()
 	return 1;
 }
 
-int	pqiperson::connect(uint32_t type, struct sockaddr_in raddr, 
-				struct sockaddr_in &proxyaddr, struct sockaddr_in &srcaddr,
-				uint32_t delay, uint32_t period, uint32_t timeout, uint32_t flags, uint32_t bandwidth)
+int	pqiperson::connect(uint32_t type, const struct sockaddr_storage &raddr, 
+				const struct sockaddr_storage &proxyaddr, const struct sockaddr_storage &srcaddr,
+				uint32_t delay, uint32_t period, uint32_t timeout, uint32_t flags, uint32_t bandwidth, 
+				const std::string &domain_addr, uint16_t domain_port)
 {
+	RsStackMutex stack(mPersonMtx); /**** LOCK MUTEX ****/
+
 #ifdef PERSON_DEBUG
 #endif
 	{
 		std::string out = "pqiperson::connect() Id: " + PeerId();
 		rs_sprintf_append(out, " type: %u", type);
-		rs_sprintf_append(out, " addr: %s:%u", rs_inet_ntoa(raddr.sin_addr).c_str(), ntohs(raddr.sin_port));
-		rs_sprintf_append(out, " proxyaddr: %s:%u", rs_inet_ntoa(proxyaddr.sin_addr).c_str(), ntohs(proxyaddr.sin_port));
-		rs_sprintf_append(out, " srcaddr: %s:%u", rs_inet_ntoa(srcaddr.sin_addr).c_str(), ntohs(srcaddr.sin_port));
+		out += " addr: ";
+		out += sockaddr_storage_tostring(raddr);
+		out += " proxyaddr: ";
+		out += sockaddr_storage_tostring(proxyaddr);
+		out += " srcaddr: ";
+		out += sockaddr_storage_tostring(srcaddr);
 		rs_sprintf_append(out, " delay: %u", delay);
 		rs_sprintf_append(out, " period: %u", period);
 		rs_sprintf_append(out, " timeout: %u", timeout);
@@ -414,19 +531,27 @@ int	pqiperson::connect(uint32_t type, struct sockaddr_in raddr,
 #ifdef PERSON_DEBUG
 	std::cerr << "pqiperson::connect() WARNING, clearing rate cap" << std::endl;
 #endif
-	setRateCap(0,0);
+	setRateCap_locked(0,0);
 
 #ifdef PERSON_DEBUG
 	std::cerr << "pqiperson::connect() setting connect_parameters" << std::endl;
 #endif
+	
+	// These two are universal.
 	(it->second)->connect_parameter(NET_PARAM_CONNECT_DELAY, delay);
-	(it->second)->connect_parameter(NET_PARAM_CONNECT_PERIOD, period);
 	(it->second)->connect_parameter(NET_PARAM_CONNECT_TIMEOUT, timeout);
+
+	// these 5 are only used by UDP connections.
+	(it->second)->connect_parameter(NET_PARAM_CONNECT_PERIOD, period);
 	(it->second)->connect_parameter(NET_PARAM_CONNECT_FLAGS, flags);
 	(it->second)->connect_parameter(NET_PARAM_CONNECT_BANDWIDTH, bandwidth);
 
-	(it->second)->connect_additional_address(NET_PARAM_CONNECT_PROXY, &proxyaddr);
-	(it->second)->connect_additional_address(NET_PARAM_CONNECT_SOURCE, &srcaddr);
+	(it->second)->connect_additional_address(NET_PARAM_CONNECT_PROXY, proxyaddr);
+	(it->second)->connect_additional_address(NET_PARAM_CONNECT_SOURCE, srcaddr);
+
+	// These are used by Proxy/Hidden 
+	(it->second)->connect_parameter(NET_PARAM_CONNECT_DOMAIN_ADDRESS, domain_addr);
+	(it->second)->connect_parameter(NET_PARAM_CONNECT_REMOTE_PORT, domain_port);
 
 	(it->second)->connect(raddr);
 		
@@ -437,25 +562,10 @@ int	pqiperson::connect(uint32_t type, struct sockaddr_in raddr,
 }
 
 
-pqiconnect	*pqiperson::getKid(uint32_t type)
-{
-	std::map<uint32_t, pqiconnect *>::iterator it;
-
-        if (kids.empty()) {
-            return NULL;
-        }
-
-	it = kids.find(type);
-	if (it == kids.end())
-	{
-	    return NULL;
-	} else {
-	    return it->second;
-	}
-}
-
 void    pqiperson::getRates(RsBwRates &rates)
 {
+	RsStackMutex stack(mPersonMtx); /**** LOCK MUTEX ****/
+
 	// get the rate from the active one.
 	if ((!active) || (activepqi == NULL))
 		return;
@@ -464,6 +574,8 @@ void    pqiperson::getRates(RsBwRates &rates)
 
 int     pqiperson::getQueueSize(bool in)
 {
+	RsStackMutex stack(mPersonMtx); /**** LOCK MUTEX ****/
+
 	// get the rate from the active one.
 	if ((!active) || (activepqi == NULL))
 		return 0;
@@ -472,6 +584,8 @@ int     pqiperson::getQueueSize(bool in)
 
 bool pqiperson::getCryptoParams(RsPeerCryptoParams& params)
 {
+	RsStackMutex stack(mPersonMtx); /**** LOCK MUTEX ****/
+
 	if(active && activepqi != NULL)
 		return activepqi->getCryptoParams(params) ;
 	else
@@ -508,6 +622,8 @@ bool pqiconnect::getCryptoParams(RsPeerCryptoParams& params)
 
 float   pqiperson::getRate(bool in)
 {
+	RsStackMutex stack(mPersonMtx); /**** LOCK MUTEX ****/
+
 	// get the rate from the active one.
 	if ((!active) || (activepqi == NULL))
 		return 0;
@@ -516,6 +632,8 @@ float   pqiperson::getRate(bool in)
 
 void    pqiperson::setMaxRate(bool in, float val)
 {
+	RsStackMutex stack(mPersonMtx); /**** LOCK MUTEX ****/
+
 	// set to all of them. (and us)
 	PQInterface::setMaxRate(in, val);
 	// clean up the children.
@@ -527,6 +645,12 @@ void    pqiperson::setMaxRate(bool in, float val)
 }
 
 void    pqiperson::setRateCap(float val_in, float val_out)
+{
+	RsStackMutex stack(mPersonMtx); /**** LOCK MUTEX ****/
+	return setRateCap_locked(val_in, val_out);
+}
+
+void    pqiperson::setRateCap_locked(float val_in, float val_out)
 {
 	// set to all of them. (and us)
 	PQInterface::setRateCap(val_in, val_out);

@@ -29,6 +29,7 @@
 #include <openssl/sha.h>
 #include <string>
 #include <iomanip>
+#include <string.h>
 #include "util/rsstring.h"
 #include "retroshare/rstypes.h"
 #include <inttypes.h>

@@ -55,7 +55,7 @@ class pqipersongrp: public pqihandler, public pqiMonitor, public p3ServiceServer
 	/*************************** Setup *************************/
 	/* pqilistener */
 
-virtual bool resetListener(struct sockaddr_in &local); // overloaded from pqiNetListener 
+virtual bool resetListener(const struct sockaddr_storage &local); // overloaded from pqiNetListener 
 int     init_listener(); 
 
 	/*************** pqiMonitor callback ***********************/
@@ -80,11 +80,15 @@ int     connectPeer(std::string id
 #endif
 					);
 
+	// New speedy recv.
+virtual bool RecvRsRawItem(RsRawItem *item);
+
+
 	/* Work-around to dodgy pointer stuff */
 int	tagHeartbeatRecvd(std::string id);
 
 	/*** callback from children ****/
-bool    notifyConnect(std::string id, uint32_t type, bool success, struct sockaddr_in remote_peer_address);
+bool    notifyConnect(std::string id, uint32_t type, bool success, const struct sockaddr_storage &remote_peer_address);
 //bool    notifyConnect(std::string id, uint32_t type, bool success);
 
 	// tick interfaces.
@@ -98,7 +102,7 @@ virtual bool locked_getCryptoParams(const std::string&, RsPeerCryptoParams&) { r
 
 	/********* FUNCTIONS to OVERLOAD for specialisation ********/
 	// THESE NEED TO BE LOCKED UNTIL PQILISTENER IS THREAD-SAFE.
-virtual pqilistener *locked_createListener(struct sockaddr_in laddr) = 0;
+virtual pqilistener *locked_createListener(const struct sockaddr_storage &laddr) = 0;
 virtual pqiperson   *locked_createPerson(std::string id, pqilistener *listener) = 0;
 	/********* FUNCTIONS to OVERLOAD for specialisation ********/
 
@@ -114,9 +118,9 @@ virtual int checkOutgoingRsItem(RsItem *item, int global)
 
 	private:
 
-	// The tunnelserver operation.
+	// The serviceserver operation.
 	int tickServiceRecv();
-	int tickServiceSend();
+	//int tickServiceSend();
 
 	pqilistener *pqil;
 	unsigned long initFlags;
@@ -131,7 +135,7 @@ class pqipersongrpDummy: public pqipersongrp
 	protected:
 
 	/********* FUNCTIONS to OVERLOAD for specialisation ********/
-virtual pqilistener *locked_createListener(struct sockaddr_in laddr);
+virtual pqilistener *locked_createListener(const struct sockaddr_storage &laddr);
 virtual pqiperson   *locked_createPerson(std::string id, pqilistener *listener);
 	/********* FUNCTIONS to OVERLOAD for specialisation ********/
 };

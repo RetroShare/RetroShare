@@ -67,6 +67,17 @@ bool GxsIdChooser::MakeIdDesc(const RsGxsId &id, QString &desc)
 	if (found)
 	{
 		desc = QString::fromUtf8(details.mNickname.c_str());
+
+		std::list<RsRecognTag>::iterator it;
+		for(it = details.mRecognTags.begin(); it != details.mRecognTags.end(); it++)
+		{
+			desc += " (";
+			desc += QString::number(it->tag_class);
+			desc += ":";
+			desc += QString::number(it->tag_type);
+			desc += ")";
+		}
+
 		if (details.mPgpLinked)
 		{
 			desc += " (PGP) [";

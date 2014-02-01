@@ -25,15 +25,17 @@
 
 #include <retroshare/rsnotify.h>
 #include <retroshare/rspeers.h>
-#include <retroshare/rschannels.h>
-#include <retroshare/rsforums.h>
+//#include <retroshare/rschannels.h>
+//#include <retroshare/rsforums.h>
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rsplugin.h>
 
+#if 0
 #include "feeds/ChanNewItem.h"
 #include "feeds/ChanMsgItem.h"
 #include "feeds/ForumNewItem.h"
 #include "feeds/ForumMsgItem.h"
+#endif
 #include "settings/rsettingswin.h"
 
 #ifdef BLOGS
@@ -53,12 +55,16 @@
 #include "common/FeedNotify.h"
 
 const uint32_t NEWSFEED_PEERLIST = 	0x0001;
+
+#if 0
 const uint32_t NEWSFEED_FORUMNEWLIST = 	0x0002;
 const uint32_t NEWSFEED_FORUMMSGLIST = 	0x0003;
 const uint32_t NEWSFEED_CHANNEWLIST = 	0x0004;
 const uint32_t NEWSFEED_CHANMSGLIST = 	0x0005;
 const uint32_t NEWSFEED_BLOGNEWLIST = 	0x0006;
 const uint32_t NEWSFEED_BLOGMSGLIST = 	0x0007;
+#endif
+
 const uint32_t NEWSFEED_MESSAGELIST = 	0x0008;
 const uint32_t NEWSFEED_CHATMSGLIST = 	0x0009;
 const uint32_t NEWSFEED_SECLIST = 	0x000a;
@@ -168,6 +174,7 @@ void NewsFeed::updateDisplay()
 					addFeedItemSecurityUnknownOut(fi);
 				break;
 
+#if 0
 			case RS_FEED_ITEM_CHAN_NEW:
 				if (flags & RS_FEED_TYPE_CHAN)
 					addFeedItemChanNew(fi);
@@ -202,6 +209,7 @@ void NewsFeed::updateDisplay()
 				if (flags & RS_FEED_TYPE_BLOG)
 					addFeedItemBlogMsg(fi);
 				break;
+#endif
 
 			case RS_FEED_ITEM_CHAT_NEW:
 				if (flags & RS_FEED_TYPE_CHAT)
@@ -275,6 +283,7 @@ void NewsFeed::testFeeds(uint notifyFlags)
 			instance->addFeedItemSecurityUnknownOut(fi);
 			break;
 
+#if 0
 		case RS_FEED_TYPE_CHAN:
 		{
 			std::list<ChannelInfo> channelList;
@@ -390,6 +399,7 @@ void NewsFeed::testFeeds(uint notifyFlags)
 //			instance->addFeedItemBlogNew(fi);
 //			instance->addFeedItemBlogMsg(fi);
 			break;
+#endif
 
 		case RS_FEED_TYPE_CHAT:
 			fi.mId1 = rsPeers->getOwnId();
@@ -635,8 +645,10 @@ void	NewsFeed::addFeedItemSecurityUnknownOut(RsFeedItem &fi)
 #endif
 }
 
+#if 0
 void	NewsFeed::addFeedItemChanNew(RsFeedItem &fi)
 {
+
 	/* make new widget */
 	ChanNewItem *cni = new ChanNewItem(this, NEWSFEED_CHANNEWLIST, fi.mId1, false, true);
 
@@ -772,6 +784,8 @@ void	NewsFeed::addFeedItemBlogMsg(RsFeedItem &fi)
 	std::cerr << std::endl;
 #endif
 }
+
+#endif
 
 void	NewsFeed::addFeedItemChatNew(RsFeedItem &fi, bool addWithoutCheck)
 {

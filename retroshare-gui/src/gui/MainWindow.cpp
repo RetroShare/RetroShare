@@ -48,12 +48,12 @@
 #include "NewsFeed.h"
 #include "ShareManager.h"
 #include "NetworkView.h"
-#include "ForumsDialog.h"
+//#include "ForumsDialog.h"
 #include "FriendsDialog.h"
 #include "ChatLobbyWidget.h"
 #include "HelpDialog.h"
 #include "AboutDialog.h"
-#include "ChannelFeed.h"
+//#include "ChannelFeed.h"
 #include "bwgraph/bwgraph.h"
 #include "help/browser/helpbrowser.h"
 #include "chat/ChatDialog.h"
@@ -88,8 +88,6 @@
 #include <retroshare/rsiface.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsfiles.h>
-#include <retroshare/rsforums.h>
-#include <retroshare/rschannels.h>
 #include <retroshare/rsnotify.h>
 
 #include "gui/connect/ConnectFriendWizard.h"
@@ -269,17 +267,21 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
                       action = createPageAction(QIcon(IMAGE_MESSAGES), tr("Messages"), grp));
     notify.push_back(QPair<MainPage*, QAction*>(messagesDialog, action));
 
+#if 0
     ui->stackPages->add(channelFeed = new ChannelFeed(ui->stackPages),
                       action = createPageAction(QIcon(IMAGE_CHANNELS), tr("Channels"), grp));
     notify.push_back(QPair<MainPage*, QAction*>(channelFeed, action));
+#endif
 
 #ifdef BLOGS
      ui->stackPages->add(blogsFeed = new BlogsDialog(ui->stackPages), createPageAction(QIcon(IMAGE_BLOGS), tr("Blogs"), grp));
 #endif
-                      
+     
+#if 0                 
     ui->stackPages->add(forumsDialog = new ForumsDialog(ui->stackPages),
                        action = createPageAction(QIcon(IMAGE_FORUMS), tr("Forums"), grp));
     notify.push_back(QPair<MainPage*, QAction*>(forumsDialog, action));
+#endif
 
 	 std::cerr << "Looking for interfaces in existing plugins:" << std::endl;
 	 for(int i = 0;i<rsPlugins->nbPlugins();++i)
@@ -820,12 +822,14 @@ void SetForegroundWindowInternal(HWND hWnd)
 		 case Messages:
 			 _instance->ui->stackPages->setCurrentPage( _instance->messagesDialog );
 			 break;
+#if 0
 		 case Channels:
 			 _instance->ui->stackPages->setCurrentPage( _instance->channelFeed );
 			 return true ;
 		 case Forums:
 			 _instance->ui->stackPages->setCurrentPage( _instance->forumsDialog );
 			 return true ;
+#endif
 #ifdef BLOGS
 		 case Blogs:
 			 Page = _instance->blogsFeed;
@@ -870,12 +874,14 @@ void SetForegroundWindowInternal(HWND hWnd)
        return Links;
    }
 #endif
+#if 0
    if (page == _instance->channelFeed) {
        return Channels;
    }
    if (page == _instance->forumsDialog) {
        return Forums;
    }
+#endif
 #ifdef BLOGS
    if (page == _instance->blogsFeed) {
        return Blogs;
@@ -912,10 +918,12 @@ void SetForegroundWindowInternal(HWND hWnd)
 		case Links:
 			return _instance->linksDialog;
 #endif
+#if 0
 		case Channels:
 			return _instance->channelFeed;
 		case Forums:
 			return _instance->forumsDialog;
+#endif
 #ifdef BLOGS
 		case Blogs:
 			return _instance->blogsFeed;

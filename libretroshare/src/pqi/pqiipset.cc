@@ -29,15 +29,14 @@
 
 bool pqiIpAddress::sameAddress(const pqiIpAddress &a) const
 {
-    	return ((mAddr.sin_addr.s_addr == a.mAddr.sin_addr.s_addr) && 
-		(mAddr.sin_port == a.mAddr.sin_port));
+	return sockaddr_storage_same(mAddr, a.mAddr);
 }
 
 
 bool pqiIpAddress::validAddress() const
 {
 	/* filter for unlikely addresses */
-	if(isLoopbackNet(&(mAddr.sin_addr)))
+	if(sockaddr_storage_isLoopbackNet(mAddr))
 	{
 #ifdef IPADDR_DEBUG
 		std::cerr << "pqiIpAddress::validAddress() ip parameter is loopback: disgarding." << std::endl ;
@@ -45,7 +44,7 @@ bool pqiIpAddress::validAddress() const
 		return false;
 	}
 
-	if(mAddr.sin_addr.s_addr == 0 || mAddr.sin_addr.s_addr == 1 || mAddr.sin_port == 0) 
+	if(sockaddr_storage_isnull(mAddr))
 	{
 #ifdef IPADDR_DEBUG
 		std::cerr << "pqiIpAddress::validAddress() ip parameter is 0.0.0.0/1, or port is 0, ignoring." << std::endl;
@@ -168,7 +167,7 @@ void    pqiIpAddrList::extractFromTlv(const RsTlvIpAddrSet &tlvAddrs)
 	for(it = tlvAddrs.addrs.begin(); it != tlvAddrs.addrs.end() ; ++it)
 	{
 		pqiIpAddress addr;
-		addr.mAddr = it->addr;
+		addr.mAddr = it->addr.addr;
 		addr.mSeenTime = it->seenTime;
 		addr.mSrc = it->source; 
 
@@ -176,14 +175,14 @@ void    pqiIpAddrList::extractFromTlv(const RsTlvIpAddrSet &tlvAddrs)
 	}
 }
 
-void    pqiIpAddrList::loadTlv(RsTlvIpAddrSet &tlvAddrs)
+void    pqiIpAddrList::loadTlv(RsTlvIpAddrSet &tlvAddrs) const
 {
-	std::list<pqiIpAddress>::iterator it;
+	std::list<pqiIpAddress>::const_iterator it;
 
 	for(it = mAddrs.begin(); it != mAddrs.end() ; ++it)
 	{
 		RsTlvIpAddressInfo addr;
-		addr.addr = it->mAddr;
+		addr.addr.addr = it->mAddr;
 		addr.seenTime = it->mSeenTime;
 		addr.source = it->mSrc;
 	
@@ -199,7 +198,8 @@ void 	pqiIpAddrList::printIpAddressList(std::string &out) const
 	time_t now = time(NULL);
 	for(it = mAddrs.begin(); it != mAddrs.end(); it++)
 	{
-		rs_sprintf_append(out, "%s:%u ( %ld old)\n", rs_inet_ntoa(it->mAddr.sin_addr).c_str(), ntohs(it->mAddr.sin_port), now - it->mSeenTime);
+		out += sockaddr_storage_tostring(it->mAddr);
+		rs_sprintf_append(out, "( %ld old)\n", now - it->mSeenTime);
 	}
 	return;
 }

@@ -28,8 +28,6 @@
 #ifndef MRK_PQI_SSL_HEADER
 #define MRK_PQI_SSL_HEADER
 
-#include <openssl/ssl.h>
-
 // operating system specific network header.
 #include "pqi/pqinetwork.h"
 
@@ -93,13 +91,14 @@ public:
 virtual ~pqissl();
 
 	// NetInterface
-virtual int connect(struct sockaddr_in raddr);
+virtual int connect(const struct sockaddr_storage &raddr);
 virtual int listen();
 virtual int stoplistening();
 virtual int reset();
 virtual int disconnect();
-virtual int getConnectAddress(struct sockaddr_in &raddr);
+virtual int getConnectAddress(struct sockaddr_storage &raddr);
 
+virtual bool connect_parameter(uint32_t type, const std::string &value);
 virtual bool connect_parameter(uint32_t type, uint32_t value);
 
 	// BinInterface
@@ -110,14 +109,37 @@ virtual int senddata(void*, int);
 virtual int readdata(void*, int);
 virtual int netstatus();
 virtual int isactive();
-virtual bool moretoread();
-virtual bool cansend();
+virtual bool moretoread(uint32_t usec);
+virtual bool cansend(uint32_t usec);
 
 virtual int close(); /* BinInterface version of reset() */
 virtual std::string gethash(); /* not used here */
 virtual bool bandwidthLimited() { return true ; } // replace by !sameLAN to avoid bandwidth limiting on LAN
 
+public:
+
+/* Completion of the SSL connection, 
+ * this is public, so it can be called by
+ * the listener (should make friends??) 
+ */
+
+int	accept(SSL *ssl, int fd, const struct sockaddr_storage &foreign_addr); 
+void getCryptoParams(RsPeerCryptoParams& params) ;
+
+
 protected:
+
+
+	/* no mutex protection for these ones */
+
+	p3LinkMgr *mLinkMgr;
+	pqissllistener *pqil; 
+
+	RsMutex mSslMtx; /**** MUTEX protects data and fn below ****/
+
+virtual int reset_locked();
+int	accept_locked(SSL *ssl, int fd, const struct sockaddr_storage &foreign_addr); 
+
 	// A little bit of information to describe 
 	// the SSL state, this is needed
 	// to allow full Non-Blocking Connect behaviour.
@@ -125,7 +147,6 @@ protected:
 	// to complete an SSL.
 
 int 	ConnectAttempt();
-int 	waiting; 
 
 virtual int Failed_Connection();
 
@@ -144,28 +165,21 @@ int Authorise_SSL_Connection();
 
 int Extract_Failed_SSL_Certificate(); // try to get cert anyway.
 
-public:
+	// check connection timeout.
+bool  	CheckConnectionTimeout();
 
-/* Completion of the SSL connection, 
- * this is public, so it can be called by
- * the listener (should make friends??) 
- */
-
-int	accept(SSL *ssl, int fd, struct sockaddr_in foreign_addr); 
-
-void getCryptoParams(RsPeerCryptoParams& params) ;
-
-protected:
 
 	//protected internal fns that are overloaded for udp case.
-virtual int net_internal_close(int fd) { return unix_close(fd); }
-virtual int net_internal_SSL_set_fd(SSL *ssl, int fd) { return SSL_set_fd(ssl, fd); }
-virtual int net_internal_fcntl_nonblock(int fd) { return unix_fcntl_nonblock(fd);}
+virtual int net_internal_close(int fd);
+virtual int net_internal_SSL_set_fd(SSL *ssl, int fd);
+virtual int net_internal_fcntl_nonblock(int fd);
 
 
 	/* data */
 	bool active;
 	bool certvalid;
+
+	int waiting; 
 
 	// addition for udp (tcp version == ACTIVE).
 	int sslmode;     
@@ -173,8 +187,7 @@ virtual int net_internal_fcntl_nonblock(int fd) { return unix_fcntl_nonblock(fd)
 	SSL *ssl_connection;
 	int sockfd;
 
-	pqissllistener *pqil;
-	struct sockaddr_in remote_addr;
+	struct sockaddr_storage remote_addr;
 
 	void *readpkt;
 	int pktlen;
@@ -194,11 +207,10 @@ virtual int net_internal_fcntl_nonblock(int fd) { return unix_fcntl_nonblock(fd)
 	uint32_t mConnectTimeout;
 	time_t   mTimeoutTS;
 
-	p3LinkMgr *mLinkMgr;
 
 private:
 	// ssl only fns.
-int connectInterface(sockaddr_in&);
+int connectInterface(const struct sockaddr_storage &addr);
 
 };
 

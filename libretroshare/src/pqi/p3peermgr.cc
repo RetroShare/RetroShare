@@ -68,19 +68,28 @@ const uint32_t PEER_IP_CONNECT_STATE_MAX_LIST_SIZE =     	4;
 /****
  * #define PEER_DEBUG 1
  ***/
+#define PEER_DEBUG 1
 
 #define MAX_AVAIL_PERIOD 230 //times a peer stay in available state when not connected
 #define MIN_RETRY_PERIOD 140
 
+static const std::string kConfigDefaultProxyServerIpAddr = "127.0.0.1";
+static const uint16_t    kConfigDefaultProxyServerPort = 9050; // standard port.
+
+static const std::string kConfigKeyExtIpFinder = "USE_EXTR_IP_FINDER";
+static const std::string kConfigKeyProxyServerIpAddr = "PROXY_SERVER_IPADDR";
+static const std::string kConfigKeyProxyServerPort = "PROXY_SERVER_PORT";
+	
 void  printConnectState(std::ostream &out, peerState &peer);
 
 peerState::peerState()
 	:id("unknown"), 
          gpg_id("unknown"),
-	 netMode(RS_NET_MODE_UNKNOWN), visState(RS_VIS_STATE_STD), lastcontact(0) 
+	 netMode(RS_NET_MODE_UNKNOWN), vs_disc(RS_VS_DISC_FULL), vs_dht(RS_VS_DHT_FULL), lastcontact(0), 
+	 hiddenNode(false), hiddenPort(0) 
 {
-        sockaddr_clear(&localaddr);
-        sockaddr_clear(&serveraddr);
+        sockaddr_storage_clear(localaddr);
+        sockaddr_storage_clear(serveraddr);
 
 	return;
 }
@@ -89,18 +98,22 @@ std::string textPeerConnectState(peerState &state)
 {
 	std::string out = "Id: " + state.id + "\n";
 	rs_sprintf_append(out, "NetMode: %lu\n", state.netMode);
-	rs_sprintf_append(out, "VisState: %lu\n", state.visState);
-	rs_sprintf_append(out, "laddr: %s:%u\n", rs_inet_ntoa(state.localaddr.sin_addr).c_str(), ntohs(state.localaddr.sin_port));
-	rs_sprintf_append(out, "eaddr: %s:%u\n", rs_inet_ntoa(state.serveraddr.sin_addr).c_str(), ntohs(state.serveraddr.sin_port));
-
+	rs_sprintf_append(out, "VisState: Disc: %u Dht: %u\n", state.vs_disc, state.vs_dht);
+	
+	out += "laddr: ";
+	out += sockaddr_storage_tostring(state.localaddr);
+	out += "\neaddr: ";
+	out += sockaddr_storage_tostring(state.serveraddr);
+	out += "\n";
+	
 	return out;
 }
 
 
-p3PeerMgrIMPL::p3PeerMgrIMPL(	const std::string& ssl_own_id,
-										const std::string& gpg_own_id,
-										const std::string& gpg_own_name,
-										const std::string& ssl_own_location)
+p3PeerMgrIMPL::p3PeerMgrIMPL(const std::string& ssl_own_id,
+				const std::string& gpg_own_id,
+				const std::string& gpg_own_name,
+				const std::string& ssl_own_location)
 	:p3Config(CONFIG_TYPE_PEERS), mPeerMtx("p3PeerMgr"), mStatusChanged(false)
 {
 
@@ -116,11 +129,17 @@ p3PeerMgrIMPL::p3PeerMgrIMPL(	const std::string& ssl_own_id,
 		mOwnState.name = gpg_own_name ;
 		mOwnState.location = ssl_own_location ;
 		mOwnState.netMode = RS_NET_MODE_UPNP; // Default to UPNP.
-		mOwnState.visState = 0;
+		mOwnState.vs_disc = RS_VS_DISC_FULL;
+		mOwnState.vs_dht = RS_VS_DHT_FULL;
 	
 		lastGroupId = 1;
 
-
+		// setup default ProxyServerAddress.
+		sockaddr_storage_clear(mProxyServerAddress);
+		sockaddr_storage_ipv4_aton(mProxyServerAddress,
+				kConfigDefaultProxyServerIpAddr.c_str());
+		sockaddr_storage_ipv4_setport(mProxyServerAddress, 
+				kConfigDefaultProxyServerPort);
 	}
 	
 #ifdef PEER_DEBUG
@@ -137,18 +156,77 @@ void    p3PeerMgrIMPL::setManagers(p3LinkMgrIMPL *linkMgr, p3NetMgrIMPL *netMgr)
 	mNetMgr = netMgr;
 }
 
+
+bool p3PeerMgrIMPL::setupHiddenNode(const std::string &hiddenAddress, const uint16_t hiddenPort)
+{
+	{
+		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+
+		std::cerr << "p3PeerMgrIMPL::setupHiddenNode()";
+		std::cerr << " Address: " << hiddenAddress;
+		std::cerr << " Port: " << hiddenPort;
+		std::cerr << std::endl;
+
+		mOwnState.hiddenNode = true;
+		mOwnState.hiddenPort = hiddenPort;
+		mOwnState.hiddenDomain = hiddenAddress;
+	}
+
+	forceHiddenNode();
+	return true;
+}
+
+
+bool p3PeerMgrIMPL::forceHiddenNode()
+{
+	{
+		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+		if (RS_NET_MODE_HIDDEN != mOwnState.netMode)
+		{
+			std::cerr << "p3PeerMgrIMPL::forceHiddenNode() Required!";
+			std::cerr << std::endl;
+		}
+		mOwnState.hiddenNode = true;
+
+		// force external address - otherwise its invalid.
+		sockaddr_storage_clear(mOwnState.serveraddr);
+		sockaddr_storage_ipv4_aton(mOwnState.serveraddr, "0.0.0.0");
+		sockaddr_storage_ipv4_setport(mOwnState.serveraddr, 0);
+	}
+
+	setOwnNetworkMode(RS_NET_MODE_HIDDEN);
+
+	// switch off DHT too.
+	setOwnVisState(mOwnState.vs_disc, RS_VS_DHT_OFF);
+
+	// Force the Port.
+	struct sockaddr_storage loopback;
+	sockaddr_storage_clear(loopback);
+	sockaddr_storage_ipv4_aton(loopback, "127.0.0.1");
+	uint16_t port = sockaddr_storage_port(mOwnState.localaddr); 
+	sockaddr_storage_ipv4_setport(loopback, port); 
+
+	setLocalAddress(AuthSSL::getAuthSSL()->OwnId(), loopback);
+
+	mNetMgr->setIPServersEnabled(false);
+
+	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+	return true;
+}
+
+
 bool p3PeerMgrIMPL::setOwnNetworkMode(uint32_t netMode)
 {
 	bool changed = false;
 	{
 		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
-#ifdef PEER_DEBUG
+//#ifdef PEER_DEBUG
 		std::cerr << "p3PeerMgrIMPL::setOwnNetworkMode() :";
 		std::cerr << " Existing netMode: " << mOwnState.netMode;
 		std::cerr << " Input netMode: " << netMode;
 		std::cerr << std::endl;
-#endif
+//#endif
 
 		if (mOwnState.netMode != (netMode & RS_NET_MODE_ACTUAL))
 		{
@@ -163,29 +241,32 @@ bool p3PeerMgrIMPL::setOwnNetworkMode(uint32_t netMode)
 	return changed;
 }
 
-bool p3PeerMgrIMPL::setOwnVisState(uint32_t visState)
+bool p3PeerMgrIMPL::setOwnVisState(uint16_t vs_disc, uint16_t vs_dht)
 {
 	bool changed = false;
 	{
 		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
 		std::string out;
-		rs_sprintf(out, "p3PeerMgr::setOwnVisState() Existing vis: %lu Input vis: %lu", mOwnState.visState, visState);
+		rs_sprintf(out, "p3PeerMgr::setOwnVisState() Existing vis: %u/%u Input vis: %u/%u", 
+				   mOwnState.vs_disc, mOwnState.vs_dht, vs_disc, vs_dht);
 		rslog(RSL_WARNING, p3peermgrzone, out);
 
 #ifdef PEER_DEBUG
-		std::cerr << out.str() << std::endl;
+		std::cerr << out.c_str() << std::endl;
 #endif
 
-		if (mOwnState.visState != visState) {
-			mOwnState.visState = visState;
+		if (mOwnState.vs_disc != vs_disc || mOwnState.vs_dht != vs_dht) 
+		{
+			mOwnState.vs_disc = vs_disc;
+			mOwnState.vs_dht = vs_dht;
 			changed = true;
 			IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 		}
 	}
 	
 	// Pass on Flags to NetMgr.
-	mNetMgr->setVisState(visState);
+	mNetMgr->setVisState(vs_disc, vs_dht);
 
 	return changed;
 }
@@ -271,6 +352,131 @@ bool    p3PeerMgrIMPL::getGpgId(const std::string &ssl_id, std::string &gpgId)
 	}
 
 	gpgId = it->second.gpg_id;
+	return true;
+}
+
+/**** HIDDEN STUFF ****/
+
+bool    p3PeerMgrIMPL::isHidden()
+{
+	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+	return mOwnState.hiddenNode;
+}
+
+
+bool    p3PeerMgrIMPL::isHiddenPeer(const std::string &ssl_id)
+{
+	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+
+	/* check for existing */
+	std::map<std::string, peerState>::iterator it;
+	it = mFriendList.find(ssl_id);
+	if (it == mFriendList.end())
+	{
+		std::cerr << "p3PeerMgrIMPL::isHiddenPeer(" << ssl_id << ") Missing Peer => false";
+		std::cerr << std::endl;
+
+		return false;
+	}
+
+	std::cerr << "p3PeerMgrIMPL::isHiddenPeer(" << ssl_id << ") = " << (it->second).hiddenNode;
+	std::cerr << std::endl;
+	return (it->second).hiddenNode;
+}
+
+bool p3PeerMgrIMPL::setHiddenDomainPort(const std::string &ssl_id, const std::string &domain_addr, const uint16_t domain_port)
+{
+	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+
+	std::cerr << "p3PeerMgrIMPL::setHiddenDomainPort()";
+	std::cerr << std::endl;
+
+	std::string domain = domain_addr;
+	// trim whitespace!
+	size_t pos = domain.find_last_not_of(" \t\n");
+	if (std::string::npos != pos)
+	{
+		domain = domain.substr(0, pos + 1);
+	}
+	pos = domain.find_first_not_of(" \t\n");
+	if (std::string::npos != pos)
+	{
+		domain = domain.substr(pos);
+	}
+
+	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+
+	if (ssl_id == AuthSSL::getAuthSSL()->OwnId()) 
+	{
+		mOwnState.hiddenNode = true;
+		mOwnState.hiddenDomain = domain;
+		mOwnState.hiddenPort = domain_port;
+		std::cerr << "p3PeerMgrIMPL::setHiddenDomainPort() Set own State";
+		std::cerr << std::endl;
+		return true;
+	}
+
+	/* check for existing */
+	std::map<std::string, peerState>::iterator it;
+	it = mFriendList.find(ssl_id);
+	if (it == mFriendList.end())
+	{
+		std::cerr << "p3PeerMgrIMPL::setHiddenDomainPort() Peer Not Found";
+		std::cerr << std::endl;
+		return false;
+	}
+
+	it->second.hiddenDomain = domain;
+	it->second.hiddenPort = domain_port;
+	it->second.hiddenNode = true;
+	std::cerr << "p3PeerMgrIMPL::setHiddenDomainPort() Set Peers State";
+	std::cerr << std::endl;
+
+	return true;
+}
+
+bool p3PeerMgrIMPL::setProxyServerAddress(const struct sockaddr_storage &proxy_addr)
+{
+	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+
+	if (!sockaddr_storage_same(mProxyServerAddress,proxy_addr))
+	{
+		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+		mProxyServerAddress = proxy_addr;
+	}
+	return true;
+}
+	
+
+bool p3PeerMgrIMPL::getProxyServerAddress(struct sockaddr_storage &proxy_addr)
+{
+	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+
+	proxy_addr = mProxyServerAddress;
+	return true;
+}
+	
+bool p3PeerMgrIMPL::getProxyAddress(const std::string &ssl_id, struct sockaddr_storage &proxy_addr, std::string &domain_addr, uint16_t &domain_port)
+{
+	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+
+	/* check for existing */
+	std::map<std::string, peerState>::iterator it;
+	it = mFriendList.find(ssl_id);
+	if (it == mFriendList.end())
+	{
+		return false;
+	}
+
+	if (!it->second.hiddenNode)
+	{
+		return false;
+	}
+
+	domain_addr = it->second.hiddenDomain;
+	domain_port = it->second.hiddenPort;
+
+	proxy_addr = mProxyServerAddress;
 	return true;
 }
 
@@ -394,7 +600,7 @@ void p3PeerMgrIMPL::getOthersList(std::list<std::string> &peers)
 
 
 int p3PeerMgrIMPL::getConnectAddresses(const std::string &id, 
-					struct sockaddr_in &lAddr, struct sockaddr_in &eAddr, 
+					struct sockaddr_storage &lAddr, struct sockaddr_storage &eAddr, 
 					pqiIpAddrSet &histAddrs, std::string &dyndns)
 {
 
@@ -454,7 +660,7 @@ bool    p3PeerMgrIMPL::haveOnceConnected()
 /*******************************************************************/
 /*******************************************************************/
 
-bool p3PeerMgrIMPL::addFriend(const std::string& input_id, const std::string& input_gpg_id, uint32_t netMode, uint32_t visState, time_t lastContact,ServicePermissionFlags service_flags)
+bool p3PeerMgrIMPL::addFriend(const std::string& input_id, const std::string& input_gpg_id, uint32_t netMode, uint16_t vs_disc, uint16_t vs_dht, time_t lastContact,ServicePermissionFlags service_flags)
 {
 	bool notifyLinkMgr = false;
 	std::string id = input_id ;
@@ -530,7 +736,9 @@ bool p3PeerMgrIMPL::addFriend(const std::string& input_id, const std::string& in
 			it = mFriendList.find(id);
 
 			/* setup connectivity parameters */
-			it->second.visState = visState;
+			it->second.vs_disc = vs_disc;
+			it->second.vs_dht = vs_dht;
+			
 			it->second.netMode  = netMode;
 			it->second.lastcontact = lastContact;
 
@@ -553,7 +761,8 @@ bool p3PeerMgrIMPL::addFriend(const std::string& input_id, const std::string& in
 			pstate.gpg_id = gpg_id;
 			pstate.name = AuthGPG::getAuthGPG()->getGPGName(gpg_id);
 			
-			pstate.visState = visState;
+			pstate.vs_disc = vs_disc;
+			pstate.vs_dht = vs_dht;
 			pstate.netMode = netMode;
 			pstate.lastcontact = lastContact;
 
@@ -571,7 +780,7 @@ bool p3PeerMgrIMPL::addFriend(const std::string& input_id, const std::string& in
 
 	if (notifyLinkMgr)
 	{
-		mLinkMgr->addFriend(id, !(visState & RS_VIS_STATE_NODHT));
+		mLinkMgr->addFriend(id, vs_dht != RS_VS_DHT_OFF);
 	}
 
 	service_flags &= servicePermissionFlags(gpg_id) ; // Always reduce the permissions. 
@@ -774,12 +983,12 @@ bool p3PeerMgrIMPL::addNeighbour(std::string id)
  * as it doesn't call back to there.
  */
 
-bool 	p3PeerMgrIMPL::UpdateOwnAddress(const struct sockaddr_in &localAddr, const struct sockaddr_in &extAddr)
+bool 	p3PeerMgrIMPL::UpdateOwnAddress(const struct sockaddr_storage &localAddr, const struct sockaddr_storage &extAddr)
 {
 	std::cerr << "p3PeerMgrIMPL::UpdateOwnAddress(";
-	std::cerr << rs_inet_ntoa(localAddr.sin_addr) << ":" << htons(localAddr.sin_port);
+	std::cerr << sockaddr_storage_tostring(localAddr);
 	std::cerr << ", ";
-	std::cerr << rs_inet_ntoa(extAddr.sin_addr) << ":" << htons(extAddr.sin_port);
+	std::cerr << sockaddr_storage_tostring(extAddr);
 	std::cerr << ")" << std::endl;
 
 	{
@@ -820,19 +1029,18 @@ bool 	p3PeerMgrIMPL::UpdateOwnAddress(const struct sockaddr_in &localAddr, const
 			std::cerr << " as MANUAL FORWARD Mode (ERROR - SHOULD NOT BE TRIGGERED: TRY_EXT_MODE)";
 			std::cerr << std::endl;
 			std::cerr << "Address is Now: ";
-			std::cerr << rs_inet_ntoa(mOwnState.serveraddr.sin_addr);
-			std::cerr << ":" << htons(mOwnState.serveraddr.sin_port);
+			std::cerr << sockaddr_storage_tostring(mOwnState.serveraddr);
 			std::cerr << std::endl;
 		}
         	else if (mOwnState.netMode & RS_NET_MODE_EXT)
 		{
-			mOwnState.serveraddr.sin_addr.s_addr = extAddr.sin_addr.s_addr;
+			sockaddr_storage_copyip(mOwnState.serveraddr,extAddr);
+			
 			std::cerr << "p3PeerMgrIMPL::UpdateOwnAddress() Disabling Update of Server Port ";
 			std::cerr << " as MANUAL FORWARD Mode";
 			std::cerr << std::endl;
 			std::cerr << "Address is Now: ";
-			std::cerr << rs_inet_ntoa(mOwnState.serveraddr.sin_addr);
-			std::cerr << ":" << htons(mOwnState.serveraddr.sin_port);
+			std::cerr << sockaddr_storage_tostring(mOwnState.serveraddr);
 			std::cerr << std::endl;
 		}
 		else
@@ -850,7 +1058,7 @@ bool 	p3PeerMgrIMPL::UpdateOwnAddress(const struct sockaddr_in &localAddr, const
 
 
 
-bool    p3PeerMgrIMPL::setLocalAddress(const std::string &id, struct sockaddr_in addr)
+bool    p3PeerMgrIMPL::setLocalAddress(const std::string &id, const struct sockaddr_storage &addr)
 {
 	bool changed = false;
 
@@ -858,8 +1066,7 @@ bool    p3PeerMgrIMPL::setLocalAddress(const std::string &id, struct sockaddr_in
 	{
 		{
 			RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
-			if (mOwnState.localaddr.sin_addr.s_addr != addr.sin_addr.s_addr ||
-			    mOwnState.localaddr.sin_port != addr.sin_port)
+			if (!sockaddr_storage_same(mOwnState.localaddr, addr))
 			{
 				mOwnState.localaddr = addr;
 				changed = true;
@@ -891,8 +1098,8 @@ bool    p3PeerMgrIMPL::setLocalAddress(const std::string &id, struct sockaddr_in
 	}
 
 	/* "it" points to peer */
-	if ((it->second.localaddr.sin_addr.s_addr != addr.sin_addr.s_addr) ||
-		(it->second.localaddr.sin_port != addr.sin_port)) {
+	if (!sockaddr_storage_same(it->second.localaddr, addr))
+	{
 		it->second.localaddr = addr;
 		changed = true;
 	}
@@ -912,7 +1119,7 @@ bool    p3PeerMgrIMPL::setLocalAddress(const std::string &id, struct sockaddr_in
 	return changed;
 }
 
-bool    p3PeerMgrIMPL::setExtAddress(const std::string &id, struct sockaddr_in addr)
+bool    p3PeerMgrIMPL::setExtAddress(const std::string &id, const struct sockaddr_storage &addr)
 {
 	bool changed = false;
 
@@ -920,8 +1127,7 @@ bool    p3PeerMgrIMPL::setExtAddress(const std::string &id, struct sockaddr_in a
 	{
 		{
 			RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
-			if (mOwnState.serveraddr.sin_addr.s_addr != addr.sin_addr.s_addr ||
-				mOwnState.serveraddr.sin_port != addr.sin_port)
+			if (!sockaddr_storage_same(mOwnState.serveraddr, addr))
 			{
 				mOwnState.serveraddr = addr;
 				changed = true;
@@ -948,8 +1154,8 @@ bool    p3PeerMgrIMPL::setExtAddress(const std::string &id, struct sockaddr_in a
 	}
 
 	/* "it" points to peer */
-	if ((it->second.serveraddr.sin_addr.s_addr != addr.sin_addr.s_addr) ||
-		(it->second.serveraddr.sin_port != addr.sin_port)) {
+	if (!sockaddr_storage_same(it->second.serveraddr, addr))
+	{
 		it->second.serveraddr = addr;
 		changed = true;
 	}
@@ -1043,7 +1249,9 @@ bool    p3PeerMgrIMPL::updateAddressList(const std::string& id, const pqiIpAddrS
 #ifdef PEER_DEBUG
 	std::cerr << "p3PeerMgrIMPL::setLocalAddress() Updated Address for: " << id;
 	std::cerr << std::endl;
-	it->second.ipAddrs.printAddrs(std::cerr);
+	std::string addrstr;
+	it->second.ipAddrs.printAddrs(addrstr);
+	std::cerr << addrstr;
 	std::cerr << std::endl;
 #endif
 
@@ -1074,7 +1282,7 @@ bool    p3PeerMgrIMPL::updateCurrentAddress(const std::string& id, const pqiIpAd
 		}
 	}
 
-	if (isPrivateNet(&(addr.mAddr.sin_addr)))
+	if (sockaddr_storage_isPrivateNet(addr.mAddr))
 	{
 		it->second.ipAddrs.updateLocalAddrs(addr);
 		it->second.localaddr = addr.mAddr;
@@ -1088,7 +1296,9 @@ bool    p3PeerMgrIMPL::updateCurrentAddress(const std::string& id, const pqiIpAd
 #ifdef PEER_DEBUG
 	std::cerr << "p3PeerMgrIMPL::updatedCurrentAddress() Updated Address for: " << id;
 	std::cerr << std::endl;
-	it->second.ipAddrs.printAddrs(std::cerr);
+	std::string addrstr;
+	it->second.ipAddrs.printAddrs(addrstr);
+	std::cerr << addrstr;
 	std::cerr << std::endl;
 #endif
 	
@@ -1186,20 +1396,19 @@ bool    p3PeerMgrIMPL::setLocation(const std::string &id, const std::string &loc
         return changed;
 }
 
-bool    p3PeerMgrIMPL::setVisState(const std::string &id, uint32_t visState)
+bool    p3PeerMgrIMPL::setVisState(const std::string &id, uint16_t vs_disc, uint16_t vs_dht)
 {
 	{
 		std::string out;
-		rs_sprintf(out, "p3PeerMgr::setVisState(%s, %lu)", id.c_str(), visState);
+		rs_sprintf(out, "p3PeerMgr::setVisState(%s, %u, %u)", id.c_str(), vs_disc, vs_dht);
 		rslog(RSL_WARNING, p3peermgrzone, out);
 	}
 
 	if (id == AuthSSL::getAuthSSL()->OwnId())
 	{
-		return setOwnVisState(visState);
+		return setOwnVisState(vs_disc, vs_dht);
 	}
 
-	bool dht_state ;
 	bool isFriend = false;
 	bool changed = false;
 	{
@@ -1220,53 +1429,47 @@ bool    p3PeerMgrIMPL::setVisState(const std::string &id, uint32_t visState)
 		}
 
 		/* "it" points to peer */
-		if (it->second.visState != visState) {
-			it->second.visState = visState;
+		if ((it->second.vs_disc != vs_disc) || (it->second.vs_dht = vs_dht))
+		{
+			it->second.vs_disc = vs_disc;
+			it->second.vs_dht = vs_dht;
 			changed = true;
 
-			dht_state = it->second.visState & RS_VIS_STATE_NODHT ;
-
-			std::cerr << "p3PeerMgrIMPL::setVisState(" << id << ", " << std::hex << visState << std::dec << ") ";
+			std::cerr << "p3PeerMgrIMPL::setVisState(" << id << ", DISC: " << vs_disc << " DHT: " << vs_dht << ") ";
 			std::cerr << " NAME: " << it->second.name;
 
-			if (it->second.visState & RS_VIS_STATE_NODHT)
+			switch(it->second.vs_disc)
 			{
-				std::cerr << " NO-DHT ";
+				default:
+				case RS_VS_DISC_OFF:
+					std::cerr << " NO-DISC ";
+					break;
+				case RS_VS_DISC_MINIMAL:
+					std::cerr << " MIN-DISC ";
+					break;
+				case RS_VS_DISC_FULL:
+					std::cerr << " FULL-DISC ";
+					break;
 			}
-			else
+			switch(it->second.vs_dht)
 			{
-				std::cerr << " DHT-OK ";
-			}
-			if (it->second.visState & RS_VIS_STATE_NODISC)
-			{
-				std::cerr << " NO-DISC ";
-			}
-			else
-			{
-				std::cerr << " DISC-OK ";
+				default:
+				case RS_VS_DHT_OFF:
+					std::cerr << " NO-DHT ";
+					break;
+				case RS_VS_DHT_PASSIVE:
+					std::cerr << " PASSIVE-DHT ";
+					break;
+				case RS_VS_DHT_FULL:
+					std::cerr << " FULL-DHT ";
+					break;
 			}
 			std::cerr << std::endl;
 		}
 	}
 	if(isFriend && changed)
 	{
-		/* toggle DHT state */
-		if(dht_state)
-		{
-
-			std::cerr << "p3PeerMgrIMPL::setVisState() setFriendVisibility => false";
-			std::cerr << std::endl;
-
-			/* hidden from DHT world */
-			mLinkMgr->setFriendVisibility(id, false);
-		}
-		else
-		{
-			std::cerr << "p3PeerMgrIMPL::setVisState() setFriendVisibility => true";
-			std::cerr << std::endl;
-
-			mLinkMgr->setFriendVisibility(id, true);
-		}
+		mLinkMgr->setFriendVisibility(id, vs_dht != RS_VS_DHT_OFF);
 	}
 
 	if (changed) {
@@ -1305,7 +1508,10 @@ bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 	/* create a list of current peers */
 	cleanup = false;
 	bool useExtAddrFinder = mNetMgr->getIPServersEnabled();
-	bool allowTunnelConnection = mLinkMgr->getTunnelConnection();
+
+	// Store Proxy Server.
+	struct sockaddr_storage proxy_addr;
+	getProxyServerAddress(proxy_addr);
 
 	mPeerMtx.lock(); /****** MUTEX LOCKED *******/ 
 
@@ -1331,14 +1537,21 @@ bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 #endif
 	item->netMode = mOwnState.netMode;
 
-	item->visState = mOwnState.visState;
+	item->vs_disc = mOwnState.vs_disc;
+	item->vs_dht = mOwnState.vs_dht;
+	
 	item->lastContact = mOwnState.lastcontact;
 
-        item->currentlocaladdr = mOwnState.localaddr;
-        item->currentremoteaddr = mOwnState.serveraddr;
-        item->dyndns = mOwnState.dyndns;
-        mOwnState.ipAddrs.mLocal.loadTlv(item->localAddrList);
-        mOwnState.ipAddrs.mExt.loadTlv(item->extAddrList);
+	item->localAddrV4.addr = mOwnState.localaddr;
+	item->extAddrV4.addr = mOwnState.serveraddr;
+	sockaddr_storage_clear(item->localAddrV6.addr);
+	sockaddr_storage_clear(item->extAddrV6.addr);
+	
+	item->dyndns = mOwnState.dyndns;
+	mOwnState.ipAddrs.mLocal.loadTlv(item->localAddrList);
+	mOwnState.ipAddrs.mExt.loadTlv(item->extAddrList);
+	item->domain_addr = mOwnState.hiddenDomain;
+	item->domain_port = mOwnState.hiddenPort;
 
 #ifdef PEER_DEBUG
 	std::cerr << "p3PeerMgrIMPL::saveList() Own Config Item:" << std::endl;
@@ -1360,13 +1573,23 @@ bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 		item->gpg_id = (it->second).gpg_id;
 		item->location = (it->second).location;
 		item->netMode = (it->second).netMode;
-		item->visState = (it->second).visState;
+		item->vs_disc = (it->second).vs_disc;
+		item->vs_dht = (it->second).vs_dht;
+
 		item->lastContact = (it->second).lastcontact;
-		item->currentlocaladdr = (it->second).localaddr;
-		item->currentremoteaddr = (it->second).serveraddr;
+		
+		item->localAddrV4.addr = (it->second).localaddr;
+		item->extAddrV4.addr = (it->second).serveraddr;
+		sockaddr_storage_clear(item->localAddrV6.addr);
+		sockaddr_storage_clear(item->extAddrV6.addr);
+		
+		
 		item->dyndns = (it->second).dyndns;
 		(it->second).ipAddrs.mLocal.loadTlv(item->localAddrList);
 		(it->second).ipAddrs.mExt.loadTlv(item->extAddrList);
+
+		item->domain_addr = (it->second).hiddenDomain;
+		item->domain_port = (it->second).hiddenPort;
 
 		saveData.push_back(item);
 		saveCleanupList.push_back(item);
@@ -1393,30 +1616,24 @@ bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 	RsConfigKeyValueSet *vitem = new RsConfigKeyValueSet ;
 
 	RsTlvKeyValue kv;
-	kv.key = "USE_EXTR_IP_FINDER" ;
+	kv.key = kConfigKeyExtIpFinder;
 	kv.value = (useExtAddrFinder)?"TRUE":"FALSE" ;
 	vitem->tlvkvs.pairs.push_back(kv) ;
 
-#ifdef PEER_DEBUG
-	std::cout << "Pushing item for use_extr_addr_finder = " << useExtAddrFinder << std::endl ;
-#endif
+
+	std::cerr << "Saving proxyServerAddress: " << sockaddr_storage_tostring(proxy_addr);
+	std::cerr << std::endl;
+
+	kv.key = kConfigKeyProxyServerIpAddr;
+	kv.value = sockaddr_storage_iptostring(proxy_addr);
+	vitem->tlvkvs.pairs.push_back(kv) ;
+
+	kv.key = kConfigKeyProxyServerPort;
+	kv.value = sockaddr_storage_porttostring(proxy_addr);
+	vitem->tlvkvs.pairs.push_back(kv) ;
+	
 	saveData.push_back(vitem);
 	saveCleanupList.push_back(vitem);
-
-                // Now save config for network digging strategies
-
-        RsConfigKeyValueSet *vitem2 = new RsConfigKeyValueSet ;
-
-        RsTlvKeyValue kv2;
-        kv2.key = "ALLOW_TUNNEL_CONNECTION" ;
-        kv2.value = (allowTunnelConnection)?"TRUE":"FALSE" ;
-        vitem2->tlvkvs.pairs.push_back(kv2) ;
-
-#ifdef PEER_DEBUG
-        std::cout << "Pushing item for allow_tunnel_connection = " << allowTunnelConnection << std::endl ;
-#endif
-        saveData.push_back(vitem2);
-	saveCleanupList.push_back(vitem2);
 
 	/* save groups */
 
@@ -1448,8 +1665,9 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 
 	// DEFAULTS.
 	bool useExtAddrFinder = true;
-	bool allowTunnelConnection = true;
-	
+	std::string proxyIpAddress = kConfigDefaultProxyServerIpAddr;
+	uint16_t    proxyPort = kConfigDefaultProxyServerPort;
+
         if (load.size() == 0) {
             std::cerr << "p3PeerMgrIMPL::loadList() list is empty, it may be a configuration problem."  << std::endl;
             return false;
@@ -1477,7 +1695,7 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 #endif
 				/* add ownConfig */
 				setOwnNetworkMode(pitem->netMode);
-				setOwnVisState(pitem->visState);
+				setOwnVisState(pitem->vs_disc, pitem->vs_dht);
 				
 				mOwnState.gpg_id = AuthGPG::getAuthGPG()->getGPGOwnId();
 				mOwnState.location = AuthSSL::getAuthSSL()->getOwnLocation();
@@ -1490,20 +1708,30 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 				std::cerr << std::endl;
 #endif
 				/* ************* */
-				addFriend(pitem->pid, pitem->gpg_id, pitem->netMode, pitem->visState, pitem->lastContact, RS_SERVICE_PERM_ALL);
+				addFriend(pitem->pid, pitem->gpg_id, pitem->netMode, pitem->vs_disc, pitem->vs_dht, pitem->lastContact, RS_SERVICE_PERM_ALL);
 				setLocation(pitem->pid, pitem->location);
 			}
-			
-			setLocalAddress(pitem->pid, pitem->currentlocaladdr);
-			setExtAddress(pitem->pid, pitem->currentremoteaddr);
-			setDynDNS (pitem->pid, pitem->dyndns);
 
-			/* convert addresses */
-			pqiIpAddrSet addrs;
-			addrs.mLocal.extractFromTlv(pitem->localAddrList);
-			addrs.mExt.extractFromTlv(pitem->extAddrList);
+			if (pitem->netMode == RS_NET_MODE_HIDDEN)
+			{
+				/* set only the hidden stuff & localAddress */
+				setLocalAddress(pitem->pid, pitem->localAddrV4.addr);
+				setHiddenDomainPort(pitem->pid, pitem->domain_addr, pitem->domain_port);
+
+			}
+			else
+			{
+				setLocalAddress(pitem->pid, pitem->localAddrV4.addr);
+				setExtAddress(pitem->pid, pitem->extAddrV4.addr);
+				setDynDNS (pitem->pid, pitem->dyndns);
+
+				/* convert addresses */
+				pqiIpAddrSet addrs;
+				addrs.mLocal.extractFromTlv(pitem->localAddrList);
+				addrs.mExt.extractFromTlv(pitem->extAddrList);
 			
-			updateAddressList(pitem->pid, addrs);
+				updateAddressList(pitem->pid, addrs);
+			}
 
 			delete(*it);
 
@@ -1521,13 +1749,25 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 			std::cerr << std::endl;
 #endif
 			std::list<RsTlvKeyValue>::iterator kit;
-			for(kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); kit++) {
-				if(kit->key == "USE_EXTR_IP_FINDER") {
+			for(kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); kit++) 
+			{
+				if (kit->key == kConfigKeyExtIpFinder)
+				{
 					useExtAddrFinder = (kit->value == "TRUE");
 					std::cerr << "setting use_extr_addr_finder to " << useExtAddrFinder << std::endl ;
-				} else if (kit->key == "ALLOW_TUNNEL_CONNECTION") {
-					allowTunnelConnection = (kit->value == "TRUE");
-					std::cerr << "setting allow_tunnel_connection to " << allowTunnelConnection << std::endl ;
+				} 
+				else if (kit->key == kConfigKeyProxyServerIpAddr)
+				{
+					proxyIpAddress = kit->value;
+					std::cerr << "Loaded proxyIpAddress: " << proxyIpAddress;
+					std::cerr << std::endl ;
+					
+				}
+				else if (kit->key == kConfigKeyProxyServerPort)
+				{
+					proxyPort = atoi(kit->value.c_str());
+					std::cerr << "Loaded proxyPort: " << proxyPort;
+					std::cerr << std::endl ;
 				}
 			}
 
@@ -1625,9 +1865,25 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 		}
 	}
 
+	// If we are hidden - don't want ExtAddrFinder - ever!
+	if (isHidden())
+	{
+		useExtAddrFinder = false;
+	}
+
 	mNetMgr->setIPServersEnabled(useExtAddrFinder);
-	mLinkMgr->setTunnelConnection(allowTunnelConnection);
-	
+
+	// Configure Proxy Server.
+	struct sockaddr_storage proxy_addr;
+	sockaddr_storage_clear(proxy_addr);
+	sockaddr_storage_ipv4_aton(proxy_addr, proxyIpAddress.c_str());
+	sockaddr_storage_ipv4_setport(proxy_addr, proxyPort);
+
+	if (sockaddr_storage_isValidNet(proxy_addr))
+	{
+		setProxyServerAddress(proxy_addr);
+	}
+
 	return true;
 }
 

@@ -107,6 +107,10 @@ std::string RsPeerNetModeString(uint32_t netModel)
 	{
 		str = "UDP Mode";
 	}
+	else if (netModel == RS_NETMODE_HIDDEN)
+	{
+		str = "Hidden";
+	}
 	else if (netModel == RS_NETMODE_UNREACHABLE)
 	{
 		str = "UDP Mode (Unreachable)";
@@ -302,31 +306,53 @@ bool	p3Peers::getPeerDetails(const std::string &id, RsPeerDetails &d)
 	d.authcode  	= "AUTHCODE";
 
 	/* fill from pcs */
-
-	d.localAddr	= rs_inet_ntoa(ps.localaddr.sin_addr);
-	d.localPort	= ntohs(ps.localaddr.sin_port);
-	d.extAddr	= rs_inet_ntoa(ps.serveraddr.sin_addr);
-	d.extPort	= ntohs(ps.serveraddr.sin_port);
-	d.dyndns        = ps.dyndns;
 	d.lastConnect	= ps.lastcontact;
 	d.connectPeriod = 0;
 
-	std::list<pqiIpAddress>::iterator it;
-	for(it = ps.ipAddrs.mLocal.mAddrs.begin(); 
-			it != ps.ipAddrs.mLocal.mAddrs.end(); it++)
+	if (ps.hiddenNode)
 	{
-		std::string toto;
-		rs_sprintf(toto, "%u    %ld sec", ntohs(it->mAddr.sin_port), time(NULL) - it->mSeenTime);
-		d.ipAddressList.push_back("L:" + rs_inet_ntoa(it->mAddr.sin_addr) + ":" + toto);
+		d.isHiddenNode = true;
+		d.hiddenNodeAddress = ps.hiddenDomain;
+		d.hiddenNodePort = ps.hiddenPort;
+		d.localAddr	= sockaddr_storage_iptostring(ps.localaddr);
+		d.localPort	= sockaddr_storage_port(ps.localaddr);
+		d.extAddr = "hidden";
+		d.extPort = 0;
+		d.dyndns = "";
 	}
-	for(it = ps.ipAddrs.mExt.mAddrs.begin(); 
-			it != ps.ipAddrs.mExt.mAddrs.end(); it++)
+	else
 	{
-		std::string toto;
-		rs_sprintf(toto, "%u    %ld sec", ntohs(it->mAddr.sin_port), time(NULL) - it->mSeenTime);
-		d.ipAddressList.push_back("E:" + rs_inet_ntoa(it->mAddr.sin_addr) + ":" + toto);
-	}
+		d.isHiddenNode = false;
+		d.hiddenNodeAddress = "";
+		d.hiddenNodePort = 0;
 
+		d.localAddr	= sockaddr_storage_iptostring(ps.localaddr);
+		d.localPort	= sockaddr_storage_port(ps.localaddr);
+		d.extAddr	= sockaddr_storage_iptostring(ps.serveraddr);
+		d.extPort	= sockaddr_storage_port(ps.serveraddr);
+		d.dyndns        = ps.dyndns;
+	
+		std::list<pqiIpAddress>::iterator it;
+		for(it = ps.ipAddrs.mLocal.mAddrs.begin(); 
+				it != ps.ipAddrs.mLocal.mAddrs.end(); it++)
+		{
+			std::string toto;
+			toto += "L:";
+			toto += sockaddr_storage_tostring(it->mAddr);
+			rs_sprintf_append(toto, "    %ld sec", time(NULL) - it->mSeenTime);
+			d.ipAddressList.push_back(toto);
+		}
+		for(it = ps.ipAddrs.mExt.mAddrs.begin(); 
+				it != ps.ipAddrs.mExt.mAddrs.end(); it++)
+		{
+			std::string toto;
+			toto += "E:";
+			toto += sockaddr_storage_tostring(it->mAddr);
+			rs_sprintf_append(toto, "    %ld sec", time(NULL) - it->mSeenTime);
+			d.ipAddressList.push_back(toto);
+		}
+	}
+	
 
 	switch(ps.netMode & RS_NET_MODE_ACTUAL)
 	{
@@ -339,6 +365,9 @@ bool	p3Peers::getPeerDetails(const std::string &id, RsPeerDetails &d)
 		case RS_NET_MODE_UDP:
 			d.netMode	= RS_NETMODE_UDP;
 			break;
+		case RS_NET_MODE_HIDDEN:
+			d.netMode	= RS_NETMODE_HIDDEN;
+			break;
 		case RS_NET_MODE_UNREACHABLE:
 		case RS_NET_MODE_UNKNOWN:
 		default:
@@ -346,18 +375,8 @@ bool	p3Peers::getPeerDetails(const std::string &id, RsPeerDetails &d)
 			break;
 	}
 
-	d.visState	= 0;
-	if (!(ps.visState & RS_VIS_STATE_NODISC))
-	{
-		d.visState |= RS_VS_DISC_ON;
-	}
-
-	if (!(ps.visState & RS_VIS_STATE_NODHT))
-	{
-		d.visState |= RS_VS_DHT_ON;
-	}
-
-
+	d.vs_disc = ps.vs_disc;
+	d.vs_dht = ps.vs_dht;
 
 
 	/* Translate */
@@ -375,8 +394,8 @@ bool	p3Peers::getPeerDetails(const std::string &id, RsPeerDetails &d)
 
 	if (pcs.state & RS_PEER_S_CONNECTED)
 	{
-		d.connectAddr = rs_inet_ntoa(pcs.connectaddr.sin_addr) ;
-		d.connectPort = pcs.connectaddr.sin_port ;
+		d.connectAddr = sockaddr_storage_iptostring(pcs.connectaddr);
+		d.connectPort = sockaddr_storage_port(pcs.connectaddr);
 	}
 	else
 	{
@@ -405,14 +424,12 @@ bool	p3Peers::getPeerDetails(const std::string &id, RsPeerDetails &d)
 
 	if (pcs.inConnAttempt)
 	{
-		if (pcs.currentConnAddrAttempt.type & RS_NET_CONN_TUNNEL) {
-			d.connectState = RS_PEER_CONNECTSTATE_TRYING_TUNNEL;
-		} else if (pcs.currentConnAddrAttempt.type & RS_NET_CONN_TCP_ALL) {
+		if (pcs.currentConnAddrAttempt.type & RS_NET_CONN_TCP_ALL) {
 			d.connectState = RS_PEER_CONNECTSTATE_TRYING_TCP;
-			rs_sprintf(d.connectStateString, "%s:%u", rs_inet_ntoa(pcs.currentConnAddrAttempt.addr.sin_addr).c_str(), ntohs(pcs.currentConnAddrAttempt.addr.sin_port));
+			d.connectStateString = sockaddr_storage_tostring(pcs.currentConnAddrAttempt.addr);
 		} else if (pcs.currentConnAddrAttempt.type & RS_NET_CONN_UDP_ALL) {
 			d.connectState = RS_PEER_CONNECTSTATE_TRYING_UDP;
-			rs_sprintf(d.connectStateString, "%s:%u", rs_inet_ntoa(pcs.currentConnAddrAttempt.addr.sin_addr).c_str(), ntohs(pcs.currentConnAddrAttempt.addr.sin_port));
+			d.connectStateString = sockaddr_storage_tostring(pcs.currentConnAddrAttempt.addr);
 		}
 	}
 	else if (pcs.state & RS_PEER_S_CONNECTED)
@@ -424,10 +441,6 @@ bool	p3Peers::getPeerDetails(const std::string &id, RsPeerDetails &d)
 		else if (pcs.connecttype == RS_NET_CONN_UDP_ALL)
 		{
 			d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_UDP;
-		}
-		else if (pcs.connecttype == RS_NET_CONN_TUNNEL)
-		{
-			d.connectState = RS_PEER_CONNECTSTATE_CONNECTED_TUNNEL;
 		}
 		else
 		{
@@ -634,7 +647,7 @@ bool 	p3Peers::addFriend(const std::string &ssl_id, const std::string &gpg_id,Se
 	 * This will cause the SSL certificate to be retained for 30 days... and give the person a chance to connect!
 	 *  */
 	time_t now = time(NULL);
-	return mPeerMgr->addFriend(ssl_id, gpg_id, RS_NET_MODE_UDP, RS_VIS_STATE_STD, now, perm_flags);
+	return mPeerMgr->addFriend(ssl_id, gpg_id, RS_NET_MODE_UDP, RS_VS_DISC_FULL, RS_VS_DHT_FULL, now, perm_flags);
 }
 
 bool 	p3Peers::removeKeysFromPGPKeyring(const std::list<std::string>& pgp_ids,std::string& backup_file,uint32_t& error_code)
@@ -717,50 +730,9 @@ void p3Peers::allowServerIPDetermination(bool b)
 	mNetMgr->setIPServersEnabled(b) ;
 }
 
-void p3Peers::allowTunnelConnection(bool b)
-{
-        #ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::allowTunnelConnection() set tunnel to : " << b << std::endl;
-        #endif
-        mLinkMgr->setTunnelConnection(b) ;
-}
-
 bool p3Peers::getAllowServerIPDetermination()
 {
 	return mNetMgr->getIPServersEnabled() ;
-}
-
-bool p3Peers::getAllowTunnelConnection()
-{
-        #ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::getAllowTunnelConnection() tunnel is : " << mConnMgr->getTunnelConnection()  << std::endl;
-        #endif
-        return mLinkMgr->getTunnelConnection() ;
-}
-
-bool 	p3Peers::setLocalAddress(const std::string &id, const std::string &addr_str, uint16_t port)
-{
-#ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::setLocalAddress() " << id << std::endl;
-#endif
-
-	struct sockaddr_in addr;
-	addr.sin_family = AF_INET;
-	addr.sin_port = htons(port);
-
-	int ret = 1;
-/********************************** WINDOWS/UNIX SPECIFIC PART *******************/
-#ifndef WINDOWS_SYS
-	if (ret && (0 != inet_aton(addr_str.c_str(), &(addr.sin_addr))))
-#else
-	addr.sin_addr.s_addr = inet_addr(addr_str.c_str());
-	if (ret)
-#endif
-/********************************** WINDOWS/UNIX SPECIFIC PART *******************/
-	{
-		return mPeerMgr->setLocalAddress(id, addr);
-	}
-	return false;
 }
 
 bool 	p3Peers::setLocation(const std::string &ssl_id, const std::string &location)
@@ -771,22 +743,121 @@ bool 	p3Peers::setLocation(const std::string &ssl_id, const std::string &locatio
 
         return mPeerMgr->setLocation(ssl_id, location);
 }
+
+
+bool 	splitAddressString(const std::string &addr, std::string &domain, uint16_t &port)
+{
+        std::cerr << "splitAddressString() Input: " << addr << std::endl;
+
+	size_t cpos = addr.rfind(':');
+	if (cpos == std::string::npos)
+	{
+        	std::cerr << "splitAddressString Failed to parse (:)";
+		std::cerr << std::endl;
+		return false;
+	}
+
+	int lenport = addr.length() - (cpos + 1); // +1 to skip over : char.
+	if (lenport <= 0)
+	{
+        	std::cerr << "splitAddressString() Missing Port ";
+		std::cerr << std::endl;
+		return false;
+	}
+
+	domain = addr.substr(0, cpos);
+	std::string portstr = addr.substr(cpos + 1, std::string::npos);
+	int portint = atoi(portstr.c_str());
+
+	if ((portint < 0) || (portint > 65535))
+	{
+        	std::cerr << "splitAddressString() Invalid Port";
+		std::cerr << std::endl;
+		return false;
+	}
+	port = portint;
+
+        std::cerr << "splitAddressString() Domain: " << domain << " Port: " << port;
+	std::cerr << std::endl;
+	return true;
+}
+
+
+bool 	p3Peers::setHiddenNode(const std::string &id, const std::string &hidden_node_address)
+{
+#ifdef P3PEERS_DEBUG
+        std::cerr << "p3Peers::setHiddenNode() " << id << std::endl;
+#endif
+
+	std::string domain;
+	uint16_t port;
+	if (!splitAddressString(hidden_node_address, domain, port))
+	{
+		return false;
+	}
+	mPeerMgr->setNetworkMode(id, RS_NET_MODE_HIDDEN);
+	mPeerMgr->setHiddenDomainPort(id, domain, port);
+	return true;
+}
+
+
+bool 	p3Peers::setHiddenNode(const std::string &id, const std::string &address, uint16_t port)
+{
+#ifdef P3PEERS_DEBUG
+        std::cerr << "p3Peers::setHiddenNode() " << id << std::endl;
+#endif
+        std::cerr << "p3Peers::setHiddenNode() Domain: " << address << " Port: " << port;
+	std::cerr << std::endl;
+
+	mPeerMgr->setNetworkMode(id, RS_NET_MODE_HIDDEN);
+	mPeerMgr->setHiddenDomainPort(id, address, port);
+	return true;
+}
+
+bool 	p3Peers::setLocalAddress(const std::string &id, const std::string &addr_str, uint16_t port)
+{
+#ifdef P3PEERS_DEBUG
+        std::cerr << "p3Peers::setLocalAddress() " << id << std::endl;
+#endif
+
+	struct sockaddr_storage addr;
+	struct sockaddr_in *addrv4p = (struct sockaddr_in *) &addr;
+	addrv4p->sin_family = AF_INET;
+	addrv4p->sin_port = htons(port);
+
+	int ret = 1;
+/********************************** WINDOWS/UNIX SPECIFIC PART *******************/
+#ifndef WINDOWS_SYS
+	if (ret && (0 != inet_aton(addr_str.c_str(), &(addrv4p->sin_addr))))
+#else
+	addrv4p->sin_addr.s_addr = inet_addr(addr_str.c_str());
+	if (ret)
+#endif
+/********************************** WINDOWS/UNIX SPECIFIC PART *******************/
+	{
+		return mPeerMgr->setLocalAddress(id, addr);
+	}
+	return false;
+}
+
 bool 	p3Peers::setExtAddress(const std::string &id, const std::string &addr_str, uint16_t port)
 {
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::setExtAddress() " << id << std::endl;
 #endif
 
-	struct sockaddr_in addr;
-	addr.sin_family = AF_INET;
-	addr.sin_port = htons(port);
+	// NOTE THIS IS IPV4 FOR NOW.
+	struct sockaddr_storage addr;
+	struct sockaddr_in *addrv4p = (struct sockaddr_in *) &addr;
+	addrv4p->sin_family = AF_INET;
+	addrv4p->sin_port = htons(port);
 
 	int ret = 1;
 /********************************** WINDOWS/UNIX SPECIFIC PART *******************/
 #ifndef WINDOWS_SYS
-	if (ret && (0 != inet_aton(addr_str.c_str(), &(addr.sin_addr))))
+	if (ret && (0 != inet_aton(addr_str.c_str(), &(addrv4p->sin_addr))))
 #else
-	addr.sin_addr.s_addr = inet_addr(addr_str.c_str());
+	addrv4p->sin_addr.s_addr = inet_addr(addr_str.c_str());
 	if (ret)
 #endif
 /********************************** WINDOWS/UNIX SPECIFIC PART *******************/
@@ -823,6 +894,9 @@ bool 	p3Peers::setNetworkMode(const std::string &id, uint32_t extNetMode)
 		case RS_NETMODE_UDP:
 			netMode = RS_NET_MODE_UDP;
 			break;
+		case RS_NETMODE_HIDDEN:
+			netMode = RS_NET_MODE_HIDDEN;
+			break;
 		case RS_NETMODE_UNREACHABLE:
 			netMode = RS_NET_MODE_UNREACHABLE;
 			break;
@@ -834,29 +908,69 @@ bool 	p3Peers::setNetworkMode(const std::string &id, uint32_t extNetMode)
 }
 
 
-bool
-p3Peers::setVisState(const std::string &id, uint32_t extVisState)
+bool p3Peers::setVisState(const std::string &id, uint16_t vs_disc, uint16_t vs_dht)
 {
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::setVisState() " << id << std::endl;
 #endif
-        std::cerr << "p3Peers::setVisState() " << id << " " << extVisState << std::endl;
+	std::cerr << "p3Peers::setVisState() " << id << " DISC: " << vs_disc;
+	std::cerr << " DHT: " << vs_dht << std::endl;
 
-	uint32_t visState = 0;
-	if (!(extVisState & RS_VS_DHT_ON))
-		visState |= RS_VIS_STATE_NODHT;
-	if (!(extVisState & RS_VS_DISC_ON))
-		visState |= RS_VIS_STATE_NODISC;
-
-	return mPeerMgr->setVisState(id, visState);
+	return mPeerMgr->setVisState(id, vs_disc, vs_dht);
 }
+
+bool p3Peers::getProxyServer(std::string &addr, uint16_t &port)
+{
+        std::cerr << "p3Peers::getProxyServer()" << std::endl;
+
+	struct sockaddr_storage proxy_addr;
+	mPeerMgr->getProxyServerAddress(proxy_addr);
+	addr = sockaddr_storage_iptostring(proxy_addr);
+	port = sockaddr_storage_port(proxy_addr);
+	return true;
+}
+
+bool p3Peers::setProxyServer(const std::string &addr_str, const uint16_t port)
+{
+#ifdef P3PEERS_DEBUG
+#endif
+        std::cerr << "p3Peers::setProxyServer() " << std::endl;
+
+	struct sockaddr_storage addr;
+	struct sockaddr_in *addrv4p = (struct sockaddr_in *) &addr;
+	addrv4p->sin_family = AF_INET;
+	addrv4p->sin_port = htons(port);
+
+	int ret = 1;
+/********************************** WINDOWS/UNIX SPECIFIC PART *******************/
+#ifndef WINDOWS_SYS
+	if (ret && (0 != inet_aton(addr_str.c_str(), &(addrv4p->sin_addr))))
+#else
+	addrv4p->sin_addr.s_addr = inet_addr(addr_str.c_str());
+	if (ret)
+#endif
+/********************************** WINDOWS/UNIX SPECIFIC PART *******************/
+	{
+		return mPeerMgr->setProxyServerAddress(addr);
+	}
+	else
+	{
+        	std::cerr << "p3Peers::setProxyServer() Failed to Parse Address" << std::endl;
+	}
+
+	return false;
+}
+
+
+
+
 
 //===========================================================================
 	/* Auth Stuff */
 std::string
-p3Peers::GetRetroshareInvite(bool include_signatures,bool old_format)
+p3Peers::GetRetroshareInvite(bool include_signatures)
 {
-	return GetRetroshareInvite(getOwnId(),include_signatures,old_format);
+	return GetRetroshareInvite(getOwnId(),include_signatures);
 }
 
 bool p3Peers::GetPGPBase64StringAndCheckSum(	const std::string& gpg_id,
@@ -884,7 +998,7 @@ bool p3Peers::GetPGPBase64StringAndCheckSum(	const std::string& gpg_id,
 	return true ;
 }
 
-std::string p3Peers::GetRetroshareInvite(const std::string& ssl_id,bool include_signatures,bool old_format)
+std::string p3Peers::GetRetroshareInvite(const std::string& ssl_id,bool include_signatures)
 {
 #ifdef P3PEERS_DEBUG
 	std::cerr << "p3Peers::GetRetroshareInvite()" << std::endl;
@@ -907,10 +1021,7 @@ std::string p3Peers::GetRetroshareInvite(const std::string& ssl_id,bool include_
 
 		RsCertificate cert( Detail,mem_block,mem_block_size ) ;
 
-		if(old_format)
-			return cert.toStdString_oldFormat() ;
-		else
-			return cert.toStdString() ;
+		return cert.toStdString() ;
 
 	}
 
@@ -955,13 +1066,31 @@ bool 	p3Peers::loadDetailsFromStringCert(const std::string &certstr, RsPeerDetai
 
 		pd.id = cert.sslid_string() ;
 		pd.location = cert.location_name_string();
-		pd.localAddr = cert.loc_ip_string();
-		pd.localPort = cert.loc_port_us();
-		pd.extAddr = cert.ext_ip_string();
-		pd.extPort = cert.ext_port_us();
-		pd.dyndns = cert.dns_string() ;
+
 		pd.isOnlyGPGdetail = pd.id.empty();
 		pd.service_perm_flags = RS_SERVICE_PERM_ALL ;
+
+		if (!cert.hidden_node_string().empty())
+		{
+			pd.isHiddenNode = true;
+
+			std::string domain;
+			uint16_t port;
+			if (splitAddressString(cert.hidden_node_string(), domain, port))
+			{
+				pd.hiddenNodeAddress = domain;
+				pd.hiddenNodePort = port;
+			}
+		}
+		else
+		{
+			pd.isHiddenNode = false;
+			pd.localAddr = cert.loc_ip_string();
+			pd.localPort = cert.loc_port_us();
+			pd.extAddr = cert.ext_ip_string();
+			pd.extPort = cert.ext_port_us();
+			pd.dyndns = cert.dns_string() ;
+		}
 	} 
 	catch(uint32_t e) 
 	{
@@ -1191,7 +1320,7 @@ RsPeerDetails::RsPeerDetails()
 	org(""),issuer(""),fpr(""),authcode(""),
 		  trustLvl(0), validLvl(0),ownsign(false), 
 	hasSignedMe(false),accept_connection(false),
-	state(0),localAddr(""),localPort(0),extAddr(""),extPort(0),netMode(0),visState(0),
+	state(0),localAddr(""),localPort(0),extAddr(""),extPort(0),netMode(0),vs_disc(0), vs_dht(0),
 	lastConnect(0),connectState(0),connectStateString(""),connectPeriod(0),foundDHT(false), 
 	wasDeniedConnection(false), deniedTS(0)
 {

@@ -3,11 +3,11 @@
  *
  * 3P/PQI network interface for RetroShare.
  *
- * Copyright 2004-2008 by Robert Fernie.
+ * Copyright 2004-2013 by Robert Fernie.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
+ * License Version 2.1 as published by the Free Software Foundation.
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -33,7 +33,18 @@ const int pqiservicezone = 60478;
  * #define SERVICE_DEBUG 1
  ****/
 
-p3ServiceServer::p3ServiceServer() : srvMtx("p3ServiceServer")
+void pqiService::setServiceServer(p3ServiceServer *server)
+{
+	mServiceServer = server;
+}
+
+bool pqiService::send(RsRawItem *item)
+{
+	return mServiceServer->sendItem(item);
+}
+
+
+p3ServiceServer::p3ServiceServer(pqiPublisher *pub) : mPublisher(pub), srvMtx("p3ServiceServer") 
 {
 	RsStackMutex stack(srvMtx); /********* LOCKED *********/
 
@@ -42,7 +53,6 @@ p3ServiceServer::p3ServiceServer() : srvMtx("p3ServiceServer")
 		"p3ServiceServer::p3ServiceServer()");
 #endif
 
-        rrit = services.begin();
 	return;
 }
 
@@ -55,20 +65,23 @@ int	p3ServiceServer::addService(pqiService *ts)
 		"p3ServiceServer::addService()");
 #endif
 
+
 	std::map<uint32_t, pqiService *>::iterator it;
 	it = services.find(ts -> getType());
 	if (it != services.end())
 	{
+		std::cerr << "p3ServiceServer::addService(): Service already added with id " << ts->getType() << "!" << std::endl;
 		// it exists already!
 		return -1;
 	}
 
+	ts->setServiceServer(this);
 	services[ts -> getType()] = ts;
-        rrit = services.begin();
+
 	return 1;
 }
 
-int	p3ServiceServer::incoming(RsRawItem *item)
+bool	p3ServiceServer::recvItem(RsRawItem *item)
 {
 	RsStackMutex stack(srvMtx); /********* LOCKED *********/
 
@@ -92,12 +105,8 @@ int	p3ServiceServer::incoming(RsRawItem *item)
 		pqioutput(PQL_DEBUG_BASIC, pqiservicezone, 
 		"p3ServiceServer::incoming() Service: No Service - deleting");
 #endif
-
-		// delete it.
 		delete item;
-
-		// it exists already!
-		return -1;
+		return false;
 	}
 
 	{
@@ -107,75 +116,28 @@ int	p3ServiceServer::incoming(RsRawItem *item)
 		pqioutput(PQL_DEBUG_BASIC, pqiservicezone, out);
 #endif
 
-		return (it->second) -> receive(item);
+		return (it->second) -> recv(item);
 	}
 
 	delete item;
-	return -1;
+	return false;
 }
 
 
 
-RsRawItem *p3ServiceServer::outgoing()
+bool p3ServiceServer::sendItem(RsRawItem *item)
 {
-	RsStackMutex stack(srvMtx); /********* LOCKED *********/
-
 #ifdef  SERVICE_DEBUG
-	pqioutput(PQL_DEBUG_ALL, pqiservicezone, 
-		"p3ServiceServer::outgoing()");
+	std::cerr << "p3ServiceServer::sendItem()";
+	std::cerr << std::endl;
+	item -> print_string(out);
+	std::cerr << std::endl;
 #endif
 
-	if (rrit != services.end())
-	{
-		rrit++;
-	}
-	else
-	{
-		rrit = services.begin();
-	}
+	/* any filtering ??? */
 
-	std::map<uint32_t, pqiService *>::iterator sit = rrit;
-	// run to the end.
-	RsRawItem *item;
-
-	// run through to the end,
-	for(;rrit != services.end();rrit++)
-	{
-		if (NULL != (item = (rrit -> second) -> send()))
-		{
-
-#ifdef  SERVICE_DEBUG
-			std::string out;
-			rs_sprintf(out, "p3ServiceServer::outgoing() Got Item From: %p\n", rrit -> second);
-
-			item -> print_string(out);
-			std::cerr << out << std::endl;
-			pqioutput(PQL_DEBUG_BASIC, pqiservicezone, out);
-#endif
-
-			return item;
-		}
-	}
-
-	// from the beginning to where we started.
-	for(rrit = services.begin();rrit != sit; rrit++)
-	{
-		if (NULL != (item = (rrit -> second) -> send()))
-		{
-
-#ifdef  SERVICE_DEBUG
-			std::string out;
-			rs_sprintf(out, "p3ServiceServer::outgoing() Got Item From: %p\n", rrit -> second);
-
-			item -> print_string(out);
-			pqioutput(PQL_DEBUG_BASIC, pqiservicezone, out);
-			std::cerr << out << std::endl;
-#endif
-
-			return item;
-		}
-	}
-	return NULL;
+	mPublisher->sendItem(item);
+	return true;
 }
 
 

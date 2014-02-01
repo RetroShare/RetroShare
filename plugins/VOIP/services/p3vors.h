@@ -99,6 +99,7 @@ class p3VoRS: public RsPQIService, public RsVoip
 		 */
 		virtual int   tick();
 		virtual int   status();
+		virtual bool  recvItem(RsItem *item);
 
 		/*************** pqiMonitor callback ***********************/
 		//virtual void statusChange(const std::list<pqipeer> &plist);
@@ -130,7 +131,7 @@ class p3VoRS: public RsPQIService, public RsVoip
 	private:
 		int   sendPackets();
 		void 	sendPingMeasurements();
-		int 	processIncoming();
+		//int 	processIncoming();
 
 		int 	handlePing(RsVoipPingItem *item);
 		int 	handlePong(RsVoipPongItem *item);

@@ -91,7 +91,7 @@ class zcQueryResult
 	// Extra ones.
 	std::string sslId;
 	std::string gpgId;
-	struct sockaddr_in addr;
+	struct sockaddr_storage addr;
 };
 
 
@@ -121,7 +121,7 @@ class zcLocationDetails
 	std::string mFullName;
 	uint16_t mPort;
 
-	struct sockaddr_in mAddress;
+	struct sockaddr_storage mAddress;
 	time_t mAddrTs;
 };
 
@@ -171,15 +171,15 @@ virtual bool    getNetworkStats(uint32_t &netsize, uint32_t &localnetsize);
 virtual bool 	findPeer(std::string id);
 virtual bool 	dropPeer(std::string id);
 
-virtual int addBadPeer(const struct sockaddr_in &addr, uint32_t reason, uint32_t flags, uint32_t age);
-virtual int addKnownPeer(const std::string &pid, const struct sockaddr_in &addr, uint32_t flags);
+virtual int addBadPeer(const struct sockaddr_storage &addr, uint32_t reason, uint32_t flags, uint32_t age);
+virtual int addKnownPeer(const std::string &pid, const struct sockaddr_storage &addr, uint32_t flags);
 
 	/* feedback on success failure of Connections */
 virtual void 	ConnectionFeedback(std::string pid, int state);
 
 	/* extract current peer status */
 virtual bool 	getPeerStatus(std::string id, 
-			struct sockaddr_in &laddr, struct sockaddr_in &raddr, 
+			struct sockaddr_storage &laddr, struct sockaddr_storage &raddr, 
 					uint32_t &type, uint32_t &mode);
 
 virtual bool    setAttachMode(bool on);

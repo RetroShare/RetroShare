@@ -38,13 +38,12 @@
 #include "retroshare/rstypes.h"
 #include "util/rsthreads.h"
 
-#include "services/p3disc.h"
 #include "services/p3msgservice.h"
 #include "services/p3chatservice.h"
-#include "services/p3blogs.h"
 #include "services/p3statusservice.h"
-#include "services/p3channels.h"
-#include "services/p3forums.h"
+
+class p3heartbeat;
+class p3discovery2;
 
 /* GXS Classes - just declare the classes.
    so we don't have to totally recompile to switch */
@@ -113,10 +112,6 @@ class RsServer: public RsControl, public RsThread
 		/* General Internal Helper Functions
 			(Must be Locked)
 		 */
-#if 0
-		cert   *intFindCert(RsCertId id);
-		RsCertId intGetCertId(cert *c);
-#endif
 
 		/****************************************/
 		/****************************************/
@@ -162,7 +157,7 @@ class RsServer: public RsControl, public RsThread
 		// The real Server Parts.
 
 		//filedexserver *server;
-		ftServer *ftserver;
+		//ftServer *ftserver;
 
 		p3PeerMgrIMPL *mPeerMgr;
 		p3LinkMgrIMPL *mLinkMgr;
@@ -176,13 +171,11 @@ class RsServer: public RsControl, public RsThread
 		//sslroot *sslr;
 
 		/* services */
-		p3disc *ad;
+		p3heartbeat *mHeart;
+		p3discovery2 *mDisc;
 		p3MsgService  *msgSrv;
 		p3ChatService *chatSrv;
 		p3StatusService *mStatusSrv;
-		p3Channels *mChannels;
-		p3Forums *mForums;
-		/* caches (that need ticking) */
 
 		/* GXS */
 		p3Wiki *mWiki;

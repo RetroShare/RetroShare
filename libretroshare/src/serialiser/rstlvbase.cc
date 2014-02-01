@@ -626,12 +626,12 @@ bool SetTlvIpAddrPortV4(void *data, uint32_t size, uint32_t *offset,
 
         sockaddr_in addr = *out;
 
-        /* now add the data .... (its already in network order) - so flip */
+        /* now add the data .... (keep in network order) */
         uint32_t ipaddr = addr.sin_addr.s_addr;
-	ok &= setRawUInt32(data, tlvend, offset, ntohl(ipaddr));
+	ok &= setRawUInt32(data, tlvend, offset, ipaddr);
 
         uint16_t port = addr.sin_port;
-	ok &= setRawUInt16(data, tlvend, offset, ntohs(port));
+	ok &= setRawUInt16(data, tlvend, offset, port);
 
 	return ok;
 }
@@ -683,21 +683,118 @@ bool GetTlvIpAddrPortV4(void *data, uint32_t size, uint32_t *offset,
 
 	bool ok = true;
 
-	/* now get the data .... (its already in network order) - so flip */
+        /* now get the data .... (keep in network order) */
 
 	uint32_t ipaddr;
 	ok &= getRawUInt32(data, tlvend, offset, &ipaddr);
 	in->sin_family = AF_INET; /* set FAMILY */
-	in->sin_addr.s_addr = htonl(ipaddr);
+	in->sin_addr.s_addr = ipaddr;
 
 	uint16_t port;
 	ok &= getRawUInt16(data, tlvend, offset, &port);
-	in->sin_port = htons(port);
+	in->sin_port = port;
 
 	return ok;
 }
 
 uint32_t GetTlvIpAddrPortV4Size() {
 	return TLV_HEADER_SIZE + 4 + 2; /* header + 4 (IP) + 2 (Port) */
+}
+
+
+bool SetTlvIpAddrPortV6(void *data, uint32_t size, uint32_t *offset,
+		uint16_t type, struct sockaddr_in6 *out) {
+	if (!data)
+		return false;
+
+	uint32_t tlvsize = GetTlvIpAddrPortV4Size();
+	uint32_t tlvend = *offset + tlvsize; /* where the data will extend to */
+
+	if (size < tlvend)
+	{
+#ifdef TLV_BASE_DEBUG
+		std::cerr << "SetTlvIpAddrPortV6() FAILED - not enough space" << std::endl;
+		std::cerr << "SetTlvIpAddrPortV6() size: " << size << std::endl;
+		std::cerr << "SetTlvIpAddrPortV6() tlvsize: " << tlvsize << std::endl;
+		std::cerr << "SetTlvIpAddrPortV6() tlvend: " << tlvend << std::endl;
+#endif
+		return false;
+	}
+
+	bool ok = true;
+	ok &= SetTlvBase(data, tlvend, offset, type, tlvsize);
+
+        /* now add the data (keep in network order) */
+	uint32_t *ip6addr = (uint32_t *) out->sin6_addr.s6_addr;
+	for(int i = 0; i < 4; i++)
+	{
+		ok &= setRawUInt32(data, tlvend, offset, ip6addr[i]);
+	}
+	ok &= setRawUInt16(data, tlvend, offset, out->sin6_port);
+	return ok;
+}
+
+bool GetTlvIpAddrPortV6(void *data, uint32_t size, uint32_t *offset,
+		uint16_t type, struct sockaddr_in6 *in) {
+	if (!data)
+		return false;
+
+	if (size < *offset + TLV_HEADER_SIZE)
+	{
+#ifdef TLV_BASE_DEBUG
+		std::cerr << "GetIpAddrPortV6() FAILED - not enough space" << std::endl;
+		std::cerr << "GetIpAddrPortV6() size: " << size << std::endl;
+		std::cerr << "GetIpAddrPortV6() *offset: " << *offset << std::endl;
+#endif
+		return false;
+	}
+
+	/* extract the type and size */
+	void *tlvstart = right_shift_void_pointer(data, *offset);
+	uint16_t tlvtype = GetTlvType(tlvstart);
+	uint32_t tlvsize = GetTlvSize(tlvstart);
+
+	/* check that there is size */
+	uint32_t tlvend = *offset + tlvsize;
+	if (size < tlvend)
+	{
+#ifdef TLV_BASE_DEBUG
+		std::cerr << "GetIpAddrPortV6() FAILED - not enough space" << std::endl;
+		std::cerr << "GetIpAddrPortV6() size: " << size << std::endl;
+		std::cerr << "GetIpAddrPortV6() tlvsize: " << tlvsize << std::endl;
+		std::cerr << "GetIpAddrPortV6() tlvend: " << tlvend << std::endl;
+#endif
+		return false;
+	}
+
+	if (type != tlvtype)
+	{
+#ifdef TLV_BASE_DEBUG
+		std::cerr << "GetIpAddrPortV6() FAILED - invalid type" << std::endl;
+		std::cerr << "GetIpAddrPortV6() type: " << type << std::endl;
+		std::cerr << "GetIpAddrPortV6() tlvtype: " << tlvtype << std::endl;
+#endif
+		return false;
+	}
+
+	*offset += TLV_HEADER_SIZE; /* skip header */
+
+	bool ok = true;
+
+        /* now get the data (keep in network order) */
+	uint32_t *ip6addr = (uint32_t *) in->sin6_addr.s6_addr;
+	for(int i = 0; i < 4; i++)
+	{
+		ok &= getRawUInt32(data, tlvend, offset, &(ip6addr[i]));
+	}
+
+	in->sin6_family = AF_INET6; /* set FAMILY */
+	ok &= getRawUInt16(data, tlvend, offset, &(in->sin6_port));
+
+	return ok;
+}
+
+uint32_t GetTlvIpAddrPortV6Size() {
+	return TLV_HEADER_SIZE + 16 + 2; /* header + 16 (IP) + 2 (Port) */
 }
 

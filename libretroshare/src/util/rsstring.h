@@ -48,4 +48,6 @@ int rs_sprintf_append(std::string &str, const char *fmt, ...);
 void stringToUpperCase(const std::string& s, std::string &upper);
 void stringToLowerCase(const std::string& s, std::string &lower);
 
+bool isHexaString(const std::string& s);
+
 #endif // RSSTRING_H_

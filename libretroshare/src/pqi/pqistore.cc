@@ -155,8 +155,7 @@ RsItem *pqistore::GetItem()
 #ifdef PQISTORE_DEBUG
 	if (outPkt != NULL)
 	{
-		std::string out;
-		rs_sprintf(out, "pqistore::GetItem() Returning:\n");
+		std::string out = "pqistore::GetItem() Returning:\n";
 		outPkt -> print(out);
 		pqioutput(PQL_DEBUG_BASIC, pqistorezone, out);
 	}
@@ -226,7 +225,7 @@ int	pqistore::writePkt(RsItem *pqi)
 	}
 
 
-	if (!(bio->cansend()))
+	if (!(bio->cansend(0)))
 	{
 		std::string out;
 		rs_sprintf(out, "pqistore::writePkt() BIO cannot write!\niscarding:\n");
@@ -281,9 +280,9 @@ int     pqistore::readPkt(RsItem **item_out)
 #endif
 	 bStopReading = false ;
 
-	if ((!(bio->isactive())) || (!(bio->moretoread())))
+	if ((!(bio->isactive())) || (!(bio->moretoread(0))))
 	{
-	 bStopReading = true ;
+		bStopReading = true ;
 		return 0;
 	}
 
@@ -431,7 +430,7 @@ bool pqiSSLstore::getEncryptedItems(std::list<RsItem* >& rsItemList)
 		if (NULL != (item = GetItem()))
 			rsItemList.push_back(item);
 
-	} while (enc_bio->isactive() && enc_bio->moretoread() && !bStopReading);
+	} while (enc_bio->isactive() && enc_bio->moretoread(0) && !bStopReading);
 
 	return true;
 }
@@ -488,7 +487,7 @@ int     pqiSSLstore::readPkt(RsItem **item_out)
 #endif
 
 	bStopReading=false ;
-	if ((!(enc_bio->isactive())) || (!(enc_bio->moretoread())))
+	if ((!(enc_bio->isactive())) || (!(enc_bio->moretoread(0))))
 	{
 		bStopReading=true ;
 		return 0;

@@ -117,6 +117,7 @@ QString ConnectFriendWizard::getErrorString(uint32_t error_code)
 		case CERTIFICATE_PARSING_ERROR_INVALID_LOCAL_IP: 			return tr("Invalid local IP.") ;
 		case CERTIFICATE_PARSING_ERROR_INVALID_CHECKSUM_SECTION: return tr("Invalid checksum section.") ;
 		case CERTIFICATE_PARSING_ERROR_CHECKSUM_ERROR: 				return tr("Checksum mismatch. Certificate is corrupted.") ;
+		case CERTIFICATE_PARSING_ERROR_WRONG_VERSION: 				return tr("Certificate has wrong version number. Remember that v0.6 and v0.5 networks are incompatible.") ;
 		case CERTIFICATE_PARSING_ERROR_UNKNOWN_SECTION_PTAG:		return tr("Unknown section type found (Certificate might be corrupted).") ;
 		case CERTIFICATE_PARSING_ERROR_MISSING_CHECKSUM:			return tr("Missing checksum.") ;
 
@@ -203,9 +204,10 @@ void ConnectFriendWizard::initializePage(int id)
 		cleanfriendCertTimer->setInterval(1000); // 1 second
 		connect(cleanfriendCertTimer, SIGNAL(timeout()), this, SLOT(cleanFriendCert()));
 
-		ui->userCertOldFormatButton->setChecked(true); 
+		ui->userCertOldFormatButton->setChecked(false); 
+		ui->userCertOldFormatButton->hide() ;
 
-		toggleFormatState(false);
+		toggleFormatState(true);
 		toggleSignatureState(false);
 		updateOwnCert();
 
@@ -685,26 +687,37 @@ void ConnectFriendWizard::accept()
 			rsPeers->assignPeerToGroup(groupId.toStdString(), peerDetails.gpg_id, true);
 	}
 
-	if(accept_connection) 
+	if ((accept_connection) && (peerDetails.id != ""))
 	{
-		//let's check if there is ip adresses in the wizard.
-		if (!peerDetails.extAddr.empty() && peerDetails.extPort) {
-			std::cerr << "ConnectFriendWizard::accept() : setting ip ext address." << std::endl;
-			rsPeers->setExtAddress(peerDetails.id, peerDetails.extAddr, peerDetails.extPort);
-		}
-		if (!peerDetails.localAddr.empty() && peerDetails.localPort) {
-			std::cerr << "ConnectFriendWizard::accept() : setting ip local address." << std::endl;
-			rsPeers->setLocalAddress(peerDetails.id, peerDetails.localAddr, peerDetails.localPort);
-		}
-		if (!peerDetails.dyndns.empty()) {
-			std::cerr << "ConnectFriendWizard::accept() : setting DynDNS." << std::endl;
-			rsPeers->setDynDNS(peerDetails.id, peerDetails.dyndns);
-		}
+		runProgressDialog = true;
+
 		if (!peerDetails.location.empty()) {
 			std::cerr << "ConnectFriendWizard::accept() : setting peerLocation." << std::endl;
 			rsPeers->setLocation(peerDetails.id, peerDetails.location);
 		}
-		runProgressDialog = true;
+
+		if (peerDetails.isHiddenNode)
+		{
+			std::cerr << "ConnectFriendWizard::accept() : setting hidden node." << std::endl;
+			rsPeers->setHiddenNode(peerDetails.id, peerDetails.hiddenNodeAddress, peerDetails.hiddenNodePort);
+		}
+		else
+		{
+			//let's check if there is ip adresses in the wizard.
+			if (!peerDetails.extAddr.empty() && peerDetails.extPort) {
+				std::cerr << "ConnectFriendWizard::accept() : setting ip ext address." << std::endl;
+				rsPeers->setExtAddress(peerDetails.id, peerDetails.extAddr, peerDetails.extPort);
+			}
+			if (!peerDetails.localAddr.empty() && peerDetails.localPort) {
+				std::cerr << "ConnectFriendWizard::accept() : setting ip local address." << std::endl;
+				rsPeers->setLocalAddress(peerDetails.id, peerDetails.localAddr, peerDetails.localPort);
+			}
+			if (!peerDetails.dyndns.empty()) {
+				std::cerr << "ConnectFriendWizard::accept() : setting DynDNS." << std::endl;
+				rsPeers->setDynDNS(peerDetails.id, peerDetails.dyndns);
+			}
+		}
+
 	}
 		
 	if (runProgressDialog)
@@ -723,7 +736,7 @@ void ConnectFriendWizard::accept()
 
 void ConnectFriendWizard::updateOwnCert()
 {
-	std::string invite = rsPeers->GetRetroshareInvite(ui->userCertIncludeSignaturesButton->isChecked(),ui->userCertOldFormatButton->isChecked());
+	std::string invite = rsPeers->GetRetroshareInvite(ui->userCertIncludeSignaturesButton->isChecked());
 
 	std::cerr << "TextPage() getting Invite: " << invite << std::endl;
 

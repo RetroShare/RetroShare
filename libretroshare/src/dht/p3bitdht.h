@@ -197,8 +197,8 @@ virtual bool    getNetworkStats(uint32_t &netsize, uint32_t &localnetsize);
 virtual bool 	findPeer(std::string id);
 virtual bool 	dropPeer(std::string id);
 
-virtual int addBadPeer(const struct sockaddr_in &addr, uint32_t reason, uint32_t flags, uint32_t age);
-virtual int addKnownPeer(const std::string &pid, const struct sockaddr_in &addr, uint32_t flags);
+virtual int addBadPeer(const struct sockaddr_storage &addr, uint32_t reason, uint32_t flags, uint32_t age);
+virtual int addKnownPeer(const std::string &pid, const struct sockaddr_storage &addr, uint32_t flags);
 //virtual int 	addFriend(const std::string pid);
 //virtual int 	addFriendOfFriend(const std::string pid);
 //virtual int 	addOther(const std::string pid);
@@ -208,10 +208,10 @@ virtual void 	ConnectionFeedback(std::string pid, int state);
 
 	/* extract current peer status */
 virtual bool 	getPeerStatus(std::string id, 
-			struct sockaddr_in &laddr, struct sockaddr_in &raddr, 
+			struct sockaddr_storage &laddr, struct sockaddr_storage &raddr, 
 					uint32_t &type, uint32_t &mode);
 
-virtual bool 	getExternalInterface(struct sockaddr_in &raddr, 
+virtual bool 	getExternalInterface(struct sockaddr_storage &raddr, 
 					uint32_t &mode);
 
 

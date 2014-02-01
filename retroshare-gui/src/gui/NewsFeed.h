@@ -80,6 +80,7 @@ private:
   void  addFeedItemSecurityUnknownIn(RsFeedItem &fi);
   void  addFeedItemSecurityUnknownOut(RsFeedItem &fi);
 
+#if 0
   void	addFeedItemChanNew(RsFeedItem &fi);
   void	addFeedItemChanUpdate(RsFeedItem &fi);
   void	addFeedItemChanMsg(RsFeedItem &fi);
@@ -88,6 +89,8 @@ private:
   void	addFeedItemForumMsg(RsFeedItem &fi);
   void  addFeedItemBlogNew(RsFeedItem &fi);
   void	addFeedItemBlogMsg(RsFeedItem &fi);
+#endif
+
   void	addFeedItemChatNew(RsFeedItem &fi, bool addWithoutCheck);
   void	addFeedItemMessage(RsFeedItem &fi);
   void	addFeedItemFilesNew(RsFeedItem &fi);

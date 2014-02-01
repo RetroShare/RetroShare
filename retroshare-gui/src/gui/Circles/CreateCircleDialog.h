@@ -55,6 +55,10 @@ private slots:
 	void filterChanged(const QString &text);
 
 private:
+
+	void updateCircleGUI();
+	void addMember(const QString& keyId, const QString& idtype, const QString& nickname );
+
 	void setupForPersonalCircle();
 	void setupForExternalCircle();
 
@@ -72,6 +76,8 @@ private:
 
 	TokenQueue *mCircleQueue;
 	TokenQueue *mIdQueue;
+
+	RsGxsCircleGroup mCircleGroup; // for editting existing Circles.
 
 	/** Qt Designer generated object */
 	Ui::CreateCircleDialog ui;

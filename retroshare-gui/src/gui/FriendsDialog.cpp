@@ -495,7 +495,7 @@ void FriendsDialog::insertChat()
         QDateTime sendTime = QDateTime::fromTime_t(it->sendTime);
         QDateTime recvTime = QDateTime::fromTime_t(it->recvTime);
         QString name = QString::fromUtf8(rsPeers->getPeerName(it->rsid).c_str());
-        QString msg = QString::fromStdWString(it->msg);
+        QString msg = QString::fromUtf8(it->msg.c_str());
 
 #ifdef FRIENDS_DEBUG
         std::cerr << "FriendsDialog::insertChat(): " << msg.toStdString() << std::endl;
@@ -566,7 +566,7 @@ void FriendsDialog::sendMsg()
 
     QString text;
     RsHtml::optimizeHtml(lineWidget, text);
-    std::wstring message = text.toStdWString();
+    std::string message = text.toUtf8().constData();
 
 #ifdef FRIENDS_DEBUG
     std::string msg(message.begin(), message.end());

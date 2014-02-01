@@ -182,7 +182,7 @@ bool upnphandler::start_upnp()
 	bool res = cUPnPControlPoint->AddPortMappings(upnpPortMapping1);
 	bool res2 = cUPnPControlPoint->AddPortMappings(upnpPortMapping2);
 
-	struct sockaddr_in extAddr;
+	struct sockaddr_storage extAddr;
 	bool extAddrResult = getExternalAddress(extAddr);
 
 	{
@@ -386,18 +386,22 @@ void    upnphandler::setExternalPort(unsigned short eport_in)
 }
 
 	/* as determined by uPnP */
-bool    upnphandler::getInternalAddress(struct sockaddr_in &addr)
+bool    upnphandler::getInternalAddress(struct sockaddr_storage &addr)
 {
 	dataMtx.lock();   /***  LOCK MUTEX  ***/
-	addr = upnp_iaddr;
+
 	bool valid = (upnpState >= RS_UPNP_S_ACTIVE);
+
+	// copy to universal addr.
+	sockaddr_storage_clear(addr);
+	sockaddr_storage_setipv4(addr, &upnp_iaddr);
 
 	dataMtx.unlock(); /*** UNLOCK MUTEX ***/
 
 	return valid;
 }
 
-bool    upnphandler::getExternalAddress(struct sockaddr_in &addr)
+bool    upnphandler::getExternalAddress(struct sockaddr_storage &addr)
 {
 	std::string externalAdress = cUPnPControlPoint->getExternalAddress();
 
@@ -416,9 +420,13 @@ bool    upnphandler::getExternalAddress(struct sockaddr_in &addr)
 		inet_aton(externalIPAddress, &(upnp_eaddr.sin_addr));
 		upnp_eaddr.sin_family = AF_INET;
 		upnp_eaddr.sin_port = htons(eport_curr);
+
+		// copy to universal addr.
+		sockaddr_storage_clear(addr);
+		sockaddr_storage_setipv4(addr, &upnp_eaddr);
+
 		dataMtx.unlock(); /*** UNLOCK MUTEX ***/
 
-		addr = upnp_eaddr;
 		return true;
 	}
 	else

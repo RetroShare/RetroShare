@@ -184,26 +184,68 @@ bool 	p3BitDht::dropPeer(std::string pid)
  ********************************* Basic Peer Details *************************************
  ******************************************************************************************/
 
-int p3BitDht::addBadPeer(const struct sockaddr_in &addr, uint32_t /*reason*/, uint32_t /*flags*/, uint32_t /*age*/)
+int p3BitDht::addBadPeer(const struct sockaddr_storage &addr, uint32_t /*reason*/, uint32_t /*flags*/, uint32_t /*age*/)
 {
 	//mUdpBitDht->updateKnownPeer(&id, 0, bdflags);
 
+	struct sockaddr_in addrv4;
+	if (addr.ss_family != AF_INET)
+	{
+		std::cerr << "p3BitDht::addBadPeer() cannot handle IPV6 Yet, aborting";
+		std::cerr << std::endl;
+		abort();
+	}
+	struct sockaddr_in *ap = (struct sockaddr_in *) &addr;
+
+	// convert.
+	addrv4.sin_family = ap->sin_family;
+	addrv4.sin_addr = ap->sin_addr;
+	addrv4.sin_port = ap->sin_port;	
+	
+	
 	if (mDhtStunner)
 	{
-		mDhtStunner->dropStunPeer(addr);
+		mDhtStunner->dropStunPeer(addrv4);
 	}
 	if (mProxyStunner)
 	{
-		mProxyStunner->dropStunPeer(addr);
+		mProxyStunner->dropStunPeer(addrv4);
 	}
 
 	return 1;
 }
 
 
-int p3BitDht::addKnownPeer(const std::string &pid, const struct sockaddr_in &addr, uint32_t flags) 
+int p3BitDht::addKnownPeer(const std::string &pid, const struct sockaddr_storage &addr, uint32_t flags) 
 {
+	struct sockaddr_in addrv4;
 
+	if (addr.ss_family != AF_INET)
+	{
+		std::cerr << "p3BitDht::addKnownPeer() Warning! Non IPv4 Address - Cannot handle IPV6 Yet.";
+		std::cerr << std::endl;
+		sockaddr_clear(&addrv4);
+
+		if (flags & NETASSIST_KNOWN_PEER_ONLINE)
+		{
+			std::cerr << "p3BitDht::addKnownPeer() Non IPv4 Address & ONLINE. Abort()ing.";
+			std::cerr << std::endl;
+			abort();
+		}
+	}
+	else
+	{
+
+		// convert.
+		struct sockaddr_in *ap = (struct sockaddr_in *) &addr;
+	
+		addrv4.sin_family = ap->sin_family;
+		addrv4.sin_addr = ap->sin_addr;
+		addrv4.sin_port = ap->sin_port;	
+	}
+
+	
+	
 	int p3type = 0;
 	int bdflags = 0;
 	bdId id;
@@ -262,13 +304,13 @@ int p3BitDht::addKnownPeer(const std::string &pid, const struct sockaddr_in &add
 	
 	
 		id.id = dpd->mDhtId.id;
-		id.addr = addr;
+		id.addr = addrv4;
 	}
 	else
 	{
 		// shouldn't use own id without mutex - but it is static!
 		id.id = mOwnDhtId;
-		id.addr = addr;
+		id.addr = addrv4;
 	}
 
 	mUdpBitDht->updateKnownPeer(&id, 0, bdflags);

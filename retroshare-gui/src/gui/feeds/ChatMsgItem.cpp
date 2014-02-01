@@ -243,8 +243,8 @@ void ChatMsgItem::sendMessage()
     /* construct a message */
     MessageInfo mi;
     
-    mi.title = tr("Quick Message").toStdWString();
-    mi.msg =   quickmsgText->toHtml().toStdWString();
+    mi.title = tr("Quick Message").toUtf8().constData();
+    mi.msg =   quickmsgText->toHtml().toUtf8().constData();
     mi.msgto.push_back(mPeerId);       
     
     rsMsgs->MessageSend(mi);

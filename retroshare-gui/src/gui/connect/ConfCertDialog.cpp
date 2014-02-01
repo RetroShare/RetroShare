@@ -197,11 +197,9 @@ void ConfCertDialog::load()
         ui.lastcontact->setText(DateTime::formatLongDateTime(detail.lastConnect));
 
         /* set retroshare version */
-        std::map<std::string, std::string>::iterator vit;
-        std::map<std::string, std::string> versions;
-        bool retv = rsDisc->getDiscVersions(versions);
-        if (retv && versions.end() != (vit = versions.find(detail.id)))
-            ui.version->setText(QString::fromStdString(vit->second));
+        std::string version;
+        rsDisc->getPeerVersion(detail.id, version);
+		ui.version->setText(QString::fromStdString(version));
 
 		  RsPeerCryptoParams cdet ;
 		  if(RsControl::instance()->getPeerCryptoDetails(detail.id,cdet) && cdet.connexion_state!=0)
@@ -215,15 +213,29 @@ void ConfCertDialog::load()
 		  else
 			  ui.crypto_info->setText(tr("Not connected")) ;
 
-        /* set local address */
-        ui.localAddress->setText(QString::fromStdString(detail.localAddr));
-        ui.localPort -> setValue(detail.localPort);
-        /* set the server address */
-        ui.extAddress->setText(QString::fromStdString(detail.extAddr));
-        ui.extPort -> setValue(detail.extPort);
+	if (detail.isHiddenNode)
+	{
+	        /* set local address */
+	        ui.localAddress->setText("hidden");
+	        ui.localPort -> setValue(0);
+	        /* set the server address */
+	        ui.extAddress->setText("hidden");
+	        ui.extPort -> setValue(0);
 
-        ui.dynDNS->setText(QString::fromStdString(detail.dyndns));
-
+	        ui.dynDNS->setText(QString::fromStdString(detail.hiddenNodeAddress));
+	}
+	else
+	{
+	        /* set local address */
+	        ui.localAddress->setText(QString::fromStdString(detail.localAddr));
+	        ui.localPort -> setValue(detail.localPort);
+	        /* set the server address */
+	        ui.extAddress->setText(QString::fromStdString(detail.extAddr));
+	        ui.extPort -> setValue(detail.extPort);
+	
+	        ui.dynDNS->setText(QString::fromStdString(detail.dyndns));
+	}
+	
         ui.statusline->setText(StatusDefs::connectStateString(detail));
 
         ui.ipAddressList->clear();
@@ -398,7 +410,7 @@ void ConfCertDialog::loadInvitePage()
         return;
     }
 
-    std::string invite = rsPeers->GetRetroshareInvite(detail.id,ui._shouldAddSignatures_CB->isChecked(),ui._useOldFormat_CB->isChecked()) ; // this needs to be a SSL id
+    std::string invite = rsPeers->GetRetroshareInvite(detail.id,ui._shouldAddSignatures_CB->isChecked()) ; // this needs to be a SSL id
 
     ui.userCertificateText->setReadOnly(true);
     ui.userCertificateText->setMinimumHeight(200);

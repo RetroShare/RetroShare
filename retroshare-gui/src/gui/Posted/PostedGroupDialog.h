@@ -33,12 +33,13 @@ class PostedGroupDialog : public GxsGroupDialog
 
 public:
 	PostedGroupDialog(TokenQueue *tokenQueue, QWidget *parent);
-	PostedGroupDialog(const RsPostedGroup &topic, QWidget *parent);
+	PostedGroupDialog(TokenQueue *tokenExternalQueue, RsTokenService *tokenService, Mode mode, RsGxsGroupId groupId, QWidget *parent);
 
 protected:
 	virtual void initUi();
 	virtual QPixmap serviceImage();
 	virtual bool service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta);
+	virtual bool service_EditGroup(uint32_t &token, RsGxsGroupUpdateMeta &updateMeta);
 
 private:
 	RsPostedGroup mTopic;

@@ -518,14 +518,14 @@ void MessageComposer::sendConnectAttemptMsg(const std::string &gpgId, const std:
         if ((it->msgflags & RS_MSG_USER_REQUEST) == 0) {
             continue;
         }
-        if (it->title == title.toStdWString()) {
+        if (it->title == title.toUtf8().constData()) {
             return;
         }
     }
 
     /* create a message */
     QString msgText = tr("Hi %1,<br><br>%2 wants to be friends with you on RetroShare.<br><br>Respond now:<br>%3<br><br>Thanks,<br>The RetroShare Team").arg(QString::fromUtf8(rsPeers->getGPGName(rsPeers->getGPGOwnId()).c_str()), sslName, link.toHtml());
-    rsMsgs->SystemMessage(title.toStdWString(), msgText.toStdWString(), RS_MSG_USER_REQUEST);
+    rsMsgs->SystemMessage(title.toUtf8().constData(), msgText.toUtf8().constData(), RS_MSG_USER_REQUEST);
 }
 
 void MessageComposer::closeEvent (QCloseEvent * event)
@@ -878,8 +878,8 @@ MessageComposer *MessageComposer::newMsg(const std::string &msgId /* = ""*/)
         // needed to send system flags with reply
         msgComposer->msgFlags = (msgInfo.msgflags & RS_MSG_SYSTEM);
 
-        msgComposer->setTitleText(QString::fromStdWString(msgInfo.title));
-        msgComposer->setMsgText(QString::fromStdWString(msgInfo.msg));
+        msgComposer->setTitleText(QString::fromUtf8(msgInfo.title.c_str()));
+        msgComposer->setMsgText(QString::fromUtf8(msgInfo.msg.c_str()));
         msgComposer->setFileList(msgInfo.files);
 
         // get existing groups
@@ -964,7 +964,7 @@ QString MessageComposer::buildReplyHeader(const MessageInfo &msgInfo)
     }
 
     header += QString("<br><font size='3'><strong>%1: </strong>%2</font><br>").arg(tr("Sent"), DateTime::formatLongDateTime(msgInfo.ts));
-    header += QString("<font size='3'><strong>%1: </strong>%2</font></span><br>").arg(tr("Subject"), QString::fromStdWString(msgInfo.title));
+    header += QString("<font size='3'><strong>%1: </strong>%2</font></span><br>").arg(tr("Subject"), QString::fromUtf8(msgInfo.title.c_str()));
     header += "<br>";
 
     header += tr("On %1, %2 wrote:").arg(DateTime::formatDateTime(msgInfo.ts), from);
@@ -1023,8 +1023,8 @@ MessageComposer *MessageComposer::replyMsg(const std::string &msgId, bool all)
 
     /* fill it in */
 
-    msgComposer->setTitleText(QString::fromStdWString(msgInfo.title), REPLY);
-    msgComposer->setQuotedMsg(QString::fromStdWString(msgInfo.msg), buildReplyHeader(msgInfo));
+    msgComposer->setTitleText(QString::fromUtf8(msgInfo.title.c_str()), REPLY);
+    msgComposer->setQuotedMsg(QString::fromUtf8(msgInfo.msg.c_str()), buildReplyHeader(msgInfo));
 
     msgComposer->addRecipient(MessageComposer::TO, msgInfo.srcId, false);
 
@@ -1067,8 +1067,8 @@ MessageComposer *MessageComposer::forwardMsg(const std::string &msgId)
 
     /* fill it in */
 
-    msgComposer->setTitleText(QString::fromStdWString(msgInfo.title), FORWARD);
-    msgComposer->setQuotedMsg(QString::fromStdWString(msgInfo.msg), buildReplyHeader(msgInfo));
+    msgComposer->setTitleText(QString::fromUtf8(msgInfo.title.c_str()), FORWARD);
+    msgComposer->setQuotedMsg(QString::fromUtf8(msgInfo.msg.c_str()), buildReplyHeader(msgInfo));
 
     std::list<FileInfo>& files_info = msgInfo.files;
 
@@ -1140,13 +1140,13 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
     /* construct a message */
     MessageInfo mi;
 
-    mi.title = misc::removeNewLine(ui.titleEdit->text()).toStdWString();
+    mi.title = misc::removeNewLine(ui.titleEdit->text()).toUtf8().constData();
     // needed to send system flags with reply
     mi.msgflags = msgFlags;
 
     QString text;
     RsHtml::optimizeHtml(ui.msgText, text);
-    mi.msg = text.toStdWString();
+    mi.msg = text.toUtf8().constData();
 
     /* check for existing title */
     if (bDraftbox == false && mi.title.empty()) {

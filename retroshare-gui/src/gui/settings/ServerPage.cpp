@@ -35,7 +35,7 @@
 #include <QTimer>
 
 ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
-    : ConfigPage(parent, flags)
+    : ConfigPage(parent, flags), mIsHiddenNode(false)
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
@@ -84,10 +84,15 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 	ui.tabWidget->widget(2)->layout()->addItem(verticalSpacer) ;
 	ui.tabWidget->widget(2)->layout()->update() ;
 
+	ui.torpage_incoming->setVisible(false);
+
   /* Hide platform specific features */
 #ifdef Q_WS_WIN
 
 #endif
+
+	std::cerr << "ServerPage::ServerPage() called";
+	std::cerr << std::endl;
 }
 
 void ServerPage::showRoutingInfo()
@@ -112,7 +117,7 @@ void ServerPage::toggleIpDetermination(bool b)
 void ServerPage::toggleTunnelConnection(bool b)
 {
         std::cerr << "ServerPage::toggleTunnelConnection() set tunnel to : " << b << std::endl;
-        rsPeers->allowTunnelConnection(b) ;
+        //rsPeers->allowTunnelConnection(b) ;
 }
 
 /** Saves the changes on this page */
@@ -135,6 +140,8 @@ ServerPage::save(QString &/*errmsg*/)
 /** Loads the settings for this page */
 void ServerPage::load()
 {
+	std::cerr << "ServerPage::load() called";
+	std::cerr << std::endl;
 
 	/* load up configuration from rsPeers */
 	RsPeerDetails detail;
@@ -143,10 +150,21 @@ void ServerPage::load()
 		return;
 	}
 
+	mIsHiddenNode = (detail.netMode == RS_NETMODE_HIDDEN);
+	if (mIsHiddenNode)
+	{
+		loadHiddenNode();
+		return;
+	}
+
 	/* set net mode */
 	int netIndex = 0;
 	switch(detail.netMode)
 	{
+		case RS_NETMODE_HIDDEN:
+			netIndex = 3;
+			ui.netModeComboBox->setEnabled(false);
+			break;
 		case RS_NETMODE_EXT:
 			netIndex = 2;
 			break;
@@ -167,9 +185,9 @@ void ServerPage::load()
 	 */
 
 	netIndex = 3; // NONE.
-	if (detail.visState & RS_VS_DHT_ON)
+	if (detail.vs_dht != RS_VS_DISC_OFF)
 	{
-		if (detail.visState & RS_VS_DISC_ON)
+		if (detail.vs_disc != RS_VS_DISC_OFF)
 		{
 			netIndex = 0; // PUBLIC
 		}
@@ -180,7 +198,7 @@ void ServerPage::load()
 	}
 	else
 	{
-		if (detail.visState & RS_VS_DISC_ON)
+		if (detail.vs_disc != RS_VS_DISC_OFF)
 		{
 			netIndex = 1; // PRIVATE
 		}
@@ -219,6 +237,13 @@ void ServerPage::load()
 		ui.ipAddressList->clear();
 		for(std::list<std::string>::const_iterator it(detail.ipAddressList.begin());it!=detail.ipAddressList.end();++it)
 			ui.ipAddressList->addItem(QString::fromStdString(*it));
+
+	/* TOR PAGE SETTINGS - only Proxy (outgoing) */
+	std::string proxyaddr;
+	uint16_t proxyport;
+	rsPeers->getProxyServer(proxyaddr, proxyport);
+	ui.torpage_proxyAddress -> setText(QString::fromStdString(proxyaddr));
+	ui.torpage_proxyPort -> setValue(proxyport);
 }
 
 void ServerPage::toggleTurtleRouting(bool b)
@@ -232,11 +257,20 @@ void ServerPage::toggleTurtleRouting(bool b)
 /** Loads the settings for this page */
 void ServerPage::updateStatus()
 {
+	std::cerr << "ServerPage::updateStatusd() called";
+	std::cerr << std::endl;
+
 	if(RsAutoUpdatePage::eventsLocked())
 		return ;
 
 	if(!isVisible())
 		return ;
+
+	if (mIsHiddenNode)
+	{
+		updateStatusHiddenNode();
+		return;
+	}
 
 	/* load up configuration from rsPeers */
 	RsPeerDetails detail;
@@ -311,6 +345,12 @@ void ServerPage::saveAddresses()
 
 	bool saveAddr = false;
 
+	if (mIsHiddenNode)
+	{
+		saveAddressesHiddenNode();
+		return;
+	}
+
 	RsPeerDetails detail;
 	std::string ownId = rsPeers->getOwnId();
 
@@ -323,6 +363,9 @@ void ServerPage::saveAddresses()
 	uint32_t netMode = 0;
 	switch(netIndex)
 	{
+		case 3:
+			netMode = RS_NETMODE_HIDDEN;
+			break;
 		case 2:
 			netMode = RS_NETMODE_EXT;
 			break;
@@ -338,26 +381,32 @@ void ServerPage::saveAddresses()
 	if (detail.netMode != netMode)
 		rsPeers->setNetworkMode(ownId, netMode);
 
-	uint32_t visState = 0;
+	uint16_t vs_disc = 0;
+	uint16_t vs_dht = 0;
 	/* Check if vis has changed */
 	switch(ui.discComboBox->currentIndex())
 	{
 		case 0:
-			visState |= (RS_VS_DISC_ON | RS_VS_DHT_ON);
+			vs_disc = RS_VS_DISC_FULL;
+			vs_dht = RS_VS_DHT_FULL;
 			break;
 		case 1:
-			visState |= RS_VS_DISC_ON;
+			vs_disc = RS_VS_DISC_FULL;
+			vs_dht = RS_VS_DHT_OFF;
 			break;
 		case 2:
-			visState |= RS_VS_DHT_ON;
+			vs_disc = RS_VS_DISC_OFF;
+			vs_dht = RS_VS_DHT_FULL;
 			break;
 		case 3:
 		default:
+			vs_disc = RS_VS_DISC_OFF;
+			vs_dht = RS_VS_DHT_OFF;
 			break;
 	}
 
-	if (visState != detail.visState)
-		rsPeers->setVisState(ownId, visState);
+	if ((vs_disc != detail.vs_disc) || (vs_dht != detail.vs_dht))
+		rsPeers->setVisState(ownId, vs_disc, vs_dht);
 
 	if (0 != netIndex)
 		saveAddr = true;
@@ -371,6 +420,253 @@ void ServerPage::saveAddresses()
 	rsPeers->setDynDNS(ownId, ui.dynDNS->text().toStdString());
 	rsConfig->SetMaxDataRates( ui.totalDownloadRate->value(), ui.totalUploadRate->value() );
 
+	// HANDLE PROXY SERVER.
+	std::string orig_proxyaddr;
+	uint16_t orig_proxyport;
+	rsPeers->getProxyServer(orig_proxyaddr, orig_proxyport);
+
+	std::string new_proxyaddr = ui.torpage_proxyAddress -> text().toStdString();
+	uint16_t new_proxyport = ui.torpage_proxyPort -> value();
+
+	if ((new_proxyaddr != orig_proxyaddr) || (new_proxyport != orig_proxyport))
+	{
+		rsPeers->setProxyServer(new_proxyaddr, new_proxyport);
+	}
+
+	load();
+}
+
+
+/***********************************************************************************/
+/***********************************************************************************/
+/******* ALTERNATIVE VERSION IF HIDDEN NODE ***************************************/
+/***********************************************************************************/
+/***********************************************************************************/
+
+/** Loads the settings for this page */
+void ServerPage::loadHiddenNode()
+{
+	std::cerr << "ServerPage::loadHiddenNode() called";
+	std::cerr << std::endl;
+
+	/* load up configuration from rsPeers */
+	RsPeerDetails detail;
+	if (!rsPeers->getPeerDetails(rsPeers->getOwnId(), detail))
+	{
+		return;
+	}
+
+	/* At this point we want to force the Configuration Page to look different
+	 * We will be called multiple times - so cannot just delete bad items.
+	 *
+	 * We want:
+	 *  NETMODE: HiddenNode FIXED.
+	 *  Disc/DHT: Discovery / No Discovery.
+	 *  Local Address: 127.0.0.1, Port: Listening Port. (listening port changable)
+	 *  External Address ==> TOR Address: 17621376587.onion + PORT.
+	 *
+	 *  Known / Previous IPs: empty / removed.
+	 *  Ask about IP: Disabled.
+	 */
+
+	// FIXED.
+	ui.netModeComboBox->setCurrentIndex(3);
+	ui.netModeComboBox->setEnabled(false);
+
+	// CHANGE OPTIONS ON 
+	ui.discComboBox->removeItem(3);
+	ui.discComboBox->removeItem(2);
+	ui.discComboBox->removeItem(1);
+	ui.discComboBox->removeItem(0);
+	ui.discComboBox->insertItem (0, tr("Discovery On (recommended)"));
+	ui.discComboBox->insertItem (1, tr("Discovery Off"));
+
+	int netIndex = 1; // OFF.
+	if (detail.vs_disc != RS_VS_DISC_OFF)
+	{
+		netIndex = 0; // DISC ON;
+	}
+	ui.discComboBox->setCurrentIndex(netIndex);
+
+	// Download Rates - Stay the same as before.
+	int dlrate = 0;
+	int ulrate = 0;
+	rsConfig->GetMaxDataRates(dlrate, ulrate);
+	ui.totalDownloadRate->setValue(dlrate);
+	ui.totalUploadRate->setValue(ulrate);
+
+	// Addresses.
+	ui.localAddress->setEnabled(false);
+	ui.localPort  -> setEnabled(false);
+	ui.extAddress -> setEnabled(false);
+	ui.extPort    -> setVisible(false);
+	ui.label_dynDNS->setVisible(false);
+	ui.dynDNS      ->setVisible(false);
+
+	ui.torpage_incoming->setVisible(true);
+
+	/* Addresses must be set here - otherwise can't edit it */
+		/* set local address */
+	ui.localAddress->setText(QString::fromStdString(detail.localAddr));
+	ui.localPort -> setValue(detail.localPort);
+		/* set the server address */
+
+	ui.extAddress->setText(tr("Hidden - See TOR Config"));
+
+	ui.showDiscStatusBar->setChecked(Settings->getStatusBarFlags() & STATUSBAR_DISC);
+
+	ui._max_tr_up_per_sec_SB->setValue(rsTurtle->getMaxTRForwardRate()) ;
+	ui._turtle_enabled_CB->setChecked(rsTurtle->enabled()) ;
+
+	// show what we have in ipAddresses. (should be nothing!)
+	ui.ipAddressList->clear();
+	for(std::list<std::string>::const_iterator it(detail.ipAddressList.begin());it!=detail.ipAddressList.end();++it)
+		ui.ipAddressList->addItem(QString::fromStdString(*it));
+
+	ui.iconlabel_upnp->setPixmap(QPixmap(":/images/ledoff1.png"));
+	ui.iconlabel_netLimited->setPixmap(QPixmap(":/images/ledoff1.png"));
+	ui.iconlabel_ext->setPixmap(QPixmap(":/images/ledoff1.png"));
+
+	ui.allowIpDeterminationCB->setChecked(false);
+	ui.allowIpDeterminationCB->setEnabled(false);
+	ui.IPServersLV->setEnabled(false);
+
+	/* TOR PAGE SETTINGS */
+
+	/* set local address */
+	ui.torpage_localAddress->setEnabled(false);
+	ui.torpage_localAddress->setText(QString::fromStdString(detail.localAddr));
+	ui.torpage_localPort -> setValue(detail.localPort);
+
+	/* set the server address */
+	ui.torpage_onionAddress->setText(QString::fromStdString(detail.hiddenNodeAddress));
+	ui.torpage_onionPort -> setValue(detail.hiddenNodePort);
+
+	std::string proxyaddr;
+	uint16_t proxyport;
+	rsPeers->getProxyServer(proxyaddr, proxyport);
+	ui.torpage_proxyAddress -> setText(QString::fromStdString(proxyaddr));
+	ui.torpage_proxyPort -> setValue(proxyport);
+
+	QString expected = "HiddenServiceDir </your/path/to/hidden/directory/service>\n";
+	expected += "HiddenServicePort ";
+	expected += QString::number(detail.hiddenNodePort);
+	expected += " ";
+	expected += QString::fromStdString(detail.localAddr);
+	expected += ":";
+	expected += QString::number(detail.localPort);
+
+	ui.torpage_configuration->setPlainText(expected);
+}
+
+/** Loads the settings for this page */
+void ServerPage::updateStatusHiddenNode()
+{
+	std::cerr << "ServerPage::updateStatusHiddenNode() called";
+	std::cerr << std::endl;
+
+// THIS IS DISABLED FOR NOW.
+#if 0
+
+	/* load up configuration from rsPeers */
+	RsPeerDetails detail;
+	if (!rsPeers->getPeerDetails(rsPeers->getOwnId(), detail))
+		return;
+
+	/* only update if can't edit */
+	if (!ui.localPort->isEnabled())
+	{
+		/* set local address */
+		ui.localPort -> setValue(detail.localPort);
+		ui.extPort -> setValue(detail.extPort);
+	}
+
+	/* set local address */
+	ui.localAddress->setText(QString::fromStdString(detail.localAddr));
+	/* set the server address */
+	ui.extAddress->setText(QString::fromStdString(detail.extAddr));
+
+
+	// Now update network bits.
+	RsConfigNetStatus net_status;
+	rsConfig->getConfigNetStatus(net_status);
+
+	/******* Network Status Tab *******/
+
+	if(net_status.netUpnpOk)
+		ui.iconlabel_upnp->setPixmap(QPixmap(":/images/ledon1.png"));
+	else
+		ui.iconlabel_upnp->setPixmap(QPixmap(":/images/ledoff1.png"));
+
+	if (net_status.netLocalOk)
+		ui.iconlabel_netLimited->setPixmap(QPixmap(":/images/ledon1.png"));
+	else
+		ui.iconlabel_netLimited->setPixmap(QPixmap(":/images/ledoff1.png"));
+
+	if (net_status.netExtAddressOk)
+		ui.iconlabel_ext->setPixmap(QPixmap(":/images/ledon1.png"));
+	else
+		ui.iconlabel_ext->setPixmap(QPixmap(":/images/ledoff1.png"));
+
+#endif
+
+}
+
+void ServerPage::saveAddressesHiddenNode()
+{
+	RsPeerDetails detail;
+	std::string ownId = rsPeers->getOwnId();
+
+	if (!rsPeers->getPeerDetails(ownId, detail))
+		return;
+
+	// NETMODE IS UNCHANGABLE
+	uint16_t vs_disc = 0;
+	uint16_t vs_dht = 0;
+	/* Check if vis has changed */
+	switch(ui.discComboBox->currentIndex())
+	{
+		default:
+		case 0:
+			vs_disc = RS_VS_DISC_FULL;
+			vs_dht = RS_VS_DHT_OFF;
+			break;
+		case 1:
+			vs_disc = RS_VS_DISC_OFF;
+			vs_dht = RS_VS_DHT_OFF;
+			break;
+	}
+
+	if ((vs_disc != detail.vs_disc) || (vs_dht != detail.vs_dht))
+		rsPeers->setVisState(ownId, vs_disc, vs_dht);
+
+	if (detail.localPort != ui.torpage_localPort->value())
+	{
+		// Set Local Address - force to 127.0.0.1
+		rsPeers->setLocalAddress(ownId, "127.0.0.1", ui.torpage_localPort->value());
+	}
+
+	std::string hiddenAddr = ui.torpage_onionAddress->text().toStdString();
+	uint16_t    hiddenPort = ui.torpage_onionPort->value();
+	if ((hiddenAddr != detail.hiddenNodeAddress) || (hiddenPort != detail.hiddenNodePort))
+	{
+		rsPeers->setHiddenNode(ownId, hiddenAddr, hiddenPort);
+	}
+
+	// HANDLE PROXY SERVER.
+	std::string orig_proxyaddr;
+	uint16_t orig_proxyport;
+	rsPeers->getProxyServer(orig_proxyaddr, orig_proxyport);
+
+	std::string new_proxyaddr = ui.torpage_proxyAddress -> text().toStdString();
+	uint16_t new_proxyport = ui.torpage_proxyPort -> value();
+
+	if ((new_proxyaddr != orig_proxyaddr) || (new_proxyport != orig_proxyport))
+	{
+		rsPeers->setProxyServer(new_proxyaddr, new_proxyport);
+	}
+
+	rsConfig->SetMaxDataRates( ui.totalDownloadRate->value(), ui.totalUploadRate->value() );
 	load();
 }
 

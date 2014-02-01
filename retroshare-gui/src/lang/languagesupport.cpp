@@ -31,7 +31,7 @@
 
 static QMap<RsPlugin*, QTranslator*> translatorPlugins;
 
-#define EXTERNAL_TRANSLATION_DIR QString::fromUtf8(RsInit::getRetroshareDataDirectory().c_str())
+#define EXTERNAL_TRANSLATION_DIR QString::fromUtf8(RsAccounts::DataDirectory().c_str())
 
 /** Initializes the list of available languages. */
 QMap<QString, QString>

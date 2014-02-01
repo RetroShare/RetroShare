@@ -71,6 +71,15 @@ const uint8_t QOS_PRIORITY_RS_DISC_ASK_INFO       		= 2 ;
 const uint8_t QOS_PRIORITY_RS_DISC_REPLY      			= 1 ;
 const uint8_t QOS_PRIORITY_RS_DISC_VERSION    			= 1 ;
 
+const uint8_t QOS_PRIORITY_RS_DISC_CONTACT    			= 2 ; // CONTACT and PGPLIST must have
+const uint8_t QOS_PRIORITY_RS_DISC_PGP_LIST       		= 2 ; // same priority.
+const uint8_t QOS_PRIORITY_RS_DISC_SERVICES    			= 2 ;
+const uint8_t QOS_PRIORITY_RS_DISC_PGP_CERT    			= 1 ;
+
+// Heartbeat.
+//
+const uint8_t QOS_PRIORITY_RS_HEARTBEAT_PULSE 			= 8 ;
+
 // Chat/Msgs
 //
 const uint8_t QOS_PRIORITY_RS_CHAT_ITEM       			= 7 ;
@@ -78,9 +87,9 @@ const uint8_t QOS_PRIORITY_RS_CHAT_AVATAR_ITEM       	= 2 ;
 const uint8_t QOS_PRIORITY_RS_MSG_ITEM               	= 2 ;
 const uint8_t QOS_PRIORITY_RS_STATUS_ITEM     			= 2 ;
 
-// VOIP
+// RTT
 //
-const uint8_t QOS_PRIORITY_RS_VOIP_PING               = 9 ;
+const uint8_t QOS_PRIORITY_RS_RTT_PING               = 9 ;
 
 // BanList
 //

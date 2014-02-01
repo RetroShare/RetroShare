@@ -34,7 +34,6 @@
 #include "pqi/pqi_base.h"
 #include "pqi/pqinetwork.h"
 #include "serialiser/rsserial.h"
-#include "serialiser/rsbaseitems.h"
 
 #include <iostream>
 #include <functional>
@@ -49,41 +48,7 @@ class SearchInterface
 public:
 	SearchInterface()  { return; }
 
-virtual	~SearchInterface() { return; }
-
-	// Cache Requests
-virtual int	SearchSpecific(RsCacheRequest *) = 0; 
-virtual RsCacheRequest *RequestedSearch() = 0;
-
-	// Cache Results
-virtual int     SendSearchResult(RsCacheItem *item) = 0;
-virtual RsCacheItem *GetSearchResult() = 0;
-
-	// FileTransfer.
-virtual RsFileRequest *GetFileRequest() = 0;
-virtual int     SendFileRequest(RsFileRequest *) = 0;
-
-virtual RsFileData *GetFileData() = 0;
-virtual int     SendFileData(RsFileData *) = 0;
-
-virtual RsFileChunkMapRequest *GetFileChunkMapRequest() = 0;
-virtual int     SendFileChunkMapRequest(RsFileChunkMapRequest *) = 0;
-
-virtual RsFileChunkMap *GetFileChunkMap() = 0;
-virtual int     SendFileChunkMap(RsFileChunkMap *) = 0;
-
-virtual RsFileCRC32MapRequest *GetFileCRC32MapRequest() = 0;
-virtual int     SendFileCRC32MapRequest(RsFileCRC32MapRequest *) = 0;
-
-virtual RsFileCRC32Map *GetFileCRC32Map() = 0;
-virtual int     SendFileCRC32Map(RsFileCRC32Map *) = 0;
-
-virtual RsFileSingleChunkCrcRequest *GetFileSingleChunkCrcRequest()=0;
-virtual int     SendFileSingleChunkCrcRequest(RsFileSingleChunkCrcRequest *ns)=0;
-
-virtual RsFileSingleChunkCrc        *GetFileSingleChunkCrc()=0;
-virtual int     SendFileSingleChunkCrc(RsFileSingleChunkCrc *ns)=0;
-
+	virtual	~SearchInterface() { return; }
 };
 
 class P3Interface: public SearchInterface
@@ -99,6 +64,21 @@ virtual int	SendRsRawItem(RsRawItem *) = 0;
 virtual RsRawItem *GetRsRawItem() = 0;
 
 };
+
+
+/* interface to allow outgoing messages to be sent directly 
+ * through to the pqiperson, rather than being queued
+ */
+
+class pqiPublisher
+{
+        public:
+virtual ~pqiPublisher() { return; }
+virtual bool sendItem(RsRawItem *item) = 0;
+
+};
+
+
 
 #endif // PQI_TOP_HEADER
 

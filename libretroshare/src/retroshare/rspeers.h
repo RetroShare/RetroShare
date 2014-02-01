@@ -54,11 +54,17 @@ const uint32_t RS_TRUST_LVL_ULTIMATE   = 5;
 const uint32_t RS_NETMODE_UDP		= 0x0001;
 const uint32_t RS_NETMODE_UPNP		= 0x0002;
 const uint32_t RS_NETMODE_EXT		= 0x0003;
-const uint32_t RS_NETMODE_UNREACHABLE	= 0x0004;
+const uint32_t RS_NETMODE_HIDDEN	= 0x0004;
+const uint32_t RS_NETMODE_UNREACHABLE	= 0x0005;
 
 /* Visibility */
-const uint32_t RS_VS_DHT_ON		= 0x0001;
-const uint32_t RS_VS_DISC_ON		= 0x0002;
+const uint32_t RS_VS_DISC_OFF		= 0x0000;
+const uint32_t RS_VS_DISC_MINIMAL	= 0x0001;
+const uint32_t RS_VS_DISC_FULL		= 0x0002;
+
+const uint32_t RS_VS_DHT_OFF		= 0x0000;
+const uint32_t RS_VS_DHT_PASSIVE	= 0x0001;
+const uint32_t RS_VS_DHT_FULL		= 0x0002;
 
 /* State */
 const uint32_t RS_PEER_STATE_FRIEND	= 0x0001;
@@ -79,12 +85,12 @@ const ServicePermissionFlags RS_SERVICE_PERM_ALL        =  RS_SERVICE_PERM_TURTL
 
 /* Connect state */
 const uint32_t RS_PEER_CONNECTSTATE_OFFLINE           = 0;
-const uint32_t RS_PEER_CONNECTSTATE_TRYING_TUNNEL     = 1;
+
 const uint32_t RS_PEER_CONNECTSTATE_TRYING_TCP        = 2;
 const uint32_t RS_PEER_CONNECTSTATE_TRYING_UDP        = 3;
 const uint32_t RS_PEER_CONNECTSTATE_CONNECTED_TCP     = 4;
 const uint32_t RS_PEER_CONNECTSTATE_CONNECTED_UDP     = 5;
-const uint32_t RS_PEER_CONNECTSTATE_CONNECTED_TUNNEL  = 6;
+
 const uint32_t RS_PEER_CONNECTSTATE_CONNECTED_UNKNOWN = 7;
 
 /* Error codes for certificate cleaning and cert parsing. Numbers should not overlap. */
@@ -106,6 +112,7 @@ const uint32_t CERTIFICATE_PARSING_ERROR_INVALID_CHECKSUM_SECTION  = 0x15 ;
 const uint32_t CERTIFICATE_PARSING_ERROR_CHECKSUM_ERROR            = 0x16 ;
 const uint32_t CERTIFICATE_PARSING_ERROR_UNKNOWN_SECTION_PTAG      = 0x17 ;
 const uint32_t CERTIFICATE_PARSING_ERROR_MISSING_CHECKSUM          = 0x18 ;
+const uint32_t CERTIFICATE_PARSING_ERROR_WRONG_VERSION             = 0x19 ;
 
 const uint32_t PGP_KEYRING_REMOVAL_ERROR_NO_ERROR                  = 0x20 ;
 const uint32_t PGP_KEYRING_REMOVAL_ERROR_CANT_REMOVE_SECRET_KEYS   = 0x21 ;
@@ -129,7 +136,6 @@ const uint32_t RS_NET_CONN_TRANS_UDP_PROXY		= 0x00000040;
 const uint32_t RS_NET_CONN_TRANS_UDP_RELAY		= 0x00000080;
 
 const uint32_t RS_NET_CONN_TRANS_OTHER_MASK		= 0x00000f00;
-const uint32_t RS_NET_CONN_TRANS_TUNNEL			= 0x00000100;
 
 const uint32_t RS_NET_CONN_TRANS_UNKNOWN		= 0x00001000;
 
@@ -207,8 +213,15 @@ class RsPeerDetails
 	/* Network details (only valid if friend) */
 	uint32_t		state;
 
-	std::string					connectAddr ; // current address if connected.
-	uint16_t						connectPort ;
+	std::string				connectAddr ; // current address if connected.
+	uint16_t				connectPort ;
+
+	// Hidden Node details.
+	bool 			isHiddenNode;
+	std::string		hiddenNodeAddress;
+	uint16_t		hiddenNodePort;
+
+	// Filled in for Standard Node.
 	std::string             localAddr;
 	uint16_t                localPort;
 	std::string             extAddr;
@@ -217,7 +230,9 @@ class RsPeerDetails
 	std::list<std::string>  ipAddressList;
 
 	uint32_t		netMode;
-	uint32_t		visState;
+	/* vis State */
+	uint16_t		vs_disc;
+	uint16_t		vs_dht;
 
 	/* basic stats */
 	uint32_t		lastConnect;           /* how long ago */
@@ -313,22 +328,27 @@ class RsPeers
 		/* Network Stuff */
 		virtual	bool connectAttempt(const std::string &ssl_id)			= 0;
 		virtual bool setLocation(const std::string &ssl_id, const std::string &location) = 0;//location is shown in the gui to differentiate ssl certs
+
+		virtual bool setHiddenNode(const std::string &id, const std::string &hidden_node_address) = 0;
+		virtual bool setHiddenNode(const std::string &id, const std::string &address, uint16_t port) = 0;
+
 		virtual	bool setLocalAddress(const std::string &ssl_id, const std::string &addr, uint16_t port) = 0;
 		virtual	bool setExtAddress(  const std::string &ssl_id, const std::string &addr, uint16_t port) = 0;
 		virtual	bool setDynDNS(const std::string &id, const std::string &addr) = 0;
 		virtual	bool setNetworkMode(const std::string &ssl_id, uint32_t netMode) 	= 0;
-		virtual bool setVisState(const std::string &ssl_id, uint32_t vis)		= 0;
+		virtual bool setVisState(const std::string &ssl_id, uint16_t vs_disc, uint16_t vs_dht)	= 0;
+
+		virtual bool getProxyServer(std::string &addr, uint16_t &port) = 0;
+		virtual bool setProxyServer(const std::string &addr, const uint16_t port) = 0;
 
 		virtual void getIPServersList(std::list<std::string>& ip_servers) = 0;
 		virtual void allowServerIPDetermination(bool) = 0;
-		virtual void allowTunnelConnection(bool) = 0;
 		virtual bool getAllowServerIPDetermination() = 0 ;
-		virtual bool getAllowTunnelConnection() = 0 ;
 
 		/* Auth Stuff */
-		virtual	std::string GetRetroshareInvite(const std::string& ssl_id,bool include_signatures,bool old_format = false) 			= 0;
+		virtual	std::string GetRetroshareInvite(const std::string& ssl_id,bool include_signatures) 			= 0;
 		virtual bool GetPGPBase64StringAndCheckSum(const std::string& gpg_id,std::string& gpg_base64_string,std::string& gpg_base64_checksum) = 0 ;
-		virtual	std::string GetRetroshareInvite(bool include_signatures,bool old_format = false) 			= 0;
+		virtual	std::string GetRetroshareInvite(bool include_signatures) 			= 0;
 		virtual  bool hasExportMinimal() = 0 ;
 
 		// Add keys to the keyring

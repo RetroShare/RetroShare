@@ -725,7 +725,7 @@ void ChatWidget::sendChat()
 
 	QString text;
 	RsHtml::optimizeHtml(chatWidget, text);
-	std::wstring msg = text.toStdWString();
+	std::string msg = text.toUtf8().constData();
 
 	if (msg.empty()) {
 		// nothing to send
@@ -738,7 +738,7 @@ void ChatWidget::sendChat()
 
 	if (rsMsgs->sendPrivateChat(peerId, msg)) {
 		QDateTime currentTime = QDateTime::currentDateTime();
-		addChatMsg(false, name, currentTime, currentTime, QString::fromStdWString(msg), MSGTYPE_NORMAL);
+		addChatMsg(false, name, currentTime, currentTime, text, MSGTYPE_NORMAL);
 	}
 
 	chatWidget->clear();

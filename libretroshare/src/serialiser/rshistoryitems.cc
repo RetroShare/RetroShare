@@ -147,7 +147,7 @@ bool RsHistorySerialiser::serialiseHistoryMsgItem(RsHistoryMsgItem* item, void* 
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_NAME, item->peerName);
 	ok &= setRawUInt32(data, tlvsize, &offset, item->sendTime);
 	ok &= setRawUInt32(data, tlvsize, &offset, item->recvTime);
-	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_WSTR_MSG, item->message);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_MSG, item->message);
 
 	if (offset != tlvsize)
 	{
@@ -202,7 +202,7 @@ RsHistoryMsgItem *RsHistorySerialiser::deserialiseHistoryMsgItem(void *data, uin
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_NAME, item->peerName);
 	ok &= getRawUInt32(data, rssize, &offset, &(item->sendTime));
 	ok &= getRawUInt32(data, rssize, &offset, &(item->recvTime));
-	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_WSTR_MSG, item->message);
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_MSG, item->message);
 
 	if (offset != rssize)
 	{

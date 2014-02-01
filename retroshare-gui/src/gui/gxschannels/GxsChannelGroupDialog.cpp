@@ -26,7 +26,9 @@
 
 // To start with we only have open forums - with distribution controls.
 
-const uint32_t ChannelCreateEnabledFlags = ( GXS_GROUP_FLAGS_ICON        |
+const uint32_t ChannelCreateEnabledFlags = ( 
+			GXS_GROUP_FLAGS_NAME        |
+			GXS_GROUP_FLAGS_ICON        |
 			GXS_GROUP_FLAGS_DESCRIPTION   |
 			GXS_GROUP_FLAGS_DISTRIBUTION  |
 			// GXS_GROUP_FLAGS_PUBLISHSIGN   |
@@ -52,13 +54,16 @@ const uint32_t ChannelCreateDefaultsFlags = ( GXS_GROUP_DEFAULTS_DISTRIB_PUBLIC 
 			//GXS_GROUP_DEFAULTS_COMMENTS_NO          |
 			0);
 
+const uint32_t ChannelEditEnabledFlags = ChannelCreateEnabledFlags;
+const uint32_t ChannelEditDefaultsFlags = ChannelCreateDefaultsFlags;
+
 GxsChannelGroupDialog::GxsChannelGroupDialog(TokenQueue *tokenQueue, QWidget *parent)
 	:GxsGroupDialog(tokenQueue, ChannelCreateEnabledFlags, ChannelCreateDefaultsFlags, parent)
 {
 }
 
-GxsChannelGroupDialog::GxsChannelGroupDialog(const RsGxsChannelGroup &group, Mode mode, QWidget *parent)
-	:GxsGroupDialog(group.mMeta, mode, parent)
+GxsChannelGroupDialog::GxsChannelGroupDialog(TokenQueue *tokenExternalQueue, RsTokenService *tokenService, Mode mode, RsGxsGroupId groupId, uint32_t enableFlags, uint32_t defaultFlags, QWidget *parent)
+:GxsGroupDialog(tokenExternalQueue, tokenService, mode, groupId, ChannelEditEnabledFlags, ChannelEditDefaultsFlags, parent)
 {
 }
 
@@ -97,3 +102,14 @@ bool GxsChannelGroupDialog::service_CreateGroup(uint32_t &token, const RsGroupMe
 	rsGxsChannels->createGroup(token, grp);
 	return true;
 }
+
+
+
+bool GxsChannelGroupDialog::service_EditGroup(uint32_t &token, RsGxsGroupUpdateMeta &updateMeta)
+{
+	std::cerr << "GxsChannelGroupDialog::service_EditGroup() UNFINISHED";
+	std::cerr << std::endl;
+
+	return false;
+}
+

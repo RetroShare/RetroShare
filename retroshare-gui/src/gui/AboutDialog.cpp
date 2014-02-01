@@ -48,15 +48,15 @@ AboutDialog::AboutDialog(QWidget* parent)
     tWidget = NULL;
     installAWidget();
     
+	QString title = tr("About RetroShare ");    
+	
     /* get libretroshare version */
-    std::map<std::string, std::string>::iterator vit;
-    std::map<std::string, std::string> versions;
-    bool retv = rsDisc->getDiscVersions(versions);
-    if (retv && versions.end() != (vit = versions.find(rsPeers->getOwnId())))
+    std::string version;
+    if (rsDisc->getPeerVersion(rsPeers->getOwnId(), version))
     {
-      QString version = QString::fromStdString(vit->second);
-      setWindowTitle(tr("About RetroShare %1").arg(version));    
+		title += QString::fromStdString(version);
     }
+	setWindowTitle(title);
         
 #ifdef Q_OS_WIN
     setWindowFlags(windowFlags() | Qt::MSWindowsFixedSizeDialogHint);
@@ -132,20 +132,20 @@ void AboutDialog::sl_levelChanged(int level) {
 
 
 void AboutDialog::updateTitle() {
-    if (tWidget == NULL) {
-        
-        /* get libretroshare version */
-        std::map<std::string, std::string>::iterator vit;
-        std::map<std::string, std::string> versions;
-        bool retv = rsDisc->getDiscVersions(versions);
-        if (retv && versions.end() != (vit = versions.find(rsPeers->getOwnId())))
-        {
-
-        QString version = QString::fromStdString(vit->second);
-        setWindowTitle(tr("About RetroShare %1").arg(version));
-          
-        }
-        } else {
+    if (tWidget == NULL) 
+	{
+		QString title = tr("About RetroShare ");    
+		
+		/* get libretroshare version */
+		std::string version;
+		if (rsDisc->getPeerVersion(rsPeers->getOwnId(), version))
+		{
+			title += QString::fromStdString(version);
+		}
+		setWindowTitle(title);
+	} 
+	else 
+	{
         setWindowTitle(tr("Have fun ;-)"));
     }
 }
@@ -185,21 +185,22 @@ AWidget::AWidget() {
     font.setPointSizeF(11);
     p.setFont(font);
 
-    /* get libretroshare version */
-    std::map<std::string, std::string>::iterator vit;
-    std::map<std::string, std::string> versions;
-    bool retv = rsDisc->getDiscVersions(versions);
-    if (retv && versions.end() != (vit = versions.find(rsPeers->getOwnId())))
+	QString title = tr("About RetroShare ");    
+	
+	/* get libretroshare version */
+	std::string version;
+	if (rsDisc->getPeerVersion(rsPeers->getOwnId(), version))
     {
-        QString version = QString("RetroShare %1 : \n%2").arg(tr("version"), QString::fromStdString(vit->second));
-        p.drawText(QRect(10, 10, width()-10, 60), version);
+	    QString versionq = QString::fromStdString("RetroShare version : \n") + QString::fromStdString(version);
+        p.drawText(QRect(10, 10, width()-10, 60), versionq);
+		
     }
 
     /* Draw Qt's version number */
     p.drawText(QRect(10, 50, width()-10, 60), QString("Qt %1 : \n%2").arg(tr("version"), QT_VERSION_STR));
 
     p.end();
-
+	
     image1 = image2 = image;
     setFixedSize(image1.size());
 

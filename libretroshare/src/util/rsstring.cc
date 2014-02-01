@@ -305,3 +305,16 @@ void stringToLowerCase(const std::string& s, std::string &lower)
 		if(lower[i] > 64 && lower[i] < 91)
 			lower[i] += 97-65 ;
 }
+
+
+
+bool isHexaString(const std::string& s)
+{
+	for(uint32_t i=0;i<s.length();++i)
+		if(!((s[i] >= 'A' && s[i] <= 'F') || (s[i] >= '0' && s[i] <= '9') || (s[i] >= 'a' && s[i] <= 'f')))
+		return false ;
+
+	return true ;
+}
+
+

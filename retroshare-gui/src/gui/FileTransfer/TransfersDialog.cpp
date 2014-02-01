@@ -64,9 +64,10 @@
 /****
  * #define SHOW_RTT_STATISTICS		1
  ****/
+#define SHOW_RTT_STATISTICS		1
 
 #ifdef SHOW_RTT_STATISTICS
-	#include "VoipStatistics.h"
+	#include "gui/RttStatistics.h"
 #endif
 
 /* Images for context menu icons */
@@ -336,6 +337,10 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 	 ui.tabWidget->insertTab(3,remoteSharedFiles = new RemoteSharedFilesDialog(), QIcon(IMAGE_FRIENDSFILES), tr("Friends files")) ;
 
 	 ui.tabWidget->addTab(localSharedFiles = new LocalSharedFilesDialog(), QIcon(IMAGE_MYFILES), tr("My files")) ;
+
+#ifdef SHOW_RTT_STATISTICS
+         ui.tabWidget->addTab( new RttStatistics(), tr("RTT Statistics")) ;
+#endif
 
 	 //ui.tabWidget->addTab( new TurtleRouterStatistics(), tr("Router Statistics")) ;
 	 //ui.tabWidget->addTab( new TurtleRouterDialog(), tr("Router Requests")) ;
@@ -903,7 +908,7 @@ void TransfersDialog::setDestinationDirectory()
 	}
 }
 
-int TransfersDialog::addItem(int row, const FileInfo &fileInfo, const std::map<std::string, std::string> &versions)
+int TransfersDialog::addItem(int row, const FileInfo &fileInfo)
 {
 	QString fileHash = QString::fromStdString(fileInfo.hash);
 	double fileDlspeed = (fileInfo.downloadStatus == FT_STATE_DOWNLOADING) ? (fileInfo.tfRate * 1024.0) : 0.0;
@@ -1031,8 +1036,10 @@ int TransfersDialog::addItem(int row, const FileInfo &fileInfo, const std::map<s
 			//unique combination: fileHash + peerId, variant: hash + peerName (too long)
 			QString hashFileAndPeerId = fileHash + QString::fromStdString(transferInfo.peerId);
 			QString version;
-			if (versions.end() != (vit = versions.find(transferInfo.peerId))) {
-				version = tr("version: ") + QString::fromStdString(vit->second);
+			std::string rsversion;
+			if (rsDisc->getPeerVersion(transferInfo.peerId, rsversion))
+			{
+				version = tr("version: ") + QString::fromStdString(rsversion);
 			}
 
 			double peerDlspeed	= 0;
@@ -1228,10 +1235,6 @@ void TransfersDialog::insertTransfers()
 	std::list<std::string> downHashes;
 	rsFiles->FileDownloads(downHashes);
 
-	/* get only once */
-	std::map<std::string, std::string> versions;
-	rsDisc->getDiscVersions(versions);
-
 	/* build set for quick search */
 	std::set<std::string> hashs;
 	std::list<std::string>::iterator it;
@@ -1272,7 +1275,7 @@ void TransfersDialog::insertTransfers()
 
 		hashs.erase(hashIt);
 
-		if (addItem(row, fileInfo, versions) < 0) {
+		if (addItem(row, fileInfo) < 0) {
 			DLListModel->removeRow(row);
 			rowCount = DLListModel->rowCount();
 			continue;
@@ -1294,7 +1297,7 @@ void TransfersDialog::insertTransfers()
 			continue;
 		}
 
-		addItem(-1, fileInfo, versions);
+		addItem(-1, fileInfo);
 	}
 
 	ui.downloadList->setSortingEnabled(true);

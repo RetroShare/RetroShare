@@ -46,9 +46,8 @@
 
 /******************** notify of new Cert **************************/
 
-#include <openssl/err.h>
 #include <openssl/rand.h>
-#include <openssl/x509.h>
+#include <openssl/ssl.h>
 
 #include <iomanip>
 
@@ -1120,7 +1119,7 @@ int AuthSSLimpl::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
             #ifdef AUTHSSL_DEBUG
             fprintf(stderr, "Doing REAL PGP Certificates\n");
             #endif
-				uint32_t auth_diagnostic ;
+			uint32_t auth_diagnostic ;
 
             /* do the REAL Authentication */
             if (!AuthX509WithGPG(X509_STORE_CTX_get_current_cert(ctx),auth_diagnostic))
@@ -1128,7 +1127,7 @@ int AuthSSLimpl::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
                     #ifdef AUTHSSL_DEBUG
                     fprintf(stderr, "AuthSSLimpl::VerifyX509Callback() X509 not authenticated.\n");
                     #endif
-						  std::cerr << "(WW) Certificate was rejected because authentication failed. Diagnostic = " << auth_diagnostic << std::endl;
+					std::cerr << "(WW) Certificate was rejected because authentication failed. Diagnostic = " << auth_diagnostic << std::endl;
                     return false;
             }
             std::string pgpid = getX509CNString(X509_STORE_CTX_get_current_cert(ctx)->cert_info->issuer);
@@ -1401,13 +1400,12 @@ void AuthSSLimpl::getCurrentConnectionAttemptInfo(std::string& gpg_id,std::strin
 bool    AuthSSLimpl::FailedCertificate(X509 *x509, const std::string& gpgid,
 													const std::string& sslid,
 													const std::string& sslcn,
-													const struct sockaddr_in& addr, 
+													const struct sockaddr_storage& addr, 
 													bool incoming)
 {
-	std::string ip_address ;
-	rs_sprintf_append(ip_address, "%s:%u", rs_inet_ntoa(addr.sin_addr).c_str(), ntohs(addr.sin_port));
-	uint32_t auth_diagnostic = 0 ;
+	std::string ip_address = sockaddr_storage_tostring(addr);
 
+	uint32_t auth_diagnostic = 0 ;
 	bool authed ;
 
 	if(x509 == NULL)
@@ -1649,7 +1647,7 @@ bool AuthSSLimpl::loadList(std::list<RsItem*>& load)
 
                             X509 *peer = loadX509FromPEM(kit->value);
 			    /* authenticate it */
-									 uint32_t diagnos ;
+				uint32_t diagnos ;
 			    if (AuthX509WithGPG(peer,diagnos))
 			    {
 				LocalStoreCert(peer);

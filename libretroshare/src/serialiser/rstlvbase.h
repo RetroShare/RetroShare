@@ -131,10 +131,13 @@ const uint16_t TLV_TYPE_STR_MSG       = 0x0057;
 const uint16_t TLV_TYPE_STR_SUBJECT   = 0x0058;
 const uint16_t TLV_TYPE_STR_LINK      = 0x0059;
 const uint16_t TLV_TYPE_STR_GENID     = 0x005a;
-const uint16_t TLV_TYPE_STR_GPGID     = 0x005b;
+const uint16_t TLV_TYPE_STR_GPGID     = 0x005b; /* depreciated */
+const uint16_t TLV_TYPE_STR_PGPID     = 0x005b; /* same as GPG */
 const uint16_t TLV_TYPE_STR_LOCATION  = 0x005c;
-const uint16_t TLV_TYPE_STR_CERT_GPG  = 0x005d;
+const uint16_t TLV_TYPE_STR_CERT_GPG  = 0x005d; 
+const uint16_t TLV_TYPE_STR_PGPCERT   = 0x005d; /* same as CERT_GPG */
 const uint16_t TLV_TYPE_STR_CERT_SSL  = 0x005e;
+const uint16_t TLV_TYPE_STR_VERSION   = 0x005f;
 
 /* Wide Chars (4 bytes per char) for internationalisation */
 const uint16_t TLV_TYPE_WSTR_PEERID   = 0x0060;
@@ -157,6 +160,11 @@ const uint16_t TLV_TYPE_IPV4_LOCAL    = 0x0080;
 const uint16_t TLV_TYPE_IPV4_REMOTE   = 0x0081;
 const uint16_t TLV_TYPE_IPV4_LAST     = 0x0082;
 const uint16_t TLV_TYPE_STR_DYNDNS    = 0x0083;
+const uint16_t TLV_TYPE_STR_DOMADDR   = 0x0084;
+
+// rearrange these in the future.
+const uint16_t TLV_TYPE_IPV4          = 0x0085;
+const uint16_t TLV_TYPE_IPV6          = 0x0086;
 
 /*** MORE STRING IDS ****/
 const uint16_t TLV_TYPE_STR_GROUPID   = 0x00a0;
@@ -201,6 +209,10 @@ const uint16_t TLV_TYPE_WKEYVALUESET  = 0x1013;
 const uint16_t TLV_TYPE_STRINGSET     = 0x1020; /* dummy non-existant */
 const uint16_t TLV_TYPE_PEERSET       = 0x1021;
 const uint16_t TLV_TYPE_HASHSET       = 0x1022;
+
+const uint16_t TLV_TYPE_PGPIDSET      = 0x1023;
+const uint16_t TLV_TYPE_RECOGNSET     = 0x1024;
+
 const uint16_t TLV_TYPE_SERVICESET    = 0x1030; 
 
 const uint16_t TLV_TYPE_SECURITYKEY   = 0x1040;
@@ -214,6 +226,7 @@ const uint16_t TLV_TYPE_IMAGE         = 0x1060;
 
 const uint16_t TLV_TYPE_ADDRESS_INFO  = 0x1070;
 const uint16_t TLV_TYPE_ADDRESS_SET   = 0x1071;
+const uint16_t TLV_TYPE_ADDRESS       = 0x1072;
 
 const uint16_t TLV_TYPE_DSDV_ENDPOINT = 0x1080;
 const uint16_t TLV_TYPE_DSDV_ENTRY    = 0x1081;
@@ -271,6 +284,10 @@ uint32_t GetTlvWideStringSize(std::wstring &in);
 bool     SetTlvIpAddrPortV4(void *data, uint32_t size, uint32_t *offset, uint16_t type, struct sockaddr_in *out);
 bool     GetTlvIpAddrPortV4(void *data, uint32_t size, uint32_t *offset, uint16_t type, struct sockaddr_in *in);
 uint32_t GetTlvIpAddrPortV4Size();
+
+bool     SetTlvIpAddrPortV6(void *data, uint32_t size, uint32_t *offset, uint16_t type, struct sockaddr_in6 *out);
+bool     GetTlvIpAddrPortV6(void *data, uint32_t size, uint32_t *offset, uint16_t type, struct sockaddr_in6 *in);
+uint32_t GetTlvIpAddrPortV6Size();
 
 /* additional function to be added
 

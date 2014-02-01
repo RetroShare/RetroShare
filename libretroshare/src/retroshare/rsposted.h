@@ -82,7 +82,6 @@ class RsPosted : public RsGxsIfaceHelper, public RsGxsCommentService
 virtual ~RsPosted() { return; }
 
 	    /* Specific Service Data */
-
 virtual bool getGroupData(const uint32_t &token, std::vector<RsPostedGroup> &groups) = 0;
 virtual bool getPostData(const uint32_t &token, std::vector<RsPostedPost> &posts) = 0;
 virtual bool getRelatedPosts(const uint32_t &token, std::vector<RsPostedPost> &posts) = 0;

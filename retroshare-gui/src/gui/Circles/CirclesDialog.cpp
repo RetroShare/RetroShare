@@ -65,7 +65,7 @@ CirclesDialog::CirclesDialog(QWidget *parent)
 	mStateHelper->addWidget(CIRCLESDIALOG_GROUPMETA, ui.treeWidget_friends, UISTATE_ACTIVE_ENABLED);
 	mStateHelper->addWidget(CIRCLESDIALOG_GROUPMETA, ui.treeWidget_category, UISTATE_ACTIVE_ENABLED);
 
-	mStateHelper->setWidgetEnabled(ui.pushButton_editCircle, false); // not implemented
+	mStateHelper->setWidgetEnabled(ui.pushButton_editCircle, false);
 
 	/* Connect signals */
 	connect(ui.pushButton_extCircle, SIGNAL(clicked()), this, SLOT(createExternalCircle()));
@@ -121,12 +121,18 @@ void CirclesDialog::createPersonalCircle()
 
 void CirclesDialog::editExistingCircle()
 {
-#if 0
-	std::string id;
+	QTreeWidgetItem *item = ui.treeWidget_membership->currentItem();
+	if ((!item) || (!item->parent()))
+	{
+		return;
+	}
+
+	QString coltext = item->text(CIRCLEGROUP_CIRCLE_COL_GROUPID);
+	std::string id = coltext.toStdString();
+
 	CreateCircleDialog dlg;
 	dlg.editExistingId(id);
 	dlg.exec();
-#endif
 }
 
 void CirclesDialog::reloadAll()
@@ -357,6 +363,7 @@ void CirclesDialog::circle_selected()
 
 	if ((!item) || (!item->parent()))
 	{
+		mStateHelper->setWidgetEnabled(ui.pushButton_editCircle, false);
 		return;
 	}
 
@@ -385,6 +392,7 @@ void CirclesDialog::circle_selected()
 	{
 		set_tree_background(ui.treeWidget_friends, GRAY_BACKGROUND);
 	}
+	mStateHelper->setWidgetEnabled(ui.pushButton_editCircle, true);
 }
 
 void CirclesDialog::friend_selected()

@@ -74,8 +74,8 @@ class PortForwardParams
 	uint32_t fwdId;
 	uint32_t status;
 	uint32_t typeFlags;
-	struct sockaddr_in intAddr;
-	struct sockaddr_in extaddr;
+	struct sockaddr_storage intAddr;
+	struct sockaddr_storage extaddr;
 };
 
 class pqiNetAssistFirewall: public pqiNetAssist
@@ -89,8 +89,8 @@ virtual void    setInternalPort(unsigned short iport_in) = 0;
 virtual void    setExternalPort(unsigned short eport_in) = 0;
  
 	 	/* as determined by uPnP */
-virtual bool    getInternalAddress(struct sockaddr_in &addr) = 0;
-virtual bool    getExternalAddress(struct sockaddr_in &addr) = 0;
+virtual bool    getInternalAddress(struct sockaddr_storage &addr) = 0;
+virtual bool    getExternalAddress(struct sockaddr_storage &addr) = 0;
 
 
 		/* New Port Forward interface to support as many ports as necessary */
@@ -109,7 +109,7 @@ class pqiNetAssistPeerShare
 	public:
 
 	/* share Addresses for various reasons (bad peers, etc) */
-virtual void 	updatePeer(std::string id, struct sockaddr_in addr, int type, int reason, int age) = 0;
+virtual void 	updatePeer(std::string id, const struct sockaddr_storage &addr, int type, int reason, int age) = 0;
 
 };
 
@@ -126,7 +126,7 @@ class pqiAddrAssist
 	pqiAddrAssist() { return; }
 virtual	~pqiAddrAssist() { return; }
 
-virtual bool    getExternalAddr(struct sockaddr_in &remote, uint8_t &stable) = 0;
+virtual bool    getExternalAddr(struct sockaddr_storage &remote, uint8_t &stable) = 0;
 virtual void    setRefreshPeriod(int32_t period) = 0;
 virtual int	tick() = 0; /* for internal accounting */
 
@@ -163,14 +163,14 @@ virtual bool 	findPeer(std::string id) = 0;
 virtual bool 	dropPeer(std::string id) = 0;
 
 	/* add non-active peers (can still toggle active/non-active via above) */
-virtual int addBadPeer(const struct sockaddr_in &addr, uint32_t reason, uint32_t flags, uint32_t age) = 0;
-virtual int addKnownPeer(const std::string &pid, const struct sockaddr_in &addr, uint32_t flags) = 0;
+virtual int addBadPeer(const struct sockaddr_storage &addr, uint32_t reason, uint32_t flags, uint32_t age) = 0;
+virtual int addKnownPeer(const std::string &pid, const struct sockaddr_storage &addr, uint32_t flags) = 0;
 
 virtual void ConnectionFeedback(std::string pid, int mode) = 0;
 
 	/* extract current peer status */
 virtual bool 	getPeerStatus(std::string id, 
-			struct sockaddr_in &laddr, struct sockaddr_in &raddr, 
+			struct sockaddr_storage &laddr, struct sockaddr_storage &raddr, 
 			uint32_t &type, uint32_t &mode) = 0; // DEPRECIATE.
 
 virtual bool    setAttachMode(bool on) = 0;		// FIXUP.

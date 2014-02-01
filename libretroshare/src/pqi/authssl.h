@@ -39,8 +39,8 @@
  * 
  */
 
-#include <openssl/ssl.h>
 #include <openssl/evp.h>
+#include <openssl/x509.h>
 
 #include <string>
 #include <map>
@@ -153,7 +153,7 @@ virtual SSL_CTX *getCTX() = 0;
 virtual void   setCurrentConnectionAttemptInfo(const std::string& gpg_id,const std::string& ssl_id,const std::string& ssl_cn) = 0 ;
 virtual void   getCurrentConnectionAttemptInfo(      std::string& gpg_id,      std::string& ssl_id,      std::string& ssl_cn) = 0 ;
 
-virtual bool    FailedCertificate(X509 *x509, const std::string& gpgid,const std::string& sslid,const std::string& sslcn,const struct sockaddr_in &addr, bool incoming) = 0; /* store for discovery */
+virtual bool    FailedCertificate(X509 *x509, const std::string& gpgid,const std::string& sslid,const std::string& sslcn,const struct sockaddr_storage &addr, bool incoming) = 0; /* store for discovery */
 virtual bool 	CheckCertificate(std::string peerId, X509 *x509) = 0; /* check that they are exact match */
 
 static void setAuthSSL_debug(AuthSSL*) ;	// used for debug only. The real function is InitSSL()
@@ -232,7 +232,7 @@ virtual SSL_CTX *getCTX();
 /* Restored these functions: */
 virtual void   setCurrentConnectionAttemptInfo(const std::string& gpg_id,const std::string& ssl_id,const std::string& ssl_cn) ;
 virtual void   getCurrentConnectionAttemptInfo(      std::string& gpg_id,      std::string& ssl_id,      std::string& ssl_cn) ;
-virtual bool    FailedCertificate(X509 *x509, const std::string& gpgid,const std::string& sslid,const std::string& sslcn,const struct sockaddr_in &addr, bool incoming); /* store for discovery */
+virtual bool    FailedCertificate(X509 *x509, const std::string& gpgid,const std::string& sslid,const std::string& sslcn,const struct sockaddr_storage &addr, bool incoming); /* store for discovery */
 virtual bool 	CheckCertificate(std::string peerId, X509 *x509); /* check that they are exact match */
 
 

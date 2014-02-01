@@ -177,7 +177,7 @@ void    p3zcNatAssist::setExternalPort(unsigned short eport_in)
 	}
 }
 
-bool    p3zcNatAssist::getInternalAddress(struct sockaddr_in &addr)
+bool    p3zcNatAssist::getInternalAddress(struct sockaddr_storage &addr)
 {
 
 #ifdef DEBUG_ZCNATASSIST
@@ -189,7 +189,7 @@ bool    p3zcNatAssist::getInternalAddress(struct sockaddr_in &addr)
 }
 
 
-bool    p3zcNatAssist::getExternalAddress(struct sockaddr_in &addr)
+bool    p3zcNatAssist::getExternalAddress(struct sockaddr_storage &addr)
 {
 	RsStackMutex stack(mZcMtx); /****** STACK LOCK MUTEX *******/
 
@@ -397,10 +397,17 @@ void p3zcNatAssist::callbackMapping(DNSServiceRef sdRef, DNSServiceFlags flags,
 
 
 	mMapped = true;
-	mExternalAddress.sin_addr.s_addr = externalAddress;
-	mExternalAddress.sin_port = externalPort;
+	
+	// THIS APPEARS TO BE IPv4 ONLY!.
+	
+	sockaddr_storage_clear(mExternalAddress);
+	struct sockaddr_in *addr = (struct sockaddr_in *) &mExternalAddress;
+	
+	addr->sin_family = AF_INET;
+	addr->sin_addr.s_addr = externalAddress;
+	addr->sin_port = externalPort;
+	
 	mTTL = ttl;
-
 
 	std::cerr <<  "p3zcNatAssist::callbackMapping() Success";
 	std::cerr << std::endl;
@@ -411,8 +418,7 @@ void p3zcNatAssist::callbackMapping(DNSServiceRef sdRef, DNSServiceFlags flags,
 	std::cerr <<  "internalPort: " << ntohs(internalPort);
 	std::cerr << std::endl;
 
-	std::cerr <<  "externalAddress: " << rs_inet_ntoa(mExternalAddress.sin_addr);
-	std::cerr <<  ":" << ntohs(mExternalAddress.sin_port);
+	std::cerr <<  "externalAddress: " << sockaddr_storage_tostring(mExternalAddress);
 	std::cerr << std::endl;
 
 	std::cerr <<  "protocol: " << protocol;

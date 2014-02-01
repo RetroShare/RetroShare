@@ -59,8 +59,6 @@ RsServer::RsServer()
 	mNotify = new p3Notify() ;
 	rsNotify = mNotify ;
 
-	ftserver = NULL;
-
 	mPeerMgr = NULL;
 	mLinkMgr = NULL;
 	mNetMgr = NULL;
@@ -70,12 +68,11 @@ RsServer::RsServer()
 	mPluginsManager = NULL;
 
 	/* services */
-	ad = NULL;
+	mHeart = NULL;
+	mDisc = NULL;
 	msgSrv = NULL;
 	chatSrv = NULL;
 	mStatusSrv = NULL;
-	mChannels = NULL;
-	mForums = NULL;
 
 	/* caches (that need ticking) */
 
@@ -169,7 +166,7 @@ void 	RsServer::run()
 			/******************************** RUN SERVER *****************/
 			lockRsCore();
 
-			int moreToTick = ftserver -> tick();
+			int moreToTick = pqih->tick();
 
 #ifdef	DEBUG_TICK
 			std::cerr << "RsServer::run() ftserver->tick(): moreToTick: " << moreToTick << std::endl;

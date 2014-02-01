@@ -38,14 +38,16 @@
  */
 
 /* These are Cache Only */
-const uint16_t RS_SERVICE_TYPE_FILE_INDEX  = 0x0001;
+const uint16_t RS_SERVICE_TYPE_FILE_INDEX    = 0x0001;
 
 /* These are Services only */
-const uint16_t RS_SERVICE_TYPE_DISC        = 0x0011;
-const uint16_t RS_SERVICE_TYPE_CHAT        = 0x0012;
-const uint16_t RS_SERVICE_TYPE_MSG         = 0x0013;
-const uint16_t RS_SERVICE_TYPE_TURTLE      = 0x0014;
-const uint16_t RS_SERVICE_TYPE_TUNNEL      = 0x0015;
+const uint16_t RS_SERVICE_TYPE_DISC          = 0x0011;
+const uint16_t RS_SERVICE_TYPE_CHAT          = 0x0012;
+const uint16_t RS_SERVICE_TYPE_MSG           = 0x0013;
+const uint16_t RS_SERVICE_TYPE_TURTLE        = 0x0014;
+const uint16_t RS_SERVICE_TYPE_TUNNEL        = 0x0015;
+const uint16_t RS_SERVICE_TYPE_HEARTBEAT     = 0x0016;
+const uint16_t RS_SERVICE_TYPE_FILE_TRANSFER = 0x0017;
 
 /* BanList Still Testing at the moment - Service Only */
 const uint16_t RS_SERVICE_TYPE_BANLIST     = 0x0101;
@@ -103,9 +105,12 @@ const uint16_t RS_SERVICE_TYPE_PROXY       = 0xf030;
 
 /* DSDV Testing at the moment - Service Only */
 const uint16_t RS_SERVICE_TYPE_DSDV        = 0xf050;
+/* Latency RTT Measurements */
+const uint16_t RS_SERVICE_TYPE_RTT         = 0xf051;
 
 /* Bandwidth Testing at the moment - Service Only */
 const uint16_t RS_SERVICE_TYPE_BWCTRL      = 0xf060;
+
 
 
 
@@ -148,6 +153,8 @@ const uint16_t RS_SERVICE_GXSV3_TYPE_FORUMS      = 0xf325;
 const uint16_t RS_SERVICE_GXSV3_TYPE_POSTED      = 0xf326;
 const uint16_t RS_SERVICE_GXSV3_TYPE_CHANNELS    = 0xf327;
 const uint16_t RS_SERVICE_GXSV3_TYPE_GXSCIRCLE   = 0xf328;
+
+const uint16_t RS_SERVICE_TYPE_GXS_RECOGN        = 0xf331;
 
 /***************** IDS ALLOCATED FOR PLUGINS ******************/
 

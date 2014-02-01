@@ -45,12 +45,7 @@
 
 #else
 
-
 #include "util/rsnet.h" /* more generic networking header */
-
-#include <winsock2.h>
-typedef int socklen_t;
-//typedef unsigned long in_addr_t;
 
 // Some Network functions that are missing from windows.
 
@@ -106,8 +101,8 @@ int sockaddr_cmp(struct sockaddr_in &addr1, struct sockaddr_in &addr2 );
 int inaddr_cmp(struct sockaddr_in addr1, struct sockaddr_in addr2 );
 int inaddr_cmp(struct sockaddr_in addr1, unsigned long);
 
-bool    getPreferredInterface(struct in_addr &routeAddr, struct in_addr &prefAddr); // returns best addr.
-bool getLocalInterfaces(in_addr &routeAddr, std::list<struct in_addr> &addrs); // returns all possible addrs.
+bool getPreferredInterface(struct sockaddr_storage &existAddr, struct sockaddr_storage &prefAddr); // returns best addr.
+bool getLocalInterfaces(struct sockaddr_storage &existAddr, std::list<struct sockaddr_storage> &addrs); // returns all possible addrs.
 
 	// checks (addr1 & 255.255.255.0) == (addr2 & 255.255.255.0)
 bool    isSameSubnet(struct in_addr *addr1, struct in_addr *addr2);

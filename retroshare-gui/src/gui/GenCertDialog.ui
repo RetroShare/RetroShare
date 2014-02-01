@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>691</width>
-    <height>442</height>
+    <width>618</width>
+    <height>641</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -32,14 +32,26 @@
        <height>30</height>
       </size>
      </property>
-     <layout class="QGridLayout" name="gridLayout">
-      <property name="horizontalSpacing">
-       <number>0</number>
-      </property>
-      <item row="2" column="0">
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>You can install retroshare on different locations using the same identity. For this, just export the selected identity, and import it on the new computer, then create a new location with it.</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QGroupBox" name="groupBox">
-        <layout class="QVBoxLayout" name="verticalLayout_3">
-         <item>
+        <layout class="QGridLayout" name="gridLayout">
+         <item row="0" column="0" colspan="4">
           <widget class="QLabel" name="no_gpg_key_label">
            <property name="text">
             <string>It looks like you don't own any profile (PGP keys). Please fill in the form below to create one, or import an existing profile.</string>
@@ -49,7 +61,7 @@
            </property>
           </widget>
          </item>
-         <item>
+         <item row="1" column="0" colspan="4">
           <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,0,0,0">
            <property name="spacing">
             <number>6</number>
@@ -118,152 +130,204 @@
            </item>
           </layout>
          </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout">
-           <item>
-            <layout class="QVBoxLayout" name="verticalLayout">
-             <item>
-              <widget class="QLabel" name="genPGPuserlabel">
-               <property name="text">
-                <string>Use identity</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="name_label">
-               <property name="text">
-                <string>Name</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="email_label">
-               <property name="text">
-                <string>Email</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="password_label">
-               <property name="toolTip">
-                <string>This Password is for PGP</string>
-               </property>
-               <property name="text">
-                <string>Password</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="password_label_2">
-               <property name="toolTip">
-                <string>This Password is for PGP</string>
-               </property>
-               <property name="text">
-                <string>Password (check)</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="location_label">
-               <property name="text">
-                <string>Location</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QVBoxLayout" name="verticalLayout_2">
-             <item>
-              <widget class="QComboBox" name="genPGPuser">
-               <property name="toolTip">
-                <string>Your profile is associated with a PGP key. RetroShare currently ignores DSA keys.</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="name_input">
-               <property name="toolTip">
-                <string>Enter your nickname here</string>
-               </property>
-               <property name="maxLength">
-                <number>64</number>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="email_input">
-               <property name="toolTip">
-                <string>Be careful: this email will be visible to your friends and friends 
+         <item row="2" column="0">
+          <widget class="QLabel" name="genPGPuserlabel">
+           <property name="text">
+            <string>Use identity</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1" colspan="3">
+          <widget class="QComboBox" name="genPGPuser">
+           <property name="toolTip">
+            <string>Your profile is associated with a PGP key. RetroShare currently ignores DSA keys.</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="name_label">
+           <property name="text">
+            <string>Name</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1" colspan="3">
+          <widget class="QLineEdit" name="name_input">
+           <property name="toolTip">
+            <string>Enter your nickname here</string>
+           </property>
+           <property name="maxLength">
+            <number>64</number>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QLabel" name="email_label">
+           <property name="text">
+            <string>Email</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1" colspan="3">
+          <widget class="QLineEdit" name="email_input">
+           <property name="toolTip">
+            <string>Be careful: this email will be visible to your friends and friends 
 of your friends. This information is required by PGP, but to stay 
 anonymous, you can use a fake email.</string>
-               </property>
-               <property name="maxLength">
-                <number>64</number>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="password_input">
-               <property name="toolTip">
-                <string>Put a strong password here. This password protects your PGP key.</string>
-               </property>
-               <property name="inputMask">
-                <string/>
-               </property>
-               <property name="maxLength">
-                <number>1024</number>
-               </property>
-               <property name="echoMode">
-                <enum>QLineEdit::Password</enum>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="password_input_2">
-               <property name="toolTip">
-                <string>Put a strong password here. This password protects your PGP key.</string>
-               </property>
-               <property name="inputMask">
-                <string/>
-               </property>
-               <property name="maxLength">
-                <number>1024</number>
-               </property>
-               <property name="echoMode">
-                <enum>QLineEdit::Password</enum>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLineEdit" name="location_input">
-               <property name="maxLength">
-                <number>64</number>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-          </layout>
+           </property>
+           <property name="maxLength">
+            <number>64</number>
+           </property>
+          </widget>
          </item>
-         <item>
-          <widget class="QLabel" name="entropy_label">
+         <item row="5" column="0">
+          <widget class="QLabel" name="password_label">
+           <property name="toolTip">
+            <string>This Password is for PGP</string>
+           </property>
            <property name="text">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Before proceeding, move your mouse around to help Retroshare collect as much randomness as possible. Filling the progressbar to 20% is needed, 100% is advised.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string>Password</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="1" colspan="3">
+          <widget class="QLineEdit" name="password_input">
+           <property name="toolTip">
+            <string>Put a strong password here. This password protects your PGP key.</string>
+           </property>
+           <property name="inputMask">
+            <string/>
+           </property>
+           <property name="maxLength">
+            <number>1024</number>
+           </property>
+           <property name="echoMode">
+            <enum>QLineEdit::Password</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="0">
+          <widget class="QLabel" name="location_label">
+           <property name="text">
+            <string>Location</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="1" colspan="3">
+          <widget class="QLineEdit" name="location_input">
+           <property name="maxLength">
+            <number>64</number>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="1" colspan="3">
+          <widget class="QLabel" name="label_location2">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="lineWidth">
+            <number>1</number>
+           </property>
+           <property name="text">
+            <string>Put a meaningful location. ex : home, laptop, etc. This field will be used to differentiate different installations with the same identity (PGP key).</string>
+           </property>
+           <property name="scaledContents">
+            <bool>false</bool>
            </property>
            <property name="wordWrap">
             <bool>true</bool>
            </property>
           </widget>
          </item>
-         <item>
-          <widget class="QProgressBar" name="entropy_bar">
-           <property name="value">
-            <number>24</number>
+         <item row="8" column="0" colspan="4">
+          <widget class="QCheckBox" name="hidden_checkbox">
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>32</height>
+            </size>
+           </property>
+           <property name="toolTip">
+            <string>Your profile is associated with a PGP key</string>
+           </property>
+           <property name="text">
+            <string>Create a Hidden Location.</string>
+           </property>
+           <property name="icon">
+            <iconset resource="images.qrc">
+             <normaloff>:/images/contact_new128.png</normaloff>:/images/contact_new128.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>32</width>
+             <height>32</height>
+            </size>
+           </property>
+           <property name="tristate">
+            <bool>false</bool>
            </property>
           </widget>
          </item>
-         <item>
+         <item row="9" column="0">
+          <widget class="QLabel" name="hiddenaddr_label">
+           <property name="text">
+            <string>Tor Address</string>
+           </property>
+          </widget>
+         </item>
+         <item row="9" column="1">
+          <widget class="QLineEdit" name="hiddenaddr_input">
+           <property name="maxLength">
+            <number>64</number>
+           </property>
+          </widget>
+         </item>
+         <item row="9" column="2">
+          <widget class="QLabel" name="hiddenport_label">
+           <property name="text">
+            <string>Port</string>
+           </property>
+          </widget>
+         </item>
+         <item row="9" column="3">
+          <widget class="QSpinBox" name="hiddenport_spinBox">
+           <property name="minimum">
+            <number>1</number>
+           </property>
+           <property name="maximum">
+            <number>65535</number>
+           </property>
+           <property name="value">
+            <number>7812</number>
+           </property>
+          </widget>
+         </item>
+         <item row="10" column="1" colspan="3">
+          <widget class="QLabel" name="label_hiddenaddr2">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="lineWidth">
+            <number>1</number>
+           </property>
+           <property name="text">
+            <string>This is a TOR Onion address of the form: xa76giaf6ifda7ri63i263.onion and your selected port,  you must first launch TOR and create a new hidden service to generate this address.</string>
+           </property>
+           <property name="scaledContents">
+            <bool>false</bool>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="11" column="1" colspan="3">
           <widget class="QPushButton" name="genButton">
            <property name="maximumSize">
             <size>
@@ -271,76 +335,41 @@ anonymous, you can use a fake email.</string>
              <height>26</height>
             </size>
            </property>
-           <property name="font">
-            <font>
-             <family>Arial</family>
-             <weight>50</weight>
-             <bold>false</bold>
-            </font>
-           </property>
-           <property name="styleSheet">
-            <string notr="true"/>
-           </property>
            <property name="text">
             <string>Create new identity</string>
            </property>
+           <property name="icon">
+            <iconset resource="images.qrc">
+             <normaloff>:/images/contact_new.png</normaloff>:/images/contact_new.png</iconset>
+           </property>
           </widget>
          </item>
+         <item row="12" column="1">
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>1</width>
+             <height>1</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
         </layout>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="header_label">
-        <property name="font">
-         <font>
-          <family>Tahoma</family>
-          <pointsize>11</pointsize>
-         </font>
-        </property>
-        <property name="text">
-         <string>RetroShare uses PGP keys for identity management.</string>
-        </property>
-        <property name="wordWrap">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="0">
-       <spacer name="verticalSpacer">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>1</width>
-          <height>1</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="genprofileinfo_label">
-        <property name="font">
-         <font>
-          <family>Tahoma</family>
-          <pointsize>11</pointsize>
-         </font>
-        </property>
-        <property name="text">
-         <string>You can install retroshare on different locations using the same identity. For this, just export the selected identity, and import it on the new computer, then create a new location with it.</string>
-        </property>
-        <property name="wordWrap">
-         <bool>true</bool>
-        </property>
        </widget>
       </item>
      </layout>
     </widget>
    </item>
    <item row="0" column="0">
-    <widget class="HeaderFrame" name="headerFrame">
-     <property name="styleSheet">
-      <string notr="true"/>
+    <widget class="QFrame" name="headerFrame">
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>140</height>
+      </size>
      </property>
      <property name="frameShape">
       <enum>QFrame::NoFrame</enum>
@@ -348,22 +377,71 @@ anonymous, you can use a fake email.</string>
      <property name="frameShadow">
       <enum>QFrame::Plain</enum>
      </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <property name="topMargin">
+       <number>3</number>
+      </property>
+      <property name="bottomMargin">
+       <number>3</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="headerImage">
+        <property name="minimumSize">
+         <size>
+          <width>128</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>128</width>
+          <height>128</height>
+         </size>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="pixmap">
+         <pixmap resource="images.qrc">:/images/contact_new128.png</pixmap>
+        </property>
+        <property name="scaledContents">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="headerLayout">
+        <item>
+         <widget class="QLabel" name="headerLabel">
+          <property name="font">
+           <font>
+            <pointsize>16</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Create a new Identity</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="headerLabel2">
+          <property name="text">
+           <string>RetroShare uses PGP keys for identity management.</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
     </widget>
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>HeaderFrame</class>
-   <extends>QFrame</extends>
-   <header>gui/common/HeaderFrame.h</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <tabstops>
   <tabstop>genPGPuser</tabstop>
   <tabstop>name_input</tabstop>
   <tabstop>email_input</tabstop>
+  <tabstop>password_input</tabstop>
   <tabstop>location_input</tabstop>
  </tabstops>
  <resources>

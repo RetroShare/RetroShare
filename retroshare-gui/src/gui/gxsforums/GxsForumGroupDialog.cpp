@@ -26,7 +26,9 @@
 
 // To start with we only have open forums - with distribution controls.
 			
-const uint32_t ForumCreateEnabledFlags = ( //GXS_GROUP_FLAGS_ICON        |
+const uint32_t ForumCreateEnabledFlags = ( 
+			GXS_GROUP_FLAGS_NAME        |
+			GXS_GROUP_FLAGS_ICON        |
 			GXS_GROUP_FLAGS_DESCRIPTION   |
 			GXS_GROUP_FLAGS_DISTRIBUTION  |
 			// GXS_GROUP_FLAGS_PUBLISHSIGN   |
@@ -52,13 +54,16 @@ const uint32_t ForumCreateDefaultsFlags = ( GXS_GROUP_DEFAULTS_DISTRIB_PUBLIC   
 			GXS_GROUP_DEFAULTS_COMMENTS_NO          |
 			0);
 
+const uint32_t ForumEditEnabledFlags = ForumCreateEnabledFlags;
+const uint32_t ForumEditDefaultsFlags = ForumCreateDefaultsFlags;
+
 GxsForumGroupDialog::GxsForumGroupDialog(TokenQueue *tokenQueue, QWidget *parent)
 	:GxsGroupDialog(tokenQueue, ForumCreateEnabledFlags, ForumCreateDefaultsFlags, parent)
 {
 }
 
-GxsForumGroupDialog::GxsForumGroupDialog(const RsGxsForumGroup &group, Mode mode, QWidget *parent)
-	:GxsGroupDialog(group.mMeta, mode, parent)
+GxsForumGroupDialog::GxsForumGroupDialog(TokenQueue *tokenExternalQueue, RsTokenService *tokenService, Mode mode, RsGxsGroupId groupId, QWidget *parent)
+:GxsGroupDialog(tokenExternalQueue, tokenService, mode, groupId, ForumEditEnabledFlags, ForumEditDefaultsFlags, parent)
 {
 }
 
@@ -90,8 +95,52 @@ bool GxsForumGroupDialog::service_CreateGroup(uint32_t &token, const RsGroupMeta
 	// Specific Function.
 	RsGxsForumGroup grp;
 	grp.mMeta = meta;
-	//grp.mDescription = std::string(desc.toUtf8());
+    grp.mDescription = std::string(ui.groupDesc->toPlainText().toUtf8());
 
 	rsGxsForums->createGroup(token, grp);
 	return true;
 }
+
+bool GxsForumGroupDialog::service_EditGroup(uint32_t &token, RsGxsGroupUpdateMeta &updateMeta)
+{
+	std::cerr << "GxsForumGroupDialog::service_EditGroup() UNFINISHED";
+	std::cerr << std::endl;
+
+	RsGxsForumGroup grp;
+	grp.mDescription = std::string(ui.groupDesc->toPlainText().toUtf8());
+
+	rsGxsForums->updateGroup(token, updateMeta, grp);
+	return true;
+}
+
+bool GxsForumGroupDialog::service_loadGroup(uint32_t token, Mode mode, RsGroupMetaData& groupMetaData)
+{
+        std::cerr << "GxsForumGroupDialog::service_loadGroup(" << token << ")";
+        std::cerr << std::endl;
+
+        std::vector<RsGxsForumGroup> groups;
+        if (!rsGxsForums->getGroupData(token, groups))
+        {
+                std::cerr << "GxsForumGroupDialog::service_loadGroup() Error getting GroupData";
+                std::cerr << std::endl;
+                return false;
+        }
+
+        if (groups.size() != 1)
+        {
+                std::cerr << "GxsForumGroupDialog::service_loadGroup() Error Group.size() != 1";
+                std::cerr << std::endl;
+                return false;
+        }
+
+        std::cerr << "GxsForumsGroupDialog::service_loadGroup() Unfinished Loading";
+        std::cerr << std::endl;
+
+	groupMetaData = groups[0].mMeta;
+	return true;
+}
+
+
+
+
+

@@ -49,10 +49,10 @@ bool GxsPublishMsgTest::testMsgSubmissionRetrieval()
     msgOut->meta.mMsgId = msgId.second;
 
     DummyMsgMap msgMap;
-	std::vector<RsDummyMsg*> msgV;
-	msgV.push_back(msgOut);
-	msgMap[msgOut->meta.mGroupId] = msgV;
-	storeToMsgDataOutMaps(msgMap);
+    std::vector<RsDummyMsg*> msgV;
+    msgV.push_back(msgOut);
+    msgMap[msgOut->meta.mGroupId] = msgV;
+    storeToMsgDataOutMaps(msgMap);
 
 
     RsTokReqOptions opts;

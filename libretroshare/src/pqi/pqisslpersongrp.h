@@ -43,7 +43,7 @@ class pqisslpersongrp: public pqipersongrp
 	protected:
 
 	/********* FUNCTIONS to OVERLOAD for specialisation ********/
-virtual pqilistener *locked_createListener(struct sockaddr_in laddr);
+virtual pqilistener *locked_createListener(const struct sockaddr_storage &laddr);
 virtual pqiperson   *locked_createPerson(std::string id, pqilistener *listener);
 	/********* FUNCTIONS to OVERLOAD for specialisation ********/
 

@@ -126,13 +126,20 @@ public:
 public:
 
     /*!
-     * This adds a groups to the gxs data base, this is a blocking call
-     * Responsibility for grp still lies with callee \n
+     * This adds a groups to the gxs data base, this is a blocking call \n
      * If function returns successfully DataAccess can be queried for grp
      * @param grp the group to add, responsibility grp passed lies with callee
      * @return false if group cound not be added
      */
     bool addGroupData(RsNxsGrp* grp);
+
+    /*!
+	 * This updates a groups in the gxs data base, this is a blocking call \n
+	 * If function returns successfully DataAccess can be queried for grp
+	 * @param grp the group to add, responsibility grp passed lies with callee
+	 * @return false if group cound not be added
+	 */
+    bool updateGroupData(RsNxsGrp* grp);
 
     /*!
      * This adds a group to the gxs data base, this is a blocking call \n
@@ -429,11 +436,13 @@ private:
 private:
 
     RsGeneralDataService* mDataStore;
+
+    RsMutex mDataMutex; /* protecting below */
+
     uint32_t mNextToken;
     std::map<uint32_t, uint32_t> mPublicToken;
     std::map<uint32_t, GxsRequest*> mRequests;
 
-    RsMutex mDataMutex;
 
 
 };

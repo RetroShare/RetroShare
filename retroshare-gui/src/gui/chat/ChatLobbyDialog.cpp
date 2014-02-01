@@ -286,7 +286,7 @@ void ChatLobbyDialog::addIncomingChatMsg(const ChatInfo& info)
 {
 	QDateTime sendTime = QDateTime::fromTime_t(info.sendTime);
 	QDateTime recvTime = QDateTime::fromTime_t(info.recvTime);
-	QString message = QString::fromStdWString(info.msg);
+	QString message = QString::fromUtf8(info.msg.c_str());
 	QString name = QString::fromUtf8(info.peer_nickname.c_str());
 	QString rsid = QString::fromUtf8(info.rsid.c_str());
 
@@ -333,7 +333,7 @@ void ChatLobbyDialog::updateParticipantsList()
     std::list<ChatLobbyInfo>::const_iterator it(lInfos.begin());
 
     // Set it to the current ChatLobby
-    for (; it!=lInfos.end() && (*it).lobby_id != lobbyId; ++it);
+    for (; it!=lInfos.end() && (*it).lobby_id != lobbyId; ++it) ;
 
     if (it != lInfos.end()) {
         ChatLobbyInfo cliInfo=(*it);
@@ -484,7 +484,7 @@ bool ChatLobbyDialog::isNicknameInLobby(const QString &nickname) {
 	std::list<ChatLobbyInfo>::const_iterator it(linfos.begin());
 	
 	// Set it to the current ChatLobby
-	for (; it!=linfos.end() && (*it).lobby_id != lobbyId; ++it);
+	for (; it!=linfos.end() && (*it).lobby_id != lobbyId; ++it) ;
 
 	if (it != linfos.end()) {
 		for (std::map<std::string,time_t>::const_iterator it2((*it).nick_names.begin()); it2 != (*it).nick_names.end(); ++it2) {

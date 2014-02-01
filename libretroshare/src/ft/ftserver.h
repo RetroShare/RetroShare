@@ -45,6 +45,7 @@
 
 #include "ft/ftdata.h"
 #include "turtle/turtleclientservice.h"
+#include "services/p3service.h"
 #include "retroshare/rsfiles.h"
 //#include "dbase/cachestrapper.h"
 
@@ -73,7 +74,7 @@ class ftDwlQueue;
 class p3PeerMgr;
 class p3LinkMgr;
 
-class ftServer: public RsFiles, public ftDataSend, public RsTurtleClientService, public RsThread
+class ftServer: public p3Service, public RsFiles, public ftDataSend, public RsTurtleClientService
 {
 
 	public:
@@ -87,8 +88,6 @@ class ftServer: public RsFiles, public ftDataSend, public RsTurtleClientService,
 		/* Assign important variables */
 		void	setConfigDirectory(std::string path);
 
-		void	setP3Interface(P3Interface *pqi);
-
 		/* add Config Items (Extra, Controller) */
 		void	addConfigComponents(p3ConfigMgr *mgr);
 
@@ -100,12 +99,6 @@ class ftServer: public RsFiles, public ftDataSend, public RsTurtleClientService,
 		/* Final Setup (once everything is assigned) */
 		void    SetupFtServer() ;
 		virtual void    connectToTurtleRouter(p3turtle *p) ;
-
-		void	StartupThreads();
-		void	StopThreads();
-
-		/* own thread */
-		virtual void	run();
 
 		// Checks that the given hash is well formed. Used to chase 
 		// string bugs.
@@ -124,6 +117,9 @@ class ftServer: public RsFiles, public ftDataSend, public RsTurtleClientService,
 		/*************** Control Interface *****************************/
 		/************** (Implements RsFiles) ***************************/
 		/***************************************************************/
+
+		void StartupThreads();
+		void StopThreads();
 
 		// member access
 
@@ -238,8 +234,6 @@ class ftServer: public RsFiles, public ftDataSend, public RsTurtleClientService,
 		virtual bool sendDataRequest(const std::string& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunksize);
 		virtual bool sendChunkMapRequest(const std::string& peer_id,const std::string& hash,bool is_client) ;
 		virtual bool sendChunkMap(const std::string& peer_id,const std::string& hash,const CompressedChunkMap& cmap,bool is_client) ;
-		virtual bool sendCRC32MapRequest(const std::string&, const std::string&) ;
-		virtual bool sendCRC32Map(const std::string&, const std::string&, const CRC32Map&) ;
 		virtual bool sendSingleChunkCRCRequest(const std::string& peer_id,const std::string& hash,uint32_t chunk_number) ;
 		virtual bool sendSingleChunkCRC(const std::string& peer_id,const std::string& hash,uint32_t chunk_number,const Sha1CheckSum& crc) ;
 
@@ -250,23 +244,22 @@ class ftServer: public RsFiles, public ftDataSend, public RsTurtleClientService,
 		bool	addConfiguration(p3ConfigMgr *cfgmgr);
 		bool	ResumeTransfers();
 
-	private:
-		bool	handleInputQueues();
-		bool	handleCacheData();
-		bool	handleFileData();
-
 		/******************* p3 Config Overload ************************/
 	protected:
 		/* Key Functions to be overloaded for Full Configuration */
 		virtual RsSerialiser *setupSerialiser();
 		virtual bool saveList(bool &cleanup, std::list<RsItem *>&);
-		virtual bool    loadList(std::list<RsItem *>& load);
+		virtual bool loadList(std::list<RsItem *>& load);
 
 	private:
 		bool  loadConfigMap(std::map<std::string, std::string> &configMap);
 		/******************* p3 Config Overload ************************/
 
 		/*************************** p3 Config Overload ********************/
+
+	protected:
+		int handleIncoming() ;
+		bool handleCacheData() ;
 
 	private:
 
@@ -279,9 +272,6 @@ class ftServer: public RsFiles, public ftDataSend, public RsTurtleClientService,
 		/* no need for Mutex protection -
 		 * as each component is protected independently.
 		 */
-
-		P3Interface *mP3iface;     /* XXX THIS NEEDS PROTECTION */
-
 		p3PeerMgr *mPeerMgr;
 		p3LinkMgr *mLinkMgr;
 
@@ -295,7 +285,6 @@ class ftServer: public RsFiles, public ftDataSend, public RsTurtleClientService,
 		ftDataMultiplex *mFtDataplex;
 		p3turtle *mTurtleRouter ;
 
-
 		ftFileSearch   *mFtSearch;
 
 		ftDwlQueue *mFtDwlQueue;
@@ -304,7 +293,6 @@ class ftServer: public RsFiles, public ftDataSend, public RsTurtleClientService,
 		std::string mConfigPath;
 		std::string mDownloadPath;
 		std::string mPartialsPath;
-
 };
 
 

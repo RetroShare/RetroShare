@@ -151,11 +151,11 @@ void* doExtAddrSearch(void *p)
 		// thread safe copy results.
 		//
 		{
-			RsStackMutex mtx(af->_addrMtx) ;
+			RsStackMutex mtx(af->mAddrMtx) ;
 
-			*(af->_found) = false ;
-			*(af->mFoundTS) = time(NULL) ;
-			*(af->_searching) = false ;
+			af->mFound = false ;
+			af->mFoundTS = time(NULL) ;
+			af->mSearching = false ;
 		}
 		pthread_exit(NULL);
 		return NULL ;
@@ -164,24 +164,25 @@ void* doExtAddrSearch(void *p)
 	sort(res.begin(),res.end()) ; // eliminates outliers.
 
 
-	if(!inet_aton(res[res.size()/2].c_str(),af->_addr))
+
+	if(!sockaddr_storage_ipv4_aton(af->mAddr, res[res.size()/2].c_str()))
 	{
 		std::cerr << "ExtAddrFinder: Could not convert " << res[res.size()/2] << " into an address." << std::endl ;
 		{
-			RsStackMutex mtx(af->_addrMtx) ;
-			*(af->_found) = false ;
-			*(af->mFoundTS) = time(NULL) ;
-			*(af->_searching) = false ;
+			RsStackMutex mtx(af->mAddrMtx) ;
+			af->mFound = false ;
+			af->mFoundTS = time(NULL) ;
+			af->mSearching = false ;
 		}
 		pthread_exit(NULL);
 		return NULL ;
 	}
 
 	{
-		RsStackMutex mtx(af->_addrMtx) ;
-		*(af->_found) = true ;
-		*(af->mFoundTS) = time(NULL) ;
-		*(af->_searching) = false ;
+		RsStackMutex mtx(af->mAddrMtx) ;
+		af->mFound = true ;
+		af->mFoundTS = time(NULL) ;
+		af->mSearching = false ;
 	}
 
 	pthread_exit(NULL);
@@ -197,44 +198,44 @@ void ExtAddrFinder::start_request()
 	pthread_detach(tid); /* so memory is reclaimed in linux */
 }
 
-bool ExtAddrFinder::hasValidIP(struct in_addr *addr)
+bool ExtAddrFinder::hasValidIP(struct sockaddr_storage &addr)
 {
 #ifdef EXTADDRSEARCH_DEBUG
 	std::cerr << "ExtAddrFinder: Getting ip." << std::endl ;
 #endif
 
 	{
-		RsStackMutex mut(_addrMtx) ;
-		if(*_found)
+		RsStackMutex mut(mAddrMtx) ;
+		if(mFound)
 		{
 #ifdef EXTADDRSEARCH_DEBUG
 			std::cerr << "ExtAddrFinder: Has stored ip: responding with this ip." << std::endl ;
 #endif
-			*addr = *_addr;
+			addr = mAddr;
 		}
 	}
 	time_t delta;
 	{
-		RsStackMutex mut(_addrMtx) ;
+		RsStackMutex mut(mAddrMtx) ;
 		//timeout the current ip
-		delta = time(NULL) - *mFoundTS;
+		delta = time(NULL) - mFoundTS;
 	}
 	if((uint32_t)delta > MAX_IP_STORE) {//launch a research
-		if( _addrMtx.trylock())
+		if( mAddrMtx.trylock())
 		{
-			if(!*_searching)
+			if(!mSearching)
 			{
 #ifdef EXTADDRSEARCH_DEBUG
 				std::cerr << "ExtAddrFinder: No stored ip: Initiating new search." << std::endl ;
 #endif
-				*_searching = true ;
+				mSearching = true ;
 				start_request() ;
 			}
 #ifdef EXTADDRSEARCH_DEBUG
 			else
 				std::cerr << "ExtAddrFinder: Already searching." << std::endl ;
 #endif
-			_addrMtx.unlock();
+			mAddrMtx.unlock();
 		}
 #ifdef EXTADDRSEARCH_DEBUG
 		else
@@ -242,24 +243,17 @@ bool ExtAddrFinder::hasValidIP(struct in_addr *addr)
 #endif
 	}
 
-	RsStackMutex mut(_addrMtx) ;
-	return *_found ;
+	RsStackMutex mut(mAddrMtx) ;
+	return mFound ;
 }
 
 void ExtAddrFinder::reset()
 {
-//	while(*_searching) 
-//#ifdef WIN32
-//		Sleep(1000) ;
-//#else
-//		sleep(1) ;
-//#endif
+	RsStackMutex mut(mAddrMtx) ;
 
-	RsStackMutex mut(_addrMtx) ;
-
-	*_found = false ;
-	*_searching = false ;
-	*mFoundTS = time(NULL) - MAX_IP_STORE;
+	mFound = false ;
+	mSearching = false ;
+	mFoundTS = time(NULL) - MAX_IP_STORE;
 }
 
 ExtAddrFinder::~ExtAddrFinder()
@@ -267,37 +261,20 @@ ExtAddrFinder::~ExtAddrFinder()
 #ifdef EXTADDRSEARCH_DEBUG
 	std::cerr << "ExtAddrFinder: Deleting ExtAddrFinder." << std::endl ;
 #endif
-//	while(*_searching) 
-//#ifdef WIN32
-//		Sleep(1000) ;
-//#else
-//		sleep(1) ;
-//#endif
 
-	RsStackMutex mut(_addrMtx) ;
-
-	delete _found ;
-	delete _searching ;
-	free (_addr) ;
 }
 
-ExtAddrFinder::ExtAddrFinder() : _addrMtx("ExtAddrFinder")
+ExtAddrFinder::ExtAddrFinder() : mAddrMtx("ExtAddrFinder")
 {
 #ifdef EXTADDRSEARCH_DEBUG
 	std::cerr << "ExtAddrFinder: Creating new ExtAddrFinder." << std::endl ;
 #endif
-	RsStackMutex mut(_addrMtx) ;
+	RsStackMutex mut(mAddrMtx) ;
 
-	_found = new bool ;
-	*_found = false ;
-
-	_searching = new bool ;
-	*_searching = false ;
-
-	mFoundTS = new time_t;
-	*mFoundTS = time(NULL) - MAX_IP_STORE;
-
-	_addr = (in_addr*)malloc(sizeof(in_addr)) ;
+	mFound = false;
+	mSearching = false;
+	mFoundTS = time(NULL) - MAX_IP_STORE;
+	sockaddr_storage_clear(mAddr);
 
 	_ip_servers.push_back(std::string( "checkip.dyndns.org" )) ;
 	_ip_servers.push_back(std::string( "www.myip.dk"   )) ;
