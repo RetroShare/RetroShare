@@ -48,8 +48,6 @@
  *
  ******************************************************************/
 
-class Sha1CheckSum ;
-
 bool getRawUInt8(void *data, uint32_t size, uint32_t *offset, uint8_t *out);
 bool setRawUInt8(void *data, uint32_t size, uint32_t *offset, uint8_t in);
 

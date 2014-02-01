@@ -71,12 +71,6 @@ class ftFileCreator: public ftFileProvider
 
 		bool hashReceivedData(std::string& hash) ;
 
-		// Checks the CRC32 of all chunks against the given CRC32 map. Re-flag the bad chunks as being void.
-		//        bad_chunks: count of achieved chunks that don't match the CRC
-		// incomplete_chunks: count of any bad or not yet downloaded chunk
-		//
-		bool crossCheckChunkMap(const CRC32Map& ref,uint32_t& bad_chunks,uint32_t& incomplete_chunks) ;
-
 		// Sets all chunks to checking state
 		//
 		void forceCheck() ; 

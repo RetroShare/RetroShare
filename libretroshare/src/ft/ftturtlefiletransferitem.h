@@ -132,24 +132,6 @@ class RsTurtleChunkCrcRequestItem: public RsTurtleGenericTunnelItem
 		virtual uint32_t serial_size() ; 
 };
 
-class RsTurtleFileCrcItem: public RsTurtleGenericTunnelItem			
-{
-	public:
-		RsTurtleFileCrcItem() : RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_FILE_CRC) { setPriorityLevel(QOS_PRIORITY_RS_FILE_CRC);}
-		RsTurtleFileCrcItem(void *data,uint32_t size) ;		// deserialization
-
-		virtual bool shouldStampTunnel() const { return true ; }
-		virtual Direction travelingDirection() const { return DIRECTION_CLIENT ; }
-
-		CRC32Map crc_map ;// Map info for the file in compressed format. Each *bit* in the array uint's says "I have" or "I don't have"
-								// by default, we suppose the peer has all the chunks. This info will thus be and-ed 
-								// with the default file map for this source.
-												
-		virtual std::ostream& print(std::ostream& o, uint16_t) ;
-		virtual bool serialize(void *data,uint32_t& size) ;	
-		virtual uint32_t serial_size() ; 
-};
-
 class RsTurtleChunkCrcItem: public RsTurtleGenericTunnelItem			
 {
 	public:

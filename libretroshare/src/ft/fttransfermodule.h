@@ -136,7 +136,6 @@ public:
   bool completeFileTransfer();
   bool isCheckingHash() ;
   void forceCheck() ;
-  void addCRC32Map(const CRC32Map& map) ;
 
   //interface to multiplex module
   bool recvFileData(const std::string& peerId, uint64_t offset, uint32_t chunk_size, void *data);
@@ -187,12 +186,6 @@ private:
   uint16_t     mFlag;  //2:file canceled, 1:transfer complete, 0: not complete, 3: checking hash, 4: checking chunks
   double desiredRate;
   double actualRate;
-
-  CRC32Map _crcmap ;
-  uint32_t _crcmap_state ;
-  time_t   _crcmap_last_asked_time ;
-  time_t   _crcmap_last_tunnel_keepup ;
-  std::string _crcreq_source ;
 
   time_t _last_activity_time_stamp ;
 

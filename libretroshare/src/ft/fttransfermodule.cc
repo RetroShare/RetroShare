@@ -92,10 +92,6 @@ ftTransferModule::ftTransferModule(ftFileCreator *fc, ftDataMultiplex *dm, ftCon
 	//mChunkSize = 10000;
 	desiredRate = FT_TM_MAX_PEER_RATE; /* 1MB/s ??? */
 	actualRate = 0;
-	_crcmap_state = FT_TM_CRC_MAP_STATE_NOCHECK ;
-	_crcmap_last_asked_time = 0 ;
-	_crcmap_last_tunnel_keepup = 0 ;
-	_crcreq_source = "";
 
 	_last_activity_time_stamp = time(NULL) ;
 }

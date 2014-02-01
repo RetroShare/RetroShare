@@ -217,7 +217,7 @@ bool setRawUFloat32(void *data,uint32_t size,uint32_t *offset,float f)
 
 bool getRawSha1(void *data,uint32_t size,uint32_t *offset,Sha1CheckSum& cs)
 {
-	uint32_t len = 20 ; // SHA1 length in bytes
+	uint32_t len = Sha1CheckSum::SIZE_IN_BYTES ; // SHA1 length in bytes = 20
 
 	/* check there is space for string */
 	if (size < *offset + len)
@@ -227,18 +227,15 @@ bool getRawSha1(void *data,uint32_t size,uint32_t *offset,Sha1CheckSum& cs)
 	}
 	bool ok = true ;
 
-	ok = ok && getRawUInt32(data, size, offset, &cs.fourbytes[0]) ;
-	ok = ok && getRawUInt32(data, size, offset, &cs.fourbytes[1]) ;
-	ok = ok && getRawUInt32(data, size, offset, &cs.fourbytes[2]) ;
-	ok = ok && getRawUInt32(data, size, offset, &cs.fourbytes[3]) ;
-	ok = ok && getRawUInt32(data, size, offset, &cs.fourbytes[4]) ;
+	cs = Sha1CheckSum(&((uint8_t*)data)[*offset]) ;
+	*offset += Sha1CheckSum::SIZE_IN_BYTES ;
 
 	return ok ;
 }
 
 bool setRawSha1(void *data,uint32_t size,uint32_t *offset,const Sha1CheckSum& cs)
 {
-	uint32_t len = 20 ; // SHA1 length in bytes
+	uint32_t len = Sha1CheckSum::SIZE_IN_BYTES ; // SHA1 length in bytes
 
 	if (size < *offset + len)
 	{
@@ -248,12 +245,9 @@ bool setRawSha1(void *data,uint32_t size,uint32_t *offset,const Sha1CheckSum& cs
 
 	bool ok = true ;
 	/* pack it in */
-	ok = ok && setRawUInt32(data, size, offset, cs.fourbytes[0]);
-	ok = ok && setRawUInt32(data, size, offset, cs.fourbytes[1]);
-	ok = ok && setRawUInt32(data, size, offset, cs.fourbytes[2]);
-	ok = ok && setRawUInt32(data, size, offset, cs.fourbytes[3]);
-	ok = ok && setRawUInt32(data, size, offset, cs.fourbytes[4]);
-
+	memcpy((void *) &(((uint8_t *) data)[*offset]), cs.toByteArray(), Sha1CheckSum::SIZE_IN_BYTES) ;
+	offset += Sha1CheckSum::SIZE_IN_BYTES ;
+	
 	return true ;
 }
 bool getRawSSLId(void *data,uint32_t size,uint32_t *offset,SSLIdType& cs)

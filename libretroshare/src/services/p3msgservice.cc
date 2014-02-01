@@ -59,7 +59,7 @@ const int msgservicezone = 54319;
 
 static const uint32_t RS_DISTANT_MSG_STATUS_TUNNEL_OK = 0x0001 ;
 static const uint32_t RS_DISTANT_MSG_STATUS_TUNNEL_DN = 0x0000 ;
-static const uint32_t DISTANT_MSG_HASH_SIZE = 20 ;
+static const uint32_t DISTANT_MSG_HASH_SIZE = Sha1CheckSum::SIZE_IN_BYTES ;
 
 static const uint8_t ENCRYPTED_MSG_PROTOCOL_VERSION_01 = 0x37 ;
 
@@ -2101,7 +2101,7 @@ bool p3MsgService::createDistantOfflineMessengingInvite(time_t time_of_validity,
 	unsigned char hash_bytes[DISTANT_MSG_HASH_SIZE] ;
 	RSRandom::random_bytes( hash_bytes, DISTANT_MSG_HASH_SIZE) ;
 
-	hash = t_RsGenericIdType<DISTANT_MSG_HASH_SIZE>(hash_bytes).toStdString(false) ;
+	hash = Sha1CheckSum(hash_bytes).toStdString(false) ;
 
 	DistantMessengingInvite invite ;
 	invite.time_of_validity = time_of_validity + time(NULL);

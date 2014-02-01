@@ -38,12 +38,12 @@
 #include <string>
 #include <inttypes.h>
 
+#include <util/rsid.h>
 #include <retroshare/rstypes.h>
 
 	/*************** SEND INTERFACE *******************/
 
 class CompressedChunkMap ;
-class Sha1CheckSum ;
 
 class ftDataSend
 {

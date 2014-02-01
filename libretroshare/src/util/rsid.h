@@ -34,7 +34,7 @@
 #include <stdint.h>
 #include <util/rsrandom.h>
 
-template<uint32_t ID_SIZE_IN_BYTES> class t_RsGenericIdType
+template<uint32_t ID_SIZE_IN_BYTES,uint32_t UNIQUE_IDENTIFIER> class t_RsGenericIdType
 {
 	public:
 		t_RsGenericIdType() { memset(bytes,0,ID_SIZE_IN_BYTES) ;}
@@ -50,9 +50,9 @@ template<uint32_t ID_SIZE_IN_BYTES> class t_RsGenericIdType
 
 		// Random initialization. Can be useful for testing.
 		//
-		static t_RsGenericIdType<ID_SIZE_IN_BYTES> random() 
+		static t_RsGenericIdType<ID_SIZE_IN_BYTES,UNIQUE_IDENTIFIER> random() 
 		{
-			t_RsGenericIdType<ID_SIZE_IN_BYTES> id ;
+			t_RsGenericIdType<ID_SIZE_IN_BYTES,UNIQUE_IDENTIFIER> id ;
 
 			for(uint32_t i=0;i<ID_SIZE_IN_BYTES;++i)
 				id.bytes[i] = RSRandom::random_u32() & 0xff ;
@@ -66,19 +66,19 @@ template<uint32_t ID_SIZE_IN_BYTES> class t_RsGenericIdType
 		const unsigned char *toByteArray() const { return &bytes[0] ; }
 		static const uint32_t SIZE_IN_BYTES = ID_SIZE_IN_BYTES ;
 
-		bool operator==(const t_RsGenericIdType<ID_SIZE_IN_BYTES>& fp) const
+		bool operator==(const t_RsGenericIdType<ID_SIZE_IN_BYTES,UNIQUE_IDENTIFIER>& fp) const
 		{
 			for(uint32_t i=0;i<ID_SIZE_IN_BYTES;++i)
 				if(fp.bytes[i] != bytes[i])
 					return false ;
 			return true ;
 		}
-		bool operator!=(const t_RsGenericIdType<ID_SIZE_IN_BYTES>& fp) const
+		bool operator!=(const t_RsGenericIdType<ID_SIZE_IN_BYTES,UNIQUE_IDENTIFIER>& fp) const
 		{
 			return !operator==(fp) ;
 		}
 
-		bool operator<(const t_RsGenericIdType<ID_SIZE_IN_BYTES>& fp) const
+		bool operator<(const t_RsGenericIdType<ID_SIZE_IN_BYTES,UNIQUE_IDENTIFIER>& fp) const
 		{
 			for(uint32_t i=0;i<ID_SIZE_IN_BYTES;++i)
 				if(fp.bytes[i] != bytes[i])
@@ -90,7 +90,7 @@ template<uint32_t ID_SIZE_IN_BYTES> class t_RsGenericIdType
 		unsigned char bytes[ID_SIZE_IN_BYTES] ;
 };
 
-template<uint32_t ID_SIZE_IN_BYTES> std::string t_RsGenericIdType<ID_SIZE_IN_BYTES>::toStdString(bool upper_case) const
+template<uint32_t ID_SIZE_IN_BYTES,uint32_t UNIQUE_IDENTIFIER> std::string t_RsGenericIdType<ID_SIZE_IN_BYTES,UNIQUE_IDENTIFIER>::toStdString(bool upper_case) const
 {
 	static const char outh[16] = { '0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F' } ;
 	static const char outl[16] = { '0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f' } ;
@@ -112,7 +112,7 @@ template<uint32_t ID_SIZE_IN_BYTES> std::string t_RsGenericIdType<ID_SIZE_IN_BYT
 	return res ;
 }
 
-template<uint32_t ID_SIZE_IN_BYTES> t_RsGenericIdType<ID_SIZE_IN_BYTES>::t_RsGenericIdType(const std::string& s) 
+template<uint32_t ID_SIZE_IN_BYTES,uint32_t UNIQUE_IDENTIFIER> t_RsGenericIdType<ID_SIZE_IN_BYTES,UNIQUE_IDENTIFIER>::t_RsGenericIdType(const std::string& s) 
 {
 	int n=0;
 	if(s.length() != ID_SIZE_IN_BYTES*2)
@@ -138,7 +138,7 @@ template<uint32_t ID_SIZE_IN_BYTES> t_RsGenericIdType<ID_SIZE_IN_BYTES>::t_RsGen
 	}
 }
 
-template<uint32_t ID_SIZE_IN_BYTES> t_RsGenericIdType<ID_SIZE_IN_BYTES>::t_RsGenericIdType(const unsigned char *mem) 
+template<uint32_t ID_SIZE_IN_BYTES,uint32_t UNIQUE_IDENTIFIER> t_RsGenericIdType<ID_SIZE_IN_BYTES,UNIQUE_IDENTIFIER>::t_RsGenericIdType(const unsigned char *mem) 
 {
 	memcpy(bytes,mem,ID_SIZE_IN_BYTES) ;
 }
@@ -146,8 +146,17 @@ template<uint32_t ID_SIZE_IN_BYTES> t_RsGenericIdType<ID_SIZE_IN_BYTES>::t_RsGen
 static const int SSL_ID_SIZE              = 16 ;
 static const int PGP_KEY_ID_SIZE          =  8 ;
 static const int PGP_KEY_FINGERPRINT_SIZE = 20 ;
+static const int SHA1_SIZE                = 20 ;
 
-typedef t_RsGenericIdType<SSL_ID_SIZE>              SSLIdType ;
-typedef t_RsGenericIdType<PGP_KEY_ID_SIZE> 			 PGPIdType;
-typedef t_RsGenericIdType<PGP_KEY_FINGERPRINT_SIZE> PGPFingerprintType ;
+// These constants are random, but should be different, in order to make the various IDs incompatible with each other.
+//
+static const uint32_t RS_GENERIC_ID_SSL_ID_TYPE          = 0x038439ff ;
+static const uint32_t RS_GENERIC_ID_PGP_ID_TYPE          = 0x80339f4f ;
+static const uint32_t RS_GENERIC_ID_SHA1_ID_TYPE         = 0x9540284e ;
+static const uint32_t RS_GENERIC_ID_PGP_FINGERPRINT_TYPE = 0x102943e3 ;
+
+typedef t_RsGenericIdType<  SSL_ID_SIZE             , RS_GENERIC_ID_SSL_ID_TYPE>          SSLIdType ;
+typedef t_RsGenericIdType<  PGP_KEY_ID_SIZE         , RS_GENERIC_ID_PGP_ID_TYPE>          PGPIdType;
+typedef t_RsGenericIdType<  SHA1_SIZE               , RS_GENERIC_ID_SHA1_ID_TYPE>         Sha1CheckSum ;
+typedef t_RsGenericIdType<  PGP_KEY_FINGERPRINT_SIZE, RS_GENERIC_ID_PGP_FINGERPRINT_TYPE> PGPFingerprintType ;
 

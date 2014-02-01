@@ -1840,7 +1840,7 @@ void	p3IdService::CacheArbitrationDone(uint32_t mode)
 
 //const int SHA_DIGEST_LENGTH = 20;
 
-typedef t_RsGenericIdType<SHA_DIGEST_LENGTH> GxsIdPgpHash;
+typedef Sha1CheckSum GxsIdPgpHash;
 
 static void calcPGPHash(const RsGxsId &id, const PGPFingerprintType &pgp, GxsIdPgpHash &hash);
 

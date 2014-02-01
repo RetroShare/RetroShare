@@ -75,10 +75,6 @@ bool		renameFile(const std::string& from,const std::string& to) ;
 //
 uint32_t rs_CRC32(const unsigned char *data,uint32_t len) ;
 
-// Computes the CRC32 map of a complete file, with given size and chunk size.
-//
-bool crc32File(FILE *f,uint64_t file_size,uint32_t chunk_size,CRC32Map& map) ;
-
 // Returns %u, %lu, or %llu, depending on the size of unsigned int, unsigned long and unsigned long long on the current system.
 // Use as;
 // 			sscanf(string, RsDirUtil::scanf_string_for_uint( sizeof(X) ), &X) ;

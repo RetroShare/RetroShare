@@ -26,6 +26,7 @@
 #ifndef PQI_HASH_
 #define PQI_HASH_
 
+#include <util/rsid.h>
 #include <openssl/sha.h>
 #include <string>
 #include <iomanip>

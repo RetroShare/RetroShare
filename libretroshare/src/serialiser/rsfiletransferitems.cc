@@ -308,11 +308,14 @@ bool RsFileTransferSingleChunkCrcItem::serialise(void *data, uint32_t& pktsize)
 	/* add mandatory parts first */
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_VALUE, hash);
 	ok &= setRawUInt32(data, tlvsize, &offset, chunk_number) ;
-	ok &= setRawUInt32(data, tlvsize, &offset, check_sum.fourbytes[0]) ;
-	ok &= setRawUInt32(data, tlvsize, &offset, check_sum.fourbytes[1]) ;
-	ok &= setRawUInt32(data, tlvsize, &offset, check_sum.fourbytes[2]) ;
-	ok &= setRawUInt32(data, tlvsize, &offset, check_sum.fourbytes[3]) ;
-	ok &= setRawUInt32(data, tlvsize, &offset, check_sum.fourbytes[4]) ;
+
+	setRawSha1(data,tlvsize,&offset,check_sum) ;
+
+	//ok &= setRawUInt32(data, tlvsize, &offset, check_sum.fourbytes[0]) ;
+	//ok &= setRawUInt32(data, tlvsize, &offset, check_sum.fourbytes[1]) ;
+	//ok &= setRawUInt32(data, tlvsize, &offset, check_sum.fourbytes[2]) ;
+	//ok &= setRawUInt32(data, tlvsize, &offset, check_sum.fourbytes[3]) ;
+	//ok &= setRawUInt32(data, tlvsize, &offset, check_sum.fourbytes[4]) ;
 
 	if (offset != tlvsize)
 	{
@@ -776,11 +779,7 @@ RsFileTransferItem *RsFileTransferSerialiser::deserialise_RsFileTransferSingleCh
 	offset += 8;
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_VALUE, item->hash); 	// file hash
 	ok &= getRawUInt32(data, rssize, &offset, &(item->chunk_number));
-	ok &= getRawUInt32(data, rssize, &offset, &(item->check_sum.fourbytes[0]));
-	ok &= getRawUInt32(data, rssize, &offset, &(item->check_sum.fourbytes[1]));
-	ok &= getRawUInt32(data, rssize, &offset, &(item->check_sum.fourbytes[2]));
-	ok &= getRawUInt32(data, rssize, &offset, &(item->check_sum.fourbytes[3]));
-	ok &= getRawUInt32(data, rssize, &offset, &(item->check_sum.fourbytes[4]));
+	getRawSha1(data,rssize,&offset,item->check_sum) ;
 
 	if (offset != rssize)
 	{

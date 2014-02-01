@@ -66,7 +66,7 @@ static const time_t 	LOBBY_LIST_AUTO_UPDATE_TIME        =  121 ; // regularly as
 static const time_t 	 DISTANT_CHAT_CLEANING_PERIOD      =   60 ; // clean distant chat caches every 60 secs (remove old invites)
 static const time_t 	 DISTANT_CHAT_KEEP_ALIVE_PERIOD    =   10 ; // sens keep alive distant chat packets every 10 secs.
 static const uint32_t DISTANT_CHAT_AES_KEY_SIZE         =   16 ; // size of AES encryption key for distant chat.
-static const uint32_t DISTANT_CHAT_HASH_SIZE            =   20 ; // This is sha1 size in bytes.
+static const uint32_t DISTANT_CHAT_HASH_SIZE            =   Sha1CheckSum::SIZE_IN_BYTES ; // This is sha1 size in bytes.
 
 static const uint32_t MAX_AVATAR_JPEG_SIZE              = 32767; // Maximum size in bytes for an avatar. Too large packets 
                                                                  // don't transfer correctly and can kill the system.
@@ -3394,7 +3394,7 @@ bool p3ChatService::createDistantChatInvite(const std::string& pgp_id,time_t tim
 	unsigned char hash_bytes[DISTANT_CHAT_HASH_SIZE] ;
 	RAND_bytes( hash_bytes, DISTANT_CHAT_HASH_SIZE) ;
 
-	std::string hash = t_RsGenericIdType<DISTANT_CHAT_HASH_SIZE>(hash_bytes).toStdString(false) ;
+	std::string hash = Sha1CheckSum(hash_bytes).toStdString(false) ;
 
 #ifdef DEBUG_DISTANT_CHAT
 	std::cerr << "Created new distant chat invite: " << std::endl;
@@ -3513,7 +3513,7 @@ bool p3ChatService::initiateDistantChatConnexion(const std::string& encrypted_st
 #ifdef DEBUG_DISTANT_CHAT
 	std::cerr << "Signature successfuly verified!" << std::endl;
 #endif
-	hash = t_RsGenericIdType<DISTANT_CHAT_HASH_SIZE>(data).toStdString(false) ;
+	hash = Sha1CheckSum(data).toStdString(false) ;
 
 	startClientDistantChatConnection(hash,pgp_id.toStdString(),data+DISTANT_CHAT_HASH_SIZE) ;
 
