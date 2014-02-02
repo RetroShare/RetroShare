@@ -22,6 +22,7 @@
  */
 
 #include "GxsIdChooser.h"
+#include "GxsIdDetails.h"
 
 #include <QTimer>
 #include <QSortFilterProxyModel>
@@ -63,41 +64,18 @@ bool GxsIdChooser::MakeIdDesc(const RsGxsId &id, QString &desc)
 {
 	RsIdentityDetails details;
 
-	bool found = rsIdentity->getIdDetails(id, details);
-	if (found)
+	std::list<QIcon> icons;
+	if (!GxsIdDetails::MakeIdDesc(id, false, desc, icons))
 	{
-		desc = QString::fromUtf8(details.mNickname.c_str());
-
-		std::list<RsRecognTag>::iterator it;
-		for(it = details.mRecognTags.begin(); it != details.mRecognTags.end(); it++)
+		if (mTimerCount > MAX_TRY) 
 		{
-			desc += " (";
-			desc += QString::number(it->tag_class);
-			desc += ":";
-			desc += QString::number(it->tag_type);
-			desc += ")";
-		}
-
-		if (details.mPgpLinked)
-		{
-			desc += " (PGP) [";
-		}
-		else
-		{
-			desc += " (Anon) [";
-		}
-	} else {
-		if (mTimerCount <= MAX_TRY) {
-			desc = QString("%1 ... [").arg(tr("Loading"));
-		} else {
 			desc = QString("%1 ... [").arg(tr("Not found"));
+			desc += QString::fromStdString(id.substr(0,5));
+			desc += "...]";
 		}
+		return false;
 	}
-
-	desc += QString::fromStdString(id.substr(0,5));
-	desc += "...]";
-
-	return found;
+	return true;
 }
 
 void GxsIdChooser::addPrivateId(const RsGxsId &gxsId, bool replace)

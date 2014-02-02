@@ -193,6 +193,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const std::string &forumId, QWidget *
 //	mTimer->start();
 
 	mFillThread = NULL;
+	ui->threadTreeWidget->setGxsIdColumn(COLUMN_THREAD_AUTHOR);
 
 	setForumId(forumId);
 
@@ -803,7 +804,8 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
 	item->setText(COLUMN_THREAD_DATE, text);
 	item->setData(COLUMN_THREAD_DATE, ROLE_THREAD_SORT, sort);
 
-	item->setId(msg.mMeta.mAuthorId, COLUMN_THREAD_AUTHOR);
+	item->setText(COLUMN_THREAD_AUTHOR, QString::fromStdString(msg.mMeta.mAuthorId));
+	//item->setId(msg.mMeta.mAuthorId, COLUMN_THREAD_AUTHOR);
 //#TODO
 #if 0
 	text = QString::fromUtf8(authorName.c_str());

@@ -22,6 +22,8 @@
  */
 
 #include "GxsIdTreeWidgetItem.h"
+#include "GxsIdDetails.h"
+
 #include "rshare.h"
 
 #include <retroshare/rspeers.h>
@@ -29,63 +31,6 @@
 #include <iostream>
 
 #define MAX_ATTEMPTS 5
-
-static bool MakeIdDesc(const RsGxsId &id, QString &str)
-{
-	RsIdentityDetails details;
-	
-	if (!rsIdentity->getIdDetails(id, details))
-	{
-		std::cerr << "GxsIdRSTreeWidgetItem::MakeIdDesc() FAILED TO GET ID";
-		std::cerr << std::endl;
-
-		str = "Loading... " + QString::fromStdString(id.substr(0,5));
-		return false;
-	}
-
-	str = QString::fromUtf8(details.mNickname.c_str());
-
-	std::list<RsRecognTag>::iterator it;
-	for(it = details.mRecognTags.begin(); it != details.mRecognTags.end(); it++)
-	{
-		str += " (";
-		str += QString::number(it->tag_class);
-		str += ":";
-		str += QString::number(it->tag_type);
-		str += ")";
-	}
-
-
-	bool addCode = true;
-	if (details.mPgpLinked)
-	{
-		str += " (PGP) [";
-		if (details.mPgpKnown)
-		{
-			/* look up real name */
-			std::string authorName = rsPeers->getPeerName(details.mPgpId);
-			str += QString::fromUtf8(authorName.c_str());
-			str += "]";
-
-			addCode = false;
-		}
-	}
-	else
-	{
-		str += " (Anon) [";
-	}
-
-	if (addCode)
-	{
-		str += QString::fromStdString(id.substr(0,5));
-		str += "...]";
-	}
-
-	std::cerr << "GxsIdRSTreeWidgetItem::MakeIdDesc() ID Ok";
-	std::cerr << std::endl;
-
-	return true;
-}
 
 /** Constructor */
 GxsIdRSTreeWidgetItem::GxsIdRSTreeWidgetItem(const RSTreeWidgetItemCompareRole *compareRole, QTreeWidget *parent)
@@ -138,7 +83,14 @@ void GxsIdRSTreeWidgetItem::loadId()
 
 	/* try and get details - if not there ... set callback */
 	QString desc;
-	bool loaded = MakeIdDesc(mId, desc);
+	std::list<QIcon> icons;
+	bool loaded = GxsIdDetails::MakeIdDesc(mId, true, desc, icons);
+	QIcon combinedIcon;
+	if (!icons.empty())
+	{
+		GxsIdDetails::GenerateCombinedIcon(combinedIcon, icons);
+		setIcon(mColumn, combinedIcon);
+	}
 
 	setText(mColumn, desc);
 
@@ -210,8 +162,15 @@ void GxsIdTreeWidgetItem::loadId()
 
 	/* try and get details - if not there ... set callback */
 	QString desc;
-	bool loaded = MakeIdDesc(mId, desc);
-
+	std::list<QIcon> icons;
+	bool loaded = GxsIdDetails::MakeIdDesc(mId, true, desc, icons);
+	QIcon combinedIcon;
+	if (!icons.empty())
+	{
+		GxsIdDetails::GenerateCombinedIcon(combinedIcon, icons);
+		setIcon(mColumn, combinedIcon);
+	}
+	
 	setText(mColumn, desc);
 
 	if (loaded)

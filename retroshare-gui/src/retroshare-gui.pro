@@ -1175,10 +1175,12 @@ gxsgui {
 	
 	HEADERS += gui/gxs/GxsGroupDialog.h \
 		gui/gxs/WikiGroupDialog.h \
+		gui/gxs/GxsIdDetails.h \
 		gui/gxs/GxsIdChooser.h \
 		gui/gxs/GxsIdLabel.h \
 		gui/gxs/GxsCircleChooser.h \
 		gui/gxs/GxsCircleLabel.h \
+		gui/gxs/GxsIdTreeWidget.h \
 		gui/gxs/GxsIdTreeWidgetItem.h \
 		gui/gxs/GxsCommentTreeWidget.h \
 		gui/gxs/GxsCommentContainer.h \
@@ -1203,10 +1205,12 @@ gxsgui {
 	
 	SOURCES += gui/gxs/GxsGroupDialog.cpp \
 		gui/gxs/WikiGroupDialog.cpp \
+		gui/gxs/GxsIdDetails.cpp \
 		gui/gxs/GxsIdChooser.cpp \
 		gui/gxs/GxsIdLabel.cpp \
 		gui/gxs/GxsCircleChooser.cpp \
 		gui/gxs/GxsCircleLabel.cpp \
+		gui/gxs/GxsIdTreeWidget.cpp \
 		gui/gxs/GxsIdTreeWidgetItem.cpp \
 		gui/gxs/GxsCommentTreeWidget.cpp \
 		gui/gxs/GxsCommentContainer.cpp \

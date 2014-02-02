@@ -22,6 +22,7 @@
  */
 
 #include "GxsIdLabel.h"
+#include "GxsIdDetails.h"
 
 #include <algorithm>
 
@@ -59,56 +60,6 @@ bool GxsIdLabel::getId(RsGxsId &id)
 	return true;
 }
 
-static bool MakeIdDesc(const RsGxsId &id, QString &str)
-{
-	RsIdentityDetails details;
-	
-	if (!rsIdentity->getIdDetails(id, details))
-	{
-		str = "Loading... " + QString::fromStdString(id.substr(0,5));
-		return false;
-	}
-
-	str = QString::fromUtf8(details.mNickname.c_str());
-
-	std::list<RsRecognTag>::iterator it;
-	for(it = details.mRecognTags.begin(); it != details.mRecognTags.end(); it++)
-	{
-		str += " (";
-		str += QString::number(it->tag_class);
-		str += ":";
-		str += QString::number(it->tag_type);
-		str += ")";
-	}
-
-	bool addCode = true;
-	if (details.mPgpLinked)
-	{
-		str += " (PGP) [";
-		if (details.mPgpKnown)
-		{
-			/* look up real name */
-			std::string authorName = rsPeers->getPeerName(details.mPgpId);
-			str += QString::fromUtf8(authorName.c_str());
-			str += "]";
-
-			addCode = false;
-		}
-	}
-	else
-	{
-		str += " (Anon) [";
-	}
-
-	if (addCode)
-	{
-		str += QString::fromStdString(id.substr(0,5));
-		str += "...]";
-	}
-
-	return true;
-}
-
 #define MAX_ATTEMPTS 3
 
 void GxsIdLabel::loadId()
@@ -117,7 +68,8 @@ void GxsIdLabel::loadId()
 
 	/* try and get details - if not there ... set callback */
 	QString desc;
-	bool loaded = MakeIdDesc(mId, desc);
+	std::list<QIcon> icons;
+	bool loaded = GxsIdDetails::MakeIdDesc(mId, false, desc, icons);
 
 	setText(desc);
 

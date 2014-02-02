@@ -153,7 +153,7 @@
         </layout>
        </item>
        <item>
-        <widget class="RSTreeWidget" name="threadTreeWidget">
+        <widget class="GxsIdRSTreeWidget" name="threadTreeWidget">
          <property name="font">
           <font>
            <pointsize>9</pointsize>
@@ -519,9 +519,9 @@
    <header location="global">gui/common/LineEditClear.h</header>
   </customwidget>
   <customwidget>
-   <class>RSTreeWidget</class>
+   <class>GxsIdRSTreeWidget</class>
    <extends>QTreeWidget</extends>
-   <header>gui/common/RSTreeWidget.h</header>
+   <header>gui/gxs/GxsIdTreeWidget.h</header>
   </customwidget>
  </customwidgets>
  <resources>
