@@ -72,17 +72,16 @@ void GxsForumGroupDialog::initUi()
 	switch (mode())
 	{
 	case MODE_CREATE:
-		setUiText(UITYPE_SERVICE_HEADER, tr("Create New Forum"));
+                setUiText(UITYPE_SERVICE_HEADER, tr("Create New Forum"));
 		break;
 	case MODE_SHOW:
 		setUiText(UITYPE_SERVICE_HEADER, tr("Forum"));
+
 		break;
 	case MODE_EDIT:
 		setUiText(UITYPE_SERVICE_HEADER, tr("Edit Forum"));
 		break;
-	}
-	
-  setUiText(UITYPE_BUTTONBOX_OK, tr("Create Forum"));
+        }
 }
 
 QPixmap GxsForumGroupDialog::serviceImage()

@@ -150,6 +150,7 @@ void GxsGroupDialog::initMode()
 		case MODE_CREATE:
 		{
 			ui.buttonBox->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+                        ui.buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Create Forum"));
 			newGroup();
 		}
 		break;
