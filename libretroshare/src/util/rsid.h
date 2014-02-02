@@ -37,7 +37,10 @@
 template<uint32_t ID_SIZE_IN_BYTES,uint32_t UNIQUE_IDENTIFIER> class t_RsGenericIdType
 {
 	public:
-		t_RsGenericIdType() { memset(bytes,0,ID_SIZE_IN_BYTES) ;}
+		t_RsGenericIdType() 
+		{ 
+			memset(bytes,0,ID_SIZE_IN_BYTES) ; 	// by default, ids are set to null()
+		}
 		virtual ~t_RsGenericIdType() {}
 
 		// Explicit constructor from a hexadecimal string
@@ -66,26 +69,17 @@ template<uint32_t ID_SIZE_IN_BYTES,uint32_t UNIQUE_IDENTIFIER> class t_RsGeneric
 		const unsigned char *toByteArray() const { return &bytes[0] ; }
 		static const uint32_t SIZE_IN_BYTES = ID_SIZE_IN_BYTES ;
 
-		bool operator==(const t_RsGenericIdType<ID_SIZE_IN_BYTES,UNIQUE_IDENTIFIER>& fp) const
-		{
-			for(uint32_t i=0;i<ID_SIZE_IN_BYTES;++i)
-				if(fp.bytes[i] != bytes[i])
+		inline bool operator==(const t_RsGenericIdType<ID_SIZE_IN_BYTES,UNIQUE_IDENTIFIER>& fp) const { return !memcmp(bytes,fp.bytes,ID_SIZE_IN_BYTES) ; }
+		inline bool operator!=(const t_RsGenericIdType<ID_SIZE_IN_BYTES,UNIQUE_IDENTIFIER>& fp) const { return !!memcmp(bytes,fp.bytes,ID_SIZE_IN_BYTES); }
+		inline bool operator< (const t_RsGenericIdType<ID_SIZE_IN_BYTES,UNIQUE_IDENTIFIER>& fp) const { return (memcmp(bytes,fp.bytes,ID_SIZE_IN_BYTES) < 0) ; }
+
+		inline bool isNull() const 
+		{ 
+			for(int i=0;i<SIZE_IN_BYTES;++i) 
+				if(bytes[i] != 0)
 					return false ;
 			return true ;
-		}
-		bool operator!=(const t_RsGenericIdType<ID_SIZE_IN_BYTES,UNIQUE_IDENTIFIER>& fp) const
-		{
-			return !operator==(fp) ;
-		}
-
-		bool operator<(const t_RsGenericIdType<ID_SIZE_IN_BYTES,UNIQUE_IDENTIFIER>& fp) const
-		{
-			for(uint32_t i=0;i<ID_SIZE_IN_BYTES;++i)
-				if(fp.bytes[i] != bytes[i])
-					return (bytes[i] < fp.bytes[i]);
-			return false;
-		}
-
+		} 
 	private:
 		unsigned char bytes[ID_SIZE_IN_BYTES] ;
 };
