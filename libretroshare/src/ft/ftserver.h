@@ -94,7 +94,7 @@ class ftServer: public p3Service, public RsFiles, public ftDataSend, public RsTu
 		virtual CacheStrapper *getCacheStrapper();
 		virtual CacheTransfer *getCacheTransfer();
 
-		std::string 	OwnId();
+		const RsPeerId& OwnId();
 
 		/* Final Setup (once everything is assigned) */
 		void    SetupFtServer() ;
@@ -106,8 +106,8 @@ class ftServer: public p3Service, public RsFiles, public ftDataSend, public RsTu
 
 		// Implements RsTurtleClientService
 		//
-		virtual bool handleTunnelRequest(const std::string& hash,const std::string& peer_id) ;
-		virtual void receiveTurtleData(RsTurtleGenericTunnelItem *item,const std::string& hash,const std::string& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction) ;
+		virtual bool handleTunnelRequest(const std::string& hash,const RsPeerId& peer_id) ;
+		virtual void receiveTurtleData(RsTurtleGenericTunnelItem *item,const std::string& hash,const RsPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction) ;
 		virtual RsTurtleGenericTunnelItem *deserialiseItem(void *data,uint32_t size) const ;
 
 		void addVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&,RsTurtleGenericTunnelItem::Direction dir) ;
@@ -130,7 +130,7 @@ class ftServer: public p3Service, public RsFiles, public ftDataSend, public RsTu
 		 * Control of Downloads
 		 ***/
 		virtual bool alreadyHaveFile(const std::string& hash, FileInfo &info);
-		virtual bool FileRequest(const std::string& fname, const std::string& hash, uint64_t size, const std::string& dest, TransferRequestFlags flags, const std::list<std::string>& srcIds);
+		virtual bool FileRequest(const std::string& fname, const std::string& hash, uint64_t size, const std::string& dest, TransferRequestFlags flags, const std::list<RsPeerId>& srcIds);
 		virtual bool FileCancel(const std::string& hash);
 		virtual bool FileControl(const std::string& hash, uint32_t flags);
 		virtual bool FileClearCompleted();
@@ -163,7 +163,7 @@ class ftServer: public p3Service, public RsFiles, public ftDataSend, public RsTu
 		virtual bool FileUploads(std::list<std::string> &hashs);
 		virtual bool FileDetails(const std::string &hash, FileSearchFlags hintflags, FileInfo &info);
 		virtual bool FileDownloadChunksDetails(const std::string& hash,FileChunksInfo& info) ;
-		virtual bool FileUploadChunksDetails(const std::string& hash,const std::string& peer_id,CompressedChunkMap& map) ;
+		virtual bool FileUploadChunksDetails(const std::string& hash,const RsPeerId& peer_id,CompressedChunkMap& map) ;
 
 
 		/***
@@ -179,14 +179,14 @@ class ftServer: public p3Service, public RsFiles, public ftDataSend, public RsTu
 		/***
 		 * Directory Listing / Search Interface
 		 ***/
-		virtual int RequestDirDetails(const std::string& uid, const std::string& path, DirDetails &details);
+		virtual int RequestDirDetails(const RsPeerId& uid, const std::string& path, DirDetails &details);
 		virtual int RequestDirDetails(void *ref, DirDetails &details, FileSearchFlags flags);
 		virtual uint32_t getType(void *ref,FileSearchFlags flags) ;
 
 		virtual int SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,FileSearchFlags flags);
-		virtual int SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,FileSearchFlags flags,const std::string& peer_id);
+		virtual int SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,FileSearchFlags flags,const RsPeerId& peer_id);
 		virtual int SearchBoolExp(Expression * exp, std::list<DirDetails> &results,FileSearchFlags flags);
-		virtual int SearchBoolExp(Expression * exp, std::list<DirDetails> &results,FileSearchFlags flags,const std::string& peer_id);
+		virtual int SearchBoolExp(Expression * exp, std::list<DirDetails> &results,FileSearchFlags flags,const RsPeerId& peer_id);
 
 		/***
 		 * Utility Functions
@@ -230,12 +230,12 @@ class ftServer: public p3Service, public RsFiles, public ftDataSend, public RsTu
 		/*************** Data Transfer Interface ***********************/
 		/***************************************************************/
 	public:
-		virtual bool sendData(const std::string& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunksize, void *data);
-		virtual bool sendDataRequest(const std::string& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunksize);
-		virtual bool sendChunkMapRequest(const std::string& peer_id,const std::string& hash,bool is_client) ;
-		virtual bool sendChunkMap(const std::string& peer_id,const std::string& hash,const CompressedChunkMap& cmap,bool is_client) ;
-		virtual bool sendSingleChunkCRCRequest(const std::string& peer_id,const std::string& hash,uint32_t chunk_number) ;
-		virtual bool sendSingleChunkCRC(const std::string& peer_id,const std::string& hash,uint32_t chunk_number,const Sha1CheckSum& crc) ;
+		virtual bool sendData(const RsPeerId& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunksize, void *data);
+		virtual bool sendDataRequest(const RsPeerId& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunksize);
+		virtual bool sendChunkMapRequest(const RsPeerId& peer_id,const std::string& hash,bool is_client) ;
+		virtual bool sendChunkMap(const RsPeerId& peer_id,const std::string& hash,const CompressedChunkMap& cmap,bool is_client) ;
+		virtual bool sendSingleChunkCRCRequest(const RsPeerId& peer_id,const std::string& hash,uint32_t chunk_number) ;
+		virtual bool sendSingleChunkCRC(const RsPeerId& peer_id,const std::string& hash,uint32_t chunk_number,const Sha1CheckSum& crc) ;
 
 		/*************** Internal Transfer Fns *************************/
 		virtual int tick();

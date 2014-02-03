@@ -119,7 +119,7 @@ class RsFiles
 
 		virtual bool alreadyHaveFile(const std::string& hash, FileInfo &info) = 0;
 		/// Returns false is we already have the file. Otherwise, initiates the dl and returns true.
-		virtual bool FileRequest(const std::string& fname, const std::string& hash, uint64_t size, const std::string& dest, TransferRequestFlags flags, const std::list<std::string>& srcIds) = 0;
+		virtual bool FileRequest(const std::string& fname, const std::string& hash, uint64_t size, const std::string& dest, TransferRequestFlags flags, const std::list<SSLIdType>& srcIds) = 0;
 		virtual bool FileCancel(const std::string& hash) = 0;
 		virtual bool setDestinationDirectory(const std::string& hash,const std::string& new_path) = 0;
 		virtual bool setDestinationName(const std::string& hash,const std::string& new_name) = 0;
@@ -155,7 +155,7 @@ class RsFiles
 		virtual bool FileDownloadChunksDetails(const std::string& hash,FileChunksInfo& info) = 0 ;
 
 		/// details about the upload with given hash
-		virtual bool FileUploadChunksDetails(const std::string& hash,const std::string& peer_id,CompressedChunkMap& map) = 0 ;
+		virtual bool FileUploadChunksDetails(const std::string& hash,const SSLIdType& peer_id,CompressedChunkMap& map) = 0 ;
 
 		/***
 		 * Extra List Access
@@ -172,14 +172,14 @@ class RsFiles
 		/***
 		 * Directory Listing / Search Interface
 		 */
-		virtual int RequestDirDetails(const std::string& uid, const std::string& path, DirDetails &details) = 0;
+		virtual int RequestDirDetails(const SSLIdType& uid, const std::string& path, DirDetails &details) = 0;
 		virtual int RequestDirDetails(void *ref, DirDetails &details, FileSearchFlags flags) = 0;
 		virtual uint32_t getType(void *ref,FileSearchFlags flags) = 0;
 
 		virtual int SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,FileSearchFlags flags) = 0;
-		virtual int SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,FileSearchFlags flags,const std::string& peer_id) = 0;
+		virtual int SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,FileSearchFlags flags,const SSLIdType& peer_id) = 0;
 		virtual int SearchBoolExp(Expression * exp, std::list<DirDetails> &results,FileSearchFlags flags) = 0;
-		virtual int SearchBoolExp(Expression * exp, std::list<DirDetails> &results,FileSearchFlags flags,const std::string& peer_id) = 0;
+		virtual int SearchBoolExp(Expression * exp, std::list<DirDetails> &results,FileSearchFlags flags,const SSLIdType& peer_id) = 0;
 
 		/***
 		 * Utility Functions.

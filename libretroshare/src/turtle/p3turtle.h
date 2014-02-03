@@ -292,23 +292,23 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 		/************* Communication with clients *******************/
 		/// Does the turtle router manages tunnels to this peer ? (this is not a
 		/// real id, but a fake one, that the turtle router is capable of connecting with a tunnel id).
-		virtual bool isTurtlePeer(const std::string& peer_id) const ;
+		virtual bool isTurtlePeer(const SSLIdType& peer_id) const ;
 
 		/// sets/gets the max number of forwarded tunnel requests per second.
 		virtual void setMaxTRForwardRate(int max_tr_up_rate) ;
 		virtual int getMaxTRForwardRate() const ;
 		
 		/// Examines the peer id, finds the turtle tunnel in it, and respond yes if the tunnel is ok and operational.
-		bool isOnline(const std::string& peer_id) const ;
+		bool isOnline(const SSLIdType& peer_id) const ;
 
 		/// Returns a unique peer id, corresponding to the given tunnel.
-		std::string getTurtlePeerId(TurtleTunnelId tid) const ;
+		SSLIdType getTurtlePeerId(TurtleTunnelId tid) const ;
 	
 		/// returns the list of virtual peers for all tunnels.
 		void getSourceVirtualPeersList(const TurtleFileHash& hash,std::list<pqipeer>& list) ;
 
 		/// Send a data request into the correct tunnel for the given file hash
-		void sendTurtleData(const std::string& virtual_peer_id, RsTurtleGenericTunnelItem *item) ;
+		void sendTurtleData(const SSLIdType& virtual_peer_id, RsTurtleGenericTunnelItem *item) ;
 
 	private:
 		//--------------------------- Admin/Helper functions -------------------------//
@@ -352,7 +352,7 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 
 		/// specific routing functions for handling particular packets.
 		void handleRecvGenericTunnelItem(RsTurtleGenericTunnelItem *item);
-		bool getTunnelServiceInfo(TurtleTunnelId, std::string& virtual_peer_id, std::string& hash, RsTurtleClientService*&) ;
+		bool getTunnelServiceInfo(TurtleTunnelId, SSLIdType& virtual_peer_id, std::string& hash, RsTurtleClientService*&) ;
 
 		// following functions should go to ftServer
 		void handleSearchRequest(RsTurtleSearchRequestItem *item);		
@@ -369,7 +369,7 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 		void returnSearchResult(RsTurtleSearchResultItem *item) ;
 
 		/// Returns true if the file with given hash is hosted locally, and accessible in anonymous mode the supplied peer.
-		virtual bool performLocalHashSearch(const TurtleFileHash& hash,const std::string& client_peer_id,RsTurtleClientService *& service);
+		virtual bool performLocalHashSearch(const TurtleFileHash& hash,const SSLIdType& client_peer_id,RsTurtleClientService *& service);
 
 		//--------------------------- Local variables --------------------------------//
 		

@@ -254,7 +254,7 @@ class RsFileTransfer: public RsItem
 		RsTlvFileItem file;
 		RsTlvPeerIdSet allPeerIds;
 
-		std::string cPeerId;
+		SSLIdType cPeerId;
 
 		uint16_t state;
 		uint16_t in;

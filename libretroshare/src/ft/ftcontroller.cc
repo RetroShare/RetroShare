@@ -161,7 +161,7 @@ bool ftController::getFileDownloadChunksDetails(const std::string& hash,FileChun
 	return false ;
 }
 
-void ftController::addFileSource(const std::string& hash,const std::string& peer_id)
+void ftController::addFileSource(const std::string& hash,const SSLIdType& peer_id)
 {
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
@@ -184,7 +184,7 @@ void ftController::addFileSource(const std::string& hash,const std::string& peer
 	std::cerr << "... not added: hash not found." << std::endl ;
 #endif
 }
-void ftController::removeFileSource(const std::string& hash,const std::string& peer_id)
+void ftController::removeFileSource(const std::string& hash,const SSLIdType& peer_id)
 {
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
@@ -293,7 +293,7 @@ void ftController::searchForDirectSources()
 
 				if(mSearch->search(it->first, RS_FILE_HINTS_REMOTE | RS_FILE_HINTS_SPEC_ONLY, info))
 					for(std::list<TransferInfo>::const_iterator pit = info.peers.begin(); pit != info.peers.end(); pit++)
-						if(rsPeers->servicePermissionFlags_sslid(pit->peerId) & RS_SERVICE_PERM_DIRECT_DL)
+						if(rsPeers->servicePermissionFlags(pit->peerId) & RS_SERVICE_PERM_DIRECT_DL)
 							if(it->second->mTransfer->addFileSource(pit->peerId)) /* if the sources don't exist already - add in */
 								setPeerState(it->second->mTransfer, pit->peerId, FT_CNTRL_STANDARD_RATE, mLinkMgr->isOnline( pit->peerId ));
 			}
@@ -1070,9 +1070,9 @@ bool ftController::alreadyHaveFile(const std::string& hash, FileInfo &info)
 
 bool 	ftController::FileRequest(const std::string& fname, const std::string& hash,
 			uint64_t size, const std::string& dest, TransferRequestFlags flags,
-																const std::list<std::string> &_srcIds, uint16_t state)
+																const std::list<SSLIdType> &_srcIds, uint16_t state)
 {
-	std::list<std::string> srcIds(_srcIds) ;
+	std::list<SSLIdType> srcIds(_srcIds) ;
 
 	/* check if we have the file */
 
@@ -1134,10 +1134,10 @@ bool 	ftController::FileRequest(const std::string& fname, const std::string& has
 	// remove the sources from the list, if they don't have clearance for direct transfer. This happens only for non cache files.
 	//
 	if(!(flags & RS_FILE_REQ_CACHE))
-		for(std::list<std::string>::iterator it = srcIds.begin(); it != srcIds.end(); )
-			if(!(rsPeers->servicePermissionFlags_sslid(*it) & RS_SERVICE_PERM_DIRECT_DL))
+		for(std::list<SSLIdType>::iterator it = srcIds.begin(); it != srcIds.end(); )
+			if(!(rsPeers->servicePermissionFlags(*it) & RS_SERVICE_PERM_DIRECT_DL))
 			{
-				std::list<std::string>::iterator tmp(it) ;
+				std::list<SSLIdType>::iterator tmp(it) ;
 				++tmp ;
 				srcIds.erase(it) ;
 				it = tmp ;
@@ -1145,7 +1145,7 @@ bool 	ftController::FileRequest(const std::string& fname, const std::string& has
 			else
 				++it ;
 	
-	std::list<std::string>::const_iterator it;
+	std::list<SSLIdType>::const_iterator it;
 	std::list<TransferInfo>::const_iterator pit;
 
 #ifdef CONTROL_DEBUG
@@ -1191,7 +1191,7 @@ bool 	ftController::FileRequest(const std::string& fname, const std::string& has
 			 */
 
 			for(it = srcIds.begin(); it != srcIds.end(); it++)
-				if(rsPeers->servicePermissionFlags_sslid(*it) & RS_SERVICE_PERM_DIRECT_DL)
+				if(rsPeers->servicePermissionFlags(*it) & RS_SERVICE_PERM_DIRECT_DL)
 				{
 					uint32_t i, j;
 					if ((dit->second)->mTransfer->getPeerState(*it, i, j))
@@ -1248,7 +1248,7 @@ bool 	ftController::FileRequest(const std::string& fname, const std::string& has
 #endif
 				// Because this is auto-add, we only add sources that we allow to DL from using direct transfers.
 
-				if ((srcIds.end() == std::find( srcIds.begin(), srcIds.end(), pit->peerId)) && (RS_SERVICE_PERM_DIRECT_DL & rsPeers->servicePermissionFlags_sslid(pit->peerId)))
+				if ((srcIds.end() == std::find( srcIds.begin(), srcIds.end(), pit->peerId)) && (RS_SERVICE_PERM_DIRECT_DL & rsPeers->servicePermissionFlags(pit->peerId)))
 				{
 					srcIds.push_back(pit->peerId);
 
@@ -1331,7 +1331,7 @@ bool 	ftController::FileRequest(const std::string& fname, const std::string& has
 	return true;
 }
 
-bool 	ftController::setPeerState(ftTransferModule *tm, std::string id, uint32_t maxrate, bool online)
+bool 	ftController::setPeerState(ftTransferModule *tm, const SSLIdType& id, uint32_t maxrate, bool online)
 {
 	if (id == mLinkMgr->getOwnId())
 	{
@@ -1708,8 +1708,8 @@ bool 	ftController::FileDetails(const std::string &hash, FileInfo &info)
 		info.storage_permission_flags |= DIR_FLAGS_NETWORK_WIDE_OTHERS ;	// file being downloaded anonymously are always anonymously available.
 
 	/* get list of sources from transferModule */
-	std::list<std::string> peerIds;
-	std::list<std::string>::iterator pit;
+	std::list<SSLIdType> peerIds;
+	std::list<SSLIdType>::iterator pit;
 
 	if (!completed)
 	{
@@ -1922,7 +1922,7 @@ bool ftController::RequestCacheFile(RsPeerId id, std::string path, std::string h
 #endif
 
 	/* Request File */
-	std::list<std::string> ids;
+	std::list<SSLIdType> ids;
 	ids.push_back(id);
 
 	FileInfo info ;

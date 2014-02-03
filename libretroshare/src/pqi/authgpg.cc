@@ -159,9 +159,9 @@ bool AuthGPG::availableGPGCertificatesWithPrivateKeys(std::list<std::string> &id
  * This function must be called successfully (return == 1)
  * before anything else can be done. (except above fn).
  */
-int AuthGPG::GPGInit(const std::string &ownId)
+int AuthGPG::GPGInit(const PGPIdType &ownId)
 {
-	std::cerr << "AuthGPG::GPGInit() called with own gpg id : " << ownId << std::endl;
+	std::cerr << "AuthGPG::GPGInit() called with own gpg id : " << ownId.toStdString() << std::endl;
 
 	mOwnGpgId = PGPIdType(ownId);
 
@@ -312,21 +312,9 @@ bool AuthGPG::DoOwnSignature(const void *data, unsigned int datalen, void *buf_s
 
 
 /* import to GnuPG and other Certificates */
-bool AuthGPG::VerifySignature(const void *data, int datalen, const void *sig, unsigned int siglen, const std::string &withfingerprint)
+bool AuthGPG::VerifySignature(const void *data, int datalen, const void *sig, unsigned int siglen, const PGPFingerprintType& withfingerprint)
 {
-	if(withfingerprint.length() != 40)
-	{
-		static bool already_reported = false ;
-
-		if( !already_reported)
-		{
-			std::cerr << "AuthGPG::VerifySignature(): no (or dammaged) fingerprint. Nor verifying signature. This is likely to be an unknown peer. fingerprint=\"" << withfingerprint << "\". Not reporting other errors." << std::endl;
-			already_reported = true ;
-		}
-		return false ;
-	}
-
-	return PGPHandler::VerifySignBin((unsigned char*)data,datalen,(unsigned char*)sig,siglen,PGPFingerprintType(withfingerprint)) ;
+	return PGPHandler::VerifySignBin((unsigned char*)data,datalen,(unsigned char*)sig,siglen,withfingerprint) ;
 }
 
 bool AuthGPG::exportProfile(const std::string& fname,const std::string& exported_id) 
@@ -417,10 +405,10 @@ std::string AuthGPG::getGPGEmail(const std::string &id,bool *success)
 
 /**** GPG versions ***/
 
-std::string AuthGPG::getGPGOwnId()
+PGPIdType AuthGPG::getGPGOwnId()
 {
 	RsStackMutex stack(gpgMtxData); /******* LOCKED ******/
-	return mOwnGpgId.toStdString();
+	return mOwnGpgId ;
 }
 
 std::string AuthGPG::getGPGOwnName()
@@ -466,31 +454,19 @@ bool AuthGPG::isKeySupported(const std::string& id) const
 	return !(pc->_flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_UNSUPPORTED_ALGORITHM) ;
 }
 
-bool AuthGPG::getGPGDetails(const std::string& id, RsPeerDetails &d) 
+bool AuthGPG::getGPGDetails(const PGPIdType& pgp_id, RsPeerDetails &d) 
 {
 	RsStackMutex stack(gpgMtxData); /******* LOCKED ******/
 
-	if(id.length() != 16)
-	{
-		static int already = 0 ;
-
-		if(already < 10)
-		{
-			std::cerr << "Wrong string passed to getGPGDetails: \"" << id << "\"" << std::endl;
-			++already ;
-		}
-		return false ;
-	}
-
-	const PGPCertificateInfo *pc = getCertInfoFromStdString(id) ;
+	const PGPCertificateInfo *pc = PGPHandler::getCertificateInfo(pgp_id) ;
 
 	if(pc == NULL)
 		return false ;
 
 	const PGPCertificateInfo& cert(*pc) ;
 
-	d.id = id ;
-	d.gpg_id = id ;
+	d.id.clear() ;
+	d.gpg_id = pgp_id ;
 	d.name = cert._name;
 	d.lastUsed = cert._time_stamp;
 	d.email = cert._email;
@@ -499,12 +475,12 @@ bool AuthGPG::getGPGDetails(const std::string& id, RsPeerDetails &d)
 	d.ownsign = cert._flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_HAS_OWN_SIGNATURE;
 	d.gpgSigners.clear() ;
 
-	for(std::set<std::string>::const_iterator it(cert.signers.begin());it!=cert.signers.end();++it)
+	for(std::set<PGPIdType>::const_iterator it(cert.signers.begin());it!=cert.signers.end();++it)
 		d.gpgSigners.push_back( *it ) ;
 
-	d.fpr = cert._fpr.toStdString();
-	d.accept_connection = cert._flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_ACCEPT_CONNEXION;
-	d.hasSignedMe = cert._flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_HAS_SIGNED_ME;
+	d.fpr = cert._fpr ;
+	d.accept_connection = 	cert._flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_ACCEPT_CONNEXION;
+	d.hasSignedMe = 			cert._flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_HAS_SIGNED_ME;
 
 	return true;
 }
@@ -661,7 +637,7 @@ bool AuthGPG::RevokeCertificate(const std::string &id)
 	return false;
 }
 
-bool AuthGPG::TrustCertificate(const std::string &id, int trustlvl)
+bool AuthGPG::TrustCertificate(const PGPIdType& id, int trustlvl)
 {
 #ifdef GPG_DEBUG
 	std::cerr << "AuthGPG::TrustCertificate(" << id << ", " << trustlvl << ")" << std::endl;
@@ -683,7 +659,7 @@ bool AuthGPG::SignDataBin(const void *data, unsigned int datalen, unsigned char 
 	return DoOwnSignature(data, datalen, sign, signlen);
 }
 
-bool AuthGPG::VerifySignBin(const void *data, uint32_t datalen, unsigned char *sign, unsigned int signlen, const std::string &withfingerprint) 
+bool AuthGPG::VerifySignBin(const void *data, uint32_t datalen, unsigned char *sign, unsigned int signlen, const PGPFingerprintType& withfingerprint) 
 {
 	return VerifySignature(data, datalen, sign, signlen, withfingerprint);
 }
@@ -707,7 +683,7 @@ int	AuthGPG::privateRevokeCertificate(const std::string &/*id*/)
 	return 0;
 }
 
-int	AuthGPG::privateTrustCertificate(const std::string &id, int trustlvl)
+int	AuthGPG::privateTrustCertificate(const PGPIdType& id, int trustlvl)
 {
 	RsStackMutex stack(gpgMtxData); /******* LOCKED ******/
 

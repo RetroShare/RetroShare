@@ -126,7 +126,7 @@ PGPHandler::PGPHandler(const std::string& pubring, const std::string& secring,co
 	int i=0 ;
 	while( (keydata = ops_keyring_get_key_by_index(_pubring,i)) != NULL )
 	{
-		PGPCertificateInfo& cert(_public_keyring_map[ PGPIdType(keydata->key_id).toStdString() ]) ;
+		PGPCertificateInfo& cert(_public_keyring_map[ PGPIdType(keydata->key_id) ]) ;
 
 		// Init all certificates.
 	
@@ -152,7 +152,7 @@ PGPHandler::PGPHandler(const std::string& pubring, const std::string& secring,co
 	i=0 ;
 	while( (keydata = ops_keyring_get_key_by_index(_secring,i)) != NULL )
 	{
-		initCertificateInfo(_secret_keyring_map[ PGPIdType(keydata->key_id).toStdString() ],keydata,i) ;
+		initCertificateInfo(_secret_keyring_map[ PGPIdType(keydata->key_id) ],keydata,i) ;
 		++i ;
 	}
 	_secring_last_update_time = time(NULL) ;
@@ -246,11 +246,11 @@ bool PGPHandler::validateAndUpdateSignatures(PGPCertificateInfo& cert,const ops_
 	if(result != NULL)
 		for(size_t i=0;i<result->valid_count;++i)
 		{
-			std::string signer_str = PGPIdType(result->valid_sigs[i].signer_id).toStdString() ;
+			PGPIdType signer_id(result->valid_sigs[i].signer_id);
 
-			if(cert.signers.find(signer_str) == cert.signers.end())
+			if(cert.signers.find(signer_id) == cert.signers.end())
 			{
-				cert.signers.insert(signer_str) ;
+				cert.signers.insert(signer_id) ;
 				ret = true ;
 			}
 		}
@@ -282,9 +282,9 @@ bool PGPHandler::printKeys() const
 	std::cerr << "Printing details of all " << std::dec << _public_keyring_map.size() << " keys: " << std::endl;
 #endif
 
-	for(std::map<std::string,PGPCertificateInfo>::const_iterator it(_public_keyring_map.begin()); it != _public_keyring_map.end(); it++)
+	for(std::map<PGPIdType,PGPCertificateInfo>::const_iterator it(_public_keyring_map.begin()); it != _public_keyring_map.end(); it++)
 	{
-		std::cerr << "PGP Key: " << it->first << std::endl;
+		std::cerr << "PGP Key: " << it->first.toStdString() << std::endl;
 
 		std::cerr << "\tName          : " <<  it->second._name << std::endl;
 		std::cerr << "\tEmail         : " <<  it->second._email << std::endl;
@@ -296,11 +296,11 @@ bool PGPHandler::printKeys() const
 		std::cerr << "\tfingerprint   : " <<  it->second._fpr.toStdString() << std::endl;
 		std::cerr << "\tSigners       : " << it->second.signers.size() <<  std::endl;
 
-		std::set<std::string>::const_iterator sit;
+		std::set<PGPIdType>::const_iterator sit;
 		for(sit = it->second.signers.begin(); sit != it->second.signers.end(); sit++)
 		{
-			std::cerr << "\t\tSigner ID:" << *sit << ", Name: " ;
-			const PGPCertificateInfo *info = PGPHandler::getCertificateInfo(PGPIdType(*sit)) ;
+			std::cerr << "\t\tSigner ID:" << (*sit).toStdString() << ", Name: " ;
+			const PGPCertificateInfo *info = PGPHandler::getCertificateInfo(*sit) ;
 
 			if(info != NULL)
 				std::cerr << info->_name ;
@@ -325,7 +325,7 @@ const PGPCertificateInfo *PGPHandler::getCertificateInfo(const PGPIdType& id) co
 {
 	RsStackMutex mtx(pgphandlerMtx) ;				// lock access to PGP memory structures.
 
-	std::map<std::string,PGPCertificateInfo>::const_iterator it( _public_keyring_map.find(id.toStdString()) ) ;
+	std::map<PGPIdType,PGPCertificateInfo>::const_iterator it( _public_keyring_map.find(id) ) ;
 
 	if(it != _public_keyring_map.end())
 		return &it->second;
@@ -432,7 +432,7 @@ bool PGPHandler::GeneratePGPCertificate(const std::string& name, const std::stri
 	
 	pgpId = PGPIdType(tmp_secring->keys[0].key_id) ;
 	addNewKeyToOPSKeyring(_secring,tmp_secring->keys[0]) ;
-	initCertificateInfo(_secret_keyring_map[ pgpId.toStdString() ],&tmp_secring->keys[0],_secring->nkeys-1) ;
+	initCertificateInfo(_secret_keyring_map[ pgpId ],&tmp_secring->keys[0],_secring->nkeys-1) ;
 
 #ifdef DEBUG_PGPHANDLER
 	std::cerr << "Added new secret key with id " << pgpId.toStdString() << " to secret keyring." << std::endl;
@@ -548,7 +548,7 @@ std::string PGPHandler::makeRadixEncodedPGPKey(const ops_keydata_t *key,bool inc
 
 const ops_keydata_t *PGPHandler::locked_getSecretKey(const PGPIdType& id) const
 {
-	std::map<std::string,PGPCertificateInfo>::const_iterator res = _secret_keyring_map.find(id.toStdString()) ;
+	std::map<PGPIdType,PGPCertificateInfo>::const_iterator res = _secret_keyring_map.find(id) ;
 
 	if(res == _secret_keyring_map.end())
 		return NULL ;
@@ -557,7 +557,7 @@ const ops_keydata_t *PGPHandler::locked_getSecretKey(const PGPIdType& id) const
 }
 const ops_keydata_t *PGPHandler::locked_getPublicKey(const PGPIdType& id,bool stamp_the_key) const
 {
-	std::map<std::string,PGPCertificateInfo>::const_iterator res = _public_keyring_map.find(id.toStdString()) ;
+	std::map<PGPIdType,PGPCertificateInfo>::const_iterator res = _public_keyring_map.find(id) ;
 
 	if(res == _public_keyring_map.end())
 		return NULL ;
@@ -667,7 +667,7 @@ bool PGPHandler::exportGPGKeyPair(const std::string& filename,const PGPIdType& e
 	return true ;
 }
 
-bool PGPHandler::getGPGDetailsFromBinaryBlock(const unsigned char *mem_block,size_t mem_size,std::string& key_id, std::string& name, std::list<std::string>& signers) const
+bool PGPHandler::getGPGDetailsFromBinaryBlock(const unsigned char *mem_block,size_t mem_size,PGPIdType& key_id, std::string& name, std::list<PGPIdType>& signers) const
 {
 	ops_keyring_t *tmp_keyring = allocateOPSKeyring();
 	ops_memory_t *mem = ops_memory_new() ;
@@ -699,7 +699,7 @@ bool PGPHandler::getGPGDetailsFromBinaryBlock(const unsigned char *mem_block,siz
 		return false ;
 	}
 
-	key_id = PGPIdType(tmp_keyring->keys[0].key_id).toStdString() ;
+	key_id = PGPIdType(tmp_keyring->keys[0].key_id) ;
 	name = std::string((char *)tmp_keyring->keys[0].uids[0].user_id) ;
 
 	// now parse signatures.
@@ -725,14 +725,11 @@ bool PGPHandler::getGPGDetailsFromBinaryBlock(const unsigned char *mem_block,siz
 	// Parse signers.
 	//
 
-	std::set<std::string> signers_set ;	// Use a set to remove duplicates.
+	std::set<PGPIdType> signers_set ;	// Use a set to remove duplicates.
 
 	if(result != NULL)
 		for(size_t i=0;i<result->valid_count;++i)
-		{
-			std::string signer_str = PGPIdType(result->valid_sigs[i].signer_id).toStdString() ;
-			signers_set.insert(signer_str) ;
-		}
+			signers_set.insert(PGPIdType(result->valid_sigs[i].signer_id)) ;
 
 	ops_validate_result_free(result) ;
 
@@ -743,7 +740,7 @@ bool PGPHandler::getGPGDetailsFromBinaryBlock(const unsigned char *mem_block,siz
 	
 	signers.clear() ;
 
-	for(std::set<std::string>::const_iterator it(signers_set.begin());it!=signers_set.end();++it)
+	for(std::set<PGPIdType>::const_iterator it(signers_set.begin());it!=signers_set.end();++it)
 		signers.push_back(*it) ;
 
 	return true ;
@@ -900,7 +897,7 @@ bool PGPHandler::importGPGKeyPair(const std::string& filename,PGPIdType& importe
 			}
 
 			addNewKeyToOPSKeyring(_secring,*seckey) ;
-			initCertificateInfo(_secret_keyring_map[ imported_key_id.toStdString() ],seckey,_secring->nkeys-1) ;
+			initCertificateInfo(_secret_keyring_map[ imported_key_id ],seckey,_secring->nkeys-1) ;
 		}
 		else
 			import_error = "Private key already exists! Not importing it again." ;
@@ -1037,7 +1034,7 @@ bool PGPHandler::LoadCertificateFromString(const std::string& pgp_cert,PGPIdType
 	return true ;
 }
 
-bool PGPHandler::locked_addOrMergeKey(ops_keyring_t *keyring,std::map<std::string,PGPCertificateInfo>& kmap,const ops_keydata_t *keydata)
+bool PGPHandler::locked_addOrMergeKey(ops_keyring_t *keyring,std::map<PGPIdType,PGPCertificateInfo>& kmap,const ops_keydata_t *keydata)
 {
 	bool ret = false ;
 	PGPIdType id(keydata->key_id) ;
@@ -1049,7 +1046,7 @@ bool PGPHandler::locked_addOrMergeKey(ops_keyring_t *keyring,std::map<std::strin
 
 	// See if the key is already in the keyring
 	const ops_keydata_t *existing_key = NULL;
-	std::map<std::string,PGPCertificateInfo>::const_iterator res = kmap.find(id.toStdString()) ;
+	std::map<PGPIdType,PGPCertificateInfo>::const_iterator res = kmap.find(id) ;
 
 	// Checks that
 	// 	- the key is referenced by keyid
@@ -1062,7 +1059,7 @@ bool PGPHandler::locked_addOrMergeKey(ops_keyring_t *keyring,std::map<std::strin
 		std::cerr << "  Key is new. Adding it to keyring" << std::endl;
 #endif
 		addNewKeyToOPSKeyring(keyring,*keydata) ; // the key is new.
-		initCertificateInfo(kmap[id.toStdString()],keydata,keyring->nkeys-1) ;
+		initCertificateInfo(kmap[id],keydata,keyring->nkeys-1) ;
 		existing_key = &(keyring->keys[keyring->nkeys-1]) ;
 		ret = true ;
 	}
@@ -1080,13 +1077,13 @@ bool PGPHandler::locked_addOrMergeKey(ops_keyring_t *keyring,std::map<std::strin
 		ret = mergeKeySignatures(const_cast<ops_keydata_t*>(existing_key),keydata) ;
 
 		if(ret)
-			initCertificateInfo(kmap[id.toStdString()],existing_key,res->second._key_index) ;
+			initCertificateInfo(kmap[id],existing_key,res->second._key_index) ;
 	}
 
 	if(ret)
 	{
-		validateAndUpdateSignatures(kmap[id.toStdString()],existing_key) ;
-		kmap[id.toStdString()]._time_stamp = time(NULL) ;
+		validateAndUpdateSignatures(kmap[id],existing_key) ;
+		kmap[id]._time_stamp = time(NULL) ;
 	}
 
 	return ret ;
@@ -1413,7 +1410,7 @@ bool PGPHandler::privateSignCertificate(const PGPIdType& ownId,const PGPIdType& 
 
 	// 4 - update signatures.
 	//
-	PGPCertificateInfo& cert(_public_keyring_map[ id_of_key_to_sign.toStdString() ]) ;
+	PGPCertificateInfo& cert(_public_keyring_map[ id_of_key_to_sign ]) ;
 	validateAndUpdateSignatures(cert,key_to_sign) ;
 	cert._flags |= PGPCertificateInfo::PGP_CERTIFICATE_FLAG_HAS_OWN_SIGNATURE ;
 
@@ -1424,25 +1421,23 @@ void PGPHandler::updateOwnSignatureFlag(const PGPIdType& own_id)
 {
 	RsStackMutex mtx(pgphandlerMtx) ;				// lock access to PGP memory structures.
 
-	std::string own_id_str = own_id.toStdString();
-
-    if(_public_keyring_map.find(own_id_str)==_public_keyring_map.end())
+    if(_public_keyring_map.find(own_id)==_public_keyring_map.end())
     {
-        std::cerr << __func__ << ": key with id=" << own_id_str << " not in keyring." << std::endl;
+        std::cerr << __func__ << ": key with id=" << own_id.toStdString() << " not in keyring." << std::endl;
         // return now, because the following operation would add an entry to _public_keyring_map
         return;
     }
 
-	PGPCertificateInfo& own_cert(_public_keyring_map[ own_id_str ]) ;
+	PGPCertificateInfo& own_cert(_public_keyring_map[ own_id ]) ;
 
-	for(std::map<std::string,PGPCertificateInfo>::iterator it=_public_keyring_map.begin();it!=_public_keyring_map.end();++it)
-		locked_updateOwnSignatureFlag(it->second,it->first,own_cert,own_id_str) ;
+	for(std::map<PGPIdType,PGPCertificateInfo>::iterator it=_public_keyring_map.begin();it!=_public_keyring_map.end();++it)
+		locked_updateOwnSignatureFlag(it->second,it->first,own_cert,own_id) ;
 }
 void PGPHandler::updateOwnSignatureFlag(const PGPIdType& cert_id,const PGPIdType& own_id)
 {
 	RsStackMutex mtx(pgphandlerMtx) ;				// lock access to PGP memory structures.
 
-	std::map<std::string,PGPCertificateInfo>::iterator it( _public_keyring_map.find(cert_id.toStdString()) ) ;
+	std::map<PGPIdType,PGPCertificateInfo>::iterator it( _public_keyring_map.find(cert_id) ) ;
 
 	if(it == _public_keyring_map.end())
 	{
@@ -1452,19 +1447,18 @@ void PGPHandler::updateOwnSignatureFlag(const PGPIdType& cert_id,const PGPIdType
 
 	PGPCertificateInfo& cert( it->second );
 
-	std::string own_id_str = own_id.toStdString();
-	PGPCertificateInfo& own_cert(_public_keyring_map[ own_id_str ]) ;
+	PGPCertificateInfo& own_cert(_public_keyring_map[ own_id ]) ;
 
-	locked_updateOwnSignatureFlag(cert,cert_id.toStdString(),own_cert,own_id_str) ;
+	locked_updateOwnSignatureFlag(cert,cert_id,own_cert,own_id) ;
 }
-void PGPHandler::locked_updateOwnSignatureFlag(PGPCertificateInfo& cert,const std::string& cert_id_str,PGPCertificateInfo& own_cert,const std::string& own_id_str)
+void PGPHandler::locked_updateOwnSignatureFlag(PGPCertificateInfo& cert,const PGPIdType& cert_id,PGPCertificateInfo& own_cert,const PGPIdType& own_id_str)
 {
 	if(cert.signers.find(own_id_str) != cert.signers.end())
 		cert._flags |= PGPCertificateInfo::PGP_CERTIFICATE_FLAG_HAS_OWN_SIGNATURE ;
 	else
 		cert._flags &= ~PGPCertificateInfo::PGP_CERTIFICATE_FLAG_HAS_OWN_SIGNATURE ;
 
-	if(own_cert.signers.find( cert_id_str ) != own_cert.signers.end())
+	if(own_cert.signers.find( cert_id ) != own_cert.signers.end())
 		cert._flags |= PGPCertificateInfo::PGP_CERTIFICATE_FLAG_HAS_SIGNED_ME ;
 	else
 		cert._flags &= ~PGPCertificateInfo::PGP_CERTIFICATE_FLAG_HAS_SIGNED_ME ;
@@ -1528,7 +1522,7 @@ void PGPHandler::setAcceptConnexion(const PGPIdType& id,bool b)
 {
 	RsStackMutex mtx(pgphandlerMtx) ;				// lock access to PGP memory structures.
 
-	std::map<std::string,PGPCertificateInfo>::iterator res = _public_keyring_map.find(id.toStdString()) ;
+	std::map<PGPIdType,PGPCertificateInfo>::iterator res = _public_keyring_map.find(id) ;
 
 	if(res != _public_keyring_map.end())
 	{
@@ -1544,27 +1538,27 @@ bool PGPHandler::getGPGFilteredList(std::list<PGPIdType>& list,bool (*filter)(co
 	RsStackMutex mtx(pgphandlerMtx) ;	// lock access to PGP directory.
 	list.clear() ;
 
-	for(std::map<std::string,PGPCertificateInfo>::const_iterator it(_public_keyring_map.begin());it!=_public_keyring_map.end();++it)
+	for(std::map<PGPIdType,PGPCertificateInfo>::const_iterator it(_public_keyring_map.begin());it!=_public_keyring_map.end();++it)
 		if( filter == NULL || (*filter)(it->second) )
 			list.push_back(PGPIdType(it->first)) ;
 
 	return true ;
 }
 
-bool PGPHandler::isGPGId(const std::string &id)
-{
-	return _public_keyring_map.find(id) != _public_keyring_map.end() ;
-}
+//bool PGPHandler::isGPGId(const std::string &id)
+//{
+//	return _public_keyring_map.find(id) != _public_keyring_map.end() ;
+//}
 
-bool PGPHandler::isGPGSigned(const std::string &id)
+bool PGPHandler::isGPGSigned(const PGPIdType &id)
 {
-	std::map<std::string,PGPCertificateInfo>::const_iterator res = _public_keyring_map.find(id) ;
+	std::map<PGPIdType,PGPCertificateInfo>::const_iterator res = _public_keyring_map.find(id) ;
 	return res != _public_keyring_map.end() && (res->second._flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_HAS_OWN_SIGNATURE) ;
 }
 
-bool PGPHandler::isGPGAccepted(const std::string &id)
+bool PGPHandler::isGPGAccepted(const PGPIdType &id)
 {
-	std::map<std::string,PGPCertificateInfo>::const_iterator res = _public_keyring_map.find(id) ;
+	std::map<PGPIdType,PGPCertificateInfo>::const_iterator res = _public_keyring_map.find(id) ;
 	return (res != _public_keyring_map.end()) && (res->second._flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_ACCEPT_CONNEXION) ;
 }
 
@@ -1635,7 +1629,7 @@ bool PGPHandler::privateTrustCertificate(const PGPIdType& id,int trustlvl)
 		return false ;
 	}
 
-	std::map<std::string,PGPCertificateInfo>::iterator it = _public_keyring_map.find(id.toStdString());
+	std::map<PGPIdType,PGPCertificateInfo>::iterator it = _public_keyring_map.find(id);
 
 	if(it == _public_keyring_map.end())
 	{
@@ -1670,13 +1664,13 @@ void PGPHandler::locked_readPrivateTrustDatabase()
 		std::cerr << "  private trust database not found. No trust info loaded." << std::endl ;
 		return ;
 	}
-	std::map<std::string,PGPCertificateInfo>::iterator it ;
+	std::map<PGPIdType,PGPCertificateInfo>::iterator it ;
 	PrivateTrustPacket trustpacket;
 	int n_packets = 0 ;
 
 	while(fread((void*)&trustpacket,sizeof(PrivateTrustPacket),1,fdb) == 1)
 	{
-		it = _public_keyring_map.find(PGPIdType(trustpacket.user_id).toStdString()) ;
+		it = _public_keyring_map.find(PGPIdType(trustpacket.user_id)) ;
 
 		if(it == _public_keyring_map.end())
 		{
@@ -1715,7 +1709,7 @@ bool PGPHandler::locked_writePrivateTrustDatabase()
 	}
 	PrivateTrustPacket trustpacket ;
 
-	for(std::map<std::string,PGPCertificateInfo>::iterator it = _public_keyring_map.begin();it!=_public_keyring_map.end() ;++it)
+	for(std::map<PGPIdType,PGPCertificateInfo>::iterator it = _public_keyring_map.begin();it!=_public_keyring_map.end() ;++it)
 	{
 		memcpy(trustpacket.user_id,PGPIdType(it->first).toByteArray(),PGP_KEY_ID_SIZE) ;
 		trustpacket.trust_level = it->second._trustLvl ;
@@ -1843,7 +1837,7 @@ bool PGPHandler::locked_syncTrustDatabase()
 	return true ;
 }
 void PGPHandler::locked_mergeKeyringFromDisk(	ops_keyring_t *keyring,
-													std::map<std::string,PGPCertificateInfo>& kmap,
+													std::map<PGPIdType,PGPCertificateInfo>& kmap,
 													const std::string& keyring_file)
 {
 #ifdef DEBUG_PGPHANDLER
@@ -1922,7 +1916,7 @@ bool PGPHandler::removeKeysFromPGPKeyring(const std::list<PGPIdType>& keys_to_re
 			continue ;
 		}
 
-		std::map<std::string,PGPCertificateInfo>::iterator res = _public_keyring_map.find((*it).toStdString()) ;
+		std::map<PGPIdType,PGPCertificateInfo>::iterator res = _public_keyring_map.find(*it) ;
 
 		if(res == _public_keyring_map.end())
 		{
@@ -1952,7 +1946,7 @@ bool PGPHandler::removeKeysFromPGPKeyring(const std::list<PGPIdType>& keys_to_re
 		const ops_keydata_t *keydata ;
 		while( (keydata = ops_keyring_get_key_by_index(_pubring,i)) != NULL )
 		{
-			PGPCertificateInfo& cert(_public_keyring_map[ PGPIdType(keydata->key_id).toStdString() ]) ;
+			PGPCertificateInfo& cert(_public_keyring_map[ PGPIdType(keydata->key_id) ]) ;
 			cert._key_index = i ;
 			++i ;
 		}

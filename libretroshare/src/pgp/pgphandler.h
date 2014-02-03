@@ -8,7 +8,7 @@
 #include <map>
 #include <set>
 #include <util/rsthreads.h>
-#include <util/rsid.h>
+#include <retroshare/rsids.h>
 
 extern "C" {
 #include <openpgpsdk/types.h>
@@ -27,7 +27,7 @@ class PGPCertificateInfo
 		std::string _email;
 		std::string _comment;
 
-		std::set<std::string> signers;
+		std::set<PGPIdType> signers;
 
 		uint32_t _trustLvl;
 		uint32_t _validLvl;
@@ -104,7 +104,7 @@ class PGPHandler
 		void updateOwnSignatureFlag(const PGPIdType& ownId) ;
 		void updateOwnSignatureFlag(const PGPIdType& pgp_id,const PGPIdType& ownId) ;
 
-		void locked_updateOwnSignatureFlag(PGPCertificateInfo&, const std::string&, PGPCertificateInfo&, const std::string&) ;
+		void locked_updateOwnSignatureFlag(PGPCertificateInfo&, const PGPIdType&, PGPCertificateInfo&, const PGPIdType&) ;
 
 		// Removes the given keys from the keyring. Also backup the keyring to a file which name is automatically generated
 		// and given pack for proper display.
@@ -123,15 +123,15 @@ class PGPHandler
 		const PGPCertificateInfo *getCertificateInfo(const PGPIdType& id) const ;
 
 		bool isGPGId(const std::string &id);
-		bool isGPGSigned(const std::string &id);
-		bool isGPGAccepted(const std::string &id);
+		bool isGPGSigned(const PGPIdType &id);
+		bool isGPGAccepted(const PGPIdType &id);
 
 		static void setPassphraseCallback(PassphraseCallback cb) ;
 		static PassphraseCallback passphraseCallback() { return _passphrase_callback ; }
 
 		// Gets info about the key. Who are the signers, what's the owner's name, etc.
 		//
-		bool getGPGDetailsFromBinaryBlock(const unsigned char *mem,size_t mem_size,std::string& key_id, std::string& name, std::list<std::string>& signers) const ;
+		bool getGPGDetailsFromBinaryBlock(const unsigned char *mem,size_t mem_size,PGPIdType& key_id, std::string& name, std::list<PGPIdType>& signers) const ;
 
 		// Debug stuff.
 		virtual bool printKeys() const ;
@@ -161,8 +161,8 @@ class PGPHandler
 		bool locked_syncPublicKeyring() ;
 		bool locked_syncTrustDatabase() ;
 
-		void locked_mergeKeyringFromDisk(ops_keyring_t *keyring, std::map<std::string,PGPCertificateInfo>& kmap, const std::string& keyring_file) ;
-		bool locked_addOrMergeKey(ops_keyring_t *keyring,std::map<std::string,PGPCertificateInfo>& kmap,const ops_keydata_t *keydata) ;
+		void locked_mergeKeyringFromDisk(ops_keyring_t *keyring, std::map<PGPIdType,PGPCertificateInfo>& kmap, const std::string& keyring_file) ;
+		bool locked_addOrMergeKey(ops_keyring_t *keyring,std::map<PGPIdType,PGPCertificateInfo>& kmap,const ops_keydata_t *keydata) ;
 
 		// Members.
 		//
@@ -171,8 +171,8 @@ class PGPHandler
 		ops_keyring_t *_pubring ;
 		ops_keyring_t *_secring ;
 
-		std::map<std::string,PGPCertificateInfo> _public_keyring_map ;	// used for fast access to keys. Gives the index in the keyring.
-		std::map<std::string,PGPCertificateInfo> _secret_keyring_map ;
+		std::map<PGPIdType,PGPCertificateInfo> _public_keyring_map ;	// used for fast access to keys. Gives the index in the keyring.
+		std::map<PGPIdType,PGPCertificateInfo> _secret_keyring_map ;
 
 		const std::string _pubring_path ;
 		const std::string _secring_path ;

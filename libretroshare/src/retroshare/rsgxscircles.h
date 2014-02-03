@@ -43,7 +43,6 @@ extern RsGxsCircles *rsGxsCircles;
 
 
 typedef std::string RsGxsCircleId;
-typedef std::string RsPeerId;	   // SSL ID.
 typedef std::string RsPgpId;
 typedef std::string RsCircleInternalId;
 

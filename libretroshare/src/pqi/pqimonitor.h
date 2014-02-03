@@ -35,6 +35,7 @@
 #include <string>
 #include <list>
 #include "pqi/pqiipset.h"
+#include "retroshare/rsids.h"
 
 /************** Define Type/Mode/Source ***************/
 
@@ -96,11 +97,11 @@ const uint32_t RS_STUN_FRIEND_OF_FRIEND	= 0x0040;
 
 class pqipeer
 {
-        public:
-std::string id;
-std::string name;
-uint32_t    state;
-uint32_t    actions;
+	public:
+		SSLIdType id;
+		std::string name;
+		uint32_t    state;
+		uint32_t    actions;
 };
 
 class p3LinkMgr;

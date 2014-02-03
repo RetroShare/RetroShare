@@ -63,14 +63,14 @@ const uint32_t FT_SERVER_CHUNK_MAP_REQ	= 0x0004;		// chunk map request to be tre
 //const uint32_t FT_CRC32MAP_REQ        	= 0x0005;		// crc32 map request to be treated by server
 const uint32_t FT_CLIENT_CHUNK_CRC_REQ	= 0x0006;		// chunk sha1 crc request to be treated
 
-ftRequest::ftRequest(uint32_t type, std::string peerId, std::string hash, uint64_t size, uint64_t offset, uint32_t chunk, void *data)
+ftRequest::ftRequest(uint32_t type, const RsPeerId& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunk, void *data)
 	:mType(type), mPeerId(peerId), mHash(hash), mSize(size),
 	mOffset(offset), mChunk(chunk), mData(data)
 {
 	return;
 }
 
-ftDataMultiplex::ftDataMultiplex(std::string ownId, ftDataSend *server, ftSearch *search)
+ftDataMultiplex::ftDataMultiplex(const RsPeerId& ownId, ftDataSend *server, ftSearch *search)
 	:RsQueueThread(DMULTIPLEX_MIN, DMULTIPLEX_MAX, DMULTIPLEX_RELAX), dataMtx("ftDataMultiplex"),
 	mDataSend(server),  mSearch(search), mOwnId(ownId)
 {
@@ -204,7 +204,7 @@ bool    ftDataMultiplex::FileDetails(const std::string &hash, FileSearchFlags hi
 	/*************** SEND INTERFACE (calls ftDataSend) *******************/
 
 	/* Client Send */
-bool	ftDataMultiplex::sendDataRequest(const std::string& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunksize)
+bool	ftDataMultiplex::sendDataRequest(const RsPeerId& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunksize)
 {
 #ifdef MPLEX_DEBUG
 	std::cerr << "ftDataMultiplex::sendDataRequest() Client Send";
@@ -214,7 +214,7 @@ bool	ftDataMultiplex::sendDataRequest(const std::string& peerId, const std::stri
 }
 
 	/* Server Send */
-bool	ftDataMultiplex::sendData(const std::string& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunksize, void *data)
+bool	ftDataMultiplex::sendData(const RsPeerId& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunksize, void *data)
 {
 #ifdef MPLEX_DEBUG
 	std::cerr << "ftDataMultiplex::sendData() Server Send";
@@ -227,7 +227,7 @@ bool	ftDataMultiplex::sendData(const std::string& peerId, const std::string& has
 	/*************** RECV INTERFACE (provides ftDataRecv) ****************/
 
 	/* Client Recv */
-bool	ftDataMultiplex::recvData(const std::string& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunksize, void *data)
+bool	ftDataMultiplex::recvData(const RsPeerId& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunksize, void *data)
 {
 #ifdef MPLEX_DEBUG
 	std::cerr << "ftDataMultiplex::recvData() Client Recv";
@@ -242,7 +242,7 @@ bool	ftDataMultiplex::recvData(const std::string& peerId, const std::string& has
 
 
 	/* Server Recv */
-bool	ftDataMultiplex::recvDataRequest(const std::string& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunksize)
+bool	ftDataMultiplex::recvDataRequest(const RsPeerId& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunksize)
 {
 #ifdef MPLEX_DEBUG
 	std::cerr << "ftDataMultiplex::recvDataRequest() Server Recv";
@@ -256,7 +256,7 @@ bool	ftDataMultiplex::recvDataRequest(const std::string& peerId, const std::stri
 	return true;
 }
 
-bool	ftDataMultiplex::recvChunkMapRequest(const std::string& peerId, const std::string& hash,bool is_client)
+bool	ftDataMultiplex::recvChunkMapRequest(const RsPeerId& peerId, const std::string& hash,bool is_client)
 {
 #ifdef MPLEX_DEBUG
 	std::cerr << "ftDataMultiplex::recvChunkMapRequest() Server Recv";
@@ -273,7 +273,7 @@ bool	ftDataMultiplex::recvChunkMapRequest(const std::string& peerId, const std::
 	return true;
 }
 
-bool	ftDataMultiplex::recvSingleChunkCRCRequest(const std::string& peerId, const std::string& hash,uint32_t chunk_number)
+bool	ftDataMultiplex::recvSingleChunkCRCRequest(const RsPeerId& peerId, const std::string& hash,uint32_t chunk_number)
 {
 #ifdef MPLEX_DEBUG
 	std::cerr << "ftDataMultiplex::recvChunkMapRequest() Server Recv";
@@ -406,7 +406,7 @@ bool 	ftDataMultiplex::doWork()
 	return true;
 }
 
-bool ftDataMultiplex::recvSingleChunkCRC(const std::string& peerId, const std::string& hash,uint32_t chunk_number,const Sha1CheckSum& crc)
+bool ftDataMultiplex::recvSingleChunkCRC(const RsPeerId& peerId, const std::string& hash,uint32_t chunk_number,const Sha1CheckSum& crc)
 {
 	RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
 
@@ -503,7 +503,7 @@ bool ftDataMultiplex::dispatchReceivedChunkCheckSum()
 // - an uploader has sent his chunk map, so we need to store it in the corresponding ftFileProvider
 // - a source for a download has sent his chunk map, so we need to send it to the corresponding ftFileCreator.
 //
-bool ftDataMultiplex::recvChunkMap(const std::string& peerId, const std::string& hash,const CompressedChunkMap& compressed_map,bool client)
+bool ftDataMultiplex::recvChunkMap(const RsPeerId& peerId, const std::string& hash,const CompressedChunkMap& compressed_map,bool client)
 {
 	RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
 
@@ -549,7 +549,7 @@ bool ftDataMultiplex::recvChunkMap(const std::string& peerId, const std::string&
 	return false;
 }
 
-bool ftDataMultiplex::handleRecvClientChunkMapRequest(const std::string& peerId, const std::string& hash)
+bool ftDataMultiplex::handleRecvClientChunkMapRequest(const RsPeerId& peerId, const std::string& hash)
 {
 	CompressedChunkMap cmap ;
 
@@ -581,7 +581,7 @@ bool ftDataMultiplex::handleRecvClientChunkMapRequest(const std::string& peerId,
 	return true ;
 }
 
-bool ftDataMultiplex::handleRecvChunkCrcRequest(const std::string& peerId, const std::string& hash, uint32_t chunk_number)
+bool ftDataMultiplex::handleRecvChunkCrcRequest(const RsPeerId& peerId, const std::string& hash, uint32_t chunk_number)
 {
 	// look into the sha1sum cache
 	
@@ -705,7 +705,7 @@ bool ftDataMultiplex::handleRecvChunkCrcRequest(const std::string& peerId, const
 	return true ;
 }
 
-bool ftDataMultiplex::handleRecvServerChunkMapRequest(const std::string& peerId, const std::string& hash)
+bool ftDataMultiplex::handleRecvServerChunkMapRequest(const RsPeerId& peerId, const std::string& hash)
 {
 	CompressedChunkMap cmap ;
 	std::map<std::string, ftFileProvider *>::iterator it ;
@@ -754,9 +754,7 @@ bool ftDataMultiplex::handleRecvServerChunkMapRequest(const std::string& peerId,
 	return true;
 }
 
-bool	ftDataMultiplex::handleRecvData(const std::string& peerId, 
-			const std::string& hash, uint64_t /*size*/,
-			uint64_t offset, uint32_t chunksize, void *data)
+bool	ftDataMultiplex::handleRecvData(const RsPeerId& peerId, const std::string& hash, uint64_t /*size*/, uint64_t offset, uint32_t chunksize, void *data)
 {
 	ftTransferModule *transfer_module = NULL ;
 
@@ -787,7 +785,7 @@ bool	ftDataMultiplex::handleRecvData(const std::string& peerId,
 
 
 	/* called by ftTransferModule */
-bool	ftDataMultiplex::handleRecvDataRequest(const std::string& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunksize)
+bool	ftDataMultiplex::handleRecvDataRequest(const RsPeerId& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunksize)
 {
 	/**** Find Files *****/
 
@@ -833,8 +831,7 @@ bool	ftDataMultiplex::handleRecvDataRequest(const std::string& peerId, const std
 	return true;
 }
 
-bool	ftDataMultiplex::locked_handleServerRequest(ftFileProvider *provider,
-		std::string peerId, std::string hash, uint64_t size, 
+bool	ftDataMultiplex::locked_handleServerRequest(ftFileProvider *provider, const RsPeerId& peerId, const std::string& hash, uint64_t size, 
 			uint64_t offset, uint32_t chunksize)
 {
 	if(chunksize > uint32_t(10*1024*1024))
@@ -875,7 +872,7 @@ bool	ftDataMultiplex::locked_handleServerRequest(ftFileProvider *provider,
 	return false;
 }
 
-bool ftDataMultiplex::getClientChunkMap(const std::string& upload_hash,const std::string& peerId,CompressedChunkMap& cmap)
+bool ftDataMultiplex::getClientChunkMap(const std::string& upload_hash,const RsPeerId& peerId,CompressedChunkMap& cmap)
 {
 	bool too_old = false;
 	{
@@ -897,7 +894,7 @@ bool ftDataMultiplex::getClientChunkMap(const std::string& upload_hash,const std
 	return true ;
 }
 
-bool ftDataMultiplex::sendChunkMapRequest(const std::string& peer_id,const std::string& hash,bool is_client)
+bool ftDataMultiplex::sendChunkMapRequest(const RsPeerId& peer_id,const std::string& hash,bool is_client)
 {
 	return mDataSend->sendChunkMapRequest(peer_id,hash,is_client);
 }
@@ -947,13 +944,13 @@ void ftDataMultiplex::handlePendingCrcRequests()
 				if(it4 == mClients.end())
 					continue ;
 
-				std::vector<std::string> sources ;
+				std::vector<RsPeerId> sources ;
 				it4->second.mCreator->getSourcesList(it2->first,sources) ;
 
 				// 1 - go through all sources. Take the oldest one.
 				//
 
-				std::string best_source ;
+				RsPeerId best_source ;
 				time_t oldest_timestamp = now ;
 
 				for(uint32_t i=0;i<sources.size();++i)
@@ -961,7 +958,7 @@ void ftDataMultiplex::handlePendingCrcRequests()
 #ifdef MPLEX_DEBUG
 					std::cerr << "ftDataMultiplex::handlePendingCrcRequests():    Examining source " << sources[i] << std::endl;
 #endif
-					std::map<std::string,time_t>::const_iterator it3(it2->second.second.find(sources[i])) ;
+					std::map<RsPeerId,time_t>::const_iterator it3(it2->second.second.find(sources[i])) ;
 
 					if(it3 == it2->second.second.end()) // source not found. So this one is surely the oldest one to have been requested.
 					{
@@ -984,7 +981,7 @@ void ftDataMultiplex::handlePendingCrcRequests()
 						std::cerr << "ftDataMultiplex::handlePendingCrcRequests():    Source too recently used! So using it directly." << std::endl;
 #endif
 				}
-				if(best_source != "")
+				if(!best_source.isNull())
 				{
 #ifdef MPLEX_DEBUG
 					std::cerr << "ftDataMultiplex::handlePendingCrcRequests(): Asking crc of chunk " << it2->first << " to peer " << best_source << " for hash " << it->first << std::endl;
@@ -1044,7 +1041,7 @@ void ftDataMultiplex::deleteUnusedServers()
 			++sit ;
 }
 
-bool	ftDataMultiplex::handleSearchRequest(const std::string& peerId, const std::string& hash)
+bool	ftDataMultiplex::handleSearchRequest(const RsPeerId& peerId, const std::string& hash)
 {
 #ifdef MPLEX_DEBUG
 	std::cerr << "ftDataMultiplex::handleSearchRequest(";

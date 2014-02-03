@@ -33,8 +33,8 @@
 #include <iostream>
 #include <string>
 #include <stdint.h>
-#include <util/rsid.h>
 
+#include <retroshare/rsids.h>
 #include <retroshare/rsflags.h>
 
 #define USE_NEW_CHUNK_CHECKING_CODE
@@ -43,6 +43,7 @@ typedef std::string   RsCertId;
 typedef std::string   RsChanId;
 typedef std::string   RsMsgId;
 typedef std::string   RsAuthId;
+typedef SSLIdType     RsPeerId ;
 
 const uint32_t FT_STATE_FAILED			= 0x0000 ;
 const uint32_t FT_STATE_OKAY				= 0x0001 ;
@@ -84,7 +85,7 @@ class TransferInfo
 {
 	public:
 		/**** Need Some of these Fields ****/
-		std::string peerId;
+		SSLIdType peerId;
 		std::string name; /* if has alternative name? */
 		double tfRate; /* kbytes */
 		int  status; /* FT_STATE_... */
@@ -235,7 +236,7 @@ class DirDetails
 
 	void *ref;
 	uint8_t type;
-	std::string id;
+	SSLIdType id;
 	std::string name;
 	std::string hash;
 	std::string path;
@@ -251,7 +252,7 @@ class DirDetails
 class FileDetail
 {
 	public:
-		std::string id;
+		SSLIdType id;
 		std::string name;
 		std::string hash;
 		std::string path;
@@ -272,7 +273,7 @@ class FileChunksInfo
 		{
 			uint32_t start ;
 			uint32_t size ;
-			std::string peer_id ;
+			RsPeerId peer_id ;
 		};
 
 		uint64_t file_size ;					// real size of the file
@@ -283,7 +284,7 @@ class FileChunksInfo
 		std::vector<ChunkState> chunks ;	
 
 		// For each source peer, gives the compressed bit map of have/don't have sate
-		std::map<std::string, CompressedChunkMap> compressed_peer_availability_maps ;
+		std::map<RsPeerId, CompressedChunkMap> compressed_peer_availability_maps ;
 
 		// For each chunk (by chunk number), gives the completion of the chunk.
 		//                     

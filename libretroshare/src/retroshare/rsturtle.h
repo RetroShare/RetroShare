@@ -33,6 +33,8 @@
 #include <list>
 #include <vector>
 
+#include "retroshare/rsids.h"
+
 class LinearizedExpression ;
 class RsTurtleClientService ;
 
@@ -54,7 +56,7 @@ struct TurtleFileInfo
 struct TurtleRequestDisplayInfo
 {
 	uint32_t request_id ;			// Id of the request
-	std::string source_peer_id ;	// Peer that relayed the request
+	SSLIdType source_peer_id ;	// Peer that relayed the request
 	uint32_t age ;						// Age in seconds
 	uint32_t depth ;					// Depth of the request. Might be altered.
 };
@@ -134,7 +136,7 @@ class RsTurtle
 		virtual void getTrafficStatistics(TurtleTrafficStatisticsInfo& info) const = 0;
 
 		// Convenience function.
-		virtual bool isTurtlePeer(const std::string& peer_id) const = 0 ;
+		virtual bool isTurtlePeer(const SSLIdType& peer_id) const = 0 ;
 
 		// Hardcore handles
 		virtual void setMaxTRForwardRate(int max_tr_up_rate) = 0 ;

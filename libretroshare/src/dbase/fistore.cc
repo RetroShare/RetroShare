@@ -106,7 +106,7 @@ int FileIndexStore::loadCache(const RsCacheData &data)
 			 *
 			 * peername should not be used in dbase.
 			 */
-			finew->root->name = data.pid; 
+			finew->root->name = data.pid.toStdString(); 
 
 			if (local)
 			{
@@ -168,7 +168,7 @@ int FileIndexStore::loadCache(const RsCacheData &data)
 
 
 	/* Search Interface - For Directory Access */
-int FileIndexStore::RequestDirDetails(const std::string& uid, const std::string& path, DirDetails& details) const
+int FileIndexStore::RequestDirDetails(const SSLIdType& uid, const std::string& path, DirDetails& details) const
 {
 	lockData();
 
@@ -382,7 +382,7 @@ int FileIndexStore::SearchKeywords(std::list<std::string> keywords, std::list<Di
 				if(!FileIndex::extractData(*rit, dd))
 					continue ;
 
-				dd.id = "Local";
+				dd.id.clear() ;
 				results.push_back(dd);
 			}
 
@@ -431,7 +431,7 @@ int FileIndexStore::searchBoolExp(Expression * exp, std::list<DirDetails> &resul
 		{
 			DirDetails dd;
 			FileIndex::extractData(*rit, dd);
-			dd.id = "Local";
+			dd.id.clear() ;
 			results.push_back(dd);
 		}
 

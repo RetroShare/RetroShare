@@ -102,12 +102,14 @@ void	ftServer::addConfigComponents(p3ConfigMgr */*mgr*/)
 	/* NOT SURE ABOUT THIS ONE */
 }
 
-std::string ftServer::OwnId()
+const RsPeerId& ftServer::OwnId()
 {
-	std::string ownId;
+	static RsPeerId null_id ;
+
 	if (mLinkMgr)
-		ownId = mLinkMgr->getOwnId();
-	return ownId;
+		return  mLinkMgr->getOwnId();
+	else
+		return null_id ;
 }
 
 	/* Final Setup (once everything is assigned) */
@@ -117,7 +119,7 @@ void ftServer::SetupFtServer()
 	/* setup FiStore/Monitor */
 	std::string localcachedir = mConfigPath + "/cache/local";
 	std::string remotecachedir = mConfigPath + "/cache/remote";
-	std::string ownId = mLinkMgr->getOwnId();
+	RsPeerId ownId = mLinkMgr->getOwnId();
 
 	/* search/extras List */
 	mFtExtra = new ftExtraList();
@@ -264,7 +266,7 @@ bool ftServer::alreadyHaveFile(const std::string& hash, FileInfo &info)
 	return mFtController->alreadyHaveFile(hash, info);
 }
 
-bool ftServer::FileRequest(const std::string& fname, const std::string& hash, uint64_t size, const std::string& dest, TransferRequestFlags flags, const std::list<std::string>& srcIds)
+bool ftServer::FileRequest(const std::string& fname, const std::string& hash, uint64_t size, const std::string& dest, TransferRequestFlags flags, const std::list<RsPeerId>& srcIds)
 {
 	std::string error_string ;
 
@@ -407,7 +409,7 @@ bool ftServer::FileDownloads(std::list<std::string> &hashs)
 	//return mFtDataplex->FileDownloads(hashs);
 }
 
-bool ftServer::FileUploadChunksDetails(const std::string& hash,const std::string& peer_id,CompressedChunkMap& cmap)
+bool ftServer::FileUploadChunksDetails(const std::string& hash,const RsPeerId& peer_id,CompressedChunkMap& cmap)
 {
 	return mFtDataplex->getClientChunkMap(hash,peer_id,cmap);
 }
@@ -481,7 +483,7 @@ void ftServer::removeVirtualPeer(const TurtleFileHash& hash,const TurtleVirtualP
 	mFtController->removeFileSource(hash,virtual_peer_id) ;
 }
 
-bool ftServer::handleTunnelRequest(const std::string& hash,const std::string& peer_id)
+bool ftServer::handleTunnelRequest(const std::string& hash,const RsPeerId& peer_id)
 {
 	FileInfo info ;
 	bool res = FileDetails(hash, RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_SPEC_ONLY | RS_FILE_HINTS_DOWNLOAD, info);
@@ -545,7 +547,7 @@ bool ftServer::ExtraFileMove(std::string fname, std::string hash, uint64_t size,
 	/******************** Directory Listing ************************/
 	/***************************************************************/
 
-int ftServer::RequestDirDetails(const std::string& uid, const std::string& path, DirDetails &details)
+int ftServer::RequestDirDetails(const RsPeerId& uid, const std::string& path, DirDetails &details)
 {
 #ifdef SERVER_DEBUG
 	std::cerr << "ftServer::RequestDirDetails(uid:" << uid;
@@ -610,12 +612,12 @@ uint32_t ftServer::getType(void *ref, FileSearchFlags flags)
 int ftServer::SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,FileSearchFlags flags)
 {
 	if(flags & RS_FILE_HINTS_LOCAL)
-		return mFiMon->SearchKeywords(keywords, results,flags,"");
+		return mFiMon->SearchKeywords(keywords, results,flags,RsPeerId());
 	else
 		return mFiStore->SearchKeywords(keywords, results,flags);
 	return 0 ;
 }
-int ftServer::SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,FileSearchFlags flags,const std::string& peer_id)
+int ftServer::SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,FileSearchFlags flags,const RsPeerId& peer_id)
 {
 #ifdef SERVER_DEBUG
 	std::cerr << "ftServer::SearchKeywords()";
@@ -637,12 +639,12 @@ int ftServer::SearchKeywords(std::list<std::string> keywords, std::list<DirDetai
 int ftServer::SearchBoolExp(Expression * exp, std::list<DirDetails> &results,FileSearchFlags flags)
 {
 	if(flags & RS_FILE_HINTS_LOCAL)
-		return mFiMon->SearchBoolExp(exp,results,flags,"") ;
+		return mFiMon->SearchBoolExp(exp,results,flags,RsPeerId()) ;
 	else
 		return mFiStore->searchBoolExp(exp, results);
 	return 0 ;
 }
-int ftServer::SearchBoolExp(Expression * exp, std::list<DirDetails> &results,FileSearchFlags flags,const std::string& peer_id)
+int ftServer::SearchBoolExp(Expression * exp, std::list<DirDetails> &results,FileSearchFlags flags,const RsPeerId& peer_id)
 {
 	if(flags & RS_FILE_HINTS_LOCAL)
 		return mFiMon->SearchBoolExp(exp,results,flags,peer_id) ;
@@ -870,7 +872,7 @@ bool  ftServer::loadConfigMap(std::map<std::string, std::string> &/*configMap*/)
 	/***************************************************************/
 
 	/* Client Send */
-bool	ftServer::sendDataRequest(const std::string& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunksize)
+bool	ftServer::sendDataRequest(const RsPeerId& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunksize)
 {
 #ifdef SERVER_DEBUG
 	std::cerr << "ftServer::sendDataRequest() to peer " << peerId << " for hash " << hash << ", offset=" << offset << ", chunk size="<< chunksize << std::endl;
@@ -908,7 +910,7 @@ bool	ftServer::sendDataRequest(const std::string& peerId, const std::string& has
 	return true;
 }
 
-bool ftServer::sendChunkMapRequest(const std::string& peerId,const std::string& hash,bool is_client)
+bool ftServer::sendChunkMapRequest(const RsPeerId& peerId,const std::string& hash,bool is_client)
 {
 #ifdef SERVER_DEBUG
 	std::cerr << "ftServer::sendChunkMapRequest() to peer " << peerId << " for hash " << hash << std::endl;
@@ -937,7 +939,7 @@ bool ftServer::sendChunkMapRequest(const std::string& peerId,const std::string& 
 	return true ;
 }
 
-bool ftServer::sendChunkMap(const std::string& peerId,const std::string& hash,const CompressedChunkMap& map,bool is_client)
+bool ftServer::sendChunkMap(const RsPeerId& peerId,const std::string& hash,const CompressedChunkMap& map,bool is_client)
 {
 #ifdef SERVER_DEBUG
 	std::cerr << "ftServer::sendChunkMap() to peer " << peerId << " for hash " << hash << std::endl;
@@ -968,7 +970,7 @@ bool ftServer::sendChunkMap(const std::string& peerId,const std::string& hash,co
 	return true ;
 }
 
-bool ftServer::sendSingleChunkCRCRequest(const std::string& peerId,const std::string& hash,uint32_t chunk_number)
+bool ftServer::sendSingleChunkCRCRequest(const RsPeerId& peerId,const std::string& hash,uint32_t chunk_number)
 {
 #ifdef SERVER_DEBUG
 	std::cerr << "ftServer::sendSingleCRCRequest() to peer " << peerId << " for hash " << hash << ", chunk number=" << chunk_number << std::endl;
@@ -999,7 +1001,7 @@ bool ftServer::sendSingleChunkCRCRequest(const std::string& peerId,const std::st
 	return true ;
 }
 
-bool ftServer::sendSingleChunkCRC(const std::string& peerId,const std::string& hash,uint32_t chunk_number,const Sha1CheckSum& crc)
+bool ftServer::sendSingleChunkCRC(const RsPeerId& peerId,const std::string& hash,uint32_t chunk_number,const Sha1CheckSum& crc)
 {
 #ifdef SERVER_DEBUG
 	std::cerr << "ftServer::sendSingleCRC() to peer " << peerId << " for hash " << hash << ", chunk number=" << chunk_number << std::endl;
@@ -1033,7 +1035,7 @@ bool ftServer::sendSingleChunkCRC(const std::string& peerId,const std::string& h
 }
 
 	/* Server Send */
-bool	ftServer::sendData(const std::string& peerId, const std::string& hash, uint64_t size, uint64_t baseoffset, uint32_t chunksize, void *data)
+bool	ftServer::sendData(const RsPeerId& peerId, const std::string& hash, uint64_t size, uint64_t baseoffset, uint32_t chunksize, void *data)
 {
 	/* create a packet */
 	/* push to networking part */
@@ -1131,7 +1133,7 @@ bool	ftServer::sendData(const std::string& peerId, const std::string& hash, uint
 //
 void ftServer::receiveTurtleData(RsTurtleGenericTunnelItem *i,
 											const std::string& hash,
-											const std::string& virtual_peer_id,
+											const RsPeerId& virtual_peer_id,
 											RsTurtleGenericTunnelItem::Direction direction) 
 {
 	switch(i->PacketSubType())

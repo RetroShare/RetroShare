@@ -174,7 +174,7 @@ class PersonEntry: public DirEntry
 {
 	public:
 	/* cleanup */
-	PersonEntry(const std::string& pid) : id(pid) { return; }
+	PersonEntry(const SSLIdType& pid) : id(pid) { return; }
 virtual	~PersonEntry() { return; }
 
 DirEntry &operator=(DirEntry &src)
@@ -186,7 +186,7 @@ DirEntry &operator=(DirEntry &src)
 	virtual uint32_t type() const { return DIR_TYPE_PERSON ; }
 
 	/* Data */
-	std::string id;
+	SSLIdType id;
 
 	/* Inherited members from FileEntry:
 	int size 	  - count for dirs 
@@ -209,7 +209,7 @@ class Expression;
 class FileIndex
 {
 	public:
-		FileIndex(const std::string& pid);
+		FileIndex(const SSLIdType& pid);
 		~FileIndex();
 
 		/* control root entries */

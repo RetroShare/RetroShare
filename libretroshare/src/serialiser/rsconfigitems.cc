@@ -112,7 +112,7 @@ void 	RsFileTransfer::clear()
 
 	file.TlvClear();
 	allPeerIds.TlvClear();
-	cPeerId = "";
+	cPeerId.clear() ;
 	state = 0;
 	in = false;
 	transferred = 0;
@@ -197,7 +197,7 @@ uint32_t    RsFileConfigSerialiser::sizeTransfer(RsFileTransfer *item)
 	uint32_t s = 8; /* header */
 	s += item->file.TlvSize();
 	s += item->allPeerIds.TlvSize();
-	s += GetTlvStringSize(item->cPeerId);
+	s += SSLIdType::SIZE_IN_BYTES;
 	s += 2; /* state */
 	s += 2; /* in/out */
 	s += 8; /* transferred */
@@ -239,7 +239,7 @@ bool     RsFileConfigSerialiser::serialiseTransfer(RsFileTransfer *item, void *d
 	ok &= item->file.SetTlv(data, tlvsize, &offset);
 	ok &= item->allPeerIds.SetTlv(data, tlvsize, &offset);
 
-        ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_PEERID, item->cPeerId);
+	ok &= setRawSSLId(data, tlvsize, &offset, item->cPeerId);
 
 	ok &= setRawUInt16(data, tlvsize, &offset, item->state);
 	ok &= setRawUInt16(data, tlvsize, &offset, item->in);
@@ -305,8 +305,7 @@ RsFileTransfer *RsFileConfigSerialiser::deserialiseTransfer(void *data, uint32_t
 	ok &= item->file.GetTlv(data, rssize, &offset);
 	ok &= item->allPeerIds.GetTlv(data, rssize, &offset);
 
-	/* string */
-        ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_PEERID, item->cPeerId);
+	ok &= getRawSSLId(data, rssize, &offset, item->cPeerId);
 
 	/* data */
 	ok &= getRawUInt16(data, rssize, &offset, &(item->state));

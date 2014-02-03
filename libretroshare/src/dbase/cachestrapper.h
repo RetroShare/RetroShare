@@ -60,11 +60,6 @@ class CacheSource;   /* Interface for local File Index/Monitor */
 class CacheStore;    /* Interface for the actual Cache */
 class CacheStrapper; /* Controlling Class */
 
-/****
-typedef uint32_t RsPeerId;
-*****/
-typedef std::string RsPeerId;
-
 /******************************** CacheId ********************************/
 
 /*!
@@ -91,7 +86,7 @@ class RsCacheData
 {
 	public:
 
-	RsPeerId pid; /// peer id
+	SSLIdType pid; /// peer id
 	/// REMOVED as a WASTE to look it up everywhere! std::string pname; /// peer name (can be used by cachestore)
 	CacheId  cid;  /// cache id
 	std::string path; /// file system path where physical cache data is located
@@ -132,8 +127,8 @@ class CacheTransfer
 		/*!
 		 * to be overloaded
 		 */
-		virtual bool RequestCacheFile(RsPeerId id, std::string path, std::string hash, uint64_t size);
-		virtual bool CancelCacheFile(RsPeerId id, std::string path, std::string hash, uint64_t size);
+		virtual bool RequestCacheFile(const SSLIdType& id, std::string path, std::string hash, uint64_t size);
+		virtual bool CancelCacheFile(const SSLIdType& id, std::string path, std::string hash, uint64_t size);
 
 		bool CompletedCache(std::string hash);                   /* internal completion -> does cb */
 		bool FailedCache(std::string hash);                      /* internal completion -> does cb */
@@ -172,7 +167,7 @@ class CacheSource
 		 *  called to determine available cache for peer -
 		 * default acceptable (returns all)
 		 */
-		virtual bool 	cachesAvailable(RsPeerId pid, std::map<CacheId, RsCacheData> &ids);
+		virtual bool 	cachesAvailable(const SSLIdType& pid, std::map<CacheId, RsCacheData> &ids);
 
 		/*!
 		 * function called at startup to load from
@@ -182,12 +177,12 @@ class CacheSource
 		virtual bool    loadLocalCache(const RsCacheData &data);
 
 			/* control Caches available */
-		bool  refreshCache(const RsCacheData &data,const std::set<std::string>& destination_peers);
+		bool  refreshCache(const RsCacheData &data,const std::set<SSLIdType>& destination_peers);
 		bool  refreshCache(const RsCacheData &data);
 		bool 	clearCache(CacheId id);
 
 		/* controls if peer is an accepted receiver for cache items. Default is yes. To be overloaded. */
-		virtual bool isPeerAcceptedAsCacheReceiver(const std::string& /*peer_id*/)  { return true ; }
+		virtual bool isPeerAcceptedAsCacheReceiver(const SSLIdType& /*peer_id*/)  { return true ; }
 
 			/* get private data */
 		std::string getCacheDir()    { return cacheDir;   }
@@ -276,7 +271,7 @@ class CacheStore
 			/* virtual functions overloaded by cache implementor */
 
 		/* controls if peer is an accepted provider for cache items. Default is yes. To be overloaded. */
-		virtual bool isPeerAcceptedAsCacheProvider(const std::string& /*peer_id*/)  { return true ; }
+		virtual bool isPeerAcceptedAsCacheProvider(const SSLIdType& /*peer_id*/)  { return true ; }
 
 		/*!
 		 * @param data cache data is stored here
@@ -334,7 +329,7 @@ class CacheStore
 		std::string cacheDir;
 
 		mutable RsMutex cMutex;
-		std::map<RsPeerId, CacheSet> caches;
+		std::map<SSLIdType, CacheSet> caches;
 
 };
 
@@ -407,7 +402,7 @@ virtual void statusChange(const std::list<pqipeer> &plist);
  *
  */
 void 	refreshCache(const RsCacheData &data);
-void 	refreshCache(const RsCacheData &data,const std::set<std::string>& destination_peers);	// specify a particular list of destination peers (self not added!)
+void 	refreshCache(const RsCacheData &data,const std::set<SSLIdType>& destination_peers);	// specify a particular list of destination peers (self not added!)
 
 /*!
  * forces config savelist
@@ -419,7 +414,7 @@ void 	refreshCacheStore(const RsCacheData &data);
 /*!
  *  list of Caches to send out
  */
-bool    getCacheUpdates(std::list<std::pair<RsPeerId, RsCacheData> > &updates);
+bool    getCacheUpdates(std::list<std::pair<SSLIdType, RsCacheData> > &updates);
 
 /*!
  * add to strapper's cachepair set so a related service's store and source can be maintained
@@ -429,7 +424,7 @@ void	addCachePair(CachePair pair);
 
 	/*** I/O (2) ***/
 void	recvCacheResponse(RsCacheData &data, time_t ts);  
-void    handleCacheQuery(RsPeerId id, std::map<CacheId, RsCacheData> &data); 
+void    handleCacheQuery(const SSLIdType& id, std::map<CacheId, RsCacheData> &data); 
 
 
 /*!
@@ -472,7 +467,7 @@ virtual bool    loadList(std::list<RsItem *>& load);
 
 	RsMutex csMtx; /* protect below */
 
-	std::list<std::pair<RsPeerId, RsCacheData> > mCacheUpdates;
+	std::list<std::pair<SSLIdType, RsCacheData> > mCacheUpdates;
 };
 
 

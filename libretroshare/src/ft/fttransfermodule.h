@@ -56,7 +56,7 @@ class HashThread ;
 class peerInfo
 {
 public:
-	peerInfo(std::string peerId_in):peerId(peerId_in),state(PQIPEER_NOT_ONLINE),desiredRate(0),actualRate(0),
+	peerInfo(const SSLIdType& peerId_in):peerId(peerId_in),state(PQIPEER_NOT_ONLINE),desiredRate(0),actualRate(0),
 		lastTS(0),
 		recvTS(0), lastTransfers(0), nResets(0), 
 		rtt(0), rttActive(false), rttStart(0), rttOffset(0),
@@ -64,7 +64,7 @@ public:
 	{
 		return;
 	}
-	peerInfo(std::string peerId_in,uint32_t state_in,uint32_t maxRate_in):
+	peerInfo(const SSLIdType& peerId_in,uint32_t state_in,uint32_t maxRate_in):
 		peerId(peerId_in),state(state_in),desiredRate(maxRate_in),actualRate(0),
 		lastTS(0),
 		recvTS(0), lastTransfers(0), nResets(0), 
@@ -73,7 +73,7 @@ public:
 	{
 		return;
 	}
-  	std::string peerId;
+  	SSLIdType peerId;
   	uint32_t state;
   	double desiredRate;
   	double actualRate;
@@ -124,13 +124,13 @@ public:
   ~ftTransferModule();
 
   //interface to download controller
-  bool setFileSources(const std::list<std::string>& peerIds);
-  bool addFileSource(const std::string& peerId);
-  bool removeFileSource(const std::string& peerId);
-  bool setPeerState(const std::string& peerId,uint32_t state,uint32_t maxRate);  //state = ONLINE/OFFLINE
-  bool getFileSources(std::list<std::string> &peerIds);
-  bool getPeerState(const std::string& peerId,uint32_t &state,uint32_t &tfRate);
-  uint32_t getDataRate(const std::string& peerId);
+  bool setFileSources(const std::list<SSLIdType>& peerIds);
+  bool addFileSource(const SSLIdType& peerId);
+  bool removeFileSource(const SSLIdType& peerId);
+  bool setPeerState(const SSLIdType& peerId,uint32_t state,uint32_t maxRate);  //state = ONLINE/OFFLINE
+  bool getFileSources(std::list<SSLIdType> &peerIds);
+  bool getPeerState(const SSLIdType& peerId,uint32_t &state,uint32_t &tfRate);
+  uint32_t getDataRate(const SSLIdType& peerId);
   bool cancelTransfer();
   bool cancelFileTransferUpward();
   bool completeFileTransfer();
@@ -138,11 +138,11 @@ public:
   void forceCheck() ;
 
   //interface to multiplex module
-  bool recvFileData(const std::string& peerId, uint64_t offset, uint32_t chunk_size, void *data);
-  void locked_requestData(const std::string& peerId, uint64_t offset, uint32_t chunk_size);
+  bool recvFileData(const SSLIdType& peerId, uint64_t offset, uint32_t chunk_size, void *data);
+  void locked_requestData(const SSLIdType& peerId, uint64_t offset, uint32_t chunk_size);
 
   //interface to file creator
-  bool locked_getChunk(const std::string& peer_id,uint32_t size_hint,uint64_t &offset, uint32_t &chunk_size);
+  bool locked_getChunk(const SSLIdType& peer_id,uint32_t size_hint,uint64_t &offset, uint32_t &chunk_size);
   bool locked_storeData(uint64_t offset, uint32_t chunk_size, void *data);
 
   int tick();
@@ -180,8 +180,8 @@ private:
 
   RsMutex tfMtx; /* below is mutex protected */
 
-  std::list<std::string>         mOnlinePeers;
-  std::map<std::string,peerInfo> mFileSources;
+  std::list<SSLIdType>         mOnlinePeers;
+  std::map<SSLIdType,peerInfo> mFileSources;
   	
   uint16_t     mFlag;  //2:file canceled, 1:transfer complete, 0: not complete, 3: checking hash, 4: checking chunks
   double desiredRate;

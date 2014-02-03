@@ -70,8 +70,8 @@ class peerState
 	public:
 	peerState(); /* init */
 
-	std::string id;
-	std::string gpg_id;
+	SSLIdType id;
+	PGPIdType gpg_id;
 
 	uint32_t netMode; /* EXT / UPNP / UDP / HIDDEN / INVALID */
 	/* visState */
@@ -114,15 +114,15 @@ class p3PeerMgr
         p3PeerMgr() { return; }
 virtual ~p3PeerMgr() { return; }
 
-virtual bool 	addFriend(const std::string &ssl_id, const std::string &gpg_id, uint32_t netMode = RS_NET_MODE_UDP,
+virtual bool 	addFriend(const SSLIdType &ssl_id, const PGPIdType &gpg_id, uint32_t netMode = RS_NET_MODE_UDP,
 					uint16_t vsDisc = RS_VS_DISC_FULL, uint16_t vsDht = RS_VS_DHT_FULL, 
 					time_t lastContact = 0,ServicePermissionFlags = ServicePermissionFlags(RS_SERVICE_PERM_ALL)) = 0;
-virtual bool	removeFriend(const std::string &ssl_id, bool removePgpId) = 0;
+virtual bool	removeFriend(const SSLIdType &ssl_id, bool removePgpId) = 0;
 
-virtual bool	isFriend(const std::string &ssl_id) = 0;
+virtual bool	isFriend(const SSLIdType& ssl_id) = 0;
 
-virtual bool 	getAssociatedPeers(const std::string &gpg_id, std::list<std::string> &ids) = 0;
-virtual bool 	removeAllFriendLocations(const std::string &gpgid) = 0;
+virtual bool 	getAssociatedPeers(const PGPIdType &gpg_id, std::list<SSLIdType> &ids) = 0;
+virtual bool 	removeAllFriendLocations(const PGPIdType &gpgid) = 0;
 
 
 	/******************** Groups **********************/
@@ -133,11 +133,11 @@ virtual bool    editGroup(const std::string &groupId, RsGroupInfo &groupInfo) = 
 virtual bool    removeGroup(const std::string &groupId) = 0;
 virtual bool    getGroupInfo(const std::string &groupId, RsGroupInfo &groupInfo) = 0;
 virtual bool    getGroupInfoList(std::list<RsGroupInfo> &groupInfoList) = 0;
-virtual bool    assignPeersToGroup(const std::string &groupId, const std::list<std::string> &peerIds, bool assign) = 0;
+virtual bool    assignPeersToGroup(const std::string &groupId, const std::list<SSLIdType> &peerIds, bool assign) = 0;
 
-	virtual ServicePermissionFlags servicePermissionFlags(const std::string& gpg_id) =0;
-	virtual ServicePermissionFlags servicePermissionFlags_sslid(const std::string& ssl_id) =0;
-	virtual void setServicePermissionFlags(const std::string& gpg_id,const ServicePermissionFlags& flags) =0;
+	virtual ServicePermissionFlags servicePermissionFlags(const PGPIdType& gpg_id) =0;
+	virtual ServicePermissionFlags servicePermissionFlags(const SSLIdType& ssl_id) =0;
+	virtual void setServicePermissionFlags(const PGPIdType& gpg_id,const ServicePermissionFlags& flags) =0;
 
 	/**************** Set Net Info ****************/
 	/*
@@ -147,19 +147,19 @@ virtual bool    assignPeersToGroup(const std::string &groupId, const std::list<s
 	 * 3) p3disc  - reasonable
 	 */
 
-virtual bool 	setLocalAddress(const std::string &id, const struct sockaddr_storage &addr) = 0;
-virtual bool 	setExtAddress(const std::string &id, const struct sockaddr_storage &addr) = 0;
-virtual bool    setDynDNS(const std::string &id, const std::string &dyndns) = 0;
+virtual bool 	setLocalAddress(const SSLIdType &id, const struct sockaddr_storage &addr) = 0;
+virtual bool 	setExtAddress(const SSLIdType &id, const struct sockaddr_storage &addr) = 0;
+virtual bool    setDynDNS(const SSLIdType &id, const std::string &dyndns) = 0;
 
-virtual bool 	setNetworkMode(const std::string &id, uint32_t netMode) = 0;
-virtual bool 	setVisState(const std::string &id, uint16_t vs_disc, uint16_t vs_dht) = 0;
+virtual bool 	setNetworkMode(const SSLIdType &id, uint32_t netMode) = 0;
+virtual bool 	setVisState(const SSLIdType &id, uint16_t vs_disc, uint16_t vs_dht) = 0;
 
-virtual bool    setLocation(const std::string &pid, const std::string &location) = 0;
-virtual bool    setHiddenDomainPort(const std::string &id, const std::string &domain_addr, const uint16_t domain_port) = 0;
+virtual bool    setLocation(const SSLIdType &pid, const std::string &location) = 0;
+virtual bool    setHiddenDomainPort(const SSLIdType &id, const std::string &domain_addr, const uint16_t domain_port) = 0;
 
-virtual bool    updateCurrentAddress(const std::string& id, const pqiIpAddress &addr) = 0;
-virtual bool    updateLastContact(const std::string& id) = 0;
-virtual bool    updateAddressList(const std::string& id, const pqiIpAddrSet &addrs) = 0;
+virtual bool    updateCurrentAddress(const SSLIdType& id, const pqiIpAddress &addr) = 0;
+virtual bool    updateLastContact(const SSLIdType& id) = 0;
+virtual bool    updateAddressList(const SSLIdType& id, const pqiIpAddrSet &addrs) = 0;
 
 
 		// THIS MUST ONLY BE CALLED BY NETMGR!!!!
@@ -175,18 +175,18 @@ virtual bool    UpdateOwnAddress(const struct sockaddr_storage &local_addr, cons
 	 */
 
 virtual bool	getOwnNetStatus(peerState &state) = 0;
-virtual bool	getFriendNetStatus(const std::string &id, peerState &state) = 0;
-virtual bool	getOthersNetStatus(const std::string &id, peerState &state) = 0;
+virtual bool	getFriendNetStatus(const SSLIdType &id, peerState &state) = 0;
+virtual bool	getOthersNetStatus(const SSLIdType &id, peerState &state) = 0;
 
-virtual bool    getPeerName(const std::string &ssl_id, std::string &name) = 0;
-virtual bool	getGpgId(const std::string &sslId, std::string &gpgId) = 0;
-virtual uint32_t getConnectionType(const std::string &sslId) = 0;
+virtual bool    getPeerName(const SSLIdType &ssl_id, std::string &name) = 0;
+virtual bool	getGpgId(const SSLIdType &sslId, PGPIdType &gpgId) = 0;
+virtual uint32_t getConnectionType(const SSLIdType &sslId) = 0;
 
 virtual bool    setProxyServerAddress(const struct sockaddr_storage &proxy_addr) = 0;
 virtual bool    getProxyServerAddress(struct sockaddr_storage &proxy_addr) = 0;
 virtual bool    isHidden() = 0;
-virtual bool    isHiddenPeer(const std::string &ssl_id) = 0;
-virtual bool    getProxyAddress(const std::string &ssl_id, struct sockaddr_storage &proxy_addr, std::string &domain_addr, uint16_t &domain_port) = 0;
+virtual bool    isHiddenPeer(const SSLIdType &ssl_id) = 0;
+virtual bool    getProxyAddress(const SSLIdType &ssl_id, struct sockaddr_storage &proxy_addr, std::string &domain_addr, uint16_t &domain_port) = 0;
 
 
 virtual int 	getFriendCount(bool ssl, bool online) = 0;
@@ -214,15 +214,15 @@ class p3PeerMgrIMPL: public p3PeerMgr, public p3Config
 /* EXTERNAL INTERFACE */
 /************************************************************************************************/
 
-virtual bool 	addFriend(const std::string &ssl_id, const std::string &gpg_id, uint32_t netMode = RS_NET_MODE_UDP,
+virtual bool 	addFriend(const SSLIdType&ssl_id, const PGPIdType&gpg_id, uint32_t netMode = RS_NET_MODE_UDP,
 							uint16_t vsDisc = RS_VS_DISC_FULL, uint16_t vsDht = RS_VS_DHT_FULL, 
 							time_t lastContact = 0,ServicePermissionFlags = ServicePermissionFlags(RS_SERVICE_PERM_ALL));
-virtual bool	removeFriend(const std::string &ssl_id, bool removePgpId);
+virtual bool	removeFriend(const SSLIdType &ssl_id, bool removePgpId);
 
-virtual bool	isFriend(const std::string &ssl_id);
+virtual bool	isFriend(const SSLIdType &ssl_id);
 
-virtual bool    getAssociatedPeers(const std::string &gpg_id, std::list<std::string> &ids);
-virtual bool    removeAllFriendLocations(const std::string &gpgid);
+virtual bool    getAssociatedPeers(const PGPIdType &gpg_id, std::list<SSLIdType> &ids);
+virtual bool    removeAllFriendLocations(const PGPIdType &gpgid);
 
 
 	/******************** Groups **********************/
@@ -247,19 +247,19 @@ virtual bool    assignPeersToGroup(const std::string &groupId, const std::list<s
 	 * 3) p3disc  - reasonable
 	 */
 
-virtual bool 	setLocalAddress(const std::string &id, const struct sockaddr_storage &addr);
-virtual bool 	setExtAddress(const std::string &id, const struct sockaddr_storage &addr);
-virtual bool    setDynDNS(const std::string &id, const std::string &dyndns);
+virtual bool 	setLocalAddress(const SSLIdType &id, const struct sockaddr_storage &addr);
+virtual bool 	setExtAddress(const SSLIdType &id, const struct sockaddr_storage &addr);
+virtual bool    setDynDNS(const SSLIdType &id, const std::string &dyndns);
 
-virtual bool 	setNetworkMode(const std::string &id, uint32_t netMode);
-virtual bool 	setVisState(const std::string &id, uint16_t vs_disc, uint16_t vs_dht);
+virtual bool 	setNetworkMode(const SSLIdType &id, uint32_t netMode);
+virtual bool 	setVisState(const SSLIdType &id, uint16_t vs_disc, uint16_t vs_dht);
 
-virtual bool    setLocation(const std::string &pid, const std::string &location);
-virtual bool    setHiddenDomainPort(const std::string &id, const std::string &domain_addr, const uint16_t domain_port);
+virtual bool    setLocation(const SSLIdType &pid, const std::string &location);
+virtual bool    setHiddenDomainPort(const SSLIdType &id, const std::string &domain_addr, const uint16_t domain_port);
 	
-virtual bool    updateCurrentAddress(const std::string& id, const pqiIpAddress &addr);
-virtual bool    updateLastContact(const std::string& id);
-virtual bool    updateAddressList(const std::string& id, const pqiIpAddrSet &addrs);
+virtual bool    updateCurrentAddress(const SSLIdType& id, const pqiIpAddress &addr);
+virtual bool    updateLastContact(const SSLIdType& id);
+virtual bool    updateAddressList(const SSLIdType& id, const pqiIpAddrSet &addrs);
 
 
 		// THIS MUST ONLY BE CALLED BY NETMGR!!!!
@@ -274,18 +274,18 @@ virtual bool    UpdateOwnAddress(const struct sockaddr_storage &local_addr, cons
 	 */
 
 virtual bool	getOwnNetStatus(peerState &state);
-virtual bool	getFriendNetStatus(const std::string &id, peerState &state);
-virtual bool	getOthersNetStatus(const std::string &id, peerState &state);
+virtual bool	getFriendNetStatus(const SSLIdType &id, peerState &state);
+virtual bool	getOthersNetStatus(const SSLIdType &id, peerState &state);
 
-virtual bool    getPeerName(const std::string &ssl_id, std::string &name);
-virtual bool	getGpgId(const std::string &sslId, std::string &gpgId);
-virtual uint32_t getConnectionType(const std::string &sslId);
+virtual bool    getPeerName(const SSLIdType& ssl_id, std::string& name);
+virtual bool	getGpgId(const SSLIdType& sslId, PGPIdType& gpgId);
+virtual uint32_t getConnectionType(const SSLIdType& sslId);
 
 virtual bool    setProxyServerAddress(const struct sockaddr_storage &proxy_addr);
 virtual bool    getProxyServerAddress(struct sockaddr_storage &proxy_addr);
 virtual bool    isHidden();
-virtual bool    isHiddenPeer(const std::string &ssl_id);
-virtual bool    getProxyAddress(const std::string &ssl_id, struct sockaddr_storage &proxy_addr, std::string &domain_addr, uint16_t &domain_port);
+virtual bool    isHiddenPeer(const SSLIdType& ssl_id);
+virtual bool    getProxyAddress(const SSLIdType& ssl_id, struct sockaddr_storage &proxy_addr, std::string &domain_addr, uint16_t &domain_port);
 
 virtual int 	getFriendCount(bool ssl, bool online);
 
@@ -299,8 +299,8 @@ virtual bool 	haveOnceConnected();
 /* Extra IMPL Functions (used by p3LinkMgr, p3NetMgr + Setup) */
 /************************************************************************************************/
 
-        p3PeerMgrIMPL(	const std::string& ssl_own_id,
-				  				const std::string& gpg_own_id,
+        p3PeerMgrIMPL(	const SSLIdType& ssl_own_id,
+				  				const PGPIdType& gpg_own_id,
 				  				const std::string& gpg_own_name,
 				  				const std::string& ssl_own_location) ;
 
@@ -311,11 +311,11 @@ bool 	setupHiddenNode(const std::string &hiddenAddress, const uint16_t hiddenPor
 
 void 	tick();
 
-const std::string getOwnId();
+const SSLIdType& getOwnId();
 bool 	setOwnNetworkMode(uint32_t netMode);
 bool 	setOwnVisState(uint16_t vs_disc, uint16_t vs_dht);
 
-int 	getConnectAddresses(const std::string &id, 
+int 	getConnectAddresses(const SSLIdType &id, 
 				struct sockaddr_storage &lAddr, struct sockaddr_storage &eAddr, 
 				pqiIpAddrSet &histAddrs, std::string &dyndns);
 
@@ -352,15 +352,15 @@ private:
 
 	peerState mOwnState;
 
-	std::map<std::string, peerState> mFriendList;	// <SSLid , peerState>
-	std::map<std::string, peerState> mOthersList;
+	std::map<SSLIdType, peerState> mFriendList;	// <SSLid , peerState>
+	std::map<SSLIdType, peerState> mOthersList;
 
 	std::list<RsPeerGroupItem *> groupList;
 	uint32_t lastGroupId;
 
 	std::list<RsItem *> saveCleanupList; /* TEMPORARY LIST WHEN SAVING */
 
-	std::map<std::string, ServicePermissionFlags> mFriendsPermissionFlags ; // permission flags for each gpg key
+	std::map<PGPIdType, ServicePermissionFlags> mFriendsPermissionFlags ; // permission flags for each gpg key
 
 	struct sockaddr_storage mProxyServerAddress;
 };

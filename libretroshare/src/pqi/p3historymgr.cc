@@ -100,7 +100,7 @@ void p3HistoryMgr::addMessage(bool incoming, const std::string &chatPeerId, cons
 		item->chatPeerId = chatPeerId;
 		item->incoming = incoming;
 		item->peerId = peerId;
-		item->peerName = cli ? cli->nick : rsPeers->getPeerName(item->peerId);
+		item->peerName = cli ? cli->nick : rsPeers->getPeerName(RsPeerId(item->peerId));
 		item->sendTime = chatItem->sendTime;
 		item->recvTime = chatItem->recvTime;
 

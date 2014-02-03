@@ -32,6 +32,7 @@
 
 #include <retroshare/rstypes.h>
 #include <retroshare/rsfiles.h>
+#include <retroshare/rsids.h>
 
 /* The Main Interface Class - for information about your Peers
 * A peer is another RS instance, means associated with an SSL certificate
@@ -186,18 +187,19 @@ class RsPeerDetails
 
 	/* Auth details */
 	bool isOnlyGPGdetail;
-	std::string id;
-	std::string gpg_id;
+	SSLIdType id;
+	PGPIdType gpg_id;
+
 	std::string name;
 	std::string email;
 	std::string location;
 	std::string org;
 	
-	std::string issuer;
+	PGPIdType issuer;
 
-	std::string fpr; /* pgp fingerprint */
-	std::string authcode; 
-	std::list<std::string> gpgSigners;
+	PGPFingerprintType fpr; /* pgp fingerprint */
+	//std::string authcode; 	// (cyril) what is this used for ?????
+	std::list<PGPIdType> gpgSigners;
 
 	uint32_t trustLvl;
 	uint32_t validLvl;
@@ -272,7 +274,7 @@ public:
 	std::string name;
 	uint32_t    flag;
 
-	std::list<std::string> peerIds;
+	std::list<SSLIdType> peerIds;
 };
 
 std::ostream &operator<<(std::ostream &out, const RsPeerDetails &detail);
@@ -289,54 +291,55 @@ class RsPeers
 		virtual bool OthersChanged() 					= 0;
 
 		/* Peer Details (Net & Auth) */
-		virtual std::string getOwnId()					= 0;
+		virtual SSLIdType getOwnId()					= 0;
 
-		virtual bool   haveSecretKey(const std::string& gpg_id) = 0 ;
+		virtual bool   haveSecretKey(const PGPIdType& gpg_id) = 0 ;
 
-		virtual bool	getOnlineList(std::list<std::string> &ssl_ids)	= 0;
-		virtual bool	getFriendList(std::list<std::string> &ssl_ids)	= 0;
-		//virtual bool	getOthersList(std::list<std::string> &ssl_ids)	= 0;
+		virtual bool	getOnlineList(std::list<SSLIdType> &ssl_ids)	= 0;
+		virtual bool	getFriendList(std::list<SSLIdType> &ssl_ids)	= 0;
 		virtual bool    getPeerCount (unsigned int *pnFriendCount, unsigned int *pnnOnlineCount, bool ssl) = 0;
 
-		virtual bool    isOnline(const std::string &ssl_id)			= 0;
-		virtual bool    isFriend(const std::string &ssl_id)			= 0;
-		virtual bool    isGPGAccepted(const std::string &gpg_id_is_friend)			= 0; //
-		virtual std::string getPeerName(const std::string &ssl_or_gpg_id)			= 0;
-		virtual std::string getGPGName(const std::string &gpg_id)	= 0;
-		virtual bool	getPeerDetails(const std::string &ssl_or_gpg_id, RsPeerDetails &d) = 0; //get Peer detail accept SSL and PGP certs
+		virtual bool    isOnline(const SSLIdType &ssl_id)			= 0;
+		virtual bool    isFriend(const SSLIdType &ssl_id)			= 0;
+		virtual bool    isGPGAccepted(const PGPIdType &gpg_id_is_friend)			= 0; //
+		virtual std::string getPeerName(const SSLIdType &ssl_id)			= 0;
+		virtual std::string getGPGName(const PGPIdType& gpg_id)	= 0;
+		virtual bool	 getPeerDetails(const SSLIdType& ssl_id, RsPeerDetails &d) = 0; 
+		virtual bool	 getGPGDetails(const PGPIdType& gpg_id, RsPeerDetails &d) = 0;
 
 		/* Using PGP Ids */
-		virtual std::string getGPGOwnId()				= 0;
-		virtual std::string getGPGId(const std::string &sslid_or_gpgid)	= 0; //return the gpg id of the given gpg or ssl id
-		virtual bool    isKeySupported(const std::string& gpg_ids)   = 0;
-		virtual bool    getGPGAcceptedList(std::list<std::string> &gpg_ids)   = 0;
-		virtual bool    getGPGSignedList(std::list<std::string> &gpg_ids)   = 0;//friends that we accpet to connect with but we don't want to sign their gpg key
-		virtual bool    getGPGValidList(std::list<std::string> &gpg_ids)   = 0;
-		virtual bool    getGPGAllList(std::list<std::string> &gpg_ids) 	= 0;
-		virtual bool	getGPGDetails(const std::string &gpg_id, RsPeerDetails &d) = 0;
-		virtual bool    getAssociatedSSLIds(const std::string &gpg_id, std::list<std::string> &ids) = 0;
+		virtual PGPIdType getGPGOwnId()				= 0;
+		virtual PGPIdType getGPGId(const SSLIdType& sslid)	= 0; //return the gpg id of the given ssl id
+		virtual bool    isKeySupported(const PGPIdType& gpg_ids)   = 0;
+		virtual bool    getGPGAcceptedList(std::list<PGPIdType> &gpg_ids)   = 0;
+		virtual bool    getGPGSignedList(std::list<PGPIdType> &gpg_ids)   = 0;//friends that we accpet to connect with but we don't want to sign their gpg key
+		virtual bool    getGPGValidList(std::list<PGPIdType> &gpg_ids)   = 0;
+		virtual bool    getGPGAllList(std::list<PGPIdType> &gpg_ids) 	= 0;
+		virtual bool    getAssociatedSSLIds(const PGPIdType& gpg_id, std::list<SSLIdType>& ids) = 0;
 		virtual bool    gpgSignData(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen) = 0;
 
 		/* Add/Remove Friends */
-		virtual	bool addFriend(const std::string &ssl_id, const std::string &gpg_id,ServicePermissionFlags flags = RS_SERVICE_PERM_ALL)    = 0;
-		virtual	bool removeFriend(const std::string &ssl_or_gpg_id)  			= 0;
-		virtual bool removeFriendLocation(const std::string &sslId) 			= 0;
+		virtual	bool addFriend(const SSLIdType &ssl_id, const PGPIdType &gpg_id,ServicePermissionFlags flags = RS_SERVICE_PERM_ALL)    = 0;
+		virtual	bool removeFriend(const PGPIdType& pgp_id)  			= 0;
+		virtual	bool removeFriend(const SSLIdType& ssl_id)  			= 0;
+
+		virtual bool removeFriendLocation(const SSLIdType& sslId) 			= 0;
 
 		/* keyring management */
-		virtual bool removeKeysFromPGPKeyring(const std::list<std::string>& pgp_ids,std::string& backup_file,uint32_t& error_code)=0 ;
+		virtual bool removeKeysFromPGPKeyring(const std::list<PGPIdType>& pgp_ids,std::string& backup_file,uint32_t& error_code)=0 ;
 
 		/* Network Stuff */
-		virtual	bool connectAttempt(const std::string &ssl_id)			= 0;
-		virtual bool setLocation(const std::string &ssl_id, const std::string &location) = 0;//location is shown in the gui to differentiate ssl certs
+		virtual	bool connectAttempt(const SSLIdType& ssl_id)			= 0;
+		virtual bool setLocation(const SSLIdType &ssl_id, const std::string &location) = 0;//location is shown in the gui to differentiate ssl certs
 
-		virtual bool setHiddenNode(const std::string &id, const std::string &hidden_node_address) = 0;
-		virtual bool setHiddenNode(const std::string &id, const std::string &address, uint16_t port) = 0;
+		virtual bool setHiddenNode(const SSLIdType &id, const std::string &hidden_node_address) = 0;
+		virtual bool setHiddenNode(const SSLIdType &id, const std::string &address, uint16_t port) = 0;
 
-		virtual	bool setLocalAddress(const std::string &ssl_id, const std::string &addr, uint16_t port) = 0;
-		virtual	bool setExtAddress(  const std::string &ssl_id, const std::string &addr, uint16_t port) = 0;
-		virtual	bool setDynDNS(const std::string &id, const std::string &addr) = 0;
-		virtual	bool setNetworkMode(const std::string &ssl_id, uint32_t netMode) 	= 0;
-		virtual bool setVisState(const std::string &ssl_id, uint16_t vs_disc, uint16_t vs_dht)	= 0;
+		virtual	bool setLocalAddress(const SSLIdType &ssl_id, const std::string &addr, uint16_t port) = 0;
+		virtual	bool setExtAddress(  const SSLIdType &ssl_id, const std::string &addr, uint16_t port) = 0;
+		virtual	bool setDynDNS(const SSLIdType &id, const std::string &addr) = 0;
+		virtual	bool setNetworkMode(const SSLIdType &ssl_id, uint32_t netMode) 	= 0;
+		virtual bool setVisState(const SSLIdType &ssl_id, uint16_t vs_disc, uint16_t vs_dht)	= 0;
 
 		virtual bool getProxyServer(std::string &addr, uint16_t &port) = 0;
 		virtual bool setProxyServer(const std::string &addr, const uint16_t port) = 0;
@@ -346,24 +349,24 @@ class RsPeers
 		virtual bool getAllowServerIPDetermination() = 0 ;
 
 		/* Auth Stuff */
-		virtual	std::string GetRetroshareInvite(const std::string& ssl_id,bool include_signatures) 			= 0;
-		virtual bool GetPGPBase64StringAndCheckSum(const std::string& gpg_id,std::string& gpg_base64_string,std::string& gpg_base64_checksum) = 0 ;
+		virtual	std::string GetRetroshareInvite(const SSLIdType& ssl_id,bool include_signatures) 			= 0;
+		virtual bool GetPGPBase64StringAndCheckSum(const PGPIdType& gpg_id,std::string& gpg_base64_string,std::string& gpg_base64_checksum) = 0 ;
 		virtual	std::string GetRetroshareInvite(bool include_signatures) 			= 0;
 		virtual  bool hasExportMinimal() = 0 ;
 
 		// Add keys to the keyring
-		virtual	bool loadCertificateFromString(const std::string& cert, std::string& ssl_id,std::string& pgp_id, std::string& error_string)  = 0;
+		virtual	bool loadCertificateFromString(const std::string& cert, SSLIdType& ssl_id,PGPIdType& pgp_id, std::string& error_string)  = 0;
 
 		// Gets the GPG details, but does not add the key to the keyring.
 		virtual	bool loadDetailsFromStringCert(const std::string& certGPG, RsPeerDetails &pd,uint32_t& error_code) = 0;
 
 		// Certificate utils
 		virtual	bool cleanCertificate(const std::string &certstr, std::string &cleanCert,int& error_code) = 0;
-		virtual	bool saveCertificateToFile(const std::string& id, const std::string &fname)  = 0;
-		virtual	std::string saveCertificateToString(const std::string &id)  	= 0;
+		virtual	bool saveCertificateToFile(const SSLIdType& id, const std::string &fname)  = 0;
+		virtual	std::string saveCertificateToString(const SSLIdType &id)  	= 0;
 
-		virtual	bool signGPGCertificate(const std::string &gpg_id)                   	= 0;
-		virtual	bool trustGPGCertificate(const std::string &gpg_id, uint32_t trustlvl) 	= 0;
+		virtual	bool signGPGCertificate(const PGPIdType &gpg_id)                   	= 0;
+		virtual	bool trustGPGCertificate(const PGPIdType &gpg_id, uint32_t trustlvl) 	= 0;
 
 		/* Group Stuff */
 		virtual bool    addGroup(RsGroupInfo &groupInfo) = 0;
@@ -372,8 +375,8 @@ class RsPeers
 		virtual bool    getGroupInfo(const std::string &groupId, RsGroupInfo &groupInfo) = 0;
 		virtual bool    getGroupInfoList(std::list<RsGroupInfo> &groupInfoList) = 0;
 		// groupId == "" && assign == false -> remove from all groups
-		virtual bool    assignPeerToGroup(const std::string &groupId, const std::string &peerId, bool assign) = 0;
-		virtual bool    assignPeersToGroup(const std::string &groupId, const std::list<std::string> &peerIds, bool assign) = 0;
+		virtual bool    assignPeerToGroup(const std::string &groupId, const SSLIdType& peerId, bool assign) = 0;
+		virtual bool    assignPeersToGroup(const std::string &groupId, const std::list<SSLIdType> &peerIds, bool assign) = 0;
 
 		/* Group sharing permission */
 
@@ -386,13 +389,13 @@ class RsPeers
 		// ... computes the sharing file permission hint flags set for this peer, that is a combination of 
 		// 		RS_FILE_HINTS_NETWORK_WIDE and RS_FILE_HINTS_BROWSABLE.
 		//
-		virtual FileSearchFlags computePeerPermissionFlags(const std::string& peer_id,FileStorageFlags file_sharing_flags,const std::list<std::string>& file_parent_groups) = 0;
+		virtual FileSearchFlags computePeerPermissionFlags(const SSLIdType& peer_id,FileStorageFlags file_sharing_flags,const std::list<std::string>& file_parent_groups) = 0;
 
 		/* Service permission flags */
 
-		virtual ServicePermissionFlags servicePermissionFlags(const std::string& gpg_id) = 0;
-		virtual ServicePermissionFlags servicePermissionFlags_sslid(const std::string& ssl_id) = 0;
-		virtual void setServicePermissionFlags(const std::string& gpg_id,const ServicePermissionFlags& flags) = 0;
+		virtual ServicePermissionFlags servicePermissionFlags(const PGPIdType& gpg_id) = 0;
+		virtual ServicePermissionFlags servicePermissionFlags(const SSLIdType& ssl_id) = 0;
+		virtual void setServicePermissionFlags(const PGPIdType& gpg_id,const ServicePermissionFlags& flags) = 0;
 };
 
 #endif

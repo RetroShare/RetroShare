@@ -23,7 +23,7 @@
  *
  */
 
-
+#ifdef SUSPENDED_UNUSED_CODE
 
 #ifndef MRK_PQI_ARCHIVE_STREAMER_HEADER
 #define MRK_PQI_ARCHIVE_STREAMER_HEADER
@@ -79,3 +79,4 @@ int     readPkt(RsItem **item_out, long *ts);
 
 
 #endif //MRK_PQI_ARCHIVE_STREAMER_HEADER
+#endif //SUSPENDED_UNUSED_CODE

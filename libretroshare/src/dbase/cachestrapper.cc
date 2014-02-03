@@ -92,7 +92,7 @@ bool    CacheSource::loadLocalCache(const RsCacheData &data)
 }
 	
         /* control Caches available */
-bool CacheSource::refreshCache(const RsCacheData &data,const std::set<std::string>& destination_peers)
+bool CacheSource::refreshCache(const RsCacheData &data,const std::set<SSLIdType>& destination_peers)
 {
 	bool ret = false;
 	{
@@ -122,9 +122,9 @@ bool CacheSource::refreshCache(const RsCacheData &data,const std::set<std::strin
 
 	if (mStrapper) /* allow testing without full feedback */
 	{
-		std::set<std::string> allowed_dest_peers ;
+		std::set<SSLIdType> allowed_dest_peers ;
 
-		for(std::set<std::string>::const_iterator it(destination_peers.begin());it!=destination_peers.end();++it)
+		for(std::set<SSLIdType>::const_iterator it(destination_peers.begin());it!=destination_peers.end();++it)
 			if(isPeerAcceptedAsCacheReceiver(*it))
 				allowed_dest_peers.insert(*it) ;
 
@@ -161,14 +161,14 @@ bool    CacheSource::refreshCache(const RsCacheData &data)
 	}
 	// Strip down destination peers to eliminate peers that are not allowed to receive cache items.
 
-	std::list<std::string> ids;
+	std::list<SSLIdType> ids;
 	rsPeers->getOnlineList(ids);
 
 	if (mStrapper) /* allow testing without full feedback */
 	{
-		std::set<std::string> allowed_dest_peers ;
+		std::set<SSLIdType> allowed_dest_peers ;
 
-		for(std::list<std::string>::const_iterator it(ids.begin());it!=ids.end();++it)
+		for(std::list<SSLIdType>::const_iterator it(ids.begin());it!=ids.end();++it)
 			if(isPeerAcceptedAsCacheReceiver(*it))
 				allowed_dest_peers.insert(*it) ;
 
@@ -232,7 +232,7 @@ bool    CacheSource::clearCache(CacheId id)
 	return ret;
 }
 		
-bool    CacheSource::cachesAvailable(RsPeerId pid, std::map<CacheId, RsCacheData> &ids)
+bool    CacheSource::cachesAvailable(const SSLIdType& pid, std::map<CacheId, RsCacheData> &ids)
 {
 	if(!isPeerAcceptedAsCacheReceiver(pid))
 		return false ;
@@ -336,7 +336,7 @@ void    CacheStore::listCaches(std::ostream &out)
 	lockData(); /* LOCK MUTEX */
 
 	/* can overwrite for more control! */
-	std::map<RsPeerId, CacheSet>::iterator pit;
+	std::map<SSLIdType, CacheSet>::iterator pit;
 	out << "CacheStore::listCaches() [" << getCacheType();
 	out << "] Total People: " << caches.size();
 	out << std::endl;
@@ -377,7 +377,7 @@ bool	CacheStore::locked_getStoredCache(RsCacheData &data)
 		return false;
 	}
 
-	std::map<RsPeerId, CacheSet>::iterator pit;
+	std::map<SSLIdType, CacheSet>::iterator pit;
 	if (caches.end() == (pit = caches.find(data.pid)))
 	{
 		return false;
@@ -414,7 +414,7 @@ bool	CacheStore::getAllStoredCaches(std::list<RsCacheData> &data)
 {
 	lockData(); /* LOCK MUTEX */
 
-	std::map<RsPeerId, CacheSet>::iterator pit;
+	std::map<SSLIdType, CacheSet>::iterator pit;
 	for(pit = caches.begin(); pit != caches.end(); pit++)
 	{
 		CacheSet::iterator cit;
@@ -585,7 +585,7 @@ int     CacheStore::loadCache(const RsCacheData &data)
 void 	CacheStore::locked_storeCacheEntry(const RsCacheData &data)
 {
 	/* store what we loaded - overwriting if necessary */
-	std::map<RsPeerId, CacheSet>::iterator pit;
+	std::map<SSLIdType, CacheSet>::iterator pit;
 	if (caches.end() == (pit = caches.find(data.pid)))
 	{
 		/* add in a new CacheSet */
@@ -658,7 +658,7 @@ void    CacheStrapper::statusChange(const std::list<pqipeer> &plist)
 
         /**************** from pqimonclient ********************/
 
-void	CacheStrapper::refreshCache(const RsCacheData &data,const std::set<std::string>& destination_peers)
+void	CacheStrapper::refreshCache(const RsCacheData &data,const std::set<SSLIdType>& destination_peers)
 {
 	/* we've received an update 
 	 * send to all online peers + self intersected with online peers.
@@ -666,13 +666,13 @@ void	CacheStrapper::refreshCache(const RsCacheData &data,const std::set<std::str
 #ifdef CS_DEBUG 
 	std::cerr << "CacheStrapper::refreshCache() : " << data << std::endl;
 #endif
-	std::string ownid = mLinkMgr->getOwnId() ;
-	std::list<std::string> ids;
+	const SSLIdType& ownid = mLinkMgr->getOwnId() ;
+	std::list<SSLIdType> ids;
 	mLinkMgr->getOnlineList(ids);
 	ids.push_back(ownid) ;
 
 	RsStackMutex stack(csMtx); /******* LOCK STACK MUTEX *********/
-	for(std::list<std::string>::const_iterator it = ids.begin(); it != ids.end(); ++it)
+	for(std::list<SSLIdType>::const_iterator it = ids.begin(); it != ids.end(); ++it)
 			if(destination_peers.find(*it) != destination_peers.end())
 			{
 #ifdef CS_DEBUG 
@@ -714,7 +714,7 @@ void	CacheStrapper::refreshCacheStore(const RsCacheData & /* data */ )
 
 }
 
-bool	CacheStrapper::getCacheUpdates(std::list<std::pair<RsPeerId, RsCacheData> > &updates)
+bool	CacheStrapper::getCacheUpdates(std::list<std::pair<SSLIdType, RsCacheData> > &updates)
 {
 	RsStackMutex stack(csMtx); /******* LOCK STACK MUTEX *********/
 	updates = mCacheUpdates;
@@ -741,28 +741,7 @@ void	CacheStrapper::recvCacheResponse(RsCacheData &data, time_t /* ts */)
 
 }
 
-
-	/* generate periodically or at a change */
-#if 0
-bool    CacheStrapper::sendCacheQuery(std::list<RsPeerId> &id, time_t ts)
-{
-	/* iterate through peers, and see who we haven't got an answer from recently */
-	std::map<RsPeerId, CacheTS>::iterator it;
-	for(it = status.begin(); it != status.end(); it++)
-	{
-		if ((ts - (it->second).query) > queryPeriod)
-		{
-			/* query this one */
-			id.push_back(it->first);
-			(it->second).query = ts;
-		}
-	}
-	return (id.size() > 0);
-}
-#endif
-
-
-void    CacheStrapper::handleCacheQuery(RsPeerId id, std::map<CacheId,RsCacheData> &hashs)
+void    CacheStrapper::handleCacheQuery(const SSLIdType& id, std::map<CacheId,RsCacheData> &hashs)
 {
 	/* basic version just iterates through ....
 	 * more complex could decide who gets what!
@@ -875,7 +854,7 @@ bool CacheStrapper::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 	std::list<RsCacheData>::iterator cit;
 	std::list<RsCacheData> ownCaches;
 	std::list<RsCacheData> remoteCaches;
-	std::string ownId = mLinkMgr->getOwnId();
+	const SSLIdType& ownId = mLinkMgr->getOwnId();
 
 	std::map<uint16_t, CachePair>::iterator it;
 	for(it = caches.begin(); it != caches.end(); it++)
@@ -899,7 +878,7 @@ bool CacheStrapper::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 		// Fixup lazy behaviour in clients...
 		// This ensures correct loading later.  
 		// (used to be: rscc->pid = cit->pid;)
-		rscc->pid = ownId; 
+		rscc->pid = ownId.toStdString(); 
 
 		//rscc->pname = cit->pname;
 		rscc->cachetypeid = cit->cid.type;
@@ -926,7 +905,7 @@ bool CacheStrapper::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 
 		RsCacheConfig *rscc = new RsCacheConfig();
 
-		rscc->pid = cit->pid;
+		rscc->pid = cit->pid.toStdString();
 		//rscc->pname = cit->pname;
 		rscc->cachetypeid = cit->cid.type;
 		rscc->cachesubid = cit->cid.subid;
@@ -955,7 +934,7 @@ bool CacheStrapper::loadList(std::list<RsItem *>& load)
 #endif
 	std::list<RsCacheData> ownCaches;
 	std::list<RsCacheData> remoteCaches;
-	std::string ownId = mLinkMgr->getOwnId();
+	const SSLIdType& ownId = mLinkMgr->getOwnId();
 
 	//peerConnectState ownState;
 	//mPeerMgr->getOwnNetStatus(ownState);
@@ -977,7 +956,7 @@ bool CacheStrapper::loadList(std::list<RsItem *>& load)
 #endif
 			RsCacheData cd;
 
-			cd.pid = rscc->pid;
+			cd.pid = SSLIdType(rscc->pid) ;
 
 #if 0
 			if(cd.pid == ownId)
@@ -1113,7 +1092,8 @@ bool CacheStrapper::loadList(std::list<RsItem *>& load)
 #ifdef CS_DEBUG 
 		std::cerr << "CacheStrapper::loadList() Cleaning cache dir: <" << *dit << ">" << std::endl;
 #endif
-                sit = saveFiles.find(RsDirUtil::convertPathToUnix(*dit));
+		sit = saveFiles.find(RsDirUtil::convertPathToUnix(*dit));
+
 		if (sit != saveFiles.end())
 		{
 #ifdef CS_DEBUG
@@ -1219,7 +1199,7 @@ bool CacheTransfer::RequestCache(RsCacheData &data, CacheStore *cbStore)
 
 
 /* to be overloaded */
-bool CacheTransfer::RequestCacheFile(RsPeerId id, std::string path, std::string hash, uint64_t size)
+bool CacheTransfer::RequestCacheFile(const SSLIdType& id, std::string path, std::string hash, uint64_t size)
 {
 	(void) id;
 	(void) path;
@@ -1238,7 +1218,7 @@ bool CacheTransfer::RequestCacheFile(RsPeerId id, std::string path, std::string 
 }
 
 /* to be overloaded */
-bool CacheTransfer::CancelCacheFile(RsPeerId id, std::string path, std::string hash, uint64_t size)
+bool CacheTransfer::CancelCacheFile(const SSLIdType& id, std::string path, std::string hash, uint64_t size)
 {
 	(void) id;
 	(void) path;

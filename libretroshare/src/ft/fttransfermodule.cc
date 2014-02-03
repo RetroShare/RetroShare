@@ -103,7 +103,7 @@ ftTransferModule::~ftTransferModule()
 }
 
 
-bool ftTransferModule::setFileSources(const std::list<std::string>& peerIds)
+bool ftTransferModule::setFileSources(const std::list<SSLIdType>& peerIds)
 {
   	RsStackMutex stack(tfMtx); /******* STACK LOCKED ******/
 
@@ -114,7 +114,7 @@ bool ftTransferModule::setFileSources(const std::list<std::string>& peerIds)
 	std::cerr << " List of peers: " ;
 #endif
 
-  std::list<std::string>::const_iterator it;
+  std::list<SSLIdType>::const_iterator it;
   for(it = peerIds.begin(); it != peerIds.end(); it++)
   {
 
@@ -123,7 +123,7 @@ bool ftTransferModule::setFileSources(const std::list<std::string>& peerIds)
 #endif
 
     peerInfo pInfo(*it);
-    mFileSources.insert(std::pair<std::string,peerInfo>(*it,pInfo));
+    mFileSources.insert(std::pair<SSLIdType,peerInfo>(*it,pInfo));
   }
 
 #ifdef FT_DEBUG
@@ -133,10 +133,10 @@ bool ftTransferModule::setFileSources(const std::list<std::string>& peerIds)
   return true;
 }
 
-bool ftTransferModule::getFileSources(std::list<std::string> &peerIds)
+bool ftTransferModule::getFileSources(std::list<SSLIdType> &peerIds)
 {
   	RsStackMutex stack(tfMtx); /******* STACK LOCKED ******/
-    std::map<std::string,peerInfo>::iterator it;
+    std::map<SSLIdType,peerInfo>::iterator it;
     for(it = mFileSources.begin(); it != mFileSources.end(); it++)
     {
 	peerIds.push_back(it->first);
@@ -144,17 +144,17 @@ bool ftTransferModule::getFileSources(std::list<std::string> &peerIds)
     return true;
 }
 
-bool ftTransferModule::addFileSource(const std::string& peerId)
+bool ftTransferModule::addFileSource(const SSLIdType& peerId)
 {
 	RsStackMutex stack(tfMtx); /******* STACK LOCKED ******/
-	std::map<std::string,peerInfo>::iterator mit;
+	std::map<SSLIdType,peerInfo>::iterator mit;
 	mit = mFileSources.find(peerId);
 
 	if (mit == mFileSources.end())
 	{
 		/* add in new source */
 		peerInfo pInfo(peerId);
-		mFileSources.insert(std::pair<std::string,peerInfo>(peerId,pInfo));
+		mFileSources.insert(std::pair<SSLIdType,peerInfo>(peerId,pInfo));
 		mit = mFileSources.find(peerId);
 
 		mMultiplexor->sendChunkMapRequest(peerId, mHash,false) ;
@@ -177,10 +177,10 @@ bool ftTransferModule::addFileSource(const std::string& peerId)
 	}
 }
 
-bool ftTransferModule::removeFileSource(const std::string& peerId)
+bool ftTransferModule::removeFileSource(const SSLIdType& peerId)
 {
 	RsStackMutex stack(tfMtx); /******* STACK LOCKED ******/
-	std::map<std::string,peerInfo>::iterator mit;
+	std::map<SSLIdType,peerInfo>::iterator mit;
 	mit = mFileSources.find(peerId);
 
 	if (mit != mFileSources.end())
@@ -199,7 +199,7 @@ bool ftTransferModule::removeFileSource(const std::string& peerId)
 	return true;
 }
 
-bool ftTransferModule::setPeerState(const std::string& peerId,uint32_t state,uint32_t maxRate)
+bool ftTransferModule::setPeerState(const SSLIdType& peerId,uint32_t state,uint32_t maxRate)
 {
   	RsStackMutex stack(tfMtx); /******* STACK LOCKED ******/
 #ifdef FT_DEBUG
@@ -209,7 +209,7 @@ bool ftTransferModule::setPeerState(const std::string& peerId,uint32_t state,uin
 	std::cerr << " maxRate: " << maxRate << std::endl;
 #endif
 
-  std::map<std::string,peerInfo>::iterator mit;
+  std::map<SSLIdType,peerInfo>::iterator mit;
   mit = mFileSources.find(peerId);
 
   if (mit == mFileSources.end())
@@ -229,7 +229,7 @@ bool ftTransferModule::setPeerState(const std::string& peerId,uint32_t state,uin
   // Start it off at zero....
   // (mit->second).actualRate=maxRate; /* should give big kick in right direction */
 
-  std::list<std::string>::iterator it;
+  std::list<SSLIdType>::iterator it;
   it = std::find(mOnlinePeers.begin(), mOnlinePeers.end(), peerId);
 
   if (state!=PQIPEER_NOT_ONLINE) 
@@ -247,10 +247,10 @@ bool ftTransferModule::setPeerState(const std::string& peerId,uint32_t state,uin
 }
 
 
-bool ftTransferModule::getPeerState(const std::string& peerId,uint32_t &state,uint32_t &tfRate)
+bool ftTransferModule::getPeerState(const SSLIdType& peerId,uint32_t &state,uint32_t &tfRate)
 {
   	RsStackMutex stack(tfMtx); /******* STACK LOCKED ******/
-  std::map<std::string,peerInfo>::iterator mit;
+  std::map<SSLIdType,peerInfo>::iterator mit;
   mit = mFileSources.find(peerId);
 
   if (mit == mFileSources.end()) return false;
@@ -267,10 +267,10 @@ bool ftTransferModule::getPeerState(const std::string& peerId,uint32_t &state,ui
   return true;
 }
 
-uint32_t ftTransferModule::getDataRate(const std::string& peerId)
+uint32_t ftTransferModule::getDataRate(const SSLIdType& peerId)
 {
   	RsStackMutex stack(tfMtx); /******* STACK LOCKED ******/
-  std::map<std::string,peerInfo>::iterator mit;
+  std::map<SSLIdType,peerInfo>::iterator mit;
   mit = mFileSources.find(peerId);
   if (mit == mFileSources.end())
   {
@@ -296,7 +296,7 @@ time_t ftTransferModule::lastActvTimeStamp()
 }
 
   //interface to client module
-bool ftTransferModule::recvFileData(const std::string& peerId, uint64_t offset, uint32_t chunk_size, void *data)
+bool ftTransferModule::recvFileData(const SSLIdType& peerId, uint64_t offset, uint32_t chunk_size, void *data)
 {
 	RsStackMutex stack(tfMtx); /******* STACK LOCKED ******/
 #ifdef FT_DEBUG
@@ -310,7 +310,7 @@ bool ftTransferModule::recvFileData(const std::string& peerId, uint64_t offset, 
 
 	bool ok = false;
 
-	std::map<std::string,peerInfo>::iterator mit;
+	std::map<SSLIdType,peerInfo>::iterator mit;
 	mit = mFileSources.find(peerId);
 
 	if (mit == mFileSources.end())
@@ -332,7 +332,7 @@ bool ftTransferModule::recvFileData(const std::string& peerId, uint64_t offset, 
 	return ok;
 }
 
-void ftTransferModule::locked_requestData(const std::string& peerId, uint64_t offset, uint32_t chunk_size)
+void ftTransferModule::locked_requestData(const SSLIdType& peerId, uint64_t offset, uint32_t chunk_size)
 {
 #ifdef FT_DEBUG
 	std::cerr << "ftTransferModule::requestData()";
@@ -347,7 +347,7 @@ void ftTransferModule::locked_requestData(const std::string& peerId, uint64_t of
   mMultiplexor->sendDataRequest(peerId, mHash, mSize, offset,chunk_size);
 }
 
-bool ftTransferModule::locked_getChunk(const std::string& peer_id,uint32_t size_hint,uint64_t &offset, uint32_t &chunk_size)
+bool ftTransferModule::locked_getChunk(const SSLIdType& peer_id,uint32_t size_hint,uint64_t &offset, uint32_t &chunk_size)
 {
 #ifdef FT_DEBUG
 	std::cerr << "ftTransferModule::locked_getChunk()";
@@ -427,7 +427,7 @@ bool ftTransferModule::queryInactive()
 	if (mFileStatus.stat == ftFileStatus::PQIFILE_CHECKING)
 		return false ;
 
-	std::map<std::string,peerInfo>::iterator mit;
+	std::map<SSLIdType,peerInfo>::iterator mit;
 	for(mit = mFileSources.begin(); mit != mFileSources.end(); mit++)
 	{
 		locked_tickPeerTransfer(mit->second);
@@ -496,7 +496,7 @@ int ftTransferModule::tick()
 	std::cerr << std::endl;
 
 	std::cerr << "Peers: ";
-  	std::map<std::string,peerInfo>::iterator it;
+  	std::map<SSLIdType,peerInfo>::iterator it;
   	for(it = mFileSources.begin(); it != mFileSources.end(); it++)
 	{
 		std::cerr << " " << it->first;
@@ -645,7 +645,7 @@ void ftTransferModule::adjustSpeed()
 {
   	RsStackMutex stack(tfMtx); /******* STACK LOCKED ******/
 
-  std::map<std::string,peerInfo>::iterator mit;
+  std::map<SSLIdType,peerInfo>::iterator mit;
 
 
   actualRate = 0;

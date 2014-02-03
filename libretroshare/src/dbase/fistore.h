@@ -83,7 +83,7 @@ virtual int loadCache(const RsCacheData &data);	  /* actual load, once data avai
 
 
 	/* Search Interface - For Directory Access */
-	int RequestDirDetails(const std::string& uid, const std::string& path, DirDetails &details) const;
+	int RequestDirDetails(const SSLIdType& uid, const std::string& path, DirDetails &details) const;
 	int RequestDirDetails(void *ref, DirDetails &details, FileSearchFlags flags) const;
 	uint32_t getType(void *ref) const ;
 

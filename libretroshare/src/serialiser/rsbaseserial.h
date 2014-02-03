@@ -29,7 +29,7 @@
 #include <string>
 #include <stdlib.h>
 #include <stdint.h>
-#include <util/rsid.h>
+#include <retroshare/rsids.h>
 
 /*******************************************************************
  * This is at the lowlevel packing routines. They are usually 

@@ -122,7 +122,7 @@ bool ftFiStore::search(const std::string &hash, FileSearchFlags hintflags, FileI
 }
 
 		
-ftFiMonitor::ftFiMonitor(CacheStrapper *cs,std::string cachedir, std::string pid,const std::string& config_dir)
+ftFiMonitor::ftFiMonitor(CacheStrapper *cs,std::string cachedir, const RsPeerId& pid,const std::string& config_dir)
 	:FileIndexMonitor(cs,cachedir, pid,config_dir), p3Config(CONFIG_TYPE_FT_SHARED)
 {
 	return;
@@ -130,9 +130,9 @@ ftFiMonitor::ftFiMonitor(CacheStrapper *cs,std::string cachedir, std::string pid
 
 bool ftFiMonitor::search(const std::string &hash, FileSearchFlags hintflags, FileInfo &info) const
 {
-	return search(hash,hintflags,"",info) ;
+	return search(hash,hintflags,RsPeerId(),info) ;
 }
-bool ftFiMonitor::search(const std::string &hash, FileSearchFlags hintflags, const std::string& peer_id,FileInfo &info) const
+bool ftFiMonitor::search(const std::string &hash, FileSearchFlags hintflags, const RsPeerId& peer_id,FileInfo &info) const
 {
 #ifdef DB_DEBUG
 	std::cerr << "ftFiMonitor::search(" << hash << "," << hintflags;

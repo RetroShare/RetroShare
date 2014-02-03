@@ -30,6 +30,7 @@
 // Only dependent on the base stuff.
 #include "pqi/pqi_base.h"
 #include "util/rsthreads.h"
+#include "retroshare/rstypes.h"
 
 #include <list>
 
@@ -42,7 +43,7 @@
 class pqistreamer: public PQInterface
 {
 	public:
-		pqistreamer(RsSerialiser *rss, std::string peerid, BinInterface *bio_in, int bio_flagsin);
+		pqistreamer(RsSerialiser *rss, const RsPeerId& peerid, BinInterface *bio_in, int bio_flagsin);
 		virtual ~pqistreamer();
 
 		// PQInterface

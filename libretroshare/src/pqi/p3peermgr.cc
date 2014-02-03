@@ -96,7 +96,7 @@ peerState::peerState()
 
 std::string textPeerConnectState(peerState &state)
 {
-	std::string out = "Id: " + state.id + "\n";
+	std::string out = "Id: " + state.id.toStdString() + "\n";
 	rs_sprintf_append(out, "NetMode: %lu\n", state.netMode);
 	rs_sprintf_append(out, "VisState: Disc: %u Dht: %u\n", state.vs_disc, state.vs_dht);
 	
@@ -110,10 +110,7 @@ std::string textPeerConnectState(peerState &state)
 }
 
 
-p3PeerMgrIMPL::p3PeerMgrIMPL(const std::string& ssl_own_id,
-				const std::string& gpg_own_id,
-				const std::string& gpg_own_name,
-				const std::string& ssl_own_location)
+p3PeerMgrIMPL::p3PeerMgrIMPL(const SSLIdType& ssl_own_id, const PGPIdType& gpg_own_id, const PGPIdType& gpg_own_name, const RsPeerId& ssl_own_location)
 	:p3Config(CONFIG_TYPE_PEERS), mPeerMtx("p3PeerMgr"), mStatusChanged(false)
 {
 
@@ -297,7 +294,7 @@ void p3PeerMgrIMPL::tick()
  */
 
 
-const std::string p3PeerMgrIMPL::getOwnId()
+const SSLIdType& p3PeerMgrIMPL::getOwnId()
 {
                 return AuthSSL::getAuthSSL()->OwnId();
 }
@@ -310,7 +307,7 @@ bool p3PeerMgrIMPL::getOwnNetStatus(peerState &state)
 	return true;
 }
 
-bool p3PeerMgrIMPL::isFriend(const std::string &id)
+bool p3PeerMgrIMPL::isFriend(const SSLIdType& id)
 {
 #ifdef PEER_DEBUG_COMMON
                 std::cerr << "p3PeerMgrIMPL::isFriend(" << id << ") called" << std::endl;
@@ -323,12 +320,12 @@ bool p3PeerMgrIMPL::isFriend(const std::string &id)
         return ret;
 }
 
-bool    p3PeerMgrIMPL::getPeerName(const std::string &ssl_id, std::string &name)
+bool    p3PeerMgrIMPL::getPeerName(const SSLIdType &ssl_id, std::string &name)
 {
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
 	/* check for existing */
-	std::map<std::string, peerState>::iterator it;
+	std::map<SSLIdType, peerState>::iterator it;
 	it = mFriendList.find(ssl_id);
 	if (it == mFriendList.end())
 	{
@@ -339,12 +336,12 @@ bool    p3PeerMgrIMPL::getPeerName(const std::string &ssl_id, std::string &name)
 	return true;
 }
 
-bool    p3PeerMgrIMPL::getGpgId(const std::string &ssl_id, std::string &gpgId)
+bool    p3PeerMgrIMPL::getGpgId(const SSLIdType &ssl_id, PGPIdType &gpgId)
 {
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
 	/* check for existing */
-	std::map<std::string, peerState>::iterator it;
+	std::map<SSLIdType, peerState>::iterator it;
 	it = mFriendList.find(ssl_id);
 	if (it == mFriendList.end())
 	{
@@ -364,12 +361,12 @@ bool    p3PeerMgrIMPL::isHidden()
 }
 
 
-bool    p3PeerMgrIMPL::isHiddenPeer(const std::string &ssl_id)
+bool    p3PeerMgrIMPL::isHiddenPeer(const SSLIdType &ssl_id)
 {
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
 	/* check for existing */
-	std::map<std::string, peerState>::iterator it;
+	std::map<SSLIdType, peerState>::iterator it;
 	it = mFriendList.find(ssl_id);
 	if (it == mFriendList.end())
 	{
@@ -384,7 +381,7 @@ bool    p3PeerMgrIMPL::isHiddenPeer(const std::string &ssl_id)
 	return (it->second).hiddenNode;
 }
 
-bool p3PeerMgrIMPL::setHiddenDomainPort(const std::string &ssl_id, const std::string &domain_addr, const uint16_t domain_port)
+bool p3PeerMgrIMPL::setHiddenDomainPort(const SSLIdType &ssl_id, const std::string &domain_addr, const uint16_t domain_port)
 {
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
@@ -417,7 +414,7 @@ bool p3PeerMgrIMPL::setHiddenDomainPort(const std::string &ssl_id, const std::st
 	}
 
 	/* check for existing */
-	std::map<std::string, peerState>::iterator it;
+	std::map<SSLIdType, peerState>::iterator it;
 	it = mFriendList.find(ssl_id);
 	if (it == mFriendList.end())
 	{
@@ -456,12 +453,12 @@ bool p3PeerMgrIMPL::getProxyServerAddress(struct sockaddr_storage &proxy_addr)
 	return true;
 }
 	
-bool p3PeerMgrIMPL::getProxyAddress(const std::string &ssl_id, struct sockaddr_storage &proxy_addr, std::string &domain_addr, uint16_t &domain_port)
+bool p3PeerMgrIMPL::getProxyAddress(const SSLIdType &ssl_id, struct sockaddr_storage &proxy_addr, std::string &domain_addr, uint16_t &domain_port)
 {
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
 	/* check for existing */
-	std::map<std::string, peerState>::iterator it;
+	std::map<SSLIdType, peerState>::iterator it;
 	it = mFriendList.find(ssl_id);
 	if (it == mFriendList.end())
 	{
@@ -481,7 +478,7 @@ bool p3PeerMgrIMPL::getProxyAddress(const std::string &ssl_id, struct sockaddr_s
 }
 
 // Placeholder until we implement this functionality.
-uint32_t p3PeerMgrIMPL::getConnectionType(const std::string &/*sslId*/)
+uint32_t p3PeerMgrIMPL::getConnectionType(const SSLIdType &/*sslId*/)
 {
 	return RS_NET_CONN_TYPE_FRIEND;
 }
@@ -490,15 +487,15 @@ int p3PeerMgrIMPL::getFriendCount(bool ssl, bool online)
 {
 	if (online) {
 		// count only online id's
-		std::list<std::string> onlineIds;
+		std::list<SSLIdType> onlineIds;
 		mLinkMgr->getOnlineList(onlineIds);
 
 		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
-		std::set<std::string> gpgIds;
+		std::set<PGPIdType> gpgIds;
 		int count = 0;
 
-		std::map<std::string, peerState>::iterator it;
+		std::map<SSLIdType, peerState>::iterator it;
 		for(it = mFriendList.begin(); it != mFriendList.end(); ++it) {
 			if (online && std::find(onlineIds.begin(), onlineIds.end(), it->first) == onlineIds.end()) {
 				continue;
@@ -522,22 +519,22 @@ int p3PeerMgrIMPL::getFriendCount(bool ssl, bool online)
 	}
 
 	// count all gpg id's
-	std::list<std::string> gpgIds;
+	std::list<PGPIdType> gpgIds;
 	AuthGPG::getAuthGPG()->getGPGAcceptedList(gpgIds);
 
 	// add own gpg id, if we have more than one location
-	std::list<std::string> ownSslIds;
+	std::list<SSLIdType> ownSslIds;
 	getAssociatedPeers(AuthGPG::getAuthGPG()->getGPGOwnId(), ownSslIds);
 
 	return gpgIds.size() + ((ownSslIds.size() > 0) ? 1 : 0);
 }
 
-bool p3PeerMgrIMPL::getFriendNetStatus(const std::string &id, peerState &state)
+bool p3PeerMgrIMPL::getFriendNetStatus(const SSLIdType &id, peerState &state)
 {
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
 	/* check for existing */
-	std::map<std::string, peerState>::iterator it;
+	std::map<SSLIdType, peerState>::iterator it;
 	it = mFriendList.find(id);
 	if (it == mFriendList.end())
 	{
@@ -549,12 +546,12 @@ bool p3PeerMgrIMPL::getFriendNetStatus(const std::string &id, peerState &state)
 }
 
 
-bool p3PeerMgrIMPL::getOthersNetStatus(const std::string &id, peerState &state)
+bool p3PeerMgrIMPL::getOthersNetStatus(const SSLIdType &id, peerState &state)
 {
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
 	/* check for existing */
-	std::map<std::string, peerState>::iterator it;
+	std::map<SSLIdType, peerState>::iterator it;
 	it = mOthersList.find(id);
 	if (it == mOthersList.end())
 	{
@@ -565,41 +562,7 @@ bool p3PeerMgrIMPL::getOthersNetStatus(const std::string &id, peerState &state)
 	return true;
 }
 
-#if 0
-
-void p3PeerMgrIMPL::getFriendList(std::list<std::string> &peers)
-{
-	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
-
-	/* check for existing */
-        std::map<std::string, peerState>::iterator it;
-	for(it = mFriendList.begin(); it != mFriendList.end(); it++)
-	{
-		peers.push_back(it->first);
-	}
-	return;
-}
-
-#endif
-
-#if 0
-void p3PeerMgrIMPL::getOthersList(std::list<std::string> &peers)
-{
-	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
-
-	/* check for existing */
-        std::map<std::string, peerState>::iterator it;
-	for(it = mOthersList.begin(); it != mOthersList.end(); it++)
-	{
-		peers.push_back(it->first);
-	}
-	return;
-}
-#endif
-
-
-
-int p3PeerMgrIMPL::getConnectAddresses(const std::string &id, 
+int p3PeerMgrIMPL::getConnectAddresses(const SSLIdType &id, 
 					struct sockaddr_storage &lAddr, struct sockaddr_storage &eAddr, 
 					pqiIpAddrSet &histAddrs, std::string &dyndns)
 {
@@ -607,7 +570,7 @@ int p3PeerMgrIMPL::getConnectAddresses(const std::string &id,
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 	
 	/* check for existing */
-	std::map<std::string, peerState>::iterator it;
+	std::map<SSLIdType, peerState>::iterator it;
 	it = mFriendList.find(id);
 	if (it == mFriendList.end())
 	{
@@ -632,7 +595,7 @@ bool    p3PeerMgrIMPL::haveOnceConnected()
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
 	/* check for existing */
-        std::map<std::string, peerState>::iterator it;
+        std::map<SSLIdType, peerState>::iterator it;
 	for(it = mFriendList.begin(); it != mFriendList.end(); it++)
 	{
 		if (it->second.lastcontact > 0)
@@ -660,23 +623,13 @@ bool    p3PeerMgrIMPL::haveOnceConnected()
 /*******************************************************************/
 /*******************************************************************/
 
-bool p3PeerMgrIMPL::addFriend(const std::string& input_id, const std::string& input_gpg_id, uint32_t netMode, uint16_t vs_disc, uint16_t vs_dht, time_t lastContact,ServicePermissionFlags service_flags)
+bool p3PeerMgrIMPL::addFriend(const SSLIdType& input_id, const PGPIdType& input_gpg_id, uint32_t netMode, uint16_t vs_disc, uint16_t vs_dht, time_t lastContact,ServicePermissionFlags service_flags)
 {
 	bool notifyLinkMgr = false;
-	std::string id = input_id ;
-	std::string gpg_id = input_gpg_id ;
+	SSLIdType id = input_id ;
+	PGPIdType gpg_id = input_gpg_id ;
 
-	rslog(RSL_WARNING, p3peermgrzone, "p3PeerMgr::addFriend() id: " + id);
-
-	// For safety, make sure ssl_id is lower case and GPG id is upper case.
-	//
-	for(uint32_t i=0;i<id.length();++i)
-		if(id[i] >= 'A' && id[i] <= 'F')
-			id[i] += 'a' - 'A' ;
-
-	for(uint32_t i=0;i<gpg_id.length();++i)
-		if(gpg_id[i] >= 'a' && gpg_id[i] <= 'f')
-			gpg_id[i] += 'A' - 'a' ;
+	rslog(RSL_WARNING, p3peermgrzone, "p3PeerMgr::addFriend() id: " + id.toStdString());
 
 	{
 		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
@@ -700,7 +653,7 @@ bool p3PeerMgrIMPL::addFriend(const std::string& input_id, const std::string& in
 		std::cerr << "p3PeerMgrIMPL::addFriend() " << id << "; gpg_id : " << gpg_id << std::endl;
 #endif
 
-		std::map<std::string, peerState>::iterator it;
+		std::map<SSLIdType, peerState>::iterator it;
 		if (mFriendList.end() != mFriendList.find(id))
 		{
 #ifdef PEER_DEBUG
@@ -795,7 +748,7 @@ bool p3PeerMgrIMPL::addFriend(const std::string& input_id, const std::string& in
 }
 
 
-bool p3PeerMgrIMPL::removeFriend(const std::string &id, bool removePgpId)
+bool p3PeerMgrIMPL::removeFriend(const SSLIdType &id, bool removePgpId)
 {
 
 #ifdef PEER_DEBUG
@@ -805,15 +758,15 @@ bool p3PeerMgrIMPL::removeFriend(const std::string &id, bool removePgpId)
 
         rslog(RSL_WARNING, p3peermgrzone, "p3PeerMgr::removeFriend() id: " + id);
 
-	std::list<std::string> sslid_toRemove; // This is a list of SSLIds.
-	std::list<std::string> pgpid_toRemove; // This is a list of SSLIds.
+	std::list<SSLIdType> sslid_toRemove; // This is a list of SSLIds.
+	std::list<PGPIdType> pgpid_toRemove; // This is a list of SSLIds.
 
 	{
 		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
 		/* move to othersList */
 		bool success = false;
-		std::map<std::string, peerState>::iterator it;
+		std::map<SSLIdType, peerState>::iterator it;
 		//remove ssl and gpg_ids
 		for(it = mFriendList.begin(); it != mFriendList.end(); it++)
 		{
@@ -834,12 +787,12 @@ bool p3PeerMgrIMPL::removeFriend(const std::string &id, bool removePgpId)
 			}
 		}
 
-		std::list<std::string>::iterator rit;
+		std::list<SSLIdType>::iterator rit;
 		for(rit = sslid_toRemove.begin(); rit != sslid_toRemove.end(); rit++) 
 			if (mFriendList.end() != (it = mFriendList.find(*rit))) 
 				mFriendList.erase(it);
 
-		std::map<std::string,ServicePermissionFlags>::iterator it2 ;
+		std::map<PGPIdType,ServicePermissionFlags>::iterator it2 ;
 
 		for(rit = pgpid_toRemove.begin(); rit != pgpid_toRemove.end(); rit++) 
 			if (mFriendsPermissionFlags.end() != (it2 = mFriendsPermissionFlags.find(*rit))) 
@@ -850,14 +803,14 @@ bool p3PeerMgrIMPL::removeFriend(const std::string &id, bool removePgpId)
 #endif
 	}
 
-	std::list<std::string>::iterator rit;
+	std::list<SSLIdType>::iterator rit;
 	for(rit = sslid_toRemove.begin(); rit != sslid_toRemove.end(); rit++) 
 	{
 		mLinkMgr->removeFriend(*rit);
 	}
 
 	/* remove id from all groups */
-	std::list<std::string> peerIds;
+	std::list<SSLIdType> peerIds;
 	peerIds.push_back(id);
 
 	assignPeersToGroup("", peerIds, false);
@@ -882,7 +835,7 @@ void p3PeerMgrIMPL::printPeerLists(std::ostream &out)
 		out << std::endl;
 
 
-		std::map<std::string, peerState>::iterator it;
+		std::map<SSLIdType, peerState>::iterator it;
 		for(it = mFriendList.begin(); it != mFriendList.end(); it++)
 		{
 			out << "\t SSL ID: " << it->second.id;
@@ -904,69 +857,6 @@ void p3PeerMgrIMPL::printPeerLists(std::ostream &out)
 }
 
 
-
-#if 0
-bool p3PeerMgrIMPL::addNeighbour(std::string id)
-{
-
-#ifdef PEER_DEBUG
-	std::cerr << "p3PeerMgrIMPL::addNeighbour() not implemented anymore." << id << std::endl;
-#endif
-
-	/* so three possibilities 
-	 * (1) already exists as friend -> do nothing.
-	 * (2) already in others list -> do nothing.
-	 * (3) is non-existant -> create new one.
-	 */
-
-	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
-
-        std::map<std::string, peerState>::iterator it;
-	if (mFriendList.end() == mFriendList.find(id))
-	{
-		/* (1) already exists */
-		return false;
-	}
-
-	if (mOthersList.end() == mOthersList.find(id))
-	{
-		/* (2) already exists */
-		return true;
-	}
-
-	/* check with the AuthMgr if its valid */
-        if (!AuthSSL::getAuthSSL()->isAuthenticated(id))
-	{
-		/* no auth */
-		return false;
-	}
-
-	/* get details from AuthMgr */
-        sslcert detail;
-        if (!AuthSSL::getAuthSSL()->getCertDetails(id, detail))
-	{
-		/* no details */
-		return false;
-	}
-
-	/* create a new entry */
-	peerState pstate;
-
-	pstate.id = id;
-        pstate.name = detail.name;
-
-	pstate.state = 0;
-	pstate.actions = 0; //RS_PEER_NEW;
-	pstate.visState = RS_VIS_STATE_STD;
-	pstate.netMode = RS_NET_MODE_UNKNOWN;
-
-	/* addr & timestamps -> auto cleared */
-	mOthersList[id] = pstate;
-
-        return false;
-}
-
-#endif
 
 /*******************************************************************/
 /*******************************************************************/
@@ -1058,7 +948,7 @@ bool 	p3PeerMgrIMPL::UpdateOwnAddress(const struct sockaddr_storage &localAddr, 
 
 
 
-bool    p3PeerMgrIMPL::setLocalAddress(const std::string &id, const struct sockaddr_storage &addr)
+bool    p3PeerMgrIMPL::setLocalAddress(const SSLIdType &id, const struct sockaddr_storage &addr)
 {
 	bool changed = false;
 
@@ -1085,7 +975,7 @@ bool    p3PeerMgrIMPL::setLocalAddress(const std::string &id, const struct socka
 
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 	/* check if it is a friend */
-	std::map<std::string, peerState>::iterator it;
+	std::map<SSLIdType, peerState>::iterator it;
 	if (mFriendList.end() == (it = mFriendList.find(id)))
 	{
 		if (mOthersList.end() == (it = mOthersList.find(id)))
@@ -1119,7 +1009,7 @@ bool    p3PeerMgrIMPL::setLocalAddress(const std::string &id, const struct socka
 	return changed;
 }
 
-bool    p3PeerMgrIMPL::setExtAddress(const std::string &id, const struct sockaddr_storage &addr)
+bool    p3PeerMgrIMPL::setExtAddress(const SSLIdType &id, const struct sockaddr_storage &addr)
 {
 	bool changed = false;
 
@@ -1141,7 +1031,7 @@ bool    p3PeerMgrIMPL::setExtAddress(const std::string &id, const struct sockadd
 
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 	/* check if it is a friend */
-	std::map<std::string, peerState>::iterator it;
+	std::map<SSLIdType, peerState>::iterator it;
 	if (mFriendList.end() == (it = mFriendList.find(id)))
 	{
 		if (mOthersList.end() == (it = mOthersList.find(id)))
@@ -1176,7 +1066,7 @@ bool    p3PeerMgrIMPL::setExtAddress(const std::string &id, const struct sockadd
 }
 
 
-bool p3PeerMgrIMPL::setDynDNS(const std::string &id, const std::string &dyndns)
+bool p3PeerMgrIMPL::setDynDNS(const SSLIdType &id, const std::string &dyndns)
 {
     bool changed = false;
 
@@ -1194,7 +1084,7 @@ bool p3PeerMgrIMPL::setDynDNS(const std::string &id, const std::string &dyndns)
 
     RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
     /* check if it is a friend */
-    std::map<std::string, peerState>::iterator it;
+    std::map<SSLIdType, peerState>::iterator it;
     if (mFriendList.end() == (it = mFriendList.find(id)))
     {
             if (mOthersList.end() == (it = mOthersList.find(id)))
@@ -1216,7 +1106,7 @@ bool p3PeerMgrIMPL::setDynDNS(const std::string &id, const std::string &dyndns)
     return changed;
 }
 
-bool    p3PeerMgrIMPL::updateAddressList(const std::string& id, const pqiIpAddrSet &addrs)
+bool    p3PeerMgrIMPL::updateAddressList(const SSLIdType& id, const pqiIpAddrSet &addrs)
 {
 #ifdef PEER_DEBUG
 	std::cerr << "p3PeerMgrIMPL::setAddressList() called for id : " << id << std::endl;
@@ -1232,7 +1122,7 @@ bool    p3PeerMgrIMPL::updateAddressList(const std::string& id, const pqiIpAddrS
 	}
 
 	/* check if it is a friend */
-	std::map<std::string, peerState>::iterator it;
+	std::map<SSLIdType, peerState>::iterator it;
 	if (mFriendList.end() == (it = mFriendList.find(id)))
 	{
             if (mOthersList.end() == (it = mOthersList.find(id)))
@@ -1261,7 +1151,7 @@ bool    p3PeerMgrIMPL::updateAddressList(const std::string& id, const pqiIpAddrS
 }
 
 
-bool    p3PeerMgrIMPL::updateCurrentAddress(const std::string& id, const pqiIpAddress &addr)
+bool    p3PeerMgrIMPL::updateCurrentAddress(const SSLIdType& id, const pqiIpAddress &addr)
 {
 #ifdef PEER_DEBUG
 	std::cerr << "p3PeerMgrIMPL::updateCurrentAddress() called for id : " << id << std::endl;
@@ -1272,7 +1162,7 @@ bool    p3PeerMgrIMPL::updateCurrentAddress(const std::string& id, const pqiIpAd
 	/* cannot be own id */
 	
 	/* check if it is a friend */
-	std::map<std::string, peerState>::iterator it;
+	std::map<SSLIdType, peerState>::iterator it;
 	if (mFriendList.end() == (it = mFriendList.find(id)))
 	{
 		if (mOthersList.end() == (it = mOthersList.find(id)))
@@ -1308,7 +1198,7 @@ bool    p3PeerMgrIMPL::updateCurrentAddress(const std::string& id, const pqiIpAd
 }
 	
 
-bool    p3PeerMgrIMPL::updateLastContact(const std::string& id)
+bool    p3PeerMgrIMPL::updateLastContact(const SSLIdType& id)
 {
 #ifdef PEER_DEBUG
 	std::cerr << "p3PeerMgrIMPL::updateLastContact() called for id : " << id << std::endl;
@@ -1319,7 +1209,7 @@ bool    p3PeerMgrIMPL::updateLastContact(const std::string& id)
 	/* cannot be own id */
 	
 	/* check if it is a friend */
-	std::map<std::string, peerState>::iterator it;
+	std::map<SSLIdType, peerState>::iterator it;
 	if (mFriendList.end() == (it = mFriendList.find(id)))
 	{
 		if (mOthersList.end() == (it = mOthersList.find(id)))
@@ -1336,7 +1226,7 @@ bool    p3PeerMgrIMPL::updateLastContact(const std::string& id)
 	return true;
 }
 
-bool    p3PeerMgrIMPL::setNetworkMode(const std::string &id, uint32_t netMode)
+bool    p3PeerMgrIMPL::setNetworkMode(const SSLIdType &id, uint32_t netMode)
 {
 	if (id == AuthSSL::getAuthSSL()->OwnId())
 	{
@@ -1345,7 +1235,7 @@ bool    p3PeerMgrIMPL::setNetworkMode(const std::string &id, uint32_t netMode)
 
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 	/* check if it is a friend */
-	std::map<std::string, peerState>::iterator it;
+	std::map<SSLIdType, peerState>::iterator it;
 	if (mFriendList.end() == (it = mFriendList.find(id)))
 	{
 		if (mOthersList.end() == (it = mOthersList.find(id)))
@@ -1367,7 +1257,7 @@ bool    p3PeerMgrIMPL::setNetworkMode(const std::string &id, uint32_t netMode)
 	return changed;
 }
 
-bool    p3PeerMgrIMPL::setLocation(const std::string &id, const std::string &location)
+bool    p3PeerMgrIMPL::setLocation(const SSLIdType &id, const std::string &location)
 {
         bool changed = false;
 
@@ -1386,7 +1276,7 @@ bool    p3PeerMgrIMPL::setLocation(const std::string &id, const std::string &loc
         }
 
         /* check if it is a friend */
-        std::map<std::string, peerState>::iterator it;
+        std::map<SSLIdType, peerState>::iterator it;
         if (mFriendList.end() != (it = mFriendList.find(id))) {
             if (it->second.location.compare(location) != 0) {
                 it->second.location = location;
@@ -1396,7 +1286,7 @@ bool    p3PeerMgrIMPL::setLocation(const std::string &id, const std::string &loc
         return changed;
 }
 
-bool    p3PeerMgrIMPL::setVisState(const std::string &id, uint16_t vs_disc, uint16_t vs_dht)
+bool    p3PeerMgrIMPL::setVisState(const SSLIdType &id, uint16_t vs_disc, uint16_t vs_dht)
 {
 	{
 		std::string out;
@@ -1415,7 +1305,7 @@ bool    p3PeerMgrIMPL::setVisState(const std::string &id, uint16_t vs_disc, uint
 		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
 		/* check if it is a friend */
-		std::map<std::string, peerState>::iterator it;
+		std::map<SSLIdType, peerState>::iterator it;
 		if (mFriendList.end() == (it = mFriendList.find(id)))
 		{
 			if (mOthersList.end() == (it = mOthersList.find(id)))
@@ -1563,7 +1453,7 @@ bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 	saveCleanupList.push_back(item);
 
 	/* iterate through all friends and save */
-        std::map<std::string, peerState>::iterator it;
+        std::map<SSLIdType, peerState>::iterator it;
 	for(it = mFriendList.begin(); it != mFriendList.end(); it++)
 	{
 		item = new RsPeerNetItem();
@@ -1602,7 +1492,7 @@ bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 
 	RsPeerServicePermissionItem *sitem = new RsPeerServicePermissionItem ;
 
-	for(std::map<std::string,ServicePermissionFlags>::const_iterator it(mFriendsPermissionFlags.begin());it!=mFriendsPermissionFlags.end();++it)
+	for(std::map<PGPIdType,ServicePermissionFlags>::const_iterator it(mFriendsPermissionFlags.begin());it!=mFriendsPermissionFlags.end();++it)
 	{
 		sitem->pgp_ids.push_back(it->first) ;
 		sitem->service_flags.push_back(it->second) ;
@@ -1677,7 +1567,7 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 	std::cerr << "p3PeerMgrIMPL::loadList() Item Count: " << load.size() << std::endl;
 #endif
 
-	std::string ownId = getOwnId();
+	SSLIdType ownId = getOwnId();
 
 	/* load the list of peers */
 	std::list<RsItem *>::iterator it;
@@ -2062,7 +1952,7 @@ bool p3PeerMgrIMPL::getGroupInfoList(std::list<RsGroupInfo> &groupInfoList)
 }
 
 // groupId == "" && assign == false -> remove from all groups
-bool p3PeerMgrIMPL::assignPeersToGroup(const std::string &groupId, const std::list<std::string> &peerIds, bool assign)
+bool p3PeerMgrIMPL::assignPeersToGroup(const std::string &groupId, const std::list<SSLIdType> &peerIds, bool assign)
 {
 	if (groupId.empty() && assign == true) {
 		return false;
@@ -2121,9 +2011,9 @@ bool p3PeerMgrIMPL::assignPeersToGroup(const std::string &groupId, const std::li
  **********************************************************************
  **********************************************************************/
 
-ServicePermissionFlags p3PeerMgrIMPL::servicePermissionFlags_sslid(const std::string& ssl_id)
+ServicePermissionFlags p3PeerMgrIMPL::servicePermissionFlags_sslid(const SSLIdType& ssl_id)
 {
-	std::string gpg_id ;
+	PGPIdType gpg_id ;
 
 	{
 		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
@@ -2133,7 +2023,7 @@ ServicePermissionFlags p3PeerMgrIMPL::servicePermissionFlags_sslid(const std::st
 			std::cerr << "(EE) p3PeerMgrIMPL::servicePermissionFlags_sslid() called with inconsistent id " << ssl_id << std::endl;
 			return RS_SERVICE_PERM_ALL ;
 		}
-		std::map<std::string, peerState>::const_iterator it = mFriendList.find(ssl_id);
+		std::map<SSLIdType, peerState>::const_iterator it = mFriendList.find(ssl_id);
 
 		if(it == mFriendList.end())
 			return RS_SERVICE_PERM_ALL ;
@@ -2145,7 +2035,7 @@ ServicePermissionFlags p3PeerMgrIMPL::servicePermissionFlags_sslid(const std::st
 }
 
 
-ServicePermissionFlags p3PeerMgrIMPL::servicePermissionFlags(const std::string& pgp_id)
+ServicePermissionFlags p3PeerMgrIMPL::servicePermissionFlags(const PGPIdType& pgp_id)
 {
 	// 
 	if(pgp_id.length() != 16)
@@ -2157,7 +2047,7 @@ ServicePermissionFlags p3PeerMgrIMPL::servicePermissionFlags(const std::string& 
 	{
 		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
-		std::map<std::string,ServicePermissionFlags>::const_iterator it = mFriendsPermissionFlags.find( pgp_id ) ;
+		std::map<PGPIdType,ServicePermissionFlags>::const_iterator it = mFriendsPermissionFlags.find( pgp_id ) ;
 
 		if(it == mFriendsPermissionFlags.end())
 			return RS_SERVICE_PERM_ALL ;
@@ -2165,7 +2055,7 @@ ServicePermissionFlags p3PeerMgrIMPL::servicePermissionFlags(const std::string& 
 			return it->second ;
 	}
 }
-void p3PeerMgrIMPL::setServicePermissionFlags(const std::string& pgp_id, const ServicePermissionFlags& flags)
+void p3PeerMgrIMPL::setServicePermissionFlags(const PGPIdType& pgp_id, const ServicePermissionFlags& flags)
 {
 		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
@@ -2188,15 +2078,15 @@ void p3PeerMgrIMPL::setServicePermissionFlags(const std::string& pgp_id, const S
  **********************************************************************
  **********************************************************************/
 
-bool p3PeerMgrIMPL::removeAllFriendLocations(const std::string &gpgid)
+bool p3PeerMgrIMPL::removeAllFriendLocations(const PGPIdType &gpgid)
 {
-	std::list<std::string> sslIds;
+	std::list<SSLIdType> sslIds;
 	if (!getAssociatedPeers(gpgid, sslIds))
 	{
 		return false;
 	}
 	
-	std::list<std::string>::iterator it;
+	std::list<SSLIdType>::iterator it;
 	for(it = sslIds.begin(); it != sslIds.end(); it++)
 	{
 		removeFriend(*it, true);
@@ -2206,7 +2096,7 @@ bool p3PeerMgrIMPL::removeAllFriendLocations(const std::string &gpgid)
 }
 
 
-bool	p3PeerMgrIMPL::getAssociatedPeers(const std::string &gpg_id, std::list<std::string> &ids)
+bool	p3PeerMgrIMPL::getAssociatedPeers(const PGPIdType &gpg_id, std::list<SSLIdType> &ids)
 {
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
@@ -2215,7 +2105,7 @@ bool	p3PeerMgrIMPL::getAssociatedPeers(const std::string &gpg_id, std::list<std:
 #endif
 	
 	int count = 0;
-	std::map<std::string, peerState>::iterator it;
+	std::map<SSLIdType, peerState>::iterator it;
 	for(it = mFriendList.begin(); it != mFriendList.end(); it++)
 	{
 		if (it->second.gpg_id == gpg_id)
@@ -2240,7 +2130,7 @@ bool	p3PeerMgrIMPL::getAssociatedPeers(const std::string &gpg_id, std::list<std:
  * We are removing the concept of a "DummyId" - There is no need for it.
  */
 
-bool isDummyFriend(std::string id)
+bool isDummyFriend(SSLIdType id)
 {
 	bool ret = (id.substr(0,5) == "dummy");
 	return ret;
@@ -2249,7 +2139,7 @@ bool isDummyFriend(std::string id)
 
 bool p3PeerMgrIMPL::removeUnusedLocations()
 {
-	std::list<std::string> toRemove;
+	std::list<SSLIdType> toRemove;
 	
 	{
 		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
@@ -2260,7 +2150,7 @@ bool p3PeerMgrIMPL::removeUnusedLocations()
 		
 		time_t now = time(NULL);
 		
-		std::map<std::string, peerState>::iterator it;
+		std::map<SSLIdType, peerState>::iterator it;
 		for(it = mFriendList.begin(); it != mFriendList.end(); it++)
 		{
 			if (now - it->second.lastcontact > VERY_OLD_PEER)
@@ -2285,7 +2175,7 @@ bool p3PeerMgrIMPL::removeUnusedLocations()
 			
 		}
 	}
-	std::list<std::string>::iterator it;
+	std::list<SSLIdType>::iterator it;
 	
 	for(it = toRemove.begin(); it != toRemove.end(); it++)
 	{
