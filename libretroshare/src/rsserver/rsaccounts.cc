@@ -39,8 +39,6 @@
 
 #include <iostream>
 
-#include <openssl/ssl.h>
-
 #include "retroshare/rsinit.h"
 #include "rsaccounts.h"
 
@@ -52,6 +50,7 @@
 #include "pqi/sslfns.h"
 #include "pqi/authgpg.h"
 
+#include <openssl/ssl.h>
 
 // Global singleton declaration of data.
 RsAccountsDetail rsAccounts;

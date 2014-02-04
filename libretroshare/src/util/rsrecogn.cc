@@ -23,13 +23,6 @@
  *
  */
 
-#ifdef WINDOWS_SYS
-#include "util/rswin.h"
-#endif // WINDOWS_SYS
-
-#include <openssl/ssl.h>
-#include <openssl/evp.h>
-
 #include "pqi/pqi_base.h"
 
 #include "util/rsrecogn.h"
@@ -37,6 +30,9 @@
 #include "util/rsstring.h"
 
 #include "gxs/gxssecurity.h"
+
+#include <openssl/ssl.h>
+#include <openssl/evp.h>
 
 /***
  * #define DEBUG_RECOGN	1
