@@ -23,6 +23,7 @@
 
 #include <QMessageBox>
 
+#include <algorithm>
 #include "gui/Circles/CreateCircleDialog.h"
 
 #include <retroshare/rspeers.h>
