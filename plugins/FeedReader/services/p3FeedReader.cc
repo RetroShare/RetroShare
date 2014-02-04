@@ -24,7 +24,8 @@
 #include "p3FeedReaderThread.h"
 #include "serialiser/rsconfigitems.h"
 #include "retroshare/rsiface.h"
-#include "retroshare/rsforums.h"
+//Todo: Replace with gxs forums
+//#include "retroshare/rsforums.h"
 #include "util/rsstring.h"
 
 RsFeedReader *rsFeedReader = NULL;
@@ -461,7 +462,8 @@ RsFeedAddResult p3FeedReader::addFeed(const FeedInfo &feedInfo, std::string &fee
 RsFeedAddResult p3FeedReader::setFeed(const std::string &feedId, const FeedInfo &feedInfo)
 {
 	std::string forumId;
-	ForumInfo forumInfo;
+	//Todo: Replace with gxs forums
+//	ForumInfo forumInfo;
 
 	{
 		RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
@@ -509,14 +511,15 @@ RsFeedAddResult p3FeedReader::setFeed(const std::string &feedId, const FeedInfo 
 
 		infoToFeed(feedInfo, fi, false);
 
-		if ((fi->flag & RS_FEED_FLAG_FORUM) && (fi->flag & RS_FEED_FLAG_UPDATE_FORUM_INFO) && !fi->forumId.empty() &&
-			(fi->name != oldName || fi->description != oldDescription)) {
-			/* name or description changed, update forum */
-			forumId = fi->forumId;
-			librs::util::ConvertUtf8ToUtf16(fi->name, forumInfo.forumName);
-			librs::util::ConvertUtf8ToUtf16(fi->description, forumInfo.forumDesc);
-			forumInfo.forumName.insert(0, FEEDREADER_FORUM_PREFIX);
-		}
+		//Todo: Replace with gxs forums
+//		if ((fi->flag & RS_FEED_FLAG_FORUM) && (fi->flag & RS_FEED_FLAG_UPDATE_FORUM_INFO) && !fi->forumId.empty() &&
+//			(fi->name != oldName || fi->description != oldDescription)) {
+//			/* name or description changed, update forum */
+//			forumId = fi->forumId;
+//			librs::util::ConvertUtf8ToUtf16(fi->name, forumInfo.forumName);
+//			librs::util::ConvertUtf8ToUtf16(fi->description, forumInfo.forumDesc);
+//			forumInfo.forumName.insert(0, FEEDREADER_FORUM_PREFIX);
+//		}
 	}
 
 	IndicateConfigChanged();
@@ -525,18 +528,19 @@ RsFeedAddResult p3FeedReader::setFeed(const std::string &feedId, const FeedInfo 
 		mNotify->notifyFeedChanged(feedId, NOTIFY_TYPE_MOD);
 	}
 
-	if (!forumId.empty()) {
-		if (mForums) {
-			/* name or description changed, update forum */
-			if (!mForums->setForumInfo(forumId, forumInfo)) {
-#ifdef FEEDREADER_DEBUG
-				std::cerr << "p3FeedReader::setFeed - can't change forum " << forumId << std::endl;
-#endif
-			}
-		} else {
-			std::cerr << "p3FeedReader::setFeed - can't change forum " << forumId << ", member mForums is not set" << std::endl;
-		}
-	}
+	//Todo: Replace with gxs forums
+//	if (!forumId.empty()) {
+//		if (mForums) {
+//			/* name or description changed, update forum */
+//			if (!mForums->setForumInfo(forumId, forumInfo)) {
+//#ifdef FEEDREADER_DEBUG
+//				std::cerr << "p3FeedReader::setFeed - can't change forum " << forumId << std::endl;
+//#endif
+//			}
+//		} else {
+//			std::cerr << "p3FeedReader::setFeed - can't change forum " << forumId << ", member mForums is not set" << std::endl;
+//		}
+//	}
 
 	return RS_FEED_ADD_RESULT_SUCCESS;
 }
@@ -1840,6 +1844,8 @@ void p3FeedReader::onProcessSuccess_addMsgs(const std::string &feedId, std::list
 		bool forum = (fi->flag & RS_FEED_FLAG_FORUM) && !fi->preview;
 		RsFeedReaderErrorState errorState = RS_FEED_ERRORSTATE_OK;
 
+//Todo: Replace with gxs forums
+#if 0
 		if (forum && !msgs.empty()) {
 			if (mForums) {
 				if (fi->forumId.empty()) {
@@ -1896,6 +1902,7 @@ void p3FeedReader::onProcessSuccess_addMsgs(const std::string &feedId, std::list
 				std::cerr << "p3FeedReader::onProcessSuccess_addMsgs - can't process forum, member mForums is not set" << std::endl;
 			}
 		}
+#endif
 
 		/* process msgs */
 		if (errorState == RS_FEED_ERRORSTATE_OK) {
@@ -1946,38 +1953,39 @@ void p3FeedReader::onProcessSuccess_addMsgs(const std::string &feedId, std::list
 		}
 	}
 
-	if (!forumId.empty() && !forumMsgs.empty()) {
-		if (mForums) {
-			/* add messages as forum messages */
-			std::list<RsFeedReaderMsg>::iterator msgIt;
-			for (msgIt = forumMsgs.begin(); msgIt != forumMsgs.end(); ++msgIt) {
-				RsFeedReaderMsg &mi = *msgIt;
+	//Todo: Replace with gxs forums
+//	if (!forumId.empty() && !forumMsgs.empty()) {
+//		if (mForums) {
+//			/* add messages as forum messages */
+//			std::list<RsFeedReaderMsg>::iterator msgIt;
+//			for (msgIt = forumMsgs.begin(); msgIt != forumMsgs.end(); ++msgIt) {
+//				RsFeedReaderMsg &mi = *msgIt;
 
-				/* convert to forum messages */
-				ForumMsgInfo forumMsgInfo;
-				forumMsgInfo.forumId = forumId;
-				librs::util::ConvertUtf8ToUtf16(mi.title, forumMsgInfo.title);
+//				/* convert to forum messages */
+//				ForumMsgInfo forumMsgInfo;
+//				forumMsgInfo.forumId = forumId;
+//				librs::util::ConvertUtf8ToUtf16(mi.title, forumMsgInfo.title);
 
-				std::string description = mi.descriptionTransformed.empty() ? mi.description : mi.descriptionTransformed;
-				/* add link */
-				if (!mi.link.empty()) {
-					description += "<br><a href=\"" + mi.link + "\">" + mi.link + "</a>";
-				}
-				librs::util::ConvertUtf8ToUtf16(description, forumMsgInfo.msg);
+//				std::string description = mi.descriptionTransformed.empty() ? mi.description : mi.descriptionTransformed;
+//				/* add link */
+//				if (!mi.link.empty()) {
+//					description += "<br><a href=\"" + mi.link + "\">" + mi.link + "</a>";
+//				}
+//				librs::util::ConvertUtf8ToUtf16(description, forumMsgInfo.msg);
 
-				if (mForums->ForumMessageSend(forumMsgInfo)) {
-					/* set to new */
-					mForums->setMessageStatus(forumMsgInfo.forumId, forumMsgInfo.msgId, 0, FORUM_MSG_STATUS_MASK);
-				} else {
-#ifdef FEEDREADER_DEBUG
-					std::cerr << "p3FeedReader::onProcessSuccess_filterMsg - can't add forum message " << mi.title << " for feed " << forumId << std::endl;
-#endif
-				}
-			}
-		} else {
-			std::cerr << "p3FeedReader::onProcessSuccess_addMsgs - can't process forum, member mForums is not set" << std::endl;
-		}
-	}
+//				if (mForums->ForumMessageSend(forumMsgInfo)) {
+//					/* set to new */
+//					mForums->setMessageStatus(forumMsgInfo.forumId, forumMsgInfo.msgId, 0, FORUM_MSG_STATUS_MASK);
+//				} else {
+//#ifdef FEEDREADER_DEBUG
+//					std::cerr << "p3FeedReader::onProcessSuccess_filterMsg - can't add forum message " << mi.title << " for feed " << forumId << std::endl;
+//#endif
+//				}
+//			}
+//		} else {
+//			std::cerr << "p3FeedReader::onProcessSuccess_addMsgs - can't process forum, member mForums is not set" << std::endl;
+//		}
+//	}
 
 	if (mNotify) {
 		mNotify->notifyFeedChanged(feedId, NOTIFY_TYPE_MOD);
@@ -2031,7 +2039,8 @@ void p3FeedReader::setFeedInfo(const std::string &feedId, const std::string &nam
 	bool changed = false;
 	bool preview;
 	std::string forumId;
-	ForumInfo forumInfoNew;
+	//Todo: Replace with gxs forums
+//	ForumInfo forumInfoNew;
 
 	{
 		RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
@@ -2063,13 +2072,14 @@ void p3FeedReader::setFeedInfo(const std::string &feedId, const std::string &nam
 			changed = true;
 		}
 
-		if ((fi->flag & RS_FEED_FLAG_FORUM) && (fi->flag & RS_FEED_FLAG_UPDATE_FORUM_INFO) && !fi->forumId.empty() && !preview) {
-			/* change forum too */
-			forumId = fi->forumId;
-			librs::util::ConvertUtf8ToUtf16(fi->name, forumInfoNew.forumName);
-			librs::util::ConvertUtf8ToUtf16(fi->description, forumInfoNew.forumDesc);
-			forumInfoNew.forumName.insert(0, FEEDREADER_FORUM_PREFIX);
-		}
+		//Todo: Replace with gxs forums
+//		if ((fi->flag & RS_FEED_FLAG_FORUM) && (fi->flag & RS_FEED_FLAG_UPDATE_FORUM_INFO) && !fi->forumId.empty() && !preview) {
+//			/* change forum too */
+//			forumId = fi->forumId;
+//			librs::util::ConvertUtf8ToUtf16(fi->name, forumInfoNew.forumName);
+//			librs::util::ConvertUtf8ToUtf16(fi->description, forumInfoNew.forumDesc);
+//			forumInfoNew.forumName.insert(0, FEEDREADER_FORUM_PREFIX);
+//		}
 	}
 
 	if (changed) {
@@ -2082,28 +2092,29 @@ void p3FeedReader::setFeedInfo(const std::string &feedId, const std::string &nam
 		}
 	}
 
-	if (!forumId.empty()) {
-		if (mForums) {
-			ForumInfo forumInfo;
-			if (mForums->getForumInfo(forumId, forumInfo)) {
-				if (forumInfo.forumName != forumInfoNew.forumName || forumInfo.forumDesc != forumInfoNew.forumDesc) {
-					/* name or description changed, update forum */
-#ifdef FEEDREADER_DEBUG
-					std::cerr << "p3FeedReader::setFeed - change forum " << forumId << std::endl;
-#endif
-					if (!mForums->setForumInfo(forumId, forumInfoNew)) {
-#ifdef FEEDREADER_DEBUG
-						std::cerr << "p3FeedReader::setFeed - can't change forum " << forumId << std::endl;
-#endif
-					}
-				}
-			} else {
-#ifdef FEEDREADER_DEBUG
-				std::cerr << "p3FeedReader::setFeed - can't get forum info " << forumId << std::endl;
-#endif
-			}
-		} else {
-			std::cerr << "p3FeedReader::setFeedInfo - can't process forum, member mForums is not set" << std::endl;
-		}
-	}
+	//Todo: Replace with gxs forums
+//	if (!forumId.empty()) {
+//		if (mForums) {
+//			ForumInfo forumInfo;
+//			if (mForums->getForumInfo(forumId, forumInfo)) {
+//				if (forumInfo.forumName != forumInfoNew.forumName || forumInfo.forumDesc != forumInfoNew.forumDesc) {
+//					/* name or description changed, update forum */
+//#ifdef FEEDREADER_DEBUG
+//					std::cerr << "p3FeedReader::setFeed - change forum " << forumId << std::endl;
+//#endif
+//					if (!mForums->setForumInfo(forumId, forumInfoNew)) {
+//#ifdef FEEDREADER_DEBUG
+//						std::cerr << "p3FeedReader::setFeed - can't change forum " << forumId << std::endl;
+//#endif
+//					}
+//				}
+//			} else {
+//#ifdef FEEDREADER_DEBUG
+//				std::cerr << "p3FeedReader::setFeed - can't get forum info " << forumId << std::endl;
+//#endif
+//			}
+//		} else {
+//			std::cerr << "p3FeedReader::setFeedInfo - can't process forum, member mForums is not set" << std::endl;
+//		}
+//	}
 }

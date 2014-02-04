@@ -30,6 +30,9 @@ class RsFeedReaderFeed;
 class RsFeedReaderMsg;
 class p3FeedReaderThread;
 
+//Todo: Replace with gxs forums
+class RsForums;
+
 class p3FeedReader : public RsPQIService, public RsFeedReader
 {
 public:

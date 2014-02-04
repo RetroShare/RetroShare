@@ -29,12 +29,13 @@
 #include "FeedReaderStringDefs.h"
 #include "gui/settings/rsharesettings.h"
 
-#include "retroshare/rsforums.h"
+//Todo: Replace with gxs forums
+//#include "retroshare/rsforums.h"
 
-bool sortForumInfo(const ForumInfo& info1, const ForumInfo& info2)
-{
-	return QString::fromStdWString(info1.forumName).compare(QString::fromStdWString(info2.forumName), Qt::CaseInsensitive);
-}
+//bool sortForumInfo(const ForumInfo& info1, const ForumInfo& info2)
+//{
+//	return QString::fromStdWString(info1.forumName).compare(QString::fromStdWString(info2.forumName), Qt::CaseInsensitive);
+//}
 
 AddFeedDialog::AddFeedDialog(RsFeedReader *feedReader, FeedReaderNotify *notify, QWidget *parent)
 	: QDialog(parent, Qt::Window), mFeedReader(feedReader), mNotify(notify), ui(new Ui::AddFeedDialog)
@@ -81,17 +82,18 @@ AddFeedDialog::AddFeedDialog(RsFeedReader *feedReader, FeedReaderNotify *notify,
 	ui->transformationTypeLabel->setText(FeedReaderStringDefs::transforationTypeString(mTransformationType));
 
 	/* fill own forums */
-	std::list<ForumInfo> forumList;
-	if (rsForums->getForumList(forumList)) {
-		forumList.sort(sortForumInfo);
-		for (std::list<ForumInfo>::iterator it = forumList.begin(); it != forumList.end(); ++it) {
-			ForumInfo &forumInfo = *it;
-			/* show only own anonymous forums */
-			if ((forumInfo.subscribeFlags & RS_DISTRIB_ADMIN) && (forumInfo.forumFlags & RS_DISTRIB_AUTHEN_ANON)) {
-				ui->forumComboBox->addItem(QString::fromStdWString(forumInfo.forumName), QString::fromStdString(forumInfo.forumId));
-			}
-		}
-	}
+	//Todo: Replace with gxs forums
+//	std::list<ForumInfo> forumList;
+//	if (rsForums->getForumList(forumList)) {
+//		forumList.sort(sortForumInfo);
+//		for (std::list<ForumInfo>::iterator it = forumList.begin(); it != forumList.end(); ++it) {
+//			ForumInfo &forumInfo = *it;
+//			/* show only own anonymous forums */
+//			if ((forumInfo.subscribeFlags & RS_DISTRIB_ADMIN) && (forumInfo.forumFlags & RS_DISTRIB_AUTHEN_ANON)) {
+//				ui->forumComboBox->addItem(QString::fromStdWString(forumInfo.forumName), QString::fromStdString(forumInfo.forumId));
+//			}
+//		}
+//	}
 	/* insert item to create a new forum */
 	ui->forumComboBox->insertItem(0, tr("Create a new anonymous public forum"), "");
 	ui->forumComboBox->setCurrentIndex(0);
@@ -102,6 +104,9 @@ AddFeedDialog::AddFeedDialog(RsFeedReader *feedReader, FeedReaderNotify *notify,
 
 	/* load settings */
 	processSettings(true);
+
+	//Todo: Replace with gxs forums
+	ui->typeForumRadio->setEnabled(false);
 }
 
 AddFeedDialog::~AddFeedDialog()
@@ -236,12 +241,13 @@ bool AddFeedDialog::fillFeed(const std::string &feedId)
 			if (feedInfo.forumId.empty()) {
 				ui->forumNameLabel->setText(tr("Not yet created"));
 			} else {
-				ForumInfo forumInfo;
-				if (rsForums->getForumInfo(feedInfo.forumId, forumInfo)) {
-					ui->forumNameLabel->setText(QString::fromStdWString(forumInfo.forumName));
-				} else {
-					ui->forumNameLabel->setText(tr("Unknown forum"));
-				}
+				//Todo: Replace with gxs forums
+//				ForumInfo forumInfo;
+//				if (rsForums->getForumInfo(feedInfo.forumId, forumInfo)) {
+//					ui->forumNameLabel->setText(QString::fromStdWString(forumInfo.forumName));
+//				} else {
+//					ui->forumNameLabel->setText(tr("Unknown forum"));
+//				}
 			}
 		} else {
 			ui->typeLocalRadio->setChecked(true);

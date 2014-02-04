@@ -113,7 +113,8 @@ FeedNotify *FeedReaderPlugin::qt_feedNotify()
 RsPQIService *FeedReaderPlugin::rs_pqi_service() const
 {
 	if (mFeedReader == NULL) {
-		mFeedReader = new p3FeedReader(mPlugInHandler, mInterfaces.mForums);
+		//Todo: Replace with gxs forums
+		mFeedReader = new p3FeedReader(mPlugInHandler, NULL /*mInterfaces.mForums*/);
 		rsFeedReader = mFeedReader;
 
 		mNotify = new FeedReaderNotify();
