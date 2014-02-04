@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>677</width>
-    <height>564</height>
+    <height>509</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -68,7 +68,7 @@
       <item row="2" column="0">
        <widget class="QGroupBox" name="groupBox">
         <layout class="QGridLayout" name="gridLayout">
-         <item row="0" column="0" colspan="4">
+         <item row="0" column="0">
           <widget class="QLabel" name="no_gpg_key_label">
            <property name="text">
             <string>It looks like you don't own any profile (PGP keys). Please fill in the form below to create one, or import an existing profile.</string>
@@ -78,8 +78,8 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="0" colspan="4">
-          <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,0,0,0">
+         <item row="1" column="0">
+          <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,0,0,0,0">
            <property name="spacing">
             <number>6</number>
            </property>
@@ -119,6 +119,35 @@
             </widget>
            </item>
            <item>
+            <widget class="QCheckBox" name="hidden_checkbox">
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>32</height>
+              </size>
+             </property>
+             <property name="toolTip">
+              <string>Your profile is associated with a PGP key</string>
+             </property>
+             <property name="text">
+              <string>Create a Hidden Location.</string>
+             </property>
+             <property name="icon">
+              <iconset resource="images.qrc">
+               <normaloff>:/images/tor-logo.png</normaloff>:/images/tor-logo.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>24</width>
+               <height>24</height>
+              </size>
+             </property>
+             <property name="tristate">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QPushButton" name="importIdentity_PB">
              <property name="text">
               <string>Import new identity</string>
@@ -147,7 +176,7 @@
            </item>
           </layout>
          </item>
-         <item row="2" column="0" colspan="4">
+         <item row="2" column="0">
           <layout class="QHBoxLayout" name="horizontalLayout">
            <item>
             <layout class="QVBoxLayout" name="verticalLayout">
@@ -196,6 +225,13 @@
               <widget class="QLabel" name="location_label">
                <property name="text">
                 <string>Location</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="hiddenaddr_label">
+               <property name="text">
+                <string>Tor Address</string>
                </property>
               </widget>
              </item>
@@ -271,74 +307,45 @@ anonymous, you can use a fake email.</string>
                </property>
               </widget>
              </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_3">
+               <property name="spacing">
+                <number>6</number>
+               </property>
+               <item>
+                <widget class="QLineEdit" name="hiddenaddr_input">
+                 <property name="maxLength">
+                  <number>64</number>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="hiddenport_label">
+                 <property name="text">
+                  <string>Port</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QSpinBox" name="hiddenport_spinBox">
+                 <property name="minimum">
+                  <number>1</number>
+                 </property>
+                 <property name="maximum">
+                  <number>65535</number>
+                 </property>
+                 <property name="value">
+                  <number>7812</number>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
             </layout>
            </item>
           </layout>
          </item>
-         <item row="3" column="0" colspan="4">
-          <widget class="QCheckBox" name="hidden_checkbox">
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>32</height>
-            </size>
-           </property>
-           <property name="toolTip">
-            <string>Your profile is associated with a PGP key</string>
-           </property>
-           <property name="text">
-            <string>Create a Hidden Location.</string>
-           </property>
-           <property name="icon">
-            <iconset resource="images.qrc">
-             <normaloff>:/images/contact_new128.png</normaloff>:/images/contact_new128.png</iconset>
-           </property>
-           <property name="iconSize">
-            <size>
-             <width>32</width>
-             <height>32</height>
-            </size>
-           </property>
-           <property name="tristate">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="0">
-          <widget class="QLabel" name="hiddenaddr_label">
-           <property name="text">
-            <string>Tor Address</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="1">
-          <widget class="QLineEdit" name="hiddenaddr_input">
-           <property name="maxLength">
-            <number>64</number>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="2">
-          <widget class="QLabel" name="hiddenport_label">
-           <property name="text">
-            <string>Port</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="3">
-          <widget class="QSpinBox" name="hiddenport_spinBox">
-           <property name="minimum">
-            <number>1</number>
-           </property>
-           <property name="maximum">
-            <number>65535</number>
-           </property>
-           <property name="value">
-            <number>7812</number>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="0" colspan="4">
+         <item row="3" column="0">
           <widget class="QLabel" name="label_hiddenaddr2">
            <property name="minimumSize">
             <size>
@@ -360,7 +367,7 @@ anonymous, you can use a fake email.</string>
            </property>
           </widget>
          </item>
-         <item row="6" column="0" colspan="4">
+         <item row="4" column="0">
           <widget class="QLabel" name="entropy_label">
            <property name="text">
             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Before proceeding, move your mouse around to help Retroshare collect as much randomness as possible. Filling the progressbar to 20% is needed, 100% is advised.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -370,14 +377,14 @@ anonymous, you can use a fake email.</string>
            </property>
           </widget>
          </item>
-         <item row="7" column="0" colspan="4">
+         <item row="5" column="0">
           <widget class="QProgressBar" name="entropy_bar">
            <property name="value">
             <number>24</number>
            </property>
           </widget>
          </item>
-         <item row="8" column="0" colspan="4">
+         <item row="6" column="0">
           <widget class="QPushButton" name="genButton">
            <property name="maximumSize">
             <size>

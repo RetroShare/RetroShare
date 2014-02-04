@@ -428,6 +428,7 @@ void GenCertDialog::genPerson()
 		ui.genButton->hide();
 		ui.importIdentity_PB->hide();
 		ui.genprofileinfo_label->hide();
+		ui.hidden_checkbox->hide();
 
 		setCursor(Qt::WaitCursor) ;
 
