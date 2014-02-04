@@ -30,7 +30,7 @@
 #define LOOPBACK_DEBUG 1
 ***/
 
-pqiloopback::pqiloopback(std::string id)
+pqiloopback::pqiloopback(const RsPeerId& id)
 	:PQInterface(id)
 {
 	setMaxRate(true, 0);

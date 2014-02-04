@@ -1342,7 +1342,7 @@ std::ostream& RsPeerServicePermissionItem::print(std::ostream &out, uint16_t ind
 	for(uint32_t i=0;i<pgp_ids.size();++i)
 	{
 		printIndent(out, int_Indent);
-		out << "pgp id: " << pgp_ids[i] << ": " << service_flags[i].toUInt32() << std::endl; 
+		out << "pgp id: " << pgp_ids[i].toStdString() << ": " << service_flags[i].toUInt32() << std::endl; 
 	}
 	printRsItemEnd(out, "RsPeerServicePermissionItem", indent);
 	return out;
@@ -1355,7 +1355,7 @@ uint32_t RsPeerConfigSerialiser::sizePermissions(RsPeerServicePermissionItem *i)
 
 	for(uint32_t j=0;j<i->pgp_ids.size();++j)
 	{
-		s += GetTlvStringSize(i->pgp_ids[j]) ;
+		s += PGPIdType::SIZE_IN_BYTES ;//GetTlvStringSize(i->pgp_ids[j]) ;
 		s += 4; /* flag */
 	}
 
@@ -1391,7 +1391,7 @@ bool RsPeerConfigSerialiser::serialisePermissions(RsPeerServicePermissionItem *i
 
 	for(uint32_t i=0;i<item->pgp_ids.size();++i)
 	{
-		ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_KEY, item->pgp_ids[i]);
+		ok &= setRawPGPId(data, tlvsize, &offset, item->pgp_ids[i]);
 		ok &= setRawUInt32(data, tlvsize, &offset, item->service_flags[i].toUInt32());
 	}
 
@@ -1446,7 +1446,7 @@ RsPeerServicePermissionItem *RsPeerConfigSerialiser::deserialisePermissions(void
 	for(uint32_t i=0;i<s;++i)
 	{
 		uint32_t flags ;
-		ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_KEY, item->pgp_ids[i]);
+		ok &= getRawPGPId(data, rssize, &offset, item->pgp_ids[i]);
 		ok &= getRawUInt32(data, rssize, &offset, &flags);
 		
 		item->service_flags[i] = ServicePermissionFlags(flags) ;

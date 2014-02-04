@@ -2138,7 +2138,7 @@ bool ftController::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 			// Remove turtle peers from sources, as they are not supposed to survive a reboot of RS, since they are dynamic sources.
 			// Otherwize, such sources are unknown from the turtle router, at restart, and never get removed.
 			//
-			for(std::list<std::string>::iterator sit(rft->allPeerIds.ids.begin());sit!=rft->allPeerIds.ids.end();)
+			for(std::list<RsPeerId>::iterator sit(rft->allPeerIds.ids.begin());sit!=rft->allPeerIds.ids.end();)
 				if(mTurtle->isTurtlePeer(*sit))
 				{
 					std::list<std::string>::iterator sittmp(sit) ;

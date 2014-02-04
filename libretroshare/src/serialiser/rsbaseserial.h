@@ -72,6 +72,9 @@ bool setRawSha1(void *data, uint32_t size, uint32_t *offset, const Sha1CheckSum&
 bool setRawSSLId(void *data, uint32_t size, uint32_t *offset, const SSLIdType& inStr);
 bool getRawSSLId(void *data, uint32_t size, uint32_t *offset, SSLIdType& outStr);
 
+bool setRawPGPId(void *data, uint32_t size, uint32_t *offset, const PGPIdType& inStr);
+bool getRawPGPId(void *data, uint32_t size, uint32_t *offset, PGPIdType& outStr);
+
 bool setRawPGPFingerprint(void *data, uint32_t size, uint32_t *offset, const PGPFingerprintType& inStr);
 bool getRawPGPFingerprint(void *data, uint32_t size, uint32_t *offset, PGPFingerprintType& outStr);
 

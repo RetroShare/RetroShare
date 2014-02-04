@@ -122,7 +122,7 @@ int	pqihandler::status()
 		// display all interfaces...
 		for(it = mods.begin(); it != mods.end(); it++)
 		{
-			rs_sprintf_append(out, "\tModule [%s] Pointer <%p>", it -> first.c_str(), (void *) ((it -> second) -> pqi));
+			rs_sprintf_append(out, "\tModule [%s] Pointer <%p>", it -> first.toStdString().c_str(), (void *) ((it -> second) -> pqi));
 		}
 
 		pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, out);
@@ -150,7 +150,7 @@ bool	pqihandler::AddSearchModule(SearchModule *mod)
 		return false;
 	}
 
-	if (mod->peerid == "")
+	if (mod->peerid.isNull())
 	{
 		// ERROR!
 		pqioutput(PQL_ALERT, pqihandlerzone, "ERROR peerid == NULL");
@@ -261,7 +261,7 @@ int	pqihandler::locked_HandleRsItem(RsItem *item, int allowglobal,uint32_t& comp
 	// check security... is output allowed.
 	if(0 < secpolicy_check((it -> second) -> sp, 0, PQI_OUTGOING))
 	{
-		std::string out = "pqihandler::HandleRsItem() sending to chan: " + it -> first;
+		std::string out = "pqihandler::HandleRsItem() sending to chan: " + it -> first.toStdString();
 		pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, out);
 #ifdef DEBUG_TICK
 		std::cerr << out << std::endl;

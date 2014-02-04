@@ -195,7 +195,7 @@ virtual uint64_t bytecount();
 class NetBinDummy: public NetBinInterface
 {
 public:
-	NetBinDummy(PQInterface *parent, std::string id, uint32_t t);
+	NetBinDummy(PQInterface *parent, const RsPeerId& id, uint32_t t);
 virtual ~NetBinDummy() { return; }
 
 	// Net Interface

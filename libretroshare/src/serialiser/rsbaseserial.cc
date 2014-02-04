@@ -250,6 +250,23 @@ bool setRawSha1(void *data,uint32_t size,uint32_t *offset,const Sha1CheckSum& cs
 	
 	return true ;
 }
+bool getRawPGPId(void *data,uint32_t size,uint32_t *offset,PGPIdType& cs)
+{
+	uint32_t len = PGPIdType::SIZE_IN_BYTES ; // SSL id type
+
+	/* check there is space for string */
+	if (size < *offset + len)
+	{
+		std::cerr << "getRawPGPId() not enough size" << std::endl;
+		return false;
+	}
+	bool ok = true ;
+
+	cs = PGPIdType(&((uint8_t*)data)[*offset]) ;
+	*offset += len ;
+
+	return ok ;
+}
 bool getRawSSLId(void *data,uint32_t size,uint32_t *offset,SSLIdType& cs)
 {
 	uint32_t len = 16 ; // SSL id type
@@ -266,6 +283,21 @@ bool getRawSSLId(void *data,uint32_t size,uint32_t *offset,SSLIdType& cs)
 	*offset += 16 ;
 
 	return ok ;
+}
+bool setRawPGPId(void *data,uint32_t size,uint32_t *offset,const PGPIdType& cs)
+{
+	uint32_t len = PGPIdType::SIZE_IN_BYTES ; // SHA1 length in bytes
+
+	if (size < *offset + len)
+	{
+		std::cerr << "setRawPGPId() Not enough size" << std::endl;
+		return false;
+	}
+
+	memcpy((void *) &(((uint8_t *) data)[*offset]), cs.toByteArray(), PGPIdType::SIZE_IN_BYTES);
+	*offset += PGPIdType::SIZE_IN_BYTES ;
+
+	return true ;
 }
 bool setRawSSLId(void *data,uint32_t size,uint32_t *offset,const SSLIdType& cs)
 {

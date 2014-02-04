@@ -79,7 +79,7 @@ template<uint32_t ID_SIZE_IN_BYTES,uint32_t UNIQUE_IDENTIFIER> class t_RsGeneric
 
 		inline bool isNull() const 
 		{ 
-			for(int i=0;i<SIZE_IN_BYTES;++i) 
+			for(uint32_t i=0;i<SIZE_IN_BYTES;++i) 
 				if(bytes[i] != 0)
 					return false ;
 			return true ;
