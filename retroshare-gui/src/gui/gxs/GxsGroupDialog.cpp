@@ -606,7 +606,7 @@ void GxsGroupDialog::updateCircleOptions()
 
 	if (ui.typeLocal->isChecked())
 	{
-		ui.circleComboBox->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_DISTRIBUTION));
+		ui.localComboBox->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_DISTRIBUTION));
 		ui.localComboBox->setVisible(true);
 	}
 	else 
