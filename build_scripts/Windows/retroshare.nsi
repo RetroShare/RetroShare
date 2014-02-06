@@ -1,16 +1,54 @@
 ; Script generated with the Venis Install Wizard & modified by defnax
 ; Reworked by Thunder
 
+# Needed defines
+;!define VERSION ""
+;!define SOURCEDIR ""
+;!define RELEASEDIR ""
+;!define QTDIR ""
+;!define MINGWDIR ""
+
+# Optional defines
+;!define REVISION ""
+;!define OUTDIR ""
+
+# Check needed defines
+!ifndef VERSION
+!error "VERSION is not defined"
+!endif
+
+!ifndef SOURCEDIR
+!error "SOURCEDIR is not defined"
+!endif
+
+!ifndef RELEASEDIR
+!error "RELEASEDIR is not defined"
+!endif
+!ifndef QTDIR
+!error "QTDIR is not defined"
+!endif
+!ifndef MINGWDIR
+!error "MINGWDIR is not defined"
+!endif
+
+# Check optional defines
+!ifdef REVISION
+!define REVISION_ "${REVISION}_"
+!else
+!define REVISION ""
+!define REVISION_ ""
+!endif
+
+!ifdef OUTDIR
+!define OUTDIR_ "${OUTDIR}\"
+!else
+!define OUTDIR ""
+!define OUTDIR_ ""
+!endif
+
 # Application name and version
 !define APPNAME "RetroShare"
-!define VERSION "$%Version%"
 !define APPNAMEANDVERSION "${APPNAME} ${VERSION}"
-
-# Source and release path
-!define SourceDir "$%SourceDir%"
-!define ReleaseDir "$%ReleaseDir%"
-!define QtDir "$%QtDir%"
-!define MinGWDir "$%MinGWDir%"
 
 # Install path
 !define INSTDIR_NORMAL "$ProgramFiles\${APPNAME}"
@@ -21,9 +59,8 @@
 
 # Main Install settings
 Name "${APPNAMEANDVERSION}"
-;InstallDir "$PROGRAMFILES\RetroShare"
 InstallDirRegKey HKLM "Software\${APPNAME}" ""
-OutFile "RetroShare_${VERSION}_setup.exe"
+OutFile "${OUTDIR_}RetroShare_${VERSION}_${REVISION_}setup.exe"
 BrandingText "${APPNAMEANDVERSION}"
 RequestExecutionlevel highest
 # Use compression
@@ -44,7 +81,7 @@ Var StyleSheetDir
 # Interface Settings
 !define MUI_ABORTWARNING
 !define MUI_HEADERIMAGE
-!define MUI_HEADERIMAGE_BITMAP "${SourceDir}\build_scripts\Windows\HeaderImage.bmp"
+!define MUI_HEADERIMAGE_BITMAP "${SOURCEDIR}\build_scripts\Windows\HeaderImage.bmp"
 ;!define MUI_WELCOMEFINISHPAGE_BITMAP "...bmp"
 
 # MUI defines
@@ -103,15 +140,15 @@ ReserveFile "${NSISDIR}\Plugins\AdvSplash.dll"
   LangString "${NAME}" "${LANG_${LANG}}" "${VALUE}"
 !macroend
 
-!insertmacro LANG_LOAD "English" "en" "1033" "${SourceDir}\retroshare-gui\src\license\license.txt"
-!insertmacro LANG_LOAD "French" "fr" "1036" "${SourceDir}\retroshare-gui\src\license\license-FR.txt"
-!insertmacro LANG_LOAD "German" "de" "1031" "${SourceDir}\retroshare-gui\src\license\license-GER.txt"
-!insertmacro LANG_LOAD "Turkish" "tr" "1055" "${SourceDir}\retroshare-gui\src\license\license-TR.txt"
-!insertmacro LANG_LOAD "SimpChinese" "zh_CN" "2052" "${SourceDir}\retroshare-gui\src\license\license.txt"
-!insertmacro LANG_LOAD "Polish" "pl" "1045" "${SourceDir}\retroshare-gui\src\license\license.txt"
-!insertmacro LANG_LOAD "Spanish" "es" "1034" "${SourceDir}\retroshare-gui\src\license\license.txt"
-!insertmacro LANG_LOAD "Russian" "ru" "1049" "${SourceDir}\retroshare-gui\src\license\license.txt"
-!insertmacro LANG_LOAD "Catalan" "ca_ES" "1027" "${SourceDir}\retroshare-gui\src\license\license.txt"
+!insertmacro LANG_LOAD "English" "en" "1033" "${SOURCEDIR}\retroshare-gui\src\license\license.txt"
+!insertmacro LANG_LOAD "French" "fr" "1036" "${SOURCEDIR}\retroshare-gui\src\license\license-FR.txt"
+!insertmacro LANG_LOAD "German" "de" "1031" "${SOURCEDIR}\retroshare-gui\src\license\license-GER.txt"
+!insertmacro LANG_LOAD "Turkish" "tr" "1055" "${SOURCEDIR}\retroshare-gui\src\license\license-TR.txt"
+!insertmacro LANG_LOAD "SimpChinese" "zh_CN" "2052" "${SOURCEDIR}\retroshare-gui\src\license\license.txt"
+!insertmacro LANG_LOAD "Polish" "pl" "1045" "${SOURCEDIR}\retroshare-gui\src\license\license.txt"
+!insertmacro LANG_LOAD "Spanish" "es" "1034" "${SOURCEDIR}\retroshare-gui\src\license\license.txt"
+!insertmacro LANG_LOAD "Russian" "ru" "1049" "${SOURCEDIR}\retroshare-gui\src\license\license.txt"
+!insertmacro LANG_LOAD "Catalan" "ca_ES" "1027" "${SOURCEDIR}\retroshare-gui\src\license\license.txt"
 
 LicenseData $(myLicenseData)
 
@@ -128,67 +165,67 @@ Section $(Section_Main) Section_Main
 
   ; Main binaries
   SetOutPath "$INSTDIR"
-  File "${ReleaseDir}\retroshare-gui\src\release\RetroShare.exe"
-  File "${ReleaseDir}\retroshare-nogui\src\release\retroshare-nogui.exe"
+  File "${RELEASEDIR}\retroshare-gui\src\release\RetroShare.exe"
+  File "${RELEASEDIR}\retroshare-nogui\src\release\retroshare-nogui.exe"
 
   ; Qt binaries
-  File "${QtDir}\bin\QtCore4.dll"
-  File "${QtDir}\bin\QtGui4.dll"
-  File "${QtDir}\bin\QtMultimedia4.dll"
-  File "${QtDir}\bin\QtSvg4.dll"
-  File "${QtDir}\bin\QtXml4.dll"
+  File "${QTDIR}\bin\QtCore4.dll"
+  File "${QTDIR}\bin\QtGui4.dll"
+  File "${QTDIR}\bin\QtMultimedia4.dll"
+  File "${QTDIR}\bin\QtSvg4.dll"
+  File "${QTDIR}\bin\QtXml4.dll"
 
   ; MinGW binaries
-  File "${MinGWDir}\bin\mingwm10.dll"
-  File "${MinGWDir}\bin\libgcc_s_dw2-1.dll"
-  File "${MinGWDir}\bin\pthreadGC2.dll"
+  File "${MINGWDIR}\bin\mingwm10.dll"
+  File "${MINGWDIR}\bin\libgcc_s_dw2-1.dll"
+  File "${MINGWDIR}\bin\pthreadGC2.dll"
 
   ; External binaries
-  File "${SourceDir}\..\lib\bin\miniupnpc.dll"
+  File "${SOURCEDIR}\..\lib\bin\miniupnpc.dll"
 
   ; Other files
-  File "${SourceDir}\retroshare-gui\src\changelog.txt"
-  File "${SourceDir}\libbitdht\src\bitdht\bdboot.txt"
+  File "${SOURCEDIR}\retroshare-gui\src\changelog.txt"
+  File "${SOURCEDIR}\libbitdht\src\bitdht\bdboot.txt"
 
   ; Image formats
   SetOutPath "$INSTDIR\imageformats"
-  File /r "${QtDir}\plugins\imageformats\qgif4.dll"
-  File /r "${QtDir}\plugins\imageformats\qico4.dll"
-  File /r "${QtDir}\plugins\imageformats\qjpeg4.dll"
-  File /r "${QtDir}\plugins\imageformats\qmng4.dll"
-  File /r "${QtDir}\plugins\imageformats\qsvg4.dll"
-  File /r "${QtDir}\plugins\imageformats\qtga4.dll"
-  File /r "${QtDir}\plugins\imageformats\qtiff4.dll"
+  File /r "${QTDIR}\plugins\imageformats\qgif4.dll"
+  File /r "${QTDIR}\plugins\imageformats\qico4.dll"
+  File /r "${QTDIR}\plugins\imageformats\qjpeg4.dll"
+  File /r "${QTDIR}\plugins\imageformats\qmng4.dll"
+  File /r "${QTDIR}\plugins\imageformats\qsvg4.dll"
+  File /r "${QTDIR}\plugins\imageformats\qtga4.dll"
+  File /r "${QTDIR}\plugins\imageformats\qtiff4.dll"
 
   ; Sounds
   SetOutPath "$INSTDIR\sounds"
-  File /r "${SourceDir}\retroshare-gui\src\sounds\*.*"
+  File /r "${SOURCEDIR}\retroshare-gui\src\sounds\*.*"
 
   ; Translations
   SetOutPath "$INSTDIR\translations"
-  File /r "${SourceDir}\retroshare-gui\src\translations\*.qm"
-  File /r "${QtDir}\translations\qt_*.qm"
+  File /r "${SOURCEDIR}\retroshare-gui\src\translations\*.qm"
+  File /r "${QTDIR}\translations\qt_*.qm"
 
   ; License
   SetOutPath "$INSTDIR\license"
-  File /r "${SourceDir}\retroshare-gui\src\license\*.*"
+  File /r "${SOURCEDIR}\retroshare-gui\src\license\*.*"
 SectionEnd
 
 # Plugins
 SectionGroup $(Section_Plugins) Section_Plugins
 Section $(Section_Plugin_FeedReader) Section_Plugin_FeedReader
   SetOutPath "$DataDir\extensions"
-  File "${ReleaseDir}\plugins\FeedReader\release\FeedReader.dll"
+  File "${RELEASEDIR}\plugins\FeedReader\release\FeedReader.dll"
 SectionEnd
 
 Section $(Section_Plugin_LinksCloud) Section_Plugin_LinksCloud
   SetOutPath "$DataDir\extensions"
-  File "${ReleaseDir}\plugins\LinksCloud\release\LinksCloud.dll"
+  File "${RELEASEDIR}\plugins\LinksCloud\release\LinksCloud.dll"
 SectionEnd
 
 Section $(Section_Plugin_VOIP) Section_Plugin_VOIP
   SetOutPath "$DataDir\extensions"
-  File "${ReleaseDir}\plugins\VOIP\release\VOIP.dll"
+  File "${RELEASEDIR}\plugins\VOIP\release\VOIP.dll"
 SectionEnd
 SectionGroupEnd
 
@@ -199,13 +236,13 @@ Section $(Section_Data) Section_Data
 
   ; Chat style
   SetOutPath "$StyleSheetDir\stylesheets\Bubble"
-  File /r "${SourceDir}\retroshare-gui\src\gui\qss\chat\Bubble\*.*"
+  File /r "${SOURCEDIR}\retroshare-gui\src\gui\qss\chat\Bubble\*.*"
   SetOutPath "$StyleSheetDir\stylesheets\Bubble_Compact"
-  File /r "${SourceDir}\retroshare-gui\src\gui\qss\chat\Bubble_Compact\*.*"
+  File /r "${SOURCEDIR}\retroshare-gui\src\gui\qss\chat\Bubble_Compact\*.*"
 
   ; Stylesheets
   SetOutPath "$INSTDIR\qss"
-  File /r "${SourceDir}\retroshare-gui\src\qss\*.*"
+  File /r "${SOURCEDIR}\retroshare-gui\src\qss\*.*"
 SectionEnd
 
 ;Section $(Section_Link) Section_Link
@@ -320,7 +357,7 @@ Function .onInit
 
   InitPluginsDir
   Push $R1
-  File /oname=$PLUGINSDIR\spltmp.bmp "${SourceDir}\retroshare-gui\src\gui\images\splash.png"
+  File /oname=$PLUGINSDIR\spltmp.bmp "${SOURCEDIR}\retroshare-gui\src\gui\images\splash.png"
   advsplash::show 1200 1000 1000 -1 $PLUGINSDIR\spltmp
   Pop $R1
   Pop $R1

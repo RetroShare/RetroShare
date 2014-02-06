@@ -5,17 +5,25 @@ setlocal
 :: Modify variable when makensis.exe doesn't exist in PATH
 set NSIS_EXE=makensis.exe
 
-:: Set needed environment variables
-if "%SourceDir%"==""  set SourceDir=
-if "%ReleaseDir%"=="" set ReleaseDir=
-if "%QtDir%"==""      set QtDir=
-if "%MinGWDir%"==""   set MinGWDir=
+:: Needed environment variables
+set SourceDir=%~dp0..\..
+::set ReleaseDir=
+::set QtDir=
+::set MinGWDir=
 
-:: Check environment variables
-if "%SourceDir%"==""  call :error_environment & goto :exit
-if "%ReleaseDir%"=="" call :error_environment & goto :exit
-if "%QtDir%"==""      call :error_environment & goto :exit
-if "%MinGWDir%"==""   call :error_environment & goto :exit
+:: Optional environment variables
+::set OutDir=
+::set Revision=
+
+:: Build defines for script
+set NSIS_PARAM=
+
+if "%SourceDir%" NEQ ""  set NSIS_PARAM=%NSIS_PARAM% /DSOURCEDIR="%SourceDir%"
+if "%ReleaseDir%" NEQ "" set NSIS_PARAM=%NSIS_PARAM% /DRELEASEDIR="%ReleaseDir%"
+if "%QtDir%" NEQ ""      set NSIS_PARAM=%NSIS_PARAM% /DQTDIR="%QtDir%"
+if "%MinGWDir%" NEQ ""   set NSIS_PARAM=%NSIS_PARAM% /DMINGWDIR="%MinGWDir%"
+if "%OutDir%" NEQ ""     set NSIS_PARAM=%NSIS_PARAM% /DOUTDIR="%OutDir%"
+if "%Revision%" NEQ ""   set NSIS_PARAM=%NSIS_PARAM% /DREVISION="%Revision%"
 
 :: Scan version from source
 set Version=
@@ -43,14 +51,10 @@ if "%Version%"=="" (
 	goto :exit
 )
 
+set NSIS_PARAM=%NSIS_PARAM% /DVERSION=%Version%
+
 :: Create installer
-"%NSIS_EXE%" "%~dp0retroshare.nsi"
+"%NSIS_EXE%" %NSIS_PARAM% "%~dp0retroshare.nsi"
 
 :exit
 endlocal
-
-goto :EOF
-
-:error_environment
-echo.
-echo Please set the needed environment variables.
