@@ -122,7 +122,7 @@ class PGPHandler
 
 		const PGPCertificateInfo *getCertificateInfo(const PGPIdType& id) const ;
 
-		bool isGPGId(const std::string &id);
+		bool isGPGId(const PGPIdType &id);
 		bool isGPGSigned(const PGPIdType &id);
 		bool isGPGAccepted(const PGPIdType &id);
 

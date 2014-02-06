@@ -110,7 +110,7 @@ std::string textPeerConnectState(peerState &state)
 }
 
 
-p3PeerMgrIMPL::p3PeerMgrIMPL(const RsPeerId& ssl_own_id, const PGPIdType& gpg_own_id, const PGPIdType& gpg_own_name, const RsPeerId& ssl_own_location)
+p3PeerMgrIMPL::p3PeerMgrIMPL(const RsPeerId& ssl_own_id, const PGPIdType& gpg_own_id, const std::string& gpg_own_name, const std::string& ssl_own_location)
 	:p3Config(CONFIG_TYPE_PEERS), mPeerMtx("p3PeerMgr"), mStatusChanged(false)
 {
 
@@ -756,7 +756,7 @@ bool p3PeerMgrIMPL::removeFriend(const RsPeerId &id, bool removePgpId)
 	std::cerr << "p3PeerMgrIMPL::removeFriend() mFriendList.size() : " << mFriendList.size() << std::endl;
 #endif
 
-        rslog(RSL_WARNING, p3peermgrzone, "p3PeerMgr::removeFriend() id: " + id);
+        rslog(RSL_WARNING, p3peermgrzone, "p3PeerMgr::removeFriend() id: " + id.toStdString());
 
 	std::list<RsPeerId> sslid_toRemove; // This is a list of SSLIds.
 	std::list<PGPIdType> pgpid_toRemove; // This is a list of SSLIds.
@@ -770,7 +770,8 @@ bool p3PeerMgrIMPL::removeFriend(const RsPeerId &id, bool removePgpId)
 		//remove ssl and gpg_ids
 		for(it = mFriendList.begin(); it != mFriendList.end(); it++)
 		{
-			if (it->second.id == id || it->second.gpg_id == id) {
+			if (it->second.id == id)
+			{
 #ifdef PEER_DEBUG
 				std::cerr << "p3PeerMgrIMPL::removeFriend() friend found in the list." << id << std::endl;
 #endif
@@ -787,14 +788,13 @@ bool p3PeerMgrIMPL::removeFriend(const RsPeerId &id, bool removePgpId)
 			}
 		}
 
-		std::list<RsPeerId>::iterator rit;
-		for(rit = sslid_toRemove.begin(); rit != sslid_toRemove.end(); rit++) 
+		for(std::list<RsPeerId>::iterator rit = sslid_toRemove.begin(); rit != sslid_toRemove.end(); rit++) 
 			if (mFriendList.end() != (it = mFriendList.find(*rit))) 
 				mFriendList.erase(it);
 
 		std::map<PGPIdType,ServicePermissionFlags>::iterator it2 ;
 
-		for(rit = pgpid_toRemove.begin(); rit != pgpid_toRemove.end(); rit++) 
+		for(std::list<PGPIdType>::iterator rit = pgpid_toRemove.begin(); rit != pgpid_toRemove.end(); rit++) 
 			if (mFriendsPermissionFlags.end() != (it2 = mFriendsPermissionFlags.find(*rit))) 
 				mFriendsPermissionFlags.erase(it2);
 
@@ -1290,7 +1290,7 @@ bool    p3PeerMgrIMPL::setVisState(const RsPeerId &id, uint16_t vs_disc, uint16_
 {
 	{
 		std::string out;
-		rs_sprintf(out, "p3PeerMgr::setVisState(%s, %u, %u)", id.c_str(), vs_disc, vs_dht);
+		rs_sprintf(out, "p3PeerMgr::setVisState(%s, %u, %u)", id.toStdString().c_str(), vs_disc, vs_dht);
 		rslog(RSL_WARNING, p3peermgrzone, out);
 	}
 
@@ -1408,9 +1408,9 @@ bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 	RsPeerNetItem *item = new RsPeerNetItem();
 	item->clear();
 
-	item->pid = getOwnId();
-        item->gpg_id = mOwnState.gpg_id;
-        item->location = mOwnState.location;
+	item->pid = getOwnId().toStdString();
+	item->gpg_id = mOwnState.gpg_id.toStdString();
+	item->location = mOwnState.location;
 #if 0
 	if (mOwnState.netMode & RS_NET_MODE_TRY_EXT)
 	{
@@ -1459,8 +1459,8 @@ bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 		item = new RsPeerNetItem();
 		item->clear();
 
-		item->pid = it->first;
-		item->gpg_id = (it->second).gpg_id;
+		item->pid = it->first.toStdString();
+		item->gpg_id = (it->second).gpg_id.toStdString();
 		item->location = (it->second).location;
 		item->netMode = (it->second).netMode;
 		item->vs_disc = (it->second).vs_disc;
@@ -1576,7 +1576,10 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 		RsPeerNetItem *pitem = dynamic_cast<RsPeerNetItem *>(*it);
 		if (pitem)
 		{
-			if (pitem->pid == ownId)
+			RsPeerId peer_id(pitem->pid) ;
+			PGPIdType peer_pgp_id(pitem->gpg_id) ;
+
+			if (peer_id == ownId)
 			{
 #ifdef PEER_DEBUG
 				std::cerr << "p3PeerMgrIMPL::loadList() Own Config Item:" << std::endl;
@@ -1598,29 +1601,29 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 				std::cerr << std::endl;
 #endif
 				/* ************* */
-				addFriend(pitem->pid, pitem->gpg_id, pitem->netMode, pitem->vs_disc, pitem->vs_dht, pitem->lastContact, RS_SERVICE_PERM_ALL);
-				setLocation(pitem->pid, pitem->location);
+				addFriend(peer_id, peer_pgp_id, pitem->netMode, pitem->vs_disc, pitem->vs_dht, pitem->lastContact, RS_SERVICE_PERM_ALL);
+				setLocation(RsPeerId(pitem->pid), pitem->location);
 			}
 
 			if (pitem->netMode == RS_NET_MODE_HIDDEN)
 			{
 				/* set only the hidden stuff & localAddress */
-				setLocalAddress(pitem->pid, pitem->localAddrV4.addr);
-				setHiddenDomainPort(pitem->pid, pitem->domain_addr, pitem->domain_port);
+				setLocalAddress(peer_id, pitem->localAddrV4.addr);
+				setHiddenDomainPort(peer_id, pitem->domain_addr, pitem->domain_port);
 
 			}
 			else
 			{
-				setLocalAddress(pitem->pid, pitem->localAddrV4.addr);
-				setExtAddress(pitem->pid, pitem->extAddrV4.addr);
-				setDynDNS (pitem->pid, pitem->dyndns);
+				setLocalAddress(peer_id, pitem->localAddrV4.addr);
+				setExtAddress(peer_id, pitem->extAddrV4.addr);
+				setDynDNS (peer_id, pitem->dyndns);
 
 				/* convert addresses */
 				pqiIpAddrSet addrs;
 				addrs.mLocal.extractFromTlv(pitem->localAddrList);
 				addrs.mExt.extractFromTlv(pitem->extAddrList);
 			
-				updateAddressList(pitem->pid, addrs);
+				updateAddressList(peer_id, addrs);
 			}
 
 			delete(*it);

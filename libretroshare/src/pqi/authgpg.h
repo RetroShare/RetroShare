@@ -68,7 +68,7 @@ public:
 class AuthGPGOperationLoadOrSave : public AuthGPGOperation
 {
 public:
-    AuthGPGOperationLoadOrSave(bool load, const PGPIdType &gpgId, const PGPIdType &gpgCert, void *userdata) 
+    AuthGPGOperationLoadOrSave(bool load, const PGPIdType &gpgId, const std::string &gpgCert, void *userdata) 
     : AuthGPGOperation(userdata)
     {
         m_load = load;
@@ -83,7 +83,7 @@ public:
 public:
     bool m_load;
     PGPIdType m_certGpgId; // set for save & load.
-    PGPIdType m_certGpg; // set for load
+	 std::string m_certGpg; // set for load
 };
 
 class AuthGPGService
@@ -111,7 +111,7 @@ class AuthGPG: public p3Config, public RsThread, public PGPHandler
 		/**
 		 * @param ids list of gpg certificate ids (note, not the actual certificates)
 		 */
-		virtual bool    availableGPGCertificatesWithPrivateKeys(std::list<PGPIdType> &ids);
+		//virtual bool    availableGPGCertificatesWithPrivateKeys(std::list<PGPIdType> &ids);
 
 		/*********************************************************************************/
 		/************************* STAGE 1 ***********************************************/
@@ -176,10 +176,10 @@ class AuthGPG: public p3Config, public RsThread, public PGPHandler
 		 *
 		 ****/
 		virtual bool LoadCertificateFromString(const std::string &pem, PGPIdType& gpg_id,std::string& error_string);
-		virtual std::string SaveCertificateToString(const RsPeerId &id,bool include_signatures) ;
+		virtual std::string SaveCertificateToString(const PGPIdType &id,bool include_signatures) ;
 
 		// Cached certificates.
-		bool   getCachedGPGCertificate(const std::string &id, std::string &certificate);
+		bool   getCachedGPGCertificate(const PGPIdType &id, std::string &certificate);
 
 		/*********************************************************************************/
 		/************************* STAGE 6 ***********************************************/

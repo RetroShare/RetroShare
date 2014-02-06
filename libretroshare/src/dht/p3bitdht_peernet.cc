@@ -143,7 +143,7 @@ int p3BitDht::NodeCallback(const bdId *id, uint32_t peerflags)
 			bdStdPrintId(std::cerr, id);
 			std::cerr << std::endl;
 #endif
-			mProxyStunner->addStunPeer(id->addr, "");
+			mProxyStunner->addStunPeer(id->addr, NULL);
 		}
 		/* else */ // removed else until we have lots of peers.
 
@@ -154,7 +154,7 @@ int p3BitDht::NodeCallback(const bdId *id, uint32_t peerflags)
 			bdStdPrintId(std::cerr, id);
 			std::cerr << std::endl;
 #endif
-			mDhtStunner->addStunPeer(id->addr, "");
+			mDhtStunner->addStunPeer(id->addr, NULL);
 		}
 	}
 	return 1;
@@ -632,7 +632,7 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 	/* if we get here, we are an endpoint (peer specified in peerId) */
 	
 	/* translate id into string for exclusive mode */
-	RsPeerId pid;
+	std::string pid;
 	bdStdPrintNodeId(pid, &(peerId.id), false);
 	
 	switch(cbtype)
@@ -1178,7 +1178,7 @@ int p3BitDht::doActions()
 				bool grabbedExclusivePort = false;
 
 				/* translate id into string for exclusive mode */
-				RsPeerId pid;
+				std::string pid;
 				bdStdPrintNodeId(pid, &(action.mDestId.id), false);
 				
 				
@@ -2382,7 +2382,7 @@ void p3BitDht::ReleaseProxyExclusiveMode_locked(DhtPeerDetails *dpd, bool addrCh
 	std::cerr << std::endl;
 	
 	/* translate id into string for exclusive mode */
-	RsPeerId pid;
+	std::string pid;
 	bdStdPrintNodeId(pid, &(dpd->mDhtId.id), false);
 	
 	

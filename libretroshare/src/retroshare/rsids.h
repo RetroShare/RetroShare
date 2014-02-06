@@ -151,7 +151,10 @@ template<uint32_t ID_SIZE_IN_BYTES,uint32_t UNIQUE_IDENTIFIER> t_RsGenericIdType
 
 template<uint32_t ID_SIZE_IN_BYTES,uint32_t UNIQUE_IDENTIFIER> t_RsGenericIdType<ID_SIZE_IN_BYTES,UNIQUE_IDENTIFIER>::t_RsGenericIdType(const unsigned char *mem) 
 {
-	memcpy(bytes,mem,ID_SIZE_IN_BYTES) ;
+	if(mem == NULL)
+		memset(bytes,0,ID_SIZE_IN_BYTES) ;
+	else
+		memcpy(bytes,mem,ID_SIZE_IN_BYTES) ;
 }
 
 static const int SSL_ID_SIZE              = 16 ;

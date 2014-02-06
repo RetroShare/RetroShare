@@ -139,18 +139,18 @@ AuthGPG::AuthGPG(const std::string& path_to_public_keyring,const std::string& pa
  *
  * returns false if GnuPG is not available.
  */
-bool AuthGPG::availableGPGCertificatesWithPrivateKeys(std::list<std::string> &ids)
-{
-	std::list<PGPIdType> pids ;
-
-	PGPHandler::availableGPGCertificatesWithPrivateKeys(pids) ;
-
-	for(std::list<PGPIdType>::const_iterator it(pids.begin());it!=pids.end();++it)
-		ids.push_back( (*it).toStdString() ) ;
-
-	/* return false if there are no private keys */
-	return !ids.empty();
-}
+//bool AuthGPG::availableGPGCertificatesWithPrivateKeys(std::list<std::string> &ids)
+//{
+//	std::list<PGPIdType> pids ;
+//
+//	PGPHandler::availableGPGCertificatesWithPrivateKeys(pids) ;
+//
+//	for(std::list<PGPIdType>::const_iterator it(pids.begin());it!=pids.end();++it)
+//		ids.push_back( (*it).toStdString() ) ;
+//
+//	/* return false if there are no private keys */
+//	return !ids.empty();
+//}
 
 /* You can initialise Retroshare with
  * (a) load existing certificate.
@@ -265,7 +265,7 @@ void AuthGPG::processServices()
 				 std::string error_string ;
 				 PGPIdType pgp_id ;
 				 LoadCertificateFromString(loadOrSave->m_certGpg, pgp_id,error_string);
-				 loadOrSave->m_certGpgId = pgp_id.toStdString() ;
+				 loadOrSave->m_certGpgId = pgp_id;
 			 }
 
 
@@ -648,9 +648,10 @@ int	AuthGPG::privateSignCertificate(const PGPIdType &id)
 }
 
 /* revoke the signature on Certificate */
-int	AuthGPG::privateRevokeCertificate(const std::string &/*id*/)
+int	AuthGPG::privateRevokeCertificate(const PGPIdType &/*id*/)
 {
 	//RsStackMutex stack(gpgMtx); /******* LOCKED ******/
+	std::cerr << __PRETTY_FUNCTION__ << ": not implemented!" << std::endl;
 
 	return 0;
 }
@@ -687,7 +688,7 @@ bool AuthGPG::saveList(bool& cleanup, std::list<RsItem*>& lst)
 #ifdef GPG_DEBUG
 	std::cerr << "AuthGPG::saveList() called" << std::endl ;
 #endif
-	std::list<std::string> ids ;	
+	std::list<PGPIdType> ids ;	
 	getGPGAcceptedList(ids) ;				// needs to be done before the lock
 
 	RsStackMutex stack(gpgMtxData); /******* LOCKED ******/
@@ -697,11 +698,11 @@ bool AuthGPG::saveList(bool& cleanup, std::list<RsItem*>& lst)
 	// Now save config for network digging strategies
 	RsConfigKeyValueSet *vitem = new RsConfigKeyValueSet ;
 
-	for (std::list<std::string>::const_iterator it(ids.begin()); it != ids.end(); ++it) 
-		if((*it) != mOwnGpgId.toStdString()) // skip our own id.
+	for (std::list<PGPIdType>::const_iterator it(ids.begin()); it != ids.end(); ++it) 
+		if((*it) != mOwnGpgId) // skip our own id.
 		{
 			RsTlvKeyValue kv;
-			kv.key = *it ;
+			kv.key = (*it).toStdString() ;
 #ifdef GPG_DEBUG
 			std::cerr << "AuthGPG::saveList() called (it->second) : " << (it->second) << std::endl ;
 #endif

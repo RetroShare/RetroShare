@@ -477,8 +477,8 @@ void p3LinkMgrIMPL::tickMonitors()
 					p3Notify *notify = RsServer::notify();
 					if (notify)
 					{
-						notify->AddPopupMessage(RS_POPUP_CONNECT, peer.id,"", "Online: ");
-						notify->AddFeedItem(RS_FEED_ITEM_PEER_CONNECT, peer.id, "", "");
+						notify->AddPopupMessage(RS_POPUP_CONNECT, peer.id.toStdString(),"", "Online: ");
+						notify->AddFeedItem(RS_FEED_ITEM_PEER_CONNECT, peer.id.toStdString(), "", "");
 					}
 				}
 			}
@@ -576,9 +576,9 @@ void p3LinkMgrIMPL::tickMonitors()
 }
 
 
-const RsPeerId p3LinkMgrIMPL::getOwnId()
+const RsPeerId& p3LinkMgrIMPL::getOwnId()
 {
-                return AuthSSL::getAuthSSL()->OwnId();
+	return AuthSSL::getAuthSSL()->OwnId();
 }
 
 
@@ -623,7 +623,7 @@ bool p3LinkMgrIMPL::connectAttempt(const RsPeerId &id, struct sockaddr_storage &
 
          }
 
-	rslog(RSL_WARNING, p3connectzone, "p3LinkMgrIMPL::connectAttempt() called id: " + id);
+	rslog(RSL_WARNING, p3connectzone, "p3LinkMgrIMPL::connectAttempt() called id: " + id.toStdString());
 
         it->second.lastattempt = time(NULL); 
         it->second.inConnAttempt = true;
@@ -786,7 +786,7 @@ bool p3LinkMgrIMPL::connectResult(const RsPeerId &id, bool success, uint32_t fla
 
 		if (id == getOwnId()) 
 		{
-			rslog(RSL_ALERT, p3connectzone, "p3LinkMgrIMPL::connectResult() ERROR Trying to Connect to OwnId: " + id);
+			rslog(RSL_ALERT, p3connectzone, "p3LinkMgrIMPL::connectResult() ERROR Trying to Connect to OwnId: " + id.toStdString());
 
 			return false;
 		}
@@ -795,7 +795,7 @@ bool p3LinkMgrIMPL::connectResult(const RsPeerId &id, bool success, uint32_t fla
 		it = mFriendList.find(id);
 		if (it == mFriendList.end())
 		{
-			rslog(RSL_ALERT, p3connectzone, "p3LinkMgrIMPL::connectResult() ERROR Missing Friend: " + id);
+			rslog(RSL_ALERT, p3connectzone, "p3LinkMgrIMPL::connectResult() ERROR Missing Friend: " + id.toStdString());
 
 #ifdef LINKMGR_DEBUG
 			std::cerr << "p3LinkMgrIMPL::connectResult() ERROR, missing Friend " << " id: " << id << std::endl;
@@ -1098,7 +1098,7 @@ void    p3LinkMgrIMPL::peerStatus(const RsPeerId& id, const pqiIpAddrSet &addrs,
 
 	{
 		/* Log */
-		std::string out = "p3LinkMgrIMPL::peerStatus() id: " + id;
+		std::string out = "p3LinkMgrIMPL::peerStatus() id: " + id.toStdString();
 		rs_sprintf_append(out, " type: %lu flags: %lu source: %lu\n", type, flags, source);
 		addrs.printAddrs(out);
 		
@@ -1360,7 +1360,7 @@ void    p3LinkMgrIMPL::peerConnectRequest(const RsPeerId& id, const struct socka
 #endif
 	{
 		/* Log */
-		std::string out = "p3LinkMgrIMPL::peerConnectRequest() id: " + id;
+		std::string out = "p3LinkMgrIMPL::peerConnectRequest() id: " + id.toStdString();
 		out += " raddr: ";
 		out += sockaddr_storage_tostring(raddr);
 		out += " proxyaddr: ";
@@ -2127,7 +2127,7 @@ bool  p3LinkMgrIMPL::locked_ConnectAttempt_Complete(peerConnectState *peer)
 
 int p3LinkMgrIMPL::addFriend(const RsPeerId &id, bool isVisible)
 {
-	rslog(RSL_WARNING, p3connectzone, "p3LinkMgr::addFriend() id: " + id);
+	rslog(RSL_WARNING, p3connectzone, "p3LinkMgr::addFriend() id: " + id.toStdString());
 
 	{
 		RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
@@ -2168,7 +2168,7 @@ int p3LinkMgrIMPL::addFriend(const RsPeerId &id, bool isVisible)
 
 int p3LinkMgrIMPL::removeFriend(const RsPeerId &id)
 {
-	rslog(RSL_WARNING, p3connectzone, "p3LinkMgr::removeFriend() id: " + id);
+	rslog(RSL_WARNING, p3connectzone, "p3LinkMgr::removeFriend() id: " + id.toStdString());
 
 	{
 		RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/

@@ -2083,24 +2083,18 @@ bool ftController::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 		RsDirUtil::removeTopDir(fit->second->mDestination, rft->file.path); /* remove fname */
 		rft->flags = fit->second->mFlags.toUInt32();
 		rft->state = fit->second->mState;
-		fit->second->mTransfer->getFileSources(rft->allPeerIds.ids);
 
-		rft->transferred = fit->second->mCreator->getRecvd();
+		std::list<RsPeerId> lst ;
+		fit->second->mTransfer->getFileSources(lst);
 
 		// Remove turtle peers from sources, as they are not supposed to survive a reboot of RS, since they are dynamic sources.
 		// Otherwize, such sources are unknown from the turtle router, at restart, and never get removed.
 		//
-		for(std::list<std::string>::iterator sit(rft->allPeerIds.ids.begin());sit!=rft->allPeerIds.ids.end();)
-			if(mTurtle->isTurtlePeer(*sit))
-			{
-				std::list<std::string>::iterator sittmp(sit) ;
-				++sittmp ;
-				rft->allPeerIds.ids.erase(sit) ;
-				sit = sittmp ;
-			}
-			else
-				++sit ;
+		for(std::list<RsPeerId>::const_iterator it(lst.begin());it!=lst.end();++it) 
+			if(!mTurtle->isTurtlePeer(*it))
+				rft->allPeerIds.ids.push_back((*it).toStdString()) ;
 
+		rft->transferred = fit->second->mCreator->getRecvd();
 		fit->second->mCreator->getAvailabilityMap(rft->compressed_chunk_map) ;
 		rft->chunk_strategy = fit->second->mCreator->getChunkStrategy() ;
 
@@ -2132,14 +2126,18 @@ bool ftController::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 				RsDirUtil::removeTopDir(pit->mDest, rft->file.path); /* remove fname */
 				rft->flags = pit->mFlags.toUInt32();
 				rft->state = pit->mState;
-				rft->allPeerIds.ids = pit->mSrcIds;
+
+				rft->allPeerIds.ids.clear() ;
+				for(std::list<RsPeerId>::const_iterator it(pit->mSrcIds.begin());it!=pit->mSrcIds.end();++it)
+					rft->allPeerIds.ids.push_back( (*it).toStdString() ) ;
 			}
 
 			// Remove turtle peers from sources, as they are not supposed to survive a reboot of RS, since they are dynamic sources.
-			// Otherwize, such sources are unknown from the turtle router, at restart, and never get removed.
+			// Otherwize, such sources are unknown from the turtle router, at restart, and never get removed. We do that in post
+			// process since the rft object may have been created from mPendingChunkMaps
 			//
-			for(std::list<RsPeerId>::iterator sit(rft->allPeerIds.ids.begin());sit!=rft->allPeerIds.ids.end();)
-				if(mTurtle->isTurtlePeer(*sit))
+			for(std::list<std::string>::iterator sit(rft->allPeerIds.ids.begin());sit!=rft->allPeerIds.ids.end();)
+				if(mTurtle->isTurtlePeer(RsPeerId(*sit)))
 				{
 					std::list<std::string>::iterator sittmp(sit) ;
 					sit = rft->allPeerIds.ids.erase(sit) ;
@@ -2201,7 +2199,11 @@ bool ftController::loadList(std::list<RsItem *>& load)
 #ifdef CONTROL_DEBUG
 			std::cerr << "ftController::loadList(): requesting " << rsft->file.name << ", " << rsft->file.hash << ", " << rsft->file.filesize << std::endl ;
 #endif
-			FileRequest(rsft->file.name, rsft->file.hash, rsft->file.filesize, rsft->file.path, TransferRequestFlags(rsft->flags), rsft->allPeerIds.ids, rsft->state);
+			std::list<RsPeerId> src_lst ;
+			for(std::list<std::string>::const_iterator it(rsft->allPeerIds.ids.begin());it!=rsft->allPeerIds.ids.end();++it)
+				src_lst.push_back(RsPeerId(*it)) ;
+
+			FileRequest(rsft->file.name, rsft->file.hash, rsft->file.filesize, rsft->file.path, TransferRequestFlags(rsft->flags), src_lst, rsft->state);
 
 			{
 				RsStackMutex mtx(ctrlMutex) ;

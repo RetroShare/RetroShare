@@ -348,7 +348,7 @@ bool 	p3BitDht::dropPeer(std::string pid)
 
 
 	/* extract current peer status */
-bool 	p3BitDht::getPeerStatus(std::string id, 
+bool 	p3BitDht::getPeerStatus(const RsPeerId& id, 
 				struct sockaddr_storage &/*laddr*/, struct sockaddr_storage &/*raddr*/,
 				uint32_t &/*type*/, uint32_t &/*mode*/)
 {

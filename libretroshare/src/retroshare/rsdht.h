@@ -110,7 +110,7 @@ class RsDhtNetPeer
 	RsDhtNetPeer();
 
         std::string mDhtId;
-        std::string mRsId;
+        RsPeerId mRsId;
 
         uint32_t mPeerType;
 	uint32_t mDhtState;

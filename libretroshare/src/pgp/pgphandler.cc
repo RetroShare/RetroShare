@@ -1545,10 +1545,10 @@ bool PGPHandler::getGPGFilteredList(std::list<PGPIdType>& list,bool (*filter)(co
 	return true ;
 }
 
-//bool PGPHandler::isGPGId(const std::string &id)
-//{
-//	return _public_keyring_map.find(id) != _public_keyring_map.end() ;
-//}
+bool PGPHandler::isGPGId(const PGPIdType &id)
+{
+	return _public_keyring_map.find(id) != _public_keyring_map.end() ;
+}
 
 bool PGPHandler::isGPGSigned(const PGPIdType &id)
 {

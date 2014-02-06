@@ -36,7 +36,7 @@
 class pqiloopback: public PQInterface
 {
 public:
-	pqiloopback(std::string id);
+	pqiloopback(const RsPeerId& id);
 virtual ~pqiloopback();
 
 // search Interface.

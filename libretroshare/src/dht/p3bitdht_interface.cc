@@ -66,7 +66,7 @@ int      p3BitDht::getDhtPeers(int lvl, std::list<RsDhtPeer> &peers)
 	return (int_peers.entries.size() > 0);
 }
 
-int      p3BitDht::getNetPeerList(std::list<std::string> &peerIds)
+int      p3BitDht::getNetPeerList(std::list<RsPeerId> &peerIds)
 {
 	RsStackMutex stack(dhtMtx); /*********** LOCKED **********/
 	std::map<bdNodeId, DhtPeerDetails>::iterator it;
@@ -78,7 +78,7 @@ int      p3BitDht::getNetPeerList(std::list<std::string> &peerIds)
 	return 1;
 }
 
-int      p3BitDht::getNetPeerStatus(std::string peerId, RsDhtNetPeer &status)
+int      p3BitDht::getNetPeerStatus(const RsPeerId& peerId, RsDhtNetPeer &status)
 {
 
 	RsStackMutex stack(dhtMtx); /*********** LOCKED **********/
