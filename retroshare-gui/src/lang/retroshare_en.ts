@@ -12504,6 +12504,10 @@ Reducing image to %1x%2 pixels?</source>
         <source>Certificate caused an internal error.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Peer/location not in friendlist (PGP id=</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ServerPage</name>
