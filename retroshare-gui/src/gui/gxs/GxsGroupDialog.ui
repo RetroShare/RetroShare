@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>695</width>
-    <height>448</height>
+    <height>488</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -257,72 +257,6 @@
         </item>
        </layout>
       </item>
-      <item row="2" column="0">
-       <widget class="QGroupBox" name="distribGroupBox">
-        <property name="title">
-         <string>Message Distribution</string>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout">
-         <property name="spacing">
-          <number>0</number>
-         </property>
-         <property name="margin">
-          <number>4</number>
-         </property>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_7">
-           <item>
-            <widget class="QRadioButton" name="typePublic">
-             <property name="text">
-              <string>Public</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="typeGroup">
-             <property name="text">
-              <string>Restricted to Group</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="typeLocal">
-             <property name="text">
-              <string>Only For Your Friends</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_8">
-           <item>
-            <widget class="GxsCircleChooser" name="circleComboBox"/>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeType">
-              <enum>QSizePolicy::MinimumExpanding</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <widget class="GxsCircleChooser" name="localComboBox"/>
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </widget>
-      </item>
       <item row="3" column="0">
        <widget class="QGroupBox" name="publishGroupBox">
         <property name="title">
@@ -448,6 +382,56 @@
         </property>
        </widget>
       </item>
+      <item row="2" column="0">
+       <widget class="QGroupBox" name="distribGroupBox">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="title">
+         <string>Message Distribution</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
+          <widget class="QRadioButton" name="typePublic">
+           <property name="text">
+            <string>Public</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_8">
+           <item>
+            <widget class="QRadioButton" name="typeGroup">
+             <property name="text">
+              <string>Restricted to Group</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="GxsCircleChooser" name="circleComboBox"/>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_7">
+           <item>
+            <widget class="QRadioButton" name="typeLocal">
+             <property name="text">
+              <string>Only For Your Friends</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="GxsCircleChooser" name="localComboBox"/>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
@@ -478,6 +462,8 @@
   </customwidget>
  </customwidgets>
  <resources>
+  <include location="../images.qrc"/>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
  </resources>
