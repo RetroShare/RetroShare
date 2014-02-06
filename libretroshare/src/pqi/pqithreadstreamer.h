@@ -32,7 +32,7 @@
 class pqithreadstreamer: public pqistreamer, public RsThread
 {
 	public:
-		pqithreadstreamer(PQInterface *parent, RsSerialiser *rss, std::string peerid, BinInterface *bio_in, int bio_flagsin);
+		pqithreadstreamer(PQInterface *parent, RsSerialiser *rss, const RsPeerId& peerid, BinInterface *bio_in, int bio_flagsin);
 
 virtual void run(); 
 virtual void start(); 

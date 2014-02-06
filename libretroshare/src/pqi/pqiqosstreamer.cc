@@ -25,7 +25,7 @@
 
 #include "pqiqosstreamer.h"
 
-pqiQoSstreamer::pqiQoSstreamer(PQInterface *parent, RsSerialiser *rss, std::string peerid, BinInterface *bio_in, int bio_flagsin)
+pqiQoSstreamer::pqiQoSstreamer(PQInterface *parent, RsSerialiser *rss, const RsPeerId& peerid, BinInterface *bio_in, int bio_flagsin)
 	: pqithreadstreamer(parent,rss,peerid,bio_in,bio_flagsin), pqiQoS(PQI_QOS_STREAMER_MAX_LEVELS, PQI_QOS_STREAMER_ALPHA)
 {
 	_total_item_size = 0 ;

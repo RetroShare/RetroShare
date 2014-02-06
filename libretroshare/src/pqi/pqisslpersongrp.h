@@ -44,13 +44,13 @@ class pqisslpersongrp: public pqipersongrp
 
 	/********* FUNCTIONS to OVERLOAD for specialisation ********/
 virtual pqilistener *locked_createListener(const struct sockaddr_storage &laddr);
-virtual pqiperson   *locked_createPerson(std::string id, pqilistener *listener);
+virtual pqiperson   *locked_createPerson(const RsPeerId& id, pqilistener *listener);
 	/********* FUNCTIONS to OVERLOAD for specialisation ********/
 
 	private:
 
 	p3PeerMgr *mPeerMgr;
-	std::map<std::string,pqissl*> ssl_tunnels ;
+	std::map<RsPeerId,pqissl*> ssl_tunnels ;
 };
 
 

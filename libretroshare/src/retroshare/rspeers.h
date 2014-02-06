@@ -291,7 +291,7 @@ class RsPeers
 		virtual bool OthersChanged() 					= 0;
 
 		/* Peer Details (Net & Auth) */
-		virtual SSLIdType getOwnId()					= 0;
+		virtual const RsPeerId& getOwnId()					= 0;
 
 		virtual bool   haveSecretKey(const PGPIdType& gpg_id) = 0 ;
 

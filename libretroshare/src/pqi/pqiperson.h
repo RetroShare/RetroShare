@@ -126,7 +126,7 @@ class NotifyData
 class pqiperson: public PQInterface
 {
 public:
-	pqiperson(std::string id, pqipersongrp *ppg);
+	pqiperson(const RsPeerId& id, pqipersongrp *ppg);
 virtual ~pqiperson(); // must clean up children.
 
 	// control of the connection.

@@ -277,7 +277,7 @@ bool p3Config::loadAttempt(const std::string& cfgFname,const std::string& signFn
 	uint32_t stream_flags = BIN_FLAGS_READABLE;
 
 	BinEncryptedFileInterface *bio = new BinEncryptedFileInterface(cfgFname.c_str(), bioflags);
-	pqiSSLstore stream(setupSerialiser(), "CONFIG", bio, stream_flags);
+	pqiSSLstore stream(setupSerialiser(), RsPeerId(), bio, stream_flags);
 
 	if(!stream.getEncryptedItems(load))
 	{
@@ -343,7 +343,7 @@ bool p3Config::saveConfig()
 		stream_flags |= BIN_FLAGS_NO_DELETE;
 
 	BinEncryptedFileInterface *cfg_bio = new BinEncryptedFileInterface(newCfgFname.c_str(), bioflags);
-	pqiSSLstore *stream = new pqiSSLstore(setupSerialiser(), "CONFIG", cfg_bio, stream_flags);
+	pqiSSLstore *stream = new pqiSSLstore(setupSerialiser(), RsPeerId(), cfg_bio, stream_flags);
 
 	written = written && stream->encryptedSendItems(toSave);
 

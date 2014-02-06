@@ -201,7 +201,7 @@ int 	pqissludp::Initiate_Connection()
 	  "pqissludp::Initiate_Connection() Opening Socket");
 
 	{
-		std::string out = "pqissludp::Initiate_Connection() Connecting To: " + PeerId();
+		std::string out = "pqissludp::Initiate_Connection() Connecting To: " + PeerId().toStdString();
 		out += " via: ";
 		out += sockaddr_storage_tostring(remote_addr);
 		out += " ";
@@ -318,7 +318,7 @@ int 	pqissludp::Initiate_Connection()
 		}
 		else if ((tou_err == ENETUNREACH) || (tou_err == ETIMEDOUT))
 		{
-			out += "ENETUNREACHABLE: cert: " + PeerId() + "\n";
+			out += "ENETUNREACHABLE: cert: " + PeerId().toStdString() + "\n";
 
 			// Then send unreachable message.
 			waiting = WAITING_FAIL_INTERFACE;
@@ -372,11 +372,11 @@ int 	pqissludp::Basic_Connection_Complete()
 	{
 		if (err == EINPROGRESS)
 		{
-			rslog(RSL_DEBUG_BASIC, pqissludpzone, "pqissludp::Basic_Connection_Complete() EINPROGRESS: cert: " + PeerId());
+			rslog(RSL_DEBUG_BASIC, pqissludpzone, "pqissludp::Basic_Connection_Complete() EINPROGRESS: cert: " + PeerId().toStdString());
 		}
 		else if ((err == ENETUNREACH) || (err == ETIMEDOUT))
 		{
-			rslog(RSL_WARNING, pqissludpzone, "pqissludp::Basic_Connection_Complete() ENETUNREACH/ETIMEDOUT: cert: " + PeerId());
+			rslog(RSL_WARNING, pqissludpzone, "pqissludp::Basic_Connection_Complete() ENETUNREACH/ETIMEDOUT: cert: " + PeerId().toStdString());
 
 			/* is the second one needed? */
 			std::string out = "pqissludp::Basic_Connection_Complete() ";
@@ -396,7 +396,7 @@ int 	pqissludp::Basic_Connection_Complete()
 	if (tou_connected(sockfd))
 	/* <===================== UDP Difference *******************/
 	{
-		rslog(RSL_WARNING, pqissludpzone, "pqissludp::Basic_Connection_Complete() Connection Complete: cert: " + PeerId());
+		rslog(RSL_WARNING, pqissludpzone, "pqissludp::Basic_Connection_Complete() Connection Complete: cert: " + PeerId().toStdString());
 
 		return 1;
 	}
@@ -481,7 +481,7 @@ bool 	pqissludp::connect_parameter(uint32_t type, uint32_t value)
 		if (type == NET_PARAM_CONNECT_PERIOD)
 		{
 			std::string out;
-			rs_sprintf(out, "pqissludp::connect_parameter() Peer: %s PERIOD: %lu", PeerId().c_str(), value);
+			rs_sprintf(out, "pqissludp::connect_parameter() Peer: %s PERIOD: %lu", PeerId().toStdString().c_str(), value);
 			rslog(RSL_WARNING, pqissludpzone, out);
 	
 			mConnectPeriod = value;
@@ -491,7 +491,7 @@ bool 	pqissludp::connect_parameter(uint32_t type, uint32_t value)
 		else if (type == NET_PARAM_CONNECT_FLAGS)
 		{
 			std::string out;
-			rs_sprintf(out, "pqissludp::connect_parameter() Peer: %s FLAGS: %lu", PeerId().c_str(), value);
+			rs_sprintf(out, "pqissludp::connect_parameter() Peer: %s FLAGS: %lu", PeerId().toStdString().c_str(), value);
 			rslog(RSL_WARNING, pqissludpzone, out);
 	
 			mConnectFlags = value;
@@ -501,7 +501,7 @@ bool 	pqissludp::connect_parameter(uint32_t type, uint32_t value)
 		else if (type == NET_PARAM_CONNECT_BANDWIDTH)
 		{
 			std::string out;
-			rs_sprintf(out, "pqissludp::connect_parameter() Peer: %s BANDWIDTH: %lu", PeerId().c_str(), value);
+			rs_sprintf(out, "pqissludp::connect_parameter() Peer: %s BANDWIDTH: %lu", PeerId().toStdString().c_str(), value);
 			rslog(RSL_WARNING, pqissludpzone, out);
 	
 			mConnectBandwidth = value;
@@ -521,7 +521,7 @@ bool pqissludp::connect_additional_address(uint32_t type, const struct sockaddr_
 		if (type == NET_PARAM_CONNECT_PROXY)
 		{
 			std::string out;
-			rs_sprintf(out, "pqissludp::connect_additional_address() Peer: %s PROXYADDR: ", PeerId().c_str());
+			rs_sprintf(out, "pqissludp::connect_additional_address() Peer: %s PROXYADDR: ", PeerId().toStdString().c_str());
 			out += sockaddr_storage_tostring(addr);
 			rslog(RSL_WARNING, pqissludpzone, out);
 	
@@ -533,7 +533,7 @@ bool pqissludp::connect_additional_address(uint32_t type, const struct sockaddr_
 		else if (type == NET_PARAM_CONNECT_SOURCE)
 		{
 			std::string out;
-			rs_sprintf(out, "pqissludp::connect_additional_address() Peer: %s SRCADDR: ", PeerId().c_str());
+			rs_sprintf(out, "pqissludp::connect_additional_address() Peer: %s SRCADDR: ", PeerId().toStdString().c_str());
 			out += sockaddr_storage_tostring(addr);
 			rslog(RSL_WARNING, pqissludpzone, out);
 	
@@ -590,22 +590,22 @@ bool 	pqissludp::moretoread(uint32_t usec)
 	{
 		if ((err == EAGAIN) || (err == EINPROGRESS))
 		{
-			rslog(RSL_DEBUG_BASIC, pqissludpzone, "pqissludp::moretoread() EAGAIN/EINPROGRESS: cert " + PeerId());
+			rslog(RSL_DEBUG_BASIC, pqissludpzone, "pqissludp::moretoread() EAGAIN/EINPROGRESS: cert " + PeerId().toStdString());
 			return 0;
 
 		}
 		else if ((err == ENETUNREACH) || (err == ETIMEDOUT))
 		{
-			rslog(RSL_WARNING, pqissludpzone, "pqissludp::moretoread() ENETUNREACH/ETIMEDOUT: cert " + PeerId());
+			rslog(RSL_WARNING, pqissludpzone, "pqissludp::moretoread() ENETUNREACH/ETIMEDOUT: cert " + PeerId().toStdString());
 		}
 		else if (err == EBADF)
 		{
-			rslog(RSL_WARNING, pqissludpzone, "pqissludp::moretoread() EBADF: cert " + PeerId());
+			rslog(RSL_WARNING, pqissludpzone, "pqissludp::moretoread() EBADF: cert " + PeerId().toStdString());
 		}
 		else 
 		{
 			std::string out = "pqissludp::moretoread() ";
-			rs_sprintf_append(out, " Unknown ERROR: %d: cert ", err, PeerId().c_str());
+			rs_sprintf_append(out, " Unknown ERROR: %d: cert ", err, PeerId().toStdString().c_str());
 			rslog(RSL_WARNING, pqissludpzone, out);
 		}
 
