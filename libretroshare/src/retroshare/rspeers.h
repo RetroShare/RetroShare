@@ -198,7 +198,7 @@ class RsPeerDetails
 	PGPIdType issuer;
 
 	PGPFingerprintType fpr; /* pgp fingerprint */
-	//std::string authcode; 	// (cyril) what is this used for ?????
+	std::string authcode; 	// (cyril) what is this used for ?????
 	std::list<PGPIdType> gpgSigners;
 
 	uint32_t trustLvl;
@@ -274,7 +274,7 @@ public:
 	std::string name;
 	uint32_t    flag;
 
-	std::list<SSLIdType> peerIds;
+	std::list<PGPIdType> peerIds;
 };
 
 std::ostream &operator<<(std::ostream &out, const RsPeerDetails &detail);
@@ -308,7 +308,7 @@ class RsPeers
 		virtual bool	 getGPGDetails(const PGPIdType& gpg_id, RsPeerDetails &d) = 0;
 
 		/* Using PGP Ids */
-		virtual PGPIdType getGPGOwnId()				= 0;
+		virtual const PGPIdType& getGPGOwnId()				= 0;
 		virtual PGPIdType getGPGId(const SSLIdType& sslid)	= 0; //return the gpg id of the given ssl id
 		virtual bool    isKeySupported(const PGPIdType& gpg_ids)   = 0;
 		virtual bool    getGPGAcceptedList(std::list<PGPIdType> &gpg_ids)   = 0;
@@ -375,8 +375,8 @@ class RsPeers
 		virtual bool    getGroupInfo(const std::string &groupId, RsGroupInfo &groupInfo) = 0;
 		virtual bool    getGroupInfoList(std::list<RsGroupInfo> &groupInfoList) = 0;
 		// groupId == "" && assign == false -> remove from all groups
-		virtual bool    assignPeerToGroup(const std::string &groupId, const SSLIdType& peerId, bool assign) = 0;
-		virtual bool    assignPeersToGroup(const std::string &groupId, const std::list<SSLIdType> &peerIds, bool assign) = 0;
+		virtual bool    assignPeerToGroup(const std::string &groupId, const PGPIdType& peerId, bool assign) = 0;
+		virtual bool    assignPeersToGroup(const std::string &groupId, const std::list<PGPIdType> &peerIds, bool assign) = 0;
 
 		/* Group sharing permission */
 
@@ -389,7 +389,7 @@ class RsPeers
 		// ... computes the sharing file permission hint flags set for this peer, that is a combination of 
 		// 		RS_FILE_HINTS_NETWORK_WIDE and RS_FILE_HINTS_BROWSABLE.
 		//
-		virtual FileSearchFlags computePeerPermissionFlags(const SSLIdType& peer_id,FileStorageFlags file_sharing_flags,const std::list<std::string>& file_parent_groups) = 0;
+		virtual FileSearchFlags computePeerPermissionFlags(const RsPeerId& peer_id,FileStorageFlags file_sharing_flags,const std::list<std::string>& file_parent_groups) = 0;
 
 		/* Service permission flags */
 

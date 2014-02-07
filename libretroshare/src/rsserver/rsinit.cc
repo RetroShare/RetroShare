@@ -566,7 +566,7 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 	}
 
 	/* check that we have selected someone */
-	std::string preferredId;
+	RsPeerId preferredId;
 	bool existingUser = rsAccounts.getPreferredAccountId(preferredId);
 
 	if (existingUser)
@@ -652,22 +652,20 @@ int 	RsInit::LockAndLoadCertificates(bool autoLoginNT, std::string& lockFilePath
 	}
 
 	// Logic that used to be external to RsInit...
-	std::string accountId;
+	RsPeerId accountId;
 	if (!rsAccounts.getPreferredAccountId(accountId))
 	{
 		return 3; // invalid PreferredAccount;
 	}
 	
-	std::string pgpId, pgpName, pgpEmail, location;
+	PGPIdType pgpId;
+	std::string pgpName, pgpEmail, location;
+
 	if (!rsAccounts.getAccountDetails(accountId, pgpId, pgpName, pgpEmail, location))
-	{
 		return 3; // invalid PreferredAccount;
-	}
 		
 	if (!rsAccounts.SelectPGPAccount(pgpId))
-	{
 		return 3; // PGP Error.
-	}
 	
 	int retVal = LockConfigDirectory(rsAccounts.PathAccountDirectory(), lockFilePath);
 	if(retVal != 0)
@@ -694,7 +692,7 @@ int 	RsInit::LockAndLoadCertificates(bool autoLoginNT, std::string& lockFilePath
  */
 int RsInit::LoadCertificates(bool autoLoginNT)
 {
-	std::string preferredId;
+	RsPeerId preferredId;
 	if (!rsAccounts.getPreferredAccountId(preferredId))
 	{
 		std::cerr << "No Account Selected" << std::endl;
@@ -758,7 +756,7 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 
 bool RsInit::RsClearAutoLogin()
 {
-	std::string preferredId;
+	RsPeerId preferredId;
 	if (!rsAccounts.getPreferredAccountId(preferredId))
 	{
 		std::cerr << "RsInit::RsClearAutoLogin() No Account Selected" << std::endl;
@@ -982,7 +980,7 @@ int RsServer::StartupRetroShare()
 		return false ;
 	}
 
-	std::string ownId = AuthSSL::getAuthSSL()->OwnId();
+	RsPeerId ownId = AuthSSL::getAuthSSL()->OwnId();
 
 	/**************************************************************************/
 	/* Any Initial Configuration (Commandline Options)  */
@@ -1360,7 +1358,7 @@ int RsServer::StartupRetroShare()
         // empty and matches an exist directory location
         // the given ssl user id then this directory is cleaned
         // and deleted
-        std::string priorGxsDir = "./" + mLinkMgr->getOwnId() + "/";
+        std::string priorGxsDir = "./" + mLinkMgr->getOwnId().toStdString() + "/";
 	std::string currGxsDir = rsAccounts.PathAccountDirectory() + "/GXS_phase2";
 
 #ifdef GXS_DEV_TESTNET // Different Directory for testing.

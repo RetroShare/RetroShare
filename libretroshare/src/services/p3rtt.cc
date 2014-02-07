@@ -168,7 +168,7 @@ void p3rtt::sendPingMeasurements()
 
 	/* we ping our peers */
 	/* who is online? */
-	std::list<std::string> idList;
+	std::list<RsPeerId> idList;
 
 	mLinkMgr->getOnlineList(idList);
 
@@ -180,7 +180,7 @@ void p3rtt::sendPingMeasurements()
 #endif
 
 	/* prepare packets */
-	std::list<std::string>::iterator it;
+	std::list<RsPeerId>::iterator it;
 	for(it = idList.begin(); it != idList.end(); it++)
 	{
 #ifdef DEBUG_RTT
@@ -309,7 +309,7 @@ int p3rtt::handlePong(RsItem *item)
 
 
 
-int	p3rtt::storePingAttempt(std::string id, double ts, uint32_t seqno)
+int	p3rtt::storePingAttempt(const RsPeerId& id, double ts, uint32_t seqno)
 {
 	RsStackMutex stack(mRttMtx); /****** LOCKED MUTEX *******/
 
@@ -332,7 +332,7 @@ int	p3rtt::storePingAttempt(std::string id, double ts, uint32_t seqno)
 
 
 
-int	p3rtt::storePongResult(std::string id, uint32_t counter, double ts, double rtt, double offset)
+int	p3rtt::storePongResult(const RsPeerId& id, uint32_t counter, double ts, double rtt, double offset)
 {
 	RsStackMutex stack(mRttMtx); /****** LOCKED MUTEX *******/
 
@@ -363,7 +363,7 @@ int	p3rtt::storePongResult(std::string id, uint32_t counter, double ts, double r
 }
 
 
-uint32_t p3rtt::getPongResults(std::string id, int n, std::list<RsRttPongResult> &results)
+uint32_t p3rtt::getPongResults(const RsPeerId& id, int n, std::list<RsRttPongResult> &results)
 {
 	RsStackMutex stack(mRttMtx); /****** LOCKED MUTEX *******/
 
@@ -381,9 +381,9 @@ uint32_t p3rtt::getPongResults(std::string id, int n, std::list<RsRttPongResult>
 
 
 
-RttPeerInfo *p3rtt::locked_GetPeerInfo(std::string id)
+RttPeerInfo *p3rtt::locked_GetPeerInfo(const RsPeerId& id)
 {
-	std::map<std::string, RttPeerInfo>::iterator it;
+	std::map<RsPeerId, RttPeerInfo>::iterator it;
 	it = mPeerInfo.find(id);
 	if (it == mPeerInfo.end())
 	{
@@ -404,7 +404,7 @@ RttPeerInfo *p3rtt::locked_GetPeerInfo(std::string id)
 
 
 
-bool RttPeerInfo::initialisePeerInfo(std::string id)
+bool RttPeerInfo::initialisePeerInfo(const RsPeerId& id)
 {
 	mId = id;
 

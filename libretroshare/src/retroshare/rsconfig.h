@@ -27,6 +27,7 @@
  */
 
 #include <inttypes.h>
+#include <retroshare/rstypes.h>
 #include <string>
 #include <list>
 #include <map>
@@ -34,10 +35,6 @@
 /* The New Config Interface Class */
 class RsServerConfig;
 extern RsServerConfig *rsConfig;
-
-
-
-
 
 #define RSNET_NETWORK_UNKNOWN		1
 #define RSNET_NETWORK_RESTARTING	2
@@ -188,7 +185,7 @@ class RsConfigNetStatus
 		
 	}
 
-	std::string		ownId;
+	RsPeerId		ownId;
 	std::string		ownName;
 
 	std::string		localAddr;

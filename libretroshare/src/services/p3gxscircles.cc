@@ -1171,7 +1171,7 @@ bool p3GxsCircles::checkCircleCacheForAutoSubscribe(RsGxsCircleCache &cache)
 	}
 
 	/* if we appear in the group - then autosubscribe, and mark as processed */
-	std::string ownId = AuthGPG::getAuthGPG()->getGPGOwnId();
+	const RsPgpId& ownId = AuthGPG::getAuthGPG()->getGPGOwnId();
 	std::map<RsPgpId, std::list<RsGxsId> >::iterator it = cache.mAllowedPeers.find(ownId);
 	if (it != cache.mAllowedPeers.end())
 	{

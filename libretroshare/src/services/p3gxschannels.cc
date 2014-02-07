@@ -601,14 +601,12 @@ void p3GxsChannels::handleUnprocessedPost(const RsGxsChannelPost &msg)
 				std::string hash  = fit->mHash;
 				uint64_t size     = fit->mSize;
 	
-				std::list<std::string> srcIds;
+				std::list<RsPeerId> srcIds;
 				std::string localpath = "";
 				TransferRequestFlags flags = RS_FILE_REQ_BACKGROUND | RS_FILE_REQ_ANONYMOUS_ROUTING;
 
 				if (size < CHANNEL_MAX_AUTO_DL)
-				{
 					rsFiles->FileRequest(fname, hash, size, localpath, flags, srcIds);
-				}
 			}
 		}
 

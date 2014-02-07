@@ -167,8 +167,8 @@ virtual ~RsDht() { return; }
 
 virtual uint32_t getNetState(uint32_t type) = 0;
 virtual int 	 getDhtPeers(int lvl, std::list<RsDhtPeer> &peers) = 0;
-virtual int 	 getNetPeerList(std::list<std::string> &peerIds) = 0;
-virtual int 	 getNetPeerStatus(std::string peerId, RsDhtNetPeer &status) = 0;
+virtual int 	 getNetPeerList(std::list<RsPeerId> &peerIds) = 0;
+virtual int 	 getNetPeerStatus(const RsPeerId& peerId, RsDhtNetPeer &status) = 0;
 
 virtual int 	getRelayEnds(std::list<RsDhtRelayEnd> &relayEnds) = 0;
 virtual int 	getRelayProxies(std::list<RsDhtRelayProxy> &relayProxies) = 0;

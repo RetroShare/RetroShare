@@ -810,10 +810,8 @@ bool p3PeerMgrIMPL::removeFriend(const RsPeerId &id, bool removePgpId)
 	}
 
 	/* remove id from all groups */
-	std::list<RsPeerId> peerIds;
-	peerIds.push_back(id);
 
-	assignPeersToGroup("", peerIds, false);
+	assignPeersToGroup("", pgpid_toRemove, false);
 
 	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
@@ -1955,7 +1953,7 @@ bool p3PeerMgrIMPL::getGroupInfoList(std::list<RsGroupInfo> &groupInfoList)
 }
 
 // groupId == "" && assign == false -> remove from all groups
-bool p3PeerMgrIMPL::assignPeersToGroup(const std::string &groupId, const std::list<RsPeerId> &peerIds, bool assign)
+bool p3PeerMgrIMPL::assignPeersToGroup(const std::string &groupId, const std::list<PGPIdType> &peerIds, bool assign)
 {
 	if (groupId.empty() && assign == true) {
 		return false;
@@ -1975,9 +1973,9 @@ bool p3PeerMgrIMPL::assignPeersToGroup(const std::string &groupId, const std::li
 			if (groupId.empty() || (*groupIt)->id == groupId) {
 				RsPeerGroupItem *groupItem = *groupIt;
 
-				std::list<RsPeerId>::const_iterator peerIt;
+				std::list<PGPIdType>::const_iterator peerIt;
 				for (peerIt = peerIds.begin(); peerIt != peerIds.end(); peerIt++) {
-					std::list<RsPeerId>::iterator peerIt1 = std::find(groupItem->peerIds.begin(), groupItem->peerIds.end(), *peerIt);
+					std::list<PGPIdType>::iterator peerIt1 = std::find(groupItem->peerIds.begin(), groupItem->peerIds.end(), *peerIt);
 					if (assign) {
 						if (peerIt1 == groupItem->peerIds.end()) {
 							groupItem->peerIds.push_back(*peerIt);

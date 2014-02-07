@@ -410,19 +410,6 @@ std::string RsCertificate::hidden_node_string() const
 	return empty;
 }
 
-std::string RsCertificate::sslid_string() const 
-{
-	if (only_pgp)
-	{
-		std::string empty;
-		return empty;
-	}
-	else
-	{
-		return location_id.toStdString(false); 
-	}
-}
-
 std::string RsCertificate::ext_ip_string() const
 {
 	std::ostringstream os ;

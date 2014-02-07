@@ -31,6 +31,7 @@
 #include <list>
 #include <set>
 
+#include "retroshare/rstypes.h"
 #include "retroshare/rstokenservice.h"
 #include "retroshare/rsgxsifacehelper.h"
 

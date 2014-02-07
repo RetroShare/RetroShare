@@ -192,23 +192,23 @@ RsNxsNetMgrImpl::RsNxsNetMgrImpl(p3LinkMgr *lMgr)
 }
 
 
-std::string RsNxsNetMgrImpl::getOwnId()
+const RsPeerId& RsNxsNetMgrImpl::getOwnId()
 {
     RsStackMutex stack(mNxsNetMgrMtx);
     return mLinkMgr->getOwnId();
 }
 
-void RsNxsNetMgrImpl::getOnlineList(std::set<std::string> &ssl_peers)
+void RsNxsNetMgrImpl::getOnlineList(std::set<RsPeerId> &ssl_peers)
 {
     ssl_peers.clear();
 
-    std::list<std::string> pList;
+    std::list<RsPeerId> pList;
     {
         RsStackMutex stack(mNxsNetMgrMtx);
         mLinkMgr->getOnlineList(pList);
     }
 
-    std::list<std::string>::const_iterator lit = pList.begin();
+    std::list<RsPeerId>::const_iterator lit = pList.begin();
 
     for(; lit != pList.end(); lit++)
         ssl_peers.insert(*lit);

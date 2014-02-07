@@ -40,9 +40,9 @@ class RttPeerInfo
 {
 	public:
 
-	bool initialisePeerInfo(std::string id);
+	bool initialisePeerInfo(const RsPeerId& id);
 
-	std::string mId;
+	RsPeerId mId;
 	double mCurrentPingTS;
 	double mCurrentPingCounter;
 	bool   mCurrentPongRecvd;
@@ -67,7 +67,7 @@ class p3rtt: public RsRtt, public p3FastService
 
 		/***** overloaded from rsRtt *****/
 
-virtual uint32_t getPongResults(std::string id, int n, std::list<RsRttPongResult> &results);
+virtual uint32_t getPongResults(const RsPeerId& id, int n, std::list<RsRttPongResult> &results);
 
 		/***** overloaded from p3Service *****/
 
@@ -82,8 +82,8 @@ virtual bool recvItem(RsItem *item); // Overloaded from p3FastService.
 		int 	handlePing(RsItem *item);
 		int 	handlePong(RsItem *item);
 
-		int 	storePingAttempt(std::string id, double ts, uint32_t mCounter);
-		int 	storePongResult(std::string id, uint32_t counter, double ts, double rtt, double offset);
+		int 	storePingAttempt(const RsPeerId& id, double ts, uint32_t mCounter);
+		int 	storePongResult(const RsPeerId& id, uint32_t counter, double ts, double rtt, double offset);
 
 
 		/*!
@@ -104,9 +104,9 @@ virtual bool recvItem(RsItem *item); // Overloaded from p3FastService.
 	private:
 		RsMutex mRttMtx;
 
-		RttPeerInfo *locked_GetPeerInfo(std::string id);
+		RttPeerInfo *locked_GetPeerInfo(const RsPeerId& id);
 
-		std::map<std::string, RttPeerInfo> mPeerInfo;
+		std::map<RsPeerId, RttPeerInfo> mPeerInfo;
 		time_t mSentPingTime;
 		uint32_t mCounter;
 

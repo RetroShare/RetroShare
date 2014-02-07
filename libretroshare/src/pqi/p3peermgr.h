@@ -133,7 +133,7 @@ virtual bool    editGroup(const std::string &groupId, RsGroupInfo &groupInfo) = 
 virtual bool    removeGroup(const std::string &groupId) = 0;
 virtual bool    getGroupInfo(const std::string &groupId, RsGroupInfo &groupInfo) = 0;
 virtual bool    getGroupInfoList(std::list<RsGroupInfo> &groupInfoList) = 0;
-virtual bool    assignPeersToGroup(const std::string &groupId, const std::list<RsPeerId> &peerIds, bool assign) = 0;
+virtual bool    assignPeersToGroup(const std::string &groupId, const std::list<PGPIdType> &peerIds, bool assign) = 0;
 
 	virtual ServicePermissionFlags servicePermissionFlags(const PGPIdType& gpg_id) =0;
 	virtual ServicePermissionFlags servicePermissionFlags(const RsPeerId& ssl_id) =0;
@@ -233,7 +233,7 @@ virtual bool    editGroup(const std::string &groupId, RsGroupInfo &groupInfo);
 virtual bool    removeGroup(const std::string &groupId);
 virtual bool    getGroupInfo(const std::string &groupId, RsGroupInfo &groupInfo);
 virtual bool    getGroupInfoList(std::list<RsGroupInfo> &groupInfoList);
-virtual bool    assignPeersToGroup(const std::string &groupId, const std::list<RsPeerId> &peerIds, bool assign);
+virtual bool    assignPeersToGroup(const std::string &groupId, const std::list<PGPIdType> &peerIds, bool assign);
 
 	virtual ServicePermissionFlags servicePermissionFlags(const PGPIdType& gpg_id) ;
 	virtual ServicePermissionFlags servicePermissionFlags(const RsPeerId& ssl_id) ;

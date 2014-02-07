@@ -62,8 +62,8 @@ int p3heartbeat::tick()
 	{
 		mLastHeartbeat = time(NULL);
 
-		std::list<std::string> peers;
-		std::list<std::string>::const_iterator pit;
+		std::list<RsPeerId> peers;
+		std::list<RsPeerId>::const_iterator pit;
 
 		mLinkMgr->getOnlineList(peers);
 		for (pit = peers.begin(); pit != peers.end(); ++pit) 
@@ -97,7 +97,7 @@ int p3heartbeat::tick()
 	return nhandled ;
 }
 
-void p3heartbeat::sendHeartbeat(const std::string &toId)
+void p3heartbeat::sendHeartbeat(const RsPeerId &toId)
 {
 
 #ifdef HEART_DEBUG
@@ -110,7 +110,7 @@ void p3heartbeat::sendHeartbeat(const std::string &toId)
 }
 
 
-void p3heartbeat::recvHeartbeat(const std::string &fromId)
+void p3heartbeat::recvHeartbeat(const RsPeerId &fromId)
 {
 
 #ifdef HEART_DEBUG

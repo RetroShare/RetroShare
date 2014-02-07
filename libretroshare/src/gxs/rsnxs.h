@@ -109,7 +109,7 @@ public:
      * @param enabled set to false to disable pause, and true otherwise
      * @return request token to be redeemed
      */
-    virtual int requestGrp(const std::list<RsGxsGroupId>& grpId, const std::string& peerId) = 0;
+    virtual int requestGrp(const std::list<RsGxsGroupId>& grpId, const RsPeerId& peerId) = 0;
 
 
 };

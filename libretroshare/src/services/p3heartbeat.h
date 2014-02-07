@@ -44,8 +44,8 @@ virtual ~p3heartbeat();
 
 	private:
 
-	void sendHeartbeat(const std::string &toId);
-	void recvHeartbeat(const std::string &fromId);
+	void sendHeartbeat(const RsPeerId &toId);
+	void recvHeartbeat(const RsPeerId &fromId);
 
 	private:
 

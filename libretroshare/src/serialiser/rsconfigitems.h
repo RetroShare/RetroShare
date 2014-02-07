@@ -131,7 +131,7 @@ public:
 	std::string name;
 	uint32_t    flag;
 
-	std::list<RsPeerId> peerIds;
+	std::list<PGPIdType> peerIds;
 };
 
 

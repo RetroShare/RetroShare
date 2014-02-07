@@ -1219,14 +1219,14 @@ int 	pqissl::Extract_Failed_SSL_Certificate()
 	// 	which could be 
 	//      (pqissl's case) sslcert->serveraddr or sslcert->localaddr.
 
-	std::string sslid ;
+	RsPeerId sslid ;
 	getX509id(peercert, sslid) ;
 
 	PGPIdType gpgid(getX509CNString(peercert->cert_info->issuer));
 	std::string sslcn = getX509CNString(peercert->cert_info->subject);
 
-	AuthSSL::getAuthSSL()->FailedCertificate(peercert, gpgid,RsPeerId(sslid),sslcn,remote_addr, false);
-	mLinkMgr->notifyDeniedConnection(gpgid, RsPeerId(sslid), sslcn, remote_addr, false);
+	AuthSSL::getAuthSSL()->FailedCertificate(peercert, gpgid,sslid,sslcn,remote_addr, false);
+	mLinkMgr->notifyDeniedConnection(gpgid, sslid, sslcn, remote_addr, false);
 
 	return 1;
 }
@@ -1277,7 +1277,7 @@ int 	pqissl::Authorise_SSL_Connection()
 		return -1;
 	}
 
-        std::string certPeerId;
+        RsPeerId certPeerId;
         getX509id(peercert, certPeerId);
         if (RsPeerId(certPeerId) != PeerId()) {
                 rslog(RSL_WARNING, pqisslzone,

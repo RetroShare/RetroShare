@@ -427,7 +427,7 @@ static  int initLib = 0;
 		return -1;
 	}
 
-	std::string mownidstr ;
+	RsPeerId mownidstr ;
 
 	if (!getX509id(x509, mownidstr))
 	{
@@ -438,7 +438,7 @@ static  int initLib = 0;
 		CloseAuth();
 		return -1;
 	}
-	mOwnId = SSLIdType(mownidstr) ;
+	mOwnId = mownidstr ;
 
 	assert(!mOwnId.isNull()) ;
 
@@ -1029,7 +1029,7 @@ bool    AuthSSLimpl::ValidateCertificate(X509 *x509, SSLIdType &peerId)
 #endif
 		return false;
 	}
-	std::string peerIdstr ;
+	RsPeerId peerIdstr ;
 
 	if(!getX509id(x509, peerIdstr)) 
 	{
@@ -1039,7 +1039,7 @@ bool    AuthSSLimpl::ValidateCertificate(X509 *x509, SSLIdType &peerId)
 #endif
 		return false;
 	}
-	peerId = SSLIdType(peerIdstr) ;
+	peerId = peerIdstr ;
 
 #ifdef AUTHSSL_DEBUG
 	std::cerr << "AuthSSLimpl::ValidateCertificate() good certificate.";
@@ -1076,11 +1076,9 @@ static int verify_x509_callback(int preverify_ok, X509_STORE_CTX *ctx)
 		}
 
 		std::string sslcn = getX509CNString(x509->cert_info->subject);
-		std::string sslidstr ;
+		RsPeerId sslid ;
 
-		getX509id(x509,sslidstr);
-
-		SSLIdType sslid(sslidstr) ;
+		getX509id(x509,sslid);
 
 		if(sslid.isNull()) 
 		{
@@ -1182,7 +1180,7 @@ int AuthSSLimpl::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
         if (preverify_ok) {
 
             //sslcert *cert = NULL;
-            std::string certId;
+            RsPeerId certId;
             getX509id(X509_STORE_CTX_get_current_cert(ctx), certId);
 
         }
@@ -1551,19 +1549,18 @@ bool AuthSSLimpl::RemoveX509(SSLIdType id)
 bool AuthSSLimpl::LocalStoreCert(X509* x509) 
 {
 	//store the certificate in the local cert list
-	std::string peerIdstr ;
-	if(!getX509id(x509, peerIdstr))
+	RsPeerId peerId ;
+	if(!getX509id(x509, peerId))
 	{
 		std::cerr << "AuthSSLimpl::LocalStoreCert() Cannot retrieve peer id from certificate." << std::endl;
 #ifdef AUTHSSL_DEBUG
 #endif
 		return false;
 	}
-	SSLIdType peerId(peerIdstr);
 
 	if(peerId.isNull())
 	{
-		std::cerr << "AuthSSLimpl::LocalStoreCert(): invalid peer id \"" << peerIdstr << "\"" << std::endl;
+		std::cerr << "AuthSSLimpl::LocalStoreCert(): invalid peer id \"" << peerId << "\"" << std::endl;
 		return false ;
 	}
 
