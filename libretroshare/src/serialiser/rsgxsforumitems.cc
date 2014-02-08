@@ -164,7 +164,7 @@ bool RsGxsForumSerialiser::serialiseGxsForumGroupItem(RsGxsForumGroupItem *item,
 	offset += 8;
 	
 	/* GxsForumGroupItem */
-	ok &= SetTlvString(data, tlvsize, &offset, 1, item->mGroup.mDescription);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_DESCR, item->mGroup.mDescription);
 	
 	if(offset != tlvsize)
 	{
@@ -224,7 +224,7 @@ RsGxsForumGroupItem* RsGxsForumSerialiser::deserialiseGxsForumGroupItem(void *da
 	/* skip the header */
 	offset += 8;
 	
-	ok &= GetTlvString(data, rssize, &offset, 1, item->mGroup.mDescription);
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_DESCR, item->mGroup.mDescription);
 	
 	if (offset != rssize)
 	{
@@ -312,7 +312,7 @@ bool RsGxsForumSerialiser::serialiseGxsForumMsgItem(RsGxsForumMsgItem *item, voi
 	offset += 8;
 	
 	/* GxsForumMsgItem */
-	ok &= SetTlvString(data, tlvsize, &offset, 1, item->mMsg.mMsg);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_MSG, item->mMsg.mMsg);
 	
 	if(offset != tlvsize)
 	{
@@ -372,7 +372,7 @@ RsGxsForumMsgItem* RsGxsForumSerialiser::deserialiseGxsForumMsgItem(void *data, 
 	/* skip the header */
 	offset += 8;
 	
-	ok &= GetTlvString(data, rssize, &offset, 1, item->mMsg.mMsg);
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_MSG, item->mMsg.mMsg);
 	
 	if (offset != rssize)
 	{

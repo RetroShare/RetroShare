@@ -183,9 +183,9 @@ bool RsGxsWikiSerialiser::serialiseGxsWikiCollectionItem(RsGxsWikiCollectionItem
 	offset += 8;
 	
 	/* GxsWikiCollectionItem */
-	ok &= SetTlvString(data, tlvsize, &offset, 1, item->collection.mDescription);
-	ok &= SetTlvString(data, tlvsize, &offset, 1, item->collection.mCategory);
-	ok &= SetTlvString(data, tlvsize, &offset, 1, item->collection.mHashTags);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_DESCR, item->collection.mDescription);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_CATEGORY, item->collection.mCategory);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_HASH_TAG, item->collection.mHashTags);
 	
 	if(offset != tlvsize)
 	{
@@ -245,9 +245,9 @@ RsGxsWikiCollectionItem* RsGxsWikiSerialiser::deserialiseGxsWikiCollectionItem(v
 	/* skip the header */
 	offset += 8;
 	
-	ok &= GetTlvString(data, rssize, &offset, 1, item->collection.mDescription);
-	ok &= GetTlvString(data, rssize, &offset, 1, item->collection.mCategory);
-	ok &= GetTlvString(data, rssize, &offset, 1, item->collection.mHashTags);
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_DESCR, item->collection.mDescription);
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_CATEGORY, item->collection.mCategory);
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_HASH_TAG, item->collection.mHashTags);
 	
 	if (offset != rssize)
 	{
@@ -340,8 +340,8 @@ bool RsGxsWikiSerialiser::serialiseGxsWikiSnapshotItem(RsGxsWikiSnapshotItem *it
 	offset += 8;
 	
 	/* GxsWikiSnapshotItem */
-	ok &= SetTlvString(data, tlvsize, &offset, 1, item->snapshot.mPage);
-	ok &= SetTlvString(data, tlvsize, &offset, 1, item->snapshot.mHashTags);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_WIKI_PAGE, item->snapshot.mPage);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_HASH_TAG, item->snapshot.mHashTags);
 	
 	if(offset != tlvsize)
 	{
@@ -401,8 +401,8 @@ RsGxsWikiSnapshotItem* RsGxsWikiSerialiser::deserialiseGxsWikiSnapshotItem(void 
 	/* skip the header */
 	offset += 8;
 	
-	ok &= GetTlvString(data, rssize, &offset, 1, item->snapshot.mPage);
-	ok &= GetTlvString(data, rssize, &offset, 1, item->snapshot.mHashTags);
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_WIKI_PAGE, item->snapshot.mPage);
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_HASH_TAG, item->snapshot.mHashTags);
 	
 	if (offset != rssize)
 	{
@@ -489,7 +489,7 @@ bool RsGxsWikiSerialiser::serialiseGxsWikiCommentItem(RsGxsWikiCommentItem *item
 	offset += 8;
 	
 	/* GxsWikiCommentItem */
-	ok &= SetTlvString(data, tlvsize, &offset, 1, item->comment.mComment);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_COMMENT, item->comment.mComment);
 	
 	if(offset != tlvsize)
 	{
@@ -549,7 +549,7 @@ RsGxsWikiCommentItem* RsGxsWikiSerialiser::deserialiseGxsWikiCommentItem(void *d
 	/* skip the header */
 	offset += 8;
 	
-	ok &= GetTlvString(data, rssize, &offset, 1, item->comment.mComment);
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_COMMENT, item->comment.mComment);
 	
 	if (offset != rssize)
 	{

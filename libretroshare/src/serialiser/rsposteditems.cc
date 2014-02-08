@@ -172,8 +172,8 @@ bool RsGxsPostedSerialiser::serialiseGxsPostedPostItem(RsGxsPostedPostItem* item
 
 	/* RsPostedPost */
 
-	ok &= SetTlvString(data, tlvsize, &offset, 1, item->mPost.mLink);
-	ok &= SetTlvString(data, tlvsize, &offset, 1, item->mPost.mNotes);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_LINK, item->mPost.mLink);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_MSG, item->mPost.mNotes);
 
 	if(offset != tlvsize)
 	{
@@ -229,8 +229,8 @@ RsGxsPostedPostItem* RsGxsPostedSerialiser::deserialiseGxsPostedPostItem(void *d
 	/* skip the header */
 	offset += 8;
 
-	ok &= GetTlvString(data, rssize, &offset, 1, item->mPost.mLink);
-	ok &= GetTlvString(data, rssize, &offset, 1, item->mPost.mNotes);
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_LINK, item->mPost.mLink);
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_MSG, item->mPost.mNotes);
 
 	if (offset != rssize)
 	{
@@ -313,7 +313,7 @@ bool RsGxsPostedSerialiser::serialiseGxsPostedGroupItem(RsGxsPostedGroupItem* it
 	offset += 8;
 
 	/* PostedGroupItem */
-	ok &= SetTlvString(data, tlvsize, &offset, 1, item->mGroup.mDescription);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_DESCR, item->mGroup.mDescription);
 
 
 	if(offset != tlvsize)
@@ -369,7 +369,7 @@ RsGxsPostedGroupItem* RsGxsPostedSerialiser::deserialiseGxsPostedGroupItem(void 
 	/* skip the header */
 	offset += 8;
 
-	ok &= GetTlvString(data, rssize, &offset, 1, item->mGroup.mDescription);
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_DESCR, item->mGroup.mDescription);
 
 	if (offset != rssize)
 	{

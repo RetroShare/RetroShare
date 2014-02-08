@@ -133,9 +133,9 @@ bool     RsGxsRecognSerialiser::serialiseReq(RsGxsRecognReqItem *item, void *dat
         ok &= setRawUInt16(data, tlvsize, &offset, item->tag_class);
         ok &= setRawUInt16(data, tlvsize, &offset, item->tag_type);
 
-	ok &= SetTlvString(data, tlvsize, &offset, 1, item->identity);
-	ok &= SetTlvString(data, tlvsize, &offset, 1, item->nickname);
-	ok &= SetTlvString(data, tlvsize, &offset, 1, item->comment);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_GXS_ID, item->identity);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_NAME, item->nickname);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_COMMENT, item->comment);
 	ok &= item->sign.SetTlv(data, tlvsize, &offset);
 
 
@@ -186,9 +186,9 @@ RsGxsRecognReqItem *RsGxsRecognSerialiser::deserialiseReq(void *data, uint32_t *
         ok &= getRawUInt16(data, tlvsize, &offset, &(item->tag_class));
         ok &= getRawUInt16(data, tlvsize, &offset, &(item->tag_type));
 
-	ok &= GetTlvString(data, tlvsize, &offset, 1, item->identity);
-	ok &= GetTlvString(data, tlvsize, &offset, 1, item->nickname);
-	ok &= GetTlvString(data, tlvsize, &offset, 1, item->comment);
+	ok &= GetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_NAME, item->identity);
+	ok &= GetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_GXS_ID, item->nickname);
+	ok &= GetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_COMMENT, item->comment);
 	ok &= item->sign.GetTlv(data, tlvsize, &offset);
 
 
@@ -307,8 +307,8 @@ bool     RsGxsRecognSerialiser::serialiseTag(RsGxsRecognTagItem *item, void *dat
         ok &= setRawUInt16(data, tlvsize, &offset, item->tag_class);
         ok &= setRawUInt16(data, tlvsize, &offset, item->tag_type);
 
-	ok &= SetTlvString(data, tlvsize, &offset, 1, item->identity);
-	ok &= SetTlvString(data, tlvsize, &offset, 1, item->nickname);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_GXS_ID, item->identity);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_NAME, item->nickname);
 	ok &= item->sign.SetTlv(data, tlvsize, &offset);
 
 
@@ -360,8 +360,8 @@ RsGxsRecognTagItem *RsGxsRecognSerialiser::deserialiseTag(void *data, uint32_t *
         ok &= getRawUInt16(data, tlvsize, &offset, &(item->tag_class));
         ok &= getRawUInt16(data, tlvsize, &offset, &(item->tag_type));
 
-	ok &= GetTlvString(data, tlvsize, &offset, 1, item->identity);
-	ok &= GetTlvString(data, tlvsize, &offset, 1, item->nickname);
+	ok &= GetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_GXS_ID, item->identity);
+	ok &= GetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_NAME, item->nickname);
 	ok &= item->sign.GetTlv(data, tlvsize, &offset);
 
 

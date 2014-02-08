@@ -139,6 +139,9 @@ const uint16_t TLV_TYPE_STR_PGPCERT   = 0x005d; /* same as CERT_GPG */
 const uint16_t TLV_TYPE_STR_CERT_SSL  = 0x005e;
 const uint16_t TLV_TYPE_STR_VERSION   = 0x005f;
 
+
+
+
 /* Wide Chars (4 bytes per char) for internationalisation */
 const uint16_t TLV_TYPE_WSTR_PEERID   = 0x0060;
 const uint16_t TLV_TYPE_WSTR_NAME     = 0x0061;
@@ -174,6 +177,19 @@ const uint16_t TLV_TYPE_STR_THREADID  = 0x00a3;
 const uint16_t TLV_TYPE_STR_KEYID     = 0x00a4;
 
 const uint16_t TLV_TYPE_WSTR_CATEGORY = 0x00b0;
+
+/* even MORE string Ids for GXS services */
+
+const uint16_t TLV_TYPE_STR_CAPTION   = 0x00b1;
+const uint16_t TLV_TYPE_STR_CATEGORY  = 0x00b2;
+const uint16_t TLV_TYPE_STR_DESCR     = 0x00b3;
+const uint16_t TLV_TYPE_STR_SIGN      = 0x00b4;
+const uint16_t TLV_TYPE_STR_HASH_TAG  = 0x00b5;
+const uint16_t TLV_TYPE_STR_WIKI_PAGE = 0x00b6;
+const uint16_t TLV_TYPE_STR_DATE      = 0x00b7;
+const uint16_t TLV_TYPE_STR_PIC_TYPE  = 0x00b8;
+const uint16_t TLV_TYPE_STR_PIC_AUTH  = 0x00b9;
+const uint16_t TLV_TYPE_STR_GXS_ID    = 0x00ba;
 
 
 	/**** Binary Types ****/

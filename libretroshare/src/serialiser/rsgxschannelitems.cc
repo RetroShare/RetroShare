@@ -220,7 +220,7 @@ bool RsGxsChannelSerialiser::serialiseGxsChannelGroupItem(RsGxsChannelGroupItem 
 	offset += 8;
 	
 	/* GxsChannelGroupItem */
-	ok &= SetTlvString(data, tlvsize, &offset, 1, item->mDescription);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_DESCR, item->mDescription);
 	item->mImage.SetTlv(data, tlvsize, &offset);
 	
 	if(offset != tlvsize)
@@ -281,7 +281,7 @@ RsGxsChannelGroupItem* RsGxsChannelSerialiser::deserialiseGxsChannelGroupItem(vo
 	/* skip the header */
 	offset += 8;
 	
-	ok &= GetTlvString(data, rssize, &offset, 1, item->mDescription);
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_DESCR, item->mDescription);
 	item->mImage.GetTlv(data, rssize, &offset);
 	
 	if (offset != rssize)
@@ -442,7 +442,7 @@ bool RsGxsChannelSerialiser::serialiseGxsChannelPostItem(RsGxsChannelPostItem *i
 	offset += 8;
 	
 	/* GxsChannelPostItem */
-	ok &= SetTlvString(data, tlvsize, &offset, 1, item->mMsg);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_MSG, item->mMsg);
 	item->mAttachment.SetTlv(data, tlvsize, &offset);
 	item->mThumbnail.SetTlv(data, tlvsize, &offset);
 	
@@ -504,7 +504,7 @@ RsGxsChannelPostItem* RsGxsChannelSerialiser::deserialiseGxsChannelPostItem(void
 	/* skip the header */
 	offset += 8;
 	
-	ok &= GetTlvString(data, rssize, &offset, 1, item->mMsg);
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_MSG, item->mMsg);
 	item->mAttachment.GetTlv(data, rssize, &offset);
 	item->mThumbnail.GetTlv(data, rssize, &offset);
 	

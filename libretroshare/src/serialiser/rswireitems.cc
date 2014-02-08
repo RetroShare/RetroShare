@@ -162,7 +162,7 @@ bool RsGxsWireSerialiser::serialiseGxsWireGroupItem(RsGxsWireGroupItem *item, vo
 	offset += 8;
 	
 	/* GxsWireGroupItem */
-	ok &= SetTlvString(data, tlvsize, &offset, 1, item->group.mDescription);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_DESCR, item->group.mDescription);
 	
 	if(offset != tlvsize)
 	{
@@ -222,7 +222,7 @@ RsGxsWireGroupItem* RsGxsWireSerialiser::deserialiseGxsWireGroupItem(void *data,
 	/* skip the header */
 	offset += 8;
 	
-	ok &= GetTlvString(data, rssize, &offset, 1, item->group.mDescription);
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_DESCR, item->group.mDescription);
 	
 	if (offset != rssize)
 	{
@@ -315,8 +315,8 @@ bool RsGxsWireSerialiser::serialiseGxsWirePulseItem(RsGxsWirePulseItem *item, vo
 	offset += 8;
 	
 	/* GxsWirePulseItem */
-	ok &= SetTlvString(data, tlvsize, &offset, 1, item->pulse.mPulseText);
-	ok &= SetTlvString(data, tlvsize, &offset, 1, item->pulse.mHashTags);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_MSG, item->pulse.mPulseText);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_HASH_TAG, item->pulse.mHashTags);
 	
 	if(offset != tlvsize)
 	{
@@ -376,8 +376,8 @@ RsGxsWirePulseItem* RsGxsWireSerialiser::deserialiseGxsWirePulseItem(void *data,
 	/* skip the header */
 	offset += 8;
 	
-	ok &= GetTlvString(data, rssize, &offset, 1, item->pulse.mPulseText);
-	ok &= GetTlvString(data, rssize, &offset, 1, item->pulse.mHashTags);
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_MSG, item->pulse.mPulseText);
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_HASH_TAG, item->pulse.mHashTags);
 	
 	if (offset != rssize)
 	{

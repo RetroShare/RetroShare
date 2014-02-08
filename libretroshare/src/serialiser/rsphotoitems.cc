@@ -190,16 +190,16 @@ bool RsGxsPhotoSerialiser::serialiseGxsPhotoAlbumItem(RsGxsPhotoAlbumItem* item,
 
     /* GxsPhotoAlbumItem */
 
-    ok &= SetTlvString(data, tlvsize, &offset, 1, item->album.mCaption);
-    ok &= SetTlvString(data, tlvsize, &offset, 1, item->album.mCategory);
-    ok &= SetTlvString(data, tlvsize, &offset, 1, item->album.mDescription);
-    ok &= SetTlvString(data, tlvsize, &offset, 1, item->album.mHashTags);
-    ok &= SetTlvString(data, tlvsize, &offset, 1, item->album.mOther);
-    ok &= SetTlvString(data, tlvsize, &offset, 1, item->album.mPhotoPath);
-    ok &= SetTlvString(data, tlvsize, &offset, 1, item->album.mPhotographer);
-    ok &= SetTlvString(data, tlvsize, &offset, 1, item->album.mWhen);
-    ok &= SetTlvString(data, tlvsize, &offset, 1, item->album.mWhere);
-    ok &= SetTlvString(data, tlvsize, &offset, 1, item->album.mThumbnail.type);
+    ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_CAPTION, item->album.mCaption);
+    ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_CATEGORY, item->album.mCategory);
+    ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_DESCR, item->album.mDescription);
+    ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_HASH_TAG, item->album.mHashTags);
+    ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_MSG, item->album.mOther);
+    ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_PATH, item->album.mPhotoPath);
+    ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_NAME, item->album.mPhotographer);
+    ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_DATE, item->album.mWhen);
+    ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_LOCATION, item->album.mWhere);
+    ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_PIC_TYPE, item->album.mThumbnail.type);
     RsTlvBinaryData b(RS_SERVICE_GXSV2_TYPE_PHOTO); // TODO, need something more persisitent
     b.setBinData(item->album.mThumbnail.data, item->album.mThumbnail.size);
     ok &= b.SetTlv(data, tlvsize, &offset);
@@ -264,17 +264,16 @@ RsGxsPhotoAlbumItem* RsGxsPhotoSerialiser::deserialiseGxsPhotoAlbumItem(void* da
     /* skip the header */
     offset += 8;
 
-
-    ok &= GetTlvString(data, rssize, &offset, 1, item->album.mCaption);
-    ok &= GetTlvString(data, rssize, &offset, 1, item->album.mCategory);
-    ok &= GetTlvString(data, rssize, &offset, 1, item->album.mDescription);
-    ok &= GetTlvString(data, rssize, &offset, 1, item->album.mHashTags);
-    ok &= GetTlvString(data, rssize, &offset, 1, item->album.mOther);
-    ok &= GetTlvString(data, rssize, &offset, 1, item->album.mPhotoPath);
-    ok &= GetTlvString(data, rssize, &offset, 1, item->album.mPhotographer);
-    ok &= GetTlvString(data, rssize, &offset, 1, item->album.mWhen);
-    ok &= GetTlvString(data, rssize, &offset, 1, item->album.mWhere);
-    ok &= GetTlvString(data, rssize, &offset, 1, item->album.mThumbnail.type);
+    ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_CAPTION, item->album.mCaption);
+    ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_CATEGORY, item->album.mCategory);
+    ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_DESCR, item->album.mDescription);
+    ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_HASH_TAG, item->album.mHashTags);
+    ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_MSG, item->album.mOther);
+    ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_PATH, item->album.mPhotoPath);
+    ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_NAME, item->album.mPhotographer);
+    ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_DATE, item->album.mWhen);
+    ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_LOCATION, item->album.mWhere);
+    ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_PIC_TYPE, item->album.mThumbnail.type);
 
         RsTlvBinaryData b(RS_SERVICE_GXSV2_TYPE_PHOTO); // TODO, need something more persisitent
 	ok &= b.GetTlv(data, rssize, &offset);
@@ -357,15 +356,15 @@ bool RsGxsPhotoSerialiser::serialiseGxsPhotoPhotoItem(RsGxsPhotoPhotoItem* item,
 
     /* GxsPhotoAlbumItem */
 
-    ok &= SetTlvString(data, tlvsize, &offset, 1, item->photo.mCaption);
-    ok &= SetTlvString(data, tlvsize, &offset, 1, item->photo.mCategory);
-    ok &= SetTlvString(data, tlvsize, &offset, 1, item->photo.mDescription);
-    ok &= SetTlvString(data, tlvsize, &offset, 1, item->photo.mHashTags);
-    ok &= SetTlvString(data, tlvsize, &offset, 1, item->photo.mOther);
-    ok &= SetTlvString(data, tlvsize, &offset, 1, item->photo.mPhotographer);
-    ok &= SetTlvString(data, tlvsize, &offset, 1, item->photo.mWhen);
-    ok &= SetTlvString(data, tlvsize, &offset, 1, item->photo.mWhere);
-    ok &= SetTlvString(data, tlvsize, &offset, 1, item->photo.mThumbnail.type);
+    ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_CAPTION, item->photo.mCaption);
+    ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_CATEGORY, item->photo.mCategory);
+    ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_DESCR, item->photo.mDescription);
+    ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_HASH_TAG, item->photo.mHashTags);
+    ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_MSG, item->photo.mOther);
+    ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_PIC_AUTH, item->photo.mPhotographer);
+    ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_DATE, item->photo.mWhen);
+    ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_LOCATION, item->photo.mWhere);
+    ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_PIC_TYPE, item->photo.mThumbnail.type);
     RsTlvBinaryData b(RS_SERVICE_GXSV2_TYPE_PHOTO); // TODO, need something more persisitent
     b.setBinData(item->photo.mThumbnail.data, item->photo.mThumbnail.size);
     ok &= b.SetTlv(data, tlvsize, &offset);
@@ -430,15 +429,15 @@ RsGxsPhotoPhotoItem* RsGxsPhotoSerialiser::deserialiseGxsPhotoPhotoItem(void* da
     /* skip the header */
     offset += 8;
 
-    ok &= GetTlvString(data, rssize, &offset, 1, item->photo.mCaption);
-    ok &= GetTlvString(data, rssize, &offset, 1, item->photo.mCategory);
-    ok &= GetTlvString(data, rssize, &offset, 1, item->photo.mDescription);
-    ok &= GetTlvString(data, rssize, &offset, 1, item->photo.mHashTags);
-    ok &= GetTlvString(data, rssize, &offset, 1, item->photo.mOther);
-    ok &= GetTlvString(data, rssize, &offset, 1, item->photo.mPhotographer);
-    ok &= GetTlvString(data, rssize, &offset, 1, item->photo.mWhen);
-    ok &= GetTlvString(data, rssize, &offset, 1, item->photo.mWhere);
-    ok &= GetTlvString(data, rssize, &offset, 1, item->photo.mThumbnail.type);
+    ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_CAPTION, item->photo.mCaption);
+    ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_CATEGORY, item->photo.mCategory);
+    ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_DESCR, item->photo.mDescription);
+    ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_HASH_TAG, item->photo.mHashTags);
+    ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_MSG, item->photo.mOther);
+    ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_PIC_AUTH, item->photo.mPhotographer);
+    ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_DATE, item->photo.mWhen);
+    ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_LOCATION, item->photo.mWhere);
+    ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_PIC_TYPE, item->photo.mThumbnail.type);
 
         RsTlvBinaryData b(RS_SERVICE_GXSV2_TYPE_PHOTO); // TODO, need something more persisitent
 	ok &= b.GetTlv(data, rssize, &offset);
@@ -499,7 +498,7 @@ bool        RsGxsPhotoSerialiser::serialiseGxsPhotoCommentItem  (RsGxsPhotoComme
 
     /* GxsPhotoAlbumItem */
 
-    ok &= SetTlvString(data, tlvsize, &offset, 0, item->comment.mComment);
+    ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_COMMENT, item->comment.mComment);
     ok &= setRawUInt32(data, tlvsize, &offset, item->comment.mCommentFlag);
 
     if(offset != tlvsize)
@@ -562,7 +561,7 @@ RsGxsPhotoCommentItem *    RsGxsPhotoSerialiser::deserialiseGxsPhotoCommentItem(
     /* skip the header */
     offset += 8;
 
-    ok &= GetTlvString(data, rssize, &offset, 0, item->comment.mComment);
+    ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_COMMENT, item->comment.mComment);
     ok &= getRawUInt32(data, rssize, &offset, &(item->comment.mCommentFlag));
 
     if (offset != rssize)

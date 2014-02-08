@@ -368,7 +368,7 @@ bool RsGxsCircleSerialiser::serialiseGxsCircleMsgItem(RsGxsCircleMsgItem *item, 
 	offset += 8;
 	
 	/* GxsCircleMsgItem */
-	ok &= SetTlvString(data, tlvsize, &offset, 1, item->msg.stuff);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_MSG, item->msg.stuff);
 	
 	if(offset != tlvsize)
 	{
@@ -428,7 +428,7 @@ RsGxsCircleMsgItem* RsGxsCircleSerialiser::deserialiseGxsCircleMsgItem(void *dat
 	/* skip the header */
 	offset += 8;
 	
-	ok &= GetTlvString(data, rssize, &offset, 1, item->msg.stuff);
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_MSG, item->msg.stuff);
 	
 	if (offset != rssize)
 	{

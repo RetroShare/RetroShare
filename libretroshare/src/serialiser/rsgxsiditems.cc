@@ -192,8 +192,8 @@ bool RsGxsIdSerialiser::serialiseGxsIdGroupItem(RsGxsIdGroupItem *item, void *da
 	offset += 8;
 	
 	/* GxsIdGroupItem */
-	ok &= SetTlvString(data, tlvsize, &offset, 1, item->group.mPgpIdHash);
-	ok &= SetTlvString(data, tlvsize, &offset, 1, item->group.mPgpIdSign);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_HASH_SHA1, item->group.mPgpIdHash);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_SIGN, item->group.mPgpIdSign);
 
 	RsTlvStringSetRef set(TLV_TYPE_RECOGNSET, item->group.mRecognTags);
 	ok &= set.SetTlv(data, tlvsize, &offset);
@@ -252,8 +252,8 @@ RsGxsIdGroupItem* RsGxsIdSerialiser::deserialiseGxsIdGroupItem(void *data, uint3
 	/* skip the header */
 	offset += 8;
 	
-	ok &= GetTlvString(data, rssize, &offset, 1, item->group.mPgpIdHash);
-	ok &= GetTlvString(data, rssize, &offset, 1, item->group.mPgpIdSign);
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_HASH_SHA1, item->group.mPgpIdHash);
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_SIGN, item->group.mPgpIdSign);
 
 	RsTlvStringSetRef set(TLV_TYPE_RECOGNSET, item->group.mRecognTags);
 	ok &= set.GetTlv(data, rssize, &offset);
@@ -352,7 +352,7 @@ bool RsGxsIdSerialiser::serialiseGxsIdOpinionItem(RsGxsIdOpinionItem *item, void
 	/* GxsIdOpinionItem */
 	ok &= setRawUInt32(data, tlvsize, &offset, item->opinion.mOpinion);
 	ok &= setRawUInt32(data, tlvsize, &offset, item->opinion.mReputation);
-	ok &= SetTlvString(data, tlvsize, &offset, 1, item->opinion.mComment);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_COMMENT, item->opinion.mComment);
 	
 	if(offset != tlvsize)
 	{
@@ -411,7 +411,7 @@ RsGxsIdOpinionItem* RsGxsIdSerialiser::deserialiseGxsIdOpinionItem(void *data, u
 	
 	ok &= getRawUInt32(data, rssize, &offset, &(item->opinion.mOpinion));
 	ok &= getRawUInt32(data, rssize, &offset, &(item->opinion.mReputation));
-	ok &= GetTlvString(data, rssize, &offset, 1, item->opinion.mComment);
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_COMMENT, item->opinion.mComment);
 	
 	if (offset != rssize)
 	{
@@ -494,7 +494,7 @@ bool RsGxsIdSerialiser::serialiseGxsIdCommentItem(RsGxsIdCommentItem *item, void
 	offset += 8;
 	
 	/* GxsIdCommentItem */
-	ok &= SetTlvString(data, tlvsize, &offset, 1, item->comment.mComment);
+	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_COMMENT, item->comment.mComment);
 	
 	if(offset != tlvsize)
 	{
@@ -551,7 +551,7 @@ RsGxsIdCommentItem* RsGxsIdSerialiser::deserialiseGxsIdCommentItem(void *data, u
 	/* skip the header */
 	offset += 8;
 	
-	ok &= GetTlvString(data, rssize, &offset, 1, item->comment.mComment);
+	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_COMMENT, item->comment.mComment);
 	
 	if (offset != rssize)
 	{
