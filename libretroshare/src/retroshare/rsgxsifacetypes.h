@@ -64,6 +64,8 @@ public:
     // for circles
     std::string mCircleId;
     uint32_t mCircleType;
+
+    // other stuff.
     uint32_t mAuthenFlags;
     std::string mParentGrpId;
 

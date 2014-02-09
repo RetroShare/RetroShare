@@ -98,6 +98,7 @@ virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgI
 virtual bool createGroup(uint32_t &token, RsPostedGroup &group) = 0;
 virtual bool createPost(uint32_t &token, RsPostedPost &post) = 0;
 
+virtual bool updateGroup(uint32_t &token, RsGxsGroupUpdateMeta& meta, RsPostedGroup &group) = 0;
 };
 
 

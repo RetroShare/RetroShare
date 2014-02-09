@@ -805,6 +805,23 @@ bool p3GxsChannels::createGroup(uint32_t &token, RsGxsChannelGroup &group)
 }
 
 
+bool p3GxsChannels::updateGroup(uint32_t &token, RsGxsGroupUpdateMeta& meta, RsGxsChannelGroup &group)
+{
+	std::cerr << "p3GxsChannels::updateGroup()" << std::endl;
+
+	if(meta.getGroupId().empty())
+		return false;
+
+	RsGxsChannelGroupItem* grpItem = new RsGxsChannelGroupItem();
+	grpItem->fromChannelGroup(group, true);
+	grpItem->meta.mGroupId = meta.getGroupId();
+
+	RsGenExchange::updateGroup(token, meta, grpItem);
+	return true;
+}
+
+
+
 bool p3GxsChannels::createPost(uint32_t &token, RsGxsChannelPost &msg)
 {
 	std::cerr << "p3GxsChannels::createChannelPost() GroupId: " << msg.mMeta.mGroupId;

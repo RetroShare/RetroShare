@@ -68,6 +68,8 @@ virtual bool getRelatedPosts(const uint32_t &token, std::vector<RsPostedPost> &p
 virtual bool createGroup(uint32_t &token, RsPostedGroup &group);
 virtual bool createPost(uint32_t &token, RsPostedPost &post);
 
+virtual bool updateGroup(uint32_t &token, RsGxsGroupUpdateMeta& meta, RsPostedGroup &group);
+
         //////////////////////////////////////////////////////////////////////////////
 	// WRAPPERS due to the separate Interface.
 

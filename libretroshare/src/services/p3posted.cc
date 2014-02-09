@@ -219,6 +219,23 @@ bool p3Posted::createGroup(uint32_t &token, RsPostedGroup &group)
 }
 
 
+bool p3Posted::updateGroup(uint32_t &token, RsGxsGroupUpdateMeta& meta, RsPostedGroup &group)
+{
+	std::cerr << "p3Posted::updateGroup()" << std::endl;
+
+	if(meta.getGroupId().empty())
+		return false;
+
+	RsGxsPostedGroupItem* grpItem = new RsGxsPostedGroupItem();
+	grpItem->mGroup = group;
+	grpItem->meta = group.mMeta;
+	grpItem->meta.mGroupId = meta.getGroupId();
+
+	RsGenExchange::updateGroup(token, meta, grpItem);
+	return true;
+}
+
+
 bool p3Posted::createPost(uint32_t &token, RsPostedPost &msg)
 {
 	std::cerr << "p3Posted::createPost() GroupId: " << msg.mMeta.mGroupId;

@@ -109,6 +109,8 @@ virtual bool subscribeToGroup(uint32_t &token, const RsGxsGroupId &groupId, bool
 virtual bool createGroup(uint32_t &token, RsGxsChannelGroup &group) = 0;
 virtual bool createPost(uint32_t &token, RsGxsChannelPost &post) = 0;
 
+virtual bool updateGroup(uint32_t &token, RsGxsGroupUpdateMeta& meta, RsGxsChannelGroup &group) = 0;
+
         // File Interface
 virtual bool ExtraFileHash(const std::string &path, std::string filename) = 0;
 virtual bool ExtraFileRemove(const std::string &hash) = 0;

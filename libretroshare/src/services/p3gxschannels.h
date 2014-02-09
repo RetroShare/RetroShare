@@ -92,6 +92,8 @@ virtual bool getRelatedPosts(const uint32_t &token, std::vector<RsGxsChannelPost
 virtual bool createGroup(uint32_t &token, RsGxsChannelGroup &group);
 virtual bool createPost(uint32_t &token, RsGxsChannelPost &post);
 
+virtual bool updateGroup(uint32_t &token, RsGxsGroupUpdateMeta& meta, RsGxsChannelGroup &group);
+
 // no tokens... should be cached.
 virtual bool setChannelAutoDownload(const RsGxsGroupId &groupId, bool enabled);
 virtual	bool getChannelAutoDownload(const RsGxsGroupId &groupid);
