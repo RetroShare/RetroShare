@@ -1184,7 +1184,7 @@ std::ostream &RsPeerGroupItem::print(std::ostream &out, uint16_t indent)
 	printIndent(out, int_Indent);
 	out << "groupFlag: " << flag << std::endl;
 
-	std::list<std::string>::iterator it;
+	std::list<PGPIdType>::iterator it;
 	for (it = peerIds.begin(); it != peerIds.end(); it++) {
 		printIndent(out, int_Indent);
 		out << "peerId: " << *it << std::endl;
@@ -1222,9 +1222,9 @@ uint32_t RsPeerConfigSerialiser::sizeGroup(RsPeerGroupItem *i)
 	s += GetTlvStringSize(i->name);
 	s += 4; /* flag */
 
-	std::list<std::string>::iterator it;
+	std::list<PGPIdType>::iterator it;
 	for (it = i->peerIds.begin(); it != i->peerIds.end(); it++) {
-		s += GetTlvStringSize(*it);
+		s += PGPIdType::SIZE_IN_BYTES ;
 	}
 
 	return s;
@@ -1260,9 +1260,9 @@ bool RsPeerConfigSerialiser::serialiseGroup(RsPeerGroupItem *item, void *data, u
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_NAME, item->name);
 	ok &= setRawUInt32(data, tlvsize, &offset, item->flag);
 
-	std::list<std::string>::iterator it;
+	std::list<PGPIdType>::iterator it;
 	for (it = item->peerIds.begin(); it != item->peerIds.end(); it++) {
-		ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_PEERID, *it);
+		ok &= setRawPGPId(data, tlvsize, &offset, *it);
 	}
 
 	if(offset != tlvsize)
@@ -1313,11 +1313,10 @@ RsPeerGroupItem *RsPeerConfigSerialiser::deserialiseGroup(void *data, uint32_t *
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_NAME, item->name);
 	ok &= getRawUInt32(data, rssize, &offset, &(item->flag));
 
-	std::string peerId;
-	while (offset != rssize) {
-		peerId.erase();
-
-		ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_PEERID, peerId);
+	PGPIdType peerId;
+	while (offset != rssize) 
+	{
+		ok &= getRawPGPId(data, rssize, &offset, peerId);
 
 		item->peerIds.push_back(peerId);
 	}

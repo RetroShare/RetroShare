@@ -123,7 +123,7 @@ int     checkOutgoingMessages();
 		struct DistantMessengingContact
 		{
 			time_t last_hit_time ;
-			std::string virtual_peer_id ;
+			RsPeerId virtual_peer_id ;
 			uint32_t status ;
 			bool pending_messages ;
 		};
@@ -132,7 +132,7 @@ int     checkOutgoingMessages();
 
 		void enableDistantMessaging(bool b) ;
 		bool distantMessagingEnabled() ;
-		bool getDistantMessageHash(const std::string& pgp_id,std::string& hash) ;
+		bool getDistantMessageHash(const PGPIdType& pgp_id,std::string& hash) ;
 
 		void sendPrivateMsgItem(RsMsgItem *) ;
 
@@ -150,14 +150,14 @@ int     checkOutgoingMessages();
 #ifdef GROUTER
 		virtual void receiveGRouterData(RsGRouterGenericDataItem *item, const GRouterKeyId& key) ;
 #endif
-		virtual bool handleTunnelRequest(const std::string& hash,const std::string& peer_id) ;
-		virtual void receiveTurtleData(RsTurtleGenericTunnelItem *item,const std::string& hash,const std::string& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction) ;
+		virtual bool handleTunnelRequest(const std::string& hash,const RsPeerId& peer_id) ;
+		virtual void receiveTurtleData(RsTurtleGenericTunnelItem *item,const std::string& hash,const RsPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction) ;
 		void addVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&,RsTurtleGenericTunnelItem::Direction dir) ;
 		void removeVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&) ;
 
 		// Utility functions
 
-		bool encryptMessage(const std::string& pgp_id,RsMsgItem *msg) ;
+		bool encryptMessage(const PGPIdType& pgp_id,RsMsgItem *msg) ;
 
 		void manageDistantPeers() ;
 		void sendTurtleData(const std::string& hash,RsMsgItem *) ;
@@ -181,7 +181,7 @@ bool checkAndRebuildPartialMessage(RsMsgItem*) ;
 
 void 	initRsMI(RsMsgItem *msg, MessageInfo &mi);
 void 	initRsMIS(RsMsgItem *msg, MsgInfoSummary &mis);
-RsMsgItem *initMIRsMsg(MessageInfo &info, const std::string &to);
+RsMsgItem *initMIRsMsg(MessageInfo &info, const RsPeerId &to);
 
 void    initStandardTagTypes();
 

@@ -36,7 +36,7 @@
 #include <stdint.h>
 #include <util/rsrandom.h>
 
-template<uint32_t ID_SIZE_IN_BYTES,uint32_t UNIQUE_IDENTIFIER> class t_RsGenericIdType
+template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER> class t_RsGenericIdType
 {
 	public:
 		t_RsGenericIdType() 
@@ -55,9 +55,9 @@ template<uint32_t ID_SIZE_IN_BYTES,uint32_t UNIQUE_IDENTIFIER> class t_RsGeneric
 
 		// Random initialization. Can be useful for testing.
 		//
-		static t_RsGenericIdType<ID_SIZE_IN_BYTES,UNIQUE_IDENTIFIER> random() 
+		static t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER> random() 
 		{
-			t_RsGenericIdType<ID_SIZE_IN_BYTES,UNIQUE_IDENTIFIER> id ;
+			t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER> id ;
 
 			for(uint32_t i=0;i<ID_SIZE_IN_BYTES;++i)
 				id.bytes[i] = RSRandom::random_u32() & 0xff ;
@@ -69,13 +69,12 @@ template<uint32_t ID_SIZE_IN_BYTES,uint32_t UNIQUE_IDENTIFIER> class t_RsGeneric
 
 		// Converts to a std::string using cached value. 
 		//
-		std::string toStdString(bool upper_case = true) const ;
 		const unsigned char *toByteArray() const { return &bytes[0] ; }
 		static const uint32_t SIZE_IN_BYTES = ID_SIZE_IN_BYTES ;
 
-		inline bool operator==(const t_RsGenericIdType<ID_SIZE_IN_BYTES,UNIQUE_IDENTIFIER>& fp) const { return !memcmp(bytes,fp.bytes,ID_SIZE_IN_BYTES) ; }
-		inline bool operator!=(const t_RsGenericIdType<ID_SIZE_IN_BYTES,UNIQUE_IDENTIFIER>& fp) const { return !!memcmp(bytes,fp.bytes,ID_SIZE_IN_BYTES); }
-		inline bool operator< (const t_RsGenericIdType<ID_SIZE_IN_BYTES,UNIQUE_IDENTIFIER>& fp) const { return (memcmp(bytes,fp.bytes,ID_SIZE_IN_BYTES) < 0) ; }
+		inline bool operator==(const t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>& fp) const { return !memcmp(bytes,fp.bytes,ID_SIZE_IN_BYTES) ; }
+		inline bool operator!=(const t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>& fp) const { return !!memcmp(bytes,fp.bytes,ID_SIZE_IN_BYTES); }
+		inline bool operator< (const t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>& fp) const { return (memcmp(bytes,fp.bytes,ID_SIZE_IN_BYTES) < 0) ; }
 
 		inline bool isNull() const 
 		{ 
@@ -85,15 +84,39 @@ template<uint32_t ID_SIZE_IN_BYTES,uint32_t UNIQUE_IDENTIFIER> class t_RsGeneric
 			return true ;
 		} 
 
-		friend std::ostream& operator<<(std::ostream& out,const t_RsGenericIdType<ID_SIZE_IN_BYTES,UNIQUE_IDENTIFIER>& id)
+		friend std::ostream& operator<<(std::ostream& out,const t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>& id)
 		{
-			return out << id.toStdString() ;
+			return out << id.toStdString(UPPER_CASE) ;
+		}
+
+		inline std::string toStdString() const { return toStdString(UPPER_CASE) ; }
+
+		inline uint32_t serial_size() const { return SIZE_IN_BYTES ; }
+		bool serialise(void *data,uint32_t pktsize,uint32_t& offset)
+		{
+			if(offset + SIZE_IN_BYTES >= pktsize)
+				return false ;
+
+			memcpy(&((uint8_t*)data)[offset],bytes,SIZE_IN_BYTES) ;
+			offset += SIZE_IN_BYTES ;
+			return true ;
+		}
+		bool deserialise(void *data,uint32_t pktsize,uint32_t& offset)
+		{
+			if(offset + SIZE_IN_BYTES >= pktsize)
+				return false ;
+
+			memcpy(bytes,&((uint8_t*)data)[offset],SIZE_IN_BYTES) ;
+			offset += SIZE_IN_BYTES ;
+			return true ;
 		}
 	private:
+		std::string toStdString(bool upper_case) const ;
+
 		unsigned char bytes[ID_SIZE_IN_BYTES] ;
 };
 
-template<uint32_t ID_SIZE_IN_BYTES,uint32_t UNIQUE_IDENTIFIER> std::string t_RsGenericIdType<ID_SIZE_IN_BYTES,UNIQUE_IDENTIFIER>::toStdString(bool upper_case) const
+template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER> std::string t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>::toStdString(bool upper_case) const
 {
 	static const char outh[16] = { '0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F' } ;
 	static const char outl[16] = { '0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f' } ;
@@ -115,7 +138,7 @@ template<uint32_t ID_SIZE_IN_BYTES,uint32_t UNIQUE_IDENTIFIER> std::string t_RsG
 	return res ;
 }
 
-template<uint32_t ID_SIZE_IN_BYTES,uint32_t UNIQUE_IDENTIFIER> t_RsGenericIdType<ID_SIZE_IN_BYTES,UNIQUE_IDENTIFIER>::t_RsGenericIdType(const std::string& s) 
+template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER> t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>::t_RsGenericIdType(const std::string& s) 
 {
 	try
 	{
@@ -149,7 +172,7 @@ template<uint32_t ID_SIZE_IN_BYTES,uint32_t UNIQUE_IDENTIFIER> t_RsGenericIdType
 	}
 }
 
-template<uint32_t ID_SIZE_IN_BYTES,uint32_t UNIQUE_IDENTIFIER> t_RsGenericIdType<ID_SIZE_IN_BYTES,UNIQUE_IDENTIFIER>::t_RsGenericIdType(const unsigned char *mem) 
+template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER> t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>::t_RsGenericIdType(const unsigned char *mem) 
 {
 	if(mem == NULL)
 		memset(bytes,0,ID_SIZE_IN_BYTES) ;
@@ -169,8 +192,8 @@ static const uint32_t RS_GENERIC_ID_PGP_ID_TYPE          = 0x80339f4f ;
 static const uint32_t RS_GENERIC_ID_SHA1_ID_TYPE         = 0x9540284e ;
 static const uint32_t RS_GENERIC_ID_PGP_FINGERPRINT_TYPE = 0x102943e3 ;
 
-typedef t_RsGenericIdType<  SSL_ID_SIZE             , RS_GENERIC_ID_SSL_ID_TYPE>          SSLIdType ;
-typedef t_RsGenericIdType<  PGP_KEY_ID_SIZE         , RS_GENERIC_ID_PGP_ID_TYPE>          PGPIdType;
-typedef t_RsGenericIdType<  SHA1_SIZE               , RS_GENERIC_ID_SHA1_ID_TYPE>         Sha1CheckSum ;
-typedef t_RsGenericIdType<  PGP_KEY_FINGERPRINT_SIZE, RS_GENERIC_ID_PGP_FINGERPRINT_TYPE> PGPFingerprintType ;
+typedef t_RsGenericIdType<  SSL_ID_SIZE             , false, RS_GENERIC_ID_SSL_ID_TYPE>          SSLIdType ;
+typedef t_RsGenericIdType<  PGP_KEY_ID_SIZE         , true,  RS_GENERIC_ID_PGP_ID_TYPE>          PGPIdType;
+typedef t_RsGenericIdType<  SHA1_SIZE               , false, RS_GENERIC_ID_SHA1_ID_TYPE>         Sha1CheckSum ;
+typedef t_RsGenericIdType<  PGP_KEY_FINGERPRINT_SIZE, true,  RS_GENERIC_ID_PGP_FINGERPRINT_TYPE> PGPFingerprintType ;
 

@@ -104,9 +104,9 @@ uint32_t RsHistorySerialiser::sizeHistoryMsgItem(RsHistoryMsgItem* item)
 {
 	uint32_t s = 8; /* header */
 	s += 2; /* version */
-	s += GetTlvStringSize(item->chatPeerId);
+	s += item->chatPeerId.serial_size();
 	s += 1; /* incoming */
-	s += GetTlvStringSize(item->peerId);
+	s += item->peerId.serial_size();
 	s += GetTlvStringSize(item->peerName);
 	s += 4; /* sendTime */
 	s += 4; /* recvTime */
@@ -140,10 +140,10 @@ bool RsHistorySerialiser::serialiseHistoryMsgItem(RsHistoryMsgItem* item, void* 
 
 	/* add mandatory parts first */
 	ok &= setRawUInt16(data, tlvsize, &offset, 0); // version
-	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_LOCATION, item->chatPeerId);
+	ok &= item->chatPeerId.serialise(data, tlvsize, offset) ;
 	uint8_t dummy = item->incoming ? 1 : 0;
 	ok &= setRawUInt8(data, tlvsize, &offset, dummy);
-	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_PEERID, item->peerId);
+	ok &= item->peerId.serialise(data, tlvsize, offset) ;
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_NAME, item->peerName);
 	ok &= setRawUInt32(data, tlvsize, &offset, item->sendTime);
 	ok &= setRawUInt32(data, tlvsize, &offset, item->recvTime);
@@ -194,11 +194,11 @@ RsHistoryMsgItem *RsHistorySerialiser::deserialiseHistoryMsgItem(void *data, uin
 	/* get mandatory parts first */
 	uint16_t version = 0;
 	ok &= getRawUInt16(data, rssize, &offset, &version);
-	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_LOCATION, item->chatPeerId);
+	ok &= item->chatPeerId.deserialise(data, rssize, offset) ;
 	uint8_t dummy;
 	ok &= getRawUInt8(data, rssize, &offset, &dummy);
 	item->incoming = (dummy == 1);
-	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_PEERID, item->peerId);
+	ok &= item->peerId.deserialise(data, rssize, offset) ;
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_NAME, item->peerName);
 	ok &= getRawUInt32(data, rssize, &offset, &(item->sendTime));
 	ok &= getRawUInt32(data, rssize, &offset, &(item->recvTime));

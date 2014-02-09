@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include <retroshare/rsids.h>
+#include <retroshare/rstypes.h>
 
 class RsPeerDetails ;
 

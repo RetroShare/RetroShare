@@ -28,6 +28,7 @@
 
 #include "serialiser/rsserviceids.h"
 #include "serialiser/rsserial.h"
+#include "retroshare/rstypes.h"
 
 /**************************************************************************/
 
@@ -40,9 +41,9 @@ public:
 	virtual void clear();
 	std::ostream& print(std::ostream &out, uint16_t indent = 0);
 
-	std::string chatPeerId; // empty for global chat
+	RsPeerId    chatPeerId; // empty for global chat
 	bool        incoming;
-	std::string peerId;
+	RsPeerId    peerId;
 	std::string peerName;
 	uint32_t    sendTime;
 	uint32_t    recvTime;
