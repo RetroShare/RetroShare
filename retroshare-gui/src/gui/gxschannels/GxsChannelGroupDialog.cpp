@@ -62,7 +62,7 @@ GxsChannelGroupDialog::GxsChannelGroupDialog(TokenQueue *tokenQueue, QWidget *pa
 {
 }
 
-GxsChannelGroupDialog::GxsChannelGroupDialog(TokenQueue *tokenExternalQueue, RsTokenService *tokenService, Mode mode, RsGxsGroupId groupId, uint32_t enableFlags, uint32_t defaultFlags, QWidget *parent)
+GxsChannelGroupDialog::GxsChannelGroupDialog(TokenQueue *tokenExternalQueue, RsTokenService *tokenService, Mode mode, RsGxsGroupId groupId, QWidget *parent)
 :GxsGroupDialog(tokenExternalQueue, tokenService, mode, groupId, ChannelEditEnabledFlags, ChannelEditDefaultsFlags, parent)
 {
 }
@@ -73,18 +73,19 @@ void GxsChannelGroupDialog::initUi()
 	{
 	case MODE_CREATE:
 		setUiText(UITYPE_SERVICE_HEADER, tr("Create New Channel"));
+		setUiText(UITYPE_BUTTONBOX_OK, tr("Create Channel"));
 		break;
 	case MODE_SHOW:
 		setUiText(UITYPE_SERVICE_HEADER, tr("Channel"));
 		break;
 	case MODE_EDIT:
 		setUiText(UITYPE_SERVICE_HEADER, tr("Edit Channel"));
+		setUiText(UITYPE_BUTTONBOX_OK, tr("Update Channel"));
 		break;
 	}
 	
 	setUiText(UITYPE_KEY_SHARE_CHECKBOX, tr("Add Channel Admins"));
 	setUiText(UITYPE_CONTACTS_DOCK, tr("Select Channel Admins"));
-	setUiText(UITYPE_BUTTONBOX_OK, tr("Create Channel"));
 }
 
 QPixmap GxsChannelGroupDialog::serviceImage()
@@ -104,12 +105,46 @@ bool GxsChannelGroupDialog::service_CreateGroup(uint32_t &token, const RsGroupMe
 }
 
 
-
-bool GxsChannelGroupDialog::service_EditGroup(uint32_t &token, RsGxsGroupUpdateMeta &updateMeta)
+bool GxsChannelGroupDialog::service_EditGroup(uint32_t &token, 
+			RsGxsGroupUpdateMeta &updateMeta,
+			RsGroupMetaData &editedMeta)
 {
-	std::cerr << "GxsChannelGroupDialog::service_EditGroup() UNFINISHED";
+	RsGxsChannelGroup grp;
+	grp.mMeta = editedMeta;
+	grp.mDescription = std::string(ui.groupDesc->toPlainText().toUtf8());
+
+	std::cerr << "GxsChannelGroupDialog::service_EditGroup() submitting changes";
 	std::cerr << std::endl;
 
-	return false;
+	rsGxsChannels->updateGroup(token, updateMeta, grp);
+	return true;
+}
+
+
+bool GxsChannelGroupDialog::service_loadGroup(uint32_t token, Mode mode, RsGroupMetaData& groupMetaData)
+{
+        std::cerr << "GxsChannelGroupDialog::service_loadGroup(" << token << ")";
+        std::cerr << std::endl;
+
+        std::vector<RsGxsChannelGroup> groups;
+        if (!rsGxsChannels->getGroupData(token, groups))
+        {
+                std::cerr << "GxsChannelGroupDialog::service_loadGroup() Error getting GroupData";
+                std::cerr << std::endl;
+                return false;
+        }
+
+        if (groups.size() != 1)
+        {
+                std::cerr << "GxsChannelGroupDialog::service_loadGroup() Error Group.size() != 1";
+                std::cerr << std::endl;
+                return false;
+        }
+
+        std::cerr << "GxsChannelsGroupDialog::service_loadGroup() Unfinished Loading";
+        std::cerr << std::endl;
+
+	groupMetaData = groups[0].mMeta;
+	return true;
 }
 

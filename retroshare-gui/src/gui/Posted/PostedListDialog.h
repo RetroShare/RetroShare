@@ -66,6 +66,9 @@ private slots:
 	void changedTopic(const QString &id);
 
 	void newTopic();
+	void showTopic();
+	void editTopic();
+
 	void showGroupDetails();
 	void newPost();
 

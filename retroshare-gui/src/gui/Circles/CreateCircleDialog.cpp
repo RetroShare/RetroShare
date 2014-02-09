@@ -91,6 +91,9 @@ CreateCircleDialog::~CreateCircleDialog()
 
 void CreateCircleDialog::editExistingId(std::string circleId)
 {
+	std::cerr << "CreateCircleDialog::editExistingId() : " << circleId;
+	std::cerr << std::endl;
+
 	/* load this circle */
 	mIsExistingCircle = true;
 	requestCircle(circleId);
@@ -340,6 +343,10 @@ void CreateCircleDialog::createCircle()
 		circle.mMeta.mCircleId = "";
 		circle.mMeta.mCircleType = GXS_CIRCLE_TYPE_LOCAL;
 	}
+	std::cerr << "CreateCircleDialog::createCircle() : mCircleType: " << circle.mMeta.mCircleType;
+	std::cerr << std::endl;
+	std::cerr << "CreateCircleDialog::createCircle() : mCircleId: " << circle.mMeta.mCircleId;
+	std::cerr << std::endl;
 
 	std::cerr << "CreateCircleDialog::createCircle() Checks and Balances Okay - calling service proper..";
 	std::cerr << std::endl;
@@ -358,16 +365,31 @@ void CreateCircleDialog::updateCircleGUI()
 	ui.circleName->setText(QString::fromUtf8(mCircleGroup.mMeta.mGroupName.c_str()));
 
 	bool isExternal = true;
+	std::cerr << "CreateCircleDialog::updateCircleGUI() : CIRCLETYPE: " << mCircleGroup.mMeta.mCircleType;
+	std::cerr << std::endl;
 	switch(mCircleGroup.mMeta.mCircleType)
 	{
 		case GXS_CIRCLE_TYPE_LOCAL:
+			std::cerr << "CreateCircleDialog::updateCircleGUI() : LOCAL CIRCLETYPE";
+			std::cerr << std::endl;
+
 			isExternal = false;
 			break;
 		case GXS_CIRCLE_TYPE_PUBLIC:
+			std::cerr << "CreateCircleDialog::updateCircleGUI() : PUBLIC CIRCLETYPE";
+			std::cerr << std::endl;
+
 			ui.radioButton_Public->setChecked(true);
 			break;
 		case GXS_CIRCLE_TYPE_EXT_SELF:
+			std::cerr << "CreateCircleDialog::updateCircleGUI() : EXT_SELF CIRCLE (fallthrough)";
+			std::cerr << std::endl;
+
 		case GXS_CIRCLE_TYPE_EXTERNAL:
+
+			std::cerr << "CreateCircleDialog::updateCircleGUI() : EXTERNAL CIRCLETYPE";
+			std::cerr << std::endl;
+
 			if (mCircleGroup.mMeta.mCircleId == mCircleGroup.mMeta.mGroupId)
 			{
 				ui.radioButton_Self->setChecked(true);
@@ -443,7 +465,7 @@ void CreateCircleDialog::loadCircle(uint32_t token)
 		return;
 	}
 		
-	std::cerr << "CreateCircleDialog::loadCircle() Unfinished Loading";
+	std::cerr << "CreateCircleDialog::loadCircle() LoadedGroup.meta: " << mCircleGroup.mMeta;
 	std::cerr << std::endl;
 
 	mCircleGroup = groups[0];

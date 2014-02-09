@@ -346,6 +346,7 @@ void GxsGroupDialog::setupReadonly()
 
 	{
 		ui.personalGroupBox->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_PERSONALSIGN));
+		ui.idChooser->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_PERSONALSIGN));
 	}
 
 	{
@@ -385,7 +386,6 @@ void GxsGroupDialog::updateFromExistingMeta()
 	/* setup name */
 	ui.groupName->setText(QString::fromUtf8(mGrpMeta.mGroupName.c_str()));
 
-	bool isExternal = true;
 	switch(mGrpMeta.mCircleType)
 	{
 		case GXS_CIRCLE_TYPE_YOUREYESONLY:
@@ -406,7 +406,6 @@ void GxsGroupDialog::updateFromExistingMeta()
 			break;
 	}
     	ui.idChooser->loadIds(0, mGrpMeta.mAuthorId);
-
 
 	updateCircleOptions();
 }
@@ -445,42 +444,173 @@ void GxsGroupDialog::submitGroup()
 
 void GxsGroupDialog::editGroup()
 {
-    std::cerr << "GxsGroupDialog::editGroup()" << std::endl;
+	std::cerr << "GxsGroupDialog::editGroup()" << std::endl;
 
-    QString name = misc::removeNewLine(ui.groupName->text());
-    uint32_t flags = GXS_SERV::FLAG_PRIVACY_PUBLIC;
+	RsGroupMetaData newMeta;
+	newMeta.mGroupId = mGrpMeta.mGroupId;
 
-    if(name.isEmpty())
-    {
-		    /* error message */
-		    QMessageBox::warning(this, "RetroShare", tr("Please add a Name"), QMessageBox::Ok, QMessageBox::Ok);
-		    return; //Don't add  a empty name!!
-    }
+	if(!prepareGroupMetaData(newMeta))
+	{
+		/* error message */
+		QMessageBox::warning(this, "RetroShare", tr("Failed to Prepare Group MetaData - please Review"), QMessageBox::Ok, QMessageBox::Ok);
+		return; //Don't add  a empty name!!
+	}
 
-    std::cerr << "GxsGroupDialog::editGroup() Unfinished" << std::endl;
-#if 0
-    uint32_t token;
-    RsGxsGroupUpdateMeta updateMeta(mGrpMeta.mGroupId);
-    updateMeta.setMetaUpdate(RsGxsGroupUpdateMeta::NAME, std::string(name.toUtf8()));
+	RsGxsGroupUpdateMeta updateMeta(mGrpMeta.mGroupId);
+	if (!buildUpdateMeta(mGrpMeta, newMeta, updateMeta))
+	{
+		/* error message */
+		QMessageBox::warning(this, "RetroShare", tr("Failed to Build UpdateMeta - Attempted to change field that is not allowed"), QMessageBox::Ok, QMessageBox::Ok);
+		return; //Don't add  a empty name!!
+	}
 
-    if (service_EditGroup(token, updateMeta))
-    {
-	    // get the Queue to handle response.
-	    if(mExternalTokenQueue != NULL)
-		    mExternalTokenQueue->queueRequest(token, TOKENREQ_GROUPINFO, RS_TOKREQ_ANSTYPE_ACK, GXSGROUP_NEWGROUPID);
-    }
-#endif
+	std::cerr << "GxsGroupDialog::editGroup() calling service_EditGroup";
+	std::cerr << std::endl;
 
-    close();
+	uint32_t token;
+	if (service_EditGroup(token, updateMeta, newMeta))
+	{
+		// get the Queue to handle response.
+		if(mExternalTokenQueue != NULL)
+			mExternalTokenQueue->queueRequest(token, TOKENREQ_GROUPINFO, RS_TOKREQ_ANSTYPE_ACK, GXSGROUP_NEWGROUPID);
+	}
+	else
+	{
+		std::cerr << "GxsGroupDialog::editGroup() ERROR";
+		std::cerr << std::endl;
+	}
+
+	close();
 }
 
+bool GxsGroupDialog::buildUpdateMeta(
+	const RsGroupMetaData &origMeta, 
+	const RsGroupMetaData &newMeta, 
+	RsGxsGroupUpdateMeta &updateMeta)
+{
+	/* check through the fields, and note which have changed */
+	if (origMeta.mGroupId != newMeta.mGroupId)
+	{
+		std::cerr << "GxsGroupDialog::buildUpdateMeta()";
+		std::cerr << " GroupId Mismatch";
+		std::cerr << std::endl;
+		return false;
+	}
+
+	if (origMeta.mGroupName != newMeta.mGroupName)
+	{
+    		updateMeta.setMetaUpdate(RsGxsGroupUpdateMeta::NAME, 
+			newMeta.mGroupName);
+	}
+
+	// These are not allowed to be changed yet!
+	bool metaOk = true;
+	if (origMeta.mGroupFlags != newMeta.mGroupFlags)
+	{
+		std::cerr << "GxsGroupDialog::buildUpdateMeta()";
+		std::cerr << " GroupFlags Differences - Not Allowed";
+		std::cerr << std::endl;
+		metaOk = false;
+	}
+	if (origMeta.mSignFlags != newMeta.mSignFlags) 
+	{
+		std::cerr << "GxsGroupDialog::buildUpdateMeta()";
+		std::cerr << " SignFlags Differences - Not Allowed";
+		std::cerr << std::endl;
+		metaOk = false;
+	}
+	if (origMeta.mAuthorId != newMeta.mAuthorId) 
+	{
+		std::cerr << "GxsGroupDialog::buildUpdateMeta()";
+		std::cerr << " AuthorId Differences - Not Allowed";
+		std::cerr << std::endl;
+		metaOk = false;
+	}
+	if (origMeta.mAuthenFlags != newMeta.mAuthenFlags)
+	{
+		std::cerr << "GxsGroupDialog::buildUpdateMeta()";
+		std::cerr << " AuthenFlags Differences - Not Allowed";
+		std::cerr << std::endl;
+		metaOk = false;
+	}
+	if (origMeta.mParentGrpId != newMeta.mParentGrpId)
+	{
+		std::cerr << "GxsGroupDialog::buildUpdateMeta()";
+		std::cerr << " ParentGrpId Differences - Not Allowed";
+		std::cerr << std::endl;
+		metaOk = false;
+	}
+	if (origMeta.mCircleType != newMeta.mCircleType) 
+	{
+		std::cerr << "GxsGroupDialog::buildUpdateMeta()";
+		std::cerr << " CircleType Differences - Not Allowed";
+		std::cerr << std::endl;
+		metaOk = false;
+	}
+	if (origMeta.mCircleId != newMeta.mCircleId) 
+	{
+		std::cerr << "GxsGroupDialog::buildUpdateMeta()";
+		std::cerr << " CircleId Differences - Not Allowed";
+		std::cerr << std::endl;
+		metaOk = false;
+	}
+	if (origMeta.mInternalCircle != newMeta.mInternalCircle)
+	{
+		std::cerr << "GxsGroupDialog::buildUpdateMeta()";
+		std::cerr << " InternalCircle Differences - Not Allowed";
+		std::cerr << std::endl;
+		metaOk = false;
+	}
+	return metaOk;
+}
+
+
+
+bool GxsGroupDialog::prepareGroupMetaData(RsGroupMetaData &meta)
+{
+	std::cerr << "GxsGroupDialog::prepareGroupMetaData()";
+	std::cerr << std::endl;
+
+	QString name = misc::removeNewLine(ui.groupName->text());
+	uint32_t flags = GXS_SERV::FLAG_PRIVACY_PUBLIC;
+
+	if(name.isEmpty())
+	{
+		std::cerr << "GxsGroupDialog::prepareGroupMetaData()";
+		std::cerr << " Invalid GroupName";
+		std::cerr << std::endl;
+		return false;
+	}
+	// Fill in the MetaData as best we can.
+	meta.mGroupName = std::string(name.toUtf8());
+
+	meta.mGroupFlags = flags;
+	meta.mSignFlags = getGroupSignFlags();
+
+	if (!setCircleParameters(meta))
+	{
+		std::cerr << "GxsGroupDialog::prepareGroupMetaData()";
+		std::cerr << " Invalid Circles";
+		std::cerr << std::endl;
+		return false;
+	}
+
+	std::cerr << "void GxsGroupDialog::prepareGroupMetaData() meta.mCircleType: ";
+	std::cerr << meta.mCircleType << " Internal: " << meta.mInternalCircle;
+	std::cerr << " External: " << meta.mCircleId;
+	std::cerr << std::endl;
+
+    	ui.idChooser->getChosenId(meta.mAuthorId);
+
+	return true;
+}
+	
 void GxsGroupDialog::createGroup()
 {
 	std::cerr << "GxsGroupDialog::createGroup()";
 	std::cerr << std::endl;
 
 	QString name = misc::removeNewLine(ui.groupName->text());
-	uint32_t flags = GXS_SERV::FLAG_PRIVACY_PUBLIC;
 
 	if(name.isEmpty())
 	{
@@ -491,26 +621,12 @@ void GxsGroupDialog::createGroup()
 
 	uint32_t token;
 	RsGroupMetaData meta;
-
-	// Fill in the MetaData as best we can.
-	meta.mGroupName = std::string(name.toUtf8());
-
-	meta.mGroupFlags = flags;
-	meta.mSignFlags = getGroupSignFlags();
-
-	if (!setCircleParameters(meta))
+	if (!prepareGroupMetaData(meta))
 	{
-			/* error message */
-			QMessageBox::warning(this, "RetroShare", tr("Invalid Circle Selection - Personal disabled for now"), QMessageBox::Ok, QMessageBox::Ok);
-			return; //Don't add with invalid circle.
+		/* error message */
+		QMessageBox::warning(this, "RetroShare", tr("Failed to Prepare Group MetaData - please Review"), QMessageBox::Ok, QMessageBox::Ok);
+		return; //Don't add with invalid circle.
 	}
-
-	std::cerr << "void GxsGroupDialog::createGroup() meta.mCircleType: ";
-	std::cerr << meta.mCircleType << " Internal: " << meta.mInternalCircle;
-	std::cerr << " External: " << meta.mCircleId;
-	std::cerr << std::endl;
-
-    	ui.idChooser->getChosenId(meta.mAuthorId);
 
 	if (service_CreateGroup(token, meta))
 	{
@@ -694,6 +810,7 @@ QString GxsGroupDialog::getDescription()
 
 void GxsGroupDialog::sendShareList(std::string groupId)
 {
+	(void) groupId;
 	close();
 }
 
@@ -743,6 +860,9 @@ void GxsGroupDialog::loadGroup(uint32_t token)
 
 bool GxsGroupDialog::service_loadGroup(uint32_t token, Mode mode, RsGroupMetaData& groupMetaData)
 {
+	(void) mode;
+	(void) groupMetaData;
+
 	std::cerr << "GxsGroupDialog::service_loadGroup(" << token << ") NOT IMPLEMENTED";
 	std::cerr << std::endl;
 	return false;

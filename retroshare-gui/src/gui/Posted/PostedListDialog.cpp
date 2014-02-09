@@ -38,12 +38,14 @@
  */
 
 /* Images for context menu icons */
-#define IMAGE_MESSAGE        ":/images/folder-draft.png"
+#define IMAGE_MESSAGE	":/images/folder-draft.png"
 #define IMAGE_SUBSCRIBE      ":/images/edit_add24.png"
 #define IMAGE_UNSUBSCRIBE    ":/images/cancel.png"
+#define IMAGE_SHOW           ":/images/info16.png"
+#define IMAGE_EDIT           ":/images/settings16.png"
 
 /* Images for TreeWidget */
-#define IMAGE_FOLDER         ":/images/folder16.png"
+#define IMAGE_FOLDER	 ":/images/folder16.png"
 #define IMAGE_FOLDERGREEN    ":/images/folder_green.png"
 #define IMAGE_FOLDERRED      ":/images/folder_red.png"
 #define IMAGE_FOLDERYELLOW   ":/images/folder_yellow.png"
@@ -51,7 +53,7 @@
 // token types to deal with
 
 #define POSTED_DEFAULT_LISTING_LENGTH 10
-#define POSTED_MAX_INDEX              10000
+#define POSTED_MAX_INDEX	      10000
 
 /** Constructor */
 PostedListDialog::PostedListDialog(QWidget *parent)
@@ -185,6 +187,14 @@ void PostedListDialog::groupListCustomPopupMenu(QPoint /*point*/)
 	action->setEnabled(!isSubscribed);
 	action = contextMnu.addAction(QIcon(IMAGE_UNSUBSCRIBE), tr("Unsubscribe"), this, SLOT(unsubscribeTopic()));
 	action->setEnabled(isSubscribed);
+
+	contextMnu.addSeparator();
+
+	action = contextMnu.addAction(QIcon(IMAGE_SHOW), tr("Show Topic Details"), this, SLOT(showTopic()));
+	action->setEnabled (!mCurrTopicId.empty());
+
+	action = contextMnu.addAction(QIcon(IMAGE_EDIT), tr("Edit Topic Details"), this, SLOT(editTopic()));
+	action->setEnabled (!mCurrTopicId.empty() && IS_GROUP_ADMIN(subscribeFlags));
 
 	contextMnu.exec(QCursor::pos());
 }
@@ -364,6 +374,26 @@ void PostedListDialog::newTopic()
 {
 	PostedGroupDialog cf (mPostedQueue, this);
 	cf.exec ();
+}
+	
+void PostedListDialog::showTopic()
+{
+	if (mCurrTopicId.empty()) {
+		return;
+	}
+
+        PostedGroupDialog cf(mPostedQueue, rsPosted->getTokenService(), GxsGroupDialog::MODE_SHOW, mCurrTopicId, this);
+        cf.exec ();
+}
+	
+void PostedListDialog::editTopic()
+{
+	if (mCurrTopicId.empty()) {
+		return;
+	}
+
+        PostedGroupDialog cf(mPostedQueue, rsPosted->getTokenService(), GxsGroupDialog::MODE_EDIT, mCurrTopicId, this);
+        cf.exec ();
 }
 	
 void PostedListDialog::showGroupDetails()

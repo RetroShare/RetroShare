@@ -192,6 +192,9 @@ void WikiDialog::showGroupDetails()
 		std::cerr << std::endl;
 		return;
 	}
+
+        WikiGroupDialog cf(mWikiQueue, rsWiki->getTokenService(), GxsGroupDialog::MODE_SHOW, groupId, this);
+        cf.exec ();
 }
 
 void WikiDialog::editGroupDetails()
@@ -204,11 +207,8 @@ void WikiDialog::editGroupDetails()
 		return;
 	}
 
-
-        //WikiGroupDialog cf (this);
-        //cf.existingGroup(groupId,  GXS_GROUP_DIALOG_EDIT_MODE);
-
-        //cf.exec ();
+        WikiGroupDialog cf(mWikiQueue, rsWiki->getTokenService(), GxsGroupDialog::MODE_EDIT, groupId, this);
+        cf.exec ();
 }
 
 
@@ -630,7 +630,12 @@ void WikiDialog::groupListCustomPopupMenu(QPoint /*point*/)
 	action = contextMnu.addAction(QIcon(IMAGE_UNSUBSCRIBE), tr("Unsubscribe to Group"), this, SLOT(unsubscribeToGroup()));
 	action->setEnabled (!mGroupId.empty() && IS_GROUP_SUBSCRIBED(subscribeFlags));
 
-	action = contextMnu.addAction(QIcon(IMAGE_EDIT), tr("Edit Group"), this, SLOT(editGroupDetails()));
+	contextMnu.addSeparator();
+
+	action = contextMnu.addAction(QIcon(IMAGE_INFO), tr("Show Wiki Group"), this, SLOT(showGroupDetails()));
+	action->setEnabled (!mGroupId.empty ());
+
+	action = contextMnu.addAction(QIcon(IMAGE_EDIT), tr("Edit Wiki Group"), this, SLOT(editGroupDetails()));
 	action->setEnabled (!mGroupId.empty() && IS_GROUP_ADMIN(subscribeFlags));
 
 	/************** NOT ENABLED YET *****************/
@@ -641,16 +646,6 @@ void WikiDialog::groupListCustomPopupMenu(QPoint /*point*/)
 	//		action->setEnabled(false);
 	//	}
 	//}
-
-	//contextMnu.addSeparator();
-
-	//contextMnu.addAction(QIcon(IMAGE_NEWFORUM), tr("New Forum"), this, SLOT(newforum()));
-
-	//action = contextMnu.addAction(QIcon(IMAGE_INFO), tr("Show Forum Details"), this, SLOT(showForumDetails()));
-	//action->setEnabled (!mForumId.empty ());
-
-	//action = contextMnu.addAction(QIcon(":/images/settings16.png"), tr("Edit Forum Details"), this, SLOT(editForumDetails()));
-	//action->setEnabled (!mForumId.empty () && IS_GROUP_ADMIN(subscribeFlags));
 
 	//QAction *shareKeyAct = new QAction(QIcon(":/images/gpgp_key_generate.png"), tr("Share Forum"), &contextMnu);
 	//connect( shareKeyAct, SIGNAL( triggered() ), this, SLOT( shareKey() ) );

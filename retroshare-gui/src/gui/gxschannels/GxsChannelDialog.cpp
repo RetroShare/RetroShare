@@ -244,17 +244,15 @@ void GxsChannelDialog::channelListCustomPopupMenu( QPoint /*point*/ )
 		contextMnu.addAction( subscribechannelAct );
 	}
 
+	QAction *channeldetailsAct = new QAction(QIcon(":/images/info16.png"), tr( "Show Channel Details" ), &contextMnu);
+	connect( channeldetailsAct , SIGNAL( triggered() ), this, SLOT( showChannelDetails() ) );
+	contextMnu.addAction( channeldetailsAct );
+
 	if (isAdmin)
 	{
 		QAction *editChannelDetailAct = new QAction(QIcon(":/images/edit_16.png"), tr("Edit Channel Details"), &contextMnu);
 		connect( editChannelDetailAct, SIGNAL( triggered() ), this, SLOT( editChannelDetail() ) );
 		contextMnu.addAction( editChannelDetailAct);
-	}
-	else
-	{
-		QAction *channeldetailsAct = new QAction(QIcon(":/images/info16.png"), tr( "Show Channel Details" ), &contextMnu);
-		connect( channeldetailsAct , SIGNAL( triggered() ), this, SLOT( showChannelDetails() ) );
-		contextMnu.addAction( channeldetailsAct );
 	}
 
 	if (isPublisher)
@@ -372,10 +370,12 @@ void GxsChannelDialog::openChat(std::string /*peerId*/)
 
 void GxsChannelDialog::editChannelDetail()
 {
-#if 0
-	EditChanDetails editUi(this, mChannelId);
-	editUi.exec();
-#endif
+       if (mChannelId.empty()) {
+               return;
+       }
+
+        GxsChannelGroupDialog cf(mChannelQueue, rsGxsChannels->getTokenService(), GxsGroupDialog::MODE_EDIT, mChannelId, this);
+        cf.exec ();
 }
 
 void GxsChannelDialog::shareKey()
@@ -799,21 +799,14 @@ void GxsChannelDialog::subscribeChannel()
 
 void GxsChannelDialog::showChannelDetails()
 {
-#if 0
-	if (mChannelId.empty()) {
-	return;
-	}
+       if (mChannelId.empty()) {
+               return;
+       }
 
-	if (!rsChannels) {
-		return;
-	}
-
-	ChannelDetails channelui (this);
-
-	channelui.showDetails(mChannelId);
-	channelui.exec();
-#endif
+        GxsChannelGroupDialog cf(mChannelQueue, rsGxsChannels->getTokenService(), GxsGroupDialog::MODE_SHOW, mChannelId, this);
+        cf.exec ();
 }
+
 
 void GxsChannelDialog::setAllAsReadClicked()
 {

@@ -73,18 +73,19 @@ void PostedGroupDialog::initUi()
 	{
 	case MODE_CREATE:
 		setUiText(UITYPE_SERVICE_HEADER, tr("Create New Topic"));
+		setUiText(UITYPE_BUTTONBOX_OK, tr("Create Topic"));
 		break;
 	case MODE_SHOW:
 		setUiText(UITYPE_SERVICE_HEADER, tr("Posted Topic"));
 		break;
 	case MODE_EDIT:
 		setUiText(UITYPE_SERVICE_HEADER, tr("Edit Topic"));
+		setUiText(UITYPE_BUTTONBOX_OK, tr("Update Topic"));
 		break;
 	}
 
 	setUiText(UITYPE_KEY_SHARE_CHECKBOX, tr("Add Topic Admins"));
 	setUiText(UITYPE_CONTACTS_DOCK, tr("Select Topic Admins"));
-	setUiText(UITYPE_BUTTONBOX_OK, tr("Create Topic"));
 }
 
 QPixmap PostedGroupDialog::serviceImage()
@@ -106,8 +107,46 @@ bool PostedGroupDialog::service_CreateGroup(uint32_t &token, const RsGroupMetaDa
 	return true;
 }
 
-bool PostedGroupDialog::service_EditGroup(uint32_t &token, RsGxsGroupUpdateMeta &updateMeta)
+bool PostedGroupDialog::service_EditGroup(uint32_t &token, 
+			RsGxsGroupUpdateMeta &updateMeta,
+			RsGroupMetaData &editedMeta)
 {
-	return false;
+	RsPostedGroup grp;
+	grp.mMeta = editedMeta;
+	grp.mDescription = std::string(ui.groupDesc->toPlainText().toUtf8());
+
+	std::cerr << "PostedGroupDialog::service_EditGroup() submitting changes";
+	std::cerr << std::endl;
+
+	rsPosted->updateGroup(token, updateMeta, grp);
+	return true;
+}
+
+
+bool PostedGroupDialog::service_loadGroup(uint32_t token, Mode mode, RsGroupMetaData& groupMetaData)
+{
+        std::cerr << "PostedGroupDialog::service_loadGroup(" << token << ")";
+        std::cerr << std::endl;
+
+        std::vector<RsPostedGroup> groups;
+        if (!rsPosted->getGroupData(token, groups))
+        {
+                std::cerr << "PostedGroupDialog::service_loadGroup() Error getting GroupData";
+                std::cerr << std::endl;
+                return false;
+        }
+
+        if (groups.size() != 1)
+        {
+                std::cerr << "PostedGroupDialog::service_loadGroup() Error Group.size() != 1";
+                std::cerr << std::endl;
+                return false;
+        }
+
+        std::cerr << "PostedGroupDialog::service_loadGroup() Unfinished Loading";
+        std::cerr << std::endl;
+
+	groupMetaData = groups[0].mMeta;
+	return true;
 }
 

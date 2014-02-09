@@ -73,18 +73,19 @@ void WikiGroupDialog::initUi()
 	{
 	case MODE_CREATE:
 		setUiText(UITYPE_SERVICE_HEADER, tr("Create New Wiki Group"));
+		setUiText(UITYPE_BUTTONBOX_OK, tr("Create Group"));
 		break;
 	case MODE_SHOW:
 		setUiText(UITYPE_SERVICE_HEADER, tr("Wiki Group"));
 		break;
 	case MODE_EDIT:
 		setUiText(UITYPE_SERVICE_HEADER, tr("Edit Wiki Group"));
+		setUiText(UITYPE_BUTTONBOX_OK, tr("Update Group"));
 		break;
 	}
 
 	setUiText(UITYPE_KEY_SHARE_CHECKBOX, tr("Add Wiki Moderators"));
 	setUiText(UITYPE_CONTACTS_DOCK, tr("Select Wiki Moderators"));
-	setUiText(UITYPE_BUTTONBOX_OK, tr("Create Group"));
 }
 
 QPixmap WikiGroupDialog::serviceImage()
@@ -106,12 +107,45 @@ bool WikiGroupDialog::service_CreateGroup(uint32_t &token, const RsGroupMetaData
 	return true;
 }
 
-bool WikiGroupDialog::service_EditGroup(uint32_t &token, RsGxsGroupUpdateMeta &updateMeta)
+bool WikiGroupDialog::service_EditGroup(uint32_t &token, 
+			RsGxsGroupUpdateMeta &updateMeta,
+			RsGroupMetaData &editedMeta)
 {
-	std::cerr << "WikiGroupDialog::service_EditGroup() UNFINISHED";
+	RsWikiCollection grp;
+	grp.mMeta = editedMeta;
+
+	std::cerr << "WikiGroupDialog::service_EditGroup() submitting changes.";
 	std::cerr << std::endl;
 
-	return false;
+	rsWiki->updateCollection(token, updateMeta, grp);
+	return true;
 }
 
+
+bool WikiGroupDialog::service_loadGroup(uint32_t token, Mode mode, RsGroupMetaData& groupMetaData)
+{
+        std::cerr << "WikiGroupDialog::service_loadGroup(" << token << ")";
+        std::cerr << std::endl;
+
+        std::vector<RsWikiCollection> groups;
+        if (!rsWiki->getCollections(token, groups))
+        {
+                std::cerr << "WikiGroupDialog::service_loadGroup() Error getting GroupData";
+                std::cerr << std::endl;
+                return false;
+        }
+
+        if (groups.size() != 1)
+        {
+                std::cerr << "WikiGroupDialog::service_loadGroup() Error Group.size() != 1";
+                std::cerr << std::endl;
+                return false;
+        }
+
+        std::cerr << "WikisGroupDialog::service_loadGroup() Unfinished Loading";
+        std::cerr << std::endl;
+
+	groupMetaData = groups[0].mMeta;
+	return true;
+}
 

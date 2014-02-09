@@ -73,6 +73,7 @@ void GxsForumGroupDialog::initUi()
 	{
 	case MODE_CREATE:
                 setUiText(UITYPE_SERVICE_HEADER, tr("Create New Forum"));
+		setUiText(UITYPE_BUTTONBOX_OK, tr("Create Forum"));
 		break;
 	case MODE_SHOW:
 		setUiText(UITYPE_SERVICE_HEADER, tr("Forum"));
@@ -80,8 +81,12 @@ void GxsForumGroupDialog::initUi()
 		break;
 	case MODE_EDIT:
 		setUiText(UITYPE_SERVICE_HEADER, tr("Edit Forum"));
+		setUiText(UITYPE_BUTTONBOX_OK, tr("Update Forum"));
 		break;
         }
+
+	setUiText(UITYPE_KEY_SHARE_CHECKBOX, tr("Add Forum Admins"));
+	setUiText(UITYPE_CONTACTS_DOCK, tr("Select Forum Admins"));
 }
 
 QPixmap GxsForumGroupDialog::serviceImage()
@@ -100,13 +105,16 @@ bool GxsForumGroupDialog::service_CreateGroup(uint32_t &token, const RsGroupMeta
 	return true;
 }
 
-bool GxsForumGroupDialog::service_EditGroup(uint32_t &token, RsGxsGroupUpdateMeta &updateMeta)
+bool GxsForumGroupDialog::service_EditGroup(uint32_t &token, 
+			RsGxsGroupUpdateMeta &updateMeta,
+			RsGroupMetaData &editedMeta)
 {
-	std::cerr << "GxsForumGroupDialog::service_EditGroup() UNFINISHED";
-	std::cerr << std::endl;
-
 	RsGxsForumGroup grp;
+	grp.mMeta = editedMeta;
 	grp.mDescription = std::string(ui.groupDesc->toPlainText().toUtf8());
+
+	std::cerr << "GxsForumGroupDialog::service_EditGroup() submitting changes";
+	std::cerr << std::endl;
 
 	rsGxsForums->updateGroup(token, updateMeta, grp);
 	return true;
