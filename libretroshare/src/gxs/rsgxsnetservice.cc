@@ -384,6 +384,11 @@ void RsGxsNetService::locked_createTransactionFromPending(GrpCircleIdRequestVett
 	{
 		const GrpIdCircleVet& entry = *cit;
 
+		// this shows what groups got cleared by the server
+#ifdef NXS_NET_DEBUG
+		std::cerr << "locked_createTransactionFromPending() Group Id: " << entry.mGroupId << "cleared: "
+				<< entry.mCleared << std::endl;
+#endif
 		if(entry.mCleared)
 		{
 			RsNxsSyncGrpItem* gItem = new
@@ -2087,6 +2092,9 @@ void RsGxsNetService::handleRecvSyncGroup(RsNxsSyncGrp* item)
 	uint32_t transN = locked_getTransactionId();
 
 	std::vector<GrpIdCircleVet> toVet;
+#ifdef NXS_NET_DEBUG
+	std::cerr << "RsGxsNetService::handleRecvSyncGroup() \nService: " << mServType << "\nGroup list beings being sent: " << std::endl;
+#endif
 
 	for(; mit != grp.end(); mit++)
 	{
@@ -2110,6 +2118,10 @@ void RsGxsNetService::handleRecvSyncGroup(RsNxsSyncGrp* item)
 				gItem->PeerId(peer);
 				gItem->transactionNumber = transN;
 				itemL.push_back(gItem);
+#ifdef NXS_NET_DEBUG
+				std::cerr << "RsGxsNetService::handleRecvSyncGroup"
+						<< "\nGroup : " << grpMeta->mGroupName << ", id: " << gItem->grpId << std::endl;
+#endif
 			}
 		}
 
