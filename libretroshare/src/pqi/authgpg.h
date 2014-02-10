@@ -152,7 +152,7 @@ class AuthGPG: public p3Config, public RsThread, public PGPHandler
 		virtual std::string getGPGEmail(const PGPIdType &pgp_id,bool *success = NULL);
 
 		/* PGP web of trust management */
-		virtual PGPIdType getGPGOwnId();
+        virtual const PGPIdType& getGPGOwnId();
 		virtual std::string getGPGOwnName();
 
 		//virtual std::string getGPGOwnEmail();

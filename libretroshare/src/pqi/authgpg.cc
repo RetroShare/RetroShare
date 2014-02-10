@@ -381,7 +381,7 @@ std::string AuthGPG::getGPGEmail(const PGPIdType& id,bool *success)
 
 /**** GPG versions ***/
 
-PGPIdType AuthGPG::getGPGOwnId()
+const PGPIdType& AuthGPG::getGPGOwnId()
 {
 	RsStackMutex stack(gpgMtxData); /******* LOCKED ******/
 	return mOwnGpgId ;

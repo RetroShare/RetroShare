@@ -2092,7 +2092,7 @@ bool ftController::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 		//
 		for(std::list<RsPeerId>::const_iterator it(lst.begin());it!=lst.end();++it) 
 			if(!mTurtle->isTurtlePeer(*it))
-				rft->allPeerIds.ids.push_back((*it).toStdString()) ;
+                rft->allPeerIds.ids.push_back(*it) ;
 
 		rft->transferred = fit->second->mCreator->getRecvd();
 		fit->second->mCreator->getAvailabilityMap(rft->compressed_chunk_map) ;
@@ -2129,19 +2129,21 @@ bool ftController::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 
 				rft->allPeerIds.ids.clear() ;
 				for(std::list<RsPeerId>::const_iterator it(pit->mSrcIds.begin());it!=pit->mSrcIds.end();++it)
-					rft->allPeerIds.ids.push_back( (*it).toStdString() ) ;
+                    rft->allPeerIds.ids.push_back( *it ) ;
 			}
 
 			// Remove turtle peers from sources, as they are not supposed to survive a reboot of RS, since they are dynamic sources.
 			// Otherwize, such sources are unknown from the turtle router, at restart, and never get removed. We do that in post
 			// process since the rft object may have been created from mPendingChunkMaps
 			//
-			for(std::list<std::string>::iterator sit(rft->allPeerIds.ids.begin());sit!=rft->allPeerIds.ids.end();)
+            for(std::list<RsPeerId>::iterator sit(rft->allPeerIds.ids.begin());sit!=rft->allPeerIds.ids.end();)
 				if(mTurtle->isTurtlePeer(RsPeerId(*sit)))
-				{
-					std::list<std::string>::iterator sittmp(sit) ;
-					sit = rft->allPeerIds.ids.erase(sit) ;
-				}
+                {
+                    std::list<RsPeerId>::iterator sittmp(sit) ;
+            ++sittmp ;
+                    rft->allPeerIds.ids.erase(sit) ;
+            sit = sittmp ;
+                }
 				else
 					++sit ;
 
@@ -2200,8 +2202,8 @@ bool ftController::loadList(std::list<RsItem *>& load)
 			std::cerr << "ftController::loadList(): requesting " << rsft->file.name << ", " << rsft->file.hash << ", " << rsft->file.filesize << std::endl ;
 #endif
 			std::list<RsPeerId> src_lst ;
-			for(std::list<std::string>::const_iterator it(rsft->allPeerIds.ids.begin());it!=rsft->allPeerIds.ids.end();++it)
-				src_lst.push_back(RsPeerId(*it)) ;
+            for(std::list<RsPeerId>::const_iterator it(rsft->allPeerIds.ids.begin());it!=rsft->allPeerIds.ids.end();++it)
+                src_lst.push_back(*it) ;
 
 			FileRequest(rsft->file.name, rsft->file.hash, rsft->file.filesize, rsft->file.path, TransferRequestFlags(rsft->flags), src_lst, rsft->state);
 
