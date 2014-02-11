@@ -238,7 +238,7 @@ extern RsMsgs   *rsMsgs;
 struct DistantOfflineMessengingInvite
 {
 	PGPIdType issuer_pgp_id ;
-	std::string hash ;
+	Sha1CheckSum hash ;
 	time_t time_of_validity ;
 };
 
@@ -290,7 +290,7 @@ virtual bool createDistantOfflineMessengingInvite(time_t validity_time_stamp, st
 virtual bool getDistantOfflineMessengingInvites(std::vector<DistantOfflineMessengingInvite>& invites) = 0 ;
 virtual void enableDistantMessaging(bool b) = 0;
 virtual bool distantMessagingEnabled() = 0;
-virtual bool getDistantMessageHash(const PGPIdType& pgp_id, std::string& hash) = 0;
+virtual bool getDistantMessageHash(const PGPIdType& pgp_id, Sha1CheckSum& hash) = 0;
 
 /****************************************/
 /*                 Chat                 */

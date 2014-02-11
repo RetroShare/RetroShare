@@ -57,7 +57,7 @@ virtual int 	getConfigStartup(RsConfigStartup &params);
                 /***** for RsConfig -> p3BandwidthControl ****/
 
 virtual int getTotalBandwidthRates(RsConfigDataRates &rates);
-virtual int getAllBandwidthRates(std::map<std::string, RsConfigDataRates> &ratemap);
+virtual int getAllBandwidthRates(std::map<RsPeerId, RsConfigDataRates> &ratemap);
 
 	/* From RsInit */
 

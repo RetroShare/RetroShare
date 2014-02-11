@@ -206,7 +206,7 @@ int 	p3ServerConfig::getTotalBandwidthRates(RsConfigDataRates &rates)
 }
 
 
-int 	p3ServerConfig::getAllBandwidthRates(std::map<std::string, RsConfigDataRates> &ratemap)
+int 	p3ServerConfig::getAllBandwidthRates(std::map<RsPeerId, RsConfigDataRates> &ratemap)
 {
 	if (rsBandwidthControl)
 	{

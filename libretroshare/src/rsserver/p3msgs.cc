@@ -116,7 +116,7 @@ bool p3Msgs::distantMessagingEnabled()
 {
 	return mMsgSrv->distantMessagingEnabled();
 }
-bool p3Msgs::getDistantMessageHash(const PGPIdType& pgp_id,std::string& hash)
+bool p3Msgs::getDistantMessageHash(const PGPIdType& pgp_id,Sha1CheckSum& hash)
 {
 	return mMsgSrv->getDistantMessageHash(pgp_id,hash);
 }

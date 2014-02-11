@@ -134,16 +134,16 @@ int     checkOutgoingMessages();
 		bool distantMessagingEnabled() ;
         bool getDistantMessageHash(const PGPIdType& pgp_id,Sha1CheckSum &hash) ;
 
-		void sendPrivateMsgItem(RsMsgItem *) ;
-
 	private:
+		void sendPrivateMsgItem(const Sha1CheckSum& hash,RsMsgItem *) ;
+
 		// This maps contains the current invitations to respond to.
-        // The map is indexed by the hash
-		std::map<std::string,DistantMessengingInvite> _messenging_invites ;
+		// The map is indexed by the hash
+		std::map<Sha1CheckSum,DistantMessengingInvite> _messenging_invites ;
 
 		// This contains the ongoing tunnel handling contacts.
-        // The map is indexed by the hash
-        std::map<std::string,DistantMessengingContact> _messenging_contacts ;
+		// The map is indexed by the hash
+		std::map<Sha1CheckSum,DistantMessengingContact> _messenging_contacts ;
 
 		// Overloaded from RsTurtleClientService
 
@@ -151,18 +151,19 @@ int     checkOutgoingMessages();
 		virtual void receiveGRouterData(RsGRouterGenericDataItem *item, const GRouterKeyId& key) ;
 #endif
         virtual bool handleTunnelRequest(const Sha1CheckSum& hash,const RsPeerId& peer_id) ;
-		virtual void receiveTurtleData(RsTurtleGenericTunnelItem *item,const std::string& hash,const RsPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction) ;
+		virtual void receiveTurtleData(RsTurtleGenericTunnelItem *item,const Sha1CheckSum& hash,const RsPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction) ;
 		void addVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&,RsTurtleGenericTunnelItem::Direction dir) ;
 		void removeVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&) ;
 
 		// Utility functions
 
 		bool encryptMessage(const PGPIdType& pgp_id,RsMsgItem *msg) ;
+		bool locked_findHashForVirtualPeerId(const RsPeerId& pid,Sha1CheckSum& hash) ;
 
 		void manageDistantPeers() ;
-		void sendTurtleData(const std::string& hash,RsMsgItem *) ;
+		void sendTurtleData(const Sha1CheckSum& hash,RsMsgItem *) ;
 #ifdef GROUTER
-		void sendGRouterData(const std::string& hash,RsMsgItem *) ;
+		void sendGRouterData(const Sha1CheckSum& hash,RsMsgItem *) ;
 #endif
 		void handleIncomingItem(RsMsgItem *) ;
 

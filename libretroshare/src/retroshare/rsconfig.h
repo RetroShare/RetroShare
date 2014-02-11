@@ -239,7 +239,7 @@ virtual int 	getConfigNetStatus(RsConfigNetStatus &status) = 0;
 //virtual int 	getConfigStartup(RsConfigStartup &params) = 0;
 
 virtual int 	getTotalBandwidthRates(RsConfigDataRates &rates) = 0;
-virtual int 	getAllBandwidthRates(std::map<std::string, RsConfigDataRates> &ratemap) = 0;
+virtual int 	getAllBandwidthRates(std::map<RsPeerId, RsConfigDataRates> &ratemap) = 0;
 
 	/* From RsInit */
 

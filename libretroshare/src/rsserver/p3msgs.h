@@ -85,7 +85,7 @@ class p3Msgs: public RsMsgs
 
 	  virtual void enableDistantMessaging(bool b) ;
 	  virtual bool distantMessagingEnabled() ;
-	  virtual bool getDistantMessageHash(const PGPIdType& pgp_id,std::string& hash) ;
+	  virtual bool getDistantMessageHash(const PGPIdType& pgp_id,Sha1CheckSum& hash) ;
 
 	  /*!
 	   * gets avatar from peer, image data in jpeg format

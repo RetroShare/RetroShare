@@ -143,9 +143,9 @@ bool p3BanList::recvBanItem(RsBanListItem *item)
 }
 
 /* overloaded from pqiNetAssistSharePeer */
-void p3BanList::updatePeer(std::string /*id*/, const struct sockaddr_storage &addr, int /*type*/, int /*reason*/, int age)
+void p3BanList::updatePeer(const RsPeerId& /*id*/, const struct sockaddr_storage &addr, int /*type*/, int /*reason*/, int age)
 {
-	std::string ownId = mLinkMgr->getOwnId();
+	RsPeerId ownId = mLinkMgr->getOwnId();
 
 	int int_reason = 0;
 	addBanEntry(ownId, addr, RSBANLIST_SOURCE_SELF, int_reason, age);
@@ -160,7 +160,7 @@ void p3BanList::updatePeer(std::string /*id*/, const struct sockaddr_storage &ad
 }
 
 
-bool p3BanList::addBanEntry(const std::string &peerId, const struct sockaddr_storage &addr, int level, uint32_t reason, uint32_t age)
+bool p3BanList::addBanEntry(const RsPeerId &peerId, const struct sockaddr_storage &addr, int level, uint32_t reason, uint32_t age)
 {
 	RsStackMutex stack(mBanMtx); /****** LOCKED MUTEX *******/
 
@@ -184,7 +184,7 @@ bool p3BanList::addBanEntry(const std::string &peerId, const struct sockaddr_sto
         }
 
 
-	std::map<std::string, BanList>::iterator it;
+	std::map<RsPeerId, BanList>::iterator it;
 	it = mBanSources.find(peerId);
 	if (it == mBanSources.end())
 	{
@@ -247,14 +247,14 @@ bool p3BanList::addBanEntry(const std::string &peerId, const struct sockaddr_sto
 int p3BanList::condenseBanSources_locked()
 {
 	time_t now = time(NULL);
-	std::string ownId = mLinkMgr->getOwnId();
+	RsPeerId ownId = mLinkMgr->getOwnId();
 	
 #ifdef DEBUG_BANLIST
 	std::cerr << "p3BanList::condenseBanSources_locked()";
 	std::cerr << std::endl;
 #endif
 
-	std::map<std::string, BanList>::const_iterator it;
+	std::map<RsPeerId, BanList>::const_iterator it;
 	for(it = mBanSources.begin(); it != mBanSources.end(); it++)
 	{
 		if (now - it->second.mLastUpdate > RSBANLIST_ENTRY_MAX_AGE)
@@ -385,7 +385,7 @@ void p3BanList::sendBanLists()
 
 	/* we ping our peers */
 	/* who is online? */
-	std::list<std::string> idList;
+	std::list<RsPeerId> idList;
 
 	mLinkMgr->getOnlineList(idList);
 
@@ -395,7 +395,7 @@ void p3BanList::sendBanLists()
 #endif
 
 	/* prepare packets */
-	std::list<std::string>::iterator it;
+	std::list<RsPeerId>::iterator it;
 	for(it = idList.begin(); it != idList.end(); it++)
 	{
 #ifdef DEBUG_BANLIST
@@ -408,7 +408,7 @@ void p3BanList::sendBanLists()
 
 
 
-int p3BanList::sendBanSet(std::string peerid)
+int p3BanList::sendBanSet(const RsPeerId& peerid)
 {
 	/* */
 	RsBanListItem *item = new RsBanListItem();
@@ -471,7 +471,7 @@ int p3BanList::printBanSources_locked(std::ostream &out)
 {
 	time_t now = time(NULL);
 	
-	std::map<std::string, BanList>::const_iterator it;
+	std::map<RsPeerId, BanList>::const_iterator it;
 	for(it = mBanSources.begin(); it != mBanSources.end(); it++)
 	{
 		out << "BanList from: " << it->first;

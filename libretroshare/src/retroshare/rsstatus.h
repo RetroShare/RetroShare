@@ -34,6 +34,7 @@ extern RsStatus *rsStatus;
 #include <string>
 #include <inttypes.h>
 #include <list>
+#include <retroshare/rstypes.h>
 
 
 const uint32_t RS_STATUS_OFFLINE  = 0x0000;
@@ -58,7 +59,7 @@ class StatusInfo
 	}
 
 	public:
-	std::string id;
+	RsPeerId id;
 	uint32_t status;
 	time_t time_stamp; /// for owner time set, and for their peers time sent
 };
@@ -88,7 +89,7 @@ class RsStatus
 	 * This retrieves the status info one peer
 	 * @param statusInfo is populated with client's peer's status
 	 */
-	virtual bool getStatus(const std::string &id, StatusInfo &statusInfo) = 0;
+	virtual bool getStatus(const RsPeerId &id, StatusInfo &statusInfo) = 0;
 
 	/**
 	 * send the client's status to his/her peers
@@ -96,7 +97,7 @@ class RsStatus
 	 * @param status the status of the peers
 	 * @return will return false if status info does not belong to client
 	 */
-	virtual bool sendStatus(const std::string &id, uint32_t status)                 = 0;
+	virtual bool sendStatus(const RsPeerId &id, uint32_t status)                 = 0;
 };
 
 
