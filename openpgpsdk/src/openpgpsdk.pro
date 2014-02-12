@@ -1,5 +1,9 @@
 TEMPLATE = lib
-CONFIG = staticlib debug
+win32 {
+	CONFIG += staticlib
+} else {
+	CONFIG = staticlib debug
+}
 
 DEFINES *= OPENSSL_NO_IDEA 
 

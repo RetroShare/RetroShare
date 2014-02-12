@@ -1,8 +1,3 @@
-win32 {
-	# Fix double defined symbols BIO_* (Find a better solution)
-	LIBS += -lcrypto
-}
-
 !include("../Common/retroshare_plugin.pri"): error("Could not include file ../Common/retroshare_plugin.pri")
 
 CONFIG += qt uic qrc resources
@@ -101,8 +96,8 @@ win32 {
 
 	INCLUDEPATH += $${CURL_DIR}/include $${LIBXML2_DIR}/include $${LIBXSLT_DIR} $${LIBICONV_DIR}/include
 
-	LIBS += -lcurl -lxml2 -lxslt -lws2_32 -lwldap32
-	LIBS += -lssl -lcrypto -lgdi32 -lwsock32
+	# Change order of the libraries
+	LIBS = -lcurl -lxml2 -lz -lxslt -lws2_32 -lwldap32 -lssl -lcrypto -lgdi32 -lwsock32 $${LIBS}
 }
 
 openbsd-* {
