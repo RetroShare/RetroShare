@@ -526,7 +526,7 @@ void NotifyQt::notifyTurtleSearchResult(uint32_t search_id,const std::list<Turtl
 		det.name = (*it).name ;
 		det.hash = (*it).hash ;
 		det.size = (*it).size ;
-		det.id = "Anonymous" ;
+		det.id.clear() ;
 
 		emit gotTurtleSearchResult(search_id,det) ;
 	}
@@ -920,7 +920,7 @@ void NotifyQt::testToaster(uint notifyFlags, /*RshareSettings::enumToasterPositi
 	QString title = tr("Test");
 	QString message = tr("This is a test.");
 
-	std::string id = rsPeers->getOwnId();
+	RsPeerId id = rsPeers->getOwnId();
 
 	uint pos = 0;
 
@@ -937,25 +937,25 @@ void NotifyQt::testToaster(uint notifyFlags, /*RshareSettings::enumToasterPositi
 				toaster = new Toaster(new MessageToaster(std::string(), tr("Unknown title"), QString("[%1]").arg(tr("Encrypted message"))));
 				break;
 			case RS_POPUP_MSG:
-				toaster = new Toaster(new MessageToaster(id, title, message));
+				toaster = new Toaster(new MessageToaster(id.toStdString(), title, message));
 				break;
 			case RS_POPUP_CONNECT:
-				toaster = new Toaster(new OnlineToaster(id));
+				toaster = new Toaster(new OnlineToaster(id.toStdString()));
 				break;
 			case RS_POPUP_DOWNLOAD:
-				toaster = new Toaster(new DownloadToaster(id, title));
+				toaster = new Toaster(new DownloadToaster(id.toStdString(), title));
 				break;
 			case RS_POPUP_CHAT:
-				toaster = new Toaster(new ChatToaster(id, message));
+				toaster = new Toaster(new ChatToaster(id.toStdString(), message));
 				break;
 			case RS_POPUP_GROUPCHAT:
-				toaster = new Toaster(new GroupChatToaster(id, message));
+				toaster = new Toaster(new GroupChatToaster(id.toStdString(), message));
 				break;
 			case RS_POPUP_CHATLOBBY:
-				toaster = new Toaster(new ChatLobbyToaster(id, title, message));
+				toaster = new Toaster(new ChatLobbyToaster(id.toStdString(), title, message));
 				break;
 			case RS_POPUP_CONNECT_ATTEMPT:
-				toaster = new Toaster(new FriendRequestToaster(id, title, id));
+				toaster = new Toaster(new FriendRequestToaster(id.toStdString(), title, id.toStdString()));
 				break;
 		}
 

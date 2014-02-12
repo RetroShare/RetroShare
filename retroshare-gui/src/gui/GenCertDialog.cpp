@@ -178,18 +178,18 @@ void GenCertDialog::init()
 
 	ui.genPGPuser->clear() ;
 
-	std::list<std::string> pgpIds;
-	std::list<std::string>::iterator it;
+	std::list<PGPIdType> pgpIds;
+	std::list<PGPIdType>::iterator it;
 	bool foundGPGKeys = false;
 	if (!mOnlyGenerateIdentity) {
 		if (RsAccounts::GetPGPLogins(pgpIds)) {
 			for(it = pgpIds.begin(); it != pgpIds.end(); it++)
 			{
-				QVariant userData(QString::fromStdString(*it));
+				QVariant userData(QString::fromStdString( (*it).toStdString() ));
 				std::string name, email;
 				RsAccounts::GetPGPLoginDetails(*it, name, email);
 				std::cerr << "Adding PGPUser: " << name << " id: " << *it << std::endl;
-				QString gid = QString::fromStdString(*it).right(8) ;
+				QString gid = QString::fromStdString( (*it).toStdString()).right(8) ;
 				ui.genPGPuser->addItem(QString::fromUtf8(name.c_str()) + " <" + QString::fromUtf8(email.c_str()) + "> (" + gid + ")", userData);
 				foundGPGKeys = true;
 			}
@@ -310,7 +310,7 @@ void GenCertDialog::exportIdentity()
 		return ;
 
 	QVariant data = ui.genPGPuser->itemData(ui.genPGPuser->currentIndex());
-	std::string gpg_id = data.toString().toStdString() ;
+	PGPIdType gpg_id (data.toString().toStdString()) ;
 
 	if(RsAccounts::ExportIdentity(fname.toStdString(),gpg_id))
 		QMessageBox::information(this,tr("Identity saved"),tr("Your identity was successfully saved\nIt is encrypted\n\nYou can now copy it to another computer\nand use the import button to load it")) ;
@@ -325,7 +325,7 @@ void GenCertDialog::importIdentity()
 	if(fname.isNull())
 		return ;
 
-	std::string gpg_id ;
+	PGPIdType gpg_id ;
 	std::string err_string ;
 
 	if(!RsAccounts::ImportIdentity(fname.toStdString(),gpg_id,err_string))
@@ -340,7 +340,7 @@ void GenCertDialog::importIdentity()
 		RsAccounts::GetPGPLoginDetails(gpg_id, name, email);
 		std::cerr << "Adding PGPUser: " << name << " id: " << gpg_id << std::endl;
 
-		QMessageBox::information(this,tr("New identity imported"),tr("Your identity was imported successfully:")+" \n"+"\nName :"+QString::fromStdString(name)+"\nemail: " + QString::fromStdString(email)+"\nKey ID: "+QString::fromStdString(gpg_id)+"\n\n"+tr("You can use it now to create a new location.")) ;
+		QMessageBox::information(this,tr("New identity imported"),tr("Your identity was imported successfully:")+" \n"+"\nName :"+QString::fromStdString(name)+"\nemail: " + QString::fromStdString(email)+"\nKey ID: "+QString::fromStdString(gpg_id.toStdString())+"\n\n"+tr("You can use it now to create a new location.")) ;
 	}
 
 	init() ;
@@ -350,7 +350,7 @@ void GenCertDialog::genPerson()
 {
 	/* Check the data from the GUI. */
 	std::string genLoc  = ui.location_input->text().toUtf8().constData();
-	std::string PGPId;
+	PGPIdType PGPId;
 	bool isHiddenLoc = false;
 
 	if (ui.hidden_checkbox->isChecked()) 
@@ -389,7 +389,7 @@ void GenCertDialog::genPerson()
 			return;
 		}
 		QVariant data = ui.genPGPuser->itemData(pgpidx);
-		PGPId = (data.toString()).toStdString();
+		PGPId = PGPIdType((data.toString()).toStdString());
 	} else {
 		if (ui.password_input->text().length() < 3 || ui.name_input->text().length() < 3 || genLoc.length() < 3) {
 			/* Message Dialog */
@@ -446,7 +446,7 @@ void GenCertDialog::genPerson()
 	/* GenerateSSLCertificate - selects the PGP Account */
 	//RsInit::SelectGPGAccount(PGPId);
 
-	std::string sslId;
+	RsPeerId sslId;
 	std::cerr << "GenCertDialog::genPerson() Generating SSL cert with gpg id : " << PGPId << std::endl;
 	std::string err;
 	bool okGen = RsAccounts::GenerateSSLCertificate(PGPId, "", genLoc, "", isHiddenLoc, sslPasswd, sslId, err);

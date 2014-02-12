@@ -203,7 +203,7 @@ void NetworkDialog::connectTreeWidgetCostumPopupMenu( QPoint /*point*/ )
 
 	QMenu *contextMnu = new QMenu;
 
-	std::string peer_id = wi->text(COLUMN_PEERID).toStdString() ;
+	PGPIdType peer_id(wi->text(COLUMN_PEERID).toStdString()) ;
 
 	// That's what context menus are made for
 	RsPeerDetails detail;
@@ -231,17 +231,17 @@ void NetworkDialog::connectTreeWidgetCostumPopupMenu( QPoint /*point*/ )
 
 void NetworkDialog::removeUnusedKeys()
 {
-	std::list<std::string> pre_selected ;
-	std::list<std::string> ids ;
+	std::list<PGPIdType> pre_selected ;
+	std::list<PGPIdType> ids ;
 
 	rsPeers->getGPGAllList(ids) ;
 	RsPeerDetails details ;
 	time_t now = time(NULL) ;
     time_t THREE_MONTHS = 3*31*24*60*60 ;//3*DayPerMonth*HoursPerDay*MinPerHour*SecPerMin
 
-	for(std::list<std::string>::const_iterator it(ids.begin());it!=ids.end();++it)
+	for(std::list<PGPIdType>::const_iterator it(ids.begin());it!=ids.end();++it)
 	{
-		rsPeers->getPeerDetails(*it,details) ;
+		rsPeers->getGPGDetails(*it,details) ;
 
 		if(rsPeers->haveSecretKey(*it))
 		{
@@ -255,13 +255,13 @@ void NetworkDialog::removeUnusedKeys()
 		}
 	}
 
-	std::list<std::string> selected = FriendSelectionDialog::selectFriends(NULL,
+	std::list<PGPIdType> selected = FriendSelectionDialog::selectFriends(NULL,
 			tr("Clean keyring"),
 			tr("The selected keys below haven't been used in the last 3 months. \nDo you want to delete them permanently ? \n\nNotes: Your old keyring will be backed up.\n    The removal may fail when running multiple Retroshare instances on the same machine."),FriendSelectionWidget::MODUS_CHECK,FriendSelectionWidget::SHOW_GPG | FriendSelectionWidget::SHOW_NON_FRIEND_GPG,
 			FriendSelectionWidget::IDTYPE_GPG, pre_selected) ;
 	
 	std::cerr << "Removing these keys from the keyring: " << std::endl;
-	for(std::list<std::string>::const_iterator it(selected.begin());it!=selected.end();++it)
+	for(std::list<PGPIdType>::const_iterator it(selected.begin());it!=selected.end();++it)
 		std::cerr << "  " << *it << std::endl;
 
 	std::string backup_file ;
@@ -298,7 +298,7 @@ void NetworkDialog::removeUnusedKeys()
 void NetworkDialog::denyFriend()
 {
 	QTreeWidgetItem *wi = getCurrentNeighbour();
-	std::string peer_id = wi->text(COLUMN_PEERID).toStdString() ;
+	PGPIdType peer_id( wi->text(COLUMN_PEERID).toStdString() );
 	rsPeers->removeFriend(peer_id) ;
 
 	securedUpdateDisplay();
@@ -364,12 +364,12 @@ void NetworkDialog::sendDistantMessage()
 		return;
 	}
 
-	std::string hash ;
-	std::string mGpgId = wi->text(COLUMN_PEERID).toStdString() ;
+	Sha1CheckSum hash ;
+	PGPIdType mGpgId(wi->text(COLUMN_PEERID).toStdString()) ;
 
 	if(rsMsgs->getDistantMessageHash(mGpgId,hash))
 	{
-		nMsgDialog->addRecipient(MessageComposer::TO, hash, mGpgId);
+		nMsgDialog->addRecipient(MessageComposer::TO, hash.toStdString(), mGpgId.toStdString());
 		nMsgDialog->show();
 		nMsgDialog->activateWindow();
 	}
@@ -397,8 +397,8 @@ void NetworkDialog::insertConnect()
 //
 //	last_time = now ;
 
-	std::list<std::string> neighs; //these are GPG ids
-	std::list<std::string>::iterator it;
+	std::list<PGPIdType> neighs; //these are GPG ids
+	std::list<PGPIdType>::iterator it;
 	rsPeers->getGPGAllList(neighs);
 
 	/* get a link to the table */
@@ -408,7 +408,7 @@ void NetworkDialog::insertConnect()
 	int index = 0;
 	while (index < connectWidget->topLevelItemCount()) 
 	{
-		std::string gpg_widget_id = (connectWidget->topLevelItem(index))->text(COLUMN_PEERID).toStdString();
+		PGPIdType gpg_widget_id( (connectWidget->topLevelItem(index))->text(COLUMN_PEERID).toStdString() );
 		RsPeerDetails detail;
 		if ( (!rsPeers->getGPGDetails(gpg_widget_id, detail)) || (ui.onlyTrustedKeys->isChecked() && (detail.validLvl < RS_TRUST_LVL_MARGINAL && !detail.accept_connection))) 
 			delete (connectWidget->takeTopLevelItem(index));
@@ -435,7 +435,7 @@ void NetworkDialog::insertConnect()
 
 		/* make a widget per friend */
 		QTreeWidgetItem *item;
-        QList<QTreeWidgetItem *> list = connectWidget->findItems(QString::fromStdString(*it), Qt::MatchExactly, COLUMN_PEERID);
+        QList<QTreeWidgetItem *> list = connectWidget->findItems(QString::fromStdString( (*it).toStdString() ), Qt::MatchExactly, COLUMN_PEERID);
 		if (list.size() == 1) {
 			item = list.front();
 		} else {
@@ -451,7 +451,7 @@ void NetworkDialog::insertConnect()
 				item -> setText(COLUMN_PEERNAME, QString::fromUtf8(detail.name.c_str()));
 
 				/* (4) key id */
-				item -> setText(COLUMN_PEERID, QString::fromStdString(detail.id));
+				item -> setText(COLUMN_PEERID, QString::fromStdString(detail.id.toStdString()));
 		}
 
         //QString TrustLevelString ;
@@ -548,7 +548,7 @@ void NetworkDialog::insertConnect()
 	rsPeers->getGPGDetails(rsPeers->getGPGOwnId(), ownGPGDetails);
 	/* make a widget per friend */
 	QTreeWidgetItem *self_item;
-    QList<QTreeWidgetItem *> list = connectWidget->findItems(QString::fromStdString(ownGPGDetails.gpg_id), Qt::MatchExactly, COLUMN_PEERID);
+    QList<QTreeWidgetItem *> list = connectWidget->findItems(QString::fromStdString(ownGPGDetails.gpg_id.toStdString()), Qt::MatchExactly, COLUMN_PEERID);
 	if (list.size() == 1) {
 		self_item = list.front();
 	} else {
@@ -559,7 +559,7 @@ void NetworkDialog::insertConnect()
     self_item->setIcon(COLUMN_CHECK,(QIcon(IMAGE_AUTHED)));
 	self_item->setText(COLUMN_PEERNAME, QString::fromUtf8(ownGPGDetails.name.c_str()) + " (" + tr("yourself") + ")");
     self_item->setText(COLUMN_I_AUTH_PEER,"N/A");
-	self_item->setText(COLUMN_PEERID, QString::fromStdString(ownGPGDetails.id));
+	self_item->setText(COLUMN_PEERID, QString::fromStdString(ownGPGDetails.id.toStdString()));
 
 	// Color each Background column in the Network Tab except the first one => 1-9
     for(int i=0;i<COLUMN_COUNT;++i)
