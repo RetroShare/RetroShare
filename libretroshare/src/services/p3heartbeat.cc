@@ -23,6 +23,8 @@
  *
  */
 
+#include <time.h>
+
 #include "services/p3heartbeat.h"
 #include "serialiser/rsheartbeatitems.h"
 
