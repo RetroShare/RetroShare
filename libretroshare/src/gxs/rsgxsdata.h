@@ -75,7 +75,7 @@ public:
 
     uint32_t    mGroupStatus;
     uint32_t    mRecvTS;
-    std::string mOriginator;
+    RsPeerId    mOriginator;
     std::string mInternalCircle;
     std::string mHash;
 };

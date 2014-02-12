@@ -12,6 +12,7 @@
 #include <vector>
 #include <string>
 #include <inttypes.h>
+#include <retroshare/rstypes.h>
 
 
 typedef std::string RsGxsGroupId;
@@ -77,7 +78,7 @@ public:
 
     uint32_t    mGroupStatus;
     std::string mServiceString; // Service Specific Free-Form extra storage.
-    std::string mOriginator;
+    RsPeerId mOriginator;
     std::string mInternalCircle;
 };
 

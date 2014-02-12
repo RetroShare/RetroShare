@@ -154,7 +154,7 @@ void RsGxsNetService::syncWithPeers()
                 uint32_t updateTS = 0;
                 if(mui)
                 {
-                    std::map<RsPeerId, uint32_t>::const_iterator cit2 = mui->msgUpdateTS.find(*vit);
+                    std::map<RsGxsGroupId, uint32_t>::const_iterator cit2 = mui->msgUpdateTS.find(*vit);
 
                     if(cit2 != mui->msgUpdateTS.end())
                     {
@@ -1627,8 +1627,8 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
 		}
 	}
 
-	std::map<RsPeerId, RsGxsGrpMetaData*> grpMetaMap;
-	std::map<RsPeerId, RsGxsGrpMetaData*>::const_iterator metaIter;
+    std::map<RsGxsGroupId, RsGxsGrpMetaData*> grpMetaMap;
+    std::map<RsGxsGroupId, RsGxsGrpMetaData*>::const_iterator metaIter;
 	mDataStore->retrieveGxsGrpMetaData(grpMetaMap);
 
 	// now do compare and add loop
@@ -1705,7 +1705,7 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
 	}
 
 	// clean up meta data
-	std::map<RsPeerId, RsGxsGrpMetaData*>::iterator mit = grpMetaMap.begin();
+    std::map<RsGxsGroupId, RsGxsGrpMetaData*>::iterator mit = grpMetaMap.begin();
 
 	for(; mit != grpMetaMap.end(); mit++)
 		delete mit->second;

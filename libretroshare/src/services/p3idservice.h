@@ -264,7 +264,7 @@ virtual int  getPrivateKey(const RsGxsId &id, RsTlvSecurityKey &key);
 
         // get Reputation.
 virtual bool haveReputation(const RsGxsId &id);
-virtual bool loadReputation(const RsGxsId &id, const std::list<std::string>& peers);
+virtual bool loadReputation(const RsGxsId &id, const std::list<RsPeerId>& peers);
 virtual bool getReputation(const RsGxsId &id, GixsReputation &rep);
 
 

@@ -96,8 +96,8 @@
  * as these will be used very frequently.
  *****/
 
-typedef std::string PeerId; // SHOULD BE REMOVED => RsPeerId (SSLID)
-typedef std::string RsPgpId;
+typedef RsPeerId  PeerId; // SHOULD BE REMOVED => RsPeerId (SSLID)
+typedef PGPIdType RsPgpId;
 typedef std::string RsGxsId;
 
 //
@@ -176,7 +176,7 @@ class RsGixsReputation
 public:
 	// get Reputation.
     virtual bool haveReputation(const RsGxsId &id) = 0;
-    virtual bool loadReputation(const RsGxsId &id, const std::list<std::string>& peers) = 0;
+    virtual bool loadReputation(const RsGxsId &id, const std::list<RsPeerId>& peers) = 0;
     virtual bool getReputation(const RsGxsId &id, GixsReputation &rep) = 0;
 };
 

@@ -441,9 +441,9 @@ private:
 
 public:
 
-    typedef std::map<std::string, RsGxsMsgUpdateItem*> ClientMsgMap;
+    typedef std::map<RsPeerId, RsGxsMsgUpdateItem*> ClientMsgMap;
     typedef std::map<std::string, RsGxsServerMsgUpdateItem*> ServerMsgMap;
-    typedef std::map<std::string, RsGxsGrpUpdateItem*> ClientGrpMap;
+    typedef std::map<RsPeerId, RsGxsGrpUpdateItem*> ClientGrpMap;
 
 private:
 

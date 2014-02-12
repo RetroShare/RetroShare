@@ -308,7 +308,9 @@ RsGxsGrpMetaData* RsDataService::locked_getGrpMeta(RetroCursor &c)
     c.getString(COL_GRP_CIRCLE_ID, grpMeta->mCircleId);
     grpMeta->mCircleType = c.getInt32(COL_GRP_CIRCL_TYPE);
     c.getString(COL_GRP_INTERN_CIRCLE, grpMeta->mInternalCircle);
-    c.getString(COL_GRP_ORIGINATOR, grpMeta->mOriginator);
+
+    std::string s ; c.getString(COL_GRP_ORIGINATOR, s) ;
+    grpMeta->mOriginator = RsPeerId(s);
     grpMeta->mAuthenFlags = c.getInt32(COL_GRP_AUTHEN_FLAGS);
     grpMeta->mRecvTS = c.getInt32(COL_GRP_RECV_TS);
 
@@ -617,7 +619,7 @@ int RsDataService::storeGroup(std::map<RsNxsGrp *, RsGxsGrpMetaData *> &grp)
         cv.put(KEY_GRP_CIRCLE_ID, grpMetaPtr->mCircleId);
         cv.put(KEY_GRP_CIRCLE_TYPE, (int32_t)grpMetaPtr->mCircleType);
         cv.put(KEY_GRP_INTERNAL_CIRCLE, grpMetaPtr->mInternalCircle);
-        cv.put(KEY_GRP_ORIGINATOR, grpMetaPtr->mOriginator);
+        cv.put(KEY_GRP_ORIGINATOR, grpMetaPtr->mOriginator.toStdString());
         cv.put(KEY_GRP_AUTHEN_FLAGS, (int32_t)grpMetaPtr->mAuthenFlags);
         cv.put(KEY_PARENT_GRP_ID, grpMetaPtr->mParentGrpId);
         cv.put(KEY_NXS_HASH, grpMetaPtr->mHash);
@@ -710,7 +712,7 @@ int RsDataService::updateGroup(std::map<RsNxsGrp *, RsGxsGrpMetaData *> &grp)
         cv.put(KEY_GRP_CIRCLE_ID, grpMetaPtr->mCircleId);
         cv.put(KEY_GRP_CIRCLE_TYPE, (int32_t)grpMetaPtr->mCircleType);
         cv.put(KEY_GRP_INTERNAL_CIRCLE, grpMetaPtr->mInternalCircle);
-        cv.put(KEY_GRP_ORIGINATOR, grpMetaPtr->mOriginator);
+        cv.put(KEY_GRP_ORIGINATOR, grpMetaPtr->mOriginator.toStdString());
         cv.put(KEY_GRP_AUTHEN_FLAGS, (int32_t)grpMetaPtr->mAuthenFlags);
         cv.put(KEY_NXS_HASH, grpMetaPtr->mHash);
 
