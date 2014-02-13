@@ -196,11 +196,11 @@ class p3Msgs: public RsMsgs
 
 	  virtual bool createDistantChatInvite(const PGPIdType& pgp_id,time_t time_of_validity,std::string& encrypted_string) ;
 	  virtual bool getDistantChatInviteList(std::vector<DistantChatInviteInfo>& invites);
-	  virtual bool initiateDistantChatConnexion(const std::string& encrypted_string,time_t validity_time,std::string& hash,uint32_t& error_code) ;
-	  virtual bool initiateDistantChatConnexion(const std::string& hash,uint32_t& error_code) ;
-	  virtual bool getDistantChatStatus(const std::string& hash,uint32_t& status,PGPIdType& pgp_id) ;
-	  virtual bool closeDistantChatConnexion(const std::string& hash) ;
-	  virtual bool removeDistantChatInvite(const std::string& hash) ;
+	  virtual bool initiateDistantChatConnexion(const std::string& encrypted_string,time_t validity_time,DistantChatPeerId& pid,uint32_t& error_code) ;
+	  virtual bool initiateDistantChatConnexion(const DistantChatPeerId& pid,uint32_t& error_code) ;
+	  virtual bool getDistantChatStatus(const DistantChatPeerId& pid,uint32_t& status,PGPIdType& pgp_id) ;
+	  virtual bool closeDistantChatConnexion(const DistantChatPeerId& pid) ;
+	  virtual bool removeDistantChatInvite(const DistantChatPeerId& pid) ;
 
    private:
 
