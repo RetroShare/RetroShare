@@ -180,20 +180,30 @@ template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER> t
 		memcpy(bytes,mem,ID_SIZE_IN_BYTES) ;
 }
 
-static const int SSL_ID_SIZE              = 16 ;
+static const int SSL_ID_SIZE              = 16 ;	// = CERTSIGNLEN
+static const int CERT_SIGN_LEN            = 16 ;	// = CERTSIGNLEN
 static const int PGP_KEY_ID_SIZE          =  8 ;
 static const int PGP_KEY_FINGERPRINT_SIZE = 20 ;
 static const int SHA1_SIZE                = 20 ;
 
 // These constants are random, but should be different, in order to make the various IDs incompatible with each other.
 //
-static const uint32_t RS_GENERIC_ID_SSL_ID_TYPE          = 0x038439ff ;
-static const uint32_t RS_GENERIC_ID_PGP_ID_TYPE          = 0x80339f4f ;
-static const uint32_t RS_GENERIC_ID_SHA1_ID_TYPE         = 0x9540284e ;
-static const uint32_t RS_GENERIC_ID_PGP_FINGERPRINT_TYPE = 0x102943e3 ;
+static const uint32_t RS_GENERIC_ID_SSL_ID_TYPE          = 0x0001 ;
+static const uint32_t RS_GENERIC_ID_PGP_ID_TYPE          = 0x0002 ;
+static const uint32_t RS_GENERIC_ID_SHA1_ID_TYPE         = 0x0003 ;
+static const uint32_t RS_GENERIC_ID_PGP_FINGERPRINT_TYPE = 0x0004 ;
+static const uint32_t RS_GENERIC_ID_GXS_GROUP_ID_TYPE    = 0x0005 ;
+static const uint32_t RS_GENERIC_ID_GXS_ID_TYPE          = 0x0006 ;
+static const uint32_t RS_GENERIC_ID_GXS_MSG_ID_TYPE      = 0x0007 ;
+static const uint32_t RS_GENERIC_ID_GXS_CIRCLE_ID_TYPE   = 0x0008 ;
 
 typedef t_RsGenericIdType<  SSL_ID_SIZE             , false, RS_GENERIC_ID_SSL_ID_TYPE>          SSLIdType ;
 typedef t_RsGenericIdType<  PGP_KEY_ID_SIZE         , true,  RS_GENERIC_ID_PGP_ID_TYPE>          PGPIdType;
 typedef t_RsGenericIdType<  SHA1_SIZE               , false, RS_GENERIC_ID_SHA1_ID_TYPE>         Sha1CheckSum ;
 typedef t_RsGenericIdType<  PGP_KEY_FINGERPRINT_SIZE, true,  RS_GENERIC_ID_PGP_FINGERPRINT_TYPE> PGPFingerprintType ;
+
+typedef t_RsGenericIdType<  CERT_SIGN_LEN           , false, RS_GENERIC_ID_GXS_GROUP_ID_TYPE   > GXSGroupId ;
+typedef t_RsGenericIdType<  CERT_SIGN_LEN           , false, RS_GENERIC_ID_GXS_ID_TYPE         > GXSId ;
+typedef t_RsGenericIdType<  SHA1_SIZE               , false, RS_GENERIC_ID_GXS_MSG_ID_TYPE     > GXSMsgId ;
+typedef t_RsGenericIdType<  CERT_SIGN_LEN           , false, RS_GENERIC_ID_GXS_CIRCLE_ID_TYPE  > GXSCircleId ;
 
