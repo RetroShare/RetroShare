@@ -148,7 +148,7 @@ signals:
     void playFiles(QStringList files);
 
 private:
-    QString getPeerName(const std::string& peer_id) const ;
+    QString getPeerName(const RsPeerId &peer_id) const ;
 
     QStandardItemModel *DLListModel;
     QStandardItemModel *ULListModel;

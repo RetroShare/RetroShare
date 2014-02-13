@@ -1034,7 +1034,7 @@ int TransfersDialog::addItem(int row, const FileInfo &fileInfo)
 
 			QString peerName = getPeerName(transferInfo.peerId);
 			//unique combination: fileHash + peerId, variant: hash + peerName (too long)
-			QString hashFileAndPeerId = fileHash + QString::fromStdString(transferInfo.peerId);
+            QString hashFileAndPeerId = fileHash + QString::fromStdString(transferInfo.peerId.toStdString());
 			QString version;
 			std::string rsversion;
 			if (rsDisc->getPeerVersion(transferInfo.peerId, rsversion))
@@ -1309,7 +1309,7 @@ void TransfersDialog::insertTransfers()
 	std::list<std::string> upHashes;
 	rsFiles->FileUploads(upHashes);
 
-	std::string ownId = rsPeers->getOwnId();
+    RsPeerId ownId = rsPeers->getOwnId();
 
 	std::set<std::string> used_hashes ;
 
@@ -1376,9 +1376,9 @@ void TransfersDialog::insertTransfers()
 				pinfo.progress = (info.size>0)?((pit->transfered % chunk_size)*100.0/info.size):0 ;
 			}
 
-			addUploadItem("", fileName, fileHash, fileSize, pinfo, dlspeed, source,QString::fromStdString(pit->peerId),  status, completed, remaining);
+            addUploadItem("", fileName, fileHash, fileSize, pinfo, dlspeed, source,QString::fromStdString(pit->peerId.toStdString()),  status, completed, remaining);
 
-			used_hashes.insert(fileHash.toStdString() + pit->peerId) ;
+            used_hashes.insert(fileHash.toStdString() + pit->peerId.toStdString()) ;
 		}
 	}
 	
@@ -1402,7 +1402,7 @@ void TransfersDialog::insertTransfers()
 	ui.uploadsList->setSortingEnabled(true);
 }
 
-QString TransfersDialog::getPeerName(const std::string& id) const
+QString TransfersDialog::getPeerName(const RsPeerId& id) const
 {
 	QString res = QString::fromUtf8(rsPeers->getPeerName(id).c_str()) ;
 
@@ -1410,7 +1410,7 @@ QString TransfersDialog::getPeerName(const std::string& id) const
 	// connect mgr). In such a case their id can suitably hold for a name.
 	//
 	if(res == "")
-		return QString::fromStdString(id) ;
+        return QString::fromStdString(id.toStdString()) ;
 	else
 		return res ;
 }

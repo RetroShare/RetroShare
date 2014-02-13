@@ -764,7 +764,7 @@ void NotifyQt::UpdateGUI()
 	{
 		uint32_t sysid;
 		uint32_t type;
-		std::string title, id, msg;
+        std::string title, id, msg;
 
 		if (rsNotify->NotifyPopupMessage(type, id, title, msg))
 		{
@@ -811,7 +811,7 @@ void NotifyQt::UpdateGUI()
 				case RS_POPUP_CHAT:
 					if (popupflags & RS_POPUP_CHAT)
 					{
-						ChatDialog *chatDialog = ChatDialog::getChat(id, 0);
+                        ChatDialog *chatDialog = ChatDialog::getChat(RsPeerId(id), 0);
 						ChatWidget *chatWidget;
 						if (chatDialog && (chatWidget = chatDialog->getChatWidget()) && chatWidget->isActive()) {
 							// do not show when active
@@ -838,7 +838,7 @@ void NotifyQt::UpdateGUI()
 				case RS_POPUP_CHATLOBBY:
 					if (popupflags & RS_POPUP_CHATLOBBY)
 					{
-						ChatDialog *chatDialog = ChatDialog::getChat(id, 0);
+                        ChatDialog *chatDialog = ChatDialog::getChat(RsPeerId(id), 0);
 						ChatWidget *chatWidget;
 						if (chatDialog && (chatWidget = chatDialog->getChatWidget()) && chatWidget->isActive()) {
 							// do not show when active

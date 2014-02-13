@@ -34,11 +34,11 @@ class ChatDialog : public QWidget
 	Q_OBJECT
 
 public:
-	static ChatDialog *getExistingChat(const std::string &peerId);
-	static ChatDialog *getChat(const std::string &peerId, uint chatflags);
+    static ChatDialog *getExistingChat(const RsPeerId &peerId);
+    static ChatDialog *getChat(const RsPeerId &peerId, uint chatflags);
 	static void cleanupChat();
-    static void chatFriend(const std::string &peerId, bool forceFocus = true);
-	static void closeChat(const std::string &peerId);
+    static void chatFriend(const RsPeerId &peerId, bool forceFocus = true);
+    static void closeChat(const RsPeerId &peerId);
 	static void chatChanged(int list, int type);
 
 	virtual void showDialog(uint /*chatflags*/) {}
@@ -50,7 +50,7 @@ public:
 	void addToParent(QWidget *newParent);
 	void removeFromParent(QWidget *oldParent);
 
-	std::string getPeerId() { return peerId; }
+    RsPeerId getPeerId() { return peerId; }
 	QString getTitle();
 	bool hasNewMessages();
 	bool isTyping();
@@ -80,14 +80,14 @@ protected:
 	void closeEvent(QCloseEvent *event);
 	virtual bool canClose() { return true; }
 
-	virtual QString getPeerName(const std::string& sslid) const ;	// can be overloaded for chat dialogs that have specific peers
+    virtual QString getPeerName(const RsPeerId &sslid) const ;	// can be overloaded for chat dialogs that have specific peers
 
-	virtual void init(const std::string &peerId, const QString &title);
+    virtual void init(const RsPeerId &peerId, const QString &title);
 	virtual void onChatChanged(int /*list*/, int /*type*/) {}
 
 	virtual void addIncomingChatMsg(const ChatInfo& info) = 0;
 
-	std::string peerId;
+    RsPeerId peerId;
 };
 
 #endif // CHATDIALOG_H

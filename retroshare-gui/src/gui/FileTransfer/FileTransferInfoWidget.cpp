@@ -227,7 +227,7 @@ void FileTransferInfoWidget::draw(const FileInfo& nfo,const FileChunksInfo& info
 		 int nb_src = 0 ;
 		 int chunk_num = (int)floor(i/float(availability_map_size_X)*(nb_chunks-1)) ;
 
-		 for(std::map<std::string,CompressedChunkMap>::const_iterator it(info.compressed_peer_availability_maps.begin());it!=info.compressed_peer_availability_maps.end();++it)
+         for(std::map<RsPeerId,CompressedChunkMap>::const_iterator it(info.compressed_peer_availability_maps.begin());it!=info.compressed_peer_availability_maps.end();++it)
 			 nb_src += it->second[chunk_num] ;
 
 		 painter->setPen(QColor::fromHsv(200,std::min(255,50*nb_src),200)) ; // the more sources, the more saturated

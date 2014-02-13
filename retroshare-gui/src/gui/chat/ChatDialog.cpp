@@ -61,7 +61,7 @@ void ChatDialog::closeEvent(QCloseEvent *event)
 	emit dialogClose(this);
 }
 
-void ChatDialog::init(const std::string &peerId, const QString &title)
+void ChatDialog::init(const RsPeerId &peerId, const QString &title)
 {
 	this->peerId = peerId;
 
@@ -74,7 +74,7 @@ void ChatDialog::init(const std::string &peerId, const QString &title)
 	}
 }
 
-/*static*/ ChatDialog *ChatDialog::getExistingChat(const std::string &peerId)
+/*static*/ ChatDialog *ChatDialog::getExistingChat(const RsPeerId &peerId)
 {
 	std::map<std::string, ChatDialog*>::iterator it;
 	if (chatDialogs.end() != (it = chatDialogs.find(peerId))) {
@@ -195,7 +195,7 @@ void ChatDialog::init(const std::string &peerId, const QString &title)
 	}
 }
 
-/*static*/ void ChatDialog::closeChat(const std::string& peerId)
+/*static*/ void ChatDialog::closeChat(const RsPeerId &peerId)
 {
 	ChatDialog *chatDialog = getExistingChat(peerId);
 
@@ -204,7 +204,7 @@ void ChatDialog::init(const std::string &peerId, const QString &title)
 	}
 }
 
-/*static*/ void ChatDialog::chatFriend(const std::string &peerId, const bool forceFocus)
+/*static*/ void ChatDialog::chatFriend(const RsPeerId &peerId, const bool forceFocus)
 {
 	if (peerId.empty()){
 		return;
@@ -298,7 +298,7 @@ bool ChatDialog::hasNewMessages()
 
 	return false;
 }
-QString ChatDialog::getPeerName(const std::string& id) const
+QString ChatDialog::getPeerName(const RsPeerId& id) const
 {
 	return QString::fromUtf8(  rsPeers->getPeerName(id).c_str() ) ;
 }

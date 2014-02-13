@@ -873,7 +873,7 @@ void FriendsDialog::setCurrentFileName(const QString &fileName)
 
 void FriendsDialog::on_actionMessageHistory_triggered()
 {
-    ImHistoryBrowser imBrowser("", ui.lineEdit, this);
+    ImHistoryBrowser imBrowser(RsPeerId(), ui.lineEdit, this);
     imBrowser.exec();
 }
 

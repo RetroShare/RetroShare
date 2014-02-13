@@ -14,7 +14,7 @@ class TurtleRouterDialog: public RsAutoUpdatePage, public Ui::TurtleRouterDialog
 		~TurtleRouterDialog();
 		
 		// Cache for peer names.
-		static QString getPeerName(const std::string& peer_id) ;
+        static QString getPeerName(const RsPeerId &peer_id) ;
 
 	private:
 		void updateTunnelRequests(	const std::vector<std::vector<std::basic_string<char> > >&, 

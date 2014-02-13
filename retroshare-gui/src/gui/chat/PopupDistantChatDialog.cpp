@@ -24,6 +24,7 @@
 #include <QMessageBox>
 
 #include <retroshare/rsstatus.h>
+#include <retroshare/rspeers.h>
 
 #include "RsAutoUpdatePage.h"
 #include "PopupDistantChatDialog.h"
@@ -54,10 +55,10 @@ PopupDistantChatDialog::PopupDistantChatDialog(QWidget *parent, Qt::WindowFlags 
 	updateDisplay() ;
 }
 
-void PopupDistantChatDialog::init(const std::string& hash,const QString & title)
+void PopupDistantChatDialog::init(const DistantChatPeerId& pid,const QString & title)
 {
-	_hash = hash ;
-	PopupChatDialog::init(hash,title) ;
+    _pid = pid ;
+    PopupChatDialog::init(pid,title) ;
 }
 
 void PopupDistantChatDialog::updateDisplay()
@@ -73,8 +74,8 @@ void PopupDistantChatDialog::updateDisplay()
 	//
 	
 	uint32_t status= RS_DISTANT_CHAT_STATUS_UNKNOWN;
-	std::string pgp_id ;
-	rsMsgs->getDistantChatStatus(_hash,status,pgp_id) ;
+    RsPgpId pgp_id ;
+    rsMsgs->getDistantChatStatus(_pid,status,pgp_id) ;
 
 	switch(status)
 	{
@@ -112,18 +113,18 @@ void PopupDistantChatDialog::updateDisplay()
 
 void PopupDistantChatDialog::closeEvent(QCloseEvent *e)
 {
-	//std::cerr << "Closing window => closing distant chat for hash " << _hash << std::endl;
+    //std::cerr << "Closing window => closing distant chat for hash " << _pid << std::endl;
 
 	uint32_t status= RS_DISTANT_CHAT_STATUS_UNKNOWN;
-	std::string pgp_id ;
-	rsMsgs->getDistantChatStatus(_hash,status,pgp_id) ;
+    RsPgpId pgp_id ;
+    rsMsgs->getDistantChatStatus(_pid,status,pgp_id) ;
 
 	if(status != RS_DISTANT_CHAT_STATUS_REMOTELY_CLOSED)
 	{
 		QString msg = tr("Closing this window will end the conversation, notify the peer and remove the encrypted tunnel.") ;
 
 		if(QMessageBox::Ok == QMessageBox::critical(NULL,tr("Kill the tunnel?"),msg, QMessageBox::Ok | QMessageBox::Cancel))
-			rsMsgs->closeDistantChatConnexion(_hash) ;
+            rsMsgs->closeDistantChatConnexion(_pid) ;
 		else
 		{
 			e->ignore() ;
@@ -136,13 +137,13 @@ void PopupDistantChatDialog::closeEvent(QCloseEvent *e)
 	PopupChatDialog::closeEvent(e) ;
 }
 
-QString PopupDistantChatDialog::getPeerName(const std::string& id) const
+QString PopupDistantChatDialog::getPeerName(const DistantChatPeerId &id) const
 {
 	uint32_t status ;
-	std::string pgp_id ; 
+    RsPgpId pgp_id ;
 
-	if(rsMsgs->getDistantChatStatus(_hash,status,pgp_id))
-		return ChatDialog::getPeerName(pgp_id) ;
+    if(rsMsgs->getDistantChatStatus(id,status,pgp_id))
+        return QString::fromStdString(rsPeers->getGPGName(pgp_id)) ;
 	else
 		return ChatDialog::getPeerName(id) ;
 }

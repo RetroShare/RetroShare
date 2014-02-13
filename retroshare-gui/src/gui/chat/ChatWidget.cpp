@@ -179,7 +179,7 @@ void ChatWidget::init(const std::string &peerId, const QString &title)
 
 	ui->titleLabel->setText(RsHtml::plainText(title));
 
-	std::string ownId = rsPeers->getOwnId();
+    RsPeerId ownId = rsPeers->getOwnId();
 	setName(QString::fromUtf8(rsPeers->getPeerName(ownId).c_str()));
 
 	ChatLobbyId lid;

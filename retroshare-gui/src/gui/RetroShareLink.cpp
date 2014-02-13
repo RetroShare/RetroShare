@@ -1263,10 +1263,10 @@ static void processList(const QStringList &list, const QString &textSingular, co
 						break ;
 					}
 
-					std::string hash  ;
+                    DistantChatPeerId dpid  ;
 					uint32_t error_code ;
 
-					if(!rsMsgs->initiateDistantChatConnexion(link._encrypted_chat_info.toStdString(),link._time_stamp,hash,error_code))
+                    if(!rsMsgs->initiateDistantChatConnexion(link._encrypted_chat_info.toStdString(),link._time_stamp,dpid,error_code))
 					{
 						QString error_msg ;
 						switch(error_code)
@@ -1283,7 +1283,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 						if(error_code == RS_DISTANT_CHAT_ERROR_UNKNOWN_KEY)
 							QMessageBox::information(NULL,QObject::tr("Chat connection is unauthenticated"),QObject::tr("Signature check failed!\nMake sure you know who you're talking to.")) ;
 
-						ChatDialog::chatFriend(hash);
+                        ChatDialog::chatFriend(dpid);
 					}
 				}
 				break ;

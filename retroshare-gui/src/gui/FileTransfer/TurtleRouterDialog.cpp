@@ -83,11 +83,11 @@ void TurtleRouterDialog::updateDisplay()
 
 }
 
-QString TurtleRouterDialog::getPeerName(const std::string& peer_id)
+QString TurtleRouterDialog::getPeerName(const RsPeerId& peer_id)
 {
-	static std::map<std::string, QString> names ;
+    static std::map<RsPeerId, QString> names ;
 
-	std::map<std::string,QString>::const_iterator it = names.find(peer_id) ;
+    std::map<RsPeerId,QString>::const_iterator it = names.find(peer_id) ;
 
 	if( it != names.end())
 		return it->second ;

@@ -96,15 +96,15 @@ void ProfileManager::fillIdentities()
 
 	QTreeWidgetItem *item;
 
-	std::list<std::string> pgpIds;
-	std::list<std::string>::iterator it;
+    std::list<RsPgpId> pgpIds;
+    std::list<RsPgpId>::iterator it;
 
 	if (RsAccounts::GetPGPLogins(pgpIds)) {
 		for (it = pgpIds.begin(); it != pgpIds.end(); it++) {
 			std::string name, email;
 			RsAccounts::GetPGPLoginDetails(*it, name, email);
 			std::cerr << "Adding PGPUser: " << name << " id: " << *it << std::endl;
-			QString gid = QString::fromStdString(*it);
+            QString gid = QString::fromStdString((*it).toStdString());
 
 			item = new RSTreeWidgetItem(NULL, 0);
 			item -> setText(COLUMN_NAME, QString::fromUtf8(name.c_str()));
@@ -125,8 +125,8 @@ void ProfileManager::exportIdentity()
 	if (!item)
 		return;
 
-	std::string gpgId = item->text(COLUMN_GID).toStdString();
-	if (gpgId.empty())
+    RsPgpId gpgId(item->text(COLUMN_GID).toStdString());
+    if (gpgId.isNull())
 		return;
 
 	QString fname = QFileDialog::getSaveFileName(this, tr("Export Identity"), "", tr("RetroShare Identity files (*.asc)"));
@@ -151,7 +151,7 @@ void ProfileManager::importIdentity()
 	if(fname.isNull())
 		return ;
 
-	std::string gpg_id ;
+    RsPgpId gpg_id ;
 	std::string err_string ;
 
 	if(!RsAccounts::ImportIdentity(fname.toUtf8().constData(),gpg_id,err_string))
@@ -166,7 +166,9 @@ void ProfileManager::importIdentity()
 		RsAccounts::GetPGPLoginDetails(gpg_id, name, email);
 		std::cerr << "Adding PGPUser: " << name << " id: " << gpg_id << std::endl;
 
-		QMessageBox::information(this,tr("New identity imported"),tr("Your identity was imported successfully:")+" \n"+"\nName :"+QString::fromStdString(name)+"\nemail: " + QString::fromStdString(email)+"\nKey ID: "+QString::fromStdString(gpg_id)+"\n\n"+tr("You can use it now to create a new location.")) ;
+        QMessageBox::information(this,tr("New identity imported"),tr("Your identity was imported successfully:")+" \n"+"\nName :"
+                                 +QString::fromStdString(name)+"\nemail: " + QString::fromStdString(email)+"\nKey ID: "
+                                 +QString::fromStdString(gpg_id.toStdString())+"\n\n"+tr("You can use it now to create a new location.")) ;
 	}
 
 	fillIdentities();

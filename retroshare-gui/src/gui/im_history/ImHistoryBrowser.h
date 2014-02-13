@@ -43,7 +43,7 @@ class ImHistoryBrowser : public QDialog
 
 public:
     /** Default constructor */
-    ImHistoryBrowser(const std::string &peerId, QTextEdit *edit, QWidget *parent = 0);
+    ImHistoryBrowser(const RsPeerId &peerId, QTextEdit *edit, QWidget *parent = 0);
     /** Default destructor */
     virtual ~ImHistoryBrowser();
 
@@ -78,7 +78,7 @@ private:
 
     ImHistoryBrowserCreateItemsThread *m_createThread;
 
-    std::string m_peerId;
+    RsPeerId m_peerId;
     bool m_isPrivateChat;
     QTextEdit *textEdit;
     bool embedSmileys;
@@ -95,7 +95,7 @@ class ImHistoryBrowserCreateItemsThread : public QThread
     Q_OBJECT
 
 public:
-    ImHistoryBrowserCreateItemsThread(ImHistoryBrowser *parent, const std::string& peerId);
+    ImHistoryBrowserCreateItemsThread(ImHistoryBrowser *parent, const RsPeerId &peerId);
     ~ImHistoryBrowserCreateItemsThread();
 
     void run();
