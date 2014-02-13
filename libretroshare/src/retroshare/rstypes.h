@@ -39,11 +39,16 @@
 
 #define USE_NEW_CHUNK_CHECKING_CODE
 
+// This adds a level of indirection to types, so we can easily change them if needed
+//
 typedef std::string   RsCertId;
 typedef std::string   RsChanId;
 typedef std::string   RsMsgId;
 typedef std::string   RsAuthId;
+
 typedef SSLIdType     RsPeerId ;
+typedef PGPIdType     RsPgpId ;
+typedef Sha1CheckSum  RsFileHash ;
 
 const uint32_t FT_STATE_FAILED			= 0x0000 ;
 const uint32_t FT_STATE_OKAY				= 0x0001 ;

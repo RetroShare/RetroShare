@@ -47,14 +47,14 @@ bool AuthorPending::expired() const
 }
 
 bool AuthorPending::getAuthorRep(GixsReputation& rep,
-                                 const std::string& authorId, const std::string& peerId)
+                                 const std::string& authorId, const RsPeerId& peerId)
 {
 	if(mRep->haveReputation(authorId))
 	{
 		return mRep->getReputation(authorId, rep);
 	}
 
-        std::list<std::string> peers;
+        std::list<RsPeerId> peers;
         peers.push_back(peerId);
         mRep->loadReputation(authorId, peers);
 	return false;
@@ -70,12 +70,12 @@ GrpAuthEntry::GrpAuthEntry()
 
 
 
-MsgRespPending::MsgRespPending(RsGixsReputation* rep, const std::string& peerId, const MsgAuthorV& msgAuthV, int cutOff)
+MsgRespPending::MsgRespPending(RsGixsReputation* rep, const RsPeerId& peerId, const MsgAuthorV& msgAuthV, int cutOff)
  : AuthorPending(rep, time(NULL)), mPeerId(peerId), mMsgAuthV(msgAuthV), mCutOff(cutOff)
 {
 }
 
-GrpRespPending::GrpRespPending(RsGixsReputation* rep, const std::string& peerId, const GrpAuthorV& grpAuthV, int cutOff)
+GrpRespPending::GrpRespPending(RsGixsReputation* rep, const RsPeerId& peerId, const GrpAuthorV& grpAuthV, int cutOff)
  : AuthorPending(rep, time(NULL)), mPeerId(peerId), mGrpAuthV(grpAuthV), mCutOff(cutOff)
 {
 }

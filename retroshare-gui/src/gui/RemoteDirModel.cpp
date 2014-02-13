@@ -960,7 +960,7 @@ void RetroshareDirModel::downloadSelected(const QModelIndexList &list)
         {
             std::cerr << "RetroshareDirModel::downloadSelected() Calling File Request";
             std::cerr << std::endl;
-            std::list<std::string> srcIds;
+            std::list<RsPeerId> srcIds;
             srcIds.push_back(details.id);
             rsFiles -> FileRequest(details.name, details.hash,
                     details.count, "", RS_FILE_REQ_ANONYMOUS_ROUTING, srcIds);
@@ -980,7 +980,7 @@ void RetroshareDirModel::downloadDirectory(const DirDetails & dirDetails, int pr
 {
 	if (dirDetails.type & DIR_TYPE_FILE)
 	{
-		std::list<std::string> srcIds;
+        std::list<RsPeerId> srcIds;
 		QString cleanPath = QDir::cleanPath(QString::fromUtf8(rsFiles->getDownloadDirectory().c_str()) + "/" + QString::fromUtf8(dirDetails.path.substr(prefixLen).c_str()));
 
 		srcIds.push_back(dirDetails.id);

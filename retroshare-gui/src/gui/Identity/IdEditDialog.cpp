@@ -127,11 +127,11 @@ void IdEditDialog::updateIdType(bool pseudo)
 	else
 	{
 		/* get GPG Details from rsPeers */
-		std::string gpgid  = rsPeers->getGPGOwnId();
+        RsPgpId gpgid  = rsPeers->getGPGOwnId();
 		RsPeerDetails details;
-		rsPeers->getPeerDetails(gpgid, details);
+        rsPeers->getGPGDetails(gpgid, details);
 
-		ui.lineEdit_GpgId->setText(QString::fromStdString(gpgid));
+        ui.lineEdit_GpgId->setText(QString::fromStdString(gpgid.toStdString()));
 		ui.lineEdit_GpgHash->setText(tr("To be generated"));
 		ui.lineEdit_GpgName->setText(QString::fromUtf8(details.name.c_str()));
 	}

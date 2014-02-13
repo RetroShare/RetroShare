@@ -57,7 +57,7 @@ StartDialog::StartDialog(QWidget *parent)
 		for(it = accountIds.begin(), i = 0; it != accountIds.end(); it++, i++)
 		{
 			const QVariant & userData = QVariant(QString::fromStdString((*it).toStdString()));
-			PGPIdType gpgid ;
+			RsPgpId gpgid ;
 			std::string name, email, location;
 			RsAccounts::GetAccountDetails(*it, gpgid, name, email, location);
 			QString accountName = QString::fromUtf8(name.c_str()) + " (" + QString::fromStdString(gpgid.toStdString()).right(8) + ") - " + QString::fromUtf8(location.c_str());

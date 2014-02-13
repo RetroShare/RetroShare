@@ -67,8 +67,8 @@ public:
     void  setTitleText(const QString &title, enumMessageType type = NORMAL);
     void  setQuotedMsg(const QString &msg, const QString &header);
     void  setMsgText(const QString &msg, bool asHtml = false);
-    void  addRecipient(enumType type, const std::string &id, bool group);
-    void  addRecipient(enumType type, const std::string &hash, const std::string& pgp_id) ;
+    void  addRecipient(enumType type, const RsPeerId &id, bool group);
+    void  addRecipient(enumType type, const Sha1CheckSum &hash, const RsPgpId &pgp_id) ;
 
 public slots:
     /* actions to take.... */
@@ -220,7 +220,7 @@ private:
     Ui::MessageComposer ui;
 
     std::list<FileInfo> _recList ;
-	 std::map<std::string,std::string> _distant_peers ;	// pairs (hash,pgp_id)
+     std::map<RsFileHash,RsPgpId> _distant_peers ;	// pairs (hash,pgp_id)
 };
 
 #endif

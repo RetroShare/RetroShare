@@ -325,7 +325,7 @@ void SearchDialog::searchtableWidgetCostumPopupMenu( QPoint /*point*/ )
     contextMnu.exec(QCursor::pos());
 }
 
-void SearchDialog::getSourceFriendsForHash(const std::string& hash,std::list<std::string>& srcIds)
+void SearchDialog::getSourceFriendsForHash(const std::string& hash,std::list<RsPeerId>& srcIds)
 {
 	std::cerr << "Searching sources for file " << hash << std::endl ;
 	srcIds.clear();
@@ -359,7 +359,7 @@ void SearchDialog::download()
 		 {
 			 std::cerr << "SearchDialog::download() Calling File Request";
 			 std::cerr << std::endl;
-			 std::list<std::string> srcIds;
+             std::list<RsPeerId> srcIds;
 
 			 std::string hash = item->text(SR_HASH_COL).toStdString();
 			 getSourceFriendsForHash(hash,srcIds) ;
@@ -369,7 +369,7 @@ void SearchDialog::download()
 			 else
 			 {
 				 std::cout << "isuing file request from search dialog: -" << (item->text(SR_NAME_COL)).toStdString() << "-" << hash << "-" << (item->text(SR_SIZE_COL)).toULongLong() << "-ids=" ;
-				 for(std::list<std::string>::const_iterator it(srcIds.begin());it!=srcIds.end();++it)
+                 for(std::list<RsPeerId>::const_iterator it(srcIds.begin());it!=srcIds.end();++it)
 					 std::cout << *it << "-" << std::endl ;
 			 }
 		 }
@@ -382,7 +382,7 @@ void SearchDialog::downloadDirectory(const QTreeWidgetItem *item, const QString 
 {
 	if (!item->childCount()) 
 	{
-		std::list<std::string> srcIds;
+        std::list<RsPeerId> srcIds;
 
 		QString path = QString::fromStdString(rsFiles->getDownloadDirectory())
                                                 + "/" + base + "/";
@@ -403,7 +403,7 @@ void SearchDialog::downloadDirectory(const QTreeWidgetItem *item, const QString 
 			<< "-" << hash
 			<< "-" << (item->text(SR_SIZE_COL)).toULongLong()
 			<< "-ids=" ;
-		for(std::list<std::string>::const_iterator it(srcIds.begin());
+        for(std::list<RsPeerId>::const_iterator it(srcIds.begin());
 				it!=srcIds.end();++it)
 			std::cout << *it << "-" << std::endl ;
 	} else {

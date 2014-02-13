@@ -82,7 +82,8 @@ void CreateMsgLinkDialog::createLink()
 
 		time_t validity_duration = computeValidityDuration() ;
 		FriendSelectionWidget::IdType type ;
-		std::string current_pgp_id = friendSelectionWidget->selectedId(type) ;
+        std::string scurrent_pgp_id = friendSelectionWidget->selectedId(type) ;
+        RsPgpId current_pgp_id(scurrent_pgp_id) ;
 
 		std::string encrypted_string ;
 
@@ -90,7 +91,7 @@ void CreateMsgLinkDialog::createLink()
 
 		RetroShareLink link ;
 
-		if(!link.createPrivateChatInvite(validity_duration + time(NULL),QString::fromStdString(current_pgp_id),QString::fromStdString(encrypted_string)) )
+        if(!link.createPrivateChatInvite(validity_duration + time(NULL),QString::fromStdString(scurrent_pgp_id),QString::fromStdString(encrypted_string)) )
 			std::cerr << "Cannot create link." << std::endl;
 
 		QList<RetroShareLink> links ;

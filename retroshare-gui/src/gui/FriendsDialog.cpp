@@ -146,7 +146,7 @@ FriendsDialog::FriendsDialog(QWidget *parent)
         int messageCount = Settings->getPublicChatHistoryCount();
         if (messageCount > 0) {
             std::list<HistoryMsg> historyMsgs;
-            rsHistory->getMessages("", historyMsgs, messageCount);
+            rsHistory->getMessages(RsPeerId(), historyMsgs, messageCount);
 
             std::list<HistoryMsg>::iterator it;
             for (it = historyMsgs.begin(); it != historyMsgs.end(); it++) {
@@ -394,7 +394,7 @@ void FriendsDialog::updateStatusString(const QString& peer_id, const QString& st
     std::cerr << "FriendsDialog: received group chat typing info. updating gui." << std::endl ;
 #endif
 
-    QString status = QString::fromUtf8(rsPeers->getPeerName(peer_id.toStdString()).c_str()) + " " + tr(status_string.toLatin1());
+    QString status = QString::fromUtf8(rsPeers->getPeerName(RsPeerId(peer_id.toStdString())).c_str()) + " " + tr(status_string.toLatin1());
     ui.statusStringLabel->setText(status) ; // displays info for 5 secs.
 
     QTimer::singleShot(5000,this,SLOT(resetStatusBar())) ;
@@ -750,7 +750,7 @@ void FriendsDialog::on_actionDelete_Chat_History_triggered()
 {
     if ((QMessageBox::question(this, "RetroShare", tr("Do you really want to physically delete the history?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes)) == QMessageBox::Yes) {
         on_actionClear_Chat_History_triggered();
-        rsHistory->clear("");
+        rsHistory->clear(RsPeerId());
     }
 }
 
@@ -821,7 +821,7 @@ void FriendsDialog::fileHashingFinished(QList<HashedFile> hashedFiles)
         HashedFile& hashedFile = *it;
         RetroShareLink link;
 
-        if (!link.createExtraFile(hashedFile.filename, hashedFile.size, QString::fromStdString(hashedFile.hash),QString::fromStdString(rsPeers->getOwnId())))
+        if (!link.createExtraFile(hashedFile.filename, hashedFile.size, QString::fromStdString(hashedFile.hash),QString::fromStdString(rsPeers->getOwnId().toStdString())))
             continue;
 
         mesgString += link.toHtmlSize();

@@ -110,7 +110,7 @@ public:
 
 private:
     ImHistoryBrowser *m_historyBrowser;
-    std::string m_peerId;
+    RsPeerId m_peerId;
     volatile bool stopped;
 };
 

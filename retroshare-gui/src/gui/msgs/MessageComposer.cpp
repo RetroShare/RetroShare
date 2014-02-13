@@ -1575,7 +1575,7 @@ void MessageComposer::editingRecipientFinished()
     lineEdit->setText(text);
 }
 
-void MessageComposer::addRecipient(enumType type, const std::string& hash,const std::string& pgp_id)
+void MessageComposer::addRecipient(enumType type, const Sha1CheckSum& hash,const RsPgpId& pgp_id)
 {
 	_distant_peers[hash] = pgp_id ;
 
@@ -1601,9 +1601,9 @@ void MessageComposer::addRecipient(enumType type, const std::string& hash,const 
 
 	setRecipientToRow(row, type, hash, false);
 }
-void MessageComposer::addRecipient(enumType type, const std::string &id, bool group)
+void MessageComposer::addRecipient(enumType type, const RsPeerId &id, bool group)
 {
-    std::list<std::string> sslIds;
+    std::list<RsPeerId> sslIds;
     if (group) {
         sslIds.push_back(id);
     } else {
@@ -1613,23 +1613,23 @@ void MessageComposer::addRecipient(enumType type, const std::string &id, bool gr
             return;
         }
 
-        if (detail.isOnlyGPGdetail) 
-		  {
-            if( (!rsPeers->getAssociatedSSLIds(id, sslIds)) || sslIds.empty()) 
-				{
-					std::string hash ;
-					if(rsMsgs->getDistantMessageHash(id,hash))
-						addRecipient(type, hash, id);
-					else
-					{
-						QMessageBox::warning(this,tr("PGP key unknown"),tr("You dont have the PGP key of the message sender. So you cannot respond!"),QMessageBox::Ok) ;
-						return;
-					}
-				}
-        } 
-		  else {
+//        if (detail.isOnlyGPGdetail)
+//		  {
+//            if( (!rsPeers->getAssociatedSSLIds(id, sslIds)) || sslIds.empty())
+//				{
+//					std::string hash ;
+//					if(rsMsgs->getDistantMessageHash(id,hash))
+//						addRecipient(type, hash, id);
+//					else
+//					{
+//						QMessageBox::warning(this,tr("PGP key unknown"),tr("You dont have the PGP key of the message sender. So you cannot respond!"),QMessageBox::Ok) ;
+//						return;
+//					}
+//				}
+//        }
+//		  else {
             sslIds.push_back(id);
-        }
+//        }
     }
     std::list<std::string>::const_iterator sslIt;
     for (sslIt = sslIds.begin(); sslIt != sslIds.end(); sslIt++) {

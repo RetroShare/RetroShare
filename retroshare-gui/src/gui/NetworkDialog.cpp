@@ -203,7 +203,7 @@ void NetworkDialog::connectTreeWidgetCostumPopupMenu( QPoint /*point*/ )
 
 	QMenu *contextMnu = new QMenu;
 
-	PGPIdType peer_id(wi->text(COLUMN_PEERID).toStdString()) ;
+    RsPgpId peer_id(wi->text(COLUMN_PEERID).toStdString()) ;
 
 	// That's what context menus are made for
 	RsPeerDetails detail;
@@ -231,15 +231,15 @@ void NetworkDialog::connectTreeWidgetCostumPopupMenu( QPoint /*point*/ )
 
 void NetworkDialog::removeUnusedKeys()
 {
-	std::list<PGPIdType> pre_selected ;
-	std::list<PGPIdType> ids ;
+    std::list<RsPgpId> pre_selected ;
+    std::list<RsPgpId> ids ;
 
 	rsPeers->getGPGAllList(ids) ;
 	RsPeerDetails details ;
 	time_t now = time(NULL) ;
     time_t THREE_MONTHS = 3*31*24*60*60 ;//3*DayPerMonth*HoursPerDay*MinPerHour*SecPerMin
 
-	for(std::list<PGPIdType>::const_iterator it(ids.begin());it!=ids.end();++it)
+    for(std::list<RsPgpId>::const_iterator it(ids.begin());it!=ids.end();++it)
 	{
 		rsPeers->getGPGDetails(*it,details) ;
 
@@ -255,13 +255,13 @@ void NetworkDialog::removeUnusedKeys()
 		}
 	}
 
-	std::list<PGPIdType> selected = FriendSelectionDialog::selectFriends(NULL,
+    std::list<RsPgpId> selected = FriendSelectionDialog::selectFriends_PGP(NULL,
 			tr("Clean keyring"),
 			tr("The selected keys below haven't been used in the last 3 months. \nDo you want to delete them permanently ? \n\nNotes: Your old keyring will be backed up.\n    The removal may fail when running multiple Retroshare instances on the same machine."),FriendSelectionWidget::MODUS_CHECK,FriendSelectionWidget::SHOW_GPG | FriendSelectionWidget::SHOW_NON_FRIEND_GPG,
-			FriendSelectionWidget::IDTYPE_GPG, pre_selected) ;
+             pre_selected) ;
 	
 	std::cerr << "Removing these keys from the keyring: " << std::endl;
-	for(std::list<PGPIdType>::const_iterator it(selected.begin());it!=selected.end();++it)
+    for(std::list<RsPgpId>::const_iterator it(selected.begin());it!=selected.end();++it)
 		std::cerr << "  " << *it << std::endl;
 
 	std::string backup_file ;
@@ -298,7 +298,7 @@ void NetworkDialog::removeUnusedKeys()
 void NetworkDialog::denyFriend()
 {
 	QTreeWidgetItem *wi = getCurrentNeighbour();
-	PGPIdType peer_id( wi->text(COLUMN_PEERID).toStdString() );
+    RsPgpId peer_id( wi->text(COLUMN_PEERID).toStdString() );
 	rsPeers->removeFriend(peer_id) ;
 
 	securedUpdateDisplay();
@@ -341,7 +341,7 @@ void NetworkDialog::copyLink()
 		return;
 	}
 
-	std::string peer_id = wi->text(COLUMN_PEERID).toStdString() ;
+    RsPgpId peer_id ( wi->text(COLUMN_PEERID).toStdString() ) ;
 
 	QList<RetroShareLink> urls;
 	RetroShareLink link;
@@ -365,11 +365,11 @@ void NetworkDialog::sendDistantMessage()
 	}
 
 	Sha1CheckSum hash ;
-	PGPIdType mGpgId(wi->text(COLUMN_PEERID).toStdString()) ;
+    RsPgpId mGpgId(wi->text(COLUMN_PEERID).toStdString()) ;
 
 	if(rsMsgs->getDistantMessageHash(mGpgId,hash))
 	{
-		nMsgDialog->addRecipient(MessageComposer::TO, hash.toStdString(), mGpgId.toStdString());
+        nMsgDialog->addRecipient(MessageComposer::TO, hash, mGpgId);
 		nMsgDialog->show();
 		nMsgDialog->activateWindow();
 	}
@@ -397,8 +397,8 @@ void NetworkDialog::insertConnect()
 //
 //	last_time = now ;
 
-	std::list<PGPIdType> neighs; //these are GPG ids
-	std::list<PGPIdType>::iterator it;
+    std::list<RsPgpId> neighs; //these are GPG ids
+    std::list<RsPgpId>::iterator it;
 	rsPeers->getGPGAllList(neighs);
 
 	/* get a link to the table */
@@ -408,7 +408,7 @@ void NetworkDialog::insertConnect()
 	int index = 0;
 	while (index < connectWidget->topLevelItemCount()) 
 	{
-		PGPIdType gpg_widget_id( (connectWidget->topLevelItem(index))->text(COLUMN_PEERID).toStdString() );
+        RsPgpId gpg_widget_id( (connectWidget->topLevelItem(index))->text(COLUMN_PEERID).toStdString() );
 		RsPeerDetails detail;
 		if ( (!rsPeers->getGPGDetails(gpg_widget_id, detail)) || (ui.onlyTrustedKeys->isChecked() && (detail.validLvl < RS_TRUST_LVL_MARGINAL && !detail.accept_connection))) 
 			delete (connectWidget->takeTopLevelItem(index));

@@ -4,25 +4,58 @@
 #include <QDialogButtonBox>
 #include "FriendSelectionDialog.h"
 
-std::list<std::string> FriendSelectionDialog::selectFriends(QWidget *parent,const QString& caption,const QString& header_text,
-																				FriendSelectionWidget::Modus modus,
-																				FriendSelectionWidget::ShowTypes show_type,
-																				FriendSelectionWidget::IdType pre_selected_id_type,
-																				const std::list<std::string>& pre_selected_ids)
+std::list<RsPgpId> FriendSelectionDialog::selectFriends(QWidget *parent,const QString& caption,const QString& header_text,
+                            FriendSelectionWidget::Modus modus,
+                            FriendSelectionWidget::ShowTypes show_type,
+                            const std::list<RsPgpId>& pre_selected_ids)
 {
-	FriendSelectionDialog dialog(parent,header_text,modus,show_type,pre_selected_id_type,pre_selected_ids) ;
+    FriendSelectionDialog dialog(parent,header_text,modus,show_type,IDTYPE_GPG,pre_selected_ids) ;
 
 	dialog.setWindowTitle(caption) ;
 
 	if(QDialog::Rejected == dialog.exec())
 		return std::list<std::string>() ;
 
-	std::list<std::string> ids ;
+    std::list<std::string> sids ;
 	dialog.friends_widget->selectedIds(pre_selected_id_type,ids,false) ;
 
-	return ids ;
+    std::list<RsPgpId> ids ;
+    for(std::list<std::string>::const_iterator it(sids.begin());it!=sids.end();++it)
+    {
+        RsPgpId id(*it) ;
+        if(!id.isNull())
+            ids.push_back(id) ;
+        else
+            std::cerr << "ERROR in " << __PRETTY_FUNCTION__ << ": string " << *it << " is not a PGP id" << std::endl;
+    }
+    return ids ;
 }
+std::list<RsPeerId> FriendSelectionDialog::selectFriends(QWidget *parent,const QString& caption,const QString& header_text,
+                            FriendSelectionWidget::Modus modus,
+                            FriendSelectionWidget::ShowTypes show_type,
+                            const std::list<RsPeerId>& pre_selected_ids)
+{
+    FriendSelectionDialog dialog(parent,header_text,modus,show_type,IDTYPE_SSL,pre_selected_ids) ;
 
+    dialog.setWindowTitle(caption) ;
+
+    if(QDialog::Rejected == dialog.exec())
+        return std::list<std::string>() ;
+
+    std::list<std::string> sids ;
+    dialog.friends_widget->selectedIds(pre_selected_id_type,ids,false) ;
+
+    std::list<RsPeerId> ids ;
+    for(std::list<std::string>::const_iterator it(sids.begin());it!=sids.end();++it)
+    {
+        RsPeerId id(*it) ;
+        if(!id.isNull())
+            ids.push_back(id) ;
+        else
+            std::cerr << "ERROR in " << __PRETTY_FUNCTION__ << ": string " << *it << " is not a SSL id" << std::endl;
+    }
+    return ids ;
+}
 FriendSelectionDialog::FriendSelectionDialog(QWidget *parent,const QString& header_text,
 															FriendSelectionWidget::Modus modus,
 															FriendSelectionWidget::ShowTypes show_type,

@@ -376,17 +376,17 @@ bool RetroShareLink::createPublicMsgInvite(time_t time_stamp,const QString& issu
 
 	return valid() ;
 }
-bool RetroShareLink::createPerson(const std::string& id)
+bool RetroShareLink::createPerson(const RsPgpId& id)
 {
     clear();
 
     RsPeerDetails detail;
-    if (rsPeers->getPeerDetails(id, detail) == false) {
+    if (rsPeers->getGPGDetails(id, detail) == false) {
         std::cerr << "RetroShareLink::createPerson() Couldn't find peer id " << id << std::endl;
         return false;
     }
 
-    _hash = QString::fromStdString(id);
+    _hash = QString::fromStdString(id.toStdString());
     _name = QString::fromUtf8(detail.name.c_str());
 
     _type = TYPE_PERSON;
@@ -396,14 +396,14 @@ bool RetroShareLink::createPerson(const std::string& id)
     return valid();
 }
 
-bool RetroShareLink::createCertificate(const std::string& ssl_or_gpg_id)
+bool RetroShareLink::createCertificate(const RsPeerId& ssl_id)
 {
 	// This is baaaaaad code:
 	// 	- we should not need to parse and re-read a cert in old format.
 	//
 	RsPeerDetails detail;
-	if (rsPeers->getPeerDetails(ssl_or_gpg_id, detail) == false) {
-		std::cerr << "RetroShareLink::createPerson() Couldn't find peer id " << ssl_or_gpg_id << std::endl;
+    if (rsPeers->getPeerDetails(ssl_id, detail) == false) {
+        std::cerr << "RetroShareLink::createPerson() Couldn't find peer id " << ssl_id << std::endl;
 		return false;
 	}
 
@@ -418,23 +418,23 @@ bool RetroShareLink::createCertificate(const std::string& ssl_or_gpg_id)
 
 	_type = TYPE_CERTIFICATE;
 
-	_GPGid = QString::fromStdString(detail.gpg_id).right(8);
+    _GPGid = QString::fromStdString(detail.gpg_id.toStdString()).right(8);
 
-	if(detail.isOnlyGPGdetail) 
-	{
-		_SSLid.clear();
-		_location.clear();
-		_ext_ip_port.clear();
-		_loc_ip_port.clear();
-	} 
-	else 
-	{
-		_SSLid = QString::fromStdString(ssl_or_gpg_id) ;
+    // if(detail.isOnlyGPGdetail)
+    // {
+    // 	_SSLid.clear();
+    // 	_location.clear();
+    // 	_ext_ip_port.clear();
+    // 	_loc_ip_port.clear();
+    // }
+    // else
+    // {
+        _SSLid = QString::fromStdString(ssl_id.toStdString()) ;
 		_location = QString::fromUtf8(detail.location.c_str()) ;
 		_ext_ip_port = QString::fromStdString(detail.extAddr) + ":" + QString::number(detail.extPort) + ";" ;
 		_loc_ip_port = QString::fromStdString(detail.localAddr) + ":" + QString::number(detail.localPort) + ";" ;
 		_dyndns_name = QString::fromStdString(detail.dyndns);
-	}
+    //}
 	_name = QString::fromUtf8(detail.name.c_str()) ;
 
 	std::cerr << "Found gpg base 64 string   = " << _GPGBase64String.toStdString() << std::endl;
@@ -449,11 +449,11 @@ bool RetroShareLink::createCertificate(const std::string& ssl_or_gpg_id)
 	return true;
 }
 
-bool RetroShareLink::createUnknwonSslCertificate(const std::string& sslId, const std::string& gpgId)
+bool RetroShareLink::createUnknwonSslCertificate(const RsPeerId& sslId, const RsPgpId& gpgId)
 {
 	// first try ssl id
 	if (createCertificate(sslId)) {
-		if (gpgId.empty() || _GPGid.toStdString() == gpgId) {
+        if (gpgId.isNull() || _GPGid.toStdString() == gpgId.toStdString()) {
 			return true;
 		}
 		// wrong gpg id
@@ -461,14 +461,14 @@ bool RetroShareLink::createUnknwonSslCertificate(const std::string& sslId, const
 	}
 
 	// then gpg id
-	if (createCertificate(gpgId)) {
+    if (createCertificate(sslId)) {
 		if (!_SSLid.isEmpty()) {
 			return false;
 		}
-		if (sslId.empty()) {
+        if (sslId.isNull()) {
 			return true;
 		}
-		_SSLid = QString::fromStdString(sslId);
+        _SSLid = QString::fromStdString(sslId.toStdString());
 		if (_location.isEmpty()) {
 			_location = _name;
 		}
@@ -680,15 +680,15 @@ QString RetroShareLink::title() const
 	case TYPE_PUBLIC_MSG:
 		{
 			RsPeerDetails detail;
-			rsPeers->getPeerDetails(_GPGid.toStdString(), detail) ;
+            rsPeers->getGPGDetails(RsPgpId(_GPGid.toStdString()), detail) ;
 			return QString("Click to send a private message to %1 (%2).").arg(QString::fromStdString(detail.name)).arg(_GPGid) ;
 		}
 	case TYPE_PRIVATE_CHAT:
 		{
 			RsPeerDetails detail;
-			rsPeers->getPeerDetails(_GPGid.toStdString(), detail) ;
+            rsPeers->getGPGDetails(RsPgpId(_GPGid.toStdString()), detail) ;
 
-			if (_GPGid.toStdString() == rsPeers->getGPGOwnId()) 
+            if (_GPGid.toStdString() == rsPeers->getGPGOwnId().toStdString())
 				return QString("Click to open a private chat canal to %1 (%2).").arg(QString::fromStdString(detail.name)).arg(_GPGid) ;
 			else
 				return QString("This is a private chat invite for %1 (%2). You can't use it.").arg(QString::fromStdString(detail.name)).arg(_GPGid) ;
@@ -875,7 +875,7 @@ QString RetroShareLink::toString() const
 QString RetroShareLink::niceName() const
 {
     if (type() == TYPE_PERSON) {
-        return PeerDefs::rsid(name().toUtf8().constData(), hash().toStdString());
+        return PeerDefs::rsid(name().toUtf8().constData(), RsPgpId(hash().toStdString()));
     }
 
 	if(type() == TYPE_PRIVATE_CHAT) {
@@ -883,7 +883,7 @@ QString RetroShareLink::niceName() const
 	}
 	if(type() == TYPE_PUBLIC_MSG) {
 			RsPeerDetails detail;
-			rsPeers->getPeerDetails(_GPGid.toStdString(), detail) ;
+            rsPeers->getGPGDetails(RsPgpId(_GPGid.toStdString()), detail) ;
 		return QString("Click this link to send a private message to %1 (%2)").arg(QString::fromStdString(detail.name)).arg(_GPGid) ;
 	}
 	if(type() == TYPE_CERTIFICATE) {
@@ -1095,7 +1095,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 				break;
 
 			case TYPE_PERSON:
-				personAdd.append(PeerDefs::rsid(link.name().toUtf8().constData(), link.hash().toStdString()));
+                personAdd.append(PeerDefs::rsid(link.name().toUtf8().constData(), RsPgpId(link.hash().toStdString())));
 				break;
 			}
 		}
@@ -1257,7 +1257,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 						QMessageBox::information(NULL,QObject::tr("Chat link is expired"),QObject::tr("This chat link is expired. The destination peer will not answer.")) ;
 						break ;
 					}
-					if(link._GPGid.toStdString() != rsPeers->getGPGOwnId())
+                    if(RsPgpId(link._GPGid.toStdString()) != rsPeers->getGPGOwnId())
 					{
 						QMessageBox::information(NULL,QObject::tr("Chat link cannot be decrypted"),QObject::tr("This chat link is encrypted with a key that is not yours. You can't use it. Key ID = ")+link._GPGid) ;
 						break ;
@@ -1296,7 +1296,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 #endif
 
 					needNotifySuccess = true;
-					std::list<std::string> srcIds;
+                    std::list<RsPeerId> srcIds;
 
 					// Add the link built-in source. This is needed for EXTRA files, where the source is specified in the link.
 
@@ -1305,7 +1305,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 #ifdef DEBUG_RSLINK
 						std::cerr << " RetroShareLink::process Adding built-in source " << link.SSLId().toStdString() << std::endl;
 #endif
-						srcIds.push_back(link.SSLId().toStdString()) ;
+                        srcIds.push_back(RsPeerId(link.SSLId().toStdString())) ;
 					}
 
 					// Get a list of available direct sources, in case the file is browsable only.
@@ -1318,7 +1318,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 #ifdef DEBUG_RSLINK
 						std::cerr << "  adding peerid " << (*it).peerId << std::endl ;
 #endif
-						srcIds.push_back((*it).peerId) ;
+                        srcIds.push_back((*it).peerId) ;
 					}
 
 					QString cleanname = link.name() ;
@@ -1337,7 +1337,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 					} else {
 						fileExist.append(link.name());
 					}
-					break;
+                    break;
 				}
 
 			case TYPE_PERSON:
@@ -1349,29 +1349,30 @@ static void processList(const QStringList &list, const QString &textSingular, co
 					needNotifySuccess = true;
 
 					RsPeerDetails detail;
-					if (rsPeers->getPeerDetails(link.hash().toStdString(), detail)) {
-						if (detail.gpg_id == rsPeers->getGPGOwnId()) {
-							// it's me, do nothing
-							break;
-						}
+                    if (rsPeers->getPeerDetails(RsPeerId(link.hash().toStdString()), detail))
+            {
+                if (RsPgpId(detail.gpg_id) == rsPeers->getGPGOwnId()) {
+                    // it's me, do nothing
+                    break;
+                }
 
-						if (detail.accept_connection) {
-							// peer connection is already accepted
-							personExist.append(PeerDefs::rsid(detail));
-							break;
-						}
+                if (detail.accept_connection) {
+                    // peer connection is already accepted
+                    personExist.append(PeerDefs::rsid(detail));
+                    break;
+                }
 
-						if (rsPeers->addFriend("", link.hash().toStdString())) {
-							ConfCertDialog::loadAll();
-							personAdded.append(PeerDefs::rsid(detail));
-							break;
-						}
+                if (rsPeers->addFriend(RsPeerId(), RsPgpId(link.hash().toStdString()))) {
+                    ConfCertDialog::loadAll();
+                    personAdded.append(PeerDefs::rsid(detail));
+                    break;
+                }
 
-						personFailed.append(PeerDefs::rsid(link.name().toUtf8().constData(), link.hash().toStdString()));
-						break;
-					}
+                personFailed.append(PeerDefs::rsid(link.name().toUtf8().constData(), RsPgpId(link.hash().toStdString())));
+                break;
+            }
 
-					personNotFound.append(PeerDefs::rsid(link.name().toUtf8().constData(), link.hash().toStdString()));
+                    personNotFound.append(PeerDefs::rsid(link.name().toUtf8().constData(), RsPgpId(link.hash().toStdString())));
 					break;
 				}
 
@@ -1493,11 +1494,17 @@ static void processList(const QStringList &list, const QString &textSingular, co
 					std::cerr << " RetroShareLink::process MessageRequest : id : " << link.hash().toStdString() << ", subject : " << link.name().toStdString() << std::endl;
 #endif
 					RsPeerDetails detail;
-					std::string dm_hash ;
+                    RsFileHash dm_hash ;
 
-					if (rsPeers->getPeerDetails(link.hash().toStdString(), detail)) 
+                    // This is awful, but apparently the hash can be multiple different types. Let's check!
+
+                    RsPgpId   pgp_id(link.hash().toStdString()) ;
+                    RsPeerId  ssl_id(link.hash().toStdString()) ;
+
+                    if(!pgp_id.isNull() && rsPeers->getGPGDetails(pgp_id, detail)
+                    || !ssl_id.isNull() && rsPeers->getPeerDetails(ssl_id,detail))
 					{
-						if (detail.accept_connection || detail.id == rsPeers->getOwnId() || detail.id == rsPeers->getGPGOwnId()) {
+                        if (detail.accept_connection || RsPeerId(detail.id) == rsPeers->getOwnId() || RsPgpId(detail.gpg_id) == rsPeers->getGPGOwnId()) {
 							MessageComposer *msg = MessageComposer::newMsg();
 							msg->addRecipient(MessageComposer::TO, detail.id, false);
 							if (link.subject().isEmpty() == false) {
