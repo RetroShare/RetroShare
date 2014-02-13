@@ -7,7 +7,7 @@
 
 #include "rsversion.h"
 
-#define LIB_VERSION "0.5.5c"
+#define LIB_VERSION "0.6.x"
 
 std::string RsUtil::retroshareVersion()
 {

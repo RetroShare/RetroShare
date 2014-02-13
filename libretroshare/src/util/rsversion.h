@@ -11,8 +11,8 @@
 // These versioning parameters are in the header because plugin versioning requires it.
 // Please use the functions below, and don't refer directly to the #defines.
 
-#define SVN_REVISION "Revision 7062"
-#define SVN_REVISION_NUMBER  7062
+#define SVN_REVISION "Revision 7106"
+#define SVN_REVISION_NUMBER  7106
 
 namespace RsUtil {
 

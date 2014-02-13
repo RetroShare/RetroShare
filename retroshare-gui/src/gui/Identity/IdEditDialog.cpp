@@ -140,6 +140,8 @@ void IdEditDialog::updateIdType(bool pseudo)
 void IdEditDialog::setupExistingId(std::string keyId)
 {
 	setWindowTitle(tr("Edit identity"));
+	ui.headerFrame->setHeaderImage(QPixmap(":/images/identity/user-properties_64.png"));
+	ui.headerFrame->setHeaderText(tr("Edit identity"));
 
 	mIsNew = false;
 

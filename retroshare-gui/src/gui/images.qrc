@@ -546,6 +546,7 @@
         <file>images/identity/list-add-user_64.png</file>
         <file>images/identity/list-remove-user_32.png</file>
         <file>images/identity/user-properties_32.png</file>
+        <file>images/identity/user-properties_64.png</file>
         <file>qss/chat/standard/private/info.xml</file>
         <file>qss/chat/standard/private/incoming.htm</file>
         <file>qss/chat/standard/private/outgoing.htm</file>

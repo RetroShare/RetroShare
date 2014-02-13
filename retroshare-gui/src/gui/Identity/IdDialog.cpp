@@ -114,7 +114,7 @@ IdDialog::IdDialog(QWidget *parent)
 	connect(ui.toolButton_NewId, SIGNAL(clicked()), this, SLOT(addIdentity()));
 	connect(ui.todoPushButton, SIGNAL(clicked()), this, SLOT(todo()));
 	connect(ui.toolButton_EditId, SIGNAL(clicked()), this, SLOT(editIdentity()));
-	connect( ui.treeWidget_IdList, SIGNAL(itemSelectionChanged()), this, SLOT(updateSelection()));
+	connect(ui.treeWidget_IdList, SIGNAL(itemSelectionChanged()), this, SLOT(updateSelection()));
 
 	connect(ui.filterComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(filterComboBoxChanged()));
 	connect(ui.filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
