@@ -328,7 +328,7 @@ void ChatLobbyWidget::updateDisplay()
 
 	// now, do a nice display of lobbies
 	
-	std::string vpid;
+    RsPeerId vpid;
 	std::list<ChatLobbyInfo>::const_iterator lobbyIt;
 
 	// remove not existing public lobbies
@@ -575,7 +575,7 @@ static void subscribeLobby(QTreeWidgetItem *item)
 
 	ChatLobbyId id = item->data(COLUMN_DATA, ROLE_ID).toULongLong();
 	if (rsMsgs->joinVisibleChatLobby(id)) {
-		std::string vpeer_id;
+        RsPeerId vpeer_id;
 		if (rsMsgs->getVirtualPeerId(id, vpeer_id)) {
             ChatDialog::chatFriend(vpeer_id,true) ;
 		}
@@ -739,7 +739,7 @@ void ChatLobbyWidget::unsubscribeChatLobby(ChatLobbyId id)
 	}
 	
 	// Unsubscribe the chat lobby
-	std::string vpeer_id;
+    RsPeerId vpeer_id;
 	if (rsMsgs->getVirtualPeerId(id, vpeer_id)) 
 		ChatDialog::closeChat(vpeer_id);
 
@@ -812,7 +812,7 @@ void ChatLobbyWidget::itemDoubleClicked(QTreeWidgetItem *item, int /*column*/)
 
 void ChatLobbyWidget::displayChatLobbyEvent(qulonglong lobby_id, int event_type, const QString& nickname, const QString& str)
 {
-	std::string vpid;
+    RsPeerId vpid;
 	if (rsMsgs->getVirtualPeerId(lobby_id, vpid)) {
 		if (ChatLobbyDialog *cld = dynamic_cast<ChatLobbyDialog*>(ChatDialog::getExistingChat(vpid))) {
 			cld->displayLobbyEvent(event_type, nickname, str);
@@ -831,7 +831,7 @@ void ChatLobbyWidget::readChatLobbyInvites()
 
 			rsMsgs->acceptLobbyInvite((*it).lobby_id);
 
-			std::string vpid;
+            RsPeerId vpid;
 			if(rsMsgs->getVirtualPeerId((*it).lobby_id,vpid )) {
                 ChatDialog::chatFriend(vpid,true);
 			} else {

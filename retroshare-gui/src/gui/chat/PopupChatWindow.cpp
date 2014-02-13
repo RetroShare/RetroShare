@@ -126,8 +126,8 @@ void PopupChatWindow::saveSettings()
 		Settings->setValueToGroup("ChatWindow", "OnTop", ui.actionSetOnTop->isChecked());
 	} else {
         if (!peerId.isNull()) {
-            PeerSettings->saveWidgetInformation(peerId.toStdString(), this);
-            PeerSettings->setPrivateChatOnTop(peerId.toStdString(), ui.actionSetOnTop->isChecked());
+            PeerSettings->saveWidgetInformation(peerId, this);
+            PeerSettings->setPrivateChatOnTop(peerId, ui.actionSetOnTop->isChecked());
 		}
 	}
 }
@@ -141,7 +141,7 @@ void PopupChatWindow::showEvent(QShowEvent */*event*/)
 			Settings->loadWidgetInformation(this);
 		} else {
 			this->move(qrand()%100, qrand()%100); //avoid to stack multiple popup chat windows on the same position
-            PeerSettings->loadWidgetInformation(peerId.toStdString(), this);
+            PeerSettings->loadWidgetInformation(peerId, this);
 		}
 	}
 }
@@ -189,7 +189,7 @@ void PopupChatWindow::addDialog(ChatDialog *dialog)
 		calculateStyle(dialog);
 
 		/* signal toggled is called */
-        ui.actionSetOnTop->setChecked(PeerSettings->getPrivateChatOnTop(peerId.toStdString()));
+        ui.actionSetOnTop->setChecked(PeerSettings->getPrivateChatOnTop(peerId));
 
 		QObject::connect(dialog, SIGNAL(dialogClose(ChatDialog*)), this, SLOT(dialogClose(ChatDialog*)));
 	}

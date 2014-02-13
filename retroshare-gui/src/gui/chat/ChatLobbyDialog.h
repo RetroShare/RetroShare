@@ -67,7 +67,7 @@ protected:
 
 	void processSettings(bool load);
 
-	virtual void init(const std::string &peerId, const QString &title);
+    virtual void init(const RsPeerId &peerId, const QString &title);
 	virtual bool canClose();
 	virtual void addIncomingChatMsg(const ChatInfo& info);
 

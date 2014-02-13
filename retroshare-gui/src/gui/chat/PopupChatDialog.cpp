@@ -56,7 +56,7 @@ void PopupChatDialog::init(const RsPeerId &peerId, const QString &title)
 	ChatDialog::init(peerId, title);
 
 	/* Hide or show the avatar frames */
-    showAvatarFrame(PeerSettings->getShowAvatarFrame(peerId.toStdString()));
+    showAvatarFrame(PeerSettings->getShowAvatarFrame(peerId));
 
 	ui.avatarWidget->setFrameType(AvatarWidget::STATUS_FRAME);
     ui.avatarWidget->setId(peerId.toStdString(), false);
@@ -219,7 +219,7 @@ void PopupChatDialog::showAvatarFrame(bool show)
 		ui.avatarFrameButton->setIcon(QIcon(":images/show_toolbox_frame.png"));
 	}
 
-    PeerSettings->setShowAvatarFrame(getPeerId().toStdString(), show);
+    PeerSettings->setShowAvatarFrame(getPeerId(), show);
 }
 
 void PopupChatDialog::clearOfflineMessages()

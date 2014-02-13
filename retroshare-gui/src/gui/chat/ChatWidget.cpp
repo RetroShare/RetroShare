@@ -172,7 +172,7 @@ void ChatWidget::addChatBarWidget(QWidget *w)
 	ui->pluginButtonFrame->layout()->addWidget(w) ;
 }
 
-void ChatWidget::init(const std::string &peerId, const QString &title)
+void ChatWidget::init(const RsPeerId &peerId, const QString &title)
 {
 	this->peerId = peerId;
 	this->title = title;
@@ -187,8 +187,8 @@ void ChatWidget::init(const std::string &peerId, const QString &title)
 		mChatType = CHATTYPE_LOBBY;
 	} else {
 		uint32_t status;
-		std::string pgp_id;
-		if (rsMsgs->getDistantChatStatus(peerId, status, pgp_id)) {
+        RsPgpId pgp_id;
+        if (rsMsgs->getDistantChatStatus(peerId, status, pgp_id)) {
 			mChatType = CHATTYPE_DISTANT;
 		} else {
 			mChatType = CHATTYPE_PRIVATE;
@@ -206,15 +206,15 @@ void ChatWidget::init(const std::string &peerId, const QString &title)
 		break;
 	}
 
-	currentColor.setNamedColor(PeerSettings->getPrivateChatColor(peerId));
-	currentFont.fromString(PeerSettings->getPrivateChatFont(peerId));
+    currentColor.setNamedColor(PeerSettings->getPrivateChatColor(peerId));
+    currentFont.fromString(PeerSettings->getPrivateChatFont(peerId));
 
 	colorChanged();
 	fontChanged();
 	setColorAndFont();
 
 	// load style
-	PeerSettings->getStyle(peerId, "ChatWidget", style);
+    PeerSettings->getStyle(peerId, "ChatWidget", style);
 
 	/* Add plugin functions */
 	int pluginCount = rsPlugins->nbPlugins();
@@ -244,11 +244,11 @@ void ChatWidget::init(const std::string &peerId, const QString &title)
 		StatusInfo peerStatusInfo;
 		// No check of return value. Non existing status info is handled as offline.
 		rsStatus->getStatus(peerId, peerStatusInfo);
-		updateStatus(QString::fromStdString(peerId), peerStatusInfo.status);
+        updateStatus(QString::fromStdString(peerId.toStdString()), peerStatusInfo.status);
 
 		// initialize first custom state string
 		QString customStateString = QString::fromUtf8(rsMsgs->getCustomStateString(peerId).c_str());
-		updatePeersCustomStateString(QString::fromStdString(peerId), customStateString);
+        updatePeersCustomStateString(QString::fromStdString(peerId.toStdString()), customStateString);
 	}
 
 
@@ -384,7 +384,7 @@ void ChatWidget::completeNickname(bool reverse)
 
 	std::list<ChatLobbyInfo>::const_iterator lobbyIt;
 	for (lobbyIt = lobbies.begin(); lobbyIt != lobbies.end(); ++lobbyIt) {
-		std::string vpid;
+        RsPeerId vpid;
 		if (rsMsgs->getVirtualPeerId(lobbyIt->lobby_id, vpid)) {
 			if (vpid == peerId) {
 				lobby = &*lobbyIt;
@@ -490,7 +490,7 @@ QAbstractItemModel *ChatWidget::modelFromPeers()
 
 	std::list<ChatLobbyInfo>::const_iterator lobbyIt;
 	for (lobbyIt = lobbies.begin(); lobbyIt != lobbies.end(); ++lobbyIt) {
-		std::string vpid;
+        RsPeerId vpid;
 		if (rsMsgs->getVirtualPeerId(lobbyIt->lobby_id, vpid)) {
 			if (vpid == peerId) {
 				lobby = &*lobbyIt;
@@ -880,7 +880,7 @@ void ChatWidget::fileHashingFinished(QList<HashedFile> hashedFiles)
 		if(mDefaultExtraFileFlags & RS_FILE_REQ_ANONYMOUS_ROUTING)
 			link.createFile(hashedFile.filename, hashedFile.size, QString::fromStdString(hashedFile.hash));
 		else
-			link.createExtraFile(hashedFile.filename, hashedFile.size, QString::fromStdString(hashedFile.hash),QString::fromStdString(rsPeers->getOwnId()));
+            link.createExtraFile(hashedFile.filename, hashedFile.size, QString::fromStdString(hashedFile.hash),QString::fromStdString(rsPeers->getOwnId().toStdString()));
 
 		if (hashedFile.flag & HashedFile::Picture) {
 			message += QString("<img src=\"file:///%1\" width=\"100\" height=\"100\">").arg(hashedFile.filepath);
@@ -947,15 +947,15 @@ void ChatWidget::updateStatus(const QString &peer_id, int status)
 	}
 
 	/* set font size for status  */
-	if (peer_id.toStdString() == peerId) {
+    if (RsPeerId(peer_id.toStdString()) == peerId) {
 		// the peers status has changed
 
 		QString peerName ;
 		uint32_t stts ;
-		std::string pgp_id ;
+        RsPgpId pgp_id ;
 
 		if(rsMsgs->getDistantChatStatus(peerId,stts,pgp_id))
-			peerName = QString::fromUtf8(rsPeers->getPeerName(pgp_id).c_str());
+            peerName = QString::fromUtf8(rsPeers->getGPGName(pgp_id).c_str());
 		else
 			peerName = QString::fromUtf8(rsPeers->getPeerName(peerId).c_str());
 
@@ -1025,10 +1025,9 @@ void ChatWidget::updateTitle()
 
 void ChatWidget::updatePeersCustomStateString(const QString& peer_id, const QString& status_string)
 {
-	std::string stdPeerId = peer_id.toStdString();
 	QString status_text;
 
-	if (stdPeerId == peerId) {
+    if (RsPeerId(peer_id.toStdString()) == peerId) {
 		// the peers status string has changed
 		if (status_string.isEmpty()) {
 			ui->statusMessageLabel->hide();
