@@ -121,7 +121,10 @@ bool RsGxsCircleGroupItem::convertFrom(const RsGxsCircleGroup &group)
 	// Enforce the local rules.
 	if (meta.mCircleType == GXS_CIRCLE_TYPE_LOCAL)
 	{
-		pgpIdSet.ids = group.mLocalFriends;
+		std::list<RsPgpId>::const_iterator it = group.mLocalFriends.begin();
+
+		for(; it != group.mLocalFriends.end(); it++)
+			pgpIdSet.ids.push_back(it->toStdString());
 	}
 	else
 	{
@@ -138,7 +141,9 @@ bool RsGxsCircleGroupItem::convertTo(RsGxsCircleGroup &group) const
 	// Enforce the local rules.
 	if (meta.mCircleType ==  GXS_CIRCLE_TYPE_LOCAL)
 	{
-		group.mLocalFriends = pgpIdSet.ids;
+		std::list<std::string>::const_iterator it = pgpIdSet.ids.begin();
+		for(; it != pgpIdSet.ids.end();  it++)
+			group.mLocalFriends.push_back(RsPgpId(*it));
 		group.mInvitedMembers.clear();
 	}
 	else

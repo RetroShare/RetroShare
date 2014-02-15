@@ -233,11 +233,11 @@ bool GrpCircleVetting::expired()
 {
 	return  time(NULL) > (mTimeStamp + EXPIRY_PERIOD_OFFSET);
 }
-bool GrpCircleVetting::canSend(const RsPgpId& peerId, const RsGxsCircleId& circleId)
+bool GrpCircleVetting::canSend(const SSLIdType& peerId, const RsGxsCircleId& circleId)
 {
 	if(mCircles->isLoaded(circleId))
 	{
-		const RsPgpId& pgpId = rsPeers->getGPGId(peerId);
+		const PGPIdType& pgpId = rsPeers->getGPGId(peerId);
 		return mCircles->canSend(circleId, pgpId);
 	}
 
@@ -247,7 +247,7 @@ bool GrpCircleVetting::canSend(const RsPgpId& peerId, const RsGxsCircleId& circl
 }
 
 GrpCircleIdRequestVetting::GrpCircleIdRequestVetting(
-		RsGcxs* const circles, std::vector<GrpIdCircleVet> grpCircleV, const std::string& peerId)
+		RsGcxs* const circles, std::vector<GrpIdCircleVet> grpCircleV, const RsPeerId& peerId)
  : GrpCircleVetting(circles), mGrpCircleV(grpCircleV), mPeerId(peerId) {}
 
 bool GrpCircleIdRequestVetting::cleared()
@@ -287,7 +287,7 @@ MsgIdCircleVet::MsgIdCircleVet(const RsGxsMessageId& msgId,
 
 MsgCircleIdsRequestVetting::MsgCircleIdsRequestVetting(RsGcxs* const circles,
 		std::vector<MsgIdCircleVet> msgs, const RsGxsGroupId& grpId,
-		const std::string& peerId, const RsGxsCircleId& circleId)
+		const RsPeerId& peerId, const RsGxsCircleId& circleId)
 : GrpCircleVetting(circles), mMsgs(msgs), mGrpId(grpId), mPeerId(peerId), mCircleId(circleId) {}
 
 bool MsgCircleIdsRequestVetting::cleared()

@@ -311,7 +311,7 @@ bool p3GxsCircles::loadCircle(const RsGxsCircleId &circleId)
 	return cache_request_load(circleId);
 }
 
-int p3GxsCircles::canSend(const RsGxsCircleId &circleId, const std::string &id)
+int p3GxsCircles::canSend(const RsGxsCircleId &circleId, const RsPgpId &id)
 {
 	RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
 	if (mCircleCache.is_cached(circleId))

@@ -250,7 +250,7 @@ public:
 	virtual bool cleared() = 0;
 
 protected:
-	bool canSend(const RsPgpId& peerId, const RsGxsCircleId& circleId);
+	bool canSend(const SSLIdType& peerId, const RsGxsCircleId& circleId);
 
 private:
 

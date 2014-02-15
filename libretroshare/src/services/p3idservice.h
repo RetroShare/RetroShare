@@ -73,7 +73,7 @@ virtual	std::string save() const;
 	bool idKnown;
 	time_t lastCheckTs;
 	uint32_t checkAttempts;
-	std::string pgpId;
+	RsPgpId pgpId;
 };
 
 class SSGxsIdRecognTags: public SSBit 
@@ -290,7 +290,7 @@ virtual void handle_event(uint32_t event_type, const std::string &elabel);
  */
 	int  cache_tick();
 
-	bool cache_request_load(const RsGxsId &id, const std::list<std::string>& peers = std::list<std::string>());
+	bool cache_request_load(const RsGxsId &id, const std::list<PeerId>& peers = std::list<PeerId>());
 	bool cache_start_load();
 	bool cache_load_for_token(uint32_t token);
 
@@ -303,7 +303,7 @@ virtual void handle_event(uint32_t event_type, const std::string &elabel);
 	// Mutex protected.
 
 	//std::list<RsGxsId> mCacheLoad_ToCache;
-	std::map<RsGxsId, std::list<std::string> > mCacheLoad_ToCache, mPendingCache;
+	std::map<RsGxsId, std::list<RsPeerId> > mCacheLoad_ToCache, mPendingCache;
 
 	// Switching to RsMemCache for Key Caching.
 	RsMemCache<RsGxsId, RsGxsIdCache> mPublicKeyCache;
@@ -434,7 +434,7 @@ std::string genRandomId(int len = 20);
 
 	std::map<uint32_t, std::set<RsGxsGroupId> > mIdsPendingCache;
 	std::map<uint32_t, std::list<RsGxsGroupId> > mGroupNotPresent;
-	std::map<RsGxsId, std::list<std::string> > mIdsNotPresent;
+	std::map<RsGxsId, std::list<RsPeerId> > mIdsNotPresent;
 	RsNetworkExchangeService* mNes;
 };
 

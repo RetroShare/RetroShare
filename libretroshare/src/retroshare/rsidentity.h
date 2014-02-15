@@ -89,7 +89,7 @@ class RsGxsIdGroup
 
 	// Not Serialised - for GUI's benefit.
 	bool mPgpKnown;
-	std::string mPgpId;
+	RsPgpId mPgpId;
 };
 
 
@@ -214,7 +214,7 @@ class RsIdentityDetails
 	// PGP Stuff.
 	bool mPgpLinked;
 	bool mPgpKnown;
-	std::string mPgpId;
+	RsPgpId mPgpId;
 
 	// Recogn details.
 	std::list<RsRecognTag> mRecognTags;

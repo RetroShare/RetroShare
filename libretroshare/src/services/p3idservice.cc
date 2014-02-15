@@ -478,7 +478,7 @@ bool p3IdService::haveReputation(const RsGxsId &id)
 	return haveKey(id);
 }
 
-bool p3IdService::loadReputation(const RsGxsId &id, const std::list<std::string>& peers)
+bool p3IdService::loadReputation(const RsGxsId &id, const std::list<PeerId>& peers)
 {
 	if (haveKey(id))
 		return true;
@@ -556,7 +556,7 @@ bool p3IdService::getGroupData(const uint32_t &token, std::vector<RsGxsIdGroup> 
 				else
 				{
 					group.mPgpKnown = false;
-					group.mPgpId    = "";
+					group.mPgpId.clear();
 
 					std::cerr << "p3IdService::getGroupData() Failed to decode ServiceString";
 					std::cerr << std::endl;
@@ -699,7 +699,8 @@ bool SSGxsIdPgp::load(const std::string &input)
 	if (1 == sscanf(input.c_str(), "K:1 I:%[^)]", pgpline))
 	{
 		idKnown = true;
-		pgpId = pgpline;
+		std::string str_line = pgpline;
+		pgpId = RsPgpId(str_line);
 	}
 	else if (1 == sscanf(input.c_str(), "K:0 T:%d", &timestamp))
 	{
@@ -719,7 +720,7 @@ std::string SSGxsIdPgp::save() const
 	if (idKnown)
 	{
 		output += "K:1 I:";
-		output += pgpId;
+		output += pgpId.toStdString();
 	}
 	else
 	{
@@ -1039,7 +1040,7 @@ void RsGxsIdCache::updateServiceString(std::string serviceString)
 			}
 			else
 			{
-				details.mPgpId = "";
+				details.mPgpId.clear();
 			}
 		}
 
@@ -1097,7 +1098,7 @@ void RsGxsIdCache::updateServiceString(std::string serviceString)
 	else
 	{
 		details.mPgpKnown = false;
-		details.mPgpId = ""; 
+		details.mPgpId.clear();
 
 		details.mOpinion = 0;
 		details.mReputation = 0;
@@ -1329,7 +1330,7 @@ bool p3IdService::cache_store(const RsGxsIdGroupItem *item)
 
 #define MIN_CYCLE_GAP	2
 
-bool p3IdService::cache_request_load(const RsGxsId &id, const std::list<std::string>& peers)
+bool p3IdService::cache_request_load(const RsGxsId &id, const std::list<PeerId>& peers)
 {
 #ifdef DEBUG_IDS
 	std::cerr << "p3IdService::cache_request_load(" << id << ")";
@@ -1370,7 +1371,7 @@ bool p3IdService::cache_start_load()
 		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 
 		/* now we process the modGroupList -> a map so we can use it easily later, and create id list too */
-		std::map<RsGxsId, std::list<std::string> >::iterator it;
+		std::map<RsGxsId, std::list<RsPeerId> >::iterator it;
 		for(it = mCacheLoad_ToCache.begin(); it != mCacheLoad_ToCache.end(); it++)
 		{
 #ifdef DEBUG_IDS
@@ -1471,8 +1472,8 @@ void p3IdService::requestIdsFromNet()
 {
 	RsStackMutex stack(mIdMtx);
 
-	std::map<RsGxsId, std::list<std::string> >::const_iterator cit;
-	std::map<std::string, std::list<RsGxsId> > requests;
+	std::map<RsGxsId, std::list<RsPeerId> >::const_iterator cit;
+	std::map<RsPeerId, std::list<RsGxsId> > requests;
 
 	// transform to appropriate structure (<peer, std::list<RsGxsId> > map) to make request to nes
 	for(cit = mIdsNotPresent.begin(); cit != mIdsNotPresent.end(); cit++)
@@ -1486,13 +1487,13 @@ void p3IdService::requestIdsFromNet()
 
 		}
 
-		const std::list<std::string>& peers = cit->second;
-		std::list<std::string>::const_iterator cit2;
+		const std::list<RsPeerId>& peers = cit->second;
+		std::list<RsPeerId>::const_iterator cit2;
 		for(cit2 = peers.begin(); cit2 != peers.end(); cit2++)
 			requests[*cit2].push_back(cit->first);
 	}
 
-	std::map<std::string, std::list<RsGxsId> >::const_iterator cit2;
+	std::map<RsPeerId, std::list<RsGxsId> >::const_iterator cit2;
 
 	for(cit2 = requests.begin(); cit2 != requests.end(); cit2++)
         {
@@ -2234,7 +2235,7 @@ bool p3IdService::pgphash_process()
 
 		/* update */
 		ssdata.pgp.idKnown = true;
-		ssdata.pgp.pgpId = pgpId.toStdString();
+		ssdata.pgp.pgpId = pgpId;
 
 	}
 	else
@@ -2312,7 +2313,7 @@ bool p3IdService::checkId(const RsGxsIdGroup &grp, PGPIdType &pgpId)
 			/* check signature too */
 			if (AuthGPG::getAuthGPG()->VerifySignBin((void *) hash.toByteArray(), hash.SIZE_IN_BYTES, 
 				(unsigned char *) grp.mPgpIdSign.c_str(), grp.mPgpIdSign.length(), 
-				mit->second.toStdString()))
+				mit->second))
 			{
 				std::cerr << "p3IdService::checkId() Signature Okay too!";
 				std::cerr << std::endl;
@@ -2372,14 +2373,14 @@ void p3IdService::getPgpIdList()
 	std::cerr << std::endl;
 #endif // DEBUG_IDS
 
- 	std::list<std::string> list;
+ 	std::list<PGPIdType> list;
 	AuthGPG::getAuthGPG()->getGPGFilteredList(list);
 
 	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 
 	mPgpFingerprintMap.clear();
 
- 	std::list<std::string>::iterator it;
+ 	std::list<PGPIdType>::iterator it;
 	for(it = list.begin(); it != list.end(); it++)
 	{
  		PGPIdType pgpId(*it);
@@ -2840,7 +2841,7 @@ void p3IdService::generateDummy_OwnIds()
 
 	/* grab all the gpg ids... and make some ids */
 
-	std::string ownId = rsPeers->getGPGOwnId();
+	PGPIdType ownId = rsPeers->getGPGOwnId();
 
 	// generate some ownIds.
 	int genCount = 0;
@@ -2854,15 +2855,15 @@ void p3IdService::generateDummy_OwnIds()
 
 		id.mMeta.mGroupFlags = RSGXSID_GROUPFLAG_REALID;
 
-		// HACK FOR DUMMY GENERATION.
-		id.mMeta.mAuthorId = ownId;
-	       	if (rsPeers->getPeerDetails(ownId, details))
-		{
-			std::ostringstream out;
-			out << details.name << "_" << i + 1;
-
-			id.mMeta.mGroupName = out.str();
-		}
+//		// HACK FOR DUMMY GENERATION.
+//		id.mMeta.mAuthorId = ownId.toStdString();
+//	       	if (rsPeers->getPeerDetails(ownId, details))
+//		{
+//			std::ostringstream out;
+//			out << details.name << "_" << i + 1;
+//
+//			id.mMeta.mGroupName = out.str();
+//		}
 
 		uint32_t dummyToken = 0;
 		createGroup(dummyToken, id);
@@ -2875,8 +2876,8 @@ void p3IdService::generateDummy_FriendPGP()
 	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 
 	// Now Generate for friends.
-	std::list<std::string> gpgids;
-	std::list<std::string>::iterator it;
+	std::list<PGPIdType> gpgids;
+	std::list<PGPIdType>::const_iterator it;
 	rsPeers->getGPGAllList(gpgids);
 
 	RsGxsIdGroup id;
@@ -2888,10 +2889,10 @@ void p3IdService::generateDummy_FriendPGP()
 	for(int j = 0; j < idx; j++, it++) ;
 
 	// HACK FOR DUMMY GENERATION.
-	id.mMeta.mAuthorId = *it;
+	id.mMeta.mAuthorId = it->toStdString();
 
 	RsPeerDetails details;
-	if (rsPeers->getPeerDetails(*it, details))
+	if (/*rsPeers->getPeerDetails(*it, details)*/false)
 	{
 		std::ostringstream out;
 		out << details.name << "_" << RSRandom::random_u32() % 1000;
