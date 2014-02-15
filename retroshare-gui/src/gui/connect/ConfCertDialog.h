@@ -26,6 +26,7 @@
 #include <QDialog>
 
 #include "ui_ConfCertDialog.h"
+#include <retroshare/rstypes.h>
 
 class ConfCertDialog : public QDialog
 {
@@ -34,7 +35,29 @@ class ConfCertDialog : public QDialog
 public:
     enum enumPage { PageDetails, PageTrust, PageCertificate };
 
-    static void showIt(const std::string& id, enumPage page);
+    template<class ID_CLASS> static void showIt(const ID_CLASS& id, enumPage page)
+    {
+        ConfCertDialog *confdialog = instance(id);
+
+        switch (page) {
+        case PageDetails:
+            confdialog->ui.stabWidget->setCurrentIndex(0);
+            break;
+        case PageTrust:
+            confdialog->ui.stabWidget->setCurrentIndex(1);
+            break;
+        case PageCertificate:
+            confdialog->ui.stabWidget->setCurrentIndex(2);
+            break;
+        }
+
+        confdialog->load();
+        confdialog->show();
+        confdialog->raise();
+        confdialog->activateWindow();
+
+        /* window will destroy itself! */
+    }
     static void loadAll();
 
 signals:
@@ -42,11 +65,12 @@ signals:
 
 private:
     /** Default constructor */
-    ConfCertDialog(const std::string& id, QWidget *parent = 0, Qt::WindowFlags flags = 0);
+    ConfCertDialog(const RsPeerId &id,const RsPgpId& pgp_id, QWidget *parent = 0, Qt::WindowFlags flags = 0);
     /** Default destructor */
     ~ConfCertDialog();
 
-    static ConfCertDialog *instance(const std::string& peer_id);
+    static ConfCertDialog *instance(const RsPeerId &peer_id);
+    static ConfCertDialog *instance(const RsPgpId &pgp_id);
 
     void load();
 
@@ -63,8 +87,9 @@ private slots:
     void showHelpDialog(const QString &topic);
 
 private:
-    std::string mId;
-    
+    RsPeerId peerId;
+    RsPgpId  pgpId;
+
     /** Qt Designer generated object */
     Ui::ConfCertDialog ui;
 };

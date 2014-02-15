@@ -44,24 +44,42 @@
 #include "util/DateTime.h"
 #include "util/misc.h"
 
-static QMap<std::string, ConfCertDialog*> instances;
+static QMap<RsPeerId, ConfCertDialog*> instances_ssl;
+static QMap<RsPgpId, ConfCertDialog*> instances_pgp;
 
-ConfCertDialog *ConfCertDialog::instance(const std::string& peer_id)
+ConfCertDialog *ConfCertDialog::instance(const RsPeerId& peer_id)
 {
-    ConfCertDialog *d = instances[peer_id];
+
+    ConfCertDialog *d = instances_ssl[peer_id];
     if (d) {
         return d;
     }
 
-    d = new ConfCertDialog(peer_id);
-    instances[peer_id] = d;
+    RsPeerDetails details ;
+    if(!rsPeers->getPeerDetails(peer_id,details))
+        return NULL ;
+
+    d = new ConfCertDialog(peer_id,details.gpg_id);
+    instances_ssl[peer_id] = d;
 
     return d;
 }
+ConfCertDialog *ConfCertDialog::instance(const RsPgpId& pgp_id)
+{
 
+    ConfCertDialog *d = instances_pgp[pgp_id];
+    if (d) {
+        return d;
+    }
+
+    d = new ConfCertDialog(RsPeerId(),pgp_id);
+    instances_pgp[pgp_id] = d;
+
+    return d;
+}
 /** Default constructor */
-ConfCertDialog::ConfCertDialog(const std::string& id, QWidget *parent, Qt::WindowFlags flags)
-  : QDialog(parent, flags), mId(id)
+ConfCertDialog::ConfCertDialog(const RsPeerId& id, const RsPgpId &pgp_id, QWidget *parent, Qt::WindowFlags flags)
+  : QDialog(parent, flags), peerId(id), pgpId(pgp_id)
 {
     /* Invoke Qt Designer generated QObject setup routine */
     ui.setupUi(this);
@@ -97,64 +115,46 @@ ConfCertDialog::ConfCertDialog(const std::string& id, QWidget *parent, Qt::Windo
 
 ConfCertDialog::~ConfCertDialog()
 {
-    QMap<std::string, ConfCertDialog*>::iterator it = instances.find(mId);
-    if (it != instances.end()) {
-        instances.erase(it);
+    if(peerId.isNull())
+    {
+        QMap<RsPeerId, ConfCertDialog*>::iterator it = instances_ssl.find(peerId);
+        if (it != instances_ssl.end())
+            instances_ssl.erase(it);
+    }
+    else
+    {
+        QMap<RsPgpId, ConfCertDialog*>::iterator it = instances_pgp.find(pgpId);
+        if (it != instances_pgp.end())
+            instances_pgp.erase(it);
     }
 }
 
-void ConfCertDialog::showIt(const std::string& peer_id, enumPage page)
-{
-    ConfCertDialog *confdialog = instance(peer_id);
-
-    switch (page) {
-    case PageDetails:
-        confdialog->ui.stabWidget->setCurrentIndex(0);
-        break;
-    case PageTrust:
-        confdialog->ui.stabWidget->setCurrentIndex(1);
-        break;
-    case PageCertificate:
-        confdialog->ui.stabWidget->setCurrentIndex(2);
-        break;
-    }
-
-    confdialog->load();
-    confdialog->show();
-    confdialog->raise();
-    confdialog->activateWindow();
-
-    /* window will destroy itself! */
-}
 
 void ConfCertDialog::setServiceFlags()
 {
-    RsPeerDetails detail;
-    if (!rsPeers->getPeerDetails(mId, detail))
-		 return ;
+    ServicePermissionFlags flags(0) ;
 
-	 ServicePermissionFlags flags(0) ;
+    if(ui._anonymous_routing_CB->isChecked()) flags = flags | RS_SERVICE_PERM_TURTLE ;
+    if(        ui._discovery_CB->isChecked()) flags = flags | RS_SERVICE_PERM_DISCOVERY ;
+    if(  ui._forums_channels_CB->isChecked()) flags = flags | RS_SERVICE_PERM_DISTRIB ;
+    if(  ui._direct_transfer_CB->isChecked()) flags = flags | RS_SERVICE_PERM_DIRECT_DL ;
 
-	 if(ui._anonymous_routing_CB->isChecked()) flags = flags | RS_SERVICE_PERM_TURTLE ;
-	 if(        ui._discovery_CB->isChecked()) flags = flags | RS_SERVICE_PERM_DISCOVERY ;
-	 if(  ui._forums_channels_CB->isChecked()) flags = flags | RS_SERVICE_PERM_DISTRIB ;
-	 if(  ui._direct_transfer_CB->isChecked()) flags = flags | RS_SERVICE_PERM_DIRECT_DL ;
-
-	 rsPeers->setServicePermissionFlags(detail.gpg_id,flags) ;
+    rsPeers->setServicePermissionFlags(pgpId,flags) ;
 }
 
 void ConfCertDialog::loadAll()
 {
-    QMap<std::string, ConfCertDialog*>::iterator it;
-    for (it = instances.begin(); it != instances.end(); it++) {
-        it.value()->load();
-    }
+    for(QMap<RsPeerId, ConfCertDialog*>::iterator it = instances_ssl.begin(); it != instances_ssl.end(); it++)  it.value()->load();
+    for(QMap<RsPgpId , ConfCertDialog*>::iterator it = instances_pgp.begin(); it != instances_pgp.end(); it++)  it.value()->load();
 }
 
 void ConfCertDialog::load()
 {
     RsPeerDetails detail;
-    if (!rsPeers->getPeerDetails(mId, detail))
+
+    bool ok = false ;
+
+    if(!(rsPeers->getPeerDetails(peerId, detail) || rsPeers->getGPGDetails(pgpId, detail)))
     {
         QMessageBox::information(this,
                                  tr("RetroShare"),
@@ -163,7 +163,7 @@ void ConfCertDialog::load()
         return;
     }
 
-    if(detail.isOnlyGPGdetail && !rsPeers->isKeySupported(mId))
+    if(detail.isOnlyGPGdetail && !rsPeers->isKeySupported(pgpId))
 	 {
 		 ui.make_friend_button->setEnabled(false) ;
 		 ui.make_friend_button->setToolTip(tr("The supplied key algorithm is not supported by RetroShare\n(Only RSA keys are supported at the moment)")) ;
@@ -180,17 +180,17 @@ void ConfCertDialog::load()
 	 ui._direct_transfer_CB->setChecked(  detail.service_perm_flags & RS_SERVICE_PERM_DIRECT_DL ) ;
 
     ui.name->setText(QString::fromUtf8(detail.name.c_str()));
-    ui.peerid->setText(QString::fromStdString(detail.id));
+    ui.peerid->setText(QString::fromStdString(detail.id.toStdString()));
 
     RetroShareLink link;
-    link.createPerson(detail.id);
+    link.createPerson(detail.gpg_id);
 
     ui.rsid->setText(link.toHtml());
-    ui.pgpfingerprint->setText(misc::fingerPrintStyleSplit(QString::fromStdString(detail.fpr)));
+    ui.pgpfingerprint->setText(misc::fingerPrintStyleSplit(QString::fromStdString(detail.fpr.toStdString())));
     ui.rsid->setToolTip(link.title());
 
     if (!detail.isOnlyGPGdetail) {
-        ui.avatar->setId(mId, false);
+        ui.avatar->setId(peerId.toStdString(), false);
 
         ui.loc->setText(QString::fromUtf8(detail.location.c_str()));
         // Dont Show a timestamp in RS calculate the day
@@ -259,7 +259,7 @@ void ConfCertDialog::load()
         ui.pgpfingerprint->show();
         ui.pgpfingerprint_label->show();
     } else {
-        ui.avatar->setId(mId, true);
+        ui.avatar->setId(pgpId.toStdString(), true);
 
         ui.rsid->show();
         ui.peerid->hide();
@@ -387,7 +387,7 @@ void ConfCertDialog::load()
     }
 
     QString text;
-    for(std::list<std::string>::const_iterator it(detail.gpgSigners.begin());it!=detail.gpgSigners.end();++it) {
+    for(std::list<RsPgpId>::const_iterator it(detail.gpgSigners.begin());it!=detail.gpgSigners.end();++it) {
         link.createPerson(*it);
         if (link.valid()) {
             text += link.toHtml() + "<BR>";
@@ -401,7 +401,7 @@ void ConfCertDialog::load()
 void ConfCertDialog::loadInvitePage()
 {
 	RsPeerDetails detail;
-    if (!rsPeers->getPeerDetails(mId, detail))
+    if (!rsPeers->getPeerDetails(peerId, detail))
     {
         QMessageBox::information(this,
                                  tr("RetroShare"),
@@ -427,9 +427,9 @@ void ConfCertDialog::applyDialog()
 {
     std::cerr << "ConfCertDialog::applyDialog() called" << std::endl ;
     RsPeerDetails detail;
-    if (!rsPeers->getPeerDetails(mId, detail))
+    if (!rsPeers->getPeerDetails(peerId, detail))
     {
-        if (!rsPeers->getGPGDetails(mId, detail)) {
+        if (!rsPeers->getGPGDetails(pgpId, detail)) {
             QMessageBox::information(this,
                                      tr("RetroShare"),
                                      tr("Error : cannot get peer details."));
@@ -441,11 +441,11 @@ void ConfCertDialog::applyDialog()
     //check the GPG trustlvl
     if (ui.radioButton_trust_fully->isChecked() && detail.trustLvl != RS_TRUST_LVL_FULL) {
         //trust has changed to fully
-        rsPeers->trustGPGCertificate(detail.id, RS_TRUST_LVL_FULL);
+        rsPeers->trustGPGCertificate(pgpId, RS_TRUST_LVL_FULL);
     } else if (ui.radioButton_trust_marginnaly->isChecked() && detail.trustLvl != RS_TRUST_LVL_MARGINAL) {
-        rsPeers->trustGPGCertificate(detail.id, RS_TRUST_LVL_MARGINAL);
+        rsPeers->trustGPGCertificate(pgpId, RS_TRUST_LVL_MARGINAL);
     } else if (ui.radioButton_trust_never->isChecked() && detail.trustLvl != RS_TRUST_LVL_NEVER) {
-        rsPeers->trustGPGCertificate(detail.id, RS_TRUST_LVL_NEVER);
+        rsPeers->trustGPGCertificate(pgpId, RS_TRUST_LVL_NEVER);
     }
 
     if (!detail.isOnlyGPGdetail) {
@@ -466,13 +466,13 @@ void ConfCertDialog::applyDialog()
 
         /* now we can action the changes */
         if (localChanged)
-            rsPeers->setLocalAddress(mId, ui.localAddress->text().toStdString(), ui.localPort->value());
+            rsPeers->setLocalAddress(peerId, ui.localAddress->text().toStdString(), ui.localPort->value());
 
         if (extChanged)
-            rsPeers->setExtAddress(mId,ui.extAddress->text().toStdString(), ui.extPort->value());
+            rsPeers->setExtAddress(peerId,ui.extAddress->text().toStdString(), ui.extPort->value());
 
         if (dnsChanged)
-            rsPeers->setDynDNS(mId, ui.dynDNS->text().toStdString());
+            rsPeers->setDynDNS(peerId, ui.dynDNS->text().toStdString());
 
         if(localChanged || extChanged || dnsChanged)
             emit configChanged();
@@ -486,12 +486,11 @@ void ConfCertDialog::applyDialog()
 
 void ConfCertDialog::makeFriend()
 {
-    std::string gpg_id = rsPeers->getGPGId(mId);
     if (ui.signGPGKeyCheckBox->isChecked()) {
-        rsPeers->signGPGCertificate(gpg_id);
+        rsPeers->signGPGCertificate(pgpId);
     } 
 	
-    rsPeers->addFriend(mId, gpg_id);
+    rsPeers->addFriend(peerId, pgpId);
 	 setServiceFlags() ;
     loadAll();
 
@@ -500,8 +499,7 @@ void ConfCertDialog::makeFriend()
 
 void ConfCertDialog::denyFriend()
 {
-    std::string gpg_id = rsPeers->getGPGId(mId);
-    rsPeers->removeFriend(gpg_id);
+    rsPeers->removeFriend(pgpId);
     loadAll();
 
     emit configChanged();
@@ -509,8 +507,7 @@ void ConfCertDialog::denyFriend()
 
 void ConfCertDialog::signGPGKey()
 {
-    std::string gpg_id = rsPeers->getGPGId(mId);
-    if (!rsPeers->signGPGCertificate(gpg_id)) {
+    if (!rsPeers->signGPGCertificate(pgpId)) {
                  QMessageBox::warning ( NULL,
                                 tr("Signature Failure"),
                                 tr("Maybe password is wrong"),

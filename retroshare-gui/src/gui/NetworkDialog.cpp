@@ -321,7 +321,7 @@ void NetworkDialog::denyFriend()
 
 void NetworkDialog::makeFriend()
 {
-	ConfCertDialog::showIt(getCurrentNeighbour()->text(COLUMN_PEERID).toStdString(), ConfCertDialog::PageTrust);
+    ConfCertDialog::showIt(RsPgpId(getCurrentNeighbour()->text(COLUMN_PEERID).toStdString()), ConfCertDialog::PageTrust);
 }
 
 /** Shows Peer Information/Auth Dialog */
@@ -331,7 +331,7 @@ void NetworkDialog::peerdetails()
 	if (item == NULL) {
 		return;
 	}
-	ConfCertDialog::showIt(item->text(COLUMN_PEERID).toStdString(), ConfCertDialog::PageDetails);
+    ConfCertDialog::showIt(RsPgpId(item->text(COLUMN_PEERID).toStdString()), ConfCertDialog::PageDetails);
 }
 
 void NetworkDialog::copyLink()

@@ -101,7 +101,7 @@ unsigned int ChatUserNotify::getNewCount()
 void ChatUserNotify::iconClicked()
 {
 	ChatDialog *chatDialog = NULL;
-	std::list<std::string> ids;
+    std::list<RsPeerId> ids;
 	if (rsMsgs->getPrivateChatQueueIds(true, ids) && ids.size()) {
 		chatDialog = ChatDialog::getChat(ids.front(), RS_CHAT_OPEN | RS_CHAT_FOCUS);
 	}

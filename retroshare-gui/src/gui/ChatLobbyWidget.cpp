@@ -548,7 +548,7 @@ void ChatLobbyWidget::createChatLobby()
 		privacyLevel = action->data().toInt();
 	}
 
-	std::list<std::string> friends;
+    std::list<RsPeerId> friends;
 	CreateLobbyDialog(friends, privacyLevel).exec();
 }
 

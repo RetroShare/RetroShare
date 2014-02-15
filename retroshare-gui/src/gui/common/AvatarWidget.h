@@ -47,7 +47,7 @@ public:
 
 	QString frameState();
 	void setFrameType(FrameType type);
-	void setId(const std::string& id, bool isGpg);
+    void setId(const std::string &id, bool isGpg);
 	void setOwnId();
 	void setDefaultAvatar(const QString &avatar);
 

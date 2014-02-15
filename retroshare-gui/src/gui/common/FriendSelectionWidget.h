@@ -76,14 +76,23 @@ public:
 	void start();
 
 	int selectedItemCount();
-	std::string selectedId(IdType &idType);
-	void selectedSslIds(std::list<std::string> &sslIds, bool onlyDirectSelected) { selectedIds(IDTYPE_SSL, sslIds, onlyDirectSelected); }
-	void selectedGpgIds(std::list<std::string> &gpgIds, bool onlyDirectSelected) { selectedIds(IDTYPE_GPG, gpgIds, onlyDirectSelected); }
-	void selectedGroupIds(std::list<std::string> &groupIds) { selectedIds(IDTYPE_GROUP, groupIds, true); }
+    std::string selectedId(IdType &idType);
 
-	void setSelectedSslIds(const std::list<std::string> &sslIds, bool add) { setSelectedIds(IDTYPE_SSL, sslIds, add); }
-	void setSelectedGpgIds(const std::list<std::string> &gpgIds, bool add) { setSelectedIds(IDTYPE_GPG, gpgIds, add); }
-	void setSelectedGroupIds(const std::list<std::string> &groupIds, bool add) { setSelectedIds(IDTYPE_GROUP, groupIds, add); }
+    template<class ID_CLASS,FriendSelectionWidget::IdType TYPE> void selectedIds(std::list<ID_CLASS>& ids, bool onlyDirectSelected)
+    {
+        std::list<std::string> tmpids ;
+        selectedIds(TYPE, tmpids, onlyDirectSelected);
+        ids.clear() ;
+        for(std::list<std::string>::const_iterator it(tmpids.begin());it!=tmpids.end();++it)
+            ids.push_back(ID_CLASS(*it)) ;
+    }
+    template<class ID_CLASS,FriendSelectionWidget::IdType TYPE> void setSelectedIds(const std::list<ID_CLASS>& ids, bool add)
+    {
+        std::list<std::string> tmpids ;
+        for(typename std::list<ID_CLASS>::const_iterator it(ids.begin());it!=ids.end();++it)
+            tmpids.push_back((*it).toStdString()) ;
+        setSelectedIds(TYPE, tmpids, add);
+    }
 
 	void itemsFromId(IdType idType, const std::string &id, QList<QTreeWidgetItem*> &items);
 	void items(QList<QTreeWidgetItem*> &items, IdType = IDTYPE_NONE);
