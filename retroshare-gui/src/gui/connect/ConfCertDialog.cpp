@@ -190,7 +190,7 @@ void ConfCertDialog::load()
     ui.rsid->setToolTip(link.title());
 
     if (!detail.isOnlyGPGdetail) {
-        ui.avatar->setId(peerId.toStdString(), false);
+        ui.avatar->setId(peerId);
 
         ui.loc->setText(QString::fromUtf8(detail.location.c_str()));
         // Dont Show a timestamp in RS calculate the day
@@ -259,7 +259,7 @@ void ConfCertDialog::load()
         ui.pgpfingerprint->show();
         ui.pgpfingerprint_label->show();
     } else {
-        ui.avatar->setId(pgpId.toStdString(), true);
+        //ui.avatar->setId(pgpId.toStdString(), true);
 
         ui.rsid->show();
         ui.peerid->hide();

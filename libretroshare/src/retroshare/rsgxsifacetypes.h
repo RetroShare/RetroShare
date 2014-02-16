@@ -15,8 +15,8 @@
 #include <retroshare/rstypes.h>
 
 
-typedef std::string RsGxsGroupId;
-typedef std::string RsGxsMessageId;
+typedef GXSGroupId RsGxsGroupId;
+typedef GXSMsgId RsGxsMessageId;
 
 typedef std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > GxsMsgIdResult;
 typedef std::pair<RsGxsGroupId, RsGxsMessageId> RsGxsGrpMsgIdPair;
@@ -54,13 +54,13 @@ public:
 
     void operator =(const RsGxsGrpMetaData& rGxsMeta);
 
-    std::string mGroupId;
+    RsGxsGroupId mGroupId;
     std::string mGroupName;
     uint32_t    mGroupFlags;
     uint32_t    mSignFlags;   // Combination of RSGXS_GROUP_SIGN_PUBLISH_MASK & RSGXS_GROUP_SIGN_AUTHOR_MASK.
 
     time_t      mPublishTs; // Mandatory.
-    std::string mAuthorId;   // Optional.
+    RsPeerId    mAuthorId;   // Optional.
 
     // for circles
     std::string mCircleId;
@@ -109,7 +109,7 @@ public:
     std::string mParentId;
     std::string mOrigMsgId;
 
-    std::string mAuthorId;
+    RsPeerId    mAuthorId;
 
     std::string mMsgName;
     time_t      mPublishTs;

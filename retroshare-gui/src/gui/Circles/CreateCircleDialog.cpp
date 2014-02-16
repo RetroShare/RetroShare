@@ -88,7 +88,7 @@ CreateCircleDialog::~CreateCircleDialog()
 	delete(mIdQueue);
 }
 
-void CreateCircleDialog::editExistingId(std::string circleId)
+void CreateCircleDialog::editExistingId(const RsGxsGroupId& circleId)
 {
 	/* load this circle */
 	mIsExistingCircle = true;
@@ -261,7 +261,7 @@ void CreateCircleDialog::createCircle()
 		}
 		else
 		{
-			circle.mLocalFriends.push_back(keyId.toStdString());	
+			circle.mLocalFriends.push_back(RsPgpId(keyId.toStdString()));	
 			std::cerr << "CreateCircleDialog::createCircle() Inserting Friend: " << keyId.toStdString();
 			std::cerr << std::endl;
 		}
@@ -457,8 +457,8 @@ void CreateCircleDialog::getPgpIdentities()
 	QTreeWidget *tree = ui.treeWidget_IdList;
 
 	tree->clear();
-	std::list<std::string> ids;
-	std::list<std::string>::iterator it;
+	std::list<RsPgpId> ids;
+	std::list<RsPgpId>::iterator it;
 
 	rsPeers->getGPGAcceptedList(ids);
 	for(it = ids.begin(); it != ids.end(); it++)
@@ -467,7 +467,7 @@ void CreateCircleDialog::getPgpIdentities()
 
 		rsPeers->getGPGDetails(*it, details);
 
-		QString  keyId = QString::fromStdString(details.gpg_id);
+		QString  keyId = QString::fromStdString(details.gpg_id.toStdString());
 		QString  nickname = QString::fromUtf8(details.name.c_str());
 		QString  idtype = tr("PGP Identity");
 

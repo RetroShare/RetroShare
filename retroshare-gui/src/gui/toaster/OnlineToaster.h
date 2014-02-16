@@ -20,6 +20,7 @@
 #ifndef ONLINETOASTER_H
 #define ONLINETOASTER_H
 
+#include <retroshare/rstypes.h>
 #include "ui_OnlineToaster.h"
 
 /**
@@ -32,13 +33,13 @@ class OnlineToaster : public QWidget
 	Q_OBJECT
 
 public:
-	OnlineToaster(const std::string &peerId);
+    OnlineToaster(const RsPeerId &peerId);
 
 private slots:
 	void chatButtonSlot();
 
 private:
-	std::string peerId;
+    RsPeerId peerId;
 
 	/** Qt Designer generated object */
 	Ui::OnlineToaster ui;

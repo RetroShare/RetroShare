@@ -60,12 +60,12 @@ private slots:
 	void todo();
 
 private:
-	void requestIdDetails(std::string &id);
+    void requestIdDetails(RsGxsGroupId &id);
 	void insertIdDetails(uint32_t token);
 
 	void requestIdList();
-	void requestIdData(std::list<std::string> &ids);
-	bool fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, const std::string &ownPgpId, int accept);
+    void requestIdData(std::list<RsGxsGroupId> &ids);
+	bool fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, const RsPgpId &ownPgpId, int accept);
 	void insertIdList(uint32_t token);
 	void filterIds();
 

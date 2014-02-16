@@ -780,7 +780,7 @@ void NotifyQt::UpdateGUI()
 
 					if (popupflags & RS_POPUP_MSG)
 					{
-						toaster = new Toaster(new MessageToaster(std::string(), tr("Encrypted message"), QString("[%1]").arg(tr("Encrypted message"))));
+						toaster = new Toaster(new MessageToaster("", tr("Encrypted message"), QString("[%1]").arg(tr("Encrypted message"))));
 					}
 					break;
 				case RS_POPUP_MSG:
@@ -796,7 +796,7 @@ void NotifyQt::UpdateGUI()
 
 					if (popupflags & RS_POPUP_CONNECT)
 					{
-						toaster = new Toaster(new OnlineToaster(id));
+						toaster = new Toaster(new OnlineToaster(RsPeerId(id)));
 					}
 					break;
 				case RS_POPUP_DOWNLOAD:
@@ -940,7 +940,7 @@ void NotifyQt::testToaster(uint notifyFlags, /*RshareSettings::enumToasterPositi
 				toaster = new Toaster(new MessageToaster(id.toStdString(), title, message));
 				break;
 			case RS_POPUP_CONNECT:
-				toaster = new Toaster(new OnlineToaster(id.toStdString()));
+				toaster = new Toaster(new OnlineToaster(id));
 				break;
 			case RS_POPUP_DOWNLOAD:
 				toaster = new Toaster(new DownloadToaster(id.toStdString(), title));

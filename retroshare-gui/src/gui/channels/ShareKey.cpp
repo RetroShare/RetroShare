@@ -68,8 +68,8 @@ void ShareKey::changeEvent(QEvent *e)
 
 void ShareKey::shareKey()
 {
-	std::list<std::string> shareList;
-	ui->keyShareList->selectedSslIds(shareList, false);
+	std::list<RsPeerId> shareList;
+	ui->keyShareList->selectedIds<RsPeerId,FriendSelectionWidget::IDTYPE_SSL>(shareList, false);
 
 	if (shareList.empty()) {
 		QMessageBox::warning(this, "RetroShare", tr("Please select at least one peer"), QMessageBox::Ok, QMessageBox::Ok);

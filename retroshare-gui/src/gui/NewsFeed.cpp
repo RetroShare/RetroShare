@@ -156,7 +156,7 @@ void NewsFeed::updateDisplay()
 			case RS_FEED_ITEM_SEC_MISSING_CERTIFICATE:
 			case RS_FEED_ITEM_SEC_INTERNAL_ERROR:
 				if (Settings->getMessageFlags() & RS_MESSAGE_CONNECT_ATTEMPT) {
-					MessageComposer::sendConnectAttemptMsg(fi.mId1, fi.mId2, QString::fromUtf8(fi.mId3.c_str()));
+					MessageComposer::sendConnectAttemptMsg(RsPgpId(fi.mId1), RsPeerId(fi.mId2), QString::fromUtf8(fi.mId3.c_str()));
 				}
 				if (flags & RS_FEED_TYPE_SECURITY)
 					addFeedItemSecurityConnectAttempt(fi);
@@ -265,7 +265,7 @@ void NewsFeed::testFeeds(uint notifyFlags)
 
 		switch(type) {
 		case RS_FEED_TYPE_PEER:
-			fi.mId1 = rsPeers->getOwnId();
+			fi.mId1 = rsPeers->getOwnId().toStdString();
 
 			instance->addFeedItemPeerConnect(fi);
 			instance->addFeedItemPeerDisconnect(fi);
@@ -274,8 +274,8 @@ void NewsFeed::testFeeds(uint notifyFlags)
 			break;
 
 		case RS_FEED_TYPE_SECURITY:
-			fi.mId1 = rsPeers->getGPGOwnId();
-			fi.mId2 = rsPeers->getOwnId();
+			fi.mId1 = rsPeers->getGPGOwnId().toStdString();
+			fi.mId2 = rsPeers->getOwnId().toStdString();
 
 			instance->addFeedItemSecurityConnectAttempt(fi);
 			instance->addFeedItemSecurityAuthDenied(fi);
@@ -402,7 +402,7 @@ void NewsFeed::testFeeds(uint notifyFlags)
 #endif
 
 		case RS_FEED_TYPE_CHAT:
-			fi.mId1 = rsPeers->getOwnId();
+			fi.mId1 = rsPeers->getOwnId().toStdString();
 			fi.mId2 = tr("This is a test.").toUtf8().constData();
 
 			instance->addFeedItemChatNew(fi, true);
@@ -794,7 +794,7 @@ void	NewsFeed::addFeedItemChatNew(RsFeedItem &fi, bool addWithoutCheck)
 	std::cerr << std::endl;
 #endif
 
-	if (!addWithoutCheck && fi.mId1 == rsPeers->getOwnId()) {
+	if (!addWithoutCheck && fi.mId1 == rsPeers->getOwnId().toStdString()) {
 		/* chat message from myself */
 		return;
 	}
@@ -857,7 +857,7 @@ void NewsFeed::openChat(std::string peerId)
 	std::cerr << std::endl;
 #endif
 
-	ChatDialog::chatFriend(peerId);
+	ChatDialog::chatFriend(RsPeerId(peerId));
 }
 
 void NewsFeed::openComments(uint32_t /*type*/, const RsGxsGroupId &/*groupId*/, const RsGxsMessageId &/*msgId*/, const QString &/*title*/)

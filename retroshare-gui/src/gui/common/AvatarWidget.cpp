@@ -39,7 +39,7 @@ AvatarWidget::AvatarWidget(QWidget *parent) :
 	ui->setupUi(this);
 
 	mFlag.isOwnId = false;
-	mFlag.isGpg = false;
+//	mFlag.isGpg = false;
 	defaultAvatar = ":/images/no_avatar_background.png";
 
 	setFrameType(NO_FRAME);
@@ -110,25 +110,25 @@ void AvatarWidget::setFrameType(FrameType type)
 	updateAvatar(QString::fromStdString(mId));
 	Rshare::refreshStyleSheet(this, false);
 }
-
-void AvatarWidget::setId(const std::string &id, bool isGpg)
+void AvatarWidget::setId(const RsPeerId &id)
 {
-	mId = id;
-	mFlag.isGpg = isGpg;
+    mId = id;
+    mPgpId = rsPeers->getGPGId(id) ;
+//    mFlag.isGpg = false ;
 
-	if (mId == rsPeers->getOwnId()) {
-		mFlag.isOwnId = true;
-		setToolTip(tr("Click to change your avatar"));
-	}
+    if (mId == rsPeers->getOwnId()) {
+        mFlag.isOwnId = true;
+        setToolTip(tr("Click to change your avatar"));
+    }
 
-	setPixmap(QPixmap());
+    setPixmap(QPixmap());
 
-	if (mId.empty()) {
-		setEnabled(false);
-	}
+    if (id.isNull()) {
+        setEnabled(false);
+    }
 
-	refreshStatus();
-	updateAvatar(QString::fromStdString(mId));
+    refreshStatus();
+    updateAvatar(QString::fromStdString(mId.toStdString()));
 }
 
 void AvatarWidget::setOwnId()
@@ -202,30 +202,30 @@ void AvatarWidget::updateAvatar(const QString &peerId)
 		return;
 	}
 
-	if (mFlag.isGpg) {
-		if (mId == peerId.toStdString()) {
-			/* called from AvatarWidget with gpg id */
-			QPixmap avatar;
-			AvatarDefs::getAvatarFromGpgId(mId, avatar, defaultAvatar);
-			setPixmap(avatar);
-			return;
-		}
-
-		/* Is this one of the ssl ids of the gpg id ? */
-		std::list<std::string> sslIds;
-		if (rsPeers->getAssociatedSSLIds(mId, sslIds) == false) {
-			return;
-		}
-
-		if (std::find(sslIds.begin(), sslIds.end(), peerId.toStdString()) != sslIds.end()) {
-			/* One of the ssl ids of the gpg id */
-			QPixmap avatar;
-			AvatarDefs::getAvatarFromGpgId(mId, avatar, defaultAvatar);
-			setPixmap(avatar);
-		}
-
-		return;
-	}
+    //if (mFlag.isGpg) {
+    //	if (mId == peerId.toStdString()) {
+    //		/* called from AvatarWidget with gpg id */
+    //		QPixmap avatar;
+    //		AvatarDefs::getAvatarFromGpgId(mId, avatar, defaultAvatar);
+    //		setPixmap(avatar);
+    //		return;
+    //	}
+    //
+    //	/* Is this one of the ssl ids of the gpg id ? */
+    //	std::list<std::string> sslIds;
+    //	if (rsPeers->getAssociatedSSLIds(mId, sslIds) == false) {
+    //		return;
+    //	}
+    //
+    //	if (std::find(sslIds.begin(), sslIds.end(), peerId.toStdString()) != sslIds.end()) {
+    //		/* One of the ssl ids of the gpg id */
+    //		QPixmap avatar;
+    //		AvatarDefs::getAvatarFromGpgId(mId, avatar, defaultAvatar);
+    //		setPixmap(avatar);
+    //	}
+    //
+    //	return;
+    //}
 
 	if (mId == peerId.toStdString()) {
 		QPixmap avatar;

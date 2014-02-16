@@ -40,7 +40,7 @@ public:
 	~CreateCircleDialog();
 
 	void editNewId(bool isExternal);
-	void editExistingId(std::string circleId);
+	void editExistingId(const RsGxsGroupId& circleId);
 
 	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 

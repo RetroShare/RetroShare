@@ -59,7 +59,7 @@ void PopupChatDialog::init(const RsPeerId &peerId, const QString &title)
     showAvatarFrame(PeerSettings->getShowAvatarFrame(peerId));
 
 	ui.avatarWidget->setFrameType(AvatarWidget::STATUS_FRAME);
-    ui.avatarWidget->setId(peerId.toStdString(), false);
+    ui.avatarWidget->setId(peerId);
 
 	ui.ownAvatarWidget->setFrameType(AvatarWidget::STATUS_FRAME);
 	ui.ownAvatarWidget->setOwnId();

@@ -600,7 +600,7 @@ void  FriendList::insertPeers()
     }
 
     // get ids of existing private chat messages
-    std::list<std::string> privateChatIds;
+    std::list<RsPeerId> privateChatIds;
     rsMsgs->getPrivateChatQueueIds(true, privateChatIds);
 
     // get existing groups
@@ -608,13 +608,13 @@ void  FriendList::insertPeers()
     std::list<RsGroupInfo>::iterator groupIt;
     rsPeers->getGroupInfoList(groupInfoList);
 
-    std::list<std::string> gpgFriends;
-    std::list<std::string>::iterator gpgIt;
+    std::list<RsPgpId> gpgFriends;
+    std::list<RsPgpId>::iterator gpgIt;
     rsPeers->getGPGAcceptedList(gpgFriends);
 
     //add own gpg id, if we have more than on location (ssl client)
-    std::list<std::string> ownSslContacts;
-    std::string ownId = rsPeers->getGPGOwnId();
+    std::list<RsPeerId> ownSslContacts;
+    RsPgpId ownId = rsPeers->getGPGOwnId();
     rsPeers->getAssociatedSSLIds(ownId, ownSslContacts);
     if (ownSslContacts.size() > 0) {
         gpgFriends.push_back(ownId);
@@ -700,7 +700,7 @@ void  FriendList::insertPeers()
         }
     }
 
-    std::list<std::string> fillGpgIds;
+    std::list<RsPgpId> fillGpgIds;
 
     // start with groups
     groupIt = groupInfoList.begin();
@@ -771,7 +771,7 @@ void  FriendList::insertPeers()
 
         // iterate through gpg friends
         for (gpgIt = gpgFriends.begin(); gpgIt != gpgFriends.end(); gpgIt++) {
-            std::string gpgId = *gpgIt;
+            RsPgpId gpgId = *gpgIt;
 
             if (mShowGroups) {
                 if (groupInfo) {

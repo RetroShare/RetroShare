@@ -565,7 +565,7 @@ bool ConnectFriendWizard::validateCurrentPage()
 	case Page_FriendRecommendations:
 		{
 			std::list<RsPeerId> recommendIds;
-			ui->frec_recommendList->selectedSslIds_SSL(recommendIds, false);
+            ui->frec_recommendList->selectedIds<RsPeerId,FriendSelectionWidget::IDTYPE_SSL>(recommendIds, false);
 
 			if (recommendIds.empty()) {
 				QMessageBox::warning(this, "RetroShare", tr("Please select at least one friend for recommendation."), QMessageBox::Ok, QMessageBox::Ok);
@@ -573,7 +573,7 @@ bool ConnectFriendWizard::validateCurrentPage()
 			}
 
 			std::list<RsPeerId> toIds;
-			ui->frec_toList->selectedSslIds_SSL(toIds, false);
+            ui->frec_toList->selectedIds<RsPeerId,FriendSelectionWidget::IDTYPE_SSL>(toIds, false);
 
 			if (toIds.empty()) {
 				QMessageBox::warning(this, "RetroShare", tr("Please select at least one friend as recipient."), QMessageBox::Ok, QMessageBox::Ok);
