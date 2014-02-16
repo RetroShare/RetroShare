@@ -532,7 +532,7 @@ protected:
      * @param token
      * @param grpItem
      */
-    void updateGroup(uint32_t& token, RsGxsGroupUpdateMeta& updateMeta, RsGxsGrpItem* grpItem);
+    void updateGroup(uint32_t& token, RsGxsGrpItem* grpItem);
 
 public:
     /*!
@@ -777,11 +777,6 @@ private:
      * @return false, if private admin and publish keys cannot be found, true otherwise
      */
     bool checkKeys(const RsTlvSecurityKeySet& keySet);
-
-    /*!
-     * Convenience function for assigning the meta update items to the actual group meta
-     */
-    void assignMetaUpdates(RsGroupMetaData& meta, const RsGxsGroupUpdateMeta metaUpdate) const;
 
 private:
 

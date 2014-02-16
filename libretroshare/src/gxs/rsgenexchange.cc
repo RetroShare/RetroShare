@@ -1419,11 +1419,11 @@ void RsGenExchange::publishGroup(uint32_t& token, RsGxsGrpItem *grpItem)
 }
 
 
-void RsGenExchange::updateGroup(uint32_t& token, RsGxsGroupUpdateMeta& updateMeta, RsGxsGrpItem* grpItem)
+void RsGenExchange::updateGroup(uint32_t& token, RsGxsGrpItem* grpItem)
 {
 	RsStackMutex stack(mGenMtx);
 	token = mDataAccess->generatePublicToken();
-        mGroupUpdatePublish.push_back(GroupUpdatePublish(grpItem, updateMeta, token));
+        mGroupUpdatePublish.push_back(GroupUpdatePublish(grpItem, token));
 
 #ifdef GEN_EXCH_DEBUG
     std::cerr << "RsGenExchange::updateGroup() token: " << token;
@@ -1894,8 +1894,7 @@ void RsGenExchange::processGroupUpdatePublish()
                 }
 
 
-                gup.grpItem->meta = *meta;
-                assignMetaUpdates(gup.grpItem->meta, gup.mUpdateMeta);
+                //gup.grpItem->meta = *meta;
                 GxsGrpPendingSign ggps(gup.grpItem, ggps.mToken);
 
                 bool publishAndAdminPrivatePresent = checkKeys(meta->keys);
@@ -1919,18 +1918,6 @@ void RsGenExchange::processGroupUpdatePublish()
 	}
 
 	mGroupUpdatePublish.clear();
-}
-
-void RsGenExchange::assignMetaUpdates(RsGroupMetaData& meta, const RsGxsGroupUpdateMeta metaUpdate) const
-{
-    const RsGxsGroupUpdateMeta::GxsMetaUpdate* updates = metaUpdate.getUpdates();
-    RsGxsGroupUpdateMeta::GxsMetaUpdate::const_iterator mit = updates->begin();
-    for(; mit != updates->end(); mit++)
-    {
-
-        if(mit->first == RsGxsGroupUpdateMeta::NAME)
-                meta.mGroupName = mit->second;
-    }
 }
 
 bool RsGenExchange::checkKeys(const RsTlvSecurityKeySet& keySet)

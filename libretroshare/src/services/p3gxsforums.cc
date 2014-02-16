@@ -227,7 +227,7 @@ bool p3GxsForums::updateGroup(uint32_t &token, RsGxsGroupUpdateMeta& meta, RsGxs
         grpItem->meta = group.mMeta;
         grpItem->meta.mGroupId = meta.getGroupId();
 
-        RsGenExchange::updateGroup(token, meta, grpItem);
+       // RsGenExchange::updateGroup(token, meta, grpItem);
 	return true;
 }
 

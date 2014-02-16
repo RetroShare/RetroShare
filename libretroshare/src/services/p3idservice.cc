@@ -636,10 +636,10 @@ bool 	p3IdService::updateGroup(uint32_t& token, RsGxsIdGroup &group)
 	std::cerr << "p3IdService::updateGroup() Updating RsGxsId: " << id;
 	std::cerr << std::endl;
 	
-	//RsGenExchange::updateGroup(token, item);
+	RsGenExchange::updateGroup(token, item);
 
-	RsGxsGroupUpdateMeta updateMeta(id);
-	RsGenExchange::updateGroup(token, updateMeta, item);
+	//RsGxsGroupUpdateMeta updateMeta(id);
+	//RsGenExchange::updateGroup(token, updateMeta, item);
 
 	// if its in the cache - clear it.
 	{
