@@ -124,7 +124,7 @@ void CreateGxsChannelMsg::pasteLink()
 
 			FileInfo info ;
 			if(rsFiles->alreadyHaveFile( (*it).hash().toStdString(),info ) )
-				addAttachment((*it).hash().toStdString(), (*it).name().toUtf8().constData(), (*it).size(), true, "") ;
+				addAttachment((*it).hash().toStdString(), (*it).name().toUtf8().constData(), (*it).size(), true, RsPeerId()) ;
 			else
 				not_have.push_back( *it ) ;
 		}
@@ -285,7 +285,7 @@ void CreateGxsChannelMsg::parseRsFileListAttachments(const std::string &attachLi
 		std::string fname;
 		std::string hash;
 		uint64_t    size = 0;
-		std::string source;
+		RsPeerId source;
 
 		int i = 0;
 		for(it2 = parts.begin(); it2 != parts.end(); it2++, i++)
@@ -304,7 +304,7 @@ void CreateGxsChannelMsg::parseRsFileListAttachments(const std::string &attachLi
 					size = qsize;
 					break;
 				case 3:
-					source = it2->toStdString();
+					source = RsPeerId(it2->toStdString());
 					break;
 			}
 		}
@@ -320,15 +320,7 @@ void CreateGxsChannelMsg::parseRsFileListAttachments(const std::string &attachLi
 		if ((ok) && (hash.size() == 40))
 		{
 			std::cerr << "Item Ok" << std::endl;
-			if (source == "Local")
-			{
-				addAttachment(hash, fname, size, true, "");
-			}
-			else
-			{
-				// TEMP NOT ALLOWED UNTIL FT WORKING.
-				addAttachment(hash, fname, size, false, source);
-			}
+			addAttachment(hash, fname, size, source.isNull(), source);
 		}
 		else
 		{
@@ -338,7 +330,7 @@ void CreateGxsChannelMsg::parseRsFileListAttachments(const std::string &attachLi
 }
 
 
-void CreateGxsChannelMsg::addAttachment(const std::string &hash, const std::string &fname, uint64_t size, bool local, const std::string &srcId)
+void CreateGxsChannelMsg::addAttachment(const std::string &hash, const std::string &fname, uint64_t size, bool local, const RsPeerId &srcId)
 {
 	/* add a SubFileItem to the attachment section */
 	std::cerr << "CreateGxsChannelMsg::addAttachment()";
@@ -416,7 +408,8 @@ void CreateGxsChannelMsg::addAttachment(const std::string &path)
 
 	// only path and filename are valid.
 	// destroyed when fileFrame (this subfileitem) is destroyed
-	SubFileItem *file = new SubFileItem(hash, filename, path, size, flags, mChannelId); 
+	//SubFileItem *file = new SubFileItem(hash, filename, path, size, flags, mChannelId); 
+	SubFileItem *file = new SubFileItem(hash, filename, path, size, flags, RsPeerId()); 
 
 	mAttachments.push_back(file);
 	QLayout *layout = fileFrame->layout();

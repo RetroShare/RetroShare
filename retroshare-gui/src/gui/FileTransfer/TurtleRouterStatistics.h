@@ -23,6 +23,7 @@
 
 #include <QPoint>
 #include <retroshare/rsturtle.h>
+#include <retroshare/rstypes.h>
 #include "ui_TurtleRouterStatistics.h"
 #include "RsAutoUpdatePage.h"
 

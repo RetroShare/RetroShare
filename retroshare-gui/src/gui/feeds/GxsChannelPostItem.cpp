@@ -281,8 +281,7 @@ void GxsChannelPostItem::loadPost(const RsGxsChannelPost &post)
 	{
 		/* add file */
 		std::string path;
-		SubFileItem *fi = new SubFileItem(it->mHash, it->mName, path, it->mSize,
-				SFI_STATE_REMOTE | SFI_TYPE_CHANNEL, "");
+		SubFileItem *fi = new SubFileItem(it->mHash, it->mName, path, it->mSize, SFI_STATE_REMOTE | SFI_TYPE_CHANNEL, RsPeerId());
 		mFileItems.push_back(fi);
 		
 		/* check if the file is a media file */

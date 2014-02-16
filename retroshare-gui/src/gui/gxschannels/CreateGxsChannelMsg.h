@@ -44,7 +44,7 @@ public:
 	~CreateGxsChannelMsg();
 
 	void addAttachment(const std::string &path);
-	void addAttachment(const std::string &hash, const std::string &fname, uint64_t size, bool local, const std::string &srcId);
+	void addAttachment(const std::string &hash, const std::string &fname, uint64_t size, bool local, const RsPeerId &srcId);
 
 	void newChannelMsg();
 

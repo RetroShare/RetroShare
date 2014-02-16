@@ -130,7 +130,7 @@ bool GxsIdDetails::MakeIdDesc(const RsGxsId &id, bool doIcons, QString &str, std
 		if (details.mPgpKnown)
 		{
 			/* look up real name */
-			std::string authorName = rsPeers->getPeerName(details.mPgpId);
+			std::string authorName = rsPeers->getGPGName(details.mPgpId);
 			str += QString::fromUtf8(authorName.c_str());
 			str += "]";
 

@@ -50,6 +50,7 @@
 #endif
 #include <QList>
 
+#include <retroshare/rstypes.h>
 #include "graphwidget.h"
 
 class Edge;
@@ -66,13 +67,13 @@ class Node : public QObject, public QGraphicsItem
 	Q_OBJECT
 
 public:
-    Node(const std::string& node_string,GraphWidget::NodeType type,GraphWidget::AuthType auth,GraphWidget *graphWidget,const std::string& ssl_id,const std::string& gpg_id);
+    Node(const std::string& node_string,GraphWidget::NodeType type,GraphWidget::AuthType auth,GraphWidget *graphWidget,const RsPeerId& ssl_id,const RsPgpId& gpg_id);
 
     void addEdge(Edge *edge);
     const QList<Edge *>& edges() const;
 
     int type() const { return Type; }
-	 const std::string& idString() const { return _gpg_id ; }
+	 std::string idString() const { return _gpg_id.toStdString() ; }
 
     void calculateForces(const double *data,int width,int height,int W,int H,float x,float y,float speedf);
     bool advance();
@@ -108,8 +109,8 @@ private:
 
 	 static Node *_selected_node ;
 
-	 std::string _ssl_id ;
-	 std::string _gpg_id ;
+	 RsPeerId _ssl_id ;
+	 RsPgpId _gpg_id ;
 
 	 static const float MASS_FACTOR = 10 ;
 	 static const float FRICTION_FACTOR = 10.8 ;

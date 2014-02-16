@@ -56,7 +56,7 @@ double convertRttToPixels(double maxRTT, double rtt)
 class RttPlot
 {
 	public:
-		RttPlot(const std::map<std::string, std::list<RsRttPongResult> > &info, 
+		RttPlot(const std::map<RsPeerId, std::list<RsRttPongResult> > &info, 
 			double refTS, double maxRTT, double minTS, double maxTS)
 			:mInfo(info), mRefTS(refTS), mMaxRTT(maxRTT), mMinTS(minTS), mMaxTS(maxTS) {}
 
@@ -91,7 +91,7 @@ class RttPlot
 			}
 
 			/* draw a different line for each peer */
-			std::map<std::string, std::list<RsRttPongResult> >::const_iterator mit;
+			std::map<RsPeerId, std::list<RsRttPongResult> >::const_iterator mit;
 			int i = 0;
 			int nLines = mInfo.size();
 			for(mit = mInfo.begin(); mit != mInfo.end(); mit++, i++)
@@ -154,7 +154,7 @@ class RttPlot
 		}
 
 	private:
-		const std::map<std::string, std::list<RsRttPongResult> > &mInfo;
+		const std::map<RsPeerId, std::list<RsRttPongResult> > &mInfo;
 		double mRefTS;
 		double mMaxRTT;
 		double mMinTS;
@@ -216,15 +216,15 @@ void RttStatistics::processSettings(bool bLoad)
 
 void RttStatistics::updateDisplay()
 {
-	std::map<std::string, std::list<RsRttPongResult> > info;
+	std::map<RsPeerId, std::list<RsRttPongResult> > info;
 
 	if (!rsRtt)
 	{
 		return;
 	}
 
-	std::list<std::string> idList;
-	std::list<std::string>::iterator it;
+	std::list<RsPeerId> idList;
+	std::list<RsPeerId>::iterator it;
 
 	rsPeers->getOnlineList(idList);
 
@@ -270,11 +270,11 @@ void RttStatistics::updateDisplay()
 	_tst_CW->update();
 }
 
-QString RttStatistics::getPeerName(const std::string& peer_id)
+QString RttStatistics::getPeerName(const RsPeerId& peer_id)
 {
-	static std::map<std::string, QString> names ;
+	static std::map<RsPeerId, QString> names ;
 
-	std::map<std::string,QString>::const_iterator it = names.find(peer_id) ;
+	std::map<RsPeerId,QString>::const_iterator it = names.find(peer_id) ;
 
 	if( it != names.end())
 		return it->second ;
@@ -295,7 +295,7 @@ RttStatisticsWidget::RttStatisticsWidget(QWidget *parent)
 	maxHeight = 0 ;
 }
 
-void RttStatisticsWidget::updateRttStatistics(const std::map<std::string, std::list<RsRttPongResult> >& info, 
+void RttStatisticsWidget::updateRttStatistics(const std::map<RsPeerId, std::list<RsRttPongResult> >& info, 
 		double maxRTT, double minTS, double maxTS)
 {
 	//static const int cellx = 6 ;

@@ -31,7 +31,7 @@ public:
 	~ConnectFriendWizard();
 
 	void setCertificate(const QString &certificate, bool friendRequest);
-	void setGpgId(const std::string &gpgId, const std::string &sslId, bool friendRequest);
+	void setGpgId(const RsPgpId &gpgId, const RsPeerId &sslId, bool friendRequest);
 
 	virtual bool validateCurrentPage();
 	virtual int nextId() const;
@@ -79,8 +79,8 @@ private:
 	QTimer *cleanfriendCertTimer;
 
 	/* FofPage */
-	std::map<QCheckBox*, std::string> _id_boxes;
-	std::map<QCheckBox*, std::string> _gpg_id_boxes;
+	std::map<QCheckBox*, RsPeerId> _id_boxes;
+	std::map<QCheckBox*, RsPgpId> _gpg_id_boxes;
 
 	/* ConclusionPage */
 	QString groupId;

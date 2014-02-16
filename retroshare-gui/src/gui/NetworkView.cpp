@@ -179,7 +179,7 @@ void  NetworkView::updateDisplay()
 
 		if(info.friend_level <= _max_friend_level && _node_ids.find(info.gpg_id) == _node_ids.end())
 		{
-            _node_ids[info.gpg_id] = ui.graphicsView->addNode("       "+detail.name, detail.name+"@"+detail.gpg_id.toStdString(),type,auth,"",info.gpg_id.toStdString());
+            _node_ids[info.gpg_id] = ui.graphicsView->addNode("       "+detail.name, detail.name+"@"+detail.gpg_id.toStdString(),type,auth,RsPeerId(),info.gpg_id);
 #ifdef DEBUG_NETWORKVIEW
 			std::cerr << "  inserted node " << info.gpg_id << ", type=" << type << ", auth=" << auth << std::endl ;
 #endif

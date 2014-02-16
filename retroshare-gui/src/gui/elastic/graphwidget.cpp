@@ -160,14 +160,14 @@ void GraphWidget::clearGraph()
 	_friction_factor = 1.0f ;
 }
 
-GraphWidget::NodeId GraphWidget::addNode(const std::string& node_short_string,const std::string& node_complete_string,NodeType type,AuthType auth,const std::string& ssl_id,const std::string& gpg_id)
+GraphWidget::NodeId GraphWidget::addNode(const std::string& node_short_string,const std::string& node_complete_string,NodeType type,AuthType auth,const RsPeerId& ssl_id,const RsPgpId& gpg_id)
 {
     Node *node = new Node(node_short_string,type,auth,this,ssl_id,gpg_id);
      node->setToolTip(QString::fromUtf8(node_complete_string.c_str())) ;
 	 _nodes.push_back(node) ;
     scene()->addItem(node);
 
-	 std::map<std::string,QPointF>::const_iterator it(_node_cached_positions.find(gpg_id)) ;
+	 std::map<std::string,QPointF>::const_iterator it(_node_cached_positions.find(gpg_id.toStdString())) ;
 	 if(_node_cached_positions.end() != it)
 		 node->setPos(it->second) ;
 	 else

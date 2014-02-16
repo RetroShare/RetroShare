@@ -1,6 +1,7 @@
 #pragma once
 
 #include <retroshare/rsturtle.h>
+#include <retroshare/rstypes.h>
 #include "ui_TurtleRouterDialog.h"
 #include "RsAutoUpdatePage.h"
 
