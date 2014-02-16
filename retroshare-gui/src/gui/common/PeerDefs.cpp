@@ -56,7 +56,7 @@ const QString PeerDefs::rsid(const RsPeerDetails &details)
     return rsid(details.name, details.id);
 }
 
-const QString PeerDefs::rsidFromId(const std::string &id, QString *name /* = NULL*/)
+const QString PeerDefs::rsidFromId(const RsPeerId &id, QString *name /* = NULL*/)
 {
     QString rsid;
 
@@ -91,18 +91,18 @@ const QString PeerDefs::rsidFromId(const std::string &id, QString *name /* = NUL
     return rsid;
 }
 
-const std::string PeerDefs::idFromRsid(const QString &rsid, bool check)
+RsPeerId PeerDefs::idFromRsid(const QString &rsid, bool check)
 {
     // search for cert id in string
-    std::string id;
+    RsPeerId id;
 
     int index = rsid.indexOf("@");
     if (index >= 0) {
         // found "@", extract cert id from string
-        id = rsid.mid(index + 1).toStdString();
+        id = RsPeerId(rsid.mid(index + 1).toStdString());
     } else {
         // maybe its only the cert id
-        id = rsid.toStdString();
+        id = RsPeerId(rsid.toStdString());
     }
 
     if (check) {

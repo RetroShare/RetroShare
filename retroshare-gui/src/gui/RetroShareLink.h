@@ -79,7 +79,7 @@ class RetroShareLink
 		bool createForum(const std::string& id, const std::string& msgId);
 		bool createChannel(const std::string& id, const std::string& msgId);
 		bool createSearch(const QString& keywords);
-		bool createMessage(const std::string& peerId, const QString& subject);
+		bool createMessage(const RsPeerId& peerId, const QString& subject);
         bool createCertificate(const RsPeerId &ssl_id) ;
 		bool createPrivateChatInvite(time_t time_stamp,const QString& gpg_id,const QString& encrypted_chat_info) ;
 		bool createPublicMsgInvite(time_t time_stamp,const QString& pgp_id,const QString& hash) ;

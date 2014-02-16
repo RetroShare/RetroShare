@@ -214,7 +214,7 @@ void IdEditDialog::loadExistingId(uint32_t token)
 			rsPeers->getGPGDetails(mEditGroup.mPgpId, details);
 			ui.lineEdit_GpgName->setText(QString::fromUtf8(details.name.c_str()));
 
-			ui.lineEdit_GpgId->setText(QString::fromStdString(mEditGroup.mPgpId));
+			ui.lineEdit_GpgId->setText(QString::fromStdString(mEditGroup.mPgpId.toStdString()));
 		}
 		else
 		{

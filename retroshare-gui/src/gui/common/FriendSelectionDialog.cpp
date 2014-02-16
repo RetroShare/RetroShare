@@ -4,12 +4,12 @@
 #include <QDialogButtonBox>
 #include "FriendSelectionDialog.h"
 
-std::list<RsPgpId> FriendSelectionDialog::selectFriends(QWidget *parent,const QString& caption,const QString& header_text,
+std::list<RsPgpId> FriendSelectionDialog::selectFriends_PGP(QWidget *parent,const QString& caption,const QString& header_text,
                             FriendSelectionWidget::Modus modus,
                             FriendSelectionWidget::ShowTypes show_type,
                             const std::list<RsPgpId>& pre_selected_ids)
 {
-    FriendSelectionDialog dialog(parent,header_text,modus,show_type,IDTYPE_GPG,pre_selected_ids) ;
+    FriendSelectionDialog dialog(parent,header_text,modus,show_type,FriendSelectionWidget::IDTYPE_GPG,pre_selected_ids) ;
 
 	dialog.setWindowTitle(caption) ;
 
@@ -17,7 +17,7 @@ std::list<RsPgpId> FriendSelectionDialog::selectFriends(QWidget *parent,const QS
 		return std::list<std::string>() ;
 
     std::list<std::string> sids ;
-	dialog.friends_widget->selectedIds(pre_selected_id_type,ids,false) ;
+	dialog.friends_widget->selectedIds(pre_selected_ids,false) ;
 
     std::list<RsPgpId> ids ;
     for(std::list<std::string>::const_iterator it(sids.begin());it!=sids.end();++it)
@@ -30,12 +30,12 @@ std::list<RsPgpId> FriendSelectionDialog::selectFriends(QWidget *parent,const QS
     }
     return ids ;
 }
-std::list<RsPeerId> FriendSelectionDialog::selectFriends(QWidget *parent,const QString& caption,const QString& header_text,
+std::list<RsPeerId> FriendSelectionDialog::selectFriends_SSL(QWidget *parent,const QString& caption,const QString& header_text,
                             FriendSelectionWidget::Modus modus,
                             FriendSelectionWidget::ShowTypes show_type,
                             const std::list<RsPeerId>& pre_selected_ids)
 {
-    FriendSelectionDialog dialog(parent,header_text,modus,show_type,IDTYPE_SSL,pre_selected_ids) ;
+    FriendSelectionDialog dialog(parent,header_text,modus,show_type,FriendSelectionWidget::IDTYPE_SSL,pre_selected_ids) ;
 
     dialog.setWindowTitle(caption) ;
 
@@ -43,7 +43,7 @@ std::list<RsPeerId> FriendSelectionDialog::selectFriends(QWidget *parent,const Q
         return std::list<std::string>() ;
 
     std::list<std::string> sids ;
-    dialog.friends_widget->selectedIds(pre_selected_id_type,ids,false) ;
+    dialog.friends_widget->selectedIds(pre_selected_ids,false) ;
 
     std::list<RsPeerId> ids ;
     for(std::list<std::string>::const_iterator it(sids.begin());it!=sids.end();++it)

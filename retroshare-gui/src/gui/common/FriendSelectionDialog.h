@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QDialog>
+#include <retroshare/rstypes.h>
 #include <gui/common/FriendSelectionWidget.h>
 
 class FriendSelectionDialog : public QDialog

@@ -288,7 +288,7 @@ void RetroShareLink::fromUrl(const QUrl& url)
     if (url.host() == HOST_MESSAGE) {
         _type = TYPE_MESSAGE;
         std::string id = urlQuery.queryItemValue(MESSAGE_ID).toStdString();
-        createMessage(id, urlQuery.queryItemValue(MESSAGE_SUBJECT));
+        createMessage(RsPeerId(id), urlQuery.queryItemValue(MESSAGE_SUBJECT));
         return;
     }
 
@@ -551,11 +551,11 @@ bool RetroShareLink::createSearch(const QString& keywords)
     return valid();
 }
 
-bool RetroShareLink::createMessage(const std::string& peerId, const QString& subject)
+bool RetroShareLink::createMessage(const RsPeerId& peerId, const QString& subject)
 {
 	clear();
 
-	_hash = QString::fromStdString(peerId);
+	_hash = QString::fromStdString(peerId.toStdString());
 	PeerDefs::rsidFromId(peerId, &_name);
 	_subject = subject;
 
@@ -698,13 +698,13 @@ QString RetroShareLink::title() const
 	case TYPE_FILE:
 		return QString("%1 (%2)").arg(hash()).arg(misc::friendlyUnit(size()));
 	case TYPE_PERSON:
-		return PeerDefs::rsidFromId(hash().toStdString());
+		return PeerDefs::rsidFromId(RsPeerId(hash().toStdString()));
 	case TYPE_FORUM:
 	case TYPE_CHANNEL:
 	case TYPE_SEARCH:
 		break;
 	case TYPE_MESSAGE:
-		return PeerDefs::rsidFromId(hash().toStdString());
+		return PeerDefs::rsidFromId(RsPeerId(hash().toStdString()));
 	case TYPE_CERTIFICATE:
 		return QObject::tr("Click to add this RetroShare cert to your PGP keyring\nand open the Make Friend Wizard.\n") + QString("PGP Id = ") + GPGId() + QString("\nSSLId = ")+SSLId();
 	}
@@ -1230,19 +1230,20 @@ static void processList(const QStringList &list, const QString &textSingular, co
 				break ;
 
 			case TYPE_PUBLIC_MSG:
-				{
-					std::cerr << "Opening a public msg window " << std::endl;
-					std::cerr << "      time_stamp = " << link._time_stamp << std::endl;
-					std::cerr << "      hash       = " << link._hash.toStdString() << std::endl;
-					std::cerr << "      Issuer Id  = " << link._GPGid.toStdString() << std::endl;
-
-					if(link._time_stamp < time(NULL))
-					{
-						QMessageBox::information(NULL,QObject::tr("Messaging link is expired"),QObject::tr("This Messaging link is expired. The destination peer will not receive it.")) ;
-						break ;
-					}
-	
-					 MessageComposer::msgDistantPeer(link._hash.toStdString(),link._GPGid.toStdString()) ;
+                {
+                    std::cerr << "(!!) Distant messages from links is disabled for now" << std::endl;
+            //		std::cerr << "Opening a public msg window " << std::endl;
+            //		std::cerr << "      time_stamp = " << link._time_stamp << std::endl;
+            //		std::cerr << "      hash       = " << link._hash.toStdString() << std::endl;
+            //		std::cerr << "      Issuer Id  = " << link._GPGid.toStdString() << std::endl;
+            //
+            //		if(link._time_stamp < time(NULL))
+            //		{
+            //			QMessageBox::information(NULL,QObject::tr("Messaging link is expired"),QObject::tr("This Messaging link is expired. The destination peer will not receive it.")) ;
+            //			break ;
+            //		}
+            //
+            //		 MessageComposer::msgDistantPeer(link._hash.toStdString(),link._GPGid.toStdString()) ;
 				}
 				break ;
 			case TYPE_PRIVATE_CHAT:
@@ -1530,7 +1531,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 							messageReceipientNotAccepted.append(PeerDefs::nameWithLocation(detail));
 						}
 					} else {
-						messageReceipientUnknown.append(PeerDefs::rsidFromId(link.hash().toStdString()));
+						messageReceipientUnknown.append(PeerDefs::rsidFromId(RsPeerId(link.hash().toStdString())));
 					}
 
 					break;

@@ -37,7 +37,9 @@ MessageToaster::MessageToaster(const std::string &peerId, const QString &title, 
 	ui.subjectLabel->setToolTip(title);
 	ui.textLabel->setText(message);
 	ui.textLabel->setToolTip(message);
-	ui.toasterLabel->setText(ui.toasterLabel->text() + " " + QString::fromUtf8(rsPeers->getPeerName(peerId).c_str()));
+
+	std::string name = (!RsPeerId(peerId).isNull())? (rsPeers->getPeerName(RsPeerId(peerId))): (rsPeers->getGPGName(RsPgpId(peerId))) ;
+	ui.toasterLabel->setText(ui.toasterLabel->text() + " " + QString::fromUtf8(name.c_str()));
 }
 
 void MessageToaster::openmessageClicked()

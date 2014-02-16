@@ -254,7 +254,7 @@ void MimeTextEdit::pasteLink()
 void MimeTextEdit::pasteOwnCertificateLink()
 {
 	RetroShareLink link;
-	std::string ownId = rsPeers->getOwnId();
+	RsPeerId ownId = rsPeers->getOwnId();
 
 	if (link.createCertificate(ownId)) {
 		insertHtml(link.toHtml() + " ");

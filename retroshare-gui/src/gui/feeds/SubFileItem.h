@@ -24,6 +24,7 @@
 
 #include "ui_SubFileItem.h"
 #include <stdint.h>
+#include <retroshare/rstypes.h>
 const uint32_t SFI_MASK_STATE		= 0x000f;
 const uint32_t SFI_MASK_TYPE		= 0x00f0;
 //const uint32_t SFI_MASK_FT		= 0x0f00;
@@ -55,7 +56,7 @@ class SubFileItem : public QWidget, private Ui::SubFileItem
 
 public:
 	/** Default Constructor */
-	SubFileItem(const std::string &hash, const std::string &name, const std::string &path, uint64_t size, uint32_t flags, const std::string &srcId);
+	SubFileItem(const std::string &hash, const std::string &name, const std::string &path, uint64_t size, uint32_t flags, const RsPeerId &srcId);
 
 	void smaller();
 
@@ -96,7 +97,7 @@ private:
 	std::string mFileHash;
 	std::string mFileName;
 	uint64_t    mFileSize;
-	std::string mSrcId;
+	RsPeerId    mSrcId;
 	std::string mChannelId;
 
 	uint32_t    mMode;

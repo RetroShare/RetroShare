@@ -48,13 +48,13 @@ public:
     MessageComposer(QWidget *parent = 0, Qt::WindowFlags flags = 0);
     ~MessageComposer();
 
-    static void msgFriend(const std::string &id, bool group);
-    static void msgDistantPeer(const std::string& hash,const std::string& pgp_id) ;
-    static void msgDistantPeer(const std::string& pgp_id) ;
+    static void msgFriend(const RsPeerId &id, bool group);
+    //static void msgDistantPeer(const std::string& hash,const std::string& pgp_id) ;
+    static void msgDistantPeer(const RsPgpId& pgp_id) ;
 
     static QString recommendMessage();
-    static void recommendFriend(const std::list <std::string> &sslIds, const std::string &to = "", const QString &msg = "", bool autoSend = false);
-    static void sendConnectAttemptMsg(const std::string &gpgId, const std::string &sslId, const QString &sslName);
+    static void recommendFriend(const std::list <RsPeerId> &sslIds, const RsPeerId &to = RsPeerId(), const QString &msg = "", bool autoSend = false);
+    static void sendConnectAttemptMsg(const RsPgpId &gpgId, const RsPeerId &sslId, const QString &sslName);
 
     static MessageComposer *newMsg(const std::string &msgId = "");
     static MessageComposer *replyMsg(const std::string &msgId, bool all);
@@ -173,8 +173,8 @@ private:
     void calculateTitle();
     void addEmptyRecipient();
 
-    bool getRecipientFromRow(int row, enumType &type, std::string &id, bool &group);
-    void setRecipientToRow(int row, enumType type, std::string id, bool group);
+    bool getRecipientFromRow(int row, enumType &type, RsPeerId &id, bool &group);
+    void setRecipientToRow(int row, enumType type, const RsPeerId& id, bool group);
 
     void clearTagLabels();
     void showTagLabels();

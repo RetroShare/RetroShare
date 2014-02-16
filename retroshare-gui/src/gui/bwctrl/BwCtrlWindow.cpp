@@ -271,8 +271,8 @@ void BwCtrlWindow::updateBandwidth()
 	peerTreeWidget->clear();
 
 	RsConfigDataRates totalRates;
-	std::map<std::string, RsConfigDataRates> rateMap;
-	std::map<std::string, RsConfigDataRates>::iterator it;
+	std::map<RsPeerId, RsConfigDataRates> rateMap;
+	std::map<RsPeerId, RsConfigDataRates>::iterator it;
 
 	rsConfig->getTotalBandwidthRates(totalRates);
 	rsConfig->getAllBandwidthRates(rateMap);
@@ -325,7 +325,7 @@ void BwCtrlWindow::updateBandwidth()
 
 		std::string name = rsPeers->getPeerName(it->first);
 
-		peer_item -> setData(COLUMN_PEERID, Qt::DisplayRole, QString::fromStdString(it->first));
+		peer_item -> setData(COLUMN_PEERID, Qt::DisplayRole, QString::fromStdString(it->first.toStdString()));
 		peer_item -> setData(COLUMN_RSNAME, Qt::DisplayRole, QString::fromStdString(name));
 
 		peer_item -> setData(COLUMN_IN_RATE, Qt::DisplayRole, it->second.mRateIn);
