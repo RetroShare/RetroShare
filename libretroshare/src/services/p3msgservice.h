@@ -127,15 +127,16 @@ int     checkOutgoingMessages();
 			uint32_t status ;
 			bool pending_messages ;
 		};
-		bool createDistantOfflineMessengingInvite(time_t time_of_validity,TurtleFileHash& hash) ;
+        bool createDistantOfflineMessengingInvite(time_t time_of_validity,DistantMsgPeerId &peer_id) ;
 		bool getDistantOfflineMessengingInvites(std::vector<DistantOfflineMessengingInvite>& invites) ;
 
 		void enableDistantMessaging(bool b) ;
 		bool distantMessagingEnabled() ;
-        bool getDistantMessageHash(const PGPIdType& pgp_id,Sha1CheckSum &hash) ;
+        bool getDistantMessagePeerId(const PGPIdType& pgp_id,DistantMsgPeerId &peer_id) ;
 
 	private:
-		void sendPrivateMsgItem(const Sha1CheckSum& hash,RsMsgItem *) ;
+        bool getDistantMessageHash(const PGPIdType& pgp_id,Sha1CheckSum &hash) ;
+        void sendPrivateMsgItem(const Sha1CheckSum& hash,RsMsgItem *) ;
 
 		// This maps contains the current invitations to respond to.
 		// The map is indexed by the hash

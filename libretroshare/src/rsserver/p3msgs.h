@@ -80,12 +80,12 @@ class p3Msgs: public RsMsgs
 
 	  virtual bool resetMessageStandardTagTypes(MsgTagType& tags);
 
-	  virtual bool createDistantOfflineMessengingInvite(time_t, std::string&) ;
+      virtual bool createDistantOfflineMessengingInvite(time_t, DistantMsgPeerId&) ;
 	  virtual bool getDistantOfflineMessengingInvites(std::vector<DistantOfflineMessengingInvite>&);
 
 	  virtual void enableDistantMessaging(bool b) ;
 	  virtual bool distantMessagingEnabled() ;
-	  virtual bool getDistantMessageHash(const PGPIdType& pgp_id,Sha1CheckSum& hash) ;
+      virtual bool getDistantMessagePeerId(const PGPIdType& pgp_id,DistantMsgPeerId& pid) ;
 
 	  /*!
 	   * gets avatar from peer, image data in jpeg format

@@ -95,7 +95,7 @@ bool    	cleanupDirectoryFaster(const std::string& dir, const std::set<std::stri
 bool 		hashFile(const std::string& filepath,   std::string &name, std::string &hash, uint64_t &size);
 bool 		getFileHash(const std::string& filepath,std::string &hash, uint64_t &size, RsThread *thread = NULL);
 
-Sha1CheckSum sha1sum(uint8_t *data,uint32_t size) ;
+Sha1CheckSum sha1sum(const uint8_t *data,uint32_t size) ;
 
 // Creates a lock file with given path, and returns the lock handle
 // returns:

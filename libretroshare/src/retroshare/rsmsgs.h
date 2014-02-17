@@ -85,9 +85,10 @@ const ChatLobbyFlags RS_CHAT_LOBBY_FLAGS_AUTO_SUBSCRIBE( 0x00000001 ) ;
 
 typedef uint64_t 		ChatLobbyId ;
 typedef uint64_t 		ChatLobbyMsgId ;
-typedef std::string 	ChatLobbyNickName ;
+typedef std::string 		ChatLobbyNickName ;
 
 typedef RsPeerId 		DistantChatPeerId ;
+typedef RsPeerId 		DistantMsgPeerId ;
 
 class MessageInfo 
 {
@@ -286,13 +287,15 @@ virtual bool setMessageTag(const std::string &msgId, uint32_t tagId, bool set) =
 
 virtual bool resetMessageStandardTagTypes(MsgTagType& tags) = 0;
 
-/* private distant messages */
+/****************************************/
+/*        Private distant messages      */
+/****************************************/
 
-virtual bool createDistantOfflineMessengingInvite(time_t validity_time_stamp, std::string& hash)=0 ;
+virtual bool createDistantOfflineMessengingInvite(time_t validity_time_stamp, DistantMsgPeerId& hash)=0 ;
 virtual bool getDistantOfflineMessengingInvites(std::vector<DistantOfflineMessengingInvite>& invites) = 0 ;
 virtual void enableDistantMessaging(bool b) = 0;
 virtual bool distantMessagingEnabled() = 0;
-virtual bool getDistantMessageHash(const PGPIdType& pgp_id, Sha1CheckSum& hash) = 0;
+virtual bool getDistantMessagePeerId(const PGPIdType& pgp_id, DistantMsgPeerId& peerId) = 0;
 
 /****************************************/
 /*                 Chat                 */
