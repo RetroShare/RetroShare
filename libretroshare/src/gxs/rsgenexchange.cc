@@ -1858,7 +1858,7 @@ void RsGenExchange::processGroupUpdatePublish()
 	// get keys for group update publish
 
 	// first build meta request map for groups to be updated
-	std::map<std::string, RsGxsGrpMetaData*> grpMeta;
+	std::map<RsGxsGroupId, RsGxsGrpMetaData*> grpMeta;
 	std::vector<GroupUpdatePublish>::iterator vit = mGroupUpdatePublish.begin();
 
 	for(; vit != mGroupUpdatePublish.end(); vit++)
@@ -1879,7 +1879,7 @@ void RsGenExchange::processGroupUpdatePublish()
 	{
 		GroupUpdatePublish& gup = *vit;
 		const RsGxsGroupId& groupId = gup.grpItem->meta.mGroupId;
-                std::map<std::string, RsGxsGrpMetaData*>::iterator mit = grpMeta.find(groupId);
+                std::map<RsGxsGroupId, RsGxsGrpMetaData*>::iterator mit = grpMeta.find(groupId);
 
                 RsGxsGrpMetaData* meta = NULL;
                 if(mit == grpMeta.end())
@@ -1979,7 +1979,7 @@ void RsGenExchange::publishGrps()
     	{
     		// timed out
     		toNotify.insert(std::make_pair(
-    				token, GrpNote(false, "")));
+    				token, GrpNote(false, RsGxsGroupId())));
     		delete ggps.mItem;
     		vit = mGrpsToPublish.erase(vit);
 
@@ -2026,7 +2026,7 @@ void RsGenExchange::publishGrps()
         if(privKeyFound)
         {
 		    // get group id from private admin key id
-			grpItem->meta.mGroupId = grp->grpId = privAdminKey.keyId;
+			grpItem->meta.mGroupId = grp->grpId = RsGxsGroupId(privAdminKey.keyId);
 
 			ServiceCreate_Return ret = service_CreateGroup(grpItem, privatekeySet);
 

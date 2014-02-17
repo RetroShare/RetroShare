@@ -426,7 +426,7 @@ uint32_t RsGxsUpdateSerialiser::sizeGxsMsgUpdate(RsGxsMsgUpdateItem* item)
 
 	for(; cit != msgUpdateTS.end(); cit++)
 	{
-        s += s += GetTlvStringSize(cit->first);
+		s += cit->first.serial_size();
         s += 4;
 	}
 
@@ -483,7 +483,7 @@ bool RsGxsUpdateSerialiser::serialiseGxsMsgUpdate(RsGxsMsgUpdateItem* item,
 
     for(; cit != msgUpdateTS.end(); cit++)
     {
-        ok &= SetTlvString(data, *size, &offset,TLV_TYPE_STR_GROUPID,cit->first) ;
+    	ok &= cit->first.serialise(data, *size, offset);
         ok &= setRawUInt32(data, *size, &offset, cit->second);
     }
 
@@ -602,7 +602,7 @@ RsGxsMsgUpdateItem* RsGxsUpdateSerialiser::deserialGxsMsgUpdate(void* data,
     uint32_t updateTS;
     for(uint32_t i = 0; i < numUpdateItems; i++)
     {
-        ok &= GetTlvString(data, *size, &offset,TLV_TYPE_STR_GROUPID,pId) ;
+        ok &= pId.deserialise(data, *size, offset);
 
         if(!ok)
             break;

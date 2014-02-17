@@ -164,7 +164,7 @@ public:
      * @param msgIds
      * @return false if token cannot be redeemed, if false you may have tried to redeem when not ready
      */
-    bool getGroupList(const uint32_t &token, std::list<std::string> &groupIds);
+    bool getGroupList(const uint32_t &token, std::list<RsGxsGroupId> &groupIds);
 
     /*!
      *

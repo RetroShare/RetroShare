@@ -254,7 +254,7 @@ bool RsNxsSerialiser::serialiseNxsMsg(RsNxsMsg *item, void *data, uint32_t *size
     ok &= setRawUInt32(data, *size, &offset, item->transactionNumber);
     ok &= setRawUInt8(data, *size, &offset, item->pos);
     ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_MSGID, item->msgId);
-    ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_GROUPID, item->grpId);
+    ok &= item->grpId.serialise(data, *size, offset);
     ok &= item->msg.SetTlv(data, tlvsize, &offset);
     ok &= item->meta.SetTlv(data, *size, &offset);
 
@@ -305,7 +305,7 @@ bool RsNxsSerialiser::serialiseNxsGrp(RsNxsGrp *item, void *data, uint32_t *size
     // grp id
     ok &= setRawUInt32(data, *size, &offset, item->transactionNumber);
     ok &= setRawUInt8(data, *size, &offset, item->pos);
-    ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_GROUPID, item->grpId);
+    ok &= item->grpId.serialise(data, *size, offset);
     ok &= item->grp.SetTlv(data, tlvsize, &offset);
     ok &= item->meta.SetTlv(data, *size, &offset);
 
@@ -574,7 +574,7 @@ RsNxsGrp* RsNxsSerialiser::deserialNxsGrp(void *data, uint32_t *size){
 
     ok &= getRawUInt32(data, *size, &offset, &(item->transactionNumber));
     ok &= getRawUInt8(data, *size, &offset, &(item->pos));
-    ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_GROUPID, item->grpId);
+    ok &= item->grpId.deserialise(data, *size, offset);
     ok &= item->grp.GetTlv(data, *size, &offset);
     ok &= item->meta.GetTlv(data, *size, &offset);
 
@@ -644,7 +644,7 @@ RsNxsMsg* RsNxsSerialiser::deserialNxsMsg(void *data, uint32_t *size){
     ok &= getRawUInt32(data, *size, &offset, &(item->transactionNumber));
     ok &= getRawUInt8(data, *size, &offset, &(item->pos));
     ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_MSGID, item->msgId);
-    ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_GROUPID, item->grpId);
+    ok &= item->grpId.deserialise(data, *size, offset);
     ok &= item->msg.GetTlv(data, *size, &offset);
     ok &= item->meta.GetTlv(data, *size, &offset);
 
@@ -1031,7 +1031,7 @@ uint32_t RsNxsSerialiser::sizeNxsMsg(RsNxsMsg *item)
 
     s += 4; // transaction number
     s += 1; // pos
-    s += GetTlvStringSize(item->grpId);
+    s += item->grpId.serial_size();
     s += GetTlvStringSize(item->msgId);
     s += item->msg.TlvSize();
     s += item->meta.TlvSize();
@@ -1045,7 +1045,7 @@ uint32_t RsNxsSerialiser::sizeNxsGrp(RsNxsGrp *item)
 
     s += 4; // transaction number
     s += 1; // pos
-    s += GetTlvStringSize(item->grpId);
+    s += item->grpId.serial_size();
     s += item->grp.TlvSize();
     s += item->meta.TlvSize();
 

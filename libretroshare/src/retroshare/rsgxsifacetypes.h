@@ -13,10 +13,10 @@
 #include <string>
 #include <inttypes.h>
 #include <retroshare/rstypes.h>
-
+#include <retroshare/rsids.h>
 
 typedef GXSGroupId RsGxsGroupId;
-typedef GXSMsgId RsGxsMessageId;
+typedef std::string RsGxsMessageId;
 
 typedef std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > GxsMsgIdResult;
 typedef std::pair<RsGxsGroupId, RsGxsMessageId> RsGxsGrpMsgIdPair;
@@ -102,7 +102,7 @@ public:
     void operator =(const RsGxsMsgMetaData& rGxsMeta);
 
 
-    std::string mGroupId;
+    RsGxsGroupId mGroupId;
     std::string mMsgId;
 
     std::string mThreadId;
