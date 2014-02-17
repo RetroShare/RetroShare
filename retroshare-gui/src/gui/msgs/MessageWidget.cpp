@@ -303,7 +303,7 @@ void MessageWidget::getcurrentrecommended()
 		return;
 	}
 
-	std::list<std::string> srcIds;
+    std::list<RsPeerId> srcIds;
 	srcIds.push_back(msgInfo.srcId);
 
 	QModelIndexList list = ui.msgList->selectionModel()->selectedIndexes();
@@ -352,7 +352,7 @@ void MessageWidget::getallrecommended()
 	/* do the requests */
 	for(it = recList.begin(); it != recList.end(); it++) {
 		std::cerr << "MessageWidget::getallrecommended() Calling File Request" << std::endl;
-		std::list<std::string> srcIds;
+        std::list<RsPeerId> srcIds;
 		srcIds.push_back(msgInfo.srcId);
 		rsFiles->FileRequest(it->fname, it->hash, it->size, "", RS_FILE_REQ_ANONYMOUS_ROUTING, srcIds);
 	}
@@ -497,7 +497,7 @@ void MessageWidget::fill(const std::string &msgId)
 	ui.msgList->insertTopLevelItems(0, items);
 
 	/* iterate through the sources */
-	std::list<std::string>::const_iterator pit;
+    std::list<RsPeerId>::const_iterator pit;
 
 	RetroShareLink link;
 	QString text;
@@ -545,9 +545,9 @@ void MessageWidget::fill(const std::string &msgId)
 
 	ui.dateText->setText(DateTime::formatDateTime(msgInfo.ts));
 
-	std::string ownId = rsPeers->getOwnId();
+    RsPeerId ownId = rsPeers->getOwnId();
 
-	std::string srcId;
+    RsPeerId srcId;
 	if ((msgInfo.msgflags & RS_MSG_BOXMASK) == RS_MSG_OUTBOX) {
 		// outgoing message are from me
 		srcId = ownId;

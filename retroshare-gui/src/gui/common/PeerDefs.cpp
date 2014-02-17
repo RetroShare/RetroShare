@@ -61,7 +61,7 @@ const QString PeerDefs::rsidFromId(const RsPeerId &id, QString *name /* = NULL*/
     QString rsid;
 
     std::string peerName = rsPeers->getPeerName(id);
-	 std::string hash ;
+     DistantMsgPeerId pid ;
 
 	 if(!peerName.empty())	
 	 {
@@ -71,7 +71,7 @@ const QString PeerDefs::rsidFromId(const RsPeerId &id, QString *name /* = NULL*/
             *name = QString::fromUtf8(peerName.c_str());
         }
     }
-	 else if(rsMsgs->getDistantMessageHash(rsPeers->getGPGOwnId(),hash) && hash == id)
+     else if(rsMsgs->getDistantMessagePeerId(rsPeers->getGPGOwnId(),pid) && pid == id)
 	 {
 		 // not a real peer. Try from hash for distant messages
 	

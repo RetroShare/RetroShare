@@ -24,6 +24,7 @@
 
 #include <QMainWindow>
 #include <retroshare/rstypes.h>
+#include <retroshare/rsmsgs.h>
 #include "ui_MessageComposer.h"
 
 class QAction;
@@ -68,7 +69,7 @@ public:
     void  setQuotedMsg(const QString &msg, const QString &header);
     void  setMsgText(const QString &msg, bool asHtml = false);
     void  addRecipient(enumType type, const RsPeerId &id, bool group);
-    void  addRecipient(enumType type, const Sha1CheckSum &hash, const RsPgpId &pgp_id) ;
+    void  addRecipient(enumType type, const DistantMsgPeerId &pid, const RsPgpId &pgp_id) ;
 
 public slots:
     /* actions to take.... */
@@ -173,8 +174,8 @@ private:
     void calculateTitle();
     void addEmptyRecipient();
 
-    bool getRecipientFromRow(int row, enumType &type, RsPeerId &id, bool &group);
-    void setRecipientToRow(int row, enumType type, const RsPeerId& id, bool group);
+    bool getRecipientFromRow(int row, enumType &type, std::string &id, bool &group);
+    void setRecipientToRow(int row, enumType type, const std::string &id, bool group);
 
     void clearTagLabels();
     void showTagLabels();
@@ -220,7 +221,7 @@ private:
     Ui::MessageComposer ui;
 
     std::list<FileInfo> _recList ;
-     std::map<RsFileHash,RsPgpId> _distant_peers ;	// pairs (hash,pgp_id)
+     std::map<DistantMsgPeerId,RsPgpId> _distant_peers ;	// pairs (hash,pgp_id)
 };
 
 #endif

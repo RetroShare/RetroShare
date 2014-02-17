@@ -817,7 +817,7 @@ void NotifyQt::UpdateGUI()
 							// do not show when active
 							break;
 						}
-						toaster = new Toaster(new ChatToaster(id, QString::fromUtf8(msg.c_str())));
+						toaster = new Toaster(new ChatToaster(RsPeerId(id), QString::fromUtf8(msg.c_str())));
 					}
 					break;
 				case RS_POPUP_GROUPCHAT:
@@ -832,7 +832,7 @@ void NotifyQt::UpdateGUI()
 								}
 							}
 						}
-						toaster = new Toaster(new GroupChatToaster(id, QString::fromUtf8(msg.c_str())));
+						toaster = new Toaster(new GroupChatToaster(RsPeerId(id), QString::fromUtf8(msg.c_str())));
 					}
 					break;
 				case RS_POPUP_CHATLOBBY:
@@ -849,7 +849,7 @@ void NotifyQt::UpdateGUI()
 							// participant is muted
 							break;
 						}
-						toaster = new Toaster(new ChatLobbyToaster(id, QString::fromUtf8(title.c_str()), QString::fromUtf8(msg.c_str())));
+						toaster = new Toaster(new ChatLobbyToaster(RsPeerId(id), QString::fromUtf8(title.c_str()), QString::fromUtf8(msg.c_str())));
 					}
 					break;
 				case RS_POPUP_CONNECT_ATTEMPT:
@@ -858,7 +858,7 @@ void NotifyQt::UpdateGUI()
 						// id = gpgid
 						// title = ssl name
 						// msg = peer id
-						toaster = new Toaster(new FriendRequestToaster(id, QString::fromUtf8(title.c_str()), msg));
+						toaster = new Toaster(new FriendRequestToaster(RsPgpId(id), QString::fromUtf8(title.c_str()), RsPeerId(msg)));
 					}
 					break;
 			}
@@ -921,6 +921,7 @@ void NotifyQt::testToaster(uint notifyFlags, /*RshareSettings::enumToasterPositi
 	QString message = tr("This is a test.");
 
 	RsPeerId id = rsPeers->getOwnId();
+	RsPgpId pgpid = rsPeers->getGPGOwnId();
 
 	uint pos = 0;
 
@@ -946,16 +947,16 @@ void NotifyQt::testToaster(uint notifyFlags, /*RshareSettings::enumToasterPositi
 				toaster = new Toaster(new DownloadToaster(id.toStdString(), title));
 				break;
 			case RS_POPUP_CHAT:
-				toaster = new Toaster(new ChatToaster(id.toStdString(), message));
+				toaster = new Toaster(new ChatToaster(id, message));
 				break;
 			case RS_POPUP_GROUPCHAT:
-				toaster = new Toaster(new GroupChatToaster(id.toStdString(), message));
+				toaster = new Toaster(new GroupChatToaster(id, message));
 				break;
 			case RS_POPUP_CHATLOBBY:
-				toaster = new Toaster(new ChatLobbyToaster(id.toStdString(), title, message));
+				toaster = new Toaster(new ChatLobbyToaster(id, title, message));
 				break;
 			case RS_POPUP_CONNECT_ATTEMPT:
-				toaster = new Toaster(new FriendRequestToaster(id.toStdString(), title, id.toStdString()));
+				toaster = new Toaster(new FriendRequestToaster(pgpid, title, id));
 				break;
 		}
 

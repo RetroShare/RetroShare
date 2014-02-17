@@ -107,13 +107,13 @@ void AvatarWidget::setFrameType(FrameType type)
 	}
 
 	refreshStatus();
-	updateAvatar(QString::fromStdString(mId));
+    updateAvatar(QString::fromStdString(mId.toStdString()));
 	Rshare::refreshStyleSheet(this, false);
 }
 void AvatarWidget::setId(const RsPeerId &id)
 {
     mId = id;
-    mPgpId = rsPeers->getGPGId(id) ;
+//    mPgpId = rsPeers->getGPGId(id) ;
 //    mFlag.isGpg = false ;
 
     if (mId == rsPeers->getOwnId()) {
@@ -133,13 +133,13 @@ void AvatarWidget::setId(const RsPeerId &id)
 
 void AvatarWidget::setOwnId()
 {
-	setId(rsPeers->getOwnId(), false);
+    setId(rsPeers->getOwnId());
 }
 
 void AvatarWidget::setDefaultAvatar(const QString &avatar)
 {
 	defaultAvatar = avatar;
-	updateAvatar(QString::fromStdString(mId));
+    updateAvatar(QString::fromStdString(mId.toStdString()));
 }
 
 void AvatarWidget::refreshStatus()
@@ -161,7 +161,7 @@ void AvatarWidget::refreshStatus()
 			// No check of return value. Non existing status info is handled as offline.
 			rsStatus->getStatus(mId, statusInfo);
 		}
-		updateStatus(QString::fromStdString(statusInfo.id), statusInfo.status);
+        updateStatus(QString::fromStdString(statusInfo.id.toStdString()), statusInfo.status);
 		break;
 	}
 	}
@@ -173,12 +173,12 @@ void AvatarWidget::updateStatus(const QString peerId, int status)
 		return;
 	}
 
-	if (mId.empty()) {
+    if (mId.isNull()) {
 		mPeerState = status;
 		Rshare::refreshStyleSheet(this, false);
 	} else {
 		/* set style for status */
-		if (mId == peerId.toStdString()) {
+        if (mId.toStdString() == peerId.toStdString()) {
 			// the peers status has changed
 			mPeerState = status;
 			setEnabled(((uint32_t) status == RS_STATUS_OFFLINE) ? false : true);
@@ -189,7 +189,7 @@ void AvatarWidget::updateStatus(const QString peerId, int status)
 
 void AvatarWidget::updateAvatar(const QString &peerId)
 {
-	if (mId.empty()) {
+    if (mId.isNull()) {
 		QPixmap avatar(defaultAvatar);
 		setPixmap(avatar);
 		return;
@@ -227,9 +227,9 @@ void AvatarWidget::updateAvatar(const QString &peerId)
     //	return;
     //}
 
-	if (mId == peerId.toStdString()) {
+    if (mId.toStdString() == peerId.toStdString()) {
 		QPixmap avatar;
-		AvatarDefs::getAvatarFromSslId(mId, avatar, defaultAvatar);
+        AvatarDefs::getAvatarFromSslId(mId.toStdString(), avatar, defaultAvatar);
 		setPixmap(avatar);
 		return;
 	}
@@ -238,6 +238,6 @@ void AvatarWidget::updateAvatar(const QString &peerId)
 void AvatarWidget::updateOwnAvatar()
 {
 	if (mFlag.isOwnId) {
-		updateAvatar(QString::fromStdString(mId));
+        updateAvatar(QString::fromStdString(mId.toStdString()));
 	}
 }

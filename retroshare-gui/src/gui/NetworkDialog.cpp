@@ -364,12 +364,12 @@ void NetworkDialog::sendDistantMessage()
 		return;
 	}
 
-	Sha1CheckSum hash ;
+    DistantMsgPeerId pid ;
     RsPgpId mGpgId(wi->text(COLUMN_PEERID).toStdString()) ;
 
-	if(rsMsgs->getDistantMessageHash(mGpgId,hash))
+    if(rsMsgs->getDistantMessagePeerId(mGpgId,pid))
 	{
-        nMsgDialog->addRecipient(MessageComposer::TO, hash, mGpgId);
+        nMsgDialog->addRecipient(MessageComposer::TO, pid, mGpgId);
 		nMsgDialog->show();
 		nMsgDialog->activateWindow();
 	}

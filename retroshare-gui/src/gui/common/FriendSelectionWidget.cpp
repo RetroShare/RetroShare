@@ -211,7 +211,7 @@ static void initSslItem(QTreeWidgetItem *item, const RsPeerDetails &detail, cons
 	}
 
 	item->setIcon(COLUMN_NAME, QIcon(StatusDefs::imageUser(state)));
-	item->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(detail.id));
+    item->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(detail.id.toStdString()));
 	item->setData(COLUMN_DATA, ROLE_SORT, "2 " + name);
 }
 
@@ -233,19 +233,19 @@ void FriendSelectionWidget::secured_fillList()
 	mInFillList = true;
 
 	// get selected items
-	std::list<std::string> sslIdsSelected;
+    std::list<RsPeerId> sslIdsSelected;
 	if (mShowTypes & SHOW_SSL) {
-		selectedSslIds(sslIdsSelected, true);
+        selectedIds<RsPeerId,IDTYPE_SSL>(sslIdsSelected,true);
 	}
 
 	std::list<std::string> groupIdsSelected;
 	if (mShowTypes & SHOW_GROUP) {
-		selectedGroupIds(groupIdsSelected);
+        selectedIds<std::string,IDTYPE_GROUP>(groupIdsSelected,true);
 	}
 
-	std::list<std::string> gpgIdsSelected;
+    std::list<RsPgpId> gpgIdsSelected;
 	if (mShowTypes & (SHOW_GPG | SHOW_NON_FRIEND_GPG)) {
-		selectedGpgIds(gpgIdsSelected, true);
+        selectedIds<RsPgpId,IDTYPE_GPG>(gpgIdsSelected,true);
 	}
 
 	// remove old items
@@ -256,16 +256,16 @@ void FriendSelectionWidget::secured_fillList()
 	std::list<RsGroupInfo>::iterator groupIt;
 	rsPeers->getGroupInfoList(groupInfoList);
 
-	std::list<std::string> gpgIds;
-	std::list<std::string>::iterator gpgIt;
+    std::list<RsPgpId> gpgIds;
+    std::list<RsPgpId>::iterator gpgIt;
 
 	if(mShowTypes & SHOW_NON_FRIEND_GPG)
 		rsPeers->getGPGAllList(gpgIds);
 	else
 		rsPeers->getGPGAcceptedList(gpgIds);
 
-	std::list<std::string> sslIds;
-	std::list<std::string>::iterator sslIt;
+    std::list<RsPeerId> sslIds;
+    std::list<RsPeerId>::iterator sslIt;
 
 	if ((mShowTypes & (SHOW_SSL | SHOW_GPG)) == SHOW_SSL) {
 		rsPeers->getFriendList(sslIds);

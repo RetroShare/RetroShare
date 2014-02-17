@@ -1495,7 +1495,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 					std::cerr << " RetroShareLink::process MessageRequest : id : " << link.hash().toStdString() << ", subject : " << link.name().toStdString() << std::endl;
 #endif
 					RsPeerDetails detail;
-                    RsFileHash dm_hash ;
+                    DistantMsgPeerId dm_pid ;
 
                     // This is awful, but apparently the hash can be multiple different types. Let's check!
 
@@ -1514,10 +1514,10 @@ static void processList(const QStringList &list, const QString &textSingular, co
 							msg->show();
 							messageStarted.append(PeerDefs::nameWithLocation(detail));
 						} 
-						else if(rsMsgs->getDistantMessageHash(detail.gpg_id,dm_hash))
+                        else if(rsMsgs->getDistantMessagePeerId(detail.gpg_id,dm_pid))
 						{
 							MessageComposer *msg = MessageComposer::newMsg();
-							msg->addRecipient(MessageComposer::TO, dm_hash,detail.gpg_id) ;
+                            msg->addRecipient(MessageComposer::TO, dm_pid,detail.gpg_id) ;
 
 							if (link.subject().isEmpty() == false) {
 								msg->setTitleText(link.subject());

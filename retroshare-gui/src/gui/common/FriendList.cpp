@@ -429,7 +429,7 @@ void FriendList::peerTreeWidgetCostumPopupMenu()
 
                      GroupDefs::sortByName(groupInfoList);
 
-                     std::string gpgId = getRsId(c);
+                     RsPgpId gpgId ( getRsId(c));
 
                      QTreeWidgetItem *parent = c->parent();
 
@@ -632,7 +632,7 @@ void  FriendList::insertPeers()
         case TYPE_GPG:
         {
             QTreeWidgetItem *parent = item->parent();
-            std::string gpg_widget_id = getRsId(item);
+            RsPgpId gpg_widget_id ( getRsId(item));
 
             // remove items that are not friends anymore
             if (std::find(gpgFriends.begin(), gpgFriends.end(), gpg_widget_id) == gpgFriends.end()) {
@@ -752,7 +752,7 @@ void  FriendList::insertPeers()
                 while (childIndex < childCount) {
                     QTreeWidgetItem *gpgItemLoop = groupItem->child(childIndex);
                     if (gpgItemLoop->type() == TYPE_GPG) {
-                        if (std::find(groupInfo->peerIds.begin(), groupInfo->peerIds.end(), getRsId(gpgItemLoop)) == groupInfo->peerIds.end()) {
+                        if (std::find(groupInfo->peerIds.begin(), groupInfo->peerIds.end(), RsPgpId(getRsId(gpgItemLoop))) == groupInfo->peerIds.end()) {
                             delete(groupItem->takeChild(groupItem->indexOfChild(gpgItemLoop)));
                             childCount = groupItem->childCount();
                             continue;
@@ -803,14 +803,14 @@ void  FriendList::insertPeers()
             int itemCount = groupItem ? groupItem->childCount() : peerTreeWidget->topLevelItemCount();
             for (int index = 0; index < itemCount; index++) {
                 gpgItemLoop = groupItem ? groupItem->child(index) : peerTreeWidget->topLevelItem(index);
-                if (gpgItemLoop->type() == TYPE_GPG && getRsId(gpgItemLoop) == gpgId) {
+                if (gpgItemLoop->type() == TYPE_GPG && getRsId(gpgItemLoop) == gpgId.toStdString()) {
                     gpgItem = gpgItemLoop;
                     break;
                 }
             }
 
             RsPeerDetails detail;
-            if ((!rsPeers->getPeerDetails(gpgId, detail) || !detail.accept_connection) && detail.gpg_id != ownId) {
+            if ((!rsPeers->getGPGDetails(gpgId, detail) || !detail.accept_connection) && detail.gpg_id != ownId) {
                 // don't accept anymore connection, remove from the view
                 if (gpgItem) {
                     if (groupItem) {
@@ -837,7 +837,7 @@ void  FriendList::insertPeers()
                 gpgItem->setTextAlignment(COLUMN_NAME, Qt::AlignLeft | Qt::AlignVCenter);
 
                 /* not displayed, used to find back the item */
-                gpgItem->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(detail.id));
+                gpgItem->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(detail.id.toStdString()));
             }
 
             if (mBigName && !mHideState && isStatusColumnHidden) {
@@ -855,7 +855,7 @@ void  FriendList::insertPeers()
             int childIndex = 0;
             while (childIndex < childCount) {
                 std::string ssl_id = getRsId(gpgItem->child(childIndex));
-                if (!rsPeers->isFriend(ssl_id)) {
+                if (!rsPeers->isFriend(RsPeerId(ssl_id))) {
                     delete (gpgItem->takeChild(childIndex));
                     // count again
                     childCount = gpgItem->childCount();
@@ -870,23 +870,23 @@ void  FriendList::insertPeers()
             bool gpg_hasPrivateChat = false;
             int bestPeerState = 0;        // for gpg item
             unsigned int bestRSState = 0; // for gpg item
-            std::string bestSslId;        // for gpg item
+            RsPeerId bestSslId;        // for gpg item
             QString bestCustomStateString;// for gpg item
-            std::list<std::string> sslContacts;
+            std::list<RsPeerId> sslContacts;
             QDateTime lastContact;
             QString itemIP;
 
             rsPeers->getAssociatedSSLIds(detail.gpg_id, sslContacts);
-            for (std::list<std::string>::iterator sslIt = sslContacts.begin(); sslIt != sslContacts.end(); sslIt++) {
+            for (std::list<RsPeerId>::iterator sslIt = sslContacts.begin(); sslIt != sslContacts.end(); sslIt++) {
                 QTreeWidgetItem *sslItem = NULL;
-                std::string sslId = *sslIt;
+                RsPeerId sslId = *sslIt;
 
                 //find the corresponding sslItem child item of the gpg item
                 bool newChild = true;
                 childCount = gpgItem->childCount();
                 for (int childIndex = 0; childIndex < childCount; childIndex++) {
                     // we assume, that only ssl items are child of the gpg item, so we don't need to test the type
-                    if (getRsId(gpgItem->child(childIndex)) == sslId) {
+                    if (getRsId(gpgItem->child(childIndex)) == sslId.toStdString()) {
                         sslItem = gpgItem->child(childIndex);
                         newChild = false;
                         break;
@@ -917,7 +917,7 @@ void  FriendList::insertPeers()
                 }
 
                 /* not displayed, used to find back the item */
-                sslItem->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(sslDetail.id));
+                sslItem->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(sslDetail.id.toStdString()));
 
                 QString sText;
                 QString customStateString;
@@ -1146,7 +1146,7 @@ void  FriendList::insertPeers()
                 // only set the avatar image the first time, or when it changed
                 // otherwise getAvatarFromSslId sends request packages to peers.
                 QPixmap avatar;
-                AvatarDefs::getAvatarFromSslId(bestSslId, avatar);
+                AvatarDefs::getAvatarFromSslId(bestSslId.toStdString(), avatar);
                 QIcon avatar_icon(avatar);
                 gpgItem->setIcon(COLUMN_AVATAR, avatar_icon);
             }
@@ -1160,7 +1160,7 @@ void  FriendList::insertPeers()
             gpgItem->setData(COLUMN_IP, Qt::DisplayRole, QVariant());
             gpgItem->setData(COLUMN_IP, ROLE_SORT, "2 " + itemIP);
 
-            if (openPeers != NULL && openPeers->find(gpgId) != openPeers->end()) {
+            if (openPeers != NULL && openPeers->find(gpgId.toStdString()) != openPeers->end()) {
                 gpgItem->setExpanded(true);
             }
         }
@@ -1287,7 +1287,7 @@ void FriendList::chatfriend(QTreeWidgetItem *pPeer)
     }
 
     std::string id = getRsId(pPeer);
-    ChatDialog::chatFriend(id);
+    ChatDialog::chatFriend(RsPeerId(id));
 }
 
 void FriendList::addFriend()
@@ -1311,7 +1311,8 @@ void FriendList::msgfriend()
         return;
 
     std::string id = getRsId(peer);
-    MessageComposer::msgFriend(id, (peer->type() == TYPE_GROUP));
+
+    MessageComposer::msgFriend(RsPeerId(id), (peer->type() == TYPE_GROUP));
 }
 
 void FriendList::recommendfriend()
@@ -1322,14 +1323,15 @@ void FriendList::recommendfriend()
         return;
 
     std::string peerId = getRsId(peer);
-    std::list<std::string> ids;
+    std::list<RsPeerId> ids;
 
-    switch (peer->type()) {
+    switch (peer->type())
+    {
     case TYPE_SSL:
-        ids.push_back(peerId);
+        ids.push_back(RsPeerId(peerId));
         break;
     case TYPE_GPG:
-        rsPeers->getAssociatedSSLIds(peerId, ids);
+        rsPeers->getAssociatedSSLIds(RsPgpId(peerId), ids);
         break;
     default:
         return;
@@ -1348,8 +1350,9 @@ void FriendList::copyFullCertificate()
 {
 	QTreeWidgetItem *c = getCurrentPeer();
 	QList<RetroShareLink> urls;
-	RetroShareLink link ;
-	link.createCertificate(getRsId(c)) ;
+    RetroShareLink link ;
+
+    link.createCertificate(RsPeerId(getRsId(c))) ;
 	urls.push_back(link);
 
 	std::cerr << "link: " << std::endl;
@@ -1464,9 +1467,12 @@ void FriendList::removefriend()
 
     if (rsPeers)
     {
+        if(RsPgpId(getRsId(c)).isNull())
+            return ;
+
         if ((QMessageBox::question(this, "RetroShare", tr("Do you want to remove this Friend?"), QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes)) == QMessageBox::Yes)
         {
-            rsPeers->removeFriend(getRsId(c));
+            rsPeers->removeFriend(RsPgpId(getRsId(c)));
         }
     }
 }
@@ -1492,22 +1498,22 @@ void FriendList::connectfriend()
             for (int childIndex = 0; childIndex < childCount; childIndex++) {
                 QTreeWidgetItem *item = c->child(childIndex);
                 if (item->type() == TYPE_SSL) {
-                    rsPeers->connectAttempt(getRsId(item));
+                    rsPeers->connectAttempt(RsPeerId(getRsId(item)));
                     item->setIcon(COLUMN_NAME,(QIcon(IMAGE_CONNECT2)));
 
 	    	    // Launch ProgressDialog, only if single SSL child.
 		    if (childCount == 1)
 		    {
-	    		ConnectProgressDialog::showProgress(getRsId(item));
+                ConnectProgressDialog::showProgress(RsPeerId(getRsId(item)));
 		    }
                 }
             }
         } else {
             //this is a SSL key
-            rsPeers->connectAttempt(getRsId(c));
+            rsPeers->connectAttempt(RsPeerId(getRsId(c)));
             c->setIcon(COLUMN_NAME,(QIcon(IMAGE_CONNECT2)));
 	    // Launch ProgressDialog.
-	    ConnectProgressDialog::showProgress(getRsId(c));
+        ConnectProgressDialog::showProgress(RsPeerId(getRsId(c)));
         }
     }
 }
@@ -1515,7 +1521,12 @@ void FriendList::connectfriend()
 /* GUI stuff -> don't do anything directly with Control */
 void FriendList::configurefriend()
 {
-    ConfCertDialog::showIt(getRsId(getCurrentPeer()), ConfCertDialog::PageDetails);
+    if(!RsPeerId(getRsId(getCurrentPeer())).isNull())
+        ConfCertDialog::showIt(RsPeerId(getRsId(getCurrentPeer())), ConfCertDialog::PageDetails);
+    else if(!RsPgpId(getRsId(getCurrentPeer())).isNull())
+        ConfCertDialog::showIt(RsPgpId(getRsId(getCurrentPeer())), ConfCertDialog::PageDetails);
+    else
+        std::cerr << "FriendList::configurefriend: id is not an SSL nor a PGP id." << std::endl;
 }
 
 // void FriendList::showLobby()
@@ -1548,7 +1559,7 @@ void FriendList::configurefriend()
 //     ChatDialog::closeChat(vpeer_id);
 // }
 
-void FriendList::getSslIdsFromItem(QTreeWidgetItem *item, std::list<std::string> &sslIds)
+void FriendList::getSslIdsFromItem(QTreeWidgetItem *item, std::list<RsPeerId> &sslIds)
 {
     if (item == NULL) {
         return;
@@ -1558,16 +1569,16 @@ void FriendList::getSslIdsFromItem(QTreeWidgetItem *item, std::list<std::string>
 
     switch (item->type()) {
     case TYPE_SSL:
-        sslIds.push_back(peerId);
+        sslIds.push_back(RsPeerId(peerId));
         break;
     case TYPE_GPG:
-        rsPeers->getAssociatedSSLIds(peerId, sslIds);
+        rsPeers->getAssociatedSSLIds(RsPgpId(peerId), sslIds);
         break;
     case TYPE_GROUP:
         {
             RsGroupInfo groupInfo;
             if (rsPeers->getGroupInfo(peerId, groupInfo)) {
-                std::list<std::string>::iterator gpgIt;
+                std::list<RsPgpId>::iterator gpgIt;
                 for (gpgIt = groupInfo.peerIds.begin(); gpgIt != groupInfo.peerIds.end(); ++gpgIt) {
                     rsPeers->getAssociatedSSLIds(*gpgIt, sslIds);
                 }
@@ -1576,42 +1587,6 @@ void FriendList::getSslIdsFromItem(QTreeWidgetItem *item, std::list<std::string>
         break;
     }
 }
-
-#ifdef TO_REMOVE
-void FriendList::inviteToLobby()
-{
-    QTreeWidgetItem *c = getCurrentPeer();
-
-    std::list<std::string> sslIds;
-    getSslIdsFromItem(c, sslIds);
-
-    std::string lobby_id = qobject_cast<QAction*>(sender())->data().toString().toStdString();
-    if (lobby_id.empty())
-        return;
-
-    ChatLobbyId lobbyId = QString::fromStdString(lobby_id).toULongLong();
-
-    // add to group
-    std::list<std::string>::iterator it;
-    for (it = sslIds.begin(); it != sslIds.end(); ++it) {
-        rsMsgs->invitePeerToLobby(lobbyId, *it);
-    }
-
-    std::string vpeer_id;
-    if (rsMsgs->getVirtualPeerId(lobbyId, vpeer_id))
-        ChatDialog::chatFriend(vpeer_id);
-}
-
-void FriendList::createchatlobby()
-{
-    QTreeWidgetItem *c = getCurrentPeer();
-
-    std::list<std::string> sslIds;
-    getSslIdsFromItem(c, sslIds);
-
-    CreateLobbyDialog(sslIds).exec();
-}
-#endif
 
 void FriendList::addToGroup()
 {
@@ -1626,9 +1601,9 @@ void FriendList::addToGroup()
     }
 
     std::string groupId = qobject_cast<QAction*>(sender())->data().toString().toStdString();
-    std::string gpgId = getRsId(c);
+    RsPgpId gpgId ( getRsId(c));
 
-    if (gpgId.empty() || groupId.empty()) {
+    if (gpgId.isNull() || groupId.empty()) {
         return;
     }
 
@@ -1652,9 +1627,9 @@ void FriendList::moveToGroup()
     }
 
     std::string groupId = qobject_cast<QAction*>(sender())->data().toString().toStdString();
-    std::string gpgId = getRsId(c);
+    RsPgpId gpgId ( getRsId(c));
 
-    if (gpgId.empty() || groupId.empty()) {
+    if (gpgId.isNull() || groupId.empty()) {
         return;
     }
 
@@ -1681,9 +1656,9 @@ void FriendList::removeFromGroup()
     }
 
     std::string groupId = qobject_cast<QAction*>(sender())->data().toString().toStdString();
-    std::string gpgId = getRsId(c);
+    RsPgpId gpgId ( getRsId(c));
 
-    if (gpgId.empty()) {
+    if (gpgId.isNull()) {
         return;
     }
 
