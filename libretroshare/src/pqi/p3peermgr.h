@@ -218,6 +218,7 @@ virtual bool 	addFriend(const RsPeerId&ssl_id, const PGPIdType&gpg_id, uint32_t 
 							uint16_t vsDisc = RS_VS_DISC_FULL, uint16_t vsDht = RS_VS_DHT_FULL, 
 							time_t lastContact = 0,ServicePermissionFlags = ServicePermissionFlags(RS_SERVICE_PERM_ALL));
 virtual bool	removeFriend(const RsPeerId &ssl_id, bool removePgpId);
+virtual bool	removeFriend(const RsPgpId &pgp_id);
 
 virtual bool	isFriend(const RsPeerId &ssl_id);
 

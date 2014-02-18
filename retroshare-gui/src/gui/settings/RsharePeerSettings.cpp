@@ -78,10 +78,10 @@ void RsharePeerSettings::cleanDeadIds()
             }
 
             ChatLobbyId lid;
-            if (rsMsgs->isLobbyId((*group).toStdString(), lid)) {
+            if (rsMsgs->isLobbyId(RsPeerId((*group).toStdString()), lid)) {
                 continue;
             }
-            if (rsPeers->isGPGAccepted((*group).toStdString()) == false) {
+            if (rsPeers->isGPGAccepted(RsPgpId((*group).toStdString())) == false) {
                 remove(*group);
             }
         }
@@ -96,11 +96,11 @@ bool RsharePeerSettings::getSettingsIdOfPeerId(const RsPeerId &peerId, std::stri
 {
     ChatLobbyId lid;
     if (rsMsgs->isLobbyId(peerId, lid)) {
-        settingsId = peerId;
+        settingsId = peerId.toStdString();
         return true;
     }
 
-    std::map<std::string, std::string>::iterator it = m_SslToGpg.find(peerId);
+    std::map<RsPeerId, std::string>::iterator it = m_SslToGpg.find(peerId);
     if (it != m_SslToGpg.end()) {
         settingsId = it->second;
         return true;
@@ -112,7 +112,7 @@ bool RsharePeerSettings::getSettingsIdOfPeerId(const RsPeerId &peerId, std::stri
     }
 
     settingsId = details.gpg_id.toStdString();
-    m_SslToGpg[peerId] = settingsId;
+    m_SslToGpg[peerId] = settingsId ;
 
     return true;
 }
@@ -136,7 +136,7 @@ QVariant RsharePeerSettings::get(const RsPeerId &peerId, const QString &key, con
 }
 
 /* set value of peer */
-void RsharePeerSettings::set(const std::string &peerId, const QString &key, const QVariant &value)
+void RsharePeerSettings::set(const RsPeerId &peerId, const QString &key, const QVariant &value)
 {
     std::string settingsId;
     if (getSettingsIdOfPeerId(peerId, settingsId) == false) {

@@ -182,7 +182,7 @@ void ConnectProgressDialog::initDialog()
 		std::string name = rsPeers->getPeerName(mId);
 		QString connectName = QString::fromUtf8(name.c_str());
 		connectName += " (";
-		connectName += QString::fromStdString(mId).left(10);
+        connectName += QString::fromStdString(mId.toStdString()).left(10);
 		connectName += "...)";
 		ui->connectId->setText(connectName);
 	}

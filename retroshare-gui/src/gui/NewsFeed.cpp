@@ -494,7 +494,7 @@ void NewsFeed::addFeedItem(QWidget *item)
 	lockLayout(item, false);
 }
 
-void NewsFeed::addFeedItemIfUnique(QWidget *item, int itemType, const std::string &sslId, bool replace)
+void NewsFeed::addFeedItemIfUnique(QWidget *item, int itemType, const RsPeerId &sslId, bool replace)
 {
 	foreach (QObject *itemObject, widgets) {
 		SecurityItem *secitem = dynamic_cast<SecurityItem*>(itemObject);
@@ -519,7 +519,7 @@ void NewsFeed::addFeedItemIfUnique(QWidget *item, int itemType, const std::strin
 void	NewsFeed::addFeedItemPeerConnect(RsFeedItem &fi)
 {
 	/* make new widget */
-	PeerItem *pi = new PeerItem(this, NEWSFEED_PEERLIST, fi.mId1, PEER_TYPE_CONNECT, false);
+    PeerItem *pi = new PeerItem(this, NEWSFEED_PEERLIST, RsPeerId(fi.mId1), PEER_TYPE_CONNECT, false);
 
 	/* store */
 
@@ -536,7 +536,7 @@ void	NewsFeed::addFeedItemPeerConnect(RsFeedItem &fi)
 void	NewsFeed::addFeedItemPeerDisconnect(RsFeedItem &fi)
 {
 	/* make new widget */
-	PeerItem *pi = new PeerItem(this, NEWSFEED_PEERLIST, fi.mId1, PEER_TYPE_STD, false);
+    PeerItem *pi = new PeerItem(this, NEWSFEED_PEERLIST, RsPeerId(fi.mId1), PEER_TYPE_STD, false);
 
 	/* store */
 
@@ -552,7 +552,7 @@ void	NewsFeed::addFeedItemPeerDisconnect(RsFeedItem &fi)
 void	NewsFeed::addFeedItemPeerHello(RsFeedItem &fi)
 {
 	/* make new widget */
-	PeerItem *pi = new PeerItem(this, NEWSFEED_PEERLIST, fi.mId1, PEER_TYPE_HELLO, false);
+    PeerItem *pi = new PeerItem(this, NEWSFEED_PEERLIST, RsPeerId(fi.mId1), PEER_TYPE_HELLO, false);
 
 	/* store */
 
@@ -568,7 +568,7 @@ void	NewsFeed::addFeedItemPeerHello(RsFeedItem &fi)
 void	NewsFeed::addFeedItemPeerNew(RsFeedItem &fi)
 {
 	/* make new widget */
-	PeerItem *pi = new PeerItem(this, NEWSFEED_PEERLIST, fi.mId1, PEER_TYPE_NEW_FOF, false);
+    PeerItem *pi = new PeerItem(this, NEWSFEED_PEERLIST, RsPeerId(fi.mId1), PEER_TYPE_NEW_FOF, false);
 
 	/* store */
 
@@ -584,12 +584,12 @@ void	NewsFeed::addFeedItemPeerNew(RsFeedItem &fi)
 void	NewsFeed::addFeedItemSecurityConnectAttempt(RsFeedItem &fi)
 {
 	/* make new widget */
-	SecurityItem *pi = new SecurityItem(this, NEWSFEED_SECLIST, fi.mId1, fi.mId2, fi.mId3, fi.mId4, fi.mType, false);
+    SecurityItem *pi = new SecurityItem(this, NEWSFEED_SECLIST, RsPgpId(fi.mId1), RsPeerId(fi.mId2), fi.mId3, fi.mId4, fi.mType, false);
 
 	/* store */
 
 	/* add to layout */
-	addFeedItemIfUnique(pi, fi.mType, fi.mId2, false);
+    addFeedItemIfUnique(pi, fi.mType, RsPeerId(fi.mId2), false);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemSecurityConnectAttempt()";
@@ -600,12 +600,12 @@ void	NewsFeed::addFeedItemSecurityConnectAttempt(RsFeedItem &fi)
 void	NewsFeed::addFeedItemSecurityAuthDenied(RsFeedItem &fi)
 {
 	/* make new widget */
-	SecurityItem *pi = new SecurityItem(this, NEWSFEED_SECLIST, fi.mId1, fi.mId2, fi.mId3, fi.mId4, fi.mType, false);
+    SecurityItem *pi = new SecurityItem(this, NEWSFEED_SECLIST, RsPgpId(fi.mId1), RsPeerId(fi.mId2), fi.mId3, fi.mId4, fi.mType, false);
 
 	/* store */
 
 	/* add to layout */
-	addFeedItemIfUnique(pi, RS_FEED_ITEM_SEC_AUTH_DENIED, fi.mId2, false);
+    addFeedItemIfUnique(pi, RS_FEED_ITEM_SEC_AUTH_DENIED, RsPeerId(fi.mId2), false);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemSecurityAuthDenied()";
@@ -616,12 +616,12 @@ void	NewsFeed::addFeedItemSecurityAuthDenied(RsFeedItem &fi)
 void	NewsFeed::addFeedItemSecurityUnknownIn(RsFeedItem &fi)
 {
 	/* make new widget */
-	SecurityItem *pi = new SecurityItem(this, NEWSFEED_SECLIST, fi.mId1, fi.mId2, fi.mId3, fi.mId4, RS_FEED_ITEM_SEC_UNKNOWN_IN, false);
+    SecurityItem *pi = new SecurityItem(this, NEWSFEED_SECLIST, RsPgpId(fi.mId1), RsPeerId(fi.mId2), fi.mId3, fi.mId4, RS_FEED_ITEM_SEC_UNKNOWN_IN, false);
 
 	/* store */
 
 	/* add to layout */
-	addFeedItemIfUnique(pi, RS_FEED_ITEM_SEC_UNKNOWN_IN, fi.mId2, false);
+    addFeedItemIfUnique(pi, RS_FEED_ITEM_SEC_UNKNOWN_IN, RsPeerId(fi.mId2), false);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemSecurityUnknownIn()";
@@ -632,12 +632,12 @@ void	NewsFeed::addFeedItemSecurityUnknownIn(RsFeedItem &fi)
 void	NewsFeed::addFeedItemSecurityUnknownOut(RsFeedItem &fi)
 {
 	/* make new widget */
-	SecurityItem *pi = new SecurityItem(this, NEWSFEED_SECLIST, fi.mId1, fi.mId2, fi.mId3, fi.mId4, RS_FEED_ITEM_SEC_UNKNOWN_OUT, false);
+    SecurityItem *pi = new SecurityItem(this, NEWSFEED_SECLIST, RsPgpId(fi.mId1), RsPeerId(fi.mId2), fi.mId3, fi.mId4, RS_FEED_ITEM_SEC_UNKNOWN_OUT, false);
 
 	/* store */
 
 	/* add to layout */
-	addFeedItemIfUnique(pi, RS_FEED_ITEM_SEC_UNKNOWN_OUT, fi.mId2, false);
+    addFeedItemIfUnique(pi, RS_FEED_ITEM_SEC_UNKNOWN_OUT, RsPeerId(fi.mId2), false);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemSecurityUnknownOut()";
@@ -800,7 +800,7 @@ void	NewsFeed::addFeedItemChatNew(RsFeedItem &fi, bool addWithoutCheck)
 	}
 
 	/* make new widget */
-	ChatMsgItem *cm = new ChatMsgItem(this, NEWSFEED_CHATMSGLIST, fi.mId1, fi.mId2);
+    ChatMsgItem *cm = new ChatMsgItem(this, NEWSFEED_CHATMSGLIST, RsPeerId(fi.mId1), fi.mId2);
 
 	/* store in forum list */
 
@@ -850,14 +850,14 @@ void NewsFeed::deleteFeedItem(QWidget *item, uint32_t /*type*/)
 	}
 }
 
-void NewsFeed::openChat(std::string peerId)
+void NewsFeed::openChat(const RsPeerId &peerId)
 {
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::openChat()";
 	std::cerr << std::endl;
 #endif
 
-	ChatDialog::chatFriend(RsPeerId(peerId));
+    ChatDialog::chatFriend(peerId);
 }
 
 void NewsFeed::openComments(uint32_t /*type*/, const RsGxsGroupId &/*groupId*/, const RsGxsMessageId &/*msgId*/, const QString &/*title*/)

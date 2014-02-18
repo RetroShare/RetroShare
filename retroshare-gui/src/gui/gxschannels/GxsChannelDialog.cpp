@@ -366,7 +366,7 @@ void GxsChannelDialog::deleteFeedItem(QWidget * /*item*/, uint32_t /*type*/)
 {
 }
 
-void GxsChannelDialog::openChat(std::string /*peerId*/)
+void GxsChannelDialog::openChat(const RsPeerId & /*peerId*/)
 {
 }
 

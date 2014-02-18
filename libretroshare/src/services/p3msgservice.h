@@ -152,9 +152,9 @@ int     checkOutgoingMessages();
 		virtual void receiveGRouterData(RsGRouterGenericDataItem *item, const GRouterKeyId& key) ;
 #endif
         virtual bool handleTunnelRequest(const Sha1CheckSum& hash,const RsPeerId& peer_id) ;
-		virtual void receiveTurtleData(RsTurtleGenericTunnelItem *item,const Sha1CheckSum& hash,const RsPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction) ;
-		void addVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&,RsTurtleGenericTunnelItem::Direction dir) ;
-		void removeVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&) ;
+//		virtual void receiveTurtleData(RsTurtleGenericTunnelItem *item,const Sha1CheckSum& hash,const RsPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction) ;
+		void addVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&,RsTurtleGenericTunnelItem::Direction dir) {}
+		void removeVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&) {}
 
 		// Utility functions
 

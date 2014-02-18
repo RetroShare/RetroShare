@@ -41,7 +41,7 @@
  ****/
 
 /** Constructor */
-ChatMsgItem::ChatMsgItem(FeedHolder *parent, uint32_t feedId, const std::string &peerId, const std::string &message)
+ChatMsgItem::ChatMsgItem(FeedHolder *parent, uint32_t feedId, const RsPeerId &peerId, const std::string &message)
 :QWidget(NULL), mParent(parent), mFeedId(feedId), mPeerId(peerId)
 {
     /* Invoke the Qt Designer generated object setup routine */
@@ -64,7 +64,7 @@ ChatMsgItem::ChatMsgItem(FeedHolder *parent, uint32_t feedId, const std::string 
 
     connect(NotifyQt::getInstance(), SIGNAL(peerHasNewAvatar(const QString&)), this, SLOT(updateAvatar(const QString&)));
 
-    avatar->setId(mPeerId, false);
+    avatar->setId(mPeerId);
 
     updateItemStatic();
     updateItem();

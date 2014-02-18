@@ -438,7 +438,7 @@ uint32_t RsGxsUpdateSerialiser::sizeGxsMsgUpdate(RsGxsMsgUpdateItem* item)
 uint32_t RsGxsUpdateSerialiser::sizeGxsServerMsgUpdate(RsGxsServerMsgUpdateItem* item)
 {
         uint32_t s = 8; // header size
-        s += GetTlvStringSize(item->grpId);
+        s += item->grpId.serial_size();
         s += 4; // grp TS
 
         return s;
@@ -533,7 +533,7 @@ bool RsGxsUpdateSerialiser::serialiseGxsServerMsgUpdate(RsGxsServerMsgUpdateItem
     /* RsNxsSyncm */
 
 
-    ok &= SetTlvString(data, *size, &offset, TLV_TYPE_STR_GROUPID, item->grpId);
+    ok &= item->grpId.serialise(data, *size, offset) ;
     ok &= setRawUInt32(data, *size, &offset, item->msgUpdateTS);
 
     if(offset != tlvsize){
@@ -678,7 +678,7 @@ RsGxsServerMsgUpdateItem* RsGxsUpdateSerialiser::deserialGxsServerMsgUpdate(void
     /* skip the header */
     offset += 8;
 
-    ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_GROUPID, item->grpId);
+    ok &= item->grpId.deserialise(data, *size, offset) ;
     ok &= getRawUInt32(data, *size, &offset, &(item->msgUpdateTS));
 
     if (offset != rssize)

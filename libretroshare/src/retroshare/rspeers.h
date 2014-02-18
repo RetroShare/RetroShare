@@ -321,8 +321,6 @@ class RsPeers
 		/* Add/Remove Friends */
 		virtual	bool addFriend(const SSLIdType &ssl_id, const PGPIdType &gpg_id,ServicePermissionFlags flags = RS_SERVICE_PERM_ALL)    = 0;
 		virtual	bool removeFriend(const PGPIdType& pgp_id)  			= 0;
-		virtual	bool removeFriend(const SSLIdType& ssl_id)  			= 0;
-
 		virtual bool removeFriendLocation(const SSLIdType& sslId) 			= 0;
 
 		/* keyring management */

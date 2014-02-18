@@ -6,7 +6,7 @@ TARGET = retroshare
 
 #GXS Stuff.
 # This should be disabled for releases until further notice.
-CONFIG += gxs debug
+#CONFIG += gxs debug
 #CONFIG += grouter
 #CONFIG += dsdv
 
@@ -418,8 +418,6 @@ HEADERS +=	serialiser/rsbaseserial.h \
 			serialiser/rsdiscovery2items.h \
 			serialiser/rsheartbeatitems.h \
 			serialiser/rsrttitems.h \
-			serialiser/rsgxsrecognitems.h \
-                        serialiser/rsgxsupdateitems.h
 
 HEADERS +=	services/p3chatservice.h \
 			services/p3msgservice.h \
@@ -551,8 +549,6 @@ SOURCES +=	serialiser/rsbaseserial.cc \
 			serialiser/rsdiscovery2items.cc \
 			serialiser/rsheartbeatitems.cc \
 			serialiser/rsrttitems.cc \
-			serialiser/rsgxsrecognitems.cc \
-                        serialiser/rsgxsupdateitems.cc
 
 SOURCES +=	services/p3chatservice.cc \
 			services/p3msgservice.cc \
@@ -661,6 +657,8 @@ gxs {
 		gxs/rsgxsifacehelper.h \
 		gxs/gxstokenqueue.h \
 		gxs/rsgxsnetutils.h \
+			serialiser/rsgxsrecognitems.h \
+                        serialiser/rsgxsupdateitems.h \
 		gxs/rsgxsiface.h
 
 
@@ -677,6 +675,8 @@ gxs {
 		gxs/gxssecurity.cc \
 		gxs/gxstokenqueue.cc \
 		gxs/rsgxsnetutils.cc \
+			serialiser/rsgxsrecognitems.cc \
+                        serialiser/rsgxsupdateitems.cc \
 		gxs/rsgxsutil.cc
 
 

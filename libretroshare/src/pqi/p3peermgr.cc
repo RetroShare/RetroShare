@@ -747,7 +747,78 @@ bool p3PeerMgrIMPL::addFriend(const RsPeerId& input_id, const PGPIdType& input_g
 	return true;
 }
 
+bool p3PeerMgrIMPL::removeFriend(const RsPgpId &id)
+{
+#ifdef PEER_DEBUG
+	std::cerr << "p3PeerMgrIMPL::removeFriend() for id : " << id << std::endl;
+	std::cerr << "p3PeerMgrIMPL::removeFriend() mFriendList.size() : " << mFriendList.size() << std::endl;
+#endif
 
+        rslog(RSL_WARNING, p3peermgrzone, "p3PeerMgr::removeFriend() id: " + id.toStdString());
+
+	std::list<RsPeerId> sslid_toRemove; // This is a list of SSLIds.
+	rsPeers->getAssociatedSSLIds(id,sslid_toRemove) ;
+
+	{
+		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+
+		/* move to othersList */
+		bool success = false;
+		std::map<RsPeerId, peerState>::iterator it;
+		//remove ssl and gpg_ids
+		for(it = mFriendList.begin(); it != mFriendList.end(); it++)
+		{
+			if (find(sslid_toRemove.begin(),sslid_toRemove.end(),it->second.id) != sslid_toRemove.end())
+			{
+#ifdef PEER_DEBUG
+				std::cerr << "p3PeerMgrIMPL::removeFriend() friend found in the list." << id << std::endl;
+#endif
+				peerState peer = it->second;
+
+				sslid_toRemove.push_back(it->second.id);
+
+				mOthersList[it->second.id] = peer;
+				mStatusChanged = true;
+
+				success = true;
+			}
+		}
+
+		for(std::list<RsPeerId>::iterator rit = sslid_toRemove.begin(); rit != sslid_toRemove.end(); rit++) 
+			if (mFriendList.end() != (it = mFriendList.find(*rit))) 
+				mFriendList.erase(it);
+
+		std::map<PGPIdType,ServicePermissionFlags>::iterator it2 = mFriendsPermissionFlags.find(id) ; 
+
+		if(it2 != mFriendsPermissionFlags.end())
+			mFriendsPermissionFlags.erase(it2);
+
+#ifdef PEER_DEBUG
+		std::cerr << "p3PeerMgrIMPL::removeFriend() new mFriendList.size() : " << mFriendList.size() << std::endl;
+#endif
+	}
+
+	std::list<RsPeerId>::iterator rit;
+	for(rit = sslid_toRemove.begin(); rit != sslid_toRemove.end(); rit++) 
+	{
+		mLinkMgr->removeFriend(*rit);
+	}
+
+	/* remove id from all groups */
+
+	std::list<RsPgpId> ids ;
+	ids.push_back(id) ;
+	assignPeersToGroup("", ids, false);
+
+	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+
+#ifdef PEER_DEBUG
+	printPeerLists(std::cerr);
+	mLinkMgr->printPeerLists(std::cerr);
+#endif
+
+        return !sslid_toRemove.empty();
+}
 bool p3PeerMgrIMPL::removeFriend(const RsPeerId &id, bool removePgpId)
 {
 

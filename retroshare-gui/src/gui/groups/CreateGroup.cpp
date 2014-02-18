@@ -69,7 +69,7 @@ CreateGroup::CreateGroup(const std::string &groupId, QWidget *parent)
 
 			ui.groupName->setDisabled(mIsStandard);
 
-			ui.friendList->setSelectedGpgIds(groupInfo.peerIds, false);
+            ui.friendList->setSelectedIds<RsPgpId,FriendSelectionWidget::IDTYPE_GPG>(groupInfo.peerIds, false);
 		} else {
 			/* Group not found, create new */
 			mGroupId.clear();
@@ -131,12 +131,12 @@ void CreateGroup::changeGroup()
 		}
 	}
 
-	std::list<std::string> gpgIds;
-	ui.friendList->selectedGpgIds(gpgIds, true);
+    std::list<RsPgpId> gpgIds;
+    ui.friendList->selectedIds<RsPgpId,FriendSelectionWidget::IDTYPE_GPG>(gpgIds, true);
 
-	std::list<std::string>::iterator it;
+    std::list<RsPgpId>::iterator it;
 	for (it = groupInfo.peerIds.begin(); it != groupInfo.peerIds.end(); ++it) {
-		std::list<std::string>::iterator gpgIt = std::find(gpgIds.begin(), gpgIds.end(), *it);
+        std::list<RsPgpId>::iterator gpgIt = std::find(gpgIds.begin(), gpgIds.end(), *it);
 		if (gpgIt == gpgIds.end()) {
 			rsPeers->assignPeerToGroup(groupInfo.id, *it, false);
 			continue;

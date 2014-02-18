@@ -852,7 +852,6 @@ static void calculateGroupsOfSslIds(const std::list<RsGroupInfo> &existingGroupI
     }
 }
 
-#ifdef SUSPENDED
 MessageComposer *MessageComposer::newMsg(const std::string &msgId /* = ""*/)
 {
     MessageComposer *msgComposer = new MessageComposer();
@@ -895,26 +894,26 @@ MessageComposer *MessageComposer::newMsg(const std::string &msgId /* = ""*/)
         std::list<std::string>::iterator groupIt;
         std::list<RsPeerId>::iterator it;
 
-        calculateGroupsOfSslIds(groupInfoList, msgInfo.msgto, groupIds);
-        for (groupIt = groupIds.begin(); groupIt != groupIds.end(); groupIt++ ) {
-            msgComposer->addRecipient(MessageComposer::TO, *groupIt, true) ;
-        }
+ //       calculateGroupsOfSslIds(groupInfoList, msgInfo.msgto, groupIds);
+ //       for (groupIt = groupIds.begin(); groupIt != groupIds.end(); groupIt++ ) {
+ //           msgComposer->addRecipient(MessageComposer::TO, *groupIt, true) ;
+ //       }
         for (it = msgInfo.msgto.begin(); it != msgInfo.msgto.end(); it++ ) {
             msgComposer->addRecipient(MessageComposer::TO, *it, false) ;
         }
 
-        calculateGroupsOfSslIds(groupInfoList, msgInfo.msgcc, groupIds);
-        for (groupIt = groupIds.begin(); groupIt != groupIds.end(); groupIt++ ) {
-            msgComposer->addRecipient(MessageComposer::CC, *groupIt, true) ;
-        }
+   //     calculateGroupsOfSslIds(groupInfoList, msgInfo.msgcc, groupIds);
+   //     for (groupIt = groupIds.begin(); groupIt != groupIds.end(); groupIt++ ) {
+   //         msgComposer->addRecipient(MessageComposer::CC, *groupIt, true) ;
+   //     }
         for (it = msgInfo.msgcc.begin(); it != msgInfo.msgcc.end(); it++ ) {
             msgComposer->addRecipient(MessageComposer::CC, *it, false) ;
         }
 
-        calculateGroupsOfSslIds(groupInfoList, msgInfo.msgbcc, groupIds);
-        for (groupIt = groupIds.begin(); groupIt != groupIds.end(); groupIt++ ) {
-            msgComposer->addRecipient(MessageComposer::BCC, *groupIt, true) ;
-        }
+//        calculateGroupsOfSslIds(groupInfoList, msgInfo.msgbcc, groupIds);
+//        for (groupIt = groupIds.begin(); groupIt != groupIds.end(); groupIt++ ) {
+//            msgComposer->addRecipient(MessageComposer::BCC, *groupIt, true) ;
+//        }
         for (it = msgInfo.msgbcc.begin(); it != msgInfo.msgbcc.end(); it++ ) {
             msgComposer->addRecipient(MessageComposer::BCC, *it, false) ;
         }
@@ -932,7 +931,6 @@ MessageComposer *MessageComposer::newMsg(const std::string &msgId /* = ""*/)
 
     return msgComposer;
 }
-#endif
 
 QString MessageComposer::buildReplyHeader(const MessageInfo &msgInfo)
 {

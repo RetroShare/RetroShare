@@ -76,7 +76,6 @@ virtual bool    gpgSignData(const void *data, const uint32_t len, unsigned char 
 	/* Add/Remove Friends */
 virtual	bool addFriend(const RsPeerId &ssl_id, const PGPIdType &gpg_id,ServicePermissionFlags flags = RS_SERVICE_PERM_ALL);
 virtual	bool removeFriend(const PGPIdType& gpgid);
-virtual	bool removeFriend(const RsPeerId& sslid);
 virtual bool removeFriendLocation(const RsPeerId& sslId);
 
 		/* keyring management */

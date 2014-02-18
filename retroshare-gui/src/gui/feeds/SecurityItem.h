@@ -38,11 +38,11 @@ class SecurityItem : public QWidget, private Ui::SecurityItem
 
 public:
 	/** Default Constructor */
-	SecurityItem(FeedHolder *parent, uint32_t feedId, const std::string &gpgId, const std::string &sslId, const std::string &sslCn, const std::string& ip_addr,uint32_t type, bool isHome);
+    SecurityItem(FeedHolder *parent, uint32_t feedId, const RsPgpId &gpgId, const RsPeerId &sslId, const std::string &sslCn, const std::string& ip_addr,uint32_t type, bool isHome);
 
 	void updateItemStatic();
 
-	bool isSame(const std::string &sslId, uint32_t type);
+    bool isSame(const RsPeerId &sslId, uint32_t type);
 
 private slots:
 	/* default stuff */
@@ -63,8 +63,8 @@ private:
 	FeedHolder *mParent;
 	uint32_t mFeedId;
 
-	std::string mGpgId;
-	std::string mSslId;
+    RsPgpId  mGpgId;
+    RsPeerId mSslId;
 	std::string mSslCn;
 	std::string mIP;
 	uint32_t mType;

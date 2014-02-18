@@ -287,7 +287,7 @@ void PostedListDialog::deleteFeedItem(QWidget */*item*/, uint32_t /*type*/)
 	return;
 }
 
-void PostedListDialog::openChat(std::string /*peerId*/)
+void PostedListDialog::openChat(const RsPeerId & /*peerId*/)
 {
 	std::cerr << "PostedListDialog::openChat() Nah";
 	std::cerr << std::endl;
