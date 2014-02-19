@@ -451,7 +451,7 @@ void NetworkDialog::insertConnect()
 				item -> setText(COLUMN_PEERNAME, QString::fromUtf8(detail.name.c_str()));
 
 				/* (4) key id */
-				item -> setText(COLUMN_PEERID, QString::fromStdString(detail.id.toStdString()));
+				item -> setText(COLUMN_PEERID, QString::fromStdString(detail.gpg_id.toStdString()));
 		}
 
         //QString TrustLevelString ;
@@ -559,7 +559,7 @@ void NetworkDialog::insertConnect()
     self_item->setIcon(COLUMN_CHECK,(QIcon(IMAGE_AUTHED)));
 	self_item->setText(COLUMN_PEERNAME, QString::fromUtf8(ownGPGDetails.name.c_str()) + " (" + tr("yourself") + ")");
     self_item->setText(COLUMN_I_AUTH_PEER,"N/A");
-	self_item->setText(COLUMN_PEERID, QString::fromStdString(ownGPGDetails.id.toStdString()));
+	self_item->setText(COLUMN_PEERID, QString::fromStdString(ownGPGDetails.gpg_id.toStdString()));
 
 	// Color each Background column in the Network Tab except the first one => 1-9
     for(int i=0;i<COLUMN_COUNT;++i)

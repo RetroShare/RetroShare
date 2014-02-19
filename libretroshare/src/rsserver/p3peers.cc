@@ -554,7 +554,10 @@ bool	p3Peers::getGPGDetails(const PGPIdType &id, RsPeerDetails &d)
 #endif
 
 	/* get from mAuthMgr */
-	return AuthGPG::getAuthGPG()->getGPGDetails(id, d);
+	bool res = AuthGPG::getAuthGPG()->getGPGDetails(id, d);
+	d.isOnlyGPGdetail = true ;
+
+	return res ;
 }
 
 const PGPIdType& p3Peers::getGPGOwnId()
@@ -946,11 +949,31 @@ bool p3Peers::setProxyServer(const std::string &addr_str, const uint16_t port)
 
 //===========================================================================
 	/* Auth Stuff */
-std::string
-p3Peers::GetRetroshareInvite(bool include_signatures)
+std::string p3Peers::GetRetroshareInvite(bool include_signatures)
 {
 	return GetRetroshareInvite(getOwnId(),include_signatures);
 }
+std::string p3Peers::getPGPKey(const RsPgpId& pgp_id,bool include_signatures)
+{
+	unsigned char *mem_block = NULL;
+	size_t mem_block_size = 0;
+
+	if(!AuthGPG::getAuthGPG()->exportPublicKey(PGPIdType(pgp_id),mem_block,mem_block_size,false,include_signatures))
+	{
+		std::cerr << "Cannot output certificate for id \"" << pgp_id << "\". Sorry." << std::endl;
+		return "" ;
+	}
+
+	RsPeerDetails Detail ;
+
+	if(!getGPGDetails(pgp_id,Detail) )
+		return "" ;
+
+	RsCertificate cert( Detail,mem_block,mem_block_size ) ;
+
+	return cert.armouredPGPKey() ;
+}
+
 
 bool p3Peers::GetPGPBase64StringAndCheckSum(	const PGPIdType& gpg_id,
 															std::string& gpg_base64_string,
@@ -962,7 +985,7 @@ bool p3Peers::GetPGPBase64StringAndCheckSum(	const PGPIdType& gpg_id,
 	unsigned char *mem_block ;
 	size_t mem_block_size ;
 
-	if(!AuthGPG::getAuthGPG()->exportPublicKey(PGPIdType(gpg_id),mem_block,mem_block_size,false,false))
+	if(!AuthGPG::getAuthGPG()->exportPublicKey(gpg_id,mem_block,mem_block_size,false,false))
 		return false ;
 
 	Radix64::encode((const char *)mem_block,mem_block_size,gpg_base64_string) ;
@@ -1255,9 +1278,8 @@ FileSearchFlags p3Peers::computePeerPermissionFlags(const RsPeerId& peer_ssl_id,
 
 RsPeerDetails::RsPeerDetails()
         :isOnlyGPGdetail(false),
-	 id(""),gpg_id(""),
 	 name(""),email(""),location(""),
-	org(""),issuer(""),fpr(""),authcode(""),
+	org(""),authcode(""),
 		  trustLvl(0), validLvl(0),ownsign(false), 
 	hasSignedMe(false),accept_connection(false),
 	state(0),localAddr(""),localPort(0),extAddr(""),extPort(0),netMode(0),vs_disc(0), vs_dht(0),

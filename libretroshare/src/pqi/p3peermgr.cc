@@ -83,9 +83,7 @@ static const std::string kConfigKeyProxyServerPort = "PROXY_SERVER_PORT";
 void  printConnectState(std::ostream &out, peerState &peer);
 
 peerState::peerState()
-	:id("unknown"), 
-         gpg_id("unknown"),
-	 netMode(RS_NET_MODE_UNKNOWN), vs_disc(RS_VS_DISC_FULL), vs_dht(RS_VS_DHT_FULL), lastcontact(0), 
+	:netMode(RS_NET_MODE_UNKNOWN), vs_disc(RS_VS_DISC_FULL), vs_dht(RS_VS_DHT_FULL), lastcontact(0), 
 	 hiddenNode(false), hiddenPort(0) 
 {
         sockaddr_storage_clear(localaddr);

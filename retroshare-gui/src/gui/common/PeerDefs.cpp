@@ -55,7 +55,6 @@ const QString PeerDefs::rsid(const RsPeerDetails &details)
 {
     return rsid(details.name, details.id);
 }
-
 const QString PeerDefs::rsidFromId(const RsPeerId &id, QString *name /* = NULL*/)
 {
     QString rsid;
@@ -80,6 +79,30 @@ const QString PeerDefs::rsidFromId(const RsPeerId &id, QString *name /* = NULL*/
 		 if(name)
 			 *name = QString::fromUtf8(peerName.c_str());
 	 }
+	 else
+    {
+        rsid = PeerDefs::rsid("", id);
+
+        if (name) 
+            *name = qApp->translate("PeerDefs", "Unknown");
+    } 
+
+    return rsid;
+}
+const QString PeerDefs::rsidFromId(const RsPgpId &id, QString *name /* = NULL*/)
+{
+    QString rsid;
+
+    std::string peerName = rsPeers->getGPGName(id);
+
+	 if(!peerName.empty())	
+	 {
+        rsid = PeerDefs::rsid(peerName, id);
+
+        if (name) {
+            *name = QString::fromUtf8(peerName.c_str());
+        }
+    }
 	 else
     {
         rsid = PeerDefs::rsid("", id);

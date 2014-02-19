@@ -35,6 +35,7 @@ public:
     static const QString rsid(const RsPeerDetails &details);
     static const QString rsid(const std::string &name, const RsPeerId &id);
     static const QString rsid(const std::string &name, const RsPgpId &id);
+    static const QString rsidFromId(const RsPgpId &id, QString *name = NULL);
     static const QString rsidFromId(const RsPeerId &id, QString *name = NULL);
     static RsPeerId idFromRsid(const QString &rsid, bool check);
 };

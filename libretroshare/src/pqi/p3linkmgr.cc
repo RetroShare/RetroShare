@@ -102,8 +102,7 @@ peerAddrInfo::peerAddrInfo()
 }
 
 peerConnectState::peerConnectState()
-	:id("unknown"), 
-	 connecttype(0),
+	: connecttype(0),
 	 lastavailable(0),
          lastattempt(0),
          name(""),

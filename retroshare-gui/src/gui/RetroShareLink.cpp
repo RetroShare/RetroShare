@@ -698,7 +698,7 @@ QString RetroShareLink::title() const
 	case TYPE_FILE:
 		return QString("%1 (%2)").arg(hash()).arg(misc::friendlyUnit(size()));
 	case TYPE_PERSON:
-		return PeerDefs::rsidFromId(RsPeerId(hash().toStdString()));
+		return PeerDefs::rsidFromId(RsPgpId(hash().toStdString()));
 	case TYPE_FORUM:
 	case TYPE_CHANNEL:
 	case TYPE_SEARCH:

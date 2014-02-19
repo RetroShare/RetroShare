@@ -600,6 +600,12 @@ bool PGPHandler::exportPublicKey(const PGPIdType& id,unsigned char *& mem_block,
 	const ops_keydata_t *key = locked_getPublicKey(id,false) ;
 	mem_block = NULL ;
 
+	if(armoured)
+	{
+		std::cerr << __PRETTY_FUNCTION__ << ": should not be used with armoured=true, because there's a bug in the armoured export of OPS" << std::endl;
+		return false ;
+	}
+
 	if(key == NULL)
 	{
 		std::cerr << "Cannot output key " << id.toStdString() << ": not found in keyring." << std::endl;

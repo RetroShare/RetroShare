@@ -84,7 +84,13 @@ ConfCertDialog::ConfCertDialog(const RsPeerId& id, const RsPgpId &pgp_id, QWidge
     /* Invoke Qt Designer generated QObject setup routine */
     ui.setupUi(this);
 
-	 ui._useOldFormat_CB->setChecked(true) ;
+	 if(id.isNull())
+		 ui._useOldFormat_CB->setChecked(true) ;
+	 else
+	 {
+		 ui._useOldFormat_CB->setChecked(false) ;
+		 ui._useOldFormat_CB->setEnabled(false) ;
+	 }
 
 	ui.headerFrame->setHeaderImage(QPixmap(":/images/user/identityinfo64.png"));
 	ui.headerFrame->setHeaderText(tr("Friend Details"));
@@ -189,76 +195,82 @@ void ConfCertDialog::load()
     ui.pgpfingerprint->setText(misc::fingerPrintStyleSplit(QString::fromStdString(detail.fpr.toStdString())));
     ui.rsid->setToolTip(link.title());
 
-    if (!detail.isOnlyGPGdetail) {
-        ui.avatar->setId(peerId);
+    if (!detail.isOnlyGPGdetail) 
+	 {
+		 ui.avatar->setId(peerId);
 
-        ui.loc->setText(QString::fromUtf8(detail.location.c_str()));
-        // Dont Show a timestamp in RS calculate the day
-        ui.lastcontact->setText(DateTime::formatLongDateTime(detail.lastConnect));
+		 ui.loc->setText(QString::fromUtf8(detail.location.c_str()));
+		 // Dont Show a timestamp in RS calculate the day
+		 ui.lastcontact->setText(DateTime::formatLongDateTime(detail.lastConnect));
 
-        /* set retroshare version */
-        std::string version;
-        rsDisc->getPeerVersion(detail.id, version);
-		ui.version->setText(QString::fromStdString(version));
+		 /* set retroshare version */
+		 std::string version;
+		 rsDisc->getPeerVersion(detail.id, version);
+		 ui.version->setText(QString::fromStdString(version));
 
-		  RsPeerCryptoParams cdet ;
-		  if(RsControl::instance()->getPeerCryptoDetails(detail.id,cdet) && cdet.connexion_state!=0)
-		  {
-			  QString ct ;
-			  ct += QString::fromStdString(cdet.cipher_name) ;
-			  ct += QString::number(cdet.cipher_bits_1) ;
-			  ct += "-"+QString::fromStdString(cdet.cipher_version) ;
-			  ui.crypto_info->setText(ct) ;
-		  }
-		  else
-			  ui.crypto_info->setText(tr("Not connected")) ;
+		 RsPeerCryptoParams cdet ;
+		 if(RsControl::instance()->getPeerCryptoDetails(detail.id,cdet) && cdet.connexion_state!=0)
+		 {
+			 QString ct ;
+			 ct += QString::fromStdString(cdet.cipher_name) ;
+			 ct += QString::number(cdet.cipher_bits_1) ;
+			 ct += "-"+QString::fromStdString(cdet.cipher_version) ;
+			 ui.crypto_info->setText(ct) ;
+		 }
+		 else
+			 ui.crypto_info->setText(tr("Not connected")) ;
 
-	if (detail.isHiddenNode)
-	{
-	        /* set local address */
-	        ui.localAddress->setText("hidden");
-	        ui.localPort -> setValue(0);
-	        /* set the server address */
-	        ui.extAddress->setText("hidden");
-	        ui.extPort -> setValue(0);
+		 if (detail.isHiddenNode)
+		 {
+			 /* set local address */
+			 ui.localAddress->setText("hidden");
+			 ui.localPort -> setValue(0);
+			 /* set the server address */
+			 ui.extAddress->setText("hidden");
+			 ui.extPort -> setValue(0);
 
-	        ui.dynDNS->setText(QString::fromStdString(detail.hiddenNodeAddress));
-	}
-	else
-	{
-	        /* set local address */
-	        ui.localAddress->setText(QString::fromStdString(detail.localAddr));
-	        ui.localPort -> setValue(detail.localPort);
-	        /* set the server address */
-	        ui.extAddress->setText(QString::fromStdString(detail.extAddr));
-	        ui.extPort -> setValue(detail.extPort);
-	
-	        ui.dynDNS->setText(QString::fromStdString(detail.dyndns));
-	}
-	
-        ui.statusline->setText(StatusDefs::connectStateString(detail));
+			 ui.dynDNS->setText(QString::fromStdString(detail.hiddenNodeAddress));
+		 }
+		 else
+		 {
+			 /* set local address */
+			 ui.localAddress->setText(QString::fromStdString(detail.localAddr));
+			 ui.localPort -> setValue(detail.localPort);
+			 /* set the server address */
+			 ui.extAddress->setText(QString::fromStdString(detail.extAddr));
+			 ui.extPort -> setValue(detail.extPort);
 
-        ui.ipAddressList->clear();
-        for(std::list<std::string>::const_iterator it(detail.ipAddressList.begin());it!=detail.ipAddressList.end();++it)
-            ui.ipAddressList->addItem(QString::fromStdString(*it));
+			 ui.dynDNS->setText(QString::fromStdString(detail.dyndns));
+		 }
 
-        ui.loc->show();
-        ui.label_loc->show();
-        ui.statusline->show();
-        ui.label_status->show();
-        ui.lastcontact->show();
-        ui.label_last_contact->show();
-        ui.version->show();
-        ui.label_version->show();
+		 ui.statusline->setText(StatusDefs::connectStateString(detail));
 
-        ui.groupBox->show();
-        ui.groupBox_4->show();
-        ui.tabWidget->show();
-        ui.rsid->hide();
-        ui.label_rsid->hide();
-        ui.pgpfingerprint->show();
-        ui.pgpfingerprint_label->show();
-    } else {
+		 ui.ipAddressList->clear();
+		 for(std::list<std::string>::const_iterator it(detail.ipAddressList.begin());it!=detail.ipAddressList.end();++it)
+			 ui.ipAddressList->addItem(QString::fromStdString(*it));
+
+		 ui.loc->show();
+		 ui.label_loc->show();
+		 ui.statusline->show();
+		 ui.label_status->show();
+		 ui.lastcontact->show();
+		 ui.label_last_contact->show();
+		 ui.version->show();
+		 ui.label_version->show();
+
+		 ui.groupBox->show();
+		 ui.groupBox_4->show();
+		 ui.tabWidget->show();
+		 ui.rsid->hide();
+		 ui.label_rsid->hide();
+		 ui.pgpfingerprint->show();
+		 ui.pgpfingerprint_label->show();
+
+		  ui.stabWidget->setTabEnabled(2,true) ;
+		  ui.stabWidget->setTabEnabled(3,true) ;
+	 } 
+	 else 
+	 {
         //ui.avatar->setId(pgpId.toStdString(), true);
 
         ui.rsid->show();
@@ -281,6 +293,10 @@ void ConfCertDialog::load()
 
         ui.groupBox->hide();
         ui.tabWidget->hide();
+
+		  ui.stabWidget->setTabEnabled(2,true) ;
+		  ui.stabWidget->setTabEnabled(3,false) ;
+		  ui._useOldFormat_CB->setEnabled(false) ;
     }
 
     if (detail.gpg_id == rsPeers->getGPGOwnId()) {
@@ -401,7 +417,7 @@ void ConfCertDialog::load()
 void ConfCertDialog::loadInvitePage()
 {
 	RsPeerDetails detail;
-    if (!rsPeers->getPeerDetails(peerId, detail))
+    if (!rsPeers->getPeerDetails(peerId, detail) && !rsPeers->getGPGDetails(pgpId,detail))
     {
         QMessageBox::information(this,
                                  tr("RetroShare"),
@@ -409,8 +425,12 @@ void ConfCertDialog::loadInvitePage()
         close();
         return;
     }
+	 std::string invite ;
 
-    std::string invite = rsPeers->GetRetroshareInvite(detail.id,ui._shouldAddSignatures_CB->isChecked()) ; // this needs to be a SSL id
+	 if(detail.isOnlyGPGdetail)
+		 invite = rsPeers->getPGPKey(detail.gpg_id,ui._shouldAddSignatures_CB->isChecked()) ; // this needs to be a SSL id
+	 else
+		 invite = rsPeers->GetRetroshareInvite(detail.id,ui._shouldAddSignatures_CB->isChecked()) ; // this needs to be a SSL id
 
     ui.userCertificateText->setReadOnly(true);
     ui.userCertificateText->setMinimumHeight(200);

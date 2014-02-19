@@ -187,7 +187,7 @@ class RsPeerDetails
 
 	/* Auth details */
 	bool isOnlyGPGdetail;
-	SSLIdType id;
+	RsPeerId id;
 	PGPIdType gpg_id;
 
 	std::string name;
@@ -295,49 +295,49 @@ class RsPeers
 
 		virtual bool   haveSecretKey(const PGPIdType& gpg_id) = 0 ;
 
-		virtual bool	getOnlineList(std::list<SSLIdType> &ssl_ids)	= 0;
-		virtual bool	getFriendList(std::list<SSLIdType> &ssl_ids)	= 0;
+		virtual bool	getOnlineList(std::list<RsPeerId> &ssl_ids)	= 0;
+		virtual bool	getFriendList(std::list<RsPeerId> &ssl_ids)	= 0;
 		virtual bool    getPeerCount (unsigned int *pnFriendCount, unsigned int *pnnOnlineCount, bool ssl) = 0;
 
-		virtual bool    isOnline(const SSLIdType &ssl_id)			= 0;
-		virtual bool    isFriend(const SSLIdType &ssl_id)			= 0;
+		virtual bool    isOnline(const RsPeerId &ssl_id)			= 0;
+		virtual bool    isFriend(const RsPeerId &ssl_id)			= 0;
 		virtual bool    isGPGAccepted(const PGPIdType &gpg_id_is_friend)			= 0; //
-		virtual std::string getPeerName(const SSLIdType &ssl_id)			= 0;
+		virtual std::string getPeerName(const RsPeerId &ssl_id)			= 0;
 		virtual std::string getGPGName(const PGPIdType& gpg_id)	= 0;
-		virtual bool	 getPeerDetails(const SSLIdType& ssl_id, RsPeerDetails &d) = 0; 
+		virtual bool	 getPeerDetails(const RsPeerId& ssl_id, RsPeerDetails &d) = 0; 
 		virtual bool	 getGPGDetails(const PGPIdType& gpg_id, RsPeerDetails &d) = 0;
 
 		/* Using PGP Ids */
 		virtual const PGPIdType& getGPGOwnId()				= 0;
-		virtual PGPIdType getGPGId(const SSLIdType& sslid)	= 0; //return the gpg id of the given ssl id
+		virtual PGPIdType getGPGId(const RsPeerId& sslid)	= 0; //return the gpg id of the given ssl id
 		virtual bool    isKeySupported(const PGPIdType& gpg_ids)   = 0;
 		virtual bool    getGPGAcceptedList(std::list<PGPIdType> &gpg_ids)   = 0;
 		virtual bool    getGPGSignedList(std::list<PGPIdType> &gpg_ids)   = 0;//friends that we accpet to connect with but we don't want to sign their gpg key
 		virtual bool    getGPGValidList(std::list<PGPIdType> &gpg_ids)   = 0;
 		virtual bool    getGPGAllList(std::list<PGPIdType> &gpg_ids) 	= 0;
-		virtual bool    getAssociatedSSLIds(const PGPIdType& gpg_id, std::list<SSLIdType>& ids) = 0;
+		virtual bool    getAssociatedSSLIds(const PGPIdType& gpg_id, std::list<RsPeerId>& ids) = 0;
 		virtual bool    gpgSignData(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen) = 0;
 
 		/* Add/Remove Friends */
-		virtual	bool addFriend(const SSLIdType &ssl_id, const PGPIdType &gpg_id,ServicePermissionFlags flags = RS_SERVICE_PERM_ALL)    = 0;
+		virtual	bool addFriend(const RsPeerId &ssl_id, const PGPIdType &gpg_id,ServicePermissionFlags flags = RS_SERVICE_PERM_ALL)    = 0;
 		virtual	bool removeFriend(const PGPIdType& pgp_id)  			= 0;
-		virtual bool removeFriendLocation(const SSLIdType& sslId) 			= 0;
+		virtual bool removeFriendLocation(const RsPeerId& sslId) 			= 0;
 
 		/* keyring management */
 		virtual bool removeKeysFromPGPKeyring(const std::list<PGPIdType>& pgp_ids,std::string& backup_file,uint32_t& error_code)=0 ;
 
 		/* Network Stuff */
-		virtual	bool connectAttempt(const SSLIdType& ssl_id)			= 0;
-		virtual bool setLocation(const SSLIdType &ssl_id, const std::string &location) = 0;//location is shown in the gui to differentiate ssl certs
+		virtual	bool connectAttempt(const RsPeerId& ssl_id)			= 0;
+		virtual bool setLocation(const RsPeerId &ssl_id, const std::string &location) = 0;//location is shown in the gui to differentiate ssl certs
 
-		virtual bool setHiddenNode(const SSLIdType &id, const std::string &hidden_node_address) = 0;
-		virtual bool setHiddenNode(const SSLIdType &id, const std::string &address, uint16_t port) = 0;
+		virtual bool setHiddenNode(const RsPeerId &id, const std::string &hidden_node_address) = 0;
+		virtual bool setHiddenNode(const RsPeerId &id, const std::string &address, uint16_t port) = 0;
 
-		virtual	bool setLocalAddress(const SSLIdType &ssl_id, const std::string &addr, uint16_t port) = 0;
-		virtual	bool setExtAddress(  const SSLIdType &ssl_id, const std::string &addr, uint16_t port) = 0;
-		virtual	bool setDynDNS(const SSLIdType &id, const std::string &addr) = 0;
-		virtual	bool setNetworkMode(const SSLIdType &ssl_id, uint32_t netMode) 	= 0;
-		virtual bool setVisState(const SSLIdType &ssl_id, uint16_t vs_disc, uint16_t vs_dht)	= 0;
+		virtual	bool setLocalAddress(const RsPeerId &ssl_id, const std::string &addr, uint16_t port) = 0;
+		virtual	bool setExtAddress(  const RsPeerId &ssl_id, const std::string &addr, uint16_t port) = 0;
+		virtual	bool setDynDNS(const RsPeerId &id, const std::string &addr) = 0;
+		virtual	bool setNetworkMode(const RsPeerId &ssl_id, uint32_t netMode) 	= 0;
+		virtual bool setVisState(const RsPeerId &ssl_id, uint16_t vs_disc, uint16_t vs_dht)	= 0;
 
 		virtual bool getProxyServer(std::string &addr, uint16_t &port) = 0;
 		virtual bool setProxyServer(const std::string &addr, const uint16_t port) = 0;
@@ -347,21 +347,22 @@ class RsPeers
 		virtual bool getAllowServerIPDetermination() = 0 ;
 
 		/* Auth Stuff */
-		virtual	std::string GetRetroshareInvite(const SSLIdType& ssl_id,bool include_signatures) 			= 0;
+		virtual	std::string GetRetroshareInvite(const RsPeerId& ssl_id,bool include_signatures) 			= 0;
+		virtual	std::string getPGPKey(const RsPgpId& pgp_id,bool include_signatures) 			= 0;
 		virtual bool GetPGPBase64StringAndCheckSum(const PGPIdType& gpg_id,std::string& gpg_base64_string,std::string& gpg_base64_checksum) = 0 ;
 		virtual	std::string GetRetroshareInvite(bool include_signatures) 			= 0;
 		virtual  bool hasExportMinimal() = 0 ;
 
 		// Add keys to the keyring
-		virtual	bool loadCertificateFromString(const std::string& cert, SSLIdType& ssl_id,PGPIdType& pgp_id, std::string& error_string)  = 0;
+		virtual	bool loadCertificateFromString(const std::string& cert, RsPeerId& ssl_id,PGPIdType& pgp_id, std::string& error_string)  = 0;
 
 		// Gets the GPG details, but does not add the key to the keyring.
 		virtual	bool loadDetailsFromStringCert(const std::string& certGPG, RsPeerDetails &pd,uint32_t& error_code) = 0;
 
 		// Certificate utils
 		virtual	bool cleanCertificate(const std::string &certstr, std::string &cleanCert,int& error_code) = 0;
-		virtual	bool saveCertificateToFile(const SSLIdType& id, const std::string &fname)  = 0;
-		virtual	std::string saveCertificateToString(const SSLIdType &id)  	= 0;
+		virtual	bool saveCertificateToFile(const RsPeerId& id, const std::string &fname)  = 0;
+		virtual	std::string saveCertificateToString(const RsPeerId &id)  	= 0;
 
 		virtual	bool signGPGCertificate(const PGPIdType &gpg_id)                   	= 0;
 		virtual	bool trustGPGCertificate(const PGPIdType &gpg_id, uint32_t trustlvl) 	= 0;
@@ -392,7 +393,7 @@ class RsPeers
 		/* Service permission flags */
 
 		virtual ServicePermissionFlags servicePermissionFlags(const PGPIdType& gpg_id) = 0;
-		virtual ServicePermissionFlags servicePermissionFlags(const SSLIdType& ssl_id) = 0;
+		virtual ServicePermissionFlags servicePermissionFlags(const RsPeerId& ssl_id) = 0;
 		virtual void setServicePermissionFlags(const PGPIdType& gpg_id,const ServicePermissionFlags& flags) = 0;
 };
 
