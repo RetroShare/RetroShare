@@ -420,8 +420,8 @@ std::string genRandomId(int len = 20);
 	uint32_t mBgToken;
 	uint32_t mBgPhase;
 	
-	std::map<std::string, RsGroupMetaData> mBgGroupMap;
-	std::list<std::string> mBgFullCalcGroups;
+	std::map<RsGxsGroupId, RsGroupMetaData> mBgGroupMap;
+	std::list<RsGxsGroupId> mBgFullCalcGroups;
 
 /************************************************************************
  * Other Data that is protected by the Mutex.

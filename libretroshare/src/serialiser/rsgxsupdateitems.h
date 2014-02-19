@@ -94,7 +94,7 @@ public:
         virtual void clear();
         virtual std::ostream &print(std::ostream &out, uint16_t indent);
 
-        std::string grpId;
+        RsGxsGroupId grpId;
         uint32_t msgUpdateTS; // the last time this group received a new msg
 };
 

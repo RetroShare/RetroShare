@@ -318,14 +318,14 @@ private:
     void locked_pushMsgRespFromList(std::list<RsNxsItem*>& itemL, const RsPeerId& sslId, const uint32_t& transN);
     void syncWithPeers();
     void addGroupItemToList(NxsTransaction*& tr,
-    		const std::string& grpId, uint32_t& transN,
+    		const RsGxsGroupId& grpId, uint32_t& transN,
     		std::list<RsNxsItem*>& reqList);
 
     bool locked_canReceive(const RsGxsGrpMetaData * const grpMeta, const RsPeerId& peerId);
 
     void processExplicitGroupRequests();
     
-    void locked_doMsgUpdateWork(const RsNxsTransac* nxsTrans, const std::string& grpId);
+    void locked_doMsgUpdateWork(const RsNxsTransac* nxsTrans, const RsGxsGroupId& grpId);
 
     void updateServerSyncTS();
 
@@ -442,7 +442,7 @@ private:
 public:
 
     typedef std::map<RsPeerId, RsGxsMsgUpdateItem*> ClientMsgMap;
-    typedef std::map<std::string, RsGxsServerMsgUpdateItem*> ServerMsgMap;
+    typedef std::map<RsGxsGroupId, RsGxsServerMsgUpdateItem*> ServerMsgMap;
     typedef std::map<RsPeerId, RsGxsGrpUpdateItem*> ClientGrpMap;
 
 private:

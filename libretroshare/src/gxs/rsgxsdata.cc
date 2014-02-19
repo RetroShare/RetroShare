@@ -37,8 +37,8 @@ uint32_t RsGxsGrpMetaData::serial_size()
 {
     uint32_t s = 8; // header size
 
-    s += GetTlvStringSize(mGroupId);
-    s += GetTlvStringSize(mOrigGrpId);
+    s += mGroupId.serial_size();
+    s += mOrigGrpId.serial_size();
     s += GetTlvStringSize(mGroupName);
     s += 4;
     s += 4;
@@ -49,7 +49,7 @@ uint32_t RsGxsGrpMetaData::serial_size()
     s += 4; // for mCircleType
     s += GetTlvStringSize(mCircleId);
     s += 4; // mAuthenFlag
-    s += GetTlvStringSize(mParentGrpId);
+    s += mParentGrpId.serial_size();
 
     return s;
 }
@@ -104,9 +104,9 @@ bool RsGxsGrpMetaData::serialise(void *data, uint32_t &pktsize)
     /* skip header */
     offset += 8;
 
-    ok &= SetTlvString(data, tlvsize, &offset, 0, mGroupId);
-    ok &= SetTlvString(data, tlvsize, &offset, 0, mOrigGrpId);
-    ok &= SetTlvString(data, tlvsize, &offset, 0, mParentGrpId);
+    ok &= mGroupId.serialise(data, tlvsize, offset);
+    ok &= mOrigGrpId.serialise(data, tlvsize, offset);
+    ok &= mParentGrpId.serialise(data, tlvsize, offset);
     ok &= SetTlvString(data, tlvsize, &offset, 0, mGroupName);
     ok &= setRawUInt32(data, tlvsize, &offset, mGroupFlags);
     ok &= setRawUInt32(data, tlvsize, &offset, mPublishTs);
@@ -135,9 +135,9 @@ bool RsGxsGrpMetaData::deserialise(void *data, uint32_t &pktsize)
 
     if(!ok) return false;
 
-    ok &= GetTlvString(data, pktsize, &offset, 0, mGroupId);
-    ok &= GetTlvString(data, pktsize, &offset, 0, mOrigGrpId);
-    ok &= GetTlvString(data, pktsize, &offset, 0, mParentGrpId);
+    ok &= mGroupId.deserialise(data, pktsize, offset);
+    ok &= mOrigGrpId.deserialise(data, pktsize, offset);
+    ok &= mParentGrpId.deserialise(data, pktsize, offset);
     ok &= GetTlvString(data, pktsize, &offset, 0, mGroupName);
     ok &= getRawUInt32(data, pktsize, &offset, &mGroupFlags);
     ok &= getRawUInt32(data, pktsize, &offset, &mPublishTs);
@@ -170,7 +170,7 @@ uint32_t RsGxsMsgMetaData::serial_size()
 
     uint32_t s = 8; // header size
 
-    s += GetTlvStringSize(mGroupId);
+    s += mGroupId.serial_size();
     s += GetTlvStringSize(mMsgId);
     s += GetTlvStringSize(mThreadId);
     s += GetTlvStringSize(mParentId);
@@ -227,7 +227,7 @@ bool RsGxsMsgMetaData::serialise(void *data, uint32_t *size)
     /* skip header */
     offset += 8;
 
-    ok &= SetTlvString(data, *size, &offset, 0, mGroupId);
+    ok &= mGroupId.serialise(data, *size, offset);
     ok &= SetTlvString(data, *size, &offset, 0, mMsgId);
     ok &= SetTlvString(data, *size, &offset, 0, mThreadId);
     ok &= SetTlvString(data, *size, &offset, 0, mParentId);
@@ -254,7 +254,7 @@ bool RsGxsMsgMetaData::deserialise(void *data, uint32_t *size)
 
     if(!ok) return false;
 
-    ok &= GetTlvString(data, *size, &offset, 0, mGroupId);
+    ok &= mGroupId.deserialise(data, *size, offset);
     ok &= GetTlvString(data, *size, &offset, 0, mMsgId);
     ok &= GetTlvString(data, *size, &offset, 0, mThreadId);
     ok &= GetTlvString(data, *size, &offset, 0, mParentId);

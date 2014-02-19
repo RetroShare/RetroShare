@@ -2187,7 +2187,7 @@ RsGeneralDataService* RsGenExchange::getDataStore()
 
 bool RsGenExchange::getGroupKeys(const RsGxsGroupId &grpId, RsTlvSecurityKeySet &keySet)
 {
-    if(grpId.empty())
+    if(grpId.isNull())
         return false;
 
     RsStackMutex stack(mGenMtx);
@@ -2377,8 +2377,8 @@ void RsGenExchange::processRecvdGroups()
         return;
 
     NxsGrpPendValidVect::iterator vit = mReceivedGrps.begin();
-    std::vector<std::string> existingGrpIds;
-    std::list<std::string> grpIds;
+    std::vector<RsGxsGroupId> existingGrpIds;
+    std::list<RsGxsGroupId> grpIds;
 
     std::map<RsNxsGrp*, RsGxsGrpMetaData*> grps;
 
@@ -2489,7 +2489,7 @@ void RsGenExchange::performUpdateValidation()
 	if(mGroupUpdates.empty())
 		return;
 
-	std::map<std::string, RsGxsGrpMetaData*> grpMetas;
+	std::map<RsGxsGroupId, RsGxsGrpMetaData*> grpMetas;
 
 	std::vector<GroupUpdate>::iterator vit = mGroupUpdates.begin();
 	for(; vit != mGroupUpdates.end(); vit++)
@@ -2504,7 +2504,7 @@ void RsGenExchange::performUpdateValidation()
 	for(; vit != mGroupUpdates.end(); vit++)
 	{
 		GroupUpdate& gu = *vit;
-		std::map<std::string, RsGxsGrpMetaData*>::iterator mit =
+		std::map<RsGxsGroupId, RsGxsGrpMetaData*>::iterator mit =
 				grpMetas.find(gu.newGrp->grpId);
 		gu.oldGrpMeta = mit->second;
 		gu.validUpdate = updateValid(*(gu.oldGrpMeta), *(gu.newGrp));
@@ -2557,7 +2557,7 @@ bool RsGenExchange::updateValid(RsGxsGrpMetaData& oldGrpMeta, RsNxsGrp& newGrp) 
 	RsTlvKeySignature adminSign = mit->second;
 
 	std::map<std::string, RsTlvSecurityKey>& keys = oldGrpMeta.keys.keys;
-	std::map<std::string, RsTlvSecurityKey>::iterator keyMit = keys.find(oldGrpMeta.mGroupId);
+	std::map<std::string, RsTlvSecurityKey>::iterator keyMit = keys.find(oldGrpMeta.mGroupId.toStdString());
 
 	if(keyMit == keys.end())
 	{

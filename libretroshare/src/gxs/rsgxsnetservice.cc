@@ -108,7 +108,7 @@ void RsGxsNetService::syncWithPeers()
 		}
 	}
 
-#ifdef GXS_ENABLE_SYNC_MSGS
+#ifndef GXS_DISABLE_SYNC_MSGS
         std::map<RsGxsGroupId, RsGxsGrpMetaData* > grpMeta;
         mDataStore->retrieveGxsGrpMetaData(grpMeta);
 
@@ -513,7 +513,7 @@ void RsGxsNetService::collateGrpFragments(GrpFragments fragments,
 
 struct MsgFragCollate
 {
-	RsGxsGroupId mMsgId;
+	RsGxsMessageId mMsgId;
 	MsgFragCollate(const RsGxsMessageId& msgId) : mMsgId(msgId){ }
 	bool operator()(RsNxsMsg* msg) { return msg->msgId == mMsgId;}
 };
@@ -1256,13 +1256,13 @@ void RsGxsNetService::locked_processCompletedIncomingTrans(NxsTransaction* tr)
 
 					std::vector<RsNxsMsg*> msgs;
 
-                                        std::string grpId;
+                                        RsGxsGroupId grpId;
 					while(tr->mItems.size() > 0)
 					{
 						RsNxsMsg* msg = dynamic_cast<RsNxsMsg*>(tr->mItems.front());
 						if(msg)
 						{
-                                                    if(grpId.empty())
+                                                    if(grpId.isNull())
                                                         grpId = msg->grpId;
 
                                                     tr->mItems.pop_front();
@@ -1307,7 +1307,7 @@ void RsGxsNetService::locked_processCompletedIncomingTrans(NxsTransaction* tr)
 	return;
 }
 
-void RsGxsNetService::locked_doMsgUpdateWork(const RsNxsTransac *nxsTrans, const std::string &grpId)
+void RsGxsNetService::locked_doMsgUpdateWork(const RsNxsTransac *nxsTrans, const RsGxsGroupId &grpId)
 {
 
     // firts check if peer exists
@@ -1457,7 +1457,7 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
 
 	// get grp id for this transaction
 	RsNxsSyncMsgItem* item = msgItemL.front();
-	const std::string& grpId = item->grpId;
+	const RsGxsGroupId& grpId = item->grpId;
 
 //	std::map<std::string, RsGxsGrpMetaData*> grpMetaMap;
 //	grpMetaMap[grpId] = NULL;
@@ -1590,7 +1590,7 @@ void RsGxsNetService::locked_pushGrpTransactionFromList(
 		delete newTrans;
 }
 void RsGxsNetService::addGroupItemToList(NxsTransaction*& tr,
-		const std::string& grpId, uint32_t& transN,
+		const RsGxsGroupId& grpId, uint32_t& transN,
 		std::list<RsNxsItem*>& reqList)
 {
 	RsNxsSyncGrpItem* grpItem = new RsNxsSyncGrpItem(mServType);
@@ -1644,7 +1644,7 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
 	for(; llit != grpItemL.end(); llit++)
 	{
 		RsNxsSyncGrpItem*& grpSyncItem = *llit;
-		const std::string& grpId = grpSyncItem->grpId;
+		const RsGxsGroupId& grpId = grpSyncItem->grpId;
 		metaIter = grpMetaMap.find(grpId);
 		bool haveItem = false;
 		bool latestVersion = false;
@@ -1724,7 +1724,7 @@ void RsGxsNetService::locked_genSendGrpsTransaction(NxsTransaction* tr)
 
 	std::list<RsNxsItem*>::iterator lit = tr->mItems.begin();
 
-	std::map<std::string, RsNxsGrp*> grps;
+	std::map<RsGxsGroupId, RsNxsGrp*> grps;
 
 	for(;lit != tr->mItems.end(); lit++)
 	{
@@ -1755,7 +1755,7 @@ void RsGxsNetService::locked_genSendGrpsTransaction(NxsTransaction* tr)
 	uint32_t transN = locked_getTransactionId();
 
 	// store grp items to send in transaction
-	std::map<std::string, RsNxsGrp*>::iterator mit = grps.begin();
+	std::map<RsGxsGroupId, RsNxsGrp*>::iterator mit = grps.begin();
 	RsPeerId peerId = tr->mTransaction->PeerId();
 	for(;mit != grps.end(); mit++)
 	{
@@ -1893,7 +1893,7 @@ void RsGxsNetService::locked_genSendMsgsTransaction(NxsTransaction* tr)
 		return;
 	}
 
-	std::string grpId = "";
+	RsGxsGroupId grpId;
 
 	for(;lit != tr->mItems.end(); lit++)
 	{
@@ -1902,7 +1902,7 @@ void RsGxsNetService::locked_genSendMsgsTransaction(NxsTransaction* tr)
 		{
 			msgIds[item->grpId].push_back(item->msgId);
 
-			if(grpId.empty())
+			if(grpId.isNull())
 				grpId = item->grpId;
 		}
 		else
@@ -2073,13 +2073,13 @@ void RsGxsNetService::handleRecvSyncGroup(RsNxsSyncGrp* item)
 
 
 
-	std::map<std::string, RsGxsGrpMetaData*> grp;
+	std::map<RsGxsGroupId, RsGxsGrpMetaData*> grp;
 	mDataStore->retrieveGxsGrpMetaData(grp);
 
 	if(grp.empty())
 		return;
 
-	std::map<std::string, RsGxsGrpMetaData*>::iterator mit =
+	std::map<RsGxsGroupId, RsGxsGrpMetaData*>::iterator mit =
 	grp.begin();
 
 	std::list<RsNxsItem*> itemL;
@@ -2213,7 +2213,7 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsg* item)
 	GxsMsgMetaResult metaResult;
 	GxsMsgReq req;
 
-	std::map<std::string, RsGxsGrpMetaData*> grpMetas;
+	std::map<RsGxsGroupId, RsGxsGrpMetaData*> grpMetas;
 	grpMetas[item->grpId] = NULL;
 	mDataStore->retrieveGxsGrpMetaData(grpMetas);
 	RsGxsGrpMetaData* grpMeta = grpMetas[item->grpId];

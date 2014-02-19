@@ -178,7 +178,7 @@ public:
     uint32_t publishTs; // to compare to Ts of receiving peer's grp of same id
 
     /// grpId of grp held by sending peer
-    std::string grpId;
+    RsGxsGroupId grpId;
     std::string authorId;
 
 };
@@ -237,7 +237,7 @@ public:
     virtual void clear();
     virtual std::ostream &print(std::ostream &out, uint16_t indent);
 
-    std::string grpId;
+    RsGxsGroupId grpId;
     uint8_t flag;
     uint32_t createdSince;
     uint32_t updateTS; // time of last update
@@ -261,7 +261,7 @@ public:
     virtual std::ostream &print(std::ostream &out, uint16_t indent);
 
     uint8_t flag; // response/req
-    std::string grpId;
+    RsGxsGroupId grpId;
     std::string msgId;
     std::string authorId;
 

@@ -203,7 +203,7 @@ bool RsNxsSerialiser::serialiseNxsSynMsgItem(RsNxsSyncMsgItem *item, void *data,
 
     ok &= setRawUInt32(data, *size, &offset, item->transactionNumber);
     ok &= setRawUInt8(data, *size, &offset, item->flag);
-    ok &= SetTlvString(data, *size, &offset, TLV_TYPE_STR_GROUPID, item->grpId);
+    ok &= item->grpId.serialise(data, *size, offset);
     ok &= SetTlvString(data, *size, &offset, TLV_TYPE_STR_MSGID, item->msgId);
     ok &= SetTlvString(data, *size, &offset, TLV_TYPE_STR_NAME, item->authorId);
 
@@ -454,7 +454,7 @@ bool RsNxsSerialiser::serialiseNxsSyncGrpItem(RsNxsSyncGrpItem *item, void *data
 
     ok &= setRawUInt32(data, *size, &offset, item->transactionNumber);
     ok &= setRawUInt8(data, *size, &offset, item->flag);
-    ok &= SetTlvString(data, *size, &offset, TLV_TYPE_STR_GROUPID, item->grpId);
+    ok &= item->grpId.serialise(data, *size, offset);
     ok &= setRawUInt32(data, *size, &offset, item->publishTs);
     ok &= SetTlvString(data, *size, &offset, TLV_TYPE_STR_NAME, item->authorId);
 
@@ -504,7 +504,7 @@ bool RsNxsSerialiser::serialiseNxsSyncMsg(RsNxsSyncMsg *item, void *data, uint32
     ok &= setRawUInt8(data, *size, &offset, item->flag);
     ok &= setRawUInt32(data, *size, &offset, item->createdSince);
     ok &= SetTlvString(data, *size, &offset, TLV_TYPE_STR_HASH_SHA1, item->syncHash);
-    ok &= SetTlvString(data, *size, &offset, TLV_TYPE_STR_GROUPID, item->grpId);
+    ok &= item->grpId.serialise(data, *size, offset);
     ok &= setRawUInt32(data, *size, &offset, item->updateTS);
 
     if(offset != tlvsize){
@@ -780,7 +780,7 @@ RsNxsSyncGrpItem* RsNxsSerialiser::deserialNxsSyncGrpItem(void *data, uint32_t *
 
     ok &= getRawUInt32(data, *size, &offset, &(item->transactionNumber));
     ok &= getRawUInt8(data, *size, &offset, &(item->flag));
-    ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_GROUPID, item->grpId);
+    ok &= item->grpId.deserialise(data, *size, offset);
     ok &= getRawUInt32(data, *size, &offset, &(item->publishTs));
     ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_NAME, item->authorId);
 
@@ -916,7 +916,7 @@ RsNxsSyncMsgItem* RsNxsSerialiser::deserialNxsSyncMsgItem(void *data, uint32_t *
 
     ok &= getRawUInt32(data, *size, &offset, &(item->transactionNumber));
     ok &= getRawUInt8(data, *size, &offset, &(item->flag));
-    ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_GROUPID, item->grpId);
+    ok &= item->grpId.deserialise(data, *size, offset);
     ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_MSGID, item->msgId);
     ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_NAME, item->authorId);
 
@@ -989,7 +989,7 @@ RsNxsSyncMsg* RsNxsSerialiser::deserialNxsSyncMsg(void *data, uint32_t *size)
     ok &= getRawUInt8(data, *size, &offset, &(item->flag));
     ok &= getRawUInt32(data, *size, &offset, &(item->createdSince));
     ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_HASH_SHA1, item->syncHash);
-    ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_GROUPID, item->grpId);
+    ok &= item->grpId.deserialise(data, *size, offset);
     ok &= getRawUInt32(data, *size, &offset, &(item->updateTS));
 
     if (offset != rssize)
@@ -1074,7 +1074,7 @@ uint32_t RsNxsSerialiser::sizeNxsSyncGrpItem(RsNxsSyncGrpItem *item)
     s += 4; // transaction number
     s += 4; // publishTs
     s += 1; // flag
-    s += GetTlvStringSize(item->grpId);
+    s += item->grpId.serial_size();
     s += GetTlvStringSize(item->authorId);
 
     return s;
@@ -1089,7 +1089,7 @@ uint32_t RsNxsSerialiser::sizeNxsSyncMsg(RsNxsSyncMsg *item)
     s += 4; // transaction number
     s += 1; // flag
     s += 4; // age
-    s += GetTlvStringSize(item->grpId);
+    s += item->grpId.serial_size();
     s += GetTlvStringSize(item->syncHash);
     s += 4; // updateTS
 
@@ -1103,7 +1103,7 @@ uint32_t RsNxsSerialiser::sizeNxsSyncMsgItem(RsNxsSyncMsgItem *item)
 
     s += 4; // transaction number
     s += 1; // flag
-    s += GetTlvStringSize(item->grpId);
+    s += item->grpId.serial_size();
     s += GetTlvStringSize(item->msgId);
     s += GetTlvStringSize(item->authorId);
 

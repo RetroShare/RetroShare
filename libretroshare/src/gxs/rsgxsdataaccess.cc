@@ -65,7 +65,7 @@ RsGxsDataAccess::RsGxsDataAccess(RsGeneralDataService* ds)
 
 
 bool RsGxsDataAccess::requestGroupInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts,
-		const std::list<std::string> &groupIds)
+		const std::list<RsGxsGroupId> &groupIds)
 {
     if(groupIds.empty())
     {
@@ -854,7 +854,7 @@ bool RsGxsDataAccess::getGroupList(const std::list<RsGxsGroupId>& grpIdsIn, cons
 
     mDataStore->retrieveGxsGrpMetaData(grpMeta);
 
-    std::map<std::string, RsGxsGrpMetaData*>::iterator mit = grpMeta.begin();
+    std::map<RsGxsGroupId, RsGxsGrpMetaData*>::iterator mit = grpMeta.begin();
 
     for(; mit != grpMeta.end(); mit++)
     {
@@ -958,8 +958,8 @@ bool RsGxsDataAccess::getMsgList(const GxsMsgReq& msgIds, const RsTokReqOptions&
                     std::vector<RsGxsMsgMetaData*>::const_iterator vit = metaV.begin();
 
                     // RUN THROUGH ALL MSGS... in map origId -> TS.
-                    std::map<RsGxsGroupId, std::pair<RsGxsMessageId, time_t> > origMsgTs;
-                    std::map<RsGxsGroupId, std::pair<RsGxsMessageId, time_t> >::iterator oit;
+                    std::map<RsGxsMessageId, std::pair<RsGxsMessageId, time_t> > origMsgTs;
+                    std::map<RsGxsMessageId, std::pair<RsGxsMessageId, time_t> >::iterator oit;
 
                     for(; vit != metaV.end(); vit++)
                     {

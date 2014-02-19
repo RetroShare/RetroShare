@@ -60,13 +60,13 @@ public:
     uint32_t    mSignFlags;   // Combination of RSGXS_GROUP_SIGN_PUBLISH_MASK & RSGXS_GROUP_SIGN_AUTHOR_MASK.
 
     time_t      mPublishTs; // Mandatory.
-    RsPeerId    mAuthorId;   // Optional.
+    std::string    mAuthorId;   // Optional.
 
     // for circles
     std::string mCircleId;
     uint32_t mCircleType;
     uint32_t mAuthenFlags;
-    std::string mParentGrpId;
+    RsGxsGroupId mParentGrpId;
 
     // BELOW HERE IS LOCAL DATA, THAT IS NOT FROM MSG.
 
@@ -109,7 +109,7 @@ public:
     std::string mParentId;
     std::string mOrigMsgId;
 
-    RsPeerId    mAuthorId;
+    std::string    mAuthorId;
 
     std::string mMsgName;
     time_t      mPublishTs;
