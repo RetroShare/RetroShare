@@ -39,7 +39,6 @@ protected:
 	virtual bool service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta);
         virtual bool service_loadGroup(uint32_t token, Mode mode, RsGroupMetaData& groupMetaData);
         virtual bool service_EditGroup(uint32_t &token, 
-			RsGxsGroupUpdateMeta &updateMeta,
 			RsGroupMetaData &editedMeta);
 
 };

@@ -41,6 +41,7 @@
 #define IDDIALOG_IDLIST		1
 #define IDDIALOG_IDDETAILS	2
 #define IDDIALOG_REPLIST	3
+#define IDDIALOG_REFRESH	4
 
 /****************************************************************
  */
@@ -85,6 +86,14 @@ IdDialog::IdDialog(QWidget *parent)
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.line_RatingOverall);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.line_RatingImplicit);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.line_RatingOwn);
+	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.line_RatingPeers);
+	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.repModButton);
+	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.repMod_Accept);
+	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.repMod_Ban);
+	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.repMod_Negative);
+	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.repMod_Positive);
+	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.repMod_Custom);
+	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui.repMod_spinBox);
 
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui.lineEdit_Nickname);
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui.lineEdit_GpgName);
@@ -95,6 +104,7 @@ IdDialog::IdDialog(QWidget *parent)
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui.line_RatingOverall);
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui.line_RatingImplicit);
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui.line_RatingOwn);
+	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui.line_RatingPeers);
 
 	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui.lineEdit_Nickname);
 	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui.lineEdit_GpgName);
@@ -105,10 +115,11 @@ IdDialog::IdDialog(QWidget *parent)
 	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui.line_RatingOverall);
 	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui.line_RatingImplicit);
 	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui.line_RatingOwn);
+	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui.line_RatingPeers);
 
-	mStateHelper->addWidget(IDDIALOG_REPLIST, ui.treeWidget_RepList);
-	mStateHelper->addLoadPlaceholder(IDDIALOG_REPLIST, ui.treeWidget_RepList);
-	mStateHelper->addClear(IDDIALOG_REPLIST, ui.treeWidget_RepList);
+	//mStateHelper->addWidget(IDDIALOG_REPLIST, ui.treeWidget_RepList);
+	//mStateHelper->addLoadPlaceholder(IDDIALOG_REPLIST, ui.treeWidget_RepList);
+	//mStateHelper->addClear(IDDIALOG_REPLIST, ui.treeWidget_RepList);
 
 	/* Connect signals */
 	connect(ui.toolButton_NewId, SIGNAL(clicked()), this, SLOT(addIdentity()));
@@ -118,6 +129,7 @@ IdDialog::IdDialog(QWidget *parent)
 
 	connect(ui.filterComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(filterComboBoxChanged()));
 	connect(ui.filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
+	connect(ui.repModButton, SIGNAL(clicked()), this, SLOT(modifyReputation()));
 
 	/* Add filter types */
 	ui.filterComboBox->addItem(tr("All"), RSID_FILTER_ALL);
@@ -141,6 +153,10 @@ IdDialog::IdDialog(QWidget *parent)
 
 	mStateHelper->setActive(IDDIALOG_IDDETAILS, false);
 	mStateHelper->setActive(IDDIALOG_REPLIST, false);
+
+	// Hiding RepList until that part is finished.
+	//ui.treeWidget_RepList->setVisible(false);
+	ui.toolButton_Reputation->setVisible(false);
 }
 
 void IdDialog::todo()
@@ -500,10 +516,89 @@ void IdDialog::insertIdDetails(uint32_t token)
 		ui.line_RatingImplicit->setText("+5 Anon Id");
 	}
 
+	{
+		QString rating = QString::number(data.mReputation.mOverallScore);
+		ui.line_RatingOverall->setText(rating);
+	}
+
+	{
+		QString rating = QString::number(data.mReputation.mIdScore);
+		ui.line_RatingImplicit->setText(rating);
+	}
+
+	{
+		QString rating = QString::number(data.mReputation.mOwnOpinion);
+		ui.line_RatingOwn->setText(rating);
+	}
+
+	{
+		QString rating = QString::number(data.mReputation.mPeerOpinion);
+		ui.line_RatingPeers->setText(rating);
+	}
+
+
+
 	/* request network ratings */
-	requestRepList(data.mMeta.mGroupId);
+	// Removing this for the moment.
+	// requestRepList(data.mMeta.mGroupId);
 }
 
+void IdDialog::modifyReputation()
+{
+	std::cerr << "IdDialog::modifyReputation()";
+	std::cerr << std::endl;
+
+	std::string id = ui.lineEdit_KeyId->text().toStdString();
+
+	int mod = 0;
+	if (ui.repMod_Accept->isChecked())
+	{
+		mod += 100;
+	}
+	else if (ui.repMod_Positive->isChecked())
+	{
+		mod += 10;
+	}
+	else if (ui.repMod_Negative->isChecked())
+	{
+		mod += -10;
+	}
+	else if (ui.repMod_Ban->isChecked())
+	{
+		mod += -100;
+	}
+	else if (ui.repMod_Custom->isChecked())
+	{
+		mod += ui.repMod_spinBox->value();
+	}
+	else
+	{
+		// invalid
+		return;
+	}
+
+	std::cerr << "IdDialog::modifyReputation() ID: " << id << " Mod: " << mod;
+	std::cerr << std::endl;
+
+	uint32_t token;
+	if (!rsIdentity->submitOpinion(token, id, false, mod))
+	{
+		std::cerr << "IdDialog::modifyReputation() Error submitting Opinion";
+		std::cerr << std::endl;
+
+	}
+
+	std::cerr << "IdDialog::modifyReputation() queuingRequest(), token: " << token;
+	std::cerr << std::endl;
+
+	// trigger refresh when finished.
+	// basic / anstype are not needed.
+	mIdQueue->queueRequest(token, 0, 0, IDDIALOG_REFRESH);
+
+	return;
+}
+
+	
 void IdDialog::updateDisplay(bool /*complete*/)
 {
 	/* Update identity list */
@@ -561,6 +656,7 @@ void IdDialog::requestRepList(const RsGxsGroupId &aboutId)
 void IdDialog::insertRepList(uint32_t token)
 {
 	mStateHelper->setLoading(IDDIALOG_REPLIST, false);
+#if 0
 
 	std::vector<RsGxsIdOpinion> opinions;
 	std::vector<RsGxsIdOpinion>::iterator vit;
@@ -575,7 +671,6 @@ void IdDialog::insertRepList(uint32_t token)
 		return;
 	}
 
-	mStateHelper->setActive(IDDIALOG_REPLIST, true);
 
 	for(vit = opinions.begin(); vit != opinions.end(); vit++)
 	{
@@ -598,9 +693,11 @@ void IdDialog::insertRepList(uint32_t token)
 
 		ui.treeWidget_RepList->addTopLevelItem(item);
 	}
+#endif
+	mStateHelper->setActive(IDDIALOG_REPLIST, true);
 }
 
-void IdDialog::loadRequest(const TokenQueue */*queue*/, const TokenRequest &req)
+void IdDialog::loadRequest(const TokenQueue * /*queue*/, const TokenRequest &req)
 {
 	std::cerr << "IdDialog::loadRequest() UserType: " << req.mUserType;
 	std::cerr << std::endl;
@@ -619,6 +716,9 @@ void IdDialog::loadRequest(const TokenQueue */*queue*/, const TokenRequest &req)
 			insertRepList(req.mToken);
 			break;
 
+		case IDDIALOG_REFRESH:
+			updateDisplay(true);
+			break;
 		default:
 			std::cerr << "IdDialog::loadRequest() ERROR";
 			std::cerr << std::endl;

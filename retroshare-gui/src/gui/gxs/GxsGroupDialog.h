@@ -181,7 +181,6 @@ protected:
          * @param meta The deriving GXS service should set their grp meta to this value
          */
 	virtual bool service_EditGroup(uint32_t &token, 
-			RsGxsGroupUpdateMeta &updateMeta,
 			RsGroupMetaData &editedMeta) = 0; 
 
 	// To be overloaded by users.
@@ -233,11 +232,6 @@ private:
 	void updateFromExistingMeta();
 
 	bool prepareGroupMetaData(RsGroupMetaData &meta);
-	bool buildUpdateMeta(
-        	const RsGroupMetaData &origMeta,
-        	const RsGroupMetaData &newMeta,
-        	RsGxsGroupUpdateMeta &updateMeta);
-
 
 	std::list<std::string> mShareList;
 	QPixmap picture;

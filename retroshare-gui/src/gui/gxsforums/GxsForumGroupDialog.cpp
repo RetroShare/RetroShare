@@ -106,7 +106,6 @@ bool GxsForumGroupDialog::service_CreateGroup(uint32_t &token, const RsGroupMeta
 }
 
 bool GxsForumGroupDialog::service_EditGroup(uint32_t &token, 
-			RsGxsGroupUpdateMeta &updateMeta,
 			RsGroupMetaData &editedMeta)
 {
 	RsGxsForumGroup grp;
@@ -116,7 +115,7 @@ bool GxsForumGroupDialog::service_EditGroup(uint32_t &token,
 	std::cerr << "GxsForumGroupDialog::service_EditGroup() submitting changes";
 	std::cerr << std::endl;
 
-	rsGxsForums->updateGroup(token, updateMeta, grp);
+	rsGxsForums->updateGroup(token, grp);
 	return true;
 }
 

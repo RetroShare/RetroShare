@@ -108,7 +108,6 @@ bool PostedGroupDialog::service_CreateGroup(uint32_t &token, const RsGroupMetaDa
 }
 
 bool PostedGroupDialog::service_EditGroup(uint32_t &token, 
-			RsGxsGroupUpdateMeta &updateMeta,
 			RsGroupMetaData &editedMeta)
 {
 	RsPostedGroup grp;
@@ -118,7 +117,7 @@ bool PostedGroupDialog::service_EditGroup(uint32_t &token,
 	std::cerr << "PostedGroupDialog::service_EditGroup() submitting changes";
 	std::cerr << std::endl;
 
-	rsPosted->updateGroup(token, updateMeta, grp);
+	rsPosted->updateGroup(token, grp);
 	return true;
 }
 

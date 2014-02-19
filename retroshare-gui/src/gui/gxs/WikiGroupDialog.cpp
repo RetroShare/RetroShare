@@ -108,7 +108,6 @@ bool WikiGroupDialog::service_CreateGroup(uint32_t &token, const RsGroupMetaData
 }
 
 bool WikiGroupDialog::service_EditGroup(uint32_t &token, 
-			RsGxsGroupUpdateMeta &updateMeta,
 			RsGroupMetaData &editedMeta)
 {
 	RsWikiCollection grp;
@@ -117,7 +116,7 @@ bool WikiGroupDialog::service_EditGroup(uint32_t &token,
 	std::cerr << "WikiGroupDialog::service_EditGroup() submitting changes.";
 	std::cerr << std::endl;
 
-	rsWiki->updateCollection(token, updateMeta, grp);
+	rsWiki->updateCollection(token, grp);
 	return true;
 }
 

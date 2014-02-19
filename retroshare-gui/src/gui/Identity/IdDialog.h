@@ -58,6 +58,7 @@ private slots:
 	void updateSelection();
 
 	void todo();
+	void modifyReputation();
 
 private:
 	void requestIdDetails(std::string &id);
