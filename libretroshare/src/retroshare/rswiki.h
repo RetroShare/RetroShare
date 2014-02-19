@@ -131,7 +131,7 @@ virtual bool submitCollection(uint32_t &token, RsWikiCollection &collection) = 0
 virtual bool submitSnapshot(uint32_t &token, RsWikiSnapshot &snapshot) = 0;
 virtual bool submitComment(uint32_t &token, RsWikiComment &comment) = 0;
 
-virtual bool updateCollection(uint32_t &token, RsGxsGroupUpdateMeta& meta, RsWikiCollection &collection) = 0;
+virtual bool updateCollection(uint32_t &token, RsWikiCollection &collection) = 0;
 
 };
 

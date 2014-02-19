@@ -89,7 +89,8 @@ RsIdentity *rsIdentity = NULL;
 
 #define GXSIDREQ_PGPHASH 	0x0010
 #define GXSIDREQ_RECOGN 	0x0020
-#define GXSIDREQ_REPUTATION 	0x0030
+
+#define GXSIDREQ_OPINION 	0x0030
 
 #define GXSIDREQ_CACHETEST 	0x1000
 
@@ -294,12 +295,6 @@ bool p3IdService:: getOwnIds(std::list<RsGxsId> &ownIds)
 	return true;
 }
 
-
-//
-bool p3IdService::submitOpinion(uint32_t& token, RsIdOpinion &opinion)
-{
-	return false;
-}
 
 bool p3IdService::createIdentity(uint32_t& token, RsIdentityParameters &params)
 {
@@ -510,6 +505,138 @@ bool p3IdService::getReputation(const RsGxsId &id, GixsReputation &rep)
 	return false;
 }
 
+#if 0
+class RegistrationRequest
+{
+	public:
+	RegistrationRequest(uint32_t token, RsGxsId &id, int score)
+	:m_extToken(token), m_id(id), m_score(score) { return; }
+
+	uint32_t m_intToken;
+	uint32_t m_extToken;
+	RsGxsId m_id;
+	int m_score;
+};
+#endif
+
+
+bool p3IdService::submitOpinion(uint32_t& token, const RsGxsId &id, bool absOpinion, int score)
+{
+	std::cerr << "p3IdService::submitOpinion()";
+	std::cerr << std::endl;
+
+	uint32_t ansType = RS_TOKREQ_ANSTYPE_SUMMARY;
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
+
+	token = RsGenExchange::generatePublicToken();
+
+	uint32_t intToken;
+	std::list<RsGxsGroupId> groups;
+	groups.push_back(id);
+
+	RsGenExchange::getTokenService()->requestGroupInfo(intToken, ansType, opts, groups);
+	GxsTokenQueue::queueRequest(intToken, GXSIDREQ_OPINION);
+
+	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+	mPendingOpinion[intToken] = OpinionRequest(token, id, absOpinion, score);
+	return true;
+}
+
+
+
+bool p3IdService::opinion_handlerequest(uint32_t token)
+{
+	std::cerr << "p3IdService::opinion_handlerequest()";
+	std::cerr << std::endl;
+
+	OpinionRequest req;
+	{
+		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+
+		/* find in pendingReputation */
+		std::map<uint32_t, OpinionRequest>::iterator it;
+		it = mPendingOpinion.find(token);
+		if (it == mPendingOpinion.end())
+		{
+			std::cerr << "p3IdService::opinion_handlerequest() ERROR finding PendingOpinion";
+			std::cerr << std::endl;
+
+			return false;
+		}
+		req = it->second;
+		mPendingOpinion.erase(it);
+	}
+
+	std::cerr << "p3IdService::opinion_handlerequest() Id: " << req.mId << " score: " << req.mScore;
+	std::cerr << std::endl;
+
+        std::list<RsGroupMetaData> groups;
+        std::list<RsGxsGroupId> groupList;
+
+        if (!getGroupMeta(token, groups))
+	{
+		std::cerr << "p3IdService::opinion_handlerequest() ERROR getGroupMeta()";
+		std::cerr << std::endl;
+
+		updatePublicRequestStatus(req.mToken, RsTokenService::GXS_REQUEST_V2_STATUS_FAILED);
+		return false;
+	}
+
+	if (groups.size() != 1)
+	{
+		std::cerr << "p3IdService::opinion_handlerequest() ERROR group.size() != 1";
+		std::cerr << std::endl;
+
+		// error.
+		updatePublicRequestStatus(req.mToken, RsTokenService::GXS_REQUEST_V2_STATUS_FAILED);
+		return false;
+	}
+        RsGroupMetaData &meta = *(groups.begin());
+
+	if (meta.mGroupId != req.mId)
+	{
+		std::cerr << "p3IdService::opinion_handlerequest() ERROR Id mismatch";
+		std::cerr << std::endl;
+
+		// error.
+		updatePublicRequestStatus(req.mToken, RsTokenService::GXS_REQUEST_V2_STATUS_FAILED);
+		return false;
+	}
+
+	/* get the string */
+	SSGxsIdGroup ssdata;
+	ssdata.load(meta.mServiceString); // attempt load - okay if fails.
+
+	/* modify score */
+	if (req.mAbsOpinion)
+	{
+		ssdata.score.rep.mOwnOpinion = req.mScore;
+	}
+	else
+	{
+		ssdata.score.rep.mOwnOpinion += req.mScore;
+	}
+
+	// update IdScore too.
+	bool pgpId = (meta.mGroupFlags & RSGXSID_GROUPFLAG_REALID);
+	ssdata.score.rep.updateIdScore(pgpId, ssdata.pgp.idKnown);
+	ssdata.score.rep.update();
+
+	/* save string */
+	std::string serviceString = ssdata.save();
+	std::cerr << "p3IdService::opinion_handlerequest() new service_string: " << serviceString;
+	std::cerr << std::endl;
+
+	/* set new Group ServiceString */
+	uint32_t dummyToken = 0;
+	setGroupServiceString(dummyToken, meta.mGroupId, serviceString);
+	cache_update_if_cached(meta.mGroupId, serviceString);
+
+	updatePublicRequestStatus(req.mToken, RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE);
+	return true;
+}
+
 
 /********************************************************************************/
 /******************* Get/Set Data      ******************************************/
@@ -544,6 +671,7 @@ bool p3IdService::getGroupData(const uint32_t &token, std::vector<RsGxsIdGroup> 
 				{
 					group.mPgpKnown = ssdata.pgp.idKnown;
 					group.mPgpId    = ssdata.pgp.pgpId;
+					group.mReputation = ssdata.score.rep;
 #ifdef DEBUG_IDS
 					std::cerr << "p3IdService::getGroupData() Success decoding ServiceString";
 					std::cerr << std::endl;
@@ -576,42 +704,6 @@ bool p3IdService::getGroupData(const uint32_t &token, std::vector<RsGxsIdGroup> 
 	return ok;
 }
 
-bool p3IdService::getMsgData(const uint32_t &token, std::vector<RsGxsIdOpinion> &opinions)
-{
-	GxsMsgDataMap msgData;
-	bool ok = RsGenExchange::getMsgData(token, msgData);
-
-	if(ok)
-	{
-		GxsMsgDataMap::iterator mit = msgData.begin();
-
-		for(; mit != msgData.end();  mit++)
-		{
-			RsGxsGroupId grpId = mit->first;
-			std::vector<RsGxsMsgItem*>& msgItems = mit->second;
-			std::vector<RsGxsMsgItem*>::iterator vit = msgItems.begin();
-
-			for(; vit != msgItems.end(); vit++)
-			{
-				RsGxsIdOpinionItem* item = dynamic_cast<RsGxsIdOpinionItem*>(*vit);
-
-				if (item)
-				{
-					RsGxsIdOpinion opinion = item->opinion;
-					opinion.mMeta = item->meta;
-					opinions.push_back(opinion);
-					delete item;
-				}
-				else
-				{
-					std::cerr << "Not a IdOpinion Item, deleting!" << std::endl;
-					delete *vit;
-				}
-			}
-		}
-	}
-	return ok;
-}
 
 /********************************************************************************/
 /********************************************************************************/
@@ -667,15 +759,6 @@ bool 	p3IdService::updateGroup(uint32_t& token, RsGxsIdGroup &group)
 		}
 	}
 
-	return true;
-}
-
-bool 	p3IdService::createMsg(uint32_t& token, RsGxsIdOpinion &opinion)
-{
-	RsGxsIdOpinionItem* item = new RsGxsIdOpinionItem();
-	item->opinion = opinion;
-	item->meta = opinion.mMeta;
-	RsGenExchange::publishMsg(token, item);
 	return true;
 }
 
@@ -806,18 +889,57 @@ void SSGxsIdRecognTags::setTags(bool processed, bool pending, uint32_t flags)
 }
 
 
-
-bool SSGxsIdScore::load(const std::string &input)
+GxsReputation::GxsReputation()
+:mOverallScore(0), mIdScore(0), mOwnOpinion(0), mPeerOpinion(0)
 {
-	return (1 == sscanf(input.c_str(), "%d", &score));
+	updateIdScore(false, false);
+	update();
 }
 
-std::string SSGxsIdScore::save() const
+static const int kIdReputationPgpKnownScore 	= 50;
+static const int kIdReputationPgpUnknownScore 	= 20;
+static const int kIdReputationAnonScore 	= 5;
+
+bool GxsReputation::updateIdScore(bool pgpLinked, bool pgpKnown)
+{
+	if (pgpLinked)
+	{
+		if (pgpKnown)
+		{
+			mIdScore = kIdReputationPgpKnownScore;
+		}
+		else
+		{
+			mIdScore = kIdReputationPgpUnknownScore;
+		}
+	}
+	else
+	{
+		mIdScore = kIdReputationAnonScore;
+	}
+	return true;
+}
+
+bool GxsReputation::update()
+{
+	mOverallScore = mIdScore + mOwnOpinion + mPeerOpinion;
+	return true;
+}
+
+
+bool SSGxsIdReputation::load(const std::string &input)
+{
+	return (4 == sscanf(input.c_str(), "%d %d %d %d", 
+		&(rep.mOverallScore), &(rep.mIdScore), &(rep.mOwnOpinion), &(rep.mPeerOpinion)));
+}
+
+std::string SSGxsIdReputation::save() const
 {
 	std::string output;
-	rs_sprintf(output, "%d", score);
+	rs_sprintf(output, "%d %d %d %d", rep.mOverallScore, rep.mIdScore, rep.mOwnOpinion, rep.mPeerOpinion);
 	return output;
 }
+
 
 bool SSGxsIdCumulator::load(const std::string &input)
 {
@@ -836,11 +958,9 @@ bool SSGxsIdGroup::load(const std::string &input)
 	char pgpstr[RSGXSID_MAX_SERVICE_STRING];
 	char recognstr[RSGXSID_MAX_SERVICE_STRING];
 	char scorestr[RSGXSID_MAX_SERVICE_STRING];
-	char opinionstr[RSGXSID_MAX_SERVICE_STRING];
-	char repstr[RSGXSID_MAX_SERVICE_STRING];
 	
 	// split into parts.
-	if (5 != sscanf(input.c_str(), "v1 {P:%[^}]} {T:%[^}]} {Y:%[^}]} {O:%[^}]} {R:%[^}]}", pgpstr, recognstr, scorestr, opinionstr, repstr))
+	if (3 != sscanf(input.c_str(), "v2 {P:%[^}]} {T:%[^}]} {R:%[^}]}", pgpstr, recognstr, scorestr))
 	{
 #ifdef DEBUG_IDS
 		std::cerr << "SSGxsIdGroup::load() Failed to extract 4 Parts";
@@ -898,6 +1018,7 @@ bool SSGxsIdGroup::load(const std::string &input)
 		ok = false;
 	}
 
+#if 0
 	if (opinion.load(opinionstr))
 	{
 #ifdef DEBUG_IDS
@@ -929,6 +1050,7 @@ bool SSGxsIdGroup::load(const std::string &input)
 #endif // DEBUG_IDS
 		ok = false;
 	}
+#endif
 
 #ifdef DEBUG_IDS
 	std::cerr << "SSGxsIdGroup::load() regurgitated: " << save();
@@ -942,7 +1064,7 @@ bool SSGxsIdGroup::load(const std::string &input)
 
 std::string SSGxsIdGroup::save() const
 {
-	std::string output = "v1 ";
+	std::string output = "v2 ";
 
 	output += "{P:";
 	output += pgp.save();
@@ -952,16 +1074,8 @@ std::string SSGxsIdGroup::save() const
 	output += recogntags.save();
 	output += "}";
 
-	output += "{Y:";
-	output += score.save();
-	output += "}";
-
-	output += "{O:";
-	output += opinion.save();
-	output += "}";
-
 	output += "{R:";
-	output += reputation.save();
+	output += score.save();
 	output += "}";
 
 	//std::cerr << "SSGxsIdGroup::save() output: " << output;
@@ -1091,16 +1205,15 @@ void RsGxsIdCache::updateServiceString(std::string serviceString)
 #endif // DEBUG_RECOGN
 		}
 
-		details.mOpinion    = 0;
-		details.mReputation = ssdata.score.score;
+		// copy over Reputation scores.
+		details.mReputation = ssdata.score.rep;
 	}
 	else
 	{
 		details.mPgpKnown = false;
 		details.mPgpId = ""; 
-
-		details.mOpinion = 0;
-		details.mReputation = 0;
+		details.mReputation.updateIdScore(false, false);
+		details.mReputation.update();
 	}
 }
 
@@ -2248,6 +2361,10 @@ bool p3IdService::pgphash_process()
 		ssdata.pgp.checkAttempts++;
 	}
 
+	// update IdScore too.
+	ssdata.score.rep.updateIdScore(true, ssdata.pgp.idKnown);
+	ssdata.score.rep.update();
+
 	/* set new Group ServiceString */
 	uint32_t dummyToken = 0;
 	std::string serviceString = ssdata.save();
@@ -2645,6 +2762,11 @@ bool p3IdService::recogn_process()
 	ssdata.recogntags.setTags(true, isPending, tagValidFlags);
 	ssdata.recogntags.lastCheckTs = time(NULL);
 	ssdata.recogntags.publishTs = item->meta.mPublishTs;
+
+	// update IdScore too.
+	bool pgpId = (item->meta.mGroupFlags & RSGXSID_GROUPFLAG_REALID);
+	ssdata.score.rep.updateIdScore(pgpId, ssdata.pgp.idKnown);
+	ssdata.score.rep.update();
 
 	/* set new Group ServiceString */
 	uint32_t dummyToken = 0;
@@ -3088,616 +3210,6 @@ Processing Algorithm:
  */
 
 
-
-
-
-
-bool 	p3IdService::reputation_start()
-{
-	if (!CacheArbitration(BG_REPUTATION))
-	{
-#ifdef DEBUG_IDS
-		std::cerr << "p3IdService::reputation_start() Other Events running... Rescheduling";
-		std::cerr << std::endl;
-#endif // DEBUG_IDS
-
-		/* reschedule in a bit */
-		RsTickEvent::schedule_in(GXSID_EVENT_REPUTATION, REPUTATION_RETRY_PERIOD);
-		return false;
-	}
-
-	CacheArbitrationDone(BG_REPUTATION);
-	// SCHEDULE NEXT ONE.
-	RsTickEvent::schedule_in(GXSID_EVENT_REPUTATION, REPUTATION_PERIOD);
-	return true;
-}
-
-
-
-#define ID_BACKGROUND_PERIOD	60
-
-int	p3IdService::background_tick()
-{
-#ifdef DEBUG_IDS
-	std::cerr << "p3IdService::background_tick()";
-	std::cerr << std::endl;
-#endif // DEBUG_IDS
-
-	// Run Background Stuff.	
-	background_checkTokenRequest();
-
-	/* every minute - run a background check */
-	time_t now = time(NULL);
-	bool doCheck = false;
-	{
-		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-		if (now -  mLastBgCheck > ID_BACKGROUND_PERIOD)
-		{
-			doCheck = true;
-			mLastBgCheck = now;
-		}
-	}
-
-	if (doCheck)
-	{
-		//addExtraDummyData();
-		background_requestGroups();
-	}
-
-
-
-	// Add in new votes + comments.
-	return 0;
-}
-
-
-
-
-/***** Background Processing ****
- *
- * Process Each Message - as it arrives.
- *
- * Update 
- *
- */
-#define ID_BG_IDLE						0
-#define ID_BG_REQUEST_GROUPS			1
-#define ID_BG_REQUEST_UNPROCESSED		2
-#define ID_BG_REQUEST_FULLCALC			3
-
-bool p3IdService::background_checkTokenRequest()
-{
-	uint32_t token = 0;
-	uint32_t phase = 0;
-	{
-		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-		if (!mBgProcessing)
-		{
-			return false;
-		}
-
-		token = mBgToken;
-		phase = mBgPhase;
-	}
-
-
-	uint32_t status;
-	uint32_t reqtype;
-	uint32_t anstype;
-	time_t ts;
-
-	
-	status = RsGenExchange::getTokenService()->requestStatus(token);
-	//checkRequestStatus(token, status, reqtype, anstype, ts);
-	
-	if (status == RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
-	{
-		switch(phase)
-		{
-			case ID_BG_REQUEST_GROUPS:
-				background_requestNewMessages();
-				break;
-			case ID_BG_REQUEST_UNPROCESSED:
-				background_processNewMessages();
-				break;
-			case ID_BG_REQUEST_FULLCALC:
-				background_processFullCalc();
-				break;
-			default:
-				break;
-		}
-	}
-	return true;
-}
-
-
-bool p3IdService::background_requestGroups()
-{
-#ifdef DEBUG_IDS
-	std::cerr << "p3IdService::background_requestGroups()";
-	std::cerr << std::endl;
-#endif // DEBUG_IDS
-
-	// grab all the subscribed groups.
-	uint32_t token = 0;
-
-	{
-		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-
-		if (mBgProcessing)
-		{
-			std::cerr << "p3IdService::background_requestGroups() ERROR Already processing, Skip this cycle";
-			std::cerr << std::endl;
-			return false;
-		}
-
-		mBgProcessing = true;
-		mBgPhase = ID_BG_REQUEST_GROUPS;
-		mBgToken = 0;
-	}
-
-	uint32_t ansType = RS_TOKREQ_ANSTYPE_SUMMARY;
-	RsTokReqOptions opts;
-	std::list<std::string> groupIds;
-
-/**
-	TODO
-	opts.mStatusFilter = RSGXS_GROUP_STATUS_NEWMSG;
-	opts.mStatusMask = RSGXS_GROUP_STATUS_NEWMSG;
-**/
-
-	RsGenExchange::getTokenService()->requestGroupInfo(token, ansType, opts, groupIds);
-	{
-		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-		mBgToken = token;
-	}
-
-	return true;
-}
-
-
-
-bool p3IdService::background_requestNewMessages()
-{
-#ifdef DEBUG_IDS
-	std::cerr << "p3IdService::background_requestNewMessages()";
-	std::cerr << std::endl;
-#endif // DEBUG_IDS
-
-	std::list<RsGroupMetaData> modGroupList;
-	std::list<RsGroupMetaData>::iterator it;
-
-	std::list<std::string> groupIds;
-	uint32_t token = 0;
-
-	{
-		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-		token = mBgToken;
-	}
-
-	if (!getGroupSummary(token, modGroupList))
-	{
-		std::cerr << "p3IdService::background_requestNewMessages() ERROR No Group List";
-		std::cerr << std::endl;
-		background_cleanup();
-		return false;
-	}
-
-	{
-		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-		mBgPhase = ID_BG_REQUEST_UNPROCESSED;
-		mBgToken = 0;
-
-		/* now we process the modGroupList -> a map so we can use it easily later, and create id list too */
-		for(it = modGroupList.begin(); it != modGroupList.end(); it++)
-		{
-			/*** TODO
-			uint32_t dummyToken = 0;
-			setGroupStatusFlags(dummyToken, it->mGroupId, 0, RSGXS_GROUP_STATUS_NEWMSG);
-			***/
-
-			mBgGroupMap[it->mGroupId] = *it;
-			groupIds.push_back(it->mGroupId);
-		}
-	}
-
-	uint32_t ansType = RS_TOKREQ_ANSTYPE_SUMMARY; 
-	RsTokReqOptions opts;
-	token = 0;
-
-	/* TODO 
-	opts.mStatusFilter = RSGXS_MSG_STATUS_UNPROCESSED;
-	opts.mStatusMask = RSGXS_MSG_STATUS_UNPROCESSED;
-	*/
-
-	RsGenExchange::getTokenService()->requestMsgInfo(token, ansType, opts, groupIds);
-
-	{
-		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-		mBgToken = token;
-	}
-	return true;
-}
-
-
-bool p3IdService::background_processNewMessages()
-{
-#ifdef DEBUG_IDS
-	std::cerr << "p3IdService::background_processNewMessages()";
-	std::cerr << std::endl;
-#endif // DEBUG_IDS
-
-	GxsMsgMetaMap newMsgMap;
-	GxsMsgMetaMap::iterator it;
-	uint32_t token = 0;
-
-	{
-		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-		token = mBgToken;
-	}
-
-	if (!getMsgSummary(token, newMsgMap))
-	{
-		std::cerr << "p3IdService::background_processNewMessages() ERROR No New Msgs";
-		std::cerr << std::endl;
-		background_cleanup();
-		return false;
-	}
-
-	/* iterate through the msgs.. update the mBgGroupMap with new data, 
-	 * and flag these items as modified - so we rewrite them to the db later.
-	 *
-	 * If a message is not an original -> store groupId for requiring full analysis later.
-	 */
-
-	std::map<std::string, RsGroupMetaData>::iterator mit;
-
-	for (it = newMsgMap.begin(); it != newMsgMap.end(); it++)
-	{
-		std::vector<RsMsgMetaData>::iterator vit;
-		for(vit = it->second.begin(); vit != it->second.end(); vit++)
-		{
-#ifdef DEBUG_IDS
-			std::cerr << "p3IdService::background_processNewMessages() new MsgId: " << vit->mMsgId;
-			std::cerr << std::endl;
-#endif // DEBUG_IDS
-	
-			/* flag each new vote as processed */
-			/**
-				TODO
-			uint32_t dummyToken = 0;
-			setMsgStatusFlags(dummyToken, it->mMsgId, 0, RSGXS_MSG_STATUS_UNPROCESSED);
-			**/
-	
-			RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-	
-			mit = mBgGroupMap.find(it->first);
-			if (mit == mBgGroupMap.end())
-			{
-				std::cerr << "p3IdService::background_processNewMessages() ERROR missing GroupId: ";
-				std::cerr << vit->mGroupId;
-				std::cerr << std::endl;
-	
-				/* error */
-				continue;
-			}
-	
-			if (mit->second.mGroupStatus & ID_LOCAL_STATUS_FULL_CALC_FLAG)
-			{
-#ifdef DEBUG_IDS
-				std::cerr << "p3IdService::background_processNewMessages() Group Already marked FULL_CALC";
-				std::cerr << std::endl;
-#endif // DEBUG_IDS
-	
-				/* already marked */
-				continue;
-			}
-	
-			if (vit->mMsgId != vit->mOrigMsgId)
-			{
-				/*
-				 *  not original -> hard, redo calc (alt: could substract previous score)
-				 */
-	
-#ifdef DEBUG_IDS
-				std::cerr << "p3IdService::background_processNewMessages() Update, mark for FULL_CALC";
-				std::cerr << std::endl;
-#endif // DEBUG_IDS
-	
-				mit->second.mGroupStatus |= ID_LOCAL_STATUS_FULL_CALC_FLAG;
-			}
-			else
-			{
-				/*
-				 * Try incremental calculation.
-				 * - extract parameters from group.
-				 * - increment, & save back.
-				 * - flag group as modified.
-				 */
-	
-#ifdef DEBUG_IDS
-				std::cerr << "p3IdService::background_processNewMessages() NewOpt, Try Inc Calc";
-				std::cerr << std::endl;
-#endif // DEBUG_IDS
-	
-				mit->second.mGroupStatus |= ID_LOCAL_STATUS_INC_CALC_FLAG;
-	
-				SSGxsIdGroup ssdata;
-				if (!ssdata.load(mit->second.mServiceString))
-				{
-					/* error */
-					std::cerr << "p3IdService::background_processNewMessages() ERROR Extracting";
-					std::cerr << std::endl;
-				}
-	
-#ifdef DEBUG_IDS
-				/* do calcs */
-				std::cerr << "p3IdService::background_processNewMessages() Extracted: ";
-				std::cerr << std::endl;
-	
-				/* store it back in */
-				std::cerr << "p3IdService::background_processNewMessages() Stored: ";
-				std::cerr << std::endl;
-#endif // DEBUG_IDS
-
-				std::string serviceString = ssdata.save();	
-				if (0)
-				{
-					/* error */
-					std::cerr << "p3IdService::background_processNewMessages() ERROR Storing";
-					std::cerr << std::endl;
-				}
-			}
-		}
-	}
-
-
-	/* now iterate through groups again 
-	 *  -> update status as we go
-	 *  -> record one requiring a full analyssis
-	 */
-
-	{
-		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-
-#ifdef DEBUG_IDS
-		std::cerr << "p3IdService::background_processNewMessages() Checking Groups for Calc Type";
-		std::cerr << std::endl;
-#endif // DEBUG_IDS
-
-		for(mit = mBgGroupMap.begin(); mit != mBgGroupMap.end(); mit++)
-		{
-			if (mit->second.mGroupStatus & ID_LOCAL_STATUS_FULL_CALC_FLAG)
-			{
-#ifdef DEBUG_IDS
-				std::cerr << "p3IdService::background_processNewMessages() FullCalc for: ";
-				std::cerr << mit->second.mGroupId;
-				std::cerr << std::endl;
-#endif // DEBUG_IDS
-
-				mBgFullCalcGroups.push_back(mit->second.mGroupId);
-			}
-			else if (mit->second.mGroupStatus & ID_LOCAL_STATUS_INC_CALC_FLAG)
-			{
-#ifdef DEBUG_IDS
-				std::cerr << "p3IdService::background_processNewMessages() IncCalc done for: ";
-				std::cerr << mit->second.mGroupId;
-				std::cerr << std::endl;
-#endif // DEBUG_IDS
-
-				/* set Cache */
-				uint32_t dummyToken = 0;
-				setGroupServiceString(dummyToken, mit->second.mGroupId, mit->second.mServiceString);
-			}
-			else
-			{
-				/* why is it here? error. */
-				std::cerr << "p3IdService::background_processNewMessages() ERROR for: ";
-				std::cerr << mit->second.mGroupId;
-				std::cerr << std::endl;
-			}
-		}
-	}
-
-	return background_FullCalcRequest();
-}
-
-
-
-bool p3IdService::background_FullCalcRequest()
-{
-	/* 
-	 * grab an GroupId from List.
-	 *  - If empty, we are finished.
-	 *  - request all latest mesgs
-	 */
-	
-	std::list<std::string> groupIds;
-	{
-		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-		mBgPhase = ID_BG_REQUEST_FULLCALC;
-		mBgToken = 0;
-		mBgGroupMap.clear();
-
-		if (mBgFullCalcGroups.empty())
-		{
-			/* finished! */
-			background_cleanup();
-			return true;
-	
-		}
-	
-		groupIds.push_back(mBgFullCalcGroups.front());
-		mBgFullCalcGroups.pop_front();
-		
-	}
-
-	/* request the summary info from the parents */
-	uint32_t ansType = RS_TOKREQ_ANSTYPE_DATA; 
-	uint32_t token = 0;
-	RsTokReqOptions opts;
-	opts.mOptions = RS_TOKREQOPT_MSG_LATEST;
-
-	RsGenExchange::getTokenService()->requestMsgInfo(token, ansType, opts, groupIds);
-
-	{
-		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-		mBgToken = token;
-	}
-	return true;
-}
-
-
-
-
-bool p3IdService::background_processFullCalc()
-{
-#ifdef DEBUG_IDS
-	std::cerr << "p3IdService::background_processFullCalc()";
-	std::cerr << std::endl;
-#endif // DEBUG_IDS
-
-	std::list<RsMsgMetaData> msgList;
-	std::list<RsMsgMetaData>::iterator it;
-
-
-	bool validmsgs = false;
-
-	/* calc variables */
-	uint32_t opinion_count = 0;
-	uint32_t opinion_nullcount = 0;
-	double   opinion_sum = 0;
-	double   opinion_sumsq = 0;
-
-	uint32_t rep_count = 0;
-	uint32_t rep_nullcount = 0;
-	double   rep_sum = 0;
-	double   rep_sumsq = 0;
-
-	std::vector<RsGxsIdOpinion> opinions;
-	std::vector<RsGxsIdOpinion>::iterator vit;
-
-	if (!getMsgData(mBgToken, opinions))
-	{
-		std::cerr << "p3IdService::background_processFullCalc() ERROR Failed to get Opinions";
-		std::cerr << std::endl;
-
-		return false;
-	}
-
-	std::string groupId;
-	for(vit = opinions.begin(); vit != opinions.end(); vit++)
-	{
-		RsGxsIdOpinion &opinion = *vit;
-
-		/* These should all be same group - should check for sanity! */
-		if (groupId == "")
-		{
-			groupId = opinion.mMeta.mGroupId;
-		}
-
-#ifdef DEBUG_IDS
-		std::cerr << "p3IdService::background_processFullCalc() Msg:";
-		std::cerr << opinion;
-		std::cerr << std::endl;
-#endif // DEBUG_IDS
-
-		validmsgs = true;
-
-		/* for each opinion.... extract score, and reputation */
-		if (opinion.mOpinion != 0)
-		{
-			opinion_count++;
-			opinion_sum += opinion.mOpinion;
-			opinion_sum += (opinion.mOpinion * opinion.mOpinion);
-		}
-		else
-		{
-			opinion_nullcount++;
-		}
-		
-
-		/* for each opinion.... extract score, and reputation */
-		if (opinion.mReputation != 0)
-		{
-			rep_nullcount++;
-			rep_sum += opinion.mReputation;
-			rep_sum += (opinion.mReputation * opinion.mReputation);
-		}
-		else
-		{
-			rep_nullcount++;
-		}
-	}
-
-	double opinion_avg = 0;
-	double opinion_var = 0;
-	double opinion_frac = 0;
-
-	double rep_avg = 0;
-	double rep_var = 0;
-	double rep_frac = 0;
-
-
-	if (opinion_count)
-	{
-		opinion_avg = opinion_sum / opinion_count;
-		opinion_var = (opinion_sumsq  - opinion_count * opinion_avg * opinion_avg) / opinion_count;
-		opinion_frac = opinion_count / ((float) (opinion_count + opinion_nullcount));
-	}
-
-	if (rep_count)
-	{
-		rep_avg = rep_sum / rep_count;
-		rep_var = (rep_sumsq  - rep_count * rep_avg * rep_avg) / rep_count;
-		rep_frac = rep_count / ((float) (rep_count + rep_nullcount));
-	}
-
-
-	if (validmsgs)
-	{
-		SSGxsIdGroup ssdata;
-		std::string serviceString = ssdata.save();
-
-#ifdef DEBUG_IDS
-		std::cerr << "p3IdService::background_updateVoteCounts() Encoded String: " << serviceString;
-		std::cerr << std::endl;
-#endif // DEBUG_IDS
-		/* store new result */
-		uint32_t dummyToken = 0;
-		setGroupServiceString(dummyToken, groupId, serviceString);
-	}
-
-	{
-		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-		mBgPhase = ID_BG_IDLE;
-		mBgToken = 0;
-	}
-
-	return background_FullCalcRequest();
-}
-
-
-bool p3IdService::background_cleanup()
-{
-#ifdef DEBUG_IDS
-	std::cerr << "p3IdService::background_cleanup()";
-	std::cerr << std::endl;
-#endif // DEBUG_IDS
-
-	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-
-	// Cleanup.
-	mBgProcessing = false;
-	mBgPhase = ID_BG_IDLE;
-	mBgToken = 0;
-	mBgGroupMap.clear();
-	mBgFullCalcGroups.clear();
-	
-	return true;
-}
-
-
 std::ostream &operator<<(std::ostream &out, const RsGxsIdGroup &grp)
 {
 	out << "RsGxsIdGroup: Meta: " << grp.mMeta;
@@ -3707,19 +3219,6 @@ std::ostream &operator<<(std::ostream &out, const RsGxsIdGroup &grp)
 	
 	return out;
 }
-
-std::ostream &operator<<(std::ostream &out, const RsGxsIdOpinion &opinion)
-{
-	out << "RsGxsIdOpinion: Meta: " << opinion.mMeta;
-	out << std::endl;
-	
-	return out;
-}
-
-
-
-
-
 
 
 void p3IdService::checkPeerForIdentities()
@@ -3757,9 +3256,8 @@ void p3IdService::handleResponse(uint32_t token, uint32_t req_type)
 		case GXSIDREQ_CACHETEST:
 			cachetest_handlerequest(token);
 			break;
-
-		case GXSIDREQ_REPUTATION:
-
+		case GXSIDREQ_OPINION:
+			opinion_handlerequest(token);
 			break;
 		default:
 			/* error */
@@ -3791,10 +3289,6 @@ void p3IdService::handle_event(uint32_t event_type, const std::string &elabel)
 
 		case GXSID_EVENT_CACHETEST:
 			cachetest_getlist();
-			break;
-
-		case GXSID_EVENT_REPUTATION:
-			reputation_start();
 			break;
 
 		case GXSID_EVENT_PGPHASH:
@@ -3845,67 +3339,5 @@ void p3IdService::handle_event(uint32_t event_type, const std::string &elabel)
 	}
 }
 
-
-
-
-/***** Conversion fns for RsGxsIdOpinion ****************/
-
-#define REP_OFFSET	10000
-#define REP_RANGE	1000
-
-int limitRep(int ans)
-{
-	if (ans < -REP_RANGE)
-	{
-		ans = -REP_RANGE;
-	}
-	if (ans > REP_RANGE)
-	{
-		ans = REP_RANGE;
-	}
-	return ans;
-}
-
-
-int convertRepToInt(uint32_t rep)
-{
-	if (rep == 0)
-	{
-		return 0;
-	}
-
-	return limitRep(rep - REP_OFFSET);
-}
-
-
-uint32_t convertRepToUint32(int rep)
-{
-	return limitRep(rep) + REP_OFFSET;
-}
-
-
-int RsGxsIdOpinion::getOpinion()
-{
-	return convertRepToInt(mOpinion);
-}
-
-
-int RsGxsIdOpinion::setOpinion(int op)
-{
-	mOpinion = convertRepToUint32(op);
-	return op;
-}
-
-int RsGxsIdOpinion::getReputation()
-{
-	return convertRepToInt(mReputation);
-}
-
-
-int RsGxsIdOpinion::setReputation(int op)
-{
-	mReputation = convertRepToUint32(op);
-	return op;
-}
 
 

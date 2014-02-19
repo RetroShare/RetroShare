@@ -69,7 +69,7 @@ virtual bool submitCollection(uint32_t &token, RsWikiCollection &collection);
 virtual bool submitSnapshot(uint32_t &token, RsWikiSnapshot &snapshot);
 virtual bool submitComment(uint32_t &token, RsWikiComment &comment);
 
-virtual bool updateCollection(uint32_t &token, RsGxsGroupUpdateMeta& meta, RsWikiCollection &collection);
+virtual bool updateCollection(uint32_t &token, RsWikiCollection &collection);
 
 	private:
 

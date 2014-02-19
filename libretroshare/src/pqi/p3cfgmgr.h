@@ -93,6 +93,8 @@ const uint32_t CONFIG_TYPE_QBLOG 	    = 0x0101;
 const uint32_t CONFIG_TYPE_FORUMS 	    = 0x0102;
 const uint32_t CONFIG_TYPE_CHANNELS 	 = 0x0103;
 
+const uint32_t CONFIG_TYPE_GXS_REPUTATION	=  0x0200;
+
 
 
 /* CACHE ID Must be at the END so that other configurations

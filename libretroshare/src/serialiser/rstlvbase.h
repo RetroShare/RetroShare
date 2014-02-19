@@ -116,6 +116,7 @@ const uint16_t TLV_TYPE_UINT32_AGE    = 0x0032;
 const uint16_t TLV_TYPE_UINT32_OFFSET = 0x0033;
 const uint16_t TLV_TYPE_UINT32_SERID  = 0x0034;
 const uint16_t TLV_TYPE_UINT32_BW     = 0x0035;
+const uint16_t TLV_TYPE_UINT32_PARAM  = 0x0030;
 
 const uint16_t TLV_TYPE_UINT64_SIZE   = 0x0040;
 const uint16_t TLV_TYPE_UINT64_OFFSET = 0x0041;
@@ -138,6 +139,7 @@ const uint16_t TLV_TYPE_STR_CERT_GPG  = 0x005d;
 const uint16_t TLV_TYPE_STR_PGPCERT   = 0x005d; /* same as CERT_GPG */
 const uint16_t TLV_TYPE_STR_CERT_SSL  = 0x005e;
 const uint16_t TLV_TYPE_STR_VERSION   = 0x005f;
+const uint16_t TLV_TYPE_STR_PARAM     = 0x0054; /* same as VALUE ---- TO FIX */
 
 
 

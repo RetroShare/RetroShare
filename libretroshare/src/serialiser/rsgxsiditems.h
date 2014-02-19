@@ -55,6 +55,7 @@ public:
 	RsGxsIdGroup group;
 };
 
+#if 0
 class RsGxsIdOpinionItem : public RsGxsMsgItem
 {
 public:
@@ -79,6 +80,7 @@ public:
     RsGxsIdComment comment;
 
 };
+#endif
 
 class RsGxsIdSerialiser : public RsSerialType
 {
@@ -99,6 +101,7 @@ public:
 	bool        serialiseGxsIdGroupItem  (RsGxsIdGroupItem *item, void *data, uint32_t *size);
 	RsGxsIdGroupItem *    deserialiseGxsIdGroupItem(void *data, uint32_t *size);
 
+#if 0
 	uint32_t    sizeGxsIdOpinionItem(RsGxsIdOpinionItem *item);
 	bool        serialiseGxsIdOpinionItem  (RsGxsIdOpinionItem *item, void *data, uint32_t *size);
 	RsGxsIdOpinionItem *    deserialiseGxsIdOpinionItem(void *data, uint32_t *size);
@@ -106,6 +109,8 @@ public:
         uint32_t    sizeGxsIdCommentItem(RsGxsIdCommentItem *item);
         bool        serialiseGxsIdCommentItem  (RsGxsIdCommentItem *item, void *data, uint32_t *size);
         RsGxsIdCommentItem *    deserialiseGxsIdCommentItem(void *data, uint32_t *size);
+#endif
+
 
 };
 

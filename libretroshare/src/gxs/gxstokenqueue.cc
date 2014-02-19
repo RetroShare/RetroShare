@@ -25,6 +25,8 @@
 
 #include "gxs/gxstokenqueue.h"
 
+#define GXS_DEBUG 	1
+
 bool GxsTokenQueue::queueRequest(uint32_t token, uint32_t req_type)
 {
 	RsStackMutex stack(mQueueMtx); /********** STACK LOCKED MTX ******/
@@ -60,6 +62,12 @@ void GxsTokenQueue::checkRequests()
 				toload.push_back(*it);
 				it = mQueue.erase(it);
 				stuffToLoad = true;
+
+#ifdef GXS_DEBUG
+				std::cerr << "GxsTokenQueue::checkRequests() token: " << token << " Complete";
+				std::cerr << std::endl;
+#endif
+				it++;
 			}
 			else if (status == RsTokenService::GXS_REQUEST_V2_STATUS_FAILED)
 			{
@@ -71,6 +79,10 @@ void GxsTokenQueue::checkRequests()
 			}
 			else
 			{
+#ifdef GXS_DEBUG
+				std::cerr << "GxsTokenQueue::checkRequests() token: " << token << " is unfinished, status: " << status;
+				std::cerr << std::endl;
+#endif
 				it++;
 			}
 		}

@@ -49,6 +49,39 @@
  *
  */
 
+#if 0
+class GxsReputation
+{
+	public:
+	GxsReputation();
+
+	bool updateIdScore(bool pgpLinked, bool pgpKnown);
+	bool update();    // checks ranges and calculates overall score.
+	int mOverallScore;
+	int mIdScore;      // PGP, Known, etc.
+	int mOwnOpinion;
+	int mPeerOpinion;
+};
+
+#endif
+
+class OpinionRequest
+{
+	public:
+	OpinionRequest(uint32_t token, RsGxsId id, bool absOpinion, int32_t score)
+	:mToken(token), mId(id), mAbsOpinion(absOpinion), mScore(score)
+	{ return; }
+	OpinionRequest()
+	:mToken(0), mId(), mAbsOpinion(false), mScore(0)
+	{ return; }
+
+	uint32_t mToken;
+	RsGxsId    mId;
+	bool     mAbsOpinion;
+	int32_t	 mScore;
+};
+
+
 // INTERNAL DATA TYPES. 
 // Describes data stored in GroupServiceString.
 
@@ -97,16 +130,16 @@ virtual	std::string save() const;
 };
 
 
-class SSGxsIdScore: public SSBit 
+class SSGxsIdReputation: public SSBit 
 {
 	public:
-	SSGxsIdScore()
-	:score(0) { return; }
+	SSGxsIdReputation()
+	:rep() { return; }
 
 virtual	bool load(const std::string &input);
 virtual	std::string save() const;
 
-	int score;
+	GxsReputation rep;
 };
 
 class SSGxsIdCumulator: public SSBit
@@ -141,7 +174,9 @@ virtual	std::string save() const;
 	SSGxsIdRecognTags recogntags;	
 
 	// reputation score.	
-	SSGxsIdScore    score;
+	SSGxsIdReputation  score;
+
+	// These are depreciated (will load, but not save)
 	SSGxsIdCumulator opinion;
 	SSGxsIdCumulator reputation;
 
@@ -173,16 +208,6 @@ void	updateServiceString(std::string serviceString);
 };
 
 
-#if 0
-class LruData
-{
-	public:
-	RsGxsId key;
-};
-#endif
-
-	
-
 // Not sure exactly what should be inherited here?
 // Chris - please correct as necessary.
 
@@ -208,12 +233,12 @@ static	uint32_t idAuthenPolicy();
 
 	// These are exposed via RsIdentity.
 virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsIdGroup> &groups);
-virtual bool getMsgData(const uint32_t &token, std::vector<RsGxsIdOpinion> &opinions);
+//virtual bool getMsgData(const uint32_t &token, std::vector<RsGxsIdOpinion> &opinions);
 
 	// These are local - and not exposed via RsIdentity.
 virtual bool createGroup(uint32_t& token, RsGxsIdGroup &group);
 virtual bool updateGroup(uint32_t& token, RsGxsIdGroup &group);
-virtual bool createMsg(uint32_t& token, RsGxsIdOpinion &opinion);
+//virtual bool createMsg(uint32_t& token, RsGxsIdOpinion &opinion);
 
 	/**************** RsIdentity External Interface.
 	 * Notes:
@@ -232,7 +257,8 @@ virtual bool  getOwnIds(std::list<RsGxsId> &ownIds);
 
 
         // 
-virtual bool submitOpinion(uint32_t& token, RsIdOpinion &opinion);
+virtual bool submitOpinion(uint32_t& token, const RsGxsId &id, 
+				bool absOpinion, int score);
 virtual bool createIdentity(uint32_t& token, RsIdentityParameters &params);
 
 virtual bool updateIdentity(uint32_t& token, RsGxsIdGroup &group);
@@ -369,6 +395,18 @@ virtual void handle_event(uint32_t event_type, const std::string &elabel);
 
 	void loadRecognKeys();
 
+
+/************************************************************************
+ * opinion processing.
+ *
+ */
+
+	bool opinion_handlerequest(uint32_t token);
+
+	/* MUTEX PROTECTED DATA */
+	std::map<uint32_t, OpinionRequest> mPendingOpinion;
+
+
 	/************************************************************************
 	 * for getting identities that are not present
 	 *
@@ -398,6 +436,7 @@ virtual void generateDummyData();
 
 std::string genRandomId(int len = 20);
 
+#if 0
 	bool reputation_start();
 	bool reputation_continue();
 
@@ -410,9 +449,11 @@ std::string genRandomId(int len = 20);
 	bool background_processFullCalc();
 	
 	bool background_cleanup();
+#endif
 
 	RsMutex mIdMtx;
 
+#if 0
 	/***** below here is locked *****/
 	bool mLastBgCheck;
 	bool mBgProcessing;
@@ -422,6 +463,7 @@ std::string genRandomId(int len = 20);
 	
 	std::map<std::string, RsGroupMetaData> mBgGroupMap;
 	std::list<std::string> mBgFullCalcGroups;
+#endif
 
 /************************************************************************
  * Other Data that is protected by the Mutex.

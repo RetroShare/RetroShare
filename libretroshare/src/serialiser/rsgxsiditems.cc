@@ -35,13 +35,16 @@
 uint32_t RsGxsIdSerialiser::size(RsItem *item)
 {
 	RsGxsIdGroupItem* grp_item = NULL;
+#if 0
 	RsGxsIdOpinionItem* op_item = NULL;
         RsGxsIdCommentItem* com_item = NULL;
+#endif
 
 	if((grp_item = dynamic_cast<RsGxsIdGroupItem*>(item)) != NULL)
 	{
 		return sizeGxsIdGroupItem(grp_item);
 	}
+#if 0
 	else if((op_item = dynamic_cast<RsGxsIdOpinionItem*>(item)) != NULL)
 	{
 		return sizeGxsIdOpinionItem(op_item);
@@ -50,6 +53,7 @@ uint32_t RsGxsIdSerialiser::size(RsItem *item)
 	{
 		return sizeGxsIdCommentItem(com_item);
 	}
+#endif
 	std::cerr << "RsGxsIdSerialiser::size() ERROR invalid item" << std::endl;
 	return 0;
 }
@@ -57,13 +61,16 @@ uint32_t RsGxsIdSerialiser::size(RsItem *item)
 bool RsGxsIdSerialiser::serialise(RsItem *item, void *data, uint32_t *size)
 {
 	RsGxsIdGroupItem* grp_item = NULL;
+#if 0
 	RsGxsIdOpinionItem* op_item = NULL;
         RsGxsIdCommentItem* com_item = NULL;
+#endif
 
 	if((grp_item = dynamic_cast<RsGxsIdGroupItem*>(item)) != NULL)
 	{
 		return serialiseGxsIdGroupItem(grp_item, data, size);
 	}
+#if 0
 	else if((op_item = dynamic_cast<RsGxsIdOpinionItem*>(item)) != NULL)
 	{
 		return serialiseGxsIdOpinionItem(op_item, data, size);
@@ -72,6 +79,7 @@ bool RsGxsIdSerialiser::serialise(RsItem *item, void *data, uint32_t *size)
 	{
 		return serialiseGxsIdCommentItem(com_item, data, size);
 	}
+#endif
 	std::cerr << "RsGxsIdSerialiser::serialise() ERROR invalid item" << std::endl;
 	return false;
 }
@@ -94,12 +102,14 @@ RsItem* RsGxsIdSerialiser::deserialise(void* data, uint32_t* size)
 		case RS_PKT_SUBTYPE_GXSID_GROUP_ITEM:
 			return deserialiseGxsIdGroupItem(data, size);
 			break;
+#if 0
 		case RS_PKT_SUBTYPE_GXSID_OPINION_ITEM:
 			return deserialiseGxsIdOpinionItem(data, size);
 			break;
 		case RS_PKT_SUBTYPE_GXSID_COMMENT_ITEM:
 			return deserialiseGxsIdCommentItem(data, size);
 			break;
+#endif
 		default:
 #ifdef GXSID_DEBUG
 			std::cerr << "RsGxsIdSerialiser::deserialise(): unknown subtype";
@@ -287,6 +297,7 @@ RsGxsIdGroupItem* RsGxsIdSerialiser::deserialiseGxsIdGroupItem(void *data, uint3
 /*****************************************************************************************/
 /*****************************************************************************************/
 
+#if 0
 
 void RsGxsIdOpinionItem::clear()
 {
@@ -575,6 +586,7 @@ RsGxsIdCommentItem* RsGxsIdSerialiser::deserialiseGxsIdCommentItem(void *data, u
 	return item;
 }
 
+#endif
 
 /*****************************************************************************************/
 /*****************************************************************************************/

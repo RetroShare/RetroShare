@@ -299,19 +299,15 @@ bool p3Wiki::submitComment(uint32_t &token, RsWikiComment &comment)
 	return true;
 }
 
-bool p3Wiki::updateCollection(uint32_t &token, RsGxsGroupUpdateMeta& meta, RsWikiCollection &group)
+bool p3Wiki::updateCollection(uint32_t &token, RsWikiCollection &group)
 {
         std::cerr << "p3Wiki::updateCollection()" << std::endl;
-
-        if(meta.getGroupId().empty())
-                return false;
 
         RsGxsWikiCollectionItem* grpItem = new RsGxsWikiCollectionItem();
         grpItem->collection = group;
         grpItem->meta = group.mMeta;
-        grpItem->meta.mGroupId = meta.getGroupId();
 
-        RsGenExchange::updateGroup(token, meta, grpItem);
+        RsGenExchange::updateGroup(token, grpItem);
         return true;
 }
 

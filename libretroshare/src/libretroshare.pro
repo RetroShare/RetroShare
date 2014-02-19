@@ -410,6 +410,8 @@ HEADERS +=	serialiser/rsbaseserial.h \
 			serialiser/rstlvkeys.h \
 			serialiser/rstlvkvwide.h \
 			serialiser/rstlvtypes.h \
+			serialiser/rstlvgenericmap.h \
+			serialiser/rstlvmaps.h \
 			serialiser/rstlvutil.h \
 			serialiser/rstlvbanlist.h \
 			serialiser/rsbanlistitems.h \
@@ -543,6 +545,7 @@ SOURCES +=	serialiser/rsbaseserial.cc \
 			serialiser/rstlvkeys.cc \
 			serialiser/rstlvkvwide.cc \
 			serialiser/rstlvtypes.cc \
+			serialiser/rstlvgenericmap.cc \
 			serialiser/rstlvutil.cc \
 			serialiser/rstlvbanlist.cc \
 			serialiser/rsbanlistitems.cc \
@@ -683,10 +686,14 @@ gxs {
 	HEADERS += retroshare/rsidentity.h \
 		gxs/rsgixs.h \
 		services/p3idservice.h \
-		serialiser/rsgxsiditems.h
+		serialiser/rsgxsiditems.h \
+		services/p3gxsreputation.h \
+		serialiser/rsgxsreputationitems.h \
 
 	SOURCES += services/p3idservice.cc \
 		serialiser/rsgxsiditems.cc \
+		services/p3gxsreputation.cc \
+		serialiser/rsgxsreputationitems.cc \
 
 	# GxsCircles Service
 	HEADERS += services/p3gxscircles.h \

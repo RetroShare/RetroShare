@@ -181,6 +181,7 @@ bool RsAccountsDetail::checkPreferredId()
 
 const std::string kPathPGPDirectory = "pgp";
 const std::string kPathKeyDirectory = "keys";
+const std::string kPathConfigDirectory = "config";
 
 const std::string kFilenamePreferredAccount = "default_cert.txt";
 const std::string kFilenameKey = "user_pk.pem";
@@ -1110,6 +1111,9 @@ bool RsAccountsDetail::setupAccount(const std::string& accountdir)
 	std::string subdir1 = accountdir + "/";
 	subdir1 += kPathKeyDirectory;
 
+	std::string subdir2 = accountdir + "/";
+	subdir2 += kPathConfigDirectory;
+
 	std::string subdir3 = accountdir + "/";
 	subdir3 += "cache";
 
@@ -1127,7 +1131,12 @@ bool RsAccountsDetail::setupAccount(const std::string& accountdir)
 	}
 	if (!RsDirUtil::checkCreateDirectory(subdir1))
 	{
-		std::cerr << "Cannot Create Config/Key Dir" << std::endl;
+		std::cerr << "Cannot Create Key Directory" << std::endl;
+		return false ;
+	}
+	if (!RsDirUtil::checkCreateDirectory(subdir2))
+	{
+		std::cerr << "Cannot Create Config Directory" << std::endl;
 		return false ;
 	}
 	if (!RsDirUtil::checkCreateDirectory(subdir3))

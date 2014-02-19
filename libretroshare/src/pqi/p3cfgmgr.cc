@@ -162,6 +162,7 @@ void	p3ConfigMgr::addConfiguration(std::string file, pqiConfig *conf)
 	{
 		filename += "/";
 	}
+	filename += "config/";
 	filename += file;
 
 	conf->setFilename(filename);

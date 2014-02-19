@@ -59,6 +59,20 @@ extern RsIdentity *rsIdentity;
 
 std::string rsIdTypeToString(uint32_t idtype);
 
+class GxsReputation
+{
+        public:
+        GxsReputation();
+
+        bool updateIdScore(bool pgpLinked, bool pgpKnown);
+        bool update();    // checks ranges and calculates overall score.
+        int mOverallScore;
+        int mIdScore;      // PGP, Known, etc.
+        int mOwnOpinion;
+        int mPeerOpinion;
+};
+
+
 class RsGxsIdGroup
 {
 	public:
@@ -90,79 +104,11 @@ class RsGxsIdGroup
 	// Not Serialised - for GUI's benefit.
 	bool mPgpKnown;
 	std::string mPgpId;
-};
-
-
-
-class RsGxsIdOpinion
-{
-	public:
-
-	RsMsgMetaData mMeta;
-
-	// In MsgMetaData.
-	//std::string mKeyId;  (mGroupId)
-	//std::string mPeerId; (mAuthorId) ???
-
-	uint32_t mOpinion;
-	std::string mComment;
-	uint32_t mReputation;
-
-
-	/* these convert To/From uint32 to expected scale. */
-	int getOpinion();
-	int getReputation();
-
-	int setOpinion(int op);
-	int setReputation(int rep);
-
-	// NOT SERIALISED YET!
-	//int mRating;
-	//int mPeersRating;
-};
-
-
-// This will probably be dropped.
-class RsGxsIdComment
-{
-	public:
-
-	RsMsgMetaData mMeta;
-	std::string mComment;
+	GxsReputation mReputation; 
 };
 
 
 std::ostream &operator<<(std::ostream &out, const RsGxsIdGroup &group);
-std::ostream &operator<<(std::ostream &out, const RsGxsIdOpinion &msg);
-
-#if 0
-class RsIdReputation
-{
-	public:
-	std::string mKeyId;
-
-	int mYourRating;
-	int mPeersRating;
-	int mFofRating;
-	int mTotalRating;
-
-	std::string mComment;
-};
-
-class RsIdOpinion
-{
-	public:
-
-	std::string mKeyId;
-	std::string mPeerId;
-
-	int mRating;
-	int mPeersRating;
-	std::string mComment;
-};
-
-#endif
-
 
 // DATA TYPE FOR EXTERNAL INTERFACE.
 
@@ -203,7 +149,7 @@ class RsIdentityDetails
 	public:
 	RsIdentityDetails()
 	:mIsOwnId(false), mPgpLinked(false), mPgpKnown(false),
-	mOpinion(0), mReputation(0) { return; }
+	mReputation() { return; }
 
 	RsGxsId mId;
 
@@ -220,8 +166,7 @@ class RsIdentityDetails
 	std::list<RsRecognTag> mRecognTags;
 
 	// reputation details.
-	double mOpinion;	
-	double mReputation;
+	GxsReputation mReputation;
 };
 
 
@@ -265,7 +210,8 @@ virtual bool  getIdDetails(const RsGxsId &id, RsIdentityDetails &details) = 0;
 virtual bool  getOwnIds(std::list<RsGxsId> &ownIds) = 0;
 
 	// 
-virtual bool submitOpinion(uint32_t& token, RsIdOpinion &opinion) = 0;
+virtual bool submitOpinion(uint32_t& token, const RsGxsId &id, 
+				bool absOpinion, int score) = 0;
 virtual bool createIdentity(uint32_t& token, RsIdentityParameters &params) = 0;
 
 virtual bool updateIdentity(uint32_t& token, RsGxsIdGroup &group) = 0;
@@ -281,7 +227,7 @@ virtual bool getRecognTagRequest(const RsGxsId &id, const std::string &comment,
          */
 
 virtual bool    getGroupData(const uint32_t &token, std::vector<RsGxsIdGroup> &groups) = 0;
-virtual bool 	getMsgData(const uint32_t &token, std::vector<RsGxsIdOpinion> &opinions) = 0;
+//virtual bool 	getMsgData(const uint32_t &token, std::vector<RsGxsIdOpinion> &opinions) = 0;
 
 };
 
