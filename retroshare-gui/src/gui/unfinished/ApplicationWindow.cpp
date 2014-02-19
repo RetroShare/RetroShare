@@ -63,7 +63,7 @@
 #define IMAGE_WIKI              ":/images/wikibook_32.png"
 #define IMAGE_POSTED            ":/images/posted_32.png"
 #define IMAGE_GXSCHANNELS       ":/images/channels.png"
-#define IMAGE_IDENTITY          ":/images/identity/user-identity_32.png"
+#define IMAGE_IDENTITY          ":/images/identity/identities_32.png"
 #define IMAGE_CIRCLES           ":/images/user/agt_forum24.png"
 
 

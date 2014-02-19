@@ -40,7 +40,7 @@ IdEditDialog::IdEditDialog(QWidget *parent)
 
 	ui.setupUi(this);
 	
-	ui.headerFrame->setHeaderImage(QPixmap(":/images/identity/list-add-user_64.png"));
+	ui.headerFrame->setHeaderImage(QPixmap(":/images/identity/identity_create_64.png"));
 	ui.headerFrame->setHeaderText(tr("Create New Identity"));
 
 	/* Setup UI helper */
@@ -140,7 +140,7 @@ void IdEditDialog::updateIdType(bool pseudo)
 void IdEditDialog::setupExistingId(std::string keyId)
 {
 	setWindowTitle(tr("Edit identity"));
-	ui.headerFrame->setHeaderImage(QPixmap(":/images/identity/user-properties_64.png"));
+	ui.headerFrame->setHeaderImage(QPixmap(":/images/identity/identity_edit_64.png"));
 	ui.headerFrame->setHeaderText(tr("Edit identity"));
 
 	mIsNew = false;

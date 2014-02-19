@@ -541,12 +541,12 @@
         <file>images/vote_down.png</file>
         <file>images/window_fullscreen.png</file>
         <file>images/window_nofullscreen.png</file>
-        <file>images/identity/user-identity_32.png</file>
-        <file>images/identity/list-add-user_32.png</file>
-        <file>images/identity/list-add-user_64.png</file>
-        <file>images/identity/list-remove-user_32.png</file>
-        <file>images/identity/user-properties_32.png</file>
-        <file>images/identity/user-properties_64.png</file>
+        <file>images/identity/identities_32.png</file>
+        <file>images/identity/identity_create_32.png</file>
+        <file>images/identity/identity_create_64.png</file>
+        <file>images/identity/identity_delete_32.png</file>
+        <file>images/identity/identity_edit_32.png</file>
+        <file>images/identity/identity_edit_64.png</file>
         <file>qss/chat/standard/private/info.xml</file>
         <file>qss/chat/standard/private/incoming.htm</file>
         <file>qss/chat/standard/private/outgoing.htm</file>

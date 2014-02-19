@@ -19,609 +19,622 @@
   <property name="windowTitle">
    <string/>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout_4">
-   <item>
-    <layout class="QVBoxLayout" name="leftLayout">
-     <property name="bottomMargin">
-      <number>6</number>
+  <layout class="QGridLayout" name="gridLayout_2">
+   <item row="0" column="0">
+    <widget class="QSplitter" name="splitter">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
      </property>
-     <item>
-      <widget class="QFrame" name="titleBarFrame">
-       <property name="frameShape">
-        <enum>QFrame::Box</enum>
+     <widget class="QWidget" name="layoutWidget">
+      <layout class="QVBoxLayout" name="leftLayout">
+       <property name="bottomMargin">
+        <number>6</number>
        </property>
-       <property name="frameShadow">
-        <enum>QFrame::Sunken</enum>
-       </property>
-       <layout class="QHBoxLayout" name="horizontalLayout_3">
-        <property name="margin">
-         <number>2</number>
-        </property>
-        <item>
-         <widget class="QLabel" name="titleBarPixmap">
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>24</width>
-            <height>24</height>
-           </size>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="pixmap">
-           <pixmap resource="../images.qrc">:/images/identity/user-identity_32.png</pixmap>
-          </property>
-          <property name="scaledContents">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QLabel" name="titleBarLabel">
-          <property name="font">
-           <font>
-            <pointsize>10</pointsize>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>Identities</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="titleBarSpacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QToolButton" name="toolButton_NewId">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="toolTip">
-           <string>Create new Identity</string>
-          </property>
-          <property name="text">
-           <string>New ID</string>
-          </property>
-          <property name="icon">
-           <iconset resource="../images.qrc">
-            <normaloff>:/images/identity/list-add-user_32.png</normaloff>:/images/identity/list-add-user_32.png</iconset>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>24</width>
-            <height>24</height>
-           </size>
-          </property>
-          <property name="autoRaise">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="todoPushButton">
-          <property name="text">
-           <string>Todo</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" name="filterLayout">
        <item>
-        <widget class="QLabel" name="filterLabel">
-         <property name="text">
-          <string>Show:</string>
+        <widget class="QFrame" name="titleBarFrame">
+         <property name="frameShape">
+          <enum>QFrame::Box</enum>
          </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QComboBox" name="filterComboBox"/>
-       </item>
-       <item>
-        <widget class="LineEditClear" name="filterLineEdit"/>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <widget class="RSTreeWidget" name="treeWidget_IdList">
-       <property name="sortingEnabled">
-        <bool>true</bool>
-       </property>
-       <column>
-        <property name="text">
-         <string>Nickname</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>KeyId</string>
-        </property>
-       </column>
-       <column>
-        <property name="text">
-         <string>Type</string>
-        </property>
-       </column>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QVBoxLayout" name="rightLayout">
-     <item>
-      <widget class="QFrame" name="toolBarFrame">
-       <property name="frameShape">
-        <enum>QFrame::Box</enum>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Sunken</enum>
-       </property>
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <property name="margin">
-         <number>2</number>
-        </property>
-        <item>
-         <widget class="QToolButton" name="toolButton_Delete">
-          <property name="toolTip">
-           <string>Delete Identity</string>
+         <property name="frameShadow">
+          <enum>QFrame::Sunken</enum>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <property name="margin">
+           <number>2</number>
           </property>
-          <property name="text">
-           <string>Delete ID</string>
-          </property>
-          <property name="icon">
-           <iconset resource="../images.qrc">
-            <normaloff>:/images/identity/list-remove-user_32.png</normaloff>:/images/identity/list-remove-user_32.png</iconset>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>24</width>
-            <height>24</height>
-           </size>
-          </property>
-          <property name="autoRaise">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QToolButton" name="toolButton_EditId">
-          <property name="text">
-           <string>Edit ID</string>
-          </property>
-          <property name="icon">
-           <iconset resource="../images.qrc">
-            <normaloff>:/images/identity/user-properties_32.png</normaloff>:/images/identity/user-properties_32.png</iconset>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>24</width>
-            <height>24</height>
-           </size>
-          </property>
-          <property name="autoRaise">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QToolButton" name="toolButton_Reputation">
-          <property name="text">
-           <string>Edit Reputation</string>
-          </property>
-          <property name="icon">
-           <iconset resource="../images.qrc">
-            <normaloff>:/images/edit_24.png</normaloff>:/images/edit_24.png</iconset>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>24</width>
-            <height>24</height>
-           </size>
-          </property>
-          <property name="toolButtonStyle">
-           <enum>Qt::ToolButtonTextBesideIcon</enum>
-          </property>
-          <property name="autoRaise">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="toolBarSpacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item>
-      <widget class="QGroupBox" name="detailsGroupBox">
-       <property name="title">
-        <string>Identity Type</string>
-       </property>
-       <layout class="QGridLayout" name="gridLayout">
-        <item row="0" column="0">
-         <widget class="QLabel" name="label">
-          <property name="text">
-           <string>Nickname</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLineEdit" name="lineEdit_Nickname">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="readOnly">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="2" rowspan="6">
-         <layout class="QVBoxLayout" name="verticalLayout_3">
           <item>
-           <widget class="QRadioButton" name="radioButton_IdYourself">
-            <property name="enabled">
-             <bool>false</bool>
+           <widget class="QLabel" name="titleBarPixmap">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
             </property>
             <property name="text">
-             <string>Yourself</string>
+             <string/>
             </property>
-            <property name="checkable">
+            <property name="pixmap">
+             <pixmap resource="../images.qrc">:/images/identity/identities_32.png</pixmap>
+            </property>
+            <property name="scaledContents">
              <bool>true</bool>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QRadioButton" name="radioButton_IdFriend">
-            <property name="enabled">
-             <bool>false</bool>
+           <widget class="QLabel" name="titleBarLabel">
+            <property name="font">
+             <font>
+              <pointsize>10</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
             </property>
             <property name="text">
-             <string>Friend</string>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
+             <string>Identities</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QRadioButton" name="radioButton_IdFOF">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="text">
-             <string>Friend of Friend</string>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QRadioButton" name="radioButton_IdOther">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="text">
-             <string>Other</string>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="Line" name="line_2">
+           <spacer name="titleBarSpacer">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QToolButton" name="toolButton_NewId">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>Create new Identity</string>
+            </property>
+            <property name="text">
+             <string>New ID</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../images.qrc">
+              <normaloff>:/images/identity/identity_create_32.png</normaloff>:/images/identity/identity_create_32.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
+            </property>
+            <property name="autoRaise">
+             <bool>true</bool>
+            </property>
            </widget>
           </item>
           <item>
-           <widget class="QRadioButton" name="radioButton_IdPseudo">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
+           <widget class="QPushButton" name="todoPushButton">
             <property name="text">
-             <string>Pseudonym</string>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
+             <string>Todo</string>
             </property>
            </widget>
           </item>
          </layout>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="label_4">
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="filterLayout">
+         <item>
+          <widget class="QLabel" name="filterLabel">
+           <property name="text">
+            <string>Show:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QComboBox" name="filterComboBox"/>
+         </item>
+         <item>
+          <widget class="LineEditClear" name="filterLineEdit"/>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="RSTreeWidget" name="treeWidget_IdList">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="sortingEnabled">
+          <bool>true</bool>
+         </property>
+         <column>
           <property name="text">
-           <string>Key ID</string>
+           <string>Nickname</string>
           </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QLineEdit" name="lineEdit_KeyId">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="readOnly">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="0">
-         <widget class="QLabel" name="label_3">
+         </column>
+         <column>
           <property name="text">
-           <string>PGP Name</string>
+           <string>KeyId</string>
           </property>
-         </widget>
-        </item>
-        <item row="4" column="1">
-         <widget class="QLineEdit" name="lineEdit_GpgName">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="readOnly">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1">
-         <widget class="QLineEdit" name="lineEdit_GpgHash">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="readOnly">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="1">
-         <widget class="QLineEdit" name="lineEdit_GpgId">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="readOnly">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="0">
-         <widget class="QLabel" name="label_7">
+         </column>
+         <column>
           <property name="text">
-           <string>PGP Id</string>
+           <string>Type</string>
           </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="label_8">
-          <property name="text">
-           <string>PGP Hash</string>
+         </column>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="layoutWidget">
+      <layout class="QVBoxLayout" name="rightLayout">
+       <item>
+        <widget class="QFrame" name="toolBarFrame">
+         <property name="frameShape">
+          <enum>QFrame::Box</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Sunken</enum>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <property name="margin">
+           <number>2</number>
           </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item>
-      <widget class="QGroupBox" name="reputationGroupBox">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="title">
-        <string>Reputation</string>
-       </property>
-       <layout class="QHBoxLayout" name="horizontalLayout_5">
-        <item>
-         <layout class="QVBoxLayout" name="verticalLayout_2">
           <item>
-           <layout class="QFormLayout" name="formLayout">
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_2">
-              <property name="font">
-               <font>
-                <weight>75</weight>
-                <bold>true</bold>
-               </font>
+           <widget class="QToolButton" name="toolButton_Delete">
+            <property name="toolTip">
+             <string>Delete Identity</string>
+            </property>
+            <property name="text">
+             <string>Delete ID</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../images.qrc">
+              <normaloff>:/images/identity/identity_delete_32.png</normaloff>:/images/identity/identity_delete_32.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
+            </property>
+            <property name="autoRaise">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="toolButton_EditId">
+            <property name="text">
+             <string>Edit ID</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../images.qrc">
+              <normaloff>:/images/identity/identity_edit_32.png</normaloff>:/images/identity/identity_edit_32.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
+            </property>
+            <property name="autoRaise">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="toolButton_Reputation">
+            <property name="text">
+             <string>Edit Reputation</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../images.qrc">
+              <normaloff>:/images/edit_24.png</normaloff>:/images/edit_24.png</iconset>
+            </property>
+            <property name="iconSize">
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextBesideIcon</enum>
+            </property>
+            <property name="autoRaise">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="toolBarSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="detailsGroupBox">
+         <property name="title">
+          <string>Identity Type</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Nickname</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="lineEdit_Nickname">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2" rowspan="6">
+           <layout class="QVBoxLayout" name="verticalLayout_3">
+            <item>
+             <widget class="QRadioButton" name="radioButton_IdYourself">
+              <property name="enabled">
+               <bool>false</bool>
               </property>
               <property name="text">
-               <string>Overall</string>
+               <string>Yourself</string>
               </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QLineEdit" name="line_RatingOverall">
-              <property name="readOnly">
+              <property name="checkable">
                <bool>true</bool>
               </property>
              </widget>
             </item>
-            <item row="1" column="0">
-             <widget class="QLabel" name="label_11">
-              <property name="text">
-               <string>Implicit</string>
+            <item>
+             <widget class="QRadioButton" name="radioButton_IdFriend">
+              <property name="enabled">
+               <bool>false</bool>
               </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QLineEdit" name="line_RatingImplicit">
-              <property name="readOnly">
+              <property name="text">
+               <string>Friend</string>
+              </property>
+              <property name="checkable">
                <bool>true</bool>
               </property>
              </widget>
             </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="label_6">
-              <property name="text">
-               <string>Opinion</string>
+            <item>
+             <widget class="QRadioButton" name="radioButton_IdFOF">
+              <property name="enabled">
+               <bool>false</bool>
               </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <widget class="QLineEdit" name="line_RatingOwn">
-              <property name="readOnly">
+              <property name="text">
+               <string>Friend of Friend</string>
+              </property>
+              <property name="checkable">
                <bool>true</bool>
               </property>
              </widget>
             </item>
-            <item row="3" column="0">
-             <widget class="QLabel" name="label_5">
+            <item>
+             <widget class="QRadioButton" name="radioButton_IdOther">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="text">
-               <string>Peers</string>
+               <string>Other</string>
+              </property>
+              <property name="checkable">
+               <bool>true</bool>
               </property>
              </widget>
             </item>
-            <item row="3" column="1">
-             <widget class="QLineEdit" name="line_RatingPeers">
-              <property name="readOnly">
+            <item>
+             <widget class="Line" name="line_2">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="radioButton_IdPseudo">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>Pseudonym</string>
+              </property>
+              <property name="checkable">
                <bool>true</bool>
               </property>
              </widget>
             </item>
            </layout>
           </item>
-          <item>
-           <spacer name="verticalSpacer">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>Key ID</string>
             </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>40</height>
-             </size>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="lineEdit_KeyId">
+            <property name="enabled">
+             <bool>true</bool>
             </property>
-           </spacer>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string>PGP Name</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QLineEdit" name="lineEdit_GpgName">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLineEdit" name="lineEdit_GpgHash">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QLineEdit" name="lineEdit_GpgId">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="label_7">
+            <property name="text">
+             <string>PGP Id</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_8">
+            <property name="text">
+             <string>PGP Hash</string>
+            </property>
+           </widget>
           </item>
          </layout>
-        </item>
-        <item>
-         <layout class="QVBoxLayout" name="verticalLayout_4">
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="reputationGroupBox">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="title">
+          <string>Reputation</string>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_5">
           <item>
-           <widget class="QGroupBox" name="tweakGroupBox">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="title">
-             <string>Tweak Opinion</string>
-            </property>
-            <layout class="QVBoxLayout" name="verticalLayout">
-             <item>
-              <widget class="QRadioButton" name="repMod_Accept">
-               <property name="text">
-                <string>Accept (+100)</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="repMod_Positive">
-               <property name="text">
-                <string>Positive (+10)</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="repMod_Negative">
-               <property name="text">
-                <string>Negative (-10)</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="repMod_Ban">
-               <property name="text">
-                <string>Ban (-100)</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <layout class="QHBoxLayout" name="horizontalLayout">
+           <layout class="QVBoxLayout" name="verticalLayout_2">
+            <item>
+             <layout class="QFormLayout" name="formLayout">
+              <item row="0" column="0">
+               <widget class="QLabel" name="label_2">
+                <property name="font">
+                 <font>
+                  <weight>75</weight>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Overall</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QLineEdit" name="line_RatingOverall">
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QLabel" name="label_11">
+                <property name="text">
+                 <string>Implicit</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QLineEdit" name="line_RatingImplicit">
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0">
+               <widget class="QLabel" name="label_6">
+                <property name="text">
+                 <string>Opinion</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="1">
+               <widget class="QLineEdit" name="line_RatingOwn">
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="0">
+               <widget class="QLabel" name="label_5">
+                <property name="text">
+                 <string>Peers</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="1">
+               <widget class="QLineEdit" name="line_RatingPeers">
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <spacer name="verticalSpacer">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout_4">
+            <item>
+             <widget class="QGroupBox" name="tweakGroupBox">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="title">
+               <string>Tweak Opinion</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout">
                <item>
-                <widget class="QRadioButton" name="repMod_Custom">
+                <widget class="QRadioButton" name="repMod_Accept">
                  <property name="text">
-                  <string>Custom</string>
+                  <string>Accept (+100)</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QSpinBox" name="repMod_spinBox">
-                 <property name="minimum">
-                  <number>-100</number>
+                <widget class="QRadioButton" name="repMod_Positive">
+                 <property name="text">
+                  <string>Positive (+10)</string>
                  </property>
-                 <property name="maximum">
-                  <number>100</number>
+                </widget>
+               </item>
+               <item>
+                <widget class="QRadioButton" name="repMod_Negative">
+                 <property name="text">
+                  <string>Negative (-10)</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QRadioButton" name="repMod_Ban">
+                 <property name="text">
+                  <string>Ban (-100)</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout">
+                 <item>
+                  <widget class="QRadioButton" name="repMod_Custom">
+                   <property name="text">
+                    <string>Custom</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QSpinBox" name="repMod_spinBox">
+                   <property name="minimum">
+                    <number>-100</number>
+                   </property>
+                   <property name="maximum">
+                    <number>100</number>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <widget class="QPushButton" name="repModButton">
+                 <property name="text">
+                  <string>Modify</string>
                  </property>
                 </widget>
                </item>
               </layout>
-             </item>
-             <item>
-              <widget class="QPushButton" name="repModButton">
-               <property name="text">
-                <string>Modify</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item>
-           <spacer name="verticalSpacer_2">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>40</height>
-             </size>
-            </property>
-           </spacer>
+             </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
           </item>
          </layout>
-        </item>
-       </layout>
-      </widget>
-     </item>
-    </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
    </item>
   </layout>
  </widget>
@@ -661,6 +674,8 @@
   <tabstop>line_RatingOwn</tabstop>
  </tabstops>
  <resources>
+  <include location="../images.qrc"/>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
