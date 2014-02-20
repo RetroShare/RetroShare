@@ -43,7 +43,7 @@ RsTlvFileItem::RsTlvFileItem()
 void RsTlvFileItem::TlvClear()
 {
 	filesize = 0;
-	hash = "";
+	hash.clear() ;
 	name.clear();
 	path.clear();
 	pop = 0;

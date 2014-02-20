@@ -993,7 +993,6 @@ error:
 
 int FileIndex::saveIndex(const std::string& filename, RsFileHash &fileHash, uint64_t &size,const std::set<std::string>& forbidden_dirs)
 {
-	unsigned char sha_buf[SHA_DIGEST_LENGTH];
 	std::string filenametmp = filename + ".tmp" ;
 	std::string s;
 
@@ -1433,7 +1432,7 @@ bool FileIndex::extractData(void *ref,DirDetails& details)
 			details.type = DIR_TYPE_PERSON ;
 		else
 			details.type = DIR_TYPE_DIR;
-		details.hash = "";
+		details.hash.clear() ;
 		details.count = dir->subdirs.size() + dir->files.size();
 		details.min_age = now - dir->most_recent_time ;
 	}

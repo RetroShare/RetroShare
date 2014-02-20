@@ -1479,7 +1479,7 @@ void RsCacheConfig::clear()
 	cachesubid = 0;
 	path = "";
 	name = "";
-	hash = "";
+	hash.clear() ;
 	size = 0;
 	recvd = 0;
 

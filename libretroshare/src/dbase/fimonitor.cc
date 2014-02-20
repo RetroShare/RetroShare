@@ -1586,7 +1586,7 @@ int FileIndexMonitor::RequestDirDetails(void *ref, DirDetails &details, FileSear
 		details.ref = NULL;
 		details.type = DIR_TYPE_ROOT;
 		details.name = "root";
-		details.hash = "";
+		details.hash.clear() ;
 		details.path = "root";
 		details.age = 0;
 		details.flags.clear() ;

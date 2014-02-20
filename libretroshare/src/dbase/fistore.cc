@@ -263,7 +263,7 @@ int FileIndexStore::RequestDirDetails(void *ref, DirDetails &details, FileSearch
 		details.ref = NULL;
 		details.type = DIR_TYPE_ROOT;
 		details.name = "";
-		details.hash = "";
+		details.hash.clear() ;
 		details.path = "";
 		details.count = indices.size();
 		details.age = 0;
