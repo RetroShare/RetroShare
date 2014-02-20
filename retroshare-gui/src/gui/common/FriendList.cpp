@@ -837,7 +837,7 @@ void  FriendList::insertPeers()
                 gpgItem->setTextAlignment(COLUMN_NAME, Qt::AlignLeft | Qt::AlignVCenter);
 
                 /* not displayed, used to find back the item */
-                gpgItem->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(detail.id.toStdString()));
+                gpgItem->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(detail.gpg_id.toStdString()));
             }
 
             if (mBigName && !mHideState && isStatusColumnHidden) {
