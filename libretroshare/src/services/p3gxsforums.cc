@@ -420,7 +420,7 @@ bool p3GxsForums::generateMessage(uint32_t &token, const RsGxsGroupId &grpId, co
 	std::string rndId = genRandomId();
 
 	rs_sprintf(msg.mMsg, "Forum Msg: GroupId: %s, ThreadId: %s, ParentId: %s + some randomness: %s", 
-		grpId.c_str(), threadId.c_str(), parentId.c_str(), rndId.c_str());
+		grpId.toStdString().c_str(), threadId.c_str(), parentId.c_str(), rndId.c_str());
 	
 	msg.mMeta.mMsgName = msg.mMsg;
 

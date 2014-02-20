@@ -428,7 +428,7 @@ bool p3GxsCommentService::createGxsVote(uint32_t &token, RsGxsVote &vote)
 		return false;
 	}
 
-	if (vote.mMeta.mGroupId.empty())
+	if (vote.mMeta.mGroupId.isNull())
 	{
 		std::cerr << "p3GxsCommentService::createGxsVote() ERROR Missing Required GroupId";
 		std::cerr << std::endl;
