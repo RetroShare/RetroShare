@@ -33,7 +33,7 @@
 #include <list>
 #include <vector>
 
-#include "retroshare/rsids.h"
+#include "retroshare/rstypes.h"
 
 class LinearizedExpression ;
 class RsTurtleClientService ;
@@ -48,7 +48,7 @@ typedef uint32_t TurtleRequestId ;
 
 struct TurtleFileInfo
 {
-	std::string hash ;
+	RsFileHash hash ;
 	std::string name ;
 	uint64_t size ;
 };
@@ -110,12 +110,12 @@ class RsTurtle
 		// tunnels for the given hash. The download should be driven by the file
 		// transfer module by calling ftServer::FileRequest().
 		//
-		virtual void monitorTunnels(const std::string& file_hash,RsTurtleClientService *client_service) = 0 ;
+		virtual void monitorTunnels(const RsFileHash& file_hash,RsTurtleClientService *client_service) = 0 ;
 
 		// Tells the turtle router to stop handling tunnels for the given file hash. Traditionally this should
 		// be called after calling ftServer::fileCancel().
 		//
-		virtual void stopMonitoringTunnels(const std::string& file_hash) = 0 ;
+		virtual void stopMonitoringTunnels(const RsFileHash& file_hash) = 0 ;
 
 		/// Adds a client tunnel service. This means that the service will be added 
 		/// to the list of services that might respond to tunnel requests.

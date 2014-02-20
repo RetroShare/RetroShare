@@ -288,7 +288,7 @@ uint32_t FileIndexStore::getType(void *ref) const
 	return b;
 }
 
-int FileIndexStore::SearchHash(std::string hash, std::list<FileDetail> &results) const
+int FileIndexStore::SearchHash(const RsFileHash& hash, std::list<FileDetail> &results) const
 {
 	lockData();
 	results.clear() ;

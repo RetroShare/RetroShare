@@ -372,13 +372,13 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor, publi
 
 		// Overloaded from RsTurtleClientService
 
-		virtual bool handleTunnelRequest(const std::string& hash,const RsPeerId& peer_id) ;
-		virtual void receiveTurtleData(RsTurtleGenericTunnelItem *item,const std::string& hash,const RsPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction) ;
+        virtual bool handleTunnelRequest(const RsFileHash &hash,const RsPeerId& peer_id) ;
+        virtual void receiveTurtleData(RsTurtleGenericTunnelItem *item,const RsFileHash& hash,const RsPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction) ;
 		void addVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&,RsTurtleGenericTunnelItem::Direction dir) ;
 		void removeVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&) ;
 		void markDistantChatAsClosed(const TurtleVirtualPeerId& vpid) ;
-		void startClientDistantChatConnection(const std::string& hash,const PGPIdType& pgp_id,const unsigned char *aes_key_buf) ;
-		bool findHashForVirtualPeerId(const TurtleVirtualPeerId& pid,std::string& hash) ;
+        void startClientDistantChatConnection(const RsFileHash& hash,const PGPIdType& pgp_id,const unsigned char *aes_key_buf) ;
+        bool findHashForVirtualPeerId(const TurtleVirtualPeerId& pid,RsFileHash& hash) ;
 
 		// Utility functions
 

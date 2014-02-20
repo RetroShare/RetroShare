@@ -86,7 +86,7 @@ class RsInitConfig
 {
 	public:
 
-                static std::string main_executable_hash;
+                static RsFileHash main_executable_hash;
 
 #ifdef WINDOWS_SYS
                 static bool portable;
@@ -143,7 +143,7 @@ const int p3facestartupzone = 47238;
 static const std::string configLogFileName = "retro.log";
 static const int SSLPWD_LEN = 64;
 
-std::string RsInitConfig::main_executable_hash;
+RsFileHash RsInitConfig::main_executable_hash;
 
 rs_lock_handle_t RsInitConfig::lockHandle;
 

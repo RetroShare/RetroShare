@@ -430,7 +430,7 @@ uint32_t RsPrivateChatMsgConfigItem::serial_size()
 uint32_t RsPrivateChatDistantInviteConfigItem::serial_size()
 {
 	uint32_t s = 8; /* header */
-	s += GetTlvStringSize(hash);
+    s += hash.serial_size();
 	s += GetTlvStringSize(encrypted_radix64_string);
 	s += destination_pgp_id.serial_size();
 	s += 16; /* aes_key */
@@ -845,7 +845,7 @@ bool RsPrivateChatDistantInviteConfigItem::serialise(void *data, uint32_t& pktsi
 	offset += 8;
 
 	/* add mandatory parts first */
-	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_KEY, hash);
+    ok &= hash.serialise(data, tlvsize, offset) ;
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_LINK, encrypted_radix64_string);
 	ok &= destination_pgp_id.serialise(data, tlvsize, offset);
 
@@ -1252,7 +1252,7 @@ RsPrivateChatDistantInviteConfigItem::RsPrivateChatDistantInviteConfigItem(void 
 	bool ok = true ;
 
 	/* get mandatory parts first */
-	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_KEY, hash);
+    ok &= hash.deserialise(data, rssize, offset) ;
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_LINK, encrypted_radix64_string);
 	ok &= destination_pgp_id.serialise(data, rssize, offset);
 

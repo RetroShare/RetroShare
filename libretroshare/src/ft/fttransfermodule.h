@@ -111,9 +111,9 @@ public:
 	};
         
         ftFileStatus():hash(""),stat(PQIFILE_INIT) {}
-	ftFileStatus(std::string hash_in):hash(hash_in),stat(PQIFILE_INIT) {}
+	ftFileStatus(const RsFileHash& hash_in):hash(hash_in),stat(PQIFILE_INIT) {}
 
-	std::string hash;
+	RsFileHash hash;
 	Status stat;
 };
 
@@ -147,8 +147,8 @@ public:
 
   int tick();
 
-  std::string hash() { return mHash; }
-  uint64_t    size() { return mSize; }
+  const RsFileHash& hash() const { return mHash; }
+  uint64_t    size() const { return mSize; }
  
   //internal used functions
   bool queryInactive();
@@ -175,7 +175,7 @@ private:
   ftDataMultiplex *mMultiplexor;
   ftController *mFtController;
 
-  std::string mHash;
+  RsFileHash mHash;
   uint64_t    mSize;
 
   RsMutex tfMtx; /* below is mutex protected */

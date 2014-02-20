@@ -176,7 +176,7 @@ uint32_t RsFileTransferChunkMapRequestItem::serial_size()
 {
 	uint32_t s = 8; /* header  */
 	s += 1 ; 							// is_client
-	s += GetTlvStringSize(hash) ; // hash
+    s += hash.serial_size() ; // hash
 
 	return s;
 }
@@ -184,7 +184,7 @@ uint32_t RsFileTransferChunkMapItem::serial_size()
 {
 	uint32_t s = 8; /* header  */
 	s += 1 ; 								// is_client
-	s += GetTlvStringSize(hash) ; 	// hash
+    s += hash.serial_size() ; 	// hash
 	s += 4 ;									// compressed map size
 	s += 4 * compressed_map._map.size() ; // compressed chunk map
 
@@ -193,8 +193,8 @@ uint32_t RsFileTransferChunkMapItem::serial_size()
 uint32_t RsFileTransferSingleChunkCrcItem::serial_size()
 {
 	uint32_t s = 8; /* header  */
-	s += GetTlvStringSize(hash) ; // hash
-	s += 4 ; // chunk number
+    s += hash.serial_size() ; 	// hash
+    s += 4 ; // chunk number
 	s += 20 ; // sha1
 
 	return s;
@@ -202,8 +202,8 @@ uint32_t RsFileTransferSingleChunkCrcItem::serial_size()
 uint32_t RsFileTransferSingleChunkCrcRequestItem::serial_size()
 {
 	uint32_t s = 8; /* header  */
-	s += GetTlvStringSize(hash) ; // hash
-	s += 4 ; // chunk number
+    s += hash.serial_size() ; 	// hash
+    s += 4 ; // chunk number
 
 	return s;
 }
@@ -267,7 +267,7 @@ bool RsFileTransferChunkMapRequestItem::serialise(void *data, uint32_t& pktsize)
 
 	/* add mandatory parts first */
 	ok &= setRawUInt8(data, tlvsize, &offset, is_client);
-	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_VALUE, hash);
+    ok &= hash.serialise(data, tlvsize, offset) ;
 
 	if (offset != tlvsize)
 	{
@@ -286,7 +286,7 @@ bool RsFileTransferSingleChunkCrcRequestItem::serialise(void *data, uint32_t& pk
 		return false ;
 
 	/* add mandatory parts first */
-	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_VALUE, hash);
+    ok &= hash.serialise(data, tlvsize, offset) ;
 	ok &= setRawUInt32(data, tlvsize, &offset, chunk_number) ;
 
 	if (offset != tlvsize)
@@ -306,7 +306,7 @@ bool RsFileTransferSingleChunkCrcItem::serialise(void *data, uint32_t& pktsize)
 		return false ;
 
 	/* add mandatory parts first */
-	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_VALUE, hash);
+    ok &= hash.serialise(data, tlvsize, offset) ;
 	ok &= setRawUInt32(data, tlvsize, &offset, chunk_number) ;
 
 	setRawSha1(data,tlvsize,&offset,check_sum) ;
@@ -335,7 +335,7 @@ bool RsFileTransferChunkMapItem::serialise(void *data, uint32_t& pktsize)
 
 	/* add mandatory parts first */
 	ok &= setRawUInt8(data, tlvsize, &offset, is_client);
-	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_VALUE, hash);
+    ok &= hash.serialise(data, tlvsize, offset) ;
 	ok &= setRawUInt32(data, tlvsize, &offset, compressed_map._map.size());
 
 	for(uint32_t i=0;i<compressed_map._map.size();++i)
@@ -517,7 +517,7 @@ RsFileTransferItem *RsFileTransferSerialiser::deserialise_RsFileTransferChunkMap
 	offset += 8;
 	uint8_t tmp ;
 	ok &= getRawUInt8(data, rssize, &offset, &tmp); item->is_client = tmp; 
-	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_VALUE, item->hash); 	// file hash
+    ok &= item->hash.deserialise(data, rssize, offset) ; // File hash
 
 	if (offset != rssize)
 	{
@@ -675,8 +675,8 @@ RsFileTransferItem *RsFileTransferSerialiser::deserialise_RsFileTransferChunkMap
 	offset += 8;
 	uint8_t tmp ;
 	ok &= getRawUInt8(data, rssize, &offset, &tmp); item->is_client = tmp; 
-	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_VALUE, item->hash); 	// file hash
-	uint32_t size =0;
+    ok &= item->hash.deserialise(data, rssize, offset) ; // File hash
+    uint32_t size =0;
 	ok &= getRawUInt32(data, rssize, &offset, &size); 
 
 	if(ok)
@@ -731,7 +731,7 @@ RsFileTransferItem *RsFileTransferSerialiser::deserialise_RsFileTransferSingleCh
 
 	/* skip the header */
 	offset += 8;
-	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_VALUE, item->hash); 	// file hash
+    ok &= item->hash.deserialise(data, rssize, offset) ;
 	ok &= getRawUInt32(data, rssize, &offset, &(item->chunk_number));
 
 	if (offset != rssize)
@@ -777,11 +777,11 @@ RsFileTransferItem *RsFileTransferSerialiser::deserialise_RsFileTransferSingleCh
 
 	/* skip the header */
 	offset += 8;
-	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_VALUE, item->hash); 	// file hash
-	ok &= getRawUInt32(data, rssize, &offset, &(item->chunk_number));
+    ok &= item->hash.deserialise(data, rssize, offset) ;
+    ok &= getRawUInt32(data, rssize, &offset, &(item->chunk_number));
 	getRawSha1(data,rssize,&offset,item->check_sum) ;
 
-	if (offset != rssize)
+    if (offset != rssize)
 	{
 		/* error */
 		delete item;

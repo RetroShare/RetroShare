@@ -920,7 +920,7 @@ QString RetroShareLink::toHtmlSize() const
 
 	if (type() == TYPE_FILE && RsCollectionFile::isCollectionFile(name())) {
 		FileInfo finfo;
-		if (rsFiles->FileDetails(hash().toStdString(), RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_LOCAL, finfo)) {
+        if (rsFiles->FileDetails(RsFileHash(hash().toStdString()), RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_LOCAL, finfo)) {
 			RsCollectionFile collection;
 			if (collection.load(QString::fromUtf8(finfo.path.c_str()), false)) {
 				size += QString(" [%1]").arg(misc::friendlyUnit(collection.size()));
@@ -1312,7 +1312,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 					// Get a list of available direct sources, in case the file is browsable only.
 					//
 					FileInfo finfo ;
-					rsFiles->FileDetails(link.hash().toStdString(), RS_FILE_HINTS_REMOTE, finfo) ;
+                    rsFiles->FileDetails(RsFileHash(link.hash().toStdString()), RS_FILE_HINTS_REMOTE, finfo) ;
 
 					for(std::list<TransferInfo>::const_iterator it(finfo.peers.begin());it!=finfo.peers.end();++it)
 					{
@@ -1333,7 +1333,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 								flag |= RSLINK_PROCESS_NOTIFY_BAD_CHARS ;
 							}
 
-					if (rsFiles->FileRequest(cleanname.toUtf8().constData(), link.hash().toStdString(), link.size(), "", RS_FILE_REQ_ANONYMOUS_ROUTING, srcIds)) {
+                    if (rsFiles->FileRequest(cleanname.toUtf8().constData(), RsFileHash(link.hash().toStdString()), link.size(), "", RS_FILE_REQ_ANONYMOUS_ROUTING, srcIds)) {
 						fileAdded.append(link.name());
 					} else {
 						fileExist.append(link.name());

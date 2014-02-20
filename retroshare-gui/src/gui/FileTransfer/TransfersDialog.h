@@ -218,8 +218,8 @@ private:
     bool m_bProcessSettings;
     void processSettings(bool bLoad);
 
-    void getSelectedItems(std::set<std::string> *ids, std::set<int> *rows);
-    void getULSelectedItems(std::set<std::string> *ids, std::set<int> *rows);
+    void getSelectedItems(std::set<RsFileHash> *ids, std::set<int> *rows);
+    void getULSelectedItems(std::set<RsFileHash> *ids, std::set<int> *rows);
     bool controlTransferFile(uint32_t flags);
     void changePriority(int priority);
     void setChunkStrategy(FileChunksInfo::ChunkStrategy s) ;

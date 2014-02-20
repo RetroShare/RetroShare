@@ -98,7 +98,7 @@ bool ExtExpression::eval(FileEntry *file){
 }
 
 bool HashExpression::eval(FileEntry *file){
-	return evalStr(file->hash);
+    return evalStr(file->hash.toStdString());
 }
 
 /*Check whether two strings are 'equal' to each other*/
@@ -115,7 +115,7 @@ static bool StrEquals(const std::string & str1, const std::string & str2,
 }
 
 /*Check whether one string contains the other*/
-static bool StrContains( std::string & str1, std::string & str2, 
+static bool StrContains( const std::string & str1, const std::string & str2,
 				  bool IgnoreCase){
 
 	std::string::const_iterator iter ;
@@ -131,7 +131,7 @@ static bool StrContains( std::string & str1, std::string & str2,
 }
 
 
-bool StringExpression :: evalStr ( std::string &str ){
+bool StringExpression :: evalStr ( const std::string &str ){
 	std::list<std::string>::iterator iter;
 	switch (Op) {
 		case ContainsAllStrings:

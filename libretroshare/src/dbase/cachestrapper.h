@@ -86,12 +86,12 @@ class RsCacheData
 {
 	public:
 
-	SSLIdType pid; /// peer id
+    RsPeerId pid; /// peer id
 	/// REMOVED as a WASTE to look it up everywhere! std::string pname; /// peer name (can be used by cachestore)
 	CacheId  cid;  /// cache id
 	std::string path; /// file system path where physical cache data is located
 	std::string name;
-	std::string hash;
+    RsFileHash hash;
 	uint64_t size;
 	time_t recvd; /// received timestamp
 };
@@ -114,7 +114,7 @@ class CacheTransfer
 		/*!
 		 * upload side of things .... searches through CacheStrapper.
 		 */
-		bool    FindCacheFile(std::string hash, std::string &path, uint64_t &size);
+        bool    FindCacheFile(const RsFileHash& hash, std::string &path, uint64_t &size);
 
 		/*!
 		 * At the download side RequestCache() => overloaded RequestCacheFile()
@@ -127,18 +127,18 @@ class CacheTransfer
 		/*!
 		 * to be overloaded
 		 */
-		virtual bool RequestCacheFile(const SSLIdType& id, std::string path, std::string hash, uint64_t size);
-		virtual bool CancelCacheFile(const SSLIdType& id, std::string path, std::string hash, uint64_t size);
+        virtual bool RequestCacheFile(const RsPeerId& id, std::string path, const RsFileHash& hash, uint64_t size);
+        virtual bool CancelCacheFile(const RsPeerId& id, std::string path, const RsFileHash& hash, uint64_t size);
 
-		bool CompletedCache(std::string hash);                   /* internal completion -> does cb */
-		bool FailedCache(std::string hash);                      /* internal completion -> does cb */
+        bool CompletedCache(const RsFileHash &hash);                   /* internal completion -> does cb */
+        bool FailedCache(const RsFileHash &hash);                      /* internal completion -> does cb */
 
 	private:
 
 	CacheStrapper *strapper;
 
-	std::map<std::string, RsCacheData>    cbData;
-	std::map<std::string, CacheStore *> cbStores;
+    std::map<RsFileHash, RsCacheData>    cbData;
+    std::map<RsFileHash, CacheStore *> cbStores;
 };
 
 
@@ -167,7 +167,7 @@ class CacheSource
 		 *  called to determine available cache for peer -
 		 * default acceptable (returns all)
 		 */
-		virtual bool 	cachesAvailable(const SSLIdType& pid, std::map<CacheId, RsCacheData> &ids);
+        virtual bool 	cachesAvailable(const RsPeerId& pid, std::map<CacheId, RsCacheData> &ids);
 
 		/*!
 		 * function called at startup to load from
@@ -177,12 +177,12 @@ class CacheSource
 		virtual bool    loadLocalCache(const RsCacheData &data);
 
 			/* control Caches available */
-		bool  refreshCache(const RsCacheData &data,const std::set<SSLIdType>& destination_peers);
+        bool  refreshCache(const RsCacheData &data,const std::set<RsPeerId>& destination_peers);
 		bool  refreshCache(const RsCacheData &data);
 		bool 	clearCache(CacheId id);
 
 		/* controls if peer is an accepted receiver for cache items. Default is yes. To be overloaded. */
-		virtual bool isPeerAcceptedAsCacheReceiver(const SSLIdType& /*peer_id*/)  { return true ; }
+        virtual bool isPeerAcceptedAsCacheReceiver(const RsPeerId& /*peer_id*/)  { return true ; }
 
 			/* get private data */
 		std::string getCacheDir()    { return cacheDir;   }
@@ -193,7 +193,7 @@ class CacheSource
 		void 	listCaches(std::ostream &out);
 
 			/* search */
-		bool    findCache(std::string hash, RsCacheData &data) const;
+        bool    findCache(const RsFileHash& hash, RsCacheData &data) const;
 
 	protected:
 
@@ -206,7 +206,7 @@ class CacheSource
 		void	unlockData() const;
 
 		CacheSet caches; /// all local cache data stored here
-                std::map<std::string, RsCacheData> mOldCaches; /// replaced/cleared caches are pushed here (in case requested)
+                std::map<RsFileHash, RsCacheData> mOldCaches; /// replaced/cleared caches are pushed here (in case requested)
 
 		private:
 
@@ -271,7 +271,7 @@ class CacheStore
 			/* virtual functions overloaded by cache implementor */
 
 		/* controls if peer is an accepted provider for cache items. Default is yes. To be overloaded. */
-		virtual bool isPeerAcceptedAsCacheProvider(const SSLIdType& /*peer_id*/)  { return true ; }
+        virtual bool isPeerAcceptedAsCacheProvider(const RsPeerId& /*peer_id*/)  { return true ; }
 
 		/*!
 		 * @param data cache data is stored here
@@ -329,7 +329,7 @@ class CacheStore
 		std::string cacheDir;
 
 		mutable RsMutex cMutex;
-		std::map<SSLIdType, CacheSet> caches;
+        std::map<RsPeerId, CacheSet> caches;
 
 };
 
@@ -402,7 +402,7 @@ virtual void statusChange(const std::list<pqipeer> &plist);
  *
  */
 void 	refreshCache(const RsCacheData &data);
-void 	refreshCache(const RsCacheData &data,const std::set<SSLIdType>& destination_peers);	// specify a particular list of destination peers (self not added!)
+void 	refreshCache(const RsCacheData &data,const std::set<RsPeerId>& destination_peers);	// specify a particular list of destination peers (self not added!)
 
 /*!
  * forces config savelist
@@ -414,7 +414,7 @@ void 	refreshCacheStore(const RsCacheData &data);
 /*!
  *  list of Caches to send out
  */
-bool    getCacheUpdates(std::list<std::pair<SSLIdType, RsCacheData> > &updates);
+bool    getCacheUpdates(std::list<std::pair<RsPeerId, RsCacheData> > &updates);
 
 /*!
  * add to strapper's cachepair set so a related service's store and source can be maintained
@@ -424,14 +424,14 @@ void	addCachePair(CachePair pair);
 
 	/*** I/O (2) ***/
 void	recvCacheResponse(RsCacheData &data, time_t ts);  
-void    handleCacheQuery(const SSLIdType& id, std::map<CacheId, RsCacheData> &data); 
+void    handleCacheQuery(const RsPeerId& id, std::map<CacheId, RsCacheData> &data);
 
 
 /*!
  *  search through CacheSources.
  *  @return false if cachedate mapping to hash not found
  */
-bool    findCache(std::string hash, RsCacheData &data) const;
+bool    findCache(const RsFileHash &hash, RsCacheData &data) const;
 
 	/* display */
 void 	listCaches(std::ostream &out);
@@ -467,7 +467,7 @@ virtual bool    loadList(std::list<RsItem *>& load);
 
 	RsMutex csMtx; /* protect below */
 
-	std::list<std::pair<SSLIdType, RsCacheData> > mCacheUpdates;
+    std::list<std::pair<RsPeerId, RsCacheData> > mCacheUpdates;
 };
 
 

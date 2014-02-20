@@ -487,7 +487,7 @@ void MessageWidget::fill(const std::string &msgId)
 		QTreeWidgetItem *item = new QTreeWidgetItem;
 		item->setText(COLUMN_FILE_NAME, QString::fromUtf8(it->fname.c_str()));
 		item->setText(COLUMN_FILE_SIZE, QString::number(it->size));
-		item->setText(COLUMN_FILE_HASH, QString::fromStdString(it->hash));
+        item->setText(COLUMN_FILE_HASH, QString::fromStdString(it->hash.toStdString()));
 
 		/* add to the list */
 		items.append(item);

@@ -241,38 +241,23 @@ bool	ftServer::ResumeTransfers()
 	return true;
 }
 
-bool ftServer::checkHash(const std::string& hash,std::string& error_string)
+bool ftServer::checkHash(const RsFileHash& hash,std::string& error_string)
 {
-	static const uint32_t HASH_LENGTH = 40 ;
-
-	if(hash.length() != HASH_LENGTH)
-	{
-		rs_sprintf(error_string, "Line too long : %u chars, %ld expected.", hash.length(), HASH_LENGTH) ;
-		return false ;
-	}
-
-	for(uint32_t i=0;i<hash.length();++i)
-		if(!((hash[i] > 47 && hash[i] < 58) || (hash[i] > 96 && hash[i] < 103)))
-		{
-			rs_sprintf(error_string, "unexpected char code=%d '%c'", (int)hash[i], hash[i]) ;
-			return false ;
-		}
-
-	return true ;
+    return true ;
 }
 
-bool ftServer::alreadyHaveFile(const std::string& hash, FileInfo &info)
+bool ftServer::alreadyHaveFile(const RsFileHash& hash, FileInfo &info)
 {
 	return mFtController->alreadyHaveFile(hash, info);
 }
 
-bool ftServer::FileRequest(const std::string& fname, const std::string& hash, uint64_t size, const std::string& dest, TransferRequestFlags flags, const std::list<RsPeerId>& srcIds)
+bool ftServer::FileRequest(const std::string& fname, const RsFileHash& hash, uint64_t size, const std::string& dest, TransferRequestFlags flags, const std::list<RsPeerId>& srcIds)
 {
 	std::string error_string ;
 
 	if(!checkHash(hash,error_string))
 	{
-		RsServer::notify()->notifyErrorMsg(0,0,"Error handling hash \""+hash+"\". This hash appears to be invalid(Error string=\""+error_string+"\"). This is probably due an bad handling of strings.") ;
+        RsServer::notify()->notifyErrorMsg(0,0,"Error handling hash \""+hash.toStdString()+"\". This hash appears to be invalid(Error string=\""+error_string+"\"). This is probably due an bad handling of strings.") ;
 		return false ;
 	}
 
@@ -284,15 +269,15 @@ bool ftServer::FileRequest(const std::string& fname, const std::string& hash, ui
 	return true ;
 }
 
-bool ftServer::setDestinationName(const std::string& hash,const std::string& name)
+bool ftServer::setDestinationName(const RsFileHash& hash,const std::string& name)
 {
 	return mFtController->setDestinationName(hash,name);
 }
-bool ftServer::setDestinationDirectory(const std::string& hash,const std::string& directory)
+bool ftServer::setDestinationDirectory(const RsFileHash& hash,const std::string& directory)
 {
 	return mFtController->setDestinationDirectory(hash,directory);
 }
-bool ftServer::setChunkStrategy(const std::string& hash,FileChunksInfo::ChunkStrategy s)
+bool ftServer::setChunkStrategy(const RsFileHash& hash,FileChunksInfo::ChunkStrategy s)
 {
 	return mFtController->setChunkStrategy(hash,s);
 }
@@ -312,7 +297,7 @@ FileChunksInfo::ChunkStrategy ftServer::defaultChunkStrategy()
 {
 	return mFtController->defaultChunkStrategy() ;
 }
-bool ftServer::FileCancel(const std::string& hash)
+bool ftServer::FileCancel(const RsFileHash& hash)
 {
 	// Remove from both queue and ftController, by default.
 	//
@@ -321,7 +306,7 @@ bool ftServer::FileCancel(const std::string& hash)
 	return true ;
 }
 
-bool ftServer::FileControl(const std::string& hash, uint32_t flags)
+bool ftServer::FileControl(const RsFileHash& hash, uint32_t flags)
 {
 	return mFtController->FileControl(hash, flags);
 }
@@ -347,17 +332,17 @@ uint32_t ftServer::getQueueSize()
 	return mFtController->getQueueSize() ;
 }
 	/* Control of Downloads Priority. */
-bool ftServer::changeQueuePosition(const std::string hash, QueueMove mv)
+bool ftServer::changeQueuePosition(const RsFileHash& hash, QueueMove mv)
 {
 	mFtController->moveInQueue(hash,mv) ;
 	return true ;
 }
-bool ftServer::changeDownloadSpeed(const std::string hash, int speed)
+bool ftServer::changeDownloadSpeed(const RsFileHash& hash, int speed)
 {
 	mFtController->setPriority(hash, (DwlSpeed)speed);
 	return true ;
 }
-bool ftServer::getDownloadSpeed(const std::string hash, int & speed)
+bool ftServer::getDownloadSpeed(const RsFileHash& hash, int & speed)
 {
 	DwlSpeed _speed;
 	int ret = mFtController->getPriority(hash, _speed);
@@ -366,12 +351,12 @@ bool ftServer::getDownloadSpeed(const std::string hash, int & speed)
 
 	return ret;
 }
-bool ftServer::clearDownload(const std::string /*hash*/)
+bool ftServer::clearDownload(const RsFileHash& /*hash*/)
 {
    return true ;
 }
 
-bool ftServer::FileDownloadChunksDetails(const std::string& hash,FileChunksInfo& info)
+bool ftServer::FileDownloadChunksDetails(const RsFileHash& hash,FileChunksInfo& info)
 {
 	return mFtController->getFileDownloadChunksDetails(hash,info);
 }
@@ -402,24 +387,24 @@ std::string ftServer::getPartialsDirectory()
 	/************************* Other Access ************************/
 	/***************************************************************/
 
-bool ftServer::FileDownloads(std::list<std::string> &hashs)
+bool ftServer::FileDownloads(std::list<RsFileHash> &hashs)
 {
 	return mFtController->FileDownloads(hashs);
 	/* this only contains downloads.... not completed */
 	//return mFtDataplex->FileDownloads(hashs);
 }
 
-bool ftServer::FileUploadChunksDetails(const std::string& hash,const RsPeerId& peer_id,CompressedChunkMap& cmap)
+bool ftServer::FileUploadChunksDetails(const RsFileHash& hash,const RsPeerId& peer_id,CompressedChunkMap& cmap)
 {
 	return mFtDataplex->getClientChunkMap(hash,peer_id,cmap);
 }
 
-bool ftServer::FileUploads(std::list<std::string> &hashs)
+bool ftServer::FileUploads(std::list<RsFileHash> &hashs)
 {
 	return mFtDataplex->FileUploads(hashs);
 }
 
-bool ftServer::FileDetails(const std::string &hash, FileSearchFlags hintflags, FileInfo &info)
+bool ftServer::FileDetails(const RsFileHash &hash, FileSearchFlags hintflags, FileInfo &info)
 {
 	if (hintflags & RS_FILE_HINTS_DOWNLOAD)
 		if(mFtController->FileDetails(hash, info))
@@ -483,7 +468,7 @@ void ftServer::removeVirtualPeer(const TurtleFileHash& hash,const TurtleVirtualP
 	mFtController->removeFileSource(hash,virtual_peer_id) ;
 }
 
-bool ftServer::handleTunnelRequest(const std::string& hash,const RsPeerId& peer_id)
+bool ftServer::handleTunnelRequest(const RsFileHash& hash,const RsPeerId& peer_id)
 {
 	FileInfo info ;
 	bool res = FileDetails(hash, RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_SPEC_ONLY | RS_FILE_HINTS_DOWNLOAD, info);
@@ -515,13 +500,13 @@ bool ftServer::handleTunnelRequest(const std::string& hash,const RsPeerId& peer_
 	/******************* ExtraFileList Access **********************/
 	/***************************************************************/
 
-bool  ftServer::ExtraFileAdd(std::string fname, std::string hash, uint64_t size,
+bool  ftServer::ExtraFileAdd(std::string fname, const RsFileHash& hash, uint64_t size,
 						uint32_t period, TransferRequestFlags flags)
 {
 	return mFtExtra->addExtraFile(fname, hash, size, period, flags);
 }
 
-bool ftServer::ExtraFileRemove(std::string hash, TransferRequestFlags flags)
+bool ftServer::ExtraFileRemove(const RsFileHash& hash, TransferRequestFlags flags)
 {
 	return mFtExtra->removeExtraFile(hash, flags);
 }
@@ -536,7 +521,7 @@ bool ftServer::ExtraFileStatus(std::string localpath, FileInfo &info)
 	return mFtExtra->hashExtraFileDone(localpath, info);
 }
 
-bool ftServer::ExtraFileMove(std::string fname, std::string hash, uint64_t size,
+bool ftServer::ExtraFileMove(std::string fname, const RsFileHash& hash, uint64_t size,
                                 std::string destpath)
 {
 	return mFtExtra->moveExtraFile(fname, hash, size, destpath);
@@ -872,7 +857,7 @@ bool  ftServer::loadConfigMap(std::map<std::string, std::string> &/*configMap*/)
 	/***************************************************************/
 
 	/* Client Send */
-bool	ftServer::sendDataRequest(const RsPeerId& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunksize)
+bool	ftServer::sendDataRequest(const RsPeerId& peerId, const RsFileHash& hash, uint64_t size, uint64_t offset, uint32_t chunksize)
 {
 #ifdef SERVER_DEBUG
 	std::cerr << "ftServer::sendDataRequest() to peer " << peerId << " for hash " << hash << ", offset=" << offset << ", chunk size="<< chunksize << std::endl;
@@ -910,7 +895,7 @@ bool	ftServer::sendDataRequest(const RsPeerId& peerId, const std::string& hash, 
 	return true;
 }
 
-bool ftServer::sendChunkMapRequest(const RsPeerId& peerId,const std::string& hash,bool is_client)
+bool ftServer::sendChunkMapRequest(const RsPeerId& peerId,const RsFileHash& hash,bool is_client)
 {
 #ifdef SERVER_DEBUG
 	std::cerr << "ftServer::sendChunkMapRequest() to peer " << peerId << " for hash " << hash << std::endl;
@@ -939,7 +924,7 @@ bool ftServer::sendChunkMapRequest(const RsPeerId& peerId,const std::string& has
 	return true ;
 }
 
-bool ftServer::sendChunkMap(const RsPeerId& peerId,const std::string& hash,const CompressedChunkMap& map,bool is_client)
+bool ftServer::sendChunkMap(const RsPeerId& peerId,const RsFileHash& hash,const CompressedChunkMap& map,bool is_client)
 {
 #ifdef SERVER_DEBUG
 	std::cerr << "ftServer::sendChunkMap() to peer " << peerId << " for hash " << hash << std::endl;
@@ -970,7 +955,7 @@ bool ftServer::sendChunkMap(const RsPeerId& peerId,const std::string& hash,const
 	return true ;
 }
 
-bool ftServer::sendSingleChunkCRCRequest(const RsPeerId& peerId,const std::string& hash,uint32_t chunk_number)
+bool ftServer::sendSingleChunkCRCRequest(const RsPeerId& peerId,const RsFileHash& hash,uint32_t chunk_number)
 {
 #ifdef SERVER_DEBUG
 	std::cerr << "ftServer::sendSingleCRCRequest() to peer " << peerId << " for hash " << hash << ", chunk number=" << chunk_number << std::endl;
@@ -1001,7 +986,7 @@ bool ftServer::sendSingleChunkCRCRequest(const RsPeerId& peerId,const std::strin
 	return true ;
 }
 
-bool ftServer::sendSingleChunkCRC(const RsPeerId& peerId,const std::string& hash,uint32_t chunk_number,const Sha1CheckSum& crc)
+bool ftServer::sendSingleChunkCRC(const RsPeerId& peerId,const RsFileHash& hash,uint32_t chunk_number,const Sha1CheckSum& crc)
 {
 #ifdef SERVER_DEBUG
 	std::cerr << "ftServer::sendSingleCRC() to peer " << peerId << " for hash " << hash << ", chunk number=" << chunk_number << std::endl;
@@ -1035,7 +1020,7 @@ bool ftServer::sendSingleChunkCRC(const RsPeerId& peerId,const std::string& hash
 }
 
 	/* Server Send */
-bool	ftServer::sendData(const RsPeerId& peerId, const std::string& hash, uint64_t size, uint64_t baseoffset, uint32_t chunksize, void *data)
+bool	ftServer::sendData(const RsPeerId& peerId, const RsFileHash& hash, uint64_t size, uint64_t baseoffset, uint32_t chunksize, void *data)
 {
 	/* create a packet */
 	/* push to networking part */
@@ -1132,7 +1117,7 @@ bool	ftServer::sendData(const RsPeerId& peerId, const std::string& hash, uint64_
 // Dont delete the item. The client (p3turtle) is doing it after calling this.
 //
 void ftServer::receiveTurtleData(RsTurtleGenericTunnelItem *i,
-											const std::string& hash,
+											const RsFileHash& hash,
 											const RsPeerId& virtual_peer_id,
 											RsTurtleGenericTunnelItem::Direction direction) 
 {

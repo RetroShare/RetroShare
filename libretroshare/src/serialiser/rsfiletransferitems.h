@@ -128,7 +128,7 @@ class RsFileTransferChunkMapRequestItem: public RsFileTransferItem
 		// Private data part.
 		//
 		bool is_client ; 		// is the request for a client, or a server ? 
-		std::string hash ;	// hash of the file for which we request the chunk map
+        RsFileHash hash ;	// hash of the file for which we request the chunk map
 };
 
 class RsFileTransferChunkMapItem: public RsFileTransferItem
@@ -149,7 +149,7 @@ class RsFileTransferChunkMapItem: public RsFileTransferItem
 		// Private data part.
 		//
 		bool is_client ; 		// is the request for a client, or a server ? 
-		std::string hash ;	// hash of the file for which we request the chunk map
+        RsFileHash hash ;	// hash of the file for which we request the chunk map
 		CompressedChunkMap compressed_map ; // Chunk map of the file.
 };
 
@@ -169,7 +169,7 @@ class RsFileTransferSingleChunkCrcRequestItem: public RsFileTransferItem
 
 		// Private data part.
 		//
-		std::string hash ;		// hash of the file for which we request the crc 
+        RsFileHash hash ;		// hash of the file for which we request the crc
 		uint32_t chunk_number ;	// chunk number
 };
 
@@ -189,7 +189,7 @@ class RsFileTransferSingleChunkCrcItem: public RsFileTransferItem
 
 		// Private data part.
 		//
-		std::string hash ; // hash of the file for which we request the chunk map
+        RsFileHash hash ; // hash of the file for which we request the chunk map
 		uint32_t chunk_number ;
 		Sha1CheckSum check_sum ; // CRC32 map of the file.
 };

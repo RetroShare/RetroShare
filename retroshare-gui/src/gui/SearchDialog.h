@@ -114,7 +114,7 @@ private:
     void insertDirectory(const QString &txt, qulonglong searchId, const DirDetails &dir);
     void setIconAndType(QTreeWidgetItem *item, const QString& filename);
     void downloadDirectory(const QTreeWidgetItem *item, const QString &base);
-    void getSourceFriendsForHash(const std::string& hash,std::list<RsPeerId> &srcIds);
+    void getSourceFriendsForHash(const RsFileHash &hash,std::list<RsPeerId> &srcIds);
 
 /** the advanced search dialog instance */
     AdvancedSearchDialog * advSearchDialog;

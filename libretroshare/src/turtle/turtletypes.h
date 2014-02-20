@@ -2,9 +2,9 @@
 
 #include "retroshare/rsturtle.h"
 
-typedef SSLIdType 	TurtlePeerId ;
-typedef SSLIdType 	TurtleVirtualPeerId ;
-typedef std::string 	TurtleFileHash ;
+typedef RsPeerId 	TurtlePeerId ;
+typedef RsPeerId 	TurtleVirtualPeerId ;
+typedef RsFileHash 	TurtleFileHash ;
 typedef std::string 	TurtleFileName ;
 
 typedef TurtleRequestId TurtleSearchRequestId ;

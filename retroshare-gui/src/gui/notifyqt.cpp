@@ -805,7 +805,7 @@ void NotifyQt::UpdateGUI()
 					if (popupflags & RS_POPUP_DOWNLOAD)
 					{
 						/* id = file hash */
-						toaster = new Toaster(new DownloadToaster(id, QString::fromUtf8(title.c_str())));
+                        toaster = new Toaster(new DownloadToaster(RsFileHash(id), QString::fromUtf8(title.c_str())));
 					}
 					break;
 				case RS_POPUP_CHAT:
@@ -944,7 +944,7 @@ void NotifyQt::testToaster(uint notifyFlags, /*RshareSettings::enumToasterPositi
 				toaster = new Toaster(new OnlineToaster(id));
 				break;
 			case RS_POPUP_DOWNLOAD:
-				toaster = new Toaster(new DownloadToaster(id.toStdString(), title));
+                toaster = new Toaster(new DownloadToaster(RsFileHash::random(), title));
 				break;
 			case RS_POPUP_CHAT:
 				toaster = new Toaster(new ChatToaster(id, message));

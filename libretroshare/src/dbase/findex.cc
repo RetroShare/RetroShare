@@ -500,7 +500,7 @@ int FileEntry::print(std::string &out)
 	else
 		out += "[MISSING PARENT]";
 
-	rs_sprintf_append(out, " %s  [ s: %lld ] ==>   [ %s ]\n", name.c_str(), size, hash.c_str());
+    rs_sprintf_append(out, " %s  [ s: %lld ] ==>   [ %s ]\n", name.c_str(), size, hash.toStdString().c_str());
 
 	return 1;
 }
@@ -754,7 +754,7 @@ int     FileIndex::printFileIndex(std::string &out)
 	return 1;
 }
 
-int FileIndex::loadIndex(const std::string& filename, const std::string& expectedHash, uint64_t size)
+int FileIndex::loadIndex(const std::string& filename, const RsFileHash& expectedHash, uint64_t size)
 {
 	FILE *file = RsDirUtil::rs_fopen(filename.c_str(),"rb") ;
 
@@ -783,7 +783,7 @@ int FileIndex::loadIndex(const std::string& filename, const std::string& expecte
 	}
 	fclose(file) ;
 
-	std::string tmpout = RsDirUtil::sha1sum((unsigned char *)(compressed_data),size).toStdString() ;
+    RsFileHash tmpout = RsDirUtil::sha1sum((unsigned char *)(compressed_data),size);
 
 //	/* calculate hash */
 //	unsigned char sha_buf[SHA_DIGEST_LENGTH];
@@ -799,7 +799,7 @@ int FileIndex::loadIndex(const std::string& filename, const std::string& expecte
 //		rs_sprintf_append(tmpout, "%02x", (unsigned int) (sha_buf[i]));
 //	}
 
-	if (expectedHash != "" && expectedHash != tmpout)
+    if (!expectedHash.isNull() && expectedHash != tmpout)
 	{
 #ifdef FI_DEBUG
 		std::cerr << "FileIndex::loadIndex expected hash does not match" << std::endl;
@@ -991,7 +991,7 @@ error:
 }
 
 
-int FileIndex::saveIndex(const std::string& filename, std::string &fileHash, uint64_t &size,const std::set<std::string>& forbidden_dirs)
+int FileIndex::saveIndex(const std::string& filename, RsFileHash &fileHash, uint64_t &size,const std::set<std::string>& forbidden_dirs)
 {
 	unsigned char sha_buf[SHA_DIGEST_LENGTH];
 	std::string filenametmp = filename + ".tmp" ;
@@ -1138,7 +1138,7 @@ void DirEntry::writeFileInfo(std::string& s)
 	{
 		rs_sprintf_append(s, "f%s%c%s%c%lld%c%ld%c%d%c%ld%c\n",
 						  FixName((fit->second)->name).c_str(), FILE_CACHE_SEPARATOR_CHAR,
-						  (fit->second)->hash.c_str(), FILE_CACHE_SEPARATOR_CHAR,
+                          (fit->second)->hash.toStdString().c_str(), FILE_CACHE_SEPARATOR_CHAR,
 						  (fit->second)->size, FILE_CACHE_SEPARATOR_CHAR,
 						  (fit->second)->modtime, FILE_CACHE_SEPARATOR_CHAR,
 						  (fit->second)->pop, FILE_CACHE_SEPARATOR_CHAR,
@@ -1165,14 +1165,14 @@ int DirEntry::saveEntry(std::string &s)
 }
 
 
-int FileIndex::searchHash(const std::string& hash, std::list<FileEntry *> &results) const
+int FileIndex::searchHash(const RsFileHash& hash, std::list<FileEntry *> &results) const
 {
 #ifdef FI_DEBUG
 	std::cerr << "FileIndex::searchHash(" << hash << ")";
 	std::cerr << std::endl;
 #endif
 
-	std::map<std::string,FileEntry*>::const_iterator it = _file_hashes.find(hash) ;
+    std::map<RsFileHash,FileEntry*>::const_iterator it = _file_hashes.find(hash) ;
 
 	if(it!=_file_hashes.end() && isValid((void*)it->second))
 		results.push_back(it->second) ;
@@ -1394,7 +1394,7 @@ bool FileIndex::extractData(void *ref,DirDetails& details)
 	}
 
 	FileEntry *file = static_cast<FileEntry *>(ref);
-	DirEntry *dir = (file->hash.empty())?static_cast<DirEntry *>(file):NULL ; // This is a hack to avoid doing a dynamic_cast
+    DirEntry *dir = (file->hash.isNull())?static_cast<DirEntry *>(file):NULL ; // This is a hack to avoid doing a dynamic_cast
 
 	details.children.clear() ;
 	time_t now = time(NULL) ;

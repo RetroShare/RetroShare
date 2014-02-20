@@ -745,7 +745,7 @@ void MessageComposer::addFile(const FileInfo &fileInfo)
 
     item->setText(COLUMN_FILE_NAME, QString::fromUtf8(fileInfo.fname.c_str()));
     item->setText(COLUMN_FILE_SIZE, misc::friendlyUnit(fileInfo.size));
-    item->setText(COLUMN_FILE_HASH, QString::fromStdString(fileInfo.hash));
+    item->setText(COLUMN_FILE_HASH, QString::fromStdString(fileInfo.hash.toStdString()));
     item->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
     item->setCheckState(COLUMN_FILE_CHECKED, Qt::Checked);
 

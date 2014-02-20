@@ -243,7 +243,7 @@ virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); /* deseria
 virtual std::ostream &print(std::ostream &out, uint16_t indent);
 
 	uint64_t filesize; /// Mandatory: size of file to be downloaded
-	std::string hash;  /// Mandatory: to find file
+    RsFileHash hash;  /// Mandatory: to find file
 	std::string name;  /// Optional: name of file
 	std::string path;  /// Optional: path on host computer
 	uint32_t    pop;   /// Optional: Popularity of file

@@ -334,7 +334,7 @@ class RsPrivateChatDistantInviteConfigItem: public RsChatItem
 		virtual uint32_t serial_size() ; 							// deserialise is handled using a constructor
 
 		unsigned char aes_key[16] ;
-		std::string hash ;
+        RsFileHash hash ;
 		std::string encrypted_radix64_string ;
 		PGPIdType destination_pgp_id ;
 		uint32_t time_of_validity ;

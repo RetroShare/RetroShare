@@ -821,7 +821,7 @@ void FriendsDialog::fileHashingFinished(QList<HashedFile> hashedFiles)
         HashedFile& hashedFile = *it;
         RetroShareLink link;
 
-        if (!link.createExtraFile(hashedFile.filename, hashedFile.size, QString::fromStdString(hashedFile.hash),QString::fromStdString(rsPeers->getOwnId().toStdString())))
+        if (!link.createExtraFile(hashedFile.filename, hashedFile.size, QString::fromStdString(hashedFile.hash.toStdString()),QString::fromStdString(rsPeers->getOwnId().toStdString())))
             continue;
 
         mesgString += link.toHtmlSize();

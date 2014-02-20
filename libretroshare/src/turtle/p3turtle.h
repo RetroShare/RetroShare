@@ -250,12 +250,12 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 		//  This function should be called in addition to ftServer::FileRequest() so that the turtle router
 		//  automatically provide tunnels for the file to download.
 		//
-		virtual void monitorTunnels(const std::string& file_hash,RsTurtleClientService *client_service) ;
+		virtual void monitorTunnels(const RsFileHash& file_hash,RsTurtleClientService *client_service) ;
 
 		/// This should be called when canceling a file download, so that the turtle router stops
 		/// handling tunnels for this file.
 		///
-		virtual void stopMonitoringTunnels(const std::string& file_hash) ;
+		virtual void stopMonitoringTunnels(const RsFileHash& file_hash) ;
 
 		/// Adds a client tunnel service. This means that the service will be added 
 		/// to the list of services that might respond to tunnel requests.
@@ -352,7 +352,7 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 
 		/// specific routing functions for handling particular packets.
 		void handleRecvGenericTunnelItem(RsTurtleGenericTunnelItem *item);
-		bool getTunnelServiceInfo(TurtleTunnelId, SSLIdType& virtual_peer_id, std::string& hash, RsTurtleClientService*&) ;
+		bool getTunnelServiceInfo(TurtleTunnelId, SSLIdType& virtual_peer_id, RsFileHash& hash, RsTurtleClientService*&) ;
 
 		// following functions should go to ftServer
 		void handleSearchRequest(RsTurtleSearchRequestItem *item);		

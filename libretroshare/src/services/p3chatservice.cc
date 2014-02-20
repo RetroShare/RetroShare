@@ -3072,7 +3072,7 @@ void p3ChatService::cleanLobbyCaches()
 		sendConnectionChallenge(*it) ;
 }
 
-bool p3ChatService::handleTunnelRequest(const std::string& hash,const RsPeerId& /*peer_id*/)
+bool p3ChatService::handleTunnelRequest(const RsFileHash& hash,const RsPeerId& /*peer_id*/)
 {
 	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
@@ -3172,7 +3172,7 @@ void p3ChatService::addVirtualPeer(const TurtleFileHash& hash,const TurtleVirtua
 
 	// Notify the GUI that the tunnel is up.
 	//
-	RsServer::notify()->notifyChatStatus(hash,"tunnel is up again!",true) ;
+    RsServer::notify()->notifyChatStatus(hash.toStdString(),"tunnel is up again!",true) ;
 }
 
 void p3ChatService::removeVirtualPeer(const TurtleFileHash& hash,const TurtleVirtualPeerId& virtual_peer_id)
@@ -3180,7 +3180,7 @@ void p3ChatService::removeVirtualPeer(const TurtleFileHash& hash,const TurtleVir
 	{
 		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
-		std::map<std::string,DistantChatPeerInfo>::iterator it = _distant_chat_peers.find(hash) ;
+        std::map<RsFileHash,DistantChatPeerInfo>::iterator it = _distant_chat_peers.find(hash) ;
 
 		if(it == _distant_chat_peers.end())
 		{
@@ -3190,8 +3190,8 @@ void p3ChatService::removeVirtualPeer(const TurtleFileHash& hash,const TurtleVir
 
 		it->second.status = RS_DISTANT_CHAT_STATUS_TUNNEL_DN ;
 	}
-	RsServer::notify()->notifyChatStatus(hash,"tunnel is down...",true) ;
-	RsServer::notify()->notifyPeerStatusChanged(hash,RS_STATUS_OFFLINE) ;
+    RsServer::notify()->notifyChatStatus(hash.toStdString(),"tunnel is down...",true) ;
+    RsServer::notify()->notifyPeerStatusChanged(hash.toStdString(),RS_STATUS_OFFLINE) ;
 }
 
 #ifdef DEBUG_DISTANT_CHAT
@@ -3207,7 +3207,7 @@ static void printBinaryData(void *data,uint32_t size)
 }
 #endif
 
-void p3ChatService::receiveTurtleData(	RsTurtleGenericTunnelItem *gitem,const std::string& hash,
+void p3ChatService::receiveTurtleData(	RsTurtleGenericTunnelItem *gitem,const RsFileHash& hash,
 													const RsPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction /*direction*/)
 {
 #ifdef DEBUG_DISTANT_CHAT
@@ -3238,7 +3238,7 @@ void p3ChatService::receiveTurtleData(	RsTurtleGenericTunnelItem *gitem,const st
 
 	{
 		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
-		std::map<std::string,DistantChatPeerInfo>::iterator it = _distant_chat_peers.find(hash) ;
+        std::map<RsFileHash,DistantChatPeerInfo>::iterator it = _distant_chat_peers.find(hash) ;
 
 		if(it == _distant_chat_peers.end())
 		{
@@ -3400,7 +3400,7 @@ bool p3ChatService::createDistantChatInvite(const PGPIdType& pgp_id,time_t time_
 
 	// Create a random hash for that invite.
 	//
-	std::string hash = Sha1CheckSum::random().toStdString() ;
+    RsFileHash hash = RsFileHash::random();
 
 #ifdef DEBUG_DISTANT_CHAT
 	std::cerr << "Created new distant chat invite: " << std::endl;
@@ -3516,7 +3516,7 @@ bool p3ChatService::initiateDistantChatConnexion(const std::string& encrypted_st
 #ifdef DEBUG_DISTANT_CHAT
 	std::cerr << "Signature successfuly verified!" << std::endl;
 #endif
-	TurtleFileHash hash = Sha1CheckSum(data).toStdString() ;
+    TurtleFileHash hash(data);
 	pid = virtualPeerIdFromHash(hash) ;
 
 	startClientDistantChatConnection(hash,pgp_id,data+DISTANT_CHAT_HASH_SIZE) ;
@@ -3549,7 +3549,7 @@ bool p3ChatService::initiateDistantChatConnexion(const std::string& encrypted_st
 
 	error_code = signature_checked ? RS_DISTANT_CHAT_ERROR_NO_ERROR : RS_DISTANT_CHAT_ERROR_UNKNOWN_KEY;
 
-	RsServer::notify()->AddPopupMessage(RS_POPUP_CHAT, hash, "Distant peer", "Conversation starts...");
+    RsServer::notify()->AddPopupMessage(RS_POPUP_CHAT, hash.toStdString(), "Distant peer", "Conversation starts...");
 
 	// Save config, since a new invite was added.
 	//
@@ -3566,9 +3566,9 @@ bool p3ChatService::initiateDistantChatConnexion(const DistantChatPeerId& pid,ui
 	{
 		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
-		std::map<std::string,DistantChatInvite>::iterator it = _distant_chat_invites.find(hash) ;
+        std::map<RsFileHash,DistantChatInvite>::iterator it = _distant_chat_invites.find(hash) ;
 
-		if(it == _distant_chat_invites.end())
+        if(it == _distant_chat_invites.end())
 		{
 			error_code = RS_DISTANT_CHAT_ERROR_UNKNOWN_HASH ;
 			return false ;
@@ -3581,13 +3581,13 @@ bool p3ChatService::initiateDistantChatConnexion(const DistantChatPeerId& pid,ui
 
 	startClientDistantChatConnection(hash,pgp_id,aes_key) ;
 
-	RsServer::notify()->AddPopupMessage(RS_POPUP_CHAT, hash, "Distant peer", "Conversation starts...");
+    RsServer::notify()->AddPopupMessage(RS_POPUP_CHAT, hash.toStdString(), "Distant peer", "Conversation starts...");
 
 	error_code = RS_DISTANT_CHAT_ERROR_NO_ERROR ;
 	return true ;
 }
 
-void p3ChatService::startClientDistantChatConnection(const std::string& hash,const PGPIdType& pgp_id,const unsigned char *aes_key_buf)
+void p3ChatService::startClientDistantChatConnection(const RsFileHash& hash,const PGPIdType& pgp_id,const unsigned char *aes_key_buf)
 {
 	DistantChatPeerInfo info ;
 
@@ -3656,7 +3656,7 @@ TurtleFileHash p3ChatService::hashFromVirtualPeerId(const DistantChatPeerId& pid
 	if(DistantChatPeerId::SIZE_IN_BYTES < Sha1CheckSum::SIZE_IN_BYTES)
 		std::cerr << __PRETTY_FUNCTION__ << ": Serious inconsistency error." << std::endl;
 		
-	return Sha1CheckSum(pid.toByteArray()).toStdString() ;
+    return Sha1CheckSum(pid.toByteArray());
 }
 bool p3ChatService::getDistantChatInviteList(std::vector<DistantChatInviteInfo>& invites)
 {
@@ -3709,7 +3709,7 @@ bool p3ChatService::closeDistantChatConnexion(const DistantChatPeerId& pid)
 	{
 		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
-		std::map<std::string,DistantChatPeerInfo>::iterator it = _distant_chat_peers.find(hash) ;
+        std::map<RsFileHash,DistantChatPeerInfo>::iterator it = _distant_chat_peers.find(hash) ;
 
 		if(it == _distant_chat_peers.end())		// server side. Nothing to do.
 		{
@@ -3735,7 +3735,7 @@ bool p3ChatService::closeDistantChatConnexion(const DistantChatPeerId& pid)
 		sendTurtleData(cs) ;	// that needs to be done off-mutex!
 
 		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
-		std::map<std::string,DistantChatPeerInfo>::iterator it = _distant_chat_peers.find(hash) ;
+        std::map<RsFileHash,DistantChatPeerInfo>::iterator it = _distant_chat_peers.find(hash) ;
 
 		if(it == _distant_chat_peers.end())		// server side. Nothing to do.
 		{

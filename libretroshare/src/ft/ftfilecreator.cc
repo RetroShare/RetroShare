@@ -24,7 +24,7 @@
 *
 ***********************************************************/
 
-ftFileCreator::ftFileCreator(const std::string& path, uint64_t size, const std::string& hash,bool assume_availability)
+ftFileCreator::ftFileCreator(const std::string& path, uint64_t size, const RsFileHash& hash,bool assume_availability)
 	: ftFileProvider(path,size,hash), chunkMap(size,assume_availability)
 {
 	/* 
@@ -617,7 +617,7 @@ bool ftFileCreator::finished()
 	return chunkMap.isComplete() ;
 }
 
-bool ftFileCreator::hashReceivedData(std::string& hash)
+bool ftFileCreator::hashReceivedData(RsFileHash& hash)
 {
 #ifdef FILE_DEBUG
 	std::cerr << "file creator asked for hashing received data " << file_name << std::endl;

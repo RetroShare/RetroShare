@@ -40,7 +40,7 @@ p3LinkMgr   *RsPluginManager::_linkmgr							= NULL ;
 typedef RsPlugin *(*RetroSharePluginEntry)(void) ;
 RsPluginHandler *rsPlugins ;
 
-RsPluginManager::RsPluginManager(const std::string& hash) 
+RsPluginManager::RsPluginManager(const RsFileHash &hash)
 	: p3Config(CONFIG_TYPE_PLUGINS),_current_executable_hash(hash)
 {
 	_allow_all_plugins = false ;
@@ -48,7 +48,7 @@ RsPluginManager::RsPluginManager(const std::string& hash)
 
 void RsPluginManager::loadConfiguration()
 {
-	std::string dummyHash = "dummyHash";
+    RsFileHash dummyHash ;
 	p3Config::loadConfiguration(dummyHash);
 }
 
@@ -81,9 +81,9 @@ bool RsPluginManager::acceptablePluginName(const std::string& name)
 #endif
 }
 
-void RsPluginManager::disablePlugin(const std::string& hash)
+void RsPluginManager::disablePlugin(const RsFileHash& hash)
 {
-	std::set<std::string>::iterator it = _accepted_hashes.find(hash) ;
+    std::set<RsFileHash>::iterator it = _accepted_hashes.find(hash) ;
 	
 	if(it != _accepted_hashes.end())
 	{
@@ -101,7 +101,7 @@ void RsPluginManager::disablePlugin(const std::string& hash)
 	}
 }
 
-void RsPluginManager::enablePlugin(const std::string& hash)
+void RsPluginManager::enablePlugin(const RsFileHash& hash)
 {
 	if(_accepted_hashes.find(hash) == _accepted_hashes.end())
 	{
@@ -110,7 +110,7 @@ void RsPluginManager::enablePlugin(const std::string& hash)
 		_accepted_hashes.insert(hash) ;
 		IndicateConfigChanged() ;
 	}
-	std::set<std::string>::const_iterator it(_rejected_hashes.find(hash)) ;
+    std::set<RsFileHash>::const_iterator it(_rejected_hashes.find(hash)) ;
 	
 	if(it != _rejected_hashes.end())
 	{
@@ -183,7 +183,7 @@ void RsPluginManager::stopPlugins()
 	}
 }
 
-void RsPluginManager::getPluginStatus(int i,uint32_t& status,std::string& file_name,std::string& hash,uint32_t& svn_revision,std::string& error_string) const
+void RsPluginManager::getPluginStatus(int i,uint32_t& status,std::string& file_name,RsFileHash &hash,uint32_t& svn_revision,std::string& error_string) const
 {
 	if((uint32_t)i >= _plugins.size())
 		return ;
@@ -267,7 +267,7 @@ bool RsPluginManager::loadPlugin(const std::string& plugin_name)
 	if(!_allow_all_plugins)
 	{
 		if(_accepted_hashes.find(pinfo.file_hash) == _accepted_hashes.end() && _rejected_hashes.find(pinfo.file_hash) == _rejected_hashes.end() )
-			if(!RsServer::notify()->askForPluginConfirmation(pinfo.file_name,pinfo.file_hash))
+            if(!RsServer::notify()->askForPluginConfirmation(pinfo.file_name,pinfo.file_hash.toStdString()))
 				_rejected_hashes.insert(pinfo.file_hash) ;		// accepted hashes are treated at the end, for security.
 
 		if(_rejected_hashes.find(pinfo.file_hash) != _rejected_hashes.end() )
@@ -435,11 +435,11 @@ void RsPluginManager::addConfigurations(p3ConfigMgr *ConfigMgr)
 
 bool RsPluginManager::loadList(std::list<RsItem*>& list)
 {
-	std::set<std::string> accepted_hash_candidates ;
-	std::set<std::string> rejected_hash_candidates ;
+    std::set<RsFileHash> accepted_hash_candidates ;
+    std::set<RsFileHash> rejected_hash_candidates ;
 
 	std::cerr << "RsPluginManager::loadList(): " << std::endl;
-	std::string reference_executable_hash = "" ;
+    RsFileHash reference_executable_hash ;
 
 	std::list<RsItem *>::iterator it;
 	for(it = list.begin(); it != list.end(); it++) 
@@ -463,12 +463,12 @@ bool RsPluginManager::loadList(std::list<RsItem*>& list)
 				}
 				else if((*kit).key == "ACCEPTED")
 				{
-					accepted_hash_candidates.insert((*kit).value) ;
+                    accepted_hash_candidates.insert(RsFileHash((*kit).value)) ;
 					std::cerr << "   Accepted hash: " << (*kit).value << std::endl;
 				}
 				else if((*kit).key == "REJECTED")
 				{
-					rejected_hash_candidates.insert((*kit).value) ;
+                    rejected_hash_candidates.insert(RsFileHash((*kit).value)) ;
 					std::cerr << "   Rejected hash: " << (*kit).value << std::endl;
 				}
 			}
@@ -501,22 +501,22 @@ bool RsPluginManager::saveList(bool& cleanup, std::list<RsItem*>& list)
 	witem->tlvkvs.pairs.push_back(kv) ;
 
 	kv.key = "REFERENCE_EXECUTABLE_HASH" ;
-	kv.value = _current_executable_hash ;
+    kv.value = _current_executable_hash.toStdString() ;
 	witem->tlvkvs.pairs.push_back(kv) ;
 
 	std::cerr << "  Saving current executable hash: " << kv.value << std::endl;
 
 	// now push accepted and rejected hashes.
 	
-	for(std::set<std::string>::const_iterator it(_accepted_hashes.begin());it!=_accepted_hashes.end();++it)
+    for(std::set<RsFileHash>::const_iterator it(_accepted_hashes.begin());it!=_accepted_hashes.end();++it)
 	{
-		witem->tlvkvs.pairs.push_back( RsTlvKeyValue( "ACCEPTED", *it ) ) ;
+        witem->tlvkvs.pairs.push_back( RsTlvKeyValue( "ACCEPTED", (*it).toStdString() ) ) ;
 		std::cerr << "  " << *it << " : " << "ACCEPTED" << std::endl;
 	}
 
-	for(std::set<std::string>::const_iterator it(_rejected_hashes.begin());it!=_rejected_hashes.end();++it)
+    for(std::set<RsFileHash>::const_iterator it(_rejected_hashes.begin());it!=_rejected_hashes.end();++it)
 	{
-		witem->tlvkvs.pairs.push_back( RsTlvKeyValue( "REJECTED", *it ) ) ;
+        witem->tlvkvs.pairs.push_back( RsTlvKeyValue( "REJECTED", (*it).toStdString() ) ) ;
 		std::cerr << "  " << *it << " : " << "REJECTED" << std::endl;
 	}
 

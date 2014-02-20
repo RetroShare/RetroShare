@@ -158,7 +158,7 @@ class StringExpression: public Expression
 
 		virtual void linearize(LinearizedExpression& e) const ;
 	protected:
-		bool evalStr(std::string &str);
+        bool evalStr(const std::string &str);
 
 		enum StringOperator Op;
 		std::list<std::string> terms;

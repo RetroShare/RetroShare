@@ -38,12 +38,12 @@
 class ftFileProvider
 {
 	public:
-		ftFileProvider(const std::string& path, uint64_t size, const std::string& hash);
+		ftFileProvider(const std::string& path, uint64_t size, const RsFileHash& hash);
 		virtual ~ftFileProvider();
 
 		virtual bool 	getFileData(const SSLIdType& peer_id,uint64_t offset, uint32_t &chunk_size, void *data);
 		virtual bool    FileDetails(FileInfo &info);
-		std::string getHash();
+		RsFileHash getHash();
 		uint64_t getFileSize();
 		bool fileOk();
 
@@ -61,14 +61,14 @@ class ftFileProvider
 		//
 		bool purgeOldPeers(time_t now,uint32_t max_duration) ;
 
-		const std::string& fileHash() const { return hash ; }
+		const RsFileHash& fileHash() const { return hash ; }
 		const std::string& fileName() const { return file_name ; }
 		uint64_t fileSize() const { return mSize ; }
 	protected:
 		virtual	int initializeFileAttrs(); /* does for both */
 
 		uint64_t    mSize;
-		std::string hash;
+		RsFileHash hash;
 		std::string file_name;
 		FILE *fd;
 

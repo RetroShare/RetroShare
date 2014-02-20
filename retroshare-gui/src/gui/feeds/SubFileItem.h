@@ -56,11 +56,11 @@ class SubFileItem : public QWidget, private Ui::SubFileItem
 
 public:
 	/** Default Constructor */
-	SubFileItem(const std::string &hash, const std::string &name, const std::string &path, uint64_t size, uint32_t flags, const RsPeerId &srcId);
+    SubFileItem(const RsFileHash &hash, const std::string &name, const std::string &path, uint64_t size, uint32_t flags, const RsPeerId &srcId);
 
 	void smaller();
 
-	std::string FileHash() { return mFileHash; }
+    RsFileHash FileHash() { return mFileHash; }
 	std::string FileName() { return mFileName; }
 	uint64_t    FileSize() { return mFileSize; }
 	std::string FilePath() { return mPath; }
@@ -94,7 +94,7 @@ private:
 	void Setup();
 
 	std::string mPath;
-	std::string mFileHash;
+    RsFileHash  mFileHash;
 	std::string mFileName;
 	uint64_t    mFileSize;
 	RsPeerId    mSrcId;

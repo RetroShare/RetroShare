@@ -132,7 +132,7 @@ void p3ConfigMgr::loadConfiguration()
 void p3ConfigMgr::loadConfig()
 {
 	std::map<uint32_t, pqiConfig *>::iterator cit;
-	std::string dummyHash = "dummyHash";
+    RsFileHash dummyHash ;
 	for (cit = configs.begin(); cit != configs.end(); cit++)
 	{
 #ifdef CONFIG_DEBUG
@@ -194,7 +194,7 @@ p3Config::p3Config(uint32_t t)
 }
 
 
-bool p3Config::loadConfiguration(std::string &loadHash)
+bool p3Config::loadConfiguration(RsFileHash &loadHash)
 {
 	return loadConfig();
 }

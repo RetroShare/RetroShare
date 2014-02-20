@@ -63,7 +63,7 @@ const uint32_t FT_SERVER_CHUNK_MAP_REQ	= 0x0004;		// chunk map request to be tre
 //const uint32_t FT_CRC32MAP_REQ        	= 0x0005;		// crc32 map request to be treated by server
 const uint32_t FT_CLIENT_CHUNK_CRC_REQ	= 0x0006;		// chunk sha1 crc request to be treated
 
-ftRequest::ftRequest(uint32_t type, const RsPeerId& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunk, void *data)
+ftRequest::ftRequest(uint32_t type, const RsPeerId& peerId, const RsFileHash& hash, uint64_t size, uint64_t offset, uint32_t chunk, void *data)
 	:mType(type), mPeerId(peerId), mHash(hash), mSize(size),
 	mOffset(offset), mChunk(chunk), mData(data)
 {
@@ -80,7 +80,7 @@ ftDataMultiplex::ftDataMultiplex(const RsPeerId& ownId, ftDataSend *server, ftSe
 bool	ftDataMultiplex::addTransferModule(ftTransferModule *mod, ftFileCreator *f)
 {
 	RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
-	std::map<std::string, ftClient>::iterator it;
+    std::map<RsFileHash, ftClient>::iterator it;
 	if (mClients.end() != (it = mClients.find(mod->hash())))
 	{
 		/* error */
@@ -91,11 +91,11 @@ bool	ftDataMultiplex::addTransferModule(ftTransferModule *mod, ftFileCreator *f)
 	return true;
 }
 		
-bool	ftDataMultiplex::removeTransferModule(std::string hash)
+bool	ftDataMultiplex::removeTransferModule(const RsFileHash& hash)
 {
 	RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
 
-	std::map<std::string, ftClient>::iterator it;
+    std::map<RsFileHash, ftClient>::iterator it;
 	if (mClients.end() == (it = mClients.find(hash)))
 	{
 		/* error */
@@ -111,7 +111,7 @@ bool	ftDataMultiplex::removeTransferModule(std::string hash)
 	// With the current action, the next server request will re-create the server as
 	// a ftFileProvider.
 	//
-	std::map<std::string, ftFileProvider*>::iterator sit = mServers.find(hash) ;
+    std::map<RsFileHash, ftFileProvider*>::iterator sit = mServers.find(hash) ;
 
 	if(sit != mServers.end())
 		mServers.erase(sit);
@@ -120,10 +120,10 @@ bool	ftDataMultiplex::removeTransferModule(std::string hash)
 }
 
 
-bool    ftDataMultiplex::FileUploads(std::list<std::string> &hashs)
+bool    ftDataMultiplex::FileUploads(std::list<RsFileHash> &hashs)
 {
 	RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
-	std::map<std::string, ftFileProvider *>::iterator sit;
+    std::map<RsFileHash, ftFileProvider *>::iterator sit;
 	for(sit = mServers.begin(); sit != mServers.end(); sit++)
 	{
 		hashs.push_back(sit->first);
@@ -131,10 +131,10 @@ bool    ftDataMultiplex::FileUploads(std::list<std::string> &hashs)
 	return true;
 }
 	
-bool    ftDataMultiplex::FileDownloads(std::list<std::string> &hashs)
+bool    ftDataMultiplex::FileDownloads(std::list<RsFileHash> &hashs)
 {
 	RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
-	std::map<std::string, ftClient>::iterator cit;
+    std::map<RsFileHash, ftClient>::iterator cit;
 	for(cit = mClients.begin(); cit != mClients.end(); cit++)
 	{
 		hashs.push_back(cit->first);
@@ -143,7 +143,7 @@ bool    ftDataMultiplex::FileDownloads(std::list<std::string> &hashs)
 }
 
 
-bool    ftDataMultiplex::FileDetails(const std::string &hash, FileSearchFlags hintsflag, FileInfo &info)
+bool    ftDataMultiplex::FileDetails(const RsFileHash &hash, FileSearchFlags hintsflag, FileInfo &info)
 {
 #ifdef MPLEX_DEBUG
 	std::cerr << "ftDataMultiplex::FileDetails(";
@@ -155,7 +155,7 @@ bool    ftDataMultiplex::FileDetails(const std::string &hash, FileSearchFlags hi
 
 	if(hintsflag & RS_FILE_HINTS_DOWNLOAD)
 	{
-		std::map<std::string, ftClient>::iterator cit;
+        std::map<RsFileHash, ftClient>::iterator cit;
 		if (mClients.end() != (cit = mClients.find(hash)))
 		{
 
@@ -173,7 +173,7 @@ bool    ftDataMultiplex::FileDetails(const std::string &hash, FileSearchFlags hi
 
 	if(hintsflag & RS_FILE_HINTS_UPLOAD)
 	{
-		std::map<std::string, ftFileProvider *>::iterator sit;
+        std::map<RsFileHash, ftFileProvider *>::iterator sit;
 		sit = mServers.find(hash);
 		if (sit != mServers.end())
 		{
@@ -204,7 +204,7 @@ bool    ftDataMultiplex::FileDetails(const std::string &hash, FileSearchFlags hi
 	/*************** SEND INTERFACE (calls ftDataSend) *******************/
 
 	/* Client Send */
-bool	ftDataMultiplex::sendDataRequest(const RsPeerId& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunksize)
+bool	ftDataMultiplex::sendDataRequest(const RsPeerId& peerId, const RsFileHash& hash, uint64_t size, uint64_t offset, uint32_t chunksize)
 {
 #ifdef MPLEX_DEBUG
 	std::cerr << "ftDataMultiplex::sendDataRequest() Client Send";
@@ -214,7 +214,7 @@ bool	ftDataMultiplex::sendDataRequest(const RsPeerId& peerId, const std::string&
 }
 
 	/* Server Send */
-bool	ftDataMultiplex::sendData(const RsPeerId& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunksize, void *data)
+bool	ftDataMultiplex::sendData(const RsPeerId& peerId, const RsFileHash& hash, uint64_t size, uint64_t offset, uint32_t chunksize, void *data)
 {
 #ifdef MPLEX_DEBUG
 	std::cerr << "ftDataMultiplex::sendData() Server Send";
@@ -227,7 +227,7 @@ bool	ftDataMultiplex::sendData(const RsPeerId& peerId, const std::string& hash, 
 	/*************** RECV INTERFACE (provides ftDataRecv) ****************/
 
 	/* Client Recv */
-bool	ftDataMultiplex::recvData(const RsPeerId& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunksize, void *data)
+bool	ftDataMultiplex::recvData(const RsPeerId& peerId, const RsFileHash& hash, uint64_t size, uint64_t offset, uint32_t chunksize, void *data)
 {
 #ifdef MPLEX_DEBUG
 	std::cerr << "ftDataMultiplex::recvData() Client Recv";
@@ -242,7 +242,7 @@ bool	ftDataMultiplex::recvData(const RsPeerId& peerId, const std::string& hash, 
 
 
 	/* Server Recv */
-bool	ftDataMultiplex::recvDataRequest(const RsPeerId& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunksize)
+bool	ftDataMultiplex::recvDataRequest(const RsPeerId& peerId, const RsFileHash& hash, uint64_t size, uint64_t offset, uint32_t chunksize)
 {
 #ifdef MPLEX_DEBUG
 	std::cerr << "ftDataMultiplex::recvDataRequest() Server Recv";
@@ -256,7 +256,7 @@ bool	ftDataMultiplex::recvDataRequest(const RsPeerId& peerId, const std::string&
 	return true;
 }
 
-bool	ftDataMultiplex::recvChunkMapRequest(const RsPeerId& peerId, const std::string& hash,bool is_client)
+bool	ftDataMultiplex::recvChunkMapRequest(const RsPeerId& peerId, const RsFileHash& hash,bool is_client)
 {
 #ifdef MPLEX_DEBUG
 	std::cerr << "ftDataMultiplex::recvChunkMapRequest() Server Recv";
@@ -273,7 +273,7 @@ bool	ftDataMultiplex::recvChunkMapRequest(const RsPeerId& peerId, const std::str
 	return true;
 }
 
-bool	ftDataMultiplex::recvSingleChunkCRCRequest(const RsPeerId& peerId, const std::string& hash,uint32_t chunk_number)
+bool	ftDataMultiplex::recvSingleChunkCRCRequest(const RsPeerId& peerId, const RsFileHash& hash,uint32_t chunk_number)
 {
 #ifdef MPLEX_DEBUG
 	std::cerr << "ftDataMultiplex::recvChunkMapRequest() Server Recv";
@@ -406,7 +406,7 @@ bool 	ftDataMultiplex::doWork()
 	return true;
 }
 
-bool ftDataMultiplex::recvSingleChunkCRC(const RsPeerId& peerId, const std::string& hash,uint32_t chunk_number,const Sha1CheckSum& crc)
+bool ftDataMultiplex::recvSingleChunkCRC(const RsPeerId& peerId, const RsFileHash& hash,uint32_t chunk_number,const Sha1CheckSum& crc)
 {
 	RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
 
@@ -425,7 +425,7 @@ bool ftDataMultiplex::recvSingleChunkCRC(const RsPeerId& peerId, const std::stri
 
 	// update the cache: get size from the client.
 
-	std::map<std::string, ftClient>::iterator it = mClients.find(hash);
+    std::map<RsFileHash, ftClient>::iterator it = mClients.find(hash);
 
 	if(it == mClients.end())
 	{
@@ -456,9 +456,9 @@ bool ftDataMultiplex::dispatchReceivedChunkCheckSum()
 
 	uint32_t MAX_CHECKSUM_CHECK_PER_FILE = 25 ;
 
-	for(std::map<std::string,Sha1CacheEntry>::iterator it(_cached_sha1maps.begin());it!=_cached_sha1maps.end();)
+    for(std::map<RsFileHash,Sha1CacheEntry>::iterator it(_cached_sha1maps.begin());it!=_cached_sha1maps.end();)
 	{
-		std::map<std::string, ftClient>::iterator itc = mClients.find(it->first);
+        std::map<RsFileHash, ftClient>::iterator itc = mClients.find(it->first);
 
 #ifdef MPLEX_DEBUG
 		std::cerr << "ftDataMultiplex::dispatchReceivedChunkCheckSum(): treating hash " << it->first << std::endl;
@@ -470,7 +470,7 @@ bool ftDataMultiplex::dispatchReceivedChunkCheckSum()
 			std::cerr << "ftDataMultiplex::dispatchReceivedChunkCheckSum() ERROR: No matching Client for hash. This is probably a late answer. Dropping the hash. Hash=" << it->first << std::endl;
 #endif
 
-			std::map<std::string,Sha1CacheEntry>::iterator tmp(it) ;
+            std::map<RsFileHash,Sha1CacheEntry>::iterator tmp(it) ;
 			++tmp ;
 			_cached_sha1maps.erase(it) ;
 			it = tmp ;
@@ -503,13 +503,13 @@ bool ftDataMultiplex::dispatchReceivedChunkCheckSum()
 // - an uploader has sent his chunk map, so we need to store it in the corresponding ftFileProvider
 // - a source for a download has sent his chunk map, so we need to send it to the corresponding ftFileCreator.
 //
-bool ftDataMultiplex::recvChunkMap(const RsPeerId& peerId, const std::string& hash,const CompressedChunkMap& compressed_map,bool client)
+bool ftDataMultiplex::recvChunkMap(const RsPeerId& peerId, const RsFileHash& hash,const CompressedChunkMap& compressed_map,bool client)
 {
 	RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
 
 	if(client)	// is the chunk map for a client, or for a server ?
 	{
-		std::map<std::string, ftClient>::iterator it = mClients.find(hash);
+        std::map<RsFileHash, ftClient>::iterator it = mClients.find(hash);
 
 		if(it == mClients.end())
 		{
@@ -531,7 +531,7 @@ bool ftDataMultiplex::recvChunkMap(const RsPeerId& peerId, const std::string& ha
 	}
 	else
 	{
-		std::map<std::string, ftFileProvider *>::iterator it = mServers.find(hash) ;
+        std::map<RsFileHash, ftFileProvider *>::iterator it = mServers.find(hash) ;
 
 		if(it == mServers.end())
 		{
@@ -549,14 +549,14 @@ bool ftDataMultiplex::recvChunkMap(const RsPeerId& peerId, const std::string& ha
 	return false;
 }
 
-bool ftDataMultiplex::handleRecvClientChunkMapRequest(const RsPeerId& peerId, const std::string& hash)
+bool ftDataMultiplex::handleRecvClientChunkMapRequest(const RsPeerId& peerId, const RsFileHash& hash)
 {
 	CompressedChunkMap cmap ;
 
 	{
 		RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
 
-		std::map<std::string, ftClient>::iterator it = mClients.find(hash);
+        std::map<RsFileHash, ftClient>::iterator it = mClients.find(hash);
 
 		if(it == mClients.end())
 		{
@@ -581,7 +581,7 @@ bool ftDataMultiplex::handleRecvClientChunkMapRequest(const RsPeerId& peerId, co
 	return true ;
 }
 
-bool ftDataMultiplex::handleRecvChunkCrcRequest(const RsPeerId& peerId, const std::string& hash, uint32_t chunk_number)
+bool ftDataMultiplex::handleRecvChunkCrcRequest(const RsPeerId& peerId, const RsFileHash& hash, uint32_t chunk_number)
 {
 	// look into the sha1sum cache
 	
@@ -614,7 +614,7 @@ bool ftDataMultiplex::handleRecvChunkCrcRequest(const RsPeerId& peerId, const st
 		return true ;
 	}
 
-	std::map<std::string, ftFileProvider *>::iterator it ;
+    std::map<RsFileHash, ftFileProvider *>::iterator it ;
 	std::string filename ;
 	uint64_t filesize =0;
 	found = true ;
@@ -705,10 +705,10 @@ bool ftDataMultiplex::handleRecvChunkCrcRequest(const RsPeerId& peerId, const st
 	return true ;
 }
 
-bool ftDataMultiplex::handleRecvServerChunkMapRequest(const RsPeerId& peerId, const std::string& hash)
+bool ftDataMultiplex::handleRecvServerChunkMapRequest(const RsPeerId& peerId, const RsFileHash& hash)
 {
 	CompressedChunkMap cmap ;
-	std::map<std::string, ftFileProvider *>::iterator it ;
+    std::map<RsFileHash, ftFileProvider *>::iterator it ;
 	bool found = true ;
 
 	{
@@ -754,13 +754,13 @@ bool ftDataMultiplex::handleRecvServerChunkMapRequest(const RsPeerId& peerId, co
 	return true;
 }
 
-bool	ftDataMultiplex::handleRecvData(const RsPeerId& peerId, const std::string& hash, uint64_t /*size*/, uint64_t offset, uint32_t chunksize, void *data)
+bool	ftDataMultiplex::handleRecvData(const RsPeerId& peerId, const RsFileHash& hash, uint64_t /*size*/, uint64_t offset, uint32_t chunksize, void *data)
 {
 	ftTransferModule *transfer_module = NULL ;
 
 	{
 		RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
-		std::map<std::string, ftClient>::iterator it;
+        std::map<RsFileHash, ftClient>::iterator it;
 		if (mClients.end() == (it = mClients.find(hash)))
 		{
 #ifdef MPLEX_DEBUG
@@ -785,12 +785,12 @@ bool	ftDataMultiplex::handleRecvData(const RsPeerId& peerId, const std::string& 
 
 
 	/* called by ftTransferModule */
-bool	ftDataMultiplex::handleRecvDataRequest(const RsPeerId& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunksize)
+bool	ftDataMultiplex::handleRecvDataRequest(const RsPeerId& peerId, const RsFileHash& hash, uint64_t size, uint64_t offset, uint32_t chunksize)
 {
 	/**** Find Files *****/
 
 	RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
-	std::map<std::string, ftClient>::iterator cit;
+    std::map<RsFileHash, ftClient>::iterator cit;
 	if (mOwnId == peerId)
 	{
 		/* own requests must be passed to Servers */
@@ -809,7 +809,7 @@ bool	ftDataMultiplex::handleRecvDataRequest(const RsPeerId& peerId, const std::s
 		return true;
 	}
 	
-	std::map<std::string, ftFileProvider *>::iterator sit;
+    std::map<RsFileHash, ftFileProvider *>::iterator sit;
 	if (mServers.end() != (sit = mServers.find(hash)))
 	{
 #ifdef MPLEX_DEBUG
@@ -831,7 +831,7 @@ bool	ftDataMultiplex::handleRecvDataRequest(const RsPeerId& peerId, const std::s
 	return true;
 }
 
-bool	ftDataMultiplex::locked_handleServerRequest(ftFileProvider *provider, const RsPeerId& peerId, const std::string& hash, uint64_t size, 
+bool	ftDataMultiplex::locked_handleServerRequest(ftFileProvider *provider, const RsPeerId& peerId, const RsFileHash& hash, uint64_t size,
 			uint64_t offset, uint32_t chunksize)
 {
 	if(chunksize > uint32_t(10*1024*1024))
@@ -872,13 +872,13 @@ bool	ftDataMultiplex::locked_handleServerRequest(ftFileProvider *provider, const
 	return false;
 }
 
-bool ftDataMultiplex::getClientChunkMap(const std::string& upload_hash,const RsPeerId& peerId,CompressedChunkMap& cmap)
+bool ftDataMultiplex::getClientChunkMap(const RsFileHash& upload_hash,const RsPeerId& peerId,CompressedChunkMap& cmap)
 {
 	bool too_old = false;
 	{
 		RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
 
-		std::map<std::string,ftFileProvider *>::iterator sit = mServers.find(upload_hash); 
+        std::map<RsFileHash,ftFileProvider *>::iterator sit = mServers.find(upload_hash);
 
 		if(mServers.end() == sit)
 			return false ;
@@ -894,11 +894,11 @@ bool ftDataMultiplex::getClientChunkMap(const std::string& upload_hash,const RsP
 	return true ;
 }
 
-bool ftDataMultiplex::sendChunkMapRequest(const RsPeerId& peer_id,const std::string& hash,bool is_client)
+bool ftDataMultiplex::sendChunkMapRequest(const RsPeerId& peer_id,const RsFileHash& hash,bool is_client)
 {
 	return mDataSend->sendChunkMapRequest(peer_id,hash,is_client);
 }
-bool ftDataMultiplex::sendSingleChunkCRCRequests(const std::string& hash, const std::vector<uint32_t>& to_ask)
+bool ftDataMultiplex::sendSingleChunkCRCRequests(const RsFileHash& hash, const std::vector<uint32_t>& to_ask)
 {
 	RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
 
@@ -930,7 +930,7 @@ void ftDataMultiplex::handlePendingCrcRequests()
 	// With this, only active sources are querried.
 	//
 
-	for(std::map<std::string,Sha1CacheEntry>::iterator it(_cached_sha1maps.begin());it!=_cached_sha1maps.end();++it)
+    for(std::map<RsFileHash,Sha1CacheEntry>::iterator it(_cached_sha1maps.begin());it!=_cached_sha1maps.end();++it)
 		for(std::map<uint32_t,std::pair<time_t,ChunkCheckSumSourceList> >::iterator it2(it->second._to_ask.begin());it2!=it->second._to_ask.end();++it2)
 			if(it2->second.first + MAX_CHECKING_CHUNK_WAIT_DELAY < now)	// is the last request old enough?
 			{
@@ -939,7 +939,7 @@ void ftDataMultiplex::handlePendingCrcRequests()
 #endif
 				// 0 - ask which sources can be used for this chunk
 				//
-				std::map<std::string,ftClient>::const_iterator it4(mClients.find(it->first)) ;
+                std::map<RsFileHash,ftClient>::const_iterator it4(mClients.find(it->first)) ;
 
 				if(it4 == mClients.end())
 					continue ;
@@ -1011,7 +1011,7 @@ void ftDataMultiplex::deleteUnusedServers()
 	//scan the uploads list in ftdatamultiplex and delete the items which time out
 	time_t now = time(NULL);
 
-	for(std::map<std::string, ftFileProvider *>::iterator sit(mServers.begin());sit != mServers.end();)
+    for(std::map<RsFileHash, ftFileProvider *>::iterator sit(mServers.begin());sit != mServers.end();)
 		if(sit->second->purgeOldPeers(now,10))
 		{
 #ifdef MPLEX_DEBUG
@@ -1030,7 +1030,7 @@ void ftDataMultiplex::deleteUnusedServers()
 				std::cerr << "ftDataMultiplex::deleteUnusedServers(): " << (void*)sit->second << " was not deleted because it's also a file creator." << std::endl ;
 #endif
 
-			std::map<std::string, ftFileProvider *>::iterator tmp(sit);
+            std::map<RsFileHash, ftFileProvider *>::iterator tmp(sit);
 			++tmp ;
 
 			mServers.erase(sit);
@@ -1041,7 +1041,7 @@ void ftDataMultiplex::deleteUnusedServers()
 			++sit ;
 }
 
-bool	ftDataMultiplex::handleSearchRequest(const RsPeerId& peerId, const std::string& hash)
+bool	ftDataMultiplex::handleSearchRequest(const RsPeerId& peerId, const RsFileHash& hash)
 {
 #ifdef MPLEX_DEBUG
 	std::cerr << "ftDataMultiplex::handleSearchRequest(";
@@ -1082,7 +1082,7 @@ bool	ftDataMultiplex::handleSearchRequest(const RsPeerId& peerId, const std::str
 		std::cerr << "ftDataMultiplex::handleSearchRequest(";
 		std::cerr << " Found Local File, sharing...";
 #endif
-		std::map<std::string,ftFileProvider*>::const_iterator it = mServers.find(hash) ;
+        std::map<RsFileHash,ftFileProvider*>::const_iterator it = mServers.find(hash) ;
 		ftFileProvider *provider ;
 
 		if(it == mServers.end())
@@ -1113,7 +1113,7 @@ bool	ftDataMultiplex::handleSearchRequest(const RsPeerId& peerId, const std::str
 	{
 		RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
 
-		std::map<std::string,ftClient>::const_iterator it(mClients.find(hash)) ;
+        std::map<RsFileHash,ftClient>::const_iterator it(mClients.find(hash)) ;
 		
 		if(it != mClients.end())
 		{

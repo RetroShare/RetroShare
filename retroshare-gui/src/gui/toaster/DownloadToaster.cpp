@@ -29,7 +29,7 @@
 
 #include <retroshare/rsfiles.h>
 
-DownloadToaster::DownloadToaster(const std::string &hash, const QString &name) : QWidget(NULL)
+DownloadToaster::DownloadToaster(const RsFileHash &hash, const QString &name) : QWidget(NULL)
 {
 	ui.setupUi(this);
 

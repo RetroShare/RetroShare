@@ -47,7 +47,7 @@ class ftFileCreator: public ftFileProvider
 {
 	public:
 
-		ftFileCreator(const std::string& savepath, uint64_t size, const std::string& hash,bool assume_availability);
+		ftFileCreator(const std::string& savepath, uint64_t size, const RsFileHash& hash,bool assume_availability);
 
 		~ftFileCreator();
 
@@ -69,7 +69,7 @@ class ftFileCreator: public ftFileProvider
 		// long time. Therefore, we must pay attention not to call this function
 		// at a time file_name nor hash can be modified, which is quite easy.
 
-		bool hashReceivedData(std::string& hash) ;
+		bool hashReceivedData(RsFileHash& hash) ;
 
 		// Sets all chunks to checking state
 		//

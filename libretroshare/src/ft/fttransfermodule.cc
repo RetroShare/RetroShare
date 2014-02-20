@@ -553,14 +553,14 @@ class HashThread: public RsThread
 #ifdef FT_DEBUG
 			std::cerr << "hash thread is running for file " << std::endl;
 #endif
-			std::string tmphash ;
+			RsFileHash tmphash ;
 			_m->hashReceivedData(tmphash) ;
 
 			RsStackMutex stack(_hashThreadMtx) ;
 			_hash = tmphash ;
 			_finished = true ;
 		}
-		std::string hash() 
+		RsFileHash hash() 
 		{
 			RsStackMutex stack(_hashThreadMtx) ;
 			return _hash ;
@@ -574,7 +574,7 @@ class HashThread: public RsThread
 		RsMutex _hashThreadMtx ;
 		ftFileCreator *_m ;
 		bool _finished ;
-		std::string _hash ;
+		RsFileHash _hash ;
 };
 
 bool ftTransferModule::checkFile()
@@ -607,7 +607,7 @@ bool ftTransferModule::checkFile()
 			return false ;
 		}
 
-		std::string check_hash( _hash_thread->hash() ) ;
+		RsFileHash check_hash( _hash_thread->hash() ) ;
 
 		_hash_thread->join();	// allow releasing of resources when finished.
 

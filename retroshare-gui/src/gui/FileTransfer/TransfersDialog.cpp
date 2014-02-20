@@ -621,7 +621,7 @@ void TransfersDialog::processSettings(bool bLoad)
 
 void TransfersDialog::downloadListCustomPopupMenu( QPoint /*point*/ )
 {
-	std::set<std::string> items;
+    std::set<RsFileHash> items;
 	getSelectedItems(&items, NULL);
 
 	bool single = (items.size() == 1) ;
@@ -677,7 +677,7 @@ void TransfersDialog::downloadListCustomPopupMenu( QPoint /*point*/ )
 			if ( lst[i].column() == 0)
 			{
                 //Get Info for current item
-                if (rsFiles->FileDetails(getID(lst[i].row(), DLListModel).toStdString(), RS_FILE_HINTS_DOWNLOAD, info))
+                if (rsFiles->FileDetails(RsFileHash(getID(lst[i].row(), DLListModel).toStdString()), RS_FILE_HINTS_DOWNLOAD, info))
                 {
                     /*const uint32_t FT_STATE_FAILED        = 0x0000 ;
                       const uint32_t FT_STATE_OKAY          = 0x0001 ;
@@ -852,7 +852,7 @@ void TransfersDialog::uploadsListCustomPopupMenu( QPoint /*point*/ )
 {
     std::cerr << "TransfersDialog::uploadsListCustomPopupMenu()" << std::endl;
 
-    std::set<std::string> items;
+    std::set<RsFileHash> items;
     getULSelectedItems(&items, NULL);
 
     bool single = (items.size() == 1);
@@ -885,23 +885,23 @@ void TransfersDialog::chooseDestinationDirectory()
 	if(dest_dir.isNull())
 		return ;
 
-	std::set<std::string> items ;
+    std::set<RsFileHash> items ;
 	getSelectedItems(&items, NULL);
 
-	for(std::set<std::string>::const_iterator it(items.begin());it!=items.end();++it)
+    for(std::set<RsFileHash>::const_iterator it(items.begin());it!=items.end();++it)
 	{
 		std::cerr << "Setting new directory " << dest_dir.toUtf8().data() << " to file " << *it << std::endl;
-		rsFiles->setDestinationDirectory(*it,dest_dir.toUtf8().data() ) ;
+        rsFiles->setDestinationDirectory(*it,dest_dir.toUtf8().data() ) ;
 	}
 }
 void TransfersDialog::setDestinationDirectory()
 {
 	std::string dest_dir(qobject_cast<QAction*>(sender())->data().toString().toUtf8().data()) ;
 
-	std::set<std::string> items ;
+    std::set<RsFileHash> items ;
 	getSelectedItems(&items, NULL);
 
-	for(std::set<std::string>::const_iterator it(items.begin());it!=items.end();++it)
+    for(std::set<RsFileHash>::const_iterator it(items.begin());it!=items.end();++it)
 	{
 		std::cerr << "Setting new directory " << dest_dir << " to file " << *it << std::endl;
 		rsFiles->setDestinationDirectory(*it,dest_dir) ;
@@ -910,7 +910,7 @@ void TransfersDialog::setDestinationDirectory()
 
 int TransfersDialog::addItem(int row, const FileInfo &fileInfo)
 {
-	QString fileHash = QString::fromStdString(fileInfo.hash);
+    QString fileHash = QString::fromStdString(fileInfo.hash.toStdString());
 	double fileDlspeed = (fileInfo.downloadStatus == FT_STATE_DOWNLOADING) ? (fileInfo.tfRate * 1024.0) : 0.0;
 
 	QString status;
@@ -951,7 +951,7 @@ int TransfersDialog::addItem(int row, const FileInfo &fileInfo)
 		if (fileInfo.downloadStatus == FT_STATE_COMPLETE) 
 			file = QFileInfo(QString::fromUtf8(fileInfo.path.c_str()), QString::fromUtf8(fileInfo.fname.c_str()));
 		else 
-			file = QFileInfo(QString::fromUtf8(rsFiles->getPartialsDirectory().c_str()), QString::fromUtf8(fileInfo.hash.c_str()));
+            file = QFileInfo(QString::fromUtf8(rsFiles->getPartialsDirectory().c_str()), QString::fromUtf8(fileInfo.hash.toStdString().c_str()));
 		
 		/*Get Last Access on File */
 		if (file.exists()) 
@@ -1232,12 +1232,12 @@ void TransfersDialog::insertTransfers()
 	ui.downloadList->setSortingEnabled(false);
 
 	/* get the download lists */
-	std::list<std::string> downHashes;
+    std::list<RsFileHash> downHashes;
 	rsFiles->FileDownloads(downHashes);
 
 	/* build set for quick search */
-	std::set<std::string> hashs;
-	std::list<std::string>::iterator it;
+    std::set<RsFileHash> hashs;
+    std::list<RsFileHash>::iterator it;
 	for (it = downHashes.begin(); it != downHashes.end(); ++it) {
 		hashs.insert(*it);
 	}
@@ -1246,10 +1246,10 @@ void TransfersDialog::insertTransfers()
 
 	int rowCount = DLListModel->rowCount();
 	int row ;
-	std::set<std::string>::iterator hashIt;
+    std::set<RsFileHash>::iterator hashIt;
 
 	for (row = 0; row < rowCount; ) {
-        std::string hash = DLListModel->item(row, COLUMN_ID)->data(Qt::UserRole).toString().toStdString();
+        RsFileHash hash ( DLListModel->item(row, COLUMN_ID)->data(Qt::UserRole).toString().toStdString());
 
 		hashIt = hashs.find(hash);
 		if (hashIt == hashs.end()) {
@@ -1306,12 +1306,12 @@ void TransfersDialog::insertTransfers()
 
 	// Now show upload hashes
 	//
-	std::list<std::string> upHashes;
+    std::list<RsFileHash> upHashes;
 	rsFiles->FileUploads(upHashes);
 
     RsPeerId ownId = rsPeers->getOwnId();
 
-	std::set<std::string> used_hashes ;
+    std::set<std::string> used_hashes ;
 
 	for(it = upHashes.begin(); it != upHashes.end(); it++) 
 	{
@@ -1328,7 +1328,7 @@ void TransfersDialog::insertTransfers()
 			if (pit->peerId == ownId) //don't display transfer to ourselves
 				continue ;
 
-			QString fileHash        = QString::fromStdString(info.hash);
+            QString fileHash        = QString::fromStdString(info.hash.toStdString());
 			QString fileName    	= QString::fromUtf8(info.fname.c_str());
 			QString source	= getPeerName(pit->peerId);
 
@@ -1425,8 +1425,8 @@ void TransfersDialog::cancel()
 {
 	bool first = true;
 
-	std::set<std::string> items;
-	std::set<std::string>::iterator it;
+    std::set<RsFileHash> items;
+    std::set<RsFileHash>::iterator it;
 	getSelectedItems(&items, NULL);
 	for (it = items.begin(); it != items.end(); it ++) {
 		if (first) {
@@ -1472,8 +1472,8 @@ void TransfersDialog::copyLink ()
 {
 	QList<RetroShareLink> links ;
 
-	std::set<std::string> items;
-	std::set<std::string>::iterator it;
+    std::set<RsFileHash> items;
+    std::set<RsFileHash>::iterator it;
 	getSelectedItems(&items, NULL);
 
 	for (it = items.begin(); it != items.end(); it ++) {
@@ -1483,7 +1483,7 @@ void TransfersDialog::copyLink ()
 		}
 
 		RetroShareLink link;
-		if (link.createFile(QString::fromUtf8(info.fname.c_str()), info.size, QString::fromStdString(info.hash))) {
+        if (link.createFile(QString::fromUtf8(info.fname.c_str()), info.size, QString::fromStdString(info.hash.toStdString()))) {
 			links.push_back(link) ;
 		}
 	}
@@ -1495,8 +1495,8 @@ void TransfersDialog::ulCopyLink ()
 {
     QList<RetroShareLink> links ;
 
-    std::set<std::string> items;
-    std::set<std::string>::iterator it;
+    std::set<RsFileHash> items;
+    std::set<RsFileHash>::iterator it;
     getULSelectedItems(&items, NULL);
 
     for (it = items.begin(); it != items.end(); it ++) {
@@ -1506,7 +1506,7 @@ void TransfersDialog::ulCopyLink ()
         }
 
         RetroShareLink link;
-        if (link.createFile(QString::fromUtf8(info.fname.c_str()), info.size, QString::fromStdString(info.hash))) {
+        if (link.createFile(QString::fromUtf8(info.fname.c_str()), info.size, QString::fromStdString(info.hash.toStdString()))) {
             links.push_back(link) ;
         }
     }
@@ -1530,7 +1530,7 @@ void TransfersDialog::showDetailsDialog()
 
 void TransfersDialog::updateDetailsDialog()
 {
-    std::string file_hash ;
+    RsFileHash file_hash ;
     std::set<int> rows;
     std::set<int>::iterator it;
     getSelectedItems(NULL, &rows);
@@ -1538,7 +1538,7 @@ void TransfersDialog::updateDetailsDialog()
     if (rows.size()) {
         int row = *rows.begin();
 
-        file_hash = getID(row, DLListModel).toStdString();
+        file_hash = RsFileHash(getID(row, DLListModel).toStdString());
     }
 
     detailsDialog()->setFileHash(file_hash);
@@ -1549,7 +1549,7 @@ void TransfersDialog::pasteLink()
 	RSLinkClipboard::process(RetroShareLink::TYPE_FILE);
 }
 
-void TransfersDialog::getSelectedItems(std::set<std::string> *ids, std::set<int> *rows)
+void TransfersDialog::getSelectedItems(std::set<RsFileHash> *ids, std::set<int> *rows)
 {
 	if (ids == NULL && rows == NULL) {
 		return;
@@ -1584,8 +1584,8 @@ void TransfersDialog::getSelectedItems(std::set<std::string> *ids, std::set<int>
 		if (isParentSelected || isChildSelected) {
 			if (ids) {
                 QStandardItem *id = DLListModel->item(i, COLUMN_ID);
-				ids->insert(id->data(Qt::DisplayRole).toString().toStdString());
-				ids->insert(id->data(Qt::UserRole   ).toString().toStdString());
+                ids->insert(RsFileHash(id->data(Qt::DisplayRole).toString().toStdString()));
+                ids->insert(RsFileHash(id->data(Qt::UserRole   ).toString().toStdString()));
 			}
 			if (rows) {
 				rows->insert(i);
@@ -1594,7 +1594,7 @@ void TransfersDialog::getSelectedItems(std::set<std::string> *ids, std::set<int>
 	}
 }
 
-void TransfersDialog::getULSelectedItems(std::set<std::string> *ids, std::set<int> *rows)
+void TransfersDialog::getULSelectedItems(std::set<RsFileHash> *ids, std::set<int> *rows)
 {
     if (ids == NULL && rows == NULL) {
         return;
@@ -1609,7 +1609,7 @@ void TransfersDialog::getULSelectedItems(std::set<std::string> *ids, std::set<in
     foreach(index, indexes) {
         if (ids) {
             QStandardItem *id = ULListModel->item(index.row(), COLUMN_UHASH);
-            ids->insert(id->data(Qt::DisplayRole).toString().toStdString());
+            ids->insert(RsFileHash(id->data(Qt::DisplayRole).toString().toStdString()));
         }
         if (rows) {
             rows->insert(index.row());
@@ -1623,8 +1623,8 @@ bool TransfersDialog::controlTransferFile(uint32_t flags)
 {
 	bool result = true;
 
-	std::set<std::string> items;
-	std::set<std::string>::iterator it;
+    std::set<RsFileHash> items;
+    std::set<RsFileHash>::iterator it;
 	getSelectedItems(&items, NULL);
 	for (it = items.begin(); it != items.end(); it ++) {
 		result &= rsFiles->FileControl(*it, flags);
@@ -1653,8 +1653,8 @@ void TransfersDialog::openFolderTransfer()
 {
 	FileInfo info;
 
-	std::set<std::string> items;
-	std::set<std::string>::iterator it;
+    std::set<RsFileHash> items;
+    std::set<RsFileHash>::iterator it;
 	getSelectedItems(&items, NULL);
 	for (it = items.begin(); it != items.end(); it ++) {
 		if (!rsFiles->FileDetails(*it, RS_FILE_HINTS_DOWNLOAD, info)) continue;
@@ -1683,8 +1683,8 @@ void TransfersDialog::ulOpenFolder()
 {
     FileInfo info;
 
-    std::set<std::string> items;
-    std::set<std::string>::iterator it;
+    std::set<RsFileHash> items;
+    std::set<RsFileHash>::iterator it;
     getULSelectedItems(&items, NULL);
     for (it = items.begin(); it != items.end(); it ++) {
         if (!rsFiles->FileDetails(*it, RS_FILE_HINTS_UPLOAD, info)) continue;
@@ -1710,8 +1710,8 @@ void TransfersDialog::previewTransfer()
 {
 	FileInfo info;
 
-	std::set<std::string> items;
-	std::set<std::string>::iterator it;
+    std::set<RsFileHash> items;
+    std::set<RsFileHash>::iterator it;
 	getSelectedItems(&items, NULL);
 	for (it = items.begin(); it != items.end(); it ++) {
 		if (!rsFiles->FileDetails(*it, RS_FILE_HINTS_DOWNLOAD, info)) continue;
@@ -1726,7 +1726,7 @@ void TransfersDialog::previewTransfer()
 	if (info.downloadStatus == FT_STATE_COMPLETE) {
 		fileInfo = QFileInfo(QString::fromUtf8(info.path.c_str()), QString::fromUtf8(info.fname.c_str()));
 	} else {
-		fileInfo = QFileInfo(QString::fromUtf8(rsFiles->getPartialsDirectory().c_str()), QString::fromUtf8(info.hash.c_str()));
+        fileInfo = QFileInfo(QString::fromUtf8(rsFiles->getPartialsDirectory().c_str()), QString::fromUtf8(info.hash.toStdString().c_str()));
 
 		QString linkName = QFileInfo(QDir::temp(), QString::fromUtf8(info.fname.c_str())).absoluteFilePath();
 		if (QFile::link(fileInfo.absoluteFilePath(), linkName)) {
@@ -1760,8 +1760,8 @@ void TransfersDialog::openTransfer()
 {
 	FileInfo info;
 
-	std::set<std::string> items;
-	std::set<std::string>::iterator it;
+    std::set<RsFileHash> items;
+    std::set<RsFileHash>::iterator it;
 	getSelectedItems(&items, NULL);
 	for (it = items.begin(); it != items.end(); it ++) {
 		if (!rsFiles->FileDetails(*it, RS_FILE_HINTS_DOWNLOAD, info)) continue;
@@ -1819,8 +1819,8 @@ void TransfersDialog::chunkProgressive()
 }
 void TransfersDialog::setChunkStrategy(FileChunksInfo::ChunkStrategy s)
 {
-	std::set<std::string> items;
-	std::set<std::string>::iterator it;
+    std::set<RsFileHash> items;
+    std::set<RsFileHash>::iterator it;
 	getSelectedItems(&items, NULL);
 
 	for (it = items.begin(); it != items.end(); it ++) {
@@ -1860,8 +1860,8 @@ void TransfersDialog::priorityQueueBottom()
 
 void TransfersDialog::changeSpeed(int speed)
 {
-	std::set<std::string> items;
-	std::set<std::string>::iterator it;
+    std::set<RsFileHash> items;
+    std::set<RsFileHash>::iterator it;
 	getSelectedItems(&items, NULL);
 
 	for (it = items.begin(); it != items.end(); it ++) 
@@ -1890,7 +1890,7 @@ static bool checkFileName(const QString& name)
 
 void TransfersDialog::renameFile()
 {
-	std::set<std::string> items;
+    std::set<RsFileHash> items;
 	getSelectedItems(&items, NULL);
 
 	if(items.size() != 1)
@@ -1899,7 +1899,7 @@ void TransfersDialog::renameFile()
 		return ;
 	}
 
-	std::string hash = *(items.begin()) ;
+    RsFileHash hash = *(items.begin()) ;
 
 	FileInfo info ;
 	if (!rsFiles->FileDetails(hash, RS_FILE_HINTS_DOWNLOAD, info)) 
@@ -1925,8 +1925,8 @@ void TransfersDialog::renameFile()
 void TransfersDialog::changeQueuePosition(QueueMove mv)
 {
 	//	std::cerr << "In changeQueuePosition (gui)"<< std::endl ;
-	std::set<std::string> items;
-	std::set<std::string>::iterator it;
+    std::set<RsFileHash> items;
+    std::set<RsFileHash>::iterator it;
 	getSelectedItems(&items, NULL);
 
 	for (it = items.begin(); it != items.end(); it ++) 
@@ -1943,7 +1943,7 @@ void TransfersDialog::clearcompleted()
 
 void TransfersDialog::showFileDetails()
 {
-	std::string file_hash ;
+    RsFileHash file_hash ;
 	int nb_select = 0 ;
 
 	for(int i = 0; i <= DLListModel->rowCount(); i++) 
@@ -1953,7 +1953,7 @@ void TransfersDialog::showFileDetails()
 			  ++nb_select ;
 		}
 	if(nb_select != 1)
-		detailsDialog()->setFileHash("") ;
+        detailsDialog()->setFileHash(RsFileHash()) ;
 	else
 		detailsDialog()->setFileHash(file_hash) ;
 	

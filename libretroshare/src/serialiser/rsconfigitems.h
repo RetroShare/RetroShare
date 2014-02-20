@@ -201,13 +201,13 @@ virtual ~RsCacheConfig();
 virtual void clear();
 std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
-        std::string     pid;                 /* Mandatory */
+        RsPeerId        pid;                 /* Mandatory */
 	uint16_t        cachetypeid;            /* Mandatory */
 	uint16_t        cachesubid;             /* Mandatory */
 
 	std::string     path;    	        /* Mandatory */
 	std::string     name;    	        /* Mandatory */
-	std::string     hash;    	        /* Mandatory */
+    RsFileHash      hash;    	        /* Mandatory */
 	uint64_t	size;			/* Mandatory */
 
 	uint32_t	recvd;                  /* Mandatory */
@@ -254,7 +254,7 @@ class RsFileTransfer: public RsItem
 		RsTlvFileItem file;
 		RsTlvPeerIdSet allPeerIds;
 
-		SSLIdType cPeerId;
+        RsPeerId cPeerId;
 
 		uint16_t state;
 		uint16_t in;

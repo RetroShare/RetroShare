@@ -33,6 +33,7 @@
 #include "retroshare/rsiface.h"
 #include "pqi/p3notify.h"
 #include "retroshare/rspeers.h"
+#include "retroshare/rstypes.h"
 #include "util/folderiterator.h"
 #include <errno.h>
 
@@ -52,7 +53,7 @@
 //#define FIM_DEBUG 1
 // ***********/
 
-FileIndexMonitor::FileIndexMonitor(CacheStrapper *cs, std::string cachedir, const SSLIdType& pid,const std::string& config_dir)
+FileIndexMonitor::FileIndexMonitor(CacheStrapper *cs, std::string cachedir, const RsPeerId& pid,const std::string& config_dir)
 	:CacheSource(RS_SERVICE_TYPE_FILE_INDEX, false, cs, cachedir), fiMutex("FileIndexMonitor"), fi(pid),
 		pendingDirs(false), pendingForceCacheWrite(false),
 		mForceCheck(false), mInCheck(false), hashCache(config_dir+"/" + "file_cache.lst"),useHashCache(true)
@@ -142,12 +143,6 @@ HashCache::HashCache(const std::string& path)
 		f.getline(buff,max_line_size,'\n') ; if(sscanf(buff,RsDirUtil::scanf_string_for_uint(sizeof(info.modf_stamp)),&info.modf_stamp) != 1) { std::cerr << "Could not read one entry! Giving up." << std::endl; break ; }
 		f.getline(buff,max_line_size,'\n') ; info.hash = std::string(buff) ;
 
-		if(info.hash.length() != 40)
-		{
-			std::cerr << "Loaded hash is not a hash: " << info.hash << std::endl;
-			break ;
-		}
-
 #ifdef FIM_DEBUG
 		std::cerr << "  (" << name << ", " << info.size << ", " << info.time_stamp << ", " << info.modf_stamp << ", " << info.hash << std::endl ;
 		++n ;
@@ -194,7 +189,7 @@ void HashCache::save()
 #endif
 }
 
-bool HashCache::find(const std::string& full_path,uint64_t size,time_t time_stamp,std::string& hash)
+bool HashCache::find(const std::string& full_path,uint64_t size,time_t time_stamp,RsFileHash& hash)
 {
 #ifdef FIM_DEBUG
 	std::cerr << "HashCache: looking for " << full_path << std::endl ;
@@ -219,7 +214,7 @@ bool HashCache::find(const std::string& full_path,uint64_t size,time_t time_stam
 		return false ;
 	}
 }
-void HashCache::insert(const std::string& full_path,uint64_t size,time_t time_stamp,const std::string& hash)
+void HashCache::insert(const std::string& full_path,uint64_t size,time_t time_stamp,const RsFileHash& hash)
 {
 	HashCacheInfo info ;
 	info.size = size ;
@@ -271,7 +266,7 @@ FileIndexMonitor::~FileIndexMonitor()
 	/* Data cleanup - TODO */
 }
 
-int FileIndexMonitor::SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,FileSearchFlags flags,const SSLIdType& peer_id)
+int FileIndexMonitor::SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,FileSearchFlags flags,const RsPeerId& peer_id)
 {
 	results.clear();
 	std::list<FileEntry *> firesults;
@@ -284,7 +279,7 @@ int FileIndexMonitor::SearchKeywords(std::list<std::string> keywords, std::list<
 	return filterResults(firesults,results,flags,peer_id) ;
 }
 
-int FileIndexMonitor::SearchBoolExp(Expression *exp, std::list<DirDetails>& results,FileSearchFlags flags,const SSLIdType& peer_id) const
+int FileIndexMonitor::SearchBoolExp(Expression *exp, std::list<DirDetails>& results,FileSearchFlags flags,const RsPeerId& peer_id) const
 {
 	results.clear();
 	std::list<FileEntry *> firesults;
@@ -297,7 +292,7 @@ int FileIndexMonitor::SearchBoolExp(Expression *exp, std::list<DirDetails>& resu
 	return filterResults(firesults,results,flags,peer_id) ;
 }
 
-int FileIndexMonitor::filterResults(std::list<FileEntry*>& firesults,std::list<DirDetails>& results,FileSearchFlags flags,const SSLIdType& peer_id) const
+int FileIndexMonitor::filterResults(std::list<FileEntry*>& firesults,std::list<DirDetails>& results,FileSearchFlags flags,const RsPeerId& peer_id) const
 {
 #ifdef DEBUG
 	if((flags & ~RS_FILE_HINTS_PERMISSION_MASK) > 0)
@@ -337,7 +332,7 @@ int FileIndexMonitor::filterResults(std::list<FileEntry*>& firesults,std::list<D
 	return !results.empty() ;
 }
 
-bool FileIndexMonitor::findLocalFile(std::string hash,FileSearchFlags hint_flags, const SSLIdType& peer_id,std::string &fullpath, uint64_t &size,FileStorageFlags& storage_flags,std::list<std::string>& parent_groups) const
+bool FileIndexMonitor::findLocalFile(const RsFileHash& hash,FileSearchFlags hint_flags, const RsPeerId& peer_id,std::string &fullpath, uint64_t &size,FileStorageFlags& storage_flags,std::list<std::string>& parent_groups) const
 {
 	std::list<FileEntry *> results;
 	bool ok = false;
@@ -451,7 +446,7 @@ bool FileIndexMonitor::loadLocalCache(const RsCacheData &data)  /* called with s
 
 		std::string name = data.name ;	
 
-		if ((ok = fi.loadIndex(data.path + '/' + name, "", data.size)))
+        if ((ok = fi.loadIndex(data.path + '/' + name, RsFileHash(), data.size)))
 		{
 #ifdef FIM_DEBUG
 			std::cerr << "FileIndexMonitor::loadCache() Success!";
@@ -516,7 +511,7 @@ bool FileIndexMonitor::loadLocalCache(const RsCacheData &data)  /* called with s
 	return false;
 }
 
-bool FileIndexMonitor::updateCache(const RsCacheData &data,const std::set<SSLIdType>& destination_peers)  /* we call this one */
+bool FileIndexMonitor::updateCache(const RsCacheData &data,const std::set<RsPeerId>& destination_peers)  /* we call this one */
 {
 	return refreshCache(data,destination_peers);
 }
@@ -1107,7 +1102,7 @@ time_t FileIndexMonitor::locked_saveFileIndexes(bool update_cache)
 	// To figure out which sets are different, we index them by the set of forbidden indexes from the directory list.
 	// This is probably a bit costly, but we can't suppose that the number of shared directories is bounded.
 	//
-	std::list<SSLIdType> all_friend_ids ;
+    std::list<RsPeerId> all_friend_ids ;
 	rsPeers->getFriendList(all_friend_ids);
 
 #ifdef FIM_DEBUG
@@ -1116,9 +1111,9 @@ time_t FileIndexMonitor::locked_saveFileIndexes(bool update_cache)
 		std::cerr << "  " << *it << std::endl;
 #endif
 
-	std::map<std::set<std::string>, std::set<SSLIdType> > peers_per_directory_combination ;
+    std::map<std::set<std::string>, std::set<RsPeerId> > peers_per_directory_combination ;
 
-	for(std::list<SSLIdType>::const_iterator it(all_friend_ids.begin());it!=all_friend_ids.end();++it)
+    for(std::list<RsPeerId>::const_iterator it(all_friend_ids.begin());it!=all_friend_ids.end();++it)
 	{
 #ifdef FIM_DEBUG
 		std::cerr << "About to save, with the following restrictions:" << std::endl ;
@@ -1153,14 +1148,14 @@ time_t FileIndexMonitor::locked_saveFileIndexes(bool update_cache)
 
 		peers_per_directory_combination[forbidden_dirs].insert(*it) ;
 	}
-	SSLIdType ownId = rsPeers->getOwnId() ;
+    RsPeerId ownId = rsPeers->getOwnId() ;
 	peers_per_directory_combination[std::set<std::string>()].insert(ownId) ;	// add full configuration to self, i.e. no forbidden directories.
 
 	int n=0 ;
 	time_t now = time(NULL) ;
 	time_t mod_time = 0 ;
 
-	for(std::map<std::set<std::string>, std::set<SSLIdType> >::const_iterator it(peers_per_directory_combination.begin());
+    for(std::map<std::set<std::string>, std::set<RsPeerId> >::const_iterator it(peers_per_directory_combination.begin());
 			it!=peers_per_directory_combination.end();++it,++n)
 	{
 		std::string tmpname_browsable;
@@ -1183,7 +1178,7 @@ time_t FileIndexMonitor::locked_saveFileIndexes(bool update_cache)
 			std::cerr << "       " << *itt << std::endl;
 #endif
 
-		std::string hash ;
+        RsFileHash hash ;
 		uint64_t size ;
 
 #ifdef FIM_DEBUG
@@ -1210,7 +1205,7 @@ time_t FileIndexMonitor::locked_saveFileIndexes(bool update_cache)
 			data.size = size;
 			data.recvd = time(NULL);
 
-			for(std::set<SSLIdType>::const_iterator ff(it->second.begin());ff!=it->second.end();++ff)
+            for(std::set<RsPeerId>::const_iterator ff(it->second.begin());ff!=it->second.end();++ff)
 				_cache_items_per_peer[*ff] = data ;
 
 			data.cid.subid = 0;
@@ -1261,7 +1256,7 @@ bool FileIndexMonitor::cachesAvailable(RsPeerId pid,std::map<CacheId, RsCacheDat
 	//
 	ids.clear() ;
 	std::map<RsPeerId,RsCacheData>::const_iterator it(_cache_items_per_peer.find(pid)) ;
-	SSLIdType ownId = rsPeers->getOwnId();
+    RsPeerId ownId = rsPeers->getOwnId();
 
 	if(it != _cache_items_per_peer.end())
 	{

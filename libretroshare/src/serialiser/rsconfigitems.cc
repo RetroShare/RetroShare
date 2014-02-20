@@ -1530,12 +1530,12 @@ uint32_t RsCacheConfigSerialiser::size(RsItem *i)
 	uint32_t s = 8; // to store calculated size, initiailize with size of header
 
 
-	s += GetTlvStringSize(item->pid);
+    s += item->pid.serial_size();
 	s += 2; /* cachetypeid */
 	s += 2; /* cachesubid */
 	s += GetTlvStringSize(item->path);
 	s += GetTlvStringSize(item->name);
-	s += GetTlvStringSize(item->hash);
+    s += item->hash.serial_size();
 	s += 8; /* size */
 	s += 4; /* recvd */
 
@@ -1567,12 +1567,12 @@ bool RsCacheConfigSerialiser::serialise(RsItem *i, void *data, uint32_t *size)
 	
 	/* add the mandatory parts first */
 
-	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_PEERID, item->pid);
+    ok &= item->pid.serialise(data, tlvsize, offset) ;
 	ok &= setRawUInt16(data, tlvsize, &offset, item->cachetypeid);
 	ok &= setRawUInt16(data, tlvsize, &offset, item->cachesubid);
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_PATH, item->path);
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_NAME, item->name);
-	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_HASH_SHA1, item->hash);
+    ok &= item->hash.serialise(data, tlvsize, offset) ;
 	ok &= setRawUInt64(data, tlvsize, &offset, item->size);
 	ok &= setRawUInt32(data, tlvsize, &offset, item->recvd);
 
@@ -1620,12 +1620,12 @@ RsItem *RsCacheConfigSerialiser::deserialise(void *data, uint32_t *size)
 
 	/* get mandatory parts first */ 
 
-	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_PEERID, item->pid);
+    ok &= item->pid.deserialise(data, rssize, offset) ;
 	ok &= getRawUInt16(data, rssize, &offset, &(item->cachetypeid));
 	ok &= getRawUInt16(data, rssize, &offset, &(item->cachesubid));
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_PATH, item->path);
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_NAME, item->name);
-	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_HASH_SHA1, item->hash);
+    ok &= item->hash.deserialise(data, rssize, offset) ;
 	ok &= getRawUInt64(data, rssize, &offset, &(item->size));
 	ok &= getRawUInt32(data, rssize, &offset, &(item->recvd));
 

@@ -261,10 +261,10 @@ int p3turtle::tick()
 //
 void p3turtle::locked_addDistantPeer(const TurtleFileHash&,TurtleTunnelId tid)
 {
-	unsigned char tmp[SSLIdType::SIZE_IN_BYTES] ;
+	unsigned char tmp[RsPeerId::SIZE_IN_BYTES] ;
 
 	((uint32_t*)tmp)[0] = tid ;
-	SSLIdType virtual_peer_id(tmp) ;
+	RsPeerId virtual_peer_id(tmp) ;
 
 	_virtual_peers[virtual_peer_id] = tid ;
 #ifdef P3TURTLE_DEBUG
@@ -603,7 +603,7 @@ void p3turtle::locked_closeTunnel(TurtleTunnelId tid,std::vector<std::pair<RsTur
 	_local_tunnels.erase(it) ;
 }
 
-void p3turtle::stopMonitoringTunnels(const std::string& hash)
+void p3turtle::stopMonitoringTunnels(const RsFileHash& hash)
 {
 	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 
@@ -721,7 +721,7 @@ uint32_t p3turtle::generatePersonalFilePrint(const TurtleFileHash& hash,uint32_t
 	// The only important thing is that the saem couple (hash,SSL id) produces the same tunnel
 	// id. The result uses a boolean to allow generating non symmetric tunnel ids.
 
-	std::string buff(hash + mLinkMgr->getOwnId().toStdString()) ;
+	std::string buff(hash.toStdString() + mLinkMgr->getOwnId().toStdString()) ;
 	uint32_t res = seed ;
 	uint32_t decal = 0 ;
 
@@ -869,7 +869,7 @@ void p3turtle::handleSearchRequest(RsTurtleSearchRequestItem *item)
 			}
 			res_item->result.push_back(result.front()) ;
 
-			item_size += 8 /* size */ + result.front().hash.size() + result.front().name.size() ;
+            item_size += 8 /* size */ + result.front().hash.serial_size() + result.front().name.size() ;
 			result.pop_front() ;
 
 			if(item_size > RSTURTLE_MAX_SEARCH_RESPONSE_SIZE || result.empty())
@@ -893,13 +893,13 @@ void p3turtle::handleSearchRequest(RsTurtleSearchRequestItem *item)
 
 	if(item->depth < TURTLE_MAX_SEARCH_DEPTH || random_bypass)
 	{
-		std::list<SSLIdType> onlineIds ;
+		std::list<RsPeerId> onlineIds ;
 		mLinkMgr->getOnlineList(onlineIds);
 #ifdef P3TURTLE_DEBUG
 				std::cerr << "  Looking for online peers" << std::endl ;
 #endif
 
-		for(std::list<SSLIdType>::const_iterator it(onlineIds.begin());it!=onlineIds.end();++it)
+		for(std::list<RsPeerId>::const_iterator it(onlineIds.begin());it!=onlineIds.end();++it)
 		{
 			if(!(RS_SERVICE_PERM_TURTLE & rsPeers->servicePermissionFlags(*it)))
 				continue ;
@@ -1086,8 +1086,8 @@ void p3turtle::handleRecvGenericTunnelItem(RsTurtleGenericTunnelItem *item)
 	std::cerr << "p3Turtle: received Generic tunnel item:" << std::endl ;
 	item->print(std::cerr,1) ;
 #endif
-	std::string hash ;
-	SSLIdType vpid ;
+	RsFileHash hash ;
+	RsPeerId vpid ;
 	RsTurtleClientService *service ;
 
 	if(!getTunnelServiceInfo(item->tunnelId(),vpid,hash,service))
@@ -1096,7 +1096,7 @@ void p3turtle::handleRecvGenericTunnelItem(RsTurtleGenericTunnelItem *item)
 	service->receiveTurtleData(item,hash,vpid,item->travelingDirection()) ;
 }
 
-bool p3turtle::getTunnelServiceInfo(TurtleTunnelId tunnel_id,SSLIdType& vpid,std::string& hash,RsTurtleClientService *& service)
+bool p3turtle::getTunnelServiceInfo(TurtleTunnelId tunnel_id,RsPeerId& vpid,RsFileHash& hash,RsTurtleClientService *& service)
 {
 	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 
@@ -1126,7 +1126,7 @@ bool p3turtle::getTunnelServiceInfo(TurtleTunnelId tunnel_id,SSLIdType& vpid,std
 
 	// Now sort out the case of client vs. server side items.
 	//
-	SSLIdType ownid = mLinkMgr->getOwnId() ;
+	RsPeerId ownid = mLinkMgr->getOwnId() ;
 
 	if(tunnel.local_src == ownid)
 	{
@@ -1162,7 +1162,7 @@ bool p3turtle::getTunnelServiceInfo(TurtleTunnelId tunnel_id,SSLIdType& vpid,std
 }
 // Send a data request into the correct tunnel for the given file hash
 //
-void p3turtle::sendTurtleData(const SSLIdType& virtual_peer_id,RsTurtleGenericTunnelItem *item)
+void p3turtle::sendTurtleData(const RsPeerId& virtual_peer_id,RsTurtleGenericTunnelItem *item)
 {
 	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 
@@ -1190,7 +1190,7 @@ void p3turtle::sendTurtleData(const SSLIdType& virtual_peer_id,RsTurtleGenericTu
 
 	item->tunnel_id = tunnel_id ;	// we should randomly select a tunnel, or something more clever.
 
-	SSLIdType ownid = mLinkMgr->getOwnId() ;
+	RsPeerId ownid = mLinkMgr->getOwnId() ;
 	uint32_t ss = item->serial_size() ;
 
 	if(item->shouldStampTunnel())
@@ -1223,14 +1223,14 @@ void p3turtle::sendTurtleData(const SSLIdType& virtual_peer_id,RsTurtleGenericTu
 	sendItem(item) ;
 }
 
-bool p3turtle::isTurtlePeer(const SSLIdType& peer_id) const
+bool p3turtle::isTurtlePeer(const RsPeerId& peer_id) const
 {
 	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 
 	return _virtual_peers.find(peer_id) != _virtual_peers.end() ;
 }
 
-SSLIdType p3turtle::getTurtlePeerId(TurtleTunnelId tid) const
+RsPeerId p3turtle::getTurtlePeerId(TurtleTunnelId tid) const
 {
 	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 
@@ -1244,7 +1244,7 @@ SSLIdType p3turtle::getTurtlePeerId(TurtleTunnelId tid) const
 	return it->second.vpid ;
 }
 
-bool p3turtle::isOnline(const SSLIdType& peer_id) const
+bool p3turtle::isOnline(const RsPeerId& peer_id) const
 {
 	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 
@@ -1469,13 +1469,13 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 
 	if(item->depth < TURTLE_MAX_SEARCH_DEPTH || random_bypass)
 	{
-		std::list<SSLIdType> onlineIds ;
+		std::list<RsPeerId> onlineIds ;
 		mLinkMgr->getOnlineList(onlineIds);
 
-		for(std::list<SSLIdType>::iterator it(onlineIds.begin());it!=onlineIds.end();)
+		for(std::list<RsPeerId>::iterator it(onlineIds.begin());it!=onlineIds.end();)
 			if(!(RS_SERVICE_PERM_TURTLE & rsPeers->servicePermissionFlags(*it)))
 			{
-				std::list<SSLIdType>::iterator tmp = it++ ;
+				std::list<RsPeerId>::iterator tmp = it++ ;
 				onlineIds.erase(tmp) ;
 			}
 			else
@@ -1499,7 +1499,7 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 		std::cerr << "  Forwarding tunnel request: Looking for online peers" << std::endl ;
 #endif
 
-		for(std::list<SSLIdType>::const_iterator it(onlineIds.begin());it!=onlineIds.end();++it)
+		for(std::list<RsPeerId>::const_iterator it(onlineIds.begin());it!=onlineIds.end();++it)
 		{
 			uint32_t linkType = mLinkMgr->getLinkType(*it);
 
@@ -1544,7 +1544,7 @@ void p3turtle::handleTunnelResult(RsTurtleTunnelOkItem *item)
 {
 	bool new_tunnel = false ;
 	TurtleFileHash new_hash ;
-	SSLIdType new_vpid ;
+	RsPeerId new_vpid ;
 	RsTurtleClientService *service = NULL ;
 
 	{
@@ -1819,7 +1819,7 @@ TurtleRequestId p3turtle::turtleSearch(const LinearizedExpression& expr)
 	return id ;
 }
 
-void p3turtle::monitorTunnels(const std::string& hash,RsTurtleClientService *client_service)
+void p3turtle::monitorTunnels(const RsFileHash& hash,RsTurtleClientService *client_service)
 {
 	{
 		RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
@@ -1875,7 +1875,7 @@ void p3turtle::returnSearchResult(RsTurtleSearchResultItem *item)
 /// Warning: this function should never be called while the turtle mutex is locked.
 /// Otherwize this is a possible source of cross-lock with the File mutex.
 //
-bool p3turtle::performLocalHashSearch(const TurtleFileHash& hash,const SSLIdType& peer_id,RsTurtleClientService *& service)
+bool p3turtle::performLocalHashSearch(const TurtleFileHash& hash,const RsPeerId& peer_id,RsTurtleClientService *& service)
 {
 	if(_registered_services.empty())
 		std::cerr << "Turtle router has no services registered. Tunnel requests cannot be handled." << std::endl;
@@ -1953,7 +1953,7 @@ void p3turtle::getTrafficStatistics(TurtleTrafficStatisticsInfo& info) const
 	float distance_to_maximum	= std::min(100.0f,info.tr_up_Bps/(float)(TUNNEL_REQUEST_PACKET_SIZE*_max_tr_up_rate)) ;
 	info.forward_probabilities.clear() ;
 
-	std::list<SSLIdType> onlineIds ;
+	std::list<RsPeerId> onlineIds ;
 	mLinkMgr->getOnlineList(onlineIds);
 
 	int nb_online_ids = onlineIds.size() ;
@@ -1992,7 +1992,7 @@ void p3turtle::getInfo(	std::vector<std::vector<std::string> >& hashes_info,
 
 		std::vector<std::string>& hashes(hashes_info.back()) ;
 
-		hashes.push_back(it->first) ;
+        hashes.push_back(it->first.toStdString()) ;
 		//hashes.push_back(it->second.name) ;
 		hashes.push_back("Name not available") ;
 		hashes.push_back(printNumber(it->second.tunnels.size())) ;
@@ -2019,7 +2019,7 @@ void p3turtle::getInfo(	std::vector<std::vector<std::string> >& hashes_info,
 		else
 			tunnel.push_back(it->second.local_dst.toStdString());
 
-		tunnel.push_back(it->second.hash) ;
+        tunnel.push_back(it->second.hash.toStdString()) ;
 		tunnel.push_back(printNumber(now-it->second.time_stamp) + " secs ago") ;
 		tunnel.push_back(printFloatNumber(it->second.speed_Bps,true)) ;
 	}

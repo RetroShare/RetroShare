@@ -186,9 +186,9 @@ class RsPluginHandler
 		virtual int nbPlugins() const = 0 ;
 		virtual RsPlugin *plugin(int i) = 0 ;
 		virtual const std::vector<std::string>& getPluginDirectories() const = 0;
-		virtual void getPluginStatus(int i,uint32_t& status,std::string& file_name,std::string& file_hash,uint32_t& svn_revision,std::string& error_string) const = 0 ;
-		virtual void enablePlugin(const std::string& hash) = 0;
-		virtual void disablePlugin(const std::string& hash) = 0;
+        virtual void getPluginStatus(int i,uint32_t& status,std::string& file_name,RsFileHash& file_hash,uint32_t& svn_revision,std::string& error_string) const = 0 ;
+        virtual void enablePlugin(const RsFileHash& hash) = 0;
+        virtual void disablePlugin(const RsFileHash& hash) = 0;
 
 		virtual void allowAllPlugins(bool b) = 0 ;
 		virtual bool getAllowAllPlugins() const = 0 ;

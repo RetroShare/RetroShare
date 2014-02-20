@@ -90,7 +90,7 @@ class TransferInfo
 {
 	public:
 		/**** Need Some of these Fields ****/
-		SSLIdType peerId;
+        RsPeerId peerId;
 		std::string name; /* if has alternative name? */
 		double tfRate; /* kbytes */
 		int  status; /* FT_STATE_... */
@@ -200,7 +200,7 @@ class FileInfo
 		int searchId;      /* 0 if none */
 		std::string path;
 		std::string fname;
-		std::string hash;
+        RsFileHash hash;
 		std::string ext;
 
 		uint64_t size;
@@ -241,9 +241,9 @@ class DirDetails
 
 	void *ref;
 	uint8_t type;
-	SSLIdType id;
+    RsPeerId id;
 	std::string name;
-	std::string hash;
+    RsFileHash hash;
 	std::string path;
 	uint64_t count;
 	uint32_t age;
@@ -257,9 +257,9 @@ class DirDetails
 class FileDetail
 {
 	public:
-		SSLIdType id;
+        RsPeerId id;
 		std::string name;
-		std::string hash;
+        RsFileHash hash;
 		std::string path;
 		uint64_t size;
 		uint32_t age;
@@ -386,14 +386,14 @@ typedef t_CRCMap<Sha1CheckSum> 	Sha1Map ;
 class DwlDetails {
 public:
 	DwlDetails() { return; }
-	DwlDetails(std::string fname, std::string hash, int count, std::string dest,
+    DwlDetails(const std::string& fname, const RsFileHash& hash, int count, std::string dest,
 			uint32_t flags, std::list<std::string> srcIds, uint32_t queue_pos)
 	: fname(fname), hash(hash), count(count), dest(dest), flags(flags),
 	srcIds(srcIds), queue_position(queue_pos), retries(0) { return; }
 
 	/* download details */
 	std::string fname;
-	std::string hash;
+    RsFileHash hash;
 	int count;
 	std::string dest;
 	uint32_t flags;
