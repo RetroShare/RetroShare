@@ -31,7 +31,7 @@
 #include "retrodb.h"
 #include "rsdbbind.h"
 
-//#define RETRODB_DEBUG
+#define RETRODB_DEBUG
 #define ENABLE_ENCRYPTED_DB
 
 

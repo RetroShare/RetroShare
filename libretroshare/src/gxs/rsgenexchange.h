@@ -609,6 +609,15 @@ public:
      */
     void setMsgServiceString(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, const std::string& servString );
 
+	/*!
+	 *
+	 * @param token value set to be redeemed with acknowledgement
+	 * @param grpId group id for cutoff value to be set
+	 * @param CutOff The cut off value to set
+	 * @return true if set successfully
+	 */
+	bool setGroupReputationCutOff(uint32_t& token, const RsGxsGroupId& grpId, int CutOff);
+
 protected:
 
     /** Notifications **/
@@ -849,8 +858,14 @@ private:
 private:
 
     std::vector<GroupUpdate> mGroupUpdates, mPeersGroupUpdate;
-
     std::vector<GroupUpdatePublish> mGroupUpdatePublish;
+
+    struct CutOffEntry
+    {
+    	uint32_t token;
+    	RsGxsGroupId id;
+    	uint32_t cutOff;
+    };
 
 };
 

@@ -2572,3 +2572,15 @@ bool RsGenExchange::updateValid(RsGxsGrpMetaData& oldGrpMeta, RsNxsGrp& newGrp) 
 
 	return GxsSecurity::validateNxsGrp(newGrp, adminSign, keyMit->second) && latest;
 }
+
+bool RsGenExchange::setGroupReputationCutOff(uint32_t& token, const RsGxsGroupId& grpId, int CutOff)
+{
+    RsStackMutex stack(mGenMtx);
+    token = mDataAccess->generatePublicToken();
+
+    GrpLocMetaData g;
+    g.grpId = grpId;
+    g.val.put(RsGeneralDataService::GRP_META_CUTOFF_LEVEL, (int32_t)CutOff);
+    mGrpLocMetaMap.insert(std::make_pair(token, g));
+	return true;
+}

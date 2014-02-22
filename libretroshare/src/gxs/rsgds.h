@@ -113,6 +113,7 @@ public:
     static const std::string GRP_META_SUBSCRIBE_FLAG;
     static const std::string GRP_META_STATUS;
     static const std::string GRP_META_SERV_STRING;
+    static const std::string GRP_META_CUTOFF_LEVEL;
 
 public:
 

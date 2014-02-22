@@ -78,6 +78,7 @@ public:
     std::string mOriginator;
     std::string mInternalCircle;
     std::string mHash;
+    uint32_t mReputationCutOff;
 };
 
 
