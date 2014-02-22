@@ -30,6 +30,7 @@
 #include <iostream>
 #include <sstream>
 #include "turtle/rsturtleitem.h"
+#include "ft/ftturtlefiletransferitem.h"
 #include <serialiser/rstlvutil.h>
 #include "support.h"
 #include "util/utest.h"

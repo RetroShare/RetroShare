@@ -30,7 +30,6 @@
 #include <stdlib.h>
 #include <iostream>
 #include <sstream>
-#include <serialiser/rstunnelitems.h>
 #include <serialiser/rstlvutil.h>
 #include "util/utest.h"
 #include "support.h"
