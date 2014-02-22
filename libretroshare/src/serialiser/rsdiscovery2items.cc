@@ -819,7 +819,7 @@ RsDiscContactItem *RsDiscSerialiser::deserialiseContact(void *data, uint32_t *pk
 
 	/* get mandatory parts first */
 	ok &= item->pgpId.deserialise(data, rssize, offset) ;
-	ok &= item->pgpId.deserialise(data, rssize, offset) ;
+	ok &= item->sslId.deserialise(data, rssize, offset) ;
 
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_LOCATION, item->location); 
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_VERSION, item->version); 

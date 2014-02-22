@@ -547,15 +547,17 @@ bool    p3Peers::gpgSignData(const void *data, const uint32_t len, unsigned char
 	return AuthGPG::getAuthGPG()->SignDataBin(data,len,sign,signlen);
 }
 
-bool	p3Peers::getGPGDetails(const PGPIdType &id, RsPeerDetails &d)
+bool	p3Peers::getGPGDetails(const PGPIdType &pgp_id, RsPeerDetails &d)
 {
 #ifdef P3PEERS_DEBUG
-	std::cerr << "p3Peers::getPgpDetails() called for id : " << id << std::endl;
+	std::cerr << "p3Peers::getPgpDetails() called for id : " << pgp_id << std::endl;
 #endif
 
 	/* get from mAuthMgr */
-	bool res = AuthGPG::getAuthGPG()->getGPGDetails(id, d);
+	bool res = AuthGPG::getAuthGPG()->getGPGDetails(pgp_id, d);
+
 	d.isOnlyGPGdetail = true ;
+	d.service_perm_flags = mPeerMgr->servicePermissionFlags(pgp_id) ;
 
 	return res ;
 }

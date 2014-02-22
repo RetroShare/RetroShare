@@ -3642,21 +3642,21 @@ void p3ChatService::cleanDistantChatInvites()
 
 DistantChatPeerId p3ChatService::virtualPeerIdFromHash(const TurtleFileHash& hash)
 {
-	if(DistantChatPeerId::SIZE_IN_BYTES < Sha1CheckSum::SIZE_IN_BYTES)
+	if(DistantChatPeerId::SIZE_IN_BYTES > Sha1CheckSum::SIZE_IN_BYTES)
 		std::cerr << __PRETTY_FUNCTION__ << ": Serious inconsistency error." << std::endl;
-		
-	unsigned char tmp[DistantChatPeerId::SIZE_IN_BYTES] ;
-	memset(tmp,0,DistantChatPeerId::SIZE_IN_BYTES) ;
-	memcpy(tmp,Sha1CheckSum(hash).toByteArray(),Sha1CheckSum::SIZE_IN_BYTES) ;
 
-	return DistantChatPeerId(tmp) ;
+	return DistantChatPeerId(hash.toByteArray()) ;
 }
 TurtleFileHash p3ChatService::hashFromVirtualPeerId(const DistantChatPeerId& pid)
 {
-	if(DistantChatPeerId::SIZE_IN_BYTES < Sha1CheckSum::SIZE_IN_BYTES)
+	if(DistantChatPeerId::SIZE_IN_BYTES > Sha1CheckSum::SIZE_IN_BYTES)
 		std::cerr << __PRETTY_FUNCTION__ << ": Serious inconsistency error." << std::endl;
-		
-    return Sha1CheckSum(pid.toByteArray());
+
+	unsigned char tmp[Sha1CheckSum::SIZE_IN_BYTES] ;
+	memset(tmp,0,Sha1CheckSum::SIZE_IN_BYTES) ;
+	memcpy(tmp,pid.toByteArray(),DistantChatPeerId::SIZE_IN_BYTES) ;
+
+	return Sha1CheckSum(tmp);
 }
 bool p3ChatService::getDistantChatInviteList(std::vector<DistantChatInviteInfo>& invites)
 {
