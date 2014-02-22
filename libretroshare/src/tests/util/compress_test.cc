@@ -27,6 +27,7 @@
 
 #include <stdint.h>
 
+#include <openssl/rand.h>
 #include "util/rscompress.h"
 #include "util/rsdir.h"
 #include "util/utest.h"
@@ -182,6 +183,14 @@ int main(int argc,char *argv[])
 										  temp/linux-g++-64/obj/rsposteditems.o \
 										  temp/linux-g++-64/obj/p3photoservice.o \
 										  temp/linux-g++-64/obj/rsphotoitems.o"  ;
+
+	for(int i=0;i<5;++i)
+		source_string = source_string+source_string ;
+
+	source_string = source_string.substr(0,550000) ;
+
+	for(int i=0;i<source_string.length()/10;++i)
+		source_string[lrand48()%(source_string.length())] = lrand48()&0xff ;
 
 	std::cerr << "Input string: length=" << source_string.length() << std::endl;
 	std::cerr << "Input string: hash  =" << RsDirUtil::sha1sum((uint8_t*)source_string.c_str(),source_string.length()).toStdString() << std::endl;
