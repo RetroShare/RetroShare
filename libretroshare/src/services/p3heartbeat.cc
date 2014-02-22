@@ -26,7 +26,7 @@
 #include "services/p3heartbeat.h"
 #include "serialiser/rsheartbeatitems.h"
 
-#define HEART_DEBUG	1
+//#define HEART_DEBUG	1
 
 
 p3heartbeat::p3heartbeat(p3LinkMgr *linkMgr, pqipersongrp *pqipg)

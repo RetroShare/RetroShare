@@ -201,16 +201,25 @@ int p3FastService::sendItem(RsItem *si)
 			std::cerr << "************************************************************" << std::endl;
 		}
 		raw->setPriorityLevel(si->priority_level()) ;
-	}
-
-	/* cleanup */
-	delete si;
 
 #ifdef SERV_DEBUG
-	std::cerr << "p3Service::send() returning RawItem.";
-	std::cerr << std::endl;
+		std::cerr << "p3Service::send() returning RawItem.";
+		std::cerr << std::endl;
 #endif
-	return pqiService::send(raw);	
+		delete si;
+
+		return pqiService::send(raw);	
+	}
+	else
+	{
+		std::cerr << "p3service: item could not be properly serialised. Will be wasted.  Item is: "<< std::endl;
+		si->print(std::cerr,0) ;
+
+		/* cleanup */
+		delete si;
+
+		return 0 ;
+	}
 }
 
 

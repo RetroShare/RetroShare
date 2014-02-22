@@ -102,8 +102,10 @@ RsItem *pqiperson::GetItem()
 
 bool pqiperson::RecvItem(RsItem *item)
 {
+#ifdef PERSON_DEBUG
 	std::cerr << "pqiperson::RecvItem()";
 	std::cerr << std::endl;
+#endif
 
 	return pqipg->recvItem((RsRawItem *) item);
 }

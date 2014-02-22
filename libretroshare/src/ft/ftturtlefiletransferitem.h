@@ -100,21 +100,6 @@ class RsTurtleFileMapItem: public RsTurtleGenericTunnelItem
 		virtual uint32_t serial_size() ; 
 };
 
-class RsTurtleFileCrcRequestItem: public RsTurtleGenericTunnelItem			
-{
-	public:
-		RsTurtleFileCrcRequestItem() : RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_FILE_CRC_REQUEST) { setPriorityLevel(QOS_PRIORITY_RS_FILE_CRC_REQUEST);}
-		RsTurtleFileCrcRequestItem(void *data,uint32_t size) ;		// deserialization
-
-		virtual bool shouldStampTunnel() const { return false ; }
-		virtual Direction travelingDirection() const { return DIRECTION_SERVER ; }
-
-		virtual std::ostream& print(std::ostream& o, uint16_t) ;
-
-		virtual bool serialize(void *data,uint32_t& size) ;	
-		virtual uint32_t serial_size() ; 
-};
-
 class RsTurtleChunkCrcRequestItem: public RsTurtleGenericTunnelItem			
 {
 	public:

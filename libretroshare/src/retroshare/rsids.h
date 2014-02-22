@@ -102,7 +102,7 @@ template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER> c
 		inline uint32_t serial_size() const { return SIZE_IN_BYTES ; }
         bool serialise(void *data,uint32_t pktsize,uint32_t& offset) const
 		{
-			if(offset + SIZE_IN_BYTES >= pktsize)
+			if(offset + SIZE_IN_BYTES > pktsize)
 				return false ;
 
 			memcpy(&((uint8_t*)data)[offset],bytes,SIZE_IN_BYTES) ;
@@ -111,7 +111,7 @@ template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER> c
 		}
 		bool deserialise(void *data,uint32_t pktsize,uint32_t& offset)
 		{
-			if(offset + SIZE_IN_BYTES >= pktsize)
+			if(offset + SIZE_IN_BYTES > pktsize)
 				return false ;
 
 			memcpy(bytes,&((uint8_t*)data)[offset],SIZE_IN_BYTES) ;

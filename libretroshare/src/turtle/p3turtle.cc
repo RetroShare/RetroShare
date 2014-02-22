@@ -262,6 +262,7 @@ int p3turtle::tick()
 void p3turtle::locked_addDistantPeer(const TurtleFileHash&,TurtleTunnelId tid)
 {
 	unsigned char tmp[RsPeerId::SIZE_IN_BYTES] ;
+	memset(tmp,0,RsPeerId::SIZE_IN_BYTES) ;
 
 	((uint32_t*)tmp)[0] = tid ;
 	RsPeerId virtual_peer_id(tmp) ;
