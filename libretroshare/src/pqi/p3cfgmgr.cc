@@ -301,8 +301,8 @@ bool p3Config::loadAttempt(const std::string& cfgFname,const std::string& signFn
 	std::string signatureStored((char *) signbio->memptr(), signbio->memsize());
 
 	std::string signatureRead;
-	std::string strHash(Hash());
-	AuthSSL::getAuthSSL()->SignData(strHash.c_str(), strHash.length(), signatureRead);
+	RsFileHash strHash(Hash());
+	AuthSSL::getAuthSSL()->SignData(strHash.toByteArray(), RsFileHash::SIZE_IN_BYTES, signatureRead);
 
 	delete signbio;
 
@@ -358,8 +358,8 @@ bool p3Config::saveConfig()
 
 	/* sign data */
 	std::string signature;
-	std::string strHash(Hash());
-	AuthSSL::getAuthSSL()->SignData(strHash.c_str(),strHash.length(), signature);
+	RsFileHash strHash(Hash());
+	AuthSSL::getAuthSSL()->SignData(strHash.toByteArray(),strHash.SIZE_IN_BYTES, signature);
 
     /* write signature to configuration */
     BinMemInterface *signbio = new BinMemInterface(signature.c_str(),
@@ -566,7 +566,7 @@ const std::string& pqiConfig::Filename()
 	return filename;
 }
 
-const std::string& pqiConfig::Hash()
+const RsFileHash& pqiConfig::Hash()
 {
 	RsStackMutex stack(cfgMtx); /***** LOCK STACK MUTEX ****/
 	return hash;
@@ -590,7 +590,7 @@ void    pqiConfig::setFilename(const std::string& name)
 	filename = name;
 }
 
-void	pqiConfig::setHash(const std::string& h)
+void	pqiConfig::setHash(const RsFileHash& h)
 {
 	RsStackMutex stack(cfgMtx); /***** LOCK STACK MUTEX ****/
 	hash = h;

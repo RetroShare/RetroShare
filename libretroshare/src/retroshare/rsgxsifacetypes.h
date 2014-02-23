@@ -16,7 +16,7 @@
 #include <retroshare/rsids.h>
 
 typedef GXSGroupId RsGxsGroupId;
-typedef std::string RsGxsMessageId;
+typedef RsFileHash RsGxsMessageId;
 
 typedef std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > GxsMsgIdResult;
 typedef std::pair<RsGxsGroupId, RsGxsMessageId> RsGxsGrpMsgIdPair;
@@ -103,11 +103,11 @@ public:
 
 
     RsGxsGroupId mGroupId;
-    std::string mMsgId;
+    RsGxsMessageId mMsgId;
 
-    std::string mThreadId;
-    std::string mParentId;
-    std::string mOrigMsgId;
+    RsGxsMessageId mThreadId;
+    RsGxsMessageId mParentId;
+    RsGxsMessageId mOrigMsgId;
 
     std::string    mAuthorId;
 

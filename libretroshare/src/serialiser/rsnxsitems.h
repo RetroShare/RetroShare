@@ -262,7 +262,7 @@ public:
 
     uint8_t flag; // response/req
     RsGxsGroupId grpId;
-    std::string msgId;
+    RsGxsMessageId msgId;
     std::string authorId;
 
 };
@@ -296,7 +296,7 @@ public:
     uint8_t pos; /// used for splitting up msg
     uint8_t count; /// number of split up messages
     RsGxsGroupId grpId; /// group id, forms part of version id
-    std::string msgId; /// msg id
+    RsFileHash msgId; /// msg id
     static int refcount;
 
     /*!

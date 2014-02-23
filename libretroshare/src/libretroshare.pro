@@ -6,7 +6,7 @@ TARGET = retroshare
 
 #GXS Stuff.
 # This should be disabled for releases until further notice.
-#CONFIG += gxs debug
+CONFIG += gxs debug
 #CONFIG += grouter
 #CONFIG += dsdv
 

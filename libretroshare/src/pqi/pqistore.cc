@@ -363,7 +363,7 @@ int     pqistore::readPkt(RsItem **item_out)
 }
 
 /**** Hashing Functions ****/
-std::string pqistore::gethash()
+RsFileHash pqistore::gethash()
 {
 	return bio->gethash();
 }

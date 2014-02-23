@@ -113,7 +113,7 @@ virtual bool moretoread(uint32_t usec);
 virtual bool cansend(uint32_t usec);
 
 virtual int close(); /* BinInterface version of reset() */
-virtual std::string gethash(); /* not used here */
+virtual RsFileHash gethash(); /* not used here */
 virtual bool bandwidthLimited() { return true ; } // replace by !sameLAN to avoid bandwidth limiting on LAN
 
 public:

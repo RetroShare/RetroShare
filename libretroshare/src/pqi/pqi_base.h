@@ -301,7 +301,7 @@ virtual int	close() = 0;
 /**
  * If hashing data
  **/
-virtual std::string gethash() = 0;
+virtual RsFileHash gethash() = 0;
 
 /**
  * Number of bytes read/sent

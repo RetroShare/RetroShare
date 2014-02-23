@@ -150,9 +150,9 @@ int	BinFileInterface::readdata(void *data, int len)
 	return len;
 }
 
-std::string  BinFileInterface::gethash()
+RsFileHash  BinFileInterface::gethash()
 {
-	std::string hashstr;
+	RsFileHash hashstr;
 	if (bin_flags & BIN_FLAGS_HASH_DATA)
 	{  
 		hash->Complete(hashstr);
@@ -410,9 +410,9 @@ int	BinMemInterface::readdata(void *data, int len)
 
 
 
-std::string  BinMemInterface::gethash()
+RsFileHash  BinMemInterface::gethash()
 	{
-		std::string hashstr;
+		RsFileHash hashstr;
 		if (bin_flags & BIN_FLAGS_HASH_DATA)
 		{  
 			hash->Complete(hashstr);
@@ -716,12 +716,12 @@ int	NetBinDummy::close()
 	return 1;
 }
 
-std::string NetBinDummy::gethash()
+RsFileHash NetBinDummy::gethash()
 {
 	std::cerr << "NetBinDummy::gethash() ";
 	printNetBinID(std::cerr, PeerId(), type);
 	std::cerr << std::endl;
 
-	return std::string("");
+	return RsFileHash();
 }
 

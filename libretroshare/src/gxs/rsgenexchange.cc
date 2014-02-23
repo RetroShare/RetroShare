@@ -502,7 +502,7 @@ int RsGenExchange::createMsgSignatures(RsTlvKeySignatureSet& signSet, RsTlvBinar
     uint8_t author_flag = GXS_SERV::MSG_AUTHEN_ROOT_AUTHOR_SIGN;
     uint8_t publish_flag = GXS_SERV::MSG_AUTHEN_ROOT_PUBLISH_SIGN;
 
-    if(!msgMeta.mParentId.empty())
+    if(!msgMeta.mParentId.isNull())
     {
         // Child Message.
         author_flag = GXS_SERV::MSG_AUTHEN_CHILD_AUTHOR_SIGN;
@@ -723,7 +723,7 @@ int RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, RsTlvSecu
     uint8_t author_flag = GXS_SERV::MSG_AUTHEN_ROOT_AUTHOR_SIGN;
     uint8_t publish_flag = GXS_SERV::MSG_AUTHEN_ROOT_PUBLISH_SIGN;
 
-    if(!msg->metaData->mParentId.empty())
+    if(!msg->metaData->mParentId.isNull())
     {
         // Child Message.
         author_flag = GXS_SERV::MSG_AUTHEN_CHILD_AUTHOR_SIGN;
@@ -1769,7 +1769,7 @@ void RsGenExchange::publishMsgs()
 			{
 				// empty orig msg id means this is the original
 				// msg
-				if(msg->metaData->mOrigMsgId.empty())
+                if(msg->metaData->mOrigMsgId.isNull())
 				{
 					msg->metaData->mOrigMsgId = msg->metaData->mMsgId;
 				}
@@ -2218,7 +2218,7 @@ void RsGenExchange::processRecvdData()
 }
 
 
-void RsGenExchange::computeHash(const RsTlvBinaryData& data, std::string& hash)
+void RsGenExchange::computeHash(const RsTlvBinaryData& data, RsFileHash& hash)
 {
 	pqihash pHash;
 	pHash.addData(data.bin_data, data.bin_len);

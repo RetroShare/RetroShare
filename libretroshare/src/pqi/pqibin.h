@@ -72,7 +72,7 @@ virtual bool 	cansend(uint32_t /* usec */)
 virtual bool    bandwidthLimited() { return false; }
 
 //! if HASHing is switched on
-virtual std::string gethash();
+virtual RsFileHash gethash();
 virtual uint64_t bytecount();
 
 protected:
@@ -178,7 +178,7 @@ virtual bool 	cansend(uint32_t /* usec */)
 	}
 virtual bool    bandwidthLimited() { return false; }
 
-virtual std::string gethash();
+virtual RsFileHash gethash();
 virtual uint64_t bytecount();
 
 	private:
@@ -227,7 +227,7 @@ virtual bool    moretoread(uint32_t usec);
 virtual bool    cansend(uint32_t usec);
 virtual int	close();
 
-virtual std::string gethash();
+virtual RsFileHash gethash();
 
 	private:
 	uint32_t type;

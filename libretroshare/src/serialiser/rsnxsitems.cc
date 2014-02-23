@@ -204,7 +204,7 @@ bool RsNxsSerialiser::serialiseNxsSynMsgItem(RsNxsSyncMsgItem *item, void *data,
     ok &= setRawUInt32(data, *size, &offset, item->transactionNumber);
     ok &= setRawUInt8(data, *size, &offset, item->flag);
     ok &= item->grpId.serialise(data, *size, offset);
-    ok &= SetTlvString(data, *size, &offset, TLV_TYPE_STR_MSGID, item->msgId);
+    ok &= item->msgId.serialise(data, *size, offset) ;
     ok &= SetTlvString(data, *size, &offset, TLV_TYPE_STR_NAME, item->authorId);
 
     if(offset != tlvsize){
@@ -253,7 +253,7 @@ bool RsNxsSerialiser::serialiseNxsMsg(RsNxsMsg *item, void *data, uint32_t *size
 
     ok &= setRawUInt32(data, *size, &offset, item->transactionNumber);
     ok &= setRawUInt8(data, *size, &offset, item->pos);
-    ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_MSGID, item->msgId);
+    ok &= item->msgId.serialise(data, tlvsize, offset) ;
     ok &= item->grpId.serialise(data, *size, offset);
     ok &= item->msg.SetTlv(data, tlvsize, &offset);
     ok &= item->meta.SetTlv(data, *size, &offset);
@@ -643,7 +643,7 @@ RsNxsMsg* RsNxsSerialiser::deserialNxsMsg(void *data, uint32_t *size){
 
     ok &= getRawUInt32(data, *size, &offset, &(item->transactionNumber));
     ok &= getRawUInt8(data, *size, &offset, &(item->pos));
-    ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_MSGID, item->msgId);
+    ok &= item->msgId.deserialise(data, *size, offset) ;
     ok &= item->grpId.deserialise(data, *size, offset);
     ok &= item->msg.GetTlv(data, *size, &offset);
     ok &= item->meta.GetTlv(data, *size, &offset);
@@ -917,7 +917,7 @@ RsNxsSyncMsgItem* RsNxsSerialiser::deserialNxsSyncMsgItem(void *data, uint32_t *
     ok &= getRawUInt32(data, *size, &offset, &(item->transactionNumber));
     ok &= getRawUInt8(data, *size, &offset, &(item->flag));
     ok &= item->grpId.deserialise(data, *size, offset);
-    ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_MSGID, item->msgId);
+    ok &= item->msgId.deserialise(data, *size, offset) ;
     ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_NAME, item->authorId);
 
     if (offset != rssize)
@@ -1032,7 +1032,7 @@ uint32_t RsNxsSerialiser::sizeNxsMsg(RsNxsMsg *item)
     s += 4; // transaction number
     s += 1; // pos
     s += item->grpId.serial_size();
-    s += GetTlvStringSize(item->msgId);
+    s += item->msgId.serial_size();
     s += item->msg.TlvSize();
     s += item->meta.TlvSize();
 
@@ -1104,7 +1104,7 @@ uint32_t RsNxsSerialiser::sizeNxsSyncMsgItem(RsNxsSyncMsgItem *item)
     s += 4; // transaction number
     s += 1; // flag
     s += item->grpId.serial_size();
-    s += GetTlvStringSize(item->msgId);
+    s += item->msgId.serial_size();
     s += GetTlvStringSize(item->authorId);
 
     return s;

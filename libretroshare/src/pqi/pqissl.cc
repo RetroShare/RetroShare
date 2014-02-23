@@ -1902,10 +1902,9 @@ bool 	pqissl::cansend(uint32_t usec)
 
 }
 
-std::string pqissl::gethash()
+RsFileHash pqissl::gethash()
 {
-	std::string dummyhash;
-	return dummyhash;
+	return RsFileHash() ;
 }
 
 /********** End of Implementation of BinInterface ******************/

@@ -350,7 +350,6 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 #endif
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
-	int c;
 	std::string prefUserString = "";
 	std::string opt_base_dir;
 
@@ -1365,10 +1364,8 @@ int RsServer::StartupRetroShare()
 	currGxsDir += "_TESTNET7";
 #endif
 
-        bool cleanUpGxsDir = false;
-
         if(!priorGxsDir.empty())
-            cleanUpGxsDir = RsDirUtil::checkDirectory(priorGxsDir);
+            RsDirUtil::checkDirectory(priorGxsDir);
 
         std::set<std::string> filesToKeep;
         bool cleanUpSuccess = RsDirUtil::cleanupDirectory(priorGxsDir, filesToKeep);

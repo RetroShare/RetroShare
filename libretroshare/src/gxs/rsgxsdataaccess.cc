@@ -968,7 +968,7 @@ bool RsGxsDataAccess::getMsgList(const GxsMsgReq& msgIds, const RsTokReqOptions&
                         /* if we are grabbing thread Head... then parentId == empty. */
                         if (onlyThreadHeadMsgs)
                         {
-                            if (!(msgMeta->mParentId.empty()))
+                            if (!(msgMeta->mParentId.isNull()))
                             {
                                     continue;
                             }
@@ -1025,7 +1025,7 @@ bool RsGxsDataAccess::getMsgList(const GxsMsgReq& msgIds, const RsTokReqOptions&
                     /* if we are grabbing thread Head... then parentId == empty. */
                     if (onlyThreadHeadMsgs)
                     {
-                            if (!(msgMeta->mParentId.empty()))
+                            if (!(msgMeta->mParentId.isNull()))
                             {
                                     continue;
                             }
@@ -1209,8 +1209,8 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
             if (onlyChildMsgs || onlyThreadMsgs)
             {
                 // RUN THROUGH ALL MSGS... in map origId -> TS.
-                std::map<std::string, std::pair<std::string, time_t> > origMsgTs;
-                std::map<std::string, std::pair<std::string, time_t> >::iterator oit;
+                std::map<RsGxsMessageId, std::pair<RsGxsMessageId, time_t> > origMsgTs;
+                std::map<RsGxsMessageId, std::pair<RsGxsMessageId, time_t> >::iterator oit;
                 for(vit_meta = metaV.begin(); vit_meta != metaV.end(); vit_meta++)
                 {
 

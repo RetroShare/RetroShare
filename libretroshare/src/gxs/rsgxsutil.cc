@@ -130,7 +130,7 @@ bool RsGxsIntegrityCheck::check()
 	for(; git != grp.end(); git++)
 	{
 		RsNxsGrp* grp = git->second;
-		std::string currHash;
+        RsFileHash currHash;
 		pqihash pHash;
 		pHash.addData(grp->grp.bin_data, grp->grp.bin_len);
 		pHash.Complete(currHash);
@@ -157,7 +157,7 @@ bool RsGxsIntegrityCheck::check()
 		for(; vit != msgV.end(); vit++)
 		{
 			RsNxsMsg* msg = *vit;
-			std::string currHash;
+            RsFileHash currHash;
 			pqihash pHash;
 			pHash.addData(msg->msg.bin_data, msg->msg.bin_len);
 			pHash.Complete(currHash);

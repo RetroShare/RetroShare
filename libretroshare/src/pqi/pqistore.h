@@ -51,7 +51,7 @@ virtual RsItem *GetItem();
 virtual int     tick();
 virtual int     status();
 
-std::string     gethash();
+RsFileHash     gethash();
 
 bool bStopReading;
 

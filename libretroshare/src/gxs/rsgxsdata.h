@@ -77,7 +77,7 @@ public:
     uint32_t    mRecvTS;
     RsPeerId    mOriginator;
     std::string mInternalCircle;
-    std::string mHash;
+    RsFileHash mHash;
 };
 
 
@@ -115,7 +115,7 @@ public:
     uint32_t    mMsgStatus;
     time_t      mChildTs;
     uint32_t recvTS;
-    std::string mHash;
+    RsFileHash mHash;
     bool validated;
 
 };

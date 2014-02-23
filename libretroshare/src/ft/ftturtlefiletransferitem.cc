@@ -543,7 +543,7 @@ std::ostream& RsTurtleChunkCrcRequestItem::print(std::ostream& o, uint16_t)
 }
 std::ostream& RsTurtleChunkCrcItem::print(std::ostream& o, uint16_t)
 {
-	o << "Chunk CRC request item:" << std::endl ;
+	o << "Chunk CRC item:" << std::endl ;
 
 	o << "  tunnel id : " << std::hex << tunnel_id << std::dec << std::endl ;
 	o << "  chunk num : " << chunk_number << std::endl ;

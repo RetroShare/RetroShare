@@ -171,10 +171,10 @@ uint32_t RsGxsMsgMetaData::serial_size()
     uint32_t s = 8; // header size
 
     s += mGroupId.serial_size();
-    s += GetTlvStringSize(mMsgId);
-    s += GetTlvStringSize(mThreadId);
-    s += GetTlvStringSize(mParentId);
-    s += GetTlvStringSize(mOrigMsgId);
+    s += mMsgId.serial_size();
+    s += mThreadId.serial_size();
+    s += mParentId.serial_size();
+    s += mOrigMsgId.serial_size();
     s += GetTlvStringSize(mAuthorId);
 
     s += signSet.TlvSize();
@@ -228,10 +228,10 @@ bool RsGxsMsgMetaData::serialise(void *data, uint32_t *size)
     offset += 8;
 
     ok &= mGroupId.serialise(data, *size, offset);
-    ok &= SetTlvString(data, *size, &offset, 0, mMsgId);
-    ok &= SetTlvString(data, *size, &offset, 0, mThreadId);
-    ok &= SetTlvString(data, *size, &offset, 0, mParentId);
-    ok &= SetTlvString(data, *size, &offset, 0, mOrigMsgId);
+    ok &= mMsgId.serialise(data, *size, offset) ;
+    ok &= mThreadId.serialise(data, *size, offset) ;
+    ok &= mParentId.serialise(data, *size, offset) ;
+    ok &= mOrigMsgId.serialise(data, *size, offset) ;
     ok &= SetTlvString(data, *size, &offset, 0, mAuthorId);
 
     ok &= signSet.SetTlv(data, *size, &offset);
@@ -255,10 +255,10 @@ bool RsGxsMsgMetaData::deserialise(void *data, uint32_t *size)
     if(!ok) return false;
 
     ok &= mGroupId.deserialise(data, *size, offset);
-    ok &= GetTlvString(data, *size, &offset, 0, mMsgId);
-    ok &= GetTlvString(data, *size, &offset, 0, mThreadId);
-    ok &= GetTlvString(data, *size, &offset, 0, mParentId);
-    ok &= GetTlvString(data, *size, &offset, 0, mOrigMsgId);
+    ok &= mMsgId.serialise(data, *size, offset) ;
+    ok &= mThreadId.serialise(data, *size,offset) ;
+    ok &= mParentId.serialise(data, *size, offset) ;
+    ok &= mOrigMsgId.serialise(data, *size, offset) ;
     ok &= GetTlvString(data, *size, &offset, 0, mAuthorId);
 
     ok &= signSet.GetTlv(data, *size, &offset);
