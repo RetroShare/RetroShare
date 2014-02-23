@@ -184,6 +184,14 @@ public:
 	 * @return true if token is false otherwise
 	 */
 	virtual bool getGroupStatistic(const uint32_t& token, GxsGroupStatistic& stats) = 0;
+
+	/*!
+	 *
+	 * @param token value set to be redeemed with acknowledgement
+	 * @param grpId group id for cutoff value to be set
+	 * @param CutOff The cut off value to set
+	 */
+	virtual void setGroupReputationCutOff(uint32_t& token, const RsGxsGroupId& grpId, int CutOff) = 0;
 };
 
 

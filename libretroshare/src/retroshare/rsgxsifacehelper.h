@@ -238,6 +238,20 @@ public:
 		return mGxs->getGroupStatistic(token, stats);
 	}
 
+
+	/*!
+	 * This determines the reputation threshold messages need to surpass in order
+	 * for it to be accepted by local user from remote source
+	 * NOTE: threshold only enforced if service require author signature
+	 * @param token value set to be redeemed with acknowledgement
+	 * @param grpId group id for cutoff value to be set
+	 * @param CutOff The cut off value to set
+	 */
+	void setGroupReputationCutOff(uint32_t& token, const RsGxsGroupId& grpId, int CutOff)
+	{
+		return mGxs->setGroupReputationCutOff(token, grpId, CutOff);
+	}
+
 private:
 
     RsGxsIface* mGxs;

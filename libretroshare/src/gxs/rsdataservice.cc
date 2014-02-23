@@ -70,6 +70,7 @@
 #define KEY_MSG_COUNT std::string("msgCount")
 #define KEY_GRP_STATUS std::string("grpStatus")
 #define KEY_GRP_LAST_POST std::string("lastPost")
+#define KEY_GRP_REP_CUTOFF std::string("rep_cutoff")
 
 
 // msg table columns
@@ -117,6 +118,7 @@
 #define COL_GRP_AUTHEN_FLAGS 20
 #define COL_PARENT_GRP_ID 21
 #define COL_GRP_RECV_TS 22
+#define COL_GRP_REP_CUTOFF 23
 
 
 // msg col numbers
@@ -143,6 +145,7 @@
 const std::string RsGeneralDataService::GRP_META_SERV_STRING = KEY_NXS_SERV_STRING;
 const std::string RsGeneralDataService::GRP_META_STATUS = KEY_GRP_STATUS;
 const std::string RsGeneralDataService::GRP_META_SUBSCRIBE_FLAG = KEY_GRP_SUBCR_FLAG;
+const std::string RsGeneralDataService::GRP_META_CUTOFF_LEVEL = KEY_GRP_REP_CUTOFF;
 
 const std::string RsGeneralDataService::MSG_META_SERV_STRING = KEY_NXS_SERV_STRING;
 const std::string RsGeneralDataService::MSG_META_STATUS = KEY_MSG_STATUS;
@@ -175,7 +178,8 @@ RsDataService::RsDataService(const std::string &serviceDir, const std::string &d
     grpMetaColumns.push_back(KEY_GRP_LAST_POST); grpMetaColumns.push_back(KEY_ORIG_GRP_ID); grpMetaColumns.push_back(KEY_NXS_SERV_STRING);
     grpMetaColumns.push_back(KEY_GRP_SIGN_FLAGS); grpMetaColumns.push_back(KEY_GRP_CIRCLE_ID); grpMetaColumns.push_back(KEY_GRP_CIRCLE_TYPE);
     grpMetaColumns.push_back(KEY_GRP_INTERNAL_CIRCLE); grpMetaColumns.push_back(KEY_GRP_ORIGINATOR);
-    grpMetaColumns.push_back(KEY_GRP_AUTHEN_FLAGS); grpMetaColumns.push_back(KEY_PARENT_GRP_ID); grpMetaColumns.push_back(KEY_RECV_TS); 
+    grpMetaColumns.push_back(KEY_GRP_AUTHEN_FLAGS); grpMetaColumns.push_back(KEY_PARENT_GRP_ID); grpMetaColumns.push_back(KEY_RECV_TS);
+    grpMetaColumns.push_back(KEY_GRP_REP_CUTOFF);
     
 
     // for retrieving actual grp data
@@ -251,6 +255,7 @@ void RsDataService::initialise(){
                  KEY_NXS_HASH + " TEXT," +
                  KEY_RECV_TS + " INT," +
                  KEY_PARENT_GRP_ID + " TEXT," +
+                 KEY_GRP_REP_CUTOFF + " INT," +
                  KEY_SIGN_SET + " BLOB);");
 
     mDb->execSQL("CREATE TRIGGER " + GRP_LAST_POST_UPDATE_TRIGGER +
@@ -284,6 +289,7 @@ RsGxsGrpMetaData* RsDataService::locked_getGrpMeta(RetroCursor &c)
     c.getString(COL_ORIG_GRP_ID, grpMeta->mOrigGrpId);
     c.getString(COL_GRP_SERV_STRING, grpMeta->mServiceString);
     c.getString(COL_HASH, grpMeta->mHash);
+    grpMeta->mReputationCutOff = c.getInt32(COL_GRP_REP_CUTOFF);
     grpMeta->mSignFlags = c.getInt32(COL_GRP_SIGN_FLAGS);
 
     grpMeta->mPublishTs = c.getInt32(COL_TIME_STAMP);
@@ -622,6 +628,7 @@ int RsDataService::storeGroup(std::map<RsNxsGrp *, RsGxsGrpMetaData *> &grp)
         cv.put(KEY_PARENT_GRP_ID, grpMetaPtr->mParentGrpId);
         cv.put(KEY_NXS_HASH, grpMetaPtr->mHash);
         cv.put(KEY_RECV_TS, (int32_t)grpMetaPtr->mRecvTS);
+        cv.put(KEY_GRP_REP_CUTOFF, (int32_t)grpMetaPtr->mReputationCutOff);
 
         if(! (grpMetaPtr->mAuthorId.empty()) ){
             cv.put(KEY_NXS_IDENTITY, grpMetaPtr->mAuthorId);

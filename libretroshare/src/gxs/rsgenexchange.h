@@ -592,6 +592,14 @@ public:
 	 */
     void setGroupServiceString(uint32_t& token, const RsGxsGroupId& grpId, const std::string& servString);
 
+	/*!
+	 *
+	 * @param token value set to be redeemed with acknowledgement
+	 * @param grpId group id for cutoff value to be set
+	 * @param CutOff The cut off value to set
+	 */
+    void setGroupReputationCutOff(uint32_t& token, const RsGxsGroupId& grpId, int CutOff);
+
     /*!
      * sets the msg status flag
      * @param token this is set to token value associated to this request

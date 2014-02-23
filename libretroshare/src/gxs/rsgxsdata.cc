@@ -77,6 +77,7 @@ void RsGxsGrpMetaData::clear(){
     mAuthenFlags = 0;
     mParentGrpId.clear();
     mRecvTS = 0;
+    mReputationCutOff = 0;
 
 }
 

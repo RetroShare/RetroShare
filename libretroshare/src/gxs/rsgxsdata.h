@@ -72,6 +72,7 @@ public:
     uint32_t    mPop; // HOW DO WE DO THIS NOW.
     uint32_t    mMsgCount; // ???
     uint32_t      mLastPost; // ???
+    uint32_t    mReputationCutOff;
 
     uint32_t    mGroupStatus;
     uint32_t    mRecvTS;
