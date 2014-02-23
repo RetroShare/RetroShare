@@ -1107,7 +1107,7 @@ time_t FileIndexMonitor::locked_saveFileIndexes(bool update_cache)
 
 #ifdef FIM_DEBUG
 	std::cerr << "FileIndexMonitor::updateCycle(): got list of all friends." << std::endl ;
-	for(std::list<std::string>::const_iterator it(all_friend_ids.begin());it!=all_friend_ids.end();++it)
+	for(std::list<RsPeerId>::const_iterator it(all_friend_ids.begin());it!=all_friend_ids.end();++it)
 		std::cerr << "  " << *it << std::endl;
 #endif
 
@@ -1171,7 +1171,7 @@ time_t FileIndexMonitor::locked_saveFileIndexes(bool update_cache)
 		std::cerr << "Sending file list: " << std::endl;
 		std::cerr << "   filename	: " << tmpname_browsable << std::endl;
 		std::cerr << "   to peers  : " << std::endl;
-		for(std::set<std::string>::const_iterator itt(it->second.begin());itt!= it->second.end();++itt)
+		for(std::set<RsPeerId>::const_iterator itt(it->second.begin());itt!= it->second.end();++itt)
 			std::cerr << "       " << *itt << std::endl;
 		std::cerr << "   forbidden : " << std::endl;
 		for(std::set<std::string>::const_iterator itt(it->first.begin());itt!= it->first.end();++itt)

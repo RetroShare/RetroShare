@@ -1052,7 +1052,7 @@ bool CacheStrapper::loadList(std::list<RsItem *>& load)
 	std::list<std::string> cacheDirs;
 	std::list<std::string>::iterator dit;
 #ifdef CS_DEBUG
-	std::list<std::string>::iterator fit;
+	std::set<std::string>::iterator fit;
 #endif
 	std::map<uint16_t, CachePair>::iterator cit;
 	for(cit = caches.begin(); cit != caches.end(); cit++)

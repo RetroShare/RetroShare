@@ -821,6 +821,11 @@ int FileIndex::loadIndex(const std::string& filename, const RsFileHash& expected
 	}
 	std::string s((char *)uncompressed_data,uncompressed_data_size) ;
 
+	std::cerr << "   file = " << filename << std::endl;
+	std::cerr << "   uncompressed size = " << uncompressed_data_size << std::endl;
+	std::cerr << "   compressed size = " << size << std::endl;
+	std::cerr << "   hash     = " << tmpout << std::endl;
+
 	delete[] compressed_data ;
 	free(uncompressed_data) ;
 
@@ -1048,6 +1053,7 @@ int FileIndex::saveIndex(const std::string& filename, RsFileHash &fileHash, uint
 
 	fileHash = RsDirUtil::sha1sum((unsigned char *)compressed_data,compressed_data_size).toStdString() ;
 
+	std::cerr << "   file     = " << filename << std::endl;
 	std::cerr << "   old size = " << s.length() << std::endl;
 	std::cerr << "   new size = " << compressed_data_size << std::endl;
 	std::cerr << "   hash     = " << fileHash << std::endl;

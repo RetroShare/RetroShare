@@ -1913,7 +1913,7 @@ void    ftController::statusChange(const std::list<pqipeer> &plist)
 }
 
 	/* Cache Interface */
-bool ftController::RequestCacheFile(RsPeerId id, std::string path, const RsFileHash& hash, uint64_t size)
+bool ftController::RequestCacheFile(const RsPeerId& id, std::string path, const RsFileHash& hash, uint64_t size)
 {
 #ifdef CONTROL_DEBUG
  std::cerr << "ftController::RequestCacheFile(" << id << ",";
@@ -1952,7 +1952,7 @@ bool ftController::RequestCacheFile(RsPeerId id, std::string path, const RsFileH
 }
 
 
-bool ftController::CancelCacheFile(RsPeerId id, std::string path, const RsFileHash& hash, uint64_t size)
+bool ftController::CancelCacheFile(const RsPeerId& id, std::string path, const RsFileHash& hash, uint64_t size)
 {
 	std::cerr << "ftController::CancelCacheFile(" << id << ",";
 	std::cerr << path << "," << hash << "," << size << ")";
