@@ -238,6 +238,7 @@ public:
 		return mGxs->getGroupStatistic(token, stats);
 	}
 
+
 private:
 
     RsGxsIface* mGxs;

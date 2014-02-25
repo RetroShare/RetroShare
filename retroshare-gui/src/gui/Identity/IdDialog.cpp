@@ -585,7 +585,7 @@ void IdDialog::insertRepList(uint32_t token)
 		/* insert 4 columns */
 
 		/* friend name */
-		item->setId(op.mMeta.mGroupId, RSIDREP_COL_NAME);
+		item->setId(op.mMeta.mGroupId.toStdString(), RSIDREP_COL_NAME);
 
 		/* score */
 		item->setText(RSIDREP_COL_OPINION, QString::number(op.getOpinion()));
