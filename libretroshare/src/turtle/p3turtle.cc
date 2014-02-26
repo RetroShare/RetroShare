@@ -431,10 +431,7 @@ void p3turtle::autoWash()
 			_incoming_file_hashes.erase(it) ;
 		}
 		if(!_hashes_to_remove.empty())
-		{
-			IndicateConfigChanged() ;	// initiates saving of handled hashes.
 			_hashes_to_remove.clear() ;
-		}
 	}
 
 	// look for tunnels and stored temporary info that have not been used for a while.
@@ -1871,8 +1868,6 @@ void p3turtle::monitorTunnels(const std::string& hash,RsTurtleClientService *cli
 		_incoming_file_hashes[hash].last_digg_time = RSRandom::random_u32()%10 ;
 		_incoming_file_hashes[hash].service = client_service ;
 	}
-
-	IndicateConfigChanged() ;	// initiates saving of handled hashes.
 }
 
 void p3turtle::returnSearchResult(RsTurtleSearchResultItem *item)

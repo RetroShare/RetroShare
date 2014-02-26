@@ -1327,7 +1327,9 @@ bool 	ftController::FileRequest(const std::string& fname, const std::string& has
 		mDownloads[hash] = ftfc;
 	}
 
-	IndicateConfigChanged(); /* completed transfer -> save */
+	if(!(flags & RS_FILE_REQ_CACHE))
+		IndicateConfigChanged(); /* completed transfer -> save */
+
 	return true;
 }
 

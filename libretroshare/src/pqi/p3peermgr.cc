@@ -620,7 +620,6 @@ bool p3PeerMgrIMPL::removeFriend(const std::string &id, bool removePgpId)
 
 				mOthersList[id] = peer;
 				mStatusChanged = true;
-
 				success = true;
 			}
 		}
@@ -774,6 +773,11 @@ bool p3PeerMgrIMPL::addNeighbour(std::string id)
  * as it doesn't call back to there.
  */
 
+static bool operator!=(const struct sockaddr_in& a1,const struct sockaddr_in& a2)
+{
+	return a1.sin_addr.s_addr != a2.sin_addr.s_addr || a1.sin_port != a2.sin_port ;
+}
+
 bool 	p3PeerMgrIMPL::UpdateOwnAddress(const struct sockaddr_in &localAddr, const struct sockaddr_in &extAddr)
 {
 	std::cerr << "p3PeerMgrIMPL::UpdateOwnAddress(";
@@ -781,17 +785,21 @@ bool 	p3PeerMgrIMPL::UpdateOwnAddress(const struct sockaddr_in &localAddr, const
 	std::cerr << ", ";
 	std::cerr << rs_inet_ntoa(extAddr.sin_addr) << ":" << htons(extAddr.sin_port);
 	std::cerr << ")" << std::endl;
+	bool changed = false ;
 
 	{
 		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
 		//update ip address list
 		pqiIpAddress ipAddressTimed;
+
+		if(ipAddressTimed.mAddr != localAddr) changed = true ;
 		ipAddressTimed.mAddr = localAddr;
 		ipAddressTimed.mSeenTime = time(NULL);
 		ipAddressTimed.mSrc = 0 ;
 		mOwnState.ipAddrs.updateLocalAddrs(ipAddressTimed);
 
+		if(mOwnState.localaddr != localAddr) changed = true ;
 		mOwnState.localaddr = localAddr;
 	}
 
@@ -801,6 +809,9 @@ bool 	p3PeerMgrIMPL::UpdateOwnAddress(const struct sockaddr_in &localAddr, const
 
 		//update ip address list
 		pqiIpAddress ipAddressTimed;
+
+		if(ipAddressTimed.mAddr != extAddr) changed = true ;
+
 		ipAddressTimed.mAddr = extAddr;
 		ipAddressTimed.mSeenTime = time(NULL);
 		ipAddressTimed.mSrc = 0 ;
@@ -826,6 +837,8 @@ bool 	p3PeerMgrIMPL::UpdateOwnAddress(const struct sockaddr_in &localAddr, const
 		}
         	else if (mOwnState.netMode & RS_NET_MODE_EXT)
 		{
+			if(mOwnState.serveraddr.sin_addr.s_addr != extAddr.sin_addr.s_addr) changed = true ;
+
 			mOwnState.serveraddr.sin_addr.s_addr = extAddr.sin_addr.s_addr;
 			std::cerr << "p3PeerMgrIMPL::UpdateOwnAddress() Disabling Update of Server Port ";
 			std::cerr << " as MANUAL FORWARD Mode";
@@ -837,11 +850,15 @@ bool 	p3PeerMgrIMPL::UpdateOwnAddress(const struct sockaddr_in &localAddr, const
 		}
 		else
 		{
+			if(mOwnState.serveraddr != extAddr) changed = true ;
+
 			mOwnState.serveraddr = extAddr;
 		}
 	}
 
-	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+	if(changed)
+		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+
 	mLinkMgr->setLocalAddress(localAddr);
 
 	return true;
@@ -1039,7 +1056,6 @@ bool    p3PeerMgrIMPL::updateAddressList(const std::string& id, const pqiIpAddrS
 	}
 
 	/* "it" points to peer */
-	it->second.ipAddrs.updateAddrs(addrs);
 #ifdef PEER_DEBUG
 	std::cerr << "p3PeerMgrIMPL::setLocalAddress() Updated Address for: " << id;
 	std::cerr << std::endl;
@@ -1047,7 +1063,8 @@ bool    p3PeerMgrIMPL::updateAddressList(const std::string& id, const pqiIpAddrS
 	std::cerr << std::endl;
 #endif
 
-	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+	if(it->second.ipAddrs.updateAddrs(addrs))
+		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 
 	return true;
 }
@@ -1058,6 +1075,7 @@ bool    p3PeerMgrIMPL::updateCurrentAddress(const std::string& id, const pqiIpAd
 #ifdef PEER_DEBUG
 	std::cerr << "p3PeerMgrIMPL::updateCurrentAddress() called for id : " << id << std::endl;
 #endif
+	bool changed = false ;
 	
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 	
@@ -1076,12 +1094,21 @@ bool    p3PeerMgrIMPL::updateCurrentAddress(const std::string& id, const pqiIpAd
 
 	if (isPrivateNet(&(addr.mAddr.sin_addr)))
 	{
-		it->second.ipAddrs.updateLocalAddrs(addr);
+		if(it->second.ipAddrs.updateLocalAddrs(addr))
+			changed = true ;
+
+		if(it->second.localaddr != addr.mAddr) changed = true ;
+
 		it->second.localaddr = addr.mAddr;
 	}
 	else
 	{
-		it->second.ipAddrs.updateExtAddrs(addr);
+		if(it->second.ipAddrs.updateExtAddrs(addr))
+			changed = true ;
+
+		if(it->second.serveraddr != addr.mAddr)
+			changed = true ;
+
 		it->second.serveraddr = addr.mAddr;
 	}
 
@@ -1092,7 +1119,8 @@ bool    p3PeerMgrIMPL::updateCurrentAddress(const std::string& id, const pqiIpAd
 	std::cerr << std::endl;
 #endif
 	
-	IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+	if(changed) 
+		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 	
 	return true;
 }
@@ -1922,8 +1950,10 @@ void p3PeerMgrIMPL::setServicePermissionFlags(const std::string& pgp_id, const S
 			return ;
 		}
 
+		if(mFriendsPermissionFlags[pgp_id] != flags) 
+			IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+
 		mFriendsPermissionFlags[pgp_id] = flags ;
-		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 }
 
 /**********************************************************************
