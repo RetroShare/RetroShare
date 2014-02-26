@@ -973,7 +973,9 @@ bool ftController::completeFile(std::string hash)
 		rsFiles->ForceDirectoryCheck() ;
 	}
 
-	IndicateConfigChanged(); /* completed transfer -> save */
+	if(!(flags & RS_FILE_REQ_CACHE))
+		IndicateConfigChanged(); /* completed transfer -> save config */
+
 	return true;
 }
 
