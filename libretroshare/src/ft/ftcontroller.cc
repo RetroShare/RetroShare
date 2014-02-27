@@ -1390,6 +1390,8 @@ bool 	ftController::FileCancel(const std::string& hash)
 	std::cerr << "ftController::FileCancel" << std::endl;
 #endif
 	/*check if the file in the download map*/
+	TransferRequestFlags flags ;
+	
 
 	{
 		RsStackMutex mtx(ctrlMutex) ;
@@ -1402,6 +1404,7 @@ bool 	ftController::FileCancel(const std::string& hash)
 #endif
 			return false;
 		}
+		flags = mit->second->mFlags ;
 
 		/* check if finished */
 		if ((mit->second)->mCreator->finished())
@@ -1461,7 +1464,9 @@ bool 	ftController::FileCancel(const std::string& hash)
 		mDownloads.erase(mit);
 	}
 
-	IndicateConfigChanged(); /* completed transfer -> save */
+	if(! (flags & RS_FILE_REQ_CACHE) )
+	   IndicateConfigChanged(); /* completed transfer -> save */
+
 	return true;
 }
 
