@@ -256,7 +256,7 @@ int main(int argc, char *argv[])
 		/* Start RetroShare */
 	}
 
-	QSplashScreen splashScreen(QPixmap(":/images/splash.png")/* , Qt::WindowStaysOnTopHint*/);
+	QSplashScreen splashScreen(QPixmap(":/images/logo/logo_splash.png")/* , Qt::WindowStaysOnTopHint*/);
 
 	switch (initResult) {
 	case RS_INIT_OK:
