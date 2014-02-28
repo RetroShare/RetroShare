@@ -148,9 +148,9 @@
 #define IMG_HELP                ":/images/help24.png"
 #define IMAGE_NEWSFEED          ":/images/newsfeed128.png"
 #define IMAGE_PLUGINS           ":/images/extension_32.png"
-#define IMAGE_NOONLINE          ":/images/rstray0.png"
-#define IMAGE_ONEONLINE         ":/images/rstray1.png"
-#define IMAGE_TWOONLINE         ":/images/rstray2.png"
+#define IMAGE_NOONLINE          ":/images/logo/logo_24_0.png"
+#define IMAGE_ONEONLINE         ":/images/logo/logo_24_1.png"
+#define IMAGE_TWOONLINE         ":/images/logo/logo_24_2.png"
 #define IMAGE_BLOGS             ":/images/kblogger.png"
 #define IMAGE_DHT               ":/images/dht16.png"
 #define IMAGE_CHATLOBBY			":/images/chat_32.png"
@@ -209,7 +209,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     QDesktopServices::setUrlHandler("https", this, "externalLinkActivated");
 
     // Setting icons
-    this->setWindowIcon(QIcon(QString::fromUtf8(":/images/rstray3.png")));
+    this->setWindowIcon(QIcon(QString::fromUtf8(":/images/logo/logo_16.png")));
 
     /* Create all the dialogs of which we only want one instance */
     _bandwidthGraph = new BandwidthGraph();

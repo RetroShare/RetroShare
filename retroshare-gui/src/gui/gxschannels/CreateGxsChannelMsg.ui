@@ -18,7 +18,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="../images.qrc">
-    <normaloff>:/images/rstray3.png</normaloff>:/images/rstray3.png</iconset>
+    <normaloff>:/images/logo/logo_16.png</normaloff>:/images/logo/logo_16.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout_8">
    <property name="margin">
@@ -293,7 +293,7 @@ p, li { white-space: pre-wrap; }
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>518</width>
+               <width>98</width>
                <height>24</height>
               </rect>
              </property>
@@ -380,6 +380,7 @@ p, li { white-space: pre-wrap; }
   </customwidget>
  </customwidgets>
  <resources>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>

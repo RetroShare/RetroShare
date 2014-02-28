@@ -18,7 +18,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="../images.qrc">
-    <normaloff>:/images/dht16.png</normaloff>:/images/dht16.png</iconset>
+    <normaloff>:/images/logo/logo_16.png</normaloff>:/images/logo/logo_16.png</iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -104,7 +104,7 @@
      <x>0</x>
      <y>0</y>
      <width>525</width>
-     <height>21</height>
+     <height>20</height>
     </rect>
    </property>
   </widget>

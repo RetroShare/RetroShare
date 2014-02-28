@@ -177,7 +177,7 @@ void AboutDialog::on_help_button_clicked()
 AWidget::AWidget() {
     setMouseTracking(true);
 
-    QImage image(":/images/about.png");
+    QImage image(":/images/logo/logo_info.png");
     QPainter p(&image);
     p.setPen(Qt::black);
     QFont font = p.font();

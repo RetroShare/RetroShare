@@ -69,8 +69,11 @@
             <height>16</height>
            </size>
           </property>
+          <property name="layoutDirection">
+           <enum>Qt::LeftToRight</enum>
+          </property>
           <property name="pixmap">
-           <pixmap resource="../images.qrc">:/images/rstray3.png</pixmap>
+           <pixmap resource="../images.qrc">:/images/logo/logo_16.png</pixmap>
           </property>
           <property name="scaledContents">
            <bool>true</bool>
@@ -184,6 +187,7 @@
   <tabstop>toasterButton</tabstop>
  </tabstops>
  <resources>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>

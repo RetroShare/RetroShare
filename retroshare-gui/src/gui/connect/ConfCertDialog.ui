@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="../images.qrc">
-    <normaloff>:/images/rstray3.png</normaloff>:/images/rstray3.png</iconset>
+    <normaloff>:/images/logo/logo_16.png</normaloff>:/images/logo/logo_16.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout_5">
    <property name="horizontalSpacing">
@@ -958,6 +958,7 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
   </customwidget>
  </customwidgets>
  <resources>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>

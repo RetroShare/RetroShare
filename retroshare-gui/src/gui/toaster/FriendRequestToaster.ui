@@ -70,7 +70,7 @@
            </size>
           </property>
           <property name="pixmap">
-           <pixmap resource="../images.qrc">:/images/rstray3.png</pixmap>
+           <pixmap resource="../images.qrc">:/images/logo/logo_16.png</pixmap>
           </property>
           <property name="scaledContents">
            <bool>true</bool>
@@ -192,6 +192,7 @@
   </customwidget>
  </customwidgets>
  <resources>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>

@@ -323,6 +323,19 @@
         <file>images/lphoto.png</file>
         <file>images/lphoto16.png</file>
         <file>images/lphoto24.png</file>
+        <file>images/logo/logo_16.png</file>
+        <file>images/logo/logo_24.png</file>
+        <file>images/logo/logo_24_0.png</file>
+        <file>images/logo/logo_24_1.png</file>
+        <file>images/logo/logo_24_2.png</file>
+        <file>images/logo/logo_32.png</file>
+        <file>images/logo/logo_48.png</file>
+        <file>images/logo/logo_64.png</file>
+        <file>images/logo/logo_128.png</file>
+        <file>images/logo/logo_256.png</file>
+        <file>images/logo/logo_512.png</file>
+        <file>images/logo/logo_info.png</file>
+        <file>images/logo/logo_splash.png</file>
         <file>images/logobar/logo_bar_fill.png</file>
         <file>images/logobar/logo_bar_start.png</file>
         <file>images/logobar/rslogo.png</file>
@@ -370,9 +383,6 @@
         <file>images/openimage.png</file>
         <file>images/pasterslink.png</file>
         <file>images/package_games1.png</file>
-        <file>images/peerdetails_16x16.png</file>
-        <file>images/peers_16x16.png</file>
-        <file>images/peers_24x24.png</file>
         <file>images/pin32.png</file>
         <file>images/print24.png</file>
         <file>images/priorityauto.png</file>
@@ -401,7 +411,6 @@
         <file>images/reload24.png</file>
         <file>images/reset.png</file>
         <file>images/resume.png</file>
-        <file>images/RetroShare16.png</file>
         <file>images/retrosharelogo1.png</file>
         <file>images/retrosharelogo2.png</file>
         <file>images/retrosharelogo32.png</file>

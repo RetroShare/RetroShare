@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="../images.qrc">
-    <normaloff>:/images/rstray3.png</normaloff>:/images/rstray3.png</iconset>
+    <normaloff>:/images/logo/logo_16.png</normaloff>:/images/logo/logo_16.png</iconset>
   </property>
   <widget class="ConnectFriendPage" name="IntroPage">
    <property name="title">
@@ -1074,6 +1074,7 @@
   </customwidget>
  </customwidgets>
  <resources>
+  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
   <include location="../images.qrc"/>
  </resources>
