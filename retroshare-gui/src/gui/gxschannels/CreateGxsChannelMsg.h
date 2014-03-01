@@ -38,13 +38,13 @@ class CreateGxsChannelMsg : public QDialog, public TokenResponse, private Ui::Cr
 
 public:
 	/** Default Constructor */
-	CreateGxsChannelMsg(std::string cId);
+    CreateGxsChannelMsg(const RsGxsGroupId& cId);
 
 	/** Default Destructor */
 	~CreateGxsChannelMsg();
 
 	void addAttachment(const std::string &path);
-	void addAttachment(const std::string &hash, const std::string &fname, uint64_t size, bool local, const RsPeerId &srcId);
+    void addAttachment(const RsFileHash &hash, const std::string &fname, uint64_t size, bool local, const RsPeerId &srcId);
 
 	void newChannelMsg();
 
@@ -77,7 +77,7 @@ private:
 	void sendMessage(const std::string &subject, const std::string &msg, const std::list<RsGxsFile> &files);
 	bool setThumbNail(const std::string& path, int frame);
 
-	std::string mChannelId;
+    RsGxsGroupId mChannelId;
 	RsGroupMetaData mChannelMeta;
 	bool mChannelMetaLoaded;
 

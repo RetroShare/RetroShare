@@ -143,7 +143,7 @@ void GxsChannelDialog::updateDisplay(bool complete)
 		/* Update channel list */
 		insertChannels();
 	}
-	if (!mChannelId.empty() && std::find(grpIds.begin(), grpIds.end(), mChannelId) != grpIds.end()) {
+    if (!mChannelId.isNull() && std::find(grpIds.begin(), grpIds.end(), mChannelId) != grpIds.end()) {
 		requestGroupData(mChannelId);
 	}
 
@@ -192,12 +192,12 @@ void GxsChannelDialog::processSettings(bool load)
 
 void GxsChannelDialog::channelListCustomPopupMenu( QPoint /*point*/ )
 {
-	if (mChannelId.empty()) 
+    if (mChannelId.isNull())
 	{
 		return;
 	}
 
-	uint32_t subscribeFlags = ui.treeWidget->subscribeFlags(QString::fromStdString(mChannelId));
+    uint32_t subscribeFlags = ui.treeWidget->subscribeFlags(QString::fromStdString(mChannelId.toStdString()));
 
 	QMenu contextMnu(this);
 
@@ -272,7 +272,7 @@ void GxsChannelDialog::channelListCustomPopupMenu( QPoint /*point*/ )
 
 	contextMnu.addSeparator();
 	QAction *action = contextMnu.addAction(QIcon(":/images/copyrslink.png"), tr("Copy RetroShare Link"), this, SLOT(copyChannelLink()));
-	action->setEnabled(!mChannelId.empty());
+    action->setEnabled(!mChannelId.isNull());
 
 	contextMnu.exec(QCursor::pos());
 
@@ -340,7 +340,7 @@ void GxsChannelDialog::channelListCustomPopupMenu( QPoint /*point*/ )
 
 	contextMnu.addSeparator();
 	QAction *action = contextMnu.addAction(QIcon(":/images/copyrslink.png"), tr("Copy RetroShare Link"), this, SLOT(copyChannelLink()));
-	action->setEnabled(!mChannelId.empty());
+    action->setEnabled(!mChannelId.isNull());
 
 	contextMnu.exec(QCursor::pos());
 
@@ -389,7 +389,7 @@ void GxsChannelDialog::shareKey()
 void GxsChannelDialog::copyChannelLink()
 {
 #if 0
-	if (mChannelId.empty()) {
+    if (mChannelId.isNull()) {
 		return;
 	}
 
@@ -407,7 +407,7 @@ void GxsChannelDialog::copyChannelLink()
 
 void GxsChannelDialog::createMsg()
 {
-	if (mChannelId.empty()) {
+    if (mChannelId.isNull()) {
 		return;
 	}
 
@@ -440,7 +440,7 @@ void GxsChannelDialog::selectChannel(const QString &id)
 
 static void channelInfoToGroupItemInfo(const RsGroupMetaData &channelInfo, GroupItemInfo &groupItemInfo)
 {
-	groupItemInfo.id = QString::fromStdString(channelInfo.mGroupId);
+    groupItemInfo.id = QString::fromStdString(channelInfo.mGroupId.toStdString());
 	groupItemInfo.name = QString::fromUtf8(channelInfo.mGroupName.c_str());
 	groupItemInfo.popularity = channelInfo.mPop;
 	groupItemInfo.lastpost = QDateTime::fromTime_t(channelInfo.mLastPost);
@@ -774,7 +774,7 @@ void GxsChannelDialog::unsubscribeChannel()
 	std::cerr << std::endl;
 #endif
 
-	if (mChannelId.empty())
+    if (mChannelId.isNull())
 		return;
 
 	uint32_t token = 0;
@@ -789,7 +789,7 @@ void GxsChannelDialog::subscribeChannel()
 	std::cerr << std::endl;
 #endif
 
-	if (mChannelId.empty())
+    if (mChannelId.isNull())
 		return;
 
 	uint32_t token = 0;
@@ -800,7 +800,7 @@ void GxsChannelDialog::subscribeChannel()
 void GxsChannelDialog::showChannelDetails()
 {
 #if 0
-	if (mChannelId.empty()) {
+    if (mChannelId.isNull()) {
 	return;
 	}
 
@@ -818,7 +818,7 @@ void GxsChannelDialog::showChannelDetails()
 void GxsChannelDialog::setAllAsReadClicked()
 {
 #if 0
-	if (mChannelId.empty()) {
+    if (mChannelId.isNull()) {
 		return;
 	}
 
@@ -846,7 +846,7 @@ void GxsChannelDialog::setAllAsReadClicked()
 
 void GxsChannelDialog::toggleAutoDownload()
 {
-	if (mChannelId.empty())
+    if (mChannelId.isNull())
 		return;
 
 	bool autoDl = rsGxsChannels->getChannelAutoDownload(mChannelId);
@@ -864,11 +864,11 @@ void GxsChannelDialog::toggleAutoDownload()
 bool GxsChannelDialog::navigate(const std::string& channelId, const std::string& msgId)
 {
 #if 0
-	if (channelId.empty()) {
+    if (channelId.isNull()) {
 		return false;
 	}
 
-	if (treeWidget->activateId(QString::fromStdString(channelId), msgId.empty()) == NULL) {
+    if (treeWidget->activateId(QString::fromStdString(channelId), msgId.isNull()) == NULL) {
 		return false;
 	}
 
@@ -877,7 +877,7 @@ bool GxsChannelDialog::navigate(const std::string& channelId, const std::string&
 		return false;
 	}
 
-	if (msgId.empty()) {
+    if (msgId.isNull()) {
 		return true;
 	}
 
@@ -976,7 +976,7 @@ void GxsChannelDialog::requestGroupData(const RsGxsGroupId &grpId)
 
 	mChannelQueue->cancelActiveRequestTokens(TOKEN_TYPE_GROUP_DATA);
 
-	if (grpId.empty()) {
+    if (grpId.isNull()) {
 		mStateHelper->setActive(TOKEN_TYPE_GROUP_DATA, false);
 		mStateHelper->setLoading(TOKEN_TYPE_GROUP_DATA, false);
 		mStateHelper->clear(TOKEN_TYPE_GROUP_DATA);
@@ -1043,7 +1043,7 @@ void GxsChannelDialog::requestPosts(const RsGxsGroupId &grpId)
 
 	mChannelQueue->cancelActiveRequestTokens(TOKEN_TYPE_POSTS);
 
-	if (grpId.empty()) {
+    if (grpId.isNull()) {
 		mStateHelper->setActive(TOKEN_TYPE_POSTS, false);
 		mStateHelper->setLoading(TOKEN_TYPE_POSTS, false);
 		mStateHelper->clear(TOKEN_TYPE_POSTS);

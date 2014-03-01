@@ -118,7 +118,7 @@ private:
 	void acknowledgeGroupUpdate(const uint32_t &token);
 	void acknowledgeMessageUpdate(const uint32_t &token);
 
-	std::string mChannelId; /* current Channel */
+    RsGxsGroupId mChannelId; /* current Channel */
 	TokenQueue *mChannelQueue;
 
 	/* Layout Pointers */
