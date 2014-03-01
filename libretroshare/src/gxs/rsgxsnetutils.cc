@@ -47,7 +47,7 @@ bool AuthorPending::expired() const
 }
 
 bool AuthorPending::getAuthorRep(GixsReputation& rep,
-                                 const std::string& authorId, const RsPeerId& peerId)
+                                 const RsGxsId& authorId, const RsPeerId& peerId)
 {
 	if(mRep->haveReputation(authorId))
 	{
@@ -281,7 +281,7 @@ int GrpCircleIdRequestVetting::getType() const
 }
 
 MsgIdCircleVet::MsgIdCircleVet(const RsGxsMessageId& msgId,
-		const std::string& authorId)
+		const RsGxsId& authorId)
  : mMsgId(msgId), mAuthorId(authorId) {
 }
 

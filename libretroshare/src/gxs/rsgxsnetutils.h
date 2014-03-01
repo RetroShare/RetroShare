@@ -141,7 +141,7 @@ protected:
 	 * @param authorId reputation to get
 	 * @return true if successfully retrieve repution
 	 */
-        bool getAuthorRep(GixsReputation& rep, const std::string& authorId, const RsPeerId& peerId);
+        bool getAuthorRep(GixsReputation& rep, const RsGxsId& authorId, const RsPeerId& peerId);
 
 private:
 
@@ -158,7 +158,7 @@ public:
 
 	RsGxsMessageId mMsgId;
 	RsGxsGroupId mGrpId;
-	std::string mAuthorId;
+	RsGxsId mAuthorId;
 	bool mPassedVetting;
 
 };
@@ -171,7 +171,7 @@ public:
 	GrpAuthEntry();
 
 	RsGxsGroupId mGrpId;
-	std::string mAuthorId;
+	RsGxsId mAuthorId;
 	bool mPassedVetting;
 };
 
@@ -218,10 +218,10 @@ public:
 class MsgIdCircleVet
 {
 public:
-	MsgIdCircleVet(const RsGxsMessageId& grpId, const std::string& authorId);
+	MsgIdCircleVet(const RsGxsMessageId& grpId, const RsGxsId& authorId);
 
 	RsGxsMessageId mMsgId;
-	std::string mAuthorId;
+	RsGxsId mAuthorId;
 };
 
 class GrpItemCircleVet

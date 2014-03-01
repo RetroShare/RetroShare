@@ -17,6 +17,7 @@
 
 typedef GXSGroupId RsGxsGroupId;
 typedef Sha1CheckSum RsGxsMessageId;
+typedef GXSId RsGxsId;
 
 typedef std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > GxsMsgIdResult;
 typedef std::pair<RsGxsGroupId, RsGxsMessageId> RsGxsGrpMsgIdPair;
@@ -60,7 +61,7 @@ public:
     uint32_t    mSignFlags;   // Combination of RSGXS_GROUP_SIGN_PUBLISH_MASK & RSGXS_GROUP_SIGN_AUTHOR_MASK.
 
     time_t      mPublishTs; // Mandatory.
-    std::string    mAuthorId;   // Optional.
+    RsGxsId    mAuthorId;   // Optional.
 
     // for circles
     std::string mCircleId;
@@ -109,7 +110,7 @@ public:
     RsGxsMessageId mParentId;
     RsGxsMessageId mOrigMsgId;
 
-    std::string    mAuthorId;
+    RsGxsId    mAuthorId;
 
     std::string mMsgName;
     time_t      mPublishTs;
@@ -172,7 +173,7 @@ public:
     // expand as support is added for other utypes
     enum UpdateType { DESCRIPTION, NAME };
 
-    RsGxsGroupUpdateMeta(const std::string& groupId) : mGroupId(groupId) {}
+    RsGxsGroupUpdateMeta(const RsGxsGroupId& groupId) : mGroupId(groupId) {}
 
     typedef std::map<UpdateType, std::string> GxsMetaUpdate;
 
@@ -193,12 +194,12 @@ public:
     bool removeUpdateType(UpdateType utype){ return mUpdates.erase(utype) == 1; }
 
     const GxsMetaUpdate* getUpdates() const { return &mUpdates; }
-    const std::string& getGroupId() const { return mGroupId; }
+    const RsGxsGroupId& getGroupId() const { return mGroupId; }
 
 private:
 
     GxsMetaUpdate mUpdates;
-    std::string mGroupId;
+    RsGxsGroupId mGroupId;
 };
 
 #endif /* RSGXSIFACETYPES_H_ */

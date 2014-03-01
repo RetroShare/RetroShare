@@ -278,12 +278,16 @@ RsGxsGrpMetaData* RsDataService::locked_getGrpMeta(RetroCursor &c)
     grpMeta->mGroupId = tempId;
 
 
-    c.getString(COL_IDENTITY, grpMeta->mAuthorId);
+
+    c.getString(COL_IDENTITY, tempId);
+    grpMeta->mAuthorId = tempId;
     c.getString(COL_GRP_NAME, grpMeta->mGroupName);
     c.getString(COL_ORIG_GRP_ID, tempId);
     grpMeta->mOrigGrpId = tempId;
     c.getString(COL_GRP_SERV_STRING, grpMeta->mServiceString);
-    c.getString(COL_HASH, grpMeta->mHash);
+    std::string temp;
+    c.getString(COL_HASH, temp);
+    grpMeta->mHash = temp;
     grpMeta->mSignFlags = c.getInt32(COL_GRP_SIGN_FLAGS);
 
     grpMeta->mPublishTs = c.getInt32(COL_TIME_STAMP);
@@ -402,10 +406,13 @@ RsGxsMsgMetaData* RsDataService::locked_getMsgMeta(RetroCursor &c)
 
     c.getString(COL_ORIG_MSG_ID, temp);
     msgMeta->mOrigMsgId = temp;
-    c.getString(COL_IDENTITY, msgMeta->mAuthorId);
+    c.getString(COL_IDENTITY, temp);
+    msgMeta->mAuthorId = temp;
     c.getString(COL_MSG_NAME, msgMeta->mMsgName);
     c.getString(COL_MSG_SERV_STRING, msgMeta->mServiceString);
-    c.getString(COL_HASH, msgMeta->mHash);
+
+    c.getString(COL_HASH, temp);
+    msgMeta->mHash = temp;
     msgMeta->recvTS = c.getInt32(COL_MSG_RECV_TS);
 
     offset = 0;
@@ -522,7 +529,7 @@ int RsDataService::storeMessage(std::map<RsNxsMsg *, RsGxsMsgMetaData *> &msg)
         cv.put(KEY_MSG_ID, msgMetaPtr->mMsgId.toStdString());
         cv.put(KEY_GRP_ID, msgMetaPtr->mGroupId.toStdString());
         cv.put(KEY_NXS_SERV_STRING, msgMetaPtr->mServiceString);
-        cv.put(KEY_NXS_HASH, msgMetaPtr->mHash);
+        cv.put(KEY_NXS_HASH, msgMetaPtr->mHash.toStdString());
         cv.put(KEY_RECV_TS, (int32_t)msgMetaPtr->recvTS);
 
 
@@ -530,7 +537,7 @@ int RsDataService::storeMessage(std::map<RsNxsMsg *, RsGxsMsgMetaData *> &msg)
         offset = 0;
         msgMetaPtr->signSet.SetTlv(signSetData, msgMetaPtr->signSet.TlvSize(), &offset);
         cv.put(KEY_SIGN_SET, msgMetaPtr->signSet.TlvSize(), signSetData);
-        cv.put(KEY_NXS_IDENTITY, msgMetaPtr->mAuthorId);
+        cv.put(KEY_NXS_IDENTITY, msgMetaPtr->mAuthorId.toStdString());
 
 
         cv.put(KEY_NXS_FLAGS, (int32_t) msgMetaPtr->mMsgFlags);
@@ -631,11 +638,11 @@ int RsDataService::storeGroup(std::map<RsNxsGrp *, RsGxsGrpMetaData *> &grp)
         cv.put(KEY_GRP_ORIGINATOR, grpMetaPtr->mOriginator.toStdString());
         cv.put(KEY_GRP_AUTHEN_FLAGS, (int32_t)grpMetaPtr->mAuthenFlags);
         cv.put(KEY_PARENT_GRP_ID, grpMetaPtr->mParentGrpId.toStdString());
-        cv.put(KEY_NXS_HASH, grpMetaPtr->mHash);
+        cv.put(KEY_NXS_HASH, grpMetaPtr->mHash.toStdString());
         cv.put(KEY_RECV_TS, (int32_t)grpMetaPtr->mRecvTS);
 
-        if(! (grpMetaPtr->mAuthorId.empty()) ){
-            cv.put(KEY_NXS_IDENTITY, grpMetaPtr->mAuthorId);
+        if(! (grpMetaPtr->mAuthorId.isNull()) ){
+            cv.put(KEY_NXS_IDENTITY, grpMetaPtr->mAuthorId.toStdString());
         }
 
         offset = 0;
@@ -723,10 +730,10 @@ int RsDataService::updateGroup(std::map<RsNxsGrp *, RsGxsGrpMetaData *> &grp)
         cv.put(KEY_GRP_INTERNAL_CIRCLE, grpMetaPtr->mInternalCircle);
         cv.put(KEY_GRP_ORIGINATOR, grpMetaPtr->mOriginator.toStdString());
         cv.put(KEY_GRP_AUTHEN_FLAGS, (int32_t)grpMetaPtr->mAuthenFlags);
-        cv.put(KEY_NXS_HASH, grpMetaPtr->mHash);
+        cv.put(KEY_NXS_HASH, grpMetaPtr->mHash.toStdString());
 
-        if(! (grpMetaPtr->mAuthorId.empty()) ){
-            cv.put(KEY_NXS_IDENTITY, grpMetaPtr->mAuthorId);
+        if(! (grpMetaPtr->mAuthorId.isNull()) ){
+            cv.put(KEY_NXS_IDENTITY, grpMetaPtr->mAuthorId.toStdString());
         }
 
         offset = 0;

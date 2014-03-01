@@ -34,6 +34,8 @@
 #include "serialiser/rstlvtypes.h"
 #include "serialiser/rstlvkeys.h"
 
+#include "retroshare/rsgxsifacetypes.h"
+
 /**************************************************************************/
 
 #define	RS_PKT_SUBTYPE_RECOGN_REQ	0x01
@@ -61,7 +63,7 @@ std::ostream &print(std::ostream &out, uint16_t indent = 0);
 	uint16_t tag_class;
 	uint16_t tag_type;
 
-	std::string identity;
+	RsGxsId identity;
 	std::string nickname;
 	std::string comment;
 
@@ -88,7 +90,7 @@ std::ostream &print(std::ostream &out, uint16_t indent = 0);
 	uint16_t tag_class;
 	uint16_t tag_type;
 
-	std::string identity;
+	RsGxsId identity;
 	std::string nickname;
 
 	RsTlvKeySignature sign;

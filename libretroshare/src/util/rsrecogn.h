@@ -34,6 +34,7 @@
 #include <openssl/rsa.h>
 
 #include "serialiser/rsgxsrecognitems.h"
+#include "retroshare/rsgxsifacetypes.h"
 
 namespace RsRecogn {
 
@@ -52,7 +53,7 @@ std::string 	getRsaKeyId(RSA *pubkey);
 RsGxsRecognTagItem *extractTag(const std::string &encoded);
 
 bool 		createTagRequest(const RsTlvSecurityKey &key, 
-			const std::string &id, const std::string &nickname, 
+			const RsGxsId &id, const std::string &nickname,
 			uint16_t tag_class, uint16_t tag_type, 
 			const std::string &comment, std::string &tag);
 

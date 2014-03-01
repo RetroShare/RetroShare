@@ -1521,7 +1521,7 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
 
 		if(msgIdSet.find(msgId) == msgIdSet.end()){
 
-			bool noAuthor = syncItem->authorId.empty();
+			bool noAuthor = syncItem->authorId.isNull();
 			if(mReputations->haveReputation(syncItem->authorId) || noAuthor)
 			{
 
@@ -1657,7 +1657,7 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
 		if(!haveItem || (haveItem && latestVersion) ){
 
 			// determine if you need to check reputation
-			bool checkRep = !grpSyncItem->authorId.empty();
+			bool checkRep = !grpSyncItem->authorId.isNull();
 
 			// check if you have reputation, if you don't then
 			// place in holding pen

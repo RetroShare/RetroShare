@@ -179,7 +179,7 @@ public:
 
     /// grpId of grp held by sending peer
     RsGxsGroupId grpId;
-    std::string authorId;
+    RsGxsId authorId;
 
 };
 
@@ -263,7 +263,7 @@ public:
     uint8_t flag; // response/req
     RsGxsGroupId grpId;
     RsGxsMessageId msgId;
-    std::string authorId;
+    RsGxsId authorId;
 
 };
 

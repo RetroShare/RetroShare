@@ -32,6 +32,7 @@
 
 #include "retroshare/rstokenservice.h"
 #include "retroshare/rsgxsifacehelper.h"
+#include "retroshare/rsids.h"
 
 /* The Main Interface Class - for information about your Peers */
 class RsIdentity;
@@ -165,8 +166,6 @@ class RsIdOpinion
 
 
 // DATA TYPE FOR EXTERNAL INTERFACE.
-
-typedef std::string RsGxsId; // TMP. => 
 
 class RsRecognTag
 {

@@ -421,7 +421,7 @@ int RsGenExchange::createGroupSignatures(RsTlvKeySignatureSet& signSet, RsTlvBin
     PrivacyBitPos pos = GRP_OPTION_BITS;
 
     // Check required permissions, and allow them to sign it - if they want too - as well!
-    if ((!grpMeta.mAuthorId.empty()) || checkAuthenFlag(pos, author_flag))
+    if ((!grpMeta.mAuthorId.isNull()) || checkAuthenFlag(pos, author_flag))
     {
         needIdentitySign = true;
         std::cerr << "Needs Identity sign! (Service Flags)";
@@ -536,7 +536,7 @@ int RsGenExchange::createMsgSignatures(RsTlvKeySignatureSet& signSet, RsTlvBinar
         std::cerr << std::endl;
     }
 
-    if (!msgMeta.mAuthorId.empty())
+    if (!msgMeta.mAuthorId.isNull())
     {
         needIdentitySign = true;
         std::cerr << "Needs Identity sign! (AuthorId Exists)";
@@ -690,7 +690,7 @@ int RsGenExchange::createMessage(RsNxsMsg* msg)
 		// get hash of msg data to create msg id
 		pqihash hash;
 		hash.addData(allMsgData, allMsgDataLen);
-		std::string hashId;
+		RsFileHash hashId;
 		hash.Complete(hashId);
 		msg->msgId = hashId;
 
@@ -746,7 +746,7 @@ int RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, RsTlvSecu
         needPublishSign = true;
 
     // Check required permissions, if they have signed it anyway - we need to validate it.
-    if ((checkAuthenFlag(pos, author_flag)) || (!msg->metaData->mAuthorId.empty()))
+    if ((checkAuthenFlag(pos, author_flag)) || (!msg->metaData->mAuthorId.isNull()))
         needIdentitySign = true;
 
 
@@ -855,7 +855,7 @@ int RsGenExchange::validateGrp(RsNxsGrp* grp, RsTlvSecurityKeySet& grpKeySet)
     PrivacyBitPos pos = GRP_OPTION_BITS;
 
     // Check required permissions, and allow them to sign it - if they want too - as well!
-    if (!(metaData.mAuthorId.empty()) || checkAuthenFlag(pos, author_flag))
+    if (!(metaData.mAuthorId.isNull()) || checkAuthenFlag(pos, author_flag))
     {
         needIdentitySign = true;
         std::cerr << "Needs Identity sign! (Service Flags)";
@@ -2220,7 +2220,7 @@ void RsGenExchange::processRecvdData()
 }
 
 
-void RsGenExchange::computeHash(const RsTlvBinaryData& data, std::string& hash)
+void RsGenExchange::computeHash(const RsTlvBinaryData& data, RsFileHash& hash)
 {
 	pqihash pHash;
 	pHash.addData(data.bin_data, data.bin_len);

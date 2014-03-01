@@ -52,7 +52,7 @@ public:
     uint32_t    mGroupFlags;
     uint32_t    mPublishTs;
     uint32_t    mSignFlags;
-    std::string mAuthorId;
+    RsGxsId mAuthorId;
 
     std::string mCircleId;
     uint32_t mCircleType;
@@ -99,7 +99,7 @@ public:
     RsGxsMessageId mThreadId;
     RsGxsMessageId mParentId;
     RsGxsMessageId mOrigMsgId;
-    std::string mAuthorId;
+    RsGxsId mAuthorId;
 
     RsTlvKeySignatureSet signSet;
 

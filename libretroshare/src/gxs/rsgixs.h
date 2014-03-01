@@ -32,7 +32,7 @@
 #include "retroshare/rsgxscircles.h"
 
 #include "serialiser/rstlvkeys.h"
-
+#include "retroshare/rsids.h"
 /*!
  * GIXP: General Identity Exchange Service.
  *
@@ -98,7 +98,6 @@
 
 typedef RsPeerId  PeerId; // SHOULD BE REMOVED => RsPeerId (SSLID)
 typedef PGPIdType RsPgpId;
-typedef std::string RsGxsId;
 
 //
 //// External Interface - 

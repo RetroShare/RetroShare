@@ -782,7 +782,7 @@ bool p3GxsCircles::cache_start_load()
 #ifdef DEBUG_CIRCLES
 	std::cerr << "p3GxsCircles::cache_start_load()";
 	std::cerr << std::endl;
-#endif // DEBUG_CIRCLES
+#endif // DEBUG_CIRCLESmatch
 
 	/* trigger request to load missing ids into cache */
 	std::list<RsGxsGroupId> groupIds;
@@ -790,7 +790,7 @@ bool p3GxsCircles::cache_start_load()
 		RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
 
 		/* now we process the modGroupList -> a map so we can use it easily later, and create id list too */
-		std::list<RsGxsId>::iterator it;
+		std::list<RsGxsCircleId>::iterator it;
 		for(it = mCacheLoad_ToCache.begin(); it != mCacheLoad_ToCache.end(); it++)
 		{
 #ifdef DEBUG_CIRCLES
@@ -1453,7 +1453,7 @@ void p3GxsCircles::checkDummyIdData()
 				std::cerr << "p3GxsCircles::checkDummyIdData() PgpLinkedId: " << it->mMeta.mGroupId;
 				std::cerr << std::endl;
 #endif // DEBUG_CIRCLES
-				mDummyPgpLinkedIds.push_back(it->mMeta.mGroupId.toStdString());
+				mDummyPgpLinkedIds.push_back(RsGxsId(it->mMeta.mGroupId.toStdString()));
 
 				if (it->mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
 				{
@@ -1461,7 +1461,7 @@ void p3GxsCircles::checkDummyIdData()
 					std::cerr << "p3GxsCircles::checkDummyIdData() OwnId: " << it->mMeta.mGroupId;
 					std::cerr << std::endl;
 #endif // DEBUG_CIRCLES
-					mDummyOwnIds.push_back(it->mMeta.mGroupId.toStdString());
+					mDummyOwnIds.push_back(RsGxsId(it->mMeta.mGroupId.toStdString()));
 				}
 			}
 			else

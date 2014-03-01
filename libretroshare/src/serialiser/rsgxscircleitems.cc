@@ -128,7 +128,11 @@ bool RsGxsCircleGroupItem::convertFrom(const RsGxsCircleGroup &group)
 	}
 	else
 	{
-		gxsIdSet.ids = group.mInvitedMembers;
+		std::list<RsGxsId>::const_iterator it = group.mInvitedMembers.begin();
+		for(; it != group.mInvitedMembers.end(); it++)
+		{
+			gxsIdSet.ids.push_back(it->toStdString());
+		}
 	}
 	subCircleSet.ids = group.mSubCircles;
 	return true;
@@ -149,7 +153,10 @@ bool RsGxsCircleGroupItem::convertTo(RsGxsCircleGroup &group) const
 	else
 	{
 		group.mLocalFriends.clear();
-		group.mInvitedMembers = gxsIdSet.ids;
+		std::list<std::string>::const_iterator cit = gxsIdSet.ids.begin();
+		for(; cit != gxsIdSet.ids.end(); cit++)
+			group.mInvitedMembers.push_back((RsGxsId(*cit)));
+
 	}
 	group.mSubCircles = subCircleSet.ids;
 	return true;

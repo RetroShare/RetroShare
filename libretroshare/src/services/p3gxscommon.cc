@@ -435,7 +435,7 @@ bool p3GxsCommentService::createGxsVote(uint32_t &token, RsGxsVote &vote)
 		return false;
 	}
 
-	if (vote.mMeta.mAuthorId.empty())
+	if (vote.mMeta.mAuthorId.isNull())
 	{
 		std::cerr << "p3GxsCommentService::createGxsVote() ERROR Missing Required AuthorId";
 		std::cerr << std::endl;

@@ -205,7 +205,7 @@ bool RsNxsSerialiser::serialiseNxsSynMsgItem(RsNxsSyncMsgItem *item, void *data,
     ok &= setRawUInt8(data, *size, &offset, item->flag);
     ok &= item->grpId.serialise(data, *size, offset);
     ok &= item->msgId.serialise(data, *size, offset);
-    ok &= SetTlvString(data, *size, &offset, TLV_TYPE_STR_NAME, item->authorId);
+    ok &= item->authorId.serialise(data, *size, offset);
 
     if(offset != tlvsize){
 #ifdef RSSERIAL_DEBUG
@@ -456,7 +456,7 @@ bool RsNxsSerialiser::serialiseNxsSyncGrpItem(RsNxsSyncGrpItem *item, void *data
     ok &= setRawUInt8(data, *size, &offset, item->flag);
     ok &= item->grpId.serialise(data, *size, offset);
     ok &= setRawUInt32(data, *size, &offset, item->publishTs);
-    ok &= SetTlvString(data, *size, &offset, TLV_TYPE_STR_NAME, item->authorId);
+    ok &= item->authorId.serialise(data, *size, offset);
 
     if(offset != tlvsize){
 #ifdef RSSERIAL_DEBUG
@@ -782,7 +782,7 @@ RsNxsSyncGrpItem* RsNxsSerialiser::deserialNxsSyncGrpItem(void *data, uint32_t *
     ok &= getRawUInt8(data, *size, &offset, &(item->flag));
     ok &= item->grpId.deserialise(data, *size, offset);
     ok &= getRawUInt32(data, *size, &offset, &(item->publishTs));
-    ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_NAME, item->authorId);
+    ok &= item->authorId.deserialise(data, *size, offset);
 
     if (offset != rssize)
     {
@@ -918,7 +918,7 @@ RsNxsSyncMsgItem* RsNxsSerialiser::deserialNxsSyncMsgItem(void *data, uint32_t *
     ok &= getRawUInt8(data, *size, &offset, &(item->flag));
     ok &= item->grpId.deserialise(data, *size, offset);
     ok &= item->msgId.deserialise(data, *size, offset);
-    ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_NAME, item->authorId);
+    ok &= item->authorId.deserialise(data, *size, offset);
 
     if (offset != rssize)
     {
@@ -1075,7 +1075,7 @@ uint32_t RsNxsSerialiser::sizeNxsSyncGrpItem(RsNxsSyncGrpItem *item)
     s += 4; // publishTs
     s += 1; // flag
     s += item->grpId.serial_size();
-    s += GetTlvStringSize(item->authorId);
+    s + item->authorId.serial_size();
 
     return s;
 }
@@ -1105,7 +1105,7 @@ uint32_t RsNxsSerialiser::sizeNxsSyncMsgItem(RsNxsSyncMsgItem *item)
     s += 1; // flag
     s += item->grpId.serial_size();
     s += item->msgId.serial_size();
-    s += GetTlvStringSize(item->authorId);
+    s += item->authorId.serial_size();
 
     return s;
 }
