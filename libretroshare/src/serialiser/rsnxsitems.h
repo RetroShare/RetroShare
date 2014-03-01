@@ -296,7 +296,7 @@ public:
     uint8_t pos; /// used for splitting up msg
     uint8_t count; /// number of split up messages
     RsGxsGroupId grpId; /// group id, forms part of version id
-    RsFileHash msgId; /// msg id
+    RsGxsMessageId msgId; /// msg id
     static int refcount;
 
     /*!

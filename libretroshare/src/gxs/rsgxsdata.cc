@@ -228,10 +228,10 @@ bool RsGxsMsgMetaData::serialise(void *data, uint32_t *size)
     offset += 8;
 
     ok &= mGroupId.serialise(data, *size, offset);
-    ok &= mMsgId.serialise(data, *size, offset) ;
-    ok &= mThreadId.serialise(data, *size, offset) ;
-    ok &= mParentId.serialise(data, *size, offset) ;
-    ok &= mOrigMsgId.serialise(data, *size, offset) ;
+    ok &= mMsgId.serialise(data, *size, offset);
+    ok &= mThreadId.serialise(data, *size, offset);
+    ok &= mParentId.serialise(data, *size, offset);
+    ok &= mOrigMsgId.serialise(data, *size, offset);
     ok &= SetTlvString(data, *size, &offset, 0, mAuthorId);
 
     ok &= signSet.SetTlv(data, *size, &offset);
@@ -255,10 +255,10 @@ bool RsGxsMsgMetaData::deserialise(void *data, uint32_t *size)
     if(!ok) return false;
 
     ok &= mGroupId.deserialise(data, *size, offset);
-    ok &= mMsgId.serialise(data, *size, offset) ;
-    ok &= mThreadId.serialise(data, *size,offset) ;
-    ok &= mParentId.serialise(data, *size, offset) ;
-    ok &= mOrigMsgId.serialise(data, *size, offset) ;
+    ok &= mMsgId.deserialise(data, *size, offset);
+    ok &= mThreadId.deserialise(data, *size, offset);
+    ok &= mParentId.deserialise(data, *size, offset);
+    ok &= mOrigMsgId.deserialise(data, *size, offset);
     ok &= GetTlvString(data, *size, &offset, 0, mAuthorId);
 
     ok &= signSet.GetTlv(data, *size, &offset);

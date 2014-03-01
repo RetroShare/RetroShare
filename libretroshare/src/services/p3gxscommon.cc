@@ -414,14 +414,14 @@ bool p3GxsCommentService::createGxsVote(uint32_t &token, RsGxsVote &vote)
 	std::cerr << std::endl;
 
 	/* vote must be associated with another item */
-    if (vote.mMeta.mThreadId.isNull())
+	if (vote.mMeta.mThreadId.isNull())
 	{
 		std::cerr << "p3GxsCommentService::createGxsVote() ERROR Missing Required ThreadId";
 		std::cerr << std::endl;
 		return false;
 	}
 
-    if (vote.mMeta.mParentId.isNull())
+	if (vote.mMeta.mParentId.isNull())
 	{
 		std::cerr << "p3GxsCommentService::createGxsVote() ERROR Missing Required ParentId";
 		std::cerr << std::endl;

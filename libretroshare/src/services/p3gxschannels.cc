@@ -598,7 +598,7 @@ void p3GxsChannels::handleUnprocessedPost(const RsGxsChannelPost &msg)
 			for(fit = msg.mFiles.begin(); fit != msg.mFiles.end(); fit++)
 			{
 				std::string fname = fit->mName;
-                RsFileHash hash  = fit->mHash;
+				Sha1CheckSum hash  = Sha1CheckSum(fit->mHash);
 				uint64_t size     = fit->mSize;
 	
 				std::list<RsPeerId> srcIds;
@@ -685,6 +685,7 @@ bool p3GxsChannels::autoDownloadEnabled(const RsGxsGroupId &id)
 
 bool SSGxsChannelGroup::load(const std::string &input)
 {
+	char line[RSGXSCHANNEL_MAX_SERVICE_STRING];
 	int download_val;
 	mAutoDownload = false;
 	if (1 == sscanf(input.c_str(), "D:%d", &download_val))
@@ -831,10 +832,11 @@ bool p3GxsChannels::ExtraFileHash(const std::string &path, std::string filename)
 }
 
 
-bool p3GxsChannels::ExtraFileRemove(const RsFileHash &hash)
+bool p3GxsChannels::ExtraFileRemove(const std::string &hash)
 {
 	TransferRequestFlags tflags = RS_FILE_REQ_ANONYMOUS_ROUTING | RS_FILE_REQ_EXTRA;
-	return rsFiles->ExtraFileRemove(hash, tflags);
+	RsFileHash fh = RsFileHash(hash);
+	return rsFiles->ExtraFileRemove(fh, tflags);
 }
 
 
@@ -1015,7 +1017,7 @@ void p3GxsChannels::dummy_tick()
 			RsGxsGroupId grpId = ref.mGroupId;
 			RsGxsMessageId parentId = ref.mMsgId;
 			mGenThreadId = ref.mThreadId;
-            if (mGenThreadId.isNull())
+			if (mGenThreadId.empty())
 			{
 				mGenThreadId = parentId;
 			}
@@ -1037,7 +1039,7 @@ void p3GxsChannels::dummy_tick()
 			RsGxsGroupId grpId = ref.mGroupId;
 			RsGxsMessageId parentId = ref.mMsgId;
 			mGenThreadId = ref.mThreadId;
-            if (mGenThreadId.isNull())
+			if (mGenThreadId.empty())
 			{
 				mGenThreadId = parentId;
 			}
@@ -1059,7 +1061,7 @@ void p3GxsChannels::dummy_tick()
 			RsGxsGroupId grpId = ref.mGroupId;
 			RsGxsMessageId parentId = ref.mMsgId;
 			mGenThreadId = ref.mThreadId;
-            if (mGenThreadId.isNull())
+			if (mGenThreadId.empty())
 			{
 				mGenThreadId = parentId;
 			}
@@ -1107,7 +1109,7 @@ bool p3GxsChannels::generateComment(uint32_t &token, const RsGxsGroupId &grpId, 
 	std::string rndId = genRandomId();
 
 	rs_sprintf(msg.mComment, "Channel Comment: GroupId: %s, ThreadId: %s, ParentId: %s + some randomness: %s", 
-        grpId.toStdString().c_str(), threadId.toStdString().c_str(), parentId.toStdString().c_str(), rndId.c_str());
+		grpId.toStdString().c_str(), threadId.c_str(), parentId.c_str(), rndId.c_str());
 	
 	msg.mMeta.mMsgName = msg.mComment;
 

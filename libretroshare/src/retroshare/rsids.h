@@ -145,14 +145,17 @@ template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER> s
 
 	return res ;
 }
-
+void chris_test();
 template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER> t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>::t_RsGenericIdType(const std::string& s) 
 {
 	try
 	{
 		int n=0;
 		if(s.length() != ID_SIZE_IN_BYTES*2)
+		{
 			throw std::runtime_error("t_RsGenericIdType<>::t_RsGenericIdType(std::string&): supplied string in constructor has wrong size.") ;
+			chris_test();
+		}
 
 		for(uint32_t i = 0; i < ID_SIZE_IN_BYTES; ++i)
 		{
@@ -176,6 +179,7 @@ template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER> t
 	catch(std::exception& e)
 	{
 		std::cerr << e.what() << std::endl;
+		chris_test();
 		clear() ;
 	}
 }
@@ -212,6 +216,5 @@ typedef t_RsGenericIdType<  PGP_KEY_FINGERPRINT_SIZE, true,  RS_GENERIC_ID_PGP_F
 
 typedef t_RsGenericIdType<  CERT_SIGN_LEN           , false, RS_GENERIC_ID_GXS_GROUP_ID_TYPE   > GXSGroupId ;
 typedef t_RsGenericIdType<  CERT_SIGN_LEN           , false, RS_GENERIC_ID_GXS_ID_TYPE         > GXSId ;
-typedef t_RsGenericIdType<  SHA1_SIZE               , false, RS_GENERIC_ID_GXS_MSG_ID_TYPE     > GXSMsgId ;
 typedef t_RsGenericIdType<  CERT_SIGN_LEN           , false, RS_GENERIC_ID_GXS_CIRCLE_ID_TYPE  > GXSCircleId ;
 

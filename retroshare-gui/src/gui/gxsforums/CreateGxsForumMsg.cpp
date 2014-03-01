@@ -46,7 +46,7 @@
 //#define ENABLE_GENERATE
 
 /** Constructor */
-CreateGxsForumMsg::CreateGxsForumMsg(const std::string &fId, const std::string &pId)
+CreateGxsForumMsg::CreateGxsForumMsg(const RsGxsGroupId &fId, const RsGxsMessageId &pId)
 : QDialog(NULL, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint), mForumId(fId), mParentId(pId)
 {
 	/* Invoke the Qt Designer generated object setup routine */
@@ -71,7 +71,7 @@ CreateGxsForumMsg::CreateGxsForumMsg(const std::string &fId, const std::string &
 	mStateHelper->addLoadPlaceholder(CREATEGXSFORUMMSG_PARENTMSG, ui.forumSubject);
 	mStateHelper->addClear(CREATEGXSFORUMMSG_PARENTMSG, ui.forumName);
 
-	QString text = pId.empty() ? tr("Start New Thread") : tr("Post Forum Message");
+	QString text = pId.isNull() ? tr("Start New Thread") : tr("Post Forum Message");
 	setWindowTitle(text);
 
 	ui.headerFrame->setHeaderImage(QPixmap(":/images/konversation64.png"));
@@ -119,7 +119,7 @@ void  CreateGxsForumMsg::newMsg()
 	/* fill in the available OwnIds for signing */
 	ui.idChooser->loadIds(IDCHOOSER_ID_REQUIRED, "");
 
-	if (mForumId.empty()) {
+        if (mForumId.isNull()) {
 		mStateHelper->setActive(CREATEGXSFORUMMSG_FORUMINFO, false);
 		mStateHelper->setActive(CREATEGXSFORUMMSG_PARENTMSG, false);
 		mStateHelper->clear(CREATEGXSFORUMMSG_FORUMINFO);
@@ -135,7 +135,7 @@ void  CreateGxsForumMsg::newMsg()
 		RsTokReqOptions opts;
 		opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
 
-		std::list<std::string> groupIds;
+                std::list<RsGxsGroupId> groupIds;
 		groupIds.push_back(mForumId);
 
 		std::cerr << "ForumsV2Dialog::newMsg() Requesting Group Summary(" << mForumId << ")";
@@ -145,7 +145,7 @@ void  CreateGxsForumMsg::newMsg()
 		mForumQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_SUMMARY, opts, groupIds, CREATEGXSFORUMMSG_FORUMINFO);
 	}
 
-	if (mParentId.empty())
+        if (mParentId.isNull())
 	{
 		mStateHelper->setActive(CREATEGXSFORUMMSG_PARENTMSG, true);
 		mParentMsgLoaded = true;
@@ -171,7 +171,7 @@ void  CreateGxsForumMsg::newMsg()
 
 void  CreateGxsForumMsg::loadFormInformation()
 {
-	if (!mParentId.empty()) {
+        if (!mParentId.isNull()) {
 		if (mParentMsgLoaded) {
 			mStateHelper->setActive(CREATEGXSFORUMMSG_PARENTMSG, true);
 			mStateHelper->setLoading(CREATEGXSFORUMMSG_PARENTMSG, false);
@@ -205,7 +205,7 @@ void  CreateGxsForumMsg::loadFormInformation()
 
 	QString name = QString::fromUtf8(mForumMeta.mGroupName.c_str());
 	QString subj;
-	if (!mParentId.empty())
+        if (!mParentId.isNull())
 	{
 		QString title = QString::fromUtf8(mParentMsg.mMeta.mMsgName.c_str());
 		name += " " + tr("In Reply to") + ": ";
@@ -373,7 +373,8 @@ void CreateGxsForumMsg::fileHashingFinished(QList<HashedFile> hashedFiles)
 	for (it = hashedFiles.begin(); it != hashedFiles.end(); ++it) {
 		HashedFile& hashedFile = *it;
 		RetroShareLink link;
-		if (link.createFile(hashedFile.filename, hashedFile.size, QString::fromStdString(hashedFile.hash))) {
+                if (link.createFile(hashedFile.filename, hashedFile.size,
+                                    QString::fromStdString(hashedFile.hash.toStdString()))) {
 			mesgString += link.toHtmlSize() + "<br>";
 		}
 	}

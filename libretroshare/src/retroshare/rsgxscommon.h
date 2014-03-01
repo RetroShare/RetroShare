@@ -37,7 +37,7 @@ class RsGxsFile
 	public:
 	RsGxsFile();
 	std::string mName;
-    RsFileHash mHash;
+	RsFileHash mHash;
 	uint64_t    mSize;
 	//std::string mPath;
 };

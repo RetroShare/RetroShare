@@ -49,7 +49,7 @@ public:
 
 //	virtual UserNotify *getUserNotify(QObject *parent);
 
-	bool navigate(const std::string& forumId, const std::string& msgId);
+	bool navigate(const  RsGxsGroupId  forumId, const std::string& msgId);
 
 	// Callback for all Loads.
 	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
@@ -90,11 +90,11 @@ private slots:
 private:
 	void insertForums();
 	
-	void updateMessageSummaryList(std::string forumId);
+	void updateMessageSummaryList( RsGxsGroupId forumId);
 //	void forumInfoToGroupItemInfo(const ForumInfo &forumInfo, GroupItemInfo &groupItemInfo);
 	void forumInfoToGroupItemInfo(const RsGroupMetaData &forumInfo, GroupItemInfo &groupItemInfo);
 
-	void openForumInNewTab(const std::string &forumId);
+	void openForumInNewTab(const  RsGxsGroupId &forumId);
 	void forumSubscribe(bool subscribe);
 
 	void processSettings(bool load);
@@ -108,13 +108,13 @@ private:
 	// subscribe/unsubscribe ack.
 	void acknowledgeSubscribeChange(const uint32_t &token);
 
-	GxsForumThreadWidget *forumThreadWidget(const std::string &forumId);
-	GxsForumThreadWidget *createThreadWidget(const std::string &forumId);
+	GxsForumThreadWidget *forumThreadWidget(const  RsGxsGroupId &forumId);
+	GxsForumThreadWidget *createThreadWidget(const  RsGxsGroupId &forumId);
 
-//	void requestGroupSummary_CurrentForum(const std::string &forumId);
+//	void requestGroupSummary_CurrentForum(const  RsGxsGroupId &forumId);
 //	void loadGroupSummary_CurrentForum(const uint32_t &token);
 
-	std::string mForumId;
+	 RsGxsGroupId mForumId;
 	TokenQueue *mForumQueue;
 	GxsForumThreadWidget *mThreadWidget;
 

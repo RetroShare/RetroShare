@@ -283,9 +283,7 @@ RsGxsGrpMetaData* RsDataService::locked_getGrpMeta(RetroCursor &c)
     c.getString(COL_ORIG_GRP_ID, tempId);
     grpMeta->mOrigGrpId = tempId;
     c.getString(COL_GRP_SERV_STRING, grpMeta->mServiceString);
-
-    c.getString(COL_HASH, tempId);
-    grpMeta->mHash = tempId ;
+    c.getString(COL_HASH, grpMeta->mHash);
     grpMeta->mSignFlags = c.getInt32(COL_GRP_SIGN_FLAGS);
 
     grpMeta->mPublishTs = c.getInt32(COL_TIME_STAMP);
@@ -393,22 +391,21 @@ RsGxsMsgMetaData* RsDataService::locked_getMsgMeta(RetroCursor &c)
     char* data = NULL;
 
 
-    std::string gId,tempId;
+    std::string gId;
     c.getString(COL_GRP_ID, gId);
     msgMeta->mGroupId = RsGxsGroupId(gId);
-    c.getString(COL_MSG_ID, tempId) ;
-    msgMeta->mMsgId = tempId ;
-
+    std::string temp;
+    c.getString(COL_MSG_ID, temp);
+    msgMeta->mMsgId = temp;
     // without these, a msg is meaningless
     ok &= (!msgMeta->mGroupId.isNull()) && (!msgMeta->mMsgId.isNull());
 
-    c.getString(COL_ORIG_MSG_ID, tempId) ;
-    msgMeta->mOrigMsgId = tempId ;
+    c.getString(COL_ORIG_MSG_ID, temp);
+    msgMeta->mOrigMsgId = temp;
     c.getString(COL_IDENTITY, msgMeta->mAuthorId);
     c.getString(COL_MSG_NAME, msgMeta->mMsgName);
     c.getString(COL_MSG_SERV_STRING, msgMeta->mServiceString);
-    c.getString(COL_HASH, tempId) ;
-    msgMeta->mHash = tempId;
+    c.getString(COL_HASH, msgMeta->mHash);
     msgMeta->recvTS = c.getInt32(COL_MSG_RECV_TS);
 
     offset = 0;
@@ -422,8 +419,10 @@ RsGxsMsgMetaData* RsDataService::locked_getMsgMeta(RetroCursor &c)
     offset = 0; data_len = 0;
 
     // thread and parent id
-    c.getString(COL_THREAD_ID, tempId) ; msgMeta->mThreadId = tempId ;
-    c.getString(COL_PARENT_ID, tempId) ; msgMeta->mParentId = tempId ;
+    c.getString(COL_THREAD_ID, temp);
+    msgMeta->mThreadId = temp;
+    c.getString(COL_PARENT_ID, temp);
+    msgMeta->mParentId = temp;
 
     // local meta
     msgMeta->mMsgStatus = c.getInt32(COL_MSG_STATUS);
@@ -445,12 +444,13 @@ RsNxsMsg* RsDataService::locked_getMessage(RetroCursor &c)
     RsNxsMsg* msg = new RsNxsMsg(mServType);
 
     bool ok = true;
-    std::string tempId ;
     uint32_t data_len = 0,
     offset = 0;
     char* data = NULL;
     c.getStringT<RsGxsGroupId>(COL_ACT_GROUP_ID, msg->grpId);
-    c.getString(COL_ACT_MSG_ID, tempId) ; msg->msgId = tempId ;
+    std::string temp;
+    c.getString(COL_ACT_MSG_ID, temp);
+    msg->msgId = temp;
 
     ok &= (!msg->grpId.isNull()) && (!msg->msgId.isNull());
 
@@ -522,7 +522,7 @@ int RsDataService::storeMessage(std::map<RsNxsMsg *, RsGxsMsgMetaData *> &msg)
         cv.put(KEY_MSG_ID, msgMetaPtr->mMsgId.toStdString());
         cv.put(KEY_GRP_ID, msgMetaPtr->mGroupId.toStdString());
         cv.put(KEY_NXS_SERV_STRING, msgMetaPtr->mServiceString);
-        cv.put(KEY_NXS_HASH, msgMetaPtr->mHash.toStdString());
+        cv.put(KEY_NXS_HASH, msgMetaPtr->mHash);
         cv.put(KEY_RECV_TS, (int32_t)msgMetaPtr->recvTS);
 
 
@@ -631,7 +631,7 @@ int RsDataService::storeGroup(std::map<RsNxsGrp *, RsGxsGrpMetaData *> &grp)
         cv.put(KEY_GRP_ORIGINATOR, grpMetaPtr->mOriginator.toStdString());
         cv.put(KEY_GRP_AUTHEN_FLAGS, (int32_t)grpMetaPtr->mAuthenFlags);
         cv.put(KEY_PARENT_GRP_ID, grpMetaPtr->mParentGrpId.toStdString());
-        cv.put(KEY_NXS_HASH, grpMetaPtr->mHash.toStdString());
+        cv.put(KEY_NXS_HASH, grpMetaPtr->mHash);
         cv.put(KEY_RECV_TS, (int32_t)grpMetaPtr->mRecvTS);
 
         if(! (grpMetaPtr->mAuthorId.empty()) ){
@@ -723,7 +723,7 @@ int RsDataService::updateGroup(std::map<RsNxsGrp *, RsGxsGrpMetaData *> &grp)
         cv.put(KEY_GRP_INTERNAL_CIRCLE, grpMetaPtr->mInternalCircle);
         cv.put(KEY_GRP_ORIGINATOR, grpMetaPtr->mOriginator.toStdString());
         cv.put(KEY_GRP_AUTHEN_FLAGS, (int32_t)grpMetaPtr->mAuthenFlags);
-        cv.put(KEY_NXS_HASH, grpMetaPtr->mHash.toStdString());
+        cv.put(KEY_NXS_HASH, grpMetaPtr->mHash);
 
         if(! (grpMetaPtr->mAuthorId.empty()) ){
             cv.put(KEY_NXS_IDENTITY, grpMetaPtr->mAuthorId);
@@ -1416,9 +1416,10 @@ void RsDataService::locked_getMessageOffsets(const RsGxsGroupId& grpId, std::vec
         {
         	RsGxsMessageId msgId;
         	int32_t msgLen;
-            int32_t msgOffSet;
-        std::string tempId ;
-            c->getString(0, tempId) ; msgId = tempId;
+        	int32_t msgOffSet;
+        	std::string temp;
+            c->getString(0, temp);
+            msgId = temp;
             msgOffSet = c->getInt32(1);
             msgLen = c->getInt32(2);
 

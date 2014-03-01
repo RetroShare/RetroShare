@@ -60,7 +60,7 @@ protected:
 
     void loadThread(const uint32_t &token);
 
-    void addItem(std::string itemId, std::string parentId, QTreeWidgetItem *item);
+    void addItem(RsGxsMessageId itemId, RsGxsMessageId parentId, QTreeWidgetItem *item);
 
 public slots:
     void customPopUpMenu(const QPoint& point);
@@ -88,8 +88,8 @@ protected:
     RsGxsMessageId mCurrentMsgId;
     RsGxsId mVoterId;
 
-    std::map<std::string, QTreeWidgetItem *> mLoadingMap;
-    std::multimap<std::string, QTreeWidgetItem *> mPendingInsertMap;
+    std::map<RsGxsMessageId, QTreeWidgetItem *> mLoadingMap;
+    std::multimap<RsGxsMessageId, QTreeWidgetItem *> mPendingInsertMap;
 
     TokenQueue *mTokenQueue;
     RsTokenService *mRsTokenService;

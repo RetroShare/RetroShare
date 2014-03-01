@@ -1490,7 +1490,7 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
 	std::vector<RsGxsMsgMetaData*> &msgMetaV = result[grpId];
 
 	std::vector<RsGxsMsgMetaData*>::const_iterator vit = msgMetaV.begin();
-    std::set<RsGxsMessageId> msgIdSet;
+	std::set<RsGxsMessageId> msgIdSet;
 
 	// put ids in set for each searching
 	for(; vit != msgMetaV.end(); vit++)
@@ -1517,7 +1517,7 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
 	for(; llit != msgItemL.end(); llit++)
 	{
 		RsNxsSyncMsgItem*& syncItem = *llit;
-        const RsGxsMessageId& msgId = syncItem->msgId;
+		const RsGxsMessageId& msgId = syncItem->msgId;
 
 		if(msgIdSet.find(msgId) == msgIdSet.end()){
 
@@ -2221,7 +2221,7 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsg* item)
 	if(grpMeta == NULL)
 		return;
 
-    req[item->grpId] = std::vector<RsGxsMessageId>();
+	req[item->grpId] = std::vector<RsGxsMessageId>();
 	mDataStore->retrieveGxsMsgMetaData(req, metaResult);
 	std::vector<RsGxsMsgMetaData*>& msgMetas = metaResult[item->grpId];
 

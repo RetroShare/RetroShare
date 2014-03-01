@@ -101,7 +101,7 @@ void GxsForumsFillThread::run()
 	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
 	opts.mOptions = RS_TOKREQOPT_MSG_LATEST;
 
-	std::list<std::string> grpIds;
+	std::list<RsGxsGroupId> grpIds;
 	grpIds.push_back(mForumId);
 
 #ifdef DEBUG_FORUMS
@@ -169,7 +169,7 @@ void GxsForumsFillThread::run()
 
 		const RsGxsForumMsg &msg = *msgIt;
 
-		if (!msg.mMeta.mParentId.empty()) {
+		if (!msg.mMeta.mParentId.isNull()) {
 			++msgIt;
 			continue;
 		}
@@ -179,7 +179,7 @@ void GxsForumsFillThread::run()
 #endif
 
 		QTreeWidgetItem *item = mParent->convertMsgToThreadWidget(msg, mUseChildTS, mFilterColumn);
-		threadList.push_back(QPair<std::string, QTreeWidgetItem*>(msg.mMeta.mMsgId, item));
+		threadList.push_back(QPair<std::string, QTreeWidgetItem*>(msg.mMeta.mMsgId.toStdString(), item));
 		calculateExpand(msg, item);
 
 		mItems.append(item);
@@ -209,7 +209,7 @@ void GxsForumsFillThread::run()
 			for (msgIt = msgs.begin(); msgIt != msgs.end(); ) {
 				const RsGxsForumMsg &msg = *msgIt;
 
-				if (msg.mMeta.mParentId != threadPair.first) {
+				if (msg.mMeta.mParentId.toStdString() != threadPair.first) {
 					++msgIt;
 					continue;
 				}
@@ -228,7 +228,7 @@ void GxsForumsFillThread::run()
 				calculateExpand(msg, item);
 
 				/* add item to process list */
-				threadList.push_back(QPair<std::string, QTreeWidgetItem*>(msg.mMeta.mMsgId, item));
+				threadList.push_back(QPair<std::string, QTreeWidgetItem*>(msg.mMeta.mMsgId.toStdString(), item));
 
 				if (++step >= steps) {
 					step = 0;
@@ -275,7 +275,7 @@ void GxsForumsFillThread::run()
 
 			/* add dummy item */
 			QTreeWidgetItem *item = mParent->generateMissingItem(msg.mMeta.mParentId);
-			threadList.push_back(QPair<std::string, QTreeWidgetItem*>(msg.mMeta.mParentId, item));
+			threadList.push_back(QPair<std::string, QTreeWidgetItem*>(msg.mMeta.mParentId.toStdString(), item));
 
 			mItems.append(item);
 			break;

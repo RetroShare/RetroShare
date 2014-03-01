@@ -112,23 +112,23 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WindowFlags flags)
                      createPageAction(QIcon(IMAGE_PHOTO), tr("Photos"), grp));
 #endif
 
-    PostedDialog *postedDialog = NULL;
-    ui.stackPages->add(postedDialog = new PostedDialog(ui.stackPages),
-                      createPageAction(QIcon(IMAGE_POSTED), tr("Posted Links"), grp));
-    postedDialog->setup();
-
-    WikiDialog *wikiDialog = NULL;
-    ui.stackPages->add(wikiDialog = new WikiDialog(ui.stackPages),
-                      createPageAction(QIcon(IMAGE_WIKI), tr("Wiki Pages"), grp));
-
+//    PostedDialog *postedDialog = NULL;
+//    ui.stackPages->add(postedDialog = new PostedDialog(ui.stackPages),
+//                      createPageAction(QIcon(IMAGE_POSTED), tr("Posted Links"), grp));
+//    postedDialog->setup();
+//
+//    WikiDialog *wikiDialog = NULL;
+//    ui.stackPages->add(wikiDialog = new WikiDialog(ui.stackPages),
+//                      createPageAction(QIcon(IMAGE_WIKI), tr("Wiki Pages"), grp));
+//
     GxsForumsDialog *gxsforumsDialog = NULL;
     ui.stackPages->add(gxsforumsDialog = new GxsForumsDialog(ui.stackPages),
                       createPageAction(QIcon(IMAGE_GXSFORUMS), tr("GxsForums"), grp));
-
-    ChannelDialog *gxschannelDialog = NULL;
-    ui.stackPages->add(gxschannelDialog = new ChannelDialog(ui.stackPages),
-                      createPageAction(QIcon(IMAGE_GXSCHANNELS), tr("GxsChannels"), grp));
-    gxschannelDialog->setup();
+//
+//    ChannelDialog *gxschannelDialog = NULL;
+//    ui.stackPages->add(gxschannelDialog = new ChannelDialog(ui.stackPages),
+//                      createPageAction(QIcon(IMAGE_GXSCHANNELS), tr("GxsChannels"), grp));
+//    gxschannelDialog->setup();
 
 // THESE HAVE TO BE CONVERTED TO VEG FORMAT
 #if USE_VEG_SERVICE

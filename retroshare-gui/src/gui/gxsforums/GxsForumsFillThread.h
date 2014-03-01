@@ -2,6 +2,7 @@
 #define GXSFORUMSFILLTHREAD_H
 
 #include <QThread>
+#include "retroshare/rsgxsifacetypes.h"
 
 class GxsForumThreadWidget;
 class RsGxsForumMsg;
@@ -25,7 +26,7 @@ signals:
 	void status(QString text);
 
 public:
-	std::string mForumId;
+	 RsGxsGroupId mForumId;
 	int mFilterColumn;
 	int mSubscribeFlags;
 	bool mFillComplete;

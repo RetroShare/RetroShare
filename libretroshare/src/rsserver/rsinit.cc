@@ -1401,7 +1401,7 @@ int RsServer::StartupRetroShare()
         RsGxsNetService* gxsid_ns = new RsGxsNetService(
                         RS_SERVICE_GXSV2_TYPE_GXSID, gxsid_ds, nxsMgr,
                         mGxsIdService, mGxsIdService, mGxsCircles,
-                        false); // don't synchronise group automatic (need explicit group request)
+                        true); // don't synchronise group automatic (need explicit group request)
 
         mGxsIdService->setNes(gxsid_ns);
         /**** GxsCircle service ****/
@@ -1815,3 +1815,10 @@ int RsServer::StartupRetroShare()
 
 	return 1;
 }
+
+
+void chris_test()
+{
+	std::cout << "tested\n";
+}
+

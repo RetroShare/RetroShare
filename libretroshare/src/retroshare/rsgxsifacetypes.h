@@ -16,7 +16,7 @@
 #include <retroshare/rsids.h>
 
 typedef GXSGroupId RsGxsGroupId;
-typedef RsFileHash RsGxsMessageId;
+typedef Sha1CheckSum RsGxsMessageId;
 
 typedef std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > GxsMsgIdResult;
 typedef std::pair<RsGxsGroupId, RsGxsMessageId> RsGxsGrpMsgIdPair;
