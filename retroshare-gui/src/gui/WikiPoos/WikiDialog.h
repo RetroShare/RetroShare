@@ -78,9 +78,9 @@ void    clearGroupTree();
 
 void 	updateWikiPage(const RsWikiSnapshot &page);
 
-bool 	getSelectedPage(std::string &groupId, std::string &pageId, std::string &origPageId);	
+bool 	getSelectedPage(RsGxsGroupId &groupId, RsGxsMessageId &pageId, RsGxsMessageId &origPageId);
 std::string getSelectedPage();
-std::string getSelectedGroup();
+const RsGxsGroupId &getSelectedGroup();
 
 
       // Using GroupTreeWidget.
@@ -106,7 +106,7 @@ void 	loadWikiPage(const uint32_t &token);
 	WikiEditDialog *mEditDialog;
 
 	std::string mGroupSelected;
-	std::string mPageSelected;
+    RsGxsMessageId mPageSelected;
 	std::string mModSelected;
 
 
@@ -114,7 +114,7 @@ void 	loadWikiPage(const uint32_t &token);
 	QTreeWidgetItem *mSubscribedGroups;
 	QTreeWidgetItem *mPopularGroups;
 	QTreeWidgetItem *mOtherGroups;
-	std::string mGroupId; // From GroupTreeWidget
+    RsGxsGroupId mGroupId; // From GroupTreeWidget
 
 	/* UI - from Designer */
 	Ui::WikiDialog ui;

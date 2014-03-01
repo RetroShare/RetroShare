@@ -41,7 +41,7 @@ public:
 
 void 	setNewPage();
 
-void 	setupData(const std::string &groupId, const std::string &pageId);
+void 	setupData(const RsGxsGroupId &groupId, const RsGxsMessageId &pageId);
 void 	loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 void 	setRepublishMode(RsGxsMessageId &origMsgId);
@@ -75,7 +75,7 @@ void 	setPreviousPage(RsWikiSnapshot &page);
 
 void 	requestPage(const RsGxsGrpMsgIdPair &msgId);
 void 	loadPage(const uint32_t &token);
-void 	requestGroup(const std::string &groupId);
+void 	requestGroup(const RsGxsGroupId &groupId);
 void 	loadGroup(const uint32_t &token);
 
 void 	requestBaseHistory(const RsGxsGrpMsgIdPair &origMsgId);

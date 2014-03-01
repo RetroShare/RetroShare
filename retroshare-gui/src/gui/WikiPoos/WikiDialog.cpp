@@ -143,8 +143,8 @@ void WikiDialog::checkUpdate()
 
 void WikiDialog::OpenOrShowAddPageDialog()
 {
-	std::string groupId = getSelectedGroup();
-	if (groupId == "")
+    RsGxsGroupId groupId = getSelectedGroup();
+    if (groupId.isNull())
 	{
 		std::cerr << "WikiDialog::OpenOrShowAddPageDialog() No Group selected";
 		std::cerr << std::endl;
@@ -159,7 +159,7 @@ void WikiDialog::OpenOrShowAddPageDialog()
 	std::cerr << "WikiDialog::OpenOrShowAddPageDialog() GroupId: " << groupId;
 	std::cerr << std::endl;
 
-	mEditDialog->setupData(groupId, "");
+    mEditDialog->setupData(groupId, RsGxsMessageId());
 	mEditDialog->setNewPage();
 
 	mEditDialog->show();
@@ -185,8 +185,8 @@ void WikiDialog::newGroup()
 
 void WikiDialog::showGroupDetails()
 {
-	std::string groupId = getSelectedGroup();
-	if (groupId == "")
+    RsGxsGroupId groupId = getSelectedGroup();
+    if (groupId.isNull())
 	{
 		std::cerr << "WikiDialog::showGroupDetails() No Group selected";
 		std::cerr << std::endl;
@@ -196,8 +196,8 @@ void WikiDialog::showGroupDetails()
 
 void WikiDialog::editGroupDetails()
 {
-	std::string groupId = getSelectedGroup();
-	if (groupId == "")
+    RsGxsGroupId groupId = getSelectedGroup();
+    if (groupId.isNull())
 	{
 		std::cerr << "WikiDialog::editGroupDetails() No Group selected";
 		std::cerr << std::endl;
@@ -215,9 +215,9 @@ void WikiDialog::editGroupDetails()
 
 void WikiDialog::OpenOrShowEditDialog()
 {
-	std::string groupId;
-	std::string pageId;
-	std::string origPageId;
+    RsGxsGroupId groupId;
+    RsGxsMessageId pageId;
+    RsGxsMessageId origPageId;
 
 	if (!getSelectedPage(groupId, pageId, origPageId))
 	{
@@ -242,9 +242,9 @@ void WikiDialog::OpenOrShowRepublishDialog()
 {
 	OpenOrShowEditDialog();
 
-	std::string groupId;
-	std::string pageId;
-	std::string origPageId;
+    RsGxsGroupId groupId;
+    RsGxsMessageId pageId;
+    RsGxsMessageId origPageId;
 
 	if (!getSelectedPage(groupId, pageId, origPageId))
 	{
@@ -264,9 +264,9 @@ void WikiDialog::OpenOrShowRepublishDialog()
 void WikiDialog::groupTreeChanged()
 {
 	/* */
-	std::string groupId;
-	std::string pageId;
-	std::string origPageId;
+    RsGxsGroupId groupId;
+    RsGxsMessageId pageId;
+    RsGxsMessageId origPageId;
 
 	getSelectedPage(groupId, pageId, origPageId);
 	if (pageId == mPageSelected)
@@ -274,7 +274,7 @@ void WikiDialog::groupTreeChanged()
 		return; /* nothing changed */
 	}
 
-	if (pageId == "")
+    if (pageId.isNull())
 	{
 		/* clear Mods */
 		clearGroupTree();
@@ -327,7 +327,7 @@ void 	WikiDialog::clearGroupTree()
 #define WIKI_GROUP_COL_ORIGPAGEID	2
 
 
-bool WikiDialog::getSelectedPage(std::string &groupId, std::string &pageId, std::string &origPageId)
+bool WikiDialog::getSelectedPage(RsGxsGroupId &groupId, RsGxsMessageId &pageId, RsGxsMessageId &origPageId)
 {
 #ifdef WIKI_DEBUG 
 	std::cerr << "WikiDialog::getSelectedPage()" << std::endl;
@@ -347,13 +347,13 @@ bool WikiDialog::getSelectedPage(std::string &groupId, std::string &pageId, std:
 
 	/* check if it has changed */
 	groupId = getSelectedGroup();
-	if (groupId == "")
+    if (groupId.isNull())
 	{
 		return false;
 	}
 
 	pageId = item->text(WIKI_GROUP_COL_PAGEID).toStdString();
-	origPageId = item->text(WIKI_GROUP_COL_ORIGPAGEID).toStdString();
+    origPageId = RsGxsMessageId(item->text(WIKI_GROUP_COL_ORIGPAGEID).toStdString());
 
 #ifdef WIKI_DEBUG 
 	std::cerr << "WikiDialog::getSelectedPage() PageId: " << pageId << std::endl;
@@ -362,7 +362,7 @@ bool WikiDialog::getSelectedPage(std::string &groupId, std::string &pageId, std:
 }
 
 
-std::string WikiDialog::getSelectedGroup()
+const RsGxsGroupId& WikiDialog::getSelectedGroup()
 {
 #ifdef WIKI_DEBUG 
 	std::cerr << "WikiDialog::getSelectedGroup(): " << mGroupId << std::endl;
@@ -460,8 +460,8 @@ void WikiDialog::loadPages(const uint32_t &token)
 
 		QTreeWidgetItem *pageItem = new QTreeWidgetItem();
 		pageItem->setText(WIKI_GROUP_COL_PAGENAME, QString::fromStdString(page.mMeta.mMsgName));
-		pageItem->setText(WIKI_GROUP_COL_PAGEID, QString::fromStdString(page.mMeta.mMsgId));
-		pageItem->setText(WIKI_GROUP_COL_ORIGPAGEID, QString::fromStdString(page.mMeta.mOrigMsgId));
+        pageItem->setText(WIKI_GROUP_COL_PAGEID, QString::fromStdString(page.mMeta.mMsgId.toStdString()));
+        pageItem->setText(WIKI_GROUP_COL_ORIGPAGEID, QString::fromStdString(page.mMeta.mOrigMsgId.toStdString()));
 
 		ui.treeWidget_Pages->addTopLevelItem(pageItem);
 	}
@@ -577,7 +577,7 @@ void WikiDialog::unsubscribeToGroup()
 
 void WikiDialog::wikiSubscribe(bool subscribe)
 {
-        if (mGroupId.empty()) {
+        if (mGroupId.isNull()) {
                 return;
         }
 
@@ -590,7 +590,7 @@ void WikiDialog::wikiGroupChanged(const QString &groupId)
 {
 	mGroupId = groupId.toStdString();
 
-        if (mGroupId.empty()) {
+        if (mGroupId.isNull()) {
                 return;
         }
 
@@ -598,7 +598,7 @@ void WikiDialog::wikiGroupChanged(const QString &groupId)
 	groupIds.push_back(mGroupId);
 	requestPages(groupIds);
 
-	int subscribeFlags = ui.groupTreeWidget->subscribeFlags(QString::fromStdString(mGroupId));
+    int subscribeFlags = ui.groupTreeWidget->subscribeFlags(QString::fromStdString(mGroupId.toStdString()));
 	ui.toolButton_NewPage->setEnabled(IS_GROUP_ADMIN(subscribeFlags));
 	ui.toolButton_Republish->setEnabled(IS_GROUP_ADMIN(subscribeFlags));
 
@@ -608,7 +608,7 @@ void WikiDialog::wikiGroupChanged(const QString &groupId)
 void WikiDialog::groupListCustomPopupMenu(QPoint /*point*/)
 {
 
-	int subscribeFlags = ui.groupTreeWidget->subscribeFlags(QString::fromStdString(mGroupId));
+    int subscribeFlags = ui.groupTreeWidget->subscribeFlags(QString::fromStdString(mGroupId.toStdString()));
 
 	QMenu contextMnu(this);
 
@@ -625,13 +625,13 @@ void WikiDialog::groupListCustomPopupMenu(QPoint /*point*/)
 	std::cerr << std::endl;
 
 	QAction *action = contextMnu.addAction(QIcon(IMAGE_SUBSCRIBE), tr("Subscribe to Group"), this, SLOT(subscribeToGroup()));
-	action->setDisabled (mGroupId.empty() || IS_GROUP_SUBSCRIBED(subscribeFlags));
+    action->setDisabled (mGroupId.isNull() || IS_GROUP_SUBSCRIBED(subscribeFlags));
 
 	action = contextMnu.addAction(QIcon(IMAGE_UNSUBSCRIBE), tr("Unsubscribe to Group"), this, SLOT(unsubscribeToGroup()));
-	action->setEnabled (!mGroupId.empty() && IS_GROUP_SUBSCRIBED(subscribeFlags));
+    action->setEnabled (!mGroupId.isNull() && IS_GROUP_SUBSCRIBED(subscribeFlags));
 
 	action = contextMnu.addAction(QIcon(IMAGE_EDIT), tr("Edit Group"), this, SLOT(editGroupDetails()));
-	action->setEnabled (!mGroupId.empty() && IS_GROUP_ADMIN(subscribeFlags));
+    action->setEnabled (!mGroupId.isNull() && IS_GROUP_ADMIN(subscribeFlags));
 
 	/************** NOT ENABLED YET *****************/
 
@@ -736,7 +736,7 @@ void WikiDialog::insertGroupsData(const std::list<RsGroupMetaData> &wikiList)
 void WikiDialog::GroupMetaDataToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo)
 {
 
-	groupItemInfo.id = QString::fromStdString(groupInfo.mGroupId);
+    groupItemInfo.id = QString::fromStdString(groupInfo.mGroupId.toStdString());
 	groupItemInfo.name = QString::fromUtf8(groupInfo.mGroupName.c_str());
 	//groupItemInfo.description = QString::fromUtf8(groupInfo.forumDesc);
 	groupItemInfo.popularity = groupInfo.mPop;
