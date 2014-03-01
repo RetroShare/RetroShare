@@ -45,7 +45,7 @@ PhotoItem::PhotoItem(PhotoShareItemHolder *holder, const QString& path, QWidget 
     connect(ui->lineEdit_Title, SIGNAL(editingFinished()), this, SLOT(setTitle()));
     connect(ui->lineEdit_PhotoGrapher, SIGNAL(editingFinished()), this, SLOT(setPhotoGrapher()));
 
-    ui->idChooser->loadIds(0, "");
+    ui->idChooser->loadIds(0, RsGxsId());
 
 }
 

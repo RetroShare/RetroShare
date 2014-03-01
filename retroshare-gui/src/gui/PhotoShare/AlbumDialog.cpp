@@ -34,7 +34,7 @@ void AlbumDialog::setUp()
     ui->lineEdit_Title->setText(QString::fromStdString(mAlbum.mMeta.mGroupName));
     ui->lineEdit_Caption->setText(QString::fromStdString(mAlbum.mCaption));
     ui->lineEdit_Category->setText(QString::fromStdString(mAlbum.mCategory));
-    ui->lineEdit_Identity->setText(QString::fromStdString(mAlbum.mMeta.mAuthorId));
+    ui->lineEdit_Identity->setText(QString::fromStdString(mAlbum.mMeta.mAuthorId.toStdString()));
     ui->lineEdit_Where->setText(QString::fromStdString(mAlbum.mWhere));
     ui->textEdit_description->setText(QString::fromStdString(mAlbum.mDescription));
 
