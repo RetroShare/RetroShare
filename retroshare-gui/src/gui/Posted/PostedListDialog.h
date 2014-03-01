@@ -101,7 +101,7 @@ private:
 	void acknowledgeGroup(const uint32_t &token);
 	void loadGroupSummary(const uint32_t &token);
 
-	void requestGroupSummary_CurrentForum(const std::string &forumId);
+    void requestGroupSummary_CurrentForum(const RsGxsGroupId &forumId);
 	void loadGroupSummary_CurrentForum(const uint32_t &token);
 
 	// subscribe/unsubscribe ack.
@@ -111,8 +111,8 @@ private:
 	void acknowledgePostMsg(const uint32_t &token);
 	void loadPostData(const uint32_t &token);
 	void insertThreads();
-	void loadCurrentTopicThreads(const std::string &forumId);
-	void requestGroupThreadData_InsertThreads(const std::string &forumId);
+    void loadCurrentTopicThreads(const RsGxsGroupId &forumId);
+    void requestGroupThreadData_InsertThreads(const RsGxsGroupId &forumId);
 	void loadGroupThreadData_InsertThreads(const uint32_t &token);
 
 	// votes

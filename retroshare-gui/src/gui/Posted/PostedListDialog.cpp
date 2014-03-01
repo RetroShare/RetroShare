@@ -128,7 +128,7 @@ void PostedListDialog::updateShowText()
 
 void PostedListDialog::getRankings()
 {
-	if(mCurrTopicId.empty())
+    if(mCurrTopicId.isNull())
 		return;
 
 	std::cerr << "PostedListDialog::getRankings()";
@@ -166,12 +166,12 @@ void PostedListDialog::getRankings()
 
 void PostedListDialog::groupListCustomPopupMenu(QPoint /*point*/)
 {
-	if (mCurrTopicId.empty())
+    if (mCurrTopicId.isNull())
 	{
 		return;
 	}
 
-	uint32_t subscribeFlags = ui.groupTreeWidget->subscribeFlags(QString::fromStdString(mCurrTopicId));
+    uint32_t subscribeFlags = ui.groupTreeWidget->subscribeFlags(QString::fromStdString(mCurrTopicId.toStdString()));
 
 	QMenu contextMnu(this);
 
@@ -191,10 +191,10 @@ void PostedListDialog::groupListCustomPopupMenu(QPoint /*point*/)
 
 void PostedListDialog::newPost()
 {
-	if(mCurrTopicId.empty())
+    if(mCurrTopicId.isNull())
 		return;
 
-	uint32_t subscribeFlags = ui.groupTreeWidget->subscribeFlags(QString::fromStdString(mCurrTopicId));
+    uint32_t subscribeFlags = ui.groupTreeWidget->subscribeFlags(QString::fromStdString(mCurrTopicId.toStdString()));
 	bool isSubscribed = IS_GROUP_SUBSCRIBED(subscribeFlags);
 
 	if (isSubscribed)
@@ -209,7 +209,7 @@ void PostedListDialog::unsubscribeTopic()
 	std::cerr << "PostedListDialog::unsubscribeTopic()";
 	std::cerr << std::endl;
 
-	if(mCurrTopicId.empty())
+    if(mCurrTopicId.isNull())
 		return;
 
 	uint32_t token;
@@ -222,7 +222,7 @@ void PostedListDialog::subscribeTopic()
 	std::cerr << "PostedListDialog::subscribeTopic()";
 	std::cerr << std::endl;
 
-	if(mCurrTopicId.empty())
+    if(mCurrTopicId.isNull())
 		return;
 
 	uint32_t token;
@@ -368,7 +368,7 @@ void PostedListDialog::newTopic()
 	
 void PostedListDialog::showGroupDetails()
 {
-	if (mCurrTopicId.empty()) 
+    if (mCurrTopicId.isNull())
 	{
 		return;
 	}
@@ -393,7 +393,7 @@ void PostedListDialog::requestGroupSummary()
 	mPostedQueue->requestGroupInfo(token,  RS_TOKREQ_ANSTYPE_SUMMARY, opts, TOKEN_USER_TYPE_TOPIC);
 
 	/* refresh Id Chooser Too */
-	RsGxsId currentId = "";
+    RsGxsId currentId ;
 	ui.idChooser->getChosenId(currentId);
 	ui.idChooser->loadIds(IDCHOOSER_ID_REQUIRED, currentId);
 }
@@ -403,7 +403,7 @@ void PostedListDialog::acknowledgeGroup(const uint32_t &token)
 	RsGxsGroupId grpId;
 	rsPosted->acknowledgeGrp(token, grpId);
 
-	if(!grpId.empty())
+    if(!grpId.isNull())
 	{
 		RsTokReqOptions opts;
 		opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
@@ -459,11 +459,11 @@ void PostedListDialog::loadVoteData(const uint32_t &/*token*/)
 /*********************** **** **** **** ***********************/
 /*********************** **** **** **** ***********************/
 
-void PostedListDialog::requestGroupSummary_CurrentForum(const std::string &forumId)
+void PostedListDialog::requestGroupSummary_CurrentForum(const RsGxsGroupId &forumId)
 {
 	RsTokReqOptions opts;
 	
-	std::list<std::string> grpIds;
+    std::list<RsGxsGroupId> grpIds;
 	grpIds.push_back(forumId);
 
 	std::cerr << "PostedListDialog::requestGroupSummary_CurrentForum(" << forumId << ")";
@@ -503,12 +503,12 @@ void PostedListDialog::insertThreads()
 	loadCurrentTopicThreads(mCurrTopicId);
 }
 
-void PostedListDialog::loadCurrentTopicThreads(const std::string &topicId)
+void PostedListDialog::loadCurrentTopicThreads(const RsGxsGroupId &topicId)
 {
 	std::cerr << "PostedListDialog::loadCurrentForumThreads(" << topicId << ")";
 	std::cerr << std::endl;
 
-	if (topicId.empty())
+    if (topicId.isNull())
 	{
 		std::cerr << "PostedListDialog::loadCurrentForumThreads() Empty GroupId .. ignoring Req";
 		std::cerr << std::endl;
@@ -521,7 +521,7 @@ void PostedListDialog::loadCurrentTopicThreads(const std::string &topicId)
 	requestGroupThreadData_InsertThreads(topicId);
 }
 
-void PostedListDialog::requestGroupThreadData_InsertThreads(const std::string &groupId)
+void PostedListDialog::requestGroupThreadData_InsertThreads(const RsGxsGroupId &groupId)
 {
 	RsTokReqOptions opts;
 
@@ -921,7 +921,7 @@ void PostedListDialog::loadRequest(const TokenQueue *queue, const TokenRequest &
 
 void PostedListDialog::groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo)
 {
-	groupItemInfo.id = QString::fromStdString(groupInfo.mGroupId);
+    groupItemInfo.id = QString::fromStdString(groupInfo.mGroupId.toStdString());
 	groupItemInfo.name = QString::fromUtf8(groupInfo.mGroupName.c_str());
 	//groupItemInfo.description = QString::fromUtf8(groupInfo.forumDesc);
 	groupItemInfo.popularity = groupInfo.mPop;

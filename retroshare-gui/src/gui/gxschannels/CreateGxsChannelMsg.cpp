@@ -409,7 +409,7 @@ void CreateGxsChannelMsg::addAttachment(const std::string &path)
 
 	rsGxsChannels->ExtraFileHash(path, filename);
 
-#error: hash is used uninitialized below ?!?
+#warning: hash is used uninitialized below ?!?
 
 	// only path and filename are valid.
 	// destroyed when fileFrame (this subfileitem) is destroyed
