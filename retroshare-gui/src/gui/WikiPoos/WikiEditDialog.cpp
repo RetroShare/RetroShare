@@ -422,7 +422,7 @@ void WikiEditDialog::setNewPage()
 	setWindowTitle(tr("Create New Wiki Page"));
 
         /* no need for for REQUIRED ID */
-        ui.comboBox_IdChooser->loadIds(0, "");
+        ui.comboBox_IdChooser->loadIds(0, RsGxsId());
 
 	textReset();
 }
@@ -434,7 +434,7 @@ void WikiEditDialog::setRepublishMode(RsGxsMessageId &origMsgId)
         mRepublishOrigId = origMsgId;
 	ui.pushButton_Submit->setText(tr("Republish"));
         /* no need for for REQUIRED ID */
-        ui.comboBox_IdChooser->loadIds(0, "");
+        ui.comboBox_IdChooser->loadIds(0, RsGxsId());
 }
 
 
@@ -588,7 +588,7 @@ void WikiEditDialog::setupData(const RsGxsGroupId &groupId, const RsGxsMessageId
 	setWindowTitle(tr("Edit Wiki Page"));
 
         /* fill in the available OwnIds for signing */
-        ui.comboBox_IdChooser->loadIds(IDCHOOSER_ID_REQUIRED, "");
+        ui.comboBox_IdChooser->loadIds(IDCHOOSER_ID_REQUIRED, RsGxsId());
 
 }
 
