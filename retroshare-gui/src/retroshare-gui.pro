@@ -368,6 +368,7 @@ HEADERS +=  rshare.h \
             util/HandleRichText.h \
             util/ObjectPainter.h \
             util/QtVersion.h \
+            util/RsFile.h \
             gui/bwgraph/bwgraph.h \
             gui/profile/ProfileWidget.h \
             gui/profile/ProfileManager.h \
@@ -682,6 +683,7 @@ SOURCES +=  main.cpp \
             util/misc.cpp \
             util/HandleRichText.cpp \
             util/ObjectPainter.cpp \
+            util/RsFile.cpp \
             gui/bwgraph/bwgraph.cpp \
             gui/profile/ProfileWidget.cpp \
             gui/profile/StatusMessage.cpp \
