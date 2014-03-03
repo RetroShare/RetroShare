@@ -18,6 +18,7 @@
 typedef GXSGroupId RsGxsGroupId;
 typedef Sha1CheckSum RsGxsMessageId;
 typedef GXSId RsGxsId;
+typedef GXSCircleId RsGxsCircleId;
 
 typedef std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > GxsMsgIdResult;
 typedef std::pair<RsGxsGroupId, RsGxsMessageId> RsGxsGrpMsgIdPair;
@@ -64,7 +65,7 @@ public:
     RsGxsId    mAuthorId;   // Optional.
 
     // for circles
-    std::string mCircleId;
+    RsGxsCircleId mCircleId;
     uint32_t mCircleType;
     uint32_t mAuthenFlags;
     RsGxsGroupId mParentGrpId;
@@ -80,7 +81,7 @@ public:
     uint32_t    mGroupStatus;
     std::string mServiceString; // Service Specific Free-Form extra storage.
     RsPeerId mOriginator;
-    std::string mInternalCircle;
+    RsGxsCircleId mInternalCircle;
 };
 
 

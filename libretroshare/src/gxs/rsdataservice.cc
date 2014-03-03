@@ -309,9 +309,11 @@ RsGxsGrpMetaData* RsDataService::locked_getGrpMeta(RetroCursor &c)
     grpMeta->mLastPost = c.getInt32(COL_GRP_LAST_POST);
     grpMeta->mGroupStatus = c.getInt32(COL_GRP_STATUS);
 
-    c.getString(COL_GRP_CIRCLE_ID, grpMeta->mCircleId);
+    c.getString(COL_GRP_CIRCLE_ID, tempId);
+    grpMeta->mCircleId = tempId;
     grpMeta->mCircleType = c.getInt32(COL_GRP_CIRCL_TYPE);
-    c.getString(COL_GRP_INTERN_CIRCLE, grpMeta->mInternalCircle);
+    c.getString(COL_GRP_INTERN_CIRCLE, tempId);
+    grpMeta->mInternalCircle = tempId;
 
     std::string s ; c.getString(COL_GRP_ORIGINATOR, s) ;
     grpMeta->mOriginator = RsPeerId(s);
@@ -632,9 +634,9 @@ int RsDataService::storeGroup(std::map<RsNxsGrp *, RsGxsGrpMetaData *> &grp)
         cv.put(KEY_NXS_FLAGS, (int32_t)grpMetaPtr->mGroupFlags);
         cv.put(KEY_TIME_STAMP, (int32_t)grpMetaPtr->mPublishTs);
         cv.put(KEY_GRP_SIGN_FLAGS, (int32_t)grpMetaPtr->mSignFlags);
-        cv.put(KEY_GRP_CIRCLE_ID, grpMetaPtr->mCircleId);
+        cv.put(KEY_GRP_CIRCLE_ID, grpMetaPtr->mCircleId.toStdString());
         cv.put(KEY_GRP_CIRCLE_TYPE, (int32_t)grpMetaPtr->mCircleType);
-        cv.put(KEY_GRP_INTERNAL_CIRCLE, grpMetaPtr->mInternalCircle);
+        cv.put(KEY_GRP_INTERNAL_CIRCLE, grpMetaPtr->mInternalCircle.toStdString());
         cv.put(KEY_GRP_ORIGINATOR, grpMetaPtr->mOriginator.toStdString());
         cv.put(KEY_GRP_AUTHEN_FLAGS, (int32_t)grpMetaPtr->mAuthenFlags);
         cv.put(KEY_PARENT_GRP_ID, grpMetaPtr->mParentGrpId.toStdString());
@@ -725,9 +727,9 @@ int RsDataService::updateGroup(std::map<RsNxsGrp *, RsGxsGrpMetaData *> &grp)
         cv.put(KEY_NXS_FLAGS, (int32_t)grpMetaPtr->mGroupFlags);
         cv.put(KEY_TIME_STAMP, (int32_t)grpMetaPtr->mPublishTs);
         cv.put(KEY_GRP_SIGN_FLAGS, (int32_t)grpMetaPtr->mSignFlags);
-        cv.put(KEY_GRP_CIRCLE_ID, grpMetaPtr->mCircleId);
+        cv.put(KEY_GRP_CIRCLE_ID, grpMetaPtr->mCircleId.toStdString());
         cv.put(KEY_GRP_CIRCLE_TYPE, (int32_t)grpMetaPtr->mCircleType);
-        cv.put(KEY_GRP_INTERNAL_CIRCLE, grpMetaPtr->mInternalCircle);
+        cv.put(KEY_GRP_INTERNAL_CIRCLE, grpMetaPtr->mInternalCircle.toStdString());
         cv.put(KEY_GRP_ORIGINATOR, grpMetaPtr->mOriginator.toStdString());
         cv.put(KEY_GRP_AUTHEN_FLAGS, (int32_t)grpMetaPtr->mAuthenFlags);
         cv.put(KEY_NXS_HASH, grpMetaPtr->mHash.toStdString());

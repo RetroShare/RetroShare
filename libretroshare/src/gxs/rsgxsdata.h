@@ -54,7 +54,7 @@ public:
     uint32_t    mSignFlags;
     RsGxsId mAuthorId;
 
-    std::string mCircleId;
+    RsGxsCircleId mCircleId;
     uint32_t mCircleType;
 
 
@@ -76,7 +76,7 @@ public:
     uint32_t    mGroupStatus;
     uint32_t    mRecvTS;
     RsPeerId    mOriginator;
-    std::string mInternalCircle;
+    RsGxsCircleId mInternalCircle;
     RsFileHash mHash;
 };
 

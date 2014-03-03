@@ -47,7 +47,7 @@ uint32_t RsGxsGrpMetaData::serial_size()
     s += signSet.TlvSize();
     s += keys.TlvSize();
     s += 4; // for mCircleType
-    s += GetTlvStringSize(mCircleId);
+    s += mCircleId.serial_size();
     s += 4; // mAuthenFlag
     s += mParentGrpId.serial_size();
 
@@ -114,7 +114,7 @@ bool RsGxsGrpMetaData::serialise(void *data, uint32_t &pktsize)
     ok &= setRawUInt32(data, tlvsize, &offset, mAuthenFlags);
     ok &= mAuthorId.serialise(data, tlvsize, offset);
     ok &= SetTlvString(data, tlvsize, &offset, 0, mServiceString);
-    ok &= SetTlvString(data, tlvsize, &offset, 0, mCircleId);
+    ok &= mCircleId.serialise(data, tlvsize, offset);
 
     ok &= signSet.SetTlv(data, tlvsize, &offset);
     ok &= keys.SetTlv(data, tlvsize, &offset);
@@ -145,7 +145,7 @@ bool RsGxsGrpMetaData::deserialise(void *data, uint32_t &pktsize)
     ok &= getRawUInt32(data, pktsize, &offset, &mAuthenFlags);
     ok &= mAuthorId.deserialise(data, pktsize, offset);
     ok &= GetTlvString(data, pktsize, &offset, 0, mServiceString);
-    ok &= GetTlvString(data, pktsize, &offset, 0, mCircleId);
+    ok &= mCircleId.deserialise(data, pktsize, offset);
     ok &= signSet.GetTlv(data, pktsize, &offset);
     ok &= keys.GetTlv(data, pktsize, &offset);
 

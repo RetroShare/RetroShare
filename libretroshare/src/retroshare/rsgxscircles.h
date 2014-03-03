@@ -43,7 +43,6 @@ class RsGxsCircles;
 extern RsGxsCircles *rsGxsCircles;
 
 
-typedef std::string RsGxsCircleId;
 typedef RsPgpId RsPgpId;
 typedef std::string RsCircleInternalId;
 

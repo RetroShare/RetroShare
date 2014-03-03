@@ -2157,7 +2157,7 @@ bool RsGxsNetService::canSendGrpId(const RsPeerId& sslId, RsGxsGrpMetaData& grpM
 	{
 		// a non empty internal circle id means this
 		// is the personal circle owner
-		if(!grpMeta.mInternalCircle.empty())
+		if(!grpMeta.mInternalCircle.isNull())
 		{
 			const RsGxsCircleId& internalCircleId = grpMeta.mCircleId;
 			if(mCircles->isLoaded(internalCircleId))
@@ -2337,7 +2337,7 @@ bool RsGxsNetService::canSendMsgIds(const std::vector<RsGxsMsgMetaData*>& msgMet
 	{
 		// a non empty internal circle id means this
 		// is the personal circle owner
-		if(!grpMeta.mInternalCircle.empty())
+		if(!grpMeta.mInternalCircle.isNull())
 		{
 			const RsGxsCircleId& internalCircleId = grpMeta.mCircleId;
 			if(mCircles->isLoaded(internalCircleId))

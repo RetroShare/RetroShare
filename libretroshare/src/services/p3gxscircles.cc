@@ -199,7 +199,8 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 
 				// for new circles we need to add them to the list.
 				RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
-				mCircleExternalIdList.push_back(git->toStdString());
+				RsGxsCircleId tempId(git->toStdString());
+				mCircleExternalIdList.push_back(tempId);
 			}
 		}
 	}
@@ -435,11 +436,11 @@ RsGenExchange::ServiceCreate_Return p3GxsCircles::service_CreateGroup(RsGxsGrpIt
 
 		if (item->meta.mCircleType == GXS_CIRCLE_TYPE_LOCAL)
 		{
-			mCirclePersonalIdList.push_back(item->meta.mGroupId.toStdString());
+			mCirclePersonalIdList.push_back(RsGxsCircleId(item->meta.mGroupId.toStdString()));
 		}
 		else
 		{
-			mCircleExternalIdList.push_back(item->meta.mGroupId.toStdString());
+			mCircleExternalIdList.push_back(RsGxsCircleId(item->meta.mGroupId.toStdString()));
 		}
 	}
 
@@ -583,13 +584,14 @@ bool p3GxsCircles::load_CircleIdList(uint32_t token)
 
 		for(it = groups.begin(); it != groups.end(); it++)
 		{
+			RsGxsCircleId tempId(it->mGroupId.toStdString());
 			if (it->mCircleType == GXS_CIRCLE_TYPE_LOCAL)
 			{
-				mCirclePersonalIdList.push_back(it->mGroupId.toStdString());
+				mCirclePersonalIdList.push_back(tempId);
 			}
 			else
 			{
-				mCircleExternalIdList.push_back(it->mGroupId.toStdString());
+				mCircleExternalIdList.push_back(tempId);
 			}
 		}
 	}
@@ -798,7 +800,7 @@ bool p3GxsCircles::cache_start_load()
 			std::cerr << std::endl;
 #endif // DEBUG_CIRCLES
 
-			groupIds.push_back(RsGxsGroupId(*it)); // might need conversion?
+			groupIds.push_back(RsGxsGroupId(it->toStdString())); // might need conversion?
 		}
 
 		mCacheLoad_ToCache.clear();
@@ -859,7 +861,7 @@ bool p3GxsCircles::cache_load_for_token(uint32_t token)
 			RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
 
 			/* should already have a LoadingCache entry */
-			RsGxsCircleId id = item->meta.mGroupId.toStdString();
+			RsGxsCircleId id = RsGxsCircleId(item->meta.mGroupId.toStdString());
 			std::map<RsGxsCircleId, RsGxsCircleCache>::iterator it;
 			it = mLoadingCache.find(id);
 			if (it == mLoadingCache.end())
@@ -1013,7 +1015,7 @@ bool p3GxsCircles::cache_load_for_token(uint32_t token)
 			if (isUnprocessedPeers)
 			{
 				/* schedule event to try reload gxsIds */
-				RsTickEvent::schedule_in(CIRCLE_EVENT_RELOADIDS, GXSID_LOAD_CYCLE, id);
+				RsTickEvent::schedule_in(CIRCLE_EVENT_RELOADIDS, GXSID_LOAD_CYCLE, id.toStdString());
 			}
 		}
 	}
@@ -1039,7 +1041,7 @@ bool p3GxsCircles::cache_load_for_token(uint32_t token)
 }
 
 
-bool p3GxsCircles::cache_reloadids(const std::string &circleId)
+bool p3GxsCircles::cache_reloadids(const RsGxsCircleId &circleId)
 {
 #ifdef DEBUG_CIRCLES
 	std::cerr << "p3GxsCircles::cache_reloadids()";
@@ -1181,8 +1183,8 @@ bool p3GxsCircles::checkCircleCacheForAutoSubscribe(RsGxsCircleCache &cache)
 
 	
 		uint32_t token, token2;	
-		RsGenExchange::subscribeToGroup(token, RsGxsGroupId(cache.mCircleId), true);
-		RsGenExchange::setGroupStatusFlags(token2, RsGxsGroupId(cache.mCircleId), 0, GXS_SERV::GXS_GRP_STATUS_UNPROCESSED);
+		RsGenExchange::subscribeToGroup(token, RsGxsGroupId(cache.mCircleId.toStdString()), true);
+		RsGenExchange::setGroupStatusFlags(token2, RsGxsGroupId(cache.mCircleId.toStdString()), 0, GXS_SERV::GXS_GRP_STATUS_UNPROCESSED);
 		cache.mGroupStatus ^= GXS_SERV::GXS_GRP_STATUS_UNPROCESSED;
 		return true;
 	}
@@ -1193,7 +1195,7 @@ bool p3GxsCircles::checkCircleCacheForAutoSubscribe(RsGxsCircleCache &cache)
 
 		/* we know all the peers - we are not part - we can flag as PROCESSED. */
 		uint32_t token;	
-		RsGenExchange::setGroupStatusFlags(token, RsGxsGroupId(cache.mCircleId), 0, GXS_SERV::GXS_GRP_STATUS_UNPROCESSED);
+		RsGenExchange::setGroupStatusFlags(token, RsGxsGroupId(cache.mCircleId.toStdString()), 0, GXS_SERV::GXS_GRP_STATUS_UNPROCESSED);
 		cache.mGroupStatus ^= GXS_SERV::GXS_GRP_STATUS_UNPROCESSED;
 	}
 	else
@@ -1647,7 +1649,7 @@ void p3GxsCircles::handle_event(uint32_t event_type, const std::string &elabel)
 			break;
 
 		case CIRCLE_EVENT_RELOADIDS:
-			cache_reloadids(elabel);
+			cache_reloadids(RsGxsCircleId(elabel));
 			break;
 
 #if 0
