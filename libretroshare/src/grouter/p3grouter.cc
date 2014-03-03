@@ -176,12 +176,12 @@ void p3GRouter::routePendingObjects()
 	std::cerr << "Cached Items : " << _pending_messages.size() << std::endl;
 
 	std::list<std::string> lst_tmp ;
-	std::list<SSLIdType> lst ;
+	std::list<RsPeerId> lst ;
 	mLinkMgr->getOnlineList(lst_tmp) ;
-	SSLIdType own_id( mLinkMgr->getOwnId() );
+	RsPeerId own_id( mLinkMgr->getOwnId() );
 
 	for(std::list<std::string>::const_iterator it(lst_tmp.begin());it!=lst_tmp.end();++it)
-		lst.push_back(SSLIdType(*it)) ;
+		lst.push_back(RsPeerId(*it)) ;
 
 	for(std::map<GRouterMsgPropagationId, GRouterRoutingInfo>::iterator it(_pending_messages.begin());it!=_pending_messages.end();)
 		if((it->second.status_flags & RS_GROUTER_ROUTING_STATE_PEND) || (it->second.status_flags == RS_GROUTER_ROUTING_STATE_SENT && it->second.tried_friends.front().time_stamp+RS_GROUTER_ROUTING_WAITING_TIME < now))
@@ -193,8 +193,8 @@ void p3GRouter::routePendingObjects()
 			std::cerr << "  Flags : " << it->second.status_flags << std::endl;
 			std::cerr << "  Probabilities: " << std::endl;
 
-			std::map<SSLIdType,float> probas ;		// friends probabilities for online friend list.
-			SSLIdType routed_friend ;					// friend chosen for the next hop
+			std::map<RsPeerId,float> probas ;		// friends probabilities for online friend list.
+			RsPeerId routed_friend ;					// friend chosen for the next hop
 			float best_proba = 0.0f;					// temp variable used to select the best proba
 			bool should_remove = false ;				// should we remove this from the map?
 
@@ -223,7 +223,7 @@ void p3GRouter::routePendingObjects()
 
 			bool friend_found = false ;
 
-			for(std::map<SSLIdType,float>::const_iterator it2(probas.begin());it2!=probas.end();++it2)
+			for(std::map<RsPeerId,float>::const_iterator it2(probas.begin());it2!=probas.end();++it2)
 			{
 				std::cerr << "     " << it2->first.toStdString() << " : " << it2->second << std::endl;
 
@@ -432,7 +432,7 @@ void p3GRouter::handleRecvPublishKeyItem(RsGRouterPublishKeyItem *item)
 
 	// update the route matrix
 
-	_routing_matrix.addRoutingClue(item->published_key,item->service_id,item->randomized_distance,item->description_string,SSLIdType(item->PeerId())) ;
+	_routing_matrix.addRoutingClue(item->published_key,item->service_id,item->randomized_distance,item->description_string,RsPeerId(item->PeerId())) ;
 
 	// forward the key to other peers according to key forwarding cache
 	
@@ -541,7 +541,7 @@ void p3GRouter::handleRecvDataItem(RsGRouterGenericDataItem *item)
 		else
 			info.status_flags = RS_GROUTER_ROUTING_STATE_PEND ;
 
-		info.origin = SSLIdType(item->PeerId()) ;
+		info.origin = RsPeerId(item->PeerId()) ;
 		info.received_time = time(NULL) ;
 
 		_pending_messages[item->routing_id] = info ;
@@ -588,7 +588,7 @@ void p3GRouter::sendData(const GRouterKeyId& destination, RsGRouterGenericDataIt
 
 	info.data_item = item ;
 	info.status_flags = RS_GROUTER_ROUTING_STATE_PEND ;
-	info.origin = SSLIdType(mLinkMgr->getOwnId()) ;
+	info.origin = RsPeerId(mLinkMgr->getOwnId()) ;
 	info.received_time = time(NULL) ;
 	
 	// Make sure we have a unique id (at least locally).
@@ -606,7 +606,7 @@ void p3GRouter::sendData(const GRouterKeyId& destination, RsGRouterGenericDataIt
 	_pending_messages[propagation_id] = info ;
 }
 
-void p3GRouter::sendACK(const SSLIdType& peer, GRouterMsgPropagationId mid, uint32_t ack_flags)
+void p3GRouter::sendACK(const RsPeerId& peer, GRouterMsgPropagationId mid, uint32_t ack_flags)
 {
 	RsGRouterACKItem *item = new RsGRouterACKItem ;
 

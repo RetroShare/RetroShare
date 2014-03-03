@@ -132,10 +132,10 @@ int     checkOutgoingMessages();
 
 		void enableDistantMessaging(bool b) ;
 		bool distantMessagingEnabled() ;
-        bool getDistantMessagePeerId(const PGPIdType& pgp_id,DistantMsgPeerId &peer_id) ;
+        bool getDistantMessagePeerId(const RsPgpId& pgp_id,DistantMsgPeerId &peer_id) ;
 
 	private:
-        bool getDistantMessageHash(const PGPIdType& pgp_id,Sha1CheckSum &hash) ;
+        bool getDistantMessageHash(const RsPgpId& pgp_id,Sha1CheckSum &hash) ;
         void sendPrivateMsgItem(const Sha1CheckSum& hash,RsMsgItem *) ;
 
 		// This maps contains the current invitations to respond to.
@@ -158,7 +158,7 @@ int     checkOutgoingMessages();
 
 		// Utility functions
 
-		bool encryptMessage(const PGPIdType& pgp_id,RsMsgItem *msg) ;
+		bool encryptMessage(const RsPgpId& pgp_id,RsMsgItem *msg) ;
 		bool locked_findHashForVirtualPeerId(const RsPeerId& pid,Sha1CheckSum& hash) ;
 
 		void manageDistantPeers() ;

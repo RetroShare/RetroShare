@@ -44,7 +44,7 @@ class RsDisc
 virtual ~RsDisc() { return; }
 
 virtual bool	getDiscFriends(const RsPeerId &id, std::list<RsPeerId>& friends) = 0;
-virtual bool	getDiscPgpFriends(const PGPIdType &pgpid, std::list<PGPIdType>& gpg_friends) = 0;
+virtual bool	getDiscPgpFriends(const RsPgpId &pgpid, std::list<RsPgpId>& gpg_friends) = 0;
 virtual bool 	getPeerVersion(const RsPeerId &id, std::string &versions) = 0;
 virtual bool 	getWaitingDiscCount(unsigned int *sendCount, unsigned int *recvCount) = 0;
 

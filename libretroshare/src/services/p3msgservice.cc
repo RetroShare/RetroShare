@@ -91,7 +91,7 @@ p3MsgService::p3MsgService(p3LinkMgr *lm)
 #ifdef GROUTER
 	// Debug stuff. Create a random key and register it.
 	const RsPeerId& own_ssl_id = rsPeers->getOwnId() ;
-	const PGPIdType& gpg_id = rsPeers->getGPGOwnId() ;
+	const RsPgpId& gpg_id = rsPeers->getGPGOwnId() ;
 
 	RsPeerDetails d;
 	rsPeers->getPeerDetails(gpg_id,d) ;
@@ -1090,7 +1090,7 @@ bool 	p3MsgService::MessageSend(MessageInfo &info)
 	RsMsgItem *msg = initMIRsMsg(info, mLinkMgr->getOwnId());
 	if (msg)
 	{
-        std::list<PGPIdType>::iterator it ;
+        std::list<RsPgpId>::iterator it ;
 
 		// Update destination ids in place of distant message hash, since this Outgoing message is for display
 		//
@@ -1792,7 +1792,7 @@ RsMsgItem *p3MsgService::initMIRsMsg(MessageInfo &info, const RsPeerId &to)
 	return msg;
 }
 
-bool p3MsgService::encryptMessage(const PGPIdType& pgp_id,RsMsgItem *item)
+bool p3MsgService::encryptMessage(const RsPgpId& pgp_id,RsMsgItem *item)
 {
 #ifdef DEBUG_DISTANT_MSG
 	std::cerr << "Encrypting message with public key " << pgp_id << " in place." << std::endl;
@@ -1813,7 +1813,7 @@ bool p3MsgService::encryptMessage(const PGPIdType& pgp_id,RsMsgItem *item)
 #ifdef DEBUG_DISTANT_MSG
 	std::cerr << "  adding own key ID " << AuthGPG::getAuthGPG()->getGPGOwnId() << std::endl;
 #endif
-	memcpy(&data[1], PGPIdType(AuthGPG::getAuthGPG()->getGPGOwnId()).toByteArray(), PGP_KEY_ID_SIZE) ;
+	memcpy(&data[1], RsPgpId(AuthGPG::getAuthGPG()->getGPGOwnId()).toByteArray(), PGP_KEY_ID_SIZE) ;
 
 	// 1 - serialise the whole message item into a binary chunk.
 	//
@@ -1982,7 +1982,7 @@ bool p3MsgService::decryptMessage(const std::string& mId)
 		return false;
 	}
 
-	PGPIdType senders_id(&decrypted_data[1]) ;
+	RsPgpId senders_id(&decrypted_data[1]) ;
 
 #ifdef DEBUG_DISTANT_MSG
 	std::cerr << "  Sender's ID: " << senders_id.toStdString() << std::endl;
@@ -2038,7 +2038,7 @@ bool p3MsgService::decryptMessage(const std::string& mId)
 	item->print(std::cerr,0) ;
 #endif
 	RsPeerId own_id ;
-	const PGPIdType& own_pgp_id = AuthGPG::getAuthGPG()->getGPGOwnId();
+	const RsPgpId& own_pgp_id = AuthGPG::getAuthGPG()->getGPGOwnId();
 	getDistantMessagePeerId(own_pgp_id,own_id) ;
 
 	{
@@ -2159,7 +2159,7 @@ void p3MsgService::enableDistantMessaging(bool b)
 
 			// Debug stuff. Create a random key and register it.
 			const RsPeerId& own_ssl_id = rsPeers->getOwnId() ;
-			const PGPIdType& gpg_id = rsPeers->getGPGOwnId() ;
+			const RsPgpId& gpg_id = rsPeers->getGPGOwnId() ;
 
 			RsPeerDetails d;
 			rsPeers->getPeerDetails(gpg_id,d) ;
@@ -2212,7 +2212,7 @@ bool p3MsgService::distantMessagingEnabled()
 	}
 	return res ;
 }
-bool p3MsgService::getDistantMessagePeerId(const PGPIdType& pgp_id,DistantMsgPeerId& peer_id)
+bool p3MsgService::getDistantMessagePeerId(const RsPgpId& pgp_id,DistantMsgPeerId& peer_id)
 {
     if(!AuthGPG::getAuthGPG()->isKeySupported(pgp_id))
         return false ;
@@ -2227,7 +2227,7 @@ bool p3MsgService::getDistantMessagePeerId(const PGPIdType& pgp_id,DistantMsgPee
 	
     return true ;
 }
-bool p3MsgService::getDistantMessageHash(const PGPIdType& pgp_id,Sha1CheckSum& hash)
+bool p3MsgService::getDistantMessageHash(const RsPgpId& pgp_id,Sha1CheckSum& hash)
 {
     if(!AuthGPG::getAuthGPG()->isKeySupported(pgp_id))
         return false ;

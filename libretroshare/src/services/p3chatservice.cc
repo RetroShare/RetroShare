@@ -464,7 +464,7 @@ bool p3ChatService::isOnline(const DistantChatPeerId& pid)
 	// check if the id is a tunnel id or a peer id.
 
 	uint32_t status ;
-	PGPIdType pgp_id ;
+	RsPgpId pgp_id ;
 
 	std::string hash ;
 	if(getDistantChatStatus(pid,status,pgp_id)) 
@@ -3386,7 +3386,7 @@ void p3ChatService::sendTurtleData(RsChatItem *item)
 	mTurtle->sendTurtleData(virtual_peer_id,gitem) ;
 }
 
-bool p3ChatService::createDistantChatInvite(const PGPIdType& pgp_id,time_t time_of_validity,std::string& encrypted_radix64_string) 
+bool p3ChatService::createDistantChatInvite(const RsPgpId& pgp_id,time_t time_of_validity,std::string& encrypted_radix64_string) 
 {
 	// create the invite
 
@@ -3424,7 +3424,7 @@ bool p3ChatService::createDistantChatInvite(const PGPIdType& pgp_id,time_t time_
 	uint32_t header_size = DISTANT_CHAT_AES_KEY_SIZE + DISTANT_CHAT_HASH_SIZE + PGP_KEY_ID_SIZE;
     unsigned char *data = new unsigned char[header_size+800] ;
 
-	PGPIdType OwnId(AuthGPG::getAuthGPG()->getGPGOwnId());
+	RsPgpId OwnId(AuthGPG::getAuthGPG()->getGPGOwnId());
 
 	memcpy(data                                                 ,Sha1CheckSum(hash).toByteArray(),DISTANT_CHAT_HASH_SIZE) ;
 	memcpy(data+DISTANT_CHAT_HASH_SIZE                          ,invite.aes_key     ,DISTANT_CHAT_AES_KEY_SIZE) ;
@@ -3498,7 +3498,7 @@ bool p3ChatService::initiateDistantChatConnexion(const std::string& encrypted_st
 
 	uint32_t header_size = DISTANT_CHAT_HASH_SIZE + DISTANT_CHAT_AES_KEY_SIZE + PGP_KEY_ID_SIZE ;
 
-	PGPIdType pgp_id( data + DISTANT_CHAT_HASH_SIZE + DISTANT_CHAT_AES_KEY_SIZE ) ;
+	RsPgpId pgp_id( data + DISTANT_CHAT_HASH_SIZE + DISTANT_CHAT_AES_KEY_SIZE ) ;
 
 #ifdef DEBUG_DISTANT_CHAT
 	std::cerr << "Got this PGP id: " << pgp_id.toStdString() << std::endl;
@@ -3559,7 +3559,7 @@ bool p3ChatService::initiateDistantChatConnexion(const std::string& encrypted_st
 
 bool p3ChatService::initiateDistantChatConnexion(const DistantChatPeerId& pid,uint32_t& error_code)
 {
-	PGPIdType pgp_id ;
+	RsPgpId pgp_id ;
 	unsigned char aes_key[DISTANT_CHAT_AES_KEY_SIZE] ;
 
 	TurtleFileHash hash = hashFromVirtualPeerId(pid) ;
@@ -3587,7 +3587,7 @@ bool p3ChatService::initiateDistantChatConnexion(const DistantChatPeerId& pid,ui
 	return true ;
 }
 
-void p3ChatService::startClientDistantChatConnection(const RsFileHash& hash,const PGPIdType& pgp_id,const unsigned char *aes_key_buf)
+void p3ChatService::startClientDistantChatConnection(const RsFileHash& hash,const RsPgpId& pgp_id,const unsigned char *aes_key_buf)
 {
 	DistantChatPeerInfo info ;
 
@@ -3677,7 +3677,7 @@ bool p3ChatService::getDistantChatInviteList(std::vector<DistantChatInviteInfo>&
 	return true ;
 }
 
-bool p3ChatService::getDistantChatStatus(const DistantChatPeerId& pid,uint32_t& status,PGPIdType& pgp_id)
+bool p3ChatService::getDistantChatStatus(const DistantChatPeerId& pid,uint32_t& status,RsPgpId& pgp_id)
 {
 	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 

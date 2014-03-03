@@ -96,7 +96,7 @@ class ftPendingRequest
         public:
         ftPendingRequest(const std::string& fname, const RsFileHash& hash,
                         uint64_t size, const std::string& dest, TransferRequestFlags flags,
-									 const std::list<SSLIdType> &srcIds, uint16_t state)
+									 const std::list<RsPeerId> &srcIds, uint16_t state)
         : mName(fname), mHash(hash), mSize(size),
 			mDest(dest), mFlags(flags), mSrcIds(srcIds), mState(state) { return; }
 
@@ -107,7 +107,7 @@ class ftPendingRequest
         uint64_t mSize;
         std::string mDest;
         TransferRequestFlags mFlags;
-        std::list<SSLIdType> mSrcIds;
+        std::list<RsPeerId> mSrcIds;
 	uint16_t mState;
 };
 
@@ -133,7 +133,7 @@ class ftController: public CacheTransfer, public RsThread, public pqiMonitor, pu
 
         bool 	FileRequest(const std::string& fname, const RsFileHash& hash,
 				uint64_t size, const std::string& dest, TransferRequestFlags flags,
-										const std::list<SSLIdType> &sourceIds, uint16_t state = ftFileControl::DOWNLOADING);
+										const std::list<RsPeerId> &sourceIds, uint16_t state = ftFileControl::DOWNLOADING);
 
 		/// Do we already have this file, either in download or in file lists ?
         bool  alreadyHaveFile(const RsFileHash& hash, FileInfo &info);
@@ -184,12 +184,12 @@ class ftController: public CacheTransfer, public RsThread, public pqiMonitor, pu
 
 		/// Returns true is full source availability can be assumed for this peer.
 		///
-		bool assumeAvailability(const SSLIdType& peer_id) const ;
+		bool assumeAvailability(const RsPeerId& peer_id) const ;
 
 		/* pqiMonitor callback (also provided mConnMgr pointer!) */
 		virtual void    statusChange(const std::list<pqipeer> &plist);
-        void addFileSource(const RsFileHash& hash,const SSLIdType& peer_id) ;
-        void removeFileSource(const RsFileHash& hash,const SSLIdType& peer_id) ;
+        void addFileSource(const RsFileHash& hash,const RsPeerId& peer_id) ;
+        void removeFileSource(const RsFileHash& hash,const RsPeerId& peer_id) ;
 
 	protected:
 
@@ -226,7 +226,7 @@ class ftController: public CacheTransfer, public RsThread, public pqiMonitor, pu
         bool 	completeFile(const RsFileHash& hash);
 		bool    handleAPendingRequest();
 
-		bool    setPeerState(ftTransferModule *tm, const SSLIdType& id,
+		bool    setPeerState(ftTransferModule *tm, const RsPeerId& id,
 				uint32_t maxrate, bool online);
 
 		time_t last_save_time ;

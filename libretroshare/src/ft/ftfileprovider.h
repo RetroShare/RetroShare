@@ -41,7 +41,7 @@ class ftFileProvider
 		ftFileProvider(const std::string& path, uint64_t size, const RsFileHash& hash);
 		virtual ~ftFileProvider();
 
-		virtual bool 	getFileData(const SSLIdType& peer_id,uint64_t offset, uint32_t &chunk_size, void *data);
+		virtual bool 	getFileData(const RsPeerId& peer_id,uint64_t offset, uint32_t &chunk_size, void *data);
 		virtual bool    FileDetails(FileInfo &info);
 		RsFileHash getHash();
 		uint64_t getFileSize();

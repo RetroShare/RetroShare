@@ -85,7 +85,7 @@ class p3Msgs: public RsMsgs
 
 	  virtual void enableDistantMessaging(bool b) ;
 	  virtual bool distantMessagingEnabled() ;
-      virtual bool getDistantMessagePeerId(const PGPIdType& pgp_id,DistantMsgPeerId& pid) ;
+      virtual bool getDistantMessagePeerId(const RsPgpId& pgp_id,DistantMsgPeerId& pid) ;
 
 	  /*!
 	   * gets avatar from peer, image data in jpeg format
@@ -194,11 +194,11 @@ class p3Msgs: public RsMsgs
     virtual bool getLobbyAutoSubscribe(const ChatLobbyId& lobby_id);
 	  virtual ChatLobbyId createChatLobby(const std::string& lobby_name,const std::string& lobby_topic,const std::list<RsPeerId>& invited_friends,uint32_t privacy_type) ;
 
-	  virtual bool createDistantChatInvite(const PGPIdType& pgp_id,time_t time_of_validity,std::string& encrypted_string) ;
+	  virtual bool createDistantChatInvite(const RsPgpId& pgp_id,time_t time_of_validity,std::string& encrypted_string) ;
 	  virtual bool getDistantChatInviteList(std::vector<DistantChatInviteInfo>& invites);
 	  virtual bool initiateDistantChatConnexion(const std::string& encrypted_string,time_t validity_time,DistantChatPeerId& pid,uint32_t& error_code) ;
 	  virtual bool initiateDistantChatConnexion(const DistantChatPeerId& pid,uint32_t& error_code) ;
-	  virtual bool getDistantChatStatus(const DistantChatPeerId& pid,uint32_t& status,PGPIdType& pgp_id) ;
+	  virtual bool getDistantChatStatus(const DistantChatPeerId& pid,uint32_t& status,RsPgpId& pgp_id) ;
 	  virtual bool closeDistantChatConnexion(const DistantChatPeerId& pid) ;
 	  virtual bool removeDistantChatInvite(const DistantChatPeerId& pid) ;
 

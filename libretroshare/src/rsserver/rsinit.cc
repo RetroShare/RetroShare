@@ -657,7 +657,7 @@ int 	RsInit::LockAndLoadCertificates(bool autoLoginNT, std::string& lockFilePath
 		return 3; // invalid PreferredAccount;
 	}
 	
-	PGPIdType pgpId;
+	RsPgpId pgpId;
 	std::string pgpName, pgpEmail, location;
 
 	if (!rsAccounts.getAccountDetails(accountId, pgpId, pgpName, pgpEmail, location))

@@ -86,7 +86,7 @@ virtual ~RsDiscPgpCertItem();
 virtual  void clear();
 virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
-	PGPIdType pgpId;
+	RsPgpId pgpId;
 	std::string pgpCert;
 };
 
@@ -106,7 +106,7 @@ virtual ~RsDiscContactItem();
 virtual  void clear();
 virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
-	PGPIdType pgpId;
+	RsPgpId pgpId;
 	RsPeerId sslId;
 
 	// COMMON

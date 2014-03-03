@@ -1222,7 +1222,7 @@ int 	pqissl::Extract_Failed_SSL_Certificate()
 	RsPeerId sslid ;
 	getX509id(peercert, sslid) ;
 
-	PGPIdType gpgid(getX509CNString(peercert->cert_info->issuer));
+	RsPgpId gpgid(getX509CNString(peercert->cert_info->issuer));
 	std::string sslcn = getX509CNString(peercert->cert_info->subject);
 
 	AuthSSL::getAuthSSL()->FailedCertificate(peercert, gpgid,sslid,sslcn,remote_addr, false);

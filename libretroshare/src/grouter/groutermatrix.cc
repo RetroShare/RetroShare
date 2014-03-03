@@ -33,7 +33,7 @@ GRouterMatrix::GRouterMatrix()
 }
 
 bool GRouterMatrix::addRoutingClue(	const GRouterKeyId& key_id,const GRouterServiceId& sid,float distance,
-												const std::string& desc_string,const SSLIdType& source_friend) 
+												const std::string& desc_string,const RsPeerId& source_friend) 
 {
 	// 1 - get the friend index.
 	//
@@ -76,18 +76,18 @@ bool GRouterMatrix::addRoutingClue(	const GRouterKeyId& key_id,const GRouterServ
 
 	return true ;
 }
-uint32_t GRouterMatrix::getFriendId_const(const SSLIdType& source_friend) const
+uint32_t GRouterMatrix::getFriendId_const(const RsPeerId& source_friend) const
 {
-	std::map<SSLIdType,uint32_t>::const_iterator it = _friend_indices.find(source_friend) ;
+	std::map<RsPeerId,uint32_t>::const_iterator it = _friend_indices.find(source_friend) ;
 
 	if(it == _friend_indices.end())
 		return _reverse_friend_indices.size() ;
 	else
 		return it->second ;
 }
-uint32_t GRouterMatrix::getFriendId(const SSLIdType& source_friend)
+uint32_t GRouterMatrix::getFriendId(const RsPeerId& source_friend)
 {
-	std::map<SSLIdType,uint32_t>::const_iterator it = _friend_indices.find(source_friend) ;
+	std::map<RsPeerId,uint32_t>::const_iterator it = _friend_indices.find(source_friend) ;
 
 	if(it == _friend_indices.end())
 	{
@@ -130,7 +130,7 @@ void GRouterMatrix::debugDump() const
 	}
 }
 
-bool GRouterMatrix::computeRoutingProbabilities(const GRouterKeyId& key_id, const std::list<SSLIdType>& friends, std::map<SSLIdType,float>& probas) const
+bool GRouterMatrix::computeRoutingProbabilities(const GRouterKeyId& key_id, const std::list<RsPeerId>& friends, std::map<RsPeerId,float>& probas) const
 {
 	// Routing probabilities are computed according to routing clues
 	//
@@ -156,7 +156,7 @@ bool GRouterMatrix::computeRoutingProbabilities(const GRouterKeyId& key_id, cons
 	}
 	const std::vector<float>& w(it2->second) ;
 	
-	for(std::list<SSLIdType>::const_iterator it(friends.begin());it!=friends.end();++it)
+	for(std::list<RsPeerId>::const_iterator it(friends.begin());it!=friends.end();++it)
 	{
 		uint32_t findex = getFriendId_const(*it) ;
 
@@ -170,7 +170,7 @@ bool GRouterMatrix::computeRoutingProbabilities(const GRouterKeyId& key_id, cons
 	}
 
 	if(total > 0.0f)
-		for(std::map<SSLIdType,float>::iterator it(probas.begin());it!=probas.end();++it)
+		for(std::map<RsPeerId,float>::iterator it(probas.begin());it!=probas.end();++it)
 			it->second /= total ;
 
 	return true ;

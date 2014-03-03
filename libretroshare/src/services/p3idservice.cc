@@ -1952,7 +1952,7 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
 
 		/* */
 		PGPFingerprintType ownFinger;
-		PGPIdType ownId(AuthGPG::getAuthGPG()->getGPGOwnId());
+		RsPgpId ownId(AuthGPG::getAuthGPG()->getGPGOwnId());
 
 		std::cerr << "p3IdService::service_CreateGroup() OwnPgpID: " << ownId.toStdString();
 		std::cerr << std::endl;
@@ -1960,7 +1960,7 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
 #ifdef GXSID_GEN_DUMMY_DATA
 		if (item->group.mMeta.mAuthorId != "")
 		{
-			ownId = PGPIdType(item->group.mMeta.mAuthorId);
+			ownId = RsPgpId(item->group.mMeta.mAuthorId);
 		}
 #endif
 
@@ -2233,7 +2233,7 @@ bool p3IdService::pgphash_process()
 	SSGxsIdGroup ssdata;
 	ssdata.load(pg.mMeta.mServiceString); // attempt load - okay if fails.
 
-	PGPIdType pgpId;
+	RsPgpId pgpId;
 
 	if (checkId(pg, pgpId))	
 	{
@@ -2276,7 +2276,7 @@ bool p3IdService::pgphash_process()
 
 
 
-bool p3IdService::checkId(const RsGxsIdGroup &grp, PGPIdType &pgpId)
+bool p3IdService::checkId(const RsGxsIdGroup &grp, RsPgpId &pgpId)
 {
 #ifdef DEBUG_IDS
 	std::cerr << "p3IdService::checkId() Starting Match Check for RsGxsId: ";
@@ -2308,7 +2308,7 @@ bool p3IdService::checkId(const RsGxsIdGroup &grp, PGPIdType &pgpId)
 
 	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 
-	std::map<PGPIdType, PGPFingerprintType>::iterator mit;
+	std::map<RsPgpId, PGPFingerprintType>::iterator mit;
 	for(mit = mPgpFingerprintMap.begin(); mit != mPgpFingerprintMap.end(); mit++)
 	{
 		GxsIdPgpHash hash;
@@ -2386,17 +2386,17 @@ void p3IdService::getPgpIdList()
 	std::cerr << std::endl;
 #endif // DEBUG_IDS
 
- 	std::list<PGPIdType> list;
+ 	std::list<RsPgpId> list;
 	AuthGPG::getAuthGPG()->getGPGFilteredList(list);
 
 	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 
 	mPgpFingerprintMap.clear();
 
- 	std::list<PGPIdType>::iterator it;
+ 	std::list<RsPgpId>::iterator it;
 	for(it = list.begin(); it != list.end(); it++)
 	{
- 		PGPIdType pgpId(*it);
+ 		RsPgpId pgpId(*it);
 		PGPFingerprintType fp;
 		AuthGPG::getAuthGPG()->getKeyFingerprint(pgpId, fp);
 
@@ -2854,7 +2854,7 @@ void p3IdService::generateDummy_OwnIds()
 
 	/* grab all the gpg ids... and make some ids */
 
-	PGPIdType ownId = rsPeers->getGPGOwnId();
+	RsPgpId ownId = rsPeers->getGPGOwnId();
 
 	// generate some ownIds.
 	int genCount = 0;
@@ -2889,8 +2889,8 @@ void p3IdService::generateDummy_FriendPGP()
 	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 
 	// Now Generate for friends.
-	std::list<PGPIdType> gpgids;
-	std::list<PGPIdType>::const_iterator it;
+	std::list<RsPgpId> gpgids;
+	std::list<RsPgpId>::const_iterator it;
 	rsPeers->getGPGAllList(gpgids);
 
 	RsGxsIdGroup id;

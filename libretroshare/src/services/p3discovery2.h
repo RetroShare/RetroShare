@@ -41,8 +41,8 @@
 
 
 
-typedef PGPIdType PGPID;
-typedef SSLIdType SSLID;
+typedef RsPgpId PGPID;
+typedef RsPeerId SSLID;
 
 class DiscSslInfo
 {
@@ -89,7 +89,7 @@ virtual ~p3discovery2();
 	
 	/* external interface */
 virtual bool    getDiscFriends(const RsPeerId &id, std::list<RsPeerId> &friends);
-virtual bool    getDiscPgpFriends(const PGPIdType &pgpid, std::list<PGPIdType> &gpg_friends);
+virtual bool    getDiscPgpFriends(const RsPgpId &pgpid, std::list<RsPgpId> &gpg_friends);
 virtual bool    getPeerVersion(const RsPeerId &id, std::string &version);
 virtual bool    getWaitingDiscCount(unsigned int *sendCount, unsigned int *recvCount);
 

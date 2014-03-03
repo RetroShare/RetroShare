@@ -51,7 +51,7 @@ class GRouterMatrix
 		// the computation accounts for the time at which the info was received and the
 		// weight of each routing hit record.
 		//
-		bool computeRoutingProbabilities(const GRouterKeyId& id, const std::list<SSLIdType>& friends, std::map<SSLIdType,float>& probas) const ;
+		bool computeRoutingProbabilities(const GRouterKeyId& id, const std::list<RsPeerId>& friends, std::map<RsPeerId,float>& probas) const ;
 
 		// Update routing probabilities for each key, accounting for all received events, but without
 		// activity information 
@@ -60,7 +60,7 @@ class GRouterMatrix
 
 		// Record one routing clue. The events can possibly be merged in time buckets.
 		//
-		bool addRoutingClue(const GRouterKeyId& id,const GRouterServiceId& sid,float distance,const std::string& desc_string,const SSLIdType& source_friend) ;
+		bool addRoutingClue(const GRouterKeyId& id,const GRouterServiceId& sid,float distance,const std::string& desc_string,const RsPeerId& source_friend) ;
 
 		// Dump info in terminal.
 		//
@@ -72,11 +72,11 @@ class GRouterMatrix
 	private:
 		// returns the friend id, possibly creating a new id.
 		//
-		uint32_t getFriendId(const SSLIdType& id) ;
+		uint32_t getFriendId(const RsPeerId& id) ;
 
 		// returns the friend id. If not exist, returns _reverse_friend_indices.size()
 		//
-		uint32_t getFriendId_const(const SSLIdType& id) const;
+		uint32_t getFriendId_const(const RsPeerId& id) const;
 
 		// List of events received and computed routing probabilities
 		//
@@ -90,8 +90,8 @@ class GRouterMatrix
 		// Routing weights. These are the result of a time convolution of the routing clues and weights
 		// recorded in _routing_clues.
 		//
-		std::map<SSLIdType,uint32_t> _friend_indices ;	// index for each friend to lookup in the routing matrix Not saved.
-		std::vector<SSLIdType> _reverse_friend_indices ;// SSLid corresponding to each friend index. Saved.
+		std::map<RsPeerId,uint32_t> _friend_indices ;	// index for each friend to lookup in the routing matrix Not saved.
+		std::vector<RsPeerId> _reverse_friend_indices ;// SSLid corresponding to each friend index. Saved.
 
 };
 

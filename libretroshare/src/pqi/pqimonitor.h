@@ -98,7 +98,7 @@ const uint32_t RS_STUN_FRIEND_OF_FRIEND	= 0x0040;
 class pqipeer
 {
 	public:
-		SSLIdType id;
+		RsPeerId id;
 		std::string name;
 		uint32_t    state;
 		uint32_t    actions;

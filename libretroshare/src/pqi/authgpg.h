@@ -68,7 +68,7 @@ public:
 class AuthGPGOperationLoadOrSave : public AuthGPGOperation
 {
 public:
-    AuthGPGOperationLoadOrSave(bool load, const PGPIdType &gpgId, const std::string &gpgCert, void *userdata) 
+    AuthGPGOperationLoadOrSave(bool load, const RsPgpId &gpgId, const std::string &gpgCert, void *userdata) 
     : AuthGPGOperation(userdata)
     {
         m_load = load;
@@ -82,7 +82,7 @@ public:
 
 public:
     bool m_load;
-    PGPIdType m_certGpgId; // set for save & load.
+    RsPgpId m_certGpgId; // set for save & load.
 	 std::string m_certGpg; // set for load
 };
 
@@ -111,7 +111,7 @@ class AuthGPG: public p3Config, public RsThread, public PGPHandler
 		/**
 		 * @param ids list of gpg certificate ids (note, not the actual certificates)
 		 */
-		//virtual bool    availableGPGCertificatesWithPrivateKeys(std::list<PGPIdType> &ids);
+		//virtual bool    availableGPGCertificatesWithPrivateKeys(std::list<RsPgpId> &ids);
 
 		/*********************************************************************************/
 		/************************* STAGE 1 ***********************************************/
@@ -134,8 +134,8 @@ class AuthGPG: public p3Config, public RsThread, public PGPHandler
 
 		/* Init by generating new Own PGP Cert, or selecting existing PGP Cert */
 
-		virtual int  GPGInit(const PGPIdType &ownId);
-		virtual bool GeneratePGPCertificate(const std::string& name, const std::string& email, const std::string& passwd, PGPIdType &pgpId, std::string &errString);
+		virtual int  GPGInit(const RsPgpId &ownId);
+		virtual bool GeneratePGPCertificate(const std::string& name, const std::string& email, const std::string& passwd, RsPgpId &pgpId, std::string &errString);
 
 		/*********************************************************************************/
 		/************************* STAGE 3 ***********************************************/
@@ -148,25 +148,25 @@ class AuthGPG: public p3Config, public RsThread, public PGPHandler
 		 * provide access to details in cache list.
 		 *
 		 ****/
-		virtual std::string getGPGName(const PGPIdType &pgp_id,bool *success = NULL);
-		virtual std::string getGPGEmail(const PGPIdType &pgp_id,bool *success = NULL);
+		virtual std::string getGPGName(const RsPgpId &pgp_id,bool *success = NULL);
+		virtual std::string getGPGEmail(const RsPgpId &pgp_id,bool *success = NULL);
 
 		/* PGP web of trust management */
-        virtual const PGPIdType& getGPGOwnId();
+        virtual const RsPgpId& getGPGOwnId();
 		virtual std::string getGPGOwnName();
 
 		//virtual std::string getGPGOwnEmail();
-		virtual bool	isKeySupported(const PGPIdType &id) const ;
-		virtual bool	haveSecretKey(const PGPIdType &id) const ;
-		virtual bool	getGPGDetails(const PGPIdType& id, RsPeerDetails &d);
-		virtual bool	getGPGAllList(std::list<PGPIdType> &ids);
-		virtual bool	getGPGValidList(std::list<PGPIdType> &ids);
-		virtual bool	getGPGAcceptedList(std::list<PGPIdType> &ids);
-		virtual bool	getGPGSignedList(std::list<PGPIdType> &ids);
-		virtual bool   importProfile(const std::string& filename,PGPIdType& gpg_id,std::string& import_error) ;
-		virtual bool   exportProfile(const std::string& filename,const PGPIdType& gpg_id) ;
+		virtual bool	isKeySupported(const RsPgpId &id) const ;
+		virtual bool	haveSecretKey(const RsPgpId &id) const ;
+		virtual bool	getGPGDetails(const RsPgpId& id, RsPeerDetails &d);
+		virtual bool	getGPGAllList(std::list<RsPgpId> &ids);
+		virtual bool	getGPGValidList(std::list<RsPgpId> &ids);
+		virtual bool	getGPGAcceptedList(std::list<RsPgpId> &ids);
+		virtual bool	getGPGSignedList(std::list<RsPgpId> &ids);
+		virtual bool   importProfile(const std::string& filename,RsPgpId& gpg_id,std::string& import_error) ;
+		virtual bool   exportProfile(const std::string& filename,const RsPgpId& gpg_id) ;
 
-		virtual bool   removeKeysFromPGPKeyring(const std::list<PGPIdType>& pgp_ids,std::string& backup_file,uint32_t& error_code) ;
+		virtual bool   removeKeysFromPGPKeyring(const std::list<RsPgpId>& pgp_ids,std::string& backup_file,uint32_t& error_code) ;
 
 		/*********************************************************************************/
 		/************************* STAGE 4 ***********************************************/
@@ -175,11 +175,11 @@ class AuthGPG: public p3Config, public RsThread, public PGPHandler
 		 * STAGE 4: Loading and Saving Certificates. (Strings and Files)
 		 *
 		 ****/
-		virtual bool LoadCertificateFromString(const std::string &pem, PGPIdType& gpg_id,std::string& error_string);
-		virtual std::string SaveCertificateToString(const PGPIdType &id,bool include_signatures) ;
+		virtual bool LoadCertificateFromString(const std::string &pem, RsPgpId& gpg_id,std::string& error_string);
+		virtual std::string SaveCertificateToString(const RsPgpId &id,bool include_signatures) ;
 
 		// Cached certificates.
-		bool   getCachedGPGCertificate(const PGPIdType &id, std::string &certificate);
+		bool   getCachedGPGCertificate(const RsPgpId &id, std::string &certificate);
 
 		/*********************************************************************************/
 		/************************* STAGE 6 ***********************************************/
@@ -191,12 +191,12 @@ class AuthGPG: public p3Config, public RsThread, public PGPHandler
 		 * done in gpgroot already.
 		 *
 		 ****/
-		virtual bool AllowConnection(const PGPIdType &gpg_id, bool accept);
+		virtual bool AllowConnection(const RsPgpId &gpg_id, bool accept);
 
-		virtual bool SignCertificateLevel0(const PGPIdType &id);
-		virtual bool RevokeCertificate(const PGPIdType &id);  /* Particularly hard - leave for later */
+		virtual bool SignCertificateLevel0(const RsPgpId &id);
+		virtual bool RevokeCertificate(const RsPgpId &id);  /* Particularly hard - leave for later */
 
-		virtual bool TrustCertificate(const PGPIdType& id,  int trustlvl); //trustlvl is 2 for none, 3 for marginal and 4 for full trust
+		virtual bool TrustCertificate(const RsPgpId& id,  int trustlvl); //trustlvl is 2 for none, 3 for marginal and 4 for full trust
 
 		/*********************************************************************************/
 		/************************* STAGE 7 ***********************************************/
@@ -210,7 +210,7 @@ class AuthGPG: public p3Config, public RsThread, public PGPHandler
 		virtual bool SignDataBin(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen);
 		virtual bool VerifySignBin(const void*, uint32_t, unsigned char*, unsigned int, const PGPFingerprintType& withfingerprint);
 
-		virtual bool encryptDataBin(const PGPIdType& pgp_id,const void *data, const uint32_t len, unsigned char *encr, unsigned int *encrlen);
+		virtual bool encryptDataBin(const RsPgpId& pgp_id,const void *data, const uint32_t len, unsigned char *encr, unsigned int *encrlen);
 		virtual bool decryptDataBin(const void *data, const uint32_t len, unsigned char *decr, unsigned int *decrlen);
 
 		virtual bool decryptTextFromFile(      std::string& text,const std::string& filename);
@@ -219,7 +219,7 @@ class AuthGPG: public p3Config, public RsThread, public PGPHandler
 //		virtual bool decryptTextFromString(      std::string& encrypted_text,std::string&     clear_string);
 //		virtual bool encryptTextToString  (const std::string& pgp_id,const std::string&     clear_text,std::string& encrypted_string);
 
-		bool getGPGFilteredList(std::list<PGPIdType>& list,bool (*filter)(const PGPCertificateInfo&) = NULL) ;
+		bool getGPGFilteredList(std::list<RsPgpId>& list,bool (*filter)(const PGPCertificateInfo&) = NULL) ;
 
 		//END of PGP public functions
 
@@ -256,9 +256,9 @@ class AuthGPG: public p3Config, public RsThread, public PGPHandler
 		bool VerifySignature(const void *data, int datalen, const void *sig, unsigned int siglen, const PGPFingerprintType& withfingerprint);
 
 		/* Sign/Trust stuff */
-		int	privateSignCertificate(const PGPIdType &id);
-		int	privateRevokeCertificate(const PGPIdType &id);		/* revoke the signature on Certificate */
-		int	privateTrustCertificate(const PGPIdType& id, int trustlvl);
+		int	privateSignCertificate(const RsPgpId &id);
+		int	privateRevokeCertificate(const RsPgpId &id);		/* revoke the signature on Certificate */
+		int	privateTrustCertificate(const RsPgpId& id, int trustlvl);
 
 		// store all keys in map mKeyList to avoid calling gpgme exe repeatedly
 		//bool    storeAllKeys();
@@ -293,7 +293,7 @@ class AuthGPG: public p3Config, public RsThread, public PGPHandler
 
 		time_t mStoreKeyTime;
 
-		PGPIdType mOwnGpgId;
+		RsPgpId mOwnGpgId;
 		bool gpgKeySelected;
 		bool _force_sync_database ;
 

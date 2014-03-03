@@ -190,7 +190,7 @@ template<class ID_CLASS,uint32_t TLV_TYPE> class t_RsTlvIdSet: public RsTlvItem
 };
 
 typedef t_RsTlvIdSet<RsPeerId,TLV_TYPE_PEERSET>		RsTlvPeerIdSet ;
-typedef t_RsTlvIdSet<PGPIdType,TLV_TYPE_PGPIDSET>	RsTlvPgpIdSet ;
+typedef t_RsTlvIdSet<RsPgpId,TLV_TYPE_PGPIDSET>	RsTlvPgpIdSet ;
 typedef t_RsTlvIdSet<Sha1CheckSum,TLV_TYPE_HASHSET> 	RsTlvHashSet ;
 
 class RsTlvServiceIdSet: public RsTlvItem

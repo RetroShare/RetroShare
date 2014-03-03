@@ -4,7 +4,7 @@
 //
 // To use this class, derive your own ID type from it. Examples include:
 //
-// 	class PGPIdType: public t_RsGenericIdType<8> 
+// 	class RsPgpId: public t_RsGenericIdType<8> 
 // 	{
 // 		[..]
 // 	};
@@ -210,7 +210,7 @@ static const uint32_t RS_GENERIC_ID_GXS_MSG_ID_TYPE      = 0x0007 ;
 static const uint32_t RS_GENERIC_ID_GXS_CIRCLE_ID_TYPE   = 0x0008 ;
 
 typedef t_RsGenericIdType<  SSL_ID_SIZE             , false, RS_GENERIC_ID_SSL_ID_TYPE>          SSLIdType ;
-typedef t_RsGenericIdType<  PGP_KEY_ID_SIZE         , true,  RS_GENERIC_ID_PGP_ID_TYPE>          PGPIdType;
+typedef t_RsGenericIdType<  PGP_KEY_ID_SIZE         , true,  RS_GENERIC_ID_PGP_ID_TYPE>          PGPIdType ;
 typedef t_RsGenericIdType<  SHA1_SIZE               , false, RS_GENERIC_ID_SHA1_ID_TYPE>         Sha1CheckSum ;
 typedef t_RsGenericIdType<  PGP_KEY_FINGERPRINT_SIZE, true,  RS_GENERIC_ID_PGP_FINGERPRINT_TYPE> PGPFingerprintType ;
 

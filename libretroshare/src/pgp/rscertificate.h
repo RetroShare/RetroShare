@@ -61,7 +61,7 @@ class RsCertificate
 		size_t         binary_pgp_key_size ;
 
 		std::string location_name ;
-		SSLIdType location_id ;
+		RsPeerId location_id ;
 		std::string pgp_version ;
 		std::string dns_name ;
 		std::string hidden_node_address;

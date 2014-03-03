@@ -71,7 +71,7 @@ class peerState
 	peerState(); /* init */
 
 	RsPeerId id;
-	PGPIdType gpg_id;
+	RsPgpId gpg_id;
 
 	uint32_t netMode; /* EXT / UPNP / UDP / HIDDEN / INVALID */
 	/* visState */
@@ -114,15 +114,15 @@ class p3PeerMgr
         p3PeerMgr() { return; }
 virtual ~p3PeerMgr() { return; }
 
-virtual bool 	addFriend(const RsPeerId &ssl_id, const PGPIdType &gpg_id, uint32_t netMode = RS_NET_MODE_UDP,
+virtual bool 	addFriend(const RsPeerId &ssl_id, const RsPgpId &gpg_id, uint32_t netMode = RS_NET_MODE_UDP,
 					uint16_t vsDisc = RS_VS_DISC_FULL, uint16_t vsDht = RS_VS_DHT_FULL, 
 					time_t lastContact = 0,ServicePermissionFlags = ServicePermissionFlags(RS_SERVICE_PERM_ALL)) = 0;
 virtual bool	removeFriend(const RsPeerId &ssl_id, bool removePgpId) = 0;
 
 virtual bool	isFriend(const RsPeerId& ssl_id) = 0;
 
-virtual bool 	getAssociatedPeers(const PGPIdType &gpg_id, std::list<RsPeerId> &ids) = 0;
-virtual bool 	removeAllFriendLocations(const PGPIdType &gpgid) = 0;
+virtual bool 	getAssociatedPeers(const RsPgpId &gpg_id, std::list<RsPeerId> &ids) = 0;
+virtual bool 	removeAllFriendLocations(const RsPgpId &gpgid) = 0;
 
 
 	/******************** Groups **********************/
@@ -133,11 +133,11 @@ virtual bool    editGroup(const std::string &groupId, RsGroupInfo &groupInfo) = 
 virtual bool    removeGroup(const std::string &groupId) = 0;
 virtual bool    getGroupInfo(const std::string &groupId, RsGroupInfo &groupInfo) = 0;
 virtual bool    getGroupInfoList(std::list<RsGroupInfo> &groupInfoList) = 0;
-virtual bool    assignPeersToGroup(const std::string &groupId, const std::list<PGPIdType> &peerIds, bool assign) = 0;
+virtual bool    assignPeersToGroup(const std::string &groupId, const std::list<RsPgpId> &peerIds, bool assign) = 0;
 
-	virtual ServicePermissionFlags servicePermissionFlags(const PGPIdType& gpg_id) =0;
+	virtual ServicePermissionFlags servicePermissionFlags(const RsPgpId& gpg_id) =0;
 	virtual ServicePermissionFlags servicePermissionFlags(const RsPeerId& ssl_id) =0;
-	virtual void setServicePermissionFlags(const PGPIdType& gpg_id,const ServicePermissionFlags& flags) =0;
+	virtual void setServicePermissionFlags(const RsPgpId& gpg_id,const ServicePermissionFlags& flags) =0;
 
 	/**************** Set Net Info ****************/
 	/*
@@ -179,7 +179,7 @@ virtual bool	getFriendNetStatus(const RsPeerId &id, peerState &state) = 0;
 virtual bool	getOthersNetStatus(const RsPeerId &id, peerState &state) = 0;
 
 virtual bool    getPeerName(const RsPeerId &ssl_id, std::string &name) = 0;
-virtual bool	getGpgId(const RsPeerId &sslId, PGPIdType &gpgId) = 0;
+virtual bool	getGpgId(const RsPeerId &sslId, RsPgpId &gpgId) = 0;
 virtual uint32_t getConnectionType(const RsPeerId &sslId) = 0;
 
 virtual bool    setProxyServerAddress(const struct sockaddr_storage &proxy_addr) = 0;
@@ -214,7 +214,7 @@ class p3PeerMgrIMPL: public p3PeerMgr, public p3Config
 /* EXTERNAL INTERFACE */
 /************************************************************************************************/
 
-virtual bool 	addFriend(const RsPeerId&ssl_id, const PGPIdType&gpg_id, uint32_t netMode = RS_NET_MODE_UDP,
+virtual bool 	addFriend(const RsPeerId&ssl_id, const RsPgpId&gpg_id, uint32_t netMode = RS_NET_MODE_UDP,
 							uint16_t vsDisc = RS_VS_DISC_FULL, uint16_t vsDht = RS_VS_DHT_FULL, 
 							time_t lastContact = 0,ServicePermissionFlags = ServicePermissionFlags(RS_SERVICE_PERM_ALL));
 virtual bool	removeFriend(const RsPeerId &ssl_id, bool removePgpId);
@@ -222,8 +222,8 @@ virtual bool	removeFriend(const RsPgpId &pgp_id);
 
 virtual bool	isFriend(const RsPeerId &ssl_id);
 
-virtual bool    getAssociatedPeers(const PGPIdType &gpg_id, std::list<RsPeerId> &ids);
-virtual bool    removeAllFriendLocations(const PGPIdType &gpgid);
+virtual bool    getAssociatedPeers(const RsPgpId &gpg_id, std::list<RsPeerId> &ids);
+virtual bool    removeAllFriendLocations(const RsPgpId &gpgid);
 
 
 	/******************** Groups **********************/
@@ -234,11 +234,11 @@ virtual bool    editGroup(const std::string &groupId, RsGroupInfo &groupInfo);
 virtual bool    removeGroup(const std::string &groupId);
 virtual bool    getGroupInfo(const std::string &groupId, RsGroupInfo &groupInfo);
 virtual bool    getGroupInfoList(std::list<RsGroupInfo> &groupInfoList);
-virtual bool    assignPeersToGroup(const std::string &groupId, const std::list<PGPIdType> &peerIds, bool assign);
+virtual bool    assignPeersToGroup(const std::string &groupId, const std::list<RsPgpId> &peerIds, bool assign);
 
-	virtual ServicePermissionFlags servicePermissionFlags(const PGPIdType& gpg_id) ;
+	virtual ServicePermissionFlags servicePermissionFlags(const RsPgpId& gpg_id) ;
 	virtual ServicePermissionFlags servicePermissionFlags(const RsPeerId& ssl_id) ;
-	virtual void setServicePermissionFlags(const PGPIdType& gpg_id,const ServicePermissionFlags& flags) ;
+	virtual void setServicePermissionFlags(const RsPgpId& gpg_id,const ServicePermissionFlags& flags) ;
 
 	/**************** Set Net Info ****************/
 	/*
@@ -279,7 +279,7 @@ virtual bool	getFriendNetStatus(const RsPeerId &id, peerState &state);
 virtual bool	getOthersNetStatus(const RsPeerId &id, peerState &state);
 
 virtual bool    getPeerName(const RsPeerId& ssl_id, std::string& name);
-virtual bool	getGpgId(const RsPeerId& sslId, PGPIdType& gpgId);
+virtual bool	getGpgId(const RsPeerId& sslId, RsPgpId& gpgId);
 virtual uint32_t getConnectionType(const RsPeerId& sslId);
 
 virtual bool    setProxyServerAddress(const struct sockaddr_storage &proxy_addr);
@@ -301,7 +301,7 @@ virtual bool 	haveOnceConnected();
 /************************************************************************************************/
 
         p3PeerMgrIMPL(	const RsPeerId& ssl_own_id,
-				  				const PGPIdType& gpg_own_id,
+				  				const RsPgpId& gpg_own_id,
 				  				const std::string& gpg_own_name,
 				  				const std::string& ssl_own_location) ;
 
@@ -361,7 +361,7 @@ private:
 
 	std::list<RsItem *> saveCleanupList; /* TEMPORARY LIST WHEN SAVING */
 
-	std::map<PGPIdType, ServicePermissionFlags> mFriendsPermissionFlags ; // permission flags for each gpg key
+	std::map<RsPgpId, ServicePermissionFlags> mFriendsPermissionFlags ; // permission flags for each gpg key
 
 	struct sockaddr_storage mProxyServerAddress;
 };

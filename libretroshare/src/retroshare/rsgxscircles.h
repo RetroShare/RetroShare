@@ -44,7 +44,7 @@ extern RsGxsCircles *rsGxsCircles;
 
 
 typedef std::string RsGxsCircleId;
-typedef PGPIdType RsPgpId;
+typedef RsPgpId RsPgpId;
 typedef std::string RsCircleInternalId;
 
 #define GXS_CIRCLE_TYPE_PUBLIC            0x0001

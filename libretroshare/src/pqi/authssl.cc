@@ -241,7 +241,7 @@ AuthSSL::AuthSSL()
 static int verify_x509_callback(int preverify_ok, X509_STORE_CTX *ctx);
 
 
-sslcert::sslcert(X509 *x509, const SSLIdType& pid)
+sslcert::sslcert(X509 *x509, const RsPeerId& pid)
 {
 	certificate = x509;
 	id = pid;
@@ -250,7 +250,7 @@ sslcert::sslcert(X509 *x509, const SSLIdType& pid)
 	location = getX509LocString(x509->cert_info->subject);
 	email = "";
 
-	issuer = PGPIdType(std::string(getX509CNString(x509->cert_info->issuer)));
+	issuer = RsPgpId(std::string(getX509CNString(x509->cert_info->issuer)));
 
 	authed = false;
 }
@@ -529,7 +529,7 @@ SSL_CTX *AuthSSLimpl::getCTX()
 	return sslctx;
 }
 
-const SSLIdType& AuthSSLimpl::OwnId()
+const RsPeerId& AuthSSLimpl::OwnId()
 {
 #ifdef AUTHSSL_DEBUG
 //	std::cerr << "AuthSSLimpl::OwnId()" << std::endl;
@@ -622,7 +622,7 @@ bool AuthSSLimpl::SignDataBin(const void *data, const uint32_t len,
 
 
 bool AuthSSLimpl::VerifySignBin(const void *data, const uint32_t len,
-                        unsigned char *sign, unsigned int signlen, const SSLIdType& sslId)
+                        unsigned char *sign, unsigned int signlen, const RsPeerId& sslId)
 {
 	/* find certificate.
 	 * if we don't have - fail.
@@ -895,7 +895,7 @@ bool AuthSSLimpl::AuthX509WithGPG(X509 *x509,uint32_t& diagnostic)
 	}
 
 	/* extract CN for peer Id */
-	PGPIdType issuer(std::string(getX509CNString(x509->cert_info->issuer)));
+	RsPgpId issuer(std::string(getX509CNString(x509->cert_info->issuer)));
 	RsPeerDetails pd;
 #ifdef AUTHSSL_DEBUG
 	std::cerr << "Checking GPG issuer : " << issuer.toStdString() << std::endl ;
@@ -1016,7 +1016,7 @@ err:
 
 
 	/* validate + get id */
-bool    AuthSSLimpl::ValidateCertificate(X509 *x509, SSLIdType &peerId)
+bool    AuthSSLimpl::ValidateCertificate(X509 *x509, RsPeerId &peerId)
 {
 	uint32_t auth_diagnostic ;
 
@@ -1068,7 +1068,7 @@ static int verify_x509_callback(int preverify_ok, X509_STORE_CTX *ctx)
 
 	if(x509 != NULL)
 	{
-		PGPIdType gpgid (std::string(getX509CNString(x509->cert_info->issuer)));
+		RsPgpId gpgid (std::string(getX509CNString(x509->cert_info->issuer)));
 		if(gpgid.isNull()) 
 		{
 			std::cerr << "verify_x509_callback(): wrong PGP id \"" << std::string(getX509CNString(x509->cert_info->issuer)) << "\"" << std::endl;
@@ -1153,7 +1153,7 @@ int AuthSSLimpl::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
 					std::cerr << "(WW) Certificate was rejected because authentication failed. Diagnostic = " << auth_diagnostic << std::endl;
                     return false;
             }
-            PGPIdType pgpid = PGPIdType(std::string(getX509CNString(X509_STORE_CTX_get_current_cert(ctx)->cert_info->issuer)));
+            RsPgpId pgpid = RsPgpId(std::string(getX509CNString(X509_STORE_CTX_get_current_cert(ctx)->cert_info->issuer)));
 
             if (pgpid != AuthGPG::getAuthGPG()->getGPGOwnId() && !AuthGPG::getAuthGPG()->isGPGAccepted(pgpid))
             {
@@ -1204,7 +1204,7 @@ int AuthSSLimpl::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
 /********************************************************************************/
 
 
-bool    AuthSSLimpl::encrypt(void *&out, int &outlen, const void *in, int inlen, const SSLIdType& peerId)
+bool    AuthSSLimpl::encrypt(void *&out, int &outlen, const void *in, int inlen, const RsPeerId& peerId)
 {
 	RsStackMutex stack(sslMtx); /******* LOCKED ******/
 
@@ -1400,7 +1400,7 @@ bool    AuthSSLimpl::decrypt(void *&out, int &outlen, const void *in, int inlen)
 /********************************************************************************/
 /********************************************************************************/
 
-void AuthSSLimpl::setCurrentConnectionAttemptInfo(const PGPIdType& gpg_id,const SSLIdType& ssl_id,const std::string& ssl_cn)
+void AuthSSLimpl::setCurrentConnectionAttemptInfo(const RsPgpId& gpg_id,const RsPeerId& ssl_id,const std::string& ssl_cn)
 {
 #ifdef AUTHSSL_DEBUG
 	std::cerr << "AuthSSL: registering connection attempt from:" << std::endl;
@@ -1412,7 +1412,7 @@ void AuthSSLimpl::setCurrentConnectionAttemptInfo(const PGPIdType& gpg_id,const 
 	_last_sslid_to_connect = ssl_id ;
 	_last_sslcn_to_connect = ssl_cn ;
 }
-void AuthSSLimpl::getCurrentConnectionAttemptInfo(PGPIdType& gpg_id,SSLIdType& ssl_id,std::string& ssl_cn)
+void AuthSSLimpl::getCurrentConnectionAttemptInfo(RsPgpId& gpg_id,RsPeerId& ssl_id,std::string& ssl_cn)
 {
 	gpg_id = _last_gpgid_to_connect ;
 	ssl_id = _last_sslid_to_connect ;
@@ -1420,8 +1420,8 @@ void AuthSSLimpl::getCurrentConnectionAttemptInfo(PGPIdType& gpg_id,SSLIdType& s
 }
 
 /* store for discovery */
-bool    AuthSSLimpl::FailedCertificate(X509 *x509, const PGPIdType& gpgid,
-													const SSLIdType& sslid,
+bool    AuthSSLimpl::FailedCertificate(X509 *x509, const RsPgpId& gpgid,
+													const RsPeerId& sslid,
 													const std::string& sslcn,
 													const struct sockaddr_storage& addr, 
 													bool incoming)
@@ -1491,7 +1491,7 @@ bool    AuthSSLimpl::FailedCertificate(X509 *x509, const PGPIdType& gpgid,
 	return false;
 }
 
-bool    AuthSSLimpl::CheckCertificate(const SSLIdType& id, X509 *x509)
+bool    AuthSSLimpl::CheckCertificate(const RsPeerId& id, X509 *x509)
 {
 	(void) id; /* remove unused parameter warning */
 
@@ -1508,9 +1508,9 @@ bool    AuthSSLimpl::CheckCertificate(const SSLIdType& id, X509 *x509)
 
 
 /* Locked search -> internal help function */
-bool AuthSSLimpl::locked_FindCert(const SSLIdType& id, sslcert **cert)
+bool AuthSSLimpl::locked_FindCert(const RsPeerId& id, sslcert **cert)
 {
-	std::map<SSLIdType, sslcert *>::iterator it;
+	std::map<RsPeerId, sslcert *>::iterator it;
 	
 	if (mCerts.end() != (it = mCerts.find(id)))
 	{
@@ -1523,9 +1523,9 @@ bool AuthSSLimpl::locked_FindCert(const SSLIdType& id, sslcert **cert)
 
 /* Remove Certificate */
 
-bool AuthSSLimpl::RemoveX509(SSLIdType id)
+bool AuthSSLimpl::RemoveX509(RsPeerId id)
 {
-	std::map<SSLIdType, sslcert *>::iterator it;
+	std::map<RsPeerId, sslcert *>::iterator it;
 	
 	RsStackMutex stack(sslMtx); /******* LOCKED ******/
 
@@ -1576,7 +1576,7 @@ bool AuthSSLimpl::LocalStoreCert(X509* x509)
 	}
 
 	/* do a search */
-	std::map<SSLIdType, sslcert *>::iterator it;
+	std::map<RsPeerId, sslcert *>::iterator it;
 	
 	if (mCerts.end() != (it = mCerts.find(peerId)))
 	{
@@ -1632,7 +1632,7 @@ bool AuthSSLimpl::saveList(bool& cleanup, std::list<RsItem*>& lst)
 
         // Now save config for network digging strategies
         RsConfigKeyValueSet *vitem = new RsConfigKeyValueSet ;
-        std::map<SSLIdType, sslcert*>::iterator mapIt;
+        std::map<RsPeerId, sslcert*>::iterator mapIt;
         for (mapIt = mCerts.begin(); mapIt != mCerts.end(); mapIt++) {
             if (mapIt->first == mOwnId) {
                 continue;
@@ -1670,7 +1670,7 @@ bool AuthSSLimpl::loadList(std::list<RsItem*>& load)
 
                         std::list<RsTlvKeyValue>::iterator kit;
                         for(kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); kit++) {
-                            if (SSLIdType(kit->key) == mOwnId) {
+                            if (RsPeerId(kit->key) == mOwnId) {
                                 continue;
                             }
 

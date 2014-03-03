@@ -116,7 +116,7 @@ bool p3Msgs::distantMessagingEnabled()
 {
 	return mMsgSrv->distantMessagingEnabled();
 }
-bool p3Msgs::getDistantMessagePeerId(const PGPIdType& pgp_id,DistantMsgPeerId &pid)
+bool p3Msgs::getDistantMessagePeerId(const RsPgpId& pgp_id,DistantMsgPeerId &pid)
 {
     return mMsgSrv->getDistantMessagePeerId(pgp_id,pid);
 }
@@ -371,7 +371,7 @@ void p3Msgs::getPendingChatLobbyInvites(std::list<ChatLobbyInvite>& invites)
 {
 	mChatSrv->getPendingChatLobbyInvites(invites) ;
 }
-bool p3Msgs::createDistantChatInvite(const PGPIdType& pgp_id,time_t time_of_validity,std::string& encrypted_string)
+bool p3Msgs::createDistantChatInvite(const RsPgpId& pgp_id,time_t time_of_validity,std::string& encrypted_string)
 {
 	return mChatSrv->createDistantChatInvite(pgp_id,time_of_validity,encrypted_string) ;
 }
@@ -387,7 +387,7 @@ bool p3Msgs::initiateDistantChatConnexion(const DistantChatPeerId& pid,uint32_t&
 {
 	return mChatSrv->initiateDistantChatConnexion(pid,error_code) ;
 }
-bool p3Msgs::getDistantChatStatus(const DistantChatPeerId& pid,uint32_t& status,PGPIdType& pgp_id) 
+bool p3Msgs::getDistantChatStatus(const DistantChatPeerId& pid,uint32_t& status,RsPgpId& pgp_id) 
 {
 	return mChatSrv->getDistantChatStatus(pid,status,pgp_id) ;
 }

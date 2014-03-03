@@ -237,7 +237,7 @@ bool GrpCircleVetting::canSend(const SSLIdType& peerId, const RsGxsCircleId& cir
 {
 	if(mCircles->isLoaded(circleId))
 	{
-		const PGPIdType& pgpId = rsPeers->getGPGId(peerId);
+		const RsPgpId& pgpId = rsPeers->getGPGId(peerId);
 		return mCircles->canSend(circleId, pgpId);
 	}
 

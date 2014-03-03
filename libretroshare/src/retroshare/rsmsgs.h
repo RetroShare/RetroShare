@@ -225,7 +225,7 @@ struct DistantChatInviteInfo
 {
 	DistantChatPeerId pid ;									// pid to contact the invite and refer to it.
 	std::string encrypted_radix64_string ;				// encrypted radix string used to for the chat link
-	PGPIdType   destination_pgp_id ;						// pgp is of the destination of the chat link
+	RsPgpId   destination_pgp_id ;						// pgp is of the destination of the chat link
 	time_t 		time_of_validity ;   					// time when te invite becomes unusable
 	uint32_t    invite_flags ;								// used to keep track of wether signature was ok or not.
 };
@@ -240,7 +240,7 @@ extern RsMsgs   *rsMsgs;
 
 struct DistantOfflineMessengingInvite
 {
-	PGPIdType issuer_pgp_id ;
+	RsPgpId issuer_pgp_id ;
 	Sha1CheckSum hash ;
 	time_t time_of_validity ;
 };
@@ -295,7 +295,7 @@ virtual bool createDistantOfflineMessengingInvite(time_t validity_time_stamp, Di
 virtual bool getDistantOfflineMessengingInvites(std::vector<DistantOfflineMessengingInvite>& invites) = 0 ;
 virtual void enableDistantMessaging(bool b) = 0;
 virtual bool distantMessagingEnabled() = 0;
-virtual bool getDistantMessagePeerId(const PGPIdType& pgp_id, DistantMsgPeerId& peerId) = 0;
+virtual bool getDistantMessagePeerId(const RsPgpId& pgp_id, DistantMsgPeerId& peerId) = 0;
 
 /****************************************/
 /*                 Chat                 */
@@ -348,11 +348,11 @@ virtual ChatLobbyId createChatLobby(const std::string& lobby_name,const std::str
 /*            Distant chat              */
 /****************************************/
 
-virtual bool createDistantChatInvite(const PGPIdType& pgp_id,time_t time_of_validity,std::string& encrypted_string) = 0 ;
+virtual bool createDistantChatInvite(const RsPgpId& pgp_id,time_t time_of_validity,std::string& encrypted_string) = 0 ;
 virtual bool getDistantChatInviteList(std::vector<DistantChatInviteInfo>& invites) = 0;
 virtual bool initiateDistantChatConnexion(const std::string& encrypted_string,time_t validity_time,DistantChatPeerId& pid,uint32_t& error_code) = 0;
 virtual bool initiateDistantChatConnexion(const DistantChatPeerId& pid,uint32_t& error_code) = 0;
-virtual bool getDistantChatStatus(const DistantChatPeerId& pid,uint32_t& status,PGPIdType& pgp_id) = 0;
+virtual bool getDistantChatStatus(const DistantChatPeerId& pid,uint32_t& status,RsPgpId& pgp_id) = 0;
 virtual bool closeDistantChatConnexion(const DistantChatPeerId& pid) = 0;
 virtual bool removeDistantChatInvite(const DistantChatPeerId& pid) = 0 ;
 

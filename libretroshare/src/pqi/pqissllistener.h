@@ -89,8 +89,8 @@ int	finaliseAccepts();
 	{
 		SSL *ssl ;
 		sockaddr_storage addr ;
-		PGPIdType gpgid ;
-		SSLIdType sslid ;
+		RsPgpId gpgid ;
+		RsPeerId sslid ;
 		std::string sslcn ;
 	};
 

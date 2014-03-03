@@ -197,7 +197,7 @@ uint32_t    RsFileConfigSerialiser::sizeTransfer(RsFileTransfer *item)
 	uint32_t s = 8; /* header */
 	s += item->file.TlvSize();
 	s += item->allPeerIds.TlvSize();
-	s += SSLIdType::SIZE_IN_BYTES;
+	s += RsPeerId::SIZE_IN_BYTES;
 	s += 2; /* state */
 	s += 2; /* in/out */
 	s += 8; /* transferred */
@@ -239,7 +239,7 @@ bool     RsFileConfigSerialiser::serialiseTransfer(RsFileTransfer *item, void *d
 	ok &= item->file.SetTlv(data, tlvsize, &offset);
 	ok &= item->allPeerIds.SetTlv(data, tlvsize, &offset);
 
-	ok &= setRawSSLId(data, tlvsize, &offset, item->cPeerId);
+	ok &= item->cPeerId.serialise(data, tlvsize, offset) ;
 
 	ok &= setRawUInt16(data, tlvsize, &offset, item->state);
 	ok &= setRawUInt16(data, tlvsize, &offset, item->in);
@@ -305,7 +305,7 @@ RsFileTransfer *RsFileConfigSerialiser::deserialiseTransfer(void *data, uint32_t
 	ok &= item->file.GetTlv(data, rssize, &offset);
 	ok &= item->allPeerIds.GetTlv(data, rssize, &offset);
 
-	ok &= getRawSSLId(data, rssize, &offset, item->cPeerId);
+	ok &= item->cPeerId.deserialise(data, rssize, offset) ;
 
 	/* data */
 	ok &= getRawUInt16(data, rssize, &offset, &(item->state));
@@ -1184,7 +1184,7 @@ std::ostream &RsPeerGroupItem::print(std::ostream &out, uint16_t indent)
 	printIndent(out, int_Indent);
 	out << "groupFlag: " << flag << std::endl;
 
-	std::list<PGPIdType>::iterator it;
+	std::list<RsPgpId>::iterator it;
 	for (it = peerIds.begin(); it != peerIds.end(); it++) {
 		printIndent(out, int_Indent);
 		out << "peerId: " << *it << std::endl;
@@ -1222,9 +1222,9 @@ uint32_t RsPeerConfigSerialiser::sizeGroup(RsPeerGroupItem *i)
 	s += GetTlvStringSize(i->name);
 	s += 4; /* flag */
 
-	std::list<PGPIdType>::iterator it;
+	std::list<RsPgpId>::iterator it;
 	for (it = i->peerIds.begin(); it != i->peerIds.end(); it++) {
-		s += PGPIdType::SIZE_IN_BYTES ;
+		s += RsPgpId::SIZE_IN_BYTES ;
 	}
 
 	return s;
@@ -1260,9 +1260,9 @@ bool RsPeerConfigSerialiser::serialiseGroup(RsPeerGroupItem *item, void *data, u
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_NAME, item->name);
 	ok &= setRawUInt32(data, tlvsize, &offset, item->flag);
 
-	std::list<PGPIdType>::iterator it;
+	std::list<RsPgpId>::iterator it;
 	for (it = item->peerIds.begin(); it != item->peerIds.end(); it++) {
-		ok &= setRawPGPId(data, tlvsize, &offset, *it);
+		ok &= (*it).serialise(data, tlvsize, offset) ;
 	}
 
 	if(offset != tlvsize)
@@ -1313,11 +1313,10 @@ RsPeerGroupItem *RsPeerConfigSerialiser::deserialiseGroup(void *data, uint32_t *
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_NAME, item->name);
 	ok &= getRawUInt32(data, rssize, &offset, &(item->flag));
 
-	PGPIdType peerId;
+	RsPgpId peerId;
 	while (offset != rssize) 
 	{
-		ok &= getRawPGPId(data, rssize, &offset, peerId);
-
+		ok &= peerId.deserialise(data, rssize, offset) ;
 		item->peerIds.push_back(peerId);
 	}
 
@@ -1354,7 +1353,7 @@ uint32_t RsPeerConfigSerialiser::sizePermissions(RsPeerServicePermissionItem *i)
 
 	for(uint32_t j=0;j<i->pgp_ids.size();++j)
 	{
-		s += PGPIdType::SIZE_IN_BYTES ;//GetTlvStringSize(i->pgp_ids[j]) ;
+		s += RsPgpId::SIZE_IN_BYTES ;//GetTlvStringSize(i->pgp_ids[j]) ;
 		s += 4; /* flag */
 	}
 
@@ -1390,7 +1389,7 @@ bool RsPeerConfigSerialiser::serialisePermissions(RsPeerServicePermissionItem *i
 
 	for(uint32_t i=0;i<item->pgp_ids.size();++i)
 	{
-		ok &= setRawPGPId(data, tlvsize, &offset, item->pgp_ids[i]);
+		ok &= item->pgp_ids[i].serialise(data, tlvsize, offset) ;
 		ok &= setRawUInt32(data, tlvsize, &offset, item->service_flags[i].toUInt32());
 	}
 
@@ -1445,7 +1444,7 @@ RsPeerServicePermissionItem *RsPeerConfigSerialiser::deserialisePermissions(void
 	for(uint32_t i=0;i<s;++i)
 	{
 		uint32_t flags ;
-		ok &= getRawPGPId(data, rssize, &offset, item->pgp_ids[i]);
+		ok &= item->pgp_ids[i].deserialise(data, rssize, offset) ;
 		ok &= getRawUInt32(data, rssize, &offset, &flags);
 		
 		item->service_flags[i] = ServicePermissionFlags(flags) ;

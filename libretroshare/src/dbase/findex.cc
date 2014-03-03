@@ -524,7 +524,7 @@ int DirEntry::print(std::string &out)
 	return 1;
 }
 
-FileIndex::FileIndex(const SSLIdType& pid)
+FileIndex::FileIndex(const RsPeerId& pid)
 {
 	root = new PersonEntry(pid);
 	registerEntry(root) ;
@@ -862,7 +862,7 @@ int FileIndex::loadIndex(const std::string& filename, const RsFileHash& expected
 				/* finished parse, last dir is root */
 				case 1:
 				{
-					SSLIdType pid = root -> id;
+					RsPeerId pid = root -> id;
 					FileIndex::unregisterEntry((void*)root) ;
 					delete root; /* to clean up old entries */
 					root = new PersonEntry(pid);

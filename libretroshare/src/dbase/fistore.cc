@@ -168,7 +168,7 @@ int FileIndexStore::loadCache(const RsCacheData &data)
 
 
 	/* Search Interface - For Directory Access */
-int FileIndexStore::RequestDirDetails(const SSLIdType& uid, const std::string& path, DirDetails& details) const
+int FileIndexStore::RequestDirDetails(const RsPeerId& uid, const std::string& path, DirDetails& details) const
 {
 	lockData();
 

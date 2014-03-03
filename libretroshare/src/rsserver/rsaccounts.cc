@@ -111,7 +111,7 @@ bool RsAccountsDetail::selectAccountByString(const std::string &prefUserString)
 	// try both.
 	//
 	RsPeerId ssl_id(prefUserString) ;
-	PGPIdType pgp_id(prefUserString) ;
+	RsPgpId pgp_id(prefUserString) ;
 
 	std::cerr << "RsAccountsDetail::selectAccountByString(" << prefUserString << ")" << std::endl;
 	
@@ -433,7 +433,7 @@ bool     RsAccountsDetail::getAccountIds(std::list<RsPeerId> &ids)
 
 
 bool     RsAccountsDetail::getAccountDetails(const RsPeerId &id,
-                                PGPIdType &gpgId, std::string &gpgName, 
+                                RsPgpId &gpgId, std::string &gpgName, 
                                 std::string &gpgEmail, std::string &location)
 {
 	std::map<RsPeerId, AccountDetails>::iterator it;
@@ -787,12 +787,12 @@ std::string RsAccountsDetail::PathDataDirectory()
 
 
                 /* Generating GPGme Account */
-int      RsAccountsDetail::GetPGPLogins(std::list<PGPIdType> &pgpIds) {
+int      RsAccountsDetail::GetPGPLogins(std::list<RsPgpId> &pgpIds) {
         AuthGPG::getAuthGPG()->availableGPGCertificatesWithPrivateKeys(pgpIds);
 	return 1;
 }
 
-int      RsAccountsDetail::GetPGPLoginDetails(const PGPIdType& id, std::string &name, std::string &email)
+int      RsAccountsDetail::GetPGPLoginDetails(const RsPgpId& id, std::string &name, std::string &email)
 {
         #ifdef GPG_DEBUG
         std::cerr << "RsInit::GetPGPLoginDetails for \"" << id << "\"" << std::endl;
@@ -818,7 +818,7 @@ int      RsAccountsDetail::GetPGPLoginDetails(const PGPIdType& id, std::string &
 /* Before any SSL stuff can be loaded, the correct PGP must be selected / generated:
  **/
 
-bool RsAccountsDetail::SelectPGPAccount(const PGPIdType& pgpId)
+bool RsAccountsDetail::SelectPGPAccount(const RsPgpId& pgpId)
 {
 	bool retVal = false;
 
@@ -836,7 +836,7 @@ bool RsAccountsDetail::SelectPGPAccount(const PGPIdType& pgpId)
 }
 
 
-bool     RsAccountsDetail::GeneratePGPCertificate(const std::string& name, const std::string& email, const std::string& passwd, PGPIdType &pgpId, std::string &errString)
+bool     RsAccountsDetail::GeneratePGPCertificate(const std::string& name, const std::string& email, const std::string& passwd, RsPgpId &pgpId, std::string &errString)
 {
     return AuthGPG::getAuthGPG()->GeneratePGPCertificate(name, email, passwd, pgpId, errString);
 }
@@ -848,12 +848,12 @@ void RsAccountsDetail::getUnsupportedKeys(std::map<std::string,std::vector<std::
 	return;
 }
 
-bool RsAccountsDetail::exportIdentity(const std::string& fname,const PGPIdType& id)
+bool RsAccountsDetail::exportIdentity(const std::string& fname,const RsPgpId& id)
 {
 	return AuthGPG::getAuthGPG()->exportProfile(fname,id);
 }
 
-bool RsAccountsDetail::importIdentity(const std::string& fname,PGPIdType& id,std::string& import_error)
+bool RsAccountsDetail::importIdentity(const std::string& fname,RsPgpId& id,std::string& import_error)
 {
 	return AuthGPG::getAuthGPG()->importProfile(fname,id,import_error);
 }
@@ -916,7 +916,7 @@ bool RsAccountsDetail::copyGnuPGKeyrings()
 
 
                 /* Create SSL Certificates */
-bool     RsAccountsDetail::GenerateSSLCertificate(const PGPIdType& pgp_id, const std::string& org, const std::string& loc, const std::string& country, const bool ishiddenloc, const std::string& passwd, RsPeerId &sslId, std::string &errString)
+bool     RsAccountsDetail::GenerateSSLCertificate(const RsPgpId& pgp_id, const std::string& org, const std::string& loc, const std::string& country, const bool ishiddenloc, const std::string& passwd, RsPeerId &sslId, std::string &errString)
 {
 	/* select the PGP Identity first */
 	if (!SelectPGPAccount(pgp_id))
@@ -1044,7 +1044,7 @@ bool     RsAccountsDetail::GenerateSSLCertificate(const PGPIdType& pgp_id, const
 	/* try to load it, and get Id */
 
 	std::string location;
-	PGPIdType pgpid_retrieved;
+	RsPgpId pgpid_retrieved;
 
 	if (LoadCheckX509(cert_name.c_str(), pgpid_retrieved, location, sslId) == 0) {
 		std::cerr << "RsInit::GenerateSSLCertificate() Cannot check own signature, maybe the files are corrupted." << std::endl;
@@ -1241,28 +1241,28 @@ std::string RsAccounts::PGPDirectory() { return rsAccounts.PathPGPDirectory(); }
 std::string RsAccounts::AccountDirectory() { return rsAccounts.PathAccountDirectory(); }
 
 // PGP Accounts.
-int     RsAccounts::GetPGPLogins(std::list<PGPIdType> &pgpIds)
+int     RsAccounts::GetPGPLogins(std::list<RsPgpId> &pgpIds)
 {
 	return rsAccounts.GetPGPLogins(pgpIds);
 }
 
-int     RsAccounts::GetPGPLoginDetails(const PGPIdType& id, std::string &name, std::string &email)
+int     RsAccounts::GetPGPLoginDetails(const RsPgpId& id, std::string &name, std::string &email)
 {
 	return rsAccounts.GetPGPLoginDetails(id, name, email);
 }
 
-bool    RsAccounts::GeneratePGPCertificate(const std::string &name, const std::string& email, const std::string& passwd, PGPIdType &pgpId, std::string &errString)
+bool    RsAccounts::GeneratePGPCertificate(const std::string &name, const std::string& email, const std::string& passwd, RsPgpId &pgpId, std::string &errString)
 {
 	return rsAccounts.GeneratePGPCertificate(name, email, passwd, pgpId, errString);
 }
 
 // PGP Support Functions.
-bool    RsAccounts::ExportIdentity(const std::string& fname,const PGPIdType& pgp_id)
+bool    RsAccounts::ExportIdentity(const std::string& fname,const RsPgpId& pgp_id)
 {
 	return rsAccounts.exportIdentity(fname,pgp_id);
 }
 
-bool    RsAccounts::ImportIdentity(const std::string& fname,PGPIdType& imported_pgp_id,std::string& import_error)
+bool    RsAccounts::ImportIdentity(const std::string& fname,RsPgpId& imported_pgp_id,std::string& import_error)
 {
 	return rsAccounts.importIdentity(fname,imported_pgp_id,import_error);
 }
@@ -1294,13 +1294,13 @@ bool    RsAccounts::GetAccountIds(std::list<RsPeerId> &ids)
 }
 
 bool    RsAccounts::GetAccountDetails(const RsPeerId &id,
-		PGPIdType &pgpId, std::string &pgpName,
+		RsPgpId &pgpId, std::string &pgpName,
 		std::string &pgpEmail, std::string &location)
 {
 	return rsAccounts.getAccountDetails(id, pgpId, pgpName, pgpEmail, location);
 }
 
-bool    RsAccounts::GenerateSSLCertificate(const PGPIdType& pgp_id, const std::string& org, const std::string& loc, const std::string& country, const bool ishiddenloc, const std::string& passwd, RsPeerId &sslId, std::string &errString)
+bool    RsAccounts::GenerateSSLCertificate(const RsPgpId& pgp_id, const std::string& org, const std::string& loc, const std::string& country, const bool ishiddenloc, const std::string& passwd, RsPeerId &sslId, std::string &errString)
 {
 	return rsAccounts.GenerateSSLCertificate(pgp_id, org, loc, country, ishiddenloc, passwd, sslId, errString);
 }

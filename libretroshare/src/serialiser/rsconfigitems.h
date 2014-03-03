@@ -109,7 +109,7 @@ class RsPeerServicePermissionItem : public RsItem
 		std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
 		/* Mandatory */
-		std::vector<PGPIdType> pgp_ids ;
+		std::vector<RsPgpId> pgp_ids ;
 		std::vector<ServicePermissionFlags> service_flags ;
 };
 class RsPeerGroupItem : public RsItem
@@ -131,7 +131,7 @@ public:
 	std::string name;
 	uint32_t    flag;
 
-	std::list<PGPIdType> peerIds;
+	std::list<RsPgpId> peerIds;
 };
 
 

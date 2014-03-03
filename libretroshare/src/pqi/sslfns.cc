@@ -693,7 +693,7 @@ bool CheckX509Certificate(X509 */*x509*/)
 
 
 // Not dependent on sslroot. load, and detroys the X509 memory.
-int	LoadCheckX509(const char *cert_file, PGPIdType& issuerName, std::string &location, RsPeerId &userId)
+int	LoadCheckX509(const char *cert_file, RsPgpId& issuerName, std::string &location, RsPeerId &userId)
 {
 	/* This function loads the X509 certificate from the file, 
 	 * and checks the certificate 
@@ -728,7 +728,7 @@ int	LoadCheckX509(const char *cert_file, PGPIdType& issuerName, std::string &loc
 	if (valid)
 	{
 		// extract the name.
-		issuerName = PGPIdType(std::string(getX509CNString(x509->cert_info->issuer)));
+		issuerName = RsPgpId(std::string(getX509CNString(x509->cert_info->issuer)));
 		location = getX509LocString(x509->cert_info->subject);
 	}
 

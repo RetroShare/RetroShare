@@ -193,9 +193,9 @@ uint32_t RsFileTransferChunkMapItem::serial_size()
 uint32_t RsFileTransferSingleChunkCrcItem::serial_size()
 {
 	uint32_t s = 8; /* header  */
-    s += hash.serial_size() ; 	// hash
-    s += 4 ; // chunk number
-	s += 20 ; // sha1
+	s += hash.serial_size() ; 	// hash
+	s += 4 ; // chunk number
+	s += check_sum.serial_size() ; // sha1
 
 	return s;
 }
@@ -309,7 +309,7 @@ bool RsFileTransferSingleChunkCrcItem::serialise(void *data, uint32_t& pktsize)
     ok &= hash.serialise(data, tlvsize, offset) ;
 	ok &= setRawUInt32(data, tlvsize, &offset, chunk_number) ;
 
-	setRawSha1(data,tlvsize,&offset,check_sum) ;
+	ok &= check_sum.serialise(data,tlvsize,offset) ;
 
 	//ok &= setRawUInt32(data, tlvsize, &offset, check_sum.fourbytes[0]) ;
 	//ok &= setRawUInt32(data, tlvsize, &offset, check_sum.fourbytes[1]) ;
@@ -779,7 +779,7 @@ RsFileTransferItem *RsFileTransferSerialiser::deserialise_RsFileTransferSingleCh
 	offset += 8;
     ok &= item->hash.deserialise(data, rssize, offset) ;
     ok &= getRawUInt32(data, rssize, &offset, &(item->chunk_number));
-	getRawSha1(data,rssize,&offset,item->check_sum) ;
+	ok &= item->check_sum.deserialise(data,rssize,offset) ;
 
     if (offset != rssize)
 	{

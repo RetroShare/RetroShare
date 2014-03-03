@@ -336,7 +336,7 @@ class RsPrivateChatDistantInviteConfigItem: public RsChatItem
 		unsigned char aes_key[16] ;
         RsFileHash hash ;
 		std::string encrypted_radix64_string ;
-		PGPIdType destination_pgp_id ;
+		RsPgpId destination_pgp_id ;
 		uint32_t time_of_validity ;
 		uint32_t last_hit_time ;
 		uint32_t flags ;

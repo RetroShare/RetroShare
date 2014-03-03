@@ -383,7 +383,7 @@ int	pqissllistenbase::continueSSL(IncomingSSLInfo& incoming_connexion_info, bool
 
 	// clear the connection info that will be filled in by the callback.
 	//
-	AuthSSL::getAuthSSL()->setCurrentConnectionAttemptInfo(PGPIdType(),RsPeerId(),std::string()) ;
+	AuthSSL::getAuthSSL()->setCurrentConnectionAttemptInfo(RsPgpId(),RsPeerId(),std::string()) ;
 
 	int err = SSL_accept(incoming_connexion_info.ssl);
 
@@ -836,7 +836,7 @@ int pqissllistener::completeConnection(int fd, IncomingSSLInfo& info)
 		AuthSSL::getAuthSSL()->CheckCertificate(newPeerId, peercert);
 
 		/* now need to get GPG id too */
-		PGPIdType pgpid(std::string(getX509CNString(peercert->cert_info->issuer)));
+		RsPgpId pgpid(std::string(getX509CNString(peercert->cert_info->issuer)));
 		mPeerMgr->addFriend(newPeerId, pgpid);
 	
 		X509_free(peercert);

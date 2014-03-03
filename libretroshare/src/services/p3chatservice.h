@@ -327,21 +327,21 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor, publi
 		// Creates the invite if the public key of the distant peer is available.
 		// Om success, stores the invite in the map above, so that we can respond to tunnel requests.
 		//
-		bool createDistantChatInvite(const PGPIdType& pgp_id,time_t time_of_validity,std::string& enc_b64_string) ;
+		bool createDistantChatInvite(const RsPgpId& pgp_id,time_t time_of_validity,std::string& enc_b64_string) ;
 		bool getDistantChatInviteList(std::vector<DistantChatInviteInfo>& invites) ;
 		bool initiateDistantChatConnexion(const std::string& encrypted_string,time_t time_of_validity,DistantChatPeerId& pid,uint32_t& error_code) ;		// from encrypted data
 		bool initiateDistantChatConnexion(const DistantChatPeerId& pid,uint32_t& error_code) ;				// from known hash of a decrypted link
 		bool closeDistantChatConnexion(const DistantChatPeerId& pid) ;
 		bool removeDistantChatInvite(const DistantChatPeerId& pid) ;
 
-		virtual bool getDistantChatStatus(const DistantChatPeerId& hash,uint32_t& status,PGPIdType& pgp_id) ;
+		virtual bool getDistantChatStatus(const DistantChatPeerId& hash,uint32_t& status,RsPgpId& pgp_id) ;
 
 	private:
 		struct DistantChatInvite
 		{
 			unsigned char aes_key[16] ;
 			std::string encrypted_radix64_string ;
-			PGPIdType destination_pgp_id ;
+			RsPgpId destination_pgp_id ;
 			time_t time_of_validity ;
 			time_t last_hit_time ;
 			uint32_t flags ;
@@ -352,7 +352,7 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor, publi
 			unsigned char aes_key[16] ;	// key to encrypt packets
 			uint32_t status ;					// info: do we have a tunnel ?
 			RsPeerId virtual_peer_id;  	// given by the turtle router. Identifies the tunnel.
-			PGPIdType pgp_id ;          	// pgp id of the peer we're talking to.
+			RsPgpId pgp_id ;          	// pgp id of the peer we're talking to.
 			RsTurtleGenericTunnelItem::Direction direction ; // specifiec wether we are client(managing the tunnel) or server.
 		};
 
@@ -377,7 +377,7 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor, publi
 		void addVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&,RsTurtleGenericTunnelItem::Direction dir) ;
 		void removeVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&) ;
 		void markDistantChatAsClosed(const TurtleVirtualPeerId& vpid) ;
-        void startClientDistantChatConnection(const RsFileHash& hash,const PGPIdType& pgp_id,const unsigned char *aes_key_buf) ;
+        void startClientDistantChatConnection(const RsFileHash& hash,const RsPgpId& pgp_id,const unsigned char *aes_key_buf) ;
         bool findHashForVirtualPeerId(const TurtleVirtualPeerId& pid,RsFileHash& hash) ;
 
 		// Utility functions

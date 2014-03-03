@@ -961,7 +961,7 @@ void p3discovery2::recvPGPCertificateRequest(const SSLID &fromId, const RsDiscPg
 	std::cerr << std::endl;
 #endif
 
-	std::list<PGPIdType>::const_iterator it;
+	std::list<RsPgpId>::const_iterator it;
 	for(it = item->pgpIdSet.ids.begin(); it != item->pgpIdSet.ids.end(); it++)
 	{
 		// NB: This doesn't include own certificates? why not.

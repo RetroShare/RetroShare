@@ -558,7 +558,7 @@ bool RsGRouterRoutingInfoItem::serialise(void *data,uint32_t& size) const
 std::ostream& RsGRouterPublishKeyItem::print(std::ostream& o, uint16_t)
 {
 	o << "GRouterPublishKeyItem:" << std::endl ;
-	o << "  POW bytes    : \""<< PGPIdType(pow_bytes).toStdString() << "\"" << std::endl ;
+	o << "  POW bytes    : \""<< RsPgpId(pow_bytes).toStdString() << "\"" << std::endl ;
 	o << "  direct origin: \""<< PeerId() << "\"" << std::endl ;
 	o << "  Key:            " << published_key.toStdString() << std::endl ;
 	o << "  Req. Id:        " << std::hex << diffusion_id << std::dec << std::endl ;

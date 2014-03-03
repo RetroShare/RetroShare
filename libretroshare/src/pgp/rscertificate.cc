@@ -154,7 +154,7 @@ RsCertificate::RsCertificate(const RsPeerDetails& Detail, const unsigned char *b
 	if(!Detail.isOnlyGPGdetail)
 	{
 		only_pgp = false ;
-		location_id = SSLIdType( Detail.id ) ;
+		location_id = RsPeerId( Detail.id ) ;
 		location_name = Detail.location ;
 
 		if (Detail.isHiddenNode)
@@ -203,7 +203,7 @@ RsCertificate::RsCertificate(const RsPeerDetails& Detail, const unsigned char *b
 		only_pgp = true ;
 		hidden_node = false;
 		hidden_node_address = "";
-		location_id = SSLIdType() ;
+		location_id = RsPeerId() ;
 		location_name = "" ;
 		memset(ipv4_internal_ip_and_port,0,6) ;
 		memset(ipv4_external_ip_and_port,0,6) ;
@@ -304,7 +304,7 @@ bool RsCertificate::initFromString(const std::string& instr,uint32_t& err_code)
 																	return false ;
 																}
 
-																location_id = SSLIdType(buf) ;
+																location_id = RsPeerId(buf) ;
 																buf = &buf[s] ;
 																only_pgp = false ;
 																break ;
