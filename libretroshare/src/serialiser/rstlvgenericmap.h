@@ -42,7 +42,7 @@ template<class T>
 class RsTlvParamRef: public RsTlvItem
 {
 	public:
-	 RsTlvParamRef(T &p): mParam(p) {}
+	 RsTlvParamRef(uint16_t param_type, T &p): mParamType(param_type), mParam(p) {}
 virtual ~RsTlvParamRef() { return; }
 virtual uint32_t TlvSize();
 virtual void	 TlvClear();
@@ -50,6 +50,7 @@ virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset); /* seriali
 virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); /* deserialise */
 virtual std::ostream &print(std::ostream &out, uint16_t indent);
 
+	uint16_t mParamType;
 	T &mParam;
 };
 
@@ -60,8 +61,11 @@ template<class K, class V>
 class RsTlvGenericPairRef: public RsTlvItem
 {
 	public:
-	 RsTlvGenericPairRef(uint16_t pair_type, K &k, V &v)
-	:mPairType(pair_type), mKey(k), mValue(v)  { return; }
+	 RsTlvGenericPairRef(uint16_t pair_type, 
+		uint16_t key_type, uint16_t value_type, K &k, V &v)
+	:mPairType(pair_type), mKeyType(key_type), 
+	 mValueType(value_type), mKey(k), mValue(v)  { return; }
+
 virtual ~RsTlvGenericPairRef() { return; }
 virtual uint32_t TlvSize();
 virtual void	 TlvClear();
@@ -70,6 +74,8 @@ virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); /* deseria
 virtual std::ostream &print(std::ostream &out, uint16_t indent);
 
 	uint16_t mPairType;
+	uint16_t mKeyType;
+	uint16_t mValueType;
 	K &mKey;
 	V &mValue;
 };
@@ -81,8 +87,11 @@ template<class K, class V>
 class RsTlvGenericMapRef: public RsTlvItem
 {
 	public:
-	 RsTlvGenericMapRef(uint16_t map_type, uint16_t pair_type, std::map<K, V> &refmap)
-	:mMapType(map_type), mPairType(pair_type), mRefMap(refmap)  { return; }
+	 RsTlvGenericMapRef(uint16_t map_type, uint16_t pair_type, 
+		uint16_t key_type, uint16_t value_type, std::map<K, V> &refmap)
+	:mMapType(map_type), mPairType(pair_type), 
+	 mKeyType(key_type), mValueType(value_type), mRefMap(refmap)  { return; }
+
 virtual ~RsTlvGenericMapRef() { return; }
 virtual uint32_t TlvSize();
 virtual void	 TlvClear();
@@ -92,6 +101,8 @@ virtual std::ostream &print(std::ostream &out, uint16_t indent);
 
 	uint16_t mMapType;
 	uint16_t mPairType;
+	uint16_t mKeyType;
+	uint16_t mValueType;
 	std::map<K, V> &mRefMap;
 };
 
