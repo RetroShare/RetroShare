@@ -117,7 +117,7 @@ void  CreateGxsForumMsg::newMsg()
 	mForumMetaLoaded = false;
 
 	/* fill in the available OwnIds for signing */
-	ui.idChooser->loadIds(IDCHOOSER_ID_REQUIRED, "");
+    ui.idChooser->loadIds(IDCHOOSER_ID_REQUIRED, RsGxsId());
 
         if (mForumId.isNull()) {
 		mStateHelper->setActive(CREATEGXSFORUMMSG_FORUMINFO, false);

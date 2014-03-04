@@ -46,7 +46,7 @@ GxsCommentDialog::GxsCommentDialog(QWidget *parent, RsTokenService *token_servic
 	ui.treeWidget->setup(token_service, comment_service);
 
 	/* fill in the available OwnIds for signing */
-	ui.idChooser->loadIds(IDCHOOSER_ID_REQUIRED, "");
+    ui.idChooser->loadIds(IDCHOOSER_ID_REQUIRED, RsGxsId());
 
 	connect(ui.refreshButton, SIGNAL(clicked()), this, SLOT(refresh()));
 	connect(ui.idChooser, SIGNAL(currentIndexChanged( int )), this, SLOT(voterSelectionChanged( int )));

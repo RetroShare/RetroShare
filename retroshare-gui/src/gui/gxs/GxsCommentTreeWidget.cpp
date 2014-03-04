@@ -95,9 +95,9 @@ void GxsCommentTreeWidget::customPopUpMenu(const QPoint& point)
 	contextMnu.addSeparator();
 
 	action = contextMnu.addAction(QIcon(IMAGE_VOTEUP), tr("Vote Up"), this, SLOT(voteUp()));
-	action->setDisabled(mVoterId.empty());
+	action->setDisabled(mVoterId.isNull());
 	action = contextMnu.addAction(QIcon(IMAGE_VOTEDOWN), tr("Vote Down"), this, SLOT(voteDown()));
-	action->setDisabled(mVoterId.empty());
+	action->setDisabled(mVoterId.isNull());
 
 
 	if (!mCurrentMsgId.isNull())

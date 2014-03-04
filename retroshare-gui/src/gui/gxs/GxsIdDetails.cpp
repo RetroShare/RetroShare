@@ -69,20 +69,19 @@ static bool findTagIcon(int tag_class, int tag_type, QIcon &icon)
 }
 
 
-static bool CreateIdIcon(const std::string &id, QIcon &idIcon)
+static bool CreateIdIcon(const RsGxsId &id, QIcon &idIcon)
 {
 	QPixmap image(IconSize, IconSize);
 	QPainter painter(&image);
 
 	painter.fillRect(0, 0, IconSize, IconSize, Qt::black);
 
-	int len = id.length();
-	for(int i = 0; i + 1 < len; i += 2)
+    int len = id.SIZE_IN_BYTES;
+    for(int i = 0; i<len; ++i)
 	{
-		char hex1 = id[i];
-		char hex2 = id[i+1];
-		int x = (hex1 >= 'a') ? (hex1 - 'a' + 10) : (hex1 - '0');
-		int y = (hex2 >= 'a') ? (hex2 - 'a' + 10) : (hex2 - '0');
+        unsigned char hex = id.toByteArray()[i];
+        int x = hex & 0xf ;
+        int y = (hex & 0xf0) >> 4 ;
 		painter.fillRect(x, y, x+1, y+1, Qt::green);
 	}
 	idIcon = QIcon(image);
@@ -99,7 +98,7 @@ bool GxsIdDetails::MakeIdDesc(const RsGxsId &id, bool doIcons, QString &str, std
 		std::cerr << "GxsIdTreeWidget::MakeIdDesc() FAILED TO GET ID";
 		std::cerr << std::endl;
 
-		str = QObject::tr("Loading... ") + QString::fromStdString(id.substr(0,5));
+        str = QObject::tr("Loading... ") + QString::fromStdString(id.toStdString().substr(0,5));
 
 		if (!doIcons)
 		{
@@ -144,7 +143,7 @@ bool GxsIdDetails::MakeIdDesc(const RsGxsId &id, bool doIcons, QString &str, std
 
 	if (addCode)
 	{
-		str += QString::fromStdString(id.substr(0,5));
+        str += QString::fromStdString(id.toStdString().substr(0,5));
 		str += "...]";
 	}
 

@@ -70,7 +70,7 @@ bool GxsIdChooser::MakeIdDesc(const RsGxsId &id, QString &desc)
 		if (mTimerCount > MAX_TRY) 
 		{
 			desc = QString("%1 ... [").arg(tr("Not found"));
-			desc += QString::fromStdString(id.substr(0,5));
+            desc += QString::fromStdString(id.toStdString().substr(0,5));
 			desc += "...]";
 		}
 		return false;
@@ -92,7 +92,7 @@ void GxsIdChooser::addPrivateId(const RsGxsId &gxsId, bool replace)
 		}
 	}
 
-	QString id = QString::fromStdString(gxsId);
+    QString id = QString::fromStdString(gxsId.toStdString());
 
 	if (replace) {
 		/* Find and replace text of exisiting item */

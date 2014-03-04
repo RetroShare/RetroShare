@@ -508,7 +508,7 @@ bool RetroShareLink::createForum(const std::string& id, const std::string& msgId
 	return valid();
 }
 
-bool RetroShareLink::createChannel(const std::string& id, const std::string& msgId)
+bool RetroShareLink::createChannel(const std::string &id, const std::string &msgId)
 {
 	clear();
 

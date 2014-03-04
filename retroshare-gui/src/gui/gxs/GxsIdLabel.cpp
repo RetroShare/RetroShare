@@ -44,7 +44,7 @@ GxsIdLabel::GxsIdLabel(QWidget *parent)
 void GxsIdLabel::setId(const RsGxsId &id)
 {
 	mId = id;
-	if (mId == "")
+    if (mId.isNull())
 	{
 		setText("No Signature");
 	}

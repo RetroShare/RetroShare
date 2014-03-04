@@ -78,8 +78,8 @@ CreateCircleDialog::CreateCircleDialog()
 	mIsExistingCircle = false;
 	mIsExternalCircle = true;
 
-	ui.idChooser->loadIds(0,"");
-	ui.circleComboBox->loadCircles(GXS_CIRCLE_CHOOSER_EXTERNAL, "");
+    ui.idChooser->loadIds(0,RsGxsId());
+    ui.circleComboBox->loadCircles(GXS_CIRCLE_CHOOSER_EXTERNAL, RsGxsCircleId());
 }
 
 CreateCircleDialog::~CreateCircleDialog()
@@ -255,7 +255,7 @@ void CreateCircleDialog::createCircle()
 		/* insert into circle */
 		if (mIsExternalCircle)
 		{
-			circle.mInvitedMembers.push_back(keyId.toStdString());	
+            circle.mInvitedMembers.push_back(RsGxsId(keyId.toStdString()));
 			std::cerr << "CreateCircleDialog::createCircle() Inserting Member: " << keyId.toStdString();
 			std::cerr << std::endl;
 		}
@@ -557,7 +557,7 @@ void CreateCircleDialog::loadIdentities(uint32_t token)
 			continue;
 		}
 
-		QString  keyId = QString::fromStdString(data.mMeta.mGroupId);
+        QString  keyId = QString::fromStdString(data.mMeta.mGroupId.toStdString());
 		QString  nickname = QString::fromUtf8(data.mMeta.mGroupName.c_str());
 		QString  idtype = tr("Anon Id");
 

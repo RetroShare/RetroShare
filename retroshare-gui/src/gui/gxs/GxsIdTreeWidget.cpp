@@ -75,7 +75,7 @@ void GxsIdItemDelegate::paint( QPainter * painter,
 	std::cerr << "GxsIdItemDelegate::paint()";
 	std::cerr << std::endl;
 		
-	RsGxsId id = mTree->ItemTextFromIndex(index, mGxsIdColumn).toStdString();
+    RsGxsId id ( mTree->ItemTextFromIndex(index, mGxsIdColumn).toStdString());
 	paintGxsId(painter, option, id);
 }
 
@@ -101,7 +101,7 @@ void GxsIdRSItemDelegate::paint( QPainter * painter,
 	std::cerr << "GxsIdRSItemDelegate::paint()";
 	std::cerr << std::endl;
 		
-	RsGxsId id = mTree->ItemTextFromIndex(index, mGxsIdColumn).toStdString();
+    RsGxsId id ( mTree->ItemTextFromIndex(index, mGxsIdColumn).toStdString());
 	paintGxsId(painter, option, id);
 }
 

@@ -108,9 +108,9 @@ void GxsGroupDialog::init()
 
 	/* Setup Reasonable Defaults */
 
-	ui.idChooser->loadIds(0,"");
-	ui.circleComboBox->loadCircles(GXS_CIRCLE_CHOOSER_EXTERNAL,"");
-	ui.localComboBox->loadCircles(GXS_CIRCLE_CHOOSER_PERSONAL,"");
+    ui.idChooser->loadIds(0,RsGxsId());
+    ui.circleComboBox->loadCircles(GXS_CIRCLE_CHOOSER_EXTERNAL,RsGxsCircleId());
+    ui.localComboBox->loadCircles(GXS_CIRCLE_CHOOSER_PERSONAL,RsGxsCircleId());
 
 	initMode();
 }

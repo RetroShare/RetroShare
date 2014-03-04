@@ -56,7 +56,7 @@ void GxsIdRSTreeWidgetItem::setId(const RsGxsId &id, int column)
 
 	mId = id;
 	mColumn = column;
-	if (mId == "")
+    if (mId.isNull())
 	{
 		setText(mColumn, "No Signature");
 	}
@@ -135,7 +135,7 @@ void GxsIdTreeWidgetItem::setId(const RsGxsId &id, int column)
 
 	mId = id;
 	mColumn = column;
-	if (mId == "")
+    if (mId.isNull())
 	{
 		setText(mColumn, "No Signature");
 	}

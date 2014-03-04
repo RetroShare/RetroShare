@@ -804,7 +804,7 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
 	item->setText(COLUMN_THREAD_DATE, text);
 	item->setData(COLUMN_THREAD_DATE, ROLE_THREAD_SORT, sort);
 
-	item->setText(COLUMN_THREAD_AUTHOR, QString::fromStdString(msg.mMeta.mAuthorId));
+    item->setText(COLUMN_THREAD_AUTHOR, QString::fromStdString(msg.mMeta.mAuthorId.toStdString()));
 	//item->setId(msg.mMeta.mAuthorId, COLUMN_THREAD_AUTHOR);
 //#TODO
 #if 0
@@ -1588,7 +1588,7 @@ void GxsForumThreadWidget::replyMessageData(const RsGxsForumMsg &msg)
 	}
 
 	// NB: TODO REMOVE rsPeers references.
-	if (rsPeers->getPeerName(RsPeerId(msg.mMeta.mAuthorId)) !="")
+    if (rsPeers->getPeerName(RsPeerId(msg.mMeta.mAuthorId)) !="")
 	{
 		MessageComposer *msgDialog = MessageComposer::newMsg();
 		msgDialog->setTitleText(QString::fromUtf8(msg.mMeta.mMsgName.c_str()), MessageComposer::REPLY);

@@ -240,7 +240,7 @@ void IdEditDialog::loadExistingId(uint32_t token)
 void IdEditDialog::checkNewTag()
 {
 	std::string tag = ui.plainTextEdit_Tag->toPlainText().toStdString();
-	std::string id = ui.lineEdit_KeyId->text().toStdString();
+    RsGxsId id ( ui.lineEdit_KeyId->text().toStdString());
 	std::string name = ui.lineEdit_Nickname->text().toUtf8().data();
 
 	QString desc;
@@ -313,7 +313,7 @@ void IdEditDialog::rmTag(int idx)
 	loadRecognTags();
 }
 
-bool IdEditDialog::tagDetails(const std::string &id, const std::string &name, const std::string &tag, QString &desc)
+bool IdEditDialog::tagDetails(const RsGxsId &id, const std::string &name, const std::string &tag, QString &desc)
 {
 	if (tag.empty())
 	{
@@ -378,7 +378,7 @@ void IdEditDialog::loadRecognTags()
 	for(it = mEditGroup.mRecognTags.begin(); it != mEditGroup.mRecognTags.end(); it++, i++)
 	{
 		QString recognTag;
-		tagDetails(mEditGroup.mMeta.mGroupId.toStdString(), mEditGroup.mMeta.mGroupName, *it, recognTag);
+        tagDetails(mEditGroup.mMeta.mGroupId, mEditGroup.mMeta.mGroupName, *it, recognTag);
 
 		switch(i)
 		{
