@@ -1,7 +1,7 @@
-set QTDIR=D:\qt\2010.05
-set MINGW=%QTDIR%\mingw
+set QTDIR=C:\Qt\4.8.5
+set MINGW=C:\MinGW
 
-set PATH=%QTDIR%\qt\bin;%QTDIR%\bin;%MINGW%\bin;%PATH%
+set PATH=%QTDIR%\bin;%MINGW%\bin;%PATH%
 
 
 qmake retroshare-gui.pro

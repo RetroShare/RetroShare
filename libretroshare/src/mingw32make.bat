@@ -1,11 +1,11 @@
-set QTDIR=d:\qt\2010.01
-set MINGW=%QTDIR%\mingw
+set QTDIR=C:\Qt\4.8.5
+set MINGW=C:\MinGW
 
-set PATH=%QTDIR%\qt\bin;%QTDIR%\bin;%MINGW%\bin;%PATH%
+set PATH=%QTDIR%\bin;%MINGW%\bin;%PATH%
 
-"D:\Programme\TortoiseSVN\bin\SubWCRev" . util\rsversion.in util\rsversion.h
+"c:\Program Files\TortoiseSVN\bin\SubWCRev" . util\rsversion.in util\rsversion.h
 
-mingw32-make clean 
+mingw32-make clean
 
 qmake libretroshare.pro
 

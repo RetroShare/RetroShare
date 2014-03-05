@@ -1,11 +1,11 @@
-set QTDIR=d:\qt\2010.05
-set MINGW=%QTDIR%\mingw
+set QTDIR=C:\Qt\4.8.5
+set MINGW=C:\MinGW
 
-set PATH=%QTDIR%\qt\bin;%QTDIR%\bin;%MINGW%\bin;%PATH%
+set PATH=%QTDIR%\bin;%MINGW%\bin;%PATH%
 
-"c:\Programme\TortoiseSVN\bin\SubWCRev" . libretroshare\src\util\rsversion.in libretroshare\src\util\rsversion.h
-"c:\Programme\TortoiseSVN\bin\SubWCRev" . retroshare-gui\src\util\rsguiversion.in retroshare-gui\src\util\rsguiversion.h
-"c:\Programme\TortoiseSVN\bin\SubWCRev" . retroshare-gui\src\retroshare.in retroshare-gui\src\retroshare.nsi
+"C:\Program Files\TortoiseSVN\bin\SubWCRev" . libretroshare\src\util\rsversion.in libretroshare\src\util\rsversion.h
+"C:\Program Files\TortoiseSVN\bin\SubWCRev" . retroshare-gui\src\util\rsguiversion.in retroshare-gui\src\util\rsguiversion.h
+"C:\Program Files\TortoiseSVN\bin\SubWCRev" . retroshare-gui\src\retroshare.in retroshare-gui\src\retroshare.nsi
 
 
 @echo off

@@ -1,7 +1,7 @@
-set QTDIR=d:\qt\2010.01
-set MINGW=%QTDIR%\mingw
+set QTDIR=C:\Qt\4.8.5
+set MINGW=C:\MinGW
 
-set PATH=%QTDIR%\qt\bin;%QTDIR%\bin;%MINGW%\bin;%PATH%
+set PATH=%QTDIR%\bin;%MINGW%\bin;%PATH%
 
 mingw32-make clean 
 
