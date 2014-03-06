@@ -126,7 +126,7 @@
 #define IMAGE_FORUMS            ":/images/konversation.png"
 #define IMAGE_PREFERENCES       ":/images/kcmsystem24.png"
 #define IMAGE_CHAT          	":/images/groupchat.png"
-#define IMAGE_RETROSHARE        ":/images/rstray3.png"
+#define IMAGE_RETROSHARE        ":/images/logo/logo_16.png"
 #define IMAGE_ABOUT             ":/images/informations_24x24.png"
 #define IMAGE_STATISTIC         ":/images/utilities-system-monitor.png"
 #define IMAGE_MESSAGES          ":/images/evolution.png"
