@@ -48,7 +48,7 @@ class RsGxsCircles;
 extern RsGxsCircles *rsGxsCircles;
 
 typedef RsPgpId RsPgpId;
-typedef std::string RsCircleInternalId;
+//typedef RsGxsCircleId RsCircleInternalId;
 
 #define GXS_CIRCLE_TYPE_PUBLIC            0x0001
 #define GXS_CIRCLE_TYPE_EXTERNAL          0x0002
@@ -69,7 +69,7 @@ public:
 
 	// BELOW IS NOT SERIALISED - BUT MUST BE STORED LOCALLY BY GXS. (If YOUREYESONLY)
 	RsPeerId mOriginator;
-	RsCircleInternalId mInternalCircle; // if Originator == ownId, otherwise blank.
+	RsGxsCircleId mInternalCircle; // if Originator == ownId, otherwise blank.
 };
 
 

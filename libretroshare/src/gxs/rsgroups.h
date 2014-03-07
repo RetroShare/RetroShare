@@ -74,8 +74,8 @@
 
 #pragma once
 
-typedef std::string SSLId ;
-typedef std::string GPGId ;
+typedef RsPeerId SSLId ;
+typedef RsPgpId GPGId ;
 typedef uint64_t    RsGroupId ;
 
 class RsPeerGroupInfo
