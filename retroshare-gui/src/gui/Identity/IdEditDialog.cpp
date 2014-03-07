@@ -378,7 +378,7 @@ void IdEditDialog::loadRecognTags()
 	for(it = mEditGroup.mRecognTags.begin(); it != mEditGroup.mRecognTags.end(); it++, i++)
 	{
 		QString recognTag;
-        tagDetails(mEditGroup.mMeta.mGroupId, mEditGroup.mMeta.mGroupName, *it, recognTag);
+        tagDetails(mEditGroup.mMeta.mAuthorId, mEditGroup.mMeta.mGroupName, *it, recognTag);
 
 		switch(i)
 		{

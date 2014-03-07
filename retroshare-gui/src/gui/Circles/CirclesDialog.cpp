@@ -370,7 +370,7 @@ void CirclesDialog::circle_selected()
 	set_item_background(item, BLUE_BACKGROUND);
 
 	QString coltext = item->text(CIRCLEGROUP_CIRCLE_COL_GROUPID);
-	std::string id = coltext.toStdString();
+    RsGxsCircleId id ( coltext.toStdString()) ;
 
 	/* update friend lists */
 	RsGxsCircleDetails details;

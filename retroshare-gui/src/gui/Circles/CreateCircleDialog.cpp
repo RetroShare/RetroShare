@@ -366,12 +366,14 @@ void CreateCircleDialog::updateCircleGUI()
 			ui.radioButton_Public->setChecked(true);
 			break;
 		case GXS_CIRCLE_TYPE_EXT_SELF:
-		case GXS_CIRCLE_TYPE_EXTERNAL:
-			if (mCircleGroup.mMeta.mCircleId == mCircleGroup.mMeta.mGroupId)
-			{
-				ui.radioButton_Self->setChecked(true);
-			}
-			else
+        case GXS_CIRCLE_TYPE_EXTERNAL:
+            // This cannot happen, unless a RsGxsCircleId can be a RsGxsGroupId
+            //
+            // if (mCircleGroup.mMeta.mCircleId == mCircleGroup.mMeta.mGroupId)
+            // {
+            // 	ui.radioButton_Self->setChecked(true);
+            // }
+            // else
 			{
 				ui.radioButton_Restricted->setChecked(true);
 			}
@@ -586,8 +588,10 @@ void CreateCircleDialog::loadIdentities(uint32_t token)
 		{
 			// check if its in the circle.
 			std::list<RsGxsId>::const_iterator it;
-			it = std::find(mCircleGroup.mInvitedMembers.begin(), 
-				mCircleGroup.mInvitedMembers.end(), data.mMeta.mGroupId);
+
+			// We use an explicit cast
+			//
+			it = std::find(mCircleGroup.mInvitedMembers.begin(), mCircleGroup.mInvitedMembers.end(), RsGxsId(data.mMeta.mGroupId));
 
 			if (it != mCircleGroup.mInvitedMembers.end())
 			{
