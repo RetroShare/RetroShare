@@ -26,7 +26,7 @@
 #pragma once
 
 #include "serialiser/rsserial.h"
-#include "util/rsid.h"
+#include "retroshare/rstypes.h"
 #include "rsgrouter.h"
 #include "p3grouter.h"
 

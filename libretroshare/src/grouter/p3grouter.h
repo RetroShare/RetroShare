@@ -31,7 +31,7 @@
 #include "rsgrouter.h"
 #include "services/p3service.h"
 #include "pqi/p3cfgmgr.h"
-#include "util/rsid.h"
+#include "retroshare/rstypes.h"
 
 #include "groutertypes.h"
 #include "groutermatrix.h"

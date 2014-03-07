@@ -94,12 +94,12 @@ p3MsgService::p3MsgService(p3LinkMgr *lm)
 	const RsPgpId& gpg_id = rsPeers->getGPGOwnId() ;
 
 	RsPeerDetails d;
-	rsPeers->getPeerDetails(gpg_id,d) ;
+    rsPeers->getGPGDetails(gpg_id,d) ;
 	PGPFingerprintType fingerp( d.fpr ) ;
 
 	// Re-hash the SSL id, to make it one way. Will be replaced by proper invitations in the future.
 	//
-	GRouterKeyId key ( RsDirUtil::sha1sum( (uint8_t*)own_ssl_id.c_str(),own_ssl_id.length() ).toStdString() ) ;
+    GRouterKeyId key ( RsDirUtil::sha1sum( own_ssl_id.toByteArray(),own_ssl_id.SIZE_IN_BYTES ))  ;
 
 	static GRouterServiceId client_id = GROUTER_CLIENT_ID_MESSAGES;
 	static std::string description = "Test string for debug purpose" ;
@@ -2162,12 +2162,12 @@ void p3MsgService::enableDistantMessaging(bool b)
 			const RsPgpId& gpg_id = rsPeers->getGPGOwnId() ;
 
 			RsPeerDetails d;
-			rsPeers->getPeerDetails(gpg_id,d) ;
+            rsPeers->getGPGDetails(gpg_id,d) ;
 			PGPFingerprintType fingerp( d.fpr ) ;
 
 			// Re-hash the SSL id, to make it one way. Will be replaced by proper invitations in the future.
 			//
-			GRouterKeyId key ( RsDirUtil::sha1sum( (uint8_t*)own_ssl_id.c_str(),own_ssl_id.length() ).toStdString() ) ;
+            GRouterKeyId key ( RsDirUtil::sha1sum( own_ssl_id.toByteArray(),own_ssl_id.SIZE_IN_BYTES ) ) ;
 
 			static GRouterServiceId client_id = GROUTER_CLIENT_ID_MESSAGES;
 			static std::string description = "Test string for debug purpose" ;

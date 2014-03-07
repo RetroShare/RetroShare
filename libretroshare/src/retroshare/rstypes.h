@@ -67,25 +67,6 @@ const uint32_t RS_CONFIG_DIRECTORY   = 0x0002 ;
 const uint32_t RS_PGP_DIRECTORY      = 0x0003 ;
 const uint32_t RS_DIRECTORY_COUNT    = 0x0004 ;
 
-//class Sha1CheckSum
-//{
-//	public:
-//		Sha1CheckSum() {}
-//		explicit Sha1CheckSum(const uint8_t *twenty_bytes_digest) ; 		// inits form a 20-bytes digest.
-//		explicit Sha1CheckSum(const std::string& fourty_bytes_string) ; 	// inits form a 40 bytes hexadecimal string.
-//
-//		static Sha1CheckSum random() ;
-//
-//		std::string toStdString() const ;
-//
-//		bool operator==(const Sha1CheckSum& s) const ;
-//		bool operator<(const Sha1CheckSum& s) const ;
-//
-//		friend std::ostream& operator<<(std::ostream& out,const Sha1CheckSum& sum) { return out << sum.toStdString() ; }
-////	private:
-//		uint32_t fourbytes[5] ;
-//};
-
 class TransferInfo
 {
 	public:

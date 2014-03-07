@@ -737,7 +737,7 @@ std::string SSGxsIdPgp::save() const
 
 bool SSGxsIdRecognTags::load(const std::string &input)
 {
-	char pgpline[RSGXSID_MAX_SERVICE_STRING];
+    //char pgpline[RSGXSID_MAX_SERVICE_STRING];
 	int pubTs = 0;
 	int lastTs = 0;
 	uint32_t flags = 0;
@@ -1200,7 +1200,7 @@ bool p3IdService::cache_process_recogntaginfo(const RsGxsIdGroupItem *item, std:
 
 	recogn_extract_taginfo(item, tagItems);
 
-	time_t now = time(NULL);
+    //time_t now = time(NULL);
 	for(it = tagItems.begin(); it != tagItems.end(); it++)
 	{
 		RsRecognTag info((*it)->tag_class, (*it)->tag_type, false);
@@ -2857,7 +2857,7 @@ void p3IdService::generateDummy_OwnIds()
 	RsPgpId ownId = rsPeers->getGPGOwnId();
 
 	// generate some ownIds.
-	int genCount = 0;
+    //int genCount = 0;
 	int i;
 
 	int nIds = 2 + (RSRandom::random_u32() % 2);
@@ -3196,8 +3196,8 @@ bool p3IdService::background_checkTokenRequest()
 
 
 	uint32_t status;
-	uint32_t reqtype;
-	uint32_t anstype;
+    //uint32_t reqtype;
+    //uint32_t anstype;
 	time_t ts;
 
 	
