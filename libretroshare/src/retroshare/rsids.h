@@ -53,6 +53,18 @@ template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER> c
 		//
 		explicit t_RsGenericIdType(const unsigned char bytes[]) ;
 
+		// Explicit constructor from a different type, checking that the sizes are compatible.
+		// This is used for conversions such as 
+		//
+		// 		GroupId -> CircleId
+		// 		GroupId -> GxsId
+		//
+		template<bool UPPER_CASE2,uint32_t UNIQUE_IDENTIFIER2>
+		explicit t_RsGenericIdType(const t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE2,UNIQUE_IDENTIFIER2>& id)
+		{
+			memcpy(bytes,id.toByteArray(),ID_SIZE_IN_BYTES) ;
+		}
+
 		// Random initialization. Can be useful for testing.
 		//
 		static t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER> random() 
