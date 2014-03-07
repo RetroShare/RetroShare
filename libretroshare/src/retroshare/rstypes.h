@@ -41,10 +41,10 @@
 
 // This adds a level of indirection to types, so we can easily change them if needed
 //
-typedef std::string   RsCertId;
-typedef std::string   RsChanId;
-typedef std::string   RsMsgId;
-typedef std::string   RsAuthId;
+//typedef std::string   RsCertId;	// unused
+//typedef std::string   RsChanId;
+//typedef std::string   RsMsgId;
+//typedef std::string   RsAuthId;
 
 typedef SSLIdType     RsPeerId ;
 typedef PGPIdType     RsPgpId ;
@@ -136,13 +136,13 @@ class Condition
 	std::string name;
 };
 
-class SearchRequest
-{
-	public:
-	int searchId;
-	RsCertId toId;  /* all zeros for everyone! */
-	std::list<Condition> tests;
-};
+//class SearchRequest // unused stuff.
+//{
+//	public:
+//	int searchId;
+//	RsCertId toId;  /* all zeros for everyone! */
+//	std::list<Condition> tests;
+//};
 
 
 /********************** For FileCache Interface *****************/
@@ -179,7 +179,7 @@ class FileInfo
 	public:
 
 		FileInfo() : mId(0) { return; }
-		RsCertId id; /* key for matching everything */
+//		RsCertId id; /* key for matching everything */
 
 		FileStorageFlags  storage_permission_flags; 	// Combination of the four RS_DIR_FLAGS_*. Updated when the file is a local stored file.
 		TransferRequestFlags   transfer_info_flags ;		// various flags from RS_FILE_HINTS_*
