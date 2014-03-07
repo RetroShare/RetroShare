@@ -38,6 +38,7 @@
 #include "MessagePage.h"
 //#include "ForumPage.h"
 #include "PluginsPage.h"
+#include "ServicePermissionsPage.h"
 #include "rsharesettings.h"
 #include "gui/notifyqt.h"
 #include "gui/common/FloatingHelpBrowser.h"
@@ -135,6 +136,7 @@ RSettingsWin::initStackedWidget()
     addPage(new ChatPage());
     addPage(new AppearancePage());
     addPage(new SoundPage() );
+    addPage(new ServicePermissionsPage() );
 
 	 // add widgets from plugins
 
