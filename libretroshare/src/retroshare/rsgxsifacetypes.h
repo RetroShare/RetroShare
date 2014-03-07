@@ -12,13 +12,13 @@
 #include <vector>
 #include <string>
 #include <inttypes.h>
-#include <retroshare/rstypes.h>
-#include <retroshare/rsids.h>
 
-typedef GXSGroupId RsGxsGroupId;
+#include <retroshare/rstypes.h>
+
+typedef GXSGroupId   RsGxsGroupId;
 typedef Sha1CheckSum RsGxsMessageId;
-typedef GXSId RsGxsId;
-typedef GXSCircleId RsGxsCircleId;
+typedef GXSId        RsGxsId;
+typedef GXSCircleId  RsGxsCircleId;
 
 typedef std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > GxsMsgIdResult;
 typedef std::pair<RsGxsGroupId, RsGxsMessageId> RsGxsGrpMsgIdPair;

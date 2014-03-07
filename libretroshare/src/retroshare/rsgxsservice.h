@@ -2,7 +2,10 @@
 #define RSGXSSERVICE_H
 
 
+#include "retroshare/rsgxsifacetypes.h"
 #include "retroshare/rstokenservice.h"
+
+class RsMsgMetaData ;
 
 typedef std::map<RsGxsGroupId, std::vector<RsMsgMetaData> > GxsMsgMetaMap;
 typedef std::map<RsGxsGrpMsgIdPair, std::vector<RsMsgMetaData> > GxsMsgRelatedMetaMap;

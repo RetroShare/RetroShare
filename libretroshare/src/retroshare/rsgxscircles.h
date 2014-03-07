@@ -32,6 +32,11 @@
 #include <set>
 
 #include "retroshare/rstypes.h"
+
+//typedef std::string RsGxsCircleId;
+//typedef RsPgpId RsPgpId;
+//typedef std::string RsCircleInternalId;
+
 #include "retroshare/rstokenservice.h"
 #include "retroshare/rsgxsifacehelper.h"
 
@@ -41,7 +46,6 @@
 /* The Main Interface Class - for information about your Peers */
 class RsGxsCircles;
 extern RsGxsCircles *rsGxsCircles;
-
 
 typedef RsPgpId RsPgpId;
 typedef std::string RsCircleInternalId;
