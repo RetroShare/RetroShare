@@ -69,7 +69,7 @@
 #define COLUMN_LAST_USED   5
 #define COLUMN_COUNT 6
 
-RsCertId getNeighRsCertId(QTreeWidgetItem *i);
+RsPeerId getNeighRsCertId(QTreeWidgetItem *i);
 
 /******
  * #define NET_DEBUG 1
@@ -587,9 +587,9 @@ QTreeWidgetItem *NetworkDialog::getCurrentNeighbour()
 }   
 
 /* Utility Fns */
-RsCertId getNeighRsCertId(QTreeWidgetItem *i)
+RsPeerId getNeighRsCertId(QTreeWidgetItem *i)
 {
-	RsCertId id = (i -> text(COLUMN_PEERID)).toStdString();
+	RsPeerId id ( (i -> text(COLUMN_PEERID)).toStdString() );
 	return id;
 }   
   
