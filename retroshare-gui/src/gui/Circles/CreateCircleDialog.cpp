@@ -28,6 +28,8 @@
 #include <retroshare/rspeers.h>
 #include <retroshare/rsidentity.h>
 
+#include <algorithm>
+
 #define CREATECIRCLEDIALOG_CIRCLEINFO 2
 #define CREATECIRCLEDIALOG_IDINFO     3
 

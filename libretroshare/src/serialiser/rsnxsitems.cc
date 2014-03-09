@@ -1075,7 +1075,7 @@ uint32_t RsNxsSerialiser::sizeNxsSyncGrpItem(RsNxsSyncGrpItem *item)
     s += 4; // publishTs
     s += 1; // flag
     s += item->grpId.serial_size();
-    s + item->authorId.serial_size();
+    s += item->authorId.serial_size();
 
     return s;
 }
