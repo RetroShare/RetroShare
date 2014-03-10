@@ -46,6 +46,27 @@ std::list<RsPeerId> FriendSelectionDialog::selectFriends_SSL(QWidget *parent,con
 
     return sids ;
 }
+std::list<RsGxsId> FriendSelectionDialog::selectFriends_GXS(QWidget *parent,const QString& caption,const QString& header_text,
+                            FriendSelectionWidget::Modus modus,
+                            FriendSelectionWidget::ShowTypes show_type,
+                            const std::list<RsGxsId>& pre_selected_ids)
+{
+    std::list<std::string> psids ;
+    for(std::list<RsGxsId>::const_iterator it(pre_selected_ids.begin());it!=pre_selected_ids.end();++it)
+        psids.push_back( (*it).toStdString() ) ;
+
+    FriendSelectionDialog dialog(parent,header_text,modus,show_type,FriendSelectionWidget::IDTYPE_SSL,psids) ;
+
+    dialog.setWindowTitle(caption) ;
+
+    if(QDialog::Rejected == dialog.exec())
+        return std::list<RsGxsId>() ;
+
+    std::list<RsGxsId> sids ;
+    dialog.friends_widget->selectedIds<RsGxsId,FriendSelectionWidget::IDTYPE_GXS>(sids,false) ;
+
+    return sids ;
+}
 FriendSelectionDialog::FriendSelectionDialog(QWidget *parent,const QString& header_text,
 															FriendSelectionWidget::Modus modus,
 															FriendSelectionWidget::ShowTypes show_type,

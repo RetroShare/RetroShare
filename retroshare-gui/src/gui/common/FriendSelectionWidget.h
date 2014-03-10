@@ -45,7 +45,8 @@ public:
 		IDTYPE_NONE,
 		IDTYPE_GROUP,
 		IDTYPE_SSL,
-		IDTYPE_GPG
+		IDTYPE_GPG,
+		IDTYPE_GXS
 	};
 
 	enum Modus
@@ -61,6 +62,7 @@ public:
         SHOW_GPG              = 2,
         SHOW_SSL              = 4,
         SHOW_NON_FRIEND_GPG   = 8,
+        SHOW_GXS              =16
     };
 
     Q_DECLARE_FLAGS(ShowTypes, ShowType)

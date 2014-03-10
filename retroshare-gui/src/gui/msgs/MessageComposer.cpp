@@ -44,6 +44,7 @@
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rsstatus.h>
 #include <retroshare/rsfiles.h>
+#include <retroshare/rsidentity.h>
 
 #include "gui/notifyqt.h"
 #include "gui/common/RSTreeWidgetItem.h"
@@ -215,7 +216,8 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     ui.friendSelectionWidget->setModus(FriendSelectionWidget::MODUS_MULTI);
     ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_GROUP
                                           | FriendSelectionWidget::SHOW_SSL
-                                          | (ui.onlyTrustedKeys->isChecked()? FriendSelectionWidget::SHOW_NONE : FriendSelectionWidget::SHOW_NON_FRIEND_GPG));
+                                          | FriendSelectionWidget::SHOW_GXS);
+                                          //| (ui.onlyTrustedKeys->isChecked()? FriendSelectionWidget::SHOW_NONE : FriendSelectionWidget::SHOW_NON_FRIEND_GPG));
     //ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_GROUP | FriendSelectionWidget::SHOW_SSL );
     ui.friendSelectionWidget->start();
 
@@ -359,25 +361,26 @@ void MessageComposer::processSettings(bool bLoad)
 
     Settings->endGroup();
 }
-/*static*/ void MessageComposer::msgDistantPeer(const RsPgpId& pgp_id)
+
+/*static*/ void MessageComposer::msgGxsIdentity(const RsGxsId &id)
 {
 //    std::cerr << "MessageComposer::msgfriend()" << std::endl;
 
     /* create a message */
 
-    DistantMsgPeerId pid ;
-    rsMsgs->getDistantMessagePeerId(pgp_id,pid) ;
-
     MessageComposer *pMsgDialog = MessageComposer::newMsg();
-    if (pMsgDialog == NULL) 
+
+    if (pMsgDialog == NULL)
         return;
 
-    pMsgDialog->addRecipient(TO,pid,pgp_id) ;
+    DistantMsgPeerId pid ;
+    rsMsgs->getDistantMessagePeerId(id,pid) ;
+
+    pMsgDialog->addRecipient(TO, RsPeerId(pid), false);
     pMsgDialog->show();
 
     /* window will destroy itself! */
 }
-
 
 /*static*/ void MessageComposer::msgFriend(const RsPeerId &id, bool group)
 {
@@ -1423,17 +1426,19 @@ void MessageComposer::setRecipientToRow(int row, enumType type, const std::strin
 		  {
 			  RsPeerDetails details;
 
-              if(_distant_peers.find(RsPeerId(id)) != _distant_peers.end())
-			  {
-                  if(!rsPeers->getGPGDetails(_distant_peers[RsPeerId(id)], details))
-				  {
-                      std::cerr << "Can't get peer details from " << _distant_peers[RsPeerId(id)] << std::endl;
-					  return ;
-				  }
+              if(_distant_peers.find(DistantMsgPeerId(id)) != _distant_peers.end())
+              {
+                  RsIdentityDetails detail;
 
-                  name = tr("Distant peer (name: %2, PGP key: %1)").arg(QString::fromStdString(_distant_peers[RsPeerId(id)].toStdString())).arg(QString::fromStdString(details.name)) ;
-				  icon = QIcon(StatusDefs::imageUser(RS_STATUS_ONLINE));
-			  }
+                  if(!rsIdentity->getIdDetails(_distant_peers[DistantMsgPeerId(id)], detail))
+                  {
+                      std::cerr << "Can't get peer details from " << _distant_peers[DistantMsgPeerId(id)] << std::endl;
+                      return ;
+                  }
+
+                  name = tr("Distant peer (name: %2, PGP key: %1)").arg(QString::fromStdString(_distant_peers[DistantMsgPeerId(id)].toStdString())).arg(QString::fromStdString(detail.mNickname)) ;
+                  icon = QIcon(StatusDefs::imageUser(RS_STATUS_ONLINE));
+              }
               else if(rsPeers->getPeerDetails(RsPeerId(id), details) && (!details.isOnlyGPGdetail))
 			  {
 				  name = PeerDefs::nameWithLocation(details);
@@ -1580,9 +1585,9 @@ void MessageComposer::editingRecipientFinished()
     lineEdit->setText(text);
 }
 
-void MessageComposer::addRecipient(enumType type, const DistantMsgPeerId& pid,const RsPgpId& pgp_id)
+void MessageComposer::addRecipient(enumType type, const DistantMsgPeerId& pid,const RsGxsId& gxs_id)
 {
-    _distant_peers[pid] = pgp_id ;
+    _distant_peers[pid] = gxs_id ;
 
 	int rowCount = ui.recipientWidget->rowCount();
 	int row;
@@ -2313,22 +2318,23 @@ void MessageComposer::addContact(enumType type)
         addRecipient(type, *idIt, false);
     }
 
-    std::list<RsPgpId> id2 ;
-    ui.friendSelectionWidget->selectedIds<RsPgpId,FriendSelectionWidget::IDTYPE_GPG>(id2, true);
-    for (std::list<RsPgpId>::const_iterator idIt = id2.begin(); idIt != id2.end(); idIt++)
-	 {
+    std::list<RsGxsId> id2 ;
+    ui.friendSelectionWidget->selectedIds<RsGxsId,FriendSelectionWidget::IDTYPE_GXS>(id2, true);
+    for (std::list<RsGxsId>::const_iterator idIt = id2.begin(); idIt != id2.end(); idIt++)
+    {
          DistantMsgPeerId pid ;
 
          if(rsMsgs->getDistantMessagePeerId(*idIt,pid))
              addRecipient(type, pid, *idIt);
-	 }
+    }
 }
 
 void MessageComposer::toggleShowNonFriend(bool bValue)
 {
     ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_GROUP
                                           | FriendSelectionWidget::SHOW_SSL
-                                          | (bValue?FriendSelectionWidget::SHOW_NONE : FriendSelectionWidget::SHOW_NON_FRIEND_GPG));
+                                          | (bValue?FriendSelectionWidget::SHOW_NONE : FriendSelectionWidget::SHOW_GXS));
+
     Settings->setValueToGroup("MessageComposer", "ShowOnlyTrustedKeys", bValue);
 }
 

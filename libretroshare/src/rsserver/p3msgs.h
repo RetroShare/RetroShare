@@ -27,6 +27,7 @@
  */
 
 #include "retroshare/rsmsgs.h"
+#include "retroshare/rsgxsifacetypes.h"
 
 class p3MsgService;
 class p3ChatService;
@@ -85,7 +86,7 @@ class p3Msgs: public RsMsgs
 
 	  virtual void enableDistantMessaging(bool b) ;
 	  virtual bool distantMessagingEnabled() ;
-      virtual bool getDistantMessagePeerId(const RsPgpId& pgp_id,DistantMsgPeerId& pid) ;
+      virtual bool getDistantMessagePeerId(const RsGxsId &pgp_id,DistantMsgPeerId& pid) ;
 
 	  /*!
 	   * gets avatar from peer, image data in jpeg format

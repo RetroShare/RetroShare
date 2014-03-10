@@ -375,6 +375,8 @@ void SecurityItem::sendMsg()
 	std::cerr << std::endl;
 #endif
 
+    std::cerr << __PRETTY_FUNCTION__ << ": suspended for now." << std::endl;
+#ifdef SUSPENDED
 	MessageComposer *nMsgDialog = MessageComposer::newMsg();
 	if (nMsgDialog == NULL) {
 		return;
@@ -389,7 +391,8 @@ void SecurityItem::sendMsg()
 		nMsgDialog->activateWindow();
 	}
 
-	/* window will destroy itself! */
+    /* window will destroy itself! */
+#endif
 }
 
 void SecurityItem::openChat()

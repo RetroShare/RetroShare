@@ -1513,8 +1513,9 @@ static void processList(const QStringList &list, const QString &textSingular, co
 							}
 							msg->show();
 							messageStarted.append(PeerDefs::nameWithLocation(detail));
-						} 
-                        else if(rsMsgs->getDistantMessagePeerId(detail.gpg_id,dm_pid))
+                        }
+#ifdef SUSPENDED
+            else if(rsMsgs->getDistantMessagePeerId(detail.gpg_id,dm_pid))
 						{
 							MessageComposer *msg = MessageComposer::newMsg();
                             msg->addRecipient(MessageComposer::TO, dm_pid,detail.gpg_id) ;
@@ -1525,7 +1526,8 @@ static void processList(const QStringList &list, const QString &textSingular, co
 							msg->show();
 							messageStarted.append(PeerDefs::nameWithLocation(detail));
 
-						}
+                        }
+#endif
 						else 
 						{
 							messageReceipientNotAccepted.append(PeerDefs::nameWithLocation(detail));

@@ -35,11 +35,11 @@ uint32_t RsGRouterPublishKeyItem::serial_size() const
 	uint32_t s = 8 ; // header
 	s += POW_PAYLOAD_SIZE  ; // proof of work bytes
 	s += 4  ; // diffusion_id
-	s += 20 ; // sha1 for published_key
+    s += published_key.serial_size() ; // sha1 for published_key
 	s += 4  ; // service id
 	s += 4  ; // randomized distance
 	s += GetTlvStringSize(description_string) ; // description
-	s += PGP_KEY_FINGERPRINT_SIZE ;		// fingerprint
+    s += fingerprint.serial_size() ;		// fingerprint
 
 	return s ;
 }
@@ -370,7 +370,7 @@ uint32_t RsGRouterGenericDataItem::serial_size() const
 {
 	uint32_t s = 8 ;	// header
 	s += sizeof(GRouterMsgPropagationId)  ; // routing id
-	s += 20 ; 			// sha1 for published_key
+    s += destination_key.serial_size() ;	// destination_key
 	s += 4 ;  			// data_size
 	s += data_size ;  // data_size
 
@@ -434,7 +434,7 @@ uint32_t RsGRouterMatrixCluesItem::serial_size() const
 {
 	uint32_t s = 8 ; 									// header
 
-	s += 20 ;				// Key size
+    s += destination_key.serial_size() ;				// Key size
 	s += 4 ; 				// list<RoutingMatrixHitEntry>::size()
 	s += (4+4+8) * clues.size() ;
 
@@ -452,14 +452,14 @@ uint32_t RsGRouterRoutingInfoItem::serial_size() const
 {
     uint32_t s = 8 ; 								// header
     s += 4  ; 										// status_flags
-    s += origin.SIZE_IN_BYTES  ; 							// origin
+    s += origin.serial_size()  ; 							// origin
     s += 8  ; 										// received_time
     s += 4  ; 										// tried_friends.size() ;
 
     s += tried_friends.size() * ( RsPeerId::SIZE_IN_BYTES + 8 ) ;			// FriendTrialRecord
 
     s += 4;										// data_item->routing_id
-    s += data_item->destination_key.SIZE_IN_BYTES;							// data_item->destination_key
+    s += data_item->destination_key.serial_size();							// data_item->destination_key
     s += 4;										// data_item->data_size
     s += data_item->data_size;								// data_item->data_bytes
 

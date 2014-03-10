@@ -33,6 +33,7 @@
 #include <set>
 
 #include "rstypes.h"
+#include "rsgxsifacetypes.h"
 
 /********************** For Messages and Channels *****************/
 
@@ -88,7 +89,7 @@ typedef uint64_t 		ChatLobbyMsgId ;
 typedef std::string 		ChatLobbyNickName ;
 
 typedef RsPeerId 		DistantChatPeerId ;
-typedef RsPeerId 		DistantMsgPeerId ;
+typedef GRouterKeyIdType	DistantMsgPeerId ;
 
 class MessageInfo 
 {
@@ -241,7 +242,7 @@ extern RsMsgs   *rsMsgs;
 struct DistantOfflineMessengingInvite
 {
 	RsPgpId issuer_pgp_id ;
-	Sha1CheckSum hash ;
+    DistantMsgPeerId peer_id ;
 	time_t time_of_validity ;
 };
 
@@ -295,7 +296,7 @@ virtual bool createDistantOfflineMessengingInvite(time_t validity_time_stamp, Di
 virtual bool getDistantOfflineMessengingInvites(std::vector<DistantOfflineMessengingInvite>& invites) = 0 ;
 virtual void enableDistantMessaging(bool b) = 0;
 virtual bool distantMessagingEnabled() = 0;
-virtual bool getDistantMessagePeerId(const RsPgpId& pgp_id, DistantMsgPeerId& peerId) = 0;
+virtual bool getDistantMessagePeerId(const RsGxsId& gxs_id, DistantMsgPeerId& peerId) = 0;
 
 /****************************************/
 /*                 Chat                 */

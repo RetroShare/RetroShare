@@ -11,7 +11,7 @@ greaterThan(QT_MAJOR_VERSION, 4) {
 
 # Below is for GXS services.
 # Should be disabled for releases.
-#CONFIG += gxs debug
+CONFIG += gxs debug
 
 gxs {
 	
@@ -25,7 +25,7 @@ gxs {
 	CONFIG += gxsgui
 	# thewire is incomplete - dont enable
 	#CONFIG += thewire
-	#CONFIG += photoshare
+	CONFIG += photoshare
 
 	DEFINES += RS_ENABLE_GXS
 }

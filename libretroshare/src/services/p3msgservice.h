@@ -43,17 +43,17 @@
 #include "serialiser/rsmsgitems.h"
 #include "util/rsthreads.h"
 
-#ifdef GROUTER
+#include "retroshare/rsgxsifacetypes.h"
+
 #include "grouter/p3grouter.h"
 #include "grouter/grouterclientservice.h"
-#endif
 #include "turtle/p3turtle.h"
 #include "turtle/turtleclientservice.h"
 
 class p3LinkMgr;
 
 // Temp tweak to test grouter
-class p3MsgService: public p3Service, public p3Config, public pqiMonitor, public RsTurtleClientService
+class p3MsgService: public p3Service, public p3Config, public pqiMonitor
 #ifdef GROUTER
 						  , public GRouterClientService
 #endif
@@ -114,8 +114,6 @@ int     checkOutgoingMessages();
 #ifdef GROUTER
 		virtual void connectToGlobalRouter(p3GRouter *) ;
 #endif
-		virtual void connectToTurtleRouter(p3turtle *) ;
-
 		struct DistantMessengingInvite
 		{
 			time_t time_of_validity ;
@@ -132,46 +130,38 @@ int     checkOutgoingMessages();
 
 		void enableDistantMessaging(bool b) ;
 		bool distantMessagingEnabled() ;
-        bool getDistantMessagePeerId(const RsPgpId& pgp_id,DistantMsgPeerId &peer_id) ;
+        bool getDistantMessagePeerId(const RsGxsId &gxs_id,DistantMsgPeerId &peer_id) ;
 
 	private:
-        bool getDistantMessageHash(const RsPgpId& pgp_id,Sha1CheckSum &hash) ;
-        void sendPrivateMsgItem(const Sha1CheckSum& hash,RsMsgItem *) ;
+        void sendPrivateMsgItem(RsMsgItem *msgitem) ;
 
 		// This maps contains the current invitations to respond to.
 		// The map is indexed by the hash
-		std::map<Sha1CheckSum,DistantMessengingInvite> _messenging_invites ;
+		  std::map<GRouterKeyId,DistantMessengingInvite> _messenging_invites ;
 
 		// This contains the ongoing tunnel handling contacts.
 		// The map is indexed by the hash
-		std::map<Sha1CheckSum,DistantMessengingContact> _messenging_contacts ;
+        std::map<GRouterKeyId,DistantMessengingContact> _messenging_contacts ;
 
 		// Overloaded from RsTurtleClientService
 
 #ifdef GROUTER
 		virtual void receiveGRouterData(RsGRouterGenericDataItem *item, const GRouterKeyId& key) ;
 #endif
-        virtual bool handleTunnelRequest(const Sha1CheckSum& hash,const RsPeerId& peer_id) ;
-//		virtual void receiveTurtleData(RsTurtleGenericTunnelItem *item,const Sha1CheckSum& hash,const RsPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction) ;
-		void addVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&,RsTurtleGenericTunnelItem::Direction dir) {}
-		void removeVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&) {}
-
 		// Utility functions
 
-		bool encryptMessage(const RsPgpId& pgp_id,RsMsgItem *msg) ;
+        bool createDistantMessage(const RsGxsId& destination_gxs_id,const RsGxsId& source_gxs_id,RsMsgItem *msg) ;
 		bool locked_findHashForVirtualPeerId(const RsPeerId& pid,Sha1CheckSum& hash) ;
 
 		void manageDistantPeers() ;
-		void sendTurtleData(const Sha1CheckSum& hash,RsMsgItem *) ;
 #ifdef GROUTER
-		void sendGRouterData(const Sha1CheckSum& hash,RsMsgItem *) ;
+        void sendGRouterData(const GRouterKeyId &key_id,RsMsgItem *) ;
 #endif
 		void handleIncomingItem(RsMsgItem *) ;
 
 #ifdef GROUTER
 		p3GRouter *mGRouter ;
 #endif
-		p3turtle *mTurtle ;
 
 uint32_t getNewUniqueMsgId();
 int     sendMessage(RsMsgItem *item);

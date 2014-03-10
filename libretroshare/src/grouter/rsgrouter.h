@@ -27,8 +27,10 @@
 
 #include "util/rsdir.h"
 #include "grouter/groutertypes.h"
+#include "retroshare/rsids.h"
 
-typedef Sha1CheckSum GRouterKeyId ;	// we use sha1. Gives sufficient entropy.
+typedef GRouterKeyIdType GRouterKeyId ;	// we use SSLIds, so that it's easier in the GUI to mix up peer ids with grouter ids.
+
 class GRouterClientService ;
 class RsGRouterGenericDataItem ;
 

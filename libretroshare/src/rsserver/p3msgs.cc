@@ -116,7 +116,7 @@ bool p3Msgs::distantMessagingEnabled()
 {
 	return mMsgSrv->distantMessagingEnabled();
 }
-bool p3Msgs::getDistantMessagePeerId(const RsPgpId& pgp_id,DistantMsgPeerId &pid)
+bool p3Msgs::getDistantMessagePeerId(const RsGxsId& pgp_id,DistantMsgPeerId &pid)
 {
     return mMsgSrv->getDistantMessagePeerId(pgp_id,pid);
 }

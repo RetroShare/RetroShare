@@ -248,6 +248,10 @@ void FriendSelectionWidget::secured_fillList()
         selectedIds<RsPgpId,IDTYPE_GPG>(gpgIdsSelected,true);
 	}
 
+	std::list<RsGxsId> gxsIdsSelected;
+	if (mShowTypes & SHOW_GXS)
+		selectedIds<RsGxsId,IDTYPE_GXS>(gxsIdsSelected,true);
+	
 	// remove old items
 	ui->friendList->clear();
 
@@ -271,6 +275,12 @@ void FriendSelectionWidget::secured_fillList()
 		rsPeers->getFriendList(sslIds);
 	}
 
+	std::list<RsGxsId> gxsIds ;
+	std::list<RsGxsId>::iterator gxsIt ;
+
+	if(mShowTypes & SHOW_GXS)
+		rsIdentity->getOwnIds(gxsIds) ;	// should get all ids, not just own. What's the correct call??
+
 	std::list<StatusInfo> statusInfo;
 	std::list<StatusInfo>::iterator statusIt;
 	rsStatus->getStatusList(statusInfo);
@@ -282,9 +292,11 @@ void FriendSelectionWidget::secured_fillList()
 	while (true) {
 		QTreeWidgetItem *groupItem = NULL;
 		QTreeWidgetItem *gpgItem = NULL;
-		RsGroupInfo *groupInfo = NULL;
+        QTreeWidgetItem *gxsItem = NULL;
+        RsGroupInfo *groupInfo = NULL;
 
-		if ((mShowTypes & SHOW_GROUP) && groupIt != groupInfoList.end()) {
+		if ((mShowTypes & SHOW_GROUP) && groupIt != groupInfoList.end()) 
+		{
 			groupInfo = &(*groupIt);
 
 			if (groupInfo->peerIds.size() == 0) {
@@ -323,7 +335,8 @@ void FriendSelectionWidget::secured_fillList()
 			}
 		}
 
-		if (mShowTypes & (SHOW_GPG | SHOW_NON_FRIEND_GPG)) {
+		if (mShowTypes & (SHOW_GPG | SHOW_NON_FRIEND_GPG)) 
+		{
 			// iterate through gpg ids
 			for (gpgIt = gpgIds.begin(); gpgIt != gpgIds.end(); gpgIt++) {
 				if (groupInfo) {
@@ -422,7 +435,9 @@ void FriendSelectionWidget::secured_fillList()
 					setSelected(mListModus, gpgItem, true);
 				}
 			}
-		} else {
+		} 
+		else 
+		{
 			// iterate through ssl ids
 			for (sslIt = sslIds.begin(); sslIt != sslIds.end(); sslIt++) {
 				RsPeerDetails detail;
@@ -470,6 +485,47 @@ void FriendSelectionWidget::secured_fillList()
 			}
 		}
 
+		if(mShowTypes & SHOW_GXS)
+		{
+			// iterate through gpg ids
+			for (gxsIt = gxsIds.begin(); gxsIt != gxsIds.end(); gxsIt++) 
+			{
+					// we fill the not assigned gpg ids
+				if (std::find(filledIds.begin(), filledIds.end(), (*gxsIt).toStdString()) != filledIds.end()) 
+						continue;
+
+				// add equal too, its no problem
+				filledIds.push_back((*gxsIt).toStdString());
+
+				RsIdentityDetails detail;
+				if (!rsIdentity->getIdDetails(*gxsIt, detail)) 
+					continue; /* BAD */
+
+				// make a widget per friend
+				gxsItem = new RSTreeWidgetItem(mCompareRole, IDTYPE_GXS);
+
+				QString name = QString::fromUtf8(detail.mNickname.c_str());
+				gxsItem->setText(COLUMN_NAME, name + " ("+QString::fromStdString( (*gxsIt).toStdString() )+")");
+
+				gxsItem->setTextColor(COLUMN_NAME, textColorOnline());
+				gxsItem->setFlags(Qt::ItemIsUserCheckable | gxsItem->flags());
+                gxsItem->setIcon(COLUMN_NAME, QIcon(StatusDefs::imageUser(RS_STATUS_ONLINE)));
+				gxsItem->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(detail.mId.toStdString()));
+				gxsItem->setData(COLUMN_DATA, ROLE_SORT, "2 " + name);
+
+				if (mListModus == MODUS_CHECK) 
+					gxsItem->setCheckState(0, Qt::Unchecked);
+
+				ui->friendList->addTopLevelItem(gxsItem);
+
+				gxsItem->setExpanded(true);
+
+				emit itemAdded(IDTYPE_GXS, QString::fromStdString(detail.mId.toStdString()), gxsItem);
+
+				if (std::find(gxsIdsSelected.begin(), gxsIdsSelected.end(), detail.mId) != gxsIdsSelected.end()) 
+					setSelected(mListModus, gxsItem, true);
+			}
+		}
 		if (groupIt != groupInfoList.end()) {
 			groupIt++;
 		} else {
@@ -657,7 +713,8 @@ void FriendSelectionWidget::itemChanged(QTreeWidgetItem *item, int column)
 		}
 		break;
 	case IDTYPE_GPG:
-		{
+    case IDTYPE_GXS:
+        {
 			if (mInGpgItemChanged) {
 				break;
 			}
@@ -790,7 +847,9 @@ void FriendSelectionWidget::selectedIds(IdType idType, std::list<std::string> &i
 			}
 			break;
 		case IDTYPE_GPG:
-			if (idType == IDTYPE_GPG) {
+        case IDTYPE_GXS:
+            if (idType == IDTYPE_GPG || idType == IDTYPE_GXS)
+            {
 				if (isSelected(mListModus, item)) {
 					id = idFromItem(item);
 				} else {
@@ -858,7 +917,8 @@ void FriendSelectionWidget::setSelectedIds(IdType idType, const std::list<std::s
 		case IDTYPE_GROUP:
 		case IDTYPE_GPG:
 		case IDTYPE_SSL:
-			if (idType == itemType) {
+        case IDTYPE_GXS:
+            if (idType == itemType) {
 				if (std::find(ids.begin(), ids.end(), id) != ids.end()) {
 					setSelected(mListModus, item, true);
 					break;

@@ -22,6 +22,7 @@
 #include <QCoreApplication>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsmsgs.h>
+#include <retroshare/rsidentity.h>
 
 #include "PeerDefs.h"
 
@@ -35,6 +36,14 @@ const QString PeerDefs::nameWithLocation(const RsPeerDetails &details)
     return name;
 }
 const QString PeerDefs::rsid(const std::string &name, const RsPgpId &id)
+{
+    if (name.empty()) {
+        return qApp->translate("PeerDefs", "Unknown") + "@" + QString::fromStdString(id.toStdString());
+    }
+
+    return QString::fromUtf8(name.c_str()) + "@" + QString::fromStdString(id.toStdString());
+}
+const QString PeerDefs::rsid(const std::string &name, const RsGxsId &id)
 {
     if (name.empty()) {
         return qApp->translate("PeerDefs", "Unknown") + "@" + QString::fromStdString(id.toStdString());
@@ -60,32 +69,42 @@ const QString PeerDefs::rsidFromId(const RsPeerId &id, QString *name /* = NULL*/
     QString rsid;
 
     std::string peerName = rsPeers->getPeerName(id);
-     DistantMsgPeerId pid ;
+    DistantMsgPeerId pid ;
 
-	 if(!peerName.empty())	
-	 {
+    if(!peerName.empty())
+    {
         rsid = PeerDefs::rsid(peerName, id);
 
-        if (name) {
+        if (name)
             *name = QString::fromUtf8(peerName.c_str());
-        }
-    }
-     else if(rsMsgs->getDistantMessagePeerId(rsPeers->getGPGOwnId(),pid) && pid == id)
-	 {
-		 // not a real peer. Try from hash for distant messages
-	
-		 peerName = rsPeers->getGPGName(rsPeers->getGPGOwnId()) ;
-		 rsid = PeerDefs::rsid(peerName, rsPeers->getGPGOwnId());
-		 if(name)
-			 *name = QString::fromUtf8(peerName.c_str());
-	 }
-	 else
-    {
-        rsid = PeerDefs::rsid("", id);
 
-        if (name) 
-            *name = qApp->translate("PeerDefs", "Unknown");
-    } 
+        return rsid ;
+
+    }
+
+    std::list<RsGxsId> gxs_ids ;
+    rsIdentity->getOwnIds(gxs_ids) ;
+
+    for(std::list<RsGxsId>::const_iterator it(gxs_ids.begin());it!=gxs_ids.end();++it)
+        if(rsMsgs->getDistantMessagePeerId(*it,pid) && RsPeerId(pid) == id)
+        {
+            // not a real peer. Try from hash for distant messages
+
+            RsIdentityDetails details ;
+            if(!rsIdentity->getIdDetails(*it,details))
+                continue ;
+
+            peerName = details.mNickname ;
+
+            rsid = PeerDefs::rsid(peerName, *it);
+            if(name)
+                *name = QString::fromUtf8(peerName.c_str());
+        }
+
+    rsid = PeerDefs::rsid("", id);
+
+    if (name)
+        *name = qApp->translate("PeerDefs", "Unknown");
 
     return rsid;
 }

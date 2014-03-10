@@ -51,7 +51,7 @@ public:
 
     static void msgFriend(const RsPeerId &id, bool group);
     //static void msgDistantPeer(const std::string& hash,const std::string& pgp_id) ;
-    static void msgDistantPeer(const RsPgpId& pgp_id) ;
+    static void msgGxsIdentity(const RsGxsId& gxs_id) ;
 
     static QString recommendMessage();
     static void recommendFriend(const std::list <RsPeerId> &sslIds, const RsPeerId &to = RsPeerId(), const QString &msg = "", bool autoSend = false);
@@ -69,7 +69,7 @@ public:
     void  setQuotedMsg(const QString &msg, const QString &header);
     void  setMsgText(const QString &msg, bool asHtml = false);
     void  addRecipient(enumType type, const RsPeerId &id, bool group);
-    void  addRecipient(enumType type, const DistantMsgPeerId &pid, const RsPgpId &pgp_id) ;
+    void  addRecipient(enumType type, const DistantMsgPeerId &pid, const RsGxsId &gxs_id) ;
 
 public slots:
     /* actions to take.... */
@@ -221,7 +221,7 @@ private:
     Ui::MessageComposer ui;
 
     std::list<FileInfo> _recList ;
-     std::map<DistantMsgPeerId,RsPgpId> _distant_peers ;	// pairs (hash,pgp_id)
+     std::map<DistantMsgPeerId,RsGxsId> _distant_peers ;	// pairs (hash,gxs_id)
 };
 
 #endif

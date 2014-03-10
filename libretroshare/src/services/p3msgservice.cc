@@ -50,6 +50,7 @@
 
 #include <iomanip>
 #include <map>
+#include <sstream>
 
 //#define MSG_DEBUG 1
 //#define DEBUG_DISTANT_MSG
@@ -57,11 +58,13 @@
 
 const int msgservicezone = 54319;
 
-static const uint32_t RS_DISTANT_MSG_STATUS_TUNNEL_OK = 0x0001 ;
-static const uint32_t RS_DISTANT_MSG_STATUS_TUNNEL_DN = 0x0000 ;
-static const uint32_t DISTANT_MSG_HASH_SIZE = Sha1CheckSum::SIZE_IN_BYTES ;
+static const uint8_t DISTANT_MSG_TAG_IDENTITY        = 0x10 ;
+static const uint8_t DISTANT_MSG_TAG_CLEAR_MSG       = 0x20 ;
+static const uint8_t DISTANT_MSG_TAG_ENCRYPTED_MSG   = 0x21 ;
+static const uint8_t DISTANT_MSG_TAG_SIGNATURE       = 0x30 ;
 
-static const uint8_t ENCRYPTED_MSG_PROTOCOL_VERSION_01 = 0x37 ;
+static const uint8_t DISTANT_MSG_PROTOCOL_VERSION_01 = 0x47 ;
+static const uint8_t DISTANT_MSG_PROTOCOL_VERSION_02 = 0x48 ;
 
 /* Another little hack ..... unique message Ids
  * will be handled in this class.....
@@ -88,24 +91,6 @@ p3MsgService::p3MsgService(p3LinkMgr *lm)
 	if(lm)
 		initStandardTagTypes();
 
-#ifdef GROUTER
-	// Debug stuff. Create a random key and register it.
-	const RsPeerId& own_ssl_id = rsPeers->getOwnId() ;
-	const RsPgpId& gpg_id = rsPeers->getGPGOwnId() ;
-
-	RsPeerDetails d;
-    rsPeers->getGPGDetails(gpg_id,d) ;
-	PGPFingerprintType fingerp( d.fpr ) ;
-
-	// Re-hash the SSL id, to make it one way. Will be replaced by proper invitations in the future.
-	//
-    GRouterKeyId key ( RsDirUtil::sha1sum( own_ssl_id.toByteArray(),own_ssl_id.SIZE_IN_BYTES ))  ;
-
-	static GRouterServiceId client_id = GROUTER_CLIENT_ID_MESSAGES;
-	static std::string description = "Test string for debug purpose" ;
-
-	mGRouter->registerKey(key,fingerp,client_id,description) ;
-#endif
 }
 
 uint32_t p3MsgService::getNewUniqueMsgId()
@@ -276,21 +261,15 @@ void p3MsgService::checkSizeAndSendMessage(RsMsgItem *msg)
 	static const uint32_t MAX_STRING_SIZE = 15000 ;
 
 	std::cerr << "Msg is size " << msg->message.size() << std::endl;
-	Sha1CheckSum hash ;
 
 	if( msg->msgFlags & RS_MSG_FLAGS_DISTANT )
 	{
 		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 
 #ifdef DEBUG_DISTANT_MSG
-		std::cerr << "checkOutgoingMessages(): removing pending message flag for hash " << (*it)->PeerId() << "." << std::endl;
+        std::cerr << "checkOutgoingMessages(): removing pending message flag for peer id " << msg->PeerId() << "." << std::endl;
 #endif
-		if(!locked_findHashForVirtualPeerId(msg->PeerId(),hash))
-		{
-			std::cerr << "p3MsgService::checkSizeAndSendMessage(): Cannot find hash for virtual peer id " << msg->PeerId() << ". This is unexpected!" << std::endl;
-			return ;
-		}
-		_messenging_contacts[hash].pending_messages = false ;
+        _messenging_contacts[GRouterKeyId(msg->PeerId())].pending_messages = false ;
 	}
 
 	while(msg->message.size() > MAX_STRING_SIZE)
@@ -311,11 +290,7 @@ void p3MsgService::checkSizeAndSendMessage(RsMsgItem *msg)
 		item->msgFlags |= RS_MSG_FLAGS_PARTIAL ;
 
 		if(msg->msgFlags & RS_MSG_FLAGS_DISTANT)
-		{
-
-
-			sendPrivateMsgItem(hash,item) ;
-		}
+            sendPrivateMsgItem(item) ;
 		else
 			sendItem(item) ;
 	}
@@ -324,7 +299,7 @@ void p3MsgService::checkSizeAndSendMessage(RsMsgItem *msg)
 #endif
 
 	if(msg->msgFlags & RS_MSG_FLAGS_DISTANT)
-		sendPrivateMsgItem(hash,msg) ;
+        sendPrivateMsgItem(msg) ;
 	else
 		sendItem(msg) ;
 }
@@ -1792,28 +1767,35 @@ RsMsgItem *p3MsgService::initMIRsMsg(MessageInfo &info, const RsPeerId &to)
 	return msg;
 }
 
-bool p3MsgService::encryptMessage(const RsPgpId& pgp_id,RsMsgItem *item)
+bool p3MsgService::createDistantMessage(const RsGxsId& destination_gxs_id,const RsGxsId& source_gxs_id,RsMsgItem *item)
 {
 #ifdef DEBUG_DISTANT_MSG
-	std::cerr << "Encrypting message with public key " << pgp_id << " in place." << std::endl;
+	std::cerr << "Creating distant message for recipient " << item->PeerId() << ", encryption key=" << destination_gxs_id << " in place." << std::endl;
 #endif
 
 	// 0 - append own id to the data.
 	//
-	uint32_t rssize = _serialiser->size(item) ;
-	unsigned char *data = (unsigned char *)malloc(1+rssize+PGP_KEY_ID_SIZE) ;
+	uint32_t conservative_max_signature_size = 1000 ;
+	uint32_t message_size = _serialiser->size(item) ;
+	uint32_t total_data_size = 1+5+source_gxs_id.SIZE_IN_BYTES+5+message_size+conservative_max_signature_size ;
+
+	unsigned char *data = (unsigned char *)malloc(total_data_size) ;
 	
 	// -1 - setup protocol version
 	//
 #ifdef DEBUG_DISTANT_MSG
-	std::cerr << "  adding protocol version TAG = " << std::hex << (int)ENCRYPTED_MSG_PROTOCOL_VERSION_01 << std::dec << std::endl;
+	std::cerr << "  adding protocol version TAG = " << std::hex << (int)DISTANT_MSG_PROTOCOL_VERSION_02 << std::dec << std::endl;
 #endif
-	data[0] = ENCRYPTED_MSG_PROTOCOL_VERSION_01 ;
-	
+	uint32_t offset = 0 ;
+	data[offset++] = DISTANT_MSG_PROTOCOL_VERSION_02 ;
+
 #ifdef DEBUG_DISTANT_MSG
 	std::cerr << "  adding own key ID " << AuthGPG::getAuthGPG()->getGPGOwnId() << std::endl;
 #endif
-	memcpy(&data[1], RsPgpId(AuthGPG::getAuthGPG()->getGPGOwnId()).toByteArray(), PGP_KEY_ID_SIZE) ;
+	data[offset++] = DISTANT_MSG_TAG_IDENTITY ;
+	offset += PGPKeyParser::write_125Size(&data[offset],source_gxs_id.SIZE_IN_BYTES) ;
+	memcpy(&data[offset], source_gxs_id.toByteArray(), source_gxs_id.SIZE_IN_BYTES) ;
+	offset += source_gxs_id.SIZE_IN_BYTES ;
 
 	// 1 - serialise the whole message item into a binary chunk.
 	//
@@ -1821,12 +1803,18 @@ bool p3MsgService::encryptMessage(const RsPgpId& pgp_id,RsMsgItem *item)
 #ifdef DEBUG_DISTANT_MSG
 	std::cerr << "  serialising item..." << std::endl;
 #endif
-	if(!_serialiser->serialise(item,&data[1+PGP_KEY_ID_SIZE],&rssize))
+	data[offset++] = DISTANT_MSG_TAG_CLEAR_MSG ;
+	offset += PGPKeyParser::write_125Size(&data[offset],message_size) ;
+
+	uint32_t remaining_size = total_data_size - offset ;
+
+	if(!_serialiser->serialise(item,&data[offset],&remaining_size))
 	{
 		std::cerr << "(EE) p3MsgService::encryptMessage(): Serialization error." << std::endl;
 		free(data) ;
 		return false;
 	}
+	offset += message_size ;
 
 	// 2 - now sign the data, if necessary, and put the signature up front
 
@@ -1841,7 +1829,9 @@ bool p3MsgService::encryptMessage(const RsPgpId& pgp_id,RsMsgItem *item)
 		signature_length = 2000 ;
 		signature_data = new unsigned char[signature_length] ;
 
-		if(!AuthGPG::getAuthGPG()->SignDataBin(data,1+rssize+PGP_KEY_ID_SIZE,signature_data,&signature_length))
+		// do a proper signature here
+		//
+		//if(!AuthGPG::getAuthGPG()->SignDataBin(data,1+rssize+PGP_KEY_ID_SIZE,signature_data,&signature_length))
 		{
 			free(data) ;
 			std::cerr << "Signature failed!" << std::endl;
@@ -1852,7 +1842,7 @@ bool p3MsgService::encryptMessage(const RsPgpId& pgp_id,RsMsgItem *item)
 #endif
 	}
 #ifdef DEBUG_DISTANT_MSG
-	std::cerr << "  total decrypted size = " << PGP_KEY_ID_SIZE + 1 + rssize + signature_length << std::endl;
+	std::cerr << "  total decrypted size = " << offset + signature_length << std::endl;
 #endif
 	// 3 - append the signature to the serialized data.
 
@@ -1861,19 +1851,20 @@ bool p3MsgService::encryptMessage(const RsPgpId& pgp_id,RsMsgItem *item)
 #ifdef DEBUG_DISTANT_MSG
 		std::cerr << "  Appending signature." << std::endl;
 #endif
-		data = (uint8_t*)realloc(data,1+rssize+signature_length+PGP_KEY_ID_SIZE) ;
-		memcpy(&data[1+rssize+PGP_KEY_ID_SIZE],signature_data,signature_length) ;
+		memcpy(&data[offset],signature_data,signature_length) ;
+		offset += signature_length ;
 	}
 
 	// 2 - pgp-encrypt the whole chunk with the user-supplied public key.
 	//
-	uint32_t encrypted_size = 1+rssize + PGP_KEY_ID_SIZE + signature_length + 1000 ;
+	uint32_t encrypted_size = offset + 1000 ;
 	unsigned char *encrypted_data = new unsigned char[encrypted_size] ;
 
 #ifdef DEBUG_DISTANT_MSG
 	std::cerr << "  Encrypting for Key ID " << pgp_id << std::endl;
 #endif
-	if(!AuthGPG::getAuthGPG()->encryptDataBin(pgp_id,data,1+rssize+signature_length+PGP_KEY_ID_SIZE,encrypted_data,&encrypted_size))
+	// Do proper encryption here
+	//if(!AuthGPG::getAuthGPG()->encryptDataBin(pgp_id,data,1+rssize+signature_length+PGP_KEY_ID_SIZE,encrypted_data,&encrypted_size))
 	{
 		free(data) ;
 		delete[] encrypted_data ;
@@ -1883,7 +1874,7 @@ bool p3MsgService::encryptMessage(const RsPgpId& pgp_id,RsMsgItem *item)
 	free(data) ;
 
 #ifdef DEBUG_DISTANT_MSG
-	std::cerr << "  Decrypted size = " << 1+rssize+signature_length+PGP_KEY_ID_SIZE << std::endl;
+	std::cerr << "  Decrypted size = " << offset << std::endl;
 	std::cerr << "  Encrypted size = " << encrypted_size << std::endl;
 	std::cerr << "  First bytes of encrypted data: " << std::hex << (int)encrypted_data[0] << " " << (int)encrypted_data[1] << " " << (int)encrypted_data[2] << std::dec << std::endl;
 	std::cerr << "  Encrypted data hash = " << RsDirUtil::sha1sum(encrypted_data,encrypted_size).toStdString() << std::endl;
@@ -1896,10 +1887,6 @@ bool p3MsgService::encryptMessage(const RsPgpId& pgp_id,RsMsgItem *item)
 	std::string armoured_data ;
 	Radix64::encode((char *)encrypted_data,encrypted_size,armoured_data) ;
 	delete[] encrypted_data ;
-
-	//std::wstring encrypted_msg = armoured_data;
-	//if(!librs::util::ConvertUtf8ToUtf16(armoured_data,encrypted_msg)) 
-	//	return false;
 
 	// wipe the item clean and replace the message by the encrypted data.
 
@@ -1917,183 +1904,225 @@ bool p3MsgService::encryptMessage(const RsPgpId& pgp_id,RsMsgItem *item)
 	return true ;
 }
 
+std::string printNumber(uint32_t n,bool hex)
+{
+    std::ostringstream os ;
+    if(hex) os << std::hex ;
+    os << n ;
+    return os.str() ;
+}
 bool p3MsgService::decryptMessage(const std::string& mId)
 {
-	uint32_t msgId = atoi(mId.c_str());
-	std::string encrypted_string ;
+    unsigned char *decrypted_data = NULL;
+    char *encrypted_data = NULL;
+
+    try
+    {
+        uint32_t msgId = atoi(mId.c_str());
+        std::string encrypted_string ;
 
 #ifdef DEBUG_DISTANT_MSG
-	std::cerr << "Decrypting message with Id " << mId << std::endl;
+        std::cerr << "Decrypting message with Id " << mId << std::endl;
 #endif
-	{
-		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
+        {
+            RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 
-		std::map<uint32_t, RsMsgItem *>::iterator mit = imsg.find(msgId);
+            std::map<uint32_t, RsMsgItem *>::iterator mit = imsg.find(msgId);
 
-		if(mit == imsg.end())
-		{
-			std::cerr << "Can't find this message in msg list. Id=" << mId << std::endl;
-			return false;
-		}
+            if(mit == imsg.end())
+            {
+                std::cerr << "Can't find this message in msg list. Id=" << mId << std::endl;
+                return false;
+            }
 
-		encrypted_string = mit->second->message ;
-	}
+            encrypted_string = mit->second->message ;
+        }
 
-	char *encrypted_data ;
-	size_t encrypted_size ;
+        size_t encrypted_size ;
 
-	Radix64::decode(encrypted_string,encrypted_data,encrypted_size) ;
+        Radix64::decode(encrypted_string,encrypted_data,encrypted_size) ;
 
 #ifdef DEBUG_DISTANT_MSG
-	std::cerr << "  Message has been radix64 decoded." << std::endl;
+        std::cerr << "  Message has been radix64 decoded." << std::endl;
 #endif
 
-	uint32_t decrypted_size = encrypted_size + 500 ;
-	unsigned char *decrypted_data = new unsigned char[decrypted_size] ;
+        uint32_t decrypted_size = encrypted_size + 500 ;
+        unsigned char *decrypted_data = new unsigned char[decrypted_size] ;
 
 #ifdef DEBUG_DISTANT_MSG
-	std::cerr << "  Calling decryption. Encrypted data size = " << encrypted_size << ", Allocated size = " << decrypted_size << std::endl;
-	std::cerr << "  First bytes of encrypted data: " << std::hex << (int)((unsigned char*)encrypted_data)[0] << " " << (int)((unsigned char*)encrypted_data)[1] << " " << (int)((unsigned char*)encrypted_data)[2] << std::dec << std::endl;
-	std::cerr << "  Encrypted data hash = " << RsDirUtil::sha1sum((uint8_t*)encrypted_data,encrypted_size).toStdString() << std::endl;
+        std::cerr << "  Calling decryption. Encrypted data size = " << encrypted_size << ", Allocated size = " << decrypted_size << std::endl;
+        std::cerr << "  First bytes of encrypted data: " << std::hex << (int)((unsigned char*)encrypted_data)[0] << " " << (int)((unsigned char*)encrypted_data)[1] << " " << (int)((unsigned char*)encrypted_data)[2] << std::dec << std::endl;
+        std::cerr << "  Encrypted data hash = " << RsDirUtil::sha1sum((uint8_t*)encrypted_data,encrypted_size).toStdString() << std::endl;
 #endif
-	if(!AuthGPG::getAuthGPG()->decryptDataBin(encrypted_data,encrypted_size,decrypted_data,&decrypted_size))
-	{
-		delete[] encrypted_data ;
-		delete[] decrypted_data ;
-		std::cerr << "decryption failed!" << std::endl;
-		return false;
-	}
-#ifdef DEBUG_DISTANT_MSG
-	std::cerr << "  Message has succesfully decrypted. Decrypted size = " << decrypted_size << std::endl;
-#endif
-
-	// 1 - get the sender's id
-	
-	unsigned char protocol_version = decrypted_data[0] ;
+        // Use proper GXS decryption here.
+    // We need something like:
+        //
+        // if(!rsGxs->decryptDataBin(encrypted_data,encrypted_size,decrypted_data,&decrypted_size))
+        //    throw std::runtime_error("decryption failed!") ;
 
 #ifdef DEBUG_DISTANT_MSG
-	std::cerr << "  Read protocol version number " << std::hex << (int)protocol_version << std::dec << std::endl;
+        std::cerr << "  Message has succesfully decrypted. Decrypted size = " << decrypted_size << std::endl;
 #endif
-	if(protocol_version != ENCRYPTED_MSG_PROTOCOL_VERSION_01)
-	{
-		std::cerr << "Bad version number " << std::hex << (int)protocol_version << std::dec << " => packet is dropped." << std::endl;
-		delete[] encrypted_data ;
-		delete[] decrypted_data ;
-		return false;
-	}
 
-	RsPgpId senders_id(&decrypted_data[1]) ;
+        // 1 - get the sender's id
+
+        uint32_t offset = 0 ;
+        unsigned char protocol_version = decrypted_data[offset++] ;
 
 #ifdef DEBUG_DISTANT_MSG
-	std::cerr << "  Sender's ID: " << senders_id.toStdString() << std::endl;
+        std::cerr << "  Read protocol version number " << std::hex << (int)protocol_version << std::dec << std::endl;
 #endif
-	// 2 - deserialize the item
+        if(protocol_version != DISTANT_MSG_PROTOCOL_VERSION_02)
+        throw std::runtime_error("Bad protocol version number " + printNumber(protocol_version,true) + " => packet is dropped.") ;
 
 #ifdef DEBUG_DISTANT_MSG
-	std::cerr << "  Deserializing..." << std::endl;
+        std::cerr << "  Reading identity section " << std::endl;
 #endif
-	uint32_t item_size = decrypted_size ;	// just needs to be larger than the actual size.
-	RsMsgItem *item = dynamic_cast<RsMsgItem*>(_serialiser->deserialise(&decrypted_data[1+PGP_KEY_ID_SIZE],&item_size)) ;
+        uint8_t ptag = decrypted_data[offset] ;
 
-	if(item == NULL)
-	{
-		std::cerr << "Decrypted message could not be deserialized." << std::endl;
-		return false ;
-	}
+        if(ptag != DISTANT_MSG_TAG_IDENTITY)
+        throw std::runtime_error("Bad ptag in encrypted msg packet "+printNumber(ptag,true)+" => packet is dropped.") ;
 
-	// 3 - check signature
+        unsigned char *tmp_data = &decrypted_data[offset] ;
+        uint32_t identity_size = PGPKeyParser::read_125Size(tmp_data) ;
+        offset += tmp_data - decrypted_data ;
 
-	bool signature_present = false ;
-	bool signature_ok = false ;
+        if(identity_size != RsGxsId::SIZE_IN_BYTES)
+        throw std::runtime_error("Bad size in Identity section " + printNumber(identity_size,false) + " => packet is dropped.") ;
 
-	if(1+item_size + PGP_KEY_ID_SIZE < decrypted_size)
-	{
-		std::cerr << "  Signature is present. Verifying it..." << std::endl;
+        RsGxsId senders_id(&decrypted_data[offset]) ;
+        offset += identity_size ;
 
-		PGPFingerprintType fingerprint ;
-		if(!AuthGPG::getAuthGPG()->getKeyFingerprint(senders_id,fingerprint)) 
-		{
-			std::cerr << "Cannot get fingerprint" << std::endl;
-			return false ;
-		}
-		std::cerr << "  Fingerprint = " << fingerprint.toStdString() << std::endl;
-
-		signature_present = true ;
-		signature_ok = AuthGPG::getAuthGPG()->VerifySignBin(decrypted_data, 1+PGP_KEY_ID_SIZE+item_size, &decrypted_data[1+PGP_KEY_ID_SIZE+item_size], decrypted_size - PGP_KEY_ID_SIZE - item_size - 1, fingerprint) ;
-	}
-	else if(1 + item_size + PGP_KEY_ID_SIZE == decrypted_size)
-		std::cerr << "  No signature in this packet" << std::endl;
-	else
-	{
-		std::cerr << "Structural error in packet: sizes do not match. Dropping the message." << std::endl;
-		return false ;
-	}
-
-	delete[] decrypted_data ;
-
-	// 4 - replace the item with the decrypted data, and update flags
-	
 #ifdef DEBUG_DISTANT_MSG
-	std::cerr << "  Decrypted message was succesfully deserialized. New message:" << std::endl;
-	item->print(std::cerr,0) ;
+        std::cerr << "  Sender's ID: " << senders_id.toStdString() << std::endl;
 #endif
-	RsPeerId own_id ;
-	const RsPgpId& own_pgp_id = AuthGPG::getAuthGPG()->getGPGOwnId();
-	getDistantMessagePeerId(own_pgp_id,own_id) ;
+        // 2 - deserialize the item
 
-	{
-		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
+        ptag = decrypted_data[offset] ;
 
-		// Keer the id.
-		RsMsgItem& msgi( *imsg[msgId] ) ;
+        if(ptag != DISTANT_MSG_TAG_CLEAR_MSG)
+            throw std::runtime_error("Bad ptag in encrypted msg packet " + printNumber(ptag,true) + " => packet is dropped.") ;
 
-		msgi = *item ;											// copy everything
-		msgi.msgId = msgId ;									// restore the correct message id, to make it consistent
-		msgi.msgFlags &= ~RS_MSG_FLAGS_ENCRYPTED ;	// just in case.
-		msgi.msgFlags |=  RS_MSG_FLAGS_DECRYPTED ;	// previousy encrypted msg is now decrypted
-	
-		DistantMsgPeerId senders_vpid ;
-		getDistantMessagePeerId(senders_id,senders_vpid) ;
-		msgi.PeerId(senders_vpid) ;
+        tmp_data = &decrypted_data[offset] ;
+        uint32_t item_size = PGPKeyParser::read_125Size(tmp_data) ;
+        offset += tmp_data - decrypted_data ;
 
-		//for(std::list<RsPeerId>::iterator it(msgi.msgto.ids.begin());it!=msgi.msgto.ids.end();++it) if(*it == own_id) *it = own_pgp_id ;
-		//for(std::list<RsPeerId>::iterator it(msgi.msgcc.ids.begin());it!=msgi.msgcc.ids.end();++it) if(*it == own_id) *it = own_pgp_id ;
-		//for(std::list<RsPeerId>::iterator it(msgi.msgbcc.ids.begin());it!=msgi.msgbcc.ids.end();++it) if(*it == own_id) *it = own_pgp_id ;
+#ifdef DEBUG_DISTANT_MSG
+        std::cerr << "  Deserializing..." << std::endl;
+#endif
+        RsMsgItem *item = dynamic_cast<RsMsgItem*>(_serialiser->deserialise(&decrypted_data[offset],&item_size)) ;
 
-		if(signature_present)
-		{
-			msgi.msgFlags |= RS_MSG_FLAGS_SIGNED ;	
+        if(item == NULL)
+        throw std::runtime_error("Decrypted message could not be deserialized.") ;
 
-			if(signature_ok)
-				msgi.msgFlags |= RS_MSG_FLAGS_SIGNATURE_CHECKS ;	// just in case.
-			else
-				msgi.msgFlags &= ~RS_MSG_FLAGS_SIGNATURE_CHECKS ;	// just in case.
-		}
+        // 3 - check signature
 
-		std::map<uint32_t, RsMsgSrcId*>::iterator it = mSrcIds.find(msgi.msgId) ;
+        bool signature_present = false ;
+        bool signature_ok = false ;
+    uint32_t size_of_signed_data = offset ;
 
-		if(it == mSrcIds.end())
-		{
-			std::cerr << "Warning: could not find message source for id " << msgi.msgId << ". Weird." << std::endl;
+        if(offset < decrypted_size)
+    {
+        uint8_t ptag = decrypted_data[offset++] ;
 
-			RsMsgSrcId* msi = new RsMsgSrcId();
-			msi->msgId = msgi.msgId;
-			msi->srcId  = senders_vpid ;
+        if(ptag != DISTANT_MSG_TAG_SIGNATURE)
+            throw std::runtime_error("Bad ptag in signature packet " + printNumber(ptag,true) + " => packet is dropped.") ;
 
-			mSrcIds.insert(std::pair<uint32_t, RsMsgSrcId*>(msi->msgId, msi));
-		}
-		else
-		{
-			std::cerr << "Substituting source name for message id " << msgi.msgId << ": " << it->second->srcId << " -> " << senders_id << std::endl;
-			it->second->srcId = senders_vpid ;
-		}
-	}
-	delete item ;
+        unsigned char *tmp_data = &decrypted_data[offset] ;
+        uint32_t signature_size = PGPKeyParser::read_125Size(tmp_data) ;
+        offset += tmp_data - decrypted_data ;
 
-	IndicateConfigChanged() ;
-	RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_MOD);
+        std::cerr << "  Signature is present. Verifying it..." << std::endl;
 
-	return true ;
+        // Do proper GXS signature check here!!
+        // Because we're using GXS ids, not pgp ids.
+        // We need something like:
+        //
+        //     signature_ok = rsGxs->VerifySignBin(decrypted_data, size_of_signed_data, &decrypted_data[offset], signature_size, senders_id) ;
+
+        signature_present = false ;
+        //signature_ok = AuthGPG::getAuthGPG()->VerifySignBin(decrypted_data, size_of_signed_data, &decrypted_data[offset], signature_size, fingerprint) ;
+    }
+        else if(offset == decrypted_size)
+            std::cerr << "  No signature in this packet" << std::endl;
+        else
+            throw std::runtime_error("Structural error in packet: sizes do not match. Dropping the message.") ;
+
+        delete[] decrypted_data ;
+    decrypted_data = NULL ;
+
+        // 4 - replace the item with the decrypted data, and update flags
+
+#ifdef DEBUG_DISTANT_MSG
+        std::cerr << "  Decrypted message was succesfully deserialized. New message:" << std::endl;
+        item->print(std::cerr,0) ;
+#endif
+        RsGxsId own_gxs_id ;		// we should use the correct own GXS ID that was used to send that message!
+        DistantMsgPeerId own_id ;
+        getDistantMessagePeerId(own_gxs_id,own_id) ;
+
+        {
+            RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
+
+            // Keer the id.
+            RsMsgItem& msgi( *imsg[msgId] ) ;
+
+            msgi = *item ;				// copy everything
+            msgi.msgId = msgId ;			// restore the correct message id, to make it consistent
+            msgi.msgFlags &= ~RS_MSG_FLAGS_ENCRYPTED ;	// just in case.
+            msgi.msgFlags |=  RS_MSG_FLAGS_DECRYPTED ;	// previousy encrypted msg is now decrypted
+
+            DistantMsgPeerId senders_vpid ;
+            getDistantMessagePeerId(senders_id,senders_vpid) ;
+            msgi.PeerId(RsPeerId(senders_vpid)) ;
+
+            //for(std::list<RsPeerId>::iterator it(msgi.msgto.ids.begin());it!=msgi.msgto.ids.end();++it) if(*it == own_id) *it = own_pgp_id ;
+            //for(std::list<RsPeerId>::iterator it(msgi.msgcc.ids.begin());it!=msgi.msgcc.ids.end();++it) if(*it == own_id) *it = own_pgp_id ;
+            //for(std::list<RsPeerId>::iterator it(msgi.msgbcc.ids.begin());it!=msgi.msgbcc.ids.end();++it) if(*it == own_id) *it = own_pgp_id ;
+
+            if(signature_present)
+            {
+                msgi.msgFlags |= RS_MSG_FLAGS_SIGNED ;
+
+                if(signature_ok)
+                    msgi.msgFlags |= RS_MSG_FLAGS_SIGNATURE_CHECKS ;	// just in case.
+                else
+                    msgi.msgFlags &= ~RS_MSG_FLAGS_SIGNATURE_CHECKS ;	// just in case.
+            }
+
+            std::map<uint32_t, RsMsgSrcId*>::iterator it = mSrcIds.find(msgi.msgId) ;
+
+            if(it == mSrcIds.end())
+            {
+                std::cerr << "Warning: could not find message source for id " << msgi.msgId << ". Weird." << std::endl;
+
+                RsMsgSrcId* msi = new RsMsgSrcId();
+                msi->msgId = msgi.msgId;
+                msi->srcId  = RsPeerId(senders_vpid) ;
+
+                mSrcIds.insert(std::pair<uint32_t, RsMsgSrcId*>(msi->msgId, msi));
+            }
+            else
+            {
+                std::cerr << "Substituting source name for message id " << msgi.msgId << ": " << it->second->srcId << " -> " << senders_id << std::endl;
+                it->second->srcId = RsPeerId(senders_vpid) ;
+            }
+        }
+        delete item ;
+
+        IndicateConfigChanged() ;
+        RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_MOD);
+
+        return true ;
+    }
+    catch(std::exception& e)
+    {
+        std::cerr << "Decryption failed: " << e.what() << std::endl;
+        if(encrypted_data != NULL) delete[] encrypted_data ;
+        if(decrypted_data != NULL) delete[] decrypted_data ;
+
+        return false ;
+    }
 }
 
 #ifdef GROUTER
@@ -2101,13 +2130,25 @@ void p3MsgService::connectToGlobalRouter(p3GRouter *gr)
 {
 	mGRouter = gr ;
 	gr->registerClientService(RS_SERVICE_TYPE_MSG,this) ;
+
+	// Debug stuff. Create a random key and register it.
+	const RsPeerId& own_ssl_id = rsPeers->getOwnId() ;
+	const RsPgpId& gpg_id = rsPeers->getGPGOwnId() ;
+
+	RsPeerDetails d;
+    rsPeers->getGPGDetails(gpg_id,d) ;
+	PGPFingerprintType fingerp( d.fpr ) ;
+
+	// Re-hash the SSL id, to make it one way. Will be replaced by proper invitations in the future.
+	//
+    GRouterKeyId key ( own_ssl_id ) ;
+
+	static GRouterServiceId client_id = GROUTER_CLIENT_ID_MESSAGES;
+	static std::string description = "Test string for debug purpose" ;
+
+	mGRouter->registerKey(key,fingerp,client_id,description) ;
 }
 #endif
-void p3MsgService::connectToTurtleRouter(p3turtle *pt)
-{
-	mTurtle = pt ;
-	pt->registerTunnelService(this) ;
-}
 
 bool p3MsgService::createDistantOfflineMessengingInvite(time_t time_of_validity,DistantMsgPeerId& peer_id)
 {
@@ -2131,28 +2172,25 @@ bool p3MsgService::createDistantOfflineMessengingInvite(time_t time_of_validity,
 
 void p3MsgService::enableDistantMessaging(bool b)
 {
-	// compute the hash
+    // compute the hash
 	
-    Sha1CheckSum hash ;
-	
-    if(!getDistantMessageHash(AuthGPG::getAuthGPG()->getGPGOwnId(),hash))
-		return ;
-
 	bool cchanged = false ;
 
-#ifdef DEBUG_DISTANT_MSG
-	std::cerr << (b?"Enabling":"Disabling") << " distant messaging, with hash  = " << hash << std::endl;
-#endif
 	{
 		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 
-		std::map<Sha1CheckSum,DistantMessengingInvite>::iterator it = _messenging_invites.find(hash) ;
+        GRouterKeyId distant_msg_peer_id ( rsPeers->getOwnId() );
+
+#ifdef DEBUG_DISTANT_MSG
+        std::cerr << (b?"Enabling":"Disabling") << " distant messaging, with peer id = " << distant_msg_peer_id << std::endl;
+#endif
+        std::map<GRouterKeyId,DistantMessengingInvite>::iterator it = _messenging_invites.find(distant_msg_peer_id) ;
 
 		if(b && it == _messenging_invites.end())
 		{
 			DistantMessengingInvite invite ;
 			invite.time_of_validity = time(NULL) + 10*365*86400;	// 10 years from now
-			_messenging_invites[hash] = invite ;
+            _messenging_invites[distant_msg_peer_id] = invite ;
 			mDistantMessagingEnabled = true ;
 #ifdef GROUTER
 			std::cerr << "Notifying the global router." << std::endl;
@@ -2167,7 +2205,7 @@ void p3MsgService::enableDistantMessaging(bool b)
 
 			// Re-hash the SSL id, to make it one way. Will be replaced by proper invitations in the future.
 			//
-            GRouterKeyId key ( RsDirUtil::sha1sum( own_ssl_id.toByteArray(),own_ssl_id.SIZE_IN_BYTES ) ) ;
+            GRouterKeyId key ( own_ssl_id ) ;
 
 			static GRouterServiceId client_id = GROUTER_CLIENT_ID_MESSAGES;
 			static std::string description = "Test string for debug purpose" ;
@@ -2181,7 +2219,7 @@ void p3MsgService::enableDistantMessaging(bool b)
 			_messenging_invites.erase(it) ;
 			mDistantMessagingEnabled = false ;
 #ifdef GROUTER
-			mGRouter->unregisterKey(GRouterKeyId(hash)) ;
+            mGRouter->unregisterKey(GRouterKeyId(distant_msg_peer_id)) ;
 #endif
 			cchanged = true ;
 		}
@@ -2193,46 +2231,34 @@ void p3MsgService::enableDistantMessaging(bool b)
 #ifdef DEBUG_DISTANT_MSG
 	std::cerr << "List of distant message invites: " << std::endl;
 	for(std::map<Sha1CheckSum,DistantMessengingInvite>::const_iterator it(_messenging_invites.begin());it!=_messenging_invites.end();++it)
-		std::cerr << "   hash = " << it->first << std::endl;
+        std::cerr << "   distant_msg_peer_id = " << it->first << std::endl;
 #endif
 }
 bool p3MsgService::distantMessagingEnabled()
 {
 	// compute the hash
-	
-	Sha1CheckSum hash ;
-	
-	if(!getDistantMessageHash(AuthGPG::getAuthGPG()->getGPGOwnId(),hash))
-		return false;
 
-	bool res ;
-	{
-		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
-		res = _messenging_invites.find(hash) != _messenging_invites.end() ;
-	}
-	return res ;
+    std::cerr << __PRETTY_FUNCTION__ << ": not yet implemented!" <<std::endl;
+//	bool res ;
+//	{
+//		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
+//        res = _messenging_invites.find(rsPeers->getOwnId()) != _messenging_invites.end() ;
+//	}
+    return false ;
 }
-bool p3MsgService::getDistantMessagePeerId(const RsPgpId& pgp_id,DistantMsgPeerId& peer_id)
+
+bool p3MsgService::getDistantMessagePeerId(const RsGxsId& gxs_id,DistantMsgPeerId& pid)
 {
-    if(!AuthGPG::getAuthGPG()->isKeySupported(pgp_id))
-        return false ;
+//    if(!AuthGPG::getAuthGPG()->isKeySupported(pgp_id))
+//       return false ;
 
-    unsigned char tmp[RsPeerId::SIZE_IN_BYTES] ;
-    memset(tmp,0,RsPeerId::SIZE_IN_BYTES) ;
-    memcpy(tmp,pgp_id.toByteArray(),RsPgpId::SIZE_IN_BYTES) ;
+    assert(pid.SIZE_IN_BYTES >= gxs_id.SIZE_IN_BYTES) ;
 
-    peer_id = RsPeerId(tmp) ;
+    unsigned char bytes[pid.SIZE_IN_BYTES];
+    memset(bytes,0,pid.SIZE_IN_BYTES) ;
+    memcpy(bytes,gxs_id.toByteArray(),gxs_id.SIZE_IN_BYTES) ;
 
-	// Also check that we have the public key.
-	
-    return true ;
-}
-bool p3MsgService::getDistantMessageHash(const RsPgpId& pgp_id,Sha1CheckSum& hash)
-{
-    if(!AuthGPG::getAuthGPG()->isKeySupported(pgp_id))
-        return false ;
-
-    hash = RsDirUtil::sha1sum(pgp_id.toByteArray(),RsPgpId::SIZE_IN_BYTES) ;
+    pid = DistantMsgPeerId(bytes) ;
 
     // Also check that we have the public key.
 
@@ -2242,10 +2268,10 @@ bool p3MsgService::getDistantOfflineMessengingInvites(std::vector<DistantOffline
 {
 	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 
-	for(std::map<Sha1CheckSum,DistantMessengingInvite>::const_iterator it(_messenging_invites.begin());it!=_messenging_invites.end();++it)
+    for(std::map<DistantMsgPeerId,DistantMessengingInvite>::const_iterator it(_messenging_invites.begin());it!=_messenging_invites.end();++it)
 	{
 		DistantOfflineMessengingInvite invite ;
-		invite.hash = it->first ;
+        invite.peer_id = it->first ;
 		invite.issuer_pgp_id = AuthGPG::getAuthGPG()->getGPGOwnId() ;
 		invite.time_of_validity = it->second.time_of_validity ;
 
@@ -2256,23 +2282,6 @@ bool p3MsgService::getDistantOfflineMessengingInvites(std::vector<DistantOffline
 #endif
 	}
 	return true ;
-}
-
-bool p3MsgService::handleTunnelRequest(const Sha1CheckSum &hash,const RsPeerId& /*peer_id*/)
-{
-
-	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
-    std::map<Sha1CheckSum,DistantMessengingInvite>::const_iterator it = _messenging_invites.find(hash) ;
-
-#ifdef DEBUG_DISTANT_MSG
-	if(it != _messenging_invites.end())
-	{
-		std::cerr << "p3MsgService::handleTunnelRequest: received TR for hash " << hash << std::endl;
-		std::cerr << "Responding OK!" << std::endl;
-	}
-#endif
-
-	return it != _messenging_invites.end() ;
 }
 
 void p3MsgService::manageDistantPeers()
@@ -2288,13 +2297,13 @@ void p3MsgService::manageDistantPeers()
 
 		// clean dead invites.
 		//
-		for(std::map<Sha1CheckSum,DistantMessengingInvite>::iterator it(_messenging_invites.begin());it!=_messenging_invites.end();)
+        for(std::map<GRouterKeyId,DistantMessengingInvite>::iterator it(_messenging_invites.begin());it!=_messenging_invites.end();)
 			if(it->second.time_of_validity < now)
 			{
 #ifdef DEBUG_DISTANT_MSG
 				std::cerr << "    Removing outdated invite " << it->second.time_of_validity << ", hash=" << it->first << std::endl;
 #endif
-				std::map<Sha1CheckSum,DistantMessengingInvite>::iterator tmp(it) ;
+                std::map<GRouterKeyId,DistantMessengingInvite>::iterator tmp(it) ;
 				++tmp ;
 				_messenging_invites.erase(it) ;
 				it = tmp ;
@@ -2378,63 +2387,6 @@ static void printBinaryData(void *data,uint32_t size)
 }
 #endif
 
-void p3MsgService::sendTurtleData(const Sha1CheckSum& hash,RsMsgItem *msgitem) 
-{
-	// The item is serialized and turned into a generic turtle item.
-	
-	uint32_t msg_serialized_rssize = _serialiser->size(msgitem) ;
-	unsigned char *msg_serialized_data = new unsigned char[msg_serialized_rssize] ;
-
-	if(!_serialiser->serialise(msgitem,msg_serialized_data,&msg_serialized_rssize))
-	{
-		std::cerr << "(EE) p3MsgService::sendTurtleData(): Serialization error." << std::endl;
-		delete[] msg_serialized_data ;
-		return ;
-	}
-
-	RsTurtleGenericDataItem *item = new RsTurtleGenericDataItem ;
-
-	item->data_bytes = malloc(msg_serialized_rssize) ;
-	item->data_size = msg_serialized_rssize ;
-	memcpy(item->data_bytes,msg_serialized_data,msg_serialized_rssize) ;
-
-	delete[] msg_serialized_data ;
-
-#ifdef DEBUG_DISTANT_MSG
-	printBinaryData(item->data_bytes,item->data_size) ;
-	std::cerr << std::endl;
-#endif
-
-	// do we have a working tunnel for that hash ?
-	// If not, put on the contact's waiting list.
-
-    RsPeerId virtual_peer_id ;
-    {
-		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
-		std::map<Sha1CheckSum,DistantMessengingContact>::const_iterator it = _messenging_contacts.find(hash) ;
-
-		if(it == _messenging_contacts.end())
-		{
-			std::cerr << "(EE) p3MsgService::sendTurtleData(): Can't find hash " << hash << " in recorded contact list." << std::endl;
-			delete[] msg_serialized_data ;
-			return ;
-		}
-
-		if(!it->second.status == RS_DISTANT_MSG_STATUS_TUNNEL_OK)
-		{
-			std::cerr << "p3MsgService::sendTurtleData(): tunnel is not ok. Putting items on waiting list." << std::endl;
-			return ;
-		}
-		virtual_peer_id = it->second.virtual_peer_id ;
-	}
-#ifdef DEBUG_DISTANT_MSG
-	std::cerr << "p3MsgService::sendTurtleData(): Sending through virtual peer: " << virtual_peer_id << std::endl;
-	std::cerr << "   item->data_size = " << item->data_size << std::endl;
-	std::cerr << "   data = " ;
-#endif
-
-	mTurtle->sendTurtleData(virtual_peer_id,item) ;
-}
 //void p3MsgService::receiveTurtleData(RsTurtleGenericTunnelItem *gitem,const Sha1CheckSum& hash,
 //												const RsPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction /*direction*/)
 //{
@@ -2491,7 +2443,7 @@ void p3MsgService::sendTurtleData(const Sha1CheckSum& hash,RsMsgItem *msgitem)
 //	}
 //}
 #ifdef GROUTER
-void p3MsgService::sendGRouterData(const Sha1CheckSum& hash,RsMsgItem *msgitem) 
+void p3MsgService::sendGRouterData(const GRouterKeyId& key_id,RsMsgItem *msgitem)
 {
 	// The item is serialized and turned into a generic turtle item.
 	
@@ -2513,7 +2465,7 @@ void p3MsgService::sendGRouterData(const Sha1CheckSum& hash,RsMsgItem *msgitem)
 
 	delete[] msg_serialized_data ;
 
-	mGRouter->sendData(GRouterKeyId(hash),item) ;
+    mGRouter->sendData(key_id,item) ;
 }
 void p3MsgService::receiveGRouterData(RsGRouterGenericDataItem *gitem,const GRouterKeyId& key)
 {
@@ -2521,38 +2473,22 @@ void p3MsgService::receiveGRouterData(RsGRouterGenericDataItem *gitem,const GRou
 }
 #endif
 
-bool p3MsgService::locked_findHashForVirtualPeerId(const RsPeerId& vpid,Sha1CheckSum& hash)
-{
-	for(std::map<Sha1CheckSum,DistantMessengingContact>::const_iterator it = _messenging_contacts.begin(); it!=_messenging_contacts.end();++it)
-		if(it->second.virtual_peer_id == vpid)
-		{
-			hash = it->first ;
-			return true ;
-		}
-	return false ;
-}
-
-void p3MsgService::sendPrivateMsgItem(const Sha1CheckSum& hash,RsMsgItem *msgitem) 
+void p3MsgService::sendPrivateMsgItem(RsMsgItem *msgitem)
 {
 #ifdef DEBUG_DISTANT_MSG
 	std::cerr << "p3MsgService::sendDistanteMsgItem(): sending distant msg item to peer " << msgitem->PeerId() << std::endl;
 #endif
-	{
+        GRouterKeyId key_id(msgitem->PeerId()) ;
+    {
 		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 
 		// allocate a new contact. If it does not exist, set its tunnel state to DN
 		//
-		std::map<Sha1CheckSum,DistantMessengingContact>::iterator it = _messenging_contacts.find(hash) ;
+        std::map<GRouterKeyId,DistantMessengingContact>::iterator it = _messenging_contacts.find(key_id) ;
 		
 		if(it == _messenging_contacts.end())
 		{
 			std::cerr << "(EE) p3MsgService::sendPrivateMsgItem(): ERROR: no tunnel for message to send. This should not happen. " << std::endl;
-			return ;
-		}
-
-		if(it->second.status != RS_DISTANT_MSG_STATUS_TUNNEL_OK)
-		{
-			std::cerr << "(WW) p3MsgService::sendPrivateMsgItem(): WARNING: no tunnel for message to send. This should not happen. " << std::endl;
 			return ;
 		}
 
@@ -2564,9 +2500,7 @@ void p3MsgService::sendPrivateMsgItem(const Sha1CheckSum& hash,RsMsgItem *msgite
 	std::cerr << "    Flushing msg " << msgitem->msgId << " for peer id " << msgitem->PeerId() << std::endl;
 #endif
 #ifdef GROUTER
-	sendGRouterData(hash,msgitem) ;
-#else
-	sendTurtleData(hash,msgitem) ;
+    sendGRouterData(key_id,msgitem) ;
 #endif
 }
 

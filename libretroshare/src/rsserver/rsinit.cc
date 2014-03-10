@@ -1320,8 +1320,6 @@ int RsServer::StartupRetroShare()
 #ifdef GROUTER
 	msgSrv->connectToGlobalRouter(gr) ;
 #endif
-	msgSrv->connectToTurtleRouter(tr) ;
-
 	pqih -> addService(mHeart);
 	pqih -> addService(mDisc);
 	pqih -> addService(msgSrv);
