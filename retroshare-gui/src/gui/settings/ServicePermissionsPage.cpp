@@ -23,7 +23,7 @@
 
 #include "rshare.h"
 
-#include <retroshare/rsservicecontrol.h>
+//#include <retroshare/rsservicecontrol.h>
 
 #include <iostream>
 #include <QTimer>
