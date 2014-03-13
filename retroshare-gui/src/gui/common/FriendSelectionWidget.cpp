@@ -41,6 +41,8 @@
 #define COLUMN_DATA   0
 #define COLUMN_COUNT  1
 
+#define IDDIALOG_IDLIST		1
+
 #define ROLE_ID       Qt::UserRole
 #define ROLE_SORT     Qt::UserRole + 1
 
@@ -73,9 +75,8 @@ static void setSelected(FriendSelectionWidget::Modus modus, QTreeWidgetItem *ite
 	}
 }
 
-FriendSelectionWidget::FriendSelectionWidget(QWidget *parent) :
-	QWidget(parent),
-	ui(new Ui::FriendSelectionWidget)
+FriendSelectionWidget::FriendSelectionWidget(QWidget *parent) 
+	: RsGxsUpdateBroadcastPage(rsIdentity,parent), ui(new Ui::FriendSelectionWidget)
 {
 	ui->setupUi(this);
 
@@ -86,6 +87,8 @@ FriendSelectionWidget::FriendSelectionWidget(QWidget *parent) :
 	mInGpgItemChanged = false;
 	mInSslItemChanged = false;
 	mInFillList = false;
+
+	mIdQueue = new TokenQueue(rsIdentity->getTokenService(), this);
 
 	connect(ui->friendList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuRequested(QPoint)));
 	connect(ui->friendList, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(itemDoubleClicked(QTreeWidgetItem*,int)));
@@ -228,6 +231,34 @@ void FriendSelectionWidget::fillList()
 	secured_fillList() ;
 }
 
+void FriendSelectionWidget::loadRequest(const TokenQueue */*queue*/, const TokenRequest &req)
+{
+	// store all IDs locally, and call fillList() ;
+
+	uint32_t token = req.mToken ;
+
+	RsGxsIdGroup data;
+	std::vector<RsGxsIdGroup> datavector;
+	std::vector<RsGxsIdGroup>::iterator vit;
+
+	if (!rsIdentity->getGroupData(token, datavector))
+	{
+		std::cerr << "FriendSelectionWidget::loadRequest() ERROR. Cannot load data from rsIdentity." << std::endl;
+		return ;
+	}
+
+	gxsIds.clear() ;
+
+	for(uint32_t i=0;i<datavector.size();++i)
+	{
+		gxsIds.push_back(datavector[i].mMeta.mGroupId) ;
+		std::cerr << "  got ID = " << datavector[i].mMeta.mGroupId << std::endl;
+	}
+
+	std::cerr << "Got all " << datavector.size() << " ids from rsIdentity. Calling update of list." << std::endl;
+	fillList() ;
+}
+
 void FriendSelectionWidget::secured_fillList()
 {
 	mInFillList = true;
@@ -274,12 +305,6 @@ void FriendSelectionWidget::secured_fillList()
 	if ((mShowTypes & (SHOW_SSL | SHOW_GPG)) == SHOW_SSL) {
 		rsPeers->getFriendList(sslIds);
 	}
-
-	std::list<RsGxsId> gxsIds ;
-	std::list<RsGxsId>::iterator gxsIt ;
-
-	if(mShowTypes & SHOW_GXS)
-		rsIdentity->getOwnIds(gxsIds) ;	// should get all ids, not just own. What's the correct call??
 
 	std::list<StatusInfo> statusInfo;
 	std::list<StatusInfo>::iterator statusIt;
@@ -488,7 +513,7 @@ void FriendSelectionWidget::secured_fillList()
 		if(mShowTypes & SHOW_GXS)
 		{
 			// iterate through gpg ids
-			for (gxsIt = gxsIds.begin(); gxsIt != gxsIds.end(); gxsIt++) 
+			for (std::vector<RsGxsGroupId>::const_iterator gxsIt = gxsIds.begin(); gxsIt != gxsIds.end(); gxsIt++) 
 			{
 					// we fill the not assigned gpg ids
 				if (std::find(filledIds.begin(), filledIds.end(), (*gxsIt).toStdString()) != filledIds.end()) 
@@ -498,7 +523,7 @@ void FriendSelectionWidget::secured_fillList()
 				filledIds.push_back((*gxsIt).toStdString());
 
 				RsIdentityDetails detail;
-				if (!rsIdentity->getIdDetails(*gxsIt, detail)) 
+				if (!rsIdentity->getIdDetails(RsGxsId(*gxsIt), detail)) 
 					continue; /* BAD */
 
 				// make a widget per friend
@@ -544,6 +569,29 @@ void FriendSelectionWidget::secured_fillList()
 
 	emit contentChanged();
 }
+void FriendSelectionWidget::updateDisplay(bool)
+{
+	requestGXSIdList() ;
+}
+void FriendSelectionWidget::requestGXSIdList()
+{
+	if (!mIdQueue)
+		return;
+
+	//mStateHelper->setLoading(IDDIALOG_IDLIST, true);
+	//mStateHelper->setLoading(IDDIALOG_IDDETAILS, true);
+	//mStateHelper->setLoading(IDDIALOG_REPLIST, true);
+
+	mIdQueue->cancelActiveRequestTokens(IDDIALOG_IDLIST);
+
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+
+	uint32_t token;
+
+	mIdQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, IDDIALOG_IDLIST);
+}
+
 
 void FriendSelectionWidget::groupsChanged(int /*type*/)
 {
