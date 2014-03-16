@@ -304,7 +304,7 @@ void MessageWidget::getcurrentrecommended()
 	}
 
     std::list<RsPeerId> srcIds;
-	srcIds.push_back(msgInfo.srcId);
+    srcIds.push_back(msgInfo.rspeerid_srcId);
 
 	QModelIndexList list = ui.msgList->selectionModel()->selectedIndexes();
 
@@ -353,7 +353,7 @@ void MessageWidget::getallrecommended()
 	for(it = recList.begin(); it != recList.end(); it++) {
 		std::cerr << "MessageWidget::getallrecommended() Calling File Request" << std::endl;
         std::list<RsPeerId> srcIds;
-		srcIds.push_back(msgInfo.srcId);
+        srcIds.push_back(msgInfo.rspeerid_srcId);
 		rsFiles->FileRequest(it->fname, it->hash, it->size, "", RS_FILE_REQ_ANONYMOUS_ROUTING, srcIds);
 	}
 }
@@ -497,28 +497,23 @@ void MessageWidget::fill(const std::string &msgId)
 	ui.msgList->insertTopLevelItems(0, items);
 
 	/* iterate through the sources */
-    std::list<RsPeerId>::const_iterator pit;
-
 	RetroShareLink link;
 	QString text;
 
-	for(pit = msgInfo.msgto.begin(); pit != msgInfo.msgto.end(); pit++) {
-		if (link.createMessage(*pit, "")) {
-			text += link.toHtml() + "   ";
-		}
-	}
+    for(std::list<RsPeerId>::const_iterator pit = msgInfo.rspeerid_msgto.begin(); pit != msgInfo.rspeerid_msgto.end(); pit++)  if (link.createMessage(*pit, ""))  text += link.toHtml() + "   ";
+    for(std::list<RsGxsId >::const_iterator pit = msgInfo.rsgxsid_msgto.begin(); pit != msgInfo.rsgxsid_msgto.end(); pit++)  if (link.createMessage(*pit, ""))  text += link.toHtml() + "   ";
+
 	ui.toText->setText(text);
 
-	if (msgInfo.msgcc.size() > 0) {
+    if (!msgInfo.rspeerid_msgcc.empty() || !msgInfo.rsgxsid_msgcc.empty())
+    {
 		ui.cclabel->setVisible(true);
 		ui.ccText->setVisible(true);
 
 		text.clear();
-		for(pit = msgInfo.msgcc.begin(); pit != msgInfo.msgcc.end(); pit++) {
-			if (link.createMessage(*pit, "")) {
-				text += link.toHtml() + "   ";
-			}
-		}
+        for(std::list<RsPeerId>::const_iterator pit = msgInfo.rspeerid_msgcc.begin(); pit != msgInfo.rspeerid_msgcc.end(); pit++)  if (link.createMessage(*pit, ""))  text += link.toHtml() + "   ";
+        for(std::list<RsGxsId>::const_iterator pit = msgInfo.rsgxsid_msgcc.begin(); pit != msgInfo.rsgxsid_msgcc.end(); pit++)  if (link.createMessage(*pit, ""))  text += link.toHtml() + "   ";
+
 		ui.ccText->setText(text);
 	} else {
 		ui.cclabel->setVisible(false);
@@ -526,16 +521,15 @@ void MessageWidget::fill(const std::string &msgId)
 		ui.ccText->clear();
 	}
 
-	if (msgInfo.msgbcc.size() > 0) {
-		ui.bcclabel->setVisible(true);
-		ui.bccText->setVisible(true);
+    if (!msgInfo.rspeerid_msgbcc.empty() || !msgInfo.rsgxsid_msgbcc.empty())
+    {
+        ui.bcclabel->setVisible(true);
+        ui.bccText->setVisible(true);
 
-		text.clear();
-		for(pit = msgInfo.msgbcc.begin(); pit != msgInfo.msgbcc.end(); pit++) {
-			if (link.createMessage(*pit, "")) {
-				text += link.toHtml() + "   ";
-			}
-		}
+        text.clear();
+        for(std::list<RsPeerId>::const_iterator pit = msgInfo.rspeerid_msgbcc.begin(); pit != msgInfo.rspeerid_msgbcc.end(); pit++)  if (link.createMessage(*pit, ""))  text += link.toHtml() + "   ";
+        for(std::list<RsGxsId>::const_iterator pit = msgInfo.rsgxsid_msgbcc.begin(); pit != msgInfo.rsgxsid_msgbcc.end(); pit++)  if (link.createMessage(*pit, ""))  text += link.toHtml() + "   ";
+
 		ui.bccText->setText(text);
 	} else {
 		ui.bcclabel->setVisible(false);
@@ -552,11 +546,11 @@ void MessageWidget::fill(const std::string &msgId)
 		// outgoing message are from me
 		srcId = ownId;
 	} else {
-		srcId = msgInfo.srcId;
+        srcId = msgInfo.rspeerid_srcId;
 	}
 	link.createMessage(srcId, "");
 
-	if ((msgInfo.msgflags & RS_MSG_SYSTEM) && msgInfo.srcId == ownId) {
+    if ((msgInfo.msgflags & RS_MSG_SYSTEM) && msgInfo.rspeerid_srcId == ownId) {
 		ui.fromText->setText("RetroShare");
 	} else {
 		ui.fromText->setText(link.toHtml());

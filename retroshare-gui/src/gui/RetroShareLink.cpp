@@ -565,7 +565,23 @@ bool RetroShareLink::createMessage(const RsPeerId& peerId, const QString& subjec
 
 	return valid();
 }
+bool RetroShareLink::createMessage(const RsGxsId& peerId, const QString& subject)
+{
+    clear();
 
+    _hash = QString::fromStdString(peerId.toStdString());
+
+    //PeerDefs::rsidFromId(peerId, &_name);
+    _name = QString::fromStdString("GXS_id("+peerId.toStdString()+")") ;
+    // do something better here!!
+    _subject = subject;
+
+    _type = TYPE_MESSAGE;
+
+    check();
+
+    return valid();
+}
 void RetroShareLink::clear()
 {
     _valid = false;
@@ -1507,7 +1523,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 					{
                         if (detail.accept_connection || RsPeerId(detail.id) == rsPeers->getOwnId() || RsPgpId(detail.gpg_id) == rsPeers->getGPGOwnId()) {
 							MessageComposer *msg = MessageComposer::newMsg();
-							msg->addRecipient(MessageComposer::TO, detail.id, false);
+                            msg->addRecipient(MessageComposer::TO, detail.id);
 							if (link.subject().isEmpty() == false) {
 								msg->setTitleText(link.subject());
 							}

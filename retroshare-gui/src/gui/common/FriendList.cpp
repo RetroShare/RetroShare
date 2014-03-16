@@ -1312,7 +1312,7 @@ void FriendList::msgfriend()
 
     std::string id = getRsId(peer);
 
-    MessageComposer::msgFriend(RsPeerId(id), (peer->type() == TYPE_GROUP));
+    MessageComposer::msgFriend(RsPeerId(id)) ;
 }
 
 void FriendList::recommendfriend()

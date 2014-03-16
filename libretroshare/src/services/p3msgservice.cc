@@ -324,12 +324,11 @@ int     p3MsgService::checkOutgoingMessages()
 		std::map<uint32_t, RsMsgItem *>::iterator mit;
 		for(mit = msgOutgoing.begin(); mit != msgOutgoing.end(); mit++)
 		{
-			if (mit->second->msgFlags & RS_MSG_FLAGS_TRASH) {
+			if (mit->second->msgFlags & RS_MSG_FLAGS_TRASH) 
 				continue;
-			}
 
 			/* find the certificate */
-            RsPeerId pid = mit->second->PeerId();
+			RsPeerId pid = mit->second->PeerId();
 			bool tunnel_is_ok = false ;
 
 			if(mit->second->msgFlags & RS_MSG_FLAGS_DISTANT)
@@ -1034,47 +1033,34 @@ bool 	p3MsgService::MessageSend(MessageInfo &info)
 {
     std::list<RsPeerId>::const_iterator pit;
 
-	for(pit = info.msgto.begin(); pit != info.msgto.end(); pit++)
+	for(pit = info.rspeerid_msgto.begin(); pit != info.rspeerid_msgto.end(); pit++)
 	{
 		RsMsgItem *msg = initMIRsMsg(info, *pit);
+
 		if (msg)
-		{
 			sendMessage(msg);
-		}
 	}
 
-	for(pit = info.msgcc.begin(); pit != info.msgcc.end(); pit++)
+	for(pit = info.rspeerid_msgcc.begin(); pit != info.rspeerid_msgcc.end(); pit++)
 	{
 		RsMsgItem *msg = initMIRsMsg(info, *pit);
 		if (msg)
-		{
 			sendMessage(msg);
-		}
 	}
 
-	for(pit = info.msgbcc.begin(); pit != info.msgbcc.end(); pit++)
+	for(pit = info.rspeerid_msgbcc.begin(); pit != info.rspeerid_msgbcc.end(); pit++)
 	{
 		RsMsgItem *msg = initMIRsMsg(info, *pit);
 		if (msg)
-		{
 			sendMessage(msg);
-		}
 	}
 
 	/* send to ourselves as well */
 	RsMsgItem *msg = initMIRsMsg(info, mLinkMgr->getOwnId());
+
 	if (msg)
 	{
-        std::list<RsPgpId>::iterator it ;
-
-		// Update destination ids in place of distant message hash, since this Outgoing message is for display
-		//
-//		for(it = msg->msgbcc.ids.begin(); it != msg->msgbcc.ids.end(); it++)
-//			if(info.encryption_keys.find(*it) != info.encryption_keys.end()) *it = info.encryption_keys[*it] ;
-//		for(it = msg->msgcc.ids.begin(); it != msg->msgcc.ids.end(); it++)
-//			if(info.encryption_keys.find(*it) != info.encryption_keys.end()) *it = info.encryption_keys[*it] ;
-//		for(it = msg->msgto.ids.begin(); it != msg->msgto.ids.end(); it++)
-//			if(info.encryption_keys.find(*it) != info.encryption_keys.end()) *it = info.encryption_keys[*it] ;
+		std::list<RsPgpId>::iterator it ;
 
 		if (msg->msgFlags & RS_MSG_FLAGS_SIGNED)
 			msg->msgFlags |= RS_MSG_FLAGS_SIGNATURE_CHECKS;	// this is always true, since we are sending the message
@@ -1118,7 +1104,7 @@ bool p3MsgService::SystemMessage(const std::string &title, const std::string &me
 	msg->subject = title;
 	msg->message = message;
 
-	msg->msgto.ids.push_back(ownId);
+	msg->rspeerid_msgto.ids.push_back(ownId);
 
 	processMsg(msg, true);
 
@@ -1492,96 +1478,35 @@ void p3MsgService::initRsMI(RsMsgItem *msg, MessageInfo &mi)
 	mi.msgflags = 0;
 
 	/* translate flags, if we sent it... outgoing */
-	if ((msg->msgFlags & RS_MSG_FLAGS_OUTGOING)
-	   /*|| (msg->PeerId() == mLinkMgr->getOwnId())*/)
-	{
-		mi.msgflags |= RS_MSG_OUTGOING;
-	}
-	/* if it has a pending flag, then its in the outbox */
-	if (msg->msgFlags & RS_MSG_FLAGS_PENDING)
-	{
-		mi.msgflags |= RS_MSG_PENDING;
-	}
-	if (msg->msgFlags & RS_MSG_FLAGS_DRAFT)
-	{
-		mi.msgflags |= RS_MSG_DRAFT;
-	}
-	if (msg->msgFlags & RS_MSG_FLAGS_NEW)
-	{
-		mi.msgflags |= RS_MSG_NEW;
-	}
 
-	if (msg->msgFlags & RS_MSG_FLAGS_SIGNED)
-		mi.msgflags |= RS_MSG_SIGNED ;
+	if (msg->msgFlags & RS_MSG_FLAGS_OUTGOING)        mi.msgflags |= RS_MSG_OUTGOING;
+	if (msg->msgFlags & RS_MSG_FLAGS_PENDING)         mi.msgflags |= RS_MSG_PENDING;    /* if it has a pending flag, then its in the outbox */
+	if (msg->msgFlags & RS_MSG_FLAGS_DRAFT)           mi.msgflags |= RS_MSG_DRAFT;
+	if (msg->msgFlags & RS_MSG_FLAGS_NEW)             mi.msgflags |= RS_MSG_NEW;
 
-	if (msg->msgFlags & RS_MSG_FLAGS_SIGNATURE_CHECKS)
-		mi.msgflags |= RS_MSG_SIGNATURE_CHECKS ;
-
-	if (msg->msgFlags & RS_MSG_FLAGS_ENCRYPTED)
-		mi.msgflags |= RS_MSG_ENCRYPTED ;
-
-	if (msg->msgFlags & RS_MSG_FLAGS_DECRYPTED)
-		mi.msgflags |= RS_MSG_DECRYPTED ;
-
-	if (msg->msgFlags & RS_MSG_FLAGS_TRASH)
-	{
-		mi.msgflags |= RS_MSG_TRASH;
-	}
-	if (msg->msgFlags & RS_MSG_FLAGS_UNREAD_BY_USER)
-	{
-		mi.msgflags |= RS_MSG_UNREAD_BY_USER;
-	}
-	if (msg->msgFlags & RS_MSG_FLAGS_REPLIED)
-	{
-		mi.msgflags |= RS_MSG_REPLIED;
-	}
-	if (msg->msgFlags & RS_MSG_FLAGS_FORWARDED)
-	{
-		mi.msgflags |= RS_MSG_FORWARDED;
-	}
-	if (msg->msgFlags & RS_MSG_FLAGS_STAR)
-	{
-		mi.msgflags |= RS_MSG_STAR;
-	}
-	if (msg->msgFlags & RS_MSG_FLAGS_USER_REQUEST)
-	{
-		mi.msgflags |= RS_MSG_USER_REQUEST;
-	}
-	if (msg->msgFlags & RS_MSG_FLAGS_FRIEND_RECOMMENDATION)
-	{
-		mi.msgflags |= RS_MSG_FRIEND_RECOMMENDATION;
-	}
-	if (msg->msgFlags & RS_MSG_FLAGS_LOAD_EMBEDDED_IMAGES)
-	{
-		mi.msgflags |= RS_MSG_LOAD_EMBEDDED_IMAGES;
-	}
+	if (msg->msgFlags & RS_MSG_FLAGS_SIGNED)                  mi.msgflags |= RS_MSG_SIGNED ;
+	if (msg->msgFlags & RS_MSG_FLAGS_SIGNATURE_CHECKS)        mi.msgflags |= RS_MSG_SIGNATURE_CHECKS ;
+	if (msg->msgFlags & RS_MSG_FLAGS_ENCRYPTED)               mi.msgflags |= RS_MSG_ENCRYPTED ;
+	if (msg->msgFlags & RS_MSG_FLAGS_DECRYPTED)               mi.msgflags |= RS_MSG_DECRYPTED ;
+	if (msg->msgFlags & RS_MSG_FLAGS_TRASH)                   mi.msgflags |= RS_MSG_TRASH;
+	if (msg->msgFlags & RS_MSG_FLAGS_UNREAD_BY_USER)          mi.msgflags |= RS_MSG_UNREAD_BY_USER;
+	if (msg->msgFlags & RS_MSG_FLAGS_REPLIED)                 mi.msgflags |= RS_MSG_REPLIED;
+	if (msg->msgFlags & RS_MSG_FLAGS_FORWARDED)               mi.msgflags |= RS_MSG_FORWARDED;
+	if (msg->msgFlags & RS_MSG_FLAGS_STAR)                    mi.msgflags |= RS_MSG_STAR;
+	if (msg->msgFlags & RS_MSG_FLAGS_USER_REQUEST)            mi.msgflags |= RS_MSG_USER_REQUEST;
+	if (msg->msgFlags & RS_MSG_FLAGS_FRIEND_RECOMMENDATION)   mi.msgflags |= RS_MSG_FRIEND_RECOMMENDATION;
+	if (msg->msgFlags & RS_MSG_FLAGS_LOAD_EMBEDDED_IMAGES)    mi.msgflags |= RS_MSG_LOAD_EMBEDDED_IMAGES;
 
 	mi.ts = msg->sendTime;
-	mi.srcId = msg->PeerId();
-	{
-		//msg->msgId;
-		rs_sprintf(mi.msgId, "%lu", msg->msgId);
-	}
+	mi.rspeerid_srcId = msg->PeerId();
 
-    std::list<RsPeerId>::iterator pit;
+	mi.rspeerid_msgto  = msg->rspeerid_msgto.ids ;
+	mi.rspeerid_msgcc  = msg->rspeerid_msgcc.ids ;
+	mi.rspeerid_msgbcc = msg->rspeerid_msgbcc.ids ;
 
-	for(pit = msg->msgto.ids.begin(); 
-        pit != msg->msgto.ids.end(); pit++)
-	{
-		mi.msgto.push_back(*pit);
-	}
-
-	for(pit = msg->msgcc.ids.begin(); 
-		pit != msg->msgcc.ids.end(); pit++)
-	{
-		mi.msgcc.push_back(*pit);
-	}
-
-	for(pit = msg->msgbcc.ids.begin(); 
-		pit != msg->msgbcc.ids.end(); pit++)
-	{
-		mi.msgbcc.push_back(*pit);
-	}
+	mi.rsgxsid_msgto  = msg->rsgxsid_msgto.ids ;
+	mi.rsgxsid_msgcc  = msg->rsgxsid_msgcc.ids ;
+	mi.rsgxsid_msgbcc = msg->rsgxsid_msgbcc.ids ;
 
 	mi.title = msg->subject;
 	mi.msg   = msg->message;
@@ -1592,9 +1517,7 @@ void p3MsgService::initRsMI(RsMsgItem *msg, MessageInfo &mi)
 	mi.count = 0;
 	mi.size = 0;
 
-	std::list<RsTlvFileItem>::iterator it;
-	for(it = msg->attachment.items.begin(); 
-			it != msg->attachment.items.end(); it++)
+	for(std::list<RsTlvFileItem>::iterator it = msg->attachment.items.begin(); it != msg->attachment.items.end(); it++)
 	{
 		FileInfo fi;
 		fi.fname = RsDirUtil::getTopDir(it->name);
@@ -1605,7 +1528,6 @@ void p3MsgService::initRsMI(RsMsgItem *msg, MessageInfo &mi)
 		mi.count++;
 		mi.size += fi.size;
 	}
-
 }
 
 void p3MsgService::initRsMIS(RsMsgItem *msg, MsgInfoSummary &mis)
@@ -1687,50 +1609,33 @@ void p3MsgService::initRsMIS(RsMsgItem *msg, MsgInfoSummary &mis)
 	mis.ts = msg->sendTime;
 }
 
-RsMsgItem *p3MsgService::initMIRsMsg(MessageInfo &info, const RsPeerId &to)
+void p3MsgService::initMIRsMsg(RsMsgItem *msg,const MessageInfo& info)
 {
-	RsMsgItem *msg = new RsMsgItem();
-
-	msg -> PeerId(to);
-
 	msg -> msgFlags = 0;
 	msg -> msgId = 0;
 	msg -> sendTime = time(NULL);
 	msg -> recvTime = 0;
-	
 	msg -> subject = info.title;
+	msg -> message = info.msg;
 
-		msg -> message = info.msg;
+	msg->rspeerid_msgto.ids  = info.rspeerid_msgto ;
+	msg->rspeerid_msgcc.ids  = info.rspeerid_msgcc ;
 
-    std::list<RsPeerId>::iterator pit;
-	for(pit = info.msgto.begin(); pit != info.msgto.end(); pit++)
-	{
-		msg -> msgto.ids.push_back(*pit);
-	}
-
-	for(pit = info.msgcc.begin(); pit != info.msgcc.end(); pit++)
-	{
-		msg -> msgcc.ids.push_back(*pit);
-	}
+	msg->rsgxsid_msgto.ids  = info.rsgxsid_msgto ;
+	msg->rsgxsid_msgcc.ids  = info.rsgxsid_msgcc ;
 
 	/* We don't fill in bcc (unless to ourselves) */
-	if (to == mLinkMgr->getOwnId())
+
+	if (msg->PeerId() == mLinkMgr->getOwnId())
 	{
-		for(pit = info.msgbcc.begin(); pit != info.msgbcc.end(); pit++)
-		{
-			msg -> msgbcc.ids.push_back(*pit);
-		}
+		msg->rsgxsid_msgbcc.ids = info.rsgxsid_msgbcc ;
+		msg->rspeerid_msgbcc.ids = info.rspeerid_msgbcc ;
 	}
 
 	msg -> attachment.title   = info.attach_title;
 	msg -> attachment.comment = info.attach_comment;
 
-	RsPeerDetails details ;
-	if(!rsPeers->getPeerDetails(to,details))
-		msg->msgFlags |= RS_MSG_FLAGS_DISTANT; 
-
-	std::list<FileInfo>::iterator it;
-	for(it = info.files.begin(); it != info.files.end(); it++)
+	for(std::list<FileInfo>::const_iterator it = info.files.begin(); it != info.files.end(); it++)
 	{
 		RsTlvFileItem mfi;
 		mfi.hash = it -> hash;
@@ -1738,32 +1643,45 @@ RsMsgItem *p3MsgService::initMIRsMsg(MessageInfo &info, const RsPeerId &to)
 		mfi.filesize = it -> size;
 		msg -> attachment.items.push_back(mfi);
 	}
-
 	/* translate flags from outside */
 	if (info.msgflags & RS_MSG_USER_REQUEST)
 		msg->msgFlags |= RS_MSG_FLAGS_USER_REQUEST;
 
 	if (info.msgflags & RS_MSG_FRIEND_RECOMMENDATION)
 		msg->msgFlags |= RS_MSG_FLAGS_FRIEND_RECOMMENDATION;
+}
+RsMsgItem *p3MsgService::initMIRsMsg(const MessageInfo& info, const RsGxsId& to)
+{
+	RsMsgItem *msg = new RsMsgItem();
+
+	initMIRsMsg(msg,info) ;
+
+	msg->PeerId(RsPeerId(to));
+	msg->msgFlags |= RS_MSG_FLAGS_DISTANT; 
 
 	if (info.msgflags & RS_MSG_SIGNED)
 		msg->msgFlags |= RS_MSG_FLAGS_SIGNED;
-
-	/* load embedded images from own messages */
-	msg->msgFlags |= RS_MSG_FLAGS_LOAD_EMBEDDED_IMAGES;
 
 	// See if we need to encrypt this message.  If so, we replace the msg text
 	// by the whole message serialized and binary encrypted, so as to obfuscate
 	// all its content.
 	//
+	createDistantMessage(to,info.rsgxsid_srcId,msg) ;
 
-	if(!info.encryption_keys.empty())
-		std::cerr << "(WW) Cannot encrypt message. Code needs to be improved." << std::endl;
-//	if(info.encryption_keys.find(to) != info.encryption_keys.end())
-//		encryptMessage(info.encryption_keys[to],msg) ;
+	return msg ;
+}
 
-		//std::cerr << "p3MsgService::initMIRsMsg()" << std::endl;
-	//msg->print(std::cerr);
+RsMsgItem *p3MsgService::initMIRsMsg(const MessageInfo &info, const RsPeerId& to)
+{
+	RsMsgItem *msg = new RsMsgItem();
+
+	initMIRsMsg(msg,info) ;
+
+	msg->PeerId(to) ;
+
+	/* load embedded images from own messages */
+	msg->msgFlags |= RS_MSG_FLAGS_LOAD_EMBEDDED_IMAGES;
+
 	return msg;
 }
 
@@ -1892,9 +1810,12 @@ bool p3MsgService::createDistantMessage(const RsGxsId& destination_gxs_id,const 
 
 	item->message = armoured_data ;
 	item->subject = "" ;
-	item->msgcc.ids.clear() ;
-	item->msgbcc.ids.clear() ;
-	item->msgto.ids.clear() ;
+	item->rspeerid_msgcc.ids.clear() ;
+	item->rspeerid_msgbcc.ids.clear() ;
+	item->rspeerid_msgto.ids.clear() ;
+	item->rsgxsid_msgcc.ids.clear() ;
+	item->rsgxsid_msgbcc.ids.clear() ;
+	item->rsgxsid_msgto.ids.clear() ;
 	item->msgFlags |= RS_MSG_FLAGS_ENCRYPTED ;
 	item->attachment.TlvClear() ;
 

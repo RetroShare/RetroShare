@@ -1114,19 +1114,28 @@ void MessagesDialog::insertMessages()
 
                         text.clear();
 
-                        std::list<RsPeerId>::const_iterator pit;
-                        for (pit = msgInfo.msgto.begin(); pit != msgInfo.msgto.end(); pit++)
+                        for(std::list<RsPeerId>::const_iterator pit = msgInfo.rspeerid_msgto.begin(); pit != msgInfo.rspeerid_msgto.end(); pit++)
                         {
-                            if (text.isEmpty() == false) {
+                            if (!text.isEmpty())
                                 text += ", ";
-                            }
 
                             std::string peerName = rsPeers->getPeerName(*pit);
-                            if (peerName.empty()) {
+                            if (peerName.empty())
                                 text += PeerDefs::rsid("", *pit);
-                            } else {
+                             else
                                 text += QString::fromUtf8(peerName.c_str());
-                            }
+                        }
+            for(std::list<RsGxsId>::const_iterator pit = msgInfo.rsgxsid_msgto.begin(); pit != msgInfo.rsgxsid_msgto.end(); pit++)
+                        {
+                            if (!text.isEmpty())
+                                text += ", ";
+
+                // We should improve this by showing the real names of each GXS id.
+                            std::string peerName = "GXS_id("+(*pit).toStdString() + ")" ;
+                            if (peerName.empty())
+                                text += PeerDefs::rsid("", *pit);
+                             else
+                                text += QString::fromUtf8(peerName.c_str());
                         }
                     } else {
                         std::cerr << "MessagesDialog::insertMsgTxtAndFiles() Couldn't find Msg" << std::endl;

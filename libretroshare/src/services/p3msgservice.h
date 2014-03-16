@@ -163,19 +163,22 @@ int     checkOutgoingMessages();
 		p3GRouter *mGRouter ;
 #endif
 
-uint32_t getNewUniqueMsgId();
-int     sendMessage(RsMsgItem *item);
-void    checkSizeAndSendMessage(RsMsgItem *msg);
+		uint32_t getNewUniqueMsgId();
+		int     sendMessage(RsMsgItem *item);
+		void    checkSizeAndSendMessage(RsMsgItem *msg);
 
-int 	incomingMsgs();
-void    processMsg(RsMsgItem *mi, bool incoming);
-bool checkAndRebuildPartialMessage(RsMsgItem*) ;
+		int 	incomingMsgs();
+		void    processMsg(RsMsgItem *mi, bool incoming);
+		bool checkAndRebuildPartialMessage(RsMsgItem*) ;
 
-void 	initRsMI(RsMsgItem *msg, MessageInfo &mi);
-void 	initRsMIS(RsMsgItem *msg, MsgInfoSummary &mis);
-RsMsgItem *initMIRsMsg(MessageInfo &info, const RsPeerId &to);
+		void 	initRsMI(RsMsgItem *msg, MessageInfo &mi);
+		void 	initRsMIS(RsMsgItem *msg, MsgInfoSummary &mis);
 
-void    initStandardTagTypes();
+		RsMsgItem *initMIRsMsg(const MessageInfo &info, const RsPeerId& to);
+		RsMsgItem *initMIRsMsg(const MessageInfo &info, const RsGxsId& to);
+		void initMIRsMsg(RsMsgItem *item,const MessageInfo &info) ;
+
+		void    initStandardTagTypes();
 
 	p3LinkMgr *mLinkMgr;
 

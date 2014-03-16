@@ -1380,9 +1380,13 @@ void 	RsMsgItem::clear()
 	subject.clear();
 	message.clear();
 
-	msgto.TlvClear();
-	msgcc.TlvClear();
-	msgbcc.TlvClear();
+	rspeerid_msgto.TlvClear();
+	rspeerid_msgcc.TlvClear();
+	rspeerid_msgbcc.TlvClear();
+
+	rsgxsid_msgto.TlvClear();
+	rsgxsid_msgcc.TlvClear();
+	rsgxsid_msgbcc.TlvClear();
 
 	attachment.TlvClear();
 }
@@ -1403,15 +1407,18 @@ std::ostream &RsMsgItem::print(std::ostream &out, uint16_t indent)
 
         printIndent(out, int_Indent);
         out << "Message To: " << std::endl;
-	msgto.print(out, int_Indent);
+		  rspeerid_msgto.print(out, int_Indent);
+		  rsgxsid_msgto.print(out, int_Indent);
 
         printIndent(out, int_Indent);
         out << "Message CC: " << std::endl;
-	msgcc.print(out, int_Indent);
+		  rspeerid_msgcc.print(out, int_Indent);
+		  rsgxsid_msgcc.print(out, int_Indent);
 
         printIndent(out, int_Indent);
         out << "Message BCC: " << std::endl;
-	msgbcc.print(out, int_Indent);
+		  rspeerid_msgbcc.print(out, int_Indent);
+		  rsgxsid_msgbcc.print(out, int_Indent);
 
         printIndent(out, int_Indent);
 	std::string cnv_subject(subject.begin(), subject.end());
@@ -1514,9 +1521,14 @@ uint32_t    RsMsgItem::serial_size(bool m_bConfiguration)
 	s += GetTlvStringSize(subject);
 	s += GetTlvStringSize(message);
 
-	s += msgto.TlvSize();
-	s += msgcc.TlvSize();
-	s += msgbcc.TlvSize();
+	s += rspeerid_msgto.TlvSize();
+	s += rspeerid_msgcc.TlvSize();
+	s += rspeerid_msgbcc.TlvSize();
+
+	s += rsgxsid_msgto.TlvSize();
+	s += rsgxsid_msgcc.TlvSize();
+	s += rsgxsid_msgbcc.TlvSize();
+
 	s += attachment.TlvSize();
 
 	if (m_bConfiguration) {
@@ -1558,9 +1570,13 @@ bool     RsMsgItem::serialise(void *data, uint32_t& pktsize,bool config)
 	ok &= SetTlvString(data,tlvsize,&offset,TLV_TYPE_STR_SUBJECT,subject);
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_MSG, message);
 
-	ok &= msgto.SetTlv(data, tlvsize, &offset);
-	ok &= msgcc.SetTlv(data, tlvsize, &offset);
-	ok &= msgbcc.SetTlv(data, tlvsize, &offset);
+	ok &= rspeerid_msgto.SetTlv(data, tlvsize, &offset);
+	ok &= rspeerid_msgcc.SetTlv(data, tlvsize, &offset);
+	ok &= rspeerid_msgbcc.SetTlv(data, tlvsize, &offset);
+
+	ok &= rsgxsid_msgto.SetTlv(data, tlvsize, &offset);
+	ok &= rsgxsid_msgcc.SetTlv(data, tlvsize, &offset);
+	ok &= rsgxsid_msgbcc.SetTlv(data, tlvsize, &offset);
 
 	ok &= attachment.SetTlv(data, tlvsize, &offset);
 
@@ -1614,9 +1630,14 @@ RsMsgItem *RsMsgSerialiser::deserialiseMsgItem(void *data, uint32_t *pktsize)
 
 	ok &= GetTlvString(data,rssize,&offset,TLV_TYPE_STR_SUBJECT,item->subject);
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_MSG, item->message);
-	ok &= item->msgto.GetTlv(data, rssize, &offset);
-	ok &= item->msgcc.GetTlv(data, rssize, &offset);
-	ok &= item->msgbcc.GetTlv(data, rssize, &offset);
+
+	ok &= item->rspeerid_msgto.GetTlv(data, rssize, &offset);
+	ok &= item->rspeerid_msgcc.GetTlv(data, rssize, &offset);
+	ok &= item->rspeerid_msgbcc.GetTlv(data, rssize, &offset);
+	ok &= item->rsgxsid_msgto.GetTlv(data, rssize, &offset);
+	ok &= item->rsgxsid_msgcc.GetTlv(data, rssize, &offset);
+	ok &= item->rsgxsid_msgbcc.GetTlv(data, rssize, &offset);
+
 	ok &= item->attachment.GetTlv(data, rssize, &offset);
 
 	if (m_bConfiguration) {
