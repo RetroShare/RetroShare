@@ -998,6 +998,9 @@ bool    p3MsgService::setMsgParentId(uint32_t msgId, uint32_t msgParentId)
 	/* Message Items */
 int     p3MsgService::sendMessage(RsMsgItem *item)
 {
+    if(!item)
+        return 0 ;
+
 	pqioutput(PQL_DEBUG_BASIC, msgservicezone, 
 		"p3MsgService::sendMessage()");
 
@@ -1031,48 +1034,32 @@ int     p3MsgService::sendMessage(RsMsgItem *item)
 
 bool 	p3MsgService::MessageSend(MessageInfo &info)
 {
-    std::list<RsPeerId>::const_iterator pit;
+    for(std::list<RsPeerId>::const_iterator pit = info.rspeerid_msgto.begin();  pit != info.rspeerid_msgto.end();  pit++) sendMessage(initMIRsMsg(info, *pit));
+    for(std::list<RsPeerId>::const_iterator pit = info.rspeerid_msgcc.begin();  pit != info.rspeerid_msgcc.end();  pit++) sendMessage(initMIRsMsg(info, *pit));
+    for(std::list<RsPeerId>::const_iterator pit = info.rspeerid_msgbcc.begin(); pit != info.rspeerid_msgbcc.end(); pit++) sendMessage(initMIRsMsg(info, *pit));
 
-	for(pit = info.rspeerid_msgto.begin(); pit != info.rspeerid_msgto.end(); pit++)
-	{
-		RsMsgItem *msg = initMIRsMsg(info, *pit);
+    for(std::list<RsGxsId>::const_iterator pit = info.rsgxsid_msgto.begin();  pit != info.rsgxsid_msgto.end();  pit++) sendMessage(initMIRsMsg(info, *pit));
+    for(std::list<RsGxsId>::const_iterator pit = info.rsgxsid_msgcc.begin();  pit != info.rsgxsid_msgcc.end();  pit++) sendMessage(initMIRsMsg(info, *pit));
+    for(std::list<RsGxsId>::const_iterator pit = info.rsgxsid_msgbcc.begin(); pit != info.rsgxsid_msgbcc.end(); pit++) sendMessage(initMIRsMsg(info, *pit));
 
-		if (msg)
-			sendMessage(msg);
-	}
+    /* send to ourselves as well */
+    RsMsgItem *msg = initMIRsMsg(info, mLinkMgr->getOwnId());
 
-	for(pit = info.rspeerid_msgcc.begin(); pit != info.rspeerid_msgcc.end(); pit++)
-	{
-		RsMsgItem *msg = initMIRsMsg(info, *pit);
-		if (msg)
-			sendMessage(msg);
-	}
+    if (msg)
+    {
+        std::list<RsPgpId>::iterator it ;
 
-	for(pit = info.rspeerid_msgbcc.begin(); pit != info.rspeerid_msgbcc.end(); pit++)
-	{
-		RsMsgItem *msg = initMIRsMsg(info, *pit);
-		if (msg)
-			sendMessage(msg);
-	}
+        if (msg->msgFlags & RS_MSG_FLAGS_SIGNED)
+            msg->msgFlags |= RS_MSG_FLAGS_SIGNATURE_CHECKS;	// this is always true, since we are sending the message
 
-	/* send to ourselves as well */
-	RsMsgItem *msg = initMIRsMsg(info, mLinkMgr->getOwnId());
+        /* use processMsg to get the new msgId */
+        processMsg(msg, false);
 
-	if (msg)
-	{
-		std::list<RsPgpId>::iterator it ;
+        // return new message id
+        rs_sprintf(info.msgId, "%lu", msg->msgId);
+    }
 
-		if (msg->msgFlags & RS_MSG_FLAGS_SIGNED)
-			msg->msgFlags |= RS_MSG_FLAGS_SIGNATURE_CHECKS;	// this is always true, since we are sending the message
-
-		/* use processMsg to get the new msgId */
-		processMsg(msg, false);
-
-		// return new message id
-		rs_sprintf(info.msgId, "%lu", msg->msgId);
-	}
-
-	return true;
+    return true;
 }
 
 bool p3MsgService::SystemMessage(const std::string &title, const std::string &message, uint32_t systemFlag)
@@ -1656,7 +1643,7 @@ RsMsgItem *p3MsgService::initMIRsMsg(const MessageInfo& info, const RsGxsId& to)
 
 	initMIRsMsg(msg,info) ;
 
-	msg->PeerId(RsPeerId(to));
+    msg->PeerId(RsPeerId());
 	msg->msgFlags |= RS_MSG_FLAGS_DISTANT; 
 
 	if (info.msgflags & RS_MSG_SIGNED)
@@ -1666,7 +1653,12 @@ RsMsgItem *p3MsgService::initMIRsMsg(const MessageInfo& info, const RsGxsId& to)
 	// by the whole message serialized and binary encrypted, so as to obfuscate
 	// all its content.
 	//
-	createDistantMessage(to,info.rsgxsid_srcId,msg) ;
+    if(!createDistantMessage(to,info.rsgxsid_srcId,msg))
+    {
+        std::cerr << "Cannot encrypt distant message. Something went wrong." << std::endl;
+        delete msg ;
+        return NULL ;
+    }
 
 	return msg ;
 }
@@ -1749,12 +1741,13 @@ bool p3MsgService::createDistantMessage(const RsGxsId& destination_gxs_id,const 
 
 		// do a proper signature here
 		//
-		//if(!AuthGPG::getAuthGPG()->SignDataBin(data,1+rssize+PGP_KEY_ID_SIZE,signature_data,&signature_length))
-		{
-			free(data) ;
-			std::cerr << "Signature failed!" << std::endl;
-			return false;
-		}
+#warning UNFINISHED CODE!!!
+//		if(!mGxsIface->signature(data,offset,signature_data,signature_length))
+//		{
+//			free(data) ;
+//			std::cerr << "Signature failed!" << std::endl;
+//			return false;
+//		}
 #ifdef DEBUG_DISTANT_MSG
 		std::cerr << "  After signature: signature size = " << signature_length << std::endl;
 #endif
@@ -1782,14 +1775,15 @@ bool p3MsgService::createDistantMessage(const RsGxsId& destination_gxs_id,const 
 	std::cerr << "  Encrypting for Key ID " << pgp_id << std::endl;
 #endif
 	// Do proper encryption here
-	//if(!AuthGPG::getAuthGPG()->encryptDataBin(pgp_id,data,1+rssize+signature_length+PGP_KEY_ID_SIZE,encrypted_data,&encrypted_size))
-	{
+#warning UNFINISHED CODE!!!
+//	if(!mGxsIface->encrypt(data,offset,encrypted_data,encrypted_size,destination_gxs_id)))
+//	{
 		free(data) ;
 		delete[] encrypted_data ;
 		std::cerr << "Encryption failed!" << std::endl;
 		return false;
-	}
-	free(data) ;
+    //}
+    //free(data) ;
 
 #ifdef DEBUG_DISTANT_MSG
 	std::cerr << "  Decrypted size = " << offset << std::endl;
@@ -1876,10 +1870,11 @@ bool p3MsgService::decryptMessage(const std::string& mId)
         std::cerr << "  Encrypted data hash = " << RsDirUtil::sha1sum((uint8_t*)encrypted_data,encrypted_size).toStdString() << std::endl;
 #endif
         // Use proper GXS decryption here.
-    // We need something like:
+    // TODO
         //
-        // if(!rsGxs->decryptDataBin(encrypted_data,encrypted_size,decrypted_data,&decrypted_size))
-        //    throw std::runtime_error("decryption failed!") ;
+#warning UNFINISHED CODE!!!
+//        if(!rsGxs->decrypt(encrypted_data,encrypted_size,decrypted_data,&decrypted_size))
+//		throw std::runtime_error("decryption failed!") ;
 
 #ifdef DEBUG_DISTANT_MSG
         std::cerr << "  Message has succesfully decrypted. Decrypted size = " << decrypted_size << std::endl;
@@ -1959,6 +1954,7 @@ bool p3MsgService::decryptMessage(const std::string& mId)
         // Because we're using GXS ids, not pgp ids.
         // We need something like:
         //
+#warning UNFINISHED CODE!!!
         //     signature_ok = rsGxs->VerifySignBin(decrypted_data, size_of_signed_data, &decrypted_data[offset], signature_size, senders_id) ;
 
         signature_present = false ;
