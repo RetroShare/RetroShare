@@ -1461,6 +1461,7 @@ void MessageComposer::setRecipientToRow(int row, enumType type, destinationType 
 
             icon = QIcon(StatusDefs::imageUser(peerStatusInfo.status));
         }
+        break ;
         default:
             std::cerr << __PRETTY_FUNCTION__ << ": Unhandled type " << dest_type << std::endl;
             return ;
