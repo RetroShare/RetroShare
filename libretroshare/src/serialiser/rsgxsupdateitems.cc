@@ -177,7 +177,7 @@ RsItem* RsGxsUpdateSerialiser::deserialise(void* data, uint32_t* size)
 uint32_t RsGxsUpdateSerialiser::sizeGxsGrpUpdate(RsGxsGrpUpdateItem* item)
 {
 	uint32_t s = 8; // header size
-	s += GetTlvStringSize(item->peerId);
+    s += item->peerId.serial_size();
 	s += 4;
 	return s;
 }
@@ -218,7 +218,7 @@ bool RsGxsUpdateSerialiser::serialiseGxsGrpUpdate(RsGxsGrpUpdateItem* item,
     /* RsGxsGrpUpdateItem */
 
 
-    ok &= SetTlvString(data, *size, &offset, TLV_TYPE_STR_PEERID, item->peerId);
+    ok &= item->peerId.serialise(data, *size, offset) ;
     ok &= setRawUInt32(data, *size, &offset, item->grpUpdateTS);
 
     if(offset != tlvsize){
@@ -326,7 +326,7 @@ RsGxsGrpUpdateItem* RsGxsUpdateSerialiser::deserialGxsGrpUpddate(void* data,
     /* skip the header */
     offset += 8;
 
-    ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_PEERID, item->peerId);
+    ok &= item->peerId.deserialise(data, *size, offset) ;
     ok &= getRawUInt32(data, *size, &offset, &(item->grpUpdateTS));
 
     if (offset != rssize)
@@ -419,15 +419,15 @@ RsGxsServerGrpUpdateItem* RsGxsUpdateSerialiser::deserialGxsServerGrpUpddate(voi
 uint32_t RsGxsUpdateSerialiser::sizeGxsMsgUpdate(RsGxsMsgUpdateItem* item)
 {
 	uint32_t s = 8; // header size
-	s += GetTlvStringSize(item->peerId);
+    s += item->peerId.serial_size() ;//GetTlvStringSize(item->peerId);
 
-	const std::map<std::string, uint32_t>& msgUpdateTS = item->msgUpdateTS;
-	std::map<std::string, uint32_t>::const_iterator cit = msgUpdateTS.begin();
+    const std::map<RsGxsGroupId, uint32_t>& msgUpdateTS = item->msgUpdateTS;
+    std::map<RsGxsGroupId, uint32_t>::const_iterator cit = msgUpdateTS.begin();
 
 	for(; cit != msgUpdateTS.end(); cit++)
 	{
-		s += GetTlvStringSize(cit->first);
-		s += 4;
+		s += cit->first.serial_size();
+        s += 4;
 	}
 
         s += 4; // number of map items
@@ -438,7 +438,7 @@ uint32_t RsGxsUpdateSerialiser::sizeGxsMsgUpdate(RsGxsMsgUpdateItem* item)
 uint32_t RsGxsUpdateSerialiser::sizeGxsServerMsgUpdate(RsGxsServerMsgUpdateItem* item)
 {
         uint32_t s = 8; // header size
-        s += GetTlvStringSize(item->grpId);
+        s += item->grpId.serial_size();
         s += 4; // grp TS
 
         return s;
@@ -473,17 +473,17 @@ bool RsGxsUpdateSerialiser::serialiseGxsMsgUpdate(RsGxsMsgUpdateItem* item,
     /* RsGxsMsgUpdateItem */
 
 
-    ok &= SetTlvString(data, *size, &offset, TLV_TYPE_STR_PEERID, item->peerId);
+    ok &= item->peerId.serialise(data, *size, offset) ;
 
-    const std::map<std::string, uint32_t>& msgUpdateTS = item->msgUpdateTS;
-    std::map<std::string, uint32_t>::const_iterator cit = msgUpdateTS.begin();
+    const std::map<RsGxsGroupId, uint32_t>& msgUpdateTS = item->msgUpdateTS;
+    std::map<RsGxsGroupId, uint32_t>::const_iterator cit = msgUpdateTS.begin();
 
     uint32_t numItems = msgUpdateTS.size();
     ok &= setRawUInt32(data, *size, &offset, numItems);
 
     for(; cit != msgUpdateTS.end(); cit++)
     {
-        ok &= SetTlvString(data, *size, &offset, TLV_TYPE_STR_GROUPID, cit->first);
+    	ok &= cit->first.serialise(data, *size, offset);
         ok &= setRawUInt32(data, *size, &offset, cit->second);
     }
 
@@ -533,7 +533,7 @@ bool RsGxsUpdateSerialiser::serialiseGxsServerMsgUpdate(RsGxsServerMsgUpdateItem
     /* RsNxsSyncm */
 
 
-    ok &= SetTlvString(data, *size, &offset, TLV_TYPE_STR_GROUPID, item->grpId);
+    ok &= item->grpId.serialise(data, *size, offset) ;
     ok &= setRawUInt32(data, *size, &offset, item->msgUpdateTS);
 
     if(offset != tlvsize){
@@ -594,15 +594,15 @@ RsGxsMsgUpdateItem* RsGxsUpdateSerialiser::deserialGxsMsgUpdate(void* data,
     /* skip the header */
     offset += 8;
 
-    ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_PEERID, item->peerId);
+    ok &= item->peerId.deserialise(data, *size, offset) ;
     uint32_t numUpdateItems;
     ok &= getRawUInt32(data, *size, &offset, &(numUpdateItems));
-    std::map<std::string, uint32_t>& msgUpdateItem = item->msgUpdateTS;
-    std::string grpId;
+    std::map<RsGxsGroupId, uint32_t>& msgUpdateItem = item->msgUpdateTS;
+    RsGxsGroupId pId;
     uint32_t updateTS;
     for(uint32_t i = 0; i < numUpdateItems; i++)
     {
-        ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_GROUPID, grpId);
+        ok &= pId.deserialise(data, *size, offset);
 
         if(!ok)
             break;
@@ -612,7 +612,7 @@ RsGxsMsgUpdateItem* RsGxsUpdateSerialiser::deserialGxsMsgUpdate(void* data,
         if(!ok)
             break;
 
-        msgUpdateItem.insert(std::make_pair(grpId, updateTS));                
+        msgUpdateItem.insert(std::make_pair(pId, updateTS));
     }
 
     if (offset != rssize)
@@ -678,7 +678,7 @@ RsGxsServerMsgUpdateItem* RsGxsUpdateSerialiser::deserialGxsServerMsgUpdate(void
     /* skip the header */
     offset += 8;
 
-    ok &= GetTlvString(data, *size, &offset, TLV_TYPE_STR_GROUPID, item->grpId);
+    ok &= item->grpId.deserialise(data, *size, offset) ;
     ok &= getRawUInt32(data, *size, &offset, &(item->msgUpdateTS));
 
     if (offset != rssize)

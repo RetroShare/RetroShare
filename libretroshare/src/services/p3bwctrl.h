@@ -88,7 +88,7 @@ class p3BandwidthControl: public p3Service, public pqiMonitor
 		/***** for RsConfig (not directly overloaded) ****/
 
 		virtual int getTotalBandwidthRates(RsConfigDataRates &rates);
-		virtual int getAllBandwidthRates(std::map<std::string, RsConfigDataRates> &ratemap);
+		virtual int getAllBandwidthRates(std::map<RsPeerId, RsConfigDataRates> &ratemap);
 
 
 
@@ -121,7 +121,7 @@ class p3BandwidthControl: public p3Service, public pqiMonitor
 		time_t mLastCheck;
 
 		RsBwRates mTotalRates;
-		std::map<std::string, BwCtrlData> mBwMap;
+		std::map<RsPeerId, BwCtrlData> mBwMap;
 
 };
 

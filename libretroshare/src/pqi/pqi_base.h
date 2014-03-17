@@ -39,6 +39,7 @@
 
 /*** Base DataTypes: ****/
 #include "serialiser/rsserial.h"
+#include "retroshare/rstypes.h"
 
 
 #define PQI_MIN_PORT 10 // TO ALLOW USERS TO HAVE PORT 80! - was 1024
@@ -186,7 +187,7 @@ class NetInterface;
 class PQInterface: public RateInterface
 {
 	public:
-		PQInterface(const std::string &id) :peerId(id) { return; }
+		PQInterface(const RsPeerId &id) :peerId(id) { return; }
 		virtual	~PQInterface() { return; }
 
 		/*!
@@ -221,7 +222,7 @@ class PQInterface: public RateInterface
 		 */
 		virtual int     tick() { return 0; }
 		virtual int     status() { return 0; }
-		virtual std::string PeerId() { return peerId; }
+		virtual const RsPeerId& PeerId() { return peerId; }
 
 		// the callback from NetInterface Connection Events.
 		virtual int	notifyEvent(NetInterface *ni, int event, const struct sockaddr_storage &remote_peer_address) 
@@ -234,7 +235,7 @@ class PQInterface: public RateInterface
 
 	private:
 
-		std::string peerId;
+		RsPeerId peerId;
 };
 
 
@@ -300,7 +301,7 @@ virtual int	close() = 0;
 /**
  * If hashing data
  **/
-virtual std::string gethash() = 0;
+virtual RsFileHash gethash() = 0;
 
 /**
  * Number of bytes read/sent
@@ -353,7 +354,7 @@ public:
 	/**
 	 * @param p_in used to notify system of connect/disconnect events
 	 */
-	NetInterface(PQInterface *p_in, std::string id)
+	NetInterface(PQInterface *p_in, const RsPeerId& id)
 	:p(p_in), peerId(id) { return; }
 
 virtual ~NetInterface() 
@@ -364,7 +365,7 @@ virtual int listen() = 0;
 virtual int stoplistening() = 0; 
 virtual int disconnect() = 0;
 virtual int reset() = 0;
-virtual std::string PeerId() { return peerId; }
+virtual const RsPeerId& PeerId() { return peerId; }
 virtual int getConnectAddress(struct sockaddr_storage &raddr) = 0;
 
 virtual bool connect_parameter(uint32_t type, uint32_t value) = 0;
@@ -376,7 +377,7 @@ PQInterface *parent() { return p; }
 
 private:
 	PQInterface *p;
-	std::string peerId;
+	RsPeerId peerId;
 };
 
 //! network binary interface (abstract)
@@ -390,7 +391,7 @@ private:
 class NetBinInterface: public NetInterface, public BinInterface
 {
 public:
-	NetBinInterface(PQInterface *parent, std::string id)
+	NetBinInterface(PQInterface *parent, const RsPeerId& id)
 	:NetInterface(parent, id)
 	{ return; }
 virtual ~NetBinInterface() { return; }

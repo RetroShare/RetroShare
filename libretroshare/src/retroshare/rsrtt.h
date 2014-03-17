@@ -29,6 +29,7 @@
 #include <inttypes.h>
 #include <string>
 #include <list>
+#include <retroshare/rstypes.h>
 
 /* The Main Interface Class - for information about your Peers */
 class RsRtt;
@@ -56,7 +57,7 @@ class RsRtt
 	RsRtt()  { return; }
 virtual ~RsRtt() { return; }
 
-virtual uint32_t getPongResults(std::string id, int n, std::list<RsRttPongResult> &results) = 0;
+virtual uint32_t getPongResults(const RsPeerId& id, int n, std::list<RsRttPongResult> &results) = 0;
 
 };
 

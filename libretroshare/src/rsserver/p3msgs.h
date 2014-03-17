@@ -80,17 +80,17 @@ class p3Msgs: public RsMsgs
 
 	  virtual bool resetMessageStandardTagTypes(MsgTagType& tags);
 
-	  virtual bool createDistantOfflineMessengingInvite(time_t, std::string&) ;
+      virtual bool createDistantOfflineMessengingInvite(time_t, DistantMsgPeerId&) ;
 	  virtual bool getDistantOfflineMessengingInvites(std::vector<DistantOfflineMessengingInvite>&);
 
 	  virtual void enableDistantMessaging(bool b) ;
 	  virtual bool distantMessagingEnabled() ;
-	  virtual bool getDistantMessageHash(const std::string& pgp_id,std::string& hash) ;
+      virtual bool getDistantMessagePeerId(const RsPgpId& pgp_id,DistantMsgPeerId& pid) ;
 
 	  /*!
 	   * gets avatar from peer, image data in jpeg format
 	   */
-	  virtual void getAvatarData(const std::string& pid,unsigned char *& data,int& size);
+	  virtual void getAvatarData(const RsPeerId& pid,unsigned char *& data,int& size);
 
 	  /*!
 	   * sets clients avatar, image data should be in jpeg format
@@ -115,7 +115,7 @@ class p3Msgs: public RsMsgs
 	  /*!
 	   * retrieves peer's custom status
 	   */
-	  virtual std::string getCustomStateString(const std::string& peer_id) ;
+	  virtual std::string getCustomStateString(const RsPeerId& peer_id) ;
 	  
 
 	  /*!
@@ -127,7 +127,7 @@ class p3Msgs: public RsMsgs
 	   * chat is sent to specifc peer
 	   * @param id peer to send chat msg to
 	   */
-	  virtual	bool	sendPrivateChat(const std::string& id, const std::string& msg);
+	  virtual	bool	sendPrivateChat(const RsPeerId& id, const std::string& msg);
 
 	  /*!
 	   * returns the count of messages in public or private queue
@@ -149,24 +149,24 @@ class p3Msgs: public RsMsgs
 	  /*!
 	   * @param id's of available private chat messages
 	   */
-	  virtual	bool   getPrivateChatQueueIds(bool incoming, std::list<std::string> &ids);
+	  virtual	bool   getPrivateChatQueueIds(bool incoming, std::list<RsPeerId> &ids);
 
 	  /*!
 	   * @param chats ref to list of received private chats is stored here
 	   */
-	  virtual	bool	getPrivateChatQueue(bool incoming, const std::string& id, std::list<ChatInfo> &chats);
+	  virtual	bool	getPrivateChatQueue(bool incoming, const RsPeerId& id, std::list<ChatInfo> &chats);
 
 	  /*!
 	   * @param clear private chat queue
 	   */
-	  virtual	bool	clearPrivateChatQueue(bool incoming, const std::string& id);
+	  virtual	bool	clearPrivateChatQueue(bool incoming, const RsPeerId& id);
 
 	  /*!
 	   * sends immediate status string to a specific peer, e.g. in a private chat
 	   * @param peer_id peer to send status string to
 	   * @param status_string immediate status to send
 	   */
-	  virtual void    sendStatusString(const std::string& peer_id, const std::string& status_string) ;
+	  virtual void    sendStatusString(const RsPeerId& peer_id, const std::string& status_string) ;
 
 	  /*!
 	   * sends immediate status to all peers
@@ -178,10 +178,10 @@ class p3Msgs: public RsMsgs
 
 	  virtual bool joinVisibleChatLobby(const ChatLobbyId& id) ;
 	  virtual void getListOfNearbyChatLobbies(std::vector<VisibleChatLobbyRecord>& public_lobbies) ;
-	  virtual bool getVirtualPeerId(const ChatLobbyId& id,std::string& vpid) ;
-	  virtual bool isLobbyId(const std::string& virtual_peer_id,ChatLobbyId& lobby_id) ;
+	  virtual bool getVirtualPeerId(const ChatLobbyId& id,RsPeerId& vpid) ;
+	  virtual bool isLobbyId(const RsPeerId& virtual_peer_id,ChatLobbyId& lobby_id) ;
 	  virtual void getChatLobbyList(std::list<ChatLobbyInfo, std::allocator<ChatLobbyInfo> >&) ;
-	  virtual void invitePeerToLobby(const ChatLobbyId&, const std::string&) ;
+	  virtual void invitePeerToLobby(const ChatLobbyId&, const RsPeerId&) ;
 	  virtual bool acceptLobbyInvite(const ChatLobbyId& id) ;
 	  virtual void denyLobbyInvite(const ChatLobbyId& id) ;
 	  virtual void getPendingChatLobbyInvites(std::list<ChatLobbyInvite>& invites) ;
@@ -192,15 +192,15 @@ class p3Msgs: public RsMsgs
 	  virtual bool getDefaultNickNameForChatLobby(std::string& nick) ;
     virtual void setLobbyAutoSubscribe(const ChatLobbyId& lobby_id, const bool autoSubscribe);
     virtual bool getLobbyAutoSubscribe(const ChatLobbyId& lobby_id);
-	  virtual ChatLobbyId createChatLobby(const std::string& lobby_name,const std::string& lobby_topic,const std::list<std::string>& invited_friends,uint32_t privacy_type) ;
+	  virtual ChatLobbyId createChatLobby(const std::string& lobby_name,const std::string& lobby_topic,const std::list<RsPeerId>& invited_friends,uint32_t privacy_type) ;
 
-	  virtual bool createDistantChatInvite(const std::string& pgp_id,time_t time_of_validity,std::string& encrypted_string) ;
+	  virtual bool createDistantChatInvite(const RsPgpId& pgp_id,time_t time_of_validity,std::string& encrypted_string) ;
 	  virtual bool getDistantChatInviteList(std::vector<DistantChatInviteInfo>& invites);
-	  virtual bool initiateDistantChatConnexion(const std::string& encrypted_string,time_t validity_time,std::string& hash,uint32_t& error_code) ;
-	  virtual bool initiateDistantChatConnexion(const std::string& hash,uint32_t& error_code) ;
-	  virtual bool getDistantChatStatus(const std::string& hash,uint32_t& status,std::string& pgp_id) ;
-	  virtual bool closeDistantChatConnexion(const std::string& hash) ;
-	  virtual bool removeDistantChatInvite(const std::string& hash) ;
+	  virtual bool initiateDistantChatConnexion(const std::string& encrypted_string,time_t validity_time,DistantChatPeerId& pid,uint32_t& error_code) ;
+	  virtual bool initiateDistantChatConnexion(const DistantChatPeerId& pid,uint32_t& error_code) ;
+	  virtual bool getDistantChatStatus(const DistantChatPeerId& pid,uint32_t& status,RsPgpId& pgp_id) ;
+	  virtual bool closeDistantChatConnexion(const DistantChatPeerId& pid) ;
+	  virtual bool removeDistantChatInvite(const DistantChatPeerId& pid) ;
 
    private:
 

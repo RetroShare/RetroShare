@@ -24,6 +24,7 @@
 
 #include <QMainWindow>
 #include <retroshare/rstypes.h>
+#include <retroshare/rsmsgs.h>
 #include "ui_MessageComposer.h"
 
 class QAction;
@@ -48,13 +49,13 @@ public:
     MessageComposer(QWidget *parent = 0, Qt::WindowFlags flags = 0);
     ~MessageComposer();
 
-    static void msgFriend(const std::string &id, bool group);
-    static void msgDistantPeer(const std::string& hash,const std::string& pgp_id) ;
-    static void msgDistantPeer(const std::string& pgp_id) ;
+    static void msgFriend(const RsPeerId &id, bool group);
+    //static void msgDistantPeer(const std::string& hash,const std::string& pgp_id) ;
+    static void msgDistantPeer(const RsPgpId& pgp_id) ;
 
     static QString recommendMessage();
-    static void recommendFriend(const std::list <std::string> &sslIds, const std::string &to = "", const QString &msg = "", bool autoSend = false);
-    static void sendConnectAttemptMsg(const std::string &gpgId, const std::string &sslId, const QString &sslName);
+    static void recommendFriend(const std::list <RsPeerId> &sslIds, const RsPeerId &to = RsPeerId(), const QString &msg = "", bool autoSend = false);
+    static void sendConnectAttemptMsg(const RsPgpId &gpgId, const RsPeerId &sslId, const QString &sslName);
 
     static MessageComposer *newMsg(const std::string &msgId = "");
     static MessageComposer *replyMsg(const std::string &msgId, bool all);
@@ -67,8 +68,8 @@ public:
     void  setTitleText(const QString &title, enumMessageType type = NORMAL);
     void  setQuotedMsg(const QString &msg, const QString &header);
     void  setMsgText(const QString &msg, bool asHtml = false);
-    void  addRecipient(enumType type, const std::string &id, bool group);
-    void  addRecipient(enumType type, const std::string &hash, const std::string& pgp_id) ;
+    void  addRecipient(enumType type, const RsPeerId &id, bool group);
+    void  addRecipient(enumType type, const DistantMsgPeerId &pid, const RsPgpId &pgp_id) ;
 
 public slots:
     /* actions to take.... */
@@ -174,7 +175,7 @@ private:
     void addEmptyRecipient();
 
     bool getRecipientFromRow(int row, enumType &type, std::string &id, bool &group);
-    void setRecipientToRow(int row, enumType type, std::string id, bool group);
+    void setRecipientToRow(int row, enumType type, const std::string &id, bool group);
 
     void clearTagLabels();
     void showTagLabels();
@@ -220,7 +221,7 @@ private:
     Ui::MessageComposer ui;
 
     std::list<FileInfo> _recList ;
-	 std::map<std::string,std::string> _distant_peers ;	// pairs (hash,pgp_id)
+     std::map<DistantMsgPeerId,RsPgpId> _distant_peers ;	// pairs (hash,pgp_id)
 };
 
 #endif

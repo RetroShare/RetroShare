@@ -53,7 +53,7 @@ PhotoSlideShow::PhotoSlideShow(const RsPhotoAlbum& album, QWidget *parent)
 
 PhotoSlideShow::~PhotoSlideShow(){
 
-    std::map<std::string, RsPhotoPhoto *>::iterator mit = mPhotos.begin();
+    std::map<RsGxsMessageId, RsPhotoPhoto *>::iterator mit = mPhotos.begin();
 
     for(; mit != mPhotos.end(); mit++)
     {
@@ -153,10 +153,10 @@ void PhotoSlideShow::loadImage()
 	/* get the image */
 	int i = 0;
 	bool found = false;
-	std::string msgId;
+    RsGxsMessageId msgId;
 
 	//std::map<std::string, RsPhotoPhoto *>::iterator it;
-	std::map<int, std::string>::iterator it;
+    std::map<int, RsGxsMessageId>::iterator it;
 	for(it = mPhotoOrder.begin(); it != mPhotoOrder.end(); it++, i++)
 	{
 		if (i == mImageIdx)

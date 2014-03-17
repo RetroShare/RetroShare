@@ -118,7 +118,7 @@ void RsCollectionFile::recursAddElements(QDomDocument& doc,const DirDetails& det
 		QDomElement f = doc.createElement("File") ;
 
 		f.setAttribute(QString("name"),QString::fromUtf8(details.name.c_str())) ;
-		f.setAttribute(QString("sha1"),QString::fromStdString(details.hash)) ;
+        f.setAttribute(QString("sha1"),QString::fromStdString(details.hash.toStdString())) ;
 		f.setAttribute(QString("size"),QString::number(details.count)) ;
 
 		e.appendChild(f) ;

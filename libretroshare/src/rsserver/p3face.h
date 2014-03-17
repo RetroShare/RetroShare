@@ -150,7 +150,7 @@ class RsServer: public RsControl, public RsThread
 		/****************************************/
 
 	public:
-		virtual bool getPeerCryptoDetails(const std::string& ssl_id,RsPeerCryptoParams& params) { return pqih->getCryptoParams(ssl_id,params); }
+		virtual bool getPeerCryptoDetails(const RsPeerId& ssl_id,RsPeerCryptoParams& params) { return pqih->getCryptoParams(ssl_id,params); }
 
 	private: 
 

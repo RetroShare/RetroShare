@@ -37,6 +37,8 @@
  *
  */
 
+#ifdef SUSPENDED_UNUSED_CODE
+
 #include "pqi/pqiarchive.h"
 #include "serialiser/rsserial.h"
 #include <iostream>
@@ -415,6 +417,6 @@ std::string pqiarchive::gethash()
 {
 	return bio->gethash();
 }
-
+#endif
 
 	

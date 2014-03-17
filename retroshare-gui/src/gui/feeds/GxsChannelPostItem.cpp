@@ -175,11 +175,11 @@ void GxsChannelPostItem::loadPost(const RsGxsChannelPost &post)
 	{
 		title = tr("Channel Feed") + ": ";
 		RetroShareLink link;
-		link.createChannel(post.mMeta.mGroupId, "");
+        link.createChannel(post.mMeta.mGroupId.toStdString(), "");
 		title += link.toHtml();
 		titleLabel->setText(title);
 		RetroShareLink msgLink;
-		msgLink.createChannel(post.mMeta.mGroupId, post.mMeta.mMsgId);
+        msgLink.createChannel(post.mMeta.mGroupId.toStdString(), post.mMeta.mMsgId.toStdString());
 		subjectLabel->setText(msgLink.toHtml());
 
 		if (IS_GROUP_SUBSCRIBED(mSubscribeFlags) || IS_GROUP_ADMIN(mSubscribeFlags))
@@ -281,8 +281,7 @@ void GxsChannelPostItem::loadPost(const RsGxsChannelPost &post)
 	{
 		/* add file */
 		std::string path;
-		SubFileItem *fi = new SubFileItem(it->mHash, it->mName, path, it->mSize,
-				SFI_STATE_REMOTE | SFI_TYPE_CHANNEL, "");
+		SubFileItem *fi = new SubFileItem(it->mHash, it->mName, path, it->mSize, SFI_STATE_REMOTE | SFI_TYPE_CHANNEL, RsPeerId());
 		mFileItems.push_back(fi);
 		
 		/* check if the file is a media file */

@@ -40,7 +40,7 @@
 #define CREATEMSG_CHANNELINFO 0x002
 
 /** Constructor */
-CreateGxsChannelMsg::CreateGxsChannelMsg(std::string cId)
+CreateGxsChannelMsg::CreateGxsChannelMsg(const RsGxsGroupId &cId)
 	: QDialog (NULL, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint), mChannelId(cId) ,mCheckAttachment(true), mAutoMediaThumbNail(false)
 {
 	/* Invoke the Qt Designer generated object setup routine */
@@ -122,9 +122,11 @@ void CreateGxsChannelMsg::pasteLink()
 
 			std::cerr << "Pasting " << (*it).toString().toStdString() << std::endl;
 
-			FileInfo info ;
-			if(rsFiles->alreadyHaveFile( (*it).hash().toStdString(),info ) )
-				addAttachment((*it).hash().toStdString(), (*it).name().toUtf8().constData(), (*it).size(), true, "") ;
+            FileInfo info ;
+            RsFileHash hash( (*it).hash().toStdString()) ;
+
+            if(rsFiles->alreadyHaveFile( hash,info ) )
+                addAttachment(hash, (*it).name().toUtf8().constData(), (*it).size(), true, RsPeerId()) ;
 			else
 				not_have.push_back( *it ) ;
 		}
@@ -283,9 +285,9 @@ void CreateGxsChannelMsg::parseRsFileListAttachments(const std::string &attachLi
 		quint64     qsize = 0;
 
 		std::string fname;
-		std::string hash;
+        RsFileHash hash;
 		uint64_t    size = 0;
-		std::string source;
+		RsPeerId source;
 
 		int i = 0;
 		for(it2 = parts.begin(); it2 != parts.end(); it2++, i++)
@@ -297,14 +299,14 @@ void CreateGxsChannelMsg::parseRsFileListAttachments(const std::string &attachLi
 					fname = it2->toStdString();
 					break;
 				case 1:
-					hash = it2->toStdString();
+                    hash = RsFileHash(it2->toStdString());
 					break;
 				case 2:
 					qsize = it2->toULongLong(&ok, 10);
 					size = qsize;
 					break;
 				case 3:
-					source = it2->toStdString();
+					source = RsPeerId(it2->toStdString());
 					break;
 			}
 		}
@@ -316,29 +318,21 @@ void CreateGxsChannelMsg::parseRsFileListAttachments(const std::string &attachLi
 		std::cerr << "\tsize: " << size << std::endl;
 		std::cerr << "\tsource: " << source << std::endl;
 
-		/* basic error checking */
-		if ((ok) && (hash.size() == 40))
+        /* basic error checking */
+        if (ok && !hash.isNull())
 		{
 			std::cerr << "Item Ok" << std::endl;
-			if (source == "Local")
-			{
-				addAttachment(hash, fname, size, true, "");
-			}
-			else
-			{
-				// TEMP NOT ALLOWED UNTIL FT WORKING.
-				addAttachment(hash, fname, size, false, source);
-			}
+			addAttachment(hash, fname, size, source.isNull(), source);
 		}
 		else
 		{
-			std::cerr << "Error Decode: Hash size: " << hash.size() << std::endl;
+            std::cerr << "Error Decode: Hash is not a hash: " << hash << std::endl;
 		}
 	}
 }
 
 
-void CreateGxsChannelMsg::addAttachment(const std::string &hash, const std::string &fname, uint64_t size, bool local, const std::string &srcId)
+void CreateGxsChannelMsg::addAttachment(const RsFileHash &hash, const std::string &fname, uint64_t size, bool local, const RsPeerId &srcId)
 {
 	/* add a SubFileItem to the attachment section */
 	std::cerr << "CreateGxsChannelMsg::addAttachment()";
@@ -411,12 +405,16 @@ void CreateGxsChannelMsg::addAttachment(const std::string &path)
 	FileInfo fInfo;
 	std::string filename;
 	uint64_t size = 0;
-	std::string hash = "";
+    RsFileHash hash ;
+
 	rsGxsChannels->ExtraFileHash(path, filename);
+
+#warning: hash is used uninitialized below ?!?
 
 	// only path and filename are valid.
 	// destroyed when fileFrame (this subfileitem) is destroyed
-	SubFileItem *file = new SubFileItem(hash, filename, path, size, flags, mChannelId); 
+	//SubFileItem *file = new SubFileItem(hash, filename, path, size, flags, mChannelId); 
+	SubFileItem *file = new SubFileItem(hash, filename, path, size, flags, RsPeerId()); 
 
 	mAttachments.push_back(file);
 	QLayout *layout = fileFrame->layout();
@@ -544,7 +542,7 @@ void CreateGxsChannelMsg::newChannelMsg()
 		RsTokReqOptions opts;
 		opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
 
-		std::list<std::string> groupIds;
+        std::list<RsGxsGroupId> groupIds;
 		groupIds.push_back(mChannelId);
 
 		std::cerr << "CreateGxsChannelMsg::newChannelMsg() Req Group Summary(" << mChannelId << ")";

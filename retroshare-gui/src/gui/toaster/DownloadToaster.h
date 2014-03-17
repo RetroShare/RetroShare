@@ -24,19 +24,20 @@
 #define DOWNLOADTOASTER_H
 
 #include "ui_DownloadToaster.h"
+#include <retroshare/rstypes.h>
 
 class DownloadToaster : public QWidget
 {
 	Q_OBJECT
 
 public:
-	DownloadToaster(const std::string &hash, const QString &name);
+    DownloadToaster(const RsFileHash &hash, const QString &name);
 
 private slots:
 	void play();
 
 private:
-	std::string fileHash;
+    RsFileHash fileHash;
 
 	/** Qt Designer generated object */
 	Ui::DownloadToaster ui;

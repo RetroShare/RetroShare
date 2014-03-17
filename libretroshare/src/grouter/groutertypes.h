@@ -68,7 +68,7 @@ class GRouterPublishedKeyInfo
 
 struct FriendTrialRecord
 {
-	SSLIdType friend_id ;			// id of the friend
+	RsPeerId  friend_id ;			// id of the friend
 	time_t    time_stamp ;			// time of the last tried
 };
 
@@ -79,7 +79,7 @@ class GRouterRoutingInfo
 
 		uint32_t status_flags ;									// pending, waiting, etc.
 		std::list<FriendTrialRecord> tried_friends ; 	// list of friends to which the item was sent ordered with time.
-		SSLIdType origin ;										// which friend sent us that item
+		RsPeerId  origin ;										// which friend sent us that item
 		time_t received_time ;									// time at which the item was received
 };
 

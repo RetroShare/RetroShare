@@ -238,7 +238,6 @@ public:
 		return mGxs->getGroupStatistic(token, stats);
 	}
 
-
 	/*!
 	 * This determines the reputation threshold messages need to surpass in order
 	 * for it to be accepted by local user from remote source

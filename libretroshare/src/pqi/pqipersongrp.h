@@ -69,9 +69,9 @@ virtual void    statusChanged();
 #endif
 
 	/******************* Peer Control **************************/
-virtual int addPeer(std::string id); /* can be overloaded for testing */
-int     removePeer(std::string id);
-int     connectPeer(std::string id
+virtual int addPeer(const RsPeerId& id); /* can be overloaded for testing */
+int     removePeer(const RsPeerId& id);
+int     connectPeer(const RsPeerId& id
 #ifdef WINDOWS_SYS
 ///////////////////////////////////////////////////////////
 // hack for too many connections
@@ -85,25 +85,25 @@ virtual bool RecvRsRawItem(RsRawItem *item);
 
 
 	/* Work-around to dodgy pointer stuff */
-int	tagHeartbeatRecvd(std::string id);
+int	tagHeartbeatRecvd(const RsPeerId& id);
 
 	/*** callback from children ****/
-bool    notifyConnect(std::string id, uint32_t type, bool success, const struct sockaddr_storage &remote_peer_address);
+bool    notifyConnect(const RsPeerId& id, uint32_t type, bool success, const struct sockaddr_storage &remote_peer_address);
 //bool    notifyConnect(std::string id, uint32_t type, bool success);
 
 	// tick interfaces.
 virtual int tick();
 virtual int status();
 
-virtual bool getCryptoParams(const std::string&,RsPeerCryptoParams&) ;
+virtual bool getCryptoParams(const RsPeerId&,RsPeerCryptoParams&) ;
 	protected:
 
-virtual bool locked_getCryptoParams(const std::string&, RsPeerCryptoParams&) { return false ;}
+virtual bool locked_getCryptoParams(const RsPeerId&, RsPeerCryptoParams&) { return false ;}
 
 	/********* FUNCTIONS to OVERLOAD for specialisation ********/
 	// THESE NEED TO BE LOCKED UNTIL PQILISTENER IS THREAD-SAFE.
 virtual pqilistener *locked_createListener(const struct sockaddr_storage &laddr) = 0;
-virtual pqiperson   *locked_createPerson(std::string id, pqilistener *listener) = 0;
+virtual pqiperson   *locked_createPerson(const RsPeerId& id, pqilistener *listener) = 0;
 	/********* FUNCTIONS to OVERLOAD for specialisation ********/
 
 	/* Overloaded RsItem Check
@@ -136,7 +136,7 @@ class pqipersongrpDummy: public pqipersongrp
 
 	/********* FUNCTIONS to OVERLOAD for specialisation ********/
 virtual pqilistener *locked_createListener(const struct sockaddr_storage &laddr);
-virtual pqiperson   *locked_createPerson(std::string id, pqilistener *listener);
+virtual pqiperson   *locked_createPerson(const RsPeerId& id, pqilistener *listener);
 	/********* FUNCTIONS to OVERLOAD for specialisation ********/
 };
 

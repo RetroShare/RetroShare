@@ -54,8 +54,8 @@
 
 const int pqistorezone = 9511;
 
-pqistore::pqistore(RsSerialiser *rss, const std::string &srcId, BinInterface *bio_in, int bio_flags_in)
-	:PQInterface(""), rsSerialiser(rss), bio_flags(bio_flags_in),
+pqistore::pqistore(RsSerialiser *rss, const RsPeerId& srcId, BinInterface *bio_in, int bio_flags_in)
+	:PQInterface(RsPeerId()), rsSerialiser(rss), bio_flags(bio_flags_in),
         nextPkt(NULL), mSrcId(srcId), bio(bio_in)
 {
 	pqioutput(PQL_DEBUG_ALL, pqistorezone, "pqistore::pqistore() Initialisation!");
@@ -363,12 +363,12 @@ int     pqistore::readPkt(RsItem **item_out)
 }
 
 /**** Hashing Functions ****/
-std::string pqistore::gethash()
+RsFileHash pqistore::gethash()
 {
 	return bio->gethash();
 }
 
-pqiSSLstore::pqiSSLstore(RsSerialiser *rss, std::string srcId, BinEncryptedFileInterface* bio_in, int bio_flagsin)
+pqiSSLstore::pqiSSLstore(RsSerialiser *rss, const RsPeerId& srcId, BinEncryptedFileInterface* bio_in, int bio_flagsin)
 : pqistore(rss, srcId, bio_in, bio_flagsin), enc_bio(bio_in)
 {
 	bStopReading=false;

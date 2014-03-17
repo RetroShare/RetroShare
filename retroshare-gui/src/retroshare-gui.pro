@@ -11,7 +11,7 @@ greaterThan(QT_MAJOR_VERSION, 4) {
 
 # Below is for GXS services.
 # Should be disabled for releases.
-CONFIG += gxs debug
+#CONFIG += gxs debug
 
 gxs {
 	
@@ -311,7 +311,6 @@ HEADERS +=  rshare.h \
             gui/AboutDialog.h \
             gui/CreateMsgLinkDialog.h \
             gui/NetworkView.h \
-            gui/TrustView.h \
             gui/MessengerWindow.h \
             gui/FriendsDialog.h \
             gui/ServicePermissionDialog.h \
@@ -525,7 +524,6 @@ FORMS +=    gui/StartDialog.ui \
             gui/MainWindow.ui \
             gui/CreateMsgLinkDialog.ui \
             gui/NetworkView.ui \
-            gui/TrustView.ui \
             gui/MessengerWindow.ui \
             gui/FriendsDialog.ui \
             gui/SearchDialog.ui \
@@ -632,7 +630,6 @@ SOURCES +=  main.cpp \
             gui/MainWindow.cpp \
             gui/CreateMsgLinkDialog.cpp \
             gui/NetworkView.cpp \
-            gui/TrustView.cpp \
             gui/MessengerWindow.cpp \
             gui/FriendsDialog.cpp \
             gui/ServicePermissionDialog.cpp \

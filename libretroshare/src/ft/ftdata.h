@@ -38,7 +38,6 @@
 #include <string>
 #include <inttypes.h>
 
-#include <util/rsid.h>
 #include <retroshare/rstypes.h>
 
 	/*************** SEND INTERFACE *******************/
@@ -51,23 +50,23 @@ class ftDataSend
 		virtual ~ftDataSend() { return; }
 
 		/* Client Send */
-		virtual bool    sendDataRequest(const std::string& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunksize) = 0;
+        virtual bool    sendDataRequest(const RsPeerId& peerId, const RsFileHash& hash, uint64_t size, uint64_t offset, uint32_t chunksize) = 0;
 
 		/* Server Send */
-		virtual bool    sendData(const std::string& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunksize, void *data) = 0;
+        virtual bool    sendData(const RsPeerId& peerId, const RsFileHash& hash, uint64_t size, uint64_t offset, uint32_t chunksize, void *data) = 0;
 
 		/// Send a chunkmap[request]. Because requests/chunkmaps can go both
 		//directions, but for different usages, we have this "is_client" flags,
 		//that gives the ultimate goal of the data. "is_client==true" means that
 		//the message is for a client (download) instead of a server.
 		//
-		virtual bool sendChunkMapRequest(const std::string& peer_id,const std::string& hash,bool is_client) = 0;
-		virtual bool sendChunkMap(const std::string& peer_id,const std::string& hash,const CompressedChunkMap& cmap,bool is_client) = 0;
+        virtual bool sendChunkMapRequest(const RsPeerId& peer_id,const RsFileHash& hash,bool is_client) = 0;
+        virtual bool sendChunkMap(const RsPeerId& peer_id,const RsFileHash& hash,const CompressedChunkMap& cmap,bool is_client) = 0;
 
 		/// Send a request for a chunk crc map
-		virtual bool sendSingleChunkCRCRequest(const std::string& peer_id,const std::string& hash,uint32_t chunk_number) = 0;
+        virtual bool sendSingleChunkCRCRequest(const RsPeerId& peer_id,const RsFileHash& hash,uint32_t chunk_number) = 0;
 		/// Send a chunk crc map
-		virtual bool sendSingleChunkCRC(const std::string& peer_id,const std::string& hash,uint32_t chunk_number,const Sha1CheckSum& crc) = 0;
+        virtual bool sendSingleChunkCRC(const RsPeerId& peer_id,const RsFileHash& hash,uint32_t chunk_number,const Sha1CheckSum& crc) = 0;
 };
 
 
@@ -80,19 +79,19 @@ class ftDataRecv
 		virtual ~ftDataRecv() { return; }
 
 		/* Client Recv */
-		virtual bool    recvData(const std::string& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunksize, void *data) = 0;
+        virtual bool    recvData(const RsPeerId& peerId, const RsFileHash& hash, uint64_t size, uint64_t offset, uint32_t chunksize, void *data) = 0;
 
 		/* Server Recv */
-		virtual bool    recvDataRequest(const std::string& peerId, const std::string& hash, uint64_t size, uint64_t offset, uint32_t chunksize) = 0;
+        virtual bool    recvDataRequest(const RsPeerId& peerId, const RsFileHash& hash, uint64_t size, uint64_t offset, uint32_t chunksize) = 0;
 
 		/// Send a request for a chunk map
-		virtual bool recvChunkMapRequest(const std::string& peer_id,const std::string& hash,bool is_client) = 0;
+        virtual bool recvChunkMapRequest(const RsPeerId& peer_id,const RsFileHash& hash,bool is_client) = 0;
 
 		/// Send a chunk map
-		virtual bool recvChunkMap(const std::string& peer_id,const std::string& hash,const CompressedChunkMap& cmap,bool is_client) = 0;
+        virtual bool recvChunkMap(const RsPeerId& peer_id,const RsFileHash& hash,const CompressedChunkMap& cmap,bool is_client) = 0;
 
-		virtual bool recvSingleChunkCRCRequest(const std::string& peer_id,const std::string& hash,uint32_t chunk_id) = 0;
-		virtual bool recvSingleChunkCRC(const std::string& peer_id,const std::string& hash,uint32_t chunk_id,const Sha1CheckSum& sum) = 0;
+        virtual bool recvSingleChunkCRCRequest(const RsPeerId& peer_id,const RsFileHash& hash,uint32_t chunk_id) = 0;
+        virtual bool recvSingleChunkCRC(const RsPeerId& peer_id,const RsFileHash& hash,uint32_t chunk_id,const Sha1CheckSum& sum) = 0;
 
 };
 

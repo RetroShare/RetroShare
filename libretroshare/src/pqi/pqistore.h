@@ -41,7 +41,7 @@
 class pqistore: public PQInterface
 {
 public:
-	pqistore(RsSerialiser *rss, const std::string &srcId, BinInterface *bio_in, int bio_flagsin);
+	pqistore(RsSerialiser *rss, const RsPeerId&srcId, BinInterface *bio_in, int bio_flagsin);
 virtual ~pqistore();
 
 // PQInterface
@@ -51,7 +51,7 @@ virtual RsItem *GetItem();
 virtual int     tick();
 virtual int     status();
 
-std::string     gethash();
+RsFileHash     gethash();
 
 bool bStopReading;
 
@@ -63,7 +63,7 @@ unsigned int  bio_flags; // only BIN_NO_CLOSE at the moment.
 
 // Temp Storage for transient data.....
 RsItem *nextPkt;
-std::string mSrcId;
+RsPeerId mSrcId;
 
 private:
 
@@ -86,7 +86,7 @@ class pqiSSLstore: public pqistore
 
 public:
 
-	pqiSSLstore(RsSerialiser *rss, std::string srcId, BinEncryptedFileInterface *bio_in, int bio_flagsin);
+	pqiSSLstore(RsSerialiser *rss, const RsPeerId& srcId, BinEncryptedFileInterface *bio_in, int bio_flagsin);
 
 	virtual ~pqiSSLstore();
 

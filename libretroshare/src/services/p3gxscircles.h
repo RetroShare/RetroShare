@@ -188,7 +188,7 @@ class p3GxsCircles: public RsGxsCircleExchange, public RsGxsCircles,
 	bool cache_request_load(const RsGxsCircleId &id);
 	bool cache_start_load();
 	bool cache_load_for_token(uint32_t token);
-	bool cache_reloadids(const std::string &circleId);
+	bool cache_reloadids(const RsGxsCircleId &circleId);
 
 	bool checkCircleCacheForAutoSubscribe(RsGxsCircleCache &cache);
 

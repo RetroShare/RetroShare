@@ -763,7 +763,7 @@ private:
 
     void  groupShareKeys(std::list<std::string> peers);
 
-    static void computeHash(const RsTlvBinaryData& data, std::string& hash);
+    static void computeHash(const RsTlvBinaryData& data, RsFileHash& hash);
 
     /*!
      * Checks validation of recently received groups to be

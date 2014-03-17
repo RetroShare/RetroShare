@@ -33,16 +33,22 @@
 #include <iostream>
 #include <string>
 #include <stdint.h>
-#include <util/rsid.h>
 
+#include <retroshare/rsids.h>
 #include <retroshare/rsflags.h>
 
 #define USE_NEW_CHUNK_CHECKING_CODE
 
-typedef std::string   RsCertId;
-typedef std::string   RsChanId;
-typedef std::string   RsMsgId;
-typedef std::string   RsAuthId;
+// This adds a level of indirection to types, so we can easily change them if needed
+//
+//typedef std::string   RsCertId;	// unused
+//typedef std::string   RsChanId;
+//typedef std::string   RsMsgId;
+//typedef std::string   RsAuthId;
+
+typedef SSLIdType     RsPeerId ;
+typedef PGPIdType     RsPgpId ;
+typedef Sha1CheckSum  RsFileHash ;
 
 const uint32_t FT_STATE_FAILED			= 0x0000 ;
 const uint32_t FT_STATE_OKAY				= 0x0001 ;
@@ -61,30 +67,11 @@ const uint32_t RS_CONFIG_DIRECTORY   = 0x0002 ;
 const uint32_t RS_PGP_DIRECTORY      = 0x0003 ;
 const uint32_t RS_DIRECTORY_COUNT    = 0x0004 ;
 
-//class Sha1CheckSum
-//{
-//	public:
-//		Sha1CheckSum() {}
-//		explicit Sha1CheckSum(const uint8_t *twenty_bytes_digest) ; 		// inits form a 20-bytes digest.
-//		explicit Sha1CheckSum(const std::string& fourty_bytes_string) ; 	// inits form a 40 bytes hexadecimal string.
-//
-//		static Sha1CheckSum random() ;
-//
-//		std::string toStdString() const ;
-//
-//		bool operator==(const Sha1CheckSum& s) const ;
-//		bool operator<(const Sha1CheckSum& s) const ;
-//
-//		friend std::ostream& operator<<(std::ostream& out,const Sha1CheckSum& sum) { return out << sum.toStdString() ; }
-////	private:
-//		uint32_t fourbytes[5] ;
-//};
-
 class TransferInfo
 {
 	public:
 		/**** Need Some of these Fields ****/
-		std::string peerId;
+        RsPeerId peerId;
 		std::string name; /* if has alternative name? */
 		double tfRate; /* kbytes */
 		int  status; /* FT_STATE_... */
@@ -130,13 +117,13 @@ class Condition
 	std::string name;
 };
 
-class SearchRequest
-{
-	public:
-	int searchId;
-	RsCertId toId;  /* all zeros for everyone! */
-	std::list<Condition> tests;
-};
+//class SearchRequest // unused stuff.
+//{
+//	public:
+//	int searchId;
+//	RsCertId toId;  /* all zeros for everyone! */
+//	std::list<Condition> tests;
+//};
 
 
 /********************** For FileCache Interface *****************/
@@ -173,7 +160,7 @@ class FileInfo
 	public:
 
 		FileInfo() : mId(0) { return; }
-		RsCertId id; /* key for matching everything */
+//		RsCertId id; /* key for matching everything */
 
 		FileStorageFlags  storage_permission_flags; 	// Combination of the four RS_DIR_FLAGS_*. Updated when the file is a local stored file.
 		TransferRequestFlags   transfer_info_flags ;		// various flags from RS_FILE_HINTS_*
@@ -194,7 +181,7 @@ class FileInfo
 		int searchId;      /* 0 if none */
 		std::string path;
 		std::string fname;
-		std::string hash;
+        RsFileHash hash;
 		std::string ext;
 
 		uint64_t size;
@@ -235,9 +222,9 @@ class DirDetails
 
 	void *ref;
 	uint8_t type;
-	std::string id;
+    RsPeerId id;
 	std::string name;
-	std::string hash;
+    RsFileHash hash;
 	std::string path;
 	uint64_t count;
 	uint32_t age;
@@ -251,9 +238,9 @@ class DirDetails
 class FileDetail
 {
 	public:
-		std::string id;
+        RsPeerId id;
 		std::string name;
-		std::string hash;
+        RsFileHash hash;
 		std::string path;
 		uint64_t size;
 		uint32_t age;
@@ -272,7 +259,7 @@ class FileChunksInfo
 		{
 			uint32_t start ;
 			uint32_t size ;
-			std::string peer_id ;
+			RsPeerId peer_id ;
 		};
 
 		uint64_t file_size ;					// real size of the file
@@ -283,7 +270,7 @@ class FileChunksInfo
 		std::vector<ChunkState> chunks ;	
 
 		// For each source peer, gives the compressed bit map of have/don't have sate
-		std::map<std::string, CompressedChunkMap> compressed_peer_availability_maps ;
+		std::map<RsPeerId, CompressedChunkMap> compressed_peer_availability_maps ;
 
 		// For each chunk (by chunk number), gives the completion of the chunk.
 		//                     
@@ -380,14 +367,14 @@ typedef t_CRCMap<Sha1CheckSum> 	Sha1Map ;
 class DwlDetails {
 public:
 	DwlDetails() { return; }
-	DwlDetails(std::string fname, std::string hash, int count, std::string dest,
+    DwlDetails(const std::string& fname, const RsFileHash& hash, int count, std::string dest,
 			uint32_t flags, std::list<std::string> srcIds, uint32_t queue_pos)
 	: fname(fname), hash(hash), count(count), dest(dest), flags(flags),
 	srcIds(srcIds), queue_position(queue_pos), retries(0) { return; }
 
 	/* download details */
 	std::string fname;
-	std::string hash;
+    RsFileHash hash;
 	int count;
 	std::string dest;
 	uint32_t flags;

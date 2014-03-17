@@ -621,13 +621,14 @@ bool saveX509ToDER(X509 *x509, uint8_t **ptr, uint32_t *len)
 }
 
 
-bool getX509id(X509 *x509, std::string &xid) {
+bool getX509id(X509 *x509, RsPeerId& xid) 
+{
 #ifdef AUTHSSL_DEBUG
 	std::cerr << "AuthSSL::getX509id()";
 	std::cerr << std::endl;
 #endif
 
-	xid = "";
+	xid.clear() ;
 	if (x509 == NULL)
 	{
 #ifdef AUTHSSL_DEBUG
@@ -652,14 +653,16 @@ bool getX509id(X509 *x509, std::string &xid) {
 	// else copy in the first CERTSIGNLEN.
 	unsigned char *signdata = ASN1_STRING_data(signature);
 
-	xid.clear();
 	/* switched to the other end of the signature. for
 	 * more randomness
 	 */
-	for(int i = signlen - CERTSIGNLEN; i < signlen; i++)
-	{
-		rs_sprintf_append(xid, "%02x", (uint16_t) (((uint8_t *) (signdata))[i]));
-	}
+
+	xid = RsPeerId(&signdata[signlen - CERTSIGNLEN]) ;
+
+	//for(int i = signlen - CERTSIGNLEN; i < signlen; i++)
+	//{
+	//	rs_sprintf_append(xid, "%02x", (uint16_t) (((uint8_t *) (signdata))[i]));
+	//}
 
 	return true;
 }
@@ -690,7 +693,7 @@ bool CheckX509Certificate(X509 */*x509*/)
 
 
 // Not dependent on sslroot. load, and detroys the X509 memory.
-int	LoadCheckX509(const char *cert_file, std::string &issuerName, std::string &location, std::string &userId)
+int	LoadCheckX509(const char *cert_file, RsPgpId& issuerName, std::string &location, RsPeerId &userId)
 {
 	/* This function loads the X509 certificate from the file, 
 	 * and checks the certificate 
@@ -725,7 +728,7 @@ int	LoadCheckX509(const char *cert_file, std::string &issuerName, std::string &l
 	if (valid)
 	{
 		// extract the name.
-		issuerName = getX509CNString(x509->cert_info->issuer);
+		issuerName = RsPgpId(std::string(getX509CNString(x509->cert_info->issuer)));
 		location = getX509LocString(x509->cert_info->subject);
 	}
 

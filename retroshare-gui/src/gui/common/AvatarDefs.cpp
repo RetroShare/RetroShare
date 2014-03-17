@@ -51,7 +51,7 @@ void AvatarDefs::getAvatarFromSslId(const std::string& sslId, QPixmap &avatar, c
 	int size = 0;
 
 	/* get avatar */
-	rsMsgs->getAvatarData(sslId, data, size);
+    rsMsgs->getAvatarData(RsPeerId(sslId), data, size);
 	if (size == 0) {
 		avatar = QPixmap(defaultImage);
 		return;
@@ -68,14 +68,14 @@ void AvatarDefs::getAvatarFromGpgId(const std::string& gpgId, QPixmap &avatar, c
 	unsigned char *data = NULL;
 	int size = 0;
 
-	if (gpgId == rsPeers->getGPGOwnId()) {
+    if (RsPgpId(gpgId) == rsPeers->getGPGOwnId()) {
 		/* Its me */
 		rsMsgs->getOwnAvatarData(data,size);
 	} else {
 		/* get the first available avatar of one of the ssl ids */
-		std::list<std::string> sslIds;
-		if (rsPeers->getAssociatedSSLIds(gpgId, sslIds)) {
-			std::list<std::string>::iterator sslId;
+        std::list<RsPeerId> sslIds;
+        if (rsPeers->getAssociatedSSLIds(RsPgpId(gpgId), sslIds)) {
+            std::list<RsPeerId>::iterator sslId;
 			for (sslId = sslIds.begin(); sslId != sslIds.end(); sslId++) {
 				rsMsgs->getAvatarData(*sslId, data, size);
 				if (size) {

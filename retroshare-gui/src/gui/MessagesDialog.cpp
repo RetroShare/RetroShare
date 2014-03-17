@@ -847,7 +847,7 @@ void MessagesDialog::insertMessages()
     bool gotInfo;
     QString text;
 
-    std::string ownId = rsPeers->getOwnId();
+    RsPeerId ownId = rsPeers->getOwnId();
 
     rsMsgs -> getMessageSummaries(msgList);
 
@@ -1114,7 +1114,7 @@ void MessagesDialog::insertMessages()
 
                         text.clear();
 
-                        std::list<std::string>::const_iterator pit;
+                        std::list<RsPeerId>::const_iterator pit;
                         for (pit = msgInfo.msgto.begin(); pit != msgInfo.msgto.end(); pit++)
                         {
                             if (text.isEmpty() == false) {
@@ -1148,7 +1148,7 @@ void MessagesDialog::insertMessages()
 
             // internal data
             QString msgId = QString::fromStdString(it->msgId);
-            item[COLUMN_DATA]->setData(QString::fromStdString(it->srcId), ROLE_SRCID);
+            item[COLUMN_DATA]->setData(QString::fromStdString(it->srcId.toStdString()), ROLE_SRCID);
             item[COLUMN_DATA]->setData(msgId, ROLE_MSGID);
             item[COLUMN_DATA]->setData(it->msgflags, ROLE_MSGFLAGS);
 

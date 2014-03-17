@@ -31,7 +31,7 @@
 class pqiQoSstreamer: public pqithreadstreamer, public pqiQoS
 {
 	public:
-		pqiQoSstreamer(PQInterface *parent, RsSerialiser *rss, std::string peerid, BinInterface *bio_in, int bio_flagsin);
+		pqiQoSstreamer(PQInterface *parent, RsSerialiser *rss, const RsPeerId& peerid, BinInterface *bio_in, int bio_flagsin);
 
 		static const uint32_t PQI_QOS_STREAMER_MAX_LEVELS =  10 ;
 		static const float    PQI_QOS_STREAMER_ALPHA      = 2.0 ;

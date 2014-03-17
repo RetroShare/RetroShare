@@ -26,7 +26,7 @@
 #pragma once
 
 #include "serialiser/rsserial.h"
-#include "util/rsid.h"
+#include "retroshare/rstypes.h"
 #include "rsgrouter.h"
 #include "p3grouter.h"
 
@@ -207,7 +207,7 @@ class RsGRouterMatrixFriendListItem: public RsGRouterItem
 
 		// packet data
 		//
-		std::vector<SSLIdType> reverse_friend_indices ;
+		std::vector<RsPeerId> reverse_friend_indices ;
 };
 
 class RsGRouterRoutingInfoItem: public RsGRouterItem, public GRouterRoutingInfo, public RsGRouterNonCopyableObject

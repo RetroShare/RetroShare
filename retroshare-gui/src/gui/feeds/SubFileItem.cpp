@@ -69,7 +69,7 @@
 const uint32_t SFI_DEFAULT_PERIOD 	= (30 * 3600 * 24); /* 30 Days */
 
 /** Constructor */
-SubFileItem::SubFileItem(const std::string &hash, const std::string &name, const std::string &path, uint64_t size, uint32_t flags, const std::string &srcId)
+SubFileItem::SubFileItem(const RsFileHash &hash, const std::string &name, const std::string &path, uint64_t size, uint32_t flags, const RsPeerId &srcId)
 :QWidget(NULL), mPath(path), mFileHash(hash), mFileName(name), mFileSize(size), mSrcId(srcId)
 {
   	/* Invoke the Qt Designer generated object setup routine */
@@ -598,7 +598,7 @@ void SubFileItem::download()
 	std::cerr << std::endl;
 #endif
 
-	std::list<std::string> sources ;
+	std::list<RsPeerId> sources ;
 
 	std::string destination;
 #if 0
@@ -623,7 +623,7 @@ void SubFileItem::download()
 	std::cerr << "SubFileItem::download() Calling File Request";
 	std::cerr << std::endl;
 
-	if (mSrcId != "")
+	if (!mSrcId.isNull())
 		sources.push_back(mSrcId);
 	
 	rsFiles->FileRequest(mFileName, mFileHash, mFileSize, destination, RS_FILE_REQ_ANONYMOUS_ROUTING, sources);
@@ -709,12 +709,12 @@ void SubFileItem::mediatype()
 
 void SubFileItem::copyLink()
 {
-	if (mFileName.empty() || mFileHash.empty()) {
+    if (mFileName.empty() || mFileHash.isNull()) {
 		return;
 	}
 
 	RetroShareLink link;
-	if (link.createFile(QString::fromUtf8(mFileName.c_str()), mFileSize, QString::fromStdString(mFileHash))) {
+    if (link.createFile(QString::fromUtf8(mFileName.c_str()), mFileSize, QString::fromStdString(mFileHash.toStdString()))) {
 		QList<RetroShareLink> urls;
 		urls.push_back(link);
 		RSLinkClipboard::copyLinks(urls);

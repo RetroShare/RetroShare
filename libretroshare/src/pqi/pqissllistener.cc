@@ -367,8 +367,8 @@ int	pqissllistenbase::acceptconnection()
 
 	incoming_connexion_info.ssl   = SSL_new(AuthSSL::getAuthSSL() -> getCTX());
 	incoming_connexion_info.addr  = remote_addr ;
-	incoming_connexion_info.gpgid = "" ;
-	incoming_connexion_info.sslid = "" ;
+	incoming_connexion_info.gpgid.clear() ;
+	incoming_connexion_info.sslid.clear() ;
 	incoming_connexion_info.sslcn = "" ;
 
 	SSL_set_fd(incoming_connexion_info.ssl, fd);
@@ -383,7 +383,7 @@ int	pqissllistenbase::continueSSL(IncomingSSLInfo& incoming_connexion_info, bool
 
 	// clear the connection info that will be filled in by the callback.
 	//
-	AuthSSL::getAuthSSL()->setCurrentConnectionAttemptInfo(std::string(),std::string(),std::string()) ;
+	AuthSSL::getAuthSSL()->setCurrentConnectionAttemptInfo(RsPgpId(),RsPeerId(),std::string()) ;
 
 	int err = SSL_accept(incoming_connexion_info.ssl);
 
@@ -690,14 +690,14 @@ pqissllistener::~pqissllistener()
 	return;
 }
 
-int 	pqissllistener::addlistenaddr(std::string id, pqissl *acc)
+int 	pqissllistener::addlistenaddr(const RsPeerId& id, pqissl *acc)
 {
-	std::map<std::string, pqissl *>::iterator it;
+	std::map<RsPeerId, pqissl *>::iterator it;
 
-	std::string out = "Adding to Cert Listening Addresses Id: " + id + "\nCurrent Certs:\n";
+	std::string out = "Adding to Cert Listening Addresses Id: " + id.toStdString() + "\nCurrent Certs:\n";
 	for(it = listenaddr.begin(); it != listenaddr.end(); it++)
 	{
-		out += id + "\n";
+		out += id.toStdString() + "\n";
 		if (it -> first == id)
 		{
 			out += "pqissllistener::addlistenaddr() Already listening for Certificate!\n";
@@ -715,13 +715,13 @@ int 	pqissllistener::addlistenaddr(std::string id, pqissl *acc)
 	return 1;
 }
 
-int	pqissllistener::removeListenPort(std::string id)
+int	pqissllistener::removeListenPort(const RsPeerId& id)
 {
 	// check where the connection is coming from.
 	// if in list of acceptable addresses, 
 	//
 	// check if in list.
-	std::map<std::string, pqissl *>::iterator it;
+	std::map<RsPeerId, pqissl *>::iterator it;
 	for(it = listenaddr.begin();it!=listenaddr.end();it++)
 	{
 		if (it->first == id)
@@ -745,14 +745,14 @@ int 	pqissllistener::status()
 {
 	pqissllistenbase::status();
 	// print certificates we are listening for.
-	std::map<std::string, pqissl *>::iterator it;
+	std::map<RsPeerId, pqissl *>::iterator it;
 
 	std::string out = "pqissllistener::status(): Listening (";
 	out += sockaddr_storage_tostring(laddr);
 	out += ") for Certs:";
 	for(it = listenaddr.begin(); it != listenaddr.end(); it++)
 	{
-		out += "\n" + it -> first ;
+		out += "\n" + it -> first.toStdString() ;
 	}
 	pqioutput(PQL_DEBUG_ALL, pqissllistenzone, out);
 
@@ -776,7 +776,7 @@ int pqissllistener::completeConnection(int fd, IncomingSSLInfo& info)
 	}
 
 	// Check cert.
-	std::string newPeerId;
+	RsPeerId newPeerId;
 
 
 	/****
@@ -787,7 +787,7 @@ int pqissllistener::completeConnection(int fd, IncomingSSLInfo& info)
         bool certOk = AuthSSL::getAuthSSL()->ValidateCertificate(peercert, newPeerId);
 
 	bool found = false;
-	std::map<std::string, pqissl *>::iterator it;
+	std::map<RsPeerId, pqissl *>::iterator it;
 
 	// Let connected one through as well! if ((npc == NULL) || (npc -> Connected()))
 	if (!certOk)
@@ -803,11 +803,11 @@ int pqissllistener::completeConnection(int fd, IncomingSSLInfo& info)
 	}
 	else
 	{
-		std::string out = "pqissllistener::continueSSL()\nchecking: " + newPeerId + "\n";
+		std::string out = "pqissllistener::continueSSL()\nchecking: " + newPeerId.toStdString() + "\n";
 		// check if cert is in our list.....
 		for(it = listenaddr.begin();(found!=true) && (it!=listenaddr.end());)
 		{
-			out + "\tagainst: " + it->first + "\n";
+			out + "\tagainst: " + it->first.toStdString() + "\n";
 			if (it -> first == newPeerId)
 			{
 				// accept even if already connected.
@@ -836,7 +836,7 @@ int pqissllistener::completeConnection(int fd, IncomingSSLInfo& info)
 		AuthSSL::getAuthSSL()->CheckCertificate(newPeerId, peercert);
 
 		/* now need to get GPG id too */
-		std::string pgpid = getX509CNString(peercert->cert_info->issuer);
+		RsPgpId pgpid(std::string(getX509CNString(peercert->cert_info->issuer)));
 		mPeerMgr->addFriend(newPeerId, pgpid);
 	
 		X509_free(peercert);
@@ -856,7 +856,7 @@ int pqissllistener::completeConnection(int fd, IncomingSSLInfo& info)
 
 	accepted_ssl.push_back(as);
 
-	std::string out = "pqissllistener::completeConnection() Successful Connection with: " + newPeerId;
+	std::string out = "pqissllistener::completeConnection() Successful Connection with: " + newPeerId.toStdString();
 	out += " for Connection:";
 	out += sockaddr_storage_tostring(info.addr);
 	out += " Adding to WAIT-ACCEPT Queue";
@@ -865,12 +865,12 @@ int pqissllistener::completeConnection(int fd, IncomingSSLInfo& info)
 	return 1;
 }
 
-int pqissllistener::finaliseConnection(int fd, SSL *ssl, std::string peerId, const struct sockaddr_storage &remote_addr)
+int pqissllistener::finaliseConnection(int fd, SSL *ssl, const RsPeerId& peerId, const struct sockaddr_storage &remote_addr)
 { 
-	std::map<std::string, pqissl *>::iterator it;
+	std::map<RsPeerId, pqissl *>::iterator it;
 
 	std::string out = "pqissllistener::finaliseConnection()\n";
-	out += "checking: " + peerId + "\n";
+	out += "checking: " + peerId.toStdString() + "\n";
 	// check if cert is in the list.....
 
 	it = listenaddr.find(peerId);

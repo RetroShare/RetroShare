@@ -46,7 +46,7 @@ class RsTurtleClientService
 		// The output info_string is used by the turtle router to display info about tunnels it manages. It is
 		// not passed to the tunnel.
 
-		virtual bool handleTunnelRequest(const std::string& /*hash*/,const std::string& /*peer_id*/) { return false ; }
+        virtual bool handleTunnelRequest(const RsFileHash& /*hash*/,const RsPeerId& /*peer_id*/) { return false ; }
 		
 		// This method is called by the turtle router to send data that comes out of a turtle tunnel.
 		// The turtle router stays responsible for the memory management of data. Most of the  time the
@@ -66,7 +66,7 @@ class RsTurtleClientService
 		// By default (if not overloaded), the method will just free the data, as any subclass should do as well.
 		// Note: p3turtle stays owner of the item, so the client should not delete it!
 		//
-		virtual void receiveTurtleData(RsTurtleGenericTunnelItem */*item*/,const std::string& /*hash*/,const std::string& /*virtual_peer_id*/,RsTurtleGenericTunnelItem::Direction /*direction*/)
+        virtual void receiveTurtleData(RsTurtleGenericTunnelItem */*item*/,const RsFileHash& /*hash*/,const RsPeerId& /*virtual_peer_id*/,RsTurtleGenericTunnelItem::Direction /*direction*/)
 		{ 
 			std::cerr << "!!!!!! Received Data from turtle router, but the client service is not handling it !!!!!!!!!!" << std::endl ; 
 		}

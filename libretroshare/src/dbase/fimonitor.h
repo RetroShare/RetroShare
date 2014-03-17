@@ -76,8 +76,8 @@ class HashCache
 		HashCache(const std::string& save_file_name) ;
 
 		void save() ;
-		void insert(const std::string& full_path,uint64_t size,time_t time_stamp,const std::string& hash) ;
-		bool find(const  std::string& full_path,uint64_t size,time_t time_stamp,std::string& hash) ;
+        void insert(const std::string& full_path,uint64_t size,time_t time_stamp,const RsFileHash& hash) ;
+        bool find(const  std::string& full_path,uint64_t size,time_t time_stamp,RsFileHash& hash) ;
 		void clean() ;
 
 		typedef struct 
@@ -85,7 +85,7 @@ class HashCache
 			uint64_t size ;
 			uint64_t time_stamp ;
 			uint64_t modf_stamp ;
-			std::string hash ;
+            RsFileHash hash ;
 		} HashCacheInfo ;
 
 		void setRememberHashFilesDuration(uint32_t days) { _max_cache_duration_days = days ; }
@@ -94,7 +94,7 @@ class HashCache
 		bool empty() const { return _files.empty() ; }
 	private:
 		uint32_t _max_cache_duration_days ;	// maximum duration of un-requested cache entries
-		std::map<std::string, HashCacheInfo> _files ;
+        std::map<std::string, HashCacheInfo> _files ;
 		std::string _path ;
 		bool _changed ;
 };
@@ -106,16 +106,16 @@ class HashCache
 class FileIndexMonitor: public CacheSource, public RsThread
 {
 	public:
-		FileIndexMonitor(CacheStrapper *cs, std::string cachedir, std::string pid, const std::string& config_dir);
+        FileIndexMonitor(CacheStrapper *cs, std::string cachedir, const RsPeerId& pid, const std::string& config_dir);
 		virtual ~FileIndexMonitor();
 
 		/* external interface for filetransfer */
-		bool findLocalFile(std::string hash,FileSearchFlags flags,const std::string& peer_id, std::string &fullpath, uint64_t &size,FileStorageFlags& storage_flags,std::list<std::string>& parent_groups) const;
+        bool findLocalFile(const RsFileHash& hash,FileSearchFlags flags,const RsPeerId& peer_id, std::string &fullpath, uint64_t &size,FileStorageFlags& storage_flags,std::list<std::string>& parent_groups) const;
 
-		int SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,FileSearchFlags flags,const std::string& peer_id) ;
-		int SearchBoolExp(Expression *exp, std::list<DirDetails> &results,FileSearchFlags flags,const std::string& peer_id) const ;
+        int SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,FileSearchFlags flags,const RsPeerId& peer_id) ;
+        int SearchBoolExp(Expression *exp, std::list<DirDetails> &results,FileSearchFlags flags,const RsPeerId& peer_id) const ;
 
-		int filterResults(std::list<FileEntry*>& firesults,std::list<DirDetails>& results,FileSearchFlags flags,const std::string& peer_id) const ;
+        int filterResults(std::list<FileEntry*>& firesults,std::list<DirDetails>& results,FileSearchFlags flags,const RsPeerId& peer_id) const ;
 
 
 		/* external interface for local access to files */
@@ -125,7 +125,7 @@ class FileIndexMonitor: public CacheSource, public RsThread
 		/* Interacting with CacheSource */
 		/* overloaded from CacheSource */
 		virtual bool loadLocalCache(const RsCacheData &data);  /* called with stored data */
-		bool 	updateCache(const RsCacheData &data,const std::set<std::string>& dest_peers);     /* we call when we have a new cache for others */
+        bool 	updateCache(const RsCacheData &data,const std::set<RsPeerId>& dest_peers);     /* we call when we have a new cache for others */
 
 
 		/* the FileIndexMonitor inner workings */

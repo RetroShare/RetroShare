@@ -92,10 +92,10 @@ bool    	checkCreateDirectory(const std::string& dir);
 bool    	cleanupDirectory(const std::string& dir, const std::set<std::string> &keepFiles);
 bool    	cleanupDirectoryFaster(const std::string& dir, const std::set<std::string> &keepFiles);
 
-bool 		hashFile(const std::string& filepath,   std::string &name, std::string &hash, uint64_t &size);
-bool 		getFileHash(const std::string& filepath,std::string &hash, uint64_t &size, RsThread *thread = NULL);
+bool 		hashFile(const std::string& filepath,   std::string &name, RsFileHash &hash, uint64_t &size);
+bool 		getFileHash(const std::string& filepath,RsFileHash &hash, uint64_t &size, RsThread *thread = NULL);
 
-Sha1CheckSum sha1sum(uint8_t *data,uint32_t size) ;
+Sha1CheckSum sha1sum(const uint8_t *data,uint32_t size) ;
 
 // Creates a lock file with given path, and returns the lock handle
 // returns:
@@ -124,11 +124,9 @@ bool    	checkWideDirectory(std::wstring dir);
 bool    	checkWideCreateDirectory(std::wstring dir);
 bool    	cleanupWideDirectory(std::wstring dir, std::list<std::wstring> keepFiles);
 
-bool 		hashWideFile(std::wstring filepath,                
-		  std::wstring &name, std::string &hash, uint64_t &size);
+bool 		hashWideFile(std::wstring filepath,std::wstring &name, RsFileHash &hash, uint64_t &size);
 
-bool 		getWideFileHash(std::wstring filepath,                
-			std::string &hash, uint64_t &size);
+bool 		getWideFileHash(std::wstring filepath,                RsFileHash &hash, uint64_t &size);
 
 FILE		*rs_fopen(const char* filename, const char* mode);
 

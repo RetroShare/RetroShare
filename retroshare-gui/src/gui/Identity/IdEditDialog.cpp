@@ -127,11 +127,11 @@ void IdEditDialog::updateIdType(bool pseudo)
 	else
 	{
 		/* get GPG Details from rsPeers */
-		std::string gpgid  = rsPeers->getGPGOwnId();
+        RsPgpId gpgid  = rsPeers->getGPGOwnId();
 		RsPeerDetails details;
-		rsPeers->getPeerDetails(gpgid, details);
+        rsPeers->getGPGDetails(gpgid, details);
 
-		ui.lineEdit_GpgId->setText(QString::fromStdString(gpgid));
+        ui.lineEdit_GpgId->setText(QString::fromStdString(gpgid.toStdString()));
 		ui.lineEdit_GpgHash->setText(tr("To be generated"));
 		ui.lineEdit_GpgName->setText(QString::fromUtf8(details.name.c_str()));
 	}
@@ -150,8 +150,8 @@ void IdEditDialog::setupExistingId(std::string keyId)
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
 
-	std::list<std::string> groupIds;
-	groupIds.push_back(keyId);
+	std::list<RsGxsGroupId> groupIds;
+	groupIds.push_back(RsGxsGroupId(keyId));
 
 	uint32_t token;
 	mIdQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds, IDEDITDIALOG_LOADID);
@@ -204,7 +204,7 @@ void IdEditDialog::loadExistingId(uint32_t token)
 	idTypeToggled(true);
 
 	ui.lineEdit_Nickname->setText(QString::fromUtf8(mEditGroup.mMeta.mGroupName.c_str()));
-	ui.lineEdit_KeyId->setText(QString::fromStdString(mEditGroup.mMeta.mGroupId));
+	ui.lineEdit_KeyId->setText(QString::fromStdString(mEditGroup.mMeta.mGroupId.toStdString()));
 
 	if (realid)
 	{
@@ -216,7 +216,7 @@ void IdEditDialog::loadExistingId(uint32_t token)
 			rsPeers->getGPGDetails(mEditGroup.mPgpId, details);
 			ui.lineEdit_GpgName->setText(QString::fromUtf8(details.name.c_str()));
 
-			ui.lineEdit_GpgId->setText(QString::fromStdString(mEditGroup.mPgpId));
+			ui.lineEdit_GpgId->setText(QString::fromStdString(mEditGroup.mPgpId.toStdString()));
 		}
 		else
 		{
@@ -242,7 +242,7 @@ void IdEditDialog::loadExistingId(uint32_t token)
 void IdEditDialog::checkNewTag()
 {
 	std::string tag = ui.plainTextEdit_Tag->toPlainText().toStdString();
-	std::string id = ui.lineEdit_KeyId->text().toStdString();
+    RsGxsId id ( ui.lineEdit_KeyId->text().toStdString());
 	std::string name = ui.lineEdit_Nickname->text().toUtf8().data();
 
 	QString desc;
@@ -315,7 +315,7 @@ void IdEditDialog::rmTag(int idx)
 	loadRecognTags();
 }
 
-bool IdEditDialog::tagDetails(const std::string &id, const std::string &name, const std::string &tag, QString &desc)
+bool IdEditDialog::tagDetails(const RsGxsId &id, const std::string &name, const std::string &tag, QString &desc)
 {
 	if (tag.empty())
 	{
@@ -380,7 +380,7 @@ void IdEditDialog::loadRecognTags()
 	for(it = mEditGroup.mRecognTags.begin(); it != mEditGroup.mRecognTags.end(); it++, i++)
 	{
 		QString recognTag;
-		tagDetails(mEditGroup.mMeta.mGroupId, mEditGroup.mMeta.mGroupName, *it, recognTag);
+        tagDetails(mEditGroup.mMeta.mAuthorId, mEditGroup.mMeta.mGroupName, *it, recognTag);
 
 		switch(i)
 		{

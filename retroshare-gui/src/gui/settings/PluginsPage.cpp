@@ -47,7 +47,8 @@ PluginsPage::PluginsPage(QWidget * parent, Qt::WindowFlags flags)
 		 {
 			 std::cerr << "  Adding new page." << std::endl;
 
-			 std::string file_name, file_hash, error_string ;
+             std::string file_name,  error_string ;
+             RsFileHash file_hash ;
 			 uint32_t status ;
 			 uint32_t svn_revision ;
 
@@ -104,7 +105,7 @@ PluginsPage::PluginsPage(QWidget * parent, Qt::WindowFlags flags)
 
 			 PluginItem *item = new PluginItem(pluginVersion, i,pluginTitle,pluginDescription,status_string,
 					 						QString::fromStdString(file_name),
-						 					QString::fromStdString(file_hash),QString::fromStdString(error_string),
+                                            QString::fromStdString(file_hash.toStdString()),QString::fromStdString(error_string),
 											plugin_icon) ;
 
 			 ui._pluginsLayout->insertWidget(0,item) ;
@@ -182,14 +183,14 @@ void PluginsPage::enablePlugin(const QString& hash)
 {
 	std::cerr << "Switching status of plugin " << hash.toStdString() << " to  enable" << std::endl;
 
-		rsPlugins->enablePlugin(hash.toStdString()) ;
+        rsPlugins->enablePlugin(RsFileHash(hash.toStdString()) );
 }
 
 void PluginsPage::disablePlugin(const QString& hash)
 {
 	std::cerr << "Switching status of plugin " << hash.toStdString() << " to disable " << std::endl;
 
-		rsPlugins->disablePlugin(hash.toStdString()) ;
+        rsPlugins->disablePlugin(RsFileHash(hash.toStdString())) ;
 }
 
 

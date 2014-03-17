@@ -25,6 +25,7 @@
 #include <QPainter>
 #include <QBitmap>
 #include "RsAutoUpdatePage.h"
+#include <retroshare/rstypes.h>
 
 class FileChunksInfo ;
 class FileInfo ;
@@ -36,7 +37,7 @@ class FileTransferInfoWidget : public RsAutoUpdatePage
 public:
     FileTransferInfoWidget(QWidget * parent = 0, Qt::WindowFlags f = 0 );
 
-	 void setFileHash(const std::string& hash) { _file_hash = hash ; }
+     void setFileHash(const RsFileHash& hash) { _file_hash = hash ; }
 
 	 virtual void updateDisplay() ;	// update from RsAutoUpdateWidget
 protected:
@@ -57,6 +58,6 @@ private:
     QPixmap notDownloadPixmap;
     QPixmap checkingPixmap;
 
-	 std::string _file_hash ;
+     RsFileHash _file_hash ;
 };
 

@@ -61,7 +61,7 @@
 const uint32_t AFI_DEFAULT_PERIOD 	= (30 * 3600 * 24); /* 30 Days */
 
 /** Constructor */
-AttachFileItem::AttachFileItem(const std::string& hash, const QString& name, uint64_t size, uint32_t flags,TransferRequestFlags tflags, const std::string& srcId)
+AttachFileItem::AttachFileItem(const RsFileHash& hash, const QString& name, uint64_t size, uint32_t flags,TransferRequestFlags tflags, const std::string& srcId)
 :QWidget(NULL), mFileHash(hash), mFileName(name), mFileSize(size), mSrcId(srcId),mFlags(tflags)
 {
   	/* Invoke the Qt Designer generated object setup routine */

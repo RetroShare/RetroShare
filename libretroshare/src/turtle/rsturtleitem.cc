@@ -60,7 +60,7 @@ uint32_t RsTurtleSearchResultItem::serial_size()
 	for(std::list<TurtleFileInfo>::const_iterator it(result.begin());it!=result.end();++it)
 	{
 		s += 8 ;											// file size
-		s += GetTlvStringSize(it->hash) ;		// file hash
+        s += it->hash.serial_size();			// file hash
 		s += GetTlvStringSize(it->name) ;		// file name
 	}
 
@@ -72,7 +72,7 @@ uint32_t RsTurtleOpenTunnelItem::serial_size()
 	uint32_t s = 0 ;
 
 	s += 8 ; // header
-	s += GetTlvStringSize(file_hash) ;		// file hash
+    s += file_hash.serial_size() ;		// file hash
 	s += 4 ; // tunnel request id
 	s += 4 ; // partial tunnel id 
 	s += 2 ; // depth
@@ -333,8 +333,8 @@ bool RsTurtleSearchResultItem::serialize(void *data,uint32_t& pktsize)
 
 	for(std::list<TurtleFileInfo>::const_iterator it(result.begin());it!=result.end();++it)
 	{
-		ok &= setRawUInt64(data, tlvsize, &offset, it->size); 								// file size
-		ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_HASH_SHA1, it->hash);	// file hash
+        ok &= setRawUInt64(data, tlvsize, &offset, it->size); 					// file size
+        ok &= it->hash.serialise(data, tlvsize, offset);					// file hash
 		ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_NAME, it->name); 		// file name
 	}
 
@@ -377,7 +377,7 @@ RsTurtleSearchResultItem::RsTurtleSearchResultItem(void *data,uint32_t pktsize)
 		TurtleFileInfo f ;
 
 		ok &= getRawUInt64(data, pktsize, &offset, &(f.size)); 									// file size
-		ok &= GetTlvString(data, pktsize, &offset, TLV_TYPE_STR_HASH_SHA1, f.hash); 	// file hash
+        ok &= f.hash.deserialise(data, pktsize, offset); 	// file hash
 		ok &= GetTlvString(data, pktsize, &offset, TLV_TYPE_STR_NAME, f.name); 			// file name
 
 		result.push_back(f) ;
@@ -412,7 +412,7 @@ bool RsTurtleOpenTunnelItem::serialize(void *data,uint32_t& pktsize)
 
 	/* add mandatory parts first */
 
-	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_HASH_SHA1, file_hash);	// file hash
+    ok &= file_hash.serialise(data, tlvsize, offset);	// file hash
 	ok &= setRawUInt32(data, tlvsize, &offset, request_id);
 	ok &= setRawUInt32(data, tlvsize, &offset, partial_tunnel_id);
 	ok &= setRawUInt16(data, tlvsize, &offset, depth);
@@ -441,7 +441,7 @@ RsTurtleOpenTunnelItem::RsTurtleOpenTunnelItem(void *data,uint32_t pktsize)
 	/* add mandatory parts first */
 
 	bool ok = true ;
-	ok &= GetTlvString(data, pktsize, &offset, TLV_TYPE_STR_HASH_SHA1, file_hash); 	// file hash
+    ok &= file_hash.deserialise(data, pktsize, offset); 	// file hash
 	ok &= getRawUInt32(data, pktsize, &offset, &request_id);
 	ok &= getRawUInt32(data, pktsize, &offset, &partial_tunnel_id) ;
 	ok &= getRawUInt16(data, pktsize, &offset, &depth);

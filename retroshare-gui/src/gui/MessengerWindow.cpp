@@ -154,7 +154,7 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WindowFlags flags)
 
     // add self nick
     RsPeerDetails pd;
-    std::string ownId = rsPeers->getOwnId();
+    RsPeerId ownId = rsPeers->getOwnId();
     if (rsPeers->getPeerDetails(ownId, pd)) {
         /* calculate only once */
         m_nickName = QString::fromUtf8(pd.name.c_str());
@@ -163,7 +163,7 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WindowFlags flags)
     /* Show nick and current state */
     StatusInfo statusInfo;
     rsStatus->getOwnStatus(statusInfo);
-    updateOwnStatus(QString::fromStdString(ownId), statusInfo.status);
+    updateOwnStatus(QString::fromStdString(ownId.toStdString()), statusInfo.status);
 
     MainWindow *pMainWindow = MainWindow::getInstance();
     if (pMainWindow) {
@@ -251,7 +251,7 @@ void MessengerWindow::savestatusmessage()
 void MessengerWindow::updateOwnStatus(const QString &peer_id, int status)
 {
     // add self nick + own status
-    if (peer_id.toStdString() == rsPeers->getOwnId())
+    if (peer_id == QString::fromStdString(rsPeers->getOwnId().toStdString()))
     {
         // my status has changed
 

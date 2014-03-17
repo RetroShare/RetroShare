@@ -82,7 +82,7 @@ virtual bool 	connect_additional_address(uint32_t type, const struct sockaddr_st
 virtual int     getConnectAddress(struct sockaddr_storage &raddr){ return ni->getConnectAddress(raddr); }
 
 	// get the contact from the net side!
-virtual std::string PeerId()
+virtual const RsPeerId& PeerId()
 {
 	if (ni)
 	{
@@ -126,7 +126,7 @@ class NotifyData
 class pqiperson: public PQInterface
 {
 public:
-	pqiperson(std::string id, pqipersongrp *ppg);
+	pqiperson(const RsPeerId& id, pqipersongrp *ppg);
 virtual ~pqiperson(); // must clean up children.
 
 	// control of the connection.

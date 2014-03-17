@@ -26,7 +26,7 @@
 #ifndef PQI_HASH_
 #define PQI_HASH_
 
-#include <util/rsid.h>
+#include <retroshare/rsids.h>
 #include <openssl/sha.h>
 #include <string>
 #include <iomanip>
@@ -63,7 +63,7 @@ void    addData(const void *data, uint32_t len)
 	}
 }
 
-void 	Complete(std::string &hash)
+void 	Complete(RsFileHash &hash)
 {
 	if (!doHash)
 	{
@@ -74,8 +74,7 @@ void 	Complete(std::string &hash)
 	SHA1_Final(sha_hash, sha_ctx);
 
 	endHash.clear();
-
-	endHash = hash = Sha1CheckSum(sha_hash).toStdString() ;
+	endHash = hash = Sha1CheckSum(sha_hash);
 
 //	for(int i = 0; i < SHA_DIGEST_LENGTH; i++)
 //	{
@@ -90,7 +89,7 @@ void 	Complete(std::string &hash)
 	private:
 
 	bool	doHash;
-	std::string endHash;
+	RsFileHash endHash;
 	uint8_t *sha_hash;
 	SHA_CTX *sha_ctx;
 };

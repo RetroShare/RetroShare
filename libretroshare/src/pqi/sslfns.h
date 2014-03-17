@@ -37,6 +37,7 @@
 #include <openssl/x509.h>
 
 #include <inttypes.h>
+#include <retroshare/rstypes.h>
 #include <string>
 
 /****
@@ -98,7 +99,7 @@ std::string saveX509ToPEM(X509* x509);
 X509 *loadX509FromDER(const uint8_t *ptr, uint32_t len);
 bool saveX509ToDER(X509 *x509, uint8_t **ptr, uint32_t *len);
 
-bool getX509id(X509 *x509, std::string &xid);
+bool getX509id(X509 *x509, RsPeerId &xid);
 
 /********************************************************************************/
 /********************************************************************************/
@@ -110,7 +111,7 @@ int pem_passwd_cb(char *buf, int size, int rwflag, void *password);
 
 bool CheckX509Certificate(X509 *x509);
 // Not dependent on sslroot. load, and detroys the X509 memory.
-int	LoadCheckX509(const char *cert_file, std::string &issuerName, std::string &location, std::string &userId);
+int	LoadCheckX509(const char *cert_file, RsPgpId& issuer, std::string &location, RsPeerId& userId);
 
 
 std::string getX509NameString(X509_NAME *name);

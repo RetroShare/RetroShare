@@ -36,7 +36,7 @@ const int pqipersongrpzone = 354;
 ///////////////////////////////////////////////////////////
 // hack for too many connections
 #include "retroshare/rsinit.h"
-static std::list<std::string> waitingIds;
+static std::list<RsPeerId> waitingIds;
 #define MAX_CONNECT_COUNT 3
 ///////////////////////////////////////////////////////////
 #endif
@@ -320,7 +320,7 @@ void pqipersongrp::statusChanged()
 
 	/* check for active connections and start waiting id's */
 	long connect_count = 0;
-	std::list<std::string> toConnect;
+	std::list<RsPeerId> toConnect;
 
 	{
 		RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
@@ -331,11 +331,11 @@ void pqipersongrp::statusChanged()
 		}
 
 		/* check for active connections and start waiting id's */
-		std::list<std::string> peers;
+		std::list<RsPeerId> peers;
 		mLinkMgr->getFriendList(peers);
 
 		/* count connection attempts */
-		std::list<std::string>::iterator peer;
+		std::list<RsPeerId>::iterator peer;
 		for (peer = peers.begin(); peer != peers.end(); peer++) {
 			peerConnectState state;
 			if (mLinkMgr->getFriendNetStatus(*peer, state) == false) {
@@ -367,7 +367,7 @@ void pqipersongrp::statusChanged()
 			if (waitingIds.empty()) {
 				break;
 			}
-			std::string waitingId = waitingIds.front();
+			RsPeerId waitingId = waitingIds.front();
 			waitingIds.pop_front();
 	
 #ifdef PGRP_DEBUG
@@ -379,7 +379,7 @@ void pqipersongrp::statusChanged()
 		}
 	} /* UNLOCKED */
 
-	std::list<std::string>::iterator cit;
+	std::list<RsPeerId>::iterator cit;
 	for(cit = toConnect.begin(); cit != toConnect.end(); cit++)
 	{
 		connectPeer(*cit, true);
@@ -388,11 +388,11 @@ void pqipersongrp::statusChanged()
 ///////////////////////////////////////////////////////////
 #endif
 
-bool pqipersongrp::getCryptoParams(const std::string& id,RsPeerCryptoParams& params)
+bool pqipersongrp::getCryptoParams(const RsPeerId& id,RsPeerCryptoParams& params)
 {
 	RsStackMutex stack(coreMtx); /******* LOCKED MUTEX **********/
 
-	std::map<std::string, SearchModule *>::iterator it = mods.find(id) ;
+	std::map<RsPeerId, SearchModule *>::iterator it = mods.find(id) ;
 
 	if(it == mods.end())
 		return false ;
@@ -402,9 +402,9 @@ bool pqipersongrp::getCryptoParams(const std::string& id,RsPeerCryptoParams& par
 	//return locked_getCryptoParams(id,params) ;
 }
 
-int     pqipersongrp::addPeer(std::string id)
+int     pqipersongrp::addPeer(const RsPeerId& id)
 {
-	pqioutput(PQL_DEBUG_BASIC, pqipersongrpzone, "pqipersongrp::addPeer() PeerId: " + id);
+	pqioutput(PQL_DEBUG_BASIC, pqipersongrpzone, "pqipersongrp::addPeer() PeerId: " + id.toStdString());
 
 	std::cerr << "pqipersongrp::addPeer() id: " << id;
 	std::cerr << std::endl;
@@ -435,9 +435,9 @@ int     pqipersongrp::addPeer(std::string id)
 }
 
 
-int     pqipersongrp::removePeer(std::string id)
+int     pqipersongrp::removePeer(const RsPeerId& id)
 {
-	std::map<std::string, SearchModule *>::iterator it;
+	std::map<RsPeerId, SearchModule *>::iterator it;
 
 #ifdef PGRP_DEBUG
 #endif
@@ -467,9 +467,9 @@ int     pqipersongrp::removePeer(std::string id)
 	return 1;
 }
 
-int pqipersongrp::tagHeartbeatRecvd(std::string id)
+int pqipersongrp::tagHeartbeatRecvd(const RsPeerId& id)
 {
-        std::map<std::string, SearchModule *>::iterator it;
+        std::map<RsPeerId, SearchModule *>::iterator it;
 
 #ifdef PGRP_DEBUG
         std::cerr << " pqipersongrp::tagHeartbeatRecvd() id: " << id;
@@ -494,7 +494,7 @@ int pqipersongrp::tagHeartbeatRecvd(std::string id)
 
 
 
-int     pqipersongrp::connectPeer(std::string id
+int     pqipersongrp::connectPeer(const RsPeerId& id
 #ifdef WINDOWS_SYS
 ///////////////////////////////////////////////////////////
 // hack for too many connections
@@ -515,7 +515,7 @@ int     pqipersongrp::connectPeer(std::string id
 #endif
 		return 0;
 	}
-	std::map<std::string, SearchModule *>::iterator it;
+	std::map<RsPeerId, SearchModule *>::iterator it;
 	it = mods.find(id);
 	if (it == mods.end())
 	{
@@ -662,7 +662,7 @@ int     pqipersongrp::connectPeer(std::string id
 	return 1;
 }
 
-bool    pqipersongrp::notifyConnect(std::string id, uint32_t ptype, bool success, const struct sockaddr_storage &raddr)
+bool    pqipersongrp::notifyConnect(const RsPeerId& id, uint32_t ptype, bool success, const struct sockaddr_storage &raddr)
 {
 	uint32_t type = 0;
 	if (ptype == PQI_CONNECT_TCP)
@@ -691,9 +691,9 @@ pqilistener * pqipersongrpDummy::locked_createListener(const struct sockaddr_sto
 }
 
 
-pqiperson * pqipersongrpDummy::locked_createPerson(std::string id, pqilistener * /*listener*/)
+pqiperson * pqipersongrpDummy::locked_createPerson(const RsPeerId& id, pqilistener * /*listener*/)
 {
-	pqioutput(PQL_DEBUG_BASIC, pqipersongrpzone, "pqipersongrpDummy::createPerson() PeerId: " + id);
+	pqioutput(PQL_DEBUG_BASIC, pqipersongrpzone, "pqipersongrpDummy::createPerson() PeerId: " + id.toStdString());
 
 	pqiperson *pqip = new pqiperson(id, this);
 

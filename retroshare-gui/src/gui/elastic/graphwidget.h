@@ -45,6 +45,7 @@
 #include <map>
 #include <QGraphicsView>
 #include <stdint.h>
+#include <retroshare/rstypes.h>
 
 class Node;
 class Edge;
@@ -72,7 +73,7 @@ public:
 			ELASTIC_NODE_AUTH_UNKNOWN		= 0x0002
 	 } AuthType ;
 
-	 NodeId addNode(const std::string& NodeShortText,const std::string& nodeCompleteText,NodeType type,AuthType auth,const std::string& ssl_id,const std::string& gpg_id) ;
+	 NodeId addNode(const std::string& NodeShortText,const std::string& nodeCompleteText,NodeType type,AuthType auth,const RsPeerId& ssl_id,const RsPgpId& gpg_id) ;
 	 EdgeId addEdge(NodeId n1,NodeId n2) ;
 
 	 void snapshotNodesPositions() ;

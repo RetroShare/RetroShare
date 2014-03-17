@@ -44,7 +44,7 @@ uint32_t p3History::getMaxStorageDuration()
 {
 	return mHistoryMgr->getMaxStorageDuration() ;
 }
-bool p3History::getMessages(const std::string &chatPeerId, std::list<HistoryMsg> &msgs, const uint32_t loadCount)
+bool p3History::getMessages(const RsPeerId &chatPeerId, std::list<HistoryMsg> &msgs, const uint32_t loadCount)
 {
 	return mHistoryMgr->getMessages(chatPeerId, msgs, loadCount);
 }
@@ -59,7 +59,7 @@ void p3History::removeMessages(const std::list<uint32_t> &msgIds)
 	mHistoryMgr->removeMessages(msgIds);
 }
 
-void p3History::clear(const std::string &chatPeerId)
+void p3History::clear(const RsPeerId &chatPeerId)
 {
 	mHistoryMgr->clear(chatPeerId);
 }

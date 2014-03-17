@@ -53,7 +53,7 @@ public:
 	/* FeedHolder */
 	virtual QScrollArea *getScrollArea();
 	virtual void deleteFeedItem(QWidget *item, uint32_t type);
-	virtual void openChat(std::string peerId);
+    virtual void openChat(const RsPeerId& peerId);
 	virtual void openComments(uint32_t type, const RsGxsGroupId &groupId, const RsGxsMessageId &msgId, const QString &title);
 
 	bool navigate(const std::string& channelId, const std::string& msgId);
@@ -118,7 +118,7 @@ private:
 	void acknowledgeGroupUpdate(const uint32_t &token);
 	void acknowledgeMessageUpdate(const uint32_t &token);
 
-	std::string mChannelId; /* current Channel */
+    RsGxsGroupId mChannelId; /* current Channel */
 	TokenQueue *mChannelQueue;
 
 	/* Layout Pointers */

@@ -27,11 +27,12 @@
 
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rspeers.h>
+#include <retroshare/rstypes.h>
 
 #include "gui/common/PeerDefs.h"
 #include "ChatDialog.h"
 
-CreateLobbyDialog::CreateLobbyDialog(const std::list<std::string>& peer_list, int privacyLevel, QWidget *parent) :
+CreateLobbyDialog::CreateLobbyDialog(const std::list<RsPeerId>& peer_list, int privacyLevel, QWidget *parent) :
 	QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint)
 {
 	ui = new Ui::CreateLobbyDialog() ;
@@ -60,7 +61,7 @@ CreateLobbyDialog::CreateLobbyDialog(const std::list<std::string>& peer_list, in
 	ui->keyShareList->setModus(FriendSelectionWidget::MODUS_CHECK);
 	ui->keyShareList->setShowType(FriendSelectionWidget::SHOW_GROUP | FriendSelectionWidget::SHOW_SSL);
 	ui->keyShareList->start();
-	ui->keyShareList->setSelectedSslIds(peer_list, false);
+    ui->keyShareList->setSelectedIds<RsPeerId,FriendSelectionWidget::IDTYPE_SSL>(peer_list, false);
 
 	if (privacyLevel) {
 		ui->security_CB->setCurrentIndex((privacyLevel == RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC) ? 0 : 1);
@@ -98,8 +99,8 @@ void CreateLobbyDialog::checkTextFields()
 
 void CreateLobbyDialog::createLobby()
 {
-	std::list<std::string> shareList;
-	ui->keyShareList->selectedSslIds(shareList, false);
+    std::list<RsPeerId> shareList;
+    ui->keyShareList->selectedIds<RsPeerId,FriendSelectionWidget::IDTYPE_SSL>(shareList, false);
 
 //	if (shareList.empty()) {
 //		QMessageBox::warning(this, "RetroShare", tr("Please select at least one friend"), QMessageBox::Ok, QMessageBox::Ok);
@@ -123,7 +124,7 @@ void CreateLobbyDialog::createLobby()
 	rsMsgs->setNickNameForChatLobby(id,ui->nickName_LE->text().toUtf8().constData()) ;
 
 	// open chat window !!
-	std::string vpid ;
+    RsPeerId vpid ;
 	
 	if(rsMsgs->getVirtualPeerId(id,vpid))
 		ChatDialog::chatFriend(vpid) ; 

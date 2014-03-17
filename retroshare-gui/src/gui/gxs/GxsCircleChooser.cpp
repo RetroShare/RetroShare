@@ -58,7 +58,7 @@ bool MakeGxsCircleDesc(const RsGxsCircleId &id, QString &desc)
 	}
 
 	desc += " (Ext) [";
-	desc += QString::fromStdString(id.substr(0,5));
+    desc += QString::fromStdString(id.toStdString().substr(0,5));
 	desc += "...]";
 
 	return true;
@@ -97,7 +97,7 @@ void GxsCircleChooser::loadGxsCircles()
 			std::cerr << std::endl;
 			continue;
 		}
-		QString id = QString::fromStdString(*it);
+        QString id = QString::fromStdString((*it).toStdString());
 
 		addItem(str, id);
 

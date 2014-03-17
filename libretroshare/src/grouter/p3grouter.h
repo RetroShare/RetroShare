@@ -31,7 +31,7 @@
 #include "rsgrouter.h"
 #include "services/p3service.h"
 #include "pqi/p3cfgmgr.h"
-#include "util/rsid.h"
+#include "retroshare/rstypes.h"
 
 #include "groutertypes.h"
 #include "groutermatrix.h"
@@ -92,7 +92,7 @@ class p3GRouter: public RsGRouter, public p3Service, public p3Config
 		// Sends an ACK to the origin of the msg. This is used to notify for 
 		// unfound route, or message correctly received, depending on the particular situation.
 		//
-		void sendACK(const SSLIdType& peer,GRouterMsgPropagationId mid, uint32_t flags) ;
+		void sendACK(const RsPeerId& peer,GRouterMsgPropagationId mid, uint32_t flags) ;
 
 		//===================================================//
 		//                  Interface with RsGRouter         //

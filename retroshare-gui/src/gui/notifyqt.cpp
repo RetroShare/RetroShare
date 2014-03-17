@@ -526,7 +526,7 @@ void NotifyQt::notifyTurtleSearchResult(uint32_t search_id,const std::list<Turtl
 		det.name = (*it).name ;
 		det.hash = (*it).hash ;
 		det.size = (*it).size ;
-		det.id = "Anonymous" ;
+		det.id.clear() ;
 
 		emit gotTurtleSearchResult(search_id,det) ;
 	}
@@ -764,7 +764,7 @@ void NotifyQt::UpdateGUI()
 	{
 		uint32_t sysid;
 		uint32_t type;
-		std::string title, id, msg;
+        std::string title, id, msg;
 
 		if (rsNotify->NotifyPopupMessage(type, id, title, msg))
 		{
@@ -780,7 +780,7 @@ void NotifyQt::UpdateGUI()
 
 					if (popupflags & RS_POPUP_MSG)
 					{
-						toaster = new Toaster(new MessageToaster(std::string(), tr("Encrypted message"), QString("[%1]").arg(tr("Encrypted message"))));
+						toaster = new Toaster(new MessageToaster("", tr("Encrypted message"), QString("[%1]").arg(tr("Encrypted message"))));
 					}
 					break;
 				case RS_POPUP_MSG:
@@ -796,7 +796,7 @@ void NotifyQt::UpdateGUI()
 
 					if (popupflags & RS_POPUP_CONNECT)
 					{
-						toaster = new Toaster(new OnlineToaster(id));
+						toaster = new Toaster(new OnlineToaster(RsPeerId(id)));
 					}
 					break;
 				case RS_POPUP_DOWNLOAD:
@@ -805,19 +805,19 @@ void NotifyQt::UpdateGUI()
 					if (popupflags & RS_POPUP_DOWNLOAD)
 					{
 						/* id = file hash */
-						toaster = new Toaster(new DownloadToaster(id, QString::fromUtf8(title.c_str())));
+                        toaster = new Toaster(new DownloadToaster(RsFileHash(id), QString::fromUtf8(title.c_str())));
 					}
 					break;
 				case RS_POPUP_CHAT:
 					if (popupflags & RS_POPUP_CHAT)
 					{
-						ChatDialog *chatDialog = ChatDialog::getChat(id, 0);
+                        ChatDialog *chatDialog = ChatDialog::getChat(RsPeerId(id), 0);
 						ChatWidget *chatWidget;
 						if (chatDialog && (chatWidget = chatDialog->getChatWidget()) && chatWidget->isActive()) {
 							// do not show when active
 							break;
 						}
-						toaster = new Toaster(new ChatToaster(id, QString::fromUtf8(msg.c_str())));
+						toaster = new Toaster(new ChatToaster(RsPeerId(id), QString::fromUtf8(msg.c_str())));
 					}
 					break;
 				case RS_POPUP_GROUPCHAT:
@@ -832,13 +832,13 @@ void NotifyQt::UpdateGUI()
 								}
 							}
 						}
-						toaster = new Toaster(new GroupChatToaster(id, QString::fromUtf8(msg.c_str())));
+						toaster = new Toaster(new GroupChatToaster(RsPeerId(id), QString::fromUtf8(msg.c_str())));
 					}
 					break;
 				case RS_POPUP_CHATLOBBY:
 					if (popupflags & RS_POPUP_CHATLOBBY)
 					{
-						ChatDialog *chatDialog = ChatDialog::getChat(id, 0);
+                        ChatDialog *chatDialog = ChatDialog::getChat(RsPeerId(id), 0);
 						ChatWidget *chatWidget;
 						if (chatDialog && (chatWidget = chatDialog->getChatWidget()) && chatWidget->isActive()) {
 							// do not show when active
@@ -849,7 +849,7 @@ void NotifyQt::UpdateGUI()
 							// participant is muted
 							break;
 						}
-						toaster = new Toaster(new ChatLobbyToaster(id, QString::fromUtf8(title.c_str()), QString::fromUtf8(msg.c_str())));
+						toaster = new Toaster(new ChatLobbyToaster(RsPeerId(id), QString::fromUtf8(title.c_str()), QString::fromUtf8(msg.c_str())));
 					}
 					break;
 				case RS_POPUP_CONNECT_ATTEMPT:
@@ -858,7 +858,7 @@ void NotifyQt::UpdateGUI()
 						// id = gpgid
 						// title = ssl name
 						// msg = peer id
-						toaster = new Toaster(new FriendRequestToaster(id, QString::fromUtf8(title.c_str()), msg));
+						toaster = new Toaster(new FriendRequestToaster(RsPgpId(id), QString::fromUtf8(title.c_str()), RsPeerId(msg)));
 					}
 					break;
 			}
@@ -920,7 +920,8 @@ void NotifyQt::testToaster(uint notifyFlags, /*RshareSettings::enumToasterPositi
 	QString title = tr("Test");
 	QString message = tr("This is a test.");
 
-	std::string id = rsPeers->getOwnId();
+	RsPeerId id = rsPeers->getOwnId();
+	RsPgpId pgpid = rsPeers->getGPGOwnId();
 
 	uint pos = 0;
 
@@ -937,13 +938,13 @@ void NotifyQt::testToaster(uint notifyFlags, /*RshareSettings::enumToasterPositi
 				toaster = new Toaster(new MessageToaster(std::string(), tr("Unknown title"), QString("[%1]").arg(tr("Encrypted message"))));
 				break;
 			case RS_POPUP_MSG:
-				toaster = new Toaster(new MessageToaster(id, title, message));
+				toaster = new Toaster(new MessageToaster(id.toStdString(), title, message));
 				break;
 			case RS_POPUP_CONNECT:
 				toaster = new Toaster(new OnlineToaster(id));
 				break;
 			case RS_POPUP_DOWNLOAD:
-				toaster = new Toaster(new DownloadToaster(id, title));
+                toaster = new Toaster(new DownloadToaster(RsFileHash::random(), title));
 				break;
 			case RS_POPUP_CHAT:
 				toaster = new Toaster(new ChatToaster(id, message));
@@ -955,7 +956,7 @@ void NotifyQt::testToaster(uint notifyFlags, /*RshareSettings::enumToasterPositi
 				toaster = new Toaster(new ChatLobbyToaster(id, title, message));
 				break;
 			case RS_POPUP_CONNECT_ATTEMPT:
-				toaster = new Toaster(new FriendRequestToaster(id, title, id));
+				toaster = new Toaster(new FriendRequestToaster(pgpid, title, id));
 				break;
 		}
 

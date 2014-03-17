@@ -183,11 +183,11 @@ void IdDialog::filterChanged(const QString& /*text*/)
 void IdDialog::updateSelection()
 {
 	QTreeWidgetItem *item = ui.treeWidget_IdList->currentItem();
-	std::string id;
+    RsGxsGroupId id;
 
 	if (item)
 	{
-		id = item->text(RSID_COL_KEYID).toStdString();
+        id = RsGxsGroupId(item->text(RSID_COL_KEYID).toStdString());
 	}
 
 	requestIdDetails(id);
@@ -212,7 +212,7 @@ void IdDialog::requestIdList()
 	mIdQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, IDDIALOG_IDLIST);
 }
 
-bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, const std::string &ownPgpId, int accept)
+bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, const RsPgpId &ownPgpId, int accept)
 {
 	bool isOwnId = (data.mPgpKnown && (data.mPgpId == ownPgpId)) || (data.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN);
 
@@ -265,7 +265,7 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 		item = new QTreeWidgetItem();
 	}
 	item->setText(RSID_COL_NICKNAME, QString::fromUtf8(data.mMeta.mGroupName.c_str()));
-	item->setText(RSID_COL_KEYID, QString::fromStdString(data.mMeta.mGroupId));
+    item->setText(RSID_COL_KEYID, QString::fromStdString(data.mMeta.mGroupId.toStdString()));
 
 	if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
 	{
@@ -316,7 +316,7 @@ void IdDialog::insertIdList(uint32_t token)
 
 	mStateHelper->setActive(IDDIALOG_IDLIST, true);
 
-	std::string ownPgpId  = rsPeers->getGPGOwnId();
+	RsPgpId ownPgpId  = rsPeers->getGPGOwnId();
 
 	/* Update existing and remove not existing items */
 	QTreeWidgetItemIterator itemIterator(ui.treeWidget_IdList);
@@ -326,7 +326,7 @@ void IdDialog::insertIdList(uint32_t token)
 
 		for (vit = datavector.begin(); vit != datavector.end(); ++vit)
 		{
-			if (vit->mMeta.mGroupId == item->text(RSID_COL_KEYID).toStdString())
+            if (vit->mMeta.mGroupId == RsGxsGroupId(item->text(RSID_COL_KEYID).toStdString()))
 			{
 				break;
 			}
@@ -361,11 +361,11 @@ void IdDialog::insertIdList(uint32_t token)
 	updateSelection();
 }
 
-void IdDialog::requestIdDetails(std::string &id)
+void IdDialog::requestIdDetails(RsGxsGroupId &id)
 {
 	mIdQueue->cancelActiveRequestTokens(IDDIALOG_IDDETAILS);
 
-	if (id.empty())
+    if (id.isNull())
 	{
 		mStateHelper->setActive(IDDIALOG_IDDETAILS, false);
 		mStateHelper->setActive(IDDIALOG_REPLIST, false);
@@ -384,7 +384,7 @@ void IdDialog::requestIdDetails(std::string &id)
 	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
 
 	uint32_t token;
-	std::list<std::string> groupIds;
+    std::list<RsGxsGroupId> groupIds;
 	groupIds.push_back(id);
 
 	mIdQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds, IDDIALOG_IDDETAILS);
@@ -430,12 +430,12 @@ void IdDialog::insertIdDetails(uint32_t token)
 	data = datavector[0];
 
 	/* get GPG Details from rsPeers */
-	std::string ownPgpId  = rsPeers->getGPGOwnId();
+	RsPgpId ownPgpId  = rsPeers->getGPGOwnId();
 
 	ui.lineEdit_Nickname->setText(QString::fromUtf8(data.mMeta.mGroupName.c_str()));
-	ui.lineEdit_KeyId->setText(QString::fromStdString(data.mMeta.mGroupId));
+    ui.lineEdit_KeyId->setText(QString::fromStdString(data.mMeta.mGroupId.toStdString()));
 	ui.lineEdit_GpgHash->setText(QString::fromStdString(data.mPgpIdHash));
-	ui.lineEdit_GpgId->setText(QString::fromStdString(data.mPgpId));
+	ui.lineEdit_GpgId->setText(QString::fromStdString(data.mPgpId.toStdString()));
 
 	if (data.mPgpKnown)
 	{
@@ -680,7 +680,7 @@ void IdDialog::insertRepList(uint32_t token)
 		/* insert 4 columns */
 
 		/* friend name */
-		item->setId(op.mMeta.mGroupId, RSIDREP_COL_NAME);
+        item->setId(op.mMeta.mAuthorId, RSIDREP_COL_NAME);
 
 		/* score */
 		item->setText(RSIDREP_COL_OPINION, QString::number(op.getOpinion()));

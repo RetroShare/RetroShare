@@ -72,7 +72,7 @@ virtual bool 	cansend(uint32_t /* usec */)
 virtual bool    bandwidthLimited() { return false; }
 
 //! if HASHing is switched on
-virtual std::string gethash();
+virtual RsFileHash gethash();
 virtual uint64_t bytecount();
 
 protected:
@@ -178,7 +178,7 @@ virtual bool 	cansend(uint32_t /* usec */)
 	}
 virtual bool    bandwidthLimited() { return false; }
 
-virtual std::string gethash();
+virtual RsFileHash gethash();
 virtual uint64_t bytecount();
 
 	private:
@@ -195,7 +195,7 @@ virtual uint64_t bytecount();
 class NetBinDummy: public NetBinInterface
 {
 public:
-	NetBinDummy(PQInterface *parent, std::string id, uint32_t t);
+	NetBinDummy(PQInterface *parent, const RsPeerId& id, uint32_t t);
 virtual ~NetBinDummy() { return; }
 
 	// Net Interface
@@ -227,7 +227,7 @@ virtual bool    moretoread(uint32_t usec);
 virtual bool    cansend(uint32_t usec);
 virtual int	close();
 
-virtual std::string gethash();
+virtual RsFileHash gethash();
 
 	private:
 	uint32_t type;

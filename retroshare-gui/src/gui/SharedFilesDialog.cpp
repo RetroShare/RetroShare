@@ -528,7 +528,7 @@ void SharedFilesDialog::copyLink (const QModelIndexList& lst, bool remote)
                     continue;
 
                 RetroShareLink link;
-                if (link.createFile(QString::fromUtf8(details.name.c_str()), details.count, details.hash.c_str())) {
+                if (link.createFile(QString::fromUtf8(details.name.c_str()), details.count, details.hash.toStdString().c_str())) {
                     urls.push_back(link) ;
                 }
             }
@@ -536,7 +536,7 @@ void SharedFilesDialog::copyLink (const QModelIndexList& lst, bool remote)
         else
         {
             RetroShareLink link;
-            if (link.createFile(QString::fromUtf8(details.name.c_str()), details.count, details.hash.c_str())) {
+            if (link.createFile(QString::fromUtf8(details.name.c_str()), details.count, details.hash.toStdString().c_str())) {
                 urls.push_back(link) ;
             }
         }

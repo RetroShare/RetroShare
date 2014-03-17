@@ -429,7 +429,7 @@ void p3PostBase::background_loadMsgs(const uint32_t &token, bool unprocessed)
 			}
 	
 			/* 3 types expected: PostedPost, Comment and Vote */
-			if (parentId.empty())
+			if (parentId.isNull())
 			{
 				/* we don't care about top-level (Posts) */
 				std::cerr << "\tIgnoring TopLevel Item";

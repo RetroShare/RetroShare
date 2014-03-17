@@ -1260,7 +1260,7 @@ void MainWindow::setStatus(QObject *pObject, int nStatus)
         nStatus = RS_STATUS_INACTIVE;
     }
 
-    rsStatus->sendStatus("", nStatus);
+    rsStatus->sendStatus(RsPeerId(), nStatus);
 
     /* set status in all status objects, but the calling one */
     for (std::set <QObject*>::iterator it = m_apStatusObjects.begin(); it != m_apStatusObjects.end(); it++) {

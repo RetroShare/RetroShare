@@ -88,19 +88,19 @@ void GxsCommentTreeWidget::customPopUpMenu(const QPoint& point)
 {
 	QMenu contextMnu( this );
 	QAction* action = contextMnu.addAction(QIcon(IMAGE_MESSAGE), tr("Reply to Comment"), this, SLOT(replyToComment()));
-	action->setDisabled(mCurrentMsgId.empty());
+	action->setDisabled(mCurrentMsgId.isNull());
 	action = contextMnu.addAction(QIcon(IMAGE_MESSAGE), tr("Submit Comment"), this, SLOT(makeComment()));
-	action->setDisabled(mThreadId.first.empty());
+	action->setDisabled(mThreadId.first.isNull());
 
 	contextMnu.addSeparator();
 
 	action = contextMnu.addAction(QIcon(IMAGE_VOTEUP), tr("Vote Up"), this, SLOT(voteUp()));
-	action->setDisabled(mVoterId.empty());
+	action->setDisabled(mVoterId.isNull());
 	action = contextMnu.addAction(QIcon(IMAGE_VOTEDOWN), tr("Vote Down"), this, SLOT(voteDown()));
-	action->setDisabled(mVoterId.empty());
+	action->setDisabled(mVoterId.isNull());
 
 
-	if (!mCurrentMsgId.empty())
+	if (!mCurrentMsgId.isNull())
 	{
 		contextMnu.addSeparator();
 		QMenu *rep_menu = contextMnu.addMenu(tr("Reputation"));
@@ -264,12 +264,12 @@ void GxsCommentTreeWidget::clearItems()
 void GxsCommentTreeWidget::completeItems()
 {
 	/* handle pending items */
-	std::string parentId;
+	RsGxsMessageId parentId;
 	QTreeWidgetItem *parent = NULL;
 	QList<QTreeWidgetItem *> topLevelItems;
 
-	std::map<std::string, QTreeWidgetItem *>::iterator lit;
-	std::multimap<std::string, QTreeWidgetItem *>::iterator pit;
+	std::map<RsGxsMessageId, QTreeWidgetItem *>::iterator lit;
+	std::multimap<RsGxsMessageId, QTreeWidgetItem *>::iterator pit;
 
 	std::cerr << "GxsCommentTreeWidget::completeItems() " << mPendingInsertMap.size();
 	std::cerr << " PendingItems";
@@ -334,7 +334,7 @@ void GxsCommentTreeWidget::completeItems()
 }
 
 
-void GxsCommentTreeWidget::addItem(std::string itemId, std::string parentId, QTreeWidgetItem *item)
+void GxsCommentTreeWidget::addItem(RsGxsMessageId itemId, RsGxsMessageId parentId, QTreeWidgetItem *item)
 {
 	std::cerr << "GxsCommentTreeWidget::addItem() Id: " << itemId;
 	std::cerr << " ParentId: " << parentId;
@@ -343,7 +343,7 @@ void GxsCommentTreeWidget::addItem(std::string itemId, std::string parentId, QTr
 	/* store in map -> for children */
 	mLoadingMap[itemId] = item;
 
-	std::map<std::string, QTreeWidgetItem *>::iterator it;
+	std::map<RsGxsMessageId, QTreeWidgetItem *>::iterator it;
 	it = mLoadingMap.find(parentId);
 	if (it != mLoadingMap.end())
 	{
@@ -437,10 +437,10 @@ void GxsCommentTreeWidget::service_loadThread(const uint32_t &token)
 		text = QString::number(comment.mOwnVote);
 		item->setText(PCITEM_COLUMN_OWNVOTE, text);
 
-		text = QString::fromUtf8(comment.mMeta.mMsgId.c_str());
+		text = QString::fromUtf8(comment.mMeta.mMsgId.toStdString().c_str());
 		item->setText(PCITEM_COLUMN_MSGID, text);
 
-		text = QString::fromUtf8(comment.mMeta.mParentId.c_str());
+		text = QString::fromUtf8(comment.mMeta.mParentId.toStdString().c_str());
 		item->setText(PCITEM_COLUMN_PARENTID, text);
 
 
@@ -467,7 +467,7 @@ QTreeWidgetItem *GxsCommentTreeWidget::service_createMissingItem(const RsGxsMess
 	item->setText(PCITEM_COLUMN_MSGID, text);
 
 
-		text = QString::fromUtf8(parent.c_str());
+		text = QString::fromUtf8(parent.toStdString().c_str());
 	item->setText(PCITEM_COLUMN_PARENTID, text);
 
 	return item;

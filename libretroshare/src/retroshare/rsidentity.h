@@ -32,6 +32,7 @@
 
 #include "retroshare/rstokenservice.h"
 #include "retroshare/rsgxsifacehelper.h"
+#include "retroshare/rsids.h"
 
 /* The Main Interface Class - for information about your Peers */
 class RsIdentity;
@@ -103,7 +104,7 @@ class RsGxsIdGroup
 
 	// Not Serialised - for GUI's benefit.
 	bool mPgpKnown;
-	std::string mPgpId;
+	RsPgpId mPgpId;
 	GxsReputation mReputation; 
 };
 
@@ -111,8 +112,6 @@ class RsGxsIdGroup
 std::ostream &operator<<(std::ostream &out, const RsGxsIdGroup &group);
 
 // DATA TYPE FOR EXTERNAL INTERFACE.
-
-typedef std::string RsGxsId; // TMP. => 
 
 class RsRecognTag
 {
@@ -160,7 +159,7 @@ class RsIdentityDetails
 	// PGP Stuff.
 	bool mPgpLinked;
 	bool mPgpKnown;
-	std::string mPgpId;
+	RsPgpId mPgpId;
 
 	// Recogn details.
 	std::list<RsRecognTag> mRecognTags;

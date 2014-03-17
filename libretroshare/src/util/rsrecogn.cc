@@ -563,7 +563,7 @@ RsGxsRecognTagItem *RsRecogn::extractTag(const std::string &encoded)
 }
 
 
-bool RsRecogn::createTagRequest(const RsTlvSecurityKey &key, const std::string &id, const std::string &nickname, uint16_t tag_class, uint16_t tag_type, const std::string &comment, std::string &tag)
+bool RsRecogn::createTagRequest(const RsTlvSecurityKey &key, const RsGxsId &id, const std::string &nickname, uint16_t tag_class, uint16_t tag_type, const std::string &comment, std::string &tag)
 {
 	RsGxsRecognReqItem *item = new RsGxsRecognReqItem();
 

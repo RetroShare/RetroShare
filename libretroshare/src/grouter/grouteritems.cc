@@ -55,12 +55,12 @@ bool RsGRouterPublishKeyItem::serialise(void *data, uint32_t& pktsize) const
 	offset += 8 ;
 
 	/* add mandatory parts first */
-	ok &= setRawUInt32(data, tlvsize, &offset, diffusion_id);
-	ok &= setRawSha1(data, tlvsize, &offset, published_key);
+    ok &= setRawUInt32(data, tlvsize, &offset, diffusion_id);
+    ok &= published_key.serialise(data, tlvsize, offset) ;
 	ok &= setRawUInt32(data, tlvsize, &offset, service_id);
 	ok &= setRawUFloat32(data, tlvsize, &offset, randomized_distance);
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_VALUE, description_string);
-	ok &= setRawPGPFingerprint(data, tlvsize, &offset, fingerprint);
+    ok &= fingerprint.serialise(data, tlvsize, offset) ;
 
 	if (offset != tlvsize)
 	{
@@ -134,10 +134,9 @@ bool RsGRouterProofOfWorkObject::checkProofOfWork(unsigned char *mem,uint32_t si
 {
 	Sha1CheckSum sum = RsDirUtil::sha1sum(mem,size) ;
 
-	for(uint32_t i=0;i<(7+PROOF_OF_WORK_REQUESTED_BYTES)/4;++i)
-		for(int j=0;j<(PROOF_OF_WORK_REQUESTED_BYTES%4);++j)
-			if(sum.fourbytes[i] & (0xff << (8*(3-j))) != 0)
-				return false ;
+    for(int i=0;i<PROOF_OF_WORK_REQUESTED_BYTES;++i)
+        if(sum.toByteArray()[i] != 0)
+            return false ;
 
 	return true ;
 }
@@ -183,11 +182,11 @@ RsGRouterItem *RsGRouterSerialiser::deserialise_RsGRouterPublishKeyItem(void *da
 	offset += 8 ;
 
 	ok &= getRawUInt32(data, pktsize, &offset, &item->diffusion_id); 	// file hash
-	ok &= getRawSha1(data, pktsize, &offset, item->published_key);
+    ok &= item->published_key.deserialise(data, pktsize, offset) ;
 	ok &= getRawUInt32(data, pktsize, &offset, &item->service_id); 	// file hash
 	ok &= getRawUFloat32(data, pktsize, &offset, item->randomized_distance); 	// file hash
 	ok &= GetTlvString(data, pktsize, &offset, TLV_TYPE_STR_VALUE,item->description_string);
-	ok &= getRawPGPFingerprint(data,pktsize,&offset,item->fingerprint) ;
+    ok &= item->fingerprint.deserialise(data,pktsize,offset) ;
 
 	if (offset != rssize || !ok)
 	{
@@ -207,7 +206,7 @@ RsGRouterItem *RsGRouterSerialiser::deserialise_RsGRouterGenericDataItem(void *d
 	RsGRouterGenericDataItem *item = new RsGRouterGenericDataItem() ;
 
 	ok &= getRawUInt32(data, pktsize, &offset, &item->routing_id); 	// file hash
-	ok &= getRawSha1(data, pktsize, &offset, item->destination_key);
+    ok &= item->destination_key.deserialise(data, pktsize, offset) ;
 	ok &= getRawUInt32(data, pktsize, &offset, &item->data_size); 	// file hash
 
 	if( NULL == (item->data_bytes = (uint8_t*)malloc(item->data_size)))
@@ -257,7 +256,7 @@ RsGRouterItem *RsGRouterSerialiser::deserialise_RsGRouterRoutingInfoItem(void *d
 	RsGRouterRoutingInfoItem *item = new RsGRouterRoutingInfoItem() ;
 
 	ok &= getRawUInt32(data, pktsize, &offset, &item->status_flags); 	
-	ok &= getRawSSLId(data, pktsize, &offset, item->origin); 	
+    ok &= item->origin.deserialise(data, pktsize, offset) ;
 	ok &= getRawTimeT(data, pktsize, &offset, item->received_time); 	
 
 	uint32_t s = 0 ;
@@ -267,7 +266,7 @@ RsGRouterItem *RsGRouterSerialiser::deserialise_RsGRouterRoutingInfoItem(void *d
 	{
 		FriendTrialRecord ftr ;
 
-		ok &= getRawSSLId(data, pktsize, &offset, ftr.friend_id); 	
+        ok &= ftr.friend_id.deserialise(data, pktsize, offset) ;
 		ok &= getRawTimeT(data, pktsize, &offset, ftr.time_stamp) ;
 
 		item->tried_friends.push_back(ftr) ;
@@ -276,7 +275,7 @@ RsGRouterItem *RsGRouterSerialiser::deserialise_RsGRouterRoutingInfoItem(void *d
 	item->data_item = new RsGRouterGenericDataItem ;
 
 	ok &= getRawUInt32(data, pktsize, &offset, &item->data_item->routing_id); 	
-	ok &= getRawSha1(data, pktsize, &offset, item->data_item->destination_key) ;
+    ok &= item->data_item->destination_key.deserialise(data, pktsize, offset) ;
 	ok &= getRawUInt32(data, pktsize, &offset, &item->data_item->data_size) ;
 
 	item->data_item->data_bytes = (uint8_t*)malloc(item->data_item->data_size) ;
@@ -305,7 +304,7 @@ RsGRouterItem *RsGRouterSerialiser::deserialise_RsGRouterMatrixFriendListItem(vo
 	item->reverse_friend_indices.resize(nb_friends) ;
 
 	for(uint32_t i=0;ok && i<nb_friends;++i)
-		ok &= getRawSSLId(data, pktsize, &offset, item->reverse_friend_indices[i]) ;
+        ok &= item->reverse_friend_indices[i].deserialise(data, pktsize, offset) ;
 
 	if (offset != rssize || !ok)
 	{
@@ -323,7 +322,7 @@ RsGRouterItem *RsGRouterSerialiser::deserialise_RsGRouterMatrixCluesItem(void *d
 
 	RsGRouterMatrixCluesItem *item = new RsGRouterMatrixCluesItem() ;
 
-	ok &= getRawSha1(data,pktsize,&offset,item->destination_key) ;
+    ok &= item->destination_key.deserialise(data,pktsize,offset) ;
 		
 	uint32_t nb_clues = 0 ;
 	ok &= getRawUInt32(data, pktsize, &offset, &nb_clues); 	
@@ -395,7 +394,7 @@ bool RsGRouterGenericDataItem::serialise(void *data,uint32_t& size) const
 
 	/* add mandatory parts first */
 	ok &= setRawUInt32(data, tlvsize, &offset, routing_id);
-	ok &= setRawSha1(data, tlvsize, &offset, destination_key);
+    ok &= destination_key.serialise(data, tlvsize, offset) ;
 	ok &= setRawUInt32(data, tlvsize, &offset, data_size);
 
 	memcpy(&((uint8_t*)data)[offset],data_bytes,data_size) ;
@@ -445,24 +444,24 @@ uint32_t RsGRouterMatrixFriendListItem::serial_size() const
 {
 	uint32_t s = 8 ; 									// header
 	s += 4  ; 											// reverse_friend_indices.size()
-	s += 16 * reverse_friend_indices.size() ; // sha1 for published_key
+    s += RsFileHash::SIZE_IN_BYTES * reverse_friend_indices.size() ; // sha1 for published_key
 
 	return s ;
 }
 uint32_t RsGRouterRoutingInfoItem::serial_size() const
 {
-	uint32_t s = 8 ; 									// header
-	s += 4  ; 											// status_flags
-	s += 16  ; 											// origin
-	s += 8  ; 											// received_time
-	s += 4  ; 											// tried_friends.size() ;
+    uint32_t s = 8 ; 								// header
+    s += 4  ; 										// status_flags
+    s += origin.SIZE_IN_BYTES  ; 							// origin
+    s += 8  ; 										// received_time
+    s += 4  ; 										// tried_friends.size() ;
 
-	s += tried_friends.size() * ( 16 + 8 ) ; 	// FriendTrialRecord
+    s += tried_friends.size() * ( RsPeerId::SIZE_IN_BYTES + 8 ) ;			// FriendTrialRecord
 
-	s += 4;												// data_item->routing_id
-	s += 20;												// data_item->destination_key
-	s += 4;												// data_item->data_size
-	s += data_item->data_size;						// data_item->data_bytes 
+    s += 4;										// data_item->routing_id
+    s += data_item->destination_key.SIZE_IN_BYTES;							// data_item->destination_key
+    s += 4;										// data_item->data_size
+    s += data_item->data_size;								// data_item->data_bytes
 
 	return s ;
 }
@@ -479,7 +478,7 @@ bool RsGRouterMatrixFriendListItem::serialise(void *data,uint32_t& size) const
 	ok &= setRawUInt32(data, tlvsize, &offset, reverse_friend_indices.size());
 
 	for(uint32_t i=0;ok && i<reverse_friend_indices.size();++i)
-		ok &= setRawSSLId(data,tlvsize,&offset,reverse_friend_indices[i]) ;
+        ok &= reverse_friend_indices[i].serialise(data,tlvsize,offset) ;
 
 	if (offset != tlvsize)
 	{
@@ -498,7 +497,7 @@ bool RsGRouterMatrixCluesItem::serialise(void *data,uint32_t& size) const
 		return false ;
 
 	/* add mandatory parts first */
-	ok &= setRawSha1(data,tlvsize,&offset,destination_key) ;
+    ok &= destination_key.serialise(data,tlvsize,offset) ;
 	ok &= setRawUInt32(data, tlvsize, &offset, clues.size());
 
 	for(std::list<RoutingMatrixHitEntry>::const_iterator it2(clues.begin());it2!=clues.end();++it2)
@@ -518,37 +517,37 @@ bool RsGRouterMatrixCluesItem::serialise(void *data,uint32_t& size) const
 }
 bool RsGRouterRoutingInfoItem::serialise(void *data,uint32_t& size) const
 {
-	uint32_t tlvsize,offset=0;
-	bool ok = true;
-	
-	if(!serialise_header(data,size,tlvsize,offset))
-		return false ;
+    uint32_t tlvsize,offset=0;
+    bool ok = true;
 
-	ok &= setRawUInt32(data, tlvsize, &offset, status_flags) ;
-	ok &= setRawSSLId(data, tlvsize, &offset, origin) ;
-	ok &= setRawTimeT(data, tlvsize, &offset, received_time) ;
-	ok &= setRawUInt32(data, tlvsize, &offset, tried_friends.size()) ;
+    if(!serialise_header(data,size,tlvsize,offset))
+        return false ;
 
-	for(std::list<FriendTrialRecord>::const_iterator it(tried_friends.begin());it!=tried_friends.end();++it)
-	{
-		ok &= setRawSSLId(data, tlvsize, &offset, (*it).friend_id) ;
-		ok &= setRawTimeT(data, tlvsize, &offset, (*it).time_stamp) ;
-	}
+    ok &= setRawUInt32(data, tlvsize, &offset, status_flags) ;
+    ok &= origin.serialise(data, tlvsize, offset) ;
+    ok &= setRawTimeT(data, tlvsize, &offset, received_time) ;
+    ok &= setRawUInt32(data, tlvsize, &offset, tried_friends.size()) ;
 
-	ok &= setRawUInt32(data, tlvsize, &offset, data_item->routing_id) ;
-	ok &= setRawSha1(data, tlvsize, &offset, data_item->destination_key) ;
-	ok &= setRawUInt32(data, tlvsize, &offset, data_item->data_size) ;
+    for(std::list<FriendTrialRecord>::const_iterator it(tried_friends.begin());it!=tried_friends.end();++it)
+    {
+        ok &= (*it).friend_id.serialise(data, tlvsize, offset ) ;
+        ok &= setRawTimeT(data, tlvsize, &offset, (*it).time_stamp) ;
+    }
 
-	memcpy(&((uint8_t*)data)[offset],data_item->data_bytes,data_item->data_size) ;
-	offset += data_item->data_size ;
+    ok &= setRawUInt32(data, tlvsize, &offset, data_item->routing_id) ;
+    ok &= data_item->destination_key.serialise(data, tlvsize, offset) ;
+    ok &= setRawUInt32(data, tlvsize, &offset, data_item->data_size) ;
 
-	if (offset != tlvsize)
-	{
-		ok = false;
-		std::cerr << "rsfileitemserialiser::serialisedata() size error! " << std::endl;
-	}
+    memcpy(&((uint8_t*)data)[offset],data_item->data_bytes,data_item->data_size) ;
+    offset += data_item->data_size ;
 
-	return ok;
+    if (offset != tlvsize)
+    {
+        ok = false;
+        std::cerr << "rsfileitemserialiser::serialisedata() size error! " << std::endl;
+    }
+
+    return ok;
 }
 
 // -----------------------------------------------------------------------------------//
@@ -558,7 +557,7 @@ bool RsGRouterRoutingInfoItem::serialise(void *data,uint32_t& size) const
 std::ostream& RsGRouterPublishKeyItem::print(std::ostream& o, uint16_t)
 {
 	o << "GRouterPublishKeyItem:" << std::endl ;
-	o << "  POW bytes    : \""<< PGPIdType(pow_bytes).toStdString() << "\"" << std::endl ;
+	o << "  POW bytes    : \""<< RsPgpId(pow_bytes).toStdString() << "\"" << std::endl ;
 	o << "  direct origin: \""<< PeerId() << "\"" << std::endl ;
 	o << "  Key:            " << published_key.toStdString() << std::endl ;
 	o << "  Req. Id:        " << std::hex << diffusion_id << std::dec << std::endl ;

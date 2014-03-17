@@ -31,6 +31,12 @@
 #include <list>
 #include <set>
 
+#include "retroshare/rstypes.h"
+
+//typedef std::string RsGxsCircleId;
+//typedef RsPgpId RsPgpId;
+//typedef std::string RsCircleInternalId;
+
 #include "retroshare/rstokenservice.h"
 #include "retroshare/rsgxsifacehelper.h"
 
@@ -41,11 +47,8 @@
 class RsGxsCircles;
 extern RsGxsCircles *rsGxsCircles;
 
-
-typedef std::string RsGxsCircleId;
-typedef std::string RsPeerId;	   // SSL ID.
-typedef std::string RsPgpId;
-typedef std::string RsCircleInternalId;
+typedef RsPgpId RsPgpId;
+//typedef RsGxsCircleId RsCircleInternalId;
 
 #define GXS_CIRCLE_TYPE_PUBLIC            0x0001
 #define GXS_CIRCLE_TYPE_EXTERNAL          0x0002
@@ -66,7 +69,7 @@ public:
 
 	// BELOW IS NOT SERIALISED - BUT MUST BE STORED LOCALLY BY GXS. (If YOUREYESONLY)
 	RsPeerId mOriginator;
-	RsCircleInternalId mInternalCircle; // if Originator == ownId, otherwise blank.
+	RsGxsCircleId mInternalCircle; // if Originator == ownId, otherwise blank.
 };
 
 

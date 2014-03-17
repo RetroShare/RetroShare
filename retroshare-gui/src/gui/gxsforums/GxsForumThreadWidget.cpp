@@ -86,7 +86,7 @@
 #define TOKEN_TYPE_INSERT_POST      2
 #define TOKEN_TYPE_REPLY_MESSAGE    3
 
-GxsForumThreadWidget::GxsForumThreadWidget(const std::string &forumId, QWidget *parent) :
+GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget *parent) :
 	RsGxsUpdateBroadcastWidget(rsGxsForums, parent),
 	ui(new Ui::GxsForumThreadWidget)
 {
@@ -256,16 +256,16 @@ void GxsForumThreadWidget::processSettings(bool load)
 	mInProcessSettings = false;
 }
 
-void GxsForumThreadWidget::setForumId(const std::string &forumId)
+void GxsForumThreadWidget::setForumId(const RsGxsGroupId &forumId)
 {
 	if (mForumId == forumId) {
-		if (!forumId.empty()) {
+		if (!forumId.isNull()) {
 			return;
 		}
 	}
 
 	mForumId = forumId;
-	ui->forumName->setText(mForumId.empty () ? "" : tr("Loading"));
+	ui->forumName->setText(mForumId.isNull () ? "" : tr("Loading"));
 	mNewCount = 0;
 	mUnreadCount = 0;
 
@@ -276,7 +276,7 @@ void GxsForumThreadWidget::setForumId(const std::string &forumId)
 
 QString GxsForumThreadWidget::forumName(bool withUnreadCount)
 {
-	QString name = mForumId.empty () ? tr("No name") : ui->forumName->text();
+	QString name = mForumId.isNull () ? tr("No name") : ui->forumName->text();
 
 	if (withUnreadCount && mUnreadCount) {
 		name += QString(" (%1)").arg(mUnreadCount);
@@ -414,7 +414,7 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 	contextMnu.addAction(newthreadAct);
 	contextMnu.addAction(replyauthorAct);
 	QAction* action = contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyMessageLink()));
-	action->setEnabled(!mForumId.empty() && !mThreadId.empty());
+	action->setEnabled(!mForumId.isNull() && !mThreadId.isNull());
 	contextMnu.addSeparator();
 	contextMnu.addAction(markMsgAsRead);
 	contextMnu.addAction(markMsgAsReadChildren);
@@ -489,7 +489,7 @@ void GxsForumThreadWidget::clickedThread(QTreeWidgetItem *item, int column)
 		return;
 	}
 
-	if (mForumId.empty() || !IS_GROUP_SUBSCRIBED(mSubscribeFlags)) {
+	if (mForumId.isNull() || !IS_GROUP_SUBSCRIBED(mSubscribeFlags)) {
 		return;
 	}
 
@@ -804,7 +804,7 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
 	item->setText(COLUMN_THREAD_DATE, text);
 	item->setData(COLUMN_THREAD_DATE, ROLE_THREAD_SORT, sort);
 
-	item->setText(COLUMN_THREAD_AUTHOR, QString::fromStdString(msg.mMeta.mAuthorId));
+    item->setText(COLUMN_THREAD_AUTHOR, QString::fromStdString(msg.mMeta.mAuthorId.toStdString()));
 	//item->setId(msg.mMeta.mAuthorId, COLUMN_THREAD_AUTHOR);
 //#TODO
 #if 0
@@ -840,7 +840,7 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
 		item->setText(COLUMN_THREAD_CONTENT, doc.toPlainText().replace(QString("\n"), QString(" ")));
 	}
 
-	item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID, QString::fromStdString(msg.mMeta.mMsgId));
+	item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID, QString::fromStdString(msg.mMeta.mMsgId.toStdString()));
 //#TODO
 #if 0
 	if (IS_GROUP_SUBSCRIBED(subscribeFlags) && !(msginfo.mMsgFlags & RS_DISTRIB_MISSING_MSG)) {
@@ -857,11 +857,11 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
 	return item;
 }
 
-QTreeWidgetItem *GxsForumThreadWidget::generateMissingItem(const std::string &msgId)
+QTreeWidgetItem *GxsForumThreadWidget::generateMissingItem(const RsGxsMessageId &msgId)
 {
 	GxsIdRSTreeWidgetItem *item = new GxsIdRSTreeWidgetItem(mThreadCompareRole);
 	item->setText(COLUMN_THREAD_TITLE, tr("[ ... Missing Message ... ]"));
-	item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID, QString::fromStdString(msgId));
+	item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID, QString::fromStdString(msgId.toStdString()));
 	item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_MISSING, true);
 
 	return item;
@@ -891,7 +891,7 @@ void GxsForumThreadWidget::insertThreads()
 	mSubscribeFlags = 0;
 	mForumDescription.clear();
 
-	if (mForumId.empty())
+	if (mForumId.isNull())
 	{
 		/* not an actual forum - clear */
 		mStateHelper->setActive(TOKEN_TYPE_CURRENTFORUM, false);
@@ -899,8 +899,8 @@ void GxsForumThreadWidget::insertThreads()
 		mStateHelper->clear(TOKEN_TYPE_CURRENTFORUM);
 		mStateHelper->clear(TOKEN_TYPE_INSERT_POST);
 		/* clear last stored forumID */
-		mForumId.erase();
-		mLastForumID.erase();
+		mForumId.clear();
+		mLastForumID.clear();
 
 #ifdef DEBUG_FORUMS
 		std::cerr << "GxsForumsDialog::insertThreads() Current Thread Invalid" << std::endl;
@@ -1131,7 +1131,7 @@ void GxsForumThreadWidget::fillChildren(QTreeWidgetItem *parentItem, QTreeWidget
 
 void GxsForumThreadWidget::insertPost()
 {
-	if (mForumId.empty())
+	if (mForumId.isNull())
 	{
 		mStateHelper->setActive(TOKEN_TYPE_CURRENTFORUM, false);
 		mStateHelper->setActive(TOKEN_TYPE_INSERT_POST, false);
@@ -1143,7 +1143,7 @@ void GxsForumThreadWidget::insertPost()
 		return;
 	}
 
-	if (mThreadId.empty())
+	if (mThreadId.isNull())
 	{
 		mStateHelper->setActive(TOKEN_TYPE_INSERT_POST, false);
 		mStateHelper->clear(TOKEN_TYPE_INSERT_POST);
@@ -1169,7 +1169,7 @@ void GxsForumThreadWidget::insertPost()
 		return;
 	}
 
-	mStateHelper->setWidgetEnabled(ui->newmessageButton, (IS_GROUP_SUBSCRIBED(mSubscribeFlags) && mThreadId.empty() == false));
+	mStateHelper->setWidgetEnabled(ui->newmessageButton, (IS_GROUP_SUBSCRIBED(mSubscribeFlags) && mThreadId.isNull() == false));
 
 	/* blank text, incase we get nothing */
 	ui->postText->clear();
@@ -1227,7 +1227,8 @@ void GxsForumThreadWidget::insertPostData(const RsGxsForumMsg &msg)
 
 	ui->time_label->setText(DateTime::formatLongDateTime(msg.mMeta.mPublishTs));
 
-	std::string authorName = rsPeers->getPeerName(msg.mMeta.mAuthorId);
+	std::string authorName;
+	//= rsPeers->getPeerName(msg.mMeta.mAuthorId);
 	QString text = QString::fromUtf8(authorName.c_str());
 
 	if (text.isEmpty())
@@ -1424,7 +1425,7 @@ void GxsForumThreadWidget::setMsgReadStatus(QList<QTreeWidgetItem*> &rows, bool 
 
 void GxsForumThreadWidget::markMsgAsReadUnread (bool read, bool children, bool forum)
 {
-	if (mForumId.empty() || !IS_GROUP_SUBSCRIBED(mSubscribeFlags)) {
+	if (mForumId.isNull() || !IS_GROUP_SUBSCRIBED(mSubscribeFlags)) {
 		return;
 	}
 
@@ -1499,7 +1500,7 @@ void GxsForumThreadWidget::setAllMsgReadStatus(bool read)
 
 void GxsForumThreadWidget::copyMessageLink()
 {
-	if (mForumId.empty() || mThreadId.empty()) {
+	if (mForumId.isNull() || mThreadId.isNull()) {
 		return;
 	}
 
@@ -1524,7 +1525,7 @@ void GxsForumThreadWidget::copyMessageLink()
 
 void GxsForumThreadWidget::createmessage()
 {
-	if (mForumId.empty () || !IS_GROUP_SUBSCRIBED(mSubscribeFlags)) {
+	if (mForumId.isNull () || !IS_GROUP_SUBSCRIBED(mSubscribeFlags)) {
 		return;
 	}
 
@@ -1536,12 +1537,12 @@ void GxsForumThreadWidget::createmessage()
 
 void GxsForumThreadWidget::createthread()
 {
-	if (mForumId.empty ()) {
+	if (mForumId.isNull ()) {
 		QMessageBox::information(this, tr("RetroShare"), tr("No Forum Selected!"));
 		return;
 	}
 
-	CreateGxsForumMsg *cfm = new CreateGxsForumMsg(mForumId, "");
+	CreateGxsForumMsg *cfm = new CreateGxsForumMsg(mForumId, RsGxsMessageId());
 	cfm->show();
 
 	/* window will destroy itself! */
@@ -1550,7 +1551,7 @@ void GxsForumThreadWidget::createthread()
 static QString buildReplyHeader(const RsMsgMetaData &meta)
 {
 	RetroShareLink link;
-	link.createMessage(meta.mAuthorId, "");
+	//link.createMessage(meta.mAuthorId, "");
 	QString from = link.toHtml();
 
 	QString header = QString("<span>-----%1-----").arg(QApplication::translate("GxsForumsDialog", "Original Message"));
@@ -1567,7 +1568,7 @@ static QString buildReplyHeader(const RsMsgMetaData &meta)
 
 void GxsForumThreadWidget::replytomessage()
 {
-	if (mForumId.empty() || mThreadId.empty()) {
+	if (mForumId.isNull() || mThreadId.isNull()) {
 		QMessageBox::information(this, tr("RetroShare"),tr("You cant reply to a non-existant Message"));
 		return;
 	}
@@ -1587,14 +1588,14 @@ void GxsForumThreadWidget::replyMessageData(const RsGxsForumMsg &msg)
 	}
 
 	// NB: TODO REMOVE rsPeers references.
-	if (rsPeers->getPeerName(msg.mMeta.mAuthorId) !="")
+    if (rsPeers->getPeerName(RsPeerId(msg.mMeta.mAuthorId)) !="")
 	{
 		MessageComposer *msgDialog = MessageComposer::newMsg();
 		msgDialog->setTitleText(QString::fromUtf8(msg.mMeta.mMsgName.c_str()), MessageComposer::REPLY);
 
 		msgDialog->setQuotedMsg(QString::fromUtf8(msg.mMsg.c_str()), buildReplyHeader(msg.mMeta));
 
-		msgDialog->addRecipient(MessageComposer::TO, msg.mMeta.mAuthorId, false);
+		//msgDialog->addRecipient(MessageComposer::TO, msg.mMeta.mAuthorId, false);
 		msgDialog->show();
 		msgDialog->activateWindow();
 
@@ -1678,7 +1679,7 @@ bool GxsForumThreadWidget::filterItem(QTreeWidgetItem *item, const QString &text
 /** Request / Response of Data ********************************/
 /*********************** **** **** **** ***********************/
 
-void GxsForumThreadWidget::requestGroupSummary_CurrentForum(const std::string &forumId)
+void GxsForumThreadWidget::requestGroupSummary_CurrentForum(const RsGxsGroupId &forumId)
 {
 	ui->progressBar->reset();
 	mStateHelper->setLoading(TOKEN_TYPE_CURRENTFORUM, true);
@@ -1690,7 +1691,7 @@ void GxsForumThreadWidget::requestGroupSummary_CurrentForum(const std::string &f
 
 	mThreadQueue->cancelActiveRequestTokens(TOKEN_TYPE_CURRENTFORUM);
 
-	std::list<std::string> grpIds;
+	std::list<RsGxsGroupId> grpIds;
 	grpIds.push_back(forumId);
 
 	std::cerr << "GxsForumsDialog::requestGroupSummary_CurrentForum(" << forumId << ")";

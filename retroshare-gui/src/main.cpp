@@ -19,14 +19,14 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#error "******************************************************************************************************************"
-#error "**** Retroshare trunk/ is currently being merged to v0.6 and protocols are not stable. It is unlikely that   *****"
-#error "**** you want to compile the trunk now.                                                                      *****"
-#error "****                                                                                                         *****"
-#error "**** To compile the latest Retroshare 0.5.5, please go to branches/v0.5.5                                    *****"
-#error "****                                                                                                         *****"
-#error "****    --- The dev team ---                                                                                 *****"
-#error "******************************************************************************************************************"
+//#error "******************************************************************************************************************"
+//#error "**** Retroshare trunk/ is currently being merged to v0.6 and protocols are not stable. It is unlikely that   *****"
+//#error "**** you want to compile the trunk now.                                                                      *****"
+//#error "****                                                                                                         *****"
+//#error "**** To compile the latest Retroshare 0.5.5, please go to branches/v0.5.5                                    *****"
+//#error "****                                                                                                         *****"
+//#error "****    --- The dev team ---                                                                                 *****"
+//#error "******************************************************************************************************************"
 
 #include <QObject>
 #include <QMessageBox>
@@ -264,7 +264,7 @@ int main(int argc, char *argv[])
 			/* Login Dialog */
 			/* check for existing Certificate */
 			bool genCert = false;
-			std::list<std::string> accountIds;
+			std::list<RsPeerId> accountIds;
 			if (RsAccounts::GetAccountIds(accountIds) && (accountIds.size() > 0))
 			{
 				StartDialog sd;
@@ -296,7 +296,7 @@ int main(int argc, char *argv[])
 			splashScreen.show();
 			splashScreen.showMessage(rshare.translate("SplashScreen", "Load profile"), Qt::AlignHCenter | Qt::AlignBottom);
 
-			std::string preferredId;
+			RsPeerId preferredId;
 			RsAccounts::GetPreferredAccountId(preferredId);
 
 			// true: note auto-login is active

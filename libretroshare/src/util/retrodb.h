@@ -294,6 +294,13 @@ public:
      */
     const void* getData(int columnIndex, uint32_t& datSize);
 
+    template <class T>
+    inline void getStringT(int columnIndex, T &str){
+    	std::string temp;
+    	getString(columnIndex, temp);
+    	str = temp;
+    }
+
 
 private:
 

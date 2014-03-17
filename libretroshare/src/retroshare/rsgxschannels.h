@@ -113,7 +113,7 @@ virtual bool updateGroup(uint32_t &token, RsGxsChannelGroup &group) = 0;
 
         // File Interface
 virtual bool ExtraFileHash(const std::string &path, std::string filename) = 0;
-virtual bool ExtraFileRemove(const std::string &hash) = 0;
+virtual bool ExtraFileRemove(const RsFileHash &hash) = 0;
 
 
 };

@@ -19,7 +19,7 @@ class PluginInfo
 
 		// Information related to the file. Do not require the plugin to be loaded nor the DSO to be openned.
 		//
-		std::string file_hash ;
+        RsFileHash file_hash ;
 		std::string file_name ;
 
 		// Information coming from directly loaded symbols. The plugin is responsible for providing them.
@@ -38,7 +38,7 @@ class PluginInfo
 class RsPluginManager: public RsPluginHandler, public p3Config
 {
 	public:
-		RsPluginManager(const std::string& current_executable_sha1_hash) ;
+        RsPluginManager(const RsFileHash& current_executable_sha1_hash) ;
 		virtual ~RsPluginManager() {}
 		
 		// ------------ Derived from RsPluginHandler ----------------//
@@ -46,9 +46,9 @@ class RsPluginManager: public RsPluginHandler, public p3Config
 		virtual int nbPlugins() const { return _plugins.size() ; }
 		virtual RsPlugin *plugin(int i) { return _plugins[i].plugin ; }
 		virtual const std::vector<std::string>& getPluginDirectories() const { return _plugin_directories ; }
-		virtual void getPluginStatus(int i, uint32_t& status,std::string& file_name, std::string& hash,uint32_t& svn_revision,std::string& error_string) const ;
-		virtual void enablePlugin(const std::string& hash) ;
-		virtual void disablePlugin(const std::string& hash) ;
+        virtual void getPluginStatus(int i, uint32_t& status,std::string& file_name, RsFileHash& hash,uint32_t& svn_revision,std::string& error_string) const ;
+        virtual void enablePlugin(const RsFileHash& hash) ;
+        virtual void disablePlugin(const RsFileHash &hash) ;
 
 		virtual void slowTickPlugins(time_t sec) ;
 		virtual const std::string& getLocalCacheDir() const ;
@@ -101,7 +101,7 @@ class RsPluginManager: public RsPluginHandler, public p3Config
 	private:
 		bool loadPlugin(RsPlugin *) ;
 		bool loadPlugin(const std::string& shared_library_name) ;
-		std::string hashPlugin(const std::string& shared_library_name) ;
+        RsFileHash hashPlugin(const std::string& shared_library_name) ;
 
 		std::vector<PluginInfo> _plugins ;
 
@@ -114,9 +114,9 @@ class RsPluginManager: public RsPluginHandler, public p3Config
 		// 		- if different => flush all plugin hashes from cache
 		// 		- if equal, 
 		//
-		std::set<std::string> _accepted_hashes ; // accepted hash values for reference executable hash.
-		std::set<std::string> _rejected_hashes ; // rejected hash values for reference executable hash.
-		std::string _current_executable_hash ;		// At all times, the list of accepted plugins should be related to the current hash of the executable. 
+        std::set<RsFileHash> _accepted_hashes ; // accepted hash values for reference executable hash.
+        std::set<RsFileHash> _rejected_hashes ; // rejected hash values for reference executable hash.
+        RsFileHash _current_executable_hash ;		// At all times, the list of accepted plugins should be related to the current hash of the executable.
 		bool _allow_all_plugins ;
 
 		static std::string _plugin_entry_symbol ;

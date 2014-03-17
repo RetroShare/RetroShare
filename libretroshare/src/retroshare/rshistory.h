@@ -33,6 +33,7 @@ extern RsHistory *rsHistory;
 #include <string>
 #include <inttypes.h>
 #include <list>
+#include "retroshare/rstypes.h"
 
 //! data object for message history
 /*!
@@ -55,9 +56,9 @@ public:
 
 public:
 	uint32_t    msgId;
-	std::string chatPeerId;
+	RsPeerId chatPeerId;
 	bool        incoming;
-	std::string peerId;
+	RsPeerId peerId;
 	std::string peerName;
 	uint32_t    sendTime;
 	uint32_t    recvTime;
@@ -71,10 +72,10 @@ public:
 class RsHistory
 {
 public:
-	virtual bool getMessages(const std::string &chatPeerId, std::list<HistoryMsg> &msgs, uint32_t loadCount) = 0;
+	virtual bool getMessages(const RsPeerId &chatPeerId, std::list<HistoryMsg> &msgs, uint32_t loadCount) = 0;
 	virtual bool getMessage(uint32_t msgId, HistoryMsg &msg) = 0;
 	virtual void removeMessages(const std::list<uint32_t> &msgIds) = 0;
-	virtual void clear(const std::string &chatPeerId) = 0;
+	virtual void clear(const RsPeerId &chatPeerId) = 0;
 
 	virtual bool getEnable(uint32_t chat_type) = 0;
 	virtual void setEnable(uint32_t chat_type, bool enable) = 0;

@@ -43,7 +43,7 @@
 #define ROLE_PLAINTEXT Qt::UserRole + 1
 #define ROLE_OFFLINE   Qt::UserRole + 2
 
-ImHistoryBrowserCreateItemsThread::ImHistoryBrowserCreateItemsThread(ImHistoryBrowser *parent, const std::string& peerId)
+ImHistoryBrowserCreateItemsThread::ImHistoryBrowserCreateItemsThread(ImHistoryBrowser *parent, const RsPeerId& peerId)
     : QThread(parent)
 {
     m_peerId = peerId;
@@ -91,7 +91,7 @@ void ImHistoryBrowserCreateItemsThread::run()
 }
 
 /** Default constructor */
-ImHistoryBrowser::ImHistoryBrowser(const std::string &peerId, QTextEdit *edit, QWidget *parent)
+ImHistoryBrowser::ImHistoryBrowser(const RsPeerId &peerId, QTextEdit *edit, QWidget *parent)
   : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint)
 {
     /* Invoke Qt Designer generated QObject setup routine */
@@ -101,7 +101,7 @@ ImHistoryBrowser::ImHistoryBrowser(const std::string &peerId, QTextEdit *edit, Q
     ui.headerFrame->setHeaderText(tr("Message History"));
 
     m_peerId = peerId;
-    m_isPrivateChat = !m_peerId.empty();
+    m_isPrivateChat = !m_peerId.isNull();
     textEdit = edit;
 
     connect(NotifyQt::getInstance(), SIGNAL(historyChanged(uint, int)), this, SLOT(historyChanged(uint, int)));

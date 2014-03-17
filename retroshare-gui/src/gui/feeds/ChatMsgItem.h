@@ -33,7 +33,7 @@ class ChatMsgItem : public QWidget, private Ui::ChatMsgItem
 
 public:
 	/** Default Constructor */
-	ChatMsgItem(FeedHolder *parent, uint32_t feedId, const std::string &peerId, const std::string &message);
+    ChatMsgItem(FeedHolder *parent, uint32_t feedId, const RsPeerId &peerId, const std::string &message);
 
 	void updateItemStatic();
 
@@ -58,7 +58,7 @@ private:
 	FeedHolder *mParent;
 	uint32_t mFeedId;
 
-	std::string mPeerId;
+    RsPeerId mPeerId;
 };
 
 #endif

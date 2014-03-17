@@ -81,8 +81,8 @@ class RsNxsNetMgr
 public:
 
 	virtual ~RsNxsNetMgr(){};
-    virtual std::string getOwnId() = 0;
-    virtual void getOnlineList(std::set<std::string>& ssl_peers) = 0;
+    virtual const RsPeerId& getOwnId() = 0;
+    virtual void getOnlineList(std::set<RsPeerId>& ssl_peers) = 0;
 
 };
 
@@ -94,8 +94,8 @@ public:
     RsNxsNetMgrImpl(p3LinkMgr* lMgr);
     virtual ~RsNxsNetMgrImpl(){};
 
-    std::string getOwnId();
-    void getOnlineList(std::set<std::string>& ssl_peers);
+    const RsPeerId& getOwnId();
+    void getOnlineList(std::set<RsPeerId>& ssl_peers);
 
 private:
 
@@ -141,7 +141,7 @@ protected:
 	 * @param authorId reputation to get
 	 * @return true if successfully retrieve repution
 	 */
-        bool getAuthorRep(GixsReputation& rep, const std::string& authorId, const std::string& peerId);
+        bool getAuthorRep(GixsReputation& rep, const RsGxsId& authorId, const RsPeerId& peerId);
 
 private:
 
@@ -158,7 +158,7 @@ public:
 
 	RsGxsMessageId mMsgId;
 	RsGxsGroupId mGrpId;
-	std::string mAuthorId;
+	RsGxsId mAuthorId;
 	bool mPassedVetting;
 
 };
@@ -171,7 +171,7 @@ public:
 	GrpAuthEntry();
 
 	RsGxsGroupId mGrpId;
-	std::string mAuthorId;
+	RsGxsId mAuthorId;
 	bool mPassedVetting;
 };
 
@@ -182,11 +182,11 @@ class MsgRespPending : public AuthorPending
 {
 public:
 
-	MsgRespPending(RsGixsReputation* rep, const std::string& peerId, const MsgAuthorV& msgAuthV, int cutOff = 0);
+	MsgRespPending(RsGixsReputation* rep, const RsPeerId& peerId, const MsgAuthorV& msgAuthV, int cutOff = 0);
 
 	int getType() const;
 	bool accepted();
-	std::string mPeerId;
+	RsPeerId mPeerId;
 	MsgAuthorV mMsgAuthV;
 	int mCutOff;
 };
@@ -195,10 +195,10 @@ class GrpRespPending : public AuthorPending
 {
 public:
 
-	GrpRespPending(RsGixsReputation* rep, const std::string& peerId, const GrpAuthorV& grpAuthV, int cutOff = 0);
+	GrpRespPending(RsGixsReputation* rep, const RsPeerId& peerId, const GrpAuthorV& grpAuthV, int cutOff = 0);
 	int getType() const;
 	bool accepted();
-	std::string mPeerId;
+	RsPeerId mPeerId;
 	GrpAuthorV mGrpAuthV;
 	int mCutOff;
 };
@@ -218,10 +218,10 @@ public:
 class MsgIdCircleVet
 {
 public:
-	MsgIdCircleVet(const RsGxsMessageId& grpId, const std::string& authorId);
+	MsgIdCircleVet(const RsGxsMessageId& grpId, const RsGxsId& authorId);
 
 	RsGxsMessageId mMsgId;
-	std::string mAuthorId;
+	RsGxsId mAuthorId;
 };
 
 class GrpItemCircleVet
@@ -250,7 +250,7 @@ public:
 	virtual bool cleared() = 0;
 
 protected:
-	bool canSend(const RsPgpId& peerId, const RsGxsCircleId& circleId);
+	bool canSend(const RsPeerId& peerId, const RsGxsCircleId& circleId);
 
 private:
 
@@ -261,23 +261,23 @@ private:
 class GrpCircleIdRequestVetting : public GrpCircleVetting
 {
 public:
-	GrpCircleIdRequestVetting(RsGcxs* const circles, std::vector<GrpIdCircleVet> mGrpCircleV, const std::string& peerId);
+	GrpCircleIdRequestVetting(RsGcxs* const circles, std::vector<GrpIdCircleVet> mGrpCircleV, const RsPeerId& peerId);
 	bool cleared();
 	int getType() const;
 	std::vector<GrpIdCircleVet> mGrpCircleV;
-	std::string mPeerId;
+	RsPeerId mPeerId;
 };
 
 class MsgCircleIdsRequestVetting : public GrpCircleVetting
 {
 public:
 	MsgCircleIdsRequestVetting(RsGcxs* const circles, std::vector<MsgIdCircleVet> msgs, const RsGxsGroupId& grpId,
-			const std::string& peerId, const RsGxsCircleId& circleId);
+			const RsPeerId& peerId, const RsGxsCircleId& circleId);
 	bool cleared();
 	int getType() const;
 	std::vector<MsgIdCircleVet> mMsgs;
 	RsGxsGroupId mGrpId;
-	std::string mPeerId;
+	RsPeerId mPeerId;
 	RsGxsCircleId mCircleId;
 };
 

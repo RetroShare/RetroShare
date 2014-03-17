@@ -109,7 +109,7 @@ class RsPeerServicePermissionItem : public RsItem
 		std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
 		/* Mandatory */
-		std::vector<std::string> pgp_ids ;
+		std::vector<RsPgpId> pgp_ids ;
 		std::vector<ServicePermissionFlags> service_flags ;
 };
 class RsPeerGroupItem : public RsItem
@@ -131,7 +131,7 @@ public:
 	std::string name;
 	uint32_t    flag;
 
-	std::list<std::string> peerIds;
+	std::list<RsPgpId> peerIds;
 };
 
 
@@ -201,13 +201,13 @@ virtual ~RsCacheConfig();
 virtual void clear();
 std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
-        std::string     pid;                 /* Mandatory */
+        RsPeerId        pid;                 /* Mandatory */
 	uint16_t        cachetypeid;            /* Mandatory */
 	uint16_t        cachesubid;             /* Mandatory */
 
 	std::string     path;    	        /* Mandatory */
 	std::string     name;    	        /* Mandatory */
-	std::string     hash;    	        /* Mandatory */
+    RsFileHash      hash;    	        /* Mandatory */
 	uint64_t	size;			/* Mandatory */
 
 	uint32_t	recvd;                  /* Mandatory */
@@ -254,7 +254,7 @@ class RsFileTransfer: public RsItem
 		RsTlvFileItem file;
 		RsTlvPeerIdSet allPeerIds;
 
-		std::string cPeerId;
+        RsPeerId cPeerId;
 
 		uint16_t state;
 		uint16_t in;

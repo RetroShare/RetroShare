@@ -54,7 +54,7 @@
 #define USE_OLD_DHT_INTERFACE	1
 
 
-bool 	p3BitDht::findPeer(std::string pid)
+bool 	p3BitDht::findPeer(const RsPeerId& pid)
 {
 #ifdef DEBUG_BITDHT
 	std::cerr << "p3BitDht::findPeer(" << pid << ")";
@@ -133,7 +133,7 @@ bool 	p3BitDht::findPeer(std::string pid)
 	return true ;
 }
 
-bool 	p3BitDht::dropPeer(std::string pid)
+bool 	p3BitDht::dropPeer(const RsPeerId& pid)
 {
 #ifdef DEBUG_BITDHT
 	std::cerr << "p3BitDht::dropPeer(" << pid << ")";
@@ -216,7 +216,7 @@ int p3BitDht::addBadPeer(const struct sockaddr_storage &addr, uint32_t /*reason*
 }
 
 
-int p3BitDht::addKnownPeer(const std::string &pid, const struct sockaddr_storage &addr, uint32_t flags) 
+int p3BitDht::addKnownPeer(const RsPeerId &pid, const struct sockaddr_storage &addr, uint32_t flags) 
 {
 	struct sockaddr_in addrv4;
 
@@ -389,7 +389,7 @@ int p3BitDht::addOther(const std::string pid)
 #endif
 
 
-int p3BitDht::removePeer(const std::string pid)
+int p3BitDht::removePeer(const RsPeerId& pid)
 {
 	RsStackMutex stack(dhtMtx);    /********* LOCKED *********/
 
@@ -401,7 +401,7 @@ int p3BitDht::removePeer(const std::string pid)
  ********************************* Basic Peer Details *************************************
  ******************************************************************************************/
 
-DhtPeerDetails *p3BitDht::addInternalPeer_locked(const std::string pid, uint32_t type)
+DhtPeerDetails *p3BitDht::addInternalPeer_locked(const RsPeerId& pid, uint32_t type)
 {
 	/* create the data structure */
 	if (!havePeerTranslation_locked(pid))
@@ -435,7 +435,7 @@ DhtPeerDetails *p3BitDht::addInternalPeer_locked(const std::string pid, uint32_t
 }
 
 
-int p3BitDht::removeInternalPeer_locked(const std::string pid)
+int p3BitDht::removeInternalPeer_locked(const RsPeerId& pid)
 {
 	bdNodeId id;
 	if (!lookupNodeId_locked(pid, &id))
@@ -478,7 +478,7 @@ DhtPeerDetails *p3BitDht::findInternalDhtPeer_locked(const bdNodeId *id, uint32_
 
 
 /* interface to get with alt id */
-DhtPeerDetails *p3BitDht::findInternalRsPeer_locked(const std::string &pid)
+DhtPeerDetails *p3BitDht::findInternalRsPeer_locked(const RsPeerId &pid)
 {
 	/* create the data structure */
 	if (!havePeerTranslation_locked(pid))
@@ -502,14 +502,14 @@ DhtPeerDetails *p3BitDht::findInternalRsPeer_locked(const std::string &pid)
  *************************** Fundamental Node Translation *********************************
  ******************************************************************************************/
 
-bool p3BitDht::havePeerTranslation_locked(const std::string &pid)
+bool p3BitDht::havePeerTranslation_locked(const RsPeerId &pid)
 {
 #ifdef DEBUG_BITDHT_TRANSLATE
 	std::cerr << "p3BitDht::havePeerTranslation_locked() for : " << pid;
 	std::cerr << std::endl;
 #endif
 
-	std::map<std::string, bdNodeId>::iterator it;
+	std::map<RsPeerId, bdNodeId>::iterator it;
 	it = mTransToNodeId.find(pid);
 	if (it == mTransToNodeId.end())
 	{
@@ -531,14 +531,14 @@ bool p3BitDht::havePeerTranslation_locked(const std::string &pid)
 }
 
 
-int p3BitDht::lookupNodeId_locked(const std::string pid, bdNodeId *id)
+int p3BitDht::lookupNodeId_locked(const RsPeerId& pid, bdNodeId *id)
 {
 #ifdef DEBUG_BITDHT_TRANSLATE
 	std::cerr << "p3BitDht::lookupNodeId_locked() for : " << pid;
 	std::cerr << std::endl;
 #endif
 
-	std::map<std::string, bdNodeId>::iterator it;
+	std::map<RsPeerId, bdNodeId>::iterator it;
 	it = mTransToNodeId.find(pid);
 	if (it == mTransToNodeId.end())
 	{
@@ -562,7 +562,7 @@ int p3BitDht::lookupNodeId_locked(const std::string pid, bdNodeId *id)
 }
 
 
-int p3BitDht::lookupRsId_locked(const bdNodeId *id, std::string &pid)
+int p3BitDht::lookupRsId_locked(const bdNodeId *id, RsPeerId&pid)
 {
 #ifdef DEBUG_BITDHT_TRANSLATE
 	std::cerr << "p3BitDht::lookupRsId_locked() for : ";
@@ -570,7 +570,7 @@ int p3BitDht::lookupRsId_locked(const bdNodeId *id, std::string &pid)
 	std::cerr << std::endl;
 #endif
 
-	std::map<bdNodeId, std::string>::iterator nit;
+	std::map<bdNodeId, RsPeerId>::iterator nit;
 	nit = mTransToRsId.find(*id);
 	if (nit == mTransToRsId.end())
 	{
@@ -592,7 +592,7 @@ int p3BitDht::lookupRsId_locked(const bdNodeId *id, std::string &pid)
 	return 1;
 }
 
-int p3BitDht::storeTranslation_locked(const std::string pid)
+int p3BitDht::storeTranslation_locked(const RsPeerId& pid)
 {
 #ifdef DEBUG_BITDHT_TRANSLATE
 	std::cerr << "p3BitDht::storeTranslation_locked(" << pid << ")";
@@ -619,7 +619,7 @@ int p3BitDht::storeTranslation_locked(const std::string pid)
 	return 1;
 }
 
-int p3BitDht::removeTranslation_locked(const std::string pid)
+int p3BitDht::removeTranslation_locked(const RsPeerId& pid)
 {
 
 #ifdef DEBUG_BITDHT_TRANSLATE
@@ -627,7 +627,7 @@ int p3BitDht::removeTranslation_locked(const std::string pid)
 	std::cerr << std::endl;
 #endif
 
-	std::map<std::string, bdNodeId>::iterator it = mTransToNodeId.find(pid);
+	std::map<RsPeerId, bdNodeId>::iterator it = mTransToNodeId.find(pid);
 	it = mTransToNodeId.find(pid);
 	if (it == mTransToNodeId.end())
 	{
@@ -646,7 +646,7 @@ int p3BitDht::removeTranslation_locked(const std::string pid)
 #endif
 
 
-	std::map<bdNodeId, std::string>::iterator nit;
+	std::map<bdNodeId, RsPeerId>::iterator nit;
 	nit = mTransToRsId.find(nid);
 	if (nit == mTransToRsId.end())
 	{
@@ -676,7 +676,7 @@ const	uint8_t RS_DHT_VERSION_LEN = 17;
 const	uint8_t rs_dht_version_data[RS_DHT_VERSION_LEN] = "RS_VERSION_0.5.1";
 
 /******************** Conversion Functions **************************/
-int p3BitDht::calculateNodeId(const std::string pid, bdNodeId *id)
+int p3BitDht::calculateNodeId(const RsPeerId& pid, bdNodeId *id)
 {
 	/* generate node id from pid */
 #ifdef DEBUG_BITDHT_TRANSLATE
@@ -691,7 +691,7 @@ int p3BitDht::calculateNodeId(const std::string pid, bdNodeId *id)
         SHA1_Init(sha_ctx);
 
         SHA1_Update(sha_ctx, rs_dht_version_data, RS_DHT_VERSION_LEN);
-        SHA1_Update(sha_ctx, pid.c_str(), pid.length());
+        SHA1_Update(sha_ctx, pid.toByteArray(), RsPeerId::SIZE_IN_BYTES);
         SHA1_Final(sha_hash, sha_ctx);
 
         for(int i = 0; i < SHA_DIGEST_LENGTH && (i < BITDHT_KEY_LEN); i++)

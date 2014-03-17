@@ -34,6 +34,8 @@
 #include <stdlib.h>
 #include <stdint.h>
 
+#include "retroshare/rstypes.h"
+
 /*******************************************************************
  * This is the Top-Level serialiser/deserialise, 
  *
@@ -84,8 +86,8 @@ class RsItem: public RsMemoryManagement::SmallObject
 		void print_string(std::string &out, uint16_t indent = 0);
 
 		/* source / destination id */
-		const std::string& PeerId() const { return peerId; }
-		void        PeerId(const std::string& id) { peerId = id; }
+		const RsPeerId& PeerId() const { return peerId; }
+		void        PeerId(const RsPeerId& id) { peerId = id; }
 
 		/* complete id */
 		uint32_t PacketId() const;
@@ -104,7 +106,7 @@ class RsItem: public RsMemoryManagement::SmallObject
 		inline void setPriorityLevel(uint8_t l) { _priority_level = l ;}
 	private:
 		uint32_t type;
-		std::string peerId;
+		RsPeerId peerId;
 		uint8_t _priority_level ;
 };
 

@@ -117,18 +117,18 @@ class RsFiles
 		 *  Control of Downloads.
 		 ***/
 
-		virtual bool alreadyHaveFile(const std::string& hash, FileInfo &info) = 0;
+		virtual bool alreadyHaveFile(const RsFileHash& hash, FileInfo &info) = 0;
 		/// Returns false is we already have the file. Otherwise, initiates the dl and returns true.
-		virtual bool FileRequest(const std::string& fname, const std::string& hash, uint64_t size, const std::string& dest, TransferRequestFlags flags, const std::list<std::string>& srcIds) = 0;
-		virtual bool FileCancel(const std::string& hash) = 0;
-		virtual bool setDestinationDirectory(const std::string& hash,const std::string& new_path) = 0;
-		virtual bool setDestinationName(const std::string& hash,const std::string& new_name) = 0;
-		virtual bool setChunkStrategy(const std::string& hash,FileChunksInfo::ChunkStrategy) = 0;
+		virtual bool FileRequest(const std::string& fname, const RsFileHash& hash, uint64_t size, const std::string& dest, TransferRequestFlags flags, const std::list<RsPeerId>& srcIds) = 0;
+		virtual bool FileCancel(const RsFileHash& hash) = 0;
+		virtual bool setDestinationDirectory(const RsFileHash& hash,const std::string& new_path) = 0;
+		virtual bool setDestinationName(const RsFileHash& hash,const std::string& new_name) = 0;
+		virtual bool setChunkStrategy(const RsFileHash& hash,FileChunksInfo::ChunkStrategy) = 0;
 		virtual void setDefaultChunkStrategy(FileChunksInfo::ChunkStrategy) = 0;
 		virtual FileChunksInfo::ChunkStrategy defaultChunkStrategy() = 0;
 		virtual uint32_t freeDiskSpaceLimit() const =0;
 		virtual void setFreeDiskSpaceLimit(uint32_t size_in_mb) =0;
-		virtual bool FileControl(const std::string& hash, uint32_t flags) = 0;
+		virtual bool FileControl(const RsFileHash& hash, uint32_t flags) = 0;
 		virtual bool FileClearCompleted() = 0;
 
 		/***
@@ -138,48 +138,47 @@ class RsFiles
 		virtual void setMinPrioritizedTransfers(uint32_t s) = 0 ;
 		virtual uint32_t getQueueSize() = 0 ;
 		virtual void setQueueSize(uint32_t s) = 0 ;
-		virtual bool changeQueuePosition(const std::string hash, QueueMove mv) = 0;
-		virtual bool changeDownloadSpeed(const std::string hash, int speed) = 0;
-		virtual bool getDownloadSpeed(const std::string hash, int & speed) = 0;
-		virtual bool clearDownload(const std::string hash) = 0;
+		virtual bool changeQueuePosition(const RsFileHash& hash, QueueMove mv) = 0;
+		virtual bool changeDownloadSpeed(const RsFileHash& hash, int speed) = 0;
+		virtual bool getDownloadSpeed(const RsFileHash& hash, int & speed) = 0;
+		virtual bool clearDownload(const RsFileHash& hash) = 0;
 //		virtual void getDwlDetails(std::list<DwlDetails> & details) = 0;
 
 		/***
 		 * Download / Upload Details.
 		 ***/
-		virtual bool FileDownloads(std::list<std::string> &hashs) = 0;
-		virtual bool FileUploads(std::list<std::string> &hashs) = 0;
-		virtual bool FileDetails(const std::string &hash, FileSearchFlags hintflags, FileInfo &info) = 0;
+		virtual bool FileDownloads(std::list<RsFileHash> &hashs) = 0;
+		virtual bool FileUploads(std::list<RsFileHash> &hashs) = 0;
+		virtual bool FileDetails(const RsFileHash &hash, FileSearchFlags hintflags, FileInfo &info) = 0;
 
 		/// Gives chunk details about the downloaded file with given hash.
-		virtual bool FileDownloadChunksDetails(const std::string& hash,FileChunksInfo& info) = 0 ;
+		virtual bool FileDownloadChunksDetails(const RsFileHash& hash,FileChunksInfo& info) = 0 ;
 
 		/// details about the upload with given hash
-		virtual bool FileUploadChunksDetails(const std::string& hash,const std::string& peer_id,CompressedChunkMap& map) = 0 ;
+		virtual bool FileUploadChunksDetails(const RsFileHash& hash,const RsPeerId& peer_id,CompressedChunkMap& map) = 0 ;
 
 		/***
 		 * Extra List Access
 		 ***/
 		//virtual bool ExtraFileAdd(std::string fname, std::string hash, uint64_t size, uint32_t period, TransferRequestFlags flags) = 0;
-		virtual bool ExtraFileRemove(std::string hash, TransferRequestFlags flags) = 0;
+		virtual bool ExtraFileRemove(const RsFileHash& hash, TransferRequestFlags flags) = 0;
 		virtual bool ExtraFileHash(std::string localpath, uint32_t period, TransferRequestFlags flags) = 0;
 		virtual bool ExtraFileStatus(std::string localpath, FileInfo &info) = 0;
-		virtual bool ExtraFileMove(std::string fname, std::string hash, uint64_t size,
-				std::string destpath) = 0;
+		virtual bool ExtraFileMove(std::string fname, const RsFileHash& hash, uint64_t size, std::string destpath) = 0;
 
 
 
 		/***
 		 * Directory Listing / Search Interface
 		 */
-		virtual int RequestDirDetails(const std::string& uid, const std::string& path, DirDetails &details) = 0;
+		virtual int RequestDirDetails(const RsPeerId& uid, const std::string& path, DirDetails &details) = 0;
 		virtual int RequestDirDetails(void *ref, DirDetails &details, FileSearchFlags flags) = 0;
 		virtual uint32_t getType(void *ref,FileSearchFlags flags) = 0;
 
 		virtual int SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,FileSearchFlags flags) = 0;
-		virtual int SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,FileSearchFlags flags,const std::string& peer_id) = 0;
+		virtual int SearchKeywords(std::list<std::string> keywords, std::list<DirDetails> &results,FileSearchFlags flags,const RsPeerId& peer_id) = 0;
 		virtual int SearchBoolExp(Expression * exp, std::list<DirDetails> &results,FileSearchFlags flags) = 0;
-		virtual int SearchBoolExp(Expression * exp, std::list<DirDetails> &results,FileSearchFlags flags,const std::string& peer_id) = 0;
+		virtual int SearchBoolExp(Expression * exp, std::list<DirDetails> &results,FileSearchFlags flags,const RsPeerId& peer_id) = 0;
 
 		/***
 		 * Utility Functions.

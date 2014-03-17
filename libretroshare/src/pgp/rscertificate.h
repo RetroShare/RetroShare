@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include <util/rsid.h>
+#include <retroshare/rstypes.h>
 
 class RsPeerDetails ;
 
@@ -30,7 +30,7 @@ class RsCertificate
 		std::string loc_ip_string() const ;
 		std::string location_name_string() const { return location_name; }
 		std::string dns_string() const { return dns_name ; }
-		std::string sslid_string() const;
+		RsPeerId sslid() const { return location_id ; }
 		std::string hidden_node_string() const;
 
 		std::string armouredPGPKey() const ;
@@ -61,7 +61,7 @@ class RsCertificate
 		size_t         binary_pgp_key_size ;
 
 		std::string location_name ;
-		SSLIdType location_id ;
+		RsPeerId location_id ;
 		std::string pgp_version ;
 		std::string dns_name ;
 		std::string hidden_node_address;

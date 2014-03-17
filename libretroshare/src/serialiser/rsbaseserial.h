@@ -29,7 +29,7 @@
 #include <string>
 #include <stdlib.h>
 #include <stdint.h>
-#include <util/rsid.h>
+#include <retroshare/rsids.h>
 
 /*******************************************************************
  * This is at the lowlevel packing routines. They are usually 
@@ -65,15 +65,6 @@ bool setRawUFloat32(void *data, uint32_t size, uint32_t *offset, float in);
 
 bool getRawString(void *data, uint32_t size, uint32_t *offset, std::string &outStr);
 bool setRawString(void *data, uint32_t size, uint32_t *offset, const std::string &inStr);
-
-bool getRawSha1(void *data, uint32_t size, uint32_t *offset, Sha1CheckSum& outStr);
-bool setRawSha1(void *data, uint32_t size, uint32_t *offset, const Sha1CheckSum& inStr);
-
-bool setRawSSLId(void *data, uint32_t size, uint32_t *offset, const SSLIdType& inStr);
-bool getRawSSLId(void *data, uint32_t size, uint32_t *offset, SSLIdType& outStr);
-
-bool setRawPGPFingerprint(void *data, uint32_t size, uint32_t *offset, const PGPFingerprintType& inStr);
-bool getRawPGPFingerprint(void *data, uint32_t size, uint32_t *offset, PGPFingerprintType& outStr);
 
 bool setRawTimeT(void *data, uint32_t size, uint32_t *offset, const time_t& inStr);
 bool getRawTimeT(void *data, uint32_t size, uint32_t *offset, time_t& outStr);

@@ -178,8 +178,8 @@ public:
     uint32_t publishTs; // to compare to Ts of receiving peer's grp of same id
 
     /// grpId of grp held by sending peer
-    std::string grpId;
-    std::string authorId;
+    RsGxsGroupId grpId;
+    RsGxsId authorId;
 
 };
 
@@ -204,7 +204,7 @@ public:
     virtual void clear();
     virtual std::ostream &print(std::ostream &out, uint16_t indent);
 
-    std::string grpId; /// group Id, needed to complete version Id (ncvi)
+    RsGxsGroupId grpId; /// group Id, needed to complete version Id (ncvi)
     static int refcount;
     RsTlvBinaryData grp; /// actual group data
     uint8_t pos; /// used for splitting up grp
@@ -237,7 +237,7 @@ public:
     virtual void clear();
     virtual std::ostream &print(std::ostream &out, uint16_t indent);
 
-    std::string grpId;
+    RsGxsGroupId grpId;
     uint8_t flag;
     uint32_t createdSince;
     uint32_t updateTS; // time of last update
@@ -261,9 +261,9 @@ public:
     virtual std::ostream &print(std::ostream &out, uint16_t indent);
 
     uint8_t flag; // response/req
-    std::string grpId;
-    std::string msgId;
-    std::string authorId;
+    RsGxsGroupId grpId;
+    RsGxsMessageId msgId;
+    RsGxsId authorId;
 
 };
 
@@ -295,8 +295,8 @@ public:
 
     uint8_t pos; /// used for splitting up msg
     uint8_t count; /// number of split up messages
-    std::string grpId; /// group id, forms part of version id
-    std::string msgId; /// msg id
+    RsGxsGroupId grpId; /// group id, forms part of version id
+    RsGxsMessageId msgId; /// msg id
     static int refcount;
 
     /*!

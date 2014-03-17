@@ -29,6 +29,7 @@
 
 #include <string>
 #include <map>
+#include "retroshare/rstypes.h"
 #include "pqi/pqinetwork.h"
 #include "pqi/pqimonitor.h"
 
@@ -109,7 +110,7 @@ class pqiNetAssistPeerShare
 	public:
 
 	/* share Addresses for various reasons (bad peers, etc) */
-virtual void 	updatePeer(std::string id, const struct sockaddr_storage &addr, int type, int reason, int age) = 0;
+virtual void 	updatePeer(const RsPeerId& id, const struct sockaddr_storage &addr, int type, int reason, int age) = 0;
 
 };
 
@@ -149,7 +150,7 @@ class pqiNetAssistConnect: public pqiNetAssist
 	/* 
 	 */
 	public:
-	pqiNetAssistConnect(std::string id, pqiConnectCb *cb)
+	pqiNetAssistConnect(const RsPeerId& id, pqiConnectCb *cb)
 	:mPeerId(id), mConnCb(cb) { return; }
 
 	/********** External DHT Interface ************************
@@ -159,17 +160,17 @@ class pqiNetAssistConnect: public pqiNetAssist
 
 
 	/* add / remove peers */
-virtual bool 	findPeer(std::string id) = 0;
-virtual bool 	dropPeer(std::string id) = 0;
+virtual bool 	findPeer(const RsPeerId& id) = 0;
+virtual bool 	dropPeer(const RsPeerId& id) = 0;
 
 	/* add non-active peers (can still toggle active/non-active via above) */
 virtual int addBadPeer(const struct sockaddr_storage &addr, uint32_t reason, uint32_t flags, uint32_t age) = 0;
-virtual int addKnownPeer(const std::string &pid, const struct sockaddr_storage &addr, uint32_t flags) = 0;
+virtual int addKnownPeer(const RsPeerId &pid, const struct sockaddr_storage &addr, uint32_t flags) = 0;
 
-virtual void ConnectionFeedback(std::string pid, int mode) = 0;
+virtual void ConnectionFeedback(const RsPeerId& pid, int mode) = 0;
 
 	/* extract current peer status */
-virtual bool 	getPeerStatus(std::string id, 
+virtual bool 	getPeerStatus(const RsPeerId& id, 
 			struct sockaddr_storage &laddr, struct sockaddr_storage &raddr, 
 			uint32_t &type, uint32_t &mode) = 0; // DEPRECIATE.
 
@@ -179,7 +180,7 @@ virtual bool    setAttachMode(bool on) = 0;		// FIXUP.
 virtual bool    getNetworkStats(uint32_t &netsize, uint32_t &localnetsize) = 0; // DEPRECIATE.
 
 	protected:
-	std::string  mPeerId;
+	RsPeerId  mPeerId;
 	pqiConnectCb *mConnCb;
 };
 

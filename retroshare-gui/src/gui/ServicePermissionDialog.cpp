@@ -88,7 +88,7 @@ void ServicePermissionDialog::itemAdded(int idType, const QString &id, QTreeWidg
 	}
 
 	RsPeerDetails detail;
-	if (!rsPeers->getPeerDetails(id.toStdString(), detail)) {
+    if (!rsPeers->getGPGDetails(RsPgpId(id.toStdString()), detail)) {
 		return;
 	}
 
@@ -140,7 +140,7 @@ void ServicePermissionDialog::setPermissions()
 			}
 		}
 
-		rsPeers->setServicePermissionFlags(ui->servicePermissionList->idFromItem(item), flags);
+        rsPeers->setServicePermissionFlags(RsPgpId(ui->servicePermissionList->idFromItem(item)), flags);
 	}
 
 	done(Accepted);

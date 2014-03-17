@@ -227,7 +227,7 @@ void RsCollectionDialog::download()
 			if(!QDir(QApplication::applicationDirPath()).mkpath(cleanPath))
 				QMessageBox::warning(NULL,QObject::tr("Unable to make path"),QObject::tr("Unable to make path:")+"<br>  "+cleanPath) ;
 
-			rsFiles->FileRequest(dlinfo.name.toUtf8().constData(), dlinfo.hash.toUtf8().constData(), dlinfo.size, cleanPath.toUtf8().constData(), RS_FILE_REQ_ANONYMOUS_ROUTING, std::list<std::string>());
+            rsFiles->FileRequest(dlinfo.name.toUtf8().constData(), RsFileHash(dlinfo.hash.toStdString()), dlinfo.size, cleanPath.toUtf8().constData(), RS_FILE_REQ_ANONYMOUS_ROUTING, std::list<RsPeerId>());
 		}
 		else
 			std::cerr<<"Skipping file : " << dlinfo.name.toStdString() << std::endl;

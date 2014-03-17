@@ -109,9 +109,9 @@ void NetworkView::setFreezeState(bool freeze)
 class NodeInfo
 {
 	public:
-		NodeInfo(const std::string& _gpg_id,uint32_t lev) : gpg_id(_gpg_id),friend_level(lev) {}
+        NodeInfo(const RsPgpId& _gpg_id,uint32_t lev) : gpg_id(_gpg_id),friend_level(lev) {}
 
-		std::string gpg_id ;
+        RsPgpId gpg_id ;
 		uint32_t friend_level ;
 } ;
 
@@ -127,16 +127,16 @@ void  NetworkView::updateDisplay()
 		return ;
 
 	/* add all friends */
-	std::string ownGPGId = rsPeers->getGPGOwnId();
+    RsPgpId ownGPGId = rsPeers->getGPGOwnId();
 //#ifdef DEBUG_NETWORKVIEW
 	std::cerr << "NetworkView::updateDisplay()" << std::endl;
 //#endif
 
 	std::deque<NodeInfo> nodes_to_treat ;						// list of nodes to be treated. Used as a queue. The int is the level of friendness
-	std::set<std::string> nodes_considered ;					// list of nodes already considered. Eases lookup.
+    std::set<RsPgpId> nodes_considered ;					// list of nodes already considered. Eases lookup.
 
 	nodes_to_treat.push_front(NodeInfo(ownGPGId,0)) ;		// initialize queue with own id.
-	nodes_considered.insert(rsPeers->getOwnId()) ;
+    nodes_considered.insert(rsPeers->getGPGOwnId()) ;
 
 	// Put own id in queue, and empty the queue, treating all nodes.
 	//
@@ -163,7 +163,7 @@ void  NetworkView::updateDisplay()
 		}
 
 		RsPeerDetails detail ;
-		if(!rsPeers->getPeerDetails(info.gpg_id, detail))
+        if(!rsPeers->getGPGDetails(info.gpg_id, detail))
 			continue ;
 
 		switch(detail.trustLvl)
@@ -179,13 +179,13 @@ void  NetworkView::updateDisplay()
 
 		if(info.friend_level <= _max_friend_level && _node_ids.find(info.gpg_id) == _node_ids.end())
 		{
-			_node_ids[info.gpg_id] = ui.graphicsView->addNode("       "+detail.name, detail.name+"@"+detail.gpg_id,type,auth,"",info.gpg_id);
+            _node_ids[info.gpg_id] = ui.graphicsView->addNode("       "+detail.name, detail.name+"@"+detail.gpg_id.toStdString(),type,auth,RsPeerId(),info.gpg_id);
 #ifdef DEBUG_NETWORKVIEW
 			std::cerr << "  inserted node " << info.gpg_id << ", type=" << type << ", auth=" << auth << std::endl ;
 #endif
 		}
 
-		std::list<std::string> friendList;
+        std::list<RsPgpId> friendList;
 		rsDisc->getDiscPgpFriends(info.gpg_id, friendList);
 
 #ifdef DEBUG_NETWORKVIEW
@@ -193,8 +193,8 @@ void  NetworkView::updateDisplay()
 #endif
 
 		if(info.friend_level+1 <= _max_friend_level)
-			for(std::list<std::string>::const_iterator sit(friendList.begin()); sit != friendList.end(); ++sit)
-				if(nodes_considered.find(*sit) == nodes_considered.end())
+            for(std::list<RsPgpId>::const_iterator sit(friendList.begin()); sit != friendList.end(); ++sit)
+                if(nodes_considered.find(*sit) == nodes_considered.end())
 				{
 #ifdef DEBUG_NETWORKVIEW
 					std::cerr << "  adding to queue: " << *sit << ", with level " << info.friend_level+1 << std::endl ;
@@ -210,12 +210,12 @@ void  NetworkView::updateDisplay()
 	std::cerr << "NetworkView::insertSignatures()" << std::endl;
 #endif
 
-	for(std::map<std::string,GraphWidget::NodeId>::const_iterator it(_node_ids.begin()); it != _node_ids.end(); it++)
+    for(std::map<RsPgpId,GraphWidget::NodeId>::const_iterator it(_node_ids.begin()); it != _node_ids.end(); it++)
 	{
-		std::list<std::string> friendList ;
+        std::list<RsPgpId> friendList ;
 
 		if(rsDisc->getDiscPgpFriends(it->first,friendList)) 
-			for(std::list<std::string>::const_iterator sit(friendList.begin()); sit != friendList.end(); sit++)
+            for(std::list<RsPgpId>::const_iterator sit(friendList.begin()); sit != friendList.end(); sit++)
 			{
 #ifdef DEBUG_NETWORKVIEW
 					std::cerr << "NetworkView: Adding Edge: ";

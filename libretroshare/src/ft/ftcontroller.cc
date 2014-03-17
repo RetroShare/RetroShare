@@ -89,7 +89,7 @@ ftFileControl::ftFileControl()
 
 ftFileControl::ftFileControl(std::string fname,
 		std::string tmppath, std::string dest,
-		uint64_t size, std::string hash, TransferRequestFlags flags,
+        uint64_t size, const RsFileHash &hash, TransferRequestFlags flags,
 		ftFileCreator *fc, ftTransferModule *tm)
 	:mName(fname), mCurrentPath(tmppath), mDestination(dest),
 	 mTransfer(tm), mCreator(fc), mState(DOWNLOADING), mHash(hash),
@@ -124,11 +124,11 @@ void ftController::setFtSearchNExtra(ftSearch *search, ftExtraList *list)
 	mExtraList = list;
 }
 
-bool ftController::getFileDownloadChunksDetails(const std::string& hash,FileChunksInfo& info)
+bool ftController::getFileDownloadChunksDetails(const RsFileHash& hash,FileChunksInfo& info)
 {
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
-	std::map<std::string, ftFileControl*>::iterator it = mDownloads.find(hash) ;
+    std::map<RsFileHash, ftFileControl*>::iterator it = mDownloads.find(hash) ;
 
 	if(it != mDownloads.end())
 	{
@@ -161,11 +161,11 @@ bool ftController::getFileDownloadChunksDetails(const std::string& hash,FileChun
 	return false ;
 }
 
-void ftController::addFileSource(const std::string& hash,const std::string& peer_id)
+void ftController::addFileSource(const RsFileHash& hash,const RsPeerId& peer_id)
 {
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
-	std::map<std::string, ftFileControl*>::iterator it = mDownloads.find(hash);
+    std::map<RsFileHash, ftFileControl*>::iterator it = mDownloads.find(hash);
 
 //#ifdef CONTROL_DEBUG
 	std::cerr << "ftController: Adding source " << peer_id << " to current download hash=" << hash ;
@@ -184,11 +184,11 @@ void ftController::addFileSource(const std::string& hash,const std::string& peer
 	std::cerr << "... not added: hash not found." << std::endl ;
 #endif
 }
-void ftController::removeFileSource(const std::string& hash,const std::string& peer_id)
+void ftController::removeFileSource(const RsFileHash& hash,const RsPeerId& peer_id)
 {
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
-	std::map<std::string, ftFileControl*>::iterator it = mDownloads.find(hash);
+    std::map<RsFileHash, ftFileControl*>::iterator it = mDownloads.find(hash);
 
 #ifdef CONTROL_DEBUG
 	std::cerr << "ftController: Adding source " << peer_id << " to current download hash=" << hash ;
@@ -245,7 +245,7 @@ void ftController::run()
 		{
 			RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
-		  for(std::map<std::string,ftFileControl*>::iterator it(mDownloads.begin());it!=mDownloads.end();++it)
+          for(std::map<RsFileHash,ftFileControl*>::iterator it(mDownloads.begin());it!=mDownloads.end();++it)
 			  it->second->mCreator->removeInactiveChunks() ;
 
 			last_clean_time = now ;
@@ -263,7 +263,7 @@ void ftController::run()
 		tickTransfers() ;
 
 		{
-			std::list<std::string> files_to_complete ;
+            std::list<RsFileHash> files_to_complete ;
 
 			{
 				RsStackMutex stack2(doneMutex);
@@ -271,7 +271,7 @@ void ftController::run()
 				mDone.clear();
 			}
 
-			for(std::list<std::string>::iterator it(files_to_complete.begin()); it != files_to_complete.end(); ++it)
+            for(std::list<RsFileHash>::iterator it(files_to_complete.begin()); it != files_to_complete.end(); ++it)
 				completeFile(*it);
 		}
 
@@ -285,7 +285,7 @@ void ftController::searchForDirectSources()
 {
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
-	for(std::map<std::string,ftFileControl*>::iterator it(mDownloads.begin()); it != mDownloads.end(); it++)
+    for(std::map<RsFileHash,ftFileControl*>::iterator it(mDownloads.begin()); it != mDownloads.end(); it++)
 		if(it->second->mState != ftFileControl::QUEUED && it->second->mState != ftFileControl::PAUSED)
 			if(! (it->second->mFlags & RS_FILE_REQ_CACHE))
 			{
@@ -293,7 +293,7 @@ void ftController::searchForDirectSources()
 
 				if(mSearch->search(it->first, RS_FILE_HINTS_REMOTE | RS_FILE_HINTS_SPEC_ONLY, info))
 					for(std::list<TransferInfo>::const_iterator pit = info.peers.begin(); pit != info.peers.end(); pit++)
-						if(rsPeers->servicePermissionFlags_sslid(pit->peerId) & RS_SERVICE_PERM_DIRECT_DL)
+						if(rsPeers->servicePermissionFlags(pit->peerId) & RS_SERVICE_PERM_DIRECT_DL)
 							if(it->second->mTransfer->addFileSource(pit->peerId)) /* if the sources don't exist already - add in */
 								setPeerState(it->second->mTransfer, pit->peerId, FT_CNTRL_STANDARD_RATE, mLinkMgr->isOnline( pit->peerId ));
 			}
@@ -310,16 +310,16 @@ void ftController::tickTransfers()
 #endif
 	// Collect all non queued files.
 	//
-	for(std::map<std::string,ftFileControl*>::iterator it(mDownloads.begin()); it != mDownloads.end(); it++)
+    for(std::map<RsFileHash,ftFileControl*>::iterator it(mDownloads.begin()); it != mDownloads.end(); it++)
 		if(it->second->mState != ftFileControl::QUEUED && it->second->mState != ftFileControl::PAUSED)
 			it->second->mTransfer->tick() ;
 }
 
-bool ftController::getPriority(const std::string& hash,DwlSpeed& p)
+bool ftController::getPriority(const RsFileHash& hash,DwlSpeed& p)
 {
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
-	std::map<std::string,ftFileControl*>::iterator it(mDownloads.find(hash)) ;
+    std::map<RsFileHash,ftFileControl*>::iterator it(mDownloads.find(hash)) ;
 
 	if(it != mDownloads.end())
 	{
@@ -330,11 +330,11 @@ bool ftController::getPriority(const std::string& hash,DwlSpeed& p)
 		return false ;
 }
 
-void ftController::setPriority(const std::string& hash,DwlSpeed p)
+void ftController::setPriority(const RsFileHash& hash,DwlSpeed p)
 {
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
-	std::map<std::string,ftFileControl*>::iterator it(mDownloads.find(hash)) ;
+    std::map<RsFileHash,ftFileControl*>::iterator it(mDownloads.find(hash)) ;
 
 	if(it != mDownloads.end())
 		it->second->mTransfer->setDownloadPriority(p) ;
@@ -342,13 +342,13 @@ void ftController::setPriority(const std::string& hash,DwlSpeed p)
 
 void ftController::cleanCacheDownloads()
 {
-	std::vector<std::string> toCancel ;
+    std::vector<RsFileHash> toCancel ;
 	time_t now = time(NULL) ;
 
 	{
 		RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
-		for(std::map<std::string,ftFileControl*>::iterator it(mDownloads.begin());it!=mDownloads.end();++it)
+        for(std::map<RsFileHash,ftFileControl*>::iterator it(mDownloads.begin());it!=mDownloads.end();++it)
 			if (((it->second)->mFlags & RS_FILE_REQ_CACHE) && it->second->mState != ftFileControl::DOWNLOADING)
 				// check if a cache file is downloaded, if the case, timeout the transfer after TIMOUT_CACHE_FILE_TRANSFER
 			{
@@ -423,7 +423,7 @@ void ftController::checkDownloadQueue()
 	time_t now = time(NULL) ;
 	uint32_t nb_moved = 0 ;	// don't move more files than the size of the queue.
 
-	for(std::map<std::string,ftFileControl*>::const_iterator it(mDownloads.begin());it!=mDownloads.end() && nb_moved <= _max_active_downloads;++it)
+    for(std::map<RsFileHash,ftFileControl*>::const_iterator it(mDownloads.begin());it!=mDownloads.end() && nb_moved <= _max_active_downloads;++it)
 		if(	it->second->mState != ftFileControl::QUEUED 
                 && (it->second->mState == ftFileControl::PAUSED
                     || now > it->second->mTransfer->lastActvTimeStamp() + (time_t)MAX_TIME_INACTIVE_REQUEUED))
@@ -557,11 +557,11 @@ uint32_t ftController::getQueueSize()
 	return _max_active_downloads ;
 }
 
-void ftController::moveInQueue(const std::string& hash,QueueMove mv)
+void ftController::moveInQueue(const RsFileHash& hash,QueueMove mv)
 {
 	RsStackMutex mtx(ctrlMutex) ;
 
-	std::map<std::string,ftFileControl*>::iterator it(mDownloads.find(hash)) ;
+    std::map<RsFileHash,ftFileControl*>::iterator it(mDownloads.find(hash)) ;
 
 	if(it == mDownloads.end())
 	{
@@ -658,7 +658,7 @@ void ftController::locked_checkQueueElement(uint32_t pos)
 	}
 }
 
-bool ftController::FlagFileComplete(std::string hash)
+bool ftController::FlagFileComplete(const RsFileHash& hash)
 {
 	RsStackMutex stack2(doneMutex);
 	mDone.push_back(hash);
@@ -780,7 +780,7 @@ bool ftController::copyFile(const std::string& source,const std::string& dest)
 
 
 
-bool ftController::completeFile(std::string hash)
+bool ftController::completeFile(const RsFileHash& hash)
 {
 	/* variables... so we can drop mutex later */
 	std::string path;
@@ -799,7 +799,7 @@ bool ftController::completeFile(std::string hash)
 		std::cerr << "ftController:completeFile(" << hash << ")";
 		std::cerr << std::endl;
 #endif
-		std::map<std::string, ftFileControl*>::iterator it(mDownloads.find(hash));
+        std::map<RsFileHash, ftFileControl*>::iterator it(mDownloads.find(hash));
 
 		if (it == mDownloads.end())
 		{
@@ -840,7 +840,7 @@ bool ftController::completeFile(std::string hash)
 		/* done - cleanup */
 
 		// (csoler) I'm copying this because "delete fc->mTransfer" deletes the hash string!
-		std::string hash_to_suppress(fc->mTransfer->hash());
+        RsFileHash hash_to_suppress(fc->mTransfer->hash());
 
 		// This should be done that early, because once the file creator is
 		// deleted, it should not be accessed by the data multiplex anymore!
@@ -965,9 +965,9 @@ bool ftController::completeFile(std::string hash)
 
 	/* Notify GUI */
 	if ((flags & RS_FILE_REQ_CACHE) == 0) {
-		RsServer::notify()->AddPopupMessage(RS_POPUP_DOWNLOAD, hash, name, "");
+        RsServer::notify()->AddPopupMessage(RS_POPUP_DOWNLOAD, hash.toStdString(), name, "");
 
-		RsServer::notify()->notifyDownloadComplete(hash);
+        RsServer::notify()->notifyDownloadComplete(hash.toStdString());
 		RsServer::notify()->notifyDownloadCompleteCount(completeCount);
 
 		rsFiles->ForceDirectoryCheck() ;
@@ -1019,12 +1019,12 @@ bool	ftController::handleAPendingRequest()
 		//
 		RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
-		std::map<std::string,RsFileTransfer*>::iterator it(mPendingChunkMaps.find(req.mHash)) ;
+        std::map<RsFileHash,RsFileTransfer*>::iterator it(mPendingChunkMaps.find(req.mHash)) ;
 
 		if(it != mPendingChunkMaps.end())
 		{
 			RsFileTransfer *rsft = it->second ;
-			std::map<std::string, ftFileControl*>::iterator fit = mDownloads.find(rsft->file.hash);
+            std::map<RsFileHash, ftFileControl*>::iterator fit = mDownloads.find(rsft->file.hash);
 
 			if((fit==mDownloads.end() || (fit->second)->mCreator == NULL))
 			{
@@ -1055,7 +1055,7 @@ bool	ftController::handleAPendingRequest()
 	return true ;
 }
 
-bool ftController::alreadyHaveFile(const std::string& hash, FileInfo &info)
+bool ftController::alreadyHaveFile(const RsFileHash& hash, FileInfo &info)
 {
 	// check for downloads
 	if (FileDetails(hash, info) && (info.downloadStatus == FT_STATE_COMPLETE))
@@ -1068,11 +1068,11 @@ bool ftController::alreadyHaveFile(const std::string& hash, FileInfo &info)
 	return false ;
 }
 
-bool 	ftController::FileRequest(const std::string& fname, const std::string& hash,
+bool 	ftController::FileRequest(const std::string& fname, const RsFileHash& hash,
 			uint64_t size, const std::string& dest, TransferRequestFlags flags,
-																const std::list<std::string> &_srcIds, uint16_t state)
+                                                                const std::list<RsPeerId> &_srcIds, uint16_t state)
 {
-	std::list<std::string> srcIds(_srcIds) ;
+    std::list<RsPeerId> srcIds(_srcIds) ;
 
 	/* check if we have the file */
 
@@ -1134,10 +1134,10 @@ bool 	ftController::FileRequest(const std::string& fname, const std::string& has
 	// remove the sources from the list, if they don't have clearance for direct transfer. This happens only for non cache files.
 	//
 	if(!(flags & RS_FILE_REQ_CACHE))
-		for(std::list<std::string>::iterator it = srcIds.begin(); it != srcIds.end(); )
-			if(!(rsPeers->servicePermissionFlags_sslid(*it) & RS_SERVICE_PERM_DIRECT_DL))
+        for(std::list<RsPeerId>::iterator it = srcIds.begin(); it != srcIds.end(); )
+			if(!(rsPeers->servicePermissionFlags(*it) & RS_SERVICE_PERM_DIRECT_DL))
 			{
-				std::list<std::string>::iterator tmp(it) ;
+                std::list<RsPeerId>::iterator tmp(it) ;
 				++tmp ;
 				srcIds.erase(it) ;
 				it = tmp ;
@@ -1145,7 +1145,7 @@ bool 	ftController::FileRequest(const std::string& fname, const std::string& has
 			else
 				++it ;
 	
-	std::list<std::string>::const_iterator it;
+    std::list<RsPeerId>::const_iterator it;
 	std::list<TransferInfo>::const_iterator pit;
 
 #ifdef CONTROL_DEBUG
@@ -1174,7 +1174,7 @@ bool 	ftController::FileRequest(const std::string& fname, const std::string& has
 	{ 
 		RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
-		std::map<std::string, ftFileControl*>::const_iterator dit = mDownloads.find(hash);
+        std::map<RsFileHash, ftFileControl*>::const_iterator dit = mDownloads.find(hash);
 
 		if (dit != mDownloads.end())
 		{
@@ -1191,7 +1191,7 @@ bool 	ftController::FileRequest(const std::string& fname, const std::string& has
 			 */
 
 			for(it = srcIds.begin(); it != srcIds.end(); it++)
-				if(rsPeers->servicePermissionFlags_sslid(*it) & RS_SERVICE_PERM_DIRECT_DL)
+				if(rsPeers->servicePermissionFlags(*it) & RS_SERVICE_PERM_DIRECT_DL)
 				{
 					uint32_t i, j;
 					if ((dit->second)->mTransfer->getPeerState(*it, i, j))
@@ -1248,7 +1248,7 @@ bool 	ftController::FileRequest(const std::string& fname, const std::string& has
 #endif
 				// Because this is auto-add, we only add sources that we allow to DL from using direct transfers.
 
-				if ((srcIds.end() == std::find( srcIds.begin(), srcIds.end(), pit->peerId)) && (RS_SERVICE_PERM_DIRECT_DL & rsPeers->servicePermissionFlags_sslid(pit->peerId)))
+				if ((srcIds.end() == std::find( srcIds.begin(), srcIds.end(), pit->peerId)) && (RS_SERVICE_PERM_DIRECT_DL & rsPeers->servicePermissionFlags(pit->peerId)))
 				{
 					srcIds.push_back(pit->peerId);
 
@@ -1268,7 +1268,7 @@ bool 	ftController::FileRequest(const std::string& fname, const std::string& has
 	{ 
 		RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
-		savepath = mPartialsPath + "/" + hash;
+        savepath = mPartialsPath + "/" + hash.toStdString();
 		destination = dest + "/" + fname;
 
 		/* if no destpath - send to download directory */
@@ -1331,7 +1331,7 @@ bool 	ftController::FileRequest(const std::string& fname, const std::string& has
 	return true;
 }
 
-bool 	ftController::setPeerState(ftTransferModule *tm, std::string id, uint32_t maxrate, bool online)
+bool 	ftController::setPeerState(ftTransferModule *tm, const RsPeerId& id, uint32_t maxrate, bool online)
 {
 	if (id == mLinkMgr->getOwnId())
 	{
@@ -1363,9 +1363,9 @@ bool 	ftController::setPeerState(ftTransferModule *tm, std::string id, uint32_t 
 }
 
 
-bool ftController::setChunkStrategy(const std::string& hash,FileChunksInfo::ChunkStrategy s)
+bool ftController::setChunkStrategy(const RsFileHash& hash,FileChunksInfo::ChunkStrategy s)
 {
-	std::map<std::string,ftFileControl*>::iterator mit=mDownloads.find(hash);
+    std::map<RsFileHash,ftFileControl*>::iterator mit=mDownloads.find(hash);
 	if (mit==mDownloads.end())
 	{
 #ifdef CONTROL_DEBUG
@@ -1378,7 +1378,7 @@ bool ftController::setChunkStrategy(const std::string& hash,FileChunksInfo::Chun
 	return true ;
 }
 
-bool 	ftController::FileCancel(const std::string& hash)
+bool 	ftController::FileCancel(const RsFileHash& hash)
 {
 	rsTurtle->stopMonitoringTunnels(hash) ;
 
@@ -1390,7 +1390,7 @@ bool 	ftController::FileCancel(const std::string& hash)
 	{
 		RsStackMutex mtx(ctrlMutex) ;
 
-		std::map<std::string,ftFileControl*>::iterator mit=mDownloads.find(hash);
+        std::map<RsFileHash,ftFileControl*>::iterator mit=mDownloads.find(hash);
 		if (mit==mDownloads.end())
 		{
 #ifdef CONTROL_DEBUG
@@ -1461,7 +1461,7 @@ bool 	ftController::FileCancel(const std::string& hash)
 	return true;
 }
 
-bool 	ftController::FileControl(const std::string& hash, uint32_t flags)
+bool 	ftController::FileControl(const RsFileHash& hash, uint32_t flags)
 {
 #ifdef CONTROL_DEBUG
  std::cerr << "ftController::FileControl(" << hash << ",";
@@ -1470,7 +1470,7 @@ bool 	ftController::FileControl(const std::string& hash, uint32_t flags)
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
 	/*check if the file in the download map*/
-	std::map<std::string,ftFileControl*>::iterator mit=mDownloads.find(hash);
+    std::map<RsFileHash,ftFileControl*>::iterator mit=mDownloads.find(hash);
 	if (mit==mDownloads.end())
 	{
 #ifdef CONTROL_DEBUG
@@ -1513,7 +1513,7 @@ bool 	ftController::FileClearCompleted()
 	{
 		RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
-		for(std::map<std::string, ftFileControl*>::iterator it(mCompleted.begin());it!=mCompleted.end();++it)
+        for(std::map<RsFileHash, ftFileControl*>::iterator it(mCompleted.begin());it!=mCompleted.end();++it)
 			delete it->second ;
 
 		mCompleted.clear();
@@ -1527,11 +1527,11 @@ bool 	ftController::FileClearCompleted()
 }
 
 	/* get Details of File Transfers */
-bool 	ftController::FileDownloads(std::list<std::string> &hashs)
+bool 	ftController::FileDownloads(std::list<RsFileHash> &hashs)
 {
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
-	std::map<std::string, ftFileControl*>::iterator it;
+    std::map<RsFileHash, ftFileControl*>::iterator it;
 	for(it = mDownloads.begin(); it != mDownloads.end(); it++)
 	{
 		hashs.push_back(it->second->mHash);
@@ -1611,7 +1611,7 @@ bool 	ftController::setPartialsDirectory(std::string path)
 
 #if 0 /*** FIX ME !!!**************/
 		/* move all existing files! */
-		std::map<std::string, ftFileControl>::iterator it;
+        std::map<RsFileHash, ftFileControl>::iterator it;
 		for(it = mDownloads.begin(); it != mDownloads.end(); it++)
 		{
 			(it->second).mCreator->changePartialDirectory(mPartialPath);
@@ -1638,10 +1638,10 @@ std::string ftController::getPartialsDirectory()
 	return mPartialsPath;
 }
 
-bool ftController::setDestinationDirectory(const std::string& hash,const std::string& dest_dir)
+bool ftController::setDestinationDirectory(const RsFileHash& hash,const std::string& dest_dir)
 {
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
-	std::map<std::string, ftFileControl*>::iterator it = mDownloads.find(hash);
+    std::map<RsFileHash, ftFileControl*>::iterator it = mDownloads.find(hash);
 
 	if (it == mDownloads.end())
 		return false;
@@ -1654,10 +1654,10 @@ bool ftController::setDestinationDirectory(const std::string& hash,const std::st
 
 	return true ;
 }
-bool ftController::setDestinationName(const std::string& hash,const std::string& dest_name)
+bool ftController::setDestinationName(const RsFileHash& hash,const std::string& dest_name)
 {
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
-	std::map<std::string, ftFileControl*>::iterator it = mDownloads.find(hash);
+    std::map<RsFileHash, ftFileControl*>::iterator it = mDownloads.find(hash);
 
 	if (it == mDownloads.end())
 		return false;
@@ -1675,12 +1675,12 @@ bool ftController::setDestinationName(const std::string& hash,const std::string&
 	return true ;
 }
 
-bool 	ftController::FileDetails(const std::string &hash, FileInfo &info)
+bool 	ftController::FileDetails(const RsFileHash &hash, FileInfo &info)
 {
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
 	bool completed = false;
-	std::map<std::string, ftFileControl*>::iterator it = mDownloads.find(hash);
+    std::map<RsFileHash, ftFileControl*>::iterator it = mDownloads.find(hash);
 	if (it == mDownloads.end())
 	{
 		/* search completed files too */
@@ -1708,8 +1708,8 @@ bool 	ftController::FileDetails(const std::string &hash, FileInfo &info)
 		info.storage_permission_flags |= DIR_FLAGS_NETWORK_WIDE_OTHERS ;	// file being downloaded anonymously are always anonymously available.
 
 	/* get list of sources from transferModule */
-	std::list<std::string> peerIds;
-	std::list<std::string>::iterator pit;
+    std::list<RsPeerId> peerIds;
+    std::list<RsPeerId>::iterator pit;
 
 	if (!completed)
 	{
@@ -1821,7 +1821,7 @@ void    ftController::statusChange(const std::list<pqipeer> &plist)
 	uint32_t rate = FT_CNTRL_STANDARD_RATE;
 
 	/* add online to all downloads */
-	std::map<std::string, ftFileControl*>::iterator it;
+    std::map<RsFileHash, ftFileControl*>::iterator it;
 	std::list<pqipeer>::const_iterator pit;
 
 #ifdef CONTROL_DEBUG
@@ -1913,7 +1913,7 @@ void    ftController::statusChange(const std::list<pqipeer> &plist)
 }
 
 	/* Cache Interface */
-bool ftController::RequestCacheFile(RsPeerId id, std::string path, std::string hash, uint64_t size)
+bool ftController::RequestCacheFile(const RsPeerId& id, std::string path, const RsFileHash& hash, uint64_t size)
 {
 #ifdef CONTROL_DEBUG
  std::cerr << "ftController::RequestCacheFile(" << id << ",";
@@ -1922,7 +1922,7 @@ bool ftController::RequestCacheFile(RsPeerId id, std::string path, std::string h
 #endif
 
 	/* Request File */
-	std::list<std::string> ids;
+    std::list<RsPeerId> ids;
 	ids.push_back(id);
 
 	FileInfo info ;
@@ -1937,7 +1937,7 @@ bool ftController::RequestCacheFile(RsPeerId id, std::string path, std::string h
 		std::cerr << "Copying it !!" << std::endl ;
 #endif
 
-		if(info.size > 0 && copyFile(info.path,path+"/"+hash))
+        if(info.size > 0 && copyFile(info.path,path+"/"+hash.toStdString()))
 		{
 			CompletedCache(hash);
 			return true ;
@@ -1946,13 +1946,13 @@ bool ftController::RequestCacheFile(RsPeerId id, std::string path, std::string h
 			return false ;
 	}
 
-	FileRequest(hash, hash, size, path, RS_FILE_REQ_CACHE | RS_FILE_REQ_NO_SEARCH, ids);
+    FileRequest(hash.toStdString(), hash, size, path, RS_FILE_REQ_CACHE | RS_FILE_REQ_NO_SEARCH, ids);
 
 	return true;
 }
 
 
-bool ftController::CancelCacheFile(RsPeerId id, std::string path, std::string hash, uint64_t size)
+bool ftController::CancelCacheFile(const RsPeerId& id, std::string path, const RsFileHash& hash, uint64_t size)
 {
 	std::cerr << "ftController::CancelCacheFile(" << id << ",";
 	std::cerr << path << "," << hash << "," << size << ")";
@@ -1994,7 +1994,7 @@ bool ftController::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 	/* create a key/value set for most of the parameters */
 	std::map<std::string, std::string> configMap;
 	std::map<std::string, std::string>::iterator mit;
-	std::list<std::string>::iterator it;
+    std::list<RsFileHash>::iterator it;
 
 	/* basic control parameters */
 	std::string s ;
@@ -2043,7 +2043,7 @@ bool ftController::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 
 
 	/* get Details of File Transfers */
-	std::list<std::string> hashs;
+    std::list<RsFileHash> hashs;
 	FileDownloads(hashs);
 
 	for(it = hashs.begin(); it != hashs.end(); it++)
@@ -2051,7 +2051,7 @@ bool ftController::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 		/* stack mutex released each loop */
   		RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 
-		std::map<std::string, ftFileControl*>::iterator fit = mDownloads.find(*it);
+        std::map<RsFileHash, ftFileControl*>::iterator fit = mDownloads.find(*it);
 		if (fit == mDownloads.end())
 			continue;
 
@@ -2083,24 +2083,18 @@ bool ftController::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 		RsDirUtil::removeTopDir(fit->second->mDestination, rft->file.path); /* remove fname */
 		rft->flags = fit->second->mFlags.toUInt32();
 		rft->state = fit->second->mState;
-		fit->second->mTransfer->getFileSources(rft->allPeerIds.ids);
 
-		rft->transferred = fit->second->mCreator->getRecvd();
+		std::list<RsPeerId> lst ;
+		fit->second->mTransfer->getFileSources(lst);
 
 		// Remove turtle peers from sources, as they are not supposed to survive a reboot of RS, since they are dynamic sources.
 		// Otherwize, such sources are unknown from the turtle router, at restart, and never get removed.
 		//
-		for(std::list<std::string>::iterator sit(rft->allPeerIds.ids.begin());sit!=rft->allPeerIds.ids.end();)
-			if(mTurtle->isTurtlePeer(*sit))
-			{
-				std::list<std::string>::iterator sittmp(sit) ;
-				++sittmp ;
-				rft->allPeerIds.ids.erase(sit) ;
-				sit = sittmp ;
-			}
-			else
-				++sit ;
+		for(std::list<RsPeerId>::const_iterator it(lst.begin());it!=lst.end();++it) 
+			if(!mTurtle->isTurtlePeer(*it))
+                rft->allPeerIds.ids.push_back(*it) ;
 
+		rft->transferred = fit->second->mCreator->getRecvd();
 		fit->second->mCreator->getAvailabilityMap(rft->compressed_chunk_map) ;
 		rft->chunk_strategy = fit->second->mCreator->getChunkStrategy() ;
 
@@ -2117,7 +2111,7 @@ bool ftController::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 			/* make RsFileTransfer item for save list */
 			RsFileTransfer *rft = NULL;
 
-			std::map<std::string,RsFileTransfer*>::iterator rit = mPendingChunkMaps.find(pit->mHash);
+            std::map<RsFileHash,RsFileTransfer*>::iterator rit = mPendingChunkMaps.find(pit->mHash);
 			if (rit != mPendingChunkMaps.end()) {
 				/* use item from the not loaded pending list */
 				rft = new RsFileTransfer(*(rit->second));
@@ -2132,18 +2126,24 @@ bool ftController::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 				RsDirUtil::removeTopDir(pit->mDest, rft->file.path); /* remove fname */
 				rft->flags = pit->mFlags.toUInt32();
 				rft->state = pit->mState;
-				rft->allPeerIds.ids = pit->mSrcIds;
+
+				rft->allPeerIds.ids.clear() ;
+				for(std::list<RsPeerId>::const_iterator it(pit->mSrcIds.begin());it!=pit->mSrcIds.end();++it)
+                    rft->allPeerIds.ids.push_back( *it ) ;
 			}
 
 			// Remove turtle peers from sources, as they are not supposed to survive a reboot of RS, since they are dynamic sources.
-			// Otherwize, such sources are unknown from the turtle router, at restart, and never get removed.
+			// Otherwize, such sources are unknown from the turtle router, at restart, and never get removed. We do that in post
+			// process since the rft object may have been created from mPendingChunkMaps
 			//
-			for(std::list<std::string>::iterator sit(rft->allPeerIds.ids.begin());sit!=rft->allPeerIds.ids.end();)
-				if(mTurtle->isTurtlePeer(*sit))
-				{
-					std::list<std::string>::iterator sittmp(sit) ;
-					sit = rft->allPeerIds.ids.erase(sit) ;
-				}
+            for(std::list<RsPeerId>::iterator sit(rft->allPeerIds.ids.begin());sit!=rft->allPeerIds.ids.end();)
+				if(mTurtle->isTurtlePeer(RsPeerId(*sit)))
+                {
+                    std::list<RsPeerId>::iterator sittmp(sit) ;
+            ++sittmp ;
+                    rft->allPeerIds.ids.erase(sit) ;
+            sit = sittmp ;
+                }
 				else
 					++sit ;
 
@@ -2201,12 +2201,16 @@ bool ftController::loadList(std::list<RsItem *>& load)
 #ifdef CONTROL_DEBUG
 			std::cerr << "ftController::loadList(): requesting " << rsft->file.name << ", " << rsft->file.hash << ", " << rsft->file.filesize << std::endl ;
 #endif
-			FileRequest(rsft->file.name, rsft->file.hash, rsft->file.filesize, rsft->file.path, TransferRequestFlags(rsft->flags), rsft->allPeerIds.ids, rsft->state);
+			std::list<RsPeerId> src_lst ;
+            for(std::list<RsPeerId>::const_iterator it(rsft->allPeerIds.ids.begin());it!=rsft->allPeerIds.ids.end();++it)
+                src_lst.push_back(*it) ;
+
+			FileRequest(rsft->file.name, rsft->file.hash, rsft->file.filesize, rsft->file.path, TransferRequestFlags(rsft->flags), src_lst, rsft->state);
 
 			{
 				RsStackMutex mtx(ctrlMutex) ;
 
-				std::map<std::string, ftFileControl*>::iterator fit = mDownloads.find(rsft->file.hash);
+                std::map<RsFileHash, ftFileControl*>::iterator fit = mDownloads.find(rsft->file.hash);
 
 				if((fit==mDownloads.end() || (fit->second)->mCreator == NULL))
 				{

@@ -35,7 +35,7 @@ class CreateGxsForumMsg : public QDialog, public TokenResponse
 	Q_OBJECT
 
 public:
-	CreateGxsForumMsg(const std::string &fId, const std::string &pId);
+        CreateGxsForumMsg(const RsGxsGroupId &fId, const RsGxsMessageId &pId);
 	~CreateGxsForumMsg();
 
 	void newMsg(); /* cleanup */
@@ -59,8 +59,8 @@ private:
 	void loadForumInfo(const uint32_t &token);
 	void loadParentMsg(const uint32_t &token);
 
-	std::string mForumId;
-	std::string mParentId;
+	 RsGxsGroupId mForumId;
+        RsGxsMessageId mParentId;
 
 	bool mParentMsgLoaded;
 	bool mForumMetaLoaded;

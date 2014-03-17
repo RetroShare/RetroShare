@@ -35,7 +35,7 @@ class RttStatistics: public RsAutoUpdatePage, public Ui::RttStatistics
 		~RttStatistics();
 		
 		// Cache for peer names.
-		static QString getPeerName(const std::string& peer_id) ;
+		static QString getPeerName(const RsPeerId& peer_id) ;
 
 	private:
 											
@@ -56,7 +56,7 @@ class RttStatisticsWidget:  public QWidget
 		virtual void resizeEvent(QResizeEvent *event);
 
 
-		void updateRttStatistics(const std::map<std::string, std::list<RsRttPongResult> >& info,
+		void updateRttStatistics(const std::map<RsPeerId, std::list<RsRttPongResult> >& info,
                 		double maxRTT, double minTS, double maxTS);
 
 	private:

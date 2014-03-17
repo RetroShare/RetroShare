@@ -36,6 +36,7 @@
 #include <QKeySequence>
 
 #include "util/log.h"
+#include "retroshare/rstypes.h"
 
 /** Rshare's version string */
 #define RSHARE_VERSION    "0.7"
@@ -89,7 +90,7 @@ public:
   /** Recalculates matching stylesheet for widget **/
   static void refreshStyleSheet(QWidget *widget, bool processChildren);
 
-  static bool loadCertificate(const std::string &accountId, bool autoLogin);
+  static bool loadCertificate(const RsPeerId &accountId, bool autoLogin);
 
   /**
    * Update Language, Style and StyleSheet.

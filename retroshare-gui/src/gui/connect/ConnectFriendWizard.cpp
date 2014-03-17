@@ -149,10 +149,10 @@ void ConnectFriendWizard::setCertificate(const QString &certificate, bool friend
 	}
 }
 
-void ConnectFriendWizard::setGpgId(const std::string &gpgId, const std::string &sslId, bool friendRequest)
+void ConnectFriendWizard::setGpgId(const RsPgpId &gpgId, const RsPeerId &sslId, bool friendRequest)
 {
-	if (!rsPeers->getPeerDetails(gpgId, peerDetails)) {
-		setField("errorMessage", tr("Cannot get peer details of PGP key %1").arg(QString::fromStdString(gpgId)));
+	if (!rsPeers->getGPGDetails(gpgId, peerDetails)) {
+		setField("errorMessage", tr("Cannot get peer details of PGP key %1").arg(QString::fromStdString(gpgId.toStdString())));
 		setStartId(Page_ErrorMessage);
 		return;
 	}
@@ -262,7 +262,7 @@ void ConnectFriendWizard::initializePage(int id)
 			ui->_direct_transfer_CB_2  ->setChecked(peerDetails.service_perm_flags & RS_SERVICE_PERM_DIRECT_DL) ;
 
 			RsPeerDetails tmp_det ;
-			bool already_in_keyring = rsPeers->getPeerDetails(peerDetails.gpg_id, tmp_det) ;
+			bool already_in_keyring = rsPeers->getGPGDetails(peerDetails.gpg_id, tmp_det) ;
 
 			ui->addKeyToKeyring_CB->setChecked(true) ;
 			ui->addKeyToKeyring_CB->setEnabled(!already_in_keyring) ;
@@ -321,10 +321,10 @@ void ConnectFriendWizard::initializePage(int id)
 			}
 
 			QString ts;
-			std::list<std::string>::iterator it;
+			std::list<RsPgpId>::iterator it;
 			for (it = peerDetails.gpgSigners.begin(); it != peerDetails.gpgSigners.end(); ++it) {
 				{
-					std::string peer_name = rsPeers->getPeerName(*it) ;
+					std::string peer_name = rsPeers->getGPGName(*it) ;
 
 					// This is baaaad code. We should handle this kind of errors with proper exceptions.
 					// This happens because signers from a unknown key cannt be found in the keyring, including
@@ -333,7 +333,7 @@ void ConnectFriendWizard::initializePage(int id)
 					if(peer_name == "[Unknown PGP Cert name]" && *it == peerDetails.gpg_id)
 						peer_name = peerDetails.name ;
 
-				ts += QString("%1<%2>\n").arg(QString::fromUtf8(peer_name.c_str()), QString::fromStdString(*it));
+				ts += QString("%1<%2>\n").arg(QString::fromUtf8(peer_name.c_str()), QString::fromStdString( (*it).toStdString()));
 				}
 			}
 
@@ -344,14 +344,14 @@ void ConnectFriendWizard::initializePage(int id)
 			if (!loc.isEmpty())
 			{
 				loc += " (";
-				loc += QString::fromStdString(peerDetails.id);
+				loc += QString::fromStdString(peerDetails.id.toStdString());
 				loc += ")";
 			}
 			else
 			{
-				if (!peerDetails.id.empty())
+				if (!peerDetails.id.isNull())
 				{
-				    loc += QString::fromStdString(peerDetails.id);
+				    loc += QString::fromStdString(peerDetails.id.toStdString());
 				}
 			}
 
@@ -401,14 +401,14 @@ void ConnectFriendWizard::initializePage(int id)
 			if (!loc.isEmpty())
 			{
 				loc += " (";
-				loc += QString::fromStdString(peerDetails.id);
+				loc += QString::fromStdString(peerDetails.id.toStdString());
 				loc += ")";
 			}
 			else
 			{
-				if (!peerDetails.id.empty())
+				if (!peerDetails.id.isNull())
 				{
-					loc += QString::fromStdString(peerDetails.id);
+					loc += QString::fromStdString(peerDetails.id.toStdString());
 				}
 			}
 
@@ -533,9 +533,9 @@ bool ConnectFriendWizard::validateCurrentPage()
 			}
 
 			// search for peer id in string
-			std::string rsidstr = PeerDefs::idFromRsid(rsidstring, false);
+			RsPeerId rsidstr = PeerDefs::idFromRsid(rsidstring, false);
 
-			if (rsidstr.empty() || !rsPeers->getPeerDetails(rsidstr, peerDetails)) {
+			if (rsidstr.isNull() || !rsPeers->getPeerDetails(rsidstr, peerDetails)) {
 				setField("errorMessage", tr("This Peer %1 is not available in your Network").arg(rsidstring));
 				error = false;
 			}
@@ -564,23 +564,23 @@ bool ConnectFriendWizard::validateCurrentPage()
 		break;
 	case Page_FriendRecommendations:
 		{
-			std::list<std::string> recommendIds;
-			ui->frec_recommendList->selectedSslIds(recommendIds, false);
+			std::list<RsPeerId> recommendIds;
+            ui->frec_recommendList->selectedIds<RsPeerId,FriendSelectionWidget::IDTYPE_SSL>(recommendIds, false);
 
 			if (recommendIds.empty()) {
 				QMessageBox::warning(this, "RetroShare", tr("Please select at least one friend for recommendation."), QMessageBox::Ok, QMessageBox::Ok);
 				return false;
 			}
 
-			std::list<std::string> toIds;
-			ui->frec_toList->selectedSslIds(toIds, false);
+			std::list<RsPeerId> toIds;
+            ui->frec_toList->selectedIds<RsPeerId,FriendSelectionWidget::IDTYPE_SSL>(toIds, false);
 
 			if (toIds.empty()) {
 				QMessageBox::warning(this, "RetroShare", tr("Please select at least one friend as recipient."), QMessageBox::Ok, QMessageBox::Ok);
 				return false;
 			}
 
-			std::list<std::string>::iterator toId;
+			std::list<RsPeerId>::iterator toId;
 			for (toId = toIds.begin(); toId != toIds.end(); toId++) {
 				MessageComposer::recommendFriend(recommendIds, *toId, ui->frec_messageEdit->toHtml(), true);
 			}
@@ -659,7 +659,9 @@ void ConnectFriendWizard::accept()
 
 	if (!mCertificate.empty() && add_key_to_keyring)
 	{
-		std::string pgp_id,ssl_id,error_string ;
+		RsPgpId pgp_id ;
+		RsPeerId ssl_id ;
+		std::string error_string ;
 
 		if(!rsPeers->loadCertificateFromString(mCertificate,ssl_id,pgp_id,error_string))
 		{
@@ -670,7 +672,7 @@ void ConnectFriendWizard::accept()
 
 	bool runProgressDialog = false;
 
-	if(accept_connection && !peerDetails.gpg_id.empty()) 
+	if(accept_connection && !peerDetails.gpg_id.isNull()) 
 	{
 		std::cerr << "ConclusionPage::validatePage() accepting GPG key for connection." << std::endl;
 		rsPeers->addFriend(peerDetails.id, peerDetails.gpg_id,serviceFlags()) ;
@@ -687,7 +689,7 @@ void ConnectFriendWizard::accept()
 			rsPeers->assignPeerToGroup(groupId.toStdString(), peerDetails.gpg_id, true);
 	}
 
-	if ((accept_connection) && (peerDetails.id != ""))
+	if ((accept_connection) && (!peerDetails.id.isNull()))
 	{
 		runProgressDialog = true;
 
@@ -722,7 +724,7 @@ void ConnectFriendWizard::accept()
 		
 	if (runProgressDialog)
 	{
-		std::string ssl_id = peerDetails.id;
+		RsPeerId ssl_id = peerDetails.id;
 		// its okay if ssl_id is invalid - dialog will show error.
 		ConnectProgressDialog::showProgress(ssl_id);
 	}
@@ -911,7 +913,7 @@ void ConnectFriendWizard::updatePeersList(int index)
 	ui->selectedPeersTW->clearContents();
 	ui->selectedPeersTW->setRowCount(0);
 
-	std::string ownId = rsPeers->getGPGOwnId();
+	RsPgpId ownId = rsPeers->getGPGOwnId();
 
 	int row = 0;
 
@@ -920,9 +922,9 @@ void ConnectFriendWizard::updatePeersList(int index)
 	// We have to use this trick because signers are given by their names instead of their ids. That's a cause
 	// for some confusion when two peers have the same name.
 	//
-	std::list<std::string> gpg_ids;
+	std::list<RsPgpId> gpg_ids;
 	rsPeers->getGPGAllList(gpg_ids);
-	for (std::list<std::string>::const_iterator it(gpg_ids.begin()); it != gpg_ids.end(); ++it) {
+	for (std::list<RsPgpId>::const_iterator it(gpg_ids.begin()); it != gpg_ids.end(); ++it) {
 		if (*it == ownId) {
 			// its me
 			continue;
@@ -933,7 +935,7 @@ void ConnectFriendWizard::updatePeersList(int index)
 #endif
 
 		RsPeerDetails details ;
-		if (!rsPeers->getPeerDetails(*it,details)) {
+		if (!rsPeers->getGPGDetails(*it,details)) {
 #ifdef FRIEND_WIZARD_DEBUG
 			std::cerr << " no details." << std::endl ;
 #endif
@@ -942,9 +944,9 @@ void ConnectFriendWizard::updatePeersList(int index)
 
 		// determine common friends
 
-		std::list<std::string> common_friends;
+		std::list<RsPgpId> common_friends;
 
-		for (std::list<std::string>::const_iterator it2(details.gpgSigners.begin()); it2 != details.gpgSigners.end(); ++it2) {
+		for (std::list<RsPgpId>::const_iterator it2(details.gpgSigners.begin()); it2 != details.gpgSigners.end(); ++it2) {
 			if(rsPeers->isGPGAccepted(*it2)) {
 				common_friends.push_back(*it2);
 			}
@@ -988,13 +990,13 @@ void ConnectFriendWizard::updatePeersList(int index)
 			if (common_friends.empty()) {
 				qcb->addItem(tr("*** None ***"));
 			} else {
-				for (std::list<std::string>::const_iterator it2(common_friends.begin()); it2 != common_friends.end(); ++it2) {
-					qcb->addItem(QString::fromStdString(*it2));
+				for (std::list<RsPgpId>::const_iterator it2(common_friends.begin()); it2 != common_friends.end(); ++it2) {
+					qcb->addItem(QString::fromStdString( (*it2).toStdString()));
 				}
 			}
 
 			ui->selectedPeersTW->setCellWidget(row, 2, qcb);
-			ui->selectedPeersTW->setItem(row, 3, new QTableWidgetItem(QString::fromStdString(details.id)));
+			ui->selectedPeersTW->setItem(row, 3, new QTableWidgetItem(QString::fromStdString(details.id.toStdString())));
 			++row;
 		}
 	}
@@ -1016,7 +1018,7 @@ void ConnectFriendWizard::signAllSelectedUsers()
 	std::cerr << "making lots of friends !!" << std::endl;
 #endif
 
-	for (std::map<QCheckBox*, std::string>::const_iterator it(_id_boxes.begin()); it != _id_boxes.end(); ++it) {
+	for (std::map<QCheckBox*, RsPeerId>::const_iterator it(_id_boxes.begin()); it != _id_boxes.end(); ++it) {
 		if (it->first->isChecked()) {
 #ifdef FRIEND_WIZARD_DEBUG
 			std::cerr << "Making friend with " << it->second << std::endl ;

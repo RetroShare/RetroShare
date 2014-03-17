@@ -245,14 +245,41 @@ std::ostream &RsTlvBinaryData::print(std::ostream &out, uint16_t indent)
 
 /************************************* Peer Id Set ************************************/
 
-RsTlvPeerIdSet::RsTlvPeerIdSet(): RsTlvStringSet(TLV_TYPE_PEERSET) {}
-RsTlvHashSet::RsTlvHashSet(): RsTlvStringSet(TLV_TYPE_HASHSET) {}
-RsTlvPgpIdSet::RsTlvPgpIdSet(): RsTlvStringSet(TLV_TYPE_PGPIDSET) {}
-
 
 RsTlvStringSet::RsTlvStringSet(uint16_t type) :mType(type)
 {
 }
+
+
+bool     RsTlvStringSet::SetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
+{
+	/* must check sizes */
+	uint32_t tlvsize = TlvSize();
+	uint32_t tlvend  = *offset + tlvsize;
+
+	if (size < tlvend)
+		return false; /* not enough space */
+
+	bool ok = true;
+
+
+		/* start at data[offset] */
+	ok &= SetTlvBase(data, tlvend, offset, mType , tlvsize);
+
+	/* determine the total size of ids strings in list */
+
+	std::list<std::string>::iterator it;
+
+	for(it = ids.begin(); it != ids.end() ; ++it)
+	{
+		if (it->length() > 0)
+			ok &= SetTlvString(data, tlvend, offset, TLV_TYPE_STR_GENID, *it);
+	}
+
+	return ok;
+
+}
+
 
 void RsTlvStringSet::TlvClear()
 {
@@ -268,7 +295,7 @@ uint32_t RsTlvStringSet::TlvSize()
 	/* determine the total size of ids strings in list */
 
 	std::list<std::string>::iterator it;
-	
+
 	for(it = ids.begin(); it != ids.end() ; ++it)
 	{
 		if (it->length() > 0)
@@ -276,36 +303,6 @@ uint32_t RsTlvStringSet::TlvSize()
 	}
 
 	return s;
-}
-
-
-bool     RsTlvStringSet::SetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
-{
-	/* must check sizes */
-	uint32_t tlvsize = TlvSize();
-	uint32_t tlvend  = *offset + tlvsize;
-
-	if (size < tlvend)
-		return false; /* not enough space */
-
-	bool ok = true;
-
-	
-		/* start at data[offset] */
-	ok &= SetTlvBase(data, tlvend, offset, mType , tlvsize);
-
-	/* determine the total size of ids strings in list */
-
-	std::list<std::string>::iterator it;
-	
-	for(it = ids.begin(); it != ids.end() ; ++it)
-	{
-		if (it->length() > 0)
-			ok &= SetTlvString(data, tlvend, offset, TLV_TYPE_STR_GENID, *it); 
-	}
-
-	return ok;
-
 }
 
 

@@ -43,7 +43,7 @@
 typedef std::map<uint32_t, NxsTransaction*> TransactionIdMap;
 
 /// to keep track of peers active transactions
-typedef std::map<std::string, TransactionIdMap > TransactionsPeerMap;
+typedef std::map<RsPeerId, TransactionIdMap > TransactionsPeerMap;
 
 
 /*!
@@ -92,7 +92,7 @@ public:
      * Circumvents polling of peers for message
      * @param peerId id of peer
      */
-    void requestGroupsOfPeer(const std::string& peerId){ return;}
+    void requestGroupsOfPeer(const RsPeerId& peerId){ return;}
 
     /*!
      * get messages of a peer for a given group id, this circumvents the normal
@@ -100,7 +100,7 @@ public:
      * @param peerId Id of peer
      * @param grpId id of group to request messages for
      */
-    void requestMessagesOfPeer(const std::string& peerId, const std::string& grpId){ return; }
+    void requestMessagesOfPeer(const RsPeerId& peerId, const std::string& grpId){ return; }
 
     /*!
      * pauses synchronisation of subscribed groups and request for group id
@@ -124,7 +124,7 @@ public:
      * @param enabled set to false to disable pause, and true otherwise
      * @return request token to be redeemed
      */
-    int requestGrp(const std::list<RsGxsGroupId>& grpId, const std::string& peerId);
+    int requestGrp(const std::list<RsGxsGroupId>& grpId, const RsPeerId& peerId);
 
     /* p3Config methods */
 
@@ -302,30 +302,30 @@ private:
      * @param toVet groupid/peer to vet are stored here if their circle id is not cached
      * @return false, if you cannot send to this peer, true otherwise
      */
-    bool canSendGrpId(const std::string& sslId, RsGxsGrpMetaData& grpMeta, std::vector<GrpIdCircleVet>& toVet);
+    bool canSendGrpId(const RsPeerId& sslId, RsGxsGrpMetaData& grpMeta, std::vector<GrpIdCircleVet>& toVet);
 
 
-    bool canSendMsgIds(const std::vector<RsGxsMsgMetaData*>& msgMetas, const RsGxsGrpMetaData&, const std::string& sslId);
+    bool canSendMsgIds(const std::vector<RsGxsMsgMetaData*>& msgMetas, const RsGxsGrpMetaData&, const RsPeerId& sslId);
 
     void locked_createTransactionFromPending(MsgRespPending* grpPend);
     void locked_createTransactionFromPending(GrpRespPending* msgPend);
     void locked_createTransactionFromPending(GrpCircleIdRequestVetting* grpPend);
     void locked_createTransactionFromPending(MsgCircleIdsRequestVetting* grpPend);
 
-    void locked_pushMsgTransactionFromList(std::list<RsNxsItem*>& reqList, const std::string& peerId, const uint32_t& transN);
-    void locked_pushGrpTransactionFromList(std::list<RsNxsItem*>& reqList, const std::string& peerId, const uint32_t& transN);
-    void locked_pushGrpRespFromList(std::list<RsNxsItem*>& respList, const std::string& peer, const uint32_t& transN);
-    void locked_pushMsgRespFromList(std::list<RsNxsItem*>& itemL, const std::string& sslId, const uint32_t& transN);
+    void locked_pushMsgTransactionFromList(std::list<RsNxsItem*>& reqList, const RsPeerId& peerId, const uint32_t& transN);
+    void locked_pushGrpTransactionFromList(std::list<RsNxsItem*>& reqList, const RsPeerId& peerId, const uint32_t& transN);
+    void locked_pushGrpRespFromList(std::list<RsNxsItem*>& respList, const RsPeerId& peer, const uint32_t& transN);
+    void locked_pushMsgRespFromList(std::list<RsNxsItem*>& itemL, const RsPeerId& sslId, const uint32_t& transN);
     void syncWithPeers();
     void addGroupItemToList(NxsTransaction*& tr,
-    		const std::string& grpId, uint32_t& transN,
+    		const RsGxsGroupId& grpId, uint32_t& transN,
     		std::list<RsNxsItem*>& reqList);
 
-    bool locked_canReceive(const RsGxsGrpMetaData * const grpMeta, const std::string& peerId);
+    bool locked_canReceive(const RsGxsGrpMetaData * const grpMeta, const RsPeerId& peerId);
 
     void processExplicitGroupRequests();
     
-    void locked_doMsgUpdateWork(const RsNxsTransac* nxsTrans, const std::string& grpId);
+    void locked_doMsgUpdateWork(const RsNxsTransac* nxsTrans, const RsGxsGroupId& grpId);
 
     void updateServerSyncTS();
 
@@ -415,7 +415,7 @@ private:
     uint32_t mTransactionTimeOut;
 
 
-    std::string mOwnId;
+    RsPeerId mOwnId;
 
     RsNxsNetMgr* mNetMgr;
 
@@ -434,16 +434,16 @@ private:
     std::vector<AuthorPending*> mPendingResp;
     std::vector<GrpCircleVetting*> mPendingCircleVets;
 
-    std::map<std::string, std::list<RsGxsGroupId> > mExplicitRequest;
+    std::map<RsPeerId, std::list<RsGxsGroupId> > mExplicitRequest;
 
     // nxs sync optimisation
     // can pull dynamically the latest timestamp for each message
 
 public:
 
-    typedef std::map<std::string, RsGxsMsgUpdateItem*> ClientMsgMap;
-    typedef std::map<std::string, RsGxsServerMsgUpdateItem*> ServerMsgMap;
-    typedef std::map<std::string, RsGxsGrpUpdateItem*> ClientGrpMap;
+    typedef std::map<RsPeerId, RsGxsMsgUpdateItem*> ClientMsgMap;
+    typedef std::map<RsGxsGroupId, RsGxsServerMsgUpdateItem*> ServerMsgMap;
+    typedef std::map<RsPeerId, RsGxsGrpUpdateItem*> ClientGrpMap;
 
 private:
 

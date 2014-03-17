@@ -25,7 +25,7 @@
 
 #include <retroshare/rspeers.h>
 
-ChatToaster::ChatToaster(const std::string &peerId, const QString &message) : QWidget(NULL)
+ChatToaster::ChatToaster(const RsPeerId &peerId, const QString &message) : QWidget(NULL)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
@@ -39,7 +39,7 @@ ChatToaster::ChatToaster(const std::string &peerId, const QString &message) : QW
 	ui.textLabel->setText(RsHtml().formatText(NULL, message, RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS | RSHTML_FORMATTEXT_CLEANSTYLE));
 	ui.toasterLabel->setText(QString::fromUtf8(rsPeers->getPeerName(peerId).c_str()));
 	ui.avatarWidget->setFrameType(AvatarWidget::STATUS_FRAME);
-	ui.avatarWidget->setId(peerId, false);
+	ui.avatarWidget->setId(peerId);
 }
 
 void ChatToaster::chatButtonSlot()

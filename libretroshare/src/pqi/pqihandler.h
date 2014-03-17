@@ -31,6 +31,7 @@
 #include "pqi/pqiqos.h"
 
 #include "util/rsthreads.h"
+#include "retroshare/rstypes.h"
 
 #include <map>
 #include <list>
@@ -38,7 +39,7 @@
 class SearchModule
 {
 	public:
-	std::string peerid;
+	RsPeerId peerid;
 	PQInterface *pqi;
 	SecurityPolicy *sp;
 };
@@ -75,7 +76,7 @@ class pqihandler: public P3Interface, public pqiPublisher
 		void	getCurrentRates(float &in, float &out);
 
 		// TESTING INTERFACE.
-		int     ExtractRates(std::map<std::string, RsBwRates> &ratemap, RsBwRates &totals);
+		int     ExtractRates(std::map<RsPeerId, RsBwRates> &ratemap, RsBwRates &totals);
 
 	protected:
 		/* check to be overloaded by those that can
@@ -91,7 +92,7 @@ class pqihandler: public P3Interface, public pqiPublisher
 
 		RsMutex coreMtx; /* MUTEX */
 
-		std::map<std::string, SearchModule *> mods;
+		std::map<RsPeerId, SearchModule *> mods;
 		SecurityPolicy *globsec;
 
 		std::list<RsItem *> in_service;

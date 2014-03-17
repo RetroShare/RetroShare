@@ -28,6 +28,7 @@
 
 #include <map>
 
+#include "retroshare/rstypes.h"
 #include "serialiser/rsserviceids.h"
 #include "serialiser/rsserial.h"
 #include "serialiser/rstlvtypes.h"
@@ -308,11 +309,11 @@ class RsPrivateChatMsgConfigItem: public RsChatItem
 		virtual uint32_t serial_size() ; 							// deserialise is handled using a constructor
 
 		/* set data from RsChatMsgItem to RsPrivateChatMsgConfigItem */
-		void set(RsChatMsgItem *ci, const std::string &peerId, uint32_t confFlags);
+		void set(RsChatMsgItem *ci, const RsPeerId &peerId, uint32_t confFlags);
 		/* get data from RsPrivateChatMsgConfigItem to RsChatMsgItem */
 		void get(RsChatMsgItem *ci);
 
-		std::string configPeerId;
+		RsPeerId configPeerId;
 		uint32_t chatFlags;
 		uint32_t configFlags;
 		uint32_t sendTime;
@@ -333,9 +334,9 @@ class RsPrivateChatDistantInviteConfigItem: public RsChatItem
 		virtual uint32_t serial_size() ; 							// deserialise is handled using a constructor
 
 		unsigned char aes_key[16] ;
-		std::string hash ;
+        RsFileHash hash ;
 		std::string encrypted_radix64_string ;
-		std::string destination_pgp_id ;
+		RsPgpId destination_pgp_id ;
 		uint32_t time_of_validity ;
 		uint32_t last_hit_time ;
 		uint32_t flags ;
@@ -545,7 +546,7 @@ class RsMsgSrcId : public RsMessageItem
 		//
 
 		uint32_t msgId;
-		std::string srcId;
+		RsPeerId srcId;
 };
 class RsPublicMsgInviteConfigItem : public RsMessageItem
 {

@@ -122,7 +122,7 @@ virtual ~pqiConfig();
  * @param loadHash This is the hash that will be compared to confirm saved configuration has not
  * been tampered with
  */
-virtual bool	loadConfiguration(std::string &loadHash) = 0;
+virtual bool	loadConfiguration(RsFileHash &loadHash) = 0;
 
 /**
  * save configuration of object
@@ -144,7 +144,7 @@ const std::string& Filename();
  * The hash computed for this configuration, can use this to compare to externally stored hash
  * for validation checking
  */
-const std::string& Hash();
+const RsFileHash& Hash();
 
 	protected:
 
@@ -152,7 +152,7 @@ const std::string& Hash();
  * Checks if configuration has changed
  */
 virtual void	IndicateConfigChanged();
-void	setHash(const std::string& h);
+void	setHash(const RsFileHash& h);
 
 	RsMutex cfgMtx;
 
@@ -172,7 +172,7 @@ void	setHash(const std::string& h);
 
 	uint32_t    type;
 	std::string filename;
-	std::string hash;
+	RsFileHash hash;
 
 
 	friend class p3ConfigMgr;
@@ -268,7 +268,7 @@ class p3Config: public pqiConfig
 
 	p3Config(uint32_t t);
 
-virtual bool	loadConfiguration(std::string &loadHash);
+virtual bool	loadConfiguration(RsFileHash &loadHash);
 virtual bool	saveConfiguration();
 
 

@@ -207,7 +207,7 @@ void PhotoDialog::acknowledgeComment(uint32_t token)
     RsGxsGrpMsgIdPair msgId;
     mRsPhoto->acknowledgeMsg(token, msgId);
 
-    if(msgId.first.empty() || msgId.second.empty()){
+    if(msgId.first.isNull() || msgId.second.isNull()){
 
     }else
     {

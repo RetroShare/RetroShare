@@ -97,7 +97,7 @@ extern BOOL WINAPI CryptUnprotectData(
 #endif
 
 
-bool RsLoginHandler::getSSLPassword(const std::string& ssl_id,bool enable_gpg_ask_passwd,std::string& ssl_passwd)
+bool RsLoginHandler::getSSLPassword(const RsPeerId& ssl_id,bool enable_gpg_ask_passwd,std::string& ssl_passwd)
 {
 	// First, see if autologin is available
 	//
@@ -113,7 +113,7 @@ bool RsLoginHandler::getSSLPassword(const std::string& ssl_id,bool enable_gpg_as
 	return getSSLPasswdFromGPGFile(ssl_id,ssl_passwd) ;
 }
 
-bool RsLoginHandler::tryAutoLogin(const std::string& ssl_id,std::string& ssl_passwd)
+bool RsLoginHandler::tryAutoLogin(const RsPeerId& ssl_id,std::string& ssl_passwd)
 {
 	std::cerr << "RsTryAutoLogin()" << std::endl;
 
@@ -124,7 +124,7 @@ bool RsLoginHandler::tryAutoLogin(const std::string& ssl_id,std::string& ssl_pas
 	gchar *passwd = NULL;
 
 	std::cerr << "Using attribute: " << ssl_id << std::endl;
-	if( gnome_keyring_find_password_sync(&my_schema, &passwd,"RetroShare SSL Id",ssl_id.c_str(),NULL) == GNOME_KEYRING_RESULT_OK )
+	if( gnome_keyring_find_password_sync(&my_schema, &passwd,"RetroShare SSL Id",ssl_id.toStdString().c_str(),NULL) == GNOME_KEYRING_RESULT_OK )
 	{
 		std::cerr << "Got SSL passwd ********************" /*<< passwd*/ << " from gnome keyring" << std::endl;
 		ssl_passwd = std::string(passwd);
@@ -355,14 +355,14 @@ bool RsLoginHandler::tryAutoLogin(const std::string& ssl_id,std::string& ssl_pas
 }
 
 
-bool RsLoginHandler::enableAutoLogin(const std::string& ssl_id,const std::string& ssl_passwd)
+bool RsLoginHandler::enableAutoLogin(const RsPeerId& ssl_id,const std::string& ssl_passwd)
 {
 	std::cerr << "RsStoreAutoLogin()" << std::endl;
 
 	/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS /* UNIX */
 #if defined(UBUNTU) || defined(__FreeBSD__) || defined(__OpenBSD__)
-	if(GNOME_KEYRING_RESULT_OK == gnome_keyring_store_password_sync(&my_schema, NULL, (gchar*)("RetroShare password for SSL Id "+ssl_id).c_str(),(gchar*)ssl_passwd.c_str(),"RetroShare SSL Id",ssl_id.c_str(),NULL)) 
+	if(GNOME_KEYRING_RESULT_OK == gnome_keyring_store_password_sync(&my_schema, NULL, (gchar*)("RetroShare password for SSL Id "+ssl_id.toStdString()).c_str(),(gchar*)ssl_passwd.c_str(),"RetroShare SSL Id",ssl_id.toStdString().c_str(),NULL)) 
 	{
 		std::cerr << "Stored passwd " << "************************" << " into gnome keyring" << std::endl;
 		return true ;
@@ -519,10 +519,10 @@ bool RsLoginHandler::enableAutoLogin(const std::string& ssl_id,const std::string
 	return false;
 }
 
-bool RsLoginHandler::clearAutoLogin(const std::string& ssl_id)
+bool RsLoginHandler::clearAutoLogin(const RsPeerId& ssl_id)
 {
 #ifdef UBUNTU
-	if(GNOME_KEYRING_RESULT_OK == gnome_keyring_delete_password_sync(&my_schema,"RetroShare SSL Id", ssl_id.c_str(),NULL))
+	if(GNOME_KEYRING_RESULT_OK == gnome_keyring_delete_password_sync(&my_schema,"RetroShare SSL Id", ssl_id.toStdString().c_str(),NULL))
 	{
 		std::cerr << "Successfully Cleared gnome keyring passwd for SSLID " << ssl_id << std::endl;
 		return true ;
@@ -621,7 +621,7 @@ bool RsLoginHandler::clearAutoLogin(const std::string& ssl_id)
 #endif
 }
 
-bool RsLoginHandler::checkAndStoreSSLPasswdIntoGPGFile(const std::string& ssl_id,const std::string& ssl_passwd)
+bool RsLoginHandler::checkAndStoreSSLPasswdIntoGPGFile(const RsPeerId& ssl_id,const std::string& ssl_passwd)
 {
 	// We want to pursue login with gpg passwd. Let's do it:
 	//
@@ -652,7 +652,7 @@ bool RsLoginHandler::checkAndStoreSSLPasswdIntoGPGFile(const std::string& ssl_id
 	return ok ;
 }
 
-bool RsLoginHandler::getSSLPasswdFromGPGFile(const std::string& ssl_id,std::string& sslPassword)
+bool RsLoginHandler::getSSLPasswdFromGPGFile(const RsPeerId& ssl_id,std::string& sslPassword)
 {
 	// Let's read the password from an encrypted file
 	// Let's check if there's a ssl_passpharese_file that we can decrypt with PGP
@@ -687,12 +687,12 @@ bool RsLoginHandler::getSSLPasswdFromGPGFile(const std::string& ssl_id,std::stri
 }
 
 
-std::string RsLoginHandler::getSSLPasswdFileName(const std::string& /*ssl_id*/)
+std::string RsLoginHandler::getSSLPasswdFileName(const RsPeerId& /*ssl_id*/)
 {
 	return rsAccounts.PathAccountKeysDirectory() + "/" + "ssl_passphrase.pgp";
 }
 
-std::string RsLoginHandler::getAutologinFileName(const std::string& /*ssl_id*/)
+std::string RsLoginHandler::getAutologinFileName(const RsPeerId& /*ssl_id*/)
 {
 	return rsAccounts.PathAccountKeysDirectory() + "/" + "help.dta" ;
 }

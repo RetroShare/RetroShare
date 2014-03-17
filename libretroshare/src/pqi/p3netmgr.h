@@ -118,10 +118,10 @@ virtual bool 	setNetworkMode(uint32_t netMode) = 0;
 virtual bool 	setVisState(uint16_t vs_disc, uint16_t vs_dht) = 0;
 
 	// Switch DHT On/Off.
-virtual bool netAssistFriend(const std::string &id, bool on) = 0;
-virtual bool netAssistKnownPeer(const std::string &id, const struct sockaddr_storage &addr, uint32_t flags) = 0;
+virtual bool netAssistFriend(const RsPeerId &id, bool on) = 0;
+virtual bool netAssistKnownPeer(const RsPeerId &id, const struct sockaddr_storage &addr, uint32_t flags) = 0;
 virtual bool netAssistBadPeer(const struct sockaddr_storage &addr, uint32_t reason, uint32_t flags, uint32_t age) = 0;
-virtual bool netAssistStatusUpdate(const std::string &id, int mode) = 0;
+virtual bool netAssistStatusUpdate(const RsPeerId &id, int mode) = 0;
 
 	/* Get Network State */
 virtual uint32_t getNetStateMode() = 0;
@@ -174,10 +174,10 @@ virtual bool 	setNetworkMode(uint32_t netMode);
 virtual bool 	setVisState(uint16_t vs_disc, uint16_t vs_dht);
 
 	// Switch DHT On/Off.
-virtual bool netAssistFriend(const std::string &id, bool on);
-virtual bool netAssistKnownPeer(const std::string &id, const struct sockaddr_storage &addr, uint32_t flags);
+virtual bool netAssistFriend(const RsPeerId &id, bool on);
+virtual bool netAssistKnownPeer(const RsPeerId &id, const struct sockaddr_storage &addr, uint32_t flags);
 virtual bool netAssistBadPeer(const struct sockaddr_storage &addr, uint32_t reason, uint32_t flags, uint32_t age);
-virtual bool netAssistStatusUpdate(const std::string &id, int mode);
+virtual bool netAssistStatusUpdate(const RsPeerId &id, int mode);
 
 	/* Get Network State */
 virtual uint32_t getNetStateMode();

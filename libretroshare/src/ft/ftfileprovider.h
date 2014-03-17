@@ -38,12 +38,12 @@
 class ftFileProvider
 {
 	public:
-		ftFileProvider(const std::string& path, uint64_t size, const std::string& hash);
+		ftFileProvider(const std::string& path, uint64_t size, const RsFileHash& hash);
 		virtual ~ftFileProvider();
 
-		virtual bool 	getFileData(const std::string& peer_id,uint64_t offset, uint32_t &chunk_size, void *data);
+		virtual bool 	getFileData(const RsPeerId& peer_id,uint64_t offset, uint32_t &chunk_size, void *data);
 		virtual bool    FileDetails(FileInfo &info);
-		std::string getHash();
+		RsFileHash getHash();
 		uint64_t getFileSize();
 		bool fileOk();
 
@@ -54,21 +54,21 @@ class ftFileProvider
 		virtual void getAvailabilityMap(CompressedChunkMap& cmap) ;
 
 		// a ftFileProvider feeds a distant peer. To display what the peers already has, we need to store/read this info.
-		void getClientMap(const std::string& peer_id,CompressedChunkMap& cmap,bool& map_is_too_old) ;
-		void setClientMap(const std::string& peer_id,const CompressedChunkMap& cmap) ;
+		void getClientMap(const RsPeerId& peer_id,CompressedChunkMap& cmap,bool& map_is_too_old) ;
+		void setClientMap(const RsPeerId& peer_id,const CompressedChunkMap& cmap) ;
 
 		// Removes inactive peers from the client list. Returns true if all peers have been removed.
 		//
 		bool purgeOldPeers(time_t now,uint32_t max_duration) ;
 
-		const std::string& fileHash() const { return hash ; }
+		const RsFileHash& fileHash() const { return hash ; }
 		const std::string& fileName() const { return file_name ; }
 		uint64_t fileSize() const { return mSize ; }
 	protected:
 		virtual	int initializeFileAttrs(); /* does for both */
 
 		uint64_t    mSize;
-		std::string hash;
+		RsFileHash hash;
 		std::string file_name;
 		FILE *fd;
 
@@ -100,7 +100,7 @@ class ftFileProvider
 
 		// Contains statistics (speed, peer name, etc.) of all uploading peers for that file.
 		//
-		std::map<std::string,PeerUploadInfo> uploading_peers ;
+		std::map<RsPeerId,PeerUploadInfo> uploading_peers ;
 
 		/* 
 		 * Mutex Required for stuff below 

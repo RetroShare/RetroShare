@@ -624,7 +624,7 @@ bool 	RsDirUtil::cleanupDirectoryFaster(const std::string& cleandir, const std::
 
 /* slightly nicer helper function */
 bool RsDirUtil::hashFile(const std::string& filepath, 
-		std::string &name, std::string &hash, uint64_t &size)
+        std::string &name, RsFileHash &hash, uint64_t &size)
 {
 	if (getFileHash(filepath, hash, size))
 	{
@@ -640,7 +640,7 @@ bool RsDirUtil::hashFile(const std::string& filepath,
 #include <iomanip>
 
 /* Function to hash, and get details of a file */
-bool RsDirUtil::getFileHash(const std::string& filepath, std::string &hash, uint64_t &size, RsThread *thread /*= NULL*/)
+bool RsDirUtil::getFileHash(const std::string& filepath, RsFileHash &hash, uint64_t &size, RsThread *thread /*= NULL*/)
 {
 	FILE *fd;
 	int  len;
@@ -698,7 +698,7 @@ bool RsDirUtil::getFileHash(const std::string& filepath, std::string &hash, uint
 }
 
 /* Function to hash, and get details of a file */
-Sha1CheckSum RsDirUtil::sha1sum(unsigned char *data, uint32_t size)
+Sha1CheckSum RsDirUtil::sha1sum(const unsigned char *data, uint32_t size)
 {
 	SHA_CTX sha_ctx ;
 

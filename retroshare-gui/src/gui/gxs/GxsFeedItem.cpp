@@ -167,7 +167,7 @@ void GxsFeedItem::requestGroupMeta()
 		return;
 	}
 
-        std::list<std::string> ids;
+        std::list<RsGxsGroupId> ids;
         ids.push_back(mGroupId);
 
         RsTokReqOptions opts;

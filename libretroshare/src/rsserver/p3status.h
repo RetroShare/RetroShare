@@ -45,8 +45,8 @@ public:
 
 	virtual bool getOwnStatus(StatusInfo& statusInfo);
 	virtual bool getStatusList(std::list<StatusInfo>& statusInfo);
-	virtual bool getStatus(const std::string &id, StatusInfo &statusInfo);
-	virtual bool sendStatus(const std::string &id, uint32_t status);
+	virtual bool getStatus(const RsPeerId &id, StatusInfo &statusInfo);
+	virtual bool sendStatus(const RsPeerId &id, uint32_t status);
 
 private:
 

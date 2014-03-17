@@ -34,27 +34,33 @@ const QString PeerDefs::nameWithLocation(const RsPeerDetails &details)
 
     return name;
 }
-
-const QString PeerDefs::rsid(const std::string &name, const std::string &id)
+const QString PeerDefs::rsid(const std::string &name, const RsPgpId &id)
 {
     if (name.empty()) {
-        return qApp->translate("PeerDefs", "Unknown") + "@" + QString::fromStdString(id);
+        return qApp->translate("PeerDefs", "Unknown") + "@" + QString::fromStdString(id.toStdString());
     }
 
-    return QString::fromUtf8(name.c_str()) + "@" + QString::fromStdString(id);
+    return QString::fromUtf8(name.c_str()) + "@" + QString::fromStdString(id.toStdString());
+}
+const QString PeerDefs::rsid(const std::string &name, const RsPeerId &id)
+{
+    if (name.empty()) {
+        return qApp->translate("PeerDefs", "Unknown") + "@" + QString::fromStdString(id.toStdString());
+    }
+
+    return QString::fromUtf8(name.c_str()) + "@" + QString::fromStdString(id.toStdString());
 }
 
 const QString PeerDefs::rsid(const RsPeerDetails &details)
 {
     return rsid(details.name, details.id);
 }
-
-const QString PeerDefs::rsidFromId(const std::string &id, QString *name /* = NULL*/)
+const QString PeerDefs::rsidFromId(const RsPeerId &id, QString *name /* = NULL*/)
 {
     QString rsid;
 
     std::string peerName = rsPeers->getPeerName(id);
-	 std::string hash ;
+     DistantMsgPeerId pid ;
 
 	 if(!peerName.empty())	
 	 {
@@ -64,7 +70,7 @@ const QString PeerDefs::rsidFromId(const std::string &id, QString *name /* = NUL
             *name = QString::fromUtf8(peerName.c_str());
         }
     }
-	 else if(rsMsgs->getDistantMessageHash(rsPeers->getGPGOwnId(),hash) && hash == id)
+     else if(rsMsgs->getDistantMessagePeerId(rsPeers->getGPGOwnId(),pid) && pid == id)
 	 {
 		 // not a real peer. Try from hash for distant messages
 	
@@ -83,19 +89,43 @@ const QString PeerDefs::rsidFromId(const std::string &id, QString *name /* = NUL
 
     return rsid;
 }
+const QString PeerDefs::rsidFromId(const RsPgpId &id, QString *name /* = NULL*/)
+{
+    QString rsid;
 
-const std::string PeerDefs::idFromRsid(const QString &rsid, bool check)
+    std::string peerName = rsPeers->getGPGName(id);
+
+	 if(!peerName.empty())	
+	 {
+        rsid = PeerDefs::rsid(peerName, id);
+
+        if (name) {
+            *name = QString::fromUtf8(peerName.c_str());
+        }
+    }
+	 else
+    {
+        rsid = PeerDefs::rsid("", id);
+
+        if (name) 
+            *name = qApp->translate("PeerDefs", "Unknown");
+    } 
+
+    return rsid;
+}
+
+RsPeerId PeerDefs::idFromRsid(const QString &rsid, bool check)
 {
     // search for cert id in string
-    std::string id;
+    RsPeerId id;
 
     int index = rsid.indexOf("@");
     if (index >= 0) {
         // found "@", extract cert id from string
-        id = rsid.mid(index + 1).toStdString();
+        id = RsPeerId(rsid.mid(index + 1).toStdString());
     } else {
         // maybe its only the cert id
-        id = rsid.toStdString();
+        id = RsPeerId(rsid.toStdString());
     }
 
     if (check) {

@@ -606,7 +606,7 @@ void Rshare::blinkTimer()
     }
 }
 
-bool Rshare::loadCertificate(const std::string &accountId, bool autoLogin)
+bool Rshare::loadCertificate(const RsPeerId &accountId, bool autoLogin)
 {
 	if (!RsAccounts::SelectAccount(accountId))
 	{

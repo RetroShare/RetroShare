@@ -267,15 +267,15 @@ void ChunkMap::setChunkCheckingResult(uint32_t chunk_number,bool check_succeeded
 // 			- chunks pushed when new chunks are needed
 // 			- chunks removed when completely downloaded
 //
-bool ChunkMap::getDataChunk(const std::string& peer_id,uint32_t size_hint,ftChunk& chunk,bool& source_chunk_map_needed)
+bool ChunkMap::getDataChunk(const RsPeerId& peer_id,uint32_t size_hint,ftChunk& chunk,bool& source_chunk_map_needed)
 {
 #ifdef DEBUG_FTCHUNK
 	std::cerr << "*** ChunkMap::getDataChunk: size_hint = " << size_hint << std::endl ;
 #endif
 	// 1 - find if this peer already has an active chunk.
 	//
-	std::map<std::string,Chunk>::iterator it = _active_chunks_feed.find(peer_id) ;
-	std::map<std::string,Chunk>::iterator falsafe_it = _active_chunks_feed.end() ;
+	std::map<RsPeerId,Chunk>::iterator it = _active_chunks_feed.find(peer_id) ;
+	std::map<RsPeerId,Chunk>::iterator falsafe_it = _active_chunks_feed.end() ;
 
 	if(it == _active_chunks_feed.end())		
 	{
@@ -284,7 +284,7 @@ bool ChunkMap::getDataChunk(const std::string& peer_id,uint32_t size_hint,ftChun
 		// 0 - Look into other pending chunks and slice from here. We only consider chunks with size smaller than 
 		//    the requested size,
 		//
-		for(std::map<std::string,Chunk>::iterator pit(_active_chunks_feed.begin());pit!=_active_chunks_feed.end();++pit)
+		for(std::map<RsPeerId,Chunk>::iterator pit(_active_chunks_feed.begin());pit!=_active_chunks_feed.end();++pit)
 		{
 			uint32_t c = pit->second._start / _chunk_size ;
 
@@ -385,10 +385,10 @@ void ChunkMap::removeInactiveChunks(std::vector<ftChunk::ChunkId>& to_remove)
 
 			// Also remove the chunk from the chunk feed, to free the associated peer.
 			//
-			for(std::map<std::string,Chunk>::iterator it3=_active_chunks_feed.begin();it3!=_active_chunks_feed.end();)
+			for(std::map<RsPeerId,Chunk>::iterator it3=_active_chunks_feed.begin();it3!=_active_chunks_feed.end();)
 				if(it3->second._start == _chunk_size*uint64_t(it->first))
 				{
-					std::map<std::string,Chunk>::iterator tmp3 = it3 ;
+					std::map<RsPeerId,Chunk>::iterator tmp3 = it3 ;
 					++it3 ;
 					_active_chunks_feed.erase(tmp3) ;
 				}
@@ -428,7 +428,7 @@ bool ChunkMap::isChunkAvailable(uint64_t offset, uint32_t chunk_size) const
 	return true ;
 }
 
-void ChunkMap::setPeerAvailabilityMap(const std::string& peer_id,const CompressedChunkMap& cmap)
+void ChunkMap::setPeerAvailabilityMap(const RsPeerId& peer_id,const CompressedChunkMap& cmap)
 {
 #ifdef DEBUG_FTCHUNK
 	std::cout << "ChunkMap::Receiving new availability map for peer " << peer_id << std::endl ;
@@ -469,9 +469,9 @@ uint32_t ChunkMap::sizeOfChunk(uint32_t cid) const
 		return _chunk_size ;
 }
 
-SourceChunksInfo *ChunkMap::getSourceChunksInfo(const std::string& peer_id)
+SourceChunksInfo *ChunkMap::getSourceChunksInfo(const RsPeerId& peer_id)
 {
-	std::map<std::string,SourceChunksInfo>::iterator it(_peers_chunks_availability.find(peer_id)) ;
+	std::map<RsPeerId,SourceChunksInfo>::iterator it(_peers_chunks_availability.find(peer_id)) ;
 
 	// Do we have a chunk map for this file source ?
 	//  - if yes, we use it
@@ -508,16 +508,16 @@ SourceChunksInfo *ChunkMap::getSourceChunksInfo(const std::string& peer_id)
 	return &(it->second) ;
 }
 
-void ChunkMap::getSourcesList(uint32_t chunk_number,std::vector<std::string>& sources) 
+void ChunkMap::getSourcesList(uint32_t chunk_number,std::vector<RsPeerId>& sources) 
 {
 	sources.clear() ;
 
-	for(std::map<std::string,SourceChunksInfo>::const_iterator it(_peers_chunks_availability.begin());it!=_peers_chunks_availability.end();++it)
+	for(std::map<RsPeerId,SourceChunksInfo>::const_iterator it(_peers_chunks_availability.begin());it!=_peers_chunks_availability.end();++it)
 		if(it->second.cmap[chunk_number])
 			sources.push_back(it->first) ;
 }
 
-uint32_t ChunkMap::getAvailableChunk(const std::string& peer_id,bool& map_is_too_old) 
+uint32_t ChunkMap::getAvailableChunk(const RsPeerId& peer_id,bool& map_is_too_old) 
 {
 	// Quite simple strategy: Check for 1st availabe chunk for this peer starting from the given start location.
 	//
@@ -601,13 +601,13 @@ void ChunkMap::getChunksInfo(FileChunksInfo& info) const
 
 	info.compressed_peer_availability_maps.clear() ;
 
-	for(std::map<std::string,SourceChunksInfo>::const_iterator it(_peers_chunks_availability.begin());it!=_peers_chunks_availability.end();++it)
+	for(std::map<RsPeerId,SourceChunksInfo>::const_iterator it(_peers_chunks_availability.begin());it!=_peers_chunks_availability.end();++it)
 		info.compressed_peer_availability_maps[it->first] = it->second.cmap ;
 }
 
-void ChunkMap::removeFileSource(const std::string& peer_id)
+void ChunkMap::removeFileSource(const RsPeerId& peer_id)
 {
-	std::map<std::string,SourceChunksInfo>::iterator it(_peers_chunks_availability.find(peer_id)) ;
+	std::map<RsPeerId,SourceChunksInfo>::iterator it(_peers_chunks_availability.find(peer_id)) ;
 
 	if(it == _peers_chunks_availability.end())
 		return ;

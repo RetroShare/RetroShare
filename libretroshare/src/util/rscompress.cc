@@ -135,7 +135,7 @@ bool RsCompress::uncompress_memory_chunk(const uint8_t *input_mem,const uint32_t
 	do 
 	{
 		uint32_t available_in = std::min(CHUNK,remaining_input) ;
-		memcpy(in,input_mem,available_in) ;
+		memcpy(in,input_mem+input_offset,available_in) ;
 		strm.avail_in = available_in ;
 		remaining_input -= available_in ;
 		input_offset += available_in ;

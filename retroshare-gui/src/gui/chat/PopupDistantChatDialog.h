@@ -39,18 +39,17 @@ class PopupDistantChatDialog: public PopupChatDialog
 	/** Default destructor */
 	virtual ~PopupDistantChatDialog();
 
-	virtual void init(const std::string& _hash, const QString &title);
+    virtual void init(const DistantChatPeerId &pid, const QString &title);
 	virtual void closeEvent(QCloseEvent *e) ;
 
-	virtual QString getPeerName(const std::string& id) const ;
+    virtual QString getPeerName(const DistantChatPeerId& id) const ;
 
 	protected slots:
 		void updateDisplay() ; // overloads RsAutoUpdatePage
 
 	private:
 	QTimer *_update_timer ;
-	std::string _hash ;
-	std::string _virtual_peer_id ;
+    DistantChatPeerId _pid ;
 	QLabel *_status_label ;
 };
 

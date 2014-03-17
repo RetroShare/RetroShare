@@ -43,7 +43,7 @@ RsTlvFileItem::RsTlvFileItem()
 void RsTlvFileItem::TlvClear()
 {
 	filesize = 0;
-	hash = "";
+	hash.clear() ;
 	name.clear();
 	path.clear();
 	pop = 0;
@@ -56,7 +56,7 @@ uint32_t    RsTlvFileItem::TlvSize()
 {
 	uint32_t s = TLV_HEADER_SIZE; /* header */
 	s += 8; /* filesize */
-	s += GetTlvStringSize(hash); 
+    s += hash.serial_size() ;
 #ifdef TLV_FI_DEBUG
 	std::cerr << "RsTlvFileItem::TlvSize() 8 + Hash: " << s << std::endl;
 #endif
@@ -163,7 +163,7 @@ bool     RsTlvFileItem::SetTlv(void *data, uint32_t size, uint32_t *offset)
 	std::cerr << std::endl;
 #endif
 
-	ok &= SetTlvString(data, tlvend, offset, TLV_TYPE_STR_HASH_SHA1, hash);
+    ok &= hash.serialise(data, tlvend, *offset) ;
 
 
 #ifdef TLV_FI_DEBUG
@@ -285,7 +285,7 @@ bool     RsTlvFileItem::GetTlv(void *data, uint32_t size, uint32_t *offset)
 
 	/* get mandatory parts first */
 	ok &= getRawUInt64(data, tlvend, offset, &filesize);
-	ok &= GetTlvString(data, tlvend, offset, TLV_TYPE_STR_HASH_SHA1, hash);
+    ok &= hash.deserialise(data, tlvend, *offset) ;
 
 	/* while there is more TLV (optional part) */
 	while((*offset) + 2 < tlvend)

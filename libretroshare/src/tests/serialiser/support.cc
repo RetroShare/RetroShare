@@ -107,7 +107,7 @@ bool operator==(const RsTlvKeySignatureSet& kss1, const RsTlvKeySignatureSet& ks
 
 bool operator==(const RsTlvPeerIdSet& pids1, const RsTlvPeerIdSet& pids2)
 {
-	std::list<std::string>::const_iterator it1 = pids1.ids.begin(),
+	std::list<RsPeerId>::const_iterator it1 = pids1.ids.begin(),
 			it2 = pids2.ids.begin();
 
 
@@ -204,37 +204,23 @@ bool operator==(const RsTlvImage& img1, const RsTlvImage& img2)
 
 void init_item(RsTlvHashSet& hs)
 {
-	std::string hash;
-
 	for(int i=0; i < 10; i++)
-	{
-		randString(SHORT_STR, hash);
-		hs.ids.push_back(hash);
-	}
+		hs.ids.push_back(RsFileHash::random());
 
-	hs.mType = TLV_TYPE_HASHSET;
 	return;
 }
 
 void init_item(RsTlvPeerIdSet& ps)
 {
-	std::string peer;
-
 	for(int i=0; i < 10; i++)
-	{
-		randString(SHORT_STR, peer);
-		ps.ids.push_back(peer);
-	}
+		ps.ids.push_back(RsPeerId::random());
 
-	ps.mType = TLV_TYPE_PEERSET;
 	return;
 }
 
 bool operator==(const RsTlvHashSet& hs1,const RsTlvHashSet& hs2)
 {
-	if(hs1.mType != hs2.mType) return false;
-
-	std::list<std::string>::const_iterator it1 = hs1.ids.begin(),
+	std::list<RsFileHash>::const_iterator it1 = hs1.ids.begin(),
 			it2 = hs2.ids.begin();
 
 	for(; ((it1 != hs1.ids.end()) && (it2 != hs2.ids.end())); it1++, it2++)
@@ -249,7 +235,7 @@ void init_item(RsTlvFileItem& fi)
 {
 	fi.age = rand()%200;
 	fi.filesize = rand()%34030313;
-	randString(SHORT_STR, fi.hash);
+	fi.hash = RsFileHash::random();
 	randString(SHORT_STR, fi.name);
 	randString(SHORT_STR, fi.path);
 	fi.piecesize = rand()%232;

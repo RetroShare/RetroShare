@@ -960,7 +960,7 @@ void RetroshareDirModel::downloadSelected(const QModelIndexList &list)
         {
             std::cerr << "RetroshareDirModel::downloadSelected() Calling File Request";
             std::cerr << std::endl;
-            std::list<std::string> srcIds;
+            std::list<RsPeerId> srcIds;
             srcIds.push_back(details.id);
             rsFiles -> FileRequest(details.name, details.hash,
                     details.count, "", RS_FILE_REQ_ANONYMOUS_ROUTING, srcIds);
@@ -980,7 +980,7 @@ void RetroshareDirModel::downloadDirectory(const DirDetails & dirDetails, int pr
 {
 	if (dirDetails.type & DIR_TYPE_FILE)
 	{
-		std::list<std::string> srcIds;
+        std::list<RsPeerId> srcIds;
 		QString cleanPath = QDir::cleanPath(QString::fromUtf8(rsFiles->getDownloadDirectory().c_str()) + "/" + QString::fromUtf8(dirDetails.path.substr(prefixLen).c_str()));
 
 		srcIds.push_back(dirDetails.id);
@@ -1074,10 +1074,10 @@ void RetroshareDirModel::getFileInfoFromIndexList(const QModelIndexList& list, s
 			// Note: for directories, the returned hash, is the peer id, so if we collect
 			// dirs, we need to be a bit more conservative for the 
 
-			if(already_in.find(details->hash+details->name) == already_in.end())
+            if(already_in.find(details->hash.toStdString()+details->name) == already_in.end())
 			{
 				file_details.push_back(*details) ;
-				already_in.insert(details->hash+details->name) ;
+                already_in.insert(details->hash.toStdString()+details->name) ;
 			}
 		}
 #ifdef RDM_DEBUG
@@ -1199,8 +1199,8 @@ QMimeData * RetroshareDirModel::mimeData ( const QModelIndexList & indexes ) con
 	/* extract from each the member text */
 	QString text;
 	QModelIndexList::const_iterator it;
-	std::map<std::string, uint64_t> drags;
-	std::map<std::string, uint64_t>::iterator dit;
+    std::map<RsFileHash, uint64_t> drags;
+    std::map<RsFileHash, uint64_t>::iterator dit;
 
 	for(it = indexes.begin(); it != indexes.end(); it++)
 	{
@@ -1239,7 +1239,7 @@ QMimeData * RetroshareDirModel::mimeData ( const QModelIndexList & indexes ) con
 
 		drags[details->hash] = details->count;
 
-		QString line = QString("%1/%2/%3/").arg(QString::fromUtf8(details->name.c_str()), QString::fromStdString(details->hash), QString::number(details->count));
+        QString line = QString("%1/%2/%3/").arg(QString::fromUtf8(details->name.c_str()), QString::fromStdString(details->hash.toStdString()), QString::number(details->count));
 
 		if (RemoteMode)
 		{

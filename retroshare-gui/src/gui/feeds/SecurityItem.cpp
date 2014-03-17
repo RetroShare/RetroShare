@@ -43,7 +43,7 @@
  ****/
 
 /** Constructor */
-SecurityItem::SecurityItem(FeedHolder *parent, uint32_t feedId, const std::string &gpgId, const std::string &sslId, const std::string &sslCn, const std::string& ip_address,uint32_t type, bool isHome)
+SecurityItem::SecurityItem(FeedHolder *parent, uint32_t feedId, const RsPgpId &gpgId, const RsPeerId &sslId, const std::string &sslCn, const std::string& ip_address,uint32_t type, bool isHome)
 :QWidget(NULL), mParent(parent), mFeedId(feedId),
 	mGpgId(gpgId), mSslId(sslId), mSslCn(sslCn), mIP(ip_address), mType(type), mIsHome(isHome)
 {
@@ -74,7 +74,7 @@ SecurityItem::SecurityItem(FeedHolder *parent, uint32_t feedId, const std::strin
     connect(NotifyQt::getInstance(), SIGNAL(friendsChanged()), this, SLOT(updateItem()));
 
 
-    avatar->setId(mSslId, false);
+    avatar->setId(mSslId);
 
     expandFrame->hide();
 
@@ -83,7 +83,7 @@ SecurityItem::SecurityItem(FeedHolder *parent, uint32_t feedId, const std::strin
 }
 
 
-bool SecurityItem::isSame(const std::string &sslId, uint32_t type)
+bool SecurityItem::isSame(const RsPeerId &sslId, uint32_t type)
 {
 	if ((mSslId == sslId) && (mType == type))
 	{
@@ -131,15 +131,15 @@ void SecurityItem::updateItemStatic()
 			requestLabel->hide();
 			break;
 		case RS_FEED_ITEM_SEC_MISSING_CERTIFICATE:
-			title = tr("Peer/location not in friendlist (PGP id=")+QString::fromStdString(mGpgId)+")";
+            title = tr("Peer/location not in friendlist (PGP id=")+QString::fromStdString(mGpgId.toStdString())+")";
 			avatar->setDefaultAvatar(":images/avatar_request_unknown.png");
 			requestLabel->show();
 			break;
 		case RS_FEED_ITEM_SEC_BAD_CERTIFICATE:
 			{
 			RsPeerDetails details ;
-			if(rsPeers->getPeerDetails(mGpgId, details))
-				title = tr("Missing/Damaged SSL certificate for key ") + QString::fromStdString(mGpgId) ;
+            if(rsPeers->getGPGDetails(mGpgId, details))
+                title = tr("Missing/Damaged SSL certificate for key ") + QString::fromStdString(mGpgId.toStdString()) ;
 			else
 				title = tr("Missing/Damaged certificate. Not a real Retroshare user.");
 			requestLabel->hide();
@@ -187,7 +187,7 @@ void SecurityItem::updateItem()
 		if (!rsPeers->getPeerDetails(mSslId, details))
 		{
 			/* then gpgid */
-			if(!rsPeers->getPeerDetails(mGpgId, details))
+            if(!rsPeers->getGPGDetails(mGpgId, details))
 			{
 				/* it is very likely that we will end up here for some of the
 				 * Unknown peer cases.... so allow them here
@@ -196,8 +196,8 @@ void SecurityItem::updateItem()
 				/* set peer name */
 				peerNameLabel->setText(QString("%1 (%2)").arg(tr("Unknown Peer"), QString::fromUtf8(mSslCn.c_str())));
 
-				nameLabel->setText(QString::fromUtf8(mSslCn.c_str()) + " (" + QString::fromStdString(mGpgId) + ")");
-				idLabel->setText(QString::fromStdString(mSslId));
+                nameLabel->setText(QString::fromUtf8(mSslCn.c_str()) + " (" + QString::fromStdString(mGpgId.toStdString()) + ")");
+                idLabel->setText(QString::fromStdString(mSslId.toStdString()));
 
 				statusLabel->setText(tr("Unknown Peer"));
 				trustLabel->setText(tr("Unknown Peer"));
@@ -221,9 +221,9 @@ void SecurityItem::updateItem()
 		peerNameLabel->setText(QString::fromUtf8(details.name.c_str()));
 
 		/* expanded Info */
-		nameLabel->setText(QString::fromUtf8(details.name.c_str()) + " (" + QString::fromStdString(mGpgId) + ")");
+        nameLabel->setText(QString::fromUtf8(details.name.c_str()) + " (" + QString::fromStdString(mGpgId.toStdString()) + ")");
 		//idLabel->setText(QString::fromStdString(details.id));
-		idLabel->setText(QString::fromStdString(mSslId));
+        idLabel->setText(QString::fromStdString(mSslId.toStdString()));
 		locLabel->setText(QString::fromUtf8(details.location.c_str()));
 
 		/* top Level info */
@@ -362,7 +362,7 @@ void SecurityItem::peerDetails()
 	}
 
 	/* then gpgid */
-	if (rsPeers->getPeerDetails(mGpgId, details))
+    if (rsPeers->getGPGDetails(mGpgId, details))
 	{
 		ConfCertDialog::showIt(mGpgId, ConfCertDialog::PageDetails);
 	}
@@ -380,11 +380,11 @@ void SecurityItem::sendMsg()
 		return;
 	}
 
-	std::string hash ;
+    RsPeerId peerId ;
 
-	if(rsMsgs->getDistantMessageHash(mGpgId,hash))
+    if(rsMsgs->getDistantMessagePeerId(mGpgId,peerId))
 	{
-		nMsgDialog->addRecipient(MessageComposer::TO, hash, mGpgId);
+        nMsgDialog->addRecipient(MessageComposer::TO, peerId, mGpgId);
 		nMsgDialog->show();
 		nMsgDialog->activateWindow();
 	}
@@ -400,6 +400,6 @@ void SecurityItem::openChat()
 #endif
 	if (mParent)
 	{
-		mParent->openChat(mGpgId);
+        mParent->openChat(mSslId);
 	}
 }

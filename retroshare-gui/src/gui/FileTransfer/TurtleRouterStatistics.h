@@ -23,6 +23,7 @@
 
 #include <QPoint>
 #include <retroshare/rsturtle.h>
+#include <retroshare/rstypes.h>
 #include "ui_TurtleRouterStatistics.h"
 #include "RsAutoUpdatePage.h"
 
@@ -37,7 +38,7 @@ class TurtleRouterStatistics: public RsAutoUpdatePage, public Ui::TurtleRouterSt
 		~TurtleRouterStatistics();
 		
 		// Cache for peer names.
-		static QString getPeerName(const std::string& peer_id) ;
+        static QString getPeerName(const RsPeerId& peer_id) ;
 
 	private:
 											

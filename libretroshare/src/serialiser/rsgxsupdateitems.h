@@ -52,7 +52,7 @@ public:
 	virtual void clear();
 	virtual std::ostream &print(std::ostream &out, uint16_t indent);
 
-	std::string peerId;
+    RsPeerId peerId;
 	uint32_t grpUpdateTS;
 };
 
@@ -79,8 +79,8 @@ public:
 	virtual void clear();
 	virtual std::ostream &print(std::ostream &out, uint16_t indent);
 
-	std::string peerId;
-	std::map<std::string, uint32_t> msgUpdateTS;
+    RsPeerId peerId;
+    std::map<RsGxsGroupId, uint32_t> msgUpdateTS;
 };
 
 class RsGxsServerMsgUpdateItem : public RsItem
@@ -94,7 +94,7 @@ public:
         virtual void clear();
         virtual std::ostream &print(std::ostream &out, uint16_t indent);
 
-        std::string grpId;
+        RsGxsGroupId grpId;
         uint32_t msgUpdateTS; // the last time this group received a new msg
 };
 

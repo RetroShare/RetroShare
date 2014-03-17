@@ -134,7 +134,7 @@ bool RsDiscSpace::checkForDiscSpace(RsDiscSpace::DiscLocation loc)
 {
 	RsStackMutex m(_mtx) ; // Locked
 
-	if(_partials_path == "" && loc == RS_PARTIALS_DIRECTORY || _download_path == "" && loc == RS_DOWNLOAD_DIRECTORY)
+    if( (_partials_path == "" && loc == RS_PARTIALS_DIRECTORY) || (_download_path == "" && loc == RS_DOWNLOAD_DIRECTORY))
 		throw std::runtime_error("Download path and partial path not properly set in RsDiscSpace. Please call RsDiscSpace::setPartialsPath() and RsDiscSpace::setDownloadPath()") ;
 
 	time_t now = time(NULL) ;

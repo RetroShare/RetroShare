@@ -359,24 +359,27 @@ void MessageComposer::processSettings(bool bLoad)
 
     Settings->endGroup();
 }
-/*static*/ void MessageComposer::msgDistantPeer(const std::string& hash,const std::string& pgp_id)
+/*static*/ void MessageComposer::msgDistantPeer(const RsPgpId& pgp_id)
 {
 //    std::cerr << "MessageComposer::msgfriend()" << std::endl;
 
     /* create a message */
 
+    DistantMsgPeerId pid ;
+    rsMsgs->getDistantMessagePeerId(pgp_id,pid) ;
+
     MessageComposer *pMsgDialog = MessageComposer::newMsg();
     if (pMsgDialog == NULL) 
         return;
 
-	 pMsgDialog->addRecipient(TO, hash,pgp_id) ;
+    pMsgDialog->addRecipient(TO,pid,pgp_id) ;
     pMsgDialog->show();
 
     /* window will destroy itself! */
 }
 
 
-/*static*/ void MessageComposer::msgFriend(const std::string &id, bool group)
+/*static*/ void MessageComposer::msgFriend(const RsPeerId &id, bool group)
 {
 //    std::cerr << "MessageComposer::msgfriend()" << std::endl;
 
@@ -391,19 +394,20 @@ void MessageComposer::processSettings(bool bLoad)
         pMsgDialog->addRecipient(TO, id, true);
     } else {
         RsPeerDetails detail;
-        if (rsPeers->getPeerDetails(id, detail) && detail.accept_connection) {
-            if (detail.isOnlyGPGdetail) {
-                //put all sslChilds in message list
-                std::list<std::string> sslIds;
-                rsPeers->getAssociatedSSLIds(id, sslIds);
-
-                std::list<std::string>::const_iterator it;
-                for (it = sslIds.begin(); it != sslIds.end(); it++) {
-                    pMsgDialog->addRecipient(TO, *it, false);
-                }
-            } else {
+        if (rsPeers->getPeerDetails(id, detail) && detail.accept_connection)
+    {
+      //      if (detail.isOnlyGPGdetail) {
+      //          //put all sslChilds in message list
+      //          std::list<RsPeerId> sslIds;
+      //          rsPeers->getAssociatedSSLIds(id, sslIds);
+    //
+      //          std::list<RsPeerId>::const_iterator it;
+      //          for (it = sslIds.begin(); it != sslIds.end(); it++) {
+      //              pMsgDialog->addRecipient(TO, *it, false);
+      //          }
+      //      } else {
                 pMsgDialog->addRecipient(TO, detail.id, false);
-            }
+       //     }
         }
     }
 
@@ -412,12 +416,12 @@ void MessageComposer::processSettings(bool bLoad)
     /* window will destroy itself! */
 }
 
-static QString buildRecommendHtml(const std::list<std::string> &sslIds, const std::string &excludeId = "")
+static QString buildRecommendHtml(const std::list<RsPeerId> &sslIds, const RsPeerId& excludeId = RsPeerId())
 {
     QString text;
 
     /* process ssl ids */
-    std::list <std::string>::const_iterator sslIt;
+    std::list <RsPeerId>::const_iterator sslIt;
     for (sslIt = sslIds.begin(); sslIt != sslIds.end(); sslIt++) {
         if (*sslIt == excludeId) {
             continue;
@@ -436,7 +440,7 @@ QString MessageComposer::recommendMessage()
     return tr("Hello,<br>I recommend a good friend of mine; you can trust them too when you trust me. <br>");
 }
 
-void MessageComposer::recommendFriend(const std::list <std::string> &sslIds, const std::string &to, const QString &msg, bool autoSend)
+void MessageComposer::recommendFriend(const std::list <RsPeerId> &sslIds, const RsPeerId &to, const QString &msg, bool autoSend)
 {
 //    std::cerr << "MessageComposer::recommendFriend()" << std::endl;
 
@@ -455,12 +459,12 @@ void MessageComposer::recommendFriend(const std::list <std::string> &sslIds, con
     composer->setTitleText(tr("You have a friend recommendation"));
     composer->msgFlags |= RS_MSG_FRIEND_RECOMMENDATION;
 
-    if (!to.empty()) {
+    if (!to.isNull()) {
         composer->addRecipient(TO, to, false);
     }
-    std::string ownId = rsPeers->getOwnId();
+    RsPgpId ownPgpId = rsPeers->getGPGOwnId();
     RetroShareLink link;
-    link.createPerson(ownId);
+    link.createPerson(ownPgpId);
     
     QString sMsgText = msg.isEmpty() ? recommendMessage() : msg;
     sMsgText += "<br><br>";
@@ -470,7 +474,7 @@ void MessageComposer::recommendFriend(const std::list <std::string> &sslIds, con
     sMsgText += tr("Thanks, <br>The RetroShare Team");
     composer->setMsgText(sMsgText);
 
-    std::list <std::string>::const_iterator peerIt;
+    std::list <RsPeerId>::const_iterator peerIt;
     for (peerIt = sslIds.begin(); peerIt != sslIds.end(); peerIt++) {
         if (*peerIt == to) {
             continue;
@@ -490,9 +494,9 @@ void MessageComposer::recommendFriend(const std::list <std::string> &sslIds, con
     /* window will destroy itself! */
 }
 
-void MessageComposer::sendConnectAttemptMsg(const std::string &gpgId, const std::string &sslId, const QString &sslName)
+void MessageComposer::sendConnectAttemptMsg(const RsPgpId &gpgId, const RsPeerId &sslId, const QString &sslName)
 {
-    if (gpgId.empty()) {
+    if (gpgId.isNull()) {
         return;
     }
 
@@ -637,8 +641,8 @@ void MessageComposer::buildCompleter()
     std::list<RsGroupInfo>::iterator groupIt;
     rsPeers->getGroupInfoList(groupInfoList);
 
-    std::list<std::string> peers;
-    std::list<std::string>::iterator peerIt;
+    std::list<RsPeerId> peers;
+    std::list<RsPeerId>::iterator peerIt;
     rsPeers->getFriendList(peers);
 
     // create completer list for friends
@@ -682,7 +686,7 @@ void MessageComposer::peerStatusChanged(const QString& peer_id, int status)
         std::string id;
         bool group;
 
-        if (getRecipientFromRow(row, type, id, group) && id.empty() == false) {
+        if (getRecipientFromRow(row, type, id, group) && !id.empty() ) {
             if (group == false && QString::fromStdString(id) == peer_id) {
                 QTableWidgetItem *item = ui.recipientWidget->item(row, COLUMN_RECIPIENT_ICON);
                 if (item) {
@@ -741,7 +745,7 @@ void MessageComposer::addFile(const FileInfo &fileInfo)
 
     item->setText(COLUMN_FILE_NAME, QString::fromUtf8(fileInfo.fname.c_str()));
     item->setText(COLUMN_FILE_SIZE, misc::friendlyUnit(fileInfo.size));
-    item->setText(COLUMN_FILE_HASH, QString::fromStdString(fileInfo.hash));
+    item->setText(COLUMN_FILE_HASH, QString::fromStdString(fileInfo.hash.toStdString()));
     item->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
     item->setCheckState(COLUMN_FILE_CHECKED, Qt::Checked);
 
@@ -761,7 +765,7 @@ void MessageComposer::calculateTitle()
     setWindowTitle(tr("Compose") + ": " + misc::removeNewLine(ui.titleEdit->text()));
 }
 
-static void calculateGroupsOfSslIds(std::list<RsGroupInfo> &existingGroupInfos, std::list<std::string> &checkSslIds, std::list<std::string> &checkGroupIds)
+static void calculateGroupsOfSslIds(const std::list<RsGroupInfo> &existingGroupInfos, std::list<RsPeerId> &checkSslIds, std::list<std::string> &checkGroupIds)
 {
     checkGroupIds.clear();
 
@@ -770,24 +774,24 @@ static void calculateGroupsOfSslIds(std::list<RsGroupInfo> &existingGroupInfos, 
         return;
     }
 
-    std::map<std::string, std::string> sslToGpg;
-    std::map<std::string, std::list<std::string> > gpgToSslIds;
+    std::map<RsPeerId, RsPgpId> sslToGpg;
+    std::map<RsPgpId, std::list<RsPeerId> > gpgToSslIds;
 
     std::list<RsGroupInfo> groupInfos;
 
     // iterate all groups
-    std::list<RsGroupInfo>::iterator groupInfoIt;
+    std::list<RsGroupInfo>::const_iterator groupInfoIt;
     for (groupInfoIt = existingGroupInfos.begin(); groupInfoIt != existingGroupInfos.end(); groupInfoIt++) {
         if (groupInfoIt->peerIds.empty()) {
             continue;
         }
 
         // iterate all assigned peers (gpg id's)
-        std::list<std::string>::iterator peerIt;
+        std::list<RsPgpId>::const_iterator peerIt;
         for (peerIt = groupInfoIt->peerIds.begin(); peerIt != groupInfoIt->peerIds.end(); peerIt++) {
-            std::list<std::string> sslIds;
+            std::list<RsPeerId> sslIds;
 
-            std::map<std::string, std::list<std::string> >::iterator it = gpgToSslIds.find(*peerIt);
+            std::map<RsPgpId, std::list<RsPeerId> >::const_iterator it = gpgToSslIds.find(*peerIt);
             if (it == gpgToSslIds.end()) {
                 rsPeers->getAssociatedSSLIds(*peerIt, sslIds);
 
@@ -797,7 +801,7 @@ static void calculateGroupsOfSslIds(std::list<RsGroupInfo> &existingGroupInfos, 
             }
 
             // iterate all ssl id's
-            std::list<std::string>::const_iterator sslIt;
+            std::list<RsPeerId>::const_iterator sslIt;
             for (sslIt = sslIds.begin(); sslIt != sslIds.end(); sslIt++) {
                 // search in ssl list
                 if (std::find(checkSslIds.begin(), checkSslIds.end(), *sslIt) == checkSslIds.end()) {
@@ -820,11 +824,11 @@ static void calculateGroupsOfSslIds(std::list<RsGroupInfo> &existingGroupInfos, 
     // remove all ssl id's of all found groups from the list
     for (groupInfoIt = groupInfos.begin(); groupInfoIt != groupInfos.end(); groupInfoIt++) {
         // iterate all assigned peers (gpg id's)
-        std::list<std::string>::iterator peerIt;
+        std::list<RsPgpId>::const_iterator peerIt;
         for (peerIt = groupInfoIt->peerIds.begin(); peerIt != groupInfoIt->peerIds.end(); peerIt++) {
-            std::list<std::string> sslIds;
+            std::list<RsPeerId> sslIds;
 
-            std::map<std::string, std::list<std::string> >::iterator it = gpgToSslIds.find(*peerIt);
+            std::map<RsPgpId, std::list<RsPeerId> >::iterator it = gpgToSslIds.find(*peerIt);
             if (it == gpgToSslIds.end()) {
                 rsPeers->getAssociatedSSLIds(*peerIt, sslIds);
 
@@ -834,10 +838,10 @@ static void calculateGroupsOfSslIds(std::list<RsGroupInfo> &existingGroupInfos, 
             }
 
             // iterate all ssl id's
-            std::list<std::string>::const_iterator sslIt;
+            std::list<RsPeerId>::const_iterator sslIt;
             for (sslIt = sslIds.begin(); sslIt != sslIds.end(); sslIt++) {
                 // search in ssl list
-                std::list<std::string>::iterator it = std::find(checkSslIds.begin(), checkSslIds.end(), *sslIt);
+                std::list<RsPeerId>::iterator it = std::find(checkSslIds.begin(), checkSslIds.end(), *sslIt);
                 if (it != checkSslIds.end()) {
                     checkSslIds.erase(it);
                 }
@@ -888,28 +892,28 @@ MessageComposer *MessageComposer::newMsg(const std::string &msgId /* = ""*/)
 
         std::list<std::string> groupIds;
         std::list<std::string>::iterator groupIt;
-        std::list<std::string>::iterator it;
+        std::list<RsPeerId>::iterator it;
 
-        calculateGroupsOfSslIds(groupInfoList, msgInfo.msgto, groupIds);
-        for (groupIt = groupIds.begin(); groupIt != groupIds.end(); groupIt++ ) {
-            msgComposer->addRecipient(MessageComposer::TO, *groupIt, true) ;
-        }
+ //       calculateGroupsOfSslIds(groupInfoList, msgInfo.msgto, groupIds);
+ //       for (groupIt = groupIds.begin(); groupIt != groupIds.end(); groupIt++ ) {
+ //           msgComposer->addRecipient(MessageComposer::TO, *groupIt, true) ;
+ //       }
         for (it = msgInfo.msgto.begin(); it != msgInfo.msgto.end(); it++ ) {
             msgComposer->addRecipient(MessageComposer::TO, *it, false) ;
         }
 
-        calculateGroupsOfSslIds(groupInfoList, msgInfo.msgcc, groupIds);
-        for (groupIt = groupIds.begin(); groupIt != groupIds.end(); groupIt++ ) {
-            msgComposer->addRecipient(MessageComposer::CC, *groupIt, true) ;
-        }
+   //     calculateGroupsOfSslIds(groupInfoList, msgInfo.msgcc, groupIds);
+   //     for (groupIt = groupIds.begin(); groupIt != groupIds.end(); groupIt++ ) {
+   //         msgComposer->addRecipient(MessageComposer::CC, *groupIt, true) ;
+   //     }
         for (it = msgInfo.msgcc.begin(); it != msgInfo.msgcc.end(); it++ ) {
             msgComposer->addRecipient(MessageComposer::CC, *it, false) ;
         }
 
-        calculateGroupsOfSslIds(groupInfoList, msgInfo.msgbcc, groupIds);
-        for (groupIt = groupIds.begin(); groupIt != groupIds.end(); groupIt++ ) {
-            msgComposer->addRecipient(MessageComposer::BCC, *groupIt, true) ;
-        }
+//        calculateGroupsOfSslIds(groupInfoList, msgInfo.msgbcc, groupIds);
+//        for (groupIt = groupIds.begin(); groupIt != groupIds.end(); groupIt++ ) {
+//            msgComposer->addRecipient(MessageComposer::BCC, *groupIt, true) ;
+//        }
         for (it = msgInfo.msgbcc.begin(); it != msgInfo.msgbcc.end(); it++ ) {
             msgComposer->addRecipient(MessageComposer::BCC, *it, false) ;
         }
@@ -935,7 +939,7 @@ QString MessageComposer::buildReplyHeader(const MessageInfo &msgInfo)
     QString from = link.toHtml();
 
     QString to;
-    std::list<std::string>::const_iterator it;
+    std::list<RsPeerId>::const_iterator it;
     for (it = msgInfo.msgto.begin(); it != msgInfo.msgto.end(); it++) {
         if (link.createMessage(*it, "")) {
             if (!to.isEmpty()) {
@@ -1029,15 +1033,15 @@ MessageComposer *MessageComposer::replyMsg(const std::string &msgId, bool all)
     msgComposer->addRecipient(MessageComposer::TO, msgInfo.srcId, false);
 
     if (all) {
-        std::string ownId = rsPeers->getOwnId();
+        RsPeerId ownId = rsPeers->getOwnId();
 
-        for (std::list<std::string>::iterator tli = msgInfo.msgto.begin(); tli != msgInfo.msgto.end(); tli++) {
+        for (std::list<RsPeerId>::iterator tli = msgInfo.msgto.begin(); tli != msgInfo.msgto.end(); tli++) {
             if (ownId != *tli) {
                 msgComposer->addRecipient(MessageComposer::TO, *tli, false) ;
             }
         }
 
-        for (std::list<std::string>::iterator tli = msgInfo.msgcc.begin(); tli != msgInfo.msgcc.end(); tli++) {
+        for (std::list<RsPeerId>::iterator tli = msgInfo.msgcc.begin(); tli != msgInfo.msgcc.end(); tli++) {
             if (ownId != *tli) {
                 msgComposer->addRecipient(MessageComposer::TO, *tli, false) ;
             }
@@ -1137,6 +1141,7 @@ void MessageComposer::sendMessage()
 
 bool MessageComposer::sendMessage_internal(bool bDraftbox)
 {
+#ifdef SUSPENDED
     /* construct a message */
     MessageInfo mi;
 
@@ -1171,7 +1176,7 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
     }
 
     /* get the ids from the send list */
-    std::list<std::string> peers;
+    std::list<RsPeerId> peers;
     rsPeers->getFriendList(peers);
 
     /* add own id */
@@ -1185,7 +1190,8 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
         std::string id;
         bool group;
 
-        if (getRecipientFromRow(row, type, id, group) && id.empty() == false) {
+        if (getRecipientFromRow(row, type, id, group) && !id.empty())
+    {
             if (group) {
                 RsGroupInfo groupInfo;
                 if (rsPeers->getGroupInfo(id, groupInfo) == false) {
@@ -1195,10 +1201,10 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
 
                 std::list<std::string>::const_iterator groupIt;
                 for (groupIt = groupInfo.peerIds.begin(); groupIt != groupInfo.peerIds.end(); groupIt++) {
-                    std::list<std::string> sslIds;
+                    std::list<RsPeerId> sslIds;
                     rsPeers->getAssociatedSSLIds(*groupIt, sslIds);
 
-                    std::list<std::string>::const_iterator sslIt;
+                    std::list<RsPeerId>::const_iterator sslIt;
                     for (sslIt = sslIds.begin(); sslIt != sslIds.end(); sslIt++) {
                         if (std::find(peers.begin(), peers.end(), *sslIt) == peers.end()) {
                             // no friend
@@ -1318,6 +1324,7 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
         }
     }
     ui.msgText->document()->setModified(false);
+#endif
     return true;
 }
 
@@ -1343,7 +1350,7 @@ void MessageComposer::addEmptyRecipient()
         }
     }
 
-    setRecipientToRow(lastRow, TO, "", false);
+    setRecipientToRow(lastRow, TO,"", false);
 }
 
 bool MessageComposer::getRecipientFromRow(int row, enumType &type, std::string &id, bool &group)
@@ -1364,7 +1371,7 @@ bool MessageComposer::getRecipientFromRow(int row, enumType &type, std::string &
     return true;
 }
 
-void MessageComposer::setRecipientToRow(int row, enumType type, std::string id, bool group)
+void MessageComposer::setRecipientToRow(int row, enumType type, const std::string& id, bool group)
 {
     if (row + 1 > ui.recipientWidget->rowCount()) {
         ui.recipientWidget->setRowCount(row + 1);
@@ -1399,7 +1406,7 @@ void MessageComposer::setRecipientToRow(int row, enumType type, std::string id, 
 
     QIcon icon;
     QString name;
-    if (!id.empty()) 
+    if (!id.empty())
 	 {
         if (group) 
 		  {
@@ -1410,31 +1417,30 @@ void MessageComposer::setRecipientToRow(int row, enumType type, std::string id, 
                 name = GroupDefs::name(groupInfo);
             } else {
                 name = tr("Unknown");
-                id.clear();
             }
         } 
 		  else 
 		  {
 			  RsPeerDetails details;
 
-			  if(_distant_peers.find(id) != _distant_peers.end())
+              if(_distant_peers.find(RsPeerId(id)) != _distant_peers.end())
 			  {
-			  	  if(!rsPeers->getPeerDetails(_distant_peers[id], details))
+                  if(!rsPeers->getGPGDetails(_distant_peers[RsPeerId(id)], details))
 				  {
-					  std::cerr << "Can't get peer details from " << _distant_peers[id] << std::endl;
+                      std::cerr << "Can't get peer details from " << _distant_peers[RsPeerId(id)] << std::endl;
 					  return ;
 				  }
 
-				  name = tr("Distant peer (name: %2, PGP key: %1)").arg(QString::fromStdString(_distant_peers[id])).arg(QString::fromStdString(details.name)) ;
+                  name = tr("Distant peer (name: %2, PGP key: %1)").arg(QString::fromStdString(_distant_peers[RsPeerId(id)].toStdString())).arg(QString::fromStdString(details.name)) ;
 				  icon = QIcon(StatusDefs::imageUser(RS_STATUS_ONLINE));
 			  }
-			  else if(rsPeers->getPeerDetails(id, details) && (!details.isOnlyGPGdetail))
+              else if(rsPeers->getPeerDetails(RsPeerId(id), details) && (!details.isOnlyGPGdetail))
 			  {
 				  name = PeerDefs::nameWithLocation(details);
 
 				  StatusInfo peerStatusInfo;
 				  // No check of return value. Non existing status info is handled as offline.
-				  rsStatus->getStatus(id, peerStatusInfo);
+                  rsStatus->getStatus(RsPeerId(id), peerStatusInfo);
 
 				  icon = QIcon(StatusDefs::imageUser(peerStatusInfo.status));
 			  } 
@@ -1442,7 +1448,6 @@ void MessageComposer::setRecipientToRow(int row, enumType type, std::string id, 
 			  {
 				  icon = QIcon(StatusDefs::imageUser(RS_STATUS_OFFLINE));
 				  name = tr("Unknown friend");
-				  id.clear();
 			  }
 		  }
     }
@@ -1538,10 +1543,10 @@ void MessageComposer::editingRecipientFinished()
     }
 
     // start with peers
-    std::list<std::string> peers;
+    std::list<RsPeerId> peers;
     rsPeers->getFriendList(peers);
 
-    std::list<std::string>::iterator peerIt;
+    std::list<RsPeerId>::iterator peerIt;
     for (peerIt = peers.begin(); peerIt != peers.end(); peerIt++) {
         RsPeerDetails details;
         if (!rsPeers->getPeerDetails(*peerIt, details)) {
@@ -1551,7 +1556,7 @@ void MessageComposer::editingRecipientFinished()
         QString name = PeerDefs::nameWithLocation(details);
         if (text.compare(name, Qt::CaseSensitive) == 0) {
             // found it
-            setRecipientToRow(row, type, details.id, false);
+            setRecipientToRow(row, type, details.id.toStdString(), false);
             return;
         }
     }
@@ -1575,9 +1580,9 @@ void MessageComposer::editingRecipientFinished()
     lineEdit->setText(text);
 }
 
-void MessageComposer::addRecipient(enumType type, const std::string& hash,const std::string& pgp_id)
+void MessageComposer::addRecipient(enumType type, const DistantMsgPeerId& pid,const RsPgpId& pgp_id)
 {
-	_distant_peers[hash] = pgp_id ;
+    _distant_peers[pid] = pgp_id ;
 
 	int rowCount = ui.recipientWidget->rowCount();
 	int row;
@@ -1592,18 +1597,18 @@ void MessageComposer::addRecipient(enumType type, const std::string& hash,const 
 			if (rowId.empty()) // use row
 				break;
 
-			if (rowId == hash && rowType == type) // existing row
+            if (rowId == pid.toStdString() && rowType == type) // existing row
 				break;
 		} 
 		else // use row
 			break;
 	}
 
-	setRecipientToRow(row, type, hash, false);
+    setRecipientToRow(row, type, pid.toStdString(), false);
 }
-void MessageComposer::addRecipient(enumType type, const std::string &id, bool group)
+void MessageComposer::addRecipient(enumType type, const RsPeerId &id, bool group)
 {
-    std::list<std::string> sslIds;
+    std::list<RsPeerId> sslIds;
     if (group) {
         sslIds.push_back(id);
     } else {
@@ -1613,25 +1618,25 @@ void MessageComposer::addRecipient(enumType type, const std::string &id, bool gr
             return;
         }
 
-        if (detail.isOnlyGPGdetail) 
-		  {
-            if( (!rsPeers->getAssociatedSSLIds(id, sslIds)) || sslIds.empty()) 
-				{
-					std::string hash ;
-					if(rsMsgs->getDistantMessageHash(id,hash))
-						addRecipient(type, hash, id);
-					else
-					{
-						QMessageBox::warning(this,tr("PGP key unknown"),tr("You dont have the PGP key of the message sender. So you cannot respond!"),QMessageBox::Ok) ;
-						return;
-					}
-				}
-        } 
-		  else {
+//        if (detail.isOnlyGPGdetail)
+//		  {
+//            if( (!rsPeers->getAssociatedSSLIds(id, sslIds)) || sslIds.empty())
+//				{
+//					std::string hash ;
+//					if(rsMsgs->getDistantMessageHash(id,hash))
+//						addRecipient(type, hash, id);
+//					else
+//					{
+//						QMessageBox::warning(this,tr("PGP key unknown"),tr("You dont have the PGP key of the message sender. So you cannot respond!"),QMessageBox::Ok) ;
+//						return;
+//					}
+//				}
+//        }
+//		  else {
             sslIds.push_back(id);
-        }
+//        }
     }
-    std::list<std::string>::const_iterator sslIt;
+    std::list<RsPeerId>::const_iterator sslIt;
     for (sslIt = sslIds.begin(); sslIt != sslIds.end(); sslIt++) {
         // search existing or empty row
         int rowCount = ui.recipientWidget->rowCount();
@@ -1647,7 +1652,7 @@ void MessageComposer::addRecipient(enumType type, const std::string &id, bool gr
                     break;
                 }
 
-                if (rowId == *sslIt && rowType == type && group == rowGroup) {
+                if (rowId == (*sslIt).toStdString() && rowType == type && group == rowGroup) {
                     // existing row
                     break;
                 }
@@ -1657,7 +1662,7 @@ void MessageComposer::addRecipient(enumType type, const std::string &id, bool gr
             }
         }
 
-        setRecipientToRow(row, type, *sslIt, group);
+        setRecipientToRow(row, type, (*sslIt).toStdString(), group);
     }
 }
 
@@ -2294,28 +2299,28 @@ void MessageComposer::fileHashingFinished(QList<HashedFile> hashedFiles)
 
 void MessageComposer::addContact(enumType type)
 {
-    std::list<std::string> ids;
-    ui.friendSelectionWidget->selectedGroupIds(ids);
+  //  std::list<std::string> ids;
+  //  ui.friendSelectionWidget->selectedIds<std::string,FriendSelectionWidget::IDTYPE_GROUP>(ids,false);
+  //
+  //  std::list<std::string>::iterator idIt;
+  //  for (idIt = ids.begin(); idIt != ids.end(); idIt++) {
+  //      addRecipient(type, *idIt, true);
+  //  }
 
-    std::list<std::string>::iterator idIt;
-    for (idIt = ids.begin(); idIt != ids.end(); idIt++) {
-        addRecipient(type, *idIt, true);
-    }
-
-    ids.empty();
-    ui.friendSelectionWidget->selectedSslIds(ids, true);
-    for (idIt = ids.begin(); idIt != ids.end(); idIt++) {
+    std::list<RsPeerId> ids ;
+    ui.friendSelectionWidget->selectedIds<RsPeerId,FriendSelectionWidget::IDTYPE_SSL>(ids, true);
+    for (std::list<RsPeerId>::const_iterator idIt = ids.begin(); idIt != ids.end(); idIt++) {
         addRecipient(type, *idIt, false);
     }
 
-    ids.empty();
-    ui.friendSelectionWidget->selectedGpgIds(ids, true);
-    for (idIt = ids.begin(); idIt != ids.end(); idIt++) 
+    std::list<RsPgpId> id2 ;
+    ui.friendSelectionWidget->selectedIds<RsPgpId,FriendSelectionWidget::IDTYPE_GPG>(id2, true);
+    for (std::list<RsPgpId>::const_iterator idIt = id2.begin(); idIt != id2.end(); idIt++)
 	 {
-		 std::string hash ;
+         DistantMsgPeerId pid ;
 
-		 if(rsMsgs->getDistantMessageHash(*idIt,hash))
-			 addRecipient(type, hash, *idIt);
+         if(rsMsgs->getDistantMessagePeerId(*idIt,pid))
+             addRecipient(type, pid, *idIt);
 	 }
 }
 
@@ -2344,14 +2349,14 @@ void MessageComposer::addBcc()
 
 void MessageComposer::addRecommend()
 {
-    std::list<std::string> sslIds;
-    ui.friendSelectionWidget->selectedSslIds(sslIds, false);
+    std::list<RsPeerId> sslIds;
+    ui.friendSelectionWidget->selectedIds<RsPeerId,FriendSelectionWidget::IDTYPE_SSL>(sslIds, false);
 
     if (sslIds.empty()) {
         return;
     }
 
-    std::list <std::string>::iterator it;
+    std::list <RsPeerId>::iterator it;
     for (it = sslIds.begin(); it != sslIds.end(); it++) {
         addRecipient(CC, *it, false);
     }
@@ -2370,7 +2375,7 @@ void MessageComposer::friendDetails()
         return;
     }
 
-    ConfCertDialog::showIt(id, ConfCertDialog::PageDetails);
+    ConfCertDialog::showIt(RsPeerId(id), ConfCertDialog::PageDetails);
 }
 
 void MessageComposer::tagAboutToShow()

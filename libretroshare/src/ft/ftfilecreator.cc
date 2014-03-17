@@ -24,7 +24,7 @@
 *
 ***********************************************************/
 
-ftFileCreator::ftFileCreator(const std::string& path, uint64_t size, const std::string& hash,bool assume_availability)
+ftFileCreator::ftFileCreator(const std::string& path, uint64_t size, const RsFileHash& hash,bool assume_availability)
 	: ftFileProvider(path,size,hash), chunkMap(size,assume_availability)
 {
 	/* 
@@ -65,7 +65,7 @@ ftFileCreator::ftFileCreator(const std::string& path, uint64_t size, const std::
 #endif
 }
 
-bool ftFileCreator::getFileData(const std::string& peer_id,uint64_t offset, uint32_t &chunk_size, void *data)
+bool ftFileCreator::getFileData(const RsPeerId& peer_id,uint64_t offset, uint32_t &chunk_size, void *data)
 {
 	// Only send the data if we actually have it.
 	//
@@ -243,7 +243,7 @@ void ftFileCreator::removeInactiveChunks()
 #endif
 }
 
-void ftFileCreator::removeFileSource(const std::string& peer_id)
+void ftFileCreator::removeFileSource(const RsPeerId& peer_id)
 {
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
 #ifdef FILE_DEBUG
@@ -456,7 +456,7 @@ void ftFileCreator::setChunkStrategy(FileChunksInfo::ChunkStrategy s)
  * But can return size = 0, if we are still waiting for the data.
  */
 
-bool ftFileCreator::getMissingChunk(const std::string& peer_id,uint32_t size_hint,uint64_t &offset, uint32_t& size,bool& source_chunk_map_needed) 
+bool ftFileCreator::getMissingChunk(const RsPeerId& peer_id,uint32_t size_hint,uint64_t &offset, uint32_t& size,bool& source_chunk_map_needed) 
 {
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
 #ifdef FILE_DEBUG
@@ -559,7 +559,7 @@ bool ftFileCreator::locked_printChunkMap()
 		std::cerr << "  " << it->second << std::endl ;
 
 	std::cerr << "Active chunks per peer:" << std::endl ;
-	for(std::map<std::string,ZeroInitCounter>::const_iterator it(mChunksPerPeer.begin());it!=mChunksPerPeer.end();++it)
+	for(std::map<RsPeerId,ZeroInitCounter>::const_iterator it(mChunksPerPeer.begin());it!=mChunksPerPeer.end();++it)
 		std::cerr << "   " << it->first << "\t: " << it->second.cnt << std::endl;
 
 	return true; 
@@ -586,14 +586,14 @@ void ftFileCreator::getAvailabilityMap(CompressedChunkMap& map)
 	chunkMap.getAvailabilityMap(map) ;
 }
 
-bool ftFileCreator::sourceIsComplete(const std::string& peer_id)
+bool ftFileCreator::sourceIsComplete(const RsPeerId& peer_id)
 {
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
 
 	return chunkMap.getSourceChunksInfo(peer_id)->is_full ;
 }
 
-void ftFileCreator::setSourceMap(const std::string& peer_id,const CompressedChunkMap& compressed_map)
+void ftFileCreator::setSourceMap(const RsPeerId& peer_id,const CompressedChunkMap& compressed_map)
 {
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
 
@@ -617,7 +617,7 @@ bool ftFileCreator::finished()
 	return chunkMap.isComplete() ;
 }
 
-bool ftFileCreator::hashReceivedData(std::string& hash)
+bool ftFileCreator::hashReceivedData(RsFileHash& hash)
 {
 #ifdef FILE_DEBUG
 	std::cerr << "file creator asked for hashing received data " << file_name << std::endl;
@@ -646,7 +646,7 @@ void ftFileCreator::forceCheck()
 	chunkMap.forceCheck(); 
 }
 
-void ftFileCreator::getSourcesList(uint32_t chunk_num,std::vector<std::string>& sources)
+void ftFileCreator::getSourcesList(uint32_t chunk_num,std::vector<RsPeerId>& sources)
 {
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
 

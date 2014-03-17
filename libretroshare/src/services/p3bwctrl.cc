@@ -92,12 +92,12 @@ int	p3BandwidthControl::status()
 bool p3BandwidthControl::checkAvailableBandwidth()
 {
 	/* check each connection status */
-	std::map<std::string, RsBwRates> rateMap;
+	std::map<RsPeerId, RsBwRates> rateMap;
 	RsBwRates total;
 
 	mPg->ExtractRates(rateMap, total);
-	std::map<std::string, RsBwRates>::iterator it;
-	std::map<std::string, BwCtrlData>::iterator bit;
+	std::map<RsPeerId, RsBwRates>::iterator it;
+	std::map<RsPeerId, BwCtrlData>::iterator bit;
 
 	/* have to merge with existing list,
 	 * erasing as we go ... then any left have to deal with
@@ -107,7 +107,7 @@ bool p3BandwidthControl::checkAvailableBandwidth()
 	mTotalRates = total;
 
 	time_t now = time(NULL);
-	std::list<std::string> oldIds; // unused for now!
+	std::list<RsPeerId> oldIds; // unused for now!
 
 	for(bit = mBwMap.begin(); bit != mBwMap.end(); bit++)
 	{
@@ -189,7 +189,7 @@ bool p3BandwidthControl::processIncoming()
 
 		/* For each packet */
 		RsStackMutex stack(mBwMtx); /****** LOCKED MUTEX *******/
-		std::map<std::string, BwCtrlData>::iterator bit;
+		std::map<RsPeerId, BwCtrlData>::iterator bit;
 
 		bit = mBwMap.find(bci->PeerId());
 		if (bit == mBwMap.end())
@@ -231,11 +231,11 @@ int  p3BandwidthControl::getTotalBandwidthRates(RsConfigDataRates &rates)
 	return 1;
 }
 
-int p3BandwidthControl::getAllBandwidthRates(std::map<std::string, RsConfigDataRates> &ratemap)
+int p3BandwidthControl::getAllBandwidthRates(std::map<RsPeerId, RsConfigDataRates> &ratemap)
 {
 	RsStackMutex stack(mBwMtx); /****** LOCKED MUTEX *******/
 
-	std::map<std::string, BwCtrlData>::iterator bit;
+	std::map<RsPeerId, BwCtrlData>::iterator bit;
 	for(bit = mBwMap.begin(); bit != mBwMap.end(); bit++)
 	{
 		RsConfigDataRates rates;
@@ -279,7 +279,7 @@ int p3BandwidthControl::printRateInfo_locked(std::ostream &out)
 	out << " MaxOut: " << mTotalRates.mMaxRateOut;
 	out << std::endl;
 
-	std::map<std::string, BwCtrlData>::iterator bit;
+	std::map<RsPeerId, BwCtrlData>::iterator bit;
 	for(bit = mBwMap.begin(); bit != mBwMap.end(); bit++)
 	{
 		out << "\t" << bit->first;
@@ -305,7 +305,7 @@ void p3BandwidthControl::statusChange(const std::list<pqipeer> &plist)
 			if (it->actions & RS_PEER_DISCONNECTED)
 			{
 				/* remove from map */
-				std::map<std::string, BwCtrlData>::iterator bit;
+				std::map<RsPeerId, BwCtrlData>::iterator bit;
 				bit = mBwMap.find(it->id);
 				if (bit == mBwMap.end())
 				{

@@ -325,7 +325,7 @@ void SearchDialog::searchtableWidgetCostumPopupMenu( QPoint /*point*/ )
     contextMnu.exec(QCursor::pos());
 }
 
-void SearchDialog::getSourceFriendsForHash(const std::string& hash,std::list<std::string>& srcIds)
+void SearchDialog::getSourceFriendsForHash(const RsFileHash& hash,std::list<RsPeerId>& srcIds)
 {
 	std::cerr << "Searching sources for file " << hash << std::endl ;
 	srcIds.clear();
@@ -359,9 +359,9 @@ void SearchDialog::download()
 		 {
 			 std::cerr << "SearchDialog::download() Calling File Request";
 			 std::cerr << std::endl;
-			 std::list<std::string> srcIds;
+             std::list<RsPeerId> srcIds;
 
-			 std::string hash = item->text(SR_HASH_COL).toStdString();
+             RsFileHash hash ( item->text(SR_HASH_COL).toStdString());
 			 getSourceFriendsForHash(hash,srcIds) ;
 
 			 if(!rsFiles -> FileRequest((item->text(SR_NAME_COL)).toUtf8().constData(), hash, (item->text(SR_SIZE_COL)).toULongLong(), "", RS_FILE_REQ_ANONYMOUS_ROUTING, srcIds))
@@ -369,7 +369,7 @@ void SearchDialog::download()
 			 else
 			 {
 				 std::cout << "isuing file request from search dialog: -" << (item->text(SR_NAME_COL)).toStdString() << "-" << hash << "-" << (item->text(SR_SIZE_COL)).toULongLong() << "-ids=" ;
-				 for(std::list<std::string>::const_iterator it(srcIds.begin());it!=srcIds.end();++it)
+                 for(std::list<RsPeerId>::const_iterator it(srcIds.begin());it!=srcIds.end();++it)
 					 std::cout << *it << "-" << std::endl ;
 			 }
 		 }
@@ -382,13 +382,13 @@ void SearchDialog::downloadDirectory(const QTreeWidgetItem *item, const QString 
 {
 	if (!item->childCount()) 
 	{
-		std::list<std::string> srcIds;
+        std::list<RsPeerId> srcIds;
 
 		QString path = QString::fromStdString(rsFiles->getDownloadDirectory())
                                                 + "/" + base + "/";
 		QString cleanPath = QDir::cleanPath(path);
 
-		std::string hash = item->text(SR_HASH_COL).toStdString();
+        RsFileHash hash ( item->text(SR_HASH_COL).toStdString());
 
 		getSourceFriendsForHash(hash,srcIds) ;
 
@@ -403,7 +403,7 @@ void SearchDialog::downloadDirectory(const QTreeWidgetItem *item, const QString 
 			<< "-" << hash
 			<< "-" << (item->text(SR_SIZE_COL)).toULongLong()
 			<< "-ids=" ;
-		for(std::list<std::string>::const_iterator it(srcIds.begin());
+        for(std::list<RsPeerId>::const_iterator it(srcIds.begin());
 				it!=srcIds.end();++it)
 			std::cout << *it << "-" << std::endl ;
 	} else {
@@ -792,7 +792,7 @@ void SearchDialog::insertDirectory(const QString &txt, qulonglong searchId, cons
 		/* translate search result for a file */
 		
 		child->setText(SR_NAME_COL, QString::fromUtf8(dir.name.c_str()));
-		child->setText(SR_HASH_COL, QString::fromStdString(dir.hash));
+        child->setText(SR_HASH_COL, QString::fromStdString(dir.hash.toStdString()));
 		child->setText(SR_SIZE_COL, QString::number(dir.count));
 		child->setData(SR_SIZE_COL, ROLE_SORT, (qulonglong) dir.count);
 		child->setText(SR_AGE_COL, QString::number(dir.age));
@@ -818,7 +818,7 @@ void SearchDialog::insertDirectory(const QString &txt, qulonglong searchId, cons
 
 		child->setIcon(SR_NAME_COL, QIcon(IMAGE_DIRECTORY));
 		child->setText(SR_NAME_COL, QString::fromUtf8(dir.name.c_str()));
-		child->setText(SR_HASH_COL, QString::fromStdString(dir.hash));
+        child->setText(SR_HASH_COL, QString::fromStdString(dir.hash.toStdString()));
 		child->setText(SR_SIZE_COL, QString::number(dir.count));
 		child->setData(SR_SIZE_COL, ROLE_SORT, (qulonglong) dir.count);
 		child->setText(SR_AGE_COL, QString::number(dir.age));
@@ -886,7 +886,7 @@ void SearchDialog::insertDirectory(const QString &txt, qulonglong searchId, cons
 
     child->setIcon(SR_NAME_COL, QIcon(IMAGE_DIRECTORY));
     child->setText(SR_NAME_COL, QString::fromUtf8(dir.name.c_str()));
-    child->setText(SR_HASH_COL, QString::fromStdString(dir.hash));
+    child->setText(SR_HASH_COL, QString::fromStdString(dir.hash.toStdString()));
     child->setText(SR_SIZE_COL, QString::number(dir.count));
     child->setData(SR_SIZE_COL, ROLE_SORT, (qulonglong) dir.count);
     child->setText(SR_AGE_COL, QString::number(dir.min_age));
@@ -990,7 +990,7 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 	int anonymousSource = 0;
 	QString modifiedResult;
 
-	QList<QTreeWidgetItem*> itms = ui.searchResultWidget->findItems(QString::fromStdString(file.hash),Qt::MatchExactly,SR_HASH_COL) ;
+    QList<QTreeWidgetItem*> itms = ui.searchResultWidget->findItems(QString::fromStdString(file.hash.toStdString()),Qt::MatchExactly,SR_HASH_COL) ;
 
 	for(QList<QTreeWidgetItem*>::const_iterator it(itms.begin());it!=itms.end();++it)
 		if((*it)->text(SR_SEARCH_ID_COL) == sid_hexa)
@@ -1058,7 +1058,7 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 		
 		QTreeWidgetItem *item = new RSTreeWidgetItem(compareResultRole);
 		item->setText(SR_NAME_COL, QString::fromUtf8(file.name.c_str()));
-		item->setText(SR_HASH_COL, QString::fromStdString(file.hash));
+        item->setText(SR_HASH_COL, QString::fromStdString(file.hash.toStdString()));
 
 		setIconAndType(item, QString::fromUtf8(file.name.c_str()));
 
@@ -1342,7 +1342,7 @@ void SearchDialog::openFolderSearch()
 
     if (item.at(0)->data(SR_DATA_COL, SR_ROLE_LOCAL).toBool()){
         QString strFileID = item.at(0)->text(SR_HASH_COL);
-        if (rsFiles->FileDetails(strFileID.toStdString(), RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_BROWSABLE | RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_SPEC_ONLY, info)){
+        if (rsFiles->FileDetails(RsFileHash(strFileID.toStdString()), RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_BROWSABLE | RS_FILE_HINTS_NETWORK_WIDE | RS_FILE_HINTS_SPEC_ONLY, info)){
             /* make path for downloaded or downloading files */
             QFileInfo qinfo;
             std::string path;

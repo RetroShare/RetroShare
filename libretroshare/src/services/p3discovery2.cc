@@ -255,7 +255,7 @@ int p3discovery2::handleIncoming()
 			{
 				recvOwnContactInfo(item->PeerId(), contact);
 			}
-			else if (rsPeers->servicePermissionFlags_sslid(item->PeerId()) & RS_SERVICE_PERM_DISCOVERY)
+			else if (rsPeers->servicePermissionFlags(item->PeerId()) & RS_SERVICE_PERM_DISCOVERY)
 			{
 				processContactInfo(item->PeerId(), contact);
 			}
@@ -268,7 +268,7 @@ int p3discovery2::handleIncoming()
 		}
 
 		/* any other packets should be dropped if they don't have permission */
-		if(!(rsPeers->servicePermissionFlags_sslid(item->PeerId()) & RS_SERVICE_PERM_DISCOVERY))
+		if(!(rsPeers->servicePermissionFlags(item->PeerId()) & RS_SERVICE_PERM_DISCOVERY))
 		{
 			delete item;
 			continue;
@@ -773,7 +773,7 @@ void p3discovery2::sendContactInfo_locked(const PGPID &aboutId, const SSLID &toI
 	std::cerr << "p3discovery2::sendContactInfo_locked() aboutPGPId: " << aboutId << " toId: " << toId;
 	std::cerr << std::endl;
 #endif
-	if (!(rsPeers->servicePermissionFlags_sslid(toId) & RS_SERVICE_PERM_DISCOVERY))
+	if (!(rsPeers->servicePermissionFlags(toId) & RS_SERVICE_PERM_DISCOVERY))
 	{
 #ifdef P3DISC_DEBUG
 		std::cerr << "p3discovery2::sendContactInfo_locked() discovery disabled for SSLID: " << toId;
@@ -961,7 +961,7 @@ void p3discovery2::recvPGPCertificateRequest(const SSLID &fromId, const RsDiscPg
 	std::cerr << std::endl;
 #endif
 
-	std::list<std::string>::const_iterator it;
+	std::list<RsPgpId>::const_iterator it;
 	for(it = item->pgpIdSet.ids.begin(); it != item->pgpIdSet.ids.end(); it++)
 	{
 		// NB: This doesn't include own certificates? why not.
@@ -1084,7 +1084,7 @@ void p3discovery2::statusChange(const std::list<pqipeer> &plist)
 	/*************************************************************************************/
 	/*			   Extracting Network Graph Details			     */
 	/*************************************************************************************/
-bool p3discovery2::getDiscFriends(const std::string& id, std::list<std::string> &proxyIds)
+bool p3discovery2::getDiscFriends(const RsPeerId& id, std::list<RsPeerId> &proxyIds)
 {
 	// This is treated appart, because otherwise we don't receive any disc info about us
 	if(id == rsPeers->getOwnId()) // SSL id	

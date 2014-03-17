@@ -393,7 +393,7 @@ bool RsGxsChannelPostItem::toChannelPost(RsGxsChannelPost &post, bool moveImage)
 		RsGxsFile fi;
 		fi.mName = RsDirUtil::getTopDir(fit->name);
 		fi.mSize  = fit->filesize;
-		fi.mHash  = fit->hash;
+		fi.mHash  = fit->hash.toStdString();
 
 		post.mFiles.push_back(fi);
 		post.mCount++;

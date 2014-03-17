@@ -44,7 +44,7 @@ PostedCreatePostDialog::PostedCreatePostDialog(TokenQueue* tokenQ, RsPosted *pos
 	ui->headerFrame->setHeaderText(tr("Submit a new Post"));
 
 	/* fill in the available OwnIds for signing */
-	ui->idChooser->loadIds(IDCHOOSER_ID_REQUIRED, "");
+	ui->idChooser->loadIds(IDCHOOSER_ID_REQUIRED, RsGxsId());
 }
 
 PostedCreatePostDialog::~PostedCreatePostDialog()

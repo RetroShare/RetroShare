@@ -171,7 +171,7 @@ void PhotoShare::checkUpdate()
         if (rsPhoto->updated())
         {
                 //insertAlbums();
-            std::list<std::string> grpIds;
+            std::list<RsGxsGroupId> grpIds;
             rsPhoto->groupsChanged(grpIds);
             if(!grpIds.empty())
             {
@@ -449,7 +449,7 @@ void PhotoShare::updatePhotos()
 /**************************** Request / Response Filling of Data ************************/
 
 
-void PhotoShare::requestAlbumList(std::list<std::string>& ids)
+void PhotoShare::requestAlbumList(std::list<RsGxsGroupId>& ids)
 {
         RsTokReqOptions opts;
         opts.mReqType = GXS_REQUEST_TYPE_GROUP_IDS;
@@ -472,12 +472,12 @@ void PhotoShare::loadAlbumList(const uint32_t &token)
         std::cerr << "PhotoShare::loadAlbumList()";
         std::cerr << std::endl;
 
-        std::list<std::string> albumIds;
+        std::list<RsGxsGroupId> albumIds;
         rsPhoto->getGroupList(token, albumIds);
 
         requestAlbumData(albumIds);
 
-        std::list<std::string>::iterator it;
+        std::list<RsGxsGroupId>::iterator it;
         for(it = albumIds.begin(); it != albumIds.end(); it++)
         {
                 requestPhotoList(*it);
@@ -525,7 +525,7 @@ bool PhotoShare::loadAlbumData(const uint32_t &token)
 }
 
 
-void PhotoShare::requestPhotoList(const std::string &albumId)
+void PhotoShare::requestPhotoList(const RsGxsGroupId &albumId)
 {
 
     std::list<RsGxsGroupId> grpIds;
@@ -543,7 +543,7 @@ void PhotoShare::acknowledgeGroup(const uint32_t &token)
     RsGxsGroupId grpId;
     rsPhoto->acknowledgeGrp(token, grpId);
 
-    if(!grpId.empty())
+    if(!grpId.isNull())
     {
         std::list<RsGxsGroupId> grpIds;
         grpIds.push_back(grpId);

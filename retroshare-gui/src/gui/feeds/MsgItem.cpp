@@ -83,7 +83,7 @@ void MsgItem::updateItemStatic()
 	/* get peer Id */
 	mPeerId = mi.srcId;
 
-	avatar->setId(mPeerId, false);
+    avatar->setId(mPeerId);
 
 	QString title;
 	QString srcName;

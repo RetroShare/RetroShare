@@ -55,12 +55,12 @@ pqilistener * pqisslpersongrp::locked_createListener(const struct sockaddr_stora
 	return listener;
 }
 
-pqiperson * pqisslpersongrp::locked_createPerson(std::string id, pqilistener *listener)
+pqiperson * pqisslpersongrp::locked_createPerson(const RsPeerId& id, pqilistener *listener)
 {
 	std::cerr << "pqisslpersongrp::locked_createPerson() PeerId: " << id;
 	std::cerr << std::endl;
 
-	pqioutput(PQL_DEBUG_BASIC, pqipersongrpzone, "pqipersongrp::createPerson() PeerId: " + id);
+	pqioutput(PQL_DEBUG_BASIC, pqipersongrpzone, "pqipersongrp::createPerson() PeerId: " + id.toStdString());
 
 	pqiperson *pqip = new pqiperson(id, this);
 

@@ -51,15 +51,15 @@ PopupChatDialog::PopupChatDialog(QWidget *parent, Qt::WindowFlags flags)
 	connect(NotifyQt::getInstance(), SIGNAL(chatStatusChanged(const QString&, const QString&, bool)), this, SLOT(chatStatusChanged(const QString&, const QString&, bool)));
 }
 
-void PopupChatDialog::init(const std::string &peerId, const QString &title)
+void PopupChatDialog::init(const RsPeerId &peerId, const QString &title)
 {
 	ChatDialog::init(peerId, title);
 
 	/* Hide or show the avatar frames */
-	showAvatarFrame(PeerSettings->getShowAvatarFrame(peerId));
+    showAvatarFrame(PeerSettings->getShowAvatarFrame(peerId));
 
 	ui.avatarWidget->setFrameType(AvatarWidget::STATUS_FRAME);
-	ui.avatarWidget->setId(peerId, false);
+    ui.avatarWidget->setId(peerId);
 
 	ui.ownAvatarWidget->setFrameType(AvatarWidget::STATUS_FRAME);
 	ui.ownAvatarWidget->setOwnId();
@@ -121,8 +121,8 @@ void PopupChatDialog::showDialog(uint chatflags)
 //
 void PopupChatDialog::chatStatusChanged(const QString &peerId, const QString& statusString, bool isPrivateChat)
 {
-	if (isPrivateChat && this->peerId == peerId.toStdString()) {
-		ui.chatWidget->updateStatusString(getPeerName(peerId.toStdString()) + " %1", statusString);
+    if (isPrivateChat && this->peerId == RsPeerId(peerId.toStdString())) {
+        ui.chatWidget->updateStatusString(getPeerName(RsPeerId(peerId.toStdString())) + " %1", statusString);
 	}
 }
 
@@ -219,7 +219,7 @@ void PopupChatDialog::showAvatarFrame(bool show)
 		ui.avatarFrameButton->setIcon(QIcon(":images/show_toolbox_frame.png"));
 	}
 
-	PeerSettings->setShowAvatarFrame(getPeerId(), show);
+    PeerSettings->setShowAvatarFrame(getPeerId(), show);
 }
 
 void PopupChatDialog::clearOfflineMessages()

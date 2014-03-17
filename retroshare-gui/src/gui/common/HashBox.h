@@ -45,7 +45,7 @@ public:
 	QString filename;
 	QString filepath;
 	uint64_t size;
-	std::string hash;
+    RsFileHash hash;
 	Flags flag;
 
 public:

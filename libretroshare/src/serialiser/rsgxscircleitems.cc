@@ -121,13 +121,26 @@ bool RsGxsCircleGroupItem::convertFrom(const RsGxsCircleGroup &group)
 	// Enforce the local rules.
 	if (meta.mCircleType == GXS_CIRCLE_TYPE_LOCAL)
 	{
-		pgpIdSet.ids = group.mLocalFriends;
+		std::list<RsPgpId>::const_iterator it = group.mLocalFriends.begin();
+
+		for(; it != group.mLocalFriends.end(); it++)
+			pgpIdSet.ids.push_back(it->toStdString());
 	}
 	else
 	{
-		gxsIdSet.ids = group.mInvitedMembers;
+		std::list<RsGxsId>::const_iterator it = group.mInvitedMembers.begin();
+		for(; it != group.mInvitedMembers.end(); it++)
+		{
+			gxsIdSet.ids.push_back(it->toStdString());
+		}
 	}
-	subCircleSet.ids = group.mSubCircles;
+	const std::list<RsGxsCircleId>& scl = group.mSubCircles;
+
+	std::list<RsGxsCircleId>::const_iterator cit = scl.begin();
+	subCircleSet.ids.clear();
+	for(; cit != scl.end(); cit++)
+		subCircleSet.ids.push_back(cit->toStdString());
+
 	return true;
 }
 
@@ -138,15 +151,27 @@ bool RsGxsCircleGroupItem::convertTo(RsGxsCircleGroup &group) const
 	// Enforce the local rules.
 	if (meta.mCircleType ==  GXS_CIRCLE_TYPE_LOCAL)
 	{
-		group.mLocalFriends = pgpIdSet.ids;
+		std::list<std::string>::const_iterator it = pgpIdSet.ids.begin();
+		for(; it != pgpIdSet.ids.end();  it++)
+			group.mLocalFriends.push_back(RsPgpId(*it));
 		group.mInvitedMembers.clear();
 	}
 	else
 	{
 		group.mLocalFriends.clear();
-		group.mInvitedMembers = gxsIdSet.ids;
+		std::list<std::string>::const_iterator cit = gxsIdSet.ids.begin();
+		for(; cit != gxsIdSet.ids.end(); cit++)
+			group.mInvitedMembers.push_back((RsGxsId(*cit)));
+
 	}
-	group.mSubCircles = subCircleSet.ids;
+
+	const std::list<std::string> scs = subCircleSet.ids;
+	std::list<std::string>::const_iterator cit = scs.begin();
+
+	group.mSubCircles.clear();
+
+	for(; cit != scs.end(); cit++)
+		group.mSubCircles.push_back(RsGxsCircleId(*cit));
 	return true;
 }
 

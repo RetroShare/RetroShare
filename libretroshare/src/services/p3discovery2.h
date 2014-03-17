@@ -41,8 +41,8 @@
 
 
 
-typedef std::string PGPID;
-typedef std::string SSLID;
+typedef RsPgpId PGPID;
+typedef RsPeerId SSLID;
 
 class DiscSslInfo
 {
@@ -88,9 +88,9 @@ virtual ~p3discovery2();
 	int	tick();
 	
 	/* external interface */
-virtual bool    getDiscFriends(const std::string &id, std::list<std::string> &friends);
-virtual bool    getDiscPgpFriends(const std::string &pgpid, std::list<std::string> &gpg_friends);
-virtual bool    getPeerVersion(const std::string &id, std::string &version);
+virtual bool    getDiscFriends(const RsPeerId &id, std::list<RsPeerId> &friends);
+virtual bool    getDiscPgpFriends(const RsPgpId &pgpid, std::list<RsPgpId> &gpg_friends);
+virtual bool    getPeerVersion(const RsPeerId &id, std::string &version);
 virtual bool    getWaitingDiscCount(unsigned int *sendCount, unsigned int *recvCount);
 
         /************* from AuthGPService ****************/

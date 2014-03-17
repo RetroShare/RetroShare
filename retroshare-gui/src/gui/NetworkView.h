@@ -24,6 +24,8 @@
 
 #include <QGraphicsScene>
 
+#include <retroshare/rstypes.h>
+
 #include "RsAutoUpdatePage.h"
 #include "ui_NetworkView.h"
 
@@ -60,7 +62,7 @@ class NetworkView : public RsAutoUpdatePage
 		/** Qt Designer generated object */
 		Ui::NetworkView ui;
 		uint _max_friend_level ;
-		std::map<std::string,GraphWidget::NodeId> _node_ids ;
+        std::map<RsPgpId,GraphWidget::NodeId> _node_ids ;
 
 		bool _should_update ;
 };

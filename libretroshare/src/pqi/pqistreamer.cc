@@ -51,7 +51,7 @@ const int PQISTREAM_ABS_MAX = 100000000; /* 100 MB/sec (actually per loop) */
 #endif
 
 
-pqistreamer::pqistreamer(RsSerialiser *rss, std::string id, BinInterface *bio_in, int bio_flags_in)
+pqistreamer::pqistreamer(RsSerialiser *rss, const RsPeerId& id, BinInterface *bio_in, int bio_flags_in)
 	:PQInterface(id), mStreamerMtx("pqistreamer"),
 	mBio(bio_in), mBio_flags(bio_flags_in), mRsSerialiser(rss), 
 	mPkt_wpending(NULL), 

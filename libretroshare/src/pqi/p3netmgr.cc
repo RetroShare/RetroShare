@@ -896,7 +896,7 @@ void p3NetMgrIMPL::netExtCheck()
 		}
 
 		/* inform DHT about our external address */
-		std::string fakeId;
+		RsPeerId fakeId;
 		netAssistKnownPeer(fakeId, mExtAddr, NETASSIST_KNOWN_PEER_SELF | NETASSIST_KNOWN_PEER_ONLINE);
 
 		rslog(RSL_WARNING, p3netmgrzone, "p3NetMgr::netExtCheck() Network Setup Complete");
@@ -1378,7 +1378,7 @@ bool p3NetMgrIMPL::netAssistConnectShutdown()
 	return true;
 }
 
-bool p3NetMgrIMPL::netAssistFriend(const std::string &id, bool on)
+bool p3NetMgrIMPL::netAssistFriend(const RsPeerId &id, bool on)
 {
 	std::map<uint32_t, pqiNetAssistConnect *>::iterator it;
 
@@ -1398,7 +1398,7 @@ bool p3NetMgrIMPL::netAssistFriend(const std::string &id, bool on)
 }
 
 
-bool p3NetMgrIMPL::netAssistKnownPeer(const std::string &id, const struct sockaddr_storage &addr, uint32_t flags)
+bool p3NetMgrIMPL::netAssistKnownPeer(const RsPeerId &id, const struct sockaddr_storage &addr, uint32_t flags)
 {
 	std::map<uint32_t, pqiNetAssistConnect *>::iterator it;
 
@@ -1449,7 +1449,7 @@ bool p3NetMgrIMPL::netAssistAttach(bool on)
 
 
 
-bool p3NetMgrIMPL::netAssistStatusUpdate(const std::string &id, int state)
+bool p3NetMgrIMPL::netAssistStatusUpdate(const RsPeerId &id, int state)
 {
 	std::map<uint32_t, pqiNetAssistConnect *>::iterator it;
 

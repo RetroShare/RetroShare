@@ -13,9 +13,12 @@
 #include <string>
 #include <inttypes.h>
 
+#include <retroshare/rstypes.h>
 
-typedef std::string RsGxsGroupId;
-typedef std::string RsGxsMessageId;
+typedef GXSGroupId   RsGxsGroupId;
+typedef Sha1CheckSum RsGxsMessageId;
+typedef GXSId        RsGxsId;
+typedef GXSCircleId  RsGxsCircleId;
 
 typedef std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > GxsMsgIdResult;
 typedef std::pair<RsGxsGroupId, RsGxsMessageId> RsGxsGrpMsgIdPair;
@@ -53,21 +56,21 @@ public:
 
     void operator =(const RsGxsGrpMetaData& rGxsMeta);
 
-    std::string mGroupId;
+    RsGxsGroupId mGroupId;
     std::string mGroupName;
     uint32_t    mGroupFlags;
     uint32_t    mSignFlags;   // Combination of RSGXS_GROUP_SIGN_PUBLISH_MASK & RSGXS_GROUP_SIGN_AUTHOR_MASK.
 
     time_t      mPublishTs; // Mandatory.
-    std::string mAuthorId;   // Optional.
+    RsGxsId    mAuthorId;   // Optional.
 
     // for circles
-    std::string mCircleId;
+    RsGxsCircleId mCircleId;
     uint32_t mCircleType;
 
     // other stuff.
     uint32_t mAuthenFlags;
-    std::string mParentGrpId;
+    RsGxsGroupId mParentGrpId;
 
     // BELOW HERE IS LOCAL DATA, THAT IS NOT FROM MSG.
 
@@ -79,8 +82,8 @@ public:
 
     uint32_t    mGroupStatus;
     std::string mServiceString; // Service Specific Free-Form extra storage.
-    std::string mOriginator;
-    std::string mInternalCircle;
+    RsPeerId mOriginator;
+    RsGxsCircleId mInternalCircle;
 };
 
 
@@ -103,14 +106,14 @@ public:
     void operator =(const RsGxsMsgMetaData& rGxsMeta);
 
 
-    std::string mGroupId;
-    std::string mMsgId;
+    RsGxsGroupId mGroupId;
+    RsGxsMessageId mMsgId;
 
-    std::string mThreadId;
-    std::string mParentId;
-    std::string mOrigMsgId;
+    RsGxsMessageId mThreadId;
+    RsGxsMessageId mParentId;
+    RsGxsMessageId mOrigMsgId;
 
-    std::string mAuthorId;
+    RsGxsId    mAuthorId;
 
     std::string mMsgName;
     time_t      mPublishTs;
@@ -173,7 +176,7 @@ public:
     // expand as support is added for other utypes
     enum UpdateType { DESCRIPTION, NAME };
 
-    RsGxsGroupUpdateMeta(const std::string& groupId) : mGroupId(groupId) {}
+    RsGxsGroupUpdateMeta(const RsGxsGroupId& groupId) : mGroupId(groupId) {}
 
     typedef std::map<UpdateType, std::string> GxsMetaUpdate;
 
@@ -194,12 +197,12 @@ public:
     bool removeUpdateType(UpdateType utype){ return mUpdates.erase(utype) == 1; }
 
     const GxsMetaUpdate* getUpdates() const { return &mUpdates; }
-    const std::string& getGroupId() const { return mGroupId; }
+    const RsGxsGroupId& getGroupId() const { return mGroupId; }
 
 private:
 
     GxsMetaUpdate mUpdates;
-    std::string mGroupId;
+    RsGxsGroupId mGroupId;
 };
 
 #endif /* RSGXSIFACETYPES_H_ */

@@ -40,7 +40,7 @@
  ****/
 
 /** Constructor */
-PeerItem::PeerItem(FeedHolder *parent, uint32_t feedId, const std::string &peerId, uint32_t type, bool isHome)
+PeerItem::PeerItem(FeedHolder *parent, uint32_t feedId, const RsPeerId &peerId, uint32_t type, bool isHome)
 :QWidget(NULL), mParent(parent), mFeedId(feedId),
 	mPeerId(peerId), mType(type), mIsHome(isHome)
 {
@@ -70,7 +70,7 @@ PeerItem::PeerItem(FeedHolder *parent, uint32_t feedId, const std::string &peerI
 
     quickmsgButton->setMenu(msgmenu);
 
-    avatar->setId(mPeerId, false);
+    avatar->setId(RsPeerId(mPeerId));
 
     expandFrame->hide();
 
@@ -114,7 +114,7 @@ void PeerItem::updateItemStatic()
 	titleLabel->setText(title);
 
 	RsPeerDetails details;
-	if (rsPeers->getPeerDetails(mPeerId, details))
+    if (rsPeers->getPeerDetails(RsPeerId(mPeerId), details))
 	{
 		/* set peer name */
 		peerNameLabel->setText(QString::fromUtf8(details.name.c_str()));
@@ -122,7 +122,7 @@ void PeerItem::updateItemStatic()
 
 		/* expanded Info */
 		nameLabel->setText(QString::fromUtf8(details.name.c_str()));
-		idLabel->setText(QString::fromStdString(details.id));
+        idLabel->setText(QString::fromStdString(details.id.toStdString()));
 		locLabel->setText(QString::fromUtf8(details.location.c_str()));
 	}
 	else

@@ -59,8 +59,8 @@ private:
 
 private:
 
-	std::map<std::string, RsPhotoPhoto *> mPhotos;
-	std::map<int, std::string> mPhotoOrder;
+    std::map<RsGxsMessageId, RsPhotoPhoto *> mPhotos;
+    std::map<int, RsGxsMessageId> mPhotoOrder;
 
 	bool mRunning;
 	int mImageIdx;

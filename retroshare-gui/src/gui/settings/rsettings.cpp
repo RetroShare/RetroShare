@@ -33,7 +33,7 @@
 RSettings::RSettings(const QString settingsGroup)
 : QSettings(SETTINGS_FILE, QSettings::IniFormat)
 {
-    std::string sPreferedId;
+    RsPeerId sPreferedId;
     m_bValid = RsAccounts::GetPreferredAccountId(sPreferedId);
 
     if (!settingsGroup.isEmpty())

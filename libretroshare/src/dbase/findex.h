@@ -91,7 +91,7 @@ virtual int print(std::string &out);
 
 	/* Data */
 	std::string name; 
-	std::string hash;
+    RsFileHash hash;
 	uint64_t size;         /* file size */
 	time_t modtime;      /* modification time - most recent mod time for a sub entry for dirs */
 	int pop;	  /* popularity rating */
@@ -174,7 +174,7 @@ class PersonEntry: public DirEntry
 {
 	public:
 	/* cleanup */
-	PersonEntry(const std::string& pid) : id(pid) { return; }
+	PersonEntry(const RsPeerId& pid) : id(pid) { return; }
 virtual	~PersonEntry() { return; }
 
 DirEntry &operator=(DirEntry &src)
@@ -186,7 +186,7 @@ DirEntry &operator=(DirEntry &src)
 	virtual uint32_t type() const { return DIR_TYPE_PERSON ; }
 
 	/* Data */
-	std::string id;
+	RsPeerId id;
 
 	/* Inherited members from FileEntry:
 	int size 	  - count for dirs 
@@ -209,7 +209,7 @@ class Expression;
 class FileIndex
 {
 	public:
-		FileIndex(const std::string& pid);
+		FileIndex(const RsPeerId& pid);
 		~FileIndex();
 
 		/* control root entries */
@@ -230,12 +230,12 @@ class FileIndex
 		int	printFileIndex(std::ostream &out);
 
 		/* load/save to file */
-		int 	loadIndex(const std::string& filename, const std::string& expectedHash, uint64_t size);
-		int 	saveIndex(const std::string& filename, std::string &fileHash, uint64_t &size, const std::set<std::string>& forbidden_roots);
+        int 	loadIndex(const std::string& filename, const RsFileHash &expectedHash, uint64_t size);
+        int 	saveIndex(const std::string& filename, RsFileHash &fileHash, uint64_t &size, const std::set<std::string>& forbidden_roots);
 
 		/* search through this index */
 		int 	searchTerms(const std::list<std::string>& terms, std::list<FileEntry *> &results) const;
-		int 	searchHash(const std::string& hash, std::list<FileEntry *> &results) const;
+        int 	searchHash(const RsFileHash& hash, std::list<FileEntry *> &results) const;
 		int     searchBoolExp(Expression * exp, std::list<FileEntry *> &results) const;
 
 		/// Recursively compute the maximum modification time of children.
@@ -262,7 +262,7 @@ class FileIndex
 		void updateHashIndex() ;
 		void recursUpdateHashIndex(DirEntry *) ;
 
-		std::map<std::string,FileEntry*> _file_hashes ;
+        std::map<RsFileHash,FileEntry*> _file_hashes ;
 };
 
 

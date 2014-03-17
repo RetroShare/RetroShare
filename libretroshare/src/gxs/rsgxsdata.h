@@ -52,9 +52,9 @@ public:
     uint32_t    mGroupFlags;
     uint32_t    mPublishTs;
     uint32_t    mSignFlags;
-    std::string mAuthorId;
+    RsGxsId mAuthorId;
 
-    std::string mCircleId;
+    RsGxsCircleId mCircleId;
     uint32_t mCircleType;
 
 
@@ -76,9 +76,9 @@ public:
 
     uint32_t    mGroupStatus;
     uint32_t    mRecvTS;
-    std::string mOriginator;
-    std::string mInternalCircle;
-    std::string mHash;
+    RsPeerId    mOriginator;
+    RsGxsCircleId mInternalCircle;
+    RsFileHash mHash;
 };
 
 
@@ -100,7 +100,7 @@ public:
     RsGxsMessageId mThreadId;
     RsGxsMessageId mParentId;
     RsGxsMessageId mOrigMsgId;
-    std::string mAuthorId;
+    RsGxsId mAuthorId;
 
     RsTlvKeySignatureSet signSet;
 
@@ -116,7 +116,7 @@ public:
     uint32_t    mMsgStatus;
     time_t      mChildTs;
     uint32_t recvTS;
-    std::string mHash;
+    RsFileHash mHash;
     bool validated;
 
 };

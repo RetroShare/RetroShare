@@ -30,6 +30,7 @@
 
 #include "util/TokenQueue.h"
 #include <retroshare/rsidentity.h>
+#include <retroshare/rsgxsifacetypes.h>
 
 class UIStateHelper;
 
@@ -65,7 +66,7 @@ private:
 
 	void loadRecognTags();
 	// extract details.
-	bool tagDetails(const std::string &id, const std::string &name, const std::string &tag, QString &desc);
+    bool tagDetails(const RsGxsId &id, const std::string &name, const std::string &tag, QString &desc);
 	void rmTag(int idx);
 	
 protected:

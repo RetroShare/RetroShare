@@ -24,6 +24,7 @@
 
 #include <QLabel>
 #include <stdint.h>
+#include <retroshare/rstypes.h>
 
 namespace Ui {
 	class AvatarWidget;
@@ -47,8 +48,8 @@ public:
 
 	QString frameState();
 	void setFrameType(FrameType type);
-	void setId(const std::string& id, bool isGpg);
-	void setOwnId();
+    void setId(const RsPeerId &id) ;
+    void setOwnId();
 	void setDefaultAvatar(const QString &avatar);
 
 protected:
@@ -65,10 +66,11 @@ private:
 	QString defaultAvatar;
 	Ui::AvatarWidget *ui;
 
-	std::string mId;
+    RsPeerId mId;
+
 	struct {
 		bool isOwnId : 1;
-		bool isGpg : 1;
+//		bool isGpg : 1;
 	} mFlag;
 	FrameType mFrameType;
 	uint32_t  mPeerState;

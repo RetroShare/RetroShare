@@ -78,10 +78,10 @@ void RsharePeerSettings::cleanDeadIds()
             }
 
             ChatLobbyId lid;
-            if (rsMsgs->isLobbyId((*group).toStdString(), lid)) {
+            if (rsMsgs->isLobbyId(RsPeerId((*group).toStdString()), lid)) {
                 continue;
             }
-            if (rsPeers->isGPGAccepted((*group).toStdString()) == false) {
+            if (rsPeers->isGPGAccepted(RsPgpId((*group).toStdString())) == false) {
                 remove(*group);
             }
         }
@@ -92,15 +92,15 @@ void RsharePeerSettings::cleanDeadIds()
     }
 }
 
-bool RsharePeerSettings::getSettingsIdOfPeerId(const std::string &peerId, std::string &settingsId)
+bool RsharePeerSettings::getSettingsIdOfPeerId(const RsPeerId &peerId, std::string &settingsId)
 {
     ChatLobbyId lid;
     if (rsMsgs->isLobbyId(peerId, lid)) {
-        settingsId = peerId;
+        settingsId = peerId.toStdString();
         return true;
     }
 
-    std::map<std::string, std::string>::iterator it = m_SslToGpg.find(peerId);
+    std::map<RsPeerId, std::string>::iterator it = m_SslToGpg.find(peerId);
     if (it != m_SslToGpg.end()) {
         settingsId = it->second;
         return true;
@@ -111,14 +111,14 @@ bool RsharePeerSettings::getSettingsIdOfPeerId(const std::string &peerId, std::s
         return false;
     }
 
-    settingsId = details.gpg_id;
-    m_SslToGpg[peerId] = settingsId;
+    settingsId = details.gpg_id.toStdString();
+    m_SslToGpg[peerId] = settingsId ;
 
     return true;
 }
 
 /* get value of peer */
-QVariant RsharePeerSettings::get(const std::string &peerId, const QString &key, const QVariant &defaultValue)
+QVariant RsharePeerSettings::get(const RsPeerId &peerId, const QString &key, const QVariant &defaultValue)
 {
     QVariant result;
 
@@ -136,7 +136,7 @@ QVariant RsharePeerSettings::get(const std::string &peerId, const QString &key, 
 }
 
 /* set value of peer */
-void RsharePeerSettings::set(const std::string &peerId, const QString &key, const QVariant &value)
+void RsharePeerSettings::set(const RsPeerId &peerId, const QString &key, const QVariant &value)
 {
     std::string settingsId;
     if (getSettingsIdOfPeerId(peerId, settingsId) == false) {
@@ -153,22 +153,22 @@ void RsharePeerSettings::set(const std::string &peerId, const QString &key, cons
     endGroup();
 }
 
-QString RsharePeerSettings::getPrivateChatColor(const std::string &peerId)
+QString RsharePeerSettings::getPrivateChatColor(const RsPeerId &peerId)
 {
     return get(peerId, "PrivateChatColor", QColor(Qt::black).name()).toString();
 }
 
-void RsharePeerSettings::setPrivateChatColor(const std::string &peerId, const QString &value)
+void RsharePeerSettings::setPrivateChatColor(const RsPeerId &peerId, const QString &value)
 {
     set(peerId, "PrivateChatColor", value);
 }
 
-QString RsharePeerSettings::getPrivateChatFont(const std::string &peerId)
+QString RsharePeerSettings::getPrivateChatFont(const RsPeerId &peerId)
 {
     return get(peerId, "PrivateChatFont", Settings->getChatScreenFont()).toString();
 }
 
-void RsharePeerSettings::setPrivateChatFont(const std::string &peerId, const QString &value)
+void RsharePeerSettings::setPrivateChatFont(const RsPeerId &peerId, const QString &value)
 {
     if (Settings->getChatScreenFont() == value) {
         set(peerId, "PrivateChatFont", QVariant());
@@ -177,17 +177,17 @@ void RsharePeerSettings::setPrivateChatFont(const std::string &peerId, const QSt
     }
 }
 
-bool RsharePeerSettings::getPrivateChatOnTop(const std::string &peerId)
+bool RsharePeerSettings::getPrivateChatOnTop(const RsPeerId &peerId)
 {
     return get(peerId, "PrivateChatOnTop", false).toBool();
 }
 
-void RsharePeerSettings::setPrivateChatOnTop(const std::string &peerId, bool value)
+void RsharePeerSettings::setPrivateChatOnTop(const RsPeerId &peerId, bool value)
 {
     set(peerId, "PrivateChatOnTop", value);
 }
 
-void RsharePeerSettings::saveWidgetInformation(const std::string &peerId, QWidget *widget)
+void RsharePeerSettings::saveWidgetInformation(const RsPeerId &peerId, QWidget *widget)
 {
     std::string settingsId;
     if (getSettingsIdOfPeerId(peerId, settingsId) == false) {
@@ -207,7 +207,7 @@ void RsharePeerSettings::saveWidgetInformation(const std::string &peerId, QWidge
     endGroup();
 }
 
-void RsharePeerSettings::loadWidgetInformation(const std::string &peerId, QWidget *widget)
+void RsharePeerSettings::loadWidgetInformation(const RsPeerId &peerId, QWidget *widget)
 {
     std::string settingsId;
     if (getSettingsIdOfPeerId(peerId, settingsId) == false) {
@@ -227,27 +227,27 @@ void RsharePeerSettings::loadWidgetInformation(const std::string &peerId, QWidge
     endGroup();
 }
 
-bool RsharePeerSettings::getShowAvatarFrame(const std::string &peerId)
+bool RsharePeerSettings::getShowAvatarFrame(const RsPeerId &peerId)
 {
     return get(peerId, "ShowAvatarFrame", true).toBool();
 }
 
-void RsharePeerSettings::setShowAvatarFrame(const std::string &peerId, bool value)
+void RsharePeerSettings::setShowAvatarFrame(const RsPeerId &peerId, bool value)
 {
     return set(peerId, "ShowAvatarFrame", value);
 }
 
-bool RsharePeerSettings::getShowParticipantsFrame(const std::string &peerId)
+bool RsharePeerSettings::getShowParticipantsFrame(const RsPeerId &peerId)
 {
     return get(peerId, "ShowParticipantsFrame", true).toBool();
 }
 
-void RsharePeerSettings::setShowParticipantsFrame(const std::string &peerId, bool value)
+void RsharePeerSettings::setShowParticipantsFrame(const RsPeerId &peerId, bool value)
 {
     return set(peerId, "ShowParticipantsFrame", value);
 }
 
-void RsharePeerSettings::getStyle(const std::string &peerId, const QString &name, RSStyle &style)
+void RsharePeerSettings::getStyle(const RsPeerId &peerId, const QString &name, RSStyle &style)
 {
     std::string settingsId;
     if (getSettingsIdOfPeerId(peerId, settingsId) == false) {
@@ -266,7 +266,7 @@ void RsharePeerSettings::getStyle(const std::string &peerId, const QString &name
     endGroup();
 }
 
-void RsharePeerSettings::setStyle(const std::string &peerId, const QString &name, RSStyle &style)
+void RsharePeerSettings::setStyle(const RsPeerId &peerId, const QString &name, RSStyle &style)
 {
     std::string settingsId;
     if (getSettingsIdOfPeerId(peerId, settingsId) == false) {

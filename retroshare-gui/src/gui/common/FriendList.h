@@ -125,7 +125,7 @@ private:
     static bool filterItem(QTreeWidgetItem *item, const QString &text);
     void updateHeader();
     void initializeHeader(bool afterLoadSettings);
-    void getSslIdsFromItem(QTreeWidgetItem *item, std::list<std::string> &sslIds);
+    void getSslIdsFromItem(QTreeWidgetItem *item, std::list<RsPeerId> &sslIds);
 
 private slots:
     void groupsChanged();

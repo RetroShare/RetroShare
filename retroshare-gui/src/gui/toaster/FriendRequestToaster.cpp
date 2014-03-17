@@ -23,7 +23,7 @@
 
 #include <retroshare/rspeers.h>
 
-FriendRequestToaster::FriendRequestToaster(const std::string &gpgId, const QString &sslName, const std::string &peerId)
+FriendRequestToaster::FriendRequestToaster(const RsPgpId &gpgId, const QString &sslName, const RsPeerId &peerId)
 	: QWidget(NULL), mGpgId(gpgId), mSslId(peerId), mSslName(sslName)
 {
 	/* Invoke the Qt Designer generated object setup routine */

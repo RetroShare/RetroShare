@@ -99,7 +99,7 @@ DetailsDialog::show()
     }
 }
 
-void DetailsDialog::setFileHash(const std::string & hash) 
+void DetailsDialog::setFileHash(const RsFileHash & hash)
 {
 	dynamic_cast<FileTransferInfoWidget*>(ui.fileTransferInfoWidget->widget())->setFileHash(hash) ;
 
@@ -108,7 +108,7 @@ void DetailsDialog::setFileHash(const std::string & hash)
 		return ;
 
 	RetroShareLink link ;
-	link.createFile(QString::fromUtf8(nfo.fname.c_str()),nfo.size,QString::fromStdString(nfo.hash)) ;
+    link.createFile(QString::fromUtf8(nfo.fname.c_str()),nfo.size,QString::fromStdString(nfo.hash.toStdString())) ;
 
 	ui.Linktext->setText(link.toString()) ;
 }

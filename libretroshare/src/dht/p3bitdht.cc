@@ -81,7 +81,7 @@ virtual int dhtInfoCallback(const bdId *id, uint32_t type, uint32_t flags, std::
 };
 
 
-p3BitDht::p3BitDht(std::string id, pqiConnectCb *cb, p3NetMgr *nm, 
+p3BitDht::p3BitDht(const RsPeerId& id, pqiConnectCb *cb, p3NetMgr *nm, 
 			UdpStack *udpstack, std::string bootstrapfile)
 	:p3Config(CONFIG_TYPE_BITDHT), pqiNetAssistConnect(id, cb), mNetMgr(nm), dhtMtx("p3BitDht")
 {
@@ -348,7 +348,7 @@ bool 	p3BitDht::dropPeer(std::string pid)
 
 
 	/* extract current peer status */
-bool 	p3BitDht::getPeerStatus(std::string id, 
+bool 	p3BitDht::getPeerStatus(const RsPeerId& id, 
 				struct sockaddr_storage &/*laddr*/, struct sockaddr_storage &/*raddr*/,
 				uint32_t &/*type*/, uint32_t &/*mode*/)
 {

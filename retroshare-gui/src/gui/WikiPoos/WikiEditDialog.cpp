@@ -392,7 +392,7 @@ void WikiEditDialog::setPreviousPage(RsWikiSnapshot &page)
 	mWikiSnapshot = page;
 
 	ui.lineEdit_Page->setText(QString::fromStdString(mWikiSnapshot.mMeta.mMsgName));
-	ui.lineEdit_PrevVersion->setText(QString::fromStdString(mWikiSnapshot.mMeta.mMsgId));
+    ui.lineEdit_PrevVersion->setText(QString::fromStdString(mWikiSnapshot.mMeta.mMsgId.toStdString()));
 	mCurrentText = QString::fromUtf8(mWikiSnapshot.mPage.c_str());
 
 	mIgnoreTextChange = true;
@@ -422,7 +422,7 @@ void WikiEditDialog::setNewPage()
 	setWindowTitle(tr("Create New Wiki Page"));
 
         /* no need for for REQUIRED ID */
-        ui.comboBox_IdChooser->loadIds(0, "");
+        ui.comboBox_IdChooser->loadIds(0, RsGxsId());
 
 	textReset();
 }
@@ -434,7 +434,7 @@ void WikiEditDialog::setRepublishMode(RsGxsMessageId &origMsgId)
         mRepublishOrigId = origMsgId;
 	ui.pushButton_Submit->setText(tr("Republish"));
         /* no need for for REQUIRED ID */
-        ui.comboBox_IdChooser->loadIds(0, "");
+        ui.comboBox_IdChooser->loadIds(0, RsGxsId());
 }
 
 
@@ -495,7 +495,7 @@ void WikiEditDialog::submitEdit()
 
 		// A Child of the current message.
 		bool isFirstChild = false;
-		if (mWikiSnapshot.mMeta.mParentId == "")
+        if (mWikiSnapshot.mMeta.mParentId.isNull())
 		{
 			isFirstChild = true;
 		}
@@ -515,8 +515,8 @@ void WikiEditDialog::submitEdit()
 			mWikiSnapshot.mMeta.mParentId = mWikiSnapshot.mMeta.mOrigMsgId;
 		}
 
-		mWikiSnapshot.mMeta.mMsgId = "";
-		mWikiSnapshot.mMeta.mOrigMsgId = "";
+        mWikiSnapshot.mMeta.mMsgId.clear() ;
+        mWikiSnapshot.mMeta.mOrigMsgId.clear() ;
 	}
 
 
@@ -568,16 +568,16 @@ void WikiEditDialog::submitEdit()
 	hide();
 }
 
-void WikiEditDialog::setupData(const std::string &groupId, const std::string &pageId)
+void WikiEditDialog::setupData(const RsGxsGroupId &groupId, const RsGxsMessageId &pageId)
 {
         mRepublishMode = false;
 	mHistoryLoaded = false;
-	if (groupId != "")
+    if (!groupId.isNull())
 	{
 		requestGroup(groupId);
 	}
 
-	if (pageId != "")
+    if (!pageId.isNull())
 	{
         	RsGxsGrpMsgIdPair msgId = std::make_pair(groupId, pageId);
 		requestPage(msgId);
@@ -588,20 +588,20 @@ void WikiEditDialog::setupData(const std::string &groupId, const std::string &pa
 	setWindowTitle(tr("Edit Wiki Page"));
 
         /* fill in the available OwnIds for signing */
-        ui.comboBox_IdChooser->loadIds(IDCHOOSER_ID_REQUIRED, "");
+        ui.comboBox_IdChooser->loadIds(IDCHOOSER_ID_REQUIRED, RsGxsId());
 
 }
 
 
 /***** Request / Response for Data **********/
 
-void WikiEditDialog::requestGroup(const std::string &groupId)
+void WikiEditDialog::requestGroup(const RsGxsGroupId &groupId)
 {
         std::cerr << "WikiEditDialog::requestGroup()";
         std::cerr << std::endl;
 
-        std::list<std::string> ids;
-	ids.push_back(groupId);
+        std::list<RsGxsGroupId> ids;
+    ids.push_back(groupId);
 
         RsTokReqOptions opts;
         opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
@@ -665,7 +665,7 @@ void WikiEditDialog::loadPage(const uint32_t &token)
 
 		/* request the history now */
 		mThreadMsgIdPair.first = page.mMeta.mGroupId;
-		if (page.mMeta.mThreadId.empty())
+        if (page.mMeta.mThreadId.isNull())
 		{
 			mThreadMsgIdPair.second = page.mMeta.mOrigMsgId;
 		}
@@ -727,10 +727,10 @@ void WikiEditDialog::loadBaseHistory(const uint32_t &token)
 	        std::cerr << std::endl;
 		
 		GxsIdRSTreeWidgetItem *modItem = new GxsIdRSTreeWidgetItem(mThreadCompareRole);
-		modItem->setData(WET_DATA_COLUMN, WET_ROLE_ORIGPAGEID, QString::fromStdString(page.mMeta.mOrigMsgId));
-		modItem->setData(WET_DATA_COLUMN, WET_ROLE_PAGEID, QString::fromStdString(page.mMeta.mMsgId));
+        modItem->setData(WET_DATA_COLUMN, WET_ROLE_ORIGPAGEID, QString::fromStdString(page.mMeta.mOrigMsgId.toStdString()));
+        modItem->setData(WET_DATA_COLUMN, WET_ROLE_PAGEID, QString::fromStdString(page.mMeta.mMsgId.toStdString()));
 
-		modItem->setData(WET_DATA_COLUMN, WET_ROLE_PARENTID, QString::fromStdString(page.mMeta.mParentId));
+        modItem->setData(WET_DATA_COLUMN, WET_ROLE_PARENTID, QString::fromStdString(page.mMeta.mParentId.toStdString()));
 
 		{
 			// From Forum stuff.
@@ -745,7 +745,7 @@ void WikiEditDialog::loadBaseHistory(const uint32_t &token)
 			modItem->setData(WET_COL_DATE, WET_ROLE_SORT, sort);
 		}
 		modItem->setId(page.mMeta.mAuthorId, WET_COL_AUTHORID);
-		modItem->setText(WET_COL_PAGEID, QString::fromStdString(page.mMeta.mMsgId));
+        modItem->setText(WET_COL_PAGEID, QString::fromStdString(page.mMeta.mMsgId.toStdString()));
 
 		ui.treeWidget_History->addTopLevelItem(modItem);
         }
@@ -805,7 +805,7 @@ void WikiEditDialog::loadEditTreeData(const uint32_t &token)
 		QTreeWidgetItem *item = ui.treeWidget_History->topLevelItem(nIndex);
 
 		/* index by MsgId --> ONLY For Wiki Thread Head Items... SPECIAL HACK FOR HERE! */	
-		std::string msgId = item->data(WET_DATA_COLUMN, WET_ROLE_PAGEID).toString().toStdString();
+        RsGxsMessageId msgId ( item->data(WET_DATA_COLUMN, WET_ROLE_PAGEID).toString().toStdString() );
 		items[msgId] = item;
 	}
 
@@ -824,7 +824,7 @@ void WikiEditDialog::loadEditTreeData(const uint32_t &token)
 	        std::cerr << " ParentId: " << snapshot.mMeta.mParentId;
 	        std::cerr << std::endl;
 
-		if (snapshot.mMeta.mParentId == "")
+        if (snapshot.mMeta.mParentId.isNull())
 		{
 			/* Ignore! */
 	        	std::cerr << "Ignoring ThreadHead Item";
@@ -842,9 +842,9 @@ void WikiEditDialog::loadEditTreeData(const uint32_t &token)
 
 		/* create an Entry */
 		GxsIdRSTreeWidgetItem *modItem = new GxsIdRSTreeWidgetItem(mThreadCompareRole);
-		modItem->setData(WET_DATA_COLUMN, WET_ROLE_ORIGPAGEID, QString::fromStdString(snapshot.mMeta.mOrigMsgId));
-		modItem->setData(WET_DATA_COLUMN, WET_ROLE_PAGEID, QString::fromStdString(snapshot.mMeta.mMsgId));
-		modItem->setData(WET_DATA_COLUMN, WET_ROLE_PARENTID, QString::fromStdString(snapshot.mMeta.mParentId));
+        modItem->setData(WET_DATA_COLUMN, WET_ROLE_ORIGPAGEID, QString::fromStdString(snapshot.mMeta.mOrigMsgId.toStdString()));
+        modItem->setData(WET_DATA_COLUMN, WET_ROLE_PAGEID, QString::fromStdString(snapshot.mMeta.mMsgId.toStdString()));
+        modItem->setData(WET_DATA_COLUMN, WET_ROLE_PARENTID, QString::fromStdString(snapshot.mMeta.mParentId.toStdString()));
 
 		{
 			// From Forum stuff.
@@ -859,7 +859,7 @@ void WikiEditDialog::loadEditTreeData(const uint32_t &token)
 			modItem->setData(WET_COL_DATE, WET_ROLE_SORT, sort);
 		}
 		modItem->setId(snapshot.mMeta.mAuthorId, WET_COL_AUTHORID);
-		modItem->setText(WET_COL_PAGEID, QString::fromStdString(snapshot.mMeta.mMsgId));
+        modItem->setText(WET_COL_PAGEID, QString::fromStdString(snapshot.mMeta.mMsgId.toStdString()));
 
 		/* find the parent */
 		iit = items.find(snapshot.mMeta.mParentId);
@@ -876,7 +876,7 @@ void WikiEditDialog::loadEditTreeData(const uint32_t &token)
 
 	for(uit = unparented.begin(); uit != unparented.end(); uit++)
 	{
-		std::string parentId = (*uit)->data(WET_DATA_COLUMN, WET_ROLE_PARENTID).toString().toStdString();
+        RsGxsMessageId parentId ( (*uit)->data(WET_DATA_COLUMN, WET_ROLE_PARENTID).toString().toStdString());
 
 
 		iit = items.find(parentId);

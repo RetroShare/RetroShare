@@ -37,6 +37,10 @@
 
 #include <stdlib.h>
 #include <stdint.h>
+#include <retroshare/rstypes.h>
+#include <serialiser/rstlvtypes.h>
+#include <serialiser/rstlvbase.h>
+#include <serialiser/rsbaseserial.h>
 
 
 //! A base class for all tlv items 
@@ -112,23 +116,82 @@ virtual std::ostream &printHex(std::ostream &out, uint16_t indent); /* SPECIAL O
 	std::list<std::string> ids; /* Mandatory */
 };
 
-class RsTlvPeerIdSet: public RsTlvStringSet
+template<class ID_CLASS,uint32_t TLV_TYPE> class t_RsTlvIdSet: public RsTlvItem
 {
 	public:
-	RsTlvPeerIdSet();
+		t_RsTlvIdSet() {}
+		virtual ~t_RsTlvIdSet() {}
+
+		virtual uint32_t TlvSize() { return ID_CLASS::SIZE_IN_BYTES * ids.size() + TLV_HEADER_SIZE; }
+		virtual void TlvClear(){ ids.clear() ; }
+		virtual bool SetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
+		{	/* must check sizes */
+			uint32_t tlvsize = TlvSize();
+			uint32_t tlvend  = *offset + tlvsize;
+
+			if (size < tlvend)
+				return false; /* not enough space */
+
+			bool ok = true;
+
+			/* start at data[offset] */
+			ok = ok && SetTlvBase(data, tlvend, offset, TLV_TYPE, tlvsize);
+
+			for(typename std::list<ID_CLASS>::const_iterator it(ids.begin());it!=ids.end();++it)
+				ok = ok && (*it).serialise(data,size,*offset) ;
+
+			return ok ;
+		}
+		virtual bool GetTlv(void *data, uint32_t size, uint32_t *offset) /* deserialise */
+		{
+			if (size < *offset + TLV_HEADER_SIZE)
+				return false;
+
+			uint16_t tlvtype = GetTlvType( &(((uint8_t *) data)[*offset])  );
+			uint32_t tlvsize = GetTlvSize( &(((uint8_t *) data)[*offset])  );
+			uint32_t tlvend = *offset + tlvsize;
+
+			if (size < tlvend)    /* check size */
+				return false; /* not enough space */
+
+			if (tlvtype != TLV_TYPE) /* check type */
+				return false;
+
+			bool ok = true;
+
+			/* ready to load */
+			TlvClear();
+
+			/* skip the header */
+			(*offset) += TLV_HEADER_SIZE;
+
+			while(*offset + ID_CLASS::SIZE_IN_BYTES <= tlvend)
+			{
+				ID_CLASS id ;
+				ok = ok && id.deserialise(data,size,*offset) ;
+				ids.push_back(id) ;
+			}
+			if(*offset != tlvend)
+				std::cerr << "(EE) deserialisaiton error in " << __PRETTY_FUNCTION__ << std::endl;
+			return *offset == tlvend ;
+		}
+		virtual std::ostream &print(std::ostream &out, uint16_t indent)
+		{
+			std::cerr << __PRETTY_FUNCTION__ << ": not implemented" << std::endl;
+			return out ;
+		}
+		virtual std::ostream &printHex(std::ostream &out, uint16_t indent) /* SPECIAL One */
+		{
+			std::cerr << __PRETTY_FUNCTION__ << ": not implemented" << std::endl;
+			return out ;
+		}
+
+		std::list<ID_CLASS> ids ;
 };
 
-class RsTlvHashSet: public RsTlvStringSet
-{
-	public:
-	RsTlvHashSet();
-};
-
-class RsTlvPgpIdSet: public RsTlvStringSet
-{
-	public:
-	RsTlvPgpIdSet();
-};
+typedef t_RsTlvIdSet<RsPeerId,TLV_TYPE_PEERSET>		RsTlvPeerIdSet ;
+typedef t_RsTlvIdSet<RsPgpId,TLV_TYPE_PGPIDSET>	RsTlvPgpIdSet ;
+typedef t_RsTlvIdSet<Sha1CheckSum,TLV_TYPE_HASHSET> 	RsTlvHashSet ;
 
 class RsTlvServiceIdSet: public RsTlvItem
 {
@@ -180,7 +243,7 @@ virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); /* deseria
 virtual std::ostream &print(std::ostream &out, uint16_t indent);
 
 	uint64_t filesize; /// Mandatory: size of file to be downloaded
-	std::string hash;  /// Mandatory: to find file
+    RsFileHash hash;  /// Mandatory: to find file
 	std::string name;  /// Optional: name of file
 	std::string path;  /// Optional: path on host computer
 	uint32_t    pop;   /// Optional: Popularity of file

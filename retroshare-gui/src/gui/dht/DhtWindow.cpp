@@ -299,8 +299,8 @@ void DhtWindow::updateNetPeers()
 {
 	QTreeWidget *peerTreeWidget = ui->peerTreeWidget;
 
-	std::list<std::string> peerIds;
-	std::list<std::string>::iterator it;
+	std::list<RsPeerId> peerIds;
+	std::list<RsPeerId>::iterator it;
 
 	rsDht->getNetPeerList(peerIds);
 
@@ -386,7 +386,7 @@ void DhtWindow::updateNetPeers()
 
 		peer_item -> setData(PTW_COL_PEERID, Qt::DisplayRole, QString::fromStdString(status.mDhtId));
 		peer_item -> setData(PTW_COL_RSNAME, Qt::DisplayRole, QString::fromStdString(name));
-		peer_item -> setData(PTW_COL_RSID, Qt::DisplayRole, QString::fromStdString(status.mRsId));
+		peer_item -> setData(PTW_COL_RSID, Qt::DisplayRole, QString::fromStdString(status.mRsId.toStdString()));
 
 		QString dhtstate;
 		switch(status.mDhtState)

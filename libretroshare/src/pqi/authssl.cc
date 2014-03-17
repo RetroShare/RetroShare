@@ -42,6 +42,7 @@
 #include "util/rsstring.h"
 
 #include "retroshare/rspeers.h" // for RsPeerDetails structure 
+#include "retroshare/rsids.h" // for RsPeerDetails structure 
 #include "rsserver/p3face.h" 
 
 /******************** notify of new Cert **************************/
@@ -240,7 +241,7 @@ AuthSSL::AuthSSL()
 static int verify_x509_callback(int preverify_ok, X509_STORE_CTX *ctx);
 
 
-sslcert::sslcert(X509 *x509, std::string pid)
+sslcert::sslcert(X509 *x509, const RsPeerId& pid)
 {
 	certificate = x509;
 	id = pid;
@@ -249,7 +250,7 @@ sslcert::sslcert(X509 *x509, std::string pid)
 	location = getX509LocString(x509->cert_info->subject);
 	email = "";
 
-	issuer = getX509CNString(x509->cert_info->issuer);
+	issuer = RsPgpId(std::string(getX509CNString(x509->cert_info->issuer)));
 
 	authed = false;
 }
@@ -426,7 +427,9 @@ static  int initLib = 0;
 		return -1;
 	}
 
-	if (!getX509id(x509, mOwnId))
+	RsPeerId mownidstr ;
+
+	if (!getX509id(x509, mownidstr))
 	{
 		std::cerr << "AuthSSLimpl::InitAuth() getX509id() Failed";
 		std::cerr << std::endl;
@@ -435,6 +438,10 @@ static  int initLib = 0;
 		CloseAuth();
 		return -1;
 	}
+	mOwnId = mownidstr ;
+
+	assert(!mOwnId.isNull()) ;
+
 	/* Check that Certificate is Ok ( virtual function )
 	 * for gpg/pgp or CA verification
 	 */
@@ -522,7 +529,7 @@ SSL_CTX *AuthSSLimpl::getCTX()
 	return sslctx;
 }
 
-std::string AuthSSLimpl::OwnId()
+const RsPeerId& AuthSSLimpl::OwnId()
 {
 #ifdef AUTHSSL_DEBUG
 //	std::cerr << "AuthSSLimpl::OwnId()" << std::endl;
@@ -615,7 +622,7 @@ bool AuthSSLimpl::SignDataBin(const void *data, const uint32_t len,
 
 
 bool AuthSSLimpl::VerifySignBin(const void *data, const uint32_t len,
-                        unsigned char *sign, unsigned int signlen, SSL_id sslId)
+                        unsigned char *sign, unsigned int signlen, const RsPeerId& sslId)
 {
 	/* find certificate.
 	 * if we don't have - fail.
@@ -677,7 +684,7 @@ X509 *AuthSSLimpl::SignX509ReqWithGPG(X509_REQ *req, long days)
         unsigned long chtype = MBSTRING_ASC;
         X509_NAME *issuer_name = X509_NAME_new();
         X509_NAME_add_entry_by_txt(issuer_name, "CN", chtype,
-                        (unsigned char *) AuthGPG::getAuthGPG()->getGPGOwnId().c_str(), -1, -1, 0);
+                        (unsigned char *) AuthGPG::getAuthGPG()->getGPGOwnId().toStdString().c_str(), -1, -1, 0);
 /****
         X509_NAME_add_entry_by_NID(issuer_name, 48, 0,
                         (unsigned char *) "email@email.com", -1, -1, 0);
@@ -687,7 +694,7 @@ X509 *AuthSSLimpl::SignX509ReqWithGPG(X509_REQ *req, long days)
                         (unsigned char *) "loc", -1, -1, 0);
 ****/
 
-        std::cerr << "AuthSSLimpl::SignX509Req() Issuer name: " << AuthGPG::getAuthGPG()->getGPGOwnId() << std::endl;
+        std::cerr << "AuthSSLimpl::SignX509Req() Issuer name: " << AuthGPG::getAuthGPG()->getGPGOwnId().toStdString() << std::endl;
 
         BIGNUM *btmp = BN_new();
         if (!BN_pseudo_rand(btmp, SERIAL_RAND_BITS, 0, 0))
@@ -888,10 +895,10 @@ bool AuthSSLimpl::AuthX509WithGPG(X509 *x509,uint32_t& diagnostic)
 	}
 
 	/* extract CN for peer Id */
-	std::string issuer = getX509CNString(x509->cert_info->issuer);
+	RsPgpId issuer(std::string(getX509CNString(x509->cert_info->issuer)));
 	RsPeerDetails pd;
 #ifdef AUTHSSL_DEBUG
-	std::cerr << "Checking GPG issuer : " << issuer << std::endl ;
+	std::cerr << "Checking GPG issuer : " << issuer.toStdString() << std::endl ;
 #endif
 	if (!AuthGPG::getAuthGPG()->getGPGDetails(issuer, pd)) {
 		std::cerr << "AuthSSLimpl::AuthX509() X509 NOT authenticated : AuthGPG::getAuthGPG()->getGPGDetails() returned false." << std::endl;
@@ -1009,7 +1016,7 @@ err:
 
 
 	/* validate + get id */
-bool    AuthSSLimpl::ValidateCertificate(X509 *x509, std::string &peerId)
+bool    AuthSSLimpl::ValidateCertificate(X509 *x509, RsPeerId &peerId)
 {
 	uint32_t auth_diagnostic ;
 
@@ -1022,7 +1029,9 @@ bool    AuthSSLimpl::ValidateCertificate(X509 *x509, std::string &peerId)
 #endif
 		return false;
 	}
-	if(!getX509id(x509, peerId)) 
+	RsPeerId peerIdstr ;
+
+	if(!getX509id(x509, peerIdstr)) 
 	{
 #ifdef AUTHSSL_DEBUG
 		std::cerr << "AuthSSLimpl::ValidateCertificate() Cannot retrieve peer id from certificate..";
@@ -1030,6 +1039,7 @@ bool    AuthSSLimpl::ValidateCertificate(X509 *x509, std::string &peerId)
 #endif
 		return false;
 	}
+	peerId = peerIdstr ;
 
 #ifdef AUTHSSL_DEBUG
 	std::cerr << "AuthSSLimpl::ValidateCertificate() good certificate.";
@@ -1058,10 +1068,23 @@ static int verify_x509_callback(int preverify_ok, X509_STORE_CTX *ctx)
 
 	if(x509 != NULL)
 	{
-		std::string gpgid = getX509CNString(x509->cert_info->issuer);
+		RsPgpId gpgid (std::string(getX509CNString(x509->cert_info->issuer)));
+		if(gpgid.isNull()) 
+		{
+			std::cerr << "verify_x509_callback(): wrong PGP id \"" << std::string(getX509CNString(x509->cert_info->issuer)) << "\"" << std::endl;
+			return false ;
+		}
+
 		std::string sslcn = getX509CNString(x509->cert_info->subject);
-		std::string sslid ;
+		RsPeerId sslid ;
+
 		getX509id(x509,sslid);
+
+		if(sslid.isNull()) 
+		{
+			std::cerr << "verify_x509_callback(): wrong SSL id \"" << std::string(getX509CNString(x509->cert_info->subject)) << "\"" << std::endl;
+			return false ;
+		}
 
 		AuthSSL::getAuthSSL()->setCurrentConnectionAttemptInfo(gpgid,sslid,sslcn) ;
 	} 
@@ -1130,7 +1153,7 @@ int AuthSSLimpl::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
 					std::cerr << "(WW) Certificate was rejected because authentication failed. Diagnostic = " << auth_diagnostic << std::endl;
                     return false;
             }
-            std::string pgpid = getX509CNString(X509_STORE_CTX_get_current_cert(ctx)->cert_info->issuer);
+            RsPgpId pgpid = RsPgpId(std::string(getX509CNString(X509_STORE_CTX_get_current_cert(ctx)->cert_info->issuer)));
 
             if (pgpid != AuthGPG::getAuthGPG()->getGPGOwnId() && !AuthGPG::getAuthGPG()->isGPGAccepted(pgpid))
             {
@@ -1157,7 +1180,7 @@ int AuthSSLimpl::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
         if (preverify_ok) {
 
             //sslcert *cert = NULL;
-            std::string certId;
+            RsPeerId certId;
             getX509id(X509_STORE_CTX_get_current_cert(ctx), certId);
 
         }
@@ -1181,7 +1204,7 @@ int AuthSSLimpl::VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx)
 /********************************************************************************/
 
 
-bool    AuthSSLimpl::encrypt(void *&out, int &outlen, const void *in, int inlen, std::string peerId)
+bool    AuthSSLimpl::encrypt(void *&out, int &outlen, const void *in, int inlen, const RsPeerId& peerId)
 {
 	RsStackMutex stack(sslMtx); /******* LOCKED ******/
 
@@ -1377,7 +1400,7 @@ bool    AuthSSLimpl::decrypt(void *&out, int &outlen, const void *in, int inlen)
 /********************************************************************************/
 /********************************************************************************/
 
-void AuthSSLimpl::setCurrentConnectionAttemptInfo(const std::string& gpg_id,const std::string& ssl_id,const std::string& ssl_cn)
+void AuthSSLimpl::setCurrentConnectionAttemptInfo(const RsPgpId& gpg_id,const RsPeerId& ssl_id,const std::string& ssl_cn)
 {
 #ifdef AUTHSSL_DEBUG
 	std::cerr << "AuthSSL: registering connection attempt from:" << std::endl;
@@ -1389,7 +1412,7 @@ void AuthSSLimpl::setCurrentConnectionAttemptInfo(const std::string& gpg_id,cons
 	_last_sslid_to_connect = ssl_id ;
 	_last_sslcn_to_connect = ssl_cn ;
 }
-void AuthSSLimpl::getCurrentConnectionAttemptInfo(std::string& gpg_id,std::string& ssl_id,std::string& ssl_cn)
+void AuthSSLimpl::getCurrentConnectionAttemptInfo(RsPgpId& gpg_id,RsPeerId& ssl_id,std::string& ssl_cn)
 {
 	gpg_id = _last_gpgid_to_connect ;
 	ssl_id = _last_sslid_to_connect ;
@@ -1397,8 +1420,8 @@ void AuthSSLimpl::getCurrentConnectionAttemptInfo(std::string& gpg_id,std::strin
 }
 
 /* store for discovery */
-bool    AuthSSLimpl::FailedCertificate(X509 *x509, const std::string& gpgid,
-													const std::string& sslid,
+bool    AuthSSLimpl::FailedCertificate(X509 *x509, const RsPgpId& gpgid,
+													const RsPeerId& sslid,
 													const std::string& sslcn,
 													const struct sockaddr_storage& addr, 
 													bool incoming)
@@ -1424,24 +1447,24 @@ bool    AuthSSLimpl::FailedCertificate(X509 *x509, const std::string& gpgid,
 #endif
 	if (incoming)
 	{
-		RsServer::notify()->AddPopupMessage(RS_POPUP_CONNECT_ATTEMPT, gpgid, sslcn, sslid);
+		RsServer::notify()->AddPopupMessage(RS_POPUP_CONNECT_ATTEMPT, gpgid.toStdString(), sslcn, sslid.toStdString());
 
 		switch(auth_diagnostic)
 		{
-			case RS_SSL_HANDSHAKE_DIAGNOSTIC_CERTIFICATE_MISSING: 	RsServer::notify()->AddFeedItem(RS_FEED_ITEM_SEC_MISSING_CERTIFICATE, gpgid, sslid, sslcn, ip_address);
+			case RS_SSL_HANDSHAKE_DIAGNOSTIC_CERTIFICATE_MISSING: 	RsServer::notify()->AddFeedItem(RS_FEED_ITEM_SEC_MISSING_CERTIFICATE, gpgid.toStdString(), sslid.toStdString(), sslcn, ip_address);
 																					  	break ;
-			case RS_SSL_HANDSHAKE_DIAGNOSTIC_CERTIFICATE_NOT_VALID: 	RsServer::notify()->AddFeedItem(RS_FEED_ITEM_SEC_BAD_CERTIFICATE, gpgid, sslid, sslcn, ip_address);
+			case RS_SSL_HANDSHAKE_DIAGNOSTIC_CERTIFICATE_NOT_VALID: 	RsServer::notify()->AddFeedItem(RS_FEED_ITEM_SEC_BAD_CERTIFICATE, gpgid.toStdString(), sslid.toStdString(), sslcn, ip_address);
 																					  	break ;
-			case RS_SSL_HANDSHAKE_DIAGNOSTIC_ISSUER_UNKNOWN: 			RsServer::notify()->AddFeedItem(RS_FEED_ITEM_SEC_UNKNOWN_IN     , gpgid, sslid, sslcn, ip_address);
+			case RS_SSL_HANDSHAKE_DIAGNOSTIC_ISSUER_UNKNOWN: 			RsServer::notify()->AddFeedItem(RS_FEED_ITEM_SEC_UNKNOWN_IN     , gpgid.toStdString(), sslid.toStdString(), sslcn, ip_address);
 																					  	break ;
-			case RS_SSL_HANDSHAKE_DIAGNOSTIC_MALLOC_ERROR:				RsServer::notify()->AddFeedItem(RS_FEED_ITEM_SEC_INTERNAL_ERROR , gpgid, sslid, sslcn, ip_address);
+			case RS_SSL_HANDSHAKE_DIAGNOSTIC_MALLOC_ERROR:				RsServer::notify()->AddFeedItem(RS_FEED_ITEM_SEC_INTERNAL_ERROR , gpgid.toStdString(), sslid.toStdString(), sslcn, ip_address);
 																					  	break ;
-			case RS_SSL_HANDSHAKE_DIAGNOSTIC_WRONG_SIGNATURE: 			RsServer::notify()->AddFeedItem(RS_FEED_ITEM_SEC_WRONG_SIGNATURE, gpgid, sslid, sslcn, ip_address);
+			case RS_SSL_HANDSHAKE_DIAGNOSTIC_WRONG_SIGNATURE: 			RsServer::notify()->AddFeedItem(RS_FEED_ITEM_SEC_WRONG_SIGNATURE, gpgid.toStdString(), sslid.toStdString(), sslcn, ip_address);
 																					  	break ;
 			case RS_SSL_HANDSHAKE_DIAGNOSTIC_OK: 							
 			case RS_SSL_HANDSHAKE_DIAGNOSTIC_UNKNOWN:
 			default:
-																						RsServer::notify()->AddFeedItem(RS_FEED_ITEM_SEC_CONNECT_ATTEMPT, gpgid, sslid, sslcn, ip_address);
+																						RsServer::notify()->AddFeedItem(RS_FEED_ITEM_SEC_CONNECT_ATTEMPT, gpgid.toStdString(), sslid.toStdString(), sslcn, ip_address);
 		}
 
 #ifdef AUTHSSL_DEBUG
@@ -1451,9 +1474,9 @@ bool    AuthSSLimpl::FailedCertificate(X509 *x509, const std::string& gpgid,
 	else 
 	{
 		if(authed)
-			RsServer::notify()->AddFeedItem(RS_FEED_ITEM_SEC_AUTH_DENIED, gpgid, sslid, sslcn, ip_address);
+			RsServer::notify()->AddFeedItem(RS_FEED_ITEM_SEC_AUTH_DENIED, gpgid.toStdString(), sslid.toStdString(), sslcn, ip_address);
 		else
-			RsServer::notify()->AddFeedItem(RS_FEED_ITEM_SEC_UNKNOWN_OUT, gpgid, sslid, sslcn, ip_address);
+			RsServer::notify()->AddFeedItem(RS_FEED_ITEM_SEC_UNKNOWN_OUT, gpgid.toStdString(), sslid.toStdString(), sslcn, ip_address);
 
 #ifdef AUTHSSL_DEBUG
 		std::cerr << " Outgoing to: ";
@@ -1468,7 +1491,7 @@ bool    AuthSSLimpl::FailedCertificate(X509 *x509, const std::string& gpgid,
 	return false;
 }
 
-bool    AuthSSLimpl::CheckCertificate(std::string id, X509 *x509)
+bool    AuthSSLimpl::CheckCertificate(const RsPeerId& id, X509 *x509)
 {
 	(void) id; /* remove unused parameter warning */
 
@@ -1485,9 +1508,9 @@ bool    AuthSSLimpl::CheckCertificate(std::string id, X509 *x509)
 
 
 /* Locked search -> internal help function */
-bool AuthSSLimpl::locked_FindCert(std::string id, sslcert **cert)
+bool AuthSSLimpl::locked_FindCert(const RsPeerId& id, sslcert **cert)
 {
-	std::map<std::string, sslcert *>::iterator it;
+	std::map<RsPeerId, sslcert *>::iterator it;
 	
 	if (mCerts.end() != (it = mCerts.find(id)))
 	{
@@ -1500,9 +1523,9 @@ bool AuthSSLimpl::locked_FindCert(std::string id, sslcert **cert)
 
 /* Remove Certificate */
 
-bool AuthSSLimpl::RemoveX509(std::string id)
+bool AuthSSLimpl::RemoveX509(RsPeerId id)
 {
-	std::map<std::string, sslcert *>::iterator it;
+	std::map<RsPeerId, sslcert *>::iterator it;
 	
 	RsStackMutex stack(sslMtx); /******* LOCKED ******/
 
@@ -1526,13 +1549,19 @@ bool AuthSSLimpl::RemoveX509(std::string id)
 bool AuthSSLimpl::LocalStoreCert(X509* x509) 
 {
 	//store the certificate in the local cert list
-	std::string peerId;
+	RsPeerId peerId ;
 	if(!getX509id(x509, peerId))
 	{
 		std::cerr << "AuthSSLimpl::LocalStoreCert() Cannot retrieve peer id from certificate." << std::endl;
 #ifdef AUTHSSL_DEBUG
 #endif
 		return false;
+	}
+
+	if(peerId.isNull())
+	{
+		std::cerr << "AuthSSLimpl::LocalStoreCert(): invalid peer id \"" << peerId << "\"" << std::endl;
+		return false ;
 	}
 
 
@@ -1547,7 +1576,7 @@ bool AuthSSLimpl::LocalStoreCert(X509* x509)
 	}
 
 	/* do a search */
-	std::map<std::string, sslcert *>::iterator it;
+	std::map<RsPeerId, sslcert *>::iterator it;
 	
 	if (mCerts.end() != (it = mCerts.find(peerId)))
 	{
@@ -1603,13 +1632,13 @@ bool AuthSSLimpl::saveList(bool& cleanup, std::list<RsItem*>& lst)
 
         // Now save config for network digging strategies
         RsConfigKeyValueSet *vitem = new RsConfigKeyValueSet ;
-        std::map<std::string, sslcert*>::iterator mapIt;
+        std::map<RsPeerId, sslcert*>::iterator mapIt;
         for (mapIt = mCerts.begin(); mapIt != mCerts.end(); mapIt++) {
             if (mapIt->first == mOwnId) {
                 continue;
             }
             RsTlvKeyValue kv;
-            kv.key = mapIt->first;
+            kv.key = mapIt->first.toStdString();
             #ifdef AUTHSSL_DEBUG
             std::cerr << "AuthSSLimpl::saveList() called (mapIt->first) : " << (mapIt->first) << std::endl ;
             #endif
@@ -1641,7 +1670,7 @@ bool AuthSSLimpl::loadList(std::list<RsItem*>& load)
 
                         std::list<RsTlvKeyValue>::iterator kit;
                         for(kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); kit++) {
-                            if (kit->key == mOwnId) {
+                            if (RsPeerId(kit->key) == mOwnId) {
                                 continue;
                             }
 

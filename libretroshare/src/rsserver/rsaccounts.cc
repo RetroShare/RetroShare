@@ -100,14 +100,6 @@ bool RsAccountsDetail::lockPreferredAccount()
 
 bool RsAccountsDetail::selectAccountByString(const std::string &prefUserString)
 {
-	std::string lower_case_user_string;
-	stringToLowerCase(prefUserString, lower_case_user_string) ;
-	std::string upper_case_user_string;
-	stringToUpperCase(prefUserString, upper_case_user_string) ;
-
-	std::cerr << "RsAccountsDetail::selectAccountByString(" << prefUserString << ")";
-	std::cerr << std::endl;
-
 	if (mAccountsLocked)
 	{
 		std::cerr << "RsAccountsDetail::selectAccountByString() ERROR Accounts Locked";
@@ -115,18 +107,22 @@ bool RsAccountsDetail::selectAccountByString(const std::string &prefUserString)
 		return false;
 	}
 		
+	// try both.
+	//
+	RsPeerId ssl_id(prefUserString) ;
+	RsPgpId pgp_id(prefUserString) ;
+
+	std::cerr << "RsAccountsDetail::selectAccountByString(" << prefUserString << ")" << std::endl;
 	
 	bool pgpNameFound = false;
-	std::map<std::string, AccountDetails>::const_iterator it;
+	std::map<RsPeerId, AccountDetails>::const_iterator it;
 	for(it = mAccounts.begin() ; it!= mAccounts.end() ; it++)
 	{
 		std::cerr << "\tChecking account (pgpid = " << it->second.mPgpId;
 		std::cerr << ", name=" << it->second.mPgpName << ", sslId="; 
 		std::cerr << it->second.mSslId << ")" << std::endl;
 
-		if(prefUserString == it->second.mPgpName || 
-			upper_case_user_string == it->second.mPgpId || 
-			lower_case_user_string == it->second.mSslId)
+		if(prefUserString == it->second.mPgpName || pgp_id == it->second.mPgpId || ssl_id == it->second.mSslId)
 		{
 			mPreferredId = it->second.mSslId;
 			pgpNameFound = true;
@@ -136,7 +132,7 @@ bool RsAccountsDetail::selectAccountByString(const std::string &prefUserString)
 }
 
 
-bool RsAccountsDetail::selectId(const std::string preferredId)
+bool RsAccountsDetail::selectId(const RsPeerId& preferredId)
 {
 	
 	if (mAccountsLocked)
@@ -146,7 +142,7 @@ bool RsAccountsDetail::selectId(const std::string preferredId)
 		return false;
 	}
 	
-	std::map<std::string, AccountDetails>::const_iterator it;
+	std::map<RsPeerId, AccountDetails>::const_iterator it;
 	it = mAccounts.find(preferredId);
 
 	if (it != mAccounts.end())
@@ -163,7 +159,7 @@ bool RsAccountsDetail::selectId(const std::string preferredId)
 
 bool RsAccountsDetail::checkPreferredId()
 {
-	std::map<std::string, AccountDetails>::const_iterator it;
+	std::map<RsPeerId, AccountDetails>::const_iterator it;
 	it = mAccounts.find(mPreferredId);
 
 	if (it != mAccounts.end())
@@ -172,7 +168,7 @@ bool RsAccountsDetail::checkPreferredId()
 	}
 	else
 	{
-		mPreferredId = "";
+		mPreferredId.clear();
 		return false;
 	}
 }
@@ -208,7 +204,7 @@ std::string RsAccountsDetail::PathAccountDirectory()
 {
 	std::string path;
 
-	std::map<std::string, AccountDetails>::const_iterator it;
+	std::map<RsPeerId, AccountDetails>::const_iterator it;
 	it = mAccounts.find(mPreferredId);
 	if (it == mAccounts.end())
 	{
@@ -371,7 +367,10 @@ bool	RsAccountsDetail::loadPreferredAccount()
 			path[i] = '\0';
 
 			// Store PreferredId.
-			mPreferredId = path;
+			mPreferredId = RsPeerId(std::string(path));
+
+			if(mPreferredId.isNull())
+				return false ;
 		}
 		fclose(ifd);
 		return true;
@@ -390,7 +389,7 @@ bool	RsAccountsDetail::storePreferredAccount()
 
 	if (ifd != NULL)
 	{
-		fprintf(ifd, "%s\n", mPreferredId.c_str());
+		fprintf(ifd, "%s\n", mPreferredId.toStdString().c_str());
 		fclose(ifd);
 
 		std::cerr << "Creating Init File: " << initfile << std::endl;
@@ -408,15 +407,15 @@ bool	RsAccountsDetail::storePreferredAccount()
  *
  */
 
-bool     RsAccountsDetail::getPreferredAccountId(std::string &id)
+bool     RsAccountsDetail::getPreferredAccountId(RsPeerId &id)
 {
 	id = mPreferredId;
-	return (mPreferredId != "");
+	return (!mPreferredId.isNull());
 }
 
-bool     RsAccountsDetail::getAccountIds(std::list<std::string> &ids)
+bool     RsAccountsDetail::getAccountIds(std::list<RsPeerId> &ids)
 {
-	std::map<std::string, AccountDetails>::iterator it;
+	std::map<RsPeerId, AccountDetails>::iterator it;
 	std::cerr << "getAccountIds:" << std::endl;
 
 	for(it = mAccounts.begin(); it != mAccounts.end(); it++)
@@ -433,11 +432,11 @@ bool     RsAccountsDetail::getAccountIds(std::list<std::string> &ids)
 }
 
 
-bool     RsAccountsDetail::getAccountDetails(const std::string &id,
-                                std::string &gpgId, std::string &gpgName, 
+bool     RsAccountsDetail::getAccountDetails(const RsPeerId &id,
+                                RsPgpId &gpgId, std::string &gpgName, 
                                 std::string &gpgEmail, std::string &location)
 {
-	std::map<std::string, AccountDetails>::iterator it;
+	std::map<RsPeerId, AccountDetails>::iterator it;
 	it = mAccounts.find(id);
 	if (it != mAccounts.end())
 	{
@@ -452,7 +451,7 @@ bool     RsAccountsDetail::getAccountDetails(const std::string &id,
 
 bool RsAccountsDetail::getAccountOptions(bool &ishidden, bool isFirstTimeRun)
 {
-	std::map<std::string, AccountDetails>::iterator it;
+	std::map<RsPeerId, AccountDetails>::iterator it;
 	it = mAccounts.find(mPreferredId);
 	if (it != mAccounts.end())
 	{
@@ -465,7 +464,7 @@ bool RsAccountsDetail::getAccountOptions(bool &ishidden, bool isFirstTimeRun)
 
 
 /* directories with valid certificates in the expected location */
-bool RsAccountsDetail::getAvailableAccounts(std::map<std::string, AccountDetails> &accounts,int& failing_accounts,std::map<std::string,std::vector<std::string> >& unsupported_keys)
+bool RsAccountsDetail::getAvailableAccounts(std::map<RsPeerId, AccountDetails> &accounts,int& failing_accounts,std::map<std::string,std::vector<std::string> >& unsupported_keys)
 {
 	failing_accounts = 0 ;
 	/* get the directories */
@@ -584,7 +583,7 @@ bool RsAccountsDetail::getAvailableAccounts(std::map<std::string, AccountDetails
 				std::cerr << "getAvailableAccounts() Accepted: " << *it << std::endl;
 #endif
 
-				std::map<std::string, AccountDetails>::iterator ait;
+				std::map<RsPeerId, AccountDetails>::iterator ait;
 				ait = accounts.find(tmpId.mSslId);
 				if (ait != accounts.end())
 				{
@@ -623,7 +622,7 @@ static bool checkAccount(std::string accountdir, AccountDetails &account,std::ma
 	basename += "user";
 
 	std::string cert_name = basename + "_cert.pem";
-	std::string userName, userId;
+	std::string userName;
 
 #ifdef AUTHSSL_DEBUG
 	std::cerr << "checkAccount() dir: " << accountdir << std::endl;
@@ -646,8 +645,8 @@ static bool checkAccount(std::string accountdir, AccountDetails &account,std::ma
 
 		if(!AuthGPG::getAuthGPG()->isKeySupported(account.mPgpId))
 		{
-			std::string keystring = account.mPgpId + " " + account.mPgpName + "&#60;" + account.mPgpEmail ;
-			unsupported_keys[keystring].push_back("Location: " + account.mLocation + "&nbsp;&nbsp;(" + account.mSslId + ")") ;
+			std::string keystring = account.mPgpId.toStdString() + " " + account.mPgpName + "&#60;" + account.mPgpEmail ;
+			unsupported_keys[keystring].push_back("Location: " + account.mLocation + "&nbsp;&nbsp;(" + account.mSslId.toStdString() + ")") ;
 			return false ;
 		}
 
@@ -788,12 +787,12 @@ std::string RsAccountsDetail::PathDataDirectory()
 
 
                 /* Generating GPGme Account */
-int      RsAccountsDetail::GetPGPLogins(std::list<std::string> &pgpIds) {
+int      RsAccountsDetail::GetPGPLogins(std::list<RsPgpId> &pgpIds) {
         AuthGPG::getAuthGPG()->availableGPGCertificatesWithPrivateKeys(pgpIds);
 	return 1;
 }
 
-int      RsAccountsDetail::GetPGPLoginDetails(const std::string& id, std::string &name, std::string &email)
+int      RsAccountsDetail::GetPGPLoginDetails(const RsPgpId& id, std::string &name, std::string &email)
 {
         #ifdef GPG_DEBUG
         std::cerr << "RsInit::GetPGPLoginDetails for \"" << id << "\"" << std::endl;
@@ -819,7 +818,7 @@ int      RsAccountsDetail::GetPGPLoginDetails(const std::string& id, std::string
 /* Before any SSL stuff can be loaded, the correct PGP must be selected / generated:
  **/
 
-bool RsAccountsDetail::SelectPGPAccount(const std::string& pgpId)
+bool RsAccountsDetail::SelectPGPAccount(const RsPgpId& pgpId)
 {
 	bool retVal = false;
 
@@ -837,7 +836,7 @@ bool RsAccountsDetail::SelectPGPAccount(const std::string& pgpId)
 }
 
 
-bool     RsAccountsDetail::GeneratePGPCertificate(const std::string& name, const std::string& email, const std::string& passwd, std::string &pgpId, std::string &errString)
+bool     RsAccountsDetail::GeneratePGPCertificate(const std::string& name, const std::string& email, const std::string& passwd, RsPgpId &pgpId, std::string &errString)
 {
     return AuthGPG::getAuthGPG()->GeneratePGPCertificate(name, email, passwd, pgpId, errString);
 }
@@ -849,12 +848,12 @@ void RsAccountsDetail::getUnsupportedKeys(std::map<std::string,std::vector<std::
 	return;
 }
 
-bool RsAccountsDetail::exportIdentity(const std::string& fname,const std::string& id)
+bool RsAccountsDetail::exportIdentity(const std::string& fname,const RsPgpId& id)
 {
 	return AuthGPG::getAuthGPG()->exportProfile(fname,id);
 }
 
-bool RsAccountsDetail::importIdentity(const std::string& fname,std::string& id,std::string& import_error)
+bool RsAccountsDetail::importIdentity(const std::string& fname,RsPgpId& id,std::string& import_error)
 {
 	return AuthGPG::getAuthGPG()->importProfile(fname,id,import_error);
 }
@@ -917,7 +916,7 @@ bool RsAccountsDetail::copyGnuPGKeyrings()
 
 
                 /* Create SSL Certificates */
-bool     RsAccountsDetail::GenerateSSLCertificate(const std::string& pgp_id, const std::string& org, const std::string& loc, const std::string& country, const bool ishiddenloc, const std::string& passwd, std::string &sslId, std::string &errString)
+bool     RsAccountsDetail::GenerateSSLCertificate(const RsPgpId& pgp_id, const std::string& org, const std::string& loc, const std::string& country, const bool ishiddenloc, const std::string& passwd, RsPeerId &sslId, std::string &errString)
 {
 	/* select the PGP Identity first */
 	if (!SelectPGPAccount(pgp_id))
@@ -1045,7 +1044,8 @@ bool     RsAccountsDetail::GenerateSSLCertificate(const std::string& pgp_id, con
 	/* try to load it, and get Id */
 
 	std::string location;
-	std::string pgpid_retrieved;
+	RsPgpId pgpid_retrieved;
+
 	if (LoadCheckX509(cert_name.c_str(), pgpid_retrieved, location, sslId) == 0) {
 		std::cerr << "RsInit::GenerateSSLCertificate() Cannot check own signature, maybe the files are corrupted." << std::endl;
 		return false;
@@ -1054,13 +1054,9 @@ bool     RsAccountsDetail::GenerateSSLCertificate(const std::string& pgp_id, con
 	/* Move directory to correct id */
 	std::string accountdir;
 	if (ishiddenloc)
-	{
-		accountdir = "HID06_" + sslId;
-	}
+		accountdir = "HID06_" + sslId.toStdString();
 	else
-	{
-		accountdir = "LOC06_" + sslId;
-	}
+		accountdir = "LOC06_" + sslId.toStdString();
 
 	std::string fullAccountDir = mBaseDirectory + "/" + accountdir;
 	std::string finalbase = fullAccountDir + "/";
@@ -1253,28 +1249,28 @@ std::string RsAccounts::PGPDirectory() { return rsAccounts.PathPGPDirectory(); }
 std::string RsAccounts::AccountDirectory() { return rsAccounts.PathAccountDirectory(); }
 
 // PGP Accounts.
-int     RsAccounts::GetPGPLogins(std::list<std::string> &pgpIds)
+int     RsAccounts::GetPGPLogins(std::list<RsPgpId> &pgpIds)
 {
 	return rsAccounts.GetPGPLogins(pgpIds);
 }
 
-int     RsAccounts::GetPGPLoginDetails(const std::string& id, std::string &name, std::string &email)
+int     RsAccounts::GetPGPLoginDetails(const RsPgpId& id, std::string &name, std::string &email)
 {
 	return rsAccounts.GetPGPLoginDetails(id, name, email);
 }
 
-bool    RsAccounts::GeneratePGPCertificate(const std::string &name, const std::string& email, const std::string& passwd, std::string &pgpId, std::string &errString)
+bool    RsAccounts::GeneratePGPCertificate(const std::string &name, const std::string& email, const std::string& passwd, RsPgpId &pgpId, std::string &errString)
 {
 	return rsAccounts.GeneratePGPCertificate(name, email, passwd, pgpId, errString);
 }
 
 // PGP Support Functions.
-bool    RsAccounts::ExportIdentity(const std::string& fname,const std::string& pgp_id)
+bool    RsAccounts::ExportIdentity(const std::string& fname,const RsPgpId& pgp_id)
 {
 	return rsAccounts.exportIdentity(fname,pgp_id);
 }
 
-bool    RsAccounts::ImportIdentity(const std::string& fname,std::string& imported_pgp_id,std::string& import_error)
+bool    RsAccounts::ImportIdentity(const std::string& fname,RsPgpId& imported_pgp_id,std::string& import_error)
 {
 	return rsAccounts.importIdentity(fname,imported_pgp_id,import_error);
 }
@@ -1290,29 +1286,29 @@ bool    RsAccounts::CopyGnuPGKeyrings()
 }
 
 // Rs Accounts
-bool    RsAccounts::SelectAccount(const std::string &id)
+bool    RsAccounts::SelectAccount(const RsPeerId &id)
 {
 	return rsAccounts.selectId(id);
 }
 
-bool    RsAccounts::GetPreferredAccountId(std::string &id)
+bool    RsAccounts::GetPreferredAccountId(RsPeerId &id)
 {
 	return rsAccounts.getPreferredAccountId(id);
 }
 
-bool    RsAccounts::GetAccountIds(std::list<std::string> &ids)
+bool    RsAccounts::GetAccountIds(std::list<RsPeerId> &ids)
 {
 	return rsAccounts.getAccountIds(ids);
 }
 
-bool    RsAccounts::GetAccountDetails(const std::string &id,
-		std::string &pgpId, std::string &pgpName,
+bool    RsAccounts::GetAccountDetails(const RsPeerId &id,
+		RsPgpId &pgpId, std::string &pgpName,
 		std::string &pgpEmail, std::string &location)
 {
 	return rsAccounts.getAccountDetails(id, pgpId, pgpName, pgpEmail, location);
 }
 
-bool    RsAccounts::GenerateSSLCertificate(const std::string& pgp_id, const std::string& org, const std::string& loc, const std::string& country, const bool ishiddenloc, const std::string& passwd, std::string &sslId, std::string &errString)
+bool    RsAccounts::GenerateSSLCertificate(const RsPgpId& pgp_id, const std::string& org, const std::string& loc, const std::string& country, const bool ishiddenloc, const std::string& passwd, RsPeerId &sslId, std::string &errString)
 {
 	return rsAccounts.GenerateSSLCertificate(pgp_id, org, loc, country, ishiddenloc, passwd, sslId, errString);
 }

@@ -418,7 +418,7 @@ uint32_t RsPrivateChatMsgConfigItem::serial_size()
 {
 	uint32_t s = 8; /* header */
 	s += 4; /* version */
-	s += GetTlvStringSize(configPeerId);
+	s += configPeerId.serial_size();
 	s += 4; /* chatFlags */
 	s += 4; /* configFlags */
 	s += 4; /* sendTime  */
@@ -430,9 +430,9 @@ uint32_t RsPrivateChatMsgConfigItem::serial_size()
 uint32_t RsPrivateChatDistantInviteConfigItem::serial_size()
 {
 	uint32_t s = 8; /* header */
-	s += GetTlvStringSize(hash);
+    s += hash.serial_size();
 	s += GetTlvStringSize(encrypted_radix64_string);
-	s += GetTlvStringSize(destination_pgp_id);
+	s += destination_pgp_id.serial_size();
 	s += 16; /* aes_key */
 	s += 4; /* time_of_validity */
 	s += 4; /* last_hit_time  */
@@ -807,7 +807,7 @@ bool RsPrivateChatMsgConfigItem::serialise(void *data, uint32_t& pktsize)
 
 	/* add mandatory parts first */
 	ok &= setRawUInt32(data, tlvsize, &offset, 0);
-	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_PEERID, configPeerId);
+	ok &= configPeerId.serialise(data, tlvsize, offset) ;
 	ok &= setRawUInt32(data, tlvsize, &offset, chatFlags);
 	ok &= setRawUInt32(data, tlvsize, &offset, configFlags);
 	ok &= setRawUInt32(data, tlvsize, &offset, sendTime);
@@ -845,9 +845,9 @@ bool RsPrivateChatDistantInviteConfigItem::serialise(void *data, uint32_t& pktsi
 	offset += 8;
 
 	/* add mandatory parts first */
-	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_KEY, hash);
+    ok &= hash.serialise(data, tlvsize, offset) ;
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_LINK, encrypted_radix64_string);
-	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_GPGID, destination_pgp_id);
+	ok &= destination_pgp_id.serialise(data, tlvsize, offset);
 
 	memcpy(&((unsigned char *)data)[offset],aes_key,16) ;
 	offset += 16 ;
@@ -1229,7 +1229,7 @@ RsPrivateChatMsgConfigItem::RsPrivateChatMsgConfigItem(void *data,uint32_t /*siz
 	/* get mandatory parts first */
 	uint32_t version = 0;
 	ok &= getRawUInt32(data, rssize, &offset, &version);
-	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_PEERID, configPeerId);
+	ok &= configPeerId.deserialise(data, rssize, offset);
 	ok &= getRawUInt32(data, rssize, &offset, &chatFlags);
 	ok &= getRawUInt32(data, rssize, &offset, &configFlags);
 	ok &= getRawUInt32(data, rssize, &offset, &sendTime);
@@ -1252,9 +1252,9 @@ RsPrivateChatDistantInviteConfigItem::RsPrivateChatDistantInviteConfigItem(void 
 	bool ok = true ;
 
 	/* get mandatory parts first */
-	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_KEY, hash);
+    ok &= hash.deserialise(data, rssize, offset) ;
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_LINK, encrypted_radix64_string);
-	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_GPGID, destination_pgp_id);
+	ok &= destination_pgp_id.serialise(data, rssize, offset);
 
 	memcpy(aes_key,&((unsigned char*)data)[offset],16) ;
 	offset += 16 ;
@@ -1296,7 +1296,7 @@ RsChatLobbyConfigItem::RsChatLobbyConfigItem(void *data,uint32_t /*size*/)
 }
 
 /* set data from RsChatMsgItem to RsPrivateChatMsgConfigItem */
-void RsPrivateChatMsgConfigItem::set(RsChatMsgItem *ci, const std::string &/*peerId*/, uint32_t confFlags)
+void RsPrivateChatMsgConfigItem::set(RsChatMsgItem *ci, const RsPeerId& /*peerId*/, uint32_t confFlags)
 {
 	PeerId(ci->PeerId());
 	configPeerId = ci->PeerId();
@@ -1982,7 +1982,7 @@ uint32_t RsMsgSrcId::serial_size(bool)
 	uint32_t s = 8; /* header */
 
 	s += 4;
-	s += GetTlvStringSize(srcId);
+	s += srcId.serial_size() ;
 
 	return s;
 }
@@ -2011,7 +2011,7 @@ bool RsMsgSrcId::serialise(void *data, uint32_t& pktsize,bool config)
 	offset += 8;
 
 	ok &= setRawUInt32(data, tlvsize, &offset, msgId);
-	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_PEERID, srcId);
+	ok &= srcId.serialise(data, tlvsize, offset) ;
 
 	if (offset != tlvsize)
 	{
@@ -2056,7 +2056,7 @@ RsMsgSrcId* RsMsgSerialiser::deserialiseMsgSrcIdItem(void* data, uint32_t* pktsi
 
 	/* get mandatory parts first */
 	ok &= getRawUInt32(data, rssize, &offset, &(item->msgId));
-	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_PEERID, item->srcId);
+	ok &= item->srcId.deserialise(data, rssize, offset);
 
 	if (offset != rssize)
 	{

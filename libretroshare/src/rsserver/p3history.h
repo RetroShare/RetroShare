@@ -41,10 +41,10 @@ public:
 	p3History(p3HistoryMgr* historyMgr);
 	virtual ~p3History();
 
-	virtual bool getMessages(const std::string &chatPeerId, std::list<HistoryMsg> &msgs, uint32_t loadCount);
+	virtual bool getMessages(const RsPeerId &chatPeerId, std::list<HistoryMsg> &msgs, uint32_t loadCount);
 	virtual bool getMessage(uint32_t msgId, HistoryMsg &msg);
 	virtual void removeMessages(const std::list<uint32_t> &msgIds);
-	virtual void clear(const std::string &chatPeerId);
+	virtual void clear(const RsPeerId &chatPeerId);
 	virtual bool getEnable(uint32_t chat_type);
 	virtual void setEnable(uint32_t chat_type, bool enable);
 	virtual uint32_t getSaveCount(uint32_t chat_type);

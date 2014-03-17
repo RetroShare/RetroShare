@@ -86,7 +86,7 @@ class RsInitConfig
 {
 	public:
 
-                static std::string main_executable_hash;
+                static RsFileHash main_executable_hash;
 
 #ifdef WINDOWS_SYS
                 static bool portable;
@@ -143,7 +143,7 @@ const int p3facestartupzone = 47238;
 static const std::string configLogFileName = "retro.log";
 static const int SSLPWD_LEN = 64;
 
-std::string RsInitConfig::main_executable_hash;
+RsFileHash RsInitConfig::main_executable_hash;
 
 rs_lock_handle_t RsInitConfig::lockHandle;
 
@@ -350,7 +350,6 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 #endif
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
-	int c;
 	std::string prefUserString = "";
 	std::string opt_base_dir;
 
@@ -566,7 +565,7 @@ int RsInit::InitRetroShare(int argcIgnored, char **argvIgnored, bool strictCheck
 	}
 
 	/* check that we have selected someone */
-	std::string preferredId;
+	RsPeerId preferredId;
 	bool existingUser = rsAccounts.getPreferredAccountId(preferredId);
 
 	if (existingUser)
@@ -652,22 +651,20 @@ int 	RsInit::LockAndLoadCertificates(bool autoLoginNT, std::string& lockFilePath
 	}
 
 	// Logic that used to be external to RsInit...
-	std::string accountId;
+	RsPeerId accountId;
 	if (!rsAccounts.getPreferredAccountId(accountId))
 	{
 		return 3; // invalid PreferredAccount;
 	}
 	
-	std::string pgpId, pgpName, pgpEmail, location;
+	RsPgpId pgpId;
+	std::string pgpName, pgpEmail, location;
+
 	if (!rsAccounts.getAccountDetails(accountId, pgpId, pgpName, pgpEmail, location))
-	{
 		return 3; // invalid PreferredAccount;
-	}
 		
 	if (!rsAccounts.SelectPGPAccount(pgpId))
-	{
 		return 3; // PGP Error.
-	}
 	
 	int retVal = LockConfigDirectory(rsAccounts.PathAccountDirectory(), lockFilePath);
 	if(retVal != 0)
@@ -694,7 +691,7 @@ int 	RsInit::LockAndLoadCertificates(bool autoLoginNT, std::string& lockFilePath
  */
 int RsInit::LoadCertificates(bool autoLoginNT)
 {
-	std::string preferredId;
+	RsPeerId preferredId;
 	if (!rsAccounts.getPreferredAccountId(preferredId))
 	{
 		std::cerr << "No Account Selected" << std::endl;
@@ -758,7 +755,7 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 
 bool RsInit::RsClearAutoLogin()
 {
-	std::string preferredId;
+	RsPeerId preferredId;
 	if (!rsAccounts.getPreferredAccountId(preferredId))
 	{
 		std::cerr << "RsInit::RsClearAutoLogin() No Account Selected" << std::endl;
@@ -982,7 +979,7 @@ int RsServer::StartupRetroShare()
 		return false ;
 	}
 
-	std::string ownId = AuthSSL::getAuthSSL()->OwnId();
+	RsPeerId ownId = AuthSSL::getAuthSSL()->OwnId();
 
 	/**************************************************************************/
 	/* Any Initial Configuration (Commandline Options)  */
@@ -1360,17 +1357,15 @@ int RsServer::StartupRetroShare()
         // empty and matches an exist directory location
         // the given ssl user id then this directory is cleaned
         // and deleted
-        std::string priorGxsDir = "./" + mLinkMgr->getOwnId() + "/";
+        std::string priorGxsDir = "./" + mLinkMgr->getOwnId().toStdString() + "/";
 	std::string currGxsDir = rsAccounts.PathAccountDirectory() + "/GXS_phase2";
 
 #ifdef GXS_DEV_TESTNET // Different Directory for testing.
 	currGxsDir += "_TESTNET9";
 #endif
 
-        bool cleanUpGxsDir = false;
-
         if(!priorGxsDir.empty())
-            cleanUpGxsDir = RsDirUtil::checkDirectory(priorGxsDir);
+            RsDirUtil::checkDirectory(priorGxsDir);
 
         std::set<std::string> filesToKeep;
         bool cleanUpSuccess = RsDirUtil::cleanupDirectory(priorGxsDir, filesToKeep);
@@ -1406,7 +1401,7 @@ int RsServer::StartupRetroShare()
         RsGxsNetService* gxsid_ns = new RsGxsNetService(
                         RS_SERVICE_GXSV2_TYPE_GXSID, gxsid_ds, nxsMgr,
                         mGxsIdService, mGxsIdService, mGxsCircles,
-                        false); // don't synchronise group automatic (need explicit group request)
+                        true); // don't synchronise group automatic (need explicit group request)
 
         mGxsIdService->setNes(gxsid_ns);
         /**** GxsCircle service ****/
@@ -1820,3 +1815,10 @@ int RsServer::StartupRetroShare()
 
 	return 1;
 }
+
+
+void chris_test()
+{
+	std::cout << "tested\n";
+}
+

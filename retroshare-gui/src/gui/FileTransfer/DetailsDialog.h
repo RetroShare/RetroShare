@@ -24,6 +24,7 @@
 
 #include <stdint.h>
 #include "ui_DetailsDialog.h"
+#include <retroshare/rstypes.h>
 
 class FileChunksInfo ;
 
@@ -37,7 +38,7 @@ public:
   /** Default destructor */
   ~DetailsDialog() {}
   
-	void setFileHash(const std::string& hash) ;
+    void setFileHash(const RsFileHash &hash) ;
 
 public slots:
   /** Overloaded QWidget.show */
@@ -52,7 +53,7 @@ private:
 
 	class QStandardItemModel *CommentsModel;
 
-	 std::string _file_hash ;
+     RsFileHash _file_hash ;
 
   
   /** Qt Designer generated object */

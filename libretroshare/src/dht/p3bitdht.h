@@ -52,7 +52,7 @@ class DhtPeerDetails
 	uint32_t mPeerType;
 
 	bdId    mDhtId;
-	std::string mRsId;
+	RsPeerId mRsId;
 
 	/* direct from the DHT! */
 	uint32_t mDhtState; // One of RSDHT_PEERDHT_[...]
@@ -142,7 +142,7 @@ class p3NetMgr;
 class p3BitDht: public p3Config, public pqiNetAssistConnect, public RsDht
 {
 	public:
-	p3BitDht(std::string id, pqiConnectCb *cb, p3NetMgr *nm,
+	p3BitDht(const RsPeerId& id, pqiConnectCb *cb, p3NetMgr *nm,
 		UdpStack *udpstack, std::string bootstrapfile);
 
 
@@ -155,8 +155,8 @@ virtual	~p3BitDht();
 
 virtual uint32_t getNetState(uint32_t type);
 virtual int      getDhtPeers(int lvl, std::list<RsDhtPeer> &peers);
-virtual int      getNetPeerList(std::list<std::string> &peerIds);
-virtual int      getNetPeerStatus(std::string peerId, RsDhtNetPeer &status);
+virtual int      getNetPeerList(std::list<RsPeerId> &peerIds);
+virtual int      getNetPeerStatus(const RsPeerId& peerId, RsDhtNetPeer &status);
 
 virtual int     getRelayEnds(std::list<RsDhtRelayEnd> &relayEnds);
 virtual int     getRelayProxies(std::list<RsDhtRelayProxy> &relayProxies);
@@ -194,20 +194,20 @@ virtual bool    getNetworkStats(uint32_t &netsize, uint32_t &localnetsize);
 	/* pqiNetAssistConnect - external interface functions */
 
 	/* add / remove peers */
-virtual bool 	findPeer(std::string id);
-virtual bool 	dropPeer(std::string id);
+virtual bool 	findPeer(const RsPeerId& id);
+virtual bool 	dropPeer(const RsPeerId& id);
 
 virtual int addBadPeer(const struct sockaddr_storage &addr, uint32_t reason, uint32_t flags, uint32_t age);
-virtual int addKnownPeer(const std::string &pid, const struct sockaddr_storage &addr, uint32_t flags);
+virtual int addKnownPeer(const RsPeerId &pid, const struct sockaddr_storage &addr, uint32_t flags);
 //virtual int 	addFriend(const std::string pid);
 //virtual int 	addFriendOfFriend(const std::string pid);
 //virtual int 	addOther(const std::string pid);
 
 	/* feedback on success failure of Connections */
-virtual void 	ConnectionFeedback(std::string pid, int state);
+virtual void 	ConnectionFeedback(const RsPeerId& pid, int state);
 
 	/* extract current peer status */
-virtual bool 	getPeerStatus(std::string id, 
+virtual bool 	getPeerStatus(const RsPeerId& id, 
 			struct sockaddr_storage &laddr, struct sockaddr_storage &raddr, 
 					uint32_t &type, uint32_t &mode);
 
@@ -255,18 +255,18 @@ int 	installRelayConnection(const bdId *srcId, const bdId *destId, uint32_t &ban
 int 	removeRelayConnection(const bdId *srcId, const bdId *destId);
 void 	monitorConnections();
 
-void    ConnectCallout(const std::string &peerId, struct sockaddr_in addr, uint32_t connectMode);
+void    ConnectCallout(const RsPeerId &peerId, struct sockaddr_in addr, uint32_t connectMode);
 
-void 	ConnectCalloutTCPAttempt(const std::string &peerId, struct sockaddr_in addr);
-void 	ConnectCalloutDirectOrProxy(const std::string &peerId, struct sockaddr_in raddr, uint32_t connectFlags, uint32_t delay);
-void 	ConnectCalloutRelay(const std::string &peerId, struct sockaddr_in srcaddr, 
+void 	ConnectCalloutTCPAttempt(const RsPeerId &peerId, struct sockaddr_in addr);
+void 	ConnectCalloutDirectOrProxy(const RsPeerId &peerId, struct sockaddr_in raddr, uint32_t connectFlags, uint32_t delay);
+void 	ConnectCalloutRelay(const RsPeerId &peerId, struct sockaddr_in srcaddr, 
 			struct sockaddr_in proxyaddr, struct sockaddr_in destaddr,
                         uint32_t connectMode, uint32_t bandwidth);
 
 
-void 	Feedback_Connected(std::string pid);
-void 	Feedback_ConnectionFailed(std::string pid);
-void 	Feedback_ConnectionClosed(std::string pid);
+void 	Feedback_Connected(const RsPeerId& pid);
+void 	Feedback_ConnectionFailed(const RsPeerId& pid);
+void 	Feedback_ConnectionClosed(const RsPeerId& pid);
 
 void 	UdpConnectionFailed_locked(DhtPeerDetails *dpd);
 void 	ReleaseProxyExclusiveMode_locked(DhtPeerDetails *dpd, bool addrChgLikely);
@@ -337,24 +337,24 @@ int     pushRelayServers();
 
 	public:
 
-int 	removePeer(const std::string pid);
+int 	removePeer(const RsPeerId& pid);
 
 	// Can be used externally too.
-int 	calculateNodeId(const std::string pid, bdNodeId *id);
+int 	calculateNodeId(const RsPeerId& pid, bdNodeId *id);
 int 	addKnownNode(const bdId *id, uint32_t flags);
 
 	private:
 
-DhtPeerDetails *addInternalPeer_locked(const std::string pid, uint32_t type);
-int 	removeInternalPeer_locked(const std::string pid);
+DhtPeerDetails *addInternalPeer_locked(const RsPeerId& pid, uint32_t type);
+int 	removeInternalPeer_locked(const RsPeerId& pid);
 DhtPeerDetails *findInternalDhtPeer_locked(const bdNodeId *id, uint32_t type);
-DhtPeerDetails *findInternalRsPeer_locked(const std::string &pid);
+DhtPeerDetails *findInternalRsPeer_locked(const RsPeerId &pid);
 
-bool 	havePeerTranslation_locked(const std::string &pid);
-int 	lookupNodeId_locked(const std::string pid, bdNodeId *id);
-int 	lookupRsId_locked(const bdNodeId *id, std::string &pid);
-int 	storeTranslation_locked(const std::string pid);
-int 	removeTranslation_locked(const std::string pid);
+bool 	havePeerTranslation_locked(const RsPeerId &pid);
+int 	lookupNodeId_locked(const RsPeerId& pid, bdNodeId *id);
+int 	lookupRsId_locked(const bdNodeId *id, RsPeerId &pid);
+int 	storeTranslation_locked(const RsPeerId& pid);
+int 	removeTranslation_locked(const RsPeerId& pid);
 
 	UdpBitDht *mUdpBitDht; /* has own mutex, is static except for creation/destruction */
 	UdpStunner *mDhtStunner;
@@ -372,14 +372,14 @@ int 	removeTranslation_locked(const std::string pid);
 
 	p3BitDhtRelayHandler *mRelayHandler;
 
-	std::string mOwnRsId;
+	RsPeerId mOwnRsId;
 	bdNodeId    mOwnDhtId;
 
 	time_t mMinuteTS;
 
 	/* translation maps */
-        std::map<std::string, bdNodeId> mTransToNodeId;
-        std::map<bdNodeId, std::string> mTransToRsId;
+        std::map<RsPeerId, bdNodeId> mTransToNodeId;
+        std::map<bdNodeId, RsPeerId> mTransToRsId;
 
 	std::map<bdNodeId, DhtPeerDetails> mPeers;
 	std::map<bdNodeId, DhtPeerDetails> mFailedPeers;

@@ -44,7 +44,7 @@ pqiConnectCbDummy::~pqiConnectCbDummy()
 	return; 
 }
 
-void    pqiConnectCbDummy::peerStatus(std::string id, const pqiIpAddrSet &addrs,
+void    pqiConnectCbDummy::peerStatus(const RsPeerId& id, const pqiIpAddrSet &addrs,
                        uint32_t type, uint32_t mode, uint32_t source)
 {
 	std::cerr << "pqiConnectCbDummy::peerStatus()";
@@ -61,7 +61,7 @@ void    pqiConnectCbDummy::peerStatus(std::string id, const pqiIpAddrSet &addrs,
 	std::cerr << out << std::endl;
 }
 
-void    pqiConnectCbDummy::peerConnectRequest(std::string id, 
+void    pqiConnectCbDummy::peerConnectRequest(const RsPeerId& id, 
                         	const struct sockaddr_storage &raddr, uint32_t source)
 {
 	std::cerr << "pqiConnectCbDummy::peerConnectRequest()";

@@ -30,6 +30,7 @@
 #include <string>
 #include <list>
 #include <map>
+#include <retroshare/rstypes.h>
 
 /* The Main Interface Class - for information about your Peers */
 class RsDisc;
@@ -42,9 +43,9 @@ class RsDisc
 	RsDisc()  { return; }
 virtual ~RsDisc() { return; }
 
-virtual bool	getDiscFriends(const std::string &id, std::list<std::string>& friends) = 0;
-virtual bool	getDiscPgpFriends(const std::string &pgpid, std::list<std::string>& gpg_friends) = 0;
-virtual bool 	getPeerVersion(const std::string &id, std::string &versions) = 0;
+virtual bool	getDiscFriends(const RsPeerId &id, std::list<RsPeerId>& friends) = 0;
+virtual bool	getDiscPgpFriends(const RsPgpId &pgpid, std::list<RsPgpId>& gpg_friends) = 0;
+virtual bool 	getPeerVersion(const RsPeerId &id, std::string &versions) = 0;
 virtual bool 	getWaitingDiscCount(unsigned int *sendCount, unsigned int *recvCount) = 0;
 
 };

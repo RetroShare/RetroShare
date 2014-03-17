@@ -474,7 +474,7 @@ void QuickStartWizard::saveChanges()
 
 
 	RsPeerDetails detail;
-	std::string ownId = rsPeers->getOwnId();
+	RsPeerId ownId = rsPeers->getOwnId();
 
 	if (!rsPeers->getPeerDetails(ownId, detail))
 	{

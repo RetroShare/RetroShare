@@ -43,7 +43,7 @@ GxsCircleLabel::GxsCircleLabel(QWidget *parent)
 void GxsCircleLabel::setCircleId(const RsGxsCircleId &id)
 {
 	mId = id;
-	if (mId == "")
+    if (mId.isNull())
 	{
 		setText("No Circle");
 	}
@@ -65,14 +65,14 @@ static bool MakeCircleDesc(const RsGxsCircleId &id, QString &str)
 	
 	if (!rsGxsCircles->getCircleDetails(id, details))
 	{
-		str = "Loading... " + QString::fromStdString(id.substr(0,5));
+        str = "Loading... " + QString::fromStdString(id.toStdString().substr(0,5));
 		return false;
 	}
 
 	str = QString::fromUtf8(details.mCircleName.c_str());
 
         str += " (Ext) [";
-        str += QString::fromStdString(id.substr(0,5));
+        str += QString::fromStdString(id.toStdString().substr(0,5));
         str += "...]";
 
 	return true;

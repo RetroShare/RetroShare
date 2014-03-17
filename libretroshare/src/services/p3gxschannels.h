@@ -144,7 +144,7 @@ virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgI
 
 	// File Interface
 virtual bool ExtraFileHash(const std::string &path, std::string filename);
-virtual bool ExtraFileRemove(const std::string &hash);
+virtual bool ExtraFileRemove(const RsFileHash &hash);
 
 	protected:
 

@@ -38,7 +38,7 @@ class PeerItem : public QWidget, private Ui::PeerItem
 
 public:
 	/** Default Constructor */
-	PeerItem(FeedHolder *parent, uint32_t feedId, const std::string &peerId, uint32_t type, bool isHome);
+    PeerItem(FeedHolder *parent, uint32_t feedId, const RsPeerId &peerId, uint32_t type, bool isHome);
 
 	void updateItemStatic();
 
@@ -63,7 +63,7 @@ private:
 	FeedHolder *mParent;
 	uint32_t mFeedId;
 
-	std::string mPeerId;
+    RsPeerId mPeerId;
 	uint32_t mType;
 	bool mIsHome;
 };

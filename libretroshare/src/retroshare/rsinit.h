@@ -45,6 +45,7 @@
 #include <list>
 #include <map>
 #include <vector>
+#include <retroshare/rstypes.h>
 
 /*!
  * Initialisation Class (not publicly disclosed to RsIFace)
@@ -136,26 +137,26 @@ namespace RsAccounts
 	std::string AccountDirectory();
 
 	// PGP Accounts.
-	int     GetPGPLogins(std::list<std::string> &pgpIds);
-	int     GetPGPLoginDetails(const std::string& id, std::string &name, std::string &email);
-	bool    GeneratePGPCertificate(const std::string&, const std::string& email, const std::string& passwd, std::string &pgpId, std::string &errString);
+	int     GetPGPLogins(std::list<RsPgpId> &pgpIds);
+	int     GetPGPLoginDetails(const RsPgpId& id, std::string &name, std::string &email);
+	bool    GeneratePGPCertificate(const std::string&, const std::string& email, const std::string& passwd, RsPgpId &pgpId, std::string &errString);
 
 	// PGP Support Functions.
-	bool    ExportIdentity(const std::string& fname,const std::string& pgp_id) ;
-	bool    ImportIdentity(const std::string& fname,std::string& imported_pgp_id,std::string& import_error) ;
+	bool    ExportIdentity(const std::string& fname,const RsPgpId& pgp_id) ;
+	bool    ImportIdentity(const std::string& fname,RsPgpId& imported_pgp_id,std::string& import_error) ;
         void    GetUnsupportedKeys(std::map<std::string,std::vector<std::string> > &unsupported_keys);
 	bool    CopyGnuPGKeyrings() ;
 
 	// Rs Accounts
-        bool    SelectAccount(const std::string &id);
+        bool    SelectAccount(const RsPeerId& id);
 
-	bool	GetPreferredAccountId(std::string &id);
-	bool    GetAccountIds(std::list<std::string> &ids);
-	bool	GetAccountDetails(const std::string &id,
-                        std::string &gpgId, std::string &gpgName,
+	bool	GetPreferredAccountId(RsPeerId &id);
+	bool    GetAccountIds(std::list<RsPeerId> &ids);
+	bool	GetAccountDetails(const RsPeerId &id,
+                        RsPgpId &gpgId, std::string &gpgName,
                         std::string &gpgEmail, std::string &location);
 
-	bool	GenerateSSLCertificate(const std::string& name, const std::string& org, const std::string& loc, const std::string& country, const bool ishiddenloc, const std::string& passwd, std::string &sslId, std::string &errString);
+	bool	GenerateSSLCertificate(const RsPgpId& pgp_id, const std::string& org, const std::string& loc, const std::string& country, const bool ishiddenloc, const std::string& passwd, RsPeerId &sslId, std::string &errString);
 
 };
 

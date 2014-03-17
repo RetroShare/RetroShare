@@ -29,19 +29,20 @@
 #include "ui_ConnectProgressDialog.h"
 
 #include <stdint.h>
+#include <retroshare/rstypes.h>
 
 class ConnectProgressDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    static void showProgress(const std::string& id);
+    static void showProgress(const RsPeerId& id);
 
 private:
-    ConnectProgressDialog(const std::string& id, QWidget *parent = 0, Qt::WindowFlags flags = 0);
+    ConnectProgressDialog(const RsPeerId& id, QWidget *parent = 0, Qt::WindowFlags flags = 0);
     ~ConnectProgressDialog();
 
-    static ConnectProgressDialog *instance(const std::string& peer_id);
+    static ConnectProgressDialog *instance(const RsPeerId& peer_id);
 
 private slots:
         void updateStatus();
@@ -82,7 +83,7 @@ private:
 
         QTimer *mTimer;
         uint32_t mState;
-        std::string mId;
+        RsPeerId mId;
         time_t mInitTS;
 
         time_t mContactTS;

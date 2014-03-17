@@ -33,6 +33,9 @@
 //    -------------+----------------+--------------------------+------------------+-------------+-------------
 //
 #include <stdint.h>
+
+#include <retroshare/rstypes.h>
+
 #include <QString>
 #include <QVector>
 #include <QUrl>
@@ -72,15 +75,15 @@ class RetroShareLink
 
 		bool createFile(const QString& name, uint64_t size, const QString& hash);
 		bool createExtraFile(const QString& name, uint64_t size, const QString& hash, const QString& ssl_id);
-		bool createPerson(const std::string& id);
+        bool createPerson(const RsPgpId &id);
 		bool createForum(const std::string& id, const std::string& msgId);
 		bool createChannel(const std::string& id, const std::string& msgId);
 		bool createSearch(const QString& keywords);
-		bool createMessage(const std::string& peerId, const QString& subject);
-		bool createCertificate(const std::string& ssl_or_gpg_id) ;
+		bool createMessage(const RsPeerId& peerId, const QString& subject);
+        bool createCertificate(const RsPeerId &ssl_id) ;
 		bool createPrivateChatInvite(time_t time_stamp,const QString& gpg_id,const QString& encrypted_chat_info) ;
 		bool createPublicMsgInvite(time_t time_stamp,const QString& pgp_id,const QString& hash) ;
-		bool createUnknwonSslCertificate(const std::string& sslId, const std::string& gpgId = "") ;
+        bool createUnknwonSslCertificate(const RsPeerId &sslId, const RsPgpId &gpgId = RsPgpId()) ;
 
 		enumType type() const {return _type; }
 		uint64_t size() const { return _size ; }

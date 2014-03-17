@@ -150,9 +150,9 @@ int	BinFileInterface::readdata(void *data, int len)
 	return len;
 }
 
-std::string  BinFileInterface::gethash()
+RsFileHash  BinFileInterface::gethash()
 {
-	std::string hashstr;
+	RsFileHash hashstr;
 	if (bin_flags & BIN_FLAGS_HASH_DATA)
 	{  
 		hash->Complete(hashstr);
@@ -410,9 +410,9 @@ int	BinMemInterface::readdata(void *data, int len)
 
 
 
-std::string  BinMemInterface::gethash()
+RsFileHash  BinMemInterface::gethash()
 	{
-		std::string hashstr;
+		RsFileHash hashstr;
 		if (bin_flags & BIN_FLAGS_HASH_DATA)
 		{  
 			hash->Complete(hashstr);
@@ -493,7 +493,7 @@ bool    BinMemInterface::readfromfile(const char *fname)
 /**************************************************************************/
 
 
-void printNetBinID(std::ostream &out, std::string id, uint32_t t)
+void printNetBinID(std::ostream &out, const RsPeerId& id, uint32_t t)
 {
 	out << "NetBinId(" << id << ",";
 	if (t == PQI_CONNECT_TCP)
@@ -520,9 +520,8 @@ void printNetBinID(std::ostream &out, std::string id, uint32_t t)
 
 const uint32_t DEFAULT_DUMMY_DELTA 	= 5;
 
-NetBinDummy::NetBinDummy(PQInterface *parent, std::string id, uint32_t t)
-       :NetBinInterface(parent, id), type(t), dummyConnected(false), 
-        toConnect(false), connectDelta(DEFAULT_DUMMY_DELTA)
+NetBinDummy::NetBinDummy(PQInterface *parent, const RsPeerId& id, uint32_t t)
+       :NetBinInterface(parent, id), type(t), dummyConnected(false), toConnect(false), connectDelta(DEFAULT_DUMMY_DELTA)
 { 
 	return; 
 }
@@ -717,12 +716,12 @@ int	NetBinDummy::close()
 	return 1;
 }
 
-std::string NetBinDummy::gethash()
+RsFileHash NetBinDummy::gethash()
 {
 	std::cerr << "NetBinDummy::gethash() ";
 	printNetBinID(std::cerr, PeerId(), type);
 	std::cerr << std::endl;
 
-	return std::string("");
+	return RsFileHash();
 }
 

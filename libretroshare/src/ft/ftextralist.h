@@ -90,7 +90,7 @@ class FileDetails
 		std::list<std::string> sources;
 		std::string path;
 		std::string fname;
-		std::string hash;
+        RsFileHash hash;
 		uint64_t size;
 #endif
 
@@ -117,11 +117,11 @@ class ftExtraList: public RsThread, public p3Config, public ftSearch
 		 * If the File is alreay Hashed, then just add it in.
 		 **/
 
-bool		addExtraFile(std::string path, std::string hash, 
+bool		addExtraFile(std::string path, const RsFileHash &hash,
 				uint64_t size, uint32_t period, TransferRequestFlags flags);
 
-bool		removeExtraFile(std::string hash, TransferRequestFlags flags);
-bool 		moveExtraFile(std::string fname, std::string hash, uint64_t size,
+bool		removeExtraFile(const RsFileHash& hash, TransferRequestFlags flags);
+bool 		moveExtraFile(std::string fname, const RsFileHash& hash, uint64_t size,
                                 std::string destpath);
 
 
@@ -138,7 +138,7 @@ bool	 	hashExtraFileDone(std::string path, FileInfo &info);
 		 * implementation of ftSearch.
 		 *
 		 **/
-virtual bool    search(const std::string &hash, FileSearchFlags hintflags, FileInfo &info) const;
+virtual bool    search(const RsFileHash &hash, FileSearchFlags hintflags, FileInfo &info) const;
 
 		/***
 		 * Thread Main Loop 
@@ -165,8 +165,8 @@ bool    cleanupEntry(std::string path, TransferRequestFlags flags);
 
 		std::list<FileDetails> mToHash;
 
-		std::map<std::string, std::string> mHashedList; /* path -> hash ( not saved ) */
-		std::map<std::string, FileDetails> mFiles;
+        std::map<std::string, RsFileHash> mHashedList; /* path -> hash ( not saved ) */
+        std::map<RsFileHash, FileDetails> mFiles;
 };
 
 

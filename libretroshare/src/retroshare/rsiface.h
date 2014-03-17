@@ -77,7 +77,7 @@ class RsControl /* The Main Interface Class - for controlling the server */
 
 		/****************************************/
 
-		virtual bool getPeerCryptoDetails(const std::string& ssl_id,RsPeerCryptoParams& params) = 0;
+		virtual bool getPeerCryptoDetails(const RsPeerId& ssl_id,RsPeerCryptoParams& params) = 0;
 
 	protected:
 		RsControl() {}	// should not be used, hence it's private.

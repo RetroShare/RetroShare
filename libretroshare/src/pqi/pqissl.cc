@@ -218,7 +218,7 @@ int 	pqissl::reset_locked()
 	 *
 	 */
 
-	outLog += "pqissl::reset():" + PeerId();
+	outLog += "pqissl::reset():" + PeerId().toStdString();
 	rs_sprintf_append(outLog, " (A: %d", (int) active);
 	rs_sprintf_append(outLog, " FD: %d", sockfd);
 	rs_sprintf_append(outLog, " W: %d",  waiting);
@@ -674,7 +674,7 @@ int 	pqissl::Initiate_Connection()
 
 	{ 
 		std::string out;
-		rs_sprintf(out, "pqissl::Initiate_Connection() Connecting To: %s via: ", PeerId().c_str());
+		rs_sprintf(out, "pqissl::Initiate_Connection() Connecting To: %s via: ", PeerId().toStdString().c_str());
 		out += sockaddr_storage_tostring(addr);
 		rslog(RSL_WARNING, pqisslzone, out);
 	}
@@ -757,7 +757,7 @@ int 	pqissl::Initiate_Connection()
 		}
 		else if ((errno == ENETUNREACH) || (errno == ETIMEDOUT))
 		{
-			out += "ENETUNREACHABLE: cert: " + PeerId();
+			out += "ENETUNREACHABLE: cert: " + PeerId().toStdString();
 			rslog(RSL_WARNING, pqisslzone, out);
 
 			// Then send unreachable message.
@@ -828,7 +828,7 @@ bool  	pqissl::CheckConnectionTimeout()
 	if (time(NULL) > mTimeoutTS)
 	{
 		std::string out;
-		rs_sprintf(out, "pqissl::Basic_Connection_Complete() Connection Timed Out. Peer: %s Period: %lu", PeerId().c_str(), mConnectTimeout);
+		rs_sprintf(out, "pqissl::Basic_Connection_Complete() Connection Timed Out. Peer: %s Period: %lu", PeerId().toStdString().c_str(), mConnectTimeout);
 
 		rslog(RSL_WARNING, pqisslzone, out);
 		/* as sockfd is valid, this should close it all up */
@@ -971,20 +971,20 @@ int 	pqissl::Basic_Connection_Complete()
 		{
 			{
 				std::string out;
-				rs_sprintf(out, "pqissl::Basic_Connection_Complete() TCP Connection Complete: cert: %s on osock: ", PeerId().c_str(), sockfd);
+				rs_sprintf(out, "pqissl::Basic_Connection_Complete() TCP Connection Complete: cert: %s on osock: ", PeerId().toStdString().c_str(), sockfd);
 				rslog(RSL_WARNING, pqisslzone, out);
 			}
 			return 1;
 		}
 		else if (err == EINPROGRESS)
 		{
-			rslog(RSL_WARNING, pqisslzone, "pqissl::Basic_Connection_Complete() EINPROGRESS: cert: " + PeerId());
+			rslog(RSL_WARNING, pqisslzone, "pqissl::Basic_Connection_Complete() EINPROGRESS: cert: " + PeerId().toStdString());
 
 			return 0;
 		}
 		else if ((err == ENETUNREACH) || (err == ETIMEDOUT))
 		{
-			rslog(RSL_WARNING, pqisslzone, "pqissl::Basic_Connection_Complete() ENETUNREACH/ETIMEDOUT: cert: " + PeerId());
+			rslog(RSL_WARNING, pqisslzone, "pqissl::Basic_Connection_Complete() ENETUNREACH/ETIMEDOUT: cert: " + PeerId().toStdString());
 
 			// Then send unreachable message.
 			net_internal_close(sockfd);
@@ -997,7 +997,7 @@ int 	pqissl::Basic_Connection_Complete()
 		}
 		else if ((err == EHOSTUNREACH) || (err == EHOSTDOWN))
 		{
-			rslog(RSL_WARNING, pqisslzone, "pqissl::Basic_Connection_Complete() EHOSTUNREACH/EHOSTDOWN: cert: " + PeerId());
+			rslog(RSL_WARNING, pqisslzone, "pqissl::Basic_Connection_Complete() EHOSTUNREACH/EHOSTDOWN: cert: " + PeerId().toStdString());
 
 			// Then send unreachable message.
 			net_internal_close(sockfd);
@@ -1009,7 +1009,7 @@ int 	pqissl::Basic_Connection_Complete()
 		}
 		else if ((err == ECONNREFUSED))
 		{
-			rslog(RSL_WARNING, pqisslzone, "pqissl::Basic_Connection_Complete() ECONNREFUSED: cert: " + PeerId());
+			rslog(RSL_WARNING, pqisslzone, "pqissl::Basic_Connection_Complete() ECONNREFUSED: cert: " + PeerId().toStdString());
 
 			// Then send unreachable message.
 			net_internal_close(sockfd);
@@ -1175,7 +1175,7 @@ int 	pqissl::SSL_Connection_Complete()
 	}
 	// if we get here... success v quickly.
 
-	rslog(RSL_WARNING, pqisslzone, "pqissl::SSL_Connection_Complete() Success!: Peer: " + PeerId());
+	rslog(RSL_WARNING, pqisslzone, "pqissl::SSL_Connection_Complete() Success!: Peer: " + PeerId().toStdString());
 
 	waiting = WAITING_SSL_AUTHORISE;
 	return 1;
@@ -1219,10 +1219,10 @@ int 	pqissl::Extract_Failed_SSL_Certificate()
 	// 	which could be 
 	//      (pqissl's case) sslcert->serveraddr or sslcert->localaddr.
 
-	std::string sslid ;
+	RsPeerId sslid ;
 	getX509id(peercert, sslid) ;
 
-	std::string gpgid = getX509CNString(peercert->cert_info->issuer);
+	RsPgpId gpgid(getX509CNString(peercert->cert_info->issuer));
 	std::string sslcn = getX509CNString(peercert->cert_info->subject);
 
 	AuthSSL::getAuthSSL()->FailedCertificate(peercert, gpgid,sslid,sslcn,remote_addr, false);
@@ -1277,9 +1277,9 @@ int 	pqissl::Authorise_SSL_Connection()
 		return -1;
 	}
 
-        std::string certPeerId;
+        RsPeerId certPeerId;
         getX509id(peercert, certPeerId);
-        if (certPeerId != PeerId()) {
+        if (RsPeerId(certPeerId) != PeerId()) {
                 rslog(RSL_WARNING, pqisslzone,
                   "pqissl::Authorise_SSL_Connection() the cert Id doesn't match the Peer id we're trying to connect to.");
 
@@ -1307,13 +1307,13 @@ int 	pqissl::Authorise_SSL_Connection()
 	if (certCorrect)
 	{
 		// then okay...
-		rslog(RSL_WARNING, pqisslzone, "pqissl::Authorise_SSL_Connection() Accepting Conn. Peer: " + PeerId());
+		rslog(RSL_WARNING, pqisslzone, "pqissl::Authorise_SSL_Connection() Accepting Conn. Peer: " + PeerId().toStdString());
 
 		accept_locked(ssl_connection, sockfd, remote_addr);
 		return 1;
 	}
 
-	rslog(RSL_WARNING, pqisslzone, "pqissl::Authorise_SSL_Connection() Something Wrong ... Shutdown. Peer: " + PeerId());
+	rslog(RSL_WARNING, pqisslzone, "pqissl::Authorise_SSL_Connection() Something Wrong ... Shutdown. Peer: " + PeerId().toStdString());
 
 	// else shutdown ssl connection.
 	rslog(RSL_ALERT, pqisslzone, "pqissl::Authorise_Connection_Complete() -> calling reset()");
@@ -1338,7 +1338,7 @@ int	pqissl::accept_locked(SSL *ssl, int fd, const struct sockaddr_storage &forei
 {
 	if (waiting != WAITING_NOT)
 	{
-		rslog(RSL_WARNING, pqisslzone, "pqissl::accept() Peer: " + PeerId() + " - Two connections in progress - Shut 1 down!");
+		rslog(RSL_WARNING, pqisslzone, "pqissl::accept() Peer: " + PeerId().toStdString() + " - Two connections in progress - Shut 1 down!");
 
 		// outgoing connection in progress.
 		// shut this baby down.
@@ -1433,7 +1433,7 @@ int	pqissl::accept_locked(SSL *ssl, int fd, const struct sockaddr_storage &forei
 	sameLAN = sockaddr_storage_samesubnet(remote_addr, localaddr);
 
 	{
-		std::string out = "pqissl::accept() SUCCESSFUL connection to: " + PeerId();
+		std::string out = "pqissl::accept() SUCCESSFUL connection to: " + PeerId().toStdString();
 		out += " localaddr: " + sockaddr_storage_iptostring(localaddr);
 		out += " remoteaddr: " + sockaddr_storage_iptostring(remote_addr);
 
@@ -1520,7 +1520,7 @@ int 	pqissl::senddata(void *data, int len)
 
 	if (len != tmppktlen)
 	{
-		std::string out = "pqissl::senddata() " + PeerId();
+		std::string out = "pqissl::senddata() " + PeerId().toStdString();
 		rs_sprintf_append(out, " Partial Send: len: %d sent: %d ", len, tmppktlen);
 	
 		int err = SSL_get_error(ssl_connection, tmppktlen);
@@ -1649,7 +1649,7 @@ int 	pqissl::readdata(void *data, int len)
 				}
 
 				++n_read_zero;
-				out += "pqissl::readdata() " + PeerId();
+				out += "pqissl::readdata() " + PeerId().toStdString();
 				rs_sprintf_append(out, " SSL_read() SSL_ERROR_ZERO_RETURN : nReadZero: %d", n_read_zero);
 
 				if ((PQISSL_MAX_READ_ZERO_COUNT < n_read_zero)
@@ -1670,7 +1670,7 @@ int 	pqissl::readdata(void *data, int len)
 			/* the only real error we expect */
 			if (error == SSL_ERROR_SYSCALL)
 			{
-				out += "pqissl::readdata() " + PeerId();
+				out += "pqissl::readdata() " + PeerId().toStdString();
 				out += " SSL_read() SSL_ERROR_SYSCALL";
 				out += " SOCKET_DEAD -> calling reset()";
 				rs_sprintf_append(out, " errno: %d", errno);
@@ -1902,10 +1902,9 @@ bool 	pqissl::cansend(uint32_t usec)
 
 }
 
-std::string pqissl::gethash()
+RsFileHash pqissl::gethash()
 {
-	std::string dummyhash;
-	return dummyhash;
+	return RsFileHash() ;
 }
 
 /********** End of Implementation of BinInterface ******************/

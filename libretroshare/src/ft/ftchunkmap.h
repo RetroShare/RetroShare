@@ -43,7 +43,7 @@ class ftChunk
 		ChunkId  id ;		// id of the chunk. Equal to the starting offset of the chunk
 		time_t   ts;		// time of last data received
 		int	  *ref_cnt; // shared counter of number of sub-blocks. Used when a slice gets split.
-		std::string peer_id ;
+		RsPeerId peer_id ;
 };
 
 // This class handles a single fixed-sized chunk. Although each chunk is requested at once,
@@ -118,7 +118,7 @@ class ChunkMap
 		/// On return:
 		/// 	- source_chunk_map_needed 	= true if the source map should be asked
 
-      virtual bool getDataChunk(const std::string& peer_id,uint32_t size_hint,ftChunk& chunk,bool& source_chunk_map_needed) ; 
+      virtual bool getDataChunk(const RsPeerId& peer_id,uint32_t size_hint,ftChunk& chunk,bool& source_chunk_map_needed) ; 
 
       /// Notify received a slice of data. This needs to 
       ///   - carve in the map of chunks what is received, what is not.
@@ -145,7 +145,7 @@ class ChunkMap
 		void setAvailabilityMap(const CompressedChunkMap& cmap) ;
 
 		/// Removes the source availability map. The map
-		void removeFileSource(const std::string& peer_id) ;
+		void removeFileSource(const RsPeerId& peer_id) ;
 
 		/// This function fills in a plain map for a file of the given size. This
 		/// is used to ensure that the chunk size will be consistent with the rest
@@ -165,12 +165,12 @@ class ChunkMap
 
 		/// Updates the peer's availablility map
 		//
-		void setPeerAvailabilityMap(const std::string& peer_id,const CompressedChunkMap& peer_map) ;
+		void setPeerAvailabilityMap(const RsPeerId& peer_id,const CompressedChunkMap& peer_map) ;
 
 		/// Returns a pointer to the availability chunk map of the given source, and possibly
 		/// allocates it if necessary.
 		//
-		SourceChunksInfo *getSourceChunksInfo(const std::string& peer_id) ;
+		SourceChunksInfo *getSourceChunksInfo(const RsPeerId& peer_id) ;
 
 		/// Returns the total size of downloaded data in the file.
 		uint64_t getTotalReceived() const { return _total_downloaded ; }
@@ -188,7 +188,7 @@ class ChunkMap
 		void getChunksToCheck(std::vector<uint32_t>& chunks_to_ask) ;
 
 		/// Get all available sources for this chunk
-		void getSourcesList(uint32_t chunk_number,std::vector<std::string>& sources) ;
+		void getSourcesList(uint32_t chunk_number,std::vector<RsPeerId>& sources) ;
 
 		/// sets all chunks to checking state
 		void forceCheck() ;
@@ -203,16 +203,16 @@ class ChunkMap
 
 		/// Returns a chunk available for this peer_id, depending on the chunk strategy.
 		//
-		uint32_t getAvailableChunk(const std::string& peer_id,bool& chunk_map_too_old) ;
+		uint32_t getAvailableChunk(const RsPeerId& peer_id,bool& chunk_map_too_old) ;
 
 	private:
 		uint64_t												_file_size ;						//! total size of the file in bytes.
 		uint32_t												_chunk_size ;						//! Size of chunks. Common to all chunks.
 		FileChunksInfo::ChunkStrategy 				_strategy ;							//! how do we allocate new chunks
-		std::map<std::string,Chunk>					_active_chunks_feed ; 			//! vector of chunks being downloaded. Exactly 1 chunk per peer.
+		std::map<RsPeerId,Chunk>					   _active_chunks_feed ; 			//! vector of chunks being downloaded. Exactly 1 chunk per peer.
 		std::map<ChunkNumber,ChunkDownloadInfo>	_slices_to_download ; 			//! list of (slice id,slice size) 
 		std::vector<FileChunksInfo::ChunkState>	_map ;								//! vector of chunk state over the whole file
-		std::map<std::string,SourceChunksInfo>		_peers_chunks_availability ;	//! what does each source peer have
+		std::map<RsPeerId,SourceChunksInfo>		_peers_chunks_availability ;	//! what does each source peer have
 		uint64_t												_total_downloaded ;				//! completion for the file
 		bool													_file_is_complete ;           //! set to true when the file is complete.
 		bool													_assume_availability ;			//! true if all sources always have the complete file.

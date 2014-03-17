@@ -73,7 +73,7 @@ virtual ~FileIndexStore();
 virtual int loadCache(const RsCacheData &data);	  /* actual load, once data available */
 
 	/* Search Interface - For FileTransfer Lookup */
-	int SearchHash(std::string hash, std::list<FileDetail> &results) const;
+    int SearchHash(const RsFileHash &hash, std::list<FileDetail> &results) const;
 
 	/* Search Interface - For Search Interface */
 	int SearchKeywords(std::list<std::string> terms, std::list<DirDetails> &results,FileSearchFlags flags) const;
@@ -83,7 +83,7 @@ virtual int loadCache(const RsCacheData &data);	  /* actual load, once data avai
 
 
 	/* Search Interface - For Directory Access */
-	int RequestDirDetails(const std::string& uid, const std::string& path, DirDetails &details) const;
+    int RequestDirDetails(const RsPeerId& uid, const std::string& path, DirDetails &details) const;
 	int RequestDirDetails(void *ref, DirDetails &details, FileSearchFlags flags) const;
 	uint32_t getType(void *ref) const ;
 

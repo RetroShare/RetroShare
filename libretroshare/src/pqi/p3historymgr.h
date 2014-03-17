@@ -48,13 +48,13 @@ public:
 
 	/******** p3HistoryMgr *********/
 
-	void addMessage(bool incoming, const std::string &chatPeerId, const std::string &peerId, const RsChatMsgItem *chatItem);
+	void addMessage(bool incoming, const RsPeerId &chatPeerId, const RsPeerId &peerId, const RsChatMsgItem *chatItem);
 
 	/********* RsHistory ***********/
 
-	bool getMessages(const std::string &chatPeerId, std::list<HistoryMsg> &msgs, uint32_t loadCount);
+	bool getMessages(const RsPeerId &chatPeerId, std::list<HistoryMsg> &msgs, uint32_t loadCount);
 	bool getMessage(uint32_t msgId, HistoryMsg &msg);
-	void clear(const std::string &chatPeerId);
+	void clear(const RsPeerId &chatPeerId);
 	void removeMessages(const std::list<uint32_t> &msgIds);
 
 	virtual bool getEnable(uint32_t chat_type);
@@ -73,7 +73,7 @@ public:
 
 private:
 	uint32_t nextMsgId;
-	std::map<std::string, std::map<uint32_t, RsHistoryMsgItem*> > mMessages;
+	std::map<RsPeerId, std::map<uint32_t, RsHistoryMsgItem*> > mMessages;
 
 	// Removes messages stored for more than mMaxMsgStorageDurationSeconds seconds.
 	// This avoids the stored list to grow crazy with time.

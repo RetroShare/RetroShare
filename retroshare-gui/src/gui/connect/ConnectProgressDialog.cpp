@@ -36,13 +36,13 @@
 
 /* maintain one static dialog per SSL ID */
 
-static std::map<std::string, ConnectProgressDialog *> instances;
+static std::map<RsPeerId, ConnectProgressDialog *> instances;
 
 int calcProgress(time_t now, time_t start, int period50, int period75, int period100);
 
-ConnectProgressDialog *ConnectProgressDialog::instance(const std::string& peer_id)
+ConnectProgressDialog *ConnectProgressDialog::instance(const RsPeerId& peer_id)
 {
-	std::map<std::string, ConnectProgressDialog *>::iterator it;
+	std::map<RsPeerId, ConnectProgressDialog *>::iterator it;
 	it = instances.find(peer_id);
 	if (it != instances.end())
 	{
@@ -54,7 +54,7 @@ ConnectProgressDialog *ConnectProgressDialog::instance(const std::string& peer_i
 	return d;
 }
 
-ConnectProgressDialog::ConnectProgressDialog(const std::string& id, QWidget *parent, Qt::WindowFlags flags)
+ConnectProgressDialog::ConnectProgressDialog(const RsPeerId& id, QWidget *parent, Qt::WindowFlags flags)
 	:QDialog(parent, flags), mId(id), ui(new Ui::ConnectProgressDialog)
 {
 	ui->setupUi(this);
@@ -68,7 +68,7 @@ ConnectProgressDialog::ConnectProgressDialog(const std::string& id, QWidget *par
 
 ConnectProgressDialog::~ConnectProgressDialog()
 {
-	std::map<std::string, ConnectProgressDialog *>::iterator it;
+	std::map<RsPeerId, ConnectProgressDialog *>::iterator it;
 	it = instances.find(mId);
 	if (it != instances.end())
 	{
@@ -76,7 +76,7 @@ ConnectProgressDialog::~ConnectProgressDialog()
 	}
 }
 
-void ConnectProgressDialog::showProgress(const std::string& peer_id)
+void ConnectProgressDialog::showProgress(const RsPeerId& peer_id)
 {
     ConnectProgressDialog *d = instance(peer_id);
 
@@ -182,7 +182,7 @@ void ConnectProgressDialog::initDialog()
 		std::string name = rsPeers->getPeerName(mId);
 		QString connectName = QString::fromUtf8(name.c_str());
 		connectName += " (";
-		connectName += QString::fromStdString(mId).left(10);
+        connectName += QString::fromStdString(mId.toStdString()).left(10);
 		connectName += "...)";
 		ui->connectId->setText(connectName);
 	}

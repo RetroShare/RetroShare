@@ -48,7 +48,7 @@
 int p3BitDht::InfoCallback(const bdId *id, uint32_t /*type*/, uint32_t /*flags*/, std::string /*info*/)
 {
 	/* translate info */
-	std::string rsid;
+	RsPeerId rsid;
 	struct sockaddr_in addr = id->addr;
 	int outtype = PNASS_TYPE_BADPEER;
 	int outreason = PNASS_REASON_UNKNOWN;
@@ -143,7 +143,7 @@ int p3BitDht::NodeCallback(const bdId *id, uint32_t peerflags)
 			bdStdPrintId(std::cerr, id);
 			std::cerr << std::endl;
 #endif
-			mProxyStunner->addStunPeer(id->addr, "");
+			//mProxyStunner->addStunPeer(id->addr, NULL);
 		}
 		/* else */ // removed else until we have lots of peers.
 
@@ -154,7 +154,7 @@ int p3BitDht::NodeCallback(const bdId *id, uint32_t peerflags)
 			bdStdPrintId(std::cerr, id);
 			std::cerr << std::endl;
 #endif
-			mDhtStunner->addStunPeer(id->addr, "");
+			//mDhtStunner->addStunPeer(id->addr, NULL);
 		}
 	}
 	return 1;
@@ -1569,7 +1569,7 @@ int p3BitDht::doActions()
 				std::cerr << std::endl;
 #endif
 
-				std::string peerRsId;
+				RsPeerId peerRsId;
 				bool foundPeerId = false;
 				{
 					RsStackMutex stack(dhtMtx); /********** LOCKED MUTEX ***************/	
@@ -1774,7 +1774,7 @@ int p3BitDht::checkConnectionAllowed(const bdId *peerId, int mode)
  */
 
  
-void p3BitDht::ConnectCalloutTCPAttempt(const std::string &peerId, struct sockaddr_in raddrv4)
+void p3BitDht::ConnectCalloutTCPAttempt(const RsPeerId &peerId, struct sockaddr_in raddrv4)
 {
 	struct sockaddr_storage raddr;
 	struct sockaddr_storage proxyaddr;
@@ -1802,7 +1802,7 @@ void p3BitDht::ConnectCalloutTCPAttempt(const std::string &peerId, struct sockad
 }
 
  
-void p3BitDht::ConnectCalloutDirectOrProxy(const std::string &peerId, struct sockaddr_in raddrv4, uint32_t connectFlags, uint32_t delay)
+void p3BitDht::ConnectCalloutDirectOrProxy(const RsPeerId &peerId, struct sockaddr_in raddrv4, uint32_t connectFlags, uint32_t delay)
 {
 	struct sockaddr_storage raddr;
 	struct sockaddr_storage proxyaddr;
@@ -1827,7 +1827,7 @@ void p3BitDht::ConnectCalloutDirectOrProxy(const std::string &peerId, struct soc
 	mConnCb->peerConnectRequest(peerId, raddr, proxyaddr, srcaddr, source, connectFlags, delay, bandwidth);
 }
 
-void p3BitDht::ConnectCalloutRelay(const std::string &peerId, 
+void p3BitDht::ConnectCalloutRelay(const RsPeerId &peerId, 
 		struct sockaddr_in srcaddrv4, struct sockaddr_in proxyaddrv4, struct sockaddr_in destaddrv4,
 			uint32_t connectFlags, uint32_t bandwidth)
 {
@@ -1944,7 +1944,7 @@ void p3BitDht::initiateConnection(const bdId *srcId, const bdId *proxyId, const 
 #endif
 
 //	uint32_t touConnectMode = 0;
-	std::string rsId;
+	RsPeerId rsId;
 	
 	{
 		RsStackMutex stack(dhtMtx); /********** LOCKED MUTEX ***************/	
@@ -2054,10 +2054,10 @@ int p3BitDht::installRelayConnection(const bdId *srcId, const bdId *destId, uint
 	int relayClass = UDP_RELAY_CLASS_GENERAL;
 
 #ifdef DEBUG_PEERNET
-	std::string strId1;
+	RsPeerId strId1;
 	bdStdPrintNodeId(strId1, &(srcId->id), false);
 
-	std::string strId2;
+	RsPeerId strId2;
 	bdStdPrintNodeId(strId2, &(destId->id), false);
 #endif
 
@@ -2180,7 +2180,7 @@ void p3BitDht::monitorConnections()
 
 
 
-void p3BitDht::Feedback_Connected(std::string pid)
+void p3BitDht::Feedback_Connected(const RsPeerId& pid)
 {
 	RsStackMutex stack(dhtMtx); /********** LOCKED MUTEX ***************/	
 	DhtPeerDetails *dpd = findInternalRsPeer_locked(pid);
@@ -2255,7 +2255,7 @@ void p3BitDht::Feedback_Connected(std::string pid)
 	ReleaseProxyExclusiveMode_locked(dpd, true);
 }
 
-void p3BitDht::Feedback_ConnectionFailed(std::string pid)
+void p3BitDht::Feedback_ConnectionFailed(const RsPeerId& pid)
 {
 	RsStackMutex stack(dhtMtx); /********** LOCKED MUTEX ***************/	
 	DhtPeerDetails *dpd = findInternalRsPeer_locked(pid);
@@ -2278,7 +2278,7 @@ void p3BitDht::Feedback_ConnectionFailed(std::string pid)
 	return UdpConnectionFailed_locked(dpd);
 }
 
-void p3BitDht::Feedback_ConnectionClosed(std::string pid)
+void p3BitDht::Feedback_ConnectionClosed(const RsPeerId& pid)
 {
 	RsStackMutex stack(dhtMtx); /********** LOCKED MUTEX ***************/	
 	DhtPeerDetails *dpd = findInternalRsPeer_locked(pid);
@@ -2419,7 +2419,7 @@ void p3BitDht::ReleaseProxyExclusiveMode_locked(DhtPeerDetails *dpd, bool addrCh
 }
 
 
-void p3BitDht::ConnectionFeedback(std::string pid, int mode)
+void p3BitDht::ConnectionFeedback(const RsPeerId& pid, int mode)
 {
 #ifdef DEBUG_PEERNET
 	std::cerr << "p3BitDht::ConnectionFeedback() peer: " << pid;

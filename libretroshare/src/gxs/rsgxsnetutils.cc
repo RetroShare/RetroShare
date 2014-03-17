@@ -47,14 +47,14 @@ bool AuthorPending::expired() const
 }
 
 bool AuthorPending::getAuthorRep(GixsReputation& rep,
-                                 const std::string& authorId, const std::string& peerId)
+                                 const RsGxsId& authorId, const RsPeerId& peerId)
 {
 	if(mRep->haveReputation(authorId))
 	{
 		return mRep->getReputation(authorId, rep);
 	}
 
-        std::list<std::string> peers;
+        std::list<RsPeerId> peers;
         peers.push_back(peerId);
         mRep->loadReputation(authorId, peers);
 	return false;
@@ -70,12 +70,12 @@ GrpAuthEntry::GrpAuthEntry()
 
 
 
-MsgRespPending::MsgRespPending(RsGixsReputation* rep, const std::string& peerId, const MsgAuthorV& msgAuthV, int cutOff)
+MsgRespPending::MsgRespPending(RsGixsReputation* rep, const RsPeerId& peerId, const MsgAuthorV& msgAuthV, int cutOff)
  : AuthorPending(rep, time(NULL)), mPeerId(peerId), mMsgAuthV(msgAuthV), mCutOff(cutOff)
 {
 }
 
-GrpRespPending::GrpRespPending(RsGixsReputation* rep, const std::string& peerId, const GrpAuthorV& grpAuthV, int cutOff)
+GrpRespPending::GrpRespPending(RsGixsReputation* rep, const RsPeerId& peerId, const GrpAuthorV& grpAuthV, int cutOff)
  : AuthorPending(rep, time(NULL)), mPeerId(peerId), mGrpAuthV(grpAuthV), mCutOff(cutOff)
 {
 }
@@ -192,23 +192,23 @@ RsNxsNetMgrImpl::RsNxsNetMgrImpl(p3LinkMgr *lMgr)
 }
 
 
-std::string RsNxsNetMgrImpl::getOwnId()
+const RsPeerId& RsNxsNetMgrImpl::getOwnId()
 {
     RsStackMutex stack(mNxsNetMgrMtx);
     return mLinkMgr->getOwnId();
 }
 
-void RsNxsNetMgrImpl::getOnlineList(std::set<std::string> &ssl_peers)
+void RsNxsNetMgrImpl::getOnlineList(std::set<RsPeerId> &ssl_peers)
 {
     ssl_peers.clear();
 
-    std::list<std::string> pList;
+    std::list<RsPeerId> pList;
     {
         RsStackMutex stack(mNxsNetMgrMtx);
         mLinkMgr->getOnlineList(pList);
     }
 
-    std::list<std::string>::const_iterator lit = pList.begin();
+    std::list<RsPeerId>::const_iterator lit = pList.begin();
 
     for(; lit != pList.end(); lit++)
         ssl_peers.insert(*lit);
@@ -233,7 +233,7 @@ bool GrpCircleVetting::expired()
 {
 	return  time(NULL) > (mTimeStamp + EXPIRY_PERIOD_OFFSET);
 }
-bool GrpCircleVetting::canSend(const RsPgpId& peerId, const RsGxsCircleId& circleId)
+bool GrpCircleVetting::canSend(const SSLIdType& peerId, const RsGxsCircleId& circleId)
 {
 	if(mCircles->isLoaded(circleId))
 	{
@@ -247,7 +247,7 @@ bool GrpCircleVetting::canSend(const RsPgpId& peerId, const RsGxsCircleId& circl
 }
 
 GrpCircleIdRequestVetting::GrpCircleIdRequestVetting(
-		RsGcxs* const circles, std::vector<GrpIdCircleVet> grpCircleV, const std::string& peerId)
+		RsGcxs* const circles, std::vector<GrpIdCircleVet> grpCircleV, const RsPeerId& peerId)
  : GrpCircleVetting(circles), mGrpCircleV(grpCircleV), mPeerId(peerId) {}
 
 bool GrpCircleIdRequestVetting::cleared()
@@ -281,13 +281,13 @@ int GrpCircleIdRequestVetting::getType() const
 }
 
 MsgIdCircleVet::MsgIdCircleVet(const RsGxsMessageId& msgId,
-		const std::string& authorId)
+		const RsGxsId& authorId)
  : mMsgId(msgId), mAuthorId(authorId) {
 }
 
 MsgCircleIdsRequestVetting::MsgCircleIdsRequestVetting(RsGcxs* const circles,
 		std::vector<MsgIdCircleVet> msgs, const RsGxsGroupId& grpId,
-		const std::string& peerId, const RsGxsCircleId& circleId)
+		const RsPeerId& peerId, const RsGxsCircleId& circleId)
 : GrpCircleVetting(circles), mMsgs(msgs), mGrpId(grpId), mPeerId(peerId), mCircleId(circleId) {}
 
 bool MsgCircleIdsRequestVetting::cleared()

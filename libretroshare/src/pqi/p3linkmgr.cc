@@ -102,8 +102,7 @@ peerAddrInfo::peerAddrInfo()
 }
 
 peerConnectState::peerConnectState()
-	:id("unknown"), 
-	 connecttype(0),
+	: connecttype(0),
 	 lastavailable(0),
          lastattempt(0),
          name(""),
@@ -120,7 +119,7 @@ peerConnectState::peerConnectState()
 
 std::string textPeerConnectState(peerConnectState &state)
 {
-    return "Id: " + state.id + "\n";
+    return "Id: " + state.id.toStdString() + "\n";
 }
 
 /*********
@@ -182,11 +181,11 @@ bool p3LinkMgrIMPL::getLocalAddress(struct sockaddr_storage &addr)
 }
 
 
-bool    p3LinkMgrIMPL::isOnline(const std::string &ssl_id)
+bool    p3LinkMgrIMPL::isOnline(const RsPeerId &ssl_id)
 {
 	RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
 
-        std::map<std::string, peerConnectState>::iterator it;
+        std::map<RsPeerId, peerConnectState>::iterator it;
 	it = mFriendList.find(ssl_id);
 	if (it == mFriendList.end())
 	{
@@ -202,11 +201,11 @@ bool    p3LinkMgrIMPL::isOnline(const std::string &ssl_id)
 
 
 
-uint32_t p3LinkMgrIMPL::getLinkType(const std::string &ssl_id)
+uint32_t p3LinkMgrIMPL::getLinkType(const RsPeerId &ssl_id)
 {
 	RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
 
-        std::map<std::string, peerConnectState>::iterator it;
+        std::map<RsPeerId, peerConnectState>::iterator it;
 	it = mFriendList.find(ssl_id);
 	if (it == mFriendList.end())
 	{
@@ -222,11 +221,11 @@ uint32_t p3LinkMgrIMPL::getLinkType(const std::string &ssl_id)
 
 
 
-void    p3LinkMgrIMPL::getOnlineList(std::list<std::string> &ssl_peers)
+void    p3LinkMgrIMPL::getOnlineList(std::list<RsPeerId> &ssl_peers)
 {
 	RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
 
-        std::map<std::string, peerConnectState>::iterator it;
+        std::map<RsPeerId, peerConnectState>::iterator it;
 	for(it = mFriendList.begin(); it != mFriendList.end(); it++)
 	{
 		if (it->second.state & RS_PEER_S_CONNECTED)
@@ -237,11 +236,11 @@ void    p3LinkMgrIMPL::getOnlineList(std::list<std::string> &ssl_peers)
 	return;
 }
 
-void    p3LinkMgrIMPL::getFriendList(std::list<std::string> &ssl_peers)
+void    p3LinkMgrIMPL::getFriendList(std::list<RsPeerId> &ssl_peers)
 {
 	RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
 
-	std::map<std::string, peerConnectState>::iterator it;
+	std::map<RsPeerId, peerConnectState>::iterator it;
 	for(it = mFriendList.begin(); it != mFriendList.end(); it++)
 	{
 		ssl_peers.push_back(it->first);
@@ -249,17 +248,17 @@ void    p3LinkMgrIMPL::getFriendList(std::list<std::string> &ssl_peers)
 	return;
 }
 
-bool    p3LinkMgrIMPL::getPeerName(const std::string &ssl_id, std::string &name)
+bool    p3LinkMgrIMPL::getPeerName(const RsPeerId &ssl_id, std::string &name)
 {
 	return mPeerMgr->getPeerName(ssl_id, name);
 }
 
 
-bool    p3LinkMgrIMPL::getFriendNetStatus(const std::string &id, peerConnectState &state)
+bool    p3LinkMgrIMPL::getFriendNetStatus(const RsPeerId &id, peerConnectState &state)
 {
 	RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
 
-        std::map<std::string, peerConnectState>::iterator it;
+        std::map<RsPeerId, peerConnectState>::iterator it;
 	it = mFriendList.find(id);
 	if (it == mFriendList.end())
 	{
@@ -273,13 +272,13 @@ bool    p3LinkMgrIMPL::getFriendNetStatus(const std::string &id, peerConnectStat
 
 
 
-void    p3LinkMgrIMPL::setFriendVisibility(const std::string &id, bool isVisible)
+void    p3LinkMgrIMPL::setFriendVisibility(const RsPeerId &id, bool isVisible)
 {
 	/* set visibility */
 	{
 		RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
 	
-		std::map<std::string, peerConnectState>::iterator it;
+		std::map<RsPeerId, peerConnectState>::iterator it;
 		it = mFriendList.find(id);
 		if (it == mFriendList.end())
 		{
@@ -327,8 +326,8 @@ void    p3LinkMgrIMPL::statusTick()
 #ifdef LINKMGR_DEBUG_TICK
 	std::cerr << "p3LinkMgrIMPL::statusTick()" << std::endl;
 #endif
-	std::list<std::string> retryIds;
-	std::list<std::string>::iterator it2;
+	std::list<RsPeerId> retryIds;
+	std::list<RsPeerId>::iterator it2;
         //std::list<std::string> dummyToRemove;
 
       {
@@ -337,7 +336,7 @@ void    p3LinkMgrIMPL::statusTick()
         time_t retry = now - mRetryPeriod;
 
       	RsStackMutex stack(mLinkMtx);  /******   LOCK MUTEX ******/
-        std::map<std::string, peerConnectState>::iterator it;
+        std::map<RsPeerId, peerConnectState>::iterator it;
 	for(it = mFriendList.begin(); it != mFriendList.end(); it++)
 	{
 		if (it->second.state & RS_PEER_S_CONNECTED)
@@ -421,7 +420,7 @@ void p3LinkMgrIMPL::tickMonitors()
 {
 	bool doStatusChange = false;
 	std::list<pqipeer> actionList;
-        std::map<std::string, peerConnectState>::iterator it;
+        std::map<RsPeerId, peerConnectState>::iterator it;
 
       {
 	RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
@@ -449,7 +448,7 @@ void p3LinkMgrIMPL::tickMonitors()
 				actionList.push_back(peer);
 
 #ifdef LINKMGR_DEBUG_ACTIONS
-				std::cerr << "Friend: " << peer.name << " Id: " << peer.id << " State: " << peer.state;
+				std::cerr << "Friend: " << peer.name << " Id: " << peer.id.toStdString() << " State: " << peer.state;
 				if (peer.state & RS_PEER_S_FRIEND)
 					std::cerr << " S:RS_PEER_S_FRIEND";
 				if (peer.state & RS_PEER_S_ONLINE)
@@ -477,8 +476,8 @@ void p3LinkMgrIMPL::tickMonitors()
 					p3Notify *notify = RsServer::notify();
 					if (notify)
 					{
-						notify->AddPopupMessage(RS_POPUP_CONNECT, peer.id,"", "Online: ");
-						notify->AddFeedItem(RS_FEED_ITEM_PEER_CONNECT, peer.id, "", "");
+						notify->AddPopupMessage(RS_POPUP_CONNECT, peer.id.toStdString(),"", "Online: ");
+						notify->AddFeedItem(RS_FEED_ITEM_PEER_CONNECT, peer.id.toStdString(), "", "");
 					}
 				}
 			}
@@ -500,7 +499,7 @@ void p3LinkMgrIMPL::tickMonitors()
 				it->second.actions = 0;
 
 #ifdef LINKMGR_DEBUG_ACTIONS
-				std::cerr << "Other: " << peer.name << " Id: " << peer.id << " State: " << peer.state;
+				std::cerr << "Other: " << peer.name << " Id: " << peer.id.toStdString() << " State: " << peer.state;
 				if (peer.state & RS_PEER_S_FRIEND)
 					std::cerr << " S:RS_PEER_S_FRIEND";
 				if (peer.state & RS_PEER_S_ONLINE)
@@ -576,13 +575,13 @@ void p3LinkMgrIMPL::tickMonitors()
 }
 
 
-const std::string p3LinkMgrIMPL::getOwnId()
+const RsPeerId& p3LinkMgrIMPL::getOwnId()
 {
-                return AuthSSL::getAuthSSL()->OwnId();
+	return AuthSSL::getAuthSSL()->OwnId();
 }
 
 
-bool p3LinkMgrIMPL::connectAttempt(const std::string &id, struct sockaddr_storage &raddr,
+bool p3LinkMgrIMPL::connectAttempt(const RsPeerId &id, struct sockaddr_storage &raddr,
 								   struct sockaddr_storage &proxyaddr,
 								   struct sockaddr_storage &srcaddr,
 								   uint32_t &delay, uint32_t &period, uint32_t &type, uint32_t &flags, uint32_t &bandwidth,
@@ -592,7 +591,7 @@ bool p3LinkMgrIMPL::connectAttempt(const std::string &id, struct sockaddr_storag
 	RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
 
 	/* check for existing */
-	std::map<std::string, peerConnectState>::iterator it;
+	std::map<RsPeerId, peerConnectState>::iterator it;
 	it = mFriendList.find(id);
 	if (it == mFriendList.end())
 	{
@@ -623,7 +622,7 @@ bool p3LinkMgrIMPL::connectAttempt(const std::string &id, struct sockaddr_storag
 
          }
 
-	rslog(RSL_WARNING, p3connectzone, "p3LinkMgrIMPL::connectAttempt() called id: " + id);
+	rslog(RSL_WARNING, p3connectzone, "p3LinkMgrIMPL::connectAttempt() called id: " + id.toStdString());
 
         it->second.lastattempt = time(NULL); 
         it->second.inConnAttempt = true;
@@ -774,7 +773,7 @@ bool p3LinkMgrIMPL::connectAttempt(const std::string &id, struct sockaddr_storag
  *
  */
 
-bool p3LinkMgrIMPL::connectResult(const std::string &id, bool success, uint32_t flags, const struct sockaddr_storage &remote_peer_address)
+bool p3LinkMgrIMPL::connectResult(const RsPeerId &id, bool success, uint32_t flags, const struct sockaddr_storage &remote_peer_address)
 {
 	bool doDhtAssist = false ;
 	bool updatePeerAddr = false;
@@ -786,16 +785,16 @@ bool p3LinkMgrIMPL::connectResult(const std::string &id, bool success, uint32_t 
 
 		if (id == getOwnId()) 
 		{
-			rslog(RSL_ALERT, p3connectzone, "p3LinkMgrIMPL::connectResult() ERROR Trying to Connect to OwnId: " + id);
+			rslog(RSL_ALERT, p3connectzone, "p3LinkMgrIMPL::connectResult() ERROR Trying to Connect to OwnId: " + id.toStdString());
 
 			return false;
 		}
 		/* check for existing */
-		std::map<std::string, peerConnectState>::iterator it;
+		std::map<RsPeerId, peerConnectState>::iterator it;
 		it = mFriendList.find(id);
 		if (it == mFriendList.end())
 		{
-			rslog(RSL_ALERT, p3connectzone, "p3LinkMgrIMPL::connectResult() ERROR Missing Friend: " + id);
+			rslog(RSL_ALERT, p3connectzone, "p3LinkMgrIMPL::connectResult() ERROR Missing Friend: " + id.toStdString());
 
 #ifdef LINKMGR_DEBUG
 			std::cerr << "p3LinkMgrIMPL::connectResult() ERROR, missing Friend " << " id: " << id << std::endl;
@@ -806,7 +805,7 @@ bool p3LinkMgrIMPL::connectResult(const std::string &id, bool success, uint32_t 
 		/* now we can tell if we think we were connected - proper point to log */
 
 		{
-			std::string out = "p3LinkMgrIMPL::connectResult() id: " + id;
+			std::string out = "p3LinkMgrIMPL::connectResult() id: " + id.toStdString();
 			if (success) 
 			{
 				out += " SUCCESS ";
@@ -1030,7 +1029,7 @@ bool p3LinkMgrIMPL::connectResult(const std::string &id, bool success, uint32_t 
  */
 
 // from pqissl, when a connection failed due to security
-void 	p3LinkMgrIMPL::notifyDeniedConnection(const std::string& gpgid,const std::string& sslid,const std::string& sslcn,const struct sockaddr_storage &addr, bool incoming)
+void 	p3LinkMgrIMPL::notifyDeniedConnection(const RsPgpId& gpgid,const RsPeerId& sslid,const std::string& sslcn,const struct sockaddr_storage &addr, bool incoming)
 {
 	std::cerr << "p3LinkMgrIMPL::notifyDeniedConnection()";
 	std::cerr << " pgpid: " << gpgid;
@@ -1040,7 +1039,7 @@ void 	p3LinkMgrIMPL::notifyDeniedConnection(const std::string& gpgid,const std::
 
 	RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
 
-        std::map<std::string, peerConnectState>::iterator it;
+        std::map<RsPeerId, peerConnectState>::iterator it;
 	it = mFriendList.find(sslid);
 	if (it == mFriendList.end())
 	{
@@ -1070,12 +1069,12 @@ void 	p3LinkMgrIMPL::notifyDeniedConnection(const std::string& gpgid,const std::
 }
 	
 
-void    p3LinkMgrIMPL::peerStatus(std::string id, const pqiIpAddrSet &addrs,
+void    p3LinkMgrIMPL::peerStatus(const RsPeerId& id, const pqiIpAddrSet &addrs,
                        uint32_t type, uint32_t flags, uint32_t source)
 {
 	/* HACKED UP FIX ****/
 
-        std::map<std::string, peerConnectState>::iterator it;
+        std::map<RsPeerId, peerConnectState>::iterator it;
 	bool isFriend = true;
 
 	time_t now = time(NULL);
@@ -1098,7 +1097,7 @@ void    p3LinkMgrIMPL::peerStatus(std::string id, const pqiIpAddrSet &addrs,
 
 	{
 		/* Log */
-		std::string out = "p3LinkMgrIMPL::peerStatus() id: " + id;
+		std::string out = "p3LinkMgrIMPL::peerStatus() id: " + id.toStdString();
 		rs_sprintf_append(out, " type: %lu flags: %lu source: %lu\n", type, flags, source);
 		addrs.printAddrs(out);
 		
@@ -1344,7 +1343,7 @@ void    p3LinkMgrIMPL::peerStatus(std::string id, const pqiIpAddrSet &addrs,
 }
 
 /* This has become very unwieldy - as extra arguments are required for UDP connections */
-void    p3LinkMgrIMPL::peerConnectRequest(std::string id, const struct sockaddr_storage &raddr, const struct sockaddr_storage &proxyaddr, const struct sockaddr_storage &srcaddr,
+void    p3LinkMgrIMPL::peerConnectRequest(const RsPeerId& id, const struct sockaddr_storage &raddr, const struct sockaddr_storage &proxyaddr, const struct sockaddr_storage &srcaddr,
 						uint32_t source, uint32_t flags, uint32_t delay, uint32_t bandwidth)
 {
 #ifdef LINKMGR_DEBUG
@@ -1360,7 +1359,7 @@ void    p3LinkMgrIMPL::peerConnectRequest(std::string id, const struct sockaddr_
 #endif
 	{
 		/* Log */
-		std::string out = "p3LinkMgrIMPL::peerConnectRequest() id: " + id;
+		std::string out = "p3LinkMgrIMPL::peerConnectRequest() id: " + id.toStdString();
 		out += " raddr: ";
 		out += sockaddr_storage_tostring(raddr);
 		out += " proxyaddr: ";
@@ -1397,7 +1396,7 @@ void    p3LinkMgrIMPL::peerConnectRequest(std::string id, const struct sockaddr_
 			{
 				RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
 
-	        		std::map<std::string, peerConnectState>::iterator it;
+	        		std::map<RsPeerId, peerConnectState>::iterator it;
 				if (mFriendList.end() == (it = mFriendList.find(id)))
 				{
 #ifdef LINKMGR_DEBUG
@@ -1449,7 +1448,7 @@ void    p3LinkMgrIMPL::peerConnectRequest(std::string id, const struct sockaddr_
 /*******************************************************************/
 /*******************************************************************/
        /*************** External Control ****************/
-bool   p3LinkMgrIMPL::retryConnect(const std::string &id)
+bool   p3LinkMgrIMPL::retryConnect(const RsPeerId &id)
 {
 	/* push all available addresses onto the connect addr stack */
 #ifdef LINKMGR_DEBUG
@@ -1467,7 +1466,7 @@ bool   p3LinkMgrIMPL::retryConnect(const std::string &id)
 
 
 
-bool   p3LinkMgrIMPL::tryConnectUDP(const std::string &id, const struct sockaddr_storage &rUdpAddr, 
+bool   p3LinkMgrIMPL::tryConnectUDP(const RsPeerId &id, const struct sockaddr_storage &rUdpAddr, 
 									const struct sockaddr_storage &proxyaddr, const struct sockaddr_storage &srcaddr,
 									uint32_t flags, uint32_t delay, uint32_t bandwidth)
 
@@ -1514,7 +1513,7 @@ bool   p3LinkMgrIMPL::tryConnectUDP(const std::string &id, const struct sockaddr
         }
 
         /* look up the id */
-        std::map<std::string, peerConnectState>::iterator it;
+        std::map<RsPeerId, peerConnectState>::iterator it;
 	if (mFriendList.end() == (it = mFriendList.find(id)))
 	{
 #ifdef LINKMGR_DEBUG
@@ -1564,7 +1563,7 @@ bool   p3LinkMgrIMPL::tryConnectUDP(const std::string &id, const struct sockaddr
 
 
 
-bool   p3LinkMgrIMPL::retryConnectTCP(const std::string &id)
+bool   p3LinkMgrIMPL::retryConnectTCP(const RsPeerId &id)
 {
 	/* Check if we should retry first */
 	{
@@ -1589,7 +1588,7 @@ bool   p3LinkMgrIMPL::retryConnectTCP(const std::string &id)
 		}
 	
 	        /* look up the id */
-	        std::map<std::string, peerConnectState>::iterator it;
+	        std::map<RsPeerId, peerConnectState>::iterator it;
 		if (mFriendList.end() == (it = mFriendList.find(id)))
 		{
 #ifdef LINKMGR_DEBUG
@@ -1626,7 +1625,7 @@ bool   p3LinkMgrIMPL::retryConnectTCP(const std::string &id)
 		{
 			RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
 
-	        	std::map<std::string, peerConnectState>::iterator it;
+	        	std::map<RsPeerId, peerConnectState>::iterator it;
 			if (mFriendList.end() != (it = mFriendList.find(id)))
 			{
 				locked_ConnectAttempt_ProxyAddress(&(it->second), proxy_addr, domain_addr, domain_port);
@@ -1652,7 +1651,7 @@ bool   p3LinkMgrIMPL::retryConnectTCP(const std::string &id)
 	{
 		RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
 
-	        std::map<std::string, peerConnectState>::iterator it;
+	        std::map<RsPeerId, peerConnectState>::iterator it;
 		if (mFriendList.end() != (it = mFriendList.find(id)))
 		{
 			locked_ConnectAttempt_CurrentAddresses(&(it->second), lAddr, eAddr);
@@ -2125,9 +2124,9 @@ bool  p3LinkMgrIMPL::locked_ConnectAttempt_Complete(peerConnectState *peer)
  ************************************* Handling of Friends *************************************************
  ***********************************************************************************************************/
 
-int p3LinkMgrIMPL::addFriend(const std::string &id, bool isVisible)
+int p3LinkMgrIMPL::addFriend(const RsPeerId &id, bool isVisible)
 {
-	rslog(RSL_WARNING, p3connectzone, "p3LinkMgr::addFriend() id: " + id);
+	rslog(RSL_WARNING, p3connectzone, "p3LinkMgr::addFriend() id: " + id.toStdString());
 
 	{
 		RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
@@ -2137,7 +2136,7 @@ int p3LinkMgrIMPL::addFriend(const std::string &id, bool isVisible)
 		std::cerr << std::endl;
 #endif
 
-	        std::map<std::string, peerConnectState>::iterator it;
+	        std::map<RsPeerId, peerConnectState>::iterator it;
 		it = mFriendList.find(id);
 	
 		if (it != mFriendList.end())
@@ -2166,9 +2165,9 @@ int p3LinkMgrIMPL::addFriend(const std::string &id, bool isVisible)
 }
 
 
-int p3LinkMgrIMPL::removeFriend(const std::string &id)
+int p3LinkMgrIMPL::removeFriend(const RsPeerId &id)
 {
-	rslog(RSL_WARNING, p3connectzone, "p3LinkMgr::removeFriend() id: " + id);
+	rslog(RSL_WARNING, p3connectzone, "p3LinkMgr::removeFriend() id: " + id.toStdString());
 
 	{
 		RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
@@ -2178,7 +2177,7 @@ int p3LinkMgrIMPL::removeFriend(const std::string &id)
 		std::cerr << std::endl;
 		#endif
 		
-		std::map<std::string, peerConnectState>::iterator it;
+		std::map<RsPeerId, peerConnectState>::iterator it;
 		it = mFriendList.find(id);
 		
 		if (it == mFriendList.end())
@@ -2218,10 +2217,10 @@ void p3LinkMgrIMPL::printPeerLists(std::ostream &out)
                 out << std::endl;
 
 
-                std::map<std::string, peerConnectState>::iterator it;
+                std::map<RsPeerId, peerConnectState>::iterator it;
                 for(it = mFriendList.begin(); it != mFriendList.end(); it++) 
                 {
-                        out << "\t SSL ID: " << it->second.id;
+                        out << "\t SSL ID: " << it->second.id.toStdString();
                         out << "\t State: " << it->second.state;
                         out << std::endl;
                 }
@@ -2230,7 +2229,7 @@ void p3LinkMgrIMPL::printPeerLists(std::ostream &out)
                 out << std::endl;
                 for(it = mOthersList.begin(); it != mOthersList.end(); it++)
                 {
-                        out << "\t SSL ID: " << it->second.id;
+                        out << "\t SSL ID: " << it->second.id.toStdString();
                         out << "\t State: " << it->second.state;
                 }
         }
@@ -2242,7 +2241,7 @@ void p3LinkMgrIMPL::printPeerLists(std::ostream &out)
 void  printConnectState(std::ostream &out, peerConnectState &peer)
 {
 
-        out << "Friend: " << peer.name << " Id: " << peer.id << " State: " << peer.state;
+        out << "Friend: " << peer.name << " Id: " << peer.id.toStdString() << " State: " << peer.state;
         if (peer.state & RS_PEER_S_FRIEND)
                 out << " S:RS_PEER_S_FRIEND";
         if (peer.state & RS_PEER_S_ONLINE)

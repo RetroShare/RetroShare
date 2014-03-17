@@ -73,7 +73,7 @@ public:
      * @param cache whether to store retrieval in mem for faster later retrieval
      * @return error code
      */
-    int retrieveNxsGrps(std::map<std::string, RsNxsGrp*>& grp, bool withMeta, bool cache);
+    int retrieveNxsGrps(std::map<RsGxsGroupId, RsNxsGrp*>& grp, bool withMeta, bool cache);
 
     /*!
      * Retrieves meta data of all groups stored (most current versions only)
@@ -111,7 +111,7 @@ public:
      * @param grpIds all grpids in store is inserted into this vector
      * @return error code
      */
-    int retrieveGroupIds(std::vector<std::string> &grpIds);
+    int retrieveGroupIds(std::vector<RsGxsGroupId> &grpIds);
 
     /*!
      * @return the cache size set for this RsGeneralDataService in bytes
@@ -226,7 +226,7 @@ private:
      * @param msgIds
      */
     bool locked_removeMessageEntries(const GxsMsgReq& msgIds);
-    bool locked_removeGroupEntries(const std::vector<std::string>& grpIds);
+    bool locked_removeGroupEntries(const std::vector<RsGxsGroupId>& grpIds);
 
     typedef std::map<RsGxsGroupId, std::vector<MsgUpdate> > MsgUpdates;
 

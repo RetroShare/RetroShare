@@ -4,25 +4,48 @@
 #include <QDialogButtonBox>
 #include "FriendSelectionDialog.h"
 
-std::list<std::string> FriendSelectionDialog::selectFriends(QWidget *parent,const QString& caption,const QString& header_text,
-																				FriendSelectionWidget::Modus modus,
-																				FriendSelectionWidget::ShowTypes show_type,
-																				FriendSelectionWidget::IdType pre_selected_id_type,
-																				const std::list<std::string>& pre_selected_ids)
+std::list<RsPgpId> FriendSelectionDialog::selectFriends_PGP(QWidget *parent,const QString& caption,const QString& header_text,
+                            FriendSelectionWidget::Modus modus,
+                            FriendSelectionWidget::ShowTypes show_type,
+                            const std::list<RsPgpId>& pre_selected_ids)
 {
-	FriendSelectionDialog dialog(parent,header_text,modus,show_type,pre_selected_id_type,pre_selected_ids) ;
+    std::list<std::string> psids ;
+    for(std::list<RsPgpId>::const_iterator it(pre_selected_ids.begin());it!=pre_selected_ids.end();++it)
+        psids.push_back( (*it).toStdString() ) ;
 
-	dialog.setWindowTitle(caption) ;
+    FriendSelectionDialog dialog(parent,header_text,modus,show_type,FriendSelectionWidget::IDTYPE_GPG,psids) ;
 
-	if(QDialog::Rejected == dialog.exec())
-		return std::list<std::string>() ;
+    dialog.setWindowTitle(caption) ;
 
-	std::list<std::string> ids ;
-	dialog.friends_widget->selectedIds(pre_selected_id_type,ids,false) ;
+    if(QDialog::Rejected == dialog.exec())
+        return std::list<RsPgpId>() ;
 
-	return ids ;
+    std::list<RsPgpId> sids ;
+    dialog.friends_widget->selectedIds<RsPgpId,FriendSelectionWidget::IDTYPE_GPG>(sids,false) ;
+
+    return sids ;
 }
+std::list<RsPeerId> FriendSelectionDialog::selectFriends_SSL(QWidget *parent,const QString& caption,const QString& header_text,
+                            FriendSelectionWidget::Modus modus,
+                            FriendSelectionWidget::ShowTypes show_type,
+                            const std::list<RsPeerId>& pre_selected_ids)
+{
+    std::list<std::string> psids ;
+    for(std::list<RsPeerId>::const_iterator it(pre_selected_ids.begin());it!=pre_selected_ids.end();++it)
+        psids.push_back( (*it).toStdString() ) ;
 
+    FriendSelectionDialog dialog(parent,header_text,modus,show_type,FriendSelectionWidget::IDTYPE_SSL,psids) ;
+
+    dialog.setWindowTitle(caption) ;
+
+    if(QDialog::Rejected == dialog.exec())
+        return std::list<RsPeerId>() ;
+
+    std::list<RsPeerId> sids ;
+    dialog.friends_widget->selectedIds<RsPeerId,FriendSelectionWidget::IDTYPE_SSL>(sids,false) ;
+
+    return sids ;
+}
 FriendSelectionDialog::FriendSelectionDialog(QWidget *parent,const QString& header_text,
 															FriendSelectionWidget::Modus modus,
 															FriendSelectionWidget::ShowTypes show_type,

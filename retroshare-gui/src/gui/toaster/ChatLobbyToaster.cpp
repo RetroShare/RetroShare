@@ -25,7 +25,7 @@
 
 #include <retroshare/rsmsgs.h>
 
-ChatLobbyToaster::ChatLobbyToaster(const std::string &peerId, const QString &name, const QString &message) : QWidget(NULL)
+ChatLobbyToaster::ChatLobbyToaster(const RsPeerId &peerId, const QString &name, const QString &message) : QWidget(NULL)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);

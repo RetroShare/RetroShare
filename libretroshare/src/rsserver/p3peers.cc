@@ -160,7 +160,7 @@ bool p3Peers::OthersChanged()
 }
 
 	/* Peer Details (Net & Auth) */
-std::string p3Peers::getOwnId()
+const RsPeerId& p3Peers::getOwnId()
 {
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::getOwnId()" << std::endl;
@@ -169,7 +169,7 @@ std::string p3Peers::getOwnId()
         return AuthSSL::getAuthSSL()->OwnId();
 }
 
-bool	p3Peers::getOnlineList(std::list<std::string> &ids)
+bool	p3Peers::getOnlineList(std::list<RsPeerId> &ids)
 {
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::getOnlineList()" << std::endl;
@@ -180,7 +180,7 @@ bool	p3Peers::getOnlineList(std::list<std::string> &ids)
 	return true;
 }
 
-bool	p3Peers::getFriendList(std::list<std::string> &ids)
+bool	p3Peers::getFriendList(std::list<RsPeerId> &ids)
 {
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::getFriendList()" << std::endl;
@@ -215,7 +215,7 @@ bool p3Peers::getPeerCount (unsigned int *friendCount, unsigned int *onlineCount
 	return true;
 }
 
-bool    p3Peers::isOnline(const std::string &id)
+bool    p3Peers::isOnline(const RsPeerId &id)
 {
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::isOnline() " << id << std::endl;
@@ -231,7 +231,7 @@ bool    p3Peers::isOnline(const std::string &id)
 	return false;
 }
 
-bool    p3Peers::isFriend(const std::string &ssl_id)
+bool    p3Peers::isFriend(const RsPeerId &ssl_id)
 {
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::isFriend() " << ssl_id << std::endl;
@@ -241,7 +241,7 @@ bool    p3Peers::isFriend(const std::string &ssl_id)
         return mPeerMgr->isFriend(ssl_id);
 }
 
-bool p3Peers::haveSecretKey(const std::string& id)
+bool p3Peers::haveSecretKey(const RsPgpId& id)
 {
 	return AuthGPG::getAuthGPG()->haveSecretKey(id) ;
 }
@@ -250,7 +250,7 @@ bool p3Peers::haveSecretKey(const std::string& id)
  * to shift it immeidately
  */
 
-bool	p3Peers::getPeerDetails(const std::string &id, RsPeerDetails &d)
+bool	p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 {
 #ifdef P3PEERS_DEBUG
 	std::cerr << "p3Peers::getPeerDetails() called for id : " << id << std::endl;
@@ -258,7 +258,7 @@ bool	p3Peers::getPeerDetails(const std::string &id, RsPeerDetails &d)
 
 	// NOW Only for SSL Details.
 
-	std::string sOwnId = AuthSSL::getAuthSSL()->OwnId();
+	RsPeerId sOwnId = AuthSSL::getAuthSSL()->OwnId();
 	peerState ps;
 
 	if (id == sOwnId)
@@ -266,30 +266,29 @@ bool	p3Peers::getPeerDetails(const std::string &id, RsPeerDetails &d)
 		mPeerMgr->getOwnNetStatus(ps);
 		ps.gpg_id = AuthGPG::getAuthGPG()->getGPGOwnId();
 	}
-	else
+	else if (!mPeerMgr->getFriendNetStatus(id, ps))
 	{
-		if (!mPeerMgr->getFriendNetStatus(id, ps))
-		{
 #ifdef P3PEERS_DEBUG
-			std::cerr << "p3Peers::getPeerDetails() ERROR not an SSL Id: " << id << std::endl;
+		std::cerr << "p3Peers::getPeerDetails() ERROR not an SSL Id: " << id << std::endl;
 #endif
-			bool res = getGPGDetails(id, d);
-
-			d.isOnlyGPGdetail = true;
-
-			if(id.length() == 16)
-				d.service_perm_flags = mPeerMgr->servicePermissionFlags(id) ;
-			else if(id.length() == 32)
-				d.service_perm_flags = mPeerMgr->servicePermissionFlags_sslid(id) ;
-			else
-			{
-				std::cerr << "p3Peers::getPeerDetails() ERROR not an correct Id: " << id << std::endl;
-				d.service_perm_flags = RS_SERVICE_PERM_NONE ;
-			}
-
-			return res ;
-		}
+		return false ;
 	}
+
+//			bool res = getGPGDetails(id, d);
+//
+//			d.isOnlyGPGdetail = true;
+//
+//			if(id.length() == 16)
+//				d.service_perm_flags = mPeerMgr->servicePermissionFlags(id) ;
+//			else if(id.length() == 32)
+//				d.service_perm_flags = mPeerMgr->servicePermissionFlags(id) ;
+//			else
+//			{
+//				std::cerr << "p3Peers::getPeerDetails() ERROR not an correct Id: " << id << std::endl;
+//				d.service_perm_flags = RS_SERVICE_PERM_NONE ;
+//			}
+//
+//			return res ;
 
 	/* get from gpg (first), to fill in the sign and trust details */
 	/* don't retrun now, we've got fill in the ssl and connection info */
@@ -454,47 +453,44 @@ bool	p3Peers::getPeerDetails(const std::string &id, RsPeerDetails &d)
 	return true;
 }
 
-bool p3Peers::isKeySupported(const std::string& id)
+bool p3Peers::isKeySupported(const RsPgpId& id)
 {
 	return AuthGPG::getAuthGPG()->isKeySupported(id);
 }
 
-std::string p3Peers::getGPGName(const std::string &gpg_id)
+std::string p3Peers::getGPGName(const RsPgpId &gpg_id)
 {
 	/* get from mAuthMgr as it should have more peers? */
         return AuthGPG::getAuthGPG()->getGPGName(gpg_id);
 }
 
-bool p3Peers::isGPGAccepted(const std::string &gpg_id_is_friend)
+bool p3Peers::isGPGAccepted(const RsPgpId &gpg_id_is_friend)
 {
         /* get from mAuthMgr as it should have more peers? */
         return AuthGPG::getAuthGPG()->isGPGAccepted(gpg_id_is_friend);
 }
 
-std::string p3Peers::getPeerName(const std::string &ssl_or_gpg_id)
+std::string p3Peers::getPeerName(const RsPeerId& ssl)
 {
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::getPeerName() " << ssl_or_gpg_id << std::endl;
 #endif
 	std::string name;
-	if (ssl_or_gpg_id == AuthSSL::getAuthSSL()->OwnId()) 
-	{
+	if (ssl == AuthSSL::getAuthSSL()->OwnId()) 
 		return AuthGPG::getAuthGPG()->getGPGOwnName();
-	}
 	
-	if (mPeerMgr->getPeerName(ssl_or_gpg_id, name)) 
+	if (mPeerMgr->getPeerName(ssl, name)) 
 	{
 #ifdef P3PEERS_DEBUG
 		std::cerr << "p3Peers::getPeerName() got a ssl id. Name is : " << name << std::endl;
 #endif
 		return name;
 	}
-	
-	return AuthGPG::getAuthGPG()->getGPGName(ssl_or_gpg_id);
+	return std::string() ;
 }
 
 
-bool	p3Peers::getGPGAllList(std::list<std::string> &ids)
+bool	p3Peers::getGPGAllList(std::list<RsPgpId> &ids)
 {
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::getGPGAllList()" << std::endl;
@@ -505,7 +501,7 @@ bool	p3Peers::getGPGAllList(std::list<std::string> &ids)
         return true;
 }
 
-bool	p3Peers::getGPGValidList(std::list<std::string> &ids)
+bool	p3Peers::getGPGValidList(std::list<RsPgpId> &ids)
 {
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::getPGPOthersList()" << std::endl;
@@ -516,7 +512,7 @@ bool	p3Peers::getGPGValidList(std::list<std::string> &ids)
         return true;
 }
 
-bool	p3Peers::getGPGSignedList(std::list<std::string> &ids)
+bool	p3Peers::getGPGSignedList(std::list<RsPgpId> &ids)
 {
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::getPGPOthersList()" << std::endl;
@@ -527,7 +523,7 @@ bool	p3Peers::getGPGSignedList(std::list<std::string> &ids)
         return true;
 }
 
-bool	p3Peers::getGPGAcceptedList(std::list<std::string> &ids)
+bool	p3Peers::getGPGAcceptedList(std::list<RsPgpId> &ids)
 {
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::getGPGAcceptedList()" << std::endl;
@@ -537,7 +533,7 @@ bool	p3Peers::getGPGAcceptedList(std::list<std::string> &ids)
 }
 
 
-bool	p3Peers::getAssociatedSSLIds(const std::string &gpg_id, std::list<std::string> &ids)
+bool	p3Peers::getAssociatedSSLIds(const RsPgpId &gpg_id, std::list<RsPeerId> &ids)
 {
 #ifdef P3PEERS_DEBUG
 	std::cerr << "p3Peers::getAssociatedSSLIds() for id : " << gpg_id << std::endl;
@@ -551,17 +547,22 @@ bool    p3Peers::gpgSignData(const void *data, const uint32_t len, unsigned char
 	return AuthGPG::getAuthGPG()->SignDataBin(data,len,sign,signlen);
 }
 
-bool	p3Peers::getGPGDetails(const std::string &id, RsPeerDetails &d)
+bool	p3Peers::getGPGDetails(const RsPgpId &pgp_id, RsPeerDetails &d)
 {
 #ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::getPgpDetails() called for id : " << id << std::endl;
+	std::cerr << "p3Peers::getPgpDetails() called for id : " << pgp_id << std::endl;
 #endif
 
-        /* get from mAuthMgr */
-        return AuthGPG::getAuthGPG()->getGPGDetails(id, d);
+	/* get from mAuthMgr */
+	bool res = AuthGPG::getAuthGPG()->getGPGDetails(pgp_id, d);
+
+	d.isOnlyGPGdetail = true ;
+	d.service_perm_flags = mPeerMgr->servicePermissionFlags(pgp_id) ;
+
+	return res ;
 }
 
-std::string p3Peers::getGPGOwnId()
+const RsPgpId& p3Peers::getGPGOwnId()
 {
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::getPGPOwnId()" << std::endl;
@@ -571,28 +572,23 @@ std::string p3Peers::getGPGOwnId()
         return AuthGPG::getAuthGPG()->getGPGOwnId();
 }
 
-std::string p3Peers::getGPGId(const std::string &sslid_or_gpgid)
+RsPgpId p3Peers::getGPGId(const RsPeerId& sslid)
 {
 #ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::getPGPId()" << std::endl;
+	std::cerr << "p3Peers::getPGPId()" << std::endl;
 #endif
 
-        /* get from mAuthMgr */
-        if (sslid_or_gpgid == AuthSSL::getAuthSSL()->OwnId()) {
-            return AuthGPG::getAuthGPG()->getGPGOwnId();
-        }
-        peerState pcs;
-        if (mPeerMgr->getFriendNetStatus(sslid_or_gpgid, pcs) || mPeerMgr->getOthersNetStatus(sslid_or_gpgid, pcs)) {
-            return pcs.gpg_id;
-        } else {
-            if ( AuthGPG::getAuthGPG()->isGPGId(sslid_or_gpgid)) {
-                #ifdef P3PEERS_DEBUG
-                std::cerr << "p3Peers::getPGPId() given id is already an gpg id : " << sslid_or_gpgid << std::endl;
-                #endif
-                return sslid_or_gpgid;
-            }
-        }
-        return "";
+	/* get from mAuthMgr */
+	if (sslid == AuthSSL::getAuthSSL()->OwnId()) 
+	{
+		return AuthGPG::getAuthGPG()->getGPGOwnId();
+	}
+	peerState pcs;
+	if (mPeerMgr->getFriendNetStatus(sslid, pcs) || mPeerMgr->getOthersNetStatus(sslid, pcs)) {
+		return pcs.gpg_id;
+	}
+
+	return RsPgpId();
 }
 
 
@@ -601,27 +597,27 @@ std::string p3Peers::getGPGId(const std::string &sslid_or_gpgid)
 	 */
 
 	/* Add/Remove Friends */
-bool 	p3Peers::addFriend(const std::string &ssl_id, const std::string &gpg_id,ServicePermissionFlags perm_flags)
+bool 	p3Peers::addFriend(const RsPeerId &ssl_id, const RsPgpId &gpg_id,ServicePermissionFlags perm_flags)
 {
 
 #ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::addFriend() with : id : " << id << "; gpg_id : " << gpg_id << std::endl;
+	std::cerr << "p3Peers::addFriend() with : id : " << id << "; gpg_id : " << gpg_id << std::endl;
 #endif
-	if (AuthGPG::getAuthGPG()->isGPGId(gpg_id)) 
+	if(AuthGPG::getAuthGPG()->isGPGId(gpg_id)) 
 	{
 #ifdef P3PEERS_DEBUG
-        	std::cerr << "p3Peers::addFriend() Authorising GPG Id: " << gpg_id << std::endl;
+		std::cerr << "p3Peers::addFriend() Authorising GPG Id: " << gpg_id << std::endl;
 #endif
 		if (AuthGPG::getAuthGPG()->AllowConnection(gpg_id, true))
 		{
 #ifdef P3PEERS_DEBUG
-	        	std::cerr << "p3Peers::addFriend() Authorization OK." << std::endl;
+			std::cerr << "p3Peers::addFriend() Authorization OK." << std::endl;
 #endif
 		}
 		else
 		{
 #ifdef P3PEERS_DEBUG
-	        	std::cerr << "p3Peers::addFriend() Authorization FAILED." << std::endl;
+			std::cerr << "p3Peers::addFriend() Authorization FAILED." << std::endl;
 #endif
 			return false;
 		}
@@ -629,12 +625,12 @@ bool 	p3Peers::addFriend(const std::string &ssl_id, const std::string &gpg_id,Se
 	else
 	{
 #ifdef P3PEERS_DEBUG
-        	std::cerr << "p3Peers::addFriend() Bad gpg_id : " << gpg_id << std::endl;
+		std::cerr << "p3Peers::addFriend() Bad gpg_id : " << gpg_id << std::endl;
 #endif
 		return false;
 	}
 
-	if (ssl_id == gpg_id || ssl_id == "") 
+	if(ssl_id.isNull())
 	{
 #ifdef P3PEERS_DEBUG
 		std::cerr << "p3Peers::addFriend() WARNING id is NULL or gpgId" << std::endl;
@@ -650,12 +646,12 @@ bool 	p3Peers::addFriend(const std::string &ssl_id, const std::string &gpg_id,Se
 	return mPeerMgr->addFriend(ssl_id, gpg_id, RS_NET_MODE_UDP, RS_VS_DISC_FULL, RS_VS_DHT_FULL, now, perm_flags);
 }
 
-bool 	p3Peers::removeKeysFromPGPKeyring(const std::list<std::string>& pgp_ids,std::string& backup_file,uint32_t& error_code)
+bool 	p3Peers::removeKeysFromPGPKeyring(const std::list<RsPgpId>& pgp_ids,std::string& backup_file,uint32_t& error_code)
 {
 	return AuthGPG::getAuthGPG()->removeKeysFromPGPKeyring(pgp_ids,backup_file,error_code) ;
 }
 
-bool 	p3Peers::removeFriendLocation(const std::string &sslId)
+bool 	p3Peers::removeFriendLocation(const RsPeerId &sslId)
 {
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::removeFriendLocation() " << sslId << std::endl;
@@ -666,7 +662,7 @@ bool 	p3Peers::removeFriendLocation(const std::string &sslId)
 
 }
 
-bool 	p3Peers::removeFriend(const std::string &gpgId)
+bool 	p3Peers::removeFriend(const RsPgpId& gpgId)
 {
 #ifdef P3PEERS_DEBUG
 	std::cerr << "p3Peers::removeFriend() " << gpgId << std::endl;
@@ -676,43 +672,31 @@ bool 	p3Peers::removeFriend(const std::string &gpgId)
 		return false;
 	}
 
-	if (AuthGPG::getAuthGPG()->isGPGId(gpgId)) 
+#ifdef P3PEERS_DEBUG
+	std::cerr << "p3Peers::removeFriend() Removing GPG Id: " << gpgId << std::endl;
+#endif
+	if (AuthGPG::getAuthGPG()->AllowConnection(gpgId, false))
 	{
 #ifdef P3PEERS_DEBUG
-        	std::cerr << "p3Peers::removeFriend() Removing GPG Id: " << gpgId << std::endl;
+		std::cerr << "p3Peers::removeFriend() OK." << std::endl;
 #endif
-		if (AuthGPG::getAuthGPG()->AllowConnection(gpgId, false))
-		{
-#ifdef P3PEERS_DEBUG
-	        	std::cerr << "p3Peers::removeFriend() OK." << std::endl;
-#endif
-			mPeerMgr->removeAllFriendLocations(gpgId);	
-			return true;
-		}
-		else
-		{
-#ifdef P3PEERS_DEBUG
-	        	std::cerr << "p3Peers::removeFriend() FAILED." << std::endl;
-#endif
-			mPeerMgr->removeAllFriendLocations(gpgId);
-			return false;
-		}
+		mPeerMgr->removeAllFriendLocations(gpgId);	
+		return true;
 	}
 	else
 	{
 #ifdef P3PEERS_DEBUG
-        	std::cerr << "p3Peers::removeFriend() Not GPG Id: " << gpg_id << std::endl;
+		std::cerr << "p3Peers::removeFriend() FAILED." << std::endl;
 #endif
-		return removeFriendLocation(gpgId);
+		mPeerMgr->removeAllFriendLocations(gpgId);
+		return false;
 	}
-
-	return false;
 }
 
 
 
 	/* Network Stuff */
-bool 	p3Peers::connectAttempt(const std::string &id)
+bool 	p3Peers::connectAttempt(const RsPeerId &id)
 {
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::connectAttempt() " << id << std::endl;
@@ -735,7 +719,7 @@ bool p3Peers::getAllowServerIPDetermination()
 	return mNetMgr->getIPServersEnabled() ;
 }
 
-bool 	p3Peers::setLocation(const std::string &ssl_id, const std::string &location)
+bool 	p3Peers::setLocation(const RsPeerId &ssl_id, const std::string &location)
 {
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::setLocation() " << ssl_id << std::endl;
@@ -745,7 +729,7 @@ bool 	p3Peers::setLocation(const std::string &ssl_id, const std::string &locatio
 }
 
 
-bool 	splitAddressString(const std::string &addr, std::string &domain, uint16_t &port)
+bool	splitAddressString(const std::string &addr, std::string &domain, uint16_t &port)
 {
         std::cerr << "splitAddressString() Input: " << addr << std::endl;
 
@@ -783,7 +767,7 @@ bool 	splitAddressString(const std::string &addr, std::string &domain, uint16_t 
 }
 
 
-bool 	p3Peers::setHiddenNode(const std::string &id, const std::string &hidden_node_address)
+bool 	p3Peers::setHiddenNode(const RsPeerId &id, const std::string &hidden_node_address)
 {
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::setHiddenNode() " << id << std::endl;
@@ -801,7 +785,7 @@ bool 	p3Peers::setHiddenNode(const std::string &id, const std::string &hidden_no
 }
 
 
-bool 	p3Peers::setHiddenNode(const std::string &id, const std::string &address, uint16_t port)
+bool 	p3Peers::setHiddenNode(const RsPeerId &id, const std::string &address, uint16_t port)
 {
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::setHiddenNode() " << id << std::endl;
@@ -814,7 +798,7 @@ bool 	p3Peers::setHiddenNode(const std::string &id, const std::string &address, 
 	return true;
 }
 
-bool 	p3Peers::setLocalAddress(const std::string &id, const std::string &addr_str, uint16_t port)
+bool 	p3Peers::setLocalAddress(const RsPeerId &id, const std::string &addr_str, uint16_t port)
 {
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::setLocalAddress() " << id << std::endl;
@@ -840,7 +824,7 @@ bool 	p3Peers::setLocalAddress(const std::string &id, const std::string &addr_st
 	return false;
 }
 
-bool 	p3Peers::setExtAddress(const std::string &id, const std::string &addr_str, uint16_t port)
+bool 	p3Peers::setExtAddress(const RsPeerId &id, const std::string &addr_str, uint16_t port)
 {
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::setExtAddress() " << id << std::endl;
@@ -867,7 +851,7 @@ bool 	p3Peers::setExtAddress(const std::string &id, const std::string &addr_str,
 	return false;
 }
 
-bool p3Peers::setDynDNS(const std::string &id, const std::string &dyndns)
+bool p3Peers::setDynDNS(const RsPeerId &id, const std::string &dyndns)
 {
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::setDynDNS() called with id: " << id << " dyndns: " << dyndns <<std::endl;
@@ -875,7 +859,7 @@ bool p3Peers::setDynDNS(const std::string &id, const std::string &dyndns)
     return mPeerMgr->setDynDNS(id, dyndns);
 }
 
-bool 	p3Peers::setNetworkMode(const std::string &id, uint32_t extNetMode)
+bool 	p3Peers::setNetworkMode(const RsPeerId &id, uint32_t extNetMode)
 {
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::setNetworkMode() " << id << std::endl;
@@ -908,7 +892,7 @@ bool 	p3Peers::setNetworkMode(const std::string &id, uint32_t extNetMode)
 }
 
 
-bool p3Peers::setVisState(const std::string &id, uint16_t vs_disc, uint16_t vs_dht)
+bool p3Peers::setVisState(const RsPeerId &id, uint16_t vs_disc, uint16_t vs_dht)
 {
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::setVisState() " << id << std::endl;
@@ -967,13 +951,33 @@ bool p3Peers::setProxyServer(const std::string &addr_str, const uint16_t port)
 
 //===========================================================================
 	/* Auth Stuff */
-std::string
-p3Peers::GetRetroshareInvite(bool include_signatures)
+std::string p3Peers::GetRetroshareInvite(bool include_signatures)
 {
 	return GetRetroshareInvite(getOwnId(),include_signatures);
 }
+std::string p3Peers::getPGPKey(const RsPgpId& pgp_id,bool include_signatures)
+{
+	unsigned char *mem_block = NULL;
+	size_t mem_block_size = 0;
 
-bool p3Peers::GetPGPBase64StringAndCheckSum(	const std::string& gpg_id,
+	if(!AuthGPG::getAuthGPG()->exportPublicKey(RsPgpId(pgp_id),mem_block,mem_block_size,false,include_signatures))
+	{
+		std::cerr << "Cannot output certificate for id \"" << pgp_id << "\". Sorry." << std::endl;
+		return "" ;
+	}
+
+	RsPeerDetails Detail ;
+
+	if(!getGPGDetails(pgp_id,Detail) )
+		return "" ;
+
+	RsCertificate cert( Detail,mem_block,mem_block_size ) ;
+
+	return cert.armouredPGPKey() ;
+}
+
+
+bool p3Peers::GetPGPBase64StringAndCheckSum(	const RsPgpId& gpg_id,
 															std::string& gpg_base64_string,
 															std::string& gpg_base64_checksum) 
 {
@@ -983,7 +987,7 @@ bool p3Peers::GetPGPBase64StringAndCheckSum(	const std::string& gpg_id,
 	unsigned char *mem_block ;
 	size_t mem_block_size ;
 
-	if(!AuthGPG::getAuthGPG()->exportPublicKey(PGPIdType(gpg_id),mem_block,mem_block_size,false,false))
+	if(!AuthGPG::getAuthGPG()->exportPublicKey(gpg_id,mem_block,mem_block_size,false,false))
 		return false ;
 
 	Radix64::encode((const char *)mem_block,mem_block_size,gpg_base64_string) ;
@@ -998,7 +1002,7 @@ bool p3Peers::GetPGPBase64StringAndCheckSum(	const std::string& gpg_id,
 	return true ;
 }
 
-std::string p3Peers::GetRetroshareInvite(const std::string& ssl_id,bool include_signatures)
+std::string p3Peers::GetRetroshareInvite(const RsPeerId& ssl_id,bool include_signatures)
 {
 #ifdef P3PEERS_DEBUG
 	std::cerr << "p3Peers::GetRetroshareInvite()" << std::endl;
@@ -1013,7 +1017,7 @@ std::string p3Peers::GetRetroshareInvite(const std::string& ssl_id,bool include_
 		unsigned char *mem_block = NULL;
 		size_t mem_block_size = 0;
 
-		if(!AuthGPG::getAuthGPG()->exportPublicKey(PGPIdType(Detail.gpg_id),mem_block,mem_block_size,false,include_signatures))
+		if(!AuthGPG::getAuthGPG()->exportPublicKey(RsPgpId(Detail.gpg_id),mem_block,mem_block_size,false,include_signatures))
 		{
 			std::cerr << "Cannot output certificate for id \"" << Detail.gpg_id << "\". Sorry." << std::endl;
 			return "" ;
@@ -1033,15 +1037,15 @@ std::string p3Peers::GetRetroshareInvite(const std::string& ssl_id,bool include_
 
 //===========================================================================
 
-bool 	p3Peers::loadCertificateFromString(const std::string& cert, std::string& ssl_id, std::string& gpg_id, std::string& error_string)
+bool 	p3Peers::loadCertificateFromString(const std::string& cert, RsPeerId& ssl_id, RsPgpId& gpg_id, std::string& error_string)
 {
 	RsCertificate crt(cert) ;
-	PGPIdType gpgid ;
+	RsPgpId gpgid ;
 
 	bool res = AuthGPG::getAuthGPG()->LoadCertificateFromString(crt.armouredPGPKey(),gpgid,error_string) ;
 
-	gpg_id = gpgid.toStdString() ;
-	ssl_id = crt.sslid_string() ;
+	gpg_id = gpgid;
+	ssl_id = crt.sslid() ;
 
 	return res ;
 }
@@ -1064,10 +1068,10 @@ bool 	p3Peers::loadDetailsFromStringCert(const std::string &certstr, RsPeerDetai
 		std::cerr << "Parsing cert for sslid, location, ext and local address details. : " << certstr << std::endl;
 #endif
 
-		pd.id = cert.sslid_string() ;
+		pd.id = cert.sslid() ;
 		pd.location = cert.location_name_string();
 
-		pd.isOnlyGPGdetail = pd.id.empty();
+		pd.isOnlyGPGdetail = pd.id.isNull();
 		pd.service_perm_flags = RS_SERVICE_PERM_ALL ;
 
 		if (!cert.hidden_node_string().empty())
@@ -1099,7 +1103,7 @@ bool 	p3Peers::loadDetailsFromStringCert(const std::string &certstr, RsPeerDetai
 		return false ;
 	}
 
-	if (pd.gpg_id == "") 
+	if (pd.gpg_id.isNull())
 		return false;
 	else 
 		return true;
@@ -1112,7 +1116,7 @@ bool p3Peers::cleanCertificate(const std::string &certstr, std::string &cleanCer
 	return RsCertificate::cleanCertificate(certstr,cleanCert,format,error_code) ;
 }
 
-bool 	p3Peers::saveCertificateToFile(const std::string &id, const std::string &/*fname*/)
+bool 	p3Peers::saveCertificateToFile(const RsPeerId &id, const std::string &/*fname*/)
 {
 	/* remove unused parameter warnings */
 	(void) id;
@@ -1128,7 +1132,7 @@ bool 	p3Peers::saveCertificateToFile(const std::string &id, const std::string &/
         return false;
 }
 
-std::string p3Peers::saveCertificateToString(const std::string &id)
+std::string p3Peers::saveCertificateToString(const RsPeerId &id)
 {
 #ifdef P3PEERS_DEBUG
 	std::cerr << "p3Peers::SaveCertificateToString() " << id;
@@ -1141,7 +1145,7 @@ std::string p3Peers::saveCertificateToString(const std::string &id)
         }
 }
 
-bool 	p3Peers::signGPGCertificate(const std::string &id)
+bool 	p3Peers::signGPGCertificate(const RsPgpId &id)
 {
 #ifdef P3PEERS_DEBUG
 	std::cerr << "p3Peers::SignCertificate() " << id;
@@ -1154,53 +1158,14 @@ bool 	p3Peers::signGPGCertificate(const std::string &id)
 }
 
 
-bool 	p3Peers::trustGPGCertificate(const std::string &id, uint32_t trustlvl)
+bool 	p3Peers::trustGPGCertificate(const RsPgpId &id, uint32_t trustlvl)
 {
 #ifdef P3PEERS_DEBUG
 	std::cerr << "p3Peers::TrustCertificate() " << id;
 	std::cerr << std::endl;
 #endif
-        //check if we've got a ssl or gpg id
-        std::string gpgId = getGPGId(id);
-        if (gpgId.empty()) {
-            //if no result then it must be a gpg id
-            return AuthGPG::getAuthGPG()->TrustCertificate(id, trustlvl);
-        } else {
-            return AuthGPG::getAuthGPG()->TrustCertificate(gpgId, trustlvl);
-        }
+	return AuthGPG::getAuthGPG()->TrustCertificate(id, trustlvl);
 }
-
-
-//int ensureExtension(std::string &name, std::string def_ext)
-//{
-//	/* if it has an extension, don't change */
-//	int len = name.length();
-//	int extpos = name.find_last_of('.');
-	
-//	std::string out;
-//	rs_sprintf_append(out, "ensureExtension() name: %s\n\t\t extpos: %d len: \n", name.c_str(), extpos, len);
-	
-//	/* check that the '.' has between 1 and 4 char after it (an extension) */
-//	if ((extpos > 0) && (extpos < len - 1) && (extpos + 6 > len))
-//	{
-//		/* extension there */
-//		std::string curext = name.substr(extpos, len);
-//		out += "ensureExtension() curext: " + curext;
-//		std::cerr << out << std::endl;
-//		return 0;
-//	}
-	
-//	if (extpos != len - 1)
-//	{
-//		name += ".";
-//	}
-//	name += def_ext;
-	
-//	out += "ensureExtension() added ext: " + name;
-	
-//	std::cerr << out << std::endl;
-//	return 1;
-//}
 
 	/* Group Stuff */
 bool p3Peers::addGroup(RsGroupInfo &groupInfo)
@@ -1255,15 +1220,15 @@ bool p3Peers::getGroupInfoList(std::list<RsGroupInfo> &groupInfoList)
 	return mPeerMgr->getGroupInfoList(groupInfoList);
 }
 
-bool p3Peers::assignPeerToGroup(const std::string &groupId, const std::string &peerId, bool assign)
+bool p3Peers::assignPeerToGroup(const std::string &groupId, const RsPgpId& peerId, bool assign)
 {
-	std::list<std::string> peerIds;
+	std::list<RsPgpId> peerIds;
 	peerIds.push_back(peerId);
 
 	return assignPeersToGroup(groupId, peerIds, assign);
 }
 
-bool p3Peers::assignPeersToGroup(const std::string &groupId, const std::list<std::string> &peerIds, bool assign)
+bool p3Peers::assignPeersToGroup(const std::string &groupId, const std::list<RsPgpId> &peerIds, bool assign)
 {
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::assignPeersToGroup()" << std::endl;
@@ -1275,7 +1240,7 @@ bool p3Peers::assignPeersToGroup(const std::string &groupId, const std::list<std
 	return res ;
 }
 
-FileSearchFlags p3Peers::computePeerPermissionFlags(const std::string& peer_ssl_id,
+FileSearchFlags p3Peers::computePeerPermissionFlags(const RsPeerId& peer_ssl_id,
 																		FileStorageFlags share_flags,
 																		const std::list<std::string>& directory_parent_groups)
 {
@@ -1286,7 +1251,7 @@ FileSearchFlags p3Peers::computePeerPermissionFlags(const std::string& peer_ssl_
 	//
 
 	bool found = false ;
-	std::string pgp_id = getGPGId(peer_ssl_id) ;
+	RsPgpId pgp_id = getGPGId(peer_ssl_id) ;
 
 	for(std::list<std::string>::const_iterator it(directory_parent_groups.begin());it!=directory_parent_groups.end() && !found;++it)
 	{
@@ -1297,7 +1262,7 @@ FileSearchFlags p3Peers::computePeerPermissionFlags(const std::string& peer_ssl_
 			continue ;
 		}
 
-		for(std::list<std::string>::const_iterator it2(info.peerIds.begin());it2!=info.peerIds.end() && !found;++it2)
+		for(std::list<RsPgpId>::const_iterator it2(info.peerIds.begin());it2!=info.peerIds.end() && !found;++it2)
 			if(*it2 == pgp_id)
 				found = true ;
 	}
@@ -1315,9 +1280,8 @@ FileSearchFlags p3Peers::computePeerPermissionFlags(const std::string& peer_ssl_
 
 RsPeerDetails::RsPeerDetails()
         :isOnlyGPGdetail(false),
-	 id(""),gpg_id(""),
 	 name(""),email(""),location(""),
-	org(""),issuer(""),fpr(""),authcode(""),
+	org(""),authcode(""),
 		  trustLvl(0), validLvl(0),ownsign(false), 
 	hasSignedMe(false),accept_connection(false),
 	state(0),localAddr(""),localPort(0),extAddr(""),extPort(0),netMode(0),vs_disc(0), vs_dht(0),
@@ -1343,7 +1307,7 @@ std::ostream &operator<<(std::ostream &out, const RsPeerDetails &detail)
 	out << " signers:";
 	out << std::endl;
 
-	std::list<std::string>::const_iterator it;
+	std::list<RsPgpId>::const_iterator it;
         for(it = detail.gpgSigners.begin();
                 it != detail.gpgSigners.end(); it++)
 	{
@@ -1380,15 +1344,15 @@ RsGroupInfo::RsGroupInfo()
 	flag = 0;
 }
 
-ServicePermissionFlags p3Peers::servicePermissionFlags_sslid(const std::string& ssl_id) 
+ServicePermissionFlags p3Peers::servicePermissionFlags(const RsPeerId& ssl_id) 
 {
-	return mPeerMgr->servicePermissionFlags_sslid(ssl_id) ;
+	return mPeerMgr->servicePermissionFlags(ssl_id) ;
 }
-ServicePermissionFlags p3Peers::servicePermissionFlags(const std::string& gpg_id) 
+ServicePermissionFlags p3Peers::servicePermissionFlags(const RsPgpId& gpg_id) 
 {
 	return mPeerMgr->servicePermissionFlags(gpg_id) ;
 }
-void p3Peers::setServicePermissionFlags(const std::string& gpg_id,const ServicePermissionFlags& flags) 
+void p3Peers::setServicePermissionFlags(const RsPgpId& gpg_id,const ServicePermissionFlags& flags) 
 {
 	mPeerMgr->setServicePermissionFlags(gpg_id,flags) ;
 }

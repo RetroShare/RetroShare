@@ -79,15 +79,6 @@ uint32_t RsTurtleFileMapItem::serial_size()
 	return s ;
 }
 
-uint32_t RsTurtleFileCrcRequestItem::serial_size()
-{
-	uint32_t s = 0 ;
-
-	s += 8 ; // header
-	s += 4 ; // tunnel id 
-
-	return s ;
-}
 uint32_t RsTurtleChunkCrcItem::serial_size()
 {
 	uint32_t s = 0 ;
@@ -95,7 +86,7 @@ uint32_t RsTurtleChunkCrcItem::serial_size()
 	s += 8 ; // header
 	s += 4 ; // tunnel id 
 	s += 4 ; // chunk number
-	s += 20 ; // check_sum 
+	s += check_sum.serial_size() ; // check_sum 
 
 	return s ;
 }
@@ -179,40 +170,6 @@ bool RsTurtleFileMapItem::serialize(void *data,uint32_t& pktsize)
 	return ok;
 }
 
-bool RsTurtleFileCrcRequestItem::serialize(void *data,uint32_t& pktsize)
-{
-#ifdef P3TURTLE_DEBUG
-	std::cerr << "RsTurtleFileCrcRequestItem::serialize(): serializing packet:" << std::endl ;
-	print(std::cerr,2) ;
-#endif
-	uint32_t tlvsize = serial_size();
-	uint32_t offset = 0;
-
-	if (pktsize < tlvsize)
-		return false; /* not enough space */
-
-	pktsize = tlvsize;
-
-	bool ok = true;
-
-	ok &= setRsItemHeader(data,tlvsize,PacketId(), tlvsize);
-
-	/* skip the header */
-	offset += 8;
-
-	/* add mandatory parts first */
-
-	ok &= setRawUInt32(data, tlvsize, &offset, tunnel_id);
-
-	if (offset != tlvsize)
-	{
-		ok = false;
-		std::cerr << "RsFileConfigSerialiser::serialiseTransfer() Size Error! " << std::endl;
-	}
-
-	return ok;
-}
-
 bool RsTurtleChunkCrcRequestItem::serialize(void *data,uint32_t& pktsize)
 {
 #ifdef P3TURTLE_DEBUG
@@ -273,7 +230,7 @@ bool RsTurtleChunkCrcItem::serialize(void *data,uint32_t& pktsize)
 
 	ok &= setRawUInt32(data, tlvsize, &offset, tunnel_id);
 	ok &= setRawUInt32(data, tlvsize, &offset, chunk_number);
-	ok &= setRawSha1(data, tlvsize, &offset, check_sum);
+	ok &= check_sum.serialise(data, tlvsize, offset) ;
 
 	if (offset != tlvsize)
 	{
@@ -353,7 +310,7 @@ RsTurtleChunkCrcItem::RsTurtleChunkCrcItem(void *data,uint32_t pktsize)
 	bool ok = true ;
 	ok &= getRawUInt32(data, pktsize, &offset, &tunnel_id) ;
 	ok &= getRawUInt32(data, pktsize, &offset, &chunk_number) ;
-	ok &= getRawSha1(data, pktsize, &offset, check_sum) ;
+	ok &= check_sum.deserialise(data, pktsize, offset) ;
 
 #ifdef WINDOWS_SYS // No Exceptions in Windows compile. (drbobs).
 #else
@@ -363,28 +320,7 @@ RsTurtleChunkCrcItem::RsTurtleChunkCrcItem(void *data,uint32_t pktsize)
 		throw std::runtime_error("Unknown error while deserializing.") ;
 #endif
 }
-RsTurtleFileCrcRequestItem::RsTurtleFileCrcRequestItem(void *data,uint32_t pktsize)
-	: RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_FILE_CRC_REQUEST)
-{
-	setPriorityLevel(QOS_PRIORITY_RS_TURTLE_FILE_CRC_REQUEST) ;
-#ifdef P3TURTLE_DEBUG
-	std::cerr << "  type = file map request item" << std::endl ;
-#endif
-	uint32_t offset = 8; // skip the header 
 
-	/* add mandatory parts first */
-
-	bool ok = true ;
-	ok &= getRawUInt32(data, pktsize, &offset, &tunnel_id);
-
-#ifdef WINDOWS_SYS // No Exceptions in Windows compile. (drbobs).
-#else
-	if (offset != pktsize)
-		throw std::runtime_error("Size error while deserializing.") ;
-	if (!ok)
-		throw std::runtime_error("Unknown error while deserializing.") ;
-#endif
-}
 RsTurtleChunkCrcRequestItem::RsTurtleChunkCrcRequestItem(void *data,uint32_t pktsize)
 	: RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_CHUNK_CRC_REQUEST)
 {
@@ -596,14 +532,6 @@ std::ostream& RsTurtleFileMapRequestItem::print(std::ostream& o, uint16_t)
 }
 
 
-std::ostream& RsTurtleFileCrcRequestItem::print(std::ostream& o, uint16_t)
-{
-	o << "File CRC request item:" << std::endl ;
-
-	o << "  tunnel id : " << std::hex << tunnel_id << std::dec << std::endl ;
-
-	return o ;
-}
 std::ostream& RsTurtleChunkCrcRequestItem::print(std::ostream& o, uint16_t)
 {
 	o << "Chunk CRC request item:" << std::endl ;
@@ -615,7 +543,7 @@ std::ostream& RsTurtleChunkCrcRequestItem::print(std::ostream& o, uint16_t)
 }
 std::ostream& RsTurtleChunkCrcItem::print(std::ostream& o, uint16_t)
 {
-	o << "Chunk CRC request item:" << std::endl ;
+	o << "Chunk CRC item:" << std::endl ;
 
 	o << "  tunnel id : " << std::hex << tunnel_id << std::dec << std::endl ;
 	o << "  chunk num : " << chunk_number << std::endl ;

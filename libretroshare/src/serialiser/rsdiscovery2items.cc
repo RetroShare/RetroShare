@@ -442,7 +442,7 @@ std::ostream &RsDiscPgpCertItem::print(std::ostream &out, uint16_t indent)
 uint32_t    RsDiscSerialiser::sizePgpCert(RsDiscPgpCertItem *item)
 {
 	uint32_t s = 8; /* header */
-	s += GetTlvStringSize(item->pgpId);
+	s += item->pgpId.serial_size();
 	s += GetTlvStringSize(item->pgpCert);
 	return s;
 }
@@ -471,7 +471,7 @@ bool     RsDiscSerialiser::serialisePgpCert(RsDiscPgpCertItem *item, void *data,
 	offset += 8;
 
 	/* add mandatory parts first */
-	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_PGPID, item->pgpId);
+	ok &= item->pgpId.serialise(data, tlvsize, offset) ;
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_PGPCERT, item->pgpCert);
 
 	if (offset != tlvsize) {
@@ -523,7 +523,7 @@ RsDiscPgpCertItem *RsDiscSerialiser::deserialisePgpCert(void *data, uint32_t *pk
 	offset += 8;
 
 	/* get mandatory parts first */
-	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_PGPID, item->pgpId);
+	ok &= item->pgpId.deserialise(data, rssize, offset) ;
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_PGPCERT, item->pgpCert);
 
 	if (offset != rssize) {
@@ -659,8 +659,8 @@ std::ostream &RsDiscContactItem::print(std::ostream &out, uint16_t indent)
 uint32_t    RsDiscSerialiser::sizeContact(RsDiscContactItem *item)
 {
 	uint32_t s = 8; /* header */
-	s += GetTlvStringSize(item->pgpId);
-	s += GetTlvStringSize(item->sslId);
+	s += item->pgpId.serial_size();
+	s += item->sslId.serial_size();
 
 	s += GetTlvStringSize(item->location);
 	s += GetTlvStringSize(item->version);
@@ -733,8 +733,8 @@ bool     RsDiscSerialiser::serialiseContact(RsDiscContactItem *item, void *data,
 	offset += 8;
 
 	/* add mandatory parts first */
-	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_PGPID, item->pgpId);
-	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_PEERID, item->sslId);
+	ok &= item->pgpId.serialise(data, tlvsize, offset) ;
+	ok &= item->sslId.serialise(data, tlvsize, offset) ;
 
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_LOCATION, item->location); 
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_VERSION, item->version); 
@@ -818,8 +818,8 @@ RsDiscContactItem *RsDiscSerialiser::deserialiseContact(void *data, uint32_t *pk
 	offset += 8;
 
 	/* get mandatory parts first */
-	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_PGPID, item->pgpId);
-	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_PEERID, item->sslId);
+	ok &= item->pgpId.deserialise(data, rssize, offset) ;
+	ok &= item->sslId.deserialise(data, rssize, offset) ;
 
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_LOCATION, item->location); 
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_VERSION, item->version); 

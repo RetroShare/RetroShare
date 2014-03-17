@@ -25,7 +25,7 @@ class GxsForumThreadWidget : public RsGxsUpdateBroadcastWidget, public TokenResp
 	Q_PROPERTY(QColor textColorMissing READ textColorMissing WRITE setTextColorMissing)
 
 public:
-	explicit GxsForumThreadWidget(const std::string &forumId, QWidget *parent = NULL);
+	explicit GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget *parent = NULL);
 	~GxsForumThreadWidget();
 
 	QColor textColorRead() const { return mTextColorRead; }
@@ -40,15 +40,15 @@ public:
 	void setTextColorNotSubscribed(QColor color) { mTextColorNotSubscribed = color; }
 	void setTextColorMissing(QColor color) { mTextColorMissing = color; }
 
-	std::string forumId() { return mForumId; }
-	void setForumId(const std::string &forumId);
+	RsGxsGroupId forumId() { return mForumId; }
+	void setForumId(const RsGxsGroupId &forumId);
 	QString forumName(bool withUnreadCount);
 	QIcon forumIcon();
 	unsigned int newCount() { return mNewCount; }
 	unsigned int unreadCount() { return mUnreadCount; }
 
 	QTreeWidgetItem *convertMsgToThreadWidget(const RsGxsForumMsg &msg, bool useChildTS, uint32_t filterColumn);
-	QTreeWidgetItem *generateMissingItem(const std::string &msgId);
+	QTreeWidgetItem *generateMissingItem(const RsGxsMessageId &msgId);
 
 	void setAllMsgReadStatus(bool read);
 
@@ -129,9 +129,9 @@ private:
 
 	void processSettings(bool bLoad);
 
-	std::string mForumId;
-	std::string mLastForumID;
-	std::string mThreadId;
+	RsGxsGroupId mForumId;
+	RsGxsGroupId mLastForumID;
+	RsGxsMessageId mThreadId;
 	QString mForumDescription;
 	int mSubscribeFlags;
 	bool mInProcessSettings;
@@ -143,7 +143,7 @@ private:
 	unsigned int mUnreadCount;
 	unsigned int mNewCount;
 
-	void requestGroupSummary_CurrentForum(const std::string &forumId);
+	void requestGroupSummary_CurrentForum(const RsGxsGroupId &forumId);
 	void loadGroupSummary_CurrentForum(const uint32_t &token);
 
 	void requestMsgData_InsertPost(const RsGxsGrpMsgIdPair &msgId);

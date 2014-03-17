@@ -352,7 +352,7 @@ void ServerPage::saveAddresses()
 	}
 
 	RsPeerDetails detail;
-	std::string ownId = rsPeers->getOwnId();
+    RsPeerId ownId = rsPeers->getOwnId();
 
 	if (!rsPeers->getPeerDetails(ownId, detail))
 		return;
@@ -615,7 +615,7 @@ void ServerPage::updateStatusHiddenNode()
 void ServerPage::saveAddressesHiddenNode()
 {
 	RsPeerDetails detail;
-	std::string ownId = rsPeers->getOwnId();
+    RsPeerId ownId = rsPeers->getOwnId();
 
 	if (!rsPeers->getPeerDetails(ownId, detail))
 		return;

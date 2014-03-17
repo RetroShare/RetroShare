@@ -51,8 +51,6 @@
 #include "pqi/pqinetwork.h"
 #include "pqi/p3cfgmgr.h"
 
-typedef std::string SSL_id;
-
 /* This #define removes Connection Manager references in AuthSSL.
  * They should not be here. What about Objects and orthogonality?
  * This code is also stopping immediate reconnections from working.
@@ -63,20 +61,18 @@ class AuthSSL;
 class sslcert
 {
         public:
-        sslcert(X509* x509, std::string id);
+        sslcert(X509* x509, const RsPeerId& id);
         sslcert();
 
         /* certificate parameters */
-        std::string id;
+        RsPeerId id;
         std::string name;
         std::string location;
         std::string org;
         std::string email;
 
-        std::string issuer;
-
-        std::string fpr;
-        //std::list<std::string> signers;
+        RsPgpId issuer;
+        PGPFingerprintType fpr;
 
         /* Auth settings */
         bool authed;
@@ -106,19 +102,8 @@ virtual bool	CloseAuth() = 0;
 	/*********** Overloaded Functions from p3AuthMgr **********/
 	
         /* get Certificate Id */
-virtual	std::string OwnId() = 0;
+virtual	const RsPeerId& OwnId() = 0;
 virtual	std::string getOwnLocation() = 0;
-//virtual bool    getAllList(std::list<std::string> &ids);
-//virtual bool    getAuthenticatedList(std::list<std::string> &ids);
-//virtual bool    getUnknownList(std::list<std::string> &ids);
-//virtual bool    getSSLChildListOfGPGId(std::string gpg_id, std::list<std::string> &ids);
-
-	/* get Details from the Certificates */
-//virtual bool    isAuthenticated(std::string id);
-//virtual	std::string getName(std::string id);
-//virtual std::string getIssuerName(std::string id);
-//virtual std::string getGPGId(SSL_id id);
-//virtual bool    getCertDetails(std::string id, sslcert &cert);
 
 	/* Load/Save certificates */
 virtual	std::string SaveOwnCertificateToString() = 0;
@@ -131,10 +116,10 @@ virtual bool 	SignDataBin(std::string, unsigned char*, unsigned int*) = 0;
 virtual bool    SignDataBin(const void*, uint32_t, unsigned char*, unsigned int*) = 0;
 virtual bool    VerifyOwnSignBin(const void*, uint32_t, unsigned char*, unsigned int) = 0;
 virtual bool	VerifySignBin(const void *data, const uint32_t len,
-                        unsigned char *sign, unsigned int signlen, SSL_id sslId) = 0;
+                        unsigned char *sign, unsigned int signlen, const RsPeerId& sslId) = 0;
 
 // return : false if encrypt failed
-virtual bool     encrypt(void *&out, int &outlen, const void *in, int inlen, std::string peerId) = 0;
+virtual bool     encrypt(void *&out, int &outlen, const void *in, int inlen, const RsPeerId& peerId) = 0;
 // return : false if decrypt fails
 virtual bool     decrypt(void *&out, int &outlen, const void *in, int inlen) = 0;
 
@@ -144,17 +129,17 @@ virtual bool 	AuthX509WithGPG(X509 *x509,uint32_t& auth_diagnostic)=0;
 
 
 virtual int 	VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx) = 0;
-virtual bool 	ValidateCertificate(X509 *x509, std::string &peerId) = 0; /* validate + get id */
+virtual bool 	ValidateCertificate(X509 *x509, RsPeerId& peerId) = 0; /* validate + get id */
 
 	public: /* SSL specific functions used in pqissl/pqissllistener */
 virtual SSL_CTX *getCTX() = 0;
 
 /* Restored these functions: */
-virtual void   setCurrentConnectionAttemptInfo(const std::string& gpg_id,const std::string& ssl_id,const std::string& ssl_cn) = 0 ;
-virtual void   getCurrentConnectionAttemptInfo(      std::string& gpg_id,      std::string& ssl_id,      std::string& ssl_cn) = 0 ;
+virtual void   setCurrentConnectionAttemptInfo(const RsPgpId& gpg_id,const RsPeerId& ssl_id,const std::string& ssl_cn) = 0 ;
+virtual void   getCurrentConnectionAttemptInfo(      RsPgpId& gpg_id,      RsPeerId& ssl_id,      std::string& ssl_cn) = 0 ;
 
-virtual bool    FailedCertificate(X509 *x509, const std::string& gpgid,const std::string& sslid,const std::string& sslcn,const struct sockaddr_storage &addr, bool incoming) = 0; /* store for discovery */
-virtual bool 	CheckCertificate(std::string peerId, X509 *x509) = 0; /* check that they are exact match */
+virtual bool    FailedCertificate(X509 *x509, const RsPgpId& gpgid,const RsPeerId& sslid,const std::string& sslcn,const struct sockaddr_storage &addr, bool incoming) = 0; /* store for discovery */
+virtual bool 	CheckCertificate(const RsPeerId& peerId, X509 *x509) = 0; /* check that they are exact match */
 
 static void setAuthSSL_debug(AuthSSL*) ;	// used for debug only. The real function is InitSSL()
 static AuthSSL *instance_ssl ;
@@ -177,19 +162,8 @@ virtual bool	CloseAuth();
 	/*********** Overloaded Functions from p3AuthMgr **********/
 	
         /* get Certificate Id */
-virtual	std::string OwnId();
+virtual	const RsPeerId& OwnId();
 virtual	std::string getOwnLocation();
-//virtual bool    getAllList(std::list<std::string> &ids);
-//virtual bool    getAuthenticatedList(std::list<std::string> &ids);
-//virtual bool    getUnknownList(std::list<std::string> &ids);
-//virtual bool    getSSLChildListOfGPGId(std::string gpg_id, std::list<std::string> &ids);
-
-	/* get Details from the Certificates */
-//virtual bool    isAuthenticated(std::string id);
-//virtual	std::string getName(std::string id);
-//virtual std::string getIssuerName(std::string id);
-//virtual std::string getGPGId(SSL_id id);
-//virtual bool    getCertDetails(std::string id, sslcert &cert);
 
 	/* Load/Save certificates */
 virtual	std::string SaveOwnCertificateToString();
@@ -202,10 +176,10 @@ virtual bool 	SignDataBin(std::string, unsigned char*, unsigned int*);
 virtual bool    SignDataBin(const void*, uint32_t, unsigned char*, unsigned int*);
 virtual bool    VerifyOwnSignBin(const void*, uint32_t, unsigned char*, unsigned int);
 virtual bool	VerifySignBin(const void *data, const uint32_t len,
-                        unsigned char *sign, unsigned int signlen, SSL_id sslId);
+                        unsigned char *sign, unsigned int signlen, const RsPeerId& sslId);
 
 // return : false if encrypt failed
-virtual bool     encrypt(void *&out, int &outlen, const void *in, int inlen, std::string peerId);
+virtual bool     encrypt(void *&out, int &outlen, const void *in, int inlen, const RsPeerId& peerId);
 // return : false if decrypt fails
 virtual bool     decrypt(void *&out, int &outlen, const void *in, int inlen);
 
@@ -215,7 +189,7 @@ virtual bool 	AuthX509WithGPG(X509 *x509,uint32_t& auth_diagnostic);
 
 
 virtual int 	VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx);
-virtual bool 	ValidateCertificate(X509 *x509, std::string &peerId); /* validate + get id */
+virtual bool 	ValidateCertificate(X509 *x509, RsPeerId& peerId); /* validate + get id */
 
 
 /*****************************************************************/
@@ -230,24 +204,24 @@ virtual bool 	ValidateCertificate(X509 *x509, std::string &peerId); /* validate 
 virtual SSL_CTX *getCTX();
 
 /* Restored these functions: */
-virtual void   setCurrentConnectionAttemptInfo(const std::string& gpg_id,const std::string& ssl_id,const std::string& ssl_cn) ;
-virtual void   getCurrentConnectionAttemptInfo(      std::string& gpg_id,      std::string& ssl_id,      std::string& ssl_cn) ;
-virtual bool    FailedCertificate(X509 *x509, const std::string& gpgid,const std::string& sslid,const std::string& sslcn,const struct sockaddr_storage &addr, bool incoming); /* store for discovery */
-virtual bool 	CheckCertificate(std::string peerId, X509 *x509); /* check that they are exact match */
+virtual void   setCurrentConnectionAttemptInfo(const RsPgpId& gpg_id,const RsPeerId& ssl_id,const std::string& ssl_cn) ;
+virtual void   getCurrentConnectionAttemptInfo(      RsPgpId& gpg_id,      RsPeerId& ssl_id,      std::string& ssl_cn) ;
+virtual bool    FailedCertificate(X509 *x509, const RsPgpId& gpgid,const RsPeerId& sslid,const std::string& sslcn,const struct sockaddr_storage &addr, bool incoming); /* store for discovery */
+virtual bool 	CheckCertificate(const RsPeerId& peerId, X509 *x509); /* check that they are exact match */
 
 
     private:
 
 bool    LocalStoreCert(X509* x509);
-bool 	RemoveX509(std::string id);
+bool 	RemoveX509(const RsPeerId id);
 
 	/*********** LOCKED Functions ******/
-bool 	locked_FindCert(std::string id, sslcert **cert);
+bool 	locked_FindCert(const RsPeerId& id, sslcert **cert);
 
 	/* Data */
 	/* these variables are constants -> don't need to protect */
 	SSL_CTX *sslctx;
-	std::string mOwnId;
+	RsPeerId mOwnId;
 	sslcert *mOwnCert;
 
         RsMutex sslMtx;  /* protects all below */
@@ -258,11 +232,11 @@ bool 	locked_FindCert(std::string id, sslcert **cert);
 
 	int init;
 
-        std::map<std::string, sslcert *> mCerts;
+        std::map<RsPeerId, sslcert *> mCerts;
 
-		  std::string _last_gpgid_to_connect ;
+		  RsPgpId _last_gpgid_to_connect ;
 		  std::string _last_sslcn_to_connect ;
-		  std::string _last_sslid_to_connect ;
+		  RsPeerId _last_sslid_to_connect ;
 };
 
 #endif // MRK_AUTH_SSL_HEADER

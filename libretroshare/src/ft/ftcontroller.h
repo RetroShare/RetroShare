@@ -74,7 +74,7 @@ class ftFileControl
 
 		ftFileControl();
 		ftFileControl(std::string fname, std::string tmppath, std::string dest,
-							uint64_t size, std::string hash, TransferRequestFlags flags,
+                            uint64_t size, const RsFileHash& hash, TransferRequestFlags flags,
 							ftFileCreator *fc, ftTransferModule *tm);
 
 		std::string	   mName;
@@ -83,7 +83,7 @@ class ftFileControl
 		ftTransferModule * mTransfer;
 		ftFileCreator *    mCreator;
 		uint32_t	   mState;
-		std::string	   mHash;
+        RsFileHash	   mHash;
 		uint64_t	   mSize;
 		TransferRequestFlags mFlags;
 		time_t		mCreateTime;
@@ -94,20 +94,20 @@ class ftFileControl
 class ftPendingRequest
 {
         public:
-        ftPendingRequest(const std::string& fname, const std::string& hash,
+        ftPendingRequest(const std::string& fname, const RsFileHash& hash,
                         uint64_t size, const std::string& dest, TransferRequestFlags flags,
-									 const std::list<std::string> &srcIds, uint16_t state)
+									 const std::list<RsPeerId> &srcIds, uint16_t state)
         : mName(fname), mHash(hash), mSize(size),
 			mDest(dest), mFlags(flags), mSrcIds(srcIds), mState(state) { return; }
 
 	ftPendingRequest() : mSize(0), mFlags(0), mState(0) { return; }
 
         std::string mName;
-        std::string mHash;
+        RsFileHash mHash;
         uint64_t mSize;
         std::string mDest;
         TransferRequestFlags mFlags;
-        std::list<std::string> mSrcIds;
+        std::list<RsPeerId> mSrcIds;
 	uint16_t mState;
 };
 
@@ -131,34 +131,34 @@ class ftController: public CacheTransfer, public RsThread, public pqiMonitor, pu
 		/********************** Controller Access **********************/
 		/***************************************************************/
 
-		bool 	FileRequest(const std::string& fname, const std::string& hash,
+        bool 	FileRequest(const std::string& fname, const RsFileHash& hash,
 				uint64_t size, const std::string& dest, TransferRequestFlags flags,
-										const std::list<std::string> &sourceIds, uint16_t state = ftFileControl::DOWNLOADING);
+										const std::list<RsPeerId> &sourceIds, uint16_t state = ftFileControl::DOWNLOADING);
 
 		/// Do we already have this file, either in download or in file lists ?
-		bool  alreadyHaveFile(const std::string& hash, FileInfo &info);
+        bool  alreadyHaveFile(const RsFileHash& hash, FileInfo &info);
 
-		bool 	setChunkStrategy(const std::string& hash,FileChunksInfo::ChunkStrategy s);
+        bool 	setChunkStrategy(const RsFileHash& hash,FileChunksInfo::ChunkStrategy s);
 		void 	setDefaultChunkStrategy(FileChunksInfo::ChunkStrategy s);
 		FileChunksInfo::ChunkStrategy	defaultChunkStrategy();
 		uint32_t freeDiskSpaceLimit() const ;
 		void setFreeDiskSpaceLimit(uint32_t size_in_mb) ;
 
-		bool 	FileCancel(const std::string& hash);
-		bool 	FileControl(const std::string& hash, uint32_t flags);
+        bool 	FileCancel(const RsFileHash& hash);
+        bool 	FileControl(const RsFileHash& hash, uint32_t flags);
 		bool 	FileClearCompleted();
-		bool 	FlagFileComplete(std::string hash);
-		bool  getFileDownloadChunksDetails(const std::string& hash,FileChunksInfo& info);
-		bool  setDestinationName(const std::string& hash,const std::string& dest_name) ;
-		bool  setDestinationDirectory(const std::string& hash,const std::string& dest_name) ;
+        bool 	FlagFileComplete(const RsFileHash& hash);
+        bool  getFileDownloadChunksDetails(const RsFileHash& hash,FileChunksInfo& info);
+        bool  setDestinationName(const RsFileHash& hash,const std::string& dest_name) ;
+        bool  setDestinationDirectory(const RsFileHash& hash,const std::string& dest_name) ;
 
 		// Download speed
-		bool getPriority(const std::string& hash,DwlSpeed& p);
-		void setPriority(const std::string& hash,DwlSpeed p);
+        bool getPriority(const RsFileHash& hash,DwlSpeed& p);
+        void setPriority(const RsFileHash& hash,DwlSpeed p);
 
 		// Action on queue position
 		//
-		void moveInQueue(const std::string& hash,QueueMove mv) ;
+        void moveInQueue(const RsFileHash& hash,QueueMove mv) ;
 		void clearQueue() ;
 		void setQueueSize(uint32_t size) ;
 		uint32_t getQueueSize() ;
@@ -166,14 +166,14 @@ class ftController: public CacheTransfer, public RsThread, public pqiMonitor, pu
 		uint32_t getMinPrioritizedTransfers() ;
 
 		/* get Details of File Transfers */
-		bool 	FileDownloads(std::list<std::string> &hashs);
+        bool 	FileDownloads(std::list<RsFileHash> &hashs);
 
 		/* Directory Handling */
-		bool 	setDownloadDirectory(std::string path);
+        bool 	setDownloadDirectory(std::string path);
 		bool 	setPartialsDirectory(std::string path);
 		std::string getDownloadDirectory();
 		std::string getPartialsDirectory();
-		bool 	FileDetails(const std::string &hash, FileInfo &info);
+        bool 	FileDetails(const RsFileHash &hash, FileInfo &info);
 
 		bool moveFile(const std::string& source,const std::string& dest) ;
 		bool copyFile(const std::string& source,const std::string& dest) ;
@@ -184,17 +184,17 @@ class ftController: public CacheTransfer, public RsThread, public pqiMonitor, pu
 
 		/// Returns true is full source availability can be assumed for this peer.
 		///
-		bool assumeAvailability(const std::string& peer_id) const ;
+		bool assumeAvailability(const RsPeerId& peer_id) const ;
 
 		/* pqiMonitor callback (also provided mConnMgr pointer!) */
 		virtual void    statusChange(const std::list<pqipeer> &plist);
-		void addFileSource(const std::string& hash,const std::string& peer_id) ;
-		void removeFileSource(const std::string& hash,const std::string& peer_id) ;
+        void addFileSource(const RsFileHash& hash,const RsPeerId& peer_id) ;
+        void removeFileSource(const RsFileHash& hash,const RsPeerId& peer_id) ;
 
 	protected:
 
-	virtual bool RequestCacheFile(RsPeerId id, std::string path, std::string hash, uint64_t size);
-		virtual bool CancelCacheFile(RsPeerId id, std::string path, std::string hash, uint64_t size);
+    virtual bool RequestCacheFile(const RsPeerId& id, std::string path, const RsFileHash& hash, uint64_t size);
+        virtual bool CancelCacheFile(const RsPeerId& id, std::string path, const RsFileHash& hash, uint64_t size);
 
 		void cleanCacheDownloads() ;
 		void searchForDirectSources() ;
@@ -223,10 +223,10 @@ class ftController: public CacheTransfer, public RsThread, public pqiMonitor, pu
 		void  locked_queueRemove(uint32_t pos) ;					// delete this element from the queue
 		void  locked_swapQueue(uint32_t pos1,uint32_t pos2) ; 	// swap position of the two elements
 
-		bool 	completeFile(std::string hash);
+        bool 	completeFile(const RsFileHash& hash);
 		bool    handleAPendingRequest();
 
-		bool    setPeerState(ftTransferModule *tm, std::string id,
+		bool    setPeerState(ftTransferModule *tm, const RsPeerId& id,
 				uint32_t maxrate, bool online);
 
 		time_t last_save_time ;
@@ -241,8 +241,8 @@ class ftController: public CacheTransfer, public RsThread, public pqiMonitor, pu
 
 		RsMutex ctrlMutex;
 
-		std::map<std::string, ftFileControl*> mCompleted;
-		std::map<std::string, ftFileControl*> mDownloads;
+        std::map<RsFileHash, ftFileControl*> mCompleted;
+        std::map<RsFileHash, ftFileControl*> mDownloads;
 		std::vector<ftFileControl*> _queue ;
 
 		std::string mConfigPath;
@@ -253,13 +253,13 @@ class ftController: public CacheTransfer, public RsThread, public pqiMonitor, pu
 
 		/* callback list (for File Completion) */
 		RsMutex doneMutex;
-		std::list<std::string> mDone;
+        std::list<RsFileHash> mDone;
 
 		/* List to Pause File transfers until Caches are properly loaded */
 		bool mFtActive;
 		bool mFtPendingDone;
 		std::list<ftPendingRequest> mPendingRequests;
-		std::map<std::string,RsFileTransfer*> mPendingChunkMaps ;
+        std::map<RsFileHash,RsFileTransfer*> mPendingChunkMaps ;
 
 		FileChunksInfo::ChunkStrategy mDefaultChunkStrategy ;
 

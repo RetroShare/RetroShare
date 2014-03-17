@@ -56,7 +56,7 @@ void ProfileWidget::showEvent ( QShowEvent * /*event*/ )
         ui.name->setText(QString::fromUtf8(detail.name.c_str()));
         ui.country->setText(QString::fromUtf8(detail.location.c_str()));
 
-        ui.peerid->setText(QString::fromStdString(detail.id));
+        ui.peerid->setText(QString::fromStdString(detail.id.toStdString()));
 
         /* set retroshare version */
         std::string version;
@@ -77,7 +77,7 @@ void ProfileWidget::showEvent ( QShowEvent * /*event*/ )
         ui.dyndns->setText(QString::fromStdString(detail.dyndns));
         ui.dyndns->setCursorPosition (0);
 
-        std::list<std::string> ids;
+        std::list<RsPgpId> ids;
         ids.clear();
         rsPeers->getGPGAcceptedList(ids);
         int friends = ids.size();

@@ -34,13 +34,13 @@ class ChatLobbyToaster : public QWidget
 	Q_OBJECT
 
 public:
-	ChatLobbyToaster(const std::string &peerId, const QString &name, const QString &message);
+	ChatLobbyToaster(const RsPeerId &peerId, const QString &name, const QString &message);
 
 private slots:
 	void chatButtonSlot();
 
 private:
-	std::string peerId;
+	RsPeerId peerId;
 
 	/** Qt Designer generated object */
 	Ui::ChatLobbyToaster ui;

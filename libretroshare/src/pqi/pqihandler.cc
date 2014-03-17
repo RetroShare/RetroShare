@@ -69,7 +69,7 @@ int	pqihandler::tick()
 		RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 
 		// tick all interfaces...
-		std::map<std::string, SearchModule *>::iterator it;
+		std::map<RsPeerId, SearchModule *>::iterator it;
 		for(it = mods.begin(); it != mods.end(); it++)
 		{
 			if (0 < ((it -> second) -> pqi) -> tick())
@@ -113,7 +113,7 @@ bool pqihandler::queueOutRsItem(RsItem *item)
 
 int	pqihandler::status()
 {
-	std::map<std::string, SearchModule *>::iterator it;
+	std::map<RsPeerId, SearchModule *>::iterator it;
 	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 
 	{ // for output
@@ -122,7 +122,7 @@ int	pqihandler::status()
 		// display all interfaces...
 		for(it = mods.begin(); it != mods.end(); it++)
 		{
-			rs_sprintf_append(out, "\tModule [%s] Pointer <%p>", it -> first.c_str(), (void *) ((it -> second) -> pqi));
+			rs_sprintf_append(out, "\tModule [%s] Pointer <%p>", it -> first.toStdString().c_str(), (void *) ((it -> second) -> pqi));
 		}
 
 		pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, out);
@@ -142,7 +142,7 @@ bool	pqihandler::AddSearchModule(SearchModule *mod)
 {
 	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 	// if peerid used -> error.
-	std::map<std::string, SearchModule *>::iterator it;
+	std::map<RsPeerId, SearchModule *>::iterator it;
 	if (mod->peerid != mod->pqi->PeerId())
 	{
 		// ERROR!
@@ -150,7 +150,7 @@ bool	pqihandler::AddSearchModule(SearchModule *mod)
 		return false;
 	}
 
-	if (mod->peerid == "")
+	if (mod->peerid.isNull())
 	{
 		// ERROR!
 		pqioutput(PQL_ALERT, pqihandlerzone, "ERROR peerid == NULL");
@@ -182,7 +182,7 @@ bool	pqihandler::AddSearchModule(SearchModule *mod)
 bool	pqihandler::RemoveSearchModule(SearchModule *mod)
 {
 	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
-	std::map<std::string, SearchModule *>::iterator it;
+	std::map<RsPeerId, SearchModule *>::iterator it;
 	for(it = mods.begin(); it != mods.end(); it++)
 	{
 		if (mod == it -> second)
@@ -208,7 +208,7 @@ int	pqihandler::locked_checkOutgoingRsItem(RsItem * /*item*/, int /*global*/)
 int	pqihandler::locked_HandleRsItem(RsItem *item, int allowglobal,uint32_t& computed_size)
 {
 	computed_size = 0 ;
-	std::map<std::string, SearchModule *>::iterator it;
+	std::map<RsPeerId, SearchModule *>::iterator it;
 	pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, 
 	  "pqihandler::HandleRsItem()");
 
@@ -261,7 +261,7 @@ int	pqihandler::locked_HandleRsItem(RsItem *item, int allowglobal,uint32_t& comp
 	// check security... is output allowed.
 	if(0 < secpolicy_check((it -> second) -> sp, 0, PQI_OUTGOING))
 	{
-		std::string out = "pqihandler::HandleRsItem() sending to chan: " + it -> first;
+		std::string out = "pqihandler::HandleRsItem() sending to chan: " + it -> first.toStdString();
 		pqioutput(PQL_DEBUG_BASIC, pqihandlerzone, out);
 #ifdef DEBUG_TICK
 		std::cerr << out << std::endl;
@@ -302,7 +302,7 @@ int     pqihandler::SendRsRawItem(RsRawItem *ns)
 
 int pqihandler::locked_GetItems()
 {
-	std::map<std::string, SearchModule *>::iterator it;
+	std::map<RsPeerId, SearchModule *>::iterator it;
 
 	RsItem *item;
 	int count = 0;
@@ -410,7 +410,7 @@ RsRawItem *pqihandler::GetRsRawItem()
 static const float MIN_RATE = 0.01; // 10 B/s
 
 // NEW extern fn to extract rates.
-int     pqihandler::ExtractRates(std::map<std::string, RsBwRates> &ratemap, RsBwRates &total)
+int     pqihandler::ExtractRates(std::map<RsPeerId, RsBwRates> &ratemap, RsBwRates &total)
 {
 	total.mMaxRateIn = getMaxRate(true);
 	total.mMaxRateOut = getMaxRate(false);
@@ -422,7 +422,7 @@ int     pqihandler::ExtractRates(std::map<std::string, RsBwRates> &ratemap, RsBw
 	/* Lock once rates have been retrieved */
 	RsStackMutex stack(coreMtx); /**************** LOCKED MUTEX ****************/
 
-	std::map<std::string, SearchModule *>::iterator it;
+	std::map<RsPeerId, SearchModule *>::iterator it;
 	for(it = mods.begin(); it != mods.end(); it++)
 	{
 		SearchModule *mod = (it -> second);
@@ -447,7 +447,7 @@ int     pqihandler::ExtractRates(std::map<std::string, RsBwRates> &ratemap, RsBw
 // internal fn to send updates 
 int     pqihandler::UpdateRates()
 {
-	std::map<std::string, SearchModule *>::iterator it;
+	std::map<RsPeerId, SearchModule *>::iterator it;
 	int num_sm = mods.size();
 
 	float avail_in = getMaxRate(true);

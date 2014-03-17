@@ -68,7 +68,7 @@ public:
 	explicit ChatWidget(QWidget *parent = 0);
 	~ChatWidget();
 
-	void init(const std::string &peerId, const QString &title);
+    void init(const RsPeerId &peerId, const QString &title);
 	ChatType chatType() { return mChatType; }
 
 	bool hasNewMessages() { return newMessages; }
@@ -84,7 +84,7 @@ public:
 
 	void addToolsAction(QAction *action);
 
-	std::string getPeerId() { return peerId; }
+    RsPeerId getPeerId() { return peerId; }
 	QString getTitle() { return title; }
 	int getPeerStatus() { return peerStatus; }
 	void setName(const QString &name);
@@ -158,7 +158,7 @@ private:
 	void completeNickname(bool reverse);
     QAbstractItemModel *modelFromPeers();
 
-	std::string peerId;
+    RsPeerId peerId;
 	QString title;
 	QString name;
 	QString completionWord;

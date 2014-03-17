@@ -111,7 +111,7 @@ void ChatLobbyDialog::inviteFriends()
 {
 	std::cerr << "Inviting friends" << std::endl;
 
-	std::list<std::string> ids = FriendSelectionDialog::selectFriends(NULL,tr("Invite friends"),tr("Select friends to invite:")) ;
+    std::list<RsPeerId> ids = FriendSelectionDialog::selectFriends_SSL(NULL,tr("Invite friends"),tr("Select friends to invite:")) ;
 
 	std::cerr << "Inviting these friends:" << std::endl;
 
@@ -119,7 +119,7 @@ void ChatLobbyDialog::inviteFriends()
 	if (!rsMsgs->isLobbyId(getPeerId(), lobby_id)) 
 		return ;
 
-	for(std::list<std::string>::const_iterator it(ids.begin());it!=ids.end();++it)
+    for(std::list<RsPeerId>::const_iterator it(ids.begin());it!=ids.end();++it)
 	{
 		std::cerr << "    " << *it  << std::endl;
 
@@ -158,14 +158,14 @@ void ChatLobbyDialog::participantsTreeWidgetCustomPopupMenu(QPoint)
 	contextMnu.exec(QCursor::pos());
 }
 
-void ChatLobbyDialog::init(const std::string &peerId, const QString &title)
+void ChatLobbyDialog::init(const RsPeerId &peerId, const QString &title)
 {
 	std::list<ChatLobbyInfo> lobbies;
 	rsMsgs->getChatLobbyList(lobbies);
 
 	std::list<ChatLobbyInfo>::const_iterator lobbyIt;
 	for (lobbyIt = lobbies.begin(); lobbyIt != lobbies.end(); ++lobbyIt) {
-		std::string vpid;
+        RsPeerId vpid;
 		if (rsMsgs->getVirtualPeerId(lobbyIt->lobby_id, vpid)) {
 			if (vpid == peerId) {
 				QString msg = tr("Welcome to lobby %1").arg(RsHtml::plainText(lobbyIt->lobby_name));
@@ -288,7 +288,7 @@ void ChatLobbyDialog::addIncomingChatMsg(const ChatInfo& info)
 	QDateTime recvTime = QDateTime::fromTime_t(info.recvTime);
 	QString message = QString::fromUtf8(info.msg.c_str());
 	QString name = QString::fromUtf8(info.peer_nickname.c_str());
-	QString rsid = QString::fromUtf8(info.rsid.c_str());
+    QString rsid = QString::fromUtf8(info.rsid.toStdString().c_str());
 
 	//std::cerr << "message from rsid " << info.rsid.c_str() << std::endl;
 	

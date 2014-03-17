@@ -517,12 +517,12 @@ std::string chooseRandomAuthorId()
         int i = 0;
         for(it = ownIds.begin(); (it != ownIds.end()) && (i < idx); it++, i++) ;
 
-	std::string answer;
+	RsGxsId answer;
         if (it != ownIds.end())
         {
 		answer = *it;
         }
-	return answer;
+	return answer.toStdString();
 }
 
 

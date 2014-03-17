@@ -106,7 +106,7 @@ virtual	std::string save() const;
 	bool idKnown;
 	time_t lastCheckTs;
 	uint32_t checkAttempts;
-	std::string pgpId;
+	RsPgpId pgpId;
 };
 
 class SSGxsIdRecognTags: public SSBit 
@@ -290,7 +290,7 @@ virtual int  getPrivateKey(const RsGxsId &id, RsTlvSecurityKey &key);
 
         // get Reputation.
 virtual bool haveReputation(const RsGxsId &id);
-virtual bool loadReputation(const RsGxsId &id, const std::list<std::string>& peers);
+virtual bool loadReputation(const RsGxsId &id, const std::list<RsPeerId>& peers);
 virtual bool getReputation(const RsGxsId &id, GixsReputation &rep);
 
 
@@ -316,7 +316,7 @@ virtual void handle_event(uint32_t event_type, const std::string &elabel);
  */
 	int  cache_tick();
 
-	bool cache_request_load(const RsGxsId &id, const std::list<std::string>& peers = std::list<std::string>());
+	bool cache_request_load(const RsGxsId &id, const std::list<PeerId>& peers = std::list<PeerId>());
 	bool cache_start_load();
 	bool cache_load_for_token(uint32_t token);
 
@@ -329,7 +329,7 @@ virtual void handle_event(uint32_t event_type, const std::string &elabel);
 	// Mutex protected.
 
 	//std::list<RsGxsId> mCacheLoad_ToCache;
-	std::map<RsGxsId, std::list<std::string> > mCacheLoad_ToCache, mPendingCache;
+	std::map<RsGxsId, std::list<RsPeerId> > mCacheLoad_ToCache, mPendingCache;
 
 	// Switching to RsMemCache for Key Caching.
 	RsMemCache<RsGxsId, RsGxsIdCache> mPublicKeyCache;
@@ -370,12 +370,12 @@ virtual void handle_event(uint32_t event_type, const std::string &elabel);
 	bool pgphash_handlerequest(uint32_t token);
 	bool pgphash_process();
 
-	bool checkId(const RsGxsIdGroup &grp, PGPIdType &pgp_id);
+	bool checkId(const RsGxsIdGroup &grp, RsPgpId &pgp_id);
 	void getPgpIdList();
 
 	/* MUTEX PROTECTED DATA (mIdMtx - maybe should use a 2nd?) */
 
-	std::map<PGPIdType, PGPFingerprintType> mPgpFingerprintMap;
+	std::map<RsPgpId, PGPFingerprintType> mPgpFingerprintMap;
 	std::list<RsGxsIdGroup> mGroupsToProcess;
 
 /************************************************************************
@@ -461,8 +461,8 @@ std::string genRandomId(int len = 20);
 	uint32_t mBgToken;
 	uint32_t mBgPhase;
 	
-	std::map<std::string, RsGroupMetaData> mBgGroupMap;
-	std::list<std::string> mBgFullCalcGroups;
+	std::map<RsGxsGroupId, RsGroupMetaData> mBgGroupMap;
+	std::list<RsGxsGroupId> mBgFullCalcGroups;
 #endif
 
 /************************************************************************
@@ -476,7 +476,7 @@ std::string genRandomId(int len = 20);
 
 	std::map<uint32_t, std::set<RsGxsGroupId> > mIdsPendingCache;
 	std::map<uint32_t, std::list<RsGxsGroupId> > mGroupNotPresent;
-	std::map<RsGxsId, std::list<std::string> > mIdsNotPresent;
+	std::map<RsGxsId, std::list<RsPeerId> > mIdsNotPresent;
 	RsNetworkExchangeService* mNes;
 };
 

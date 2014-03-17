@@ -47,9 +47,9 @@ class AttachFileItem : public QWidget, private Ui::AttachFileItem
 public:
 	/** Default Constructor */
 	AttachFileItem(const QString& localpath,TransferRequestFlags flags);
-	AttachFileItem(const std::string& hash, const QString& name, uint64_t size, uint32_t flags,TransferRequestFlags tflags, const std::string& srcId);
+    AttachFileItem(const RsFileHash& hash, const QString& name, uint64_t size, uint32_t flags,TransferRequestFlags tflags, const std::string& srcId);
 
-	const std::string& FileHash() { return mFileHash; }
+    const RsFileHash& FileHash() { return mFileHash; }
 	const QString& FileName() { return mFileName; }
 	uint64_t       FileSize() { return mFileSize; }
 	const QString& FilePath() { return mPath; }
@@ -68,7 +68,7 @@ private:
 	void Setup();
 
 	QString    mPath;
-	std::string mFileHash;
+    RsFileHash mFileHash;
 	QString     mFileName;
 	uint64_t    mFileSize;
 	std::string mSrcId;

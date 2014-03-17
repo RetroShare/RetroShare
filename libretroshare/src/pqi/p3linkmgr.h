@@ -94,7 +94,7 @@ class peerConnectState
 	public:
 	peerConnectState(); /* init */
 
-	std::string id;
+	RsPeerId id;
 
 	/***** Below here not stored permanently *****/
 
@@ -155,26 +155,26 @@ class p3LinkMgr: public pqiConnectCb
 virtual ~p3LinkMgr() { return; }
 
 
-virtual const 	std::string getOwnId() = 0;
-virtual bool  	isOnline(const std::string &ssl_id) = 0;
-virtual void  	getOnlineList(std::list<std::string> &ssl_peers) = 0;
-virtual bool  	getPeerName(const std::string &ssl_id, std::string &name) = 0;
-virtual uint32_t getLinkType(const std::string &ssl_id) = 0;
+virtual const 	RsPeerId& getOwnId() = 0;
+virtual bool  	isOnline(const RsPeerId &ssl_id) = 0;
+virtual void  	getOnlineList(std::list<RsPeerId> &ssl_peers) = 0;
+virtual bool  	getPeerName(const RsPeerId &ssl_id, std::string &name) = 0;
+virtual uint32_t getLinkType(const RsPeerId &ssl_id) = 0;
 
 	/**************** handle monitors *****************/
 virtual void	addMonitor(pqiMonitor *mon) = 0;
 virtual void	removeMonitor(pqiMonitor *mon) = 0;
 
 	/****************** Connections *******************/
-virtual bool	connectAttempt(const std::string &id, struct sockaddr_storage &raddr,
+virtual bool	connectAttempt(const RsPeerId &id, struct sockaddr_storage &raddr,
 					struct sockaddr_storage &proxyaddr, struct sockaddr_storage &srcaddr,
 					uint32_t &delay, uint32_t &period, uint32_t &type, uint32_t &flags, uint32_t &bandwidth,
 					std::string &domain_addr, uint16_t &domain_port) = 0;
 	
-virtual bool 	connectResult(const std::string &id, bool success, uint32_t flags, const struct sockaddr_storage &remote_peer_address) = 0;
-virtual bool	retryConnect(const std::string &id) = 0;
+virtual bool 	connectResult(const RsPeerId &id, bool success, uint32_t flags, const struct sockaddr_storage &remote_peer_address) = 0;
+virtual bool	retryConnect(const RsPeerId &id) = 0;
 
-virtual void 	notifyDeniedConnection(const std::string& gpgid,const std::string& sslid,const std::string& sslcn,const struct sockaddr_storage &addr, bool incoming) = 0;
+virtual void 	notifyDeniedConnection(const RsPgpId& gpgid,const RsPeerId& sslid,const std::string& sslcn,const struct sockaddr_storage &addr, bool incoming) = 0;
 
 	/* Network Addresses */
 virtual bool 	setLocalAddress(const struct sockaddr_storage &addr) = 0;
@@ -182,12 +182,12 @@ virtual bool 	getLocalAddress(struct sockaddr_storage &addr) = 0;
 
 	/************* DEPRECIATED FUNCTIONS (TO REMOVE) ********/
 
-virtual void	getFriendList(std::list<std::string> &ssl_peers) = 0; // ONLY used by p3peers.cc USE p3PeerMgr instead.
-virtual bool	getFriendNetStatus(const std::string &id, peerConnectState &state) = 0; // ONLY used by p3peers.cc
+virtual void	getFriendList(std::list<RsPeerId> &ssl_peers) = 0; // ONLY used by p3peers.cc USE p3PeerMgr instead.
+virtual bool	getFriendNetStatus(const RsPeerId &id, peerConnectState &state) = 0; // ONLY used by p3peers.cc
 
 
 	/************* DEPRECIATED FUNCTIONS (TO REMOVE) ********/
-virtual int 	addFriend(const std::string &ssl_id, bool isVisible) = 0;
+virtual int 	addFriend(const RsPeerId &ssl_id, bool isVisible) = 0;
 	/******* overloaded from pqiConnectCb *************/
 // THESE MUSTn't BE specfied HERE - as overloaded from pqiConnectCb.
 //virtual void    peerStatus(std::string id, const pqiIpAddrSet &addrs, 
@@ -212,11 +212,11 @@ class p3LinkMgrIMPL: public p3LinkMgr
 /* EXTERNAL INTERFACE */
 /************************************************************************************************/
 
-virtual const 	std::string getOwnId();
-virtual bool  	isOnline(const std::string &ssl_id);
-virtual void  	getOnlineList(std::list<std::string> &ssl_peers);
-virtual bool  	getPeerName(const std::string &ssl_id, std::string &name);
-virtual uint32_t getLinkType(const std::string &ssl_id);
+virtual const 	RsPeerId& getOwnId();
+virtual bool  	isOnline(const RsPeerId &ssl_id);
+virtual void  	getOnlineList(std::list<RsPeerId> &ssl_peers);
+virtual bool  	getPeerName(const RsPeerId &ssl_id, std::string &name);
+virtual uint32_t getLinkType(const RsPeerId &ssl_id);
 
 
 	/**************** handle monitors *****************/
@@ -224,32 +224,32 @@ virtual void	addMonitor(pqiMonitor *mon);
 virtual void	removeMonitor(pqiMonitor *mon);
 
 	/****************** Connections *******************/
-virtual bool	connectAttempt(const std::string &id, struct sockaddr_storage &raddr,
+virtual bool	connectAttempt(const RsPeerId &id, struct sockaddr_storage &raddr,
 					struct sockaddr_storage &proxyaddr, struct sockaddr_storage &srcaddr,
 					uint32_t &delay, uint32_t &period, uint32_t &type, uint32_t &flags, uint32_t &bandwidth, 
 					std::string &domain_addr, uint16_t &domain_port);
 	
-virtual bool 	connectResult(const std::string &id, bool success, uint32_t flags, const struct sockaddr_storage &remote_peer_address);
-virtual bool	retryConnect(const std::string &id);
+virtual bool 	connectResult(const RsPeerId &id, bool success, uint32_t flags, const struct sockaddr_storage &remote_peer_address);
+virtual bool	retryConnect(const RsPeerId &id);
 
-virtual void 	notifyDeniedConnection(const std::string& gpgid,const std::string& sslid,const std::string& sslcn,const struct sockaddr_storage &addr, bool incoming);
+virtual void 	notifyDeniedConnection(const RsPgpId& gpgid,const RsPeerId& sslid,const std::string& sslcn,const struct sockaddr_storage &addr, bool incoming);
 
 	/* Network Addresses */
 virtual bool 	setLocalAddress(const struct sockaddr_storage &addr);
 virtual bool 	getLocalAddress(struct sockaddr_storage &addr);
 
 	/******* overloaded from pqiConnectCb *************/
-virtual void    peerStatus(std::string id, const pqiIpAddrSet &addrs, 
+virtual void    peerStatus(const RsPeerId& id, const pqiIpAddrSet &addrs, 
                         uint32_t type, uint32_t flags, uint32_t source);
-virtual void    peerConnectRequest(std::string id, const struct sockaddr_storage &raddr,
+virtual void    peerConnectRequest(const RsPeerId& id, const struct sockaddr_storage &raddr,
                         const struct sockaddr_storage &proxyaddr,  const struct sockaddr_storage &srcaddr, 
                         uint32_t source, uint32_t flags, uint32_t delay, uint32_t bandwidth);
 
 
 	/************* DEPRECIATED FUNCTIONS (TO REMOVE) ********/
 
-virtual void	getFriendList(std::list<std::string> &ssl_peers); // ONLY used by p3peers.cc USE p3PeerMgr instead.
-virtual bool	getFriendNetStatus(const std::string &id, peerConnectState &state); // ONLY used by p3peers.cc
+virtual void	getFriendList(std::list<RsPeerId> &ssl_peers); // ONLY used by p3peers.cc USE p3PeerMgr instead.
+virtual bool	getFriendNetStatus(const RsPeerId &id, peerConnectState &state); // ONLY used by p3peers.cc
 
 /************************************************************************************************/
 /* Extra IMPL Functions (used by p3PeerMgr, p3NetMgr + Setup) */
@@ -260,11 +260,11 @@ virtual bool	getFriendNetStatus(const std::string &id, peerConnectState &state);
 void 	tick();
 
 	/* THIS COULD BE ADDED TO INTERFACE */
-void    setFriendVisibility(const std::string &id, bool isVisible);
+void    setFriendVisibility(const RsPeerId &id, bool isVisible);
 
 	/* add/remove friends */
-virtual int 	addFriend(const std::string &ssl_id, bool isVisible);
-int 	removeFriend(const std::string &ssl_id);
+virtual int 	addFriend(const RsPeerId &ssl_id, bool isVisible);
+int 	removeFriend(const RsPeerId &ssl_id);
 
 void 	printPeerLists(std::ostream &out);
 
@@ -284,12 +284,12 @@ void 	statusTick();
 void 	tickMonitors();
 
 	/* connect attempts UDP */
-bool   tryConnectUDP(const std::string &id, const struct sockaddr_storage &rUdpAddr, 
+bool   tryConnectUDP(const RsPeerId &id, const struct sockaddr_storage &rUdpAddr, 
 							const struct sockaddr_storage &proxyaddr, const struct sockaddr_storage &srcaddr,
 							uint32_t flags, uint32_t delay, uint32_t bandwidth);
 
 	/* connect attempts TCP */
-bool	retryConnectTCP(const std::string &id);
+bool	retryConnectTCP(const RsPeerId &id);
 
 void 	locked_ConnectAttempt_SpecificAddress(peerConnectState *peer, const struct sockaddr_storage &remoteAddr);
 void 	locked_ConnectAttempt_CurrentAddresses(peerConnectState *peer, const struct sockaddr_storage &localAddr, const struct sockaddr_storage &serverAddr);
@@ -330,8 +330,8 @@ private:
 
 	//peerConnectState mOwnState;
 
-	std::map<std::string, peerConnectState> mFriendList;
-	std::map<std::string, peerConnectState> mOthersList;
+	std::map<RsPeerId, peerConnectState> mFriendList;
+	std::map<RsPeerId, peerConnectState> mOthersList;
 
 	std::list<RsPeerGroupItem *> groupList;
 	uint32_t lastGroupId;

@@ -219,6 +219,10 @@ bool p3GxsForums::updateGroup(uint32_t &token, RsGxsForumGroup &group)
 {
 	std::cerr << "p3GxsForums::updateGroup()" << std::endl;
 
+
+        if(meta.getGroupId().isNull())
+		return false;
+
 	RsGxsForumGroupItem* grpItem = new RsGxsForumGroupItem();
 	grpItem->mGroup = group;
         grpItem->meta = group.mMeta;
@@ -392,7 +396,7 @@ void p3GxsForums::dummy_tick()
 			RsGxsGroupId grpId = ref.mGroupId;
 			RsGxsMessageId parentId = ref.mMsgId;
 			mGenThreadId = ref.mThreadId;
-			if (mGenThreadId.empty())
+			if (mGenThreadId.isNull())
 			{
 				mGenThreadId = parentId;
 			}
@@ -416,7 +420,7 @@ bool p3GxsForums::generateMessage(uint32_t &token, const RsGxsGroupId &grpId, co
 	std::string rndId = genRandomId();
 
 	rs_sprintf(msg.mMsg, "Forum Msg: GroupId: %s, ThreadId: %s, ParentId: %s + some randomness: %s", 
-		grpId.c_str(), threadId.c_str(), parentId.c_str(), rndId.c_str());
+		grpId.toStdString().c_str(), threadId.toStdString().c_str(), parentId.toStdString().c_str(), rndId.c_str());
 	
 	msg.mMeta.mMsgName = msg.mMsg;
 

@@ -23,7 +23,7 @@
 
 #include <retroshare/rspeers.h>
 
-GroupChatToaster::GroupChatToaster(const std::string &peerId, const QString &message) : QWidget(NULL)
+GroupChatToaster::GroupChatToaster(const RsPeerId &peerId, const QString &message) : QWidget(NULL)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
@@ -38,7 +38,7 @@ GroupChatToaster::GroupChatToaster(const std::string &peerId, const QString &mes
 	ui.toasterLabel->setText(QString::fromUtf8(rsPeers->getPeerName(peerId).c_str()));
 	ui.avatarWidget->setFrameType(AvatarWidget::STATUS_FRAME);
 	ui.avatarWidget->setDefaultAvatar(":/images/user/personal64.png");
-	ui.avatarWidget->setId(peerId, false);
+	ui.avatarWidget->setId(peerId);
 }
 
 void GroupChatToaster::chatButtonSlot()

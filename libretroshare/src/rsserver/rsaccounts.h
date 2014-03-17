@@ -36,20 +36,21 @@
 #include <string>
 #include <list>
 #include <map>
+#include "retroshare/rstypes.h"
 
 class AccountDetails
 {
 	public:
 		AccountDetails();
 
-		std::string mSslId;
+		RsPeerId mSslId;
 		std::string mAccountDir;
 
-		std::string mPgpId;
+		RsPgpId mPgpId;
 		std::string mPgpName;
 		std::string mPgpEmail;
 
-                std::string mLocation;
+		std::string mLocation;
 		bool mIsHiddenLoc;
 		bool mFirstRun;
 
@@ -85,38 +86,36 @@ class RsAccountsDetail
 
 		// PGP Accounts.
 
-		int  	GetPGPLogins(std::list<std::string> &pgpIds);
-		int	GetPGPLoginDetails(const std::string& id, std::string &name, std::string &email);
-		bool	GeneratePGPCertificate(const std::string&, const std::string& email, const std::string& passwd, std::string &pgpId, std::string &errString);
+		int  	GetPGPLogins(std::list<RsPgpId> &pgpIds);
+		int	GetPGPLoginDetails(const RsPgpId& id, std::string &name, std::string &email);
+		bool	GeneratePGPCertificate(const std::string&, const std::string& email, const std::string& passwd, RsPgpId &pgpId, std::string &errString);
 
-                bool    SelectPGPAccount(const std::string& pgpId);
+                bool    SelectPGPAccount(const RsPgpId& pgpId);
 
 		// PGP Support Functions.
-		bool    exportIdentity(const std::string& fname,const std::string& pgp_id) ;
-		bool    importIdentity(const std::string& fname,std::string& imported_pgp_id,std::string& import_error) ;
+		bool    exportIdentity(const std::string& fname,const RsPgpId& pgp_id) ;
+		bool    importIdentity(const std::string& fname,RsPgpId& imported_pgp_id,std::string& import_error) ;
         	void    getUnsupportedKeys(std::map<std::string,std::vector<std::string> > &unsupported_keys);
 		bool    copyGnuPGKeyrings() ;
 
 
 		// Selecting Rs Account.
 		bool selectAccountByString(const std::string &prefUserString);
-		bool selectId(const std::string preferredId);
+		bool selectId(const RsPeerId& preferredId);
 
 		// Details of Rs Account.
-		bool getPreferredAccountId(std::string &id);
-		bool getAccountDetails(const std::string &id,
-			std::string &gpgId, std::string &gpgName, 
-			std::string &gpgEmail, std::string &location);
+		bool getPreferredAccountId(RsPeerId &id);
+		bool getAccountDetails(const RsPeerId &id, RsPgpId& gpgId, std::string &gpgName, std::string &gpgEmail, std::string &location);
 
 		bool getAccountOptions(bool &ishidden, bool isFirstTimeRun);
 
 
-		bool getAccountIds(std::list<std::string> &ids);
+		bool getAccountIds(std::list<RsPeerId> &ids);
 
-		bool GenerateSSLCertificate(const std::string& gpg_id, 
+		bool GenerateSSLCertificate(const RsPgpId& gpg_id, 
 			const std::string& org, const std::string& loc, 
 			const std::string& country, const bool ishiddenloc, 
-			const std::string& passwd, std::string &sslId, 
+			const std::string& passwd, RsPeerId &sslId, 
 			std::string &errString);
 
 		// From init file.
@@ -130,7 +129,7 @@ class RsAccountsDetail
 
 		std::string getHomePath() ;
 
-		bool getAvailableAccounts(std::map<std::string, AccountDetails> &accounts, 
+		bool getAvailableAccounts(std::map<RsPeerId, AccountDetails> &accounts, 
 			int& failing_accounts,
 			std::map<std::string,std::vector<std::string> >& unsupported_keys);
 
@@ -140,8 +139,8 @@ class RsAccountsDetail
 
 		bool mAccountsLocked;
 
-		std::map<std::string, AccountDetails> mAccounts;
-		std::string mPreferredId;
+		std::map<RsPeerId, AccountDetails> mAccounts;
+		RsPeerId mPreferredId;
 		std::string mBaseDirectory;
 
 		std::map<std::string,std::vector<std::string> > mUnsupportedKeys ;

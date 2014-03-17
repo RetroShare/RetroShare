@@ -77,16 +77,16 @@ void CryptoPage::showEvent ( QShowEvent * /*event*/ )
         ui.name->setText(QString::fromUtf8(detail.name.c_str()));
         ui.country->setText(QString::fromUtf8(detail.location.c_str()));
 
-        ui.peerid->setText(QString::fromStdString(detail.id));
-        ui.pgpid->setText(QString::fromStdString(detail.gpg_id));
-        ui.pgpfingerprint->setText(misc::fingerPrintStyleSplit(QString::fromStdString(detail.fpr)));
+        ui.peerid->setText(QString::fromStdString(detail.id.toStdString()));
+        ui.pgpid->setText(QString::fromStdString(detail.gpg_id.toStdString()));
+        ui.pgpfingerprint->setText(misc::fingerPrintStyleSplit(QString::fromStdString(detail.fpr.toStdString())));
 
         /* set retroshare version */
         std::string version;
         rsDisc->getPeerVersion(detail.id, version);
 		ui.version->setText(QString::fromStdString(version));
 
-        std::list<std::string> ids;
+        std::list<RsPgpId> ids;
         ids.clear();
         rsPeers->getGPGAcceptedList(ids);
         int friends = ids.size();
@@ -119,7 +119,7 @@ void
 CryptoPage::copyRSLink()
 {
 	RetroShareLink link ;
-	std::string ownId = rsPeers->getOwnId() ;
+	RsPeerId ownId = rsPeers->getOwnId() ;
 
 	if( link.createCertificate(ownId) )
 	{

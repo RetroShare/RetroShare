@@ -61,12 +61,12 @@ bool AuthGPG::decryptTextFromFile(std::string& text,const std::string& inputfile
 	return PGPHandler::decryptTextFromFile(mOwnGpgId,text,inputfile) ;
 }
 
-bool AuthGPG::removeKeysFromPGPKeyring(const std::list<std::string>& pgp_ids,std::string& backup_file,uint32_t& error_code) 
+bool AuthGPG::removeKeysFromPGPKeyring(const std::list<RsPgpId>& pgp_ids,std::string& backup_file,uint32_t& error_code) 
 {
-	std::list<PGPIdType> pids ;
+	std::list<RsPgpId> pids ;
 
-	for(std::list<std::string>::const_iterator it(pgp_ids.begin());it!=pgp_ids.end();++it)
-		pids.push_back(PGPIdType(*it)) ;
+	for(std::list<RsPgpId>::const_iterator it(pgp_ids.begin());it!=pgp_ids.end();++it)
+		pids.push_back(RsPgpId(*it)) ;
 
 	return PGPHandler::removeKeysFromPGPKeyring(pids,backup_file,error_code) ;
 }
@@ -83,7 +83,7 @@ bool AuthGPG::encryptTextToFile(const std::string& text,const std::string& outfi
 
 // bool AuthGPG::encryptTextToString(const std::string& pgp_id,const std::string& text,std::string& outstr)
 // {
-// 	return PGPHandler::encryptTextToString(PGPIdType(pgp_id),text,outstr) ;
+// 	return PGPHandler::encryptTextToString(RsPgpId(pgp_id),text,outstr) ;
 // }
 
 std::string pgp_pwd_callback(void * /*hook*/, const char *uid_hint, const char * /*passphrase_info*/, int prev_was_bad)
@@ -139,18 +139,18 @@ AuthGPG::AuthGPG(const std::string& path_to_public_keyring,const std::string& pa
  *
  * returns false if GnuPG is not available.
  */
-bool AuthGPG::availableGPGCertificatesWithPrivateKeys(std::list<std::string> &ids)
-{
-	std::list<PGPIdType> pids ;
-
-	PGPHandler::availableGPGCertificatesWithPrivateKeys(pids) ;
-
-	for(std::list<PGPIdType>::const_iterator it(pids.begin());it!=pids.end();++it)
-		ids.push_back( (*it).toStdString() ) ;
-
-	/* return false if there are no private keys */
-	return !ids.empty();
-}
+//bool AuthGPG::availableGPGCertificatesWithPrivateKeys(std::list<std::string> &ids)
+//{
+//	std::list<RsPgpId> pids ;
+//
+//	PGPHandler::availableGPGCertificatesWithPrivateKeys(pids) ;
+//
+//	for(std::list<RsPgpId>::const_iterator it(pids.begin());it!=pids.end();++it)
+//		ids.push_back( (*it).toStdString() ) ;
+//
+//	/* return false if there are no private keys */
+//	return !ids.empty();
+//}
 
 /* You can initialise Retroshare with
  * (a) load existing certificate.
@@ -159,11 +159,11 @@ bool AuthGPG::availableGPGCertificatesWithPrivateKeys(std::list<std::string> &id
  * This function must be called successfully (return == 1)
  * before anything else can be done. (except above fn).
  */
-int AuthGPG::GPGInit(const std::string &ownId)
+int AuthGPG::GPGInit(const RsPgpId &ownId)
 {
-	std::cerr << "AuthGPG::GPGInit() called with own gpg id : " << ownId << std::endl;
+	std::cerr << "AuthGPG::GPGInit() called with own gpg id : " << ownId.toStdString() << std::endl;
 
-	mOwnGpgId = PGPIdType(ownId);
+	mOwnGpgId = RsPgpId(ownId);
 
 	//force the validity of the private key. When set to unknown, it caused signature and text encryptions bugs
 	privateTrustCertificate(ownId, 5);
@@ -263,9 +263,9 @@ void AuthGPG::processServices()
 				 std::cerr << "AuthGPGimpl::processServices() Process load operation" << std::endl;
 #endif
 				 std::string error_string ;
-				 PGPIdType pgp_id ;
+				 RsPgpId pgp_id ;
 				 LoadCertificateFromString(loadOrSave->m_certGpg, pgp_id,error_string);
-				 loadOrSave->m_certGpgId = pgp_id.toStdString() ;
+				 loadOrSave->m_certGpgId = pgp_id;
 			 }
 
 
@@ -312,39 +312,19 @@ bool AuthGPG::DoOwnSignature(const void *data, unsigned int datalen, void *buf_s
 
 
 /* import to GnuPG and other Certificates */
-bool AuthGPG::VerifySignature(const void *data, int datalen, const void *sig, unsigned int siglen, const std::string &withfingerprint)
+bool AuthGPG::VerifySignature(const void *data, int datalen, const void *sig, unsigned int siglen, const PGPFingerprintType& withfingerprint)
 {
-	if(withfingerprint.length() != 40)
-	{
-		static bool already_reported = false ;
-
-		if( !already_reported)
-		{
-			std::cerr << "AuthGPG::VerifySignature(): no (or dammaged) fingerprint. Nor verifying signature. This is likely to be an unknown peer. fingerprint=\"" << withfingerprint << "\". Not reporting other errors." << std::endl;
-			already_reported = true ;
-		}
-		return false ;
-	}
-
-	return PGPHandler::VerifySignBin((unsigned char*)data,datalen,(unsigned char*)sig,siglen,PGPFingerprintType(withfingerprint)) ;
+	return PGPHandler::VerifySignBin((unsigned char*)data,datalen,(unsigned char*)sig,siglen,withfingerprint) ;
 }
 
-bool AuthGPG::exportProfile(const std::string& fname,const std::string& exported_id) 
+bool AuthGPG::exportProfile(const std::string& fname,const RsPgpId& exported_id) 
 {
-	return PGPHandler::exportGPGKeyPair(fname,PGPIdType(exported_id)) ;
+	return PGPHandler::exportGPGKeyPair(fname,exported_id) ;
 }
 
-bool AuthGPG::importProfile(const std::string& fname,std::string& imported_id,std::string& import_error)
+bool AuthGPG::importProfile(const std::string& fname,RsPgpId& imported_id,std::string& import_error)
 {
-	PGPIdType id ;
-
-	if(PGPHandler::importGPGKeyPair(fname,id,import_error))
-	{
-		imported_id = id.toStdString() ;
-		return true ;
-	}
-	else
-		return false ;
+	return PGPHandler::importGPGKeyPair(fname,imported_id,import_error) ;
 }
 
 	
@@ -355,35 +335,19 @@ bool   AuthGPG::active()
         return gpgKeySelected;
 }
 
-bool    AuthGPG::GeneratePGPCertificate(const std::string& name, 
-													const std::string& email, const std::string& passwd, std::string &pgpId, std::string& errString) 
+bool    AuthGPG::GeneratePGPCertificate(const std::string& name, const std::string& email, const std::string& passwd, RsPgpId& pgpId, std::string& errString) 
 {
 	RsStackMutex stack(gpgMtxEngine); /******* LOCKED ******/
 	
-	PGPIdType id ;
-
-	bool res = PGPHandler::GeneratePGPCertificate(name, email, passwd, id, errString) ;
-
-	pgpId = id.toStdString() ;
-	return res ;
+	return PGPHandler::GeneratePGPCertificate(name, email, passwd, pgpId, errString) ;
 }
 
 /**** These Two are common */
-std::string AuthGPG::getGPGName(const std::string &id,bool *success)
+std::string AuthGPG::getGPGName(const RsPgpId& id,bool *success)
 {
-	if(id.length() != 16)
-	{
-		static int already = 0 ;
-		if(already < 10)
-		{
-			std::cerr << "Wrong string passed to getGPGDetails: \"" << id << "\"" << std::endl;
-			already++ ;
-		}
-		return std::string() ;
-	}
 	RsStackMutex stack(gpgMtxData); /******* LOCKED ******/
 
-	const PGPCertificateInfo *info = getCertInfoFromStdString(id) ;
+	const PGPCertificateInfo *info = getCertificateInfo(id) ;
 
 	if(info != NULL)
 	{
@@ -398,10 +362,10 @@ std::string AuthGPG::getGPGName(const std::string &id,bool *success)
 }
 
 /**** These Two are common */
-std::string AuthGPG::getGPGEmail(const std::string &id,bool *success)
+std::string AuthGPG::getGPGEmail(const RsPgpId& id,bool *success)
 {
 	RsStackMutex stack(gpgMtxData); /******* LOCKED ******/
-	const PGPCertificateInfo *info = getCertInfoFromStdString(id) ;
+	const PGPCertificateInfo *info = getCertificateInfo(id) ;
 
 	if(info != NULL)
 	{
@@ -417,26 +381,22 @@ std::string AuthGPG::getGPGEmail(const std::string &id,bool *success)
 
 /**** GPG versions ***/
 
-std::string AuthGPG::getGPGOwnId()
+const RsPgpId& AuthGPG::getGPGOwnId()
 {
 	RsStackMutex stack(gpgMtxData); /******* LOCKED ******/
-	return mOwnGpgId.toStdString();
+	return mOwnGpgId ;
 }
 
 std::string AuthGPG::getGPGOwnName()
 {
-	return getGPGName(mOwnGpgId.toStdString()) ;
+	return getGPGName(mOwnGpgId) ;
 }
 
-bool	AuthGPG::getGPGAllList(std::list<std::string> &ids)
+bool	AuthGPG::getGPGAllList(std::list<RsPgpId> &ids)
 {
 	RsStackMutex stack(gpgMtxData); /******* LOCKED ******/
 
-	std::list<PGPIdType> list ;
-	PGPHandler::getGPGFilteredList(list) ;
-
-	for(std::list<PGPIdType>::const_iterator it(list.begin());it!=list.end();++it)
-		ids.push_back( (*it).toStdString() ) ;
+	PGPHandler::getGPGFilteredList(ids) ;
 
 	return true;
 }
@@ -444,7 +404,7 @@ const PGPCertificateInfo *AuthGPG::getCertInfoFromStdString(const std::string& p
 {
 	try
 	{
-		return PGPHandler::getCertificateInfo(PGPIdType(pgp_id)) ;
+		return PGPHandler::getCertificateInfo(RsPgpId(pgp_id)) ;
 	}
 	catch(std::exception& e)
 	{
@@ -452,13 +412,13 @@ const PGPCertificateInfo *AuthGPG::getCertInfoFromStdString(const std::string& p
 		return NULL ;
 	}
 }
-bool AuthGPG::haveSecretKey(const std::string& id) const
+bool AuthGPG::haveSecretKey(const RsPgpId& id) const
 {
-	return PGPHandler::haveSecretKey(PGPIdType(id)) ;
+	return PGPHandler::haveSecretKey(id) ;
 }
-bool AuthGPG::isKeySupported(const std::string& id) const
+bool AuthGPG::isKeySupported(const RsPgpId& id) const
 {
-	const PGPCertificateInfo *pc = getCertInfoFromStdString(id) ;
+	const PGPCertificateInfo *pc = getCertificateInfo(id) ;
 
 	if(pc == NULL)
 		return false ;
@@ -466,31 +426,19 @@ bool AuthGPG::isKeySupported(const std::string& id) const
 	return !(pc->_flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_UNSUPPORTED_ALGORITHM) ;
 }
 
-bool AuthGPG::getGPGDetails(const std::string& id, RsPeerDetails &d) 
+bool AuthGPG::getGPGDetails(const RsPgpId& pgp_id, RsPeerDetails &d) 
 {
 	RsStackMutex stack(gpgMtxData); /******* LOCKED ******/
 
-	if(id.length() != 16)
-	{
-		static int already = 0 ;
-
-		if(already < 10)
-		{
-			std::cerr << "Wrong string passed to getGPGDetails: \"" << id << "\"" << std::endl;
-			++already ;
-		}
-		return false ;
-	}
-
-	const PGPCertificateInfo *pc = getCertInfoFromStdString(id) ;
+	const PGPCertificateInfo *pc = PGPHandler::getCertificateInfo(pgp_id) ;
 
 	if(pc == NULL)
 		return false ;
 
 	const PGPCertificateInfo& cert(*pc) ;
 
-	d.id = id ;
-	d.gpg_id = id ;
+	d.id.clear() ;
+	d.gpg_id = pgp_id ;
 	d.name = cert._name;
 	d.lastUsed = cert._time_stamp;
 	d.email = cert._email;
@@ -499,55 +447,49 @@ bool AuthGPG::getGPGDetails(const std::string& id, RsPeerDetails &d)
 	d.ownsign = cert._flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_HAS_OWN_SIGNATURE;
 	d.gpgSigners.clear() ;
 
-	for(std::set<std::string>::const_iterator it(cert.signers.begin());it!=cert.signers.end();++it)
+	for(std::set<RsPgpId>::const_iterator it(cert.signers.begin());it!=cert.signers.end();++it)
 		d.gpgSigners.push_back( *it ) ;
 
-	d.fpr = cert._fpr.toStdString();
-	d.accept_connection = cert._flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_ACCEPT_CONNEXION;
-	d.hasSignedMe = cert._flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_HAS_SIGNED_ME;
+	d.fpr = cert._fpr ;
+	d.accept_connection = 	cert._flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_ACCEPT_CONNEXION;
+	d.hasSignedMe = 			cert._flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_HAS_SIGNED_ME;
 
 	return true;
 }
 
-bool AuthGPG::getGPGFilteredList(std::list<std::string>& list,bool (*filter)(const PGPCertificateInfo&)) 
+bool AuthGPG::getGPGFilteredList(std::list<RsPgpId>& list,bool (*filter)(const PGPCertificateInfo&)) 
 {
 	RsStackMutex stack(gpgMtxData); /******* LOCKED ******/
-	std::list<PGPIdType> ids ;
 
-	PGPHandler::getGPGFilteredList(ids,filter) ;
-
-	for(std::list<PGPIdType>::const_iterator it(ids.begin());it!=ids.end();++it)
-		list.push_back( (*it).toStdString() ) ;
-
-	return true ;
+	return PGPHandler::getGPGFilteredList(list,filter) ;
 }
 
 static bool filter_Validity(const PGPCertificateInfo& /*info*/) { return true ; } //{ return info._validLvl >= PGPCertificateInfo::GPGME_VALIDITY_MARGINAL ; }
 static bool filter_Accepted(const PGPCertificateInfo& info) { return info._flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_ACCEPT_CONNEXION ; }
 static bool filter_OwnSigned(const PGPCertificateInfo& info) { return info._flags & PGPCertificateInfo::PGP_CERTIFICATE_FLAG_HAS_OWN_SIGNATURE ; }
 
-bool	AuthGPG::getGPGValidList(std::list<std::string> &ids)
+bool	AuthGPG::getGPGValidList(std::list<RsPgpId> &ids)
 {
 	return getGPGFilteredList(ids,&filter_Validity);
 }
 
-bool	AuthGPG::getGPGAcceptedList(std::list<std::string> &ids)
+bool	AuthGPG::getGPGAcceptedList(std::list<RsPgpId> &ids)
 {
 	return getGPGFilteredList(ids,&filter_Accepted);
 }
 
-bool	AuthGPG::getGPGSignedList(std::list<std::string> &ids)
+bool	AuthGPG::getGPGSignedList(std::list<RsPgpId> &ids)
 {
 	return getGPGFilteredList(ids,&filter_OwnSigned);
 }
 
-bool	AuthGPG::getCachedGPGCertificate(const std::string &id, std::string &certificate)
+bool	AuthGPG::getCachedGPGCertificate(const RsPgpId &id, std::string &certificate)
 {
 	RsStackMutex stack(gpgMtxData); /******* LOCKED ******/
 #ifdef LIMIT_CERTIFICATE_SIZE
-	certificate = PGPHandler::SaveCertificateToString(PGPIdType(id),false) ;
+	certificate = PGPHandler::SaveCertificateToString(RsPgpId(id),false) ;
 #else
-	certificate = PGPHandler::SaveCertificateToString(PGPIdType(id),true) ;
+	certificate = PGPHandler::SaveCertificateToString(RsPgpId(id),true) ;
 #endif
 
 // #ifdef LIMIT_CERTIFICATE_SIZE
@@ -569,31 +511,15 @@ bool	AuthGPG::getCachedGPGCertificate(const std::string &id, std::string &certif
 
 
 /* SKTAN : do not know how to use std::string id */
-std::string AuthGPG::SaveCertificateToString(const std::string &id,bool include_signatures)
-{
-
-	if (!isGPGId(id)) {
-		std::cerr << "AuthGPG::SaveCertificateToString() unknown ID" << std::endl;
-		return "";
-	}
-
-	RsStackMutex stack(gpgMtxEngine); /******* LOCKED ******/
-
-	std::string tmp = PGPHandler::SaveCertificateToString(PGPIdType(id),include_signatures) ;
-
-//	// Try to remove signatures manually.
-//	//
-//	std::string cleaned_key ;
-//
-//	if( (!include_signatures) && PGPKeyManagement::createMinimalKey(tmp,cleaned_key))
-//		return cleaned_key ;
-//	else
-
-	return tmp;
-}
+ std::string AuthGPG::SaveCertificateToString(const RsPgpId &id,bool include_signatures)
+ {
+ 	RsStackMutex stack(gpgMtxEngine); /******* LOCKED ******/
+ 
+ 	return PGPHandler::SaveCertificateToString(id,include_signatures) ;
+ }
 
 /* import to GnuPG and other Certificates */
-bool AuthGPG::LoadCertificateFromString(const std::string &str, PGPIdType& gpg_id,std::string& error_string)
+bool AuthGPG::LoadCertificateFromString(const std::string &str, RsPgpId& gpg_id,std::string& error_string)
 {
 	RsStackMutex stack(gpgMtxEngine); /******* LOCKED ******/
 
@@ -620,7 +546,7 @@ bool AuthGPG::LoadCertificateFromString(const std::string &str, PGPIdType& gpg_i
 /*************************************/
 
 /* These take PGP Ids */
-bool AuthGPG::AllowConnection(const std::string &gpg_id, bool accept)
+bool AuthGPG::AllowConnection(const RsPgpId& gpg_id, bool accept)
 {
 #ifdef GPG_DEBUG
         std::cerr << "AuthGPG::AllowConnection(" << gpg_id << ")" << std::endl;
@@ -629,7 +555,7 @@ bool AuthGPG::AllowConnection(const std::string &gpg_id, bool accept)
 	/* Was a "Reload Certificates" here -> be shouldn't be needed -> and very expensive, try without. */
 	{
 		RsStackMutex stack(gpgMtxData);
-		PGPHandler::setAcceptConnexion(PGPIdType(gpg_id),accept) ;
+		PGPHandler::setAcceptConnexion(gpg_id,accept) ;
 	}
 
 	IndicateConfigChanged();
@@ -640,7 +566,7 @@ bool AuthGPG::AllowConnection(const std::string &gpg_id, bool accept)
 }
 
 /* These take PGP Ids */
-bool AuthGPG::SignCertificateLevel0(const std::string &id)
+bool AuthGPG::SignCertificateLevel0(const RsPgpId &id)
 {
 #ifdef GPG_DEBUG
 	std::cerr << "AuthGPG::SignCertificat(" << id << ")" << std::endl;
@@ -649,7 +575,7 @@ bool AuthGPG::SignCertificateLevel0(const std::string &id)
 	return privateSignCertificate(id) ;
 }
 
-bool AuthGPG::RevokeCertificate(const std::string &id)
+bool AuthGPG::RevokeCertificate(const RsPgpId &id)
 {
 	/* remove unused parameter warnings */
 	(void) id;
@@ -661,7 +587,7 @@ bool AuthGPG::RevokeCertificate(const std::string &id)
 	return false;
 }
 
-bool AuthGPG::TrustCertificate(const std::string &id, int trustlvl)
+bool AuthGPG::TrustCertificate(const RsPgpId& id, int trustlvl)
 {
 #ifdef GPG_DEBUG
 	std::cerr << "AuthGPG::TrustCertificate(" << id << ", " << trustlvl << ")" << std::endl;
@@ -669,9 +595,9 @@ bool AuthGPG::TrustCertificate(const std::string &id, int trustlvl)
 	return privateTrustCertificate(id, trustlvl) ;
 }
 
-bool AuthGPG::encryptDataBin(const std::string& pgp_id,const void *data, unsigned int datalen, unsigned char *sign, unsigned int *signlen) 
+bool AuthGPG::encryptDataBin(const RsPgpId& pgp_id,const void *data, unsigned int datalen, unsigned char *sign, unsigned int *signlen) 
 {
-	return PGPHandler::encryptDataBin(PGPIdType(pgp_id),data,datalen,sign,signlen) ;
+	return PGPHandler::encryptDataBin(RsPgpId(pgp_id),data,datalen,sign,signlen) ;
 }
 
 bool AuthGPG::decryptDataBin(const void *data, unsigned int datalen, unsigned char *sign, unsigned int *signlen) 
@@ -683,31 +609,32 @@ bool AuthGPG::SignDataBin(const void *data, unsigned int datalen, unsigned char 
 	return DoOwnSignature(data, datalen, sign, signlen);
 }
 
-bool AuthGPG::VerifySignBin(const void *data, uint32_t datalen, unsigned char *sign, unsigned int signlen, const std::string &withfingerprint) 
+bool AuthGPG::VerifySignBin(const void *data, uint32_t datalen, unsigned char *sign, unsigned int signlen, const PGPFingerprintType& withfingerprint) 
 {
 	return VerifySignature(data, datalen, sign, signlen, withfingerprint);
 }
 
 /* Sign/Trust stuff */
 
-int	AuthGPG::privateSignCertificate(const std::string &id)
+int	AuthGPG::privateSignCertificate(const RsPgpId &id)
 {
 	RsStackMutex stack(gpgMtxData); /******* LOCKED ******/
 
-	int ret = PGPHandler::privateSignCertificate(mOwnGpgId,PGPIdType(id)) ;
+	int ret = PGPHandler::privateSignCertificate(mOwnGpgId,id) ;
 	_force_sync_database = true ;
 	return ret ;
 }
 
 /* revoke the signature on Certificate */
-int	AuthGPG::privateRevokeCertificate(const std::string &/*id*/)
+int	AuthGPG::privateRevokeCertificate(const RsPgpId &/*id*/)
 {
 	//RsStackMutex stack(gpgMtx); /******* LOCKED ******/
+	std::cerr << __PRETTY_FUNCTION__ << ": not implemented!" << std::endl;
 
 	return 0;
 }
 
-int	AuthGPG::privateTrustCertificate(const std::string &id, int trustlvl)
+int	AuthGPG::privateTrustCertificate(const RsPgpId& id, int trustlvl)
 {
 	RsStackMutex stack(gpgMtxData); /******* LOCKED ******/
 
@@ -718,7 +645,7 @@ int	AuthGPG::privateTrustCertificate(const std::string &id, int trustlvl)
 		return 0;
 	}
 
-	int res = PGPHandler::privateTrustCertificate(PGPIdType(id),trustlvl) ;
+	int res = PGPHandler::privateTrustCertificate(id,trustlvl) ;
 	_force_sync_database = true ;
 	return res ;
 }
@@ -739,7 +666,7 @@ bool AuthGPG::saveList(bool& cleanup, std::list<RsItem*>& lst)
 #ifdef GPG_DEBUG
 	std::cerr << "AuthGPG::saveList() called" << std::endl ;
 #endif
-	std::list<std::string> ids ;	
+	std::list<RsPgpId> ids ;	
 	getGPGAcceptedList(ids) ;				// needs to be done before the lock
 
 	RsStackMutex stack(gpgMtxData); /******* LOCKED ******/
@@ -749,11 +676,11 @@ bool AuthGPG::saveList(bool& cleanup, std::list<RsItem*>& lst)
 	// Now save config for network digging strategies
 	RsConfigKeyValueSet *vitem = new RsConfigKeyValueSet ;
 
-	for (std::list<std::string>::const_iterator it(ids.begin()); it != ids.end(); ++it) 
-		if((*it) != mOwnGpgId.toStdString()) // skip our own id.
+	for (std::list<RsPgpId>::const_iterator it(ids.begin()); it != ids.end(); ++it) 
+		if((*it) != mOwnGpgId) // skip our own id.
 		{
 			RsTlvKeyValue kv;
-			kv.key = *it ;
+			kv.key = (*it).toStdString() ;
 #ifdef GPG_DEBUG
 			std::cerr << "AuthGPG::saveList() called (it->second) : " << (it->second) << std::endl ;
 #endif
@@ -788,7 +715,7 @@ bool AuthGPG::loadList(std::list<RsItem*>& load)
 			std::list<RsTlvKeyValue>::iterator kit;
 			for(kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); kit++) 
 				if (kit->key != mOwnGpgId.toStdString()) 
-					PGPHandler::setAcceptConnexion(PGPIdType(kit->key), (kit->value == "TRUE"));
+					PGPHandler::setAcceptConnexion(RsPgpId(kit->key), (kit->value == "TRUE"));
 		}
 		delete (*it);
 	}

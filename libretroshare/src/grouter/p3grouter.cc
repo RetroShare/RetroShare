@@ -23,6 +23,153 @@
  *
  */
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// Decentralized routing
+// =====================
+// 
+// Use cases:
+//    - Peer A asks for B's key, for which he has the signature, or the ID.
+//    - Peer A wants to send a private msg to peer C, for which he has the public key
+//    - Peer A wants to contact a channel's owner, a group owner, a forum owner, etc.
+//    - Peer C needs to route msg/key requests from unknown peer, to unknown peer so that the information
+//       eventually reach their destination.
+// 
+// Main idea: Each peer holds a local routing table, a matrix with probabilities that each friend
+// is a correct path for a given key ID.
+// 
+// The routing tables are updated as messages go back and forth. Successful
+// interactions feed the routing table with information of where to route the
+// packets.
+// 
+// The routing is kept probabilistic, meaning that the optimal route is not
+// always chosen, but the randomness helps updating the routing probabilities.
+// 
+// Services that might use the router (All services really...)
+//     - Identity manager (p3Identity)
+//        - asks identities i.e. RSA public keys (i.e. sends dentity requests through router)
+//     - Messenger
+//        - sends/receives messages to distant peers
+//     - Channels, forums, posted, etc.
+//        - send messages to the origin of the channel/forum/posted
+// 
+// GUI
+//    - a debug panel should show the routing info: probabilities for all known IDs
+//    - routing probabilities for a given ID accordign to who's connected
+// 
+// Decentralized routing algorithm:
+//    - tick() method
+//       * calls autoWash(), send() and receive()
+// 
+//    - message passing
+//       - upward: 
+//          * Forward msg to friends according to probabilities.
+//          * If all equal, send to all friends (or a rando subset of them).
+//          * keep the local routing info in a cache that is saved (Which peer issued the msg)
+//             - which probability was used to chose this friend (will be useful
+//               to compute the routing contribution if the msg is ACK-ed)
+// 
+//       - downward: look into routing cache. If info not present, drop the item.
+//         Forward item into stored direction.
+// 
+//       - routing probability computation: count number of times a reliable info is obtained from
+//         which direction for which identity
+//          * the count is a floating point number, since weights can be assigned to each info
+//            (especially for importance sampling)
+//          * init: all friends have equal count of 0 (or 1, well, we'll have to make this right).
+//          * We use importance sampling, meaning that when peer relays a msg from ID:
+//                 count[ID, peer] += 1.0 / importance
+// 
+//              ... where importance was the probability of chosing peer for the
+//              route upward.
+// 
+//          * probability of forward is proportional to count.
+// 
+//    - routing cache
+//       * this cache stores messages IDs (like turtle router) but is saved on disk
+//       * it is used to remember where to send back responses to messages, and
+//         with what probability the route was chosen.
+//       * cache items have a TTL and the cache is cleaned regularly.
+// 
+//    - routing matrix
+//       * the structure is fed by other services, when they receive key IDs.
+//       * stores for each identity the count of how many times each peer gave reliable info for that ID.
+//        That information should be enough to route packets in the correct direction. 
+//       * saved to disk.
+//       * all contributions should have a time stamp. Regularly, the oldest contributions are removed.
+// 
+//          struct RoutingMatrixHitEntry
+//          {
+//             float weight ;
+//             time_t time_stamp ;
+//          }
+//          typedef std::map<std::string,std::list<RoutingMatrixHitEntry> > RSAKeyRoutingMap ;
+// 
+//          class RoutingMatrix
+//          {
+//             public:
+//                // Computes the routing probabilities for this id  for the given list of friends.
+//                // the computation accounts for the time at which the info was received and the
+//                // weight of each routing hit record.
+//                //
+//                bool computeRoutingProbabilities(RSAKeyIDType id, const std::vector<SSLIdType>& friends,
+//                                                 std::vector<float>& probas) const ;
+// 
+//                // remove oldest entries.
+//                bool autoWash() ;
+// 
+//                // Record one routing clue. The events can possibly be merged in time buckets.
+//                //
+//                bool addRoutingEvent(RSAKeyIDType id,const SSLIdType& which friend) ;
+// 
+//             private:
+//                std::map<RSAKeyIDType, RSAKeyRoutingMap> _known_keys ;
+//          };
+// 
+//    - Routed packets: we use a common packet type for all services:
+// 
+//       We need two abstract item types:
+// 
+//          * Data packet
+//             - packet unique ID (sha1, or uint64_t)
+//             - destination ID (for Dn packets, the destination is the source!)
+//             - packet type: Id request, Message, etc.
+//             - packet service ID (Can be messenging, channels, etc).
+//             - packet data (void* + size_t)
+//             - flags (such as ACK or response required, and packet direction)
+//          * ACK packet.
+//             - packet unique ID (the id of the corresponding data)
+//             - flags (reason for ACK. Could be data delivered, or error, too far, etc)
+// 
+//    - Data storage packets
+//       * We need storage packets for the matrix states.
+//       * General routing options info?
+// 
+//    - estimated memory cost
+//       For each identity, the matrix needs
+//          - hits for each friend peer with time stamps. That means 8 bytes per hit.
+//             That is for 1000 identities, having at most 100 hits each (We keep
+//             the hits below a maximum. 100 seems ok.), that is 1000*100*8 < 1MB. Not much.
+// 
+//    - Main difficulties:
+//       * have a good re-try strategy if a msg does not arrive.
+//       * handle peer availability. In forward mode: easy. In backward mode:
+//         difficult. We should wait, and send back the packet if possible.
+//       * robustness
+//       * security: avoid flooding, and message alteration.
+// 
+// 	- Questions to be solved
+// 		* how do we talk to other services?
+// 			- keep a list of services?
+// 
+// 			- in practice, services will need to send requests, and expect responses.
+// 				* gxs (p3identity) asks for a key, gxs (p3identity) should get the key.
+// 				* msg service wants to send a distant msg, or msg receives a distant msg.
+// 
+// 				=> we need abstract packets and service ids.
+//
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 #include "util/rsrandom.h"
 #include "pqi/p3linkmgr.h"
 #include "serialiser/rsconfigitems.h"
@@ -175,13 +322,9 @@ void p3GRouter::routePendingObjects()
 	std::cerr << "p3GRouter::routeObjects() triage phase:" << std::endl;
 	std::cerr << "Cached Items : " << _pending_messages.size() << std::endl;
 
-	std::list<std::string> lst_tmp ;
-	std::list<SSLIdType> lst ;
-	mLinkMgr->getOnlineList(lst_tmp) ;
-	SSLIdType own_id( mLinkMgr->getOwnId() );
-
-	for(std::list<std::string>::const_iterator it(lst_tmp.begin());it!=lst_tmp.end();++it)
-		lst.push_back(SSLIdType(*it)) ;
+	std::list<RsPeerId> lst ;
+    mLinkMgr->getOnlineList(lst) ;
+	RsPeerId own_id( mLinkMgr->getOwnId() );
 
 	for(std::map<GRouterMsgPropagationId, GRouterRoutingInfo>::iterator it(_pending_messages.begin());it!=_pending_messages.end();)
 		if((it->second.status_flags & RS_GROUTER_ROUTING_STATE_PEND) || (it->second.status_flags == RS_GROUTER_ROUTING_STATE_SENT && it->second.tried_friends.front().time_stamp+RS_GROUTER_ROUTING_WAITING_TIME < now))
@@ -193,8 +336,8 @@ void p3GRouter::routePendingObjects()
 			std::cerr << "  Flags : " << it->second.status_flags << std::endl;
 			std::cerr << "  Probabilities: " << std::endl;
 
-			std::map<SSLIdType,float> probas ;		// friends probabilities for online friend list.
-			SSLIdType routed_friend ;					// friend chosen for the next hop
+			std::map<RsPeerId,float> probas ;		// friends probabilities for online friend list.
+			RsPeerId routed_friend ;					// friend chosen for the next hop
 			float best_proba = 0.0f;					// temp variable used to select the best proba
 			bool should_remove = false ;				// should we remove this from the map?
 
@@ -223,7 +366,7 @@ void p3GRouter::routePendingObjects()
 
 			bool friend_found = false ;
 
-			for(std::map<SSLIdType,float>::const_iterator it2(probas.begin());it2!=probas.end();++it2)
+			for(std::map<RsPeerId,float>::const_iterator it2(probas.begin());it2!=probas.end();++it2)
 			{
 				std::cerr << "     " << it2->first.toStdString() << " : " << it2->second << std::endl;
 
@@ -255,10 +398,10 @@ void p3GRouter::routePendingObjects()
 
 				std::cerr << "  Sending..." << std::endl;
 				// send
-				new_item->PeerId(routed_friend.toStdString()) ;
+                new_item->PeerId(routed_friend) ;
 				sendItem(new_item) ;
 			}
-			else if(it->second.origin.toStdString() != mLinkMgr->getOwnId() || std::find(lst.begin(),lst.end(),it->second.origin) != lst.end())
+            else if(it->second.origin != mLinkMgr->getOwnId() || std::find(lst.begin(),lst.end(),it->second.origin) != lst.end())
 			{
 				// There's no correct friend to send this item to. We keep it for a while. If it's too old,
 				// we discard it. For now, the procedure is to send back an ACK.
@@ -320,7 +463,7 @@ void p3GRouter::publishKeys()
 			item.randomized_distance = drand48() ;
 			item.fingerprint = info.fpr;
 			item.description_string = info.description_string ;
-			item.PeerId("") ;	// no peer id => key is forwarded to all friends.
+            item.PeerId(RsPeerId()) ;	// no peer id => key is forwarded to all friends.
 
 			locked_forwardKey(item) ;
 
@@ -332,14 +475,14 @@ void p3GRouter::publishKeys()
 
 void p3GRouter::locked_forwardKey(const RsGRouterPublishKeyItem& item) 
 {
-	std::list<std::string> connected_peers ;
+    std::list<RsPeerId> connected_peers ;
 	mLinkMgr->getOnlineList(connected_peers) ;
 
 	std::cerr << "  Forwarding key item to all available friends..." << std::endl;
 
 	// get list of connected friends, and broadcast to all of them
 	//
-	for(std::list<std::string>::const_iterator it(connected_peers.begin());it!=connected_peers.end();++it)
+    for(std::list<RsPeerId>::const_iterator it(connected_peers.begin());it!=connected_peers.end();++it)
 		if(item.PeerId() != *it)
 		{
 			std::cerr << "    sending to " << (*it) << std::endl; 
@@ -432,7 +575,7 @@ void p3GRouter::handleRecvPublishKeyItem(RsGRouterPublishKeyItem *item)
 
 	// update the route matrix
 
-	_routing_matrix.addRoutingClue(item->published_key,item->service_id,item->randomized_distance,item->description_string,SSLIdType(item->PeerId())) ;
+	_routing_matrix.addRoutingClue(item->published_key,item->service_id,item->randomized_distance,item->description_string,RsPeerId(item->PeerId())) ;
 
 	// forward the key to other peers according to key forwarding cache
 	
@@ -496,7 +639,7 @@ void p3GRouter::handleRecvACKItem(RsGRouterACKItem *item)
 			break ;
 	}
 
-	if(it->second.origin.toStdString() == mLinkMgr->getOwnId())
+    if(it->second.origin == mLinkMgr->getOwnId())
 	{
 		// find the client service and notify it.
 		std::cerr << "  We're owner: should notify client id" << std::endl;
@@ -511,7 +654,7 @@ void p3GRouter::handleRecvACKItem(RsGRouterACKItem *item)
 void p3GRouter::handleRecvDataItem(RsGRouterGenericDataItem *item)
 {
 	RsStackMutex mtx(grMtx) ;
-	std::cerr << "Received data item for key " << item->destination_key.toStdString() << std::endl;
+    std::cerr << "Received data item for key " << item->destination_key << std::endl;
 
 	// Do we have this item in the cache already?
 	//   - if not, add in the pending items
@@ -541,7 +684,7 @@ void p3GRouter::handleRecvDataItem(RsGRouterGenericDataItem *item)
 		else
 			info.status_flags = RS_GROUTER_ROUTING_STATE_PEND ;
 
-		info.origin = SSLIdType(item->PeerId()) ;
+		info.origin = RsPeerId(item->PeerId()) ;
 		info.received_time = time(NULL) ;
 
 		_pending_messages[item->routing_id] = info ;
@@ -588,7 +731,7 @@ void p3GRouter::sendData(const GRouterKeyId& destination, RsGRouterGenericDataIt
 
 	info.data_item = item ;
 	info.status_flags = RS_GROUTER_ROUTING_STATE_PEND ;
-	info.origin = SSLIdType(mLinkMgr->getOwnId()) ;
+	info.origin = RsPeerId(mLinkMgr->getOwnId()) ;
 	info.received_time = time(NULL) ;
 	
 	// Make sure we have a unique id (at least locally).
@@ -606,13 +749,13 @@ void p3GRouter::sendData(const GRouterKeyId& destination, RsGRouterGenericDataIt
 	_pending_messages[propagation_id] = info ;
 }
 
-void p3GRouter::sendACK(const SSLIdType& peer, GRouterMsgPropagationId mid, uint32_t ack_flags)
+void p3GRouter::sendACK(const RsPeerId& peer, GRouterMsgPropagationId mid, uint32_t ack_flags)
 {
 	RsGRouterACKItem *item = new RsGRouterACKItem ;
 
 	item->state = ack_flags ;
 	item->mid = mid ;
-	item->PeerId(peer.toStdString()) ;
+    item->PeerId(peer) ;
 
 	sendItem(item) ;
 }

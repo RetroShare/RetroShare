@@ -33,6 +33,8 @@
 #include <list>
 #include <vector>
 
+#include "retroshare/rstypes.h"
+
 class LinearizedExpression ;
 class RsTurtleClientService ;
 
@@ -46,7 +48,7 @@ typedef uint32_t TurtleRequestId ;
 
 struct TurtleFileInfo
 {
-	std::string hash ;
+	RsFileHash hash ;
 	std::string name ;
 	uint64_t size ;
 };
@@ -54,7 +56,7 @@ struct TurtleFileInfo
 struct TurtleRequestDisplayInfo
 {
 	uint32_t request_id ;			// Id of the request
-	std::string source_peer_id ;	// Peer that relayed the request
+	RsPeerId source_peer_id ;	// Peer that relayed the request
 	uint32_t age ;						// Age in seconds
 	uint32_t depth ;					// Depth of the request. Might be altered.
 };
@@ -108,12 +110,12 @@ class RsTurtle
 		// tunnels for the given hash. The download should be driven by the file
 		// transfer module by calling ftServer::FileRequest().
 		//
-		virtual void monitorTunnels(const std::string& file_hash,RsTurtleClientService *client_service) = 0 ;
+		virtual void monitorTunnels(const RsFileHash& file_hash,RsTurtleClientService *client_service) = 0 ;
 
 		// Tells the turtle router to stop handling tunnels for the given file hash. Traditionally this should
 		// be called after calling ftServer::fileCancel().
 		//
-		virtual void stopMonitoringTunnels(const std::string& file_hash) = 0 ;
+		virtual void stopMonitoringTunnels(const RsFileHash& file_hash) = 0 ;
 
 		/// Adds a client tunnel service. This means that the service will be added 
 		/// to the list of services that might respond to tunnel requests.
@@ -134,7 +136,7 @@ class RsTurtle
 		virtual void getTrafficStatistics(TurtleTrafficStatisticsInfo& info) const = 0;
 
 		// Convenience function.
-		virtual bool isTurtlePeer(const std::string& peer_id) const = 0 ;
+		virtual bool isTurtlePeer(const RsPeerId& peer_id) const = 0 ;
 
 		// Hardcore handles
 		virtual void setMaxTRForwardRate(int max_tr_up_rate) = 0 ;
