@@ -1464,7 +1464,7 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
 	RsNxsSyncMsgItem* item = msgItemL.front();
 	const RsGxsGroupId& grpId = item->grpId;
 
-	std::map<std::string, RsGxsGrpMetaData*> grpMetaMap;
+	std::map<RsGxsGroupId, RsGxsGrpMetaData*> grpMetaMap;
 	grpMetaMap[grpId] = NULL;
 	mDataStore->retrieveGxsGrpMetaData(grpMetaMap);
 	RsGxsGrpMetaData* grpMeta = grpMetaMap[grpId];
