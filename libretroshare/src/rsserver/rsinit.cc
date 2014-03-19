@@ -1110,7 +1110,8 @@ int RsServer::StartupRetroShare()
 	 * if not... copy from dataDirectory
 	 */
 
-	if (!RsDirUtil::checkFile(bootstrapfile,true))
+	uint64_t tmp_size ;
+	if (!RsDirUtil::checkFile(bootstrapfile,tmp_size,true))
 	{
 		std::cerr << "DHT bootstrap file not in ConfigDir: " << bootstrapfile << std::endl;
 		std::string installfile = rsAccounts.PathDataDirectory();
@@ -1118,7 +1119,7 @@ int RsServer::StartupRetroShare()
 		installfile += BITDHT_BOOTSTRAP_FILENAME;
 
 		std::cerr << "Checking for Installation DHT bootstrap file " << installfile << std::endl;
-		if ((installfile != "") && (RsDirUtil::checkFile(installfile)))
+		if ((installfile != "") && (RsDirUtil::checkFile(installfile,tmp_size)))
 		{
 			std::cerr << "Copying Installation DHT bootstrap file..." << std::endl;
 			if (RsDirUtil::copyFile(installfile, bootstrapfile))

@@ -85,7 +85,7 @@ int     	breakupDirList(const std::string& path, std::list<std::string> &subdirs
 
 bool 		copyFile(const std::string& source,const std::string& dest);
 bool 		fileExists(const std::string& file);
-bool    	checkFile(const std::string& filename,bool disallow_empty_file = false);
+bool    	checkFile(const std::string& filename,uint64_t& file_size,bool disallow_empty_file = false);
 bool    	checkDirectory(const std::string& dir);
 bool    	checkCreateDirectory(const std::string& dir);
 
