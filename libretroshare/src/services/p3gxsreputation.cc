@@ -256,7 +256,8 @@ bool p3GxsReputation::SendReputations(RsGxsReputationRequestItem *request)
 			continue;
 		}
 
-		pkt->mOpinions[rit->first] = ConvertToSerialised(rit->second.mOwnOpinion, true);
+		std::string gxsId = rit->first.toStdString();
+		pkt->mOpinions[gxsId] = ConvertToSerialised(rit->second.mOwnOpinion, true);
 		pkt->mLatestUpdate = rit->second.mOwnOpinionTs;
 		if (pkt->mLatestUpdate == (uint32_t) now)
 		{
@@ -313,11 +314,13 @@ bool p3GxsReputation::RecvReputations(RsGxsReputationUpdateItem *item)
 
 		/* find matching Reputation */
 		std::map<RsGxsId, Reputation>::iterator rit;
-		rit = mReputations.find(it->first);
+		RsGxsId gxsId(it->first);
+
+		rit = mReputations.find(gxsId);
 		if (rit == mReputations.end())
 		{
-			mReputations[it->first] = Reputation(it->first);
-			rit = mReputations.find(it->first);
+			mReputations[gxsId] = Reputation(gxsId);
+			rit = mReputations.find(gxsId);
 		}
 
 		Reputation &reputation = rit->second;
@@ -327,7 +330,7 @@ bool p3GxsReputation::RecvReputations(RsGxsReputationUpdateItem *item)
 		if (previous != reputation.CalculateReputation())
 		{
 			// updated from the network.
-			mUpdatedReputations.insert(it->first);
+			mUpdatedReputations.insert(gxsId);
 		}
 	}
 	updateLatestUpdate(peerid, item->mLatestUpdate);
@@ -437,7 +440,7 @@ bool p3GxsReputation::saveList(bool& cleanup, std::list<RsItem*> &savelist)
 		}
 
 		RsGxsReputationConfigItem *item = new RsGxsReputationConfigItem();
-		item->mPeerId = it->first;
+		item->mPeerId = it->first.toStdString();
 		item->mLatestUpdate = it->second.mLatestUpdate;
 		item->mLastQuery = it->second.mLastQuery;
 		savelist.push_back(item);
@@ -448,7 +451,7 @@ bool p3GxsReputation::saveList(bool& cleanup, std::list<RsItem*> &savelist)
 	for(rit = mReputations.begin(); rit != mReputations.end(); rit++, count++)
 	{
 		RsGxsReputationSetItem *item = new RsGxsReputationSetItem();
-		item->mGxsId = rit->first;
+		item->mGxsId = rit->first.toStdString();
 		item->mOwnOpinion = ConvertToSerialised(rit->second.mOwnOpinion, false);
 		item->mOwnOpinionTs = rit->second.mOwnOpinionTs;
 		item->mReputation = ConvertToSerialised(rit->second.mReputation, false);
@@ -457,7 +460,7 @@ bool p3GxsReputation::saveList(bool& cleanup, std::list<RsItem*> &savelist)
 		for(oit = rit->second.mOpinions.begin(); oit != rit->second.mOpinions.end(); ++oit)
 		{
 			// should be already limited.
-			item->mOpinions[oit->first] = ConvertToSerialised(oit->second, false);
+			item->mOpinions[oit->first.toStdString()] = ConvertToSerialised(oit->second, false);
 		}
 
 		savelist.push_back(item);
@@ -474,7 +477,7 @@ void p3GxsReputation::saveDone()
 bool p3GxsReputation::loadList(std::list<RsItem *>& loadList)
 {
 	std::list<RsItem *>::iterator it;
-	std::set<std::string> peerSet;
+	std::set<RsPeerId> peerSet;
 
 	for(it = loadList.begin(); it != loadList.end(); it++)
 	{
@@ -483,12 +486,13 @@ bool p3GxsReputation::loadList(std::list<RsItem *>& loadList)
 		if (item)
 		{
 			RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
-			ReputationConfig &config = mConfig[item->mPeerId];
-			config.mPeerId = item->mPeerId;
+			RsPeerId peerId(item->mPeerId);
+			ReputationConfig &config = mConfig[peerId];
+			config.mPeerId = peerId;
 			config.mLatestUpdate = item->mLatestUpdate;
 			config.mLastQuery = 0;
 			
-			peerSet.insert(item->mPeerId);
+			peerSet.insert(peerId);
 		}
 		RsGxsReputationSetItem *set = dynamic_cast<RsGxsReputationSetItem *>(*it);
 		if (set)
@@ -501,30 +505,32 @@ bool p3GxsReputation::loadList(std::list<RsItem *>& loadList)
 	return true;
 }
 
-bool p3GxsReputation::loadReputationSet(RsGxsReputationSetItem *item, const std::set<std::string> &peerSet)
+bool p3GxsReputation::loadReputationSet(RsGxsReputationSetItem *item, const std::set<RsPeerId> &peerSet)
 {
 	RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
 
 	std::map<RsGxsId, Reputation>::iterator rit;
 
 	/* find matching Reputation */
-	rit = mReputations.find(item->mGxsId);
+	RsGxsId gxsId(item->mGxsId);
+	rit = mReputations.find(gxsId);
 	if (rit != mReputations.end())
 	{
 		std::cerr << "ERROR";
 		std::cerr << std::endl;
 	}
 
-	Reputation &reputation = mReputations[item->mGxsId];
+	Reputation &reputation = mReputations[gxsId];
 
 	// install opinions.
 	std::map<std::string, uint32_t>::const_iterator oit;
 	for(oit = item->mOpinions.begin(); oit != item->mOpinions.end(); oit++)
 	{
 		// expensive ... but necessary.
-		if (peerSet.end() != peerSet.find(oit->first))
+		RsPeerId peerId(oit->first);
+		if (peerSet.end() != peerSet.find(peerId))
 		{
-			reputation.mOpinions[oit->first] = ConvertFromSerialised(oit->second, true);
+			reputation.mOpinions[peerId] = ConvertFromSerialised(oit->second, true);
 		}
 	}
 
@@ -535,10 +541,10 @@ bool p3GxsReputation::loadReputationSet(RsGxsReputationSetItem *item, const std:
 	int previous = ConvertFromSerialised(item->mReputation, false);
 	if (previous != reputation.CalculateReputation())
 	{
-		mUpdatedReputations.insert(item->mGxsId);
+		mUpdatedReputations.insert(gxsId);
 	}
 
-	mUpdated.insert(std::make_pair(reputation.mOwnOpinionTs, item->mGxsId));
+	mUpdated.insert(std::make_pair(reputation.mOwnOpinionTs, gxsId));
 	return true;
 }
 
@@ -610,7 +616,7 @@ void p3GxsReputation::sendReputationRequests()
 #endif
 
 	/* prepare packets */
-	std::list<std::string>::iterator it;
+	std::list<RsPeerId>::iterator it;
 	for(it = idList.begin(); it != idList.end(); it++)
 	{
 #ifdef DEBUG_REPUTATION

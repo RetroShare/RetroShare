@@ -220,7 +220,7 @@ bool p3GxsForums::updateGroup(uint32_t &token, RsGxsForumGroup &group)
 	std::cerr << "p3GxsForums::updateGroup()" << std::endl;
 
 
-        if(meta.getGroupId().isNull())
+        if(group.mMeta.mGroupId.isNull())
 		return false;
 
 	RsGxsForumGroupItem* grpItem = new RsGxsForumGroupItem();

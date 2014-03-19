@@ -37,7 +37,7 @@
 #include "retroshare/rsidentity.h"
 #include "services/p3service.h"
 
-typedef std::string RsPeerId;
+//typedef std::string RsPeerId;
 
 class p3LinkMgr;
 
@@ -126,7 +126,7 @@ class p3GxsReputation: public p3Service, public p3Config /* , public pqiMonitor 
 		bool updateLatestUpdate(RsPeerId peerid, time_t ts);
 
 		bool loadReputationSet(RsGxsReputationSetItem *item, 
-				const std::set<std::string> &peerSet);
+				const std::set<RsPeerId> &peerSet);
 
 		int     sendPackets();
 		void sendReputationRequests();
