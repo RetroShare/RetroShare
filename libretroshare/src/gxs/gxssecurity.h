@@ -98,7 +98,7 @@ public:
          *@param in
          *@param inlen
          */
-        static bool encrypt(void *&out, int &outlen, const void *in, int inlen, EVP_PKEY *privateKey);
+        static bool encrypt(void *&out, int &outlen, const void *in, int inlen, const RsTlvSecurityKey& key) ;
 
 
         /**
@@ -110,7 +110,7 @@ public:
          * @param inlen
          * @return false if encryption failed
          */
-        static bool decrypt(void *&out, int &outlen, const void *in, int inlen, EVP_PKEY *privateKey);
+        static bool decrypt(void *&out, int &outlen, const void *in, int inlen, const RsTlvSecurityKey& key) ;
 
         /*!
          * uses grp signature to check if group has been

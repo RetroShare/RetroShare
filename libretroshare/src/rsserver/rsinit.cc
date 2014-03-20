@@ -1293,63 +1293,6 @@ int RsServer::StartupRetroShare()
 	//
 	mPluginsManager->loadPlugins(programatically_inserted_plugins) ;
 
-	/* create Services */
-	mDisc = new p3discovery2(mPeerMgr, mLinkMgr, mNetMgr);
-	mHeart = new p3heartbeat(mLinkMgr, pqih);
-	msgSrv = new p3MsgService(mLinkMgr);
-	chatSrv = new p3ChatService(mLinkMgr, mHistoryMgr);
-	mStatusSrv = new p3StatusService(mLinkMgr);
-
-#ifdef GROUTER
-	p3GRouter *gr = new p3GRouter(mLinkMgr) ;
-	rsGRouter = gr ;
-	pqih->addService(gr) ;
-#endif
-
-	p3turtle *tr = new p3turtle(mLinkMgr) ;
-	rsTurtle = tr ;
-	pqih -> addService(tr);
-	pqih -> addService(ftserver);
-
-	rsDisc  = mDisc;
-	rsMsgs  = new p3Msgs(msgSrv, chatSrv);
-
-	// connect components to turtle router.
-
-	ftserver->connectToTurtleRouter(tr) ;
-	chatSrv->connectToTurtleRouter(tr) ;
-#ifdef GROUTER
-	msgSrv->connectToGlobalRouter(gr) ;
-#endif
-	pqih -> addService(mHeart);
-	pqih -> addService(mDisc);
-	pqih -> addService(msgSrv);
-	pqih -> addService(chatSrv);
-	pqih ->addService(mStatusSrv);
-
-
-	// set interfaces for plugins
-	//
-	RsPlugInInterfaces interfaces;
-	interfaces.mFiles  = rsFiles;
-	interfaces.mPeers  = rsPeers;
-	interfaces.mMsgs   = rsMsgs;
-	interfaces.mTurtle = rsTurtle;
-	interfaces.mDisc   = rsDisc;
-	interfaces.mDht    = rsDht;
-	// don't exist no more.
-	//interfaces.mForums = mForums;
-	interfaces.mNotify = mNotify;
-
-	mPluginsManager->setInterfaces(interfaces);
-
-	// now add plugin objects inside the loop:
-	// 	- client services provided by plugins.
-	// 	- cache services provided by plugins.
-	//
-	mPluginsManager->registerClientServices(pqih) ;
-	mPluginsManager->registerCacheServices() ;
-
 #ifdef RS_ENABLE_GXS
 
         // The idea is that if priorGxsDir is non
@@ -1536,6 +1479,64 @@ int RsServer::StartupRetroShare()
         RsInitConfig::gxs_passwd = "";
 
 #endif // RS_ENABLE_GXS.
+
+	/* create Services */
+	mDisc = new p3discovery2(mPeerMgr, mLinkMgr, mNetMgr);
+	mHeart = new p3heartbeat(mLinkMgr, pqih);
+	msgSrv = new p3MsgService(mLinkMgr,mGxsIdService);
+	chatSrv = new p3ChatService(mLinkMgr, mHistoryMgr);
+	mStatusSrv = new p3StatusService(mLinkMgr);
+
+#ifdef GROUTER
+	p3GRouter *gr = new p3GRouter(mLinkMgr) ;
+	rsGRouter = gr ;
+	pqih->addService(gr) ;
+#endif
+
+	p3turtle *tr = new p3turtle(mLinkMgr) ;
+	rsTurtle = tr ;
+	pqih -> addService(tr);
+	pqih -> addService(ftserver);
+
+	rsDisc  = mDisc;
+	rsMsgs  = new p3Msgs(msgSrv, chatSrv);
+
+	// connect components to turtle router.
+
+	ftserver->connectToTurtleRouter(tr) ;
+	chatSrv->connectToTurtleRouter(tr) ;
+#ifdef GROUTER
+	msgSrv->connectToGlobalRouter(gr) ;
+#endif
+	pqih -> addService(mHeart);
+	pqih -> addService(mDisc);
+	pqih -> addService(msgSrv);
+	pqih -> addService(chatSrv);
+	pqih ->addService(mStatusSrv);
+
+
+	// set interfaces for plugins
+	//
+	RsPlugInInterfaces interfaces;
+	interfaces.mFiles  = rsFiles;
+	interfaces.mPeers  = rsPeers;
+	interfaces.mMsgs   = rsMsgs;
+	interfaces.mTurtle = rsTurtle;
+	interfaces.mDisc   = rsDisc;
+	interfaces.mDht    = rsDht;
+	// don't exist no more.
+	//interfaces.mForums = mForums;
+	interfaces.mNotify = mNotify;
+
+	mPluginsManager->setInterfaces(interfaces);
+
+	// now add plugin objects inside the loop:
+	// 	- client services provided by plugins.
+	// 	- cache services provided by plugins.
+	//
+	mPluginsManager->registerClientServices(pqih) ;
+	mPluginsManager->registerCacheServices() ;
+
 
 
 #ifdef RS_RTT

@@ -26,15 +26,20 @@
 
 #include "retroshare/rsiface.h"
 #include "retroshare/rspeers.h"
+#include "retroshare/rsidentity.h"
 
 #include "pqi/pqibin.h"
 #include "pqi/pqiarchive.h"
 #include "pqi/p3linkmgr.h"
 #include "pqi/authgpg.h"
-
-#include "services/p3msgservice.h"
-#include "pgp/pgpkeyutil.h"
 #include "pqi/p3cfgmgr.h"
+
+#include "gxs/gxssecurity.h"
+
+#include "services/p3idservice.h"
+#include "services/p3msgservice.h"
+
+#include "pgp/pgpkeyutil.h"
 #include "rsserver/p3face.h"
 #include "serialiser/rsconfigitems.h"
 #ifdef GROUTER
@@ -78,9 +83,8 @@ static const uint8_t DISTANT_MSG_PROTOCOL_VERSION_02 = 0x48 ;
  */
 
 
-p3MsgService::p3MsgService(p3LinkMgr *lm)
-	:p3Service(RS_SERVICE_TYPE_MSG), p3Config(CONFIG_TYPE_MSGS),
-	mLinkMgr(lm), mMsgMtx("p3MsgService"), mMsgUniqueId(time(NULL))
+p3MsgService::p3MsgService(p3LinkMgr *lm,p3IdService *id_serv)
+	:p3Service(RS_SERVICE_TYPE_MSG), p3Config(CONFIG_TYPE_MSGS), mLinkMgr(lm), mIdService(id_serv), mMsgMtx("p3MsgService"), mMsgUniqueId(time(NULL))
 {
 	_serialiser = new RsMsgSerialiser();
 	addSerialType(_serialiser);
@@ -1677,146 +1681,187 @@ RsMsgItem *p3MsgService::initMIRsMsg(const MessageInfo &info, const RsPeerId& to
 	return msg;
 }
 
+//void p3MsgService::handleResponse(uint32_t token,uint32_t req_type)
+//{
+//}
+//
+//bool p3MsgService::hasRequestGxsIdKey(const RsGxsId& key_id)
+//{
+//	// Finite state machinery to get the GXS key. This is horrible.
+//	//
+//
+//	std::map<RsGxsId, 
+//	uint32_t token=0 ;
+//	RsTokReqOptions opts;
+//	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+//
+//	std::cerr << "Requesting GXS key to encrypt." << std::endl;
+//
+//	RsGenExchange::getTokenService()->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts);
+//
+//	uint32_t status ;
+//	while( (status = RsGenExchange::getTokenService()->requestStatus(token)) != GXS_REQUEST_V2_STATUS_COMPLETE)
+//	{
+//		std::cerr << "  Waiting for answer..." << std::endl;
+//		usleep(500000) ;
+//	}
+//}
+
 bool p3MsgService::createDistantMessage(const RsGxsId& destination_gxs_id,const RsGxsId& source_gxs_id,RsMsgItem *item)
 {
 #ifdef DEBUG_DISTANT_MSG
 	std::cerr << "Creating distant message for recipient " << item->PeerId() << ", encryption key=" << destination_gxs_id << " in place." << std::endl;
 #endif
+	unsigned char *data = NULL ;
+	void *encrypted_data = NULL ;
 
-	// 0 - append own id to the data.
-	//
-	uint32_t conservative_max_signature_size = 1000 ;
-	uint32_t message_size = _serialiser->size(item) ;
-	uint32_t total_data_size = 1+5+source_gxs_id.SIZE_IN_BYTES+5+message_size+conservative_max_signature_size ;
-
-	unsigned char *data = (unsigned char *)malloc(total_data_size) ;
-	
-	// -1 - setup protocol version
-	//
-#ifdef DEBUG_DISTANT_MSG
-	std::cerr << "  adding protocol version TAG = " << std::hex << (int)DISTANT_MSG_PROTOCOL_VERSION_02 << std::dec << std::endl;
-#endif
-	uint32_t offset = 0 ;
-	data[offset++] = DISTANT_MSG_PROTOCOL_VERSION_02 ;
-
-#ifdef DEBUG_DISTANT_MSG
-	std::cerr << "  adding own key ID " << AuthGPG::getAuthGPG()->getGPGOwnId() << std::endl;
-#endif
-	data[offset++] = DISTANT_MSG_TAG_IDENTITY ;
-	offset += PGPKeyParser::write_125Size(&data[offset],source_gxs_id.SIZE_IN_BYTES) ;
-	memcpy(&data[offset], source_gxs_id.toByteArray(), source_gxs_id.SIZE_IN_BYTES) ;
-	offset += source_gxs_id.SIZE_IN_BYTES ;
-
-	// 1 - serialise the whole message item into a binary chunk.
-	//
-
-#ifdef DEBUG_DISTANT_MSG
-	std::cerr << "  serialising item..." << std::endl;
-#endif
-	data[offset++] = DISTANT_MSG_TAG_CLEAR_MSG ;
-	offset += PGPKeyParser::write_125Size(&data[offset],message_size) ;
-
-	uint32_t remaining_size = total_data_size - offset ;
-
-	if(!_serialiser->serialise(item,&data[offset],&remaining_size))
+	try
 	{
-		std::cerr << "(EE) p3MsgService::encryptMessage(): Serialization error." << std::endl;
-		free(data) ;
-		return false;
-	}
-	offset += message_size ;
-
-	// 2 - now sign the data, if necessary, and put the signature up front
-
-	uint32_t signature_length = 0 ;
-	unsigned char *signature_data = NULL ;
-
-	if(item->msgFlags & RS_MSG_FLAGS_SIGNED)
-	{
-#ifdef DEBUG_DISTANT_MSG
-		std::cerr << "  Signing the message..." << std::endl;
-#endif
-		signature_length = 2000 ;
-		signature_data = new unsigned char[signature_length] ;
-
-		// do a proper signature here
+		// 0 - append own id to the data.
 		//
+		uint32_t conservative_max_signature_size = 1000 ;
+		uint32_t message_size = _serialiser->size(item) ;
+		uint32_t total_data_size = 1+5+source_gxs_id.SIZE_IN_BYTES+5+message_size+conservative_max_signature_size ;
+
+		data = (unsigned char *)malloc(total_data_size) ;
+
+		// -1 - setup protocol version
+		//
+#ifdef DEBUG_DISTANT_MSG
+		std::cerr << "  adding protocol version TAG = " << std::hex << (int)DISTANT_MSG_PROTOCOL_VERSION_02 << std::dec << std::endl;
+#endif
+		uint32_t offset = 0 ;
+		data[offset++] = DISTANT_MSG_PROTOCOL_VERSION_02 ;
+
+#ifdef DEBUG_DISTANT_MSG
+		std::cerr << "  adding own key ID " << AuthGPG::getAuthGPG()->getGPGOwnId() << std::endl;
+#endif
+		data[offset++] = DISTANT_MSG_TAG_IDENTITY ;
+		offset += PGPKeyParser::write_125Size(&data[offset],source_gxs_id.SIZE_IN_BYTES) ;
+		memcpy(&data[offset], source_gxs_id.toByteArray(), source_gxs_id.SIZE_IN_BYTES) ;
+		offset += source_gxs_id.SIZE_IN_BYTES ;
+
+		// 1 - serialise the whole message item into a binary chunk.
+		//
+
+#ifdef DEBUG_DISTANT_MSG
+		std::cerr << "  serialising item..." << std::endl;
+#endif
+		data[offset++] = DISTANT_MSG_TAG_CLEAR_MSG ;
+		offset += PGPKeyParser::write_125Size(&data[offset],message_size) ;
+
+		uint32_t remaining_size = total_data_size - offset ;
+
+		if(!_serialiser->serialise(item,&data[offset],&remaining_size))
+			throw std::runtime_error("Serialization error.") ;
+		
+		offset += message_size ;
+
+		// 2 - now sign the data, if necessary, and put the signature up front
+
+		uint32_t signature_length = 0 ;
+		unsigned char *signature_data = NULL ;
+
+		if(false)//item->msgFlags & RS_MSG_FLAGS_SIGNED)
+		{
+#ifdef DEBUG_DISTANT_MSG
+			std::cerr << "  Signing the message..." << std::endl;
+#endif
+			signature_length = 2000 ;
+			signature_data = new unsigned char[signature_length] ;
+
+			// do a proper signature here
+			//
 #warning UNFINISHED CODE!!!
-//		if(!mGxsIface->signature(data,offset,signature_data,signature_length))
-//		{
-//			free(data) ;
-//			std::cerr << "Signature failed!" << std::endl;
-//			return false;
-//		}
+			//		if(!mGxsIface->signature(data,offset,signature_data,signature_length))
+			//		{
+			//			free(data) ;
+			//			std::cerr << "Signature failed!" << std::endl;
+			//			return false;
+			//		}
 #ifdef DEBUG_DISTANT_MSG
-		std::cerr << "  After signature: signature size = " << signature_length << std::endl;
+			std::cerr << "  After signature: signature size = " << signature_length << std::endl;
 #endif
-	}
+		}
 #ifdef DEBUG_DISTANT_MSG
-	std::cerr << "  total decrypted size = " << offset + signature_length << std::endl;
+		std::cerr << "  total decrypted size = " << offset + signature_length << std::endl;
 #endif
-	// 3 - append the signature to the serialized data.
+		// 3 - append the signature to the serialized data.
 
-	if(signature_length > 0)
-	{
+		if(signature_length > 0)
+		{
 #ifdef DEBUG_DISTANT_MSG
-		std::cerr << "  Appending signature." << std::endl;
+			std::cerr << "  Appending signature." << std::endl;
 #endif
-		memcpy(&data[offset],signature_data,signature_length) ;
-		offset += signature_length ;
-	}
+			memcpy(&data[offset],signature_data,signature_length) ;
+			offset += signature_length ;
+		}
 
-	// 2 - pgp-encrypt the whole chunk with the user-supplied public key.
-	//
-	uint32_t encrypted_size = offset + 1000 ;
-	unsigned char *encrypted_data = new unsigned char[encrypted_size] ;
+		// 2 - pgp-encrypt the whole chunk with the user-supplied public key.
+		//
+		int encrypted_size = offset + 1000 ;
+		encrypted_data = malloc(encrypted_size) ;
 
 #ifdef DEBUG_DISTANT_MSG
-	std::cerr << "  Encrypting for Key ID " << pgp_id << std::endl;
+		std::cerr << "  Encrypting for Key ID " << pgp_id << std::endl;
 #endif
-	// Do proper encryption here
+		// Do proper encryption here
 #warning UNFINISHED CODE!!!
-//	if(!mGxsIface->encrypt(data,offset,encrypted_data,encrypted_size,destination_gxs_id)))
-//	{
+
+		RsTlvSecurityKey encryption_key ;
+
+		if(!mIdService->getKey(destination_gxs_id,encryption_key))
+			throw std::runtime_error("Cannot get encryption key for id " + destination_gxs_id.toStdString()) ;
+
+		if(!GxsSecurity::encrypt(encrypted_data,encrypted_size,data,offset,encryption_key))
+			throw std::runtime_error("Encryption failed!") ;
+
 		free(data) ;
-		delete[] encrypted_data ;
-		std::cerr << "Encryption failed!" << std::endl;
-		return false;
-    //}
-    //free(data) ;
+		data = NULL ;
 
 #ifdef DEBUG_DISTANT_MSG
-	std::cerr << "  Decrypted size = " << offset << std::endl;
-	std::cerr << "  Encrypted size = " << encrypted_size << std::endl;
-	std::cerr << "  First bytes of encrypted data: " << std::hex << (int)encrypted_data[0] << " " << (int)encrypted_data[1] << " " << (int)encrypted_data[2] << std::dec << std::endl;
-	std::cerr << "  Encrypted data hash = " << RsDirUtil::sha1sum(encrypted_data,encrypted_size).toStdString() << std::endl;
+		std::cerr << "  Decrypted size = " << offset << std::endl;
+		std::cerr << "  Encrypted size = " << encrypted_size << std::endl;
+		std::cerr << "  First bytes of encrypted data: " << std::hex << (int)encrypted_data[0] << " " << (int)encrypted_data[1] << " " << (int)encrypted_data[2] << std::dec << std::endl;
+		std::cerr << "  Encrypted data hash = " << RsDirUtil::sha1sum(encrypted_data,encrypted_size).toStdString() << std::endl;
 #endif
-	// Now turn the binary encrypted chunk into a readable radix string.
-	//
+		// Now turn the binary encrypted chunk into a readable radix string.
+		//
 #ifdef DEBUG_DISTANT_MSG
-	std::cerr << "  Converting to radix64" << std::endl;
+		std::cerr << "  Converting to radix64" << std::endl;
 #endif
-	std::string armoured_data ;
-	Radix64::encode((char *)encrypted_data,encrypted_size,armoured_data) ;
-	delete[] encrypted_data ;
+		std::string armoured_data ;
+		Radix64::encode((char *)encrypted_data,encrypted_size,armoured_data) ;
 
-	// wipe the item clean and replace the message by the encrypted data.
+		free(encrypted_data) ;
+		encrypted_data = NULL ;
 
-	item->message = armoured_data ;
-	item->subject = "" ;
-	item->rspeerid_msgcc.ids.clear() ;
-	item->rspeerid_msgbcc.ids.clear() ;
-	item->rspeerid_msgto.ids.clear() ;
-	item->rsgxsid_msgcc.ids.clear() ;
-	item->rsgxsid_msgbcc.ids.clear() ;
-	item->rsgxsid_msgto.ids.clear() ;
-	item->msgFlags |= RS_MSG_FLAGS_ENCRYPTED ;
-	item->attachment.TlvClear() ;
+		// wipe the item clean and replace the message by the encrypted data.
+
+		item->message = armoured_data ;
+		item->subject = "" ;
+		item->rspeerid_msgcc.ids.clear() ;
+		item->rspeerid_msgbcc.ids.clear() ;
+		item->rspeerid_msgto.ids.clear() ;
+		item->rsgxsid_msgcc.ids.clear() ;
+		item->rsgxsid_msgbcc.ids.clear() ;
+		item->rsgxsid_msgto.ids.clear() ;
+		item->msgFlags |= RS_MSG_FLAGS_ENCRYPTED ;
+		item->attachment.TlvClear() ;
 
 #ifdef DEBUG_DISTANT_MSG
-	std::cerr << "  Done" << std::endl;
+		std::cerr << "  Done" << std::endl;
 #endif
-	return true ;
+		return true ;
+	}
+	catch(std::exception& e)
+	{
+		std::cerr << __PRETTY_FUNCTION__ << ": Error. reason: " << e.what() << std::endl;
+
+		if(encrypted_data) free(encrypted_data) ;
+		if(data) free(data) ;
+		return false ;
+	}
 }
 
 std::string printNumber(uint32_t n,bool hex)
@@ -1828,13 +1873,14 @@ std::string printNumber(uint32_t n,bool hex)
 }
 bool p3MsgService::decryptMessage(const std::string& mId)
 {
-    unsigned char *decrypted_data = NULL;
+    void *decrypted_data = NULL;
     char *encrypted_data = NULL;
 
     try
     {
         uint32_t msgId = atoi(mId.c_str());
         std::string encrypted_string ;
+		  RsGxsId destination_gxs_id ;
 
 #ifdef DEBUG_DISTANT_MSG
         std::cerr << "Decrypting message with Id " << mId << std::endl;
@@ -1851,6 +1897,7 @@ bool p3MsgService::decryptMessage(const std::string& mId)
             }
 
             encrypted_string = mit->second->message ;
+				destination_gxs_id = RsGxsId(mit->second->PeerId()) ;
         }
 
         size_t encrypted_size ;
@@ -1861,11 +1908,9 @@ bool p3MsgService::decryptMessage(const std::string& mId)
         std::cerr << "  Message has been radix64 decoded." << std::endl;
 #endif
 
-        uint32_t decrypted_size = encrypted_size + 500 ;
-        unsigned char *decrypted_data = new unsigned char[decrypted_size] ;
-
 #ifdef DEBUG_DISTANT_MSG
         std::cerr << "  Calling decryption. Encrypted data size = " << encrypted_size << ", Allocated size = " << decrypted_size << std::endl;
+		  std::cerr << "  Destination GxsId : " << destination_gxs_id << std::endl;
         std::cerr << "  First bytes of encrypted data: " << std::hex << (int)((unsigned char*)encrypted_data)[0] << " " << (int)((unsigned char*)encrypted_data)[1] << " " << (int)((unsigned char*)encrypted_data)[2] << std::dec << std::endl;
         std::cerr << "  Encrypted data hash = " << RsDirUtil::sha1sum((uint8_t*)encrypted_data,encrypted_size).toStdString() << std::endl;
 #endif
@@ -1873,17 +1918,26 @@ bool p3MsgService::decryptMessage(const std::string& mId)
     // TODO
         //
 #warning UNFINISHED CODE!!!
-//        if(!rsGxs->decrypt(encrypted_data,encrypted_size,decrypted_data,&decrypted_size))
-//		throw std::runtime_error("decryption failed!") ;
 
+        int decrypted_size = 0 ;
+        decrypted_data = NULL ;
+
+		RsTlvSecurityKey encryption_key ;
+
+		if(!mIdService->getPrivateKey(destination_gxs_id,encryption_key))
+			throw std::runtime_error("Cannot get private encryption key for id " + destination_gxs_id.toStdString()) ;
+
+		if(!GxsSecurity::decrypt(decrypted_data,decrypted_size,(void*)encrypted_data,encrypted_size,encryption_key))
+			throw std::runtime_error("Decryption failed!") ;
+
+		uint8_t *decr_data = (uint8_t*)decrypted_data ;
 #ifdef DEBUG_DISTANT_MSG
         std::cerr << "  Message has succesfully decrypted. Decrypted size = " << decrypted_size << std::endl;
 #endif
-
         // 1 - get the sender's id
 
         uint32_t offset = 0 ;
-        unsigned char protocol_version = decrypted_data[offset++] ;
+        unsigned char protocol_version = decr_data[offset++] ;
 
 #ifdef DEBUG_DISTANT_MSG
         std::cerr << "  Read protocol version number " << std::hex << (int)protocol_version << std::dec << std::endl;
@@ -1894,19 +1948,19 @@ bool p3MsgService::decryptMessage(const std::string& mId)
 #ifdef DEBUG_DISTANT_MSG
         std::cerr << "  Reading identity section " << std::endl;
 #endif
-        uint8_t ptag = decrypted_data[offset] ;
+        uint8_t ptag = decr_data[offset] ;
 
         if(ptag != DISTANT_MSG_TAG_IDENTITY)
         throw std::runtime_error("Bad ptag in encrypted msg packet "+printNumber(ptag,true)+" => packet is dropped.") ;
 
-        unsigned char *tmp_data = &decrypted_data[offset] ;
+        unsigned char *tmp_data = &decr_data[offset] ;
         uint32_t identity_size = PGPKeyParser::read_125Size(tmp_data) ;
-        offset += tmp_data - decrypted_data ;
+        offset += tmp_data - decr_data ;
 
         if(identity_size != RsGxsId::SIZE_IN_BYTES)
         throw std::runtime_error("Bad size in Identity section " + printNumber(identity_size,false) + " => packet is dropped.") ;
 
-        RsGxsId senders_id(&decrypted_data[offset]) ;
+        RsGxsId senders_id(&decr_data[offset]) ;
         offset += identity_size ;
 
 #ifdef DEBUG_DISTANT_MSG
@@ -1914,19 +1968,19 @@ bool p3MsgService::decryptMessage(const std::string& mId)
 #endif
         // 2 - deserialize the item
 
-        ptag = decrypted_data[offset] ;
+        ptag = decr_data[offset] ;
 
         if(ptag != DISTANT_MSG_TAG_CLEAR_MSG)
             throw std::runtime_error("Bad ptag in encrypted msg packet " + printNumber(ptag,true) + " => packet is dropped.") ;
 
-        tmp_data = &decrypted_data[offset] ;
+        tmp_data = &decr_data[offset] ;
         uint32_t item_size = PGPKeyParser::read_125Size(tmp_data) ;
-        offset += tmp_data - decrypted_data ;
+        offset += tmp_data - decr_data ;
 
 #ifdef DEBUG_DISTANT_MSG
         std::cerr << "  Deserializing..." << std::endl;
 #endif
-        RsMsgItem *item = dynamic_cast<RsMsgItem*>(_serialiser->deserialise(&decrypted_data[offset],&item_size)) ;
+        RsMsgItem *item = dynamic_cast<RsMsgItem*>(_serialiser->deserialise(&decr_data[offset],&item_size)) ;
 
         if(item == NULL)
         throw std::runtime_error("Decrypted message could not be deserialized.") ;
@@ -1939,14 +1993,14 @@ bool p3MsgService::decryptMessage(const std::string& mId)
 
         if(offset < decrypted_size)
     {
-        uint8_t ptag = decrypted_data[offset++] ;
+        uint8_t ptag = decr_data[offset++] ;
 
         if(ptag != DISTANT_MSG_TAG_SIGNATURE)
             throw std::runtime_error("Bad ptag in signature packet " + printNumber(ptag,true) + " => packet is dropped.") ;
 
-        unsigned char *tmp_data = &decrypted_data[offset] ;
+        unsigned char *tmp_data = &decr_data[offset] ;
         uint32_t signature_size = PGPKeyParser::read_125Size(tmp_data) ;
-        offset += tmp_data - decrypted_data ;
+        offset += tmp_data - decr_data ;
 
         std::cerr << "  Signature is present. Verifying it..." << std::endl;
 
@@ -1965,8 +2019,8 @@ bool p3MsgService::decryptMessage(const std::string& mId)
         else
             throw std::runtime_error("Structural error in packet: sizes do not match. Dropping the message.") ;
 
-        delete[] decrypted_data ;
-    decrypted_data = NULL ;
+        free(decr_data) ;
+		  decr_data = NULL ;
 
         // 4 - replace the item with the decrypted data, and update flags
 
@@ -2035,8 +2089,8 @@ bool p3MsgService::decryptMessage(const std::string& mId)
     catch(std::exception& e)
     {
         std::cerr << "Decryption failed: " << e.what() << std::endl;
-        if(encrypted_data != NULL) delete[] encrypted_data ;
-        if(decrypted_data != NULL) delete[] decrypted_data ;
+        if(encrypted_data != NULL) free(encrypted_data) ;
+        if(decrypted_data != NULL) free(decrypted_data) ;
 
         return false ;
     }
