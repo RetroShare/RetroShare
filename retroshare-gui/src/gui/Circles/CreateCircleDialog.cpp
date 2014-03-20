@@ -391,7 +391,7 @@ void CreateCircleDialog::updateCircleGUI()
 			std::cerr << "CreateCircleDialog::updateCircleGUI() : EXTERNAL CIRCLETYPE";
 			std::cerr << std::endl;
 
-			if (mCircleGroup.mMeta.mCircleId == mCircleGroup.mMeta.mGroupId)
+			if (mCircleGroup.mMeta.mCircleId.toStdString() == mCircleGroup.mMeta.mGroupId.toStdString())
 			{
 				ui.radioButton_Restricted->setChecked(true);
 			}

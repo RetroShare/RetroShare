@@ -31,6 +31,7 @@
 #include "serialiser/rsserviceids.h"
 #include "serialiser/rsserial.h"
 #include "serialiser/rstlvtypes.h"
+#include "retroshare/rsgxsifacetypes.h"
 
 #define RS_PKT_SUBTYPE_GXSREPUTATION_CONFIG_ITEM 	0x01
 #define RS_PKT_SUBTYPE_GXSREPUTATION_SET_ITEM 		0x02
@@ -96,7 +97,7 @@ virtual ~RsGxsReputationUpdateItem();
 virtual void clear();  
 std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
-	std::map<std::string, uint32_t> mOpinions; // GxsId -> Opinion.
+	std::map<RsGxsId, uint32_t> mOpinions; // GxsId -> Opinion.
 	uint32_t mLatestUpdate; 
 };
 

@@ -548,7 +548,7 @@ void IdDialog::modifyReputation()
 	std::cerr << "IdDialog::modifyReputation()";
 	std::cerr << std::endl;
 
-	std::string id = ui.lineEdit_KeyId->text().toStdString();
+	RsGxsId id(ui.lineEdit_KeyId->text().toStdString());
 
 	int mod = 0;
 	if (ui.repMod_Accept->isChecked())

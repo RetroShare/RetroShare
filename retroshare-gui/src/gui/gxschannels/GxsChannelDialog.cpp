@@ -370,7 +370,7 @@ void GxsChannelDialog::openChat(const RsPeerId & /*peerId*/)
 
 void GxsChannelDialog::editChannelDetail()
 {
-       if (mChannelId.empty()) {
+       if (mChannelId.isNull()) {
                return;
        }
 
@@ -799,7 +799,7 @@ void GxsChannelDialog::subscribeChannel()
 
 void GxsChannelDialog::showChannelDetails()
 {
-       if (mChannelId.empty()) {
+       if (mChannelId.isNull()) {
                return;
        }
 

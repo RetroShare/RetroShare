@@ -633,7 +633,7 @@ void WikiDialog::groupListCustomPopupMenu(QPoint /*point*/)
 	contextMnu.addSeparator();
 
 	action = contextMnu.addAction(QIcon(IMAGE_INFO), tr("Show Wiki Group"), this, SLOT(showGroupDetails()));
-	action->setEnabled (!mGroupId.empty ());
+	action->setEnabled (!mGroupId.isNull());
 
 	action = contextMnu.addAction(QIcon(IMAGE_EDIT), tr("Edit Wiki Group"), this, SLOT(editGroupDetails()));
     action->setEnabled (!mGroupId.isNull() && IS_GROUP_ADMIN(subscribeFlags));

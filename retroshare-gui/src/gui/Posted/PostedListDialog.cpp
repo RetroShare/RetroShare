@@ -191,10 +191,10 @@ void PostedListDialog::groupListCustomPopupMenu(QPoint /*point*/)
 	contextMnu.addSeparator();
 
 	action = contextMnu.addAction(QIcon(IMAGE_SHOW), tr("Show Topic Details"), this, SLOT(showTopic()));
-	action->setEnabled (!mCurrTopicId.empty());
+	action->setEnabled (!mCurrTopicId.isNull());
 
 	action = contextMnu.addAction(QIcon(IMAGE_EDIT), tr("Edit Topic Details"), this, SLOT(editTopic()));
-	action->setEnabled (!mCurrTopicId.empty() && IS_GROUP_ADMIN(subscribeFlags));
+	action->setEnabled (!mCurrTopicId.isNull() && IS_GROUP_ADMIN(subscribeFlags));
 
 	contextMnu.exec(QCursor::pos());
 }
@@ -378,7 +378,7 @@ void PostedListDialog::newTopic()
 	
 void PostedListDialog::showTopic()
 {
-	if (mCurrTopicId.empty()) {
+	if (mCurrTopicId.isNull()) {
 		return;
 	}
 
@@ -388,7 +388,7 @@ void PostedListDialog::showTopic()
 	
 void PostedListDialog::editTopic()
 {
-	if (mCurrTopicId.empty()) {
+	if (mCurrTopicId.isNull()) {
 		return;
 	}
 

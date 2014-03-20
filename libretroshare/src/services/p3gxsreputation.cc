@@ -256,7 +256,7 @@ bool p3GxsReputation::SendReputations(RsGxsReputationRequestItem *request)
 			continue;
 		}
 
-		std::string gxsId = rit->first.toStdString();
+		RsGxsId gxsId = rit->first;
 		pkt->mOpinions[gxsId] = ConvertToSerialised(rit->second.mOwnOpinion, true);
 		pkt->mLatestUpdate = rit->second.mOwnOpinionTs;
 		if (pkt->mLatestUpdate == (uint32_t) now)
@@ -307,7 +307,7 @@ bool p3GxsReputation::RecvReputations(RsGxsReputationUpdateItem *item)
 
 	RsPeerId peerid = item->PeerId();
 
-	std::map<std::string, uint32_t>::iterator it;
+	std::map<RsGxsId, uint32_t>::iterator it;
 	for(it = item->mOpinions.begin(); it != item->mOpinions.end(); it++)
 	{
 		RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/

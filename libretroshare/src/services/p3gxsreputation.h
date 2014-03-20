@@ -37,7 +37,6 @@
 #include "retroshare/rsidentity.h"
 #include "services/p3service.h"
 
-//typedef std::string RsPeerId;
 
 class p3LinkMgr;
 
