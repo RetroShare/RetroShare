@@ -550,7 +550,7 @@ bool RshareSettings::getRetroShareProtocol()
 	QSettings retroshare("HKEY_CLASSES_ROOT\\retroshare", QSettings::NativeFormat);
 	if (retroshare.contains("Default")) {
 		/* Check profile */
-		if (retroshare.value("Profile").toString().toStdString() == rsPeers->getOwnId()) {
+		if (retroshare.value("Profile").toString().toStdString() == rsPeers->getOwnId().toStdString()) {
 			/* Check app path */
 			QSettings command("HKEY_CLASSES_ROOT\\retroshare\\shell\\open\\command", QSettings::NativeFormat);
 			if (command.value("Default").toString() == getAppPathForProtocol()) {
@@ -588,7 +588,7 @@ bool RshareSettings::setRetroShareProtocol(bool value)
 			return false;
 		}
 		retroshare.setValue("URL Protocol", "");
-		retroshare.setValue("Profile", QString::fromStdString(rsPeers->getOwnId()));
+		retroshare.setValue("Profile", QString::fromStdString(rsPeers->getOwnId().toStdString()));
 
 		QSettings command("HKEY_CLASSES_ROOT\\retroshare\\shell\\open\\command", QSettings::NativeFormat);
 		command.setValue("Default", getAppPathForProtocol());

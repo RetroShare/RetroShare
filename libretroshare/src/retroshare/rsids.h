@@ -85,7 +85,7 @@ template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER> c
 				this->bytes[i] = temp.toByteArray()[i];
 		}
 
-		inline void clear() { bzero(bytes,SIZE_IN_BYTES) ; }
+		inline void clear() { memset(bytes,0,SIZE_IN_BYTES) ; }
 
 		// Converts to a std::string using cached value. 
 		//
