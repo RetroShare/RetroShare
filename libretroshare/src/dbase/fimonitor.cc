@@ -51,8 +51,8 @@
 #include <sstream>
 #include <time.h>
 
-//***********
-#define FIM_DEBUG 1
+// ***********
+// #define FIM_DEBUG 1
 // ***********/
 
 FileIndexMonitor::FileIndexMonitor(CacheStrapper *cs, std::string cachedir, const RsPeerId& pid,const std::string& config_dir)

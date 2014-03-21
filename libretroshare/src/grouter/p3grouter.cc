@@ -497,13 +497,12 @@ void p3GRouter::locked_forwardKey(const RsGRouterPublishKeyItem& item)
 		else
 			std::cerr << "    Not forwarding to source id " << item.PeerId() << std::endl;
 }
-bool p3GRouter::registerKey(const GRouterKeyId& key,const PGPFingerprintType& fps,const GRouterServiceId& client_id,const std::string& description) 
+bool p3GRouter::registerKey(const GRouterKeyId& key,const GRouterServiceId& client_id,const std::string& description) 
 {
 	RsStackMutex mtx(grMtx) ;
 
 	GRouterPublishedKeyInfo info ;
 	info.service_id = client_id ;
-	info.fpr = fps ;
 	info.description_string = description.substr(0,20);
 	info.validity_time = 0 ;			// not used yet.
 	info.last_published_time = 0 ; 	// means never published, se it will be re-published soon.

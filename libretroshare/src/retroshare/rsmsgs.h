@@ -302,11 +302,8 @@ virtual bool resetMessageStandardTagTypes(MsgTagType& tags) = 0;
 /*        Private distant messages      */
 /****************************************/
 
-virtual bool createDistantOfflineMessengingInvite(time_t validity_time_stamp, DistantMsgPeerId& hash)=0 ;
-virtual bool getDistantOfflineMessengingInvites(std::vector<DistantOfflineMessengingInvite>& invites) = 0 ;
 virtual void enableDistantMessaging(bool b) = 0;
 virtual bool distantMessagingEnabled() = 0;
-virtual bool getDistantMessagePeerId(const RsGxsId& gxs_id, DistantMsgPeerId& peerId) = 0;
 
 /****************************************/
 /*                 Chat                 */

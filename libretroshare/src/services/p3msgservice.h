@@ -126,22 +126,15 @@ class p3MsgService: public p3Service, public p3Config, public pqiMonitor
 			uint32_t status ;
 			bool pending_messages ;
 		};
-		bool createDistantOfflineMessengingInvite(time_t time_of_validity,DistantMsgPeerId &peer_id) ;
-		bool getDistantOfflineMessengingInvites(std::vector<DistantOfflineMessengingInvite>& invites) ;
-
 		void enableDistantMessaging(bool b) ;
 		bool distantMessagingEnabled() ;
-		bool getDistantMessagePeerId(const RsGxsId &gxs_id,DistantMsgPeerId &peer_id) ;
 
 	private:
 		void sendPrivateMsgItem(RsMsgItem *msgitem) ;
 
-		// This maps contains the current invitations to respond to.
-		// The map is indexed by the hash
-		std::map<GRouterKeyId,DistantMessengingInvite> _messenging_invites ;
-
 		// This contains the ongoing tunnel handling contacts.
 		// The map is indexed by the hash
+		//
 		std::map<GRouterKeyId,DistantMessengingContact> _messenging_contacts ;
 
 		// Overloaded from RsTurtleClientService

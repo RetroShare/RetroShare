@@ -49,9 +49,9 @@ RSA *GxsSecurity::extractPublicKey(const RsTlvSecurityKey& key)
         return rsakey;
 }
 
-bool GxsSecurity::getSignature(char* data, uint32_t data_len, RsTlvSecurityKey* privKey, RsTlvKeySignature& sign)
+bool GxsSecurity::getSignature(const char *data, uint32_t data_len, const RsTlvSecurityKey& privKey, RsTlvKeySignature& sign)
 {
-	RSA* rsa_pub = extractPrivateKey(*privKey);
+	RSA* rsa_pub = extractPrivateKey(privKey);
 	EVP_PKEY *key_pub = EVP_PKEY_new();
 	EVP_PKEY_assign_RSA(key_pub, rsa_pub);
 
@@ -69,9 +69,31 @@ bool GxsSecurity::getSignature(char* data, uint32_t data_len, RsTlvSecurityKey* 
 	EVP_PKEY_free(key_pub);
 
 	sign.signData.setBinData(sigbuf, siglen);
-	sign.keyId = privKey->keyId;
+	sign.keyId = privKey.keyId;
 
 	return ok;
+}
+
+bool GxsSecurity::validateSignature(const char *data, uint32_t data_len, const RsTlvSecurityKey& key, const RsTlvKeySignature& signature)
+{
+	RSA *rsakey = RSAPublicKey_dup(extractPublicKey(key)) ;
+
+	EVP_PKEY *signKey = EVP_PKEY_new();
+	EVP_PKEY_assign_RSA(signKey, rsakey);
+
+	/* calc and check signature */
+	EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
+
+	EVP_VerifyInit(mdctx, EVP_sha1());
+	EVP_VerifyUpdate(mdctx, data, data_len);
+
+	int signOk = EVP_VerifyFinal(mdctx, (unsigned char*)signature.signData.bin_data, signature.signData.bin_len, signKey);
+
+	/* clean up */
+	EVP_PKEY_free(signKey);
+	EVP_MD_CTX_destroy(mdctx);
+
+	return signOk;
 }
 
 bool GxsSecurity::validateNxsMsg(RsNxsMsg& msg, RsTlvKeySignature& sign, RsTlvSecurityKey& key)

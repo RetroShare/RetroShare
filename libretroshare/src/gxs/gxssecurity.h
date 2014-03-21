@@ -139,7 +139,16 @@ public:
          * @param sign the signature is stored here
          * @return false if signature creation failed, true is signature created
          */
-        static bool getSignature(char* data, uint32_t data_len, RsTlvSecurityKey* privKey, RsTlvKeySignature& sign);
+        static bool getSignature(const char *data, uint32_t data_len, const RsTlvSecurityKey& privKey, RsTlvKeySignature& sign);
+
+        /*!
+         * @param data data that has been signed
+         * @param data_len length of signed data 
+         * @param privKey public key to used to check signature
+         * @param sign Signature for the data 
+         * @return true if signature checks
+         */
+        static bool validateSignature(const char *data, uint32_t data_len, const RsTlvSecurityKey& pubKey, const RsTlvKeySignature& sign);
 };
 
 #endif // GXSSECURITY_H

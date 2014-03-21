@@ -75,9 +75,7 @@ class p3GRouter: public RsGRouter, public p3Service, public p3Config
 		// Unregistering a key might not have an instantaneous effect, so the client is responsible for 
 		// discarding traffic that might later come for this key.
 		//
-		bool registerKey(const GRouterKeyId& key,const PGPFingerprintType& pgp_fingerprint,
-								const GRouterServiceId& client_id,const std::string& description_string) ;
-
+		bool   registerKey(const GRouterKeyId& key, const GRouterServiceId& client_id,const std::string& description_string) ;
 		bool unregisterKey(const GRouterKeyId& key) ;
 
 		//===================================================//
