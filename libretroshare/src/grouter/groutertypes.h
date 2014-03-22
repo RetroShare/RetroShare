@@ -50,6 +50,8 @@ static const time_t RS_GROUTER_PUBLISH_CAMPAIGN_PERIOD     =    1 *60 ; // Check
 static const time_t RS_GROUTER_PUBLISH_KEY_TIME_INTERVAL   =    2 *60 ; // Advertise each key once a day at most.
 static const time_t RS_GROUTER_ROUTING_WAITING_TIME        =     3600 ; // time between two trial of sending a given message
 static const time_t RS_GROUTER_KEY_DIFFUSION_MAX_KEEP      =     7200 ; // time to keep key diffusion items in cache, to avoid multiple diffusion.
+static const uint32_t GROUTER_ITEM_DISTANCE_UNIT           =      100 ; // One unit of distance between two peers
+static const uint32_t GROUTER_ITEM_MAX_TRAVEL_DISTANCE     =   10*100 ; // 10 distance units. That is a lot.
 
 static const uint32_t RS_GROUTER_ROUTING_STATE_UNKN = 0x0000 ;		// unknown. Unused.
 static const uint32_t RS_GROUTER_ROUTING_STATE_PEND = 0x0001 ;		// item is pending. Should be sent asap. 
@@ -70,6 +72,8 @@ struct FriendTrialRecord
 {
 	RsPeerId  friend_id ;			// id of the friend
 	time_t    time_stamp ;			// time of the last tried
+	float     probability ;			// probability at which the item was selected
+	int       nb_friends ;			// number of friends at the time of sending the item
 };
 
 class GRouterRoutingInfo
@@ -81,5 +85,6 @@ class GRouterRoutingInfo
 		std::list<FriendTrialRecord> tried_friends ; 	// list of friends to which the item was sent ordered with time.
 		RsPeerId  origin ;										// which friend sent us that item
 		time_t received_time ;									// time at which the item was received
+		uint32_t randomized_distance ; 						// distance of travel, randomized at each hop.
 };
 

@@ -60,7 +60,7 @@ class GRouterMatrix
 
 		// Record one routing clue. The events can possibly be merged in time buckets.
 		//
-		bool addRoutingClue(const GRouterKeyId& id,const GRouterServiceId& sid,float distance,const std::string& desc_string,const RsPeerId& source_friend) ;
+		bool addRoutingClue(const GRouterKeyId& id,const RsPeerId& source_friend,float weight) ;
 
 		// Dump info in terminal.
 		//

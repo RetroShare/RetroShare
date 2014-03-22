@@ -32,8 +32,7 @@ GRouterMatrix::GRouterMatrix()
 	_proba_need_updating = true ;
 }
 
-bool GRouterMatrix::addRoutingClue(	const GRouterKeyId& key_id,const GRouterServiceId& sid,float distance,
-												const std::string& desc_string,const RsPeerId& source_friend) 
+bool GRouterMatrix::addRoutingClue(const GRouterKeyId& key_id,const RsPeerId& source_friend,float weight) 
 {
 	// 1 - get the friend index.
 	//
@@ -44,7 +43,7 @@ bool GRouterMatrix::addRoutingClue(	const GRouterKeyId& key_id,const GRouterServ
 	time_t now = time(NULL) ;
 
 	RoutingMatrixHitEntry rc ;
-	rc.weight = 1.0f / (1.0f + distance) ;
+	rc.weight = weight ;
 	rc.time_stamp = now ;
 	rc.friend_id = fid ;
 

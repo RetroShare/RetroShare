@@ -50,6 +50,7 @@ const uint32_t RS_GROUTER_ACK_STATE_RECEIVED_INDIRECTLY = 0x0002 ;		// data was 
 const uint32_t RS_GROUTER_ACK_STATE_GIVEN_UP            = 0x0003 ;		// data was given up. No route.
 const uint32_t RS_GROUTER_ACK_STATE_NO_ROUTE            = 0x0004 ;		// data was given up. No route.
 const uint32_t RS_GROUTER_ACK_STATE_UNKNOWN             = 0x0005 ;		// unknown destination key
+const uint32_t RS_GROUTER_ACK_STATE_TOO_FAR             = 0x0006 ;		// dropped because of distance
 
 /***********************************************************************************/
 /*                           Basic GRouter Item Class                              */
@@ -151,6 +152,7 @@ class RsGRouterGenericDataItem: public RsGRouterItem, public RsGRouterNonCopyabl
 		//
 		GRouterMsgPropagationId routing_id ;
 		GRouterKeyId destination_key ;
+		uint32_t randomized_distance ;
 
 		uint32_t data_size ;
 		uint8_t *data_bytes;
