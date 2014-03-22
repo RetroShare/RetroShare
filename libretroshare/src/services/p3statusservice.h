@@ -51,6 +51,8 @@ class p3StatusService: public p3Service, public p3Config, public pqiMonitor
 	p3StatusService(p3LinkMgr *lm);
 virtual ~p3StatusService();
 
+virtual RsServiceInfo getServiceInfo();
+
 /***** overloaded from p3Service *****/
 virtual int tick();
 virtual int status();

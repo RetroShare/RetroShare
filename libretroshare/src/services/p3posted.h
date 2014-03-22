@@ -45,6 +45,7 @@ class p3Posted: public p3PostBase, public RsPosted
 	public:
 
 	p3Posted(RsGeneralDataService* gds, RsNetworkExchangeService* nes, RsGixs* gixs);
+virtual RsServiceInfo getServiceInfo();
 
 	protected:
 

@@ -119,7 +119,8 @@ PUBLIC_HEADERS =	retroshare/rsdisc.h \
 					retroshare/rstypes.h \
 					retroshare/rsdht.h \
 					retroshare/rsrtt.h \
-					retroshare/rsconfig.h
+					retroshare/rsconfig.h \
+					retroshare/rsservicecontrol.h \
 
 
 HEADERS += plugins/pluginmanager.h \
@@ -383,7 +384,8 @@ HEADERS +=	pqi/authssl.h \
 			pqi/pqithreadstreamer.h \
 			pqi/pqiqosstreamer.h \
 			pqi/sslfns.h \
-			pqi/pqinetstatebox.h 
+			pqi/pqinetstatebox.h \
+			pqi/p3servicecontrol.h \
 
 #			pqi/p3dhtmgr.h \
 
@@ -410,7 +412,9 @@ HEADERS +=	serialiser/rsbaseserial.h \
 			serialiser/rstlvkeys.h \
 			serialiser/rstlvkvwide.h \
 			serialiser/rstlvtypes.h \
+			serialiser/rstlvgenericparam.h \
 			serialiser/rstlvgenericmap.h \
+			serialiser/rstlvgenericmap.inl \
 			serialiser/rstlvmaps.h \
 			serialiser/rstlvutil.h \
 			serialiser/rstlvbanlist.h \
@@ -420,7 +424,8 @@ HEADERS +=	serialiser/rsbaseserial.h \
 			serialiser/rsheartbeatitems.h \
 			serialiser/rsrttitems.h \
 			serialiser/rsgxsrecognitems.h \
-                        serialiser/rsgxsupdateitems.h
+                        serialiser/rsgxsupdateitems.h \
+                        serialiser/rsserviceinfoitems.h \
 
 HEADERS +=	services/p3chatservice.h \
 			services/p3msgservice.h \
@@ -431,6 +436,7 @@ HEADERS +=	services/p3chatservice.h \
 			services/p3discovery2.h \
 			services/p3heartbeat.h \
 			services/p3rtt.h \
+			services/p3serviceinfo.cc \
 
 HEADERS +=	turtle/p3turtle.h \
 			turtle/rsturtleitem.h \
@@ -509,7 +515,8 @@ SOURCES +=	pqi/authgpg.cc \
 			pqi/pqithreadstreamer.cc \
 			pqi/pqiqosstreamer.cc \
 			pqi/sslfns.cc \
-			pqi/pqinetstatebox.cc 
+			pqi/pqinetstatebox.cc \
+			pqi/p3servicecontrol.cc \
 
 #			pqi/p3dhtmgr.cc \
 
@@ -545,7 +552,7 @@ SOURCES +=	serialiser/rsbaseserial.cc \
 			serialiser/rstlvkeys.cc \
 			serialiser/rstlvkvwide.cc \
 			serialiser/rstlvtypes.cc \
-			serialiser/rstlvgenericmap.cc \
+			serialiser/rstlvgenericparam.cc \
 			serialiser/rstlvutil.cc \
 			serialiser/rstlvbanlist.cc \
 			serialiser/rsbanlistitems.cc \
@@ -554,7 +561,8 @@ SOURCES +=	serialiser/rsbaseserial.cc \
 			serialiser/rsheartbeatitems.cc \
 			serialiser/rsrttitems.cc \
 			serialiser/rsgxsrecognitems.cc \
-                        serialiser/rsgxsupdateitems.cc
+                        serialiser/rsgxsupdateitems.cc \
+                        serialiser/rsserviceinfoitems.cc \
 
 SOURCES +=	services/p3chatservice.cc \
 			services/p3msgservice.cc \
@@ -565,6 +573,7 @@ SOURCES +=	services/p3chatservice.cc \
 			services/p3discovery2.cc \
 			services/p3heartbeat.cc \
 			services/p3rtt.cc \
+			services/p3serviceinfo.cc \
 
 SOURCES +=	turtle/p3turtle.cc \
 				turtle/rsturtleitem.cc 

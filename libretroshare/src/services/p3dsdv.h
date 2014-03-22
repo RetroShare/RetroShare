@@ -53,6 +53,7 @@ class p3Dsdv: public RsDsdv, public p3Service /* , public p3Config */, public pq
 {
 	public:
 	p3Dsdv(p3LinkMgr *cm);
+virtual RsServiceInfo getServiceInfo();
 
 		/*** internal librs interface ****/
 

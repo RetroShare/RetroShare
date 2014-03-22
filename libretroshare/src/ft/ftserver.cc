@@ -64,8 +64,8 @@ static const time_t FILE_TRANSFER_LOW_PRIORITY_TASKS_PERIOD = 5 ; // low priorit
 
 	/* Setup */
 ftServer::ftServer(p3PeerMgr *pm, p3LinkMgr *lm)
-        :       p3Service(RS_SERVICE_TYPE_FILE_TRANSFER),
-					 mPeerMgr(pm),
+        :       p3Service(),
+	 	mPeerMgr(pm),
                 mLinkMgr(lm),
 		mCacheStrapper(NULL),
 		mFiStore(NULL), mFiMon(NULL),
@@ -76,6 +76,23 @@ ftServer::ftServer(p3PeerMgr *pm, p3LinkMgr *lm)
 
 	addSerialType(new RsFileTransferSerialiser()) ;
 }
+
+const std::string FILE_TRANSFER_APP_NAME = "ft";
+const uint16_t FILE_TRANSFER_APP_MAJOR_VERSION	= 	1;
+const uint16_t FILE_TRANSFER_APP_MINOR_VERSION  = 	0;
+const uint16_t FILE_TRANSFER_MIN_MAJOR_VERSION  = 	1;
+const uint16_t FILE_TRANSFER_MIN_MINOR_VERSION	=	0;
+
+RsServiceInfo ftServer::getServiceInfo()
+{
+	return RsServiceInfo(RS_SERVICE_TYPE_FILE_TRANSFER, 
+		FILE_TRANSFER_APP_NAME,
+		FILE_TRANSFER_APP_MAJOR_VERSION, 
+		FILE_TRANSFER_APP_MINOR_VERSION, 
+		FILE_TRANSFER_MIN_MAJOR_VERSION, 
+		FILE_TRANSFER_MIN_MINOR_VERSION);
+}
+
 
 void	ftServer::setConfigDirectory(std::string path)
 {

@@ -135,6 +135,8 @@ class p3GxsCircles: public RsGxsCircleExchange, public RsGxsCircles,
 	p3GxsCircles(RsGeneralDataService* gds, RsNetworkExchangeService* nes, 
 		p3IdService *identities);
 
+virtual RsServiceInfo getServiceInfo();
+
 	/*********** External Interface ***************/
 
 	virtual bool getCircleDetails(const RsGxsCircleId &id, RsGxsCircleDetails &details);

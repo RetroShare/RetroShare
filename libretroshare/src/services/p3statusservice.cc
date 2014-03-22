@@ -48,7 +48,7 @@ std::ostream& operator<<(std::ostream& out, const StatusInfo& si)
 RsStatus *rsStatus = NULL;
 
 p3StatusService::p3StatusService(p3LinkMgr *cm)
-	:p3Service(RS_SERVICE_TYPE_STATUS), p3Config(CONFIG_TYPE_STATUS), mLinkMgr(cm), mStatusMtx("p3StatusService")
+	:p3Service(), p3Config(CONFIG_TYPE_STATUS), mLinkMgr(cm), mStatusMtx("p3StatusService")
 {
 	addSerialType(new RsStatusSerialiser());
 
@@ -57,6 +57,24 @@ p3StatusService::p3StatusService(p3LinkMgr *cm)
 p3StatusService::~p3StatusService()
 {
 }
+
+
+const std::string STATUS_APP_NAME = "status";
+const uint16_t STATUS_APP_MAJOR_VERSION	= 	1;
+const uint16_t STATUS_APP_MINOR_VERSION  = 	0;
+const uint16_t STATUS_MIN_MAJOR_VERSION  = 	1;
+const uint16_t STATUS_MIN_MINOR_VERSION	=	0;
+
+RsServiceInfo p3StatusService::getServiceInfo()
+{
+	return RsServiceInfo(RS_SERVICE_TYPE_STATUS, 
+		STATUS_APP_NAME,
+		STATUS_APP_MAJOR_VERSION, 
+		STATUS_APP_MINOR_VERSION, 
+		STATUS_MIN_MAJOR_VERSION, 
+		STATUS_MIN_MINOR_VERSION);
+}
+
 
 bool p3StatusService::getOwnStatus(StatusInfo& statusInfo)
 {

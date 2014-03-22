@@ -300,6 +300,12 @@ int     pqihandler::SendRsRawItem(RsRawItem *ns)
 // system that is completely biased and slow...
 // someone please fix.
 
+/////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
+// THIS CODE SHOULD BE ABLE TO BE REMOVED!
+/////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
+
 int pqihandler::locked_GetItems()
 {
 	std::map<RsPeerId, SearchModule *>::iterator it;
@@ -319,6 +325,11 @@ int pqihandler::locked_GetItems()
 			// if yes... attempt to read.
 			while((item = (mod -> pqi) -> GetItem()) != NULL)
 			{
+
+		std::cerr << "pqihandler::locked_GetItems() pqi->GetItem()";
+		std::cerr << " should never happen anymore!";
+		std::cerr << std::endl;
+
 #ifdef RSITEM_DEBUG 
 				std::string out;
 				rs_sprintf(out, "pqihandler::GetItems() Incoming Item from: %p\n", mod -> pqi);
@@ -406,6 +417,13 @@ RsRawItem *pqihandler::GetRsRawItem()
 	}
 	return NULL;
 }
+
+/////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
+// ABOVE CODE SHOULD BE ABLE TO BE REMOVED!
+/////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
+
 
 static const float MIN_RATE = 0.01; // 10 B/s
 

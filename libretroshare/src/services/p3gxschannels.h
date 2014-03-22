@@ -60,6 +60,7 @@ class p3GxsChannels: public RsGenExchange, public RsGxsChannels,
 	public:
 
 	p3GxsChannels(RsGeneralDataService* gds, RsNetworkExchangeService* nes, RsGixs* gixs);
+virtual RsServiceInfo getServiceInfo();
 
 virtual void service_tick();
 

@@ -43,6 +43,7 @@ class p3Wire: public RsGenExchange, public RsWire
 {
 public:
     p3Wire(RsGeneralDataService* gds, RsNetworkExchangeService* nes, RsGixs *gixs);
+virtual RsServiceInfo getServiceInfo();
 static uint32_t wireAuthenPolicy();
 
 protected:

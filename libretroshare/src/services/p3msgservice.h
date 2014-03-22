@@ -60,6 +60,7 @@ class p3MsgService: public p3Service, public p3Config, public pqiMonitor, public
 {
 	public:
 	p3MsgService(p3LinkMgr *lm);
+virtual RsServiceInfo getServiceInfo();
 
 	/* External Interface */
 bool 	getMessageSummaries(std::list<MsgInfoSummary> &msgList);

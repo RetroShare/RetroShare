@@ -53,12 +53,16 @@ std::string generateRandomServiceId();
 //TODO : encryption and upload / download rate implementation
 
 
+//	p3FastService(uint16_t type) 
+//	:pqiService((((uint32_t) RS_PKT_VERSION_SERVICE) << 24) + (((uint32_t) type) << 8)), 
+
+
 class p3FastService: public pqiService
 {
 	protected:
 
-	p3FastService(uint16_t type) 
-	:pqiService((((uint32_t) RS_PKT_VERSION_SERVICE) << 24) + (((uint32_t) type) << 8)), 
+	p3FastService() 
+	:pqiService(), 
 	srvMtx("p3FastService"), rsSerialiser(NULL)
 	{
 		rsSerialiser = new RsSerialiser();
@@ -95,8 +99,8 @@ class p3Service: public p3FastService
 {
 	protected:
 
-	p3Service(uint16_t type) 
-	:p3FastService(type)
+	p3Service() 
+	:p3FastService()
 	{
 		return; 
 	}
@@ -127,8 +131,8 @@ class nullService: public pqiService
 {
 	protected:
 
-	nullService(uint16_t type) 
-	:pqiService((((uint32_t) RS_PKT_VERSION_SERVICE) << 24) + (((uint32_t) type) << 8))
+	nullService() 
+	:pqiService()
 	{
 		return; 
 	}
@@ -157,8 +161,8 @@ class p3ThreadedService: public p3Service, public RsThread
 {
 	protected:
 
-	p3ThreadedService(uint16_t type) 
-	:p3Service(type) { return; }
+	p3ThreadedService() 
+	:p3Service() { return; }
 
 	public:
 

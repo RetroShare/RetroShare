@@ -867,6 +867,7 @@ RsGRouter *rsGRouter = NULL ;
         #endif
 #endif
 	
+#include "services/p3serviceinfo.h"
 #include "services/p3heartbeat.h"
 #include "services/p3discovery2.h"
 #include "services/p3msgservice.h"
@@ -1221,9 +1222,10 @@ int RsServer::StartupRetroShare()
 
 	/**************************** BITDHT ***********************************/
 
+	p3ServiceControl *serviceCtrl = new p3ServiceControl(0);
 
 	SecurityPolicy *none = secpolicy_create();
-	pqih = new pqisslpersongrp(none, flags, mPeerMgr);
+	pqih = new pqisslpersongrp(serviceCtrl, none, flags, mPeerMgr);
 	//pqih = new pqipersongrpDummy(none, flags);
 
 	/****** New Ft Server **** !!! */
@@ -1293,6 +1295,7 @@ int RsServer::StartupRetroShare()
 	mPluginsManager->loadPlugins(programatically_inserted_plugins) ;
 
 	/* create Services */
+	p3ServiceInfo *serviceInfo = new p3ServiceInfo(serviceCtrl);
 	mDisc = new p3discovery2(mPeerMgr, mLinkMgr, mNetMgr);
 	mHeart = new p3heartbeat(mLinkMgr, pqih);
 	msgSrv = new p3MsgService(mLinkMgr);
@@ -1302,13 +1305,13 @@ int RsServer::StartupRetroShare()
 #ifdef GROUTER
 	p3GRouter *gr = new p3GRouter(mLinkMgr) ;
 	rsGRouter = gr ;
-	pqih->addService(gr) ;
+	pqih->addService(gr, true) ;
 #endif
 
 	p3turtle *tr = new p3turtle(mLinkMgr) ;
 	rsTurtle = tr ;
-	pqih -> addService(tr);
-	pqih -> addService(ftserver);
+	pqih -> addService(tr, true);
+	pqih -> addService(ftserver, true);
 
 	rsDisc  = mDisc;
 	rsMsgs  = new p3Msgs(msgSrv, chatSrv);
@@ -1322,11 +1325,12 @@ int RsServer::StartupRetroShare()
 #endif
 	msgSrv->connectToTurtleRouter(tr) ;
 
-	pqih -> addService(mHeart);
-	pqih -> addService(mDisc);
-	pqih -> addService(msgSrv);
-	pqih -> addService(chatSrv);
-	pqih ->addService(mStatusSrv);
+	pqih -> addService(serviceInfo, true);
+	pqih -> addService(mHeart, true);
+	pqih -> addService(mDisc, true);
+	pqih -> addService(msgSrv, true);
+	pqih -> addService(chatSrv, true);
+	pqih ->addService(mStatusSrv, true);
 
 
 	// set interfaces for plugins
@@ -1400,13 +1404,12 @@ int RsServer::StartupRetroShare()
         // create GXS ID service
         RsGxsNetService* gxsid_ns = new RsGxsNetService(
                         RS_SERVICE_GXSV2_TYPE_GXSID, gxsid_ds, nxsMgr,
-                        mGxsIdService, mGxsIdService, mGxsCircles,
-                        true); // don't synchronise group automatic (need explicit group request)
+			mGxsIdService, mGxsIdService->getServiceInfo(), 
+			mGxsIdService, mGxsCircles,
+			false); // don't synchronise group automatic (need explicit group request)
 
         mGxsIdService->setNes(gxsid_ns);
         /**** GxsCircle service ****/
-
-
 
 
 #ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
@@ -1419,7 +1422,8 @@ int RsServer::StartupRetroShare()
         // create GXS Circle service
         RsGxsNetService* gxscircles_ns = new RsGxsNetService(
                         RS_SERVICE_GXSV2_TYPE_GXSCIRCLE, gxscircles_ds, nxsMgr,
-                        mGxsCircles, mGxsIdService, mGxsCircles);
+                        mGxsCircles, mGxsCircles->getServiceInfo(), 
+			mGxsIdService, mGxsCircles);
 
 
         /**** Photo service ****/
@@ -1435,14 +1439,17 @@ int RsServer::StartupRetroShare()
 
         // create GXS photo service
         RsGxsNetService* photo_ns = new RsGxsNetService(
-                        RS_SERVICE_GXSV2_TYPE_PHOTO, photo_ds, nxsMgr, mPhoto, mGxsIdService, mGxsCircles);
+                        RS_SERVICE_GXSV2_TYPE_PHOTO, photo_ds, nxsMgr, 
+			mPhoto, mPhoto->getServiceInfo(), 
+			mGxsIdService, mGxsCircles);
 
         /**** Posted GXS service ****/
 
 
 
         RsGeneralDataService* posted_ds = new RsDataService(currGxsDir + "/", "posted_db",
-                                                            RS_SERVICE_GXSV2_TYPE_POSTED, NULL, RsInitConfig::gxs_passwd);
+                        RS_SERVICE_GXSV2_TYPE_POSTED, 
+			NULL, RsInitConfig::gxs_passwd);
 
 #ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
         posted_ds->resetDataStore(); //TODO: remove, new service data per RS session, for testing
@@ -1452,16 +1459,16 @@ int RsServer::StartupRetroShare()
 
         // create GXS photo service
         RsGxsNetService* posted_ns = new RsGxsNetService(
-                        RS_SERVICE_GXSV2_TYPE_POSTED, posted_ds, nxsMgr, mPosted, mGxsIdService, mGxsCircles);
-
+                        RS_SERVICE_GXSV2_TYPE_POSTED, posted_ds, nxsMgr, 
+			mPosted, mPosted->getServiceInfo(), 
+			mGxsIdService, mGxsCircles);
 
         /**** Wiki GXS service ****/
 
 
-
         RsGeneralDataService* wiki_ds = new RsDataService(currGxsDir + "/", "wiki_db",
-                                                            RS_SERVICE_GXSV2_TYPE_WIKI,
-                                                            NULL, RsInitConfig::gxs_passwd);
+                        RS_SERVICE_GXSV2_TYPE_WIKI,
+                        NULL, RsInitConfig::gxs_passwd);
 
 #ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
         wiki_ds->resetDataStore(); //TODO: remove, new service data per RS session, for testing
@@ -1471,14 +1478,17 @@ int RsServer::StartupRetroShare()
 
         // create GXS photo service
         RsGxsNetService* wiki_ns = new RsGxsNetService(
-                        RS_SERVICE_GXSV2_TYPE_WIKI, wiki_ds, nxsMgr, mWiki, mGxsIdService, mGxsCircles);
+                        RS_SERVICE_GXSV2_TYPE_WIKI, wiki_ds, nxsMgr, 
+			mWiki, mWiki->getServiceInfo(), 
+			mGxsIdService, mGxsCircles);
 
 
         /**** Wire GXS service ****/
 
 
         RsGeneralDataService* wire_ds = new RsDataService(currGxsDir + "/", "wire_db",
-                                                            RS_SERVICE_GXSV2_TYPE_WIRE, NULL, RsInitConfig::gxs_passwd);
+                        RS_SERVICE_GXSV2_TYPE_WIRE, 
+			NULL, RsInitConfig::gxs_passwd);
 
 #ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
         wire_ds->resetDataStore(); //TODO: remove, new service data per RS session, for testing
@@ -1488,7 +1498,9 @@ int RsServer::StartupRetroShare()
 
         // create GXS photo service
         RsGxsNetService* wire_ns = new RsGxsNetService(
-                        RS_SERVICE_GXSV2_TYPE_WIRE, wire_ds, nxsMgr, mWire, mGxsIdService, mGxsCircles);
+                        RS_SERVICE_GXSV2_TYPE_WIRE, wire_ds, nxsMgr, 
+			mWire, mWire->getServiceInfo(), 
+			mGxsIdService, mGxsCircles);
 
 
         /**** Forum GXS service ****/
@@ -1505,7 +1517,8 @@ int RsServer::StartupRetroShare()
         // create GXS photo service
         RsGxsNetService* gxsforums_ns = new RsGxsNetService(
                         RS_SERVICE_GXSV2_TYPE_FORUMS, gxsforums_ds, nxsMgr,
-                        mGxsForums, mGxsIdService, mGxsCircles);
+                        mGxsForums, mGxsForums->getServiceInfo(),
+			mGxsIdService, mGxsCircles);
 
 
         /**** Channel GXS service ****/
@@ -1522,16 +1535,17 @@ int RsServer::StartupRetroShare()
         // create GXS photo service
         RsGxsNetService* gxschannels_ns = new RsGxsNetService(
                         RS_SERVICE_GXSV2_TYPE_CHANNELS, gxschannels_ds, nxsMgr,
-                        mGxsChannels, mGxsIdService, mGxsCircles);
+                        mGxsChannels, mGxsChannels->getServiceInfo(), 
+			mGxsIdService, mGxsCircles);
 
         // now add to p3service
-        pqih->addService(gxsid_ns);
-        pqih->addService(gxscircles_ns);
-        pqih->addService(photo_ns);
-        pqih->addService(posted_ns);
-        pqih->addService(wiki_ns);
-        pqih->addService(gxsforums_ns);
-        pqih->addService(gxschannels_ns);
+        pqih->addService(gxsid_ns, true);
+        pqih->addService(gxscircles_ns, true);
+        pqih->addService(photo_ns, true);
+        pqih->addService(posted_ns, true);
+        pqih->addService(wiki_ns, true);
+        pqih->addService(gxsforums_ns, true);
+        pqih->addService(gxschannels_ns, true);
 
         // remove pword from memory
         RsInitConfig::gxs_passwd = "";
@@ -1541,21 +1555,21 @@ int RsServer::StartupRetroShare()
 
 #ifdef RS_RTT
 	p3rtt *mRtt = new p3rtt(mLinkMgr);
-	pqih -> addService(mRtt);
+	pqih -> addService(mRtt, true);
 	rsRtt = mRtt;
 #endif
 
 	// new services to test.
 	p3BanList *mBanList = new p3BanList(mLinkMgr, mNetMgr);
-	pqih -> addService(mBanList);
+	pqih -> addService(mBanList, true);
 	mBitDht->setupPeerSharer(mBanList);
 
 	p3BandwidthControl *mBwCtrl = new p3BandwidthControl(pqih);
-	pqih -> addService(mBwCtrl); 
+	pqih -> addService(mBwCtrl, true); 
 
 #ifdef SERVICES_DSDV
 	p3Dsdv *mDsdv = new p3Dsdv(mLinkMgr);
-	pqih -> addService(mDsdv);
+	pqih -> addService(mDsdv, true);
 	rsDsdv = mDsdv;
 	mDsdv->addTestService();
 #endif
@@ -1589,6 +1603,7 @@ int RsServer::StartupRetroShare()
 
 	/**************************************************************************/
 	/* need to Monitor too! */
+	mLinkMgr->addMonitor(serviceInfo);
 	mLinkMgr->addMonitor(pqih);
 	mLinkMgr->addMonitor(mCacheStrapper);
 	mLinkMgr->addMonitor(mDisc);

@@ -44,7 +44,7 @@ bool pqiService::send(RsRawItem *item)
 }
 
 
-p3ServiceServer::p3ServiceServer(pqiPublisher *pub) : mPublisher(pub), srvMtx("p3ServiceServer") 
+p3ServiceServer::p3ServiceServer(pqiPublisher *pub, p3ServiceControl *ctrl) : mPublisher(pub), mServiceControl(ctrl), srvMtx("p3ServiceServer") 
 {
 	RsStackMutex stack(srvMtx); /********* LOCKED *********/
 
@@ -56,7 +56,7 @@ p3ServiceServer::p3ServiceServer(pqiPublisher *pub) : mPublisher(pub), srvMtx("p
 	return;
 }
 
-int	p3ServiceServer::addService(pqiService *ts)
+int	p3ServiceServer::addService(pqiService *ts, bool defaultOn)
 {
 	RsStackMutex stack(srvMtx); /********* LOCKED *********/
 
@@ -65,18 +65,21 @@ int	p3ServiceServer::addService(pqiService *ts)
 		"p3ServiceServer::addService()");
 #endif
 
-
+	RsServiceInfo info = ts->getServiceInfo();
 	std::map<uint32_t, pqiService *>::iterator it;
-	it = services.find(ts -> getType());
+	it = services.find(info.mServiceType);
 	if (it != services.end())
 	{
-		std::cerr << "p3ServiceServer::addService(): Service already added with id " << ts->getType() << "!" << std::endl;
+		std::cerr << "p3ServiceServer::addService(): Service already added with id " << info.mServiceType << "!" << std::endl;
 		// it exists already!
 		return -1;
 	}
 
 	ts->setServiceServer(this);
-	services[ts -> getType()] = ts;
+	services[info.mServiceType] = ts;
+
+	// This doesn't need to be in Mutex.
+	mServiceControl->registerService(info, defaultOn);
 
 	return 1;
 }
@@ -96,6 +99,16 @@ bool	p3ServiceServer::recvItem(RsRawItem *item)
 		pqioutput(PQL_DEBUG_BASIC, pqiservicezone, out);
 	}
 #endif
+
+	// Packet Filtering.
+	// This doesn't need to be in Mutex.
+	if (!mServiceControl->checkFilter(item->PacketId() & 0xffffff00, item->PeerId()))
+	{
+		std::cerr << "p3ServiceServer::recvItem() Fails Filtering";
+		delete item;
+		return false;
+	}
+
 
 	std::map<uint32_t, pqiService *>::iterator it;
 	it = services.find(item -> PacketId() & 0xffffff00);
@@ -133,8 +146,20 @@ bool p3ServiceServer::sendItem(RsRawItem *item)
 	item -> print_string(out);
 	std::cerr << std::endl;
 #endif
+	if (!item)
+	{
+		std::cerr << "p3ServiceServer::sendItem() Caught Null item";
+		std::cerr << std::endl;
+		return false;
+	}
 
-	/* any filtering ??? */
+	// Packet Filtering.
+	if (!mServiceControl->checkFilter(item->PacketId() & 0xffffff00, item->PeerId()))
+	{
+		std::cerr << "p3ServiceServer::sendItem() Fails Filtering";
+		delete item;
+		return false;
+	}
 
 	mPublisher->sendItem(item);
 	return true;

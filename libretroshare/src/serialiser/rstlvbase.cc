@@ -259,6 +259,98 @@ bool GetTlvUInt32(void *data, uint32_t size, uint32_t *offset,
 	return ok;
 }
 
+// UInt16
+bool SetTlvUInt16(void *data, uint32_t size, uint32_t *offset, uint16_t type,
+		uint16_t out) 
+{
+	if (!data)
+		return false;
+	uint32_t tlvsize = GetTlvUInt16Size(); /* this will always be 8 bytes */
+	uint32_t tlvend = *offset + tlvsize; /* where the data will extend to */
+	if (size < tlvend)
+	{
+#ifdef TLV_BASE_DEBUG
+		std::cerr << "SetTlvUInt16() FAILED - not enough space. (or earlier)" << std::endl;
+		std::cerr << "SetTlvUInt16() size: " << size << std::endl;
+		std::cerr << "SetTlvUInt16() tlvsize: " << tlvsize << std::endl;
+		std::cerr << "SetTlvUInt16() tlvend: " << tlvend << std::endl;
+#endif
+		return false;
+	}
+
+	bool ok = true;
+
+	/* Now use the function we got to set the TlvHeader */
+	/* function shifts offset to the new start for the next data */
+	ok &= SetTlvBase(data, tlvend, offset, type, tlvsize);
+
+#ifdef TLV_BASE_DEBUG
+	if (!ok)
+	{
+		std::cerr << "SetTlvUInt16() SetTlvBase FAILED (or earlier)" << std::endl;
+	}
+#endif
+
+	/* now set the UInt16 ( in rsbaseserial.h???) */
+	ok &= setRawUInt16(data, tlvend, offset, out);
+
+#ifdef TLV_BASE_DEBUG
+	if (!ok)
+	{
+		std::cerr << "SetTlvUInt16() setRawUInt16 FAILED (or earlier)" << std::endl;
+	}
+#endif
+
+
+	return ok;
+
+}
+
+bool GetTlvUInt16(void *data, uint32_t size, uint32_t *offset, 
+		uint16_t type, uint16_t *in) 
+{
+	if (!data)
+		return false;
+
+	if (size < *offset + TLV_HEADER_SIZE)
+		return false;
+
+	/* extract the type and size */
+	void *tlvstart = right_shift_void_pointer(data, *offset);
+	uint16_t tlvtype = GetTlvType(tlvstart);
+	uint32_t tlvsize = GetTlvSize(tlvstart);
+
+	/* check that there is size */
+	uint32_t tlvend = *offset + tlvsize;
+	if (size < tlvend)
+	{
+#ifdef TLV_BASE_DEBUG
+		std::cerr << "GetTlvUInt16() FAILED - not enough space." << std::endl;
+		std::cerr << "GetTlvUInt16() size: " << size << std::endl;
+		std::cerr << "GetTlvUInt16() tlvsize: " << tlvsize << std::endl;
+		std::cerr << "GetTlvUInt16() tlvend: " << tlvend << std::endl;
+#endif
+		return false;
+	}
+
+	if (type != tlvtype)
+	{
+#ifdef TLV_BASE_DEBUG
+		std::cerr << "GetTlvUInt16() FAILED - Type mismatch" << std::endl;
+		std::cerr << "GetTlvUInt16() type: " << type << std::endl;
+		std::cerr << "GetTlvUInt16() tlvtype: " << tlvtype << std::endl;
+#endif
+		return false;
+	}
+
+	*offset += TLV_HEADER_SIZE; /* step past header */
+
+	bool ok = true;
+	ok &= getRawUInt16(data, tlvend, offset, in);
+
+	return ok;
+}
+
 
 uint32_t GetTlvUInt64Size() {
 	return TLV_HEADER_SIZE + 8;

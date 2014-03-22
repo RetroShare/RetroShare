@@ -1,6 +1,6 @@
 
 /*
- * libretroshare/src/serialiser: rstlvgenericmap.cc
+ * libretroshare/src/serialiser: rstlvgenericmap.inl
  *
  * RetroShare Serialiser.
  *
@@ -35,89 +35,6 @@
 #include <iostream>
 
 #define TLV_DEBUG 1
-
-/* generic print */
-template<class T>
-std::ostream & RsTlvParamRef<T>::print(std::ostream &out, uint16_t indent)
-{
-	printIndent(out, indent);
-	out << "Type: " << mParamType << "Param: " << mParam;
-	return out;
-}
-
-
-template<>
-uint32_t RsTlvParamRef<uint32_t>::TlvSize()
-{
-	return GetTlvUInt32Size();
-}
-
-template<>
-void RsTlvParamRef<uint32_t>::TlvClear()
-{
-	mParam = 0;
-}
-
-template<>
-bool RsTlvParamRef<uint32_t>::SetTlv(void *data, uint32_t size, uint32_t *offset)
-{
-        return SetTlvUInt32(data, size, offset, mParamType, mParam);
-}
-
-template<>
-bool RsTlvParamRef<uint32_t>::GetTlv(void *data, uint32_t size, uint32_t *offset)
-{
-	return GetTlvUInt32(data, size, offset, mParamType, &mParam);
-}
-
-#if 0
-template<>
-std::ostream & RsTlvParamRef<uint32_t>::print(std::ostream &out, uint16_t indent)
-{
-	printIndent(out, indent);
-	out << mParam;
-	return out;
-}
-#endif
-
-/***** std::string ****/
-template<>
-uint32_t RsTlvParamRef<std::string>::TlvSize()
-{
-	return GetTlvStringSize(mParam);
-}
-
-template<>
-void RsTlvParamRef<std::string>::TlvClear()
-{
-	mParam.clear();
-}
-
-template<>
-bool RsTlvParamRef<std::string>::SetTlv(void *data, uint32_t size, uint32_t *offset)
-{
-        return SetTlvString(data, size, offset, mParamType, mParam);
-}
-
-template<>
-bool RsTlvParamRef<std::string>::GetTlv(void *data, uint32_t size, uint32_t *offset)
-{
-	return GetTlvString(data, size, offset, mParamType, mParam);
-}
-
-#if 0
-template<>
-std::ostream & RsTlvParamRef<std::string>::print(std::ostream &out, uint16_t indent)
-{
-	printIndent(out, indent);
-	out << "Type: " << mParamType << "Param: " << mParam;
-	return out;
-}
-#endif
-
-// declare likely combinations.
-template class RsTlvParamRef<uint32_t>;
-template class RsTlvParamRef<std::string>;
 
 /*********************************** RsTlvGenericPairRef ***********************************/
 
@@ -163,6 +80,16 @@ bool  RsTlvGenericPairRef<K, V>::SetTlv(void *data, uint32_t size, uint32_t *off
 	ok &= key.SetTlv(data, tlvend, offset);
 	ok &= value.SetTlv(data, tlvend, offset);
 
+	if (!ok)
+	{
+		std::cerr << "RsTlvGenericPairRef<>::SetTlv() Failed";
+		std::cerr << std::endl;
+	}
+	else
+	{
+		std::cerr << "RsTlvGenericPairRef<>::SetTlv() Ok";
+		std::cerr << std::endl;
+	}
 	return ok;
 }
 
@@ -186,6 +113,9 @@ bool  RsTlvGenericPairRef<K, V>::GetTlv(void *data, uint32_t size, uint32_t *off
 
 	/* ready to load */
 	TlvClear();
+
+	/* skip the header */
+	(*offset) += TLV_HEADER_SIZE;
 
 	RsTlvParamRef<K> key(mKeyType, mKey);
 	RsTlvParamRef<V> value(mValueType, mValue);
@@ -213,7 +143,7 @@ bool  RsTlvGenericPairRef<K, V>::GetTlv(void *data, uint32_t size, uint32_t *off
 template<class K, class V>
 std::ostream &RsTlvGenericPairRef<K, V>::print(std::ostream &out, uint16_t indent)
 { 
-	printBase(out, "RsTlvGenericPairRef", indent);
+	//printBase(out, "RsTlvGenericPairRef", indent);
 	uint16_t int_Indent = indent + 2;
 
 	RsTlvParamRef<K> key(mKeyType, mKey);
@@ -229,7 +159,7 @@ std::ostream &RsTlvGenericPairRef<K, V>::print(std::ostream &out, uint16_t inden
 	value.print(out, 0);
 	out << std::endl;
 	
-	printEnd(out, "RsTlvGenericPairRef", indent);
+	//printEnd(out, "RsTlvGenericPairRef", indent);
 	return out;
 }
 
@@ -285,6 +215,12 @@ bool  RsTlvGenericMapRef<K, V>::SetTlv(void *data, uint32_t size, uint32_t *offs
 		ok &= pair.SetTlv(data, size, offset);
 	}
 
+	if (!ok)
+	{
+		std::cerr << "RsTlvGenericMapRef<>::SetTlv() Failed";
+		std::cerr << std::endl;
+	}
+
 	return ok;
 }
 
@@ -322,7 +258,7 @@ bool  RsTlvGenericMapRef<K, V>::GetTlv(void *data, uint32_t size, uint32_t *offs
 		{
 			K k;
 			V v;
-			RsTlvGenericPairRef<const K, V> pair(mPairType, mKeyType, mValueType, k, v);
+			RsTlvGenericPairRef<K, V> pair(mPairType, mKeyType, mValueType, k, v);
 			ok &= pair.GetTlv(data, size, offset);
 			if (ok)
 			{
@@ -360,7 +296,7 @@ bool  RsTlvGenericMapRef<K, V>::GetTlv(void *data, uint32_t size, uint32_t *offs
 template<class K, class V>
 std::ostream &RsTlvGenericMapRef<K, V>::print(std::ostream &out, uint16_t indent)
 {
-	printBase(out, "RsTlvGenericMapRef", indent);
+	//printBase(out, "RsTlvGenericMapRef", indent);
 	uint16_t int_Indent = indent + 2;
 	
 	printIndent(out, int_Indent);
@@ -373,15 +309,15 @@ std::ostream &RsTlvGenericMapRef<K, V>::print(std::ostream &out, uint16_t indent
 		pair.print(out, int_Indent);
 	}
 
-	printEnd(out, "RsTlvGenericMapRef", indent);
+	//printEnd(out, "RsTlvGenericMapRef", indent);
 	return out;
 }
 
 // declare likely combinations.
-template class RsTlvGenericMapRef<uint32_t, uint32_t>;
-template class RsTlvGenericMapRef<uint32_t, std::string>;
-template class RsTlvGenericMapRef<std::string, uint32_t>;
-template class RsTlvGenericMapRef<std::string, std::string>;
+//template class RsTlvGenericMapRef<uint32_t, uint32_t>;
+//template class RsTlvGenericMapRef<uint32_t, std::string>;
+//template class RsTlvGenericMapRef<std::string, uint32_t>;
+//template class RsTlvGenericMapRef<std::string, std::string>;
 
 
 

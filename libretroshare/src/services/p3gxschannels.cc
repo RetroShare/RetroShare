@@ -78,6 +78,24 @@ p3GxsChannels::p3GxsChannels(RsGeneralDataService *gds, RsNetworkExchangeService
 
 }
 
+
+const std::string GXS_CHANNELS_APP_NAME = "gxschannels";
+const uint16_t GXS_CHANNELS_APP_MAJOR_VERSION  =       1;
+const uint16_t GXS_CHANNELS_APP_MINOR_VERSION  =       0;
+const uint16_t GXS_CHANNELS_MIN_MAJOR_VERSION  =       1;
+const uint16_t GXS_CHANNELS_MIN_MINOR_VERSION  =       0;
+
+RsServiceInfo p3GxsChannels::getServiceInfo()
+{
+        return RsServiceInfo(RS_SERVICE_GXSV2_TYPE_CHANNELS,
+                GXS_CHANNELS_APP_NAME,
+                GXS_CHANNELS_APP_MAJOR_VERSION,
+                GXS_CHANNELS_APP_MINOR_VERSION,
+                GXS_CHANNELS_MIN_MAJOR_VERSION,
+                GXS_CHANNELS_MIN_MINOR_VERSION);
+}
+
+
 uint32_t p3GxsChannels::channelsAuthenPolicy()
 {
 	uint32_t policy = 0;

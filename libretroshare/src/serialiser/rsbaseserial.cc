@@ -215,6 +215,12 @@ bool setRawUFloat32(void *data,uint32_t size,uint32_t *offset,float f)
 	return setRawUInt32(data, size, offset, n);
 }
 
+
+uint32_t getRawStringSize(const std::string &outStr)
+{
+	return outStr.length() + 4;
+}
+
 bool getRawString(void *data, uint32_t size, uint32_t *offset, std::string &outStr)
 {
 	uint32_t len = 0;

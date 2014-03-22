@@ -92,6 +92,23 @@ p3PhotoService::p3PhotoService(RsGeneralDataService* gds, RsNetworkExchangeServi
 {
 }
 
+const std::string GXS_PHOTO_APP_NAME = "gxsphoto";
+const uint16_t GXS_PHOTO_APP_MAJOR_VERSION  =       1;
+const uint16_t GXS_PHOTO_APP_MINOR_VERSION  =       0;
+const uint16_t GXS_PHOTO_MIN_MAJOR_VERSION  =       1;
+const uint16_t GXS_PHOTO_MIN_MINOR_VERSION  =       0;
+
+RsServiceInfo p3PhotoService::getServiceInfo()
+{
+        return RsServiceInfo(RS_SERVICE_GXSV2_TYPE_PHOTO,
+                GXS_PHOTO_APP_NAME,
+                GXS_PHOTO_APP_MAJOR_VERSION,
+                GXS_PHOTO_APP_MINOR_VERSION,
+                GXS_PHOTO_MIN_MAJOR_VERSION,
+                GXS_PHOTO_MIN_MINOR_VERSION);
+}
+
+
 
 uint32_t p3PhotoService::photoAuthenPolicy()
 {

@@ -123,7 +123,7 @@ uint32_t ConvertToSerialised(int32_t value, bool limit)
 
 
 p3GxsReputation::p3GxsReputation(p3LinkMgr *lm)
-	:p3Service(RS_SERVICE_GXSV2_TYPE_REPUTATION), p3Config(CONFIG_TYPE_GXS_REPUTATION),
+	:p3Service(), p3Config(CONFIG_TYPE_GXS_REPUTATION),
 	mReputationMtx("p3GxsReputation"), mLinkMgr(lm) 
 {
 	addSerialType(new RsGxsReputationSerialiser());
@@ -132,6 +132,24 @@ p3GxsReputation::p3GxsReputation(p3LinkMgr *lm)
 	mStoreTime = 0;
 	mReputationsUpdated = false;
 }
+
+
+const std::string GXS_REPUTATION_APP_NAME = "gxsreputation";
+const uint16_t GXS_REPUTATION_APP_MAJOR_VERSION  =       1;
+const uint16_t GXS_REPUTATION_APP_MINOR_VERSION  =       0;
+const uint16_t GXS_REPUTATION_MIN_MAJOR_VERSION  =       1;
+const uint16_t GXS_REPUTATION_MIN_MINOR_VERSION  =       0;
+
+RsServiceInfo p3GxsReputation::getServiceInfo()
+{
+        return RsServiceInfo(RS_SERVICE_GXSV2_TYPE_REPUTATION,
+                GXS_REPUTATION_APP_NAME,
+                GXS_REPUTATION_APP_MAJOR_VERSION,
+                GXS_REPUTATION_APP_MINOR_VERSION,
+                GXS_REPUTATION_MIN_MAJOR_VERSION,
+                GXS_REPUTATION_MIN_MINOR_VERSION);
+}
+
 
 
 int	p3GxsReputation::tick()

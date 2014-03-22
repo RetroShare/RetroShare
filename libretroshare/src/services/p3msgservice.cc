@@ -76,7 +76,7 @@ static const uint8_t ENCRYPTED_MSG_PROTOCOL_VERSION_01 = 0x37 ;
 
 
 p3MsgService::p3MsgService(p3LinkMgr *lm)
-	:p3Service(RS_SERVICE_TYPE_MSG), p3Config(CONFIG_TYPE_MSGS),
+	:p3Service(), p3Config(CONFIG_TYPE_MSGS),
 	mLinkMgr(lm), mMsgMtx("p3MsgService"), mMsgUniqueId(time(NULL))
 {
 	_serialiser = new RsMsgSerialiser();
@@ -107,6 +107,23 @@ p3MsgService::p3MsgService(p3LinkMgr *lm)
 	mGRouter->registerKey(key,fingerp,client_id,description) ;
 #endif
 }
+
+const std::string MSG_APP_NAME = "msg";
+const uint16_t MSG_APP_MAJOR_VERSION	= 	1;
+const uint16_t MSG_APP_MINOR_VERSION  = 	0;
+const uint16_t MSG_MIN_MAJOR_VERSION  = 	1;
+const uint16_t MSG_MIN_MINOR_VERSION	=	0;
+
+RsServiceInfo p3MsgService::getServiceInfo()
+{
+	return RsServiceInfo(RS_SERVICE_TYPE_MSG, 
+		MSG_APP_NAME,
+		MSG_APP_MAJOR_VERSION, 
+		MSG_APP_MINOR_VERSION, 
+		MSG_MIN_MAJOR_VERSION, 
+		MSG_MIN_MINOR_VERSION);
+}
+
 
 uint32_t p3MsgService::getNewUniqueMsgId()
 {

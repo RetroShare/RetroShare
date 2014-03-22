@@ -61,6 +61,24 @@ p3GxsForums::p3GxsForums(RsGeneralDataService *gds, RsNetworkExchangeService *ne
 
 }
 
+
+const std::string GXS_FORUMS_APP_NAME = "gxsforums";
+const uint16_t GXS_FORUMS_APP_MAJOR_VERSION  =       1;
+const uint16_t GXS_FORUMS_APP_MINOR_VERSION  =       0;
+const uint16_t GXS_FORUMS_MIN_MAJOR_VERSION  =       1;
+const uint16_t GXS_FORUMS_MIN_MINOR_VERSION  =       0;
+
+RsServiceInfo p3GxsForums::getServiceInfo()
+{
+        return RsServiceInfo(RS_SERVICE_GXSV2_TYPE_FORUMS,
+                GXS_FORUMS_APP_NAME,
+                GXS_FORUMS_APP_MAJOR_VERSION,
+                GXS_FORUMS_APP_MINOR_VERSION,
+                GXS_FORUMS_MIN_MAJOR_VERSION,
+                GXS_FORUMS_MIN_MINOR_VERSION);
+}
+
+
 uint32_t p3GxsForums::forumsAuthenPolicy()
 {
 	uint32_t policy = 0;

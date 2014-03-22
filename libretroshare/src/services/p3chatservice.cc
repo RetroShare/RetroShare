@@ -76,7 +76,7 @@ static const uint32_t MAX_MESSAGES_PER_SECONDS_NUMBER     =  5 ; // max number o
 static const uint32_t MAX_MESSAGES_PER_SECONDS_PERIOD     = 10 ; // duration window for max number of messages before messages get dropped.
 
 p3ChatService::p3ChatService(p3LinkMgr *lm, p3HistoryMgr *historyMgr)
-	:p3Service(RS_SERVICE_TYPE_CHAT), p3Config(CONFIG_TYPE_CHAT), mChatMtx("p3ChatService"), mLinkMgr(lm) , mHistoryMgr(historyMgr)
+	:p3Service(), p3Config(CONFIG_TYPE_CHAT), mChatMtx("p3ChatService"), mLinkMgr(lm) , mHistoryMgr(historyMgr)
 {
 	_serializer = new RsChatSerialiser() ;
 	_own_avatar = NULL ;
@@ -90,6 +90,23 @@ p3ChatService::p3ChatService(p3LinkMgr *lm, p3HistoryMgr *historyMgr)
 
 	addSerialType(_serializer) ;
 }
+
+const std::string CHAT_APP_NAME = "chat";
+const uint16_t CHAT_APP_MAJOR_VERSION	= 	1;
+const uint16_t CHAT_APP_MINOR_VERSION  = 	0;
+const uint16_t CHAT_MIN_MAJOR_VERSION  = 	1;
+const uint16_t CHAT_MIN_MINOR_VERSION	=	0;
+
+RsServiceInfo p3ChatService::getServiceInfo()
+{
+	return RsServiceInfo(RS_SERVICE_TYPE_CHAT, 
+		CHAT_APP_NAME,
+		CHAT_APP_MAJOR_VERSION, 
+		CHAT_APP_MINOR_VERSION, 
+		CHAT_MIN_MAJOR_VERSION, 
+		CHAT_MIN_MINOR_VERSION);
+}
+
 
 void p3ChatService::connectToTurtleRouter(p3turtle *tr)
 {

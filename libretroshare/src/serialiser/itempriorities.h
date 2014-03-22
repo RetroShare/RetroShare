@@ -109,3 +109,7 @@ const uint8_t QOS_PRIORITY_RS_DSDV_DATA     			= 2 ;
 const uint8_t QOS_PRIORITY_RS_GXS_NET                   = 3 ;
 // GXS Reputation.
 const uint8_t QOS_PRIORITY_RS_GXSREPUTATION_ITEM		= 2;
+
+// Service Info / Control.
+const uint8_t QOS_PRIORITY_RS_SERVICE_INFO_ITEM		= 7;
+

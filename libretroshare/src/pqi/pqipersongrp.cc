@@ -83,6 +83,10 @@ int pqipersongrp::tickServiceRecv()
 
 	while(NULL != (pqi = GetRsRawItem()))
 	{
+		std::cerr << "pqipersongrp::tickServiceRecv() GetRsRawItem()";
+		std::cerr << " should never happen anymore!";
+		std::cerr << std::endl;
+
 		++i;
 		pqioutput(PQL_DEBUG_BASIC, pqipersongrpzone, 
 			"pqipersongrp::tickServiceRecv() Incoming TunnelItem");
@@ -130,8 +134,8 @@ int pqipersongrp::tickServiceSend()
 
 
 	// init
-pqipersongrp::pqipersongrp(SecurityPolicy *glob, unsigned long flags)
-	:pqihandler(glob), p3ServiceServer(this), pqil(NULL), initFlags(flags)
+pqipersongrp::pqipersongrp(p3ServiceControl *ctrl, SecurityPolicy *glob, unsigned long flags)
+	:pqihandler(glob), p3ServiceServer(this, ctrl), pqil(NULL), initFlags(flags)
 {
 }
 

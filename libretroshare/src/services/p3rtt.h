@@ -64,6 +64,7 @@ class p3rtt: public RsRtt, public p3FastService
 {
 	public:
 		p3rtt(p3LinkMgr *cm);
+virtual RsServiceInfo getServiceInfo();
 
 		/***** overloaded from rsRtt *****/
 

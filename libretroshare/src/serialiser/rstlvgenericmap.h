@@ -32,28 +32,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-
-/**** TLV *****
- * Generic Parameters / Maps.
- */
-
-
-template<class T>
-class RsTlvParamRef: public RsTlvItem
-{
-	public:
-	 RsTlvParamRef(uint16_t param_type, T &p): mParamType(param_type), mParam(p) {}
-virtual ~RsTlvParamRef() { return; }
-virtual uint32_t TlvSize();
-virtual void	 TlvClear();
-virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset); /* serialise   */
-virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); /* deserialise */
-virtual std::ostream &print(std::ostream &out, uint16_t indent);
-
-	uint16_t mParamType;
-	T &mParam;
-};
-
+#include "serialiser/rstlvgenericparam.h"
 
 /*********************************** RsTlvGenericPairRef ***********************************/
 
@@ -106,6 +85,8 @@ virtual std::ostream &print(std::ostream &out, uint16_t indent);
 	std::map<K, V> &mRefMap;
 };
 
+
+#include "rstlvgenericmap.inl"
 
 #endif
 

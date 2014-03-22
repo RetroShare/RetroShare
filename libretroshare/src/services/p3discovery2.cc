@@ -85,7 +85,7 @@ void DiscPgpInfo::mergeFriendList(const std::list<PGPID> &friends)
 
 
 p3discovery2::p3discovery2(p3PeerMgr *peerMgr, p3LinkMgr *linkMgr, p3NetMgr *netMgr)
-:p3Service(RS_SERVICE_TYPE_DISC), mPeerMgr(peerMgr), mLinkMgr(linkMgr), mNetMgr(netMgr), 
+:p3Service(), mPeerMgr(peerMgr), mLinkMgr(linkMgr), mNetMgr(netMgr), 
 	mDiscMtx("p3discovery2")
 {
 	RsStackMutex stack(mDiscMtx); /********** STACK LOCKED MTX ******/
@@ -104,6 +104,28 @@ p3discovery2::p3discovery2(p3PeerMgr *peerMgr, p3LinkMgr *linkMgr, p3NetMgr *net
 	
 	return;
 }
+
+
+const std::string DISCOVERY_APP_NAME = "disc";
+const uint16_t DISCOVERY_APP_MAJOR_VERSION  =       1;
+const uint16_t DISCOVERY_APP_MINOR_VERSION  =       0;
+const uint16_t DISCOVERY_MIN_MAJOR_VERSION  =       1;
+const uint16_t DISCOVERY_MIN_MINOR_VERSION  =       0;
+
+RsServiceInfo p3discovery2::getServiceInfo()
+{
+        return RsServiceInfo(RS_SERVICE_TYPE_DISC,
+                DISCOVERY_APP_NAME,
+                DISCOVERY_APP_MAJOR_VERSION,
+                DISCOVERY_APP_MINOR_VERSION,
+                DISCOVERY_MIN_MAJOR_VERSION,
+                DISCOVERY_MIN_MINOR_VERSION);
+}
+
+
+
+
+
 
 p3discovery2::~p3discovery2()
 {

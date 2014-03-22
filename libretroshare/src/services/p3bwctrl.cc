@@ -46,12 +46,30 @@ p3BandwidthControl *rsBandwidthControl;
 
 
 p3BandwidthControl::p3BandwidthControl(pqipersongrp *pg)
-	:p3Service(RS_SERVICE_TYPE_BWCTRL), mPg(pg), mBwMtx("p3BwCtrl")
+	:p3Service(), mPg(pg), mBwMtx("p3BwCtrl")
 {
 	addSerialType(new RsBwCtrlSerialiser());
 
 	mLastCheck = 0;
 }
+
+
+const std::string BANDWIDTH_CTRL_APP_NAME = "bandwidth_ctrl";
+const uint16_t BANDWIDTH_CTRL_APP_MAJOR_VERSION  =       1;
+const uint16_t BANDWIDTH_CTRL_APP_MINOR_VERSION  =       0;
+const uint16_t BANDWIDTH_CTRL_MIN_MAJOR_VERSION  =       1;
+const uint16_t BANDWIDTH_CTRL_MIN_MINOR_VERSION  =       0;
+
+RsServiceInfo p3BandwidthControl::getServiceInfo()
+{
+        return RsServiceInfo(RS_SERVICE_TYPE_BWCTRL,
+                BANDWIDTH_CTRL_APP_NAME,
+                BANDWIDTH_CTRL_APP_MAJOR_VERSION,
+                BANDWIDTH_CTRL_APP_MINOR_VERSION,
+                BANDWIDTH_CTRL_MIN_MAJOR_VERSION,
+                BANDWIDTH_CTRL_MIN_MINOR_VERSION);
+}
+
 
 
 int	p3BandwidthControl::tick()

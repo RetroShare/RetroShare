@@ -69,6 +69,7 @@ class p3BanList: /* public RsBanList, */ public p3Service, public pqiNetAssistPe
 {
 	public:
 		p3BanList(p3LinkMgr *lm, p3NetMgr *nm);
+		virtual RsServiceInfo getServiceInfo();
 
 		/***** overloaded from RsBanList *****/
 

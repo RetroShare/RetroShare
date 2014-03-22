@@ -84,6 +84,7 @@ class p3GxsReputation: public p3Service, public p3Config /* , public pqiMonitor 
 {
 	public:
 		p3GxsReputation(p3LinkMgr *lm);
+		virtual RsServiceInfo getServiceInfo();
 
 		/***** Interface for p3idservice *****/
 

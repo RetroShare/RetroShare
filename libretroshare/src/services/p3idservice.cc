@@ -165,6 +165,24 @@ p3IdService::p3IdService(RsGeneralDataService *gds, RsNetworkExchangeService *ne
 	loadRecognKeys();
 }
 
+const std::string GXSID_APP_NAME = "gxsid";
+const uint16_t GXSID_APP_MAJOR_VERSION  =       1;
+const uint16_t GXSID_APP_MINOR_VERSION  =       0;
+const uint16_t GXSID_MIN_MAJOR_VERSION  =       1;
+const uint16_t GXSID_MIN_MINOR_VERSION  =       0;
+
+RsServiceInfo p3IdService::getServiceInfo()
+{
+        return RsServiceInfo(RS_SERVICE_GXSV2_TYPE_GXSID,
+                GXSID_APP_NAME,
+                GXSID_APP_MAJOR_VERSION,
+                GXSID_APP_MINOR_VERSION,
+                GXSID_MIN_MAJOR_VERSION,
+                GXSID_MIN_MINOR_VERSION);
+}
+
+
+
 void p3IdService::setNes(RsNetworkExchangeService *nes)
 {
     RsStackMutex stack(mIdMtx);

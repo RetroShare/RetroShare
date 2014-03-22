@@ -46,6 +46,24 @@ p3Posted::p3Posted(RsGeneralDataService *gds, RsNetworkExchangeService *nes, RsG
 }
 
 
+const std::string GXS_POSTED_APP_NAME = "gxsposted";
+const uint16_t GXS_POSTED_APP_MAJOR_VERSION  =       1;
+const uint16_t GXS_POSTED_APP_MINOR_VERSION  =       0;
+const uint16_t GXS_POSTED_MIN_MAJOR_VERSION  =       1;
+const uint16_t GXS_POSTED_MIN_MINOR_VERSION  =       0;
+
+RsServiceInfo p3Posted::getServiceInfo()
+{
+        return RsServiceInfo(RS_SERVICE_GXSV2_TYPE_POSTED,
+                GXS_POSTED_APP_NAME,
+                GXS_POSTED_APP_MAJOR_VERSION,
+                GXS_POSTED_APP_MINOR_VERSION,
+                GXS_POSTED_MIN_MAJOR_VERSION,
+                GXS_POSTED_MIN_MINOR_VERSION);
+}
+
+
+
 bool p3Posted::getGroupData(const uint32_t &token, std::vector<RsPostedGroup> &groups)
 {
 	std::vector<RsGxsGrpItem*> grpData;

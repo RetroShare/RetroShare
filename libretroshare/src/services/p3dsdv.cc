@@ -64,13 +64,31 @@ RsDsdv *rsDsdv = NULL;
  ****/
 
 p3Dsdv::p3Dsdv(p3LinkMgr *lm)
-	:p3Service(RS_SERVICE_TYPE_DSDV), /* p3Config(CONFIG_TYPE_DSDV), */ mDsdvMtx("p3Dsdv"), mLinkMgr(lm) 
+	:p3Service(), /* p3Config(CONFIG_TYPE_DSDV), */ mDsdvMtx("p3Dsdv"), mLinkMgr(lm) 
 {
 	addSerialType(new RsDsdvSerialiser());
 
 	mSentTablesTime = 0;
 	mSentIncrementTime = 0;
 }
+
+const std::string DSDV_APP_NAME = "dsdv";
+const uint16_t DSDV_APP_MAJOR_VERSION  =       1;
+const uint16_t DSDV_APP_MINOR_VERSION  =       0;
+const uint16_t DSDV_MIN_MAJOR_VERSION  =       1;
+const uint16_t DSDV_MIN_MINOR_VERSION  =       0;
+
+RsServiceInfo p3Dsdv::getServiceInfo()
+{
+        return RsServiceInfo(RS_SERVICE_TYPE_DSDV,
+                DSDV_APP_NAME,
+                DSDV_APP_MAJOR_VERSION,
+                DSDV_APP_MINOR_VERSION,
+                DSDV_MIN_MAJOR_VERSION,
+                DSDV_MIN_MINOR_VERSION);
+}
+
+
 
 int	p3Dsdv::tick()
 {

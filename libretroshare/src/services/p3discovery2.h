@@ -81,6 +81,8 @@ class p3discovery2: public RsDisc, public p3Service, public pqiMonitor, public A
 	p3discovery2(p3PeerMgr *peerMgr, p3LinkMgr *linkMgr, p3NetMgr *netMgr);
 virtual ~p3discovery2();
 
+virtual RsServiceInfo getServiceInfo();
+
 	/************* from pqiMonitor *******************/
 	virtual void statusChange(const std::list<pqipeer> &plist);
 	/************* from pqiMonitor *******************/

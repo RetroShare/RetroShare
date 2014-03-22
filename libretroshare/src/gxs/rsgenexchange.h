@@ -133,6 +133,11 @@ public:
 
     virtual ~RsGenExchange();
 
+    // Convention that this is implemented here. 
+    // and passes to network service.
+    virtual RsServiceInfo getServiceInfo() = 0; 
+
+
     /** S: Observer implementation **/
 
     /*!

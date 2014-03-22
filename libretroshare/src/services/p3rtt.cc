@@ -117,7 +117,7 @@ static double convert64bitsToTs(uint64_t bits)
 
 
 p3rtt::p3rtt(p3LinkMgr *lm)
-	:p3FastService(RS_SERVICE_TYPE_RTT), mRttMtx("p3rtt"), mLinkMgr(lm) 
+	:p3FastService(), mRttMtx("p3rtt"), mLinkMgr(lm) 
 {
 	addSerialType(new RsRttSerialiser());
 
@@ -125,6 +125,24 @@ p3rtt::p3rtt(p3LinkMgr *lm)
 	mCounter = 0;
 
 }
+
+
+const std::string RTT_APP_NAME = "rtt";
+const uint16_t RTT_APP_MAJOR_VERSION  =       1;
+const uint16_t RTT_APP_MINOR_VERSION  =       0;
+const uint16_t RTT_MIN_MAJOR_VERSION  =       1;
+const uint16_t RTT_MIN_MINOR_VERSION  =       0;
+
+RsServiceInfo p3rtt::getServiceInfo()
+{
+        return RsServiceInfo(RS_SERVICE_TYPE_RTT,
+                RTT_APP_NAME,
+                RTT_APP_MAJOR_VERSION,
+                RTT_APP_MINOR_VERSION,
+                RTT_MIN_MAJOR_VERSION,
+                RTT_MIN_MINOR_VERSION);
+}
+
 
 
 int	p3rtt::tick()

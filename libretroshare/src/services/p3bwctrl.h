@@ -73,6 +73,7 @@ class p3BandwidthControl: public p3Service, public pqiMonitor
 {
 	public:
 		p3BandwidthControl(pqipersongrp *pg);
+		virtual RsServiceInfo getServiceInfo();
 
 		/***** overloaded from RsBanList *****/
 

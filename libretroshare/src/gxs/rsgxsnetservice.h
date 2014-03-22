@@ -73,10 +73,15 @@ public:
      * @param nxsObs observer will be notified whenever new messages/grps
      * arrive
      */
-    RsGxsNetService(uint16_t servType, RsGeneralDataService* gds, RsNxsNetMgr* netMgr,
-    		RsNxsObserver* nxsObs = NULL, RsGixsReputation* repuations = NULL, RsGcxs* circles = NULL, bool grpAutoSync = true);
+    RsGxsNetService(uint16_t servType, RsGeneralDataService *gds,
+                RsNxsNetMgr *netMgr, 
+ 		RsNxsObserver *nxsObs,  // used to be = NULL.
+		const RsServiceInfo serviceInfo,
+		RsGixsReputation* reputations = NULL, RsGcxs* circles = NULL, bool grpAutoSync = true);
 
     virtual ~RsGxsNetService();
+
+    virtual RsServiceInfo getServiceInfo() { return mServiceInfo; }
 
 public:
 
@@ -452,6 +457,7 @@ private:
     ClientGrpMap mClientGrpUpdateMap;
 
     RsGxsServerGrpUpdateItem* mGrpServerUpdateItem;
+    RsServiceInfo mServiceInfo;
 };
 
 #endif // RSGXSNETSERVICE_H

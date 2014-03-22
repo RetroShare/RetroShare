@@ -56,6 +56,24 @@ p3Wiki::p3Wiki(RsGeneralDataService* gds, RsNetworkExchangeService* nes, RsGixs 
 
 }
 
+
+const std::string GXS_WIKI_APP_NAME = "gxswiki";
+const uint16_t GXS_WIKI_APP_MAJOR_VERSION  =       1;
+const uint16_t GXS_WIKI_APP_MINOR_VERSION  =       0;
+const uint16_t GXS_WIKI_MIN_MAJOR_VERSION  =       1;
+const uint16_t GXS_WIKI_MIN_MINOR_VERSION  =       0;
+
+RsServiceInfo p3Wiki::getServiceInfo()
+{
+        return RsServiceInfo(RS_SERVICE_GXSV2_TYPE_WIKI,
+                GXS_WIKI_APP_NAME,
+                GXS_WIKI_APP_MAJOR_VERSION,
+                GXS_WIKI_APP_MINOR_VERSION,
+                GXS_WIKI_MIN_MAJOR_VERSION,
+                GXS_WIKI_MIN_MINOR_VERSION);
+}
+
+
 uint32_t p3Wiki::wikiAuthenPolicy()
 {
 	uint32_t policy = 0;

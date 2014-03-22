@@ -41,11 +41,14 @@
  const uint32_t RsGxsNetService::FRAGMENT_SIZE = 150000;
 
 RsGxsNetService::RsGxsNetService(uint16_t servType, RsGeneralDataService *gds,
-                                 RsNxsNetMgr *netMgr, RsNxsObserver *nxsObs, RsGixsReputation* reputations, RsGcxs* circles, bool grpAutoSync)
-                                     : p3Config(servType), p3ThreadedService(servType),
+                                 RsNxsNetMgr *netMgr, RsNxsObserver *nxsObs, 
+				const RsServiceInfo serviceInfo,
+				RsGixsReputation* reputations, RsGcxs* circles, bool grpAutoSync)
+                                     : p3Config(servType), p3ThreadedService(),
                                        mTransactionTimeOut(TRANSAC_TIMEOUT), mServType(servType), mDataStore(gds), mTransactionN(0),
                                        mObserver(nxsObs), mNxsMutex("RsGxsNetService"), mNetMgr(netMgr), mSYNC_PERIOD(SYNC_PERIOD),
-                                       mSyncTs(0), mReputations(reputations), mCircles(circles), mGrpAutoSync(grpAutoSync), mGrpServerUpdateItem(NULL)
+                                       mSyncTs(0), mReputations(reputations), mCircles(circles), mGrpAutoSync(grpAutoSync), mGrpServerUpdateItem(NULL), 
+					mServiceInfo(serviceInfo)
 
 {
 	addSerialType(new RsNxsSerialiser(mServType));

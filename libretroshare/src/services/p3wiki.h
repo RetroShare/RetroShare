@@ -45,6 +45,7 @@ class p3Wiki: public RsGenExchange, public RsWiki,
 {
 public:
     p3Wiki(RsGeneralDataService* gds, RsNetworkExchangeService* nes, RsGixs *gixs);
+virtual RsServiceInfo getServiceInfo();
 static uint32_t wikiAuthenPolicy();
 
 protected:

@@ -52,6 +52,8 @@ const uint16_t RS_SERVICE_TYPE_FILE_TRANSFER = 0x0017;
 /* BanList Still Testing at the moment - Service Only */
 const uint16_t RS_SERVICE_TYPE_BANLIST     = 0x0101;
 
+const uint16_t RS_SERVICE_TYPE_SERVICEINFO   = 0x0201;
+
 /* Caches based on p3distrib (Cache Only)
  * Unfortunately, noone changed the DUMMY IDS... so we are stuck with them!
  */

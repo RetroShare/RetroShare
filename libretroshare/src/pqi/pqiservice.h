@@ -31,6 +31,9 @@
 #include "pqi/pqi_base.h"
 #include "util/rsthreads.h"
 
+#include "retroshare/rsservicecontrol.h"
+#include "pqi/p3servicecontrol.h"
+
 // PQI Service, is a generic lower layer on which services can run on.
 // 
 // these packets get passed through the 
@@ -59,8 +62,8 @@ class pqiService
 {
 	protected:
 
-	pqiService(uint32_t t) // our type of packets.
-	:type(t), mServiceServer(NULL) { return; }
+	pqiService() // our type of packets.
+	:mServiceServer(NULL) { return; }
 
 virtual ~pqiService() { return; }
 
@@ -70,29 +73,28 @@ void 	setServiceServer(p3ServiceServer *server);
 virtual bool	recv(RsRawItem *) = 0;
 virtual bool	send(RsRawItem *item);
 
-uint32_t getType() { return type; }
+virtual RsServiceInfo getServiceInfo() = 0;
 
 virtual int	tick() { return 0; }
 
 	private:
-	uint32_t type;
 	p3ServiceServer *mServiceServer; // const, no need for mutex.
 };
 
 #include <map>
 
-/* We are pushing the packets back through p3ServiceServer2, 
+/* We are pushing the packets back through p3ServiceServer, 
  * so that we can filter services at this level later...
- * if we decide not to do this, pqiService2 can call through
+ * if we decide not to do this, pqiService can call through
  * to the base level pqiPublisher instead.
  */
 
 class p3ServiceServer
 {
 public:
-	p3ServiceServer(pqiPublisher *pub);
+	p3ServiceServer(pqiPublisher *pub, p3ServiceControl *ctrl);
 
-int	addService(pqiService *);
+int	addService(pqiService *, bool defaultOn);
 
 bool	recvItem(RsRawItem *);
 bool	sendItem(RsRawItem *);
@@ -102,9 +104,10 @@ int	tick();
 private:
 
 	pqiPublisher *mPublisher;	// constant no need for mutex.
+	p3ServiceControl *mServiceControl;
 
 	RsMutex srvMtx; 
-std::map<uint32_t, pqiService *> services;
+	std::map<uint32_t, pqiService *> services;
 
 };
 

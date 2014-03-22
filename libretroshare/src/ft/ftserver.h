@@ -84,6 +84,7 @@ class ftServer: public p3Service, public RsFiles, public ftDataSend, public RsTu
 		/***************************************************************/
 
 		ftServer(p3PeerMgr *peerMgr, p3LinkMgr *linkMgr);
+		virtual RsServiceInfo getServiceInfo();
 
 		/* Assign important variables */
 		void	setConfigDirectory(std::string path);

@@ -43,6 +43,24 @@ p3Wire::p3Wire(RsGeneralDataService* gds, RsNetworkExchangeService* nes, RsGixs 
 }
 
 
+const std::string WIRE_APP_NAME = "gxswire";
+const uint16_t WIRE_APP_MAJOR_VERSION  =       1;
+const uint16_t WIRE_APP_MINOR_VERSION  =       0;
+const uint16_t WIRE_MIN_MAJOR_VERSION  =       1;
+const uint16_t WIRE_MIN_MINOR_VERSION  =       0;
+
+RsServiceInfo p3Wire::getServiceInfo()
+{
+        return RsServiceInfo(RS_SERVICE_GXSV2_TYPE_WIRE,
+                WIRE_APP_NAME,
+                WIRE_APP_MAJOR_VERSION,
+                WIRE_APP_MINOR_VERSION,
+                WIRE_MIN_MAJOR_VERSION,
+                WIRE_MIN_MINOR_VERSION);
+}
+
+
+
 uint32_t p3Wire::wireAuthenPolicy()
 {
 	uint32_t policy = 0;

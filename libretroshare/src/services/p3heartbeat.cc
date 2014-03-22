@@ -32,7 +32,7 @@
 
 
 p3heartbeat::p3heartbeat(p3LinkMgr *linkMgr, pqipersongrp *pqipg)
-:p3Service(RS_SERVICE_TYPE_HEARTBEAT), mLinkMgr(linkMgr), mPqiPersonGrp(pqipg), 
+:p3Service(), mLinkMgr(linkMgr), mPqiPersonGrp(pqipg), 
 	mHeartMtx("p3heartbeat")
 {
 	RsStackMutex stack(mHeartMtx); /********** STACK LOCKED MTX ******/
@@ -54,6 +54,24 @@ p3heartbeat::~p3heartbeat()
 	return;
 	
 }
+
+
+const std::string HEARTBEAT_APP_NAME = "heartbeat";
+const uint16_t HEARTBEAT_APP_MAJOR_VERSION  =       1;
+const uint16_t HEARTBEAT_APP_MINOR_VERSION  =       0;
+const uint16_t HEARTBEAT_MIN_MAJOR_VERSION  =       1;
+const uint16_t HEARTBEAT_MIN_MINOR_VERSION  =       0;
+
+RsServiceInfo p3heartbeat::getServiceInfo()
+{
+        return RsServiceInfo(RS_SERVICE_TYPE_HEARTBEAT,
+                HEARTBEAT_APP_NAME,
+                HEARTBEAT_APP_MAJOR_VERSION,
+                HEARTBEAT_APP_MINOR_VERSION,
+                HEARTBEAT_MIN_MAJOR_VERSION,
+                HEARTBEAT_MIN_MINOR_VERSION);
+}
+
 
 int p3heartbeat::tick()
 {

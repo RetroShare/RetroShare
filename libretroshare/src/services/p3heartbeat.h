@@ -40,6 +40,8 @@ class p3heartbeat: public p3Service
 	p3heartbeat(p3LinkMgr *linkMgr, pqipersongrp *pqipg);
 virtual ~p3heartbeat();
 
+virtual RsServiceInfo getServiceInfo();
+
 	int	tick();
 
 	private:

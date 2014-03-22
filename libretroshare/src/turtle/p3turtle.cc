@@ -99,7 +99,7 @@ static const int MAX_TR_FORWARD_PER_SEC_LOWER_LIMIT = 10 ;
 static const int DISTANCE_SQUEEZING_POWER 	       =  8 ;
 
 p3turtle::p3turtle(p3LinkMgr *lm)
-	:p3Service(RS_SERVICE_TYPE_TURTLE), p3Config(CONFIG_TYPE_TURTLE), mLinkMgr(lm), mTurtleMtx("p3turtle")
+	:p3Service(), p3Config(CONFIG_TYPE_TURTLE), mLinkMgr(lm), mTurtleMtx("p3turtle")
 {
 	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 
@@ -119,6 +119,23 @@ p3turtle::p3turtle(p3LinkMgr *lm)
 	_traffic_info.reset() ;
 	_max_tr_up_rate = MAX_TR_FORWARD_PER_SEC ;
 }
+
+const std::string TURTLE_APP_NAME = "turtle";
+const uint16_t TURTLE_APP_MAJOR_VERSION  =       1;
+const uint16_t TURTLE_APP_MINOR_VERSION  =       0;
+const uint16_t TURTLE_MIN_MAJOR_VERSION  =       1;
+const uint16_t TURTLE_MIN_MINOR_VERSION  =       0;
+
+RsServiceInfo p3turtle::getServiceInfo()
+{
+	return RsServiceInfo(RS_SERVICE_TYPE_TURTLE,
+		TURTLE_APP_NAME,
+		TURTLE_APP_MAJOR_VERSION,
+		TURTLE_APP_MINOR_VERSION,
+		TURTLE_MIN_MAJOR_VERSION,
+		TURTLE_MIN_MINOR_VERSION);
+}
+
 
 void p3turtle::setEnabled(bool b) 
 {

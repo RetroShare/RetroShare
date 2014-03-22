@@ -58,12 +58,30 @@
 
 
 p3BanList::p3BanList(p3LinkMgr *lm, p3NetMgr *nm)
-	:p3Service(RS_SERVICE_TYPE_BANLIST), mBanMtx("p3BanList"), mLinkMgr(lm), mNetMgr(nm) 
+	:p3Service(), mBanMtx("p3BanList"), mLinkMgr(lm), mNetMgr(nm) 
 {
 	addSerialType(new RsBanListSerialiser());
 
 	mSentListTime = 0;
 }
+
+
+const std::string BANLIST_APP_NAME = "banlist";
+const uint16_t BANLIST_APP_MAJOR_VERSION  =       1;
+const uint16_t BANLIST_APP_MINOR_VERSION  =       0;
+const uint16_t BANLIST_MIN_MAJOR_VERSION  =       1;
+const uint16_t BANLIST_MIN_MINOR_VERSION  =       0;
+
+RsServiceInfo p3BanList::getServiceInfo()
+{
+        return RsServiceInfo(RS_SERVICE_TYPE_BANLIST,
+                BANLIST_APP_NAME,
+                BANLIST_APP_MAJOR_VERSION,
+                BANLIST_APP_MINOR_VERSION,
+                BANLIST_MIN_MAJOR_VERSION,
+                BANLIST_MIN_MINOR_VERSION);
+}
+
 
 
 int	p3BanList::tick()

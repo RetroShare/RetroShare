@@ -130,6 +130,24 @@ p3GxsCircles::p3GxsCircles(RsGeneralDataService *gds, RsNetworkExchangeService *
 }
 
 
+const std::string GXS_CIRCLES_APP_NAME = "gxscircle";
+const uint16_t GXS_CIRCLES_APP_MAJOR_VERSION  =       1;
+const uint16_t GXS_CIRCLES_APP_MINOR_VERSION  =       0;
+const uint16_t GXS_CIRCLES_MIN_MAJOR_VERSION  =       1;
+const uint16_t GXS_CIRCLES_MIN_MINOR_VERSION  =       0;
+
+RsServiceInfo p3GxsCircles::getServiceInfo()
+{
+        return RsServiceInfo(RS_SERVICE_GXSV2_TYPE_GXSCIRCLE,
+                GXS_CIRCLES_APP_NAME,
+                GXS_CIRCLES_APP_MAJOR_VERSION,
+                GXS_CIRCLES_APP_MINOR_VERSION,
+                GXS_CIRCLES_MIN_MAJOR_VERSION,
+                GXS_CIRCLES_MIN_MINOR_VERSION);
+}
+
+
+
 uint32_t p3GxsCircles::circleAuthenPolicy()
 {
 

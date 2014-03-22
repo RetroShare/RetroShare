@@ -63,6 +63,7 @@ bool setRawUInt64(void *data, uint32_t size, uint32_t *offset, uint64_t in);
 bool getRawUFloat32(void *data, uint32_t size, uint32_t *offset, float& out);
 bool setRawUFloat32(void *data, uint32_t size, uint32_t *offset, float in);
 
+uint32_t getRawStringSize(const std::string &outStr);
 bool getRawString(void *data, uint32_t size, uint32_t *offset, std::string &outStr);
 bool setRawString(void *data, uint32_t size, uint32_t *offset, const std::string &inStr);
 

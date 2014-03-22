@@ -55,6 +55,8 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor, publi
 	public:
 		p3ChatService(p3LinkMgr *cm, p3HistoryMgr *historyMgr);
 
+		virtual RsServiceInfo getServiceInfo();
+
 		/***** overloaded from p3Service *****/
 		/*!
 		 * This retrieves all chat msg items and also (important!)

@@ -34,6 +34,7 @@ class p3PhotoService : public RsPhoto, public RsGenExchange
 public:
 
     p3PhotoService(RsGeneralDataService* gds, RsNetworkExchangeService* nes, RsGixs* gixs);
+virtual RsServiceInfo getServiceInfo();
 
 static uint32_t photoAuthenPolicy();
 

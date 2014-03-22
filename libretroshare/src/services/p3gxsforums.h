@@ -46,6 +46,8 @@ class p3GxsForums: public RsGenExchange, public RsGxsForums,
 
 	p3GxsForums(RsGeneralDataService* gds, RsNetworkExchangeService* nes, RsGixs* gixs);
 
+virtual RsServiceInfo getServiceInfo();
+
 virtual void service_tick();
 
 	protected:

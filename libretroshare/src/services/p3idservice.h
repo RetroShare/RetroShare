@@ -216,6 +216,8 @@ class p3IdService: public RsGxsIdExchange, public RsIdentity,
 {
 	public:
 	p3IdService(RsGeneralDataService* gds, RsNetworkExchangeService* nes);
+
+virtual RsServiceInfo getServiceInfo();
 static	uint32_t idAuthenPolicy();
 
 	virtual void service_tick(); // needed for background processing.

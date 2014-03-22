@@ -217,6 +217,7 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 {
 	public:
 		p3turtle(p3LinkMgr *lm) ;
+		virtual RsServiceInfo getServiceInfo();
 
 		// Enables/disable the service. Still ticks, but does nothing. Default is true.
 		//

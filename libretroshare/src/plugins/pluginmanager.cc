@@ -410,7 +410,7 @@ void RsPluginManager::registerClientServices(p3ServiceServer *pqih)
 	for(uint32_t i=0;i<_plugins.size();++i)
 		if(_plugins[i].plugin != NULL && _plugins[i].plugin->rs_pqi_service() != NULL)
 		{
-			pqih->addService(_plugins[i].plugin->rs_pqi_service()) ;
+			pqih->addService(_plugins[i].plugin->rs_pqi_service(), true) ;
 			std::cerr << "    Added pqi service for plugin " << _plugins[i].plugin->getPluginName() << std::endl;
 		}
 }
@@ -534,7 +534,7 @@ RsCacheService::RsCacheService(uint16_t service_type,uint32_t config_type,uint32
 }
 
 RsPQIService::RsPQIService(uint16_t service_type,uint32_t config_type,uint32_t /*tick_delay_in_seconds*/, RsPluginHandler* /*pgHandler*/)
-	: p3Service(service_type),p3Config(config_type)
+	: p3Service(),p3Config(config_type)
 {
 }
 
