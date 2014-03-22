@@ -141,6 +141,19 @@ void p3ServiceControl::getServiceChanges(std::set<RsPeerId> &updateSet)
 }
 
 
+bool p3ServiceControl::getOwnServices(RsPeerServiceInfo &info)
+{
+	std::cerr << "p3ServiceControl::getOwnServices()";
+	std::cerr << std::endl;
+
+	RsStackMutex stack(mCtrlMtx); /***** LOCK STACK MUTEX ****/
+
+	info.mPeerId = "";
+	info.mServiceList = mOwnServices;
+	return true;
+}
+
+
 bool p3ServiceControl::getServicesAllowed(const RsPeerId &peerId, RsPeerServiceInfo &info)
 {
 	std::cerr << "p3ServiceControl::getServicesAllowed(" << peerId.toStdString() << ")";
@@ -391,7 +404,7 @@ bool versionOkay(uint16_t version_major, uint16_t version_minor,
 }
 
 
-bool servicesCompatible(const RsServiceInfo &info1, const RsServiceInfo &info2)
+bool ServiceInfoCompatible(const RsServiceInfo &info1, const RsServiceInfo &info2)
 {
 	// Id, or Name mismatch.
 	if ((info1.mServiceType != info2.mServiceType) ||
@@ -521,7 +534,7 @@ bool	p3ServiceControl::updateFilterByPeer_locked(const RsPeerId &peerId)
 			std::cerr << std::endl;
 			/* match of service IDs */
 			/* check if compatible */
-			if (servicesCompatible(oit->second, tit->second))
+			if (ServiceInfoCompatible(oit->second, tit->second))
 			{
 				if (peerHasPermissionForService_locked(peerId, oit->first))
 				{

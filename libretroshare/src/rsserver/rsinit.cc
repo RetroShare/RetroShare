@@ -1223,6 +1223,7 @@ int RsServer::StartupRetroShare()
 	/**************************** BITDHT ***********************************/
 
 	p3ServiceControl *serviceCtrl = new p3ServiceControl(0);
+	rsServiceControl = serviceCtrl;
 
 	SecurityPolicy *none = secpolicy_create();
 	pqih = new pqisslpersongrp(serviceCtrl, none, flags, mPeerMgr);

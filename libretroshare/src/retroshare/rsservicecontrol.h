@@ -60,6 +60,10 @@ class RsServiceInfo
 };
 
 
+bool ServiceInfoCompatible(const RsServiceInfo &info1, const RsServiceInfo &info2);
+
+
+
 /* this is what is transmitted to peers */
 class RsPeerServiceInfo
 {
@@ -99,6 +103,8 @@ class RsServiceControl
 
 	RsServiceControl()  { return; }
 virtual ~RsServiceControl() { return; }
+
+virtual bool getOwnServices(RsPeerServiceInfo &info) = 0;
 
 virtual bool getServicesAllowed(const RsPeerId &peerId, RsPeerServiceInfo &info) = 0;
 virtual bool getServicesProvided(const RsPeerId &peerId, RsPeerServiceInfo &info) = 0;

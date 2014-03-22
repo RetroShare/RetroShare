@@ -73,6 +73,8 @@ public:
 	 * External Interface (RsServiceControl).
 	 */
 
+virtual bool getOwnServices(RsPeerServiceInfo &info);
+
 	// This is what is passed to peers, can be displayed by GUI too.
 virtual bool getServicesAllowed(const RsPeerId &peerId, RsPeerServiceInfo &info);
 
