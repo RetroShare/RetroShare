@@ -22,6 +22,8 @@
 #include "ServicePermissionsPage.h"
 
 #include "rshare.h"
+#include <retroshare/rspeers.h>
+#include <retroshare/rsservicecontrol.h>
 
 //#include <retroshare/rsservicecontrol.h>
 
@@ -45,7 +47,7 @@ ServicePermissionsPage::ServicePermissionsPage(QWidget * parent, Qt::WindowFlags
 
 QString ServicePermissionsPage::helpText() const
 {
-   return tr("<h1><img width=\"24\" src=\":/images/64px_help.png\">&nbsp;&nbsp;Permissions</h1>                   \
+   return tr("<h1><img width=\"24\" src=\":/images/64px_help.png\">&nbsp;&nbsp;Permissions</h1>		   \
 <p>Permissions allow you to control which services are available to which friends </p>");
 }
 
@@ -85,24 +87,15 @@ QBrush getColor(bool defaultOn, Qt::CheckState checkState)
 	/** Loads the settings for this page */
 void ServicePermissionsPage::load()
 {
-	/* get all the peers */
-	/* get all the services */
+	std::list<RsPeerId> peerList;
+	std::list<RsPeerId>::const_iterator pit;
+	rsPeers->getFriendList(peerList);
 
-	std::list<std::string> peerList;
-	std::list<std::string>::const_iterator pit;
-	peerList.push_back("peer1");
-	peerList.push_back("peer2");
-	peerList.push_back("peer3");
-	peerList.push_back("peer4");
+	RsPeerServiceInfo ownServices;
+	std::map<uint32_t, RsServiceInfo>::const_iterator sit;
+	rsServiceControl->getOwnServices(ownServices);
 
-	std::list<std::string> serviceList;
-	std::list<std::string>::const_iterator sit;
-	serviceList.push_back("service1");
-	serviceList.push_back("service2");
-	serviceList.push_back("service3");
-	serviceList.push_back("service4");
-
-     	ui.tableWidget->setRowCount(serviceList.size());
+     	ui.tableWidget->setRowCount(ownServices.mServiceList.size());
      	ui.tableWidget->setColumnCount(peerList.size() + 1);
 
 	QStringList columnHeaders;
@@ -110,20 +103,35 @@ void ServicePermissionsPage::load()
 	columnHeaders.push_back(tr("Default"));
 	for(pit = peerList.begin(); pit != peerList.end(); pit++)
 	{
-		columnHeaders.push_back(QString::fromStdString(*pit));
+		columnHeaders.push_back(QString::fromStdString( rsPeers->getPeerName(*pit)));
 	}
 
+	// Fill in CheckBoxes.
 	int row;
 	int column;
-	for(row = 0, sit = serviceList.begin(); sit != serviceList.end(); sit++, row++)
+	for(row = 0, sit = ownServices.mServiceList.begin(); sit != ownServices.mServiceList.end(); sit++, row++)
 	{
-		rowHeaders.push_back(QString::fromStdString(*sit));
+		rowHeaders.push_back(QString::fromStdString(sit->second.mServiceName));
+		RsServicePermissions permissions;
+		if (!rsServiceControl->getServicePermissions(sit->first, permissions))
+		{
+			continue;
+		}
+
 		{
      			QTableWidgetItem *item = new QTableWidgetItem(tr("Default"));
 			Qt::ItemFlags flags(Qt::ItemIsUserCheckable);
 			flags |= Qt::ItemIsEnabled;
 			item->setFlags(flags);
-			item->setCheckState(Qt::Checked);
+
+			if (permissions.mDefaultAllowed)
+			{
+				item->setCheckState(Qt::Checked);
+			}
+			else
+			{
+				item->setCheckState(Qt::Unchecked);
+			}
 			ui.tableWidget->setItem(row, 0, item);
 		}
 
@@ -135,8 +143,124 @@ void ServicePermissionsPage::load()
 			flags |= Qt::ItemIsEnabled;
 			flags |= Qt::ItemIsTristate;
 			item->setFlags(flags);
-			item->setCheckState(Qt::PartiallyChecked);
+			if (permissions.mPeersAllowed.end() != permissions.mPeersAllowed.find(*pit))
+			{
+				item->setCheckState(Qt::Checked);
+
+			}
+			else if (permissions.mPeersDenied.end() != permissions.mPeersDenied.find(*pit))
+			{
+				item->setCheckState(Qt::Unchecked);
+			}
+			else
+			{
+				item->setCheckState(Qt::PartiallyChecked);
+			}
 			ui.tableWidget->setItem(row, column, item);
+		}
+	}
+
+	// Now Get a List of Services Provided by Peers - and add text.
+	int stdRowCount = ownServices.mServiceList.size();
+	int maxRowCount = stdRowCount;
+	for(column = 1, pit = peerList.begin(); 
+			pit != peerList.end(); pit++, column++)
+	{
+		RsPeerServiceInfo peerInfo;
+		if (rsServiceControl->getServicesProvided(*pit, peerInfo))
+		{
+			std::map<uint32_t, RsServiceInfo>::const_iterator eit, sit2, eit2;
+			sit = ownServices.mServiceList.begin();
+			eit = ownServices.mServiceList.end();
+			sit2 = peerInfo.mServiceList.begin();
+			eit2 = peerInfo.mServiceList.end();
+			row = 0;
+			int extraRowIndex = stdRowCount;
+
+			while((sit != eit) && (sit2 != eit2))
+			{
+				if (sit->first < sit2->first)
+				{
+					// A Service they don't have.
+					QTableWidgetItem *item = ui.tableWidget->item(row, column);
+					item->setText(tr("No"));
+
+					++sit;
+					++row;
+				}
+				else if (sit2->first < sit->first)
+				{
+					// They have a service we dont!
+					// Add extra item on the end. (TODO)
+					if (extraRowIndex + 1 > maxRowCount)
+					{
+						maxRowCount = extraRowIndex + 1;
+     						ui.tableWidget->setRowCount(maxRowCount);
+						rowHeaders.push_back(tr("Other Service"));
+					}
+
+     					QTableWidgetItem *item = new QTableWidgetItem();
+					item->setText(QString::fromStdString(sit2->second.mServiceName));
+					ui.tableWidget->setItem(extraRowIndex, column, item);
+					++extraRowIndex;
+					++sit2;
+				}
+				else
+				{
+					QTableWidgetItem *item = ui.tableWidget->item(row, column);
+                        		if (ServiceInfoCompatible(sit->second, sit2->second))
+					{
+						item->setText(tr("Yes"));
+					}
+					else
+					{
+						item->setText(tr("Incompatible"));
+					}
+
+					// Matching service.
+					++row;
+					++sit;
+					++sit2;
+				}
+			}
+
+			// More Services they don't have.
+			for(; sit != eit; ++sit)
+			{
+				// A Service they don't have.
+				QTableWidgetItem *item = ui.tableWidget->item(row, column);
+				item->setText(tr("No"));
+
+				++sit;
+				++row;
+			}
+
+			//  Services we don't have.
+			for(; sit2 != eit2; ++sit2)
+			{
+				// A Service they don't have.
+				// Add extra item on the end. (TODO)
+				if (extraRowIndex + 1 > maxRowCount)
+				{
+					maxRowCount = extraRowIndex + 1;
+     					ui.tableWidget->setRowCount(maxRowCount);
+					rowHeaders.push_back(tr("Other Service"));
+				}
+
+     				QTableWidgetItem *item = new QTableWidgetItem();
+				item->setText(QString::fromStdString(sit2->second.mServiceName));
+				ui.tableWidget->setItem(extraRowIndex, column, item);
+				++extraRowIndex;
+				++sit2;
+			}
+		}
+		else
+		{
+			for(row = 0; row < stdRowCount; row++)
+			{
+				QTableWidgetItem *item = ui.tableWidget->item(row, column);
+				item->setText(tr("N/A"));
+			}
 		}
 	}
 
