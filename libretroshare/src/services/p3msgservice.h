@@ -54,10 +54,7 @@ class p3LinkMgr;
 class p3IdService;
 
 // Temp tweak to test grouter
-class p3MsgService: public p3Service, public p3Config, public pqiMonitor
-#ifdef GROUTER
-						  , public GRouterClientService
-#endif
+class p3MsgService: public p3Service, public p3Config, public pqiMonitor, public GRouterClientService
 {
 	public:
 		p3MsgService(p3LinkMgr *lm,p3IdService *id_service);
@@ -112,9 +109,8 @@ class p3MsgService: public p3Service, public p3Config, public pqiMonitor
 
 		/*** overloaded from p3turtle   ***/
 
-#ifdef GROUTER
 		virtual void connectToGlobalRouter(p3GRouter *) ;
-#endif
+
 		struct DistantMessengingInvite
 		{
 			time_t time_of_validity ;
@@ -137,25 +133,19 @@ class p3MsgService: public p3Service, public p3Config, public pqiMonitor
 		//
 		std::map<GRouterKeyId,DistantMessengingContact> _messenging_contacts ;
 
-		// Overloaded from RsTurtleClientService
+		// Overloaded from GRouterClientService
 
-#ifdef GROUTER
-		virtual void receiveGRouterData(RsGRouterGenericDataItem *item, const GRouterKeyId& key) ;
-#endif
+		virtual void receiveGRouterData(const GRouterKeyId& key,const RsGRouterGenericDataItem *item) ;
+
 		// Utility functions
 
 		bool createDistantMessage(const RsGxsId& destination_gxs_id,const RsGxsId& source_gxs_id,RsMsgItem *msg) ;
 		bool locked_findHashForVirtualPeerId(const RsPeerId& pid,Sha1CheckSum& hash) ;
+		void sendGRouterData(const GRouterKeyId &key_id,RsMsgItem *) ;
 
 		void manageDistantPeers() ;
-#ifdef GROUTER
-		void sendGRouterData(const GRouterKeyId &key_id,RsMsgItem *) ;
-#endif
-		void handleIncomingItem(RsMsgItem *) ;
 
-#ifdef GROUTER
-		p3GRouter *mGRouter ;
-#endif
+		void handleIncomingItem(RsMsgItem *) ;
 
 		uint32_t getNewUniqueMsgId();
 		int     sendMessage(RsMsgItem *item);
@@ -176,6 +166,7 @@ class p3MsgService: public p3Service, public p3Config, public pqiMonitor
 
 		p3LinkMgr *mLinkMgr;
 		p3IdService *mIdService ;
+		p3GRouter *mGRouter ;
 
 		/* Mutex Required for stuff below */
 

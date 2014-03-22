@@ -215,7 +215,8 @@ int p3GRouter::tick()
 	{
 		last_publish_campaign_time = now ;
 
-		publishKeys() ;
+		//publishKeys() ;	// we don't publish keys anymore.
+		//
 		_routing_matrix.updateRoutingProbabilities() ;
 	}
 
@@ -701,7 +702,7 @@ void p3GRouter::handleRecvDataItem(RsGRouterGenericDataItem *item)
 			if(its != _registered_services.end())
 			{
 				std::cerr << "  Key is owned by us. Notifying service for this item." << std::endl;
-				its->second->receiveGRouterData(item_copy,it->first) ;
+				its->second->receiveGRouterData(it->first,item_copy) ;
 			}
 			else
 				std::cerr << "  (EE) weird situation. No service registered for a key that we own. Key id = " << item->destination_key.toStdString() << ", service id = " << it->second.service_id << std::endl;

@@ -86,7 +86,7 @@ const QString PeerDefs::rsidFromId(const RsPeerId &id, QString *name /* = NULL*/
     rsIdentity->getOwnIds(gxs_ids) ;
 
     for(std::list<RsGxsId>::const_iterator it(gxs_ids.begin());it!=gxs_ids.end();++it)
-        if(rsMsgs->getDistantMessagePeerId(*it,pid) && RsPeerId(pid) == id)
+        if(RsPeerId(*it) == id)
         {
             // not a real peer. Try from hash for distant messages
 

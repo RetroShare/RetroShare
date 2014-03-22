@@ -56,6 +56,8 @@
 #include <openssl/rand.h>
 #include <fcntl.h>
 
+#define ENABLE_GROUTER
+
 #if (defined(__unix__) || defined(unix)) && !defined(USG)
 #include <sys/param.h>
 #endif
@@ -69,7 +71,7 @@
 #include "pqi/sslfns.h"
 #include "pqi/authgpg.h"
 
-#ifdef GROUTER
+#ifdef ENABLE_GROUTER
 #include "grouter/p3grouter.h"
 #endif
 
@@ -839,7 +841,7 @@ bool RsInit::SetHiddenLocation(const std::string& hiddenaddress, uint16_t port)
 
 RsFiles *rsFiles = NULL;
 RsTurtle *rsTurtle = NULL ;
-#ifdef GROUTER
+#ifdef ENABLE_GROUTER
 RsGRouter *rsGRouter = NULL ;
 #endif
 
@@ -1487,7 +1489,7 @@ int RsServer::StartupRetroShare()
 	chatSrv = new p3ChatService(mLinkMgr, mHistoryMgr);
 	mStatusSrv = new p3StatusService(mLinkMgr);
 
-#ifdef GROUTER
+#ifdef ENABLE_GROUTER
 	p3GRouter *gr = new p3GRouter(mLinkMgr) ;
 	rsGRouter = gr ;
 	pqih->addService(gr) ;
@@ -1505,7 +1507,7 @@ int RsServer::StartupRetroShare()
 
 	ftserver->connectToTurtleRouter(tr) ;
 	chatSrv->connectToTurtleRouter(tr) ;
-#ifdef GROUTER
+#ifdef ENABLE_GROUTER
 	msgSrv->connectToGlobalRouter(gr) ;
 #endif
 	pqih -> addService(mHeart);
@@ -1618,7 +1620,7 @@ int RsServer::StartupRetroShare()
 	mConfigMgr->addConfiguration("p3History.cfg", mHistoryMgr);
 	mConfigMgr->addConfiguration("p3Status.cfg", mStatusSrv);
 	mConfigMgr->addConfiguration("turtle.cfg", tr);
-#ifdef GROUTER
+#ifdef ENABLE_GROUTER
 	mConfigMgr->addConfiguration("grouter.cfg", gr);
 #endif
 

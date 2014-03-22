@@ -1237,8 +1237,11 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
             switch (type)
             {
             case TO: addUnique(mi.rspeerid_msgto,pid);
+            break ;
             case CC: addUnique(mi.rspeerid_msgcc,pid);
+            break ;
             case BCC:addUnique(mi.rspeerid_msgbcc,pid);
+            break ;
             }
         }
             break ;
@@ -1249,8 +1252,11 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
             switch (type)
             {
             case TO: addUnique(mi.rsgxsid_msgto,gid) ;
+            break ;
             case CC: addUnique(mi.rsgxsid_msgcc,gid) ;
+            break ;
             case BCC:addUnique(mi.rsgxsid_msgbcc,gid) ;
+            break ;
             }
         }
             break ;

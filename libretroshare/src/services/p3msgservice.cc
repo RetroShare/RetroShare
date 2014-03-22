@@ -42,10 +42,9 @@
 #include "pgp/pgpkeyutil.h"
 #include "rsserver/p3face.h"
 #include "serialiser/rsconfigitems.h"
-#ifdef GROUTER
+
 #include "grouter/p3grouter.h"
 #include "grouter/groutertypes.h"
-#endif
 
 #include "util/rsdebug.h"
 #include "util/rsdir.h"
@@ -335,42 +334,8 @@ int     p3MsgService::checkOutgoingMessages()
 
 			/* find the certificate */
 			RsPeerId pid = mit->second->PeerId();
-			bool tunnel_is_ok = false ;
 
-			if(mit->second->msgFlags & RS_MSG_FLAGS_DISTANT)
-			{
-				// Do we have a tunnel already?
-				//
-#ifdef GROUTER
-				tunnel_is_ok = true ;
-#else
-//				const RsPeerId& hash = mit->second->PeerId() ;
-//				std::map<Sha1CheckSum,DistantMessengingContact>::iterator it = _messenging_contacts.find(hash) ;
-//
-//				if(it != _messenging_contacts.end())
-//				{
-//					tunnel_is_ok = (it->second.status == RS_DISTANT_MSG_STATUS_TUNNEL_OK) ;
-//#ifdef DEBUG_DISTANT_MSG
-//					std::cerr << "checkOutGoingMessages(): distant contact found. tunnel_is_ok = " << tunnel_is_ok << std::endl;
-//#endif
-//				}
-//				else
-//				{
-//#ifdef DEBUG_DISTANT_MSG
-//					std::cerr << "checkOutGoingMessages(): distant contact not found. Asking for tunnels for hash " << hash << std::endl;
-//#endif
-//					// no. Ask for monitoring tunnels.
-//					rsTurtle->monitorTunnels(hash,this) ;					 
-//					tunnel_is_ok = false ;
-//
-//					DistantMessengingContact& contact( _messenging_contacts[hash] ) ;
-//					contact.status = RS_DISTANT_MSG_STATUS_TUNNEL_DN ;
-//					contact.pending_messages = true ;
-//				}
-#endif
-			}
-
-			if(tunnel_is_ok || mLinkMgr->isOnline(pid) || pid == ownId) /* FEEDBACK Msg to Ourselves */
+			if( (mit->second->msgFlags & RS_MSG_FLAGS_DISTANT) || mLinkMgr->isOnline(pid) || pid == ownId) /* FEEDBACK Msg to Ourselves */
 			{
 				/* send msg */
 				pqioutput(PQL_DEBUG_BASIC, msgservicezone, 
@@ -2056,13 +2021,11 @@ bool p3MsgService::decryptMessage(const std::string& mId)
     }
 }
 
-#ifdef GROUTER
 void p3MsgService::connectToGlobalRouter(p3GRouter *gr)
 {
 	mGRouter = gr ;
 	gr->registerClientService(RS_SERVICE_TYPE_MSG,this) ;
 }
-#endif
 
 void p3MsgService::enableDistantMessaging(bool b)
 {
@@ -2129,7 +2092,6 @@ void p3MsgService::manageDistantPeers()
 	}
 }
 
-#ifdef GROUTER
 void p3MsgService::sendGRouterData(const GRouterKeyId& key_id,RsMsgItem *msgitem)
 {
 	// The item is serialized and turned into a generic turtle item.
@@ -2154,18 +2116,28 @@ void p3MsgService::sendGRouterData(const GRouterKeyId& key_id,RsMsgItem *msgitem
 
     mGRouter->sendData(key_id,item) ;
 }
-void p3MsgService::receiveGRouterData(RsGRouterGenericDataItem *gitem,const GRouterKeyId& key)
+void p3MsgService::receiveGRouterData(const GRouterKeyId& key, const RsGRouterGenericDataItem *gitem)
 {
-	std::cerr << "(WW) p3msgservice::receiveGRouterData(): received message. Not handled yet. Needs implementing." << std::endl; 
+	std::cerr << "p3MsgService::receiveGRouterData(): received message item of size " << gitem->data_size << ", for key " << key << std::endl;
+
+	uint32_t size = gitem->data_size ;
+		RsItem *item = _serialiser->deserialise(gitem->data_bytes,&size) ;
+
+	RsMsgItem *encrypted_msg_item = dynamic_cast<RsMsgItem*>(item) ;
+
+	if(encrypted_msg_item != NULL)
+	{
+		std::cerr << "  Encrypted item correctly deserialised. Passing on to incoming list." << std::endl;
+
+		encrypted_msg_item->PeerId(RsPeerId(key)) ;	// hack to pass on GXS id.
+		handleIncomingItem(encrypted_msg_item) ;
+	}
+	else
+		std::cerr << "  Item could not be deserialised. Format error??" << std::endl;
 }
-#endif
 
 void p3MsgService::sendPrivateMsgItem(RsMsgItem *msgitem)
 {
-#ifndef GROUTER
-	std::cerr << "GRouter is not enabled. Cannot send distant message." << std::endl;
-	return ;
-#else
 #ifdef DEBUG_DISTANT_MSG
 	std::cerr << "p3MsgService::sendDistanteMsgItem(): sending distant msg item to peer " << msgitem->PeerId() << std::endl;
 #endif
@@ -2192,7 +2164,6 @@ void p3MsgService::sendPrivateMsgItem(RsMsgItem *msgitem)
 #endif
 
 	sendGRouterData(key_id,msgitem) ;
-#endif
 }
 
 
