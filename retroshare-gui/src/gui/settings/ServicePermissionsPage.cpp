@@ -231,7 +231,6 @@ void ServicePermissionsPage::load()
 				QTableWidgetItem *item = ui.tableWidget->item(row, column);
 				item->setText(tr("No"));
 
-				++sit;
 				++row;
 			}
 
@@ -251,7 +250,6 @@ void ServicePermissionsPage::load()
 				item->setText(QString::fromStdString(sit2->second.mServiceName));
 				ui.tableWidget->setItem(extraRowIndex, column, item);
 				++extraRowIndex;
-				++sit2;
 			}
 		}
 		else

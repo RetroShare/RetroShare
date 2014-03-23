@@ -11,7 +11,7 @@ greaterThan(QT_MAJOR_VERSION, 4) {
 
 # Below is for GXS services.
 # Should be disabled for releases.
-#CONFIG += gxs debug
+CONFIG += gxs debug
 
 gxs {
 	
