@@ -157,7 +157,7 @@ template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER> s
 
 	return res ;
 }
-void chris_test();
+
 template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER> t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>::t_RsGenericIdType(const std::string& s) 
 {
 	try
@@ -166,7 +166,6 @@ template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER> t
 		if(s.length() != ID_SIZE_IN_BYTES*2)
 		{
 			throw std::runtime_error("t_RsGenericIdType<>::t_RsGenericIdType(std::string&): supplied string in constructor has wrong size.") ;
-			chris_test();
 		}
 
 		for(uint32_t i = 0; i < ID_SIZE_IN_BYTES; ++i)
@@ -191,7 +190,6 @@ template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER> t
 	catch(std::exception& e)
 	{
 		std::cerr << e.what() << std::endl;
-		chris_test();
 		clear() ;
 	}
 }

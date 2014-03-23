@@ -176,12 +176,12 @@ template<class ID_CLASS,uint32_t TLV_TYPE> class t_RsTlvIdSet: public RsTlvItem
 				std::cerr << "(EE) deserialisaiton error in " << __PRETTY_FUNCTION__ << std::endl;
 			return *offset == tlvend ;
 		}
-		virtual std::ostream &print(std::ostream &out, uint16_t indent)
+		virtual std::ostream &print(std::ostream &out, uint16_t /* indent */)
 		{
 			std::cerr << __PRETTY_FUNCTION__ << ": not implemented" << std::endl;
 			return out ;
 		}
-		virtual std::ostream &printHex(std::ostream &out, uint16_t indent) /* SPECIAL One */
+		virtual std::ostream &printHex(std::ostream &out, uint16_t /* indent */) /* SPECIAL One */
 		{
 			std::cerr << __PRETTY_FUNCTION__ << ": not implemented" << std::endl;
 			return out ;

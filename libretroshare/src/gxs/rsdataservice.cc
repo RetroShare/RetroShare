@@ -153,9 +153,9 @@ const std::string RsGeneralDataService::MSG_META_STATUS = KEY_MSG_STATUS;
 const uint32_t RsGeneralDataService::GXS_MAX_ITEM_SIZE = 1572864; // 1.5 Mbytes
 
 RsDataService::RsDataService(const std::string &serviceDir, const std::string &dbName, uint16_t serviceType,
-                             RsGxsSearchModule *mod, const std::string& key)
-    : RsGeneralDataService(), mServiceDir(serviceDir), mDbName(mServiceDir + "/" + dbName), mServType(serviceType),
-    mDbMutex("RsDataService"), mDb( new RetroDb(mDbName, RetroDb::OPEN_READWRITE_CREATE, key)) {
+                             RsGxsSearchModule * /* mod */, const std::string& key)
+    : RsGeneralDataService(), mDbMutex("RsDataService"), mServiceDir(serviceDir), mDbName(mServiceDir + "/" + dbName), mServType(serviceType),
+    mDb( new RetroDb(mDbName, RetroDb::OPEN_READWRITE_CREATE, key)) {
 
     initialise();
 
@@ -792,7 +792,7 @@ bool RsDataService::validSize(RsNxsGrp* grp) const
 	return false;
 }
 
-int RsDataService::retrieveNxsGrps(std::map<RsGxsGroupId, RsNxsGrp *> &grp, bool withMeta, bool cache){
+int RsDataService::retrieveNxsGrps(std::map<RsGxsGroupId, RsNxsGrp *> &grp, bool withMeta, bool /* cache */){
 
     if(grp.empty()){
 
@@ -888,7 +888,7 @@ void RsDataService::locked_retrieveGroups(RetroCursor* c, std::vector<RsNxsGrp*>
     }
 }
 
-int RsDataService::retrieveNxsMsgs(const GxsMsgReq &reqIds, GxsMsgResult &msg, bool cache, bool withMeta)
+int RsDataService::retrieveNxsMsgs(const GxsMsgReq &reqIds, GxsMsgResult &msg, bool /* cache */, bool withMeta)
 {
 
     GxsMsgReq::const_iterator mit = reqIds.begin();
@@ -1455,7 +1455,7 @@ uint32_t RsDataService::cacheSize() const {
     return 0;
 }
 
-int RsDataService::setCacheSize(uint32_t size)
+int RsDataService::setCacheSize(uint32_t /* size */)
 {
     return 0;
 }

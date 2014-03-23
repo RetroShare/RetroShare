@@ -48,7 +48,6 @@ const uint8_t RS_PKT_SUBTYPE_NXS_TRANS      = 0x0040;
 
 // possibility create second service to deal with this functionality
 
-const uint8_t RS_PKT_SUBTYPE_NXS_EXTENDED      = 0x0080; // in order to extend supported pkt subtypes
 const uint8_t RS_PKT_SUBTYPE_EXT_SEARCH_GRP   = 0x0001;
 const uint8_t RS_PKT_SUBTYPE_EXT_SEARCH_MSG   = 0x0002;
 const uint8_t RS_PKT_SUBTYPE_EXT_DELETE_GRP   = 0x0004;
@@ -336,25 +335,6 @@ public:
 
 
 /*!
- * used to extend data types processed
- */
-class RsNxsExtended : public RsNxsItem
-{
-
-public:
-
-    RsNxsExtended(uint16_t servtype) : RsNxsItem(servtype, RS_PKT_SUBTYPE_NXS_EXTENDED), extData(servtype) { return; }
-    virtual ~RsNxsExtended() { return; }
-
-    virtual void clear() {}
-    virtual std::ostream &print(std::ostream &out, uint16_t indent);
-
-    RsTlvBinaryData extData;
-    uint32_t type;
-};
-
-
-/*!
  * Used to respond to a RsGrpSearchReq
  * with grpId/MsgIds that satisfy search request
  */
@@ -479,11 +459,6 @@ private:
     virtual uint32_t sizeNxsTrans(RsNxsTransac* item);
     virtual bool serialiseNxsTrans(RsNxsTransac* item, void* data, uint32_t* size);
     virtual RsNxsTransac* deserialNxsTrans(void* data, uint32_t *size);
-
-    /* RS_PKT_SUBTYPE_EXTENDED */
-    virtual RsNxsExtended* deserialNxsExtended(void* data, uint32_t *size);
-    virtual uint32_t sizeNxsExtended(RsNxsExtended* item);
-    virtual bool serialiseNxsExtended(RsNxsExtended* item, void* data, uint32_t* size);
 
 private:
 

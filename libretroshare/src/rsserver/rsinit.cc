@@ -1837,9 +1837,3 @@ int RsServer::StartupRetroShare()
 	return 1;
 }
 
-
-void chris_test()
-{
-	std::cout << "tested\n";
-}
-

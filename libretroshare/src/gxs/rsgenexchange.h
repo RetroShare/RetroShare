@@ -752,11 +752,10 @@ private:
     /*!
 	 * Attempts to validate group signatures
 	 * @param grp group to be validated
-	 * @param grpKeySet the keys set user has for the group
 	 * @return VALIDATE_SUCCESS for success, VALIDATE_FAIL for fail,
 	 * 		   VALIDATE_ID_SIGN_NOT_AVAIL for Id sign key not avail (but requested)
 	 */
-	int validateGrp(RsNxsGrp* grp, RsTlvSecurityKeySet& grpKeySet);
+	int validateGrp(RsNxsGrp* grp);
 
     /*!
      * Checks flag against a given privacy bit block

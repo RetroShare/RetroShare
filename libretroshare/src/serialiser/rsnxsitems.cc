@@ -109,8 +109,6 @@ RsItem* RsNxsSerialiser::deserialise(void *data, uint32_t *size) {
             return deserialNxsMsg(data, size);
         case RS_PKT_SUBTYPE_NXS_TRANS:
             return deserialNxsTrans(data, size);
-        case RS_PKT_SUBTYPE_NXS_EXTENDED:
-            return deserialNxsExtended(data, size);
         default:
             {
 #ifdef RSSERIAL_DEBUG
@@ -133,7 +131,6 @@ bool RsNxsSerialiser::serialise(RsItem *item, void *data, uint32_t *size){
     RsNxsSyncGrpItem* sgl;
     RsNxsSyncMsg* sgm;
     RsNxsSyncMsgItem* sgml;
-    RsNxsExtended* nxt;
     RsNxsTransac* ntx;
 
     if((sg = dynamic_cast<RsNxsSyncGrp*>(item))  != NULL)
@@ -160,9 +157,6 @@ bool RsNxsSerialiser::serialise(RsItem *item, void *data, uint32_t *size){
     }else if((nmg = dynamic_cast<RsNxsMsg*>(item)) != NULL)
     {
         return serialiseNxsMsg(nmg, data, size);
-    }else if((nxt = dynamic_cast<RsNxsExtended*>(item)) != NULL){
-
-        return serialiseNxsExtended(nxt, data, size);
     }
 
 #ifdef NXS_DEBUG
@@ -522,12 +516,6 @@ bool RsNxsSerialiser::serialiseNxsSyncMsg(RsNxsSyncMsg *item, void *data, uint32
 #endif
 
     return ok;
-}
-
-
-bool RsNxsSerialiser::serialiseNxsExtended(RsNxsExtended *item, void *data, uint32_t *size){
-
-    return false;
 }
 
 /*** deserialisation ***/
@@ -1015,12 +1003,6 @@ RsNxsSyncMsg* RsNxsSerialiser::deserialNxsSyncMsg(void *data, uint32_t *size)
 }
 
 
-RsNxsExtended* RsNxsSerialiser::deserialNxsExtended(void *data, uint32_t *size){
-    return NULL;
-}
-
-
-
 /*** size functions ***/
 
 
@@ -1122,10 +1104,6 @@ uint32_t RsNxsSerialiser::sizeNxsTrans(RsNxsTransac *item){
     return s;
 }
 
-uint32_t RsNxsSerialiser::sizeNxsExtended(RsNxsExtended *item){
-
-    return 0;
-}
 
 int RsNxsGrp::refcount = 0;
 /** print and clear functions **/
@@ -1205,19 +1183,6 @@ std::ostream& RsNxsSyncGrp::print(std::ostream &out, uint16_t indent)
     return out;
 }
 
-std::ostream& RsNxsExtended::print(std::ostream &out, uint16_t indent){
-    printRsItemBase(out, "RsNxsExtended", indent);
-    uint16_t int_Indent = indent + 2;
-
-    printIndent(out , int_Indent);
-    out << "type: " << type << std::endl;
-    printIndent(out , int_Indent);
-    extData.print(out, int_Indent);
-
-    printRsItemEnd(out ,"RsNxsExtended", indent);
-
-    return out;
-}
 
 std::ostream& RsNxsSyncMsg::print(std::ostream &out, uint16_t indent)
 {

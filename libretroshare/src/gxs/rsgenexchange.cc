@@ -56,13 +56,31 @@
 RsGenExchange::RsGenExchange(RsGeneralDataService *gds, RsNetworkExchangeService *ns,
                              RsSerialType *serviceSerialiser, uint16_t servType, RsGixs* gixs,
                              uint32_t authenPolicy, uint32_t messageStorePeriod)
-: mGenMtx("GenExchange"), mDataStore(gds), mNetService(ns), mSerialiser(serviceSerialiser),
-    mServType(servType), mGixs(gixs), mAuthenPolicy(authenPolicy), MESSAGE_STORE_PERIOD(messageStorePeriod),
-    CREATE_FAIL(0), CREATE_SUCCESS(1), CREATE_FAIL_TRY_LATER(2), SIGN_MAX_ATTEMPTS(5),
-    SIGN_FAIL(0), SIGN_SUCCESS(1), SIGN_FAIL_TRY_LATER(2),
-    VALIDATE_FAIL(0), VALIDATE_SUCCESS(1), VALIDATE_FAIL_TRY_LATER(2), VALIDATE_MAX_ATTEMPTS(5),
-    mCleaning(false), mLastClean(time(NULL)), mMsgCleanUp(NULL), mChecking(false), mIntegrityCheck(NULL),
-    mLastCheck(time(NULL))
+: mGenMtx("GenExchange"),
+  mDataStore(gds),
+  mNetService(ns),
+  mSerialiser(serviceSerialiser),
+  mServType(servType),
+  mGixs(gixs),
+  mAuthenPolicy(authenPolicy),
+  MESSAGE_STORE_PERIOD(messageStorePeriod),
+  mCleaning(false),
+  mLastClean(time(NULL)),
+  mMsgCleanUp(NULL),
+  mChecking(false),
+  mLastCheck(time(NULL)),
+  mIntegrityCheck(NULL),
+  CREATE_FAIL(0),
+  CREATE_SUCCESS(1),
+  CREATE_FAIL_TRY_LATER(2),
+  SIGN_MAX_ATTEMPTS(5),
+  SIGN_FAIL(0),
+  SIGN_SUCCESS(1),
+  SIGN_FAIL_TRY_LATER(2),
+  VALIDATE_FAIL(0),
+  VALIDATE_SUCCESS(1),
+  VALIDATE_FAIL_TRY_LATER(2),
+  VALIDATE_MAX_ATTEMPTS(5)
 {
 
     mDataAccess = new RsGxsDataAccess(gds);
@@ -284,7 +302,6 @@ void RsGenExchange::generatePublicFromPrivateKeys(const RsTlvSecurityKeySet &pri
     typedef std::map<std::string, RsTlvSecurityKey> keyMap;
     const keyMap& allKeys = privatekeySet.keys;
     keyMap::const_iterator cit = allKeys.begin();
-    bool adminFound = false, publishFound = false;
     for(; cit != allKeys.end(); cit++)
     {
         const RsTlvSecurityKey& privKey = cit->second;
@@ -842,13 +859,11 @@ int RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, RsTlvSecu
 
 }
 
-int RsGenExchange::validateGrp(RsNxsGrp* grp, RsTlvSecurityKeySet& grpKeySet)
+int RsGenExchange::validateGrp(RsNxsGrp* grp)
 {
 
 	bool needIdentitySign = false, idValidate = false;
 	RsGxsGrpMetaData& metaData = *(grp->metaData);
-
-    int id_ret;
 
     uint8_t author_flag = GXS_SERV::GRP_OPTION_AUTHEN_AUTHOR_SIGN;
 
@@ -2388,7 +2403,7 @@ void RsGenExchange::processRecvdGroups()
         if(deserialOk)
         {
         	grp->metaData = meta;
-        	uint8_t ret = validateGrp(grp, meta->keys);
+        	uint8_t ret = validateGrp(grp);
 
 
         	if(ret == VALIDATE_SUCCESS)

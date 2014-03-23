@@ -93,21 +93,6 @@ public:
     void setSyncAge(uint32_t age);
 
     /*!
-     * Explicitly requests all the groups contained by a peer
-     * Circumvents polling of peers for message
-     * @param peerId id of peer
-     */
-    void requestGroupsOfPeer(const RsPeerId& peerId){ return;}
-
-    /*!
-     * get messages of a peer for a given group id, this circumvents the normal
-     * polling of peers for messages of given group id
-     * @param peerId Id of peer
-     * @param grpId id of group to request messages for
-     */
-    void requestMessagesOfPeer(const RsPeerId& peerId, const std::string& grpId){ return; }
-
-    /*!
      * pauses synchronisation of subscribed groups and request for group id
      * from peers
      * @param enabled set to false to disable pause, and true otherwise
@@ -121,7 +106,7 @@ public:
      * @param msgId the messages to retrieve
      * @return request token to be redeemed
      */
-    int requestMsg(const RsGxsGrpMsgIdPair& msgId){ return 0;}
+    int requestMsg(const RsGxsGrpMsgIdPair& /* msgId */){ return 0;}
 
     /*!
      * Request for this group is sent through to peers on your network

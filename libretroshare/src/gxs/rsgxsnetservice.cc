@@ -44,10 +44,10 @@ RsGxsNetService::RsGxsNetService(uint16_t servType, RsGeneralDataService *gds,
                                  RsNxsNetMgr *netMgr, RsNxsObserver *nxsObs, 
 				const RsServiceInfo serviceInfo,
 				RsGixsReputation* reputations, RsGcxs* circles, bool grpAutoSync)
-                                     : p3Config(servType), p3ThreadedService(),
-                                       mTransactionTimeOut(TRANSAC_TIMEOUT), mServType(servType), mDataStore(gds), mTransactionN(0),
-                                       mObserver(nxsObs), mNxsMutex("RsGxsNetService"), mNetMgr(netMgr), mSYNC_PERIOD(SYNC_PERIOD),
-                                       mSyncTs(0), mReputations(reputations), mCircles(circles), mGrpAutoSync(grpAutoSync), mGrpServerUpdateItem(NULL), 
+                                     : p3ThreadedService(), p3Config(servType), mTransactionN(0),
+                                       mObserver(nxsObs), mDataStore(gds), mServType(servType),
+                                       mTransactionTimeOut(TRANSAC_TIMEOUT), mNetMgr(netMgr), mNxsMutex("RsGxsNetService"),
+                                       mSyncTs(0), mSYNC_PERIOD(SYNC_PERIOD), mCircles(circles), mReputations(reputations), mGrpAutoSync(grpAutoSync), mGrpServerUpdateItem(NULL),
 					mServiceInfo(serviceInfo)
 
 {
@@ -2405,12 +2405,12 @@ bool RsGxsNetService::canSendMsgIds(const std::vector<RsGxsMsgMetaData*>& msgMet
 
 /** inherited methods **/
 
-void RsGxsNetService::pauseSynchronisation(bool enabled)
+void RsGxsNetService::pauseSynchronisation(bool /* enabled */)
 {
 
 }
 
-void RsGxsNetService::setSyncAge(uint32_t age)
+void RsGxsNetService::setSyncAge(uint32_t /* age */)
 {
 
 }

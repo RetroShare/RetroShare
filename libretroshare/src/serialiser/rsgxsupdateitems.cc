@@ -38,8 +38,13 @@ void RsGxsGrpUpdateItem::clear()
 
 std::ostream& RsGxsGrpUpdateItem::print(std::ostream& out, uint16_t indent)
 {
+    printRsItemBase(out, "RsGxsGrpUpdateItem", indent);
+    uint16_t int_Indent = indent + 2;
+    out << "peerId: " << peerId << std::endl;
+    printIndent(out, int_Indent);
+    out << "grpUpdateTS: " << grpUpdateTS << std::endl;
+    printIndent(out, int_Indent);
 	return out ;
-
 }
 
 
@@ -52,6 +57,25 @@ void RsGxsMsgUpdateItem::clear()
 
 std::ostream& RsGxsMsgUpdateItem::print(std::ostream& out, uint16_t indent)
 {
+    RsPeerId peerId;
+    std::map<RsGxsGroupId, uint32_t> msgUpdateTS;
+
+    printRsItemBase(out, "RsGxsMsgUpdateItem", indent);
+    uint16_t int_Indent = indent + 2;
+    out << "peerId: " << peerId << std::endl;
+    printIndent(out, int_Indent);
+
+    std::map<RsGxsGroupId, uint32_t>::const_iterator cit = msgUpdateTS.begin();
+    out << "msgUpdateTS map:" << std::endl;
+    int_Indent += 2;
+    for(; cit != msgUpdateTS.end(); cit++)
+    {
+    	out << "grpId: " << cit->first << std::endl;
+		printIndent(out, int_Indent);
+		out << "Msg time stamp: " << cit->second << std::endl;
+		printIndent(out, int_Indent);
+    }
+
 	return out;
 }
 
@@ -65,7 +89,13 @@ void RsGxsServerMsgUpdateItem::clear()
 
 std::ostream& RsGxsServerMsgUpdateItem::print(std::ostream& out, uint16_t indent)
 {
-	return out;
+    printRsItemBase(out, "RsGxsServerMsgUpdateItem", indent);
+    uint16_t int_Indent = indent + 2;
+    out << "grpId: " << grpId << std::endl;
+    printIndent(out, int_Indent);
+    out << "msgUpdateTS: " << msgUpdateTS << std::endl;
+    printIndent(out, int_Indent);
+    return out;
 }
 
 
@@ -76,6 +106,11 @@ void RsGxsServerGrpUpdateItem::clear()
 
 std::ostream& RsGxsServerGrpUpdateItem::print(std::ostream& out, uint16_t indent)
 {
+    printRsItemBase(out, "RsGxsServerGrpUpdateItem", indent);
+    uint16_t int_Indent = indent + 2;
+    out << "grpUpdateTS: " << grpUpdateTS << std::endl;
+    printIndent(out, int_Indent);
+
 	return out;
 }
 
@@ -182,7 +217,7 @@ uint32_t RsGxsUpdateSerialiser::sizeGxsGrpUpdate(RsGxsGrpUpdateItem* item)
 	return s;
 }
 
-uint32_t RsGxsUpdateSerialiser::sizeGxsServerGrpUpdate(RsGxsServerGrpUpdateItem* item)
+uint32_t RsGxsUpdateSerialiser::sizeGxsServerGrpUpdate(RsGxsServerGrpUpdateItem* /* item */)
 {
         uint32_t s = 8; // header size
         s += 4; // time stamp
