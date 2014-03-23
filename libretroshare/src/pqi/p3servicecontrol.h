@@ -55,7 +55,7 @@ class ServicePeerFilter
 
 std::ostream &operator<<(std::ostream &out, const ServicePeerFilter &filter);
 
-class p3ServiceControl: public RsServiceControl /* , public p3Config, public pqiMonitor */
+class p3ServiceControl: public RsServiceControl, public pqiMonitor /* , public p3Config */
 {
 public:
 
@@ -124,6 +124,7 @@ virtual bool loadList(std::list<RsItem *>& load);
 private:
 
 void    notifyServices();
+void    notifyAboutFriends();
 
 bool createDefaultPermissions_locked(uint32_t serviceId, std::string serviceName, bool defaultOn);
 
@@ -138,6 +139,8 @@ void    recordFilterChanges_locked(const RsPeerId &peerId,
 
 void    updatePeerConnect(const RsPeerId &peerId);
 void    updatePeerDisconnect(const RsPeerId &peerId);
+void    updatePeerNew(const RsPeerId &peerId);
+void    updatePeerRemoved(const RsPeerId &peerId);
 
 
 bool peerHasPermissionForService_locked(const RsPeerId &peerId, uint32_t serviceId);
@@ -157,8 +160,12 @@ bool peerHasPermissionForService_locked(const RsPeerId &peerId, uint32_t service
 	// Below here is saved in Configuration.
 	std::map<uint32_t, RsServicePermissions> mServicePermissionMap;
 
-	std::multimap<uint32_t, pqiServiceMonitor *> mMonitors;
         std::map<uint32_t, ServiceNotifications> mNotifications;
+        std::list<pqiServicePeer> mFriendNotifications;
+
+	// Separate mutex here - must not hold both at the same time!
+	RsMutex mMonitorMtx; /* below is protected */
+	std::multimap<uint32_t, pqiServiceMonitor *> mMonitors;
 };
 
 

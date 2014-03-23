@@ -1063,45 +1063,49 @@ void p3discovery2::recvPGPCertificate(const SSLID &fromId, RsDiscPgpCertItem *it
 						  
 						  
 
-        /************* from pqiMonitor *******************/
-void p3discovery2::statusChange(const std::list<pqipeer> &plist)
+        /************* from pqiServiceMonitor *******************/
+void p3discovery2::statusChange(const std::list<pqiServicePeer> &plist)
 {
-#ifdef P3DISC_DEBUG
+//#ifdef P3DISC_DEBUG
 	std::cerr << "p3discovery2::statusChange()" << std::endl;
-#endif
+//#endif
 
-	std::list<pqipeer>::const_iterator pit;
+	std::list<pqiServicePeer>::const_iterator pit;
 	for(pit =  plist.begin(); pit != plist.end(); pit++) 
 	{
-		if ((pit->state & RS_PEER_S_FRIEND) && (pit->actions & RS_PEER_CONNECTED)) 
+		if (pit->actions & RS_SERVICE_PEER_CONNECTED) 
 		{
-#ifdef P3DISC_DEBUG
+//#ifdef P3DISC_DEBUG
 			std::cerr << "p3discovery2::statusChange() Starting Disc with: " << pit->id << std::endl;
-#endif
+//#endif
 			sendOwnContactInfo(pit->id);
 		} 
-		else if (!(pit->state & RS_PEER_S_FRIEND) && (pit->actions & RS_PEER_MOVED)) 
+		else if (pit->actions & RS_SERVICE_PEER_DISCONNECTED) 
 		{
-#ifdef P3DISC_DEBUG
-			std::cerr << "p3discovery2::statusChange() Removing Friend: " << pit->id << std::endl;
-#endif
-			removeFriend(pit->id);
+			std::cerr << "p3discovery2::statusChange() Disconnected: " << pit->id << std::endl;
 		}
-		else if ((pit->state & RS_PEER_S_FRIEND) && (pit->actions & RS_PEER_NEW)) 
+
+		if (pit->actions & RS_SERVICE_PEER_NEW)
 		{
-#ifdef P3DISC_DEBUG
+//#ifdef P3DISC_DEBUG
 			std::cerr << "p3discovery2::statusChange() Adding Friend: " << pit->id << std::endl;
-#endif
+//#endif
 			addFriend(pit->id);
 		}
+		else if (pit->actions & RS_SERVICE_PEER_REMOVED)
+		{
+//#ifdef P3DISC_DEBUG
+			std::cerr << "p3discovery2::statusChange() Removing Friend: " << pit->id << std::endl;
+//#endif
+			removeFriend(pit->id);
+		}
 	}
-#ifdef P3DISC_DEBUG
+//#ifdef P3DISC_DEBUG
 	std::cerr << "p3discovery2::statusChange() finished." << std::endl;
-#endif
+//#endif
 	return;
 }
 
-		
 
 	/*************************************************************************************/
 	/*			   Extracting Network Graph Details			     */

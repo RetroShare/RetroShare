@@ -1604,14 +1604,19 @@ int RsServer::StartupRetroShare()
 
 	/**************************************************************************/
 	/* need to Monitor too! */
-	mLinkMgr->addMonitor(serviceInfo);
 	mLinkMgr->addMonitor(pqih);
+	mLinkMgr->addMonitor(serviceCtrl);
+	mLinkMgr->addMonitor(serviceInfo);
+
+	// below should be changed to pqiServiceMonitors....
 	mLinkMgr->addMonitor(mCacheStrapper);
-	mLinkMgr->addMonitor(mDisc);
 	mLinkMgr->addMonitor(msgSrv);
 	mLinkMgr->addMonitor(mStatusSrv);
 	mLinkMgr->addMonitor(chatSrv);
 	mLinkMgr->addMonitor(mBwCtrl);
+
+	// Services that have been changed to pqiServiceMonitor
+	serviceCtrl->registerServiceMonitor(mDisc, mDisc->getServiceInfo().mServiceType);
 
 	/* must also add the controller as a Monitor...
 	 * a little hack to get it to work.

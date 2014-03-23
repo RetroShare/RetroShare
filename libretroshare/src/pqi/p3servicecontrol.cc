@@ -32,7 +32,7 @@ RsServiceControl *rsServiceControl = NULL;
 
 p3ServiceControl::p3ServiceControl(uint32_t configId)
         :RsServiceControl(), /* p3Config(configId), pqiMonitor(),  */
-	mCtrlMtx("p3ServiceControl")
+	mCtrlMtx("p3ServiceControl"), mMonitorMtx("P3ServiceControl::Monitor")
 {
 }
 
@@ -90,7 +90,7 @@ bool p3ServiceControl::deregisterService(uint32_t serviceId)
 /* Interface for Services */
 bool p3ServiceControl::registerServiceMonitor(pqiServiceMonitor *monitor, uint32_t serviceId)
 {
-	RsStackMutex stack(mCtrlMtx); /***** LOCK STACK MUTEX ****/
+	RsStackMutex stack(mMonitorMtx); /***** LOCK STACK MUTEX ****/
 
 	std::cerr << "p3ServiceControl::registerServiceMonitor() for ServiceId: ";
 	std::cerr << serviceId;
@@ -103,7 +103,7 @@ bool p3ServiceControl::registerServiceMonitor(pqiServiceMonitor *monitor, uint32
 
 bool p3ServiceControl::deregisterServiceMonitor(pqiServiceMonitor *monitor)
 {
-	RsStackMutex stack(mCtrlMtx); /***** LOCK STACK MUTEX ****/
+	RsStackMutex stack(mMonitorMtx); /***** LOCK STACK MUTEX ****/
 
 	std::cerr << "p3ServiceControl::deregisterServiceMonitor()";
 	std::cerr << std::endl;
@@ -682,7 +682,7 @@ void	p3ServiceControl::removePeer(const RsPeerId &peerId)
 {
 	RsStackMutex stack(mCtrlMtx); /***** LOCK STACK MUTEX ****/
 
-	std::cerr << "p3ServiceControl::removePeer()";
+	std::cerr << "p3ServiceControl::removePeer() : " << peerId.toStdString();
 	std::cerr << std::endl;
 
 	ServicePeerFilter originalFilter;
@@ -692,9 +692,17 @@ void	p3ServiceControl::removePeer(const RsPeerId &peerId)
 		fit = mPeerFilterMap.find(peerId);
 		if (fit != mPeerFilterMap.end())
 		{
+			std::cerr << "p3ServiceControl::removePeer() clearing mPeerFilterMap";
+			std::cerr << std::endl;
+
 			hadFilter = true;
 			originalFilter = fit->second;
 			mPeerFilterMap.erase(fit);
+		}
+		else
+		{
+			std::cerr << "p3ServiceControl::removePeer() Nothing in mPeerFilterMap";
+			std::cerr << std::endl;
 		}
 	}
 
@@ -703,7 +711,15 @@ void	p3ServiceControl::removePeer(const RsPeerId &peerId)
 		sit = mServicesProvided.find(peerId);
 		if (sit != mServicesProvided.end())
 		{
+			std::cerr << "p3ServiceControl::removePeer() clearing mServicesProvided";
+			std::cerr << std::endl;
+
 			mServicesProvided.erase(sit);
+		}
+		else
+		{
+			std::cerr << "p3ServiceControl::removePeer() Nothing in mServicesProvided";
+			std::cerr << std::endl;
 		}
 	}
 
@@ -720,6 +736,9 @@ void	p3ServiceControl::removePeer(const RsPeerId &peerId)
 
 void	p3ServiceControl::tick()
 {
+	notifyAboutFriends();
+	notifyServices();
+
 	std::cerr << "p3ServiceControl::tick()";
 	std::cerr << std::endl;
 }
@@ -754,8 +773,14 @@ void    p3ServiceControl::statusChange(const std::list<pqipeer> &plist)
         std::list<pqipeer>::const_iterator pit;
         for(pit =  plist.begin(); pit != plist.end(); pit++)
         {
+		std::cerr << "p3ServiceControl::statusChange() for peer: ";
+		std::cerr << " peer: " << (pit->id).toStdString();
+		std::cerr << " state: " << pit->state;
+		std::cerr << " actions: " << pit->actions;
+		std::cerr << std::endl;
                 if (pit->state & RS_PEER_S_FRIEND)
 		{
+			// Connected / Disconnected. (interal actions).
 			if (pit->actions & RS_PEER_CONNECTED)
 			{
 				updatePeerConnect(pit->id);
@@ -763,6 +788,19 @@ void    p3ServiceControl::statusChange(const std::list<pqipeer> &plist)
 			else if (pit->actions & RS_PEER_DISCONNECTED)
 			{
 				updatePeerDisconnect(pit->id);
+			}
+
+			// Added / Removed. (pass on notifications).
+			if (pit->actions & RS_PEER_NEW)
+			{
+				updatePeerNew(pit->id);
+			}
+		}
+		else
+		{
+			if (pit->actions & RS_PEER_MOVED)
+			{
+				updatePeerRemoved(pit->id);
 			}
                 }
 	}
@@ -786,53 +824,143 @@ void    p3ServiceControl::updatePeerDisconnect(const RsPeerId &peerId)
 	return;
 }
 
+
+// Update Peer status.
+void    p3ServiceControl::updatePeerNew(const RsPeerId &peerId)
+{
+	std::cerr << "p3ServiceControl::updatePeerNew(): " << peerId.toStdString();
+	std::cerr << std::endl;
+
+	pqiServicePeer peer;
+	peer.id = peerId;
+	peer.actions = RS_SERVICE_PEER_NEW;
+	mFriendNotifications.push_back(peer);
+
+	return;
+}
+
+void    p3ServiceControl::updatePeerRemoved(const RsPeerId &peerId)
+{
+	std::cerr << "p3ServiceControl::updatePeerRemoved(): " << peerId.toStdString();
+	std::cerr << std::endl;
+
+	removePeer(peerId);
+
+	pqiServicePeer peer;
+	peer.id = peerId;
+	peer.actions = RS_SERVICE_PEER_REMOVED;
+	mFriendNotifications.push_back(peer);
+
+	return;
+}
+
 /****************************************************************************/
 /****************************************************************************/
+
+
+void	p3ServiceControl::notifyAboutFriends()
+{
+	std::list<pqiServicePeer> friendNotifications;
+	{
+		RsStackMutex stack(mCtrlMtx); /***** LOCK STACK MUTEX ****/
+
+		if (mFriendNotifications.empty())
+		{
+			return;
+		}
+		std::cerr << "p3ServiceControl::notifyAboutFriends(): Something has changed!";
+		std::cerr << std::endl;
+
+		mFriendNotifications.swap(friendNotifications);
+	}
+
+	{
+		RsStackMutex stack(mMonitorMtx); /***** LOCK STACK MUTEX ****/
+
+        	std::multimap<uint32_t, pqiServiceMonitor *>::const_iterator sit;
+		for(sit = mMonitors.begin(); sit != mMonitors.end(); sit++)
+		{
+			sit->second->statusChange(friendNotifications);
+		}
+	}
+}
+
 
 void	p3ServiceControl::notifyServices()
 {
-	RsStackMutex stack(mCtrlMtx); /***** LOCK STACK MUTEX ****/
-
-        std::map<uint32_t, ServiceNotifications>::const_iterator it;
-        std::multimap<uint32_t, pqiServiceMonitor *>::const_iterator sit, eit;
-	for(it = mNotifications.begin(); it != mNotifications.end(); it++)
+        std::map<uint32_t, ServiceNotifications> notifications;
 	{
-		sit = mMonitors.lower_bound(it->first);
-		eit = mMonitors.upper_bound(it->first);
-		if (sit == eit)
+		RsStackMutex stack(mCtrlMtx); /***** LOCK STACK MUTEX ****/
+
+		if (mNotifications.empty())
 		{
-			/* nothing to notify - skip */
-			continue;
+			return;
 		}
 
-		std::list<pqiServicePeer> peers;
-		std::set<RsPeerId>::const_iterator pit;
-		for(pit = it->second.mAdded.begin(); 
-			pit != it->second.mAdded.end(); pit++)
+		std::cerr << "p3ServiceControl::notifyServices()";
+		std::cerr << std::endl;
+
+		mNotifications.swap(notifications);
+	}
+
+	{
+		RsStackMutex stack(mMonitorMtx); /***** LOCK STACK MUTEX ****/
+
+        	std::map<uint32_t, ServiceNotifications>::const_iterator it;
+        	std::multimap<uint32_t, pqiServiceMonitor *>::const_iterator sit, eit;
+		for(it = notifications.begin(); it != notifications.end(); it++)
 		{
-			pqiServicePeer peer;
-			peer.id = *pit;
-			peer.actions = RS_SERVICE_PEER_CONNECTED;
+			std::cerr << "p3ServiceControl::notifyServices(): Notifications for Service: " << it->first;
+			std::cerr << std::endl;
 
-			peers.push_back(peer);
-		}
-
-		for(pit = it->second.mRemoved.begin(); 
-			pit != it->second.mRemoved.end(); pit++)
-		{
-			pqiServicePeer peer;
-			peer.id = *pit;
-			peer.actions = RS_SERVICE_PEER_REMOVED;
-
-			peers.push_back(peer);
-		}
-
-		for(; sit != eit; sit++)
-		{
-			sit->second->statusChange(peers);
+			sit = mMonitors.lower_bound(it->first);
+			eit = mMonitors.upper_bound(it->first);
+			if (sit == eit)
+			{
+				/* nothing to notify - skip */
+				std::cerr << "p3ServiceControl::notifyServices(): Noone Monitoring ... skipping";
+				std::cerr << std::endl;
+	
+				continue;
+			}
+	
+			std::list<pqiServicePeer> peers;
+			std::set<RsPeerId>::const_iterator pit;
+			for(pit = it->second.mAdded.begin(); 
+				pit != it->second.mAdded.end(); pit++)
+			{
+				pqiServicePeer peer;
+				peer.id = *pit;
+				peer.actions = RS_SERVICE_PEER_CONNECTED;
+	
+				peers.push_back(peer);
+	
+				std::cerr << "p3ServiceControl::notifyServices(): Peer: " << *pit << " CONNECTED";
+				std::cerr << std::endl;
+			}
+	
+			for(pit = it->second.mRemoved.begin(); 
+				pit != it->second.mRemoved.end(); pit++)
+			{
+				pqiServicePeer peer;
+				peer.id = *pit;
+				peer.actions = RS_SERVICE_PEER_DISCONNECTED;
+	
+				peers.push_back(peer);
+	
+				std::cerr << "p3ServiceControl::notifyServices(): Peer: " << *pit << " DISCONNECTED";
+				std::cerr << std::endl;
+			}
+	
+			for(; sit != eit; sit++)
+			{
+				std::cerr << "p3ServiceControl::notifyServices(): Sending to Monitoring Service";
+				std::cerr << std::endl;
+	
+				sit->second->statusChange(peers);
+			}
 		}
 	}
-	mNotifications.clear();
 }
 
 

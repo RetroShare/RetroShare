@@ -170,6 +170,8 @@ bool p3ServiceServer::sendItem(RsRawItem *item)
 int	p3ServiceServer::tick()
 {
 
+	mServiceControl->tick();
+
 	RsStackMutex stack(srvMtx); /********* LOCKED *********/
 
 #ifdef  SERVICE_DEBUG

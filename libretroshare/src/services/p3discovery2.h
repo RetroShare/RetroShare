@@ -34,7 +34,7 @@
 #include "pqi/p3linkmgr.h"
 #include "pqi/p3netmgr.h"
 
-#include "pqi/pqimonitor.h"
+#include "pqi/pqiservicemonitor.h"
 #include "serialiser/rsdiscovery2items.h"
 #include "services/p3service.h"
 #include "pqi/authgpg.h"
@@ -74,7 +74,7 @@ void    mergeFriendList(const std::list<PGPID> &friends);
 
 
 
-class p3discovery2: public RsDisc, public p3Service, public pqiMonitor, public AuthGPGService
+class p3discovery2: public RsDisc, public p3Service, public pqiServiceMonitor, public AuthGPGService
 {
 	public:
 
@@ -83,9 +83,9 @@ virtual ~p3discovery2();
 
 virtual RsServiceInfo getServiceInfo();
 
-	/************* from pqiMonitor *******************/
-	virtual void statusChange(const std::list<pqipeer> &plist);
-	/************* from pqiMonitor *******************/
+	/************* from pqiServiceMonitor *******************/
+	virtual void statusChange(const std::list<pqiServicePeer> &plist);
+	/************* from pqiServiceMonitor *******************/
 	
 	int	tick();
 	
