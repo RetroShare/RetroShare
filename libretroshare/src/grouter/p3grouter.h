@@ -133,8 +133,11 @@ class p3GRouter: public RsGRouter, public p3Service, public p3Config
 		void debugDump() ;
 		void locked_forwardKey(const RsGRouterPublishKeyItem&) ;
 
+		// utility functions
+		//
 		static uint32_t computeBranchingFactor(const std::map<RsPeerId,float>& probas,uint32_t dist) ;
 		static std::set<RsPeerId> computeRoutingFriends(const std::map<RsPeerId,float>& probas,uint32_t N) ;
+		static uint32_t computeRandomDistanceIncrement(const RsPeerId& pid,const GRouterKeyId& destination_id) ;
 
 		//===================================================//
 		//                  p3Config methods                 //

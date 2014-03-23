@@ -312,7 +312,7 @@ bool GxsSecurity::decrypt(void *& out, int & outlen, const void *in, int inlen, 
 #ifdef DISTRIB_DEBUG
 	std::cerr << "GxsSecurity::decrypt() " << std::endl;
 #endif
-	RSA *rsa_publish = RSAPublicKey_dup(extractPrivateKey(key)) ;
+	RSA *rsa_publish = RSAPrivateKey_dup(extractPrivateKey(key)) ;
 	EVP_PKEY *privateKey = NULL;
 
 	//RSA* rsa_publish = EVP_PKEY_get1_RSA(privateKey);

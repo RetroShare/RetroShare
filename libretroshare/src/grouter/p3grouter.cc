@@ -307,13 +307,14 @@ void p3GRouter::routePendingObjects()
 	RsPeerId own_id( mLinkMgr->getOwnId() );
 
 	for(std::map<GRouterMsgPropagationId, GRouterRoutingInfo>::iterator it(_pending_messages.begin());it!=_pending_messages.end();)
-		if((it->second.status_flags & RS_GROUTER_ROUTING_STATE_PEND) || (it->second.status_flags == RS_GROUTER_ROUTING_STATE_SENT && it->second.tried_friends.front().time_stamp+RS_GROUTER_ROUTING_WAITING_TIME < now))
+		if((it->second.status_flags == RS_GROUTER_ROUTING_STATE_PEND) || (it->second.status_flags == RS_GROUTER_ROUTING_STATE_SENT && it->second.tried_friends.front().time_stamp+RS_GROUTER_ROUTING_WAITING_TIME < now))
 		{
 			std::cerr << "  Msg id: " << std::hex << it->first << std::dec << std::endl;
 			std::cerr << "  Origin: " << it->second.origin.toStdString() << std::endl;
 			std::cerr << "  Last  : " << it->second.tried_friends.front().friend_id.toStdString() << std::endl;
 			std::cerr << "  Time  : " << it->second.tried_friends.front().time_stamp << std::endl;
 			std::cerr << "  Flags : " << it->second.status_flags << std::endl;
+			std::cerr << "  Dist  : " << it->second.data_item->randomized_distance<< std::endl;
 			std::cerr << "  Probabilities: " << std::endl;
 
 			std::map<RsPeerId,float> probas ;		// friends probabilities for online friend list.
@@ -326,7 +327,7 @@ void p3GRouter::routePendingObjects()
 
 			// Compute the branching factor.
 
-			int N = computeBranchingFactor(probas,it->second.randomized_distance) ;
+			int N = computeBranchingFactor(probas,it->second.data_item->randomized_distance) ;
 
 			// Now use this to select N random peers according to the given probabilities
 
@@ -358,6 +359,8 @@ void p3GRouter::routePendingObjects()
 
 				// send
 				new_item->PeerId(*its) ;
+				new_item->randomized_distance += computeRandomDistanceIncrement(*its,new_item->destination_key) ;
+
 				sendItem(new_item) ;
 			}
 
@@ -382,6 +385,25 @@ void p3GRouter::routePendingObjects()
 			std::cerr << "Skipping " << std::hex << it->first << std::dec << ", dest=" << it->second.data_item->destination_key.toStdString() << ", state = " << it->second.status_flags << ", stamp=" << it->second.tried_friends.front().time_stamp << " - " << it->second.tried_friends.front().friend_id.toStdString() << std::endl;
 			++it ;
 		}
+}
+
+uint32_t p3GRouter::computeRandomDistanceIncrement(const RsPeerId& pid,const GRouterKeyId& destination_key)
+{
+	// This computes a consistent random bias between 0 and 255, which only depends on the
+	// destination key and the friend the item is going to be routed through.
+	// Makes it much harder for attakcers to figure out what is going on with
+	// distances in the network, and makes statistics about multiple sending
+	// attempts impossible.
+	//
+	static uint64_t random_salt = RSRandom::random_u64() ;
+	static const int total_size = RsPeerId::SIZE_IN_BYTES + GRouterKeyId::SIZE_IN_BYTES + sizeof(random_salt) ;
+
+	unsigned char tmpmem[total_size] ;
+	*(uint64_t*)&tmpmem[0] = random_salt ;
+	memcpy(&tmpmem[sizeof(random_salt)],pid.toByteArray(),RsPeerId::SIZE_IN_BYTES) ;
+	memcpy(&tmpmem[sizeof(random_salt) + RsPeerId::SIZE_IN_BYTES],destination_key.toByteArray(),GRouterKeyId::SIZE_IN_BYTES) ;
+
+	return RsDirUtil::sha1sum(tmpmem,total_size).toByteArray()[5] ;
 }
 
 uint32_t p3GRouter::computeBranchingFactor(const std::map<RsPeerId,float>& probas,uint32_t dist) 
@@ -474,10 +496,15 @@ bool p3GRouter::registerKey(const GRouterKeyId& key,const GRouterServiceId& clie
 {
 	RsStackMutex mtx(grMtx) ;
 
+	if(_registered_services.find(client_id) == _registered_services.end())
+	{
+		std::cerr << __PRETTY_FUNCTION__ << ": unable to register key " << key << " for client id " << client_id << ": client id  is not known." << std::endl;
+		return false ;
+	}
+
 	GRouterPublishedKeyInfo info ;
 	info.service_id = client_id ;
 	info.description_string = description.substr(0,20);
-	info.validity_time = 0 ;			// not used yet.
 	info.last_published_time = 0 ; 	// means never published, se it will be re-published soon.
 
 	_owned_key_ids[key] = info ;
@@ -615,9 +642,11 @@ void p3GRouter::handleRecvACKItem(RsGRouterACKItem *item)
 				_routing_matrix.addRoutingClue(it->second.data_item->destination_key,item->PeerId(),weight) ;
 			}
 
-			std::cerr << "  forwarding ACK to origin: " << it->second.origin.toStdString() << std::endl;
-
-			sendACK(it->second.origin,item->mid,item->state) ;
+			if(it->second.origin != mLinkMgr->getOwnId())
+			{
+				std::cerr << "  forwarding ACK to origin: " << it->second.origin.toStdString() << std::endl;
+				sendACK(it->second.origin,item->mid,item->state) ;
+			}
 			break ;
 
 		case RS_GROUTER_ACK_STATE_GIVEN_UP:				            // route is bad. We forward back and update the routing matrix.
@@ -696,31 +725,25 @@ void p3GRouter::handleRecvDataItem(RsGRouterGenericDataItem *item)
 	// Is the item for us? If so, find the client service and send the item back.
 	//
 	if(it != _owned_key_ids.end())
-		if(time(NULL) < it->second.validity_time) 
-		{
-			if(itr->second.status_flags == RS_GROUTER_ROUTING_STATE_ARVD)
-				sendACK(item->PeerId(), item->routing_id, RS_GROUTER_ACK_STATE_RECEIVED_INDIRECTLY) ;
-			else
-			{
-				sendACK(item->PeerId(), item->routing_id, RS_GROUTER_ACK_STATE_RECEIVED) ;
-				itr->second.status_flags = RS_GROUTER_ROUTING_STATE_ARVD ;
-
-				std::map<GRouterServiceId,GRouterClientService*>::const_iterator its = _registered_services.find(it->second.service_id) ;
-
-				if(its != _registered_services.end())
-				{
-					std::cerr << "  Key is owned by us. Notifying service for this item." << std::endl;
-					its->second->receiveGRouterData(it->first,item_copy) ;
-				}
-				else
-					std::cerr << "  (EE) weird situation. No service registered for a key that we own. Key id = " << item->destination_key.toStdString() << ", service id = " << it->second.service_id << std::endl;
-			}
-		}
+	{
+		if(itr->second.status_flags == RS_GROUTER_ROUTING_STATE_ARVD)
+			sendACK(item->PeerId(), item->routing_id, RS_GROUTER_ACK_STATE_RECEIVED_INDIRECTLY) ;
 		else
 		{
-			std::cerr << "  key is outdated. The item will be dropped." << std::endl;
-			return ;
+			sendACK(item->PeerId(), item->routing_id, RS_GROUTER_ACK_STATE_RECEIVED) ;
+			itr->second.status_flags = RS_GROUTER_ROUTING_STATE_ARVD ;
+
+			std::map<GRouterServiceId,GRouterClientService*>::const_iterator its = _registered_services.find(it->second.service_id) ;
+
+			if(its != _registered_services.end())
+			{
+				std::cerr << "  Key is owned by us. Notifying service for this item." << std::endl;
+				its->second->receiveGRouterData(it->first,item_copy) ;
+			}
+			else
+				std::cerr << "  (EE) weird situation. No service registered for a key that we own. Key id = " << item->destination_key.toStdString() << ", service id = " << it->second.service_id << std::endl;
 		}
+	}
 	else
 	{
 		std::cerr << "  item is not for us. Storing in pending mode." << std::endl;
@@ -747,7 +770,7 @@ void p3GRouter::sendData(const GRouterKeyId& destination, RsGRouterGenericDataIt
 	info.data_item = item ;
 	info.status_flags = RS_GROUTER_ROUTING_STATE_PEND ;
 	info.origin = RsPeerId(mLinkMgr->getOwnId()) ;
-	info.received_time = time(NULL) ;
+	info.data_item->randomized_distance = 0 ;
 	
 	// Make sure we have a unique id (at least locally).
 	//
@@ -762,6 +785,7 @@ void p3GRouter::sendData(const GRouterKeyId& destination, RsGRouterGenericDataIt
 	std::cerr << "  data_item.byte = " << info.data_item->data_bytes << std::endl;
 	std::cerr << "  destination    = " << info.data_item->destination_key << std::endl;
 	std::cerr << "  status         = " << info.status_flags << std::endl;
+	std::cerr << "  distance       = " << info.data_item->randomized_distance << std::endl;
 	std::cerr << "  origin         = " << info.origin.toStdString() << std::endl;
 	std::cerr << "  Recv time      = " << info.received_time << std::endl;
 
@@ -878,7 +902,8 @@ void p3GRouter::debugDump()
 
 	for(std::map<GRouterMsgPropagationId, GRouterRoutingInfo>::iterator it(_pending_messages.begin());it!=_pending_messages.end();++it)
 		std::cerr << "    Msg id: " << std::hex << it->first << std::dec 
-		          << "  Origin: " << it->second.origin.toStdString() 
+		          << "  Local Origin: " << it->second.origin.toStdString() 
+					 << "  Destination: " << it->second.data_item->destination_key 
 		          << "  Time  : " << now - it->second.tried_friends.front().time_stamp << " secs ago."
 		          << "  Status: " << statusString[it->second.status_flags] << std::endl;
 

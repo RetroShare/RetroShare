@@ -1855,6 +1855,8 @@ bool p3MsgService::decryptMessage(const std::string& mId)
 		if(!GxsSecurity::decrypt(decrypted_data,decrypted_size,(void*)encrypted_data,encrypted_size,encryption_key))
 			throw std::runtime_error("Decryption failed!") ;
 
+		std::cerr << "  First bytes of decrypted data: " << RsUtil::BinToHex((const char *)decrypted_data,std::min(decrypted_size,50)) << "..."<< std::endl;
+
 		uint8_t *decr_data = (uint8_t*)decrypted_data ;
 #ifdef DEBUG_DISTANT_MSG
         std::cerr << "  Message has succesfully decrypted. Decrypted size = " << decrypted_size << std::endl;
@@ -1873,14 +1875,15 @@ bool p3MsgService::decryptMessage(const std::string& mId)
 #ifdef DEBUG_DISTANT_MSG
         std::cerr << "  Reading identity section " << std::endl;
 #endif
-        uint8_t ptag = decr_data[offset] ;
+        uint8_t ptag = decr_data[offset++] ;
 
         if(ptag != DISTANT_MSG_TAG_IDENTITY)
         throw std::runtime_error("Bad ptag in encrypted msg packet "+printNumber(ptag,true)+" => packet is dropped.") ;
 
         unsigned char *tmp_data = &decr_data[offset] ;
+		  unsigned char *old_data = tmp_data ;
         uint32_t identity_size = PGPKeyParser::read_125Size(tmp_data) ;
-        offset += tmp_data - decr_data ;
+        offset += tmp_data - old_data ;
 
         if(identity_size != RsGxsId::SIZE_IN_BYTES)
         throw std::runtime_error("Bad size in Identity section " + printNumber(identity_size,false) + " => packet is dropped.") ;
@@ -1893,19 +1896,21 @@ bool p3MsgService::decryptMessage(const std::string& mId)
 #endif
         // 2 - deserialize the item
 
-        ptag = decr_data[offset] ;
+        ptag = decr_data[offset++] ;
 
         if(ptag != DISTANT_MSG_TAG_CLEAR_MSG)
             throw std::runtime_error("Bad ptag in encrypted msg packet " + printNumber(ptag,true) + " => packet is dropped.") ;
 
         tmp_data = &decr_data[offset] ;
+		  old_data = tmp_data ;
         uint32_t item_size = PGPKeyParser::read_125Size(tmp_data) ;
-        offset += tmp_data - decr_data ;
+        offset += tmp_data - old_data ;
 
 #ifdef DEBUG_DISTANT_MSG
         std::cerr << "  Deserializing..." << std::endl;
 #endif
         RsMsgItem *item = dynamic_cast<RsMsgItem*>(_serialiser->deserialise(&decr_data[offset],&item_size)) ;
+		  offset += item_size ;
 
         if(item == NULL)
         throw std::runtime_error("Decrypted message could not be deserialized.") ;
@@ -1923,9 +1928,10 @@ bool p3MsgService::decryptMessage(const std::string& mId)
 			  if(ptag != DISTANT_MSG_TAG_SIGNATURE)
 				  throw std::runtime_error("Bad ptag in signature packet " + printNumber(ptag,true) + " => packet is dropped.") ;
 
-			  unsigned char *tmp_data = &decr_data[offset] ;
+			  tmp_data = &decr_data[offset] ;
+			  old_data = tmp_data ;
 			  uint32_t signature_size = PGPKeyParser::read_125Size(tmp_data) ;
-			  offset += tmp_data - decr_data ;
+			  offset += tmp_data - old_data ;
 
 			  RsTlvKeySignature signature ;
 			  signature.keyId = senders_id.toStdString() ;
@@ -2024,7 +2030,7 @@ bool p3MsgService::decryptMessage(const std::string& mId)
 void p3MsgService::connectToGlobalRouter(p3GRouter *gr)
 {
 	mGRouter = gr ;
-	gr->registerClientService(RS_SERVICE_TYPE_MSG,this) ;
+	gr->registerClientService(GROUTER_CLIENT_ID_MESSAGES,this) ;
 }
 
 void p3MsgService::enableDistantMessaging(bool b)

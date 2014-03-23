@@ -150,7 +150,14 @@ bool GRouterMatrix::computeRoutingProbabilities(const GRouterKeyId& key_id, cons
 
 	if(it2 == _time_combined_hits.end())
 	{
-		std::cerr << "GRouterMatrix::computeRoutingProbabilities(): key id " << key_id.toStdString() << " does not exist!" << std::endl;
+		// The key is not known. In this case, we return equal probabilities for all peers. 
+		//
+		float p = 1.0f / friends.size() ;
+
+		for(std::list<RsPeerId>::const_iterator it(friends.begin());it!=friends.end();++it)
+			probas[*it] = p ;
+
+		std::cerr << "GRouterMatrix::computeRoutingProbabilities(): key id " << key_id.toStdString() << " does not exist! Returning uniform probabilities." << std::endl;
 		return  false ;
 	}
 	const std::vector<float>& w(it2->second) ;
