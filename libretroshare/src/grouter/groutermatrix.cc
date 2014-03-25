@@ -102,6 +102,14 @@ uint32_t GRouterMatrix::getFriendId(const RsPeerId& source_friend)
 		return it->second ;
 }
 
+void GRouterMatrix::getListOfKnownKeys(std::vector<GRouterKeyId>& key_ids) const
+{
+	key_ids.clear() ;
+
+	for(std::map<GRouterKeyId,std::vector<float> >::const_iterator it(_time_combined_hits.begin());it!=_time_combined_hits.end();++it)
+		key_ids.push_back(it->first) ;
+}
+
 void GRouterMatrix::debugDump() const
 {
 	std::cerr << "    Proba needs up: " << _proba_need_updating << std::endl;
@@ -129,7 +137,7 @@ void GRouterMatrix::debugDump() const
 	}
 }
 
-bool GRouterMatrix::computeRoutingProbabilities(const GRouterKeyId& key_id, const std::list<RsPeerId>& friends, std::map<RsPeerId,float>& probas) const
+bool GRouterMatrix::computeRoutingProbabilities(const GRouterKeyId& key_id, const std::vector<RsPeerId>& friends, std::vector<float>& probas) const
 {
 	// Routing probabilities are computed according to routing clues
 	//
@@ -143,7 +151,7 @@ bool GRouterMatrix::computeRoutingProbabilities(const GRouterKeyId& key_id, cons
 	if(_proba_need_updating)
 		std::cerr << "GRouterMatrix::computeRoutingProbabilities(): matrix is not up to date. Not a real problem, but still..." << std::endl;
 
-	probas.clear() ;
+	probas.resize(friends.size(),0.0f) ;
 	float total = 0.0f ;
 
 	std::map<GRouterKeyId,std::vector<float> >::const_iterator it2 = _time_combined_hits.find(key_id) ;
@@ -154,30 +162,30 @@ bool GRouterMatrix::computeRoutingProbabilities(const GRouterKeyId& key_id, cons
 		//
 		float p = 1.0f / friends.size() ;
 
-		for(std::list<RsPeerId>::const_iterator it(friends.begin());it!=friends.end();++it)
-			probas[*it] = p ;
+		probas.clear() ;
+		probas.resize(friends.size(),p) ;
 
 		std::cerr << "GRouterMatrix::computeRoutingProbabilities(): key id " << key_id.toStdString() << " does not exist! Returning uniform probabilities." << std::endl;
 		return  false ;
 	}
 	const std::vector<float>& w(it2->second) ;
 	
-	for(std::list<RsPeerId>::const_iterator it(friends.begin());it!=friends.end();++it)
+	for(uint32_t i=0;i<friends.size();++i)
 	{
-		uint32_t findex = getFriendId_const(*it) ;
+		uint32_t findex = getFriendId_const(friends[i]) ;
 
 		if(findex >= w.size())
-			probas[*it] = 0.0f ;
+			probas[i] = 0.0f ;
 		else
 		{
-			probas[*it] = w[findex] ;
+			probas[i] = w[findex] ;
 			total += w[findex] ;
 		}
 	}
 
 	if(total > 0.0f)
-		for(std::map<RsPeerId,float>::iterator it(probas.begin());it!=probas.end();++it)
-			it->second /= total ;
+		for(int i=0;i<friends.size();++i)
+			probas[i] /= total ;
 
 	return true ;
 }

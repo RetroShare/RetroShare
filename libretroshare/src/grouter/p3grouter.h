@@ -28,15 +28,16 @@
 #include <map>
 #include <queue>
 
-#include "rsgrouter.h"
+#include "retroshare/rsgrouter.h"
+#include "retroshare/rstypes.h"
+
 #include "services/p3service.h"
 #include "pqi/p3cfgmgr.h"
-#include "retroshare/rstypes.h"
 
 #include "groutertypes.h"
 #include "groutermatrix.h"
-#include "groutercache.h"
 #include "grouteritems.h"
+//#include "groutercache.h"
 
 // To be put in pqi/p3cfgmgr.h
 //
@@ -101,7 +102,7 @@ class p3GRouter: public RsGRouter, public p3Service, public p3Config
 		// 	- list of clues/time_stamp for each key.
 		// 	- real time routing probabilities
 		//
-		virtual bool getRoutingMatrixInfo(RoutingMatrixInfo& info) { return false ;}
+		virtual bool getRoutingMatrixInfo(GRouterRoutingMatrixInfo& info) ;
 
 		// debug info from routing cache
 		// 	- Cache Items
@@ -111,7 +112,7 @@ class p3GRouter: public RsGRouter, public p3Service, public p3Config
 		// 		* message type
 		// 	- Cache state (memory size, etc)
 		//
-		virtual bool getRoutingCacheInfo(RoutingCacheInfo& info) { return false ;} 
+		virtual bool getRoutingCacheInfo(std::vector<GRouterRoutingCacheInfo>& info) ;
 
 	protected:
 		//===================================================//
@@ -135,8 +136,8 @@ class p3GRouter: public RsGRouter, public p3Service, public p3Config
 
 		// utility functions
 		//
-		static uint32_t computeBranchingFactor(const std::map<RsPeerId,float>& probas,uint32_t dist) ;
-		static std::set<RsPeerId> computeRoutingFriends(const std::map<RsPeerId,float>& probas,uint32_t N) ;
+		static uint32_t computeBranchingFactor(const std::vector<RsPeerId>& friends,const std::vector<float>& probas,uint32_t dist) ;
+		static std::set<uint32_t> computeRoutingFriends(const std::vector<RsPeerId>& friends,const std::vector<float>& probas,uint32_t N) ;
 		static uint32_t computeRandomDistanceIncrement(const RsPeerId& pid,const GRouterKeyId& destination_id) ;
 
 		//===================================================//

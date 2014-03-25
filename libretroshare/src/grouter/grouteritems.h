@@ -27,7 +27,8 @@
 
 #include "serialiser/rsserial.h"
 #include "retroshare/rstypes.h"
-#include "rsgrouter.h"
+
+#include "retroshare/rsgrouter.h"
 #include "p3grouter.h"
 
 // To be put in serialiser/rsserviceids.h

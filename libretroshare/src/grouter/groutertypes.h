@@ -58,16 +58,6 @@ static const uint32_t RS_GROUTER_ROUTING_STATE_PEND = 0x0001 ;		// item is pendi
 static const uint32_t RS_GROUTER_ROUTING_STATE_SENT = 0x0002 ;		// item is sent. Waiting for answer
 static const uint32_t RS_GROUTER_ROUTING_STATE_ARVD = 0x0003 ;		// item is at destination. The cache only holds it to avoid duplication.
 
-class GRouterPublishedKeyInfo
-{
-	public:
-		GRouterServiceId service_id ;
-		std::string description_string ;
-		PGPFingerprintType fpr ;
-		time_t last_published_time ;
-		time_t validity_time ;
-};
-
 class FriendTrialRecord
 {
 	public:

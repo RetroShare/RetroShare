@@ -388,6 +388,7 @@ HEADERS +=  rshare.h \
             gui/msgs/MessageUserNotify.h \
             gui/images/retroshare_win.rc.h \
             gui/settings/rsharesettings.h \
+            gui/settings/GlobalRouterStatistics.h \
             gui/settings/RsharePeerSettings.h \
             gui/settings/rsettings.h \
             gui/settings/rsettingswin.h \
@@ -744,6 +745,7 @@ SOURCES +=  main.cpp \
             gui/style/StyleDialog.cpp \
             gui/settings/rsharesettings.cpp \
             gui/settings/RsharePeerSettings.cpp \
+            gui/settings/GlobalRouterStatistics.cpp \
             gui/settings/rsettings.cpp \
             gui/settings/rsettingswin.cpp \
             gui/settings/GeneralPage.cpp \

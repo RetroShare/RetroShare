@@ -306,6 +306,10 @@ void p3GRouter::routePendingObjects()
 	mLinkMgr->getOnlineList(lst) ;
 	RsPeerId own_id( mLinkMgr->getOwnId() );
 
+	std::vector<RsPeerId> pids ;
+	for(std::list<RsPeerId>::const_iterator it(lst.begin());it!=lst.end();++it)
+		pids.push_back(*it) ;
+
 	for(std::map<GRouterMsgPropagationId, GRouterRoutingInfo>::iterator it(_pending_messages.begin());it!=_pending_messages.end();)
 		if((it->second.status_flags == RS_GROUTER_ROUTING_STATE_PEND) || (it->second.status_flags == RS_GROUTER_ROUTING_STATE_SENT && it->second.tried_friends.front().time_stamp+RS_GROUTER_ROUTING_WAITING_TIME < now))
 		{
@@ -317,27 +321,27 @@ void p3GRouter::routePendingObjects()
 			std::cerr << "  Dist  : " << it->second.data_item->randomized_distance<< std::endl;
 			std::cerr << "  Probabilities: " << std::endl;
 
-			std::map<RsPeerId,float> probas ;		// friends probabilities for online friend list.
-			RsPeerId routed_friend ;					// friend chosen for the next hop
-			bool should_remove = false ;				// should we remove this from the map?
+			std::vector<float> probas ;		// friends probabilities for online friend list.
+			RsPeerId routed_friend ;			// friend chosen for the next hop
+			bool should_remove = false ;		// should we remove this from the map?
 
 			// Retrieve probabilities for this key. This call always succeeds. If no route is known, all probabilities become equal.
 			//
-			_routing_matrix.computeRoutingProbabilities(it->second.data_item->destination_key, lst, probas) ;
+			_routing_matrix.computeRoutingProbabilities(it->second.data_item->destination_key, pids, probas) ;
 
 			// Compute the branching factor.
 
-			int N = computeBranchingFactor(probas,it->second.data_item->randomized_distance) ;
+			int N = computeBranchingFactor(pids,probas,it->second.data_item->randomized_distance) ;
 
 			// Now use this to select N random peers according to the given probabilities
 
-			std::set<RsPeerId> routing_friends = computeRoutingFriends(probas,N) ;
+			std::set<uint32_t> routing_friend_indices = computeRoutingFriends(pids,probas,N) ;
 
 			std::cerr << "  Routing statistics: " << std::endl;
 
 			// Actually send the item.
 
-			for(std::set<RsPeerId>::const_iterator its(routing_friends.begin());its!=routing_friends.end();++its)
+			for(std::set<uint32_t>::const_iterator its(routing_friend_indices.begin());its!=routing_friend_indices.end();++its)
 			{
 				std::cerr << "    Friend : " << (*its) << std::endl;
 
@@ -347,7 +351,7 @@ void p3GRouter::routePendingObjects()
 				// update cache entry
 				FriendTrialRecord ftr ;
 				ftr.time_stamp = now ;
-				ftr.friend_id = routed_friend ;
+				ftr.friend_id = pids[*its];
 				ftr.probability = probas[*its] ;
 				ftr.nb_friends = probas.size() ;
 
@@ -358,8 +362,8 @@ void p3GRouter::routePendingObjects()
 				std::cerr << "    Sending..." << std::endl;
 
 				// send
-				new_item->PeerId(*its) ;
-				new_item->randomized_distance += computeRandomDistanceIncrement(*its,new_item->destination_key) ;
+				new_item->PeerId(pids[*its]) ;
+				new_item->randomized_distance += computeRandomDistanceIncrement(pids[*its],new_item->destination_key) ;
 
 				sendItem(new_item) ;
 			}
@@ -406,30 +410,31 @@ uint32_t p3GRouter::computeRandomDistanceIncrement(const RsPeerId& pid,const GRo
 	return RsDirUtil::sha1sum(tmpmem,total_size).toByteArray()[5] ;
 }
 
-uint32_t p3GRouter::computeBranchingFactor(const std::map<RsPeerId,float>& probas,uint32_t dist) 
+uint32_t p3GRouter::computeBranchingFactor(const std::vector<RsPeerId>& friends,const std::vector<float>& probas,uint32_t dist) 
 {
 	// This should be made a bit more adaptive ;-)
 	//
 	return 1 ;
 }
 
-std::set<RsPeerId> p3GRouter::computeRoutingFriends(const std::map<RsPeerId,float>& probas,uint32_t N) 
+std::set<uint32_t> p3GRouter::computeRoutingFriends(const std::vector<RsPeerId>& pids,const std::vector<float>& probas,uint32_t N) 
 {
 	// We draw N friends according to the routing probabilitites that are passed as parameter.
 	//
 
-	std::set<RsPeerId> res ;
+	std::set<uint32_t> res ;
 
 	if(probas.empty())
 		return res ;
 
-	res.insert(probas.begin()->first) ;
+	res.insert(0) ;
 
 	return res ;
 }
 
 void p3GRouter::publishKeys()
 {
+#ifdef SUSPENDED
 	RsStackMutex mtx(grMtx) ;
 
 	// Go through list of published keys
@@ -449,14 +454,13 @@ void p3GRouter::publishKeys()
 			std::cerr << "   Key id          : " << it->first.toStdString() << std::endl;
 			std::cerr << "   Service id      : " << std::hex << info.service_id << std::dec << std::endl;
 			std::cerr << "   Description     : " << info.description_string << std::endl;
-			std::cerr << "   Fingerprint     : " << info.fpr.toStdString() << std::endl;
 
 			RsGRouterPublishKeyItem item ;
 			item.diffusion_id = RSRandom::random_u32() ;
 			item.published_key = it->first ;
 			item.service_id = info.service_id ;
 			item.randomized_distance = drand48() ;
-			item.fingerprint = info.fpr;
+			item.fingerprint.clear() ;	// not set
 			item.description_string = info.description_string ;
             item.PeerId(RsPeerId()) ;	// no peer id => key is forwarded to all friends.
 
@@ -466,6 +470,7 @@ void p3GRouter::publishKeys()
 			info.last_published_time = now ;
 		}
 	}
+#endif
 }
 
 void p3GRouter::locked_forwardKey(const RsGRouterPublishKeyItem& item) 
@@ -505,7 +510,7 @@ bool p3GRouter::registerKey(const GRouterKeyId& key,const GRouterServiceId& clie
 	GRouterPublishedKeyInfo info ;
 	info.service_id = client_id ;
 	info.description_string = description.substr(0,20);
-	info.last_published_time = 0 ; 	// means never published, se it will be re-published soon.
+	//info.last_published_time = 0 ; 	// means never published, se it will be re-published soon.
 
 	_owned_key_ids[key] = info ;
 
@@ -864,6 +869,54 @@ bool p3GRouter::saveList(bool& cleanup,std::list<RsItem*>& items)
 	return true ;
 }
 
+bool p3GRouter::getRoutingMatrixInfo(RsGRouter::GRouterRoutingMatrixInfo& info)
+{
+	info.per_friend_probabilities.clear() ;
+	info.friend_ids.clear() ;
+	info.published_keys.clear() ;
+
+	std::list<RsPeerId> ids ;
+	mLinkMgr->getOnlineList(ids) ;
+
+	RsStackMutex mtx(grMtx) ;
+
+	info.published_keys = _owned_key_ids ;
+
+	for(std::list<RsPeerId>::const_iterator it(ids.begin());it!=ids.end();++it)
+		info.friend_ids.push_back(*it) ;
+
+	std::vector<GRouterKeyId> known_keys ;
+	std::vector<float> probas ;
+	_routing_matrix.getListOfKnownKeys(known_keys) ;
+
+	for(uint32_t i=0;i<known_keys.size();++i)
+	{
+		_routing_matrix.computeRoutingProbabilities(known_keys[i],info.friend_ids,probas) ;
+		info.per_friend_probabilities[known_keys[i]] = probas ;
+	}
+
+	return true ;
+}
+bool p3GRouter::getRoutingCacheInfo(std::vector<GRouterRoutingCacheInfo>& infos) 
+{
+	RsStackMutex mtx(grMtx) ;
+	infos.clear() ;
+
+	for(std::map<GRouterMsgPropagationId,GRouterRoutingInfo>::const_iterator it(_pending_messages.begin());it!=_pending_messages.end();++it)
+	{
+		infos.push_back(GRouterRoutingCacheInfo()) ;
+		GRouterRoutingCacheInfo& cinfo(infos.back()) ;
+
+		cinfo.mid = it->first ;
+		cinfo.local_origin = it->second.origin ;
+		cinfo.destination = it->second.data_item->destination_key ;
+		cinfo.time_stamp = it->second.received_time ;
+		cinfo.status = it->second.status_flags ;
+		cinfo.data_size = it->second.data_item->data_size ;
+	}
+	return true ;
+}
+
 // Dump everything
 //
 void p3GRouter::debugDump()
@@ -880,7 +933,7 @@ void p3GRouter::debugDump()
 		std::cerr << "    Key id          : " << it->first.toStdString() << std::endl;
 		std::cerr << "      Service id    : " << std::hex << it->second.service_id << std::dec << std::endl;
 		std::cerr << "      Description   : " << it->second.description_string << std::endl;
-		std::cerr << "      Last published: " << now - it->second.last_published_time << " secs ago" << std::endl;
+		//std::cerr << "      Last published: " << now - it->second.last_published_time << " secs ago" << std::endl;
 	}
 
 	std::cerr << "  Registered services: " << std::endl;
