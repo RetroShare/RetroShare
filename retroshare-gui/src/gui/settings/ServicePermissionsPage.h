@@ -48,6 +48,8 @@ class ServicePermissionsPage: public ConfigPage
 		void tableItemChanged ( QTableWidgetItem * item );
 	private:
 
+		size_t mStdRowCount;
+		size_t mStdColumnCount;
 		Ui::ServicePermissionsPage ui;
 };
 

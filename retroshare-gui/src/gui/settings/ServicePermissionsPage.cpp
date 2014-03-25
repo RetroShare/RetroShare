@@ -30,6 +30,10 @@
 #include <iostream>
 #include <QTimer>
 
+#define PermissionStateUserRole		(Qt::UserRole)
+#define ServiceIdUserRole		(Qt::UserRole + 1)
+#define PeerIdUserRole			(Qt::UserRole + 2)
+
 ServicePermissionsPage::ServicePermissionsPage(QWidget * parent, Qt::WindowFlags flags)
     : ConfigPage(parent, flags)
 {
@@ -54,7 +58,91 @@ QString ServicePermissionsPage::helpText() const
 	/** Saves the changes on this page */
 bool ServicePermissionsPage::save(QString &/*errmsg*/)
 {
+	std::cerr << "ServicePermissionsPage::save()";
+	std::cerr << std::endl;
+	size_t row, column;
+	for(row = 0; row < mStdRowCount; ++row)
+	{
+		bool requiresSaving = false;
+		bool defaultOn = true;
+		uint32_t serviceId;
 
+		{
+			QTableWidgetItem *item = ui.tableWidget->item (row, 0);
+			QVariant qvDefault   = item->data(PermissionStateUserRole);
+			QVariant qvServiceId = item->data(ServiceIdUserRole);
+			serviceId = qvServiceId.toUInt();
+			Qt::CheckState currentState = item->checkState();
+			Qt::CheckState origState = (Qt::CheckState) qvDefault.toUInt();
+
+			if (currentState != origState)
+			{
+				requiresSaving = true;
+			}
+			defaultOn = (currentState == Qt::Checked);
+		}
+
+		if (!requiresSaving)
+		{
+			for(column = 1; column < mStdColumnCount; ++column)
+			{
+				QTableWidgetItem *item = ui.tableWidget->item (row, column);
+				Qt::CheckState currentState = item->checkState();
+				QVariant qvOrigState = item->data(PermissionStateUserRole);
+				Qt::CheckState origState = (Qt::CheckState) qvOrigState.toUInt();
+				
+				if (currentState != origState)
+				{
+					requiresSaving = true;
+					break;
+				}
+			}
+		}
+
+		if (requiresSaving)
+		{
+			RsServicePermissions permissions;
+			permissions.mDefaultAllowed = defaultOn;
+			permissions.mServiceId = serviceId;
+
+			std::cerr << "ServicePermissionsPage::save() saving row: " << row;
+			std::cerr << " serviceId: " << serviceId;
+			std::cerr << " defaultAllowed: " << defaultOn;
+			std::cerr << std::endl;
+
+			for(column = 1; column < mStdColumnCount; ++column)
+			{
+				QTableWidgetItem *item = ui.tableWidget->item (row, column);
+				Qt::CheckState currentState = item->checkState();
+			
+				QTableWidgetItem *iditem = ui.tableWidget->item (0, column);
+				RsPeerId peerId(iditem->data(PeerIdUserRole).toString().toStdString());
+
+				switch(currentState)
+				{
+					case Qt::Checked:
+						std::cerr << "ServicePermissionsPage::save() peer: " << peerId.toStdString();
+						std::cerr << " Allowed";
+						std::cerr << std::endl;
+						permissions.mPeersAllowed.insert(peerId);
+						break;
+					case Qt::Unchecked:
+						std::cerr << "ServicePermissionsPage::save() peer: " << peerId.toStdString();
+						std::cerr << " Allowed";
+						std::cerr << std::endl;
+						permissions.mPeersDenied.insert(peerId);
+						break;
+					case Qt::PartiallyChecked:
+						std::cerr << "ServicePermissionsPage::save() peer: " << peerId.toStdString();
+						std::cerr << " Default";
+						std::cerr << std::endl;
+						/* default */	
+						break;
+				}
+			}
+			rsServiceControl->updateServicePermissions(serviceId, permissions);
+		}
+	}	
 	return true;
 }
 
@@ -95,8 +183,10 @@ void ServicePermissionsPage::load()
 	std::map<uint32_t, RsServiceInfo>::const_iterator sit;
 	rsServiceControl->getOwnServices(ownServices);
 
-     	ui.tableWidget->setRowCount(ownServices.mServiceList.size());
-     	ui.tableWidget->setColumnCount(peerList.size() + 1);
+	mStdRowCount = ownServices.mServiceList.size();
+	mStdColumnCount = peerList.size() + 1;
+     	ui.tableWidget->setRowCount(mStdRowCount);
+     	ui.tableWidget->setColumnCount(mStdColumnCount);
 
 	QStringList columnHeaders;
 	QStringList rowHeaders;
@@ -107,8 +197,8 @@ void ServicePermissionsPage::load()
 	}
 
 	// Fill in CheckBoxes.
-	int row;
-	int column;
+	size_t row;
+	size_t column;
 	for(row = 0, sit = ownServices.mServiceList.begin(); sit != ownServices.mServiceList.end(); sit++, row++)
 	{
 		rowHeaders.push_back(QString::fromStdString(sit->second.mServiceName));
@@ -127,11 +217,14 @@ void ServicePermissionsPage::load()
 			if (permissions.mDefaultAllowed)
 			{
 				item->setCheckState(Qt::Checked);
+				item->setData(PermissionStateUserRole, QVariant((int) (Qt::Checked)));
 			}
 			else
 			{
 				item->setCheckState(Qt::Unchecked);
+				item->setData(PermissionStateUserRole, QVariant((int) (Qt::Unchecked)));
 			}
+			item->setData(ServiceIdUserRole, QVariant((uint) sit->first));
 			ui.tableWidget->setItem(row, 0, item);
 		}
 
@@ -146,23 +239,30 @@ void ServicePermissionsPage::load()
 			if (permissions.mPeersAllowed.end() != permissions.mPeersAllowed.find(*pit))
 			{
 				item->setCheckState(Qt::Checked);
+				item->setData(PermissionStateUserRole, QVariant((int) (Qt::Checked)));
 
 			}
 			else if (permissions.mPeersDenied.end() != permissions.mPeersDenied.find(*pit))
 			{
 				item->setCheckState(Qt::Unchecked);
+				item->setData(PermissionStateUserRole, QVariant((int) (Qt::Unchecked)));
 			}
 			else
 			{
 				item->setCheckState(Qt::PartiallyChecked);
+				item->setData(PermissionStateUserRole, QVariant((int) (Qt::PartiallyChecked)));
 			}
 			ui.tableWidget->setItem(row, column, item);
+
+			if (row == 0)
+			{
+				item->setData(PeerIdUserRole, QVariant(QString::fromStdString(pit->toStdString())));
+			}
 		}
 	}
 
 	// Now Get a List of Services Provided by Peers - and add text.
-	int stdRowCount = ownServices.mServiceList.size();
-	int maxRowCount = stdRowCount;
+	int maxRowCount = mStdRowCount;
 	for(column = 1, pit = peerList.begin(); 
 			pit != peerList.end(); pit++, column++)
 	{
@@ -175,7 +275,7 @@ void ServicePermissionsPage::load()
 			sit2 = peerInfo.mServiceList.begin();
 			eit2 = peerInfo.mServiceList.end();
 			row = 0;
-			int extraRowIndex = stdRowCount;
+			int extraRowIndex = mStdRowCount;
 
 			while((sit != eit) && (sit2 != eit2))
 			{
@@ -254,7 +354,7 @@ void ServicePermissionsPage::load()
 		}
 		else
 		{
-			for(row = 0; row < stdRowCount; row++)
+			for(row = 0; row < mStdRowCount; row++)
 			{
 				QTableWidgetItem *item = ui.tableWidget->item(row, column);
 				item->setText(tr("N/A"));
@@ -299,11 +399,6 @@ void ServicePermissionsPage::tableItemChanged ( QTableWidgetItem * item )
 		}
 	}
 }
-
-
-
-	
-
 
 
 
