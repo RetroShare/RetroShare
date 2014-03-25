@@ -30,8 +30,9 @@
 
 RsServiceControl *rsServiceControl = NULL;
 
-p3ServiceControl::p3ServiceControl(uint32_t configId)
-        :RsServiceControl(), /* p3Config(configId), pqiMonitor(),  */
+p3ServiceControl::p3ServiceControl(p3LinkMgr *linkMgr, uint32_t configId)
+	:RsServiceControl(), /* p3Config(configId), pqiMonitor(),  */
+	mLinkMgr(linkMgr), 
 	mCtrlMtx("p3ServiceControl"), mMonitorMtx("P3ServiceControl::Monitor")
 {
 }
@@ -269,17 +270,18 @@ bool p3ServiceControl::updateServicePermissions(uint32_t serviceId, const RsServ
 
 	std::map<uint32_t, RsServicePermissions>::iterator it;
 	it = mServicePermissionMap.find(serviceId);
+	if (it == mServicePermissionMap.end())
+	{
+		std::cerr << "p3ServiceControl::updateServicePermissions()";
+		std::cerr << " ERROR missing previous permissions";
+		std::cerr << std::endl;
+		// ERROR.
+		return false;
+	}
 
-
-	/* here we have to check which peers - permissions have changed for, 
-	 * and flag for updates.
-	 *
-	 * This is far more complex.
-	 * need to check if versions are compatible and peers are providing service.
-	 */
-#if 0
-	std::list<std::string> onlinePeers;
-	std::list<std::string>::const_iterator pit;
+	std::list<RsPeerId> onlinePeers;
+	mLinkMgr->getOnlineList(onlinePeers);
+	std::list<RsPeerId>::const_iterator pit;
 	if (it != mServicePermissionMap.end())
 	{
 		for(pit = onlinePeers.begin(); pit != onlinePeers.end(); pit++)
@@ -291,19 +293,12 @@ bool p3ServiceControl::updateServicePermissions(uint32_t serviceId, const RsServ
 			}
 		}
 	}
-	else
-	{
-		// ERROR!
-		it = mServicePermissionMap.find[serviceId];
-		for(pit = onlinePeers.begin(); pit != onlinePeers.end(); pit++)
-		{
-			mUpdatedSet.insert(*pit);
-		}
-	}
-#endif
 
  	it->second = permissions;
- 	it->second.mServiceId = serviceId; // just to make sure!
+	it->second.mServiceId = serviceId; // just to make sure!
+
+	// This is overkill - but will update everything.
+	updateAllFilters_locked();
 	return true;
 }
 
@@ -455,6 +450,15 @@ bool	p3ServiceControl::updateAllFilters()
 
 	RsStackMutex stack(mCtrlMtx); /***** LOCK STACK MUTEX ****/
 
+	return updateAllFilters_locked();
+}
+
+
+bool	p3ServiceControl::updateAllFilters_locked()
+{
+	std::cerr << "p3ServiceControl::updateAllFilters_locked()";
+	std::cerr << std::endl;
+
 	// Create a peerSet from ServicesProvided + PeerFilters.
 	// This will completely refresh the Filters.
 	std::set<RsPeerId> peerSet;
@@ -466,7 +470,7 @@ bool	p3ServiceControl::updateAllFilters()
 		peerSet.insert(it->first);
 	}
 
-        std::map<RsPeerId, ServicePeerFilter>::const_iterator fit;
+	std::map<RsPeerId, ServicePeerFilter>::const_iterator fit;
 	for(fit = mPeerFilterMap.begin(); fit != mPeerFilterMap.end(); fit++)
 	{
 		peerSet.insert(fit->first);
@@ -489,7 +493,7 @@ bool	p3ServiceControl::updateFilterByPeer_locked(const RsPeerId &peerId)
 	ServicePeerFilter originalFilter;
 	ServicePeerFilter peerFilter;
 
-        std::map<RsPeerId, ServicePeerFilter>::iterator fit;
+	std::map<RsPeerId, ServicePeerFilter>::iterator fit;
 	fit = mPeerFilterMap.find(peerId);
 	if (fit != mPeerFilterMap.end())
 	{
@@ -764,21 +768,21 @@ bool p3ServiceControl::loadList(std::list<RsItem *>& loadList)
 /****************************************************************************/
 /****************************************************************************/
 
-        // pqiMonitor.
+	// pqiMonitor.
 void    p3ServiceControl::statusChange(const std::list<pqipeer> &plist)
 {
 	std::cerr << "p3ServiceControl::statusChange()";
 	std::cerr << std::endl;
 
-        std::list<pqipeer>::const_iterator pit;
-        for(pit =  plist.begin(); pit != plist.end(); pit++)
-        {
+	std::list<pqipeer>::const_iterator pit;
+	for(pit =  plist.begin(); pit != plist.end(); pit++)
+	{
 		std::cerr << "p3ServiceControl::statusChange() for peer: ";
 		std::cerr << " peer: " << (pit->id).toStdString();
 		std::cerr << " state: " << pit->state;
 		std::cerr << " actions: " << pit->actions;
 		std::cerr << std::endl;
-                if (pit->state & RS_PEER_S_FRIEND)
+		if (pit->state & RS_PEER_S_FRIEND)
 		{
 			// Connected / Disconnected. (interal actions).
 			if (pit->actions & RS_PEER_CONNECTED)
@@ -802,7 +806,7 @@ void    p3ServiceControl::statusChange(const std::list<pqipeer> &plist)
 			{
 				updatePeerRemoved(pit->id);
 			}
-                }
+		}
 	}
 	return;
 }
@@ -877,7 +881,7 @@ void	p3ServiceControl::notifyAboutFriends()
 	{
 		RsStackMutex stack(mMonitorMtx); /***** LOCK STACK MUTEX ****/
 
-        	std::multimap<uint32_t, pqiServiceMonitor *>::const_iterator sit;
+		std::multimap<uint32_t, pqiServiceMonitor *>::const_iterator sit;
 		for(sit = mMonitors.begin(); sit != mMonitors.end(); sit++)
 		{
 			sit->second->statusChange(friendNotifications);
@@ -888,7 +892,7 @@ void	p3ServiceControl::notifyAboutFriends()
 
 void	p3ServiceControl::notifyServices()
 {
-        std::map<uint32_t, ServiceNotifications> notifications;
+	std::map<uint32_t, ServiceNotifications> notifications;
 	{
 		RsStackMutex stack(mCtrlMtx); /***** LOCK STACK MUTEX ****/
 
@@ -906,8 +910,8 @@ void	p3ServiceControl::notifyServices()
 	{
 		RsStackMutex stack(mMonitorMtx); /***** LOCK STACK MUTEX ****/
 
-        	std::map<uint32_t, ServiceNotifications>::const_iterator it;
-        	std::multimap<uint32_t, pqiServiceMonitor *>::const_iterator sit, eit;
+		std::map<uint32_t, ServiceNotifications>::const_iterator it;
+		std::multimap<uint32_t, pqiServiceMonitor *>::const_iterator sit, eit;
 		for(it = notifications.begin(); it != notifications.end(); it++)
 		{
 			std::cerr << "p3ServiceControl::notifyServices(): Notifications for Service: " << it->first;
@@ -993,12 +997,12 @@ bool RsServicePermissions::peerHasPermission(const RsPeerId &peerId) const
 }
 
 RsServiceInfo::RsServiceInfo(
-                const uint16_t service_type, 
-                const std::string service_name, 
-                const uint16_t version_major,
-                const uint16_t version_minor,
-                const uint16_t min_version_major,
-                const uint16_t min_version_minor)
+		const uint16_t service_type, 
+		const std::string service_name, 
+		const uint16_t version_major,
+		const uint16_t version_minor,
+		const uint16_t min_version_major,
+		const uint16_t min_version_minor)
  :mServiceName(service_name), 
   mServiceType((((uint32_t) RS_PKT_VERSION_SERVICE) << 24) + (((uint32_t) service_type) << 8)), 
   mVersionMajor(version_major), 
@@ -1025,7 +1029,7 @@ std::ostream &operator<<(std::ostream &out, const RsPeerServiceInfo &info)
 {
 	out << "RsPeerServiceInfo(" << info.mPeerId << ")";
 	out << std::endl;
-        std::map<uint32_t, RsServiceInfo>::const_iterator it;
+	std::map<uint32_t, RsServiceInfo>::const_iterator it;
 	for(it = info.mServiceList.begin(); it != info.mServiceList.end(); it++)
 	{
 		out << "\t Service:" << it->first << " : ";
@@ -1046,13 +1050,13 @@ std::ostream &operator<<(std::ostream &out, const RsServiceInfo &info)
 
 std::ostream &operator<<(std::ostream &out, const ServicePeerFilter &filter)
 {
-        out << "ServicePeerFilter DenyAll: " << filter.mDenyAll;
+	out << "ServicePeerFilter DenyAll: " << filter.mDenyAll;
 	out << " AllowAll: " << filter.mAllowAll;
 	out << " Matched Services: ";
-        std::set<uint32_t>::const_iterator it;
+	std::set<uint32_t>::const_iterator it;
 	for(it = filter.mAllowedServices.begin(); it != filter.mAllowedServices.end(); it++)
 	{
-         	out << *it << " ";
+	 	out << *it << " ";
 	}
 	out << std::endl;
 	return out;

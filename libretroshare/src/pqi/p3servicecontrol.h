@@ -34,6 +34,7 @@
 #include "pqi/p3cfgmgr.h"
 #include "pqi/pqimonitor.h"
 #include "pqi/pqiservicemonitor.h"
+#include "pqi/p3linkmgr.h"
 
 class ServiceNotifications
 {
@@ -61,7 +62,7 @@ public:
 
 	/**
 	 */
-        p3ServiceControl(uint32_t configId);
+        p3ServiceControl(p3LinkMgr *linkMgr, uint32_t configId);
 
         /**
          * checks and update all added configurations
@@ -129,6 +130,7 @@ void    notifyAboutFriends();
 bool createDefaultPermissions_locked(uint32_t serviceId, std::string serviceName, bool defaultOn);
 
 bool 	updateAllFilters();
+bool 	updateAllFilters_locked();
 bool 	updateFilterByPeer(const RsPeerId &peerId);
 bool 	updateFilterByPeer_locked(const RsPeerId &peerId);
 
@@ -145,6 +147,7 @@ void    updatePeerRemoved(const RsPeerId &peerId);
 
 bool peerHasPermissionForService_locked(const RsPeerId &peerId, uint32_t serviceId);
 
+	p3LinkMgr *mLinkMgr;
 
 	RsMutex mCtrlMtx; /* below is protected */
 
