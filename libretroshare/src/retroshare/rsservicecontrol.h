@@ -111,6 +111,8 @@ virtual bool getServicesProvided(const RsPeerId &peerId, RsPeerServiceInfo &info
 virtual bool getServicePermissions(uint32_t serviceId, RsServicePermissions &permissions) = 0;
 virtual bool updateServicePermissions(uint32_t serviceId, const RsServicePermissions &permissions) = 0;
 
+virtual void getPeersConnected(const uint32_t serviceId, std::set<RsPeerId> &peerSet) = 0;
+
 };
 
 #endif

@@ -630,6 +630,7 @@ void	p3ServiceControl::recordFilterChanges_locked(const RsPeerId &peerId,
 			std::cerr << std::endl;
 			// removal
 			changes[*it1] = false;
+			filterChangeRemoved_locked(peerId, *it1);
 			++it1;
 		}
 		else if (*it2 < *it1)
@@ -637,6 +638,7 @@ void	p3ServiceControl::recordFilterChanges_locked(const RsPeerId &peerId,
 			std::cerr << "Added Service: " << *it2;
 			std::cerr << std::endl;
 			// addition.
+			filterChangeAdded_locked(peerId, *it2);
 			changes[*it2] = true;
 			++it2;
 		}
@@ -654,6 +656,7 @@ void	p3ServiceControl::recordFilterChanges_locked(const RsPeerId &peerId,
 		std::cerr << std::endl;
 		// removal
 		changes[*it1] = false;
+		filterChangeRemoved_locked(peerId, *it1);
 	}
 
 	for(; it2 != eit2; it2++)
@@ -662,8 +665,11 @@ void	p3ServiceControl::recordFilterChanges_locked(const RsPeerId &peerId,
 		std::cerr << std::endl;
 		// addition.
 		changes[*it2] = true;
+		filterChangeAdded_locked(peerId, *it2);
 	}
 
+	// Can remove changes map... as only used below.
+#if 0
 	// now we to store for later notifications.
 	std::map<uint32_t, bool>::const_iterator cit;
 	for(cit = changes.begin(); cit != changes.end(); cit++)
@@ -678,6 +684,8 @@ void	p3ServiceControl::recordFilterChanges_locked(const RsPeerId &peerId,
 			notes.mRemoved.insert(peerId);
 		}
 	}
+#endif
+
 }
 
 
@@ -731,6 +739,83 @@ void	p3ServiceControl::removePeer(const RsPeerId &peerId)
 	{
 		ServicePeerFilter emptyFilter;
 		recordFilterChanges_locked(peerId, originalFilter, emptyFilter);
+	}
+}
+
+/****************************************************************************/
+/****************************************************************************/
+// need to provide list of connected peers per service.
+// these are collected here.
+
+void p3ServiceControl::filterChangeRemoved_locked(const RsPeerId &peerId, uint32_t serviceId)
+{
+	std::cerr << "p3ServiceControl::filterChangeRemoved_locked(" << peerId.toStdString();
+	std::cerr << ", " << serviceId << ")";
+	std::cerr << std::endl;
+
+	std::map<uint32_t, std::set<RsPeerId> >::iterator mit;
+
+	std::set<RsPeerId> &peerSet = mServicePeerMap[serviceId];
+	std::set<RsPeerId>::iterator sit;
+
+	sit = peerSet.find(peerId);
+	if (sit != peerSet.end())
+	{
+		peerSet.erase(sit);
+	}
+	else
+	{
+		// ERROR
+		std::cerr << "p3ServiceControl::filterChangeRemoved_locked() ERROR NOT FOUND";
+		std::cerr << std::endl;
+	}
+
+	// Add to Notifications too.
+	ServiceNotifications &notes = mNotifications[serviceId];
+	notes.mRemoved.insert(peerId);
+}
+
+
+void p3ServiceControl::filterChangeAdded_locked(const RsPeerId &peerId, uint32_t serviceId)
+{
+	std::cerr << "p3ServiceControl::filterChangeAdded_locked(" << peerId.toStdString();
+	std::cerr << ", " << serviceId << ")";
+	std::cerr << std::endl;
+
+	std::map<uint32_t, std::set<RsPeerId> >::iterator mit;
+
+	std::set<RsPeerId> &peerSet = mServicePeerMap[serviceId];
+
+	// This bit is only for error checking.
+	std::set<RsPeerId>::iterator sit = peerSet.find(peerId);
+	if (sit != peerSet.end())
+	{
+		// ERROR.
+		std::cerr << "p3ServiceControl::filterChangeAdded_locked() ERROR NOT FOUND";
+		std::cerr << std::endl;
+	}
+	peerSet.insert(peerId);
+
+	// Add to Notifications too.
+	ServiceNotifications &notes = mNotifications[serviceId];
+	notes.mAdded.insert(peerId);
+}
+
+
+
+void p3ServiceControl::getPeersConnected(const uint32_t serviceId, std::set<RsPeerId> &peerSet)
+{
+	RsStackMutex stack(mCtrlMtx); /***** LOCK STACK MUTEX ****/
+
+	std::map<uint32_t, std::set<RsPeerId> >::iterator mit;
+	mit = mServicePeerMap.find(serviceId);
+	if (mit != mServicePeerMap.end())
+	{
+		peerSet = mit->second;
+	}
+	else
+	{
+		peerSet.clear();
 	}
 }
 
@@ -832,6 +917,8 @@ void    p3ServiceControl::updatePeerDisconnect(const RsPeerId &peerId)
 // Update Peer status.
 void    p3ServiceControl::updatePeerNew(const RsPeerId &peerId)
 {
+	RsStackMutex stack(mCtrlMtx); /***** LOCK STACK MUTEX ****/
+
 	std::cerr << "p3ServiceControl::updatePeerNew(): " << peerId.toStdString();
 	std::cerr << std::endl;
 
@@ -845,6 +932,8 @@ void    p3ServiceControl::updatePeerNew(const RsPeerId &peerId)
 
 void    p3ServiceControl::updatePeerRemoved(const RsPeerId &peerId)
 {
+	RsStackMutex stack(mCtrlMtx); /***** LOCK STACK MUTEX ****/
+
 	std::cerr << "p3ServiceControl::updatePeerRemoved(): " << peerId.toStdString();
 	std::cerr << std::endl;
 
