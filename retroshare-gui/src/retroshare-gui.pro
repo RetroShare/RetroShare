@@ -566,6 +566,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/settings/SoundPage.ui \
             gui/settings/ChatPage.ui \
             gui/settings/RelayPage.ui \
+            gui/settings/GlobalRouterStatistics.ui \
             gui/settings/PluginItem.ui \
             gui/toaster/MessageToaster.ui \
             gui/toaster/OnlineToaster.ui \

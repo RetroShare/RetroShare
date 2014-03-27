@@ -35,6 +35,15 @@
 
 static const int MAX_TUNNEL_REQUESTS_DISPLAY = 10 ;
 
+static QColor colorScale(float f)
+{
+	if(f == 0)
+		return QColor::fromHsv(0,0,192) ;
+	else
+		return QColor::fromHsv((int)((1.0-f)*280),200,255) ;
+}
+
+
 // class TRHistogram
 // {
 // 	public:
@@ -180,11 +189,11 @@ static const int MAX_TUNNEL_REQUESTS_DISPLAY = 10 ;
 GlobalRouterStatistics::GlobalRouterStatistics(QWidget *parent)
 	: RsAutoUpdatePage(2000,parent)
 {
-	//setupUi(this) ;
+	setupUi(this) ;
 	
 	m_bProcessSettings = false;
 
-	layout()->addWidget( _tst_CW = new GlobalRouterStatisticsWidget() ) ; 
+	_router_F->setWidget( _tst_CW = new GlobalRouterStatisticsWidget() ) ; 
 
 	//_tunnel_statistics_F->setWidgetResizable(true);
 	//_tunnel_statistics_F->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -230,10 +239,15 @@ void GlobalRouterStatistics::processSettings(bool bLoad)
 
 void GlobalRouterStatistics::updateDisplay()
 {
-	//rsTurtle->getInfo(hashes_info,tunnels_info,search_reqs_info,tunnel_reqs_info) ;
+	std::vector<RsGRouter::GRouterRoutingCacheInfo> cache_infos ;
+	RsGRouter::GRouterRoutingMatrixInfo matrix_info ;
+
+	rsGRouter->getRoutingCacheInfo(cache_infos) ;
+	rsGRouter->getRoutingMatrixInfo(matrix_info) ;
+
 	//_tst_CW->updateTunnelStatistics(hashes_info,tunnels_info,search_reqs_info,tunnel_reqs_info) ;
 
-	_tst_CW->update();
+	_tst_CW->updateContent(cache_infos,matrix_info);
 }
 
 QString GlobalRouterStatistics::getPeerName(const RsPeerId &peer_id)
@@ -261,7 +275,8 @@ GlobalRouterStatisticsWidget::GlobalRouterStatisticsWidget(QWidget *parent)
 	maxHeight = 0 ;
 }
 
-void GlobalRouterStatisticsWidget::updateGRouterStatistics()
+void GlobalRouterStatisticsWidget::updateContent(const std::vector<RsGRouter::GRouterRoutingCacheInfo>& cache_infos,
+																 const RsGRouter::GRouterRoutingMatrixInfo& matrix_info)
 {
 	// What do we need to draw?
 	//
@@ -277,7 +292,6 @@ void GlobalRouterStatisticsWidget::updateGRouterStatistics()
 	// Data items
 	// 	Msg id				Local origin				Destination				Time           Status
 	//
-#ifdef SUSPENDED
 	static const int cellx = 6 ;
 	static const int celly = 10+4 ;
 
@@ -294,36 +308,73 @@ void GlobalRouterStatisticsWidget::updateGRouterStatistics()
 	// draw...
 	int ox=5,oy=5 ;
 
-	TRHistogram(search_reqs_info).draw(&painter,ox,oy,tr("Search requests repartition") + ":") ;
+//	TRHistogram(search_reqs_info).draw(&painter,ox,oy,tr("Search requests repartition") + ":") ;
+//
+//	painter.setPen(QColor::fromRgb(70,70,70)) ;
+//	painter.drawLine(0,oy,maxWidth,oy) ;
+//	oy += celly ;
+//
+//	TRHistogram(tunnel_reqs_info).draw(&painter,ox,oy,tr("Tunnel requests repartition") + ":") ;
+//
+//	// now give information about turtle traffic.
+//	//
+//	TurtleTrafficStatisticsInfo info ;
+//	rsTurtle->getTrafficStatistics(info) ;
+//
+//	painter.setPen(QColor::fromRgb(70,70,70)) ;
+//	painter.drawLine(0,oy,maxWidth,oy) ;
+//	oy += celly ;
 
-	painter.setPen(QColor::fromRgb(70,70,70)) ;
-	painter.drawLine(0,oy,maxWidth,oy) ;
-	oy += celly ;
+	painter.drawText(ox,oy+celly,tr("Pending packets")+":" + QString::number(cache_infos.size())) ; oy += celly*2 ;
 
-	TRHistogram(tunnel_reqs_info).draw(&painter,ox,oy,tr("Tunnel requests repartition") + ":") ;
+	for(uint32_t i=0;i<cache_infos.size();++i)
+	{
+		QString packet_string ;
+		packet_string += QString::number(cache_infos[i].mid,16)  ;
+		packet_string += tr(" by ")+QString::fromStdString(cache_infos[i].local_origin.toStdString()) ;
+		packet_string += tr(" to ")+QString::fromStdString(cache_infos[i].destination.toStdString()) ;
+		packet_string += tr(" Status ")+QString::number(cache_infos[i].status) ;
 
-	// now give information about turtle traffic.
-	//
-	TurtleTrafficStatisticsInfo info ;
-	rsTurtle->getTrafficStatistics(info) ;
+		painter.drawText(ox+2*cellx,oy+celly,packet_string ) ; oy += celly ;
+	}
 
-	painter.setPen(QColor::fromRgb(70,70,70)) ;
-	painter.drawLine(0,oy,maxWidth,oy) ;
-	oy += celly ;
+	painter.drawText(ox,oy+celly,tr("Managed keys")+":" + QString::number(matrix_info.published_keys.size())) ; oy += celly*2 ;
 
-	painter.drawText(ox,oy+celly,tr("Turtle router traffic")+":") ; oy += celly*2 ;
-	painter.drawText(ox+2*cellx,oy+celly,tr("Tunnel requests Up")+"\t: " + speedString(info.tr_up_Bps) ) ; oy += celly ;
-	painter.drawText(ox+2*cellx,oy+celly,tr("Tunnel requests Dn")+"\t: " + speedString(info.tr_dn_Bps) ) ; oy += celly ;
-	painter.drawText(ox+2*cellx,oy+celly,tr("Incoming file data")+"\t: " + speedString(info.data_dn_Bps) ) ; oy += celly ;
-	painter.drawText(ox+2*cellx,oy+celly,tr("Outgoing file data")+"\t: " + speedString(info.data_up_Bps) ) ; oy += celly ;
-	painter.drawText(ox+2*cellx,oy+celly,tr("Forwarded data    ")+"\t: " + speedString(info.unknown_updn_Bps) ) ; oy += celly ;
+	for(std::map<GRouterKeyId,RsGRouter::GRouterPublishedKeyInfo>::const_iterator it(matrix_info.published_keys.begin());it!=matrix_info.published_keys.end();++it)
+	{
+		QString packet_string ;
+		packet_string += QString::fromStdString(it->first.toStdString())  ;
+		packet_string += tr(" : Service ID = ")+QString::number(it->second.service_id,16) ;
+		packet_string += "  \""+QString::fromUtf8(it->second.description_string.c_str()) + "\"" ;
+
+		painter.drawText(ox+2*cellx,oy+celly,packet_string ) ; oy += celly ;
+	}
+	//painter.drawText(ox+2*cellx,oy+celly,tr("Tunnel requests Up")+"\t: " + speedString(info.tr_up_Bps) ) ; oy += celly ;
+	//painter.drawText(ox+2*cellx,oy+celly,tr("Tunnel requests Dn")+"\t: " + speedString(info.tr_dn_Bps) ) ; oy += celly ;
+	//painter.drawText(ox+2*cellx,oy+celly,tr("Incoming file data")+"\t: " + speedString(info.data_dn_Bps) ) ; oy += celly ;
+	//painter.drawText(ox+2*cellx,oy+celly,tr("Outgoing file data")+"\t: " + speedString(info.data_up_Bps) ) ; oy += celly ;
+	//painter.drawText(ox+2*cellx,oy+celly,tr("Forwarded data    ")+"\t: " + speedString(info.unknown_updn_Bps) ) ; oy += celly ;
 
 	QString prob_string ;
 
-	for(uint i=0;i<info.forward_probabilities.size();++i)
-		prob_string += QString::number(info.forward_probabilities[i],'g',2) + " (" + QString::number(i) + ") " ;
+	//for(uint i=0;i<info.forward_probabilities.size();++i)
+	//	prob_string += QString::number(info.forward_probabilities[i],'g',2) + " (" + QString::number(i) + ") " ;
 
-	painter.drawText(ox+2*cellx,oy+celly,tr("TR Forward probabilities")+"\t: " + prob_string ) ; 
+	oy += celly ;
+	painter.drawText(ox+0*cellx,oy+celly,tr("Routing matrix")+"\t: " + prob_string ) ; 
+
+	static const int MaxKeySize = 20 ;
+
+	for(std::map<GRouterKeyId,std::vector<float> >::const_iterator it(matrix_info.per_friend_probabilities.begin());it!=matrix_info.per_friend_probabilities.end();++it)
+	{
+		painter.drawText(ox+2*cellx,oy+celly,QString::fromStdString(it->first.toStdString())+" : ") ; 
+
+		for(uint32_t i=0;i<matrix_info.friend_ids.size();++i)
+ 			painter.fillRect(ox+(MaxKeySize + i)*cellx+20,oy,cellx,celly,colorScale(it->second[i])) ;
+		
+		oy += celly ;
+	}
+
 	oy += celly ;
 	oy += celly ;
 
@@ -331,7 +382,6 @@ void GlobalRouterStatisticsWidget::updateGRouterStatistics()
 	//
 	pixmap = tmppixmap;
 	maxHeight = oy ;
-#endif
 }
 
 QString GlobalRouterStatisticsWidget::speedString(float f)

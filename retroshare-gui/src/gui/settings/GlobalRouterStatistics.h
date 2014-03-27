@@ -26,10 +26,11 @@
 #include <retroshare/rstypes.h>
 
 #include "RsAutoUpdatePage.h"
+#include "ui_GlobalRouterStatistics.h"
 
 class GlobalRouterStatisticsWidget ;
 
-class GlobalRouterStatistics: public RsAutoUpdatePage
+class GlobalRouterStatistics: public RsAutoUpdatePage, public Ui::GlobalRouterStatistics
 {
 	Q_OBJECT
 
@@ -60,7 +61,7 @@ class GlobalRouterStatisticsWidget:  public QWidget
 		virtual void paintEvent(QPaintEvent *event) ;
 		virtual void resizeEvent(QResizeEvent *event);
 
-		void updateGRouterStatistics();
+		void updateContent(const std::vector<RsGRouter::GRouterRoutingCacheInfo>& cache_infos, const RsGRouter::GRouterRoutingMatrixInfo& matrix_info);
 	private:
 		static QString speedString(float f) ;
 

@@ -22,6 +22,7 @@
 #include "ServerPage.h"
 #include <gui/FileTransfer/TurtleRouterDialog.h>
 #include <gui/FileTransfer/TurtleRouterStatistics.h>
+#include <gui/settings/GlobalRouterStatistics.h>
 
 #include "rshare.h"
 #include "rsharesettings.h"
@@ -78,11 +79,12 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 	trs->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding)) ;
 	ui.tabWidget->widget(2)->layout()->addWidget(trs) ;
 	ui.tabWidget->widget(2)->layout()->setContentsMargins(0,5,0,0) ;
-
-	QSpacerItem *verticalSpacer = new QSpacerItem(0,0,QSizePolicy::Expanding, QSizePolicy::Minimum);
-
-	ui.tabWidget->widget(2)->layout()->addItem(verticalSpacer) ;
+	ui.tabWidget->widget(2)->layout()->addItem( new QSpacerItem(0,0,QSizePolicy::Expanding, QSizePolicy::Minimum)) ;
 	ui.tabWidget->widget(2)->layout()->update() ;
+
+	GlobalRouterStatistics *grs = new GlobalRouterStatistics ;
+	grs->setSizePolicy(QSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding)) ;
+	ui.tabWidget->addTab(grs,tr("Global routing")) ;
 
 	ui.torpage_incoming->setVisible(false);
 
