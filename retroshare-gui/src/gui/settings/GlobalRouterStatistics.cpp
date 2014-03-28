@@ -271,7 +271,7 @@ QString GlobalRouterStatistics::getPeerName(const RsPeerId &peer_id)
 GlobalRouterStatisticsWidget::GlobalRouterStatisticsWidget(QWidget *parent)
 	: QWidget(parent)
 {
-	maxWidth = 200 ;
+	maxWidth = 400 ;
 	maxHeight = 0 ;
 }
 
@@ -301,6 +301,7 @@ void GlobalRouterStatisticsWidget::updateContent(const std::vector<RsGRouter::GR
 
 	QPainter painter(&tmppixmap);
 	painter.initFrom(this);
+	painter.setPen(QColor::fromRgb(0,0,0)) ;
 
 	maxHeight = 500 ;
 
@@ -338,6 +339,8 @@ void GlobalRouterStatisticsWidget::updateContent(const std::vector<RsGRouter::GR
 		painter.drawText(ox+2*cellx,oy+celly,packet_string ) ; oy += celly ;
 	}
 
+	oy += celly ;
+
 	painter.drawText(ox,oy+celly,tr("Managed keys")+":" + QString::number(matrix_info.published_keys.size())) ; oy += celly*2 ;
 
 	for(std::map<GRouterKeyId,RsGRouter::GRouterPublishedKeyInfo>::const_iterator it(matrix_info.published_keys.begin());it!=matrix_info.published_keys.end();++it)
@@ -349,19 +352,34 @@ void GlobalRouterStatisticsWidget::updateContent(const std::vector<RsGRouter::GR
 
 		painter.drawText(ox+2*cellx,oy+celly,packet_string ) ; oy += celly ;
 	}
+	oy += celly ;
+
 	//painter.drawText(ox+2*cellx,oy+celly,tr("Tunnel requests Up")+"\t: " + speedString(info.tr_up_Bps) ) ; oy += celly ;
 	//painter.drawText(ox+2*cellx,oy+celly,tr("Tunnel requests Dn")+"\t: " + speedString(info.tr_dn_Bps) ) ; oy += celly ;
 	//painter.drawText(ox+2*cellx,oy+celly,tr("Incoming file data")+"\t: " + speedString(info.data_dn_Bps) ) ; oy += celly ;
 	//painter.drawText(ox+2*cellx,oy+celly,tr("Outgoing file data")+"\t: " + speedString(info.data_up_Bps) ) ; oy += celly ;
 	//painter.drawText(ox+2*cellx,oy+celly,tr("Forwarded data    ")+"\t: " + speedString(info.unknown_updn_Bps) ) ; oy += celly ;
 
-	QString prob_string ;
-
 	//for(uint i=0;i<info.forward_probabilities.size();++i)
 	//	prob_string += QString::number(info.forward_probabilities[i],'g',2) + " (" + QString::number(i) + ") " ;
 
+	QString prob_string ;
+	
+	painter.drawText(ox+0*cellx,oy+celly,tr("Routing matrix  (")) ; 
+
+	// draw scale
+	
+	for(int i=0;i<100;++i)
+	{
+		painter.setPen(colorScale(i/100.0)) ;
+		painter.drawLine(ox+120+i,oy+celly+2,ox+120+i,oy+2) ;
+	}
+	painter.setPen(QColor::fromRgb(0,0,0)) ;
+
+	painter.drawText(ox+230,oy+celly,")") ; 
+	
 	oy += celly ;
-	painter.drawText(ox+0*cellx,oy+celly,tr("Routing matrix")+"\t: " + prob_string ) ; 
+	oy += celly ;
 
 	static const int MaxKeySize = 20 ;
 
@@ -370,7 +388,7 @@ void GlobalRouterStatisticsWidget::updateContent(const std::vector<RsGRouter::GR
 		painter.drawText(ox+2*cellx,oy+celly,QString::fromStdString(it->first.toStdString())+" : ") ; 
 
 		for(uint32_t i=0;i<matrix_info.friend_ids.size();++i)
- 			painter.fillRect(ox+(MaxKeySize + i)*cellx+20,oy,cellx,celly,colorScale(it->second[i])) ;
+ 			painter.fillRect(ox+(MaxKeySize + i)*cellx+200,oy,cellx,celly,colorScale(it->second[i])) ;
 		
 		oy += celly ;
 	}
