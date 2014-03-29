@@ -61,7 +61,7 @@ class GlobalRouterStatisticsWidget:  public QWidget
 		virtual void paintEvent(QPaintEvent *event) ;
 		virtual void resizeEvent(QResizeEvent *event);
 
-		void updateContent(const std::vector<RsGRouter::GRouterRoutingCacheInfo>& cache_infos, const RsGRouter::GRouterRoutingMatrixInfo& matrix_info);
+		void updateContent() ;
 	private:
 		static QString speedString(float f) ;
 
