@@ -51,7 +51,7 @@ RsGxsForums *rsGxsForums = NULL;
 /********************************************************************************/
 
 p3GxsForums::p3GxsForums(RsGeneralDataService *gds, RsNetworkExchangeService *nes, RsGixs* gixs)
-    : RsGenExchange(gds, nes, new RsGxsForumSerialiser(), RS_SERVICE_GXSV2_TYPE_FORUMS, gixs, forumsAuthenPolicy()), RsGxsForums(this)
+    : RsGenExchange(gds, nes, new RsGxsForumSerialiser(), RS_SERVICE_GXS_TYPE_FORUMS, gixs, forumsAuthenPolicy()), RsGxsForums(this)
 {
 	// For Dummy Msgs.
 	mGenActive = false;
@@ -70,7 +70,7 @@ const uint16_t GXS_FORUMS_MIN_MINOR_VERSION  =       0;
 
 RsServiceInfo p3GxsForums::getServiceInfo()
 {
-        return RsServiceInfo(RS_SERVICE_GXSV2_TYPE_FORUMS,
+        return RsServiceInfo(RS_SERVICE_GXS_TYPE_FORUMS,
                 GXS_FORUMS_APP_NAME,
                 GXS_FORUMS_APP_MAJOR_VERSION,
                 GXS_FORUMS_APP_MINOR_VERSION,

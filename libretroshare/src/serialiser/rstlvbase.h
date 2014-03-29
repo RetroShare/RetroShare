@@ -1,5 +1,4 @@
-#ifndef RS_TLV_BASE_H
-#define RS_TLV_BASE_H
+#pragma once
 
 /*
  * libretroshare/src/serialiser: rstlvbase.h
@@ -62,10 +61,10 @@
  *
  ******************************************************************/
 
-#include <stdlib.h>
-#include <string.h>
+#include <inttypes.h>
 #include <string>
 #include "util/rsnet.h"
+
 
 /* 0b 0000 0000 0001 XXXX UInt8       */
 /* 0b 0000 0000 0010 XXXX UInt16      */
@@ -105,11 +104,6 @@ const uint32_t TLV_HEADER_LEN_SIZE    = 4;
 const uint32_t TLV_HEADER_SIZE        = TLV_HEADER_TYPE_SIZE + TLV_HEADER_LEN_SIZE;
 /* TLV HEADER SIZE (Reference) *******************************/
 
-
-const uint16_t TLV_TYPE_UINT8_SERID   = 0x0010;
-
-const uint16_t TLV_TYPE_UINT16_SERID  = 0x0020;
-
 const uint16_t TLV_TYPE_UINT32_SIZE   = 0x0030;
 const uint16_t TLV_TYPE_UINT32_POP    = 0x0031;
 const uint16_t TLV_TYPE_UINT32_AGE    = 0x0032;
@@ -141,22 +135,6 @@ const uint16_t TLV_TYPE_STR_CERT_SSL  = 0x005e;
 const uint16_t TLV_TYPE_STR_VERSION   = 0x005f;
 const uint16_t TLV_TYPE_STR_PARAM     = 0x0054; /* same as VALUE ---- TO FIX */
 
-
-
-
-/* Wide Chars (4 bytes per char) for internationalisation */
-const uint16_t TLV_TYPE_WSTR_PEERID   = 0x0060;
-const uint16_t TLV_TYPE_WSTR_NAME     = 0x0061;
-const uint16_t TLV_TYPE_WSTR_PATH     = 0x0062;
-const uint16_t TLV_TYPE_WSTR_KEY      = 0x0063;
-const uint16_t TLV_TYPE_WSTR_VALUE    = 0x0064;
-const uint16_t TLV_TYPE_WSTR_COMMENT  = 0x0065;
-const uint16_t TLV_TYPE_WSTR_TITLE    = 0x0066;
-const uint16_t TLV_TYPE_WSTR_MSG      = 0x0067;
-const uint16_t TLV_TYPE_WSTR_SUBJECT  = 0x0068;
-const uint16_t TLV_TYPE_WSTR_LINK     = 0x0069;
-const uint16_t TLV_TYPE_WSTR_GENID    = 0x006a;
-
 /* Hashs are always strings */
 const uint16_t TLV_TYPE_STR_HASH_SHA1 = 0x0070;
 const uint16_t TLV_TYPE_STR_HASH_ED2K = 0x0071;
@@ -177,8 +155,6 @@ const uint16_t TLV_TYPE_STR_MSGID     = 0x00a1;
 const uint16_t TLV_TYPE_STR_PARENTID  = 0x00a2;
 const uint16_t TLV_TYPE_STR_THREADID  = 0x00a3;
 const uint16_t TLV_TYPE_STR_KEYID     = 0x00a4;
-
-const uint16_t TLV_TYPE_WSTR_CATEGORY = 0x00b0;
 
 /* even MORE string Ids for GXS services */
 
@@ -220,9 +196,7 @@ const uint16_t TLV_TYPE_FILESET       = 0x1001;
 const uint16_t TLV_TYPE_FILEDATA      = 0x1002;
 
 const uint16_t TLV_TYPE_KEYVALUE      = 0x1010;
-const uint16_t TLV_TYPE_WKEYVALUE     = 0x1012;
 const uint16_t TLV_TYPE_KEYVALUESET   = 0x1011;
-const uint16_t TLV_TYPE_WKEYVALUESET  = 0x1013;
 
 const uint16_t TLV_TYPE_STRINGSET     = 0x1020; /* dummy non-existant */
 const uint16_t TLV_TYPE_PEERSET       = 0x1021;
@@ -253,6 +227,7 @@ const uint16_t TLV_TYPE_DSDV_ENTRY_SET= 0x1082;
 
 const uint16_t TLV_TYPE_BAN_ENTRY     = 0x1090;
 const uint16_t TLV_TYPE_BAN_LIST      = 0x1091;
+
 
 
 const uint32_t RSTLV_IMAGE_TYPE_PNG = 0x0001;
@@ -317,4 +292,3 @@ above(SetTlvbinData) is partially implemented
 bool GetTlvBinData(void* data, uint32_t size, uint32_t* offset, uint16_t type, void* data_bin, uint32_t len_tlv)
 
 *************************************/
-#endif

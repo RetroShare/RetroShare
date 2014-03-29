@@ -273,9 +273,11 @@ int p3Dsdv::generateRoutingTable(const RsPeerId &peerId, bool incremental)
 		entry.sequence = v.mStableRoute.mSequence;
 		entry.distance = v.mStableRoute.mDistance;
 
-		dsdv->routes.entries.push_back(entry);
+		//dsdv->routes.entries.push_back(entry);
+		dsdv->routes.mList.push_back(entry);
 
-		if (dsdv->routes.entries.size() > RSDSDV_MAX_ROUTE_TABLE)
+		//if (dsdv->routes.entries.size() > RSDSDV_MAX_ROUTE_TABLE)
+		if (dsdv->routes.mList.size() > RSDSDV_MAX_ROUTE_TABLE)
 		{
 			sendItem(dsdv);
 			dsdv = new RsDsdvRouteItem();
@@ -329,7 +331,8 @@ int p3Dsdv::handleDSDV(RsDsdvRouteItem *dsdv)
 #endif
 
 	std::list<RsTlvDsdvEntry>::iterator it;
-	for(it = dsdv->routes.entries.begin(); it != dsdv->routes.entries.end(); it++)
+	//for(it = dsdv->routes.entries.begin(); it != dsdv->routes.entries.end(); it++)
+	for(it = dsdv->routes.mList.begin(); it != dsdv->routes.mList.end(); it++)
 	{
 		/* check for existing */
 		RsTlvDsdvEntry &entry = *it;

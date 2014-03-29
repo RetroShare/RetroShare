@@ -151,7 +151,8 @@ bool p3BanList::recvBanItem(RsBanListItem *item)
 	bool updated = false;
 
 	std::list<RsTlvBanListEntry>::const_iterator it;
-	for(it = item->peerList.entries.begin(); it != item->peerList.entries.end(); it++)
+	//for(it = item->peerList.entries.begin(); it != item->peerList.entries.end(); it++)
+	for(it = item->peerList.mList.begin(); it != item->peerList.mList.end(); it++)
 	{
 		// Order is important!.	
 		updated = (addBanEntry(item->PeerId(), it->addr.addr, it->level, 
@@ -450,7 +451,8 @@ int p3BanList::sendBanSet(const RsPeerId& peerid)
 			bi.level = it->second.level;
 			bi.age = now - it->second.mTs;
 	
-			item->peerList.entries.push_back(bi);
+			//item->peerList.entries.push_back(bi);
+			item->peerList.mList.push_back(bi);
 		}
 	}			
 

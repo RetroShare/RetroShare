@@ -8,7 +8,7 @@ TARGET = retroshare
 # This should be disabled for releases until further notice.
 CONFIG += gxs debug
 
-#CONFIG += dsdv
+CONFIG += dsdv
 
 profiling {
 	QMAKE_CXXFLAGS -= -fomit-frame-pointer
@@ -399,12 +399,18 @@ HEADERS +=	serialiser/rsbaseserial.h \
 			serialiser/rsstatusitems.h \
 			serialiser/rstlvaddrs.h \
 			serialiser/rstlvbase.h \
+			serialiser/rstlvitem.h \
+			serialiser/rstlvidset.h \
+			serialiser/rstlvfileitem.h \
+			serialiser/rstlvimage.h \
+			serialiser/rstlvstring.h \
+			serialiser/rstlvbinary.h \
 			serialiser/rstlvkeys.h \
-			serialiser/rstlvkvwide.h \
-			serialiser/rstlvtypes.h \
+			serialiser/rstlvkeyvalue.h \
 			serialiser/rstlvgenericparam.h \
 			serialiser/rstlvgenericmap.h \
 			serialiser/rstlvgenericmap.inl \
+			serialiser/rstlvlist.h \
 			serialiser/rstlvmaps.h \
 			serialiser/rstlvutil.h \
 			serialiser/rstlvbanlist.h \
@@ -541,11 +547,14 @@ SOURCES +=	serialiser/rsbaseserial.cc \
 			serialiser/rsstatusitems.cc \
 			serialiser/rstlvaddrs.cc \
 			serialiser/rstlvbase.cc \
+			serialiser/rstlvitem.cc \
+			serialiser/rstlvidset.cc \
 			serialiser/rstlvfileitem.cc \
 			serialiser/rstlvimage.cc \
+			serialiser/rstlvstring.cc \
+			serialiser/rstlvbinary.cc \
 			serialiser/rstlvkeys.cc \
-			serialiser/rstlvkvwide.cc \
-			serialiser/rstlvtypes.cc \
+			serialiser/rstlvkeyvalue.cc \
 			serialiser/rstlvgenericparam.cc \
 			serialiser/rstlvutil.cc \
 			serialiser/rstlvbanlist.cc \
@@ -640,8 +649,6 @@ SOURCES +=	zeroconf/p3zcnatassist.cc \
 gxs {
 	DEFINES *= RS_ENABLE_GXS
 	DEFINES *= SQLITE_HAS_CODEC
-
-	DEFINES *= GXS_DEV_TESTNET
 	DEFINES *= GXS_ENABLE_SYNC_MSGS
 
 	HEADERS += serialiser/rsnxsitems.h \

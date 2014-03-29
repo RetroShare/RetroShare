@@ -26,11 +26,14 @@
  *
  */
 
-#include "serialiser/rstlvtypes.h"
+#include "serialiser/rstlvitem.h"
+
+#if 0
 #include <map>
 
 #include <stdlib.h>
 #include <stdint.h>
+#endif
 
 
 /**** TLV *****
@@ -44,11 +47,11 @@ class RsTlvParamRef: public RsTlvItem
 	public:
 	 RsTlvParamRef(uint16_t param_type, T &p): mParamType(param_type), mParam(p) {}
 virtual ~RsTlvParamRef() { return; }
-virtual uint32_t TlvSize();
+virtual uint32_t TlvSize() const;
 virtual void	 TlvClear();
-virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset); /* serialise   */
-virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); /* deserialise */
-virtual std::ostream &print(std::ostream &out, uint16_t indent);
+virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset) const; 
+virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); 
+virtual std::ostream &print(std::ostream &out, uint16_t indent) const;
 
 	uint16_t mParamType;
 	T &mParam;

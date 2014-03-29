@@ -50,27 +50,43 @@ const uint16_t RS_SERVICE_TYPE_HEARTBEAT     = 0x0016;
 const uint16_t RS_SERVICE_TYPE_FILE_TRANSFER = 0x0017;
 const uint16_t RS_SERVICE_TYPE_GROUTER       = 0x0018;
 
-/* BanList Still Testing at the moment - Service Only */
-const uint16_t RS_SERVICE_TYPE_BANLIST     = 0x0101;
+const uint16_t RS_SERVICE_TYPE_SERVICEINFO   = 0x0020;
+/* Bandwidth Control */
+const uint16_t RS_SERVICE_TYPE_BWCTRL        = 0x0021;
 
-const uint16_t RS_SERVICE_TYPE_SERVICEINFO   = 0x0201;
+// Non essential services.
+const uint16_t RS_SERVICE_TYPE_BANLIST       = 0x0101;
+const uint16_t RS_SERVICE_TYPE_STATUS        = 0x0102;
 
-/* Caches based on p3distrib (Cache Only)
- * Unfortunately, noone changed the DUMMY IDS... so we are stuck with them!
- */
-const uint16_t RS_SERVICE_TYPE_DISTRIB     = 0xf110;
-const uint16_t RS_SERVICE_TYPE_FORUM       = 0xf120;
-const uint16_t RS_SERVICE_TYPE_CHANNEL     = 0xf130;
-const uint16_t RS_SERVICE_TYPE_CHANNEL_SOCKET = 0xf140;
+ /* New Cache Services  */
+/* Rs Network Exchange Service */
+const uint16_t RS_SERVICE_TYPE_NXS 	       = 0x0200;
 
- /* Status - Service only */
-const uint16_t RS_SERVICE_TYPE_STATUS      = 0xf020;
+const uint16_t RS_SERVICE_GXS_TYPE_GXSID       = 0x0211;
+const uint16_t RS_SERVICE_GXS_TYPE_PHOTO       = 0x0212;
+const uint16_t RS_SERVICE_GXS_TYPE_WIKI        = 0x0213;
+const uint16_t RS_SERVICE_GXS_TYPE_WIRE        = 0x0214;
+const uint16_t RS_SERVICE_GXS_TYPE_FORUMS      = 0x0215;
+const uint16_t RS_SERVICE_GXS_TYPE_POSTED      = 0x0216;
+const uint16_t RS_SERVICE_GXS_TYPE_CHANNELS    = 0x0217;
+const uint16_t RS_SERVICE_GXS_TYPE_GXSCIRCLE   = 0x0218;
+// not gxs, but used with identities.
+const uint16_t RS_SERVICE_GXS_TYPE_REPUTATION  = 0x0219;
+const uint16_t RS_SERVICE_TYPE_GXS_RECOGN      = 0x0220;
+
+// Experimental Services.
+/* DSDV Testing at the moment - Service Only */
+const uint16_t RS_SERVICE_TYPE_DSDV        = 0x1010;
+/* Latency RTT Measurements */
+const uint16_t RS_SERVICE_TYPE_RTT         = 0x1011;
+
 
 /***************** IDS ALLOCATED FOR PLUGINS ******************/
+// 2000+
 
-const uint16_t RS_SERVICE_TYPE_PLUGIN_ARADO_ID   = 0x0401;
-const uint16_t RS_SERVICE_TYPE_PLUGIN_QCHESS_ID  = 0x0402;
-const uint16_t RS_SERVICE_TYPE_PLUGIN_FEEDREADER = 0x0403;
+const uint16_t RS_SERVICE_TYPE_PLUGIN_ARADO_ID   = 0x2001;
+const uint16_t RS_SERVICE_TYPE_PLUGIN_QCHESS_ID  = 0x2002;
+const uint16_t RS_SERVICE_TYPE_PLUGIN_FEEDREADER = 0x2003;
 
 
 /****************** BELOW ARE ONLY THEORETICAL (CAN BE CHANGED) *****/
@@ -93,82 +109,36 @@ const uint16_t RS_SERVICE_TYPE_PLUGIN_FEEDREADER = 0x0403;
  */
 
  /*! for Qblog service (Cache Only) */
-const uint16_t RS_SERVICE_TYPE_QBLOG	   = 0xf010;
+//const uint16_t RS_SERVICE_TYPE_QBLOG	   = 0xf010;
 
 /* TEST VOIP - Service only */
 // NOT SURE WHATS HAPPENING WITH THIS ONE? 
 // SHOULD BE DEFINED IN PLUGIN SECTION!
 //const uint16_t RS_SERVICE_TYPE_VOIP        = 0xf011;
 
- /* Status - Service only */
-//const uint16_t RS_SERVICE_TYPE_STATUS      = 0xf020;
-
  /* Proxy - Service only */
-const uint16_t RS_SERVICE_TYPE_PROXY       = 0xf030;
-
-/* DSDV Testing at the moment - Service Only */
-const uint16_t RS_SERVICE_TYPE_DSDV        = 0xf050;
-/* Latency RTT Measurements */
-const uint16_t RS_SERVICE_TYPE_RTT         = 0xf051;
-
-/* Bandwidth Testing at the moment - Service Only */
-const uint16_t RS_SERVICE_TYPE_BWCTRL      = 0xf060;
-
-
-
-
-//const uint16_t RS_SERVICE_TYPE_DISTRIB     = 0xf110;
-//const uint16_t RS_SERVICE_TYPE_FORUM       = 0xf120;
-//const uint16_t RS_SERVICE_TYPE_CHANNEL     = 0xf130;
-//const uint16_t RS_SERVICE_TYPE_CHANNEL_SOCKET = 0xf140;
+//const uint16_t RS_SERVICE_TYPE_PROXY       = 0xf030;
 
 /* Games/External Apps - Service Only */
-const uint16_t RS_SERVICE_TYPE_GAME_LAUNCHER = 0xf200;
-const uint16_t RS_SERVICE_TYPE_PORT          = 0xf201;
+//const uint16_t RS_SERVICE_TYPE_GAME_LAUNCHER = 0xf200;
+//const uint16_t RS_SERVICE_TYPE_PORT          = 0xf201;
 
 /* Example Games (NOT USED YET!) */
 /* Board Games */
-const uint16_t RS_SERVICE_TYPE_GAME_QTCHESS  = 0xf211;
-const uint16_t RS_SERVICE_TYPE_GAME_QGO      = 0xf212;
+//const uint16_t RS_SERVICE_TYPE_GAME_QTCHESS  = 0xf211;
+//const uint16_t RS_SERVICE_TYPE_GAME_QGO      = 0xf212;
 
 /* Card Games */
-const uint16_t RS_SERVICE_TYPE_GAME_BIGTWO   = 0xf213;
-const uint16_t RS_SERVICE_TYPE_GAME_POKER    = 0xf214;
-
- /* New Cache Services  */
-/* Rs Network Exchange Service */
-const uint16_t RS_SERVICE_TYPE_NXS 	   = 0xf300;
-
-const uint16_t RS_SERVICE_GXSV2_TYPE_GXSID       = 0xf311;
-const uint16_t RS_SERVICE_GXSV2_TYPE_GXSCIRCLE   = 0xf312;
-const uint16_t RS_SERVICE_GXSV2_TYPE_PHOTO       = 0xf313;
-const uint16_t RS_SERVICE_GXSV2_TYPE_WIKI        = 0xf314;
-const uint16_t RS_SERVICE_GXSV2_TYPE_WIRE        = 0xf315;
-const uint16_t RS_SERVICE_GXSV2_TYPE_FORUMS      = 0xf316;
-const uint16_t RS_SERVICE_GXSV2_TYPE_POSTED      = 0xf317;
-const uint16_t RS_SERVICE_GXSV2_TYPE_CHANNELS    = 0xf318;
-const uint16_t RS_SERVICE_GXSV2_TYPE_REPUTATION  = 0xf319;
-
-const uint16_t RS_SERVICE_GXSV3_TYPE_GXSID       = 0xf321;
-const uint16_t RS_SERVICE_GXSV3_TYPE_PHOTO       = 0xf322;
-const uint16_t RS_SERVICE_GXSV3_TYPE_WIKI        = 0xf323;
-const uint16_t RS_SERVICE_GXSV3_TYPE_WIRE        = 0xf324;
-const uint16_t RS_SERVICE_GXSV3_TYPE_FORUMS      = 0xf325;
-const uint16_t RS_SERVICE_GXSV3_TYPE_POSTED      = 0xf326;
-const uint16_t RS_SERVICE_GXSV3_TYPE_CHANNELS    = 0xf327;
-const uint16_t RS_SERVICE_GXSV3_TYPE_GXSCIRCLE   = 0xf328;
-const uint16_t RS_SERVICE_GXSV3_TYPE_REPUTATION  = 0xf329;
-
-const uint16_t RS_SERVICE_TYPE_GXS_RECOGN        = 0xf331;
+//const uint16_t RS_SERVICE_TYPE_GAME_BIGTWO   = 0xf213;
+//const uint16_t RS_SERVICE_TYPE_GAME_POKER    = 0xf214;
 
 /***************** IDS ALLOCATED FOR PLUGINS ******************/
 
-const uint16_t RS_SERVICE_TYPE_PLUGIN_ARADO_TEST_ID1   = 0xf401;
-const uint16_t RS_SERVICE_TYPE_PLUGIN_QCHESS_TEST_ID1   = 0xf402;
+//const uint16_t RS_SERVICE_TYPE_PLUGIN_ARADO_TEST_ID1   = 0xf401;
+//const uint16_t RS_SERVICE_TYPE_PLUGIN_QCHESS_TEST_ID1   = 0xf402;
 
 // test
-const uint16_t RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM = 0xf403;
-
+//const uint16_t RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM = 0xf403;
 
 
 #endif /* RS_SERVICE_IDS_H */

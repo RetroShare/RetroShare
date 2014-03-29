@@ -30,7 +30,8 @@
 
 #include "serialiser/rsserviceids.h"
 #include "serialiser/rsserial.h"
-#include "serialiser/rstlvtypes.h"
+#include "serialiser/rstlvitem.h"
+#include "serialiser/rstlvstring.h"
 
 #include "rsgxsitems.h"
 #include "retroshare/rsgxscircles.h"
@@ -47,7 +48,7 @@ class RsGxsCircleGroupItem : public RsGxsGrpItem
 
 public:
 
-	RsGxsCircleGroupItem():  RsGxsGrpItem(RS_SERVICE_GXSV2_TYPE_GXSCIRCLE,
+	RsGxsCircleGroupItem():  RsGxsGrpItem(RS_SERVICE_GXS_TYPE_GXSCIRCLE,
 			RS_PKT_SUBTYPE_GXSCIRCLE_GROUP_ITEM), 
 			pgpIdSet(GXSCIRCLE_PGPIDSET), 
 			gxsIdSet(GXSCIRCLE_GXSIDSET), 
@@ -70,7 +71,7 @@ class RsGxsCircleMsgItem : public RsGxsMsgItem
 {
 public:
 
-	RsGxsCircleMsgItem(): RsGxsMsgItem(RS_SERVICE_GXSV2_TYPE_GXSCIRCLE,
+	RsGxsCircleMsgItem(): RsGxsMsgItem(RS_SERVICE_GXS_TYPE_GXSCIRCLE,
 			RS_PKT_SUBTYPE_GXSCIRCLE_MSG_ITEM) {return; }
         virtual ~RsGxsCircleMsgItem() { return;}
         void clear();
@@ -83,7 +84,7 @@ class RsGxsCircleSerialiser : public RsSerialType
 public:
 
 	RsGxsCircleSerialiser()
-	:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_GXSV2_TYPE_GXSCIRCLE)
+	:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_GXS_TYPE_GXSCIRCLE)
 	{ return; }
 	virtual     ~RsGxsCircleSerialiser() { return; }
 

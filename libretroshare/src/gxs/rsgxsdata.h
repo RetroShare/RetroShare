@@ -27,8 +27,10 @@
  */
 
 #include <string>
+
+#include <retroshare/rstypes.h>
+
 #include "serialiser/rsserial.h"
-#include "serialiser/rstlvtypes.h"
 #include "serialiser/rstlvkeys.h"
 #include "serialiser/rsgxsitems.h"
 

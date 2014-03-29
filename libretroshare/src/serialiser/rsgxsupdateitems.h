@@ -27,13 +27,16 @@
  */
 
 
-#include <map>
 
+#if 0
+#include <map>
 #include "serialiser/rsserviceids.h"
 #include "serialiser/rsserial.h"
 #include "serialiser/rstlvbase.h"
 #include "serialiser/rstlvtypes.h"
 #include "serialiser/rstlvkeys.h"
+#endif
+
 #include "gxs/rsgxsdata.h"
 
 

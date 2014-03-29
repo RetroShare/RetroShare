@@ -139,7 +139,7 @@ RsIdentity *rsIdentity = NULL;
 /********************************************************************************/
 
 p3IdService::p3IdService(RsGeneralDataService *gds, RsNetworkExchangeService *nes)
-	: RsGxsIdExchange(gds, nes, new RsGxsIdSerialiser(), RS_SERVICE_GXSV2_TYPE_GXSID, idAuthenPolicy()), 
+	: RsGxsIdExchange(gds, nes, new RsGxsIdSerialiser(), RS_SERVICE_GXS_TYPE_GXSID, idAuthenPolicy()), 
 	RsIdentity(this), GxsTokenQueue(this), RsTickEvent(), 
 	mPublicKeyCache(DEFAULT_MEM_CACHE_SIZE, "GxsIdPublicKeyCache"), 
 	mPrivateKeyCache(DEFAULT_MEM_CACHE_SIZE, "GxsIdPrivateKeyCache"), 
@@ -153,13 +153,10 @@ p3IdService::p3IdService(RsGeneralDataService *gds, RsNetworkExchangeService *ne
 	RsTickEvent::schedule_in(GXSID_EVENT_REPUTATION, REPUTATION_PERIOD);
 	RsTickEvent::schedule_now(GXSID_EVENT_CACHEOWNIDS);
 
-#ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
+	//RsTickEvent::schedule_in(GXSID_EVENT_CACHETEST, CACHETEST_PERIOD);
 
-	RsTickEvent::schedule_in(GXSID_EVENT_CACHETEST, CACHETEST_PERIOD);
-
-  #ifdef GXSID_GEN_DUMMY_DATA
-	RsTickEvent::schedule_now(GXSID_EVENT_DUMMYDATA);
-  #endif
+#ifdef GXSID_GEN_DUMMY_DATA
+	//RsTickEvent::schedule_now(GXSID_EVENT_DUMMYDATA);
 #endif
 
 	loadRecognKeys();
@@ -173,7 +170,7 @@ const uint16_t GXSID_MIN_MINOR_VERSION  =       0;
 
 RsServiceInfo p3IdService::getServiceInfo()
 {
-        return RsServiceInfo(RS_SERVICE_GXSV2_TYPE_GXSID,
+        return RsServiceInfo(RS_SERVICE_GXS_TYPE_GXSID,
                 GXSID_APP_NAME,
                 GXSID_APP_MAJOR_VERSION,
                 GXSID_APP_MINOR_VERSION,
@@ -2091,10 +2088,10 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
 		std::cerr << std::endl;
 
 #ifdef GXSID_GEN_DUMMY_DATA
-		if (item->group.mMeta.mAuthorId != "")
-		{
-			ownId = RsPgpId(item->group.mMeta.mAuthorId);
-		}
+//		if (item->group.mMeta.mAuthorId != "")
+//		{
+//			ownId = RsPgpId(item->group.mMeta.mAuthorId);
+//		}
 #endif
 
 

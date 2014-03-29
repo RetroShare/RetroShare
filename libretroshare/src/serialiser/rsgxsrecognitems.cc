@@ -23,8 +23,8 @@
  *
  */
 
-#include "serialiser/rsbaseserial.h"
 #include "serialiser/rsgxsrecognitems.h"
+#include "serialiser/rsbaseserial.h"
 
 /***
 #define RSSERIAL_DEBUG 1

@@ -142,7 +142,7 @@ const uint16_t GXS_REPUTATION_MIN_MINOR_VERSION  =       0;
 
 RsServiceInfo p3GxsReputation::getServiceInfo()
 {
-        return RsServiceInfo(RS_SERVICE_GXSV2_TYPE_REPUTATION,
+        return RsServiceInfo(RS_SERVICE_GXS_TYPE_REPUTATION,
                 GXS_REPUTATION_APP_NAME,
                 GXS_REPUTATION_APP_MAJOR_VERSION,
                 GXS_REPUTATION_APP_MINOR_VERSION,

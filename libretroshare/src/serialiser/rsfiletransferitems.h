@@ -29,8 +29,10 @@
 
 #include "retroshare/rstypes.h"
 #include "serialiser/rsserial.h"
-#include "serialiser/rstlvtypes.h"
+//#include "serialiser/rstlvtypes.h"
+#include "serialiser/rstlvfileitem.h"
 #include "serialiser/rsserviceids.h"
+
 
 const uint8_t RS_PKT_SUBTYPE_FT_DATA_REQUEST       = 0x01;
 const uint8_t RS_PKT_SUBTYPE_FT_DATA               = 0x02;

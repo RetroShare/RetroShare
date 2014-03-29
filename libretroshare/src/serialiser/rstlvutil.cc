@@ -31,16 +31,23 @@
  *
  */
 
-/* print out a packet */
-#include <stdlib.h>
+#include "serialiser/rstlvutil.h"
+
+#include "serialiser/rstlvbase.h"
+#include "serialiser/rstlvitem.h"
+#include "util/rsstring.h"
+#include "util/utest.h"
+
 #include <iostream>
+#include <stdlib.h>
+
+#if 0
+/* print out a packet */
 #include <iomanip>
 #include <vector>
 
-#include "serialiser/rstlvbase.h"
-#include "serialiser/rstlvtypes.h"
-#include "util/utest.h"
-#include "util/rsstring.h"
+
+#endif
 
 void displayRawPacket(std::ostream &out, void *data, uint32_t size)
 {

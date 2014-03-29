@@ -1,11 +1,11 @@
 #pragma once
 
 /*
- * libretroshare/src/serialiser: rstlvdsdv.h
+ * libretroshare/src/serialiser: rstlvfileitem.h
  *
  * RetroShare Serialiser.
  *
- * Copyright 2011 by Robert Fernie
+ * Copyright 2007-2008 by Robert Fernie, Chris Parker
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,62 +27,67 @@
 
 /*******************************************************************
  * These are the Compound TLV structures that must be (un)packed.
+ *
  ******************************************************************/
 
 #include "serialiser/rstlvitem.h"
-#include "serialiser/rstlvbase.h"
-#include "serialiser/rstlvlist.h"
+#include "serialiser/rstlvidset.h"
+#include "serialiser/rstlvbinary.h"
 
-#define RSDSDV_MAX_ROUTE_TABLE	1000
-
-class RsTlvDsdvEndPoint: public RsTlvItem
+class RsTlvFileItem: public RsTlvItem
 {
 	public:
-	 RsTlvDsdvEndPoint();
-virtual ~RsTlvDsdvEndPoint() { return; }
+	 RsTlvFileItem();
+virtual ~RsTlvFileItem() { return; }
 virtual uint32_t TlvSize() const;
 virtual void	 TlvClear();
 virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset) const; 
 virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); 
 virtual std::ostream &print(std::ostream &out, uint16_t indent) const;
 
-	uint32_t idType;
-	std::string anonChunk;
-	std::string serviceId;
+	uint64_t filesize; /// Mandatory: size of file to be downloaded
+    RsFileHash hash;  /// Mandatory: to find file
+	std::string name;  /// Optional: name of file
+	std::string path;  /// Optional: path on host computer
+	uint32_t    pop;   /// Optional: Popularity of file
+	uint32_t    age;   /// Optional: age of file
+	// For chunk hashing.
+	uint32_t    piecesize;  /// Optional: bytes/piece for hashset.
+	RsTlvHashSet hashset; /// Optional: chunk hashes.
+
 };
 
-class RsTlvDsdvEntry: public RsTlvItem
+class RsTlvFileSet: public RsTlvItem
 {
 	public:
-	 RsTlvDsdvEntry();
-virtual ~RsTlvDsdvEntry() { return; }
+	 RsTlvFileSet() { return; }
+virtual ~RsTlvFileSet() { return; }
 virtual uint32_t TlvSize() const;
 virtual void	 TlvClear();
 virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset) const; 
 virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); 
 virtual std::ostream &print(std::ostream &out, uint16_t indent) const;
 
-	RsTlvDsdvEndPoint endPoint;
-	uint32_t sequence;
-	uint32_t distance;
+	std::list<RsTlvFileItem> items; /// Mandatory 
+	std::string title;   		/// Optional: title of file set
+	std::string comment; 		/// Optional: comments for file
 };
 
-typedef t_RsTlvList<RsTlvDsdvEntry,TLV_TYPE_DSDV_ENTRY_SET> RsTlvDsdvEntrySet;
 
-#if 0
-class RsTlvDsdvEntrySet: public RsTlvItem
+class RsTlvFileData: public RsTlvItem
 {
 	public:
-	 RsTlvDsdvEntrySet();
-virtual ~RsTlvDsdvEntrySet() { return; }
-virtual uint32_t TlvSize();
+	 RsTlvFileData(); 
+	 virtual ~RsTlvFileData() { return; }
+virtual uint32_t TlvSize() const;
 virtual void	 TlvClear();
-virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset); /* serialise   */
-virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); /* deserialise */
-virtual std::ostream &print(std::ostream &out, uint16_t indent);
+virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset) const; 
+virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); 
+virtual std::ostream &print(std::ostream &out, uint16_t indent) const;
 
-	std::list<RsTlvDsdvEntry> entries;
+	RsTlvFileItem   file;         /// Mandatory: file information	
+	uint64_t        file_offset;  /// Mandatory: where to start in bin data
+	RsTlvBinaryData binData;      /// Mandatory: serialised file info
 };
 
-#endif
 

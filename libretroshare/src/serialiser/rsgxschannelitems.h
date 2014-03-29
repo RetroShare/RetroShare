@@ -30,7 +30,9 @@
 
 #include "serialiser/rsserviceids.h"
 #include "serialiser/rsserial.h"
-#include "serialiser/rstlvtypes.h"
+//#include "serialiser/rstlvtypes.h"
+#include "serialiser/rstlvfileitem.h"
+#include "serialiser/rstlvimage.h"
 
 #include "serialiser/rsgxscommentitems.h"
 
@@ -47,7 +49,7 @@ class RsGxsChannelGroupItem : public RsGxsGrpItem
 
 public:
 
-	RsGxsChannelGroupItem():  RsGxsGrpItem(RS_SERVICE_GXSV2_TYPE_CHANNELS,
+	RsGxsChannelGroupItem():  RsGxsGrpItem(RS_SERVICE_GXS_TYPE_CHANNELS,
 			RS_PKT_SUBTYPE_GXSCHANNEL_GROUP_ITEM) { return;}
         virtual ~RsGxsChannelGroupItem() { return;}
 
@@ -66,7 +68,7 @@ class RsGxsChannelPostItem : public RsGxsMsgItem
 {
 public:
 
-	RsGxsChannelPostItem(): RsGxsMsgItem(RS_SERVICE_GXSV2_TYPE_CHANNELS,
+	RsGxsChannelPostItem(): RsGxsMsgItem(RS_SERVICE_GXS_TYPE_CHANNELS,
 			RS_PKT_SUBTYPE_GXSCHANNEL_POST_ITEM) {return; }
         virtual ~RsGxsChannelPostItem() { return;}
         void clear();
@@ -88,7 +90,7 @@ class RsGxsChannelSerialiser : public RsGxsCommentSerialiser
 public:
 
 	RsGxsChannelSerialiser()
-	:RsGxsCommentSerialiser(RS_SERVICE_GXSV2_TYPE_CHANNELS)
+	:RsGxsCommentSerialiser(RS_SERVICE_GXS_TYPE_CHANNELS)
 	{ return; }
 	virtual     ~RsGxsChannelSerialiser() { return; }
 

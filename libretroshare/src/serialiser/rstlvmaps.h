@@ -26,7 +26,10 @@
  *
  */
 
+#if 0
 #include "serialiser/rstlvgenericmaps.h"
+
+#endif
 
 
 class RsTlvOpinionMapRef: public RsTlvGenericMapRef<std::string, uint32_t>

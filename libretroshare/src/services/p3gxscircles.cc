@@ -108,7 +108,7 @@ RsGxsCircles *rsGxsCircles = NULL;
 
 p3GxsCircles::p3GxsCircles(RsGeneralDataService *gds, RsNetworkExchangeService *nes, p3IdService *identities)
 	: RsGxsCircleExchange(gds, nes, new RsGxsCircleSerialiser(), 
-			RS_SERVICE_GXSV2_TYPE_GXSCIRCLE, identities, circleAuthenPolicy()), 
+			RS_SERVICE_GXS_TYPE_GXSCIRCLE, identities, circleAuthenPolicy()), 
 	RsGxsCircles(this), GxsTokenQueue(this), RsTickEvent(), mIdentities(identities), 
 	mCircleMtx("p3GxsCircles"),
         mCircleCache(DEFAULT_MEM_CACHE_SIZE, "GxsCircleCache")
@@ -120,12 +120,7 @@ p3GxsCircles::p3GxsCircles(RsGeneralDataService *gds, RsNetworkExchangeService *
 	RsTickEvent::schedule_now(CIRCLE_EVENT_LOADIDS);
 
 	// Dummy Circles.
-
-#ifndef GXS_DEV_TESTNET // NO RESET, OR DUMMYDATA for TESTNET
-
-	RsTickEvent::schedule_in(CIRCLE_EVENT_DUMMYSTART, CIRCLE_DUMMY_STARTPERIOD);
-
-#endif
+//	RsTickEvent::schedule_in(CIRCLE_EVENT_DUMMYSTART, CIRCLE_DUMMY_STARTPERIOD);
 
 }
 
@@ -138,7 +133,7 @@ const uint16_t GXS_CIRCLES_MIN_MINOR_VERSION  =       0;
 
 RsServiceInfo p3GxsCircles::getServiceInfo()
 {
-        return RsServiceInfo(RS_SERVICE_GXSV2_TYPE_GXSCIRCLE,
+        return RsServiceInfo(RS_SERVICE_GXS_TYPE_GXSCIRCLE,
                 GXS_CIRCLES_APP_NAME,
                 GXS_CIRCLES_APP_MAJOR_VERSION,
                 GXS_CIRCLES_APP_MINOR_VERSION,

@@ -96,9 +96,9 @@ void RsServer::rsGlobalShutDown()
         if(mGxsChannels) mGxsChannels->join();
         if(mGxsIdService) mGxsIdService->join();
         if(mPosted) mPosted->join();
-        //if(mPhoto) mPhoto->join();
         if(mWiki) mWiki->join();
-        if(mWire) mWire->join();
+        //if(mPhoto) mPhoto->join();
+        //if(mWire) mWire->join();
 #endif
 
 	AuthGPG::exit();

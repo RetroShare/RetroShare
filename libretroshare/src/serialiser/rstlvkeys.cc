@@ -25,13 +25,9 @@
  */
 
 #include "rstlvkeys.h"
-
 #include "rstlvbase.h"
-#include "rstlvtypes.h"
 #include "rsbaseserial.h"
-#include "util/rsprint.h"
-#include <ostream>
-#include <iomanip>
+
 #include <iostream>
 
 #define TLV_DEBUG 1
@@ -65,7 +61,7 @@ void RsTlvSecurityKey::ShallowClear()
 }
 
 
-uint32_t RsTlvSecurityKey::TlvSize()
+uint32_t RsTlvSecurityKey::TlvSize() const
 {
 	uint32_t s = TLV_HEADER_SIZE; /* header + 4 for size */
 
@@ -81,7 +77,7 @@ uint32_t RsTlvSecurityKey::TlvSize()
 
 }
 
-bool  RsTlvSecurityKey::SetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
+bool  RsTlvSecurityKey::SetTlv(void *data, uint32_t size, uint32_t *offset) const
 {
 	/* must check sizes */
 	uint32_t tlvsize = TlvSize();
@@ -114,7 +110,7 @@ bool  RsTlvSecurityKey::SetTlv(void *data, uint32_t size, uint32_t *offset) /* s
 }
 
 
-bool  RsTlvSecurityKey::GetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
+bool  RsTlvSecurityKey::GetTlv(void *data, uint32_t size, uint32_t *offset)
 {
 	if (size < *offset + TLV_HEADER_SIZE)
 		return false;	
@@ -180,11 +176,10 @@ bool  RsTlvSecurityKey::GetTlv(void *data, uint32_t size, uint32_t *offset) /* s
 	}
 
 	return ok;
-	
 }
 
 
-std::ostream &RsTlvSecurityKey::print(std::ostream &out, uint16_t indent)
+std::ostream &RsTlvSecurityKey::print(std::ostream &out, uint16_t indent) const
 { 
 	printBase(out, "RsTlvSecurityKey", indent);
 	uint16_t int_Indent = indent + 2;
@@ -224,12 +219,12 @@ void RsTlvSecurityKeySet::TlvClear()
 	keys.clear(); //empty list
 }
 
-uint32_t RsTlvSecurityKeySet::TlvSize()
+uint32_t RsTlvSecurityKeySet::TlvSize() const
 {
 
 	uint32_t s = TLV_HEADER_SIZE; /* header */
 
-	std::map<std::string, RsTlvSecurityKey>::iterator it;
+	std::map<std::string, RsTlvSecurityKey>::const_iterator it;
 	
 	s += GetTlvStringSize(groupId); 
 
@@ -244,7 +239,7 @@ uint32_t RsTlvSecurityKeySet::TlvSize()
 	return s;
 }
 
-bool  RsTlvSecurityKeySet::SetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
+bool  RsTlvSecurityKeySet::SetTlv(void *data, uint32_t size, uint32_t *offset) const
 {
 	/* must check sizes */
 	uint32_t tlvsize = TlvSize();
@@ -269,7 +264,7 @@ bool  RsTlvSecurityKeySet::SetTlv(void *data, uint32_t size, uint32_t *offset) /
 
 	if(!keys.empty())
 	{
-		std::map<std::string, RsTlvSecurityKey>::iterator it;
+		std::map<std::string, RsTlvSecurityKey>::const_iterator it;
 
 		for(it = keys.begin(); it != keys.end() ; ++it)
 			ok &= (it->second).SetTlv(data, size, offset);
@@ -281,7 +276,7 @@ return ok;
 }
 
 
-bool  RsTlvSecurityKeySet::GetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
+bool  RsTlvSecurityKeySet::GetTlv(void *data, uint32_t size, uint32_t *offset) 
 {
 	if (size < *offset + TLV_HEADER_SIZE)
 		return false;	
@@ -357,7 +352,7 @@ bool  RsTlvSecurityKeySet::GetTlv(void *data, uint32_t size, uint32_t *offset) /
 }
 
 // prints out contents of RsTlvSecurityKeySet
-std::ostream &RsTlvSecurityKeySet::print(std::ostream &out, uint16_t indent)
+std::ostream &RsTlvSecurityKeySet::print(std::ostream &out, uint16_t indent) const
 {
 	printBase(out, "RsTlvSecurityKeySet", indent);
 	uint16_t int_Indent = indent + 2;
@@ -366,7 +361,7 @@ std::ostream &RsTlvSecurityKeySet::print(std::ostream &out, uint16_t indent)
 	out << "GroupId: " << groupId;
 	out << std::endl;
 
-	std::map<std::string, RsTlvSecurityKey>::iterator it;
+	std::map<std::string, RsTlvSecurityKey>::const_iterator it;
 	for(it = keys.begin(); it != keys.end() ; ++it)
 		(it->second).print(out, int_Indent);
 
@@ -397,7 +392,7 @@ void RsTlvKeySignature::ShallowClear()
 	signData.bin_len = 0;
 }
 
-uint32_t RsTlvKeySignature::TlvSize()
+uint32_t RsTlvKeySignature::TlvSize() const
 {
 	uint32_t s = TLV_HEADER_SIZE; /* header + 4 for size */
 
@@ -407,7 +402,7 @@ uint32_t RsTlvKeySignature::TlvSize()
 
 }
 
-bool  RsTlvKeySignature::SetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
+bool  RsTlvKeySignature::SetTlv(void *data, uint32_t size, uint32_t *offset) const
 {
 	/* must check sizes */
 	uint32_t tlvsize = TlvSize();
@@ -445,7 +440,7 @@ bool  RsTlvKeySignature::SetTlv(void *data, uint32_t size, uint32_t *offset) /* 
 }
 
 
-bool  RsTlvKeySignature::GetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
+bool  RsTlvKeySignature::GetTlv(void *data, uint32_t size, uint32_t *offset) 
 {
 	if (size < *offset + TLV_HEADER_SIZE)
 		return false;	
@@ -503,7 +498,7 @@ bool  RsTlvKeySignature::GetTlv(void *data, uint32_t size, uint32_t *offset) /* 
 }
 
 
-std::ostream &RsTlvKeySignature::print(std::ostream &out, uint16_t indent)
+std::ostream &RsTlvKeySignature::print(std::ostream &out, uint16_t indent) const
 { 
 	printBase(out, "RsTlvKeySignature", indent);
 	uint16_t int_Indent = indent + 2;
@@ -528,19 +523,19 @@ RsTlvKeySignatureSet::RsTlvKeySignatureSet()
 
 }
 
-std::ostream &RsTlvKeySignatureSet::print(std::ostream &out, uint16_t indent)
+std::ostream &RsTlvKeySignatureSet::print(std::ostream &out, uint16_t indent) const
 {
     printBase(out, "RsTlvKeySignatureSet", indent);
     uint16_t int_Indent = indent + 2;
 
     printIndent(out, int_Indent);
 
-    std::map<SignType, RsTlvKeySignature>::iterator mit = keySignSet.begin();
+    std::map<SignType, RsTlvKeySignature>::const_iterator mit = keySignSet.begin();
 
     for(; mit != keySignSet.end(); mit++)
     {
         out << "SignType: " << mit->first << std::endl;
-        RsTlvKeySignature& sign = mit->second;
+        const RsTlvKeySignature& sign = mit->second;
         sign.print(out, indent);
     }
 
@@ -555,7 +550,7 @@ void RsTlvKeySignatureSet::TlvClear()
     keySignSet.clear();
 }
 
-bool RsTlvKeySignatureSet::SetTlv(void *data, uint32_t size, uint32_t *offset)
+bool RsTlvKeySignatureSet::SetTlv(void *data, uint32_t size, uint32_t *offset) const
 {
 
     /* must check sizes */
@@ -579,7 +574,7 @@ bool RsTlvKeySignatureSet::SetTlv(void *data, uint32_t size, uint32_t *offset)
 
     if(!keySignSet.empty())
     {
-            std::map<SignType, RsTlvKeySignature>::iterator it;
+            std::map<SignType, RsTlvKeySignature>::const_iterator it;
 
             for(it = keySignSet.begin(); it != keySignSet.end() ; ++it)
             {
@@ -674,10 +669,10 @@ bool RsTlvKeySignatureSet::GetTlv(void *data, uint32_t size, uint32_t *offset)
     return ok;
 }
 
-uint32_t RsTlvKeySignatureSet::TlvSize()
+uint32_t RsTlvKeySignatureSet::TlvSize() const
 {
     uint32_t s = TLV_HEADER_SIZE; // header size
-    std::map<SignType, RsTlvKeySignature>::iterator it;
+    std::map<SignType, RsTlvKeySignature>::const_iterator it;
 
     for(it = keySignSet.begin(); it != keySignSet.end() ; ++it)
     {

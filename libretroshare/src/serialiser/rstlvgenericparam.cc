@@ -24,21 +24,15 @@
  *
  */
 
-#include "rstlvbase.h"
-#include "rstlvtypes.h"
-#include "rstlvgenericmap.h"
-#include "rsbaseserial.h"
-#include "util/rsprint.h"
-#include <ostream>
-#include <sstream>
-#include <iomanip>
+#include "serialiser/rstlvgenericparam.h"
+#include "serialiser/rstlvbase.h"
 #include <iostream>
 
 #define TLV_DEBUG 1
 
 /* generic print */
 template<class T>
-std::ostream & RsTlvParamRef<T>::print(std::ostream &out, uint16_t indent)
+std::ostream & RsTlvParamRef<T>::print(std::ostream &out, uint16_t indent) const
 {
 	printIndent(out, indent);
 	out << "Type: " << mParamType << " Param: " << mParam;
@@ -48,7 +42,7 @@ std::ostream & RsTlvParamRef<T>::print(std::ostream &out, uint16_t indent)
 
 /***** uint16_t ****/
 template<>
-uint32_t RsTlvParamRef<uint16_t>::TlvSize()
+uint32_t RsTlvParamRef<uint16_t>::TlvSize() const
 {
 	return GetTlvUInt16Size();
 }
@@ -60,7 +54,7 @@ void RsTlvParamRef<uint16_t>::TlvClear()
 }
 
 template<>
-bool RsTlvParamRef<uint16_t>::SetTlv(void *data, uint32_t size, uint32_t *offset)
+bool RsTlvParamRef<uint16_t>::SetTlv(void *data, uint32_t size, uint32_t *offset) const
 {
 	uint16_t param = mParam;
         return SetTlvUInt16(data, size, offset, mParamType, mParam);
@@ -76,7 +70,7 @@ bool RsTlvParamRef<uint16_t>::GetTlv(void *data, uint32_t size, uint32_t *offset
 }
 
 template<>
-std::ostream & RsTlvParamRef<uint16_t>::print(std::ostream &out, uint16_t indent)
+std::ostream & RsTlvParamRef<uint16_t>::print(std::ostream &out, uint16_t indent) const
 {
 	printIndent(out, indent);
 	out << "Type: " << mParamType << "Param: " << mParam;
@@ -87,7 +81,7 @@ std::ostream & RsTlvParamRef<uint16_t>::print(std::ostream &out, uint16_t indent
 /***** const uint16_t ****/
 
 template<>
-uint32_t RsTlvParamRef<const uint16_t>::TlvSize()
+uint32_t RsTlvParamRef<const uint16_t>::TlvSize() const
 {
 	return GetTlvUInt16Size();
 }
@@ -100,7 +94,7 @@ void RsTlvParamRef<const uint16_t>::TlvClear()
 
 
 template<>
-bool RsTlvParamRef<const uint16_t>::SetTlv(void *data, uint32_t size, uint32_t *offset)
+bool RsTlvParamRef<const uint16_t>::SetTlv(void *data, uint32_t size, uint32_t *offset) const
 {
         return SetTlvUInt16(data, size, offset, mParamType, mParam);
 }
@@ -113,17 +107,16 @@ bool RsTlvParamRef<const uint16_t>::GetTlv(void *data, uint32_t size, uint32_t *
 
 
 template<>
-std::ostream & RsTlvParamRef<const uint16_t>::print(std::ostream &out, uint16_t indent)
+std::ostream & RsTlvParamRef<const uint16_t>::print(std::ostream &out, uint16_t indent) const
 {
 	printIndent(out, indent);
 	out << "Type: " << mParamType << "Param: " << mParam;
 	return out;
 }
 
-
 /***** uint32_t ****/
 template<>
-uint32_t RsTlvParamRef<uint32_t>::TlvSize()
+uint32_t RsTlvParamRef<uint32_t>::TlvSize() const
 {
 	return GetTlvUInt32Size();
 }
@@ -135,7 +128,7 @@ void RsTlvParamRef<uint32_t>::TlvClear()
 }
 
 template<>
-bool RsTlvParamRef<uint32_t>::SetTlv(void *data, uint32_t size, uint32_t *offset)
+bool RsTlvParamRef<uint32_t>::SetTlv(void *data, uint32_t size, uint32_t *offset) const
 {
         return SetTlvUInt32(data, size, offset, mParamType, mParam);
 }
@@ -147,7 +140,7 @@ bool RsTlvParamRef<uint32_t>::GetTlv(void *data, uint32_t size, uint32_t *offset
 }
 
 template<>
-std::ostream & RsTlvParamRef<uint32_t>::print(std::ostream &out, uint16_t indent)
+std::ostream & RsTlvParamRef<uint32_t>::print(std::ostream &out, uint16_t indent) const
 {
 	printIndent(out, indent);
 	out << "Type: " << mParamType << "Param: " << mParam;
@@ -158,7 +151,7 @@ std::ostream & RsTlvParamRef<uint32_t>::print(std::ostream &out, uint16_t indent
 
 /***** const uint32_t ****/
 template<>
-uint32_t RsTlvParamRef<const uint32_t>::TlvSize()
+uint32_t RsTlvParamRef<const uint32_t>::TlvSize() const
 {
 	return GetTlvUInt32Size();
 }
@@ -170,7 +163,7 @@ void RsTlvParamRef<const uint32_t>::TlvClear()
 }
 
 template<>
-bool RsTlvParamRef<const uint32_t>::SetTlv(void *data, uint32_t size, uint32_t *offset)
+bool RsTlvParamRef<const uint32_t>::SetTlv(void *data, uint32_t size, uint32_t *offset) const
 {
         return SetTlvUInt32(data, size, offset, mParamType, mParam);
 }
@@ -183,7 +176,7 @@ bool RsTlvParamRef<const uint32_t>::GetTlv(void *data, uint32_t size, uint32_t *
 }
 
 template<>
-std::ostream & RsTlvParamRef<const uint32_t>::print(std::ostream &out, uint16_t indent)
+std::ostream & RsTlvParamRef<const uint32_t>::print(std::ostream &out, uint16_t indent) const
 {
 	printIndent(out, indent);
 	out << "Type: " << mParamType << "Param: " << mParam;
@@ -193,7 +186,7 @@ std::ostream & RsTlvParamRef<const uint32_t>::print(std::ostream &out, uint16_t 
 
 /***** std::string ****/
 template<>
-uint32_t RsTlvParamRef<std::string>::TlvSize()
+uint32_t RsTlvParamRef<std::string>::TlvSize() const
 {
 	return GetTlvStringSize(mParam);
 }
@@ -205,7 +198,7 @@ void RsTlvParamRef<std::string>::TlvClear()
 }
 
 template<>
-bool RsTlvParamRef<std::string>::SetTlv(void *data, uint32_t size, uint32_t *offset)
+bool RsTlvParamRef<std::string>::SetTlv(void *data, uint32_t size, uint32_t *offset) const
 {
         return SetTlvString(data, size, offset, mParamType, mParam);
 }
@@ -217,7 +210,7 @@ bool RsTlvParamRef<std::string>::GetTlv(void *data, uint32_t size, uint32_t *off
 }
 
 template<>
-std::ostream & RsTlvParamRef<std::string>::print(std::ostream &out, uint16_t indent)
+std::ostream & RsTlvParamRef<std::string>::print(std::ostream &out, uint16_t indent) const
 {
 	printIndent(out, indent);
 	out << "Type: " << mParamType << "Param: " << mParam;

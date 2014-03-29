@@ -30,7 +30,6 @@
 
 #include "serialiser/rsserviceids.h"
 #include "serialiser/rsserial.h"
-#include "serialiser/rstlvtypes.h"
 
 #include "rsgxsitems.h"
 #include "retroshare/rsidentity.h"
@@ -44,7 +43,7 @@ class RsGxsIdGroupItem : public RsGxsGrpItem
 
 public:
 
-	RsGxsIdGroupItem():  RsGxsGrpItem(RS_SERVICE_GXSV2_TYPE_GXSID,
+	RsGxsIdGroupItem():  RsGxsGrpItem(RS_SERVICE_GXS_TYPE_GXSID,
 			RS_PKT_SUBTYPE_GXSID_GROUP_ITEM) { return;}
         virtual ~RsGxsIdGroupItem() { return;}
 
@@ -60,7 +59,7 @@ class RsGxsIdOpinionItem : public RsGxsMsgItem
 {
 public:
 
-	RsGxsIdOpinionItem(): RsGxsMsgItem(RS_SERVICE_GXSV2_TYPE_GXSID,
+	RsGxsIdOpinionItem(): RsGxsMsgItem(RS_SERVICE_GXS_TYPE_GXSID,
 			RS_PKT_SUBTYPE_GXSID_OPINION_ITEM) {return; }
         virtual ~RsGxsIdOpinionItem() { return;}
         void clear();
@@ -72,7 +71,7 @@ class RsGxsIdCommentItem : public RsGxsMsgItem
 {
 public:
 
-    RsGxsIdCommentItem(): RsGxsMsgItem(RS_SERVICE_GXSV2_TYPE_GXSID,
+    RsGxsIdCommentItem(): RsGxsMsgItem(RS_SERVICE_GXS_TYPE_GXSID,
                                           RS_PKT_SUBTYPE_GXSID_COMMENT_ITEM) { return; }
     virtual ~RsGxsIdCommentItem() { return; }
     void clear();
@@ -87,7 +86,7 @@ class RsGxsIdSerialiser : public RsSerialType
 public:
 
 	RsGxsIdSerialiser()
-	:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_GXSV2_TYPE_GXSID)
+	:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_GXS_TYPE_GXSID)
 	{ return; }
 	virtual     ~RsGxsIdSerialiser() { return; }
 

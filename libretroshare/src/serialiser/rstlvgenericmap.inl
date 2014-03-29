@@ -24,17 +24,9 @@
  *
  */
 
-#include "rstlvbase.h"
-#include "rstlvtypes.h"
-#include "rstlvgenericmap.h"
-#include "rsbaseserial.h"
-#include "util/rsprint.h"
-#include <ostream>
-#include <sstream>
-#include <iomanip>
-#include <iostream>
 
-#define TLV_DEBUG 1
+// Must be different - as this is inline in headers.
+#define TLV_GENERICMAP_DEBUG 1
 
 /*********************************** RsTlvGenericPairRef ***********************************/
 
@@ -48,7 +40,7 @@ void RsTlvGenericPairRef<K, V>::TlvClear()
 }
 
 template<class K, class V>
-uint32_t RsTlvGenericPairRef<K, V>::TlvSize()
+uint32_t RsTlvGenericPairRef<K, V>::TlvSize() const
 {
 	uint32_t s = TLV_HEADER_SIZE; /* header */
 	RsTlvParamRef<K> key(mKeyType, mKey);
@@ -61,7 +53,7 @@ uint32_t RsTlvGenericPairRef<K, V>::TlvSize()
 }
 
 template<class K, class V>
-bool  RsTlvGenericPairRef<K, V>::SetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
+bool  RsTlvGenericPairRef<K, V>::SetTlv(void *data, uint32_t size, uint32_t *offset) const
 {
 	/* must check sizes */
 	uint32_t tlvsize = TlvSize();
@@ -94,7 +86,7 @@ bool  RsTlvGenericPairRef<K, V>::SetTlv(void *data, uint32_t size, uint32_t *off
 }
 
 template<class K, class V>
-bool  RsTlvGenericPairRef<K, V>::GetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
+bool  RsTlvGenericPairRef<K, V>::GetTlv(void *data, uint32_t size, uint32_t *offset) 
 {
 	if (size < *offset + TLV_HEADER_SIZE)
 		return false;	
@@ -130,7 +122,7 @@ bool  RsTlvGenericPairRef<K, V>::GetTlv(void *data, uint32_t size, uint32_t *off
 	 ***************************************************************************/
 	if (*offset != tlvend)
 	{
-#ifdef TLV_DEBUG
+#ifdef TLV_GENERICMAP_DEBUG
 		std::cerr << "RsTlvGenericPairRef::GetTlv() Warning extra bytes at end of item";
 		std::cerr << std::endl;
 #endif
@@ -141,7 +133,7 @@ bool  RsTlvGenericPairRef<K, V>::GetTlv(void *data, uint32_t size, uint32_t *off
 }
 
 template<class K, class V>
-std::ostream &RsTlvGenericPairRef<K, V>::print(std::ostream &out, uint16_t indent)
+std::ostream &RsTlvGenericPairRef<K, V>::print(std::ostream &out, uint16_t indent) const
 { 
 	//printBase(out, "RsTlvGenericPairRef", indent);
 	uint16_t int_Indent = indent + 2;
@@ -178,7 +170,7 @@ void RsTlvGenericMapRef<K, V>::TlvClear()
 }
 
 template<class K, class V>
-uint32_t RsTlvGenericMapRef<K, V>::TlvSize()
+uint32_t RsTlvGenericMapRef<K, V>::TlvSize() const
 {
 	uint32_t s = TLV_HEADER_SIZE; /* header */
 
@@ -193,7 +185,7 @@ uint32_t RsTlvGenericMapRef<K, V>::TlvSize()
 }
 
 template<class K, class V>
-bool  RsTlvGenericMapRef<K, V>::SetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
+bool  RsTlvGenericMapRef<K, V>::SetTlv(void *data, uint32_t size, uint32_t *offset) const
 {
 	/* must check sizes */
 	uint32_t tlvsize = TlvSize();
@@ -225,7 +217,7 @@ bool  RsTlvGenericMapRef<K, V>::SetTlv(void *data, uint32_t size, uint32_t *offs
 }
 
 template<class K, class V>
-bool  RsTlvGenericMapRef<K, V>::GetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
+bool  RsTlvGenericMapRef<K, V>::GetTlv(void *data, uint32_t size, uint32_t *offset) 
 {
 	if (size < *offset + TLV_HEADER_SIZE)
 		return false;	
@@ -283,7 +275,7 @@ bool  RsTlvGenericMapRef<K, V>::GetTlv(void *data, uint32_t size, uint32_t *offs
 	 ***************************************************************************/
 	if (*offset != tlvend)
 	{
-#ifdef TLV_DEBUG
+#ifdef TLV_GENERICMAP_DEBUG
 		std::cerr << "RsTlvGenericMapRef::GetTlv() Warning extra bytes at end of item";
 		std::cerr << std::endl;
 #endif
@@ -294,7 +286,7 @@ bool  RsTlvGenericMapRef<K, V>::GetTlv(void *data, uint32_t size, uint32_t *offs
 }
 
 template<class K, class V>
-std::ostream &RsTlvGenericMapRef<K, V>::print(std::ostream &out, uint16_t indent)
+std::ostream &RsTlvGenericMapRef<K, V>::print(std::ostream &out, uint16_t indent) const
 {
 	//printBase(out, "RsTlvGenericMapRef", indent);
 	uint16_t int_Indent = indent + 2;
@@ -312,14 +304,4 @@ std::ostream &RsTlvGenericMapRef<K, V>::print(std::ostream &out, uint16_t indent
 	//printEnd(out, "RsTlvGenericMapRef", indent);
 	return out;
 }
-
-// declare likely combinations.
-//template class RsTlvGenericMapRef<uint32_t, uint32_t>;
-//template class RsTlvGenericMapRef<uint32_t, std::string>;
-//template class RsTlvGenericMapRef<std::string, uint32_t>;
-//template class RsTlvGenericMapRef<std::string, std::string>;
-
-
-
-
 

@@ -31,7 +31,14 @@
 #include "retroshare/rstypes.h"
 #include "serialiser/rsserviceids.h"
 #include "serialiser/rsserial.h"
+
+#include "serialiser/rstlvidset.h"
+#include "serialiser/rstlvfileitem.h"
+
+#if 0
 #include "serialiser/rstlvtypes.h"
+#include "serialiser/rstlvfileitem.h"
+#endif
 
 /**************************************************************************/
 

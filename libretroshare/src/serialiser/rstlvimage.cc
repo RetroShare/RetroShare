@@ -1,6 +1,6 @@
 
 /*
- * libretroshare/src/serialiser: rstlvfileitem.cc
+ * libretroshare/src/serialiser: rstlvimage.cc
  *
  * RetroShare Serialiser.
  *
@@ -24,11 +24,14 @@
  *
  */
 
+#include "serialiser/rstlvimage.h"
+
+#if 0
 #include <iostream>
 
 #include "serialiser/rstlvbase.h"
-#include "serialiser/rstlvtypes.h"
 #include "serialiser/rsbaseserial.h"
+#endif
 
 /***
  * #define TLV_IMG_DEBUG 1
@@ -49,7 +52,7 @@ void RsTlvImage::TlvClear()
 }
 
 
-uint32_t RsTlvImage::TlvSize()
+uint32_t RsTlvImage::TlvSize() const
 {
 	uint32_t s = TLV_HEADER_SIZE; /* header */
 
@@ -61,7 +64,7 @@ uint32_t RsTlvImage::TlvSize()
 }
 
 
-bool RsTlvImage::SetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
+bool RsTlvImage::SetTlv(void *data, uint32_t size, uint32_t *offset) const
 {
 #ifdef TLV_IMG_DEBUG
         std::cerr << "RsTlvImage::SetTlv()" << std::endl;
@@ -108,7 +111,7 @@ bool RsTlvImage::SetTlv(void *data, uint32_t size, uint32_t *offset) /* serialis
 
 }
 
-bool RsTlvImage::GetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
+bool RsTlvImage::GetTlv(void *data, uint32_t size, uint32_t *offset) 
 {
 #ifdef TLV_IMG_DEBUG
        	std::cerr << "RsTlvImage::GetTlv()" << std::endl;
@@ -176,7 +179,7 @@ bool RsTlvImage::GetTlv(void *data, uint32_t size, uint32_t *offset) /* serialis
 }
 
 /* print it out */
-std::ostream &RsTlvImage::print(std::ostream &out, uint16_t indent)
+std::ostream &RsTlvImage::print(std::ostream &out, uint16_t indent) const
 {
 	printBase(out, "RsTlvImage", indent);
 	uint16_t int_Indent = indent + 2;

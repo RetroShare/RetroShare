@@ -1,11 +1,11 @@
 #pragma once
 
 /*
- * libretroshare/src/serialiser: rstlvbanlist.h
+ * libretroshare/src/serialiser: rstlvimage.h
  *
  * RetroShare Serialiser.
  *
- * Copyright 2011 by Robert Fernie
+ * Copyright 2007-2008 by Robert Fernie, Chris Parker
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,34 +27,29 @@
 
 /*******************************************************************
  * These are the Compound TLV structures that must be (un)packed.
+ *
  ******************************************************************/
 
 #include "serialiser/rstlvitem.h"
-#include "serialiser/rstlvaddrs.h"
-#include "serialiser/rstlvlist.h"
+#include "serialiser/rstlvbinary.h"
 #include "serialiser/rstlvbase.h"
+#include "serialiser/rsbaseserial.h"
 
-#define RSDSDV_MAX_ROUTE_TABLE	1000
-
-class RsTlvBanListEntry: public RsTlvItem
+class RsTlvImage: public RsTlvItem
 {
 	public:
-	 RsTlvBanListEntry();
-virtual ~RsTlvBanListEntry() { return; }
+	 RsTlvImage(); 
+	 RsTlvImage(const RsTlvImage& );
+	 virtual ~RsTlvImage() { return; }
 virtual uint32_t TlvSize() const;
 virtual void	 TlvClear();
-virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset) const; 
-virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); 
+virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset) const;
+virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset);
+
 virtual std::ostream &print(std::ostream &out, uint16_t indent) const;
 
-	RsTlvIpAddress addr;
-	uint32_t level;
-	uint32_t reason;
-	uint32_t age;
+	uint32_t        image_type;   // Mandatory: 
+	RsTlvBinaryData binData;      // Mandatory: serialised file info
 };
-
-
-typedef t_RsTlvList<RsTlvBanListEntry,TLV_TYPE_BAN_LIST> RsTlvBanList;
-
 
 

@@ -31,9 +31,16 @@
 
 #include "retroshare/rstypes.h"
 #include "serialiser/rsserial.h"
+
+#include "serialiser/rstlvidset.h"
+#include "serialiser/rstlvfileitem.h"
+#include "serialiser/rstlvkeyvalue.h"
+#include "serialiser/rstlvaddrs.h"
+
+#if 0
 #include "serialiser/rstlvbase.h"
 #include "serialiser/rstlvtypes.h"
-#include "serialiser/rstlvaddrs.h"
+#endif
 
 class RsGroupInfo;
 

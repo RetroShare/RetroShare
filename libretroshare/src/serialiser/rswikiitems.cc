@@ -84,7 +84,7 @@ RsItem* RsGxsWikiSerialiser::deserialise(void* data, uint32_t* size)
 	uint32_t rstype = getRsItemId(data);
 		
 	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-		(RS_SERVICE_GXSV2_TYPE_WIKI != getRsItemService(rstype)))
+		(RS_SERVICE_GXS_TYPE_WIKI != getRsItemService(rstype)))
 	{
 		return NULL; /* wrong type */
 	}
@@ -219,7 +219,7 @@ RsGxsWikiCollectionItem* RsGxsWikiSerialiser::deserialiseGxsWikiCollectionItem(v
 	
 	
 	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-		(RS_SERVICE_GXSV2_TYPE_WIKI != getRsItemService(rstype)) ||
+		(RS_SERVICE_GXS_TYPE_WIKI != getRsItemService(rstype)) ||
 		(RS_PKT_SUBTYPE_WIKI_COLLECTION_ITEM != getRsItemSubType(rstype)))
 	{
 #ifdef GXSID_DEBUG
@@ -375,7 +375,7 @@ RsGxsWikiSnapshotItem* RsGxsWikiSerialiser::deserialiseGxsWikiSnapshotItem(void 
 	
 	
 	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-		(RS_SERVICE_GXSV2_TYPE_WIKI != getRsItemService(rstype)) ||
+		(RS_SERVICE_GXS_TYPE_WIKI != getRsItemService(rstype)) ||
 		(RS_PKT_SUBTYPE_WIKI_SNAPSHOT_ITEM != getRsItemSubType(rstype)))
 	{
 #ifdef GXSID_DEBUG
@@ -523,7 +523,7 @@ RsGxsWikiCommentItem* RsGxsWikiSerialiser::deserialiseGxsWikiCommentItem(void *d
 	
 	
 	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-		(RS_SERVICE_GXSV2_TYPE_WIKI != getRsItemService(rstype)) ||
+		(RS_SERVICE_GXS_TYPE_WIKI != getRsItemService(rstype)) ||
 		(RS_PKT_SUBTYPE_WIKI_COMMENT_ITEM != getRsItemSubType(rstype)))
 	{
 #ifdef GXSID_DEBUG

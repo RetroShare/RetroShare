@@ -30,9 +30,14 @@
 
 #include "serialiser/rsserviceids.h"
 #include "serialiser/rsserial.h"
+#include "serialiser/rstlvkeys.h"
+#include "serialiser/rstlvidset.h"
+
+#if 0
 #include "serialiser/rstlvbase.h"
 #include "serialiser/rstlvtypes.h"
-#include "serialiser/rstlvkeys.h"
+
+#endif
 
 #include "retroshare/rsgxsifacetypes.h"
 

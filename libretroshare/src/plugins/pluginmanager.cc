@@ -2,10 +2,16 @@
 
 #include "pluginmanager.h"
 #include <dirent.h>
+
+#if 0
 #include <serialiser/rsserial.h>
 #include <serialiser/rstlvbase.h>
 #include <serialiser/rstlvtypes.h>
+#endif
+
 #include <serialiser/rspluginitems.h>
+
+
 #include <rsserver/p3face.h>
 #include <util/rsdir.h>
 #include <util/folderiterator.h>

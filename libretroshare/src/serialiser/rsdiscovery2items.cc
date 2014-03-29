@@ -24,14 +24,16 @@
  *
  */
 
-#include "serialiser/rsbaseserial.h"
+#include "serialiser/rsdiscovery2items.h"
 #include "serialiser/rsbaseserial.h"
 
+#if 0
+
 #include "serialiser/rsserviceids.h"
-#include "serialiser/rsdiscovery2items.h"
 
 #include "serialiser/rstlvbase.h"
 #include "serialiser/rstlvtypes.h"
+#endif
 
 /***
  * #define RSSERIAL_DEBUG 		1

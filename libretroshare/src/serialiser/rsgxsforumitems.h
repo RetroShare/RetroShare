@@ -30,7 +30,7 @@
 
 #include "serialiser/rsserviceids.h"
 #include "serialiser/rsserial.h"
-#include "serialiser/rstlvtypes.h"
+//#include "serialiser/rstlvtypes.h"
 
 #include "rsgxsitems.h"
 #include "retroshare/rsgxsforums.h"
@@ -43,7 +43,7 @@ class RsGxsForumGroupItem : public RsGxsGrpItem
 
 public:
 
-	RsGxsForumGroupItem():  RsGxsGrpItem(RS_SERVICE_GXSV2_TYPE_FORUMS,
+	RsGxsForumGroupItem():  RsGxsGrpItem(RS_SERVICE_GXS_TYPE_FORUMS,
 			RS_PKT_SUBTYPE_GXSFORUM_GROUP_ITEM) { return;}
         virtual ~RsGxsForumGroupItem() { return;}
 
@@ -58,7 +58,7 @@ class RsGxsForumMsgItem : public RsGxsMsgItem
 {
 public:
 
-	RsGxsForumMsgItem(): RsGxsMsgItem(RS_SERVICE_GXSV2_TYPE_FORUMS,
+	RsGxsForumMsgItem(): RsGxsMsgItem(RS_SERVICE_GXS_TYPE_FORUMS,
 			RS_PKT_SUBTYPE_GXSFORUM_MESSAGE_ITEM) {return; }
         virtual ~RsGxsForumMsgItem() { return;}
         void clear();
@@ -72,7 +72,7 @@ class RsGxsForumSerialiser : public RsSerialType
 public:
 
 	RsGxsForumSerialiser()
-	:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_GXSV2_TYPE_FORUMS)
+	:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_GXS_TYPE_FORUMS)
 	{ return; }
 	virtual     ~RsGxsForumSerialiser() { return; }
 

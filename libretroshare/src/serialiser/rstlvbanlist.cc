@@ -24,15 +24,10 @@
  *
  */
 
-#include "rstlvbanlist.h"
+#include "serialiser/rstlvbanlist.h"
+#include "serialiser/rstlvbase.h"
 
-#include "rstlvbase.h"
-#include "rstlvtypes.h"
-#include "rsbaseserial.h"
-#include "util/rsprint.h"
-#include <ostream>
-#include <iomanip>
-#include <iostream>
+#include "serialiser/rsbaseserial.h"
 
 
 /************************************* RsTlvBanListEntry ************************************/
@@ -51,7 +46,7 @@ void RsTlvBanListEntry::TlvClear()
 	age = 0;
 }
 
-uint32_t RsTlvBanListEntry::TlvSize()
+uint32_t RsTlvBanListEntry::TlvSize() const
 {
 	uint32_t s = TLV_HEADER_SIZE; 
 
@@ -64,7 +59,7 @@ uint32_t RsTlvBanListEntry::TlvSize()
 
 }
 
-bool  RsTlvBanListEntry::SetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
+bool  RsTlvBanListEntry::SetTlv(void *data, uint32_t size, uint32_t *offset) const
 {
 	/* must check sizes */
 	uint32_t tlvsize = TlvSize();
@@ -89,7 +84,7 @@ bool  RsTlvBanListEntry::SetTlv(void *data, uint32_t size, uint32_t *offset) /* 
 }
 
 
-bool  RsTlvBanListEntry::GetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
+bool  RsTlvBanListEntry::GetTlv(void *data, uint32_t size, uint32_t *offset)
 {
 	if (size < *offset + TLV_HEADER_SIZE)
 		return false;	
@@ -137,7 +132,7 @@ bool  RsTlvBanListEntry::GetTlv(void *data, uint32_t size, uint32_t *offset) /* 
 }
 
 
-std::ostream &RsTlvBanListEntry::print(std::ostream &out, uint16_t indent)
+std::ostream &RsTlvBanListEntry::print(std::ostream &out, uint16_t indent) const
 { 
 	printBase(out, "RsTlvBanListEntry", indent);
 	uint16_t int_Indent = indent + 2;
@@ -161,153 +156,5 @@ std::ostream &RsTlvBanListEntry::print(std::ostream &out, uint16_t indent)
 	printEnd(out, "RsTlvBanListEntry", indent);
 	return out;
 }
-
-
-/************************************* RsTlvBanList ************************************/
-
-RsTlvBanList::RsTlvBanList()
-{
-
-}
-
-void RsTlvBanList::TlvClear()
-{
-	entries.clear();
-}
-
-uint32_t RsTlvBanList::TlvSize()
-{
-
-	uint32_t s = TLV_HEADER_SIZE; /* header */
-
-	std::list<RsTlvBanListEntry>::iterator it;
-	
-
-	if(!entries.empty())
-	{
-
-		for(it = entries.begin(); it != entries.end() ; ++it)
-			s += it->TlvSize();
-
-	}
-
-	return s;
-}
-
-bool  RsTlvBanList::SetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
-{
-	/* must check sizes */
-	uint32_t tlvsize = TlvSize();
-	uint32_t tlvend  = *offset + tlvsize;
-
-	if (size < tlvend)
-		return false; /* not enough space */
-
-	bool ok = true;
-
-		/* start at data[offset] */
-	ok &= SetTlvBase(data, tlvend, offset, TLV_TYPE_BAN_LIST , tlvsize);
-	
-	if(!entries.empty())
-	{
-		std::list<RsTlvBanListEntry>::iterator it;
-
-		for(it = entries.begin(); it != entries.end() ; ++it)
-			ok &= it->SetTlv(data, size, offset);
-	}
-	
-
-	return ok;
-
-}
-
-
-bool  RsTlvBanList::GetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
-{
-	if (size < *offset + TLV_HEADER_SIZE)
-		return false;	
-
-	uint16_t tlvtype = GetTlvType( &(((uint8_t *) data)[*offset])  );
-	uint32_t tlvsize = GetTlvSize( &(((uint8_t *) data)[*offset])  );
-	uint32_t tlvend = *offset + tlvsize;
-
-	if (size < tlvend)    /* check size */
-		return false; /* not enough space */
-
-	if (tlvtype != TLV_TYPE_BAN_LIST) /* check type */
-		return false;
-
-	bool ok = true;
-
-	/* ready to load */
-	TlvClear();
-
-	/* skip the header */
-	(*offset) += TLV_HEADER_SIZE;
-
-        /* while there is TLV  */
-        while((*offset) + 2 < tlvend)
-        {
-                /* get the next type */
-                uint16_t tlvsubtype = GetTlvType( &(((uint8_t *) data)[*offset]) );
-
-                switch(tlvsubtype)
-                {
-                        case TLV_TYPE_BAN_ENTRY:
-			{
-				RsTlvBanListEntry entry;
-				ok &= entry.GetTlv(data, size, offset);
-				if (ok)
-				{
-					entries.push_back(entry);
-				}
-			}
-				break;
-                        default:
-                                ok &= SkipUnknownTlv(data, tlvend, offset);
-                                break;
-
-                }
-
-                if (!ok)
-			break;
-	}
-   
-
-		
-	/***************************************************************************
-	 * NB: extra components could be added (for future expansion of the type).
-	 *            or be present (if this code is reading an extended version).
-	 *
-	 * We must chew up the extra characters to conform with TLV specifications
-	 ***************************************************************************/
-	if (*offset != tlvend)
-	{
-#ifdef TLV_DEBUG
-		std::cerr << "RsTlvBanList::GetTlv() Warning extra bytes at end of item";
-		std::cerr << std::endl;
-#endif
-		*offset = tlvend;
-	}
-
-	return ok;
-}
-
-// prints out contents of RsTlvBanList
-std::ostream &RsTlvBanList::print(std::ostream &out, uint16_t indent)
-{
-	printBase(out, "RsTlvBanList", indent);
-	uint16_t int_Indent = indent + 2;
-
-	std::list<RsTlvBanListEntry>::iterator it;
-	for(it = entries.begin(); it != entries.end() ; ++it)
-		it->print(out, int_Indent);
-
-	printEnd(out, "RsTlvBanList", indent);
-	return out;
-}
-
-
-/************************************* RsTlvBanList ************************************/
 
 

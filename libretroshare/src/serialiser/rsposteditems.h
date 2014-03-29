@@ -3,7 +3,7 @@
 
 #include "serialiser/rsserviceids.h"
 #include "serialiser/rsserial.h"
-#include "serialiser/rstlvtypes.h"
+//#include "serialiser/rstlvtypes.h"
 
 #include "serialiser/rsgxscommentitems.h"
 
@@ -16,7 +16,7 @@ const uint8_t RS_PKT_SUBTYPE_POSTED_POST_ITEM = 0x03;
 class RsGxsPostedGroupItem : public RsGxsGrpItem
 {
 public:
-	RsGxsPostedGroupItem() : RsGxsGrpItem(RS_SERVICE_GXSV2_TYPE_POSTED,
+	RsGxsPostedGroupItem() : RsGxsGrpItem(RS_SERVICE_GXS_TYPE_POSTED,
 		 RS_PKT_SUBTYPE_POSTED_GRP_ITEM) { return; }
 	virtual ~RsGxsPostedGroupItem() { return; }
 
@@ -29,7 +29,7 @@ public:
 class RsGxsPostedPostItem : public RsGxsMsgItem
 {
 public:
-	RsGxsPostedPostItem() : RsGxsMsgItem(RS_SERVICE_GXSV2_TYPE_POSTED,
+	RsGxsPostedPostItem() : RsGxsMsgItem(RS_SERVICE_GXS_TYPE_POSTED,
 		 RS_PKT_SUBTYPE_POSTED_POST_ITEM) {return ; }
 	virtual ~RsGxsPostedPostItem() { return; }
 
@@ -45,7 +45,7 @@ class RsGxsPostedSerialiser : public RsGxsCommentSerialiser
 public:
 
 	RsGxsPostedSerialiser()
-	:RsGxsCommentSerialiser(RS_SERVICE_GXSV2_TYPE_POSTED)
+	:RsGxsCommentSerialiser(RS_SERVICE_GXS_TYPE_POSTED)
 	{ return; }
 
 	virtual ~RsGxsPostedSerialiser() { return; }

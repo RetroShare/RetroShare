@@ -36,7 +36,7 @@ RsWire *rsWire = NULL;
 
 
 p3Wire::p3Wire(RsGeneralDataService* gds, RsNetworkExchangeService* nes, RsGixs *gixs)
-	:RsGenExchange(gds, nes, new RsGxsWireSerialiser(), RS_SERVICE_GXSV2_TYPE_WIRE, gixs, wireAuthenPolicy()),
+	:RsGenExchange(gds, nes, new RsGxsWireSerialiser(), RS_SERVICE_GXS_TYPE_WIRE, gixs, wireAuthenPolicy()),
 	RsWire(this), mWireMtx("WireMtx")
 {
 
@@ -51,7 +51,7 @@ const uint16_t WIRE_MIN_MINOR_VERSION  =       0;
 
 RsServiceInfo p3Wire::getServiceInfo()
 {
-        return RsServiceInfo(RS_SERVICE_GXSV2_TYPE_WIRE,
+        return RsServiceInfo(RS_SERVICE_GXS_TYPE_WIRE,
                 WIRE_APP_NAME,
                 WIRE_APP_MAJOR_VERSION,
                 WIRE_APP_MINOR_VERSION,

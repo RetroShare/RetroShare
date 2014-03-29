@@ -30,7 +30,6 @@
 
 #include "serialiser/rsserviceids.h"
 #include "serialiser/rsserial.h"
-#include "serialiser/rstlvtypes.h"
 #include "serialiser/rstlvbanlist.h"
 
 #define RS_PKT_SUBTYPE_BANLIST_ITEM       0x01

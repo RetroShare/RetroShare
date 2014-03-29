@@ -27,10 +27,13 @@
 #pragma once
 
 #include "serialiser/rsserial.h"
-#include "serialiser/rstlvbase.h"
-#include "serialiser/rstlvtypes.h"
 #include "serialiser/rsconfigitems.h"
 #include "serialiser/rsbaseserial.h"
+
+#if 0
+#include "serialiser/rstlvbase.h"
+#include "serialiser/rstlvtypes.h"
+#endif
 
 const uint8_t RS_PKT_CLASS_PLUGIN_SUBTYPE_HASHSET = 0x01 ;
 

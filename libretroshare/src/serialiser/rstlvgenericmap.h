@@ -26,13 +26,16 @@
  *
  */
 
-#include "serialiser/rstlvtypes.h"
+#include "serialiser/rstlvitem.h"
+#include "serialiser/rstlvgenericparam.h"
+
+#if 0
 #include <map>
 
 #include <stdlib.h>
 #include <stdint.h>
 
-#include "serialiser/rstlvgenericparam.h"
+#endif
 
 /*********************************** RsTlvGenericPairRef ***********************************/
 
@@ -46,11 +49,11 @@ class RsTlvGenericPairRef: public RsTlvItem
 	 mValueType(value_type), mKey(k), mValue(v)  { return; }
 
 virtual ~RsTlvGenericPairRef() { return; }
-virtual uint32_t TlvSize();
+virtual uint32_t TlvSize() const;
 virtual void	 TlvClear();
-virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset); /* serialise   */
-virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); /* deserialise */
-virtual std::ostream &print(std::ostream &out, uint16_t indent);
+virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset) const; 
+virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); 
+virtual std::ostream &print(std::ostream &out, uint16_t indent) const;
 
 	uint16_t mPairType;
 	uint16_t mKeyType;
@@ -72,11 +75,11 @@ class RsTlvGenericMapRef: public RsTlvItem
 	 mKeyType(key_type), mValueType(value_type), mRefMap(refmap)  { return; }
 
 virtual ~RsTlvGenericMapRef() { return; }
-virtual uint32_t TlvSize();
+virtual uint32_t TlvSize() const;
 virtual void	 TlvClear();
-virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset); /* serialise   */
-virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); /* deserialise */
-virtual std::ostream &print(std::ostream &out, uint16_t indent);
+virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset) const; 
+virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); 
+virtual std::ostream &print(std::ostream &out, uint16_t indent) const;
 
 	uint16_t mMapType;
 	uint16_t mPairType;

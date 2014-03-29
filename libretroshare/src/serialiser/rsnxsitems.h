@@ -32,7 +32,7 @@
 #include "serialiser/rsserviceids.h"
 #include "serialiser/rsserial.h"
 #include "serialiser/rstlvbase.h"
-#include "serialiser/rstlvtypes.h"
+#include "serialiser/rstlvitem.h"
 #include "serialiser/rstlvkeys.h"
 #include "gxs/rsgxsdata.h"
 

@@ -74,7 +74,7 @@ RsItem* RsGxsCircleSerialiser::deserialise(void* data, uint32_t* size)
 	uint32_t rstype = getRsItemId(data);
 		
 	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-		(RS_SERVICE_GXSV2_TYPE_GXSCIRCLE != getRsItemService(rstype)))
+		(RS_SERVICE_GXS_TYPE_GXSCIRCLE != getRsItemService(rstype)))
 	{
 		return NULL; /* wrong type */
 	}
@@ -277,7 +277,7 @@ RsGxsCircleGroupItem* RsGxsCircleSerialiser::deserialiseGxsCircleGroupItem(void 
 	
 	
 	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-		(RS_SERVICE_GXSV2_TYPE_GXSCIRCLE != getRsItemService(rstype)) ||
+		(RS_SERVICE_GXS_TYPE_GXSCIRCLE != getRsItemService(rstype)) ||
 		(RS_PKT_SUBTYPE_GXSCIRCLE_GROUP_ITEM != getRsItemSubType(rstype)))
 	{
 #ifdef CIRCLE_DEBUG
@@ -427,7 +427,7 @@ RsGxsCircleMsgItem* RsGxsCircleSerialiser::deserialiseGxsCircleMsgItem(void *dat
 	
 	
 	if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-		(RS_SERVICE_GXSV2_TYPE_GXSCIRCLE != getRsItemService(rstype)) ||
+		(RS_SERVICE_GXS_TYPE_GXSCIRCLE != getRsItemService(rstype)) ||
 		(RS_PKT_SUBTYPE_GXSCIRCLE_MSG_ITEM != getRsItemSubType(rstype)))
 	{
 #ifdef CIRCLE_DEBUG

@@ -29,7 +29,9 @@
 /* some utility functions mainly for debugging 
  */
 
+#include <inttypes.h>
 #include <ostream>
+#include <vector>
 
 class RsTlvItem;
 
@@ -37,7 +39,6 @@ class RsTlvItem;
 void displayRawPacket(std::ostream &out, void *data, uint32_t size);
 int test_SerialiseTlvItem(std::ostream &str, RsTlvItem *in, RsTlvItem *out);
 
-#include <vector>
 
 bool test_StepThroughTlvStack(std::ostream &str, void *data, int size);
 int test_CreateTlvStack(std::ostream &str,

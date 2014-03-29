@@ -24,11 +24,15 @@
  *
  */
 
+#include "serialiser/rstlvfileitem.h"
+#include "serialiser/rsbaseserial.h"
+
+#if 0
 #include <iostream>
 
 #include "serialiser/rstlvbase.h"
 #include "serialiser/rstlvtypes.h"
-#include "serialiser/rsbaseserial.h"
+#endif
 
 /***
  * #define TLV_FI_DEBUG 1
@@ -52,7 +56,7 @@ void RsTlvFileItem::TlvClear()
 	hashset.TlvClear();
 }
 
-uint32_t    RsTlvFileItem::TlvSize()
+uint32_t    RsTlvFileItem::TlvSize() const
 {
 	uint32_t s = TLV_HEADER_SIZE; /* header */
 	s += 8; /* filesize */
@@ -119,7 +123,7 @@ uint32_t    RsTlvFileItem::TlvSize()
 }
 
 /* serialise the data to the buffer */
-bool     RsTlvFileItem::SetTlv(void *data, uint32_t size, uint32_t *offset)
+bool     RsTlvFileItem::SetTlv(void *data, uint32_t size, uint32_t *offset) const
 {
 	/* must check sizes */
 	uint32_t tlvsize = TlvSize();
@@ -342,7 +346,7 @@ bool     RsTlvFileItem::GetTlv(void *data, uint32_t size, uint32_t *offset)
 
 
 /* print it out */
-std::ostream &RsTlvFileItem::print(std::ostream &out, uint16_t indent)
+std::ostream &RsTlvFileItem::print(std::ostream &out, uint16_t indent) const
 {
 	printBase(out, "RsTlvFileItem", indent);
 	uint16_t int_Indent = indent + 2;
@@ -401,13 +405,13 @@ void RsTlvFileSet::TlvClear()
 	items.clear();  
 }
 
-uint32_t RsTlvFileSet::TlvSize()
+uint32_t RsTlvFileSet::TlvSize() const
 {
 	uint32_t s = TLV_HEADER_SIZE; /* header */
 
 	/* first determine the total size of RstlvFileItems in list */
 
-	std::list<RsTlvFileItem>::iterator it;
+	std::list<RsTlvFileItem>::const_iterator it;
 	
 	for(it = items.begin(); it != items.end() ; ++it)
 	{
@@ -427,7 +431,7 @@ uint32_t RsTlvFileSet::TlvSize()
 
 /* serialize data to the buffer */
 
-bool     RsTlvFileSet::SetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
+bool     RsTlvFileSet::SetTlv(void *data, uint32_t size, uint32_t *offset) const
 {
 	/* must check sizes */
 	uint32_t tlvsize = TlvSize();
@@ -442,7 +446,7 @@ bool     RsTlvFileSet::SetTlv(void *data, uint32_t size, uint32_t *offset) /* se
 	ok &= SetTlvBase(data, tlvend, offset, TLV_TYPE_FILESET, tlvsize);
         
 	    /* add mandatory parts first */
-	std::list<RsTlvFileItem>::iterator it;
+	std::list<RsTlvFileItem>::const_iterator it;
 	
 	for(it = items.begin(); it != items.end() ; ++it)  
 	{
@@ -542,7 +546,7 @@ bool     RsTlvFileSet::GetTlv(void *data, uint32_t size, uint32_t *offset)
 
 /* print it out */
 
-std::ostream &RsTlvFileSet::print(std::ostream &out, uint16_t indent)
+std::ostream &RsTlvFileSet::print(std::ostream &out, uint16_t indent) const
 {
 	printBase(out, "RsTlvFileSet", indent);
 	uint16_t int_Indent = indent + 2;
@@ -550,7 +554,7 @@ std::ostream &RsTlvFileSet::print(std::ostream &out, uint16_t indent)
 
 	printIndent(out, int_Indent);
 	out << "Mandatory:"  << std::endl;
-	std::list<RsTlvFileItem>::iterator it;
+	std::list<RsTlvFileItem>::const_iterator it;
 	
 	for(it = items.begin(); it != items.end() ; ++it)
 	{
@@ -595,7 +599,7 @@ void RsTlvFileData::TlvClear()
 }
 
 
-uint32_t RsTlvFileData::TlvSize()
+uint32_t RsTlvFileData::TlvSize() const
 {
 	uint32_t s = TLV_HEADER_SIZE; /* header */
 
@@ -608,7 +612,7 @@ uint32_t RsTlvFileData::TlvSize()
 }
 
 
-bool RsTlvFileData::SetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
+bool RsTlvFileData::SetTlv(void *data, uint32_t size, uint32_t *offset) const
 {
 	/* must check sizes */
 	uint32_t tlvsize = TlvSize();
@@ -633,7 +637,7 @@ bool RsTlvFileData::SetTlv(void *data, uint32_t size, uint32_t *offset) /* seria
 
 }
 
-bool RsTlvFileData::GetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
+bool RsTlvFileData::GetTlv(void *data, uint32_t size, uint32_t *offset) 
 {
 	if (size < *offset + TLV_HEADER_SIZE)
 	{
@@ -684,7 +688,7 @@ bool RsTlvFileData::GetTlv(void *data, uint32_t size, uint32_t *offset) /* seria
 }
 
 /* print it out */
-std::ostream &RsTlvFileData::print(std::ostream &out, uint16_t indent)
+std::ostream &RsTlvFileData::print(std::ostream &out, uint16_t indent) const
 {
 	printBase(out, "RsTlvFileData", indent);
 	uint16_t int_Indent = indent + 2;

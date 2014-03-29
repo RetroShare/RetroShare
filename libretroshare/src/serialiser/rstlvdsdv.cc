@@ -25,14 +25,7 @@
  */
 
 #include "rstlvdsdv.h"
-
-#include "rstlvbase.h"
-#include "rstlvtypes.h"
 #include "rsbaseserial.h"
-#include "util/rsprint.h"
-#include <ostream>
-#include <iomanip>
-#include <iostream>
 
 
 /************************************* RsTlvDsdvEndPoint ************************************/
@@ -50,7 +43,7 @@ void RsTlvDsdvEndPoint::TlvClear()
 	serviceId.clear();
 }
 
-uint32_t RsTlvDsdvEndPoint::TlvSize()
+uint32_t RsTlvDsdvEndPoint::TlvSize() const
 {
 	uint32_t s = TLV_HEADER_SIZE; /* header + 4 + str + str */
 
@@ -62,7 +55,7 @@ uint32_t RsTlvDsdvEndPoint::TlvSize()
 
 }
 
-bool  RsTlvDsdvEndPoint::SetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
+bool  RsTlvDsdvEndPoint::SetTlv(void *data, uint32_t size, uint32_t *offset) const
 {
 	/* must check sizes */
 	uint32_t tlvsize = TlvSize();
@@ -86,7 +79,7 @@ bool  RsTlvDsdvEndPoint::SetTlv(void *data, uint32_t size, uint32_t *offset) /* 
 }
 
 
-bool  RsTlvDsdvEndPoint::GetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
+bool  RsTlvDsdvEndPoint::GetTlv(void *data, uint32_t size, uint32_t *offset)
 {
 	if (size < *offset + TLV_HEADER_SIZE)
 		return false;	
@@ -133,7 +126,7 @@ bool  RsTlvDsdvEndPoint::GetTlv(void *data, uint32_t size, uint32_t *offset) /* 
 }
 
 
-std::ostream &RsTlvDsdvEndPoint::print(std::ostream &out, uint16_t indent)
+std::ostream &RsTlvDsdvEndPoint::print(std::ostream &out, uint16_t indent) const
 { 
 	printBase(out, "RsTlvDsdvEndPoint", indent);
 	uint16_t int_Indent = indent + 2;
@@ -170,7 +163,7 @@ void RsTlvDsdvEntry::TlvClear()
 	distance = 0;
 }
 
-uint32_t RsTlvDsdvEntry::TlvSize()
+uint32_t RsTlvDsdvEntry::TlvSize() const
 {
 	uint32_t s = TLV_HEADER_SIZE; /* header + EndPoint.Size + 4 + 4 */
 
@@ -182,7 +175,7 @@ uint32_t RsTlvDsdvEntry::TlvSize()
 
 }
 
-bool  RsTlvDsdvEntry::SetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
+bool  RsTlvDsdvEntry::SetTlv(void *data, uint32_t size, uint32_t *offset) const
 {
 	/* must check sizes */
 	uint32_t tlvsize = TlvSize();
@@ -207,7 +200,7 @@ bool  RsTlvDsdvEntry::SetTlv(void *data, uint32_t size, uint32_t *offset) /* ser
 }
 
 
-bool  RsTlvDsdvEntry::GetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
+bool  RsTlvDsdvEntry::GetTlv(void *data, uint32_t size, uint32_t *offset)
 {
 	if (size < *offset + TLV_HEADER_SIZE)
 		return false;	
@@ -255,7 +248,7 @@ bool  RsTlvDsdvEntry::GetTlv(void *data, uint32_t size, uint32_t *offset) /* ser
 }
 
 
-std::ostream &RsTlvDsdvEntry::print(std::ostream &out, uint16_t indent)
+std::ostream &RsTlvDsdvEntry::print(std::ostream &out, uint16_t indent) const
 { 
 	printBase(out, "RsTlvDsdvEntry", indent);
 	uint16_t int_Indent = indent + 2;
@@ -277,6 +270,7 @@ std::ostream &RsTlvDsdvEntry::print(std::ostream &out, uint16_t indent)
 
 /************************************* RsTlvDsdvEntrySet ************************************/
 
+#if 0
 RsTlvDsdvEntrySet::RsTlvDsdvEntrySet()
 {
 
@@ -420,6 +414,6 @@ std::ostream &RsTlvDsdvEntrySet::print(std::ostream &out, uint16_t indent)
 }
 
 
-/************************************* RsTlvIpAddressInfo ************************************/
+#endif
 
 

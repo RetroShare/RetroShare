@@ -164,7 +164,8 @@ void    pqiIpAddrList::extractFromTlv(const RsTlvIpAddrSet &tlvAddrs)
 {
 	std::list<RsTlvIpAddressInfo>::const_iterator it;
 
-	for(it = tlvAddrs.addrs.begin(); it != tlvAddrs.addrs.end() ; ++it)
+	//for(it = tlvAddrs.addrs.begin(); it != tlvAddrs.addrs.end() ; ++it)
+	for(it = tlvAddrs.mList.begin(); it != tlvAddrs.mList.end() ; ++it)
 	{
 		pqiIpAddress addr;
 		addr.mAddr = it->addr.addr;
@@ -186,7 +187,8 @@ void    pqiIpAddrList::loadTlv(RsTlvIpAddrSet &tlvAddrs) const
 		addr.seenTime = it->mSeenTime;
 		addr.source = it->mSrc;
 	
-		tlvAddrs.addrs.push_back(addr);
+		//tlvAddrs.addrs.push_back(addr);
+		tlvAddrs.mList.push_back(addr);
 	}
 }
 

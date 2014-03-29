@@ -30,7 +30,6 @@
 
 #include "serialiser/rsserviceids.h"
 #include "serialiser/rsserial.h"
-#include "serialiser/rstlvtypes.h"
 #include "retroshare/rsgxsifacetypes.h"
 
 #define RS_PKT_SUBTYPE_GXSREPUTATION_CONFIG_ITEM 	0x01
@@ -44,7 +43,7 @@ class RsGxsReputationConfigItem: public RsItem
 {
 	public:
 	RsGxsReputationConfigItem() 
-	:RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_GXSV2_TYPE_REPUTATION, 
+	:RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_GXS_TYPE_REPUTATION, 
 		RS_PKT_SUBTYPE_GXSREPUTATION_CONFIG_ITEM)
 	{ 
 		setPriorityLevel(QOS_PRIORITY_RS_GXSREPUTATION_ITEM);
@@ -64,7 +63,7 @@ class RsGxsReputationSetItem: public RsItem
 {
 	public:
 	RsGxsReputationSetItem() 
-	:RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_GXSV2_TYPE_REPUTATION, 
+	:RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_GXS_TYPE_REPUTATION, 
 		RS_PKT_SUBTYPE_GXSREPUTATION_SET_ITEM)
 	{ 
 		setPriorityLevel(QOS_PRIORITY_RS_GXSREPUTATION_ITEM);
@@ -86,7 +85,7 @@ class RsGxsReputationUpdateItem: public RsItem
 {
 	public:
 	RsGxsReputationUpdateItem() 
-	:RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_GXSV2_TYPE_REPUTATION, 
+	:RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_GXS_TYPE_REPUTATION, 
 		RS_PKT_SUBTYPE_GXSREPUTATION_UPDATE_ITEM)
 	{ 
 		setPriorityLevel(QOS_PRIORITY_RS_GXSREPUTATION_ITEM);
@@ -105,7 +104,7 @@ class RsGxsReputationRequestItem: public RsItem
 {
 	public:
 	RsGxsReputationRequestItem() 
-	:RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_GXSV2_TYPE_REPUTATION,
+	:RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_GXS_TYPE_REPUTATION,
 		RS_PKT_SUBTYPE_GXSREPUTATION_REQUEST_ITEM)
 	{ 
 		setPriorityLevel(QOS_PRIORITY_RS_GXSREPUTATION_ITEM);
@@ -124,7 +123,7 @@ class RsGxsReputationSerialiser: public RsSerialType
 {
 	public:
 	RsGxsReputationSerialiser()
-	:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_GXSV2_TYPE_REPUTATION)
+	:RsSerialType(RS_PKT_VERSION_SERVICE, RS_SERVICE_GXS_TYPE_REPUTATION)
 	{ return; }
 virtual     ~RsGxsReputationSerialiser()
 	{ return; }

@@ -25,8 +25,9 @@
 
 #include <iostream>
 
-#include "rsphotoitems.h"
+#include "serialiser/rsphotoitems.h"
 #include "serialiser/rstlvbase.h"
+#include "serialiser/rstlvbinary.h"
 #include "serialiser/rsbaseserial.h"
 
 #define GXS_PHOTO_SERIAL_DEBUG
@@ -98,7 +99,7 @@ RsItem* RsGxsPhotoSerialiser::deserialise(void* data, uint32_t* size)
         uint32_t rstype = getRsItemId(data);
 
         if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-                (RS_SERVICE_GXSV2_TYPE_PHOTO != getRsItemService(rstype)))
+                (RS_SERVICE_GXS_TYPE_PHOTO != getRsItemService(rstype)))
         {
                 return NULL; /* wrong type */
         }
@@ -200,7 +201,7 @@ bool RsGxsPhotoSerialiser::serialiseGxsPhotoAlbumItem(RsGxsPhotoAlbumItem* item,
     ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_DATE, item->album.mWhen);
     ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_LOCATION, item->album.mWhere);
     ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_PIC_TYPE, item->album.mThumbnail.type);
-    RsTlvBinaryData b(RS_SERVICE_GXSV2_TYPE_PHOTO); // TODO, need something more persisitent
+    RsTlvBinaryData b(RS_SERVICE_GXS_TYPE_PHOTO); // TODO, need something more persisitent
     b.setBinData(item->album.mThumbnail.data, item->album.mThumbnail.size);
     ok &= b.SetTlv(data, tlvsize, &offset);
 
@@ -238,7 +239,7 @@ RsGxsPhotoAlbumItem* RsGxsPhotoSerialiser::deserialiseGxsPhotoAlbumItem(void* da
 
 
     if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-            (RS_SERVICE_GXSV2_TYPE_PHOTO != getRsItemService(rstype)) ||
+            (RS_SERVICE_GXS_TYPE_PHOTO != getRsItemService(rstype)) ||
             (RS_PKT_SUBTYPE_PHOTO_ITEM != getRsItemSubType(rstype)))
     {
 #ifdef GXS_PHOTO_SERIAL_DEBUG
@@ -275,7 +276,7 @@ RsGxsPhotoAlbumItem* RsGxsPhotoSerialiser::deserialiseGxsPhotoAlbumItem(void* da
     ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_LOCATION, item->album.mWhere);
     ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_PIC_TYPE, item->album.mThumbnail.type);
 
-        RsTlvBinaryData b(RS_SERVICE_GXSV2_TYPE_PHOTO); // TODO, need something more persisitent
+        RsTlvBinaryData b(RS_SERVICE_GXS_TYPE_PHOTO); // TODO, need something more persisitent
 	ok &= b.GetTlv(data, rssize, &offset);
 	item->album.mThumbnail.data = (uint8_t*)b.bin_data;
 	item->album.mThumbnail.size = b.bin_len;
@@ -365,7 +366,7 @@ bool RsGxsPhotoSerialiser::serialiseGxsPhotoPhotoItem(RsGxsPhotoPhotoItem* item,
     ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_DATE, item->photo.mWhen);
     ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_LOCATION, item->photo.mWhere);
     ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_PIC_TYPE, item->photo.mThumbnail.type);
-    RsTlvBinaryData b(RS_SERVICE_GXSV2_TYPE_PHOTO); // TODO, need something more persisitent
+    RsTlvBinaryData b(RS_SERVICE_GXS_TYPE_PHOTO); // TODO, need something more persisitent
     b.setBinData(item->photo.mThumbnail.data, item->photo.mThumbnail.size);
     ok &= b.SetTlv(data, tlvsize, &offset);
 
@@ -403,7 +404,7 @@ RsGxsPhotoPhotoItem* RsGxsPhotoSerialiser::deserialiseGxsPhotoPhotoItem(void* da
 
 
     if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-            (RS_SERVICE_GXSV2_TYPE_PHOTO != getRsItemService(rstype)) ||
+            (RS_SERVICE_GXS_TYPE_PHOTO != getRsItemService(rstype)) ||
             (RS_PKT_SUBTYPE_PHOTO_SHOW_ITEM != getRsItemSubType(rstype)))
     {
 #ifdef GXS_PHOTO_SERIAL_DEBUG
@@ -439,7 +440,7 @@ RsGxsPhotoPhotoItem* RsGxsPhotoSerialiser::deserialiseGxsPhotoPhotoItem(void* da
     ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_LOCATION, item->photo.mWhere);
     ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_PIC_TYPE, item->photo.mThumbnail.type);
 
-        RsTlvBinaryData b(RS_SERVICE_GXSV2_TYPE_PHOTO); // TODO, need something more persisitent
+        RsTlvBinaryData b(RS_SERVICE_GXS_TYPE_PHOTO); // TODO, need something more persisitent
 	ok &= b.GetTlv(data, rssize, &offset);
 	item->photo.mThumbnail.data = (uint8_t*)(b.bin_data);
 	item->photo.mThumbnail.size = b.bin_len;
@@ -534,7 +535,7 @@ RsGxsPhotoCommentItem *    RsGxsPhotoSerialiser::deserialiseGxsPhotoCommentItem(
 
 
     if ((RS_PKT_VERSION_SERVICE != getRsItemVersion(rstype)) ||
-            (RS_SERVICE_GXSV2_TYPE_PHOTO != getRsItemService(rstype)) ||
+            (RS_SERVICE_GXS_TYPE_PHOTO != getRsItemService(rstype)) ||
             (RS_PKT_SUBTYPE_PHOTO_COMMENT_ITEM != getRsItemSubType(rstype)))
     {
 #ifdef GXS_PHOTO_SERIAL_DEBUG

@@ -36,7 +36,7 @@
 /***** RsServiceInfo ****/
 
 template<>
-std::ostream &RsTlvParamRef<RsServiceInfo>::print(std::ostream &out, uint16_t indent) 
+std::ostream &RsTlvParamRef<RsServiceInfo>::print(std::ostream &out, uint16_t indent) const
 {
 	out << "RsServiceInfo: " << mParam.mServiceType << " name " << mParam.mServiceName;
 	out << std::endl;
@@ -47,7 +47,7 @@ std::ostream &RsTlvParamRef<RsServiceInfo>::print(std::ostream &out, uint16_t in
 }
 
 template<>
-uint32_t RsTlvParamRef<RsServiceInfo>::TlvSize() 
+uint32_t RsTlvParamRef<RsServiceInfo>::TlvSize() const
 {
 	uint32_t s = TLV_HEADER_SIZE; /* header + 4 for size */
 
@@ -66,7 +66,7 @@ void RsTlvParamRef<RsServiceInfo>::TlvClear()
 }
 
 template<>
-bool RsTlvParamRef<RsServiceInfo>::SetTlv(void *data, uint32_t size, uint32_t *offset) 
+bool RsTlvParamRef<RsServiceInfo>::SetTlv(void *data, uint32_t size, uint32_t *offset)  const
 {
 	/* must check sizes */
 	uint32_t tlvsize = TlvSize();

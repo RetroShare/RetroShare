@@ -24,15 +24,17 @@
  *
  */
 
-#include "rstlvaddrs.h"
+#include "serialiser/rstlvbase.h"
+#include "serialiser/rstlvaddrs.h"
+#include "serialiser/rsbaseserial.h"
 
-#include "rstlvbase.h"
+#if 0
 #include "rstlvtypes.h"
-#include "rsbaseserial.h"
 #include "util/rsprint.h"
 #include <ostream>
 #include <iomanip>
 #include <iostream>
+#endif
 
 
 /************************************* RsTlvIpAddress ************************************/
@@ -49,7 +51,7 @@ void RsTlvIpAddress::TlvClear()
 	sockaddr_storage_clear(addr);
 }
 
-uint32_t RsTlvIpAddress::TlvSize()
+uint32_t RsTlvIpAddress::TlvSize() const
 {
 	uint32_t s = TLV_HEADER_SIZE; 
 	switch(addr.ss_family)
@@ -67,7 +69,7 @@ uint32_t RsTlvIpAddress::TlvSize()
 	return s;
 }
 
-bool  RsTlvIpAddress::SetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
+bool  RsTlvIpAddress::SetTlv(void *data, uint32_t size, uint32_t *offset) const
 {
 	/* must check sizes */
 	uint32_t tlvsize = TlvSize();
@@ -101,7 +103,7 @@ bool  RsTlvIpAddress::SetTlv(void *data, uint32_t size, uint32_t *offset) /* ser
 }
 
 
-bool  RsTlvIpAddress::GetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
+bool  RsTlvIpAddress::GetTlv(void *data, uint32_t size, uint32_t *offset) 
 {
 	if (size < *offset + TLV_HEADER_SIZE)
 		return false;	
@@ -163,7 +165,7 @@ bool  RsTlvIpAddress::GetTlv(void *data, uint32_t size, uint32_t *offset) /* ser
 }
 
 
-std::ostream &RsTlvIpAddress::print(std::ostream &out, uint16_t indent)
+std::ostream &RsTlvIpAddress::print(std::ostream &out, uint16_t indent) const
 { 
 	printBase(out, "RsTlvIpAddress", indent);
 	uint16_t int_Indent = indent + 2;
@@ -194,7 +196,7 @@ void RsTlvIpAddressInfo::TlvClear()
 	source = 0;
 }
 
-uint32_t RsTlvIpAddressInfo::TlvSize()
+uint32_t RsTlvIpAddressInfo::TlvSize() const
 {
 	uint32_t s = TLV_HEADER_SIZE; /* header + IpAddr + 8 for time & 4 for size */
 
@@ -206,7 +208,7 @@ uint32_t RsTlvIpAddressInfo::TlvSize()
 
 }
 
-bool  RsTlvIpAddressInfo::SetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
+bool  RsTlvIpAddressInfo::SetTlv(void *data, uint32_t size, uint32_t *offset) const
 {
 	/* must check sizes */
 	uint32_t tlvsize = TlvSize();
@@ -231,7 +233,7 @@ bool  RsTlvIpAddressInfo::SetTlv(void *data, uint32_t size, uint32_t *offset) /*
 }
 
 
-bool  RsTlvIpAddressInfo::GetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
+bool  RsTlvIpAddressInfo::GetTlv(void *data, uint32_t size, uint32_t *offset)
 {
 	if (size < *offset + TLV_HEADER_SIZE)
 		return false;	
@@ -279,7 +281,7 @@ bool  RsTlvIpAddressInfo::GetTlv(void *data, uint32_t size, uint32_t *offset) /*
 }
 
 
-std::ostream &RsTlvIpAddressInfo::print(std::ostream &out, uint16_t indent)
+std::ostream &RsTlvIpAddressInfo::print(std::ostream &out, uint16_t indent) const
 { 
 	printBase(out, "RsTlvIpAddressInfo", indent);
 	uint16_t int_Indent = indent + 2;
@@ -300,7 +302,7 @@ std::ostream &RsTlvIpAddressInfo::print(std::ostream &out, uint16_t indent)
 
 
 
-
+#if 0
 /************************************* RsTlvIpAddrSet ************************************/
 
 void RsTlvIpAddrSet::TlvClear()
@@ -308,7 +310,7 @@ void RsTlvIpAddrSet::TlvClear()
 	addrs.clear();
 }
 
-uint32_t RsTlvIpAddrSet::TlvSize()
+uint32_t RsTlvIpAddrSet::TlvSize() const
 {
 
 	uint32_t s = TLV_HEADER_SIZE; /* header */
@@ -327,7 +329,7 @@ uint32_t RsTlvIpAddrSet::TlvSize()
 	return s;
 }
 
-bool  RsTlvIpAddrSet::SetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
+bool  RsTlvIpAddrSet::SetTlv(void *data, uint32_t size, uint32_t *offset) const
 {
 	/* must check sizes */
 	uint32_t tlvsize = TlvSize();
@@ -355,7 +357,7 @@ return ok;
 }
 
 
-bool  RsTlvIpAddrSet::GetTlv(void *data, uint32_t size, uint32_t *offset) /* serialise   */
+bool  RsTlvIpAddrSet::GetTlv(void *data, uint32_t size, uint32_t *offset)
 {
 	if (size < *offset + TLV_HEADER_SIZE)
 		return false;	
@@ -427,7 +429,7 @@ bool  RsTlvIpAddrSet::GetTlv(void *data, uint32_t size, uint32_t *offset) /* ser
 }
 
 // prints out contents of RsTlvIpAddrSet
-std::ostream &RsTlvIpAddrSet::print(std::ostream &out, uint16_t indent)
+std::ostream &RsTlvIpAddrSet::print(std::ostream &out, uint16_t indent) const
 {
 	printBase(out, "RsTlvIpAddrSet", indent);
 	uint16_t int_Indent = indent + 2;
@@ -443,3 +445,4 @@ std::ostream &RsTlvIpAddrSet::print(std::ostream &out, uint16_t indent)
 
 /************************************* RsTlvIpAddressInfo ************************************/
 
+#endif
