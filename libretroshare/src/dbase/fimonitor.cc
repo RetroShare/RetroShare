@@ -29,6 +29,7 @@
 #include "rsserver/p3face.h"
 #include "dbase/fimonitor.h"
 #include "util/rsdir.h"
+#include "pqi/authssl.h"
 #include "serialiser/rsserviceids.h"
 #include "retroshare/rsiface.h"
 #include "pqi/p3notify.h"
@@ -47,16 +48,17 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <fstream>
+#include <sstream>
 #include <time.h>
 
-//***********
-//#define FIM_DEBUG 1
+// ***********
+// #define FIM_DEBUG 1
 // ***********/
 
 FileIndexMonitor::FileIndexMonitor(CacheStrapper *cs, std::string cachedir, const RsPeerId& pid,const std::string& config_dir)
 	:CacheSource(RS_SERVICE_TYPE_FILE_INDEX, false, cs, cachedir), fiMutex("FileIndexMonitor"), fi(pid),
 		pendingDirs(false), pendingForceCacheWrite(false),
-		mForceCheck(false), mInCheck(false), hashCache(config_dir+"/" + "file_cache.lst"),useHashCache(true)
+		mForceCheck(false), mInCheck(false), hashCache(config_dir+"/" + "file_cache"),useHashCache(true)
 
 {
 	updatePeriod = 15 * 60; // 15 minutes
@@ -114,7 +116,63 @@ HashCache::HashCache(const std::string& path)
 	_max_cache_duration_days = 10 ; // 10 days is the default value.
 	_files.clear() ;
 	_changed = false ;
-	std::ifstream f(_path.c_str()) ;
+
+	// check for unencrypted
+	
+	std::istream *f = NULL ;
+	uint64_t file_size ;
+
+	if(RsDirUtil::checkFile( _path+".bin",file_size,false ) )
+	{
+		std::cerr << "Encrypted hash cache file present. Reading it." << std::endl;
+
+		// read the binary stream into memory.
+		//
+		void *buffer = malloc(file_size) ;
+
+		if(buffer == NULL)
+		{
+			std::cerr << "Cannot allocate memory for reading encrypted file cache, bytes=" << file_size << std::endl;
+			return ;
+		}
+		FILE *F = fopen( (_path+".bin").c_str(),"rb") ;
+
+		if(fread(buffer,1,file_size,F) != file_size)
+		{
+			std::cerr << "Cannot read from file " + _path+".bin" << ": something's wrong." << std::endl;
+			free(buffer) ;
+			return ;
+		}
+		fclose(F) ;
+
+		void *decrypted_data ;
+		int decrypted_data_size ;
+
+		if(!AuthSSL::getAuthSSL()->decrypt(decrypted_data, decrypted_data_size, buffer, file_size))
+		{
+			std::cerr << "Cannot decrypt encrypted file cache. Something's wrong." << std::endl;
+			free(buffer) ;
+			return ;
+		}
+		free(buffer) ;
+
+		std::string s((char *)decrypted_data,decrypted_data_size) ;
+		f = new std::istringstream(s) ;
+
+		free(decrypted_data) ;
+	}
+	else
+	{
+		std::cerr << "Encrypted file cache not present. Trying unencrypted..." << std::endl;
+
+		f  = new std::ifstream( (_path+".lst").c_str()) ;
+
+		if(!f->good())
+		{
+			std::cerr << "Unencrypted file cache not present either." << std::endl;
+			return ;
+		}
+	}
 
 	std::streamsize max_line_size = 2000 ; // should be enough. Anyway, if we
 														// miss one entry, we just lose some
@@ -127,21 +185,21 @@ HashCache::HashCache(const std::string& path)
 	int n=0 ;
 #endif
 
-	while(!f.eof())
+	while(!f->eof())
 	{
 		HashCacheInfo info ;
 
-		f.getline(buff,max_line_size,'\n') ;
+		f->getline(buff,max_line_size,'\n') ;
 		std::string name(buff) ;
 
-		f.getline(buff,max_line_size,'\n') ; //if(sscanf(buff,"%llu",&info.size) != 1) break ;
+		f->getline(buff,max_line_size,'\n') ; //if(sscanf(buff,"%llu",&info.size) != 1) break ;
 
 		info.size = 0 ;
 		sscanf(buff, RsDirUtil::scanf_string_for_uint(sizeof(info.size)), &info.size);
 
-		f.getline(buff,max_line_size,'\n') ; if(sscanf(buff,RsDirUtil::scanf_string_for_uint(sizeof(info.time_stamp)),&info.time_stamp) != 1) { std::cerr << "Could not read one entry! Giving up." << std::endl; break ; }
-		f.getline(buff,max_line_size,'\n') ; if(sscanf(buff,RsDirUtil::scanf_string_for_uint(sizeof(info.modf_stamp)),&info.modf_stamp) != 1) { std::cerr << "Could not read one entry! Giving up." << std::endl; break ; }
-		f.getline(buff,max_line_size,'\n') ; info.hash = std::string(buff) ;
+		f->getline(buff,max_line_size,'\n') ; if(sscanf(buff,RsDirUtil::scanf_string_for_uint(sizeof(info.time_stamp)),&info.time_stamp) != 1) { std::cerr << "Could not read one entry! Giving up." << std::endl; break ; }
+		f->getline(buff,max_line_size,'\n') ; if(sscanf(buff,RsDirUtil::scanf_string_for_uint(sizeof(info.modf_stamp)),&info.modf_stamp) != 1) { std::cerr << "Could not read one entry! Giving up." << std::endl; break ; }
+		f->getline(buff,max_line_size,'\n') ; info.hash = std::string(buff) ;
 
 #ifdef FIM_DEBUG
 		std::cerr << "  (" << name << ", " << info.size << ", " << info.time_stamp << ", " << info.modf_stamp << ", " << info.hash << std::endl ;
@@ -149,9 +207,9 @@ HashCache::HashCache(const std::string& path)
 #endif
 		_files[name] = info ;
 	}
-	f.close() ;
 
 	delete[] buff ;
+	delete f ;
 #ifdef FIM_DEBUG
 	std::cerr << n << " entries loaded." << std::endl ;
 #endif
@@ -164,7 +222,7 @@ void HashCache::save()
 #ifdef FIM_DEBUG
 		std::cerr << "Saving Hash Cache to file " << _path << "..." << std::endl ;
 #endif
-		std::ofstream f( (_path+".tmp").c_str() ) ;
+		std::ostringstream f ;
 
 		for(std::map<std::string,HashCacheInfo>::const_iterator it(_files.begin());it!=_files.end();++it)
 		{
@@ -174,9 +232,34 @@ void HashCache::save()
 			f << it->second.modf_stamp << std::endl;
 			f << it->second.hash << std::endl;
 		}
-		f.close() ;
 
-		RsDirUtil::renameFile(_path+".tmp",_path) ;
+		void *encryptedData = NULL ;
+		int encDataLen = 0 ;
+
+		if(!AuthSSL::getAuthSSL()->encrypt(encryptedData, encDataLen, f.str().c_str(), f.str().length(), AuthSSL::getAuthSSL()->OwnId()))
+		{
+			std::cerr << "Cannot encrypt hash cache. Something's wrong." << std::endl;
+			return;
+		}
+
+		FILE *F = fopen( (_path+".bin.tmp").c_str(),"wb" ) ;
+
+		if(F == NULL)
+		{
+			std::cerr << "Cannot open encrypted file cache for writing: " << _path+".bin.tmp" << std::endl;
+			free(encryptedData) ;
+			return ;
+		}
+		if(fwrite(encryptedData,1,encDataLen,F) != encDataLen)
+		{
+			std::cerr << "Could not write entire encrypted hash cache file. Out of disc space??" << std::endl;
+			free(encryptedData) ;
+			return ;
+		}
+		fclose(F) ;
+		free(encryptedData) ;
+
+		RsDirUtil::renameFile(_path+".bin.tmp",_path+".bin") ;
 #ifdef FIM_DEBUG
 		std::cerr << "done." << std::endl ;
 #endif

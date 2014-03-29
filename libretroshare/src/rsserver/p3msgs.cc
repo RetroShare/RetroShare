@@ -100,14 +100,6 @@ bool p3Msgs::decryptMessage(const std::string& mId)
 {
 	return mMsgSrv->decryptMessage(mId);
 }
-bool p3Msgs::createDistantOfflineMessengingInvite(time_t ts, DistantMsgPeerId &hash)
-{
-	return mMsgSrv->createDistantOfflineMessengingInvite(ts,hash) ;
-}
-bool p3Msgs::getDistantOfflineMessengingInvites(std::vector<DistantOfflineMessengingInvite>& invites)
-{
-	return mMsgSrv->getDistantOfflineMessengingInvites(invites);
-}
 void p3Msgs::enableDistantMessaging(bool b)
 {
 	mMsgSrv->enableDistantMessaging(b);
@@ -115,10 +107,6 @@ void p3Msgs::enableDistantMessaging(bool b)
 bool p3Msgs::distantMessagingEnabled()
 {
 	return mMsgSrv->distantMessagingEnabled();
-}
-bool p3Msgs::getDistantMessagePeerId(const RsPgpId& pgp_id,DistantMsgPeerId &pid)
-{
-    return mMsgSrv->getDistantMessagePeerId(pgp_id,pid);
 }
 
 bool p3Msgs::SystemMessage(const std::string &title, const std::string &message, uint32_t systemFlag)

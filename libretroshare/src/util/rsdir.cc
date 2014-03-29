@@ -294,7 +294,7 @@ bool RsDirUtil::copyFile(const std::string& source,const std::string& dest)
 }
 
 
-bool	RsDirUtil::checkFile(const std::string& filename,bool disallow_empty_file)
+bool	RsDirUtil::checkFile(const std::string& filename,uint64_t& file_size,bool disallow_empty_file)
 {
 	int val;
 	mode_t st_mode;
@@ -326,6 +326,8 @@ bool	RsDirUtil::checkFile(const std::string& filename,bool disallow_empty_file)
 #endif
 		return false;
 	}
+
+	file_size = buf.st_size ;
 
 	if(disallow_empty_file && buf.st_size == 0)
 		return false ;

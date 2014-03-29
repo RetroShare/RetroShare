@@ -458,11 +458,6 @@ class RsMsgItem: public RsMessageItem
 	public:
 		RsMsgItem() :RsMessageItem(RS_PKT_SUBTYPE_DEFAULT) {}
 
-//		RsMsgItem(uint16_t type) 
-//			:RsItem(RS_PKT_VERSION_SERVICE, type, 
-//					RS_PKT_SUBTYPE_DEFAULT)
-//	{ setPriorityLevel(QOS_PRIORITY_RS_MSG_ITEM) ; }
-
 		virtual ~RsMsgItem() {}
 		virtual void clear();
 
@@ -482,9 +477,13 @@ class RsMsgItem: public RsMessageItem
 		std::string subject;
 		std::string message;
 
-		RsTlvPeerIdSet msgto;
-		RsTlvPeerIdSet msgcc;
-		RsTlvPeerIdSet msgbcc;
+		RsTlvPeerIdSet rspeerid_msgto;
+		RsTlvPeerIdSet rspeerid_msgcc;
+		RsTlvPeerIdSet rspeerid_msgbcc;
+
+		RsTlvGxsIdSet rsgxsid_msgto;
+		RsTlvGxsIdSet rsgxsid_msgcc;
+		RsTlvGxsIdSet rsgxsid_msgbcc;
 
 		RsTlvFileSet attachment;
 };

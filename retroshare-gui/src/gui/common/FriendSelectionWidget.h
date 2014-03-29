@@ -26,6 +26,9 @@
 #include <QWidget>
 #include <QDialog>
 
+#include <gui/gxs/RsGxsUpdateBroadcastPage.h>
+#include "util/TokenQueue.h"
+
 namespace Ui {
 class FriendSelectionWidget;
 }
@@ -33,7 +36,7 @@ class FriendSelectionWidget;
 class QTreeWidgetItem;
 class RSTreeWidgetItemCompareRole;
 
-class FriendSelectionWidget : public QWidget
+class FriendSelectionWidget : public RsGxsUpdateBroadcastPage, public TokenResponse
 {
 	Q_OBJECT
 
@@ -45,7 +48,8 @@ public:
 		IDTYPE_NONE,
 		IDTYPE_GROUP,
 		IDTYPE_SSL,
-		IDTYPE_GPG
+		IDTYPE_GPG,
+		IDTYPE_GXS
 	};
 
 	enum Modus
@@ -61,6 +65,7 @@ public:
         SHOW_GPG              = 2,
         SHOW_SSL              = 4,
         SHOW_NON_FRIEND_GPG   = 8,
+        SHOW_GXS              =16
     };
 
     Q_DECLARE_FLAGS(ShowTypes, ShowType)
@@ -107,6 +112,9 @@ public:
 protected:
 	void changeEvent(QEvent *e);
 
+	virtual void loadRequest(const TokenQueue *queue,const TokenRequest& req);
+	virtual void updateDisplay(bool complete);
+
 signals:
 	void itemAdded(int idType, const QString &id, QTreeWidgetItem *item);
 	void contentChanged();
@@ -132,6 +140,8 @@ private:
 	void selectedIds(IdType idType, std::list<std::string> &ids, bool onlyDirectSelected);
 	void setSelectedIds(IdType idType, const std::list<std::string> &ids, bool add);
 
+	void requestGXSIdList() ;
+
 	bool mStarted;
 	RSTreeWidgetItemCompareRole *mCompareRole;
 	Modus mListModus;
@@ -147,6 +157,9 @@ private:
 	Ui::FriendSelectionWidget *ui;
 
 	friend class FriendSelectionDialog ;
+
+	std::vector<RsGxsGroupId> gxsIds ;
+	TokenQueue *mIdQueue ;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(FriendSelectionWidget::ShowTypes)

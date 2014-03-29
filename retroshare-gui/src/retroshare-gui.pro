@@ -25,7 +25,7 @@ gxs {
 	CONFIG += gxsgui
 	# thewire is incomplete - dont enable
 	#CONFIG += thewire
-	#CONFIG += photoshare
+	CONFIG += photoshare
 
 	DEFINES += RS_ENABLE_GXS
 }
@@ -388,6 +388,7 @@ HEADERS +=  rshare.h \
             gui/msgs/MessageUserNotify.h \
             gui/images/retroshare_win.rc.h \
             gui/settings/rsharesettings.h \
+            gui/settings/GlobalRouterStatistics.h \
             gui/settings/RsharePeerSettings.h \
             gui/settings/rsettings.h \
             gui/settings/rsettingswin.h \
@@ -567,6 +568,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/settings/ChatPage.ui \
             gui/settings/RelayPage.ui \
             gui/settings/ServicePermissionsPage.ui \
+            gui/settings/GlobalRouterStatistics.ui \
             gui/settings/PluginItem.ui \
             gui/toaster/MessageToaster.ui \
             gui/toaster/OnlineToaster.ui \
@@ -746,6 +748,7 @@ SOURCES +=  main.cpp \
             gui/style/StyleDialog.cpp \
             gui/settings/rsharesettings.cpp \
             gui/settings/RsharePeerSettings.cpp \
+            gui/settings/GlobalRouterStatistics.cpp \
             gui/settings/rsettings.cpp \
             gui/settings/rsettingswin.cpp \
             gui/settings/GeneralPage.cpp \

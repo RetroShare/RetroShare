@@ -28,15 +28,16 @@
 #include <map>
 #include <queue>
 
-#include "rsgrouter.h"
+#include "retroshare/rsgrouter.h"
+#include "retroshare/rstypes.h"
+
 #include "services/p3service.h"
 #include "pqi/p3cfgmgr.h"
-#include "retroshare/rstypes.h"
 
 #include "groutertypes.h"
 #include "groutermatrix.h"
-#include "groutercache.h"
 #include "grouteritems.h"
+//#include "groutercache.h"
 
 // To be put in pqi/p3cfgmgr.h
 //
@@ -75,9 +76,7 @@ class p3GRouter: public RsGRouter, public p3Service, public p3Config
 		// Unregistering a key might not have an instantaneous effect, so the client is responsible for 
 		// discarding traffic that might later come for this key.
 		//
-		bool registerKey(const GRouterKeyId& key,const PGPFingerprintType& pgp_fingerprint,
-								const GRouterServiceId& client_id,const std::string& description_string) ;
-
+		bool   registerKey(const GRouterKeyId& key, const GRouterServiceId& client_id,const std::string& description_string) ;
 		bool unregisterKey(const GRouterKeyId& key) ;
 
 		//===================================================//
@@ -103,7 +102,7 @@ class p3GRouter: public RsGRouter, public p3Service, public p3Config
 		// 	- list of clues/time_stamp for each key.
 		// 	- real time routing probabilities
 		//
-		virtual bool getRoutingMatrixInfo(RoutingMatrixInfo& info) { return false ;}
+		virtual bool getRoutingMatrixInfo(GRouterRoutingMatrixInfo& info) ;
 
 		// debug info from routing cache
 		// 	- Cache Items
@@ -113,8 +112,21 @@ class p3GRouter: public RsGRouter, public p3Service, public p3Config
 		// 		* message type
 		// 	- Cache state (memory size, etc)
 		//
-		virtual bool getRoutingCacheInfo(RoutingCacheInfo& info) { return false ;} 
+		virtual bool getRoutingCacheInfo(std::vector<GRouterRoutingCacheInfo>& info) ;
 
+		//===================================================//
+		//         Derived from p3Service                    //
+		//===================================================//
+
+		virtual RsServiceInfo getServiceInfo() 
+		{ 
+			return RsServiceInfo(RS_SERVICE_TYPE_GROUTER, 
+										SERVICE_INFO_APP_NAME,
+										SERVICE_INFO_APP_MAJOR_VERSION,
+										SERVICE_INFO_APP_MINOR_VERSION,
+										SERVICE_INFO_MIN_MAJOR_VERSION,
+										SERVICE_INFO_MIN_MINOR_VERSION) ; 
+		}
 	protected:
 		//===================================================//
 		//         Routing method handling                   //
@@ -127,6 +139,12 @@ class p3GRouter: public RsGRouter, public p3Service, public p3Config
 		//
 		virtual int tick() ; 
 
+		static const std::string SERVICE_INFO_APP_NAME ;
+		static const uint16_t SERVICE_INFO_APP_MAJOR_VERSION	= 	1;
+		static const uint16_t SERVICE_INFO_APP_MINOR_VERSION  = 	0;
+		static const uint16_t SERVICE_INFO_MIN_MAJOR_VERSION  = 	1;
+		static const uint16_t SERVICE_INFO_MIN_MINOR_VERSION	=	0;
+
 	private:
 		void autoWash() ;
 		void routePendingObjects() ;
@@ -134,6 +152,12 @@ class p3GRouter: public RsGRouter, public p3Service, public p3Config
 		void publishKeys() ;
 		void debugDump() ;
 		void locked_forwardKey(const RsGRouterPublishKeyItem&) ;
+
+		// utility functions
+		//
+		static uint32_t computeBranchingFactor(const std::vector<RsPeerId>& friends,const std::vector<float>& probas,uint32_t dist) ;
+		static std::set<uint32_t> computeRoutingFriends(const std::vector<RsPeerId>& friends,const std::vector<float>& probas,uint32_t N) ;
+		static uint32_t computeRandomDistanceIncrement(const RsPeerId& pid,const GRouterKeyId& destination_id) ;
 
 		//===================================================//
 		//                  p3Config methods                 //

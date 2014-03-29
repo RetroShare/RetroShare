@@ -221,7 +221,7 @@ void NetworkDialog::connectTreeWidgetCostumPopupMenu( QPoint /*point*/ )
 		contextMnu->addAction(QIcon(IMAGE_EXPORT), tr("Export my certificate..."), this, SLOT(on_actionExportKey_activated()));
 
 	contextMnu->addAction(QIcon(IMAGE_PEERDETAILS), tr("Peer details..."), this, SLOT(peerdetails()));
-	contextMnu->addAction(QIcon(IMAGE_MESSAGE), tr("Send Message"), this, SLOT(sendDistantMessage()));
+    //contextMnu->addAction(QIcon(IMAGE_MESSAGE), tr("Send Message"), this, SLOT(sendDistantMessage()));
 	contextMnu->addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyLink()));
 	contextMnu->addSeparator() ;
 	contextMnu->addAction(QIcon(IMAGE_CLEAN_UNUSED), tr("Remove unused keys..."), this, SLOT(removeUnusedKeys()));
@@ -352,30 +352,30 @@ void NetworkDialog::copyLink()
 	RSLinkClipboard::copyLinks(urls);
 }
 
-void NetworkDialog::sendDistantMessage()
-{
-	QTreeWidgetItem *wi = getCurrentNeighbour();
-	if (wi == NULL) {
-		return;
-	}
-
-	MessageComposer *nMsgDialog = MessageComposer::newMsg();
-	if (nMsgDialog == NULL) {
-		return;
-	}
-
-    DistantMsgPeerId pid ;
-    RsPgpId mGpgId(wi->text(COLUMN_PEERID).toStdString()) ;
-
-    if(rsMsgs->getDistantMessagePeerId(mGpgId,pid))
-	{
-        nMsgDialog->addRecipient(MessageComposer::TO, pid, mGpgId);
-		nMsgDialog->show();
-		nMsgDialog->activateWindow();
-	}
-
-	/* window will destroy itself! */
-}
+//void NetworkDialog::sendDistantMessage()
+//{
+//	QTreeWidgetItem *wi = getCurrentNeighbour();
+//	if (wi == NULL) {
+//		return;
+//	}
+//
+//	MessageComposer *nMsgDialog = MessageComposer::newMsg();
+//	if (nMsgDialog == NULL) {
+//		return;
+//	}
+//
+//    DistantMsgPeerId pid ;
+//    RsPgpId mGpgId(wi->text(COLUMN_PEERID).toStdString()) ;
+//
+//    if(rsMsgs->getDistantMessagePeerId(mGpgId,pid))
+//	{
+//        nMsgDialog->addRecipient(MessageComposer::TO, pid, mGpgId);
+//		nMsgDialog->show();
+//		nMsgDialog->activateWindow();
+//	}
+//
+//	/* window will destroy itself! */
+//}
 
 void NetworkDialog::updateDisplay()
 {

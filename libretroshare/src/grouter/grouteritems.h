@@ -26,20 +26,19 @@
 #pragma once
 
 #include "serialiser/rsserial.h"
+#include "serialiser/rsserviceids.h"
 #include "retroshare/rstypes.h"
-#include "rsgrouter.h"
+
+#include "retroshare/rsgrouter.h"
 #include "p3grouter.h"
 
-// To be put in serialiser/rsserviceids.h
-static const uint8_t RS_SERVICE_TYPE_GROUTER = 0x0016 ;
-
 const uint8_t RS_PKT_SUBTYPE_GROUTER_PUBLISH_KEY	= 0x01 ;			// used to publish a key
-const uint8_t RS_PKT_SUBTYPE_GROUTER_DATA          = 0x02 ;			// used to send data to a destination
 const uint8_t RS_PKT_SUBTYPE_GROUTER_ACK           = 0x03 ;			// acknowledgement of data received
+const uint8_t RS_PKT_SUBTYPE_GROUTER_DATA          = 0x05 ;			// used to send data to a destination
 
 const uint8_t RS_PKT_SUBTYPE_GROUTER_MATRIX_CLUES  = 0x80 ;			// item to save matrix clues
-const uint8_t RS_PKT_SUBTYPE_GROUTER_ROUTING_INFO  = 0x81 ;			// item to save routing info
 const uint8_t RS_PKT_SUBTYPE_GROUTER_FRIENDS_LIST  = 0x82 ;			// item to save friend lists
+const uint8_t RS_PKT_SUBTYPE_GROUTER_ROUTING_INFO  = 0x85 ;			// item to save routing info
 
 const uint8_t QOS_PRIORITY_RS_GROUTER_PUBLISH_KEY = 3 ;				// slow items. No need to congest the network with this.
 const uint8_t QOS_PRIORITY_RS_GROUTER_ACK         = 3 ;
@@ -50,6 +49,7 @@ const uint32_t RS_GROUTER_ACK_STATE_RECEIVED_INDIRECTLY = 0x0002 ;		// data was 
 const uint32_t RS_GROUTER_ACK_STATE_GIVEN_UP            = 0x0003 ;		// data was given up. No route.
 const uint32_t RS_GROUTER_ACK_STATE_NO_ROUTE            = 0x0004 ;		// data was given up. No route.
 const uint32_t RS_GROUTER_ACK_STATE_UNKNOWN             = 0x0005 ;		// unknown destination key
+const uint32_t RS_GROUTER_ACK_STATE_TOO_FAR             = 0x0006 ;		// dropped because of distance
 
 /***********************************************************************************/
 /*                           Basic GRouter Item Class                              */
@@ -151,6 +151,7 @@ class RsGRouterGenericDataItem: public RsGRouterItem, public RsGRouterNonCopyabl
 		//
 		GRouterMsgPropagationId routing_id ;
 		GRouterKeyId destination_key ;
+		uint32_t randomized_distance ;
 
 		uint32_t data_size ;
 		uint8_t *data_bytes;
@@ -251,12 +252,12 @@ class RsGRouterSerialiser: public RsSerialType
 		virtual RsItem *deserialise (void *data, uint32_t *size) ;
 
 	private:
-		RsGRouterItem *deserialise_RsGRouterPublishKeyItem(void *data,uint32_t size) const ;
-		RsGRouterItem *deserialise_RsGRouterGenericDataItem(void *data,uint32_t size) const ;
-		RsGRouterItem *deserialise_RsGRouterACKItem(void *data,uint32_t size) const ;
-		RsGRouterItem *deserialise_RsGRouterMatrixCluesItem(void *data,uint32_t size) const ;
-		RsGRouterItem *deserialise_RsGRouterMatrixFriendListItem(void *data,uint32_t size) const ;
-		RsGRouterItem *deserialise_RsGRouterRoutingInfoItem(void *data,uint32_t size) const ;
+		RsGRouterPublishKeyItem       *deserialise_RsGRouterPublishKeyItem(void *data,uint32_t size) const ;
+		RsGRouterGenericDataItem      *deserialise_RsGRouterGenericDataItem(void *data,uint32_t size) const ;
+		RsGRouterACKItem              *deserialise_RsGRouterACKItem(void *data,uint32_t size) const ;
+		RsGRouterMatrixCluesItem      *deserialise_RsGRouterMatrixCluesItem(void *data,uint32_t size) const ;
+		RsGRouterMatrixFriendListItem *deserialise_RsGRouterMatrixFriendListItem(void *data,uint32_t size) const ;
+		RsGRouterRoutingInfoItem      *deserialise_RsGRouterRoutingInfoItem(void *data,uint32_t size) const ;
 };
 
 

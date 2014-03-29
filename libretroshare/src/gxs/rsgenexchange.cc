@@ -392,7 +392,7 @@ uint8_t RsGenExchange::createGroup(RsNxsGrp *grp, RsTlvSecurityKeySet& privateKe
     memcpy(allGrpData+(grp->grp.bin_len), metaData, metaDataLen);
 
     RsTlvKeySignature adminSign;
-    bool ok = GxsSecurity::getSignature(allGrpData, allGrpDataLen, &privAdminKey, adminSign);
+    bool ok = GxsSecurity::getSignature(allGrpData, allGrpDataLen, privAdminKey, adminSign);
 
     // add admin sign to grpMeta
     meta->signSet.keySignSet[GXS_SERV::FLAG_AUTHEN_ADMIN] = adminSign;
@@ -458,7 +458,7 @@ int RsGenExchange::createGroupSignatures(RsTlvKeySignatureSet& signSet, RsTlvBin
                 RsTlvKeySignature sign;
 
                 if(GxsSecurity::getSignature((char*)grpData.bin_data, grpData.bin_len,
-                                                &authorKey, sign))
+                                                authorKey, sign))
                 {
                 	id_ret = SIGN_SUCCESS;
                 }
@@ -584,7 +584,7 @@ int RsGenExchange::createMsgSignatures(RsTlvKeySignatureSet& signSet, RsTlvBinar
 
             RsTlvKeySignature pubSign = signSet.keySignSet[GXS_SERV::FLAG_AUTHEN_PUBLISH];
 
-            publishSignSuccess = GxsSecurity::getSignature((char*)msgData.bin_data, msgData.bin_len, pubKey, pubSign);
+            publishSignSuccess = GxsSecurity::getSignature((char*)msgData.bin_data, msgData.bin_len, *pubKey, pubSign);
 
             //place signature in msg meta
             signSet.keySignSet[GXS_SERV::FLAG_AUTHEN_PUBLISH] = pubSign;
@@ -617,7 +617,7 @@ int RsGenExchange::createMsgSignatures(RsTlvKeySignatureSet& signSet, RsTlvBinar
                 RsTlvKeySignature sign;
 
                 if(GxsSecurity::getSignature((char*)msgData.bin_data, msgData.bin_len,
-                                                &authorKey, sign))
+                                                authorKey, sign))
                 {
                 	id_ret = SIGN_SUCCESS;
                 }

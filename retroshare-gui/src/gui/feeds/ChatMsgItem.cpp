@@ -197,7 +197,7 @@ void ChatMsgItem::sendMsg()
         return;
     }
 
-    nMsgDialog->addRecipient(MessageComposer::TO, mPeerId, false);
+    nMsgDialog->addRecipient(MessageComposer::TO, mPeerId);
     nMsgDialog->show();
     nMsgDialog->activateWindow();
 
@@ -245,7 +245,7 @@ void ChatMsgItem::sendMessage()
     
     mi.title = tr("Quick Message").toUtf8().constData();
     mi.msg =   quickmsgText->toHtml().toUtf8().constData();
-    mi.msgto.push_back(mPeerId);       
+    mi.rspeerid_msgto.push_back(mPeerId);
     
     rsMsgs->MessageSend(mi);
 

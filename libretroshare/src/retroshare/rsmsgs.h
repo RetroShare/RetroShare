@@ -33,6 +33,7 @@
 #include <set>
 
 #include "rstypes.h"
+#include "rsgxsifacetypes.h"
 
 /********************** For Messages and Channels *****************/
 
@@ -88,32 +89,42 @@ typedef uint64_t 		ChatLobbyMsgId ;
 typedef std::string 		ChatLobbyNickName ;
 
 typedef RsPeerId 		DistantChatPeerId ;
-typedef RsPeerId 		DistantMsgPeerId ;
+typedef GRouterKeyIdType	DistantMsgPeerId ;
 
 class MessageInfo 
 {
-	public:
-	MessageInfo() {}
-	std::string msgId;
-	RsPeerId srcId;
+public:
+    MessageInfo() {}
+    std::string msgId;
 
-	unsigned int msgflags;
+    RsPeerId rspeerid_srcId;
+    RsGxsId  rsgxsid_srcId;
 
-	std::list<RsPeerId> msgto;
-	std::list<RsPeerId> msgcc;
-	std::list<RsPeerId> msgbcc;
+    unsigned int msgflags;
 
-	std::string title;
-	std::string msg;
+	 // friend destinations
+	 //
+    std::list<RsPeerId> rspeerid_msgto;		// RsPeerId is used here for various purposes:
+    std::list<RsPeerId> rspeerid_msgcc;		//    - real peer ids which are actual friend locations
+    std::list<RsPeerId> rspeerid_msgbcc;		//    -
 
-	std::string attach_title;
-	std::string attach_comment;
-	std::list<FileInfo> files;
-	std::map<std::string,std::string> encryption_keys ; // for concerned ids only the public pgp key id to encrypt the message with.
-	int size;  /* total of files */
-	int count; /* file count     */
+	 // distant peers
+	 //
+    std::list<RsGxsId> rsgxsid_msgto;		// RsPeerId is used here for various purposes:
+    std::list<RsGxsId> rsgxsid_msgcc;		//    - real peer ids which are actual friend locations
+    std::list<RsGxsId> rsgxsid_msgbcc;		//    -
 
-	int ts;
+    std::string title;
+    std::string msg;
+
+    std::string attach_title;
+    std::string attach_comment;
+    std::list<FileInfo> files;
+
+    int size;  /* total of files */
+    int count; /* file count     */
+
+    int ts;
 };
 
 class MsgInfoSummary 
@@ -241,7 +252,7 @@ extern RsMsgs   *rsMsgs;
 struct DistantOfflineMessengingInvite
 {
 	RsPgpId issuer_pgp_id ;
-	Sha1CheckSum hash ;
+    DistantMsgPeerId peer_id ;
 	time_t time_of_validity ;
 };
 
@@ -291,11 +302,8 @@ virtual bool resetMessageStandardTagTypes(MsgTagType& tags) = 0;
 /*        Private distant messages      */
 /****************************************/
 
-virtual bool createDistantOfflineMessengingInvite(time_t validity_time_stamp, DistantMsgPeerId& hash)=0 ;
-virtual bool getDistantOfflineMessengingInvites(std::vector<DistantOfflineMessengingInvite>& invites) = 0 ;
 virtual void enableDistantMessaging(bool b) = 0;
 virtual bool distantMessagingEnabled() = 0;
-virtual bool getDistantMessagePeerId(const RsPgpId& pgp_id, DistantMsgPeerId& peerId) = 0;
 
 /****************************************/
 /*                 Chat                 */

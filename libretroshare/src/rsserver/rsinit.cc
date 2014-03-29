@@ -56,6 +56,8 @@
 #include <openssl/rand.h>
 #include <fcntl.h>
 
+#define ENABLE_GROUTER
+
 #if (defined(__unix__) || defined(unix)) && !defined(USG)
 #include <sys/param.h>
 #endif
@@ -69,7 +71,7 @@
 #include "pqi/sslfns.h"
 #include "pqi/authgpg.h"
 
-#ifdef GROUTER
+#ifdef ENABLE_GROUTER
 #include "grouter/p3grouter.h"
 #endif
 
@@ -839,7 +841,7 @@ bool RsInit::SetHiddenLocation(const std::string& hiddenaddress, uint16_t port)
 
 RsFiles *rsFiles = NULL;
 RsTurtle *rsTurtle = NULL ;
-#ifdef GROUTER
+#ifdef ENABLE_GROUTER
 RsGRouter *rsGRouter = NULL ;
 #endif
 
@@ -1111,7 +1113,8 @@ int RsServer::StartupRetroShare()
 	 * if not... copy from dataDirectory
 	 */
 
-	if (!RsDirUtil::checkFile(bootstrapfile,true))
+	uint64_t tmp_size ;
+	if (!RsDirUtil::checkFile(bootstrapfile,tmp_size,true))
 	{
 		std::cerr << "DHT bootstrap file not in ConfigDir: " << bootstrapfile << std::endl;
 		std::string installfile = rsAccounts.PathDataDirectory();
@@ -1119,7 +1122,7 @@ int RsServer::StartupRetroShare()
 		installfile += BITDHT_BOOTSTRAP_FILENAME;
 
 		std::cerr << "Checking for Installation DHT bootstrap file " << installfile << std::endl;
-		if ((installfile != "") && (RsDirUtil::checkFile(installfile)))
+		if ((installfile != "") && (RsDirUtil::checkFile(installfile,tmp_size)))
 		{
 			std::cerr << "Copying Installation DHT bootstrap file..." << std::endl;
 			if (RsDirUtil::copyFile(installfile, bootstrapfile))
@@ -1294,67 +1297,6 @@ int RsServer::StartupRetroShare()
 	// 	programatically_inserted_plugins.push_back(myCoolPlugin) ;
 	//
 	mPluginsManager->loadPlugins(programatically_inserted_plugins) ;
-
-	/* create Services */
-	p3ServiceInfo *serviceInfo = new p3ServiceInfo(serviceCtrl);
-	mDisc = new p3discovery2(mPeerMgr, mLinkMgr, mNetMgr, serviceCtrl);
-	mHeart = new p3heartbeat(serviceCtrl, pqih);
-	msgSrv = new p3MsgService(serviceCtrl);
-	chatSrv = new p3ChatService(serviceCtrl, mLinkMgr, mHistoryMgr);
-	mStatusSrv = new p3StatusService(serviceCtrl);
-
-#ifdef GROUTER
-	p3GRouter *gr = new p3GRouter(mLinkMgr) ;
-	rsGRouter = gr ;
-	pqih->addService(gr, true) ;
-#endif
-
-	p3turtle *tr = new p3turtle(mLinkMgr) ;
-	rsTurtle = tr ;
-	pqih -> addService(tr, true);
-	pqih -> addService(ftserver, true);
-
-	rsDisc  = mDisc;
-	rsMsgs  = new p3Msgs(msgSrv, chatSrv);
-
-	// connect components to turtle router.
-
-	ftserver->connectToTurtleRouter(tr) ;
-	chatSrv->connectToTurtleRouter(tr) ;
-#ifdef GROUTER
-	msgSrv->connectToGlobalRouter(gr) ;
-#endif
-	msgSrv->connectToTurtleRouter(tr) ;
-
-	pqih -> addService(serviceInfo, true);
-	pqih -> addService(mHeart, true);
-	pqih -> addService(mDisc, true);
-	pqih -> addService(msgSrv, true);
-	pqih -> addService(chatSrv, true);
-	pqih ->addService(mStatusSrv, true);
-
-
-	// set interfaces for plugins
-	//
-	RsPlugInInterfaces interfaces;
-	interfaces.mFiles  = rsFiles;
-	interfaces.mPeers  = rsPeers;
-	interfaces.mMsgs   = rsMsgs;
-	interfaces.mTurtle = rsTurtle;
-	interfaces.mDisc   = rsDisc;
-	interfaces.mDht    = rsDht;
-	// don't exist no more.
-	//interfaces.mForums = mForums;
-	interfaces.mNotify = mNotify;
-
-	mPluginsManager->setInterfaces(interfaces);
-
-	// now add plugin objects inside the loop:
-	// 	- client services provided by plugins.
-	// 	- cache services provided by plugins.
-	//
-	mPluginsManager->registerClientServices(pqih) ;
-	mPluginsManager->registerCacheServices() ;
 
 #ifdef RS_ENABLE_GXS
 
@@ -1553,6 +1495,67 @@ int RsServer::StartupRetroShare()
 
 #endif // RS_ENABLE_GXS.
 
+	/* create Services */
+	p3ServiceInfo *serviceInfo = new p3ServiceInfo(serviceCtrl);
+	mDisc = new p3discovery2(mPeerMgr, mLinkMgr, mNetMgr, serviceCtrl);
+	mHeart = new p3heartbeat(serviceCtrl, pqih);
+	msgSrv = new p3MsgService(serviceCtrl,mGxsIdService);
+	chatSrv = new p3ChatService(serviceCtrl, mLinkMgr, mHistoryMgr);
+	mStatusSrv = new p3StatusService(serviceCtrl);
+
+#ifdef ENABLE_GROUTER
+	p3GRouter *gr = new p3GRouter(mLinkMgr) ;
+	rsGRouter = gr ;
+	pqih->addService(gr,true) ;
+#endif
+
+	p3turtle *tr = new p3turtle(mLinkMgr) ;
+	rsTurtle = tr ;
+	pqih -> addService(tr,true);
+	pqih -> addService(ftserver,true);
+
+	rsDisc  = mDisc;
+	rsMsgs  = new p3Msgs(msgSrv, chatSrv);
+
+	// connect components to turtle router.
+
+	ftserver->connectToTurtleRouter(tr) ;
+	chatSrv->connectToTurtleRouter(tr) ;
+#ifdef ENABLE_GROUTER
+	msgSrv->connectToGlobalRouter(gr) ;
+#endif
+
+	pqih -> addService(serviceInfo,true);
+	pqih -> addService(mHeart,true);
+	pqih -> addService(mDisc,true);
+	pqih -> addService(msgSrv,true);
+	pqih -> addService(chatSrv,true);
+	pqih ->addService(mStatusSrv,true);
+
+
+	// set interfaces for plugins
+	//
+	RsPlugInInterfaces interfaces;
+	interfaces.mFiles  = rsFiles;
+	interfaces.mPeers  = rsPeers;
+	interfaces.mMsgs   = rsMsgs;
+	interfaces.mTurtle = rsTurtle;
+	interfaces.mDisc   = rsDisc;
+	interfaces.mDht    = rsDht;
+	// don't exist no more.
+	//interfaces.mForums = mForums;
+	interfaces.mNotify = mNotify;
+
+	mPluginsManager->setInterfaces(interfaces);
+
+	// now add plugin objects inside the loop:
+	// 	- client services provided by plugins.
+	// 	- cache services provided by plugins.
+	//
+	mPluginsManager->registerClientServices(pqih) ;
+	mPluginsManager->registerCacheServices() ;
+
+
 
 #ifdef RS_RTT
 	p3rtt *mRtt = new p3rtt(serviceCtrl);
@@ -1635,7 +1638,7 @@ int RsServer::StartupRetroShare()
 	mConfigMgr->addConfiguration("p3History.cfg", mHistoryMgr);
 	mConfigMgr->addConfiguration("p3Status.cfg", mStatusSrv);
 	mConfigMgr->addConfiguration("turtle.cfg", tr);
-#ifdef GROUTER
+#ifdef ENABLE_GROUTER
 	mConfigMgr->addConfiguration("grouter.cfg", gr);
 #endif
 

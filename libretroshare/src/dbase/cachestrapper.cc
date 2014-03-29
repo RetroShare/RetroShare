@@ -1006,7 +1006,8 @@ bool CacheStrapper::loadList(std::list<RsItem *>& load)
 				std::cerr << std::endl;
 #endif
 
-				bool fileExists = RsDirUtil::checkFile(filename);
+				uint64_t tmp_size ;
+				bool fileExists = RsDirUtil::checkFile(filename,tmp_size);
 				if (fileExists)
 				{
 #ifdef CS_DEBUG 

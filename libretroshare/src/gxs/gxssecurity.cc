@@ -49,9 +49,9 @@ RSA *GxsSecurity::extractPublicKey(const RsTlvSecurityKey& key)
         return rsakey;
 }
 
-bool GxsSecurity::getSignature(char* data, uint32_t data_len, RsTlvSecurityKey* privKey, RsTlvKeySignature& sign)
+bool GxsSecurity::getSignature(const char *data, uint32_t data_len, const RsTlvSecurityKey& privKey, RsTlvKeySignature& sign)
 {
-	RSA* rsa_pub = extractPrivateKey(*privKey);
+	RSA* rsa_pub = extractPrivateKey(privKey);
 	EVP_PKEY *key_pub = EVP_PKEY_new();
 	EVP_PKEY_assign_RSA(key_pub, rsa_pub);
 
@@ -69,9 +69,31 @@ bool GxsSecurity::getSignature(char* data, uint32_t data_len, RsTlvSecurityKey* 
 	EVP_PKEY_free(key_pub);
 
 	sign.signData.setBinData(sigbuf, siglen);
-	sign.keyId = privKey->keyId;
+	sign.keyId = privKey.keyId;
 
 	return ok;
+}
+
+bool GxsSecurity::validateSignature(const char *data, uint32_t data_len, const RsTlvSecurityKey& key, const RsTlvKeySignature& signature)
+{
+	RSA *rsakey = RSAPublicKey_dup(extractPublicKey(key)) ;
+
+	EVP_PKEY *signKey = EVP_PKEY_new();
+	EVP_PKEY_assign_RSA(signKey, rsakey);
+
+	/* calc and check signature */
+	EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
+
+	EVP_VerifyInit(mdctx, EVP_sha1());
+	EVP_VerifyUpdate(mdctx, data, data_len);
+
+	int signOk = EVP_VerifyFinal(mdctx, (unsigned char*)signature.signData.bin_data, signature.signData.bin_len, signKey);
+
+	/* clean up */
+	EVP_PKEY_free(signKey);
+	EVP_MD_CTX_destroy(mdctx);
+
+	return signOk;
 }
 
 bool GxsSecurity::validateNxsMsg(RsNxsMsg& msg, RsTlvKeySignature& sign, RsTlvSecurityKey& key)
@@ -204,101 +226,112 @@ std::string GxsSecurity::getBinDataSign(void *data, int len)
 
 
 
-bool GxsSecurity::encrypt(void *& out, int & outlen, const void *in, int inlen, EVP_PKEY *privateKey)
+bool GxsSecurity::encrypt(void *& out, int & outlen, const void *in, int inlen, const RsTlvSecurityKey& key)
 {
-
-
 #ifdef DISTRIB_DEBUG
-        std::cerr << "GxsSecurity::encrypt() " << std::endl;
+	std::cerr << "GxsSecurity::encrypt() " << std::endl;
 #endif
 
-        RSA *rsa_publish_pub = NULL;
-        EVP_PKEY *public_key = NULL;
+	RSA *rsa_publish_pub = RSAPublicKey_dup(extractPublicKey(key)) ;
+	EVP_PKEY *public_key = NULL;
 
-        RSA* rsa_publish = EVP_PKEY_get1_RSA(privateKey);
-        rsa_publish_pub = RSAPublicKey_dup(rsa_publish);
+	//RSA* rsa_publish = EVP_PKEY_get1_RSA(privateKey);
+	//rsa_publish_pub = RSAPublicKey_dup(rsa_publish);
 
 
-        if(rsa_publish_pub  != NULL){
-                public_key = EVP_PKEY_new();
-                EVP_PKEY_assign_RSA(public_key, rsa_publish_pub);
-        }else{
+	if(rsa_publish_pub  != NULL)
+	{
+		public_key = EVP_PKEY_new();
+		EVP_PKEY_assign_RSA(public_key, rsa_publish_pub);
+	}else{
 #ifdef DISTRIB_DEBUG
-                std::cerr << "GxsSecurity(): Could not generate publish key " << grpId
-                                  << std::endl;
+		std::cerr << "GxsSecurity(): Could not generate publish key " << grpId
+			<< std::endl;
 #endif
-                return false;
-        }
+		return false;
+	}
 
-    EVP_CIPHER_CTX ctx;
-    int eklen, net_ekl;
-    unsigned char *ek;
-    unsigned char iv[EVP_MAX_IV_LENGTH];
-    EVP_CIPHER_CTX_init(&ctx);
-    int out_currOffset = 0;
-    int out_offset = 0;
+	EVP_CIPHER_CTX ctx;
+	int eklen, net_ekl;
+	unsigned char *ek;
+	unsigned char iv[EVP_MAX_IV_LENGTH];
+	EVP_CIPHER_CTX_init(&ctx);
+	int out_currOffset = 0;
+	int out_offset = 0;
 
-    int max_evp_key_size = EVP_PKEY_size(public_key);
-    ek = (unsigned char*)malloc(max_evp_key_size);
-    const EVP_CIPHER *cipher = EVP_aes_128_cbc();
-    int cipher_block_size = EVP_CIPHER_block_size(cipher);
-    int size_net_ekl = sizeof(net_ekl);
+	int max_evp_key_size = EVP_PKEY_size(public_key);
+	ek = (unsigned char*)malloc(max_evp_key_size);
+	const EVP_CIPHER *cipher = EVP_aes_128_cbc();
+	int cipher_block_size = EVP_CIPHER_block_size(cipher);
+	int size_net_ekl = sizeof(net_ekl);
 
-    int max_outlen = inlen + cipher_block_size + EVP_MAX_IV_LENGTH + max_evp_key_size + size_net_ekl;
+	int max_outlen = inlen + cipher_block_size + EVP_MAX_IV_LENGTH + max_evp_key_size + size_net_ekl;
 
-    // intialize context and send store encrypted cipher in ek
-        if(!EVP_SealInit(&ctx, EVP_aes_128_cbc(), &ek, &eklen, iv, &public_key, 1)) return false;
+	// intialize context and send store encrypted cipher in ek
+	if(!EVP_SealInit(&ctx, EVP_aes_128_cbc(), &ek, &eklen, iv, &public_key, 1)) return false;
 
-        // now assign memory to out accounting for data, and cipher block size, key length, and key length val
-    out = new unsigned char[inlen + cipher_block_size + size_net_ekl + eklen + EVP_MAX_IV_LENGTH];
+	// now assign memory to out accounting for data, and cipher block size, key length, and key length val
+	out = new unsigned char[inlen + cipher_block_size + size_net_ekl + eklen + EVP_MAX_IV_LENGTH];
 
-        net_ekl = htonl(eklen);
-        memcpy((unsigned char*)out + out_offset, &net_ekl, size_net_ekl);
-        out_offset += size_net_ekl;
+	net_ekl = htonl(eklen);
+	memcpy((unsigned char*)out + out_offset, &net_ekl, size_net_ekl);
+	out_offset += size_net_ekl;
 
-        memcpy((unsigned char*)out + out_offset, ek, eklen);
-        out_offset += eklen;
+	memcpy((unsigned char*)out + out_offset, ek, eklen);
+	out_offset += eklen;
 
-        memcpy((unsigned char*)out + out_offset, iv, EVP_MAX_IV_LENGTH);
-        out_offset += EVP_MAX_IV_LENGTH;
+	memcpy((unsigned char*)out + out_offset, iv, EVP_MAX_IV_LENGTH);
+	out_offset += EVP_MAX_IV_LENGTH;
 
-        // now encrypt actual data
-        if(!EVP_SealUpdate(&ctx, (unsigned char*) out + out_offset, &out_currOffset, (unsigned char*) in, inlen)) return false;
+	// now encrypt actual data
+	if(!EVP_SealUpdate(&ctx, (unsigned char*) out + out_offset, &out_currOffset, (unsigned char*) in, inlen)) return false;
 
-        // move along to partial block space
-        out_offset += out_currOffset;
+	// move along to partial block space
+	out_offset += out_currOffset;
 
-        // add padding
-        if(!EVP_SealFinal(&ctx, (unsigned char*) out + out_offset, &out_currOffset)) return false;
+	// add padding
+	if(!EVP_SealFinal(&ctx, (unsigned char*) out + out_offset, &out_currOffset)) return false;
 
-        // move to end
-        out_offset += out_currOffset;
+	// move to end
+	out_offset += out_currOffset;
 
-        // make sure offset has not gone passed valid memory bounds
-        if(out_offset > max_outlen) return false;
+	// make sure offset has not gone passed valid memory bounds
+	if(out_offset > max_outlen) return false;
 
-        // free encrypted key data
-        free(ek);
+	// free encrypted key data
+	free(ek);
 
-        outlen = out_offset;
-        return true;
-
-    delete[] ek;
-
-#ifdef DISTRIB_DEBUG
-    std::cerr << "GxsSecurity::encrypt() finished with outlen : " << outlen << std::endl;
-#endif
-
-    return true;
+	outlen = out_offset;
+	return true;
 }
 
 
-bool GxsSecurity::decrypt(void *& out, int & outlen, const void *in, int inlen, EVP_PKEY *privateKey)
+bool GxsSecurity::decrypt(void *& out, int & outlen, const void *in, int inlen, const RsTlvSecurityKey& key)
 {
 
 #ifdef DISTRIB_DEBUG
-        std::cerr << "GxsSecurity::decrypt() " << std::endl;
+	std::cerr << "GxsSecurity::decrypt() " << std::endl;
 #endif
+	RSA *rsa_publish = RSAPrivateKey_dup(extractPrivateKey(key)) ;
+	EVP_PKEY *privateKey = NULL;
+
+	//RSA* rsa_publish = EVP_PKEY_get1_RSA(privateKey);
+	//rsa_publish_pub = RSAPublicKey_dup(rsa_publish);
+
+	if(rsa_publish != NULL)
+	{
+		privateKey = EVP_PKEY_new();
+		EVP_PKEY_assign_RSA(privateKey, rsa_publish);
+	}
+	else
+	{
+#ifdef DISTRIB_DEBUG
+		std::cerr << "GxsSecurity(): Could not generate publish key " << grpId
+			<< std::endl;
+#endif
+		return false;
+	}
+
 
     EVP_CIPHER_CTX ctx;
     int eklen = 0, net_ekl = 0;

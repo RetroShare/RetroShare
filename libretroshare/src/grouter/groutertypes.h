@@ -34,7 +34,7 @@ class RsGRouterGenericDataItem ;
 
 typedef uint32_t GRouterServiceId ;
 typedef uint32_t GRouterKeyPropagationId ;
-typedef uint32_t GRouterMsgPropagationId ;
+typedef uint64_t GRouterMsgPropagationId ;
 
 static const uint32_t GROUTER_CLIENT_ID_MESSAGES     = 0x1001 ;
 
@@ -50,36 +50,35 @@ static const time_t RS_GROUTER_PUBLISH_CAMPAIGN_PERIOD     =    1 *60 ; // Check
 static const time_t RS_GROUTER_PUBLISH_KEY_TIME_INTERVAL   =    2 *60 ; // Advertise each key once a day at most.
 static const time_t RS_GROUTER_ROUTING_WAITING_TIME        =     3600 ; // time between two trial of sending a given message
 static const time_t RS_GROUTER_KEY_DIFFUSION_MAX_KEEP      =     7200 ; // time to keep key diffusion items in cache, to avoid multiple diffusion.
+static const uint32_t GROUTER_ITEM_DISTANCE_UNIT           =      256 ; // One unit of distance between two peers
+static const uint32_t GROUTER_ITEM_MAX_TRAVEL_DISTANCE     =   16*256 ; // 16 distance units. That is a lot.
 
 static const uint32_t RS_GROUTER_ROUTING_STATE_UNKN = 0x0000 ;		// unknown. Unused.
 static const uint32_t RS_GROUTER_ROUTING_STATE_PEND = 0x0001 ;		// item is pending. Should be sent asap. 
 static const uint32_t RS_GROUTER_ROUTING_STATE_SENT = 0x0002 ;		// item is sent. Waiting for answer
 static const uint32_t RS_GROUTER_ROUTING_STATE_ARVD = 0x0003 ;		// item is at destination. The cache only holds it to avoid duplication.
 
-class GRouterPublishedKeyInfo
+class FriendTrialRecord
 {
 	public:
-		GRouterServiceId service_id ;
-		std::string description_string ;
-		PGPFingerprintType fpr ;
-		time_t last_published_time ;
-		time_t validity_time ;
-};
-
-struct FriendTrialRecord
-{
-	RsPeerId  friend_id ;			// id of the friend
-	time_t    time_stamp ;			// time of the last tried
+		RsPeerId  friend_id ;			// id of the friend
+		time_t    time_stamp ;			// time of the last tried
+		float     probability ;			// probability at which the item was selected
+		uint32_t  nb_friends ;			// number of friends at the time of sending the item
+	
+		bool serialise(void *data,uint32_t& offset,uint32_t size) const ;
+		bool deserialise(void *data,uint32_t& offset,uint32_t size) ;
 };
 
 class GRouterRoutingInfo
 {
 	public:
-		RsGRouterGenericDataItem *data_item ;
-
 		uint32_t status_flags ;									// pending, waiting, etc.
-		std::list<FriendTrialRecord> tried_friends ; 	// list of friends to which the item was sent ordered with time.
 		RsPeerId  origin ;										// which friend sent us that item
 		time_t received_time ;									// time at which the item was received
+
+		std::list<FriendTrialRecord> tried_friends ; 	// list of friends to which the item was sent ordered with time.
+
+		RsGRouterGenericDataItem *data_item ;
 };
 

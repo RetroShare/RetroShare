@@ -42,6 +42,7 @@ class MessageComposer : public QMainWindow
 public:
     enum enumType { TO, CC, BCC };
     enum enumMessageType { NORMAL, REPLY, FORWARD };
+    enum destinationType { PEER_TYPE_SSL, PEER_TYPE_GROUP, PEER_TYPE_GXS };
 
 public:
     /** Default Constructor */
@@ -49,9 +50,9 @@ public:
     MessageComposer(QWidget *parent = 0, Qt::WindowFlags flags = 0);
     ~MessageComposer();
 
-    static void msgFriend(const RsPeerId &id, bool group);
-    //static void msgDistantPeer(const std::string& hash,const std::string& pgp_id) ;
-    static void msgDistantPeer(const RsPgpId& pgp_id) ;
+    static void msgFriend(const RsPeerId &id);
+    static void msgGxsIdentity(const RsGxsId& gxs_id) ;
+    static void msgGroup(const std::string& group_id) ;
 
     static QString recommendMessage();
     static void recommendFriend(const std::list <RsPeerId> &sslIds, const RsPeerId &to = RsPeerId(), const QString &msg = "", bool autoSend = false);
@@ -68,8 +69,9 @@ public:
     void  setTitleText(const QString &title, enumMessageType type = NORMAL);
     void  setQuotedMsg(const QString &msg, const QString &header);
     void  setMsgText(const QString &msg, bool asHtml = false);
-    void  addRecipient(enumType type, const RsPeerId &id, bool group);
-    void  addRecipient(enumType type, const DistantMsgPeerId &pid, const RsPgpId &pgp_id) ;
+    void  addRecipient(enumType type, const RsPeerId &id);
+    void  addRecipient(enumType type, const RsGxsId &gxs_id) ;
+    void  addRecipient(enumType type, const std::string& group_id) ;
 
 public slots:
     /* actions to take.... */
@@ -174,8 +176,8 @@ private:
     void calculateTitle();
     void addEmptyRecipient();
 
-    bool getRecipientFromRow(int row, enumType &type, std::string &id, bool &group);
-    void setRecipientToRow(int row, enumType type, const std::string &id, bool group);
+    bool getRecipientFromRow(int row, enumType &type, destinationType& dest_type, std::string &id);
+    void setRecipientToRow(int row, enumType type, destinationType dest_type,const std::string &id);
 
     void clearTagLabels();
     void showTagLabels();
@@ -221,7 +223,7 @@ private:
     Ui::MessageComposer ui;
 
     std::list<FileInfo> _recList ;
-     std::map<DistantMsgPeerId,RsPgpId> _distant_peers ;	// pairs (hash,pgp_id)
+    std::set<RsGxsId> _distant_peers ;	// we keep a list of them, in order to know which peer is a GXS id.
 };
 
 #endif

@@ -41,7 +41,7 @@
 #include <serialiser/rstlvtypes.h>
 #include <serialiser/rstlvbase.h>
 #include <serialiser/rsbaseserial.h>
-
+#include <retroshare/rsgxsifacetypes.h>
 
 //! A base class for all tlv items 
 /*! This class is provided to allow the serialisation and deserialization of compund 
@@ -190,9 +190,10 @@ template<class ID_CLASS,uint32_t TLV_TYPE> class t_RsTlvIdSet: public RsTlvItem
 		std::list<ID_CLASS> ids ;
 };
 
-typedef t_RsTlvIdSet<RsPeerId,TLV_TYPE_PEERSET>		RsTlvPeerIdSet ;
-typedef t_RsTlvIdSet<RsPgpId,TLV_TYPE_PGPIDSET>	RsTlvPgpIdSet ;
+typedef t_RsTlvIdSet<RsPeerId,TLV_TYPE_PEERSET>		   RsTlvPeerIdSet ;
+typedef t_RsTlvIdSet<RsPgpId,TLV_TYPE_PGPIDSET>	      RsTlvPgpIdSet ;
 typedef t_RsTlvIdSet<Sha1CheckSum,TLV_TYPE_HASHSET> 	RsTlvHashSet ;
+typedef t_RsTlvIdSet<RsGxsId,TLV_TYPE_GXSIDSET> 	   RsTlvGxsIdSet ;
 
 class RsTlvServiceIdSet: public RsTlvItem
 {

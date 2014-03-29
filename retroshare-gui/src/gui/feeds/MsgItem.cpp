@@ -81,16 +81,16 @@ void MsgItem::updateItemStatic()
 		return;
 
 	/* get peer Id */
-	mPeerId = mi.srcId;
+    mPeerId = mi.rspeerid_srcId;
 
     avatar->setId(mPeerId);
 
 	QString title;
 	QString srcName;
-	if ((mi.msgflags & RS_MSG_SYSTEM) && mi.srcId == rsPeers->getOwnId()) {
+    if ((mi.msgflags & RS_MSG_SYSTEM) && mi.rspeerid_srcId == rsPeers->getOwnId()) {
 		srcName = "RetroShare";
 	} else {
-		srcName = QString::fromUtf8(rsPeers->getPeerName(mi.srcId).c_str());
+        srcName = QString::fromUtf8(rsPeers->getPeerName(mi.rspeerid_srcId).c_str());
 	}
 
 	timestampLabel->setText(DateTime::formatLongDateTime(mi.ts));
@@ -138,7 +138,7 @@ void MsgItem::updateItemStatic()
 	for(it = mi.files.begin(); it != mi.files.end(); it++)
 	{
 		/* add file */
-		SubFileItem *fi = new SubFileItem(it->hash, it->fname, it->path, it->size, SFI_STATE_REMOTE, mi.srcId);
+        SubFileItem *fi = new SubFileItem(it->hash, it->fname, it->path, it->size, SFI_STATE_REMOTE, mi.rspeerid_srcId);
 		mFileItems.push_back(fi);
 
 		QLayout *layout = expandFrame->layout();

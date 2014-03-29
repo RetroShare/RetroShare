@@ -7,7 +7,7 @@ TARGET = retroshare
 #GXS Stuff.
 # This should be disabled for releases until further notice.
 CONFIG += gxs debug
-#CONFIG += grouter
+
 #CONFIG += dsdv
 
 profiling {
@@ -32,23 +32,6 @@ debug {
 
         QMAKE_CXXFLAGS -= -O2 -fomit-frame-pointer
         QMAKE_CXXFLAGS *= -g -fno-omit-frame-pointer
-}
-
-grouter {
-DEFINES *= GROUTER
-
-HEADERS +=  grouter/groutercache.h \
-				grouter/rsgrouter.h \
-				grouter/grouteritems.h \
-				grouter/p3grouter.h \
-				grouter/rsgroutermatrix.h \
-				grouter/rsgrouterclient.h 
-
-SOURCES +=  grouter/p3grouter.cc \
-				grouter/grouteritems.cc \ 
-				grouter/groutermatrix.cc 
-#				grouter/groutercache.cc \
-#				grouter/rsgrouterclient.cc 
 }
 
 dsdv {
@@ -397,6 +380,13 @@ HEADERS +=	rsserver/p3face.h \
 			rsserver/rsaccounts.h \
 			rsserver/p3serverconfig.h
 
+HEADERS +=  grouter/groutercache.h \
+				grouter/rsgrouter.h \
+				grouter/grouteritems.h \
+				grouter/p3grouter.h \
+				grouter/rsgroutermatrix.h \
+				grouter/rsgrouterclient.h 
+
 HEADERS +=	serialiser/rsbaseserial.h \
 			serialiser/rsfiletransferitems.h \
 			serialiser/rsserviceserialiser.h \
@@ -532,6 +522,10 @@ SOURCES += 		rsserver/p3face-config.cc \
 			rsserver/rsloginhandler.cc \
 			rsserver/rstypes.cc \
 			rsserver/p3serverconfig.cc
+
+SOURCES +=  grouter/p3grouter.cc \
+				grouter/grouteritems.cc \ 
+				grouter/groutermatrix.cc 
 
 SOURCES += plugins/pluginmanager.cc \
 				plugins/dlfcn_win32.cc \

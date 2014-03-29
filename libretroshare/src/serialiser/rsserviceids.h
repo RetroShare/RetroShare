@@ -48,6 +48,7 @@ const uint16_t RS_SERVICE_TYPE_TURTLE        = 0x0014;
 const uint16_t RS_SERVICE_TYPE_TUNNEL        = 0x0015;
 const uint16_t RS_SERVICE_TYPE_HEARTBEAT     = 0x0016;
 const uint16_t RS_SERVICE_TYPE_FILE_TRANSFER = 0x0017;
+const uint16_t RS_SERVICE_TYPE_GROUTER       = 0x0018;
 
 /* BanList Still Testing at the moment - Service Only */
 const uint16_t RS_SERVICE_TYPE_BANLIST     = 0x0101;

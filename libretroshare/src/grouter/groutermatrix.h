@@ -28,8 +28,8 @@
 #include <list>
 
 #include "pgp/rscertificate.h"
+#include "retroshare/rsgrouter.h"
 #include "groutertypes.h"
-#include "rsgrouter.h"
 
 class RsItem ;
 
@@ -51,7 +51,7 @@ class GRouterMatrix
 		// the computation accounts for the time at which the info was received and the
 		// weight of each routing hit record.
 		//
-		bool computeRoutingProbabilities(const GRouterKeyId& id, const std::list<RsPeerId>& friends, std::map<RsPeerId,float>& probas) const ;
+		bool computeRoutingProbabilities(const GRouterKeyId& id, const std::vector<RsPeerId>& friends, std::vector<float>& probas) const ;
 
 		// Update routing probabilities for each key, accounting for all received events, but without
 		// activity information 
@@ -60,14 +60,15 @@ class GRouterMatrix
 
 		// Record one routing clue. The events can possibly be merged in time buckets.
 		//
-		bool addRoutingClue(const GRouterKeyId& id,const GRouterServiceId& sid,float distance,const std::string& desc_string,const RsPeerId& source_friend) ;
+		bool addRoutingClue(const GRouterKeyId& id,const RsPeerId& source_friend,float weight) ;
+
+		bool saveList(std::list<RsItem*>& items) ;
+		bool loadList(std::list<RsItem*>& items) ;
 
 		// Dump info in terminal.
 		//
 		void debugDump() const ;
-
-		bool saveList(std::list<RsItem*>& items) ;
-		bool loadList(std::list<RsItem*>& items) ;
+		void getListOfKnownKeys(std::vector<GRouterKeyId>& key_ids) const ;
 
 	private:
 		// returns the friend id, possibly creating a new id.

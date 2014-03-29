@@ -27,43 +27,56 @@
 
 #include "util/rsdir.h"
 #include "grouter/groutertypes.h"
+#include "retroshare/rsids.h"
 
-typedef Sha1CheckSum GRouterKeyId ;	// we use sha1. Gives sufficient entropy.
+typedef GRouterKeyIdType GRouterKeyId ;	// we use SSLIds, so that it's easier in the GUI to mix up peer ids with grouter ids.
+
 class GRouterClientService ;
 class RsGRouterGenericDataItem ;
-
-// This is the interface file for the global router service.
-//
-struct RoutingCacheInfo
-{
-	// what do we want to show here?
-	// 	- recently routed items
-	// 	- ongoing routing info
-	// 		- pending items, waiting for an answer
-	// 		- 
-};
-
-struct RoutingMatrixInfo
-{
-	// Probabilities of reaching a given key for each friend.
-	// This concerns all known keys.
-	//
-	std::map<GRouterKeyId, std::vector<float> > per_friend_probabilities ;
-
-	// List of own published keys, with associated service ID
-	//
-	std::map<GRouterKeyId, GRouterClientService *> published_keys ;
-};
 
 class RsGRouter
 {
 	public:
+		// This is the interface file for the global router service.
+		//
+		struct GRouterRoutingCacheInfo
+		{
+			GRouterMsgPropagationId mid ;
+			RsPeerId                local_origin;
+			GRouterKeyId            destination ;
+			time_t                  time_stamp ;
+			uint32_t                status ;
+			uint32_t                data_size ;
+		};
+
+		struct GRouterPublishedKeyInfo
+		{
+			std::string  description_string ;
+			uint32_t     service_id ;
+		};
+
+		struct GRouterRoutingMatrixInfo
+		{
+			// Probabilities of reaching a given key for each friend.
+			// This concerns all known keys.
+			//
+			std::map<GRouterKeyId, std::vector<float> > per_friend_probabilities ;
+
+			// List of friend ids in the same order. Should roughly correspond to the friends that are currently online.
+			//
+			std::vector<RsPeerId> friend_ids ;
+
+			// List of own published keys, with associated service ID
+			//
+			std::map<GRouterKeyId,GRouterPublishedKeyInfo> published_keys ;
+		};
+
 		//===================================================//
 		//                  Debugging info                   //
 		//===================================================//
 
-		virtual bool getRoutingCacheInfo(RoutingCacheInfo& info) =0; 
-		virtual bool getRoutingMatrixInfo(RoutingMatrixInfo& info) =0; 
+		virtual bool getRoutingCacheInfo(std::vector<GRouterRoutingCacheInfo>& infos) =0; 
+		virtual bool getRoutingMatrixInfo(GRouterRoutingMatrixInfo& info) =0; 
 
 		// retrieve the routing probabilities
 		
@@ -72,8 +85,7 @@ class RsGRouter
 		//===================================================//
 
 		virtual void sendData(const GRouterKeyId& destination, RsGRouterGenericDataItem *item) =0;
-		virtual bool registerKey(const GRouterKeyId& key,const PGPFingerprintType& fps,const GRouterServiceId& client_id,const std::string& description_string) =0;
-
+		virtual bool registerKey(const GRouterKeyId& key,const GRouterServiceId& client_id,const std::string& description_string) =0;
 };
 
 // To access the GRouter from anywhere

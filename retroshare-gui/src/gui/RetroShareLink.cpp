@@ -565,7 +565,23 @@ bool RetroShareLink::createMessage(const RsPeerId& peerId, const QString& subjec
 
 	return valid();
 }
+bool RetroShareLink::createMessage(const RsGxsId& peerId, const QString& subject)
+{
+    clear();
 
+    _hash = QString::fromStdString(peerId.toStdString());
+
+    //PeerDefs::rsidFromId(peerId, &_name);
+    _name = QString::fromStdString("GXS_id("+peerId.toStdString()+")") ;
+    // do something better here!!
+    _subject = subject;
+
+    _type = TYPE_MESSAGE;
+
+    check();
+
+    return valid();
+}
 void RetroShareLink::clear()
 {
     _valid = false;
@@ -1507,14 +1523,15 @@ static void processList(const QStringList &list, const QString &textSingular, co
 					{
                         if (detail.accept_connection || RsPeerId(detail.id) == rsPeers->getOwnId() || RsPgpId(detail.gpg_id) == rsPeers->getGPGOwnId()) {
 							MessageComposer *msg = MessageComposer::newMsg();
-							msg->addRecipient(MessageComposer::TO, detail.id, false);
+                            msg->addRecipient(MessageComposer::TO, detail.id);
 							if (link.subject().isEmpty() == false) {
 								msg->setTitleText(link.subject());
 							}
 							msg->show();
 							messageStarted.append(PeerDefs::nameWithLocation(detail));
-						} 
-                        else if(rsMsgs->getDistantMessagePeerId(detail.gpg_id,dm_pid))
+                        }
+#ifdef SUSPENDED
+            else if(rsMsgs->getDistantMessagePeerId(detail.gpg_id,dm_pid))
 						{
 							MessageComposer *msg = MessageComposer::newMsg();
                             msg->addRecipient(MessageComposer::TO, dm_pid,detail.gpg_id) ;
@@ -1525,7 +1542,8 @@ static void processList(const QStringList &list, const QString &textSingular, co
 							msg->show();
 							messageStarted.append(PeerDefs::nameWithLocation(detail));
 
-						}
+                        }
+#endif
 						else 
 						{
 							messageReceipientNotAccepted.append(PeerDefs::nameWithLocation(detail));
