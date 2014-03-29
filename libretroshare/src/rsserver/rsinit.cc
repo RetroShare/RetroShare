@@ -1455,12 +1455,12 @@ int RsServer::StartupRetroShare()
 	mStatusSrv = new p3StatusService(serviceCtrl);
 
 #ifdef ENABLE_GROUTER
-	p3GRouter *gr = new p3GRouter(mLinkMgr) ;
+	p3GRouter *gr = new p3GRouter(serviceCtrl,mLinkMgr) ;
 	rsGRouter = gr ;
 	pqih->addService(gr,true) ;
 #endif
 
-	p3turtle *tr = new p3turtle(mLinkMgr) ;
+	p3turtle *tr = new p3turtle(serviceCtrl,mLinkMgr) ;
 	rsTurtle = tr ;
 	pqih -> addService(tr,true);
 	pqih -> addService(ftserver,true);

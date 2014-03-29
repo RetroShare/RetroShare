@@ -216,7 +216,7 @@ class TurtleHashInfo
 class p3turtle: public p3Service, public RsTurtle, public p3Config
 {
 	public:
-		p3turtle(p3LinkMgr *lm) ;
+		p3turtle(p3ServiceControl *sc,p3LinkMgr *lm) ;
 		virtual RsServiceInfo getServiceInfo();
 
 		// Enables/disable the service. Still ticks, but does nothing. Default is true.
@@ -375,8 +375,10 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 		//--------------------------- Local variables --------------------------------//
 		
 		/* data */
-		p3LinkMgr *mLinkMgr;
+		p3ServiceControl   *mServiceControl;
+		p3LinkMgr          *mLinkMgr;
 		RsTurtleSerialiser *_serialiser ;
+		RsPeerId            _own_id ;
 
 		mutable RsMutex mTurtleMtx;
 

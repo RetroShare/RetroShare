@@ -50,7 +50,7 @@ class RsGRouterACKItem ;
 class p3GRouter: public RsGRouter, public p3Service, public p3Config
 {
 	public:
-		p3GRouter(p3LinkMgr *lm) ;
+		p3GRouter(p3ServiceControl *sc,p3LinkMgr *lm) ;
 
 		//===================================================//
 		//         Router clients business                   //
@@ -226,7 +226,8 @@ class p3GRouter: public RsGRouter, public p3Service, public p3Config
 
 		// Pointers to other RS objects
 		//
-		p3LinkMgr *mLinkMgr ;
+		p3ServiceControl *mServiceControl ;
+		p3LinkMgr        *mLinkMgr ;
 
 		// Multi-thread protection mutex.
 		//

@@ -191,10 +191,14 @@
 #include "groutertypes.h"
 #include "grouterclientservice.h"
 
+/**********************/
+//#define GROUTER_DEBUG
+/**********************/
+
 const std::string p3GRouter::SERVICE_INFO_APP_NAME = "Global Router" ;
 
-p3GRouter::p3GRouter(p3LinkMgr *lm)
-	: p3Service(), p3Config(), mLinkMgr(lm), grMtx("GRouter")
+p3GRouter::p3GRouter(p3ServiceControl *sc,p3LinkMgr *lm)
+	: p3Service(), p3Config(), mServiceControl(sc), mLinkMgr(lm), grMtx("GRouter")
 {
 	addSerialType(new RsGRouterSerialiser()) ;
 
@@ -234,6 +238,7 @@ int p3GRouter::tick()
 		_routing_matrix.updateRoutingProbabilities() ;
 	}
 
+#ifdef GROUTER_DEBUG
 	// Debug dump everything
 	//
 	if(now > last_debug_output_time + RS_GROUTER_DEBUG_OUTPUT_PERIOD)
@@ -241,13 +246,16 @@ int p3GRouter::tick()
 		last_debug_output_time = now ;
 		debugDump() ;
 	}
+#endif
 
 	// If content has changed, save config, at most every RS_GROUTER_MIN_CONFIG_SAVE_PERIOD seconds appart
 	// Otherwise, always save at least every RS_GROUTER_MAX_CONFIG_SAVE_PERIOD seconds
 	//
 	if(_changed && now > last_config_changed + RS_GROUTER_MIN_CONFIG_SAVE_PERIOD)
 	{
+#ifdef GROUTER_DEBUG
 		std::cerr << "p3GRouter::tick(): triggering config save." << std::endl;
+#endif
 
 		_changed = false ;
 		last_config_changed = now ;
@@ -271,7 +279,9 @@ void p3GRouter::autoWash()
 {
 	RsStackMutex mtx(grMtx) ;
 
+#ifdef GROUTER_DEBUG
 	std::cerr << "p3GRouter::autoWash(): cleaning old entried." << std::endl;
+#endif
 
 	// cleanup cache
 
@@ -280,7 +290,9 @@ void p3GRouter::autoWash()
 	for(std::map<GRouterKeyPropagationId,time_t>::iterator it(_key_diffusion_time_stamps.begin());it!=_key_diffusion_time_stamps.end();)
 		if(it->second + RS_GROUTER_KEY_DIFFUSION_MAX_KEEP < now)
 		{
+#ifdef GROUTER_DEBUG
 			std::cerr << "  Removing key diffusion time stamp " << it->second << " for diffusion id " << std::hex << it->first << std::dec << std::endl;
+#endif
 			std::map<GRouterKeyPropagationId,time_t>::iterator tmp(it) ;
 			++tmp ;
 			_key_diffusion_time_stamps.erase(it) ;
@@ -291,8 +303,10 @@ void p3GRouter::autoWash()
 
 	// look into pending items.
 	
+#ifdef GROUTER_DEBUG
 	std::cerr << "  Pending key diffusion items: " << _key_diffusion_items.size() << std::endl;
 	std::cerr << "  Pending messages to route  : " << _pending_messages.size() << std::endl;
+#endif
 }
 
 void p3GRouter::routePendingObjects()
@@ -301,20 +315,23 @@ void p3GRouter::routePendingObjects()
 
 	time_t now = time(NULL) ;
 
+#ifdef GROUTER_DEBUG
 	std::cerr << "p3GRouter::routeObjects() triage phase:" << std::endl;
 	std::cerr << "Cached Items : " << _pending_messages.size() << std::endl;
+#endif
 
-	std::list<RsPeerId> lst ;
-	mLinkMgr->getOnlineList(lst) ;
-	RsPeerId own_id( mLinkMgr->getOwnId() );
+	std::set<RsPeerId> lst ;
+	mServiceControl->getPeersConnected(RS_SERVICE_TYPE_GROUTER,lst) ;
+	RsPeerId own_id( mServiceControl->getOwnId() );
 
 	std::vector<RsPeerId> pids ;
-	for(std::list<RsPeerId>::const_iterator it(lst.begin());it!=lst.end();++it)
+	for(std::set<RsPeerId>::const_iterator it(lst.begin());it!=lst.end();++it)
 		pids.push_back(*it) ;
 
 	for(std::map<GRouterMsgPropagationId, GRouterRoutingInfo>::iterator it(_pending_messages.begin());it!=_pending_messages.end();)
 		if((it->second.status_flags == RS_GROUTER_ROUTING_STATE_PEND) || (it->second.status_flags == RS_GROUTER_ROUTING_STATE_SENT && it->second.tried_friends.front().time_stamp+RS_GROUTER_ROUTING_WAITING_TIME < now))
 		{
+#ifdef GROUTER_DEBUG
 			std::cerr << "  Msg id: " << std::hex << it->first << std::dec << std::endl;
 			std::cerr << "  Origin: " << it->second.origin.toStdString() << std::endl;
 			std::cerr << "  Last  : " << it->second.tried_friends.front().friend_id.toStdString() << std::endl;
@@ -322,6 +339,7 @@ void p3GRouter::routePendingObjects()
 			std::cerr << "  Flags : " << it->second.status_flags << std::endl;
 			std::cerr << "  Dist  : " << it->second.data_item->randomized_distance<< std::endl;
 			std::cerr << "  Probabilities: " << std::endl;
+#endif
 
 			std::vector<float> probas ;		// friends probabilities for online friend list.
 			RsPeerId routed_friend ;			// friend chosen for the next hop
@@ -339,13 +357,17 @@ void p3GRouter::routePendingObjects()
 
 			std::set<uint32_t> routing_friend_indices = computeRoutingFriends(pids,probas,N) ;
 
+#ifdef GROUTER_DEBUG
 			std::cerr << "  Routing statistics: " << std::endl;
+#endif
 
 			// Actually send the item.
 
 			for(std::set<uint32_t>::const_iterator its(routing_friend_indices.begin());its!=routing_friend_indices.end();++its)
 			{
+#ifdef GROUTER_DEBUG
 				std::cerr << "    Friend : " << (*its) << std::endl;
+#endif
 
 				// make a deep copy of the item
 				RsGRouterGenericDataItem *new_item = it->second.data_item->duplicate() ;
@@ -360,8 +382,10 @@ void p3GRouter::routePendingObjects()
 				it->second.tried_friends.push_front(ftr) ;
 				it->second.status_flags = RS_GROUTER_ROUTING_STATE_SENT ;
 
+#ifdef GROUTER_DEBUG
 				std::cerr << "    Routing probability: " << ftr.probability << std::endl;
 				std::cerr << "    Sending..." << std::endl;
+#endif
 
 				// send
 				new_item->PeerId(pids[*its]) ;
@@ -375,7 +399,9 @@ void p3GRouter::routePendingObjects()
 			{
 				// We remove from the map. That means the RsItem* has been transfered to somewhere else.
 				//
+#ifdef GROUTER_DEBUG
 				std::cerr << "  Removing item from pending items" << std::endl;
+#endif
 
 				std::map<GRouterMsgPropagationId, GRouterRoutingInfo>::iterator tmp(it) ;
 				delete it->second.data_item ;
@@ -388,7 +414,9 @@ void p3GRouter::routePendingObjects()
 		}
 		else
 		{
+#ifdef GROUTER_DEBUG
 			std::cerr << "Skipping " << std::hex << it->first << std::dec << ", dest=" << it->second.data_item->destination_key.toStdString() << ", state = " << it->second.status_flags << ", stamp=" << it->second.tried_friends.front().time_stamp << " - " << it->second.tried_friends.front().friend_id.toStdString() << std::endl;
+#endif
 			++it ;
 		}
 }
@@ -452,10 +480,12 @@ void p3GRouter::publishKeys()
 		{
 			// publish this key
 
+#ifdef GROUTER_DEBUG
 			std::cerr << "Publishing this key: " << std::endl;
 			std::cerr << "   Key id          : " << it->first.toStdString() << std::endl;
 			std::cerr << "   Service id      : " << std::hex << info.service_id << std::dec << std::endl;
 			std::cerr << "   Description     : " << info.description_string << std::endl;
+#endif
 
 			RsGRouterPublishKeyItem item ;
 			item.diffusion_id = RSRandom::random_u32() ;
@@ -477,17 +507,21 @@ void p3GRouter::publishKeys()
 
 void p3GRouter::locked_forwardKey(const RsGRouterPublishKeyItem& item) 
 {
-    std::list<RsPeerId> connected_peers ;
-	mLinkMgr->getOnlineList(connected_peers) ;
+	std::set<RsPeerId> connected_peers ;
+	mServiceControl->getPeersConnected(RS_SERVICE_TYPE_GROUTER,connected_peers) ;
 
+#ifdef GROUTER_DEBUG
 	std::cerr << "  Forwarding key item to all available friends..." << std::endl;
+#endif
 
 	// get list of connected friends, and broadcast to all of them
 	//
-    for(std::list<RsPeerId>::const_iterator it(connected_peers.begin());it!=connected_peers.end();++it)
+    for(std::set<RsPeerId>::const_iterator it(connected_peers.begin());it!=connected_peers.end();++it)
 		if(item.PeerId() != *it)
 		{
+#ifdef GROUTER_DEBUG
 			std::cerr << "    sending to " << (*it) << std::endl; 
+#endif
 
 			RsGRouterPublishKeyItem *itm = new RsGRouterPublishKeyItem(item) ;
 			itm->PeerId(*it) ;
@@ -496,8 +530,10 @@ void p3GRouter::locked_forwardKey(const RsGRouterPublishKeyItem& item)
 
 			sendItem(itm) ;
 		}
+#ifdef GROUTER_DEBUG
 		else
 			std::cerr << "    Not forwarding to source id " << item.PeerId() << std::endl;
+#endif
 }
 bool p3GRouter::registerKey(const GRouterKeyId& key,const GRouterServiceId& client_id,const std::string& description) 
 {
@@ -515,11 +551,12 @@ bool p3GRouter::registerKey(const GRouterKeyId& key,const GRouterServiceId& clie
 	//info.last_published_time = 0 ; 	// means never published, se it will be re-published soon.
 
 	_owned_key_ids[key] = info ;
-
+#ifdef GROUTER_DEBUG
 	std::cerr << "Registered the following key: " << std::endl;
 	std::cerr << "   Key id      : " << key.toStdString() << std::endl;
 	std::cerr << "   Client id   : " << std::hex << client_id << std::dec << std::endl;
 	std::cerr << "   Description : " << info.description_string << std::endl;
+#endif
 
 	return true ;
 }
@@ -535,10 +572,12 @@ bool p3GRouter::unregisterKey(const GRouterKeyId& key)
 		return false ;
 	}
 
+#ifdef GROUTER_DEBUG
 	std::cerr << "p3GRouter::unregistered the following key: " << std::endl;
 	std::cerr << "   Key id      : " << key.toStdString() << std::endl;
 	std::cerr << "   Client id   : " << std::hex << it->second.service_id << std::dec << std::endl;
 	std::cerr << "   Description : " << it->second.description_string << std::endl;
+#endif
 
 	_owned_key_ids.erase(it) ;
 
@@ -572,12 +611,14 @@ void p3GRouter::handleRecvPublishKeyItem(RsGRouterPublishKeyItem *item)
 {
 	RsStackMutex mtx(grMtx) ;
 
+#ifdef GROUTER_DEBUG
 	std::cerr << "Received key publish item for key :" << std::endl ;
 	std::cerr << "     diffusion  = " << std::hex << item->diffusion_id << std::dec << std::endl ;
 	std::cerr << "     key id     = " << item->published_key.toStdString() << std::endl ;
 	std::cerr << "     service id = " << std::hex << item->service_id << std::dec << std::endl;
 	std::cerr << "     distance   = " << item->randomized_distance << std::endl;
 	std::cerr << "     description= " << item->description_string << std::endl;
+#endif
 
 	// update the route matrix
 
@@ -593,7 +634,9 @@ void p3GRouter::handleRecvPublishKeyItem(RsGRouterPublishKeyItem *item)
 
 	if(found)
 	{
+#ifdef GROUTER_DEBUG
 		std::cerr << "  Key diffusion item already in cache. Not forwardign further." << std::endl;
+#endif
 		return ;
 	}
 
@@ -608,7 +651,9 @@ void p3GRouter::handleRecvPublishKeyItem(RsGRouterPublishKeyItem *item)
 void p3GRouter::handleRecvACKItem(RsGRouterACKItem *item)
 {
 	RsStackMutex mtx(grMtx) ;
+#ifdef GROUTER_DEBUG
 	std::cerr << "Received ACK item, mid=" << std::hex << item->mid << std::dec << ", ACK type = "<< item->state << std::endl;
+#endif
 
 	// find the item in the pendign list, 
 	// 	- if not found, drop.
@@ -624,7 +669,9 @@ void p3GRouter::handleRecvACKItem(RsGRouterACKItem *item)
 
 	if(it == _pending_messages.end())
 	{
+#ifdef GROUTER_DEBUG
 		std::cerr << "p3GRouter::handleRecvACKItem(): cannot find entry for message id " << std::hex << item->mid << std::dec << ". Dropping it." << std::endl;
+#endif
 		return ;
 	}
 	switch(item->state)
@@ -633,7 +680,9 @@ void p3GRouter::handleRecvACKItem(RsGRouterACKItem *item)
 		case RS_GROUTER_ACK_STATE_RECEIVED:								
 			// Notify the origin. This is the main route and it was successful.
 																				
+#ifdef GROUTER_DEBUG
 			std::cerr << "  updating routing matrix." << std::endl;
+#endif
 
 			it->second.status_flags = RS_GROUTER_ROUTING_STATE_ARVD ;
 
@@ -643,7 +692,9 @@ void p3GRouter::handleRecvACKItem(RsGRouterACKItem *item)
 				// Now compute the weight for that particular item. See with what probabilities it was chosen.
 				//
 				float weight = (item->state == RS_GROUTER_ACK_STATE_RECEIVED)?1.0f : 0.5;
+#ifdef GROUTER_DEBUG
 				std::cerr << "    weight = " << weight << std::endl;
+#endif
 
 
 				_routing_matrix.addRoutingClue(it->second.data_item->destination_key,item->PeerId(),weight) ;
@@ -651,7 +702,9 @@ void p3GRouter::handleRecvACKItem(RsGRouterACKItem *item)
 
 			if(it->second.origin != mLinkMgr->getOwnId())
 			{
+#ifdef GROUTER_DEBUG
 				std::cerr << "  forwarding ACK to origin: " << it->second.origin.toStdString() << std::endl;
+#endif
 				sendACK(it->second.origin,item->mid,item->state) ;
 			}
 			break ;
@@ -663,7 +716,9 @@ void p3GRouter::handleRecvACKItem(RsGRouterACKItem *item)
 	if(it->second.origin == mLinkMgr->getOwnId())
 	{
 		// find the client service and notify it.
+#ifdef GROUTER_DEBUG
 		std::cerr << "  We're owner: should notify client id" << std::endl;
+#endif
 	}
 
 	// Just decrement the list of tried friends
@@ -671,7 +726,9 @@ void p3GRouter::handleRecvACKItem(RsGRouterACKItem *item)
 	for(std::list<FriendTrialRecord>::iterator it2(it->second.tried_friends.begin());it2!=it->second.tried_friends.end();++it2)
 		if( (*it2).friend_id == item->PeerId())
 		{
+#ifdef GROUTER_DEBUG
 			std::cerr << "  Removing friend try for peer " << item->PeerId() << ". " << it->second.tried_friends.size() << " tries left." << std::endl;
+#endif
 			it->second.tried_friends.erase(it2) ;
 			break ;
 		}
@@ -681,20 +738,26 @@ void p3GRouter::handleRecvACKItem(RsGRouterACKItem *item)
 		delete it->second.data_item ;
 		_pending_messages.erase(it) ;
 
+#ifdef GROUTER_DEBUG
 		std::cerr << "  No tries left. Removing item from pending list." << std::endl;
+#endif
 	}
 }
 
 void p3GRouter::handleRecvDataItem(RsGRouterGenericDataItem *item)
 {
 	RsStackMutex mtx(grMtx) ;
+#ifdef GROUTER_DEBUG
 	std::cerr << "Received data item for key " << item->destination_key << ", distance = " << item->randomized_distance << std::endl;
+#endif
 
 	// check the item depth. If too large, send a ACK back.
 
 	if(item->randomized_distance > GROUTER_ITEM_MAX_TRAVEL_DISTANCE)
 	{
+#ifdef GROUTER_DEBUG
 		std::cerr << "  Distance is too large: " << item->randomized_distance << " units. Item is dropped." << std::endl;
+#endif
 		sendACK(item->PeerId(),item->routing_id,RS_GROUTER_ACK_STATE_TOO_FAR) ;
 		return ;
 	}
@@ -709,13 +772,17 @@ void p3GRouter::handleRecvDataItem(RsGRouterGenericDataItem *item)
 
 	if(itr != _pending_messages.end())
 	{
+#ifdef GROUTER_DEBUG
 		std::cerr << "  Item is already there. Nothing to do. Should we update the cache?" << std::endl;
+#endif
 
 		item_copy = itr->second.data_item ;
 	}
 	else		// item is not known. Store it into pending msgs. We make a copy, since the item will be deleted otherwise.
 	{
+#ifdef GROUTER_DEBUG
 		std::cerr << "  Item is new. Storing in cache as pending messages." << std::endl;
+#endif
 
 		GRouterRoutingInfo info ;
 
@@ -744,16 +811,22 @@ void p3GRouter::handleRecvDataItem(RsGRouterGenericDataItem *item)
 
 			if(its != _registered_services.end())
 			{
+#ifdef GROUTER_DEBUG
 				std::cerr << "  Key is owned by us. Notifying service for this item." << std::endl;
+#endif
 				its->second->receiveGRouterData(it->first,item_copy) ;
 			}
+#ifdef GROUTER_DEBUG
 			else
 				std::cerr << "  (EE) weird situation. No service registered for a key that we own. Key id = " << item->destination_key.toStdString() << ", service id = " << it->second.service_id << std::endl;
+#endif
 		}
 	}
 	else
 	{
+#ifdef GROUTER_DEBUG
 		std::cerr << "  item is not for us. Storing in pending mode." << std::endl;
+#endif
 		itr->second.status_flags = RS_GROUTER_ROUTING_STATE_PEND ;
 	}
 
@@ -787,6 +860,7 @@ void p3GRouter::sendData(const GRouterKeyId& destination, RsGRouterGenericDataIt
 	item->destination_key = destination  ;
 	item->routing_id = propagation_id  ;
 
+#ifdef GROUTER_DEBUG
 	std::cerr << "p3GRouter::sendGRouterData(): pushing the followign item in the msg pending list:" << std::endl;
 	std::cerr << "  data_item.size = " << info.data_item->data_size << std::endl;
 	std::cerr << "  data_item.byte = " << info.data_item->data_bytes << std::endl;
@@ -795,6 +869,7 @@ void p3GRouter::sendData(const GRouterKeyId& destination, RsGRouterGenericDataIt
 	std::cerr << "  distance       = " << info.data_item->randomized_distance << std::endl;
 	std::cerr << "  origin         = " << info.origin.toStdString() << std::endl;
 	std::cerr << "  Recv time      = " << info.received_time << std::endl;
+#endif
 
 	_pending_messages[propagation_id] = info ;
 }
@@ -814,13 +889,17 @@ bool p3GRouter::loadList(std::list<RsItem*>& items)
 {
 	RsStackMutex mtx(grMtx) ;
 
+#ifdef GROUTER_DEBUG
 	std::cerr << "p3GRouter::loadList() : " << std::endl;
+#endif
 
 	_routing_matrix.loadList(items) ;
 
+#ifdef GROUTER_DEBUG
 	// remove all existing objects.
 	//
 	std::cerr << "  removing all existing items (" << _pending_messages.size() << " items to delete)." << std::endl;
+#endif
 
 	for(std::map<GRouterMsgPropagationId,GRouterRoutingInfo>::iterator it(_pending_messages.begin());it!=_pending_messages.end();++it)
 		delete it->second.data_item ;
@@ -850,12 +929,16 @@ bool p3GRouter::saveList(bool& cleanup,std::list<RsItem*>& items)
 
 	cleanup = true ; // the client should delete the items.
 
+#ifdef GROUTER_DEBUG
 	std::cerr << "p3GRouter::saveList()..." << std::endl;
 	std::cerr << "  saving routing clues." << std::endl;
+#endif
 
 	_routing_matrix.saveList(items) ;
 
+#ifdef GROUTER_DEBUG
 	std::cerr << "  saving pending items." << std::endl;
+#endif
 
 	for(std::map<GRouterMsgPropagationId,GRouterRoutingInfo>::const_iterator it(_pending_messages.begin());it!=_pending_messages.end();++it)
 	{
@@ -877,14 +960,14 @@ bool p3GRouter::getRoutingMatrixInfo(RsGRouter::GRouterRoutingMatrixInfo& info)
 	info.friend_ids.clear() ;
 	info.published_keys.clear() ;
 
-	std::list<RsPeerId> ids ;
-	mLinkMgr->getOnlineList(ids) ;
+	std::set<RsPeerId> ids ;
+	mServiceControl->getPeersConnected(RS_SERVICE_TYPE_GROUTER,ids) ;
 
 	RsStackMutex mtx(grMtx) ;
 
 	info.published_keys = _owned_key_ids ;
 
-	for(std::list<RsPeerId>::const_iterator it(ids.begin());it!=ids.end();++it)
+	for(std::set<RsPeerId>::const_iterator it(ids.begin());it!=ids.end();++it)
 		info.friend_ids.push_back(*it) ;
 
 	std::vector<GRouterKeyId> known_keys ;
