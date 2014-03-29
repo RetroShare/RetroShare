@@ -30,6 +30,7 @@
 
 #include <string>
 #include <map>
+#include <set>
 
 #include "pqi/pqi_base.h"
 #include "pqi/pqiindic.h"
@@ -59,48 +60,9 @@
  *
  *********************/
 
-const uint32_t CONFIG_TYPE_GENERAL 	    = 0x0001;
-const uint32_t CONFIG_TYPE_PEERS 	    = 0x0002;
-const uint32_t CONFIG_TYPE_FSERVER 	    = 0x0003;
-const uint32_t CONFIG_TYPE_MSGS 	       = 0x0004;
-const uint32_t CONFIG_TYPE_AUTHGPG	 	 = 0x0006;
-
-/* new FileTransfer */
-const uint32_t CONFIG_TYPE_FT_SHARED 	 = 0x0007;
-const uint32_t CONFIG_TYPE_FT_EXTRA_LIST= 0x0008;
-const uint32_t CONFIG_TYPE_FT_CONTROL 	 = 0x0009;
-const uint32_t CONFIG_TYPE_FT_DWLQUEUE	 = 0x000A;
-
-const uint32_t CONFIG_TYPE_P3DISC	 	 = 0x000B;
-const uint32_t CONFIG_TYPE_AUTHSSL	 	 = 0x000C;
-
-/* wish these ids where higher...
- * may move when switch to v0.5
- */
-const uint32_t CONFIG_TYPE_CHAT 	       = 0x0012;
-const uint32_t CONFIG_TYPE_STATUS 		 = 0x0013;
-const uint32_t CONFIG_TYPE_PLUGINS	 	 = 0x0014;
-const uint32_t CONFIG_TYPE_HISTORY 		 = 0x0015;
-
-/// turtle router
-const uint32_t CONFIG_TYPE_TURTLE	 	 = 0x0020;
-
-/// dht (relay stuff mainly)
-const uint32_t CONFIG_TYPE_BITDHT	 	 = 0x0030;
-
-/* standard services */
-const uint32_t CONFIG_TYPE_QBLOG 	    = 0x0101;
-const uint32_t CONFIG_TYPE_FORUMS 	    = 0x0102;
-const uint32_t CONFIG_TYPE_CHANNELS 	 = 0x0103;
-
-const uint32_t CONFIG_TYPE_GXS_REPUTATION	=  0x0200;
-
-
-
 /* CACHE ID Must be at the END so that other configurations
  * are loaded First (Cache Config --> Cache Loading)
  */
-const uint32_t CONFIG_TYPE_CACHE 	= 0xff01;
 
 class p3ConfigMgr;
 
@@ -114,7 +76,7 @@ class p3ConfigMgr;
 class pqiConfig
 {
 	public:
-	pqiConfig(uint32_t t);
+	pqiConfig();
 virtual ~pqiConfig();
 
 /**
@@ -128,12 +90,6 @@ virtual bool	loadConfiguration(RsFileHash &loadHash) = 0;
  * save configuration of object
  */
 virtual bool	saveConfiguration() = 0;
-
-/**
- * The type of configuration, see ids where this class is declared
- * @see p3cfgmgr.h
- */
-uint32_t   Type();
 
 /**
  *  The name of the configuration file
@@ -170,17 +126,13 @@ void	setHash(const RsFileHash& h);
 
 	Indicator ConfInd;
 
-	uint32_t    type;
 	std::string filename;
 	RsFileHash hash;
-
 
 	friend class p3ConfigMgr;
 	/* so it can access:
 	 * setFilename() and HasConfigChanged()
 	 */
-
-
 };
 
 
@@ -244,12 +196,12 @@ class p3ConfigMgr
 		 */
 		void loadConfig();
 
-const std::string basedir;
+	const std::string basedir;
 
 	RsMutex cfgMtx; /* below is protected */
 
-bool	mConfigSaveActive;
-std::map<uint32_t, pqiConfig *> configs;
+	bool	mConfigSaveActive;
+	std::list<pqiConfig *> mConfigs;
 };
 
 
@@ -266,7 +218,7 @@ class p3Config: public pqiConfig
 {
 	public:
 
-	p3Config(uint32_t t);
+	p3Config();
 
 virtual bool	loadConfiguration(RsFileHash &loadHash);
 virtual bool	saveConfiguration();

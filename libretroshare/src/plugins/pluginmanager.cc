@@ -41,7 +41,7 @@ typedef RsPlugin *(*RetroSharePluginEntry)(void) ;
 RsPluginHandler *rsPlugins ;
 
 RsPluginManager::RsPluginManager(const RsFileHash &hash)
-	: p3Config(CONFIG_TYPE_PLUGINS),_current_executable_hash(hash)
+	: p3Config(),_current_executable_hash(hash)
 {
 	_allow_all_plugins = false ;
 }
@@ -525,16 +525,16 @@ bool RsPluginManager::saveList(bool& cleanup, std::list<RsItem*>& list)
 	return true;
 }
 
-RsCacheService::RsCacheService(uint16_t service_type,uint32_t config_type,uint32_t tick_delay, RsPluginHandler* pgHandler)
+RsCacheService::RsCacheService(uint16_t service_type,uint32_t tick_delay, RsPluginHandler* pgHandler)
         : CacheSource(service_type, true, pgHandler->getFileServer()->getCacheStrapper(), pgHandler->getLocalCacheDir()),
           CacheStore (service_type, true, pgHandler->getFileServer()->getCacheStrapper(), pgHandler->getFileServer()->getCacheTransfer(), pgHandler->getRemoteCacheDir()),
-	  p3Config(config_type), // CONFIG_TYPE_RANK_LINK
+	  p3Config(), 
 	  _tick_delay_in_seconds(tick_delay)
 {
 }
 
-RsPQIService::RsPQIService(uint16_t service_type,uint32_t config_type,uint32_t /*tick_delay_in_seconds*/, RsPluginHandler* /*pgHandler*/)
-	: p3Service(),p3Config(config_type)
+RsPQIService::RsPQIService(uint16_t service_type,uint32_t /*tick_delay_in_seconds*/, RsPluginHandler* /*pgHandler*/)
+	: p3Service(),p3Config()
 {
 }
 

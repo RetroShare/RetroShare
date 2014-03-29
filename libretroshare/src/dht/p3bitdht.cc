@@ -83,7 +83,7 @@ virtual int dhtInfoCallback(const bdId *id, uint32_t type, uint32_t flags, std::
 
 p3BitDht::p3BitDht(const RsPeerId& id, pqiConnectCb *cb, p3NetMgr *nm, 
 			UdpStack *udpstack, std::string bootstrapfile)
-	:p3Config(CONFIG_TYPE_BITDHT), pqiNetAssistConnect(id, cb), mNetMgr(nm), dhtMtx("p3BitDht")
+	:p3Config(), pqiNetAssistConnect(id, cb), mNetMgr(nm), dhtMtx("p3BitDht")
 {
 	mDhtStunner = NULL;
 	mProxyStunner = NULL;

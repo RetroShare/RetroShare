@@ -123,7 +123,7 @@ uint32_t ConvertToSerialised(int32_t value, bool limit)
 
 
 p3GxsReputation::p3GxsReputation(p3LinkMgr *lm)
-	:p3Service(), p3Config(CONFIG_TYPE_GXS_REPUTATION),
+	:p3Service(), p3Config(),
 	mReputationMtx("p3GxsReputation"), mLinkMgr(lm) 
 {
 	addSerialType(new RsGxsReputationSerialiser());

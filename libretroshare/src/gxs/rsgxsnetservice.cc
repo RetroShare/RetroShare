@@ -44,7 +44,7 @@ RsGxsNetService::RsGxsNetService(uint16_t servType, RsGeneralDataService *gds,
                                  RsNxsNetMgr *netMgr, RsNxsObserver *nxsObs, 
 				const RsServiceInfo serviceInfo,
 				RsGixsReputation* reputations, RsGcxs* circles, bool grpAutoSync)
-                                     : p3ThreadedService(), p3Config(servType), mTransactionN(0),
+                                     : p3ThreadedService(), p3Config(), mTransactionN(0),
                                        mObserver(nxsObs), mDataStore(gds), mServType(servType),
                                        mTransactionTimeOut(TRANSAC_TIMEOUT), mNetMgr(netMgr), mNxsMutex("RsGxsNetService"),
                                        mSyncTs(0), mSYNC_PERIOD(SYNC_PERIOD), mCircles(circles), mReputations(reputations), mGrpAutoSync(grpAutoSync), mGrpServerUpdateItem(NULL),

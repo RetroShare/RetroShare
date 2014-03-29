@@ -9,7 +9,7 @@
 class RsPQIService: public p3Service, public p3Config
 {
 	public:
-		RsPQIService(uint16_t type,uint32_t config_type,uint32_t tick_delay_in_seconds, RsPluginHandler* pgHandler) ;
+		RsPQIService(uint16_t type,uint32_t tick_delay_in_seconds, RsPluginHandler* pgHandler) ;
 
 		uint32_t tickDelay() const { return _tick_delay_in_seconds ; }
 		virtual int tick() = 0 ;

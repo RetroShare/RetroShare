@@ -123,7 +123,7 @@ bool ftFiStore::search(const RsFileHash &hash, FileSearchFlags hintflags, FileIn
 
 		
 ftFiMonitor::ftFiMonitor(CacheStrapper *cs,std::string cachedir, const RsPeerId& pid,const std::string& config_dir)
-	:FileIndexMonitor(cs,cachedir, pid,config_dir), p3Config(CONFIG_TYPE_FT_SHARED)
+	:FileIndexMonitor(cs,cachedir, pid,config_dir), p3Config()
 {
 	return;
 }

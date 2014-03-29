@@ -41,7 +41,7 @@
  *****/
 
 ftExtraList::ftExtraList()
-	:p3Config(CONFIG_TYPE_FT_EXTRA_LIST), extMutex("p3Config")
+	:p3Config(), extMutex("p3Config")
 {
 	return;
 }

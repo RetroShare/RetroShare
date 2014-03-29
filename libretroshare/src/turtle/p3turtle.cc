@@ -99,7 +99,7 @@ static const int MAX_TR_FORWARD_PER_SEC_LOWER_LIMIT = 10 ;
 static const int DISTANCE_SQUEEZING_POWER 	       =  8 ;
 
 p3turtle::p3turtle(p3LinkMgr *lm)
-	:p3Service(), p3Config(CONFIG_TYPE_TURTLE), mLinkMgr(lm), mTurtleMtx("p3turtle")
+	:p3Service(), p3Config(), mLinkMgr(lm), mTurtleMtx("p3turtle")
 {
 	RsStackMutex stack(mTurtleMtx); /********** STACK LOCKED MTX ******/
 

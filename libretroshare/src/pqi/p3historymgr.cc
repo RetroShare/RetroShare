@@ -41,7 +41,7 @@
 RsHistory *rsHistory = NULL;
 
 p3HistoryMgr::p3HistoryMgr()
-	: p3Config(CONFIG_TYPE_HISTORY), mHistoryMtx("p3HistoryMgr")
+	: p3Config(), mHistoryMtx("p3HistoryMgr")
 {
 	nextMsgId = 1;
 

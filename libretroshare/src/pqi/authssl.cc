@@ -276,7 +276,7 @@ sslcert::sslcert(X509 *x509, const RsPeerId& pid)
 
 
 AuthSSLimpl::AuthSSLimpl()
-	: p3Config(CONFIG_TYPE_AUTHSSL), sslctx(NULL),
+	: p3Config(), sslctx(NULL),
 	mOwnCert(NULL), sslMtx("AuthSSL"), mOwnPrivateKey(NULL), mOwnPublicKey(NULL), init(0)
 {
 }

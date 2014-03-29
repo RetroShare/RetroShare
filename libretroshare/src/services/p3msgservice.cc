@@ -76,7 +76,7 @@ static const uint8_t ENCRYPTED_MSG_PROTOCOL_VERSION_01 = 0x37 ;
 
 
 p3MsgService::p3MsgService(p3ServiceControl *sc)
-	:p3Service(), p3Config(CONFIG_TYPE_MSGS),
+	:p3Service(), p3Config(),
 	mServiceCtrl(sc), mMsgMtx("p3MsgService"), mMsgUniqueId(time(NULL))
 {
 	_serialiser = new RsMsgSerialiser();

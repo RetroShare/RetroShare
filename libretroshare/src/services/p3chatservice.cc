@@ -76,7 +76,7 @@ static const uint32_t MAX_MESSAGES_PER_SECONDS_NUMBER     =  5 ; // max number o
 static const uint32_t MAX_MESSAGES_PER_SECONDS_PERIOD     = 10 ; // duration window for max number of messages before messages get dropped.
 
 p3ChatService::p3ChatService(p3ServiceControl *sc, p3LinkMgr *lm, p3HistoryMgr *historyMgr)
-	:p3Service(), p3Config(CONFIG_TYPE_CHAT), mChatMtx("p3ChatService"), mServiceCtrl(sc), mLinkMgr(lm) , mHistoryMgr(historyMgr)
+	:p3Service(), p3Config(), mChatMtx("p3ChatService"), mServiceCtrl(sc), mLinkMgr(lm) , mHistoryMgr(historyMgr)
 {
 	_serializer = new RsChatSerialiser() ;
 	_own_avatar = NULL ;

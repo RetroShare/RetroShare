@@ -57,10 +57,10 @@ void	p3ConfigMgr::tick()
 	RsStackMutex stack(cfgMtx); /***** LOCK STACK MUTEX ****/
 
 	/* iterate through and check if any have changed */
-	std::map<uint32_t, pqiConfig *>::iterator it;
-	for(it = configs.begin(); it != configs.end(); it++)
+	std::list<pqiConfig *>::iterator it;
+	for(it = mConfigs.begin(); it != mConfigs.end(); it++)
 	{
-		if (it->second->HasConfigChanged(0))
+		if ((*it)->HasConfigChanged(0))
 		{
 
 #ifdef CONFIG_DEBUG
@@ -104,17 +104,17 @@ void p3ConfigMgr::saveConfig()
 
 	RsStackMutex stack(cfgMtx);  /***** LOCK STACK MUTEX ****/
 
-	std::map<uint32_t, pqiConfig *>::iterator it;
-	for(it = configs.begin(); it != configs.end(); it++)
+	std::list<pqiConfig *>::iterator it;
+	for(it = mConfigs.begin(); it != mConfigs.end(); it++)
 	{
-		if (it->second->HasConfigChanged(1))
+		if ((*it)->HasConfigChanged(1))
 		{
 #ifdef CONFIG_DEBUG
 			std::cerr << "p3ConfigMgr::globalSaveConfig() Saving Element: ";
 			std::cerr << it->first;
 			std::cerr << std::endl;
 #endif
-			ok &= it->second->saveConfiguration();
+			ok &= (*it)->saveConfiguration();
 		}
 		/* save metaconfig */
 	}
@@ -131,9 +131,9 @@ void p3ConfigMgr::loadConfiguration()
 
 void p3ConfigMgr::loadConfig()
 {
-	std::map<uint32_t, pqiConfig *>::iterator cit;
-    RsFileHash dummyHash ;
-	for (cit = configs.begin(); cit != configs.end(); cit++)
+	std::list<pqiConfig *>::iterator cit;
+	RsFileHash dummyHash ;
+	for (cit = mConfigs.begin(); cit != mConfigs.end(); cit++)
 	{
 #ifdef CONFIG_DEBUG
 		std::cerr << "p3ConfigMgr::loadConfig() Element: ";
@@ -141,11 +141,11 @@ void p3ConfigMgr::loadConfig()
 		std::cerr << std::endl;
 #endif
 
-		cit->second->loadConfiguration(dummyHash);
+		(*cit)->loadConfiguration(dummyHash);
 
 		/* force config to NOT CHANGED */
-		cit->second->HasConfigChanged(0);
-		cit->second->HasConfigChanged(1);
+		(*cit)->HasConfigChanged(0);
+		(*cit)->HasConfigChanged(1);
 	}
 
 	return;
@@ -165,16 +165,20 @@ void	p3ConfigMgr::addConfiguration(std::string file, pqiConfig *conf)
 	filename += "config/";
 	filename += file;
 
-	conf->setFilename(filename);
-
-	std::map<uint32_t, pqiConfig *>::iterator cit = configs.find(conf->Type());
-	if (cit != configs.end())
+	std::list<pqiConfig *>::iterator cit = std::find(mConfigs.begin(),mConfigs.end(),conf);
+	if (cit != mConfigs.end())
 	{
-		std::cerr << "p3Config::addConfiguration() WARNING: type " << conf->Type();
-		std::cerr << " with filename " << filename;
-		std::cerr << " already added with filename " << cit->second->Filename() << std::endl;
+		std::cerr << "p3Config::addConfiguration() Config already added";
+		std::cerr << std::endl;
+		std::cerr << "\tOriginal filename " << (*cit)->Filename();
+		std::cerr << std::endl;
+		std::cerr << "\tIgnoring new filename " << filename;
+		std::cerr << std::endl;
+		return;
 	}
-	configs[conf->Type()] = conf;
+
+	conf->setFilename(filename);
+	mConfigs.push_back(conf);
 }
 
 
@@ -188,8 +192,8 @@ void    p3ConfigMgr::completeConfiguration()
 
 
 
-p3Config::p3Config(uint32_t t)
-	:pqiConfig(t)
+p3Config::p3Config()
+	:pqiConfig()
 {
 	return;
 }
@@ -407,7 +411,7 @@ bool p3Config::saveConfig()
 /**************************** CONFIGURATION CLASSES ********************/
 
 p3GeneralConfig::p3GeneralConfig()
-	:p3Config(CONFIG_TYPE_GENERAL)
+	:p3Config()
 {
 	return;
 }
@@ -544,8 +548,8 @@ bool    p3GeneralConfig::loadList(std::list<RsItem *>& load)
  * only the Indication and hash really need it
  */
 
-pqiConfig::pqiConfig(uint32_t t)
-	: cfgMtx("pqiConfig"), ConfInd(2), type(t)
+pqiConfig::pqiConfig()
+	: cfgMtx("pqiConfig"), ConfInd(2)
 {
 	return;
 }
@@ -553,12 +557,6 @@ pqiConfig::pqiConfig(uint32_t t)
 pqiConfig::~pqiConfig()
 {
 	return;
-}
-
-uint32_t   pqiConfig::Type()
-{
-	RsStackMutex stack(cfgMtx); /***** LOCK STACK MUTEX ****/
-	return type;
 }
 
 const std::string& pqiConfig::Filename()

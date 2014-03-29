@@ -99,7 +99,7 @@ ftFileControl::ftFileControl(std::string fname,
 }
 
 ftController::ftController(CacheStrapper *cs, ftDataMultiplex *dm, p3ServiceControl *sc, uint32_t ftServiceId)
-	:CacheTransfer(cs), p3Config(CONFIG_TYPE_FT_CONTROL), 
+	:CacheTransfer(cs), p3Config(), 
 	last_save_time(0),
 	last_clean_time(0),
 	mDataplex(dm),

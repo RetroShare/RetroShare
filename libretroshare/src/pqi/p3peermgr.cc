@@ -109,7 +109,7 @@ std::string textPeerConnectState(peerState &state)
 
 
 p3PeerMgrIMPL::p3PeerMgrIMPL(const RsPeerId& ssl_own_id, const RsPgpId& gpg_own_id, const std::string& gpg_own_name, const std::string& ssl_own_location)
-	:p3Config(CONFIG_TYPE_PEERS), mPeerMtx("p3PeerMgr"), mStatusChanged(false)
+	:p3Config(), mPeerMtx("p3PeerMgr"), mStatusChanged(false)
 {
 
 	{

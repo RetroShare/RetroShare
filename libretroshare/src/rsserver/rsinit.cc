@@ -1630,7 +1630,6 @@ int RsServer::StartupRetroShare()
 
 	mConfigMgr->addConfiguration("peers.cfg", mPeerMgr);
 	mConfigMgr->addConfiguration("general.cfg", mGeneralConfig);
-	mConfigMgr->addConfiguration("cache.cfg", mCacheStrapper);
 	mConfigMgr->addConfiguration("msgs.cfg", msgSrv);
 	mConfigMgr->addConfiguration("chat.cfg", chatSrv);
 	mConfigMgr->addConfiguration("p3History.cfg", mHistoryMgr);
@@ -1645,7 +1644,6 @@ int RsServer::StartupRetroShare()
 #endif
 
 #ifdef RS_ENABLE_GXS
-
 	mConfigMgr->addConfiguration("identity.cfg", gxsid_ns);
 	mConfigMgr->addConfiguration("gxsforums.cfg", gxsforums_ns);
 	mConfigMgr->addConfiguration("gxschannels.cfg", gxschannels_ns);
@@ -1654,7 +1652,6 @@ int RsServer::StartupRetroShare()
 	mConfigMgr->addConfiguration("wire.cfg", wire_ns);
 	mConfigMgr->addConfiguration("wiki.cfg", wiki_ns);
 	mConfigMgr->addConfiguration("photo.cfg", photo_ns);
-
 #endif
 
 	mPluginsManager->addConfigurations(mConfigMgr) ;
@@ -1666,12 +1663,13 @@ int RsServer::StartupRetroShare()
 	/**************************************************************************/
 	std::cerr << "(2) Load configuration files" << std::endl;
 
-	mConfigMgr->loadConfiguration();
-
 	/* NOTE: CacheStrapper's load causes Cache Files to be
 	 * loaded into all the CacheStores/Sources. This happens
 	 * after all the other configurations have happened.
 	 */
+
+	mConfigMgr->addConfiguration("cache.cfg", mCacheStrapper);
+	mConfigMgr->loadConfiguration();
 
 	/**************************************************************************/
 	/* trigger generalConfig loading for classes that require it */

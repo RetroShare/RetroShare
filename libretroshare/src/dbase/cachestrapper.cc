@@ -620,7 +620,7 @@ void 	CacheStore::locked_storeCacheEntry(const RsCacheData &data)
  ********************************* CacheStrapper ********************************/
 
 CacheStrapper::CacheStrapper(p3ServiceControl *sc, uint32_t ftServiceId)
-		:p3Config(CONFIG_TYPE_CACHE), mServiceCtrl(sc), mFtServiceId(ftServiceId), 
+		:p3Config(), mServiceCtrl(sc), mFtServiceId(ftServiceId), 
 		csMtx("CacheStrapper")
 {
 	return;
