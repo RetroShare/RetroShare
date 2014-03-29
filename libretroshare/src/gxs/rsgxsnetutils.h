@@ -28,10 +28,10 @@
 
 #include <stdlib.h>
 #include "retroshare/rsgxsifacetypes.h"
-#include "pqi/p3linkmgr.h"
 #include "serialiser/rsnxsitems.h"
 #include "rsgixs.h"
 
+class p3ServiceControl;
 
 /*!
  * This represents a transaction made
@@ -82,7 +82,7 @@ public:
 
 	virtual ~RsNxsNetMgr(){};
     virtual const RsPeerId& getOwnId() = 0;
-    virtual void getOnlineList(std::set<RsPeerId>& ssl_peers) = 0;
+    virtual void getOnlineList(const uint32_t serviceId, std::set<RsPeerId>& ssl_peers) = 0;
 
 };
 
@@ -91,16 +91,16 @@ class RsNxsNetMgrImpl : public RsNxsNetMgr
 
 public:
 
-    RsNxsNetMgrImpl(p3LinkMgr* lMgr);
+    RsNxsNetMgrImpl(p3ServiceControl* sc);
     virtual ~RsNxsNetMgrImpl(){};
 
-    const RsPeerId& getOwnId();
-    void getOnlineList(std::set<RsPeerId>& ssl_peers);
+    virtual const RsPeerId& getOwnId();
+    virtual void getOnlineList(const uint32_t serviceId, std::set<RsPeerId>& ssl_peers);
 
 private:
 
-    p3LinkMgr* mLinkMgr;
-    RsMutex mNxsNetMgrMtx;
+    // No need for mutex as this is constant in the class.
+    p3ServiceControl* mServiceCtrl;
 
 };
 

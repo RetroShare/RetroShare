@@ -84,7 +84,7 @@ void RsGxsNetService::syncWithPeers()
 {
 
 	std::set<RsPeerId> peers;
-	mNetMgr->getOnlineList(peers);
+	mNetMgr->getOnlineList(mServiceInfo.mServiceType, peers);
 
 	std::set<RsPeerId>::iterator sit = peers.begin();
 

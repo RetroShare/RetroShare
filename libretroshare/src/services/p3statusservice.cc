@@ -47,8 +47,8 @@ std::ostream& operator<<(std::ostream& out, const StatusInfo& si)
 
 RsStatus *rsStatus = NULL;
 
-p3StatusService::p3StatusService(p3LinkMgr *cm)
-	:p3Service(), p3Config(CONFIG_TYPE_STATUS), mLinkMgr(cm), mStatusMtx("p3StatusService")
+p3StatusService::p3StatusService(p3ServiceControl *sc)
+	:p3Service(), p3Config(CONFIG_TYPE_STATUS), mServiceCtrl(sc), mStatusMtx("p3StatusService")
 {
 	addSerialType(new RsStatusSerialiser());
 
@@ -83,7 +83,7 @@ bool p3StatusService::getOwnStatus(StatusInfo& statusInfo)
 #endif
 
 	std::map<RsPeerId, StatusInfo>::iterator it;
-	const RsPeerId& ownId = mLinkMgr->getOwnId();
+	const RsPeerId& ownId = mServiceCtrl->getOwnId();
 
 	RsStackMutex stack(mStatusMtx);
 	it = mStatusInfoMap.find(ownId);
@@ -154,12 +154,12 @@ bool p3StatusService::getStatus(const RsPeerId &id, StatusInfo &statusInfo)
 bool p3StatusService::sendStatus(const RsPeerId &id, uint32_t status)
 {
 	StatusInfo statusInfo;
-	std::list<RsPeerId> onlineList;
+	std::set<RsPeerId> onlineList;
 
 	{
 		RsStackMutex stack(mStatusMtx);
 
-		statusInfo.id = mLinkMgr->getOwnId();
+		statusInfo.id = mServiceCtrl->getOwnId();
 		statusInfo.status = status;
 
 		// don't save inactive status
@@ -179,13 +179,13 @@ bool p3StatusService::sendStatus(const RsPeerId &id, uint32_t status)
 		}
 
 		if (id.isNull()) {
-			mLinkMgr->getOnlineList(onlineList);
+			mServiceCtrl->getPeersConnected(getServiceInfo().mServiceType, onlineList);
 		} else {
-			onlineList.push_back(id);
+			onlineList.insert(id);
 		}
 	}
 
-	std::list<RsPeerId>::iterator it;
+	std::set<RsPeerId>::iterator it;
 
 #ifdef STATUS_DEBUG
 	std::cerr << "p3StatusService::sendStatus() " << std::endl;
@@ -288,11 +288,11 @@ bool p3StatusService::saveList(bool& cleanup, std::list<RsItem*>& ilist){
 
 	{
 		RsStackMutex stack(mStatusMtx);
-		it = mStatusInfoMap.find(mLinkMgr->getOwnId());
+		it = mStatusInfoMap.find(mServiceCtrl->getOwnId());
 
 		if(it == mStatusInfoMap.end()){
 			std::cerr << "p3StatusService::saveList() :" << "Did not find your status"
-				      << mLinkMgr->getOwnId() << std::endl;
+				      << mServiceCtrl->getOwnId() << std::endl;
 			delete own_status;
 			return false;
 		}
@@ -326,14 +326,14 @@ bool p3StatusService::loadList(std::list<RsItem*>& load){
 
 	if(own_status != NULL){
 
-		own_info.id = mLinkMgr->getOwnId();
+		own_info.id = mServiceCtrl->getOwnId();
 		own_info.status = own_status->status;
 		own_info.time_stamp = own_status->sendTime;
 		delete own_status;
 
 		{
 			RsStackMutex stack(mStatusMtx);
-			std::pair<RsPeerId, StatusInfo> pr(mLinkMgr->getOwnId(), own_info);
+			std::pair<RsPeerId, StatusInfo> pr(mServiceCtrl->getOwnId(), own_info);
 			mStatusInfoMap.insert(pr);
 		}
 
@@ -363,48 +363,52 @@ int p3StatusService::status(){
 
 /*************** pqiMonitor callback ***********************/
 
-void p3StatusService::statusChange(const std::list<pqipeer> &plist)
+void p3StatusService::statusChange(const std::list<pqiServicePeer> &plist)
 {
 	bool changedState = false;
 
 	StatusInfo statusInfo;
-	std::list<pqipeer>::const_iterator it;
-	for (it = plist.begin(); it != plist.end(); it++) {
-		if (it->state & RS_PEER_S_FRIEND) {
-			if (it->actions & RS_PEER_DISCONNECTED)
+	std::list<pqiServicePeer>::const_iterator it;
+	for (it = plist.begin(); it != plist.end(); it++)
+ 	{
+		if (it->actions & RS_SERVICE_PEER_DISCONNECTED)
+		{
 			{
-				{
-					RsStackMutex stack(mStatusMtx);
-					/* remove peer from status map */
-					mStatusInfoMap.erase(it->id);
-				} /* UNLOCKED */
+				RsStackMutex stack(mStatusMtx);
+				/* remove peer from status map */
+				mStatusInfoMap.erase(it->id);
+			} /* UNLOCKED */
 
-				changedState = true;
-				RsServer::notify()->notifyPeerStatusChanged(it->id.toStdString(), RS_STATUS_OFFLINE);
+			changedState = true;
+			RsServer::notify()->notifyPeerStatusChanged(it->id.toStdString(), RS_STATUS_OFFLINE);
+		}
+
+		if (it->actions & RS_SERVICE_PEER_CONNECTED) 
+		{
+			/* send current status, only call getOwnStatus once in the loop */
+			if (statusInfo.id.isNull() == false || getOwnStatus(statusInfo)) 
+			{
+				sendStatus(it->id, statusInfo.status);
 			}
 
-			if (it->actions & RS_PEER_CONNECTED) {
-				/* send current status, only call getOwnStatus once in the loop */
-				if (statusInfo.id.isNull() == false || getOwnStatus(statusInfo)) {
-					sendStatus(it->id, statusInfo.status);
-				}
+			{
+				RsStackMutex stack(mStatusMtx);
 
-				{
-					RsStackMutex stack(mStatusMtx);
+				/* We assume that the peer is online. If not, he send us a new status */
+				StatusInfo info;
+				info.id = it->id;
+				info.status = RS_STATUS_ONLINE;
+				info.time_stamp = time(NULL);
 
-					/* We assume that the peer is online. If not, he send us a new status */
-					StatusInfo info;
-					info.id = it->id;
-					info.status = RS_STATUS_ONLINE;
-					info.time_stamp = time(NULL);
+				mStatusInfoMap[it->id] = info;
+			} /* UNLOCKED */
 
-					mStatusInfoMap[it->id] = info;
-				} /* UNLOCKED */
+			changedState = true;
+			RsServer::notify()->notifyPeerStatusChanged(it->id.toStdString(), RS_STATUS_ONLINE);
+		}
 
-				changedState = true;
-				RsServer::notify()->notifyPeerStatusChanged(it->id.toStdString(), RS_STATUS_ONLINE);
-			}
-		} else if (it->actions & RS_PEER_MOVED) {
+		if (it->actions & RS_SERVICE_PEER_REMOVED) 
+		{
 			/* now handle remove */
 			{
 				RsStackMutex stack(mStatusMtx);

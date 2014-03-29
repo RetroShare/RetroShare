@@ -33,8 +33,10 @@
 
 #include "serialiser/rsbwctrlitems.h"
 #include "services/p3service.h"
-#include "pqi/pqipersongrp.h"
+#include "pqi/pqiservicemonitor.h"
 #include "retroshare/rsconfig.h" // for datatypes.
+
+class pqipersongrp;
 
 // Extern is defined here - as this is bundled with rsconfig.h
 class p3BandwidthControl;
@@ -69,7 +71,7 @@ class BwCtrlData
   * Sadly this has to be strongly integrated into pqi, with ref to pqipersongrp.
   */
 
-class p3BandwidthControl: public p3Service, public pqiMonitor
+class p3BandwidthControl: public p3Service, public pqiServiceMonitor
 {
 	public:
 		p3BandwidthControl(pqipersongrp *pg);
@@ -98,7 +100,7 @@ class p3BandwidthControl: public p3Service, public pqiMonitor
 		 */
 
 		/*************** pqiMonitor callback ***********************/
-		virtual void statusChange(const std::list<pqipeer> &plist);
+		virtual void statusChange(const std::list<pqiServicePeer> &plist);
 
 
 		/************* from p3Config *******************/

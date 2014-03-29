@@ -28,16 +28,16 @@
 
 // Moved Heartbeat to a seperate service.
 
-#include "pqi/p3linkmgr.h"
-#include "pqi/pqipersongrp.h"
 #include "services/p3service.h"
 
+class p3ServiceControl;
+class pqipersongrp;
 
 class p3heartbeat: public p3Service
 {
 	public:
 
-	p3heartbeat(p3LinkMgr *linkMgr, pqipersongrp *pqipg);
+	p3heartbeat(p3ServiceControl *sc, pqipersongrp *pqipg);
 virtual ~p3heartbeat();
 
 virtual RsServiceInfo getServiceInfo();
@@ -51,7 +51,7 @@ virtual RsServiceInfo getServiceInfo();
 
 	private:
 
-	p3LinkMgr *mLinkMgr;
+	p3ServiceControl *mServiceCtrl;
 	pqipersongrp *mPqiPersonGrp;
 
 	/* data */

@@ -1222,7 +1222,7 @@ int RsServer::StartupRetroShare()
 
 	/**************************** BITDHT ***********************************/
 
-	p3ServiceControl *serviceCtrl = new p3ServiceControl(mLinkMgr, 0);
+	p3ServiceControl *serviceCtrl = new p3ServiceControl(mLinkMgr);
 	rsServiceControl = serviceCtrl;
 
 	SecurityPolicy *none = secpolicy_create();
@@ -1230,12 +1230,12 @@ int RsServer::StartupRetroShare()
 	//pqih = new pqipersongrpDummy(none, flags);
 
 	/****** New Ft Server **** !!! */
-	ftServer *ftserver = new ftServer(mPeerMgr, mLinkMgr);
+	ftServer *ftserver = new ftServer(mPeerMgr, serviceCtrl);
 	ftserver->setConfigDirectory(rsAccounts.PathAccountDirectory());
 
 	ftserver->SetupFtServer() ;
 	CacheStrapper *mCacheStrapper = ftserver->getCacheStrapper();
-	CacheTransfer *mCacheTransfer = ftserver->getCacheTransfer();
+	//CacheTransfer *mCacheTransfer = ftserver->getCacheTransfer();
 
 	/* setup any extra bits (Default Paths) */
 	ftserver->setPartialsDirectory(emergencyPartialsDir);
@@ -1297,11 +1297,11 @@ int RsServer::StartupRetroShare()
 
 	/* create Services */
 	p3ServiceInfo *serviceInfo = new p3ServiceInfo(serviceCtrl);
-	mDisc = new p3discovery2(mPeerMgr, mLinkMgr, mNetMgr);
-	mHeart = new p3heartbeat(mLinkMgr, pqih);
-	msgSrv = new p3MsgService(mLinkMgr);
-	chatSrv = new p3ChatService(mLinkMgr, mHistoryMgr);
-	mStatusSrv = new p3StatusService(mLinkMgr);
+	mDisc = new p3discovery2(mPeerMgr, mLinkMgr, mNetMgr, serviceCtrl);
+	mHeart = new p3heartbeat(serviceCtrl, pqih);
+	msgSrv = new p3MsgService(serviceCtrl);
+	chatSrv = new p3ChatService(serviceCtrl, mLinkMgr, mHistoryMgr);
+	mStatusSrv = new p3StatusService(serviceCtrl);
 
 #ifdef GROUTER
 	p3GRouter *gr = new p3GRouter(mLinkMgr) ;
@@ -1383,7 +1383,7 @@ int RsServer::StartupRetroShare()
         // TODO: temporary to store GXS service data, remove
         RsDirUtil::checkCreateDirectory(currGxsDir);
 
-        RsNxsNetMgr* nxsMgr =  new RsNxsNetMgrImpl(mLinkMgr);
+        RsNxsNetMgr* nxsMgr =  new RsNxsNetMgrImpl(serviceCtrl);
 
         /**** Identity service ****/
 
@@ -1555,13 +1555,13 @@ int RsServer::StartupRetroShare()
 
 
 #ifdef RS_RTT
-	p3rtt *mRtt = new p3rtt(mLinkMgr);
+	p3rtt *mRtt = new p3rtt(serviceCtrl);
 	pqih -> addService(mRtt, true);
 	rsRtt = mRtt;
 #endif
 
 	// new services to test.
-	p3BanList *mBanList = new p3BanList(mLinkMgr, mNetMgr);
+	p3BanList *mBanList = new p3BanList(serviceCtrl, mNetMgr);
 	pqih -> addService(mBanList, true);
 	mBitDht->setupPeerSharer(mBanList);
 
@@ -1569,7 +1569,7 @@ int RsServer::StartupRetroShare()
 	pqih -> addService(mBwCtrl, true); 
 
 #ifdef SERVICES_DSDV
-	p3Dsdv *mDsdv = new p3Dsdv(mLinkMgr);
+	p3Dsdv *mDsdv = new p3Dsdv(serviceCtrl);
 	pqih -> addService(mDsdv, true);
 	rsDsdv = mDsdv;
 	mDsdv->addTestService();
@@ -1608,21 +1608,18 @@ int RsServer::StartupRetroShare()
 	mLinkMgr->addMonitor(serviceCtrl);
 	mLinkMgr->addMonitor(serviceInfo);
 
-	// below should be changed to pqiServiceMonitors....
-	mLinkMgr->addMonitor(mCacheStrapper);
-	mLinkMgr->addMonitor(msgSrv);
-	mLinkMgr->addMonitor(mStatusSrv);
-	mLinkMgr->addMonitor(chatSrv);
-	mLinkMgr->addMonitor(mBwCtrl);
+	// NOTE these were added in ftServer (was added twice).
+	//mLinkMgr->addMonitor(mCacheStrapper);
+	//mLinkMgr->addMonitor(((ftController *) mCacheTransfer));
 
 	// Services that have been changed to pqiServiceMonitor
+	serviceCtrl->registerServiceMonitor(msgSrv, msgSrv->getServiceInfo().mServiceType);
 	serviceCtrl->registerServiceMonitor(mDisc, mDisc->getServiceInfo().mServiceType);
-
-	/* must also add the controller as a Monitor...
-	 * a little hack to get it to work.
-	 */
-	mLinkMgr->addMonitor(((ftController *) mCacheTransfer));
-
+	serviceCtrl->registerServiceMonitor(mStatusSrv, 
+						mStatusSrv->getServiceInfo().mServiceType);
+	serviceCtrl->registerServiceMonitor(chatSrv, 
+						chatSrv->getServiceInfo().mServiceType);
+	serviceCtrl->registerServiceMonitor(mBwCtrl, mDisc->getServiceInfo().mServiceType);
 
 	/**************************************************************************/
 

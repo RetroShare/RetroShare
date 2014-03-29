@@ -378,8 +378,8 @@ void	ftFiMonitor::setSharedDirectories(const std::list<SharedDirInfo>& dirList)
 
 
 
-ftCacheStrapper::ftCacheStrapper(p3LinkMgr *lm)
-        :CacheStrapper(lm)
+ftCacheStrapper::ftCacheStrapper(p3ServiceControl *sc, uint32_t ftServiceId)
+        :CacheStrapper(sc, ftServiceId)
 {
 	return;
 }

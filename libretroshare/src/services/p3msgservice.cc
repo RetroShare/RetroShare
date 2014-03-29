@@ -75,9 +75,9 @@ static const uint8_t ENCRYPTED_MSG_PROTOCOL_VERSION_01 = 0x37 ;
  */
 
 
-p3MsgService::p3MsgService(p3LinkMgr *lm)
+p3MsgService::p3MsgService(p3ServiceControl *sc)
 	:p3Service(), p3Config(CONFIG_TYPE_MSGS),
-	mLinkMgr(lm), mMsgMtx("p3MsgService"), mMsgUniqueId(time(NULL))
+	mServiceCtrl(sc), mMsgMtx("p3MsgService"), mMsgUniqueId(time(NULL))
 {
 	_serialiser = new RsMsgSerialiser();
 	addSerialType(_serialiser);
@@ -85,7 +85,7 @@ p3MsgService::p3MsgService(p3LinkMgr *lm)
 	mDistantMessagingEnabled = true ;
 
 	/* Initialize standard tag types */
-	if(lm)
+	if(sc)
 		initStandardTagTypes();
 
 #ifdef GROUTER
@@ -280,10 +280,24 @@ void p3MsgService::handleIncomingItem(RsMsgItem *mi)
 		RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_MOD);
 }
 
-void    p3MsgService::statusChange(const std::list<pqipeer> &/*plist*/)
+void    p3MsgService::statusChange(const std::list<pqiServicePeer> &plist)
 {
 	/* should do it properly! */
-	checkOutgoingMessages();
+	/* only do this when a new peer is connected */
+	bool newPeers = false;
+	std::list<pqiServicePeer>::const_iterator it;
+	for(it = plist.begin(); it != plist.end(); it++)
+	{
+		if (it->actions & RS_SERVICE_PEER_CONNECTED)
+		{
+			newPeers = true;
+		}
+	}
+
+	if (newPeers)
+	{
+		checkOutgoingMessages();
+	}
 }
 
 void p3MsgService::checkSizeAndSendMessage(RsMsgItem *msg)
@@ -357,7 +371,7 @@ int     p3MsgService::checkOutgoingMessages()
 	std::list<RsMsgItem*> output_queue ;
 
 	{
-        const RsPeerId& ownId = mLinkMgr->getOwnId();
+        const RsPeerId& ownId = mServiceCtrl->getOwnId();
 
 		std::list<uint32_t>::iterator it;
 		std::list<uint32_t> toErase;
@@ -407,7 +421,7 @@ int     p3MsgService::checkOutgoingMessages()
 #endif
 			}
 
-			if(tunnel_is_ok || mLinkMgr->isOnline(pid) || pid == ownId) /* FEEDBACK Msg to Ourselves */
+			if(tunnel_is_ok || mServiceCtrl->isPeerConnected(getServiceInfo().mServiceType, pid) || pid == ownId) /* FEEDBACK Msg to Ourselves */
 			{
 				/* send msg */
 				pqioutput(PQL_DEBUG_BASIC, msgservicezone, 
@@ -542,7 +556,7 @@ static void getStandardTagTypes(MsgTagType &tags)
 void p3MsgService::initStandardTagTypes()
 {
 	bool bChanged = false;
-    const RsPeerId& ownId = mLinkMgr->getOwnId();
+    const RsPeerId& ownId = mServiceCtrl->getOwnId();
 
 	MsgTagType tags;
 	getStandardTagTypes(tags);
@@ -722,7 +736,7 @@ void p3MsgService::loadWelcomeMsg()
 	/* Load Welcome Message */
 	RsMsgItem *msg = new RsMsgItem();
 
-	//msg -> PeerId(mLinkMgr->getOwnId());
+	//msg -> PeerId(mServiceCtrl->getOwnId());
 
 	msg -> sendTime = time(NULL);
 	msg -> recvTime = time(NULL);
@@ -1008,7 +1022,7 @@ bool    p3MsgService::setMsgParentId(uint32_t msgId, uint32_t msgParentId)
 		{
 			if (msgParentId) {
 				RsMsgParentId* msp = new RsMsgParentId();
-				msp->PeerId (mLinkMgr->getOwnId());
+				msp->PeerId (mServiceCtrl->getOwnId());
 				msp->msgId = msgId;
 				msp->msgParentId = msgParentId;
 				mParentId.insert(std::pair<uint32_t, RsMsgParentId*>(msgId, msp));
@@ -1054,7 +1068,7 @@ int     p3MsgService::sendMessage(RsMsgItem *item)
 		/* STORE MsgID */
 		msgOutgoing[item->msgId] = item;
 
-		if (item->PeerId() != mLinkMgr->getOwnId()) {
+		if (item->PeerId() != mServiceCtrl->getOwnId()) {
 			/* not to the loopback device */
 			RsMsgSrcId* msi = new RsMsgSrcId();
 			msi->msgId = item->msgId;
@@ -1104,7 +1118,7 @@ bool 	p3MsgService::MessageSend(MessageInfo &info)
 	}
 
 	/* send to ourselves as well */
-	RsMsgItem *msg = initMIRsMsg(info, mLinkMgr->getOwnId());
+	RsMsgItem *msg = initMIRsMsg(info, mServiceCtrl->getOwnId());
 	if (msg)
 	{
         std::list<RsPgpId>::iterator it ;
@@ -1138,7 +1152,7 @@ bool p3MsgService::SystemMessage(const std::string &title, const std::string &me
 		return false;
 	}
 
-    const RsPeerId& ownId = mLinkMgr->getOwnId();
+    const RsPeerId& ownId = mServiceCtrl->getOwnId();
 
 	RsMsgItem *msg = new RsMsgItem();
 
@@ -1169,7 +1183,7 @@ bool p3MsgService::SystemMessage(const std::string &title, const std::string &me
 
 bool p3MsgService::MessageToDraft(MessageInfo &info, const std::string &msgParentId)
 {
-    RsMsgItem *msg = initMIRsMsg(info, mLinkMgr->getOwnId());
+    RsMsgItem *msg = initMIRsMsg(info, mServiceCtrl->getOwnId());
     if (msg)
     {
         uint32_t msgId = 0;
@@ -1250,7 +1264,7 @@ bool  	p3MsgService::setMessageTagType(uint32_t tagId, std::string& text, uint32
 
 			/* new tag */
 			RsMsgTagType* tagType = new RsMsgTagType();
-			tagType->PeerId (mLinkMgr->getOwnId());
+			tagType->PeerId (mServiceCtrl->getOwnId());
 			tagType->rgb_color = rgb_color;
 			tagType->tagId = tagId;
 			tagType->text = text;
@@ -1391,7 +1405,7 @@ bool 	p3MsgService::setMessageTag(const std::string &msgId, uint32_t tagId, bool
 			if (set) {
 				/* new msg */
 				RsMsgTags* tag = new RsMsgTags();
-				tag->PeerId (mLinkMgr->getOwnId());
+				tag->PeerId (mServiceCtrl->getOwnId());
 
 				tag->msgId = mid;
 				tag->tagIds.push_back(tagId);
@@ -1535,7 +1549,7 @@ void p3MsgService::initRsMI(RsMsgItem *msg, MessageInfo &mi)
 
 	/* translate flags, if we sent it... outgoing */
 	if ((msg->msgFlags & RS_MSG_FLAGS_OUTGOING)
-	   /*|| (msg->PeerId() == mLinkMgr->getOwnId())*/)
+	   /*|| (msg->PeerId() == mServiceCtrl->getOwnId())*/)
 	{
 		mi.msgflags |= RS_MSG_OUTGOING;
 	}
@@ -1668,7 +1682,7 @@ void p3MsgService::initRsMIS(RsMsgItem *msg, MsgInfoSummary &mis)
 
 	/* translate flags, if we sent it... outgoing */
 	if ((msg->msgFlags & RS_MSG_FLAGS_OUTGOING)
-	   /*|| (msg->PeerId() == mLinkMgr->getOwnId())*/)
+	   /*|| (msg->PeerId() == mServiceCtrl->getOwnId())*/)
 	{
 		mis.msgflags |= RS_MSG_OUTGOING;
 	}
@@ -1756,7 +1770,7 @@ RsMsgItem *p3MsgService::initMIRsMsg(MessageInfo &info, const RsPeerId &to)
 	}
 
 	/* We don't fill in bcc (unless to ourselves) */
-	if (to == mLinkMgr->getOwnId())
+	if (to == mServiceCtrl->getOwnId())
 	{
 		for(pit = info.msgbcc.begin(); pit != info.msgbcc.end(); pit++)
 		{

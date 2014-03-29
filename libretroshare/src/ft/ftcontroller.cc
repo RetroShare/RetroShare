@@ -98,13 +98,15 @@ ftFileControl::ftFileControl(std::string fname,
 	return;
 }
 
-ftController::ftController(CacheStrapper *cs, ftDataMultiplex *dm, std::string /*configDir*/)
+ftController::ftController(CacheStrapper *cs, ftDataMultiplex *dm, p3ServiceControl *sc, uint32_t ftServiceId)
 	:CacheTransfer(cs), p3Config(CONFIG_TYPE_FT_CONTROL), 
 	last_save_time(0),
 	last_clean_time(0),
 	mDataplex(dm),
 	mTurtle(NULL), 
 	mFtServer(NULL), 
+	mServiceCtrl(sc),
+	mFtServiceId(ftServiceId),
 	ctrlMutex("ftController"),
 	doneMutex("ftController"),
 	mFtActive(false),
@@ -173,7 +175,7 @@ void ftController::addFileSource(const RsFileHash& hash,const RsPeerId& peer_id)
 	if(it != mDownloads.end())
 	{
 		it->second->mTransfer->addFileSource(peer_id);
-		setPeerState(it->second->mTransfer, peer_id, FT_CNTRL_STANDARD_RATE, mLinkMgr->isOnline( peer_id ));
+		setPeerState(it->second->mTransfer, peer_id, FT_CNTRL_STANDARD_RATE, mServiceCtrl->isPeerConnected(mFtServiceId, peer_id ));
 
 #ifdef CONTROL_DEBUG
 		std::cerr << "... added." << std::endl ;
@@ -295,7 +297,7 @@ void ftController::searchForDirectSources()
 					for(std::list<TransferInfo>::const_iterator pit = info.peers.begin(); pit != info.peers.end(); pit++)
 						if(rsPeers->servicePermissionFlags(pit->peerId) & RS_SERVICE_PERM_DIRECT_DL)
 							if(it->second->mTransfer->addFileSource(pit->peerId)) /* if the sources don't exist already - add in */
-								setPeerState(it->second->mTransfer, pit->peerId, FT_CNTRL_STANDARD_RATE, mLinkMgr->isOnline( pit->peerId ));
+								setPeerState(it->second->mTransfer, pit->peerId, FT_CNTRL_STANDARD_RATE, mServiceCtrl->isPeerConnected(mFtServiceId, pit->peerId));
 			}
 }
 
@@ -1208,7 +1210,7 @@ bool 	ftController::FileRequest(const std::string& fname, const RsFileHash& hash
 					std::cerr << std::endl;
 #endif
 					(dit->second)->mTransfer->addFileSource(*it);
-					setPeerState(dit->second->mTransfer, *it, rate, mLinkMgr->isOnline(*it));
+					setPeerState(dit->second->mTransfer, *it, rate, mServiceCtrl->isPeerConnected(mFtServiceId, *it));
 
 					IndicateConfigChanged(); /* new peer for transfer -> save */
 				}
@@ -1305,7 +1307,7 @@ bool 	ftController::FileRequest(const std::string& fname, const RsFileHash& hash
 		std::cerr << "ftController::FileRequest() adding peer: " << *it;
 		std::cerr << std::endl;
 #endif
-		setPeerState(tm, *it, rate, mLinkMgr->isOnline(*it));
+		setPeerState(tm, *it, rate, mServiceCtrl->isPeerConnected(mFtServiceId, *it));
 	}
 
 	/* add structures into the accessible data. Needs to be locked */
@@ -1333,7 +1335,7 @@ bool 	ftController::FileRequest(const std::string& fname, const RsFileHash& hash
 
 bool 	ftController::setPeerState(ftTransferModule *tm, const RsPeerId& id, uint32_t maxrate, bool online)
 {
-	if (id == mLinkMgr->getOwnId())
+	if (id == mServiceCtrl->getOwnId())
 	{
 #ifdef CONTROL_DEBUG
 		std::cerr << "ftController::setPeerState() is Self";
@@ -1815,14 +1817,14 @@ bool 	ftController::FileDetails(const RsFileHash &hash, FileInfo &info)
 	/* pqiMonitor callback:
 	 * Used to tell TransferModules new available peers
 	 */
-void    ftController::statusChange(const std::list<pqipeer> &plist)
+void    ftController::statusChange(const std::list<pqiServicePeer> &plist)
 {
 	RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
 	uint32_t rate = FT_CNTRL_STANDARD_RATE;
 
 	/* add online to all downloads */
     std::map<RsFileHash, ftFileControl*>::iterator it;
-	std::list<pqipeer>::const_iterator pit;
+	std::list<pqiServicePeer>::const_iterator pit;
 
 #ifdef CONTROL_DEBUG
 	std::cerr << "ftController::statusChange()";
@@ -1842,7 +1844,7 @@ void    ftController::statusChange(const std::list<pqipeer> &plist)
 #ifdef CONTROL_DEBUG
 			std::cerr << "Peer: " << pit->id;
 #endif
-			if (pit->actions & RS_PEER_CONNECTED)
+			if (pit->actions & RS_SERVICE_PEER_CONNECTED)
 			{
 #ifdef CONTROL_DEBUG
 				std::cerr << " is Newly Connected!";
@@ -1850,7 +1852,7 @@ void    ftController::statusChange(const std::list<pqipeer> &plist)
 #endif
 				setPeerState(it->second->mTransfer, pit->id, rate, true);
 			}
-			else if (pit->actions & RS_PEER_DISCONNECTED)
+			else if (pit->actions & RS_SERVICE_PEER_DISCONNECTED)
 			{
 #ifdef CONTROL_DEBUG
 				std::cerr << " is Just disconnected!";
@@ -1858,7 +1860,7 @@ void    ftController::statusChange(const std::list<pqipeer> &plist)
 #endif
 				setPeerState(it->second->mTransfer, pit->id, rate, false);
 			}
-			else
+			else // Added or Removed.
 			{
 #ifdef CONTROL_DEBUG
 				std::cerr << " had something happen to it: ";
@@ -1872,41 +1874,42 @@ void    ftController::statusChange(const std::list<pqipeer> &plist)
 		// Now also look at turtle virtual peers.
 		//
 		std::list<pqipeer> vlist ;
+		std::list<pqipeer>::const_iterator vit;
 		mTurtle->getSourceVirtualPeersList(it->first,vlist) ;
 
 #ifdef CONTROL_DEBUG
 		std::cerr << "vlist.size() = " << vlist.size() << std::endl;
 #endif
 
-		for(pit = vlist.begin(); pit != vlist.end(); pit++)
+		for(vit = vlist.begin(); vit != vlist.end(); vit++)
 		{
 #ifdef CONTROL_DEBUG
-			std::cerr << "Peer: " << pit->id;
+			std::cerr << "Peer: " << vit->id;
 #endif
-			if (pit->actions & RS_PEER_CONNECTED)
+			if (vit->actions & RS_PEER_CONNECTED)
 			{
 #ifdef CONTROL_DEBUG
 				std::cerr << " is Newly Connected!";
 				std::cerr << std::endl;
 #endif
-				setPeerState(it->second->mTransfer, pit->id, rate, true);
+				setPeerState(it->second->mTransfer, vit->id, rate, true);
 			}
-			else if (pit->actions & RS_PEER_DISCONNECTED)
+			else if (vit->actions & RS_PEER_DISCONNECTED)
 			{
 #ifdef CONTROL_DEBUG
 				std::cerr << " is Just disconnected!";
 				std::cerr << std::endl;
 #endif
-				setPeerState(it->second->mTransfer, pit->id, rate, false);
+				setPeerState(it->second->mTransfer, vit->id, rate, false);
 			}
 			else
 			{
 #ifdef CONTROL_DEBUG
 				std::cerr << " had something happen to it: ";
-				std::cerr << pit-> actions;
+				std::cerr << vit-> actions;
 				std::cerr << std::endl;
 #endif
-				setPeerState(it->second->mTransfer, pit->id, rate, false);
+				setPeerState(it->second->mTransfer, vit->id, rate, false);
 			}
 		}
 	}

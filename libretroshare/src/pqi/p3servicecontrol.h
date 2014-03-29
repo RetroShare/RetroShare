@@ -62,13 +62,21 @@ public:
 
 	/**
 	 */
-        p3ServiceControl(p3LinkMgr *linkMgr, uint32_t configId);
+        p3ServiceControl(p3LinkMgr *linkMgr);
 
         /**
          * checks and update all added configurations
          * @see rsserver
          */
         void	tick();
+
+        /**
+         * provided so that services don't need linkMgr, and can get all info
+	 * from ServiceControl.
+         * @see rsserver
+         */
+
+virtual const 	RsPeerId& getOwnId();
 
 	/**
 	 * External Interface (RsServiceControl).
@@ -88,6 +96,7 @@ virtual bool updateServicePermissions(uint32_t serviceId, const RsServicePermiss
 
 	// Get List of Peers using this Service.
 virtual void getPeersConnected(const uint32_t serviceId, std::set<RsPeerId> &peerSet);
+virtual bool isPeerConnected(const uint32_t serviceId, const RsPeerId &peerId);
 
 	/**
 	 * Registration for all Services.
@@ -155,6 +164,7 @@ bool createDefaultPermissions_locked(uint32_t serviceId, std::string serviceName
 bool peerHasPermissionForService_locked(const RsPeerId &peerId, uint32_t serviceId);
 
 	p3LinkMgr *mLinkMgr;
+	const RsPeerId mOwnPeerId; // const from constructor
 
 	RsMutex mCtrlMtx; /* below is protected */
 

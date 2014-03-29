@@ -33,9 +33,9 @@
 #include "retroshare/rsstatus.h"
 #include "services/p3service.h"
 #include "pqi/p3cfgmgr.h"
-#include "pqi/pqimonitor.h"
+#include "pqi/pqiservicemonitor.h"
 
-class p3LinkMgr;
+class p3ServiceControl;
 
 //! handles standard status messages (busy, away, online, offline) set by user
 /*!
@@ -44,11 +44,11 @@ class p3LinkMgr;
  * custom string.
  * @see rsiface/rsstatus.h for status constants
  */
-class p3StatusService: public p3Service, public p3Config, public pqiMonitor
+class p3StatusService: public p3Service, public p3Config, public pqiServiceMonitor
 {
 	public:
 
-	p3StatusService(p3LinkMgr *lm);
+	p3StatusService(p3ServiceControl *sc);
 virtual ~p3StatusService();
 
 virtual RsServiceInfo getServiceInfo();
@@ -58,7 +58,7 @@ virtual int tick();
 virtual int status();
 
 /*************** pqiMonitor callback ***********************/
-virtual void    statusChange(const std::list<pqipeer> &plist);
+virtual void    statusChange(const std::list<pqiServicePeer> &plist);
 
 /********* RsStatus ***********/
 
@@ -95,7 +95,7 @@ virtual bool loadList(std::list<RsItem*>& load);
 
 virtual void receiveStatusQueue();
 
-p3LinkMgr *mLinkMgr;
+p3ServiceControl *mServiceCtrl;
 
 std::map<RsPeerId, StatusInfo> mStatusInfoMap;
 

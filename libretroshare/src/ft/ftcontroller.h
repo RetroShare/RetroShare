@@ -46,10 +46,11 @@ class ftServer;
 class ftExtraList;
 class ftDataMultiplex;
 class p3turtle ;
+class p3ServiceControl;
 
 #include "dbase/cachestrapper.h"
 #include "util/rsthreads.h"
-#include "pqi/pqimonitor.h"
+#include "pqi/pqiservicemonitor.h"
 #include "pqi/p3cfgmgr.h"
 
 #include "retroshare/rsfiles.h"
@@ -112,12 +113,12 @@ class ftPendingRequest
 };
 
 
-class ftController: public CacheTransfer, public RsThread, public pqiMonitor, public p3Config
+class ftController: public CacheTransfer, public RsThread, public pqiServiceMonitor, public p3Config
 {
 	public:
 
 		/* Setup */
-		ftController(CacheStrapper *cs, ftDataMultiplex *dm, std::string configDir);
+		ftController(CacheStrapper *cs, ftDataMultiplex *dm, p3ServiceControl *sc, uint32_t ftServiceId);
 
 		void	setFtSearchNExtra(ftSearch *, ftExtraList *);
 		void	setTurtleRouter(p3turtle *) ;
@@ -187,7 +188,8 @@ class ftController: public CacheTransfer, public RsThread, public pqiMonitor, pu
 		bool assumeAvailability(const RsPeerId& peer_id) const ;
 
 		/* pqiMonitor callback (also provided mConnMgr pointer!) */
-		virtual void    statusChange(const std::list<pqipeer> &plist);
+		virtual void    statusChange(const std::list<pqiServicePeer> &plist);
+
         void addFileSource(const RsFileHash& hash,const RsPeerId& peer_id) ;
         void removeFileSource(const RsFileHash& hash,const RsPeerId& peer_id) ;
 
@@ -238,6 +240,8 @@ class ftController: public CacheTransfer, public RsThread, public pqiMonitor, pu
 		ftExtraList *mExtraList;
 		p3turtle *mTurtle ;
 		ftServer *mFtServer ;
+		p3ServiceControl *mServiceCtrl;
+		uint32_t mFtServiceId;
 
 		RsMutex ctrlMutex;
 

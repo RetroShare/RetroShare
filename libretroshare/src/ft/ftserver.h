@@ -72,7 +72,7 @@ class p3turtle;
 class ftDwlQueue;
 
 class p3PeerMgr;
-class p3LinkMgr;
+class p3ServiceControl;
 
 class ftServer: public p3Service, public RsFiles, public ftDataSend, public RsTurtleClientService
 {
@@ -83,7 +83,7 @@ class ftServer: public p3Service, public RsFiles, public ftDataSend, public RsTu
 		/******************** Setup ************************************/
 		/***************************************************************/
 
-		ftServer(p3PeerMgr *peerMgr, p3LinkMgr *linkMgr);
+		ftServer(p3PeerMgr *peerMgr, p3ServiceControl *serviceCtrl);
 		virtual RsServiceInfo getServiceInfo();
 
 		/* Assign important variables */
@@ -274,7 +274,7 @@ class ftServer: public p3Service, public RsFiles, public ftDataSend, public RsTu
 		 * as each component is protected independently.
 		 */
 		p3PeerMgr *mPeerMgr;
-		p3LinkMgr *mLinkMgr;
+		p3ServiceControl *mServiceCtrl;
 
 		ftCacheStrapper *mCacheStrapper;
 		ftFiStore 	*mFiStore;

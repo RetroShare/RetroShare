@@ -22,8 +22,9 @@
  */
 
 #include "dbase/cachestrapper.h"
+#include "serialiser/rsserviceids.h"
 #include "serialiser/rsconfigitems.h"
-#include "pqi/p3linkmgr.h"
+#include "pqi/p3servicecontrol.h"
 #include "pqi/p3peermgr.h"
 #include "util/rsdir.h"
 
@@ -618,8 +619,9 @@ void 	CacheStore::locked_storeCacheEntry(const RsCacheData &data)
  *
  ********************************* CacheStrapper ********************************/
 
-CacheStrapper::CacheStrapper(p3LinkMgr *lm)
-		:p3Config(CONFIG_TYPE_CACHE), mLinkMgr(lm), csMtx("CacheStrapper")
+CacheStrapper::CacheStrapper(p3ServiceControl *sc, uint32_t ftServiceId)
+		:p3Config(CONFIG_TYPE_CACHE), mServiceCtrl(sc), mFtServiceId(ftServiceId), 
+		csMtx("CacheStrapper")
 {
 	return;
 }
@@ -633,12 +635,12 @@ void	CacheStrapper::addCachePair(CachePair set)
 
         /**************** from pqimonclient ********************/
 
-void    CacheStrapper::statusChange(const std::list<pqipeer> &plist)
+void    CacheStrapper::statusChange(const std::list<pqiServicePeer> &plist)
 {
-	std::list<pqipeer>::const_iterator it;
+	std::list<pqiServicePeer>::const_iterator it;
 	for(it = plist.begin(); it != plist.end(); it++)
 	{
-		if(it->actions & RS_PEER_CONNECTED)
+		if(it->actions & RS_SERVICE_PEER_CONNECTED)
 		{
 			/* grab all the cache ids and add */
 
@@ -666,13 +668,15 @@ void	CacheStrapper::refreshCache(const RsCacheData &data,const std::set<RsPeerId
 #ifdef CS_DEBUG 
 	std::cerr << "CacheStrapper::refreshCache() : " << data << std::endl;
 #endif
-    const RsPeerId& ownid = mLinkMgr->getOwnId() ;
-    std::list<RsPeerId> ids;
-	mLinkMgr->getOnlineList(ids);
-	ids.push_back(ownid) ;
+    const RsPeerId& ownid = mServiceCtrl->getOwnId() ;
+    std::set<RsPeerId> ids;
+
+	// Need to use ftServiceID as packets are passed through there.
+	mServiceCtrl->getPeersConnected(mFtServiceId, ids);
+	ids.insert(ownid) ;
 
 	RsStackMutex stack(csMtx); /******* LOCK STACK MUTEX *********/
-    for(std::list<RsPeerId>::const_iterator it = ids.begin(); it != ids.end(); ++it)
+    for(std::set<RsPeerId>::const_iterator it = ids.begin(); it != ids.end(); ++it)
 			if(destination_peers.find(*it) != destination_peers.end())
 			{
 #ifdef CS_DEBUG 
@@ -693,14 +697,14 @@ void	CacheStrapper::refreshCache(const RsCacheData &data,const std::set<RsPeerId
 // 	std::cerr << "CacheStrapper::refreshCache() : " << data << std::endl;
 // #endif
 // 
-// 	std::string ownid = mLinkMgr->getOwnId() ;
-// 	std::list<std::string> ids;
-// 	mLinkMgr->getOnlineList(ids);
+// 	std::string ownid = mServiceCtrl->getOwnId() ;
+// 	std::set<std::string> ids;
+// 	mServiceCtrl->getOnlineList(ids);
 // 	ids.push_back(ownid) ;
 // 
 // 	{
 // 		RsStackMutex stack(csMtx); /******* LOCK STACK MUTEX *********/
-// 		for(std::list<std::string>::const_iterator it = ids.begin(); it != ids.end(); ++it)
+// 		for(std::set<std::string>::const_iterator it = ids.begin(); it != ids.end(); ++it)
 // 			if(*it == ownid || isPeerPartipating(*it))
 // 				mCacheUpdates.push_back(std::make_pair(*it, data));
 // 	}
@@ -761,7 +765,7 @@ void    CacheStrapper::listCaches(std::ostream &out)
 {
 	/* can overwrite for more control! */
 	std::map<uint16_t, CachePair>::iterator it;
-	out << "CacheStrapper::listCaches() [" << mLinkMgr->getOwnId();
+	out << "CacheStrapper::listCaches() [" << mServiceCtrl->getOwnId();
 	out << "] " << " Total Caches: " << caches.size();
 	out << std::endl;
 	for(it = caches.begin(); it != caches.end(); it++)
@@ -854,7 +858,7 @@ bool CacheStrapper::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 	std::list<RsCacheData>::iterator cit;
 	std::list<RsCacheData> ownCaches;
 	std::list<RsCacheData> remoteCaches;
-    const RsPeerId& ownId = mLinkMgr->getOwnId();
+    const RsPeerId& ownId = mServiceCtrl->getOwnId();
 
 	std::map<uint16_t, CachePair>::iterator it;
 	for(it = caches.begin(); it != caches.end(); it++)
@@ -934,7 +938,7 @@ bool CacheStrapper::loadList(std::list<RsItem *>& load)
 #endif
 	std::list<RsCacheData> ownCaches;
 	std::list<RsCacheData> remoteCaches;
-    const RsPeerId& ownId = mLinkMgr->getOwnId();
+    const RsPeerId& ownId = mServiceCtrl->getOwnId();
 
 	//peerConnectState ownState;
 	//mPeerMgr->getOwnNetStatus(ownState);

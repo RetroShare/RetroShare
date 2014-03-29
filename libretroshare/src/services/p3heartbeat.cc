@@ -28,11 +28,14 @@
 #include "services/p3heartbeat.h"
 #include "serialiser/rsheartbeatitems.h"
 
+#include "pqi/p3servicecontrol.h"
+#include "pqi/pqipersongrp.h"
+
 //#define HEART_DEBUG	1
 
 
-p3heartbeat::p3heartbeat(p3LinkMgr *linkMgr, pqipersongrp *pqipg)
-:p3Service(), mLinkMgr(linkMgr), mPqiPersonGrp(pqipg), 
+p3heartbeat::p3heartbeat(p3ServiceControl *sc, pqipersongrp *pqipg)
+:p3Service(), mServiceCtrl(sc), mPqiPersonGrp(pqipg), 
 	mHeartMtx("p3heartbeat")
 {
 	RsStackMutex stack(mHeartMtx); /********** STACK LOCKED MTX ******/
@@ -82,10 +85,10 @@ int p3heartbeat::tick()
 	{
 		mLastHeartbeat = time(NULL);
 
-		std::list<RsPeerId> peers;
-		std::list<RsPeerId>::const_iterator pit;
+		std::set<RsPeerId> peers;
+		std::set<RsPeerId>::const_iterator pit;
 
-		mLinkMgr->getOnlineList(peers);
+		mServiceCtrl->getPeersConnected(getServiceInfo().mServiceType, peers);
 		for (pit = peers.begin(); pit != peers.end(); ++pit) 
 		{
 			sendHeartbeat(*pit);

@@ -58,7 +58,7 @@ class RsDsdvRoute
 {
 	public:
 
-	std::string 	mNextHop;
+	RsPeerId 	mNextHop;
 	uint32_t 	mSequence;
 	uint32_t 	mDistance;
 	time_t   	mReceived;
@@ -75,7 +75,7 @@ class RsDsdvTableEntry
 	RsDsdvRoute	mStableRoute;
 	//RsDsdvRoute	mFreshestRoute;
 
-	std::map<std::string, RsDsdvRoute> mAllRoutes;
+	std::map<RsPeerId, RsDsdvRoute> mAllRoutes;
 
 	uint32_t	mFlags;
 

@@ -25,7 +25,7 @@
 #define MRK_CACHE_STRAPPER_H
 
 #include "pqi/p3cfgmgr.h"
-#include "pqi/pqimonitor.h"
+#include "pqi/pqiservicemonitor.h"
 #include "util/rsthreads.h"
 
 #include <list>
@@ -377,9 +377,9 @@ bool operator<(const CachePair &a, const CachePair &b);
  * queries and updates as new information arrives.
  */
 
-class p3LinkMgr;
+class p3ServiceControl;
 
-class CacheStrapper: public pqiMonitor, public p3Config
+class CacheStrapper: public pqiServiceMonitor, public p3Config
 {
 	public:
 
@@ -387,11 +387,11 @@ class CacheStrapper: public pqiMonitor, public p3Config
 		 * @param cm handle used by strapper for getting peer connection information (online peers, sslids...)
 		 * @return
 		 */
-        CacheStrapper(p3LinkMgr *lm);
+        CacheStrapper(p3ServiceControl *sc, uint32_t ftServiceId);
 virtual ~CacheStrapper() { return; }
 
 	/************* from pqiMonitor *******************/
-virtual void statusChange(const std::list<pqipeer> &plist);
+virtual void statusChange(const std::list<pqiServicePeer> &plist);
 	/************* from pqiMonitor *******************/
 
 	/* Feedback from CacheSources */
@@ -461,7 +461,8 @@ virtual bool    loadList(std::list<RsItem *>& load);
 	private:
 
 	/* these are static - so shouldn't need mutex */
-	p3LinkMgr *mLinkMgr;
+	p3ServiceControl *mServiceCtrl;
+	uint32_t          mFtServiceId; 
 
 	std::map<uint16_t, CachePair> caches;
 

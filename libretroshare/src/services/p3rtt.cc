@@ -116,8 +116,8 @@ static double convert64bitsToTs(uint64_t bits)
 
 
 
-p3rtt::p3rtt(p3LinkMgr *lm)
-	:p3FastService(), mRttMtx("p3rtt"), mLinkMgr(lm) 
+p3rtt::p3rtt(p3ServiceControl *sc)
+	:p3FastService(), mRttMtx("p3rtt"), mServiceCtrl(sc) 
 {
 	addSerialType(new RsRttSerialiser());
 
@@ -186,9 +186,9 @@ void p3rtt::sendPingMeasurements()
 
 	/* we ping our peers */
 	/* who is online? */
-	std::list<RsPeerId> idList;
+	std::set<RsPeerId> idList;
 
-	mLinkMgr->getOnlineList(idList);
+	mServiceCtrl->getPeersConnected(getServiceInfo().mServiceType, idList);
 
 	double ts = getCurrentTS();
 
@@ -198,7 +198,7 @@ void p3rtt::sendPingMeasurements()
 #endif
 
 	/* prepare packets */
-	std::list<RsPeerId>::iterator it;
+	std::set<RsPeerId>::iterator it;
 	for(it = idList.begin(); it != idList.end(); it++)
 	{
 #ifdef DEBUG_RTT

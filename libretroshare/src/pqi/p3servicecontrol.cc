@@ -30,12 +30,18 @@
 
 RsServiceControl *rsServiceControl = NULL;
 
-p3ServiceControl::p3ServiceControl(p3LinkMgr *linkMgr, uint32_t configId)
+p3ServiceControl::p3ServiceControl(p3LinkMgr *linkMgr)
 	:RsServiceControl(), /* p3Config(configId), pqiMonitor(),  */
-	mLinkMgr(linkMgr), 
+	mLinkMgr(linkMgr), mOwnPeerId(linkMgr->getOwnId()),
 	mCtrlMtx("p3ServiceControl"), mMonitorMtx("P3ServiceControl::Monitor")
 {
 }
+
+const 	RsPeerId& p3ServiceControl::getOwnId()
+{
+	return mOwnPeerId;
+}
+
 
 /* Interface for Services */
 bool p3ServiceControl::registerService(const RsServiceInfo &info, bool defaultOn)
@@ -817,6 +823,23 @@ void p3ServiceControl::getPeersConnected(const uint32_t serviceId, std::set<RsPe
 	{
 		peerSet.clear();
 	}
+}
+
+
+bool p3ServiceControl::isPeerConnected(const uint32_t serviceId, const RsPeerId &peerId)
+{
+	RsStackMutex stack(mCtrlMtx); /***** LOCK STACK MUTEX ****/
+
+	std::map<uint32_t, std::set<RsPeerId> >::iterator mit;
+	mit = mServicePeerMap.find(serviceId);
+	if (mit != mServicePeerMap.end())
+	{
+		std::set<RsPeerId>::iterator sit;
+		sit = mit->second.find(peerId);
+		return (sit != mit->second.end());
+	}
+
+	return false;
 }
 
 

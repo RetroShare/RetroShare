@@ -24,6 +24,7 @@
  */
 
 #include "rsgxsnetutils.h"
+#include "pqi/p3servicecontrol.h"
 #include "retroshare/rspeers.h"
 
 
@@ -185,8 +186,8 @@ NxsTransaction::~NxsTransaction(){
 
 /* Net Manager */
 
-RsNxsNetMgrImpl::RsNxsNetMgrImpl(p3LinkMgr *lMgr)
-    : mLinkMgr(lMgr), mNxsNetMgrMtx("RsNxsNetMgrImpl")
+RsNxsNetMgrImpl::RsNxsNetMgrImpl(p3ServiceControl *sc)
+    : mServiceCtrl(sc)
 {
 
 }
@@ -194,24 +195,12 @@ RsNxsNetMgrImpl::RsNxsNetMgrImpl(p3LinkMgr *lMgr)
 
 const RsPeerId& RsNxsNetMgrImpl::getOwnId()
 {
-    RsStackMutex stack(mNxsNetMgrMtx);
-    return mLinkMgr->getOwnId();
+    return mServiceCtrl->getOwnId();
 }
 
-void RsNxsNetMgrImpl::getOnlineList(std::set<RsPeerId> &ssl_peers)
+void RsNxsNetMgrImpl::getOnlineList(const uint32_t serviceId, std::set<RsPeerId> &ssl_peers)
 {
-    ssl_peers.clear();
-
-    std::list<RsPeerId> pList;
-    {
-        RsStackMutex stack(mNxsNetMgrMtx);
-        mLinkMgr->getOnlineList(pList);
-    }
-
-    std::list<RsPeerId>::const_iterator lit = pList.begin();
-
-    for(; lit != pList.end(); lit++)
-        ssl_peers.insert(*lit);
+    mServiceCtrl->getPeersConnected(serviceId, ssl_peers);
 }
 
 const time_t GrpCircleVetting::EXPIRY_PERIOD_OFFSET = 5; // 10 seconds

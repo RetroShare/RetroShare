@@ -25,6 +25,7 @@
 
 #include "pqi/p3linkmgr.h"
 #include "pqi/p3netmgr.h"
+#include "pqi/pqipersongrp.h"
 
 #include "util/rsnet.h"
 
@@ -311,37 +312,34 @@ int p3BandwidthControl::printRateInfo_locked(std::ostream &out)
 }
 
 	/*************** pqiMonitor callback ***********************/
-void p3BandwidthControl::statusChange(const std::list<pqipeer> &plist)
+void p3BandwidthControl::statusChange(const std::list<pqiServicePeer> &plist)
 {
-	std::list<pqipeer>::const_iterator it;
+	std::list<pqiServicePeer>::const_iterator it;
 	for (it = plist.begin(); it != plist.end(); it++) 
 	{
-		if (it->state & RS_PEER_S_FRIEND) 
-		{
-			RsStackMutex stack(mBwMtx); /****** LOCKED MUTEX *******/
+		RsStackMutex stack(mBwMtx); /****** LOCKED MUTEX *******/
 
-			if (it->actions & RS_PEER_DISCONNECTED)
+		if (it->actions & RS_SERVICE_PEER_DISCONNECTED)
+		{
+			/* remove from map */
+			std::map<RsPeerId, BwCtrlData>::iterator bit;
+			bit = mBwMap.find(it->id);
+			if (bit == mBwMap.end())
 			{
-				/* remove from map */
-				std::map<RsPeerId, BwCtrlData>::iterator bit;
-				bit = mBwMap.find(it->id);
-				if (bit == mBwMap.end())
-				{
-					std::cerr << "p3BandwidthControl::statusChange() ERROR";
-					std::cerr << " Entry not in map";
-					std::cerr << std::endl;
-				}
-				else
-				{
-					mBwMap.erase(bit);
-				}
+				std::cerr << "p3BandwidthControl::statusChange() ERROR";
+				std::cerr << " Entry not in map";
+				std::cerr << std::endl;
 			}
-			else if (it->actions & RS_PEER_CONNECTED) 
+			else
 			{
-				/* stuff */
-				BwCtrlData data;
-				mBwMap[it->id] = data;
+				mBwMap.erase(bit);
 			}
+		}
+		else if (it->actions & RS_SERVICE_PEER_CONNECTED) 
+		{
+			/* stuff */
+			BwCtrlData data;
+			mBwMap[it->id] = data;
 		}
 	}
 	return;

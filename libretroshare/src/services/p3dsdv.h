@@ -37,7 +37,7 @@
 
 #include "retroshare/rsdsdv.h"
 
-class p3LinkMgr;
+class p3ServiceControl;
 
 
 #define RSDSDV_MAX_DISTANCE	3
@@ -49,10 +49,10 @@ class p3LinkMgr;
   * Finds RS wide paths to Services and Peers.
   */
 
-class p3Dsdv: public RsDsdv, public p3Service /* , public p3Config */, public pqiMonitor
+class p3Dsdv: public RsDsdv, public p3Service /* , public p3Config */, public pqiServiceMonitor
 {
 	public:
-	p3Dsdv(p3LinkMgr *cm);
+	p3Dsdv(p3ServiceControl *cm);
 virtual RsServiceInfo getServiceInfo();
 
 		/*** internal librs interface ****/
@@ -71,7 +71,7 @@ void    clearSignificantChangesFlags();
 
 
 int 	generateRoutingTables(bool incremental);
-int 	generateRoutingTable(const std::string &peerId, bool incremental);
+int 	generateRoutingTable(const RsPeerId &peerId, bool incremental);
 
 int     processIncoming();
 
@@ -97,7 +97,7 @@ virtual int getDsdvEntry(const std::string &hash, RsDsdvTableEntry &entry);
 		virtual int   status();
 
 		/*************** pqiMonitor callback ***********************/
-		virtual void statusChange(const std::list<pqipeer> &plist);
+		virtual void statusChange(const std::list<pqiServicePeer> &plist);
 
 		/************* from p3Config *******************/
 		//virtual RsSerialiser *setupSerialiser() ;
@@ -115,7 +115,7 @@ virtual int getDsdvEntry(const std::string &hash, RsDsdvTableEntry &entry);
 	
 		bool mSignificantChanges;
 
-		p3LinkMgr *mLinkMgr;
+		p3ServiceControl *mServiceCtrl;
 
 };
 

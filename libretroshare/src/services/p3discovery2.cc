@@ -84,8 +84,8 @@ void DiscPgpInfo::mergeFriendList(const std::list<PGPID> &friends)
 }
 
 
-p3discovery2::p3discovery2(p3PeerMgr *peerMgr, p3LinkMgr *linkMgr, p3NetMgr *netMgr)
-:p3Service(), mPeerMgr(peerMgr), mLinkMgr(linkMgr), mNetMgr(netMgr), 
+p3discovery2::p3discovery2(p3PeerMgr *peerMgr, p3LinkMgr *linkMgr, p3NetMgr *netMgr, p3ServiceControl *sc)
+:p3Service(), mPeerMgr(peerMgr), mLinkMgr(linkMgr), mNetMgr(netMgr), mServiceCtrl(sc),
 	mDiscMtx("p3discovery2")
 {
 	RsStackMutex stack(mDiscMtx); /********** STACK LOCKED MTX ******/
@@ -752,7 +752,7 @@ void p3discovery2::updatePeers_locked(const SSLID &aboutId)
 					mit != ffit->second.mSslIds.end(); mit++)
 			{
 				SSLID sslid = mit->first;
-				if (mLinkMgr->isOnline(sslid))
+				if (mServiceCtrl->isPeerConnected(getServiceInfo().mServiceType, sslid))
 				{
 					// TODO IGNORE if sslid == aboutId, or sslid == ownId.
 #ifdef P3DISC_DEBUG

@@ -63,8 +63,8 @@ RsDsdv *rsDsdv = NULL;
  *
  ****/
 
-p3Dsdv::p3Dsdv(p3LinkMgr *lm)
-	:p3Service(), /* p3Config(CONFIG_TYPE_DSDV), */ mDsdvMtx("p3Dsdv"), mLinkMgr(lm) 
+p3Dsdv::p3Dsdv(p3ServiceControl *sc)
+	:p3Service(), /* p3Config(CONFIG_TYPE_DSDV), */ mDsdvMtx("p3Dsdv"), mServiceCtrl(sc) 
 {
 	addSerialType(new RsDsdvSerialiser());
 
@@ -195,8 +195,8 @@ int 	p3Dsdv::generateRoutingTables(bool incremental)
 {
 	/* we ping our peers */
 	/* who is online? */
-	std::list<std::string> idList;
-	mLinkMgr->getOnlineList(idList);
+	std::set<RsPeerId> idList;
+	mServiceCtrl->getPeersConnected(getServiceInfo().mServiceType, idList);
 
 #ifdef DEBUG_DSDV
 	std::cerr << "p3Dsdv::generateRoutingTables(" << incremental << ")";
@@ -210,7 +210,7 @@ int 	p3Dsdv::generateRoutingTables(bool incremental)
 	}
 
 	/* prepare packets */
-	std::list<std::string>::iterator it;
+	std::set<RsPeerId>::iterator it;
 	for(it = idList.begin(); it != idList.end(); it++)
 	{
 #ifdef DEBUG_DSDV
@@ -228,7 +228,7 @@ int 	p3Dsdv::generateRoutingTables(bool incremental)
 }
 
 
-int p3Dsdv::generateRoutingTable(const std::string &peerId, bool incremental)
+int p3Dsdv::generateRoutingTable(const RsPeerId &peerId, bool incremental)
 {
 	RsDsdvRouteItem *dsdv = new RsDsdvRouteItem();
 	dsdv->PeerId(peerId);
@@ -385,7 +385,7 @@ int p3Dsdv::handleDSDV(RsDsdvRouteItem *dsdv)
 			}
 			
 			/* look for this in mAllRoutes */
-			std::map<std::string, RsDsdvRoute>::iterator rit;
+			std::map<RsPeerId, RsDsdvRoute>::iterator rit;
 			rit = v.mAllRoutes.find(dsdv->PeerId());
 			if (rit == v.mAllRoutes.end())
 			{
@@ -485,11 +485,11 @@ int p3Dsdv::selectStableRoutes()
 			continue; // Ignore if we are source.
 		}		
 		
-		std::map<std::string, RsDsdvRoute>::iterator rit;
+		std::map<RsPeerId, RsDsdvRoute>::iterator rit;
 		uint32_t newest = 0;
-		std::string newestId;
+		RsPeerId newestId;
 		uint32_t closest = RSDSDV_MAX_DISTANCE + 1;
-		std::string closestId;
+		RsPeerId closestId;
 		time_t closestAge = 0;
 
 		/* find newest sequence number */
@@ -646,9 +646,9 @@ int p3Dsdv::clearOldRoutes()
 
 
 /*************** pqiMonitor callback ***********************/
-void p3Dsdv::statusChange(const std::list<pqipeer> &plist)
+void p3Dsdv::statusChange(const std::list<pqiServicePeer> &plist)
 {
-	std::list<pqipeer>::const_iterator it;
+	std::list<pqiServicePeer>::const_iterator it;
 	for(it = plist.begin(); it != plist.end(); it++)
 	{
 		/* only care about disconnected / not friends cases */
@@ -738,7 +738,7 @@ int p3Dsdv::addDsdvId(RsDsdvId *id, std::string realHash)
 	RsDsdvTableEntry v;
 	v.mDest = *id;
 
-	v.mStableRoute.mNextHop = mLinkMgr->getOwnId();
+	v.mStableRoute.mNextHop = mServiceCtrl->getOwnId();
 	v.mStableRoute.mReceived = now;
 	v.mStableRoute.mValidSince = now;
 	v.mStableRoute.mSequence = 0;
@@ -901,7 +901,7 @@ std::ostream &operator<<(std::ostream &out, const RsDsdvTableEntry &entry)
 		out << "\tAll Routes:" << std::endl;
 	}
 
-	std::map<std::string, RsDsdvRoute>::const_iterator it;
+	std::map<RsPeerId, RsDsdvRoute>::const_iterator it;
 	for(it = entry.mAllRoutes.begin(); it != entry.mAllRoutes.end(); it++)
 	{
 		out << "\t\t" << it->second << std::endl;

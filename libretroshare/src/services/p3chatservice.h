@@ -33,10 +33,12 @@
 
 #include "serialiser/rsmsgitems.h"
 #include "services/p3service.h"
+#include "pqi/pqiservicemonitor.h"
 #include "pgp/pgphandler.h"
 #include "turtle/turtleclientservice.h"
 #include "retroshare/rsmsgs.h"
 
+class p3ServiceControl;
 class p3LinkMgr;
 class p3HistoryMgr;
 class p3turtle ;
@@ -50,10 +52,10 @@ typedef RsPeerId ChatLobbyVirtualPeerId ;
   * This service uses rsnotify (callbacks librs clients (e.g. rs-gui))
   * @see NotifyBase
   */
-class p3ChatService: public p3Service, public p3Config, public pqiMonitor, public RsTurtleClientService
+class p3ChatService: public p3Service, public p3Config, public pqiServiceMonitor, public RsTurtleClientService
 {
 	public:
-		p3ChatService(p3LinkMgr *cm, p3HistoryMgr *historyMgr);
+		p3ChatService(p3ServiceControl *cs, p3LinkMgr *cm, p3HistoryMgr *historyMgr);
 
 		virtual RsServiceInfo getServiceInfo();
 
@@ -69,7 +71,7 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor, publi
 		virtual int   status();
 
 		/*************** pqiMonitor callback ***********************/
-		virtual void statusChange(const std::list<pqipeer> &plist);
+		virtual void statusChange(const std::list<pqiServicePeer> &plist);
 
 		/*!
 		 * public chat sent to all peers
@@ -276,6 +278,7 @@ class p3ChatService: public p3Service, public p3Config, public pqiMonitor, publi
 		RsChatAvatarItem *makeOwnAvatarItem() ;
 		RsChatStatusItem *makeOwnCustomStateStringItem() ;
 
+		p3ServiceControl *mServiceCtrl;
 		p3LinkMgr *mLinkMgr;
 		p3HistoryMgr *mHistoryMgr;
 

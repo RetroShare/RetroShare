@@ -75,8 +75,8 @@ static const uint32_t MAX_ALLOWED_LOBBIES_IN_LIST_WARNING = 50 ;
 static const uint32_t MAX_MESSAGES_PER_SECONDS_NUMBER     =  5 ; // max number of messages from a given peer in a window for duration below
 static const uint32_t MAX_MESSAGES_PER_SECONDS_PERIOD     = 10 ; // duration window for max number of messages before messages get dropped.
 
-p3ChatService::p3ChatService(p3LinkMgr *lm, p3HistoryMgr *historyMgr)
-	:p3Service(), p3Config(CONFIG_TYPE_CHAT), mChatMtx("p3ChatService"), mLinkMgr(lm) , mHistoryMgr(historyMgr)
+p3ChatService::p3ChatService(p3ServiceControl *sc, p3LinkMgr *lm, p3HistoryMgr *historyMgr)
+	:p3Service(), p3Config(CONFIG_TYPE_CHAT), mChatMtx("p3ChatService"), mServiceCtrl(sc), mLinkMgr(lm) , mHistoryMgr(historyMgr)
 {
 	_serializer = new RsChatSerialiser() ;
 	_own_avatar = NULL ;
@@ -170,13 +170,13 @@ int     p3ChatService::sendPublicChat(const std::string &msg)
 {
 	/* go through all the peers */
 
-	std::list<RsPeerId> ids;
-	std::list<RsPeerId>::iterator it;
-	mLinkMgr->getOnlineList(ids);
+	std::set<RsPeerId> ids;
+	std::set<RsPeerId>::iterator it;
+	mServiceCtrl->getPeersConnected(getServiceInfo().mServiceType, ids);
 
 	/* add in own id -> so get reflection */
-	RsPeerId ownId = mLinkMgr->getOwnId();
-	ids.push_back(ownId);
+	RsPeerId ownId = mServiceCtrl->getOwnId();
+	ids.insert(ownId);
 
 #ifdef CHAT_DEBUG
 	std::cerr << "p3ChatService::sendChat()";
@@ -259,15 +259,15 @@ class p3ChatService::AvatarInfo
 
 void p3ChatService::sendGroupChatStatusString(const std::string& status_string)
 {
-	std::list<RsPeerId> ids;
-	mLinkMgr->getOnlineList(ids);
+	std::set<RsPeerId> ids;
+	mServiceCtrl->getPeersConnected(getServiceInfo().mServiceType, ids);
 
 #ifdef CHAT_DEBUG
 	std::cerr << "p3ChatService::sendChat(): sending group chat status string: " << status_string << std::endl ;
 	std::cerr << std::endl;
 #endif
 
-	for(std::list<RsPeerId>::iterator it = ids.begin(); it != ids.end(); ++it)
+	for(std::set<RsPeerId>::iterator it = ids.begin(); it != ids.end(); ++it)
 	{
 		RsChatStatusItem *cs = new RsChatStatusItem ;
 
@@ -487,7 +487,7 @@ bool p3ChatService::isOnline(const DistantChatPeerId& pid)
 	if(getDistantChatStatus(pid,status,pgp_id)) 
 		return true ;
 	else
-		return mLinkMgr->isOnline(pid) ;
+		return mServiceCtrl->isPeerConnected(getServiceInfo().mServiceType, pid);
 }
 
 bool     p3ChatService::sendPrivateChat(const RsPeerId &id, const std::string &msg)
@@ -556,7 +556,7 @@ bool     p3ChatService::sendPrivateChat(const RsPeerId &id, const std::string &m
 	std::cerr << std::endl;
 #endif
 
-	mHistoryMgr->addMessage(false, id, mLinkMgr->getOwnId(), ci);
+	mHistoryMgr->addMessage(false, id, mServiceCtrl->getOwnId(), ci);
 
 	checkSizeAndSendMessage_deprecated(ci);
 
@@ -1323,7 +1323,7 @@ bool p3ChatService::handleRecvChatMsgItem(RsChatMsgItem *ci)
 				publicChanged = true;
 				publicList.push_back(ci);	// don't delete the item !!
 
-				if (ci->PeerId() != mLinkMgr->getOwnId()) {
+				if (ci->PeerId() != mServiceCtrl->getOwnId()) {
 					/* not from loop back */
 					mHistoryMgr->addMessage(true, RsPeerId(), ci->PeerId(), ci);
 				}
@@ -1388,10 +1388,10 @@ void p3ChatService::getListOfNearbyChatLobbies(std::vector<VisibleChatLobbyRecor
 
 	if(now > MIN_DELAY_BETWEEN_PUBLIC_LOBBY_REQ + last_visible_lobby_info_request_time)
 	{
-		std::list<RsPeerId> ids ;
-		mLinkMgr->getOnlineList(ids);
+		std::set<RsPeerId> ids ;
+		mServiceCtrl->getPeersConnected(getServiceInfo().mServiceType, ids);
 
-		for(std::list<RsPeerId>::const_iterator it(ids.begin());it!=ids.end();++it)
+		for(std::set<RsPeerId>::const_iterator it(ids.begin());it!=ids.end();++it)
 		{
 #ifdef CHAT_DEBUG
 			std::cerr << "  asking list of public lobbies to " << *it << std::endl;
@@ -1591,7 +1591,7 @@ void p3ChatService::initRsChatInfo(RsChatMsgItem *c, ChatInfo &i)
 
 void p3ChatService::setOwnCustomStateString(const std::string& s)
 {
-	std::list<RsPeerId> onlineList;
+	std::set<RsPeerId> onlineList;
 	{
 		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
@@ -1603,13 +1603,13 @@ void p3ChatService::setOwnCustomStateString(const std::string& s)
 		for(std::map<RsPeerId,StateStringInfo>::iterator it(_state_strings.begin());it!=_state_strings.end();++it)
 			it->second._own_is_new = true ;
 
-		mLinkMgr->getOnlineList(onlineList);
+		mServiceCtrl->getPeersConnected(getServiceInfo().mServiceType, onlineList);
 	}
 
 	RsServer::notify()->notifyOwnStatusMessageChanged() ;
 
 	// alert your online peers to your newly set status
-	std::list<RsPeerId>::iterator it(onlineList.begin());
+	std::set<RsPeerId>::iterator it(onlineList.begin());
 	for(; it != onlineList.end(); it++){
 
 		RsChatStatusItem *cs = new RsChatStatusItem();
@@ -1984,7 +1984,7 @@ bool p3ChatService::saveList(bool& cleanup, std::list<RsItem*>& list)
 	if(_own_avatar != NULL)
 	{
 		RsChatAvatarItem *ci = makeOwnAvatarItem() ;
-		ci->PeerId(mLinkMgr->getOwnId());
+		ci->PeerId(mServiceCtrl->getOwnId());
 
 		list.push_back(ci) ;
 	}
@@ -2075,54 +2075,54 @@ RsSerialiser *p3ChatService::setupSerialiser()
 
 /*************** pqiMonitor callback ***********************/
 
-void p3ChatService::statusChange(const std::list<pqipeer> &plist)
+void p3ChatService::statusChange(const std::list<pqiServicePeer> &plist)
 {
-	std::list<pqipeer>::const_iterator it;
+	std::list<pqiServicePeer>::const_iterator it;
 	for (it = plist.begin(); it != plist.end(); it++) {
-		if (it->state & RS_PEER_S_FRIEND) {
-			if (it->actions & RS_PEER_CONNECTED) {
-				
-				/* send the saved outgoing messages */
-				bool changed = false;
+		if (it->actions & RS_SERVICE_PEER_CONNECTED) 
+		{
+			/* send the saved outgoing messages */
+			bool changed = false;
 
-				std::vector<RsChatMsgItem*> to_send ;
+			std::vector<RsChatMsgItem*> to_send ;
 
-				if (privateOutgoingList.size()) 
-				{
-					RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+			if (privateOutgoingList.size()) 
+			{
+				RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
-					RsPeerId ownId = mLinkMgr->getOwnId();
+				RsPeerId ownId = mServiceCtrl->getOwnId();
 
-					std::list<RsChatMsgItem *>::iterator cit = privateOutgoingList.begin();
-					while (cit != privateOutgoingList.end()) {
-						RsChatMsgItem *c = *cit;
+				std::list<RsChatMsgItem *>::iterator cit = privateOutgoingList.begin();
+				while (cit != privateOutgoingList.end()) {
+					RsChatMsgItem *c = *cit;
 
-						if (c->PeerId() == it->id) {
-							mHistoryMgr->addMessage(false, c->PeerId(), ownId, c);
+					if (c->PeerId() == it->id) {
+						mHistoryMgr->addMessage(false, c->PeerId(), ownId, c);
 
-							to_send.push_back(c) ;
+						to_send.push_back(c) ;
 
-							changed = true;
+						changed = true;
 
-							cit = privateOutgoingList.erase(cit);
+						cit = privateOutgoingList.erase(cit);
 
-							continue;
-						}
-
-						cit++;
+						continue;
 					}
-				} /* UNLOCKED */
 
-				for(uint32_t i=0;i<to_send.size();++i)
-					checkSizeAndSendMessage_deprecated(to_send[i]); // delete item
-
-				if (changed) {
-					RsServer::notify()->notifyListChange(NOTIFY_LIST_PRIVATE_OUTGOING_CHAT, NOTIFY_TYPE_DEL);
-
-					IndicateConfigChanged();
+					cit++;
 				}
+			} /* UNLOCKED */
+
+			for(uint32_t i=0;i<to_send.size();++i)
+				checkSizeAndSendMessage_deprecated(to_send[i]); // delete item
+
+			if (changed) {
+				RsServer::notify()->notifyListChange(NOTIFY_LIST_PRIVATE_OUTGOING_CHAT, NOTIFY_TYPE_DEL);
+
+				IndicateConfigChanged();
 			}
-		} else if (it->actions & RS_PEER_MOVED) {
+		}
+		else if (it->actions & RS_SERVICE_PEER_REMOVED) 
+		{
 			/* now handle remove */
 			clearPrivateChatQueue(true, it->id);
 			clearPrivateChatQueue(false, it->id);
@@ -2163,7 +2163,7 @@ bool p3ChatService::bounceLobbyObject(RsChatLobbyBouncingObject *item,const RsPe
 
 	// Adds the peer id to the list of friend participants, even if it's not original msg source
 
-	if(peer_id != mLinkMgr->getOwnId())
+	if(peer_id != mServiceCtrl->getOwnId())
 		lobby.participating_friends.insert(peer_id) ;
 
 	lobby.nick_names[item->nick] = now ;
@@ -2196,7 +2196,7 @@ bool p3ChatService::bounceLobbyObject(RsChatLobbyBouncingObject *item,const RsPe
 	// Forward to allparticipating friends, except this peer.
 
 	for(std::set<RsPeerId>::const_iterator it(lobby.participating_friends.begin());it!=lobby.participating_friends.end();++it)
-		if((*it)!=peer_id && mLinkMgr->isOnline(*it)) 
+		if((*it)!=peer_id && mServiceCtrl->isPeerConnected(getServiceInfo().mServiceType, *it)) 
 		{
 			RsChatLobbyBouncingObject *obj2 = item->duplicate() ; // makes a copy
 			RsChatItem *item2 = dynamic_cast<RsChatItem*>(obj2) ;
@@ -2270,7 +2270,7 @@ void p3ChatService::sendLobbyStatusItem(const ChatLobbyId& lobby_id,int type,con
 		item.string1 = status_string ;
 		item.sendTime = time(NULL) ;
 	}
-	RsPeerId ownId = mLinkMgr->getOwnId();
+	RsPeerId ownId = mServiceCtrl->getOwnId();
 	bounceLobbyObject(&item,ownId) ;
 }
 
@@ -2429,10 +2429,10 @@ void p3ChatService::sendConnectionChallenge(ChatLobbyId lobby_id)
 
 	// Broadcast to all direct friends
 
-	std::list<RsPeerId> ids ;
-	mLinkMgr->getOnlineList(ids);
+	std::set<RsPeerId> ids ;
+	mServiceCtrl->getPeersConnected(getServiceInfo().mServiceType, ids);
 
-	for(std::list<RsPeerId>::const_iterator it(ids.begin());it!=ids.end();++it)
+	for(std::set<RsPeerId>::const_iterator it(ids.begin());it!=ids.end();++it)
 	{
 		RsChatLobbyConnectChallengeItem *item = new RsChatLobbyConnectChallengeItem ;
 

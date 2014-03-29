@@ -35,6 +35,7 @@
 
 class p3LinkMgr ;
 class p3PeerMgr ;
+class p3ServiceControl ;
 
 
 #include "ft/ftsearch.h"
@@ -91,7 +92,7 @@ virtual bool    loadList(std::list<RsItem *>& load);
 class ftCacheStrapper: public CacheStrapper, public ftSearch
 {
 	public:
-        ftCacheStrapper(p3LinkMgr *cm);
+        ftCacheStrapper(p3ServiceControl *cm, uint32_t ftServiceId);
 
 	/* overloaded search function */
 virtual bool search(const RsFileHash &hash, FileSearchFlags hintflags, FileInfo &info) const;

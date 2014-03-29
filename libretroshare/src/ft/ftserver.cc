@@ -63,16 +63,16 @@ const int ftserverzone = 29539;
 static const time_t FILE_TRANSFER_LOW_PRIORITY_TASKS_PERIOD = 5 ; // low priority tasks handling every 5 seconds
 
 	/* Setup */
-ftServer::ftServer(p3PeerMgr *pm, p3LinkMgr *lm)
+ftServer::ftServer(p3PeerMgr *pm, p3ServiceControl *sc)
         :       p3Service(),
 	 	mPeerMgr(pm),
-                mLinkMgr(lm),
+                mServiceCtrl(sc),
 		mCacheStrapper(NULL),
 		mFiStore(NULL), mFiMon(NULL),
 		mFtController(NULL), mFtExtra(NULL),
 		mFtDataplex(NULL), mFtSearch(NULL), srvMutex("ftServer")
 {
-	mCacheStrapper = new ftCacheStrapper(lm);
+	mCacheStrapper = new ftCacheStrapper(sc, getServiceInfo().mServiceType);
 
 	addSerialType(new RsFileTransferSerialiser()) ;
 }
@@ -123,8 +123,8 @@ const RsPeerId& ftServer::OwnId()
 {
 	static RsPeerId null_id ;
 
-	if (mLinkMgr)
-		return  mLinkMgr->getOwnId();
+	if (mServiceCtrl)
+		return  mServiceCtrl->getOwnId();
 	else
 		return null_id ;
 }
@@ -136,7 +136,7 @@ void ftServer::SetupFtServer()
 	/* setup FiStore/Monitor */
 	std::string localcachedir = mConfigPath + "/cache/local";
 	std::string remotecachedir = mConfigPath + "/cache/remote";
-	RsPeerId ownId = mLinkMgr->getOwnId();
+	RsPeerId ownId = mServiceCtrl->getOwnId();
 
 	/* search/extras List */
 	mFtExtra = new ftExtraList();
@@ -146,7 +146,7 @@ void ftServer::SetupFtServer()
 	mFtDataplex = new ftDataMultiplex(ownId, this, mFtSearch);
 
 	/* make Controller */
-	mFtController = new ftController(mCacheStrapper, mFtDataplex, mConfigPath);
+	mFtController = new ftController(mCacheStrapper, mFtDataplex, mServiceCtrl, getServiceInfo().mServiceType);
 	mFtController -> setFtSearchNExtra(mFtSearch, mFtExtra);
 	std::string tmppath = ".";
 	mFtController->setPartialsDirectory(tmppath);
@@ -167,8 +167,8 @@ void ftServer::SetupFtServer()
 	mFtSearch->addSearchMode(mFiMon, RS_FILE_HINTS_LOCAL);
 	mFtSearch->addSearchMode(mFiStore, RS_FILE_HINTS_REMOTE);
 
-	mLinkMgr->addMonitor(mFtController);
-	mLinkMgr->addMonitor(mCacheStrapper);
+	mServiceCtrl->registerServiceMonitor(mFtController, getServiceInfo().mServiceType);
+	mServiceCtrl->registerServiceMonitor(mCacheStrapper, getServiceInfo().mServiceType);
 
 	return;
 }
@@ -562,7 +562,7 @@ int ftServer::RequestDirDetails(const RsPeerId& uid, const std::string& path, Di
 		std::cerr << std::endl;
 	}
 #endif
-	if(uid == mLinkMgr->getOwnId())
+	if(uid == mServiceCtrl->getOwnId())
 		return mFiMon->RequestDirDetails(path, details);
 	else
 		return mFiStore->RequestDirDetails(uid, path, details);

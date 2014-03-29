@@ -23,7 +23,7 @@
  *
  */
 
-#include "pqi/p3linkmgr.h"
+#include "pqi/p3servicecontrol.h"
 #include "pqi/p3netmgr.h"
 
 #include "util/rsnet.h"
@@ -57,8 +57,8 @@
  */
 
 
-p3BanList::p3BanList(p3LinkMgr *lm, p3NetMgr *nm)
-	:p3Service(), mBanMtx("p3BanList"), mLinkMgr(lm), mNetMgr(nm) 
+p3BanList::p3BanList(p3ServiceControl *sc, p3NetMgr *nm)
+	:p3Service(), mBanMtx("p3BanList"), mServiceCtrl(sc), mNetMgr(nm) 
 {
 	addSerialType(new RsBanListSerialiser());
 
@@ -163,7 +163,7 @@ bool p3BanList::recvBanItem(RsBanListItem *item)
 /* overloaded from pqiNetAssistSharePeer */
 void p3BanList::updatePeer(const RsPeerId& /*id*/, const struct sockaddr_storage &addr, int /*type*/, int /*reason*/, int age)
 {
-	RsPeerId ownId = mLinkMgr->getOwnId();
+	RsPeerId ownId = mServiceCtrl->getOwnId();
 
 	int int_reason = 0;
 	addBanEntry(ownId, addr, RSBANLIST_SOURCE_SELF, int_reason, age);
@@ -265,7 +265,7 @@ bool p3BanList::addBanEntry(const RsPeerId &peerId, const struct sockaddr_storag
 int p3BanList::condenseBanSources_locked()
 {
 	time_t now = time(NULL);
-	RsPeerId ownId = mLinkMgr->getOwnId();
+	RsPeerId ownId = mServiceCtrl->getOwnId();
 	
 #ifdef DEBUG_BANLIST
 	std::cerr << "p3BanList::condenseBanSources_locked()";
@@ -403,9 +403,9 @@ void p3BanList::sendBanLists()
 
 	/* we ping our peers */
 	/* who is online? */
-	std::list<RsPeerId> idList;
+	std::set<RsPeerId> idList;
 
-	mLinkMgr->getOnlineList(idList);
+	mServiceCtrl->getPeersConnected(getServiceInfo().mServiceType, idList);
 
 #ifdef DEBUG_BANLIST
 	std::cerr << "p3BanList::sendBanList()";
@@ -413,7 +413,7 @@ void p3BanList::sendBanLists()
 #endif
 
 	/* prepare packets */
-	std::list<RsPeerId>::iterator it;
+	std::set<RsPeerId>::iterator it;
 	for(it = idList.begin(); it != idList.end(); it++)
 	{
 #ifdef DEBUG_BANLIST

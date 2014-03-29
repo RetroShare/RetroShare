@@ -35,7 +35,7 @@
 #include "services/p3service.h"
 //#include "retroshare/rsbanlist.h"
 
-class p3LinkMgr;
+class p3ServiceControl;
 class p3NetMgr;
 
 class BanListPeer
@@ -68,7 +68,7 @@ class BanList
 class p3BanList: /* public RsBanList, */ public p3Service, public pqiNetAssistPeerShare /* , public p3Config, public pqiMonitor */
 {
 	public:
-		p3BanList(p3LinkMgr *lm, p3NetMgr *nm);
+		p3BanList(p3ServiceControl *sc, p3NetMgr *nm);
 		virtual RsServiceInfo getServiceInfo();
 
 		/***** overloaded from RsBanList *****/
@@ -126,7 +126,7 @@ class p3BanList: /* public RsBanList, */ public p3Service, public pqiNetAssistPe
 		std::map<RsPeerId, BanList> mBanSources;
 		std::map<struct sockaddr_storage, BanListPeer> mBanSet;
 
-		p3LinkMgr *mLinkMgr;
+		p3ServiceControl *mServiceCtrl;
 		p3NetMgr *mNetMgr;
 
 };

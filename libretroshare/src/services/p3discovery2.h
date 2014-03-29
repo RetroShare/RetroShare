@@ -39,6 +39,7 @@
 #include "services/p3service.h"
 #include "pqi/authgpg.h"
 
+class p3ServiceControl;
 
 
 typedef RsPgpId PGPID;
@@ -78,7 +79,7 @@ class p3discovery2: public RsDisc, public p3Service, public pqiServiceMonitor, p
 {
 	public:
 
-	p3discovery2(p3PeerMgr *peerMgr, p3LinkMgr *linkMgr, p3NetMgr *netMgr);
+	p3discovery2(p3PeerMgr *peerMgr, p3LinkMgr *linkMgr, p3NetMgr *netMgr, p3ServiceControl *sc);
 virtual ~p3discovery2();
 
 virtual RsServiceInfo getServiceInfo();
@@ -133,6 +134,7 @@ virtual void setGPGOperation(AuthGPGOperation *operation);
 	p3PeerMgr *mPeerMgr;
 	p3LinkMgr *mLinkMgr;
 	p3NetMgr  *mNetMgr;
+	p3ServiceControl *mServiceCtrl;
 
 	/* data */
 	RsMutex mDiscMtx;

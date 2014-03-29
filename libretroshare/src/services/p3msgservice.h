@@ -36,7 +36,7 @@
 #include "pqi/pqi.h"
 #include "pqi/pqiindic.h"
 
-#include "pqi/pqimonitor.h"
+#include "pqi/pqiservicemonitor.h"
 #include "pqi/p3cfgmgr.h"
 
 #include "services/p3service.h"
@@ -53,13 +53,13 @@
 class p3LinkMgr;
 
 // Temp tweak to test grouter
-class p3MsgService: public p3Service, public p3Config, public pqiMonitor, public RsTurtleClientService
+class p3MsgService: public p3Service, public p3Config, public pqiServiceMonitor, public RsTurtleClientService
 #ifdef GROUTER
 						  , public GRouterClientService
 #endif
 {
 	public:
-	p3MsgService(p3LinkMgr *lm);
+	p3MsgService(p3ServiceControl *sc);
 virtual RsServiceInfo getServiceInfo();
 
 	/* External Interface */
@@ -106,7 +106,7 @@ virtual void saveDone();
 	/*** Overloaded from p3Config ****/
 
 	/*** Overloaded from pqiMonitor ***/
-virtual void    statusChange(const std::list<pqipeer> &plist);
+virtual void    statusChange(const std::list<pqiServicePeer> &plist);
 int     checkOutgoingMessages();
 	/*** Overloaded from pqiMonitor ***/
 
@@ -188,7 +188,7 @@ RsMsgItem *initMIRsMsg(MessageInfo &info, const RsPeerId &to);
 
 void    initStandardTagTypes();
 
-	p3LinkMgr *mLinkMgr;
+	p3ServiceControl *mServiceCtrl;
 
 	/* Mutex Required for stuff below */
 

@@ -34,7 +34,7 @@
 #include "services/p3service.h"
 #include "retroshare/rsrtt.h"
 
-class p3LinkMgr;
+class p3ServiceControl;
 
 class RttPeerInfo
 {
@@ -63,7 +63,7 @@ class RttPeerInfo
 class p3rtt: public RsRtt, public p3FastService
 {
 	public:
-		p3rtt(p3LinkMgr *cm);
+		p3rtt(p3ServiceControl *sc);
 virtual RsServiceInfo getServiceInfo();
 
 		/***** overloaded from rsRtt *****/
@@ -111,7 +111,7 @@ virtual bool recvItem(RsItem *item); // Overloaded from p3FastService.
 		time_t mSentPingTime;
 		uint32_t mCounter;
 
-		p3LinkMgr *mLinkMgr;
+		p3ServiceControl *mServiceCtrl;
 
 };
 
