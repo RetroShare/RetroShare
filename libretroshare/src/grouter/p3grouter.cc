@@ -182,6 +182,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+#include <math.h>
+
 #include "util/rsrandom.h"
 #include "pqi/p3linkmgr.h"
 #include "serialiser/rsconfigitems.h"
@@ -192,7 +194,7 @@
 #include "grouterclientservice.h"
 
 /**********************/
-//#define GROUTER_DEBUG
+#define GROUTER_DEBUG
 /**********************/
 
 const std::string p3GRouter::SERVICE_INFO_APP_NAME = "Global Router" ;
@@ -349,7 +351,7 @@ void p3GRouter::routePendingObjects()
 			//
 			_routing_matrix.computeRoutingProbabilities(it->second.data_item->destination_key, pids, probas) ;
 
-			// Compute the branching factor.
+			// Compute the maximum branching factor.
 
 			int N = computeBranchingFactor(pids,probas,it->second.data_item->randomized_distance) ;
 
@@ -442,23 +444,112 @@ uint32_t p3GRouter::computeRandomDistanceIncrement(const RsPeerId& pid,const GRo
 
 uint32_t p3GRouter::computeBranchingFactor(const std::vector<RsPeerId>& friends,const std::vector<float>& probas,uint32_t dist) 
 {
-	// This should be made a bit more adaptive ;-)
+	// The branching factor N should ensure that messages have a constant probability of getting to destination.
+	// What we're computing here is the maximum branching factor. Depending on the routing probabilities,
+	// the actual branching factor is likely to be less.
 	//
-	return 1 ;
+	// The output is a number of friends to pick, which we compute from the total number of connected friends.
+	// We use a heuristic, based on observations of turtle:
+	//
+	// 	dist	: 0      1      2      3      4      5     6
+	// 	BF		: 1    0.7    0.3    0.1   0.05   0.05  0.05
+
+	static const uint32_t MAX_DIST_INDEX = 7 ;
+	static float branching_factors[MAX_DIST_INDEX] = { 1,0.7,0.3,0.1,0.05,0.05,0.05 } ;
+
+	uint32_t dist_index = std::min( (uint32_t)(dist / (float)GROUTER_ITEM_DISTANCE_UNIT), MAX_DIST_INDEX-1) ;
+
+	// Now temper the branching factor by how likely we are to already have a good guess from the probabilities:
+	//		- if the largest probability is much larger than the second one
+	
+	std::vector<float> probs(probas) ;
+	std::sort(probs.begin(),probs.end()) ;
+	int n=0 ;
+
+	for(int i=probs.size()-1;i>=0;--i)
+		if(probs[i] > 0.5 * probs.back())
+			++n ;
+
+	// send the final value
+
+	return std::max(1, std::min(n, (int)(friends.size()*branching_factors[dist_index]))) ;
 }
 
+class peer_comparison_function
+{
+	public:
+		bool operator()(const std::pair<float,uint32_t>& p1,const std::pair<float,uint32_t>& p2) const
+		{
+			return p1.first > p2.first ;
+		}
+};
 std::set<uint32_t> p3GRouter::computeRoutingFriends(const std::vector<RsPeerId>& pids,const std::vector<float>& probas,uint32_t N) 
 {
-	// We draw N friends according to the routing probabilitites that are passed as parameter.
-	//
-
 	std::set<uint32_t> res ;
 
-	if(probas.empty())
+	if(pids.size() != probas.size())
+	{
+		std::cerr << __PRETTY_FUNCTION__ << ": ERROR!! pids and probas should have the same size! Returning 0 friends!" << std::endl;
 		return res ;
+	}
+	// We draw N friends according to the routing probabilitites that are passed as parameter.
+	//
+	// Basically, we proceed using the following heuristic:
+	// 	- allocate p<N peers to be selected among the highest probabilities (if they exist)
+	// 	- draw the remaining N-p peers randomly, according to the routing probabilities.
 
-	res.insert(0) ;
+	// Sort all peers according to probabilities. In order to shuffle peers with identical probabilities, we add
+	// a very small offset to each of them.
+	//
+	std::vector<std::pair<float,uint32_t> > probas_with_peers ;
 
+	for(uint32_t i=0;i<pids.size();++i)
+		probas_with_peers.push_back(std::make_pair(std::min(1.0,probas[i] + 0.001*RSRandom::random_f32()), i)) ;
+
+	std::sort(probas_with_peers.begin(),probas_with_peers.end(),peer_comparison_function()) ;
+
+#ifdef GROUTER_DEBUG
+	std::cerr << "  Selecting at most " << N << " friends." << std::endl;
+#endif
+
+	// The smaller the probability, the more randomly should the peer be selected.
+	// 	- the largest peer is always selected.
+	// 	- smaller peers a selected more uniformly
+	//
+	// To do that we:
+	// 	- loop i for 0 to N-1 where N is the number of peers to select
+	// 	- draw one peer from the sorted array between 0 and P*i/N according to probabilities.
+
+	for(uint32_t i=0;i<N;++i)
+	{
+#ifdef GROUTER_DEBUG
+		std::cerr << "    Computing routing friends. Randomised probabilities are: " << std::endl;
+		for(uint32_t j=0;j<probas_with_peers.size();++j)
+			std::cerr << "      " << probas_with_peers[j].second << " (" << pids[probas_with_peers[j].second] << ") : " << probas_with_peers[j].first << std::endl;
+#endif
+		int p = (int)ceil(i/(float)N * probas_with_peers.size()) ;
+
+		// randomly select one peer between 0 and p
+
+		float total = 0.0f ; for(int j=0;j<p;++j) total += probas_with_peers[j].first ;	// computes the partial sum of the array
+		float r = RSRandom::random_f32()*total ;
+
+		int k; total=0.0f ; for(k=0;total < r;++k) total += probas_with_peers[k].first ; --k ;
+
+		std::cerr << "    => Friend " << i << ", between 0 and " << p-1 << ": chose k=" << k << ", peer=" << probas_with_peers[k].second << std::endl;
+
+		res.insert(probas_with_peers[k].second) ;
+
+		// remove the selected peer from the array. We can use a linear remove, since the rest is already linear.
+
+		for(int j=k;j+1<probas_with_peers.size();++j)
+			probas_with_peers[j] = probas_with_peers[j+1] ;
+
+		probas_with_peers.pop_back() ;
+	}
+
+	// We also add a totally random peer, for the sake of discovery new routes.
+	//
 	return res ;
 }
 
@@ -687,7 +778,7 @@ void p3GRouter::handleRecvACKItem(RsGRouterACKItem *item)
 			it->second.status_flags = RS_GROUTER_ROUTING_STATE_ARVD ;
 
 			{
-				#warning UNFINISHED code.
+#warning UNFINISHED code.
 
 				// Now compute the weight for that particular item. See with what probabilities it was chosen.
 				//
