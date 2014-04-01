@@ -169,7 +169,7 @@ uint32_t RsGxsIdSerialiser::sizeGxsIdGroupItem(RsGxsIdGroupItem *item)
 	const RsGxsIdGroup& group = item->group;
 	uint32_t s = 8; // header
 
-	s += GetTlvStringSize(group.mPgpIdHash);
+	s += Sha1CheckSum::SIZE_IN_BYTES;
 	s += GetTlvStringSize(group.mPgpIdSign);
 
 	RsTlvStringSetRef set(TLV_TYPE_RECOGNSET, item->group.mRecognTags);
@@ -203,7 +203,7 @@ bool RsGxsIdSerialiser::serialiseGxsIdGroupItem(RsGxsIdGroupItem *item, void *da
 	offset += 8;
 	
 	/* GxsIdGroupItem */
-	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_HASH_SHA1, item->group.mPgpIdHash);
+	ok &= item->group.mPgpIdHash.serialise(data, tlvsize, offset);
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_SIGN, item->group.mPgpIdSign);
 
 	RsTlvStringSetRef set(TLV_TYPE_RECOGNSET, item->group.mRecognTags);
@@ -263,7 +263,7 @@ RsGxsIdGroupItem* RsGxsIdSerialiser::deserialiseGxsIdGroupItem(void *data, uint3
 	/* skip the header */
 	offset += 8;
 	
-	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_HASH_SHA1, item->group.mPgpIdHash);
+	ok &= item->group.mPgpIdHash.deserialise(data, rssize, offset);
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_SIGN, item->group.mPgpIdSign);
 
 	RsTlvStringSetRef set(TLV_TYPE_RECOGNSET, item->group.mRecognTags);

@@ -42,12 +42,10 @@
  * #define DEBUG_IDS	1
  * #define DEBUG_RECOGN	1
  * #define GXSID_GEN_DUMMY_DATA	1
- * #define ENABLE_PGP_SIGNATURES 1
  ****/
 
 #define DEBUG_IDS	1
 #define DEBUG_RECOGN	1
-#define ENABLE_PGP_SIGNATURES 	1
 
 
 #define ID_REQUEST_LIST		0x0001
@@ -1984,9 +1982,7 @@ void	p3IdService::CacheArbitrationDone(uint32_t mode)
 
 //const int SHA_DIGEST_LENGTH = 20;
 
-typedef Sha1CheckSum GxsIdPgpHash;
-
-static void calcPGPHash(const RsGxsId &id, const PGPFingerprintType &pgp, GxsIdPgpHash &hash);
+static void calcPGPHash(const RsGxsId &id, const PGPFingerprintType &pgp, Sha1CheckSum &hash);
 
 
 // Must Use meta.
@@ -2078,7 +2074,7 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
 	if (item->group.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID) 
 	{
 		/* create the hash */
-		GxsIdPgpHash hash;
+		Sha1CheckSum hash;
 
 		/* */
 		PGPFingerprintType ownFinger;
@@ -2094,8 +2090,6 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
 //		}
 #endif
 
-
-
 		if (!AuthGPG::getAuthGPG()->getKeyFingerprint(ownId,ownFinger))
 		{
 			std::cerr << "p3IdService::service_CreateGroup() ERROR Own Finger is stuck";
@@ -2106,8 +2100,9 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
 		std::cerr << "p3IdService::service_CreateGroup() OwnFingerprint: " << ownFinger.toStdString();
 		std::cerr << std::endl;
 
-		calcPGPHash(RsGxsId(item->group.mMeta.mGroupId.toStdString()), ownFinger, hash);
-		item->group.mPgpIdHash = hash.toStdString();
+		RsGxsId gxsId(item->group.mMeta.mGroupId.toStdString());
+		calcPGPHash(gxsId, ownFinger, hash);
+		item->group.mPgpIdHash = hash;
 
 #ifdef DEBUG_IDS
 #endif // DEBUG_IDS
@@ -2118,7 +2113,6 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
 		/* do signature */
 
 
-#ifdef ENABLE_PGP_SIGNATURES
 #define MAX_SIGN_SIZE 2048
 		uint8_t signarray[MAX_SIGN_SIZE]; 
 		unsigned int sign_size = MAX_SIGN_SIZE;
@@ -2149,11 +2143,6 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
 			std::cerr << std::endl;
 		}
 		/* done! */
-#else
-		item->group.mPgpIdSign = "";
-		createStatus = SERVICE_CREATE_SUCCESS;
-#endif
-
 	}
 	else
 	{
@@ -2425,15 +2414,8 @@ bool p3IdService::checkId(const RsGxsIdGroup &grp, RsPgpId &pgpId)
 	std::cerr << std::endl;
 #endif // DEBUG_IDS
 
-
-	if (grp.mPgpIdHash.length() != SHA_DIGEST_LENGTH * 2)
-	{
-		std::cerr << "ERROR PgpIdHash len:" << grp.mPgpIdHash.length();
-		std::cerr << std::endl;
-	}
-
 	/* iterate through and check hash */
-	GxsIdPgpHash ans(grp.mPgpIdHash);
+	Sha1CheckSum ans = grp.mPgpIdHash;
 
 #ifdef DEBUG_IDS
 	std::cerr << "\tExpected Answer: " << ans.toStdString();
@@ -2445,14 +2427,12 @@ bool p3IdService::checkId(const RsGxsIdGroup &grp, RsPgpId &pgpId)
 	std::map<RsPgpId, PGPFingerprintType>::iterator mit;
 	for(mit = mPgpFingerprintMap.begin(); mit != mPgpFingerprintMap.end(); mit++)
 	{
-		GxsIdPgpHash hash;
+		Sha1CheckSum hash;
 		calcPGPHash(RsGxsId(grp.mMeta.mGroupId.toStdString()), mit->second, hash);
 		if (ans == hash)
 		{
 			std::cerr << "p3IdService::checkId() HASH MATCH!";
 			std::cerr << std::endl;
-
-#ifdef ENABLE_PGP_SIGNATURES
 			std::cerr << "p3IdService::checkId() Hash : " << hash.toStdString();
 			std::cerr << std::endl;
 
@@ -2487,19 +2467,6 @@ bool p3IdService::checkId(const RsGxsIdGroup &grp, RsPgpId &pgpId)
 			}
 			std::cerr << strout;
 			std::cerr << std::endl;
-
-
-#else
-			pgpId = mit->first;
-
-#ifdef DEBUG_IDS
-			std::cerr << "p3IdService::checkId() Skipping Signature check for now... Hash Okay";
-			std::cerr << std::endl;
-#endif // DEBUG_IDS
-
-			return true;
-#endif
-
 		}
 	}
 
@@ -2549,7 +2516,7 @@ void p3IdService::getPgpIdList()
 }
 
 
-void calcPGPHash(const RsGxsId &id, const PGPFingerprintType &pgp, GxsIdPgpHash &hash)
+void calcPGPHash(const RsGxsId &id, const PGPFingerprintType &pgp, Sha1CheckSum &hash)
 {
 	unsigned char signature[SHA_DIGEST_LENGTH];
 	/* hash id + pubkey => pgphash */
@@ -2559,7 +2526,7 @@ void calcPGPHash(const RsGxsId &id, const PGPFingerprintType &pgp, GxsIdPgpHash 
 	SHA1_Update(sha_ctx, id.toStdString().c_str(), id.toStdString().length()); // TO FIX ONE DAY.
 	SHA1_Update(sha_ctx, pgp.toByteArray(), pgp.SIZE_IN_BYTES);
 	SHA1_Final(signature, sha_ctx);
-	hash = GxsIdPgpHash(signature);
+	hash = Sha1CheckSum(signature);
 
 #ifdef DEBUG_IDS
 	std::cerr << "calcPGPHash():";

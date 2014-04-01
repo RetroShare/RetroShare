@@ -60,7 +60,7 @@ template<class ID_CLASS,uint32_t TLV_TYPE> class t_RsTlvIdSet: public RsTlvItem
 			ok = ok && SetTlvBase(data, tlvend, offset, TLV_TYPE, tlvsize);
 
 			for(typename std::list<ID_CLASS>::const_iterator it(ids.begin());it!=ids.end();++it)
-				ok = ok && (*it).serialise(data,size,*offset) ;
+				ok = ok && (*it).serialise(data,tlvend,*offset) ;
 
 			return ok ;
 		}
@@ -90,7 +90,7 @@ template<class ID_CLASS,uint32_t TLV_TYPE> class t_RsTlvIdSet: public RsTlvItem
 			while(*offset + ID_CLASS::SIZE_IN_BYTES <= tlvend)
 			{
 				ID_CLASS id ;
-				ok = ok && id.deserialise(data,size,*offset) ;
+				ok = ok && id.deserialise(data,tlvend,*offset) ;
 				ids.push_back(id) ;
 			}
 			if(*offset != tlvend)
@@ -115,6 +115,7 @@ typedef t_RsTlvIdSet<RsPeerId,TLV_TYPE_PEERSET>		RsTlvPeerIdSet ;
 typedef t_RsTlvIdSet<RsPgpId,TLV_TYPE_PGPIDSET>	RsTlvPgpIdSet ;
 typedef t_RsTlvIdSet<Sha1CheckSum,TLV_TYPE_HASHSET> 	RsTlvHashSet ;
 typedef t_RsTlvIdSet<RsGxsId,TLV_TYPE_GXSIDSET> 	RsTlvGxsIdSet ;
+typedef t_RsTlvIdSet<RsGxsCircleId,TLV_TYPE_GXSCIRCLEIDSET> 	RsTlvGxsCircleIdSet ;
 
 class RsTlvServiceIdSet: public RsTlvItem
 {

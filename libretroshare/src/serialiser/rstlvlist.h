@@ -30,6 +30,8 @@
 
 #include <list>
 
+#define TLV_DEBUG_LIST 1
+
 template<class TLV_CLASS,uint32_t TLV_TYPE> class t_RsTlvList: public RsTlvItem
 {
 	public:
@@ -49,12 +51,18 @@ template<class TLV_CLASS,uint32_t TLV_TYPE> class t_RsTlvList: public RsTlvItem
 		virtual void TlvClear(){ mList.clear(); }
 		virtual bool SetTlv(void *data, uint32_t size, uint32_t *offset) const
 		{	
-			/* must check sizes */
 			uint32_t tlvsize = TlvSize();
 			uint32_t tlvend  = *offset + tlvsize;
+			/* must check sizes */
 
 			if (size < tlvend)
+			{
+#ifdef TLV_DEBUG_LIST
+				std::cerr << "RsTlvList::SetTlv() Not enough size";
+				std::cerr << std::endl;
+#endif
 				return false; /* not enough space */
+			}
 
 			bool ok = true;
 
@@ -64,15 +72,20 @@ template<class TLV_CLASS,uint32_t TLV_TYPE> class t_RsTlvList: public RsTlvItem
 			typename std::list<TLV_CLASS>::const_iterator it;
 			for(it = mList.begin();it != mList.end(); ++it)
 			{
-				ok &= it->SetTlv(data,tlvsize,offset) ;
+				ok &= it->SetTlv(data,tlvend,offset) ;
 			}
-
 			return ok ;
 		}
 		virtual bool GetTlv(void *data, uint32_t size, uint32_t *offset)
 		{
 			if (size < *offset + TLV_HEADER_SIZE)
+			{
+#ifdef TLV_DEBUG_LIST
+				std::cerr << "RsTlvList::GetTlv() Not enough size";
+				std::cerr << std::endl;
+#endif
 				return false;
+			}
 
 			uint16_t tlvtype = GetTlvType( &(((uint8_t *) data)[*offset])  );
 			uint32_t tlvsize = GetTlvSize( &(((uint8_t *) data)[*offset])  );
@@ -96,7 +109,7 @@ template<class TLV_CLASS,uint32_t TLV_TYPE> class t_RsTlvList: public RsTlvItem
 			while(ok && ((*offset) + 6 < tlvend))
 			{
 				TLV_CLASS item;
-				ok &= item.GetTlv(data,size,offset);
+				ok &= item.GetTlv(data,tlvend,offset);
 				if (ok)
 				{
 					mList.push_back(item);

@@ -1475,9 +1475,10 @@ bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 	RsPeerNetItem *item = new RsPeerNetItem();
 	item->clear();
 
-	item->pid = getOwnId().toStdString();
-	item->gpg_id = mOwnState.gpg_id.toStdString();
+	item->peerId = getOwnId();
+	item->pgpId = mOwnState.gpg_id;
 	item->location = mOwnState.location;
+
 #if 0
 	if (mOwnState.netMode & RS_NET_MODE_TRY_EXT)
 	{
@@ -1526,8 +1527,8 @@ bool p3PeerMgrIMPL::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 		item = new RsPeerNetItem();
 		item->clear();
 
-		item->pid = it->first.toStdString();
-		item->gpg_id = (it->second).gpg_id.toStdString();
+		item->peerId = it->first;
+		item->pgpId = (it->second).gpg_id;
 		item->location = (it->second).location;
 		item->netMode = (it->second).netMode;
 		item->vs_disc = (it->second).vs_disc;
@@ -1643,8 +1644,8 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 		RsPeerNetItem *pitem = dynamic_cast<RsPeerNetItem *>(*it);
 		if (pitem)
 		{
-			RsPeerId peer_id(pitem->pid) ;
-			RsPgpId peer_pgp_id(pitem->gpg_id) ;
+			RsPeerId peer_id = pitem->peerId ;
+			RsPgpId peer_pgp_id = pitem->pgpId ;
 
 			if (peer_id == ownId)
 			{
@@ -1669,7 +1670,7 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 #endif
 				/* ************* */
 				addFriend(peer_id, peer_pgp_id, pitem->netMode, pitem->vs_disc, pitem->vs_dht, pitem->lastContact, RS_SERVICE_PERM_ALL);
-				setLocation(RsPeerId(pitem->pid), pitem->location);
+				setLocation(pitem->peerId, pitem->location);
 			}
 
 			if (pitem->netMode == RS_NET_MODE_HIDDEN)
@@ -2044,15 +2045,15 @@ bool p3PeerMgrIMPL::assignPeersToGroup(const std::string &groupId, const std::li
 
 				std::list<RsPgpId>::const_iterator peerIt;
 				for (peerIt = peerIds.begin(); peerIt != peerIds.end(); peerIt++) {
-					std::list<RsPgpId>::iterator peerIt1 = std::find(groupItem->peerIds.begin(), groupItem->peerIds.end(), *peerIt);
+					std::list<RsPgpId>::iterator peerIt1 = std::find(groupItem->pgpList.ids.begin(), groupItem->pgpList.ids.end(), *peerIt);
 					if (assign) {
-						if (peerIt1 == groupItem->peerIds.end()) {
-							groupItem->peerIds.push_back(*peerIt);
+						if (peerIt1 == groupItem->pgpList.ids.end()) {
+							groupItem->pgpList.ids.push_back(*peerIt);
 							changed = true;
 						}
 					} else {
-						if (peerIt1 != groupItem->peerIds.end()) {
-							groupItem->peerIds.erase(peerIt1);
+						if (peerIt1 != groupItem->pgpList.ids.end()) {
+							groupItem->pgpList.ids.erase(peerIt1);
 							changed = true;
 						}
 					}

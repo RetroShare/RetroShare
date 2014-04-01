@@ -32,6 +32,7 @@
 #include "serialiser/rsserial.h"
 #include "serialiser/rstlvitem.h"
 #include "serialiser/rstlvstring.h"
+#include "serialiser/rstlvidset.h"
 
 #include "rsgxsitems.h"
 #include "retroshare/rsgxscircles.h"
@@ -49,10 +50,13 @@ class RsGxsCircleGroupItem : public RsGxsGrpItem
 public:
 
 	RsGxsCircleGroupItem():  RsGxsGrpItem(RS_SERVICE_GXS_TYPE_GXSCIRCLE,
-			RS_PKT_SUBTYPE_GXSCIRCLE_GROUP_ITEM), 
+			RS_PKT_SUBTYPE_GXSCIRCLE_GROUP_ITEM)
+#if 0
 			pgpIdSet(GXSCIRCLE_PGPIDSET), 
 			gxsIdSet(GXSCIRCLE_GXSIDSET), 
-			subCircleSet(GXSCIRCLE_SUBCIRCLESET) { return;}
+			subCircleSet(GXSCIRCLE_SUBCIRCLESET) 
+#endif
+			{ return;}
         virtual ~RsGxsCircleGroupItem() { return;}
 
         void clear();
@@ -62,9 +66,9 @@ public:
 	bool convertTo(RsGxsCircleGroup &group) const;
 
 	// DIFFERENT FROM OTHER ONES, as stupid serialisation otherwise.
-	RsTlvStringSet pgpIdSet; // For Local Groups.
-	RsTlvStringSet gxsIdSet; // For External Groups.
-	RsTlvStringSet subCircleSet;
+	RsTlvPgpIdSet pgpIdSet; // For Local Groups.
+	RsTlvGxsIdSet gxsIdSet; // For External Groups.
+	RsTlvGxsCircleIdSet subCircleSet;
 };
 
 class RsGxsCircleMsgItem : public RsGxsMsgItem

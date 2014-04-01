@@ -28,15 +28,6 @@
 #include "serialiser/rstlvaddrs.h"
 #include "serialiser/rsbaseserial.h"
 
-#if 0
-#include "rstlvtypes.h"
-#include "util/rsprint.h"
-#include <ostream>
-#include <iomanip>
-#include <iostream>
-#endif
-
-
 /************************************* RsTlvIpAddress ************************************/
 
 RsTlvIpAddress::RsTlvIpAddress()

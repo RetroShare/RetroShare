@@ -96,8 +96,10 @@ class RsGxsIdGroup
 	// Actually PgpIdHash is SHA1(.mMeta.mGroupId + PGPHandler->GpgFingerprint(ownId))
 	//                                 ???                 160 bits.
 
-	std::string mPgpIdHash; 
-	std::string mPgpIdSign;   // Need a signature as proof - otherwise anyone could add others Hashes.
+	Sha1CheckSum mPgpIdHash;
+	// Need a signature as proof - otherwise anyone could add others Hashes.
+	// This is a string, as the length is variable.
+	std::string mPgpIdSign;   
 
 	// Recognition Strings. MAX# defined above.
 	std::list<std::string> mRecognTags;

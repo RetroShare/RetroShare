@@ -37,11 +37,6 @@
 #include "serialiser/rstlvkeyvalue.h"
 #include "serialiser/rstlvaddrs.h"
 
-#if 0
-#include "serialiser/rstlvbase.h"
-#include "serialiser/rstlvtypes.h"
-#endif
-
 class RsGroupInfo;
 
 const uint8_t RS_PKT_TYPE_GENERAL_CONFIG = 0x01;
@@ -79,9 +74,9 @@ virtual void clear();
 std::ostream &print(std::ostream &out, uint16_t indent = 0);
 
 	/* networking information */
-	std::string pid;                          /* Mandatory */
-        std::string gpg_id;                          /* Mandatory */
-        std::string location;                          /* not Mandatory */
+	RsPeerId    peerId;                       /* Mandatory */
+        RsPgpId     pgpId;                        /* Mandatory */
+        std::string location;                     /* Mandatory */
         uint32_t    netMode;                      /* Mandatory */
 	uint16_t    vs_disc;                      /* Mandatory */
 	uint16_t    vs_dht;                       /* Mandatory */
@@ -119,6 +114,8 @@ class RsPeerServicePermissionItem : public RsItem
 		std::vector<RsPgpId> pgp_ids ;
 		std::vector<ServicePermissionFlags> service_flags ;
 };
+
+
 class RsPeerGroupItem : public RsItem
 {
 public:
@@ -138,7 +135,7 @@ public:
 	std::string name;
 	uint32_t    flag;
 
-	std::list<RsPgpId> peerIds;
+	RsTlvPgpIdSet pgpList;
 };
 
 
@@ -261,7 +258,7 @@ class RsFileTransfer: public RsItem
 		RsTlvFileItem file;
 		RsTlvPeerIdSet allPeerIds;
 
-        RsPeerId cPeerId;
+        	RsPeerId cPeerId;
 
 		uint16_t state;
 		uint16_t in;

@@ -775,8 +775,8 @@ RsPeerNetItem::~RsPeerNetItem()
 
 void RsPeerNetItem::clear()
 {
-	pid.clear();
-        gpg_id.clear();
+	peerId.clear();
+        pgpId.clear();
         location.clear();
 	netMode = 0;
 	vs_disc = 0;
@@ -803,10 +803,10 @@ std::ostream &RsPeerNetItem::print(std::ostream &out, uint16_t indent)
 	uint16_t int_Indent = indent + 2;
 
 	printIndent(out, int_Indent);
-    	out << "PeerId: " << pid << std::endl; 
+    	out << "PeerId: " << peerId.toStdString() << std::endl; 
 
         printIndent(out, int_Indent);
-        out << "GPGid: " << gpg_id << std::endl;
+        out << "PgpId: " << pgpId.toStdString() << std::endl;
 
         printIndent(out, int_Indent);
         out << "location: " << location << std::endl;
@@ -845,6 +845,9 @@ std::ostream &RsPeerNetItem::print(std::ostream &out, uint16_t indent)
 	localAddrList.print(out, int_Indent);
 	extAddrList.print(out, int_Indent);
 
+	printIndent(out, int_Indent);
+	out << "DomainAddr: " << domain_addr;
+	out << ":" << domain_port << std::endl;
         printRsItemEnd(out, "RsPeerNetItem", indent);
 	return out;
 }
@@ -854,8 +857,8 @@ std::ostream &RsPeerNetItem::print(std::ostream &out, uint16_t indent)
 uint32_t RsPeerConfigSerialiser::sizeNet(RsPeerNetItem *i)
 {	
 	uint32_t s = 8; /* header */
-	s += GetTlvStringSize(i->pid); /* peerid */ 
-        s += GetTlvStringSize(i->gpg_id);
+	s += RsPeerId::SIZE_IN_BYTES;
+	s += RsPgpId::SIZE_IN_BYTES;
         s += GetTlvStringSize(i->location);
         s += 4; /* netMode */
 	s += 2; /* vs_disc */
@@ -914,19 +917,18 @@ bool RsPeerConfigSerialiser::serialiseNet(RsPeerNetItem *item, void *data, uint3
 	offset += 8;
 
 	/* add mandatory parts first */
-	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_PEERID, item->pid); /* Mandatory */
-	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_GPGID, item->gpg_id); /* Mandatory */
+	ok &= item->peerId.serialise(data, tlvsize, offset);
+	ok &= item->pgpId.serialise(data, tlvsize, offset);
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_LOCATION, item->location); /* Mandatory */
 	ok &= setRawUInt32(data, tlvsize, &offset, item->netMode); /* Mandatory */
 	ok &= setRawUInt16(data, tlvsize, &offset, item->vs_disc); /* Mandatory */
 	ok &= setRawUInt16(data, tlvsize, &offset, item->vs_dht); /* Mandatory */
 	ok &= setRawUInt32(data, tlvsize, &offset, item->lastContact); /* Mandatory */
-
 	ok &= item->localAddrV4.SetTlv(data, tlvsize, &offset); 
 	ok &= item->extAddrV4.SetTlv(data, tlvsize, &offset);
 	ok &= item->localAddrV6.SetTlv(data, tlvsize, &offset); 
 	ok &= item->extAddrV6.SetTlv(data, tlvsize, &offset);
-	
+
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_DYNDNS, item->dyndns);
 
 	ok &= item->localAddrList.SetTlv(data, tlvsize, &offset);
@@ -938,10 +940,10 @@ bool RsPeerConfigSerialiser::serialiseNet(RsPeerNetItem *item, void *data, uint3
 
 	if(offset != tlvsize)
 	{
-		ok = false;
 #ifdef RSSERIAL_ERROR_DEBUG
 		std::cerr << "RsPeerConfigSerialiser::serialiseNet() Size Error! " << std::endl;
 #endif
+		ok = false;
 	}
 
 	return ok;
@@ -992,8 +994,8 @@ RsPeerNetItem *RsPeerConfigSerialiser::deserialiseNet(void *data, uint32_t *size
 	offset += 8;
 
 	/* get mandatory parts first */
-	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_PEERID, item->pid); /* Mandatory */
-	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_GPGID, item->gpg_id); /* Mandatory */
+	ok &= item->peerId.deserialise(data, rssize, offset);
+	ok &= item->pgpId.deserialise(data, rssize, offset);
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_LOCATION, item->location); /* Mandatory */
 	ok &= getRawUInt32(data, rssize, &offset, &(item->netMode)); /* Mandatory */
 	ok &= getRawUInt16(data, rssize, &offset, &(item->vs_disc)); /* Mandatory */
@@ -1008,14 +1010,6 @@ RsPeerNetItem *RsPeerConfigSerialiser::deserialiseNet(void *data, uint32_t *size
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_DYNDNS, item->dyndns); 
 	ok &= item->localAddrList.GetTlv(data, rssize, &offset);
 	ok &= item->extAddrList.GetTlv(data, rssize, &offset);
-
-	// Allow acceptance of old format.
-	if (offset == rssize)
-	{
-		std::cerr << "RsPeerConfigSerialiser::deserialiseNet() Accepting Old format PeerNetItem" << std::endl;
-		return item;
-	}
-	
 
 	// New for V0.6.
         ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_DOMADDR, item->domain_addr);
@@ -1167,7 +1161,7 @@ void RsPeerGroupItem::clear()
 	id.clear();
 	name.clear();
 	flag = 0;
-	peerIds.clear();
+	pgpList.ids.clear();
 }
 
 std::ostream &RsPeerGroupItem::print(std::ostream &out, uint16_t indent)
@@ -1185,9 +1179,9 @@ std::ostream &RsPeerGroupItem::print(std::ostream &out, uint16_t indent)
 	out << "groupFlag: " << flag << std::endl;
 
 	std::list<RsPgpId>::iterator it;
-	for (it = peerIds.begin(); it != peerIds.end(); it++) {
+	for (it = pgpList.ids.begin(); it != pgpList.ids.end(); it++) {
 		printIndent(out, int_Indent);
-		out << "peerId: " << *it << std::endl;
+		out << "peerId: " << it->toStdString() << std::endl;
 	}
 
 	printRsItemEnd(out, "RsPeerGroupItem", indent);
@@ -1200,7 +1194,7 @@ void RsPeerGroupItem::set(RsGroupInfo &groupInfo)
 	id = groupInfo.id;
 	name = groupInfo.name;
 	flag = groupInfo.flag;
-	peerIds = groupInfo.peerIds;
+	pgpList.ids = groupInfo.peerIds;
 }
 
 /* get data from RsGroupInfo to RsPeerGroupItem */
@@ -1209,7 +1203,7 @@ void RsPeerGroupItem::get(RsGroupInfo &groupInfo)
 	groupInfo.id = id;
 	groupInfo.name = name;
 	groupInfo.flag = flag;
-	groupInfo.peerIds = peerIds;
+	groupInfo.peerIds = pgpList.ids;
 }
 
 /*************************************************************************/
@@ -1221,12 +1215,7 @@ uint32_t RsPeerConfigSerialiser::sizeGroup(RsPeerGroupItem *i)
 	s += GetTlvStringSize(i->id);
 	s += GetTlvStringSize(i->name);
 	s += 4; /* flag */
-
-	std::list<RsPgpId>::iterator it;
-	for (it = i->peerIds.begin(); it != i->peerIds.end(); it++) {
-		s += RsPgpId::SIZE_IN_BYTES ;
-	}
-
+	s += i->pgpList.TlvSize();
 	return s;
 }
 
@@ -1259,11 +1248,7 @@ bool RsPeerConfigSerialiser::serialiseGroup(RsPeerGroupItem *item, void *data, u
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_KEY, item->id);
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_NAME, item->name);
 	ok &= setRawUInt32(data, tlvsize, &offset, item->flag);
-
-	std::list<RsPgpId>::iterator it;
-	for (it = item->peerIds.begin(); it != item->peerIds.end(); it++) {
-		ok &= (*it).serialise(data, tlvsize, offset) ;
-	}
+	ok &= item->pgpList.SetTlv(data, tlvsize, &offset);
 
 	if(offset != tlvsize)
 	{
@@ -1312,13 +1297,7 @@ RsPeerGroupItem *RsPeerConfigSerialiser::deserialiseGroup(void *data, uint32_t *
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_KEY, item->id);
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_NAME, item->name);
 	ok &= getRawUInt32(data, rssize, &offset, &(item->flag));
-
-	RsPgpId peerId;
-	while (offset != rssize) 
-	{
-		ok &= peerId.deserialise(data, rssize, offset) ;
-		item->peerIds.push_back(peerId);
-	}
+	ok &= item->pgpList.GetTlv(data, rssize, &offset);
 
 	if (offset != rssize)
 	{
@@ -1529,12 +1508,12 @@ uint32_t RsCacheConfigSerialiser::size(RsItem *i)
 	uint32_t s = 8; // to store calculated size, initiailize with size of header
 
 
-    s += item->pid.serial_size();
+	s += item->pid.serial_size();
 	s += 2; /* cachetypeid */
 	s += 2; /* cachesubid */
 	s += GetTlvStringSize(item->path);
 	s += GetTlvStringSize(item->name);
-    s += item->hash.serial_size();
+	s += item->hash.serial_size();
 	s += 8; /* size */
 	s += 4; /* recvd */
 
@@ -1566,12 +1545,12 @@ bool RsCacheConfigSerialiser::serialise(RsItem *i, void *data, uint32_t *size)
 	
 	/* add the mandatory parts first */
 
-    ok &= item->pid.serialise(data, tlvsize, offset) ;
+	ok &= item->pid.serialise(data, tlvsize, offset) ;
 	ok &= setRawUInt16(data, tlvsize, &offset, item->cachetypeid);
 	ok &= setRawUInt16(data, tlvsize, &offset, item->cachesubid);
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_PATH, item->path);
 	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_NAME, item->name);
-    ok &= item->hash.serialise(data, tlvsize, offset) ;
+	ok &= item->hash.serialise(data, tlvsize, offset) ;
 	ok &= setRawUInt64(data, tlvsize, &offset, item->size);
 	ok &= setRawUInt32(data, tlvsize, &offset, item->recvd);
 
@@ -1619,12 +1598,12 @@ RsItem *RsCacheConfigSerialiser::deserialise(void *data, uint32_t *size)
 
 	/* get mandatory parts first */ 
 
-    ok &= item->pid.deserialise(data, rssize, offset) ;
+	ok &= item->pid.deserialise(data, rssize, offset) ;
 	ok &= getRawUInt16(data, rssize, &offset, &(item->cachetypeid));
 	ok &= getRawUInt16(data, rssize, &offset, &(item->cachesubid));
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_PATH, item->path);
 	ok &= GetTlvString(data, rssize, &offset, TLV_TYPE_STR_NAME, item->name);
-    ok &= item->hash.deserialise(data, rssize, offset) ;
+	ok &= item->hash.deserialise(data, rssize, offset) ;
 	ok &= getRawUInt64(data, rssize, &offset, &(item->size));
 	ok &= getRawUInt32(data, rssize, &offset, &(item->recvd));
 
