@@ -3106,7 +3106,7 @@ bool 	p3GroupDistrib::locked_updateGroupPublishKey(GroupInfo &info, RsDistribGrp
 #endif
 
 		/* if we have full key already - ignore */
-		return true;
+		return false;
 	}
 
 	/* need to update key */
