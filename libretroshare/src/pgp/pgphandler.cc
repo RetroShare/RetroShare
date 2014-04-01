@@ -963,6 +963,8 @@ bool PGPHandler::LoadCertificateFromString(const std::string& pgp_cert,PGPIdType
 	{
 		std::cerr << "Loaded certificate contains more than one PGP key. This is not allowed." << std::endl;
 		error_string = "Loaded certificate contains more than one PGP key. This is not allowed." ;
+		ops_keyring_free(tmp_keyring) ;
+		free(tmp_keyring) ;
 		return false ;
 	}
 
@@ -974,6 +976,8 @@ bool PGPHandler::LoadCertificateFromString(const std::string& pgp_cert,PGPIdType
 	{
 		error_string = "Public key is not version 4. Rejected!" ;
 		std::cerr << "Received a key with unhandled version number (" << keydata->key.pkey.version << ")" << std::endl;
+		ops_keyring_free(tmp_keyring) ;
+		free(tmp_keyring) ;
 		return false ;
 	}
 
@@ -985,6 +989,8 @@ bool PGPHandler::LoadCertificateFromString(const std::string& pgp_cert,PGPIdType
 	{
 		std::cerr << "Cannot validate self-signature for this certificate. Format error?" << std::endl;
 		error_string = "Cannot validate self signature for this certificate. Format error?" ;
+		ops_keyring_free(tmp_keyring) ;
+		free(tmp_keyring) ;
 		return false ;
 	}
 
@@ -1002,6 +1008,8 @@ bool PGPHandler::LoadCertificateFromString(const std::string& pgp_cert,PGPIdType
 		error_string = "This key is not self-signed. This is required by Retroshare." ;
 		std::cerr <<   "This key is not self-signed. This is required by Retroshare." << std::endl;
 		ops_validate_result_free(result);
+		ops_keyring_free(tmp_keyring) ;
+		free(tmp_keyring) ;
 		return false ;
 	}
 	ops_validate_result_free(result);
@@ -1027,7 +1035,11 @@ bool PGPHandler::LoadCertificateFromString(const std::string& pgp_cert,PGPIdType
 	if(tmp_keyring->nkeys > 0)
 		id = PGPIdType(tmp_keyring->keys[0].key_id) ;
 	else
+	{
+		ops_keyring_free(tmp_keyring) ;
+		free(tmp_keyring) ;
 		return false ;
+	}
 
 	ops_keyring_free(tmp_keyring) ;
 	free(tmp_keyring) ;
