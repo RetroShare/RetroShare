@@ -718,7 +718,7 @@ void TransfersDialog::downloadListCustomPopupMenu( QPoint /*point*/ )
         }// for (int i = 0; i < lst.count (); i++)
     }//if(!items.empty())
 
-    if(atLeastOne_Downloading)
+    if(atLeastOne_Waiting || atLeastOne_Downloading || atLeastOne_Queued || atLeastOne_Paused)
 			contextMnu.addMenu(&prioritySpeedMenu);
     if(atLeastOne_Queued)
 			contextMnu.addMenu(&priorityQueueMenu) ;
