@@ -345,6 +345,7 @@ static QString saveSpace(const QString text)
 	bool outBrackets=false, echapChar=false;
 	QString keyName = "";
 	bool getKeyName = false;
+	bool firstOutBracket = false ;
 	
 	for(int i=0;i<savedSpaceText.length();i++){
 		QChar cursChar=savedSpaceText.at(i);
@@ -358,16 +359,16 @@ static QString saveSpace(const QString text)
 		}
 		
 		if(cursChar==QLatin1Char('>'))         {
-			if(!echapChar && i>0) outBrackets=true;
+			if(!echapChar && i>0) { outBrackets=true; firstOutBracket=true ; }
 		} else if(cursChar==QLatin1Char('\t')) {
-			if(outBrackets && (keyName!="style")) savedSpaceText.replace(i, 1, "&nbsp;&nbsp;");
+			if(outBrackets && firstOutBracket && (keyName!="style")) savedSpaceText.replace(i, 1, "&nbsp;&nbsp;");
 		} else if(cursChar==QLatin1Char(' '))  {
-			if(outBrackets && (keyName!="style")) savedSpaceText.replace(i, 1, "&nbsp;");
+			if(outBrackets && firstOutBracket && (keyName!="style")) savedSpaceText.replace(i, 1, "&nbsp;");
 		} else if(cursChar==QChar(0xA0))  {
-			if(outBrackets && (keyName!="style")) savedSpaceText.replace(i, 1, "&nbsp;");
+			if(outBrackets && firstOutBracket && (keyName!="style")) savedSpaceText.replace(i, 1, "&nbsp;");
 		} else if(cursChar==QLatin1Char('<'))  {
 			if(!echapChar) {outBrackets=false; getKeyName=true; keyName.clear();}
-		}
+		} else firstOutBracket = false ;
 		echapChar=(cursChar==QLatin1Char('\\'));
 		
 	}
