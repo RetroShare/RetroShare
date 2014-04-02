@@ -22,13 +22,13 @@ class PeerNode
 			std::map<std::string,std::string> local_dst ;
 		};
 
-		PeerNode(const std::string& id,const std::list<std::string>& friends) ;
+		PeerNode(const RsPeerId& id,const std::list<RsPeerId>& friends) ;
 		~PeerNode() ;
 
 		RsRawItem *outgoing() ;
 		void incoming(RsRawItem *) ;
 
-		const std::string& id() const { return _id ;}
+		const RsPeerId& id() const { return _id ;}
 
 		void tick() ;
 
@@ -36,8 +36,8 @@ class PeerNode
 
 		// Turtle-related methods
 		//
-		void manageFileHash(const std::string& hash) ;
-		void provideFileHash(const std::string& hash) ;
+		void manageFileHash(const RsFileHash& hash) ;
+		void provideFileHash(const RsFileHash& hash) ;
 
 		const std::set<TurtleFileHash>& providedHashes() const { return _provided_hashes; }
 		const std::set<TurtleFileHash>& managedHashes() const { return _managed_hashes; }
@@ -48,7 +48,8 @@ class PeerNode
 		p3ServiceServer *_service_server ;
 		MonitoredTurtleRouter *_turtle ;
 		ftServer *_ftserver ;
-		std::string _id ;
+		pqiPublisher *_publisher ;
+		RsPeerId _id ;
 
 		std::set<TurtleFileHash> _provided_hashes ;
 		std::set<TurtleFileHash> _managed_hashes ;
@@ -85,9 +86,9 @@ class Network: public Graph<PeerNode>
 		//
 		void tick() ;
 
-		PeerNode& node_by_id(const std::string& node_id) ;
+		PeerNode& node_by_id(const RsPeerId& node_id) ;
 
 	private:
-		std::map<std::string,uint32_t> _node_ids ;
+		std::map<RsPeerId,uint32_t> _node_ids ;
 };
 

@@ -3,21 +3,21 @@
 class MonitoredTurtleRouter: public p3turtle
 {
 	public:
-		MonitoredTurtleRouter(p3LinkMgr *lmgr,ftServer *fts)
-			: p3turtle(lmgr)
+		MonitoredTurtleRouter(p3ServiceControl *sc,p3LinkMgr *lmgr,ftServer *fts)
+			: p3turtle(sc,lmgr)
 		{
 		}
 
 		// Overload functions that I don't want to be called for real!
 
-		virtual bool loadConfiguration(std::string& loadHash) { return true ;}
+		virtual bool loadConfiguration(RsFileHash& loadHash) { return true ;}
 		virtual bool saveConfiguration() { return true ;}
-		virtual bool performLocalHashSearch(const TurtleFileHash& hash,const std::string& peer_id,FileInfo& info) ;
+		virtual bool performLocalHashSearch(const TurtleFileHash& hash,const RsPeerId& peer_id,FileInfo& info) ;
 
 		// new functions to replace somme internal functionalities
 
-		void provideFileHash(const std::string& hash) ;
+		void provideFileHash(const RsFileHash& hash) ;
 
 	private:
-		std::map<std::string,FileInfo> _local_files ;
+		std::map<RsFileHash,FileInfo> _local_files ;
 };

@@ -61,9 +61,9 @@ class TRHistogram
 				return ;
 
 			ox += 10 ;
-			std::map<std::string,std::vector<int> > hits ;
-			std::map<std::string,std::vector<int> > depths ;
-			std::map<std::string,std::vector<int> >::iterator it ;
+			std::map<RsPeerId,std::vector<int> > hits ;
+			std::map<RsPeerId,std::vector<int> > depths ;
+			std::map<RsPeerId,std::vector<int> >::iterator it ;
 
 			int max_hits = 1;
 			int max_depth = 1;
@@ -211,11 +211,11 @@ void TurtleRouterStatistics::updateDisplay()
 	_tst_CW->update();
 }
 
-QString TurtleRouterStatistics::getPeerName(const std::string& peer_id)
+QString TurtleRouterStatistics::getPeerName(const RsPeerId& peer_id)
 {
-	static std::map<std::string, QString> names ;
+	static std::map<RsPeerId, QString> names ;
 
-	std::map<std::string,QString>::const_iterator it = names.find(peer_id) ;
+	std::map<RsPeerId,QString>::const_iterator it = names.find(peer_id) ;
 
 	if( it != names.end())
 		return it->second ;

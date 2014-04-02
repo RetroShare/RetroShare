@@ -2,7 +2,7 @@
 #include <QMenu>
 #include <QAction>
 
-#include <util/rsid.h>
+#include <retroshare/rsids.h>
 
 #include "Network.h"
 #include "NetworkViewer.h"
@@ -72,7 +72,7 @@ void NetworkViewer::draw()
 
 		for(std::set<uint32_t>::const_iterator it(neighs.begin());it!=neighs.end();++it)
 		{
-			if(traffic_info.local_src.find(_network.node(*it).id())!=traffic_info.local_src.end() || traffic_info.local_dst.find(_network.node(*it).id())!=traffic_info.local_dst.end())
+			if(traffic_info.local_src.find(_network.node(*it).id().toStdString())!=traffic_info.local_src.end() || traffic_info.local_dst.find(_network.node(*it).id().toStdString())!=traffic_info.local_dst.end())
 			{
 				glColor3f(0.9f,0.4f,0.2f) ;
 				tunnel_nodes.insert(i) ;
@@ -137,18 +137,18 @@ void NetworkViewer::draw()
 		int offset = 0 ;
 		int text_height = 15 ;
 
-		drawText(10+_node_coords[_current_displayed_node].x,offset + height()-_node_coords[_current_displayed_node].y, "Node id = " + QString::fromStdString(node.id())) ;
+		drawText(10+_node_coords[_current_displayed_node].x,offset + height()-_node_coords[_current_displayed_node].y, "Node id = " + QString::fromStdString(node.id().toStdString())) ;
 		offset += text_height ;
 
 		for(std::set<TurtleFileHash>::const_iterator it(node.providedHashes().begin());it!=node.providedHashes().end();++it)
 		{
-			drawText(10+_node_coords[_current_displayed_node].x,offset + height()-_node_coords[_current_displayed_node].y, "Server for hash " + QString::fromStdString(*it) );
+			drawText(10+_node_coords[_current_displayed_node].x,offset + height()-_node_coords[_current_displayed_node].y, "Server for hash " + QString::fromStdString((*it).toStdString()) );
 			offset += text_height ;
 		}
 
 		for(std::set<TurtleFileHash>::const_iterator it(node.managedHashes().begin());it!=node.managedHashes().end();++it)
 		{
-			drawText(10+_node_coords[_current_displayed_node].x,offset + height()-_node_coords[_current_displayed_node].y, "Client for hash " + QString::fromStdString(*it) ) ;
+			drawText(10+_node_coords[_current_displayed_node].x,offset + height()-_node_coords[_current_displayed_node].y, "Client for hash " + QString::fromStdString((*it).toStdString()) ) ;
 			offset += text_height ;
 		}
 	}
@@ -538,7 +538,7 @@ void NetworkViewer::contextMenu(QPoint p)
 
 		for(std::set<TurtleFileHash>::const_iterator it(managed_hashes.begin());it!=managed_hashes.end();++it)
 		{
-			QAction* provide_hash_action = new QAction(QString::fromStdString(*it), Mnu2);
+			QAction* provide_hash_action = new QAction(QString::fromStdString((*it).toStdString()), Mnu2);
 			connect(provide_hash_action, SIGNAL(triggered()), this, SLOT(actionProvideHash()));
 			Mnu2->addAction(provide_hash_action);
 		}
@@ -549,7 +549,7 @@ void NetworkViewer::contextMenu(QPoint p)
 
 		for(std::set<TurtleFileHash>::const_iterator it(provided_hashes.begin());it!=provided_hashes.end();++it)
 		{
-			QAction* manage_hash_action = new QAction(QString::fromStdString(*it), Mnu2);
+			QAction* manage_hash_action = new QAction(QString::fromStdString((*it).toStdString()), Mnu2);
 			connect(manage_hash_action, SIGNAL(triggered()), this, SLOT(actionManageHash()));
 			Mnu2->addAction(manage_hash_action);
 		}
@@ -562,11 +562,11 @@ void NetworkViewer::actionManageHash()
 	if(_current_acted_node < 0)
 		return ;
 
-	std::string hash ;
+	RsFileHash hash ;
 
 	if(qobject_cast<QAction*>(sender())->text().length() == 20) //data().toString().toStdString();
 	{
-		hash = qobject_cast<QAction*>(sender())->text().toStdString() ;
+		hash = RsFileHash(qobject_cast<QAction*>(sender())->text().toStdString()) ;
 
 		std::cerr << "Managing existing hash " << hash << std::endl;
 	}
@@ -574,11 +574,7 @@ void NetworkViewer::actionManageHash()
 	{
 		std::cerr << "Managing random hash..." << std::endl;
 
-		unsigned char hash_bytes[20] ;
-		for(int i=0;i<20;++i)
-			hash_bytes[i] = lrand48() & 0xff ;
-
-		hash = t_RsGenericIdType<20>(hash_bytes).toStdString(false) ;
+		hash = RsFileHash::random() ;
 	}
 
 
@@ -598,7 +594,7 @@ void NetworkViewer::actionProvideHash()
 		return ;
 
 	std::cerr << "Providing hash " << hash.toStdString() << std::endl;
-	_network.node(_current_acted_node).provideFileHash(hash.toStdString()) ;
+	_network.node(_current_acted_node).provideFileHash(RsFileHash(hash.toStdString())) ;
 
 	updateGL() ;
 }

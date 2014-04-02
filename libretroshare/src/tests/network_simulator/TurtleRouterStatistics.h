@@ -37,7 +37,7 @@ class TurtleRouterStatistics: public RsAutoUpdatePage, public Ui::TurtleRouterSt
 		~TurtleRouterStatistics();
 		
 		// Cache for peer names.
-		static QString getPeerName(const std::string& peer_id) ;
+		static QString getPeerName(const RsPeerId& peer_id) ;
 
 		void setTurtleRouter(const RsTurtle *turtle) { _turtle = turtle ; }
 

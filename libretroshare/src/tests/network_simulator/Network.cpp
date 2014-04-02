@@ -4,12 +4,13 @@
 #include <vector>
 #include <list>
 #include <string.h>
-#include <util/rsid.h>
+#include <retroshare/rsids.h>
 
 #include <retroshare/rspeers.h>
 #include <turtle/p3turtle.h>
 #include <serialiser/rsserial.h>
 #include <pqi/p3linkmgr.h>
+#include <pqi/p3peermgr.h>
 #include <ft/ftserver.h>
 #include <ft/ftcontroller.h>
 #include <services/p3service.h>
@@ -21,18 +22,14 @@ bool Network::initRandom(uint32_t nb_nodes,float connexion_probability)
 	_nodes.clear() ;
 	_neighbors.clear() ;
 
-	std::vector<std::string> ids ;
+	std::vector<RsPeerId> ids ;
 
 	_neighbors.resize(nb_nodes) ;
 	ids.resize(nb_nodes) ;
 
 	for(uint32_t i=0;i<nb_nodes;++i)
 	{
-		unsigned char bytes[20] ;
-		for(int k=0;k<20;++k)
-			bytes[k] = lrand48() & 0xff ;
-
-		ids[i] = t_RsGenericIdType<20>(bytes).toStdString(false) ;
+		ids[i] = RsPeerId::random() ;
 		_node_ids[ids[i]] = i ;
 	}
 		
@@ -57,7 +54,7 @@ bool Network::initRandom(uint32_t nb_nodes,float connexion_probability)
 	{
 		std::cerr << "Added new node with id " << ids[i] << std::endl;
 
-		std::list<std::string> friends ;
+		std::list<RsPeerId> friends ;
 		for(std::set<uint32_t>::const_iterator it(_neighbors[i].begin());it!=_neighbors[i].end();++it)
 			friends.push_back( ids[*it] ) ;
 
@@ -93,12 +90,12 @@ void Network::tick()
 	}
 }
 
-PeerNode& Network::node_by_id(const std::string& id)
+PeerNode& Network::node_by_id(const RsPeerId& id)
 {
-	std::map<std::string,uint32_t>::const_iterator it = _node_ids.find(id) ;
+	std::map<RsPeerId,uint32_t>::const_iterator it = _node_ids.find(id) ;
 
 	if(it == _node_ids.end())
-		throw std::runtime_error("Error. Bad id passed to node_by_id ("+id+")") ;
+		throw std::runtime_error("Error. Bad id passed to node_by_id ("+id.toStdString()+")") ;
 
 	return node(it->second) ;
 }
@@ -106,20 +103,54 @@ PeerNode& Network::node_by_id(const std::string& id)
 class FakeLinkMgr: public p3LinkMgrIMPL
 {
 	public:
-		FakeLinkMgr(const std::string& own_id,const std::list<std::string>& friends)
+		FakeLinkMgr(const RsPeerId& own_id,const std::list<RsPeerId>& friends)
 			: p3LinkMgrIMPL(NULL,NULL),_own_id(own_id),_friends(friends)
 		{
 		}
 
-		virtual const std::string getOwnId() { return _own_id ; }
-		virtual void getOnlineList(std::list<std::string>& lst) { lst = _friends ; }
-		virtual uint32_t getLinkType(const std::string&) { return RS_NET_CONN_TCP_ALL | RS_NET_CONN_SPEED_NORMAL; }
+		virtual const RsPeerId& getOwnId() { return _own_id ; }
+		virtual void getOnlineList(std::list<RsPeerId>& lst) { lst = _friends ; }
+		virtual uint32_t getLinkType(const RsPeerId&) { return RS_NET_CONN_TCP_ALL | RS_NET_CONN_SPEED_NORMAL; }
 
-		virtual bool getPeerName(const std::string &ssl_id, std::string &name) { name = ssl_id ; return true ;}
+		virtual bool getPeerName(const RsPeerId &ssl_id, std::string &name) { name = ssl_id.toStdString() ; return true ;}
 
 	private:
-		std::string _own_id ;
-		std::list<std::string> _friends ;
+		RsPeerId _own_id ;
+		std::list<RsPeerId> _friends ;
+};
+
+class FakePublisher: public pqiPublisher
+{
+	public:
+		virtual bool sendItem(RsRawItem *item) 
+		{
+			_item_queue.push_back(item) ;
+		}
+
+		RsRawItem *outgoing() 
+		{
+			RsRawItem *item = _item_queue.front() ;
+			_item_queue.pop_front() ;
+			return item ;
+		}
+
+	private:
+		std::list<RsRawItem*> _item_queue ;
+};
+
+class FakePeerMgr: public p3PeerMgrIMPL
+{
+	public:
+		FakePeerMgr(const RsPeerId& own,const std::list<RsPeerId>& ids)
+			: p3PeerMgrIMPL(own,RsPgpId(),"no name","location name")
+		{
+			for(std::list<RsPeerId>::const_iterator it(ids.begin());it!=ids.end();++it)
+				_ids.insert(*it) ;
+		}
+
+		virtual bool idFriend(const RsPeerId& ssl_id) { return _ids.find(ssl_id) != _ids.end() ; }
+
+		std::set<RsPeerId> _ids ;
 };
 
 const RsTurtle *PeerNode::turtle_service() const 
@@ -127,17 +158,22 @@ const RsTurtle *PeerNode::turtle_service() const
 	return _turtle ;
 }
 
-PeerNode::PeerNode(const std::string& id,const std::list<std::string>& friends)
+PeerNode::PeerNode(const RsPeerId& id,const std::list<RsPeerId>& friends)
 	: _id(id)
 {
 	// add a service server.
 	
-	_service_server = new p3ServiceServer ;
-
 	p3LinkMgr *link_mgr = new FakeLinkMgr(id, friends) ;
-	ftServer *ft_server = new ftServer(NULL,link_mgr) ;
+	p3PeerMgr *peer_mgr = new FakePeerMgr(id, friends) ;
 
-	_service_server->addService(_turtle = new MonitoredTurtleRouter(link_mgr,ft_server)) ;
+	_publisher = new FakePublisher ;
+	p3ServiceControl *ctrl = new p3ServiceControl(link_mgr) ;
+
+	_service_server = new p3ServiceServer(_publisher,ctrl);
+
+	ftServer *ft_server = new ftServer(peer_mgr,ctrl) ;
+
+	_service_server->addService(_turtle = new MonitoredTurtleRouter(ctrl,link_mgr,ft_server),true) ;
 
 	// add a turtle router.
 	//
@@ -156,20 +192,20 @@ void PeerNode::tick()
 
 void PeerNode::incoming(RsRawItem *item)
 {
-	_service_server->incoming(item) ;
+	_service_server->recvItem(item) ;
 }
 RsRawItem *PeerNode::outgoing()
 {
-	return _service_server->outgoing() ;
+	return dynamic_cast<FakePublisher*>(_publisher)->outgoing() ;
 }
 
-void PeerNode::provideFileHash(const std::string& hash)
+void PeerNode::provideFileHash(const RsFileHash& hash)
 {
 	_provided_hashes.insert(hash) ;
 	_turtle->provideFileHash(hash) ;
 }
 
-void PeerNode::manageFileHash(const std::string& hash)
+void PeerNode::manageFileHash(const RsFileHash& hash)
 {
 	_managed_hashes.insert(hash) ;
 	_turtle->monitorTunnels(hash,_ftserver) ;

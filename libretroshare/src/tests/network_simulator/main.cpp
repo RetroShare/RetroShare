@@ -4,7 +4,7 @@
 #include "NetworkSimulatorGUI.h"
 #include "MonitoredRsPeers.h"
 #include <QApplication>
-#include <common/argstream.h>
+#include <util/argstream.h>
 
 int main(int argc, char *argv[])
 {
@@ -21,8 +21,8 @@ int main(int argc, char *argv[])
 		float connexion_probability = 0.2 ;
 
 		as >> option('i',"gui",show_gui,"show gui (vs. do the pipeline automatically)")
-			>> parameter('n',"nodes",nb_nodes,"number of nodes in the network")
-			>> parameter('p',"connexion probability",connexion_probability,"probability that two nodes are connected (exponential law)")
+			>> parameter('n',"nodes",nb_nodes,"number of nodes in the network",false)
+			>> parameter('p',"connexion probability",connexion_probability,"probability that two nodes are connected (exponential law)",false)
 			>> help() ;
 
 		as.defaultErrorHandling() ;
