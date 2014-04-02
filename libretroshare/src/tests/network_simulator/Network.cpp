@@ -129,7 +129,10 @@ class FakePublisher: public pqiPublisher
 
 		RsRawItem *outgoing() 
 		{
-			RsRawItem *item = _item_queue.front() ;
+            if(_item_queue.empty())
+                return NULL ;
+
+            RsRawItem *item = _item_queue.front() ;
 			_item_queue.pop_front() ;
 			return item ;
 		}

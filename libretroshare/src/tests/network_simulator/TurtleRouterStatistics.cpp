@@ -220,13 +220,7 @@ QString TurtleRouterStatistics::getPeerName(const RsPeerId& peer_id)
 	if( it != names.end())
 		return it->second ;
 	else
-	{
-		RsPeerDetails detail ;
-		if(!rsPeers->getPeerDetails(peer_id,detail))
-			return tr("Unknown Peer");
-
-		return (names[peer_id] = QString::fromUtf8(detail.name.c_str())) ;
-	}
+        return (names[peer_id] = QString::fromStdString(peer_id.toStdString())) ;
 }
 
 TurtleRouterStatisticsWidget::TurtleRouterStatisticsWidget(QWidget *parent)
