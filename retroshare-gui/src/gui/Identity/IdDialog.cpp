@@ -434,7 +434,7 @@ void IdDialog::insertIdDetails(uint32_t token)
 
 	ui.lineEdit_Nickname->setText(QString::fromUtf8(data.mMeta.mGroupName.c_str()));
     ui.lineEdit_KeyId->setText(QString::fromStdString(data.mMeta.mGroupId.toStdString()));
-	ui.lineEdit_GpgHash->setText(QString::fromStdString(data.mPgpIdHash));
+	ui.lineEdit_GpgHash->setText(QString::fromStdString(data.mPgpIdHash.toStdString()));
 	ui.lineEdit_GpgId->setText(QString::fromStdString(data.mPgpId.toStdString()));
 
 	if (data.mPgpKnown)

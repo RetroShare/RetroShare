@@ -208,7 +208,7 @@ void IdEditDialog::loadExistingId(uint32_t token)
 
 	if (realid)
 	{
-		ui.lineEdit_GpgHash->setText(QString::fromStdString(mEditGroup.mPgpIdHash));
+		ui.lineEdit_GpgHash->setText(QString::fromStdString(mEditGroup.mPgpIdHash.toStdString()));
 
 		if (mEditGroup.mPgpKnown)
 		{
