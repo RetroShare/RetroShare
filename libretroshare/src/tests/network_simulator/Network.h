@@ -9,6 +9,7 @@
 #include <turtle/p3turtle.h>
 
 class MonitoredTurtleRouter ;
+class MonitoredTurtleClient ;
 class RsTurtle ;
 class RsRawItem ;
 class p3ServiceServer ;
@@ -46,8 +47,8 @@ class PeerNode
 
 	private:
 		p3ServiceServer *_service_server ;
-		MonitoredTurtleRouter *_turtle ;
-		ftServer *_ftserver ;
+        p3turtle *_turtle ;
+        MonitoredTurtleClient *_ftserver ;
 		pqiPublisher *_publisher ;
 		RsPeerId _id ;
 

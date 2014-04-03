@@ -1,19 +1,13 @@
 #include "MonitoredTurtle.h"
 
-bool MonitoredTurtleRouter::performLocalHashSearch(const TurtleFileHash& hash,const RsPeerId& peer_id,FileInfo& info)
+bool MonitoredTurtleClient::handleTunnelRequest(const TurtleFileHash& hash,const RsPeerId& peer_id)
 {
 	std::map<RsFileHash,FileInfo>::const_iterator it( _local_files.find(hash) ) ;
 
-	if(it != _local_files.end() )
-	{
-		info = it->second ;
-		return true ;
-	}
-	else
-		return false ;
+    return (it != _local_files.end() ) ;
 }
 
-void MonitoredTurtleRouter::provideFileHash(const RsFileHash& hash)
+void MonitoredTurtleClient::provideFileHash(const RsFileHash& hash)
 {
 	FileInfo& info( _local_files[hash] ) ;
 

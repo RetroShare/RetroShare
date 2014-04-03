@@ -153,13 +153,40 @@ class FakePeerMgr: public p3PeerMgrIMPL
 
 		virtual bool idFriend(const RsPeerId& ssl_id) { return _ids.find(ssl_id) != _ids.end() ; }
 
-		std::set<RsPeerId> _ids ;
+        virtual ServicePermissionFlags servicePermissionFlags(const RsPeerId& ssl_id)
+        {
+            return ~ServicePermissionFlags(0) ;
+        }
+        std::set<RsPeerId> _ids ;
 };
-
 const RsTurtle *PeerNode::turtle_service() const 
 {
 	return _turtle ;
 }
+
+class FakeServiceControl: public p3ServiceControl
+{
+    public:
+        FakeServiceControl(p3LinkMgr *lm)
+            : p3ServiceControl(lm),mLink(lm)
+        {
+        }
+
+        virtual void getPeersConnected(const uint32_t serviceId, std::set<RsPeerId> &peerSet)
+        {
+            std::list<RsPeerId> ids ;
+            mLink->getOnlineList(ids) ;
+
+            for(std::list<RsPeerId>::const_iterator it(ids.begin());it!=ids.end();++it)
+                peerSet.insert(*it) ;
+        }
+
+    virtual bool checkFilter(uint32_t,const RsPeerId& id)
+    {
+        return true ;
+    }
+    p3LinkMgr *mLink;
+};
 
 PeerNode::PeerNode(const RsPeerId& id,const std::list<RsPeerId>& friends)
 	: _id(id)
@@ -170,14 +197,22 @@ PeerNode::PeerNode(const RsPeerId& id,const std::list<RsPeerId>& friends)
 	p3PeerMgr *peer_mgr = new FakePeerMgr(id, friends) ;
 
 	_publisher = new FakePublisher ;
-	p3ServiceControl *ctrl = new p3ServiceControl(link_mgr) ;
+    p3ServiceControl *ctrl = new FakeServiceControl(link_mgr) ;
 
 	_service_server = new p3ServiceServer(_publisher,ctrl);
 
 	ftServer *ft_server = new ftServer(peer_mgr,ctrl) ;
 
-	_service_server->addService(_turtle = new MonitoredTurtleRouter(ctrl,link_mgr,ft_server),true) ;
+    _service_server->addService(_turtle = new p3turtle(ctrl,link_mgr),true) ;
 
+    _ftserver = new MonitoredTurtleClient ;
+    _ftserver->connectToTurtleRouter(_turtle) ;
+
+    RsServicePermissions perms;
+    perms.mDefaultAllowed = true ;
+    perms.mServiceId = RS_SERVICE_TYPE_TURTLE ;
+
+    ctrl->updateServicePermissions(RS_SERVICE_TYPE_TURTLE,perms) ;
 	// add a turtle router.
 	//
 }
@@ -205,7 +240,7 @@ RsRawItem *PeerNode::outgoing()
 void PeerNode::provideFileHash(const RsFileHash& hash)
 {
 	_provided_hashes.insert(hash) ;
-	_turtle->provideFileHash(hash) ;
+    _ftserver->provideFileHash(hash) ;
 }
 
 void PeerNode::manageFileHash(const RsFileHash& hash)
