@@ -777,7 +777,7 @@ int p3turtle::handleIncoming()
 	{
 		nhandled++;
 
-		if( (!(_turtle_routing_enabled && _turtle_routing_session_enabled)) || !(RS_SERVICE_PERM_TURTLE & rsPeers->servicePermissionFlags(item->PeerId())))
+		if(!(_turtle_routing_enabled && _turtle_routing_session_enabled))
 			delete item ;
 		else
 		{
@@ -926,8 +926,8 @@ void p3turtle::handleSearchRequest(RsTurtleSearchRequestItem *item)
 
 		for(std::set<RsPeerId>::const_iterator it(onlineIds.begin());it!=onlineIds.end();++it)
 		{
-			if(!(RS_SERVICE_PERM_TURTLE & rsPeers->servicePermissionFlags(*it)))
-				continue ;
+//			if(!mServiceControl->isPeerConnected(RS_SERVICE_TYPE_TURTLE,*it))
+//				continue ;
 
 			uint32_t linkType = mLinkMgr->getLinkType(*it);
 
@@ -1484,14 +1484,14 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 		std::set<RsPeerId> onlineIds ;
 		mServiceControl->getPeersConnected(RS_SERVICE_TYPE_TURTLE, onlineIds);
 
-		for(std::set<RsPeerId>::iterator it(onlineIds.begin());it!=onlineIds.end();)
-			if(!(RS_SERVICE_PERM_TURTLE & rsPeers->servicePermissionFlags(*it)))
-			{
-				std::set<RsPeerId>::iterator tmp = it++ ;
-				onlineIds.erase(tmp) ;
-			}
-			else
-				++it ;
+//		for(std::set<RsPeerId>::iterator it(onlineIds.begin());it!=onlineIds.end();)
+//			if(!mServiceControl->isPeerConnected(RS_SERVICE_PERM_TURTLE,*it))
+//			{
+//				std::set<RsPeerId>::iterator tmp = it++ ;
+//				onlineIds.erase(tmp) ;
+//			}
+//			else
+//				++it ;
 
 		int nb_online_ids = onlineIds.size() ;
 
@@ -1603,7 +1603,7 @@ void p3turtle::handleTunnelResult(RsTurtleTunnelOkItem *item)
 		{
 			tunnel.local_src = it->second.origin ;
 			tunnel.local_dst = item->PeerId() ;
-			tunnel.hash = "" ;
+			tunnel.hash.clear() ;
 			tunnel.time_stamp = time(NULL) ;
 			tunnel.transfered_bytes = 0 ;
 			tunnel.speed_Bps = 0.0f ;
