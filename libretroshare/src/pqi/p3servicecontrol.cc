@@ -28,6 +28,10 @@
 #include "serialiser/rsserviceids.h"
 #include "serialiser/rsserial.h"
 
+/*******************************/
+// #define SERVICECONTROL_DEBUG
+/*******************************/
+
 RsServiceControl *rsServiceControl = NULL;
 
 p3ServiceControl::p3ServiceControl(p3LinkMgr *linkMgr)
@@ -134,9 +138,10 @@ bool p3ServiceControl::deregisterServiceMonitor(pqiServiceMonitor *monitor)
 void p3ServiceControl::getServiceChanges(std::set<RsPeerId> &updateSet)
 {
 	RsStackMutex stack(mCtrlMtx); /***** LOCK STACK MUTEX ****/
-
+#ifdef SERVICECONTROL_DEBUG
 	std::cerr << "p3ServiceControl::getServiceChanges()";
 	std::cerr << std::endl;
+#endif
 
 	std::set<RsPeerId>::iterator it;
 	for (it = mUpdatedSet.begin(); it != mUpdatedSet.end(); it++)
@@ -150,8 +155,10 @@ void p3ServiceControl::getServiceChanges(std::set<RsPeerId> &updateSet)
 
 bool p3ServiceControl::getOwnServices(RsPeerServiceInfo &info)
 {
+#ifdef SERVICECONTROL_DEBUG
 	std::cerr << "p3ServiceControl::getOwnServices()";
 	std::cerr << std::endl;
+#endif
 
 	RsStackMutex stack(mCtrlMtx); /***** LOCK STACK MUTEX ****/
 
@@ -163,8 +170,10 @@ bool p3ServiceControl::getOwnServices(RsPeerServiceInfo &info)
 
 bool p3ServiceControl::getServicesAllowed(const RsPeerId &peerId, RsPeerServiceInfo &info)
 {
+#ifdef SERVICECONTROL_DEBUG
 	std::cerr << "p3ServiceControl::getServicesAllowed(" << peerId.toStdString() << ")";
 	std::cerr << std::endl;
+#endif
 
 	RsStackMutex stack(mCtrlMtx); /***** LOCK STACK MUTEX ****/
 
@@ -184,8 +193,10 @@ bool p3ServiceControl::getServicesAllowed(const RsPeerId &peerId, RsPeerServiceI
 
 bool p3ServiceControl::peerHasPermissionForService_locked(const RsPeerId &peerId, uint32_t serviceId)
 {
+#ifdef SERVICECONTROL_DEBUG
 	std::cerr << "p3ServiceControl::peerHasPermissionForService_locked()";
 	std::cerr << std::endl;
+#endif
 
 	std::map<uint32_t, RsServicePermissions>::iterator it;
 	it = mServicePermissionMap.find(serviceId);
@@ -201,8 +212,10 @@ bool p3ServiceControl::getServicesProvided(const RsPeerId &peerId, RsPeerService
 {
 	RsStackMutex stack(mCtrlMtx); /***** LOCK STACK MUTEX ****/
 
+#ifdef SERVICECONTROL_DEBUG
 	std::cerr << "p3ServiceControl::getServicesProvided()";
 	std::cerr << std::endl;
+#endif
 
 	std::map<RsPeerId, RsPeerServiceInfo>::iterator it;
 	it = mServicesProvided.find(peerId);
@@ -219,8 +232,10 @@ bool p3ServiceControl::updateServicesProvided(const RsPeerId &peerId, const RsPe
 {
 	RsStackMutex stack(mCtrlMtx); /***** LOCK STACK MUTEX ****/
 
+#ifdef SERVICECONTROL_DEBUG
 	std::cerr << "p3ServiceControl::updateServicesProvided() from: " << peerId.toStdString();
 	std::cerr << std::endl;
+#endif
 
 	std::cerr << info;
 	std::cerr << std::endl;
@@ -235,8 +250,10 @@ bool p3ServiceControl::getServicePermissions(uint32_t serviceId, RsServicePermis
 {
 	RsStackMutex stack(mCtrlMtx); /***** LOCK STACK MUTEX ****/
 
+#ifdef SERVICECONTROL_DEBUG
 	std::cerr << "p3ServiceControl::getServicePermissions()";
 	std::cerr << std::endl;
+#endif
 
 	std::map<uint32_t, RsServicePermissions>::iterator it;
 
@@ -271,8 +288,10 @@ bool p3ServiceControl::updateServicePermissions(uint32_t serviceId, const RsServ
 {
 	RsStackMutex stack(mCtrlMtx); /***** LOCK STACK MUTEX ****/
 
+#ifdef SERVICECONTROL_DEBUG
 	std::cerr << "p3ServiceControl::updateServicePermissions()";
 	std::cerr << std::endl;
+#endif
 
 	std::map<uint32_t, RsServicePermissions>::iterator it;
 	it = mServicePermissionMap.find(serviceId);
@@ -325,8 +344,10 @@ bool	p3ServiceControl::checkFilter(uint32_t serviceId, const RsPeerId &peerId)
 {
 	RsStackMutex stack(mCtrlMtx); /***** LOCK STACK MUTEX ****/
 
+#ifdef SERVICECONTROL_DEBUG
 	std::cerr << "p3ServiceControl::checkFilter() ";
 	std::cerr << " ServiceId: " << serviceId;
+#endif
 
 	std::map<uint32_t, RsServiceInfo>::iterator it;
 	it = mOwnServices.find(serviceId);
@@ -385,8 +406,10 @@ bool	p3ServiceControl::checkFilter(uint32_t serviceId, const RsPeerId &peerId)
 		std::cerr << std::endl;
 		return false;
 	}
+#ifdef SERVICECONTROL_DEBUG
 	std::cerr << "p3ServiceControl::checkFilter() Allowed Peer.find(serviceId)";
 	std::cerr << std::endl;
+#endif
 	return true;
 }
 
@@ -441,8 +464,10 @@ bool ServiceInfoCompatible(const RsServiceInfo &info1, const RsServiceInfo &info
 
 bool	p3ServiceControl::updateFilterByPeer(const RsPeerId &peerId)
 {
+#ifdef SERVICECONTROL_DEBUG
 	std::cerr << "p3ServiceControl::updateFilterByPeer()";
 	std::cerr << std::endl;
+#endif
 
 	RsStackMutex stack(mCtrlMtx); /***** LOCK STACK MUTEX ****/
 	return updateFilterByPeer_locked(peerId);
@@ -451,8 +476,10 @@ bool	p3ServiceControl::updateFilterByPeer(const RsPeerId &peerId)
 
 bool	p3ServiceControl::updateAllFilters()
 {
+#ifdef SERVICECONTROL_DEBUG
 	std::cerr << "p3ServiceControl::updateAllFilters()";
 	std::cerr << std::endl;
+#endif
 
 	RsStackMutex stack(mCtrlMtx); /***** LOCK STACK MUTEX ****/
 
@@ -462,8 +489,10 @@ bool	p3ServiceControl::updateAllFilters()
 
 bool	p3ServiceControl::updateAllFilters_locked()
 {
+#ifdef SERVICECONTROL_DEBUG
 	std::cerr << "p3ServiceControl::updateAllFilters_locked()";
 	std::cerr << std::endl;
+#endif
 
 	// Create a peerSet from ServicesProvided + PeerFilters.
 	// This will completely refresh the Filters.
@@ -493,8 +522,10 @@ bool	p3ServiceControl::updateAllFilters_locked()
 // create filter. (the easy way).
 bool	p3ServiceControl::updateFilterByPeer_locked(const RsPeerId &peerId)
 {
+#ifdef SERVICECONTROL_DEBUG
 	std::cerr << "p3ServiceControl::updateFilterByPeer_locked() : " << peerId.toStdString();
 	std::cerr << std::endl;
+#endif
 
 	ServicePeerFilter originalFilter;
 	ServicePeerFilter peerFilter;
@@ -532,8 +563,10 @@ bool	p3ServiceControl::updateFilterByPeer_locked(const RsPeerId &peerId)
 	std::map<uint32_t, RsServiceInfo>::const_iterator tit = it->second.mServiceList.begin();
 	std::map<uint32_t, RsServiceInfo>::const_iterator etit = it->second.mServiceList.end();
 
+#ifdef SERVICECONTROL_DEBUG
 	std::cerr << "p3ServiceControl::updateFilterByPeer_locked() Comparing lists";
 	std::cerr << std::endl;
+#endif
 
 
 	while((oit != eoit) && (tit != etit))
@@ -700,8 +733,10 @@ void	p3ServiceControl::removePeer(const RsPeerId &peerId)
 {
 	RsStackMutex stack(mCtrlMtx); /***** LOCK STACK MUTEX ****/
 
+#ifdef SERVICECONTROL_DEBUG
 	std::cerr << "p3ServiceControl::removePeer() : " << peerId.toStdString();
 	std::cerr << std::endl;
+#endif
 
 	ServicePeerFilter originalFilter;
 	bool hadFilter = false;
@@ -851,23 +886,29 @@ void	p3ServiceControl::tick()
 	notifyAboutFriends();
 	notifyServices();
 
+#ifdef SERVICECONTROL_DEBUG
 	std::cerr << "p3ServiceControl::tick()";
 	std::cerr << std::endl;
+#endif
 }
 
 // configuration.
 bool p3ServiceControl::saveList(bool &cleanup, std::list<RsItem *> &saveList)
 {
+#ifdef SERVICECONTROL_DEBUG
 	std::cerr << "p3ServiceControl::saveList()";
 	std::cerr << std::endl;
+#endif
 
 	return true;
 }
 
 bool p3ServiceControl::loadList(std::list<RsItem *>& loadList)
 {
+#ifdef SERVICECONTROL_DEBUG
 	std::cerr << "p3ServiceControl::loadList()";
 	std::cerr << std::endl;
+#endif
 
 	return true;
 }
@@ -879,8 +920,10 @@ bool p3ServiceControl::loadList(std::list<RsItem *>& loadList)
 	// pqiMonitor.
 void    p3ServiceControl::statusChange(const std::list<pqipeer> &plist)
 {
+#ifdef SERVICECONTROL_DEBUG
 	std::cerr << "p3ServiceControl::statusChange()";
 	std::cerr << std::endl;
+#endif
 
 	std::list<pqipeer>::const_iterator pit;
 	for(pit =  plist.begin(); pit != plist.end(); pit++)
@@ -922,15 +965,19 @@ void    p3ServiceControl::statusChange(const std::list<pqipeer> &plist)
 // Update Peer status.
 void    p3ServiceControl::updatePeerConnect(const RsPeerId &peerId)
 {
+#ifdef SERVICECONTROL_DEBUG
 	std::cerr << "p3ServiceControl::updatePeerConnect(): " << peerId.toStdString();
 	std::cerr << std::endl;
+#endif
 	return;
 }
 
 void    p3ServiceControl::updatePeerDisconnect(const RsPeerId &peerId)
 {
+#ifdef SERVICECONTROL_DEBUG
 	std::cerr << "p3ServiceControl::updatePeerDisconnect(): " << peerId.toStdString();
 	std::cerr << std::endl;
+#endif
 
 	removePeer(peerId);
 	return;
@@ -942,8 +989,10 @@ void    p3ServiceControl::updatePeerNew(const RsPeerId &peerId)
 {
 	RsStackMutex stack(mCtrlMtx); /***** LOCK STACK MUTEX ****/
 
+#ifdef SERVICECONTROL_DEBUG
 	std::cerr << "p3ServiceControl::updatePeerNew(): " << peerId.toStdString();
 	std::cerr << std::endl;
+#endif
 
 	pqiServicePeer peer;
 	peer.id = peerId;
@@ -957,8 +1006,10 @@ void    p3ServiceControl::updatePeerRemoved(const RsPeerId &peerId)
 {
 	RsStackMutex stack(mCtrlMtx); /***** LOCK STACK MUTEX ****/
 
+#ifdef SERVICECONTROL_DEBUG
 	std::cerr << "p3ServiceControl::updatePeerRemoved(): " << peerId.toStdString();
 	std::cerr << std::endl;
+#endif
 
 	removePeer(peerId);
 
@@ -1092,8 +1143,10 @@ RsServicePermissions::RsServicePermissions()
 
 bool RsServicePermissions::peerHasPermission(const RsPeerId &peerId) const
 {
+#ifdef SERVICECONTROL_DEBUG
 	std::cerr << "RsServicePermissions::peerHasPermission()";
 	std::cerr << std::endl;
+#endif
 
 	std::set<RsPeerId>::const_iterator it;
 	if (mDefaultAllowed)
