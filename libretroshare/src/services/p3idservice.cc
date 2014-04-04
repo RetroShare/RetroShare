@@ -509,12 +509,17 @@ bool p3IdService::getReputation(const RsGxsId &id, GixsReputation &rep)
 	if (mPublicKeyCache.fetch(id, data))
 	{
 		rep.id = id;
-		// Score > 0 is okay.
-		// Will extract score from Cache Info.
-		// For the moment just return positive number.
-		rep.score = 10; 
-		return true;
+                rep.score = data.details.mReputation.mOverallScore;
+                std::cerr << "p3IdService::getReputation() id: ";
+                std::cerr << id.toStdString() << " score: " <<
+  rep.score;
+                std::cerr << std::endl;
+                  return true;
+
 	}
+              std::cerr << "p3IdService::getReputation() id: ";
+              std::cerr << id.toStdString() << " not cached";
+              std::cerr << std::endl;
 	return false;
 }
 
