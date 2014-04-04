@@ -36,6 +36,8 @@
 #include "util/HandleRichText.h"
 #include "util/DateTime.h"
 
+#include <iostream>
+
 /****
  * #define DEBUG_ITEM 1
  ****/
@@ -104,6 +106,9 @@ void GxsChannelPostItem::setup()
 
 	connect( readButton, SIGNAL( toggled(bool) ), this, SLOT( readToggled(bool) ) );
 	connect( NotifyQt::getInstance(), SIGNAL(channelMsgReadSatusChanged(QString,QString,int)), this, SLOT(channelMsgReadSatusChanged(QString,QString,int)), Qt::QueuedConnection);
+
+	//connect( voteUpButton, SIGNAL(clicked()), this, SLOT(makeUpVote()));
+	//connect( voteDownButton, SIGNAL(clicked()), this, SLOT( makeDownVote()));	
 
 	downloadButton->hide();
 	playButton->hide();
@@ -199,6 +204,9 @@ void GxsChannelPostItem::loadPost(const RsGxsChannelPost &post)
 		/* subject */
 		titleLabel->setText(QString::fromUtf8(post.mMeta.mMsgName.c_str()));
 		subjectLabel->setText(RsHtml().formatText(NULL, QString::fromUtf8(post.mMsg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
+		
+		//QString score = QString::number(post.mTopScore);
+		// scoreLabel->setText(score); 
 
 		/* disable buttons: deletion facility not enabled with cache services yet */
 		clearButton->setEnabled(false);
@@ -259,6 +267,35 @@ void GxsChannelPostItem::loadPost(const RsGxsChannelPost &post)
 			//newLabel->setVisible(false);
 		}
 	}
+	
+	// differences between Feed or Top of Comment.
+	if (mParent)
+	{
+		commentButton->show();
+
+		if (post.mComments)
+		{
+			QString commentText = QString::number(post.mComments);
+			commentText += " ";
+			commentText += tr("Comments");
+			commentButton->setText(commentText);
+		}
+		else
+		{
+			commentButton->setText(tr("Comment"));
+		}
+	}
+	else
+	{
+		commentButton->hide();
+	}
+	
+	// disable voting buttons - if they have already voted.
+	/*if (post.mMeta.mMsgStatus & GXS_SERV::GXS_MSG_STATUS_VOTE_MASK)
+	{
+		voteUpButton->setEnabled(false);
+		voteDownButton->setEnabled(false);
+	}*/
 
 	msgLabel->setText(RsHtml().formatText(NULL, QString::fromUtf8(post.mMsg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 	msgFrame->setVisible(!post.mMsg.empty());
@@ -538,4 +575,28 @@ void GxsChannelPostItem::copyLink()
 	}
 #endif
 
+}
+
+void GxsChannelPostItem::makeDownVote()
+{
+	RsGxsGrpMsgIdPair msgId;
+	msgId.first = mPost.mMeta.mGroupId;
+	msgId.second = mPost.mMeta.mMsgId;
+
+	voteUpButton->setEnabled(false);
+	voteDownButton->setEnabled(false);
+
+	emit vote(msgId, false);
+}
+
+void GxsChannelPostItem::makeUpVote()
+{
+	RsGxsGrpMsgIdPair msgId;
+	msgId.first = mPost.mMeta.mGroupId;
+	msgId.second = mPost.mMeta.mMsgId;
+
+	voteUpButton->setEnabled(false);
+	voteDownButton->setEnabled(false);
+
+	emit vote(msgId, true);
 }

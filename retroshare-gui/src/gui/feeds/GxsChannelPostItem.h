@@ -63,6 +63,12 @@ private slots:
 	void unsubscribeChannel();
 	void updateItem();
 
+	void makeUpVote();
+	void makeDownVote();
+
+signals:
+	void vote(const RsGxsGrpMsgIdPair& msgId, bool up);	
+
 private:
 	void setup();
 	void loadPost(const RsGxsChannelPost &post);
