@@ -124,19 +124,26 @@ void init_item(RsGxsMsgMetaData* metaMsg)
 
     init_random(metaMsg->mGroupId) ;
     init_random(metaMsg->mMsgId) ;
+	 metaMsg->refcount = 1;
     init_random(metaMsg->mThreadId) ;
     init_random(metaMsg->mParentId) ;
-    init_random(metaMsg->mAuthorId) ;
     init_random(metaMsg->mOrigMsgId) ;
-
-    randString(SHORT_STR, metaMsg->mMsgName);
+    init_random(metaMsg->mAuthorId) ;
 
     init_item(metaMsg->signSet);
+
+    randString(SHORT_STR, metaMsg->mServiceString);
+
+    randString(SHORT_STR, metaMsg->mMsgName);
 
     metaMsg->mPublishTs = rand()%313;
     metaMsg->mMsgFlags = rand()%224;
     metaMsg->mMsgStatus = rand()%4242;
     metaMsg->mChildTs = rand()%221;
+	 metaMsg->recvTS = rand()%2327 ;
+
+	 init_random(metaMsg->mHash) ;
+	 metaMsg->validated = true ;
 }
 
 
