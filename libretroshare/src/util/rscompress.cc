@@ -122,11 +122,13 @@ bool RsCompress::uncompress_memory_chunk(const uint8_t *input_mem,const uint32_t
 	unsigned char out[CHUNK];
 
 	/* allocate inflate state */
+	memset(&strm,0,sizeof(strm)) ;
 	strm.zalloc = Z_NULL;
 	strm.zfree = Z_NULL;
 	strm.opaque = Z_NULL;
-	strm.avail_in = 0;
 	strm.next_in = Z_NULL;
+	strm.next_out = Z_NULL;
+
 	ret = inflateInit(&strm);
 	if (ret != Z_OK)
 		return ret;
