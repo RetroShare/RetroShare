@@ -652,7 +652,10 @@ bool RsChatLobbyListItem::serialise(void *data, uint32_t& pktsize)
 	if (pktsize < tlvsize)
 		return false; /* not enough space */
 
-	if(lobby_ids.size() != lobby_counts.size() || lobby_ids.size() != lobby_names.size())
+	if((lobby_ids.size() != lobby_names.size()) || 
+		(lobby_ids.size() != lobby_topics.size()) ||
+		(lobby_ids.size() != lobby_counts.size()) ||
+		(lobby_ids.size() != lobby_privacy_levels.size()))
 	{
 		std::cerr << "Consistency error in RsChatLobbyListItem!! Sizes don't match!" << std::endl;
 		return false ;

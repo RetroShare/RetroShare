@@ -78,6 +78,7 @@ class RsGxsIdGroup
 {
 	public:
 	RsGxsIdGroup():mPgpKnown(false) { return; }
+	~RsGxsIdGroup() { return; }
 
 
 	RsGroupMetaData mMeta;

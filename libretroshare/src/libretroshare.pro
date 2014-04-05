@@ -412,7 +412,6 @@ HEADERS +=	serialiser/rsbaseserial.h \
 			serialiser/rstlvgenericmap.inl \
 			serialiser/rstlvlist.h \
 			serialiser/rstlvmaps.h \
-			serialiser/rstlvutil.h \
 			serialiser/rstlvbanlist.h \
 			serialiser/rsbanlistitems.h \
 			serialiser/rsbwctrlitems.h \
@@ -556,7 +555,6 @@ SOURCES +=	serialiser/rsbaseserial.cc \
 			serialiser/rstlvkeys.cc \
 			serialiser/rstlvkeyvalue.cc \
 			serialiser/rstlvgenericparam.cc \
-			serialiser/rstlvutil.cc \
 			serialiser/rstlvbanlist.cc \
 			serialiser/rsbanlistitems.cc \
 			serialiser/rsbwctrlitems.cc \

@@ -29,6 +29,7 @@
 #include "serialiser/rstlvbase.h"
 #include "serialiser/rsbaseserial.h"
 #include "serialiser/rstlvstring.h"
+#include "util/rsstring.h"
 
 #define GXSID_DEBUG	1
 
@@ -151,7 +152,14 @@ std::ostream& RsGxsIdGroupItem::print(std::ostream& out, uint16_t indent)
 	printIndent(out, int_Indent);
 	out << "PgpIdHash: " << group.mPgpIdHash << std::endl;
 	printIndent(out, int_Indent);
-	out << "PgpIdSign: " << group.mPgpIdSign << std::endl;
+
+	std::string signhex;
+	// convert from binary to hex.
+	for(unsigned int i = 0; i < group.mPgpIdSign.length(); i++)
+	{
+		rs_sprintf_append(signhex, "%02x", (uint32_t) ((uint8_t) group.mPgpIdSign[i]));
+	}
+	out << "PgpIdSign: " << signhex << std::endl;
 	printIndent(out, int_Indent);
 	out << "RecognTags:" << std::endl;
 
