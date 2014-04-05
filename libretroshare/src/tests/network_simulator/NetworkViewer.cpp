@@ -564,7 +564,7 @@ void NetworkViewer::actionManageHash()
 
 	RsFileHash hash ;
 
-	if(qobject_cast<QAction*>(sender())->text().length() == 20) //data().toString().toStdString();
+	if(qobject_cast<QAction*>(sender())->text().length() == 40) //data().toString().toStdString();
 	{
 		hash = RsFileHash(qobject_cast<QAction*>(sender())->text().toStdString()) ;
 
