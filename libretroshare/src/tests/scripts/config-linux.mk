@@ -11,7 +11,7 @@ endif
 
 # Need to define miniupnpc version because API  changed a little between v1.0 and 1.2
 # put 10 for 1.0 and 12 for 1.2
-DEFINES += -D_FILE_OFFSET_BITS=64
+DEFINES += -D_FILE_OFFSET_BITS=64 -DSQLITE_HAS_CODEC
 
 include $(RS_TOP_DIR)/tests/scripts/checks.mk
 
@@ -70,8 +70,8 @@ ifdef PQI_USE_XPGP
 LIBS +=  -lssl -lcrypto  -lpthread
 #LIBS +=  -L$(UPNPC_DIR) -lminiupnpc
 LIBS +=  $(XLIB) -ldl -lz 
-LIBS +=  -lupnp
-
+LIBS +=  -lupnp 
+LIBS += ../../../../../lib/sqlcipher/.libs/libsqlcipher.a
 	
 RSLIBS = $(LIBS)
 

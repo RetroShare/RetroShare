@@ -42,10 +42,13 @@
 #include <string.h>
 #include <iostream>
 #include "serialiser/rstlvbase.h"
-#include "serialiser/rstlvtypes.h"
 #include "serialiser/rstlvkeys.h"
-#include "serialiser/rstlvkvwide.h"
 #include "serialiser/rstlvutil.h"
+#include "serialiser/rstlvbinary.h"
+#include "serialiser/rstlvidset.h"
+#include "serialiser/rstlvfileitem.h"
+#include "serialiser/rstlvkeyvalue.h"
+#include "serialiser/rstlvimage.h"
 
 #include "util/utest.h"
 
@@ -123,8 +126,6 @@ int test_TlvRandom(void *data, uint32_t len, uint32_t offset)
 
 	RsTlvKeyValue       kv;
 	RsTlvKeyValueSet    kvset;
-	RsTlvKeyValueWide   kvwide;
-	RsTlvKeyValueWideSet   kvwideset;
 
 	RsTlvImage   	    image;
    
@@ -139,8 +140,6 @@ int test_TlvRandom(void *data, uint32_t len, uint32_t offset)
 	CHECK(test_TlvItem(&servset, data, len, offset));
 	CHECK(test_TlvItem(&kv, data, len, offset));
 	CHECK(test_TlvItem(&kvset, data, len, offset));
-	CHECK(test_TlvItem(&kvwide, data, len, offset));
-	CHECK(test_TlvItem(&kvwideset, data, len, offset));
 	std::cerr << "test_TlvRandom:: Testing Keys " << std::endl;
 	CHECK(test_TlvItem(&skey, data, len, offset));
 	CHECK(test_TlvItem(&skeyset, data, len, offset));
@@ -157,8 +156,6 @@ int test_TlvRandom(void *data, uint32_t len, uint32_t offset)
 	CHECK(test_SetTlvItem(&servset, TLV_TYPE_SERVICESET, data, len, offset));
 	CHECK(test_SetTlvItem(&kv, TLV_TYPE_KEYVALUE, data, len, offset));
 	CHECK(test_SetTlvItem(&kvset, TLV_TYPE_KEYVALUESET, data, len, offset));
-	CHECK(test_SetTlvItem(&kvwide, TLV_TYPE_WKEYVALUE, data, len, offset));
-	CHECK(test_SetTlvItem(&kvwideset, TLV_TYPE_WKEYVALUESET, data, len, offset));
 	std::cerr << "test_TlvRandom:: Testing Keys (TYPESET)" << std::endl;
 	CHECK(test_SetTlvItem(&skey, TLV_TYPE_SECURITYKEY, data, len, offset));
 	CHECK(test_SetTlvItem(&skeyset, TLV_TYPE_SECURITYKEYSET, data, len, offset));

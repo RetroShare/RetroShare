@@ -26,7 +26,12 @@
 
 #include <iostream>
 #include <sstream>
-#include "serialiser/rstlvtypes.h"
+#include "serialiser/rstlvbinary.h"
+#include "serialiser/rstlvfileitem.h"
+#include "serialiser/rstlvstring.h"
+#include "serialiser/rstlvidset.h"
+#include "serialiser/rstlvkeyvalue.h"
+#include "serialiser/rstlvimage.h"
 #include "serialiser/rstlvutil.h"
 #include "serialiser/rstlvbase.h"
 #include "util/utest.h"
@@ -208,7 +213,7 @@ int test_RsTlvPeerIdSet()
 
 	RsTlvPeerIdSet i1, i2; // one to set and other to get
 
-	std::string testString;
+	RsPeerId testId;
 
 	std::string randString[5];
 	randString[0] = "e$424!�!�";
@@ -221,9 +226,8 @@ int test_RsTlvPeerIdSet()
 
 	for(int i = 0; i < 15 ; i++)
 	{
-		testString = randString[(rand() % 4)] + randString[(rand() % 4)];
-
-		i1.ids.push_back(testString);
+		testId.random();
+		i1.ids.push_back(testId);
 	}
 
 	CHECK(test_SerialiseTlvItem(std::cerr, &i1, &i2));
@@ -362,37 +366,13 @@ int test_RsTlvHashSet()
 
 	int numRandStrings = rand()%30;
 
-	std::string* randString = NULL;
-	std::list<std::string> randStrings;
-
-	char alpha = 'a';
-	char* stringData = NULL;
-
-	for(int i=0; i < numRandStrings; i++){
-
-		int stringLength = rand()%200;
-		stringData = new char[stringLength];
-
-			for(int i=0; i != stringLength; i++)
-				stringData[i] = alpha + (rand() % 26);
-
-
-		randString = new std::string(stringData, stringLength);
-		randStrings.push_back(*randString);
-
-		// release memory resources
-		delete randString;
-		delete stringData;
-		stringData = NULL;
-		randString = NULL;
-	}
-
-
 	/* store a number of random ids */
 
 	for(int i = 0; i < numRandStrings ; i++)
 	{
-		i1.ids = randStrings;
+		RsPeerId randId;
+		randId.random();
+		i1.ids.push_back(randId);
 	}
 
 	CHECK(test_SerialiseTlvItem(std::cerr, &i1, &i2));

@@ -31,7 +31,8 @@
  */
 
 #include <iostream>
-#include "serialiser/rstlvtypes.h"
+#include "serialiser/rstlvfileitem.h"
+#include "serialiser/rstlvbinary.h"
 #include "serialiser/rstlvutil.h"
 #include "util/utest.h"
 

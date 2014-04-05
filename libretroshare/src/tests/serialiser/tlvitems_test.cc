@@ -32,7 +32,7 @@
 
 #include <string.h>
 #include <iostream>
-#include "serialiser/rstlvtypes.h"
+#include "serialiser/rstlvbinary.h"
 #include "serialiser/rstlvutil.h"
 #include "util/utest.h"
 

@@ -34,7 +34,10 @@
 #include "serialiser/rsserial.h"
 #include "serialiser/rstlvutil.h"
 #include "serialiser/rstlvkeys.h"
-#include "serialiser/rstlvtypes.h"
+#include "serialiser/rstlvbinary.h"
+#include "serialiser/rstlvfileitem.h"
+#include "serialiser/rstlvidset.h"
+#include "serialiser/rstlvimage.h"
 
 
 

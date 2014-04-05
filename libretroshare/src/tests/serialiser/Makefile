@@ -10,23 +10,33 @@ OPS_TOP_DIR = ../../../../openpgpsdk/src
 include $(RS_TOP_DIR)/tests/scripts/config.mk
 ###############################################################
 
+OBJ = rstlvutil.o
+
 TESTOBJ  = tlvbase_test.o tlvbase_test2.o rstunnelitem_test.o
 TESTOBJ += tlvitems_test.o tlvstack_test.o rsserial_test.o 
 TESTOBJ += rstlvwidetest.o tlvrandom_test.o rsturtleitem_test.o
 TESTOBJ += tlvtypes_test.o support.o distribitem_test.o rsmsgitem_test.o  
 TESTOBJ += rsstatusitem_test.o rsconfigitem_test.o
-TESTOBJ += rsgrouteritem_test.o
+TESTOBJ += rsgrouteritem_test.o $(OBJ)
 
-TESTS  = tlvbase_test tlvbase_test2 rstlvwidetest
-TESTS += tlvitems_test tlvstack_test rstunnelitem_test
-TESTS +=  tlvrandom_test rsserial_test rsturtleitem_test
-TESTS +=  tlvtypes_test distribitem_test rsmsgitem_test
-TESTS +=  rsstatusitem_test rsconfigitem_test
-TESTOBJ += rsgrouteritem_test
+TESTS  = tlvbase_test tlvbase_test2 
+#rstlvwidetest
+TESTS += tlvitems_test tlvstack_test 
+#rstunnelitem_test
+TESTS +=  tlvrandom_test rsturtleitem_test
+#rsserial_test 
+TESTS +=  tlvtypes_test 
+#rsmsgitem_test
+#distribitem_test 
+TESTS +=  rsstatusitem_test 
+#rsconfigitem_test
+#TESTS += rsgrouteritem_test
 
 #rsbaseitem_test
 
-all: tests
+all: tests 
+
+tests: $(OBJ)
 
 tlvbase_test : tlvbase_test.o
 	$(CC) $(CFLAGS) -o tlvbase_test tlvbase_test.o $(OBJ) $(LIBS) 
@@ -43,14 +53,14 @@ tlvstack_test : tlvstack_test.o
 rsserial_test : rsserial_test.o
 	$(CC) $(CFLAGS) -o rsserial_test rsserial_test.o $(OBJ) $(LIBS) 
 
-rsserial_test : rsgrouteritem_test.o
+rsgrouteritem_test : rsgrouteritem_test.o
 	$(CC) $(CFLAGS) -o rsgrouteritem_test rsgrouteritem_test.o $(OBJ) $(LIBS) 
 
 rsbaseitem_test : rsbaseitem_test.o
 	$(CC) $(CFLAGS) -o rsbaseitem_test rsbaseitem_test.o $(OBJ) $(LIBS) 
 
-rstlvwidetest : rstlvwidetest.o
-	$(CC) $(CFLAGS) -o rstlvwidetest rstlvwidetest.o $(OBJ) $(LIBS)
+#rstlvwidetest : rstlvwidetest.o
+#	$(CC) $(CFLAGS) -o rstlvwidetest rstlvwidetest.o $(OBJ) $(LIBS)
 
 tlvrandom_test : tlvrandom_test.o
 	$(CC) $(CFLAGS) -o tlvrandom_test tlvrandom_test.o $(OBJ) $(LIBS)
