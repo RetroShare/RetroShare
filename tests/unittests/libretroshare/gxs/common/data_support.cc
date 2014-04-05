@@ -1,6 +1,7 @@
 #include "libretroshare/serialiser/support.h"
 #include "data_support.h"
 
+template<class T> void init_random(T& t) { t = T::random() ; }
 
 bool operator==(const RsNxsGrp& l, const RsNxsGrp& r){
 
@@ -88,33 +89,46 @@ void init_item(RsNxsMsg& nxm)
 void init_item(RsGxsGrpMetaData* metaGrp)
 {
 
-    metaGrp->mGroupId.random();
-    metaGrp->mOrigGrpId.random();
-    metaGrp->mAuthorId.random();
+    init_random(metaGrp->mGroupId);
+    init_random(metaGrp->mOrigGrpId);
+    init_random(metaGrp->mAuthorId);
+    init_random(metaGrp->mCircleId);
+    init_random(metaGrp->mParentGrpId);
     randString(SHORT_STR, metaGrp->mGroupName);
+    randString(SHORT_STR, metaGrp->mServiceString);
 
     init_item(metaGrp->signSet);
     init_item(metaGrp->keys);
 
     metaGrp->mPublishTs = rand()%3452;
     metaGrp->mGroupFlags = rand()%43;
+    metaGrp->mSignFlags = rand()%43;
+    metaGrp->mAuthenFlags = rand()%43;
 
-    metaGrp->mGroupStatus = rand()%313;
     metaGrp->mSubscribeFlags = rand()%2251;
+    metaGrp->mPop = rand()%5262;
     metaGrp->mMsgCount = rand()%2421;
     metaGrp->mLastPost = rand()%2211;
-    metaGrp->mPop = rand()%5262;
+    metaGrp->mReputationCutOff = rand()%5262;
+
+    metaGrp->mGroupStatus = rand()%313;
+    metaGrp->mRecvTS = rand()%313;
+
+	 metaGrp->mOriginator = RsPeerId::random() ;
+	 metaGrp->mInternalCircle = RsGxsCircleId::random() ;
+	 metaGrp->mHash = RsFileHash::random() ;
 }
 
 void init_item(RsGxsMsgMetaData* metaMsg)
 {
 
-    metaMsg->mGroupId.random();
-    metaMsg->mMsgId.random();
-    metaMsg->mThreadId.random();
-    metaMsg->mParentId.random();
-    metaMsg->mAuthorId.random();
-    metaMsg->mOrigMsgId.random();
+    init_random(metaMsg->mGroupId) ;
+    init_random(metaMsg->mMsgId) ;
+    init_random(metaMsg->mThreadId) ;
+    init_random(metaMsg->mParentId) ;
+    init_random(metaMsg->mAuthorId) ;
+    init_random(metaMsg->mOrigMsgId) ;
+
     randString(SHORT_STR, metaMsg->mMsgName);
 
     init_item(metaMsg->signSet);
@@ -132,7 +146,7 @@ RsSerialType* init_item(RsNxsGrp& nxg)
 {
     nxg.clear();
 
-    nxg.grpId.random();
+    init_random(nxg.grpId) ;
     nxg.transactionNumber = rand()%23;
     init_item(nxg.grp);
     init_item(nxg.meta);
@@ -145,8 +159,8 @@ RsSerialType* init_item(RsNxsMsg& nxm)
 {
     nxm.clear();
 
-    nxm.msgId.random();
-    nxm.grpId.random();
+    init_random(nxm.msgId) ;
+    init_random(nxm.grpId) ;
     init_item(nxm.msg);
     init_item(nxm.meta);
     nxm.transactionNumber = rand()%23;
@@ -171,7 +185,7 @@ RsSerialType* init_item(RsNxsSyncMsg& rsgm)
     rsgm.flag = RsNxsSyncMsg::FLAG_USE_SYNC_HASH;
     rsgm.createdSince = rand()%24232;
     rsgm.transactionNumber = rand()%23;
-    rsgm.grpId.random();
+    init_random(rsgm.grpId) ;
     randString(SHORT_STR, rsgm.syncHash);
 
     return new RsNxsSerialiser(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
@@ -184,7 +198,7 @@ RsSerialType* init_item(RsNxsSyncGrpItem& rsgl)
     rsgl.flag = RsNxsSyncGrpItem::FLAG_RESPONSE;
     rsgl.transactionNumber = rand()%23;
     rsgl.publishTs = rand()%23;
-    rsgl.grpId.random();
+    init_random(rsgl.grpId) ;
 
     return new RsNxsSerialiser(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
 }
@@ -195,8 +209,8 @@ RsSerialType* init_item(RsNxsSyncMsgItem& rsgml)
 
     rsgml.flag = RsNxsSyncGrpItem::FLAG_RESPONSE;
     rsgml.transactionNumber = rand()%23;
-    rsgml.grpId.random();
-    rsgml.msgId.random();
+    init_random(rsgml.grpId) ;
+    init_random(rsgml.msgId) ;
 
     return new RsNxsSerialiser(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
 }

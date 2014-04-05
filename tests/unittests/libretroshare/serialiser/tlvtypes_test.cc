@@ -253,7 +253,7 @@ TEST(libretroshare_serialiser, test_RsTlvBinData)
 
 
 	b1.setBinData(data, bin_size);
-	delete data;
+	delete[] data;
 
 	//do check
 	EXPECT_TRUE(test_SerialiseTlvItem(std::cerr, &b1, &b2));
@@ -278,7 +278,7 @@ TEST(libretroshare_serialiser, test_RsTlvImage)
 	image1.image_type = RSTLV_IMAGE_TYPE_PNG;
 	image1.binData.setBinData(image_data, bin_size);
 
-	delete image_data;
+	delete[] image_data;
 
 	EXPECT_TRUE(test_SerialiseTlvItem(std::cerr, &image1, &image2));
 }
