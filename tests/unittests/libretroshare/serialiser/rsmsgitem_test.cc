@@ -40,7 +40,7 @@ RsSerialType* init_item(RsChatMsgItem& cmi)
 
 	return new RsChatSerialiser();
 }
-RsSerialType* init_item(RsChatLobbyListRequestItem& cmi)
+RsSerialType* init_item(RsChatLobbyListRequestItem& )
 {
 	return new RsChatSerialiser();
 }
@@ -50,13 +50,17 @@ RsSerialType* init_item(RsChatLobbyListItem& cmi)
 
 	cmi.lobby_ids.resize(n) ;
 	cmi.lobby_names.resize(n) ;
+	cmi.lobby_topics.resize(n) ;
 	cmi.lobby_counts.resize(n) ;
+	cmi.lobby_privacy_levels.resize(n) ;
 
 	for(int i=0;i<n;++i)
 	{
 		cmi.lobby_ids[i] = RSRandom::random_u64() ;
 		randString(5+(rand()%10), cmi.lobby_names[i]);
+		randString(20+(rand()%15), cmi.lobby_topics[i]);
 		cmi.lobby_counts[i] = RSRandom::random_u32() ;
+		cmi.lobby_privacy_levels[i] = RSRandom::random_u32()%3 ;
 	}
 
 	return new RsChatSerialiser();
@@ -75,7 +79,10 @@ RsSerialType* init_item(RsChatLobbyMsgItem& cmi)
 }
 RsSerialType *init_item(RsChatLobbyEventItem& cmi)
 {
-	cmi.event_type = rand()%256 ;
+	cmi.lobby_id = RSRandom::random_u64() ;
+	cmi.msg_id = RSRandom::random_u64() ;
+	randString(20, cmi.nick);
+	cmi.event_type = RSRandom::random_u32()%256 ;
 	randString(20, cmi.string1);
 
 	return new RsChatSerialiser();
@@ -193,7 +200,7 @@ bool operator ==(const RsChatLobbyListItem& cmiLeft,const  RsChatLobbyListItem& 
 	}
 	return true ;
 }
-bool operator ==(const RsChatLobbyListRequestItem& cmiLeft,const  RsChatLobbyListRequestItem& cmiRight)
+bool operator ==(const RsChatLobbyListRequestItem& ,const  RsChatLobbyListRequestItem& )
 {
 	return true ;
 }

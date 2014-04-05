@@ -135,7 +135,8 @@ TEST(libretroshare_serialiser, RsTlvFileData)
 	d1.file.age = 0;
 	d1.file.pop = 0;
 
-	char data[15];
+	unsigned char data[15];
+	RSRandom::random_bytes(data,15) ;
 	d1.binData.setBinData(data, 15);
 
 	d1.file_offset = 222;
