@@ -133,12 +133,13 @@ TEST(libretroshare_serialiser, test_RsTlvFileData)
 
 	/* initialise */
 	d1.file.filesize = 101010;
-	d1.file.hash = "ABCDEFEGHE";
+	d1.file.hash = RsFileHash::random() ;
 	d1.file.name = "";
 	d1.file.age = 0;
 	d1.file.pop = 0;
 
-	char data[15];
+	unsigned char data[15];
+	RSRandom::random_bytes(data,15) ;
 	d1.binData.setBinData(data, 15);
 
 	d1.file_offset = 222;
