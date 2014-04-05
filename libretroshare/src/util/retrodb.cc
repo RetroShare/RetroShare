@@ -72,16 +72,14 @@ RetroDb::RetroDb(const std::string &dbPath, int flags, const std::string& key) :
 
 RetroDb::~RetroDb(){
 
-    if(mDb)
-        sqlite3_close(mDb);
+	sqlite3_close(mDb);	// no-op if mDb is NULL (https://www.sqlite.org/c3ref/close.html)
+	mDb = NULL ;
 }
 
 void RetroDb::closeDb(){
 
-    int rc;
-
-    if(mDb)
-        rc  = sqlite3_close(mDb);
+    int rc= sqlite3_close(mDb);
+	 mDb = NULL ;
 
 #ifdef RETRODB_DEBUG
     std::cerr << "RetroDb::closeDb(): Error code on close: " << rc << std::endl;
