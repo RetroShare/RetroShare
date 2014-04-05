@@ -307,6 +307,8 @@ RsGxsGrpMetaData* RsDataService::locked_getGrpMeta(RetroCursor &c)
 
     if(data)
         ok &= grpMeta->keys.GetTlv(data, data_len, &offset);
+	 else
+		 grpMeta->keys.TlvClear() ;
 
     // local meta
     grpMeta->mSubscribeFlags = c.getInt32(COL_GRP_SUBCR_FLAG);

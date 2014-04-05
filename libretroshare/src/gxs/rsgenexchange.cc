@@ -1896,42 +1896,42 @@ void RsGenExchange::processGroupUpdatePublish()
 	{
 		GroupUpdatePublish& gup = *vit;
 		const RsGxsGroupId& groupId = gup.grpItem->meta.mGroupId;
-                std::map<RsGxsGroupId, RsGxsGrpMetaData*>::iterator mit = grpMeta.find(groupId);
+		std::map<RsGxsGroupId, RsGxsGrpMetaData*>::iterator mit = grpMeta.find(groupId);
 
-                RsGxsGrpMetaData* meta = NULL;
-                if(mit == grpMeta.end())
-                {
-                    std::cerr << "Error! could not find meta of old group to update!" << std::endl;
-                    mDataAccess->updatePublicRequestStatus(gup.mToken, RsTokenService::GXS_REQUEST_V2_STATUS_FAILED);
-                    delete gup.grpItem;
-                    continue;
-                }else
-                {
-                    meta = mit->second;
-                }
-
-
-                //gup.grpItem->meta = *meta;
-                GxsGrpPendingSign ggps(gup.grpItem, ggps.mToken);
-
-                bool publishAndAdminPrivatePresent = checkKeys(meta->keys);
-
-                if(publishAndAdminPrivatePresent)
+		RsGxsGrpMetaData* meta = NULL;
+		if(mit == grpMeta.end() || mit->second == NULL)
 		{
-                    ggps.mPrivateKeys = meta->keys;
-                    generatePublicFromPrivateKeys(ggps.mPrivateKeys, ggps.mPublicKeys);
-                    ggps.mHaveKeys = true;
-                    ggps.mStartTS = time(NULL);
-                    ggps.mLastAttemptTS = 0;
-                    ggps.mIsUpdate = true;
-                    ggps.mToken = gup.mToken;
-                    mGrpsToPublish.push_back(ggps);
+			std::cerr << "Error! could not find meta of old group to update!" << std::endl;
+			mDataAccess->updatePublicRequestStatus(gup.mToken, RsTokenService::GXS_REQUEST_V2_STATUS_FAILED);
+			delete gup.grpItem;
+			continue;
 		}else
 		{
-                    delete gup.grpItem;
-                    mDataAccess->updatePublicRequestStatus(gup.mToken, RsTokenService::GXS_REQUEST_V2_STATUS_FAILED);
+			meta = mit->second;
 		}
-                delete meta;
+
+
+		//gup.grpItem->meta = *meta;
+		GxsGrpPendingSign ggps(gup.grpItem, ggps.mToken);
+
+		bool publishAndAdminPrivatePresent = checkKeys(meta->keys);
+
+		if(publishAndAdminPrivatePresent)
+		{
+			ggps.mPrivateKeys = meta->keys;
+			generatePublicFromPrivateKeys(ggps.mPrivateKeys, ggps.mPublicKeys);
+			ggps.mHaveKeys = true;
+			ggps.mStartTS = time(NULL);
+			ggps.mLastAttemptTS = 0;
+			ggps.mIsUpdate = true;
+			ggps.mToken = gup.mToken;
+			mGrpsToPublish.push_back(ggps);
+		}else
+		{
+			delete gup.grpItem;
+			mDataAccess->updatePublicRequestStatus(gup.mToken, RsTokenService::GXS_REQUEST_V2_STATUS_FAILED);
+		}
+		delete meta;
 	}
 
 	mGroupUpdatePublish.clear();
