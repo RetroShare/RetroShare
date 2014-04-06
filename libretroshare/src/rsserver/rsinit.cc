@@ -1301,8 +1301,6 @@ int RsServer::StartupRetroShare()
 #ifdef RS_ENABLE_GXS
 
 	std::string currGxsDir = rsAccounts.PathAccountDirectory() + "/gxs";
-        currGxsDir += "_FINALTESTS";
-
         RsDirUtil::checkCreateDirectory(currGxsDir);
 
         RsNxsNetMgr* nxsMgr =  new RsNxsNetMgrImpl(serviceCtrl);

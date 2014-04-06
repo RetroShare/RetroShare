@@ -302,9 +302,8 @@ bool RsAccountsDetail::defaultBaseDirectory()
 		return false ;
 	}
 
-	// TODO change back to .retroshare after testing.
 	basedir = h;
-	basedir += "/.retroshare6";
+	basedir += "/.retroshare";
 
 #else
 	if (RsInit::isPortable())
