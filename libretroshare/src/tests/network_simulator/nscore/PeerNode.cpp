@@ -1,0 +1,81 @@
+#include "PeerNode.h"
+#include "FakeComponents.h"
+#include "MonitoredTurtle.h"
+
+PeerNode::PeerNode(const RsPeerId& id,const std::list<RsPeerId>& friends)
+	: _id(id)
+{
+	// add a service server.
+	
+	p3LinkMgr *link_mgr = new FakeLinkMgr(id, friends) ;
+	p3PeerMgr *peer_mgr = new FakePeerMgr(id, friends) ;
+
+	_publisher = new FakePublisher ;
+    p3ServiceControl *ctrl = new FakeServiceControl(link_mgr) ;
+
+	_service_server = new p3ServiceServer(_publisher,ctrl);
+
+	ftServer *ft_server = new ftServer(peer_mgr,ctrl) ;
+
+    _service_server->addService(_turtle = new p3turtle(ctrl,link_mgr),true) ;
+
+    _ftserver = new MonitoredTurtleClient ;
+    _ftserver->connectToTurtleRouter(_turtle) ;
+
+    RsServicePermissions perms;
+    perms.mDefaultAllowed = true ;
+    perms.mServiceId = RS_SERVICE_TYPE_TURTLE ;
+
+    ctrl->updateServicePermissions(RS_SERVICE_TYPE_TURTLE,perms) ;
+	// add a turtle router.
+	//
+}
+
+PeerNode::~PeerNode()
+{
+	delete _service_server ;
+}
+
+void PeerNode::tick()
+{
+	std::cerr << "  ticking peer node " << _id << std::endl;
+	_service_server->tick() ;
+}
+
+void PeerNode::incoming(RsRawItem *item)
+{
+	_service_server->recvItem(item) ;
+}
+RsRawItem *PeerNode::outgoing()
+{
+	return dynamic_cast<FakePublisher*>(_publisher)->outgoing() ;
+}
+
+void PeerNode::provideFileHash(const RsFileHash& hash)
+{
+	_provided_hashes.insert(hash) ;
+    _ftserver->provideFileHash(hash) ;
+}
+
+void PeerNode::manageFileHash(const RsFileHash& hash)
+{
+	_managed_hashes.insert(hash) ;
+	_turtle->monitorTunnels(hash,_ftserver) ;
+}
+
+void PeerNode::getTrafficInfo(NodeTrafficInfo& info)
+{
+	std::vector<std::vector<std::string> > hashes_info ;
+	std::vector<std::vector<std::string> > tunnels_info ;
+	std::vector<TurtleRequestDisplayInfo > search_reqs_info ;
+	std::vector<TurtleRequestDisplayInfo > tunnel_reqs_info ;
+
+	_turtle->getInfo(hashes_info,tunnels_info,search_reqs_info,tunnel_reqs_info) ;
+
+	for(uint32_t i=0;i<tunnels_info.size();++i)
+	{
+		info.local_src[tunnels_info[i][1]] = tunnels_info[i][0] ;
+		info.local_src[tunnels_info[i][2]] = tunnels_info[i][0] ;
+	}
+}
+
