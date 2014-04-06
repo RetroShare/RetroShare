@@ -564,6 +564,23 @@ void NetworkViewer::contextMenu(QPoint p)
 
     contextMnu.addAction(action_ProvideGRKey);
 
+    std::set<GRouterKeyId> provided_keys ;
+
+    for(uint32_t i=0;i<_network.n_nodes();++i)
+        if(i != _current_acted_node)
+            provided_keys.insert( _network.node(i).providedGRKeys().begin(), _network.node(i).providedGRKeys().end()) ;
+
+    if(!provided_keys.empty())
+    {
+        QMenu *Mnu2 = contextMnu.addMenu("Send message to Key") ;
+
+        for(std::set<GRouterKeyId>::const_iterator it(provided_keys.begin());it!=provided_keys.end();++it)
+        {
+            QAction* send_message_action = new QAction(QString::fromStdString((*it).toStdString()), Mnu2);
+            connect(send_message_action, SIGNAL(triggered()), this, SLOT(actionSendToGRKey()));
+            Mnu2->addAction(send_message_action);
+        }
+    }
     // Execute!
 
     contextMnu.exec(mapToGlobal(p));

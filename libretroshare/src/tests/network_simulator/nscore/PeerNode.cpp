@@ -22,7 +22,12 @@ PeerNode::PeerNode(const RsPeerId& id,const std::list<RsPeerId>& friends)
 
     ctrl->updateServicePermissions(RS_SERVICE_TYPE_TURTLE,perms) ;
 
-	// Turtle business
+    perms.mDefaultAllowed = true ;
+    perms.mServiceId = RS_SERVICE_TYPE_GROUTER ;
+
+    ctrl->updateServicePermissions(RS_SERVICE_TYPE_GROUTER,perms) ;
+
+    // Turtle business
 
 	_service_server->addService(_turtle = new p3turtle(ctrl,link_mgr),true) ;
 	_turtle_client = new MonitoredTurtleClient ;
@@ -73,7 +78,8 @@ void PeerNode::sendToGRKey(const GRouterKeyId& key_id)
 }
 void PeerNode::provideGRKey(const GRouterKeyId& key_id)
 {
-	_grouter_client->provideKey(key_id) ;
+    _grouter_client->provideKey(key_id) ;
+    _provided_keys.insert(key_id);
 }
 void PeerNode::getTrafficInfo(NodeTrafficInfo& info)
 {
