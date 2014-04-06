@@ -8,6 +8,8 @@ INCLUDEPATH *= ../../.. ..
 TARGET = NetworkSim
 DESTDIR = bin
 
+PRE_TARGETDEPS = ../nscore/nscore.pro
+
 SOURCES = main.cpp NetworkViewer.cpp NetworkSimulatorGUI.cpp \
           TurtleRouterStatistics.cpp RsAutoUpdatePage.cpp 
 

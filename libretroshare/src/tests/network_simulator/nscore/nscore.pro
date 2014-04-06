@@ -8,11 +8,13 @@ TARGET = nscore
 SOURCES = Network.cpp \
 			 PeerNode.cpp \
           MonitoredRsPeers.cpp \
-			 MonitoredTurtle.cpp
+			 MonitoredTurtleClient.cpp \
+			 MonitoredGRouterClient.cpp
 
 HEADERS = Network.h \
 			 PeerNode.h \
-			 MonitoredTurtle.h  \
-          MonitoredRsPeers.h
+          MonitoredRsPeers.h \
+			 MonitoredTurtleClient.h  \
+			 MonitoredGRouterClient.h
 
 DESTDIR = ../lib

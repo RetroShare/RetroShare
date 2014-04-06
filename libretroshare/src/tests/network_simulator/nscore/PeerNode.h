@@ -3,10 +3,11 @@
 #include <retroshare/rstypes.h>
 #include <turtle/p3turtle.h>
 
-class MonitoredTurtleRouter ;
 class MonitoredTurtleClient ;
+class MonitoredGRouterClient ;
 class RsTurtle ;
 class p3turtle ;
+class p3GRouter ;
 class pqiPublisher ;
 class RsRawItem ;
 class p3ServiceServer ;
@@ -30,10 +31,10 @@ class PeerNode
 
 		void tick() ;
 
-		const RsTurtle *turtle_service() const { return _turtle ; }
-
 		// Turtle-related methods
 		//
+		const RsTurtle *turtle_service() const { return _turtle ; }
+
 		void manageFileHash(const RsFileHash& hash) ;
 		void provideFileHash(const RsFileHash& hash) ;
 
@@ -42,12 +43,22 @@ class PeerNode
 
 		void getTrafficInfo(NodeTrafficInfo& trinfo) ;	// 
 
+		// GRouter-related methods
+		//
 	private:
 		p3ServiceServer *_service_server ;
-		p3turtle *_turtle ;
-		MonitoredTurtleClient *_ftserver ;
 		pqiPublisher *_publisher ;
 		RsPeerId _id ;
+
+		// turtle stuff
+		//
+		p3turtle *_turtle ;
+		MonitoredTurtleClient *_turtle_client ;
+
+		// grouter stuff
+		//
+		p3GRouter *_grouter ;
+		MonitoredGRouterClient *_grouter_client ;
 
 		std::set<RsFileHash> _provided_hashes ;
 		std::set<RsFileHash> _managed_hashes ;

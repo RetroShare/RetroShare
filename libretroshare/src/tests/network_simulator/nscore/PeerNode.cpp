@@ -1,6 +1,7 @@
 #include "PeerNode.h"
 #include "FakeComponents.h"
-#include "MonitoredTurtle.h"
+#include "MonitoredTurtleClient.h"
+#include "MonitoredGRouterClient.h"
 
 PeerNode::PeerNode(const RsPeerId& id,const std::list<RsPeerId>& friends)
 	: _id(id)
@@ -15,20 +16,24 @@ PeerNode::PeerNode(const RsPeerId& id,const std::list<RsPeerId>& friends)
 
 	_service_server = new p3ServiceServer(_publisher,ctrl);
 
-	ftServer *ft_server = new ftServer(peer_mgr,ctrl) ;
-
-    _service_server->addService(_turtle = new p3turtle(ctrl,link_mgr),true) ;
-
-    _ftserver = new MonitoredTurtleClient ;
-    _ftserver->connectToTurtleRouter(_turtle) ;
-
     RsServicePermissions perms;
     perms.mDefaultAllowed = true ;
     perms.mServiceId = RS_SERVICE_TYPE_TURTLE ;
 
     ctrl->updateServicePermissions(RS_SERVICE_TYPE_TURTLE,perms) ;
-	// add a turtle router.
+
+	// Turtle business
+
+	_service_server->addService(_turtle = new p3turtle(ctrl,link_mgr),true) ;
+	_turtle_client = new MonitoredTurtleClient ;
+	_turtle_client->connectToTurtleRouter(_turtle) ;
+
+	// global router business.
 	//
+
+	_service_server->addService(_grouter = new p3GRouter(ctrl,link_mgr),true) ;
+	_grouter_client = new MonitoredGRouterClient ;
+	_grouter_client->connectToGlobalRouter(_grouter) ;
 }
 
 PeerNode::~PeerNode()
@@ -54,13 +59,13 @@ RsRawItem *PeerNode::outgoing()
 void PeerNode::provideFileHash(const RsFileHash& hash)
 {
 	_provided_hashes.insert(hash) ;
-    _ftserver->provideFileHash(hash) ;
+    _turtle_client->provideFileHash(hash) ;
 }
 
 void PeerNode::manageFileHash(const RsFileHash& hash)
 {
 	_managed_hashes.insert(hash) ;
-	_turtle->monitorTunnels(hash,_ftserver) ;
+	_turtle->monitorTunnels(hash,_turtle_client) ;
 }
 
 void PeerNode::getTrafficInfo(NodeTrafficInfo& info)

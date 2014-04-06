@@ -15,7 +15,7 @@
 #include <ft/ftcontroller.h>
 #include <services/p3service.h>
 #include "Network.h"
-#include "MonitoredTurtle.h"
+#include "MonitoredTurtleClient.h"
 #include "FakeComponents.h"
 
 bool Network::initRandom(uint32_t nb_nodes,float connexion_probability)

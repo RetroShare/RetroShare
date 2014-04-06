@@ -29,6 +29,7 @@ class FakePublisher: public pqiPublisher
 		virtual bool sendItem(RsRawItem *item) 
 		{
 			_item_queue.push_back(item) ;
+			return true ;
 		}
 
 		RsRawItem *outgoing() 
