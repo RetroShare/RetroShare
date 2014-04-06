@@ -890,7 +890,16 @@ bool ftController::completeFile(std::string hash)
 		/* switch map */
 		if (!(fc->mFlags & RS_FILE_REQ_CACHE)) /* clean up completed cache files automatically */
 		{
-			mCompleted[fc->mHash] = fc;
+			std::map<std::string,ftFileControl*>::iterator it = mCompleted.find(fc->mHash) ;
+
+			if(it != mCompleted.end())
+			{
+				delete it->second ;
+				it->second = fc ;
+			}
+			else
+				mCompleted[fc->mHash] = fc;
+
 			completeCount = mCompleted.size();
 		} else
 			delete fc ;
