@@ -19,7 +19,7 @@
 // 5 - perturbate the network 
 // 		* change the load of each node, and the delay when forwarding requests.
 //
-#include "Network.h"
+#include "nscore/Network.h"
 
 class NetworkViewer: public QGLViewer
 {

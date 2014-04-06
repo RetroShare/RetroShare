@@ -4,7 +4,7 @@
 
 #include <retroshare/rsids.h>
 
-#include "Network.h"
+#include "nscore/Network.h"
 #include "NetworkViewer.h"
 
 NetworkViewer::NetworkViewer(QWidget *parent,Network&net)

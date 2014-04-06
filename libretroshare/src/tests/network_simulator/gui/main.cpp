@@ -1,10 +1,12 @@
 #include <fenv.h>
-
-#include "Network.h"
-#include "NetworkSimulatorGUI.h"
-#include "MonitoredRsPeers.h"
-#include <QApplication>
 #include <util/argstream.h>
+
+#include "nscore/Network.h"
+#include "nscore/MonitoredRsPeers.h"
+
+#include <QApplication>
+
+#include "NetworkSimulatorGUI.h"
 
 int main(int argc, char *argv[])
 {

@@ -3,7 +3,7 @@ TEMPLATE = app
 CONFIG *= qt qglviewer 
 QT *= xml opengl
 
-INCLUDEPATH *= ../.. ..
+INCLUDEPATH *= ../../.. ..
 
 TARGET = NetworkSim
 DESTDIR = bin
@@ -16,4 +16,9 @@ HEADERS = NetworkViewer.h NetworkSimulatorGUI.h \
 
 FORMS = NetworkSimulatorGUI.ui TurtleRouterStatistics.ui
 
-LIBS *= ../../../lib/libretroshare.a ../../../../../libbitdht/src/lib/libbitdht.a ../../../../../../lib/sqlcipher/.libs/libsqlcipher.a   ../../../../../openpgpsdk/src/lib/libops.a -lgnome-keyring -lupnp -lssl -lcrypto -lbz2 -lixml
+LIBS *= ../../../lib/libretroshare.a \
+        ../../../../../libbitdht/src/lib/libbitdht.a \
+		  ../../../../../../lib/sqlcipher/.libs/libsqlcipher.a   \
+		  ../../../../../openpgpsdk/src/lib/libops.a \
+		  ../lib/libnscore.a \
+		  -lgnome-keyring -lupnp -lssl -lcrypto -lbz2 -lixml
