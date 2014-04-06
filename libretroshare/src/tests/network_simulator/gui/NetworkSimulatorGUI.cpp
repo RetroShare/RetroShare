@@ -30,6 +30,9 @@ void NetworkSimulatorGUI::updateSelectedNode(int node_id)
 {
     _turtle_router_statistics->setTurtleRouter( _viewer->network().node(node_id).turtle_service() ) ;
     _global_router_statistics->setGlobalRouter( _viewer->network().node(node_id).global_router_service() ) ;
+
+    _turtle_router_statistics->updateDisplay() ;
+    _global_router_statistics->updateDisplay() ;
 }
 
 void NetworkSimulatorGUI::toggleNetworkTraffic(bool b)

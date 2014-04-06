@@ -43,10 +43,10 @@ class GlobalRouterStatistics: public RsAutoUpdatePage, public Ui::GlobalRouterSt
         static QString getPeerName(const RsPeerId& peer_id) ;
 
     void setGlobalRouter(const RsGRouter *grouter) ;
+        virtual void updateDisplay() ;
 
 	private:
 											
-		virtual void updateDisplay() ;
 
         GlobalRouterStatisticsWidget *_tst_CW ;
         RsGRouter *_grouter ;

@@ -41,9 +41,8 @@ class TurtleRouterStatistics: public RsAutoUpdatePage, public Ui::TurtleRouterSt
 
 		void setTurtleRouter(const RsTurtle *turtle) { _turtle = turtle ; }
 
-	private:
-											
-		virtual void updateDisplay() ;
+        virtual void updateDisplay() ;
+    private:
 
 		TurtleRouterStatisticsWidget *_tst_CW ;
 		const RsTurtle *_turtle ;
