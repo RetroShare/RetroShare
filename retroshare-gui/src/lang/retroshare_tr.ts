@@ -244,7 +244,11 @@
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; Drag &amp;amp; Drop to insert pictures. Click on a picture to edit details below.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; Resimleri eklemek için sürükle ve bırak. Aşağıdaki detayları düzenlemek için resmi tıklayınız.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Back</source>
@@ -268,7 +272,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Where were these taken?</source>
-        <translation type="unfinished"/>
+        <translation>Bunlar nerede çekildi ?</translation>
     </message>
     <message>
         <source>Load Album Thumbnail</source>
@@ -339,7 +343,11 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; Drag &amp;amp; Drop to insert pictures. Click on a picture to edit details below.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt; Resimleri eklemek için sürükle ve bırak. Aşağıdaki detayları düzenlemek için resmi tıklayınız.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Add Photo</source>
@@ -374,7 +382,11 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Album Title :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Albüm Başlığı :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -382,7 +394,11 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Photographer :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Fotoğrafçı :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
@@ -425,7 +441,8 @@ p, li { white-space: pre-wrap; }
     <message>
         <source> Warning: The services here are experimental. Please help us test them. 
  But Remember: Any data here *WILL* be lost when we upgrade the protocols.</source>
-        <translation type="unfinished"/>
+        <translation>Uyarı: Buradaki servisler deneme niteliğindedir. Lütfen onları test etmemize yardım edin.
+Ama hatırlayın: buradaki herhangi bir bilgi, protokolleri güncellediğimiz de yok olacak.</translation>
     </message>
     <message>
         <source>Identities</source>
@@ -1746,11 +1763,11 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Private chat invite from </source>
-        <translation type="unfinished"/>
+        <translation>Özel sohbet davetiyesi</translation>
     </message>
     <message>
         <source>Private chat invite to </source>
-        <translation type="unfinished"/>
+        <translation>Özel sohbete davet et</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;In this tab you can setup how many chat messages Retroshare will keep saved on the disc and how much of the previous conversation it will display, for the different chat systems. The max storage period allows to discard old messages and prevents the chat history from filling up with volatile chat (e.g. chat lobbies and distant chat).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
@@ -2304,7 +2321,7 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Use as direct source, when available</source>
-        <translation type="unfinished"/>
+        <translation>Kullanılabilir olduğunda doğrudan kaynak olarak kullan</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Retroshare periodically checks your friend lists for browsable files matching your transfers, to establish a direct transfer. In this case, your friend knows you&apos;re downloading the file.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;To prevent this behavior for this friend only, uncheck this box. You can still perform a direct transfer if you explicitly ask for it, by e.g. downloading from your friend&apos;s file list. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
@@ -2541,7 +2558,7 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>To accept the Friend Request, click the Finish button.</source>
-        <translation type="unfinished"/>
+        <translation>Arkadaşlık isteğini kabul etmek için Son tuşunu tıklayın.</translation>
     </message>
     <message>
         <source>Sorry, some error appeared</source>
@@ -2569,15 +2586,15 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>This peer is already on your friend list. Adding it might just set it&apos;s ip address.</source>
-        <translation type="unfinished"/>
+        <translation>Bu kişi zaten kayıtlı görünüyor. Onu eklemek sadece ip adresini değiştirebilir.</translation>
     </message>
     <message>
         <source>Abnormal size read is bigger than memory block.</source>
-        <translation type="unfinished"/>
+        <translation>Anormal boyuttaki veri, hafıza bloğundan daha fazladır.</translation>
     </message>
     <message>
         <source>Invalid location id.</source>
-        <translation type="unfinished"/>
+        <translation>Geçersiz yer kimliği</translation>
     </message>
     <message>
         <source>Invalid external IP.</source>
@@ -2605,7 +2622,7 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Unknown certificate error</source>
-        <translation type="unfinished"/>
+        <translation>Bilinmeyen sertifika hatası</translation>
     </message>
     <message>
         <source>Certificate Load Failed</source>
@@ -2761,7 +2778,7 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Use as direct source, when available</source>
-        <translation type="unfinished"/>
+        <translation>Kullanılabilir olduğunda doğrudan kaynak olarak kullan</translation>
     </message>
     <message>
         <source>Direct source</source>
@@ -2769,7 +2786,7 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Recommend many friends to each others</source>
-        <translation type="unfinished"/>
+        <translation>Arkadaşlarınızı birbirine tavsiye edin.</translation>
     </message>
     <message>
         <source>Friend Recommendations</source>
@@ -2823,7 +2840,7 @@ even if you don&apos;t make friends.</source>
     </message>
     <message>
         <source>Connecting to:</source>
-        <translation type="unfinished"/>
+        <translation>Bağlanıyor:</translation>
     </message>
     <message>
         <source>TextLabel</source>
@@ -2831,7 +2848,7 @@ even if you don&apos;t make friends.</source>
     </message>
     <message>
         <source>Network </source>
-        <translation type="unfinished"/>
+        <translation>Ağ</translation>
     </message>
     <message>
         <source>Net Result</source>
@@ -2879,7 +2896,7 @@ even if you don&apos;t make friends.</source>
     </message>
     <message>
         <source>Unknown State</source>
-        <translation type="unfinished"/>
+        <translation>Bilinmeyen durum</translation>
     </message>
     <message>
         <source>Offline</source>
@@ -2963,7 +2980,7 @@ even if you don&apos;t make friends.</source>
     </message>
     <message>
         <source>Initial connections can take a while, please be patient</source>
-        <translation type="unfinished"/>
+        <translation>İlk bağlantı biraz zaman alabilir, lütfen sabırlı olunuz</translation>
     </message>
     <message>
         <source>If an error is detected it will be displayed here</source>
@@ -2975,27 +2992,27 @@ even if you don&apos;t make friends.</source>
     </message>
     <message>
         <source>Retroshare will continue connecting in the background</source>
-        <translation type="unfinished"/>
+        <translation>Retroshare arkaplanda bağlanmaya devam edecek</translation>
     </message>
     <message>
         <source>Connection Timeout</source>
-        <translation type="unfinished"/>
+        <translation>Bağlantı zaman aşımı</translation>
     </message>
     <message>
         <source>Connection Attempt has taken too long</source>
-        <translation type="unfinished"/>
+        <translation>Bağlantı girişimi çok uzun sürdü</translation>
     </message>
     <message>
         <source>But no error has been detected</source>
-        <translation type="unfinished"/>
+        <translation>Fakat hiçbir hata tespit edilemedi.</translation>
     </message>
     <message>
         <source>Try again shortly, Retroshare will continue connecting in the background</source>
-        <translation type="unfinished"/>
+        <translation>Daha sonra tekrar deneyin, Retroshare arkaplanda bağlanmaya devam edecek</translation>
     </message>
     <message>
         <source>If you continue to get this message, please contact developers</source>
-        <translation type="unfinished"/>
+        <translation>Eğer bu mesajı almaya devam ederseniz, lütfen geliştiricilerle iletişim kurun.</translation>
     </message>
     <message>
         <source>DHT Lookup Timeout</source>
@@ -3035,7 +3052,7 @@ even if you don&apos;t make friends.</source>
     </message>
     <message>
         <source>Congratulations, you are connected</source>
-        <translation type="unfinished"/>
+        <translation>Tebrikler, bağlandınız.</translation>
     </message>
     <message>
         <source>DHT startup Failed</source>
@@ -3047,11 +3064,11 @@ even if you don&apos;t make friends.</source>
     </message>
     <message>
         <source>Common causes of this problem are:</source>
-        <translation type="unfinished"/>
+        <translation>Bu sorunun genel nedenleri:</translation>
     </message>
     <message>
         <source>     - You are not connected to the Internet</source>
-        <translation type="unfinished"/>
+        <translation>İnternete bağlı değilsiniz.</translation>
     </message>
     <message>
         <source>     - You have a missing or out-of-date DHT bootstrap file (bdboot.txt)</source>
@@ -3067,7 +3084,7 @@ even if you don&apos;t make friends.</source>
     </message>
     <message>
         <source>Retroshare has tried All Known Addresses, with no success</source>
-        <translation type="unfinished"/>
+        <translation>Retroshare bilinen bütün adresleri denedi, Başarılı olmadı</translation>
     </message>
     <message>
         <source>The DHT is needed if your friends have Dynamic IP Addresses.</source>
@@ -3083,11 +3100,11 @@ even if you don&apos;t make friends.</source>
     </message>
     <message>
         <source>We successfully reached your Friend.</source>
-        <translation type="unfinished"/>
+        <translation>Arkadaşınıza başarılı bir şekilde ulaştık.</translation>
     </message>
     <message>
         <source>but they have not added you as a Friend.</source>
-        <translation type="unfinished"/>
+        <translation>fakat onlar sizi arkadaşı olarak eklemedi.</translation>
     </message>
     <message>
         <source>Please contact them to add your Certificate</source>
@@ -3111,7 +3128,7 @@ even if you don&apos;t make friends.</source>
     </message>
     <message>
         <source>We Cannot find your Friend.</source>
-        <translation type="unfinished"/>
+        <translation>Arkadaşınızı bulamadık.</translation>
     </message>
     <message>
         <source>They are either offline or their DHT is Off</source>
@@ -3639,7 +3656,13 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&quot;&gt;Attachments:&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt; Use Drag and Drop / Add Files button, to Hash new files.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt; Copy/Paste RetroShare links from your shares&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Ekler:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt; Sürükle ve bırak / Dosya ekleme butonunu tıkla, yeni dosyalar yaratmak için.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt; RetroShare bağlantılarını paylaştıklarından Kopyala/Yapıştır&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Add File to Attach</source>
@@ -3683,11 +3706,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>You are about to add files you&apos;re not actually sharing. Do you still want this to happen?</source>
-        <translation type="unfinished"/>
+        <translation>Gerçekte paylaşmadığınız dosyaları eklemek üzeresiniz. Bunun olmasını istiyor musunuz?</translation>
     </message>
     <message>
         <source>About to post un-owned files to a channel.</source>
-        <translation type="unfinished"/>
+        <translation>Size ait olmayan dosyaları bir kanala göndermek üzeresiniz.</translation>
     </message>
     <message>
         <source>Drop file error.</source>
@@ -4020,7 +4043,13 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:10pt; font-weight:600;&quot;&gt;Attachments:&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt; Use Drag and Drop / Add Files button, to Hash new files.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt; Copy/Paste RetroShare links from your shares&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Ekler:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt; Sürükle ve bırak / Dosya ekleme butonunu tıkla, yeni dosyalar yaratmak için.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;img src=&quot;:/images/feedback_arrow.png&quot; /&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt; RetroShare bağlantılarını paylaştıklarından Kopyala/Yapıştır&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Add File to Attach</source>
@@ -4171,7 +4200,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Please choose Signing Id, it is required</source>
-        <translation type="unfinished"/>
+        <translation>Lütfen bir imza seçin, Gerekli</translation>
     </message>
     <message>
         <source>Add Extra File</source>
@@ -4297,7 +4326,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Your new chat invite has been created. You can now copy/paste it as a Retroshare link.</source>
-        <translation type="unfinished"/>
+        <translation>Yeni sohbet davetiyeniz oluşturuldu. Artık Retroshare bağlantısı olarak Kopyala/Yapıştır yapabilirsiniz.</translation>
     </message>
     <message>
         <source>Messaging invite creation failed</source>
@@ -5067,7 +5096,10 @@ dosyaların tekrar-karılmasından kurtulursunuz.</translation>
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Friends&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-size:8pt; font-weight:400; font-style:normal; text-decoration:none;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:9pt; font-weight:600;&quot;&gt;Arkadaşlar&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>#</source>
@@ -6388,7 +6420,7 @@ p, li { white-space: pre-wrap; }⏎
         <source>Be careful: this email will be visible to your friends and friends 
 of your friends. This information is required by PGP, but to stay 
 anonymous, you can use a fake email.</source>
-        <translation type="unfinished"/>
+        <translation>Dikkat: Bu e-posta arkadaşlarınız ve onların arkadaşları tarafından görülebilir. PGP için bu bilgi gereklidir, Fakat bu e-postanın gizli kalması için, sahte e-posta kullanabilirsiniz.</translation>
     </message>
     <message>
         <source>This Password is for PGP</source>
@@ -6558,7 +6590,7 @@ Fill in your PGP password when asked, to sign your new key.</source>
     </message>
     <message>
         <source>Failed to Generate your new Certificate, maybe PGP password is wrong!</source>
-        <translation type="unfinished"/>
+        <translation>Yeni sertifika oluşturulamadı, PGP şifresi yanlış olabilir.</translation>
     </message>
     <message>
         <source>Password (check)</source>
@@ -6623,7 +6655,7 @@ the same identity (PGP key).</source>
     </message>
     <message>
         <source>Register retroshare:// as URL protocol (Restart required)</source>
-        <translation type="unfinished"/>
+        <translation>retroshare:// URL protokolü olarak kaydet (Yeniden başlatılmalı)</translation>
     </message>
     <message>
         <source>You need administrator rights to change this option.</source>
@@ -6687,7 +6719,16 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Be sure to get their invitation back as well... &lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;You can only connect with friends if you have both added each other.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;RetroShare arkadaşlarınız olmadan hiçbirşeydir. İşlemi başlatmak için butonu tıklayın.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Arkadaşlarınıza &amp;quot;Kimlik sertifikanız&amp;quot; ile davetiye gönderin.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Sizde arkadaşlarınızın davetiyelerini aldığınızdan emin olun... &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Arkadaşlarınıza sadece iki tarafta birbirini eklediyse bağlanabilirsiniz.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Add Your Friends to RetroShare</source>
@@ -6909,11 +6950,11 @@ p, li { white-space: pre-wrap; }
     <name>GroupFlagsWidget</name>
     <message>
         <source>Directory is browsable for friends from groups</source>
-        <translation type="unfinished"/>
+        <translation>Bu dizin gruplardaki arkadaşlarınız tarafından taranabilir.</translation>
     </message>
     <message>
         <source>Directory is NOT browsable for friends from groups</source>
-        <translation type="unfinished"/>
+        <translation>Bu dizin gruplardaki arkadaşlarınız tarafından taranamaz</translation>
     </message>
     <message>
         <source>Directory is accessible by anonymous tunnels from friends from groups</source>
@@ -6925,11 +6966,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Directory is browsable for any friend</source>
-        <translation type="unfinished"/>
+        <translation>Bu dizin herhangi bir arkadaşınız tarafından taranabilir.</translation>
     </message>
     <message>
         <source>Directory is NOT browsable for any friend</source>
-        <translation type="unfinished"/>
+        <translation>Bu dizin hiçbir arkadaşınız tarafından taranamaz</translation>
     </message>
     <message>
         <source>Directory is accessible by anonymous tunnels from any friend</source>
@@ -6957,7 +6998,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Only friends in groups </source>
-        <translation type="unfinished"/>
+        <translation>Sadece gruplardaki arkadaşlar</translation>
     </message>
     <message>
         <source> can relay anonymous tunnels to this directory</source>
@@ -6965,7 +7006,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>No one can anonymously access this directory.</source>
-        <translation type="unfinished"/>
+        <translation>Hiç kimse anonim olarak bu dizine erişemez.</translation>
     </message>
 </context>
 <context>
@@ -8271,7 +8312,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>PGP Associated ID</source>
-        <translation type="unfinished"/>
+        <translation>PGP ilişkili kimlik</translation>
     </message>
     <message>
         <source>Pseudonym</source>
@@ -9653,7 +9694,7 @@ mesaji kaydetmek istiyor musunuz?</translation>
     </message>
     <message>
         <source>No starred messages available. Stars let you give messages a special status to make them easier to find. To star a message, click on the light gray star beside any message.</source>
-        <translation type="unfinished"/>
+        <translation>Hiç yıldızlı mesaj yok. Mesajlara yıldız ekleyerek onları daha kolay bulabilirsiniz. Bir postaya yıldız eklemek için yanındaki açık gri yıldızı tıklayabilirsiniz.</translation>
     </message>
     <message>
         <source>No system messages available.</source>
@@ -10324,7 +10365,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Please check your system clock.</source>
-        <translation type="unfinished"/>
+        <translation>Lütfen sistem saatini kontrol ediniz</translation>
     </message>
     <message>
         <source>Examining shared files...</source>
@@ -10587,7 +10628,11 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Photographer :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Fotoğrafçı :&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -10643,7 +10688,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Please select an album before
 requesting to edit it!</source>
-        <translation type="unfinished"/>
+        <translation>Düzenlemeye çalışmadan önce lütfen bir albüm seçiniz!</translation>
     </message>
 </context>
 <context>
@@ -10939,7 +10984,11 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:12pt; font-weight:600;&quot;&gt;Link&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:12pt; font-weight:600;&quot;&gt;Bağlantı adresi&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Signed by: </source>
@@ -11005,7 +11054,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Edit Topic</source>
-        <translation type="unfinished"/>
+        <translation>Konuyu düzenle</translation>
     </message>
     <message>
         <source>Create Topic</source>
@@ -11445,7 +11494,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Do you want this link to be handled by your system?</source>
-        <translation type="unfinished"/>
+        <translation>Bu bağlantının sisteminiz tarafından kullanılmasını istiyor musunuz?</translation>
     </message>
     <message>
         <source>Click to add this RetroShare cert to your PGP keyring
@@ -11592,7 +11641,8 @@ and open the Make Friend Wizard.
     <message>
         <source>Warning: forbidden characters found in filenames. 
 Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replaced by &apos;_&apos;.</source>
-        <translation type="unfinished"/>
+        <translation>Uyarı: Dosyada kullanımı yasak karakterler bulundu.
+&lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; karakterler &apos;_&apos; ile değiştirilecek.</translation>
     </message>
     <message>
         <source>Result</source>
@@ -11653,7 +11703,7 @@ Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replace
     </message>
     <message>
         <source>Initialization failed. Wrong or missing installation of PGP.</source>
-        <translation type="unfinished"/>
+        <translation>Başlatılamadı. Yanlış veya eksik PGP </translation>
     </message>
     <message>
         <source>An unexpected error occurred. Please report &apos;RsInit::InitRetroShare unexpected return code %1&apos;.</source>
@@ -11702,7 +11752,7 @@ Dosyayı kilitle:⏎</translation>
     </message>
     <message>
         <source>This chat link is expired. The destination peer will not answer.</source>
-        <translation type="unfinished"/>
+        <translation>Bu sohbet bağlantısının süresi doldu. Karşı taraf cevap veremez.</translation>
     </message>
     <message>
         <source>Chat link cannot be decrypted</source>
@@ -12791,7 +12841,7 @@ The default value is 20.</source>
     </message>
     <message>
         <source>Use as direct source, when available</source>
-        <translation type="unfinished"/>
+        <translation>Kullanılabilir olduğunda doğrudan kaynak olarak kullan</translation>
     </message>
 </context>
 <context>
@@ -13081,7 +13131,7 @@ The default value is 20.</source>
     </message>
     <message>
         <source>Message arrived</source>
-        <translation type="unfinished"/>
+        <translation>Mesaj geldi</translation>
     </message>
     <message>
         <source>Download</source>
@@ -13138,7 +13188,7 @@ The default value is 20.</source>
     </message>
     <message>
         <source>Name (PGP Id) - location:</source>
-        <translation type="unfinished"/>
+        <translation>İsim (PGP kimliği) - yer:</translation>
     </message>
     <message>
         <source>Remember Password</source>
@@ -13524,7 +13574,7 @@ Yinede önbellek dosyaları için bir kaç yer bırakmanız tavsiye edilir.</tra
     </message>
     <message>
         <source>Progressive</source>
-        <translation type="unfinished"/>
+        <translation>İlerleyen</translation>
     </message>
     <message>
         <source>Random</source>
@@ -13755,7 +13805,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Progressive</source>
-        <translation type="unfinished"/>
+        <translation>İlerleyen</translation>
     </message>
     <message>
         <source>Play</source>
@@ -14083,7 +14133,7 @@ Sabırlı olun!</translation>
     </message>
     <message>
         <source>This table normally auto-updates every 10 seconds.</source>
-        <translation type="unfinished"/>
+        <translation>Bu tablo normalde her 10 saniyede bir güncellenir.</translation>
     </message>
     <message>
         <source>Self</source>
@@ -14516,7 +14566,7 @@ Sabırlı olun!</translation>
     </message>
     <message>
         <source>Enable Obsolete Edits</source>
-        <translation type="unfinished"/>
+        <translation>Eski düzenlemeleri etkinleştir.</translation>
     </message>
     <message>
         <source>Choose for Merge</source>
@@ -14604,14 +14654,14 @@ Sabırlı olun!</translation>
     </message>
     <message>
         <source>Edit Wiki Page</source>
-        <translation type="unfinished"/>
+        <translation>Wiki sayfasını düzenle</translation>
     </message>
 </context>
 <context>
     <name>WikiGroupDialog</name>
     <message>
         <source>Create New Wiki Group</source>
-        <translation type="unfinished"/>
+        <translation>Yeni Wiki grubu oluştur</translation>
     </message>
     <message>
         <source>Wiki Group</source>

@@ -225,31 +225,31 @@
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="392"/>
-        <location filename="../LinksDialog.cpp" line="144"/>
+        <location filename="../LinksDialog.cpp" line="145"/>
         <source>+2 Great!</source>
         <translation>+2 멋져요 :D</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="401"/>
-        <location filename="../LinksDialog.cpp" line="147"/>
+        <location filename="../LinksDialog.cpp" line="148"/>
         <source>+1 Good</source>
         <translation>+1 좋아요 :)</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="410"/>
-        <location filename="../LinksDialog.cpp" line="150"/>
+        <location filename="../LinksDialog.cpp" line="151"/>
         <source>0 Okay</source>
         <translation>0 괜찮아요 : |</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="419"/>
-        <location filename="../LinksDialog.cpp" line="153"/>
+        <location filename="../LinksDialog.cpp" line="154"/>
         <source>-1 Sux</source>
         <translation>-1 어우 :S</translation>
     </message>
     <message>
         <location filename="../LinksDialog.ui" line="428"/>
-        <location filename="../LinksDialog.cpp" line="156"/>
+        <location filename="../LinksDialog.cpp" line="157"/>
         <source>-2 Bad Link</source>
         <translation>-2 후졌어요 :(</translation>
     </message>
@@ -269,59 +269,59 @@
         <translation>새 링크 추가</translation>
     </message>
     <message>
-        <location filename="../LinksDialog.cpp" line="137"/>
+        <location filename="../LinksDialog.cpp" line="138"/>
         <source>Share Link Anonymously</source>
         <translation>익명으로 링크 공유</translation>
     </message>
     <message>
-        <location filename="../LinksDialog.cpp" line="141"/>
+        <location filename="../LinksDialog.cpp" line="142"/>
         <source>Vote on Link</source>
         <translation>링크에 투표</translation>
     </message>
     <message>
-        <location filename="../LinksDialog.cpp" line="160"/>
+        <location filename="../LinksDialog.cpp" line="161"/>
         <source>Download</source>
         <translation>다운로드</translation>
     </message>
     <message>
-        <location filename="../LinksDialog.cpp" line="707"/>
-        <location filename="../LinksDialog.cpp" line="735"/>
-        <location filename="../LinksDialog.cpp" line="743"/>
+        <location filename="../LinksDialog.cpp" line="708"/>
+        <location filename="../LinksDialog.cpp" line="736"/>
+        <location filename="../LinksDialog.cpp" line="744"/>
         <source>Add Link Failure</source>
         <translation>잘못된 링크 추가</translation>
     </message>
     <message>
-        <location filename="../LinksDialog.cpp" line="707"/>
+        <location filename="../LinksDialog.cpp" line="708"/>
         <source>Missing Link and/or Title</source>
         <translation>링크 또는 제목이 빠졌습니다</translation>
     </message>
     <message>
-        <location filename="../LinksDialog.cpp" line="735"/>
+        <location filename="../LinksDialog.cpp" line="736"/>
         <source>Missing Link Data</source>
         <translation>링크 데이터가 빠졌습니다</translation>
     </message>
     <message>
-        <location filename="../LinksDialog.cpp" line="743"/>
+        <location filename="../LinksDialog.cpp" line="744"/>
         <source>Missing Comment</source>
         <translation>답글이 빠졌습니다</translation>
     </message>
     <message>
-        <location filename="../LinksDialog.cpp" line="758"/>
+        <location filename="../LinksDialog.cpp" line="759"/>
         <source>Link Title Not Changed</source>
         <translation>링크 제목이 바뀌지 않았습니다</translation>
     </message>
     <message>
-        <location filename="../LinksDialog.cpp" line="758"/>
+        <location filename="../LinksDialog.cpp" line="759"/>
         <source>Do you want to continue?</source>
         <translation>계속하시겠습니까?</translation>
     </message>
     <message>
-        <location filename="../LinksDialog.cpp" line="813"/>
+        <location filename="../LinksDialog.cpp" line="814"/>
         <source>Expand</source>
         <translation>확장</translation>
     </message>
     <message>
-        <location filename="../LinksDialog.cpp" line="820"/>
+        <location filename="../LinksDialog.cpp" line="821"/>
         <source>Hide</source>
         <translation>숨김</translation>
     </message>

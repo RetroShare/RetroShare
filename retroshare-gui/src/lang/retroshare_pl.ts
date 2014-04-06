@@ -1850,7 +1850,7 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Bold</source>
-        <translation type="unfinished"/>
+        <translation>Pogrubienie</translation>
     </message>
     <message>
         <source>Underline</source>
@@ -1930,7 +1930,7 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Load Picture File</source>
-        <translation type="unfinished"/>
+        <translation>Wczytaj obraz</translation>
     </message>
     <message>
         <source>Save as...</source>
@@ -2112,7 +2112,7 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Local Address</source>
-        <translation type="unfinished"/>
+        <translation>Adres Lokalny</translation>
     </message>
     <message>
         <source>External Address</source>
@@ -3263,7 +3263,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Please add a Name</source>
-        <translation type="unfinished"/>
+        <translation>Proszę, dodaj Nazwę</translation>
     </message>
     <message>
         <source>Load File</source>
@@ -3298,11 +3298,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Subject :</source>
-        <translation type="unfinished"/>
+        <translation>Temat:</translation>
     </message>
     <message>
         <source>Html Editor</source>
-        <translation type="unfinished"/>
+        <translation>Edytor html</translation>
     </message>
     <message>
         <source>toolBar</source>
@@ -3326,7 +3326,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Bold</source>
-        <translation type="unfinished"/>
+        <translation>Pogrubienie</translation>
     </message>
     <message>
         <source>Underline</source>
@@ -3338,7 +3338,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Publish</source>
-        <translation type="unfinished"/>
+        <translation>Publikuj</translation>
     </message>
     <message>
         <source>New</source>
@@ -3366,7 +3366,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Undo</source>
-        <translation type="unfinished"/>
+        <translation>Cofnij</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -3602,7 +3602,7 @@ Do you want to save your changes?</source>
     </message>
     <message>
         <source>Please add a Name</source>
-        <translation type="unfinished"/>
+        <translation>Proszę, dodaj Nazwę</translation>
     </message>
     <message>
         <source>Load channel logo</source>
@@ -3647,7 +3647,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Subject :</source>
-        <translation type="unfinished"/>
+        <translation>Temat:</translation>
     </message>
     <message>
         <source>Attachments</source>
@@ -3833,7 +3833,7 @@ p, li { white-space: pre-wrap; }
     <name>CreateForum</name>
     <message>
         <source>Create new Forum</source>
-        <translation type="unfinished"/>
+        <translation>Utwórz Nowe Forum</translation>
     </message>
     <message>
         <source>Name</source>
@@ -3901,7 +3901,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Please add a Name</source>
-        <translation type="unfinished"/>
+        <translation>Proszę, dodaj Nazwę</translation>
     </message>
 </context>
 <context>
@@ -3924,7 +3924,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Sign Message</source>
-        <translation type="unfinished"/>
+        <translation>Podpisz Wiadomość</translation>
     </message>
     <message>
         <source>Forum Post</source>
@@ -3964,14 +3964,14 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Load Picture File</source>
-        <translation type="unfinished"/>
+        <translation>Wczytaj obraz</translation>
     </message>
 </context>
 <context>
     <name>CreateGroup</name>
     <message>
         <source>Create a Group</source>
-        <translation type="unfinished"/>
+        <translation>Utwórz Grupę</translation>
     </message>
     <message>
         <source>Group Name</source>
@@ -3979,7 +3979,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Enter a name for your group</source>
-        <translation type="unfinished"/>
+        <translation>Wprowadź nazwę grupy</translation>
     </message>
     <message>
         <source>Friends</source>
@@ -4028,7 +4028,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Subject :</source>
-        <translation type="unfinished"/>
+        <translation>Temat:</translation>
     </message>
     <message>
         <source>Attachments</source>
@@ -4194,7 +4194,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Your nick name:</source>
-        <translation type="unfinished"/>
+        <translation>Twój pseudonim:</translation>
     </message>
     <message>
         <source>Security policy:</source>
@@ -4473,7 +4473,7 @@ p, li { white-space: pre-wrap; }
     <name>DetailsDialog</name>
     <message>
         <source>Details</source>
-        <translation type="unfinished"/>
+        <translation>Szczegóły</translation>
     </message>
     <message>
         <source>General</source>
@@ -4608,7 +4608,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Key</source>
-        <translation type="unfinished"/>
+        <translation>Klucz</translation>
     </message>
     <message>
         <source>Status Flags</source>
@@ -6073,7 +6073,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Bold</source>
-        <translation type="unfinished"/>
+        <translation>Pogrubienie</translation>
     </message>
     <message>
         <source>Underline</source>
@@ -6209,7 +6209,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Load Picture File</source>
-        <translation type="unfinished"/>
+        <translation>Wczytaj obraz</translation>
     </message>
     <message>
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Friends&lt;/h1&gt;                                       &lt;p&gt;The Friends tab shows...your friends: the list of persons you have accepted to connect to.                       &lt;/p&gt;                                                       &lt;p&gt;You can group friends together to allow a finer level of information access, for instance to only allow          some friends to see some files.&lt;/p&gt;     &lt;p&gt;On the right, you will find 3 useful tabs:                                                                       &lt;ul&gt;                                                                                                                &lt;li&gt;Broadcast sends messages to all connected friends at once&lt;/li&gt;                                   &lt;li&gt;Local Network shows the network around you, including friends of your friends&lt;/li&gt;                       &lt;li&gt;Keyring contains keys you collected, mostly forwarded to you by your friends&lt;/li&gt;                                  &lt;/ul&gt; &lt;/p&gt;                                                                                                        </source>
@@ -6247,7 +6247,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Title / Comment</source>
-        <translation type="unfinished"/>
+        <translation>Tytuł / Komentarz</translation>
     </message>
     <message>
         <source>Create New Game</source>
@@ -7304,7 +7304,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Score</source>
-        <translation type="unfinished"/>
+        <translation>Wynik</translation>
     </message>
     <message>
         <source>UpVotes</source>
@@ -8679,7 +8679,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Bold</source>
-        <translation type="unfinished"/>
+        <translation>Pogrubienie</translation>
     </message>
     <message>
         <source>Italic</source>
@@ -12629,7 +12629,7 @@ peers still need to trust each other to allow connection. </source>
     </message>
     <message>
         <source>Local Address</source>
-        <translation type="unfinished"/>
+        <translation>Adres Lokalny</translation>
     </message>
     <message>
         <source>External Address</source>

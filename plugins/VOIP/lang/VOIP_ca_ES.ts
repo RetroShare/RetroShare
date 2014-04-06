@@ -30,7 +30,7 @@
     <message>
         <location filename="../gui/AudioChatWidgetHolder.cpp" line="143"/>
         <source>VoIP Status</source>
-        <translation>Estat VoIP</translation>
+        <translation>Estat VeuIP</translation>
     </message>
     <message>
         <location filename="../gui/AudioChatWidgetHolder.cpp" line="143"/>
@@ -212,7 +212,7 @@
     <message>
         <location filename="../gui/AudioInputConfig.h" line="72"/>
         <source>VOIP</source>
-        <translation>VoIP</translation>
+        <translation>VeuIP</translation>
     </message>
 </context>
 <context>
@@ -577,7 +577,7 @@
     <message>
         <location filename="../VOIPPlugin.cpp" line="168"/>
         <source>VOIP</source>
-        <translation>VoIP</translation>
+        <translation>VeuIP</translation>
     </message>
 </context>
 <context>
@@ -585,7 +585,7 @@
     <message>
         <location filename="../gui/VoipStatistics.ui" line="14"/>
         <source>VoipTest Statistics</source>
-        <translation>Estadístiques VoIPTest</translation>
+        <translation>Estadístiques VeuIPTest</translation>
     </message>
 </context>
 </TS>

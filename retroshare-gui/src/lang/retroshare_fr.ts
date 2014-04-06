@@ -474,7 +474,7 @@ Mais rappelez-vous : Toutes les données *SERONT* perdus quand nous mettrons à 
     </message>
     <message>
         <source>Photos</source>
-        <translation type="unfinished"/>
+        <translation>Photos</translation>
     </message>
 </context>
 <context>
@@ -3866,7 +3866,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Remove </source>
-        <translation type="unfinished"/>
+        <translation>Supprimer</translation>
     </message>
     <message>
         <source>Search</source>
@@ -5375,19 +5375,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Patch</source>
-        <translation type="unfinished"/>
+        <translation>Patch</translation>
     </message>
     <message>
         <source>C++</source>
-        <translation type="unfinished"/>
+        <translation>C++</translation>
     </message>
     <message>
         <source>Header</source>
-        <translation type="unfinished"/>
+        <translation>En-tête</translation>
     </message>
     <message>
         <source>C </source>
-        <translation type="unfinished"/>
+        <translation>C </translation>
     </message>
 </context>
 <context>
@@ -11135,7 +11135,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>You are submitting a link. The key to a successful submission is interesting content and a descriptive title.</source>
-        <translation type="unfinished"/>
+        <translation>Vous présentez un lien. La clé pour une présentation réussie est un contenu intéressant avec un titre descriptif.</translation>
     </message>
     <message>
         <source>Submit</source>
@@ -11143,11 +11143,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Submit a new Post</source>
-        <translation type="unfinished"/>
+        <translation>Soumettre un nouveau sujet </translation>
     </message>
     <message>
         <source>Please add a Title</source>
-        <translation type="unfinished"/>
+        <translation>Ajouter un titre s&apos;il vous plaît</translation>
     </message>
 </context>
 <context>
@@ -11181,7 +11181,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Create Topic</source>
-        <translation type="unfinished"/>
+        <translation>Créer un sujet</translation>
     </message>
 </context>
 <context>
@@ -11212,11 +11212,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Vote up</source>
-        <translation type="unfinished"/>
+        <translation>Voter pour</translation>
     </message>
     <message>
         <source>Vote down</source>
-        <translation type="unfinished"/>
+        <translation>Voter contre</translation>
     </message>
     <message>
         <source>\/</source>
@@ -11224,7 +11224,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Submitted</source>
-        <translation type="unfinished"/>
+        <translation>Soumis</translation>
     </message>
 </context>
 <context>
@@ -11319,7 +11319,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Submit a new Post</source>
-        <translation type="unfinished"/>
+        <translation>Soumettre un nouveau poste</translation>
     </message>
     <message>
         <source>Todo</source>
@@ -12794,19 +12794,19 @@ Réduire l&apos;image par %1x%2 pixels ?</translation>
     </message>
     <message>
         <source>Certificate has wrong signature!! This peer is not who he claims to be.</source>
-        <translation type="unfinished"/>
+        <translation>Ce certificat a une signature erronée! Cette personne n&apos;est pas celle qu&apos;elle prétend être.</translation>
     </message>
     <message>
         <source>Missing/Damaged SSL certificate for key </source>
-        <translation type="unfinished"/>
+        <translation>Ce certificat SSL est Manquant/endommagé pour la clé</translation>
     </message>
     <message>
         <source>Missing/Damaged certificate. Not a real Retroshare user.</source>
-        <translation type="unfinished"/>
+        <translation>Ce certificat est Manquant/endommagé. Ce n&apos;est pas un réel Utilisateur de Retroshare</translation>
     </message>
     <message>
         <source>Certificate caused an internal error.</source>
-        <translation type="unfinished"/>
+        <translation>Ce certificat a provoqué une erreur interne.</translation>
     </message>
 </context>
 <context>

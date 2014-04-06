@@ -120,7 +120,7 @@
     </message>
     <message>
         <source>Category:</source>
-        <translation type="unfinished"/>
+        <translation>Категория:</translation>
     </message>
     <message>
         <source>Animals</source>
@@ -160,11 +160,11 @@
     </message>
     <message>
         <source>Work</source>
-        <translation type="unfinished"/>
+        <translation>Работа</translation>
     </message>
     <message>
         <source>Random</source>
-        <translation type="unfinished"/>
+        <translation>Случайно</translation>
     </message>
     <message>
         <source>Caption:</source>
@@ -208,7 +208,7 @@
     </message>
     <message>
         <source>Restricted</source>
-        <translation type="unfinished"/>
+        <translation>Ограничено</translation>
     </message>
     <message>
         <source>Resize Images (&lt; 1Mb)</source>
@@ -228,11 +228,11 @@
     </message>
     <message>
         <source>Authenticated Comments</source>
-        <translation type="unfinished"/>
+        <translation>Авторизованные комментарии</translation>
     </message>
     <message>
         <source>Any Comments Allowed</source>
-        <translation type="unfinished"/>
+        <translation>Любые комментарии разрешены</translation>
     </message>
     <message>
         <source>Publish with Identity</source>
@@ -299,7 +299,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Category:</source>
-        <translation type="unfinished"/>
+        <translation>Категория:</translation>
     </message>
     <message>
         <source>Caption</source>
@@ -429,7 +429,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Identities</source>
-        <translation type="unfinished"/>
+        <translation>Личности</translation>
     </message>
     <message>
         <source>Circles</source>
@@ -437,11 +437,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Posted Links</source>
-        <translation type="unfinished"/>
+        <translation>Опубликованные ссылки</translation>
     </message>
     <message>
         <source>Wiki Pages</source>
-        <translation type="unfinished"/>
+        <translation>Wiki страницы</translation>
     </message>
     <message>
         <source>GxsForums</source>
@@ -634,15 +634,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Unknown Blog</source>
-        <translation type="unfinished"/>
+        <translation>Неизвестный блог</translation>
     </message>
     <message>
         <source>New Blog</source>
-        <translation type="unfinished"/>
+        <translation>Новый блог</translation>
     </message>
     <message>
         <source>Updated Blog</source>
-        <translation type="unfinished"/>
+        <translation>Обновлённый блог</translation>
     </message>
     <message>
         <source>Hide</source>
@@ -837,11 +837,11 @@ p, li { white-space: pre-wrap; }
     <name>BwCtrlWindow</name>
     <message>
         <source>Bandwidth Control Window</source>
-        <translation type="unfinished"/>
+        <translation>Подробности трафика</translation>
     </message>
     <message>
         <source>Bandwidth Measurements</source>
-        <translation type="unfinished"/>
+        <translation>Измерения трафика</translation>
     </message>
     <message>
         <source>Name</source>
@@ -853,15 +853,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>In (KB/s)</source>
-        <translation type="unfinished"/>
+        <translation>Вх. (KB/s)</translation>
     </message>
     <message>
         <source>InMax (KB/s)</source>
-        <translation type="unfinished"/>
+        <translation>Вх. макс. (KB/s)</translation>
     </message>
     <message>
         <source>InQueue</source>
-        <translation type="unfinished"/>
+        <translation>Вх. очередь</translation>
     </message>
     <message>
         <source>InAllocated (KB/s)</source>
@@ -873,15 +873,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Out (KB/s)</source>
-        <translation type="unfinished"/>
+        <translation>Исх. (KB/s)</translation>
     </message>
     <message>
         <source>OutMax (KB/s)</source>
-        <translation type="unfinished"/>
+        <translation>Исх. макс. (KB/s)</translation>
     </message>
     <message>
         <source>OutQueue</source>
-        <translation type="unfinished"/>
+        <translation>Исх. очередь</translation>
     </message>
     <message>
         <source>OutAllowed (KB/s)</source>
@@ -987,7 +987,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Set as read and remove item</source>
-        <translation type="unfinished"/>
+        <translation>Установить как чтение и удаление элемента</translation>
     </message>
     <message>
         <source>Remove Item</source>
@@ -1015,7 +1015,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Open File</source>
-        <translation type="unfinished"/>
+        <translation>Открыть файл</translation>
     </message>
     <message>
         <source>Play Media</source>
@@ -1101,7 +1101,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Destination directory</source>
-        <translation type="unfinished"/>
+        <translation>Папка загрузки</translation>
     </message>
 </context>
 <context>
@@ -1139,7 +1139,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>My Channels</source>
-        <translation type="unfinished"/>
+        <translation>Мои каналы</translation>
     </message>
     <message>
         <source>Subscribed Channels</source>
@@ -1183,11 +1183,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Set destination directory</source>
-        <translation type="unfinished"/>
+        <translation>Папка загрузки</translation>
     </message>
     <message>
         <source>Other...</source>
-        <translation type="unfinished"/>
+        <translation>Другая...</translation>
     </message>
     <message>
         <source>[Default]</source>
@@ -1199,7 +1199,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Select channel destination directory</source>
-        <translation type="unfinished"/>
+        <translation>Выбрать папку загрузки</translation>
     </message>
     <message>
         <source>Publish rights restored.</source>
@@ -1235,7 +1235,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Subscribed</source>
-        <translation type="unfinished"/>
+        <translation>Подписка</translation>
     </message>
 </context>
 <context>
@@ -1262,7 +1262,7 @@ Please choose one of it to chat with.</source>
     <name>ChatLobbyDialog</name>
     <message>
         <source>Participants</source>
-        <translation type="unfinished"/>
+        <translation>Участники</translation>
     </message>
     <message>
         <source>Change nick name</source>
@@ -1278,7 +1278,7 @@ Please choose one of it to chat with.</source>
     </message>
     <message>
         <source>Leave this lobby (Unsubscribe)</source>
-        <translation type="unfinished"/>
+        <translation>Выйти из этой комнаты (Отписаться)</translation>
     </message>
     <message>
         <source>Invite friends</source>
@@ -1302,7 +1302,7 @@ Please choose one of it to chat with.</source>
     </message>
     <message>
         <source>Lobby chat</source>
-        <translation type="unfinished"/>
+        <translation>Чат</translation>
     </message>
     <message>
         <source>Lobby management</source>
@@ -1338,11 +1338,14 @@ Please choose one of it to chat with.</source>
     </message>
     <message>
         <source>Right click to mute/unmute participants&lt;br/&gt;Double click to address this person&lt;br/&gt;</source>
-        <translation type="unfinished"/>
+        <translation>ПКМ - игнорировать участника.
+&lt;br/&gt;
+&lt;br/&gt;
+Двойной клик - обратиться: вставить ник в чат</translation>
     </message>
     <message>
         <source>This participant is not active since:</source>
-        <translation type="unfinished"/>
+        <translation>Этот участник неактивен с: </translation>
     </message>
     <message>
         <source> seconds</source>
@@ -1376,11 +1379,11 @@ Please choose one of it to chat with.</source>
     </message>
     <message>
         <source>Private Lobbies</source>
-        <translation>Приватные Комнаты</translation>
+        <translation>Приватные комнаты</translation>
     </message>
     <message>
         <source>Public Lobbies</source>
-        <translation>Публичные Комнаты</translation>
+        <translation>Публичные комнаты</translation>
     </message>
     <message>
         <source>Create chat lobby</source>
@@ -1412,7 +1415,7 @@ Please choose one of it to chat with.</source>
     </message>
     <message>
         <source>You&apos;re not subscribed to this lobby; Double click-it to enter and chat.</source>
-        <translation type="unfinished"/>
+        <translation>Вы не подписаны на эту комнату. Используйте двойной щелчок для входа</translation>
     </message>
     <message>
         <source>Invitation to chat lobby</source>
@@ -1424,7 +1427,7 @@ Please choose one of it to chat with.</source>
     </message>
     <message>
         <source>Add Auto Subscribe</source>
-        <translation type="unfinished"/>
+        <translation>Автоподписка</translation>
     </message>
     <message>
         <source>%1 invites you to chat lobby named %2</source>
@@ -1432,7 +1435,7 @@ Please choose one of it to chat with.</source>
     </message>
     <message>
         <source>Search Chat lobbies</source>
-        <translation>Поиск лобби чатов</translation>
+        <translation>Искать комнаты в чате</translation>
     </message>
     <message>
         <source>Search Name</source>
@@ -1440,11 +1443,11 @@ Please choose one of it to chat with.</source>
     </message>
     <message>
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Chat Lobbies&lt;/h1&gt;                              		  &lt;p&gt;Chat lobbies are distributed chat rooms, and work pretty much like IRC.                                      		  They allow you to talk anonymously with tons of people without the need to make friends.&lt;/p&gt;                    		  &lt;p&gt;A chat lobby can be public (your friends see it) or private (your friends can&apos;t see it, unless you           		  invite them with &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). Once you have been invited to a private lobby, you will be able to see it when your friends   		  are using it.&lt;/p&gt;                                                                                               		  &lt;p&gt;The list at left shows                                                                                     		  chat lobbies your friends are participating in. You can either                                 		  &lt;ul&gt;                                                                                                            			  &lt;li&gt;Right click to create a new chat lobby&lt;/li&gt;                                                              		     &lt;li&gt;Double click a chat lobby to enter, chat, and show it to your friends&lt;/li&gt;                      		  &lt;/ul&gt; 		  Note: For the chat lobbies to work properly, your computer needs be on time.  So check your system clock!		  &lt;/p&gt;                                      		</source>
-        <translation type="unfinished"/>
+        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Чаты&lt;/h1&gt; ⇥⇥ &lt;p&gt;Чаты RetroShare – это одноранговая платформа для общения пользователей, аналогичная IRC ⇥⇥ Чаты позволяют анонимно общаться с огромным количеством людей независимо от того, является ли пользователь другом или нет.&lt;/p&gt; ⇥⇥ &lt;p&gt;Комната чата может быть публичной (ваши друзья видят её) или приватной (ваши друзья не видят её, ⇥⇥ пока вы не пришлёте им приглашение  &lt;img src=&quot;:/images/add_24x24.png&quot; width=12/&gt;). Как только вы получили приглашение в приватную комнату, вы начинаете видеть, как ваши друзья ⇥⇥ пользуются ей.&lt;/p&gt; ⇥⇥ &lt;p&gt;Список слева показывает ⇥⇥ те комнаты чата, в которых находятся ваши друзья. Вы можете ⇥⇥ &lt;ul&gt; ⇥⇥⇥ &lt;li&gt;создать новую комнату чата, щёлкнув правой кнопкой мыши; &lt;/li&gt; ⇥⇥ &lt;li&gt;двойным щелчком мыши войти в неё, общаться и показать её своим друзьям&lt;/li&gt; ⇥⇥ &lt;/ul&gt; ⇥⇥ Замечание: для надлежащей работы комнат чата необходимо, чтобы ваше системное время было точным! ⇥⇥ &lt;/p&gt; ⇥⇥</translation>
     </message>
     <message>
         <source>Subscribed</source>
-        <translation type="unfinished"/>
+        <translation>Подписка</translation>
     </message>
     <message>
         <source>Show </source>
@@ -1468,7 +1471,7 @@ Please choose one of it to chat with.</source>
     </message>
     <message>
         <source>Lobby Name:</source>
-        <translation type="unfinished"/>
+        <translation>Название комнаты:</translation>
     </message>
     <message>
         <source>Lobby Id:</source>
@@ -1476,7 +1479,7 @@ Please choose one of it to chat with.</source>
     </message>
     <message>
         <source>Topic:</source>
-        <translation type="unfinished"/>
+        <translation>Тема:</translation>
     </message>
     <message>
         <source>Type:</source>
@@ -1484,7 +1487,7 @@ Please choose one of it to chat with.</source>
     </message>
     <message>
         <source>Peers:</source>
-        <translation type="unfinished"/>
+        <translation>Участников:</translation>
     </message>
     <message>
         <source>TextLabel</source>
@@ -1494,15 +1497,17 @@ Please choose one of it to chat with.</source>
         <source>No lobby selected. 
 Select lobbies at left to show details.
 Double click lobbies to enter and chat.</source>
-        <translation type="unfinished"/>
+        <translation>Нет выделенных комнат.
+Выделите комнаты слева, чтобы посмотреть подробности.
+Двойной щелчок мыши для входа в комнату и общения.</translation>
     </message>
     <message>
         <source>Private Subscribed Lobbies</source>
-        <translation type="unfinished"/>
+        <translation>Подписанные приватные комнаты</translation>
     </message>
     <message>
         <source>Public Subscribed Lobbies</source>
-        <translation type="unfinished"/>
+        <translation>Подписанные публичные комнаты</translation>
     </message>
 </context>
 <context>
@@ -1560,19 +1565,19 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Enable custom fonts</source>
-        <translation type="unfinished"/>
+        <translation>разрешить нестандартный шрифт</translation>
     </message>
     <message>
         <source>Enable custom font size</source>
-        <translation type="unfinished"/>
+        <translation>разрешить нестандартный размер шрифта</translation>
     </message>
     <message>
         <source>Enable bold</source>
-        <translation type="unfinished"/>
+        <translation>Разрешить жирный шрифт</translation>
     </message>
     <message>
         <source>Enable italics</source>
-        <translation type="unfinished"/>
+        <translation>разрешить курсив</translation>
     </message>
     <message>
         <source>Minimum text contrast</source>
@@ -1588,11 +1593,11 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Blink tab icon</source>
-        <translation type="unfinished"/>
+        <translation>Мерцание иконки вкладки</translation>
     </message>
     <message>
         <source>Default nickname for chat lobbies:</source>
-        <translation>Никнейм по умолчанию для Комнат чата:</translation>
+        <translation>Имя по умолчанию для комнат чата</translation>
     </message>
     <message>
         <source>Private Chat</source>
@@ -1612,7 +1617,7 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Blink window/tab icon</source>
-        <translation type="unfinished"/>
+        <translation>Мерцание иконки окна/вкладки</translation>
     </message>
     <message>
         <source>Chat Font</source>
@@ -1748,11 +1753,11 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;In this tab you can setup how many chat messages Retroshare will keep saved on the disc and how much of the previous conversation it will display, for the different chat systems. The max storage period allows to discard old messages and prevents the chat history from filling up with volatile chat (e.g. chat lobbies and distant chat).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;В этой вкладке вы можете задать количество сообщений чата RetroShare будет хранить на диске, а также объём отображения состоявшихся бесед для различных систем чатов. Максимальный период хранения позволяет очищать историю чатов и предотвращает её заполнение временными чатами (например, в форме комнат чатов или удалённых чатов).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Chatlobbies</source>
-        <translation type="unfinished"/>
+        <translation>Комнаты чата</translation>
     </message>
     <message>
         <source>Enabled:</source>
@@ -1896,7 +1901,7 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Deletes all stored and displayed chat history</source>
-        <translation>Удалить всю сохраненную и показываемую историю чата</translation>
+        <translation>Удалить всю сохранённую и отображаемую историю чата</translation>
     </message>
     <message>
         <source>Choose font</source>
@@ -1936,7 +1941,7 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Messages you send will be delivered after Friend is again Online</source>
-        <translation>Сообщения которые вы отправите другу будут доставлены когда он появится онлайн</translation>
+        <translation>Отправляемое сообщение будет доставлено другу, когда он подключится к сети</translation>
     </message>
     <message>
         <source>is Idle and may not reply</source>
@@ -1995,7 +2000,7 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Friends of Friends</source>
-        <translation type="unfinished"/>
+        <translation>Друзья друзей</translation>
     </message>
     <message>
         <source>Others</source>
@@ -2011,7 +2016,7 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Discovery</source>
-        <translation type="unfinished"/>
+        <translation>Обнаружение</translation>
     </message>
     <message>
         <source>Share Category</source>
@@ -2031,11 +2036,11 @@ Double click lobbies to enter and chat.</source>
     </message>
     <message>
         <source>Todo</source>
-        <translation type="unfinished"/>
+        <translation>На выполнение</translation>
     </message>
     <message>
         <source>Friends Of Friends</source>
-        <translation type="unfinished"/>
+        <translation>Друзья друзей</translation>
     </message>
     <message>
         <source>External Circles (Admin)</source>
@@ -2058,7 +2063,7 @@ Double click lobbies to enter and chat.</source>
     <name>ConfCertDialog</name>
     <message>
         <source>Friend Details</source>
-        <translation>Детали о друге</translation>
+        <translation>Подробности о друге</translation>
     </message>
     <message>
         <source>Details</source>
@@ -2198,7 +2203,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Services</source>
-        <translation type="unfinished"/>
+        <translation>Сервисы</translation>
     </message>
     <message>
         <source>User service permissions</source>
@@ -2208,19 +2213,21 @@ p, li { white-space: pre-wrap; }
         <source>This tab allows you to finely tune which services each of your contacts is allowed to use with you.
 
 Some services (Discovery, anonymous routing) can be switched off globally, which always overrides the settings per-user.</source>
-        <translation type="unfinished"/>
+        <translation>Здесь вы можете настроить какие сервисы контакт может использовать с вами.
+
+Некоторые сервисы (обнаружение, тунели) могут быть отключены глобально для всех на вкладке Сервер, и настройки для отдельных пользователей не будут иметь эффекта.</translation>
     </message>
     <message>
         <source>Anonymous routing</source>
-        <translation type="unfinished"/>
+        <translation>Анонимные туннели</translation>
     </message>
     <message>
         <source>Discovery</source>
-        <translation type="unfinished"/>
+        <translation>Обнаружение</translation>
     </message>
     <message>
         <source>Forums/Channels</source>
-        <translation type="unfinished"/>
+        <translation>Форумы и каналы</translation>
     </message>
     <message>
         <source>Chat</source>
@@ -2237,7 +2244,8 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     <message>
         <source>The supplied key algorithm is not supported by RetroShare
 (Only RSA keys are supported at the moment)</source>
-        <translation type="unfinished"/>
+        <translation>Предоставленный алгоритм ключа не поддерживается RetroShare 
+(на данный момент поддерживаются только RSA ключей)</translation>
     </message>
     <message>
         <source>My key is signed by : </source>
@@ -2285,11 +2293,12 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling anonymous routing will suppress all sending/retrieval of tunnel and anonymous search requests from/to this user. This user will not be able to transfer anonymously through you.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>Отключает прием и создание анонимных туннелей для этого контакта, а так же передачу/обработку поисковых запросов.
+Этот клиент не сможет анонимно передавать через вас.</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling discovery removes the sending of public keys of your own friends to this user. Discovery information from this friend will be dropped as well.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;For a global switch, go to the server configuration panel.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>Отключает отправку публичных ключей ваших друзей этому контакту. Так же выключает получение этих данных с контакта</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Disabling this means that forums and channels posts will not be passed from you to this friend, and items coming from this friend will be dropped.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
@@ -2297,11 +2306,13 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Use as direct source, when available</source>
-        <translation type="unfinished"/>
+        <translation>Прямой источник</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Retroshare periodically checks your friend lists for browsable files matching your transfers, to establish a direct transfer. In this case, your friend knows you&apos;re downloading the file.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;To prevent this behavior for this friend only, uncheck this box. You can still perform a direct transfer if you explicitly ask for it, by e.g. downloading from your friend&apos;s file list. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>Retroshare периодически проверяет списки файлов ваших друзей на наличие файлов которые вы загружаете, чтобы установить прямое соединение для передачи. В этом случае ваши друзья знают что вы качаете этот файл.
+Чтобы отключить такое поведение для этого контакта, снимите галку.
+Несмотря на это, вы сможете скачать файл напрямую, если укажете это явно, загружая его непостредственно из списка файлов друга.</translation>
     </message>
     <message>
         <source>Encryption</source>
@@ -2332,19 +2343,19 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Add a new Friend</source>
-        <translation type="unfinished"/>
+        <translation>Добавить нового друга</translation>
     </message>
     <message>
         <source>This wizard will help you to connect to your friend(s) to RetroShare network.&lt;br&gt;These ways are possible to do this:</source>
-        <translation type="unfinished"/>
+        <translation>Этот мастер поможет вам соединиться с друзьями в сети (RetroShare).&lt;br&gt;Для этого доступны следующие способы:</translation>
     </message>
     <message>
         <source>&amp;Enter the certificate manually</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Ввести сертификат вручную</translation>
     </message>
     <message>
         <source>&amp;You get a certificate file from your friend</source>
-        <translation type="unfinished"/>
+        <translation>У вас есть файл сертификата друга</translation>
     </message>
     <message>
         <source>&amp;Make friend with selected friends of my friends</source>
@@ -2352,7 +2363,7 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>&amp;Enter RetroShare ID manually</source>
-        <translation type="unfinished"/>
+        <translation>&amp;Ввести RetroShare ID вручную</translation>
     </message>
     <message>
         <source>&amp;Send an Invitation by Email 
@@ -2361,15 +2372,15 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Text certificate</source>
-        <translation type="unfinished"/>
+        <translation>Текст сертификата</translation>
     </message>
     <message>
         <source>Use text representation of the PGP certificates.</source>
-        <translation type="unfinished"/>
+        <translation>Использовать текстовое представление PGP сертификатов.</translation>
     </message>
     <message>
         <source>The text below is your PGP certificate. You have to provide it to your friend</source>
-        <translation type="unfinished"/>
+        <translation>Текст ниже - ваш PGP сертификат. Его вы должны предоставить вашему другу</translation>
     </message>
     <message>
         <source>Include signatures</source>
@@ -2377,23 +2388,23 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Copy your Cert to Clipboard</source>
-        <translation type="unfinished"/>
+        <translation>Скопировать ваш сертификат в буфер обмена</translation>
     </message>
     <message>
         <source>Save your Cert into a File</source>
-        <translation type="unfinished"/>
+        <translation>Сохранить ваш сертификат в файл</translation>
     </message>
     <message>
         <source>Run Email program</source>
-        <translation type="unfinished"/>
+        <translation>Запустить почтовый клиент</translation>
     </message>
     <message>
         <source>Please, paste your friends PGP certificate into the box below</source>
-        <translation type="unfinished"/>
+        <translation>Введите сертификат друга в окне ниже</translation>
     </message>
     <message>
         <source>Certificate files</source>
-        <translation type="unfinished"/>
+        <translation>Файлы сертификатов</translation>
     </message>
     <message>
         <source>Use PGP certificates saved in files.</source>
@@ -2401,19 +2412,19 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Import friend&apos;s certificate...</source>
-        <translation type="unfinished"/>
+        <translation>Импортировать сертификат друга</translation>
     </message>
     <message>
         <source>You have to generate a file with your certificate and give it to your friend. Also, you can use a file generated before.</source>
-        <translation type="unfinished"/>
+        <translation>Вы можете создать файл с вашим сертификатом и дать его другу. Также вы можете использовать файл созданный заранее</translation>
     </message>
     <message>
         <source>Export my certificate...</source>
-        <translation type="unfinished"/>
+        <translation>Экспортировать мой сертификат</translation>
     </message>
     <message>
         <source>Drag and Drop your friends&apos;s certificate in this Window or specify path in the box below</source>
-        <translation type="unfinished"/>
+        <translation>Перетащите файл сертификата друга в это окно или укажите путь в поле ниже</translation>
     </message>
     <message>
         <source>Browse</source>
@@ -2421,15 +2432,15 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Friends of friends</source>
-        <translation type="unfinished"/>
+        <translation>Друзья друзей</translation>
     </message>
     <message>
         <source>Select now who you want to make friends with.</source>
-        <translation type="unfinished"/>
+        <translation>Выберите с кем вы хотите стать друзьями</translation>
     </message>
     <message>
         <source>Show me:</source>
-        <translation type="unfinished"/>
+        <translation>Показать мне:</translation>
     </message>
     <message>
         <source>Make friend with these peers</source>
@@ -2441,11 +2452,11 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Use RetroShare ID for adding a Friend which is available in your network.</source>
-        <translation type="unfinished"/>
+        <translation>Использовать RetroShare ID для добавления друга, который доступен в сети.</translation>
     </message>
     <message>
         <source>Add Friends RetroShare ID...</source>
-        <translation type="unfinished"/>
+        <translation>Добавить RetroShare ID друзей...</translation>
     </message>
     <message>
         <source>Paste Friends RetroShare ID in the box below</source>
@@ -2453,11 +2464,11 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Enter the RetroShare ID of your Friend, e.g. Peer@BDE8D16A46D938CF</source>
-        <translation type="unfinished"/>
+        <translation>Введите RetroShare ID вашего друга, например Peer@BDE8D16A46D938CF</translation>
     </message>
     <message>
         <source>Invite Friends by Email</source>
-        <translation type="unfinished"/>
+        <translation>Пригласить друзей по эл. почте</translation>
     </message>
     <message>
         <source>Enter your friends&apos; email addresses (separate each one with a semicolon)</source>
@@ -2465,11 +2476,11 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Your friends&apos; email addresses:</source>
-        <translation type="unfinished"/>
+        <translation>Адреса эл. почты ваших друзей:</translation>
     </message>
     <message>
         <source>Enter Friends Email addresses</source>
-        <translation type="unfinished"/>
+        <translation>Введите адреса эл. почты друзей</translation>
     </message>
     <message>
         <source>Subject:</source>
@@ -2485,7 +2496,7 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Peer details</source>
-        <translation type="unfinished"/>
+        <translation>Сведения об участнике</translation>
     </message>
     <message>
         <source>Name:</source>
@@ -2493,7 +2504,7 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Email:</source>
-        <translation type="unfinished"/>
+        <translation>Эл. почта</translation>
     </message>
     <message>
         <source>Location:</source>
@@ -2505,7 +2516,7 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Add friend to group:</source>
-        <translation type="unfinished"/>
+        <translation>Добавить друга в группу:</translation>
     </message>
     <message>
         <source>Authenticate friend (Sign PGP Key)</source>
@@ -2513,23 +2524,23 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Add as friend to connect with</source>
-        <translation type="unfinished"/>
+        <translation>Добавить как друга, для соединения с</translation>
     </message>
     <message>
         <source>Service permissions</source>
-        <translation type="unfinished"/>
+        <translation>Разрешения</translation>
     </message>
     <message>
         <source>Anonymous routing</source>
-        <translation type="unfinished"/>
+        <translation>Анонимные туннели</translation>
     </message>
     <message>
         <source>Discovery</source>
-        <translation type="unfinished"/>
+        <translation>Обнаружение</translation>
     </message>
     <message>
         <source>Forums/channels</source>
-        <translation type="unfinished"/>
+        <translation>Форумы и каналы</translation>
     </message>
     <message>
         <source>To accept the Friend Request, click the Finish button.</source>
@@ -2537,11 +2548,11 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Sorry, some error appeared</source>
-        <translation type="unfinished"/>
+        <translation>К сожалению, появились некоторые ошибки</translation>
     </message>
     <message>
         <source>Here is the error message:</source>
-        <translation type="unfinished"/>
+        <translation>Сообщение об ошибке:</translation>
     </message>
     <message>
         <source>Make Friend</source>
@@ -2549,7 +2560,7 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Details about your friend:</source>
-        <translation type="unfinished"/>
+        <translation>Подробная информация о вашем друге:</translation>
     </message>
     <message>
         <source>Key validity:</source>
@@ -2613,11 +2624,11 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Friends of my friends who already trust me</source>
-        <translation type="unfinished"/>
+        <translation>Друзей моих друзей, которые уже доверяют мне</translation>
     </message>
     <message>
         <source>Signed peers showing as denied</source>
-        <translation type="unfinished"/>
+        <translation>Подписанные пиры показывать как отказано</translation>
     </message>
     <message>
         <source>Peer name</source>
@@ -2641,7 +2652,7 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Full</source>
-        <translation type="unfinished"/>
+        <translation>Полностью</translation>
     </message>
     <message>
         <source>Marginal</source>
@@ -2661,35 +2672,35 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Certificate Load Failed:can&apos;t read from file %1 </source>
-        <translation type="unfinished"/>
+        <translation>Ошибка загрузки сертификата: не удается прочитать файл %1 </translation>
     </message>
     <message>
         <source>Certificate Load Failed:something is wrong with %1 </source>
-        <translation type="unfinished"/>
+        <translation>Ошибка загрузки сертификата: что-то не так с %1 </translation>
     </message>
     <message>
         <source>Certificate Load Failed:file %1 not found</source>
-        <translation type="unfinished"/>
+        <translation>Ошибка загрузки сертификата: %1 не найден</translation>
     </message>
     <message>
         <source>This Peer %1 is not available in your Network</source>
-        <translation type="unfinished"/>
+        <translation>Этот peer %1 не доступен в вашей сети</translation>
     </message>
     <message>
         <source>Use new certificate format (safer, more robust)</source>
-        <translation type="unfinished"/>
+        <translation>Использовать новый формат сертификата (безопаснее)</translation>
     </message>
     <message>
         <source>Use old (backward compatible) certificate format</source>
-        <translation type="unfinished"/>
+        <translation>Использовать старый формат сертификата (совместим со старыми версиями)</translation>
     </message>
     <message>
         <source>Remove signatures</source>
-        <translation type="unfinished"/>
+        <translation>Удаление подписи</translation>
     </message>
     <message>
         <source>RetroShare Invite</source>
-        <translation type="unfinished"/>
+        <translation>RetroShare приглашение</translation>
     </message>
     <message>
         <source>No or misspelled BEGIN tag found</source>
@@ -2701,11 +2712,11 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>No checksum found (the last 5 chars should be separated by a &apos;=&apos; char), or no newline after tag line (e.g. line beginning with Version:)</source>
-        <translation type="unfinished"/>
+        <translation>Контрольная сумма отсутствует (последние 5 символов должны быть разделены символом «=»), или нет новой строки после линии тегов (например линии начиная с Version:)</translation>
     </message>
     <message>
         <source>Unknown error. Your cert is probably not even a certificate.</source>
-        <translation type="unfinished"/>
+        <translation>Неизвестная ошибка. Ваш сертификат, возможно, даже не сертификат.</translation>
     </message>
     <message>
         <source>Connect Friend Help</source>
@@ -2713,11 +2724,11 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>You can copy this text and send it to your friend via email or some other way</source>
-        <translation type="unfinished"/>
+        <translation>Вы можете скопировать этот текст и отправить вашему другу по почте, или любым другим способом</translation>
     </message>
     <message>
         <source>Your Cert is copied to Clipboard, paste and send it to your friend via email or some other way</source>
-        <translation type="unfinished"/>
+        <translation>Ваш сертификат скопирован в буфер обмена. Вставьте его в письмо и отправьте Вашему другу по электронной почте или воспользуйтесь иным способом.</translation>
     </message>
     <message>
         <source>Save as...</source>
@@ -2729,23 +2740,23 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Select Certificate</source>
-        <translation type="unfinished"/>
+        <translation>Выбрать сертификат</translation>
     </message>
     <message>
         <source>Sorry, create certificate failed</source>
-        <translation type="unfinished"/>
+        <translation>Извините, попытка создания сертификата не удалась</translation>
     </message>
     <message>
         <source>Please choose a filename</source>
-        <translation type="unfinished"/>
+        <translation>Пожалуйста, укажите имя файла</translation>
     </message>
     <message>
         <source>Certificate file successfully created</source>
-        <translation type="unfinished"/>
+        <translation>Успешно создан файл сертификата</translation>
     </message>
     <message>
         <source>Sorry, certificate file creation failed</source>
-        <translation type="unfinished"/>
+        <translation>К сожалению, не удалось создать файл сертификата</translation>
     </message>
     <message>
         <source>*** None ***</source>
@@ -2753,7 +2764,7 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Use as direct source, when available</source>
-        <translation type="unfinished"/>
+        <translation>Прямой источник</translation>
     </message>
     <message>
         <source>Direct source</source>
@@ -2769,7 +2780,7 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Message:</source>
-        <translation type="unfinished"/>
+        <translation>Сообщение:</translation>
     </message>
     <message>
         <source>Recommend friends</source>
@@ -2789,7 +2800,7 @@ Some services (Discovery, anonymous routing) can be switched off globally, which
     </message>
     <message>
         <source>Please note that RetroShare will require excessive amounts of bandwidth, memory and CPU if you add to many friends. You can add as many friends as you like, but more than 40 will probably require too much resources.</source>
-        <translation type="unfinished"/>
+        <translation>Вы можете добавлять так много друзей как хотите, но для числа более 40 вероятно потребуется много ресурсов CPU, памяти и пропускной способности сети.</translation>
     </message>
     <message>
         <source>Add key to keyring</source>
@@ -2875,7 +2886,7 @@ even if you don&apos;t make friends.</source>
     </message>
     <message>
         <source>Offline</source>
-        <translation type="unfinished"/>
+        <translation>Нет сети</translation>
     </message>
     <message>
         <source>Behind Symmetric NAT</source>
@@ -3023,7 +3034,7 @@ even if you don&apos;t make friends.</source>
     </message>
     <message>
         <source>Connected</source>
-        <translation type="unfinished"/>
+        <translation>Соединён</translation>
     </message>
     <message>
         <source>Congratulations, you are connected</source>
@@ -3234,7 +3245,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Authenticated Messages</source>
-        <translation>Сообщения прошедшие проверку</translation>
+        <translation>Сообщения, прошедшие проверку</translation>
     </message>
     <message>
         <source>Anonymous Messages</source>
@@ -3562,7 +3573,7 @@ Do you want to save your changes?</source>
     </message>
     <message>
         <source>Allowed Messages</source>
-        <translation>Разрешенные сообщения</translation>
+        <translation>Разрешённые сообщения</translation>
     </message>
     <message>
         <source>Anonymous Messages</source>
@@ -4320,11 +4331,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Profile Manager</source>
-        <translation type="unfinished"/>
+        <translation>Управление профилями</translation>
     </message>
     <message>
         <source>Public Information</source>
-        <translation type="unfinished"/>
+        <translation>Публичная информация</translation>
     </message>
     <message>
         <source>Name:</source>
@@ -4340,19 +4351,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Number of Friends:</source>
-        <translation type="unfinished"/>
+        <translation>Число друзей</translation>
     </message>
     <message>
         <source>Software Version:</source>
-        <translation type="unfinished"/>
+        <translation>Версия программы</translation>
     </message>
     <message>
         <source>Online since:</source>
-        <translation type="unfinished"/>
+        <translation>Подключен с:</translation>
     </message>
     <message>
         <source>Other Information</source>
-        <translation type="unfinished"/>
+        <translation>Прочее</translation>
     </message>
     <message>
         <source>Certificate</source>
@@ -4485,15 +4496,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Active</source>
-        <translation type="unfinished"/>
+        <translation>Загрузка</translation>
     </message>
     <message>
         <source>Outstanding</source>
-        <translation type="unfinished"/>
+        <translation>В очереди</translation>
     </message>
     <message>
         <source>Needs checking</source>
-        <translation type="unfinished"/>
+        <translation>Ожидает проверки</translation>
     </message>
     <message>
         <source>retroshare link(s)</source>
@@ -4660,7 +4671,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Offline</source>
-        <translation type="unfinished"/>
+        <translation>Нет сети</translation>
     </message>
     <message>
         <source>Local Net</source>
@@ -4772,7 +4783,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Failed</source>
-        <translation type="unfinished"/>
+        <translation>Ошибка</translation>
     </message>
     <message>
         <source>offline</source>
@@ -4780,7 +4791,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Unreachable</source>
-        <translation type="unfinished"/>
+        <translation>Недоступен</translation>
     </message>
     <message>
         <source>ONLINE</source>
@@ -4812,7 +4823,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Connected</source>
-        <translation type="unfinished"/>
+        <translation>Соединён</translation>
     </message>
     <message>
         <source>Request Active</source>
@@ -4923,7 +4934,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Edit Share</source>
-        <translation>Правка общих папок</translation>
+        <translation>Управление папками</translation>
     </message>
     <message>
         <source>Remember file hashes even if not shared. 
@@ -5122,7 +5133,7 @@ p, li { white-space: pre-wrap; }
     <name>ExprParamElement</name>
     <message>
         <source>to</source>
-        <translation type="unfinished"/>
+        <translation>кому</translation>
     </message>
     <message>
         <source>ignore case</source>
@@ -5149,7 +5160,7 @@ p, li { white-space: pre-wrap; }
     <name>ExpressionWidget</name>
     <message>
         <source>Expression Widget</source>
-        <translation type="unfinished"/>
+        <translation>Визуализация выражения</translation>
     </message>
     <message>
         <source>Delete this expression</source>
@@ -5223,7 +5234,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>File name</source>
-        <translation type="unfinished"/>
+        <translation>Имя файла:</translation>
     </message>
     <message>
         <source>Destination folder</source>
@@ -5251,7 +5262,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Transferred</source>
-        <translation type="unfinished"/>
+        <translation>Передано</translation>
     </message>
     <message>
         <source>Remaining</source>
@@ -5263,7 +5274,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Chunk strategy</source>
-        <translation type="unfinished"/>
+        <translation>Метод передачи</translation>
     </message>
     <message>
         <source>Transfer type</source>
@@ -5275,7 +5286,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Direct friend transfer / Availability assumed</source>
-        <translation type="unfinished"/>
+        <translation>Обмен данными с другом / Предполагается доступность</translation>
     </message>
 </context>
 <context>
@@ -5361,7 +5372,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Share Flags</source>
-        <translation type="unfinished"/>
+        <translation>Флаги доступа</translation>
     </message>
     <message>
         <source>Directory</source>
@@ -5435,7 +5446,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Set as read and remove item</source>
-        <translation type="unfinished"/>
+        <translation>Установить как чтение и удаление элемента</translation>
     </message>
     <message>
         <source>Remove Item</source>
@@ -5494,7 +5505,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Unknown Forum</source>
-        <translation type="unfinished"/>
+        <translation>Неизвестный форум</translation>
     </message>
     <message>
         <source>New Forum</source>
@@ -5502,7 +5513,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Updated Forum</source>
-        <translation type="unfinished"/>
+        <translation>Обновленный форум</translation>
     </message>
     <message>
         <source>Hide</source>
@@ -5631,7 +5642,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>My Forums</source>
-        <translation type="unfinished"/>
+        <translation>Мои форумы</translation>
     </message>
     <message>
         <source>Subscribed Forums</source>
@@ -5747,7 +5758,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>AUTHD</source>
-        <translation type="unfinished"/>
+        <translation>Требуется подпись</translation>
     </message>
     <message>
         <source>[ ... Missing Message ... ]</source>
@@ -5783,7 +5794,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>On %1, %2 wrote:</source>
-        <translation type="unfinished"/>
+        <translation>На %1 %2 написал</translation>
     </message>
     <message>
         <source>You can&apos;t reply an Anonymous Author</source>
@@ -5941,7 +5952,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Deny Friend</source>
-        <translation>Запретить другу</translation>
+        <translation>Отказать другу</translation>
     </message>
     <message>
         <source>Remove Friend Location</source>
@@ -6001,7 +6012,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Attempt to connect</source>
-        <translation type="unfinished"/>
+        <translation>Соединиться</translation>
     </message>
     <message>
         <source>Create new group</source>
@@ -6062,11 +6073,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Edit status message</source>
-        <translation type="unfinished"/>
+        <translation>Изменить ваш статус</translation>
     </message>
     <message>
         <source>Broadcast</source>
-        <translation type="unfinished"/>
+        <translation>Широковещательный чат</translation>
     </message>
     <message>
         <source>Bold</source>
@@ -6118,11 +6129,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Set your status message</source>
-        <translation type="unfinished"/>
+        <translation>Изменить ваш статус</translation>
     </message>
     <message>
         <source>Edit your status message</source>
-        <translation type="unfinished"/>
+        <translation>Изменить ваш статус</translation>
     </message>
     <message>
         <source>Browse Message History</source>
@@ -6162,7 +6173,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Local network</source>
-        <translation type="unfinished"/>
+        <translation>Сетевое окружение</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
@@ -6194,11 +6205,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Keyring</source>
-        <translation type="unfinished"/>
+        <translation>Массив ключей</translation>
     </message>
     <message>
         <source>Retroshare broadcast chat: messages are sent to all connected friends.</source>
-        <translation type="unfinished"/>
+        <translation>Широковещательный чат RetroShare: сообщения будут рассылаться всем подключённым друзьям.</translation>
     </message>
     <message>
         <source>Attach a Picture</source>
@@ -6210,7 +6221,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Friends&lt;/h1&gt;                                       &lt;p&gt;The Friends tab shows...your friends: the list of persons you have accepted to connect to.                       &lt;/p&gt;                                                       &lt;p&gt;You can group friends together to allow a finer level of information access, for instance to only allow          some friends to see some files.&lt;/p&gt;     &lt;p&gt;On the right, you will find 3 useful tabs:                                                                       &lt;ul&gt;                                                                                                                &lt;li&gt;Broadcast sends messages to all connected friends at once&lt;/li&gt;                                   &lt;li&gt;Local Network shows the network around you, including friends of your friends&lt;/li&gt;                       &lt;li&gt;Keyring contains keys you collected, mostly forwarded to you by your friends&lt;/li&gt;                                  &lt;/ul&gt; &lt;/p&gt;                                                                                                        </source>
-        <translation type="unfinished"/>
+        <translation>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Друзья&lt;/h1&gt; &lt;p&gt;Вкладка &quot;Друзья&quot; отображает... ваших друзей: список тех участников сети, к которым вы дали согласие подключаться. &lt;/p&gt; &lt;p&gt;Вы можете группировать друзей для осуществления тонкой настройки уровней доступа, например, чтобы кто-то из ваших друзей имел доступ к определённым файлам.&lt;/p&gt; &lt;p&gt;Справа вы найдёте 3 полезных вкладки: &lt;ul&gt; &lt;li&gt;Широковещательный чат отсылает сообщение всем подключённым друзьям одновременно&lt;/li&gt; &lt;li&gt;Сетевое окружение показывает, кто находится рядом с вами&lt;/li&gt; &lt;li&gt;Массив ключей содержит ключи, большей частью полученные от ваших друзей&lt;/li&gt; &lt;/ul&gt; &lt;/p&gt; </translation>
     </message>
 </context>
 <context>
@@ -6224,7 +6235,7 @@ p, li { white-space: pre-wrap; }
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Games Launcher&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt; p, li { white-space: pre-wrap; } &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt; &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Модуль запуска игр&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Game:</source>
@@ -6236,11 +6247,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>GameType: 1. Get In Touch with the developers</source>
-        <translation type="unfinished"/>
+        <translation>Тип игры: 1. Связаться с разработчиками</translation>
     </message>
     <message>
         <source>GameType: 2.</source>
-        <translation type="unfinished"/>
+        <translation>Тип игры: 2.</translation>
     </message>
     <message>
         <source>Title / Comment</source>
@@ -6351,7 +6362,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>You can install retroshare on different locations using the same identity. For this, just export the selected identity, and import it on the new computer, then create a new location with it.</source>
-        <translation type="unfinished"/>
+        <translation>Можно установить RetroShare в разных местоположениях, используя одну и ту же личность. Для этого экспортируйте нужную личность и импортируйте на новом компьютере, затем создайте новое расположение с ней.</translation>
     </message>
     <message>
         <source>It looks like you don&apos;t own any profile (PGP keys). Please fill in the form below to create one, or import an existing profile.</source>
@@ -6367,7 +6378,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Enter your nickname here</source>
-        <translation type="unfinished"/>
+        <translation>Введите ваш ник </translation>
     </message>
     <message>
         <source>Email</source>
@@ -6377,7 +6388,7 @@ p, li { white-space: pre-wrap; }
         <source>Be careful: this email will be visible to your friends and friends 
 of your friends. This information is required by PGP, but to stay 
 anonymous, you can use a fake email.</source>
-        <translation type="unfinished"/>
+        <translation>Осторожно: этот почтовый адрес будет виден вашим друзьям и их друзьям. Эта информация необходима для PGP, но для анонимности вы можете указать поддельный адрес</translation>
     </message>
     <message>
         <source>This Password is for PGP</source>
@@ -6389,7 +6400,7 @@ anonymous, you can use a fake email.</source>
     </message>
     <message>
         <source>Put a strong password here. This password protects your PGP key.</source>
-        <translation type="unfinished"/>
+        <translation>Укажите надежный пароль. Этот пароль защищает ваш PGP ключ.</translation>
     </message>
     <message>
         <source>Location</source>
@@ -6397,7 +6408,7 @@ anonymous, you can use a fake email.</source>
     </message>
     <message>
         <source>Create new identity</source>
-        <translation type="unfinished"/>
+        <translation>Создать новую личность</translation>
     </message>
     <message>
         <source>Use identity</source>
@@ -6409,23 +6420,23 @@ anonymous, you can use a fake email.</source>
     </message>
     <message>
         <source>Create a new identity</source>
-        <translation type="unfinished"/>
+        <translation>Создать новую личность</translation>
     </message>
     <message>
         <source>Import new identity</source>
-        <translation type="unfinished"/>
+        <translation>Импортировать новую личность</translation>
     </message>
     <message>
         <source>Export selected identity</source>
-        <translation type="unfinished"/>
+        <translation>Экспортируйте выбранную личность</translation>
     </message>
     <message>
         <source>Create a new Identity</source>
-        <translation type="unfinished"/>
+        <translation>Создать новую личность</translation>
     </message>
     <message>
         <source>RetroShare uses PGP keys for identity management.</source>
-        <translation type="unfinished"/>
+        <translation>RetroShare использует PGP ключи для управления личностями</translation>
     </message>
     <message>
         <source>[Optional] Visible to your friends, and friends of friends.</source>
@@ -6457,11 +6468,11 @@ anonymous, you can use a fake email.</source>
     </message>
     <message>
         <source>Create new Identity</source>
-        <translation type="unfinished"/>
+        <translation>Создать новую личность</translation>
     </message>
     <message>
         <source>Generate new Identity</source>
-        <translation type="unfinished"/>
+        <translation>Создать новую личность</translation>
     </message>
     <message>
         <source>You can create a new identity with this form.</source>
@@ -6469,7 +6480,7 @@ anonymous, you can use a fake email.</source>
     </message>
     <message>
         <source>You can use an existing identity (i.e. a PGP key pair), from the list below, or create a new one with this form.</source>
-        <translation type="unfinished"/>
+        <translation>Вы можете использовать имеющуюся личность (т.е. пару ключей PGP), или  создать новую.</translation>
     </message>
     <message>
         <source>Export Identity</source>
@@ -6551,21 +6562,22 @@ Fill in your PGP password when asked, to sign your new key.</source>
     </message>
     <message>
         <source>Password (check)</source>
-        <translation type="unfinished"/>
+        <translation>Пароль (еще раз)</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Before proceeding, move your mouse around to help Retroshare collect as much randomness as possible. Filling the progressbar to 20% is needed, 100% is advised.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>Прежде чем продолжить, подвигайте мышью чтобы собрать некоторые случайные данные. Необходимо набрать 20%, желательно до 100%</translation>
     </message>
     <message>
         <source>[Required] Type the same password again here.</source>
-        <translation type="unfinished"/>
+        <translation>[Обязательно] Введите пароль еще раз</translation>
     </message>
     <message>
         <source>Put a meaningful location. ex : home, laptop, etc. 
 This field will be used to differentiate different installations with
 the same identity (PGP key).</source>
-        <translation type="unfinished"/>
+        <translation>Укажите понятное местоположение, например: дом, ноут, и т.п.
+Это поле будет различать несколько разных инсталляций с однинаковой личностью (PGP ключем)</translation>
     </message>
     <message>
         <source>Passwords do not match</source>
@@ -6596,7 +6608,7 @@ the same identity (PGP key).</source>
     </message>
     <message>
         <source>Enable Advanced Mode (Restart Required)</source>
-        <translation>Включить продвинутый режим(потребуется перезапуск)</translation>
+        <translation>Включить продвинутый режим (потребуется перезапуск)</translation>
     </message>
     <message>
         <source>Misc</source>
@@ -6632,7 +6644,7 @@ the same identity (PGP key).</source>
     </message>
     <message>
         <source>Launch startup wizard</source>
-        <translation type="unfinished"/>
+        <translation>Запустить мастер настройки</translation>
     </message>
     <message>
         <source>Error</source>
@@ -6652,7 +6664,7 @@ the same identity (PGP key).</source>
     </message>
     <message>
         <source>Minimize to Tray Icon</source>
-        <translation type="unfinished"/>
+        <translation>Сворачиваться в трей</translation>
     </message>
 </context>
 <context>
@@ -6676,7 +6688,13 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Be sure to get their invitation back as well... &lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;You can only connect with friends if you have both added each other.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>RetroShare не может работать без друзей. Нажмите на кнопку чтоб пригласить друга.
+&lt;br&gt;
+Отправьте  приглашение с вашим сертификатом по почте
+&lt;br&gt;
+Аналогично получите приглашения от друзей.
+&lt;br&gt;
+Вы сможее соединиться только если добавите друг друга</translation>
     </message>
     <message>
         <source>Add Your Friends to RetroShare</source>
@@ -6716,7 +6734,11 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;If it remains Red, then you have a Nasty Firewall, that RetroShare struggles to connect through.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Look in the Further Help section for more advice about connecting.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>Когда вы с друзьями одновременно в сети, RetroShare автоматически вас соединит.
+&lt;br&gt;&lt;br&gt;
+Клиент должен подключиться к сети прежде чем сможет соединиться с друзьями. Это может занять 5-30  минут в первый запуск. Значок DHT внизу клиента станет зеленым, когда это произойдет.
+&lt;br&gt;&lt;br&gt;
+Через пару минут значок NAT должен стать зеленым или желтым в зависимости от вашей сетевой доступности. Если он остается красным, значит вас блокирует фаервол.</translation>
     </message>
     <message>
         <source>Advanced: Open Firewall Port</source>
@@ -6827,7 +6849,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>RetroShare Support</source>
-        <translation type="unfinished"/>
+        <translation>Команда поддержки RetroShare</translation>
     </message>
 </context>
 <context>
@@ -6898,11 +6920,11 @@ p, li { white-space: pre-wrap; }
     <name>GroupFlagsWidget</name>
     <message>
         <source>Directory is browsable for friends from groups</source>
-        <translation type="unfinished"/>
+        <translation>Папка доступна для просмотра друзьям из групп</translation>
     </message>
     <message>
         <source>Directory is NOT browsable for friends from groups</source>
-        <translation type="unfinished"/>
+        <translation>Папка не доступна для просмотра друзьям из групп</translation>
     </message>
     <message>
         <source>Directory is accessible by anonymous tunnels from friends from groups</source>
@@ -6914,11 +6936,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Directory is browsable for any friend</source>
-        <translation type="unfinished"/>
+        <translation>Папка доступна для просмотра для всех друзей</translation>
     </message>
     <message>
         <source>Directory is NOT browsable for any friend</source>
-        <translation type="unfinished"/>
+        <translation>Папка не доступна для просмотра для всех друзей</translation>
     </message>
     <message>
         <source>Directory is accessible by anonymous tunnels from any friend</source>
@@ -6930,19 +6952,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>All your friends can browse this directory</source>
-        <translation type="unfinished"/>
+        <translation>Все ваши друзья могут просматривать эту папку</translation>
     </message>
     <message>
         <source>Only friends in groups %1 can browse this directory</source>
-        <translation type="unfinished"/>
+        <translation>Папка доступна к просмотру только друзьям из группы %1</translation>
     </message>
     <message>
         <source>No one can browse this directory</source>
-        <translation type="unfinished"/>
+        <translation>Никто не может просматривать эту папку</translation>
     </message>
     <message>
         <source>All your friends can relay anonymous tunnels to this directory</source>
-        <translation type="unfinished"/>
+        <translation>Эта папка доступна по анонимным туннелям через ваших друзей</translation>
     </message>
     <message>
         <source>Only friends in groups </source>
@@ -7024,7 +7046,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Hash</source>
-        <translation type="unfinished"/>
+        <translation>Хэш</translation>
     </message>
     <message>
         <source>Date</source>
@@ -7044,7 +7066,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>contains all</source>
-        <translation type="unfinished"/>
+        <translation>содержит всё</translation>
     </message>
     <message>
         <source>is</source>
@@ -7103,7 +7125,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>My Channels</source>
-        <translation type="unfinished"/>
+        <translation>Мои каналы</translation>
     </message>
     <message>
         <source>Subscribed Channels</source>
@@ -7171,7 +7193,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Todo</source>
-        <translation type="unfinished"/>
+        <translation>На выполнение</translation>
     </message>
 </context>
 <context>
@@ -7233,7 +7255,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Set as read and remove item</source>
-        <translation type="unfinished"/>
+        <translation>Установить как чтение и удаление элемента</translation>
     </message>
     <message>
         <source>Remove Item</source>
@@ -7279,7 +7301,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Top</source>
-        <translation type="unfinished"/>
+        <translation>На самый верх</translation>
     </message>
     <message>
         <source>Voter ID:</source>
@@ -7607,7 +7629,7 @@ before you can comment</source>
     </message>
     <message>
         <source>My Forums</source>
-        <translation type="unfinished"/>
+        <translation>Мои форумы</translation>
     </message>
     <message>
         <source>Subscribed Forums</source>
@@ -7667,7 +7689,7 @@ before you can comment</source>
     </message>
     <message>
         <source>AUTHD</source>
-        <translation type="unfinished"/>
+        <translation>Требуется подпись</translation>
     </message>
     <message>
         <source>Original Message</source>
@@ -7687,18 +7709,18 @@ before you can comment</source>
     </message>
     <message>
         <source>On %1, %2 wrote:</source>
-        <translation type="unfinished"/>
+        <translation>На %1 %2 написал</translation>
     </message>
     <message>
         <source>Todo</source>
-        <translation type="unfinished"/>
+        <translation>На выполнение</translation>
     </message>
 </context>
 <context>
     <name>GxsForumsFillThread</name>
     <message>
         <source>Waiting</source>
-        <translation type="unfinished"/>
+        <translation>ожидание</translation>
     </message>
     <message>
         <source>Retrieving</source>
@@ -7870,7 +7892,7 @@ before you can comment</source>
     </message>
     <message>
         <source>Find Next</source>
-        <translation type="unfinished"/>
+        <translation>Искать дальше</translation>
     </message>
     <message>
         <source>Case sensitive</source>
@@ -7910,7 +7932,7 @@ before you can comment</source>
     </message>
     <message>
         <source>Backspace</source>
-        <translation type="unfinished"/>
+        <translation>Backspace</translation>
     </message>
     <message>
         <source>Forward</source>
@@ -7918,15 +7940,15 @@ before you can comment</source>
     </message>
     <message>
         <source>Move to next page (Shift+Backspace)</source>
-        <translation type="unfinished"/>
+        <translation>Перейти на следующую страницу (Shift + Backspace)</translation>
     </message>
     <message>
         <source>Shift+Backspace</source>
-        <translation type="unfinished"/>
+        <translation>Shift + Backspace</translation>
     </message>
     <message>
         <source>Home</source>
-        <translation type="unfinished"/>
+        <translation>Домой</translation>
     </message>
     <message>
         <source>Move to the Home page (Ctrl+H)</source>
@@ -7938,7 +7960,7 @@ before you can comment</source>
     </message>
     <message>
         <source>Find</source>
-        <translation type="unfinished"/>
+        <translation>Найти</translation>
     </message>
     <message>
         <source>Search for a word or phrase on current page (Ctrl+F)</source>
@@ -7946,7 +7968,7 @@ before you can comment</source>
     </message>
     <message>
         <source>Ctrl+F</source>
-        <translation type="unfinished"/>
+        <translation>Ctrl + F</translation>
     </message>
     <message>
         <source>Close</source>
@@ -7954,7 +7976,7 @@ before you can comment</source>
     </message>
     <message>
         <source>Close Vidalia Help</source>
-        <translation type="unfinished"/>
+        <translation>Закрыть справку Vidalia</translation>
     </message>
     <message>
         <source>Esc</source>
@@ -7962,11 +7984,11 @@ before you can comment</source>
     </message>
     <message>
         <source>Error Loading Help Contents: </source>
-        <translation type="unfinished"/>
+        <translation>Ошибка загрузки содержимого справки:</translation>
     </message>
     <message>
         <source>Supplied XML file is not a valid Contents document.</source>
-        <translation type="unfinished"/>
+        <translation>Существующий XML-файл имеет неверный формат</translation>
     </message>
     <message>
         <source>Search reached end of document</source>
@@ -7982,7 +8004,7 @@ before you can comment</source>
     </message>
     <message>
         <source>Found %1 results</source>
-        <translation type="unfinished"/>
+        <translation>Найдено %1 результатов</translation>
     </message>
 </context>
 <context>
@@ -8009,7 +8031,23 @@ p, li { white-space: pre-wrap; }
 &lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;Retroshare Project Page&lt;/a&gt;&lt;/li&gt;
 &lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;RetroShare Team Blog&lt;/a&gt;&lt;/li&gt;
 &lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;RetroShare Dev Twiter&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;RetroShare – это кроссплатформенное приложение на основе открытого ПО, &lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;персональная защищённая децентрализованная коммуникационная система.⇥&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Она позволяет осуществлять совместно с друзьями безопасный файлообмен,  &lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;использует доверенную сеть для установления подлинности участников и OpenSSL для шифрования всей передаваемой информации. &lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;RetroShare предоставляет сервисы файлообмена, чатов, электронной почты и каналов&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;Следующие полезные ссылки дают больше сведений:&lt;/span&gt;&lt;/p&gt;
+&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-size:8pt;&quot; align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;&lt;span style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot;&gt;Вебсайт Retroshare&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;Вики-страница Retroshare&lt;/a&gt;&lt;/li&gt;
+&lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;Форум RetroShare&lt;/a&gt;&lt;/li&gt;
+&lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;Страница проекта Retroshare&lt;/a&gt;&lt;/li&gt;
+&lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;Блог команды RetroShare&lt;/a&gt;&lt;/li&gt;
+&lt;li style=&quot; font-size:12pt; text-decoration: underline; color:#0000ff;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;http://retroshare.sourceforge.net&quot;&gt;Твиттер разработчиков RetroShare&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Authors</source>
@@ -8017,7 +8055,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Thanks to</source>
-        <translation type="unfinished"/>
+        <translation>Благодарности</translation>
     </message>
     <message>
         <source>Translation</source>
@@ -8084,7 +8122,7 @@ p, li { white-space: pre-wrap; }
     <name>IdDialog</name>
     <message>
         <source>Identities</source>
-        <translation type="unfinished"/>
+        <translation>Личности</translation>
     </message>
     <message>
         <source>New ID</source>
@@ -8148,7 +8186,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Other</source>
-        <translation type="unfinished"/>
+        <translation>Другие</translation>
     </message>
     <message>
         <source>Pseudonym</source>
@@ -8200,7 +8238,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Todo</source>
-        <translation type="unfinished"/>
+        <translation>На выполнение</translation>
     </message>
     <message>
         <source>Show:</source>
@@ -8228,7 +8266,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Create new Identity</source>
-        <translation type="unfinished"/>
+        <translation>Создать новую личность</translation>
     </message>
     <message>
         <source>Delete Identity</source>
@@ -8337,15 +8375,15 @@ p, li { white-space: pre-wrap; }
     <name>LocalSharedFilesDialog</name>
     <message>
         <source>Create collection file</source>
-        <translation type="unfinished"/>
+        <translation>Создать файл коллекции</translation>
     </message>
     <message>
         <source>Open File</source>
-        <translation type="unfinished"/>
+        <translation>Открыть файл</translation>
     </message>
     <message>
         <source>Open Folder</source>
-        <translation type="unfinished"/>
+        <translation>Открыть папку</translation>
     </message>
     <message>
         <source>Edit Share Permissions</source>
@@ -8353,7 +8391,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Checking...</source>
-        <translation type="unfinished"/>
+        <translation>Проверка ...</translation>
     </message>
     <message>
         <source>Check files</source>
@@ -8384,7 +8422,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add Share</source>
-        <translation type="unfinished"/>
+        <translation>Управление папками</translation>
     </message>
     <message>
         <source>Options</source>
@@ -8392,7 +8430,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Messenger</source>
-        <translation type="unfinished"/>
+        <translation>Доставка сообщений</translation>
     </message>
     <message>
         <source>About</source>
@@ -8400,7 +8438,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>SMPlayer</source>
-        <translation type="unfinished"/>
+        <translation>SMPlayer</translation>
     </message>
     <message>
         <source>Quit</source>
@@ -8424,15 +8462,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>File sharing</source>
-        <translation>Обмен файлами</translation>
+        <translation>Файлообмен</translation>
     </message>
     <message>
         <source>Chat Lobbies</source>
-        <translation type="unfinished"/>
+        <translation>Чаты</translation>
     </message>
     <message>
         <source>Messages</source>
-        <translation>Сообщения</translation>
+        <translation>Почта</translation>
     </message>
     <message>
         <source>Channels</source>
@@ -8464,7 +8502,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>The disk space in your </source>
-        <translation type="unfinished"/>
+        <translation>Дисковое пространство в вашем</translation>
     </message>
     <message>
         <source> directory is running low (current limit is </source>
@@ -8476,11 +8514,15 @@ p, li { white-space: pre-wrap; }
  RetroShare will now safely suspend any disk access to this directory. 
 
  Please make some free space and click Ok.</source>
-        <translation type="unfinished"/>
+        <translation> МБ).
+
+RetroShare безопасно приостановит доступ диска к этой папке.
+
+Пожалуйста, освободите немного дискового пространства и нажмите Ok.</translation>
     </message>
     <message>
         <source>Show/Hide</source>
-        <translation type="unfinished"/>
+        <translation>Показать / Скрыть</translation>
     </message>
     <message>
         <source>Status</source>
@@ -8492,15 +8534,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Open Messenger</source>
-        <translation type="unfinished"/>
+        <translation>Открыть мессенджер</translation>
     </message>
     <message>
         <source>Open Messages</source>
-        <translation type="unfinished"/>
+        <translation>Открыть сообщения</translation>
     </message>
     <message>
         <source>Bandwidth Graph</source>
-        <translation type="unfinished"/>
+        <translation>График пропускной способности</translation>
     </message>
     <message>
         <source>DHT Details</source>
@@ -8508,7 +8550,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Bandwidth Details</source>
-        <translation type="unfinished"/>
+        <translation>Подробности трафика</translation>
     </message>
     <message>
         <source>Applications</source>
@@ -8536,27 +8578,27 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>%1 new message</source>
-        <translation type="unfinished"/>
+        <translation>%1 новое сообщение</translation>
     </message>
     <message>
         <source>%1 new messages</source>
-        <translation type="unfinished"/>
+        <translation>%1 новых сообщений</translation>
     </message>
     <message>
         <source>Down: %1 (kB/s)</source>
-        <translation type="unfinished"/>
+        <translation>Приём: %1 (кБ/с)</translation>
     </message>
     <message>
         <source>Up: %1 (kB/s)</source>
-        <translation type="unfinished"/>
+        <translation>Отдача: %1 (кБ/с)</translation>
     </message>
     <message>
         <source>%1 friend connected</source>
-        <translation type="unfinished"/>
+        <translation>%1 друг соединён</translation>
     </message>
     <message>
         <source>%1 friends connected</source>
-        <translation type="unfinished"/>
+        <translation>%1 друзей соединены</translation>
     </message>
     <message>
         <source>Do you really want to exit RetroShare ?</source>
@@ -8588,7 +8630,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>It seems to be an old RetroShare link. Please use copy instead.</source>
-        <translation type="unfinished"/>
+        <translation>Используется тип ссылки устаревшей версии RetroShare. Пожалуйста, используйте копирование.</translation>
     </message>
     <message>
         <source>The file link is malformed.</source>
@@ -8596,18 +8638,18 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>ServicePermissions</source>
-        <translation type="unfinished"/>
+        <translation>Разрешения</translation>
     </message>
     <message>
         <source>Service permissions matrix</source>
-        <translation type="unfinished"/>
+        <translation>Управление правами доступа</translation>
     </message>
 </context>
 <context>
     <name>MessageComposer</name>
     <message>
         <source>Compose</source>
-        <translation type="unfinished"/>
+        <translation>Составить</translation>
     </message>
     <message>
         <source>Contacts</source>
@@ -8615,23 +8657,23 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>&gt;&gt; To</source>
-        <translation type="unfinished"/>
+        <translation>&gt;&gt; Кому</translation>
     </message>
     <message>
         <source>&gt;&gt; Cc</source>
-        <translation type="unfinished"/>
+        <translation>&gt;&gt; Копия</translation>
     </message>
     <message>
         <source>&gt;&gt; Bcc</source>
-        <translation type="unfinished"/>
+        <translation>&gt;&gt; Невидимая копия</translation>
     </message>
     <message>
         <source>&gt;&gt; Recommend</source>
-        <translation type="unfinished"/>
+        <translation>&gt;&gt; Рекомендовать</translation>
     </message>
     <message>
         <source>Paragraph</source>
-        <translation type="unfinished"/>
+        <translation>Абзац</translation>
     </message>
     <message>
         <source>Heading 1</source>
@@ -8639,23 +8681,23 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Heading 2</source>
-        <translation type="unfinished"/>
+        <translation>Заголовок 2</translation>
     </message>
     <message>
         <source>Heading 3</source>
-        <translation type="unfinished"/>
+        <translation>Заголовок 3</translation>
     </message>
     <message>
         <source>Heading 4</source>
-        <translation type="unfinished"/>
+        <translation>Заголовок 4</translation>
     </message>
     <message>
         <source>Heading 5</source>
-        <translation type="unfinished"/>
+        <translation>Заголовок 5</translation>
     </message>
     <message>
         <source>Heading 6</source>
-        <translation type="unfinished"/>
+        <translation>Заголовок 6</translation>
     </message>
     <message>
         <source>Font size</source>
@@ -8691,7 +8733,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Sets text font to code style</source>
-        <translation type="unfinished"/>
+        <translation>Установка шрифта для стиля кода</translation>
     </message>
     <message>
         <source>Underline</source>
@@ -8703,7 +8745,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Tags:</source>
-        <translation type="unfinished"/>
+        <translation>Теги:</translation>
     </message>
     <message>
         <source>Tags</source>
@@ -8723,7 +8765,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Hash</source>
-        <translation type="unfinished"/>
+        <translation>Хэш</translation>
     </message>
     <message>
         <source>Send</source>
@@ -8739,7 +8781,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Toggle Contacts View</source>
-        <translation type="unfinished"/>
+        <translation>Переключить вид контактов</translation>
     </message>
     <message>
         <source>Save</source>
@@ -8759,15 +8801,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Quote</source>
-        <translation type="unfinished"/>
+        <translation>Цитата</translation>
     </message>
     <message>
         <source>Add Blockquote</source>
-        <translation type="unfinished"/>
+        <translation>Добавить цитату</translation>
     </message>
     <message>
         <source>Send To:</source>
-        <translation type="unfinished"/>
+        <translation>Отправить: </translation>
     </message>
     <message>
         <source>&amp;Left</source>
@@ -8791,7 +8833,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>You have a friend recommendation</source>
-        <translation type="unfinished"/>
+        <translation>Вы получили рекомендацию на установление дружеского контакта</translation>
     </message>
     <message>
         <source>This friend is suggested by</source>
@@ -8807,16 +8849,17 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Hi %1,&lt;br&gt;&lt;br&gt;%2 wants to be friends with you on RetroShare.&lt;br&gt;&lt;br&gt;Respond now:&lt;br&gt;%3&lt;br&gt;&lt;br&gt;Thanks,&lt;br&gt;The RetroShare Team</source>
-        <translation type="unfinished"/>
+        <translation>Привет %1,&lt;br&gt;&lt;br&gt;%2 хочет быть Вашим другом в сети RetroShare.&lt;br&gt;&lt;br&gt;Ответить сейчас:&lt;br&gt;%3&lt;br&gt;&lt;br&gt;Благодарим,&lt;br&gt;команда RetroShare</translation>
     </message>
     <message>
         <source>Save Message</source>
-        <translation type="unfinished"/>
+        <translation>Сохранить сообщение</translation>
     </message>
     <message>
         <source>Message has not been Sent.
 Do you want to save message to draft box?</source>
-        <translation type="unfinished"/>
+        <translation>Сообщение не отправлено.
+Хотите ли вы сохранить сообщение в черновиках?</translation>
     </message>
     <message>
         <source>Paste RetroShare Link</source>
@@ -8824,19 +8867,19 @@ Do you want to save message to draft box?</source>
     </message>
     <message>
         <source>Add to &quot;To&quot;</source>
-        <translation type="unfinished"/>
+        <translation>Добавить к &quot;Кому&quot;</translation>
     </message>
     <message>
         <source>Add to &quot;CC&quot;</source>
-        <translation type="unfinished"/>
+        <translation>Добавить к &quot;Копия&quot;</translation>
     </message>
     <message>
         <source>Add to &quot;BCC&quot;</source>
-        <translation type="unfinished"/>
+        <translation>Добавить к &quot;Невидимая копия&quot;</translation>
     </message>
     <message>
         <source>Add as Recommend</source>
-        <translation type="unfinished"/>
+        <translation>Добавить как рекомендацию</translation>
     </message>
     <message>
         <source>Friend Details</source>
@@ -8856,7 +8899,7 @@ Do you want to save message to draft box?</source>
     </message>
     <message>
         <source>Cc</source>
-        <translation type="unfinished"/>
+        <translation>Копия</translation>
     </message>
     <message>
         <source>Sent</source>
@@ -8868,15 +8911,15 @@ Do you want to save message to draft box?</source>
     </message>
     <message>
         <source>On %1, %2 wrote:</source>
-        <translation type="unfinished"/>
+        <translation>На %1 %2 написал</translation>
     </message>
     <message>
         <source>Re:</source>
-        <translation type="unfinished"/>
+        <translation>Ответ:</translation>
     </message>
     <message>
         <source>Fwd:</source>
-        <translation type="unfinished"/>
+        <translation>Перенаправление:</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -8884,7 +8927,7 @@ Do you want to save message to draft box?</source>
     </message>
     <message>
         <source>Do you want to send the message without a subject ?</source>
-        <translation type="unfinished"/>
+        <translation>Отправить сообщение без темы?</translation>
     </message>
     <message>
         <source>Please insert at least one recipient.</source>
@@ -8892,7 +8935,7 @@ Do you want to save message to draft box?</source>
     </message>
     <message>
         <source>Bcc</source>
-        <translation type="unfinished"/>
+        <translation>Невидимая копия</translation>
     </message>
     <message>
         <source>Unknown</source>
@@ -8920,11 +8963,11 @@ Do you want to save message to draft box?</source>
     </message>
     <message>
         <source>Save &amp;As File</source>
-        <translation type="unfinished"/>
+        <translation>Сохранить как &amp;файл</translation>
     </message>
     <message>
         <source>Save &amp;As Draft</source>
-        <translation type="unfinished"/>
+        <translation>Сохранить как черновик</translation>
     </message>
     <message>
         <source>&amp;Print...</source>
@@ -8968,7 +9011,7 @@ Do you want to save message to draft box?</source>
     </message>
     <message>
         <source>&amp;Contacts Sidebar</source>
-        <translation type="unfinished"/>
+        <translation>Боковой &amp;список контактов</translation>
     </message>
     <message>
         <source>&amp;Insert</source>
@@ -8980,11 +9023,11 @@ Do you want to save message to draft box?</source>
     </message>
     <message>
         <source>&amp;Horizontal Line</source>
-        <translation type="unfinished"/>
+        <translation>Горизонтальная линия</translation>
     </message>
     <message>
         <source>&amp;Format</source>
-        <translation type="unfinished"/>
+        <translation>Форм&amp;атирование</translation>
     </message>
     <message>
         <source>Open File...</source>
@@ -9009,7 +9052,8 @@ Do you want to save message to draft box?</source>
     <message>
         <source>Message has not been Sent.
 Do you want to save message ?</source>
-        <translation type="unfinished"/>
+        <translation>Сообщение не отправлено.
+Хотите ли вы сохранить сообщение?</translation>
     </message>
     <message>
         <source>Choose Image</source>
@@ -9033,7 +9077,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Only show people you trusted</source>
-        <translation type="unfinished"/>
+        <translation>Показывать только друзей</translation>
     </message>
     <message>
         <source>PGP key unknown</source>
@@ -9048,7 +9092,7 @@ Do you want to save message ?</source>
     <name>MessagePage</name>
     <message>
         <source>Reading</source>
-        <translation type="unfinished"/>
+        <translation>Чтение</translation>
     </message>
     <message>
         <source>Set message to read on activate</source>
@@ -9064,7 +9108,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Tags can be used to categorize and prioritize your messages</source>
-        <translation type="unfinished"/>
+        <translation>Теги могут быть использованы для классификации ваших сообщений и определения их приоритетности</translation>
     </message>
     <message>
         <source>Add</source>
@@ -9072,7 +9116,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Edit</source>
-        <translation type="unfinished"/>
+        <translation>Правка</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -9084,11 +9128,11 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>A new tab</source>
-        <translation type="unfinished"/>
+        <translation>Новая вкладка</translation>
     </message>
     <message>
         <source>A new window</source>
-        <translation type="unfinished"/>
+        <translation>Новое окно</translation>
     </message>
     <message>
         <source>Edit Tag</source>
@@ -9096,19 +9140,19 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Message</source>
-        <translation>Сообщение</translation>
+        <translation>Почтовая служба</translation>
     </message>
     <message>
         <source>Distant messages:</source>
-        <translation type="unfinished"/>
+        <translation>Дальние сообщения:</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;The link below allows people in the network to send encrypted messages to you, using tunnels. To do that, they need your public PGP key, which they will get using the Retroshare discovery system. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Ссылка ниже даёт возможность участникам сети отсылать вам шифрованные сообщения, используя туннелирование. Чтобы осуществить это, им необходим ваш публичный PGP-ключ, который они получат через систему обнаружения RetroShare. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Accept encrypted distant messages from everyone</source>
-        <translation type="unfinished"/>
+        <translation>Принимать дальние шифрованные сообщения от любого участника сети.</translation>
     </message>
     <message>
         <source>Load embedded images</source>
@@ -9119,7 +9163,7 @@ Do you want to save message ?</source>
     <name>MessageToaster</name>
     <message>
         <source>Sub:</source>
-        <translation type="unfinished"/>
+        <translation>Тема:</translation>
     </message>
 </context>
 <context>
@@ -9137,7 +9181,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Download all Recommended Files</source>
-        <translation type="unfinished"/>
+        <translation>Скачать все рекомендованные файлы</translation>
     </message>
     <message>
         <source>Subject:</source>
@@ -9153,15 +9197,15 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Cc:</source>
-        <translation type="unfinished"/>
+        <translation>Копия:</translation>
     </message>
     <message>
         <source>Bcc:</source>
-        <translation type="unfinished"/>
+        <translation>Невидимая копия:</translation>
     </message>
     <message>
         <source>Tags:</source>
-        <translation type="unfinished"/>
+        <translation>Теги:</translation>
     </message>
     <message>
         <source>File Name</source>
@@ -9173,7 +9217,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Hash</source>
-        <translation type="unfinished"/>
+        <translation>Хэш</translation>
     </message>
     <message>
         <source>Print</source>
@@ -9185,11 +9229,11 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Confirm %1 as friend</source>
-        <translation type="unfinished"/>
+        <translation>Подтвердить дружбу с %1</translation>
     </message>
     <message>
         <source>Add %1 as friend</source>
-        <translation type="unfinished"/>
+        <translation>Добавить %1 как друга</translation>
     </message>
     <message>
         <source>No subject</source>
@@ -9272,7 +9316,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Compose</source>
-        <translation type="unfinished"/>
+        <translation>Составить</translation>
     </message>
     <message>
         <source>Reply to selected message</source>
@@ -9292,7 +9336,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Forward selected message</source>
-        <translation type="unfinished"/>
+        <translation>Переслать выбранные сообщения</translation>
     </message>
     <message>
         <source>Forward</source>
@@ -9352,7 +9396,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Save &amp;As File</source>
-        <translation type="unfinished"/>
+        <translation>Сохранить как &amp;файл</translation>
     </message>
     <message>
         <source>&amp;Print...</source>
@@ -9375,7 +9419,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Compose</source>
-        <translation type="unfinished"/>
+        <translation>Составить</translation>
     </message>
     <message>
         <source>Reply to selected message</source>
@@ -9395,11 +9439,11 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Forward selected message</source>
-        <translation type="unfinished"/>
+        <translation>Переслать выбранные сообщения</translation>
     </message>
     <message>
         <source>Foward</source>
-        <translation type="unfinished"/>
+        <translation>Переслать</translation>
     </message>
     <message>
         <source>Remove selected message</source>
@@ -9435,7 +9479,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Draft</source>
-        <translation type="unfinished"/>
+        <translation>Черновики</translation>
     </message>
     <message>
         <source>Sent</source>
@@ -9443,23 +9487,23 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Trash</source>
-        <translation type="unfinished"/>
+        <translation>Корзина</translation>
     </message>
     <message>
         <source>Total Inbox:</source>
-        <translation type="unfinished"/>
+        <translation>Все входящие:</translation>
     </message>
     <message>
         <source>Folders</source>
-        <translation type="unfinished"/>
+        <translation>Папки</translation>
     </message>
     <message>
         <source>Quick View</source>
-        <translation type="unfinished"/>
+        <translation>Быстрый просмотр</translation>
     </message>
     <message>
         <source>Print...</source>
-        <translation type="unfinished"/>
+        <translation>Печать...</translation>
     </message>
     <message>
         <source>Print Preview</source>
@@ -9487,19 +9531,19 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Save As...</source>
-        <translation type="unfinished"/>
+        <translation>Сохранить как...</translation>
     </message>
     <message>
         <source>Reply to Message</source>
-        <translation type="unfinished"/>
+        <translation>Ответить на сообщение </translation>
     </message>
     <message>
         <source>Reply to All</source>
-        <translation type="unfinished"/>
+        <translation>Ответить всем</translation>
     </message>
     <message>
         <source>Forward Message</source>
-        <translation type="unfinished"/>
+        <translation>Переслать сообщение</translation>
     </message>
     <message>
         <source>Subject</source>
@@ -9519,35 +9563,35 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Click to sort by attachments</source>
-        <translation type="unfinished"/>
+        <translation>Сортировка по вложенным файлам</translation>
     </message>
     <message>
         <source>Click to sort by subject</source>
-        <translation type="unfinished"/>
+        <translation>Сортировка по темам</translation>
     </message>
     <message>
         <source>Click to sort by read</source>
-        <translation type="unfinished"/>
+        <translation>Сортировка по прочитанным сообщениям</translation>
     </message>
     <message>
         <source>Click to sort by from</source>
-        <translation type="unfinished"/>
+        <translation>Сортировка по полю &quot;От&quot;</translation>
     </message>
     <message>
         <source>Click to sort by date</source>
-        <translation type="unfinished"/>
+        <translation>Сортировка по дате</translation>
     </message>
     <message>
         <source>Click to sort by tags</source>
-        <translation type="unfinished"/>
+        <translation>Сортировка по тегам</translation>
     </message>
     <message>
         <source>Click to sort by star</source>
-        <translation type="unfinished"/>
+        <translation>Сортировка по звёздам</translation>
     </message>
     <message>
         <source>Forward selected Message</source>
-        <translation type="unfinished"/>
+        <translation>Переслать выбранное сообщение</translation>
     </message>
     <message>
         <source>Search Subject</source>
@@ -9579,7 +9623,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Starred</source>
-        <translation type="unfinished"/>
+        <translation>Отмечено звездой</translation>
     </message>
     <message>
         <source>System</source>
@@ -9587,11 +9631,11 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Open in a new window</source>
-        <translation type="unfinished"/>
+        <translation>Открыть в новом окне</translation>
     </message>
     <message>
         <source>Open in a new tab</source>
-        <translation type="unfinished"/>
+        <translation>Открыть в новой вкладке</translation>
     </message>
     <message>
         <source>Mark as read</source>
@@ -9603,43 +9647,43 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Add Star</source>
-        <translation type="unfinished"/>
+        <translation>Добавить звезду</translation>
     </message>
     <message>
         <source>Edit</source>
-        <translation type="unfinished"/>
+        <translation>Правка</translation>
     </message>
     <message>
         <source>Edit as new</source>
-        <translation type="unfinished"/>
+        <translation>Редактировать как новое</translation>
     </message>
     <message>
         <source>Remove Messages</source>
-        <translation type="unfinished"/>
+        <translation>Удалить сообщения</translation>
     </message>
     <message>
         <source>Remove Message</source>
-        <translation type="unfinished"/>
+        <translation>Удалить сообщение </translation>
     </message>
     <message>
         <source>Undelete</source>
-        <translation type="unfinished"/>
+        <translation>Отменить удаление</translation>
     </message>
     <message>
         <source>Empty trash</source>
-        <translation type="unfinished"/>
+        <translation>Очистить корзину</translation>
     </message>
     <message>
         <source>Drafts</source>
-        <translation type="unfinished"/>
+        <translation>Черновики</translation>
     </message>
     <message>
         <source>No starred messages available. Stars let you give messages a special status to make them easier to find. To star a message, click on the light gray star beside any message.</source>
-        <translation type="unfinished"/>
+        <translation>Нет оценённых сообщений. Оценка сообщений присваивает им специальный статус для последующего удобного поиска и ранжирования. Чтобы оценить сообщение щёлкните на звезду серого цвета рядом с ним.</translation>
     </message>
     <message>
         <source>No system messages available.</source>
-        <translation type="unfinished"/>
+        <translation>Системные сообщения отсутствуют</translation>
     </message>
     <message>
         <source>To</source>
@@ -9647,11 +9691,11 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Click to sort by to</source>
-        <translation type="unfinished"/>
+        <translation>Сортировка по полю &quot;Кому&quot;</translation>
     </message>
     <message>
         <source>Total:</source>
-        <translation type="unfinished"/>
+        <translation>Всего:</translation>
     </message>
     <message>
         <source>Decrypt Message</source>
@@ -9683,7 +9727,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Messages&lt;/h1&gt;                          &lt;p&gt;Messages are like &lt;b&gt;e-mail&lt;/b&gt;: you send/receive them from your friends when both of you are connected.&lt;/p&gt;  &lt;p&gt;It is also possible to send messages to non friends, using tunnels. Such messages are always encrypted. It is  recommended to cryptographically sign distant messages, as a proof of your identity, using the &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; button  in the message composer window. Distant messages are not guarrantied to arrive, since this requires the distant peer to accept them (You need yourself to switch this on in Config-Messages).&lt;/p&gt; &lt;p&gt;Some additional features allow you to exchange data in messages: you may recommend files to your friends by pasting file links,  or recommend friends-to-be to other friends, in order to streathen your network.&lt;/p&gt;                    </source>
-        <translation type="unfinished"/>
+        <translation>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Messages&lt;/h1&gt; &lt;p&gt;Почтовый сервис RetroShare аналогичен классическому &lt;b&gt;e-mail&lt;/b&gt;: вы получаете/отправляете сообщения вашим друзьям, когда между вами и вашими друзьями установлено соединение.&lt;/p&gt; &lt;p&gt;Имеется возможность слать сообщения участникам, не являющимимся вашими друзьями, используя систему анонимных туннелей. В обоих случаях все сообщения шифруются. Под удалёнными сообщениями рекомендуется ставить криптографическую подпись, что будет подтверждать вашу личность. Используйте для этого кнопку &lt;img width=&quot;16&quot; src=&quot;:/images/stock_signature_ok.png&quot;/&gt; в менеджере сообщений. Нет гарантий, что удалённое сообщение будет доставлено адресату, так как такая пересылка требует, чтобы удалённый участник активировал такую возможность (вам также следует сделать это в разделе «Почтовый сервис» настроек).&lt;/p&gt; &lt;p&gt;Некоторые дополнительные возможности позволяют вам передавать иную информацию: вы можете рекомендовать файлы вашим друзьям, вставляя ссылки на них, или рекомендовать друзьям других участников сети, в целях расширения сети ваших контактов.&lt;/p&gt; </translation>
     </message>
     <message>
         <source>This message has been successfully decrypted, and is unsigned.</source>
@@ -9694,15 +9738,15 @@ Do you want to save message ?</source>
     <name>MessengerWindow</name>
     <message>
         <source>RetroShare Messenger</source>
-        <translation type="unfinished"/>
+        <translation>Мессенджер RetroShare</translation>
     </message>
     <message>
         <source>Add a Friend</source>
-        <translation type="unfinished"/>
+        <translation>Добавить друга</translation>
     </message>
     <message>
         <source>Share files for your friends</source>
-        <translation type="unfinished"/>
+        <translation>Откройте друзьям доступ к вашим файлам</translation>
     </message>
 </context>
 <context>
@@ -9720,7 +9764,7 @@ Do you want to save message ?</source>
     <name>MsgItem</name>
     <message>
         <source>Reply to Message</source>
-        <translation type="unfinished"/>
+        <translation>Ответить на сообщение </translation>
     </message>
     <message>
         <source>Reply Message</source>
@@ -9728,7 +9772,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Delete Message</source>
-        <translation type="unfinished"/>
+        <translation>Удалить сообщение</translation>
     </message>
     <message>
         <source>Play Media</source>
@@ -9744,19 +9788,19 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Message From</source>
-        <translation type="unfinished"/>
+        <translation>Сообщение от</translation>
     </message>
     <message>
         <source>Sent Msg</source>
-        <translation type="unfinished"/>
+        <translation>Отправленное сообщение</translation>
     </message>
     <message>
         <source>Draft Msg</source>
-        <translation type="unfinished"/>
+        <translation>Черновик сообщения</translation>
     </message>
     <message>
         <source>Pending Msg</source>
-        <translation type="unfinished"/>
+        <translation>Ожидающее сообщение</translation>
     </message>
     <message>
         <source>Hide</source>
@@ -9771,27 +9815,27 @@ Do you want to save message ?</source>
     <name>NATStatus</name>
     <message>
         <source>&lt;strong&gt;NAT:&lt;/strong&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;strong&gt;NAT:&lt;/strong&gt;</translation>
     </message>
     <message>
         <source>Network Status Unknown</source>
-        <translation type="unfinished"/>
+        <translation>Состояние сети не известно</translation>
     </message>
     <message>
         <source>Offline</source>
-        <translation type="unfinished"/>
+        <translation>Нет сети</translation>
     </message>
     <message>
         <source>Nasty Firewall</source>
-        <translation type="unfinished"/>
+        <translation>Непрозрачный межсетевой экран</translation>
     </message>
     <message>
         <source>DHT Disabled and Firewalled</source>
-        <translation type="unfinished"/>
+        <translation>DHT отключена и блокируется сетевым экраном</translation>
     </message>
     <message>
         <source>Network Restarting</source>
-        <translation type="unfinished"/>
+        <translation>Перезапуск сети</translation>
     </message>
     <message>
         <source>Behind Firewall</source>
@@ -9811,7 +9855,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>OK | RetroShare Server</source>
-        <translation type="unfinished"/>
+        <translation>OK | Сервер RetroShare</translation>
     </message>
     <message>
         <source>Internet connection</source>
@@ -9842,7 +9886,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Did I authenticated peer</source>
-        <translation type="unfinished"/>
+        <translation>Подтвердил ли я подлинность пира</translation>
     </message>
     <message>
         <source>Did I sign his PGP key</source>
@@ -9850,7 +9894,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Did peer authenticated me</source>
-        <translation type="unfinished"/>
+        <translation>Подтвердил ли пир мою подлинность</translation>
     </message>
     <message>
         <source>Cert Id</source>
@@ -9866,27 +9910,27 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Set Tabs Right</source>
-        <translation type="unfinished"/>
+        <translation>Расположить вкладки справа</translation>
     </message>
     <message>
         <source>Set Tabs North</source>
-        <translation type="unfinished"/>
+        <translation>Расположить вкладки сверху</translation>
     </message>
     <message>
         <source>Set Tabs South</source>
-        <translation type="unfinished"/>
+        <translation>Расположить вкладки снизу</translation>
     </message>
     <message>
         <source>Set Tabs Left</source>
-        <translation type="unfinished"/>
+        <translation>Расположить вкладки слева</translation>
     </message>
     <message>
         <source>Set Tabs Rounded</source>
-        <translation type="unfinished"/>
+        <translation>Расположить вкладки вокруг</translation>
     </message>
     <message>
         <source>Set Tabs Triangular</source>
-        <translation type="unfinished"/>
+        <translation>Расположить вкладки в форме треугольника</translation>
     </message>
     <message>
         <source>Add Friend</source>
@@ -9930,7 +9974,7 @@ Do you want to save message ?</source>
     </message>
     <message>
         <source>Export my certificate...</source>
-        <translation type="unfinished"/>
+        <translation>Экспортировать мой сертификат</translation>
     </message>
     <message>
         <source>Peer details...</source>
@@ -9995,7 +10039,7 @@ Reported error: </source>
     </message>
     <message>
         <source>Marginally trusted peer</source>
-        <translation type="unfinished"/>
+        <translation>Минимально доверенный пир</translation>
     </message>
     <message>
         <source>Fully trusted peer</source>
@@ -10019,7 +10063,7 @@ Reported error: </source>
     </message>
     <message>
         <source>Today</source>
-        <translation type="unfinished"/>
+        <translation>Сегодня</translation>
     </message>
     <message>
         <source>Never</source>
@@ -10032,7 +10076,8 @@ Reported error: </source>
     <message>
         <source> has authenticated you. 
 Right-click and select &apos;make friend&apos; to be able to connect.</source>
-        <translation type="unfinished"/>
+        <translation>подтвердил вашу подлинность.
+Щёлкните правой кнопкой мыши и выберите &quot;Сделать другом&quot; чтобы иметь возможность подключиться.</translation>
     </message>
     <message>
         <source>yourself</source>
@@ -10044,11 +10089,11 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Only show people you trusted</source>
-        <translation type="unfinished"/>
+        <translation>Показывать только друзей</translation>
     </message>
     <message>
         <source>Send Message</source>
-        <translation type="unfinished"/>
+        <translation>Послать сообщение</translation>
     </message>
     <message>
         <source> If I accept connection from peer</source>
@@ -10090,7 +10135,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Edge length:</source>
-        <translation type="unfinished"/>
+        <translation>Длина края</translation>
     </message>
     <message>
         <source>Freeze</source>
@@ -10101,7 +10146,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     <name>NewTag</name>
     <message>
         <source>New Tag</source>
-        <translation type="unfinished"/>
+        <translation>Новый тег</translation>
     </message>
     <message>
         <source>Name:</source>
@@ -10109,7 +10154,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Choose color</source>
-        <translation type="unfinished"/>
+        <translation>Выбор цвета</translation>
     </message>
     <message>
         <source>OK</source>
@@ -10132,7 +10177,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Remove All</source>
-        <translation>Удалить всех</translation>
+        <translation>Очистить ленту</translation>
     </message>
     <message>
         <source>This is a test.</source>
@@ -10140,7 +10185,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;News Feed&lt;/h1&gt;                                                             &lt;p&gt;The News Feed displays the last events on your network, sorted by the time you received them.                   This gives you a summary of the activity of your friends.                                                          You can configure which events to show by pressing on &lt;b&gt;Options&lt;/b&gt;. &lt;/p&gt;                                         &lt;p&gt;The various events shown are:                                                                                   &lt;ul&gt;                                                                                                            &lt;li&gt;Connection attempts (useful to make friends with new people and control who&apos;s trying to reach you)&lt;/li&gt;    &lt;li&gt;Channel and Forum posts&lt;/li&gt;                                                                               &lt;li&gt;New Channels and Forums you can subscribe to&lt;/li&gt;                                                          &lt;li&gt;Private messages from your friends&lt;/li&gt;                                                                    &lt;/ul&gt; &lt;/p&gt;                                                                                                       </source>
-        <translation type="unfinished"/>
+        <translation>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Новостная лента&lt;/h1&gt; &lt;p&gt;Лента новостей отображает последние события вашей сети, в порядке получения. Можно настроить какие виды событий отображать в ленте, нажав &lt;b&gt;Параметры&lt;/b&gt;. &lt;/p&gt; &lt;p&gt;События могут быть например: &lt;ul&gt; &lt;li&gt;Попытки соединений (полезно для заведения новых друзей и отслеживания кто пытается с вами связаться)&lt;/li&gt; &lt;li&gt;Сообщения в форумах и каналах&lt;/li&gt; &lt;li&gt;Новые форумы и каналы&lt;/li&gt; &lt;li&gt;Личные сообщения от ваших друзей&lt;/li&gt; &lt;/ul&gt; &lt;/p&gt;</translation>
     </message>
 </context>
 <context>
@@ -10179,7 +10224,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Add feeds at end</source>
-        <translation type="unfinished"/>
+        <translation>Добавлять сообщения в конец</translation>
     </message>
     <message>
         <source>Test</source>
@@ -10187,7 +10232,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Systray Icon</source>
-        <translation type="unfinished"/>
+        <translation>Иконка в системном трее</translation>
     </message>
     <message>
         <source>Message</source>
@@ -10199,11 +10244,11 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Toasters</source>
-        <translation type="unfinished"/>
+        <translation>Всплывающие окна</translation>
     </message>
     <message>
         <source>Friend Connect</source>
-        <translation type="unfinished"/>
+        <translation>Соединение с другом</translation>
     </message>
     <message>
         <source>New Message</source>
@@ -10227,15 +10272,15 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Position</source>
-        <translation type="unfinished"/>
+        <translation>Местоположение</translation>
     </message>
     <message>
         <source>X Margin</source>
-        <translation type="unfinished"/>
+        <translation>Отступ по горизонтали</translation>
     </message>
     <message>
         <source>Y Margin</source>
-        <translation type="unfinished"/>
+        <translation>Отступ по вертикали</translation>
     </message>
     <message>
         <source>Systray message</source>
@@ -10251,19 +10296,19 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Combined</source>
-        <translation type="unfinished"/>
+        <translation>объединить</translation>
     </message>
     <message>
         <source>Blink</source>
-        <translation type="unfinished"/>
+        <translation>мерцать</translation>
     </message>
     <message>
         <source>Top Left</source>
-        <translation type="unfinished"/>
+        <translation>Верхний левый угол</translation>
     </message>
     <message>
         <source>Top Right</source>
-        <translation type="unfinished"/>
+        <translation>Верхний правый угол</translation>
     </message>
     <message>
         <source>Bottom Left</source>
@@ -10275,11 +10320,11 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Notify</source>
-        <translation>Уведомить</translation>
+        <translation>Уведомления</translation>
     </message>
     <message>
         <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Notify&lt;/h1&gt; 		  &lt;p&gt;Retroshare will notify you about what happens in your network.         		  Depending on your usage, you may want to enable or disable some of the    		  notifications. This page is designed for that!&lt;/p&gt;                        		  </source>
-        <translation type="unfinished"/>
+        <translation>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Notify&lt;/h1&gt; ⇥⇥ &lt;p&gt;Retroshare будет уведомлять вас о том, что происходит в сети. ⇥⇥ В зависимости от ваших требований вы можете активировать или деактивировать ⇥⇥ некоторые уведомления. Данная страница предназначена для этого!&lt;/p&gt; ⇥⇥ </translation>
     </message>
 </context>
 <context>
@@ -10302,7 +10347,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>For the chat lobbies to work properly, the time of your computer needs to be correct. Please check that this is the case (A possible time shift of several minutes was detected with your friends). </source>
-        <translation type="unfinished"/>
+        <translation>Для надлежащей работы чата требуется, чтобы системное время компьютера было точным. Пожалуйста, проверьте его. (Смещение системного времени в несколько минут может нарушить общение с вашими друзьями.)</translation>
     </message>
     <message>
         <source>Please check your system clock.</source>
@@ -10318,7 +10363,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Saving file index...</source>
-        <translation type="unfinished"/>
+        <translation>Сохранение списка файлов...</translation>
     </message>
     <message>
         <source>Test</source>
@@ -10348,19 +10393,19 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     <name>OpModeStatus</name>
     <message>
         <source>Normal Mode</source>
-        <translation type="unfinished"/>
+        <translation>Обычный</translation>
     </message>
     <message>
         <source>No Anon D/L</source>
-        <translation type="unfinished"/>
+        <translation>без анонимов</translation>
     </message>
     <message>
         <source>Gaming Mode</source>
-        <translation type="unfinished"/>
+        <translation>Игровой</translation>
     </message>
     <message>
         <source>Low Traffic</source>
-        <translation type="unfinished"/>
+        <translation>Экономичный</translation>
     </message>
     <message>
         <source>Use this DropList to quickly change Retroshare's behaviour
@@ -10417,7 +10462,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Trust: </source>
-        <translation type="unfinished"/>
+        <translation>Доверие:</translation>
     </message>
     <message>
         <source>Location:</source>
@@ -10449,7 +10494,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Connect Attempt</source>
-        <translation type="unfinished"/>
+        <translation>Попытка соединения</translation>
     </message>
     <message>
         <source>Friend of Friend</source>
@@ -10457,7 +10502,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     </message>
     <message>
         <source>Peer</source>
-        <translation type="unfinished"/>
+        <translation>Участник</translation>
     </message>
     <message>
         <source>Unknown Peer</source>
@@ -10498,7 +10543,7 @@ Right-click and select &apos;make friend&apos; to be able to connect.</source>
     <name>PhotoDialog</name>
     <message>
         <source>PhotoShare</source>
-        <translation type="unfinished"/>
+        <translation>PhotoShare</translation>
     </message>
     <message>
         <source>Photo</source>
@@ -10620,7 +10665,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>PhotoShare</source>
-        <translation type="unfinished"/>
+        <translation>PhotoShare</translation>
     </message>
     <message>
         <source>Please select an album before
@@ -10632,15 +10677,15 @@ requesting to edit it!</source>
     <name>PhotoSlideShow</name>
     <message>
         <source>Album Name</source>
-        <translation type="unfinished"/>
+        <translation>Название альбома</translation>
     </message>
     <message>
         <source>Image</source>
-        <translation type="unfinished"/>
+        <translation>Изображение</translation>
     </message>
     <message>
         <source>Show/Hide Details</source>
-        <translation type="unfinished"/>
+        <translation>Показать / Скрыть детали</translation>
     </message>
     <message>
         <source>&lt;&lt;</source>
@@ -10714,7 +10759,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Launch configuration panel, if provided by the plugin</source>
-        <translation type="unfinished"/>
+        <translation>Запустить панель настройки, если предоставлено плагином</translation>
     </message>
     <message>
         <source>Configure</source>
@@ -10730,7 +10775,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>File hash:</source>
-        <translation type="unfinished"/>
+        <translation>Хэш файла:</translation>
     </message>
     <message>
         <source>Status: </source>
@@ -10753,22 +10798,22 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Plugins (*.so *.dll)</source>
-        <translation type="unfinished"/>
+        <translation>Плагины (*.so; *.dll)</translation>
     </message>
 </context>
 <context>
     <name>PluginsPage</name>
     <message>
         <source>Authorize all plugins</source>
-        <translation type="unfinished"/>
+        <translation>Разрешить все плагины</translation>
     </message>
     <message>
         <source>Loaded plugins</source>
-        <translation type="unfinished"/>
+        <translation>Загруженные плагины</translation>
     </message>
     <message>
         <source>Plugin look-up directories</source>
-        <translation type="unfinished"/>
+        <translation>Папки поиска плагинов</translation>
     </message>
     <message>
         <source>Hash rejected. Enable it manually and restart, if you need.</source>
@@ -10792,7 +10837,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>No plugin object</source>
-        <translation type="unfinished"/>
+        <translation>Плагин отсутствует</translation>
     </message>
     <message>
         <source>Plugins is loaded.</source>
@@ -10800,7 +10845,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Unknown status.</source>
-        <translation type="unfinished"/>
+        <translation>Неизвестное состояние</translation>
     </message>
     <message>
         <source>Title unavailable</source>
@@ -10808,7 +10853,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Description unavailable</source>
-        <translation type="unfinished"/>
+        <translation>Описание недоступно</translation>
     </message>
     <message>
         <source>Unknown version</source>
@@ -10819,7 +10864,10 @@ p, li { white-space: pre-wrap; }
 be checked for the hash. However, in normal
 times, checking the hash protects you from
 malicious behavior of crafted plugins.</source>
-        <translation type="unfinished"/>
+        <translation>Плагины, находящиеся в стадии разработки, требуют проверки.
+Они не могут быть проверены по хэш-сумме, однако в обычной
+ситуации проверка хэш-суммы защищает вас от злонамеренных
+действий, осуществляемых подменёнными плагинами.</translation>
     </message>
     <message>
         <source>Plugins</source>
@@ -10841,7 +10889,7 @@ malicious behavior of crafted plugins.</source>
     <name>PopupChatDialog</name>
     <message>
         <source>Clear offline messages</source>
-        <translation type="unfinished"/>
+        <translation>Очистить оффлайн-сообщения</translation>
     </message>
     <message>
         <source>Hide Avatar</source>
@@ -10864,11 +10912,11 @@ malicious behavior of crafted plugins.</source>
     </message>
     <message>
         <source>Dock tab</source>
-        <translation type="unfinished"/>
+        <translation>Закрепить вкладку</translation>
     </message>
     <message>
         <source>Undock tab</source>
-        <translation type="unfinished"/>
+        <translation>Открепить вкладку</translation>
     </message>
     <message>
         <source>Set Chat Window Color</source>
@@ -10876,7 +10924,7 @@ malicious behavior of crafted plugins.</source>
     </message>
     <message>
         <source>Set window on top</source>
-        <translation type="unfinished"/>
+        <translation>Разместить окно сверху</translation>
     </message>
 </context>
 <context>
@@ -10891,7 +10939,7 @@ malicious behavior of crafted plugins.</source>
     </message>
     <message>
         <source>Closing this window will end the conversation, notify the peer and remove the encrypted tunnel.</source>
-        <translation type="unfinished"/>
+        <translation>Закрытие этого окна приведёт к завершению разговора, уведомлению участника и удалению шифрованного туннеля.</translation>
     </message>
     <message>
         <source>Kill the tunnel?</source>
@@ -10942,7 +10990,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Submit</source>
-        <translation type="unfinished"/>
+        <translation>Отправить</translation>
     </message>
     <message>
         <source>Submit a new Post</source>
@@ -10957,7 +11005,7 @@ p, li { white-space: pre-wrap; }
     <name>PostedDialog</name>
     <message>
         <source>Posted Links</source>
-        <translation type="unfinished"/>
+        <translation>Опубликованные ссылки</translation>
     </message>
 </context>
 <context>
@@ -11046,31 +11094,31 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Top</source>
-        <translation type="unfinished"/>
+        <translation>На самый верх</translation>
     </message>
     <message>
         <source>Today</source>
-        <translation type="unfinished"/>
+        <translation>Сегодня</translation>
     </message>
     <message>
         <source>Yesterday</source>
-        <translation type="unfinished"/>
+        <translation>Вчера</translation>
     </message>
     <message>
         <source>This Week</source>
-        <translation type="unfinished"/>
+        <translation>На этой неделе</translation>
     </message>
     <message>
         <source>This Month</source>
-        <translation type="unfinished"/>
+        <translation>В этом месяце</translation>
     </message>
     <message>
         <source>This Year</source>
-        <translation type="unfinished"/>
+        <translation>В этом году</translation>
     </message>
     <message>
         <source>Showing 1-100</source>
-        <translation type="unfinished"/>
+        <translation>Показаны 1-100</translation>
     </message>
     <message>
         <source>Prev</source>
@@ -11086,15 +11134,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Subscribed Topics</source>
-        <translation type="unfinished"/>
+        <translation>Подписка на темы</translation>
     </message>
     <message>
         <source>Popular Topics</source>
-        <translation type="unfinished"/>
+        <translation>Популярные темы</translation>
     </message>
     <message>
         <source>Other Topics</source>
-        <translation type="unfinished"/>
+        <translation>Другие темы</translation>
     </message>
     <message>
         <source>Subscribe</source>
@@ -11126,14 +11174,14 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Todo</source>
-        <translation type="unfinished"/>
+        <translation>На выполнение</translation>
     </message>
 </context>
 <context>
     <name>PrintPreview</name>
     <message>
         <source>RetroShare Message - Print Preview</source>
-        <translation type="unfinished"/>
+        <translation>Сообщение RetroShare: предпросмотр печати</translation>
     </message>
     <message>
         <source>Print</source>
@@ -11145,7 +11193,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Page Setup...</source>
-        <translation type="unfinished"/>
+        <translation>Настройки страницы...</translation>
     </message>
     <message>
         <source>Zoom In</source>
@@ -11157,18 +11205,18 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>&amp;Close</source>
-        <translation type="unfinished"/>
+        <translation>Закрыть</translation>
     </message>
 </context>
 <context>
     <name>ProfileManager</name>
     <message>
         <source>Profile Manager</source>
-        <translation type="unfinished"/>
+        <translation>Управление профилями</translation>
     </message>
     <message>
         <source>Identities</source>
-        <translation type="unfinished"/>
+        <translation>Личности</translation>
     </message>
     <message>
         <source>Name</source>
@@ -11184,7 +11232,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Export selected identity</source>
-        <translation type="unfinished"/>
+        <translation>Экспортируйте выбранную личность</translation>
     </message>
     <message>
         <source>Export Identity</source>
@@ -11267,7 +11315,7 @@ p, li { white-space: pre-wrap; }
     <name>ProfileWidget</name>
     <message>
         <source>Edit status message</source>
-        <translation type="unfinished"/>
+        <translation>Изменить ваш статус</translation>
     </message>
     <message>
         <source>Copy Certificate</source>
@@ -11275,11 +11323,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Profile Manager</source>
-        <translation type="unfinished"/>
+        <translation>Управление профилями</translation>
     </message>
     <message>
         <source>Public Information</source>
-        <translation type="unfinished"/>
+        <translation>Публичная информация</translation>
     </message>
     <message>
         <source>Name:</source>
@@ -11295,7 +11343,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Number of Friends:</source>
-        <translation type="unfinished"/>
+        <translation>Число друзей</translation>
     </message>
     <message>
         <source>Version:</source>
@@ -11303,11 +11351,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Online since:</source>
-        <translation type="unfinished"/>
+        <translation>Подключен с:</translation>
     </message>
     <message>
         <source>Other Information</source>
-        <translation type="unfinished"/>
+        <translation>Прочее</translation>
     </message>
     <message>
         <source>My Address</source>
@@ -11335,18 +11383,18 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Sorry, create certificate failed</source>
-        <translation type="unfinished"/>
+        <translation>Извините, попытка создания сертификата не удалась</translation>
     </message>
     <message>
         <source>Your Cert is copied to Clipboard, paste and send it to your friend via email or some other way</source>
-        <translation type="unfinished"/>
+        <translation>Ваш сертификат скопирован в буфер обмена. Вставьте его в письмо и отправьте Вашему другу по электронной почте или воспользуйтесь иным способом.</translation>
     </message>
 </context>
 <context>
     <name>PulseAddDialog</name>
     <message>
         <source>Post From:</source>
-        <translation type="unfinished"/>
+        <translation>Сообщение от:</translation>
     </message>
     <message>
         <source>Account 1</source>
@@ -11362,11 +11410,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Add to Pulse</source>
-        <translation type="unfinished"/>
+        <translation>Добавить в Pulse</translation>
     </message>
     <message>
         <source>filter</source>
-        <translation type="unfinished"/>
+        <translation>фильтр</translation>
     </message>
     <message>
         <source>URL Adder</source>
@@ -11374,11 +11422,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Display As</source>
-        <translation type="unfinished"/>
+        <translation>Показать как</translation>
     </message>
     <message>
         <source>URL</source>
-        <translation type="unfinished"/>
+        <translation>URL</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -11412,7 +11460,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Participants: </source>
-        <translation type="unfinished"/>
+        <translation>Участники:</translation>
     </message>
     <message>
         <source>Confirmation</source>
@@ -11434,7 +11482,7 @@ and open the Make Friend Wizard.
     </message>
     <message>
         <source>Add files</source>
-        <translation type="unfinished"/>
+        <translation>Добавить файлы</translation>
     </message>
     <message>
         <source>Add friend</source>
@@ -11450,15 +11498,15 @@ and open the Make Friend Wizard.
     </message>
     <message>
         <source>Do you want to process %1 links ?</source>
-        <translation type="unfinished"/>
+        <translation>Хотите ли вы обработать %1 ссылок?</translation>
     </message>
     <message>
         <source>%1 of %2 RetroShare link processed.</source>
-        <translation type="unfinished"/>
+        <translation>%1 из %2 ссылок RetroShare обработана.</translation>
     </message>
     <message>
         <source>%1 of %2 RetroShare links processed.</source>
-        <translation type="unfinished"/>
+        <translation>%1 из %2 ссылок RetroShare обработаны.</translation>
     </message>
     <message>
         <source>File added</source>
@@ -11470,15 +11518,15 @@ and open the Make Friend Wizard.
     </message>
     <message>
         <source>File exist</source>
-        <translation type="unfinished"/>
+        <translation>Файл уже имеется</translation>
     </message>
     <message>
         <source>Files exist</source>
-        <translation type="unfinished"/>
+        <translation>Файлы уже имеются</translation>
     </message>
     <message>
         <source>Friend added</source>
-        <translation type="unfinished"/>
+        <translation>Друг добавлен</translation>
     </message>
     <message>
         <source>Friends added</source>
@@ -11490,55 +11538,55 @@ and open the Make Friend Wizard.
     </message>
     <message>
         <source>Friends exist</source>
-        <translation type="unfinished"/>
+        <translation>Эти друзья уже существуют</translation>
     </message>
     <message>
         <source>Friend not added</source>
-        <translation type="unfinished"/>
+        <translation>Друг не добавлен</translation>
     </message>
     <message>
         <source>Friends not added</source>
-        <translation type="unfinished"/>
+        <translation>Друзья не добавлены</translation>
     </message>
     <message>
         <source>Friend not found</source>
-        <translation type="unfinished"/>
+        <translation>Друг не найден</translation>
     </message>
     <message>
         <source>Friends not found</source>
-        <translation type="unfinished"/>
+        <translation>Друзья не найдены</translation>
     </message>
     <message>
         <source>Forum not found</source>
-        <translation type="unfinished"/>
+        <translation>Форум не найден</translation>
     </message>
     <message>
         <source>Forums not found</source>
-        <translation type="unfinished"/>
+        <translation>Форумы не найдены</translation>
     </message>
     <message>
         <source>Forum message not found</source>
-        <translation type="unfinished"/>
+        <translation>Сообщение в форуме не найдено</translation>
     </message>
     <message>
         <source>Forum messages not found</source>
-        <translation type="unfinished"/>
+        <translation>Сообщения в форуме не найдены</translation>
     </message>
     <message>
         <source>Channel not found</source>
-        <translation type="unfinished"/>
+        <translation>Канал не найден</translation>
     </message>
     <message>
         <source>Channels not found</source>
-        <translation type="unfinished"/>
+        <translation>Каналы не найдены</translation>
     </message>
     <message>
         <source>Channel message not found</source>
-        <translation type="unfinished"/>
+        <translation>Сообщение в канале не найдено</translation>
     </message>
     <message>
         <source>Channel messages not found</source>
-        <translation type="unfinished"/>
+        <translation>Сообщения в канале не найдены</translation>
     </message>
     <message>
         <source>Recipient not accepted</source>
@@ -11558,11 +11606,11 @@ and open the Make Friend Wizard.
     </message>
     <message>
         <source>Malformed links</source>
-        <translation type="unfinished"/>
+        <translation>Некорректные ссылки</translation>
     </message>
     <message>
         <source>Invalid links</source>
-        <translation type="unfinished"/>
+        <translation>Нерабочие ссылки</translation>
     </message>
     <message>
         <source>Warning: forbidden characters found in filenames. 
@@ -11571,15 +11619,15 @@ Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replace
     </message>
     <message>
         <source>Result</source>
-        <translation type="unfinished"/>
+        <translation>Результат</translation>
     </message>
     <message>
         <source>Unable to make path</source>
-        <translation type="unfinished"/>
+        <translation>Невозможно задать путь</translation>
     </message>
     <message>
         <source>Unable to make path:</source>
-        <translation type="unfinished"/>
+        <translation>Невозможно задать путь:</translation>
     </message>
     <message>
         <source>Failed to process collection file</source>
@@ -11595,16 +11643,16 @@ Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replace
     </message>
     <message>
         <source>Peer details</source>
-        <translation type="unfinished"/>
+        <translation>Сведения об участнике</translation>
     </message>
     <message>
         <source>File Request canceled</source>
-        <translation type="unfinished"/>
+        <translation>Запрос на файл отменён</translation>
     </message>
     <message>
         <source>The following has not been added to your download list, because you already have it:
     </source>
-        <translation type="unfinished"/>
+        <translation>Указанное ниже не добавлено в ваш список закачек, так как эти файлы у вас уже имеются: </translation>
     </message>
     <message>
         <source>You appear to have locations associated to DSA keys:</source>
@@ -11612,7 +11660,7 @@ Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replace
     </message>
     <message>
         <source>DSA keys are not yet supported by this version of RetroShare. All these locations will be unusable. We&apos;re very sorry for that.</source>
-        <translation type="unfinished"/>
+        <translation>DSA ключи не поддерживаются в этой версии RetroShare. Все эти места будет непригодными для использования. Мы очень извиняемся за это.</translation>
     </message>
     <message>
         <source>This version of RetroShare is using OpenPGP-SDK. As a side effect, it&apos;s not using the system shared PGP keyring, but has it&apos;s own keyring shared by all RetroShare instances. &lt;br&gt;&lt;br&gt;You do not appear to have such a keyring, although PGP keys are mentioned by existing RetroShare accounts, probably because you just changed to this new version of the software.</source>
@@ -11636,7 +11684,7 @@ Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replace
     </message>
     <message>
         <source>An unexpected error occured. Please report &apos;RsInit::InitRetroShare unexpected return code %1&apos;.</source>
-        <translation type="unfinished"/>
+        <translation>Произошла непредвиденная ошибка. Пожалуйста, сообщите &apos;RsInit::InitRetroShare unexpected return code %1&apos;.</translation>
     </message>
     <message>
         <source>Multiple instances</source>
@@ -11646,7 +11694,8 @@ Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replace
         <source>Another RetroShare using the same profile is already running on your system. Please close that instance first
  Lock file:
 </source>
-        <translation type="unfinished"/>
+        <translation>Другой экземпляр программы RetroShare, использующей тот же профиль, работает в данный момент. Пожалуйста, закройте работающую программу. Блокирующий файл: 
+</translation>
     </message>
     <message>
         <source>An unexpected error occurred when Retroshare tried to acquire the single instance lock
@@ -11664,7 +11713,7 @@ Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replace
     </message>
     <message>
         <source>Start with a RetroShare link is only supported for Windows.</source>
-        <translation type="unfinished"/>
+        <translation>Запуск ссылкой RetroShare поддерживается только на ОС Windows.</translation>
     </message>
     <message>
         <source>Select who can contact you:</source>
@@ -11775,71 +11824,71 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;    &lt;/span&gt;&lt;img src=&quot;:/images/list_bullet_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;  Choose which files you share.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;    &lt;/span&gt;&lt;img src=&quot;:/images/list_bullet_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;  Get started using RetroShare.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt; &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt; p, li { white-space: pre-wrap; } &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt; &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Добро пожаловать в RetroShare!&lt;/span&gt;&lt;/p&gt; &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt; &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Этот помощник посодействует Вам в настройке RetroShare за несколько простых шагов.&lt;/span&gt;&lt;/p&gt; &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt; &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Если Вы опытный пользователь, у вас имеется возможность настроить RetroShare, воспользовавшись панелью инструментов программы. Для закрытия помощника Вы в любой момент можете нажать на кнопку Выйти.&lt;/span&gt;&lt;/p&gt; &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt; &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Данный помощник посодействует в следующем:&lt;/span&gt;&lt;/p&gt; &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt; &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;img src=&quot;:/images/list_bullet_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Даст RetroShare необходимую информацию о Вашем подключении к Интернету.&lt;/span&gt;&lt;/p&gt; &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt; &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;img src=&quot;:/images/list_bullet_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Поможет открыть доступ к файлам и папкам.&lt;/span&gt;&lt;/p&gt; &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt; &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;img src=&quot;:/images/list_bullet_arrow.png&quot; /&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; Начать использование RetroShare.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Next &gt;</source>
-        <translation type="unfinished"/>
+        <translation>Далее &gt;</translation>
     </message>
     <message>
         <source>Exit</source>
-        <translation type="unfinished"/>
+        <translation>Выйти</translation>
     </message>
     <message>
         <source>For best performance, RetroShare needs to know a little about your connection to the internet.</source>
-        <translation type="unfinished"/>
+        <translation>Для повышения производительности RetroShare необходимо получить информацию о Вашем подключении к Интернету.</translation>
     </message>
     <message>
         <source>Choose your download speed limit: </source>
-        <translation type="unfinished"/>
+        <translation>Укажите предел скорости скачивания:</translation>
     </message>
     <message>
         <source> KB/s</source>
-        <translation type="unfinished"/>
+        <translation>кБ/с</translation>
     </message>
     <message>
         <source>Choose your upload speed limit: </source>
-        <translation type="unfinished"/>
+        <translation>Укажите предел скорости отдачи:</translation>
     </message>
     <message>
         <source>Connection :</source>
-        <translation type="unfinished"/>
+        <translation>Соединение:</translation>
     </message>
     <message>
         <source>Automatic (UPnP)</source>
-        <translation type="unfinished"/>
+        <translation>Автоматически (UPnP)</translation>
     </message>
     <message>
         <source>Firewalled</source>
-        <translation type="unfinished"/>
+        <translation>За межсетевым экраном</translation>
     </message>
     <message>
         <source>Manually forwarded port</source>
-        <translation type="unfinished"/>
+        <translation>Вручную перенаправленный порт</translation>
     </message>
     <message>
         <source>Discovery :</source>
-        <translation type="unfinished"/>
+        <translation>Обнаружение:</translation>
     </message>
     <message>
         <source>Public: DHT &amp; Discovery</source>
-        <translation type="unfinished"/>
+        <translation>Публичный режим: DHT и обнаружение</translation>
     </message>
     <message>
         <source>Private: Discovery Only</source>
-        <translation type="unfinished"/>
+        <translation>Приватный режим: только обнаружение</translation>
     </message>
     <message>
         <source>Inverted: DHT Only</source>
-        <translation type="unfinished"/>
+        <translation>Обращённый режим: только DHT</translation>
     </message>
     <message>
         <source>Dark Net: None</source>
-        <translation type="unfinished"/>
+        <translation>Darknet-режим: отключено всё</translation>
     </message>
     <message>
         <source>&lt; Back</source>
-        <translation type="unfinished"/>
+        <translation>&lt; Назад</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -11850,7 +11899,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-size:8pt;&quot;&gt;You can separately setup share flags for each shared directory:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-size:8pt; font-weight:600;&quot;&gt;Browsable by friends&lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-size:8pt;&quot;&gt;: files are browsable from your direct friends.&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Anonymously shared&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: files can be downloaded by anybody through anonymous tunnels.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt; &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt; p, li { white-space: pre-wrap; } &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt; &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Здесь представлены папки, к которым открыт доступ. Вы можете добавлять папки в список или удалять их оттуда, воспользовавшись кнопкой слева. При добавлении папки ко всему её содержимому будет открыт общий доступ.&lt;/span&gt;&lt;/p&gt; &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;Вы можете раздельно устанавливать флаги доступа для каждой папки:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt; &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Доступно друзьям&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: содержимое папки и его структура доступны только прямым друзьям.&lt;/span&gt;&lt;/p&gt; &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;Анонимный доступ&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;: содержимое папки может быть скачано через систему анонимных туннелей.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Directory</source>
@@ -11858,11 +11907,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Network Wide</source>
-        <translation type="unfinished"/>
+        <translation>Обширная сеть</translation>
     </message>
     <message>
         <source>Browseable</source>
-        <translation type="unfinished"/>
+        <translation>Просматривать содержимое</translation>
     </message>
     <message>
         <source>Add</source>
@@ -11884,7 +11933,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;Enjoy using RetroShare!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt; &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt; p, li { white-space: pre-wrap; } &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;DejaVu Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt; &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt; &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;&lt;/p&gt; &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt;&quot;&gt;Наслаждайтесь работой с RetroShare!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -11895,19 +11944,19 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;These settings configure how and when RetroShare starts .&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt; &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt; p, li { white-space: pre-wrap; } &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt; &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Ещё один шаг! Вы почти завершили конфигурирование RetroShare на Вашем компьютере.&lt;/span&gt;&lt;/p&gt; &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt; &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Эти настройки укажут RetroShare как и когда она будет загружаться.&lt;/span&gt;&lt;/p&gt; &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Do not show a message when Closing RetroShare</source>
-        <translation type="unfinished"/>
+        <translation>Не показывать сообщения при закрытии RetroShare</translation>
     </message>
     <message>
         <source>Start Minimized</source>
-        <translation type="unfinished"/>
+        <translation>Загружать приложение свёрнутым</translation>
     </message>
     <message>
         <source>Start RetroShare when my System Starts.</source>
-        <translation type="unfinished"/>
+        <translation>Загружать RetroShare при запуске операционной системы.</translation>
     </message>
     <message>
         <source>Start minimized on system start</source>
@@ -11915,15 +11964,15 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Finish</source>
-        <translation type="unfinished"/>
+        <translation>Готово</translation>
     </message>
     <message>
         <source>Select A Folder To Share</source>
-        <translation type="unfinished"/>
+        <translation>Выбрать папку для доступа</translation>
     </message>
     <message>
         <source>Shared Directory Added!</source>
-        <translation type="unfinished"/>
+        <translation>Разделяемая папка добавлена!</translation>
     </message>
     <message>
         <source>Do you really want to stop sharing this directory ? </source>
@@ -11931,7 +11980,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Warning!</source>
-        <translation type="unfinished"/>
+        <translation>Внимание!</translation>
     </message>
 </context>
 <context>
@@ -11953,49 +12002,49 @@ p, li { white-space: pre-wrap; }
     <name>RSettingsWin</name>
     <message>
         <source>Error Saving Configuration on page </source>
-        <translation type="unfinished"/>
+        <translation>Ошибка сохранения настроек на странице</translation>
     </message>
 </context>
 <context>
     <name>RatesStatus</name>
     <message>
         <source>&lt;strong&gt;Down:&lt;/strong&gt; 0.00 (kB/s) | &lt;strong&gt;Up:&lt;/strong&gt; 0.00 (kB/s) </source>
-        <translation type="unfinished"/>
+        <translation>&lt;strong&gt;Скачивание:&lt;/strong&gt; 0.00 (кБ/с) | &lt;strong&gt;Отдача:&lt;/strong&gt; 0.00 (кБ/с)  </translation>
     </message>
     <message>
         <source>Down</source>
-        <translation type="unfinished"/>
+        <translation>Скачивание</translation>
     </message>
     <message>
         <source>Up</source>
-        <translation type="unfinished"/>
+        <translation>Отдача</translation>
     </message>
 </context>
 <context>
     <name>RelayPage</name>
     <message>
         <source>Enable Relay Connections</source>
-        <translation type="unfinished"/>
+        <translation>Разрешить трансляцию соединений</translation>
     </message>
     <message>
         <source>Use Relay Servers</source>
-        <translation type="unfinished"/>
+        <translation>Использовать серверы-трансляторы</translation>
     </message>
     <message>
         <source>Relay options</source>
-        <translation type="unfinished"/>
+        <translation>Настройки трансляции</translation>
     </message>
     <message>
         <source>Number</source>
-        <translation type="unfinished"/>
+        <translation>Количество</translation>
     </message>
     <message>
         <source>Bandwidth per link</source>
-        <translation type="unfinished"/>
+        <translation>Полоса пропускания на одно соединение</translation>
     </message>
     <message>
         <source>Total Bandwidth</source>
-        <translation type="unfinished"/>
+        <translation>Общая полоса пропускания</translation>
     </message>
     <message>
         <source>Friends</source>
@@ -12003,43 +12052,49 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>kB/s</source>
-        <translation type="unfinished"/>
+        <translation>кБ/с</translation>
     </message>
     <message>
         <source>Friends of Friends</source>
-        <translation type="unfinished"/>
+        <translation>Друзья друзей</translation>
     </message>
     <message>
         <source>General</source>
-        <translation>Главное</translation>
+        <translation>Прочие</translation>
     </message>
     <message>
         <source>Total:</source>
-        <translation type="unfinished"/>
+        <translation>Всего:</translation>
     </message>
     <message>
         <source>Relay Server Setup</source>
-        <translation type="unfinished"/>
+        <translation>Настройки сервера-транслятора</translation>
     </message>
     <message>
         <source>Add Server</source>
-        <translation type="unfinished"/>
+        <translation>Добавить сервер</translation>
     </message>
     <message>
         <source>Server DHT Key</source>
-        <translation type="unfinished"/>
+        <translation>DHT-ключ сервера</translation>
     </message>
     <message>
         <source>Remove Server</source>
-        <translation type="unfinished"/>
+        <translation>Удалить сервер</translation>
     </message>
     <message>
         <source>Relay</source>
-        <translation type="unfinished"/>
+        <translation>Транслятор</translation>
     </message>
     <message>
         <source>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Relays&lt;/h1&gt;                                 &lt;p&gt;By activating relays, you allow your Retroshare node to act as a bridge between Retroshare  				  users who cannot connect directly, e.g. because they&apos;re firewalled.&lt;/p&gt;                        				  &lt;p&gt;You may choose to act as a relay by checking &lt;i&gt;enable relay connections&lt;/i&gt;, or simply     				  benefit from other peers acting as relay, by checking &lt;i&gt;use relay servers&lt;/i&gt;. For the former,				  you may specify the bandwidth allocated when acting as a relay for friends of you, for friends 				  of your friends, or anyone in the Retroshare network.&lt;/p&gt;                                      				  &lt;p&gt;In any case, a Retroshare node acting as a relay cannot see the relayed traffic, since it   				  is encrypted and authenticated by the two relayed nodes.&lt;/p&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;h1&gt;&lt;img width=&quot;24&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Relays&lt;/h1&gt; &lt;p&gt;
+Релеи помогают соединяться участниками сети, которые не могут соединиться напрямую, например если они находятся за фаерволом.
+Вы можете включить эту поддержку, чтобы помогать другим пользователям сети.
+
+Можно настроить допустимую скорость для релеев друзей, их друзей и посторонних.
+
+Узел RetroShare в режиме релея не может видеть проходящий через него трафик, так как он зашифрован</translation>
     </message>
 </context>
 <context>
@@ -12057,34 +12112,34 @@ p, li { white-space: pre-wrap; }
     <name>RetroshareDirModel</name>
     <message>
         <source>NEW</source>
-        <translation type="unfinished"/>
+        <translation>НОВЫЙ</translation>
     </message>
 </context>
 <context>
     <name>RsCollectionDialog</name>
     <message>
         <source>Collection</source>
-        <translation type="unfinished"/>
+        <translation>Коллекция</translation>
     </message>
     <message>
         <source>File name :</source>
-        <translation type="unfinished"/>
+        <translation>Имя файла:</translation>
     </message>
     <message>
         <source>Total size :</source>
-        <translation type="unfinished"/>
+        <translation>Суммарный объём:</translation>
     </message>
     <message>
         <source>Selected files:</source>
-        <translation type="unfinished"/>
+        <translation>Выбранные файлы:</translation>
     </message>
     <message>
         <source>Select all</source>
-        <translation type="unfinished"/>
+        <translation>Выбрать все</translation>
     </message>
     <message>
         <source>Deselect all</source>
-        <translation type="unfinished"/>
+        <translation>Отменить выбор всех</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -12092,7 +12147,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Download!</source>
-        <translation type="unfinished"/>
+        <translation>Скачать!</translation>
     </message>
     <message>
         <source>File</source>
@@ -12104,7 +12159,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Hash</source>
-        <translation type="unfinished"/>
+        <translation>Хэш</translation>
     </message>
     <message>
         <source>Bad filenames have been cleaned</source>
@@ -12121,23 +12176,23 @@ Characters &lt;b&gt;&quot;,|,/,\,&amp;lt;,&amp;gt;,*,?&lt;/b&gt; will be replace
     <name>RsCollectionFile</name>
     <message>
         <source>Cannot open file %1</source>
-        <translation type="unfinished"/>
+        <translation>Невозможно открыть файл %1</translation>
     </message>
     <message>
         <source>Error parsing xml file</source>
-        <translation type="unfinished"/>
+        <translation>Ошибка синтаксического анализа xml-файла</translation>
     </message>
     <message>
         <source>Open collection file</source>
-        <translation type="unfinished"/>
+        <translation>Открыть файл коллекции</translation>
     </message>
     <message>
         <source>Collection files</source>
-        <translation type="unfinished"/>
+        <translation>Файлы коллекций</translation>
     </message>
     <message>
         <source>Create collection file</source>
-        <translation type="unfinished"/>
+        <translation>Создать файл коллекции</translation>
     </message>
     <message>
         <source>This file contains the string &quot;%1&quot; and is therefore an invalid collection file. 
@@ -12158,51 +12213,51 @@ Reducing image to %1x%2 pixels?</source>
     <name>Rshare</name>
     <message>
         <source>Resets ALL stored RetroShare settings.</source>
-        <translation type="unfinished"/>
+        <translation>Сбрасывает ВСЕ сохранённые настройки RetroShare.</translation>
     </message>
     <message>
         <source>Sets the directory RetroShare uses for data files.</source>
-        <translation type="unfinished"/>
+        <translation>Задаёт папку, используемую RetroShare для хранения файлов данных.</translation>
     </message>
     <message>
         <source>Sets the name and location of RetroShare&apos;s logfile.</source>
-        <translation type="unfinished"/>
+        <translation>Установка имени и пути к лог-файлу RetroShare.</translation>
     </message>
     <message>
         <source>Sets the verbosity of RetroShare&apos;s logging.</source>
-        <translation type="unfinished"/>
+        <translation>Настройки подробности журналирования RetroShare.</translation>
     </message>
     <message>
         <source>Sets RetroShare&apos;s interface style.</source>
-        <translation type="unfinished"/>
+        <translation>Настройки стиля интерфейса RetroShare.</translation>
     </message>
     <message>
         <source>Sets RetroShare&apos;s interface stylesheets.</source>
-        <translation type="unfinished"/>
+        <translation>Настройки таблицы стилей RetroShare.</translation>
     </message>
     <message>
         <source>Sets RetroShare&apos;s language.</source>
-        <translation type="unfinished"/>
+        <translation>Настройки локализации RetroShare.</translation>
     </message>
     <message>
         <source>RetroShare Usage Information</source>
-        <translation type="unfinished"/>
+        <translation>Статистика использования RetroShare.</translation>
     </message>
     <message>
         <source>Invalid language code specified: </source>
-        <translation type="unfinished"/>
+        <translation>Указан недействительный код языка:</translation>
     </message>
     <message>
         <source>Invalid GUI style specified: </source>
-        <translation type="unfinished"/>
+        <translation>Указан недействительный стиль GUI:</translation>
     </message>
     <message>
         <source>Invalid log level specified: </source>
-        <translation type="unfinished"/>
+        <translation>Указан недействительный уровень журналирования:</translation>
     </message>
     <message>
         <source>Unable to open log file &apos;%1&apos;: %2</source>
-        <translation type="unfinished"/>
+        <translation>Не получается открыть лог-файл &apos;%1&apos;: %2</translation>
     </message>
     <message>
         <source>built-in</source>
@@ -12232,7 +12287,7 @@ Reducing image to %1x%2 pixels?</source>
     <name>SearchDialog</name>
     <message>
         <source>Enter a keyword here (at least 3 char long)</source>
-        <translation type="unfinished"/>
+        <translation>Введите ключевое слово (по меньшей мере – 3 символа)</translation>
     </message>
     <message>
         <source>Start Search</source>
@@ -12248,11 +12303,11 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Advanced</source>
-        <translation type="unfinished"/>
+        <translation>Расширенный поиск</translation>
     </message>
     <message>
         <source>Search inside &quot;browsable&quot; files of your friends</source>
-        <translation>Искать файлы доступные к обзору у ваших друзей</translation>
+        <translation>Искать среди файлов, доступных обзору у ваших друзей</translation>
     </message>
     <message>
         <source>Browsable files</source>
@@ -12285,11 +12340,11 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>KeyWords</source>
-        <translation type="unfinished"/>
+        <translation>Ключевые слова</translation>
     </message>
     <message>
         <source>Results</source>
-        <translation type="unfinished"/>
+        <translation>Результаты </translation>
     </message>
     <message>
         <source>Search Id</source>
@@ -12297,7 +12352,7 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Filename</source>
-        <translation type="unfinished"/>
+        <translation>Имя файла</translation>
     </message>
     <message>
         <source>Size</source>
@@ -12305,7 +12360,7 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Sources</source>
-        <translation type="unfinished"/>
+        <translation>Источники</translation>
     </message>
     <message>
         <source>Type</source>
@@ -12317,7 +12372,7 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Hash</source>
-        <translation type="unfinished"/>
+        <translation>Хэш</translation>
     </message>
     <message>
         <source>Filter:</source>
@@ -12333,7 +12388,7 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Any</source>
-        <translation type="unfinished"/>
+        <translation>Произвольный</translation>
     </message>
     <message>
         <source>Archive</source>
@@ -12345,7 +12400,7 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>CD-Image</source>
-        <translation type="unfinished"/>
+        <translation>Образ диска</translation>
     </message>
     <message>
         <source>Document</source>
@@ -12369,11 +12424,11 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Download Selected</source>
-        <translation type="unfinished"/>
+        <translation>Скачать выделенное</translation>
     </message>
     <message>
         <source>Download selected</source>
-        <translation type="unfinished"/>
+        <translation>Скачать выделенное</translation>
     </message>
     <message>
         <source>File Name</source>
@@ -12389,7 +12444,7 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Send RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>Послать RetroShare-ссылку</translation>
     </message>
     <message>
         <source>Download Notice</source>
@@ -12397,15 +12452,15 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Skipping Local Files</source>
-        <translation type="unfinished"/>
+        <translation>Исключить локальный поиск</translation>
     </message>
     <message>
         <source>Sorry</source>
-        <translation type="unfinished"/>
+        <translation>Извините</translation>
     </message>
     <message>
         <source>This function is not yet implemented.</source>
-        <translation type="unfinished"/>
+        <translation>Эта функция ещё не реализована.</translation>
     </message>
     <message>
         <source>Search again</source>
@@ -12413,23 +12468,23 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Remove</source>
-        <translation>Удалить</translation>
+        <translation>Удалить эту позицию</translation>
     </message>
     <message>
         <source>Remove All</source>
-        <translation>Удалить всех</translation>
+        <translation>Удалить всё</translation>
     </message>
     <message>
         <source>Folder</source>
-        <translation type="unfinished"/>
+        <translation>Папка</translation>
     </message>
     <message>
         <source>New RetroShare Link(s)</source>
-        <translation type="unfinished"/>
+        <translation>Новая RetroShare-ссылка (-ки)</translation>
     </message>
     <message>
         <source>Open Folder</source>
-        <translation type="unfinished"/>
+        <translation>Открыть папку</translation>
     </message>
 </context>
 <context>
@@ -12440,11 +12495,11 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Accept Friend Request</source>
-        <translation type="unfinished"/>
+        <translation>Принять запрос на дружбу</translation>
     </message>
     <message>
         <source>Peer details</source>
-        <translation type="unfinished"/>
+        <translation>Сведения об участнике</translation>
     </message>
     <message>
         <source>Deny friend</source>
@@ -12480,7 +12535,7 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Trust: </source>
-        <translation type="unfinished"/>
+        <translation>Доверие:</translation>
     </message>
     <message>
         <source>Location:</source>
@@ -12504,7 +12559,7 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Connect Attempt</source>
-        <translation type="unfinished"/>
+        <translation>Попытка соединения</translation>
     </message>
     <message>
         <source>Connection refused by remote peer</source>
@@ -12516,11 +12571,11 @@ Reducing image to %1x%2 pixels?</source>
     </message>
     <message>
         <source>Unknown (Outgoing) Connect Attempt</source>
-        <translation type="unfinished"/>
+        <translation>Неизвестная попытка соединения (исходящая)</translation>
     </message>
     <message>
         <source>Unknown Security Issue</source>
-        <translation type="unfinished"/>
+        <translation>Неизвестная проблема безопасности</translation>
     </message>
     <message>
         <source>Unknown Peer</source>
@@ -12555,19 +12610,19 @@ Reducing image to %1x%2 pixels?</source>
     <name>ServerPage</name>
     <message>
         <source>Network Configuration</source>
-        <translation type="unfinished"/>
+        <translation>Конфигурация сети</translation>
     </message>
     <message>
         <source>Automatic (UPnP)</source>
-        <translation type="unfinished"/>
+        <translation>Автоматически (UPnP)</translation>
     </message>
     <message>
         <source>Firewalled</source>
-        <translation type="unfinished"/>
+        <translation>За межсетевым экраном</translation>
     </message>
     <message>
         <source>Manually Forwarded Port</source>
-        <translation type="unfinished"/>
+        <translation>Ручное назначение порта</translation>
     </message>
     <message>
         <source>The DHT allows you to answer connection 
@@ -12579,23 +12634,23 @@ identities of your trusted contacts to connected
 peers, to help them choose new friends. 
 The friendship is never automatic however, and both 
 peers still need to trust each other to allow connection. </source>
-        <translation type="unfinished"/>
+        <translation>DHT позволяет находить друзей через сеть BitTorrent DHT и значительно упрощает возможность соединения. Сервис обнаружения посылает информацию о местоположении и идентификаторы ваших друзей всем подключенным пирам, чтобы помочь в поиске друзей. Найденые контакты не становятся автоматически друзьями, обе стороны должны добавить друг друга вручную чтобы иметь возможность соединиться.</translation>
     </message>
     <message>
         <source>Public: DHT &amp; Discovery</source>
-        <translation type="unfinished"/>
+        <translation>Публичный режим: DHT и обнаружение</translation>
     </message>
     <message>
         <source>Private: Discovery Only</source>
-        <translation type="unfinished"/>
+        <translation>Приватный режим: только обнаружение</translation>
     </message>
     <message>
         <source>Inverted: DHT Only</source>
-        <translation type="unfinished"/>
+        <translation>Обращённый режим: только DHT</translation>
     </message>
     <message>
         <source>Dark Net: None</source>
-        <translation type="unfinished"/>
+        <translation>Darknet-режим: отключено всё</translation>
     </message>
     <message>
         <source>Local Address</source>
@@ -12611,15 +12666,15 @@ peers still need to trust each other to allow connection. </source>
     </message>
     <message>
         <source>Port:</source>
-        <translation type="unfinished"/>
+        <translation>Порт: </translation>
     </message>
     <message>
         <source>Acceptable ports range from 1024 to 65535. Ports below 1024 are reserved by your system.</source>
-        <translation type="unfinished"/>
+        <translation>Диапазон доступных портов – от 1024 до 65535. Порты ниже 1024 зарезервированы операционной системой.</translation>
     </message>
     <message>
         <source>Local network</source>
-        <translation type="unfinished"/>
+        <translation>Локальная сеть</translation>
     </message>
     <message>
         <source>External ip address finder</source>
@@ -12635,7 +12690,7 @@ peers still need to trust each other to allow connection. </source>
     </message>
     <message>
         <source>Show Discovery information in statusbar</source>
-        <translation type="unfinished"/>
+        <translation>Показывать информацию об обнаружении в строке состояния</translation>
     </message>
     <message>
         <source>If you uncheck this, RetroShare can only determine your IP 
@@ -12646,7 +12701,7 @@ behind a firewall or a VPN.</source>
     </message>
     <message>
         <source>Allow RetroShare to ask my ip to these websites:</source>
-        <translation type="unfinished"/>
+        <translation>Разрешить RetroShare спрашивать мой IP-адрес у этих сайтов:</translation>
     </message>
     <message>
         <source>Bandwidth</source>
@@ -12658,7 +12713,7 @@ behind a firewall or a VPN.</source>
     </message>
     <message>
         <source>kB/s</source>
-        <translation type="unfinished"/>
+        <translation>кБ/с</translation>
     </message>
     <message>
         <source>If you uncheck this, RetroShare will not use tunnel connection between peers that are firewalled and cannot connect directly. This is independent from F2F routing (turtle router).</source>
@@ -12666,11 +12721,11 @@ behind a firewall or a VPN.</source>
     </message>
     <message>
         <source>Allow Tunnel Connection</source>
-        <translation type="unfinished"/>
+        <translation>Разрешить туннелирование</translation>
     </message>
     <message>
         <source>Turtle router</source>
-        <translation type="unfinished"/>
+        <translation>Маршрутизатор Turtle</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Unchecking this disables all anonymous routing activity, except cache cleaning. Incoming tunnel requests are discarded, and no tunnel requests are sent to anyone.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
@@ -12696,7 +12751,12 @@ statistically longer tunnels to pass. Be very careful though, since this generat
 many small packets that can significantly slow down your own file transfer. 
 
 The default value is 20.</source>
-        <translation type="unfinished"/>
+        <translation>Это значение определяет как много туннелей в секунду можно создавать. 
+
+Если у вас быстрое подключение к сети, вы можете повысить это значение до 30-40,
+Учтите, что это создает много мелких пакетов, и может сильно замедлить передачу файлов
+
+Значение по умолчанию - 20.</translation>
     </message>
     <message>
         <source>Server</source>
@@ -12715,27 +12775,27 @@ The default value is 20.</source>
     <name>ServicePermissionDialog</name>
     <message>
         <source>Service permissions</source>
-        <translation type="unfinished"/>
+        <translation>Разрешения</translation>
     </message>
     <message>
         <source>Anonymous routing</source>
-        <translation type="unfinished"/>
+        <translation>Анонимные туннели</translation>
     </message>
     <message>
         <source>Discovery</source>
-        <translation type="unfinished"/>
+        <translation>Обнаружение</translation>
     </message>
     <message>
         <source>Forums/Channels</source>
-        <translation type="unfinished"/>
+        <translation>Форумы и каналы</translation>
     </message>
     <message>
         <source>Service Permissions</source>
-        <translation type="unfinished"/>
+        <translation>Разрешения</translation>
     </message>
     <message>
         <source>Use as direct source, when available</source>
-        <translation type="unfinished"/>
+        <translation>Прямой источник</translation>
     </message>
 </context>
 <context>
@@ -12749,15 +12809,15 @@ The default value is 20.</source>
     <name>ShareDialog</name>
     <message>
         <source>RetroShare Share Folder</source>
-        <translation type="unfinished"/>
+        <translation>Разделяемая папка RetroShare</translation>
     </message>
     <message>
         <source>Share Folder</source>
-        <translation type="unfinished"/>
+        <translation>Разделяемая папка</translation>
     </message>
     <message>
         <source>Local Path</source>
-        <translation type="unfinished"/>
+        <translation>Путь к папке</translation>
     </message>
     <message>
         <source>Browse</source>
@@ -12765,15 +12825,15 @@ The default value is 20.</source>
     </message>
     <message>
         <source>Virtual Folder</source>
-        <translation type="unfinished"/>
+        <translation>Виртуальное имя папки</translation>
     </message>
     <message>
         <source>Share Flags</source>
-        <translation type="unfinished"/>
+        <translation>Флаги доступа</translation>
     </message>
     <message>
         <source>Share flags and groups: </source>
-        <translation type="unfinished"/>
+        <translation>Флаги доступа и группы</translation>
     </message>
     <message>
         <source>Edit Shared Folder</source>
@@ -12781,7 +12841,7 @@ The default value is 20.</source>
     </message>
     <message>
         <source>Select A Folder To Share</source>
-        <translation type="unfinished"/>
+        <translation>Выбрать папку для доступа</translation>
     </message>
 </context>
 <context>
@@ -12796,7 +12856,7 @@ The default value is 20.</source>
     </message>
     <message>
         <source>Share for Friend</source>
-        <translation type="unfinished"/>
+        <translation>Доступна для друга</translation>
     </message>
     <message>
         <source>Select the Friends with which you want to Share your Channel.</source>
@@ -12808,18 +12868,18 @@ The default value is 20.</source>
     </message>
     <message>
         <source>Please select at least one peer</source>
-        <translation type="unfinished"/>
+        <translation>Пожалуйста, укажите хотя бы одного участника сети</translation>
     </message>
 </context>
 <context>
     <name>ShareManager</name>
     <message>
         <source>RetroShare Share Manager</source>
-        <translation type="unfinished"/>
+        <translation>Менеджер доступа к ресурсам RetroShare</translation>
     </message>
     <message>
         <source>Shared Folder Manager</source>
-        <translation type="unfinished"/>
+        <translation>Менеджер доступа к папкам</translation>
     </message>
     <message>
         <source>Directory</source>
@@ -12827,11 +12887,11 @@ The default value is 20.</source>
     </message>
     <message>
         <source>Virtual Folder</source>
-        <translation type="unfinished"/>
+        <translation>Виртуальное имя папки</translation>
     </message>
     <message>
         <source>Share flags</source>
-        <translation type="unfinished"/>
+        <translation>Флаги доступа</translation>
     </message>
     <message>
         <source>Groups</source>
@@ -12839,7 +12899,7 @@ The default value is 20.</source>
     </message>
     <message>
         <source>Add a Share Directory</source>
-        <translation type="unfinished"/>
+        <translation>Добавить папку для доступа</translation>
     </message>
     <message>
         <source>Add</source>
@@ -12855,15 +12915,15 @@ The default value is 20.</source>
     </message>
     <message>
         <source>Apply and close</source>
-        <translation type="unfinished"/>
+        <translation>Применить</translation>
     </message>
     <message>
         <source>Edit selected Shared Directory</source>
-        <translation type="unfinished"/>
+        <translation>Редактировать выделенные разделяемые папки</translation>
     </message>
     <message>
         <source>Edit</source>
-        <translation type="unfinished"/>
+        <translation>Правка</translation>
     </message>
     <message>
         <source>Share Manager</source>
@@ -12875,7 +12935,7 @@ The default value is 20.</source>
     </message>
     <message>
         <source>Warning!</source>
-        <translation type="unfinished"/>
+        <translation>Внимание!</translation>
     </message>
     <message>
         <source>Do you really want to stop sharing this directory ?</source>
@@ -12887,15 +12947,15 @@ The default value is 20.</source>
     </message>
     <message>
         <source>File can&apos;t be dropped, only directories are accepted.</source>
-        <translation type="unfinished"/>
+        <translation>Файл не может быть сброшен, операция применима только к папкам</translation>
     </message>
     <message>
         <source>Directory not found or directory name not accepted.</source>
-        <translation type="unfinished"/>
+        <translation>Папка не найдена или неприменимое имя папки.</translation>
     </message>
     <message>
         <source>This is a list of shared folders. You can add and remove folders using the buttons at the bottom. When you add a new folder, intially all files in that folder are shared. You can separately setup share flags for each shared directory.</source>
-        <translation type="unfinished"/>
+        <translation>Это список разделяемых папок. Вы можете добавлять или удалять папки, используя кнопки внизу. Когда вы открываете доступ к папке, всё её содержимое доступно к скачиванию. Вы можете отдельно установить флаги доступа к каждой из разделяемых папок.</translation>
     </message>
 </context>
 <context>
@@ -12918,11 +12978,11 @@ The default value is 20.</source>
     </message>
     <message>
         <source>Tree view</source>
-        <translation type="unfinished"/>
+        <translation>Древовидное представление</translation>
     </message>
     <message>
         <source>Flat view</source>
-        <translation type="unfinished"/>
+        <translation>Плоское представление</translation>
     </message>
     <message>
         <source>All</source>
@@ -12930,23 +12990,23 @@ The default value is 20.</source>
     </message>
     <message>
         <source>One day old</source>
-        <translation type="unfinished"/>
+        <translation>Не старше одного дня</translation>
     </message>
     <message>
         <source>One Week old</source>
-        <translation type="unfinished"/>
+        <translation>Не старше одной недели</translation>
     </message>
     <message>
         <source>One month old</source>
-        <translation type="unfinished"/>
+        <translation>Не старше одного месяца</translation>
     </message>
     <message>
         <source>check files</source>
-        <translation type="unfinished"/>
+        <translation>проверить файлы</translation>
     </message>
     <message>
         <source>Download selected</source>
-        <translation type="unfinished"/>
+        <translation>Скачать выделенное</translation>
     </message>
     <message>
         <source>Download</source>
@@ -12954,38 +13014,38 @@ The default value is 20.</source>
     </message>
     <message>
         <source>Copy retroshare Links to Clipboard</source>
-        <translation type="unfinished"/>
+        <translation>Скопировать RetroShare-ссылки в буфер обмена</translation>
     </message>
     <message>
         <source>Copy retroshare Links to Clipboard (HTML)</source>
-        <translation type="unfinished"/>
+        <translation>Скопировать RetroShare-ссылки в буфер обмена (HTML)</translation>
     </message>
     <message>
         <source>Send retroshare Links</source>
-        <translation type="unfinished"/>
+        <translation>Отправить RetroShare-ссылки</translation>
     </message>
     <message>
         <source>Send retroshare Links to Cloud</source>
-        <translation type="unfinished"/>
+        <translation>Отправить RetroShare-ссылки на облачный сервис</translation>
     </message>
     <message>
         <source>Add Links to Cloud</source>
-        <translation type="unfinished"/>
+        <translation>Добавить ссылки на облачный сервис</translation>
     </message>
     <message>
         <source>RetroShare Link</source>
-        <translation type="unfinished"/>
+        <translation>Ссылка RetroShare</translation>
     </message>
     <message>
         <source>Recommendation(s)</source>
-        <translation type="unfinished"/>
+        <translation>Рекомендация (-ии)</translation>
     </message>
 </context>
 <context>
     <name>SoundPage</name>
     <message>
         <source>Event:</source>
-        <translation type="unfinished"/>
+        <translation>Событие:</translation>
     </message>
     <message>
         <source>Filename:</source>
@@ -12997,11 +13057,11 @@ The default value is 20.</source>
     </message>
     <message>
         <source>Event</source>
-        <translation type="unfinished"/>
+        <translation>Событие</translation>
     </message>
     <message>
         <source>Filename</source>
-        <translation type="unfinished"/>
+        <translation>Имя файла</translation>
     </message>
     <message>
         <source>Friend</source>
@@ -13009,15 +13069,15 @@ The default value is 20.</source>
     </message>
     <message>
         <source>go Online</source>
-        <translation type="unfinished"/>
+        <translation>Выйти в Сеть</translation>
     </message>
     <message>
         <source>Chatmessage</source>
-        <translation type="unfinished"/>
+        <translation>Сообщение в чате</translation>
     </message>
     <message>
         <source>New Msg</source>
-        <translation type="unfinished"/>
+        <translation>Новое сообщение</translation>
     </message>
     <message>
         <source>Message</source>
@@ -13037,37 +13097,37 @@ The default value is 20.</source>
     </message>
     <message>
         <source>Open File</source>
-        <translation type="unfinished"/>
+        <translation>Открыть файл</translation>
     </message>
     <message>
         <source>Sound</source>
-        <translation type="unfinished"/>
+        <translation>Звук</translation>
     </message>
 </context>
 <context>
     <name>SoundStatus</name>
     <message>
         <source>Sound on</source>
-        <translation type="unfinished"/>
+        <translation>Звук включён</translation>
     </message>
     <message>
         <source>Sound off</source>
-        <translation type="unfinished"/>
+        <translation>Звук выключен</translation>
     </message>
 </context>
 <context>
     <name>SplashScreen</name>
     <message>
         <source>Load profile</source>
-        <translation type="unfinished"/>
+        <translation>Загрузить профиль</translation>
     </message>
     <message>
         <source>Load configuration</source>
-        <translation type="unfinished"/>
+        <translation>Загрузить параметры</translation>
     </message>
     <message>
         <source>Create interface</source>
-        <translation type="unfinished"/>
+        <translation>Создать интерфейс</translation>
     </message>
 </context>
 <context>
@@ -13086,7 +13146,7 @@ The default value is 20.</source>
     </message>
     <message>
         <source>Remember Password</source>
-        <translation type="unfinished"/>
+        <translation>Запомнить пароль</translation>
     </message>
     <message>
         <source>Log In</source>
@@ -13096,7 +13156,7 @@ The default value is 20.</source>
         <source>Opens a dialog for creating a new profile or 
 adding locations to an existing profile. 
 The current identities/locations will not be affected.</source>
-        <translation type="unfinished"/>
+        <translation>Открыть диалоговое окно для содания нового профиля или добавления местоположений к существующему профилю. Текущие личности / местоположения затронуты не будут.</translation>
     </message>
     <message>
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -13104,7 +13164,7 @@ The current identities/locations will not be affected.</source>
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Manage profiles and locations...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt; &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt; p, li { white-space: pre-wrap; } &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt; &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;a href=&quot;Create new Profile...&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Управление профилями и местоположениями...&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Load Person Failure</source>
@@ -13116,7 +13176,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Warning</source>
-        <translation type="unfinished"/>
+        <translation>Предупреждение</translation>
     </message>
     <message>
         <source>The password to your SSL certificate (your location) will be stored encrypted in your Gnome Keyring. 
@@ -13147,19 +13207,19 @@ This choice can be reverted in settings.</source>
     <name>StatusDefs</name>
     <message>
         <source>Offline</source>
-        <translation type="unfinished"/>
+        <translation>Нет сети</translation>
     </message>
     <message>
         <source>Away</source>
-        <translation type="unfinished"/>
+        <translation>Отошёл</translation>
     </message>
     <message>
         <source>Busy</source>
-        <translation type="unfinished"/>
+        <translation>Занят</translation>
     </message>
     <message>
         <source>Online</source>
-        <translation type="unfinished"/>
+        <translation>В сети</translation>
     </message>
     <message>
         <source>Idle</source>
@@ -13167,31 +13227,31 @@ This choice can be reverted in settings.</source>
     </message>
     <message>
         <source>Friend is offline</source>
-        <translation type="unfinished"/>
+        <translation>Друг отключился</translation>
     </message>
     <message>
         <source>Friend is away</source>
-        <translation type="unfinished"/>
+        <translation>Друг отошёл</translation>
     </message>
     <message>
         <source>Friend is busy</source>
-        <translation type="unfinished"/>
+        <translation>Друг занят</translation>
     </message>
     <message>
         <source>Friend is online</source>
-        <translation type="unfinished"/>
+        <translation>Друг в сети</translation>
     </message>
     <message>
         <source>Friend is idle</source>
-        <translation type="unfinished"/>
+        <translation>Друг не активен</translation>
     </message>
     <message>
         <source>Connected</source>
-        <translation type="unfinished"/>
+        <translation>Соединён</translation>
     </message>
     <message>
         <source>Unreachable</source>
-        <translation type="unfinished"/>
+        <translation>Недоступен</translation>
     </message>
     <message>
         <source>Available</source>
@@ -13203,42 +13263,42 @@ This choice can be reverted in settings.</source>
     </message>
     <message>
         <source>Trying tunnel connection</source>
-        <translation type="unfinished"/>
+        <translation>Попытка соединения через туннель</translation>
     </message>
     <message>
         <source>Trying TCP</source>
-        <translation type="unfinished"/>
+        <translation>Попытка установления TCP-соединения</translation>
     </message>
     <message>
         <source>Trying UDP</source>
-        <translation type="unfinished"/>
+        <translation>Попытка установления UDP-соединения</translation>
     </message>
     <message>
         <source>Connected: TCP</source>
-        <translation type="unfinished"/>
+        <translation>Соединено: TCP</translation>
     </message>
     <message>
         <source>Connected: UDP</source>
-        <translation type="unfinished"/>
+        <translation>Соединено: UDP</translation>
     </message>
     <message>
         <source>Connected: Tunnel</source>
-        <translation type="unfinished"/>
+        <translation>Соединено: туннель</translation>
     </message>
     <message>
         <source>Connected: Unknown</source>
-        <translation type="unfinished"/>
+        <translation>Соединено: неизвестно</translation>
     </message>
     <message>
         <source>DHT: Contact</source>
-        <translation type="unfinished"/>
+        <translation>DHT: контакт</translation>
     </message>
 </context>
 <context>
     <name>StatusMessage</name>
     <message>
         <source>Status message</source>
-        <translation type="unfinished"/>
+        <translation>Статус сообщения</translation>
     </message>
     <message>
         <source>Message:</source>
@@ -13265,19 +13325,19 @@ p, li { white-space: pre-wrap; }
     <name>StyleDialog</name>
     <message>
         <source>Define Style</source>
-        <translation type="unfinished"/>
+        <translation>Задать стиль</translation>
     </message>
     <message>
         <source>Choose color</source>
-        <translation type="unfinished"/>
+        <translation>Выбор цвета</translation>
     </message>
     <message>
         <source>Color 2</source>
-        <translation type="unfinished"/>
+        <translation>Цвет 2</translation>
     </message>
     <message>
         <source>Color 1</source>
-        <translation type="unfinished"/>
+        <translation>Цвет 1</translation>
     </message>
     <message>
         <source>Style</source>
@@ -13289,11 +13349,11 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Solid</source>
-        <translation type="unfinished"/>
+        <translation>Сплошной</translation>
     </message>
     <message>
         <source>Gradient</source>
-        <translation type="unfinished"/>
+        <translation>Плавный переход</translation>
     </message>
 </context>
 <context>
@@ -13308,7 +13368,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Download File</source>
-        <translation type="unfinished"/>
+        <translation>Скачать файл</translation>
     </message>
     <message>
         <source>Download</source>
@@ -13316,7 +13376,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Play File</source>
-        <translation type="unfinished"/>
+        <translation>Проиграть файл</translation>
     </message>
     <message>
         <source>Play</source>
@@ -13324,19 +13384,19 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Save File</source>
-        <translation type="unfinished"/>
+        <translation>Сохранить файл</translation>
     </message>
     <message>
         <source>ERROR</source>
-        <translation type="unfinished"/>
+        <translation>ОШИБКА</translation>
     </message>
     <message>
         <source>EXTRA</source>
-        <translation type="unfinished"/>
+        <translation>ДОПОЛНИТЕЛЬНЫЙ</translation>
     </message>
     <message>
         <source>REMOTE</source>
-        <translation type="unfinished"/>
+        <translation>УДАЛЁННЫЙ</translation>
     </message>
     <message>
         <source>DOWNLOAD</source>
@@ -13344,27 +13404,27 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>LOCAL</source>
-        <translation type="unfinished"/>
+        <translation>ЛОКАЛЬНЫЙ</translation>
     </message>
     <message>
         <source>UPLOAD</source>
-        <translation type="unfinished"/>
+        <translation>ОТДАЧА</translation>
     </message>
     <message>
         <source>Remove Attachment</source>
-        <translation type="unfinished"/>
+        <translation>Удалить вложение</translation>
     </message>
     <message>
         <source>File %1 does not exist at location.</source>
-        <translation type="unfinished"/>
+        <translation>Файл %1 не существует в указанном месте</translation>
     </message>
     <message>
         <source>File %1 is not completed.</source>
-        <translation type="unfinished"/>
+        <translation>Файл %1 не полный</translation>
     </message>
     <message>
         <source>Save Channel File</source>
-        <translation type="unfinished"/>
+        <translation>Сохранить файл Канала</translation>
     </message>
     <message>
         <source>Open</source>
@@ -13372,7 +13432,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Open File</source>
-        <translation type="unfinished"/>
+        <translation>Открыть файл</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
@@ -13383,64 +13443,64 @@ p, li { white-space: pre-wrap; }
     <name>TBoard</name>
     <message>
         <source>Pause</source>
-        <translation type="unfinished"/>
+        <translation>Пауза</translation>
     </message>
 </context>
 <context>
     <name>TagDefs</name>
     <message>
         <source>Important</source>
-        <translation type="unfinished"/>
+        <translation>Важное</translation>
     </message>
     <message>
         <source>Work</source>
-        <translation type="unfinished"/>
+        <translation>Работа</translation>
     </message>
     <message>
         <source>Personal</source>
-        <translation type="unfinished"/>
+        <translation>Личное</translation>
     </message>
     <message>
         <source>Todo</source>
-        <translation type="unfinished"/>
+        <translation>На выполнение</translation>
     </message>
     <message>
         <source>Later</source>
-        <translation type="unfinished"/>
+        <translation>Позже</translation>
     </message>
 </context>
 <context>
     <name>TagsMenu</name>
     <message>
         <source>Remove All Tags</source>
-        <translation type="unfinished"/>
+        <translation>Удалить все теги</translation>
     </message>
     <message>
         <source>New tag ...</source>
-        <translation type="unfinished"/>
+        <translation>Новый тег...</translation>
     </message>
 </context>
 <context>
     <name>TransferPage</name>
     <message>
         <source>Transfer options</source>
-        <translation type="unfinished"/>
+        <translation>Параметры передачи</translation>
     </message>
     <message>
         <source>Maximum simultaneous downloads:</source>
-        <translation type="unfinished"/>
+        <translation>Максимальное количество одновременных закачек:</translation>
     </message>
     <message>
         <source>Slots reserved for non-cache transfers:</source>
-        <translation type="unfinished"/>
+        <translation>Резерв слотов для ваших загрузок</translation>
     </message>
     <message>
         <source>Default chunk strategy:</source>
-        <translation type="unfinished"/>
+        <translation>Метод выбора частей по умолчанию</translation>
     </message>
     <message>
         <source>Safety disk space limit :</source>
-        <translation type="unfinished"/>
+        <translation>Резерв свободного места на диске:</translation>
     </message>
     <message>
         <source>You can use this to force RetroShare to download your files rather 
@@ -13449,11 +13509,13 @@ to be equal to the queue size above will always prioritize your files
 over cache. 
 
 It is however recommended to leave at least a few slots for cache files.</source>
-        <translation type="unfinished"/>
+        <translation>Количество слотов для ваших файлов. Если поставить это значение равным общему лимиту слотов выше, приоритет передачи ваших файлов всегда будет выше чем у файлов кеша.
+
+Рекомендуется оставлять хотя бы несколько слотов для передачи кеша.</translation>
     </message>
     <message>
         <source>Streaming</source>
-        <translation type="unfinished"/>
+        <translation>Последовательно</translation>
     </message>
     <message>
         <source>Progressive</source>
@@ -13461,7 +13523,7 @@ It is however recommended to leave at least a few slots for cache files.</source
     </message>
     <message>
         <source>Random</source>
-        <translation type="unfinished"/>
+        <translation>Случайно</translation>
     </message>
     <message>
         <source> MB</source>
@@ -13477,7 +13539,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-size:8pt;&quot;&gt;You can separately setup share flags for each shared directory in the shared files dialog to be:&lt;/span&gt;&lt;/p&gt;
 &lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-family:'Sans'; font-size:8pt;&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Browsable by friends&lt;/span&gt;: files are seen by your friends.&lt;/li&gt;
 &lt;li style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Anonymously shared&lt;/span&gt;: files are anonymously reachable through distant F2F tunnels.&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt; &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt; p, li { white-space: pre-wrap; } &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt; &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt; font-weight:600;&quot;&gt;RetroShare&lt;/span&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt; способна передавать данные и поисковые запросы между участниками сети, не обязательно являющимися друзьями. Однако этот трафик передаётся только через подключённых друзей и является анонимным.&lt;/span&gt;&lt;/p&gt; &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt; &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot;&gt;В диалоговом окне раздач для каждой папки по отдельности вы можете установить свои флаги с целью обеспечения:&lt;/span&gt;&lt;/p&gt; &lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;обзора папок друзьями&lt;/span&gt;: файлы в папках видимы только вашими друзьями.&lt;/li&gt; &lt;li style=&quot; font-family:&apos;Sans&apos;; font-size:8pt;&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;анонимного доступа&lt;/span&gt;: файлы доступны анонимно через F2F-туннели.&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Transfer</source>
@@ -13492,7 +13554,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>You have %1 completed downloads</source>
-        <translation type="unfinished"/>
+        <translation>У вас %1 завершённых закачек</translation>
     </message>
     <message>
         <source>You have %1 completed download</source>
@@ -13500,7 +13562,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>%1 completed downloads</source>
-        <translation type="unfinished"/>
+        <translation>%1 завершённых закачек</translation>
     </message>
     <message>
         <source>%1 completed download</source>
@@ -13511,11 +13573,11 @@ p, li { white-space: pre-wrap; }
     <name>TransfersDialog</name>
     <message>
         <source>Downloads</source>
-        <translation type="unfinished"/>
+        <translation>Обмен файлами</translation>
     </message>
     <message>
         <source>Uploads</source>
-        <translation type="unfinished"/>
+        <translation>Передача</translation>
     </message>
     <message>
         <source>Name</source>
@@ -13529,22 +13591,22 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Completed</source>
-        <translation type="unfinished"/>
+        <translation>Завершено</translation>
     </message>
     <message>
         <source>Speed</source>
         <comment>i.e: Download speed</comment>
-        <translation type="unfinished"/>
+        <translation>Скорость</translation>
     </message>
     <message>
         <source>Progress / Availability</source>
         <comment>i.e: % downloaded</comment>
-        <translation type="unfinished"/>
+        <translation>Прогресс / Доступность</translation>
     </message>
     <message>
         <source>Sources</source>
         <comment>i.e: Sources</comment>
-        <translation type="unfinished"/>
+        <translation>Источники</translation>
     </message>
     <message>
         <source>Status</source>
@@ -13552,7 +13614,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Speed / Queue position</source>
-        <translation type="unfinished"/>
+        <translation>Скорость / Место в очереди</translation>
     </message>
     <message>
         <source>Remaining</source>
@@ -13561,30 +13623,30 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Download time</source>
         <comment>i.e: Estimated Time of Arrival / Time left</comment>
-        <translation type="unfinished"/>
+        <translation>Время загрузки</translation>
     </message>
     <message>
         <source>Peer</source>
         <comment>i.e: user name</comment>
-        <translation type="unfinished"/>
+        <translation>Участник</translation>
     </message>
     <message>
         <source>Progress</source>
         <comment>i.e: % uploaded</comment>
-        <translation type="unfinished"/>
+        <translation>Прогресс</translation>
     </message>
     <message>
         <source>Speed</source>
         <comment>i.e: upload speed</comment>
-        <translation type="unfinished"/>
+        <translation>Скорость</translation>
     </message>
     <message>
         <source>Transferred</source>
-        <translation type="unfinished"/>
+        <translation>Передано</translation>
     </message>
     <message>
         <source>Hash</source>
-        <translation type="unfinished"/>
+        <translation>Хэш</translation>
     </message>
     <message>
         <source>Search</source>
@@ -13592,55 +13654,55 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Friends files</source>
-        <translation type="unfinished"/>
+        <translation>Файлы друзей</translation>
     </message>
     <message>
         <source>My files</source>
-        <translation type="unfinished"/>
+        <translation>Мои файлы</translation>
     </message>
     <message>
         <source>Show cache transfers</source>
-        <translation type="unfinished"/>
+        <translation>Отображать передачи кеша</translation>
     </message>
     <message>
         <source>Download from collection file...</source>
-        <translation type="unfinished"/>
+        <translation>Загрузить из файла коллекции...</translation>
     </message>
     <message>
         <source>Pause</source>
-        <translation type="unfinished"/>
+        <translation>Пауза</translation>
     </message>
     <message>
         <source>Resume</source>
-        <translation type="unfinished"/>
+        <translation>Возобновить</translation>
     </message>
     <message>
         <source>Force Check</source>
-        <translation type="unfinished"/>
+        <translation>Инициировать проверку</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Вернуться/Отмена</translation>
+        <translation>Отменить загрузку</translation>
     </message>
     <message>
         <source>Open Folder</source>
-        <translation type="unfinished"/>
+        <translation>Открыть папку</translation>
     </message>
     <message>
         <source>Open File</source>
-        <translation type="unfinished"/>
+        <translation>Открыть файл</translation>
     </message>
     <message>
         <source>Preview File</source>
-        <translation type="unfinished"/>
+        <translation>Предпросмотр</translation>
     </message>
     <message>
         <source>Details...</source>
-        <translation type="unfinished"/>
+        <translation>Подробности ...</translation>
     </message>
     <message>
         <source>Clear Completed</source>
-        <translation type="unfinished"/>
+        <translation>Убрать завершенные</translation>
     </message>
     <message>
         <source>Copy RetroShare Link</source>
@@ -13652,39 +13714,39 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Down</source>
-        <translation type="unfinished"/>
+        <translation>Скачивание</translation>
     </message>
     <message>
         <source>Up</source>
-        <translation type="unfinished"/>
+        <translation>Отдача</translation>
     </message>
     <message>
         <source>Top</source>
-        <translation type="unfinished"/>
+        <translation>В начало списка</translation>
     </message>
     <message>
         <source>Bottom</source>
-        <translation type="unfinished"/>
+        <translation>В конец списка</translation>
     </message>
     <message>
         <source>Streaming</source>
-        <translation type="unfinished"/>
+        <translation>Последовательно</translation>
     </message>
     <message>
         <source>Slower</source>
-        <translation type="unfinished"/>
+        <translation>Медленнее</translation>
     </message>
     <message>
         <source>Average</source>
-        <translation type="unfinished"/>
+        <translation>Норма</translation>
     </message>
     <message>
         <source>Faster</source>
-        <translation type="unfinished"/>
+        <translation>Быстрее</translation>
     </message>
     <message>
         <source>Random</source>
-        <translation type="unfinished"/>
+        <translation>Случайно</translation>
     </message>
     <message>
         <source>Progressive</source>
@@ -13696,27 +13758,27 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Rename file...</source>
-        <translation type="unfinished"/>
+        <translation>Переименовать файл</translation>
     </message>
     <message>
         <source>Specify...</source>
-        <translation type="unfinished"/>
+        <translation>Выбрать...</translation>
     </message>
     <message>
         <source>Move in Queue...</source>
-        <translation type="unfinished"/>
+        <translation>Переместить в очереди ...</translation>
     </message>
     <message>
         <source>Priority (Speed)...</source>
-        <translation type="unfinished"/>
+        <translation>Приоритет (скорость)</translation>
     </message>
     <message>
         <source>Chunk strategy</source>
-        <translation type="unfinished"/>
+        <translation>Метод передачи</translation>
     </message>
     <message>
         <source>Set destination directory</source>
-        <translation type="unfinished"/>
+        <translation>Папка загрузки</translation>
     </message>
     <message>
         <source>Choose directory</source>
@@ -13724,7 +13786,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Failed</source>
-        <translation type="unfinished"/>
+        <translation>Ошибка</translation>
     </message>
     <message>
         <source>Okay</source>
@@ -13732,27 +13794,27 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Waiting</source>
-        <translation type="unfinished"/>
+        <translation>ожидание</translation>
     </message>
     <message>
         <source>Downloading</source>
-        <translation type="unfinished"/>
+        <translation>Загрузка</translation>
     </message>
     <message>
         <source>Complete</source>
-        <translation type="unfinished"/>
+        <translation>Готово</translation>
     </message>
     <message>
         <source>Queued</source>
-        <translation type="unfinished"/>
+        <translation>В очереди</translation>
     </message>
     <message>
         <source>Paused</source>
-        <translation type="unfinished"/>
+        <translation>Пауза</translation>
     </message>
     <message>
         <source>Checking...</source>
-        <translation type="unfinished"/>
+        <translation>Проверка ...</translation>
     </message>
     <message>
         <source>Unknown</source>
@@ -13769,23 +13831,30 @@ map of the data; it will compare and invalidate
 bad blocks, and download them again
 
 Try to be patient!</source>
-        <translation type="unfinished"/>
+        <translation>Если хеш-сумма принятых данных не соответствует
+хеш-сумме, указанной источником, то принятые данные,
+скорее всего, искажены. RetroShare спросит у источника
+детальную информацию о данных.
+
+Программа проанализирует соответствие данных
+и искажённые блоки буду скачаны снова.
+Будьте терпеливы! На данную процедуру необходимо время.</translation>
     </message>
     <message>
         <source>version: </source>
-        <translation type="unfinished"/>
+        <translation>Версия:</translation>
     </message>
     <message>
         <source>Transferring</source>
-        <translation type="unfinished"/>
+        <translation>Передача</translation>
     </message>
     <message>
         <source>Uploading</source>
-        <translation type="unfinished"/>
+        <translation>Передача</translation>
     </message>
     <message>
         <source>Are you sure that you want to cancel and delete these files?</source>
-        <translation type="unfinished"/>
+        <translation>Вы уверены, что хотите отменить загрузку и удалить эти файлы?</translation>
     </message>
     <message>
         <source>RetroShare</source>
@@ -13793,27 +13862,27 @@ Try to be patient!</source>
     </message>
     <message>
         <source>File preview</source>
-        <translation type="unfinished"/>
+        <translation>Предпросмотр</translation>
     </message>
     <message>
         <source>Can&apos;t create link for file %1.</source>
-        <translation type="unfinished"/>
+        <translation>Невозможно создать ссылку для файла %1.</translation>
     </message>
     <message>
         <source>File %1 preview failed.</source>
-        <translation type="unfinished"/>
+        <translation>Предпросмотр недоступен для %1</translation>
     </message>
     <message>
         <source>Click OK when program terminates!</source>
-        <translation type="unfinished"/>
+        <translation>Нажмите OK, когда программа завершит работу!</translation>
     </message>
     <message>
         <source>Open Transfer</source>
-        <translation type="unfinished"/>
+        <translation>Открыть загрузку</translation>
     </message>
     <message>
         <source>File %1 is not completed. If it is a media file, try to preview it.</source>
-        <translation type="unfinished"/>
+        <translation>Файл %1 не завершен. Если это медиафайл, попробуйте Предпросмотр</translation>
     </message>
     <message>
         <source>Change file name</source>
@@ -13821,7 +13890,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Please enter a new file name</source>
-        <translation type="unfinished"/>
+        <translation>Укажите новое имя файла</translation>
     </message>
     <message>
         <source>Please enter a new--and valid--filename</source>
@@ -13830,7 +13899,7 @@ Try to be patient!</source>
     <message>
         <source>Last Time Seen</source>
         <comment>i.e: Last Time Receiced Data</comment>
-        <translation type="unfinished"/>
+        <translation>Последний раз в сети</translation>
     </message>
     <message>
         <source>UserID</source>
@@ -13858,7 +13927,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Speed</source>
-        <translation type="unfinished"/>
+        <translation>Скорость</translation>
     </message>
     <message>
         <source>Show Speed Column</source>
@@ -13866,7 +13935,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Progress / Availability</source>
-        <translation type="unfinished"/>
+        <translation>Прогресс / Доступность</translation>
     </message>
     <message>
         <source>Show Progress / Availability Column</source>
@@ -13874,7 +13943,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Sources</source>
-        <translation type="unfinished"/>
+        <translation>Источники</translation>
     </message>
     <message>
         <source>Show Sources Column</source>
@@ -13894,7 +13963,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Download time</source>
-        <translation type="unfinished"/>
+        <translation>Время загрузки</translation>
     </message>
     <message>
         <source>Show Download time Column</source>
@@ -13906,7 +13975,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Last Time Seen</source>
-        <translation type="unfinished"/>
+        <translation>Последний раз в сети</translation>
     </message>
     <message>
         <source>Show Last Time Seen Column</source>
@@ -13935,18 +14004,18 @@ Try to be patient!</source>
     </message>
     <message>
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;File Transfer&lt;/h1&gt;                                                             &lt;p&gt;Retroshare brings two ways of transferring files: direct transfers from your friends, and                                         distant anonymous tunnelled transfers. In addition, file transfer is multi-source and allows swarming                                          (you can be a source while downloading)&lt;/p&gt;                                         &lt;p&gt;You can share files using the &lt;img src=&quot;:/images/directoryadd_24x24_shadow.png&quot; width=16 /&gt; icon from the left side bar.     These files will be listed in the My Files tab. You can decide for each friend group whether they can or not see these files     in their Friends Files tab&lt;/p&gt;    &lt;p&gt;The search tab reports files from your friends&apos; file lists, and distant files that can be reached     anonymously using the multi-hop tunnelling system.&lt;/p&gt;     </source>
-        <translation type="unfinished"/>
+        <translation>&lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;File Transfer&lt;/h1&gt; &lt;p&gt;Retroshare поддерживает два метода передвчи файлов: прямые передачи между друзьями, и анонимные туннельные передачи. Кроме этого поддерживается загрузка с нескольких источников (вы так же можете быть источником пока загружаете)&lt;/p&gt; &lt;p&gt;Вы можете раздавать свои файлы, воспользуйтесь значком &lt;img src=&quot;:/images/directoryadd_24x24_shadow.png&quot; width=16 /&gt; на панели. Эти файлы будут добавлены в список ваших общих ресурсов. Вы можете определить доступность этих файлов для определенных групп друзей&lt;/p&gt; &lt;p&gt;Вкладка поиск позволяет искать файлы среди доступных ресурсов ваших друзей, а так же у незнакомых пользователей посредством  поиска через анонимные туннели.&lt;/p&gt;</translation>
     </message>
 </context>
 <context>
     <name>TreeStyle_RDM</name>
     <message>
         <source>My files</source>
-        <translation type="unfinished"/>
+        <translation>Мои файлы</translation>
     </message>
     <message>
         <source>FILE</source>
-        <translation type="unfinished"/>
+        <translation>ФАЙЛ</translation>
     </message>
     <message>
         <source>Files</source>
@@ -13958,7 +14027,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>DIR</source>
-        <translation type="unfinished"/>
+        <translation>ПАПКА</translation>
     </message>
     <message>
         <source>Friends Directories</source>
@@ -13982,11 +14051,11 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Share Flags</source>
-        <translation type="unfinished"/>
+        <translation>Флаги доступа</translation>
     </message>
     <message>
         <source>What&apos;s new</source>
-        <translation type="unfinished"/>
+        <translation>Что нового</translation>
     </message>
     <message>
         <source>Groups</source>
@@ -13997,7 +14066,7 @@ Try to be patient!</source>
     <name>TrustView</name>
     <message>
         <source>Zoom :</source>
-        <translation type="unfinished"/>
+        <translation>Увеличение:</translation>
     </message>
     <message>
         <source>Update</source>
@@ -14005,7 +14074,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Showing: whole network</source>
-        <translation type="unfinished"/>
+        <translation>Показать: всю сеть</translation>
     </message>
     <message>
         <source>This table normally auto-updates every 10 seconds.</source>
@@ -14013,47 +14082,47 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Self</source>
-        <translation type="unfinished"/>
+        <translation>Сам</translation>
     </message>
     <message>
         <source>Trust</source>
-        <translation type="unfinished"/>
+        <translation>Доверие</translation>
     </message>
     <message>
         <source> is authenticated (one way) by </source>
-        <translation type="unfinished"/>
+        <translation>аутентифицирован (однонаправленно)</translation>
     </message>
     <message>
         <source>Half</source>
-        <translation type="unfinished"/>
+        <translation>Наполовину</translation>
     </message>
     <message>
         <source> authenticated himself</source>
-        <translation type="unfinished"/>
+        <translation>подтвердил свою подлинность</translation>
     </message>
     <message>
         <source> authenticated each other</source>
-        <translation type="unfinished"/>
+        <translation>взаимно подтвердили подлинность</translation>
     </message>
     <message>
         <source>Full</source>
-        <translation type="unfinished"/>
+        <translation>Полностью</translation>
     </message>
     <message>
         <source> is authenticated by </source>
-        <translation type="unfinished"/>
+        <translation>аутентифицирован</translation>
     </message>
     <message>
         <source> peers, including him(her)self.</source>
-        <translation type="unfinished"/>
+        <translation>участники, включая самого (саму) себя.</translation>
     </message>
     <message>
         <source> authenticated </source>
-        <translation type="unfinished"/>
+        <translation>подлинность подтверждена</translation>
     </message>
     <message>
         <source>Showing: peers connected to </source>
-        <translation type="unfinished"/>
+        <translation>Показывать: участники, подключённые к</translation>
     </message>
 </context>
 <context>
@@ -14064,45 +14133,45 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Tunnel requests</source>
-        <translation type="unfinished"/>
+        <translation>Запросы туннелей</translation>
     </message>
     <message>
         <source>Unknown hashes</source>
-        <translation type="unfinished"/>
+        <translation>Неизвестные хэши</translation>
     </message>
     <message>
         <source>Tunnel id</source>
-        <translation type="unfinished"/>
+        <translation>ID туннеля</translation>
     </message>
     <message>
         <source>last transfer</source>
-        <translation type="unfinished"/>
+        <translation>последняя передача</translation>
     </message>
     <message>
         <source>Speed</source>
-        <translation type="unfinished"/>
+        <translation>Скорость</translation>
     </message>
     <message>
         <source>Request id: %1	 from [%2]	 %3 secs ago</source>
-        <translation type="unfinished"/>
+        <translation>Запрос id: %1	 от [%2]	 %3 сек. назад</translation>
     </message>
 </context>
 <context>
     <name>TurtleRouterDialogForm</name>
     <message>
         <source>Router Statistics</source>
-        <translation type="unfinished"/>
+        <translation>Статистика роутера</translation>
     </message>
     <message>
         <source>F2F router information</source>
-        <translation type="unfinished"/>
+        <translation>Информация F2F роутера</translation>
     </message>
 </context>
 <context>
     <name>TurtleRouterStatistics</name>
     <message>
         <source>Router Statistics</source>
-        <translation type="unfinished"/>
+        <translation>Статистика роутера</translation>
     </message>
     <message>
         <source>Age in seconds</source>
@@ -14133,7 +14202,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Turtle router traffic</source>
-        <translation type="unfinished"/>
+        <translation>Трафик turtle-маршрутизатора</translation>
     </message>
     <message>
         <source>Tunnel requests Up</source>
@@ -14190,7 +14259,7 @@ Try to be patient!</source>
     <name>UserNotify</name>
     <message>
         <source>You have %1 new messages</source>
-        <translation type="unfinished"/>
+        <translation>У вас %1 новых сообщений</translation>
     </message>
     <message>
         <source>You have %1 new message</source>
@@ -14198,11 +14267,11 @@ Try to be patient!</source>
     </message>
     <message>
         <source>%1 new messages</source>
-        <translation type="unfinished"/>
+        <translation>%1 новых сообщений</translation>
     </message>
     <message>
         <source>%1 new message</source>
-        <translation type="unfinished"/>
+        <translation>%1 новое сообщение</translation>
     </message>
 </context>
 <context>
@@ -14256,15 +14325,15 @@ Try to be patient!</source>
     <name>WikiAddDialog</name>
     <message>
         <source>Basic Details</source>
-        <translation type="unfinished"/>
+        <translation>Основные сведения</translation>
     </message>
     <message>
         <source>Group Name:</source>
-        <translation type="unfinished"/>
+        <translation>Имя группы:</translation>
     </message>
     <message>
         <source>Category:</source>
-        <translation type="unfinished"/>
+        <translation>Категория:</translation>
     </message>
     <message>
         <source>Travel</source>
@@ -14284,11 +14353,11 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Work</source>
-        <translation type="unfinished"/>
+        <translation>Работа</translation>
     </message>
     <message>
         <source>Random</source>
-        <translation type="unfinished"/>
+        <translation>Случайно</translation>
     </message>
     <message>
         <source>Description:</source>
@@ -14304,11 +14373,11 @@ Try to be patient!</source>
     </message>
     <message>
         <source>All Friends</source>
-        <translation type="unfinished"/>
+        <translation>Все друзья</translation>
     </message>
     <message>
         <source>Restricted</source>
-        <translation type="unfinished"/>
+        <translation>Ограничено</translation>
     </message>
     <message>
         <source>N/A</source>
@@ -14320,11 +14389,11 @@ Try to be patient!</source>
     </message>
     <message>
         <source>This List Contains</source>
-        <translation type="unfinished"/>
+        <translation>Этот список содержит</translation>
     </message>
     <message>
         <source>All your Groups</source>
-        <translation type="unfinished"/>
+        <translation>Все ваши группы</translation>
     </message>
     <message>
         <source>No Comments Allowed</source>
@@ -14332,34 +14401,34 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Authenticated Comments</source>
-        <translation type="unfinished"/>
+        <translation>Авторизованные комментарии</translation>
     </message>
     <message>
         <source>Any Comments Allowed</source>
-        <translation type="unfinished"/>
+        <translation>Любые комментарии разрешены</translation>
     </message>
     <message>
         <source>Publish with XXX Key</source>
-        <translation type="unfinished"/>
+        <translation>Публикация с ключом XXX</translation>
     </message>
     <message>
         <source>Cancel </source>
-        <translation type="unfinished"/>
+        <translation>Отмена</translation>
     </message>
     <message>
         <source>Create Group</source>
-        <translation type="unfinished"/>
+        <translation>Создание группы</translation>
     </message>
 </context>
 <context>
     <name>WikiDialog</name>
     <message>
         <source>Wiki Pages</source>
-        <translation type="unfinished"/>
+        <translation>Wiki страницы</translation>
     </message>
     <message>
         <source>New Group</source>
-        <translation type="unfinished"/>
+        <translation>Новая группа</translation>
     </message>
     <message>
         <source>Page Name</source>
@@ -14387,11 +14456,11 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Edit</source>
-        <translation type="unfinished"/>
+        <translation>Правка</translation>
     </message>
     <message>
         <source>New Page</source>
-        <translation type="unfinished"/>
+        <translation>Новая страница</translation>
     </message>
     <message>
         <source>Refresh</source>
@@ -14427,7 +14496,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Todo</source>
-        <translation type="unfinished"/>
+        <translation>На выполнение</translation>
     </message>
     <message>
         <source>Edit Group</source>
@@ -14478,11 +14547,11 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Page Name:</source>
-        <translation type="unfinished"/>
+        <translation>Название страницы:</translation>
     </message>
     <message>
         <source>Previous Version</source>
-        <translation type="unfinished"/>
+        <translation>Предыдущая версия</translation>
     </message>
     <message>
         <source>Tags</source>
@@ -14510,7 +14579,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Submit</source>
-        <translation type="unfinished"/>
+        <translation>Отправить</translation>
     </message>
     <message>
         <source>Hide Edit History</source>
@@ -14557,7 +14626,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Create Group</source>
-        <translation type="unfinished"/>
+        <translation>Создание группы</translation>
     </message>
 </context>
 <context>
@@ -14572,15 +14641,15 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Last Month</source>
-        <translation type="unfinished"/>
+        <translation>Последний месяц</translation>
     </message>
     <message>
         <source>Last Week</source>
-        <translation type="unfinished"/>
+        <translation>Последняя неделя</translation>
     </message>
     <message>
         <source>Today</source>
-        <translation type="unfinished"/>
+        <translation>Сегодня</translation>
     </message>
     <message>
         <source>New</source>
@@ -14600,7 +14669,7 @@ Try to be patient!</source>
     </message>
     <message>
         <source>Network Wide</source>
-        <translation type="unfinished"/>
+        <translation>Обширная сеть</translation>
     </message>
     <message>
         <source>Manage Accounts</source>
@@ -14691,55 +14760,55 @@ Try to be patient!</source>
     <message>
         <source>&lt; 1m</source>
         <comment>&lt; 1 minute</comment>
-        <translation type="unfinished"/>
+        <translation>&lt; 1 мин</translation>
     </message>
     <message>
         <source>%1 minutes</source>
         <comment>e.g: 10minutes</comment>
-        <translation type="unfinished"/>
+        <translation>%1 мин.</translation>
     </message>
     <message>
         <source>%1h %2m</source>
         <comment>e.g: 3hours 5minutes</comment>
-        <translation type="unfinished"/>
+        <translation>%1ч %2м</translation>
     </message>
     <message>
         <source>%1d %2h</source>
         <comment>e.g: 2days 10hours</comment>
-        <translation type="unfinished"/>
+        <translation>%1д %2ч</translation>
     </message>
     <message>
         <source>%1y %2d</source>
         <comment>e.g: 2 years 2days </comment>
-        <translation type="unfinished"/>
+        <translation>%1г %2д</translation>
     </message>
     <message>
         <source>k</source>
         <comment>e.g: 3.1 k</comment>
-        <translation type="unfinished"/>
+        <translation>к</translation>
     </message>
     <message>
         <source>M</source>
         <comment>e.g: 3.1 M</comment>
-        <translation type="unfinished"/>
+        <translation>М</translation>
     </message>
     <message>
         <source>G</source>
         <comment>e.g: 3.1 G</comment>
-        <translation type="unfinished"/>
+        <translation>Г</translation>
     </message>
     <message>
         <source>T</source>
         <comment>e.g: 3.1 T</comment>
-        <translation type="unfinished"/>
+        <translation>Т</translation>
     </message>
     <message>
         <source>Load avatar image</source>
-        <translation type="unfinished"/>
+        <translation>Загрузить картинку для аватара</translation>
     </message>
     <message>
         <source>Pictures (*.png *.xpm *.jpg *.tiff *.gif)</source>
-        <translation type="unfinished"/>
+        <translation>Изображения (*.png *.xpm *.jpg *.tiff *.gif)</translation>
     </message>
 </context>
 </TS>

@@ -3,7 +3,7 @@
     <name>AWidget</name>
     <message>
         <source>version</source>
-        <translation>versio</translation>
+        <translation>-versio</translation>
     </message>
 </context>
 <context>
@@ -12799,19 +12799,19 @@ Pienennetäänkö kuva kokoon %1x%2 pikseliä?</translation>
     </message>
     <message>
         <source>Certificate has wrong signature!! This peer is not who he claims to be.</source>
-        <translation type="unfinished"/>
+        <translation>Varmenteella on väärä allekirjoitus! Vertainen ei ole se, joka hän väittää olevansa.</translation>
     </message>
     <message>
         <source>Missing/Damaged SSL certificate for key </source>
-        <translation type="unfinished"/>
+        <translation>Puuttuva/vioittunut avaimen SSL-varmenne</translation>
     </message>
     <message>
         <source>Missing/Damaged certificate. Not a real Retroshare user.</source>
-        <translation type="unfinished"/>
+        <translation>Puuttuva/vioittunut SSL-varmenne. Ei todellinen Retrosharen käyttäjä.</translation>
     </message>
     <message>
         <source>Certificate caused an internal error.</source>
-        <translation type="unfinished"/>
+        <translation>Varmenne aiheutti sisäisen virheen.</translation>
     </message>
 </context>
 <context>

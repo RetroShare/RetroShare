@@ -157,7 +157,7 @@
   <name>Page_InstallMode</name> 
   <message> 
     <source>Installation Mode</source> 
-    <translation type="unfinished"/> 
+    <translation>Режим установки</translation> 
   </message> 
 </context> 
 <context> 

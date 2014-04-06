@@ -24,6 +24,6 @@
 !insertmacro LANG_STRING Page_InstallMode_Desc "Elija cómo quiere instalar ${APPNAME}."
 !insertmacro LANG_STRING Page_InstallMode_Standard "Instalación &Estándar"
 !insertmacro LANG_STRING Page_InstallMode_Standard_Desc "Instalar ${APPNAME} para el usuario actual de esta máquina."
-!insertmacro LANG_STRING Page_InstallMode_Portable "Instalación &Portátil"
-!insertmacro LANG_STRING Page_InstallMode_Portable_Desc "En modo portátil, todos los datos de configuración se almacenan en la carpeta de la aplicación y no se escribe ninguna información en el registro."
+!insertmacro LANG_STRING Page_InstallMode_Portable "Instalación &Portable"
+!insertmacro LANG_STRING Page_InstallMode_Portable_Desc "En modo portable, todos los datos de configuración se almacenan en la carpeta de la aplicación y no se escribe ninguna información en el registro."
 !insertmacro LANG_STRING Link_Uninstall "Desinstalar"

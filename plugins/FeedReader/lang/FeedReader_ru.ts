@@ -279,7 +279,7 @@
     <message>
         <location filename="../gui/FeedReaderConfig.h" line="50"/>
         <source>FeedReader</source>
-        <translation type="unfinished"/>
+        <translation>FeedReader – RSS-агрегатор</translation>
     </message>
 </context>
 <context>
@@ -317,7 +317,7 @@
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="293"/>
         <source>Folder</source>
-        <translation type="unfinished"/>
+        <translation>Папка</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="301"/>
@@ -327,7 +327,7 @@
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="309"/>
         <source>Edit</source>
-        <translation type="unfinished"/>
+        <translation>Правка</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderDialog.cpp" line="314"/>
@@ -418,7 +418,7 @@
     <message>
         <location filename="../gui/FeedReaderFeedItem.ui" line="222"/>
         <source>Set as read and remove item</source>
-        <translation type="unfinished"/>
+        <translation>Установить как чтение и удаление элемента</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderFeedItem.ui" line="248"/>
@@ -610,7 +610,7 @@
     <message>
         <location filename="../FeedReaderPlugin.cpp" line="165"/>
         <source>FeedReader</source>
-        <translation type="unfinished"/>
+        <translation>FeedReader – RSS-агрегатор</translation>
     </message>
 </context>
 <context>
@@ -653,7 +653,7 @@
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="67"/>
         <source>Downloading</source>
-        <translation type="unfinished"/>
+        <translation>Загрузка</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="69"/>
@@ -714,7 +714,7 @@
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="117"/>
         <source>Forum not found</source>
-        <translation type="unfinished"/>
+        <translation>Форум не найден</translation>
     </message>
     <message>
         <location filename="../gui/FeedReaderStringDefs.cpp" line="120"/>
@@ -865,7 +865,7 @@
     <message>
         <location filename="../gui/PreviewFeedDialog.cpp" line="426"/>
         <source>Edit</source>
-        <translation type="unfinished"/>
+        <translation>Правка</translation>
     </message>
     <message>
         <location filename="../gui/PreviewFeedDialog.cpp" line="432"/>

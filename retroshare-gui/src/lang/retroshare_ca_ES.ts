@@ -8573,7 +8573,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>News feed</source>
-        <translation>Noticies noves</translation>
+        <translation>Novetats</translation>
     </message>
     <message>
         <source>Friends</source>
@@ -10294,7 +10294,7 @@ Botó dret i selecciona &apos;fer amic&apos; per poder connectar-hi.</translatio
     <name>NewsFeed</name>
     <message>
         <source>News Feed</source>
-        <translation>Noticies noves</translation>
+        <translation>Novetats</translation>
     </message>
     <message>
         <source>Options</source>
@@ -10310,14 +10310,14 @@ Botó dret i selecciona &apos;fer amic&apos; per poder connectar-hi.</translatio
     </message>
     <message>
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;News Feed&lt;/h1&gt;                                                             &lt;p&gt;The News Feed displays the last events on your network, sorted by the time you received them.                   This gives you a summary of the activity of your friends.                                                          You can configure which events to show by pressing on &lt;b&gt;Options&lt;/b&gt;. &lt;/p&gt;                                         &lt;p&gt;The various events shown are:                                                                                   &lt;ul&gt;                                                                                                            &lt;li&gt;Connection attempts (useful to make friends with new people and control who&apos;s trying to reach you)&lt;/li&gt;    &lt;li&gt;Channel and Forum posts&lt;/li&gt;                                                                               &lt;li&gt;New Channels and Forums you can subscribe to&lt;/li&gt;                                                          &lt;li&gt;Private messages from your friends&lt;/li&gt;                                                                    &lt;/ul&gt; &lt;/p&gt;                                                                                                       </source>
-        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Noticies noves&lt;/h1&gt; &lt;p&gt;La font de noticies mostra els últims esdeveniments a la xarxa ordenats per hora de recepció. Això et proporciona un resum de l&apos;activitat dels teus amics. Pots triar quins esdeveniments es mostren a &lt;b&gt;Opcions&lt;/b&gt;. &lt;/p&gt; &lt;p&gt;Els esdeveniments mostrats són: &lt;ul&gt; &lt;li&gt;Intents de connexió (útil per fer amics amb gent nova i controlar qui està intentant connectar-te)&lt;/li&gt; &lt;li&gt;Publicacions a canals i fòrums&lt;/li&gt; &lt;li&gt;Nous canals i fòrums als que et pots subscriure&lt;/li&gt; &lt;li&gt;Missatges privats dels teus amics&lt;/li&gt; &lt;/ul&gt; &lt;/p&gt;</translation>
+        <translation> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;Novetats&lt;/h1&gt; &lt;p&gt;La font de noticies mostra els últims esdeveniments a la xarxa ordenats per hora de recepció. Això et proporciona un resum de l&apos;activitat dels teus amics. Pots triar quins esdeveniments es mostren a &lt;b&gt;Opcions&lt;/b&gt;. &lt;/p&gt; &lt;p&gt;Els esdeveniments mostrats són: &lt;ul&gt; &lt;li&gt;Intents de connexió (útil per fer amics amb gent nova i controlar qui està intentant connectar-te)&lt;/li&gt; &lt;li&gt;Publicacions a canals i fòrums&lt;/li&gt; &lt;li&gt;Nous canals i fòrums als que et pots subscriure&lt;/li&gt; &lt;li&gt;Missatges privats dels teus amics&lt;/li&gt; &lt;/ul&gt; &lt;/p&gt;</translation>
     </message>
 </context>
 <context>
     <name>NotifyPage</name>
     <message>
         <source>News Feed</source>
-        <translation>Noticies noves</translation>
+        <translation>Novetats</translation>
     </message>
     <message>
         <source>Peers</source>
@@ -10523,7 +10523,7 @@ Botó dret i selecciona &apos;fer amic&apos; per poder connectar-hi.</translatio
     </message>
     <message>
         <source>No Anon D/L</source>
-        <translation>No descarrega anònima</translation>
+        <translation>Cap descarrega anònima</translation>
     </message>
     <message>
         <source>Gaming Mode</source>
@@ -11818,7 +11818,7 @@ Els caràcters &lt;b&gt;&quot;,|,/,\,&amp;lt;&amp;gt;,*,?&lt;/b&gt; es substitui
     <message>
         <source>The following has not been added to your download list, because you already have it:
     </source>
-        <translation>El següent no s&apos;ha afegit a la llista de descarregues perquè ja hi era:⏎</translation>
+        <translation>El següent no s&apos;ha afegit a la llista de descarregues perquè ja hi era:</translation>
     </message>
     <message>
         <source>You appear to have locations associated to DSA keys:</source>
@@ -12027,7 +12027,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Choose your download speed limit: </source>
-        <translation>Quin és el teu limit de descarrega:</translation>
+        <translation>Quin és el teu límit de baixada:</translation>
     </message>
     <message>
         <source> KB/s</source>
@@ -12216,11 +12216,11 @@ p, li { white-space: pre-wrap; }
     <name>RatesStatus</name>
     <message>
         <source>&lt;strong&gt;Down:&lt;/strong&gt; 0.00 (kB/s) | &lt;strong&gt;Up:&lt;/strong&gt; 0.00 (kB/s) </source>
-        <translation>&lt;strong&gt;Descarrega:&lt;/strong&gt; 0.00 (kB/s) | &lt;strong&gt;Pujada:&lt;/strong&gt; 0.00 (kB/s) </translation>
+        <translation>&lt;strong&gt;Baixada:&lt;/strong&gt; 0.00 (kB/s) | &lt;strong&gt;Pujada:&lt;/strong&gt; 0.00 (kB/s) </translation>
     </message>
     <message>
         <source>Down</source>
-        <translation>Descarrega</translation>
+        <translation>Baixada</translation>
     </message>
     <message>
         <source>Up</source>
@@ -12981,7 +12981,7 @@ El valor per defecte és 20.</translation>
     </message>
     <message>
         <source>Download (KB/s) </source>
-        <translation>Descarrega (kB/s)</translation>
+        <translation>Baixada (kB/s)</translation>
     </message>
     <message>
         <source>Upload (KB/s) </source>
@@ -13733,7 +13733,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Default chunk strategy:</source>
-        <translation>Estratègia de descarrega per defecte:</translation>
+        <translation>Estratègia de fragmentació per defecte:</translation>
     </message>
     <message>
         <source>Safety disk space limit :</source>
@@ -13746,10 +13746,7 @@ to be equal to the queue size above will always prioritize your files
 over cache. 
 
 It is however recommended to leave at least a few slots for cache files.</source>
-        <translation>Pots forçar que el RetroShare descarregui arxius teus en lloc de 
-arxius de cau per tantes ranures com sol·licitis. Posant aquest valor
-al mateix que la mida de la cua de sobre farà que sempre tinguin 
-prioritat els arxius en descarrega per sobre del de cau. 
+        <translation>Pots forçar que el RetroShare descarregui arxius teus en lloc d&apos;arxius cau per tantes ranures com sol·licitis. Posant aquest valor al mateix que la mida de la cua de sobre farà que sempre tinguin prioritat els arxius en descarrega per sobre dels cau. 
 No obstant, es recomana deixar algunes ranures lliures pels arxius cau.</translation>
     </message>
     <message>
@@ -13790,7 +13787,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Transfer</source>
-        <translation>Transferencia</translation>
+        <translation>Transferència</translation>
     </message>
 </context>
 <context>
@@ -13961,7 +13958,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <source>Down</source>
-        <translation>Descarrega</translation>
+        <translation>Baixada</translation>
     </message>
     <message>
         <source>Up</source>
@@ -14078,13 +14075,9 @@ map of the data; it will compare and invalidate
 bad blocks, and download them again
 
 Try to be patient!</source>
-        <translation>Si el número de hash de les dades descarregades
-no es correspon amb l&apos;anunciat per la font de
-l&apos;arxiu és probable que les dades siguin 
-corruptes.
-El RetroShare demanarà a la font un mapa 
-detallat de les dades; Compararà i invalidarà 
-els fragments dolents i els tornarà a descarregar.
+        <translation>Si el número de hash de les dades descarregades no es correspon amb l&apos;anunciat per la font de l&apos;arxiu és probable que les dades siguin corruptes.
+El RetroShare demanarà a la font un mapa detallat de les dades; Compararà i invalidarà els fragments dolents i els tornarà a descarregar.
+
 Tingues paciència!</translation>
     </message>
     <message>
@@ -14125,7 +14118,7 @@ Tingues paciència!</translation>
     </message>
     <message>
         <source>Open Transfer</source>
-        <translation>Obrir transferencia</translation>
+        <translation>Obrir transferència</translation>
     </message>
     <message>
         <source>File %1 is not completed. If it is a media file, try to preview it.</source>

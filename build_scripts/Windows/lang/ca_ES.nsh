@@ -20,7 +20,7 @@
 !insertmacro LANG_STRING Section_Plugin_VOIP_Desc "Instal·lar complement VeuIP."
 !insertmacro LANG_STRING Section_AutoStart "Posada en marxa automàtica"
 !insertmacro LANG_STRING Section_AutoStart_Desc "Autoengegar al arrencar."
-!insertmacro LANG_STRING Page_InstallMode "Installation Mode"
+!insertmacro LANG_STRING Page_InstallMode "Mode instal·lació"
 !insertmacro LANG_STRING Page_InstallMode_Desc "Escull com vols instal·lar ${APPNAME}."
 !insertmacro LANG_STRING Page_InstallMode_Standard "Instal·lació e&stàndard"
 !insertmacro LANG_STRING Page_InstallMode_Standard_Desc "Instal·la ${APPNAME} per la sessió d'usuari actual."

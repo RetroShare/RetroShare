@@ -17,7 +17,7 @@
   <name>Section_Data</name> 
   <message> 
     <source>Skins</source> 
-    <translation type="unfinished"/> 
+    <translation>Skórki</translation> 
   </message> 
 </context> 
 <context> 
@@ -59,21 +59,21 @@
   <name>Section_Desktop</name> 
   <message> 
     <source>Desktop icon</source> 
-    <translation type="unfinished"/> 
+    <translation>Ikona na pulpicie</translation> 
   </message> 
 </context> 
 <context> 
   <name>Section_Desktop_Desc</name> 
   <message> 
     <source>Adds icon to desktop.</source> 
-    <translation type="unfinished"/> 
+    <translation>Dodawanie ikony na pulpicie</translation> 
   </message> 
 </context> 
 <context> 
   <name>Section_QuickLaunch</name> 
   <message> 
     <source>Quick Launch icon</source> 
-    <translation type="unfinished"/> 
+    <translation>Ikona szybkiego uruchamiania</translation> 
   </message> 
 </context> 
 <context> 
@@ -87,14 +87,14 @@
   <name>Section_Plugins</name> 
   <message> 
     <source>Optional plugins</source> 
-    <translation type="unfinished"/> 
+    <translation>Wtyczki opcjonalne</translation> 
   </message> 
 </context> 
 <context> 
   <name>Section_Plugins_Desc</name> 
   <message> 
     <source>Optional plugins to extend functionality.</source> 
-    <translation type="unfinished"/> 
+    <translation>Wtyczki opcjonalne rozszerzające funkcjonalność.</translation> 
   </message> 
 </context> 
 <context> 
@@ -150,28 +150,28 @@
   <name>Section_AutoStart_Desc</name> 
   <message> 
     <source>Auto-Run at startup.</source> 
-    <translation type="unfinished"/> 
+    <translation>Automatyczne uruchamianie przy starcie.</translation> 
   </message> 
 </context> 
 <context> 
   <name>Page_InstallMode</name> 
   <message> 
     <source>Installation Mode</source> 
-    <translation type="unfinished"/> 
+    <translation>Tryb instalacji</translation> 
   </message> 
 </context> 
 <context> 
   <name>Page_InstallMode_Desc</name> 
   <message> 
     <source>Choose how you want to install ${APPNAME}.</source> 
-    <translation type="unfinished"/> 
+    <translation>Wybierz jak chcesz zainstalować ${APPNAME}.</translation> 
   </message> 
 </context> 
 <context> 
   <name>Page_InstallMode_Standard</name> 
   <message> 
     <source>&amp;Standard installation</source> 
-    <translation type="unfinished"/> 
+    <translation>&amp;Standardowa instalacja</translation> 
   </message> 
 </context> 
 <context> 
@@ -199,7 +199,7 @@
   <name>Link_Uninstall</name> 
   <message> 
     <source>Uninstall</source> 
-    <translation type="unfinished"/> 
+    <translation>Odinstaluj</translation> 
   </message> 
 </context> 
 </TS>

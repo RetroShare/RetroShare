@@ -20,7 +20,7 @@
 !insertmacro LANG_STRING Section_Plugin_VOIP_Desc "Установка плагина VOIP."
 !insertmacro LANG_STRING Section_AutoStart "Автозапуск"
 !insertmacro LANG_STRING Section_AutoStart_Desc "Автозапуск при загрузке."
-!insertmacro LANG_STRING Page_InstallMode "Installation Mode"
+!insertmacro LANG_STRING Page_InstallMode "Режим установки"
 !insertmacro LANG_STRING Page_InstallMode_Desc "Выберите метод установки ${APPNAME}."
 !insertmacro LANG_STRING Page_InstallMode_Standard "Стандартная установка"
 !insertmacro LANG_STRING Page_InstallMode_Standard_Desc "Установка ${APPNAME} для текущего пользователя компьютера."

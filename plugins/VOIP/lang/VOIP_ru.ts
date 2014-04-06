@@ -187,7 +187,7 @@
     <message>
         <location filename="../gui/AudioInputConfig.cpp" line="101"/>
         <source>Voice Activity</source>
-        <translation type="unfinished"/>
+        <translation>Голосовая активность</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.cpp" line="102"/>
@@ -197,17 +197,17 @@
     <message>
         <location filename="../gui/AudioInputConfig.cpp" line="204"/>
         <source>%1 s</source>
-        <translation type="unfinished"/>
+        <translation>%1 с</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.cpp" line="212"/>
         <source>Off</source>
-        <translation type="unfinished"/>
+        <translation>Выкл</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.cpp" line="215"/>
         <source>-%1 dB</source>
-        <translation type="unfinished"/>
+        <translation>-%1 dB</translation>
     </message>
     <message>
         <location filename="../gui/AudioInputConfig.h" line="72"/>
@@ -432,7 +432,7 @@
     <message>
         <location filename="../gui/AudioWizard.ui" line="86"/>
         <source>Talk normally, and adjust the slider below so that the bar moves into green when you talk, and doesn&apos;t go into the orange zone.</source>
-        <translation type="unfinished"/>
+        <translation>Говорите нормально и переместите ползунок ниже, так что бы бар переходил в зеленую зону, когда вы говорите и не появлялся в оранжевой зоне.</translation>
     </message>
     <message>
         <location filename="../gui/AudioWizard.ui" line="130"/>
@@ -505,7 +505,7 @@
     <message>
         <location filename="../VOIPPlugin.cpp" line="95"/>
         <source>&lt;h3&gt;RetroShare VOIP plugin&lt;/h3&gt;&lt;br/&gt;   * Contributors: Cyril Soler, Josselin Jacquard&lt;br/&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;h3&gt;RetroShare VOIP плагин&lt;/h3&gt;&lt;br/&gt;   * Contributors: Cyril Soler, Josselin Jacquard&lt;br/&gt;</translation>
     </message>
     <message>
         <location filename="../VOIPPlugin.cpp" line="96"/>
@@ -515,7 +515,7 @@
     <message>
         <location filename="../VOIPPlugin.cpp" line="97"/>
         <source>&lt;li&gt; setup microphone levels using the configuration panel&lt;/li&gt;</source>
-        <translation type="unfinished"/>
+        <translation>&lt;li&gt;установка уровня использования микрофона с помощью панели настройки&lt;/li&gt;</translation>
     </message>
     <message>
         <location filename="../VOIPPlugin.cpp" line="98"/>

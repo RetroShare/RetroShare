@@ -185,14 +185,14 @@
   <name>Page_InstallMode_Portable</name> 
   <message> 
     <source>&amp;Portable installation</source> 
-    <translation>Instalación &amp;Portátil</translation> 
+    <translation>Instalación &amp;Portable</translation> 
   </message> 
 </context> 
 <context> 
   <name>Page_InstallMode_Portable_Desc</name> 
   <message> 
     <source>In portable mode all configuration data is stored in the application folder and no information is written to the registry.</source> 
-    <translation>En modo portátil, todos los datos de configuración se almacenan en la carpeta de la aplicación y no se escribe ninguna información en el registro.</translation> 
+    <translation>En modo portable, todos los datos de configuración se almacenan en la carpeta de la aplicación y no se escribe ninguna información en el registro.</translation> 
   </message> 
 </context> 
 <context> 
