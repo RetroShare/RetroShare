@@ -2,6 +2,7 @@
 
 #include <retroshare/rstypes.h>
 #include <turtle/p3turtle.h>
+#include <grouter/p3grouter.h>
 
 class MonitoredTurtleClient ;
 class MonitoredGRouterClient ;
@@ -34,6 +35,7 @@ class PeerNode
 		// Turtle-related methods
 		//
 		const RsTurtle *turtle_service() const { return _turtle ; }
+        const RsGRouter *global_router_service() const { return _grouter ; }
 
 		void manageFileHash(const RsFileHash& hash) ;
 		void provideFileHash(const RsFileHash& hash) ;
@@ -45,6 +47,11 @@ class PeerNode
 
 		// GRouter-related methods
 		//
+		void provideGRKey(const GRouterKeyId& key_id) ;
+		void sendToGRKey(const GRouterKeyId& key_id) ;
+
+		const std::set<GRouterKeyId>& providedGRKeys() const { return _provided_keys; }
+
 	private:
 		p3ServiceServer *_service_server ;
 		pqiPublisher *_publisher ;
@@ -62,5 +69,6 @@ class PeerNode
 
 		std::set<RsFileHash> _provided_hashes ;
 		std::set<RsFileHash> _managed_hashes ;
+		std::set<GRouterKeyId> _provided_keys ;
 };
 

@@ -67,7 +67,14 @@ void PeerNode::manageFileHash(const RsFileHash& hash)
 	_managed_hashes.insert(hash) ;
 	_turtle->monitorTunnels(hash,_turtle_client) ;
 }
-
+void PeerNode::sendToGRKey(const GRouterKeyId& key_id)
+{
+	_grouter_client->sendMessage(key_id) ;
+}
+void PeerNode::provideGRKey(const GRouterKeyId& key_id)
+{
+	_grouter_client->provideKey(key_id) ;
+}
 void PeerNode::getTrafficInfo(NodeTrafficInfo& info)
 {
 	std::vector<std::vector<std::string> > hashes_info ;

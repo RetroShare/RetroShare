@@ -43,8 +43,10 @@ class NetworkViewer: public QGLViewer
 	public slots:
 		void timerEvent(QTimerEvent *) ;
 		void contextMenu(QPoint) ;
-		void actionManageHash() ;
+		void actionClientForHash() ;
 		void actionProvideHash() ;
+		void actionSendToGRKey() ;
+		void actionProvideGRKey() ;
 
 	private:
 		void calculateForces(const Network::NodeId& node_id,const double *map,int W,int H,float x,float y,float /*speedf*/,float& new_x, float& new_y) ;
@@ -73,7 +75,9 @@ class NetworkViewer: public QGLViewer
 		bool _dragging ;
 		bool _nodes_need_recomputing ;
 
-		QAction *action_ManageHash ;
+		QAction *action_SendToGRKey ;
+		QAction *action_ProvideGRKey ;
+		QAction *action_ClientForHash ;
 		QAction *action_ProvideHash ;
 };
 

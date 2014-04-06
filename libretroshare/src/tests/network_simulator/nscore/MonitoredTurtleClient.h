@@ -9,6 +9,7 @@ public:
 
     bool handleTunnelRequest(const TurtleFileHash& hash,const RsPeerId& peer_id);
     void provideFileHash(const RsFileHash& hash);
+	 void requestFileHash(const RsFileHash& hash) ;
 
 private:
     std::map<RsFileHash,FileInfo> _local_files ;

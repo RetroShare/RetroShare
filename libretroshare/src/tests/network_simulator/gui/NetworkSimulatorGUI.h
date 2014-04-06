@@ -1,6 +1,7 @@
 #include "ui_NetworkSimulatorGUI.h"
 
 class TurtleRouterStatistics ;
+class GlobalRouterStatistics ;
 class NetworkViewer ;
 class Network ;
 
@@ -20,6 +21,7 @@ class NetworkSimulatorGUI: public QMainWindow, public Ui::NetworkSimulatorGUI
 	private:
 		NetworkViewer *_viewer ;
 		TurtleRouterStatistics *_turtle_router_statistics ;
+        GlobalRouterStatistics *_global_router_statistics ;
 
 		int tickTimerId ;
 };

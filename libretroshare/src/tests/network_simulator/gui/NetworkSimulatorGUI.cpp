@@ -4,6 +4,7 @@
 #include "NetworkSimulatorGUI.h"
 #include "NetworkViewer.h"
 #include "TurtleRouterStatistics.h"
+#include "GlobalRouterStatistics.h"
 
 NetworkSimulatorGUI::NetworkSimulatorGUI(Network& net)
 {
@@ -16,13 +17,19 @@ NetworkSimulatorGUI::NetworkSimulatorGUI(Network& net)
 	QObject::connect(_viewer,SIGNAL(nodeSelected(int)),this,SLOT(updateSelectedNode(int))) ;
 	QObject::connect(flow_CB,SIGNAL(toggled(bool)),this,SLOT(toggleNetworkTraffic(bool))) ;
 
-	QVBoxLayout *layout2 = new QVBoxLayout(inspectorFrame) ;
-	layout2->addWidget(_turtle_router_statistics = new TurtleRouterStatistics() ) ;
+    QVBoxLayout *layout2 = new QVBoxLayout(inspectorFrame) ;
+    QTabWidget *tabwidget = new QTabWidget() ;
+
+    layout2->addWidget(tabwidget) ;
+
+    tabwidget->addTab(_turtle_router_statistics = new TurtleRouterStatistics(),"Turtle router" ) ;
+    tabwidget->addTab(_global_router_statistics = new GlobalRouterStatistics(),"Global router" ) ;
 }
 
 void NetworkSimulatorGUI::updateSelectedNode(int node_id)
 {
-	_turtle_router_statistics->setTurtleRouter( _viewer->network().node(node_id).turtle_service() ) ;
+    _turtle_router_statistics->setTurtleRouter( _viewer->network().node(node_id).turtle_service() ) ;
+    _global_router_statistics->setGlobalRouter( _viewer->network().node(node_id).global_router_service() ) ;
 }
 
 void NetworkSimulatorGUI::toggleNetworkTraffic(bool b)

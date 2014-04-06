@@ -5,6 +5,7 @@
 #include <retroshare/rsids.h>
 
 #include "nscore/Network.h"
+#include "nscore/MonitoredGRouterClient.h"
 #include "NetworkViewer.h"
 
 NetworkViewer::NetworkViewer(QWidget *parent,Network&net)
@@ -32,8 +33,11 @@ NetworkViewer::NetworkViewer(QWidget *parent,Network&net)
 
 	connect(this,SIGNAL(customContextMenuRequested(QPoint)),this,SLOT(contextMenu(QPoint)));
 
-	action_ManageHash = new QAction(QString("Manage new random hash"),this) ;
-	QObject::connect(action_ManageHash,SIGNAL(triggered()),this,SLOT(actionManageHash())) ;
+	action_ClientForHash = new QAction(QString("Client for new random hash"),this) ;
+	QObject::connect(action_ClientForHash,SIGNAL(triggered()),this,SLOT(actionClientForHash())) ;
+
+	action_ProvideGRKey = new QAction(QString("Provide new GRouter key"),this) ;
+	QObject::connect(action_ProvideGRKey,SIGNAL(triggered()),this,SLOT(actionProvideGRKey())) ;
 
 	setMouseTracking(true) ;
 }
@@ -514,7 +518,7 @@ void NetworkViewer::contextMenu(QPoint p)
 
 	QMenu contextMnu ;//= ui.msgText->createStandardContextMenu(matrix.map(point));
 
-	contextMnu.addAction(action_ManageHash);
+    contextMnu.addAction(action_ClientForHash);
 
 	if(_current_acted_node == -1)
 		return ;
@@ -545,19 +549,27 @@ void NetworkViewer::contextMenu(QPoint p)
 	}
 	if(!provided_hashes.empty())
 	{
-		QMenu *Mnu2 = contextMnu.addMenu("Manage hash") ;
+		QMenu *Mnu2 = contextMnu.addMenu("Client for hash") ;
 
 		for(std::set<TurtleFileHash>::const_iterator it(provided_hashes.begin());it!=provided_hashes.end();++it)
 		{
 			QAction* manage_hash_action = new QAction(QString::fromStdString((*it).toStdString()), Mnu2);
-			connect(manage_hash_action, SIGNAL(triggered()), this, SLOT(actionManageHash()));
+			connect(manage_hash_action, SIGNAL(triggered()), this, SLOT(actionClientForHash()));
 			Mnu2->addAction(manage_hash_action);
 		}
-	}
-	contextMnu.exec(mapToGlobal(p));
+    }
+    contextMnu.addSeparator() ;
+
+    // GRouter stuff
+
+    contextMnu.addAction(action_ProvideGRKey);
+
+    // Execute!
+
+    contextMnu.exec(mapToGlobal(p));
 }
 
-void NetworkViewer::actionManageHash()
+void NetworkViewer::actionClientForHash()
 {
 	if(_current_acted_node < 0)
 		return ;
@@ -595,6 +607,42 @@ void NetworkViewer::actionProvideHash()
 
 	std::cerr << "Providing hash " << hash.toStdString() << std::endl;
 	_network.node(_current_acted_node).provideFileHash(RsFileHash(hash.toStdString())) ;
+
+	updateGL() ;
+}
+
+void NetworkViewer::actionSendToGRKey()
+{
+	if(_current_acted_node < 0)
+		return ;
+
+	GRouterKeyId key_id ;
+
+	if(qobject_cast<QAction*>(sender())->text().length() == 32) //data().toString().toStdString();
+	{
+		key_id = GRouterKeyId(qobject_cast<QAction*>(sender())->text().toStdString()) ;
+
+		std::cerr << "Sending to existing key " << key_id << std::endl;
+	}
+
+	std::cerr << "   current node = " << _current_acted_node << std::endl ;
+	std::cerr << "   sending message = " << key_id << std::endl;
+
+	_network.node(_current_acted_node).sendToGRKey(key_id) ;
+
+	updateGL() ;
+}
+
+void NetworkViewer::actionProvideGRKey()
+{
+	if(_current_acted_node < 0)
+		return ;
+
+	GRouterKeyId key_id = GRouterKeyId::random();
+	QString key = QString::fromStdString(key_id.toStdString()) ;
+
+	std::cerr << "Providing new grouter key " << key_id << std::endl;
+	_network.node(_current_acted_node).provideGRKey(key_id) ;
 
 	updateGL() ;
 }
