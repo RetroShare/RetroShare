@@ -204,25 +204,27 @@ p3GRouter::p3GRouter(p3ServiceControl *sc,p3LinkMgr *lm)
 {
 	addSerialType(new RsGRouterSerialiser()) ;
 
+	_last_autowash_time = 0 ;
+	_last_publish_campaign_time = 0 ;
+	_last_debug_output_time = 0 ;
+	_last_config_changed = 0 ;
+
+	_random_salt = RSRandom::random_u64() ;
+
 	_changed = false ;
 }
 
 int p3GRouter::tick()
 {
-	static time_t last_autowash_time = 0 ;
-	static time_t last_publish_campaign_time = 0 ;
-	static time_t last_debug_output_time = 0 ;
-	static time_t last_config_changed = 0 ;
-
 	time_t now = time(NULL) ;
 
-	if(now > last_autowash_time + RS_GROUTER_AUTOWASH_PERIOD)
+	if(now > _last_autowash_time + RS_GROUTER_AUTOWASH_PERIOD)
 	{
 		// route pending objects
 		//
 		routePendingObjects() ;
 
-		last_autowash_time = now ;
+		_last_autowash_time = now ;
 		autoWash() ;
 	}
 	// Handle incoming items
@@ -231,9 +233,9 @@ int p3GRouter::tick()
 	
 	// Advertise published keys
 	//
-	if(now > last_publish_campaign_time + RS_GROUTER_PUBLISH_CAMPAIGN_PERIOD)
+	if(now > _last_publish_campaign_time + RS_GROUTER_PUBLISH_CAMPAIGN_PERIOD)
 	{
-		last_publish_campaign_time = now ;
+		_last_publish_campaign_time = now ;
 
 		//publishKeys() ;	// we don't publish keys anymore.
 		//
@@ -243,9 +245,9 @@ int p3GRouter::tick()
 #ifdef GROUTER_DEBUG
 	// Debug dump everything
 	//
-	if(now > last_debug_output_time + RS_GROUTER_DEBUG_OUTPUT_PERIOD)
+	if(now > _last_debug_output_time + RS_GROUTER_DEBUG_OUTPUT_PERIOD)
 	{
-		last_debug_output_time = now ;
+		_last_debug_output_time = now ;
 		debugDump() ;
 	}
 #endif
@@ -253,14 +255,14 @@ int p3GRouter::tick()
 	// If content has changed, save config, at most every RS_GROUTER_MIN_CONFIG_SAVE_PERIOD seconds appart
 	// Otherwise, always save at least every RS_GROUTER_MAX_CONFIG_SAVE_PERIOD seconds
 	//
-	if(_changed && now > last_config_changed + RS_GROUTER_MIN_CONFIG_SAVE_PERIOD)
+	if(_changed && now > _last_config_changed + RS_GROUTER_MIN_CONFIG_SAVE_PERIOD)
 	{
 #ifdef GROUTER_DEBUG
 		std::cerr << "p3GRouter::tick(): triggering config save." << std::endl;
 #endif
 
 		_changed = false ;
-		last_config_changed = now ;
+		_last_config_changed = now ;
 		IndicateConfigChanged() ;
 	}
 
@@ -431,13 +433,12 @@ uint32_t p3GRouter::computeRandomDistanceIncrement(const RsPeerId& pid,const GRo
 	// distances in the network, and makes statistics about multiple sending
 	// attempts impossible.
 	//
-	static uint64_t random_salt = RSRandom::random_u64() ;
-	static const int total_size = RsPeerId::SIZE_IN_BYTES + GRouterKeyId::SIZE_IN_BYTES + sizeof(random_salt) ;
+	static const int total_size = RsPeerId::SIZE_IN_BYTES + GRouterKeyId::SIZE_IN_BYTES + sizeof(_random_salt) ;
 
 	unsigned char tmpmem[total_size] ;
-	*(uint64_t*)&tmpmem[0] = random_salt ;
-	memcpy(&tmpmem[sizeof(random_salt)],pid.toByteArray(),RsPeerId::SIZE_IN_BYTES) ;
-	memcpy(&tmpmem[sizeof(random_salt) + RsPeerId::SIZE_IN_BYTES],destination_key.toByteArray(),GRouterKeyId::SIZE_IN_BYTES) ;
+	*(uint64_t*)&tmpmem[0] = _random_salt ;
+	memcpy(&tmpmem[sizeof(_random_salt)],pid.toByteArray(),RsPeerId::SIZE_IN_BYTES) ;
+	memcpy(&tmpmem[sizeof(_random_salt) + RsPeerId::SIZE_IN_BYTES],destination_key.toByteArray(),GRouterKeyId::SIZE_IN_BYTES) ;
 
 	return RsDirUtil::sha1sum(tmpmem,total_size).toByteArray()[5] ;
 }
@@ -455,7 +456,7 @@ uint32_t p3GRouter::computeBranchingFactor(const std::vector<RsPeerId>& friends,
 	// 	BF		: 1    0.7    0.3    0.1   0.05   0.05  0.05
 
 	static const uint32_t MAX_DIST_INDEX = 7 ;
-	static float branching_factors[MAX_DIST_INDEX] = { 1,0.7,0.3,0.1,0.05,0.05,0.05 } ;
+	static const float branching_factors[MAX_DIST_INDEX] = { 1,0.7,0.3,0.1,0.05,0.05,0.05 } ;
 
 	uint32_t dist_index = std::min( (uint32_t)(dist / (float)GROUTER_ITEM_DISTANCE_UNIT), MAX_DIST_INDEX-1) ;
 
@@ -534,7 +535,7 @@ std::set<uint32_t> p3GRouter::computeRoutingFriends(const std::vector<RsPeerId>&
 		float total = 0.0f ; for(int j=0;j<p;++j) total += probas_with_peers[j].first ;	// computes the partial sum of the array
 		float r = RSRandom::random_f32()*total ;
 
-		int k; total=0.0f ; for(k=0;total < r;++k) total += probas_with_peers[k].first ; --k ;
+		int k; total=0.0f ; for(k=0;total < r;++k) total += probas_with_peers[k].first ; 
 
 		std::cerr << "    => Friend " << i << ", between 0 and " << p-1 << ": chose k=" << k << ", peer=" << probas_with_peers[k].second << std::endl;
 
@@ -1045,7 +1046,7 @@ bool p3GRouter::saveList(bool& cleanup,std::list<RsItem*>& items)
 	return true ;
 }
 
-bool p3GRouter::getRoutingMatrixInfo(RsGRouter::GRouterRoutingMatrixInfo& info)
+bool p3GRouter::getRoutingMatrixInfo(RsGRouter::GRouterRoutingMatrixInfo& info) 
 {
 	info.per_friend_probabilities.clear() ;
 	info.friend_ids.clear() ;
@@ -1073,7 +1074,7 @@ bool p3GRouter::getRoutingMatrixInfo(RsGRouter::GRouterRoutingMatrixInfo& info)
 
 	return true ;
 }
-bool p3GRouter::getRoutingCacheInfo(std::vector<GRouterRoutingCacheInfo>& infos) 
+bool p3GRouter::getRoutingCacheInfo(std::vector<GRouterRoutingCacheInfo>& infos)  
 {
 	RsStackMutex mtx(grMtx) ;
 	infos.clear() ;
@@ -1127,7 +1128,7 @@ void p3GRouter::debugDump()
 
 	std::cerr << "  Data items: " << std::endl;
 
-	static std::string statusString[4] = { "Unkn","Pend","Sent","Ackn" };
+	static const std::string statusString[4] = { "Unkn","Pend","Sent","Ackn" };
 
 	for(std::map<GRouterMsgPropagationId, GRouterRoutingInfo>::iterator it(_pending_messages.begin());it!=_pending_messages.end();++it)
 		std::cerr << "    Msg id: " << std::hex << it->first << std::dec 

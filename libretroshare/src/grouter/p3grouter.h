@@ -157,7 +157,8 @@ class p3GRouter: public RsGRouter, public p3Service, public p3Config
 		//
 		static uint32_t computeBranchingFactor(const std::vector<RsPeerId>& friends,const std::vector<float>& probas,uint32_t dist) ;
 		static std::set<uint32_t> computeRoutingFriends(const std::vector<RsPeerId>& friends,const std::vector<float>& probas,uint32_t N) ;
-		static uint32_t computeRandomDistanceIncrement(const RsPeerId& pid,const GRouterKeyId& destination_id) ;
+
+		uint32_t computeRandomDistanceIncrement(const RsPeerId& pid,const GRouterKeyId& destination_id) ;
 
 		//===================================================//
 		//                  p3Config methods                 //
@@ -235,6 +236,13 @@ class p3GRouter: public RsGRouter, public p3Service, public p3Config
 
 		// config update/save variables
 		bool _changed ;
+
+		time_t _last_autowash_time ;
+		time_t _last_publish_campaign_time ;
+		time_t _last_debug_output_time ;
+		time_t _last_config_changed ;
+
+		uint64_t _random_salt ;
 };
 
 

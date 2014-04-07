@@ -75,8 +75,8 @@ class RsGRouter
 		//                  Debugging info                   //
 		//===================================================//
 
-		virtual bool getRoutingCacheInfo(std::vector<GRouterRoutingCacheInfo>& infos) =0; 
-		virtual bool getRoutingMatrixInfo(GRouterRoutingMatrixInfo& info) =0; 
+        virtual bool getRoutingCacheInfo(std::vector<GRouterRoutingCacheInfo>& infos) =0;
+        virtual bool getRoutingMatrixInfo(GRouterRoutingMatrixInfo& info) =0;
 
 		// retrieve the routing probabilities
 		
