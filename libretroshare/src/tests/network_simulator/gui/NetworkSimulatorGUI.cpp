@@ -33,6 +33,8 @@ void NetworkSimulatorGUI::updateSelectedNode(int node_id)
 
     _turtle_router_statistics->updateDisplay() ;
     _global_router_statistics->updateDisplay() ;
+
+	 std::cerr << "Selected objects: turtle=" << std::hex <<  _viewer->network().node(node_id).turtle_service() << ", grouter=" << _viewer->network().node(node_id).global_router_service() << std::dec << std::endl;
 }
 
 void NetworkSimulatorGUI::toggleNetworkTraffic(bool b)
@@ -57,7 +59,7 @@ void NetworkSimulatorGUI::timerEvent(QTimerEvent *event)
 {
 	Q_UNUSED(event) ;
 
-	std::cerr << "timer event!" << std::endl;
+	//std::cerr << "timer event!" << std::endl;
 
 	_viewer->network().tick() ;
 

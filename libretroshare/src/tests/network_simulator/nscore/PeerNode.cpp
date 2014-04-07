@@ -48,7 +48,7 @@ PeerNode::~PeerNode()
 
 void PeerNode::tick()
 {
-	std::cerr << "  ticking peer node " << _id << std::endl;
+	//std::cerr << "  ticking peer node " << _id << std::endl;
 	_service_server->tick() ;
 }
 

@@ -48,6 +48,7 @@ GlobalRouterStatistics::GlobalRouterStatistics(QWidget *parent)
 	setupUi(this) ;
 	
 	_router_F->setWidget( _tst_CW = new GlobalRouterStatisticsWidget() ) ; 
+	_grouter = NULL ;
 }
 
 GlobalRouterStatistics::~GlobalRouterStatistics()
@@ -61,7 +62,8 @@ void GlobalRouterStatistics::setGlobalRouter(const RsGRouter *grouter)
 }
 void GlobalRouterStatistics::updateDisplay()
 {
-    _tst_CW->updateContent(_grouter) ;
+	if(_grouter != NULL)
+		_tst_CW->updateContent(_grouter) ;
 }
 
 QString GlobalRouterStatistics::getPeerName(const RsPeerId &peer_id)

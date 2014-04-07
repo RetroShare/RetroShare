@@ -66,7 +66,7 @@ bool Network::initRandom(uint32_t nb_nodes,float connexion_probability)
 
 void Network::tick()
 {
-	std::cerr<< "network loop: tick()" << std::endl;
+	//std::cerr<< "network loop: tick()" << std::endl;
 
 	// Tick all nodes.
 
