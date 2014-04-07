@@ -273,6 +273,8 @@ void GxsChannelPostItem::loadPost(const RsGxsChannelPost &post)
 	{
 		commentButton->show();
 
+// THIS CODE IS doesn't compile - disabling until fixed.
+#if 0
 		if (post.mComments)
 		{
 			QString commentText = QString::number(post.mComments);
@@ -284,6 +286,8 @@ void GxsChannelPostItem::loadPost(const RsGxsChannelPost &post)
 		{
 			commentButton->setText(tr("Comment"));
 		}
+#endif
+
 	}
 	else
 	{
