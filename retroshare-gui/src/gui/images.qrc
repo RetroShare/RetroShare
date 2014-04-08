@@ -666,6 +666,13 @@
         <file>images/connect/connectFriendBanner1.png</file>
         <file>images/connect/info16.png</file>
         <file>images/connect/mail_send.png</file>
+        <file>images/tags/pgp-known.png</file>
+        <file>images/tags/pgp-unknown.png</file>
+        <file>images/tags/anon.png</file>
+        <file>images/tags/dev-ambassador.png</file>
+        <file>images/tags/dev-translator.png</file>
+        <file>images/tags/dev-patcher.png</file>
+        <file>images/tags/developer.png</file>
         <file>help/version.html</file>
         <file>images/view-certificate-sign-48.png</file>
     </qresource>

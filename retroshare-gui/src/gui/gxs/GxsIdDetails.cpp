@@ -32,15 +32,15 @@
 
 /* Images for tag icons */
 #define IMAGE_LOADING     ":/images/folder-draft.png"
-#define IMAGE_PGPKNOWN    ":/images/vote_up.png"
-#define IMAGE_PGPUNKNOWN  ":/images/vote_up.png"
-#define IMAGE_ANON        ":/images/vote_down.png"
+#define IMAGE_PGPKNOWN    ":/images/tags/pgp-known.png"
+#define IMAGE_PGPUNKNOWN  ":/images/tags/pgp-unknown.png"
+#define IMAGE_ANON        ":/images/tags/anon.png"
 
-#define IMAGE_DEV_AMBASSADOR     ":/images/vote_down.png"
-#define IMAGE_DEV_CONTRIBUTOR    ":/images/vote_down.png"
-#define IMAGE_DEV_TRANSLATOR     ":/images/vote_down.png"
-#define IMAGE_DEV_PATCHER        ":/images/vote_down.png"
-#define IMAGE_DEV_DEVELOPER      ":/images/vote_down.png"
+#define IMAGE_DEV_AMBASSADOR     ":/images/tags/dev-ambassador.png"
+#define IMAGE_DEV_CONTRIBUTOR    ":/images/tags/vote_down.png"
+#define IMAGE_DEV_TRANSLATOR     ":/images/tags/dev-translator.png"
+#define IMAGE_DEV_PATCHER        ":/images/tags/dev-patcher.png"
+#define IMAGE_DEV_DEVELOPER      ":/images/tags/developer.png"
 
 static const int IconSize = 20;
 
