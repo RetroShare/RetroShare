@@ -230,7 +230,7 @@ win32 {
 	UPNPC_DIR = ../../../miniupnpc-1.3
 
 	ZLIB_DIR = ../../../zlib-1.2.3
-	SSL_DIR = ../../../openssl-1.0.1c
+	SSL_DIR = ../../../openssl-1.0.1g
 	OPENPGPSDK_DIR = ../../openpgpsdk/src
 
 	INCLUDEPATH += . $${SSL_DIR}/include $${UPNPC_DIR} $${ZLIB_DIR} $${OPENPGPSDK_DIR}
