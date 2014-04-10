@@ -22,6 +22,7 @@ linux-* {
 	PRE_TARGETDEPS *= ../../openpgpsdk/src/lib/libops.a
 
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
+	LIBS += ../librssimulator/lib/librssimulator.a
 	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
 	LIBS += -lssl -lupnp -lixml -lXss -lgnome-keyring
 	LIBS *= -lcrypto -ldl -lX11 -lz
@@ -93,6 +94,7 @@ win32 {
 	#QTPLUGIN += qjpeg
 
 	PRE_TARGETDEPS *= ../../libretroshare/src/lib/libretroshare.a
+	PRE_TARGETDEPS *= ../librssimulator/lib/librssimulator.a
 	PRE_TARGETDEPS *= ../../openpgpsdk/src/lib/libops.a
 
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
@@ -131,6 +133,7 @@ macx {
 
 	CONFIG += version_detail_bash_script
 	LIBS += ../../libretroshare/src/lib/libretroshare.a
+	LIBS += ../librssimulator/lib/librssimulator.a
 	LIBS += ../../openpgpsdk/src/lib/libops.a -lbz2
         LIBS += -lssl -lcrypto -lz 
         #LIBS += -lssl -lcrypto -lz -lgpgme -lgpg-error -lassuan
@@ -159,6 +162,7 @@ macx {
 freebsd-* {
 	INCLUDEPATH *= /usr/local/include/gpgme
 	LIBS *= ../../libretroshare/src/lib/libretroshare.a
+	LIBS *= ../librssimulator/lib/librssimulator.a
 	LIBS *= -lssl
 	LIBS *= -lgpgme
 	LIBS *= -lupnp
@@ -181,6 +185,7 @@ openbsd-* {
 	PRE_TARGETDEPS *= ../../openpgpsdk/src/lib/libops.a
 
 	LIBS *= ../../libretroshare/src/lib/libretroshare.a
+	LIBS *= ../librssimulator/lib/librssimulator.a
 	LIBS *= ../../openpgpsdk/src/lib/libops.a -lbz2
 	LIBS *= -lssl -lcrypto
 	LIBS *= -lgpgme
@@ -218,13 +223,7 @@ win32 {
 DEPENDPATH += . \
 
 INCLUDEPATH += ../../libretroshare/src/
-
-# Input
-
-
-#
-#            gui/channels/ChannelUserNotify.h \
-#            gui/settings/ForumPage.h \
+INCLUDEPATH += ../librssimulator/
 
 SOURCES +=  unittests.cc \
 
@@ -293,7 +292,6 @@ SOURCES += libretroshare/gxs/data_service/rsdataservice_test.cc \
 
 ################################ dbase #####################################
 
-#HEADERS += libretroshare/dbase
 
 SOURCES += libretroshare/dbase/fisavetest.cc \
 	libretroshare/dbase/fitest2.cc \
@@ -302,5 +300,9 @@ SOURCES += libretroshare/dbase/fisavetest.cc \
 #	libretroshare/dbase/ficachetest.cc \
 #	libretroshare/dbase/fimontest.cc \
 
+
+############################### services ###################################
+
+SOURCES += libretroshare/services/status/status_test.cc \
 
 
