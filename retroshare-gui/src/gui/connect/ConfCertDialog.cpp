@@ -121,13 +121,13 @@ ConfCertDialog::ConfCertDialog(const RsPeerId& id, const RsPgpId &pgp_id, QWidge
 
 ConfCertDialog::~ConfCertDialog()
 {
-    if(peerId.isNull())
+//    if(peerId.isNull())
     {
         QMap<RsPeerId, ConfCertDialog*>::iterator it = instances_ssl.find(peerId);
         if (it != instances_ssl.end())
             instances_ssl.erase(it);
     }
-    else
+//    else
     {
         QMap<RsPgpId, ConfCertDialog*>::iterator it = instances_pgp.find(pgpId);
         if (it != instances_pgp.end())
@@ -157,8 +157,6 @@ void ConfCertDialog::loadAll()
 void ConfCertDialog::load()
 {
     RsPeerDetails detail;
-
-    bool ok = false ;
 
     if(!(rsPeers->getPeerDetails(peerId, detail) || rsPeers->getGPGDetails(pgpId, detail)))
     {
