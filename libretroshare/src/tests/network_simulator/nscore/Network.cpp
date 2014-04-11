@@ -73,21 +73,27 @@ void Network::tick()
 	for(uint32_t i=0;i<n_nodes();++i)
 		node(i).tick() ;
 
-	// Get items for each components and send them to their destination.
-	//
-	for(uint32_t i=0;i<n_nodes();++i)
+	try
 	{
-		RsRawItem *item ;
-
-		while( (item = node(i).outgoing()) != NULL)
+		// Get items for each components and send them to their destination.
+		//
+		for(uint32_t i=0;i<n_nodes();++i)
 		{
-			std::cerr << "Tick: send item from " << item->PeerId() << " to " << Network::node(i).id() << std::endl;
+			RsRawItem *item ;
 
-			PeerNode& node = node_by_id(item->PeerId()) ;
-			item->PeerId(Network::node(i).id()) ;
+			while( (item = node(i).outgoing()) != NULL)
+			{
+				std::cerr << "Tick: send item from " << item->PeerId() << " to " << Network::node(i).id() << std::endl;
 
-			node.incoming(item) ;
+				PeerNode& node = node_by_id(item->PeerId()) ;
+				item->PeerId(Network::node(i).id()) ;
+
+				node.incoming(item) ;
+			}
 		}
+	}
+	catch(...)
+	{
 	}
 }
 

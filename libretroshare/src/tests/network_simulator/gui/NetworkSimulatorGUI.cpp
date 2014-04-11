@@ -28,13 +28,13 @@ NetworkSimulatorGUI::NetworkSimulatorGUI(Network& net)
 
 void NetworkSimulatorGUI::updateSelectedNode(int node_id)
 {
-    _turtle_router_statistics->setTurtleRouter( _viewer->network().node(node_id).turtle_service() ) ;
-    _global_router_statistics->setGlobalRouter( _viewer->network().node(node_id).global_router_service() ) ;
+	const RsTurtle *turtle = _viewer->network().node(node_id).turtle_service() ;
+	const RsGRouter *grouter = _viewer->network().node(node_id).global_router_service() ;
 
-    _turtle_router_statistics->updateDisplay() ;
-    _global_router_statistics->updateDisplay() ;
+    _turtle_router_statistics->setTurtleRouter( turtle ) ;
+    _global_router_statistics->setGlobalRouter( grouter ) ;
 
-	 std::cerr << "Selected objects: turtle=" << std::hex <<  _viewer->network().node(node_id).turtle_service() << ", grouter=" << _viewer->network().node(node_id).global_router_service() << std::dec << std::endl;
+	 std::cerr << "Selected objects: turtle=" << std::hex <<  turtle << ", grouter=" << grouter << std::dec << std::endl;
 }
 
 void NetworkSimulatorGUI::toggleNetworkTraffic(bool b)

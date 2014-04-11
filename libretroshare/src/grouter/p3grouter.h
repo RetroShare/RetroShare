@@ -149,13 +149,12 @@ class p3GRouter: public RsGRouter, public p3Service, public p3Config
 		void autoWash() ;
 		void routePendingObjects() ;
 		void handleIncoming() ;
-		void publishKeys() ;
 		void debugDump() ;
 		void locked_forwardKey(const RsGRouterPublishKeyItem&) ;
 
 		// utility functions
 		//
-		static uint32_t computeBranchingFactor(const std::vector<RsPeerId>& friends,const std::vector<float>& probas,uint32_t dist) ;
+		static uint32_t computeBranchingFactor(const std::vector<RsPeerId>& friends,uint32_t dist) ;
 		static std::set<uint32_t> computeRoutingFriends(const std::vector<RsPeerId>& friends,const std::vector<float>& probas,uint32_t N) ;
 
 		uint32_t computeRandomDistanceIncrement(const RsPeerId& pid,const GRouterKeyId& destination_id) ;
@@ -200,6 +199,7 @@ class p3GRouter: public RsGRouter, public p3Service, public p3Config
 		//
 		std::map<GRouterKeyId, GRouterPublishedKeyInfo> _owned_key_ids ;
 
+#ifdef TO_BE_REMOVED
 		// Key publish cache and buffers
 		//   Handles key publish items routes and forwarding info.
 		//
@@ -213,6 +213,9 @@ class p3GRouter: public RsGRouter, public p3Service, public p3Config
 		//
 		std::priority_queue<RsGRouterPublishKeyItem *> _key_diffusion_items ;
 
+		void handleRecvPublishKeyItem(RsGRouterPublishKeyItem *item) ;
+#endif
+
 		// Registered services. These are known to the different peers with a common id,
 		// so it's important to keep consistency here. This map is volatile, and re-created at each startup of
 		// the software, when newly created services register themselves.
@@ -221,7 +224,6 @@ class p3GRouter: public RsGRouter, public p3Service, public p3Config
 
 		// Data handling ethods
 		//
-		void handleRecvPublishKeyItem(RsGRouterPublishKeyItem *item) ;
 		void handleRecvDataItem(RsGRouterGenericDataItem *item);
 		void handleRecvACKItem(RsGRouterACKItem *item);
 
@@ -238,7 +240,7 @@ class p3GRouter: public RsGRouter, public p3Service, public p3Config
 		bool _changed ;
 
 		time_t _last_autowash_time ;
-		time_t _last_publish_campaign_time ;
+		time_t _last_matrix_update_time ;
 		time_t _last_debug_output_time ;
 		time_t _last_config_changed ;
 
