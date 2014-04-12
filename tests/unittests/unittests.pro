@@ -305,4 +305,14 @@ SOURCES += libretroshare/dbase/fisavetest.cc \
 
 SOURCES += libretroshare/services/status/status_test.cc \
 
+############################### gxs ########################################
+
+HEADERS += libretroshare/services/gxs/rsgxstestitems.h \
+	libretroshare/services/gxs/gxstestservice.h \
+	libretroshare/services/gxs/GxsIsolatedServiceTester.h \
+
+SOURCES += libretroshare/services/gxs/rsgxstestitems.cc \
+	libretroshare/services/gxs/gxstestservice.cc \
+	libretroshare/services/gxs/GxsIsolatedServiceTester.cc \
+	libretroshare/services/gxs/nxsbasic_test.cc \
 
