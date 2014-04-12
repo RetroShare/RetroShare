@@ -1174,9 +1174,9 @@ std::ostream& RsNxsSyncGrp::print(std::ostream &out, uint16_t indent)
     printIndent(out , int_Indent);
     out << "Sync Age: " << createdSince << std::endl;
     printIndent(out , int_Indent);
-    out << "flag" << flag << std::endl;
+    out << "flag: " << (uint32_t) flag << std::endl;
     printIndent(out , int_Indent);
-    out << "updateTS" << updateTS << std::endl;
+    out << "updateTS: " << updateTS << std::endl;
 
     printRsItemEnd(out ,"RsNxsSyncGrp", indent);
 
@@ -1196,7 +1196,7 @@ std::ostream& RsNxsSyncMsg::print(std::ostream &out, uint16_t indent)
     printIndent(out , int_Indent);
     out << "syncHash: " << syncHash << std::endl;
     printIndent(out , int_Indent);
-    out << "flag: " << flag << std::endl;
+    out << "flag: " << (uint32_t) flag << std::endl;
     printIndent(out , int_Indent);
     out << "updateTS: " << updateTS << std::endl;
 
@@ -1210,7 +1210,7 @@ std::ostream& RsNxsSyncGrpItem::print(std::ostream &out, uint16_t indent)
     uint16_t int_Indent = indent + 2;
 
     printIndent(out , int_Indent);
-    out << "flag: " << flag << std::endl;
+    out << "flag: " << (uint32_t) flag << std::endl;
     printIndent(out , int_Indent);
     out << "grpId: " << grpId << std::endl;
     printIndent(out , int_Indent);
@@ -1230,7 +1230,7 @@ std::ostream& RsNxsSyncMsgItem::print(std::ostream &out, uint16_t indent)
     uint16_t int_Indent = indent + 2;
 
     printIndent(out , int_Indent);
-    out << "flag: " << flag << std::endl;
+    out << "flag: " << (uint32_t) flag << std::endl;
     printIndent(out , int_Indent);
     out << "grpId: " << grpId << std::endl;
     printIndent(out , int_Indent);
