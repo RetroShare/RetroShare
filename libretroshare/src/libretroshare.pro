@@ -8,7 +8,7 @@ TARGET = retroshare
 # This should be disabled for releases until further notice.
 CONFIG += gxs debug
 
-CONFIG += dsdv
+#CONFIG += dsdv
 
 profiling {
 	QMAKE_CXXFLAGS -= -fomit-frame-pointer
