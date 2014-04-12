@@ -22,6 +22,7 @@
 #include "FakeNetMgr.h"
 #include "FakePublisher.h"
 #include "FakeServiceControl.h"
+#include "FakeNxsNetMgr.h"
 
 
 PeerNode::PeerNode(const RsPeerId& id,const std::list<RsPeerId>& friends, bool online)
@@ -31,6 +32,7 @@ PeerNode::PeerNode(const RsPeerId& id,const std::list<RsPeerId>& friends, bool o
 	mLinkMgr = new FakeLinkMgr(id, friends, online) ;
 	mPeerMgr = new FakePeerMgr(id, friends) ;
 	mPublisher = new FakePublisher() ;
+	mNxsNetMgr = new FakeNxsNetMgr(mLinkMgr);
 
 	_service_control = new FakeServiceControl(mLinkMgr) ;
 	_service_server = new p3ServiceServer(mPublisher,_service_control);
@@ -73,6 +75,12 @@ p3LinkMgr *PeerNode::getLinkMgr()
 p3PeerMgr *PeerNode::getPeerMgr()
 { 
 	return mPeerMgr; 
+}
+
+
+RsNxsNetMgr *PeerNode::getNxsNetMgr()
+{ 
+	return mNxsNetMgr; 
 }
 
 void PeerNode::notifyOfFriends()
@@ -172,12 +180,17 @@ void PeerNode::takeOffline(std::list<RsPeerId> &offlineList)
 
 void PeerNode::tick()
 {
+#ifdef DEBUG
 	std::cerr << "  ticking peer node " << _id << std::endl;
+#endif
 	_service_server->tick() ;
 }
 
 void PeerNode::incoming(RsRawItem *item)
 {
+#ifdef DEBUG
+	std::cerr << "PeerNode::incoming()" << std::endl;
+#endif
 	_service_server->recvItem(item) ;
 }
 

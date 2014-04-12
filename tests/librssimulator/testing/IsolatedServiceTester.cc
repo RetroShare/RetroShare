@@ -34,7 +34,7 @@ bool IsolatedServiceTester::startup()
 
 bool IsolatedServiceTester::tick()
 {
-
+	mNode->tick();
 	return true;
 }
 
@@ -57,9 +57,11 @@ RsItem *IsolatedServiceTester::getPacket()
 	RsRawItem *rawitem = mNode->outgoing();
 	if (rawitem)
 	{
+#ifdef DEBUG
 		/* convert back to standard item for convenience */
 		std::cerr << "IsolatedServiceTester::getPacket() have RsRawItem";
 		std::cerr << std::endl;
+#endif
 
 		/* convert to RsServiceItem */
 		uint32_t size = rawitem->getRawLength();
@@ -96,8 +98,10 @@ RsItem *IsolatedServiceTester::getPacket()
 
 bool IsolatedServiceTester::sendPacket(RsItem *si)
 {
+#ifdef DEBUG
 	std::cerr << "IsolatedServiceTester::sendPacket()";
 	std::cerr << std::endl;
+#endif
 
 	/* try to convert */
 	uint32_t size = mRsSerialiser->size(si);
@@ -132,6 +136,14 @@ bool IsolatedServiceTester::sendPacket(RsItem *si)
 
 	if (raw)
 	{
+#ifdef DEBUG
+		std::cerr << "IsolatedServiceTester::sendPacket()";
+		std::cerr << std::endl;
+		si->print(std::cerr);
+		std::cerr << "IsolatedServiceTester::sendPacket() passing to Node: ";
+		std::cerr << std::endl;
+#endif
+
 		raw->PeerId(si->PeerId());
 		mNode->incoming(raw);
 	}

@@ -11,6 +11,8 @@ class p3ServiceControl;
 class FakeLinkMgr;
 class FakePeerMgr;
 class FakeNetMgr;
+class RsNxsNetMgr;
+class FakeNxsNetMgr;
 class pqiMonitor;
 class pqiServiceMonitor;
 class pqiService;
@@ -33,6 +35,7 @@ class PeerNode
 		p3LinkMgr *getLinkMgr();
 		p3PeerMgr *getPeerMgr();
 		p3NetMgr *getNetMgr();
+		RsNxsNetMgr *getNxsNetMgr();
 
 		void AddService(pqiService *service);
 		void AddPqiMonitor(pqiMonitor *service);
@@ -52,6 +55,7 @@ class PeerNode
 		FakeLinkMgr *mLinkMgr;
 		FakePeerMgr *mPeerMgr;
 		FakeNetMgr *mNetMgr;
+		FakeNxsNetMgr *mNxsNetMgr;
 
 		/* for monitors */
 		std::list<pqiMonitor *> mPqiMonitors;
