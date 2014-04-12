@@ -6,8 +6,6 @@
 #include <string>
 #include <list>
 
-#include "bitdht/bdiface.h"
-
 /*** Network state 
  * Want this to be all encompassing.
  *

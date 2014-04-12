@@ -4,6 +4,8 @@
 #include "pqi/pqinetstatebox.h"
 #include "time.h"
 
+#include "bitdht/bdiface.h"
+
 // External Interface.
 
 void pqiNetStateBox::setAddressStunDht(const struct sockaddr_storage &addr, bool stable)
