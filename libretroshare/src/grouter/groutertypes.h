@@ -29,12 +29,9 @@
 #include <time.h>
 #include <list>
 #include "pgp/rscertificate.h"
+#include "retroshare/rsgrouter.h"
 
 class RsGRouterGenericDataItem ;
-
-typedef uint32_t GRouterServiceId ;
-typedef uint32_t GRouterKeyPropagationId ;
-typedef uint64_t GRouterMsgPropagationId ;
 
 static const uint32_t GROUTER_CLIENT_ID_MESSAGES     = 0x1001 ;
 
@@ -50,6 +47,7 @@ static const time_t RS_GROUTER_MATRIX_UPDATE_PERIOD        =    1 *10 ; // Check
 static const time_t RS_GROUTER_PUBLISH_KEY_TIME_INTERVAL   =    2 *60 ; // Advertise each key once a day at most.
 static const time_t RS_GROUTER_ROUTING_WAITING_TIME        =    2 *60 ; // time between two trial of sending a given message
 //static const time_t RS_GROUTER_ROUTING_WAITING_TIME        =     3600 ; // time between two trial of sending a given message
+static const time_t RS_GROUTER_MEAN_EXPECTED_RTT           =       30 ; // reference RTT time for a message. 
 
 static const uint32_t GROUTER_ITEM_DISTANCE_UNIT           =      256 ; // One unit of distance between two peers
 static const uint32_t GROUTER_ITEM_MAX_TRAVEL_DISTANCE     =   16*256 ; // 16 distance units. That is a lot.
@@ -85,10 +83,11 @@ class GRouterRoutingInfo
 	public:
 		uint32_t status_flags ;									// pending, waiting, etc.
 		RsPeerId  origin ;										// which friend sent us that item
-		time_t received_time ;									// time at which the item was received
-		time_t last_activity ;									// time at which the item was received
+		time_t received_time ;									// time at which the item was originally received
+		time_t last_sent ;										// last time the item was sent to friends
 
 		std::list<FriendTrialRecord> tried_friends ; 	// list of friends to which the item was sent ordered with time.
+		GRouterKeyId destination_key ;						// ultimate destination for this key
 
 		RsGRouterGenericDataItem *data_item ;
 };

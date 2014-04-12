@@ -26,10 +26,11 @@
 #pragma once
 
 #include "util/rsdir.h"
-#include "grouter/groutertypes.h"
 #include "retroshare/rsids.h"
 
 typedef GRouterKeyIdType GRouterKeyId ;	// we use SSLIds, so that it's easier in the GUI to mix up peer ids with grouter ids.
+typedef uint32_t GRouterServiceId ;
+typedef uint64_t GRouterMsgPropagationId ;
 
 class GRouterClientService ;
 class RsGRouterGenericDataItem ;

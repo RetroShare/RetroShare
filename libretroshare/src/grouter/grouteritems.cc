@@ -30,46 +30,46 @@ bool RsGRouterItem::serialise_header(void *data,uint32_t& pktsize,uint32_t& tlvs
 }
 
 /* serialise the data to the buffer */
-uint32_t RsGRouterPublishKeyItem::serial_size() const
-{
-	uint32_t s = 8 ; // header
-	s += POW_PAYLOAD_SIZE  ; // proof of work bytes
-	s += 4  ; // diffusion_id
-    s += published_key.serial_size() ; // sha1 for published_key
-	s += 4  ; // service id
-	s += 4  ; // randomized distance
-	s += GetTlvStringSize(description_string) ; // description
-    s += fingerprint.serial_size() ;		// fingerprint
-
-	return s ;
-}
-bool RsGRouterPublishKeyItem::serialise(void *data, uint32_t& pktsize) const
-{
-	uint32_t tlvsize,offset=0;
-	bool ok = true;
-	
-	if(!serialise_header(data,pktsize,tlvsize,offset))
-		return false ;
-
-	memcpy(&((uint8_t*)data)[offset],pow_bytes,POW_PAYLOAD_SIZE) ;
-	offset += 8 ;
-
-	/* add mandatory parts first */
-    ok &= setRawUInt32(data, tlvsize, &offset, diffusion_id);
-    ok &= published_key.serialise(data, tlvsize, offset) ;
-	ok &= setRawUInt32(data, tlvsize, &offset, service_id);
-	ok &= setRawUFloat32(data, tlvsize, &offset, randomized_distance);
-	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_VALUE, description_string);
-    ok &= fingerprint.serialise(data, tlvsize, offset) ;
-
-	if (offset != tlvsize)
-	{
-		ok = false;
-		std::cerr << "RsFileItemSerialiser::serialiseData() Size Error! " << std::endl;
-	}
-
-	return ok;
-}
+// uint32_t RsGRouterPublishKeyItem::serial_size() const
+// {
+// 	uint32_t s = 8 ; // header
+// 	s += POW_PAYLOAD_SIZE  ; // proof of work bytes
+// 	s += 4  ; // diffusion_id
+//     s += published_key.serial_size() ; // sha1 for published_key
+// 	s += 4  ; // service id
+// 	s += 4  ; // randomized distance
+// 	s += GetTlvStringSize(description_string) ; // description
+//     s += fingerprint.serial_size() ;		// fingerprint
+// 
+// 	return s ;
+// }
+//bool RsGRouterPublishKeyItem::serialise(void *data, uint32_t& pktsize) const
+//{
+//	uint32_t tlvsize,offset=0;
+//	bool ok = true;
+//	
+//	if(!serialise_header(data,pktsize,tlvsize,offset))
+//		return false ;
+//
+//	memcpy(&((uint8_t*)data)[offset],pow_bytes,POW_PAYLOAD_SIZE) ;
+//	offset += 8 ;
+//
+//	/* add mandatory parts first */
+//    ok &= setRawUInt32(data, tlvsize, &offset, diffusion_id);
+//    ok &= published_key.serialise(data, tlvsize, offset) ;
+//	ok &= setRawUInt32(data, tlvsize, &offset, service_id);
+//	ok &= setRawUFloat32(data, tlvsize, &offset, randomized_distance);
+//	ok &= SetTlvString(data, tlvsize, &offset, TLV_TYPE_STR_VALUE, description_string);
+//    ok &= fingerprint.serialise(data, tlvsize, offset) ;
+//
+//	if (offset != tlvsize)
+//	{
+//		ok = false;
+//		std::cerr << "RsFileItemSerialiser::serialiseData() Size Error! " << std::endl;
+//	}
+//
+//	return ok;
+//}
 
 /**********************************************************************************************/
 /*                                        PROOF OF WORK STUFF                                 */
@@ -157,7 +157,7 @@ RsItem *RsGRouterSerialiser::deserialise(void *data, uint32_t *pktsize)
 
 	switch(getRsItemSubType(rstype))
 	{
-		case RS_PKT_SUBTYPE_GROUTER_PUBLISH_KEY:  return deserialise_RsGRouterPublishKeyItem(data, *pktsize);
+		//case RS_PKT_SUBTYPE_GROUTER_PUBLISH_KEY:  return deserialise_RsGRouterPublishKeyItem(data, *pktsize);
 		case RS_PKT_SUBTYPE_GROUTER_DATA:   		return deserialise_RsGRouterGenericDataItem(data, *pktsize);
 		case RS_PKT_SUBTYPE_GROUTER_ACK:    		return deserialise_RsGRouterACKItem(data, *pktsize);
 		case RS_PKT_SUBTYPE_GROUTER_MATRIX_CLUES:	return deserialise_RsGRouterMatrixCluesItem(data, *pktsize);
@@ -170,32 +170,32 @@ RsItem *RsGRouterSerialiser::deserialise(void *data, uint32_t *pktsize)
 	return NULL;
 }
 
-RsGRouterPublishKeyItem *RsGRouterSerialiser::deserialise_RsGRouterPublishKeyItem(void *data, uint32_t pktsize) const
-{
-	uint32_t offset = 8; // skip the header 
-	uint32_t rssize = getRsItemSize(data);
-	bool ok = true ;
-
-	RsGRouterPublishKeyItem *item = new RsGRouterPublishKeyItem() ;
-
-	memcpy(&((uint8_t*)data)[offset],item->pow_bytes,RsGRouterProofOfWorkObject::POW_PAYLOAD_SIZE) ;
-	offset += 8 ;
-
-	ok &= getRawUInt32(data, pktsize, &offset, &item->diffusion_id); 	// file hash
-    ok &= item->published_key.deserialise(data, pktsize, offset) ;
-	ok &= getRawUInt32(data, pktsize, &offset, &item->service_id); 	// file hash
-	ok &= getRawUFloat32(data, pktsize, &offset, item->randomized_distance); 	// file hash
-	ok &= GetTlvString(data, pktsize, &offset, TLV_TYPE_STR_VALUE,item->description_string);
-    ok &= item->fingerprint.deserialise(data,pktsize,offset) ;
-
-	if (offset != rssize || !ok)
-	{
-		std::cerr << __PRETTY_FUNCTION__ << ": error while deserialising! Item will be dropped." << std::endl;
-		return NULL ;
-	}
-
-	return item;
-}
+//RsGRouterPublishKeyItem *RsGRouterSerialiser::deserialise_RsGRouterPublishKeyItem(void *data, uint32_t pktsize) const
+//{
+//	uint32_t offset = 8; // skip the header 
+//	uint32_t rssize = getRsItemSize(data);
+//	bool ok = true ;
+//
+//	RsGRouterPublishKeyItem *item = new RsGRouterPublishKeyItem() ;
+//
+//	memcpy(&((uint8_t*)data)[offset],item->pow_bytes,RsGRouterProofOfWorkObject::POW_PAYLOAD_SIZE) ;
+//	offset += 8 ;
+//
+//	ok &= getRawUInt32(data, pktsize, &offset, &item->diffusion_id); 	// file hash
+//    ok &= item->published_key.deserialise(data, pktsize, offset) ;
+//	ok &= getRawUInt32(data, pktsize, &offset, &item->service_id); 	// file hash
+//	ok &= getRawUFloat32(data, pktsize, &offset, item->randomized_distance); 	// file hash
+//	ok &= GetTlvString(data, pktsize, &offset, TLV_TYPE_STR_VALUE,item->description_string);
+//    ok &= item->fingerprint.deserialise(data,pktsize,offset) ;
+//
+//	if (offset != rssize || !ok)
+//	{
+//		std::cerr << __PRETTY_FUNCTION__ << ": error while deserialising! Item will be dropped." << std::endl;
+//		return NULL ;
+//	}
+//
+//	return item;
+//}
 
 RsGRouterGenericDataItem *RsGRouterSerialiser::deserialise_RsGRouterGenericDataItem(void *data, uint32_t pktsize) const
 {
@@ -560,20 +560,20 @@ bool RsGRouterRoutingInfoItem::serialise(void *data,uint32_t& size) const
 // -------------------------------------  IO  --------------------------------------- // 
 // -----------------------------------------------------------------------------------//
 //
-std::ostream& RsGRouterPublishKeyItem::print(std::ostream& o, uint16_t)
-{
-	o << "GRouterPublishKeyItem:" << std::endl ;
-	o << "  POW bytes    : \""<< RsPgpId(pow_bytes).toStdString() << "\"" << std::endl ;
-	o << "  direct origin: \""<< PeerId() << "\"" << std::endl ;
-	o << "  Key:            " << published_key.toStdString() << std::endl ;
-	o << "  Req. Id:        " << std::hex << diffusion_id << std::dec << std::endl ;
-	o << "  Srv. Id:        " << std::hex << service_id << std::dec << std::endl ;
-	o << "  Distance:       " << randomized_distance << std::endl ;
-	o << "  Description:    " << description_string << std::endl ;
-	o << "  Fingerprint:    " << fingerprint.toStdString() << std::endl ;
-
-	return o ;
-}
+//std::ostream& RsGRouterPublishKeyItem::print(std::ostream& o, uint16_t)
+//{
+//	o << "GRouterPublishKeyItem:" << std::endl ;
+//	o << "  POW bytes    : \""<< RsPgpId(pow_bytes).toStdString() << "\"" << std::endl ;
+//	o << "  direct origin: \""<< PeerId() << "\"" << std::endl ;
+//	o << "  Key:            " << published_key.toStdString() << std::endl ;
+//	o << "  Req. Id:        " << std::hex << diffusion_id << std::dec << std::endl ;
+//	o << "  Srv. Id:        " << std::hex << service_id << std::dec << std::endl ;
+//	o << "  Distance:       " << randomized_distance << std::endl ;
+//	o << "  Description:    " << description_string << std::endl ;
+//	o << "  Fingerprint:    " << fingerprint.toStdString() << std::endl ;
+//
+//	return o ;
+//}
 std::ostream& RsGRouterACKItem::print(std::ostream& o, uint16_t)
 {
 	o << "RsGRouterACKItem:" << std::endl ;

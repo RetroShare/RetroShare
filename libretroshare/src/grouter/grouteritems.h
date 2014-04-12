@@ -44,12 +44,6 @@ const uint8_t QOS_PRIORITY_RS_GROUTER_PUBLISH_KEY = 3 ;				// slow items. No nee
 const uint8_t QOS_PRIORITY_RS_GROUTER_ACK         = 3 ;
 const uint8_t QOS_PRIORITY_RS_GROUTER_DATA        = 3 ;
 
-const uint32_t RS_GROUTER_ACK_STATE_RECEIVED            = 0x0001 ;		// data was received, directly
-const uint32_t RS_GROUTER_ACK_STATE_RECEIVED_INDIRECTLY = 0x0002 ;		// data was received indirectly
-const uint32_t RS_GROUTER_ACK_STATE_GIVEN_UP            = 0x0003 ;		// data was given up. No route.
-const uint32_t RS_GROUTER_ACK_STATE_NO_ROUTE            = 0x0004 ;		// data was given up. No route.
-const uint32_t RS_GROUTER_ACK_STATE_UNKNOWN             = 0x0005 ;		// unknown destination key
-const uint32_t RS_GROUTER_ACK_STATE_TOO_FAR             = 0x0006 ;		// dropped because of distance
 
 /***********************************************************************************/
 /*                           Basic GRouter Item Class                              */
@@ -107,27 +101,27 @@ class RsGRouterProofOfWorkObject
 /*                                Specific packets                                 */
 /***********************************************************************************/
 
-class RsGRouterPublishKeyItem: public RsGRouterItem, public RsGRouterProofOfWorkObject
-{
-	public:
-		RsGRouterPublishKeyItem() : RsGRouterItem(RS_PKT_SUBTYPE_GROUTER_PUBLISH_KEY) { setPriorityLevel(QOS_PRIORITY_RS_GROUTER_PUBLISH_KEY) ; }
-
-		virtual bool serialise(void *data,uint32_t& size) const ;	
-		virtual uint32_t serial_size() const ; 						
-
-		virtual void clear() {} 
-		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0) ;
-
-		// packet data
-		//
-		GRouterKeyPropagationId diffusion_id ;
-		GRouterKeyId published_key ;
-		uint32_t service_id ;
-		float randomized_distance ;
-		std::string  description_string ;
-		PGPFingerprintType fingerprint ;
-
-};
+//class RsGRouterPublishKeyItem: public RsGRouterItem, public RsGRouterProofOfWorkObject
+//{
+//	public:
+//		RsGRouterPublishKeyItem() : RsGRouterItem(RS_PKT_SUBTYPE_GROUTER_PUBLISH_KEY) { setPriorityLevel(QOS_PRIORITY_RS_GROUTER_PUBLISH_KEY) ; }
+//
+//		virtual bool serialise(void *data,uint32_t& size) const ;	
+//		virtual uint32_t serial_size() const ; 						
+//
+//		virtual void clear() {} 
+//		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0) ;
+//
+//		// packet data
+//		//
+//		GRouterKeyPropagationId diffusion_id ;
+//		GRouterKeyId published_key ;
+//		uint32_t service_id ;
+//		float randomized_distance ;
+//		std::string  description_string ;
+//		PGPFingerprintType fingerprint ;
+//
+//};
 
 class RsGRouterGenericDataItem: public RsGRouterItem, public RsGRouterNonCopyableObject
 {
@@ -252,7 +246,7 @@ class RsGRouterSerialiser: public RsSerialType
 		virtual RsItem *deserialise (void *data, uint32_t *size) ;
 
 	private:
-		RsGRouterPublishKeyItem       *deserialise_RsGRouterPublishKeyItem(void *data,uint32_t size) const ;
+		//RsGRouterPublishKeyItem       *deserialise_RsGRouterPublishKeyItem(void *data,uint32_t size) const ;
 		RsGRouterGenericDataItem      *deserialise_RsGRouterGenericDataItem(void *data,uint32_t size) const ;
 		RsGRouterACKItem              *deserialise_RsGRouterACKItem(void *data,uint32_t size) const ;
 		RsGRouterMatrixCluesItem      *deserialise_RsGRouterMatrixCluesItem(void *data,uint32_t size) const ;

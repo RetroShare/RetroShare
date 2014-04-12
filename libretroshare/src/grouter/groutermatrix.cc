@@ -184,7 +184,7 @@ bool GRouterMatrix::computeRoutingProbabilities(const GRouterKeyId& key_id, cons
 	}
 
 	if(total > 0.0f)
-		for(int i=0;i<friends.size();++i)
+		for(uint32_t i=0;i<friends.size();++i)
 			probas[i] /= total ;
 
 	return true ;
