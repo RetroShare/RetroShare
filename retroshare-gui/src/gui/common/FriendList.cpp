@@ -459,11 +459,10 @@ void FriendList::peerTreeWidgetCostumPopupMenu()
                          }
                      }
 
+                     QMenu *groupsMenu = contextMnu.addMenu(QIcon(IMAGE_GROUP16), tr("Groups"));
+                     groupsMenu->addAction(QIcon(IMAGE_EXPAND), tr("Create new group"), this, SLOT(createNewGroup()));
+
                      if (addToGroupMenu || moveToGroupMenu || foundGroup) {
-                         QMenu *groupsMenu = contextMnu.addMenu(QIcon(IMAGE_GROUP16), tr("Groups"));
-
-								 groupsMenu->addAction(QIcon(IMAGE_EXPAND), tr("Create new group"), this, SLOT(createNewGroup()));
-
                          if (addToGroupMenu) {
                              groupsMenu->addMenu(addToGroupMenu);
                          }
