@@ -126,6 +126,20 @@ void NetworkViewer::draw()
 		if(tunnel_nodes.find(i) != tunnel_nodes.end() && r==0.8f && g==0.8f && b==0.8f)
 			r = 0.9f, g=0.4f,b=0.2f ;
 
+		std::vector<RsGRouter::GRouterRoutingCacheInfo> infos ;
+		_network.node(i).global_router_service()->getRoutingCacheInfo(infos) ;
+
+		if(infos.size() == 1)
+			switch(infos[0].status)
+			{
+				case 1: r=1  ; g=0.5; b=0.1 ; break ;
+				case 2: r=0.4; g=0.5; b=0.4 ; break ;
+				case 3: r=0.2; g=0.2; b=0.7 ; break ;
+				case 4: r=0.6; g=0.1; b=0.2 ; break ;
+				default:
+						  r=0.2; g=0.2; b=0.2 ; break ;
+			}
+
 		glColor3f(r,g,b) ;
 
 		glVertex2f(_node_coords[i].x, _node_coords[i].y) ;

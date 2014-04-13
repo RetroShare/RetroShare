@@ -39,19 +39,16 @@ static const uint32_t RS_GROUTER_MATRIX_MAX_HIT_ENTRIES       = 5;
 static const uint32_t RS_GROUTER_MATRIX_MIN_TIME_BETWEEN_HITS = 60;	// can be set to up to half the publish time interval. Prevents flooding routes.
 static const uint32_t RS_GROUTER_MIN_CONFIG_SAVE_PERIOD =  5;	// at most save config every 5 seconds
 
-static const time_t RS_GROUTER_DEBUG_OUTPUT_PERIOD         =       20 ; // Output everything
-static const time_t RS_GROUTER_AUTOWASH_PERIOD             =       60 ; // Autowash every minute. Not a costly operation.
-//static const time_t RS_GROUTER_PUBLISH_CAMPAIGN_PERIOD   =    10*60 ; // Check for key advertising every 10 minutes
-//static const time_t RS_GROUTER_PUBLISH_KEY_TIME_INTERVAL = 24*60*60 ; // Advertise each key once a day at most.
+static const time_t RS_GROUTER_DEBUG_OUTPUT_PERIOD         =       10 ; // Output everything
+static const time_t RS_GROUTER_AUTOWASH_PERIOD             =       10 ; // Autowash every minute. Not a costly operation.
 static const time_t RS_GROUTER_MATRIX_UPDATE_PERIOD        =    1 *10 ; // Check for key advertising every 10 minutes
-static const time_t RS_GROUTER_PUBLISH_KEY_TIME_INTERVAL   =    2 *60 ; // Advertise each key once a day at most.
 static const time_t RS_GROUTER_ROUTING_WAITING_TIME        =    2 *60 ; // time between two trial of sending a given message
-//static const time_t RS_GROUTER_ROUTING_WAITING_TIME        =     3600 ; // time between two trial of sending a given message
+//atic const time_t RS_GROUTER_ROUTING_WAITING_TIME        =     3600 ; // time between two trial of sending a given message
 static const time_t RS_GROUTER_MEAN_EXPECTED_RTT           =       30 ; // reference RTT time for a message. 
 
 static const uint32_t GROUTER_ITEM_DISTANCE_UNIT           =      256 ; // One unit of distance between two peers
-static const uint32_t GROUTER_ITEM_MAX_TRAVEL_DISTANCE     =   16*256 ; // 16 distance units. That is a lot.
-static const uint32_t GROUTER_ITEM_MAX_CACHE_KEEP_TIME     =     3600 ; // 16 distance units. That is a lot.
+static const uint32_t GROUTER_ITEM_MAX_TRAVEL_DISTANCE     =    6*256 ; // 6 distance units. That is a lot.
+static const uint32_t GROUTER_ITEM_MAX_CACHE_KEEP_TIME     =     1200 ; // should be probably extended. Items older than that should always be removed.
 
 static const uint32_t RS_GROUTER_ROUTING_STATE_UNKN = 0x0000 ;		// unknown. Unused.
 static const uint32_t RS_GROUTER_ROUTING_STATE_PEND = 0x0001 ;		// item is pending. Should be sent asap. 

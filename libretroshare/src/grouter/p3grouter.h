@@ -27,6 +27,7 @@
 
 #include <map>
 #include <queue>
+#include <fstream>
 
 #include "retroshare/rsgrouter.h"
 #include "retroshare/rstypes.h"
@@ -127,6 +128,8 @@ class p3GRouter: public RsGRouter, public p3Service, public p3Config
 										SERVICE_INFO_MIN_MAJOR_VERSION,
 										SERVICE_INFO_MIN_MINOR_VERSION) ; 
 		}
+
+		void setDebugEnabled(bool b) { _debug_enabled = b ; }
 	protected:
 		//===================================================//
 		//         Routing method handling                   //
@@ -146,16 +149,24 @@ class p3GRouter: public RsGRouter, public p3Service, public p3Config
 		static const uint16_t SERVICE_INFO_MIN_MINOR_VERSION	=	0;
 
 	private:
+		class nullstream: public std::ostream {};
+
+		std::ostream& grouter_debug() const 
+		{
+			static nullstream null ;
+
+			return _debug_enabled?(std::cerr):null;
+		}
+
 		void autoWash() ;
 		void routePendingObjects() ;
 		void handleIncoming() ;
 		void debugDump() ;
-		void locked_forwardKey(const RsGRouterPublishKeyItem&) ;
 
 		// utility functions
 		//
 		static uint32_t computeBranchingFactor(const std::vector<RsPeerId>& friends,uint32_t dist) ;
-		static std::set<uint32_t> computeRoutingFriends(const std::vector<RsPeerId>& friends,const std::vector<float>& probas,uint32_t N) ;
+		std::set<uint32_t> computeRoutingFriends(const std::vector<RsPeerId>& friends,const std::vector<float>& probas,uint32_t N) ;
 		static float computeMatrixContribution(float base,uint32_t time_shift,float probability) ;
 
 		uint32_t computeRandomDistanceIncrement(const RsPeerId& pid,const GRouterKeyId& destination_id) ;
@@ -239,6 +250,7 @@ class p3GRouter: public RsGRouter, public p3Service, public p3Config
 
 		// config update/save variables
 		bool _changed ;
+		bool _debug_enabled ;
 
 		time_t _last_autowash_time ;
 		time_t _last_matrix_update_time ;
@@ -248,4 +260,4 @@ class p3GRouter: public RsGRouter, public p3Service, public p3Config
 		uint64_t _random_salt ;
 };
 
-
+template<typename T> p3GRouter::nullstream& operator<<(p3GRouter::nullstream& ns,const T&) { return ns ; }

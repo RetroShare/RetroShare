@@ -192,13 +192,8 @@ bool GRouterMatrix::computeRoutingProbabilities(const GRouterKeyId& key_id, cons
 
 bool GRouterMatrix::updateRoutingProbabilities()
 {
-	std::cerr << "Updating routing probabilities..." << std::endl;
-
 	if(!_proba_need_updating)
-	{
-		std::cerr << "  not needed." << std::endl;
 		return false ;
-	}
 
 	time_t now = time(NULL) ;
 

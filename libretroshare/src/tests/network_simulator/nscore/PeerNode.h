@@ -35,7 +35,7 @@ class PeerNode
 		// Turtle-related methods
 		//
 		const RsTurtle *turtle_service() const { return _turtle ; }
-        const RsGRouter *global_router_service() const { return _grouter ; }
+		p3GRouter *global_router_service() const { return _grouter ; }
 
 		void manageFileHash(const RsFileHash& hash) ;
 		void provideFileHash(const RsFileHash& hash) ;

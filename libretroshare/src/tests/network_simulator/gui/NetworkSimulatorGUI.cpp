@@ -34,6 +34,11 @@ void NetworkSimulatorGUI::updateSelectedNode(int node_id)
     _turtle_router_statistics->setTurtleRouter( turtle ) ;
     _global_router_statistics->setGlobalRouter( grouter ) ;
 
+	 // make only the selected node to display grouter info
+
+	 for(uint32_t i=0;i<_viewer->network().n_nodes();++i)
+		 _viewer->network().node(i).global_router_service()->setDebugEnabled(i==node_id) ;
+
 	 std::cerr << "Selected objects: turtle=" << std::hex <<  turtle << ", grouter=" << grouter << std::dec << std::endl;
 }
 
