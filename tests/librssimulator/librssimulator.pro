@@ -40,8 +40,13 @@ SOURCES += peer/PeerNode.cc \
 ###################### Unit Tests ###############################
 
 HEADERS += testing/IsolatedServiceTester.h \
+	testing/SetServiceTester.h \
+	testing/SetPacket.h \
+	testing/SetFilter.h \
 
 SOURCES += testing/IsolatedServiceTester.cc \
+	testing/SetServiceTester.cc \
+	testing/SetFilter.cc \
 
 ##################### Network Sims ##############################
 # to be ported over.
