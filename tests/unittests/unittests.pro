@@ -310,9 +310,13 @@ SOURCES += libretroshare/services/status/status_test.cc \
 HEADERS += libretroshare/services/gxs/rsgxstestitems.h \
 	libretroshare/services/gxs/gxstestservice.h \
 	libretroshare/services/gxs/GxsIsolatedServiceTester.h \
+	libretroshare/services/gxs/GxsPeerNode.h \
+	libretroshare/services/gxs/GxsPairServiceTester.h \
 
 SOURCES += libretroshare/services/gxs/rsgxstestitems.cc \
 	libretroshare/services/gxs/gxstestservice.cc \
 	libretroshare/services/gxs/GxsIsolatedServiceTester.cc \
+	libretroshare/services/gxs/GxsPeerNode.cc \
+	libretroshare/services/gxs/GxsPairServiceTester.cc \
 	libretroshare/services/gxs/nxsbasic_test.cc \
-
+	libretroshare/services/gxs/nxspair_tests.cc \
