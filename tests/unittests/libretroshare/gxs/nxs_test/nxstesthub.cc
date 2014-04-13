@@ -1,130 +1,193 @@
 #include "nxstesthub.h"
 
-NxsTestHub::NxsTestHub(NxsTestScenario * nts, std::set<RsPeerId> &peers) : mTestScenario(nts)
+
+
+class NotifyWithPeerId : public RsNxsObserver
 {
+public:
 
-    std::set<RsPeerId>::iterator sit = peers.begin();
+	NotifyWithPeerId(RsPeerId val, NxsTestHub& hub)
+	: mPeerId(val), mTestHub(hub){
 
-    for(; sit != peers.end(); sit++)
+	}
+
+    void notifyNewMessages(std::vector<RsNxsMsg*>& messages)
     {
-        std::set<RsPeerId> msgPeers = peers;
-
-        // add peers all peers except one iterator currently points to
-        msgPeers.erase(*sit);
-        NxsNetDummyMgr* dummyMgr = new NxsNetDummyMgr(*sit, msgPeers);
-        RsGeneralDataService* ds = mTestScenario->getDataService(*sit);
-        NxsMessageTestObserver* obs = new NxsMessageTestObserver(ds);
-
-	RsServiceInfo info;
-        RsGxsNetService* netService =
-                new RsGxsNetService(mTestScenario->getServiceType(),
-                                                 ds, dummyMgr, obs, info);
-
-
-        mNetServices.insert(std::make_pair(*sit, netService));
-        mObservers.insert(std::make_pair(*sit, obs));
+    	mTestHub.notifyNewMessages(mPeerId, messages);
     }
 
-    sit = peers.begin();
-
-    // launch net services
-    for(; sit != peers.end(); sit++)
+    void notifyNewGroups(std::vector<RsNxsGrp*>& groups)
     {
-        RsGxsNetService* n = mNetServices[*sit];
-        createThread(*n);
-        mServices.insert(std::make_pair(*sit, n));
+    	mTestHub.notifyNewGroups(mPeerId, groups);
     }
-}
 
-NxsTestHub::~NxsTestHub()
+private:
+
+	RsPeerId mPeerId;
+	rs_nxs_test::NxsTestHub& mTestHub;
+};
+
+rs_nxs_test::NxsTestHub::NxsTestHub(NxsTestScenario* testScenario)
+ : mTestScenario(testScenario)
 {
-    std::map<RsPeerId, RsGxsNetService*>::iterator mit = mNetServices.begin();
+	std::list<RsPeerId> peers;
+	mTestScenario->getPeers(peers);
 
-    for(; mit != mNetServices.end(); mit++)
-        delete mit->second;
-}
+	// for each peer get initialise a nxs net instance
+	// and pass this to the simulator
 
+	std::list<RsPeerId>::const_iterator cit = peers.begin();
 
-void NxsTestHub::run()
-{
-        double timeDelta = .2;
+	for(; cit != peers.end(); cit++)
+	{
+		RsGxsNetService* ns = new RsGxsNetService(mTestScenario->getServiceType(),
+				mTestScenario->getDataService(*cit), mTestScenario->getDummyNetManager(*cit),
+				new NotifyWithPeerId(*cit, *this),
+				mTestScenario->getServiceInfo(), mTestScenario->getDummyReputations(*cit),
+				mTestScenario->getDummyCircles(*cit), true);
 
-	while(isRunning()){
-
-                // make thread sleep for a bit
-        #ifndef WINDOWS_SYS
-                usleep((int) (timeDelta * 1000000));
-        #else
-                Sleep((int) (timeDelta * 1000));
-        #endif
-
-
-                std::map<RsPeerId, p3Service*>::iterator mit = mServices.begin();
-
-                for(; mit != mServices.end(); mit++)
-                {
-                    p3Service* s = mit->second;
-                    s->tick();
-                }
-
-                mit = mServices.begin();
-
-                // collect msgs to send to peers from peers
-                for(; mit != mServices.end(); mit++)
-                {
-                    const RsPeerId& peer = mit->first;
-                    p3Service* s = mit->second;
-
-                    // first store all the sends from all services
-                    RsItem* item = NULL;
-
-                    while((item =  s->send()) != NULL){
-
-                        const RsPeerId peerToReceive = item->PeerId();
-
-                        // set the peer this item comes from
-                        item->PeerId(peer);
-                        mPeerQueues[peerToReceive].push_back(item);
-                    }
-
-
-                }
-
-                // now route items to peers
-                std::map<RsPeerId, std::vector<RsItem*> >::iterator mit_queue = mPeerQueues.begin();
-
-                for(; mit_queue != mPeerQueues.end(); mit_queue++)
-                {
-                    std::vector<RsItem*>& queueV = mit_queue->second;
-                    std::vector<RsItem*>::iterator vit = queueV.begin();
-                    const RsPeerId peerToReceive = mit_queue->first;
-                    for(; vit != queueV.end(); vit++)
-                    {
-
-                        RsItem* item = *vit;
-                        p3Service* service = mServices[peerToReceive];
-
-                        service->receive(dynamic_cast<RsRawItem*>(item));
-                    }
-                    queueV.clear();
-                }
+		mPeerNxsMap.insert(std::make_pair(*cit, ns));
 	}
 }
 
-void NxsTestHub::cleanUp()
-{
-    std::map<RsPeerId, RsGxsNetService*>::iterator mit = mNetServices.begin();
-    for(; mit != mNetServices.end(); mit++)
-    {
-        RsGxsNetService* n = mit->second;
-        n->join();
-    }
 
-    // also shut down this net service peers if this goes down
-    mTestScenario->cleanUp();
+rs_nxs_test::NxsTestHub::~NxsTestHub() {
 }
 
-bool NxsTestHub::testsPassed()
+
+bool rs_nxs_test::NxsTestHub::testsPassed()
 {
-	return false;
+	return mTestScenario->checkTestPassed();
 }
+
+
+void rs_nxs_test::NxsTestHub::run()
+{
+	bool running = isRunning();
+	double timeDelta = .2;
+	while(running)
+	{
+#ifndef WINDOWS_SYS
+        usleep((int) (timeDelta * 1000000));
+#else
+        Sleep((int) (timeDelta * 1000));
+#endif
+
+        tick();
+
+		running = isRunning();
+	}
+
+}
+
+
+void rs_nxs_test::NxsTestHub::StartTest()
+{
+	// get all services up and running
+	PeerNxsMap::iterator mit = mPeerNxsMap.begin();
+	for(; mit != mPeerNxsMap.end(); mit++)
+	{
+		createThread(*(mit->second));
+	}
+
+	createThread(*this);
+}
+
+
+void rs_nxs_test::NxsTestHub::EndTest()
+{
+	// then stop this thread
+	join();
+
+	// stop services
+	PeerNxsMap::iterator mit = mPeerNxsMap.begin();
+	for(; mit != mPeerNxsMap.end(); mit++)
+	{
+		mit->second->join();
+	}
+
+}
+
+void rs_nxs_test::NxsTestHub::notifyNewMessages(const RsPeerId& pid,
+		std::vector<RsNxsMsg*>& messages)
+{
+
+	std::map<RsNxsMsg*, RsGxsMsgMetaData*> toStore;
+	std::vector<RsNxsMsg*>::iterator it = messages.begin();
+	for(; it != messages.end(); it++)
+	{
+		RsNxsMsg* msg = *it;
+		RsGxsMsgMetaData* meta = new RsGxsMsgMetaData();
+		bool ok = meta->deserialise(msg->meta.bin_data, msg->meta.bin_len);
+		toStore.insert(std::make_pair(msg, meta));
+	}
+
+	RsDataService* ds = mTestScenario->getDataService(pid);
+	ds->storeMessage(toStore);
+}
+
+
+void rs_nxs_test::NxsTestHub::notifyNewGroups(const RsPeerId& pid, std::vector<RsNxsGrp*>& groups)
+{
+	std::map<RsNxsGrp*, RsGxsGrpMetaData*> toStore;
+	std::vector<RsNxsGrp*>::iterator it = groups.begin();
+	for(; it != groups.end(); it++)
+	{
+		RsNxsGrp* grp = *it;
+		RsGxsGrpMetaData* meta = new RsGxsGrpMetaData();
+		bool ok = meta->deserialise(grp->meta.bin_data, grp->meta.bin_len);
+		toStore.insert(std::make_pair(grp, meta));
+	}
+
+	RsDataService* ds = mTestScenario->getDataService(pid);
+	ds->storeGroup(toStore);
+}
+
+void rs_nxs_test::NxsTestHub::Wait(int seconds) {
+
+#ifndef WINDOWS_SYS
+        usleep((int) (1000000));
+#else
+        Sleep((int) (1000));
+#endif
+}
+
+void rs_nxs_test::NxsTestHub::tick()
+{
+	// for each nxs instance pull out all items from each and then move to destination peer
+
+	typedef std::map<RsPeerId, std::list<RsItem*> > DestMap;
+
+	PeerNxsMap::iterator it = mPeerNxsMap.begin();
+	DestMap destMap;
+	for(; it != mPeerNxsMap.end(); it++)
+	{
+		RsGxsNetService* s = *it;
+		s->tick();
+		RsItem* item = s->recvItem();
+
+		if(item != NULL)
+			destMap[item->PeerId()].push_back(item);
+	}
+
+	DestMap::iterator dit = destMap.begin();
+
+	for(; dit != destMap.end(); dit++ )
+	{
+		std::list<RsItem*> payload = dit->second;
+		const RsPeerId& pid = dit->first;
+
+		if(mPeerNxsMap.count(pid) > 0)
+		{
+			std::list<RsItem*>::iterator pit = payload.begin();
+			for(; pit != payload.end(); pit)
+				mPeerNxsMap[pid]->recvItem(*pit);
+		}
+		else
+		{
+			std::cerr << "Could not find peer: " << pid << std::endl;
+		}
+	}
+}
+
+

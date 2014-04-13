@@ -5,42 +5,19 @@
  *      Author: crispy
  */
 
-#include "util/utest.h"
+#include <gtest/gtest.h>
+
+#include "nxsgrpsync_test.h"
 #include "nxstesthub.h"
-#include "nxstestscenario.h"
-
-INITTEST();
 
 
-int main()
+TEST(libretroshare_gxs, gxs_grp_sync)
 {
+	NxsGrpSync* gsync_test = new NxsGrpSync();
+	rs_nxs_test::NxsTestHub tHub(gsync_test);
+	tHub.StartTest();
+	rs_nxs_test::NxsTestHub::wait(10);
+	tHub.EndTest();
 
-	// first setup
-	NxsMessageTest msgTest(RS_SERVICE_TYPE_PLUGIN_SIMPLE_FORUM);
-        std::set<std::string> peers;
-        peers.insert("PeerA");
-        peers.insert("PeerB");
-        NxsTestHub hub(&msgTest, peers);
-
-	// now get things started
-	createThread(hub);
-
-        double timeDelta = 50;
-
-	// put this thread to sleep for 10 secs
-        // make thread sleep for a bit
-#ifndef WINDOWS_SYS
-        usleep((int) (timeDelta * 1000000));
-#else
-        Sleep((int) (timeDelta * 1000));
-#endif
-
-	hub.join();
-	CHECK(hub.testsPassed());
-
-	hub.cleanUp();
-
-    FINALREPORT("RsGxsNetService Tests");
-
-    return TESTRESULT();
+	ASSERT_TRUE(tHub.testsPassed());
 }

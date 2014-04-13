@@ -748,11 +748,6 @@ bool 	p3IdService::updateGroup(uint32_t& token, RsGxsIdGroup &group)
 	
 	RsGenExchange::updateGroup(token, item);
 
-
-	RsGxsGroupUpdateMeta updateMeta(RsGxsGroupId(id.toStdString()));
-	RsGenExchange::updateGroup(token, item);
-
-
 	// if its in the cache - clear it.
 	{
 		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/

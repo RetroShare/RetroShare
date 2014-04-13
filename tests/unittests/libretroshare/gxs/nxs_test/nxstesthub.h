@@ -11,79 +11,83 @@
 // of peers
 
 
-class NxsNetDummyMgr : public RsNxsNetMgr
+
+namespace rs_nxs_test
 {
-
-public:
-
-    NxsNetDummyMgr(RsPeerId ownId, std::set<RsPeerId> peers) : mOwnId(ownId), mPeers(peers) {
-
-	}
-
-    const RsPeerId& getOwnId()  { return mOwnId; }
-    void getOnlineList(uint32_t serviceId, std::set<RsPeerId>& ssl_peers) { ssl_peers = mPeers; }
-
-private:
-
-    RsPeerId mOwnId;
-    std::set<RsPeerId> mPeers;
-
-};
-
-
-/*!
- * Testing of nxs services occurs through use of two services
- * When a service sends this class can interrogate the send and the receives of
- *
- * NxsScenario stores the type of synchronisation to be tested
- * Operation:
- * First NxsTestHub needs to be instantiated with a test scenario
- *   * The scenario contains two databases to be used on the communicating pair of RsGxsNetService instances (net instances)
- * The Test hub has a ticker service for the p3Services which allows the netservices to search what groups and messages they have
- * and synchronise according to their subscriptions. The default is to subscribe to all groups held by other peer
- * The threads for both net instances are started which begins their processing of transactions
- */
-class NxsTestHub : public RsThread
-{
-public:
-
 
 	/*!
-	 * This construct the test hub
-	 * for a give scenario in mind
+	 * Testing of nxs services occurs through use of two services
+	 * When a service sends this class can interrogate the send and the receives of
+	 *
+	 * NxsScenario stores the type of synchronisation to be tested
+	 * Operation:
+	 * First NxsTestHub needs to be instantiated with a test scenario
+	 *   * The scenario contains two databases to be used on the communicating pair of RsGxsNetService instances (net instances)
+	 * The Test hub has a ticker service for the p3Services which allows the netservices to search what groups and messages they have
+	 * and synchronise according to their subscriptions. The default is to subscribe to all groups held by other peer
+	 * The threads for both net instances are started which begins their processing of transactions
 	 */
-    NxsTestHub(NxsTestScenario*, std::set<RsPeerId>& peers);
+	class NxsTestHub : public RsThread
+	{
+	public:
 
 
-    /*!
-     *
-     */
-    virtual ~NxsTestHub();
+		/*!
+		 * This constructs the test hub
+		 * for a give scenario in mind
+		 */
+		NxsTestHub(NxsTestScenario* testScenario);
 
-    /*!
-     * To be called only after this thread has
-     * been shutdown
-     */
-    bool testsPassed();
+		/*!
+		 * This cleans up what ever testing resources are left
+		 * including the test scenario
+		 */
+		virtual ~NxsTestHub();
 
-    /*!
-     *  This simulates the p3Service ticker and calls both gxs net services tick methods
-     *  Also enables transport of messages between both services
-     */
-    void run();
+		/*!
+		 * To be called only after end test is called
+		 * otherwise undefined
+		 */
+		bool testsPassed();
 
+		/*!
+		 *  This simulates the p3Service ticker and calls both gxs net services tick methods
+		 *  Also enables transport of messages between both services
+		 */
+		void run();
 
-    void cleanUp();
-private:
+		/*!
+		 * Begings test, equivalent to CreateThread(this)
+		 */
+		void StartTest();
 
-    std::map<RsPeerId, p3Service*> mServices;
-    std::map<RsPeerId, RsGxsNetService*> mNetServices;
-    std::map<RsPeerId, NxsMessageTestObserver*> mObservers;
+		/*!
+		 * Gracefully ends the test
+		 */
+		void EndTest();
 
-    std::map<RsPeerId, std::vector<RsItem*> > mPeerQueues;
+	    /*!
+	     * @param messages messages are deleted after function returns
+	     */
+	    void notifyNewMessages(const RsPeerId&, std::vector<RsNxsMsg*>& messages);
 
-    NxsTestScenario *mTestScenario;
+	    /*!
+	     * @param messages messages are deleted after function returns
+	     */
+	    void notifyNewGroups(const RsPeerId&, std::vector<RsNxsGrp*>& groups);
 
-};
+	    static void Wait(int seconds);
 
+	private:
+
+	    void tick();
+
+	private:
+
+	    typedef std::map<RsPeerId, RsGxsNetService* > PeerNxsMap ;
+		PeerNxsMap mPeerNxsMap;
+		NxsTestScenario *mTestScenario;
+
+	};
+}
 #endif // NXSTESTHUB_H
