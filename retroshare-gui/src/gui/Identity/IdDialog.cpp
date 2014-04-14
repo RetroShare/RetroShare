@@ -164,7 +164,6 @@ void IdDialog::todo()
 	QMessageBox::information(this, "Todo",
 							 "<b>Open points:</b><ul>"
 							 "<li>Delete ID"
-							 "<li>Edit ID"
 							 "<li>Reputation"
 							 "<li>Load/save settings"
 							 "</ul>");
@@ -275,11 +274,11 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 			rsPeers->getGPGDetails(data.mPgpId, details);
 			item->setText(RSID_COL_IDTYPE, QString::fromUtf8(details.name.c_str()));
 		}
-	else
-	{
+		else
+		{
 			item->setText(RSID_COL_IDTYPE, tr("PGP Linked Id"));
+		}
 	}
-}
 	else
 	{
 		item->setText(RSID_COL_IDTYPE, tr("Anon Id"));
@@ -312,7 +311,7 @@ void IdDialog::insertIdList(uint32_t token)
 		mStateHelper->clear(IDDIALOG_REPLIST);
 
 		return;
-}
+	}
 
 	mStateHelper->setActive(IDDIALOG_IDLIST, true);
 
@@ -536,8 +535,6 @@ void IdDialog::insertIdDetails(uint32_t token)
 		ui.line_RatingPeers->setText(rating);
 	}
 
-
-
 	/* request network ratings */
 	// Removing this for the moment.
 	// requestRepList(data.mMeta.mGroupId);
@@ -597,7 +594,6 @@ void IdDialog::modifyReputation()
 
 	return;
 }
-
 	
 void IdDialog::updateDisplay(bool /*complete*/)
 {
@@ -610,7 +606,7 @@ void IdDialog::addIdentity()
 	IdEditDialog dlg(this);
 	dlg.setupNewId(false);
 	dlg.exec();
-	}
+}
 
 void IdDialog::editIdentity()
 {
@@ -627,7 +623,7 @@ void IdDialog::editIdentity()
 	IdEditDialog dlg(this);
 	dlg.setupExistingId(keyId);
 	dlg.exec();
-	}
+}
 
 void IdDialog::filterIds()
 {
@@ -670,7 +666,6 @@ void IdDialog::insertRepList(uint32_t token)
 
 		return;
 	}
-
 
 	for(vit = opinions.begin(); vit != opinions.end(); vit++)
 	{

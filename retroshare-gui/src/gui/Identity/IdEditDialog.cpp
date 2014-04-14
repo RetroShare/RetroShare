@@ -61,6 +61,9 @@ IdEditDialog::IdEditDialog(QWidget *parent)
 	mStateHelper->addLoadPlaceholder(IDEDITDIALOG_LOADID, ui.lineEdit_GpgId);
 	mStateHelper->addLoadPlaceholder(IDEDITDIALOG_LOADID, ui.lineEdit_GpgName);
 
+	/* Initialize recogn tags */
+	loadRecognTags();
+
 	/* Connect signals */
 	connect(ui.radioButton_GpgId, SIGNAL(toggled(bool)), this, SLOT(idTypeToggled(bool)));
 	connect(ui.radioButton_Pseudo, SIGNAL(toggled(bool)), this, SLOT(idTypeToggled(bool)));
@@ -255,7 +258,6 @@ void IdEditDialog::checkNewTag()
 		ok = true;
 	}
 
-
 	if (mEditGroup.mRecognTags.size() >= MAX_RECOGN_TAGS)
 	{
 		ok = false;
@@ -356,7 +358,6 @@ bool IdEditDialog::tagDetails(const RsGxsId &id, const std::string &name, const 
 	return ok;
 }
 
-
 void IdEditDialog::loadRecognTags()
 {
 	std::cerr << "IdEditDialog::loadRecognTags()";
@@ -426,7 +427,6 @@ void IdEditDialog::submit()
 	}
 }
 
-
 void IdEditDialog::createId()
 {
 	std::string groupname = ui.lineEdit_Nickname->text().toUtf8().constData();
@@ -448,7 +448,6 @@ void IdEditDialog::createId()
 	close();
 }
 
-
 void IdEditDialog::updateId()
 {
 	/* submit updated details */
@@ -468,9 +467,6 @@ void IdEditDialog::updateId()
 
 	close();
 }
-
-
-
 
 void IdEditDialog::loadRequest(const TokenQueue */*queue*/, const TokenRequest &req)
 {

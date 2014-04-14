@@ -102,6 +102,9 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
+            </property>
             <property name="toolTip">
              <string>Create new Identity</string>
             </property>
@@ -180,7 +183,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="layoutWidget">
+     <widget class="QWidget" name="layoutWidget1">
       <layout class="QVBoxLayout" name="rightLayout">
        <item>
         <widget class="QFrame" name="toolBarFrame">
@@ -196,6 +199,9 @@
           </property>
           <item>
            <widget class="QToolButton" name="toolButton_Delete">
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
+            </property>
             <property name="toolTip">
              <string>Delete Identity</string>
             </property>
@@ -219,6 +225,12 @@
           </item>
           <item>
            <widget class="QToolButton" name="toolButton_EditId">
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
+            </property>
+            <property name="toolTip">
+             <string>Edit Identity</string>
+            </property>
             <property name="text">
              <string>Edit ID</string>
             </property>
@@ -239,6 +251,9 @@
           </item>
           <item>
            <widget class="QToolButton" name="toolButton_Reputation">
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
+            </property>
             <property name="text">
              <string>Edit Reputation</string>
             </property>
@@ -674,12 +689,6 @@
   <tabstop>line_RatingOwn</tabstop>
  </tabstops>
  <resources>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
-  <include location="../images.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>
