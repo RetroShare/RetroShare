@@ -99,18 +99,17 @@ bool GxsForumGroupDialog::service_CreateGroup(uint32_t &token, const RsGroupMeta
 	// Specific Function.
 	RsGxsForumGroup grp;
 	grp.mMeta = meta;
-    grp.mDescription = std::string(ui.groupDesc->toPlainText().toUtf8());
+	grp.mDescription = getDescription().toUtf8().constData();
 
 	rsGxsForums->createGroup(token, grp);
 	return true;
 }
 
-bool GxsForumGroupDialog::service_EditGroup(uint32_t &token, 
-			RsGroupMetaData &editedMeta)
+bool GxsForumGroupDialog::service_EditGroup(uint32_t &token, RsGroupMetaData &editedMeta)
 {
 	RsGxsForumGroup grp;
 	grp.mMeta = editedMeta;
-	grp.mDescription = std::string(ui.groupDesc->toPlainText().toUtf8());
+	grp.mDescription = getDescription().toUtf8().constData();
 
 	std::cerr << "GxsForumGroupDialog::service_EditGroup() submitting changes";
 	std::cerr << std::endl;
@@ -119,34 +118,31 @@ bool GxsForumGroupDialog::service_EditGroup(uint32_t &token,
 	return true;
 }
 
-bool GxsForumGroupDialog::service_loadGroup(uint32_t token, Mode mode, RsGroupMetaData& groupMetaData)
+bool GxsForumGroupDialog::service_loadGroup(uint32_t token, Mode /*mode*/, RsGroupMetaData& groupMetaData, QString &description)
 {
-        std::cerr << "GxsForumGroupDialog::service_loadGroup(" << token << ")";
-        std::cerr << std::endl;
+	std::cerr << "GxsForumGroupDialog::service_loadGroup(" << token << ")";
+	std::cerr << std::endl;
 
-        std::vector<RsGxsForumGroup> groups;
-        if (!rsGxsForums->getGroupData(token, groups))
-        {
-                std::cerr << "GxsForumGroupDialog::service_loadGroup() Error getting GroupData";
-                std::cerr << std::endl;
-                return false;
-        }
+	std::vector<RsGxsForumGroup> groups;
+	if (!rsGxsForums->getGroupData(token, groups))
+	{
+		std::cerr << "GxsForumGroupDialog::service_loadGroup() Error getting GroupData";
+		std::cerr << std::endl;
+		return false;
+	}
 
-        if (groups.size() != 1)
-        {
-                std::cerr << "GxsForumGroupDialog::service_loadGroup() Error Group.size() != 1";
-                std::cerr << std::endl;
-                return false;
-        }
+	if (groups.size() != 1)
+	{
+		std::cerr << "GxsForumGroupDialog::service_loadGroup() Error Group.size() != 1";
+		std::cerr << std::endl;
+		return false;
+	}
 
-        std::cerr << "GxsForumsGroupDialog::service_loadGroup() Unfinished Loading";
-        std::cerr << std::endl;
+	std::cerr << "GxsForumsGroupDialog::service_loadGroup() Unfinished Loading";
+	std::cerr << std::endl;
 
 	groupMetaData = groups[0].mMeta;
+	description = QString::fromUtf8(groups[0].mDescription.c_str());
+
 	return true;
 }
-
-
-
-
-

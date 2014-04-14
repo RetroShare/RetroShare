@@ -804,7 +804,7 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
 	item->setText(COLUMN_THREAD_DATE, text);
 	item->setData(COLUMN_THREAD_DATE, ROLE_THREAD_SORT, sort);
 
-    item->setText(COLUMN_THREAD_AUTHOR, QString::fromStdString(msg.mMeta.mAuthorId.toStdString()));
+	item->setText(COLUMN_THREAD_AUTHOR, QString::fromStdString(msg.mMeta.mAuthorId.toStdString()));
 	//item->setId(msg.mMeta.mAuthorId, COLUMN_THREAD_AUTHOR);
 //#TODO
 #if 0
@@ -910,14 +910,14 @@ void GxsForumThreadWidget::insertThreads()
 	}
 
 	// Get Current Forum Info... then complete insertForumThreads().
-	requestGroupSummary_CurrentForum(mForumId);
+	requestGroup_CurrentForum(mForumId);
 }
 
-void GxsForumThreadWidget::insertForumThreads(const RsGroupMetaData &fi)
+void GxsForumThreadWidget::insertForumThreads(const RsGxsForumGroup &group)
 {
-	mSubscribeFlags = fi.mSubscribeFlags;
-	ui->forumName->setText(QString::fromUtf8(fi.mGroupName.c_str()));
-//	mForumDescription = QString::fromUtf8(fi.mDescription); // not available
+	mSubscribeFlags = group.mMeta.mSubscribeFlags;
+	ui->forumName->setText(QString::fromUtf8(group.mMeta.mGroupName.c_str()));
+	mForumDescription = QString::fromUtf8(group.mDescription.c_str());
 
 	ui->progressBar->reset();
 	mStateHelper->setActive(TOKEN_TYPE_CURRENTFORUM, true);
@@ -1551,7 +1551,7 @@ void GxsForumThreadWidget::createthread()
 static QString buildReplyHeader(const RsMsgMetaData &meta)
 {
 	RetroShareLink link;
-	//link.createMessage(meta.mAuthorId, "");
+	link.createMessage(meta.mAuthorId, "");
 	QString from = link.toHtml();
 
 	QString header = QString("<span>-----%1-----").arg(QApplication::translate("GxsForumsDialog", "Original Message"));
@@ -1587,15 +1587,14 @@ void GxsForumThreadWidget::replyMessageData(const RsGxsForumMsg &msg)
 		return;
 	}
 
-	// NB: TODO REMOVE rsPeers references.
-    if (rsPeers->getPeerName(RsPeerId(msg.mMeta.mAuthorId)) !="")
+	if (!msg.mMeta.mAuthorId.isNull())
 	{
 		MessageComposer *msgDialog = MessageComposer::newMsg();
 		msgDialog->setTitleText(QString::fromUtf8(msg.mMeta.mMsgName.c_str()), MessageComposer::REPLY);
 
 		msgDialog->setQuotedMsg(QString::fromUtf8(msg.mMsg.c_str()), buildReplyHeader(msg.mMeta));
 
-		//msgDialog->addRecipient(MessageComposer::TO, msg.mMeta.mAuthorId, false);
+		msgDialog->addRecipient(MessageComposer::TO, RsPeerId(msg.mMeta.mAuthorId));
 		msgDialog->show();
 		msgDialog->activateWindow();
 
@@ -1679,7 +1678,7 @@ bool GxsForumThreadWidget::filterItem(QTreeWidgetItem *item, const QString &text
 /** Request / Response of Data ********************************/
 /*********************** **** **** **** ***********************/
 
-void GxsForumThreadWidget::requestGroupSummary_CurrentForum(const RsGxsGroupId &forumId)
+void GxsForumThreadWidget::requestGroup_CurrentForum(const RsGxsGroupId &forumId)
 {
 	ui->progressBar->reset();
 	mStateHelper->setLoading(TOKEN_TYPE_CURRENTFORUM, true);
@@ -1687,32 +1686,31 @@ void GxsForumThreadWidget::requestGroupSummary_CurrentForum(const RsGxsGroupId &
 	emit forumChanged(this);
 
 	RsTokReqOptions opts;
-	opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
 
 	mThreadQueue->cancelActiveRequestTokens(TOKEN_TYPE_CURRENTFORUM);
 
 	std::list<RsGxsGroupId> grpIds;
 	grpIds.push_back(forumId);
 
-	std::cerr << "GxsForumsDialog::requestGroupSummary_CurrentForum(" << forumId << ")";
+	std::cerr << "GxsForumsDialog::requestGroup_CurrentForum(" << forumId << ")";
 	std::cerr << std::endl;
 
 	uint32_t token;
-	mThreadQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_SUMMARY, opts, grpIds, TOKEN_TYPE_CURRENTFORUM);
+	mThreadQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, grpIds, TOKEN_TYPE_CURRENTFORUM);
 }
 
-void GxsForumThreadWidget::loadGroupSummary_CurrentForum(const uint32_t &token)
+void GxsForumThreadWidget::loadGroup_CurrentForum(const uint32_t &token)
 {
-	std::cerr << "GxsForumsDialog::loadGroupSummary_CurrentForum()";
+	std::cerr << "GxsForumsDialog::loadGroup_CurrentForum()";
 	std::cerr << std::endl;
 
-	std::list<RsGroupMetaData> groupInfo;
-	rsGxsForums->getGroupSummary(token, groupInfo);
+	std::vector<RsGxsForumGroup> groups;
+	rsGxsForums->getGroupData(token, groups);
 
-	if (groupInfo.size() == 1)
+	if (groups.size() == 1)
 	{
-		RsGroupMetaData fi = groupInfo.front();
-		insertForumThreads(fi);
+		insertForumThreads(groups[0]);
 	}
 	else
 	{
@@ -1809,7 +1807,6 @@ void GxsForumThreadWidget::requestMsgData_ReplyMessage(const RsGxsGrpMsgIdPair &
 
 	uint32_t token;
 	mThreadQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, TOKEN_TYPE_REPLY_MESSAGE);
-
 }
 
 void GxsForumThreadWidget::loadMsgData_ReplyMessage(const uint32_t &token)
@@ -1850,7 +1847,7 @@ void GxsForumThreadWidget::loadRequest(const TokenQueue *queue, const TokenReque
 		switch(req.mUserType)
 		{
 		case TOKEN_TYPE_CURRENTFORUM:
-			loadGroupSummary_CurrentForum(req.mToken);
+			loadGroup_CurrentForum(req.mToken);
 			break;
 
 		case TOKEN_TYPE_INSERT_POST:

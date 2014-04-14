@@ -107,12 +107,11 @@ bool PostedGroupDialog::service_CreateGroup(uint32_t &token, const RsGroupMetaDa
 	return true;
 }
 
-bool PostedGroupDialog::service_EditGroup(uint32_t &token, 
-			RsGroupMetaData &editedMeta)
+bool PostedGroupDialog::service_EditGroup(uint32_t &token, RsGroupMetaData &editedMeta)
 {
 	RsPostedGroup grp;
 	grp.mMeta = editedMeta;
-	grp.mDescription = std::string(ui.groupDesc->toPlainText().toUtf8());
+	grp.mDescription = getDescription().toUtf8().constData();
 
 	std::cerr << "PostedGroupDialog::service_EditGroup() submitting changes";
 	std::cerr << std::endl;
@@ -121,31 +120,31 @@ bool PostedGroupDialog::service_EditGroup(uint32_t &token,
 	return true;
 }
 
-
-bool PostedGroupDialog::service_loadGroup(uint32_t token, Mode mode, RsGroupMetaData& groupMetaData)
+bool PostedGroupDialog::service_loadGroup(uint32_t token, Mode /*mode*/, RsGroupMetaData& groupMetaData, QString &description)
 {
-        std::cerr << "PostedGroupDialog::service_loadGroup(" << token << ")";
-        std::cerr << std::endl;
+	std::cerr << "PostedGroupDialog::service_loadGroup(" << token << ")";
+	std::cerr << std::endl;
 
-        std::vector<RsPostedGroup> groups;
-        if (!rsPosted->getGroupData(token, groups))
-        {
-                std::cerr << "PostedGroupDialog::service_loadGroup() Error getting GroupData";
-                std::cerr << std::endl;
-                return false;
-        }
+	std::vector<RsPostedGroup> groups;
+	if (!rsPosted->getGroupData(token, groups))
+	{
+		std::cerr << "PostedGroupDialog::service_loadGroup() Error getting GroupData";
+		std::cerr << std::endl;
+		return false;
+	}
 
-        if (groups.size() != 1)
-        {
-                std::cerr << "PostedGroupDialog::service_loadGroup() Error Group.size() != 1";
-                std::cerr << std::endl;
-                return false;
-        }
+	if (groups.size() != 1)
+	{
+		std::cerr << "PostedGroupDialog::service_loadGroup() Error Group.size() != 1";
+		std::cerr << std::endl;
+		return false;
+	}
 
-        std::cerr << "PostedGroupDialog::service_loadGroup() Unfinished Loading";
-        std::cerr << std::endl;
+	std::cerr << "PostedGroupDialog::service_loadGroup() Unfinished Loading";
+	std::cerr << std::endl;
 
 	groupMetaData = groups[0].mMeta;
+	description = QString::fromUtf8(groups[0].mDescription.c_str());
+
 	return true;
 }
-

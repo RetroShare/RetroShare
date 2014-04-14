@@ -130,7 +130,6 @@ void GxsChannelDialog::todo()
 							 "<li>Restore channel keys"
 							 "<li>Copy/navigate channel link"
 							 "<li>Display count of unread messages"
-							 "<li>Show/Edit channel details"
 							 "<li>Set all as read"
 							 "<li>Set read/unread status"
 							 "</ul>");

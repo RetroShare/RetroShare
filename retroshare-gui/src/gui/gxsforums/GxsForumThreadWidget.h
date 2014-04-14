@@ -9,6 +9,7 @@ class RSTreeWidgetItemCompareRole;
 class RsGxsForumMsg;
 class GxsForumsFillThread;
 class UIStateHelper;
+class RsGxsForumGroup;
 
 namespace Ui {
 class GxsForumThreadWidget;
@@ -105,7 +106,7 @@ private slots:
 	void fillThreadStatus(QString text);
 
 private:
-	void insertForumThreads(const RsGroupMetaData &fi);
+	void insertForumThreads(const RsGxsForumGroup &group);
 	void insertPostData(const RsGxsForumMsg &msg); // Second Half.
 
 	void insertThreads();
@@ -143,8 +144,8 @@ private:
 	unsigned int mUnreadCount;
 	unsigned int mNewCount;
 
-	void requestGroupSummary_CurrentForum(const RsGxsGroupId &forumId);
-	void loadGroupSummary_CurrentForum(const uint32_t &token);
+	void requestGroup_CurrentForum(const RsGxsGroupId &forumId);
+	void loadGroup_CurrentForum(const uint32_t &token);
 
 	void requestMsgData_InsertPost(const RsGxsGrpMsgIdPair &msgId);
 	void loadMsgData_InsertPost(const uint32_t &token);

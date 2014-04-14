@@ -135,8 +135,8 @@ void GxsForumsDialog::todo()
 							 "<li>Restore forum keys"
 							 "<li>Display AUTHD"
 							 "<li>Copy/navigate forum link"
+							 "<li>Display author of post"
 							 "<li>Display count of unread messages"
-							 "<li>Show/Edit forum details"
 							 "<li>Don't show own posts as unread"
 							 "<li>Remove messages"
 							 "</ul>");
@@ -350,7 +350,7 @@ void GxsForumsDialog::insertForumsData(const std::list<RsGroupMetaData> &forumLi
 	ui.forumTreeWidget->fillGroupItems(popularForums, popList);
 	ui.forumTreeWidget->fillGroupItems(otherForums, otherList);
 
-        updateMessageSummaryList(RsGxsGroupId());
+	updateMessageSummaryList(RsGxsGroupId());
 }
 
 GxsForumThreadWidget *GxsForumsDialog::forumThreadWidget(const RsGxsGroupId &forumId)
@@ -390,7 +390,7 @@ void GxsForumsDialog::changedForum(const QString &forumId)
 //	requestGroupSummary_CurrentForum(mForumId);
 
 	/* search exisiting tab */
-        GxsForumThreadWidget *threadWidget = forumThreadWidget(mForumId);
+	GxsForumThreadWidget *threadWidget = forumThreadWidget(mForumId);
 
 	if (!threadWidget) {
 		if (mThreadWidget) {
@@ -399,7 +399,7 @@ void GxsForumsDialog::changedForum(const QString &forumId)
 			threadWidget->setForumId(mForumId);
 		} else {
 			/* create new tab */
-                        threadWidget = createThreadWidget(mForumId);
+			threadWidget = createThreadWidget(mForumId);
 		}
 	}
 
@@ -408,7 +408,7 @@ void GxsForumsDialog::changedForum(const QString &forumId)
 
 void GxsForumsDialog::forumTreeMiddleButtonClicked(QTreeWidgetItem *item)
 {
-        openForumInNewTab(RsGxsGroupId(ui.forumTreeWidget->itemId(item).toStdString()));
+	openForumInNewTab(RsGxsGroupId(ui.forumTreeWidget->itemId(item).toStdString()));
 }
 
 void GxsForumsDialog::openInNewTab()
@@ -418,7 +418,7 @@ void GxsForumsDialog::openInNewTab()
 
 void GxsForumsDialog::openForumInNewTab(const RsGxsGroupId &forumId)
 {
-        if (forumId.isNull()) {
+	if (forumId.isNull()) {
 		return;
 	}
 
@@ -453,7 +453,7 @@ void GxsForumsDialog::threadTabChanged(int index)
 		return;
 	}
 
-        ui.forumTreeWidget->activateId(QString::fromStdString(threadWidget->forumId().toStdString()), false);
+	ui.forumTreeWidget->activateId(QString::fromStdString(threadWidget->forumId().toStdString()), false);
 }
 
 void GxsForumsDialog::threadTabInfoChanged(QWidget *widget)
@@ -474,7 +474,7 @@ void GxsForumsDialog::threadTabInfoChanged(QWidget *widget)
 
 void GxsForumsDialog::copyForumLink()
 {
-        if (mForumId.isNull()) {
+	if (mForumId.isNull()) {
 		return;
 	}
 
@@ -531,7 +531,7 @@ void GxsForumsDialog::unsubscribeToForum()
 
 void GxsForumsDialog::forumSubscribe(bool subscribe)
 {
-        if (mForumId.isNull()) {
+	if (mForumId.isNull()) {
 		return;
 	}
 
@@ -542,7 +542,7 @@ void GxsForumsDialog::forumSubscribe(bool subscribe)
 
 void GxsForumsDialog::showForumDetails()
 {
-        if (mForumId.isNull()) {
+	if (mForumId.isNull()) {
 		return;
 	}
 
@@ -552,7 +552,7 @@ void GxsForumsDialog::showForumDetails()
 
 void GxsForumsDialog::editForumDetails()
 {
-        if (mForumId.isNull()) {
+	if (mForumId.isNull()) {
 		return;
 	}
 
@@ -565,7 +565,7 @@ void GxsForumsDialog::editForumDetails()
 
 void GxsForumsDialog::shareKey()
 {
-        ShareKey shareUi(this, mForumId.toStdString(), FORUM_KEY_SHARE);
+	ShareKey shareUi(this, mForumId.toStdString(), FORUM_KEY_SHARE);
 	shareUi.exec();
 }
 
@@ -583,7 +583,7 @@ void GxsForumsDialog::updateMessageSummaryList( RsGxsGroupId forumId)
 				continue;
 			}
 
-                        if (forumId.isNull() || childId == forumId.toStdString()) {
+			if (forumId.isNull() || childId == forumId.toStdString()) {
 				/* calculate unread messages */
 				unsigned int newMessageCount = 0;
 				unsigned int unreadMessageCount = 0;
@@ -595,7 +595,7 @@ void GxsForumsDialog::updateMessageSummaryList( RsGxsGroupId forumId)
 
 				ui.forumTreeWidget->setUnreadCount(childItem, unreadMessageCount);
 
-                                if (forumId.isNull() == false) {
+				if (forumId.isNull() == false) {
 					/* Calculate only this forum */
 					break;
 				}
@@ -606,11 +606,11 @@ void GxsForumsDialog::updateMessageSummaryList( RsGxsGroupId forumId)
 
 bool GxsForumsDialog::navigate(const RsGxsGroupId  forumId, const std::string& msgId)
 {
-        if (forumId.isNull()) {
+	if (forumId.isNull()) {
 		return false;
 	}
 
-        if (ui.forumTreeWidget->activateId(QString::fromStdString(forumId.toStdString()), msgId.empty()) == NULL) {
+	if (ui.forumTreeWidget->activateId(QString::fromStdString(forumId.toStdString()), msgId.empty()) == NULL) {
 		return false;
 	}
 

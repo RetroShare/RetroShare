@@ -136,7 +136,7 @@ void GxsGroupDialog::setUiText(UiType uiType, const QString &text)
 	case UITYPE_CONTACTS_DOCK:
 		ui.contactsdockWidget->setWindowTitle(text);
 		break;
-  case UITYPE_BUTTONBOX_OK:
+	case UITYPE_BUTTONBOX_OK:
 		ui.buttonBox->button(QDialogButtonBox::Ok)->setText(text);
 		break;
 	}
@@ -150,7 +150,7 @@ void GxsGroupDialog::initMode()
 		case MODE_CREATE:
 		{
 			ui.buttonBox->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
-                        ui.buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Create Forum"));
+			ui.buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Create Forum"));
 			newGroup();
 		}
 		break;
@@ -162,6 +162,7 @@ void GxsGroupDialog::initMode()
 			requestGroup(mGrpMeta.mGroupId);
 		}
 		break;
+
 		case MODE_EDIT:
 		{
 			ui.buttonBox->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
@@ -171,7 +172,6 @@ void GxsGroupDialog::initMode()
 		break;
 	}
 }
-
 
 void GxsGroupDialog::clearForm()
 {
@@ -267,44 +267,26 @@ void GxsGroupDialog::setupDefaults()
 
 void GxsGroupDialog::setupVisibility()
 {
-	{
-		ui.groupName->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_NAME);
-	}
-	{
-		ui.groupLogo->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_ICON);
-		ui.addLogoButton->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_ICON);
-	}
+	ui.groupName->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_NAME);
 
-	{
-		ui.groupDesc->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_DESCRIPTION);
-		ui.groupDescLabel->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_DESCRIPTION);
-	}
+	ui.groupLogo->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_ICON);
+	ui.addLogoButton->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_ICON);
 
-	{
-		ui.distribGroupBox->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_DISTRIBUTION);
-	}
+	ui.groupDesc->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_DESCRIPTION);
+	ui.groupDescLabel->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_DESCRIPTION);
 
-	{
-		ui.publishGroupBox->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_PUBLISHSIGN);
-	}
+	ui.distribGroupBox->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_DISTRIBUTION);
 
-	{
-		ui.pubKeyShare_cb->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_SHAREKEYS);
-	}
+	ui.publishGroupBox->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_PUBLISHSIGN);
 
-	{
-		ui.personalGroupBox->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_PERSONALSIGN);
-	}
+	ui.pubKeyShare_cb->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_SHAREKEYS);
 
-	{
-		ui.commentGroupBox->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_COMMENTS);
-	}
+	ui.personalGroupBox->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_PERSONALSIGN);
 
-	{
-		ui.extraFrame->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_EXTRA);
-	}
+	ui.commentGroupBox->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_COMMENTS);
+
+	ui.extraFrame->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_EXTRA);
 }
-
 
 void GxsGroupDialog::setAllReadonly()
 {
@@ -316,48 +298,29 @@ void GxsGroupDialog::setAllReadonly()
 	mReadonlyFlags = origReadonlyFlags;
 }
 
-
 void GxsGroupDialog::setupReadonly()
 {
-	{
-		ui.groupName->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_NAME));
-	}
-	{
-		ui.groupLogo->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_ICON));
-		ui.addLogoButton->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_ICON));
-	}
+	ui.groupName->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_NAME));
 
-	{
-		ui.groupDesc->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_DESCRIPTION));
-		ui.groupDescLabel->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_DESCRIPTION));
-	}
+	ui.groupLogo->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_ICON));
+	ui.addLogoButton->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_ICON));
 
-	{
-		ui.distribGroupBox->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_DISTRIBUTION));
-	}
+	ui.groupDesc->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_DESCRIPTION));
+	ui.groupDescLabel->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_DESCRIPTION));
 
-	{
-		ui.publishGroupBox->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_PUBLISHSIGN));
-	}
+	ui.distribGroupBox->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_DISTRIBUTION));
 
-	{
-		ui.pubKeyShare_cb->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_SHAREKEYS));
-	}
+	ui.publishGroupBox->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_PUBLISHSIGN));
 
-	{
-		ui.personalGroupBox->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_PERSONALSIGN));
-		ui.idChooser->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_PERSONALSIGN));
-	}
+	ui.pubKeyShare_cb->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_SHAREKEYS));
 
-	{
-		ui.commentGroupBox->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_COMMENTS));
-	}
+	ui.personalGroupBox->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_PERSONALSIGN));
+	ui.idChooser->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_PERSONALSIGN));
 
-	{
-		ui.extraFrame->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_EXTRA));
-	}
+	ui.commentGroupBox->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_COMMENTS));
+
+	ui.extraFrame->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_EXTRA));
 }
-
 
 void GxsGroupDialog::newGroup()
 {
@@ -365,10 +328,9 @@ void GxsGroupDialog::newGroup()
 	setupVisibility();
 	setupReadonly();
 	clearForm();
-
 }
 
-void GxsGroupDialog::updateFromExistingMeta()
+void GxsGroupDialog::updateFromExistingMeta(const QString &description)
 {
 	std::cerr << "void GxsGroupDialog::updateFromExistingMeta()";
 	std::cerr << std::endl;
@@ -385,6 +347,9 @@ void GxsGroupDialog::updateFromExistingMeta()
 
 	/* setup name */
 	ui.groupName->setText(QString::fromUtf8(mGrpMeta.mGroupName.c_str()));
+
+	/* set description */
+	ui.groupDesc->setPlainText(description);
 
 	switch(mGrpMeta.mCircleType)
 	{
@@ -405,11 +370,11 @@ void GxsGroupDialog::updateFromExistingMeta()
 			std::cerr << std::endl;
 			break;
 	}
-    	ui.idChooser->loadIds(0, mGrpMeta.mAuthorId);
+
+	ui.idChooser->loadIds(0, mGrpMeta.mAuthorId);
 
 	updateCircleOptions();
 }
-
 
 void GxsGroupDialog::submitGroup()
 {
@@ -475,7 +440,6 @@ void GxsGroupDialog::editGroup()
 	close();
 }
 
-
 bool GxsGroupDialog::prepareGroupMetaData(RsGroupMetaData &meta)
 {
 	std::cerr << "GxsGroupDialog::prepareGroupMetaData()";
@@ -510,7 +474,7 @@ bool GxsGroupDialog::prepareGroupMetaData(RsGroupMetaData &meta)
 	std::cerr << " External: " << meta.mCircleId;
 	std::cerr << std::endl;
 
-    	ui.idChooser->getChosenId(meta.mAuthorId);
+	ui.idChooser->getChosenId(meta.mAuthorId);
 
 	return true;
 }
@@ -524,9 +488,9 @@ void GxsGroupDialog::createGroup()
 
 	if(name.isEmpty())
 	{
-			/* error message */
-			QMessageBox::warning(this, "RetroShare", tr("Please add a Name"), QMessageBox::Ok, QMessageBox::Ok);
-			return; //Don't add  a empty name!!
+		/* error message */
+		QMessageBox::warning(this, "RetroShare", tr("Please add a Name"), QMessageBox::Ok, QMessageBox::Ok);
+		return; //Don't add  a empty name!!
 	}
 
 	uint32_t token;
@@ -610,8 +574,6 @@ void GxsGroupDialog::setGroupSignFlags(uint32_t signFlags)
 	}
 }
 
-
-
 /**** Above logic is flawed, and will be removed shortly
  *
  *
@@ -681,8 +643,6 @@ bool GxsGroupDialog::setCircleParameters(RsGroupMetaData &meta)
 	return true;
 }
 
-
-
 void GxsGroupDialog::cancelDialog()
 {
 	std::cerr << "GxsGroupDialog::cancelDialog() Should Close!";
@@ -711,16 +671,15 @@ QPixmap GxsGroupDialog::getLogo()
 
 QString GxsGroupDialog::getDescription()
 {
-	return ui.groupDesc->document()->toPlainText();
+    return ui.groupDesc->toPlainText();
 }
 
 /***********************************************************************************
   Share Lists.
  ***********************************************************************************/
 
-void GxsGroupDialog::sendShareList(std::string groupId)
+void GxsGroupDialog::sendShareList(std::string /*groupId*/)
 {
-	(void) groupId;
 	close();
 }
 
@@ -734,8 +693,6 @@ void GxsGroupDialog::setShareList()
 		this->resize(this->size().width() - ui.contactsdockWidget->size().width(), this->size().height());
 	}
 }
-
-
 
 /***********************************************************************************
   Loading Group.
@@ -756,26 +713,16 @@ void GxsGroupDialog::requestGroup(const RsGxsGroupId &groupId)
 	mInternalTokenQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds, GXSGROUP_INTERNAL_LOADGROUP);
 }
 
-
 void GxsGroupDialog::loadGroup(uint32_t token)
 {
 	std::cerr << "GxsGroupDialog::loadGroup(" << token << ")";
 	std::cerr << std::endl;
 
-	if (service_loadGroup(token, mMode, mGrpMeta))
+	QString description;
+	if (service_loadGroup(token, mMode, mGrpMeta, description))
 	{
-		updateFromExistingMeta();
+		updateFromExistingMeta(description);
 	}
-}
-
-bool GxsGroupDialog::service_loadGroup(uint32_t token, Mode mode, RsGroupMetaData& groupMetaData)
-{
-	(void) mode;
-	(void) groupMetaData;
-
-	std::cerr << "GxsGroupDialog::service_loadGroup(" << token << ") NOT IMPLEMENTED";
-	std::cerr << std::endl;
-	return false;
 }
 
 void GxsGroupDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
@@ -798,8 +745,3 @@ void GxsGroupDialog::loadRequest(const TokenQueue *queue, const TokenRequest &re
 		}
 	}
 }
-
-
-
-
-

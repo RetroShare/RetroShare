@@ -168,24 +168,23 @@ protected:
 	void setUiText(UiType uiType, const QString &text);
 
 	/*!
-         * It is up to the service to do the actual group creation
-         * Service can also modify initial meta going into group
+	 * It is up to the service to do the actual group creation
+	 * Service can also modify initial meta going into group
 	 * @param token This should be set to the token retrieved
 	 * @param meta The deriving GXS service should set their grp meta to this value
 	 */
 	virtual bool service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta) = 0;
 
-        /*!
-         * It is up to the service to do the actual group editing
-         * @param token This should be set to the token retrieved
-         * @param meta The deriving GXS service should set their grp meta to this value
-         */
-	virtual bool service_EditGroup(uint32_t &token, 
-			RsGroupMetaData &editedMeta) = 0; 
+	/*!
+	 * It is up to the service to do the actual group editing
+	 * @param token This should be set to the token retrieved
+	 * @param meta The deriving GXS service should set their grp meta to this value
+	 */
+	virtual bool service_EditGroup(uint32_t &token, RsGroupMetaData &editedMeta) = 0;
 
 	// To be overloaded by users.
 	// use Token to retrieve from service, fill in metaData.
-	virtual bool service_loadGroup(uint32_t token, Mode mode, RsGroupMetaData& groupMetaData);
+	virtual bool service_loadGroup(uint32_t token, Mode mode, RsGroupMetaData& groupMetaData, QString &description) = 0;
 
 	/*!
 	 * This returns a group logo from the ui \n
@@ -198,8 +197,8 @@ protected:
 	 * This returns a group description string from the ui
 	 * @return group description string
 	 */
-	virtual QString getDescription();
-	
+	QString getDescription();
+
 private slots:
 
 	/* actions to take.... */
@@ -222,14 +221,14 @@ private:
 	void setupVisibility();
 	void clearForm();
 	void createGroup();
-        void editGroup();
+	void editGroup();
 	void sendShareList(std::string forumId);
 	void loadNewGroupId(const uint32_t &token);
 
 	// loading existing Groups.
 	void requestGroup(const RsGxsGroupId &groupId);
 	void loadGroup(uint32_t token);
-	void updateFromExistingMeta();
+	void updateFromExistingMeta(const QString &description);
 
 	bool prepareGroupMetaData(RsGroupMetaData &meta);
 
@@ -245,7 +244,7 @@ private:
 	uint32_t mReadonlyFlags;
 	uint32_t mDefaultsFlags;
 
-    protected:
+protected:
 
 	/** Qt Designer generated object */
 	Ui::GxsGroupDialog ui;

@@ -130,7 +130,7 @@ void PostedListDialog::updateShowText()
 
 void PostedListDialog::getRankings()
 {
-    if(mCurrTopicId.isNull())
+	if(mCurrTopicId.isNull())
 		return;
 
 	std::cerr << "PostedListDialog::getRankings()";
@@ -168,12 +168,12 @@ void PostedListDialog::getRankings()
 
 void PostedListDialog::groupListCustomPopupMenu(QPoint /*point*/)
 {
-    if (mCurrTopicId.isNull())
+	if (mCurrTopicId.isNull())
 	{
 		return;
 	}
 
-    uint32_t subscribeFlags = ui.groupTreeWidget->subscribeFlags(QString::fromStdString(mCurrTopicId.toStdString()));
+	uint32_t subscribeFlags = ui.groupTreeWidget->subscribeFlags(QString::fromStdString(mCurrTopicId.toStdString()));
 
 	QMenu contextMnu(this);
 
@@ -201,10 +201,10 @@ void PostedListDialog::groupListCustomPopupMenu(QPoint /*point*/)
 
 void PostedListDialog::newPost()
 {
-    if(mCurrTopicId.isNull())
+	if(mCurrTopicId.isNull())
 		return;
 
-    uint32_t subscribeFlags = ui.groupTreeWidget->subscribeFlags(QString::fromStdString(mCurrTopicId.toStdString()));
+	uint32_t subscribeFlags = ui.groupTreeWidget->subscribeFlags(QString::fromStdString(mCurrTopicId.toStdString()));
 	bool isSubscribed = IS_GROUP_SUBSCRIBED(subscribeFlags);
 
 	if (isSubscribed)
@@ -219,7 +219,7 @@ void PostedListDialog::unsubscribeTopic()
 	std::cerr << "PostedListDialog::unsubscribeTopic()";
 	std::cerr << std::endl;
 
-    if(mCurrTopicId.isNull())
+	if(mCurrTopicId.isNull())
 		return;
 
 	uint32_t token;
@@ -232,7 +232,7 @@ void PostedListDialog::subscribeTopic()
 	std::cerr << "PostedListDialog::subscribeTopic()";
 	std::cerr << std::endl;
 
-    if(mCurrTopicId.isNull())
+	if(mCurrTopicId.isNull())
 		return;
 
 	uint32_t token;
@@ -281,7 +281,7 @@ void PostedListDialog::submitVote(const RsGxsGrpMsgIdPair &msgId, bool up)
 	uint32_t token;
 	rsPosted->createVote(token, vote);
 	mPostedQueue->queueRequest(token, TOKENREQ_MSGINFO, RS_TOKREQ_ANSTYPE_ACK, TOKEN_USER_TYPE_VOTE);
-} 
+}
 
 /*****************************************************************************************/
 // Overloaded from FeedHolder.
@@ -382,23 +382,23 @@ void PostedListDialog::showTopic()
 		return;
 	}
 
-        PostedGroupDialog cf(mPostedQueue, rsPosted->getTokenService(), GxsGroupDialog::MODE_SHOW, mCurrTopicId, this);
-        cf.exec ();
+	PostedGroupDialog cf(mPostedQueue, rsPosted->getTokenService(), GxsGroupDialog::MODE_SHOW, mCurrTopicId, this);
+	cf.exec ();
 }
-	
+
 void PostedListDialog::editTopic()
 {
 	if (mCurrTopicId.isNull()) {
 		return;
 	}
 
-        PostedGroupDialog cf(mPostedQueue, rsPosted->getTokenService(), GxsGroupDialog::MODE_EDIT, mCurrTopicId, this);
-        cf.exec ();
+	PostedGroupDialog cf(mPostedQueue, rsPosted->getTokenService(), GxsGroupDialog::MODE_EDIT, mCurrTopicId, this);
+	cf.exec ();
 }
-	
+
 void PostedListDialog::showGroupDetails()
 {
-    if (mCurrTopicId.isNull())
+	if (mCurrTopicId.isNull())
 	{
 		return;
 	}
@@ -423,7 +423,7 @@ void PostedListDialog::requestGroupSummary()
 	mPostedQueue->requestGroupInfo(token,  RS_TOKREQ_ANSTYPE_SUMMARY, opts, TOKEN_USER_TYPE_TOPIC);
 
 	/* refresh Id Chooser Too */
-    RsGxsId currentId ;
+	RsGxsId currentId ;
 	ui.idChooser->getChosenId(currentId);
 	ui.idChooser->loadIds(IDCHOOSER_ID_REQUIRED, currentId);
 }
@@ -433,7 +433,7 @@ void PostedListDialog::acknowledgeGroup(const uint32_t &token)
 	RsGxsGroupId grpId;
 	rsPosted->acknowledgeGrp(token, grpId);
 
-    if(!grpId.isNull())
+	if(!grpId.isNull())
 	{
 		RsTokReqOptions opts;
 		opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
@@ -493,7 +493,7 @@ void PostedListDialog::requestGroupSummary_CurrentForum(const RsGxsGroupId &foru
 {
 	RsTokReqOptions opts;
 	
-    std::list<RsGxsGroupId> grpIds;
+	std::list<RsGxsGroupId> grpIds;
 	grpIds.push_back(forumId);
 
 	std::cerr << "PostedListDialog::requestGroupSummary_CurrentForum(" << forumId << ")";
@@ -538,7 +538,7 @@ void PostedListDialog::loadCurrentTopicThreads(const RsGxsGroupId &topicId)
 	std::cerr << "PostedListDialog::loadCurrentForumThreads(" << topicId << ")";
 	std::cerr << std::endl;
 
-    if (topicId.isNull())
+	if (topicId.isNull())
 	{
 		std::cerr << "PostedListDialog::loadCurrentForumThreads() Empty GroupId .. ignoring Req";
 		std::cerr << std::endl;
@@ -852,12 +852,12 @@ void PostedListDialog::acknowledgeSubscribeChange(const uint32_t &token)
 /*********************** **** **** **** ***********************/
 /*********************** **** **** **** ***********************/
 /*********************** **** **** **** ***********************/
-	
+
 void PostedListDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 {
 	std::cerr << "PostedListDialog::loadRequest() UserType: " << req.mUserType;
 	std::cerr << std::endl;
-				
+
 	if (queue == mPostedQueue)
 	{
 		/* now switch on req */
@@ -951,7 +951,7 @@ void PostedListDialog::loadRequest(const TokenQueue *queue, const TokenRequest &
 
 void PostedListDialog::groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo)
 {
-    groupItemInfo.id = QString::fromStdString(groupInfo.mGroupId.toStdString());
+	groupItemInfo.id = QString::fromStdString(groupInfo.mGroupId.toStdString());
 	groupItemInfo.name = QString::fromUtf8(groupInfo.mGroupName.c_str());
 	//groupItemInfo.description = QString::fromUtf8(groupInfo.forumDesc);
 	groupItemInfo.popularity = groupInfo.mPop;
@@ -1033,7 +1033,6 @@ void PostedListDialog::todo()
 	QMessageBox::information(this, "Todo",
 							 "<b>Open points:</b><ul>"
 							 "<li>Subreddits/tag to posts support"
-							 "<li>Edit Topics"
 							 "<li>Picture Support"
 							 "</ul>");
 }

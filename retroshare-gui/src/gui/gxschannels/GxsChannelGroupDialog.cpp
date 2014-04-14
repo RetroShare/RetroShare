@@ -98,19 +98,17 @@ bool GxsChannelGroupDialog::service_CreateGroup(uint32_t &token, const RsGroupMe
 	// Specific Function.
 	RsGxsChannelGroup grp;
 	grp.mMeta = meta;
-	//grp.mDescription = std::string(desc.toUtf8());
+	grp.mDescription = getDescription().toUtf8().constData();
 
 	rsGxsChannels->createGroup(token, grp);
 	return true;
 }
 
-
-bool GxsChannelGroupDialog::service_EditGroup(uint32_t &token, 
-			RsGroupMetaData &editedMeta)
+bool GxsChannelGroupDialog::service_EditGroup(uint32_t &token, RsGroupMetaData &editedMeta)
 {
 	RsGxsChannelGroup grp;
 	grp.mMeta = editedMeta;
-	grp.mDescription = std::string(ui.groupDesc->toPlainText().toUtf8());
+	grp.mDescription = getDescription().toUtf8().constData();
 
 	std::cerr << "GxsChannelGroupDialog::service_EditGroup() submitting changes";
 	std::cerr << std::endl;
@@ -119,31 +117,31 @@ bool GxsChannelGroupDialog::service_EditGroup(uint32_t &token,
 	return true;
 }
 
-
-bool GxsChannelGroupDialog::service_loadGroup(uint32_t token, Mode mode, RsGroupMetaData& groupMetaData)
+bool GxsChannelGroupDialog::service_loadGroup(uint32_t token, Mode /*mode*/, RsGroupMetaData& groupMetaData, QString &description)
 {
-        std::cerr << "GxsChannelGroupDialog::service_loadGroup(" << token << ")";
-        std::cerr << std::endl;
+	std::cerr << "GxsChannelGroupDialog::service_loadGroup(" << token << ")";
+	std::cerr << std::endl;
 
-        std::vector<RsGxsChannelGroup> groups;
-        if (!rsGxsChannels->getGroupData(token, groups))
-        {
-                std::cerr << "GxsChannelGroupDialog::service_loadGroup() Error getting GroupData";
-                std::cerr << std::endl;
-                return false;
-        }
+	std::vector<RsGxsChannelGroup> groups;
+	if (!rsGxsChannels->getGroupData(token, groups))
+	{
+		std::cerr << "GxsChannelGroupDialog::service_loadGroup() Error getting GroupData";
+		std::cerr << std::endl;
+		return false;
+	}
 
-        if (groups.size() != 1)
-        {
-                std::cerr << "GxsChannelGroupDialog::service_loadGroup() Error Group.size() != 1";
-                std::cerr << std::endl;
-                return false;
-        }
+	if (groups.size() != 1)
+	{
+		std::cerr << "GxsChannelGroupDialog::service_loadGroup() Error Group.size() != 1";
+		std::cerr << std::endl;
+		return false;
+	}
 
-        std::cerr << "GxsChannelsGroupDialog::service_loadGroup() Unfinished Loading";
-        std::cerr << std::endl;
+	std::cerr << "GxsChannelsGroupDialog::service_loadGroup() Unfinished Loading";
+	std::cerr << std::endl;
 
 	groupMetaData = groups[0].mMeta;
+	description = QString::fromUtf8(groups[0].mDescription.c_str());
+
 	return true;
 }
-

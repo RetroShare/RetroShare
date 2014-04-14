@@ -1,7 +1,7 @@
 /****************************************************************
  *  RetroShare is distributed under the following license:
  *
- *  Copyright (C) 2008 Robert Fernie
+ *  Copyright (C) 2006, crypton
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public License
@@ -15,32 +15,36 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#ifndef _GXSFORUM_GROUP_DIALOG_H
-#define _GXSFORUM_GROUP_DIALOG_H
+#ifndef FORUMPAGE_H
+#define FORUMPAGE_H
 
-#include "gui/gxs/GxsGroupDialog.h"
-#include <retroshare/rsgxsforums.h>
+#include <retroshare-gui/configpage.h>
+#include "ui_ForumPage.h"
 
-class GxsForumGroupDialog : public GxsGroupDialog
+class ForumPage : public ConfigPage
 {
 	Q_OBJECT
 
 public:
-	GxsForumGroupDialog(TokenQueue *tokenQueue, QWidget *parent);
-	GxsForumGroupDialog(TokenQueue *tokenExternalQueue, RsTokenService *tokenService, Mode mode, RsGxsGroupId groupId, QWidget *parent);
+	ForumPage(QWidget * parent = 0, Qt::WindowFlags flags = 0);
+	~ForumPage();
 
-protected:
-	virtual void initUi();
-	virtual QPixmap serviceImage();
-	virtual bool service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta);
-	virtual bool service_loadGroup(uint32_t token, Mode mode, RsGroupMetaData& groupMetaData, QString &description);
-	virtual bool service_EditGroup(uint32_t &token, RsGroupMetaData &editedMeta);
+	/** Saves the changes on this page */
+	virtual bool save(QString &errmsg);
+	/** Loads the settings for this page */
+	virtual void load();
 
+	virtual QPixmap iconPixmap() const { return QPixmap(":/images/konversation.png") ; }
+	virtual QString pageName() const { return tr("Forum") ; }
+	virtual QString helpText() const { return ""; }
 
+private:
+	Ui::ForumPage ui;
 };
 
-#endif
+#endif // !FORUMPAGE_H
+

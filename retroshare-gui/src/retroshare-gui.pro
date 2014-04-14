@@ -400,6 +400,7 @@ HEADERS +=  rshare.h \
             gui/settings/CryptoPage.h \
             gui/settings/MessagePage.h \
             gui/settings/NewTag.h \
+            gui/settings/ForumPage.h \
             gui/settings/PluginsPage.h \
             gui/settings/PluginItem.h \
             gui/settings/AppearancePage.h \
@@ -511,7 +512,6 @@ HEADERS +=  rshare.h \
 #            gui/channels/CreateChannelMsg.h \
 #            gui/channels/EditChanDetails.h \
 #            gui/channels/ChannelUserNotify.h \
-#            gui/settings/ForumPage.h \
 
 FORMS +=    gui/StartDialog.ui \
             gui/GenCertDialog.ui \
@@ -561,6 +561,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/settings/CryptoPage.ui \
             gui/settings/MessagePage.ui \
             gui/settings/NewTag.ui \
+            gui/settings/ForumPage.ui \
             gui/settings/PluginsPage.ui \
             gui/settings/AppearancePage.ui \
             gui/settings/TransferPage.ui \
@@ -617,7 +618,6 @@ FORMS +=    gui/StartDialog.ui \
 #            gui/channels/EditChanDetails.ui \
 #            gui/feeds/ChanNewItem.ui \
 #            gui/feeds/ChanMsgItem.ui \
-#            gui/settings/ForumPage.ui \
 
 SOURCES +=  main.cpp \
             rshare.cpp \
@@ -759,6 +759,7 @@ SOURCES +=  main.cpp \
             gui/settings/CryptoPage.cpp \
             gui/settings/MessagePage.cpp \
             gui/settings/NewTag.cpp \
+            gui/settings/ForumPage.cpp \
             gui/settings/PluginsPage.cpp \
             gui/settings/PluginItem.cpp \
             gui/settings/AppearancePage.cpp \
@@ -825,7 +826,6 @@ SOURCES +=  main.cpp \
 #            gui/channels/ChannelUserNotify.cpp \
 #            gui/feeds/ChanNewItem.cpp \
 #            gui/feeds/ChanMsgItem.cpp \
-#            gui/settings/ForumPage.cpp \
 
 RESOURCES += gui/images.qrc lang/lang.qrc gui/help/content/content.qrc
 
