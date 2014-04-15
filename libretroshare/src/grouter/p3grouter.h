@@ -168,6 +168,7 @@ class p3GRouter: public RsGRouter, public p3Service, public p3Config
 		static uint32_t computeBranchingFactor(const std::vector<RsPeerId>& friends,uint32_t dist) ;
 		std::set<uint32_t> computeRoutingFriends(const std::vector<RsPeerId>& friends,const std::vector<float>& probas,uint32_t N) ;
 		static float computeMatrixContribution(float base,uint32_t time_shift,float probability) ;
+		static time_t computeNextTimeDelay(time_t duration) ;
 
 		uint32_t computeRandomDistanceIncrement(const RsPeerId& pid,const GRouterKeyId& destination_id) ;
 

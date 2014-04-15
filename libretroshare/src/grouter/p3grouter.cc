@@ -269,6 +269,19 @@ int p3GRouter::tick()
 	return 0 ;
 }
 
+time_t p3GRouter::computeNextTimeDelay(time_t stored_time)
+{
+	// Computes the time to wait before re-sending the object, based on how long it has been stored already.
+	
+	if(stored_time <       2*60  )  return      10 ;	// re-schedule every 10 secs for items not older than 2 mins. This ensures a rapid spread when peers are online.
+	if(stored_time <      40*60  )  return 10 * 60 ;	// then, try every 10 mins for 40 mins
+	if(stored_time <       4*3600)  return    3600 ;	// then, try every hour for 4 hours
+	if(stored_time <   10*24*3600)  return 12*3600 ;	// then, try every 12 hours for 10 days
+	if(stored_time < 6*30*24*3600)  return 5*86400 ;	// then, try every 5 days for 6 months
+
+	return 6*30*86400 ;											// default: try every 5 months
+}
+
 RsSerialiser *p3GRouter::setupSerialiser()
 {
 	RsSerialiser *rss = new RsSerialiser ;
@@ -303,7 +316,7 @@ void p3GRouter::autoWash()
 			_pending_messages.erase(it) ;
 			it = tmp ;
 		}
-		else if(it->second.data_item != NULL && it->second.status_flags == RS_GROUTER_ROUTING_STATE_SENT && it->second.last_sent+RS_GROUTER_ROUTING_WAITING_TIME < now)
+		else if(it->second.data_item != NULL && it->second.status_flags == RS_GROUTER_ROUTING_STATE_SENT && computeNextTimeDelay(it->second.last_sent - it->second.received_time) + it->second.last_sent < now)
 		{
 			it->second.status_flags = RS_GROUTER_ROUTING_STATE_PEND ;
 #ifdef GROUTER_DEBUG
@@ -768,7 +781,7 @@ void p3GRouter::handleRecvACKItem(RsGRouterACKItem *item)
 #ifdef GROUTER_DEBUG
 		grouter_debug() << "  No tries left. Removing item from pending list." << std::endl;
 #endif
-		if(it->second.status_flags != RS_GROUTER_ROUTING_STATE_ARVD)
+		if(it->second.status_flags != RS_GROUTER_ROUTING_STATE_ARVD && next_state != RS_GROUTER_ROUTING_STATE_ARVD)
 		{
 			next_state = RS_GROUTER_ROUTING_STATE_DEAD ;
 			forward_state = RS_GROUTER_ACK_STATE_GVNP ;
@@ -853,6 +866,9 @@ void p3GRouter::handleRecvDataItem(RsGRouterGenericDataItem *item)
 		grouter_debug() << "  Item is already there. Nothing to do. Should we update the cache?" << std::endl;
 #endif
 		item_copy = itr->second.data_item ;
+
+		if(itr->second.status_flags == RS_GROUTER_ROUTING_STATE_ARVD)
+			returned_ack = RS_GROUTER_ACK_STATE_IRCV ;
 	}
 	else		// item is not known. Store it into pending msgs. We make a copy, since the item will be deleted otherwise.
 	{
@@ -973,7 +989,7 @@ void p3GRouter::sendACK(const RsPeerId& peer, GRouterMsgPropagationId mid, uint3
 
 	item->state = ack_flags ;
 	item->mid = mid ;
-    item->PeerId(peer) ;
+	item->PeerId(peer) ;
 
 	sendItem(item) ;
 }
@@ -1135,13 +1151,12 @@ void p3GRouter::debugDump()
 	for(std::map<GRouterMsgPropagationId, GRouterRoutingInfo>::iterator it(_pending_messages.begin());it!=_pending_messages.end();++it)
 	{
 		grouter_debug() << "    Msg id: " << std::hex << it->first << std::dec << "  Local Origin: " << it->second.origin.toStdString() ;
-		grouter_debug() << "  Destination: " << it->second.destination_key ;
-		grouter_debug() << "  Time  : " << now - it->second.last_sent << " secs ago.";
-		grouter_debug() << "  Status: " << statusString[it->second.status_flags] << std::endl;
+		grouter_debug() << "    Destination: " << it->second.destination_key ;
+		grouter_debug() << "    Received   : " << now - it->second.received_time << " secs ago.";
+		grouter_debug() << "    Last sent  : " << now - it->second.last_sent << " secs ago.";
+		grouter_debug() << "    Status: " << statusString[it->second.status_flags] << std::endl;
+		grouter_debug() << "    Interval: " << computeNextTimeDelay(it->second.last_sent - it->second.received_time) << std::endl;
 	}
-
-//			          << "  Last  : " << it->second.tried_friends.front().friend_id.toStdString() << std::endl;
-//			          << "  Probabilities: " << std::endl;
 
 	grouter_debug() << "  Routing matrix: " << std::endl;
 

@@ -48,7 +48,7 @@ static const time_t RS_GROUTER_MEAN_EXPECTED_RTT           =       30 ; // refer
 
 static const uint32_t GROUTER_ITEM_DISTANCE_UNIT           =      256 ; // One unit of distance between two peers
 static const uint32_t GROUTER_ITEM_MAX_TRAVEL_DISTANCE     =    6*256 ; // 6 distance units. That is a lot.
-static const uint32_t GROUTER_ITEM_MAX_CACHE_KEEP_TIME     =     1200 ; // should be probably extended. Items older than that should always be removed.
+static const uint32_t GROUTER_ITEM_MAX_CACHE_KEEP_TIME     = 30*86400 ; // Items are kept in cache for 1 month, to allow sending to peers while not online.
 
 static const uint32_t RS_GROUTER_ROUTING_STATE_UNKN = 0x0000 ;		// unknown. Unused.
 static const uint32_t RS_GROUTER_ROUTING_STATE_PEND = 0x0001 ;		// item is pending. Should be sent asap. 
