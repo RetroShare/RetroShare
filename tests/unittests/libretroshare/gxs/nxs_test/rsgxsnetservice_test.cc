@@ -10,13 +10,16 @@
 #include "nxsgrpsync_test.h"
 #include "nxstesthub.h"
 
-
 TEST(libretroshare_gxs, gxs_grp_sync)
 {
-	NxsGrpSync* gsync_test = new NxsGrpSync();
+	rs_nxs_test::NxsTestScenario::pointer gsync_test = rs_nxs_test::NxsTestScenario::pointer(
+			new rs_nxs_test::NxsGrpSync());
 	rs_nxs_test::NxsTestHub tHub(gsync_test);
 	tHub.StartTest();
-	rs_nxs_test::NxsTestHub::wait(10);
+
+	// wait for ten seconds
+	rs_nxs_test::NxsTestHub::Wait(10);
+
 	tHub.EndTest();
 
 	ASSERT_TRUE(tHub.testsPassed());

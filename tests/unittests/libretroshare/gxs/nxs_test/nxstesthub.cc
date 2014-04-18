@@ -6,7 +6,7 @@ class NotifyWithPeerId : public RsNxsObserver
 {
 public:
 
-	NotifyWithPeerId(RsPeerId val, NxsTestHub& hub)
+	NotifyWithPeerId(RsPeerId val, rs_nxs_test::NxsTestHub& hub)
 	: mPeerId(val), mTestHub(hub){
 
 	}
@@ -27,7 +27,29 @@ private:
 	rs_nxs_test::NxsTestHub& mTestHub;
 };
 
-rs_nxs_test::NxsTestHub::NxsTestHub(NxsTestScenario* testScenario)
+using namespace rs_nxs_test;
+
+class NxsTestHubConnection : public p3ServiceServerIface
+{
+
+public:
+	NxsTestHubConnection(const RsPeerId& id, RecvPeerItemIface* recvIface) : mPeerId(id), mRecvIface(recvIface) {}
+
+	bool	recvItem(RsRawItem * i)
+	{
+		return mRecvIface->recvItem(i, mPeerId);
+	}
+	bool	sendItem(RsRawItem * i)
+	{
+		return recvItem(i);
+	}
+private:
+	RsPeerId mPeerId;
+	RecvPeerItemIface* mRecvIface;
+
+};
+
+rs_nxs_test::NxsTestHub::NxsTestHub(NxsTestScenario::pointer testScenario)
  : mTestScenario(testScenario)
 {
 	std::list<RsPeerId> peers;
@@ -40,11 +62,21 @@ rs_nxs_test::NxsTestHub::NxsTestHub(NxsTestScenario* testScenario)
 
 	for(; cit != peers.end(); cit++)
 	{
-		RsGxsNetService* ns = new RsGxsNetService(mTestScenario->getServiceType(),
-				mTestScenario->getDataService(*cit), mTestScenario->getDummyNetManager(*cit),
+		RsGxsNetService::pointer ns = RsGxsNetService::pointer(
+				new RsGxsNetService(
+				mTestScenario->getServiceType(),
+				mTestScenario->getDataService(*cit),
+				mTestScenario->getDummyNetManager(*cit),
 				new NotifyWithPeerId(*cit, *this),
-				mTestScenario->getServiceInfo(), mTestScenario->getDummyReputations(*cit),
-				mTestScenario->getDummyCircles(*cit), true);
+				mTestScenario->getServiceInfo(),
+				mTestScenario->getDummyReputations(*cit),
+				mTestScenario->getDummyCircles(*cit), true
+				)
+		);
+
+		NxsTestHubConnection *connection =
+				new NxsTestHubConnection(*cit, this);
+		ns->setServiceServer(connection);
 
 		mPeerNxsMap.insert(std::make_pair(*cit, ns));
 	}
@@ -118,11 +150,11 @@ void rs_nxs_test::NxsTestHub::notifyNewMessages(const RsPeerId& pid,
 	{
 		RsNxsMsg* msg = *it;
 		RsGxsMsgMetaData* meta = new RsGxsMsgMetaData();
-		bool ok = meta->deserialise(msg->meta.bin_data, msg->meta.bin_len);
+		bool ok = meta->deserialise(msg->meta.bin_data, &(msg->meta.bin_len));
 		toStore.insert(std::make_pair(msg, meta));
 	}
 
-	RsDataService* ds = mTestScenario->getDataService(pid);
+	RsGeneralDataService* ds = mTestScenario->getDataService(pid);
 	ds->storeMessage(toStore);
 }
 
@@ -139,55 +171,41 @@ void rs_nxs_test::NxsTestHub::notifyNewGroups(const RsPeerId& pid, std::vector<R
 		toStore.insert(std::make_pair(grp, meta));
 	}
 
-	RsDataService* ds = mTestScenario->getDataService(pid);
+	RsGeneralDataService* ds = mTestScenario->getDataService(pid);
 	ds->storeGroup(toStore);
 }
 
 void rs_nxs_test::NxsTestHub::Wait(int seconds) {
 
+	double dsecs = seconds;
+
 #ifndef WINDOWS_SYS
-        usleep((int) (1000000));
+        usleep((int) (dsecs * 1000000));
 #else
-        Sleep((int) (1000));
+        Sleep((int) (dsecs * 1000));
 #endif
+}
+
+bool rs_nxs_test::NxsTestHub::recvItem(RsRawItem* item, const RsPeerId& peerFrom)
+{
+	RsPeerId id = item->PeerId();
+	item->PeerId(peerFrom);
+	return mPeerNxsMap[id]->recv(item); //
 }
 
 void rs_nxs_test::NxsTestHub::tick()
 {
 	// for each nxs instance pull out all items from each and then move to destination peer
 
-	typedef std::map<RsPeerId, std::list<RsItem*> > DestMap;
-
 	PeerNxsMap::iterator it = mPeerNxsMap.begin();
-	DestMap destMap;
+
 	for(; it != mPeerNxsMap.end(); it++)
 	{
-		RsGxsNetService* s = *it;
+		RsGxsNetService::pointer s = it->second;
 		s->tick();
-		RsItem* item = s->recvItem();
 
-		if(item != NULL)
-			destMap[item->PeerId()].push_back(item);
 	}
 
-	DestMap::iterator dit = destMap.begin();
-
-	for(; dit != destMap.end(); dit++ )
-	{
-		std::list<RsItem*> payload = dit->second;
-		const RsPeerId& pid = dit->first;
-
-		if(mPeerNxsMap.count(pid) > 0)
-		{
-			std::list<RsItem*>::iterator pit = payload.begin();
-			for(; pit != payload.end(); pit)
-				mPeerNxsMap[pid]->recvItem(*pit);
-		}
-		else
-		{
-			std::cerr << "Could not find peer: " << pid << std::endl;
-		}
-	}
 }
 
 

@@ -55,7 +55,7 @@
 // DataType is defined in the serialiser directory.
 
 class RsRawItem;
-class p3ServiceServer;
+class p3ServiceServerIface;
 
 
 class pqiService
@@ -68,7 +68,7 @@ class pqiService
 virtual ~pqiService() { return; }
 
 	public:
-void 	setServiceServer(p3ServiceServer *server);
+void 	setServiceServer(p3ServiceServerIface *server);
 	// 
 virtual bool	recv(RsRawItem *) = 0;
 virtual bool	send(RsRawItem *item);
@@ -78,7 +78,7 @@ virtual RsServiceInfo getServiceInfo() = 0;
 virtual int	tick() { return 0; }
 
 	private:
-	p3ServiceServer *mServiceServer; // const, no need for mutex.
+	p3ServiceServerIface *mServiceServer; // const, no need for mutex.
 };
 
 #include <map>
@@ -89,7 +89,21 @@ virtual int	tick() { return 0; }
  * to the base level pqiPublisher instead.
  */
 
-class p3ServiceServer
+// use interface to allow DI
+class p3ServiceServerIface
+{
+public:
+
+	virtual ~p3ServiceServerIface() {}
+
+
+virtual bool	recvItem(RsRawItem *) = 0;
+virtual bool	sendItem(RsRawItem *) = 0;
+
+
+};
+
+class p3ServiceServer : public p3ServiceServerIface
 {
 public:
 	p3ServiceServer(pqiPublisher *pub, p3ServiceControl *ctrl);
@@ -100,6 +114,7 @@ bool	recvItem(RsRawItem *);
 bool	sendItem(RsRawItem *);
 
 int	tick();
+public:
 
 private:
 

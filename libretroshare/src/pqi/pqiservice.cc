@@ -33,7 +33,7 @@ const int pqiservicezone = 60478;
  * #define SERVICE_DEBUG 1
  ****/
 
-void pqiService::setServiceServer(p3ServiceServer *server)
+void pqiService::setServiceServer(p3ServiceServerIface *server)
 {
 	mServiceServer = server;
 }

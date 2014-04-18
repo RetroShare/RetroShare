@@ -38,6 +38,7 @@
 #include "rsgxsnetutils.h"
 #include "pqi/p3cfgmgr.h"
 #include "rsgixs.h"
+#include "util/rssharedptr.h"
 
 /// keep track of transaction number
 typedef std::map<uint32_t, NxsTransaction*> TransactionIdMap;
@@ -63,6 +64,8 @@ class RsGxsNetService : public RsNetworkExchangeService, public p3ThreadedServic
     public p3Config
 {
 public:
+
+	typedef RsSharedPtr<RsGxsNetService> pointer;
 
 	static const uint32_t FRAGMENT_SIZE;
     /*!

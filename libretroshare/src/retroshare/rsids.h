@@ -35,10 +35,16 @@
 #include <string.h>
 #include <stdint.h>
 #include <util/rsrandom.h>
+#include <vector>
+#include <list>
 
 template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER> class t_RsGenericIdType
 {
 	public:
+
+		typedef std::list<t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER> > std_list;
+		typedef std::vector<t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER> > std_vector;
+
 		t_RsGenericIdType() 
 		{ 
 			memset(bytes,0,ID_SIZE_IN_BYTES) ; 	// by default, ids are set to null()

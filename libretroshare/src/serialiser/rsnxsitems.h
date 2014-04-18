@@ -200,6 +200,8 @@ public:
     //std::cout << "\nGrp refcount-- : " << --refcount << std::endl;
     }
 
+    RsNxsGrp* clone() const;
+
     virtual void clear();
     virtual std::ostream &print(std::ostream &out, uint16_t indent);
 

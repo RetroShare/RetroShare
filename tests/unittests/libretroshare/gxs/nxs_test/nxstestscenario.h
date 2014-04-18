@@ -10,8 +10,10 @@
 
 #include <map>
 #include "retroshare/rstypes.h"
+#include "gxs/rsgxsnetutils.h"
 #include "gxs/rsdataservice.h"
 #include "gxs/rsnxsobserver.h"
+#include "util/rssharedptr.h"
 
 namespace rs_nxs_test
 {
@@ -21,6 +23,8 @@ namespace rs_nxs_test
 	class NxsTestScenario
 	{
 	public:
+
+		typedef RsSharedPtr<NxsTestScenario> pointer;
 
 		virtual ~NxsTestScenario() {}
 

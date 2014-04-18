@@ -96,11 +96,11 @@ class RsItem: public RsMemoryManagement::SmallObject
 		uint8_t  PacketVersion();
 		uint8_t  PacketClass();
 		uint8_t  PacketType();
-		uint8_t  PacketSubType();
+		uint8_t  PacketSubType() const;
 
 		/* For Service Packets */
 		RsItem(uint8_t ver, uint16_t service, uint8_t subtype);
-		uint16_t  PacketService(); /* combined Packet class/type (mid 16bits) */
+		uint16_t  PacketService() const; /* combined Packet class/type (mid 16bits) */
 
 		inline uint8_t priority_level() const { return _priority_level ;}
 		inline void setPriorityLevel(uint8_t l) { _priority_level = l ;}

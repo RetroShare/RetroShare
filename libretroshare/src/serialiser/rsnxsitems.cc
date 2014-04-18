@@ -1243,6 +1243,19 @@ std::ostream& RsNxsSyncMsgItem::print(std::ostream &out, uint16_t indent)
     return out;
 }
 
+RsNxsGrp* RsNxsGrp::clone() const {
+	RsNxsGrp* grp = new RsNxsGrp(PacketService());
+	*grp = *this;
+
+	if(this->metaData)
+	{
+		grp->metaData = new RsGxsGrpMetaData();
+		*(grp->metaData) = *(this->metaData);
+	}
+
+	return grp;
+}
+
 std::ostream& RsNxsGrp::print(std::ostream &out, uint16_t indent){
 
     printRsItemBase(out, "RsNxsGrp", indent);

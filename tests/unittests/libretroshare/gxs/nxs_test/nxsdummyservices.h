@@ -8,6 +8,13 @@
 #ifndef NXSDUMMYSERVICES_H_
 #define NXSDUMMYSERVICES_H_
 
+#include <list>
+#include <map>
+#include <retroshare/rstypes.h>
+#include <gxs/rsgixs.h>
+#include <gxs/rsgxsnetutils.h>
+#include <algorithm>
+
 
 namespace rs_nxs_test
 {
@@ -30,7 +37,7 @@ namespace rs_nxs_test
 		 * @param membership
 		 * @param cached
 		 */
-		RsNxsSimpleDummyCircles(std::list<Membership>& membership, bool cached)
+		RsNxsSimpleDummyCircles(std::list<Membership>& membership, bool cached);
 
 		/* GXS Interface - for working out who can receive */
 		bool isLoaded(const RsGxsCircleId &circleId);
@@ -83,19 +90,26 @@ namespace rs_nxs_test
 
 	public:
 
-		RsNxsNetDummyMgr(RsPeerId ownId, std::set<RsPeerId> peers) : mOwnId(ownId), mPeers(peers) {
+		RsNxsNetDummyMgr(const RsPeerId& ownId, const std::list<RsPeerId>& peers) : mOwnId(ownId), mPeers(peers) {
 
 		}
-
 		const RsPeerId& getOwnId()  { return mOwnId; }
-		void getOnlineList(uint32_t serviceId, std::set<RsPeerId>& ssl_peers) { ssl_peers = mPeers; }
+		void getOnlineList(const uint32_t serviceId, std::set<RsPeerId>& ssl_peers)
+		{
+			RsPeerId::std_list::iterator lit = mPeers.begin();
+
+			for(; lit != mPeers.end(); lit++)
+				ssl_peers.insert(*lit);
+		}
 
 	private:
 
 		RsPeerId mOwnId;
-		std::set<RsPeerId> mPeers;
+		std::list<RsPeerId> mPeers;
 
 	};
+
+
 }
 
 #endif /* NXSDUMMYSERVICES_H_ */

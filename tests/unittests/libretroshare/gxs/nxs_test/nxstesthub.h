@@ -15,6 +15,13 @@
 namespace rs_nxs_test
 {
 
+	class RecvPeerItemIface
+	{
+	public:
+		virtual ~RecvPeerItemIface(){}
+		virtual bool	recvItem(RsRawItem *item, const RsPeerId& peerFrom) =0 ;
+	};
+
 	/*!
 	 * Testing of nxs services occurs through use of two services
 	 * When a service sends this class can interrogate the send and the receives of
@@ -27,7 +34,7 @@ namespace rs_nxs_test
 	 * and synchronise according to their subscriptions. The default is to subscribe to all groups held by other peer
 	 * The threads for both net instances are started which begins their processing of transactions
 	 */
-	class NxsTestHub : public RsThread
+	class NxsTestHub : public RsThread, public RecvPeerItemIface
 	{
 	public:
 
@@ -36,7 +43,7 @@ namespace rs_nxs_test
 		 * This constructs the test hub
 		 * for a give scenario in mind
 		 */
-		NxsTestHub(NxsTestScenario* testScenario);
+		NxsTestHub(NxsTestScenario::pointer testScenario);
 
 		/*!
 		 * This cleans up what ever testing resources are left
@@ -78,15 +85,20 @@ namespace rs_nxs_test
 
 	    static void Wait(int seconds);
 
+
+	public:
+
+		bool	recvItem(RsRawItem *item, const RsPeerId& peerFrom);
+
 	private:
 
 	    void tick();
 
 	private:
 
-	    typedef std::map<RsPeerId, RsGxsNetService* > PeerNxsMap ;
+	    typedef std::map<RsPeerId, RsGxsNetService::pointer > PeerNxsMap ;
 		PeerNxsMap mPeerNxsMap;
-		NxsTestScenario *mTestScenario;
+		NxsTestScenario::pointer mTestScenario;
 
 	};
 }

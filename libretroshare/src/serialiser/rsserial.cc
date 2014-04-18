@@ -156,7 +156,7 @@ uint8_t    RsItem::PacketType()
 }
 
 	
-uint8_t    RsItem::PacketSubType()
+uint8_t    RsItem::PacketSubType() const
 {
 	return (type & 0xFF);
 }
@@ -170,7 +170,7 @@ RsItem::RsItem(uint8_t ver, uint16_t service, uint8_t subtype)
 	return;
 }
 
-uint16_t    RsItem::PacketService()
+uint16_t    RsItem::PacketService() const
 {
 	return (type >> 8) & 0xFFFF;
 }

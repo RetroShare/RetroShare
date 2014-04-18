@@ -117,6 +117,8 @@ public:
 
 public:
 
+    typedef std::map<RsNxsGrp*, RsGxsGrpMetaData*> GrpStoreMap;
+
     RsGeneralDataService(){}
     virtual ~RsGeneralDataService(){return;}
 
