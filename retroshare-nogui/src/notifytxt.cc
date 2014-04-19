@@ -144,8 +144,8 @@ void NotifyTxt::notifyListChange(int list, int type)
 			
 void NotifyTxt::displayNeighbours()
 {
-	std::list<std::string> neighs;
-	std::list<std::string>::iterator it;
+	std::list<RsPgpId> neighs;
+	std::list<RsPgpId>::iterator it;
 
 	rsPeers->getGPGAllList(neighs);
 
@@ -153,7 +153,7 @@ void NotifyTxt::displayNeighbours()
 	for(it = neighs.begin(); it != neighs.end(); it++)
 	{
 		RsPeerDetails detail;
-		rsPeers->getPeerDetails(*it, detail);
+		rsPeers->getGPGDetails(*it, detail);
 
 		out << "Neighbour: ";
 		out << detail;
@@ -164,8 +164,8 @@ void NotifyTxt::displayNeighbours()
 
 void NotifyTxt::displayFriends()
 {
-	std::list<std::string> ids;
-	std::list<std::string>::iterator it;
+	std::list<RsPeerId> ids;
+	std::list<RsPeerId>::iterator it;
 
 	rsPeers->getFriendList(ids);
 
