@@ -67,6 +67,7 @@ NxsGrpSync::NxsGrpSync()
 		RsGxsGrpMetaData* meta = new RsGxsGrpMetaData();
 		init_item(meta);
 		grp->metaData = meta;
+		meta->mSubscribeFlags = GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED;
 		RsNxsGrp* grp_copy = grp->clone();
 
 

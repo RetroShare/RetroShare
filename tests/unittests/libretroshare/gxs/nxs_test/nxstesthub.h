@@ -4,6 +4,7 @@
 #include "util/rsthreads.h"
 #include "gxs/rsgxsnetservice.h"
 #include "nxstestscenario.h"
+#include <queue>
 
 // it would probably be useful if the test scenario
 // provided the net dummy managers
@@ -96,9 +97,12 @@ namespace rs_nxs_test
 
 	private:
 
+	    typedef std::pair<RsPeerId, RsRawItem*> PayLoad;
+
 	    typedef std::map<RsPeerId, RsGxsNetService::pointer > PeerNxsMap ;
 		PeerNxsMap mPeerNxsMap;
 		NxsTestScenario::pointer mTestScenario;
+		std::queue<PayLoad> mPayLoad;
 
 	};
 }

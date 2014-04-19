@@ -188,9 +188,9 @@ void rs_nxs_test::NxsTestHub::Wait(int seconds) {
 
 bool rs_nxs_test::NxsTestHub::recvItem(RsRawItem* item, const RsPeerId& peerFrom)
 {
-	RsPeerId id = item->PeerId();
-	item->PeerId(peerFrom);
-	return mPeerNxsMap[id]->recv(item); //
+	PayLoad p(peerFrom, item);
+	mPayLoad.push(p);
+	return true;
 }
 
 void rs_nxs_test::NxsTestHub::tick()
@@ -199,6 +199,20 @@ void rs_nxs_test::NxsTestHub::tick()
 
 	PeerNxsMap::iterator it = mPeerNxsMap.begin();
 
+	// deliver payloads to peer's net services
+	while(!mPayLoad.empty())
+	{
+		PayLoad& p = mPayLoad.front();
+
+		RsRawItem* item = p.second;
+		RsPeerId peerFrom = p.first;
+		RsPeerId peerTo = item->PeerId();
+		item->PeerId(peerFrom);
+		mPeerNxsMap[peerTo]->recv(item); //
+		mPayLoad.pop();
+	}
+
+	// then tick net services
 	for(; it != mPeerNxsMap.end(); it++)
 	{
 		RsGxsNetService::pointer s = it->second;

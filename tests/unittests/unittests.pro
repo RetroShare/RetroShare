@@ -260,12 +260,17 @@ HEADERS += libretroshare/gxs/common/data_support.h \
 
 SOURCES += libretroshare/gxs/common/data_support.cc \
 
-#HEADERS +=  libretroshare/gxs/nxs_test/nxstesthub.h \
-#	libretroshare/gxs/nxs_test/nxstestscenario.h \
-#
-#SOURCES +=  libretroshare/gxs/nxs_test/nxstesthub.cc \
-#	libretroshare/gxs/nxs_test/nxstestscenario.cc \
-#	libretroshare/gxs/nxs_test/rsgxsnetservice_test.cc \
+HEADERS +=  libretroshare/gxs/nxs_test/nxsdummyservices.h \
+	libretroshare/gxs/nxs_test/nxsgrpsync_test.h \
+	libretroshare/gxs/nxs_test/nxsmsgsync_test.h \
+	libretroshare/gxs/nxs_test/nxstesthub.h \
+	libretroshare/gxs/nxs_test/nxstestscenario.h
+
+SOURCES +=  libretroshare/gxs/nxs_test/nxsdummyservices.cc \
+	libretroshare/gxs/nxs_test/nxsgrpsync_test.cc \
+	libretroshare/gxs/nxs_test/nxsmsgsync_test.cc \
+	libretroshare/gxs/nxs_test/nxstesthub.cc \
+	libretroshare/gxs/nxs_test/rsgxsnetservice_test.cc
 
 HEADERS += libretroshare/gxs/gen_exchange/genexchangetester.h \
 	libretroshare/gxs/gen_exchange/gxspublishmsgtest.h \
