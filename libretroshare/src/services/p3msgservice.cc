@@ -298,16 +298,6 @@ void p3MsgService::checkSizeAndSendMessage(RsMsgItem *msg)
 
 	std::cerr << "Msg is size " << msg->message.size() << std::endl;
 
-	if( msg->msgFlags & RS_MSG_FLAGS_DISTANT )
-	{
-		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
-
-#ifdef DEBUG_DISTANT_MSG
-        std::cerr << "checkOutgoingMessages(): removing pending message flag for peer id " << msg->PeerId() << "." << std::endl;
-#endif
-        _messenging_contacts[GRouterKeyId(msg->PeerId())].pending_messages = false ;
-	}
-
 	while(msg->message.size() > MAX_STRING_SIZE)
 	{
 		// chop off the first 15000 wchars
@@ -366,7 +356,9 @@ int     p3MsgService::checkOutgoingMessages()
 			/* find the certificate */
 			RsPeerId pid = mit->second->PeerId();
 
-			if( pid == ownId || (mit->second->msgFlags & RS_MSG_FLAGS_DISTANT) || mServiceCtrl->isPeerConnected(getServiceInfo().mServiceType, pid) ) /* FEEDBACK Msg to Ourselves */
+			if( pid == ownId 
+					|| ( (mit->second->msgFlags & RS_MSG_FLAGS_DISTANT) && (!(mit->second->msgFlags & RS_MSG_FLAGS_ROUTED)))
+					|| mServiceCtrl->isPeerConnected(getServiceInfo().mServiceType, pid) ) /* FEEDBACK Msg to Ourselves */
 			{
 				/* send msg */
 				pqioutput(PQL_DEBUG_BASIC, msgservicezone, 
@@ -375,9 +367,16 @@ int     p3MsgService::checkOutgoingMessages()
 				(mit->second)->msgFlags &= ~RS_MSG_FLAGS_PENDING;
 
 				output_queue.push_back(mit->second) ;
-				toErase.push_back(mit->first);
 
-				changed = true ;
+				// When the message is a distant msg, dont remove it yet from the list. Only mark it as being sent, so that we don't send it again.
+				//
+				if(!(mit->second->msgFlags & RS_MSG_FLAGS_DISTANT))
+				{
+					toErase.push_back(mit->first);
+					changed = true ;
+				}
+				else
+					mit->second->msgFlags |= RS_MSG_FLAGS_ROUTED ;
 			}
 			else
 			{
@@ -2151,7 +2150,45 @@ void p3MsgService::sendGRouterData(const GRouterKeyId& key_id,RsMsgItem *msgitem
 
 	delete[] msg_serialized_data ;
 
-    mGRouter->sendData(key_id,item) ;
+	GRouterMsgPropagationId grouter_message_id ;
+
+    mGRouter->sendData(key_id,item,grouter_message_id) ;
+
+	 // now store the grouter id along with the message id, so that we can keep track of received messages
+
+	 _ongoing_messages[grouter_message_id] = msgitem->msgId ;
+}
+void p3MsgService::acknowledgeDataReceived(const GRouterMsgPropagationId& id)
+{
+	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
+#ifdef DEBUG_DISTANT_MSG
+	std::cerr << "p3MsgService::acknowledgeDataReceived(): acknowledging data received for msg propagation id  " << id << std::endl;
+#endif
+	std::map<GRouterMsgPropagationId,uint32_t>::iterator it = _ongoing_messages.find(id) ;
+
+	if(it == _ongoing_messages.end())
+	{
+		std::cerr << "  (EE) cannot find pending message to acknowledge. Weird. grouter id = " << id << std::endl;
+		return ;
+	}
+
+	uint32_t msg_id = it->second ;
+
+	// we should now remove the item from the msgOutgoing list.
+	
+	std::map<uint32_t,RsMsgItem*>::iterator it2 = msgOutgoing.find(msg_id) ;
+
+	if(it2 == msgOutgoing.end())
+	{
+		std::cerr << "(EE) message has been ACKed, but is not in outgoing list. Something's wrong!!" << std::endl;
+		return ;
+	}
+
+	delete it2->second ;
+	msgOutgoing.erase(it2) ;
+
+	RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_MOD);
+	IndicateConfigChanged() ;
 }
 void p3MsgService::receiveGRouterData(const GRouterKeyId& key, const RsGRouterGenericDataItem *gitem)
 {
@@ -2179,22 +2216,6 @@ void p3MsgService::sendPrivateMsgItem(RsMsgItem *msgitem)
 	std::cerr << "p3MsgService::sendDistanteMsgItem(): sending distant msg item to peer " << msgitem->PeerId() << std::endl;
 #endif
 	GRouterKeyId key_id(msgitem->PeerId()) ;
-	{
-		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
-
-		// allocate a new contact. If it does not exist, set its tunnel state to DN
-		//
-		std::map<GRouterKeyId,DistantMessengingContact>::iterator it = _messenging_contacts.find(key_id) ;
-
-		if(it == _messenging_contacts.end())
-		{
-			std::cerr << "(EE) p3MsgService::sendPrivateMsgItem(): ERROR: no tunnel for message to send. This should not happen. " << std::endl;
-			return ;
-		}
-
-		if(!it->second.pending_messages)
-			std::cerr << "(WW) p3MsgService::sendPrivateMsgItem(): WARNING: no pending message flag. This should not happen. " << std::endl;
-	}
 
 #ifdef DEBUG_DISTANT_MSG
 	std::cerr << "    Flushing msg " << msgitem->msgId << " for peer id " << msgitem->PeerId() << std::endl;

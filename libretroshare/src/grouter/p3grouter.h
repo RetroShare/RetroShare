@@ -85,9 +85,10 @@ class p3GRouter: public RsGRouter, public p3Service, public p3Config
 		//===================================================//
 
 		// Sends an item to the given destination.  The router takes ownership of
-		// the memory. That means item_data will be erase on return.
+		// the memory. That means item_data will be erase on return. The returned id should be
+		// remembered by the client, so that he knows when the data has been received.
 		//
-		void sendData(const GRouterKeyId& destination, RsGRouterGenericDataItem *item) ;
+		void sendData(const GRouterKeyId& destination, RsGRouterGenericDataItem *item,GRouterMsgPropagationId& id) ;
 
 		// Sends an ACK to the origin of the msg. This is used to notify for 
 		// unfound route, or message correctly received, depending on the particular situation.
@@ -169,6 +170,8 @@ class p3GRouter: public RsGRouter, public p3Service, public p3Config
 		std::set<uint32_t> computeRoutingFriends(const std::vector<RsPeerId>& friends,const std::vector<float>& probas,uint32_t N) ;
 		static float computeMatrixContribution(float base,uint32_t time_shift,float probability) ;
 		static time_t computeNextTimeDelay(time_t duration) ;
+
+		void locked_notifyClientAcknowledged(const GRouterKeyId& key,const GRouterMsgPropagationId& msg_id) const ;
 
 		uint32_t computeRandomDistanceIncrement(const RsPeerId& pid,const GRouterKeyId& destination_id) ;
 

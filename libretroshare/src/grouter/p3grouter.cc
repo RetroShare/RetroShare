@@ -346,7 +346,7 @@ void p3GRouter::routePendingObjects()
 #endif
 
 	std::set<RsPeerId> lst ;
-	mServiceControl->getPeersConnected(RS_SERVICE_TYPE_GROUTER,lst) ;
+	mServiceControl->getPeersConnected(getServiceInfo().mServiceType,lst) ;
 	RsPeerId own_id( mServiceControl->getOwnId() );
 
 	// The policy is the following:
@@ -635,6 +635,30 @@ void p3GRouter::handleIncoming()
 	}
 }
 
+void p3GRouter::locked_notifyClientAcknowledged(const GRouterKeyId& key,const GRouterMsgPropagationId& msg_id) const
+{
+#ifdef GROUTER_DEBUG
+	grouter_debug() << "  Key is owned by us. Notifying service that item was ACKed." << std::endl;
+#endif
+	// notify the client
+	//
+	std::map<GRouterKeyId, GRouterPublishedKeyInfo>::const_iterator it = _owned_key_ids.find(key) ;
+
+	if(it == _owned_key_ids.end())
+	{
+		std::cerr << "(EE) key " << key << " is not owned by us. That is a weird situation. Probably a bug!" << std::endl;
+		return ;
+	}
+	std::map<GRouterServiceId,GRouterClientService*>::const_iterator its = _registered_services.find(it->second.service_id) ;
+
+	if(its == _registered_services.end())
+	{
+		std::cerr << "(EE) key " << key << " is attached to service " << it->second.service_id << ", which is unknown!! That is a bug." << std::endl;
+		return ;
+	}
+	its->second->acknowledgeDataReceived(msg_id) ;
+} 
+
 void p3GRouter::handleRecvACKItem(RsGRouterACKItem *item)
 {
 	RsStackMutex mtx(grMtx) ;
@@ -695,13 +719,21 @@ void p3GRouter::handleRecvACKItem(RsGRouterACKItem *item)
 	uint32_t next_state = it->second.status_flags;
 	uint32_t forward_state = RS_GROUTER_ACK_STATE_UNKN ;
 	bool update_routing_matrix = false ;
+	bool should_remove = false ;
+	bool delete_data = false ;
 
 	time_t now = time(NULL) ;
 
 	switch(item->state)
 	{
+		case RS_GROUTER_ACK_STATE_RCVD:	
+			if(it->second.origin == mLinkMgr->getOwnId())
+			{
+				locked_notifyClientAcknowledged(it->second.destination_key,it->first) ;
+				should_remove = true ;									
+			} // no break afterwards. That is on purpose!
+
 		case RS_GROUTER_ACK_STATE_IRCV:				
-		case RS_GROUTER_ACK_STATE_RCVD:								
 			// Notify the origin. This is the main route and it was successful.
 																				
 #ifdef GROUTER_DEBUG
@@ -714,19 +746,12 @@ void p3GRouter::handleRecvACKItem(RsGRouterACKItem *item)
 			next_state = RS_GROUTER_ROUTING_STATE_ARVD ;
 
 			update_routing_matrix = true ;
+			delete_data = true ;
 			break ;
 			
 
 		case RS_GROUTER_ACK_STATE_GVNP:				            // route is bad. We forward back and update the routing matrix.
 			break ;
-	}
-
-	if(it->second.origin == mLinkMgr->getOwnId())
-	{
-		// find the client service and notify it.
-#ifdef GROUTER_DEBUG
-		grouter_debug() << "  We're owner: should notify client id" << std::endl;
-#endif
 	}
 
 	// Just decrement the list of tried friends
@@ -773,19 +798,16 @@ void p3GRouter::handleRecvACKItem(RsGRouterACKItem *item)
 
 	if(it->second.tried_friends.empty())
 	{
-		delete it->second.data_item ;
-		it->second.data_item = NULL ;
-
-		// delete item, but keep the cache entry for a while.
-
 #ifdef GROUTER_DEBUG
-		grouter_debug() << "  No tries left. Removing item from pending list." << std::endl;
+		grouter_debug() << "  No tries left. Keeping item into pending list or a while." << std::endl;
 #endif
+		// If no route was found, delete item, but keep the cache entry for a while in order to avoid bouncing.
+		//
 		if(it->second.status_flags != RS_GROUTER_ROUTING_STATE_ARVD && next_state != RS_GROUTER_ROUTING_STATE_ARVD)
 		{
 			next_state = RS_GROUTER_ROUTING_STATE_DEAD ;
 			forward_state = RS_GROUTER_ACK_STATE_GVNP ;
-		}
+		} 
 	}
 
 	// Now send an ACK if necessary.
@@ -805,6 +827,20 @@ void p3GRouter::handleRecvACKItem(RsGRouterACKItem *item)
 		sendACK(it->second.origin,item->mid,item->state) ;
 	}
 	it->second.status_flags = next_state ;
+
+	if(delete_data)
+	{
+		delete it->second.data_item ;
+		it->second.data_item = NULL ;
+	}
+	if(should_remove)
+	{
+#ifdef GROUTER_DEBUG
+		grouter_debug() << "  Removing entry from pending messages. " << std::endl;
+#endif
+		delete it->second.data_item ;
+		_pending_messages.erase(it) ;
+	}
 }
 
 void p3GRouter::handleRecvDataItem(RsGRouterGenericDataItem *item)
@@ -930,7 +966,9 @@ void p3GRouter::handleRecvDataItem(RsGRouterGenericDataItem *item)
 
 	grouter_debug() << "  after triage: status = " << new_status_flags << ", ack = " << returned_ack << std::endl;
 
-	if(new_status_flags != RS_GROUTER_ROUTING_STATE_UNKN) itr->second.status_flags = new_status_flags ;
+	if(new_status_flags != RS_GROUTER_ROUTING_STATE_UNKN) 
+		itr->second.status_flags = new_status_flags ;
+
 	if(returned_ack     != RS_GROUTER_ACK_STATE_UNKN) 
 		sendACK(item->PeerId(),item->routing_id,returned_ack) ;
 
@@ -944,7 +982,7 @@ bool p3GRouter::registerClientService(const GRouterServiceId& id,GRouterClientSe
 	return true ;
 }
 
-void p3GRouter::sendData(const GRouterKeyId& destination, RsGRouterGenericDataItem *item)
+void p3GRouter::sendData(const GRouterKeyId& destination, RsGRouterGenericDataItem *item,GRouterMsgPropagationId& propagation_id)
 {
 	RsStackMutex mtx(grMtx) ;
 	// push the item into pending messages.
@@ -963,7 +1001,6 @@ void p3GRouter::sendData(const GRouterKeyId& destination, RsGRouterGenericDataIt
 	
 	// Make sure we have a unique id (at least locally).
 	//
-	GRouterMsgPropagationId propagation_id ;
 	do { propagation_id = RSRandom::random_u32(); } while(_pending_messages.find(propagation_id) != _pending_messages.end()) ;
 
 	item->destination_key = destination  ;
@@ -1070,7 +1107,7 @@ bool p3GRouter::getRoutingMatrixInfo(RsGRouter::GRouterRoutingMatrixInfo& info)
 	info.published_keys.clear() ;
 
 	std::set<RsPeerId> ids ;
-	mServiceControl->getPeersConnected(RS_SERVICE_TYPE_GROUTER,ids) ;
+	mServiceControl->getPeersConnected(getServiceInfo().mServiceType,ids) ;
 
 	RsStackMutex mtx(grMtx) ;
 

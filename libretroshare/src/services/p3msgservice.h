@@ -132,11 +132,12 @@ class p3MsgService: public p3Service, public p3Config, public pqiServiceMonitor,
 		// This contains the ongoing tunnel handling contacts.
 		// The map is indexed by the hash
 		//
-		std::map<GRouterKeyId,DistantMessengingContact> _messenging_contacts ;
+		std::map<GRouterMsgPropagationId,uint32_t> _ongoing_messages ;
 
 		// Overloaded from GRouterClientService
 
 		virtual void receiveGRouterData(const GRouterKeyId& key,const RsGRouterGenericDataItem *item) ;
+		virtual void acknowledgeDataReceived(const GRouterMsgPropagationId& msg_id) ;
 
 		// Utility functions
 

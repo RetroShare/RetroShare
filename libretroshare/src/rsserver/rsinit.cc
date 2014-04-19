@@ -1567,10 +1567,8 @@ int RsServer::StartupRetroShare()
 	// Services that have been changed to pqiServiceMonitor
 	serviceCtrl->registerServiceMonitor(msgSrv, msgSrv->getServiceInfo().mServiceType);
 	serviceCtrl->registerServiceMonitor(mDisc, mDisc->getServiceInfo().mServiceType);
-	serviceCtrl->registerServiceMonitor(mStatusSrv, 
-						mStatusSrv->getServiceInfo().mServiceType);
-	serviceCtrl->registerServiceMonitor(chatSrv, 
-						chatSrv->getServiceInfo().mServiceType);
+	serviceCtrl->registerServiceMonitor(mStatusSrv, mStatusSrv->getServiceInfo().mServiceType);
+	serviceCtrl->registerServiceMonitor(chatSrv, chatSrv->getServiceInfo().mServiceType);
 	serviceCtrl->registerServiceMonitor(mBwCtrl, mDisc->getServiceInfo().mServiceType);
 
 	/**************************************************************************/

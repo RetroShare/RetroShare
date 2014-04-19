@@ -55,6 +55,14 @@ class GRouterClientService
 			std::cerr << "   destination key_id = " << destination_key.toStdString() << std::endl;
 		}
 
+		// This method is called by the global router when a message has been acknowledged, in order to notify the client.
+		//
+		virtual void acknowledgeDataReceived(const GRouterMsgPropagationId& received_id) 
+		{
+			std::cerr << "!!!!!! Received Data acknowledge from global router, but the client service is not handling it !!!!!!!!!!" << std::endl ; 
+			std::cerr << "   message ID = " << received_id << std::endl;
+		}
+
 		// This function is mandatory. It should do two things:
 		// 	1 - keep a pointer to the global router, so as to be able to send data (e.g. copy pt into a local variable)
 		// 	2 - call pt->registerTunnelService(this), so that the TR knows that service and can send back information to it.

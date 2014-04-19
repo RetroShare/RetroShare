@@ -431,7 +431,6 @@ const uint32_t RS_MSG_FLAGS_REPLIED               = 0x00000080;
 const uint32_t RS_MSG_FLAGS_FORWARDED             = 0x00000100;
 const uint32_t RS_MSG_FLAGS_STAR                  = 0x00000200;
 const uint32_t RS_MSG_FLAGS_PARTIAL               = 0x00000400;
-// system message
 const uint32_t RS_MSG_FLAGS_USER_REQUEST          = 0x00000800;
 const uint32_t RS_MSG_FLAGS_FRIEND_RECOMMENDATION = 0x00001000;
 const uint32_t RS_MSG_FLAGS_SYSTEM                = RS_MSG_FLAGS_USER_REQUEST | RS_MSG_FLAGS_FRIEND_RECOMMENDATION;
@@ -442,6 +441,7 @@ const uint32_t RS_MSG_FLAGS_SIGNATURE_CHECKS      = 0x00010000;
 const uint32_t RS_MSG_FLAGS_SIGNED                = 0x00020000;
 const uint32_t RS_MSG_FLAGS_LOAD_EMBEDDED_IMAGES  = 0x00040000;
 const uint32_t RS_MSG_FLAGS_DECRYPTED             = 0x00080000;
+const uint32_t RS_MSG_FLAGS_ROUTED                = 0x00100000;
 
 class RsMessageItem: public RsItem
 {
