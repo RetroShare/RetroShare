@@ -430,6 +430,10 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 		bool  _turtle_routing_enabled ;
 		bool  _turtle_routing_session_enabled ;
 
+		// p3ServiceControl service type
+
+		uint32_t _service_type ;
+
 #ifdef P3TURTLE_DEBUG
 		// debug function
 		void dumpState() ;

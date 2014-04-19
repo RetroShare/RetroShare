@@ -125,6 +125,7 @@ p3turtle::p3turtle(p3ServiceControl *sc,p3LinkMgr *lm)
 
 	_traffic_info.reset() ;
 	_max_tr_up_rate = MAX_TR_FORWARD_PER_SEC ;
+	_service_type = getServiceInfo().mServiceType ;
 }
 
 const std::string TURTLE_APP_NAME = "turtle";
@@ -919,7 +920,7 @@ void p3turtle::handleSearchRequest(RsTurtleSearchRequestItem *item)
 	if(item->depth < TURTLE_MAX_SEARCH_DEPTH || random_bypass)
 	{
 		std::set<RsPeerId> onlineIds ;
-		mServiceControl->getPeersConnected(RS_SERVICE_TYPE_TURTLE, onlineIds);
+		mServiceControl->getPeersConnected(_service_type, onlineIds);
 #ifdef P3TURTLE_DEBUG
 		std::cerr << "  Looking for online peers" << std::endl ;
 #endif
@@ -1482,7 +1483,7 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 	if(item->depth < TURTLE_MAX_SEARCH_DEPTH || random_bypass)
 	{
 		std::set<RsPeerId> onlineIds ;
-		mServiceControl->getPeersConnected(RS_SERVICE_TYPE_TURTLE, onlineIds);
+		mServiceControl->getPeersConnected(_service_type, onlineIds);
 
 //		for(std::set<RsPeerId>::iterator it(onlineIds.begin());it!=onlineIds.end();)
 //			if(!mServiceControl->isPeerConnected(RS_SERVICE_PERM_TURTLE,*it))
@@ -1948,7 +1949,7 @@ void p3turtle::getTrafficStatistics(TurtleTrafficStatisticsInfo& info) const
 	info.forward_probabilities.clear() ;
 
 	std::set<RsPeerId> onlineIds ;
-	mServiceControl->getPeersConnected(RS_SERVICE_TYPE_TURTLE, onlineIds);
+	mServiceControl->getPeersConnected(_service_type, onlineIds);
 
 	int nb_online_ids = onlineIds.size() ;
 
