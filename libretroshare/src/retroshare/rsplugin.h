@@ -38,6 +38,7 @@ class RsPluginHandler ;
 extern RsPluginHandler *rsPlugins ;
 
 class p3Service ;
+class RsServiceControl ;
 class RsTurtle ;
 class RsDht ;
 class RsDisc ;
@@ -100,7 +101,6 @@ public:
     RsTurtle *mTurtle;
     RsDisc   *mDisc;
     RsDht    *mDht;
-    //RsForums *mForums;
     RsNotify *mNotify;
 };
 
@@ -129,7 +129,11 @@ class RsPlugin
 		// derive from p3Config, which means that the service provided by the plugin can load/save its own
 		// config by deriving loadList() and saveList() from p3Config.
 		//
-		virtual std::string configurationFileName() const { return std::string() ; }
+		virtual std::string configurationFileName() const 
+		{ 
+			std::cerr << "(EE) Plugin configuration file name requested in non overloaded method! Plugin code should derive configurationFileName() method!" << std::endl;
+			return std::string() ;
+		}
 
 		//
 		//=================================== GUI ====================================//
@@ -196,9 +200,9 @@ class RsPluginHandler
 		virtual void slowTickPlugins(time_t sec) = 0 ;
 
 		virtual const std::string& getLocalCacheDir() const =0;
-		virtual const std::string& getRemoteCacheDir() const =0;
-		virtual ftServer *getFileServer() const = 0;
-		virtual p3LinkMgr *getLinkMgr() const = 0;
+        virtual const std::string& getRemoteCacheDir() const =0;
+
+        virtual RsServiceControl *getServiceControl() const = 0;
 };
 
 

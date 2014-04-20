@@ -53,8 +53,7 @@ class RsPluginManager: public RsPluginHandler, public p3Config
 		virtual void slowTickPlugins(time_t sec) ;
 		virtual const std::string& getLocalCacheDir() const ;
 		virtual const std::string& getRemoteCacheDir() const ;
-		virtual ftServer *getFileServer() const ;
-		virtual p3LinkMgr *getLinkMgr() const ;
+		virtual RsServiceControl *getServiceControl() const ;
 
 		virtual void allowAllPlugins(bool b) ;
 		virtual bool getAllowAllPlugins() const ;
@@ -78,8 +77,7 @@ class RsPluginManager: public RsPluginHandler, public p3Config
 
 		static bool acceptablePluginName(const std::string& s) ;
 		static void setCacheDirectories(const std::string& local,const std::string& remote) ;
-		static void setFileServer(ftServer *ft) { _ftserver = ft ; }
-		static void setLinkMgr(p3LinkMgr *cm) { _linkmgr = cm ; }
+		static void setServiceControl(RsServiceControl *cm) { _service_control = cm ; }
 
 		// Normal plugin loading system. Parses through the plugin directories and loads
 		// dso libraries, checks for the hash, and loads/rejects plugins according to
@@ -124,8 +122,8 @@ class RsPluginManager: public RsPluginHandler, public p3Config
 		static std::string _plugin_API_symbol ;
 		static std::string _remote_cache_dir ;
 		static std::string _local_cache_dir ;
-		static ftServer *_ftserver ;
-		static p3LinkMgr *_linkmgr ;
+
+		static RsServiceControl *_service_control ;
 
 		static std::vector<std::string> _plugin_directories ;
 };

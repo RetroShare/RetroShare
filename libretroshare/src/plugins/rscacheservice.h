@@ -3,6 +3,9 @@
 #include <dbase/cachestrapper.h>
 #include "plugins/pluginmanager.h"
 
+// This code needs to be re-written to work with GXS. For now it is obsolete.
+//
+
 // The following class abstracts the construction of a cache service. The user only has to 
 // supply RS with a type ID. If the ID is already in use, RS will complain.
 //
@@ -23,4 +26,3 @@ class RsCacheService: public CacheSource, public CacheStore, public p3Config
 	private:
 		uint32_t _tick_delay_in_seconds ;
 };
-

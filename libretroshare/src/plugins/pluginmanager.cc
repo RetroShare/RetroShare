@@ -40,8 +40,7 @@ std::string RsPluginManager::_local_cache_dir ;
 std::string RsPluginManager::_remote_cache_dir ;
 std::vector<std::string> RsPluginManager::_plugin_directories ;
 
-ftServer   		*RsPluginManager::_ftserver 					= NULL ;
-p3LinkMgr   *RsPluginManager::_linkmgr							= NULL ;
+RsServiceControl   *RsPluginManager::_service_control							= NULL ;
 
 typedef RsPlugin *(*RetroSharePluginEntry)(void) ;
 RsPluginHandler *rsPlugins ;
@@ -363,18 +362,6 @@ bool RsPluginManager::loadPlugin(const std::string& plugin_name)
 	return true;
 }
 
-p3LinkMgr *RsPluginManager::getLinkMgr() const
-{
-	assert(_linkmgr != NULL) ;
-	return _linkmgr ;
-}
-
-
-ftServer *RsPluginManager::getFileServer() const
-{
-	assert(_ftserver != NULL) ;
-	return _ftserver ;
-}
 const std::string& RsPluginManager::getLocalCacheDir() const
 {
 	assert(!_local_cache_dir.empty()) ;
@@ -384,6 +371,11 @@ const std::string& RsPluginManager::getRemoteCacheDir() const
 {
 	assert(!_remote_cache_dir.empty()) ;
 	return _remote_cache_dir ;
+}
+RsServiceControl *RsPluginManager::getServiceControl() const
+{
+	assert(_service_control);
+	return _service_control ;
 }
 void RsPluginManager::slowTickPlugins(time_t seconds)
 {
@@ -531,13 +523,13 @@ bool RsPluginManager::saveList(bool& cleanup, std::list<RsItem*>& list)
 	return true;
 }
 
-RsCacheService::RsCacheService(uint16_t service_type,uint32_t tick_delay, RsPluginHandler* pgHandler)
-        : CacheSource(service_type, true, pgHandler->getFileServer()->getCacheStrapper(), pgHandler->getLocalCacheDir()),
-          CacheStore (service_type, true, pgHandler->getFileServer()->getCacheStrapper(), pgHandler->getFileServer()->getCacheTransfer(), pgHandler->getRemoteCacheDir()),
-	  p3Config(), 
-	  _tick_delay_in_seconds(tick_delay)
-{
-}
+// RsCacheService::RsCacheService(uint16_t service_type,uint32_t tick_delay, RsPluginHandler* pgHandler)
+//         : CacheSource(service_type, true, pgHandler->getFileServer()->getCacheStrapper(), pgHandler->getLocalCacheDir()),
+//           CacheStore (service_type, true, pgHandler->getFileServer()->getCacheStrapper(), pgHandler->getFileServer()->getCacheTransfer(), pgHandler->getRemoteCacheDir()),
+// 	  p3Config(), 
+// 	  _tick_delay_in_seconds(tick_delay)
+// {
+// }
 
 RsPQIService::RsPQIService(uint16_t service_type,uint32_t /*tick_delay_in_seconds*/, RsPluginHandler* /*pgHandler*/)
 	: p3Service(),p3Config()

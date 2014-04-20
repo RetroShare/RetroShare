@@ -1258,9 +1258,9 @@ int RsServer::StartupRetroShare()
 	std::vector<std::string> plugins_directories ;
 
 #ifndef WINDOWS_SYS
-	plugins_directories.push_back(std::string("/usr/lib/retroshare/extensions/")) ;
+	plugins_directories.push_back(std::string("/usr/lib/retroshare/extensions6/")) ;
 #endif
-	std::string extensions_dir = rsAccounts.PathBaseDirectory() + "/extensions/" ;
+	std::string extensions_dir = rsAccounts.PathBaseDirectory() + "/extensions6/" ;
 	plugins_directories.push_back(extensions_dir) ;
 
 	if(!RsDirUtil::checkCreateDirectory(extensions_dir))
@@ -1280,8 +1280,7 @@ int RsServer::StartupRetroShare()
 	// cache directories, get pointers to cache strapper, or access ownId()
 	//
 	mPluginsManager->setCacheDirectories(localcachedir,remotecachedir) ;
-	mPluginsManager->setFileServer(ftserver) ;
-	mPluginsManager->setLinkMgr(mLinkMgr) ;
+	mPluginsManager->setServiceControl(serviceCtrl) ;
 
 	// Now load the plugins. This parses the available SO/DLL files for known symbols.
 	//
@@ -1491,8 +1490,6 @@ int RsServer::StartupRetroShare()
 	interfaces.mTurtle = rsTurtle;
 	interfaces.mDisc   = rsDisc;
 	interfaces.mDht    = rsDht;
-	// don't exist no more.
-	//interfaces.mForums = mForums;
 	interfaces.mNotify = mNotify;
 
 	mPluginsManager->setInterfaces(interfaces);
