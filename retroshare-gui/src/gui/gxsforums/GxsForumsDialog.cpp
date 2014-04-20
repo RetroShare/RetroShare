@@ -382,7 +382,7 @@ GxsForumThreadWidget *GxsForumsDialog::createThreadWidget(const RsGxsGroupId &fo
 
 void GxsForumsDialog::changedForum(const QString &forumId)
 {
-	mForumId = forumId.toStdString();
+	mForumId = RsGxsGroupId(forumId.toStdString());
 	if (mForumId.isNull()) {
 		return;
 	}

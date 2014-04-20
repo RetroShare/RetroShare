@@ -123,7 +123,7 @@ bool GxsCircleChooser::getChosenCircle(RsGxsCircleId &id)
 	int idx = currentIndex();
 
 	QVariant var = itemData(idx);
-	id = var.toString().toStdString();
+	id = RsGxsCircleId(var.toString().toStdString());
 
 	return true;
 }

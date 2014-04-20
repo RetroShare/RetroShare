@@ -473,7 +473,7 @@ void GxsForumThreadWidget::changedThread()
 	if (!item || !item->isSelected()) {
 		mThreadId.clear();
 	} else {
-		mThreadId = item->data(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID).toString().toStdString();
+		mThreadId = RsGxsMessageId(item->data(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID).toString().toStdString());
 	}
 
 	if (mFillThread) {

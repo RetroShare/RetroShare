@@ -321,7 +321,7 @@ void MessageWidget::getcurrentrecommended()
 			fi.size = it->data().toULongLong() ;
 			break ;
 		case COLUMN_FILE_HASH:
-			fi.hash = it->data().toString().toStdString() ;
+			fi.hash = RsFileHash(it->data().toString().toStdString()) ;
 			break ;
 		}
 	}

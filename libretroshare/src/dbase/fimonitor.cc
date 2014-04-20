@@ -199,7 +199,7 @@ HashCache::HashCache(const std::string& path)
 
 		f->getline(buff,max_line_size,'\n') ; if(sscanf(buff,RsDirUtil::scanf_string_for_uint(sizeof(info.time_stamp)),&info.time_stamp) != 1) { std::cerr << "Could not read one entry! Giving up." << std::endl; break ; }
 		f->getline(buff,max_line_size,'\n') ; if(sscanf(buff,RsDirUtil::scanf_string_for_uint(sizeof(info.modf_stamp)),&info.modf_stamp) != 1) { std::cerr << "Could not read one entry! Giving up." << std::endl; break ; }
-		f->getline(buff,max_line_size,'\n') ; info.hash = std::string(buff) ;
+		f->getline(buff,max_line_size,'\n') ; info.hash = RsFileHash(std::string(buff)) ;
 
 #ifdef FIM_DEBUG
 		std::cerr << "  (" << name << ", " << info.size << ", " << info.time_stamp << ", " << info.modf_stamp << ", " << info.hash << std::endl ;

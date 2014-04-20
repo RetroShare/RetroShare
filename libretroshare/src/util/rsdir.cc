@@ -692,7 +692,7 @@ bool RsDirUtil::getFileHash(const std::string& filepath, RsFileHash &hash, uint6
 
 	SHA1_Final(&sha_buf[0], sha_ctx);
 
-	hash = Sha1CheckSum(sha_buf).toStdString() ;
+	hash = Sha1CheckSum(sha_buf);
 
 	delete sha_ctx;
 	fclose(fd);

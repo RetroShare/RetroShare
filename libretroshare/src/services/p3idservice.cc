@@ -1138,7 +1138,7 @@ RsGxsIdCache::RsGxsIdCache(const RsGxsIdGroupItem *item, const RsTlvSecurityKey 
 
 	// Fill in Details.
 	details.mNickname = item->meta.mGroupName;
-	details.mId = item->meta.mGroupId.toStdString();
+	details.mId = RsGxsId(item->meta.mGroupId);
 
 #ifdef DEBUG_IDS
 	std::cerr << "RsGxsIdCache::RsGxsIdCache() for: " << details.mId;
@@ -2018,7 +2018,7 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
 	
 		if(pk.keyFlags == (RSTLV_KEY_DISTRIB_ADMIN | RSTLV_KEY_TYPE_FULL))
 		{
-			item->group.mMeta.mGroupId = pk.keyId;
+			item->group.mMeta.mGroupId = RsGxsGroupId(pk.keyId);
 			break;
 		}
 	}
@@ -2150,8 +2150,8 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
 	}
 
 	// Enforce no AuthorId.
-	item->meta.mAuthorId = "";
-	item->group.mMeta.mAuthorId = "";
+	item->meta.mAuthorId.clear() ;
+	item->group.mMeta.mAuthorId.clear() ;
 	// copy meta data to be sure its all the same.
 	//item->group.mMeta = item->meta;
 
@@ -2899,26 +2899,6 @@ void p3IdService::loadRecognKeys()
 /************************************************************************************/
 /************************************************************************************/
 
-
-std::string p3IdService::genRandomId(int len)
-{
-	std::string randomId;
-	for(int i = 0; i < len; i++)
-	{
-		int val = RSRandom::random_u32() % 16;
-		if (val < 10)
-		{
-			randomId += (char) ('0' + val);
-		}
-		else
-		{
-			randomId += (char) ('a' + (val - 10));
-		}
-	}
-	
-	return randomId;
-}
-	
 #define MAX_KNOWN_PGPIDS	20 
 #define MAX_UNKNOWN_PGPIDS	20 
 #define MAX_PSEUDOIDS		20
@@ -3008,7 +2988,7 @@ void p3IdService::generateDummy_FriendPGP()
 	for(int j = 0; j < idx; j++, it++) ;
 
 	// HACK FOR DUMMY GENERATION.
-	id.mMeta.mAuthorId = it->toStdString();
+	id.mMeta.mAuthorId = RsGxsId::random() ;
 
 	RsPeerDetails details;
 	if (/*rsPeers->getPeerDetails(*it, details)*/false)
@@ -3021,7 +3001,7 @@ void p3IdService::generateDummy_FriendPGP()
 	{
 		std::cerr << "p3IdService::generateDummy_FriendPGP() missing" << std::endl;
 		std::cerr << std::endl;
-		id.mMeta.mGroupName = genRandomId();
+		id.mMeta.mGroupName = RSRandom::random_alphaNumericString(10) ;
 	}
 
 	uint32_t dummyToken = 0;
@@ -3037,9 +3017,9 @@ void p3IdService::generateDummy_UnknownPGP()
 
 	// FAKE DATA.
 	id.mMeta.mGroupFlags = RSGXSID_GROUPFLAG_REALID;
-	id.mPgpIdHash = genRandomId(40);
-	id.mPgpIdSign = genRandomId(40);
-	id.mMeta.mGroupName = genRandomId();
+	id.mPgpIdHash = Sha1CheckSum::random() ;
+	id.mPgpIdSign = RSRandom::random_alphaNumericString(20) ;
+	id.mMeta.mGroupName = RSRandom::random_alphaNumericString(10) ;
 
 	uint32_t dummyToken = 0;
 	createGroup(dummyToken, id);
@@ -3054,7 +3034,7 @@ void p3IdService::generateDummy_UnknownPseudo()
 
 	// FAKE DATA.
 	id.mMeta.mGroupFlags = 0;
-	id.mMeta.mGroupName = genRandomId();
+	id.mMeta.mGroupName = RSRandom::random_alphaNumericString(10) ;
 
 	uint32_t dummyToken = 0;
 	createGroup(dummyToken, id);

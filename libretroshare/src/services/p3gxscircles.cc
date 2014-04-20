@@ -440,7 +440,7 @@ RsGenExchange::ServiceCreate_Return p3GxsCircles::service_CreateGroup(RsGxsGrpIt
 	if (item->meta.mCircleType == GXS_CIRCLE_TYPE_EXT_SELF)
 	{
 		item->meta.mCircleType = GXS_CIRCLE_TYPE_EXTERNAL;
-		item->meta.mCircleId = item->meta.mGroupId.toStdString();
+		item->meta.mCircleId = RsGxsCircleId(item->meta.mGroupId);
 	}
 
 
@@ -484,7 +484,7 @@ RsGxsCircleCache::RsGxsCircleCache()
 bool RsGxsCircleCache::loadBaseCircle(const RsGxsCircleGroup &circle)
 {
 
-	mCircleId = circle.mMeta.mGroupId.toStdString();
+	mCircleId = RsGxsCircleId(circle.mMeta.mGroupId);
 	mCircleName = circle.mMeta.mGroupName;
 	mUpdateTime = time(NULL);
 	mProcessedCircles.insert(mCircleId);

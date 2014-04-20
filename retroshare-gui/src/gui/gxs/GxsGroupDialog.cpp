@@ -629,7 +629,7 @@ bool GxsGroupDialog::setCircleParameters(RsGroupMetaData &meta)
 		meta.mCircleType = GXS_CIRCLE_TYPE_YOUREYESONLY;
 		meta.mCircleId.clear();
 		meta.mOriginator.clear();
-		meta.mInternalCircle = "Internal Circle Id";
+		meta.mInternalCircle.clear() ;
 	
 		if (!ui.localComboBox->getChosenCircle(meta.mInternalCircle))
 		{

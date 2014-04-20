@@ -882,7 +882,7 @@ bool CacheStrapper::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 		// Fixup lazy behaviour in clients...
 		// This ensures correct loading later.  
 		// (used to be: rscc->pid = cit->pid;)
-		rscc->pid = ownId.toStdString(); 
+		rscc->pid = ownId;
 
 		//rscc->pname = cit->pname;
 		rscc->cachetypeid = cit->cid.type;
@@ -909,7 +909,7 @@ bool CacheStrapper::saveList(bool &cleanup, std::list<RsItem *>& saveData)
 
 		RsCacheConfig *rscc = new RsCacheConfig();
 
-		rscc->pid = cit->pid.toStdString();
+		rscc->pid = cit->pid;
 		//rscc->pname = cit->pname;
 		rscc->cachetypeid = cit->cid.type;
 		rscc->cachesubid = cit->cid.subid;

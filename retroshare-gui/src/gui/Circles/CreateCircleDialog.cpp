@@ -290,7 +290,7 @@ void CreateCircleDialog::createCircle()
 		std::cerr << std::endl;
 
 		// set distribution from GUI.
-		circle.mMeta.mCircleId = "";
+		circle.mMeta.mCircleId.clear() ;
 		if (ui.radioButton_Public->isChecked())
 		{
 			std::cerr << "CreateCircleDialog::createCircle() Public Circle";
@@ -342,7 +342,7 @@ void CreateCircleDialog::createCircle()
 		std::cerr << std::endl;
 
 		// set personal distribution
-		circle.mMeta.mCircleId = "";
+		circle.mMeta.mCircleId.clear() ;
 		circle.mMeta.mCircleType = GXS_CIRCLE_TYPE_LOCAL;
 	}
 	std::cerr << "CreateCircleDialog::createCircle() : mCircleType: " << circle.mMeta.mCircleType;

@@ -595,7 +595,7 @@ void MessageComposer::pasteRecommended()
         if (links[i].valid() && links[i].type() == RetroShareLink::TYPE_FILE) {
             FileInfo fileInfo;
             fileInfo.fname = links[i].name().toStdString();
-            fileInfo.hash = links[i].hash().toStdString();
+            fileInfo.hash = RsFileHash(links[i].hash().toStdString());
             fileInfo.size = links[i].size();
 
             addFile(fileInfo);

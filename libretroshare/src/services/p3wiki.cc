@@ -359,17 +359,6 @@ std::ostream &operator<<(std::ostream &out, const RsWikiComment &comment)
 
 /***** FOR TESTING *****/
 
-std::string p3Wiki::genRandomId()
-{
-        std::string randomId;
-        for(int i = 0; i < 20; i++)
-        {
-                randomId += (char) ('a' + (RSRandom::random_u32() % 26));
-        }
-
-        return randomId;
-}
-
 const int about_len = 10;
 const std::string about_txt[] = 
 	{	"Welcome to RsWiki, a fully distributed Wiki system that anyone can edit.",
@@ -454,9 +443,9 @@ void p3Wiki::generateDummyData()
         for(i = 0; i < GEN_COLLECTIONS; i++)
         {
 		RsWikiCollection wiki;
-		wiki.mMeta.mGroupId = genRandomId();
+		wiki.mMeta.mGroupId = RsGxsGroupId::random(); 
 		wiki.mMeta.mGroupFlags = 0;
-		wiki.mMeta.mGroupName = genRandomId();
+		wiki.mMeta.mGroupName = RsGxsGroupId::random().toStdString(); 
 
 		uint32_t dummyToken = 0;
 		submitCollection(dummyToken, wiki);
@@ -523,24 +512,19 @@ bool generateNextDummyPage(const RsGxsMessageId &threadId, const int lines, cons
 
 #include <retroshare/rsidentity.h>
 
-std::string chooseRandomAuthorId()
+RsGxsId chooseRandomAuthorId()
 {
-        /* chose a random Id to sign with */
-        std::list<RsGxsId> ownIds;
-        std::list<RsGxsId>::iterator it;
+	/* chose a random Id to sign with */
+	std::list<RsGxsId> ownIds;
+	std::list<RsGxsId>::iterator it;
 
-        rsIdentity->getOwnIds(ownIds);
+	rsIdentity->getOwnIds(ownIds);
 
-        uint32_t idx = (uint32_t) (ownIds.size() * RSRandom::random_f32());
-        int i = 0;
-        for(it = ownIds.begin(); (it != ownIds.end()) && (i < idx); it++, i++) ;
+	uint32_t idx = (uint32_t) (RSRandom::random_u32() % (int)ownIds.size()) ;
+	int i = 0;
+	for(it = ownIds.begin(); (it != ownIds.end()) && (i < idx); it++, i++) ;
 
-	RsGxsId answer;
-        if (it != ownIds.end())
-        {
-		answer = *it;
-        }
-	return answer.toStdString();
+	return *it ;
 }
 
 

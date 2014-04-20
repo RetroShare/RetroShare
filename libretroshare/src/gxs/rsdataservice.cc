@@ -280,19 +280,19 @@ RsGxsGrpMetaData* RsDataService::locked_getGrpMeta(RetroCursor &c)
     // grpId
     std::string tempId;
     c.getString(COL_GRP_ID, tempId);
-    grpMeta->mGroupId = tempId;
+    grpMeta->mGroupId = RsGxsGroupId(tempId);
 
 
 
     c.getString(COL_IDENTITY, tempId);
-    grpMeta->mAuthorId = tempId;
+    grpMeta->mAuthorId = RsGxsId(tempId);
     c.getString(COL_GRP_NAME, grpMeta->mGroupName);
     c.getString(COL_ORIG_GRP_ID, tempId);
-    grpMeta->mOrigGrpId = tempId;
+    grpMeta->mOrigGrpId = RsGxsGroupId(tempId);
     c.getString(COL_GRP_SERV_STRING, grpMeta->mServiceString);
     std::string temp;
     c.getString(COL_HASH, temp);
-    grpMeta->mHash = temp;
+    grpMeta->mHash = RsFileHash(temp);
     grpMeta->mReputationCutOff = c.getInt32(COL_GRP_REP_CUTOFF);
     grpMeta->mSignFlags = c.getInt32(COL_GRP_SIGN_FLAGS);
 
@@ -318,10 +318,10 @@ RsGxsGrpMetaData* RsDataService::locked_getGrpMeta(RetroCursor &c)
     grpMeta->mGroupStatus = c.getInt32(COL_GRP_STATUS);
 
     c.getString(COL_GRP_CIRCLE_ID, tempId);
-    grpMeta->mCircleId = tempId;
+    grpMeta->mCircleId = RsGxsCircleId(tempId);
     grpMeta->mCircleType = c.getInt32(COL_GRP_CIRCL_TYPE);
     c.getString(COL_GRP_INTERN_CIRCLE, tempId);
-    grpMeta->mInternalCircle = tempId;
+    grpMeta->mInternalCircle = RsGxsCircleId(tempId);
 
     std::string s ; c.getString(COL_GRP_ORIGINATOR, s) ;
     grpMeta->mOriginator = RsPeerId(s);
@@ -330,7 +330,7 @@ RsGxsGrpMetaData* RsDataService::locked_getGrpMeta(RetroCursor &c)
 
 
     c.getString(COL_PARENT_GRP_ID, tempId);
-    grpMeta->mParentGrpId = tempId;
+    grpMeta->mParentGrpId = RsGxsGroupId(tempId);
 
     if(ok)
         return grpMeta;
@@ -410,19 +410,19 @@ RsGxsMsgMetaData* RsDataService::locked_getMsgMeta(RetroCursor &c)
     msgMeta->mGroupId = RsGxsGroupId(gId);
     std::string temp;
     c.getString(COL_MSG_ID, temp);
-    msgMeta->mMsgId = temp;
+    msgMeta->mMsgId = RsGxsMessageId(temp);
     // without these, a msg is meaningless
     ok &= (!msgMeta->mGroupId.isNull()) && (!msgMeta->mMsgId.isNull());
 
     c.getString(COL_ORIG_MSG_ID, temp);
-    msgMeta->mOrigMsgId = temp;
+    msgMeta->mOrigMsgId = RsGxsMessageId(temp);
     c.getString(COL_IDENTITY, temp);
-    msgMeta->mAuthorId = temp;
+    msgMeta->mAuthorId = RsGxsId(temp);
     c.getString(COL_MSG_NAME, msgMeta->mMsgName);
     c.getString(COL_MSG_SERV_STRING, msgMeta->mServiceString);
 
     c.getString(COL_HASH, temp);
-    msgMeta->mHash = temp;
+    msgMeta->mHash = RsFileHash(temp);
     msgMeta->recvTS = c.getInt32(COL_MSG_RECV_TS);
 
     offset = 0;
@@ -437,9 +437,9 @@ RsGxsMsgMetaData* RsDataService::locked_getMsgMeta(RetroCursor &c)
 
     // thread and parent id
     c.getString(COL_THREAD_ID, temp);
-    msgMeta->mThreadId = temp;
+    msgMeta->mThreadId = RsGxsMessageId(temp);
     c.getString(COL_PARENT_ID, temp);
-    msgMeta->mParentId = temp;
+    msgMeta->mParentId = RsGxsMessageId(temp);
 
     // local meta
     msgMeta->mMsgStatus = c.getInt32(COL_MSG_STATUS);
@@ -467,7 +467,7 @@ RsNxsMsg* RsDataService::locked_getMessage(RetroCursor &c)
     c.getStringT<RsGxsGroupId>(COL_ACT_GROUP_ID, msg->grpId);
     std::string temp;
     c.getString(COL_ACT_MSG_ID, temp);
-    msg->msgId = temp;
+    msg->msgId = RsGxsMessageId(temp);
 
     ok &= (!msg->grpId.isNull()) && (!msg->msgId.isNull());
 
@@ -1437,7 +1437,7 @@ void RsDataService::locked_getMessageOffsets(const RsGxsGroupId& grpId, std::vec
         	int32_t msgOffSet;
         	std::string temp;
             c->getString(0, temp);
-            msgId = temp;
+            msgId = RsGxsMessageId(temp);
             msgOffSet = c->getInt32(1);
             msgLen = c->getInt32(2);
 

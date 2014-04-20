@@ -231,7 +231,7 @@ bool RsPluginManager::loadPlugin(RsPlugin *p)
 	PluginInfo pinfo ;
 	pinfo.plugin = p ;
 	pinfo.file_name = "No file" ;
-	pinfo.file_hash = "No hash" ;
+	pinfo.file_hash.clear() ;
 	pinfo.info_string = "" ;
 
 	p->setPlugInHandler(this); // WIN fix, cannot share global space with shared libraries
@@ -456,7 +456,7 @@ bool RsPluginManager::loadList(std::list<RsItem*>& list)
 				}
 				else if((*kit).key == "REFERENCE_EXECUTABLE_HASH")
 				{
-					reference_executable_hash = kit->value ;
+					reference_executable_hash = RsFileHash(kit->value) ;
 					std::cerr << "   Reference executable hash: " << kit->value << std::endl;
 				}
 				else if((*kit).key == "ACCEPTED")

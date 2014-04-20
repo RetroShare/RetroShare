@@ -1122,8 +1122,8 @@ bool p3GxsChannels::generatePost(uint32_t &token, const RsGxsGroupId &grpId)
 	msg.mMeta.mMsgName = msg.mMsg;
 
 	msg.mMeta.mGroupId = grpId;
-	msg.mMeta.mThreadId = "";
-	msg.mMeta.mParentId = "";
+	msg.mMeta.mThreadId.clear() ;
+	msg.mMeta.mParentId.clear() ;
 
 	msg.mMeta.mMsgStatus = GXS_SERV::GXS_MSG_STATUS_UNPROCESSED | GXS_SERV::GXS_MSG_STATUS_UNREAD;
 

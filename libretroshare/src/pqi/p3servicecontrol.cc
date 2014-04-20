@@ -162,7 +162,7 @@ bool p3ServiceControl::getOwnServices(RsPeerServiceInfo &info)
 
 	RsStackMutex stack(mCtrlMtx); /***** LOCK STACK MUTEX ****/
 
-	info.mPeerId = "";
+	info.mPeerId.clear() ;
 	info.mServiceList = mOwnServices;
 	return true;
 }

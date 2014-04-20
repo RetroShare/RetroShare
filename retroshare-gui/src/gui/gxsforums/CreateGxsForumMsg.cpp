@@ -271,7 +271,7 @@ void  CreateGxsForumMsg::createMsg()
 	RsGxsForumMsg msg;
 	msg.mMeta.mGroupId = mForumId;
 	msg.mMeta.mParentId = mParentId;
-	msg.mMeta.mMsgId = "";
+	msg.mMeta.mMsgId.clear() ;
 	if (mParentMsgLoaded)
 	{
 		msg.mMeta.mThreadId = mParentMsg.mMeta.mThreadId;

@@ -337,7 +337,7 @@ bool WikiDialog::getSelectedPage(RsGxsGroupId &groupId, RsGxsMessageId &pageId, 
 		return false;
 	}
 
-	pageId = item->text(WIKI_GROUP_COL_PAGEID).toStdString();
+	pageId = RsGxsMessageId(item->text(WIKI_GROUP_COL_PAGEID).toStdString());
 	origPageId = RsGxsMessageId(item->text(WIKI_GROUP_COL_ORIGPAGEID).toStdString());
 
 #ifdef WIKI_DEBUG 
@@ -559,7 +559,7 @@ void WikiDialog::wikiSubscribe(bool subscribe)
 
 void WikiDialog::wikiGroupChanged(const QString &groupId)
 {
-	mGroupId = groupId.toStdString();
+	mGroupId = RsGxsGroupId(groupId.toStdString());
 
 	if (mGroupId.isNull()) {
 		return;

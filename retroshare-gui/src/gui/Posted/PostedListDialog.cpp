@@ -362,7 +362,7 @@ void PostedListDialog::updateDisplayedItems(const std::vector<RsGxsMessageId> &m
 
 void PostedListDialog::changedTopic(const QString &id)
 {
-	mCurrTopicId = id.toStdString();
+	mCurrTopicId = RsGxsGroupId(id.toStdString());
 	insertThreads();
 }
 

@@ -187,7 +187,7 @@ bool GxsIdChooser::getChosenId(RsGxsId &id)
 	int idx = currentIndex();
 
 	QVariant var = itemData(idx);
-	id = var.toString().toStdString();
+	id = RsGxsId(var.toString().toStdString());
 
 	return true;
 }

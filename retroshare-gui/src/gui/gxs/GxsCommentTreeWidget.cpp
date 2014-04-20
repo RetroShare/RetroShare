@@ -80,7 +80,7 @@ void GxsCommentTreeWidget::setCurrentMsgId(QTreeWidgetItem *current, QTreeWidget
 
 	if(current)
 	{
-		mCurrentMsgId = current->text(PCITEM_COLUMN_MSGID).toStdString();
+		mCurrentMsgId = RsGxsMessageId(current->text(PCITEM_COLUMN_MSGID).toStdString());
 	}
 }
 

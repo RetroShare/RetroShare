@@ -428,7 +428,7 @@ void GxsChannelDialog::restoreChannelKeys()
 
 void GxsChannelDialog::selectChannel(const QString &id)
 {
-	mChannelId = id.toStdString();
+	mChannelId = RsGxsGroupId(id.toStdString());
 
 	bool autoDl = rsGxsChannels->getChannelAutoDownload(mChannelId);
 	setAutoDownloadButton(autoDl);

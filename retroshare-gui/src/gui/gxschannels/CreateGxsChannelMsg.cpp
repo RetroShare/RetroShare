@@ -617,9 +617,9 @@ void CreateGxsChannelMsg::sendMessage(const std::string &subject, const std::str
 		RsGxsChannelPost post;
 
 		post.mMeta.mGroupId = mChannelId;
-		post.mMeta.mParentId = "";
-		post.mMeta.mThreadId = "";
-		post.mMeta.mMsgId = "";
+		post.mMeta.mParentId.clear() ;
+		post.mMeta.mThreadId.clear() ;
+		post.mMeta.mMsgId.clear() ;
 
 		post.mMeta.mMsgName = subject;
 		post.mMsg = msg;

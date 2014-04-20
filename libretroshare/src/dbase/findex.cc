@@ -941,7 +941,7 @@ int FileIndex::loadIndex(const std::string& filename, const RsFileHash& expected
 				nfile = new FileEntry();
 				registerEntry((void*)nfile) ;
 				nfile->name = tokens[0];
-				nfile->hash = tokens[1];
+				nfile->hash = RsFileHash(tokens[1]);
 				nfile->size = atoll(tokens[2].c_str());
 				nfile->modtime = atoi(tokens[3].c_str());
 				nfile->pop = atoi(tokens[4].c_str());
@@ -1051,7 +1051,7 @@ int FileIndex::saveIndex(const std::string& filename, RsFileHash &fileHash, uint
 		return false ;
 	}
 
-	fileHash = RsDirUtil::sha1sum((unsigned char *)compressed_data,compressed_data_size).toStdString() ;
+	fileHash = RsDirUtil::sha1sum((unsigned char *)compressed_data,compressed_data_size);
 
 	std::cerr << "   file     = " << filename << std::endl;
 	std::cerr << "   old size = " << s.length() << std::endl;

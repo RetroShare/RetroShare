@@ -83,14 +83,6 @@ template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER> c
 			return id ;
 		}
 
-		inline void operator=(const std::string& str)
-		{
-			t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER> temp = t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>(str);
-
-            for(uint32_t i = 0; i < ID_SIZE_IN_BYTES; i++)
-				this->bytes[i] = temp.toByteArray()[i];
-		}
-
 		inline void clear() { memset(bytes,0,SIZE_IN_BYTES) ; }
 
 		// Converts to a std::string using cached value. 

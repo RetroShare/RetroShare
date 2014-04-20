@@ -1949,7 +1949,7 @@ void TransfersDialog::showFileDetails()
 	for(int i = 0; i <= DLListModel->rowCount(); i++) 
 		if(selection->isRowSelected(i, QModelIndex())) 
 		{
-	        file_hash = getID(i, DLListModel).toStdString();
+	        file_hash = RsFileHash(getID(i, DLListModel).toStdString());
 			  ++nb_select ;
 		}
 	if(nb_select != 1)

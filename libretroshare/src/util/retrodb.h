@@ -298,7 +298,7 @@ public:
     inline void getStringT(int columnIndex, T &str){
     	std::string temp;
     	getString(columnIndex, temp);
-    	str = temp;
+    	str = T(temp);
     }
 
 

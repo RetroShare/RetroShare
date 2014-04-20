@@ -162,7 +162,7 @@ void WikiEditDialog::historySelected()
 	
 	RsGxsGrpMsgIdPair newSnapshot = mThreadMsgIdPair;
 	std::string pageId = item->data(WET_DATA_COLUMN, WET_ROLE_PAGEID).toString().toStdString();
-	newSnapshot.second = pageId;
+	newSnapshot.second = RsGxsMessageId(pageId);
 
 	std::cerr << "WikiEditDialog::historySelected() New PageId: " << pageId;
 	std::cerr << std::endl;
@@ -469,10 +469,10 @@ void WikiEditDialog::submitEdit()
 	if (mNewPage)
 	{
 		mWikiSnapshot.mMeta.mGroupId = mWikiCollection.mMeta.mGroupId;
-		mWikiSnapshot.mMeta.mOrigMsgId = "";
-		mWikiSnapshot.mMeta.mMsgId = "";
-		mWikiSnapshot.mMeta.mParentId = "";
-		mWikiSnapshot.mMeta.mThreadId = "";
+		mWikiSnapshot.mMeta.mOrigMsgId.clear() ;
+		mWikiSnapshot.mMeta.mMsgId.clear() ;
+		mWikiSnapshot.mMeta.mParentId.clear() ;
+		mWikiSnapshot.mMeta.mThreadId.clear() ;
 
 		std::cerr << "WikiEditDialog::submitEdit() Is New Page";
 		std::cerr << std::endl;
@@ -484,9 +484,9 @@ void WikiEditDialog::submitEdit()
 		// A New Version of the ThreadHead.
 		mWikiSnapshot.mMeta.mGroupId = mWikiCollection.mMeta.mGroupId;
 		mWikiSnapshot.mMeta.mOrigMsgId = mRepublishOrigId;
-		mWikiSnapshot.mMeta.mParentId = "";
-		mWikiSnapshot.mMeta.mThreadId = "";
-		mWikiSnapshot.mMeta.mMsgId = "";
+		mWikiSnapshot.mMeta.mParentId.clear() ;
+		mWikiSnapshot.mMeta.mThreadId.clear() ;
+		mWikiSnapshot.mMeta.mMsgId.clear() ;
 	}
 	else
 	{
