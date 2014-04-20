@@ -56,7 +56,7 @@ double convertRttToPixels(double maxRTT, double rtt)
 class VoipLagPlot
 {
 	public:
-		VoipLagPlot(const std::map<std::string, std::list<RsVoipPongResult> > &info, 
+        VoipLagPlot(const std::map<RsPeerId, std::list<RsVoipPongResult> > &info,
 			double refTS, double maxRTT, double minTS, double maxTS)
 			:mInfo(info), mRefTS(refTS), mMaxRTT(maxRTT), mMinTS(minTS), mMaxTS(maxTS) {}
 
@@ -96,7 +96,7 @@ class VoipLagPlot
 			}
 
 			/* draw a different line for each peer */
-			std::map<std::string, std::list<RsVoipPongResult> >::const_iterator mit;
+            std::map<RsPeerId, std::list<RsVoipPongResult> >::const_iterator mit;
 			int i = 0;
 			int nLines = mInfo.size();
 			for(mit = mInfo.begin(); mit != mInfo.end(); mit++, i++)
@@ -161,14 +161,14 @@ class VoipLagPlot
 
 				painter->setPen(QColor::fromRgb(0,0,0)) ;
 				painter->drawRect(ox,oy,cellx,celly) ;
-				painter->drawText(ox + cellx + 4,oy + celly / 2,VoipStatistics::getPeerName(mit->first));
+                painter->drawText(ox + cellx + 4,oy + celly / 2,VoipStatistics::getPeerName(mit->first));
 
 				oy += 2 * celly;
 			}
 		}
 
 	private:
-		const std::map<std::string, std::list<RsVoipPongResult> > &mInfo;
+        const std::map<RsPeerId, std::list<RsVoipPongResult> > &mInfo;
 		double mRefTS;
 		double mMaxRTT;
 		double mMinTS;
@@ -230,15 +230,15 @@ void VoipStatistics::processSettings(bool bLoad)
 
 void VoipStatistics::updateDisplay()
 {
-	std::map<std::string, std::list<RsVoipPongResult> > info;
+    std::map<RsPeerId, std::list<RsVoipPongResult> > info;
 
 	if (!rsVoip)
 	{
 		return;
 	}
 
-	std::list<std::string> idList;
-	std::list<std::string>::iterator it;
+    std::list<RsPeerId> idList;
+    std::list<RsPeerId>::iterator it;
 
 	rsPeers->getOnlineList(idList);
 
@@ -284,11 +284,11 @@ void VoipStatistics::updateDisplay()
 	_tst_CW->update();
 }
 
-QString VoipStatistics::getPeerName(const std::string& peer_id)
+QString VoipStatistics::getPeerName(const RsPeerId& peer_id)
 {
-	static std::map<std::string, QString> names ;
+    static std::map<RsPeerId, QString> names ;
 
-	std::map<std::string,QString>::const_iterator it = names.find(peer_id) ;
+    std::map<RsPeerId,QString>::const_iterator it = names.find(peer_id) ;
 
 	if( it != names.end())
 		return it->second ;
@@ -309,7 +309,7 @@ VoipStatisticsWidget::VoipStatisticsWidget(QWidget *parent)
 	maxHeight = 0 ;
 }
 
-void VoipStatisticsWidget::updateVoipStatistics(const std::map<std::string, std::list<RsVoipPongResult> >& info, 
+void VoipStatisticsWidget::updateVoipStatistics(const std::map<RsPeerId, std::list<RsVoipPongResult> >& info,
 		double maxRTT, double minTS, double maxTS)
 {
 	//static const int cellx = 6 ;

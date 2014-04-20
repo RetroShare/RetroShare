@@ -6,16 +6,17 @@
 //
 
 #include <QObject>
+#include <retroshare/rstypes.h>
 
 class PluginNotifier: public QObject
 {
 	Q_OBJECT
 
 	public:
-		void notifyReceivedVoipData(const std::string& peer_id) ;
-		void notifyReceivedVoipInvite(const std::string& peer_id) ;
-		void notifyReceivedVoipHangUp(const std::string& peer_id) ;
-		void notifyReceivedVoipAccept(const std::string& peer_id) ;
+        void notifyReceivedVoipData(const RsPeerId& peer_id) ;
+        void notifyReceivedVoipInvite(const RsPeerId &peer_id) ;
+        void notifyReceivedVoipHangUp(const RsPeerId& peer_id) ;
+        void notifyReceivedVoipAccept(const RsPeerId &peer_id) ;
 
 	signals:
 		void voipInvitationReceived(const QString&) ;	// signal emitted when an invitation has been received

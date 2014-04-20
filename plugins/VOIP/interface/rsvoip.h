@@ -7,6 +7,7 @@
 #include <string>
 #include <list>
 #include <vector>
+#include <retroshare/rstypes.h>
 
 class RsVoip ;
 extern RsVoip *rsVoip;
@@ -36,17 +37,17 @@ struct RsVoipDataChunk
 class RsVoip
 {
 	public:
-		virtual int sendVoipHangUpCall(const std::string& peer_id) = 0;
-		virtual int sendVoipRinging(const std::string& peer_id) = 0;
-		virtual int sendVoipAcceptCall(const std::string& peer_id) = 0;
+        virtual int sendVoipHangUpCall(const RsPeerId& peer_id) = 0;
+        virtual int sendVoipRinging(const RsPeerId& peer_id) = 0;
+        virtual int sendVoipAcceptCall(const RsPeerId& peer_id) = 0;
 
 		// Sending data. The client keeps the memory ownership and must delete it after calling this.
-		virtual int sendVoipData(const std::string& peer_id,const RsVoipDataChunk& chunk) = 0;
+        virtual int sendVoipData(const RsPeerId& peer_id,const RsVoipDataChunk& chunk) = 0;
 
 		// The server fill in the data and gives up memory ownership. The client must delete the memory
 		// in each chunk once it has been used.
 		//
-		virtual bool getIncomingData(const std::string& peer_id,std::vector<RsVoipDataChunk>& chunks) = 0;
+        virtual bool getIncomingData(const RsPeerId& peer_id,std::vector<RsVoipDataChunk>& chunks) = 0;
 
 		typedef enum { AudioTransmitContinous = 0, AudioTransmitVAD = 1, AudioTransmitPushToTalk = 2 } enumAudioTransmit ;
 
@@ -67,7 +68,7 @@ class RsVoip
 		virtual bool getVoipEchoCancel() const = 0 ;
 		virtual void setVoipEchoCancel(bool) = 0 ;
 
-		virtual uint32_t getPongResults(std::string id, int n, std::list<RsVoipPongResult> &results) = 0;
+        virtual uint32_t getPongResults(const RsPeerId& id, int n, std::list<RsVoipPongResult> &results) = 0;
 };
 
 

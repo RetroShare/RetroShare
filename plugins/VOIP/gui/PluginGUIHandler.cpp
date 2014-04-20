@@ -22,19 +22,20 @@ void PluginGUIHandler::ReceivedVoipAccept(const QString& /*peer_id*/)
 	std::cerr << "****** Plugin GUI handler: received VoipAccept!" << std::endl;
 }
 
-void PluginGUIHandler::ReceivedVoipData(const QString& peer_id) 
+void PluginGUIHandler::ReceivedVoipData(const QString& qpeer_id)
 {
         std::cerr << "****** Plugin GUI handler: received VoipData!" << std::endl;
 
+    RsPeerId peer_id(qpeer_id.toStdString()) ;
 	std::vector<RsVoipDataChunk> chunks ;
 
-	if(!rsVoip->getIncomingData(peer_id.toStdString(),chunks))
+    if(!rsVoip->getIncomingData(peer_id,chunks))
 	{
 		std::cerr << "PluginGUIHandler::ReceivedVoipData(): No data chunks to get. Weird!" << std::endl;
 		return ;
 	}
 
-	ChatDialog *di = ChatDialog::getExistingChat(peer_id.toStdString()) ;
+    ChatDialog *di = ChatDialog::getExistingChat(peer_id) ;
 	if (di) {
 		ChatWidget *cw = di->getChatWidget();
 		if (cw) {
@@ -47,7 +48,7 @@ void PluginGUIHandler::ReceivedVoipData(const QString& peer_id)
 					for (unsigned int i = 0; i < chunks.size(); ++i) {
 						for (unsigned int chunkIndex=0; chunkIndex<chunks.size(); chunkIndex++){
 							QByteArray qb(reinterpret_cast<const char *>(chunks[chunkIndex].data),chunks[chunkIndex].size);
-							acwh->addAudioData(peer_id,&qb);
+                            acwh->addAudioData(QString::fromStdString(peer_id.toStdString()),&qb);
 						}
 					}
 					break;

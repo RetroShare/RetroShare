@@ -30,7 +30,6 @@
 
 #include "serialiser/rsserviceids.h"
 #include "serialiser/rsserial.h"
-#include "serialiser/rstlvtypes.h"
 
 /**************************************************************************/
 

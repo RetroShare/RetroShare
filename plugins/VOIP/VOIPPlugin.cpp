@@ -133,11 +133,8 @@ RsAutoUpdatePage *VOIPPlugin::qt_transfers_tab() const
 
 RsPQIService *VOIPPlugin::rs_pqi_service() const
 {
-	if(mVoip == NULL)
-	{
-		mVoip = new p3VoRS(mPlugInHandler,mPluginNotifier) ; // , 3600 * 24 * 30 * 6); // 6 Months
-		rsVoip = mVoip ;
-	}
+    if(mVoip == NULL)
+        rsVoip = mVoip = new p3VoRS(mPlugInHandler,mPluginNotifier) ; // , 3600 * 24 * 30 * 6); // 6 Months
 
 	return mVoip ;
 }

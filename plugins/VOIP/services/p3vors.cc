@@ -78,33 +78,6 @@ RsVoip *rsVoip = NULL;
  *
  */
 
-
-
-#if 0
-class RsVorsLagItem: public RsItem
-{
-	public:
-
-	uint32_t seqno;
-	uint32_t type; 	// REQUEST, RESPONSE.
-	double peerTs;
-
-};
-
-class RsVorsDatatem: public RsItem
-{
-	public:
-
-	uint32_t seqno;
-	uint32_t encoding;
-	uint32_t audiolength;   // in 44.1 kbs samples.
-	uint32_t datalength;   
-	void *data;
-};
-
-#endif
-
-
 #ifdef WINDOWS_SYS
 #include <time.h>
 #include <sys/timeb.h>
@@ -143,7 +116,7 @@ static double convert64bitsToTs(uint64_t bits)
 }
 
 p3VoRS::p3VoRS(RsPluginHandler *handler,PluginNotifier *notifier)
-	 : RsPQIService(RS_SERVICE_TYPE_VOIP_PLUGIN,CONFIG_TYPE_VOIP_PLUGIN,0,handler), mVorsMtx("p3VoRS"), mLinkMgr(handler->getLinkMgr()) , mNotify(notifier)
+     : RsPQIService(RS_SERVICE_TYPE_VOIP_PLUGIN,0,handler), mVorsMtx("p3VoRS"), mServiceControl(handler->getServiceControl()) , mNotify(notifier)
 {
 	addSerialType(new RsVoipSerialiser());
 
@@ -159,6 +132,21 @@ p3VoRS::p3VoRS(RsPluginHandler *handler,PluginNotifier *notifier)
         _noise_suppress = -45;
         _echo_cancel = true;
 
+}
+RsServiceInfo p3VoRS::getServiceInfo()
+{
+    const std::string TURTLE_APP_NAME = "VOIP";
+    const uint16_t TURTLE_APP_MAJOR_VERSION  =       1;
+    const uint16_t TURTLE_APP_MINOR_VERSION  =       0;
+    const uint16_t TURTLE_MIN_MAJOR_VERSION  =       1;
+    const uint16_t TURTLE_MIN_MINOR_VERSION  =       0;
+
+    return RsServiceInfo(RS_SERVICE_TYPE_VOIP_PLUGIN,
+                         TURTLE_APP_NAME,
+                         TURTLE_APP_MAJOR_VERSION,
+                         TURTLE_APP_MINOR_VERSION,
+                         TURTLE_MIN_MAJOR_VERSION,
+                         TURTLE_MIN_MINOR_VERSION);
 }
 
 int	p3VoRS::tick()
@@ -196,7 +184,7 @@ int	p3VoRS::sendPackets()
 	}
 	return true ;
 }
-int p3VoRS::sendVoipHangUpCall(const std::string& peer_id)
+int p3VoRS::sendVoipHangUpCall(const RsPeerId &peer_id)
 {
 	RsVoipProtocolItem *item = new RsVoipProtocolItem ;
 
@@ -208,7 +196,7 @@ int p3VoRS::sendVoipHangUpCall(const std::string& peer_id)
 
 	return true ;
 }
-int p3VoRS::sendVoipAcceptCall(const std::string& peer_id)
+int p3VoRS::sendVoipAcceptCall(const RsPeerId& peer_id)
 {
 	RsVoipProtocolItem *item = new RsVoipProtocolItem ;
 
@@ -220,7 +208,7 @@ int p3VoRS::sendVoipAcceptCall(const std::string& peer_id)
 
 	return true ;
 }
-int p3VoRS::sendVoipRinging(const std::string& peer_id)
+int p3VoRS::sendVoipRinging(const RsPeerId &peer_id)
 {
 	RsVoipProtocolItem *item = new RsVoipProtocolItem ;
 
@@ -233,7 +221,7 @@ int p3VoRS::sendVoipRinging(const std::string& peer_id)
 	return true ;
 }
 
-int p3VoRS::sendVoipData(const std::string& peer_id,const RsVoipDataChunk& chunk)
+int p3VoRS::sendVoipData(const RsPeerId& peer_id,const RsVoipDataChunk& chunk)
 {
 #ifdef DEBUG_VORS
 	std::cerr << "Sending " << chunk.size << " bytes of voip data." << std::endl;
@@ -267,9 +255,11 @@ void p3VoRS::sendPingMeasurements()
 {
 	/* we ping our peers */
 	/* who is online? */
-	std::list<std::string> idList;
+    if(!mServiceControl)
+        return ;
 
-	mLinkMgr->getOnlineList(idList);
+    std::set<RsPeerId> onlineIds;
+        mServiceControl->getPeersConnected(getServiceInfo().mServiceType, onlineIds);
 
 	double ts = getCurrentTS();
 
@@ -279,8 +269,8 @@ void p3VoRS::sendPingMeasurements()
 #endif
 
 	/* prepare packets */
-	std::list<std::string>::iterator it;
-	for(it = idList.begin(); it != idList.end(); it++)
+    std::set<RsPeerId>::iterator it;
+    for(it = onlineIds.begin(); it != onlineIds.end(); it++)
 	{
 #ifdef DEBUG_VORS
 		std::cerr << "p3VoRS::sendPingMeasurements() Pinging: " << *it;
@@ -347,7 +337,7 @@ void p3VoRS::handleData(RsVoipDataItem *item)
 
 	// store the data in a queue.
 
-	std::map<std::string,VorsPeerInfo>::iterator it = mPeerInfo.find(item->PeerId()) ;
+    std::map<RsPeerId,VorsPeerInfo>::iterator it = mPeerInfo.find(item->PeerId()) ;
 
 	if(it == mPeerInfo.end())
 	{
@@ -362,13 +352,13 @@ void p3VoRS::handleData(RsVoipDataItem *item)
 	}
 }
 
-bool p3VoRS::getIncomingData(const std::string& peer_id,std::vector<RsVoipDataChunk>& incoming_data_chunks)
+bool p3VoRS::getIncomingData(const RsPeerId& peer_id,std::vector<RsVoipDataChunk>& incoming_data_chunks)
 {
 	RsStackMutex stack(mVorsMtx); /****** LOCKED MUTEX *******/
 
 	incoming_data_chunks.clear() ;
 
-	std::map<std::string,VorsPeerInfo>::iterator it = mPeerInfo.find(peer_id) ;
+    std::map<RsPeerId,VorsPeerInfo>::iterator it = mPeerInfo.find(peer_id) ;
 
 	if(it == mPeerInfo.end())
 	{
@@ -505,7 +495,7 @@ int p3VoRS::handlePong(RsVoipPongItem *pong)
 	return true ;
 }
 
-int	p3VoRS::storePingAttempt(std::string id, double ts, uint32_t seqno)
+int	p3VoRS::storePingAttempt(const RsPeerId& id, double ts, uint32_t seqno)
 {
 	RsStackMutex stack(mVorsMtx); /****** LOCKED MUTEX *******/
 
@@ -528,7 +518,7 @@ int	p3VoRS::storePingAttempt(std::string id, double ts, uint32_t seqno)
 
 
 
-int	p3VoRS::storePongResult(std::string id, uint32_t counter, double ts, double rtt, double offset)
+int	p3VoRS::storePongResult(const RsPeerId &id, uint32_t counter, double ts, double rtt, double offset)
 {
 	RsStackMutex stack(mVorsMtx); /****** LOCKED MUTEX *******/
 
@@ -559,7 +549,7 @@ int	p3VoRS::storePongResult(std::string id, uint32_t counter, double ts, double 
 }
 
 
-uint32_t p3VoRS::getPongResults(std::string id, int n, std::list<RsVoipPongResult> &results)
+uint32_t p3VoRS::getPongResults(const RsPeerId& id, int n, std::list<RsVoipPongResult> &results)
 {
 	RsStackMutex stack(mVorsMtx); /****** LOCKED MUTEX *******/
 
@@ -577,9 +567,9 @@ uint32_t p3VoRS::getPongResults(std::string id, int n, std::list<RsVoipPongResul
 
 
 
-VorsPeerInfo *p3VoRS::locked_GetPeerInfo(std::string id)
+VorsPeerInfo *p3VoRS::locked_GetPeerInfo(const RsPeerId &id)
 {
-	std::map<std::string, VorsPeerInfo>::iterator it;
+    std::map<RsPeerId, VorsPeerInfo>::iterator it;
 	it = mPeerInfo.find(id);
 	if (it == mPeerInfo.end())
 	{
@@ -598,7 +588,7 @@ VorsPeerInfo *p3VoRS::locked_GetPeerInfo(std::string id)
 	return &(it->second);
 }
 
-bool VorsPeerInfo::initialisePeerInfo(std::string id)
+bool VorsPeerInfo::initialisePeerInfo(const RsPeerId& id)
 {
 	mId = id;
 

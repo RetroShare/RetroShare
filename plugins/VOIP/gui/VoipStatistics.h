@@ -37,7 +37,7 @@ class VoipStatistics: public RsAutoUpdatePage, public Ui::VoipStatistics
 		~VoipStatistics();
 		
 		// Cache for peer names.
-		static QString getPeerName(const std::string& peer_id) ;
+        static QString getPeerName(const RsPeerId &peer_id) ;
 
 	private:
 											
@@ -60,7 +60,7 @@ class VoipStatisticsWidget:  public QWidget
 		virtual void resizeEvent(QResizeEvent *event);
 
 
-		void updateVoipStatistics(const std::map<std::string, std::list<RsVoipPongResult> >& info,
+        void updateVoipStatistics(const std::map<RsPeerId, std::list<RsVoipPongResult> >& info,
                 		double maxRTT, double minTS, double maxTS);
 
 	private:
