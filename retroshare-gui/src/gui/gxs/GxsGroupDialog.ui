@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>695</width>
-    <height>497</height>
+    <height>524</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -525,7 +525,7 @@
              </property>
              <property name="icon">
               <iconset resource="../images.qrc">
-               <normaloff>:/images/user/group24.png</normaloff>:/images/user/group24.png</iconset>
+               <normaloff>:/images/user/friends24.png</normaloff>:/images/user/friends24.png</iconset>
              </property>
              <property name="iconSize">
               <size>
