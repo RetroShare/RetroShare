@@ -716,6 +716,7 @@ double RetroCursor::getDouble(int columnIndex){
 }
 
 void RetroCursor::getString(int columnIndex, std::string &str){
+    str.clear();
     char* raw_str = (char*)sqlite3_column_text(mStmt, columnIndex);
     if(raw_str != NULL)
     {
