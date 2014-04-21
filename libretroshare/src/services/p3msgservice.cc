@@ -364,7 +364,6 @@ int     p3MsgService::checkOutgoingMessages()
 				pqioutput(PQL_DEBUG_BASIC, msgservicezone, 
 					"p3MsgService::checkOutGoingMessages() Sending out message");
 				/* remove the pending flag */
-				(mit->second)->msgFlags &= ~RS_MSG_FLAGS_PENDING;
 
 				output_queue.push_back(mit->second) ;
 
@@ -372,11 +371,17 @@ int     p3MsgService::checkOutgoingMessages()
 				//
 				if(!(mit->second->msgFlags & RS_MSG_FLAGS_DISTANT))
 				{
+					(mit->second)->msgFlags &= ~RS_MSG_FLAGS_PENDING;
 					toErase.push_back(mit->first);
 					changed = true ;
 				}
 				else
+				{
+#ifdef DEBUG_DISTANT_MSG
+					std::cerr << "Message id " << mit->first << " is distant: kept in outgoing, and marked as ROUTED" << std::endl;
+#endif
 					mit->second->msgFlags |= RS_MSG_FLAGS_ROUTED ;
+				}
 			}
 			else
 			{
@@ -590,7 +595,7 @@ bool    p3MsgService::loadList(std::list<RsItem*>& load)
 				}
 
 	}
-	if(!distant_messaging_set)
+	if(mDistantMessagingEnabled || !distant_messaging_set)
 	{
 #ifdef DEBUG_DISTANT_MSG
 		std::cerr << "No config value for distant messaging. Setting it to true." << std::endl;
@@ -2106,26 +2111,7 @@ void p3MsgService::manageDistantPeers()
 #ifdef DEBUG_DISTANT_MSG
 	std::cerr << "p3MsgService::manageDistantPeers()" << std::endl;
 #endif
-	time_t now = time(NULL) ;
-	{
-		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
-
-//		// clean dead contacts.
-//		//
-//		for(std::map<Sha1CheckSum,DistantMessengingContact>::iterator it(_messenging_contacts.begin());it!=_messenging_contacts.end();)
-//			if((!it->second.pending_messages) && it->second.status == RS_DISTANT_MSG_STATUS_TUNNEL_DN)
-//			{
-//#ifdef DEBUG_DISTANT_MSG
-//				std::cerr << "    Removing dead contact with no pending msgs and dead tunnel. hash=" << it->first << std::endl;
-//#endif
-//				std::map<Sha1CheckSum,DistantMessengingContact>::iterator tmp(it) ;
-//				++tmp ;
-//				_messenging_contacts.erase(it) ;
-//				it = tmp ;
-//			}
-//			else
-//				++it ;
-	}
+	enableDistantMessaging(mDistantMessagingEnabled) ;
 }
 
 void p3MsgService::sendGRouterData(const GRouterKeyId& key_id,RsMsgItem *msgitem)
@@ -2152,7 +2138,7 @@ void p3MsgService::sendGRouterData(const GRouterKeyId& key_id,RsMsgItem *msgitem
 
 	GRouterMsgPropagationId grouter_message_id ;
 
-    mGRouter->sendData(key_id,item,grouter_message_id) ;
+    mGRouter->sendData(key_id,GROUTER_CLIENT_ID_MESSAGES,item,grouter_message_id) ;
 
 	 // now store the grouter id along with the message id, so that we can keep track of received messages
 
@@ -2187,7 +2173,7 @@ void p3MsgService::acknowledgeDataReceived(const GRouterMsgPropagationId& id)
 	delete it2->second ;
 	msgOutgoing.erase(it2) ;
 
-	RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_MOD);
+	RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_ADD);
 	IndicateConfigChanged() ;
 }
 void p3MsgService::receiveGRouterData(const GRouterKeyId& key, const RsGRouterGenericDataItem *gitem)

@@ -259,6 +259,7 @@ RsGRouterRoutingInfoItem *RsGRouterSerialiser::deserialise_RsGRouterRoutingInfoI
 	ok &= getRawUInt32(data, pktsize, &offset, &item->status_flags); 	
 	ok &= item->origin.deserialise(data, pktsize, offset) ;
 	ok &= getRawTimeT(data, pktsize, &offset, item->received_time); 	
+	ok &= getRawTimeT(data, pktsize, &offset, item->last_sent); 	
 	ok &= getRawUInt32(data, pktsize, &offset, &item->client_id); 	
 
 	uint32_t s = 0 ;
@@ -281,6 +282,8 @@ RsGRouterRoutingInfoItem *RsGRouterSerialiser::deserialise_RsGRouterRoutingInfoI
 		offset += item->data_item->serial_size() ;
 	else
 		ok = false ;
+
+	item->destination_key = item->data_item->destination_key ;
 
 	if (offset != rssize || !ok)
 	{
@@ -457,6 +460,7 @@ uint32_t RsGRouterRoutingInfoItem::serial_size() const
     s += 4  ; 										// status_flags
     s += origin.serial_size()  ; 			// origin
     s += 8  ; 										// received_time
+    s += 8  ; 										// last_sent
     s += 4  ; 										// tried_friends.size() ;
     s += sizeof(GRouterServiceId)  ; 		// service_id
     s += tried_friends.size() * ( RsPeerId::SIZE_IN_BYTES + 8 + 4 + 4 ) ;			// FriendTrialRecord
@@ -544,6 +548,7 @@ bool RsGRouterRoutingInfoItem::serialise(void *data,uint32_t& size) const
     ok &= setRawUInt32(data, tlvsize, &offset, status_flags) ;
     ok &= origin.serialise(data, tlvsize, offset) ;
     ok &= setRawTimeT(data, tlvsize, &offset, received_time) ;
+    ok &= setRawTimeT(data, tlvsize, &offset, last_sent) ;
     ok &= setRawUInt32(data, tlvsize, &offset, client_id) ;
     ok &= setRawUInt32(data, tlvsize, &offset, tried_friends.size()) ;
 
@@ -606,6 +611,7 @@ std::ostream& RsGRouterRoutingInfoItem::print(std::ostream& o, uint16_t)
 	o << "  direct origin: \""<< PeerId() << "\"" << std::endl ;
 	o << "  origin:          "<< origin.toStdString() << std::endl ;
 	o << "  recv time:       "<< received_time << std::endl ;
+	o << "  Last sent:       "<< last_sent << std::endl ;
 	o << "  flags:           "<< std::hex << status_flags << std::dec << std::endl ;
 	o << "  Key:             "<< data_item->destination_key.toStdString() << std::endl ;
 	o << "  Data size:       "<< data_item->data_size << std::endl ;

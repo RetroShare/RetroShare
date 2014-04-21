@@ -38,7 +38,7 @@ const uint8_t RS_PKT_SUBTYPE_GROUTER_DATA          = 0x05 ;			// used to send da
 
 const uint8_t RS_PKT_SUBTYPE_GROUTER_MATRIX_CLUES  = 0x80 ;			// item to save matrix clues
 const uint8_t RS_PKT_SUBTYPE_GROUTER_FRIENDS_LIST  = 0x82 ;			// item to save friend lists
-const uint8_t RS_PKT_SUBTYPE_GROUTER_ROUTING_INFO  = 0x86 ;			// item to save routing info
+const uint8_t RS_PKT_SUBTYPE_GROUTER_ROUTING_INFO  = 0x87 ;			// item to save routing info
 
 const uint8_t QOS_PRIORITY_RS_GROUTER_PUBLISH_KEY = 3 ;				// slow items. No need to congest the network with this.
 const uint8_t QOS_PRIORITY_RS_GROUTER_ACK         = 3 ;
