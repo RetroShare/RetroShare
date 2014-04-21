@@ -58,11 +58,6 @@ const int p3connectzone = 3431;
  * #define LINKMGR_DEBUG_LINKTYPE	1
  ***/
 
-#define LINKMGR_DEBUG 1
-#define LINKMGR_DEBUG_CONNFAIL 1
-#define LINKMGR_DEBUG_ACTIONS  1
-#define LINKMGR_DEBUG_LINKTYPE	1
-
 /****
  * #define DISABLE_UDP_CONNECTIONS	1		
  ***/
