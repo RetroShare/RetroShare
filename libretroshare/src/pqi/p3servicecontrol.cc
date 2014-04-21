@@ -1004,14 +1004,14 @@ void    p3ServiceControl::updatePeerNew(const RsPeerId &peerId)
 
 void    p3ServiceControl::updatePeerRemoved(const RsPeerId &peerId)
 {
-	RsStackMutex stack(mCtrlMtx); /***** LOCK STACK MUTEX ****/
-
 #ifdef SERVICECONTROL_DEBUG
 	std::cerr << "p3ServiceControl::updatePeerRemoved(): " << peerId.toStdString();
 	std::cerr << std::endl;
 #endif
 
 	removePeer(peerId);
+
+	RsStackMutex stack(mCtrlMtx); /***** LOCK STACK MUTEX ****/
 
 	pqiServicePeer peer;
 	peer.id = peerId;
