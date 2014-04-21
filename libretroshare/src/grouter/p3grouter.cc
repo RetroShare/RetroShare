@@ -208,6 +208,7 @@ p3GRouter::p3GRouter(p3ServiceControl *sc,p3LinkMgr *lm)
 	_last_debug_output_time = 0 ;
 	_last_config_changed = 0 ;
 	_last_matrix_update_time = 0 ;
+	_debug_enabled = true ;
 
 	_random_salt = RSRandom::random_u64() ;
 
@@ -316,7 +317,7 @@ void p3GRouter::autoWash()
 			_pending_messages.erase(it) ;
 			it = tmp ;
 		}
-		else if(it->second.data_item != NULL && it->second.status_flags == RS_GROUTER_ROUTING_STATE_SENT && computeNextTimeDelay(it->second.last_sent - it->second.received_time) + it->second.last_sent < now)
+		else if(it->second.status_flags == RS_GROUTER_ROUTING_STATE_SENT && computeNextTimeDelay(it->second.last_sent - it->second.received_time) + it->second.last_sent < now)
 		{
 			it->second.status_flags = RS_GROUTER_ROUTING_STATE_PEND ;
 #ifdef GROUTER_DEBUG
@@ -388,8 +389,6 @@ void p3GRouter::routePendingObjects()
 			{
 				sendACK(it->second.origin,it->first,RS_GROUTER_ACK_STATE_GVNP) ;
 				it->second.status_flags = RS_GROUTER_ROUTING_STATE_DEAD ;
-				delete it->second.data_item ;
-				it->second.data_item = NULL ;
 				++it ;
 				continue ;
 			}
@@ -635,25 +634,18 @@ void p3GRouter::handleIncoming()
 	}
 }
 
-void p3GRouter::locked_notifyClientAcknowledged(const GRouterKeyId& key,const GRouterMsgPropagationId& msg_id) const
+void p3GRouter::locked_notifyClientAcknowledged(const GRouterMsgPropagationId& msg_id,const GRouterServiceId& service_id) const
 {
 #ifdef GROUTER_DEBUG
-	grouter_debug() << "  Key is owned by us. Notifying service that item was ACKed." << std::endl;
+	grouter_debug() << "  Key is owned by us. Notifying service that item was ACKed. msg_id=" << msg_id << ", service_id = " << service_id << "." << std::endl;
 #endif
 	// notify the client
 	//
-	std::map<GRouterKeyId, GRouterPublishedKeyInfo>::const_iterator it = _owned_key_ids.find(key) ;
-
-	if(it == _owned_key_ids.end())
-	{
-		std::cerr << "(EE) key " << key << " is not owned by us. That is a weird situation. Probably a bug!" << std::endl;
-		return ;
-	}
-	std::map<GRouterServiceId,GRouterClientService*>::const_iterator its = _registered_services.find(it->second.service_id) ;
+	std::map<GRouterServiceId,GRouterClientService*>::const_iterator its = _registered_services.find(service_id) ;
 
 	if(its == _registered_services.end())
 	{
-		std::cerr << "(EE) key " << key << " is attached to service " << it->second.service_id << ", which is unknown!! That is a bug." << std::endl;
+		std::cerr << "(EE) message " << msg_id << " is attached to service " << service_id << ", which is unknown!! That is a bug." << std::endl;
 		return ;
 	}
 	its->second->acknowledgeDataReceived(msg_id) ;
@@ -720,7 +712,6 @@ void p3GRouter::handleRecvACKItem(RsGRouterACKItem *item)
 	uint32_t forward_state = RS_GROUTER_ACK_STATE_UNKN ;
 	bool update_routing_matrix = false ;
 	bool should_remove = false ;
-	bool delete_data = false ;
 
 	time_t now = time(NULL) ;
 
@@ -729,7 +720,7 @@ void p3GRouter::handleRecvACKItem(RsGRouterACKItem *item)
 		case RS_GROUTER_ACK_STATE_RCVD:	
 			if(it->second.origin == mLinkMgr->getOwnId())
 			{
-				locked_notifyClientAcknowledged(it->second.destination_key,it->first) ;
+				locked_notifyClientAcknowledged(it->first,it->second.client_id) ;
 				should_remove = true ;									
 			} // no break afterwards. That is on purpose!
 
@@ -746,7 +737,6 @@ void p3GRouter::handleRecvACKItem(RsGRouterACKItem *item)
 			next_state = RS_GROUTER_ROUTING_STATE_ARVD ;
 
 			update_routing_matrix = true ;
-			delete_data = true ;
 			break ;
 			
 
@@ -803,7 +793,12 @@ void p3GRouter::handleRecvACKItem(RsGRouterACKItem *item)
 #endif
 		// If no route was found, delete item, but keep the cache entry for a while in order to avoid bouncing.
 		//
-		if(it->second.status_flags != RS_GROUTER_ROUTING_STATE_ARVD && next_state != RS_GROUTER_ROUTING_STATE_ARVD)
+		if(it->second.origin == mLinkMgr->getOwnId())
+		{
+			next_state = RS_GROUTER_ROUTING_STATE_SENT ;	// Keep it that way until the item gets sent again (turned into PEND)
+			forward_state = RS_GROUTER_ACK_STATE_UNKN ;
+		} 
+		else if(it->second.status_flags != RS_GROUTER_ROUTING_STATE_ARVD && next_state != RS_GROUTER_ROUTING_STATE_ARVD)
 		{
 			next_state = RS_GROUTER_ROUTING_STATE_DEAD ;
 			forward_state = RS_GROUTER_ACK_STATE_GVNP ;
@@ -828,11 +823,6 @@ void p3GRouter::handleRecvACKItem(RsGRouterACKItem *item)
 	}
 	it->second.status_flags = next_state ;
 
-	if(delete_data)
-	{
-		delete it->second.data_item ;
-		it->second.data_item = NULL ;
-	}
 	if(should_remove)
 	{
 #ifdef GROUTER_DEBUG
@@ -922,6 +912,7 @@ void p3GRouter::handleRecvDataItem(RsGRouterGenericDataItem *item)
 		info.last_sent = 0 ;
 		info.destination_key = item->destination_key ;
 		info.status_flags = RS_GROUTER_ROUTING_STATE_PEND ;
+		info.client_id = 0 ;
 
 		_pending_messages[item->routing_id] = info ;
 		itr = _pending_messages.find(item->routing_id) ;
@@ -982,7 +973,7 @@ bool p3GRouter::registerClientService(const GRouterServiceId& id,GRouterClientSe
 	return true ;
 }
 
-void p3GRouter::sendData(const GRouterKeyId& destination, RsGRouterGenericDataItem *item,GRouterMsgPropagationId& propagation_id)
+void p3GRouter::sendData(const GRouterKeyId& destination,const GRouterServiceId& client_id, RsGRouterGenericDataItem *item,GRouterMsgPropagationId& propagation_id)
 {
 	RsStackMutex mtx(grMtx) ;
 	// push the item into pending messages.
@@ -998,6 +989,7 @@ void p3GRouter::sendData(const GRouterKeyId& destination, RsGRouterGenericDataIt
 	info.last_sent = 0 ;
 	info.received_time = now ;
 	info.destination_key = destination ;
+	info.client_id = client_id ;
 	
 	// Make sure we have a unique id (at least locally).
 	//
@@ -1015,6 +1007,7 @@ void p3GRouter::sendData(const GRouterKeyId& destination, RsGRouterGenericDataIt
 	grouter_debug() << "  distance       = " << info.data_item->randomized_distance << std::endl;
 	grouter_debug() << "  origin         = " << info.origin.toStdString() << std::endl;
 	grouter_debug() << "  Recv time      = " << info.received_time << std::endl;
+	grouter_debug() << "  Client id      = " << info.client_id << std::endl;
 #endif
 
 	_pending_messages[propagation_id] = info ;
@@ -1047,6 +1040,8 @@ bool p3GRouter::loadList(std::list<RsItem*>& items)
 	grouter_debug() << "  removing all existing items (" << _pending_messages.size() << " items to delete)." << std::endl;
 #endif
 
+	// clear the existing list.
+	//
 	for(std::map<GRouterMsgPropagationId,GRouterRoutingInfo>::iterator it(_pending_messages.begin());it!=_pending_messages.end();++it)
 		delete it->second.data_item ;
 	_pending_messages.clear() ;
@@ -1058,7 +1053,7 @@ bool p3GRouter::loadList(std::list<RsItem*>& items)
 		if(NULL != (itm1 = dynamic_cast<RsGRouterRoutingInfoItem*>(*it)))
 		{
 			_pending_messages[itm1->data_item->routing_id] = *itm1 ;	
-			_pending_messages[itm1->data_item->routing_id].data_item = itm1->data_item ;	// avoids duplication.
+			//_pending_messages[itm1->data_item->routing_id].data_item = itm1->data_item ;	// avoids duplication.
 
 			itm1->data_item = NULL ;	// prevents deletion.
 		}
@@ -1093,7 +1088,6 @@ bool p3GRouter::saveList(bool& cleanup,std::list<RsItem*>& items)
 		*(GRouterRoutingInfo*)item = it->second ;	// copy all members
 
 		item->data_item = it->second.data_item->duplicate() ;	// deep copy, because we call delete on the object, and the item might be removed before we handle it in the client.
-
 		items.push_back(item) ;
 	}
 
@@ -1143,7 +1137,7 @@ bool p3GRouter::getRoutingCacheInfo(std::vector<GRouterRoutingCacheInfo>& infos)
 		cinfo.destination = it->second.destination_key ;
 		cinfo.time_stamp = it->second.received_time ;
 		cinfo.status = it->second.status_flags ;
-		cinfo.data_size = (it->second.data_item==NULL)?0:(it->second.data_item->data_size) ;
+		cinfo.data_size = it->second.data_item->data_size ;
 	}
 	return true ;
 }

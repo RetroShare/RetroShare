@@ -85,7 +85,7 @@ class RsGRouter
 		//         Communication to other services.          //
 		//===================================================//
 
-		virtual void sendData(const GRouterKeyId& destination, RsGRouterGenericDataItem *item,GRouterMsgPropagationId& id) =0;
+		virtual void sendData(const GRouterKeyId& destination, const GRouterServiceId& client_id, RsGRouterGenericDataItem *item,GRouterMsgPropagationId& id) =0;
 		virtual bool registerKey(const GRouterKeyId& key,const GRouterServiceId& client_id,const std::string& description_string) =0;
 };
 

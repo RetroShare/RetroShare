@@ -85,6 +85,7 @@ class GRouterRoutingInfo
 
 		std::list<FriendTrialRecord> tried_friends ; 	// list of friends to which the item was sent ordered with time.
 		GRouterKeyId destination_key ;						// ultimate destination for this key
+		GRouterServiceId client_id ;							// service ID of the client. Only valid when origin==OwnId
 
 		RsGRouterGenericDataItem *data_item ;
 };

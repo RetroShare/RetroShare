@@ -259,6 +259,7 @@ RsGRouterRoutingInfoItem *RsGRouterSerialiser::deserialise_RsGRouterRoutingInfoI
 	ok &= getRawUInt32(data, pktsize, &offset, &item->status_flags); 	
 	ok &= item->origin.deserialise(data, pktsize, offset) ;
 	ok &= getRawTimeT(data, pktsize, &offset, item->received_time); 	
+	ok &= getRawUInt32(data, pktsize, &offset, &item->client_id); 	
 
 	uint32_t s = 0 ;
 	ok &= getRawUInt32(data, pktsize, &offset, &s) ;
@@ -276,6 +277,10 @@ RsGRouterRoutingInfoItem *RsGRouterSerialiser::deserialise_RsGRouterRoutingInfoI
 	}
 
 	item->data_item = deserialise_RsGRouterGenericDataItem(&((uint8_t*)data)[offset],pktsize - offset) ;
+	if(item->data_item != NULL) 
+		offset += item->data_item->serial_size() ;
+	else
+		ok = false ;
 
 	if (offset != rssize || !ok)
 	{
@@ -453,8 +458,9 @@ uint32_t RsGRouterRoutingInfoItem::serial_size() const
     s += origin.serial_size()  ; 			// origin
     s += 8  ; 										// received_time
     s += 4  ; 										// tried_friends.size() ;
+    s += sizeof(GRouterServiceId)  ; 		// service_id
     s += tried_friends.size() * ( RsPeerId::SIZE_IN_BYTES + 8 + 4 + 4 ) ;			// FriendTrialRecord
-    s += data_item->serial_size();			// data_item
+	 s += data_item->serial_size();			// data_item
 
 	return s ;
 }
@@ -538,6 +544,7 @@ bool RsGRouterRoutingInfoItem::serialise(void *data,uint32_t& size) const
     ok &= setRawUInt32(data, tlvsize, &offset, status_flags) ;
     ok &= origin.serialise(data, tlvsize, offset) ;
     ok &= setRawTimeT(data, tlvsize, &offset, received_time) ;
+    ok &= setRawUInt32(data, tlvsize, &offset, client_id) ;
     ok &= setRawUInt32(data, tlvsize, &offset, tried_friends.size()) ;
 
     for(std::list<FriendTrialRecord>::const_iterator it(tried_friends.begin());it!=tried_friends.end();++it)
@@ -602,6 +609,7 @@ std::ostream& RsGRouterRoutingInfoItem::print(std::ostream& o, uint16_t)
 	o << "  flags:           "<< std::hex << status_flags << std::dec << std::endl ;
 	o << "  Key:             "<< data_item->destination_key.toStdString() << std::endl ;
 	o << "  Data size:       "<< data_item->data_size << std::endl ;
+	o << "  Client id:       "<< client_id << std::endl ;
 	o << "  Tried friends:   "<< tried_friends.size() << std::endl;
 
 	return o ;

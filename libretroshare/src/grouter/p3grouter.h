@@ -87,8 +87,9 @@ class p3GRouter: public RsGRouter, public p3Service, public p3Config
 		// Sends an item to the given destination.  The router takes ownership of
 		// the memory. That means item_data will be erase on return. The returned id should be
 		// remembered by the client, so that he knows when the data has been received.
+		// The client id is supplied so that the client can be notified when the data has been received.
 		//
-		void sendData(const GRouterKeyId& destination, RsGRouterGenericDataItem *item,GRouterMsgPropagationId& id) ;
+		void sendData(const GRouterKeyId& destination,const GRouterServiceId& client_id, RsGRouterGenericDataItem *item,GRouterMsgPropagationId& id) ;
 
 		// Sends an ACK to the origin of the msg. This is used to notify for 
 		// unfound route, or message correctly received, depending on the particular situation.
@@ -171,7 +172,7 @@ class p3GRouter: public RsGRouter, public p3Service, public p3Config
 		static float computeMatrixContribution(float base,uint32_t time_shift,float probability) ;
 		static time_t computeNextTimeDelay(time_t duration) ;
 
-		void locked_notifyClientAcknowledged(const GRouterKeyId& key,const GRouterMsgPropagationId& msg_id) const ;
+		void locked_notifyClientAcknowledged(const GRouterMsgPropagationId& msg_id,const GRouterServiceId& service_id) const ;
 
 		uint32_t computeRandomDistanceIncrement(const RsPeerId& pid,const GRouterKeyId& destination_id) ;
 
@@ -214,23 +215,6 @@ class p3GRouter: public RsGRouter, public p3Service, public p3Config
 		// 	- usage time stamps
 		//
 		std::map<GRouterKeyId, GRouterPublishedKeyInfo> _owned_key_ids ;
-
-#ifdef TO_BE_REMOVED
-		// Key publish cache and buffers
-		//   Handles key publish items routes and forwarding info.
-		//
-		//  1 - timestamps of diffused keys received stored by diffusion id. 
-		std::map<GRouterKeyPropagationId,time_t> _key_diffusion_time_stamps ;
-
-		//  2 - list of key diffusion items to be routed. These are stored in a priority structure
-		//      where the priority is based on key distance, so that:
-		//      	- long distance keys get propagated less easily
-		//      	- when the list exceeds the maximum allowed size, items with the largest distance get dropped.
-		//
-		std::priority_queue<RsGRouterPublishKeyItem *> _key_diffusion_items ;
-
-		void handleRecvPublishKeyItem(RsGRouterPublishKeyItem *item) ;
-#endif
 
 		// Registered services. These are known to the different peers with a common id,
 		// so it's important to keep consistency here. This map is volatile, and re-created at each startup of
