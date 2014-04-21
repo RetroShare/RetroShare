@@ -2185,7 +2185,7 @@ bool RsGxsNetService::canSendGrpId(const RsPeerId& sslId, RsGxsGrpMetaData& grpM
 		// is the personal circle owner
 		if(!grpMeta.mInternalCircle.isNull())
 		{
-			const RsGxsCircleId& internalCircleId = grpMeta.mCircleId;
+			const RsGxsCircleId& internalCircleId = grpMeta.mInternalCircle;
 			if(mCircles->isLoaded(internalCircleId))
 			{
 				const RsPgpId& pgpId = rsPeers->getGPGId(sslId);

@@ -1315,6 +1315,7 @@ int RsServer::StartupRetroShare()
         RsGeneralDataService* gxscircles_ds = new RsDataService(currGxsDir + "/", "gxscircles_db",
                         RS_SERVICE_GXS_TYPE_GXSCIRCLE, NULL, RsInitConfig::gxs_passwd);
 
+	// create GxsCircles - early, as IDs need it.
         mGxsCircles = new p3GxsCircles(gxscircles_ds, NULL, mGxsIdService);
 
         // create GXS ID service
@@ -1326,10 +1327,6 @@ int RsServer::StartupRetroShare()
 
         mGxsIdService->setNes(gxsid_ns);
         /**** GxsCircle service ****/
-
-
-        // init gxs services
-        mGxsCircles = new p3GxsCircles(gxscircles_ds, NULL, mGxsIdService);
 
         // create GXS Circle service
         RsGxsNetService* gxscircles_ns = new RsGxsNetService(

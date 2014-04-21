@@ -735,6 +735,10 @@ void RetroCursor::getString(int columnIndex, std::string &str){
                 	str.clear();
 #endif
     }
+    else
+    {
+       str.clear();
+    }
 }
 
 const void* RetroCursor::getData(int columnIndex, uint32_t &datSize){
