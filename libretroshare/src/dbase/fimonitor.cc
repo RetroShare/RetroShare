@@ -145,8 +145,8 @@ HashCache::HashCache(const std::string& path)
 		}
 		fclose(F) ;
 
-		void *decrypted_data ;
-		int decrypted_data_size ;
+		void *decrypted_data =NULL;
+		int decrypted_data_size =0;
 
 		if(!AuthSSL::getAuthSSL()->decrypt(decrypted_data, decrypted_data_size, buffer, file_size))
 		{
