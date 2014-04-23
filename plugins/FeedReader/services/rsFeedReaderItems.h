@@ -24,7 +24,7 @@
 
 #include "serialiser/rsserviceids.h"
 #include "serialiser/rsserial.h"
-#include "serialiser/rstlvtypes.h"
+#include "serialiser/rstlvstring.h"
 
 #include "p3FeedReader.h"
 

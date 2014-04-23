@@ -74,6 +74,7 @@ public:
 
 	/****************** p3Service STUFF ******************/
 	virtual int tick();
+	virtual RsServiceInfo getServiceInfo() ;
 
 	/****************** internal STUFF *******************/
 	bool getFeedToDownload(RsFeedReaderFeed &feed, const std::string &neededFeedId);

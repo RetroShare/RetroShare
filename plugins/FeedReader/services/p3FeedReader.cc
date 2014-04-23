@@ -38,7 +38,7 @@ RsFeedReader *rsFeedReader = NULL;
  *********/
 
 p3FeedReader::p3FeedReader(RsPluginHandler* pgHandler, RsForums *forums)
-	: RsPQIService(RS_SERVICE_TYPE_PLUGIN_FEEDREADER, CONFIG_TYPE_FEEDREADER, 5, pgHandler),
+	: RsPQIService(RS_SERVICE_TYPE_PLUGIN_FEEDREADER,  5, pgHandler),
 	  mFeedReaderMtx("p3FeedReader"), mDownloadMutex("p3FeedReaderDownload"), mProcessMutex("p3FeedReaderProcess"), mPreviewMutex("p3FeedReaderPreview")
 {
 	mNextFeedId = 1;
@@ -225,6 +225,22 @@ uint32_t p3FeedReader::getStandardStorageTime()
 	RsStackMutex stack(mFeedReaderMtx); /******* LOCK STACK MUTEX *********/
 
 	return mStandardStorageTime;
+}
+
+RsServiceInfo p3FeedReader::getServiceInfo()
+{
+    const std::string FEEDREADER_APP_NAME = "FEEDREADER";
+    const uint16_t FEEDREADER_APP_MAJOR_VERSION  =       1;
+    const uint16_t FEEDREADER_APP_MINOR_VERSION  =       0;
+    const uint16_t FEEDREADER_MIN_MAJOR_VERSION  =       1;
+    const uint16_t FEEDREADER_MIN_MINOR_VERSION  =       0;
+
+    return RsServiceInfo(RS_SERVICE_TYPE_PLUGIN_FEEDREADER,
+                         FEEDREADER_APP_NAME,
+                         FEEDREADER_APP_MAJOR_VERSION,
+                         FEEDREADER_APP_MINOR_VERSION,
+                         FEEDREADER_MIN_MAJOR_VERSION,
+                         FEEDREADER_MIN_MINOR_VERSION);
 }
 
 void p3FeedReader::setStandardStorageTime(uint32_t storageTime)
