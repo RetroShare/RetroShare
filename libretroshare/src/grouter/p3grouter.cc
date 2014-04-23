@@ -321,7 +321,7 @@ void p3GRouter::autoWash()
 		{
 			it->second.status_flags = RS_GROUTER_ROUTING_STATE_PEND ;
 #ifdef GROUTER_DEBUG
-			grouter_debug() << "  Scheduling the item " << std::hex << it->first << std::dec << " for sending again." << std::endl;
+			grouter_debug() << "  Scheduling the item " << std::hex << it->first << std::dec << " for sending again (next_time_delay=" << computeNextTimeDelay(it->second.last_sent - it->second.received_time) << ", now - last_sent = " << now - it->second.last_sent << "." << std::endl;
 #endif
 			++it ;
 		}
@@ -545,8 +545,6 @@ std::set<uint32_t> p3GRouter::computeRoutingFriends(const std::vector<RsPeerId>&
 	//
 	for(uint32_t i=0;i<N;++i)
 	{
-		int p = probas.size() ;
-
 		// randomly select one peer between 0 and p
 
 		float total = 0.0f ; for(uint32_t j=0;j<probas.size();++j) total += probas[j] ;	// computes the partial sum of the array
@@ -717,21 +715,21 @@ void p3GRouter::handleRecvACKItem(RsGRouterACKItem *item)
 
 	switch(item->state)
 	{
+		case RS_GROUTER_ACK_STATE_IRCV:				
 		case RS_GROUTER_ACK_STATE_RCVD:	
-			if(it->second.origin == mLinkMgr->getOwnId())
+			if(it->second.origin == mLinkMgr->getOwnId() && it->second.status_flags != RS_GROUTER_ROUTING_STATE_ARVD)
 			{
 				locked_notifyClientAcknowledged(it->first,it->second.client_id) ;
 				should_remove = true ;									
 			} // no break afterwards. That is on purpose!
 
-		case RS_GROUTER_ACK_STATE_IRCV:				
 			// Notify the origin. This is the main route and it was successful.
 																				
 #ifdef GROUTER_DEBUG
 			grouter_debug() << "  updating routing matrix." << std::endl;
 #endif
 
-			if(it->second.status_flags == RS_GROUTER_ROUTING_STATE_SENT)
+			if(it->second.status_flags != RS_GROUTER_ROUTING_STATE_ARVD)
 				forward_state = RS_GROUTER_ACK_STATE_RCVD ;
 
 			next_state = RS_GROUTER_ROUTING_STATE_ARVD ;
@@ -909,7 +907,7 @@ void p3GRouter::handleRecvDataItem(RsGRouterGenericDataItem *item)
 
 		info.origin = item->PeerId() ;
 		info.received_time = time(NULL) ;
-		info.last_sent = 0 ;
+		info.last_sent = info.received_time ;
 		info.destination_key = item->destination_key ;
 		info.status_flags = RS_GROUTER_ROUTING_STATE_PEND ;
 		info.client_id = 0 ;
@@ -986,7 +984,7 @@ void p3GRouter::sendData(const GRouterKeyId& destination,const GRouterServiceId&
 	info.status_flags = RS_GROUTER_ROUTING_STATE_PEND ;
 	info.origin = mLinkMgr->getOwnId() ;
 	info.data_item->randomized_distance = 0 ;
-	info.last_sent = 0 ;
+	info.last_sent = now ;
 	info.received_time = now ;
 	info.destination_key = destination ;
 	info.client_id = client_id ;
