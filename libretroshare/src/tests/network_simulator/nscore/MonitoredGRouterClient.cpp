@@ -21,6 +21,7 @@ void MonitoredGRouterClient::sendMessage(const GRouterKeyId& destination_key_id)
 	item->data_bytes = (unsigned char *)malloc(item->data_size) ;
 
 	RSRandom::random_bytes(item->data_bytes,item->data_size) ;
+	GRouterMsgPropagationId propagation_id ;
 
-	_grouter->sendData(destination_key_id,item) ;
+	_grouter->sendData(destination_key_id,GROUTER_CLIENT_SERVICE_ID_00,item,propagation_id) ;
 }
