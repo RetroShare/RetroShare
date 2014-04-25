@@ -8,40 +8,38 @@
 #ifndef NXSMSGSYNC_TEST_H_
 #define NXSMSGSYNC_TEST_H_
 
+#include "nxstestscenario.h"
 
 
-
-	class NxsMessageTest : public NxsTestScenario
+	class NxsMessageTest : public rs_nxs_test::NxsTestScenario
 	{
-
 	public:
 
-		NxsMessageTest(uint16_t servtype);
-		virtual ~NxsMessageTest();
-		std::string getTestName();
+		NxsMessageTest();
+		void getPeers(std::list<RsPeerId>& peerIds);
+		RsGeneralDataService* getDataService(const RsPeerId& peerId);
+		bool checkTestPassed();
+		RsNxsNetMgr* getDummyNetManager(const RsPeerId& peerId);
+		RsGcxs* getDummyCircles(const RsPeerId& peerId);
+		RsGixsReputation* getDummyReputations(const RsPeerId& peerId);
 		uint16_t getServiceType();
-		RsGeneralDataService* getDataService(const RsPeerId& peer);
-
-		/*!
-		 * Call to remove files created
-		 * in the test directory
-		 */
-		void cleanUp();
-
-		bool testPassed();
-
-	private:
-		void setUpDataBases();
-		void populateStore(RsGeneralDataService* dStore);
+		RsServiceInfo getServiceInfo();
 
 	private:
 
-		std::string mTestName;
-		std::map<RsPeerId, RsGeneralDataService*> mPeerStoreMap;
-		std::set<std::string> mStoreNames;
+		std::list<RsPeerId> mPeerIds;
+		typedef std::map<RsPeerId, RsGeneralDataService*> DataMap;
+		typedef std::map<RsPeerId, std::list<RsNxsGrp*> > ExpectedMap;
+
+		DataMap mDataServices;
+		std::map<RsPeerId, RsNxsNetMgr*> mNxsNetMgrs;
+		RsGixsReputation* mRep;
+		RsGcxs* mCircles;
+		RsServiceInfo mServInfo;
+
+		ExpectedMap mExpectedResult;
+
 		uint16_t mServType;
-
-		RsMutex mMsgTestMtx;
 
 	};
 

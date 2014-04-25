@@ -31,11 +31,13 @@ namespace rs_nxs_test
 		virtual void getPeers(std::list<RsPeerId>& peerIds) = 0;
 		virtual RsGeneralDataService* getDataService(const RsPeerId& peerId) = 0;
 		virtual bool checkTestPassed() = 0;
+		virtual bool checkDeepTestPassed() = 0;
 		virtual RsNxsNetMgr* getDummyNetManager(const RsPeerId& peerId) = 0;
 		virtual RsGcxs* getDummyCircles(const RsPeerId& peerId) = 0;
 		virtual RsGixsReputation* getDummyReputations(const RsPeerId& peerId) = 0;
 		virtual uint16_t getServiceType() = 0;
 		virtual RsServiceInfo getServiceInfo() = 0;
+
 
 	};
 }

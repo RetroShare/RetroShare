@@ -29,8 +29,6 @@ NxsGrpSync::NxsGrpSync()
 
 	for(int i =0; i < numPeers; i++)
 	{
-
-
 		RsPeerId id = RsPeerId::random();
 		mPeerIds.push_back(id);
 	}
@@ -68,8 +66,8 @@ NxsGrpSync::NxsGrpSync()
 		init_item(meta);
 		grp->metaData = meta;
 		meta->mSubscribeFlags = GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED;
-		RsNxsGrp* grp_copy = grp->clone();
 
+                RsGxsGroupId grpId = grp->grpId;
 
 		RsGeneralDataService::GrpStoreMap gsp;
 		gsp.insert(std::make_pair(grp, meta));
@@ -78,9 +76,8 @@ NxsGrpSync::NxsGrpSync()
 		// the expected result is that each peer has the group of the others
 		it = mPeerIds.begin();
 		for(; it != mPeerIds.end(); it++)
-		{
-			if(mit->first != *it)
-				mExpectedResult[*it].push_back(grp_copy);
+                {
+                    mExpectedResult[*it].push_back(grpId);
 		}
 	}
 
@@ -97,31 +94,6 @@ void NxsGrpSync::getPeers(std::list<RsPeerId>& peerIds)
 RsGeneralDataService* NxsGrpSync::getDataService(const RsPeerId& peerId)
 {
 	return mDataServices[peerId];
-}
-
-bool NxsGrpSync::checkTestPassed()
-{
-	// look at data store, as all peers should have same
-	// number of groups
-	DataMap::iterator mit = mDataServices.begin();
-	std::list<int> vals;
-	for(; mit != mDataServices.end(); mit++)
-	{
-		RsGxsGroupId::std_vector grpIds;
-		mit->second->retrieveGroupIds(grpIds);
-		vals.push_back(grpIds.size());
-	}
-
-	std::list<int>::iterator lit = vals.begin();
-	int prev = *lit;
-	bool passed = true;
-	for(; lit != vals.end(); lit++)
-	{
-		passed &= *lit == prev;
-		prev = *lit;
-	}
-
-	return passed;
 }
 
 RsNxsNetMgr* NxsGrpSync::getDummyNetManager(const RsPeerId& peerId)
@@ -160,4 +132,9 @@ rs_nxs_test::NxsGrpSync::~NxsGrpSync()
 RsServiceInfo rs_nxs_test::NxsGrpSync::getServiceInfo() {
 	return mServInfo;
 }
+
+const NxsGrpTestScenario::ExpectedMap& rs_nxs_test::NxsGrpSync::getExpectedMap() {
+	return mExpectedResult;
+}
+
 

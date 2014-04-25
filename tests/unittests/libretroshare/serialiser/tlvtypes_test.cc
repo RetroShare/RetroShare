@@ -47,7 +47,7 @@ TEST(libretroshare_serialiser, test_RsTlvFileItem)
 
 	/* initialise */
 	i1.filesize = 101010;
-	i1.hash = "ABCDEFEGHE";
+	i1.hash = RsFileHash("ABCDEFEGHE");
 	i1.name = "TestFile.txt";
 	i1.pop  = 12;
 	i1.age  = 456;
@@ -105,7 +105,7 @@ TEST(libretroshare_serialiser, test_RsTlvFileSet)
 	{
 		RsTlvFileItem fi;
 		fi.filesize = 16 + i * i;
-		fi.hash = "ABCDEF";
+		fi.hash = RsFileHash("ABCDEF");
 		std::ostringstream out;
 		out << "File" << i << "_inSet.txt";
 		fi.name = out.str();

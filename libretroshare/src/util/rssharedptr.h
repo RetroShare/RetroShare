@@ -21,26 +21,43 @@ public:
 	RsSharedPtr() : mShared(NULL), mCount(NULL) {}
 
 	RsSharedPtr(T* shared)
-	: mShared(shared), mCount(new int(0))
+	: mShared(shared), mCount(new int(0)), mSharedPtrMutex(new RsMutex("SharedMutex"))
 	{
 		mCount++;
 	}
 
 	RsSharedPtr(const RsSharedPtr<T>& rsp)
 	{
+		rsp.lock();
 		mShared = rsp.mShared;
 		mCount = rsp.mCount;
 		mCount++;
+		mSharedPtrMutex = rsp.mSharedPtrMutex;
+		rsp.unlock();
+
 	}
 
 	void operator=(const RsSharedPtr<T>& rsp)
 	{
+		rsp.lock();
+		mSharedPtrMutex = rsp.mSharedPtrMutex;
 		DecrementAndDeleteIfLast();
 		mShared = rsp.mShared;
 		RepointAndIncrement(rsp.mCount);
+
+		mSharedPtrMutex->unlock();
 	}
 
-	T* release() { mCount--; T* temp = mShared; mShared = NULL; return temp; }
+	T* release() {
+
+		lock();
+
+		mCount--; T* temp = mShared; mShared = NULL;
+
+		unlock();
+
+		return temp;
+	}
 	T* get() { return mShared; }
 
 	T& operator*(){ return *mShared; }
@@ -72,10 +89,14 @@ private:
 
 	}
 
+	void lock() const { mSharedPtrMutex->lock(); }
+	void unlock() const { mSharedPtrMutex->unlock(); }
+
 private:
 
 	int* mCount;
 	T* mShared;
+	RsMutex* mSharedPtrMutex;
 
 };
 

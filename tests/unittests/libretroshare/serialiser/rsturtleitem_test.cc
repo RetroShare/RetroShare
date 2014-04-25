@@ -136,7 +136,7 @@ RsSerialType* init_item(RsTurtleOpenTunnelItem& item)
 	item.depth = rand() ;
 	item.request_id = rand() ;
 	item.partial_tunnel_id = rand() ;
-	item.file_hash = std::string("c0edcfecc0844ef175d61dd589ab288d262b6bc8") ;
+	item.file_hash = RsFileHash("c0edcfecc0844ef175d61dd589ab288d262b6bc8") ;
 	return new RsTurtleSerialiser();
 }
 bool operator==(const RsTurtleOpenTunnelItem& it1,const RsTurtleOpenTunnelItem& it2)
@@ -189,7 +189,7 @@ bool operator==(const RsTurtleStringSearchRequestItem& it1,const RsTurtleStringS
 }
 RsSerialType* init_item(TurtleFileInfo& info)
 {
-	info.hash = "3f753e8ac3b94ab9fddfad94480f747bf4418370";
+	info.hash = RsFileHash("3f753e8ac3b94ab9fddfad94480f747bf4418370");
 	info.name = "toto.png";
 	info.size = 0x3392085443897ull ;
 	return new RsTurtleSerialiser();
