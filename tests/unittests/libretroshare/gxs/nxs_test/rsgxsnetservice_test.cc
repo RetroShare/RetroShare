@@ -8,6 +8,7 @@
 #include <gtest/gtest.h>
 
 #include "nxsgrpsync_test.h"
+#include "nxsmsgsync_test.h"
 #include "nxstesthub.h"
 
 TEST(libretroshare_gxs, gxs_grp_sync)
@@ -18,7 +19,22 @@ TEST(libretroshare_gxs, gxs_grp_sync)
 	tHub.StartTest();
 
 	// wait for ten seconds
-        rs_nxs_test::NxsTestHub::Wait(15);
+	rs_nxs_test::NxsTestHub::Wait(10);
+
+	tHub.EndTest();
+
+	ASSERT_TRUE(tHub.testsPassed());
+}
+
+TEST(libretroshare_gxs, gxs_msg_sync)
+{
+	rs_nxs_test::NxsTestScenario::pointer gsync_test = rs_nxs_test::NxsTestScenario::pointer(
+			new rs_nxs_test::NxsMsgSync);
+	rs_nxs_test::NxsTestHub tHub(gsync_test);
+	tHub.StartTest();
+
+	// wait for ten seconds
+	rs_nxs_test::NxsTestHub::Wait(10);
 
 	tHub.EndTest();
 

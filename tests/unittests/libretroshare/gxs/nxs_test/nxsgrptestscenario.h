@@ -20,8 +20,8 @@ public:
 	NxsGrpTestScenario();
 	virtual ~NxsGrpTestScenario();
 
-	bool checkTestPassed();
-	bool checkDeepTestPassed();
+	virtual bool checkTestPassed();
+	virtual bool checkDeepTestPassed();
 
 protected:
 

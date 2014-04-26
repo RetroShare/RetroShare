@@ -191,6 +191,8 @@ RsDataService::RsDataService(const std::string &serviceDir, const std::string &d
     mMsgOffSetColumns.push_back(KEY_NXS_FILE_LEN);
 
     grpIdColumn.push_back(KEY_GRP_ID);
+
+    mMsgIdColumn.push_back(KEY_MSG_ID);
 }
 
 RsDataService::~RsDataService(){
@@ -1342,6 +1344,32 @@ int RsDataService::retrieveGroupIds(std::vector<RsGxsGroupId> &grpIds)
 	}
 
 	return 1;
+}
+
+int RsDataService::retrieveMsgIds(const RsGxsGroupId& grpId,
+		RsGxsMessageId::std_vector& msgIds) {
+
+	RetroCursor* c = mDb->sqlQuery(MSG_TABLE_NAME, mMsgIdColumn, KEY_GRP_ID+ "='" + grpId.toStdString() + "'", "");
+
+	if(c)
+	{
+		bool valid = c->moveToFirst();
+
+		while(valid)
+		{
+			std::string msgId;
+			c->getString(0, msgId);
+			msgIds.push_back(RsGxsMessageId(msgId));
+			valid = c->moveToNext();
+		}
+		delete c;
+	}else
+	{
+		return 0;
+	}
+
+	return 1;
+
 }
 
 bool RsDataService::locked_updateMessageEntries(const MsgUpdates& updates)

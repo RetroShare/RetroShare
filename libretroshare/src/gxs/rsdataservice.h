@@ -114,6 +114,14 @@ public:
     int retrieveGroupIds(std::vector<RsGxsGroupId> &grpIds);
 
     /*!
+     * Retrives all msg ids in store
+     * @param grpId groupId of message ids to retrieve
+     * @param msgId msgsids retrieved
+     * @return error code
+     */
+    int retrieveMsgIds(const RsGxsGroupId& grpId, RsGxsMessageId::std_vector& msgId);
+
+    /*!
      * @return the cache size set for this RsGeneralDataService in bytes
      */
     uint32_t cacheSize() const;
@@ -249,6 +257,7 @@ private:
     std::list<std::string> msgColumns;
     std::list<std::string> msgMetaColumns;
     std::list<std::string> mMsgOffSetColumns;
+    std::list<std::string> mMsgIdColumn;
 
     std::list<std::string> grpColumns;
     std::list<std::string> grpMetaColumns;

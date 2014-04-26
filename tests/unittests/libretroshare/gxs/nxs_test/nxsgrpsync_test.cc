@@ -13,14 +13,7 @@
 
 using namespace rs_nxs_test;
 
-template<typename T>
-void copy_all_but(T& ex, const std::list<T>& s, std::list<T>& d)
-{
-	typename std::list<T>::const_iterator cit = s.begin();
-	for(; cit != s.end(); cit++)
-		if(*cit != ex)
-			d.push_back(*cit);
-}
+
 
 NxsGrpSync::NxsGrpSync()
 {
@@ -48,12 +41,14 @@ NxsGrpSync::NxsGrpSync()
 		RsNxsNetMgr* mgr = new rs_nxs_test::RsNxsNetDummyMgr(*it, otherPeers);
 		mNxsNetMgrs.insert(std::make_pair(*it, mgr));
 
-		RsNxsSimpleDummyReputation::RepMap reMap;
-		std::list<RsNxsSimpleDummyCircles::Membership> membership;
-		// now reputation service
-		mRep = new RsNxsSimpleDummyReputation(reMap, true);
-		mCircles = new RsNxsSimpleDummyCircles(membership, true);
 	}
+
+	RsNxsSimpleDummyReputation::RepMap reMap;
+	std::list<RsNxsSimpleDummyCircles::Membership> membership;
+	// now reputation service
+	mRep = new RsNxsSimpleDummyReputation(reMap, true);
+	mCircles = new RsNxsSimpleDummyCircles(membership, true);
+
 
 	// lets create some a group each for all peers
 	DataMap::iterator mit = mDataServices.begin();

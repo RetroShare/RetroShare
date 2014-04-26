@@ -3,7 +3,7 @@ CONFIG += bitdht
 
 CONFIG += gxs debug
 
-LIBS += -lgtest
+LIBS += -lgtest.a
 
 gxs {
 	DEFINES += RS_ENABLE_GXS
@@ -27,7 +27,7 @@ linux-* {
 	LIBS += -lssl -lupnp -lixml -lXss -lgnome-keyring
 	LIBS *= -lcrypto -ldl -lX11 -lz
 
-	gxs {
+gxs {
 		LIBS += ../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 
 		# We need a explicit path here, to force using the home version of sqlite3 that really encrypts the database.
@@ -261,12 +261,16 @@ HEADERS += libretroshare/gxs/common/data_support.h \
 SOURCES += libretroshare/gxs/common/data_support.cc \
 
 HEADERS +=  libretroshare/gxs/nxs_test/nxsdummyservices.h \
+	libretroshare/gxs/nxs_test/nxsgrptestscenario.h \
+	libretroshare/gxs/nxs_test/nxsmsgtestscenario.h \
 	libretroshare/gxs/nxs_test/nxsgrpsync_test.h \
 	libretroshare/gxs/nxs_test/nxsmsgsync_test.h \
 	libretroshare/gxs/nxs_test/nxstesthub.h \
 	libretroshare/gxs/nxs_test/nxstestscenario.h
 
 SOURCES +=  libretroshare/gxs/nxs_test/nxsdummyservices.cc \
+	libretroshare/gxs/nxs_test/nxsgrptestscenario.cc \
+	libretroshare/gxs/nxs_test/nxsmsgtestscenario.cc \
 	libretroshare/gxs/nxs_test/nxsgrpsync_test.cc \
 	libretroshare/gxs/nxs_test/nxsmsgsync_test.cc \
 	libretroshare/gxs/nxs_test/nxstesthub.cc \

@@ -118,6 +118,7 @@ public:
 public:
 
     typedef std::map<RsNxsGrp*, RsGxsGrpMetaData*> GrpStoreMap;
+    typedef std::map<RsNxsMsg*, RsGxsMsgMetaData*> MsgStoreMap;
 
     RsGeneralDataService(){}
     virtual ~RsGeneralDataService(){return;}
@@ -178,6 +179,14 @@ public:
      * @return error code
      */
     virtual int retrieveGroupIds(std::vector<RsGxsGroupId>& grpIds) = 0;
+
+    /*!
+     * Retrives all msg ids in store
+     * @param grpId groupId of message ids to retrieve
+     * @param msgId msgsids retrieved
+     * @return error code
+     */
+    virtual int retrieveMsgIds(const RsGxsGroupId& grpId, RsGxsMessageId::std_vector& msgId) = 0;
 
     /*!
      * @return the cache size set for this RsGeneralDataService in bytes
