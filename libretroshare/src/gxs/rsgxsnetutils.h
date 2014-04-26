@@ -83,6 +83,7 @@ public:
 	virtual ~RsNxsNetMgr(){};
     virtual const RsPeerId& getOwnId() = 0;
     virtual void getOnlineList(const uint32_t serviceId, std::set<RsPeerId>& ssl_peers) = 0;
+    virtual RsPgpId getGPGId(const RsPeerId& peerId) = 0;
 
 };
 
@@ -94,8 +95,9 @@ public:
     RsNxsNetMgrImpl(p3ServiceControl* sc);
     virtual ~RsNxsNetMgrImpl(){};
 
-    virtual const RsPeerId& getOwnId();
-    virtual void getOnlineList(const uint32_t serviceId, std::set<RsPeerId>& ssl_peers);
+    const RsPeerId& getOwnId();
+    void getOnlineList(const uint32_t serviceId, std::set<RsPeerId>& ssl_peers);
+    RsPgpId getGPGId(const RsPeerId& peerId);
 
 private:
 
@@ -243,7 +245,7 @@ public:
 	static const int MSG_ID_RECV_PEND;
 
 
-	GrpCircleVetting(RsGcxs* const circles);
+	GrpCircleVetting(RsGcxs* const circles, RsNxsNetMgr* const netMgr);
 	virtual ~GrpCircleVetting();
 	bool expired();
 	virtual int getType() const = 0;
@@ -255,13 +257,14 @@ protected:
 private:
 
 	RsGcxs* const mCircles;
+	RsNxsNetMgr* const mNetMgr;
 	time_t mTimeStamp;
 };
 
 class GrpCircleIdRequestVetting : public GrpCircleVetting
 {
 public:
-	GrpCircleIdRequestVetting(RsGcxs* const circles, std::vector<GrpIdCircleVet> mGrpCircleV, const RsPeerId& peerId);
+	GrpCircleIdRequestVetting(RsGcxs* const circles, RsNxsNetMgr* const netMgr, std::vector<GrpIdCircleVet> mGrpCircleV, const RsPeerId& peerId);
 	bool cleared();
 	int getType() const;
 	std::vector<GrpIdCircleVet> mGrpCircleV;
@@ -271,7 +274,7 @@ public:
 class MsgCircleIdsRequestVetting : public GrpCircleVetting
 {
 public:
-	MsgCircleIdsRequestVetting(RsGcxs* const circles, std::vector<MsgIdCircleVet> msgs, const RsGxsGroupId& grpId,
+	MsgCircleIdsRequestVetting(RsGcxs* const circles, RsNxsNetMgr* const netMgr, std::vector<MsgIdCircleVet> msgs, const RsGxsGroupId& grpId,
 			const RsPeerId& peerId, const RsGxsCircleId& circleId);
 	bool cleared();
 	int getType() const;

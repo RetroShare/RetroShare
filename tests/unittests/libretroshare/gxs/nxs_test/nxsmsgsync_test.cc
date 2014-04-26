@@ -20,6 +20,7 @@ rs_nxs_test::NxsMsgSync::NxsMsgSync()
 {
 	int numPeers = 2;
 
+	// create 2 peers
 	for(int i =0; i < numPeers; i++)
 	{
 		RsPeerId id = RsPeerId::random();
@@ -31,7 +32,7 @@ rs_nxs_test::NxsMsgSync::NxsMsgSync()
 	for(; it != mPeerIds.end(); it++)
 	{
 		// data stores
-		RsGeneralDataService* ds = new RsDataService("./", "grp_store_" +
+		RsGeneralDataService* ds = new RsDataService("./", "data_store_" +
 				it->toStdString(), mServType, NULL, "key");
 		mDataServices.insert(std::make_pair(*it, ds));
 
@@ -57,16 +58,17 @@ rs_nxs_test::NxsMsgSync::NxsMsgSync()
 		std::auto_ptr<RsNxsGrp> grp = std::auto_ptr<RsNxsGrp>(new RsNxsGrp(mServType));
 
 		init_item(*grp);
-                RsGxsGrpMetaData* meta = new RsGxsGrpMetaData();
-                init_item(meta);
-                meta->mReputationCutOff = 0;
+		RsGxsGrpMetaData* meta = new RsGxsGrpMetaData();
+		init_item(meta);
+		meta->mReputationCutOff = 0;
 		meta->mGroupId = grp->grpId;
                 grp->metaData = meta;
 		meta->mSubscribeFlags = GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED;
+		meta->mCircleType = GXS_CIRCLE_TYPE_PUBLIC;
 
 		RsGxsGroupId grpId = grp->grpId;
 
-		// the expected result is that each peer has the group of the others
+		// the expected result is that each peer has all messages
 		it = mPeerIds.begin();
 
 		DataMap::iterator mit = mDataServices.begin();
@@ -95,6 +97,7 @@ rs_nxs_test::NxsMsgSync::NxsMsgSync()
 				RsGxsMsgMetaData* msgMeta = new RsGxsMsgMetaData();
 				init_item(msgMeta);
 				msgMeta->mGroupId = grp->grpId;
+				msgMeta->mMsgId = msg->msgId;
 				RsGeneralDataService::MsgStoreMap msm;
 				msm.insert(std::make_pair(msg , msgMeta));
 				RsGxsMessageId msgId = msg->msgId;

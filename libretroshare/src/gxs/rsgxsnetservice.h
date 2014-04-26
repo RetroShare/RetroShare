@@ -231,11 +231,19 @@ private:
     void locked_genReqGrpTransaction(NxsTransaction* tr);
 
     /*!
-     * Generates new transaction to send msg data based on list
-     * of grpids received from peer stored in passed transaction
+     * This first checks if one can send a grpId based circles
+     * If it can send, then it call locked_genSendMsgsTransaction
      * @param tr transaction responsible for generating grp request
+     * @see locked_genSendMsgsTransaction
      */
-    void locked_genSendMsgsTransaction(NxsTransaction* tr);
+    void locked_checkSendMsgsTransaction(NxsTransaction* tr);
+
+    /*!
+	 * Generates new transaction to send msg data based on list
+	 * of grpids received from peer stored in passed transaction
+	 * @param tr transaction responsible for generating grp request
+	 */
+	void locked_genSendMsgsTransaction(NxsTransaction* tr);
 
     /*!
      * Generates new transaction to send grp data based on list

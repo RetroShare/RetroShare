@@ -213,8 +213,8 @@ const int GrpCircleVetting::MSG_ID_RECV_PEND = 3;
 GrpIdCircleVet::GrpIdCircleVet(const RsGxsGroupId& grpId, const RsGxsCircleId& circleId)
  : mGroupId(grpId), mCircleId(circleId), mCleared(false) {}
 
-GrpCircleVetting::GrpCircleVetting(RsGcxs* const circles)
- : mCircles(circles) {}
+GrpCircleVetting::GrpCircleVetting(RsGcxs* const circles, RsNxsNetMgr* const netMgr)
+ : mCircles(circles), mNetMgr(netMgr) {}
 
 GrpCircleVetting::~GrpCircleVetting() {}
 
@@ -226,7 +226,7 @@ bool GrpCircleVetting::canSend(const SSLIdType& peerId, const RsGxsCircleId& cir
 {
 	if(mCircles->isLoaded(circleId))
 	{
-		const RsPgpId& pgpId = rsPeers->getGPGId(peerId);
+		const RsPgpId& pgpId = mNetMgr->getGPGId(peerId);
 		return mCircles->canSend(circleId, pgpId);
 	}
 
@@ -236,8 +236,8 @@ bool GrpCircleVetting::canSend(const SSLIdType& peerId, const RsGxsCircleId& cir
 }
 
 GrpCircleIdRequestVetting::GrpCircleIdRequestVetting(
-		RsGcxs* const circles, std::vector<GrpIdCircleVet> grpCircleV, const RsPeerId& peerId)
- : GrpCircleVetting(circles), mGrpCircleV(grpCircleV), mPeerId(peerId) {}
+		RsGcxs* const circles, RsNxsNetMgr* const netMgr, std::vector<GrpIdCircleVet> grpCircleV, const RsPeerId& peerId)
+ : GrpCircleVetting(circles, netMgr), mGrpCircleV(grpCircleV), mPeerId(peerId) {}
 
 bool GrpCircleIdRequestVetting::cleared()
 {
@@ -274,10 +274,10 @@ MsgIdCircleVet::MsgIdCircleVet(const RsGxsMessageId& msgId,
  : mMsgId(msgId), mAuthorId(authorId) {
 }
 
-MsgCircleIdsRequestVetting::MsgCircleIdsRequestVetting(RsGcxs* const circles,
+MsgCircleIdsRequestVetting::MsgCircleIdsRequestVetting(RsGcxs* const circles, RsNxsNetMgr* const netMgr,
 		std::vector<MsgIdCircleVet> msgs, const RsGxsGroupId& grpId,
 		const RsPeerId& peerId, const RsGxsCircleId& circleId)
-: GrpCircleVetting(circles), mMsgs(msgs), mGrpId(grpId), mPeerId(peerId), mCircleId(circleId) {}
+: GrpCircleVetting(circles, netMgr), mMsgs(msgs), mGrpId(grpId), mPeerId(peerId), mCircleId(circleId) {}
 
 bool MsgCircleIdsRequestVetting::cleared()
 {
@@ -290,4 +290,9 @@ int MsgCircleIdsRequestVetting::getType() const
 {
 	return MSG_ID_SEND_PEND;
 }
+
+RsPgpId RsNxsNetMgrImpl::getGPGId(const RsPeerId& peerId) {
+	rsPeers->getGPGId(peerId);
+}
+
 

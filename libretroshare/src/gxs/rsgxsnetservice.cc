@@ -457,7 +457,7 @@ bool RsGxsNetService::locked_canReceive(const RsGxsGrpMetaData * const grpMeta,
 
 			if(mCircles->isLoaded(grpMeta->mCircleId))
 			{
-				const RsPgpId& pgpId = rsPeers->getGPGId(peerId);
+				const RsPgpId& pgpId = mNetMgr->getGPGId(peerId);
 				return mCircles->canSend(grpMeta->mCircleId, pgpId);
 			}
 
@@ -1912,6 +1912,7 @@ void RsGxsNetService::locked_genSendMsgsTransaction(NxsTransaction* tr)
 		return;
 	}
 
+	// hacky assumes a transaction only consist of a single grpId
 	RsGxsGroupId grpId;
 
 	for(;lit != tr->mItems.end(); lit++)
@@ -2144,7 +2145,7 @@ void RsGxsNetService::handleRecvSyncGroup(RsNxsSyncGrp* item)
 
 	if(!toVet.empty())
 	{
-		mPendingCircleVets.push_back(new GrpCircleIdRequestVetting(mCircles, toVet, peer));
+		mPendingCircleVets.push_back(new GrpCircleIdRequestVetting(mCircles, mNetMgr, toVet, peer));
 	}
 
 	locked_pushGrpRespFromList(itemL, peer, transN);
@@ -2171,7 +2172,7 @@ bool RsGxsNetService::canSendGrpId(const RsPeerId& sslId, RsGxsGrpMetaData& grpM
 	{
 		if(mCircles->isLoaded(circleId))
 		{
-			const RsPgpId& pgpId = rsPeers->getGPGId(sslId);
+			const RsPgpId& pgpId = mNetMgr->getGPGId(sslId);
 			return mCircles->canSend(circleId, pgpId);
 		}
 
@@ -2188,7 +2189,7 @@ bool RsGxsNetService::canSendGrpId(const RsPeerId& sslId, RsGxsGrpMetaData& grpM
 			const RsGxsCircleId& internalCircleId = grpMeta.mInternalCircle;
 			if(mCircles->isLoaded(internalCircleId))
 			{
-				const RsPgpId& pgpId = rsPeers->getGPGId(sslId);
+				const RsPgpId& pgpId = mNetMgr->getGPGId(sslId);
 				return mCircles->canSend(internalCircleId, pgpId);
 			}
 
@@ -2261,7 +2262,7 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsg* item)
 
 	uint32_t transN = locked_getTransactionId();
 
-	if(/*canSendMsgIds(msgMetas, *grpMeta, peer)*/ true)
+	if(canSendMsgIds(msgMetas, *grpMeta, peer))
 	{
 		std::vector<RsGxsMsgMetaData*>::iterator vit = msgMetas.begin();
 
@@ -2337,7 +2338,7 @@ bool RsGxsNetService::canSendMsgIds(const std::vector<RsGxsMsgMetaData*>& msgMet
 	{
 		if(mCircles->isLoaded(circleId))
 		{
-			const RsPgpId& pgpId = rsPeers->getGPGId(sslId);
+			const RsPgpId& pgpId = mNetMgr->getGPGId(sslId);
 			return mCircles->canSend(circleId, pgpId);
 		}
 
@@ -2353,7 +2354,7 @@ bool RsGxsNetService::canSendMsgIds(const std::vector<RsGxsMsgMetaData*>& msgMet
 		}
 
 		if(!toVet.empty())
-			mPendingCircleVets.push_back(new MsgCircleIdsRequestVetting(mCircles, toVet, grpMeta.mGroupId,
+			mPendingCircleVets.push_back(new MsgCircleIdsRequestVetting(mCircles, mNetMgr, toVet, grpMeta.mGroupId,
 					sslId, grpMeta.mCircleId));
 
 		return false;
@@ -2365,10 +2366,10 @@ bool RsGxsNetService::canSendMsgIds(const std::vector<RsGxsMsgMetaData*>& msgMet
 		// is the personal circle owner
 		if(!grpMeta.mInternalCircle.isNull())
 		{
-			const RsGxsCircleId& internalCircleId = grpMeta.mCircleId;
+			const RsGxsCircleId& internalCircleId = grpMeta.mInternalCircle;
 			if(mCircles->isLoaded(internalCircleId))
 			{
-				const RsPgpId& pgpId = rsPeers->getGPGId(sslId);
+				const RsPgpId& pgpId = mNetMgr->getGPGId(sslId);
 				return mCircles->canSend(internalCircleId, pgpId);
 			}
 
@@ -2384,7 +2385,7 @@ bool RsGxsNetService::canSendMsgIds(const std::vector<RsGxsMsgMetaData*>& msgMet
 			}
 
 			if(!toVet.empty())
-				mPendingCircleVets.push_back(new MsgCircleIdsRequestVetting(mCircles, toVet, grpMeta.mGroupId,
+				mPendingCircleVets.push_back(new MsgCircleIdsRequestVetting(mCircles, mNetMgr, toVet, grpMeta.mGroupId,
 						sslId, grpMeta.mCircleId));
 
 			return false;
