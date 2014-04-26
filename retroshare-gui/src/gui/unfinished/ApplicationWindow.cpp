@@ -120,7 +120,7 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WindowFlags flags)
     WikiDialog *wikiDialog = NULL;
     ui.stackPages->add(wikiDialog = new WikiDialog(ui.stackPages),
                       createPageAction(QIcon(IMAGE_WIKI), tr("Wiki Pages"), grp));
-
+#if 0
     GxsForumsDialog *gxsforumsDialog = NULL;
     ui.stackPages->add(gxsforumsDialog = new GxsForumsDialog(ui.stackPages),
                       createPageAction(QIcon(IMAGE_GXSFORUMS), tr("GxsForums"), grp));
@@ -129,6 +129,7 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WindowFlags flags)
     ui.stackPages->add(gxschannelDialog = new ChannelDialog(ui.stackPages),
                       createPageAction(QIcon(IMAGE_GXSCHANNELS), tr("GxsChannels"), grp));
     gxschannelDialog->setup();
+#endif
 
 // THESE HAVE TO BE CONVERTED TO VEG FORMAT
 #if USE_VEG_SERVICE

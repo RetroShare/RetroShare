@@ -90,6 +90,9 @@
 #include <retroshare/rsfiles.h>
 #include <retroshare/rsnotify.h>
 
+#include "gui/gxschannels/ChannelDialog.h"
+#include "gui/gxsforums/GxsForumsDialog.h"
+
 #include "gui/connect/ConnectFriendWizard.h"
 #include "util/rsguiversion.h"
 #include "settings/rsettingswin.h"
@@ -154,6 +157,8 @@
 #define IMAGE_BLOGS             ":/images/kblogger.png"
 #define IMAGE_DHT               ":/images/dht16.png"
 #define IMAGE_CHATLOBBY			":/images/chat_32.png"
+#define IMAGE_GXSCHANNELS       ":/images/channels.png"
+#define IMAGE_GXSFORUMS         ":/images/konversation.png"
 
 /*static*/ MainWindow *MainWindow::_instance = NULL;
 
@@ -267,11 +272,14 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
                       action = createPageAction(QIcon(IMAGE_MESSAGES), tr("Messages"), grp));
     notify.push_back(QPair<MainPage*, QAction*>(messagesDialog, action));
 
-#if 0
-    ui->stackPages->add(channelFeed = new ChannelFeed(ui->stackPages),
-                      action = createPageAction(QIcon(IMAGE_CHANNELS), tr("Channels"), grp));
-    notify.push_back(QPair<MainPage*, QAction*>(channelFeed, action));
-#endif
+    ui->stackPages->add(gxschannelDialog = new ChannelDialog(ui->stackPages),
+                      action = createPageAction(QIcon(IMAGE_GXSCHANNELS), tr("Channels"), grp));
+    gxschannelDialog->setup();
+    notify.push_back(QPair<MainPage*, QAction*>(gxschannelDialog, action));
+
+    ui->stackPages->add(gxsforumDialog = new GxsForumsDialog(ui->stackPages),
+                      action = createPageAction(QIcon(IMAGE_GXSFORUMS), tr("Forums"), grp));
+    notify.push_back(QPair<MainPage*, QAction*>(gxsforumDialog, action));
 
 #ifdef BLOGS
      ui->stackPages->add(blogsFeed = new BlogsDialog(ui->stackPages), createPageAction(QIcon(IMAGE_BLOGS), tr("Blogs"), grp));

@@ -38,8 +38,9 @@
 
 /** Constructor */
 GxsIdChooser::GxsIdChooser(QWidget *parent)
-: QComboBox(parent), mFlags(IDCHOOSER_ANON_DEFAULT), mDefaultId("")
+: QComboBox(parent), mFlags(IDCHOOSER_ANON_DEFAULT)
 {
+	mDefaultId.clear() ;
 	mTimer = NULL;
 	mTimerCount = 0;
 
