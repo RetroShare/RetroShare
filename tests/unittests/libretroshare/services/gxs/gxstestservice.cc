@@ -61,7 +61,8 @@ uint32_t GxsTestService::testAuthenPolicy(uint32_t testMode)
 
 	// Edits generally need an authors signature.
 
-	flag = GXS_SERV::MSG_AUTHEN_ROOT_PUBLISH_SIGN | GXS_SERV::MSG_AUTHEN_CHILD_AUTHOR_SIGN;
+	//flag = GXS_SERV::MSG_AUTHEN_ROOT_PUBLISH_SIGN | GXS_SERV::MSG_AUTHEN_CHILD_AUTHOR_SIGN;
+	flag = GXS_SERV::MSG_AUTHEN_ROOT_AUTHOR_SIGN | GXS_SERV::MSG_AUTHEN_CHILD_AUTHOR_SIGN;
 	RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::PUBLIC_GRP_BITS);
 
 	flag |= GXS_SERV::MSG_AUTHEN_CHILD_PUBLISH_SIGN;
@@ -225,6 +226,36 @@ bool GxsTestService::submitTestGroup(uint32_t &token, RsTestGroup &group)
 	RsGenExchange::publishGroup(token, groupItem);
 	return true;
 }
+
+RsGenExchange::ServiceCreate_Return GxsTestService::service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& /*keySet*/)
+{
+        std::cerr << "GxsTestService::service_CreateGroup()";
+        std::cerr << std::endl;
+
+        RsGxsTestGroupItem *item = dynamic_cast<RsGxsTestGroupItem *>(grpItem);
+        if (!item)
+        {
+                std::cerr << "p3GxsCircles::service_CreateGroup() ERROR invalid cast";
+                std::cerr << std::endl;
+                return SERVICE_CREATE_FAIL;
+        }
+
+        std::cerr << "GxsTestService::service_CreateGroup() Details:";
+        std::cerr << std::endl;
+	std::cerr << "GroupId: " << item->meta.mGroupId;
+        std::cerr << std::endl;
+	std::cerr << "AuthorId: " << item->meta.mAuthorId;
+        std::cerr << std::endl;
+	std::cerr << "CircleType: " << item->meta.mCircleType;
+        std::cerr << std::endl;
+	std::cerr << "CircleId: " << item->meta.mCircleId;
+        std::cerr << std::endl;
+	std::cerr << "InternalCircle: " << item->meta.mInternalCircle;
+        std::cerr << std::endl;
+
+        return SERVICE_CREATE_SUCCESS;
+}
+
 
 
 bool GxsTestService::submitTestMsg(uint32_t &token, RsTestMsg &msg)

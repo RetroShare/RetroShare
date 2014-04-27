@@ -12,6 +12,9 @@ gxs {
 TEMPLATE = app
 TARGET = unittests
 
+OPENPGPSDK_DIR = ../../openpgpsdk/src
+INCLUDEPATH *= $${OPENPGPSDK_DIR} ../openpgpsdk
+
 ################################# Linux ##########################################
 # Put lib dir in QMAKE_LFLAGS so it appears before -L/usr/lib
 linux-* {
@@ -321,11 +324,14 @@ HEADERS += libretroshare/services/gxs/rsgxstestitems.h \
 	libretroshare/services/gxs/GxsIsolatedServiceTester.h \
 	libretroshare/services/gxs/GxsPeerNode.h \
 	libretroshare/services/gxs/GxsPairServiceTester.h \
+	libretroshare/services/gxs/FakePgpAuxUtils.h \
 
 SOURCES += libretroshare/services/gxs/rsgxstestitems.cc \
 	libretroshare/services/gxs/gxstestservice.cc \
 	libretroshare/services/gxs/GxsIsolatedServiceTester.cc \
 	libretroshare/services/gxs/GxsPeerNode.cc \
 	libretroshare/services/gxs/GxsPairServiceTester.cc \
+	libretroshare/services/gxs/FakePgpAuxUtils.cc \
 	libretroshare/services/gxs/nxsbasic_test.cc \
 	libretroshare/services/gxs/nxspair_tests.cc \
+	libretroshare/services/gxs/gxscircle_tests.cc \

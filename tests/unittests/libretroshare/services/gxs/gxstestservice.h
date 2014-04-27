@@ -75,6 +75,9 @@ virtual void notifyChanges(std::vector<RsGxsNotify*>& changes) ;
         // Overloaded from RsTickEvent.
 virtual void handle_event(uint32_t event_type, const std::string &elabel);
 
+	// override for examination of data.
+virtual RsGenExchange::ServiceCreate_Return service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& /*keySet*/);
+
 public:
 
 virtual void service_tick();
@@ -86,6 +89,7 @@ virtual bool getRelatedMsgs(const uint32_t &token, std::vector<RsTestMsg> &msgs)
 
 virtual bool submitTestGroup(uint32_t &token, RsTestGroup &group);
 virtual bool submitTestMsg(uint32_t &token, RsTestMsg &msg);
+
 
 virtual bool updateTestGroup(uint32_t &token, RsTestGroup &group);
 

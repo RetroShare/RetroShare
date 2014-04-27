@@ -70,7 +70,7 @@ rs_nxs_test::NxsTestHub::NxsTestHub(NxsTestScenario::pointer testScenario)
 				new NotifyWithPeerId(*cit, *this),
 				mTestScenario->getServiceInfo(),
 				mTestScenario->getDummyReputations(*cit),
-				mTestScenario->getDummyCircles(*cit), true
+				mTestScenario->getDummyCircles(*cit), NULL, true
 				)
 		);
 

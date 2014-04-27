@@ -28,7 +28,7 @@
  * This test is rather slow - should speed it up.
  */
 
-TEST(libretroshare_services, GXS_nxs_basic)
+TEST(libretroshare_services, DISABLED_GXS_nxs_basic)
 {
 	RsPeerId ownId = RsPeerId::random();
 	RsPeerId friendId = RsPeerId::random();
@@ -88,7 +88,7 @@ TEST(libretroshare_services, GXS_nxs_basic)
  *
  */
 
-TEST(libretroshare_services, GXS_nxs_basic2)
+TEST(libretroshare_services, DISABLED_GXS_nxs_basic2)
 {
 	RsPeerId ownId = RsPeerId::random();
 	RsPeerId friendId = RsPeerId::random();
