@@ -89,14 +89,15 @@ bool	p3ServiceServer::recvItem(RsRawItem *item)
 	RsStackMutex stack(srvMtx); /********* LOCKED *********/
 
 #ifdef  SERVICE_DEBUG
-	pqioutput(PQL_DEBUG_BASIC, pqiservicezone, 
-		"p3ServiceServer::incoming()");
+	std::cerr << "p3ServiceServer::incoming()";
+	std::cerr << std::endl;
 
 	{
 		std::string out;
 		rs_sprintf(out, "p3ServiceServer::incoming() PacketId: %x\nLooking for Service: %x\nItem:\n", item -> PacketId(), (item -> PacketId() & 0xffffff00));
 		item -> print_string(out);
-		pqioutput(PQL_DEBUG_BASIC, pqiservicezone, out);
+		std::cerr << out;
+		std::cerr << std::endl;
 	}
 #endif
 
@@ -115,8 +116,8 @@ bool	p3ServiceServer::recvItem(RsRawItem *item)
 	if (it == services.end())
 	{
 #ifdef  SERVICE_DEBUG
-		pqioutput(PQL_DEBUG_BASIC, pqiservicezone, 
-		"p3ServiceServer::incoming() Service: No Service - deleting");
+		std::cerr << "p3ServiceServer::incoming() Service: No Service - deleting";
+		std::cerr << std::endl;
 #endif
 		delete item;
 		return false;
@@ -124,9 +125,8 @@ bool	p3ServiceServer::recvItem(RsRawItem *item)
 
 	{
 #ifdef  SERVICE_DEBUG
-		std::string out;
-		rs_sprintf(out, "p3ServiceServer::incoming() Sending to %p", it -> second);
-		pqioutput(PQL_DEBUG_BASIC, pqiservicezone, out);
+		std::cerr << "p3ServiceServer::incoming() Sending to : " << (void *) it -> second;
+		std::cerr << std::endl;
 #endif
 
 		return (it->second) -> recv(item);
@@ -143,7 +143,7 @@ bool p3ServiceServer::sendItem(RsRawItem *item)
 #ifdef  SERVICE_DEBUG
 	std::cerr << "p3ServiceServer::sendItem()";
 	std::cerr << std::endl;
-	item -> print_string(out);
+	item -> print(std::cerr);
 	std::cerr << std::endl;
 #endif
 	if (!item)

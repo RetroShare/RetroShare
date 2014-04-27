@@ -29,8 +29,9 @@
 #include "serialiser/rsserial.h"
 
 /*******************************/
-// #define SERVICECONTROL_DEBUG
+// #define SERVICECONTROL_DEBUG	1
 /*******************************/
+#define SERVICECONTROL_DEBUG	1
 
 RsServiceControl *rsServiceControl = NULL;
 
@@ -64,10 +65,12 @@ bool p3ServiceControl::registerService(const RsServiceInfo &info, bool defaultOn
 	/* sanity check ServiceInfo */
 	mOwnServices[info.mServiceType] = info;
 
+#ifdef SERVICECONTROL_DEBUG
 	std::cerr << "p3ServiceControl::registerService() Registered ServiceID: " << info.mServiceType;
 	std::cerr << std::endl;
 	std::cerr << "p3ServiceControl::registerService() ServiceName: " << info.mServiceName;
 	std::cerr << std::endl;
+#endif
 
 
 	/* create default permissions for this service
@@ -91,8 +94,10 @@ bool p3ServiceControl::deregisterService(uint32_t serviceId)
 		return false;
 	}
 
+#ifdef SERVICECONTROL_DEBUG
 	std::cerr << "p3ServiceControl::deregisterService() Removed ServiceID: " << serviceId;
 	std::cerr << std::endl;
+#endif
 	mOwnServices.erase(it);
 	return true;
 }
@@ -103,9 +108,11 @@ bool p3ServiceControl::registerServiceMonitor(pqiServiceMonitor *monitor, uint32
 {
 	RsStackMutex stack(mMonitorMtx); /***** LOCK STACK MUTEX ****/
 
+#ifdef SERVICECONTROL_DEBUG
 	std::cerr << "p3ServiceControl::registerServiceMonitor() for ServiceId: ";
 	std::cerr << serviceId;
 	std::cerr << std::endl;
+#endif
 
 	mMonitors.insert(std::make_pair(serviceId, monitor));
 	return true;
@@ -116,8 +123,10 @@ bool p3ServiceControl::deregisterServiceMonitor(pqiServiceMonitor *monitor)
 {
 	RsStackMutex stack(mMonitorMtx); /***** LOCK STACK MUTEX ****/
 
+#ifdef SERVICECONTROL_DEBUG
 	std::cerr << "p3ServiceControl::deregisterServiceMonitor()";
 	std::cerr << std::endl;
+#endif
 
 	std::multimap<uint32_t, pqiServiceMonitor *>::iterator it;
 	for(it = mMonitors.begin(); it != mMonitors.end(); )
@@ -353,15 +362,21 @@ bool	p3ServiceControl::checkFilter(uint32_t serviceId, const RsPeerId &peerId)
 	it = mOwnServices.find(serviceId);
 	if (it != mOwnServices.end())
 	{
+#ifdef SERVICECONTROL_DEBUG
 		std::cerr << " ServiceName: " << it->second.mServiceName;
+#endif
 	}
 	else
 	{
+#ifdef SERVICECONTROL_DEBUG
 		std::cerr << " ServiceName: Unknown! ";
+#endif
 	}
 
+#ifdef SERVICECONTROL_DEBUG
 	std::cerr << " PeerId: " << peerId.toStdString();
 	std::cerr << std::endl;
+#endif
 
 	// must allow ServiceInfo through, or we have nothing!
 #define FULLID_SERVICEINFO ((((uint32_t) RS_PKT_VERSION_SERVICE) << 24) + ((RS_SERVICE_TYPE_SERVICEINFO) << 8)) 
@@ -369,8 +384,10 @@ bool	p3ServiceControl::checkFilter(uint32_t serviceId, const RsPeerId &peerId)
 	//if (serviceId == RS_SERVICE_TYPE_SERVICEINFO)
 	if (serviceId == FULLID_SERVICEINFO)
 	{
+#ifdef SERVICECONTROL_DEBUG
 		std::cerr << "p3ServiceControl::checkFilter() Allowed SERVICEINFO";
 		std::cerr << std::endl;
+#endif
 		return true;
 	}
 
@@ -379,22 +396,28 @@ bool	p3ServiceControl::checkFilter(uint32_t serviceId, const RsPeerId &peerId)
 	pit = mPeerFilterMap.find(peerId);
 	if (pit == mPeerFilterMap.end())
 	{
+#ifdef SERVICECONTROL_DEBUG
 		std::cerr << "p3ServiceControl::checkFilter() Denied No PeerId";
 		std::cerr << std::endl;
+#endif
 		return false;
 	}
 
 	if (pit->second.mDenyAll)
 	{
+#ifdef SERVICECONTROL_DEBUG
 		std::cerr << "p3ServiceControl::checkFilter() Denied Peer.DenyAll";
 		std::cerr << std::endl;
+#endif
 		return false;
 	}
 
 	if (pit->second.mAllowAll)
 	{
+#ifdef SERVICECONTROL_DEBUG
 		std::cerr << "p3ServiceControl::checkFilter() Allowed Peer.AllowAll";
 		std::cerr << std::endl;
+#endif
 		return true;
 	}
 
@@ -402,8 +425,10 @@ bool	p3ServiceControl::checkFilter(uint32_t serviceId, const RsPeerId &peerId)
 	sit = pit->second.mAllowedServices.find(serviceId);
 	if (sit == pit->second.mAllowedServices.end())
 	{
+#ifdef SERVICECONTROL_DEBUG
 		std::cerr << "p3ServiceControl::checkFilter() Denied !Peer.find(serviceId)";
 		std::cerr << std::endl;
+#endif
 		return false;
 	}
 #ifdef SERVICECONTROL_DEBUG
@@ -434,6 +459,7 @@ bool ServiceInfoCompatible(const RsServiceInfo &info1, const RsServiceInfo &info
 	if ((info1.mServiceType != info2.mServiceType) ||
 		(info1.mServiceName != info2.mServiceName))
 	{
+#ifdef SERVICECONTROL_DEBUG
 		std::cerr << "servicesCompatible: Type/Name mismatch";
 		std::cerr << std::endl;
 		std::cerr << "Info1 ID: " << info1.mServiceType;
@@ -442,6 +468,7 @@ bool ServiceInfoCompatible(const RsServiceInfo &info1, const RsServiceInfo &info
 		std::cerr << "Info2 ID: " << info2.mServiceType;
 		std::cerr << " " << info2.mServiceName;
 		std::cerr << std::endl;
+#endif
 		return false;
 	}
 
@@ -541,8 +568,10 @@ bool	p3ServiceControl::updateFilterByPeer_locked(const RsPeerId &peerId)
 	it = mServicesProvided.find(peerId);
 	if (it == mServicesProvided.end())
 	{
+#ifdef SERVICECONTROL_DEBUG
 		std::cerr << "p3ServiceControl::updateFilterByPeer_locked() Empty ... Clearing";
 		std::cerr << std::endl;
+#endif
 	
 		// empty, remove... 
 		recordFilterChanges_locked(peerId, originalFilter, peerFilter);
@@ -573,16 +602,20 @@ bool	p3ServiceControl::updateFilterByPeer_locked(const RsPeerId &peerId)
 	{
 		if (oit->first == tit->first)
 		{
+#ifdef SERVICECONTROL_DEBUG
 			std::cerr << "\tChecking Matching Service ID: " << oit->first;
 			std::cerr << std::endl;
+#endif
 			/* match of service IDs */
 			/* check if compatible */
 			if (ServiceInfoCompatible(oit->second, tit->second))
 			{
 				if (peerHasPermissionForService_locked(peerId, oit->first))
 				{
+#ifdef SERVICECONTROL_DEBUG
 					std::cerr << "\t\tMatched Service ID: " << oit->first;
 					std::cerr << std::endl;
+#endif
 					peerFilter.mAllowedServices.insert(oit->first);
 				}
 			}
@@ -593,14 +626,18 @@ bool	p3ServiceControl::updateFilterByPeer_locked(const RsPeerId &peerId)
 		{
 			if (oit->first < tit->first)
 			{
+#ifdef SERVICECONTROL_DEBUG
 				std::cerr << "\tSkipping Only Own Service ID: " << oit->first;
 				std::cerr << std::endl;
+#endif
 				oit++;
 			}
 			else
 			{
+#ifdef SERVICECONTROL_DEBUG
 				std::cerr << "\tSkipping Only Peer Service ID: " << tit->first;
 				std::cerr << std::endl;
+#endif
 				tit++;
 			}
 		}
@@ -623,8 +660,10 @@ bool	p3ServiceControl::updateFilterByPeer_locked(const RsPeerId &peerId)
 	// update or remove.
 	if (peerFilter.mDenyAll)
 	{
+#ifdef SERVICECONTROL_DEBUG
 		std::cerr << "p3ServiceControl::updateFilterByPeer_locked() Empty(2) ... Clearing";
 		std::cerr << std::endl;
+#endif
 	
 		if (fit != mPeerFilterMap.end())
 		{
@@ -633,8 +672,10 @@ bool	p3ServiceControl::updateFilterByPeer_locked(const RsPeerId &peerId)
 	}
 	else
 	{
+#ifdef SERVICECONTROL_DEBUG
 		std::cerr << "p3ServiceControl::updateFilterByPeer_locked() Installing PeerFilter";
 		std::cerr << std::endl;
+#endif
 		mPeerFilterMap[peerId] = peerFilter;
 	}
 	recordFilterChanges_locked(peerId, originalFilter, peerFilter);
@@ -644,6 +685,7 @@ bool	p3ServiceControl::updateFilterByPeer_locked(const RsPeerId &peerId)
 void	p3ServiceControl::recordFilterChanges_locked(const RsPeerId &peerId, 
 	ServicePeerFilter &originalFilter, ServicePeerFilter &updatedFilter)
 {
+#ifdef SERVICECONTROL_DEBUG
 	std::cerr << "p3ServiceControl::recordFilterChanges_locked()";
 	std::cerr << std::endl;
 	std::cerr << "PeerId: " << peerId.toStdString();
@@ -652,6 +694,7 @@ void	p3ServiceControl::recordFilterChanges_locked(const RsPeerId &peerId,
 	std::cerr << std::endl;
 	std::cerr << "UpdatedFilter: " << updatedFilter;
 	std::cerr << std::endl;
+#endif
 
 	/* find differences */
 	std::map<uint32_t, bool> changes;
@@ -665,8 +708,10 @@ void	p3ServiceControl::recordFilterChanges_locked(const RsPeerId &peerId,
 	{
 		if (*it1 < *it2)
 		{
+#ifdef SERVICECONTROL_DEBUG
 			std::cerr << "Removed Service: " << *it1;
 			std::cerr << std::endl;
+#endif
 			// removal
 			changes[*it1] = false;
 			filterChangeRemoved_locked(peerId, *it1);
@@ -674,8 +719,10 @@ void	p3ServiceControl::recordFilterChanges_locked(const RsPeerId &peerId,
 		}
 		else if (*it2 < *it1)
 		{
+#ifdef SERVICECONTROL_DEBUG
 			std::cerr << "Added Service: " << *it2;
 			std::cerr << std::endl;
+#endif
 			// addition.
 			filterChangeAdded_locked(peerId, *it2);
 			changes[*it2] = true;
@@ -691,8 +738,10 @@ void	p3ServiceControl::recordFilterChanges_locked(const RsPeerId &peerId,
 	// Handle the unfinished Set.
 	for(; it1 != eit1; it1++)
 	{
+#ifdef SERVICECONTROL_DEBUG
 		std::cerr << "Removed Service: " << *it1;
 		std::cerr << std::endl;
+#endif
 		// removal
 		changes[*it1] = false;
 		filterChangeRemoved_locked(peerId, *it1);
@@ -700,8 +749,10 @@ void	p3ServiceControl::recordFilterChanges_locked(const RsPeerId &peerId,
 
 	for(; it2 != eit2; it2++)
 	{
+#ifdef SERVICECONTROL_DEBUG
 		std::cerr << "Added Service: " << *it2;
 		std::cerr << std::endl;
+#endif
 		// addition.
 		changes[*it2] = true;
 		filterChangeAdded_locked(peerId, *it2);
@@ -745,8 +796,10 @@ void	p3ServiceControl::removePeer(const RsPeerId &peerId)
 		fit = mPeerFilterMap.find(peerId);
 		if (fit != mPeerFilterMap.end())
 		{
+#ifdef SERVICECONTROL_DEBUG
 			std::cerr << "p3ServiceControl::removePeer() clearing mPeerFilterMap";
 			std::cerr << std::endl;
+#endif
 
 			hadFilter = true;
 			originalFilter = fit->second;
@@ -754,8 +807,10 @@ void	p3ServiceControl::removePeer(const RsPeerId &peerId)
 		}
 		else
 		{
+#ifdef SERVICECONTROL_DEBUG
 			std::cerr << "p3ServiceControl::removePeer() Nothing in mPeerFilterMap";
 			std::cerr << std::endl;
+#endif
 		}
 	}
 
@@ -764,15 +819,19 @@ void	p3ServiceControl::removePeer(const RsPeerId &peerId)
 		sit = mServicesProvided.find(peerId);
 		if (sit != mServicesProvided.end())
 		{
+#ifdef SERVICECONTROL_DEBUG
 			std::cerr << "p3ServiceControl::removePeer() clearing mServicesProvided";
 			std::cerr << std::endl;
+#endif
 
 			mServicesProvided.erase(sit);
 		}
 		else
 		{
+#ifdef SERVICECONTROL_DEBUG
 			std::cerr << "p3ServiceControl::removePeer() Nothing in mServicesProvided";
 			std::cerr << std::endl;
+#endif
 		}
 	}
 
@@ -790,9 +849,11 @@ void	p3ServiceControl::removePeer(const RsPeerId &peerId)
 
 void p3ServiceControl::filterChangeRemoved_locked(const RsPeerId &peerId, uint32_t serviceId)
 {
+#ifdef SERVICECONTROL_DEBUG
 	std::cerr << "p3ServiceControl::filterChangeRemoved_locked(" << peerId.toStdString();
 	std::cerr << ", " << serviceId << ")";
 	std::cerr << std::endl;
+#endif
 
 	std::map<uint32_t, std::set<RsPeerId> >::iterator mit;
 
@@ -819,9 +880,11 @@ void p3ServiceControl::filterChangeRemoved_locked(const RsPeerId &peerId, uint32
 
 void p3ServiceControl::filterChangeAdded_locked(const RsPeerId &peerId, uint32_t serviceId)
 {
+#ifdef SERVICECONTROL_DEBUG
 	std::cerr << "p3ServiceControl::filterChangeAdded_locked(" << peerId.toStdString();
 	std::cerr << ", " << serviceId << ")";
 	std::cerr << std::endl;
+#endif
 
 	std::map<uint32_t, std::set<RsPeerId> >::iterator mit;
 
@@ -928,11 +991,13 @@ void    p3ServiceControl::statusChange(const std::list<pqipeer> &plist)
 	std::list<pqipeer>::const_iterator pit;
 	for(pit =  plist.begin(); pit != plist.end(); pit++)
 	{
+#ifdef SERVICECONTROL_DEBUG
 		std::cerr << "p3ServiceControl::statusChange() for peer: ";
 		std::cerr << " peer: " << (pit->id).toStdString();
 		std::cerr << " state: " << pit->state;
 		std::cerr << " actions: " << pit->actions;
 		std::cerr << std::endl;
+#endif
 		if (pit->state & RS_PEER_S_FRIEND)
 		{
 			// Connected / Disconnected. (interal actions).
@@ -1035,8 +1100,10 @@ void	p3ServiceControl::notifyAboutFriends()
 		{
 			return;
 		}
+#ifdef SERVICECONTROL_DEBUG
 		std::cerr << "p3ServiceControl::notifyAboutFriends(): Something has changed!";
 		std::cerr << std::endl;
+#endif
 
 		mFriendNotifications.swap(friendNotifications);
 	}
@@ -1064,8 +1131,10 @@ void	p3ServiceControl::notifyServices()
 			return;
 		}
 
+#ifdef SERVICECONTROL_DEBUG
 		std::cerr << "p3ServiceControl::notifyServices()";
 		std::cerr << std::endl;
+#endif
 
 		mNotifications.swap(notifications);
 	}
@@ -1077,16 +1146,20 @@ void	p3ServiceControl::notifyServices()
 		std::multimap<uint32_t, pqiServiceMonitor *>::const_iterator sit, eit;
 		for(it = notifications.begin(); it != notifications.end(); it++)
 		{
+#ifdef SERVICECONTROL_DEBUG
 			std::cerr << "p3ServiceControl::notifyServices(): Notifications for Service: " << it->first;
 			std::cerr << std::endl;
+#endif
 
 			sit = mMonitors.lower_bound(it->first);
 			eit = mMonitors.upper_bound(it->first);
 			if (sit == eit)
 			{
 				/* nothing to notify - skip */
+#ifdef SERVICECONTROL_DEBUG
 				std::cerr << "p3ServiceControl::notifyServices(): Noone Monitoring ... skipping";
 				std::cerr << std::endl;
+#endif
 	
 				continue;
 			}
@@ -1102,8 +1175,10 @@ void	p3ServiceControl::notifyServices()
 	
 				peers.push_back(peer);
 	
+#ifdef SERVICECONTROL_DEBUG
 				std::cerr << "p3ServiceControl::notifyServices(): Peer: " << *pit << " CONNECTED";
 				std::cerr << std::endl;
+#endif
 			}
 	
 			for(pit = it->second.mRemoved.begin(); 
@@ -1115,14 +1190,18 @@ void	p3ServiceControl::notifyServices()
 	
 				peers.push_back(peer);
 	
+#ifdef SERVICECONTROL_DEBUG
 				std::cerr << "p3ServiceControl::notifyServices(): Peer: " << *pit << " DISCONNECTED";
 				std::cerr << std::endl;
+#endif
 			}
 	
 			for(; sit != eit; sit++)
 			{
+#ifdef SERVICECONTROL_DEBUG
 				std::cerr << "p3ServiceControl::notifyServices(): Sending to Monitoring Service";
 				std::cerr << std::endl;
+#endif
 	
 				sit->second->statusChange(peers);
 			}

@@ -44,6 +44,8 @@
 
 #include "serialiser/rsgxsrecognitems.h"
 
+class PgpAuxUtils;
+
 /* 
  * Identity Service
  *
@@ -215,7 +217,7 @@ class p3IdService: public RsGxsIdExchange, public RsIdentity,
 		public GxsTokenQueue, public RsTickEvent
 {
 	public:
-	p3IdService(RsGeneralDataService* gds, RsNetworkExchangeService* nes);
+	p3IdService(RsGeneralDataService* gds, RsNetworkExchangeService* nes, PgpAuxUtils *pgpUtils);
 
 virtual RsServiceInfo getServiceInfo();
 static	uint32_t idAuthenPolicy();
@@ -415,6 +417,7 @@ virtual void handle_event(uint32_t event_type, const std::string &elabel);
 	 */
 	void checkPeerForIdentities();
 
+
 	/* MUTEX PROTECTED DATA (mIdMtx - maybe should use a 2nd?) */
 
 	bool checkRecognSignature_locked(std::string encoded, RSA &key, std::string signature);
@@ -480,6 +483,13 @@ std::string genRandomId(int len = 20);
 	std::map<uint32_t, std::list<RsGxsGroupId> > mGroupNotPresent;
 	std::map<RsGxsId, std::list<RsPeerId> > mIdsNotPresent;
 	RsNetworkExchangeService* mNes;
+
+	/**************************
+ 	 * AuxUtils provides interface to Security Function (e.g. GPGAuth(), notify etc.)
+	 * without depending directly on all these classes.
+	 */
+
+	PgpAuxUtils *mPgpUtils;
 };
 
 #endif // P3_IDENTITY_SERVICE_HEADER

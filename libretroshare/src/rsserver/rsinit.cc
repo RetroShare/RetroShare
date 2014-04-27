@@ -883,6 +883,7 @@ RsGRouter *rsGRouter = NULL ;
 #include "gxs/rsgxsnetservice.h"
 #include "retroshare/rsgxsflags.h"
 
+#include "pgp/pgpauxutils.h"
 #include "services/p3idservice.h"
 #include "services/p3gxscircles.h"
 #include "services/p3wiki.h"
@@ -1310,19 +1311,22 @@ int RsServer::StartupRetroShare()
                         RS_SERVICE_GXS_TYPE_GXSID, NULL, RsInitConfig::gxs_passwd);
 
         // init gxs services
-        mGxsIdService = new p3IdService(gxsid_ds, NULL);
+	PgpAuxUtils *pgpAuxUtils = new PgpAuxUtilsImpl();
+        mGxsIdService = new p3IdService(gxsid_ds, NULL, pgpAuxUtils);
 
+        // circles created here, as needed by Ids.
         RsGeneralDataService* gxscircles_ds = new RsDataService(currGxsDir + "/", "gxscircles_db",
                         RS_SERVICE_GXS_TYPE_GXSCIRCLE, NULL, RsInitConfig::gxs_passwd);
 
 	// create GxsCircles - early, as IDs need it.
-        mGxsCircles = new p3GxsCircles(gxscircles_ds, NULL, mGxsIdService);
+        mGxsCircles = new p3GxsCircles(gxscircles_ds, NULL, mGxsIdService, pgpAuxUtils);
 
         // create GXS ID service
         RsGxsNetService* gxsid_ns = new RsGxsNetService(
                         RS_SERVICE_GXS_TYPE_GXSID, gxsid_ds, nxsMgr,
 			mGxsIdService, mGxsIdService->getServiceInfo(), 
 			mGxsIdService, mGxsCircles,
+			pgpAuxUtils,
 			false); // don't synchronise group automatic (need explicit group request)
 
         mGxsIdService->setNes(gxsid_ns);
@@ -1332,8 +1336,8 @@ int RsServer::StartupRetroShare()
         RsGxsNetService* gxscircles_ns = new RsGxsNetService(
                         RS_SERVICE_GXS_TYPE_GXSCIRCLE, gxscircles_ds, nxsMgr,
                         mGxsCircles, mGxsCircles->getServiceInfo(), 
-			mGxsIdService, mGxsCircles);
-
+			mGxsIdService, mGxsCircles,
+			pgpAuxUtils);
 
         /**** Posted GXS service ****/
 
@@ -1349,7 +1353,8 @@ int RsServer::StartupRetroShare()
         RsGxsNetService* posted_ns = new RsGxsNetService(
                         RS_SERVICE_GXS_TYPE_POSTED, posted_ds, nxsMgr, 
 			mPosted, mPosted->getServiceInfo(), 
-			mGxsIdService, mGxsCircles);
+			mGxsIdService, mGxsCircles,
+			pgpAuxUtils);
 
         /**** Wiki GXS service ****/
 
@@ -1364,7 +1369,8 @@ int RsServer::StartupRetroShare()
         RsGxsNetService* wiki_ns = new RsGxsNetService(
                         RS_SERVICE_GXS_TYPE_WIKI, wiki_ds, nxsMgr, 
 			mWiki, mWiki->getServiceInfo(), 
-			mGxsIdService, mGxsCircles);
+			mGxsIdService, mGxsCircles,
+			pgpAuxUtils);
 
 
         /**** Forum GXS service ****/
@@ -1379,7 +1385,8 @@ int RsServer::StartupRetroShare()
         RsGxsNetService* gxsforums_ns = new RsGxsNetService(
                         RS_SERVICE_GXS_TYPE_FORUMS, gxsforums_ds, nxsMgr,
                         mGxsForums, mGxsForums->getServiceInfo(),
-			mGxsIdService, mGxsCircles);
+			mGxsIdService, mGxsCircles,
+			pgpAuxUtils);
 
 
         /**** Channel GXS service ****/
@@ -1393,7 +1400,8 @@ int RsServer::StartupRetroShare()
         RsGxsNetService* gxschannels_ns = new RsGxsNetService(
                         RS_SERVICE_GXS_TYPE_CHANNELS, gxschannels_ds, nxsMgr,
                         mGxsChannels, mGxsChannels->getServiceInfo(), 
-			mGxsIdService, mGxsCircles);
+			mGxsIdService, mGxsCircles,
+			pgpAuxUtils);
 
 
 
@@ -1409,7 +1417,8 @@ int RsServer::StartupRetroShare()
         RsGxsNetService* photo_ns = new RsGxsNetService(
                         RS_SERVICE_GXS_TYPE_PHOTO, photo_ds, nxsMgr, 
 			mPhoto, mPhoto->getServiceInfo(), 
-			mGxsIdService, mGxsCircles);
+			mGxsIdService, mGxsCircles,
+			pgpAuxUtils);
 #endif
 
 #if 0 // WIRE IS DISABLED FOR THE MOMENT
@@ -1424,7 +1433,8 @@ int RsServer::StartupRetroShare()
         RsGxsNetService* wire_ns = new RsGxsNetService(
                         RS_SERVICE_GXS_TYPE_WIRE, wire_ds, nxsMgr, 
 			mWire, mWire->getServiceInfo(), 
-			mGxsIdService, mGxsCircles);
+			mGxsIdService, mGxsCircles,
+			pgpAuxUtils);
 #endif
         // now add to p3service
         pqih->addService(gxsid_ns, true);

@@ -24,16 +24,17 @@
  */
 
 #include "services/p3idservice.h"
+#include "pgp/pgpauxutils.h"
 #include "serialiser/rsgxsiditems.h"
 #include "retroshare/rsgxsflags.h"
-#include "rsserver/p3face.h"
 #include "util/rsrandom.h"
 #include "util/rsstring.h"
 #include "util/radix64.h"
 
-#include "pqi/authgpg.h"
 
-#include <retroshare/rspeers.h>
+//#include "pqi/authgpg.h"
+
+//#include <retroshare/rspeers.h>
 
 #include <sstream>
 #include <stdio.h>
@@ -136,12 +137,13 @@ RsIdentity *rsIdentity = NULL;
 /******************* Startup / Tick    ******************************************/
 /********************************************************************************/
 
-p3IdService::p3IdService(RsGeneralDataService *gds, RsNetworkExchangeService *nes)
+p3IdService::p3IdService(RsGeneralDataService *gds, RsNetworkExchangeService *nes, PgpAuxUtils *pgpUtils)
 	: RsGxsIdExchange(gds, nes, new RsGxsIdSerialiser(), RS_SERVICE_GXS_TYPE_GXSID, idAuthenPolicy()), 
 	RsIdentity(this), GxsTokenQueue(this), RsTickEvent(), 
 	mPublicKeyCache(DEFAULT_MEM_CACHE_SIZE, "GxsIdPublicKeyCache"), 
 	mPrivateKeyCache(DEFAULT_MEM_CACHE_SIZE, "GxsIdPrivateKeyCache"), 
-	mIdMtx("p3IdService"), mNes(nes)
+	mIdMtx("p3IdService"), mNes(nes),
+	mPgpUtils(pgpUtils)
 {
 	mBgSchedule_Mode = 0;
 	mBgSchedule_Active = false;
@@ -2078,7 +2080,7 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
 
 		/* */
 		PGPFingerprintType ownFinger;
-		RsPgpId ownId(AuthGPG::getAuthGPG()->getGPGOwnId());
+		RsPgpId ownId(mPgpUtils->getPGPOwnId());
 
 		std::cerr << "p3IdService::service_CreateGroup() OwnPgpID: " << ownId.toStdString();
 		std::cerr << std::endl;
@@ -2090,7 +2092,7 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
 //		}
 #endif
 
-		if (!AuthGPG::getAuthGPG()->getKeyFingerprint(ownId,ownFinger))
+		if (!mPgpUtils->getKeyFingerprint(ownId,ownFinger))
 		{
 			std::cerr << "p3IdService::service_CreateGroup() ERROR Own Finger is stuck";
 			std::cerr << std::endl;
@@ -2118,7 +2120,7 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
 		unsigned int sign_size = MAX_SIGN_SIZE;
 		int result ;
 
-		if (!RsServer::notify()->askForDeferredSelfSignature((void *) hash.toByteArray(), hash.SIZE_IN_BYTES, signarray, &sign_size,result))
+		if (!mPgpUtils->askForDeferredSelfSignature((void *) hash.toByteArray(), hash.SIZE_IN_BYTES, signarray, &sign_size,result))
 		{
 			/* error */
 			std::cerr << "p3IdService::service_CreateGroup() ERROR Signing stuff";
@@ -2438,7 +2440,7 @@ bool p3IdService::checkId(const RsGxsIdGroup &grp, RsPgpId &pgpId)
 
 			/* miracle match! */
 			/* check signature too */
-			if (AuthGPG::getAuthGPG()->VerifySignBin((void *) hash.toByteArray(), hash.SIZE_IN_BYTES, 
+			if (mPgpUtils->VerifySignBin((void *) hash.toByteArray(), hash.SIZE_IN_BYTES, 
 				(unsigned char *) grp.mPgpIdSign.c_str(), grp.mPgpIdSign.length(), 
 				mit->second))
 			{
@@ -2488,7 +2490,7 @@ void p3IdService::getPgpIdList()
 #endif // DEBUG_IDS
 
  	std::list<RsPgpId> list;
-	AuthGPG::getAuthGPG()->getGPGFilteredList(list);
+	mPgpUtils->getGPGAllList(list);
 
 	RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 
@@ -2499,7 +2501,7 @@ void p3IdService::getPgpIdList()
 	{
  		RsPgpId pgpId(*it);
 		PGPFingerprintType fp;
-		AuthGPG::getAuthGPG()->getKeyFingerprint(pgpId, fp);
+		mPgpUtils->getKeyFingerprint(pgpId, fp);
 
 #ifdef DEBUG_IDS
 		std::cerr << "p3IdService::getPgpIdList() Id: " << pgpId.toStdString() << " => " << fp.toStdString();
@@ -2940,8 +2942,9 @@ void p3IdService::generateDummy_OwnIds()
 
 	/* grab all the gpg ids... and make some ids */
 
-	RsPgpId ownId = rsPeers->getGPGOwnId();
+	RsPgpId ownId = mPgpUtils->getPGPOwnId();
 
+#if 0
 	// generate some ownIds.
     //int genCount = 0;
 	int i;
@@ -2967,6 +2970,7 @@ void p3IdService::generateDummy_OwnIds()
 		uint32_t dummyToken = 0;
 		createGroup(dummyToken, id);
 	}
+#endif
 }
 
 
@@ -2977,7 +2981,7 @@ void p3IdService::generateDummy_FriendPGP()
 	// Now Generate for friends.
 	std::list<RsPgpId> gpgids;
 	std::list<RsPgpId>::const_iterator it;
-	rsPeers->getGPGAllList(gpgids);
+	mPgpUtils->getGPGAllList(gpgids);
 
 	RsGxsIdGroup id;
 
@@ -2987,6 +2991,7 @@ void p3IdService::generateDummy_FriendPGP()
 	it = gpgids.begin();
 	for(int j = 0; j < idx; j++, it++) ;
 
+#if 0
 	// HACK FOR DUMMY GENERATION.
 	id.mMeta.mAuthorId = RsGxsId::random() ;
 
@@ -3006,6 +3011,7 @@ void p3IdService::generateDummy_FriendPGP()
 
 	uint32_t dummyToken = 0;
 	createGroup(dummyToken, id);
+#endif
 }
 
 

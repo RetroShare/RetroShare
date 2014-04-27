@@ -126,14 +126,14 @@ class RsGxsCircleCache
 };
 
 
-
+class PgpAuxUtils;
 
 class p3GxsCircles: public RsGxsCircleExchange, public RsGxsCircles,
 		public GxsTokenQueue, public RsTickEvent
 {
 	public:
 	p3GxsCircles(RsGeneralDataService* gds, RsNetworkExchangeService* nes, 
-		p3IdService *identities);
+		p3IdService *identities, PgpAuxUtils *pgpUtils);
 
 virtual RsServiceInfo getServiceInfo();
 
@@ -196,6 +196,7 @@ virtual RsServiceInfo getServiceInfo();
 
 
 	p3IdService *mIdentities; // Needed for constructing Circle Info,
+	PgpAuxUtils *mPgpUtils;
 
 	RsMutex mCircleMtx; /* Locked Below Here */
 

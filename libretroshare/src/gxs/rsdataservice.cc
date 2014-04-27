@@ -140,7 +140,9 @@
 #define COL_IDENTITY 4
 #define COL_HASH 5
 
-#define RS_DATA_SERVICE_DEBUG
+/*****
+ * #define RS_DATA_SERVICE_DEBUG  1
+ ****/
 
 const std::string RsGeneralDataService::GRP_META_SERV_STRING = KEY_NXS_SERV_STRING;
 const std::string RsGeneralDataService::GRP_META_STATUS = KEY_GRP_STATUS;
@@ -196,6 +198,12 @@ RsDataService::RsDataService(const std::string &serviceDir, const std::string &d
 }
 
 RsDataService::~RsDataService(){
+
+#ifdef RS_DATA_SERVICE_DEBUG
+	std::cerr << "RsDataService::~RsDataService()";
+	std::cerr << std::endl;
+#endif
+
     mDb->closeDb();
     delete mDb;
 }
@@ -270,6 +278,11 @@ void RsDataService::initialise(){
 
 RsGxsGrpMetaData* RsDataService::locked_getGrpMeta(RetroCursor &c)
 {
+#ifdef RS_DATA_SERVICE_DEBUG
+	std::cerr << "RsDataService::locked_getGrpMeta()";
+	std::cerr << std::endl;
+#endif
+
     RsGxsGrpMetaData* grpMeta = new RsGxsGrpMetaData();
 
     bool ok = true;
@@ -283,11 +296,9 @@ RsGxsGrpMetaData* RsDataService::locked_getGrpMeta(RetroCursor &c)
     std::string tempId;
     c.getString(COL_GRP_ID, tempId);
     grpMeta->mGroupId = RsGxsGroupId(tempId);
-
-
-
     c.getString(COL_IDENTITY, tempId);
     grpMeta->mAuthorId = RsGxsId(tempId);
+
     c.getString(COL_GRP_NAME, grpMeta->mGroupName);
     c.getString(COL_ORIG_GRP_ID, tempId);
     grpMeta->mOrigGrpId = RsGxsGroupId(tempId);
@@ -1081,10 +1092,19 @@ void RsDataService::locked_retrieveMsgMeta(RetroCursor *c, std::vector<RsGxsMsgM
 
 int RsDataService::retrieveGxsGrpMetaData(std::map<RsGxsGroupId, RsGxsGrpMetaData *>& grp)
 {
+#ifdef RS_DATA_SERVICE_DEBUG
+	std::cerr << "RsDataService::retrieveGxsGrpMetaData()";
+	std::cerr << std::endl;
+#endif
 
     RsStackMutex stack(mDbMutex);
 
     if(grp.empty()){
+
+#ifdef RS_DATA_SERVICE_DEBUG
+	std::cerr << "RsDataService::retrieveGxsGrpMetaData() retrieving all";
+	std::cerr << std::endl;
+#endif
 
         RetroCursor* c = mDb->sqlQuery(GRP_TABLE_NAME, grpMetaColumns, "", "");
 
@@ -1095,7 +1115,6 @@ int RsDataService::retrieveGxsGrpMetaData(std::map<RsGxsGroupId, RsGxsGrpMetaDat
             while(valid)
             {
                 RsGxsGrpMetaData* g = locked_getGrpMeta(*c);
-
                 if(g)
                 {
                     grp[g->mGroupId] = g;

@@ -46,6 +46,7 @@ typedef std::map<uint32_t, NxsTransaction*> TransactionIdMap;
 /// to keep track of peers active transactions
 typedef std::map<RsPeerId, TransactionIdMap > TransactionsPeerMap;
 
+class PgpAuxUtils;
 
 /*!
  * This class implements the RsNetWorkExchangeService
@@ -80,7 +81,9 @@ public:
                 RsNxsNetMgr *netMgr, 
  		RsNxsObserver *nxsObs,  // used to be = NULL.
 		const RsServiceInfo serviceInfo,
-		RsGixsReputation* reputations = NULL, RsGcxs* circles = NULL, bool grpAutoSync = true);
+		RsGixsReputation* reputations = NULL, RsGcxs* circles = NULL, 
+		PgpAuxUtils *pgpUtils = NULL,
+		bool grpAutoSync = true);
 
     virtual ~RsGxsNetService();
 
@@ -429,6 +432,7 @@ private:
 
     RsGcxs* mCircles;
     RsGixsReputation* mReputations;
+    PgpAuxUtils *mPgpUtils;
     bool mGrpAutoSync;
 
     // need to be verfied

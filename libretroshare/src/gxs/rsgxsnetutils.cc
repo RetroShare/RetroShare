@@ -25,7 +25,7 @@
 
 #include "rsgxsnetutils.h"
 #include "pqi/p3servicecontrol.h"
-#include "retroshare/rspeers.h"
+#include "pgp/pgpauxutils.h"
 
 
  const time_t AuthorPending::EXPIRY_PERIOD_OFFSET = 30; // 30 seconds
@@ -213,8 +213,8 @@ const int GrpCircleVetting::MSG_ID_RECV_PEND = 3;
 GrpIdCircleVet::GrpIdCircleVet(const RsGxsGroupId& grpId, const RsGxsCircleId& circleId)
  : mGroupId(grpId), mCircleId(circleId), mCleared(false) {}
 
-GrpCircleVetting::GrpCircleVetting(RsGcxs* const circles, RsNxsNetMgr* const netMgr)
- : mCircles(circles), mNetMgr(netMgr) {}
+GrpCircleVetting::GrpCircleVetting(RsGcxs* const circles, PgpAuxUtils *pgpUtils)
+ : mCircles(circles), mPgpUtils(pgpUtils) {}
 
 GrpCircleVetting::~GrpCircleVetting() {}
 
@@ -226,7 +226,7 @@ bool GrpCircleVetting::canSend(const SSLIdType& peerId, const RsGxsCircleId& cir
 {
 	if(mCircles->isLoaded(circleId))
 	{
-		const RsPgpId& pgpId = mNetMgr->getGPGId(peerId);
+		const RsPgpId& pgpId = mPgpUtils->getPGPId(peerId);
 		return mCircles->canSend(circleId, pgpId);
 	}
 
@@ -236,8 +236,10 @@ bool GrpCircleVetting::canSend(const SSLIdType& peerId, const RsGxsCircleId& cir
 }
 
 GrpCircleIdRequestVetting::GrpCircleIdRequestVetting(
-		RsGcxs* const circles, RsNxsNetMgr* const netMgr, std::vector<GrpIdCircleVet> grpCircleV, const RsPeerId& peerId)
- : GrpCircleVetting(circles, netMgr), mGrpCircleV(grpCircleV), mPeerId(peerId) {}
+		RsGcxs* const circles, 
+		PgpAuxUtils *pgpUtils,
+		std::vector<GrpIdCircleVet> grpCircleV, const RsPeerId& peerId)
+ : GrpCircleVetting(circles, pgpUtils), mGrpCircleV(grpCircleV), mPeerId(peerId) {}
 
 bool GrpCircleIdRequestVetting::cleared()
 {
@@ -274,10 +276,11 @@ MsgIdCircleVet::MsgIdCircleVet(const RsGxsMessageId& msgId,
  : mMsgId(msgId), mAuthorId(authorId) {
 }
 
-MsgCircleIdsRequestVetting::MsgCircleIdsRequestVetting(RsGcxs* const circles, RsNxsNetMgr* const netMgr,
+MsgCircleIdsRequestVetting::MsgCircleIdsRequestVetting(RsGcxs* const circles,
+		PgpAuxUtils *pgpUtils,
 		std::vector<MsgIdCircleVet> msgs, const RsGxsGroupId& grpId,
 		const RsPeerId& peerId, const RsGxsCircleId& circleId)
-: GrpCircleVetting(circles, netMgr), mMsgs(msgs), mGrpId(grpId), mPeerId(peerId), mCircleId(circleId) {}
+: GrpCircleVetting(circles, pgpUtils), mMsgs(msgs), mGrpId(grpId), mPeerId(peerId), mCircleId(circleId) {}
 
 bool MsgCircleIdsRequestVetting::cleared()
 {
@@ -289,10 +292,6 @@ bool MsgCircleIdsRequestVetting::cleared()
 int MsgCircleIdsRequestVetting::getType() const
 {
 	return MSG_ID_SEND_PEND;
-}
-
-RsPgpId RsNxsNetMgrImpl::getGPGId(const RsPeerId& peerId) {
-	rsPeers->getGPGId(peerId);
 }
 
 

@@ -29,9 +29,7 @@
 #include "util/rsrandom.h"
 #include "util/rsstring.h"
 
-#include "pqi/authgpg.h"
-
-#include <retroshare/rspeers.h>
+#include "pgp/pgpauxutils.h"
 
 #include <sstream>
 #include <stdio.h>
@@ -106,10 +104,13 @@ RsGxsCircles *rsGxsCircles = NULL;
 /******************* Startup / Tick    ******************************************/
 /********************************************************************************/
 
-p3GxsCircles::p3GxsCircles(RsGeneralDataService *gds, RsNetworkExchangeService *nes, p3IdService *identities)
+p3GxsCircles::p3GxsCircles(RsGeneralDataService *gds, RsNetworkExchangeService *nes, 
+	p3IdService *identities, PgpAuxUtils *pgpUtils)
 	: RsGxsCircleExchange(gds, nes, new RsGxsCircleSerialiser(), 
 			RS_SERVICE_GXS_TYPE_GXSCIRCLE, identities, circleAuthenPolicy()), 
-	RsGxsCircles(this), GxsTokenQueue(this), RsTickEvent(), mIdentities(identities), 
+	RsGxsCircles(this), GxsTokenQueue(this), RsTickEvent(), 
+	mIdentities(identities), 
+	mPgpUtils(pgpUtils),
 	mCircleMtx("p3GxsCircles"),
         mCircleCache(DEFAULT_MEM_CACHE_SIZE, "GxsCircleCache")
 
@@ -1186,7 +1187,7 @@ bool p3GxsCircles::checkCircleCacheForAutoSubscribe(RsGxsCircleCache &cache)
 	}
 
 	/* if we appear in the group - then autosubscribe, and mark as processed */
-	const RsPgpId& ownId = AuthGPG::getAuthGPG()->getGPGOwnId();
+	const RsPgpId& ownId = mPgpUtils->getPGPOwnId();
 	std::map<RsPgpId, std::list<RsGxsId> >::iterator it = cache.mAllowedPeers.find(ownId);
 	if (it != cache.mAllowedPeers.end())
 	{

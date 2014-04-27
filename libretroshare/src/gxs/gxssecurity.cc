@@ -26,7 +26,7 @@
 
 #include "gxssecurity.h"
 #include "pqi/authgpg.h"
-#include "retroshare/rspeers.h"
+//#include "retroshare/rspeers.h"
 
 #define GXS_SECURITY_DEBUG
 
