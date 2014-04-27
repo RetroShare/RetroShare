@@ -15,16 +15,16 @@ CONFIG += gxs debug
 
 gxs {
 	
-	CONFIG += wikipoos
 	CONFIG += identities
 	CONFIG += circles
 	CONFIG += gxsforums
 	CONFIG += gxschannels
 	CONFIG += posted
-	CONFIG += unfinished
+	#CONFIG += unfinished
 	CONFIG += gxsgui
 	# thewire is incomplete - dont enable
 	#CONFIG += thewire
+	CONFIG += wikipoos
 	CONFIG += photoshare
 
 	DEFINES += RS_ENABLE_GXS

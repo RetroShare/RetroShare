@@ -95,7 +95,7 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WindowFlags flags)
     //CalDialog *calDialog = NULL;
     //ui.stackPages->add(calDialog = new CalDialog(ui.stackPages),
     //                  createPageAction(QIcon(IMAGE_CALENDAR), tr("Shared Calendars"), grp));
-
+#if 0
     IdDialog *idDialog = NULL;
     ui.stackPages->add(idDialog = new IdDialog(ui.stackPages),
                       createPageAction(QIcon(IMAGE_IDENTITY), tr("Identities"), grp));
@@ -104,6 +104,7 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WindowFlags flags)
     CirclesDialog *circlesDialog = NULL;
     ui.stackPages->add(circlesDialog = new CirclesDialog(ui.stackPages),
                       createPageAction(QIcon(IMAGE_CIRCLES ), tr("Circles"), grp));
+#endif
 #endif
 
 #ifdef RS_USE_PHOTOSHARE
