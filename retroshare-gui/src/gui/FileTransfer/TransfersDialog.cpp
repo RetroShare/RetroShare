@@ -19,10 +19,6 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#ifdef WIN32
-        #include <windows.h>
-#endif
-
 #include <QMenu>
 #include <QInputDialog>
 #include <QFileDialog>
@@ -55,6 +51,7 @@
 #include <gui/common/RsCollectionFile.h>
 #include "TransferUserNotify.h"
 #include "util/QtVersion.h"
+#include "util/RsFile.h"
 
 #include <retroshare/rsfiles.h>
 #include <retroshare/rspeers.h>
@@ -1718,8 +1715,10 @@ void TransfersDialog::previewTransfer()
 		break;
 	}
 
+	QFileInfo fileNameInfo(QString::fromUtf8(info.fname.c_str()));
+
 	/* check if the file is a media file */
-	if (!misc::isPreviewable(QFileInfo(QString::fromUtf8(info.fname.c_str())).suffix())) return;
+	if (!misc::isPreviewable(fileNameInfo.suffix())) return;
 
 	/* make path for downloaded or downloading files */
 	QFileInfo fileInfo;
@@ -1728,8 +1727,16 @@ void TransfersDialog::previewTransfer()
 	} else {
         fileInfo = QFileInfo(QString::fromUtf8(rsFiles->getPartialsDirectory().c_str()), QString::fromUtf8(info.hash.toStdString().c_str()));
 
-		QString linkName = QFileInfo(QDir::temp(), QString::fromUtf8(info.fname.c_str())).absoluteFilePath();
-		if (QFile::link(fileInfo.absoluteFilePath(), linkName)) {
+		QDir temp;
+#ifdef WINDOWS_SYS
+		/* the symbolic link must be created on the same drive like the real file, use partial directory */
+		temp = fileInfo.absoluteDir();
+#else
+		temp = QDir::temp();
+#endif
+
+		QString linkName = QFileInfo(temp, fileNameInfo.fileName()).absoluteFilePath();
+		if (RsFile::CreateLink(fileInfo.absoluteFilePath(), linkName)) {
 			fileInfo.setFile(linkName);
 		} else {
 			std::cerr << "previewTransfer(): can't create link for file " << fileInfo.absoluteFilePath().toStdString() << std::endl;
@@ -1752,7 +1759,17 @@ void TransfersDialog::previewTransfer()
 			/* wait for the file to open then remove the link */
 			QMessageBox::information(this, tr("File preview"), tr("Click OK when program terminates!"));
 		}
-		QFile::remove(fileInfo.absoluteFilePath());
+		/* try to delete the preview file */
+		forever {
+			if (QFile::remove(fileInfo.absoluteFilePath())) {
+				/* preview file could be removed */
+				break;
+			}
+			/* ask user to try it again */
+			if (QMessageBox::question(this, tr("File preview"), QString("%1\n\n%2\n\n%3").arg(tr("Could not delete preview file"), fileInfo.absoluteFilePath(), tr("Try it again?")),  QMessageBox::Yes, QMessageBox::No) == QMessageBox::No) {
+				break;
+			}
+		}
 	}
 }
 

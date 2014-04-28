@@ -13891,6 +13891,14 @@ Try to be patient!</source>
         <source> &lt;h1&gt;&lt;img width=&quot;32&quot; src=&quot;:/images/64px_help.png&quot;&gt;&amp;nbsp;&amp;nbsp;File Transfer&lt;/h1&gt;                                                             &lt;p&gt;Retroshare brings two ways of transferring files: direct transfers from your friends, and                                         distant anonymous tunnelled transfers. In addition, file transfer is multi-source and allows swarming                                          (you can be a source while downloading)&lt;/p&gt;                                         &lt;p&gt;You can share files using the &lt;img src=&quot;:/images/directoryadd_24x24_shadow.png&quot; width=16 /&gt; icon from the left side bar.     These files will be listed in the My Files tab. You can decide for each friend group whether they can or not see these files     in their Friends Files tab&lt;/p&gt;    &lt;p&gt;The search tab reports files from your friends&apos; file lists, and distant files that can be reached     anonymously using the multi-hop tunnelling system.&lt;/p&gt;     </source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Could not delete preview file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Try it again?</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>TreeStyle_RDM</name>
