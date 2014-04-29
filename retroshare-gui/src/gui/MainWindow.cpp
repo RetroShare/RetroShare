@@ -229,21 +229,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     applicationWindow->hide();
     #endif    
 
-    /** Left Side ToolBar**/
-    connect(actionAdd_Friend, SIGNAL(triggered() ), this , SLOT( addFriend() ) );
-    connect(actionAdd_Share, SIGNAL(triggered() ), this , SLOT( openShareManager() ) );
-    connect(actionOptions, SIGNAL(triggered()), this, SLOT( showSettings()) );
-//    connect(actionMessenger, SIGNAL(triggered()), this, SLOT( showMessengerWindow()) );
-    connect(actionServicePermissions, SIGNAL(triggered()), this, SLOT(servicePermission()));
-
-    actionMessenger->setVisible(false);
-
-    connect(actionAbout, SIGNAL(triggered()), this, SLOT( showabout()) );
-    //connect(actionColor, SIGNAL(triggered()), this, SLOT( setStyle()) );
-
-    /** adjusted quit behaviour: trigger a warning that can be switched off in the saved
-        config file RetroShare.conf */
-    connect(actionQuit, SIGNAL(triggered()), this, SLOT(doQuit()));
 
     QList<QPair<MainPage*, QAction*> > notify;
 
@@ -255,8 +240,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
                        action = createPageAction(QIcon(IMAGE_NEWSFEED), tr("News feed"), grp));
     notify.push_back(QPair<MainPage*, QAction*>(newsFeed, action));
 
-//    stackPages->add(networkDialog = new NetworkDialog(stackPages),
-//                       createPageAction(QIcon(IMAGE_NETWORK2), tr("Network"), grp));
 
     stackPages->add(friendsDialog = new FriendsDialog(stackPages),
                        action = createPageAction(QIcon(IMAGE_PEERS), tr("Network"), grp));
@@ -269,9 +252,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     CirclesDialog *circlesDialog = NULL;
     stackPages->add(circlesDialog = new CirclesDialog(stackPages), createPageAction(QIcon(IMAGE_CIRCLES ), tr("Circles"), grp));
     notify.push_back(QPair<MainPage*, QAction*>(circlesDialog, action));
-
-//    stackPages->add(searchDialog = new SearchDialog(stackPages),
-//                       createPageAction(QIcon(IMAGE_SEARCH), tr("Search"), grp));
 
     stackPages->add(transfersDialog = new TransfersDialog(stackPages),
                       action = createPageAction(QIcon(IMAGE_TRANSFERS), tr("File sharing"), grp));
@@ -355,6 +335,11 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     toolBar->addSeparator();
     addAction(new QAction(QIcon(IMAGE_UNFINISHED), tr("Unfinished"), toolBar), SLOT(showApplWindow()));
 #endif
+
+    addAction(new QAction(QIcon(IMAGE_OPTIONS), tr("Options"), toolBar), SLOT(showSettings()));
+    addAction(new QAction(QIcon(IMAGE_ABOUT), tr("About"), toolBar), SLOT(showabout()));
+    addAction(new QAction(QIcon(IMAGE_QUIT), tr("Quit"), toolBar), SLOT(doQuit()));
+
 
     stackPages->setCurrentIndex(Settings->getLastPageInMainWindow());
 

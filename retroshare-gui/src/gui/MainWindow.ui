@@ -15,7 +15,16 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <property name="margin">
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
      <number>0</number>
     </property>
     <item row="0" column="0">
@@ -37,26 +46,6 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-  </widget>
-  <widget class="QToolBar" name="toolBar_2">
-   <property name="contextMenuPolicy">
-    <enum>Qt::CustomContextMenu</enum>
-   </property>
-   <attribute name="toolBarArea">
-    <enum>LeftToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-   <addaction name="actionAdd_Friend"/>
-   <addaction name="actionAdd_Share"/>
-   <addaction name="actionServicePermissions"/>
-   <addaction name="separator"/>
-   <addaction name="actionMessenger"/>
-   <addaction name="actionAbout"/>
-   <addaction name="actionOptions"/>
-   <addaction name="separator"/>
-   <addaction name="actionQuit"/>
   </widget>
   <action name="actionAdd_Friend">
    <property name="icon">

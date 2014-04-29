@@ -173,6 +173,12 @@ FriendsDialog::FriendsDialog(QWidget *parent)
 //
 //    ui.menutoolButton->setMenu(menu);
 
+    QToolButton *addFriendButton = new QToolButton(this);
+    addFriendButton->setIcon(QIcon(":/images/user/add_user24.png"));
+    addFriendButton->setToolTip(tr("Add Friend"));
+    connect(addFriendButton, SIGNAL(clicked()), this, SLOT(addFriend()));
+    ui.friendList->addToolButton(addFriendButton);
+
     setAcceptDrops(true);
     ui.lineEdit->setAcceptDrops(false);
     ui.hashBox->setDropWidget(this);
