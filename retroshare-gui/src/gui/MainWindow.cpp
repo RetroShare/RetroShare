@@ -336,7 +336,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     addAction(new QAction(QIcon(IMAGE_UNFINISHED), tr("Unfinished"), toolBar), SLOT(showApplWindow()));
 #endif
 
-    addAction(new QAction(QIcon(IMAGE_OPTIONS), tr("Options"), toolBar), SLOT(showSettings()));
+    addAction(new QAction(QIcon(IMAGE_PREFERENCES), tr("Options"), toolBar), SLOT(showSettings()));
     addAction(new QAction(QIcon(IMAGE_ABOUT), tr("About"), toolBar), SLOT(showabout()));
     addAction(new QAction(QIcon(IMAGE_QUIT), tr("Quit"), toolBar), SLOT(doQuit()));
 
