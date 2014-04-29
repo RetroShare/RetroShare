@@ -733,7 +733,7 @@ void RsGxsNetService::recvNxsItemQueue(){
 				case RS_PKT_SUBTYPE_NXS_SYNC_GRP: handleRecvSyncGroup (dynamic_cast<RsNxsSyncGrp*>(ni)) ; break ;
 				case RS_PKT_SUBTYPE_NXS_SYNC_MSG: handleRecvSyncMessage (dynamic_cast<RsNxsSyncMsg*>(ni)) ; break ;
 				default:
-					std::cerr << "Unhandled item subtype " << ni->PacketSubType() << " in RsGxsNetService: " << std::endl; break;
+					std::cerr << "Unhandled item subtype " << (uint32_t) ni->PacketSubType() << " in RsGxsNetService: " << std::endl; break;
 			}
 			delete item ;
 		}
@@ -2237,10 +2237,20 @@ bool RsGxsNetService::canSendGrpId(const RsPeerId& sslId, RsGxsGrpMetaData& grpM
 		return true;
 	}
 
-	const RsGxsCircleId& circleId = grpMeta.mCircleId;
-
 	if(circleType == GXS_CIRCLE_TYPE_EXTERNAL)
 	{
+		const RsGxsCircleId& circleId = grpMeta.mCircleId;
+		if(circleId.isNull())
+		{
+			std::cerr << "RsGxsNetService::canSendGrpId() ERROR; EXTERNAL_CIRCLE missing NULL CircleId";
+			std::cerr << grpMeta.mGroupId;
+			std::cerr << std::endl;
+
+			// should just be shared. ? no - this happens for
+			// Circle Groups which lose their CircleIds.
+			// return true;
+		}
+
 		if(mCircles->isLoaded(circleId))
 		{
 #ifdef NXS_NET_DEBUG
