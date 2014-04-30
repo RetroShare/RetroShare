@@ -147,6 +147,7 @@ bool RetroDb::execSQL(const std::string &query){
             std::cerr << "RetroDb::execSQL(): Error executing statement (code: " << rc << ")\n";
             std::cerr << "Sqlite Error msg: " <<  sqlite3_errmsg(mDb)
                       << std::endl;
+            std::cerr << "RetroDb::execSQL() Query: " <<  query << std::endl;
         }
     }
 
