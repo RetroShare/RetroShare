@@ -6,6 +6,10 @@
 #include "SetServiceTester.h"
 #include "peer/PeerNode.h"
 
+/**
+ * #define DEBUG_TEST	1
+ **/
+
 SetServiceTester::SetServiceTester()
 :mDropFilter(SetFilter::FILTER_NONE), 
  mCaptureFilter(SetFilter::FILTER_ALL), 
@@ -145,8 +149,10 @@ bool SetServiceTester::tickUntilFinish(int max_ticks)
 
 bool SetServiceTester::tickUntilEvent(int max_ticks, EventType eventType)
 {
+#ifdef DEBUG_TEST
 	std::cerr << "SetServiceTester::tickUntilEvent()";
 	std::cerr << std::endl;
+#endif
 
 	for(int i = 0; i < max_ticks; i++)
 	{
@@ -156,9 +162,11 @@ bool SetServiceTester::tickUntilEvent(int max_ticks, EventType eventType)
 			pit->second->tick();
 			while (pit->second->haveOutgoingPackets())
 			{
+#ifdef DEBUG_TEST
 				std::cerr << "SetServiceTester::tickUntilEvent() ";
 				std::cerr << "packet from: " << pit->first.toStdString();
 				std::cerr << std::endl;
+#endif
 
 				bool finished = false;
 				double ts = time(NULL) - mRefTime;
@@ -170,10 +178,12 @@ bool SetServiceTester::tickUntilEvent(int max_ticks, EventType eventType)
 				SetPacket pkt(ts, srcId, destId, item);
 				if (filter(pkt))
 				{
+#ifdef DEBUG_TEST
 					std::cerr << "Dropping Packet: ";
 					std::cerr << std::endl;
 					item->print(std::cerr);
 					std::cerr << std::endl;
+#endif
 
 					delete rawItem;
 					delete item;
@@ -184,10 +194,12 @@ bool SetServiceTester::tickUntilEvent(int max_ticks, EventType eventType)
 				{
 					if (finish(pkt))
 					{
+#ifdef DEBUG_TEST
 						std::cerr << "Finish Packet: ";
 						std::cerr << std::endl;
 						item->print(std::cerr);
 						std::cerr << std::endl;
+#endif
 
 						finished = true;
 					}
@@ -195,10 +207,12 @@ bool SetServiceTester::tickUntilEvent(int max_ticks, EventType eventType)
 
 				if (capture(pkt))
 				{
+#ifdef DEBUG_TEST
 					std::cerr << "Capture Packet: ";
 					std::cerr << std::endl;
 					item->print(std::cerr);
 					std::cerr << std::endl;
+#endif
 
 					mPackets.push_back(pkt);
 					if (eventType == UNTIL_CAPTURE)
@@ -272,9 +286,11 @@ RsItem *SetServiceTester::convertToRsItem(RsRawItem *rawitem, bool toDelete)
 {
 	if (rawitem)
 	{
+#ifdef DEBUG_TEST
 		/* convert back to standard item for convenience */
 		std::cerr << "SetServiceTester::getPacket() have RsRawItem";
 		std::cerr << std::endl;
+#endif
 
 		/* convert to RsServiceItem */
 		uint32_t size = rawitem->getRawLength();
@@ -315,8 +331,10 @@ RsItem *SetServiceTester::convertToRsItem(RsRawItem *rawitem, bool toDelete)
 
 RsRawItem *SetServiceTester::convertToRsRawItem(RsItem *item, bool toDelete)
 {
+#ifdef DEBUG_TEST
 	std::cerr << "SetServiceTester::convertToRawItem()";
 	std::cerr << std::endl;
+#endif
 
 	/* try to convert */
 	uint32_t size = mRsSerialiser->size(item);
