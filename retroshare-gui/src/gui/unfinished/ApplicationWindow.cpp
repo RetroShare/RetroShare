@@ -83,6 +83,7 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WindowFlags flags)
 
     /* Create the config pages and actions */
     QActionGroup *grp = new QActionGroup(this);
+    QAction *action;
 
     //StatisticDialog *statisticDialog = NULL;
     //ui.stackPages->add(statisticDialog = new StatisticDialog(ui.stackPages),
@@ -98,37 +99,42 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WindowFlags flags)
 #if 0
     IdDialog *idDialog = NULL;
     ui.stackPages->add(idDialog = new IdDialog(ui.stackPages),
-                      createPageAction(QIcon(IMAGE_IDENTITY), tr("Identities"), grp));
+                      action = createPageAction(QIcon(IMAGE_IDENTITY), tr("Identities"), grp));
 
 #ifdef RS_USE_CIRCLES
     CirclesDialog *circlesDialog = NULL;
     ui.stackPages->add(circlesDialog = new CirclesDialog(ui.stackPages),
-                      createPageAction(QIcon(IMAGE_CIRCLES ), tr("Circles"), grp));
+                      action = createPageAction(QIcon(IMAGE_CIRCLES ), tr("Circles"), grp));
+    mNotify.push_back(QPair<MainPage*, QAction*>(circlesDialog, action));
 #endif
 #endif
 
 #ifdef RS_USE_PHOTOSHARE
     PhotoShare *photoShare = NULL;
     ui.stackPages->add(photoShare = new PhotoShare(ui.stackPages),
-                     createPageAction(QIcon(IMAGE_PHOTO), tr("Photos"), grp));
+                     action = createPageAction(QIcon(IMAGE_PHOTO), tr("Photos"), grp));
+    mNotify.push_back(QPair<MainPage*, QAction*>(photoShare, action));
 #endif
 
     PostedDialog *postedDialog = NULL;
     ui.stackPages->add(postedDialog = new PostedDialog(ui.stackPages),
-                      createPageAction(QIcon(IMAGE_POSTED), tr("Posted Links"), grp));
+                      action = createPageAction(QIcon(IMAGE_POSTED), tr("Posted Links"), grp));
     postedDialog->setup();
+    mNotify.push_back(QPair<MainPage*, QAction*>(postedDialog, action));
 
     WikiDialog *wikiDialog = NULL;
     ui.stackPages->add(wikiDialog = new WikiDialog(ui.stackPages),
-                      createPageAction(QIcon(IMAGE_WIKI), tr("Wiki Pages"), grp));
+                      action = createPageAction(QIcon(IMAGE_WIKI), tr("Wiki Pages"), grp));
+    mNotify.push_back(QPair<MainPage*, QAction*>(wikiDialog, action));
 #if 0
     GxsForumsDialog *gxsforumsDialog = NULL;
     ui.stackPages->add(gxsforumsDialog = new GxsForumsDialog(ui.stackPages),
-                      createPageAction(QIcon(IMAGE_GXSFORUMS), tr("GxsForums"), grp));
+                      action = createPageAction(QIcon(IMAGE_GXSFORUMS), tr("GxsForums"), grp));
+    mNotify.push_back(QPair<MainPage*, QAction*>(gxsforumsDialog, action));
 
     ChannelDialog *gxschannelDialog = NULL;
     ui.stackPages->add(gxschannelDialog = new ChannelDialog(ui.stackPages),
-                      createPageAction(QIcon(IMAGE_GXSCHANNELS), tr("GxsChannels"), grp));
+                      action = createPageAction(QIcon(IMAGE_GXSCHANNELS), tr("GxsChannels"), grp));
     gxschannelDialog->setup();
 #endif
 
@@ -136,8 +142,8 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WindowFlags flags)
 #if USE_VEG_SERVICE
     WireDialog *wireDialog = NULL;
     ui.stackPages->add(wireDialog = new WireDialog(ui.stackPages),
-                      createPageAction(QIcon(IMAGE_BWGRAPH), tr("The Wire"), grp));
-
+                      action = createPageAction(QIcon(IMAGE_BWGRAPH), tr("The Wire"), grp));
+    mNotify.push_back(QPair<MainPage*, QAction*>(wireDialog, action));
 #endif
 
    /* Create the toolbar */

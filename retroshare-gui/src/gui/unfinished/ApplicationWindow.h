@@ -48,6 +48,8 @@ public:
     //GroupsDialog      *groupsDialog;
     //StatisticDialog   *statisticDialog;
 
+    QList<QPair<MainPage*, QAction*> > &getNotify() { return mNotify; }
+
 protected:
     void closeEvent(QCloseEvent *);
 
@@ -56,6 +58,9 @@ private:
     QAction* createPageAction(QIcon img, QString text, QActionGroup *group);
     /** Adds a new action to the toolbar. */
     void addAction(QAction *action, const char *slot = 0);
+
+private:
+    QList<QPair<MainPage*, QAction*> > mNotify;
 
     /** Qt Designer generated object */
     Ui::ApplicationWindow ui;

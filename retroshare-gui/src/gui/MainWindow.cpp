@@ -343,6 +343,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 #ifdef UNFINISHED
     ui->toolBar->addSeparator();
     addAction(new QAction(QIcon(IMAGE_UNFINISHED), tr("Unfinished"), ui->toolBar), SLOT(showApplWindow()));
+    notify += applicationWindow->getNotify();
 #endif
 
     addAction(new QAction(QIcon(IMAGE_PREFERENCES), tr("Options"), ui->toolBar), SLOT(showSettings()));
