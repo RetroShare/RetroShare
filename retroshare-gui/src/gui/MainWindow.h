@@ -26,7 +26,6 @@
 #include <set>
 
 #include "gui/common/rwindow.h"
-#include "ui_MainWindow.h"
 
 namespace Ui {
 class MainWindow;
@@ -73,7 +72,7 @@ class BlogsDialog;
 class ApplicationWindow;
 #endif
 
-class MainWindow : public RWindow, public Ui::MainWindow
+class MainWindow : public RWindow
 {
   Q_OBJECT
 
@@ -258,6 +257,8 @@ private:
     // idle function
     void setIdle(bool Idle);
     bool isIdle;
+
+	 Ui::MainWindow *ui ;
 };
 
 #endif

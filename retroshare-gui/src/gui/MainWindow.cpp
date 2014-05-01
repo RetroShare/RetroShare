@@ -72,6 +72,9 @@
 #include "gui/GetStartedDialog.h"
 #endif
 
+#ifdef SUSPENDED
+#include "gui/People/PeopleDialog.h"
+#endif
 #include "gui/FileTransfer/TurtleRouterDialog.h"
 #include "idle/idle.h"
 
@@ -187,8 +190,10 @@
 MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     : RWindow("MainWindow", parent, flags)
 {
+	ui = new Ui::MainWindow ;
+
     /* Invoke the Qt Designer generated QObject setup routine */
-    setupUi(this);
+    ui->setupUi(this);
 
     _instance = this;
 
@@ -236,50 +241,54 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     QActionGroup *grp = new QActionGroup(this);
     QAction *action;
 
-    stackPages->add(newsFeed = new NewsFeed(stackPages),
+    ui->stackPages->add(newsFeed = new NewsFeed(ui->stackPages),
                        action = createPageAction(QIcon(IMAGE_NEWSFEED), tr("News feed"), grp));
     notify.push_back(QPair<MainPage*, QAction*>(newsFeed, action));
 
 
-    stackPages->add(friendsDialog = new FriendsDialog(stackPages),
+    ui->stackPages->add(friendsDialog = new FriendsDialog(ui->stackPages),
                        action = createPageAction(QIcon(IMAGE_PEERS), tr("Network"), grp));
     notify.push_back(QPair<MainPage*, QAction*>(friendsDialog, action));
-
+#ifdef SUSPENDED
+	 PeopleDialog *peopleDialog = NULL;
+    ui->stackPages->add(peopleDialog = new PeopleDialog(ui->stackPages), action = createPageAction(QIcon(IMAGE_IDENTITY), tr("People"), grp));
+    notify.push_back(QPair<MainPage*, QAction*>(peopleDialog, action));
+#endif
 	 IdDialog *idDialog = NULL;
-    stackPages->add(idDialog = new IdDialog(stackPages), action = createPageAction(QIcon(IMAGE_IDENTITY), tr("People"), grp));
+    ui->stackPages->add(idDialog = new IdDialog(ui->stackPages), action = createPageAction(QIcon(IMAGE_IDENTITY), tr("Itentities"), grp));
     notify.push_back(QPair<MainPage*, QAction*>(idDialog, action));
 
     CirclesDialog *circlesDialog = NULL;
-    stackPages->add(circlesDialog = new CirclesDialog(stackPages), createPageAction(QIcon(IMAGE_CIRCLES ), tr("Circles"), grp));
+    ui->stackPages->add(circlesDialog = new CirclesDialog(ui->stackPages), createPageAction(QIcon(IMAGE_CIRCLES ), tr("Circles"), grp));
     notify.push_back(QPair<MainPage*, QAction*>(circlesDialog, action));
 
-    stackPages->add(transfersDialog = new TransfersDialog(stackPages),
+    ui->stackPages->add(transfersDialog = new TransfersDialog(ui->stackPages),
                       action = createPageAction(QIcon(IMAGE_TRANSFERS), tr("File sharing"), grp));
     notify.push_back(QPair<MainPage*, QAction*>(transfersDialog, action));
 
-    stackPages->add(chatLobbyDialog = new ChatLobbyWidget(stackPages),
+    ui->stackPages->add(chatLobbyDialog = new ChatLobbyWidget(ui->stackPages),
                       action = createPageAction(QIcon(IMAGE_CHATLOBBY), tr("Chat Lobbies"), grp));
     notify.push_back(QPair<MainPage*, QAction*>(chatLobbyDialog, action));
 
-    stackPages->add(messagesDialog = new MessagesDialog(stackPages),
+    ui->stackPages->add(messagesDialog = new MessagesDialog(ui->stackPages),
                       action = createPageAction(QIcon(IMAGE_MESSAGES), tr("Messages"), grp));
     notify.push_back(QPair<MainPage*, QAction*>(messagesDialog, action));
 
-    stackPages->add(gxschannelDialog = new ChannelDialog(stackPages),
+    ui->stackPages->add(gxschannelDialog = new ChannelDialog(ui->stackPages),
                       action = createPageAction(QIcon(IMAGE_GXSCHANNELS), tr("Channels"), grp));
     gxschannelDialog->setup();
     notify.push_back(QPair<MainPage*, QAction*>(gxschannelDialog, action));
 
-    stackPages->add(gxsforumDialog = new GxsForumsDialog(stackPages),
+    ui->stackPages->add(gxsforumDialog = new GxsForumsDialog(ui->stackPages),
                       action = createPageAction(QIcon(IMAGE_GXSFORUMS), tr("Forums"), grp));
     notify.push_back(QPair<MainPage*, QAction*>(gxsforumDialog, action));
 
 #ifdef BLOGS
-     stackPages->add(blogsFeed = new BlogsDialog(stackPages), createPageAction(QIcon(IMAGE_BLOGS), tr("Blogs"), grp));
+     ui->stackPages->add(blogsFeed = new BlogsDialog(ui->stackPages), createPageAction(QIcon(IMAGE_BLOGS), tr("Blogs"), grp));
 #endif
      
 #if 0                 
-    stackPages->add(forumsDialog = new ForumsDialog(stackPages),
+    ui->stackPages->add(forumsDialog = new ForumsDialog(ui->stackPages),
                        action = createPageAction(QIcon(IMAGE_FORUMS), tr("Forums"), grp));
     notify.push_back(QPair<MainPage*, QAction*>(forumsDialog, action));
 #endif
@@ -299,7 +308,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 			 std::cerr << "  Addign widget page for plugin " << rsPlugins->plugin(i)->getPluginName() << std::endl;
 			 MainPage *pluginPage = rsPlugins->plugin(i)->qt_page();
 			 QAction *pluginAction = createPageAction(icon, QString::fromUtf8(rsPlugins->plugin(i)->getPluginName().c_str()), grp);
-			 stackPages->add(pluginPage, pluginAction);
+			 ui->stackPages->add(pluginPage, pluginAction);
 			 notify.push_back(QPair<MainPage*, QAction*>(pluginPage, pluginAction));
 		 }
 		 else if(rsPlugins->plugin(i) == NULL)
@@ -311,7 +320,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 
 #ifndef RS_RELEASE_VERSION
 #ifdef PLUGINMGR
-    stackPages->add(pluginsPage = new PluginsPage(stackPages),
+    ui->stackPages->add(pluginsPage = new PluginsPage(ui->stackPages),
                        createPageAction(QIcon(IMAGE_PLUGINS), tr("Plugins"), grp));
 #endif
 #endif
@@ -321,27 +330,27 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 
     if (!advancedMode)
     {
-        stackPages->add(getStartedPage = new GetStartedDialog(stackPages),
+        ui->stackPages->add(getStartedPage = new GetStartedDialog(ui->stackPages),
                        createPageAction(QIcon(IMG_HELP), tr("Getting Started"), grp));
     }
 #endif
 
     /* Create the toolbar */
-    toolBar->addActions(grp->actions());
+    ui->toolBar->addActions(grp->actions());
 
-    connect(grp, SIGNAL(triggered(QAction *)), stackPages, SLOT(showPage(QAction *)));
+    connect(grp, SIGNAL(triggered(QAction *)), ui->stackPages, SLOT(showPage(QAction *)));
 
 #ifdef UNFINISHED
-    toolBar->addSeparator();
-    addAction(new QAction(QIcon(IMAGE_UNFINISHED), tr("Unfinished"), toolBar), SLOT(showApplWindow()));
+    ui->toolBar->addSeparator();
+    addAction(new QAction(QIcon(IMAGE_UNFINISHED), tr("Unfinished"), ui->toolBar), SLOT(showApplWindow()));
 #endif
 
-    addAction(new QAction(QIcon(IMAGE_PREFERENCES), tr("Options"), toolBar), SLOT(showSettings()));
-    addAction(new QAction(QIcon(IMAGE_ABOUT), tr("About"), toolBar), SLOT(showabout()));
-    addAction(new QAction(QIcon(IMAGE_QUIT), tr("Quit"), toolBar), SLOT(doQuit()));
+    addAction(new QAction(QIcon(IMAGE_PREFERENCES), tr("Options"), ui->toolBar), SLOT(showSettings()));
+    addAction(new QAction(QIcon(IMAGE_ABOUT), tr("About"), ui->toolBar), SLOT(showabout()));
+    addAction(new QAction(QIcon(IMAGE_QUIT), tr("Quit"), ui->toolBar), SLOT(doQuit()));
 
 
-    stackPages->setCurrentIndex(Settings->getLastPageInMainWindow());
+    ui->stackPages->setCurrentIndex(Settings->getLastPageInMainWindow());
 
     /** StatusBar section ********/
     /* initialize combobox in status bar */
@@ -387,7 +396,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     for (notifyIt = notify.begin(); notifyIt != notify.end(); ++notifyIt) {
         UserNotify *userNotify = notifyIt->first->getUserNotify(this);
         if (userNotify) {
-            userNotify->initialize(toolBar, notifyIt->second);
+            userNotify->initialize(ui->toolBar, notifyIt->second);
             connect(userNotify, SIGNAL(countChanged()), this, SLOT(updateTrayCombine()));
             userNotifyList.push_back(userNotify);
         }
@@ -403,7 +412,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     loadOwnStatus();
 
     /* Set focus to the current page */
-    stackPages->currentWidget()->setFocus();
+    ui->stackPages->currentWidget()->setFocus();
 
     idle = new Idle();
     idle->start();
@@ -417,7 +426,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 /** Destructor. */
 MainWindow::~MainWindow()
 {
-    Settings->setLastPageInMainWindow(stackPages->currentIndex());
+    Settings->setLastPageInMainWindow(ui->stackPages->currentIndex());
 
     delete peerstatus;
     delete natstatus;
@@ -698,7 +707,7 @@ void MainWindow::addAction(QAction *action, const char *slot)
     font = action->font();
     font.setPointSize(9);
     action->setFont(font);
-    toolBar->addAction(action);
+    ui->toolBar->addAction(action);
     connect(action, SIGNAL(triggered()), this, slot);
 }
 
@@ -791,7 +800,7 @@ void SetForegroundWindowInternal(HWND hWnd)
     /* Show the dialog. */
     raiseWindow();
     /* Set the focus to the specified page. */
-    _instance->stackPages->setCurrentPage(page);
+    _instance->ui->stackPages->setCurrentPage(page);
 }
 
 /** Set focus to the given page. */
@@ -803,35 +812,35 @@ void SetForegroundWindowInternal(HWND hWnd)
 
 	 switch (page) {
 		 case Search:
-			 _instance->stackPages->setCurrentPage( _instance->transfersDialog );
+			 _instance->ui->stackPages->setCurrentPage( _instance->transfersDialog );
 			 _instance->transfersDialog->activatePage(TransfersDialog::SearchTab) ;
 			 break ;
 		 case Network:
-			 _instance->stackPages->setCurrentPage( _instance->friendsDialog );
+			 _instance->ui->stackPages->setCurrentPage( _instance->friendsDialog );
 			 _instance->friendsDialog->activatePage(FriendsDialog::NetworkTab) ;
 			 break;
 		 case Friends:
-			 _instance->stackPages->setCurrentPage( _instance->friendsDialog );
+			 _instance->ui->stackPages->setCurrentPage( _instance->friendsDialog );
 			 break;
 		 case ChatLobby:
-			 _instance->stackPages->setCurrentPage( _instance->chatLobbyDialog );
+			 _instance->ui->stackPages->setCurrentPage( _instance->chatLobbyDialog );
 			 break;
 		 case Transfers:
-			 _instance->stackPages->setCurrentPage( _instance->transfersDialog );
+			 _instance->ui->stackPages->setCurrentPage( _instance->transfersDialog );
 			 break;
 		 case SharedDirectories:
-			 _instance->stackPages->setCurrentPage( _instance->transfersDialog );
+			 _instance->ui->stackPages->setCurrentPage( _instance->transfersDialog );
 			 _instance->transfersDialog->activatePage(TransfersDialog::LocalSharedFilesTab) ;
 			 break;
 		 case Messages:
-			 _instance->stackPages->setCurrentPage( _instance->messagesDialog );
+			 _instance->ui->stackPages->setCurrentPage( _instance->messagesDialog );
 			 break;
 #if 0
 		 case Channels:
-			 _instance->stackPages->setCurrentPage( _instance->channelFeed );
+			 _instance->ui->stackPages->setCurrentPage( _instance->channelFeed );
 			 return true ;
 		 case Forums:
-			 _instance->stackPages->setCurrentPage( _instance->forumsDialog );
+			 _instance->ui->stackPages->setCurrentPage( _instance->forumsDialog );
 			 return true ;
 #endif
 #ifdef BLOGS
@@ -853,7 +862,7 @@ void SetForegroundWindowInternal(HWND hWnd)
        return Network;
    }
 
-   QWidget *page = _instance->stackPages->currentWidget();
+   QWidget *page = _instance->ui->stackPages->currentWidget();
 
 //   if (page == _instance->networkDialog) {
 //       return Network;
@@ -1109,10 +1118,10 @@ void
 MainWindow::retranslateUi()
 {
   retranslateUi();
-  foreach (MainPage *page, stackPages->pages()) {
+  foreach (MainPage *page, ui->stackPages->pages()) {
     page->retranslateUi();
   }
-  foreach (QAction *action, toolBar->actions()) {
+  foreach (QAction *action, ui->toolBar->actions()) {
     action->setText(tr(qPrintable(action->data().toString()), "MainWindow"));
   }
 }
