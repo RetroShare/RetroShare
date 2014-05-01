@@ -210,9 +210,10 @@ public:
 class GrpIdCircleVet
 {
 public:
-	GrpIdCircleVet(const RsGxsGroupId& grpId, const RsGxsCircleId& circleId);
+	GrpIdCircleVet(const RsGxsGroupId& grpId, const RsGxsCircleId& circleId, const RsGxsId& authId);
 	RsGxsGroupId mGroupId;
 	RsGxsCircleId mCircleId;
+	RsGxsId mAuthorId;
 	bool mCleared;
 };
 

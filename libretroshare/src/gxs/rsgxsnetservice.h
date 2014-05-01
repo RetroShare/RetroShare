@@ -311,6 +311,8 @@ private:
 
     bool canSendMsgIds(const std::vector<RsGxsMsgMetaData*>& msgMetas, const RsGxsGrpMetaData&, const RsPeerId& sslId);
 
+    bool checkCanRecvMsgFromPeer(const RsPeerId& sslId, const RsGxsGrpMetaData& meta);
+
     void locked_createTransactionFromPending(MsgRespPending* grpPend);
     void locked_createTransactionFromPending(GrpRespPending* msgPend);
     void locked_createTransactionFromPending(GrpCircleIdRequestVetting* grpPend);

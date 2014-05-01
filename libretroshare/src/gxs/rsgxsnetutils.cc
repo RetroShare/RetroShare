@@ -210,11 +210,11 @@ const int GrpCircleVetting::MSG_ID_SEND_PEND = 3;
 const int GrpCircleVetting::MSG_ID_RECV_PEND = 3;
 
 
-GrpIdCircleVet::GrpIdCircleVet(const RsGxsGroupId& grpId, const RsGxsCircleId& circleId)
- : mGroupId(grpId), mCircleId(circleId), mCleared(false) {}
+GrpIdCircleVet::GrpIdCircleVet(const RsGxsGroupId& grpId, const RsGxsCircleId& circleId, const RsGxsId& authId)
+ : mGroupId(grpId), mCircleId(circleId), mAuthorId(authId), mCleared(false) {}
 
 GrpCircleVetting::GrpCircleVetting(RsGcxs* const circles, PgpAuxUtils *pgpUtils)
- : mCircles(circles), mPgpUtils(pgpUtils) {}
+ : mCircles(circles), mPgpUtils(pgpUtils), mTimeStamp(time(NULL)) {}
 
 GrpCircleVetting::~GrpCircleVetting() {}
 
