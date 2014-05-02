@@ -159,7 +159,7 @@ HashCache::HashCache(const std::string& path)
 		std::string s((char *)decrypted_data,decrypted_data_size) ;
 		f = new std::istringstream(s) ;
 
-		free(decrypted_data) ;
+		delete[] decrypted_data ;
 	}
 	else
 	{
