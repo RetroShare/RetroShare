@@ -31,7 +31,6 @@
 /*******************************/
 // #define SERVICECONTROL_DEBUG	1
 /*******************************/
-#define SERVICECONTROL_DEBUG	1
 
 RsServiceControl *rsServiceControl = NULL;
 
