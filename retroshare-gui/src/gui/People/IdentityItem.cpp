@@ -57,13 +57,6 @@ QRectF IdentityItem::boundingRect() const
     return QRectF(-(int)IMG_SIZE/2-10, -(int)IMG_SIZE/2-10, (int)IMG_SIZE+20,(int)IMG_SIZE+35) ;
 }
 
-//QPainterPath IdentityItem::shape() const
-//{
-//    QPainterPath path;
-//    path.addRect(-(int)IMG_SIZE, -(int)IMG_SIZE, 2*(int)IMG_SIZE, 2*(int)IMG_SIZE);
-//    return path;
-//}
-
 QImage IdentityItem::makeDefaultIcon(const RsGxsGroupId& id)
 {
 	int S = 128 ;

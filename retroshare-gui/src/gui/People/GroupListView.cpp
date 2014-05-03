@@ -32,7 +32,7 @@ GroupListView::GroupListView(QWidget *)
     scene->setSceneRect(0, 0, width(), height());
 
     setCacheMode(CacheBackground);
-    setViewportUpdateMode(BoundingRectViewportUpdate);
+    setViewportUpdateMode(FullViewportUpdate);
     setRenderHint(QPainter::Antialiasing);
     setTransformationAnchor(AnchorUnderMouse);
     setResizeAnchor(AnchorViewCenter);
@@ -46,53 +46,6 @@ void GroupListView::resizeEvent(QResizeEvent *e)
 {
     scene()->setSceneRect(0, 0, e->size().width(), e->size().height());
 }
-
-void GroupListView::clearGraph()
-{
-//	QGraphicsScene *scene = new QGraphicsScene(this);
-//	scene->setItemIndexMethod(QGraphicsScene::NoIndex);
-//	setScene(scene);
-
-//	scene->addItem(centerNode);
-//	centerNode->setPos(0, 0);
-
-//	if (oldscene != NULL)
-//	{
-//		delete oldscene;
-//	}
-
-	scene()->clear();
-	scene()->setSceneRect(-200, -200, 1000, 1000);
-//	_edges.clear();
-//	_nodes.clear();
-	_friction_factor = 1.0f ;
-}
-
-// GroupListView::NodeId GroupListView::addNode(const std::string& node_short_string,const std::string& node_complete_string,NodeType type,AuthType auth,const RsPeerId& ssl_id,const RsPgpId& gpg_id)
-// {
-//     Node *node = new Node(node_short_string,type,auth,this,ssl_id,gpg_id);
-//      node->setToolTip(QString::fromUtf8(node_complete_string.c_str())) ;
-// 	 _nodes.push_back(node) ;
-//     scene()->addItem(node);
-// 
-// 	 std::map<std::string,QPointF>::const_iterator it(_node_cached_positions.find(gpg_id.toStdString())) ;
-// 	 if(_node_cached_positions.end() != it)
-// 		 node->setPos(it->second) ;
-// 	 else
-// 	 {
-// 		 qreal x1,y1,x2,y2 ;
-// 		 sceneRect().getCoords(&x1,&y1,&x2,&y2) ;
-// 
-// 		 float f1 = (type == GroupListView::ELASTIC_NODE_TYPE_OWN)?0.5:(rand()/(float)RAND_MAX) ;
-// 		 float f2 = (type == GroupListView::ELASTIC_NODE_TYPE_OWN)?0.5:(rand()/(float)RAND_MAX) ;
-// 
-// 		 node->setPos(x1+f1*(x2-x1),y1+f2*(y2-y1));
-// 	 }
-// #ifdef DEBUG_ELASTIC
-// 	 std::cerr << "Added node " << _nodes.size()-1 << std::endl ;
-// #endif
-// 	 return _nodes.size()-1 ;
-// }
 
 void GroupListView::itemMoved()
 {
@@ -108,36 +61,18 @@ void GroupListView::itemMoved()
 
 void GroupListView::keyPressEvent(QKeyEvent *event)
 {
-    switch (event->key()) {
-//    case Qt::Key_Up:
-//        centerNode->moveBy(0, -20);
-//        break;
-//    case Qt::Key_Down:
-//        centerNode->moveBy(0, 20);
-//        break;
-//    case Qt::Key_Left:
-//        centerNode->moveBy(-20, 0);
-//        break;
-//    case Qt::Key_Right:
-//        centerNode->moveBy(20, 0);
-//        break;
-    case Qt::Key_Plus:
-        scaleView(qreal(1.2));
-        break;
-    case Qt::Key_Minus:
-        scaleView(1 / qreal(1.2));
-        break;
-    case Qt::Key_Space:
-    case Qt::Key_Enter:
-		  requestIdList() ;
-//        foreach (QGraphicsItem *item, scene()->items()) {
-//            if (qgraphicsitem_cast<Node *>(item))
-//                item->setPos(-150 + qrand() % 300, -150 + qrand() % 300);
-//        }
-        break;
-    default:
-        QGraphicsView::keyPressEvent(event);
-    }
+    switch (event->key()) 
+	 {
+		 case Qt::Key_Plus: scaleView(qreal(1.2));
+								  break;
+		 case Qt::Key_Minus:scaleView(1 / qreal(1.2));
+								  break;
+		 case Qt::Key_Space:
+		 case Qt::Key_Enter:requestIdList() ;
+			 break;
+		 default:
+								  QGraphicsView::keyPressEvent(event);
+	 }
 }
 
 void GroupListView::timerEvent(QTimerEvent *event)
@@ -155,15 +90,7 @@ void GroupListView::timerEvent(QTimerEvent *event)
 
 	 QRectF R(scene()->sceneRect()) ;
 
-//    if (!itemsMoved) {
-//        killTimer(timerId);
-//#ifdef DEBUG_ELASTIC
-//		  std::cerr << "Killing timr" << std::endl ;
-//#endif
-//        timerId = 0;
-//    }
-	 _friction_factor *= 1.001f ;
-//	 std::cerr << "Friction factor = " << _friction_factor << std::endl;
+	 // do nothing for now.
 }
 
 void GroupListView::setEdgeLength(uint32_t l)
@@ -267,7 +194,6 @@ void GroupListView::forceRedraw()
 		it->second->update( it->second->boundingRect()) ;
 
 	updateSceneRect(sceneRect()) ;
-	scaleView(1.0);
 }
 void GroupListView::wheelEvent(QWheelEvent *event)
 {
@@ -309,58 +235,61 @@ void GroupListView::updateDisplay(bool)
 	
 void GroupListView::drawBackground(QPainter *painter, const QRectF &rect)
 {
-	//Q_UNUSED(rect);
+    //Q_UNUSED(rect);
 
-	std::cerr << "drawing background..." << std::endl;
-	// Shadow
-	QRectF sceneRect = this->sceneRect();
+    std::cerr << "drawing background..." << std::endl;
+    // Shadow
+    QRectF sceneRect = this->sceneRect();
 
-	// QRectF rightShadow(sceneRect.right(), sceneRect.top() + 5, 5, sceneRect.height());
-	// QRectF bottomShadow(sceneRect.left() + 5, sceneRect.bottom(), sceneRect.width(), 5);
-	// if (rightShadow.intersects(rect) || rightShadow.contains(rect))
-	// 	painter->fillRect(rightShadow, Qt::darkGray);
-	// if (bottomShadow.intersects(rect) || bottomShadow.contains(rect))
-	// 	painter->fillRect(bottomShadow, Qt::darkGray);
+    // Fill
+    QLinearGradient gradient(sceneRect.topLeft(), sceneRect.bottomRight());
+    gradient.setColorAt(0, Qt::white);
+    gradient.setColorAt(1, Qt::lightGray);
+    painter->fillRect(rect.intersected(sceneRect), gradient);
 
-	// Fill
-	QLinearGradient gradient(sceneRect.topLeft(), sceneRect.bottomRight());
-	gradient.setColorAt(0, Qt::white);
-	gradient.setColorAt(1, Qt::lightGray);
-	painter->fillRect(rect.intersected(sceneRect), gradient);
-	//painter->setBrush(Qt::NoBrush);
-	//painter->drawRect(sceneRect);
+    // Text
+    // QRectF textRect(sceneRect.left() + 4, sceneRect.top() + 4,
+    // 		sceneRect.width() - 4, sceneRect.height() - 4);
+    // QString message(tr("Click and drag the nodes around, and zoom with the mouse "
+    // 			"wheel or the '+' and '-' keys"));
 
-	// Text
-	// QRectF textRect(sceneRect.left() + 4, sceneRect.top() + 4,
-	// 		sceneRect.width() - 4, sceneRect.height() - 4);
-	// QString message(tr("Click and drag the nodes around, and zoom with the mouse "
-	// 			"wheel or the '+' and '-' keys"));
+    // QFont font = painter->font();
+    // font.setBold(true);
+    // font.setPointSize(14);
+    // painter->setFont(font);
+    // painter->setPen(Qt::lightGray);
+    // painter->drawText(textRect.translated(2, 2), message);
+    // painter->setPen(Qt::black);
+    // painter->drawText(textRect, message);
 
-	// QFont font = painter->font();
-	// font.setBold(true);
-	// font.setPointSize(14);
-	// painter->setFont(font);
-	// painter->setPen(Qt::lightGray);
-	// painter->drawText(textRect.translated(2, 2), message);
-	// painter->setPen(Qt::black);
-	// painter->drawText(textRect, message);
+    // Now draw information about current Identity
+    //
+    static const int font_size = 12 ;
 
-	// Now draw information about current Identity
-	//
-	if(IdentityItem::_selected_node != NULL)
-	{
-		std::cerr << "Drawing selected info" << std::endl;
-		painter->setPen(Qt::black);
-		QFont font = painter->font();
-		font.setBold(true);
-		font.setPointSize(14);
-		painter->setFont(font);
+    if(IdentityItem::_selected_node != NULL)
+    {
+        std::cerr << "Drawing selected info" << std::endl;
+        painter->setPen(Qt::black);
+        QFont font = painter->font();
+        font.setBold(true);
+        font.setPointSize(font_size);
+        painter->setFont(font);
 
-		const RsGxsIdGroup& group_info(IdentityItem::_selected_node->groupInfo()) ;
+        const RsGxsIdGroup& group_info(IdentityItem::_selected_node->groupInfo()) ;
 
-		painter->drawText(QPointF(IdentityItem::IMG_SIZE*2.5,50), QString("Id: ")+QString::fromStdString(group_info.mMeta.mGroupId.toStdString() ));
-		painter->drawText(QPointF(100,100), QString("Id: ")+QString::fromStdString(group_info.mMeta.mGroupId.toStdString() ));
-	}
+        std::cerr << "scene rect: " << sceneRect.x() << " " << sceneRect.y() << " " << sceneRect.width() << " " << sceneRect.height() << " " << std::endl;
+        int n=1 ;
+        static const int line_height = font_size+2 ;
+
+        QString typestring = (group_info.mPgpKnown)?(QString("Signed by node ")+QString::fromStdString(rsPeers->getGPGName(group_info.mPgpId))
+                                                                           + " ("
+                                                                           +QString::fromStdString(group_info.mPgpId.toStdString())
+                                                                           +")"):tr("Anonymous") ;
+
+        painter->drawText(sceneRect.translated(IdentityItem::IMG_SIZE*2.5,line_height*n++), QString("Name\t: ")+QString::fromStdString(group_info.mMeta.mGroupName ));
+        painter->drawText(sceneRect.translated(IdentityItem::IMG_SIZE*2.5,line_height*n++), QString("Id  \t: ")+QString::fromStdString(group_info.mMeta.mGroupId.toStdString() ));
+        painter->drawText(sceneRect.translated(IdentityItem::IMG_SIZE*2.5,line_height*n++), QString("Type\t: ")+typestring );
+    }
 }
 
 void GroupListView::scaleView(qreal scaleFactor)
