@@ -72,9 +72,7 @@
 #include "gui/GetStartedDialog.h"
 #endif
 
-#ifdef SUSPENDED
 #include "gui/People/PeopleDialog.h"
-#endif
 #include "gui/FileTransfer/TurtleRouterDialog.h"
 #include "idle/idle.h"
 
@@ -249,11 +247,11 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     ui->stackPages->add(friendsDialog = new FriendsDialog(ui->stackPages),
                        action = createPageAction(QIcon(IMAGE_PEERS), tr("Network"), grp));
     notify.push_back(QPair<MainPage*, QAction*>(friendsDialog, action));
-#ifdef SUSPENDED
+
 	 PeopleDialog *peopleDialog = NULL;
     ui->stackPages->add(peopleDialog = new PeopleDialog(ui->stackPages), action = createPageAction(QIcon(IMAGE_IDENTITY), tr("People"), grp));
     notify.push_back(QPair<MainPage*, QAction*>(peopleDialog, action));
-#endif
+
 	 IdDialog *idDialog = NULL;
     ui->stackPages->add(idDialog = new IdDialog(ui->stackPages), action = createPageAction(QIcon(IMAGE_IDENTITY), tr("Itentities"), grp));
     notify.push_back(QPair<MainPage*, QAction*>(idDialog, action));
