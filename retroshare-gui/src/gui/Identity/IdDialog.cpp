@@ -22,6 +22,7 @@
  */
 
 #include <QMessageBox>
+#include <QMenu>
 
 #include "IdDialog.h"
 #include "gui/gxs/GxsIdTreeWidgetItem.h"
@@ -60,6 +61,8 @@
 #define RSID_FILTER_OTHERS       0x0004
 #define RSID_FILTER_PSEUDONYMS   0x0008
 #define RSID_FILTER_ALL          0xffff
+
+#define IMAGE_EDIT                 ":/images/edit_16.png"
 
 /** Constructor */
 IdDialog::IdDialog(QWidget *parent)
@@ -125,7 +128,10 @@ IdDialog::IdDialog(QWidget *parent)
 	connect(ui.toolButton_NewId, SIGNAL(clicked()), this, SLOT(addIdentity()));
 	connect(ui.todoPushButton, SIGNAL(clicked()), this, SLOT(todo()));
 	connect(ui.toolButton_EditId, SIGNAL(clicked()), this, SLOT(editIdentity()));
+	connect(ui.editIdentity, SIGNAL(triggered()), this, SLOT(editIdentity()));
+
 	connect(ui.treeWidget_IdList, SIGNAL(itemSelectionChanged()), this, SLOT(updateSelection()));
+	connect(ui.treeWidget_IdList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(IdListCustomPopupMenu(QPoint)));
 
 	connect(ui.filterComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(filterComboBoxChanged()));
 	connect(ui.filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
@@ -148,6 +154,8 @@ IdDialog::IdDialog(QWidget *parent)
 
 	/* Setup tree */
 	ui.treeWidget_IdList->sortByColumn(RSID_COL_NICKNAME, Qt::AscendingOrder);
+	ui.treeWidget_IdList->setContextMenuPolicy(Qt::CustomContextMenu) ;
+
 
 	mIdQueue = new TokenQueue(rsIdentity->getTokenService(), this);
 
@@ -489,6 +497,7 @@ void IdDialog::insertIdDetails(uint32_t token)
 		// No Delete Ids yet!
 		mStateHelper->setWidgetEnabled(ui.toolButton_Delete, /*true*/ false);
 		mStateHelper->setWidgetEnabled(ui.toolButton_EditId, true);
+		ui.editIdentity->setEnabled(true);
 	}
 	else
 	{
@@ -496,6 +505,7 @@ void IdDialog::insertIdDetails(uint32_t token)
 		mStateHelper->setWidgetEnabled(ui.toolButton_Reputation, /*true*/ false);
 		mStateHelper->setWidgetEnabled(ui.toolButton_Delete, false);
 		mStateHelper->setWidgetEnabled(ui.toolButton_EditId, false);
+		ui.editIdentity->setEnabled(false);
 	}
 
 	/* now fill in the reputation information */
@@ -719,4 +729,15 @@ void IdDialog::loadRequest(const TokenQueue * /*queue*/, const TokenRequest &req
 			std::cerr << std::endl;
 			break;
 	}
+}
+
+void IdDialog::IdListCustomPopupMenu( QPoint )
+{
+
+
+    QMenu contextMnu( this );
+
+    contextMnu.addAction(ui.editIdentity);
+
+    contextMnu.exec(QCursor::pos());
 }

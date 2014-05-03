@@ -39,7 +39,16 @@
           <enum>QFrame::Sunken</enum>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_3">
-          <property name="margin">
+          <property name="leftMargin">
+           <number>2</number>
+          </property>
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="rightMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
            <number>2</number>
           </property>
           <item>
@@ -194,7 +203,16 @@
           <enum>QFrame::Sunken</enum>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
-          <property name="margin">
+          <property name="leftMargin">
+           <number>2</number>
+          </property>
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="rightMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
            <number>2</number>
           </property>
           <item>
@@ -652,6 +670,18 @@
     </widget>
    </item>
   </layout>
+  <action name="editIdentity">
+   <property name="icon">
+    <iconset resource="../images.qrc">
+     <normaloff>:/images/edit_16.png</normaloff>:/images/edit_16.png</iconset>
+   </property>
+   <property name="text">
+    <string>Edit Identity</string>
+   </property>
+   <property name="toolTip">
+    <string>Edit Identity</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>

@@ -59,6 +59,9 @@ private slots:
 
 	void todo();
 	void modifyReputation();
+	
+		/** Create the context popup menu and it's submenus */
+	void IdListCustomPopupMenu( QPoint point );
 
 private:
     void requestIdDetails(RsGxsGroupId &id);
