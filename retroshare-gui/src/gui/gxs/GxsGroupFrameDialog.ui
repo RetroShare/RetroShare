@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>GxsForumsDialog</class>
- <widget class="QWidget" name="GxsForumsDialog">
+ <class>GxsGroupFrameDialog</class>
+ <widget class="QWidget" name="GxsGroupFrameDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -33,7 +33,16 @@
        <enum>QFrame::NoFrame</enum>
       </property>
       <layout class="QGridLayout">
-       <property name="margin">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
         <number>0</number>
        </property>
        <property name="spacing">
@@ -48,7 +57,16 @@
           <enum>QFrame::Sunken</enum>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
-          <property name="margin">
+          <property name="leftMargin">
+           <number>2</number>
+          </property>
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="rightMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
            <number>2</number>
           </property>
           <item>
@@ -80,7 +98,7 @@
              </font>
             </property>
             <property name="text">
-             <string>Forums</string>
+             <string notr="true">Name</string>
             </property>
            </widget>
           </item>
@@ -108,7 +126,7 @@
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="GroupTreeWidget" name="forumTreeWidget" native="true">
+        <widget class="GroupTreeWidget" name="groupTreeWidget" native="true">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
            <horstretch>0</horstretch>
@@ -119,7 +137,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="RSTabWidget" name="threadTabWidget">
+     <widget class="RSTabWidget" name="messageTabWidget">
       <property name="currentIndex">
        <number>-1</number>
       </property>

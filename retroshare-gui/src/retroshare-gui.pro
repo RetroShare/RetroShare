@@ -1121,8 +1121,7 @@ gxsforums {
 		gui/gxsforums/GxsForumThreadWidget.h \
 		gui/gxsforums/GxsForumsFillThread.h
 
-	FORMS += gui/gxsforums/GxsForumsDialog.ui \
-		gui/gxsforums/CreateGxsForumMsg.ui \
+	FORMS += gui/gxsforums/CreateGxsForumMsg.ui \
 		gui/gxsforums/GxsForumThreadWidget.ui
 
 	SOURCES += gui/gxsforums/GxsForumsDialog.cpp \
@@ -1139,16 +1138,18 @@ gxschannels {
 		gui/gxschannels/GxsChannelGroupDialog.h \
 		gui/gxschannels/CreateGxsChannelMsg.h \
 		gui/gxschannels/ChannelDialog.h \
-		gui/feeds/GxsChannelPostItem.h \
+		gui/gxschannels/GxsChannelPostsWidget.h \
+		gui/feeds/GxsChannelPostItem.h
 	
-	FORMS += gui/gxschannels/GxsChannelDialog.ui \
+	FORMS += gui/gxschannels/GxsChannelPostsWidget.ui \
 		gui/gxschannels/CreateGxsChannelMsg.ui \
-		gui/feeds/GxsChannelPostItem.ui \
+		gui/feeds/GxsChannelPostItem.ui
 	
 	SOURCES += gui/gxschannels/GxsChannelDialog.cpp \
+		gui/gxschannels/GxsChannelPostsWidget.cpp \
 		gui/gxschannels/GxsChannelGroupDialog.cpp \
 		gui/gxschannels/CreateGxsChannelMsg.cpp \
-		gui/feeds/GxsChannelPostItem.cpp \
+		gui/feeds/GxsChannelPostItem.cpp
 }
 	
 	
@@ -1199,6 +1200,8 @@ gxsgui {
 		gui/gxs/GxsCommentContainer.h \
 		gui/gxs/GxsCommentDialog.h \
 		gui/gxs/GxsCreateCommentDialog.h \
+		gui/gxs/GxsGroupFrameDialog.h \
+		gui/gxs/GxsMessageFrameWidget.h \
 		gui/gxs/GxsFeedItem.h \
 		gui/gxs/RsGxsUpdateBroadcastBase.h \
 		gui/gxs/RsGxsUpdateBroadcastWidget.h \
@@ -1212,6 +1215,7 @@ gxsgui {
 		gui/gxs/GxsCommentContainer.ui \
 		gui/gxs/GxsCommentDialog.ui \
 		gui/gxs/GxsCreateCommentDialog.ui \
+		gui/gxs/GxsGroupFrameDialog.ui
 	
 #		gui/gxs/GxsMsgDialog.ui \
 #		gui/gxs/GxsCommentTreeWidget.ui \
@@ -1229,6 +1233,8 @@ gxsgui {
 		gui/gxs/GxsCommentContainer.cpp \
 		gui/gxs/GxsCommentDialog.cpp \
 		gui/gxs/GxsCreateCommentDialog.cpp \
+		gui/gxs/GxsGroupFrameDialog.cpp \
+		gui/gxs/GxsMessageFrameWidget.cpp \
 		gui/gxs/GxsFeedItem.cpp \
 		gui/gxs/RsGxsUpdateBroadcastBase.cpp \
 		gui/gxs/RsGxsUpdateBroadcastWidget.cpp \

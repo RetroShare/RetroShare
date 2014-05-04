@@ -1,0 +1,115 @@
+/****************************************************************
+ *  RetroShare is distributed under the following license:
+ *
+ *  Copyright (C) 2008 Robert Fernie
+ *
+ *  This program is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU General Public License
+ *  as published by the Free Software Foundation; either version 2
+ *  of the License, or (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ *  Boston, MA  02110-1301, USA.
+ ****************************************************************/
+
+#ifndef _GXS_CHANNELPOSTSWIDGET_H
+#define _GXS_CHANNELPOSTSWIDGET_H
+
+#include <map>
+
+#include "gui/gxs/GxsMessageFrameWidget.h"
+
+#include "gui/feeds/FeedHolder.h"
+
+#include "util/TokenQueue.h"
+
+namespace Ui {
+class GxsChannelPostsWidget;
+}
+
+//class ChanMsgItem;
+class GxsChannelPostItem;
+class QTreeWidgetItem;
+class UIStateHelper;
+class QBoxLayout;
+
+class GxsChannelPostsWidget : public GxsMessageFrameWidget, public TokenResponse, public FeedHolder
+{
+	Q_OBJECT
+
+public:
+	/** Default Constructor */
+	GxsChannelPostsWidget(const RsGxsGroupId &channelId, QWidget *parent = 0);
+	/** Default Destructor */
+	~GxsChannelPostsWidget();
+
+	/* GxsMessageFrameWidget */
+	virtual RsGxsGroupId groupId() { return mChannelId; }
+	virtual void setGroupId(const RsGxsGroupId &channelId);
+	virtual QString groupName(bool withUnreadCount);
+	virtual QIcon groupIcon();
+	virtual void setAllMessagesRead(bool read);
+
+	/* FeedHolder */
+	virtual QScrollArea *getScrollArea();
+	virtual void deleteFeedItem(QWidget *item, uint32_t type);
+    virtual void openChat(const RsPeerId& peerId);
+    virtual void openComments(uint32_t type, const RsGxsGroupId &groupId, const RsGxsMessageId &msgId, const QString &title);
+
+	/* NEW GXS FNS */
+	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
+
+signals:
+	void commentLoad(const RsGxsGroupId &groupId, const RsGxsMessageId &msgId, const QString &title);
+
+protected:
+	virtual void updateDisplay(bool complete);
+
+private slots:
+	void createMsg();
+
+	//void fillThreadFinished();
+	//void fillThreadAddMsg(const QString &channelId, const QString &channelMsgId, int current, int count);
+
+private:
+	void processSettings(bool load);
+
+	void setAutoDownloadButton(bool autoDl);
+
+	/* NEW GXS FNS */
+	void requestGroupData(const RsGxsGroupId &grpId);
+	void loadGroupData(const uint32_t &token);
+
+	void requestPosts(const RsGxsGroupId &grpId);
+	void loadPosts(const uint32_t &token);
+
+	void insertChannelDetails(const RsGxsChannelGroup &group);
+	void insertChannelPosts(const std::vector<RsGxsChannelPost> &posts);
+
+	void acknowledgeMessageUpdate(const uint32_t &token);
+
+    RsGxsGroupId mChannelId; /* current Channel */
+	TokenQueue *mChannelQueue;
+
+	/* Layout Pointers */
+	QBoxLayout *mMsgLayout;
+
+	//QList<ChanMsgItem *> mChanMsgItems;
+	QList<GxsChannelPostItem *> mChannelPostItems;
+
+	std::map<std::string, uint32_t> mChanSearchScore; //chanId, score
+
+	UIStateHelper *mStateHelper;
+
+	/* UI - from Designer */
+	Ui::GxsChannelPostsWidget *ui;
+};
+
+#endif

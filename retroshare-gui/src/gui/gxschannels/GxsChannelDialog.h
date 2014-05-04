@@ -22,23 +22,10 @@
 #ifndef _GXS_CHANNEL_DIALOG_H
 #define _GXS_CHANNEL_DIALOG_H
 
-#include <map>
-
-#include "gui/gxs/RsGxsUpdateBroadcastPage.h"
-
-#include "ui_GxsChannelDialog.h"
-
-#include "gui/feeds/FeedHolder.h"
+#include "gui/gxs/GxsGroupFrameDialog.h"
 #include "gui/gxs/GxsCommentContainer.h"
 
-#include "util/TokenQueue.h"
-
-//class ChanMsgItem;
-class GxsChannelPostItem;
-class QTreeWidgetItem;
-class UIStateHelper;
-
-class GxsChannelDialog : public RsGxsUpdateBroadcastPage, public TokenResponse, public GxsServiceDialog, public FeedHolder
+class GxsChannelDialog : public GxsGroupFrameDialog, public GxsServiceDialog
 {
 	Q_OBJECT
 
@@ -50,94 +37,20 @@ public:
 
 //	virtual UserNotify *getUserNotify(QObject *parent);
 
-	/* FeedHolder */
-	virtual QScrollArea *getScrollArea();
-	virtual void deleteFeedItem(QWidget *item, uint32_t type);
-    virtual void openChat(const RsPeerId& peerId);
-	virtual void openComments(uint32_t type, const RsGxsGroupId &groupId, const RsGxsMessageId &msgId, const QString &title);
-
-	bool navigate(const std::string& channelId, const std::string& msgId);
-
-	/* NEW GXS FNS */
-	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
-
-protected:
-	virtual void updateDisplay(bool complete);
-
 private slots:
-	void todo();
-	void channelListCustomPopupMenu(QPoint point);
-	void selectChannel(const QString &id);
-
-	void createChannel();
-
-	void subscribeChannel();
-	void unsubscribeChannel();
-	void setAllAsReadClicked();
 	void toggleAutoDownload();
-
-	void createMsg();
-
-	void showChannelDetails();
-	void restoreChannelKeys();
-	void editChannelDetail();
-	void shareKey();
-	void copyChannelLink();
-
-//	void channelMsgReadSatusChanged(const QString& channelId, const QString& msgId, int status);
-
-	//void fillThreadFinished();
-	//void fillThreadAddMsg(const QString &channelId, const QString &channelMsgId, int current, int count);
+	void loadComment(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId, const QString &title);
 
 private:
-	//void updateChannelList();
-	//void updateChannelMsgs();
-	void updateMessageSummaryList(const std::string &channelId);
-
-	void processSettings(bool load);
-
-	void setAutoDownloadButton(bool autoDl);
-
-	/* NEW GXS FNS */
-	void insertChannels();
-
-	void requestGroupSummary();
-	void loadGroupSummary(const uint32_t &token);
-
-	void requestGroupData(const RsGxsGroupId &grpId);
-	void loadGroupData(const uint32_t &token);
-
-	void requestPosts(const RsGxsGroupId &grpId);
-	void loadPosts(const uint32_t &token);
-
-	void insertChannelData(const std::list<RsGroupMetaData> &channelList);
-
-	void insertChannelDetails(const RsGxsChannelGroup &group);
-	void insertChannelPosts(const std::vector<RsGxsChannelPost> &posts);
-
-	void acknowledgeGroupUpdate(const uint32_t &token);
-	void acknowledgeMessageUpdate(const uint32_t &token);
-
-    RsGxsGroupId mChannelId; /* current Channel */
-	TokenQueue *mChannelQueue;
-
-	/* Layout Pointers */
-	QBoxLayout *mMsgLayout;
-
-	//QList<ChanMsgItem *> mChanMsgItems;
-	QList<GxsChannelPostItem *> mChannelPostItems;
-
-	std::map<std::string, uint32_t> mChanSearchScore; //chanId, score
-
-	QTreeWidgetItem *ownChannels;
-	QTreeWidgetItem *subcribedChannels;
-	QTreeWidgetItem *popularChannels;
-	QTreeWidgetItem *otherChannels;
-
-	UIStateHelper *mStateHelper;
-
-	/* UI - from Designer */
-	Ui::GxsChannelDialog ui;
+	/* GxsGroupFrameDialog */
+	virtual QString text(TextType type);
+	virtual QString icon(IconType type);
+	virtual QString settingsGroupName() { return "GxsChannelDialog"; }
+	virtual GxsGroupDialog *createNewGroupDialog(TokenQueue *tokenQueue);
+	virtual GxsGroupDialog *createGroupDialog(TokenQueue *tokenQueue, RsTokenService *tokenService, GxsGroupDialog::Mode mode, RsGxsGroupId groupId);
+	virtual int shareKeyType();
+	virtual GxsMessageFrameWidget *createMessageFrameWidget(const RsGxsGroupId &groupId);
+	virtual void groupTreeCustomActions(RsGxsGroupId grpId, int subscribeFlags, QList<QAction*> &actions);
 };
 
 #endif

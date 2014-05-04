@@ -87,7 +87,7 @@
 #define TOKEN_TYPE_REPLY_MESSAGE    3
 
 GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget *parent) :
-	RsGxsUpdateBroadcastWidget(rsGxsForums, parent),
+	GxsMessageFrameWidget(rsGxsForums, parent),
 	ui(new Ui::GxsForumThreadWidget)
 {
 	ui->setupUi(this);
@@ -195,7 +195,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	mFillThread = NULL;
 	ui->threadTreeWidget->setGxsIdColumn(COLUMN_THREAD_AUTHOR);
 
-	setForumId(forumId);
+	setGroupId(forumId);
 
 	ui->threadTreeWidget->installEventFilter(this);
 }
@@ -256,7 +256,7 @@ void GxsForumThreadWidget::processSettings(bool load)
 	mInProcessSettings = false;
 }
 
-void GxsForumThreadWidget::setForumId(const RsGxsGroupId &forumId)
+void GxsForumThreadWidget::setGroupId(const RsGxsGroupId &forumId)
 {
 	if (mForumId == forumId) {
 		if (!forumId.isNull()) {
@@ -269,12 +269,12 @@ void GxsForumThreadWidget::setForumId(const RsGxsGroupId &forumId)
 	mNewCount = 0;
 	mUnreadCount = 0;
 
-	emit forumChanged(this);
+	emit groupChanged(this);
 
 	insertThreads();
 }
 
-QString GxsForumThreadWidget::forumName(bool withUnreadCount)
+QString GxsForumThreadWidget::groupName(bool withUnreadCount)
 {
 	QString name = mForumId.isNull () ? tr("No name") : ui->forumName->text();
 
@@ -285,7 +285,7 @@ QString GxsForumThreadWidget::forumName(bool withUnreadCount)
 	return name;
 }
 
-QIcon GxsForumThreadWidget::forumIcon()
+QIcon GxsForumThreadWidget::groupIcon()
 {
 	if (mStateHelper->isLoading(TOKEN_TYPE_CURRENTFORUM) || mFillThread) {
 		return QIcon(":/images/kalarm.png");
@@ -632,7 +632,7 @@ void GxsForumThreadWidget::calculateUnreadCount()
 	}
 
 	if (changed) {
-		emit forumChanged(this);
+		emit groupChanged(this);
 	}
 }
 
@@ -682,7 +682,7 @@ void GxsForumThreadWidget::fillThreadFinished()
 
 			mStateHelper->setLoading(TOKEN_TYPE_CURRENTFORUM, false);
 			mStateHelper->setLoading(TOKEN_TYPE_INSERT_POST, false);
-			emit forumChanged(this);
+			emit groupChanged(this);
 		}
 
 		if (thread->wasStopped()) {
@@ -745,7 +745,7 @@ void GxsForumThreadWidget::fillThreadFinished()
 			insertPost();
 			calculateIconsAndFonts();
 			calculateUnreadCount();
-			emit forumChanged(this);
+			emit groupChanged(this);
 		}
 
 #ifdef DEBUG_FORUMS
@@ -968,7 +968,7 @@ void GxsForumThreadWidget::insertForumThreads(const RsGxsForumGroup &group)
 
 	// start thread
 	mFillThread->start();
-	emit forumChanged(this);
+	emit groupChanged(this);
 }
 
 void GxsForumThreadWidget::fillThreads(QList<QTreeWidgetItem *> &threadList, bool expandNewMessages, QList<QTreeWidgetItem*> &itemToExpand)
@@ -1493,7 +1493,7 @@ void GxsForumThreadWidget::markMsgAsUnreadChildren()
 	markMsgAsReadUnread(false, true, false);
 }
 
-void GxsForumThreadWidget::setAllMsgReadStatus(bool read)
+void GxsForumThreadWidget::setAllMessagesRead(bool read)
 {
 	markMsgAsReadUnread(read, true, true);
 }
@@ -1683,7 +1683,7 @@ void GxsForumThreadWidget::requestGroup_CurrentForum(const RsGxsGroupId &forumId
 	ui->progressBar->reset();
 	mStateHelper->setLoading(TOKEN_TYPE_CURRENTFORUM, true);
 	mStateHelper->setLoading(TOKEN_TYPE_INSERT_POST, true);
-	emit forumChanged(this);
+	emit groupChanged(this);
 
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
@@ -1723,7 +1723,7 @@ void GxsForumThreadWidget::loadGroup_CurrentForum(const uint32_t &token)
 		mStateHelper->setActive(TOKEN_TYPE_INSERT_POST, false);
 		mStateHelper->clear(TOKEN_TYPE_CURRENTFORUM);
 		mStateHelper->clear(TOKEN_TYPE_INSERT_POST);
-		emit forumChanged(this);
+		emit groupChanged(this);
 	}
 }
 

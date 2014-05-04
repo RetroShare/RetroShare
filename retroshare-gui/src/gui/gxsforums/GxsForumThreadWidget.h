@@ -1,7 +1,7 @@
 #ifndef GXSFORUMTHREADWIDGET_H
 #define GXSFORUMTHREADWIDGET_H
 
-#include "gui/gxs/RsGxsUpdateBroadcastWidget.h"
+#include "gui/gxs/GxsMessageFrameWidget.h"
 #include "util/TokenQueue.h"
 
 class QTreeWidgetItem;
@@ -15,7 +15,7 @@ namespace Ui {
 class GxsForumThreadWidget;
 }
 
-class GxsForumThreadWidget : public RsGxsUpdateBroadcastWidget, public TokenResponse
+class GxsForumThreadWidget : public GxsMessageFrameWidget, public TokenResponse
 {
 	Q_OBJECT
 
@@ -41,23 +41,20 @@ public:
 	void setTextColorNotSubscribed(QColor color) { mTextColorNotSubscribed = color; }
 	void setTextColorMissing(QColor color) { mTextColorMissing = color; }
 
-	RsGxsGroupId forumId() { return mForumId; }
-	void setForumId(const RsGxsGroupId &forumId);
-	QString forumName(bool withUnreadCount);
-	QIcon forumIcon();
+	virtual RsGxsGroupId groupId() { return mForumId; }
+	virtual void setGroupId(const RsGxsGroupId &forumId);
+	virtual QString groupName(bool withUnreadCount);
+	virtual QIcon groupIcon();
 	unsigned int newCount() { return mNewCount; }
 	unsigned int unreadCount() { return mUnreadCount; }
 
 	QTreeWidgetItem *convertMsgToThreadWidget(const RsGxsForumMsg &msg, bool useChildTS, uint32_t filterColumn);
 	QTreeWidgetItem *generateMissingItem(const RsGxsMessageId &msgId);
 
-	void setAllMsgReadStatus(bool read);
+	virtual void setAllMessagesRead(bool read);
 
 	// Callback for all Loads.
 	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
-
-signals:
-	void forumChanged(QWidget *widget);
 
 protected:
 	bool eventFilter(QObject *obj, QEvent *ev);
