@@ -13,6 +13,12 @@
 #include "FakePgpAuxUtils.h"
 #include "gxstestservice.h"
 
+
+#ifdef USER_NETSERVICE_WRAPPER
+	#include "RsGxsNetServiceTester.h"
+#endif
+
+
 GxsPeerNode::GxsPeerNode(const RsPeerId &ownId, const std::list<RsPeerId> &friends, int testMode, bool useIdentityService)
 	:PeerNode(ownId, friends, false),
 	mUseIdentityService(useIdentityService),
@@ -62,12 +68,16 @@ GxsPeerNode::GxsPeerNode(const RsPeerId &ownId, const std::list<RsPeerId> &frien
 				mGxsIdService, mGxsCircles,
 				mPgpAuxUtils,
 				false); // don't synchronise group automatic (need explicit group request)
-	
+
 		mGxsIdService->setNes(mGxsIdNs);
 		/**** GxsCircle service ****/
 	
-		mGxsCirclesNs = new RsGxsNetService(
-				RS_SERVICE_GXS_TYPE_GXSCIRCLE, mGxsCirclesDs, nxsMgr,
+#ifdef USER_NETSERVICE_WRAPPER
+		mGxsCirclesNs = new RsGxsNetServiceTester
+#else
+		mGxsCirclesNs = new RsGxsNetService
+#endif
+				(RS_SERVICE_GXS_TYPE_GXSCIRCLE, mGxsCirclesDs, nxsMgr,
 				mGxsCircles, mGxsCircles->getServiceInfo(),
 				mGxsIdService, mGxsCircles,
 				mPgpAuxUtils);
@@ -88,8 +98,12 @@ GxsPeerNode::GxsPeerNode(const RsPeerId &ownId, const std::list<RsPeerId> &frien
 
 	mTestService = new GxsTestService(mTestDs, NULL, mGxsIdService, testMode);
 
-	mTestNs = new RsGxsNetService(
-			RS_SERVICE_GXS_TYPE_TEST, mTestDs, nxsMgr,
+#ifdef USER_NETSERVICE_WRAPPER
+	mTestNs = new RsGxsNetServiceTester
+#else
+	mTestNs = new RsGxsNetService
+#endif
+			(RS_SERVICE_GXS_TYPE_TEST, mTestDs, nxsMgr,
 			mTestService, mTestService->getServiceInfo(),
 			mGxsIdService, mGxsCircles,
 			mPgpAuxUtils);
@@ -149,7 +163,30 @@ GxsPeerNode::~GxsPeerNode()
 	RsDirUtil::cleanupDirectory(mGxsDir, filesToKeep);
 }
 	
+bool GxsPeerNode::checkTestServiceAllowedGroups(const RsPeerId &peerId)
+{
+#ifdef USER_NETSERVICE_WRAPPER
+	std::vector<RsGxsGroupId> groups;
+	return ((RsGxsNetServiceTester *) mTestNs)->fetchAllowedGroups(peerId, groups);
+#else
+	std::cerr << "GxsPeerNode::checkTestServiceAllowedGroups() not available";
+	std::cerr << std::endl;
+	return true;
+#endif
+}
 
+	
+bool GxsPeerNode::checkCircleServiceAllowedGroups(const RsPeerId &peerId)
+{
+#ifdef USER_NETSERVICE_WRAPPER
+	std::vector<RsGxsGroupId> groups;
+	return ((RsGxsNetServiceTester *) mGxsCirclesNs)->fetchAllowedGroups(peerId, groups);
+#else
+	std::cerr << "GxsPeerNode::checkCircleServiceAllowedGroups() not available";
+	std::cerr << std::endl;
+	return true;
+#endif
+}
 
 bool GxsPeerNode::createIdentity(const std::string &name, 
 		bool pgpLinked,
@@ -268,6 +305,11 @@ bool GxsPeerNode::createCircle(const std::string &name,
 			return false;
 			break;
 	}
+
+	std::cerr << "GxsPeerNode::createCircle()";
+        std::cerr << " CircleType: " << (uint32_t) grp1.mMeta.mCircleType;
+        std::cerr << " CircleId: " << grp1.mMeta.mCircleId.toStdString();
+        std::cerr << std::endl;
 
 	uint32_t token;
 	if (!mGxsCircles->createGroup(token, grp1))

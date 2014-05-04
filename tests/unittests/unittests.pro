@@ -3,7 +3,7 @@ CONFIG += bitdht
 
 CONFIG += gxs debug
 
-LIBS += -lgtest.a
+LIBS += -lgtest
 
 gxs {
 	DEFINES += RS_ENABLE_GXS
@@ -274,10 +274,11 @@ HEADERS +=  libretroshare/gxs/nxs_test/nxsdummyservices.h \
 SOURCES +=  libretroshare/gxs/nxs_test/nxsdummyservices.cc \
 	libretroshare/gxs/nxs_test/nxsgrptestscenario.cc \
 	libretroshare/gxs/nxs_test/nxsmsgtestscenario.cc \
-	libretroshare/gxs/nxs_test/nxsgrpsync_test.cc \
-	libretroshare/gxs/nxs_test/nxsmsgsync_test.cc \
 	libretroshare/gxs/nxs_test/nxstesthub.cc \
-	libretroshare/gxs/nxs_test/rsgxsnetservice_test.cc
+
+#	libretroshare/gxs/nxs_test/rsgxsnetservice_test.cc
+#	libretroshare/gxs/nxs_test/nxsmsgsync_test.cc \
+#	libretroshare/gxs/nxs_test/nxsgrpsync_test.cc \
 
 HEADERS += libretroshare/gxs/gen_exchange/genexchangetester.h \
 	libretroshare/gxs/gen_exchange/gxspublishmsgtest.h \
@@ -326,6 +327,8 @@ HEADERS += libretroshare/services/gxs/rsgxstestitems.h \
 	libretroshare/services/gxs/GxsPairServiceTester.h \
 	libretroshare/services/gxs/FakePgpAuxUtils.h \
 
+#	libretroshare/services/gxs/RsGxsNetServiceTester.h \
+
 SOURCES += libretroshare/services/gxs/rsgxstestitems.cc \
 	libretroshare/services/gxs/gxstestservice.cc \
 	libretroshare/services/gxs/GxsIsolatedServiceTester.cc \
@@ -335,3 +338,8 @@ SOURCES += libretroshare/services/gxs/rsgxstestitems.cc \
 	libretroshare/services/gxs/nxsbasic_test.cc \
 	libretroshare/services/gxs/nxspair_tests.cc \
 	libretroshare/services/gxs/gxscircle_tests.cc \
+
+#	libretroshare/services/gxs/gxscircle_mintest.cc \
+
+
+#	libretroshare/services/gxs/RsGxsNetServiceTester.cc \

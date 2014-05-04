@@ -27,6 +27,9 @@ public:
 	GxsPeerNode(const RsPeerId &ownId, const std::list<RsPeerId> &peers, int testMode, bool useIdentityService);
 	~GxsPeerNode();
 
+bool checkTestServiceAllowedGroups(const RsPeerId &peerId);
+bool checkCircleServiceAllowedGroups(const RsPeerId &peerId);
+
 bool createIdentity(const std::string &name,
                 bool pgpLinked,
                 uint32_t circleType,

@@ -60,30 +60,34 @@ const RsPgpId & FakePgpAuxUtils::getPGPOwnId()
 
 RsPgpId FakePgpAuxUtils::getPGPId(const RsPeerId& sslid)
 {
-	std::cerr << "FakePgpAuxUtils::getPGPId()";
 	/* convert an sslId */
 	std::string idstring = sslid.toStdString();
 	idstring.resize(RsPgpId::SIZE_IN_BYTES*2, '0');
 	RsPgpId pgpId(idstring);
 
+#if 0
+	std::cerr << "FakePgpAuxUtils::getPGPId()";
 	std::cerr << " RsPeerId: " << sslid.toStdString();
 	std::cerr << " RsPgpId: " << pgpId.toStdString();
 	std::cerr << std::endl;
+#endif
 	return pgpId;
 }
 
 
 bool FakePgpAuxUtils::getKeyFingerprint(const RsPgpId& id,PGPFingerprintType& fp) const
 {
-	std::cerr << "FakePgpAuxUtils::getKeyFingerprint()";
 	/* convert an sslId */
 	std::string idstring = id.toStdString();
 	idstring.resize(PGPFingerprintType::SIZE_IN_BYTES*2, '0');
 	PGPFingerprintType pgpfp(idstring);
 
+#if 0
+	std::cerr << "FakePgpAuxUtils::getKeyFingerprint()";
 	std::cerr << " RsPeerId: " << id.toStdString();
 	std::cerr << " RsPgpId: " << pgpfp.toStdString();
 	std::cerr << std::endl;
+#endif
 
 	fp = pgpfp;
 	return true;
