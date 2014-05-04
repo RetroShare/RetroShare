@@ -2364,6 +2364,7 @@ void RsGenExchange::processRecvdMessages()
 
     if(!msgIds.empty())
     {
+    	removeDeleteExistingMessages(msgs, msgIds);
         mDataStore->storeMessage(msgs);
         RsGxsMsgChange* c = new RsGxsMsgChange(RsGxsNotify::TYPE_RECEIVE);
         c->msgChangeMap = msgIds;
@@ -2587,3 +2588,58 @@ void RsGenExchange::setGroupReputationCutOff(uint32_t& token, const RsGxsGroupId
     g.val.put(RsGeneralDataService::GRP_META_CUTOFF_LEVEL, (int32_t)CutOff);
     mGrpLocMetaMap.insert(std::make_pair(token, g));
 }
+
+void RsGenExchange::removeDeleteExistingMessages(
+		RsGeneralDataService::MsgStoreMap& msgs, GxsMsgReq& msgIdsNotify) {
+
+	// first get grp ids of messages to be stored
+	RsGeneralDataService::MsgStoreMap::const_iterator cit =
+			msgs.begin();
+
+	RsGxsGroupId::std_set mGrpIdsUnique;
+
+	for(; cit != msgs.end(); cit++)
+	{
+		mGrpIdsUnique.insert(cit->second->mGroupId);
+	}
+
+	RsGxsGroupId::std_list grpIds(mGrpIdsUnique.begin(), mGrpIdsUnique.end());
+	RsGxsGroupId::std_list::const_iterator it = grpIds.begin();
+	typedef std::map<RsGxsGroupId, RsGxsMessageId::std_vector> MsgIdReq;
+	MsgIdReq msgIdReq;
+
+	// now get a list of all msgs ids for each group
+	for(; it != grpIds.end(); it++)
+	{
+		mDataStore->retrieveMsgIds(*it, msgIdReq[*it]);
+	}
+
+	RsGeneralDataService::MsgStoreMap::iterator cit2 = msgs.begin();
+	RsGeneralDataService::MsgStoreMap filtered;
+
+	// now for each msg to be stored that exist in the retrieved msg/grp "index" delete and erase from map
+	for(; cit2 != msgs.end(); cit2++)
+	{
+		const RsGxsMessageId::std_vector& msgIds = msgIdReq[cit2->second->mGroupId];
+
+		if(std::find(msgIds.begin(), msgIds.end(), cit2->second->mMsgId) !=
+				msgIds.end())
+		{
+			// msg exist in retrieved index
+			delete cit2->first;
+			RsGxsMessageId::std_vector& notifyIds = msgIdsNotify[cit2->second->mGroupId];
+			RsGxsMessageId::std_vector::iterator it2 = std::find(notifyIds.begin(),
+					notifyIds.end(), cit2->second->mMsgId);
+			if(it2 != notifyIds.end())
+				notifyIds.erase(it2);
+		}
+		else
+		{
+			// does not exist so add to filtered list
+			filtered.insert(*cit2);
+		}
+	}
+
+	msgs = filtered;
+}
+

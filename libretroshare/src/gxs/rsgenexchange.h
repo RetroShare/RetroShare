@@ -771,7 +771,7 @@ private:
 
     /*!
      * Checks validation of recently received groups to be
-     * updated
+     * updated (and updates them, a bit of a misnomer)
      */
     void performUpdateValidation();
 
@@ -789,6 +789,14 @@ private:
      * @return false, if private admin and publish keys cannot be found, true otherwise
      */
     bool checkKeys(const RsTlvSecurityKeySet& keySet);
+
+    /*!
+     * Message and notification map passed to method
+     * are cleansed of msgs and ids that already exist in database
+     * @param msgs messages to be filtered
+     * @param msgIdsNotify message notification map to be filtered
+     */
+    void removeDeleteExistingMessages(RsGeneralDataService::MsgStoreMap& msgs, GxsMsgReq& msgIdsNotify);
 
 private:
 

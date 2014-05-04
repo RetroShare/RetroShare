@@ -37,6 +37,7 @@
 #include <util/rsrandom.h>
 #include <vector>
 #include <list>
+#include <set>
 
 template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER> class t_RsGenericIdType
 {
@@ -44,6 +45,7 @@ template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER> c
 
 		typedef std::list<t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER> > std_list;
 		typedef std::vector<t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER> > std_vector;
+		typedef std::set<t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER> > std_set;
 
 		t_RsGenericIdType() 
 		{ 
