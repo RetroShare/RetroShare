@@ -159,11 +159,11 @@
 #define IMAGE_TWOONLINE         ":/images/logo/logo_24_2.png"
 #define IMAGE_BLOGS             ":/images/kblogger.png"
 #define IMAGE_DHT               ":/images/dht16.png"
-#define IMAGE_CHATLOBBY			":/images/chat_32.png"
+#define IMAGE_CHATLOBBY			    ":/images/chat_32.png"
 #define IMAGE_GXSCHANNELS       ":/images/channels.png"
 #define IMAGE_GXSFORUMS         ":/images/konversation.png"
 #define IMAGE_IDENTITY          ":/images/identity/identities_32.png"
-#define IMAGE_CIRCLES           ":/images/user/agt_forum24.png"
+#define IMAGE_CIRCLES           ":/images/circles/circles_32.png"
 
 
 /*static*/ MainWindow *MainWindow::_instance = NULL;

@@ -53,7 +53,7 @@ CreateCircleDialog::CreateCircleDialog()
 	//setWindowTitle(text);
 	//Settings->loadWidgetInformation(this);
 			
-	ui.headerFrame->setHeaderImage(QPixmap(":/images/user/agt_forum64.png"));
+	ui.headerFrame->setHeaderImage(QPixmap(":/images/circles/circles_64.png"));
 
 	// connect up the buttons.
 	connect(ui.addButton, SIGNAL(clicked()), this, SLOT(addMember()));
