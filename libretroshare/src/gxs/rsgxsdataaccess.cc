@@ -51,12 +51,18 @@
 #define RS_TOKREQ_ANSTYPE_SUMMARY	0x0002
 #define RS_TOKREQ_ANSTYPE_DATA		0x0003
 
+
         const uint8_t RsTokenService::GXS_REQUEST_V2_STATUS_FAILED = 0;
         const uint8_t RsTokenService::GXS_REQUEST_V2_STATUS_PENDING = 1;
         const uint8_t RsTokenService::GXS_REQUEST_V2_STATUS_PARTIAL = 2;
         const uint8_t RsTokenService::GXS_REQUEST_V2_STATUS_FINISHED_INCOMPLETE = 3;
         const uint8_t RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE = 4;
         const uint8_t RsTokenService::GXS_REQUEST_V2_STATUS_DONE = 5;			 // ONCE ALL DATA RETRIEVED.
+
+
+/***********
+ * #define DATA_DEBUG	1
+ **********/
 
 RsGxsDataAccess::RsGxsDataAccess(RsGeneralDataService* ds)
  : mDataStore(ds), mDataMutex("RsGxsDataAccess"), mNextToken(0)
@@ -103,7 +109,10 @@ bool RsGxsDataAccess::requestGroupInfo(uint32_t &token, uint32_t ansType, const 
     }else
     {
             generateToken(token);
+
+#ifdef DATA_DEBUG
             std::cerr << "RsGxsDataAccess::requestGroupInfo() gets Token: " << token << std::endl;
+#endif
     }
 
     setReq(req, token, ansType, opts);
@@ -142,7 +151,9 @@ bool RsGxsDataAccess::requestGroupInfo(uint32_t &token, uint32_t ansType, const 
     }else
     {
             generateToken(token);
+#ifdef DATA_DEBUG
             std::cerr << "RsGxsDataAccess::requestGroupInfo() gets Token: " << token << std::endl;
+#endif
     }
 
     setReq(req, token, ansType, opts);
@@ -213,7 +224,9 @@ bool RsGxsDataAccess::requestMsgInfo(uint32_t &token, uint32_t ansType,
 	}else
 	{
 		generateToken(token);
+#ifdef DATA_DEBUG
 		std::cerr << "RsGxsDataAccess::requestMsgInfo() gets Token: " << token << std::endl;
+#endif
 	}
 
 	setReq(req, token, ansType, opts);
@@ -263,7 +276,9 @@ bool RsGxsDataAccess::requestMsgInfo(uint32_t &token, uint32_t ansType,
         }else
         {
                 generateToken(token);
+#ifdef DATA_DEBUG
                 std::cerr << "RsGxsDataAccess::requestMsgInfo() gets Token: " << token << std::endl;
+#endif
         }
 
         setReq(req, token, ansType, opts);
@@ -706,9 +721,11 @@ void RsGxsDataAccess::processRequests()
 			GxsRequest* req = it->second;
                         if (req->status == GXS_REQUEST_V2_STATUS_PENDING)
 			{
+#ifdef DATA_DEBUG
 				std::cerr << "RsGxsDataAccess::processRequests() Processing Token: " << req->token << " Status: "
 						<< req->status << " ReqType: " << req->reqType << " Age: "
 						<< now - req->reqTime << std::endl;
+#endif
 
                                 req->status = GXS_REQUEST_V2_STATUS_PARTIAL;
 
@@ -744,10 +761,8 @@ void RsGxsDataAccess::processRequests()
                                 }
 				else
 				{
-	#ifdef GXSDATA_SERVE_DEBUG
 					std::cerr << "RsGxsDataAccess::processRequests() Failed to process request, token: "
 							  << req->token << std::endl;
-	#endif
 
                                         req->status = GXS_REQUEST_V2_STATUS_FAILED;
 				}
@@ -758,15 +773,19 @@ void RsGxsDataAccess::processRequests()
 			}
                         else if (req->status == GXS_REQUEST_V2_STATUS_DONE)
 			{
+#ifdef DATA_DEBUG
 				std::cerr << "RsGxsDataAccess::processrequests() Clearing Done Request Token: "
 						  << req->token;
 				std::cerr << std::endl;
+#endif
 				toClear.push_back(req->token);
 			}
                         else if (now - req->reqTime > MAX_REQUEST_AGE)
 			{
+#ifdef DATA_DEBUG
 				std::cerr << "RsGxsDataAccess::processrequests() Clearing Old Request Token: " << req->token;
 				std::cerr << std::endl;
+#endif
 				toClear.push_back(req->token);
 			}
 		}

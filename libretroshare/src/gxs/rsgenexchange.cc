@@ -1252,19 +1252,15 @@ bool RsGenExchange::getMsgData(const uint32_t &token, GxsMsgDataMap &msgItems)
 					}
 					else
 					{
-#ifdef GEN_EXCH_DEBUG
 						std::cerr << "RsGenExchange::getMsgData() deserialisation/dynamic_cast ERROR";
 						std::cerr << std::endl;
-#endif
 						delete item;
 					}
 				}
 				else
 				{
-#ifdef GEN_EXCH_DEBUG
 					std::cerr << "RsGenExchange::getMsgData() deserialisation ERROR";
 					std::cerr << std::endl;
-#endif
 				}
 				delete msg;
 			}
@@ -1385,6 +1381,11 @@ void RsGenExchange::notifyNewGroups(std::vector<RsNxsGrp *> &groups)
     	// TODO: move this to nxs layer to save bandwidth
     	if(received == mReceivedGrps.end())
     	{
+#ifdef GEN_EXCH_DEBUG
+		std::cerr << "RsGenExchange::notifyNewGroups() Received GrpId: " << grp->grpId;
+		std::cerr << std::endl;
+#endif
+
     		GxsPendingItem<RsNxsGrp*, RsGxsGroupId> gpsi(grp, grp->grpId);
     		mReceivedGrps.push_back(gpsi);
     	}
@@ -1412,9 +1413,20 @@ void RsGenExchange::notifyNewMessages(std::vector<RsNxsMsg *>& messages)
 
     	// if we have msg already just delete it
     	if(it == mMsgPendingValidate.end())
+	{
+#ifdef GEN_EXCH_DEBUG
+		std::cerr << "RsGenExchange::notifyNewMessages() Received Msg: ";
+		std::cerr << " GrpId: " << msg->grpId;
+		std::cerr << " MsgId: " << msg->msgId;
+		std::cerr << std::endl;
+#endif
+
     		mReceivedMsgs.push_back(msg);
+	}
     	else
+	{
     		delete msg;
+	}
     }
 
 }
@@ -1690,8 +1702,10 @@ void RsGenExchange::publishMsgs()
 
 	for(; mit != mMsgsToPublish.end(); mit++)
 	{
+#ifdef GEN_EXCH_DEBUG
 		std::cerr << "RsGenExchange::publishMsgs() Publishing a Message";
 		std::cerr << std::endl;
+#endif
 
 		RsNxsMsg* msg = new RsNxsMsg(mServType);
 		RsGxsMsgItem* msgItem = mit->second;
@@ -1822,16 +1836,12 @@ void RsGenExchange::publishMsgs()
 					mDataAccess->updatePublicRequestStatus(mit->first,
 							RsTokenService::GXS_REQUEST_V2_STATUS_FAILED);
 
-#ifdef GEN_EXCH_DEBUG
 				std::cerr << "RsGenExchange::publishMsgs() failed to publish msg " << std::endl;
-#endif
 			}
 		}
 		else
 		{
-#ifdef GEN_EXCH_DEBUG
 			std::cerr << "RsGenExchange::publishMsgs() failed to serialise msg " << std::endl;
-#endif
 		}
 
 		delete[] mData;
@@ -2063,6 +2073,14 @@ void RsGenExchange::publishGrps()
 						| GXS_SERV::GROUP_SUBSCRIBE_PUBLISH;
 
 				create = createGroup(grp, privatekeySet, publicKeySet);
+
+#ifdef GEN_EXCH_DEBUG
+				std::cerr << "RsGenExchange::publishGrps() ";
+				std::cerr << " GrpId: " << grp->grpId;
+				std::cerr << " CircleType: " << (uint32_t) grp->metaData->mCircleType;
+				std::cerr << " CircleId: " << grp->metaData->mCircleId.toStdString();
+				std::cerr << std::endl;
+#endif
 
 				if(create == CREATE_SUCCESS)
 				{

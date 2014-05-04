@@ -25,7 +25,9 @@
 
 #include "gxs/gxstokenqueue.h"
 
-#define GXS_DEBUG 	1
+/*******
+ * #define GXS_DEBUG 	1
+ ******/
 
 bool GxsTokenQueue::queueRequest(uint32_t token, uint32_t req_type)
 {

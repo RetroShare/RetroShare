@@ -535,8 +535,20 @@ int RsDataService::storeMessage(std::map<RsNxsMsg *, RsGxsMsgMetaData *> &msg)
         RsNxsMsg* msgPtr = mit->first;
         RsGxsMsgMetaData* msgMetaPtr = mit->second;
 
+#ifdef RS_DATA_SERVICE_DEBUG 
+	std::cerr << "RsDataService::storeMessage() ";
+	std::cerr << " GroupId: " << msgMetaPtr->mGroupId.toStdString();
+	std::cerr << " MessageId: " << msgMetaPtr->mMsgId.toStdString();
+	std::cerr << std::endl;
+#endif
+
         // skip msg item if size if greater than
-        if(!validSize(msgPtr)) continue;
+        if(!validSize(msgPtr))
+	{
+		std::cerr << "RsDataService::storeMessage() ERROR invalid size";
+		std::cerr << std::endl;
+		continue;
+	}
 
         // create or access file in binary
         std::string msgFile = mServiceDir + "/" + msgPtr->grpId.toStdString() + "-msgs";
@@ -587,7 +599,15 @@ int RsDataService::storeMessage(std::map<RsNxsMsg *, RsGxsMsgMetaData *> &msg)
         ostrm.close();
         delete[] msgData;
 
-        mDb->sqlInsert(MSG_TABLE_NAME, "", cv);
+        if (!mDb->sqlInsert(MSG_TABLE_NAME, "", cv))
+	{
+		std::cerr << "RsDataService::storeMessage() sqlInsert Failed";
+		std::cerr << std::endl;
+		std::cerr << "\t For GroupId: " << msgMetaPtr->mGroupId.toStdString();
+		std::cerr << std::endl;
+		std::cerr << "\t & MessageId: " << msgMetaPtr->mMsgId.toStdString();
+		std::cerr << std::endl;
+	}
     }
 
     // finish transaction
@@ -632,6 +652,13 @@ int RsDataService::storeGroup(std::map<RsNxsGrp *, RsGxsGrpMetaData *> &grp)
 
         // if data is larger than max item size do not add
         if(!validSize(grpPtr)) continue;
+
+#ifdef RS_DATA_SERVICE_DEBUG 
+	std::cerr << "RsDataService::storeGroup() GrpId: " << grpPtr->grpId.toStdString();
+	std::cerr << " CircleType: " << (uint32_t) grpMetaPtr->mCircleType;
+	std::cerr << " CircleId: " << grpMetaPtr->mCircleId.toStdString();
+	std::cerr << std::endl;
+#endif
 
         std::string grpFile = mServiceDir + "/" + grpPtr->grpId.toStdString();
         std::fstream ostrm(grpFile.c_str(), std::ios::binary | std::ios::app | std::ios::out);
@@ -689,7 +716,13 @@ int RsDataService::storeGroup(std::map<RsNxsGrp *, RsGxsGrpMetaData *> &grp)
         ostrm.write(grpData, grpPtr->grp.TlvSize());
         ostrm.close();
 
-        mDb->sqlInsert(GRP_TABLE_NAME, "", cv);
+        if (!mDb->sqlInsert(GRP_TABLE_NAME, "", cv))
+	{
+		std::cerr << "RsDataService::storeGroup() sqlInsert Failed";
+		std::cerr << std::endl;
+		std::cerr << "\t For GroupId: " << grpMetaPtr->mGroupId.toStdString();
+		std::cerr << std::endl;
+	}
     }
     // finish transaction
     bool ret = mDb->execSQL("COMMIT;");
@@ -873,6 +906,13 @@ int RsDataService::retrieveNxsGrps(std::map<RsGxsGroupId, RsNxsGrp *> &grp, bool
         {
             RsNxsGrp* grpPtr = grp[mit->first];
             grpPtr->metaData = metaMap[mit->first];
+
+#ifdef RS_DATA_SERVICE_DEBUG 
+	    std::cerr << "RsDataService::retrieveNxsGrps() GrpId: " << mit->first.toStdString();
+	    std::cerr << " CircleType: " << (uint32_t) grpPtr->metaData->mCircleType;
+	    std::cerr << " CircleId: " << grpPtr->metaData->mCircleId.toStdString();
+	    std::cerr << std::endl;
+#endif
         }
     }
 

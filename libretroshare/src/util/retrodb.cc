@@ -34,7 +34,6 @@
 //#define RETRODB_DEBUG
 #define ENABLE_ENCRYPTED_DB
 
-
 const int RetroDb::OPEN_READONLY = SQLITE_OPEN_READONLY;
 const int RetroDb::OPEN_READWRITE = SQLITE_OPEN_READWRITE;
 const int RetroDb::OPEN_READWRITE_CREATE = SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE;
@@ -237,14 +236,13 @@ bool RetroDb::sqlInsert(const std::string &table, const std::string& /* nullColu
     // complete insertion query
     std::string sqlQuery = "INSERT INTO " + qColumns + " " + qValues;
 
-    execSQL_bind(sqlQuery, paramBindings);
+    bool ok = execSQL_bind(sqlQuery, paramBindings);
 
 #ifdef RETRODB_DEBUG
     std::cerr << "RetroDb::sqlInsert(): " << sqlQuery << std::endl;
 #endif
 
-
-    return true;
+    return ok;
 }
 
 std::string RetroDb::getKey() const
@@ -265,7 +263,7 @@ bool RetroDb::execSQL_bind(const std::string &query, std::list<RetroBind*> &para
 
     // check if there are any errors
     if(rc != SQLITE_OK){
-        std::cerr << "RetroDb::execSQL(): Error preparing statement\n";
+        std::cerr << "RetroDb::execSQL_bind(): Error preparing statement\n";
         std::cerr << "Error code: " <<  sqlite3_errmsg(mDb)
                   << std::endl;
         return false;
@@ -318,12 +316,13 @@ bool RetroDb::execSQL_bind(const std::string &query, std::list<RetroBind*> &para
     if(!ok){
 
         if(rc == SQLITE_BUSY){
-            std::cerr << "RetroDb::execSQL()\n" ;
+            std::cerr << "RetroDb::execSQL_bind()\n" ;
             std::cerr << "SQL timed out!" << std::endl;
         }else{
-            std::cerr << "RetroDb::execSQL(): Error executing statement (code: " << rc << ")\n";
+            std::cerr << "RetroDb::execSQL_bind(): Error executing statement (code: " << rc << ")\n";
             std::cerr << "Sqlite Error msg: " <<  sqlite3_errmsg(mDb)
                       << std::endl;
+            std::cerr << "RetroDb::execSQL_bind() Query: " <<  query << std::endl;
         }
     }
 
@@ -749,5 +748,4 @@ const void* RetroCursor::getData(int columnIndex, uint32_t &datSize){
 
     return val;
 }
-
 

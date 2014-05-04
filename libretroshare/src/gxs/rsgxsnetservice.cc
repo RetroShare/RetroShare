@@ -2263,13 +2263,12 @@ bool RsGxsNetService::canSendGrpId(const RsPeerId& sslId, RsGxsGrpMetaData& grpM
 		const RsGxsCircleId& circleId = grpMeta.mCircleId;
 		if(circleId.isNull())
 		{
-			std::cerr << "RsGxsNetService::canSendGrpId() ERROR; EXTERNAL_CIRCLE missing NULL CircleId";
+			std::cerr << "RsGxsNetService::canSendGrpId() ERROR; EXTERNAL_CIRCLE missing NULL CircleId: ";
 			std::cerr << grpMeta.mGroupId;
 			std::cerr << std::endl;
 
-			// should just be shared. ? no - this happens for
-			// Circle Groups which lose their CircleIds.
-			// return true;
+			// ERROR, will never be shared.
+			return false;
 		}
 
 		if(mCircles->isLoaded(circleId))
