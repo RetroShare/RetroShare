@@ -25,15 +25,11 @@
 #include "gui/gxschannels/CreateGxsChannelMsg.h"
 #include "gui/common/UIStateHelper.h"
 
+#include <algorithm>
+
 #define CHAN_DEFAULT_IMAGE ":/images/channels.png"
 
 #define WARNING_LIMIT 3600*24*2
-
-/* Images for TreeWidget */
-#define IMAGE_CHANNELBLUE     ":/images/channelsblue.png"
-#define IMAGE_CHANNELGREEN    ":/images/channelsgreen.png"
-#define IMAGE_CHANNELRED      ":/images/channelsred.png"
-#define IMAGE_CHANNELYELLOW   ":/images/channelsyellow.png"
 
 /****
  * #define DEBUG_CHANNEL
@@ -44,6 +40,7 @@
 #define TOKEN_TYPE_MESSAGE_CHANGE   4
 #define TOKEN_TYPE_GROUP_DATA       6
 #define TOKEN_TYPE_POSTS            7
+#define TOKEN_TYPE_RELATEDPOSTS     8
 
 /** Constructor */
 GxsChannelPostsWidget::GxsChannelPostsWidget(const RsGxsGroupId &channelId, QWidget *parent)
@@ -56,7 +53,8 @@ GxsChannelPostsWidget::GxsChannelPostsWidget(const RsGxsGroupId &channelId, QWid
 	/* Setup UI helper */
 	mStateHelper = new UIStateHelper(this);
 
-	mStateHelper->addWidget(TOKEN_TYPE_POSTS, ui->progressBar, UISTATE_LOADING_VISIBLE);
+	// No progress yet
+//	mStateHelper->addWidget(TOKEN_TYPE_POSTS, ui->progressBar, UISTATE_LOADING_VISIBLE);
 	mStateHelper->addWidget(TOKEN_TYPE_POSTS, ui->progressLabel, UISTATE_LOADING_VISIBLE);
 
 	mStateHelper->addLoadPlaceholder(TOKEN_TYPE_GROUP_DATA, ui->nameLabel);
@@ -92,13 +90,17 @@ GxsChannelPostsWidget::~GxsChannelPostsWidget()
 void GxsChannelPostsWidget::updateDisplay(bool complete)
 {
 	if (complete) {
-		/* Not needed */
+		/* Fill complete */
+		requestGroupData(mChannelId);
+		requestPosts(mChannelId);
 		return;
 	}
 
 	std::list<RsGxsGroupId> &grpIds = getGrpIds();
 	if (!mChannelId.isNull() && std::find(grpIds.begin(), grpIds.end(), mChannelId) != grpIds.end()) {
 		requestGroupData(mChannelId);
+		/* Do we need to fill all posts? */
+		requestPosts(mChannelId);
 	} else {
 		std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgs = getMsgIds();
 		if (!msgs.empty())
@@ -106,7 +108,7 @@ void GxsChannelPostsWidget::updateDisplay(bool complete)
 			std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::iterator mit = msgs.find(mChannelId);
 			if(mit != msgs.end())
 			{
-				requestPosts(mChannelId);
+				requestRelatedPosts(mChannelId, mit->second);
 			}
 		}
 	}
@@ -143,7 +145,7 @@ void GxsChannelPostsWidget::setGroupId(const RsGxsGroupId &groupId)
 
 	emit groupChanged(this);
 
-	requestGroupData(mChannelId);
+	fillComplete();
 }
 
 QString GxsChannelPostsWidget::groupName(bool withUnreadCount)
@@ -238,24 +240,55 @@ void GxsChannelPostsWidget::insertChannelDetails(const RsGxsChannelGroup &group)
 	setAutoDownloadButton(group.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED);
 
 	emit groupChanged(this);
-	requestPosts(mChannelId);
 }
 
-void GxsChannelPostsWidget::insertChannelPosts(const std::vector<RsGxsChannelPost> &posts)
+static bool sortChannelMsgSummaryAsc(const RsGxsChannelPost &msg1, const RsGxsChannelPost &msg2)
+{
+	return (msg1.mMeta.mPublishTs > msg2.mMeta.mPublishTs);
+}
+
+static bool sortChannelMsgSummaryDesc(const RsGxsChannelPost &msg1, const RsGxsChannelPost &msg2)
+{
+	return (msg1.mMeta.mPublishTs < msg2.mMeta.mPublishTs);
+}
+
+void GxsChannelPostsWidget::insertChannelPosts(std::vector<RsGxsChannelPost> &posts, bool related)
 {
 	std::vector<RsGxsChannelPost>::const_iterator it;
 
 	// Do these need sorting? probably.
 	// can we add that into the request?
-	//msgs.sort(sortChannelMsgSummary);
+	if (related) {
+		/* Sort descending to add posts at top */
+		std::sort(posts.begin(), posts.end(), sortChannelMsgSummaryDesc);
+	} else {
+		std::sort(posts.begin(), posts.end(), sortChannelMsgSummaryAsc);
+	}
 
 	uint32_t subscribeFlags = 0xffffffff;
 
 	for (it = posts.begin(); it != posts.end(); it++)
 	{
-		GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, *it, subscribeFlags, true);
-		mChannelPostItems.push_back(item);
-		ui->verticalLayout->addWidget(item);
+		GxsChannelPostItem *item = NULL;
+		if (related) {
+			foreach (GxsChannelPostItem *loopItem, mChannelPostItems) {
+				if (loopItem->messageId() == it->mMeta.mMsgId) {
+					item = loopItem;
+					break;
+				}
+			}
+		}
+		if (item) {
+			//TODO: Update item
+		} else {
+			item = new GxsChannelPostItem(this, 0, *it, subscribeFlags, true);
+			mChannelPostItems.push_back(item);
+			if (related) {
+				ui->verticalLayout->insertWidget(0, item);
+			} else {
+				ui->verticalLayout->addWidget(item);
+			}
+		}
 	}
 }
 
@@ -448,6 +481,16 @@ void GxsChannelPostsWidget::setAutoDownloadButton(bool autoDl)
 	}
 }
 
+void GxsChannelPostsWidget::clearPosts()
+{
+	/* replace all the messages with new ones */
+	QList<GxsChannelPostItem *>::iterator mit;
+	for (mit = mChannelPostItems.begin(); mit != mChannelPostItems.end(); mit++) {
+		delete (*mit);
+	}
+	mChannelPostItems.clear();
+}
+
 /**********************************************************************************************
  * New Stuff here.
  *************/
@@ -526,12 +569,8 @@ void GxsChannelPostsWidget::requestPosts(const RsGxsGroupId &grpId)
 	std::cerr << std::endl;
 #endif
 
-	/* replace all the messages with new ones */
-	QList<GxsChannelPostItem *>::iterator mit;
-	for (mit = mChannelPostItems.begin(); mit != mChannelPostItems.end(); mit++) {
-		delete (*mit);
-	}
-	mChannelPostItems.clear();
+	/* Request all posts */
+	clearPosts();
 
 	mChannelQueue->cancelActiveRequestTokens(TOKEN_TYPE_POSTS);
 
@@ -566,7 +605,57 @@ void GxsChannelPostsWidget::loadPosts(const uint32_t &token)
 
 	mStateHelper->setActive(TOKEN_TYPE_POSTS, true);
 
-	insertChannelPosts(posts);
+	insertChannelPosts(posts, false);
+
+	mStateHelper->setLoading(TOKEN_TYPE_POSTS, false);
+}
+
+void GxsChannelPostsWidget::requestRelatedPosts(const RsGxsGroupId &grpId, const std::vector<RsGxsMessageId> &msgIds)
+{
+#ifdef DEBUG_CHANNEL
+	std::cerr << "GxsChannelPostsWidget::requestRelatedPosts()";
+	std::cerr << std::endl;
+#endif
+
+	mChannelQueue->cancelActiveRequestTokens(TOKEN_TYPE_RELATEDPOSTS);
+
+	if (grpId.isNull()) {
+		mStateHelper->setActive(TOKEN_TYPE_POSTS, false);
+		mStateHelper->setLoading(TOKEN_TYPE_POSTS, false);
+		mStateHelper->clear(TOKEN_TYPE_POSTS);
+		return;
+	}
+
+	mStateHelper->setLoading(TOKEN_TYPE_POSTS, true);
+
+	std::list<RsGxsGroupId> groupIds;
+	groupIds.push_back(grpId);
+
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_MSG_RELATED_DATA;
+	opts.mOptions = RS_TOKREQOPT_MSG_VERSIONS;
+
+	uint32_t token;
+	std::vector<RsGxsGrpMsgIdPair> relatedMsgIds;
+	for (std::vector<RsGxsMessageId>::const_iterator msgIt = msgIds.begin(); msgIt != msgIds.end(); ++msgIt) {
+		relatedMsgIds.push_back(RsGxsGrpMsgIdPair(grpId, *msgIt));
+	}
+	mChannelQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, relatedMsgIds, TOKEN_TYPE_RELATEDPOSTS);
+}
+
+void GxsChannelPostsWidget::loadRelatedPosts(const uint32_t &token)
+{
+#ifdef DEBUG_CHANNEL
+	std::cerr << "GxsChannelPostsWidget::loadRelatedPosts()";
+	std::cerr << std::endl;
+#endif
+
+	std::vector<RsGxsChannelPost> posts;
+	rsGxsChannels->getRelatedPosts(token, posts);
+
+	mStateHelper->setActive(TOKEN_TYPE_POSTS, true);
+
+	insertChannelPosts(posts, true);
 
 	mStateHelper->setLoading(TOKEN_TYPE_POSTS, false);
 }
@@ -606,6 +695,9 @@ void GxsChannelPostsWidget::loadRequest(const TokenQueue *queue, const TokenRequ
 				break;
 		case TOKEN_TYPE_POSTS:
 				loadPosts(req.mToken);
+				break;
+		case TOKEN_TYPE_RELATEDPOSTS:
+				loadRelatedPosts(req.mToken);
 				break;
 		default:
 				std::cerr << "GxsChannelPostsWidget::loadRequest() ERROR: INVALID TYPE";

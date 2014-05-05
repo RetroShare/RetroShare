@@ -39,6 +39,9 @@ public:
 	GxsFeedItem(FeedHolder *parent, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, RsGxsIfaceHelper *iface, bool loadData);
 virtual ~GxsFeedItem();
 
+	RsGxsGroupId groupId() { return mGroupId; }
+	RsGxsMessageId messageId() { return mMessageId; }
+
 protected:
 
 	// generic Fns - to be overloaded.

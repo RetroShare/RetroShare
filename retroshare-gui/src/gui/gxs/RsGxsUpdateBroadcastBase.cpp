@@ -10,7 +10,7 @@ RsGxsUpdateBroadcastBase::RsGxsUpdateBroadcastBase(RsGxsIfaceHelper *ifaceImpl, 
 	: QObject(parent)
 {
 	mUpdateWhenInvisible = false;
-	mFirstVisible = true;
+	mFillComplete = true;
 
 	mUpdateBroadcast = RsGxsUpdateBroadcast::get(ifaceImpl);
 	connect(mUpdateBroadcast, SIGNAL(changed()), this, SLOT(updateBroadcastChanged()));
@@ -22,6 +22,13 @@ RsGxsUpdateBroadcastBase::~RsGxsUpdateBroadcastBase()
 {
 }
 
+void RsGxsUpdateBroadcastBase::fillComplete()
+{
+	mFillComplete = true;
+
+	updateBroadcastChanged();
+}
+
 void RsGxsUpdateBroadcastBase::securedUpdateDisplay()
 {
 	if (RsAutoUpdatePage::eventsLocked()) {
@@ -30,8 +37,8 @@ void RsGxsUpdateBroadcastBase::securedUpdateDisplay()
 		return;
 	}
 
-	emit fillDisplay(mFirstVisible);
-	mFirstVisible = false;
+	emit fillDisplay(mFillComplete);
+	mFillComplete = false;
 
 	/* Clear updated ids */
 	mGrpIds.clear();
@@ -40,7 +47,7 @@ void RsGxsUpdateBroadcastBase::securedUpdateDisplay()
 
 void RsGxsUpdateBroadcastBase::showEvent(QShowEvent */*event*/)
 {
-	if (mFirstVisible) {
+	if (mFillComplete) {
 		/* Initial fill */
 		securedUpdateDisplay();
 	}

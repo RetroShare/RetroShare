@@ -12,6 +12,11 @@ RsGxsUpdateBroadcastWidget::~RsGxsUpdateBroadcastWidget()
 {
 }
 
+void RsGxsUpdateBroadcastWidget::fillComplete()
+{
+	mBase->fillComplete();
+}
+
 void RsGxsUpdateBroadcastWidget::setUpdateWhenInvisible(bool update)
 {
 	mBase->setUpdateWhenInvisible(update);

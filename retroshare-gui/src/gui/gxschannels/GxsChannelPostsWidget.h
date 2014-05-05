@@ -82,6 +82,7 @@ private:
 	void processSettings(bool load);
 
 	void setAutoDownloadButton(bool autoDl);
+	void clearPosts();
 
 	/* NEW GXS FNS */
 	void requestGroupData(const RsGxsGroupId &grpId);
@@ -90,8 +91,11 @@ private:
 	void requestPosts(const RsGxsGroupId &grpId);
 	void loadPosts(const uint32_t &token);
 
+	void requestRelatedPosts(const RsGxsGroupId &grpId, const std::vector<RsGxsMessageId> &msgIds);
+	void loadRelatedPosts(const uint32_t &token);
+
 	void insertChannelDetails(const RsGxsChannelGroup &group);
-	void insertChannelPosts(const std::vector<RsGxsChannelPost> &posts);
+	void insertChannelPosts(std::vector<RsGxsChannelPost> &posts, bool related);
 
 	void acknowledgeMessageUpdate(const uint32_t &token);
 

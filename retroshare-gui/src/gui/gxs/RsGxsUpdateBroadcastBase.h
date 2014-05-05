@@ -18,7 +18,9 @@ protected:
 	RsGxsUpdateBroadcastBase(RsGxsIfaceHelper* ifaceImpl, QWidget *parent = NULL);
 	virtual ~RsGxsUpdateBroadcastBase();
 
+	void fillComplete();
 	void setUpdateWhenInvisible(bool update) { mUpdateWhenInvisible = update; }
+
 	std::list<RsGxsGroupId> &getGrpIds() { return mGrpIds; }
 	std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &getMsgIds() { return mMsgIds; }
 
@@ -35,7 +37,7 @@ private slots:
 
 private:
 	RsGxsUpdateBroadcast *mUpdateBroadcast;
-	bool mFirstVisible;
+	bool mFillComplete;
 	bool mUpdateWhenInvisible; // Update also when not visible
 	std::list<RsGxsGroupId> mGrpIds;
 	std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > mMsgIds;

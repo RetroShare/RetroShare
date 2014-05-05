@@ -739,7 +739,7 @@ void GxsGroupFrameDialog::acknowledgeSubscribeChange(const uint32_t &token)
 	RsGxsGroupId groupId;
 	mInterface->acknowledgeGrp(token, groupId);
 
-	requestGroupSummary();
+	fillComplete();
 }
 
 /*********************** **** **** **** ***********************/
