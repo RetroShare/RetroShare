@@ -160,37 +160,34 @@ template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER> s
 
 template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER> t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>::t_RsGenericIdType(const std::string& s) 
 {
-	try
+	int n=0;
+	if(s.length() != ID_SIZE_IN_BYTES*2)
 	{
-		int n=0;
-		if(s.length() != ID_SIZE_IN_BYTES*2)
+		std::cerr << "t_RsGenericIdType<>::t_RsGenericIdType(std::string&): supplied string in constructor has wrong size." << std::endl;
+		clear();
+		return;
+	}
+
+	for(uint32_t i = 0; i < ID_SIZE_IN_BYTES; ++i)
+	{
+		bytes[i] = 0 ;
+
+		for(int k=0;k<2;++k)
 		{
-			throw std::runtime_error("t_RsGenericIdType<>::t_RsGenericIdType(std::string&): supplied string in constructor has wrong size.") ;
-		}
+			char b = s[n++] ;
 
-		for(uint32_t i = 0; i < ID_SIZE_IN_BYTES; ++i)
-		{
-			bytes[i] = 0 ;
-
-			for(int k=0;k<2;++k)
-			{
-				char b = s[n++] ;
-
-				if(b >= 'A' && b <= 'F')
-					bytes[i] += (b-'A'+10) << 4*(1-k) ;
-				else if(b >= 'a' && b <= 'f')
-					bytes[i] += (b-'a'+10) << 4*(1-k) ;
-				else if(b >= '0' && b <= '9')
-					bytes[i] += (b-'0') << 4*(1-k) ;
-				else
-					throw std::runtime_error("t_RsGenericIdType<>::t_RsGenericIdType(std::string&): supplied string is not purely hexadecimal") ;
+			if(b >= 'A' && b <= 'F')
+				bytes[i] += (b-'A'+10) << 4*(1-k) ;
+			else if(b >= 'a' && b <= 'f')
+				bytes[i] += (b-'a'+10) << 4*(1-k) ;
+			else if(b >= '0' && b <= '9')
+				bytes[i] += (b-'0') << 4*(1-k) ;
+			else {
+				std::cerr << "t_RsGenericIdType<>::t_RsGenericIdType(std::string&): supplied string is not purely hexadecimal" << std::endl;
+				clear();
+				return;
 			}
 		}
-	}
-	catch(std::exception& e)
-	{
-		std::cerr << e.what() << std::endl;
-		clear() ;
 	}
 }
 

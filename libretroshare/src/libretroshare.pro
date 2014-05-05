@@ -89,6 +89,7 @@ PUBLIC_HEADERS =	retroshare/rsdisc.h \
 					retroshare/rsexpr.h \
 					retroshare/rsfiles.h \
 					retroshare/rshistory.h \
+					retroshare/rsids.h \
 					retroshare/rsiface.h \
 					retroshare/rsinit.h \
 					retroshare/rsplugin.h \
