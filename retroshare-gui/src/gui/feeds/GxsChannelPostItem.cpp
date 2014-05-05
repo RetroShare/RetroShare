@@ -47,31 +47,27 @@
 #define COLOR_NORMAL QColor(248, 248, 248)
 #define COLOR_NEW    QColor(220, 236, 253)
 
-#define SELF_LOAD 	1
-#define DATA_PROVIDED	2
+#define SELF_LOAD      1
+#define DATA_PROVIDED  2
 
-
-GxsChannelPostItem::GxsChannelPostItem(FeedHolder *parent, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome)
-        :GxsFeedItem(parent, feedId, groupId, messageId, isHome, rsGxsChannels, true)
+GxsChannelPostItem::GxsChannelPostItem(FeedHolder *parent, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome) :
+	GxsFeedItem(parent, feedId, groupId, messageId, isHome, rsGxsChannels, true)
 {
 	mMode = SELF_LOAD;
 
 	setup();
 }
 
-
-
-
 /** Constructor */
-GxsChannelPostItem::GxsChannelPostItem(FeedHolder *parent, uint32_t feedId, const RsGxsChannelPost &post, uint32_t subFlags, bool isHome)
-        :GxsFeedItem(parent, feedId, post.mMeta.mGroupId, post.mMeta.mMsgId, isHome, rsGxsChannels, false)
+GxsChannelPostItem::GxsChannelPostItem(FeedHolder *parent, uint32_t feedId, const RsGxsChannelPost &post, uint32_t subFlags, bool isHome) :
+	GxsFeedItem(parent, feedId, post.mMeta.mGroupId, post.mMeta.mMsgId, isHome, rsGxsChannels, false)
 {
 	std::cerr << "GxsChannelPostItem::GxsChannelPostItem() Direct Load";
 	std::cerr << std::endl;
 
 	mMode = DATA_PROVIDED;
-        mGroupMeta.mSubscribeFlags = subFlags;
-	m_inUpdateItemStatic = false;
+	mGroupMeta.mSubscribeFlags = subFlags;
+	mInUpdateItemStatic = false;
 
 	setup();
 
@@ -79,61 +75,64 @@ GxsChannelPostItem::GxsChannelPostItem(FeedHolder *parent, uint32_t feedId, cons
 	loadPost(post);
 }
 
+GxsChannelPostItem::~GxsChannelPostItem()
+{
+	delete(ui);
+}
 
 void GxsChannelPostItem::setup()
 {
 	/* Invoke the Qt Designer generated object setup routine */
-	setupUi(this);
+	ui = new Ui::GxsChannelPostItem;
+	ui->setupUi(this);
 
 	setAttribute ( Qt::WA_DeleteOnClose, true );
 
-	m_inUpdateItemStatic = false;
+	mInUpdateItemStatic = false;
 
 	/* general ones */
-	connect( expandButton, SIGNAL( clicked( void ) ), this, SLOT( toggle ( void ) ) );
-	connect( clearButton, SIGNAL( clicked( void ) ), this, SLOT( removeItem ( void ) ) );
+	connect(ui->expandButton, SIGNAL(clicked(void)), this, SLOT(toggle(void)));
+	connect(ui->clearButton, SIGNAL(clicked(void)), this, SLOT(removeItem(void)));
 
 	/* specific */
-	connect(readAndClearButton, SIGNAL(clicked()), this, SLOT(readAndClearItem()));
-	connect( unsubscribeButton, SIGNAL( clicked( void ) ), this, SLOT( unsubscribeChannel ( void ) ) );
+	connect(ui->readAndClearButton, SIGNAL(clicked()), this, SLOT(readAndClearItem()));
+	connect(ui->unsubscribeButton, SIGNAL(clicked(void)), this, SLOT(unsubscribeChannel(void)));
 
-	connect( downloadButton, SIGNAL( clicked( void ) ), this, SLOT( download ( void ) ) );
+	connect(ui->downloadButton, SIGNAL(clicked(void)), this, SLOT(download(void)));
 	// HACK FOR NOW.
-	connect( commentButton, SIGNAL( clicked( void ) ), this, SLOT( loadComments ( void ) ) );
+	connect(ui->commentButton, SIGNAL(clicked(void)), this, SLOT(loadComments(void)));
 
-	connect( playButton, SIGNAL( clicked( void ) ), this, SLOT( play ( void ) ) );
-	connect( copyLinkButton, SIGNAL( clicked( void ) ), this, SLOT( copyLink ( void ) ) );
+	connect(ui->playButton, SIGNAL(clicked(void)), this, SLOT( play(void)));
+	connect(ui->copyLinkButton, SIGNAL(clicked(void)), this, SLOT(copyLink(void)));
 
-	connect( readButton, SIGNAL( toggled(bool) ), this, SLOT( readToggled(bool) ) );
-	connect( NotifyQt::getInstance(), SIGNAL(channelMsgReadSatusChanged(QString,QString,int)), this, SLOT(channelMsgReadSatusChanged(QString,QString,int)), Qt::QueuedConnection);
+	connect(ui->readButton, SIGNAL(toggled(bool)), this, SLOT(readToggled(bool)));
+	//connect(NotifyQt::getInstance(), SIGNAL(channelMsgReadSatusChanged(QString,QString,int)), this, SLOT(channelMsgReadSatusChanged(QString,QString,int)), Qt::QueuedConnection);
 
-	//connect( voteUpButton, SIGNAL(clicked()), this, SLOT(makeUpVote()));
-	//connect( voteDownButton, SIGNAL(clicked()), this, SLOT( makeDownVote()));	
+	//connect(ui-> voteUpButton, SIGNAL(clicked()), this, SLOT(makeUpVote()));
+	//connect(ui->voteDownButton, SIGNAL(clicked()), this, SLOT(makeDownVote()));
 
-	downloadButton->hide();
-	playButton->hide();
-	warn_image_label->hide();
-	warning_label->hide();
+	ui->downloadButton->hide();
+	ui->playButton->hide();
+	ui->warn_image_label->hide();
+	ui->warning_label->hide();
 
-	titleLabel->setMinimumWidth(100);
-	subjectLabel->setMinimumWidth(100);
-	warning_label->setMinimumWidth(100);
+	ui->titleLabel->setMinimumWidth(100);
+	ui->subjectLabel->setMinimumWidth(100);
+	ui->warning_label->setMinimumWidth(100);
 
-	frame->setProperty("state", "");
-	QPalette palette = frame->palette();
-	palette.setColor(frame->backgroundRole(), COLOR_NORMAL);
-	frame->setPalette(palette);
+	ui->frame->setProperty("state", "");
+	QPalette palette = ui->frame->palette();
+	palette.setColor(ui->frame->backgroundRole(), COLOR_NORMAL);
+	ui->frame->setPalette(palette);
 
-	expandFrame->hide();
+	ui->expandFrame->hide();
 }
-
 
 void GxsChannelPostItem::loadComments()
 {
 	QString title = QString::fromUtf8(mPost.mMeta.mMsgName.c_str());
 	comments(title);
 }
-
 
 void GxsChannelPostItem::loadMessage(const uint32_t &token)
 {
@@ -160,8 +159,6 @@ void GxsChannelPostItem::loadMessage(const uint32_t &token)
 	updateItem();
 }
 
-
-
 void GxsChannelPostItem::loadPost(const RsGxsChannelPost &post)
 {
 	/* fill in */
@@ -170,7 +167,7 @@ void GxsChannelPostItem::loadPost(const RsGxsChannelPost &post)
 	std::cerr << std::endl;
 #endif
 
-	m_inUpdateItemStatic = true;
+	mInUpdateItemStatic = true;
 
 	mPost = post;
 
@@ -180,46 +177,45 @@ void GxsChannelPostItem::loadPost(const RsGxsChannelPost &post)
 	{
 		title = tr("Channel Feed") + ": ";
 		RetroShareLink link;
-        link.createChannel(post.mMeta.mGroupId.toStdString(), "");
+		link.createChannel(post.mMeta.mGroupId.toStdString(), "");
 		title += link.toHtml();
-		titleLabel->setText(title);
+		ui->titleLabel->setText(title);
 		RetroShareLink msgLink;
-        msgLink.createChannel(post.mMeta.mGroupId.toStdString(), post.mMeta.mMsgId.toStdString());
-		subjectLabel->setText(msgLink.toHtml());
+		msgLink.createChannel(post.mMeta.mGroupId.toStdString(), post.mMeta.mMsgId.toStdString());
+		ui->subjectLabel->setText(msgLink.toHtml());
 
 		if (IS_GROUP_SUBSCRIBED(mSubscribeFlags) || IS_GROUP_ADMIN(mSubscribeFlags))
 		{
-			unsubscribeButton->setEnabled(true);
+			ui->unsubscribeButton->setEnabled(true);
 		}
 		else 
 		{
-			unsubscribeButton->setEnabled(false);
+			ui->unsubscribeButton->setEnabled(false);
 		}
-		readButton->hide();
+		ui->readButton->hide();
 		//newLabel->hide();
-		copyLinkButton->hide();
+		ui->copyLinkButton->hide();
 	}
 	else
 	{
 		/* subject */
-		titleLabel->setText(QString::fromUtf8(post.mMeta.mMsgName.c_str()));
-		subjectLabel->setText(RsHtml().formatText(NULL, QString::fromUtf8(post.mMsg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
+		ui->titleLabel->setText(QString::fromUtf8(post.mMeta.mMsgName.c_str()));
+		ui->subjectLabel->setText(RsHtml().formatText(NULL, QString::fromUtf8(post.mMsg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 		
 		//QString score = QString::number(post.mTopScore);
 		// scoreLabel->setText(score); 
 
 		/* disable buttons: deletion facility not enabled with cache services yet */
-		clearButton->setEnabled(false);
-		unsubscribeButton->setEnabled(false);
-		clearButton->hide();
-		readAndClearButton->hide();
-		unsubscribeButton->hide();
-		copyLinkButton->show();
+		ui->clearButton->setEnabled(false);
+		ui->unsubscribeButton->setEnabled(false);
+		ui->clearButton->hide();
+		ui->readAndClearButton->hide();
+		ui->unsubscribeButton->hide();
+		ui->copyLinkButton->show();
 
 		if (IS_GROUP_SUBSCRIBED(mGroupMeta.mSubscribeFlags) || IS_GROUP_ADMIN(mGroupMeta.mSubscribeFlags))
 		{
-
-			readButton->setVisible(true);
+			ui->readButton->setVisible(true);
 #if 0
 			uint32_t status = 0;
 			rsChannels->getMessageStatus(mChanId, mMsgId, status);
@@ -227,13 +223,13 @@ void GxsChannelPostItem::loadPost(const RsGxsChannelPost &post)
 
 			if (IS_MSG_UNREAD(post.mMeta.mMsgStatus) || IS_MSG_NEW(post.mMeta.mMsgStatus))
 			{
-				readButton->setChecked(true);
-				readButton->setIcon(QIcon(":/images/message-state-unread.png"));
+				ui->readButton->setChecked(true);
+				ui->readButton->setIcon(QIcon(":/images/message-state-unread.png"));
 			} 
 			else 
 			{
-				readButton->setChecked(false);
-				readButton->setIcon(QIcon(":/images/message-state-read.png"));
+				ui->readButton->setChecked(false);
+				ui->readButton->setIcon(QIcon(":/images/message-state-read.png"));
 			}
 
 			bool newState;
@@ -252,26 +248,26 @@ void GxsChannelPostItem::loadPost(const RsGxsChannelPost &post)
 			}
 
 			/* unpolish widget to clear the stylesheet's palette cache */
-			frame->style()->unpolish(frame);
+			ui->frame->style()->unpolish(ui->frame);
 
-			QPalette palette = frame->palette();
-			palette.setColor(frame->backgroundRole(), color);
-			frame->setPalette(palette);
+			QPalette palette = ui->frame->palette();
+			palette.setColor(ui->frame->backgroundRole(), color);
+			ui->frame->setPalette(palette);
 
-			frame->setProperty("new", newState);
-			Rshare::refreshStyleSheet(frame, false);
+			ui->frame->setProperty("new", newState);
+			Rshare::refreshStyleSheet(ui->frame, false);
 		} 
 		else 
 		{
-			readButton->setVisible(false);
-			//newLabel->setVisible(false);
+			ui->readButton->setVisible(false);
+			//ui->newLabel->setVisible(false);
 		}
 	}
 	
 	// differences between Feed or Top of Comment.
 	if (mParent)
 	{
-		commentButton->show();
+		ui->commentButton->show();
 
 // THIS CODE IS doesn't compile - disabling until fixed.
 #if 0
@@ -280,18 +276,18 @@ void GxsChannelPostItem::loadPost(const RsGxsChannelPost &post)
 			QString commentText = QString::number(post.mComments);
 			commentText += " ";
 			commentText += tr("Comments");
-			commentButton->setText(commentText);
+			ui->commentButton->setText(commentText);
 		}
 		else
 		{
-			commentButton->setText(tr("Comment"));
+			ui->commentButton->setText(tr("Comment"));
 		}
 #endif
 
 	}
 	else
 	{
-		commentButton->hide();
+		ui->commentButton->hide();
 	}
 	
 	// disable voting buttons - if they have already voted.
@@ -301,12 +297,12 @@ void GxsChannelPostItem::loadPost(const RsGxsChannelPost &post)
 		voteDownButton->setEnabled(false);
 	}*/
 
-	msgLabel->setText(RsHtml().formatText(NULL, QString::fromUtf8(post.mMsg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
-	msgFrame->setVisible(!post.mMsg.empty());
+	ui->msgLabel->setText(RsHtml().formatText(NULL, QString::fromUtf8(post.mMsg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
+	ui->msgFrame->setVisible(!post.mMsg.empty());
 
-	datetimelabel->setText(DateTime::formatLongDateTime(post.mMeta.mPublishTs));
+	ui->datetimelabel->setText(DateTime::formatLongDateTime(post.mMeta.mPublishTs));
 
-	filelabel->setText(QString("(%1 %2) %3").arg(post.mCount).arg(tr("Files")).arg(misc::friendlyUnit(post.mSize)));
+	ui->filelabel->setText(QString("(%1 %2) %3").arg(post.mCount).arg(tr("Files")).arg(misc::friendlyUnit(post.mSize)));
 
 	if (mFileItems.empty() == false) {
 		std::list<SubFileItem *>::iterator it;
@@ -329,8 +325,7 @@ void GxsChannelPostItem::loadPost(const RsGxsChannelPost &post)
 		if (!misc::isPreviewable(QFileInfo(QString::fromUtf8(it->mName.c_str())).suffix())) 
 		  fi->mediatype();
 
-
-		QLayout *layout = expandFrame->layout();
+		QLayout *layout = ui->expandFrame->layout();
 		layout->addWidget(fi);
 	}
 
@@ -339,10 +334,10 @@ void GxsChannelPostItem::loadPost(const RsGxsChannelPost &post)
 		QPixmap thumbnail;
 		thumbnail.loadFromData(post.mThumbnail.mData, post.mThumbnail.mSize, "PNG");
 		// Wiping data - as its been passed to thumbnail.
-		logoLabel->setPixmap(thumbnail);
+		ui->logoLabel->setPixmap(thumbnail);
 	}
 
-	m_inUpdateItemStatic = false;
+	mInUpdateItemStatic = false;
 }
 
 void GxsChannelPostItem::setFileCleanUpWarning(uint32_t time_left)
@@ -350,22 +345,21 @@ void GxsChannelPostItem::setFileCleanUpWarning(uint32_t time_left)
 	int hours = (int)time_left/3600;
 	int minutes = (time_left - hours*3600)%60;
 
-	warning_label->setText(tr("Warning! You have less than %1 hours and %2 minute before this file is deleted Consider saving it.").arg(
+	ui->warning_label->setText(tr("Warning! You have less than %1 hours and %2 minute before this file is deleted Consider saving it.").arg(
 			QString::number(hours)).arg(QString::number(minutes)));
 
-	QFont warnFont = warning_label->font();
+	QFont warnFont = ui->warning_label->font();
 	warnFont.setBold(true);
-	warning_label->setFont(warnFont);
+	ui->warning_label->setFont(warnFont);
 
-	warn_image_label->setVisible(true);
-	warning_label->setVisible(true);
-	return;
-
+	ui->warn_image_label->setVisible(true);
+	ui->warning_label->setVisible(true);
 }
 
 void GxsChannelPostItem::updateItem()
 {
 	/* fill in */
+
 #ifdef DEBUG_ITEM
 	std::cerr << "GxsChannelPostItem::updateItem()";
 	std::cerr << std::endl;
@@ -406,31 +400,31 @@ void GxsChannelPostItem::updateItem()
 	}
 
 	if (downloadCount) {
-		downloadButton->show();
+		ui->downloadButton->show();
 
 		if (downloadStartable) {
-			downloadButton->setEnabled(true);
+			ui->downloadButton->setEnabled(true);
 		} else {
-			downloadButton->setEnabled(false);
+			ui->downloadButton->setEnabled(false);
 		}
 	} else {
-		downloadButton->hide();
+		ui->downloadButton->hide();
 	}
 	if (playCount) {
 		/* one file is playable */
-		playButton->show();
+		ui->playButton->show();
 
 		if (playStartable == 1) {
-			playButton->setEnabled(true);
+			ui->playButton->setEnabled(true);
 		} else {
-			playButton->setEnabled(false);
+			ui->playButton->setEnabled(false);
 		}
 	} else {
-		playButton->hide();
+		ui->playButton->hide();
 	}
 
 	if (loopAgain) {
-		QTimer::singleShot( msec_rate, this, SLOT(updateItem( void ) ));
+		QTimer::singleShot( msec_rate, this, SLOT(updateItem(void)));
 	}
 
 	// HACK TO DISPLAY COMMENT BUTTON FOR NOW.
@@ -445,19 +439,19 @@ void GxsChannelPostItem::toggle()
 		mParent->lockLayout(this, true);
 	}
 
-	if (expandFrame->isHidden())
+	if (ui->expandFrame->isHidden())
 	{
-		expandFrame->show();
-		expandButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
-		expandButton->setToolTip(tr("Hide"));
+		ui->expandFrame->show();
+		ui->expandButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
+		ui->expandButton->setToolTip(tr("Hide"));
 
 		readToggled(false);
 	}
 	else
 	{
-		expandFrame->hide();
-		expandButton->setIcon(QIcon(QString(":/images/edit_add24.png")));
-		expandButton->setToolTip(tr("Expand"));
+		ui->expandFrame->hide();
+		ui->expandButton->setIcon(QIcon(QString(":/images/edit_add24.png")));
+		ui->expandButton->setToolTip(tr("Expand"));
 	}
 
 	if (mParent)
@@ -515,9 +509,8 @@ void GxsChannelPostItem::play()
 
 void GxsChannelPostItem::readToggled(bool checked)
 {
-
 #if 0
-	if (m_inUpdateItemStatic) {
+	if (mInUpdateItemStatic) {
 		return;
 	}
 
@@ -538,14 +531,11 @@ void GxsChannelPostItem::readToggled(bool checked)
 	if (!mIsHome) {
 		connect( NotifyQt::getInstance(), SIGNAL(channelMsgReadSatusChanged(QString,QString,int)), this, SLOT(channelMsgReadSatusChanged(QString,QString,int)), Qt::QueuedConnection);
 	}
-
 #endif
-
 }
 
 void GxsChannelPostItem::channelMsgReadSatusChanged(const QString& channelId, const QString& msgId, int status)
 {
-
 #if 0
 	if (channelId.toStdString() == mChanId && msgId.toStdString() == mMsgId) {
 		if (!mIsHome) {
@@ -557,12 +547,10 @@ void GxsChannelPostItem::channelMsgReadSatusChanged(const QString& channelId, co
 		updateItemStatic();
 	}
 #endif
-
 }
 
 void GxsChannelPostItem::copyLink()
 {
-
 #if 0
 	if (mChanId.empty() || mMsgId.empty()) {
 		return;
@@ -578,7 +566,6 @@ void GxsChannelPostItem::copyLink()
 		}
 	}
 #endif
-
 }
 
 void GxsChannelPostItem::makeDownVote()
@@ -587,8 +574,8 @@ void GxsChannelPostItem::makeDownVote()
 	msgId.first = mPost.mMeta.mGroupId;
 	msgId.second = mPost.mMeta.mMsgId;
 
-	voteUpButton->setEnabled(false);
-	voteDownButton->setEnabled(false);
+	ui->voteUpButton->setEnabled(false);
+	ui->voteDownButton->setEnabled(false);
 
 	emit vote(msgId, false);
 }
@@ -599,8 +586,8 @@ void GxsChannelPostItem::makeUpVote()
 	msgId.first = mPost.mMeta.mGroupId;
 	msgId.second = mPost.mMeta.mMsgId;
 
-	voteUpButton->setEnabled(false);
-	voteDownButton->setEnabled(false);
+	ui->voteUpButton->setEnabled(false);
+	ui->voteDownButton->setEnabled(false);
 
 	emit vote(msgId, true);
 }

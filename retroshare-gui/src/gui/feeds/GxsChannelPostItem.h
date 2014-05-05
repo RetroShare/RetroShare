@@ -29,24 +29,27 @@
 #include "ui_GxsChannelPostItem.h"
 #include <stdint.h>
 
+namespace Ui {
+class GxsChannelPostItem;
+}
+
 class FeedHolder;
 class SubFileItem;
 
-class GxsChannelPostItem : public GxsFeedItem, private Ui::GxsChannelPostItem
+class GxsChannelPostItem : public GxsFeedItem
 {
 	Q_OBJECT
 
 public:
 	/** Default Constructor */
-        GxsChannelPostItem(FeedHolder *parent, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome);
+	GxsChannelPostItem(FeedHolder *parent, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome);
 	GxsChannelPostItem(FeedHolder *parent, uint32_t feedId, const RsGxsChannelPost &post, uint32_t subscribeFlags, bool isHome);
+	virtual ~GxsChannelPostItem();
 
 	void setFileCleanUpWarning(uint32_t time_left);
 
-	//const std::string &msgId() { return mMsgId; }
-
 protected: 
-virtual void loadMessage(const uint32_t &token);
+	virtual void loadMessage(const uint32_t &token);
 
 private slots:
 	/* default stuff */
@@ -73,14 +76,16 @@ private:
 	void setup();
 	void loadPost(const RsGxsChannelPost &post);
 
-	bool m_inUpdateItemStatic;
+	bool mInUpdateItemStatic;
 
-        uint32_t mMode;
-        uint32_t mSubscribeFlags;
+	uint32_t mMode;
+	uint32_t mSubscribeFlags;
 	RsGxsChannelPost mPost;
 
 	std::list<SubFileItem *> mFileItems;
+
+	/** Qt Designer generated object */
+	Ui::GxsChannelPostItem *ui;
 };
 
 #endif
-

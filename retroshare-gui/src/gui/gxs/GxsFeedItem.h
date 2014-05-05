@@ -37,37 +37,34 @@ class GxsFeedItem : public QWidget, public TokenResponse
 public:
 	/** Note parent can = NULL */
 	GxsFeedItem(FeedHolder *parent, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, RsGxsIfaceHelper *iface, bool loadData);
-virtual ~GxsFeedItem();
+	virtual ~GxsFeedItem();
 
 	RsGxsGroupId groupId() { return mGroupId; }
 	RsGxsMessageId messageId() { return mMessageId; }
 
 protected:
-
 	// generic Fns - to be overloaded.
-virtual void updateItemStatic();
-virtual void updateItem();
-virtual void loadMessage(const uint32_t &token) = 0;
-	
+	virtual void updateItemStatic();
+	virtual void updateItem();
+	virtual void loadMessage(const uint32_t &token) = 0;
 
 	void requestMessage();
 
-virtual void loadGroupMeta(const uint32_t &token);
-virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
+	virtual void loadGroupMeta(const uint32_t &token);
+	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 	// general fns that can be implemented here.
-protected slots:
 
+protected slots:
 	void comments(const QString &title);
 	void subscribe();
 	void unsubscribe();
 	void removeItem();
 
 protected:
-
 	FeedHolder *mParent;
 	uint32_t    mFeedId;
-	bool	    mIsHome;
+	bool        mIsHome;
 
 	RsGxsGroupId mGroupId;
 	RsGxsMessageId mMessageId;
@@ -75,7 +72,6 @@ protected:
 	RsGroupMetaData mGroupMeta;
 
 private:
-
 	void requestGroupMeta();
 
 	RsGxsIfaceHelper *mGxsIface;
