@@ -163,6 +163,7 @@ void PeopleDialog::updateDisplay(bool /*complete*/)
 {
 	/* Update identity list */
 	circles_view->requestIdList();
+	circles_view->requestCirclesList();
 }
 
 #if 0

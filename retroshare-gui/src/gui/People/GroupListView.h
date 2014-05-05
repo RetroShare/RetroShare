@@ -11,6 +11,7 @@
 
 class UIStateHelper;
 class IdentityItem ;
+class CircleItem ;
 
 class GroupListView : public QGraphicsView,  public TokenResponse
 {
@@ -19,7 +20,7 @@ class GroupListView : public QGraphicsView,  public TokenResponse
 public:
 		 static const uint32_t GLVIEW_IDLIST    ;
 		 static const uint32_t GLVIEW_IDDETAILS ;
-		 static const uint32_t GLVIEW_REPLIST   ;
+		 static const uint32_t GLVIEW_CIRCLES   ;
 		 static const uint32_t GLVIEW_REFRESH   ;
 
     GroupListView(QWidget * = NULL);
@@ -35,8 +36,12 @@ public:
 	 uint32_t edgeLength() const { return _edge_length ; }
 
 	 void loadRequest(const TokenQueue * /*queue*/, const TokenRequest &req) ;
+
 	 void requestIdList() ;
+	 void requestCirclesList() ;
+
 	 void insertIdList(uint32_t token) ;
+	 void insertCircles(uint32_t token) ;
 
 	 protected slots:
 		 void forceRedraw() ;
@@ -70,5 +75,6 @@ private:
 	 UIStateHelper *mStateHelper;
 
      std::map<RsGxsGroupId,IdentityItem *> _identity_items ;
+     std::map<RsGxsGroupId,CircleItem *> _circles_items ;
 };
 

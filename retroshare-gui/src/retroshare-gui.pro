@@ -1075,11 +1075,13 @@ thewire {
 
 HEADERS += gui/People/PeopleDialog.h
 HEADERS += gui/People/IdentityItem.h
+HEADERS += gui/People/CircleItem.h
 HEADERS += gui/People/GroupListView.h 
 FORMS   += gui/People/PeopleDialog.ui 
 SOURCES += gui/People/PeopleDialog.cpp 
 SOURCES += gui/People/GroupListView.cpp 
 SOURCES += gui/People/IdentityItem.cpp
+SOURCES += gui/People/CircleItem.cpp
 
 identities {
 	

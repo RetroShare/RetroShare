@@ -6,16 +6,18 @@
 #include "gui/common/UIStateHelper.h"
 #include <retroshare/rsidentity.h>
 #include <retroshare/rspeers.h>
+#include <retroshare/rsgxscircles.h>
 
 #include "GroupListView.h"
 #include "IdentityItem.h"
+#include "CircleItem.h"
 
 #include <math.h>
 
 const uint32_t GroupListView::GLVIEW_IDLIST    = 0x0001 ;
 const uint32_t GroupListView::GLVIEW_IDDETAILS = 0x0002 ;
 const uint32_t GroupListView::GLVIEW_REFRESH   = 0x0003 ;
-const uint32_t GroupListView::GLVIEW_REPLIST   = 0x0004 ;
+const uint32_t GroupListView::GLVIEW_CIRCLES   = 0x0004 ;
 
 GroupListView::GroupListView(QWidget *)
     : timerId(0), mIsFrozen(false)
@@ -69,6 +71,7 @@ void GroupListView::keyPressEvent(QKeyEvent *event)
 								  break;
 		 case Qt::Key_Space:
 		 case Qt::Key_Enter:requestIdList() ;
+								  requestCirclesList() ;
 			 break;
 		 default:
 								  QGraphicsView::keyPressEvent(event);
@@ -124,13 +127,15 @@ void GroupListView::insertIdList(uint32_t token)
 		std::cerr << std::endl;
 
 		mStateHelper->setLoading(GLVIEW_IDDETAILS, false);
-		mStateHelper->setLoading(GLVIEW_REPLIST, false);
+		mStateHelper->setLoading(GLVIEW_CIRCLES, false);
+
 		mStateHelper->setActive(GLVIEW_IDLIST, false);
 		mStateHelper->setActive(GLVIEW_IDDETAILS, false);
-		mStateHelper->setActive(GLVIEW_REPLIST, false);
+		mStateHelper->setActive(GLVIEW_CIRCLES, false);
+
 		mStateHelper->clear(GLVIEW_IDLIST);
 		mStateHelper->clear(GLVIEW_IDDETAILS);
-		mStateHelper->clear(GLVIEW_REPLIST);
+		mStateHelper->clear(GLVIEW_CIRCLES);
 
 		return;
 	}
@@ -145,7 +150,7 @@ void GroupListView::insertIdList(uint32_t token)
     for (vit = datavector.begin(); vit != datavector.end(); ++vit)
         if(_identity_items.find((*vit).mMeta.mGroupId) == _identity_items.end())
         {
-            std::cerr << "Loading data vector identity ID = " << (*vit).mMeta.mGroupId << std::endl;
+            std::cerr << "Loading data vector identity ID = " << (*vit).mMeta.mGroupId << ", i="<< i << std::endl;
 
             IdentityItem *new_item = new IdentityItem(*vit) ;
             _identity_items[(*vit).mMeta.mGroupId] = new_item ;
@@ -164,6 +169,70 @@ void GroupListView::insertIdList(uint32_t token)
 
 	// fix up buttons.
 //	updateSelection();
+}
+void GroupListView::insertCircles(uint32_t token)
+{
+	mStateHelper->setLoading(GLVIEW_CIRCLES, false);
+
+	std::cerr << "CirclesDialog::loadGroupMeta()" << std::endl;
+
+	std::list<RsGroupMetaData> groupInfo;
+	std::list<RsGroupMetaData>::iterator vit;
+
+	if (!rsGxsCircles->getGroupSummary(token,groupInfo))
+	{
+		std::cerr << "CirclesDialog::loadGroupMeta() Error getting GroupMeta";
+		std::cerr << std::endl;
+		mStateHelper->setActive(GLVIEW_CIRCLES, false);
+		return;
+	}
+
+	mStateHelper->setActive(GLVIEW_CIRCLES, true);
+
+	/* add the top level item */
+	int i=0;
+
+	for(vit = groupInfo.begin(); vit != groupInfo.end(); vit++)
+	{
+		/* Add Widget, and request Pages */
+		std::cerr << "CirclesDialog::loadGroupMeta() GroupId: " << vit->mGroupId;
+		std::cerr << " Group: " << vit->mGroupName;
+		std::cerr << std::endl;
+
+		CircleItem *gitem = new CircleItem( *vit ) ;
+
+		_circles_items[(*vit).mGroupId] = gitem ;
+
+		gitem->setPos(150+IdentityItem::IMG_SIZE/2,(40+IdentityItem::IMG_SIZE)*(i+0.5)) ;
+
+		QObject::connect(gitem,SIGNAL(itemChanged()),this,SLOT(forceRedraw())) ;
+
+		scene()->addItem(gitem) ;
+		++i ;
+ 
+		//groupItem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QString::fromUtf8(vit->mGroupName.c_str()));
+		//groupItem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPID, QString::fromStdString(vit->mGroupId.toStdString()));
+
+		//if (vit->mCircleType == GXS_CIRCLE_TYPE_LOCAL)
+		//{
+		//	personalCirclesItem->addChild(groupItem);
+		//}
+		//else
+		//{
+		//	if (vit->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
+		//	{
+		//		externalAdminCirclesItem->addChild(groupItem);
+		//	}
+		//	else if (vit->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)
+		//	{
+		//		externalSubCirclesItem->addChild(groupItem);
+		//	}
+		//	else
+		//	{
+		//		externalOtherCirclesItem->addChild(groupItem);
+		//	}
+		//}
+	}
 }
 
 void GroupListView::requestIdList()
@@ -186,7 +255,25 @@ void GroupListView::requestIdList()
 
 	mIdQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, GLVIEW_IDLIST);
 }
+void GroupListView::requestCirclesList()
+{
+	std::cerr << "Requesting Circles list..." << std::endl;
 
+	if (!mIdQueue)
+		return;
+
+	mStateHelper->setLoading(GLVIEW_CIRCLES,    true);
+	//mStateHelper->setLoading(GLVIEW_IDDETAILS, true);
+	//mStateHelper->setLoading(GLVIEW_REPLIST,   true);
+
+	mIdQueue->cancelActiveRequestTokens(GLVIEW_CIRCLES);
+
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
+
+	uint32_t token;
+	mIdQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_SUMMARY, opts, GLVIEW_CIRCLES);
+}
 void GroupListView::forceRedraw()
 {
 	std::cerr << "force redraw" << std::endl;
@@ -214,8 +301,8 @@ void GroupListView::loadRequest(const TokenQueue * /*queue*/, const TokenRequest
 			//insertIdDetails(req.mToken);
 			break;
 
-		case GLVIEW_REPLIST:
-			//insertRepList(req.mToken);
+		case GLVIEW_CIRCLES:
+			insertCircles(req.mToken);
 			break;
 
 		case GLVIEW_REFRESH:
@@ -286,9 +373,9 @@ void GroupListView::drawBackground(QPainter *painter, const QRectF &rect)
                                                                            +QString::fromStdString(group_info.mPgpId.toStdString())
                                                                            +")"):tr("Anonymous") ;
 
-        painter->drawText(sceneRect.translated(IdentityItem::IMG_SIZE*2.5,line_height*n++), QString("Name\t: ")+QString::fromStdString(group_info.mMeta.mGroupName ));
-        painter->drawText(sceneRect.translated(IdentityItem::IMG_SIZE*2.5,line_height*n++), QString("Id  \t: ")+QString::fromStdString(group_info.mMeta.mGroupId.toStdString() ));
-        painter->drawText(sceneRect.translated(IdentityItem::IMG_SIZE*2.5,line_height*n++), QString("Type\t: ")+typestring );
+        painter->drawText(sceneRect.translated(IdentityItem::IMG_SIZE*2.5,line_height*n++), QString("Name : ")+QString::fromStdString(group_info.mMeta.mGroupName ));
+        painter->drawText(sceneRect.translated(IdentityItem::IMG_SIZE*2.5+31,line_height*n++), QString("Id : ")+QString::fromStdString(group_info.mMeta.mGroupId.toStdString() ));
+        painter->drawText(sceneRect.translated(IdentityItem::IMG_SIZE*2.5+10,line_height*n++), QString("Type : ")+typestring );
     }
 }
 
