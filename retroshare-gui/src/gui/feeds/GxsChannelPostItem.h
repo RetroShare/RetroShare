@@ -26,7 +26,6 @@
 
 #include <retroshare/rsgxschannels.h>
 #include "gui/gxs/GxsFeedItem.h"
-#include "ui_GxsChannelPostItem.h"
 #include <stdint.h>
 
 namespace Ui {
@@ -82,7 +81,7 @@ private:
 	uint32_t mSubscribeFlags;
 	RsGxsChannelPost mPost;
 
-	std::list<SubFileItem *> mFileItems;
+	std::list<SubFileItem*> mFileItems;
 
 	/** Qt Designer generated object */
 	Ui::GxsChannelPostItem *ui;

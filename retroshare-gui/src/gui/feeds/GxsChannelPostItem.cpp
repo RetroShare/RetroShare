@@ -21,16 +21,16 @@
  *
  */
 
-#include <QDateTime>
 #include <QTimer>
 #include <QFileInfo>
 
 #include "rshare.h"
 #include "GxsChannelPostItem.h"
+#include "ui_GxsChannelPostItem.h"
 
 #include "FeedHolder.h"
 #include "SubFileItem.h"
-#include "gui/notifyqt.h"
+//#include "gui/notifyqt.h"
 #include "util/misc.h"
 #include "gui/RetroShareLink.h"
 #include "util/HandleRichText.h"
@@ -323,7 +323,7 @@ void GxsChannelPostItem::loadPost(const RsGxsChannelPost &post)
 		
 		/* check if the file is a media file */
 		if (!misc::isPreviewable(QFileInfo(QString::fromUtf8(it->mName.c_str())).suffix())) 
-		  fi->mediatype();
+			fi->mediatype();
 
 		QLayout *layout = ui->expandFrame->layout();
 		layout->addWidget(fi);
