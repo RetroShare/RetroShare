@@ -24,8 +24,8 @@ public:
 
 	void fillComplete();
 	void setUpdateWhenInvisible(bool update);
-	std::list<RsGxsGroupId> &getGrpIds();
-	std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &getMsgIds();
+	const std::list<RsGxsGroupId> &getGrpIds();
+	const std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &getMsgIds();
 
 protected:
 	virtual void showEvent(QShowEvent *event);

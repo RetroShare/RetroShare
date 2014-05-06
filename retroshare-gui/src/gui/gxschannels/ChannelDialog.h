@@ -60,7 +60,7 @@ public:
 
 	virtual QWidget *createHeaderWidget(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId)
 	{
-		return new GxsChannelPostItem(NULL, 0, grpId, msgId, true);
+		return new GxsChannelPostItem(NULL, 0, grpId, msgId, true, true);
 	}
 
 	virtual QPixmap getServicePixmap()

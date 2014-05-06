@@ -23,6 +23,7 @@
 
 #include "gui/gxs/GxsFeedItem.h"
 #include "gui/feeds/FeedHolder.h"
+#include "gui/gxs/RsGxsUpdateBroadcastBase.h"
 
 #include <iostream>
 
@@ -111,7 +112,7 @@ void GxsFeedItem::updateItem()
 
 /***********************************************************/
 
-GxsFeedItem::GxsFeedItem(FeedHolder *parent, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, RsGxsIfaceHelper *iface, bool loadData) :
+GxsFeedItem::GxsFeedItem(FeedHolder *parent, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, RsGxsIfaceHelper *iface, bool loadData, bool autoUpdate) :
 	QWidget(NULL)
 {
 	std::cerr << "GxsFeedItem::GxsFeedItem()";
@@ -136,6 +137,14 @@ GxsFeedItem::GxsFeedItem(FeedHolder *parent, uint32_t feedId, const RsGxsGroupId
 	{
 		mLoadQueue = NULL;
 	}
+
+	if (mGxsIface && autoUpdate) {
+		/* Connect to update broadcast */
+		mUpdateBroadcastBase = new RsGxsUpdateBroadcastBase(mGxsIface);
+		connect(mUpdateBroadcastBase, SIGNAL(fillDisplay(bool)), this, SLOT(fillDisplay(bool)));
+	} else {
+		mUpdateBroadcastBase = NULL;
+	}
 }
 
 GxsFeedItem::~GxsFeedItem()
@@ -143,9 +152,30 @@ GxsFeedItem::~GxsFeedItem()
 	std::cerr << "GxsFeedItem::~GxsFeedItem()";
 	std::cerr << std::endl;
 
+	if (mUpdateBroadcastBase)
+	{
+		delete(mUpdateBroadcastBase);
+	}
+
 	if (mLoadQueue)
 	{
 		delete mLoadQueue;
+	}
+}
+
+void GxsFeedItem::fillDisplay(bool /*complete*/)
+{
+	const std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgs = mUpdateBroadcastBase->getMsgIds();
+	if (!msgs.empty())
+	{
+		std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::const_iterator mit = msgs.find(groupId());
+		if (mit != msgs.end())
+		{
+			const std::vector<RsGxsMessageId> &msgIds = mit->second;
+			if (std::find(msgIds.begin(), msgIds.end(), messageId()) != msgIds.end()) {
+				requestMessage();
+			}
+		}
 	}
 }
 
@@ -177,7 +207,12 @@ void GxsFeedItem::requestMessage()
 
 	if (!mLoadQueue)
 	{
-		return;
+		if (mGxsIface)
+		{
+			mLoadQueue = new TokenQueue(mGxsIface->getTokenService(), this);
+		} else {
+			return;
+		}
 	}
 
 	RsTokReqOptions opts;

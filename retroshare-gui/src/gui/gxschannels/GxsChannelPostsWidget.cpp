@@ -43,8 +43,8 @@
 #define TOKEN_TYPE_RELATEDPOSTS     8
 
 /** Constructor */
-GxsChannelPostsWidget::GxsChannelPostsWidget(const RsGxsGroupId &channelId, QWidget *parent)
-	: GxsMessageFrameWidget(rsGxsChannels, parent),
+GxsChannelPostsWidget::GxsChannelPostsWidget(const RsGxsGroupId &channelId, QWidget *parent) :
+	GxsMessageFrameWidget(rsGxsChannels, parent),
 	ui(new Ui::GxsChannelPostsWidget)
 {
 	/* Invoke the Qt Designer generated object setup routine */
@@ -96,16 +96,16 @@ void GxsChannelPostsWidget::updateDisplay(bool complete)
 		return;
 	}
 
-	std::list<RsGxsGroupId> &grpIds = getGrpIds();
+	const std::list<RsGxsGroupId> &grpIds = getGrpIds();
 	if (!mChannelId.isNull() && std::find(grpIds.begin(), grpIds.end(), mChannelId) != grpIds.end()) {
 		requestGroupData(mChannelId);
 		/* Do we need to fill all posts? */
 		requestPosts(mChannelId);
 	} else {
-		std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgs = getMsgIds();
+		const std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgs = getMsgIds();
 		if (!msgs.empty())
 		{
-			std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::iterator mit = msgs.find(mChannelId);
+			std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::const_iterator mit = msgs.find(mChannelId);
 			if(mit != msgs.end())
 			{
 				requestRelatedPosts(mChannelId, mit->second);
@@ -279,9 +279,10 @@ void GxsChannelPostsWidget::insertChannelPosts(std::vector<RsGxsChannelPost> &po
 			}
 		}
 		if (item) {
-			//TODO: Update item
+			item->setPost(*it);
+			//TODO: Sort timestamp
 		} else {
-			item = new GxsChannelPostItem(this, 0, *it, subscribeFlags, true);
+			item = new GxsChannelPostItem(this, 0, *it, subscribeFlags, true, false);
 			mChannelPostItems.push_back(item);
 			if (related) {
 				ui->verticalLayout->insertWidget(0, item);
@@ -626,10 +627,11 @@ void GxsChannelPostsWidget::requestRelatedPosts(const RsGxsGroupId &grpId, const
 		return;
 	}
 
-	mStateHelper->setLoading(TOKEN_TYPE_POSTS, true);
+	if (msgIds.empty()) {
+		return;
+	}
 
-	std::list<RsGxsGroupId> groupIds;
-	groupIds.push_back(grpId);
+	mStateHelper->setLoading(TOKEN_TYPE_POSTS, true);
 
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_MSG_RELATED_DATA;

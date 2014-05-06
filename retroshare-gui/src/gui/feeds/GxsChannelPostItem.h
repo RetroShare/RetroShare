@@ -41,11 +41,12 @@ class GxsChannelPostItem : public GxsFeedItem
 
 public:
 	/** Default Constructor */
-	GxsChannelPostItem(FeedHolder *parent, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome);
-	GxsChannelPostItem(FeedHolder *parent, uint32_t feedId, const RsGxsChannelPost &post, uint32_t subscribeFlags, bool isHome);
+	GxsChannelPostItem(FeedHolder *parent, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate);
+	GxsChannelPostItem(FeedHolder *parent, uint32_t feedId, const RsGxsChannelPost &post, uint32_t subscribeFlags, bool isHome, bool autoUpdate);
 	virtual ~GxsChannelPostItem();
 
 	void setFileCleanUpWarning(uint32_t time_left);
+	bool setPost(const RsGxsChannelPost &post);
 
 protected: 
 	virtual void loadMessage(const uint32_t &token);

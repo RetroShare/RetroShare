@@ -14,15 +14,16 @@ class RsGxsUpdateBroadcastBase : public QObject
 
 	Q_OBJECT
 
-protected:
+public:
 	RsGxsUpdateBroadcastBase(RsGxsIfaceHelper* ifaceImpl, QWidget *parent = NULL);
 	virtual ~RsGxsUpdateBroadcastBase();
 
+	const std::list<RsGxsGroupId> &getGrpIds() { return mGrpIds; }
+	const std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &getMsgIds() { return mMsgIds; }
+
+protected:
 	void fillComplete();
 	void setUpdateWhenInvisible(bool update) { mUpdateWhenInvisible = update; }
-
-	std::list<RsGxsGroupId> &getGrpIds() { return mGrpIds; }
-	std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &getMsgIds() { return mMsgIds; }
 
 	void showEvent(QShowEvent *e);
 

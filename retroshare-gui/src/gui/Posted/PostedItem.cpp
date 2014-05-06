@@ -32,14 +32,14 @@
 
 /** Constructor */
 
-PostedItem::PostedItem(FeedHolder *parent, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome)
-	:GxsFeedItem(parent, feedId, groupId, messageId, isHome, rsPosted, true)
+PostedItem::PostedItem(FeedHolder *parent, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome) :
+	GxsFeedItem(parent, feedId, groupId, messageId, isHome, rsPosted, true, false)
 {
 	setup();
 }
 
-PostedItem::PostedItem(FeedHolder *parent, uint32_t feedId, const RsPostedPost &post, bool isHome)
-	:GxsFeedItem(parent, feedId, post.mMeta.mGroupId, post.mMeta.mMsgId, isHome, rsPosted, false),
+PostedItem::PostedItem(FeedHolder *parent, uint32_t feedId, const RsPostedPost &post, bool isHome) :
+	GxsFeedItem(parent, feedId, post.mMeta.mGroupId, post.mMeta.mMsgId, isHome, rsPosted, false, false),
 	mPost(post)
 {
 	setup();

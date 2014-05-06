@@ -42,16 +42,14 @@
  * #define DEBUG_ITEM 1
  ****/
 
-#define DEBUG_ITEM 	1
-
 #define COLOR_NORMAL QColor(248, 248, 248)
 #define COLOR_NEW    QColor(220, 236, 253)
 
 #define SELF_LOAD      1
 #define DATA_PROVIDED  2
 
-GxsChannelPostItem::GxsChannelPostItem(FeedHolder *parent, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome) :
-	GxsFeedItem(parent, feedId, groupId, messageId, isHome, rsGxsChannels, true)
+GxsChannelPostItem::GxsChannelPostItem(FeedHolder *parent, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate) :
+	GxsFeedItem(parent, feedId, groupId, messageId, isHome, rsGxsChannels, true, autoUpdate)
 {
 	mMode = SELF_LOAD;
 
@@ -59,8 +57,8 @@ GxsChannelPostItem::GxsChannelPostItem(FeedHolder *parent, uint32_t feedId, cons
 }
 
 /** Constructor */
-GxsChannelPostItem::GxsChannelPostItem(FeedHolder *parent, uint32_t feedId, const RsGxsChannelPost &post, uint32_t subFlags, bool isHome) :
-	GxsFeedItem(parent, feedId, post.mMeta.mGroupId, post.mMeta.mMsgId, isHome, rsGxsChannels, false)
+GxsChannelPostItem::GxsChannelPostItem(FeedHolder *parent, uint32_t feedId, const RsGxsChannelPost &post, uint32_t subFlags, bool isHome, bool autoUpdate) :
+	GxsFeedItem(parent, feedId, post.mMeta.mGroupId, post.mMeta.mMsgId, isHome, rsGxsChannels, false, autoUpdate)
 {
 	std::cerr << "GxsChannelPostItem::GxsChannelPostItem() Direct Load";
 	std::cerr << std::endl;
@@ -73,6 +71,19 @@ GxsChannelPostItem::GxsChannelPostItem(FeedHolder *parent, uint32_t feedId, cons
 
 	// is it because we are in the constructor?
 	loadPost(post);
+}
+
+bool GxsChannelPostItem::setPost(const RsGxsChannelPost &post)
+{
+	if (groupId() != post.mMeta.mGroupId || messageId() != post.mMeta.mMsgId) {
+		std::cerr << "GxsChannelPostItem::setPost() - Wrong id, cannot set post";
+		std::cerr << std::endl;
+		return false;
+	}
+
+	loadPost(post);
+
+	return true;
 }
 
 GxsChannelPostItem::~GxsChannelPostItem()
@@ -162,6 +173,7 @@ void GxsChannelPostItem::loadMessage(const uint32_t &token)
 void GxsChannelPostItem::loadPost(const RsGxsChannelPost &post)
 {
 	/* fill in */
+
 #ifdef DEBUG_ITEM
 	std::cerr << "GxsChannelPostItem::loadPost()";
 	std::cerr << std::endl;

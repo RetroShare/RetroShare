@@ -29,6 +29,7 @@
 #include <stdint.h>
 
 class FeedHolder;
+class RsGxsUpdateBroadcastBase;
 
 class GxsFeedItem : public QWidget, public TokenResponse
 {
@@ -36,7 +37,7 @@ class GxsFeedItem : public QWidget, public TokenResponse
 
 public:
 	/** Note parent can = NULL */
-	GxsFeedItem(FeedHolder *parent, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, RsGxsIfaceHelper *iface, bool loadData);
+	GxsFeedItem(FeedHolder *parent, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, RsGxsIfaceHelper *iface, bool loadData, bool autoUpdate);
 	virtual ~GxsFeedItem();
 
 	RsGxsGroupId groupId() { return mGroupId; }
@@ -61,6 +62,10 @@ protected slots:
 	void unsubscribe();
 	void removeItem();
 
+private slots:
+	/* RsGxsUpdateBroadcastBase */
+	void fillDisplay(bool complete);
+
 protected:
 	FeedHolder *mParent;
 	uint32_t    mFeedId;
@@ -76,6 +81,7 @@ private:
 
 	RsGxsIfaceHelper *mGxsIface;
 	TokenQueue *mLoadQueue;
+	RsGxsUpdateBroadcastBase *mUpdateBroadcastBase;
 };
 
 #endif

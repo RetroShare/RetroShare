@@ -22,12 +22,12 @@ void RsGxsUpdateBroadcastWidget::setUpdateWhenInvisible(bool update)
 	mBase->setUpdateWhenInvisible(update);
 }
 
-std::list<RsGxsGroupId> &RsGxsUpdateBroadcastWidget::getGrpIds()
+const std::list<RsGxsGroupId> &RsGxsUpdateBroadcastWidget::getGrpIds()
 {
 	return mBase->getGrpIds();
 }
 
-std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &RsGxsUpdateBroadcastWidget::getMsgIds()
+const std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &RsGxsUpdateBroadcastWidget::getMsgIds()
 {
 	return mBase->getMsgIds();
 }

@@ -319,13 +319,13 @@ void PostedListDialog::updateDisplay(bool /*complete*/)
 	/* update List */
 	insertGroups();
 
-	std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgs = getMsgIds();
+	const std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgs = getMsgIds();
 	if(!msgs.empty())
 	{
 		std::cerr << "rsPosted->msgsChanged():";
 		std::cerr << std::endl;
 
-		std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::iterator mit;
+		std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::const_iterator mit;
 		mit = msgs.find(mCurrTopicId);
 		if(mit != msgs.end())
 		{

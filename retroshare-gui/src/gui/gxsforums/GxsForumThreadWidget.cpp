@@ -318,12 +318,12 @@ void GxsForumThreadWidget::updateDisplay(bool complete)
 		return;
 	}
 
-	std::list<RsGxsGroupId> &grpIds = getGrpIds();
+	const std::list<RsGxsGroupId> &grpIds = getGrpIds();
 	if (std::find(grpIds.begin(), grpIds.end(), mForumId) != grpIds.end()) {
 		/* Update threads */
 		insertThreads();
 	} else {
-		std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgIds = getMsgIds();
+		const std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgIds = getMsgIds();
 		if (msgIds.find(mForumId) != msgIds.end()) {
 			/* Update threads */
 			insertThreads();
