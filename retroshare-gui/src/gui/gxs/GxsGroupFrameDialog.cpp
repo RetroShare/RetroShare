@@ -44,6 +44,7 @@
 #define IMAGE_COPYLINK       ":/images/copyrslink.png"
 #define IMAGE_EDIT           ":/images/edit_16.png"
 #define IMAGE_SHARE           ":/images/share-icon-16.png"
+#define IMAGE_TABNEW           ":/images/tab-new.png"
 
 #define TOKEN_TYPE_LISTING          1
 #define TOKEN_TYPE_SUBSCRIBE_CHANGE 2
@@ -219,7 +220,7 @@ void GxsGroupFrameDialog::groupTreeCustomPopupMenu(QPoint /*point*/)
 	}
 
 	if (mMessageWidget) {
-		action = contextMnu.addAction(QIcon(""), tr("Open in new tab"), this, SLOT(openInNewTab()));
+		action = contextMnu.addAction(QIcon(IMAGE_TABNEW), tr("Open in new tab"), this, SLOT(openInNewTab()));
 		if (mGroupId.isNull() || messageWidget(mGroupId, true)) {
 			action->setEnabled(false);
 		}

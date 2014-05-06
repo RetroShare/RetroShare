@@ -75,9 +75,9 @@ QString GxsChannelDialog::icon(IconType type)
 {
 	switch (type) {
 	case ICON_NAME:
-		return ":/images/add_channel24.png";
+		return ":/images/channels24.png";
 	case ICON_NEW:
-		return ":/images/new_forum16.png";
+		return ":/images/add_channel24.png";
 	case ICON_YOUR_GROUP:
 		return ":/images/channelsblue.png";
 	case ICON_SUBSCRIBED_GROUP:

@@ -630,13 +630,24 @@ void IdDialog::removeIdentity()
 		std::cerr << std::endl;
 		return;
 	}
+	
+		QString queryWrn;
+	  queryWrn.clear();
+	  queryWrn.append(tr("Do you really want to delete this Identity ?"));
+	
+	if ((QMessageBox::question(this, tr("Really delete? "),queryWrn,QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes))== QMessageBox::Yes)
+		{
+      std::string keyId = item->text(RSID_COL_KEYID).toStdString();
 
-	std::string keyId = item->text(RSID_COL_KEYID).toStdString();
+      uint32_t dummyToken = 0;
+      RsGxsIdGroup group;
+      group.mMeta.mGroupId=RsGxsGroupId(keyId);
+      rsIdentity->deleteIdentity(dummyToken, group);
+		}
+		else
+			return;
 
-	uint32_t dummyToken = 0;
-	RsGxsIdGroup group;
-	group.mMeta.mGroupId=RsGxsGroupId(keyId);
-	rsIdentity->deleteIdentity(dummyToken, group);
+
 
 }
 
