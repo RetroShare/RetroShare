@@ -90,7 +90,18 @@ void GxsChannelGroupDialog::initUi()
 
 QPixmap GxsChannelGroupDialog::serviceImage()
 {
-	return QPixmap(":/images/add_channel64.png");
+	switch (mode())
+	{
+	case MODE_CREATE:
+		return QPixmap(":/images/add_channel64.png");
+	break;
+		case MODE_SHOW:
+		return QPixmap(":/images/channels.png");
+		break;
+	case MODE_EDIT:
+		return QPixmap(":/images/channels.png");
+		break;
+	}
 }
 
 bool GxsChannelGroupDialog::service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta)
