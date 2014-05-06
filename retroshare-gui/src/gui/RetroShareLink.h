@@ -99,12 +99,13 @@ class RetroShareLink
 		const QString& SSLId() const { return _SSLid ; }
 		const QString& GPGId() const { return _GPGid ; }
 		const QString& localIPAndPort() const { return _loc_ip_port ; }
-		const QString& externalIPAndPort() const { return _ext_ip_port ; }
-		const QString& dyndns() const { return _dyndns_name ; }
-		const QString& location() const { return _location ; }
-		time_t timeStamp() const { return _time_stamp ; }
-		const QString& encryptedPrivateChatInfo() const { return _encrypted_chat_info ; }
-		QString title() const;
+               const QString& externalIPAndPort() const { return _ext_ip_port ; }
+               const QString& dyndns() const { return _dyndns_name ; }
+               const QString& location() const { return _location ; }
+        const QString& radix() const { return _radix ; }
+        time_t timeStamp() const { return _time_stamp ; }
+               const QString& encryptedPrivateChatInfo() const { return _encrypted_chat_info ; }
+               QString title() const;
 
 		unsigned int subType() const { return _subType; }
 		void setSubType(unsigned int subType) { _subType = subType; }
@@ -156,11 +157,12 @@ class RetroShareLink
 		QString  _GPGBase64String ; // GPG Cert
 		QString  _GPGBase64CheckSum ; // GPG Cert
 		QString  _location ;	// location 
-		QString  _ext_ip_port ;
-		QString  _loc_ip_port ;
-		QString  _dyndns_name ;
-		QString  _encrypted_chat_info ; // encrypted data string for the recipient of a chat invite
-		time_t   _time_stamp ; 				// time stamp at which the link will expire.
+               QString  _ext_ip_port ;
+               QString  _loc_ip_port ;
+               QString  _dyndns_name ;
+        QString  _radix ;
+        QString  _encrypted_chat_info ; // encrypted data string for the recipient of a chat invite
+               time_t   _time_stamp ; 				// time stamp at which the link will expire.
 
 		unsigned int _subType; // for general use as sub type for _type (RSLINK_SUBTYPE_...)
 };

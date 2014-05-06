@@ -97,6 +97,7 @@
 #define CERTIFICATE_EXT_IPPORT   "extipp"
 #define CERTIFICATE_LOC_IPPORT   "locipp"
 #define CERTIFICATE_DYNDNS       "dyndns"
+#define CERTIFICATE_RADIX        "radix"
 
 #define PRIVATE_CHAT_TIME_STAMP  "time_stamp"
 #define PRIVATE_CHAT_STRING      "encrypted_data"
@@ -294,12 +295,13 @@ void RetroShareLink::fromUrl(const QUrl& url)
 
 	 if (url.host() == HOST_CERTIFICATE) {
         _type = TYPE_CERTIFICATE;
-		  _SSLid = urlQuery.queryItemValue(CERTIFICATE_SSLID);
-		  _name = urlQuery.queryItemValue(CERTIFICATE_NAME);
-		  _location = urlQuery.queryItemValue(CERTIFICATE_LOCATION);
-		  _GPGBase64String = urlQuery.queryItemValue(CERTIFICATE_GPG_BASE64);
-		  _GPGid = urlQuery.queryItemValue(CERTIFICATE_GPG_ID);
-		  _GPGBase64CheckSum = urlQuery.queryItemValue(CERTIFICATE_GPG_CHECKSUM);
+                 _SSLid = urlQuery.queryItemValue(CERTIFICATE_SSLID);
+                 _name = urlQuery.queryItemValue(CERTIFICATE_NAME);
+                 _location = urlQuery.queryItemValue(CERTIFICATE_LOCATION);
+          _radix = urlQuery.queryItemValue(CERTIFICATE_RADIX);
+          _GPGBase64String = urlQuery.queryItemValue(CERTIFICATE_GPG_BASE64);
+          _GPGid = urlQuery.queryItemValue(CERTIFICATE_GPG_ID);
+          _GPGBase64CheckSum = urlQuery.queryItemValue(CERTIFICATE_GPG_CHECKSUM);
 		  _ext_ip_port = urlQuery.queryItemValue(CERTIFICATE_EXT_IPPORT);
 		  _loc_ip_port = urlQuery.queryItemValue(CERTIFICATE_LOC_IPPORT);
 		  _dyndns_name = urlQuery.queryItemValue(CERTIFICATE_DYNDNS);
@@ -430,18 +432,21 @@ bool RetroShareLink::createCertificate(const RsPeerId& ssl_id)
     // else
     // {
         _SSLid = QString::fromStdString(ssl_id.toStdString()) ;
-		_location = QString::fromUtf8(detail.location.c_str()) ;
-		_ext_ip_port = QString::fromStdString(detail.extAddr) + ":" + QString::number(detail.extPort) + ";" ;
-		_loc_ip_port = QString::fromStdString(detail.localAddr) + ":" + QString::number(detail.localPort) + ";" ;
+        _radix = QString::fromUtf8(rsPeers->GetRetroshareInvite(ssl_id,false).c_str());
+        _radix.replace("\n","");
+        _location = QString::fromUtf8(detail.location.c_str()) ;
+               _ext_ip_port = QString::fromStdString(detail.extAddr) + ":" + QString::number(detail.extPort) + ";" ;
+               _loc_ip_port = QString::fromStdString(detail.localAddr) + ":" + QString::number(detail.localPort) + ";" ;
 		_dyndns_name = QString::fromStdString(detail.dyndns);
     //}
 	_name = QString::fromUtf8(detail.name.c_str()) ;
 
-	std::cerr << "Found gpg base 64 string   = " << _GPGBase64String.toStdString() << std::endl;
-	std::cerr << "Found gpg base 64 checksum = " << _GPGBase64CheckSum.toStdString() << std::endl;
-	std::cerr << "Found SSLId                = " << _SSLid.toStdString() << std::endl;
-	std::cerr << "Found GPGId                = " << _GPGid.toStdString() << std::endl;
-	std::cerr << "Found Local    IP+Port     = " << _loc_ip_port.toStdString() << std::endl;
+       std::cerr << "Found gpg base 64 string   = " << _GPGBase64String.toStdString() << std::endl;
+       std::cerr << "Found gpg base 64 checksum = " << _GPGBase64CheckSum.toStdString() << std::endl;
+    std::cerr << "Found radix                = " << _radix.toStdString() << std::endl;
+    std::cerr << "Found SSLId                = " << _SSLid.toStdString() << std::endl;
+       std::cerr << "Found GPGId                = " << _GPGid.toStdString() << std::endl;
+       std::cerr << "Found Local    IP+Port     = " << _loc_ip_port.toStdString() << std::endl;
 	std::cerr << "Found External IP+Port     = " << _ext_ip_port.toStdString() << std::endl;
 	std::cerr << "Found Location             = " << _location.toStdString() << std::endl;
 	std::cerr << "Found DNS                  = " << _dyndns_name.toStdString() << std::endl;
@@ -864,12 +869,13 @@ QString RetroShareLink::toString() const
 		  urlQuery.addQueryItem(CERTIFICATE_GPG_ID, _GPGid);
 		  urlQuery.addQueryItem(CERTIFICATE_GPG_BASE64, _GPGBase64String);
 		  urlQuery.addQueryItem(CERTIFICATE_GPG_CHECKSUM, _GPGBase64CheckSum);
-		  if (!_location.isEmpty()) {
-			  urlQuery.addQueryItem(CERTIFICATE_LOCATION, encodeItem(_location));
-		  }
-		  urlQuery.addQueryItem(CERTIFICATE_NAME, encodeItem(_name));
-		  if (!_loc_ip_port.isEmpty()) {
-			  urlQuery.addQueryItem(CERTIFICATE_LOC_IPPORT, encodeItem(_loc_ip_port));
+                 if (!_location.isEmpty()) {
+                         urlQuery.addQueryItem(CERTIFICATE_LOCATION, encodeItem(_location));
+                 }
+          urlQuery.addQueryItem(CERTIFICATE_RADIX, _radix);
+          urlQuery.addQueryItem(CERTIFICATE_NAME, encodeItem(_name));
+                 if (!_loc_ip_port.isEmpty()) {
+                         urlQuery.addQueryItem(CERTIFICATE_LOC_IPPORT, encodeItem(_loc_ip_port));
 		  }
 		  if (!_ext_ip_port.isEmpty()) {
 			  urlQuery.addQueryItem(CERTIFICATE_EXT_IPPORT, encodeItem(_ext_ip_port));
@@ -1208,41 +1214,43 @@ static void processList(const QStringList &list, const QString &textSingular, co
 #ifdef DEBUG_RSLINK
 					std::cerr << " RetroShareLink::process certificate." << std::endl;
 #endif
-					needNotifySuccess = true;
+                                       needNotifySuccess = true;
 
-					QString RS_Certificate ;
-					RS_Certificate += "-----BEGIN PGP PUBLIC KEY BLOCK-----\n" ;
-					RS_Certificate += "Version: Retroshare Generated cert.\n" ;
-					RS_Certificate += "\n" ;
+                    //QString RS_Certificate ;
+                    //RS_Certificate += "-----BEGIN PGP PUBLIC KEY BLOCK-----\n" ;
+                    //RS_Certificate += "Version: Retroshare Generated cert.\n" ;
+                    //RS_Certificate += "\n" ;
 
-					QString radix = link.GPGRadix64Key() ;
+                    //QString radix = link.GPGRadix64Key() ;
 
-					while(radix.size() > 64)
-					{
-						RS_Certificate += radix.left(64) + "\n" ;
-						radix = radix.right(radix.size() - 64) ;
-					}
-					RS_Certificate += radix.left(64) + "\n" ;
-					RS_Certificate += "=" + link.GPGBase64CheckSum() + "\n" ;
-					RS_Certificate += "-----END PGP PUBLIC KEY BLOCK-----\n" ;
-					RS_Certificate += "--SSLID--" + link.SSLId() + ";--LOCATION--" + link.location() + ";\n" ;
+                    //while(radix.size() > 64)
+                    //{
+                    //	RS_Certificate += radix.left(64) + "\n" ;
+                    //	radix = radix.right(radix.size() - 64) ;
+                    //}
+                    //RS_Certificate += radix.left(64) + "\n" ;
+                    //RS_Certificate += "=" + link.GPGBase64CheckSum() + "\n" ;
+                    //RS_Certificate += "-----END PGP PUBLIC KEY BLOCK-----\n" ;
+                    //RS_Certificate += "--SSLID--" + link.SSLId() + ";--LOCATION--" + link.location() + ";\n" ;
 
-					if(!link.externalIPAndPort().isNull())
-						RS_Certificate += "--EXT--" + link.externalIPAndPort() + ";" ;
-					if(!link.localIPAndPort().isNull())
-						RS_Certificate += "--LOCAL--" + link.localIPAndPort() + ";" ;
-					if(!link.dyndns().isNull())
-						RS_Certificate += "--DYNDNS--" + link.dyndns() + ";" ;
-					RS_Certificate += "\n" ;
+                    //if(!link.externalIPAndPort().isNull())
+                    //	RS_Certificate += "--EXT--" + link.externalIPAndPort() + ";" ;
+                    //if(!link.localIPAndPort().isNull())
+                    //	RS_Certificate += "--LOCAL--" + link.localIPAndPort() + ";" ;
+                    //if(!link.dyndns().isNull())
+                    //	RS_Certificate += "--DYNDNS--" + link.dyndns() + ";" ;
+                    //RS_Certificate += "\n" ;
 
-					std::cerr << "Usign this certificate:" << std::endl;
-					std::cerr << RS_Certificate.toStdString() << std::endl;
+                                       std::cerr << "Usign this certificate:" << std::endl;
+                    //std::cerr << RS_Certificate.toStdString() << std::endl;
+                    std::cerr << link.radix().toStdString() << std::endl;
 
-					ConnectFriendWizard connectFriendWizard;
-					connectFriendWizard.setCertificate(RS_Certificate, (link.subType() == RSLINK_SUBTYPE_CERTIFICATE_USER_REQUEST) ? true : false);
-					connectFriendWizard.exec();
-					needNotifySuccess = false;
-				}
+                                       ConnectFriendWizard connectFriendWizard;
+//					connectFriendWizard.setCertificate(RS_Certificate, (link.subType() == RSLINK_SUBTYPE_CERTIFICATE_USER_REQUEST) ? true : false);
+                    connectFriendWizard.setCertificate(link.radix(), (link.subType() == RSLINK_SUBTYPE_CERTIFICATE_USER_REQUEST) ? true : false);
+                    connectFriendWizard.exec();
+                                       needNotifySuccess = false;
+                               }
 				break ;
 
 			case TYPE_PUBLIC_MSG:
