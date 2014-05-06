@@ -682,6 +682,15 @@
     <string>Edit Identity</string>
    </property>
   </action>
+  <action name="removeIdentity">
+   <property name="icon">
+    <iconset resource="../images.qrc">
+     <normaloff>:/images/delete.png</normaloff>:/images/delete.png</iconset>
+   </property>
+   <property name="text">
+    <string>Delete Identity</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>

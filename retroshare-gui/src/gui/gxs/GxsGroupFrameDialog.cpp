@@ -42,6 +42,8 @@
 #define IMAGE_INFO           ":/images/info16.png"
 //#define IMAGE_GROUPAUTHD     ":/images/konv_message2.png"
 #define IMAGE_COPYLINK       ":/images/copyrslink.png"
+#define IMAGE_EDIT           ":/images/edit_16.png"
+#define IMAGE_SHARE           ":/images/share-icon-16.png"
 
 #define TOKEN_TYPE_LISTING          1
 #define TOKEN_TYPE_SUBSCRIBE_CHANGE 2
@@ -230,10 +232,10 @@ void GxsGroupFrameDialog::groupTreeCustomPopupMenu(QPoint /*point*/)
 	action = contextMnu.addAction(QIcon(IMAGE_INFO), tr("Show Details"), this, SLOT(showGroupDetails()));
 	action->setEnabled (!mGroupId.isNull());
 
-	action = contextMnu.addAction(QIcon(":/images/settings16.png"), tr("Edit Details"), this, SLOT(editGroupDetails()));
+	action = contextMnu.addAction(QIcon(IMAGE_EDIT), tr("Edit Details"), this, SLOT(editGroupDetails()));
 	action->setEnabled (!mGroupId.isNull() && isAdmin);
 
-	action = contextMnu.addAction(QIcon(":/images/gpgp_key_generate.png"), tr("Share"), this, SLOT(shareKey()));
+	action = contextMnu.addAction(QIcon(IMAGE_SHARE), tr("Share"), this, SLOT(shareKey()));
 	action->setEnabled(!mGroupId.isNull() && isAdmin);
 
 	if (!mGroupId.isNull() && isPublisher && !isAdmin) {

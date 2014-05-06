@@ -148,4 +148,13 @@ public:
 	uint32_t mToken;
 };
 
+class GroupDeletePublish
+{
+public:
+        GroupDeletePublish(RsGxsGrpItem* item, uint32_t token)
+            : grpItem(item), mToken(token) {}
+	RsGxsGrpItem* grpItem;
+	uint32_t mToken;
+};
+
 #endif /* GXSUTIL_H_ */

@@ -53,6 +53,7 @@ private slots:
 	void filterChanged(const QString &text);
 
 	void addIdentity();
+	void removeIdentity();
 	void editIdentity();
 
 	void updateSelection();

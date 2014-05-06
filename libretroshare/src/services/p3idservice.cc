@@ -352,8 +352,20 @@ bool p3IdService::updateIdentity(uint32_t& token, RsGxsIdGroup &group)
 	return false;
 }
 
+bool p3IdService::deleteIdentity(uint32_t& token, RsGxsIdGroup &group)
+{
+#ifdef DEBUG_IDS
+	std::cerr << "p3IdService::deleteIdentity()";
+	std::cerr << std::endl;
+#endif
 
-bool p3IdService::parseRecognTag(const RsGxsId &id, const std::string &nickname, 
+	deleteGroup(token, group);
+
+	return false;
+}
+
+
+bool p3IdService::parseRecognTag(const RsGxsId &id, const std::string &nickname,
 			const std::string &tag, RsRecognTagDetails &details)
 {
 #ifdef DEBUG_RECOGN
@@ -817,6 +829,74 @@ bool 	p3IdService::updateGroup(uint32_t& token, RsGxsIdGroup &group)
 			std::cerr << "p3IdService::updateGroup() Not in PrivateKeyCache";
 			std::cerr << std::endl;
 #endif
+		}
+	}
+
+	return true;
+}
+
+bool 	p3IdService::deleteGroup(uint32_t& token, RsGxsIdGroup &group)
+{
+	RsGxsId id = RsGxsId(group.mMeta.mGroupId.toStdString());
+	RsGxsIdGroupItem* item = new RsGxsIdGroupItem();
+	item->group = group;
+	item->meta = group.mMeta;
+
+#ifdef DEBUG_IDS
+	std::cerr << "p3IdService::deleteGroup() Deleting RsGxsId: " << id;
+	std::cerr << std::endl;
+#endif
+
+	RsGenExchange::deleteGroup(token, item);
+
+	// if its in the cache - clear it.
+	{
+		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+		if (mPublicKeyCache.erase(id))
+		{
+#ifdef DEBUG_IDS
+			std::cerr << "p3IdService::deleteGroup() Removed from PublicKeyCache";
+			std::cerr << std::endl;
+#endif
+		}
+		else
+		{
+#ifdef DEBUG_IDS
+			std::cerr << "p3IdService::deleteGroup() Not in PublicKeyCache";
+			std::cerr << std::endl;
+#endif
+		}
+
+		if (mPrivateKeyCache.erase(id))
+		{
+#ifdef DEBUG_IDS
+			std::cerr << "p3IdService::deleteGroup() Removed from PrivateKeyCache";
+			std::cerr << std::endl;
+#endif
+		}
+		else
+		{
+#ifdef DEBUG_IDS
+			std::cerr << "p3IdService::deleteGroup() Not in PrivateKeyCache";
+			std::cerr << std::endl;
+#endif
+		}
+
+		std::list<RsGxsId>::iterator lit = std::find( mOwnIds.begin(), mOwnIds.end(), id);
+		if (lit != mOwnIds.end())
+		{
+			mOwnIds.remove((RsGxsId)*lit);
+	#ifdef DEBUG_IDS
+			std::cerr << "p3IdService::deleteGroup() Removed from OwnIds";
+			std::cerr << std::endl;
+	#endif
+		}
+		else
+		{
+	#ifdef DEBUG_IDS
+			std::cerr << "p3IdService::deleteGroup() Not in OwnIds";
+			std::cerr << std::endl;
+	#endif
 		}
 	}
 

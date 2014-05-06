@@ -127,7 +127,9 @@ IdDialog::IdDialog(QWidget *parent)
 	/* Connect signals */
 	connect(ui.toolButton_NewId, SIGNAL(clicked()), this, SLOT(addIdentity()));
 	connect(ui.todoPushButton, SIGNAL(clicked()), this, SLOT(todo()));
+	connect(ui.toolButton_Delete, SIGNAL(clicked()), this, SLOT(removeIdentity()));
 	connect(ui.toolButton_EditId, SIGNAL(clicked()), this, SLOT(editIdentity()));
+	connect(ui.removeIdentity, SIGNAL(triggered()), this, SLOT(removeIdentity()));
 	connect(ui.editIdentity, SIGNAL(triggered()), this, SLOT(editIdentity()));
 
 	connect(ui.treeWidget_IdList, SIGNAL(itemSelectionChanged()), this, SLOT(updateSelection()));
@@ -171,7 +173,7 @@ void IdDialog::todo()
 {
 	QMessageBox::information(this, "Todo",
 							 "<b>Open points:</b><ul>"
-							 "<li>Delete ID"
+//							 "<li>Delete ID"
 							 "<li>Reputation"
 							 "<li>Load/save settings"
 							 "</ul>");
@@ -494,10 +496,10 @@ void IdDialog::insertIdDetails(uint32_t token)
 	if (isOwnId)
 	{
 		mStateHelper->setWidgetEnabled(ui.toolButton_Reputation, false);
-		// No Delete Ids yet!
-		mStateHelper->setWidgetEnabled(ui.toolButton_Delete, /*true*/ false);
+		mStateHelper->setWidgetEnabled(ui.toolButton_Delete, true);
 		mStateHelper->setWidgetEnabled(ui.toolButton_EditId, true);
 		ui.editIdentity->setEnabled(true);
+		ui.removeIdentity->setEnabled(true);
 	}
 	else
 	{
@@ -506,6 +508,7 @@ void IdDialog::insertIdDetails(uint32_t token)
 		mStateHelper->setWidgetEnabled(ui.toolButton_Delete, false);
 		mStateHelper->setWidgetEnabled(ui.toolButton_EditId, false);
 		ui.editIdentity->setEnabled(false);
+		ui.removeIdentity->setEnabled(false);
 	}
 
 	/* now fill in the reputation information */
@@ -618,6 +621,25 @@ void IdDialog::addIdentity()
 	dlg.exec();
 }
 
+void IdDialog::removeIdentity()
+{
+	QTreeWidgetItem *item = ui.treeWidget_IdList->currentItem();
+	if (!item)
+	{
+		std::cerr << "IdDialog::editIdentity() Invalid item";
+		std::cerr << std::endl;
+		return;
+	}
+
+	std::string keyId = item->text(RSID_COL_KEYID).toStdString();
+
+	uint32_t dummyToken = 0;
+	RsGxsIdGroup group;
+	group.mMeta.mGroupId=RsGxsGroupId(keyId);
+	rsIdentity->deleteIdentity(dummyToken, group);
+
+}
+
 void IdDialog::editIdentity()
 {
 	QTreeWidgetItem *item = ui.treeWidget_IdList->currentItem();
@@ -661,6 +683,7 @@ void IdDialog::requestRepList(const RsGxsGroupId &aboutId)
 
 void IdDialog::insertRepList(uint32_t token)
 {
+	Q_UNUSED(token)
 	mStateHelper->setLoading(IDDIALOG_REPLIST, false);
 #if 0
 
@@ -738,6 +761,7 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
     QMenu contextMnu( this );
 
     contextMnu.addAction(ui.editIdentity);
+		contextMnu.addAction(ui.removeIdentity);
 
     contextMnu.exec(QCursor::pos());
 }

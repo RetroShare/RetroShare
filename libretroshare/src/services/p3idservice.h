@@ -242,6 +242,7 @@ virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsIdGroup> &grou
 	// These are local - and not exposed via RsIdentity.
 virtual bool createGroup(uint32_t& token, RsGxsIdGroup &group);
 virtual bool updateGroup(uint32_t& token, RsGxsIdGroup &group);
+virtual bool deleteGroup(uint32_t& token, RsGxsIdGroup &group);
 //virtual bool createMsg(uint32_t& token, RsGxsIdOpinion &opinion);
 
 	/**************** RsIdentity External Interface.
@@ -266,6 +267,7 @@ virtual bool submitOpinion(uint32_t& token, const RsGxsId &id,
 virtual bool createIdentity(uint32_t& token, RsIdentityParameters &params);
 
 virtual bool updateIdentity(uint32_t& token, RsGxsIdGroup &group);
+virtual bool deleteIdentity(uint32_t& token, RsGxsIdGroup &group);
 
 virtual bool parseRecognTag(const RsGxsId &id, const std::string &nickname,
                         const std::string &tag, RsRecognTagDetails &details);

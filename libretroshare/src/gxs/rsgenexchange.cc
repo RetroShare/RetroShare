@@ -56,10 +56,10 @@
 RsGenExchange::RsGenExchange(RsGeneralDataService *gds, RsNetworkExchangeService *ns,
                              RsSerialType *serviceSerialiser, uint16_t servType, RsGixs* gixs,
                              uint32_t authenPolicy, uint32_t messageStorePeriod)
-: mGenMtx("GenExchange"),
-  mDataStore(gds),
-  mNetService(ns),
-  mSerialiser(serviceSerialiser),
+  : mGenMtx("GenExchange"),
+    mDataStore(gds),
+    mNetService(ns),
+    mSerialiser(serviceSerialiser),
   mServType(servType),
   mGixs(gixs),
   mAuthenPolicy(authenPolicy),
@@ -131,7 +131,9 @@ void RsGenExchange::tick()
 
 	publishMsgs();
 
-        processGroupUpdatePublish();
+	processGroupUpdatePublish();
+
+	processGroupDelete();
 
 	processRecvdData();
 
@@ -1029,15 +1031,15 @@ bool RsGenExchange::subscribeToGroup(uint32_t& token, const RsGxsGroupId& grpId,
         setGroupSubscribeFlags(token, grpId, GXS_SERV::GROUP_SUBSCRIBE_NOT_SUBSCRIBED,
         		(GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED | GXS_SERV::GROUP_SUBSCRIBE_NOT_SUBSCRIBED));
 
-    return true;
+	return true;
 }
 
-bool RsGenExchange::getGroupStatistic(const uint32_t& token, GxsGroupStatistic& stats)
+bool RsGenExchange::getGroupStatistic(const uint32_t& /*token*/, GxsGroupStatistic& /*stats*/)
 {
 	return false;
 }
 
-bool RsGenExchange::getServiceStatistic(const uint32_t& token, GxsServiceStatistic& stats)
+bool RsGenExchange::getServiceStatistic(const uint32_t& /*token*/, GxsServiceStatistic& /*stats*/)
 {
 	return false;
 }
@@ -1460,6 +1462,17 @@ void RsGenExchange::updateGroup(uint32_t& token, RsGxsGrpItem* grpItem)
 #endif
 }
 
+void RsGenExchange::deleteGroup(uint32_t& token, RsGxsGrpItem* grpItem)
+{
+	RsStackMutex stack(mGenMtx);
+	token = mDataAccess->generatePublicToken();
+	mGroupDeletePublish.push_back(GroupDeletePublish(grpItem, token));
+
+#ifdef GEN_EXCH_DEBUG
+	std::cerr << "RsGenExchange::deleteGroup() token: " << token;
+	std::cerr << std::endl;
+#endif
+}
 
 void RsGenExchange::publishMsg(uint32_t& token, RsGxsMsgItem *msgItem)
 {
@@ -1945,6 +1958,54 @@ void RsGenExchange::processGroupUpdatePublish()
 	}
 
 	mGroupUpdatePublish.clear();
+}
+
+void RsGenExchange::processGroupDelete()
+{
+
+	RsStackMutex stack(mGenMtx);
+
+	// get keys for group delete publish
+	typedef std::pair<bool, RsGxsGroupId> GrpNote;
+	std::map<uint32_t, GrpNote> toNotify;
+
+	std::vector<GroupDeletePublish>::iterator vit = mGroupDeletePublish.begin();
+	for(; vit != mGroupDeletePublish.end(); vit++)
+	{
+		GroupDeletePublish& gdp = *vit;
+		uint32_t token = gdp.mToken;
+		const RsGxsGroupId& groupId = gdp.grpItem->meta.mGroupId;
+		std::vector<RsGxsGroupId> gprIds;
+		gprIds.push_back(groupId);
+		mDataStore->removeGroups(gprIds);
+		toNotify.insert(std::make_pair(
+		                  token, GrpNote(true, RsGxsGroupId())));
+	}
+
+
+	std::list<RsGxsGroupId> grpDeleted;
+	std::map<uint32_t, GrpNote>::iterator mit = toNotify.begin();
+	for(; mit != toNotify.end(); mit++)
+	{
+		GrpNote& note = mit->second;
+		uint8_t status = note.first ? RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE
+		                            : RsTokenService::GXS_REQUEST_V2_STATUS_FAILED;
+
+		mGrpNotify.insert(std::make_pair(mit->first, note.second));
+		mDataAccess->updatePublicRequestStatus(mit->first, status);
+
+		if(note.first)
+			grpDeleted.push_back(note.second);
+	}
+
+	if(!grpDeleted.empty())
+	{
+		RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_PUBLISH);
+		gc->mGrpIdList = grpDeleted;
+		mNotifications.push_back(gc);
+	}
+
+	mGroupDeletePublish.clear();
 }
 
 bool RsGenExchange::checkKeys(const RsTlvSecurityKeySet& keySet)

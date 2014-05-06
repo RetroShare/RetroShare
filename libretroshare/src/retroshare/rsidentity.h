@@ -217,6 +217,7 @@ virtual bool submitOpinion(uint32_t& token, const RsGxsId &id,
 virtual bool createIdentity(uint32_t& token, RsIdentityParameters &params) = 0;
 
 virtual bool updateIdentity(uint32_t& token, RsGxsIdGroup &group) = 0;
+virtual bool deleteIdentity(uint32_t& token, RsGxsIdGroup &group) = 0;
 
 virtual bool parseRecognTag(const RsGxsId &id, const std::string &nickname,
                         const std::string &tag, RsRecognTagDetails &details) = 0;

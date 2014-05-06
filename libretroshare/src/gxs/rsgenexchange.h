@@ -529,7 +529,6 @@ protected:
      */
     void publishGroup(uint32_t& token, RsGxsGrpItem* grpItem);
 
-
     /*!
      * Updates an existing group item \n
      * This will induce a related change message \n
@@ -538,6 +537,15 @@ protected:
      * @param grpItem
      */
     void updateGroup(uint32_t& token, RsGxsGrpItem* grpItem);
+
+    /*!
+     * Deletes an existing group item \n
+     * This will induce a related change message \n
+     * Ownership of item passes to this rsgenexchange \n
+     * @param token
+     * @param grpItem
+     */
+    void deleteGroup(uint32_t& token, RsGxsGrpItem* grpItem);
 
 public:
     /*!
@@ -653,6 +661,8 @@ private:
     void publishGrps();
 
     void processGroupUpdatePublish();
+
+		void processGroupDelete();
 
     void publishMsgs();
 
@@ -866,6 +876,8 @@ private:
     std::vector<GroupUpdate> mGroupUpdates, mPeersGroupUpdate;
 
     std::vector<GroupUpdatePublish> mGroupUpdatePublish;
+
+		std::vector<GroupDeletePublish> mGroupDeletePublish;
 
 };
 
