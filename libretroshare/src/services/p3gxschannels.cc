@@ -796,7 +796,8 @@ void p3GxsChannels::setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPai
 	std::cerr << "p3GxsChannels::setMessageReadStatus()";
 	std::cerr << std::endl;
 
-	uint32_t mask = GXS_SERV::GXS_MSG_STATUS_UNREAD;
+	/* Always remove status unprocessed */
+	uint32_t mask = GXS_SERV::GXS_MSG_STATUS_UNREAD | GXS_SERV::GXS_MSG_STATUS_UNPROCESSED;
 	uint32_t status = GXS_SERV::GXS_MSG_STATUS_UNREAD;
 	if (read)
 	{

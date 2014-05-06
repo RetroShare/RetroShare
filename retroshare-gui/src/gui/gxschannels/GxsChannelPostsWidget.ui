@@ -110,7 +110,7 @@
        <number>2</number>
       </property>
       <property name="rightMargin">
-       <number>2</number>
+       <number>5</number>
       </property>
       <property name="bottomMargin">
        <number>2</number>
@@ -150,6 +150,13 @@
          </size>
         </property>
        </spacer>
+      </item>
+      <item>
+       <widget class="QLabel" name="loadingLabel">
+        <property name="text">
+         <string>Loading</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
@@ -232,10 +239,6 @@
     <string>Enable Auto-Download</string>
    </property>
   </action>
-  <zorder>toolBarFrame</zorder>
-  <zorder>scrollArea</zorder>
-  <zorder></zorder>
-  <zorder>headFrame</zorder>
   <zorder>toolBarFrame</zorder>
   <zorder>scrollArea</zorder>
   <zorder></zorder>

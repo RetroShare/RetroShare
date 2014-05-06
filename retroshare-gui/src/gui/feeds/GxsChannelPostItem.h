@@ -76,6 +76,8 @@ private:
 	void setup();
 	void loadPost(const RsGxsChannelPost &post);
 
+	void setReadStatus(bool isNew, bool isUnread);
+
 	bool mInUpdateItemStatic;
 
 	uint32_t mMode;

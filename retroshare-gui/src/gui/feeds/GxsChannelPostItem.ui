@@ -222,6 +222,13 @@
              </widget>
             </item>
             <item>
+             <widget class="QLabel" name="newLabel">
+              <property name="text">
+               <string>New</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QLabel" name="scoreLabel">
               <property name="font">
                <font>

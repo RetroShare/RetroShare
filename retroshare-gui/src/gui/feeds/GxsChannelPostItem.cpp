@@ -205,7 +205,7 @@ void GxsChannelPostItem::loadPost(const RsGxsChannelPost &post)
 			ui->unsubscribeButton->setEnabled(false);
 		}
 		ui->readButton->hide();
-		//newLabel->hide();
+		ui->newLabel->hide();
 		ui->copyLinkButton->hide();
 	}
 	else
@@ -228,51 +228,13 @@ void GxsChannelPostItem::loadPost(const RsGxsChannelPost &post)
 		if (IS_GROUP_SUBSCRIBED(mGroupMeta.mSubscribeFlags) || IS_GROUP_ADMIN(mGroupMeta.mSubscribeFlags))
 		{
 			ui->readButton->setVisible(true);
-#if 0
-			uint32_t status = 0;
-			rsChannels->getMessageStatus(mChanId, mMsgId, status);
-#endif
 
-			if (IS_MSG_UNREAD(post.mMeta.mMsgStatus) || IS_MSG_NEW(post.mMeta.mMsgStatus))
-			{
-				ui->readButton->setChecked(true);
-				ui->readButton->setIcon(QIcon(":/images/message-state-unread.png"));
-			} 
-			else 
-			{
-				ui->readButton->setChecked(false);
-				ui->readButton->setIcon(QIcon(":/images/message-state-read.png"));
-			}
-
-			bool newState;
-			QColor color;
-			if (!IS_MSG_UNREAD(post.mMeta.mMsgStatus))
-			{
-				//newLabel->setVisible(false);
-				newState = false;
-				color = COLOR_NORMAL;
-			} 
-			else 
-			{
-				//newLabel->setVisible(true);
-				newState = true;
-				color = COLOR_NEW;
-			}
-
-			/* unpolish widget to clear the stylesheet's palette cache */
-			ui->frame->style()->unpolish(ui->frame);
-
-			QPalette palette = ui->frame->palette();
-			palette.setColor(ui->frame->backgroundRole(), color);
-			ui->frame->setPalette(palette);
-
-			ui->frame->setProperty("new", newState);
-			Rshare::refreshStyleSheet(ui->frame, false);
+			setReadStatus(IS_MSG_NEW(post.mMeta.mMsgStatus), IS_MSG_UNREAD(post.mMeta.mMsgStatus) || IS_MSG_NEW(post.mMeta.mMsgStatus));
 		} 
 		else 
 		{
 			ui->readButton->setVisible(false);
-			//ui->newLabel->setVisible(false);
+			ui->newLabel->setVisible(false);
 		}
 	}
 	
@@ -350,6 +312,32 @@ void GxsChannelPostItem::loadPost(const RsGxsChannelPost &post)
 	}
 
 	mInUpdateItemStatic = false;
+}
+
+void GxsChannelPostItem::setReadStatus(bool isNew, bool isUnread)
+{
+	if (isUnread)
+	{
+		ui->readButton->setChecked(true);
+		ui->readButton->setIcon(QIcon(":/images/message-state-unread.png"));
+	}
+	else
+	{
+		ui->readButton->setChecked(false);
+		ui->readButton->setIcon(QIcon(":/images/message-state-read.png"));
+	}
+
+	ui->newLabel->setVisible(isNew);
+
+	/* unpolish widget to clear the stylesheet's palette cache */
+	ui->frame->style()->unpolish(ui->frame);
+
+	QPalette palette = ui->frame->palette();
+	palette.setColor(ui->frame->backgroundRole(), isNew ? COLOR_NEW : COLOR_NORMAL);
+	ui->frame->setPalette(palette);
+
+	ui->frame->setProperty("new", isNew);
+	Rshare::refreshStyleSheet(ui->frame, false);
 }
 
 void GxsChannelPostItem::setFileCleanUpWarning(uint32_t time_left)
@@ -521,29 +509,16 @@ void GxsChannelPostItem::play()
 
 void GxsChannelPostItem::readToggled(bool checked)
 {
-#if 0
 	if (mInUpdateItemStatic) {
 		return;
 	}
 
-	/* set always as read ... */
-	uint32_t statusNew = CHANNEL_MSG_STATUS_READ;
-	if (checked) {
-		/* ... and as unread by user */
-		statusNew |= CHANNEL_MSG_STATUS_UNREAD_BY_USER;
-	} else {
-		/* ... and as read by user */
-		statusNew &= ~CHANNEL_MSG_STATUS_UNREAD_BY_USER;
-	}
+	RsGxsGrpMsgIdPair msgPair = std::make_pair(groupId(), messageId());
 
-	if (!mIsHome) {
-		disconnect( NotifyQt::getInstance(), SIGNAL(channelMsgReadSatusChanged(QString,QString,int)), this, SLOT(channelMsgReadSatusChanged(QString,QString,int)));
-	}
-	rsChannels->setMessageStatus(mChanId, mMsgId, statusNew, CHANNEL_MSG_STATUS_READ | CHANNEL_MSG_STATUS_UNREAD_BY_USER);
-	if (!mIsHome) {
-		connect( NotifyQt::getInstance(), SIGNAL(channelMsgReadSatusChanged(QString,QString,int)), this, SLOT(channelMsgReadSatusChanged(QString,QString,int)), Qt::QueuedConnection);
-	}
-#endif
+	uint32_t token;
+	rsGxsChannels->setMessageReadStatus(token, msgPair, !checked);
+
+	setReadStatus(false, checked);
 }
 
 void GxsChannelPostItem::channelMsgReadSatusChanged(const QString& channelId, const QString& msgId, int status)

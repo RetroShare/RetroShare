@@ -54,8 +54,9 @@ GxsChannelPostsWidget::GxsChannelPostsWidget(const RsGxsGroupId &channelId, QWid
 	mStateHelper = new UIStateHelper(this);
 
 	// No progress yet
+	mStateHelper->addWidget(TOKEN_TYPE_POSTS, ui->loadingLabel, UISTATE_LOADING_VISIBLE);
 //	mStateHelper->addWidget(TOKEN_TYPE_POSTS, ui->progressBar, UISTATE_LOADING_VISIBLE);
-	mStateHelper->addWidget(TOKEN_TYPE_POSTS, ui->progressLabel, UISTATE_LOADING_VISIBLE);
+//	mStateHelper->addWidget(TOKEN_TYPE_POSTS, ui->progressLabel, UISTATE_LOADING_VISIBLE);
 
 	mStateHelper->addLoadPlaceholder(TOKEN_TYPE_GROUP_DATA, ui->nameLabel);
 
@@ -69,6 +70,7 @@ GxsChannelPostsWidget::GxsChannelPostsWidget(const RsGxsGroupId &channelId, QWid
 
 	/*************** Setup Left Hand Side (List of Channels) ****************/
 
+	ui->loadingLabel->hide();
 	ui->progressLabel->hide();
 	ui->progressBar->hide();
 
