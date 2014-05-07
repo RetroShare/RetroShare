@@ -54,12 +54,16 @@
 #include "FriendsDialog.h"
 #include "NetworkView.h"
 #include "NetworkDialog.h"
+#include "gui/Identity/IdDialog.h"
+#include "gui/Circles/CirclesDialog.h"
 
 /* Images for Newsfeed icons */
 #define IMAGE_NEWSFEED           ""
 #define IMAGE_NEWSFEED_NEW       ":/images/message-state-new.png"
-#define IMAGE_NETWORK2          ":/images/rs1.png"
+#define IMAGE_NETWORK2          ":/images/logo/logo_16.png"
 #define IMAGE_PEERS         	":/images/groupchat.png"
+#define IMAGE_IDENTITY          ":/images/identity/identities_32.png"
+#define IMAGE_CIRCLES           ":/images/circles/circles_32.png"
 
 /******
  * #define FRIENDS_DEBUG 1
@@ -91,6 +95,8 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     ui.avatar->setOwnId();
 
     ui.tabWidget->setTabPosition(QTabWidget::North);
+    ui.tabWidget->addTab(idDialog = new IdDialog(),QIcon(IMAGE_IDENTITY), tr("Identities"));
+    ui.tabWidget->addTab(circlesDialog = new CirclesDialog(),QIcon(IMAGE_CIRCLES), tr("Circles"));
     ui.tabWidget->addTab(networkView = new NetworkView(),QIcon(IMAGE_NETWORK2), tr("Local network"));
     ui.tabWidget->addTab(networkDialog = new NetworkDialog(),QIcon(IMAGE_PEERS), tr("Keyring"));
 
@@ -103,6 +109,7 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     ui.tabWidget->hideCloseButton(1);
     ui.tabWidget->hideCloseButton(2);
     ui.tabWidget->hideCloseButton(3);
+    ui.tabWidget->hideCloseButton(4);
 
     /* get the current text and text color of the tab bar */
     //newsFeedTabColor = ui.tabWidget->tabBar()->tabTextColor(newsFeedTabIndex);
@@ -251,6 +258,10 @@ void FriendsDialog::activatePage(FriendsDialog::Page page)
 {
 	switch(page)
 	{
+		case FriendsDialog::IdTab: ui.tabWidget->setCurrentWidget(idDialog) ;
+											  break ;
+		case FriendsDialog::CirclesTab: ui.tabWidget->setCurrentWidget(circlesDialog) ;
+											  break ;
 		case FriendsDialog::NetworkTab: ui.tabWidget->setCurrentWidget(networkDialog) ;
 											  break ;
 		case FriendsDialog::BroadcastTab: ui.tabWidget->setCurrentWidget(networkDialog) ;

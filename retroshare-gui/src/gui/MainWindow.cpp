@@ -252,13 +252,13 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     ui->stackPages->add(peopleDialog = new PeopleDialog(ui->stackPages), action = createPageAction(QIcon(IMAGE_IDENTITY), tr("People"), grp));
     notify.push_back(QPair<MainPage*, QAction*>(peopleDialog, action));
 
-	 IdDialog *idDialog = NULL;
+	 /*IdDialog *idDialog = NULL;
     ui->stackPages->add(idDialog = new IdDialog(ui->stackPages), action = createPageAction(QIcon(IMAGE_IDENTITY), tr("Itentities"), grp));
     notify.push_back(QPair<MainPage*, QAction*>(idDialog, action));
 
     CirclesDialog *circlesDialog = NULL;
     ui->stackPages->add(circlesDialog = new CirclesDialog(ui->stackPages), createPageAction(QIcon(IMAGE_CIRCLES ), tr("Circles"), grp));
-    notify.push_back(QPair<MainPage*, QAction*>(circlesDialog, action));
+    notify.push_back(QPair<MainPage*, QAction*>(circlesDialog, action));*/
 
     ui->stackPages->add(transfersDialog = new TransfersDialog(ui->stackPages),
                       action = createPageAction(QIcon(IMAGE_TRANSFERS), tr("File sharing"), grp));

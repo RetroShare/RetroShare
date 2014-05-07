@@ -34,6 +34,8 @@ class QTextCharFormat;
 class ChatTabWidget;
 class NetworkDialog;
 class NetworkView;
+class IdDialog;
+class CirclesDialog;
 
 class FriendsDialog : public RsAutoUpdatePage
 {
@@ -42,9 +44,12 @@ class FriendsDialog : public RsAutoUpdatePage
 public:
 		 enum Page {
 						 /* Fixed numbers for load and save the last page */
-			 				NetworkTab         = 0,  /** Network page. */
-							NetworkViewTab     = 1,  /** Network new graph. */
-							BroadcastTab       = 2   /** Old group chat page. */
+			 				IdTab              = 0,  /** Identities page. */
+							CirclesTab         = 1,  /** Circles page. */
+							NetworkTab         = 2,  /** Network page. */
+							NetworkViewTab     = 3,  /** Network new graph. */
+							BroadcastTab       = 4   /** Old group chat page. */
+							
 		 };
 
     /** Default Constructor */
@@ -63,6 +68,10 @@ public:
 
 	 NetworkDialog *networkDialog ;
 	 NetworkView *networkView ;
+	 
+	 CirclesDialog *circlesDialog;
+	 IdDialog *idDialog;
+	 
 public slots:
 
     void publicChatChanged(int type);
