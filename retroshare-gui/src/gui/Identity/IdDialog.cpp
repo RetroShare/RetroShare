@@ -767,7 +767,9 @@ void IdDialog::loadRequest(const TokenQueue * /*queue*/, const TokenRequest &req
 
 void IdDialog::IdListCustomPopupMenu( QPoint )
 {
-
+    //Disable by default, will be enable by insertIdDetails()
+    ui.removeIdentity->setEnabled(false);
+    ui.editIdentity->setEnabled(false);
 
     QMenu contextMnu( this );
 
