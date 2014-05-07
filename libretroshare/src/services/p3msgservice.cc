@@ -748,6 +748,11 @@ bool p3MsgService::getMessage(const std::string &mId, MessageInfo &msg)
 
 	/* mit valid */
 	initRsMI(mit->second, msg);
+
+	std::map<uint32_t, RsMsgSrcId*>::const_iterator it = mSrcIds.find(msgId) ;
+	if(it != mSrcIds.end())
+		msg.rsgxsid_srcId = RsGxsId(it->second->srcId) ;
+
 	return true;
 }
 

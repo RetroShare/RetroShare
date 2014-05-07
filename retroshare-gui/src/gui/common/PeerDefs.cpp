@@ -99,6 +99,8 @@ const QString PeerDefs::rsidFromId(const RsPeerId &id, QString *name /* = NULL*/
             rsid = PeerDefs::rsid(peerName, *it);
             if(name)
                 *name = QString::fromUtf8(peerName.c_str());
+
+				return rsid ;
         }
 
     rsid = PeerDefs::rsid("", id);

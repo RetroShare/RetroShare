@@ -80,6 +80,7 @@ public slots:
     void  addImage();
     
     void changeFormatType(int styleIndex );
+	 void updateSigningButton(int) ;
 
 protected:
     void closeEvent (QCloseEvent * event);

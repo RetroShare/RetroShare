@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>796</width>
+    <width>892</width>
     <height>682</height>
    </rect>
   </property>
@@ -641,23 +641,6 @@
                 </property>
                </widget>
               </item>
-              <item row="0" column="15">
-               <widget class="QPushButton" name="signMessage_CB">
-                <property name="toolTip">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Cryptographically sign message to distant peers. This is prevents intermediate peers to spoof your identity.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-                <property name="text">
-                 <string/>
-                </property>
-                <property name="icon">
-                 <iconset resource="../images.qrc">
-                  <normaloff>:/images/stock_signature_ok.png</normaloff>:/images/stock_signature_ok.png</iconset>
-                </property>
-                <property name="checkable">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
              </layout>
             </item>
            </layout>
@@ -728,7 +711,7 @@
              </property>
             </widget>
            </item>
-           <item row="0" column="1" colspan="5">
+           <item row="0" column="1" colspan="7">
             <widget class="QLineEdit" name="titleEdit"/>
            </item>
            <item row="1" column="0">
@@ -762,6 +745,16 @@
             </widget>
            </item>
            <item row="1" column="3">
+            <layout class="QHBoxLayout" name="tagLayout"/>
+           </item>
+           <item row="1" column="4">
+            <widget class="QLabel" name="label_2">
+             <property name="text">
+              <string>Respond to:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2">
             <spacer name="horizontalSpacer">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
@@ -774,8 +767,25 @@
              </property>
             </spacer>
            </item>
-           <item row="1" column="2">
-            <layout class="QHBoxLayout" name="tagLayout"/>
+           <item row="1" column="5">
+            <widget class="QComboBox" name="respond_to_CB"/>
+           </item>
+           <item row="1" column="6">
+            <widget class="QPushButton" name="signMessage_CB">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Cryptographically sign message to distant peers. This is prevents intermediate peers to spoof your identity.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../images.qrc">
+               <normaloff>:/images/stock_signature_ok.png</normaloff>:/images/stock_signature_ok.png</iconset>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
@@ -859,7 +869,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>796</width>
+     <width>892</width>
      <height>25</height>
     </rect>
    </property>

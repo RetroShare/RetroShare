@@ -236,6 +236,29 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
 
     setupFormatActions();
 
+	 std::list<RsGxsId> own_ids ;
+	 rsIdentity->getOwnIds(own_ids) ;
+
+	 ui.respond_to_CB->addItem(tr("[no identity]"), QVariant(QString::fromStdString(RsGxsId().toStdString()))) ;
+
+	 for(std::list<RsGxsId>::const_iterator it(own_ids.begin());it!=own_ids.end();++it)
+	 {
+		 RsIdentityDetails details ;
+		 rsIdentity->getIdDetails(*it,details) ;
+
+		 std::cerr << "Adding identity: id=" << (*it) << ", name=" << details.mNickname << std::endl;
+
+		 if(details.mNickname.empty()) // I don't know why, but that happens
+			 ui.respond_to_CB->addItem(QString::fromStdString((*it).toStdString()), QString::fromStdString((*it).toStdString())) ;
+		 else
+			 ui.respond_to_CB->addItem(QString::fromUtf8(details.mNickname.c_str()), QString::fromStdString((*it).toStdString())) ;
+	 }
+
+	 QObject::connect(ui.respond_to_CB, SIGNAL(currentIndexChanged(int)), this, SLOT(updateSigningButton(int))) ;
+
+	 if(!own_ids.empty())
+		 ui.respond_to_CB->setCurrentIndex(1) ;
+
     /*ui.comboStyle->addItem("Standard");
     ui.comboStyle->addItem("Bullet List (Disc)");
     ui.comboStyle->addItem("Bullet List (Circle)");
@@ -330,6 +353,13 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
 MessageComposer::~MessageComposer()
 {
     delete(m_compareRole);
+}
+void MessageComposer::updateSigningButton(int n)
+{
+	if(n == 0)
+		ui.signMessage_CB->setEnabled(false) ;
+	else
+		ui.signMessage_CB->setEnabled(true) ;
 }
 
 void MessageComposer::processSettings(bool bLoad)
@@ -1145,6 +1175,12 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
 {
     /* construct a message */
     MessageInfo mi;
+
+	 // add a GXS signer/from in case the message is to be sent to a distant peer
+
+	 mi.rsgxsid_srcId = RsGxsId(ui.respond_to_CB->itemData(ui.respond_to_CB->currentIndex()).toString().toStdString()) ;
+
+	 std::cerr << "MessageSend: setting 'from' field to GXS id = " << mi.rsgxsid_srcId << std::endl;
 
     mi.title = misc::removeNewLine(ui.titleEdit->text()).toUtf8().constData();
     // needed to send system flags with reply
