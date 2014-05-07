@@ -163,7 +163,8 @@ template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER> t
 	int n=0;
 	if(s.length() != ID_SIZE_IN_BYTES*2)
 	{
-		std::cerr << "t_RsGenericIdType<>::t_RsGenericIdType(std::string&): supplied string in constructor has wrong size." << std::endl;
+		if(!s.empty()) 
+			std::cerr << "t_RsGenericIdType<>::t_RsGenericIdType(std::string&): supplied string in constructor has wrong size." << std::endl;
 		clear();
 		return;
 	}
