@@ -38,7 +38,7 @@ class GxsGroupFrameDialog;
 class GroupTreeWidget;
 class GroupItemInfo;
 class GxsMessageFrameWidget;
-//class UIStateHelper;
+class UIStateHelper;
 
 class GxsGroupFrameDialog : public RsGxsUpdateBroadcastPage, public TokenResponse
 {
@@ -159,7 +159,7 @@ private:
 	QTreeWidgetItem *mPopularGroups;
 	QTreeWidgetItem *mOtherGroups;
 
-//	UIStateHelper *mStateHelper;
+	UIStateHelper *mStateHelper;
 
 	/** Qt Designer generated object */
 	Ui::GxsGroupFrameDialog *ui;

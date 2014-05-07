@@ -116,6 +116,13 @@
            </spacer>
           </item>
           <item>
+           <widget class="QLabel" name="loadingLabel">
+            <property name="text">
+             <string>Loading</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QPushButton" name="todoPushButton">
             <property name="text">
              <string>Todo</string>

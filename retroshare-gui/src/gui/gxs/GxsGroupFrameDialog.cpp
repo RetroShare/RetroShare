@@ -32,7 +32,7 @@
 #include "gui/channels/ShareKey.h"
 #include "gui/common/RSTreeWidget.h"
 #include "gui/notifyqt.h"
-//#include "gui/common/UIStateHelper.h"
+#include "gui/common/UIStateHelper.h"
 
 //#define DEBUG_GROUPFRAMEDIALOG
 
@@ -46,7 +46,7 @@
 #define IMAGE_SHARE           ":/images/share-icon-16.png"
 #define IMAGE_TABNEW           ":/images/tab-new.png"
 
-#define TOKEN_TYPE_LISTING          1
+#define TOKEN_TYPE_GROUP_SUMMARY    1
 #define TOKEN_TYPE_SUBSCRIBE_CHANGE 2
 //#define TOKEN_TYPE_CURRENTGROUP     3
 
@@ -80,8 +80,9 @@ GxsGroupFrameDialog::GxsGroupFrameDialog(RsGxsIfaceHelper *ifaceImpl, QWidget *p
 	mTokenQueue = new TokenQueue(mInterface->getTokenService(), this);
 
 	/* Setup UI helper */
-//	mStateHelper = new UIStateHelper(this);
-	// no widget to add yet
+	mStateHelper = new UIStateHelper(this);
+
+	mStateHelper->addWidget(TOKEN_TYPE_GROUP_SUMMARY, ui->loadingLabel, UISTATE_LOADING_VISIBLE);
 
 	connect(ui->groupTreeWidget, SIGNAL(treeCustomContextMenuRequested(QPoint)), this, SLOT(groupTreeCustomPopupMenu(QPoint)));
 	connect(ui->groupTreeWidget, SIGNAL(treeItemActivated(QString)), this, SLOT(changedGroup(QString)));
@@ -686,20 +687,20 @@ void GxsGroupFrameDialog::updateMessageSummaryList(RsGxsGroupId groupId)
 
 void GxsGroupFrameDialog::requestGroupSummary()
 {
-//	mStateHelper->setLoading(TOKEN_TYPE_LISTING, true);
+	mStateHelper->setLoading(TOKEN_TYPE_GROUP_SUMMARY, true);
 
 #ifdef DEBUG_GROUPFRAMEDIALOG
 	std::cerr << "GxsGroupFrameDialog::requestGroupSummary()";
 	std::cerr << std::endl;
 #endif
 
-	mTokenQueue->cancelActiveRequestTokens(TOKEN_TYPE_LISTING);
+	mTokenQueue->cancelActiveRequestTokens(TOKEN_TYPE_GROUP_SUMMARY);
 
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
 
 	uint32_t token;
-	mTokenQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_SUMMARY, opts, TOKEN_TYPE_LISTING);
+	mTokenQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_SUMMARY, opts, TOKEN_TYPE_GROUP_SUMMARY);
 }
 
 void GxsGroupFrameDialog::loadGroupSummary(const uint32_t &token)
@@ -714,7 +715,7 @@ void GxsGroupFrameDialog::loadGroupSummary(const uint32_t &token)
 
 	if (groupInfo.size() > 0)
 	{
-//		mStateHelper->setActive(TOKEN_TYPE_LISTING, true);
+		mStateHelper->setActive(TOKEN_TYPE_GROUP_SUMMARY, true);
 
 		insertGroupsData(groupInfo);
 	}
@@ -723,10 +724,10 @@ void GxsGroupFrameDialog::loadGroupSummary(const uint32_t &token)
 		std::cerr << "GxsGroupFrameDialog::loadGroupSummary() ERROR No Groups...";
 		std::cerr << std::endl;
 
-//		mStateHelper->setActive(TOKEN_TYPE_LISTING, false);
+		mStateHelper->setActive(TOKEN_TYPE_GROUP_SUMMARY, false);
 	}
 
-//	mStateHelper->setLoading(TOKEN_TYPE_LISTING, false);
+	mStateHelper->setLoading(TOKEN_TYPE_GROUP_SUMMARY, false);
 }
 
 /*********************** **** **** **** ***********************/
@@ -801,7 +802,7 @@ void GxsGroupFrameDialog::loadRequest(const TokenQueue *queue, const TokenReques
 		/* now switch on req */
 		switch(req.mUserType)
 		{
-		case TOKEN_TYPE_LISTING:
+		case TOKEN_TYPE_GROUP_SUMMARY:
 			loadGroupSummary(req.mToken);
 			break;
 

@@ -29,13 +29,11 @@
 
 #define CHAN_DEFAULT_IMAGE ":/images/channels.png"
 
-#define WARNING_LIMIT 3600*24*2
-
 /****
  * #define DEBUG_CHANNEL
  ***/
 
-#define USE_THREAD
+//#define USE_THREAD
 
 #define TOKEN_TYPE_MESSAGE_CHANGE   4
 #define TOKEN_TYPE_GROUP_DATA       6
@@ -163,7 +161,7 @@ QString GxsChannelPostsWidget::groupName(bool withUnreadCount)
 
 QIcon GxsChannelPostsWidget::groupIcon()
 {
-	if (mStateHelper->isLoading(TOKEN_TYPE_POSTS)) {
+	if (mStateHelper->isLoading(TOKEN_TYPE_GROUP_DATA) || mStateHelper->isLoading(TOKEN_TYPE_POSTS)) {
 		return QIcon(":/images/kalarm.png");
 	}
 
@@ -240,8 +238,6 @@ void GxsChannelPostsWidget::insertChannelDetails(const RsGxsChannelGroup &group)
 	}
 
 	setAutoDownloadButton(group.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED);
-
-	emit groupChanged(this);
 }
 
 static bool sortChannelMsgSummaryAsc(const RsGxsChannelPost &msg1, const RsGxsChannelPost &msg2)
@@ -511,7 +507,7 @@ void GxsChannelPostsWidget::requestGroupData(const RsGxsGroupId &grpId)
 
 	mChannelQueue->cancelActiveRequestTokens(TOKEN_TYPE_GROUP_DATA);
 
-    if (grpId.isNull()) {
+	if (grpId.isNull()) {
 		mStateHelper->setActive(TOKEN_TYPE_GROUP_DATA, false);
 		mStateHelper->setLoading(TOKEN_TYPE_GROUP_DATA, false);
 		mStateHelper->clear(TOKEN_TYPE_GROUP_DATA);
@@ -560,9 +556,9 @@ void GxsChannelPostsWidget::loadGroupData(const uint32_t &token)
 
 		mStateHelper->setActive(TOKEN_TYPE_GROUP_DATA, false);
 		mStateHelper->clear(TOKEN_TYPE_GROUP_DATA);
-
-		emit groupChanged(this);
 	}
+
+	emit groupChanged(this);
 }
 
 void GxsChannelPostsWidget::requestPosts(const RsGxsGroupId &grpId)
@@ -577,14 +573,16 @@ void GxsChannelPostsWidget::requestPosts(const RsGxsGroupId &grpId)
 
 	mChannelQueue->cancelActiveRequestTokens(TOKEN_TYPE_POSTS);
 
-    if (grpId.isNull()) {
+	if (grpId.isNull()) {
 		mStateHelper->setActive(TOKEN_TYPE_POSTS, false);
 		mStateHelper->setLoading(TOKEN_TYPE_POSTS, false);
 		mStateHelper->clear(TOKEN_TYPE_POSTS);
+		emit groupChanged(this);
 		return;
 	}
 
 	mStateHelper->setLoading(TOKEN_TYPE_POSTS, true);
+	emit groupChanged(this);
 
 	std::list<RsGxsGroupId> groupIds;
 	groupIds.push_back(grpId);
@@ -611,6 +609,7 @@ void GxsChannelPostsWidget::loadPosts(const uint32_t &token)
 	insertChannelPosts(posts, false);
 
 	mStateHelper->setLoading(TOKEN_TYPE_POSTS, false);
+	emit groupChanged(this);
 }
 
 void GxsChannelPostsWidget::requestRelatedPosts(const RsGxsGroupId &grpId, const std::vector<RsGxsMessageId> &msgIds)
@@ -626,6 +625,7 @@ void GxsChannelPostsWidget::requestRelatedPosts(const RsGxsGroupId &grpId, const
 		mStateHelper->setActive(TOKEN_TYPE_POSTS, false);
 		mStateHelper->setLoading(TOKEN_TYPE_POSTS, false);
 		mStateHelper->clear(TOKEN_TYPE_POSTS);
+		emit groupChanged(this);
 		return;
 	}
 
@@ -634,6 +634,7 @@ void GxsChannelPostsWidget::requestRelatedPosts(const RsGxsGroupId &grpId, const
 	}
 
 	mStateHelper->setLoading(TOKEN_TYPE_POSTS, true);
+	emit groupChanged(this);
 
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_MSG_RELATED_DATA;
@@ -662,6 +663,7 @@ void GxsChannelPostsWidget::loadRelatedPosts(const uint32_t &token)
 	insertChannelPosts(posts, true);
 
 	mStateHelper->setLoading(TOKEN_TYPE_POSTS, false);
+	emit groupChanged(this);
 }
 
 void GxsChannelPostsWidget::acknowledgeMessageUpdate(const uint32_t &token)
