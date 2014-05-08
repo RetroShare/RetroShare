@@ -104,7 +104,8 @@ MessageWidget *MessageWidget::openMsg(const std::string &msgId, bool window)
 	}
 	MessageWidget *msgWidget = new MessageWidget(false, parent);
 	msgWidget->isWindow = window;
-    msgWidget->fill(msgId);
+	msgWidget->fill(msgId);
+
 	if (parent) {
 		parent->addWidget(msgWidget);
 	}
@@ -431,12 +432,19 @@ void MessageWidget::showTagLabels()
 	}
 }
 
+void MessageWidget::refill()
+{
+	//uint32_t msg_id = currMsgId ;
+	//currMsgId = 0 ;
+
+	//fill(msg_id) ;
+}
 void MessageWidget::fill(const std::string &msgId)
 {
-	if (currMsgId == msgId) {
-		// message doesn't changed
-		return;
-	}
+//	if (currMsgId == msgId) {
+//		// message doesn't changed
+//		return;
+//	}
 
 	ui.decryptFrame->hide();
 
@@ -540,21 +548,29 @@ void MessageWidget::fill(const std::string &msgId)
 	ui.dateText->setText(DateTime::formatDateTime(msgInfo.ts));
 
     RsPeerId ownId = rsPeers->getOwnId();
+	 QString tooltip_string ;
 
-    RsPeerId srcId;
-	if ((msgInfo.msgflags & RS_MSG_BOXMASK) == RS_MSG_OUTBOX) {
-		// outgoing message are from me
-		srcId = ownId;
-	} else {
-        srcId = msgInfo.rspeerid_srcId;
+	if ((msgInfo.msgflags & RS_MSG_BOXMASK) == RS_MSG_OUTBOX) // outgoing message are from me
+	{
+		tooltip_string = PeerDefs::rsidFromId(ownId) ;
+		link.createMessage(ownId, "");
+	} 
+	else if(msgInfo.msgflags & RS_MSG_DECRYPTED || msgInfo.msgflags & RS_MSG_ENCRYPTED)	// distant message
+	{
+		tooltip_string = PeerDefs::rsidFromId(msgInfo.rsgxsid_srcId) ;
+		link.createMessage(msgInfo.rsgxsid_srcId, "");
 	}
-	link.createMessage(srcId, "");
+	else
+	{
+		tooltip_string = PeerDefs::rsidFromId(msgInfo.rspeerid_srcId) ;
+		link.createMessage(msgInfo.rspeerid_srcId, "");
+	}
 
     if ((msgInfo.msgflags & RS_MSG_SYSTEM) && msgInfo.rspeerid_srcId == ownId) {
 		ui.fromText->setText("RetroShare");
 	} else {
 		ui.fromText->setText(link.toHtml());
-		ui.fromText->setToolTip(PeerDefs::rsidFromId(srcId));
+		ui.fromText->setToolTip(tooltip_string) ;
 	}
 
 	if (msgInfo.msgflags & RS_MSG_ENCRYPTED) {

@@ -72,7 +72,7 @@ const QString PeerDefs::rsidFromId(const RsGxsId &id, QString *name /* = NULL*/)
 {
     QString rsid;
 
-	 // Check own GXS ids.
+	 // Check own GXS ids first, since they can be obtained faster.
 	 //
     std::list<RsGxsId> gxs_ids ;
     rsIdentity->getOwnIds(gxs_ids) ;
@@ -95,6 +95,18 @@ const QString PeerDefs::rsidFromId(const RsGxsId &id, QString *name /* = NULL*/)
 				return rsid ;
         }
 
+	 RsIdentityDetails details ;
+
+	 if(rsIdentity->getIdDetails(id,details))
+	 {
+		 std::string peerName = details.mNickname ;
+		 rsid = PeerDefs::rsid(peerName, id);
+
+		 if(name)
+			 *name = QString::fromUtf8(peerName.c_str());
+
+		 return rsid ;
+	 }
     rsid = PeerDefs::rsid("", id);
 
     if (name)

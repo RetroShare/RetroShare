@@ -69,6 +69,7 @@ private slots:
 	void print();
 	void printPreview();
 	void saveAs();
+	void refill();
 
 	void msgfilelistWidgetCostumPopupMenu(QPoint);
 	void messagesTagsChanged();

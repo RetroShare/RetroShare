@@ -576,8 +576,8 @@ bool RetroShareLink::createMessage(const RsGxsId& peerId, const QString& subject
 
 	_hash = QString::fromStdString(peerId.toStdString());
 
-	//PeerDefs::rsidFromId(peerId, &_name);
-	_name = QString::fromStdString("GXS_id("+peerId.toStdString()+")") ;
+	PeerDefs::rsidFromId(peerId, &_name);
+	//_name = QString::fromStdString("GXS_id("+peerId.toStdString()+")") ;
 	// do something better here!!
 	_subject = subject;
 
@@ -1543,6 +1543,12 @@ static void processList(const QStringList &list, const QString &textSingular, co
 
 					if(!gxs_id.isNull() && rsIdentity->getIdDetails(gxs_id,gxs_details))
 					{
+						if(gxs_details.mIsOwnId)
+						{
+							QMessageBox::warning(NULL,QString("Cannot send message to yourself"),QString("This identity is owned by you. You wouldn't want to send yourself a message right?"));
+							break ;
+						}
+
 						MessageComposer *msg = MessageComposer::newMsg();
 						msg->addRecipient(MessageComposer::TO, gxs_id) ;
 
