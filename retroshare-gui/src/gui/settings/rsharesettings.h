@@ -256,6 +256,8 @@ public:
   void setForumOpenAllInNewTab(bool value);
   bool getForumLoadEmbeddedImages();
   void setForumLoadEmbeddedImages(bool value);
+  bool getChannelOpenAllInNewTab();
+  void setChannelOpenAllInNewTab(bool value);
 
   /* time before idle */
   uint getMaxTimeBeforeIdle();

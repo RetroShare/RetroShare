@@ -37,6 +37,7 @@ public:
 //	virtual UserNotify *getUserNotify(QObject *parent);
 
 private slots:
+	void settingsChanged();
 	void toggleAutoDownload();
 
 private:

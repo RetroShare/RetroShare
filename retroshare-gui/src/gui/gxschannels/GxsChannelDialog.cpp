@@ -24,6 +24,8 @@
 #include "GxsChannelPostsWidget.h"
 #include "gui/channels/ShareKey.h"
 #include "gui/feeds/GxsChannelPostItem.h"
+#include "gui/settings/rsharesettings.h"
+#include "gui/notifyqt.h"
 
 /****
  * #define DEBUG_CHANNEL
@@ -33,13 +35,19 @@
 GxsChannelDialog::GxsChannelDialog(QWidget *parent)
 	: GxsGroupFrameDialog(rsGxsChannels, parent)
 {
-	//#TODO: add settings like forums
-	setSingleTab(true);
+	connect(NotifyQt::getInstance(), SIGNAL(settingsChanged()), this, SLOT(settingsChanged()));
+
+	settingsChanged();
 }
 
 GxsChannelDialog::~GxsChannelDialog()
 {
 }
+
+//UserNotify *GxsChannelDialog::getUserNotify(QObject *parent)
+//{
+//	return new ChannelUserNotify(parent);
+//}
 
 QString GxsChannelDialog::text(TextType type)
 {
@@ -94,10 +102,10 @@ QString GxsChannelDialog::icon(IconType type)
 	return "";
 }
 
-//UserNotify *GxsChannelDialog::getUserNotify(QObject *parent)
-//{
-//	return new ChannelUserNotify(parent);
-//}
+void GxsChannelDialog::settingsChanged()
+{
+	setSingleTab(!Settings->getChannelOpenAllInNewTab());
+}
 
 GxsGroupDialog *GxsChannelDialog::createNewGroupDialog(TokenQueue *tokenQueue)
 {

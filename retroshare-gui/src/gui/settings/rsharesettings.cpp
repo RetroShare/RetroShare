@@ -778,6 +778,16 @@ void RshareSettings::setForumOpenAllInNewTab(bool value)
     setValueToGroup("ForumDialog", "OpenAllInNewTab", value);
 }
 
+bool RshareSettings::getChannelOpenAllInNewTab()
+{
+    return valueFromGroup("ChannelDialog", "OpenAllInNewTab", true).toBool();
+}
+
+void RshareSettings::setChannelOpenAllInNewTab(bool value)
+{
+    setValueToGroup("ChannelDialog", "OpenAllInNewTab", value);
+}
+
 /* time before idle */
 uint RshareSettings::getMaxTimeBeforeIdle()
 {

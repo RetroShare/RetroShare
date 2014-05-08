@@ -409,6 +409,7 @@ HEADERS +=  rshare.h \
             gui/settings/SoundPage.h \
             gui/settings/TransferPage.h \
             gui/settings/ChatPage.h \
+            gui/settings/ChannelPage.h \
             gui/settings/RelayPage.h \
             gui/settings/ServicePermissionsPage.h \
             gui/settings/AddFileAssociationDialog.h \
@@ -568,6 +569,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/settings/TransferPage.ui \
             gui/settings/SoundPage.ui \
             gui/settings/ChatPage.ui \
+            gui/settings/ChannelPage.ui \
             gui/settings/RelayPage.ui \
             gui/settings/ServicePermissionsPage.ui \
             gui/settings/GlobalRouterStatistics.ui \
@@ -769,6 +771,7 @@ SOURCES +=  main.cpp \
             gui/settings/SoundPage.cpp \
             gui/settings/TransferPage.cpp \
             gui/settings/ChatPage.cpp \
+            gui/settings/ChannelPage.cpp \
             gui/settings/RelayPage.cpp \
             gui/settings/ServicePermissionsPage.cpp \
             gui/settings/AddFileAssociationDialog.cpp \
