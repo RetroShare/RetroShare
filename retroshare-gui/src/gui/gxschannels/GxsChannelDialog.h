@@ -23,9 +23,8 @@
 #define _GXS_CHANNEL_DIALOG_H
 
 #include "gui/gxs/GxsGroupFrameDialog.h"
-#include "gui/gxs/GxsCommentContainer.h"
 
-class GxsChannelDialog : public GxsGroupFrameDialog, public GxsServiceDialog
+class GxsChannelDialog : public GxsGroupFrameDialog
 {
 	Q_OBJECT
 
@@ -39,7 +38,6 @@ public:
 
 private slots:
 	void toggleAutoDownload();
-	void loadComment(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId, const QString &title);
 
 private:
 	/* GxsGroupFrameDialog */
@@ -51,6 +49,8 @@ private:
 	virtual int shareKeyType();
 	virtual GxsMessageFrameWidget *createMessageFrameWidget(const RsGxsGroupId &groupId);
 	virtual void groupTreeCustomActions(RsGxsGroupId grpId, int subscribeFlags, QList<QAction*> &actions);
+	virtual RsGxsCommentService *getCommentService();
+	virtual QWidget *createCommentHeaderWidget(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId);
 };
 
 #endif

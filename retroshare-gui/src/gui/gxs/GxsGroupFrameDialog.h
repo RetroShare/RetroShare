@@ -39,6 +39,8 @@ class GroupTreeWidget;
 class GroupItemInfo;
 class GxsMessageFrameWidget;
 class UIStateHelper;
+class RsGxsCommentService;
+class GxsCommentDialog;
 
 class GxsGroupFrameDialog : public RsGxsUpdateBroadcastPage, public TokenResponse
 {
@@ -111,6 +113,8 @@ private slots:
 
 	void shareKey();
 
+	void loadComment(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId, const QString &title);
+
 private:
 	virtual QString text(TextType type) = 0;
 	virtual QString icon(IconType type) = 0;
@@ -120,6 +124,8 @@ private:
 	virtual int shareKeyType() = 0;
 	virtual GxsMessageFrameWidget *createMessageFrameWidget(const RsGxsGroupId &groupId) = 0;
 	virtual void groupTreeCustomActions(RsGxsGroupId /*grpId*/, int /*subscribeFlags*/, QList<QAction*> &/*actions*/) {}
+	virtual RsGxsCommentService *getCommentService() { return NULL; }
+	virtual QWidget *createCommentHeaderWidget(const RsGxsGroupId &/*grpId*/, const RsGxsMessageId &/*msgId*/) { return NULL; }
 
 	void initUi();
 
@@ -142,6 +148,8 @@ private:
 
 	GxsMessageFrameWidget *messageWidget(const RsGxsGroupId &groupId, bool ownTab);
 	GxsMessageFrameWidget *createMessageWidget(const RsGxsGroupId &groupId);
+
+	GxsCommentDialog *commentWidget(const RsGxsMessageId &msgId);
 
 //	void requestGroupSummary_CurrentGroup(const  RsGxsGroupId &groupId);
 //	void loadGroupSummary_CurrentGroup(const uint32_t &token);

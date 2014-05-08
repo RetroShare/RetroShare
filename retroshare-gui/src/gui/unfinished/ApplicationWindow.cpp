@@ -36,7 +36,6 @@
 #include "gui/WikiPoos/WikiDialog.h"
 #include "gui/Posted/PostedDialog.h"
 #include "gui/gxsforums/GxsForumsDialog.h"
-#include "gui/gxschannels/ChannelDialog.h"
 
 // THESE HAVE TO BE CONVERTED TO VEG FORMAT
 #if USE_VEG_SERVICE

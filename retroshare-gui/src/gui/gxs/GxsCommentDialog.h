@@ -24,31 +24,36 @@
 #ifndef MRK_GXS_COMMENT_DIALOG_H
 #define MRK_GXS_COMMENT_DIALOG_H
 
-#include "ui_GxsCommentDialog.h"
 #include "gui/gxs/GxsCommentContainer.h"
 
+namespace Ui {
+class GxsCommentDialog;
+}
 
 class GxsCommentDialog: public QWidget 
 {
-  Q_OBJECT
+	Q_OBJECT
 
 public:
 	GxsCommentDialog(QWidget *parent, RsTokenService *token_service, RsGxsCommentService *comment_service);
+	virtual ~GxsCommentDialog();
 
-        void setCommentHeader(QWidget *header);
-        void commentLoad(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId);
+	void setCommentHeader(QWidget *header);
+	void commentLoad(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId);
+
+	RsGxsGroupId groupId() { return mGrpId; }
+	RsGxsMessageId messageId() { return mMsgId; }
 
 private slots:
 	void refresh();
 	void voterSelectionChanged( int index );
 
 private:
-
-        RsGxsGroupId   mGrpId;
-        RsGxsMessageId mMsgId;
+	RsGxsGroupId   mGrpId;
+	RsGxsMessageId mMsgId;
 
 	/* UI - from Designer */
-	Ui::GxsCommentDialog ui;
+	Ui::GxsCommentDialog *ui;
 };
 
 #endif

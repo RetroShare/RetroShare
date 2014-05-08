@@ -1139,7 +1139,6 @@ gxschannels {
 	HEADERS += gui/gxschannels/GxsChannelDialog.h \
 		gui/gxschannels/GxsChannelGroupDialog.h \
 		gui/gxschannels/CreateGxsChannelMsg.h \
-		gui/gxschannels/ChannelDialog.h \
 		gui/gxschannels/GxsChannelPostsWidget.h \
 		gui/feeds/GxsChannelPostItem.h
 	

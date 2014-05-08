@@ -36,8 +36,8 @@ class QLabel;
 class QActionGroup;
 class Idle;
 class PeerStatus;
-class	ChannelDialog ;
-class	GxsForumsDialog ;
+class GxsChannelDialog ;
+class GxsForumsDialog ;
 class NATStatus;
 class RatesStatus;
 class DiscStatus;
@@ -131,7 +131,7 @@ public:
 	 ChatLobbyWidget   *chatLobbyDialog;
 	 MessagesDialog    *messagesDialog;
 	 SharedFilesDialog *sharedfilesDialog;
-	 ChannelDialog     *gxschannelDialog ;
+	 GxsChannelDialog  *gxschannelDialog ;
 	 GxsForumsDialog   *gxsforumDialog ;
 
 //    ForumsDialog      *forumsDialog;

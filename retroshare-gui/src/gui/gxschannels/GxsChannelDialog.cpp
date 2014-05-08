@@ -23,6 +23,7 @@
 #include "GxsChannelGroupDialog.h"
 #include "GxsChannelPostsWidget.h"
 #include "gui/channels/ShareKey.h"
+#include "gui/feeds/GxsChannelPostItem.h"
 
 /****
  * #define DEBUG_CHANNEL
@@ -30,7 +31,7 @@
 
 /** Constructor */
 GxsChannelDialog::GxsChannelDialog(QWidget *parent)
-	: GxsGroupFrameDialog(rsGxsChannels, parent), GxsServiceDialog(dynamic_cast<GxsCommentContainer *>(parent))
+	: GxsGroupFrameDialog(rsGxsChannels, parent)
 {
 	//#TODO: add settings like forums
 	setSingleTab(true);
@@ -115,17 +116,7 @@ int GxsChannelDialog::shareKeyType()
 
 GxsMessageFrameWidget *GxsChannelDialog::createMessageFrameWidget(const RsGxsGroupId &groupId)
 {
-	GxsChannelPostsWidget *widget = new GxsChannelPostsWidget(groupId);
-
-	//#TODO: find better solution
-	connect(widget, SIGNAL(commentLoad(RsGxsGroupId,RsGxsMessageId,QString)), this, SLOT(loadComment(RsGxsGroupId,RsGxsMessageId,QString)));
-
-	return widget;
-}
-
-void GxsChannelDialog::loadComment(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId, const QString &title)
-{
-	commentLoad(grpId, msgId, title);
+	return new GxsChannelPostsWidget(groupId);
 }
 
 void GxsChannelDialog::groupTreeCustomActions(RsGxsGroupId grpId, int subscribeFlags, QList<QAction*> &actions)
@@ -141,6 +132,16 @@ void GxsChannelDialog::groupTreeCustomActions(RsGxsGroupId grpId, int subscribeF
 		connect(action, SIGNAL(triggered()), this, SLOT(toggleAutoDownload()));
 		actions.append(action);
 	}
+}
+
+RsGxsCommentService *GxsChannelDialog::getCommentService()
+{
+	return rsGxsChannels;
+}
+
+QWidget *GxsChannelDialog::createCommentHeaderWidget(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId)
+{
+	return new GxsChannelPostItem(NULL, 0, grpId, msgId, true, true);
 }
 
 void GxsChannelDialog::toggleAutoDownload()

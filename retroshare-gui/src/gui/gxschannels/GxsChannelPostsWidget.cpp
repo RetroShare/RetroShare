@@ -192,7 +192,7 @@ void GxsChannelPostsWidget::openChat(const RsPeerId & /*peerId*/)
 // Callback from Widget->FeedHolder->ServiceDialog->CommentContainer->CommentDialog,
 void GxsChannelPostsWidget::openComments(uint32_t /*type*/, const RsGxsGroupId &groupId, const RsGxsMessageId &msgId, const QString &title)
 {
-	emit commentLoad(groupId, msgId, title);
+	emit loadComment(groupId, msgId, title);
 }
 
 void GxsChannelPostsWidget::createMsg()

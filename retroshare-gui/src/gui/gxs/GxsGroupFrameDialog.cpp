@@ -33,6 +33,7 @@
 #include "gui/common/RSTreeWidget.h"
 #include "gui/notifyqt.h"
 #include "gui/common/UIStateHelper.h"
+#include "GxsCommentDialog.h"
 
 //#define DEBUG_GROUPFRAMEDIALOG
 
@@ -43,12 +44,15 @@
 //#define IMAGE_GROUPAUTHD     ":/images/konv_message2.png"
 #define IMAGE_COPYLINK       ":/images/copyrslink.png"
 #define IMAGE_EDIT           ":/images/edit_16.png"
-#define IMAGE_SHARE           ":/images/share-icon-16.png"
-#define IMAGE_TABNEW           ":/images/tab-new.png"
+#define IMAGE_SHARE          ":/images/share-icon-16.png"
+#define IMAGE_TABNEW         ":/images/tab-new.png"
+#define IMAGE_COMMENT        ""
 
 #define TOKEN_TYPE_GROUP_SUMMARY    1
 #define TOKEN_TYPE_SUBSCRIBE_CHANGE 2
 //#define TOKEN_TYPE_CURRENTGROUP     3
+
+#define MAX_COMMENT_TITLE 32
 
 /*
  * Transformation Notes:
@@ -388,6 +392,39 @@ void GxsGroupFrameDialog::shareKey()
 	shareUi.exec();
 }
 
+void GxsGroupFrameDialog::loadComment(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId, const QString &title)
+{
+	RsGxsCommentService *commentService = getCommentService();
+	if (!commentService) {
+		/* No comment service available */
+		return;
+	}
+
+	GxsCommentDialog *commentDialog = commentWidget(msgId);
+	if (!commentDialog) {
+		QString comments = title;
+		if (title.length() > MAX_COMMENT_TITLE)
+		{
+			comments.truncate(MAX_COMMENT_TITLE - 3);
+			comments += "...";
+		}
+
+		commentDialog = new GxsCommentDialog(this, mInterface->getTokenService(), commentService);
+
+		QWidget *commentHeader = createCommentHeaderWidget(grpId, msgId);
+		if (commentHeader) {
+			commentDialog->setCommentHeader(commentHeader);
+		}
+
+		commentDialog->commentLoad(grpId, msgId);
+
+		int index = ui->messageTabWidget->addTab(commentDialog, comments);
+		ui->messageTabWidget->setTabIcon(index, QIcon(IMAGE_COMMENT));
+	}
+
+	ui->messageTabWidget->setCurrentWidget(commentDialog);
+}
+
 bool GxsGroupFrameDialog::navigate(const RsGxsGroupId groupId, const std::string& msgId)
 {
 	if (groupId.isNull()) {
@@ -453,9 +490,24 @@ GxsMessageFrameWidget *GxsGroupFrameDialog::createMessageWidget(const RsGxsGroup
 
 	int index = ui->messageTabWidget->addTab(msgWidget, msgWidget->groupName(true));
 	ui->messageTabWidget->setTabIcon(index, msgWidget->groupIcon());
+
 	connect(msgWidget, SIGNAL(groupChanged(QWidget*)), this, SLOT(messageTabInfoChanged(QWidget*)));
+	connect(msgWidget, SIGNAL(loadComment(RsGxsGroupId,RsGxsMessageId,QString)), this, SLOT(loadComment(RsGxsGroupId,RsGxsMessageId,QString)));
 
 	return msgWidget;
+}
+
+GxsCommentDialog *GxsGroupFrameDialog::commentWidget(const RsGxsMessageId &msgId)
+{
+	int tabCount = ui->messageTabWidget->count();
+	for (int index = 0; index < tabCount; ++index) {
+		GxsCommentDialog *childWidget = dynamic_cast<GxsCommentDialog*>(ui->messageTabWidget->widget(index));
+		if (childWidget && childWidget->messageId() == msgId) {
+			return childWidget;
+		}
+	}
+
+	return NULL;
 }
 
 void GxsGroupFrameDialog::changedGroup(const QString &groupId)
@@ -510,16 +562,18 @@ void GxsGroupFrameDialog::openGroupInNewTab(const RsGxsGroupId &groupId)
 
 void GxsGroupFrameDialog::messageTabCloseRequested(int index)
 {
-	GxsMessageFrameWidget *msgWidget = dynamic_cast<GxsMessageFrameWidget*>(ui->messageTabWidget->widget(index));
-	if (!msgWidget) {
+	QWidget *widget = ui->messageTabWidget->widget(index);
+	if (!widget) {
 		return;
 	}
 
-	if (msgWidget == mMessageWidget) {
+	GxsMessageFrameWidget *msgWidget = dynamic_cast<GxsMessageFrameWidget*>(widget);
+	if (msgWidget && msgWidget == mMessageWidget) {
+		/* Don't close single tab */
 		return;
 	}
 
-	delete(msgWidget);
+	delete(widget);
 }
 
 void GxsGroupFrameDialog::messageTabChanged(int index)

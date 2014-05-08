@@ -22,10 +22,7 @@
  */
 
 #include "gui/gxs/GxsCommentDialog.h"
-
-//#include "gxs/GxsCreateComment.h"
-//#include <retroshare/rsposted.h>
-
+#include "ui_GxsCommentDialog.h"
 
 #include <iostream>
 #include <sstream>
@@ -34,25 +31,30 @@
 #include <QMessageBox>
 #include <QDateTime>
 
-
-
 /** Constructor */
 GxsCommentDialog::GxsCommentDialog(QWidget *parent, RsTokenService *token_service, RsGxsCommentService *comment_service)
-:QWidget(parent)
+	: QWidget(parent), ui(new Ui::GxsCommentDialog)
 {
-	ui.setupUi(this);
-	//ui.postFrame->setVisible(false);
+	/* Invoke the Qt Designer generated QObject setup routine */
+	ui->setupUi(this);
 
-	ui.treeWidget->setup(token_service, comment_service);
+	//ui->postFrame->setVisible(false);
+
+	ui->treeWidget->setup(token_service, comment_service);
 
 	/* fill in the available OwnIds for signing */
-    ui.idChooser->loadIds(IDCHOOSER_ID_REQUIRED, RsGxsId());
+	ui->idChooser->loadIds(IDCHOOSER_ID_REQUIRED, RsGxsId());
 
-	connect(ui.refreshButton, SIGNAL(clicked()), this, SLOT(refresh()));
-	connect(ui.idChooser, SIGNAL(currentIndexChanged( int )), this, SLOT(voterSelectionChanged( int )));
+	connect(ui->refreshButton, SIGNAL(clicked()), this, SLOT(refresh()));
+	connect(ui->idChooser, SIGNAL(currentIndexChanged( int )), this, SLOT(voterSelectionChanged( int )));
 
 	/* force voterId through - first time */
 	voterSelectionChanged( 0 );
+}
+
+GxsCommentDialog::~GxsCommentDialog()
+{
+	delete(ui);
 }
 
 void GxsCommentDialog::commentLoad(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId)
@@ -68,9 +70,8 @@ void GxsCommentDialog::commentLoad(const RsGxsGroupId &grpId, const RsGxsMessage
 	threadId.first = grpId;
 	threadId.second = msgId;
 
-	ui.treeWidget->requestComments(threadId);
+	ui->treeWidget->requestComments(threadId);
 }
-
 
 void GxsCommentDialog::refresh()
 {
@@ -80,18 +81,17 @@ void GxsCommentDialog::refresh()
 	commentLoad(mGrpId, mMsgId);
 }
 
-
 void GxsCommentDialog::voterSelectionChanged( int index )
 {
 	std::cerr << "GxsCommentDialog::voterSelectionChanged(" << index << ")";
 	std::cerr << std::endl;
 
 	RsGxsId voterId; 
-	if (ui.idChooser->getChosenId(voterId))
+	if (ui->idChooser->getChosenId(voterId))
 	{
 		std::cerr << "GxsCommentDialog::voterSelectionChanged() => " << voterId;
 		std::cerr << std::endl;
-		ui.treeWidget->setVoteId(voterId);
+		ui->treeWidget->setVoteId(voterId);
 	}
 	else
 	{
@@ -99,8 +99,6 @@ void GxsCommentDialog::voterSelectionChanged( int index )
 		std::cerr << std::endl;
 	}
 }
-
-
 
 void GxsCommentDialog::setCommentHeader(QWidget *header)
 {
@@ -114,31 +112,29 @@ void GxsCommentDialog::setCommentHeader(QWidget *header)
 	std::cerr << "GxsCommentDialog::setCommentHeader() Adding header to ui,postFrame";
 	std::cerr << std::endl;
 
-	//header->setParent(ui.postFrame);
-	//ui.postFrame->setVisible(true);
+	//header->setParent(ui->postFrame);
+	//ui->postFrame->setVisible(true);
 
-	QLayout *alayout = ui.postFrame->layout();
+	QLayout *alayout = ui->postFrame->layout();
 	alayout->addWidget(header);
 
 #if 0
-	ui.postFrame->setVisible(true);
+	ui->postFrame->setVisible(true);
 
 	QDateTime qtime;
 	qtime.setTime_t(mCurrentPost.mMeta.mPublishTs);
 	QString timestamp = qtime.toString("dd.MMMM yyyy hh:mm");
-	ui.dateLabel->setText(timestamp);
-	ui.fromLabel->setText(QString::fromUtf8(mCurrentPost.mMeta.mAuthorId.c_str()));
-	ui.titleLabel->setText("<a href=" + QString::fromStdString(mCurrentPost.mLink) +
+	ui->dateLabel->setText(timestamp);
+	ui->fromLabel->setText(QString::fromUtf8(mCurrentPost.mMeta.mAuthorId.c_str()));
+	ui->titleLabel->setText("<a href=" + QString::fromStdString(mCurrentPost.mLink) +
 					   "><span style=\" text-decoration: underline; color:#0000ff;\">" +
 					   QString::fromStdString(mCurrentPost.mMeta.mMsgName) + "</span></a>");
-	ui.siteLabel->setText("<a href=" + QString::fromStdString(mCurrentPost.mLink) +
+	ui->siteLabel->setText("<a href=" + QString::fromStdString(mCurrentPost.mLink) +
 					   "><span style=\" text-decoration: underline; color:#0000ff;\">" +
 					   QString::fromStdString(mCurrentPost.mLink) + "</span></a>");
 
-	ui.scoreLabel->setText(QString("0"));
+	ui->scoreLabel->setText(QString("0"));
 
-	ui.notesBrowser->setPlainText(QString::fromStdString(mCurrentPost.mNotes));
+	ui->notesBrowser->setPlainText(QString::fromStdString(mCurrentPost.mNotes));
 #endif
-
 }
-

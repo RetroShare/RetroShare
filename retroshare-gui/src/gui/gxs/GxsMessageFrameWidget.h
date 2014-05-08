@@ -41,6 +41,7 @@ public:
 
 signals:
 	void groupChanged(QWidget *widget);
+	void loadComment(const RsGxsGroupId &groupId, const RsGxsMessageId &msgId, const QString &title);
 };
 
 #endif // GXSMESSAGEFRAMEWIDGET_H

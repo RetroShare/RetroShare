@@ -66,9 +66,6 @@ public:
 	/* NEW GXS FNS */
 	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
-signals:
-	void commentLoad(const RsGxsGroupId &groupId, const RsGxsMessageId &msgId, const QString &title);
-
 protected:
 	virtual void updateDisplay(bool complete);
 

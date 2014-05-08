@@ -91,7 +91,7 @@
 #include <retroshare/rsfiles.h>
 #include <retroshare/rsnotify.h>
 
-#include "gui/gxschannels/ChannelDialog.h"
+#include "gui/gxschannels/GxsChannelDialog.h"
 #include "gui/gxsforums/GxsForumsDialog.h"
 #include "gui/Identity/IdDialog.h"
 #include "gui/Circles/CirclesDialog.h"
@@ -272,9 +272,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
                       action = createPageAction(QIcon(IMAGE_MESSAGES), tr("Messages"), grp));
     notify.push_back(QPair<MainPage*, QAction*>(messagesDialog, action));
 
-    ui->stackPages->add(gxschannelDialog = new ChannelDialog(ui->stackPages),
+    ui->stackPages->add(gxschannelDialog = new GxsChannelDialog(ui->stackPages),
                       action = createPageAction(QIcon(IMAGE_GXSCHANNELS), tr("Channels"), grp));
-    gxschannelDialog->setup();
     notify.push_back(QPair<MainPage*, QAction*>(gxschannelDialog, action));
 
     ui->stackPages->add(gxsforumDialog = new GxsForumsDialog(ui->stackPages),
@@ -436,6 +435,8 @@ MainWindow::~MainWindow()
 #ifdef UNFINISHED
     delete applicationWindow;
 #endif
+
+    delete(ui);
 }
 
 void MainWindow::displayDiskSpaceWarning(int loc,int size_limit_mb)
