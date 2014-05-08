@@ -50,7 +50,7 @@
 #include <retroshare/rsfiles.h>
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rspeers.h>
-//#include <retroshare/rsforums.h>
+#include <retroshare/rsidentity.h>
 //#include <retroshare/rschannels.h>
 
 //#define DEBUG_RSLINK 1
@@ -109,247 +109,247 @@
 
 RetroShareLink::RetroShareLink(const QUrl& url)
 {
-    fromUrl(url);
+	fromUrl(url);
 }
 
 RetroShareLink::RetroShareLink(const QString& url)
 {
-    fromString(url);
+	fromString(url);
 }
 
 void RetroShareLink::fromString(const QString& url)
 {
-    clear();
+	clear();
 
-    // parse
+	// parse
 #ifdef DEBUG_RSLINK
-    std::cerr << "got new RS link \"" << url.toStdString() << "\"" << std::endl ;
+	std::cerr << "got new RS link \"" << url.toStdString() << "\"" << std::endl ;
 #endif
 
-    if ((url.startsWith(QString(RSLINK_SCHEME) + "://" + QString(HOST_FILE)) && url.count("|") == 3) ||
-        (url.startsWith(QString(RSLINK_SCHEME) + "://" + QString(HOST_PERSON)) && url.count("|") == 2)) 
-	 {
-        /* Old link, we try it */
-        QStringList list = url.split ("|");
+	if ((url.startsWith(QString(RSLINK_SCHEME) + "://" + QString(HOST_FILE)) && url.count("|") == 3) ||
+			(url.startsWith(QString(RSLINK_SCHEME) + "://" + QString(HOST_PERSON)) && url.count("|") == 2)) 
+	{
+		/* Old link, we try it */
+		QStringList list = url.split ("|");
 
-        if (list.size() >= 1) {
-            if (list.size() == 4 && list[0] == QString(RSLINK_SCHEME) + "://" + QString(HOST_FILE)) {
-                bool ok ;
+		if (list.size() >= 1) {
+			if (list.size() == 4 && list[0] == QString(RSLINK_SCHEME) + "://" + QString(HOST_FILE)) {
+				bool ok ;
 
-                _type = TYPE_FILE;
-                _name = list[1] ;
-                _size = list[2].toULongLong(&ok) ;
-                _hash = list[3].left(40) ;	// normally not necessary, but it's a security.
+				_type = TYPE_FILE;
+				_name = list[1] ;
+				_size = list[2].toULongLong(&ok) ;
+				_hash = list[3].left(40) ;	// normally not necessary, but it's a security.
 
-                if (ok) {
+				if (ok) {
 #ifdef DEBUG_RSLINK
-                    std::cerr << "New RetroShareLink forged:" << std::endl ;
-                    std::cerr << "  name = \"" << _name.toStdString() << "\"" << std::endl ;
-                    std::cerr << "  hash = \"" << _hash.toStdString() << "\"" << std::endl ;
-                    std::cerr << "  size = " << _size << std::endl ;
+					std::cerr << "New RetroShareLink forged:" << std::endl ;
+					std::cerr << "  name = \"" << _name.toStdString() << "\"" << std::endl ;
+					std::cerr << "  hash = \"" << _hash.toStdString() << "\"" << std::endl ;
+					std::cerr << "  size = " << _size << std::endl ;
 #endif
-                    check();
-                    return;
-                }
-            } else if (list.size() == 3 && list[0] == QString(RSLINK_SCHEME) + "://" + QString(HOST_PERSON)) {
-                _type = TYPE_PERSON;
-                _name = list[1] ;
-                _hash = list[2].left(40) ;	// normally not necessary, but it's a security.
-                _size = 0;
-                check();
-                return;
-            }
+					check();
+					return;
+				}
+			} else if (list.size() == 3 && list[0] == QString(RSLINK_SCHEME) + "://" + QString(HOST_PERSON)) {
+				_type = TYPE_PERSON;
+				_name = list[1] ;
+				_hash = list[2].left(40) ;	// normally not necessary, but it's a security.
+				_size = 0;
+				check();
+				return;
+			}
 
-            // bad link
-        }
-    }
+			// bad link
+		}
+	}
 
-    /* Now try QUrl */
-    fromUrl(QUrl::fromEncoded(url.toUtf8().constData()));
+	/* Now try QUrl */
+	fromUrl(QUrl::fromEncoded(url.toUtf8().constData()));
 }
 
 void RetroShareLink::fromUrl(const QUrl& url)
 {
 #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
-    const QUrlQuery urlQuery(url);
+	const QUrlQuery urlQuery(url);
 #else
-    const QUrl &urlQuery(url);
+	const QUrl &urlQuery(url);
 #endif
 
-    clear();
+	clear();
 
-    // parse
+	// parse
 #ifdef DEBUG_RSLINK
-    std::cerr << "got new RS link \"" << url.toString().toStdString() << "\"" << std::endl ;
+	std::cerr << "got new RS link \"" << url.toString().toStdString() << "\"" << std::endl ;
 #endif
 
-    if (url.scheme() != RSLINK_SCHEME) {
-        /* No RetroShare-Link */
-		 std::cerr << "Not a RS link: scheme=" << url.scheme().toStdString() << std::endl;
-        return;
-    }
+	if (url.scheme() != RSLINK_SCHEME) {
+		/* No RetroShare-Link */
+		std::cerr << "Not a RS link: scheme=" << url.scheme().toStdString() << std::endl;
+		return;
+	}
 
-    if (url.host() == HOST_FILE) {
-        bool ok ;
+	if (url.host() == HOST_FILE) {
+		bool ok ;
 
-        _type = TYPE_FILE;
-        _name = urlQuery.queryItemValue(FILE_NAME);
-        _size = urlQuery.queryItemValue(FILE_SIZE).toULongLong(&ok);
-        _hash = urlQuery.queryItemValue(FILE_HASH).left(40);	// normally not necessary, but it's a security.
+		_type = TYPE_FILE;
+		_name = urlQuery.queryItemValue(FILE_NAME);
+		_size = urlQuery.queryItemValue(FILE_SIZE).toULongLong(&ok);
+		_hash = urlQuery.queryItemValue(FILE_HASH).left(40);	// normally not necessary, but it's a security.
 
-        if (ok) {
+		if (ok) {
 #ifdef DEBUG_RSLINK
-            std::cerr << "New RetroShareLink forged:" << std::endl ;
-            std::cerr << "  name = \"" << _name.toStdString() << "\"" << std::endl ;
-            std::cerr << "  hash = \"" << _hash.toStdString() << "\"" << std::endl ;
-            std::cerr << "  size = " << _size << std::endl ;
+			std::cerr << "New RetroShareLink forged:" << std::endl ;
+			std::cerr << "  name = \"" << _name.toStdString() << "\"" << std::endl ;
+			std::cerr << "  hash = \"" << _hash.toStdString() << "\"" << std::endl ;
+			std::cerr << "  size = " << _size << std::endl ;
 #endif
-            check();
-            return;
-        }
-    }
+			check();
+			return;
+		}
+	}
 
-	 if(url.host() == HOST_PRIVATE_CHAT) 
-	 {
-		 bool ok ;
-		 _type = TYPE_PRIVATE_CHAT ;
-		 _time_stamp = urlQuery.queryItemValue(PRIVATE_CHAT_TIME_STAMP).toUInt(&ok) ;
-		 _encrypted_chat_info = urlQuery.queryItemValue(PRIVATE_CHAT_STRING) ;
-		 _GPGid = urlQuery.queryItemValue(PRIVATE_CHAT_GPG_ID) ;
+	if(url.host() == HOST_PRIVATE_CHAT) 
+	{
+		bool ok ;
+		_type = TYPE_PRIVATE_CHAT ;
+		_time_stamp = urlQuery.queryItemValue(PRIVATE_CHAT_TIME_STAMP).toUInt(&ok) ;
+		_encrypted_chat_info = urlQuery.queryItemValue(PRIVATE_CHAT_STRING) ;
+		_GPGid = urlQuery.queryItemValue(PRIVATE_CHAT_GPG_ID) ;
 
-		 check() ;
-            return;
-	 }
-	 if(url.host() == HOST_PUBLIC_MSG) 
-	 {
-		 bool ok ;
-		 _type = TYPE_PUBLIC_MSG ;
-		 _hash = urlQuery.queryItemValue(PUBLIC_MSG_HASH) ;
-		 _time_stamp = urlQuery.queryItemValue(PUBLIC_MSG_TIME_STAMP).toUInt(&ok) ;
-		 _GPGid = urlQuery.queryItemValue(PUBLIC_MSG_SRC_PGP_ID) ;
+		check() ;
+		return;
+	}
+	if(url.host() == HOST_PUBLIC_MSG) 
+	{
+		bool ok ;
+		_type = TYPE_PUBLIC_MSG ;
+		_hash = urlQuery.queryItemValue(PUBLIC_MSG_HASH) ;
+		_time_stamp = urlQuery.queryItemValue(PUBLIC_MSG_TIME_STAMP).toUInt(&ok) ;
+		_GPGid = urlQuery.queryItemValue(PUBLIC_MSG_SRC_PGP_ID) ;
 
-		 check() ;
-            return;
-	 }
+		check() ;
+		return;
+	}
 
-    if (url.host() == HOST_EXTRAFILE) {
-        bool ok ;
+	if (url.host() == HOST_EXTRAFILE) {
+		bool ok ;
 
-        _type = TYPE_EXTRAFILE;
-        _name = urlQuery.queryItemValue(FILE_NAME);
-        _size = urlQuery.queryItemValue(FILE_SIZE).toULongLong(&ok);
-        _hash = urlQuery.queryItemValue(FILE_HASH).left(40);	// normally not necessary, but it's a security.
-		  _SSLid = urlQuery.queryItemValue(FILE_SOURCE);
+		_type = TYPE_EXTRAFILE;
+		_name = urlQuery.queryItemValue(FILE_NAME);
+		_size = urlQuery.queryItemValue(FILE_SIZE).toULongLong(&ok);
+		_hash = urlQuery.queryItemValue(FILE_HASH).left(40);	// normally not necessary, but it's a security.
+		_SSLid = urlQuery.queryItemValue(FILE_SOURCE);
 
-        if (ok) {
+		if (ok) {
 #ifdef DEBUG_RSLINK
-            std::cerr << "New RetroShareLink forged:" << std::endl ;
-            std::cerr << "  name = \"" << _name.toStdString() << "\"" << std::endl ;
-            std::cerr << "  hash = \"" << _hash.toStdString() << "\"" << std::endl ;
-            std::cerr << "  size = " << _size << std::endl ;
-            std::cerr << "  src  = " << _SSLid.toStdString() << std::endl ;
+			std::cerr << "New RetroShareLink forged:" << std::endl ;
+			std::cerr << "  name = \"" << _name.toStdString() << "\"" << std::endl ;
+			std::cerr << "  hash = \"" << _hash.toStdString() << "\"" << std::endl ;
+			std::cerr << "  size = " << _size << std::endl ;
+			std::cerr << "  src  = " << _SSLid.toStdString() << std::endl ;
 #endif
-            check();
-            return;
-        }
-    }
-    if (url.host() == HOST_PERSON) {
-        _type = TYPE_PERSON;
-        _name = urlQuery.queryItemValue(PERSON_NAME);
-        _hash = urlQuery.queryItemValue(PERSON_HASH).left(40);	// normally not necessary, but it's a security.
-        check();
-        return;
-    }
+			check();
+			return;
+		}
+	}
+	if (url.host() == HOST_PERSON) {
+		_type = TYPE_PERSON;
+		_name = urlQuery.queryItemValue(PERSON_NAME);
+		_hash = urlQuery.queryItemValue(PERSON_HASH).left(40);	// normally not necessary, but it's a security.
+		check();
+		return;
+	}
 
-    if (url.host() == HOST_FORUM) {
-        _type = TYPE_FORUM;
-        _name = urlQuery.queryItemValue(FORUM_NAME);
-        _hash = urlQuery.queryItemValue(FORUM_ID);
-        _msgId = urlQuery.queryItemValue(FORUM_MSGID);
-        check();
-        return;
-    }
+	if (url.host() == HOST_FORUM) {
+		_type = TYPE_FORUM;
+		_name = urlQuery.queryItemValue(FORUM_NAME);
+		_hash = urlQuery.queryItemValue(FORUM_ID);
+		_msgId = urlQuery.queryItemValue(FORUM_MSGID);
+		check();
+		return;
+	}
 
-    if (url.host() == HOST_CHANNEL) {
-        _type = TYPE_CHANNEL;
-        _name = urlQuery.queryItemValue(CHANNEL_NAME);
-        _hash = urlQuery.queryItemValue(CHANNEL_ID);
-        _msgId = urlQuery.queryItemValue(CHANNEL_MSGID);
-        check();
-        return;
-    }
+	if (url.host() == HOST_CHANNEL) {
+		_type = TYPE_CHANNEL;
+		_name = urlQuery.queryItemValue(CHANNEL_NAME);
+		_hash = urlQuery.queryItemValue(CHANNEL_ID);
+		_msgId = urlQuery.queryItemValue(CHANNEL_MSGID);
+		check();
+		return;
+	}
 
-    if (url.host() == HOST_SEARCH) {
-        _type = TYPE_SEARCH;
-        _name = urlQuery.queryItemValue(SEARCH_KEYWORDS);
-        check();
-        return;
-    }
+	if (url.host() == HOST_SEARCH) {
+		_type = TYPE_SEARCH;
+		_name = urlQuery.queryItemValue(SEARCH_KEYWORDS);
+		check();
+		return;
+	}
 
-    if (url.host() == HOST_MESSAGE) {
-        _type = TYPE_MESSAGE;
-        std::string id = urlQuery.queryItemValue(MESSAGE_ID).toStdString();
-        createMessage(RsPeerId(id), urlQuery.queryItemValue(MESSAGE_SUBJECT));
-        return;
-    }
+	if (url.host() == HOST_MESSAGE) {
+		_type = TYPE_MESSAGE;
+		std::string id = urlQuery.queryItemValue(MESSAGE_ID).toStdString();
+		createMessage(RsPeerId(id), urlQuery.queryItemValue(MESSAGE_SUBJECT));
+		return;
+	}
 
-	 if (url.host() == HOST_CERTIFICATE) {
-        _type = TYPE_CERTIFICATE;
-                 _SSLid = urlQuery.queryItemValue(CERTIFICATE_SSLID);
-                 _name = urlQuery.queryItemValue(CERTIFICATE_NAME);
-                 _location = urlQuery.queryItemValue(CERTIFICATE_LOCATION);
-          _radix = urlQuery.queryItemValue(CERTIFICATE_RADIX);
-          _GPGBase64String = urlQuery.queryItemValue(CERTIFICATE_GPG_BASE64);
-          _GPGid = urlQuery.queryItemValue(CERTIFICATE_GPG_ID);
-          _GPGBase64CheckSum = urlQuery.queryItemValue(CERTIFICATE_GPG_CHECKSUM);
-		  _ext_ip_port = urlQuery.queryItemValue(CERTIFICATE_EXT_IPPORT);
-		  _loc_ip_port = urlQuery.queryItemValue(CERTIFICATE_LOC_IPPORT);
-		  _dyndns_name = urlQuery.queryItemValue(CERTIFICATE_DYNDNS);
-		  std::cerr << "Got a certificate link!!" << std::endl;
-		  check() ;
-        return;
-    }
-    // bad link
+	if (url.host() == HOST_CERTIFICATE) {
+		_type = TYPE_CERTIFICATE;
+		_SSLid = urlQuery.queryItemValue(CERTIFICATE_SSLID);
+		_name = urlQuery.queryItemValue(CERTIFICATE_NAME);
+		_location = urlQuery.queryItemValue(CERTIFICATE_LOCATION);
+		_radix = urlQuery.queryItemValue(CERTIFICATE_RADIX);
+		_GPGBase64String = urlQuery.queryItemValue(CERTIFICATE_GPG_BASE64);
+		_GPGid = urlQuery.queryItemValue(CERTIFICATE_GPG_ID);
+		_GPGBase64CheckSum = urlQuery.queryItemValue(CERTIFICATE_GPG_CHECKSUM);
+		_ext_ip_port = urlQuery.queryItemValue(CERTIFICATE_EXT_IPPORT);
+		_loc_ip_port = urlQuery.queryItemValue(CERTIFICATE_LOC_IPPORT);
+		_dyndns_name = urlQuery.queryItemValue(CERTIFICATE_DYNDNS);
+		std::cerr << "Got a certificate link!!" << std::endl;
+		check() ;
+		return;
+	}
+	// bad link
 
 #ifdef DEBUG_RSLINK
-    std::cerr << "Wrongly formed RS link. Can't process." << std::endl ;
+	std::cerr << "Wrongly formed RS link. Can't process." << std::endl ;
 #endif
-    clear();
+	clear();
 }
 
 RetroShareLink::RetroShareLink()
 {
-    clear();
+	clear();
 }
 
 bool RetroShareLink::createExtraFile(const QString& name, uint64_t size, const QString& hash,const QString& ssl_id)
 {
-    clear();
+	clear();
 
-    _name = name;
-    _size = size;
-    _hash = hash;
-    _SSLid = ssl_id;
+	_name = name;
+	_size = size;
+	_hash = hash;
+	_SSLid = ssl_id;
 
-    _type = TYPE_EXTRAFILE;
+	_type = TYPE_EXTRAFILE;
 
-    check();
+	check();
 
-    return valid();
+	return valid();
 }
 bool RetroShareLink::createFile(const QString& name, uint64_t size, const QString& hash)
 {
-    clear();
+	clear();
 
-    _name = name;
-    _size = size;
-    _hash = hash;
+	_name = name;
+	_size = size;
+	_hash = hash;
 
-    _type = TYPE_FILE;
+	_type = TYPE_FILE;
 
-    check();
+	check();
 
-    return valid();
+	return valid();
 }
 
 bool RetroShareLink::createPrivateChatInvite(time_t time_stamp,const QString& gpg_id,const QString& encrypted_chat_info) 
@@ -380,22 +380,22 @@ bool RetroShareLink::createPublicMsgInvite(time_t time_stamp,const QString& issu
 }
 bool RetroShareLink::createPerson(const RsPgpId& id)
 {
-    clear();
+	clear();
 
-    RsPeerDetails detail;
-    if (rsPeers->getGPGDetails(id, detail) == false) {
-        std::cerr << "RetroShareLink::createPerson() Couldn't find peer id " << id << std::endl;
-        return false;
-    }
+	RsPeerDetails detail;
+	if (rsPeers->getGPGDetails(id, detail) == false) {
+		std::cerr << "RetroShareLink::createPerson() Couldn't find peer id " << id << std::endl;
+		return false;
+	}
 
-    _hash = QString::fromStdString(id.toStdString());
-    _name = QString::fromUtf8(detail.name.c_str());
+	_hash = QString::fromStdString(id.toStdString());
+	_name = QString::fromUtf8(detail.name.c_str());
 
-    _type = TYPE_PERSON;
+	_type = TYPE_PERSON;
 
-    check();
+	check();
 
-    return valid();
+	return valid();
 }
 
 bool RetroShareLink::createCertificate(const RsPeerId& ssl_id)
@@ -404,8 +404,8 @@ bool RetroShareLink::createCertificate(const RsPeerId& ssl_id)
 	// 	- we should not need to parse and re-read a cert in old format.
 	//
 	RsPeerDetails detail;
-    if (rsPeers->getPeerDetails(ssl_id, detail) == false) {
-        std::cerr << "RetroShareLink::createPerson() Couldn't find peer id " << ssl_id << std::endl;
+	if (rsPeers->getPeerDetails(ssl_id, detail) == false) {
+		std::cerr << "RetroShareLink::createPerson() Couldn't find peer id " << ssl_id << std::endl;
 		return false;
 	}
 
@@ -420,33 +420,33 @@ bool RetroShareLink::createCertificate(const RsPeerId& ssl_id)
 
 	_type = TYPE_CERTIFICATE;
 
-    _GPGid = QString::fromStdString(detail.gpg_id.toStdString()).right(8);
+	_GPGid = QString::fromStdString(detail.gpg_id.toStdString()).right(8);
 
-    // if(detail.isOnlyGPGdetail)
-    // {
-    // 	_SSLid.clear();
-    // 	_location.clear();
-    // 	_ext_ip_port.clear();
-    // 	_loc_ip_port.clear();
-    // }
-    // else
-    // {
-        _SSLid = QString::fromStdString(ssl_id.toStdString()) ;
-        _radix = QString::fromUtf8(rsPeers->GetRetroshareInvite(ssl_id,false).c_str());
-        _radix.replace("\n","");
-        _location = QString::fromUtf8(detail.location.c_str()) ;
-               _ext_ip_port = QString::fromStdString(detail.extAddr) + ":" + QString::number(detail.extPort) + ";" ;
-               _loc_ip_port = QString::fromStdString(detail.localAddr) + ":" + QString::number(detail.localPort) + ";" ;
-		_dyndns_name = QString::fromStdString(detail.dyndns);
-    //}
+	// if(detail.isOnlyGPGdetail)
+	// {
+	// 	_SSLid.clear();
+	// 	_location.clear();
+	// 	_ext_ip_port.clear();
+	// 	_loc_ip_port.clear();
+	// }
+	// else
+	// {
+	_SSLid = QString::fromStdString(ssl_id.toStdString()) ;
+	_radix = QString::fromUtf8(rsPeers->GetRetroshareInvite(ssl_id,false).c_str());
+	_radix.replace("\n","");
+	_location = QString::fromUtf8(detail.location.c_str()) ;
+	_ext_ip_port = QString::fromStdString(detail.extAddr) + ":" + QString::number(detail.extPort) + ";" ;
+	_loc_ip_port = QString::fromStdString(detail.localAddr) + ":" + QString::number(detail.localPort) + ";" ;
+	_dyndns_name = QString::fromStdString(detail.dyndns);
+	//}
 	_name = QString::fromUtf8(detail.name.c_str()) ;
 
-       std::cerr << "Found gpg base 64 string   = " << _GPGBase64String.toStdString() << std::endl;
-       std::cerr << "Found gpg base 64 checksum = " << _GPGBase64CheckSum.toStdString() << std::endl;
-    std::cerr << "Found radix                = " << _radix.toStdString() << std::endl;
-    std::cerr << "Found SSLId                = " << _SSLid.toStdString() << std::endl;
-       std::cerr << "Found GPGId                = " << _GPGid.toStdString() << std::endl;
-       std::cerr << "Found Local    IP+Port     = " << _loc_ip_port.toStdString() << std::endl;
+	std::cerr << "Found gpg base 64 string   = " << _GPGBase64String.toStdString() << std::endl;
+	std::cerr << "Found gpg base 64 checksum = " << _GPGBase64CheckSum.toStdString() << std::endl;
+	std::cerr << "Found radix                = " << _radix.toStdString() << std::endl;
+	std::cerr << "Found SSLId                = " << _SSLid.toStdString() << std::endl;
+	std::cerr << "Found GPGId                = " << _GPGid.toStdString() << std::endl;
+	std::cerr << "Found Local    IP+Port     = " << _loc_ip_port.toStdString() << std::endl;
 	std::cerr << "Found External IP+Port     = " << _ext_ip_port.toStdString() << std::endl;
 	std::cerr << "Found Location             = " << _location.toStdString() << std::endl;
 	std::cerr << "Found DNS                  = " << _dyndns_name.toStdString() << std::endl;
@@ -458,7 +458,7 @@ bool RetroShareLink::createUnknwonSslCertificate(const RsPeerId& sslId, const Rs
 {
 	// first try ssl id
 	if (createCertificate(sslId)) {
-        if (gpgId.isNull() || _GPGid.toStdString() == gpgId.toStdString()) {
+		if (gpgId.isNull() || _GPGid.toStdString() == gpgId.toStdString()) {
 			return true;
 		}
 		// wrong gpg id
@@ -466,14 +466,14 @@ bool RetroShareLink::createUnknwonSslCertificate(const RsPeerId& sslId, const Rs
 	}
 
 	// then gpg id
-    if (createCertificate(sslId)) {
+	if (createCertificate(sslId)) {
 		if (!_SSLid.isEmpty()) {
 			return false;
 		}
-        if (sslId.isNull()) {
+		if (sslId.isNull()) {
 			return true;
 		}
-        _SSLid = QString::fromStdString(sslId.toStdString());
+		_SSLid = QString::fromStdString(sslId.toStdString());
 		if (_location.isEmpty()) {
 			_location = _name;
 		}
@@ -545,15 +545,15 @@ bool RetroShareLink::createChannel(const std::string &id, const std::string &msg
 
 bool RetroShareLink::createSearch(const QString& keywords)
 {
-    clear();
+	clear();
 
-    _name = keywords;
+	_name = keywords;
 
-    _type = TYPE_SEARCH;
+	_type = TYPE_SEARCH;
 
-    check();
+	check();
 
-    return valid();
+	return valid();
 }
 
 bool RetroShareLink::createMessage(const RsPeerId& peerId, const QString& subject)
@@ -572,32 +572,32 @@ bool RetroShareLink::createMessage(const RsPeerId& peerId, const QString& subjec
 }
 bool RetroShareLink::createMessage(const RsGxsId& peerId, const QString& subject)
 {
-    clear();
+	clear();
 
-    _hash = QString::fromStdString(peerId.toStdString());
+	_hash = QString::fromStdString(peerId.toStdString());
 
-    //PeerDefs::rsidFromId(peerId, &_name);
-    _name = QString::fromStdString("GXS_id("+peerId.toStdString()+")") ;
-    // do something better here!!
-    _subject = subject;
+	//PeerDefs::rsidFromId(peerId, &_name);
+	_name = QString::fromStdString("GXS_id("+peerId.toStdString()+")") ;
+	// do something better here!!
+	_subject = subject;
 
-    _type = TYPE_MESSAGE;
+	_type = TYPE_MESSAGE;
 
-    check();
+	check();
 
-    return valid();
+	return valid();
 }
 void RetroShareLink::clear()
 {
-    _valid = false;
-    _type = TYPE_UNKNOWN;
-    _subType = 0;
-    _hash = "" ;
-    _size = 0 ;
-    _name = "" ;
-	 _GPGid = "" ;
-	 _time_stamp = 0 ;
-	 _encrypted_chat_info = "" ;
+	_valid = false;
+	_type = TYPE_UNKNOWN;
+	_subType = 0;
+	_hash = "" ;
+	_size = 0 ;
+	_name = "" ;
+	_GPGid = "" ;
+	_time_stamp = 0 ;
+	_encrypted_chat_info = "" ;
 }
 
 void RetroShareLink::check()
@@ -696,38 +696,38 @@ QString RetroShareLink::title() const
 	}
 
 	switch (_type) {
-	case TYPE_UNKNOWN:
-		break;
-	case TYPE_PUBLIC_MSG:
-		{
-			RsPeerDetails detail;
-            rsPeers->getGPGDetails(RsPgpId(_GPGid.toStdString()), detail) ;
-			return QString("Click to send a private message to %1 (%2).").arg(QString::fromStdString(detail.name)).arg(_GPGid) ;
-		}
-	case TYPE_PRIVATE_CHAT:
-		{
-			RsPeerDetails detail;
-            rsPeers->getGPGDetails(RsPgpId(_GPGid.toStdString()), detail) ;
+		case TYPE_UNKNOWN:
+			break;
+		case TYPE_PUBLIC_MSG:
+			{
+				RsPeerDetails detail;
+				rsPeers->getGPGDetails(RsPgpId(_GPGid.toStdString()), detail) ;
+				return QString("Click to send a private message to %1 (%2).").arg(QString::fromStdString(detail.name)).arg(_GPGid) ;
+			}
+		case TYPE_PRIVATE_CHAT:
+			{
+				RsPeerDetails detail;
+				rsPeers->getGPGDetails(RsPgpId(_GPGid.toStdString()), detail) ;
 
-            if (_GPGid.toStdString() == rsPeers->getGPGOwnId().toStdString())
-				return QString("Click to open a private chat canal to %1 (%2).").arg(QString::fromStdString(detail.name)).arg(_GPGid) ;
-			else
-				return QString("This is a private chat invite for %1 (%2). You can't use it.").arg(QString::fromStdString(detail.name)).arg(_GPGid) ;
-		}
-	case TYPE_EXTRAFILE:
-		return QString("%1 (%2, Extra - Source included)").arg(hash()).arg(misc::friendlyUnit(size()));
-	case TYPE_FILE:
-		return QString("%1 (%2)").arg(hash()).arg(misc::friendlyUnit(size()));
-	case TYPE_PERSON:
-		return PeerDefs::rsidFromId(RsPgpId(hash().toStdString()));
-	case TYPE_FORUM:
-	case TYPE_CHANNEL:
-	case TYPE_SEARCH:
-		break;
-	case TYPE_MESSAGE:
-		return PeerDefs::rsidFromId(RsPeerId(hash().toStdString()));
-	case TYPE_CERTIFICATE:
-		return QObject::tr("Click to add this RetroShare cert to your PGP keyring\nand open the Make Friend Wizard.\n") + QString("PGP Id = ") + GPGId() + QString("\nSSLId = ")+SSLId();
+				if (_GPGid.toStdString() == rsPeers->getGPGOwnId().toStdString())
+					return QString("Click to open a private chat canal to %1 (%2).").arg(QString::fromStdString(detail.name)).arg(_GPGid) ;
+				else
+					return QString("This is a private chat invite for %1 (%2). You can't use it.").arg(QString::fromStdString(detail.name)).arg(_GPGid) ;
+			}
+		case TYPE_EXTRAFILE:
+			return QString("%1 (%2, Extra - Source included)").arg(hash()).arg(misc::friendlyUnit(size()));
+		case TYPE_FILE:
+			return QString("%1 (%2)").arg(hash()).arg(misc::friendlyUnit(size()));
+		case TYPE_PERSON:
+			return PeerDefs::rsidFromId(RsPgpId(hash().toStdString()));
+		case TYPE_FORUM:
+		case TYPE_CHANNEL:
+		case TYPE_SEARCH:
+			break;
+		case TYPE_MESSAGE:
+			return PeerDefs::rsidFromId(RsPeerId(hash().toStdString()));
+		case TYPE_CERTIFICATE:
+			return QObject::tr("Click to add this RetroShare cert to your PGP keyring\nand open the Make Friend Wizard.\n") + QString("PGP Id = ") + GPGId() + QString("\nSSLId = ")+SSLId();
 	}
 
 	return "";
@@ -735,177 +735,177 @@ QString RetroShareLink::title() const
 
 static QString encodeItem(QString item)
 {
-    return item
-//            .replace("{", "%"+QString::number((int)'{', 16))
-//            .replace("}", "%"+QString::number((int)'}', 16))
-//            .replace("[", "%"+QString::number((int)'[', 16))
-//            .replace("]", "%"+QString::number((int)']', 16))
-//            .replace("^", "%"+QString::number((int)'^', 16))
-//            .replace("~", "%"+QString::number((int)'~', 16))
-//            .replace(";", "%"+QString::number((int)';', 16))
-//            .replace(":", "%"+QString::number((int)':', 16))
-//            .replace("=", "%"+QString::number((int)'=', 16))
-//            .replace("+", "%"+QString::number((int)'+', 16))
-//            .replace("$", "%"+QString::number((int)'$', 16))
-//            .replace(",", "%"+QString::number((int)',', 16))
-//            .replace("\"", "%"+QString::number((int)'\"', 16))
-//            .replace("|", "%"+QString::number((int)'|', 16))
-//            .replace("?", "%"+QString::number((int)'?', 16))
-//            .replace("@", "%"+QString::number((int)'@', 16))
-            .replace("&", "%"+QString::number((int)'&', 16))//Not necessary: only for text link
-            .replace("/", "%"+QString::number((int)'/', 16))
-            .replace(" ", "%"+QString::number((int)' ', 16))
-            .replace("#", "%"+QString::number((int)'#', 16))
-//            .replace("£", "%"+QString::number((int)'£', 16))
-//            .replace("µ", "%"+QString::number((int)'µ', 16))
-//            .replace("§", "%"+QString::number((int)'§', 16))
-//            .replace("!", "%"+QString::number((int)'!', 16))
-            ;
+	return item
+		//            .replace("{", "%"+QString::number((int)'{', 16))
+		//            .replace("}", "%"+QString::number((int)'}', 16))
+		//            .replace("[", "%"+QString::number((int)'[', 16))
+		//            .replace("]", "%"+QString::number((int)']', 16))
+		//            .replace("^", "%"+QString::number((int)'^', 16))
+		//            .replace("~", "%"+QString::number((int)'~', 16))
+		//            .replace(";", "%"+QString::number((int)';', 16))
+		//            .replace(":", "%"+QString::number((int)':', 16))
+		//            .replace("=", "%"+QString::number((int)'=', 16))
+		//            .replace("+", "%"+QString::number((int)'+', 16))
+		//            .replace("$", "%"+QString::number((int)'$', 16))
+		//            .replace(",", "%"+QString::number((int)',', 16))
+		//            .replace("\"", "%"+QString::number((int)'\"', 16))
+		//            .replace("|", "%"+QString::number((int)'|', 16))
+		//            .replace("?", "%"+QString::number((int)'?', 16))
+		//            .replace("@", "%"+QString::number((int)'@', 16))
+		.replace("&", "%"+QString::number((int)'&', 16))//Not necessary: only for text link
+		.replace("/", "%"+QString::number((int)'/', 16))
+		.replace(" ", "%"+QString::number((int)' ', 16))
+		.replace("#", "%"+QString::number((int)'#', 16))
+		//            .replace("£", "%"+QString::number((int)'£', 16))
+		//            .replace("µ", "%"+QString::number((int)'µ', 16))
+		//            .replace("§", "%"+QString::number((int)'§', 16))
+		//            .replace("!", "%"+QString::number((int)'!', 16))
+		;
 }
 
 QString RetroShareLink::toString() const
 {
-    QUrl url;
+	QUrl url;
 #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
-    QUrlQuery urlQuery;
+	QUrlQuery urlQuery;
 #else
-    QUrl &urlQuery(url);
+	QUrl &urlQuery(url);
 #endif
 
-    switch (_type) {
-    case TYPE_UNKNOWN:
-        return "";
+	switch (_type) {
+		case TYPE_UNKNOWN:
+			return "";
 
-    case TYPE_FILE:
-        url.setScheme(RSLINK_SCHEME);
-        url.setHost(HOST_FILE);
-        urlQuery.addQueryItem(FILE_NAME, encodeItem(_name));
-        urlQuery.addQueryItem(FILE_SIZE, QString::number(_size));
-        urlQuery.addQueryItem(FILE_HASH, _hash);
+		case TYPE_FILE:
+			url.setScheme(RSLINK_SCHEME);
+			url.setHost(HOST_FILE);
+			urlQuery.addQueryItem(FILE_NAME, encodeItem(_name));
+			urlQuery.addQueryItem(FILE_SIZE, QString::number(_size));
+			urlQuery.addQueryItem(FILE_HASH, _hash);
 
-        break;
+			break;
 
-	 case TYPE_PRIVATE_CHAT:
-		  url.setScheme(RSLINK_SCHEME) ;
-		  url.setHost(HOST_PRIVATE_CHAT) ;
-		  urlQuery.addQueryItem(PRIVATE_CHAT_TIME_STAMP,QString::number(_time_stamp)) ;
-		  urlQuery.addQueryItem(PRIVATE_CHAT_GPG_ID,_GPGid) ;
-		  urlQuery.addQueryItem(PRIVATE_CHAT_STRING,_encrypted_chat_info) ;
+		case TYPE_PRIVATE_CHAT:
+			url.setScheme(RSLINK_SCHEME) ;
+			url.setHost(HOST_PRIVATE_CHAT) ;
+			urlQuery.addQueryItem(PRIVATE_CHAT_TIME_STAMP,QString::number(_time_stamp)) ;
+			urlQuery.addQueryItem(PRIVATE_CHAT_GPG_ID,_GPGid) ;
+			urlQuery.addQueryItem(PRIVATE_CHAT_STRING,_encrypted_chat_info) ;
 
-		  break;
+			break;
 
-	 case TYPE_PUBLIC_MSG:
-		  url.setScheme(RSLINK_SCHEME) ;
-		  url.setHost(HOST_PUBLIC_MSG) ;
-		  urlQuery.addQueryItem(PUBLIC_MSG_TIME_STAMP,QString::number(_time_stamp)) ;
-		  urlQuery.addQueryItem(PUBLIC_MSG_HASH,_hash) ;
-		  urlQuery.addQueryItem(PUBLIC_MSG_SRC_PGP_ID,_GPGid) ;
+		case TYPE_PUBLIC_MSG:
+			url.setScheme(RSLINK_SCHEME) ;
+			url.setHost(HOST_PUBLIC_MSG) ;
+			urlQuery.addQueryItem(PUBLIC_MSG_TIME_STAMP,QString::number(_time_stamp)) ;
+			urlQuery.addQueryItem(PUBLIC_MSG_HASH,_hash) ;
+			urlQuery.addQueryItem(PUBLIC_MSG_SRC_PGP_ID,_GPGid) ;
 
-		  break;
+			break;
 
-	 case TYPE_EXTRAFILE:
-		url.setScheme(RSLINK_SCHEME);
-		url.setHost(HOST_EXTRAFILE);
-		urlQuery.addQueryItem(FILE_NAME, encodeItem(_name));
-		urlQuery.addQueryItem(FILE_SIZE, QString::number(_size));
-		urlQuery.addQueryItem(FILE_HASH, _hash);
-		urlQuery.addQueryItem(FILE_SOURCE, _SSLid);
+		case TYPE_EXTRAFILE:
+			url.setScheme(RSLINK_SCHEME);
+			url.setHost(HOST_EXTRAFILE);
+			urlQuery.addQueryItem(FILE_NAME, encodeItem(_name));
+			urlQuery.addQueryItem(FILE_SIZE, QString::number(_size));
+			urlQuery.addQueryItem(FILE_HASH, _hash);
+			urlQuery.addQueryItem(FILE_SOURCE, _SSLid);
 
-		break;
+			break;
 
-    case TYPE_PERSON:
-        url.setScheme(RSLINK_SCHEME);
-        url.setHost(HOST_PERSON);
-        urlQuery.addQueryItem(PERSON_NAME, encodeItem(_name));
-        urlQuery.addQueryItem(PERSON_HASH, _hash);
+		case TYPE_PERSON:
+			url.setScheme(RSLINK_SCHEME);
+			url.setHost(HOST_PERSON);
+			urlQuery.addQueryItem(PERSON_NAME, encodeItem(_name));
+			urlQuery.addQueryItem(PERSON_HASH, _hash);
 
-        break;
+			break;
 
-    case TYPE_FORUM:
-        url.setScheme(RSLINK_SCHEME);
-        url.setHost(HOST_FORUM);
-        urlQuery.addQueryItem(FORUM_NAME, encodeItem(_name));
-        urlQuery.addQueryItem(FORUM_ID, _hash);
-        if (!_msgId.isEmpty()) {
-            urlQuery.addQueryItem(FORUM_MSGID, _msgId);
-        }
+		case TYPE_FORUM:
+			url.setScheme(RSLINK_SCHEME);
+			url.setHost(HOST_FORUM);
+			urlQuery.addQueryItem(FORUM_NAME, encodeItem(_name));
+			urlQuery.addQueryItem(FORUM_ID, _hash);
+			if (!_msgId.isEmpty()) {
+				urlQuery.addQueryItem(FORUM_MSGID, _msgId);
+			}
 
-        break;
+			break;
 
-    case TYPE_CHANNEL:
-        url.setScheme(RSLINK_SCHEME);
-        url.setHost(HOST_CHANNEL);
-        urlQuery.addQueryItem(CHANNEL_NAME, encodeItem(_name));
-        urlQuery.addQueryItem(CHANNEL_ID, _hash);
-        if (!_msgId.isEmpty()) {
-            urlQuery.addQueryItem(CHANNEL_MSGID, _msgId);
-        }
+		case TYPE_CHANNEL:
+			url.setScheme(RSLINK_SCHEME);
+			url.setHost(HOST_CHANNEL);
+			urlQuery.addQueryItem(CHANNEL_NAME, encodeItem(_name));
+			urlQuery.addQueryItem(CHANNEL_ID, _hash);
+			if (!_msgId.isEmpty()) {
+				urlQuery.addQueryItem(CHANNEL_MSGID, _msgId);
+			}
 
-        break;
+			break;
 
-    case TYPE_SEARCH:
-        url.setScheme(RSLINK_SCHEME);
-        url.setHost(HOST_SEARCH);
-        urlQuery.addQueryItem(SEARCH_KEYWORDS, encodeItem(_name));
+		case TYPE_SEARCH:
+			url.setScheme(RSLINK_SCHEME);
+			url.setHost(HOST_SEARCH);
+			urlQuery.addQueryItem(SEARCH_KEYWORDS, encodeItem(_name));
 
-        break;
+			break;
 
-    case TYPE_MESSAGE:
-        url.setScheme(RSLINK_SCHEME);
-        url.setHost(HOST_MESSAGE);
-        urlQuery.addQueryItem(MESSAGE_ID, _hash);
-        if (_subject.isEmpty() == false) {
-           urlQuery.addQueryItem(MESSAGE_SUBJECT, encodeItem(_subject));
-        }
+		case TYPE_MESSAGE:
+			url.setScheme(RSLINK_SCHEME);
+			url.setHost(HOST_MESSAGE);
+			urlQuery.addQueryItem(MESSAGE_ID, _hash);
+			if (_subject.isEmpty() == false) {
+				urlQuery.addQueryItem(MESSAGE_SUBJECT, encodeItem(_subject));
+			}
 
-        break;
+			break;
 
-	 case TYPE_CERTIFICATE:
-		  url.setScheme(RSLINK_SCHEME);
-		  url.setHost(HOST_CERTIFICATE) ;
-		  if (!_SSLid.isEmpty()) {
-			  urlQuery.addQueryItem(CERTIFICATE_SSLID, _SSLid);
-		  }
-		  urlQuery.addQueryItem(CERTIFICATE_GPG_ID, _GPGid);
-		  urlQuery.addQueryItem(CERTIFICATE_GPG_BASE64, _GPGBase64String);
-		  urlQuery.addQueryItem(CERTIFICATE_GPG_CHECKSUM, _GPGBase64CheckSum);
-                 if (!_location.isEmpty()) {
-                         urlQuery.addQueryItem(CERTIFICATE_LOCATION, encodeItem(_location));
-                 }
-          urlQuery.addQueryItem(CERTIFICATE_RADIX, _radix);
-          urlQuery.addQueryItem(CERTIFICATE_NAME, encodeItem(_name));
-                 if (!_loc_ip_port.isEmpty()) {
-                         urlQuery.addQueryItem(CERTIFICATE_LOC_IPPORT, encodeItem(_loc_ip_port));
-		  }
-		  if (!_ext_ip_port.isEmpty()) {
-			  urlQuery.addQueryItem(CERTIFICATE_EXT_IPPORT, encodeItem(_ext_ip_port));
-		  }
-		  if (!_dyndns_name.isEmpty()) {
-			  urlQuery.addQueryItem(CERTIFICATE_DYNDNS, encodeItem(_dyndns_name));
-		  }
+		case TYPE_CERTIFICATE:
+			url.setScheme(RSLINK_SCHEME);
+			url.setHost(HOST_CERTIFICATE) ;
+			if (!_SSLid.isEmpty()) {
+				urlQuery.addQueryItem(CERTIFICATE_SSLID, _SSLid);
+			}
+			urlQuery.addQueryItem(CERTIFICATE_GPG_ID, _GPGid);
+			urlQuery.addQueryItem(CERTIFICATE_GPG_BASE64, _GPGBase64String);
+			urlQuery.addQueryItem(CERTIFICATE_GPG_CHECKSUM, _GPGBase64CheckSum);
+			if (!_location.isEmpty()) {
+				urlQuery.addQueryItem(CERTIFICATE_LOCATION, encodeItem(_location));
+			}
+			urlQuery.addQueryItem(CERTIFICATE_RADIX, _radix);
+			urlQuery.addQueryItem(CERTIFICATE_NAME, encodeItem(_name));
+			if (!_loc_ip_port.isEmpty()) {
+				urlQuery.addQueryItem(CERTIFICATE_LOC_IPPORT, encodeItem(_loc_ip_port));
+			}
+			if (!_ext_ip_port.isEmpty()) {
+				urlQuery.addQueryItem(CERTIFICATE_EXT_IPPORT, encodeItem(_ext_ip_port));
+			}
+			if (!_dyndns_name.isEmpty()) {
+				urlQuery.addQueryItem(CERTIFICATE_DYNDNS, encodeItem(_dyndns_name));
+			}
 
-          break;
-    }
+			break;
+	}
 
 #if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
-    url.setQuery(urlQuery);
+	url.setQuery(urlQuery);
 #endif
 
-    return url.toString();
+	return url.toString();
 }
 
 QString RetroShareLink::niceName() const
 {
-    if (type() == TYPE_PERSON) {
-        return PeerDefs::rsid(name().toUtf8().constData(), RsPgpId(hash().toStdString()));
-    }
+	if (type() == TYPE_PERSON) {
+		return PeerDefs::rsid(name().toUtf8().constData(), RsPgpId(hash().toStdString()));
+	}
 
 	if(type() == TYPE_PRIVATE_CHAT) {
-			return QString("Private chat invite (Valid only for key %1)").arg(_GPGid);
+		return QString("Private chat invite (Valid only for key %1)").arg(_GPGid);
 	}
 	if(type() == TYPE_PUBLIC_MSG) {
-			RsPeerDetails detail;
-            rsPeers->getGPGDetails(RsPgpId(_GPGid.toStdString()), detail) ;
+		RsPeerDetails detail;
+		rsPeers->getGPGDetails(RsPgpId(_GPGid.toStdString()), detail) ;
 		return QString("Click this link to send a private message to %1 (%2)").arg(QString::fromStdString(detail.name)).arg(_GPGid) ;
 	}
 	if(type() == TYPE_CERTIFICATE) {
@@ -915,7 +915,7 @@ QString RetroShareLink::niceName() const
 		return QString("RetroShare Certificate (%1, @%2)").arg(_name, _location);	// should add SSL id there
 	}
 
-    return name();
+	return name();
 }
 
 QString RetroShareLink::toHtml() const
@@ -942,7 +942,7 @@ QString RetroShareLink::toHtmlSize() const
 
 	if (type() == TYPE_FILE && RsCollectionFile::isCollectionFile(name())) {
 		FileInfo finfo;
-        if (rsFiles->FileDetails(RsFileHash(hash().toStdString()), RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_LOCAL, finfo)) {
+		if (rsFiles->FileDetails(RsFileHash(hash().toStdString()), RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_LOCAL, finfo)) {
 			RsCollectionFile collection;
 			if (collection.load(QString::fromUtf8(finfo.path.c_str()), false)) {
 				size += QString(" [%1]").arg(misc::friendlyUnit(collection.size()));
@@ -955,100 +955,100 @@ QString RetroShareLink::toHtmlSize() const
 
 bool RetroShareLink::checkName(const QString& name)
 {
-    if(name == "")
-        return false ;
+	if(name == "")
+		return false ;
 
-    for(int i=0;i<name.length();++i)
-    {
-        QChar::Category cat( name[i].category() ) ;
+	for(int i=0;i<name.length();++i)
+	{
+		QChar::Category cat( name[i].category() ) ;
 
-        if(	cat == QChar::Separator_Line
-                || cat == QChar::Other_NotAssigned
-                )
-        {
+		if(	cat == QChar::Separator_Line
+				|| cat == QChar::Other_NotAssigned
+		  )
+		{
 #ifdef DEBUG_RSLINK
-            std::cerr <<"Unwanted category " << cat << " at place " << i << " in string \"" << name.toStdString() << "\"" << std::endl ;
+			std::cerr <<"Unwanted category " << cat << " at place " << i << " in string \"" << name.toStdString() << "\"" << std::endl ;
 #endif
-            return false ;
-        }
-    }
+			return false ;
+		}
+	}
 
-    return true ;
+	return true ;
 }
 
 QUrl RetroShareLink::toUrl() const
 {
-    return QUrl::fromEncoded(toString().toUtf8().constData());
+	return QUrl::fromEncoded(toString().toUtf8().constData());
 }
 
 bool RetroShareLink::checkSSLId(const QString& ssl_id)
 {
-    if(ssl_id.length() != 32)
-        return false ;
+	if(ssl_id.length() != 32)
+		return false ;
 
-    QByteArray qb(ssl_id.toLatin1()) ;
+	QByteArray qb(ssl_id.toLatin1()) ;
 
-    for(int i=0;i<qb.length();++i)
-    {
-        unsigned char b(qb[i]) ;
+	for(int i=0;i<qb.length();++i)
+	{
+		unsigned char b(qb[i]) ;
 
-        if(!((b>47 && b<58) || (b>96 && b<103)))
-            return false ;
-    }
+		if(!((b>47 && b<58) || (b>96 && b<103)))
+			return false ;
+	}
 
-    return true ;
+	return true ;
 }
 bool RetroShareLink::checkPGPId(const QString& pgp_id)
 {
-    if(pgp_id.length() != 16)
-        return false ;
+	if(pgp_id.length() != 16)
+		return false ;
 
-    QByteArray qb(pgp_id.toLatin1()) ;
+	QByteArray qb(pgp_id.toLatin1()) ;
 
-    for(int i=0;i<qb.length();++i)
-    {
-        unsigned char b(qb[i]) ;
+	for(int i=0;i<qb.length();++i)
+	{
+		unsigned char b(qb[i]) ;
 
-        if(!((b>47 && b<58) || (b>64 && b<71)))
-            return false ;
-    }
+		if(!((b>47 && b<58) || (b>64 && b<71)))
+			return false ;
+	}
 
-    return true ;
+	return true ;
 }
 bool RetroShareLink::checkRadix64(const QString& s)
 {
 	QByteArray qb(s.toLatin1()) ;
 
-    for(int i=0;i<qb.length();++i)
-    {
-        unsigned char b(qb[i]) ;
+	for(int i=0;i<qb.length();++i)
+	{
+		unsigned char b(qb[i]) ;
 
-		  if(!(  (b > 46 && b < 58) || (b > 64 && b < 91) || (b > 96 && b < 123) || b=='+' || b=='='))
-		  {
-			  std::cerr << "Character not allowed in radix: " << b << std::endl;
-			  return false;
-		  }
-	 }
-	 std::cerr << "Radix check: passed" << std::endl;
-	 return true ;
+		if(!(  (b > 46 && b < 58) || (b > 64 && b < 91) || (b > 96 && b < 123) || b=='+' || b=='='))
+		{
+			std::cerr << "Character not allowed in radix: " << b << std::endl;
+			return false;
+		}
+	}
+	std::cerr << "Radix check: passed" << std::endl;
+	return true ;
 }
 
 bool RetroShareLink::checkHash(const QString& hash)
 {
-    if(hash.length() != 40)
-        return false ;
+	if(hash.length() != 40)
+		return false ;
 
-    QByteArray qb(hash.toLatin1()) ;
+	QByteArray qb(hash.toLatin1()) ;
 
-    for(int i=0;i<qb.length();++i)
-    {
-        unsigned char b(qb[i]) ;
+	for(int i=0;i<qb.length();++i)
+	{
+		unsigned char b(qb[i]) ;
 
-        if(!((b>47 && b<58) || (b>96 && b<103)))
-            return false ;
-    }
+		if(!((b>47 && b<58) || (b>96 && b<103)))
+			return false ;
+	}
 
-    return true ;
+	return true ;
 }
 
 static void processList(const QStringList &list, const QString &textSingular, const QString &textPlural, QString &result)
@@ -1100,25 +1100,25 @@ static void processList(const QStringList &list, const QString &textSingular, co
 			}
 
 			switch (link.type()) {
-			case TYPE_UNKNOWN:
-			case TYPE_FORUM:
-			case TYPE_CHANNEL:
-			case TYPE_SEARCH:
-			case TYPE_MESSAGE:
-			case TYPE_CERTIFICATE:
-			case TYPE_PRIVATE_CHAT:
-			case TYPE_PUBLIC_MSG:
-				// no need to ask
-				break;
+				case TYPE_UNKNOWN:
+				case TYPE_FORUM:
+				case TYPE_CHANNEL:
+				case TYPE_SEARCH:
+				case TYPE_MESSAGE:
+				case TYPE_CERTIFICATE:
+				case TYPE_PRIVATE_CHAT:
+				case TYPE_PUBLIC_MSG:
+					// no need to ask
+					break;
 
-			case TYPE_FILE:
-			case TYPE_EXTRAFILE:
-				fileAdd.append(link.name());
-				break;
+				case TYPE_FILE:
+				case TYPE_EXTRAFILE:
+					fileAdd.append(link.name());
+					break;
 
-			case TYPE_PERSON:
-                personAdd.append(PeerDefs::rsid(link.name().toUtf8().constData(), RsPgpId(link.hash().toStdString())));
-				break;
+				case TYPE_PERSON:
+					personAdd.append(PeerDefs::rsid(link.name().toUtf8().constData(), RsPgpId(link.hash().toStdString())));
+					break;
 			}
 		}
 
@@ -1214,60 +1214,60 @@ static void processList(const QStringList &list, const QString &textSingular, co
 #ifdef DEBUG_RSLINK
 					std::cerr << " RetroShareLink::process certificate." << std::endl;
 #endif
-                                       needNotifySuccess = true;
+					needNotifySuccess = true;
 
-                    //QString RS_Certificate ;
-                    //RS_Certificate += "-----BEGIN PGP PUBLIC KEY BLOCK-----\n" ;
-                    //RS_Certificate += "Version: Retroshare Generated cert.\n" ;
-                    //RS_Certificate += "\n" ;
+					//QString RS_Certificate ;
+					//RS_Certificate += "-----BEGIN PGP PUBLIC KEY BLOCK-----\n" ;
+					//RS_Certificate += "Version: Retroshare Generated cert.\n" ;
+					//RS_Certificate += "\n" ;
 
-                    //QString radix = link.GPGRadix64Key() ;
+					//QString radix = link.GPGRadix64Key() ;
 
-                    //while(radix.size() > 64)
-                    //{
-                    //	RS_Certificate += radix.left(64) + "\n" ;
-                    //	radix = radix.right(radix.size() - 64) ;
-                    //}
-                    //RS_Certificate += radix.left(64) + "\n" ;
-                    //RS_Certificate += "=" + link.GPGBase64CheckSum() + "\n" ;
-                    //RS_Certificate += "-----END PGP PUBLIC KEY BLOCK-----\n" ;
-                    //RS_Certificate += "--SSLID--" + link.SSLId() + ";--LOCATION--" + link.location() + ";\n" ;
+					//while(radix.size() > 64)
+					//{
+					//	RS_Certificate += radix.left(64) + "\n" ;
+					//	radix = radix.right(radix.size() - 64) ;
+					//}
+					//RS_Certificate += radix.left(64) + "\n" ;
+					//RS_Certificate += "=" + link.GPGBase64CheckSum() + "\n" ;
+					//RS_Certificate += "-----END PGP PUBLIC KEY BLOCK-----\n" ;
+					//RS_Certificate += "--SSLID--" + link.SSLId() + ";--LOCATION--" + link.location() + ";\n" ;
 
-                    //if(!link.externalIPAndPort().isNull())
-                    //	RS_Certificate += "--EXT--" + link.externalIPAndPort() + ";" ;
-                    //if(!link.localIPAndPort().isNull())
-                    //	RS_Certificate += "--LOCAL--" + link.localIPAndPort() + ";" ;
-                    //if(!link.dyndns().isNull())
-                    //	RS_Certificate += "--DYNDNS--" + link.dyndns() + ";" ;
-                    //RS_Certificate += "\n" ;
+					//if(!link.externalIPAndPort().isNull())
+					//	RS_Certificate += "--EXT--" + link.externalIPAndPort() + ";" ;
+					//if(!link.localIPAndPort().isNull())
+					//	RS_Certificate += "--LOCAL--" + link.localIPAndPort() + ";" ;
+					//if(!link.dyndns().isNull())
+					//	RS_Certificate += "--DYNDNS--" + link.dyndns() + ";" ;
+					//RS_Certificate += "\n" ;
 
-                                       std::cerr << "Usign this certificate:" << std::endl;
-                    //std::cerr << RS_Certificate.toStdString() << std::endl;
-                    std::cerr << link.radix().toStdString() << std::endl;
+					std::cerr << "Usign this certificate:" << std::endl;
+					//std::cerr << RS_Certificate.toStdString() << std::endl;
+					std::cerr << link.radix().toStdString() << std::endl;
 
-                                       ConnectFriendWizard connectFriendWizard;
-//					connectFriendWizard.setCertificate(RS_Certificate, (link.subType() == RSLINK_SUBTYPE_CERTIFICATE_USER_REQUEST) ? true : false);
-                    connectFriendWizard.setCertificate(link.radix(), (link.subType() == RSLINK_SUBTYPE_CERTIFICATE_USER_REQUEST) ? true : false);
-                    connectFriendWizard.exec();
-                                       needNotifySuccess = false;
-                               }
+					ConnectFriendWizard connectFriendWizard;
+					//					connectFriendWizard.setCertificate(RS_Certificate, (link.subType() == RSLINK_SUBTYPE_CERTIFICATE_USER_REQUEST) ? true : false);
+					connectFriendWizard.setCertificate(link.radix(), (link.subType() == RSLINK_SUBTYPE_CERTIFICATE_USER_REQUEST) ? true : false);
+					connectFriendWizard.exec();
+					needNotifySuccess = false;
+				}
 				break ;
 
 			case TYPE_PUBLIC_MSG:
-                {
-                    std::cerr << "(!!) Distant messages from links is disabled for now" << std::endl;
-            //		std::cerr << "Opening a public msg window " << std::endl;
-            //		std::cerr << "      time_stamp = " << link._time_stamp << std::endl;
-            //		std::cerr << "      hash       = " << link._hash.toStdString() << std::endl;
-            //		std::cerr << "      Issuer Id  = " << link._GPGid.toStdString() << std::endl;
-            //
-            //		if(link._time_stamp < time(NULL))
-            //		{
-            //			QMessageBox::information(NULL,QObject::tr("Messaging link is expired"),QObject::tr("This Messaging link is expired. The destination peer will not receive it.")) ;
-            //			break ;
-            //		}
-            //
-            //		 MessageComposer::msgDistantPeer(link._hash.toStdString(),link._GPGid.toStdString()) ;
+				{
+					std::cerr << "(!!) Distant messages from links is disabled for now" << std::endl;
+					//		std::cerr << "Opening a public msg window " << std::endl;
+					//		std::cerr << "      time_stamp = " << link._time_stamp << std::endl;
+					//		std::cerr << "      hash       = " << link._hash.toStdString() << std::endl;
+					//		std::cerr << "      Issuer Id  = " << link._GPGid.toStdString() << std::endl;
+					//
+					//		if(link._time_stamp < time(NULL))
+					//		{
+					//			QMessageBox::information(NULL,QObject::tr("Messaging link is expired"),QObject::tr("This Messaging link is expired. The destination peer will not receive it.")) ;
+					//			break ;
+					//		}
+					//
+					//		 MessageComposer::msgDistantPeer(link._hash.toStdString(),link._GPGid.toStdString()) ;
 				}
 				break ;
 			case TYPE_PRIVATE_CHAT:
@@ -1282,16 +1282,16 @@ static void processList(const QStringList &list, const QString &textSingular, co
 						QMessageBox::information(NULL,QObject::tr("Chat link is expired"),QObject::tr("This chat link is expired. The destination peer will not answer.")) ;
 						break ;
 					}
-                    if(RsPgpId(link._GPGid.toStdString()) != rsPeers->getGPGOwnId())
+					if(RsPgpId(link._GPGid.toStdString()) != rsPeers->getGPGOwnId())
 					{
 						QMessageBox::information(NULL,QObject::tr("Chat link cannot be decrypted"),QObject::tr("This chat link is encrypted with a key that is not yours. You can't use it. Key ID = ")+link._GPGid) ;
 						break ;
 					}
 
-                    DistantChatPeerId dpid  ;
+					DistantChatPeerId dpid  ;
 					uint32_t error_code ;
 
-                    if(!rsMsgs->initiateDistantChatConnexion(link._encrypted_chat_info.toStdString(),link._time_stamp,dpid,error_code))
+					if(!rsMsgs->initiateDistantChatConnexion(link._encrypted_chat_info.toStdString(),link._time_stamp,dpid,error_code))
 					{
 						QString error_msg ;
 						switch(error_code)
@@ -1308,7 +1308,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 						if(error_code == RS_DISTANT_CHAT_ERROR_UNKNOWN_KEY)
 							QMessageBox::information(NULL,QObject::tr("Chat connection is unauthenticated"),QObject::tr("Signature check failed!\nMake sure you know who you're talking to.")) ;
 
-                        ChatDialog::chatFriend(dpid);
+						ChatDialog::chatFriend(dpid);
 					}
 				}
 				break ;
@@ -1321,7 +1321,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 #endif
 
 					needNotifySuccess = true;
-                    std::list<RsPeerId> srcIds;
+					std::list<RsPeerId> srcIds;
 
 					// Add the link built-in source. This is needed for EXTRA files, where the source is specified in the link.
 
@@ -1330,20 +1330,20 @@ static void processList(const QStringList &list, const QString &textSingular, co
 #ifdef DEBUG_RSLINK
 						std::cerr << " RetroShareLink::process Adding built-in source " << link.SSLId().toStdString() << std::endl;
 #endif
-                        srcIds.push_back(RsPeerId(link.SSLId().toStdString())) ;
+						srcIds.push_back(RsPeerId(link.SSLId().toStdString())) ;
 					}
 
 					// Get a list of available direct sources, in case the file is browsable only.
 					//
 					FileInfo finfo ;
-                    rsFiles->FileDetails(RsFileHash(link.hash().toStdString()), RS_FILE_HINTS_REMOTE, finfo) ;
+					rsFiles->FileDetails(RsFileHash(link.hash().toStdString()), RS_FILE_HINTS_REMOTE, finfo) ;
 
 					for(std::list<TransferInfo>::const_iterator it(finfo.peers.begin());it!=finfo.peers.end();++it)
 					{
 #ifdef DEBUG_RSLINK
 						std::cerr << "  adding peerid " << (*it).peerId << std::endl ;
 #endif
-                        srcIds.push_back((*it).peerId) ;
+						srcIds.push_back((*it).peerId) ;
 					}
 
 					QString cleanname = link.name() ;
@@ -1357,12 +1357,12 @@ static void processList(const QStringList &list, const QString &textSingular, co
 								flag |= RSLINK_PROCESS_NOTIFY_BAD_CHARS ;
 							}
 
-                    if (rsFiles->FileRequest(cleanname.toUtf8().constData(), RsFileHash(link.hash().toStdString()), link.size(), "", RS_FILE_REQ_ANONYMOUS_ROUTING, srcIds)) {
+					if (rsFiles->FileRequest(cleanname.toUtf8().constData(), RsFileHash(link.hash().toStdString()), link.size(), "", RS_FILE_REQ_ANONYMOUS_ROUTING, srcIds)) {
 						fileAdded.append(link.name());
 					} else {
 						fileExist.append(link.name());
 					}
-                    break;
+					break;
 				}
 
 			case TYPE_PERSON:
@@ -1374,30 +1374,30 @@ static void processList(const QStringList &list, const QString &textSingular, co
 					needNotifySuccess = true;
 
 					RsPeerDetails detail;
-                    if (rsPeers->getPeerDetails(RsPeerId(link.hash().toStdString()), detail))
-            {
-                if (RsPgpId(detail.gpg_id) == rsPeers->getGPGOwnId()) {
-                    // it's me, do nothing
-                    break;
-                }
+					if (rsPeers->getPeerDetails(RsPeerId(link.hash().toStdString()), detail))
+					{
+						if (RsPgpId(detail.gpg_id) == rsPeers->getGPGOwnId()) {
+							// it's me, do nothing
+							break;
+						}
 
-                if (detail.accept_connection) {
-                    // peer connection is already accepted
-                    personExist.append(PeerDefs::rsid(detail));
-                    break;
-                }
+						if (detail.accept_connection) {
+							// peer connection is already accepted
+							personExist.append(PeerDefs::rsid(detail));
+							break;
+						}
 
-                if (rsPeers->addFriend(RsPeerId(), RsPgpId(link.hash().toStdString()))) {
-                    ConfCertDialog::loadAll();
-                    personAdded.append(PeerDefs::rsid(detail));
-                    break;
-                }
+						if (rsPeers->addFriend(RsPeerId(), RsPgpId(link.hash().toStdString()))) {
+							ConfCertDialog::loadAll();
+							personAdded.append(PeerDefs::rsid(detail));
+							break;
+						}
 
-                personFailed.append(PeerDefs::rsid(link.name().toUtf8().constData(), RsPgpId(link.hash().toStdString())));
-                break;
-            }
+						personFailed.append(PeerDefs::rsid(link.name().toUtf8().constData(), RsPgpId(link.hash().toStdString())));
+						break;
+					}
 
-                    personNotFound.append(PeerDefs::rsid(link.name().toUtf8().constData(), RsPgpId(link.hash().toStdString())));
+					personNotFound.append(PeerDefs::rsid(link.name().toUtf8().constData(), RsPgpId(link.hash().toStdString())));
 					break;
 				}
 
@@ -1519,49 +1519,44 @@ static void processList(const QStringList &list, const QString &textSingular, co
 					std::cerr << " RetroShareLink::process MessageRequest : id : " << link.hash().toStdString() << ", subject : " << link.name().toStdString() << std::endl;
 #endif
 					RsPeerDetails detail;
-                    DistantMsgPeerId dm_pid ;
+					DistantMsgPeerId dm_pid ;
 
-                    // This is awful, but apparently the hash can be multiple different types. Let's check!
+					// This is awful, but apparently the hash can be multiple different types. Let's check!
 
-                    RsPgpId   pgp_id(link.hash().toStdString()) ;
-                    RsPeerId  ssl_id(link.hash().toStdString()) ;
+					RsPeerId  ssl_id(link.hash().toStdString()) ;
 
-                    if(!pgp_id.isNull() && rsPeers->getGPGDetails(pgp_id, detail)
-                    || !ssl_id.isNull() && rsPeers->getPeerDetails(ssl_id,detail))
+					if(!ssl_id.isNull() && rsPeers->getPeerDetails(ssl_id,detail) && detail.accept_connection)
 					{
-                        if (detail.accept_connection || RsPeerId(detail.id) == rsPeers->getOwnId() || RsPgpId(detail.gpg_id) == rsPeers->getGPGOwnId()) {
-							MessageComposer *msg = MessageComposer::newMsg();
-                            msg->addRecipient(MessageComposer::TO, detail.id);
-							if (link.subject().isEmpty() == false) {
-								msg->setTitleText(link.subject());
-							}
-							msg->show();
-							messageStarted.append(PeerDefs::nameWithLocation(detail));
-                        }
-#ifdef SUSPENDED
-            else if(rsMsgs->getDistantMessagePeerId(detail.gpg_id,dm_pid))
-						{
-							MessageComposer *msg = MessageComposer::newMsg();
-                            msg->addRecipient(MessageComposer::TO, dm_pid,detail.gpg_id) ;
-
-							if (link.subject().isEmpty() == false) {
-								msg->setTitleText(link.subject());
-							}
-							msg->show();
-							messageStarted.append(PeerDefs::nameWithLocation(detail));
-
-                        }
-#endif
-						else 
-						{
-							messageReceipientNotAccepted.append(PeerDefs::nameWithLocation(detail));
+						//if (detail.accept_connection || RsPeerId(detail.id) == rsPeers->getOwnId() || RsPgpId(detail.gpg_id) == rsPeers->getGPGOwnId()) 
+						MessageComposer *msg = MessageComposer::newMsg();
+						msg->addRecipient(MessageComposer::TO, detail.id);
+						if (link.subject().isEmpty() == false) {
+							msg->setTitleText(link.subject());
 						}
-					} else {
-						messageReceipientUnknown.append(PeerDefs::rsidFromId(RsPeerId(link.hash().toStdString())));
+						msg->show();
+						messageStarted.append(PeerDefs::nameWithLocation(detail));
+						break ;
 					}
 
-					break;
+					RsIdentityDetails gxs_details ;
+					RsGxsId gxs_id(link.hash().toStdString()) ;
+
+					if(!gxs_id.isNull() && rsIdentity->getIdDetails(gxs_id,gxs_details))
+					{
+						MessageComposer *msg = MessageComposer::newMsg();
+						msg->addRecipient(MessageComposer::TO, gxs_id) ;
+
+						if (link.subject().isEmpty() == false) 
+							msg->setTitleText(link.subject());
+						
+						msg->show();
+						messageStarted.append(PeerDefs::nameWithLocation(gxs_details));
+
+						break ;
+					}
+					messageReceipientUnknown.append(PeerDefs::rsidFromId(RsPeerId(link.hash().toStdString())));
 				}
+				break;
 
 			default:
 				std::cerr << " RetroShareLink::process unknown type: " << link.type() << std::endl;
@@ -1692,117 +1687,117 @@ static void processList(const QStringList &list, const QString &textSingular, co
 
 void RSLinkClipboard::copyLinks(const QList<RetroShareLink>& links)
 {
-    QString res ;
-    for (int i = 0; i < links.size(); ++i)
-        res += links[i].toString() + "\n" ;
+	QString res ;
+	for (int i = 0; i < links.size(); ++i)
+		res += links[i].toString() + "\n" ;
 
-    QApplication::clipboard()->setText(res) ;
+	QApplication::clipboard()->setText(res) ;
 }
 
 void RSLinkClipboard::pasteLinks(QList<RetroShareLink> &links)
 {
-    return parseClipboard(links);
+	return parseClipboard(links);
 }
 
 void RSLinkClipboard::parseClipboard(QList<RetroShareLink> &links)
 {
-    // parse clipboard for links.
-    //
-    links.clear();
-    QString text = QApplication::clipboard()->text() ;
+	// parse clipboard for links.
+	//
+	links.clear();
+	QString text = QApplication::clipboard()->text() ;
 
-    std::cerr << "Parsing clipboard:" << text.toStdString() << std::endl ;
+	std::cerr << "Parsing clipboard:" << text.toStdString() << std::endl ;
 
-    QRegExp rx(QString("retroshare://(%1)[^\r\n]+").arg(HOST_REGEXP));
+	QRegExp rx(QString("retroshare://(%1)[^\r\n]+").arg(HOST_REGEXP));
 
-    int pos = 0;
+	int pos = 0;
 
-    while((pos = rx.indexIn(text, pos)) != -1)
-    {
-        QString url(text.mid(pos, rx.matchedLength()));
-        RetroShareLink link(url);
+	while((pos = rx.indexIn(text, pos)) != -1)
+	{
+		QString url(text.mid(pos, rx.matchedLength()));
+		RetroShareLink link(url);
 
-        if(link.valid())
-        {
-            // check that the link is not already in the list:
-            bool already = false ;
-            for (int i = 0; i <links.size(); ++i)
-                if(links[i] == link)
-                {
-                    already = true ;
-                    break ;
-                }
+		if(link.valid())
+		{
+			// check that the link is not already in the list:
+			bool already = false ;
+			for (int i = 0; i <links.size(); ++i)
+				if(links[i] == link)
+				{
+					already = true ;
+					break ;
+				}
 
-            if(!already)
-            {
-                links.push_back(link) ;
+			if(!already)
+			{
+				links.push_back(link) ;
 #ifdef DEBUG_RSLINK
-                std::cerr << "captured link: " << link.toString().toStdString() << std::endl ;
+				std::cerr << "captured link: " << link.toString().toStdString() << std::endl ;
 #endif
-            }
-        }
+			}
+		}
 #ifdef DEBUG_RSLINK
-        else
-            std::cerr << "invalid link" << std::endl ;
+		else
+			std::cerr << "invalid link" << std::endl ;
 #endif
 
-        pos += rx.matchedLength();
-    }
+		pos += rx.matchedLength();
+	}
 }
 
 QString RSLinkClipboard::toString()
 {
-    QList<RetroShareLink> links;
-    parseClipboard(links);
+	QList<RetroShareLink> links;
+	parseClipboard(links);
 
-    QString res ;
-    for(int i = 0; i < links.size(); ++i)
-        res += links[i].toString() + "\n" ;
+	QString res ;
+	for(int i = 0; i < links.size(); ++i)
+		res += links[i].toString() + "\n" ;
 
-    return res ;
+	return res ;
 }
 
 QString RSLinkClipboard::toHtml()
 {
-    QList<RetroShareLink> links;
-    parseClipboard(links);
+	QList<RetroShareLink> links;
+	parseClipboard(links);
 
-    QString res ;
-    for(int i = 0; i < links.size(); ++i)
-        res += links[i].toHtml() + "<br>" ;
+	QString res ;
+	for(int i = 0; i < links.size(); ++i)
+		res += links[i].toHtml() + "<br>" ;
 
-    return res ;
+	return res ;
 }
 
 bool RSLinkClipboard::empty(RetroShareLink::enumType type /* = RetroShareLink::TYPE_UNKNOWN*/)
 {
-    QList<RetroShareLink> links;
-    parseClipboard(links);
+	QList<RetroShareLink> links;
+	parseClipboard(links);
 
-    if (type == RetroShareLink::TYPE_UNKNOWN) {
-        return links.empty();
-    }
+	if (type == RetroShareLink::TYPE_UNKNOWN) {
+		return links.empty();
+	}
 
-    for (QList<RetroShareLink>::iterator link = links.begin(); link != links.end(); link++) {
-        if (link->type() == type) {
-            return false;
-        }
-    }
+	for (QList<RetroShareLink>::iterator link = links.begin(); link != links.end(); link++) {
+		if (link->type() == type) {
+			return false;
+		}
+	}
 
-    return true;
+	return true;
 }
 
 /*static*/ int RSLinkClipboard::process(RetroShareLink::enumType type /* = RetroShareLink::TYPE_UNKNOWN*/, uint flag /* = RSLINK_PROCESS_NOTIFY_ALL*/)
 {
-    QList<RetroShareLink> links;
-    pasteLinks(links);
+	QList<RetroShareLink> links;
+	pasteLinks(links);
 
 	QList<RetroShareLink> linksToProcess;
 	for (int i = 0; i < links.size(); i++) {
-        if (links[i].valid() && (type == RetroShareLink::TYPE_UNKNOWN || links[i].type() == type)) {
-            linksToProcess.append(links[i]);
-        }
-    }
+		if (links[i].valid() && (type == RetroShareLink::TYPE_UNKNOWN || links[i].type() == type)) {
+			linksToProcess.append(links[i]);
+		}
+	}
 
 	if (linksToProcess.size() == 0) {
 		return 0;
