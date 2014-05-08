@@ -54,6 +54,12 @@ RSA *GxsSecurity::extractPublicKey(const RsTlvSecurityKey& key)
 bool GxsSecurity::getSignature(const char *data, uint32_t data_len, const RsTlvSecurityKey& privKey, RsTlvKeySignature& sign)
 {
 	RSA* rsa_pub = extractPrivateKey(privKey);
+
+	if(!rsa_pub)
+	{
+		std::cerr << "GxsSecurity::validateSignature(): Cannot validate signature. Keydata is incomplete." << std::endl;
+		return false ;
+	}
 	EVP_PKEY *key_pub = EVP_PKEY_new();
 	EVP_PKEY_assign_RSA(key_pub, rsa_pub);
 
@@ -80,6 +86,11 @@ bool GxsSecurity::validateSignature(const char *data, uint32_t data_len, const R
 {
 	RSA *rsakey = RSAPublicKey_dup(extractPublicKey(key)) ;
 
+	if(!rsakey)
+	{
+		std::cerr << "GxsSecurity::validateSignature(): Cannot validate signature. Keydata is incomplete." << std::endl;
+		return false ;
+	}
 	EVP_PKEY *signKey = EVP_PKEY_new();
 	EVP_PKEY_assign_RSA(signKey, rsakey);
 

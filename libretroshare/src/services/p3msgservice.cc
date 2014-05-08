@@ -1984,10 +1984,12 @@ bool p3MsgService::decryptMessage(const std::string& mId)
 
 			  RsTlvSecurityKey signature_key ;
 
-			  if(mIdService->getKey(senders_id,signature_key) && GxsSecurity::validateSignature((char*)decrypted_data,offset,signature_key,signature))
-				  signature_ok = true ;
+			  if(!mIdService->getKey(senders_id,signature_key) || signature_key.keyData.bin_data == NULL)
+				  std::cerr << "(EE) No key for checking signature from " << senders_id << ", can't veryfy signature." << std::endl;
+			  else if(!GxsSecurity::validateSignature((char*)decrypted_data,offset,signature_key,signature))
+				  std::cerr << "(EE) Signature was verified and it doesn't check! This is a security issue!" << std::endl;
 			  else
-				  std::cerr << "(!!) No key for checking signature from " << senders_id << ", or signature doesn't check." << std::endl;
+				  signature_ok = true ;
 
 			  offset += signature_size ;
 		  }
