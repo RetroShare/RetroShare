@@ -1555,26 +1555,39 @@ bool p3FeedReader::loadList(std::list<RsItem *>& load)
 		}
 	}
 
-	/* now sort msgs into feeds */
 	RsStackMutex stack(mFeedReaderMtx); /********** STACK LOCKED MTX ******/
 
-	std::map<std::string, RsFeedReaderMsg*>::iterator it1;
-	for (it1 = msgs.begin(); it1 != msgs.end(); ++it1) {
+	/* check feeds */
+	std::map<std::string, RsFeedReaderFeed*>::iterator feedIt;
+	for (feedIt = mFeeds.begin(); feedIt != mFeeds.end(); ++feedIt) {
+		RsFeedReaderFeed *feed = feedIt->second;
+		if (!feed->parentId.empty()) {
+			/* check parent */
+			if (mFeeds.find(feed->parentId) == mFeeds.end()) {
+				/* parent not found, clear it */
+				feed->parentId.clear();
+			}
+		}
+	}
+
+	/* now sort msgs into feeds */
+	std::map<std::string, RsFeedReaderMsg*>::iterator msgIt;
+	for (msgIt = msgs.begin(); msgIt != msgs.end(); ++msgIt) {
 		uint32_t msgId = 0;
-		if (sscanf(it1->first.c_str(), "%u", &msgId) == 1) {
-			std::map<std::string, RsFeedReaderFeed*>::iterator it2 = mFeeds.find(it1->second->feedId);
-			if (it2 == mFeeds.end()) {
+		if (sscanf(msgIt->first.c_str(), "%u", &msgId) == 1) {
+			feedIt = mFeeds.find(msgIt->second->feedId);
+			if (feedIt == mFeeds.end()) {
 				/* feed does not exist exists */
-				delete it1->second;
+				delete msgIt->second;
 				continue;
 			}
-			it2->second->msgs[it1->first] = it1->second;
+			feedIt->second->msgs[msgIt->first] = msgIt->second;
 			if (msgId + 1 > mNextMsgId) {
 				mNextMsgId = msgId + 1;
 			}
 		} else {
 			/* invalid msg id */
-			delete(it1->second);
+			delete(msgIt->second);
 		}
 	}
 

@@ -70,6 +70,9 @@ void p3FeedReaderThread::run()
 
 					RsFeedReaderErrorState result = download(feed, content, icon, errorString);
 					if (result == RS_FEED_ERRORSTATE_OK) {
+						/* trim */
+						XMLWrapper::trimString(content);
+
 						mFeedReader->onDownloadSuccess(feed.feedId, content, icon);
 					} else {
 						mFeedReader->onDownloadError(feed.feedId, result, errorString);
