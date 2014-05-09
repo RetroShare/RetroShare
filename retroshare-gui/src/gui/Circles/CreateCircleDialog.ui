@@ -147,16 +147,23 @@
                <number>0</number>
               </property>
               <item>
+               <widget class="QRadioButton" name="radioButton_ListAll">
+                <property name="text">
+                 <string>All</string>
+                </property>
+               </widget>
+              </item>
+              <item>
                <widget class="QRadioButton" name="radioButton_ListAllPGP">
                 <property name="text">
-                 <string>All PGP IDs</string>
+                 <string>Signed</string>
                 </property>
                </widget>
               </item>
               <item>
                <widget class="QRadioButton" name="radioButton_ListKnownPGP">
                 <property name="text">
-                 <string>Known PGP IDs</string>
+                 <string>Signed by known nodes</string>
                 </property>
                </widget>
               </item>

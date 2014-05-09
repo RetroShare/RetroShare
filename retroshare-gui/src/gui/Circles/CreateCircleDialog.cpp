@@ -76,7 +76,11 @@ CreateCircleDialog::CreateCircleDialog()
 	
 	ui.removeButton->setEnabled(false);
 	ui.addButton->setEnabled(false);
-	ui.radioButton_ListKnownPGP->setChecked(true);
+	ui.radioButton_ListAll->setChecked(true);
+
+	QObject::connect(ui.radioButton_ListAll, SIGNAL(toggled(bool)), this, SLOT(updateCircleGUI())) ;
+	QObject::connect(ui.radioButton_ListAllPGP, SIGNAL(toggled(bool)), this, SLOT(updateCircleGUI())) ;
+	QObject::connect(ui.radioButton_ListKnownPGP, SIGNAL(toggled(bool)), this, SLOT(updateCircleGUI())) ;
 
 	mIsExistingCircle = false;
 	mIsExternalCircle = true;
@@ -541,6 +545,7 @@ void CreateCircleDialog::loadIdentities(uint32_t token)
 	std::list<std::string> ids;
 	std::list<std::string>::iterator it;
 
+	bool acceptAnonymous = ui.radioButton_ListAll->isChecked();
 	bool acceptAllPGP = ui.radioButton_ListAllPGP->isChecked();
 	bool acceptKnownPGP = ui.radioButton_ListKnownPGP->isChecked();
 
@@ -560,15 +565,16 @@ void CreateCircleDialog::loadIdentities(uint32_t token)
 
 		/* do filtering */
 		bool ok = false;
-		if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID)
 		{
-			if (acceptAllPGP)
-			{
+			if (acceptAnonymous)
 				ok = true;
+			else if (acceptAllPGP) 
+			{
+				ok = data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID ;
 			}
 			else if (data.mPgpKnown)
 			{
-				ok = true;
+				ok = data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID ;
 			}
 		}
 
