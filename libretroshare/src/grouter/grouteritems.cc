@@ -450,7 +450,7 @@ uint32_t RsGRouterMatrixFriendListItem::serial_size() const
 {
 	uint32_t s = 8 ; 									// header
 	s += 4  ; 											// reverse_friend_indices.size()
-    s += RsFileHash::SIZE_IN_BYTES * reverse_friend_indices.size() ; // sha1 for published_key
+	s += RsPeerId::SIZE_IN_BYTES * reverse_friend_indices.size() ; // sha1 for published_key
 
 	return s ;
 }

@@ -553,7 +553,7 @@ std::set<uint32_t> p3GRouter::computeRoutingFriends(const std::vector<RsPeerId>&
 		int k=0; total=probas[0] ; while(total<r) total += probas[++k]; 
 
 #ifdef GROUTER_DEBUG
-		grouter_debug() << "    => Friend " << i << ", between 0 and " << p-1 << ": chose k=" << k << ", peer=" << pids[k] << " with probability " << probas[k] << std::endl;
+		grouter_debug() << "    => Friend " << i << ", between 0 and " << N-1 << ": chose k=" << k << ", peer=" << pids[k] << " with probability " << probas[k] << std::endl;
 #endif
 
 		res.insert(k) ;
@@ -772,6 +772,7 @@ void p3GRouter::handleRecvACKItem(RsGRouterACKItem *item)
 				grouter_debug() << "    ==> final weight : " << weight << std::endl;
 #endif
 				_routing_matrix.addRoutingClue(it->second.destination_key,item->PeerId(),weight) ;
+				_changed = true ;
 			}
 #ifdef GROUTER_DEBUG
 			grouter_debug() << "  Removing friend try for peer " << item->PeerId() << ". " << it->second.tried_friends.size() << " tries left." << std::endl;
