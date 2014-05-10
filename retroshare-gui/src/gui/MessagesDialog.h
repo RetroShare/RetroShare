@@ -27,9 +27,11 @@
 #include "mainpage.h"
 #include "ui_MessagesDialog.h"
 
+#define IMAGE_MESSAGES          ":/images/evolution.png"
+
 class MessageWidget;
 
-class MessagesDialog : public MainPage 
+class MessagesDialog : public MainPage
 {
   Q_OBJECT
 
@@ -40,6 +42,10 @@ public:
   MessagesDialog(QWidget *parent = 0);
   /** Default Destructor */
   ~MessagesDialog();
+
+  virtual QIcon iconPixmap() const { return QIcon(IMAGE_MESSAGES) ; } //MainPage
+  virtual QString pageName() const { return tr("Messages") ; } //MainPage
+  virtual QString helpText() const { return ""; } //MainPage
 
   virtual UserNotify *getUserNotify(QObject *parent);
 

@@ -44,6 +44,10 @@
 #define SETTING_LANGUAGE            "LanguageCode"
 #define SETTING_STYLE               "InterfaceStyle"
 #define SETTING_SHEETNAME           "SheetName"
+#define SETTING_PAGEBUTTONLOC       "PageButtonLocation"
+#define SETTING_ACTIONBUTTONLOC     "ActionButtonLocation"
+#define SETTING_TOOLBUTTONSTYLE     "ToolButtonStyle"
+#define SETTING_TOOLBUTTONSIZE      "ToolButtonSize"
 
 #define SETTING_DATA_DIRECTORY      "DataDirectory"
 #define SETTING_BWGRAPH_FILTER        "StatisticDialog/BWLineFilter"
@@ -68,6 +72,12 @@
 /* Default bandwidth graph settings */
 #define DEFAULT_BWGRAPH_FILTER          (BWGRAPH_SEND|BWGRAPH_REC)
 #define DEFAULT_BWGRAPH_ALWAYS_ON_TOP   false
+
+/* values for ToolButtonStyle */
+#define SETTING_VALUE_TOOLBUTTONSTYLE_ICONONLY        1
+#define SETTING_VALUE_TOOLBUTTONSTYLE_TEXTONLY        2
+#define SETTING_VALUE_TOOLBUTTONSTYLE_TEXTBESIDEICON  3
+#define SETTING_VALUE_TOOLBUTTONSTYLE_TEXTUNDERICON   4
 
 // the one and only global settings object
 RshareSettings *Settings = NULL;
@@ -171,6 +181,102 @@ void RshareSettings::setSheetName(QString sheet)
     setValue(SETTING_SHEETNAME, sheet);
 }
 
+/** Gets the page button Location.*/
+bool RshareSettings::getPageButtonLoc()
+{
+  return value(SETTING_PAGEBUTTONLOC, false).toBool();
+}
+/** Sets the page button Location.*/
+void RshareSettings::setPageButtonLoc(bool onToolBar)
+{
+    setValue(SETTING_PAGEBUTTONLOC, onToolBar);
+}
+
+/** Gets the action button Location.*/
+bool RshareSettings::getActionButtonLoc()
+{
+  return value(SETTING_ACTIONBUTTONLOC, true).toBool();
+}
+/** Sets the action button Location.*/
+void RshareSettings::setActionButtonLoc(bool onToolBar)
+{
+    setValue(SETTING_ACTIONBUTTONLOC, onToolBar);
+}
+
+/** Gets the tool button's style.*/
+Qt::ToolButtonStyle RshareSettings::getToolButtonStyle()
+{
+  int intValue=value(SETTING_TOOLBUTTONSTYLE, SETTING_VALUE_TOOLBUTTONSTYLE_TEXTUNDERICON).toInt();
+  switch (intValue)
+  {
+    case SETTING_VALUE_TOOLBUTTONSTYLE_ICONONLY:
+    return Qt::ToolButtonIconOnly;
+    case SETTING_VALUE_TOOLBUTTONSTYLE_TEXTONLY:
+    return Qt::ToolButtonTextOnly;
+    case SETTING_VALUE_TOOLBUTTONSTYLE_TEXTBESIDEICON:
+    return Qt::ToolButtonTextBesideIcon;
+    case SETTING_VALUE_TOOLBUTTONSTYLE_TEXTUNDERICON:
+    default:
+    return Qt::ToolButtonTextUnderIcon;
+  }
+}
+/** Sets the tool button's style.*/
+void RshareSettings::setToolButtonStyle(Qt::ToolButtonStyle style)
+{
+  switch (style)
+  {
+    case Qt::ToolButtonIconOnly:
+      setValue(SETTING_TOOLBUTTONSTYLE, SETTING_VALUE_TOOLBUTTONSTYLE_ICONONLY);
+    break;
+    case Qt::ToolButtonTextOnly:
+      setValue(SETTING_TOOLBUTTONSTYLE, SETTING_VALUE_TOOLBUTTONSTYLE_TEXTONLY);
+    break;
+    case Qt::ToolButtonTextBesideIcon:
+      setValue(SETTING_TOOLBUTTONSTYLE, SETTING_VALUE_TOOLBUTTONSTYLE_TEXTBESIDEICON);
+    break;
+    case Qt::ToolButtonTextUnderIcon:
+    default:
+      setValue(SETTING_TOOLBUTTONSTYLE, SETTING_VALUE_TOOLBUTTONSTYLE_TEXTUNDERICON);
+  }
+}
+
+/** Gets the tool button's size.*/
+int RshareSettings::getToolButtonSize()
+{
+  int intValue=value(SETTING_TOOLBUTTONSIZE, 24).toInt();
+  switch (intValue)
+  {
+    case 8:
+    return 8;
+    case 16:
+    return 16;
+    case 24:
+    default:
+    return 24;
+    case 32:
+    return 32;
+  }
+}
+
+/** Sets the tool button's size.*/
+void RshareSettings::setToolButtonSize(int size)
+{
+  switch (size)
+  {
+    case 8:
+      setValue(SETTING_TOOLBUTTONSIZE, 8);
+    break;
+    case 16:
+      setValue(SETTING_TOOLBUTTONSIZE, 16);
+    break;
+    case 24:
+    default:
+      setValue(SETTING_TOOLBUTTONSIZE, 24);
+    break;
+    case 32:
+      setValue(SETTING_TOOLBUTTONSIZE, 32);
+  }
+}
 static QString getKeyForLastDir(RshareSettings::enumLastDir type)
 {
     switch (type) {

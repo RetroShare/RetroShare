@@ -27,6 +27,9 @@
 
 #include "gui/feeds/FeedHolder.h"
 #include <retroshare-gui/RsAutoUpdatePage.h>
+
+#define IMAGE_NEWSFEED          ":/images/newsfeed/news-feed-32.png"
+
 class RsFeedItem;
 
 class ForumNewItem;
@@ -43,6 +46,10 @@ public:
   NewsFeed(QWidget *parent = 0);
   /** Default Destructor */
   virtual ~NewsFeed();
+
+  virtual QIcon iconPixmap() const { return QIcon(IMAGE_NEWSFEED) ; } //MainPage
+  virtual QString pageName() const { return tr("News feed") ; } //MainPage
+  virtual QString helpText() const { return ""; } //MainPage
 
   virtual UserNotify *getUserNotify(QObject *parent);
 

@@ -28,6 +28,7 @@
 
 #include <QTimer>
 
+#define IMG_HELP                ":/images/help24.png"
 
 class GetStartedDialog : public MainPage
 {
@@ -38,6 +39,10 @@ public:
 	GetStartedDialog(QWidget *parent = 0);
 	/** Default Destructor */
 	~GetStartedDialog();
+
+	virtual QIcon iconPixmap() const { return QIcon(IMG_HELP) ; } //MainPage
+	virtual QString pageName() const { return tr("Getting Started") ; } //MainPage
+	virtual QString helpText() const { return ""; } //MainPage
 
 	// Single Point for (English) Text of the Invitation.
 	// This is used by other classes.

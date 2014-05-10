@@ -35,6 +35,8 @@
 #include "gui/gxs/GxsCommentContainer.h"
 #include "gui/feeds/FeedHolder.h"
 
+#define IMAGE_POSTED            ":/images/posted_32.png"
+
 class PostedItem;
 
 /*********************** **** **** **** ***********************/
@@ -54,6 +56,11 @@ class PostedListDialog : public RsGxsUpdateBroadcastPage, public FeedHolder, pub
 
 public:
 	PostedListDialog(QWidget *parent = 0);
+	
+	virtual QIcon iconPixmap() const { return QIcon(IMAGE_POSTED) ; } //MainPage
+	virtual QString pageName() const { return tr("Posted Links") ; } //MainPage
+	virtual QString helpText() const { return ""; } //MainPage
+	
 
 	// Overloaded from FeedHolder.
 	virtual QScrollArea *getScrollArea();

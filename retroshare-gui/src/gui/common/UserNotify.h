@@ -24,10 +24,12 @@
 
 #include <QObject>
 #include <QSystemTrayIcon>
+#include <QListWidgetItem>
 
 class QToolBar;
 class QToolButton;
 class QAction;
+//class QListWidgetItem;
 
 class UserNotify : public QObject
 {
@@ -36,7 +38,7 @@ class UserNotify : public QObject
 public:
 	UserNotify(QObject *parent = 0);
 
-	void initialize(QToolBar *mainToolBar, QAction *mainAction);
+	void initialize(QToolBar *mainToolBar, QAction *mainAction, QListWidgetItem *listItem);
 	void createIcons(QMenu *notifyMenu);
 
 	virtual bool hasSetting(QString &/*name*/) { return false; }
@@ -67,6 +69,7 @@ private:
 
 	QToolButton *mMainToolButton;
 	QAction *mMainAction;
+	QListWidgetItem *mListItem;
 	QSystemTrayIcon *mTrayIcon;
 	QAction *mNotifyIcon;
 	unsigned int mNewCount;

@@ -28,6 +28,8 @@
 #include "util/TokenQueue.h"
 #include "ui_CirclesDialog.h"
 
+#define IMAGE_CIRCLES           ":/images/circles/circles_32.png"
+
 class UIStateHelper;
 
 class CirclesDialog : public RsGxsUpdateBroadcastPage, public TokenResponse
@@ -36,6 +38,10 @@ class CirclesDialog : public RsGxsUpdateBroadcastPage, public TokenResponse
 
 public:
 	CirclesDialog(QWidget *parent = 0);
+
+	virtual QIcon iconPixmap() const { return QIcon(IMAGE_CIRCLES) ; } //MainPage
+	virtual QString pageName() const { return tr("Circles") ; } //MainPage
+	virtual QString helpText() const { return ""; } //MainPage
 
 	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 

@@ -34,6 +34,7 @@ class MainWindow;
 class QComboBox;
 class QLabel;
 class QActionGroup;
+class QListWidgetItem;
 class Idle;
 class PeerStatus;
 class GxsChannelDialog ;
@@ -168,6 +169,8 @@ public slots:
 
     void retroshareLinkActivated(const QUrl &url);
     void externalLinkActivated(const QUrl &url);
+    //! Go to a specific part of the control panel.
+    void setNewPage(int page);
 
 protected:
     /** Default Constructor */
@@ -212,6 +215,7 @@ private slots:
     void showSettings();
     void statusChangedMenu(QAction *pAction);
     void statusChangedComboBox(int index);
+    void settingsChanged();
 
     /** Called when user attempts to quit via quit button*/
     void doQuit();
@@ -219,6 +223,8 @@ private slots:
     void updateTrayCombine();
 
 private:
+    void initStackedPage();
+    void addPage(MainPage *page, QActionGroup *grp, 	QList<QPair<MainPage *, QPair<QAction *, QListWidgetItem *> > > *notify);
     void createTrayIcon();
     void createNotifyIcons();
     static MainWindow *_instance;

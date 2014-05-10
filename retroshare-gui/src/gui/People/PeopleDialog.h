@@ -30,6 +30,8 @@
 
 #include "ui_PeopleDialog.h"
 
+#define IMAGE_IDENTITY          ":/images/identity/identities_32.png"
+
 class UIStateHelper;
 
 class PeopleDialog : public RsGxsUpdateBroadcastPage, public Ui::PeopleDialog
@@ -38,6 +40,10 @@ class PeopleDialog : public RsGxsUpdateBroadcastPage, public Ui::PeopleDialog
 
 	public:
 		PeopleDialog(QWidget *parent = 0);
+
+		virtual QIcon iconPixmap() const { return QIcon(IMAGE_IDENTITY) ; } //MainPage
+		virtual QString pageName() const { return tr("People") ; } //MainPage
+		virtual QString helpText() const { return ""; } //MainPage
 
 	protected:
 		virtual void updateDisplay(bool complete);

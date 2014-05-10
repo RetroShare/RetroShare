@@ -31,6 +31,7 @@ UserNotify::UserNotify(QObject *parent) :
 {
 	mMainToolButton = NULL;
 	mMainAction = NULL;
+	mListItem = NULL;
 	mTrayIcon = NULL;
 	mNotifyIcon = NULL;
 	mNewCount = 0;
@@ -39,7 +40,7 @@ UserNotify::UserNotify(QObject *parent) :
 	connect(rApp, SIGNAL(blink(bool)), this, SLOT(blink(bool)));
 }
 
-void UserNotify::initialize(QToolBar *mainToolBar, QAction *mainAction)
+void UserNotify::initialize(QToolBar *mainToolBar, QAction *mainAction, QListWidgetItem *listItem)
 {
 	mMainAction = mainAction;
 	if (mMainAction) {
@@ -47,6 +48,10 @@ void UserNotify::initialize(QToolBar *mainToolBar, QAction *mainAction)
 		if (mainToolBar) {
 			mMainToolButton = dynamic_cast<QToolButton*>(mainToolBar->widgetForAction(mMainAction));
 		}
+	}
+	mListItem = listItem;
+	if (mListItem && !mMainAction) {
+		mButtonText = mMainAction->text();
 	}
 }
 
@@ -94,6 +99,14 @@ void UserNotify::updateIcon()
 		mMainAction->setFont(font);
 	}
 
+	if (mListItem) {
+		mListItem->setIcon(getMainIcon(count > 0));
+		mListItem->setText((count > 0) ? QString("%1 (%2)").arg(mButtonText).arg(count) : mButtonText);
+
+		QFont font = mListItem->font();
+		font.setBold(count > 0);
+		mListItem->setFont(font);
+	}
 	if (mMainToolButton) {
 		mMainToolButton->setStyleSheet((count > 0) ? "QToolButton { color: #E21D3A; }" : "");
 

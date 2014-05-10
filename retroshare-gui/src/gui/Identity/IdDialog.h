@@ -34,6 +34,8 @@
 #include "gui/Identity/IdEditDialog.h"
 #include "util/TokenQueue.h"
 
+#define IMAGE_IDDIALOG          ":/images/identity/identities_32.png"
+
 class UIStateHelper;
 
 class IdDialog : public RsGxsUpdateBroadcastPage, public TokenResponse
@@ -42,6 +44,10 @@ class IdDialog : public RsGxsUpdateBroadcastPage, public TokenResponse
 
 public:
 	IdDialog(QWidget *parent = 0);
+
+	virtual QIcon iconPixmap() const { return QIcon(IMAGE_IDDIALOG) ; } //MainPage
+	virtual QString pageName() const { return tr("Itentities") ; } //MainPage
+	virtual QString helpText() const { return ""; } //MainPage
 
 	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 

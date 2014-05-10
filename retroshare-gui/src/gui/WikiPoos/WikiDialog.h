@@ -35,6 +35,8 @@
 
 #include <map>
 
+#define IMAGE_WIKI              ":/images/wikibook_32.png"
+
 class WikiAddDialog;
 class WikiEditDialog;
 
@@ -44,6 +46,11 @@ class WikiDialog : public MainPage, public TokenResponse
 
 public:
 	WikiDialog(QWidget *parent = 0);
+	
+	virtual QIcon iconPixmap() const { return QIcon(IMAGE_WIKI) ; } //MainPage
+	virtual QString pageName() const { return tr("Wiki Pages") ; } //MainPage
+	virtual QString helpText() const { return ""; } //MainPage
+
 
 void 	loadRequest(const TokenQueue *queue, const TokenRequest &req);
 

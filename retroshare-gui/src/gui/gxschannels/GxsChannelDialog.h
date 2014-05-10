@@ -24,6 +24,8 @@
 
 #include "gui/gxs/GxsGroupFrameDialog.h"
 
+#define IMAGE_GXSCHANNELS       ":/images/channels.png"
+
 class GxsChannelDialog : public GxsGroupFrameDialog
 {
 	Q_OBJECT
@@ -33,6 +35,10 @@ public:
 	GxsChannelDialog(QWidget *parent = 0);
 	/** Default Destructor */
 	~GxsChannelDialog();
+
+	virtual QIcon iconPixmap() const { return QIcon(IMAGE_GXSCHANNELS) ; } //MainPage
+	virtual QString pageName() const { return tr("Channels") ; } //MainPage
+	virtual QString helpText() const { return ""; } //MainPage
 
 //	virtual UserNotify *getUserNotify(QObject *parent);
 

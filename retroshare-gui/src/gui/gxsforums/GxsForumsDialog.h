@@ -24,6 +24,8 @@
 
 #include "gui/gxs/GxsGroupFrameDialog.h"
 
+#define IMAGE_GXSFORUMS         ":/images/konversation.png"
+
 class GxsForumsDialog : public GxsGroupFrameDialog
 {
 	Q_OBJECT
@@ -31,6 +33,10 @@ class GxsForumsDialog : public GxsGroupFrameDialog
 public:
 	GxsForumsDialog(QWidget *parent = 0);
 	~GxsForumsDialog();
+
+	virtual QIcon iconPixmap() const { return QIcon(IMAGE_GXSFORUMS) ; } //MainPage
+	virtual QString pageName() const { return tr("Forums") ; } //MainPage
+	virtual QString helpText() const { return ""; } //MainPage
 
 //	virtual UserNotify *getUserNotify(QObject *parent);
 

@@ -27,6 +27,8 @@
 
 #include "ui_FriendsDialog.h"
 
+#define IMAGE_PEERS         	":/images/groupchat.png"
+
 class QFont;
 class QAction;
 class QTextEdit;
@@ -56,6 +58,10 @@ public:
     FriendsDialog(QWidget *parent = 0);
     /** Default Destructor */
     ~FriendsDialog ();
+
+    virtual QIcon iconPixmap() const { return QIcon(IMAGE_PEERS) ; } //MainPage
+    virtual QString pageName() const { return tr("Network") ; } //MainPage
+    virtual QString helpText() const { return ""; } //MainPage
 
     virtual UserNotify *getUserNotify(QObject *parent);
 

@@ -111,7 +111,27 @@ public:
   void setSheetName(QString sheet);
   /** Gets the stylesheet */
   QString getSheetName();
-  
+
+  /** Gets the page button Location.*/
+  bool getPageButtonLoc();
+  /** Sets the page button Location.*/
+  void setPageButtonLoc(bool onToolBar);
+
+  /** Gets the action button Location.*/
+  bool getActionButtonLoc();
+  /** Sets the action button Location.*/
+  void setActionButtonLoc(bool onToolBar);
+
+  /** Gets the tool button's style.*/
+  Qt::ToolButtonStyle getToolButtonStyle();
+  /** Sets the tool button's style.*/
+  void setToolButtonStyle(Qt::ToolButtonStyle style);
+
+  /** Gets the tool button's size.*/
+  int getToolButtonSize();
+  /** Sets the tool button's size.*/
+  void setToolButtonSize(int size);
+
   /** Returns true if RetroShare's main window should be visible when the
   * application starts. */
   bool getStartMinimized();

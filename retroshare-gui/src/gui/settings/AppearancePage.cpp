@@ -35,7 +35,7 @@ AppearancePage::AppearancePage(QWidget * parent, Qt::WindowFlags flags)
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
 
-	connect(ui.styleSheetCombo, SIGNAL(activated(int)), this, SLOT(loadStyleSheet(int)));
+	connect(ui.cmboStyleSheet, SIGNAL(activated(int)), this, SLOT(loadStyleSheet(int)));
 
 	/* Populate combo boxes */
 	foreach (QString code, LanguageSupport::languageCodes()) {
@@ -46,13 +46,13 @@ AppearancePage::AppearancePage(QWidget * parent, Qt::WindowFlags flags)
 	}
 
 	// add empty entry representing "no style sheet"
-	ui.styleSheetCombo->addItem("", "");
+	ui.cmboStyleSheet->addItem("", "");
 
 	QMap<QString, QString> styleSheets;
 	Rshare::getAvailableStyleSheets(styleSheets);
 
 	foreach (QString name, styleSheets.keys()) {
-		ui.styleSheetCombo->addItem(name, styleSheets[name]);
+		ui.cmboStyleSheet->addItem(name, styleSheets[name]);
 	}
 
 	/* Hide platform specific features */
@@ -69,7 +69,39 @@ bool AppearancePage::save(QString &errmsg)
 
 	Settings->setLanguageCode(languageCode);
 	Settings->setInterfaceStyle(ui.cmboStyle->currentText());
-	Settings->setSheetName(ui.styleSheetCombo->itemData(ui.styleSheetCombo->currentIndex()).toString());
+	Settings->setSheetName(ui.cmboStyleSheet->itemData(ui.cmboStyleSheet->currentIndex()).toString());
+	Settings->setPageButtonLoc(ui.rbtPageOnToolBar->isChecked());
+	Settings->setActionButtonLoc(ui.rbtActionOnToolBar->isChecked());
+	switch (ui.cmboTollButtonsStyle->currentIndex())
+	{
+		case 0:
+			Settings->setToolButtonStyle(Qt::ToolButtonIconOnly);
+		break;
+		case 1:
+			Settings->setToolButtonStyle(Qt::ToolButtonTextOnly);
+		break;
+		case 2:
+			Settings->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+		break;
+		case 3:
+		default:
+			Settings->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+	}
+	switch (ui.cmboTollButtonsSize->currentIndex())
+	{
+		case 0:
+			Settings->setToolButtonSize(8);
+		break;
+		case 1:
+			Settings->setToolButtonSize(16);
+		break;
+		case 2:
+		default:
+			Settings->setToolButtonSize(24);
+		break;
+		case 3:
+			Settings->setToolButtonSize(32);
+	}
 
 	/* Set to new style */
 	Rshare::setStyle(ui.cmboStyle->currentText());
@@ -86,15 +118,50 @@ void AppearancePage::load()
 	index = ui.cmboStyle->findData(Rshare::style().toLower());
 	ui.cmboStyle->setCurrentIndex(index);
 
-	index = ui.styleSheetCombo->findData(Settings->getSheetName());
+	index = ui.cmboStyleSheet->findData(Settings->getSheetName());
 	if (index == -1) {
 		/* set standard "no style sheet" */
-		index = ui.styleSheetCombo->findData("");
+		index = ui.cmboStyleSheet->findData("");
 	}
-	ui.styleSheetCombo->setCurrentIndex(index);
+	ui.cmboStyleSheet->setCurrentIndex(index);
+
+	ui.rbtPageOnToolBar->setChecked(Settings->getPageButtonLoc());
+	ui.rbtPageOnListItem->setChecked(!Settings->getPageButtonLoc());
+	ui.rbtActionOnToolBar->setChecked(Settings->getActionButtonLoc());
+	ui.rbtActionOnListItem->setChecked(!Settings->getActionButtonLoc());
+	switch (Settings->getToolButtonStyle())
+	{
+		case Qt::ToolButtonIconOnly:
+			ui.cmboTollButtonsStyle->setCurrentIndex(0);
+		break;
+		case Qt::ToolButtonTextOnly:
+			ui.cmboTollButtonsStyle->setCurrentIndex(1);
+		break;
+		case Qt::ToolButtonTextBesideIcon:
+			ui.cmboTollButtonsStyle->setCurrentIndex(2);
+		break;
+		case Qt::ToolButtonTextUnderIcon:
+		default:
+			ui.cmboTollButtonsStyle->setCurrentIndex(3);
+	}
+	switch (Settings->getToolButtonSize())
+	{
+		case 8:
+			ui.cmboTollButtonsSize->setCurrentIndex(0);
+		break;
+		case 16:
+			ui.cmboTollButtonsSize->setCurrentIndex(1);
+		break;
+		case 24:
+		default:
+			ui.cmboTollButtonsSize->setCurrentIndex(2);
+		break;
+		case 32:
+			ui.cmboTollButtonsSize->setCurrentIndex(3);
+	}
 }
 
 void AppearancePage::loadStyleSheet(int index)
 {
-	Rshare::loadStyleSheet(ui.styleSheetCombo->itemData(index).toString());
+	Rshare::loadStyleSheet(ui.cmboStyleSheet->itemData(index).toString());
 }

@@ -5,6 +5,8 @@
 #include "ui_ChatLobbyWidget.h"
 #include "RsAutoUpdatePage.h"
 
+#define IMAGE_CHATLOBBY			    ":/images/chat_32.png"
+
 class RSTreeWidgetItemCompareRole;
 class ChatTabWidget ;
 class ChatLobbyDialog ;
@@ -17,7 +19,7 @@ struct ChatLobbyInfoStruct
 	time_t last_typing_event ;
 };
 
-class ChatLobbyWidget : public RsAutoUpdatePage, Ui::ChatLobbyWidget
+class ChatLobbyWidget : public RsAutoUpdatePage
 {
 	Q_OBJECT
 
@@ -27,6 +29,10 @@ public:
 
 	/** Default destructor */
 	~ChatLobbyWidget();
+
+	virtual QIcon iconPixmap() const { return QIcon(IMAGE_CHATLOBBY) ; } //MainPage
+	virtual QString pageName() const { return tr("Chat Lobbies") ; } //MainPage
+	virtual QString helpText() const { return ""; } //MainPage
 
 	virtual void updateDisplay();
 
@@ -85,8 +91,11 @@ private:
 
     /** Defines the actions for the header context menu */
     QAction* showUserCountAct;
-    QAction* showTopicAct;
-    QAction* showSubscribeAct;
-    int getNumColVisible();
+	QAction* showTopicAct;
+	QAction* showSubscribeAct;
+	int getNumColVisible();
+
+	/* UI - from Designer */
+	Ui::ChatLobbyWidget ui;
 };
 

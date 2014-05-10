@@ -25,6 +25,7 @@
 
 #include <QWidget>
 #include <QTextBrowser>
+#include <QIcon>
 
 class UserNotify;
 class QAbstractButton ;
@@ -32,22 +33,40 @@ class FloatingHelpBrowser;
 
 class MainPage : public QWidget
 {
-	Q_OBJECT 
+	Q_OBJECT
 
-	public:
-		/** Default Constructor */
-		MainPage(QWidget *parent = 0, Qt::WindowFlags flags = 0) ;
+public:
+	/** Default Constructor */
+	MainPage(QWidget *parent = 0, Qt::WindowFlags flags = 0);
 
-		virtual void retranslateUi() {}
-		virtual UserNotify *getUserNotify(QObject */*parent*/) { return NULL; }
+	// Icon to be used to display the main page.
+	//
+	virtual QIcon iconPixmap() const { return mIcon ; }
+	void setIconPixmap(QIcon icon) { mIcon = icon; }
+
+	// Name of the page, to put in the leftside list and action name
+	//
+	virtual QString pageName() const { return mName ; }
+	void setPageName(QString name) { mName = name; }
+
+	// Text to be used to display in the help browser
+	//
+	virtual QString helpText() const { return mHelp ; }
+	void setHelpText(QString help) { mHelp = help; }
+
+	virtual void retranslateUi() {}
+	virtual UserNotify *getUserNotify(QObject */*parent*/) { return NULL; }
 
 		// Overload this to add some help info  to the page. The way the info is 
 		// shown is handled by showHelp() below;
-		//
-		void registerHelpButton(QAbstractButton *button, const QString& help_html_text) ;
+	//
+	void registerHelpButton(QAbstractButton *button, const QString& help_html_text) ;
 
-	private:
-		FloatingHelpBrowser *mHelpBrowser ;
+private:
+	FloatingHelpBrowser *mHelpBrowser ;
+	QIcon mIcon;
+	QString mName;
+	QString mHelp;
 };
 
 #endif

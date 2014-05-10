@@ -47,33 +47,33 @@
 #define IMAGE_AUTOSUBSCRIBE   ":images/accepted16.png"
 
 ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
-	: RsAutoUpdatePage(5000, parent, flags)
+  : RsAutoUpdatePage(5000, parent, flags)
 {
-	setupUi(this);
+	ui.setupUi(this);
 
-    m_bProcessSettings = false;
+	m_bProcessSettings = false;
 
-	QObject::connect(NotifyQt::getInstance(), SIGNAL(lobbyListChanged()), SLOT(lobbyChanged()));
-	QObject::connect(NotifyQt::getInstance(), SIGNAL(chatLobbyEvent(qulonglong,int,const QString&,const QString&)), this, SLOT(displayChatLobbyEvent(qulonglong,int,const QString&,const QString&)));
-	QObject::connect(NotifyQt::getInstance(), SIGNAL(chatLobbyInviteReceived()), this, SLOT(readChatLobbyInvites()));
+	QObject::connect( NotifyQt::getInstance(), SIGNAL(lobbyListChanged()), SLOT(lobbyChanged()));
+	QObject::connect( NotifyQt::getInstance(), SIGNAL(chatLobbyEvent(qulonglong,int,const QString&,const QString&)), this, SLOT(displayChatLobbyEvent(qulonglong,int,const QString&,const QString&)));
+	QObject::connect( NotifyQt::getInstance(), SIGNAL(chatLobbyInviteReceived()), this, SLOT(readChatLobbyInvites()));
 
-	QObject::connect(lobbyTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(lobbyTreeWidgetCustomPopupMenu(QPoint)));
-	QObject::connect(lobbyTreeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(itemDoubleClicked(QTreeWidgetItem*,int)));
-	QObject::connect(lobbyTreeWidget, SIGNAL(itemSelectionChanged()), this, SLOT(updateCurrentLobby()));
+	QObject::connect( ui.lobbyTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(lobbyTreeWidgetCustomPopupMenu(QPoint)));
+	QObject::connect( ui.lobbyTreeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(itemDoubleClicked(QTreeWidgetItem*,int)));
+	QObject::connect( ui.lobbyTreeWidget, SIGNAL(itemSelectionChanged()), this, SLOT(updateCurrentLobby()));
 
-	QObject::connect( filterLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterItems(QString)));
-	QObject::connect( filterLineEdit, SIGNAL(filterChanged(int)), this, SLOT(filterColumnChanged(int)));
-	QObject::connect( createlobbytoolButton, SIGNAL(clicked()), this, SLOT(createChatLobby()));
+	QObject::connect( ui.filterLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterItems(QString)));
+	QObject::connect( ui.filterLineEdit, SIGNAL(filterChanged(int)), this, SLOT(filterColumnChanged(int)));
+	QObject::connect( ui.createlobbytoolButton, SIGNAL(clicked()), this, SLOT(createChatLobby()));
 
 	compareRole = new RSTreeWidgetItemCompareRole;
 	compareRole->setRole(COLUMN_NAME, ROLE_SORT);
 
-	lobbyTreeWidget->setColumnCount(COLUMN_COUNT);
-	lobbyTreeWidget->sortItems(COLUMN_NAME, Qt::AscendingOrder);
+	ui.lobbyTreeWidget->setColumnCount(COLUMN_COUNT);
+	ui.lobbyTreeWidget->sortItems(COLUMN_NAME, Qt::AscendingOrder);
 
-	lobbyTreeWidget->setContextMenuPolicy(Qt::CustomContextMenu) ;
+	ui.lobbyTreeWidget->setContextMenuPolicy(Qt::CustomContextMenu) ;
 
-	QTreeWidgetItem *headerItem = lobbyTreeWidget->headerItem();
+	QTreeWidgetItem *headerItem = ui.lobbyTreeWidget->headerItem();
 	headerItem->setText(COLUMN_NAME, tr("Name"));
 	headerItem->setText(COLUMN_USER_COUNT, tr("Count"));
 	headerItem->setText(COLUMN_TOPIC, tr("Topic"));
@@ -81,56 +81,56 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 	headerItem->setTextAlignment(COLUMN_NAME, Qt::AlignHCenter | Qt::AlignVCenter);
 	headerItem->setTextAlignment(COLUMN_TOPIC, Qt::AlignHCenter | Qt::AlignVCenter);
 	headerItem->setTextAlignment(COLUMN_USER_COUNT, Qt::AlignHCenter | Qt::AlignVCenter);
-    headerItem->setTextAlignment(COLUMN_SUBSCRIBED, Qt::AlignHCenter | Qt::AlignVCenter);
+	headerItem->setTextAlignment(COLUMN_SUBSCRIBED, Qt::AlignHCenter | Qt::AlignVCenter);
 
-	QHeaderView *header = lobbyTreeWidget->header();
+	QHeaderView *header = ui.lobbyTreeWidget->header();
 	QHeaderView_setSectionResizeMode(header, COLUMN_NAME, QHeaderView::Interactive);
 	QHeaderView_setSectionResizeMode(header, COLUMN_USER_COUNT, QHeaderView::Interactive);
-    QHeaderView_setSectionResizeMode(header, COLUMN_TOPIC, QHeaderView::Interactive);
+	QHeaderView_setSectionResizeMode(header, COLUMN_TOPIC, QHeaderView::Interactive);
     QHeaderView_setSectionResizeMode(header, COLUMN_SUBSCRIBED, QHeaderView::Interactive);
 
     privateSubLobbyItem = new RSTreeWidgetItem(compareRole, TYPE_FOLDER);
     privateSubLobbyItem->setText(COLUMN_NAME, tr("Private Subscribed Lobbies"));
-    privateSubLobbyItem->setData(COLUMN_NAME, ROLE_SORT, "1");
-    //	privateLobbyItem->setIcon(COLUMN_NAME, QIcon(IMAGE_PRIVATE));
-    privateSubLobbyItem->setData(COLUMN_DATA, ROLE_PRIVACYLEVEL, RS_CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE);
-    lobbyTreeWidget->insertTopLevelItem(0, privateSubLobbyItem);
+	privateSubLobbyItem->setData(COLUMN_NAME, ROLE_SORT, "1");
+	//	privateLobbyItem->setIcon(COLUMN_NAME, QIcon(IMAGE_PRIVATE));
+	privateSubLobbyItem->setData(COLUMN_DATA, ROLE_PRIVACYLEVEL, RS_CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE);
+	ui.lobbyTreeWidget->insertTopLevelItem(0, privateSubLobbyItem);
 
-    publicSubLobbyItem = new RSTreeWidgetItem(compareRole, TYPE_FOLDER);
-    publicSubLobbyItem->setText(COLUMN_NAME, tr("Public Subscribed Lobbies"));
-    publicSubLobbyItem->setData(COLUMN_NAME, ROLE_SORT, "2");
-    //	publicLobbyItem->setIcon(COLUMN_NAME, QIcon(IMAGE_PUBLIC));
-    publicSubLobbyItem->setData(COLUMN_DATA, ROLE_PRIVACYLEVEL, RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC);
-    lobbyTreeWidget->insertTopLevelItem(1, publicSubLobbyItem);
+	publicSubLobbyItem = new RSTreeWidgetItem(compareRole, TYPE_FOLDER);
+	publicSubLobbyItem->setText(COLUMN_NAME, tr("Public Subscribed Lobbies"));
+	publicSubLobbyItem->setData(COLUMN_NAME, ROLE_SORT, "2");
+	//	publicLobbyItem->setIcon(COLUMN_NAME, QIcon(IMAGE_PUBLIC));
+	publicSubLobbyItem->setData(COLUMN_DATA, ROLE_PRIVACYLEVEL, RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC);
+	ui.lobbyTreeWidget->insertTopLevelItem(1, publicSubLobbyItem);
 
 	privateLobbyItem = new RSTreeWidgetItem(compareRole, TYPE_FOLDER);
 	privateLobbyItem->setText(COLUMN_NAME, tr("Private Lobbies"));
-    privateLobbyItem->setData(COLUMN_NAME, ROLE_SORT, "3");
-//	privateLobbyItem->setIcon(COLUMN_NAME, QIcon(IMAGE_PRIVATE));
+	privateLobbyItem->setData(COLUMN_NAME, ROLE_SORT, "3");
+	//	privateLobbyItem->setIcon(COLUMN_NAME, QIcon(IMAGE_PRIVATE));
 	privateLobbyItem->setData(COLUMN_DATA, ROLE_PRIVACYLEVEL, RS_CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE);
-    lobbyTreeWidget->insertTopLevelItem(2, privateLobbyItem);
+	ui.lobbyTreeWidget->insertTopLevelItem(2, privateLobbyItem);
 
 	publicLobbyItem = new RSTreeWidgetItem(compareRole, TYPE_FOLDER);
 	publicLobbyItem->setText(COLUMN_NAME, tr("Public Lobbies"));
-    publicLobbyItem->setData(COLUMN_NAME, ROLE_SORT, "4");
-//	publicLobbyItem->setIcon(COLUMN_NAME, QIcon(IMAGE_PUBLIC));
+	publicLobbyItem->setData(COLUMN_NAME, ROLE_SORT, "4");
+	//	publicLobbyItem->setIcon(COLUMN_NAME, QIcon(IMAGE_PUBLIC));
 	publicLobbyItem->setData(COLUMN_DATA, ROLE_PRIVACYLEVEL, RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC);
-    lobbyTreeWidget->insertTopLevelItem(3, publicLobbyItem);
+	ui.lobbyTreeWidget->insertTopLevelItem(3, publicLobbyItem);
 
-	lobbyTreeWidget->expandAll();
-    lobbyTreeWidget->setColumnHidden(COLUMN_NAME,false) ;
-    lobbyTreeWidget->setColumnHidden(COLUMN_USER_COUNT,true) ;
-    lobbyTreeWidget->setColumnHidden(COLUMN_TOPIC,true) ;
-    lobbyTreeWidget->setColumnHidden(COLUMN_SUBSCRIBED,true) ;
-	lobbyTreeWidget->setSortingEnabled(true) ;
+	ui.lobbyTreeWidget->expandAll();
+	ui.lobbyTreeWidget->setColumnHidden(COLUMN_NAME,false) ;
+	ui.lobbyTreeWidget->setColumnHidden(COLUMN_USER_COUNT,true) ;
+	ui.lobbyTreeWidget->setColumnHidden(COLUMN_TOPIC,true) ;
+	ui.lobbyTreeWidget->setColumnHidden(COLUMN_SUBSCRIBED,true) ;
+	ui.lobbyTreeWidget->setSortingEnabled(true) ;
 
-	lobbyTreeWidget->adjustSize();
-    lobbyTreeWidget->setColumnWidth(COLUMN_NAME,100);
-    lobbyTreeWidget->setColumnWidth(COLUMN_USER_COUNT, 50);
-    lobbyTreeWidget->setColumnWidth(COLUMN_TOPIC, 50);
+	ui.lobbyTreeWidget->adjustSize();
+	ui.lobbyTreeWidget->setColumnWidth(COLUMN_NAME,100);
+	ui.lobbyTreeWidget->setColumnWidth(COLUMN_USER_COUNT, 50);
+	ui.lobbyTreeWidget->setColumnWidth(COLUMN_TOPIC, 50);
 
-    /** Setup the actions for the header context menu */
-    showUserCountAct= new QAction(headerItem->text(COLUMN_USER_COUNT),this);
+	/** Setup the actions for the header context menu */
+	showUserCountAct= new QAction(headerItem->text(COLUMN_USER_COUNT),this);
     showUserCountAct->setCheckable(true); showUserCountAct->setToolTip(tr("Show ")+showUserCountAct->text()+tr(" Column"));
     connect(showUserCountAct,SIGNAL(triggered(bool)),this,SLOT(setShowUserCountColumn(bool))) ;
     showTopicAct= new QAction(headerItem->text(COLUMN_TOPIC),this);
@@ -143,37 +143,37 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 	// Set initial size of the splitter
 	QList<int> sizes;
 	sizes << 200 << width(); // Qt calculates the right sizes
-	splitter->setSizes(sizes);
+	ui.splitter->setSizes(sizes);
 
 	lobbyChanged();
 	showBlankPage(0) ;
-	
-	 /* add filter actions */
-	filterLineEdit->addFilter(QIcon(), tr("Name"), COLUMN_NAME, tr("Search Name"));
-	filterLineEdit->setCurrentFilter(COLUMN_NAME);
 
-    // load settings
-    processSettings(true);
+	/* add filter actions */
+	ui.filterLineEdit->addFilter(QIcon(), tr("Name"), COLUMN_NAME, tr("Search Name"));
+	ui.filterLineEdit->setCurrentFilter(COLUMN_NAME);
 
-		QString help_str = tr(
-		" <h1><img width=\"32\" src=\":/images/64px_help.png\">&nbsp;&nbsp;Chat Lobbies</h1>                              \
-		  <p>Chat lobbies are distributed chat rooms, and work pretty much like IRC.                                      \
-		  They allow you to talk anonymously with tons of people without the need to make friends.</p>                    \
-		  <p>A chat lobby can be public (your friends see it) or private (your friends can't see it, unless you           \
-		  invite them with <img src=\":/images/add_24x24.png\" width=12/>). Once you have been invited to a private lobby, you will be able to see it when your friends   \
-		  are using it.</p>                                                                                               \
-		  <p>The list at left shows                                                                                     \
-		  chat lobbies your friends are participating in. You can either                                 \
+	// load settings
+	processSettings(true);
+
+	QString help_str = tr("\
+	                      <h1><img width=\"32\" src=\":/images/64px_help.png\">&nbsp;&nbsp;Chat Lobbies</h1>                              \
+	                      <p>Chat lobbies are distributed chat rooms, and work pretty much like IRC.                                      \
+	                      They allow you to talk anonymously with tons of people without the need to make friends.</p>                    \
+	                      <p>A chat lobby can be public (your friends see it) or private (your friends can't see it, unless you           \
+	                      invite them with <img src=\":/images/add_24x24.png\" width=12/>). \
+	                      Once you have been invited to a private lobby, you will be able to see it when your friends   \
+	                      are using it.</p>                                                                                               \
+	                      <p>The list at left shows                                                                                     \
+	                      chat lobbies your friends are participating in. You can either                                 \
 		  <ul>                                                                                                            \
 			  <li>Right click to create a new chat lobby</li>                                                              \
 		     <li>Double click a chat lobby to enter, chat, and show it to your friends</li>                      \
-		  </ul> \
-		  Note: For the chat lobbies to work properly, your computer needs be on time.  So check your system clock!\
-		  </p>                                      \
-		") ;
-
-
-	registerHelpButton(helpButton,help_str) ;
+	                      </ul> \
+	                      Note: For the chat lobbies to work properly, your computer needs be on time.  So check your system clock!\
+	                      </p>                                      \
+	                      "
+	                      ) ;
+	    registerHelpButton(ui.helpButton,help_str) ;
 }
 
 ChatLobbyWidget::~ChatLobbyWidget()
@@ -189,7 +189,7 @@ ChatLobbyWidget::~ChatLobbyWidget()
 void ChatLobbyWidget::lobbyTreeWidgetCustomPopupMenu(QPoint)
 {
 	std::cerr << "Creating customPopupMennu" << std::endl;
-	QTreeWidgetItem *item = lobbyTreeWidget->currentItem();
+	QTreeWidgetItem *item = ui.lobbyTreeWidget->currentItem();
 
 	QMenu contextMnu(this);
 
@@ -211,14 +211,14 @@ void ChatLobbyWidget::lobbyTreeWidgetCustomPopupMenu(QPoint)
         }
 	}
 
-    contextMnu.addSeparator();//-------------------------------------------------------------------
+	contextMnu.addSeparator();//-------------------------------------------------------------------
 
-    showUserCountAct->setChecked(!lobbyTreeWidget->isColumnHidden(COLUMN_USER_COUNT));
-    showTopicAct->setChecked(!lobbyTreeWidget->isColumnHidden(COLUMN_TOPIC));
-    showSubscribeAct->setChecked(!lobbyTreeWidget->isColumnHidden(COLUMN_SUBSCRIBED));
+	showUserCountAct->setChecked(!ui.lobbyTreeWidget->isColumnHidden(COLUMN_USER_COUNT));
+	showTopicAct->setChecked(!ui.lobbyTreeWidget->isColumnHidden(COLUMN_TOPIC));
+	showSubscribeAct->setChecked(!ui.lobbyTreeWidget->isColumnHidden(COLUMN_SUBSCRIBED));
 
-    QMenu *menu = contextMnu.addMenu(tr("Columns"));
-    menu->addAction(showUserCountAct);
+	QMenu *menu = contextMnu.addMenu(tr("Columns"));
+	menu->addAction(showUserCountAct);
     menu->addAction(showTopicAct);
     menu->addAction(showSubscribeAct);
 
@@ -274,7 +274,7 @@ void ChatLobbyWidget::addChatPage(ChatLobbyDialog *d)
 
 	if(_lobby_infos.find(d->id()) == _lobby_infos.end())
 	{
-		stackedWidget->addWidget(d) ;
+		ui.stackedWidget->addWidget(d) ;
 
 		connect(d,SIGNAL(lobbyLeave(ChatLobbyId)),this,SLOT(unsubscribeChatLobby(ChatLobbyId))) ;
 		connect(d,SIGNAL(typingEventReceived(ChatLobbyId)),this,SLOT(updateTypingStatus(ChatLobbyId))) ;
@@ -300,12 +300,12 @@ void ChatLobbyWidget::addChatPage(ChatLobbyDialog *d)
 
 void ChatLobbyWidget::setCurrentChatPage(ChatLobbyDialog *d)
 {
-	stackedWidget->setCurrentWidget(d) ;
+	ui.stackedWidget->setCurrentWidget(d) ;
 
 	if (d) {
 		QTreeWidgetItem *item = getTreeWidgetItem(d->id());
 		if (item) {
-			lobbyTreeWidget->setCurrentItem(item);
+			ui.lobbyTreeWidget->setCurrentItem(item);
 		}
 	}
 }
@@ -465,7 +465,7 @@ void ChatLobbyWidget::updateDisplay()
 			}
 		}
 		if (!icon.isNull()) {
-			item->setIcon(COLUMN_NAME, subscribed ? icon : icon.pixmap(lobbyTreeWidget->iconSize(), QIcon::Disabled));
+			item->setIcon(COLUMN_NAME, subscribed ? icon : icon.pixmap(ui.lobbyTreeWidget->iconSize(), QIcon::Disabled));
 		}
 
 		bool autoSubscribe = rsMsgs->getLobbyAutoSubscribe(lobby.lobby_id);
@@ -474,7 +474,7 @@ void ChatLobbyWidget::updateDisplay()
 		{
 			if(_lobby_infos.find(lobby.lobby_id) == _lobby_infos.end())
 			{
-				if (item == lobbyTreeWidget->currentItem())
+				if (item == ui.lobbyTreeWidget->currentItem())
 				{
 					ChatDialog::chatFriend(vpid) ;
 				}else{
@@ -483,10 +483,10 @@ void ChatLobbyWidget::updateDisplay()
 			}
 		}
 
-		updateItem(lobbyTreeWidget, item, lobby.lobby_id, lobby.lobby_name,lobby.lobby_topic, lobby.total_number_of_peers, subscribed, autoSubscribe);
+		updateItem(ui.lobbyTreeWidget, item, lobby.lobby_id, lobby.lobby_name,lobby.lobby_topic, lobby.total_number_of_peers, subscribed, autoSubscribe);
 	}
 
-//	time_t now = time(NULL) ;
+	//	time_t now = time(NULL) ;
 
 	// Now add participating lobbies.
 	//
@@ -532,12 +532,12 @@ void ChatLobbyWidget::updateDisplay()
 			item->setIcon(COLUMN_NAME, icon);
 		}
 
-        bool autoSubscribe = rsMsgs->getLobbyAutoSubscribe(lobby.lobby_id);
+		bool autoSubscribe = rsMsgs->getLobbyAutoSubscribe(lobby.lobby_id);
 
-        updateItem(lobbyTreeWidget, item, lobby.lobby_id, lobby.lobby_name,lobby.lobby_topic, lobby.nick_names.size(), true, autoSubscribe);
+		updateItem(ui.lobbyTreeWidget, item, lobby.lobby_id, lobby.lobby_name,lobby.lobby_topic, lobby.nick_names.size(), true, autoSubscribe);
 	}
-    publicSubLobbyItem->setHidden(publicSubLobbyItem->childCount()==0);
-    privateSubLobbyItem->setHidden(privateSubLobbyItem->childCount()==0);
+	publicSubLobbyItem->setHidden(publicSubLobbyItem->childCount()==0);
+	privateSubLobbyItem->setHidden(privateSubLobbyItem->childCount()==0);
 }
 
 void ChatLobbyWidget::createChatLobby()
@@ -564,7 +564,7 @@ void ChatLobbyWidget::showLobby(QTreeWidgetItem *item)
 	if(_lobby_infos.find(id) == _lobby_infos.end())
 		showBlankPage(id) ;
 	else
-		stackedWidget->setCurrentWidget(_lobby_infos[id].dialog) ;
+		ui.stackedWidget->setCurrentWidget(_lobby_infos[id].dialog) ;
 }
 
 static void subscribeLobby(QTreeWidgetItem *item)
@@ -597,7 +597,7 @@ void ChatLobbyWidget::autoSubscribeLobby(QTreeWidgetItem *item)
 void ChatLobbyWidget::showBlankPage(ChatLobbyId id)
 {
 	// show the default blank page.
-	stackedWidget->setCurrentWidget(_lobby_blank_page) ;
+	ui.stackedWidget->setCurrentWidget(ui._lobby_blank_page) ;
 
 	// Update information
 	std::vector<VisibleChatLobbyRecord> lobbies;
@@ -606,34 +606,34 @@ void ChatLobbyWidget::showBlankPage(ChatLobbyId id)
 	for(std::vector<VisibleChatLobbyRecord>::const_iterator it(lobbies.begin());it!=lobbies.end();++it)
 		if( (*it).lobby_id == id)
 		{
-			lobbyname_lineEdit->setText( RsHtml::plainText(it->lobby_name) );
-			lobbyid_lineEdit->setText( QString::number((*it).lobby_id,16) );
-			lobbytopic_lineEdit->setText( RsHtml::plainText(it->lobby_topic) );
-			lobbytype_lineEdit->setText( (( (*it).lobby_privacy_level == RS_CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE)?tr("Private"):tr("Public")) );
-			lobbypeers_lineEdit->setText( QString::number((*it).total_number_of_peers) );
-			
-			lobbyinfo_label->setText(tr("You're not subscribed to this lobby; Double click-it to enter and chat.") );
+			ui.lobbyname_lineEdit->setText( RsHtml::plainText(it->lobby_name) );
+			ui.lobbyid_lineEdit->setText( QString::number((*it).lobby_id,16) );
+			ui.lobbytopic_lineEdit->setText( RsHtml::plainText(it->lobby_topic) );
+			ui.lobbytype_lineEdit->setText( (( (*it).lobby_privacy_level == RS_CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE)?tr("Private"):tr("Public")) );
+			ui.lobbypeers_lineEdit->setText( QString::number((*it).total_number_of_peers) );
+
+			ui.lobbyinfo_label->setText(tr("You're not subscribed to this lobby; Double click-it to enter and chat.") );
 			return ;
 		}
 
-	lobbyname_lineEdit->clear();
-	lobbyid_lineEdit->clear();
-	lobbytopic_lineEdit->clear();
-	lobbytype_lineEdit->clear();
-	lobbypeers_lineEdit->clear();
+	ui.lobbyname_lineEdit->clear();
+	ui.lobbyid_lineEdit->clear();
+	ui.lobbytopic_lineEdit->clear();
+	ui.lobbytype_lineEdit->clear();
+	ui.lobbypeers_lineEdit->clear();
 
 	QString text = tr("No lobby selected. \nSelect lobbies at left to show details.\nDouble click lobbies to enter and chat.") ;
-	lobbyinfo_label->setText(text) ;
+	ui.lobbyinfo_label->setText(text) ;
 }
 
 void ChatLobbyWidget::subscribeItem()
 {
-	subscribeLobby(lobbyTreeWidget->currentItem());
+	subscribeLobby(ui.lobbyTreeWidget->currentItem());
 }
 
 void ChatLobbyWidget::autoSubscribeItem()
 {
-    autoSubscribeLobby(lobbyTreeWidget->currentItem());
+	autoSubscribeLobby(ui.lobbyTreeWidget->currentItem());
 }
 
 QTreeWidgetItem *ChatLobbyWidget::getTreeWidgetItem(ChatLobbyId id)
@@ -708,13 +708,13 @@ void ChatLobbyWidget::resetLobbyTreeIcons()
 		if(it->second.last_typing_event + 5 <= now)
 		{
 			getTreeWidgetItem(it->first)->setIcon(COLUMN_NAME,it->second.default_icon) ;
-//			std::cerr << "Reseted 1 lobby icon." << std::endl;
+			//std::cerr << "Reseted 1 lobby icon." << std::endl;
 		}
 }
 
 void ChatLobbyWidget::unsubscribeItem()
 {
-	QTreeWidgetItem *item = lobbyTreeWidget->currentItem();
+	QTreeWidgetItem *item = ui.lobbyTreeWidget->currentItem();
 	if (item == NULL && item->type() != TYPE_LOBBY) {
 		return;
 	}
@@ -734,10 +734,10 @@ void ChatLobbyWidget::unsubscribeChatLobby(ChatLobbyId id)
 
 	if(it != _lobby_infos.end())
 	{
-		stackedWidget->removeWidget(it->second.dialog) ;
+		ui.stackedWidget->removeWidget(it->second.dialog) ;
 		_lobby_infos.erase(it) ;
 	}
-	
+
 	// Unsubscribe the chat lobby
     RsPeerId vpeer_id;
 	if (rsMsgs->getVirtualPeerId(id, vpeer_id)) 
@@ -745,25 +745,25 @@ void ChatLobbyWidget::unsubscribeChatLobby(ChatLobbyId id)
 
 	rsMsgs->unsubscribeChatLobby(id);
     bool isAutoSubscribe = rsMsgs->getLobbyAutoSubscribe(id);
-    if (isAutoSubscribe) rsMsgs->setLobbyAutoSubscribe(id, !isAutoSubscribe);
+	if (isAutoSubscribe) rsMsgs->setLobbyAutoSubscribe(id, !isAutoSubscribe);
 
-    ChatLobbyDialog *cldCW=NULL ;
-    if (NULL != (cldCW = dynamic_cast<ChatLobbyDialog *>(stackedWidget->currentWidget())))
-    {
+	ChatLobbyDialog *cldCW=NULL ;
+	if (NULL != (cldCW = dynamic_cast<ChatLobbyDialog *>(ui.stackedWidget->currentWidget())))
+	{
 
-        QTreeWidgetItem *qtwiFound = getTreeWidgetItem(cldCW->id());
-        if (qtwiFound) {
-            lobbyTreeWidget->setCurrentItem(qtwiFound);
-        }
-    } else {
-        lobbyTreeWidget->clearSelection();
+		QTreeWidgetItem *qtwiFound = getTreeWidgetItem(cldCW->id());
+		if (qtwiFound) {
+			ui.lobbyTreeWidget->setCurrentItem(qtwiFound);
+		}
+	} else {
+		ui.lobbyTreeWidget->clearSelection();
 
-    }
+	}
 }
 
 void ChatLobbyWidget::updateCurrentLobby()
 {
-	QList<QTreeWidgetItem *> items = lobbyTreeWidget->selectedItems() ;
+	QList<QTreeWidgetItem *> items = ui.lobbyTreeWidget->selectedItems() ;
 
 	if(items.empty())
 		showLobby(0) ;
@@ -781,14 +781,14 @@ void ChatLobbyWidget::updateCurrentLobby()
 			item->setIcon(COLUMN_NAME, icon) ;
 		}
 	}
-	
-	if (filterLineEdit->text().isEmpty() == false) {
-		filterItems(filterLineEdit->text());
+
+	if (ui.filterLineEdit->text().isEmpty() == false) {
+		filterItems(ui.filterLineEdit->text());
 	}
 }
 void ChatLobbyWidget::updateMessageChanged(ChatLobbyId id)
 {
-	QTreeWidgetItem *current_item = lobbyTreeWidget->currentItem();
+	QTreeWidgetItem *current_item = ui.lobbyTreeWidget->currentItem();
 
 	// Don't show anything for current lobby.
 	//
@@ -845,17 +845,17 @@ void ChatLobbyWidget::readChatLobbyInvites()
 
 void ChatLobbyWidget::filterColumnChanged(int)
 {
-    filterItems(filterLineEdit->text());
+	filterItems(ui.filterLineEdit->text());
 }
 
 void ChatLobbyWidget::filterItems(const QString &text)
 {
-    int filterColumn = filterLineEdit->currentFilter();
+	int filterColumn = ui.filterLineEdit->currentFilter();
 
-    int count = lobbyTreeWidget->topLevelItemCount ();
-    for (int index = 0; index < count; index++) {
-        filterItem(lobbyTreeWidget->topLevelItem(index), text, filterColumn);
-    }
+	int count = ui.lobbyTreeWidget->topLevelItemCount ();
+	for (int index = 0; index < count; index++) {
+		filterItem(ui.lobbyTreeWidget->topLevelItem(index), text, filterColumn);
+	}
 }
 
 bool ChatLobbyWidget::filterItem(QTreeWidgetItem *item, const QString &text, int filterColumn)
@@ -888,68 +888,68 @@ bool ChatLobbyWidget::filterItem(QTreeWidgetItem *item, const QString &text, int
 
 void ChatLobbyWidget::processSettings(bool bLoad)
 {
-    m_bProcessSettings = true;
+	m_bProcessSettings = true;
 
-    QHeaderView *Header = lobbyTreeWidget->header () ;
+	QHeaderView *Header = ui.lobbyTreeWidget->header () ;
 
-    Settings->beginGroup(QString("ChatLobbyWidget"));
+	Settings->beginGroup(QString("ChatLobbyWidget"));
 
     if (bLoad) {
         // load settings
 
-        // state of the lists
-        Header->restoreState(Settings->value("lobbyList").toByteArray());
+		// state of the lists
+		Header->restoreState(Settings->value("lobbyList").toByteArray());
 
-        setShowUserCountColumn(Settings->value("showUserCountColumn", !lobbyTreeWidget->isColumnHidden(COLUMN_USER_COUNT)).toBool());
-        setShowTopicColumn(Settings->value("showTopicColumn", !lobbyTreeWidget->isColumnHidden(COLUMN_TOPIC)).toBool());
-        setShowSubscribeColumn(Settings->value("showSubscribeColumn", !lobbyTreeWidget->isColumnHidden(COLUMN_SUBSCRIBED)).toBool());
-    } else {
-        // save settings
+		setShowUserCountColumn(Settings->value("showUserCountColumn", !ui.lobbyTreeWidget->isColumnHidden(COLUMN_USER_COUNT)).toBool());
+		setShowTopicColumn(Settings->value("showTopicColumn", !ui.lobbyTreeWidget->isColumnHidden(COLUMN_TOPIC)).toBool());
+		setShowSubscribeColumn(Settings->value("showSubscribeColumn", !ui.lobbyTreeWidget->isColumnHidden(COLUMN_SUBSCRIBED)).toBool());
+	} else {
+		// save settings
 
-        // state of the lists
-        Settings->setValue("lobbyList", Header->saveState());
+		// state of the lists
+		Settings->setValue("lobbyList", Header->saveState());
 
-        Settings->setValue("showUserCountColumn", !lobbyTreeWidget->isColumnHidden(COLUMN_USER_COUNT));
-        Settings->setValue("showTopicColumn", !lobbyTreeWidget->isColumnHidden(COLUMN_TOPIC));
-        Settings->setValue("showSubscribeColumn", !lobbyTreeWidget->isColumnHidden(COLUMN_SUBSCRIBED));
-    }
+		Settings->setValue("showUserCountColumn", !ui.lobbyTreeWidget->isColumnHidden(COLUMN_USER_COUNT));
+		Settings->setValue("showTopicColumn", !ui.lobbyTreeWidget->isColumnHidden(COLUMN_TOPIC));
+		Settings->setValue("showSubscribeColumn", !ui.lobbyTreeWidget->isColumnHidden(COLUMN_SUBSCRIBED));
+	}
 
-    Settings->endGroup();
+	Settings->endGroup();
     m_bProcessSettings = false;
 }
 
 void ChatLobbyWidget::setShowUserCountColumn(bool show)
 {
-    if (lobbyTreeWidget->isColumnHidden(COLUMN_USER_COUNT) == show) {
-        lobbyTreeWidget->setColumnHidden(COLUMN_USER_COUNT, !show);
-    }
-    lobbyTreeWidget->header()->setVisible(getNumColVisible()>1);
+	if (ui.lobbyTreeWidget->isColumnHidden(COLUMN_USER_COUNT) == show) {
+		ui.lobbyTreeWidget->setColumnHidden(COLUMN_USER_COUNT, !show);
+	}
+	ui.lobbyTreeWidget->header()->setVisible(getNumColVisible()>1);
 }
 
 void ChatLobbyWidget::setShowTopicColumn(bool show)
 {
-    if (lobbyTreeWidget->isColumnHidden(COLUMN_TOPIC) == show) {
-        lobbyTreeWidget->setColumnHidden(COLUMN_TOPIC, !show);
-    }
-    lobbyTreeWidget->header()->setVisible(getNumColVisible()>1);
+	if (ui.lobbyTreeWidget->isColumnHidden(COLUMN_TOPIC) == show) {
+		ui.lobbyTreeWidget->setColumnHidden(COLUMN_TOPIC, !show);
+	}
+	ui.lobbyTreeWidget->header()->setVisible(getNumColVisible()>1);
 }
 
 void ChatLobbyWidget::setShowSubscribeColumn(bool show)
 {
-    if (lobbyTreeWidget->isColumnHidden(COLUMN_SUBSCRIBED) == show) {
-        lobbyTreeWidget->setColumnHidden(COLUMN_SUBSCRIBED, !show);
-    }
-    lobbyTreeWidget->header()->setVisible(getNumColVisible()>1);
+	if (ui.lobbyTreeWidget->isColumnHidden(COLUMN_SUBSCRIBED) == show) {
+		ui.lobbyTreeWidget->setColumnHidden(COLUMN_SUBSCRIBED, !show);
+	}
+	ui.lobbyTreeWidget->header()->setVisible(getNumColVisible()>1);
 }
 
 int ChatLobbyWidget::getNumColVisible()
 {
-    int iNumColVis=0;
-    for (int iColumn = 0; iColumn < COLUMN_COUNT; ++iColumn) {
-        if (!lobbyTreeWidget->isColumnHidden(iColumn)) {
-            ++iNumColVis;
-        }
-    }
+	int iNumColVis=0;
+	for (int iColumn = 0; iColumn < COLUMN_COUNT; ++iColumn) {
+		if (!ui.lobbyTreeWidget->isColumnHidden(iColumn)) {
+			++iNumColVis;
+		}
+	}
     return iNumColVis;
 }
 

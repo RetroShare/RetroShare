@@ -95,12 +95,15 @@
 #include "gui/gxsforums/GxsForumsDialog.h"
 #include "gui/Identity/IdDialog.h"
 #include "gui/Circles/CirclesDialog.h"
+#include "gui/WikiPoos/WikiDialog.h"
+#include "gui/Posted/PostedDialog.h"
 
 #include "gui/connect/ConnectFriendWizard.h"
 #include "util/rsguiversion.h"
 #include "settings/rsettingswin.h"
 #include "settings/rsharesettings.h"
 #include "common/StatusDefs.h"
+#include "gui/notifyqt.h"
 
 #include <iomanip>
 #include <unistd.h>
@@ -125,8 +128,8 @@
 
 /* Images for toolbar icons */
 //#define IMAGE_NETWORK2          ":/images/rs1.png"
-#define IMAGE_PEERS         	":/images/groupchat.png"
-#define IMAGE_TRANSFERS      	":/images/ktorrent32.png"
+//#define IMAGE_PEERS         	":/images/groupchat.png"
+//#define IMAGE_TRANSFERS      	":/images/ktorrent32.png"
 #define IMAGE_FILES   	        ":/images/fileshare32.png"
 #define IMAGE_CHANNELS       	":/images/channels.png"
 #define IMAGE_FORUMS            ":/images/konversation.png"
@@ -135,7 +138,7 @@
 #define IMAGE_RETROSHARE        ":/images/logo/logo_16.png"
 #define IMAGE_ABOUT             ":/images/informations_24x24.png"
 #define IMAGE_STATISTIC         ":/images/utilities-system-monitor.png"
-#define IMAGE_MESSAGES          ":/images/evolution.png"
+//#define IMAGE_MESSAGES          ":/images/evolution.png"
 #define IMAGE_BWGRAPH           ":/images/ksysguard.png"
 #define IMAGE_RSM32             ":/images/kdmconfig.png"
 #define IMAGE_RSM16             ":/images/rsmessenger16.png"
@@ -144,26 +147,26 @@
 #define IMAGE_COLOR         	":/images/highlight.png"
 #define IMAGE_GAMES             ":/images/kgames.png"
 #define IMAGE_PHOTO             ":/images/lphoto.png"
-#define IMAGE_ADDFRIEND         ":/images/add-friend24.png"
+#define IMAGE_ADDFRIEND         ":/images/user/add_user24.png"
 #define IMAGE_ADDSHARE          ":/images/directoryadd_24x24_shadow.png"
 #define IMAGE_OPTIONS           ":/images/settings.png"
 #define IMAGE_QUIT              ":/images/exit_24x24.png"
 #define IMAGE_UNFINISHED        ":/images/underconstruction.png"
 #define IMAGE_MINIMIZE          ":/images/window_nofullscreen.png"
 #define IMAGE_MAXIMIZE          ":/images/window_fullscreen.png"
-#define IMG_HELP                ":/images/help24.png"
-#define IMAGE_NEWSFEED          ":/images/newsfeed/news-feed-32.png"
+//#define IMG_HELP                ":/images/help24.png"
+//#define IMAGE_NEWSFEED          ":/images/newsfeed/news-feed-32.png"
 #define IMAGE_PLUGINS           ":/images/extension_32.png"
 #define IMAGE_NOONLINE          ":/images/logo/logo_24_0.png"
 #define IMAGE_ONEONLINE         ":/images/logo/logo_24_1.png"
 #define IMAGE_TWOONLINE         ":/images/logo/logo_24_2.png"
 #define IMAGE_BLOGS             ":/images/kblogger.png"
 #define IMAGE_DHT               ":/images/dht16.png"
-#define IMAGE_CHATLOBBY			    ":/images/chat_32.png"
-#define IMAGE_GXSCHANNELS       ":/images/channels.png"
-#define IMAGE_GXSFORUMS         ":/images/konversation.png"
-#define IMAGE_IDENTITY          ":/images/identity/identities_32.png"
-#define IMAGE_CIRCLES           ":/images/circles/circles_32.png"
+//#define IMAGE_CHATLOBBY			    ":/images/chat_32.png"
+//#define IMAGE_GXSCHANNELS       ":/images/channels.png"
+//#define IMAGE_GXSFORUMS         ":/images/konversation.png"
+//#define IMAGE_IDENTITY          ":/images/identity/identities_32.png"
+//#define IMAGE_CIRCLES           ":/images/circles/circles_32.png"
 
 
 /*static*/ MainWindow *MainWindow::_instance = NULL;
@@ -209,12 +212,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 
     setWindowTitle(tr("RetroShare %1 a secure decentralized communication platform").arg(retroshareVersion()) + " - " + nameAndLocation);
 
-    /* WORK OUT IF WE"RE IN ADVANCED MODE OR NOT */
-    bool advancedMode = false;
-    std::string advsetting;
-    if (rsConfig->getConfigurationOption(RS_CONFIG_ADVANCED, advsetting) && (advsetting == "YES")) {
-        advancedMode = true;
-    }
 
     /* add url handler for RetroShare links */
     QDesktopServices::setUrlHandler(RSLINK_SCHEME, this, "retroshareLinkActivated");
@@ -230,125 +227,14 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     #ifdef UNFINISHED
     applicationWindow = new ApplicationWindow();
     applicationWindow->hide();
-    #endif    
+    #endif
 
+    initStackedPage();
+    connect(ui->listWidget, SIGNAL(currentRowChanged(int)), this, SLOT(setNewPage(int)));
+    connect(ui->stackPages, SIGNAL(currentChanged(int)), this, SLOT(setNewPage(int)));
 
-    QList<QPair<MainPage*, QAction*> > notify;
-
-    /* Create the Main pages and actions */
-    QActionGroup *grp = new QActionGroup(this);
-    QAction *action;
-
-    ui->stackPages->add(newsFeed = new NewsFeed(ui->stackPages),
-                       action = createPageAction(QIcon(IMAGE_NEWSFEED), tr("News feed"), grp));
-    notify.push_back(QPair<MainPage*, QAction*>(newsFeed, action));
-
-
-    ui->stackPages->add(friendsDialog = new FriendsDialog(ui->stackPages),
-                       action = createPageAction(QIcon(IMAGE_PEERS), tr("Network"), grp));
-    notify.push_back(QPair<MainPage*, QAction*>(friendsDialog, action));
-
-	 PeopleDialog *peopleDialog = NULL;
-    ui->stackPages->add(peopleDialog = new PeopleDialog(ui->stackPages), action = createPageAction(QIcon(IMAGE_IDENTITY), tr("People"), grp));
-    notify.push_back(QPair<MainPage*, QAction*>(peopleDialog, action));
-
-	 /*IdDialog *idDialog = NULL;
-    ui->stackPages->add(idDialog = new IdDialog(ui->stackPages), action = createPageAction(QIcon(IMAGE_IDENTITY), tr("Itentities"), grp));
-    notify.push_back(QPair<MainPage*, QAction*>(idDialog, action));
-
-    CirclesDialog *circlesDialog = NULL;
-    ui->stackPages->add(circlesDialog = new CirclesDialog(ui->stackPages), createPageAction(QIcon(IMAGE_CIRCLES ), tr("Circles"), grp));
-    notify.push_back(QPair<MainPage*, QAction*>(circlesDialog, action));*/
-
-    ui->stackPages->add(transfersDialog = new TransfersDialog(ui->stackPages),
-                      action = createPageAction(QIcon(IMAGE_TRANSFERS), tr("File sharing"), grp));
-    notify.push_back(QPair<MainPage*, QAction*>(transfersDialog, action));
-
-    ui->stackPages->add(chatLobbyDialog = new ChatLobbyWidget(ui->stackPages),
-                      action = createPageAction(QIcon(IMAGE_CHATLOBBY), tr("Chat Lobbies"), grp));
-    notify.push_back(QPair<MainPage*, QAction*>(chatLobbyDialog, action));
-
-    ui->stackPages->add(messagesDialog = new MessagesDialog(ui->stackPages),
-                      action = createPageAction(QIcon(IMAGE_MESSAGES), tr("Messages"), grp));
-    notify.push_back(QPair<MainPage*, QAction*>(messagesDialog, action));
-
-    ui->stackPages->add(gxschannelDialog = new GxsChannelDialog(ui->stackPages),
-                      action = createPageAction(QIcon(IMAGE_GXSCHANNELS), tr("Channels"), grp));
-    notify.push_back(QPair<MainPage*, QAction*>(gxschannelDialog, action));
-
-    ui->stackPages->add(gxsforumDialog = new GxsForumsDialog(ui->stackPages),
-                      action = createPageAction(QIcon(IMAGE_GXSFORUMS), tr("Forums"), grp));
-    notify.push_back(QPair<MainPage*, QAction*>(gxsforumDialog, action));
-
-#ifdef BLOGS
-     ui->stackPages->add(blogsFeed = new BlogsDialog(ui->stackPages), createPageAction(QIcon(IMAGE_BLOGS), tr("Blogs"), grp));
-#endif
-     
-#if 0                 
-    ui->stackPages->add(forumsDialog = new ForumsDialog(ui->stackPages),
-                       action = createPageAction(QIcon(IMAGE_FORUMS), tr("Forums"), grp));
-    notify.push_back(QPair<MainPage*, QAction*>(forumsDialog, action));
-#endif
-
-	 std::cerr << "Looking for interfaces in existing plugins:" << std::endl;
-	 for(int i = 0;i<rsPlugins->nbPlugins();++i)
-	 {
-		 QIcon icon ;
-
-		 if(rsPlugins->plugin(i) != NULL && rsPlugins->plugin(i)->qt_page() != NULL)
-		 {
-			 if(rsPlugins->plugin(i)->qt_icon() != NULL)
-				 icon = *rsPlugins->plugin(i)->qt_icon() ;
-			 else
-				 icon = QIcon(":images/extension_48.png") ;
-
-			 std::cerr << "  Addign widget page for plugin " << rsPlugins->plugin(i)->getPluginName() << std::endl;
-			 MainPage *pluginPage = rsPlugins->plugin(i)->qt_page();
-			 QAction *pluginAction = createPageAction(icon, QString::fromUtf8(rsPlugins->plugin(i)->getPluginName().c_str()), grp);
-			 ui->stackPages->add(pluginPage, pluginAction);
-			 notify.push_back(QPair<MainPage*, QAction*>(pluginPage, pluginAction));
-		 }
-		 else if(rsPlugins->plugin(i) == NULL)
-			 std::cerr << "  No plugin object !" << std::endl;
-		 else
-			 std::cerr << "  No plugin page !" << std::endl;
-
-	 }
-
-#ifndef RS_RELEASE_VERSION
-#ifdef PLUGINMGR
-    ui->stackPages->add(pluginsPage = new PluginsPage(ui->stackPages),
-                       createPageAction(QIcon(IMAGE_PLUGINS), tr("Plugins"), grp));
-#endif
-#endif
-
-#ifdef GETSTARTED_GUI
-    MainPage *getStartedPage = NULL;
-
-    if (!advancedMode)
-    {
-        ui->stackPages->add(getStartedPage = new GetStartedDialog(ui->stackPages),
-                       createPageAction(QIcon(IMG_HELP), tr("Getting Started"), grp));
-    }
-#endif
-
-    /* Create the toolbar */
-    ui->toolBar->addActions(grp->actions());
-
-    connect(grp, SIGNAL(triggered(QAction *)), ui->stackPages, SLOT(showPage(QAction *)));
-
-#ifdef UNFINISHED
-    ui->toolBar->addSeparator();
-    addAction(new QAction(QIcon(IMAGE_UNFINISHED), tr("Unfinished"), ui->toolBar), SLOT(showApplWindow()));
-    notify += applicationWindow->getNotify();
-#endif
-
-    addAction(new QAction(QIcon(IMAGE_PREFERENCES), tr("Options"), ui->toolBar), SLOT(showSettings()));
-    addAction(new QAction(QIcon(IMAGE_ABOUT), tr("About"), ui->toolBar), SLOT(showabout()));
-    addAction(new QAction(QIcon(IMAGE_QUIT), tr("Quit"), ui->toolBar), SLOT(doQuit()));
-
-
-    ui->stackPages->setCurrentIndex(Settings->getLastPageInMainWindow());
+    //ui->stackPages->setCurrentIndex(Settings->getLastPageInMainWindow());
+    setNewPage(Settings->getLastPageInMainWindow());
 
     /** StatusBar section ********/
     /* initialize combobox in status bar */
@@ -390,19 +276,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     /* Creates a tray icon with a context menu and adds it to the system's * notification area. */
     createTrayIcon();
 
-    QList<QPair<MainPage*, QAction*> >::iterator notifyIt;
-    for (notifyIt = notify.begin(); notifyIt != notify.end(); ++notifyIt) {
-        UserNotify *userNotify = notifyIt->first->getUserNotify(this);
-        if (userNotify) {
-            userNotify->initialize(ui->toolBar, notifyIt->second);
-            connect(userNotify, SIGNAL(countChanged()), this, SLOT(updateTrayCombine()));
-            userNotifyList.push_back(userNotify);
-        }
-    }
-
     createNotifyIcons();
 
-    /* caclulate friend count */
+    /* calculate friend count */
     updateFriends();
     connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(QString,int)), this, SLOT(updateFriends()));
     connect(NotifyQt::getInstance(), SIGNAL(friendsChanged()), this, SLOT(updateFriends()));
@@ -419,6 +295,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     QTimer *timer = new QTimer(this);
     timer->connect(timer, SIGNAL(timeout()), this, SLOT(updateStatus()));
     timer->start(1000);
+
+    connect(NotifyQt::getInstance(), SIGNAL(settingsChanged()), this, SLOT(settingsChanged()));
+    settingsChanged();
 }
 
 /** Destructor. */
@@ -437,6 +316,238 @@ MainWindow::~MainWindow()
 #endif
 
     delete(ui);
+}
+
+/** Initialyse Stacked Page*/
+void MainWindow::initStackedPage()
+{
+  /* WORK OUT IF WE"RE IN ADVANCED MODE OR NOT */
+  bool advancedMode = false;
+  std::string advsetting;
+  if (rsConfig->getConfigurationOption(RS_CONFIG_ADVANCED, advsetting) && (advsetting == "YES")) {
+      advancedMode = true;
+  }
+
+  QList<QPair<MainPage*, QPair<QAction*, QListWidgetItem*> > > notify;
+
+  /* Create the Main pages and actions */
+  QActionGroup *grp = new QActionGroup(this);
+  //QAction *action;
+
+  //ui->stackPages->add(newsFeed = new NewsFeed(ui->stackPages),
+  //                   action = createPageAction(QIcon(IMAGE_NEWSFEED), tr("News feed"), grp));
+  //notify.push_back(QPair<MainPage*, QAction*>(newsFeed, action));
+  addPage(newsFeed = new NewsFeed(ui->stackPages), grp, &notify);
+
+  //ui->stackPages->add(friendsDialog = new FriendsDialog(ui->stackPages),
+  //                   action = createPageAction(QIcon(IMAGE_PEERS), tr("Network"), grp));
+  //notify.push_back(QPair<MainPage*, QAction*>(friendsDialog, action));
+  addPage(friendsDialog = new FriendsDialog(ui->stackPages), grp, &notify);
+
+  PeopleDialog *peopleDialog = NULL;
+  //ui->stackPages->add(peopleDialog = new PeopleDialog(ui->stackPages),
+  //                   action = createPageAction(QIcon(IMAGE_IDENTITY), tr("People"), grp));
+  //notify.push_back(QPair<MainPage*, QAction*>(peopleDialog, action));
+  addPage(peopleDialog = new PeopleDialog(ui->stackPages), grp, &notify);
+
+  IdDialog *idDialog = NULL;
+  //ui->stackPages->add(idDialog = new IdDialog(ui->stackPages),
+  //                   action = createPageAction(QIcon(IMAGE_IDENTITY), tr("Itentities"), grp));
+  //notify.push_back(QPair<MainPage*, QAction*>(idDialog, action));
+  addPage(idDialog = new IdDialog(ui->stackPages), grp, &notify);
+
+  CirclesDialog *circlesDialog = NULL;
+  //ui->stackPages->add(circlesDialog = new CirclesDialog(ui->stackPages),
+  //                   action = createPageAction(QIcon(IMAGE_CIRCLES ), tr("Circles"), grp));
+  //notify.push_back(QPair<MainPage*, QAction*>(circlesDialog, action));
+  addPage(circlesDialog = new CirclesDialog(ui->stackPages), grp, &notify);
+
+  //ui->stackPages->add(transfersDialog = new TransfersDialog(ui->stackPages),
+  //                  action = createPageAction(QIcon(IMAGE_TRANSFERS), tr("File sharing"), grp));
+  //notify.push_back(QPair<MainPage*, QAction*>(transfersDialog, action));
+  addPage(transfersDialog = new TransfersDialog(ui->stackPages), grp, &notify);
+
+  //ui->stackPages->add(chatLobbyDialog = new ChatLobbyWidget(ui->stackPages),
+  //                  action = createPageAction(QIcon(IMAGE_CHATLOBBY), tr("Chat Lobbies"), grp));
+  //notify.push_back(QPair<MainPage*, QAction*>(chatLobbyDialog, action));
+  addPage(chatLobbyDialog = new ChatLobbyWidget(ui->stackPages), grp, &notify);
+
+  //ui->stackPages->add(messagesDialog = new MessagesDialog(ui->stackPages),
+  //                  action = createPageAction(QIcon(IMAGE_MESSAGES), tr("Messages"), grp));
+  //notify.push_back(QPair<MainPage*, QAction*>(messagesDialog, action));
+  addPage(messagesDialog = new MessagesDialog(ui->stackPages), grp, &notify);
+
+  //ui->stackPages->add(gxschannelDialog = new GxsChannelDialog(ui->stackPages),
+  //                  action = createPageAction(QIcon(IMAGE_GXSCHANNELS), tr("Channels"), grp));
+  //notify.push_back(QPair<MainPage*, QAction*>(gxschannelDialog, action));
+  addPage(gxschannelDialog = new GxsChannelDialog(ui->stackPages), grp, &notify);
+
+  //ui->stackPages->add(gxsforumDialog = new GxsForumsDialog(ui->stackPages),
+  //                  action = createPageAction(QIcon(IMAGE_GXSFORUMS), tr("Forums"), grp));
+  //notify.push_back(QPair<MainPage*, QAction*>(gxsforumDialog, action));
+  addPage(gxsforumDialog = new GxsForumsDialog(ui->stackPages), grp, &notify);
+  
+  //PostedDialog *postedDialog = NULL;
+  //addPage(postedDialog = new PostedDialog(ui->stackPages), grp, &notify);
+  //postedDialog->setup();
+
+  WikiDialog *wikiDialog = NULL;
+  addPage(wikiDialog = new WikiDialog(ui->stackPages), grp, &notify);
+
+#ifdef BLOGS
+  //ui->stackPages->add(blogsFeed = new BlogsDialog(ui->stackPages),
+  //                    createPageAction(QIcon(IMAGE_BLOGS), tr("Blogs"), grp));
+  //TODO: Add iconPixmap, pageName and helpText to BlogsDialog.h
+  addPage(blogsFeed = new BlogsDialog(ui->stackPages), grp, NULL);
+#endif
+
+#if 0
+  //ui->stackPages->add(forumsDialog = new ForumsDialog(ui->stackPages),
+  //                   action = createPageAction(QIcon(IMAGE_FORUMS), tr("Forums"), grp));
+  //notify.push_back(QPair<MainPage*, QAction*>(forumsDialog, action));
+  //TODO: Add iconPixmap, pageName and helpText to BlogsDialog.h
+  addPage(forumsDialog = new ForumsDialog(ui->stackPages), grp, &notify);
+#endif
+
+ std::cerr << "Looking for interfaces in existing plugins:" << std::endl;
+ for(int i = 0;i<rsPlugins->nbPlugins();++i)
+ {
+	 QIcon icon ;
+
+	 if(rsPlugins->plugin(i) != NULL && rsPlugins->plugin(i)->qt_page() != NULL)
+	 {
+		 if(rsPlugins->plugin(i)->qt_icon() != NULL)
+			 icon = *rsPlugins->plugin(i)->qt_icon() ;
+		 else
+			 icon = QIcon(":images/extension_48.png") ;
+
+		 std::cerr << "  Addign widget page for plugin " << rsPlugins->plugin(i)->getPluginName() << std::endl;
+		 MainPage *pluginPage = rsPlugins->plugin(i)->qt_page();
+		 pluginPage->setIconPixmap(icon);
+		 pluginPage->setPageName(QString::fromUtf8(rsPlugins->plugin(i)->getPluginName().c_str()));
+		 //QAction *pluginAction = createPageAction(icon, QString::fromUtf8(rsPlugins->plugin(i)->getPluginName().c_str()), grp);
+		 //ui->stackPages->add(pluginPage, pluginAction);
+		 //notify.push_back(QPair<MainPage*, QAction*>(pluginPage, pluginAction));
+		 addPage(pluginPage, grp, &notify);
+	 }
+	 else if(rsPlugins->plugin(i) == NULL)
+		 std::cerr << "  No plugin object !" << std::endl;
+	 else
+		 std::cerr << "  No plugin page !" << std::endl;
+
+ }
+
+#ifndef RS_RELEASE_VERSION
+#ifdef PLUGINMGR
+  //ui->stackPages->add(pluginsPage = new PluginsPage(ui->stackPages),
+  //                   createPageAction(QIcon(IMAGE_PLUGINS), tr("Plugins"), grp));
+  //TODO: Add iconPixmap, pageName and helpText to PluginsPage.h
+  addPage(pluginsPage = new PluginsPage(ui->stackPages), grp, NULL);
+#endif
+#endif
+
+#ifdef GETSTARTED_GUI
+  MainPage *getStartedPage = NULL;
+
+  if (!advancedMode)
+  {
+      //ui->stackPages->add(getStartedPage = new GetStartedDialog(ui->stackPages),
+      //               createPageAction(QIcon(IMG_HELP), tr("Getting Started"), grp));
+      addPage(getStartedPage = new GetStartedDialog(ui->stackPages), grp, NULL);
+  }
+#endif
+
+  /* Create the toolbar */
+  ui->toolBarPage->addActions(grp->actions());
+  connect(grp, SIGNAL(triggered(QAction *)), ui->stackPages, SLOT(showPage(QAction *)));
+
+
+#ifdef UNFINISHED
+  addAction(new QAction(QIcon(IMAGE_UNFINISHED), tr("Unfinished"), ui->toolBar), SLOT(showApplWindow()));
+  ui->toolBarAction->addSeparator();
+  notify += applicationWindow->getNotify();
+#endif
+
+  addAction(new QAction(QIcon(IMAGE_ADDFRIEND), tr("Add"), ui->toolBarAction), SLOT(addFriend()));
+  addAction(new QAction(QIcon(IMAGE_PREFERENCES), tr("Options"), ui->toolBarAction), SLOT(showSettings()));
+  addAction(new QAction(QIcon(IMAGE_ABOUT), tr("About"), ui->toolBarAction), SLOT(showabout()));
+  addAction(new QAction(QIcon(IMAGE_QUIT), tr("Quit"), ui->toolBarAction), SLOT(doQuit()));
+
+  QList<QPair<MainPage*, QPair<QAction*, QListWidgetItem*> > >::iterator notifyIt;
+  for (notifyIt = notify.begin(); notifyIt != notify.end(); ++notifyIt) {
+      UserNotify *userNotify = notifyIt->first->getUserNotify(this);
+      if (userNotify) {
+          userNotify->initialize(ui->toolBarPage, notifyIt->second.first, notifyIt->second.second);
+          connect(userNotify, SIGNAL(countChanged()), this, SLOT(updateTrayCombine()));
+          userNotifyList.push_back(userNotify);
+      }
+  }
+
+}
+
+/** Creates a new action associated with a config page. */
+QAction *MainWindow::createPageAction(const QIcon &icon, const QString &text, QActionGroup *group)
+{
+    QFont font;
+    QAction *action = new QAction(icon, text, group);
+    font = action->font();
+    font.setPointSize(9);
+    action->setCheckable(true);
+    action->setFont(font);
+    return action;
+}
+
+/** Adds the given action to the toolbar and hooks its triggered() signal to
+ * the specified slot (if given). */
+void MainWindow::addAction(QAction *action, const char *slot)
+{
+    QFont font;
+    font = action->font();
+    font.setPointSize(9);
+    action->setFont(font);
+    ui->toolBarAction->addAction(action);
+    connect(action, SIGNAL(triggered()), this, slot);
+
+    QListWidgetItem *item = new QListWidgetItem(action->icon(),action->text()) ;
+    item->setData(Qt::UserRole,QString(slot));
+    ui->listWidget->addItem(item) ;
+}
+
+/** Add the given page to the stackPage and list. */
+void MainWindow::addPage(MainPage *page, QActionGroup *grp, QList<QPair<MainPage*, QPair<QAction*, QListWidgetItem*> > > *notify)
+{
+	QAction *action;
+	ui->stackPages->add(page, action = createPageAction(page->iconPixmap(), page->pageName(), grp));
+
+	QListWidgetItem *item = new QListWidgetItem(QIcon(page->iconPixmap()),page->pageName()) ;
+	ui->listWidget->addItem(item) ;
+
+	if (notify)
+	{
+		QPair<QAction*, QListWidgetItem*> pair = QPair<QAction*, QListWidgetItem*>( action, item);
+		notify->push_back(QPair<MainPage*, QPair<QAction*, QListWidgetItem*> >(page, pair));
+	}
+}
+
+/** Selection page. */
+void MainWindow::setNewPage(int page)
+{
+	MainPage *pagew = dynamic_cast<MainPage*>(ui->stackPages->widget(page)) ;
+
+	if(pagew)
+	{
+		ui->stackPages->setCurrentIndex(page);
+		ui->listWidget->setCurrentRow(page);
+	} else {
+		QString procName = ui->listWidget->item(page)->data(Qt::UserRole).toString();
+#ifdef UNFINISHED
+		if (procName == SLOT(showApplWindow())) showApplWindow();
+#endif
+		if (procName == SLOT(showSettings())) showSettings();
+		if (procName == SLOT(showabout())) showabout();
+		if (procName == SLOT(doQuit())) doQuit();
+		ui->listWidget->setCurrentRow(ui->stackPages->currentIndex());
+	}
 }
 
 void MainWindow::displayDiskSpaceWarning(int loc,int size_limit_mb)
@@ -685,30 +796,6 @@ void MainWindow::postModDirectories(bool update_local)
     ShareManager::postModDirectories(update_local);
 
     QCoreApplication::flush();
-}
-
-/** Creates a new action associated with a config page. */
-QAction *MainWindow::createPageAction(const QIcon &icon, const QString &text, QActionGroup *group)
-{
-    QFont font;
-    QAction *action = new QAction(icon, text, group);
-    font = action->font();
-    font.setPointSize(9);
-    action->setCheckable(true);
-    action->setFont(font);
-    return action;
-}
-
-/** Adds the given action to the toolbar and hooks its triggered() signal to
- * the specified slot (if given). */
-void MainWindow::addAction(QAction *action, const char *slot)
-{
-    QFont font;
-    font = action->font();
-    font.setPointSize(9);
-    action->setFont(font);
-    ui->toolBar->addAction(action);
-    connect(action, SIGNAL(triggered()), this, slot);
 }
 
 #ifdef WINDOWS_SYS
@@ -1121,7 +1208,7 @@ MainWindow::retranslateUi()
   foreach (MainPage *page, ui->stackPages->pages()) {
     page->retranslateUi();
   }
-  foreach (QAction *action, ui->toolBar->actions()) {
+  foreach (QAction *action, ui->toolBarPage->actions()) {
     action->setText(tr(qPrintable(action->data().toString()), "MainWindow"));
   }
 }
@@ -1303,6 +1390,27 @@ void MainWindow::statusChangedComboBox(int index)
     /* no object known */
     setStatus(NULL, statusComboBox->itemData(index, Qt::UserRole).toInt());
 }
+
+/*new setting*/
+void MainWindow::settingsChanged()
+{
+	ui->toolBarPage->setVisible(Settings->getPageButtonLoc());
+	ui->toolBarAction->setVisible(Settings->getActionButtonLoc());
+	ui->listWidget->setVisible(!Settings->getPageButtonLoc() || !Settings->getActionButtonLoc());
+	for(int i = 0; i < ui->listWidget->count(); i++) {
+		if (ui->listWidget->item(i)->data(Qt::UserRole).toString() == "") {
+			ui->listWidget->item(i)->setHidden(Settings->getPageButtonLoc());
+		} else {
+			ui->listWidget->item(i)->setHidden(Settings->getActionButtonLoc());
+		}
+	}
+	int size = Settings->getToolButtonSize();
+	ui->toolBarPage->setToolButtonStyle(Settings->getToolButtonStyle());
+	ui->toolBarPage->setIconSize(QSize(size,size));
+	ui->toolBarAction->setToolButtonStyle(Settings->getToolButtonStyle());
+	ui->toolBarAction->setIconSize(QSize(size,size));
+}
+
 void MainWindow::externalLinkActivated(const QUrl &url)
 {
 	static bool already_warned = false ;

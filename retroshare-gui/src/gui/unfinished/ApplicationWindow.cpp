@@ -115,7 +115,7 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WindowFlags flags)
     mNotify.push_back(QPair<MainPage*, QAction*>(photoShare, action));
 #endif
 
-    PostedDialog *postedDialog = NULL;
+    /*PostedDialog *postedDialog = NULL;
     ui.stackPages->add(postedDialog = new PostedDialog(ui.stackPages),
                       action = createPageAction(QIcon(IMAGE_POSTED), tr("Posted Links"), grp));
     postedDialog->setup();
@@ -124,7 +124,7 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WindowFlags flags)
     WikiDialog *wikiDialog = NULL;
     ui.stackPages->add(wikiDialog = new WikiDialog(ui.stackPages),
                       action = createPageAction(QIcon(IMAGE_WIKI), tr("Wiki Pages"), grp));
-    mNotify.push_back(QPair<MainPage*, QAction*>(wikiDialog, action));
+    mNotify.push_back(QPair<MainPage*, QAction*>(wikiDialog, action));*/
 #if 0
     GxsForumsDialog *gxsforumsDialog = NULL;
     ui.stackPages->add(gxsforumsDialog = new GxsForumsDialog(ui.stackPages),
