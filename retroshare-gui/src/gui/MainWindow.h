@@ -232,10 +232,13 @@ private:
     /** A BandwidthGraph object which handles monitoring RetroShare bandwidth usage */
     BandwidthGraph* _bandwidthGraph;
 
+    typedef void (MainWindow::*FunctionType)();
+
     /** Creates a new action for a Main page. */
     QAction* createPageAction(const QIcon &icon, const QString &text, QActionGroup *group);
     /** Adds a new action to the toolbar. */
-    void addAction(QAction *action, const char *slot = 0);
+    void addAction(QAction *action, FunctionType actionFunction, const char *slot = 0);
+    QMap<QString, FunctionType> _functionList;
 
     QString nameAndLocation;
 

@@ -102,6 +102,21 @@ bool AppearancePage::save(QString &errmsg)
 		case 3:
 			Settings->setToolButtonSize(32);
 	}
+	switch (ui.cmboListItemSize->currentIndex())
+	{
+		case 0:
+			Settings->setListItemIconSize(8);
+		break;
+		case 1:
+			Settings->setListItemIconSize(16);
+		break;
+		case 2:
+		default:
+			Settings->setListItemIconSize(24);
+		break;
+		case 3:
+			Settings->setListItemIconSize(32);
+	}
 
 	/* Set to new style */
 	Rshare::setStyle(ui.cmboStyle->currentText());
@@ -158,6 +173,21 @@ void AppearancePage::load()
 		break;
 		case 32:
 			ui.cmboTollButtonsSize->setCurrentIndex(3);
+	}
+	switch (Settings->getListItemIconSize())
+	{
+		case 8:
+			ui.cmboListItemSize->setCurrentIndex(0);
+		break;
+		case 16:
+			ui.cmboListItemSize->setCurrentIndex(1);
+		break;
+		case 24:
+		default:
+			ui.cmboListItemSize->setCurrentIndex(2);
+		break;
+		case 32:
+			ui.cmboListItemSize->setCurrentIndex(3);
 	}
 }
 

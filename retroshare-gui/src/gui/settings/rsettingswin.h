@@ -28,7 +28,7 @@
 
 class FloatingHelpBrowser;
 
-class RSettingsWin: public QDialog, private Ui::Settings
+class RSettingsWin: public QDialog
 {
 	Q_OBJECT
 
@@ -61,6 +61,9 @@ private:
 	FloatingHelpBrowser *mHelpBrowser;
 	static RSettingsWin *_instance;
 	static int lastPage;
+
+	/* UI - from Designer */
+	Ui::Settings ui;
 };
 
 #endif // !RSETTINGSWIN_HPP_

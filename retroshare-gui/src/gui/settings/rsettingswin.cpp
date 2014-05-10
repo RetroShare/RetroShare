@@ -54,24 +54,32 @@ int RSettingsWin::lastPage = 0;
 RSettingsWin::RSettingsWin(QWidget *parent)
     : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint)
 {
-    setupUi(this);
+    ui.setupUi(this);
     setAttribute(Qt::WA_DeleteOnClose, true);
     setModal(false);
 
     /* Initialize help browser */
-    mHelpBrowser = new FloatingHelpBrowser(this, helpButton);
+    mHelpBrowser = new FloatingHelpBrowser(this, ui.helpButton);
 
     initStackedWidget();
 
-    connect(listWidget, SIGNAL(currentRowChanged(int)), this, SLOT(setNewPage(int)));
-    connect(buttonBox, SIGNAL(accepted()), this, SLOT(saveChanges()));
-    connect(buttonBox, SIGNAL(rejected()), this, SLOT(close()));
+    /* Load window position */
+    QByteArray geometry = Settings->valueFromGroup("SettingDialog", "Geometry", QByteArray()).toByteArray();
+    if (geometry.isEmpty() == false) {
+      restoreGeometry(geometry);
+    }
+
+    connect(ui.listWidget, SIGNAL(currentRowChanged(int)), this, SLOT(setNewPage(int)));
+    connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(saveChanges()));
+    connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(close()));
     connect(this, SIGNAL(finished(int)), this, SLOT(dialogFinished(int)));
 }
 
 RSettingsWin::~RSettingsWin()
 {
-    lastPage = stackedWidget->currentIndex ();
+    /* Save window position */
+    Settings->setValueToGroup("SettingDialog", "Geometry", saveGeometry());
+    lastPage = ui.stackedWidget->currentIndex ();
     _instance = NULL;
 }
 
@@ -104,13 +112,13 @@ void RSettingsWin::dialogFinished(int result)
 
 /*static*/ void RSettingsWin::postModDirectories(bool update_local)
 {
-    if (_instance == NULL || _instance->isHidden() || _instance->stackedWidget == NULL) {
+    if (_instance == NULL || _instance->isHidden() || _instance->ui.stackedWidget == NULL) {
        return;
     }
 
     if (update_local) {
-        if (_instance->stackedWidget->currentIndex() == Directories) {
-            ConfigPage *Page = dynamic_cast<ConfigPage *> (_instance->stackedWidget->currentWidget());
+        if (_instance->ui.stackedWidget->currentIndex() == Directories) {
+            ConfigPage *Page = dynamic_cast<ConfigPage *> (_instance->ui.stackedWidget->currentWidget());
             if (Page) {
                 Page->load();
             }
@@ -121,8 +129,8 @@ void RSettingsWin::dialogFinished(int result)
 void
 RSettingsWin::initStackedWidget()
 {
-    stackedWidget->setCurrentIndex(-1);
-    stackedWidget->removeWidget(stackedWidget->widget(0));
+    ui.stackedWidget->setCurrentIndex(-1);
+    ui.stackedWidget->removeWidget(ui.stackedWidget->widget(0));
 
     addPage(new GeneralPage(0));
     addPage(new ServerPage());
@@ -157,16 +165,16 @@ RSettingsWin::initStackedWidget()
 
 void RSettingsWin::addPage(ConfigPage *page)
 {
-	stackedWidget->addWidget(page) ;
+	ui.stackedWidget->addWidget(page) ;
 
 	QListWidgetItem *item = new QListWidgetItem(QIcon(page->iconPixmap()),page->pageName()) ;
-	listWidget->addItem(item) ;
+	ui.listWidget->addItem(item) ;
 }
 
 void
 RSettingsWin::setNewPage(int page)
 {
-	ConfigPage *pagew = dynamic_cast<ConfigPage*>(stackedWidget->widget(page)) ;
+	ConfigPage *pagew = dynamic_cast<ConfigPage*>(ui.stackedWidget->widget(page)) ;
 
 	mHelpBrowser->hide();
 
@@ -176,11 +184,11 @@ RSettingsWin::setNewPage(int page)
 		mHelpBrowser->clear();
 		return ;
 	}
-	pageName->setText(pagew->pageName());
-	pageicon->setPixmap(pagew->iconPixmap()) ;
+	ui.pageName->setText(pagew->pageName());
+	ui.pageicon->setPixmap(pagew->iconPixmap()) ;
 
-	stackedWidget->setCurrentIndex(page);
-	listWidget->setCurrentRow(page);
+	ui.stackedWidget->setCurrentIndex(page);
+	ui.listWidget->setCurrentRow(page);
 
 	mHelpBrowser->setHelpText(pagew->helpText());
 }
@@ -192,15 +200,15 @@ RSettingsWin::saveChanges()
 	QString errmsg;
 
 	/* Call each config page's save() method to save its data */
-	int i, count = stackedWidget->count();
-	for (i = 0; i < count; i++) 
+	int i, count = ui.stackedWidget->count();
+	for (i = 0; i < count; i++)
 	{
-		ConfigPage *page = dynamic_cast<ConfigPage *>(stackedWidget->widget(i));
+		ConfigPage *page = dynamic_cast<ConfigPage *>(ui.stackedWidget->widget(i));
 		if (page && page->wasLoaded()) {
 			if (!page->save(errmsg))
 			{
 				/* Display the offending page */
-				stackedWidget->setCurrentWidget(page);
+				ui.stackedWidget->setCurrentWidget(page);
 
 				/* Show the user what went wrong */
 				QMessageBox::warning(this,

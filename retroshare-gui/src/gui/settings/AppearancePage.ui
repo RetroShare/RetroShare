@@ -20,190 +20,6 @@
    <property name="spacing">
     <number>0</number>
    </property>
-   <item row="4" column="0">
-    <widget class="QGroupBox" name="grpToolBar">
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>75</height>
-      </size>
-     </property>
-     <property name="contextMenuPolicy">
-      <enum>Qt::NoContextMenu</enum>
-     </property>
-     <property name="title">
-      <string>Tool Bar</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_ToolBar">
-      <item row="4" column="0">
-       <widget class="QFrame" name="frameAction">
-        <property name="frameShape">
-         <enum>QFrame::StyledPanel</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Plain</enum>
-        </property>
-        <layout class="QHBoxLayout" name="horizontalLayout">
-         <property name="margin">
-          <number>2</number>
-         </property>
-         <item>
-          <widget class="QRadioButton" name="rbtActionOnToolBar">
-           <property name="text">
-            <string>On Tool Bar</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QRadioButton" name="rbtActionOnListItem">
-           <property name="text">
-            <string>On List Item</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>300</width>
-             <height>16</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QFrame" name="framePage">
-        <property name="frameShape">
-         <enum>QFrame::StyledPanel</enum>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Plain</enum>
-        </property>
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
-         <property name="margin">
-          <number>2</number>
-         </property>
-         <item>
-          <widget class="QRadioButton" name="rbtPageOnToolBar">
-           <property name="text">
-            <string>On Tool Bar</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QRadioButton" name="rbtPageOnListItem">
-           <property name="text">
-            <string>On List Item</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>300</width>
-             <height>16</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="labelActionToolBar">
-        <property name="text">
-         <string>Where do you want to have the buttons for menu?</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="labelPageToolBar">
-        <property name="text">
-         <string>Where do you want to have the buttons for the page?</string>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="0">
-       <widget class="QLabel" name="labelToolButtonStyle">
-        <property name="text">
-         <string>Choose the style of Tool Buttons.</string>
-        </property>
-       </widget>
-      </item>
-      <item row="6" column="0">
-       <widget class="QComboBox" name="cmboTollButtonsStyle">
-        <item>
-         <property name="text">
-          <string>Icon Only</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Text Only</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Text Beside Icon</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Text Under Icon</string>
-         </property>
-        </item>
-       </widget>
-      </item>
-      <item row="7" column="0">
-       <widget class="QComboBox" name="cmboTollButtonsSize">
-        <item>
-         <property name="text">
-          <string>Icon Size = 8x8</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Icon Size = 16x16</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Icon Size = 24x24</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Inon Size = 32x32</string>
-         </property>
-        </item>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="6" column="0">
-    <spacer>
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>361</width>
-       <height>61</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
    <item row="0" column="0">
     <widget class="QGroupBox" name="grpLanguage">
      <property name="minimumSize">
@@ -261,44 +77,6 @@
      </layout>
     </widget>
    </item>
-   <item row="2" column="0">
-    <widget class="QGroupBox" name="grpStyleSheet">
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>64</height>
-      </size>
-     </property>
-     <property name="title">
-      <string>Style Sheet</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_StyleSheet">
-      <item row="0" column="0">
-       <widget class="QComboBox" name="cmboStyleSheet">
-        <property name="minimumSize">
-         <size>
-          <width>150</width>
-          <height>0</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <spacer>
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>215</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-     </layout>
-    </widget>
-   </item>
    <item row="1" column="0">
     <widget class="QGroupBox" name="grpStyle">
      <property name="minimumSize">
@@ -342,6 +120,286 @@
          </size>
         </property>
        </spacer>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QGroupBox" name="grpStyleSheet">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>64</height>
+      </size>
+     </property>
+     <property name="title">
+      <string>Style Sheet</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_StyleSheet">
+      <item row="0" column="0">
+       <widget class="QComboBox" name="cmboStyleSheet">
+        <property name="minimumSize">
+         <size>
+          <width>150</width>
+          <height>0</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <spacer>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>215</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="7" column="0">
+    <spacer>
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>361</width>
+       <height>61</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="6" column="0">
+    <widget class="QGroupBox" name="grpToolBar">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>228</height>
+      </size>
+     </property>
+     <property name="contextMenuPolicy">
+      <enum>Qt::NoContextMenu</enum>
+     </property>
+     <property name="title">
+      <string>Tool Bar</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_ToolBar">
+      <item row="4" column="0">
+       <widget class="QFrame" name="frameAction">
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Plain</enum>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <property name="margin">
+          <number>2</number>
+         </property>
+         <item>
+          <widget class="QRadioButton" name="rbtActionOnToolBar">
+           <property name="text">
+            <string>On Tool Bar</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="rbtActionOnListItem">
+           <property name="text">
+            <string>On List Item</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>300</width>
+             <height>16</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="labelActionToolBar">
+        <property name="text">
+         <string>Where do you want to have the buttons for menu?</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QFrame" name="framePage">
+        <property name="frameShape">
+         <enum>QFrame::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Plain</enum>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <property name="margin">
+          <number>2</number>
+         </property>
+         <item>
+          <widget class="QRadioButton" name="rbtPageOnToolBar">
+           <property name="text">
+            <string>On Tool Bar</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="rbtPageOnListItem">
+           <property name="text">
+            <string>On List Item</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>300</width>
+             <height>16</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="labelPageToolBar">
+        <property name="text">
+         <string>Where do you want to have the buttons for the page?</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0">
+       <widget class="QFrame" name="frameToolListStyle">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::NoFrame</enum>
+        </property>
+        <layout class="QGridLayout" name="gridLayoutToolListStyle">
+         <item row="2" column="0">
+       <widget class="QComboBox" name="cmboTollButtonsStyle">
+        <item>
+         <property name="text">
+          <string>Icon Only</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Text Only</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Text Beside Icon</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Text Under Icon</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="labelToolButtonStyle">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Choose the style of Tool Buttons.</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLabel" name="labelListItemStyle">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Choose the style of List Items.</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+       <widget class="QComboBox" name="cmboTollButtonsSize">
+        <item>
+         <property name="text">
+          <string>Icon Size = 8x8</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Icon Size = 16x16</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Icon Size = 24x24</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Inon Size = 32x32</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="1" column="1">
+          <widget class="QComboBox" name="cmboListItemSize">
+           <item>
+            <property name="text">
+             <string>Icon Size = 8x8</string>
+        </property>
+      </item>
+           <item>
+            <property name="text">
+             <string>Icon Size = 16x16</string>
+     </property>
+      </item>
+           <item>
+            <property name="text">
+             <string>Icon Size = 24x24</string>
+        </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Inon Size = 32x32</string>
+        </property>
+      </item>
+    </widget>
+   </item>
+        </layout>
+       </widget>
       </item>
      </layout>
     </widget>

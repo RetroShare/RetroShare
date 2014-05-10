@@ -235,6 +235,11 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 
     //ui->stackPages->setCurrentIndex(Settings->getLastPageInMainWindow());
     setNewPage(Settings->getLastPageInMainWindow());
+    /* Load listWidget postion */
+    QByteArray geometry = Settings->valueFromGroup("MainWindow", "SplitterState", QByteArray()).toByteArray();
+    if (geometry.isEmpty() == false) {
+      ui->splitter->restoreState(geometry);
+    }
 
     /** StatusBar section ********/
     /* initialize combobox in status bar */
@@ -304,6 +309,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 MainWindow::~MainWindow()
 {
     Settings->setLastPageInMainWindow(ui->stackPages->currentIndex());
+    /* Save listWidget position */
+    Settings->setValueToGroup("MainWindow", "SplitterState", ui->splitter->saveState());
 
     delete peerstatus;
     delete natstatus;
@@ -463,15 +470,16 @@ void MainWindow::initStackedPage()
 
 
 #ifdef UNFINISHED
-  addAction(new QAction(QIcon(IMAGE_UNFINISHED), tr("Unfinished"), ui->toolBar), SLOT(showApplWindow()));
+  addAction(new QAction(QIcon(IMAGE_UNFINISHED), tr("Unfinished"), ui->toolBar), &MainWindow::showApplWindow, SLOT(showApplWindow()));
   ui->toolBarAction->addSeparator();
   notify += applicationWindow->getNotify();
 #endif
 
-  addAction(new QAction(QIcon(IMAGE_ADDFRIEND), tr("Add"), ui->toolBarAction), SLOT(addFriend()));
-  addAction(new QAction(QIcon(IMAGE_PREFERENCES), tr("Options"), ui->toolBarAction), SLOT(showSettings()));
-  addAction(new QAction(QIcon(IMAGE_ABOUT), tr("About"), ui->toolBarAction), SLOT(showabout()));
-  addAction(new QAction(QIcon(IMAGE_QUIT), tr("Quit"), ui->toolBarAction), SLOT(doQuit()));
+  /** Add icon on Action bar */
+  addAction(new QAction(QIcon(IMAGE_ADDFRIEND), tr("Add"), ui->toolBarAction), &MainWindow::addFriend, SLOT(addFriend()));
+  addAction(new QAction(QIcon(IMAGE_PREFERENCES), tr("Options"), ui->toolBarAction), &MainWindow::showSettings, SLOT(showSettings()));
+  addAction(new QAction(QIcon(IMAGE_ABOUT), tr("About"), ui->toolBarAction), &MainWindow::showabout, SLOT(showabout()));
+  addAction(new QAction(QIcon(IMAGE_QUIT), tr("Quit"), ui->toolBarAction), &MainWindow::doQuit, SLOT(doQuit()));
 
   QList<QPair<MainPage*, QPair<QAction*, QListWidgetItem*> > >::iterator notifyIt;
   for (notifyIt = notify.begin(); notifyIt != notify.end(); ++notifyIt) {
@@ -498,19 +506,22 @@ QAction *MainWindow::createPageAction(const QIcon &icon, const QString &text, QA
 }
 
 /** Adds the given action to the toolbar and hooks its triggered() signal to
- * the specified slot (if given). */
-void MainWindow::addAction(QAction *action, const char *slot)
+ * the specified slot (if given).
+ * Have to pass function pointer and slot, because we can't make slot of function pointer */
+void MainWindow::addAction(QAction *action, FunctionType actionFunction, const char *slot)
 {
     QFont font;
     font = action->font();
     font.setPointSize(9);
     action->setFont(font);
     ui->toolBarAction->addAction(action);
-    connect(action, SIGNAL(triggered()), this, slot);
+    if (slot) connect(action, SIGNAL(triggered()), this, slot);
 
     QListWidgetItem *item = new QListWidgetItem(action->icon(),action->text()) ;
     item->setData(Qt::UserRole,QString(slot));
     ui->listWidget->addItem(item) ;
+
+    if (slot) _functionList[slot] = actionFunction;
 }
 
 /** Add the given page to the stackPage and list. */
@@ -540,12 +551,9 @@ void MainWindow::setNewPage(int page)
 		ui->listWidget->setCurrentRow(page);
 	} else {
 		QString procName = ui->listWidget->item(page)->data(Qt::UserRole).toString();
-#ifdef UNFINISHED
-		if (procName == SLOT(showApplWindow())) showApplWindow();
-#endif
-		if (procName == SLOT(showSettings())) showSettings();
-		if (procName == SLOT(showabout())) showabout();
-		if (procName == SLOT(doQuit())) doQuit();
+		FunctionType function = _functionList[procName];
+		if (function) (this->*function)();
+
 		ui->listWidget->setCurrentRow(ui->stackPages->currentIndex());
 	}
 }
@@ -1404,11 +1412,13 @@ void MainWindow::settingsChanged()
 			ui->listWidget->item(i)->setHidden(Settings->getActionButtonLoc());
 		}
 	}
-	int size = Settings->getToolButtonSize();
+	int toolSize = Settings->getToolButtonSize();
 	ui->toolBarPage->setToolButtonStyle(Settings->getToolButtonStyle());
-	ui->toolBarPage->setIconSize(QSize(size,size));
+	ui->toolBarPage->setIconSize(QSize(toolSize,toolSize));
 	ui->toolBarAction->setToolButtonStyle(Settings->getToolButtonStyle());
-	ui->toolBarAction->setIconSize(QSize(size,size));
+	ui->toolBarAction->setIconSize(QSize(toolSize,toolSize));
+	int itemSize = Settings->getListItemIconSize();
+	ui->listWidget->setIconSize(QSize(itemSize,itemSize));
 }
 
 void MainWindow::externalLinkActivated(const QUrl &url)

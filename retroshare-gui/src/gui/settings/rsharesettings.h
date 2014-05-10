@@ -132,6 +132,11 @@ public:
   /** Sets the tool button's size.*/
   void setToolButtonSize(int size);
 
+  /** Gets the list item icon's size.*/
+  int getListItemIconSize();
+  /** Sets the list item icon's size.*/
+  void setListItemIconSize(int size);
+
   /** Returns true if RetroShare's main window should be visible when the
   * application starts. */
   bool getStartMinimized();

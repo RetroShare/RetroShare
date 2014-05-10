@@ -48,6 +48,7 @@
 #define SETTING_ACTIONBUTTONLOC     "ActionButtonLocation"
 #define SETTING_TOOLBUTTONSTYLE     "ToolButtonStyle"
 #define SETTING_TOOLBUTTONSIZE      "ToolButtonSize"
+#define SETTING_LISTITEMICONSIZE    "ListItemIconSize"
 
 #define SETTING_DATA_DIRECTORY      "DataDirectory"
 #define SETTING_BWGRAPH_FILTER        "StatisticDialog/BWLineFilter"
@@ -277,6 +278,45 @@ void RshareSettings::setToolButtonSize(int size)
       setValue(SETTING_TOOLBUTTONSIZE, 32);
   }
 }
+
+/** Gets the list item icon's size.*/
+int RshareSettings::getListItemIconSize()
+{
+  int intValue=value(SETTING_LISTITEMICONSIZE, 24).toInt();
+  switch (intValue)
+  {
+    case 8:
+    return 8;
+    case 16:
+    return 16;
+    case 24:
+    default:
+    return 24;
+    case 32:
+    return 32;
+  }
+}
+
+/** Sets the list item icon's size.*/
+void RshareSettings::setListItemIconSize(int size)
+{
+  switch (size)
+  {
+    case 8:
+      setValue(SETTING_LISTITEMICONSIZE, 8);
+    break;
+    case 16:
+      setValue(SETTING_LISTITEMICONSIZE, 16);
+    break;
+    case 24:
+    default:
+      setValue(SETTING_LISTITEMICONSIZE, 24);
+    break;
+    case 32:
+      setValue(SETTING_LISTITEMICONSIZE, 32);
+  }
+}
+
 static QString getKeyForLastDir(RshareSettings::enumLastDir type)
 {
     switch (type) {
