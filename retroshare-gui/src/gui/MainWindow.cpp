@@ -84,6 +84,7 @@
 #include "statusbar/discstatus.h"
 #include "statusbar/OpModeStatus.h"
 #include "statusbar/SoundStatus.h"
+#include "statusbar/ToasterDisable.h"
 #include <retroshare/rsstatus.h>
 
 #include <retroshare/rsiface.h>
@@ -276,6 +277,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     statusBar()->addPermanentWidget(new OpModeStatus());
 
     statusBar()->addPermanentWidget(new SoundStatus());
+
+    statusBar()->addPermanentWidget(new ToasterDisable());
     /** Status Bar end ******/
 
     /* Creates a tray icon with a context menu and adds it to the system's * notification area. */

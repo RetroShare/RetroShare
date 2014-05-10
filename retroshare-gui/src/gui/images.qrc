@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/" >
+    <qresource prefix="/">
         <file>images/add_chat24.png</file>
         <file>images/mail-encrypted-full.png</file>
         <file>images/decrypt-mail.png</file>
@@ -678,8 +678,10 @@
         <file>images/circles/circles_64.png</file>
         <file>images/newsfeed/news-feed-32.png</file>
         <file>images/newsfeed/news-feed-notify-32.png</file>
-        <file>images/share-icon-16.png</file>  
+        <file>images/share-icon-16.png</file>
         <file>help/version.html</file>
         <file>images/view-certificate-sign-48.png</file>
+        <file>images/toasterEnable.png</file>
+        <file>images/toasterDisable.png</file>
     </qresource>
 </RCC>

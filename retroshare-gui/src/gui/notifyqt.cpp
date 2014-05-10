@@ -96,6 +96,7 @@ public:
 };
 
 /*static*/ NotifyQt *NotifyQt::_instance = NULL;
+/*static*/ bool NotifyQt::_disableAllToaster = false;
 
 /*static*/ NotifyQt *NotifyQt::Create ()
 {
@@ -109,6 +110,20 @@ public:
 /*static*/ NotifyQt *NotifyQt::getInstance ()
 {
     return _instance;
+}
+
+/*static*/ bool NotifyQt::isAllDisable ()
+{
+	return _disableAllToaster;
+}
+
+void NotifyQt::SetDisableAll(bool bValue)
+{
+	if (bValue!=_disableAllToaster)
+	{
+		_disableAllToaster=bValue;
+		emit disableAllChanged(bValue);
+	}
 }
 
 NotifyQt::NotifyQt() : cDialog(NULL)
@@ -141,9 +156,9 @@ void NotifyQt::notifyOwnAvatarChanged()
 			return ;
 	}
 
-        #ifdef NOTIFY_DEBUG
+#ifdef NOTIFY_DEBUG
 	std::cerr << "Notifyqt:: notified that own avatar changed" << std::endl ;
-        #endif
+#endif
 	emit ownAvatarChanged() ;
 }
 
@@ -726,7 +741,7 @@ void NotifyQt::notifyListPreChange(int list, int /*type*/)
 	/* New Timer Based Update scheme ...
 	 * means correct thread seperation
 	 *
-	 * uses Flags, to detect changes 
+	 * uses Flags, to detect changes
 	 */
 
 void NotifyQt::enable()
@@ -778,7 +793,7 @@ void NotifyQt::UpdateGUI()
 				case RS_POPUP_ENCRYPTED_MSG:
 					soundManager->play(SOUND_MESSAGE_ARRIVED);
 
-					if (popupflags & RS_POPUP_MSG)
+					if ((popupflags & RS_POPUP_MSG) && !_disableAllToaster)
 					{
 						toaster = new Toaster(new MessageToaster("", tr("Encrypted message"), QString("[%1]").arg(tr("Encrypted message"))));
 					}
@@ -786,7 +801,7 @@ void NotifyQt::UpdateGUI()
 				case RS_POPUP_MSG:
 					soundManager->play(SOUND_MESSAGE_ARRIVED);
 
-					if (popupflags & RS_POPUP_MSG)
+					if ((popupflags & RS_POPUP_MSG) && !_disableAllToaster)
 					{
 						toaster = new Toaster(new MessageToaster(id, QString::fromUtf8(title.c_str()), QString::fromUtf8(msg.c_str())));
 					}
@@ -794,7 +809,7 @@ void NotifyQt::UpdateGUI()
 				case RS_POPUP_CONNECT:
 					soundManager->play(SOUND_USER_ONLINE);
 
-					if (popupflags & RS_POPUP_CONNECT)
+					if ((popupflags & RS_POPUP_CONNECT) && !_disableAllToaster)
 					{
 						toaster = new Toaster(new OnlineToaster(RsPeerId(id)));
 					}
@@ -802,16 +817,16 @@ void NotifyQt::UpdateGUI()
 				case RS_POPUP_DOWNLOAD:
 					soundManager->play(SOUND_DOWNLOAD_COMPLETE);
 
-					if (popupflags & RS_POPUP_DOWNLOAD)
+					if ((popupflags & RS_POPUP_DOWNLOAD) && !_disableAllToaster)
 					{
 						/* id = file hash */
-                        toaster = new Toaster(new DownloadToaster(RsFileHash(id), QString::fromUtf8(title.c_str())));
+						toaster = new Toaster(new DownloadToaster(RsFileHash(id), QString::fromUtf8(title.c_str())));
 					}
 					break;
 				case RS_POPUP_CHAT:
-					if (popupflags & RS_POPUP_CHAT)
+					if ((popupflags & RS_POPUP_CHAT) && !_disableAllToaster)
 					{
-                        ChatDialog *chatDialog = ChatDialog::getChat(RsPeerId(id), 0);
+						ChatDialog *chatDialog = ChatDialog::getChat(RsPeerId(id), 0);
 						ChatWidget *chatWidget;
 						if (chatDialog && (chatWidget = chatDialog->getChatWidget()) && chatWidget->isActive()) {
 							// do not show when active
@@ -821,7 +836,7 @@ void NotifyQt::UpdateGUI()
 					}
 					break;
 				case RS_POPUP_GROUPCHAT:
-					if (popupflags & RS_POPUP_GROUPCHAT)
+					if ((popupflags & RS_POPUP_GROUPCHAT) && !_disableAllToaster)
 					{
 						MainWindow *mainWindow = MainWindow::getInstance();
 						if (mainWindow && mainWindow->isActiveWindow() && !mainWindow->isMinimized()) {
@@ -836,9 +851,9 @@ void NotifyQt::UpdateGUI()
 					}
 					break;
 				case RS_POPUP_CHATLOBBY:
-					if (popupflags & RS_POPUP_CHATLOBBY)
+					if ((popupflags & RS_POPUP_CHATLOBBY) && !_disableAllToaster)
 					{
-                        ChatDialog *chatDialog = ChatDialog::getChat(RsPeerId(id), 0);
+						ChatDialog *chatDialog = ChatDialog::getChat(RsPeerId(id), 0);
 						ChatWidget *chatWidget;
 						if (chatDialog && (chatWidget = chatDialog->getChatWidget()) && chatWidget->isActive()) {
 							// do not show when active
@@ -853,7 +868,7 @@ void NotifyQt::UpdateGUI()
 					}
 					break;
 				case RS_POPUP_CONNECT_ATTEMPT:
-					if (popupflags & RS_POPUP_CONNECT_ATTEMPT)
+					if ((popupflags & RS_POPUP_CONNECT_ATTEMPT) && !_disableAllToaster)
 					{
 						// id = gpgid
 						// title = ssl name
@@ -868,7 +883,7 @@ void NotifyQt::UpdateGUI()
 				toaster->widget->setWindowFlags(Qt::ToolTip | Qt::WindowStaysOnTopHint);
 
 				/* add toaster to waiting list */
-//				QMutexLocker lock(&waitingToasterMutex);
+				//QMutexLocker lock(&waitingToasterMutex);
 				waitingToasterList.push_back(toaster);
 			}
 		}
@@ -967,7 +982,7 @@ void NotifyQt::testToaster(uint notifyFlags, /*RshareSettings::enumToasterPositi
 			toaster->margin = margin;
 
 			/* add toaster to waiting list */
-//			QMutexLocker lock(&waitingToasterMutex);
+			//QMutexLocker lock(&waitingToasterMutex);
 			waitingToasterList.push_back(toaster);
 		}
 	}
@@ -992,7 +1007,7 @@ void NotifyQt::notifySettingsChanged()
 void NotifyQt::startWaitingToasters()
 {
 	{
-//		QMutexLocker lock(&waitingToasterMutex);
+		//QMutexLocker lock(&waitingToasterMutex);
 
 		if (waitingToasterList.empty()) {
 			/* No toasters are waiting */
@@ -1001,7 +1016,7 @@ void NotifyQt::startWaitingToasters()
 	}
 
 	{
-//		QMutexLocker lock(&runningToasterMutex);
+		//QMutexLocker lock(&runningToasterMutex);
 
 		if (runningToasterList.size() >= 3) {
 			/* Don't show more than 3 toasters at once */
@@ -1012,7 +1027,7 @@ void NotifyQt::startWaitingToasters()
 	Toaster *toaster = NULL;
 
 	{
-//		QMutexLocker lock(&waitingToasterMutex);
+		//QMutexLocker lock(&waitingToasterMutex);
 
 		if (waitingToasterList.size()) {
 			/* Take one toaster of the waiting list */
@@ -1022,7 +1037,7 @@ void NotifyQt::startWaitingToasters()
 	}
 
 	if (toaster) {
-//		QMutexLocker lock(&runningToasterMutex);
+		//QMutexLocker lock(&runningToasterMutex);
 
 		/* Calculate positions */
 		QSize size = toaster->widget->size();
@@ -1069,7 +1084,7 @@ void NotifyQt::startWaitingToasters()
 
 void NotifyQt::runningTick()
 {
-//	QMutexLocker lock(&runningToasterMutex);
+	//QMutexLocker lock(&runningToasterMutex);
 
 	int interval = runningToasterTimer->interval();
 	QPoint diff;

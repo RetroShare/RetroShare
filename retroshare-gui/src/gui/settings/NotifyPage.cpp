@@ -41,6 +41,8 @@ NotifyPage::NotifyPage(QWidget * parent, Qt::WindowFlags flags)
 
   connect(ui.notifyButton, SIGNAL(clicked()), this, SLOT(testNotify()));
   connect(ui.toasterButton, SIGNAL(clicked()), this, SLOT(testToaster()));
+  connect(ui.pushButtonDisableAll,SIGNAL(toggled(bool)), NotifyQt::getInstance(), SLOT(SetDisableAll(bool)));
+  connect(NotifyQt::getInstance(),SIGNAL(disableAllChanged(bool)), ui.pushButtonDisableAll, SLOT(setChecked(bool)));
 
   QFont font = ui.notify_Peers->font(); // use font from existing checkbox
 
@@ -238,6 +240,8 @@ void NotifyPage::load()
     ui.systray_ChatLobby->setChecked(Settings->getDisplayTrayChatLobby());
 
     ui.addFeedsAtEnd->setChecked(Settings->getAddFeedsAtEnd());
+
+    ui.pushButtonDisableAll->setChecked(NotifyQt::isAllDisable());
 
     RshareSettings::enumToasterPosition toasterPosition = Settings->getToasterPosition();
     ui.comboBoxToasterPosition->clear();

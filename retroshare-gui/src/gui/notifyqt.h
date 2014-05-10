@@ -31,6 +31,7 @@ class NotifyQt: public QObject, public NotifyClient
 	public:
 		static NotifyQt *Create ();
 		static NotifyQt *getInstance ();
+		static bool isAllDisable();
 		void enable() ;
 
 		virtual ~NotifyQt() { return; }
@@ -130,9 +131,11 @@ class NotifyQt: public QObject, public NotifyClient
 		/* Notify from GUI */
 		void chatStyleChanged(int /*ChatStyle::enumStyleType*/ styleType);
 		void settingsChanged();
+		void disableAllChanged(bool disableAll) const;
 
 	public slots:
 		void UpdateGUI(); /* called by timer */
+		void SetDisableAll(bool bValue);
 
 	private slots:
 		void runningTick();
@@ -143,6 +146,7 @@ class NotifyQt: public QObject, public NotifyClient
 		NotifyQt();
 
 		static NotifyQt *_instance;
+		static bool _disableAllToaster;
 
 		/* system notifications */
 
