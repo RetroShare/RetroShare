@@ -95,8 +95,8 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     ui.avatar->setOwnId();
 
     ui.tabWidget->setTabPosition(QTabWidget::North);
-    ui.tabWidget->addTab(idDialog = new IdDialog(),QIcon(IMAGE_IDENTITY), tr("Identities"));
-    ui.tabWidget->addTab(circlesDialog = new CirclesDialog(),QIcon(IMAGE_CIRCLES), tr("Circles"));
+    //ui.tabWidget->addTab(idDialog = new IdDialog(),QIcon(IMAGE_IDENTITY), tr("Identities"));
+    //ui.tabWidget->addTab(circlesDialog = new CirclesDialog(),QIcon(IMAGE_CIRCLES), tr("Circles"));
     ui.tabWidget->addTab(networkView = new NetworkView(),QIcon(IMAGE_NETWORK2), tr("Local network"));
     ui.tabWidget->addTab(networkDialog = new NetworkDialog(),QIcon(IMAGE_PEERS), tr("Keyring"));
 
