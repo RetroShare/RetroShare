@@ -22,6 +22,7 @@
 #include <iostream>
 #include <QTimer>
 #include <QObject>
+#include <QFontMetrics>
 
 #include <QPainter>
 #include <QStylePainter>
@@ -139,9 +140,6 @@ void GlobalRouterStatisticsWidget::updateContent()
 	// Data items
 	// 	Msg id				Local origin				Destination				Time           Status
 	//
-	static const int cellx = 6 ;
-	static const int celly = 10+4 ;
-
 	QPixmap tmppixmap(maxWidth, maxHeight);
 	tmppixmap.fill(this, 0, 0);
 	setFixedHeight(maxHeight);
@@ -150,29 +148,60 @@ void GlobalRouterStatisticsWidget::updateContent()
 	painter.initFrom(this);
 	painter.setPen(QColor::fromRgb(0,0,0)) ;
 
+	QFont times_f("Times") ;
+	QFont monospace_f("Monospace") ;
+	monospace_f.setStyleHint(QFont::TypeWriter) ;
+
+	QFontMetrics fm_monospace(monospace_f) ;
+	QFontMetrics fm_times(times_f) ;
+
+	static const int cellx = fm_monospace.width(QString(" ")) ;
+	static const int celly = fm_monospace.height() ;
+
 	maxHeight = 500 ;
 
 	// std::cerr << "Drawing into pixmap of size " << maxWidth << "x" << maxHeight << std::endl;
 	// draw...
 	int ox=5,oy=5 ;
 
+	painter.setFont(times_f) ;
 	painter.drawText(ox,oy+celly,tr("Pending packets")+":" + QString::number(cache_infos.size())) ; oy += celly*2 ;
+
+	painter.setFont(monospace_f) ;
+
+	static const QString status_string[5] = { "UNKN", "PEND","SENT","ACKN","DEAD" } ;
+	time_t now = time(NULL) ;
+	std::map<QString, std::vector<QString> > tos ;
 
 	for(uint32_t i=0;i<cache_infos.size();++i)
 	{
 		QString packet_string ;
-		packet_string += QString::number(cache_infos[i].mid,16)  ;
+		packet_string += QString("Id=")+QString::number(cache_infos[i].mid,16)  ;
 		packet_string += tr(" by ")+QString::fromStdString(cache_infos[i].local_origin.toStdString()) ;
-		packet_string += tr(" to ")+QString::fromStdString(cache_infos[i].destination.toStdString()) ;
-		packet_string += tr(" Status ")+QString::number(cache_infos[i].status) ;
+		packet_string += tr(" size=")+QString::number(cache_infos[i].data_size) ;
+		packet_string += tr(" Status ")+status_string[cache_infos[i].status % 6] ;
+		packet_string += " "+QString::number(now - cache_infos[i].time_stamp) + tr(" secs ago");
 
-		painter.drawText(ox+2*cellx,oy+celly,packet_string ) ; oy += celly ;
+		tos[ QString::fromStdString(cache_infos[i].destination.toStdString()) ].push_back(packet_string) ;
+	}
+
+	for(std::map<QString,std::vector<QString> >::const_iterator it(tos.begin());it!=tos.end();++it)
+	{
+		painter.drawText(ox+2*cellx,oy+celly,tr("To: ")+it->first ) ; oy += celly ;
+
+		for(uint32_t i=0;i<it->second.size();++i)
+		{
+			painter.drawText(ox+4*cellx,oy+celly,it->second[i] ) ; 
+			oy += celly ;
+		}
 	}
 
 	oy += celly ;
 
+	painter.setFont(times_f) ;
 	painter.drawText(ox,oy+celly,tr("Managed keys")+":" + QString::number(matrix_info.published_keys.size())) ; oy += celly*2 ;
 
+	painter.setFont(monospace_f) ;
 	for(std::map<GRouterKeyId,RsGRouter::GRouterPublishedKeyInfo>::const_iterator it(matrix_info.published_keys.begin());it!=matrix_info.published_keys.end();++it)
 	{
 		QString packet_string ;
@@ -185,31 +214,35 @@ void GlobalRouterStatisticsWidget::updateContent()
 	oy += celly ;
 
 	QString prob_string ;
+	painter.setFont(times_f) ;
+	QString Q = tr("Routing matrix  (") ;
 	
-	painter.drawText(ox+0*cellx,oy+celly,tr("Routing matrix  (")) ; 
+	painter.drawText(ox+0*cellx,oy+fm_times.height(),Q) ;
 
 	// draw scale
 	
 	for(int i=0;i<100;++i)
 	{
 		painter.setPen(colorScale(i/100.0)) ;
-		painter.drawLine(ox+120+i,oy+celly+2,ox+120+i,oy+2) ;
+		painter.drawLine(fm_times.width(Q)+i,oy+celly+2,fm_times.width(Q)+i,oy+2) ;
 	}
 	painter.setPen(QColor::fromRgb(0,0,0)) ;
 
-	painter.drawText(ox+230,oy+celly,")") ; 
+	painter.drawText(ox+fm_times.width(Q) + 100,oy+celly,")") ; 
 	
 	oy += celly ;
 	oy += celly ;
 
 	static const int MaxKeySize = 20 ;
+	painter.setFont(monospace_f) ;
 
 	for(std::map<GRouterKeyId,std::vector<float> >::const_iterator it(matrix_info.per_friend_probabilities.begin());it!=matrix_info.per_friend_probabilities.end();++it)
 	{
-		painter.drawText(ox+2*cellx,oy+celly,QString::fromStdString(it->first.toStdString())+" : ") ; 
+		QString ids = QString::fromStdString(it->first.toStdString())+" : " ;
+		painter.drawText(ox+2*cellx,oy+celly,ids) ; 
 
 		for(uint32_t i=0;i<matrix_info.friend_ids.size();++i)
- 			painter.fillRect(ox+(MaxKeySize + i)*cellx+200,oy,cellx,celly,colorScale(it->second[i])) ;
+ 			painter.fillRect(ox+i*cellx+fm_monospace.width(ids),oy,cellx,celly,colorScale(it->second[i])) ;
 		
 		oy += celly ;
 	}
