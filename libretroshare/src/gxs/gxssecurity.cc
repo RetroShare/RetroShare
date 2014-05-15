@@ -398,6 +398,7 @@ std::string GxsSecurity::getRsaKeySign(RSA *pubkey)
         BN_bn2bin(pubkey -> e, &tmp[lenn]);
 
 		  Sha1CheckSum s = RsDirUtil::sha1sum(tmp,lenn+lene) ;
+		  delete[] tmp ;
 
         // Copy first CERTSIGNLEN bytes from the hash of the public modulus and exponent
 		  // We should not be using strings here, but a real ID. To be done later.
