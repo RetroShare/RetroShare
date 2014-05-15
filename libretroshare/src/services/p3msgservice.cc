@@ -1681,7 +1681,7 @@ bool p3MsgService::createDistantMessage(const RsGxsId& destination_gxs_id,const 
 	std::cerr << "Creating distant message for recipient " << destination_gxs_id << std::endl;
 #endif
 	unsigned char *data = NULL ;
-	void *encrypted_data = NULL ;
+	uint8_t *encrypted_data = NULL ;
 
 	try
 	{
@@ -1800,7 +1800,7 @@ bool p3MsgService::createDistantMessage(const RsGxsId& destination_gxs_id,const 
 		std::string armoured_data ;
 		Radix64::encode((char *)encrypted_data,encrypted_size,armoured_data) ;
 
-		free(encrypted_data) ;
+		delete[] encrypted_data ;
 		encrypted_data = NULL ;
 
 		// wipe the item clean and replace the message by the encrypted data.
@@ -1841,7 +1841,7 @@ std::string printNumber(uint32_t n,bool hex)
 }
 bool p3MsgService::decryptMessage(const std::string& mId)
 {
-    void *decrypted_data = NULL;
+    uint8_t *decrypted_data = NULL;
     char *encrypted_data = NULL;
 
     try
@@ -1892,19 +1892,18 @@ bool p3MsgService::decryptMessage(const std::string& mId)
 		if(!mIdService->getPrivateKey(destination_gxs_id,encryption_key))
 			throw std::runtime_error("Cannot get private encryption key for id " + destination_gxs_id.toStdString()) ;
 
-		if(!GxsSecurity::decrypt(decrypted_data,decrypted_size,(void*)encrypted_data,encrypted_size,encryption_key))
+		if(!GxsSecurity::decrypt(decrypted_data,decrypted_size,(uint8_t*)encrypted_data,encrypted_size,encryption_key))
 			throw std::runtime_error("Decryption failed!") ;
 
 		std::cerr << "  First bytes of decrypted data: " << RsUtil::BinToHex((const char *)decrypted_data,std::min(decrypted_size,50)) << "..."<< std::endl;
 
-		uint8_t *decr_data = (uint8_t*)decrypted_data ;
 #ifdef DEBUG_DISTANT_MSG
         std::cerr << "  Message has succesfully decrypted. Decrypted size = " << decrypted_size << std::endl;
 #endif
         // 1 - get the sender's id
 
         uint32_t offset = 0 ;
-        unsigned char protocol_version = decr_data[offset++] ;
+        unsigned char protocol_version = decrypted_data[offset++] ;
 
 #ifdef DEBUG_DISTANT_MSG
         std::cerr << "  Read protocol version number " << std::hex << (int)protocol_version << std::dec << std::endl;
@@ -1915,12 +1914,12 @@ bool p3MsgService::decryptMessage(const std::string& mId)
 #ifdef DEBUG_DISTANT_MSG
         std::cerr << "  Reading identity section " << std::endl;
 #endif
-        uint8_t ptag = decr_data[offset++] ;
+        uint8_t ptag = decrypted_data[offset++] ;
 
         if(ptag != DISTANT_MSG_TAG_IDENTITY)
         throw std::runtime_error("Bad ptag in encrypted msg packet "+printNumber(ptag,true)+" => packet is dropped.") ;
 
-        unsigned char *tmp_data = &decr_data[offset] ;
+        unsigned char *tmp_data = &decrypted_data[offset] ;
 		  unsigned char *old_data = tmp_data ;
         uint32_t identity_size = PGPKeyParser::read_125Size(tmp_data) ;
         offset += tmp_data - old_data ;
@@ -1928,7 +1927,7 @@ bool p3MsgService::decryptMessage(const std::string& mId)
         if(identity_size != RsGxsId::SIZE_IN_BYTES)
         throw std::runtime_error("Bad size in Identity section " + printNumber(identity_size,false) + " => packet is dropped.") ;
 
-        RsGxsId senders_id(&decr_data[offset]) ;
+        RsGxsId senders_id(&decrypted_data[offset]) ;
         offset += identity_size ;
 
 #ifdef DEBUG_DISTANT_MSG
@@ -1936,12 +1935,12 @@ bool p3MsgService::decryptMessage(const std::string& mId)
 #endif
         // 2 - deserialize the item
 
-        ptag = decr_data[offset++] ;
+        ptag = decrypted_data[offset++] ;
 
         if(ptag != DISTANT_MSG_TAG_CLEAR_MSG)
             throw std::runtime_error("Bad ptag in encrypted msg packet " + printNumber(ptag,true) + " => packet is dropped.") ;
 
-        tmp_data = &decr_data[offset] ;
+        tmp_data = &decrypted_data[offset] ;
 		  old_data = tmp_data ;
         uint32_t item_size = PGPKeyParser::read_125Size(tmp_data) ;
         offset += tmp_data - old_data ;
@@ -1949,7 +1948,7 @@ bool p3MsgService::decryptMessage(const std::string& mId)
 #ifdef DEBUG_DISTANT_MSG
         std::cerr << "  Deserializing..." << std::endl;
 #endif
-        RsMsgItem *item = dynamic_cast<RsMsgItem*>(_serialiser->deserialise(&decr_data[offset],&item_size)) ;
+        RsMsgItem *item = dynamic_cast<RsMsgItem*>(_serialiser->deserialise(&decrypted_data[offset],&item_size)) ;
 		  offset += item_size ;
 
         if(item == NULL)
@@ -1963,12 +1962,12 @@ bool p3MsgService::decryptMessage(const std::string& mId)
 
         if(offset < decrypted_size)
 		  {
-			  uint8_t ptag = decr_data[offset++] ;
+			  uint8_t ptag = decrypted_data[offset++] ;
 
 			  if(ptag != DISTANT_MSG_TAG_SIGNATURE)
 				  throw std::runtime_error("Bad ptag in signature packet " + printNumber(ptag,true) + " => packet is dropped.") ;
 
-			  tmp_data = &decr_data[offset] ;
+			  tmp_data = &decrypted_data[offset] ;
 			  old_data = tmp_data ;
 			  uint32_t signature_size = PGPKeyParser::read_125Size(tmp_data) ;
 			  offset += tmp_data - old_data ;
@@ -1977,7 +1976,7 @@ bool p3MsgService::decryptMessage(const std::string& mId)
 			  signature.keyId = senders_id.toStdString() ;
 			  signature.signData.bin_len = signature_size ;
 			  signature.signData.bin_data = malloc(signature_size) ;
-			  memcpy(signature.signData.bin_data,&decr_data[offset],signature_size) ;
+			  memcpy(signature.signData.bin_data,&decrypted_data[offset],signature_size) ;
 
 			  std::cerr << "  Signature is present. Verifying it..." << std::endl;
 			  signature_present = true ;
@@ -1998,8 +1997,8 @@ bool p3MsgService::decryptMessage(const std::string& mId)
         else
             throw std::runtime_error("Structural error in packet: sizes do not match. Dropping the message.") ;
 
-        free(decr_data) ;
-		  decr_data = NULL ;
+        delete[] decrypted_data ;
+		  decrypted_data = NULL ;
 
         // 4 - replace the item with the decrypted data, and update flags
 
@@ -2062,8 +2061,8 @@ bool p3MsgService::decryptMessage(const std::string& mId)
     catch(std::exception& e)
     {
         std::cerr << "Decryption failed: " << e.what() << std::endl;
-        if(encrypted_data != NULL) free(encrypted_data) ;
-        if(decrypted_data != NULL) free(decrypted_data) ;
+        if(encrypted_data != NULL) delete[] encrypted_data ;
+        if(decrypted_data != NULL) delete[] decrypted_data ;
 
         return false ;
     }

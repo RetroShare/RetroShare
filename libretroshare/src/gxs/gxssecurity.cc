@@ -181,6 +181,7 @@ bool GxsSecurity::validateNxsMsg(RsNxsMsg& msg, RsTlvKeySignature& sign, RsTlvSe
             memcpy(allMsgData, msg.msg.bin_data, msg.msg.bin_len);
             memcpy(allMsgData+(msg.msg.bin_len), metaData, metaDataLen);
 
+				delete[] metaData ;
 
             EVP_PKEY *signKey = EVP_PKEY_new();
             EVP_PKEY_assign_RSA(signKey, rsakey);
@@ -191,6 +192,8 @@ bool GxsSecurity::validateNxsMsg(RsNxsMsg& msg, RsTlvKeySignature& sign, RsTlvSe
             EVP_VerifyInit(mdctx, EVP_sha1());
             EVP_VerifyUpdate(mdctx, allMsgData, allMsgDataLen);
             int signOk = EVP_VerifyFinal(mdctx, sigbuf, siglen, signKey);
+
+				delete[] allMsgData ;
 
             /* clean up */
             EVP_PKEY_free(signKey);
@@ -217,30 +220,7 @@ bool GxsSecurity::validateNxsMsg(RsNxsMsg& msg, RsTlvKeySignature& sign, RsTlvSe
 	return false;
 }
 
-
-
-std::string GxsSecurity::getBinDataSign(void *data, int len)
-{
-        unsigned char *tmp = (unsigned char *) data;
-
-        // copy first CERTSIGNLEN bytes...
-        if (len > CERTSIGNLEN)
-        {
-                len = CERTSIGNLEN;
-        }
-
-        std::string id;
-        for(uint32_t i = 0; i < CERTSIGNLEN; i++)
-        {
-                rs_sprintf_append(id, "%02x", (uint16_t) (((uint8_t *) (tmp))[i]));
-        }
-
-        return id;
-}
-
-
-
-bool GxsSecurity::encrypt(void *& out, int & outlen, const void *in, int inlen, const RsTlvSecurityKey& key)
+bool GxsSecurity::encrypt(uint8_t *& out, int & outlen, const uint8_t *in, int inlen, const RsTlvSecurityKey& key)
 {
 #ifdef DISTRIB_DEBUG
 	std::cerr << "GxsSecurity::encrypt() " << std::endl;
@@ -257,7 +237,9 @@ bool GxsSecurity::encrypt(void *& out, int & outlen, const void *in, int inlen, 
 	{
 		public_key = EVP_PKEY_new();
 		EVP_PKEY_assign_RSA(public_key, rsa_publish_pub);
-	}else{
+	}
+	else
+	{
 #ifdef DISTRIB_DEBUG
 		std::cerr << "GxsSecurity(): Could not generate publish key " << grpId
 			<< std::endl;
@@ -285,7 +267,7 @@ bool GxsSecurity::encrypt(void *& out, int & outlen, const void *in, int inlen, 
 	if(!EVP_SealInit(&ctx, EVP_aes_128_cbc(), &ek, &eklen, iv, &public_key, 1)) return false;
 
 	// now assign memory to out accounting for data, and cipher block size, key length, and key length val
-	out = new unsigned char[inlen + cipher_block_size + size_net_ekl + eklen + EVP_MAX_IV_LENGTH];
+	out = new uint8_t[inlen + cipher_block_size + size_net_ekl + eklen + EVP_MAX_IV_LENGTH];
 
 	net_ekl = htonl(eklen);
 	memcpy((unsigned char*)out + out_offset, &net_ekl, size_net_ekl);
@@ -298,19 +280,34 @@ bool GxsSecurity::encrypt(void *& out, int & outlen, const void *in, int inlen, 
 	out_offset += EVP_MAX_IV_LENGTH;
 
 	// now encrypt actual data
-	if(!EVP_SealUpdate(&ctx, (unsigned char*) out + out_offset, &out_currOffset, (unsigned char*) in, inlen)) return false;
+	if(!EVP_SealUpdate(&ctx, (unsigned char*) out + out_offset, &out_currOffset, (unsigned char*) in, inlen)) 
+	{
+		delete[] out ;
+		out = NULL ;
+		return false;
+	}
 
 	// move along to partial block space
 	out_offset += out_currOffset;
 
 	// add padding
-	if(!EVP_SealFinal(&ctx, (unsigned char*) out + out_offset, &out_currOffset)) return false;
+	if(!EVP_SealFinal(&ctx, (unsigned char*) out + out_offset, &out_currOffset)) 
+	{
+		delete[] out ;
+		out = NULL ;
+		return false;
+	}
 
 	// move to end
 	out_offset += out_currOffset;
 
 	// make sure offset has not gone passed valid memory bounds
-	if(out_offset > max_outlen) return false;
+	if(out_offset > max_outlen) 
+	{
+		delete[] out ;
+		out = NULL ;
+		return false;
+	}
 
 	// free encrypted key data
 	free(ek);
@@ -320,7 +317,7 @@ bool GxsSecurity::encrypt(void *& out, int & outlen, const void *in, int inlen, 
 }
 
 
-bool GxsSecurity::decrypt(void *& out, int & outlen, const void *in, int inlen, const RsTlvSecurityKey& key)
+bool GxsSecurity::decrypt(uint8_t *& out, int & outlen, const uint8_t *in, int inlen, const RsTlvSecurityKey& key)
 {
 
 #ifdef DISTRIB_DEBUG
@@ -371,20 +368,34 @@ bool GxsSecurity::decrypt(void *& out, int & outlen, const void *in, int inlen, 
 
     if(!EVP_OpenInit(&ctx, cipher, ek, eklen, iv, privateKey)) return false;
 
-    out = new unsigned char[inlen - in_offset];
+	 if(inlen < in_offset)
+	 {
+		 std::cerr << "Severe error in " << __PRETTY_FUNCTION__ << ": cannot encrypt. " << std::endl;
+		 return false ;
+	 }
+    out = new uint8_t[inlen - in_offset];
 
-    if(!EVP_OpenUpdate(&ctx, (unsigned char*) out, &out_currOffset, (unsigned char*)in + in_offset, inlen - in_offset)) return false;
+    if(!EVP_OpenUpdate(&ctx, (unsigned char*) out, &out_currOffset, (unsigned char*)in + in_offset, inlen - in_offset)) 
+	 {
+		 delete[] out ;
+		 out = NULL ;
+		 return false;
+	 }
 
     in_offset += out_currOffset;
     outlen += out_currOffset;
 
-    if(!EVP_OpenFinal(&ctx, (unsigned char*)out + out_currOffset, &out_currOffset)) return false;
+    if(!EVP_OpenFinal(&ctx, (unsigned char*)out + out_currOffset, &out_currOffset)) 
+	 {
+		 delete[] out ;
+		 out = NULL ;
+		 return false;
+	 }
 
     outlen += out_currOffset;
-
     free(ek);
 
-        return true;
+	 return true;
 }
 
 std::string GxsSecurity::getRsaKeySign(RSA *pubkey)
@@ -476,6 +487,7 @@ bool GxsSecurity::validateNxsGrp(RsNxsGrp& grp, RsTlvKeySignature& sign, RsTlvSe
         memcpy(allGrpData, grp.grp.bin_data, grp.grp.bin_len);
         memcpy(allGrpData+(grp.grp.bin_len), metaData, metaDataLen);
 
+		  delete[] metaData ;
 
         EVP_PKEY *signKey = EVP_PKEY_new();
         EVP_PKEY_assign_RSA(signKey, rsakey);
@@ -486,6 +498,8 @@ bool GxsSecurity::validateNxsGrp(RsNxsGrp& grp, RsTlvKeySignature& sign, RsTlvSe
         EVP_VerifyInit(mdctx, EVP_sha1());
         EVP_VerifyUpdate(mdctx, allGrpData, allGrpDataLen);
         int signOk = EVP_VerifyFinal(mdctx, sigbuf, siglen, signKey);
+
+		  delete[] allGrpData ;
 
         /* clean up */
         EVP_PKEY_free(signKey);
@@ -512,26 +526,26 @@ return false;
 
 void GxsSecurity::setRSAPublicKey(RsTlvSecurityKey & key, RSA *rsa_pub)
 {
-        unsigned char data[10240]; /* more than enough space */
-        unsigned char *ptr = data;
-        int reqspace = i2d_RSAPublicKey(rsa_pub, &ptr);
+        unsigned char *data = NULL ;	// this works for OpenSSL > 0.9.7
+        int reqspace = i2d_RSAPublicKey(rsa_pub, &data);
 
         key.keyData.setBinData(data, reqspace);
-
         key.keyId = getRsaKeySign(rsa_pub);
+
+		  free(data) ;
 }
 
 
 
 void GxsSecurity::setRSAPrivateKey(RsTlvSecurityKey & key, RSA *rsa_priv)
 {
-        unsigned char data[10240]; /* more than enough space */
-        unsigned char *ptr = data;
-        int reqspace = i2d_RSAPrivateKey(rsa_priv, &ptr);
+        unsigned char *data = NULL ;
+        int reqspace = i2d_RSAPrivateKey(rsa_priv, &data);
 
         key.keyData.setBinData(data, reqspace);
-
         key.keyId = getRsaKeySign(rsa_priv);
+
+		  free(data) ;
 }
 
 RSA *GxsSecurity::extractPrivateKey(const RsTlvSecurityKey & key)
