@@ -26,6 +26,7 @@
 
 #include "gxssecurity.h"
 #include "pqi/authgpg.h"
+#include "util/rsdir.h"
 //#include "retroshare/rspeers.h"
 
 /****
@@ -388,23 +389,22 @@ bool GxsSecurity::decrypt(void *& out, int & outlen, const void *in, int inlen, 
 
 std::string GxsSecurity::getRsaKeySign(RSA *pubkey)
 {
-        int len = BN_num_bytes(pubkey -> n);
-        unsigned char tmp[len];
+        int lenn = BN_num_bytes(pubkey -> n);
+        int lene = BN_num_bytes(pubkey -> e);
+
+        unsigned char *tmp = new unsigned char[lenn+lene];
+
         BN_bn2bin(pubkey -> n, tmp);
+        BN_bn2bin(pubkey -> e, &tmp[lenn]);
 
-        // copy first CERTSIGNLEN bytes...
-        if (len > CERTSIGNLEN)
-        {
-                len = CERTSIGNLEN;
-        }
+		  Sha1CheckSum s = RsDirUtil::sha1sum(tmp,lenn+lene) ;
 
-        std::string id;
-        for(uint32_t i = 0; i < CERTSIGNLEN; i++)
-        {
-                rs_sprintf_append(id, "%02x", (uint16_t) (((uint8_t *) (tmp))[i]));
-        }
+        // Copy first CERTSIGNLEN bytes from the hash of the public modulus and exponent
+		  // We should not be using strings here, but a real ID. To be done later.
 
-        return id;
+		  assert(Sha1CheckSum::SIZE_IN_BYTES >= CERTSIGNLEN) ;
+
+        return s.toStdString().substr(0,2*CERTSIGNLEN);
 }
 
 
@@ -517,8 +517,7 @@ void GxsSecurity::setRSAPublicKey(RsTlvSecurityKey & key, RSA *rsa_pub)
 
         key.keyData.setBinData(data, reqspace);
 
-        std::string keyId = getRsaKeySign(rsa_pub);
-        key.keyId = keyId;
+        key.keyId = getRsaKeySign(rsa_pub);
 }
 
 
@@ -531,8 +530,7 @@ void GxsSecurity::setRSAPrivateKey(RsTlvSecurityKey & key, RSA *rsa_priv)
 
         key.keyData.setBinData(data, reqspace);
 
-        std::string keyId = getRsaKeySign(rsa_priv);
-        key.keyId = keyId;
+        key.keyId = getRsaKeySign(rsa_priv);
 }
 
 RSA *GxsSecurity::extractPrivateKey(const RsTlvSecurityKey & key)
