@@ -33,15 +33,28 @@
  * #define GXS_SECURITY_DEBUG 	1
  ***/
 
-GxsSecurity::GxsSecurity()
+static std::string getRsaKeyFingerprint(RSA *pubkey)
 {
+        int lenn = BN_num_bytes(pubkey -> n);
+        int lene = BN_num_bytes(pubkey -> e);
+
+        unsigned char *tmp = new unsigned char[lenn+lene];
+
+        BN_bn2bin(pubkey -> n, tmp);
+        BN_bn2bin(pubkey -> e, &tmp[lenn]);
+
+		  Sha1CheckSum s = RsDirUtil::sha1sum(tmp,lenn+lene) ;
+		  delete[] tmp ;
+
+        // Copy first CERTSIGNLEN bytes from the hash of the public modulus and exponent
+		  // We should not be using strings here, but a real ID. To be done later.
+
+		  assert(Sha1CheckSum::SIZE_IN_BYTES >= CERTSIGNLEN) ;
+
+        return s.toStdString().substr(0,2*CERTSIGNLEN);
 }
 
-GxsSecurity::~GxsSecurity()
-{
-}
-
-RSA *GxsSecurity::extractPublicKey(const RsTlvSecurityKey& key)
+static RSA *extractPublicKey(const RsTlvSecurityKey& key)
 {
         const unsigned char *keyptr = (const unsigned char *) key.keyData.bin_data;
         long keylen = key.keyData.bin_len;
@@ -50,6 +63,86 @@ RSA *GxsSecurity::extractPublicKey(const RsTlvSecurityKey& key)
         RSA *rsakey = d2i_RSAPublicKey(NULL, &(keyptr), keylen);
 
         return rsakey;
+}
+static void setRSAPublicKey(RsTlvSecurityKey & key, RSA *rsa_pub)
+{
+        unsigned char *data = NULL ;	// this works for OpenSSL > 0.9.7
+        int reqspace = i2d_RSAPublicKey(rsa_pub, &data);
+
+        key.keyData.setBinData(data, reqspace);
+        key.keyId = getRsaKeyFingerprint(rsa_pub);
+
+		  free(data) ;
+}
+
+static void setRSAPrivateKey(RsTlvSecurityKey & key, RSA *rsa_priv)
+{
+        unsigned char *data = NULL ;
+        int reqspace = i2d_RSAPrivateKey(rsa_priv, &data);
+
+        key.keyData.setBinData(data, reqspace);
+        key.keyId = getRsaKeyFingerprint(rsa_priv);
+
+		  free(data) ;
+}
+
+static RSA *extractPrivateKey(const RsTlvSecurityKey & key)
+{
+        const unsigned char *keyptr = (const unsigned char *) key.keyData.bin_data;
+        long keylen = key.keyData.bin_len;
+
+        /* extract admin key */
+        RSA *rsakey = d2i_RSAPrivateKey(NULL, &(keyptr), keylen);
+
+        return rsakey;
+}
+
+bool GxsSecurity::generateKeyPair(RsTlvSecurityKey& public_key,RsTlvSecurityKey& private_key)
+{
+	// admin keys
+    RSA *rsa     = RSA_generate_key(2048, 65537, NULL, NULL);
+    RSA *rsa_pub = RSAPublicKey_dup(rsa);
+
+    setRSAPublicKey(public_key, rsa_pub);
+    setRSAPrivateKey(private_key, rsa);
+
+    public_key.startTS = time(NULL);
+    public_key.endTS = public_key.startTS + 60 * 60 * 24 * 365 * 5; /* approx 5 years */
+
+    private_key.startTS = public_key.startTS;
+    private_key.endTS = 0; /* no end */
+
+    // clean up
+    RSA_free(rsa);
+    RSA_free(rsa_pub);
+
+	 return true ;
+}
+
+bool GxsSecurity::extractPublicKey(const RsTlvSecurityKey& private_key,RsTlvSecurityKey& public_key)
+{
+	if(!(private_key.keyFlags & RSTLV_KEY_TYPE_FULL))
+		return false ;
+
+	RSA *rsaPrivKey = extractPrivateKey(private_key);
+
+	if(!rsaPrivKey)
+		return false ;
+
+	RSA *rsaPubKey = RSAPublicKey_dup(rsaPrivKey);
+	RSA_free(rsaPrivKey);
+
+	if(!rsaPubKey)
+		return false ;
+
+	setRSAPublicKey(public_key, rsaPubKey);
+	RSA_free(rsaPubKey);
+
+	public_key.keyFlags  = private_key.keyFlags & (RSTLV_KEY_DISTRIB_MASK) ;	// keep the distrib flags
+	public_key.keyFlags |= RSTLV_KEY_TYPE_PUBLIC_ONLY;
+	public_key.endTS     = public_key.startTS + 60 * 60 * 24 * 365 * 5; /* approx 5 years */
+
+	return true ;
 }
 
 bool GxsSecurity::getSignature(const char *data, uint32_t data_len, const RsTlvSecurityKey& privKey, RsTlvKeySignature& sign)
@@ -85,7 +178,7 @@ bool GxsSecurity::getSignature(const char *data, uint32_t data_len, const RsTlvS
 
 bool GxsSecurity::validateSignature(const char *data, uint32_t data_len, const RsTlvSecurityKey& key, const RsTlvKeySignature& signature)
 {
-	RSA *rsakey = RSAPublicKey_dup(extractPublicKey(key)) ;
+	RSA *rsakey = RSAPublicKey_dup(::extractPublicKey(key)) ;
 
 	if(!rsakey)
 	{
@@ -226,7 +319,7 @@ bool GxsSecurity::encrypt(uint8_t *& out, int & outlen, const uint8_t *in, int i
 	std::cerr << "GxsSecurity::encrypt() " << std::endl;
 #endif
 
-	RSA *rsa_publish_pub = RSAPublicKey_dup(extractPublicKey(key)) ;
+	RSA *rsa_publish_pub = RSAPublicKey_dup(::extractPublicKey(key)) ;
 	EVP_PKEY *public_key = NULL;
 
 	//RSA* rsa_publish = EVP_PKEY_get1_RSA(privateKey);
@@ -398,27 +491,6 @@ bool GxsSecurity::decrypt(uint8_t *& out, int & outlen, const uint8_t *in, int i
 	 return true;
 }
 
-std::string GxsSecurity::getRsaKeySign(RSA *pubkey)
-{
-        int lenn = BN_num_bytes(pubkey -> n);
-        int lene = BN_num_bytes(pubkey -> e);
-
-        unsigned char *tmp = new unsigned char[lenn+lene];
-
-        BN_bn2bin(pubkey -> n, tmp);
-        BN_bn2bin(pubkey -> e, &tmp[lenn]);
-
-		  Sha1CheckSum s = RsDirUtil::sha1sum(tmp,lenn+lene) ;
-		  delete[] tmp ;
-
-        // Copy first CERTSIGNLEN bytes from the hash of the public modulus and exponent
-		  // We should not be using strings here, but a real ID. To be done later.
-
-		  assert(Sha1CheckSum::SIZE_IN_BYTES >= CERTSIGNLEN) ;
-
-        return s.toStdString().substr(0,2*CERTSIGNLEN);
-}
-
 
 bool GxsSecurity::validateNxsGrp(RsNxsGrp& grp, RsTlvKeySignature& sign, RsTlvSecurityKey& key)
 {
@@ -522,41 +594,6 @@ bool GxsSecurity::validateNxsGrp(RsNxsGrp& grp, RsTlvKeySignature& sign, RsTlvSe
 #endif
 
 return false;
-}
-
-void GxsSecurity::setRSAPublicKey(RsTlvSecurityKey & key, RSA *rsa_pub)
-{
-        unsigned char *data = NULL ;	// this works for OpenSSL > 0.9.7
-        int reqspace = i2d_RSAPublicKey(rsa_pub, &data);
-
-        key.keyData.setBinData(data, reqspace);
-        key.keyId = getRsaKeySign(rsa_pub);
-
-		  free(data) ;
-}
-
-
-
-void GxsSecurity::setRSAPrivateKey(RsTlvSecurityKey & key, RSA *rsa_priv)
-{
-        unsigned char *data = NULL ;
-        int reqspace = i2d_RSAPrivateKey(rsa_priv, &data);
-
-        key.keyData.setBinData(data, reqspace);
-        key.keyId = getRsaKeySign(rsa_priv);
-
-		  free(data) ;
-}
-
-RSA *GxsSecurity::extractPrivateKey(const RsTlvSecurityKey & key)
-{
-        const unsigned char *keyptr = (const unsigned char *) key.keyData.bin_data;
-        long keylen = key.keyData.bin_len;
-
-        /* extract admin key */
-        RSA *rsakey = d2i_RSAPrivateKey(NULL, &(keyptr), keylen);
-
-        return rsakey;
 }
 
 

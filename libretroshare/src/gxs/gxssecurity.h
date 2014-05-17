@@ -39,116 +39,80 @@
  * operations needed to validate data received in RsGenExchange
  * Also has routine for creating security objects around msgs and groups
  */
-class GxsSecurity {
+class GxsSecurity 
+{
+	public:
+		/*!
+		 * Extracts a public key from a private key.
+		 */
+		static bool extractPublicKey(const RsTlvSecurityKey& private_key,RsTlvSecurityKey& public_key) ;
 
-public:
+		/*!
+		 * Generates a public/private RSA keypair. To be used for all GXS purposes.
+		 * @param RsTlvSecurityKey public  RSA key 
+		 * @param RsTlvSecurityKey private RSA key 
+		 * @return true if the generate was successful, false otherwise.
+		 */
+		static bool generateKeyPair(RsTlvSecurityKey& public_key,RsTlvSecurityKey& private_key) ;
 
-        GxsSecurity();
-        ~GxsSecurity();
+		/*!
+		 * Encrypts data using envelope encryption (taken from open ssl's evp_sealinit )
+		 * only full publish key holders can encrypt data for given group
+		 *@param out
+		 *@param outlen
+		 *@param in
+		 *@param inlen
+		 */
+		static bool encrypt(uint8_t *&out, int &outlen, const uint8_t *in, int inlen, const RsTlvSecurityKey& key) ;
 
-        /*!
-         * extracts the public key from an RsTlvSecurityKey
-         * @param key RsTlvSecurityKey to extract public RSA key from
-         * @return pointer to the public RSA key if successful, null otherwise
-         */
-        static RSA *extractPublicKey(const RsTlvSecurityKey &key);
+		/**
+		 * Decrypts data using evelope decryption (taken from open ssl's evp_sealinit )
+		 * only full publish key holders can decrypt data for a group
+		 * @param out where decrypted data is written to
+		 * @param outlen
+		 * @param in
+		 * @param inlen
+		 * @return false if encryption failed
+		 */
+		static bool decrypt(uint8_t *&out, int &outlen, const uint8_t *in, int inlen, const RsTlvSecurityKey& key) ;
 
-        /*!
-         * extracts the public key from an RsTlvSecurityKey
-         * @param key RsTlvSecurityKey to extract private RSA key from
-         * @return pointer to the private RSA key if successful, null otherwise
-         */
-        static RSA *extractPrivateKey(const RsTlvSecurityKey &key);
+		/*!
+		 * uses grp signature to check if group has been
+		 * tampered with
+		 * @param newGrp the Nxs group to be validated
+		 * @param sign the signature to validdate against
+		 * @param key the public key to use to check signature
+		 * @return true if group valid false otherwise
+		 */
+		static bool validateNxsGrp(RsNxsGrp& grp, RsTlvKeySignature& sign, RsTlvSecurityKey& key);
 
-        /*!
-         * stores the rsa public key in a RsTlvSecurityKey
-         * @param key RsTlvSecurityKey to store the public rsa key in
-         * @param rsa_pub
-         */
-        static void setRSAPublicKey(RsTlvSecurityKey &key, RSA *rsa_pub);
-
-        /*!
-         * stores the rsa private key in a RsTlvSecurityKey
-         * @param key stores the rsa private key in a RsTlvSecurityKey
-         * @param rsa_priv the rsa private key to store
-         */
-        static void setRSAPrivateKey(RsTlvSecurityKey &key, RSA *rsa_priv);
-
-        /*!
-         * extracts signature from RSA key
-         * @param pubkey
-         * @return signature of RSA key in hex format
-         */
-        static std::string getRsaKeySign(RSA *pubkey);
-
-        /*!
-         * extracts the first CERTSIGNLEN bytes of signature and stores it in a string
-         * in hex format
-         * @param data signature
-         * @param len the length of the signature data
-         * @return returns the first CERTSIGNLEN of the signature as a string
-         */
-        static std::string getBinDataSign(void *data, int len);
-
-        /*!
-         * Encrypts data using envelope encryption (taken from open ssl's evp_sealinit )
-         * only full publish key holders can encrypt data for given group
-         *@param out
-         *@param outlen
-         *@param in
-         *@param inlen
-         */
-        static bool encrypt(uint8_t *&out, int &outlen, const uint8_t *in, int inlen, const RsTlvSecurityKey& key) ;
+		/*!
+		 * Validate a msg's signature using the given public key
+		 * @param msg the Nxs message to be validated
+		 * @param sign the signature to validdate against
+		 * @param key the public key to use to check signature
+		 * @return false if verfication of signature is not passed
+		 */
+		static bool validateNxsMsg(RsNxsMsg& msg, RsTlvKeySignature& sign, RsTlvSecurityKey& key);
 
 
-        /**
-         * Decrypts data using evelope decryption (taken from open ssl's evp_sealinit )
-         * only full publish key holders can decrypt data for a group
-         * @param out where decrypted data is written to
-         * @param outlen
-         * @param in
-         * @param inlen
-         * @return false if encryption failed
-         */
-        static bool decrypt(uint8_t *&out, int &outlen, const uint8_t *in, int inlen, const RsTlvSecurityKey& key) ;
+		/*!
+		 * @param data data to be signed
+		 * @param data_len length of data to be signed
+		 * @param privKey private key to used to make signature
+		 * @param sign the signature is stored here
+		 * @return false if signature creation failed, true is signature created
+		 */
+		static bool getSignature(const char *data, uint32_t data_len, const RsTlvSecurityKey& privKey, RsTlvKeySignature& sign);
 
-        /*!
-         * uses grp signature to check if group has been
-         * tampered with
-         * @param newGrp the Nxs group to be validated
-         * @param sign the signature to validdate against
-         * @param key the public key to use to check signature
-         * @return true if group valid false otherwise
-         */
-        static bool validateNxsGrp(RsNxsGrp& grp, RsTlvKeySignature& sign, RsTlvSecurityKey& key);
-
-        /*!
-         * Validate a msg's signature using the given public key
-         * @param msg the Nxs message to be validated
-         * @param sign the signature to validdate against
-         * @param key the public key to use to check signature
-         * @return false if verfication of signature is not passed
-         */
-        static bool validateNxsMsg(RsNxsMsg& msg, RsTlvKeySignature& sign, RsTlvSecurityKey& key);
-
-
-        /*!
-         * @param data data to be signed
-         * @param data_len length of data to be signed
-         * @param privKey private key to used to make signature
-         * @param sign the signature is stored here
-         * @return false if signature creation failed, true is signature created
-         */
-        static bool getSignature(const char *data, uint32_t data_len, const RsTlvSecurityKey& privKey, RsTlvKeySignature& sign);
-
-        /*!
-         * @param data data that has been signed
-         * @param data_len length of signed data 
-         * @param privKey public key to used to check signature
-         * @param sign Signature for the data 
-         * @return true if signature checks
-         */
-        static bool validateSignature(const char *data, uint32_t data_len, const RsTlvSecurityKey& pubKey, const RsTlvKeySignature& sign);
+		/*!
+		 * @param data data that has been signed
+		 * @param data_len length of signed data 
+		 * @param privKey public key to used to check signature
+		 * @param sign Signature for the data 
+		 * @return true if signature checks
+		 */
+		static bool validateSignature(const char *data, uint32_t data_len, const RsTlvSecurityKey& pubKey, const RsTlvKeySignature& sign);
 };
 
 #endif // GXSSECURITY_H

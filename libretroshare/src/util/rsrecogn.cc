@@ -568,7 +568,8 @@ bool RsRecogn::createTagRequest(const RsTlvSecurityKey &key, const RsGxsId &id, 
 	RsGxsRecognReqItem *item = new RsGxsRecognReqItem();
 
 	EVP_PKEY *signKey = EVP_PKEY_new();
-	RSA *rsakey = GxsSecurity::extractPrivateKey(key);
+	RSA *rsakey = d2i_RSAPrivateKey(NULL, (const unsigned char **)&key.keyData.bin_data, key.keyData.bin_len);
+
         if (!rsakey)
         {
 #ifdef DEBUG_RECOGN

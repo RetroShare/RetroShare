@@ -233,26 +233,11 @@ bool RsGenExchange::acknowledgeTokenGrp(const uint32_t& token,
 	return true;
 }
 
-void RsGenExchange::generateGroupKeys(RsTlvSecurityKeySet& privatekeySet,
-		RsTlvSecurityKeySet& publickeySet, bool genPublishKeys)
+void RsGenExchange::generateGroupKeys(RsTlvSecurityKeySet& privatekeySet, RsTlvSecurityKeySet& publickeySet, bool genPublishKeys)
 {
     /* create Keys */
-
-    // admin keys
-    RSA *rsa_admin = RSA_generate_key(2048, 65537, NULL, NULL);
-    RSA *rsa_admin_pub = RSAPublicKey_dup(rsa_admin);
-
-    /* set admin keys */
     RsTlvSecurityKey adminKey, privAdminKey;
-
-    GxsSecurity::setRSAPublicKey(adminKey, rsa_admin_pub);
-    GxsSecurity::setRSAPrivateKey(privAdminKey, rsa_admin);
-
-    adminKey.startTS = time(NULL);
-    adminKey.endTS = adminKey.startTS + 60 * 60 * 24 * 365 * 5; /* approx 5 years */
-
-    privAdminKey.startTS = adminKey.startTS;
-    privAdminKey.endTS = 0; /* no end */
+	 GxsSecurity::generateKeyPair(adminKey,privAdminKey) ;
 
     // for now all public
     adminKey.keyFlags = RSTLV_KEY_DISTRIB_ADMIN | RSTLV_KEY_TYPE_PUBLIC_ONLY;
@@ -261,27 +246,11 @@ void RsGenExchange::generateGroupKeys(RsTlvSecurityKeySet& privatekeySet,
     publickeySet.keys[adminKey.keyId] = adminKey;
     privatekeySet.keys[privAdminKey.keyId] = privAdminKey;
 
-    // clean up
-    RSA_free(rsa_admin);
-    RSA_free(rsa_admin_pub);
-
     if(genPublishKeys)
     {
-        // publish keys
-        RSA *rsa_publish = RSA_generate_key(2048, 65537, NULL, NULL);
-        RSA *rsa_publish_pub = RSAPublicKey_dup(rsa_publish);
-
         /* set publish keys */
         RsTlvSecurityKey pubKey, privPubKey;
-
-        GxsSecurity::setRSAPublicKey(pubKey, rsa_publish_pub);
-        GxsSecurity::setRSAPrivateKey(privPubKey, rsa_publish);
-
-        pubKey.startTS = adminKey.startTS;
-        pubKey.endTS = pubKey.startTS + 60 * 60 * 24 * 365 * 5; /* approx 5 years */
-
-        privPubKey.startTS = adminKey.startTS;
-        privPubKey.endTS = 0; /* no end */
+		  GxsSecurity::generateKeyPair(pubKey,privPubKey) ;
 
         // for now all public
         pubKey.keyFlags = RSTLV_KEY_DISTRIB_PUBLIC | RSTLV_KEY_TYPE_PUBLIC_ONLY;
@@ -289,59 +258,19 @@ void RsGenExchange::generateGroupKeys(RsTlvSecurityKeySet& privatekeySet,
 
         publickeySet.keys[pubKey.keyId] = pubKey;
         privatekeySet.keys[privPubKey.keyId] = privPubKey;
-
-        RSA_free(rsa_publish);
-        RSA_free(rsa_publish_pub);
     }
 }
 
-void RsGenExchange::generatePublicFromPrivateKeys(const RsTlvSecurityKeySet &privatekeySet,
-                                                  RsTlvSecurityKeySet &publickeySet)
+void RsGenExchange::generatePublicFromPrivateKeys(const RsTlvSecurityKeySet &privatekeySet, RsTlvSecurityKeySet &publickeySet)
 {
+	// actually just copy settings of one key except mark its key flags public
 
-    // actually just copy settings of one key except mark its key flags public
+	publickeySet = RsTlvSecurityKeySet() ;
+	RsTlvSecurityKey pubkey ;
 
-    typedef std::map<std::string, RsTlvSecurityKey> keyMap;
-    const keyMap& allKeys = privatekeySet.keys;
-    keyMap::const_iterator cit = allKeys.begin();
-    for(; cit != allKeys.end(); cit++)
-    {
-        const RsTlvSecurityKey& privKey = cit->second;
-        if(privKey.keyFlags & RSTLV_KEY_TYPE_FULL)
-        {
-            RsTlvSecurityKey pubKey;
-
-            pubKey = privKey;
-
-            RSA *rsaPrivKey = NULL, *rsaPubKey = NULL;
-
-            rsaPrivKey = GxsSecurity::extractPrivateKey(privKey);
-
-            if(rsaPrivKey)
-                rsaPubKey = RSAPublicKey_dup(rsaPrivKey);
-
-            if(rsaPrivKey && rsaPubKey)
-            {
-                GxsSecurity::setRSAPublicKey(pubKey, rsaPubKey);
-
-                if(pubKey.keyFlags & RSTLV_KEY_DISTRIB_ADMIN)
-                    pubKey.keyFlags = RSTLV_KEY_DISTRIB_ADMIN | RSTLV_KEY_TYPE_PUBLIC_ONLY;
-
-                if(pubKey.keyFlags & RSTLV_KEY_DISTRIB_PRIVATE)
-                    pubKey.keyFlags = RSTLV_KEY_DISTRIB_PRIVATE | RSTLV_KEY_TYPE_PUBLIC_ONLY;
-
-                pubKey.endTS = pubKey.startTS + 60 * 60 * 24 * 365 * 5; /* approx 5 years */
-
-                publickeySet.keys.insert(std::make_pair(pubKey.keyId, pubKey));
-            }
-
-            if(rsaPrivKey)
-                RSA_free(rsaPrivKey);
-
-            if(rsaPubKey)
-                RSA_free(rsaPubKey);
-        }
-    }
+	for(std::map<std::string, RsTlvSecurityKey>::const_iterator cit=privatekeySet.keys.begin(); cit != privatekeySet.keys.end(); ++cit)
+		if(GxsSecurity::extractPublicKey(cit->second,pubkey))
+			publickeySet.keys.insert(std::make_pair(pubkey.keyId, pubkey));
 }
 
 uint8_t RsGenExchange::createGroup(RsNxsGrp *grp, RsTlvSecurityKeySet& privateKeySet, RsTlvSecurityKeySet& publicKeySet)
