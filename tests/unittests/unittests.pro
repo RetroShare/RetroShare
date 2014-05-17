@@ -295,6 +295,8 @@ SOURCES += libretroshare/gxs/gen_exchange/gxspublishgrouptest.cc \
 	libretroshare/gxs/gen_exchange/genexchangetester.cc \
 	libretroshare/gxs/gen_exchange/genexchangetestservice.cc \
 
+SOURCES += libretroshare/gxs/security/gxssecurity_test.cc
+
 #	libretroshare/gxs/gen_exchange/gxsmsgrelatedtest.cc \
 
 HEADERS += libretroshare/gxs/data_service/rsdataservice_test.h \
