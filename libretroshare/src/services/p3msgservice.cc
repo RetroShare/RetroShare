@@ -60,7 +60,7 @@
 //#define MSG_DEBUG 1
 //#define DEBUG_DISTANT_MSG
 //#define DISABLE_DISTANT_MESSAGES 
-#define DEBUG_DISTANT_MSG
+//#define DEBUG_DISTANT_MSG
 
 const int msgservicezone = 54319;
 
@@ -1751,8 +1751,11 @@ bool p3MsgService::createDistantMessage(const RsGxsId& destination_gxs_id,const 
 
 #ifdef DEBUG_DISTANT_MSG
 			std::cerr << "  Appending signature." << std::endl;
-			std::cerr << "    size = : " << signature.signData.bin_len << std::endl;
-			std::cerr << "    hex  = : " << RsUtil::BinToHex((const char*)signature.signData.bin_data,std::min(50u,signature.signData.bin_len)) << "..." << std::endl;
+			std::cerr << "    data length: " << offset     << std::endl;
+			std::cerr << "    data hash  : " << RsDirUtil::sha1sum(data,offset) << std::endl;
+			std::cerr << "    sign size  : " << signature.signData.bin_len << std::endl;
+			std::cerr << "    sign hex   : " << RsUtil::BinToHex((const char*)signature.signData.bin_data,std::min(50u,signature.signData.bin_len)) << "..." << std::endl;
+			std::cerr << "    sign hash  : " << RsDirUtil::sha1sum((const uint8_t*)signature.signData.bin_data,signature.signData.bin_len) << std::endl;
 #endif
 			if(offset + signature.signData.bin_len + 5 + 1 >= total_data_size)
 				throw std::runtime_error("Conservative size is not enough! Can't serialise encrypted message.") ;
@@ -1978,14 +1981,37 @@ bool p3MsgService::decryptMessage(const std::string& mId)
 			  signature.signData.bin_data = malloc(signature_size) ;
 			  memcpy(signature.signData.bin_data,&decrypted_data[offset],signature_size) ;
 
+#ifdef DEBUG_DISTANT_MSG
 			  std::cerr << "  Signature is present. Verifying it..." << std::endl;
+			  std::cerr << "    data length: " << size_of_signed_data     << std::endl;
+			  std::cerr << "    data hash  : " << RsDirUtil::sha1sum(decrypted_data,size_of_signed_data) << std::endl;
+			  std::cerr << "    Sign length: " << signature.signData.bin_len << std::endl;
+			  std::cerr << "    Sign hash  : " << RsDirUtil::sha1sum((const uint8_t*)signature.signData.bin_data,signature.signData.bin_len) << std::endl;
+			  std::cerr << "    Sign key id: " << signature.keyId << std::endl;
+#endif
 			  signature_present = true ;
 
 			  RsTlvSecurityKey signature_key ;
 
-			  if(!mIdService->getKey(senders_id,signature_key) || signature_key.keyData.bin_data == NULL)
-				  std::cerr << "(EE) No key for checking signature from " << senders_id << ", can't veryfy signature." << std::endl;
-			  else if(!GxsSecurity::validateSignature((char*)decrypted_data,offset,signature_key,signature))
+			  // We need to get the key of the sender, but if the key is not cached, we need to get it first. So we let
+			  // the system work for 2-3 seconds before giving up. Normally this would only cause a delay for uncached 
+			  // keys, which is rare. To force the system to cache the key, we first call for getIdDetails().
+			  //
+			  RsIdentityDetails details  ;
+			  mIdService->getIdDetails(senders_id,details);
+
+			  for(int i=0;i<6;++i)
+				  if(!mIdService->getKey(senders_id,signature_key) || signature_key.keyData.bin_data == NULL)
+				  {
+					  std::cerr << "  Cannot get key. Waiting for caching. try " << i << "/6" << std::endl;
+					  usleep(500000) ;	// sleep for 500 msec.
+				  }
+				  else
+					  break ;
+
+			  if(signature_key.keyData.bin_data == NULL)
+				  std::cerr << "(EE) No key for checking signature from " << senders_id << ", can't verify signature." << std::endl;
+			  else if(!GxsSecurity::validateSignature((char*)decrypted_data,size_of_signed_data,signature_key,signature))
 				  std::cerr << "(EE) Signature was verified and it doesn't check! This is a security issue!" << std::endl;
 			  else
 				  signature_ok = true ;

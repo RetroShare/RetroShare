@@ -99,12 +99,16 @@ template<class ID_CLASS,uint32_t TLV_TYPE> class t_RsTlvIdSet: public RsTlvItem
 		}
 		virtual std::ostream &print(std::ostream &out, uint16_t /* indent */) const
 		{
-			std::cerr << __PRETTY_FUNCTION__ << ": not implemented" << std::endl;
+			for(typename std::list<ID_CLASS>::const_iterator it(ids.begin());it!=ids.end();++it)
+				out << (*it).toStdString() << ", " ;
+
 			return out ;
 		}
 		virtual std::ostream &printHex(std::ostream &out, uint16_t /* indent */) const /* SPECIAL One */
 		{
-			std::cerr << __PRETTY_FUNCTION__ << ": not implemented" << std::endl;
+			for(typename std::list<ID_CLASS>::const_iterator it(ids.begin());it!=ids.end();++it)
+				out << (*it).toStdString() << ", " ;
+
 			return out ;
 		}
 

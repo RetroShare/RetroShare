@@ -135,6 +135,7 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     setAttribute ( Qt::WA_DeleteOnClose, true );
 
     ui.hashBox->hide();
+	 ui.signMessage_CB->setChecked(true) ;
 
     // connect up the buttons.
     connect( ui.actionSend, SIGNAL( triggered (bool)), this, SLOT( sendMessage( ) ) );
