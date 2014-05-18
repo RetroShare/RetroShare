@@ -84,7 +84,7 @@ void NxsMsgTestScenario::cleanTestScenario()
 
 	for(; cit != peerIds.end(); cit++)
 	{
-		std::string tableFile = "grp_store_" + cit->toStdString();
+		std::string tableFile = "msg_store_" + cit->toStdString();
 		remove(tableFile.c_str());
 	}
 

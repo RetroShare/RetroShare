@@ -58,3 +58,57 @@ bool rs_nxs_test::RsNxsSimpleDummyReputation::getReputation(const RsGxsId& id,
 	rep.score = 5;
 	return true;
 }
+
+rs_nxs_test::RsNxsDelayedDummyCircles::RsNxsDelayedDummyCircles(
+		int countBeforePresent) : mCountBeforePresent(countBeforePresent)
+{
+}
+
+rs_nxs_test::RsNxsDelayedDummyCircles::~RsNxsDelayedDummyCircles() {
+}
+
+bool rs_nxs_test::RsNxsDelayedDummyCircles::isLoaded(
+		const RsGxsCircleId& circleId) {
+	return allowed(circleId);
+}
+
+bool rs_nxs_test::RsNxsDelayedDummyCircles::loadCircle(
+		const RsGxsCircleId& circleId) {
+	return allowed(circleId);
+}
+
+int rs_nxs_test::RsNxsDelayedDummyCircles::canSend(
+		const RsGxsCircleId& circleId, const RsPgpId& id) {
+	return allowed(circleId);
+}
+
+int rs_nxs_test::RsNxsDelayedDummyCircles::canReceive(
+		const RsGxsCircleId& circleId, const RsPgpId& id) {
+	return allowed(circleId);
+}
+
+bool rs_nxs_test::RsNxsDelayedDummyCircles::recipients(
+		const RsGxsCircleId& circleId, std::list<RsPgpId>& friendlist) {
+	return allowed(circleId);
+}
+
+bool rs_nxs_test::RsNxsDelayedDummyCircles::allowed(
+		const RsGxsCircleId& circleId) {
+
+	if(mMembershipCallCount.find(circleId) == mMembershipCallCount.end())
+		mMembershipCallCount[circleId] = 0;
+
+	if(mMembershipCallCount[circleId] >= mCountBeforePresent)
+	{
+		mMembershipCallCount[circleId]++;
+		return true;
+	}
+	else
+	{
+		mMembershipCallCount[circleId]++;
+		return false;
+	}
+
+}
+
+

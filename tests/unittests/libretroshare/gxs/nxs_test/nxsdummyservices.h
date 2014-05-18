@@ -53,6 +53,43 @@ namespace rs_nxs_test
 	};
 
 	/*!
+	 * This dummy circles implementation
+	 * allow instantiation with simple membership
+	 * list for a given circle
+	 */
+	class RsNxsDelayedDummyCircles : public RsGcxs
+	{
+	public:
+
+		/*!
+		 *
+		 * @param membership
+		 * @param countBeforePresent how many times a pgpid is checked before it becomes present
+		 */
+		RsNxsDelayedDummyCircles(int countBeforePresent);
+		virtual ~RsNxsDelayedDummyCircles();
+
+		/* GXS Interface - for working out who can receive */
+		bool isLoaded(const RsGxsCircleId &circleId);
+		bool loadCircle(const RsGxsCircleId &circleId);
+
+		int canSend(const RsGxsCircleId &circleId, const RsPgpId &id);
+		int canReceive(const RsGxsCircleId &circleId, const RsPgpId &id);
+		bool recipients(const RsGxsCircleId &circleId, std::list<RsPgpId> &friendlist);
+
+	private:
+
+		bool allowed(const RsGxsCircleId& circleId);
+
+	private:
+
+		typedef int CallCount;
+		std::map<RsGxsCircleId, CallCount> mMembershipCallCount;
+		int mCountBeforePresent;
+	};
+
+
+	/*!
 	 * This dummy reputation allows you to set the
 	 * reputations of peers
 	 */
