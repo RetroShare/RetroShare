@@ -24,6 +24,7 @@ TEST(libretroshare_gxs, gxs_grp_sync)
 	tHub.EndTest();
 
 	ASSERT_TRUE(tHub.testsPassed());
+
 }
 
 TEST(libretroshare_gxs, gxs_msg_sync)

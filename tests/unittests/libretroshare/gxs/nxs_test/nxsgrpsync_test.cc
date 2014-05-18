@@ -31,10 +31,8 @@ NxsGrpSync::NxsGrpSync()
 	for(; it != mPeerIds.end(); it++)
 	{
 		// data stores
-		RsGeneralDataService* ds = new RsDataService("./", "grp_store_" +
-				it->toStdString(), mServType, NULL, "key");
+		RsGeneralDataService* ds = createDataStore(*it, mServType);
 		mDataServices.insert(std::make_pair(*it, ds));
-
 		// net managers
 		std::list<RsPeerId> otherPeers;
 		copy_all_but<RsPeerId>(*it, mPeerIds, otherPeers);

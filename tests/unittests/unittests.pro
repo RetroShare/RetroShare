@@ -275,10 +275,9 @@ SOURCES +=  libretroshare/gxs/nxs_test/nxsdummyservices.cc \
 	libretroshare/gxs/nxs_test/nxsgrptestscenario.cc \
 	libretroshare/gxs/nxs_test/nxsmsgtestscenario.cc \
 	libretroshare/gxs/nxs_test/nxstesthub.cc \
-
-#	libretroshare/gxs/nxs_test/rsgxsnetservice_test.cc
-#	libretroshare/gxs/nxs_test/nxsmsgsync_test.cc \
-#	libretroshare/gxs/nxs_test/nxsgrpsync_test.cc \
+	libretroshare/gxs/nxs_test/rsgxsnetservice_test.cc \
+	libretroshare/gxs/nxs_test/nxsmsgsync_test.cc \
+	libretroshare/gxs/nxs_test/nxsgrpsync_test.cc 
 
 HEADERS += libretroshare/gxs/gen_exchange/genexchangetester.h \
 	libretroshare/gxs/gen_exchange/gxspublishmsgtest.h \

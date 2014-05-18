@@ -51,6 +51,40 @@ bool NxsGrpTestScenario::checkDeepTestPassed()
 	return false;
 }
 
+void NxsGrpTestScenario::cleanTestScenario()
+{
+	DataPeerMap::iterator mit = mDataPeerMap.begin();
+	RsPeerId::std_vector peerIds;
+
+	// remove grps and msg data
+	for(; mit != mDataPeerMap.end(); mit++)
+	{
+		mit->second->resetDataStore();
+		peerIds.push_back(mit->first);
+	}
+
+	// now delete tables
+	RsPeerId::std_vector::const_iterator cit = peerIds.begin();
+
+	for(; cit != peerIds.end(); cit++)
+	{
+		std::string tableFile = "grp_store_" + cit->toStdString();
+		remove(tableFile.c_str());
+	}
 }
+
+RsGeneralDataService* NxsGrpTestScenario::createDataStore(
+		const RsPeerId& peerId, uint16_t servType)
+{
+	RsGeneralDataService* ds = new RsDataService("./", "grp_store_" +
+					peerId.toStdString(), servType, NULL, "key");
+
+	mDataPeerMap.insert(std::make_pair(peerId, ds));
+	return ds;
+}
+
+}
+
+
 
  /* namespace rs_nxs_test */

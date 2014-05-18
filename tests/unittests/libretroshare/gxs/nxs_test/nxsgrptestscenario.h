@@ -22,11 +22,17 @@ public:
 
 	virtual bool checkTestPassed();
 	virtual bool checkDeepTestPassed();
+	void cleanTestScenario();
 
 protected:
 
-	RsDataService* createDataStore(const RsPeerId& peerId);
 	virtual const ExpectedMap& getExpectedMap() = 0;
+	RsGeneralDataService* createDataStore(const RsPeerId& peerId, uint16_t servType);
+
+private:
+
+	typedef std::map<RsPeerId, RsGeneralDataService*> DataPeerMap;
+	DataPeerMap mDataPeerMap;
 };
 
 } /* namespace rs_nxs_test */

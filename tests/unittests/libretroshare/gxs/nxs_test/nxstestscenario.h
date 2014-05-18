@@ -38,6 +38,8 @@ namespace rs_nxs_test
 		virtual uint16_t getServiceType() = 0;
 		virtual RsServiceInfo getServiceInfo() = 0;
 
+		virtual void cleanTestScenario() = 0;
+
 
 	};
 }

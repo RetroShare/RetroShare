@@ -138,6 +138,7 @@ void rs_nxs_test::NxsTestHub::EndTest()
 		mit->second->join();
 	}
 
+	mTestScenario->cleanTestScenario();
 }
 
 void rs_nxs_test::NxsTestHub::notifyNewMessages(const RsPeerId& pid,

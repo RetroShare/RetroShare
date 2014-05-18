@@ -32,8 +32,7 @@ rs_nxs_test::NxsMsgSync::NxsMsgSync()
 	for(; it != mPeerIds.end(); it++)
 	{
 		// data stores
-		RsGeneralDataService* ds = new RsDataService("./", "data_store_" +
-				it->toStdString(), mServType, NULL, "key");
+		RsGeneralDataService* ds = createDataStore(*it, mServType);
 		mDataServices.insert(std::make_pair(*it, ds));
 
 		// net managers
