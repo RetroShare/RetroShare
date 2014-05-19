@@ -53,6 +53,7 @@
 #include "util/rsrandom.h"
 #include "util/rsprint.h"
 
+#include <unistd.h>
 #include <iomanip>
 #include <map>
 #include <sstream>
