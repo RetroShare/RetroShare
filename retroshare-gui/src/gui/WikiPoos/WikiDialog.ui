@@ -26,11 +26,17 @@
        </property>
        <item>
         <widget class="QFrame" name="titleBarFrame">
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>30</height>
+          </size>
+         </property>
          <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
+          <enum>QFrame::Box</enum>
          </property>
          <property name="frameShadow">
-          <enum>QFrame::Raised</enum>
+          <enum>QFrame::Sunken</enum>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <property name="margin">
@@ -85,7 +91,7 @@
              </size>
             </property>
             <property name="toolButtonStyle">
-             <enum>Qt::ToolButtonTextBesideIcon</enum>
+             <enum>Qt::ToolButtonIconOnly</enum>
             </property>
             <property name="autoRaise">
              <bool>true</bool>
@@ -105,8 +111,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>218</width>
-            <height>456</height>
+            <width>232</width>
+            <height>462</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -155,11 +161,17 @@
        </property>
        <item>
         <widget class="QFrame" name="toolBarFrame">
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>30</height>
+          </size>
+         </property>
          <property name="frameShape">
-          <enum>QFrame::StyledPanel</enum>
+          <enum>QFrame::Box</enum>
          </property>
          <property name="frameShadow">
-          <enum>QFrame::Raised</enum>
+          <enum>QFrame::Sunken</enum>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout">
           <property name="margin">
@@ -169,6 +181,12 @@
            <widget class="QToolButton" name="toolButton_PrevPage">
             <property name="enabled">
              <bool>false</bool>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
             </property>
             <property name="text">
              <string>&lt;&lt;</string>
@@ -192,6 +210,12 @@
            <widget class="QToolButton" name="toolButton_NextPage">
             <property name="enabled">
              <bool>false</bool>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>24</width>
+              <height>24</height>
+             </size>
             </property>
             <property name="text">
              <string>&gt;&gt;</string>
@@ -356,8 +380,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>515</width>
-            <height>456</height>
+            <width>501</width>
+            <height>462</height>
            </rect>
           </property>
           <property name="styleSheet">
