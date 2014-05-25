@@ -25,6 +25,7 @@
 
 #include <retroshare/rsstatus.h>
 #include <retroshare/rspeers.h>
+#include <retroshare/rsidentity.h>
 
 #include "RsAutoUpdatePage.h"
 #include "PopupDistantChatDialog.h"
@@ -74,8 +75,8 @@ void PopupDistantChatDialog::updateDisplay()
 	//
 	
 	uint32_t status= RS_DISTANT_CHAT_STATUS_UNKNOWN;
-    RsPgpId pgp_id ;
-    rsMsgs->getDistantChatStatus(_pid,status,pgp_id) ;
+	RsGxsId gxs_id ;
+	rsMsgs->getDistantChatStatus(_pid,gxs_id,status) ;
 
 	switch(status)
 	{
@@ -116,8 +117,8 @@ void PopupDistantChatDialog::closeEvent(QCloseEvent *e)
     //std::cerr << "Closing window => closing distant chat for hash " << _pid << std::endl;
 
 	uint32_t status= RS_DISTANT_CHAT_STATUS_UNKNOWN;
-    RsPgpId pgp_id ;
-    rsMsgs->getDistantChatStatus(_pid,status,pgp_id) ;
+    RsGxsId gxs_id ;
+    rsMsgs->getDistantChatStatus(_pid,gxs_id,status) ;
 
 	if(status != RS_DISTANT_CHAT_STATUS_REMOTELY_CLOSED)
 	{
@@ -140,10 +141,21 @@ void PopupDistantChatDialog::closeEvent(QCloseEvent *e)
 QString PopupDistantChatDialog::getPeerName(const DistantChatPeerId &id) const
 {
 	uint32_t status ;
-    RsPgpId pgp_id ;
+    RsGxsId gxs_id ;
 
-    if(rsMsgs->getDistantChatStatus(id,status,pgp_id))
-        return QString::fromStdString(rsPeers->getGPGName(pgp_id)) ;
+    if(rsMsgs->getDistantChatStatus(id,gxs_id,status))
+	 {
+		 RsIdentityDetails details  ;
+
+		 for(int i=0;i<3;++i)
+			 if(rsIdentity->getIdDetails(gxs_id,details))
+				 return QString::fromUtf8( details.mNickname.c_str() ) ;
+			 else
+				 usleep(500000) ;	// sleep for 500 msec.
+
+		 return QString::fromStdString(id.toStdString()) ;
+	 }
 	else
 		return ChatDialog::getPeerName(id) ;
 }
+

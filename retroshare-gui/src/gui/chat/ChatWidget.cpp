@@ -49,6 +49,7 @@
 #include "util/HandleRichText.h"
 
 #include <retroshare/rsstatus.h>
+#include <retroshare/rsidentity.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rshistory.h>
 #include <retroshare/rsmsgs.h>
@@ -187,8 +188,8 @@ void ChatWidget::init(const RsPeerId &peerId, const QString &title)
 		mChatType = CHATTYPE_LOBBY;
 	} else {
 		uint32_t status;
-        RsPgpId pgp_id;
-        if (rsMsgs->getDistantChatStatus(peerId, status, pgp_id)) {
+        RsGxsId gxs_id;
+        if (rsMsgs->getDistantChatStatus(peerId, gxs_id, status)) {
 			mChatType = CHATTYPE_DISTANT;
 		} else {
 			mChatType = CHATTYPE_PRIVATE;
@@ -952,10 +953,16 @@ void ChatWidget::updateStatus(const QString &peer_id, int status)
 
 		QString peerName ;
 		uint32_t stts ;
-        RsPgpId pgp_id ;
+        RsGxsId gxs_id ;
 
-		if(rsMsgs->getDistantChatStatus(peerId,stts,pgp_id))
-            peerName = QString::fromUtf8(rsPeers->getGPGName(pgp_id).c_str());
+		if(rsMsgs->getDistantChatStatus(peerId,gxs_id,stts))
+		{
+			RsIdentityDetails details  ;
+			if(rsIdentity->getIdDetails(gxs_id,details))
+				peerName = QString::fromUtf8( details.mNickname.c_str() ) ;
+			else
+				peerName = QString::fromStdString(gxs_id.toStdString()) ;
+		}
 		else
 			peerName = QString::fromUtf8(rsPeers->getPeerName(peerId).c_str());
 

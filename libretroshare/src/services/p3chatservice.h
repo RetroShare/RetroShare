@@ -332,39 +332,20 @@ class p3ChatService: public p3Service, public p3Config, public pqiServiceMonitor
 		// Creates the invite if the public key of the distant peer is available.
 		// Om success, stores the invite in the map above, so that we can respond to tunnel requests.
 		//
-		bool createDistantChatInvite(const RsPgpId& pgp_id,time_t time_of_validity,std::string& enc_b64_string) ;
-		bool getDistantChatInviteList(std::vector<DistantChatInviteInfo>& invites) ;
-		bool initiateDistantChatConnexion(const std::string& encrypted_string,time_t time_of_validity,DistantChatPeerId& pid,uint32_t& error_code) ;		// from encrypted data
-		bool initiateDistantChatConnexion(const DistantChatPeerId& pid,uint32_t& error_code) ;				// from known hash of a decrypted link
+		bool initiateDistantChatConnexion(const RsGxsId& gxs_id,DistantChatPeerId& pid,uint32_t& error_code) ;
 		bool closeDistantChatConnexion(const DistantChatPeerId& pid) ;
-		bool removeDistantChatInvite(const DistantChatPeerId& pid) ;
-
-		virtual bool getDistantChatStatus(const DistantChatPeerId& hash,uint32_t& status,RsPgpId& pgp_id) ;
+		virtual bool getDistantChatStatus(const DistantChatPeerId& hash,RsGxsId& gxs_id,uint32_t& status) ;
 
 	private:
-		struct DistantChatInvite
-		{
-			unsigned char aes_key[16] ;
-			std::string encrypted_radix64_string ;
-			RsPgpId destination_pgp_id ;
-			time_t time_of_validity ;
-			time_t last_hit_time ;
-			uint32_t flags ;
-		};
 		struct DistantChatPeerInfo 
 		{
 			time_t last_contact ; 			// used to send keep alive packets
 			unsigned char aes_key[16] ;	// key to encrypt packets
 			uint32_t status ;					// info: do we have a tunnel ?
 			RsPeerId virtual_peer_id;  	// given by the turtle router. Identifies the tunnel.
-			RsPgpId pgp_id ;          	// pgp id of the peer we're talking to.
+			RsGxsId gxs_id ;          		// pgp id of the peer we're talking to.
 			RsTurtleGenericTunnelItem::Direction direction ; // specifiec wether we are client(managing the tunnel) or server.
 		};
-
-		// This map contains the ongoing invites. This is the list where to look to
-		// handle tunnel requests.
-		//
-		std::map<TurtleFileHash,DistantChatInvite> _distant_chat_invites ;
 
 		// This maps contains the current peers to talk to with distant chat.
 		//
@@ -377,17 +358,17 @@ class p3ChatService: public p3Service, public p3Config, public pqiServiceMonitor
 
 		// Overloaded from RsTurtleClientService
 
-        virtual bool handleTunnelRequest(const RsFileHash &hash,const RsPeerId& peer_id) ;
-        virtual void receiveTurtleData(RsTurtleGenericTunnelItem *item,const RsFileHash& hash,const RsPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction) ;
+		virtual bool handleTunnelRequest(const RsFileHash &hash,const RsPeerId& peer_id) ;
+		virtual void receiveTurtleData(RsTurtleGenericTunnelItem *item,const RsFileHash& hash,const RsPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction) ;
 		void addVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&,RsTurtleGenericTunnelItem::Direction dir) ;
 		void removeVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&) ;
 		void markDistantChatAsClosed(const TurtleVirtualPeerId& vpid) ;
-        void startClientDistantChatConnection(const RsFileHash& hash,const RsPgpId& pgp_id,const unsigned char *aes_key_buf) ;
-        bool findHashForVirtualPeerId(const TurtleVirtualPeerId& pid,RsFileHash& hash) ;
+		void startClientDistantChatConnection(const RsFileHash& hash,const RsGxsId& gxs_id,const unsigned char *aes_key_buf) ;
+		bool getHashFromVirtualPeerId(const TurtleVirtualPeerId& pid,RsFileHash& hash) ;
+		TurtleFileHash hashFromDistantChatPeerId(const DistantChatPeerId& pid) ;
 
 		// Utility functions
 
-		void cleanDistantChatInvites() ;
 		void sendTurtleData(RsChatItem *) ;
 		void sendPrivateChatItem(RsChatItem *) ;
 

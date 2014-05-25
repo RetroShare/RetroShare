@@ -98,9 +98,9 @@ void ChatDialog::init(const RsPeerId &peerId, const QString &title)
 		}
 
 		uint32_t distant_peer_status ;
-        RsPgpId distant_chat_pgp_id ;
+		RsGxsId distant_chat_gxs_id ;
 
-		if(rsMsgs->getDistantChatStatus(peerId,distant_peer_status,distant_chat_pgp_id)) 
+		if(rsMsgs->getDistantChatStatus(peerId,distant_chat_gxs_id,distant_peer_status)) 
 			chatflags = RS_CHAT_OPEN | RS_CHAT_FOCUS; // use own flags
 
 		if (chatflags & RS_CHAT_OPEN) {
@@ -118,8 +118,8 @@ void ChatDialog::init(const RsPeerId &peerId, const QString &title)
 			} else if(distant_peer_status > 0) {
 				cd = new PopupDistantChatDialog();
 				chatDialogs[peerId] = cd;
-				std::string peer_name = rsPeers->getGPGName(distant_chat_pgp_id) ;
-                cd->init(peerId, tr("Talking to ")+QString::fromStdString(peer_name)+" (PGP id="+QString::fromStdString(distant_chat_pgp_id.toStdString())+")") ;
+				QString peer_name = cd->getPeerName(peerId) ;
+                cd->init(peerId, tr("Talking to ")+peer_name+" (GXS id="+QString::fromStdString(distant_chat_gxs_id.toStdString())+")") ;
 
 			} else {
 				RsPeerDetails sslDetails;
@@ -210,10 +210,10 @@ void ChatDialog::init(const RsPeerId &peerId, const QString &title)
 		return;
 	}
 
-    RsPgpId distant_chat_pgp_id ;
+    RsGxsId distant_chat_gxs_id ;
 	uint32_t distant_peer_status ;
 
-	if(rsMsgs->getDistantChatStatus(peerId,distant_peer_status,distant_chat_pgp_id)) 
+	if(rsMsgs->getDistantChatStatus(peerId,distant_chat_gxs_id,distant_peer_status)) 
 	{
         getChat(peerId, forceFocus ? RS_CHAT_OPEN | RS_CHAT_FOCUS : RS_CHAT_OPEN ); // use own flags
 		return ;

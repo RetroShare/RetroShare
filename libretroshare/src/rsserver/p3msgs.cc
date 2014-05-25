@@ -359,32 +359,16 @@ void p3Msgs::getPendingChatLobbyInvites(std::list<ChatLobbyInvite>& invites)
 {
 	mChatSrv->getPendingChatLobbyInvites(invites) ;
 }
-bool p3Msgs::createDistantChatInvite(const RsPgpId& pgp_id,time_t time_of_validity,std::string& encrypted_string)
+bool p3Msgs::initiateDistantChatConnexion(const RsGxsId& gxs_id,DistantChatPeerId& pid,uint32_t& error_code)
 {
-	return mChatSrv->createDistantChatInvite(pgp_id,time_of_validity,encrypted_string) ;
+	return mChatSrv->initiateDistantChatConnexion(gxs_id,pid,error_code) ;
 }
-bool p3Msgs::getDistantChatInviteList(std::vector<DistantChatInviteInfo>& invites)
+bool p3Msgs::getDistantChatStatus(const DistantChatPeerId& pid,RsGxsId& gxs_id,uint32_t& status)
 {
-	return mChatSrv->getDistantChatInviteList(invites) ;
-}
-bool p3Msgs::initiateDistantChatConnexion(const std::string& encrypted_str,time_t validity_time,DistantChatPeerId& pid,uint32_t& error_code)
-{
-	return mChatSrv->initiateDistantChatConnexion(encrypted_str,validity_time,pid,error_code) ;
-}
-bool p3Msgs::initiateDistantChatConnexion(const DistantChatPeerId& pid,uint32_t& error_code)
-{
-	return mChatSrv->initiateDistantChatConnexion(pid,error_code) ;
-}
-bool p3Msgs::getDistantChatStatus(const DistantChatPeerId& pid,uint32_t& status,RsPgpId& pgp_id) 
-{
-	return mChatSrv->getDistantChatStatus(pid,status,pgp_id) ;
+	return mChatSrv->getDistantChatStatus(pid,gxs_id,status) ;
 }
 bool p3Msgs::closeDistantChatConnexion(const DistantChatPeerId& pid)
 {
 	return mChatSrv->closeDistantChatConnexion(pid) ;
-}
-bool p3Msgs::removeDistantChatInvite(const DistantChatPeerId& pid)
-{
-	return mChatSrv->removeDistantChatInvite(pid) ;
 }
 

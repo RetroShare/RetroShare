@@ -6,18 +6,19 @@
 #include <QGraphicsItem>
 #include <QGraphicsSceneMouseEvent>
 
+#include "IdentityItem.h"
 #include "CircleItem.h"
 
 #define IMAGE_MAKEFRIEND ""
 
 CircleItem *CircleItem::_selected_node = NULL ;
 
-CircleItem::CircleItem(const RsGroupMetaData& group_info)
-	: _group_info(group_info)
+CircleItem::CircleItem(const RsGroupMetaData& group_info, const RsGxsCircleDetails& details)
+	: _group_info(group_info), _circle_details(details)
 {
 	std::cerr << "Created group item for id=" <<group_info.mGroupId << std::endl;
 
-//	    setFlag(ItemIsMovable);
+	    setFlag(ItemIsMovable);
 	setAcceptHoverEvents(true) ;
 #if QT_VERSION >= 0x040600
     setFlag(ItemSendsGeometryChanges);
@@ -27,6 +28,16 @@ CircleItem::CircleItem(const RsGroupMetaData& group_info)
 
 	 mDeterminedBB = false ;
 	 mBBWidth = 40 ;
+
+	 /* update friend lists */
+
+	 // update the position of all members
+
+	 uint32_t n=details.mUnknownPeers.size() ;
+
+	 _angles.resize(n) ;
+	 for(uint32_t i=0;i<n;++i)
+		 _angles[i] = 2*M_PI/n ;
 }
 
 void CircleItem::hoverEnterEvent(QGraphicsSceneHoverEvent *e)
@@ -48,31 +59,43 @@ void CircleItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *e)
 	update() ;
 }
 
-
 QRectF CircleItem::boundingRect() const
 {
 	static const bool mDeterminedBB = false ;
 	static const int mBBWidth = 40 ;
 
-    return QRectF(-(int)IMG_SIZE/2-10, -(int)IMG_SIZE/2-10, (int)IMG_SIZE+20,(int)IMG_SIZE+35) ;
+    return QRectF(-(int)IMG_SIZE/2 - CRC_SIZE, -(int)IMG_SIZE/2 - CRC_SIZE, IMG_SIZE+2*CRC_SIZE,IMG_SIZE+2*CRC_SIZE) ;
 }
 
 void CircleItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *)
 {
-	painter->setPen(Qt::NoPen);
-	painter->setBrush(Qt::lightGray);
-	painter->drawEllipse(-7, -7, 20, 20);
-
-	QRadialGradient gradient(-10, -IMG_SIZE/3.0, IMG_SIZE*1.5);
-	gradient.setColorAt(0.0f,Qt::lightGray) ;
-	gradient.setColorAt(1.0f,Qt::darkGray) ;
-	painter->setBrush(gradient);
-	
 	if(_selected)
 		painter->setOpacity(0.7) ;
 	else
 		painter->setOpacity(1.0) ;
 
+	// draw a circle in the center
+	//
+	QRadialGradient gradient(-10, -IMG_SIZE/3.0, IMG_SIZE*1.5);
+	gradient.setColorAt(0.0f,Qt::lightGray) ;
+	gradient.setColorAt(1.0f,Qt::darkGray) ;
+	painter->setBrush(gradient);
+	
+	painter->setPen(Qt::NoPen);
+	painter->setBrush(Qt::lightGray);
+	painter->drawEllipse(-7, -7, 20, 20);
+
+	// Now draw all members of this circle into a circle
+	//
+	uint32_t i=0 ;
+	for(std::set<RsGxsId>::const_iterator it(_circle_details.mUnknownPeers.begin());it!= _circle_details.mUnknownPeers.end();++it)
+	{
+		painter->drawImage(QPoint(CRC_SIZE*cos(_angles[i]) -(int)IMG_SIZE/2, CRC_SIZE*sin(_angles[i]) -(int)IMG_SIZE/2), IdentityItem::makeDefaultIcon(RsGxsGroupId(*it))) ;
+		++i ;
+	}
+
+	// Draw the name of the circle
+	//
 	painter->setPen(QPen(Qt::black, 0));
 
 	//painter->drawRoundedRect(QRectF(-(int)IMG_SIZE/2-10, -(int)IMG_SIZE/2-10, 20+IMG_SIZE, 20+IMG_SIZE),20,15) ;

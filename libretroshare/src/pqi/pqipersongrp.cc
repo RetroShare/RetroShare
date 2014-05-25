@@ -44,7 +44,6 @@ static std::list<RsPeerId> waitingIds;
 /****
  *#define PGRP_DEBUG 1
  ****/
-#define PGRP_DEBUG 1
 
 #define DEFAULT_DOWNLOAD_KB_RATE	(200.0)
 #define DEFAULT_UPLOAD_KB_RATE		(50.0)

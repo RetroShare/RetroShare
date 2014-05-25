@@ -1270,48 +1270,49 @@ static void processList(const QStringList &list, const QString &textSingular, co
 					//		 MessageComposer::msgDistantPeer(link._hash.toStdString(),link._GPGid.toStdString()) ;
 				}
 				break ;
-			case TYPE_PRIVATE_CHAT:
-				{
-					std::cerr << "Opening a private chat window " << std::endl;
-					std::cerr << "      time_stamp = " << link._time_stamp << std::endl;
-					std::cerr << "      enc-string = " << link._encrypted_chat_info.toStdString() << std::endl;
-					std::cerr << "      PGP Id     = " << link._GPGid.toStdString() << std::endl;
 
-					if(link._time_stamp < time(NULL))
-					{
-						QMessageBox::information(NULL,QObject::tr("Chat link is expired"),QObject::tr("This chat link is expired. The destination peer will not answer.")) ;
-						break ;
-					}
-					if(RsPgpId(link._GPGid.toStdString()) != rsPeers->getGPGOwnId())
-					{
-						QMessageBox::information(NULL,QObject::tr("Chat link cannot be decrypted"),QObject::tr("This chat link is encrypted with a key that is not yours. You can't use it. Key ID = ")+link._GPGid) ;
-						break ;
-					}
-
-					DistantChatPeerId dpid  ;
-					uint32_t error_code ;
-
-					if(!rsMsgs->initiateDistantChatConnexion(link._encrypted_chat_info.toStdString(),link._time_stamp,dpid,error_code))
-					{
-						QString error_msg ;
-						switch(error_code)
-						{
-							default:
-							case RS_DISTANT_CHAT_ERROR_DECRYPTION_FAILED:  error_msg = QObject::tr("The link could not be decrypted.") ; break ;
-							case RS_DISTANT_CHAT_ERROR_SIGNATURE_MISMATCH: error_msg = QObject::tr("The link signature cannot be checked.") ; break ;
-							case RS_DISTANT_CHAT_ERROR_UNKNOWN_KEY:        error_msg = QObject::tr("The link is signed by an unknown key.") ; break ;
-						}
-						QMessageBox::information(NULL,QObject::tr("Chat connection is not possible"),error_msg) ;
-					}
-					else
-					{
-						if(error_code == RS_DISTANT_CHAT_ERROR_UNKNOWN_KEY)
-							QMessageBox::information(NULL,QObject::tr("Chat connection is unauthenticated"),QObject::tr("Signature check failed!\nMake sure you know who you're talking to.")) ;
-
-						ChatDialog::chatFriend(dpid);
-					}
-				}
-				break ;
+//			case TYPE_PRIVATE_CHAT:
+//				{
+//					std::cerr << "Opening a private chat window " << std::endl;
+//					std::cerr << "      time_stamp = " << link._time_stamp << std::endl;
+//					std::cerr << "      enc-string = " << link._encrypted_chat_info.toStdString() << std::endl;
+//					std::cerr << "      PGP Id     = " << link._GPGid.toStdString() << std::endl;
+//
+//					if(link._time_stamp < time(NULL))
+//					{
+//						QMessageBox::information(NULL,QObject::tr("Chat link is expired"),QObject::tr("This chat link is expired. The destination peer will not answer.")) ;
+//						break ;
+//					}
+//					if(RsPgpId(link._GPGid.toStdString()) != rsPeers->getGPGOwnId())
+//					{
+//						QMessageBox::information(NULL,QObject::tr("Chat link cannot be decrypted"),QObject::tr("This chat link is encrypted with a key that is not yours. You can't use it. Key ID = ")+link._GPGid) ;
+//						break ;
+//					}
+//
+//					DistantChatPeerId dpid  ;
+//					uint32_t error_code ;
+//
+//					if(!rsMsgs->initiateDistantChatConnexion(link._encrypted_chat_info.toStdString(),link._time_stamp,dpid,error_code))
+//					{
+//						QString error_msg ;
+//						switch(error_code)
+//						{
+//							default:
+//							case RS_DISTANT_CHAT_ERROR_DECRYPTION_FAILED:  error_msg = QObject::tr("The link could not be decrypted.") ; break ;
+//							case RS_DISTANT_CHAT_ERROR_SIGNATURE_MISMATCH: error_msg = QObject::tr("The link signature cannot be checked.") ; break ;
+//							case RS_DISTANT_CHAT_ERROR_UNKNOWN_KEY:        error_msg = QObject::tr("The link is signed by an unknown key.") ; break ;
+//						}
+//						QMessageBox::information(NULL,QObject::tr("Chat connection is not possible"),error_msg) ;
+//					}
+//					else
+//					{
+//						if(error_code == RS_DISTANT_CHAT_ERROR_UNKNOWN_KEY)
+//							QMessageBox::information(NULL,QObject::tr("Chat connection is unauthenticated"),QObject::tr("Signature check failed!\nMake sure you know who you're talking to.")) ;
+//
+//						ChatDialog::chatFriend(dpid);
+//					}
+//				}
+//				break ;
 
 			case TYPE_FILE:
 			case TYPE_EXTRAFILE:

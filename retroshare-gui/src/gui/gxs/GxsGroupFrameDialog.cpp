@@ -204,8 +204,12 @@ void GxsGroupFrameDialog::todo()
 	QMessageBox::information(this, "Todo", text(TEXT_TODO));
 }
 
-void GxsGroupFrameDialog::groupTreeCustomPopupMenu(QPoint /*point*/)
+void GxsGroupFrameDialog::groupTreeCustomPopupMenu(QPoint point)
 {
+	QString id = "" ;//ui->groupTreeWidget->itemIdAt(point);
+	if (id.isEmpty()) return;
+
+	mGroupId = RsGxsGroupId(id.toStdString());
 	int subscribeFlags = ui->groupTreeWidget->subscribeFlags(QString::fromStdString(mGroupId.toStdString()));
 
 	bool isAdmin = IS_GROUP_ADMIN(subscribeFlags);

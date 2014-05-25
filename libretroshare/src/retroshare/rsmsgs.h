@@ -88,7 +88,7 @@ typedef uint64_t 		ChatLobbyId ;
 typedef uint64_t 		ChatLobbyMsgId ;
 typedef std::string 		ChatLobbyNickName ;
 
-typedef RsPeerId 		DistantChatPeerId ;
+typedef RsPeerId 				DistantChatPeerId ;
 typedef GRouterKeyIdType	DistantMsgPeerId ;
 
 class MessageInfo 
@@ -356,13 +356,9 @@ virtual ChatLobbyId createChatLobby(const std::string& lobby_name,const std::str
 /*            Distant chat              */
 /****************************************/
 
-virtual bool createDistantChatInvite(const RsPgpId& pgp_id,time_t time_of_validity,std::string& encrypted_string) = 0 ;
-virtual bool getDistantChatInviteList(std::vector<DistantChatInviteInfo>& invites) = 0;
-virtual bool initiateDistantChatConnexion(const std::string& encrypted_string,time_t validity_time,DistantChatPeerId& pid,uint32_t& error_code) = 0;
-virtual bool initiateDistantChatConnexion(const DistantChatPeerId& pid,uint32_t& error_code) = 0;
-virtual bool getDistantChatStatus(const DistantChatPeerId& pid,uint32_t& status,RsPgpId& pgp_id) = 0;
+virtual bool initiateDistantChatConnexion(const RsGxsId& pid,DistantChatPeerId& id,uint32_t& error_code) = 0;
+virtual bool getDistantChatStatus(const DistantChatPeerId& pid,RsGxsId& gxs_id,uint32_t& status) = 0;
 virtual bool closeDistantChatConnexion(const DistantChatPeerId& pid) = 0;
-virtual bool removeDistantChatInvite(const DistantChatPeerId& pid) = 0 ;
 
 };
 

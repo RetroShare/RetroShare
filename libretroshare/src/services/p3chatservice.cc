@@ -37,6 +37,7 @@
 #include "retroshare/rsiface.h"
 #include "retroshare/rspeers.h"
 #include "retroshare/rsstatus.h"
+#include "retroshare/rsidentity.h"
 #include "pqi/pqibin.h"
 #include "pqi/pqistore.h"
 #include "pqi/p3linkmgr.h"
@@ -50,6 +51,7 @@
  * #define CHAT_DEBUG 1
  * #define DEBUG_DISTANT_CHAT 1
  ****/
+#define DEBUG_DISTANT_CHAT 1
 
 static const int 		CONNECTION_CHALLENGE_MAX_COUNT 	  =   20 ; // sends a connection challenge every 20 messages
 static const time_t	CONNECTION_CHALLENGE_MAX_MSG_AGE	  =   30 ; // maximum age of a message to be used in a connection challenge
@@ -120,7 +122,6 @@ int	p3ChatService::tick()
 		receiveChatQueue();
 
 	static time_t last_clean_time_lobby = 0 ;
-	static time_t last_clean_time_dchat = 0 ;
 	static time_t last_req_chat_lobby_list = 0 ;
 
 	time_t now = time(NULL) ;
@@ -130,15 +131,8 @@ int	p3ChatService::tick()
 		cleanLobbyCaches() ;
 		last_clean_time_lobby = now ;
 	}
-	if(last_clean_time_dchat + DISTANT_CHAT_CLEANING_PERIOD < now)
-	{
-		cleanDistantChatInvites() ;
-		last_clean_time_dchat = now ;
-	}
 	if(last_req_chat_lobby_list + LOBBY_LIST_AUTO_UPDATE_TIME < now)
 	{
-		cleanDistantChatInvites() ;
-
 		std::vector<VisibleChatLobbyRecord> visible_lobbies_tmp ;
 		getListOfNearbyChatLobbies(visible_lobbies_tmp) ;
 
@@ -301,25 +295,38 @@ void p3ChatService::sendStatusString( const RsPeerId& id , const std::string& st
 	}
 }
 
+bool p3ChatService::getHashFromVirtualPeerId(const TurtleVirtualPeerId& vpid,TurtleFileHash& hash)
+{
+	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+
+	for(std::map<TurtleFileHash,DistantChatPeerInfo>::const_iterator it=_distant_chat_peers.begin();it!=_distant_chat_peers.end();++it)
+		if( it->second.virtual_peer_id == vpid)  
+		{
+			hash = it->first ;
+			return true ;
+		}
+
+	return false ;
+}
+
 void p3ChatService::sendPrivateChatItem(RsChatItem *item)
 {
-	bool found = false ;
+	TurtleFileHash hash ;
 
+	if(getHashFromVirtualPeerId(item->PeerId(),hash))	// the hash is not used here. That can be optimized.
 	{
-		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
-
-		for(std::map<TurtleFileHash,DistantChatPeerInfo>::const_iterator it=_distant_chat_peers.begin();it!=_distant_chat_peers.end();++it)
-			if( it->second.virtual_peer_id == item->PeerId())  // _distant_chat_peers.find(item->PeerId()) !=_distant_chat_peers.end()) 
-			{
-				found = true ;
-				break ;
-			}
-	}
-
-	if(found)
+#ifdef CHAT_DEBUG
+		std::cerr << "p3ChatService::sendPrivateChatItem(): sending to " << item->PeerId() << ": interpreted as a distant chat virtual peer id." << std::endl;
+#endif
 		sendTurtleData(item) ;
+	}
 	else
+	{
+#ifdef CHAT_DEBUG
+		std::cerr << "p3ChatService::sendPrivateChatItem(): sending to " << item->PeerId() << ": interpreted as friend peer id." << std::endl;
+#endif
 		sendItem(item) ;
+	}
 }
 
 void p3ChatService::checkSizeAndSendMessage_deprecated(RsChatMsgItem *msg)
@@ -481,10 +488,10 @@ bool p3ChatService::isOnline(const DistantChatPeerId& pid)
 	// check if the id is a tunnel id or a peer id.
 
 	uint32_t status ;
-	RsPgpId pgp_id ;
+	RsGxsId gxs_id ;
 
 	std::string hash ;
-	if(getDistantChatStatus(pid,status,pgp_id)) 
+	if(getDistantChatStatus(pid,gxs_id,status)) 
 		return true ;
 	else
 		return mServiceCtrl->isPeerConnected(getServiceInfo().mServiceType, pid);
@@ -900,7 +907,11 @@ void p3ChatService::handleRecvChatLobbyList(RsChatLobbyListItem *item)
 		std::cerr << "Warning: Peer " << item->PeerId() << "(" << rsPeers->getPeerName(item->PeerId()) << ") is sending a lobby list of " << item->lobby_ids.size() << " lobbies. This is unusual, and probably a attempt to crash you." << std::endl;
 
     std::list<ChatLobbyId> chatLobbyToSubscribe;
+	 std::list<ChatLobbyId> invitationNeeded ;
 
+#ifdef CHAT_DEBUG
+	 std::cerr << "Received chat lobby list from friend " << item->PeerId() << ", " << item->lobby_ids.size() << " elements." << std::endl;
+#endif
 	{
 		time_t now = time(NULL) ;
 
@@ -925,10 +936,29 @@ void p3ChatService::handleRecvChatLobbyList(RsChatLobbyListItem *item)
 
 			std::map<ChatLobbyId,ChatLobbyFlags>::const_iterator it(_known_lobbies_flags.find(item->lobby_ids[i])) ;
 
+#ifdef CHAT_DEBUG
+			std::cerr << "  lobby id " << std::hex << item->lobby_ids[i] << std::dec << ", " << item->lobby_names[i] << ", " << item->lobby_counts[i] << " participants" << std::endl;
+#endif
 			if(it != _known_lobbies_flags.end() && (it->second & RS_CHAT_LOBBY_FLAGS_AUTO_SUBSCRIBE))
 			{
+#ifdef CHAT_DEBUG
+				std::cerr << "    lobby is flagged as autosubscribed. Adding it to subscribe list." << std::endl;
+#endif
 				ChatLobbyId clid = item->lobby_ids[i];
 				chatLobbyToSubscribe.push_back(clid);
+			}
+
+			// for subscribed lobbies, check that item->PeerId() is among the participating friends. If not, add him!
+
+			std::map<ChatLobbyId,ChatLobbyEntry>::iterator it2 = _chat_lobbys.find(item->lobby_ids[i]) ;
+
+			if(it2 != _chat_lobbys.end() && it2->second.participating_friends.find(item->PeerId()) == it2->second.participating_friends.end())
+			{
+#ifdef CHAT_DEBUG
+				std::cerr << "    lobby is currently subscribed but friend is not participating already -> adding to partipating friends and sending invite." << std::endl;
+#endif
+				it2->second.participating_friends.insert(item->PeerId()) ; 
+				invitationNeeded.push_back(item->lobby_ids[i]) ;
 			}
 		}
 	}
@@ -936,6 +966,9 @@ void p3ChatService::handleRecvChatLobbyList(RsChatLobbyListItem *item)
     std::list<ChatLobbyId>::iterator it;
     for (it = chatLobbyToSubscribe.begin(); it != chatLobbyToSubscribe.end(); it++) 
         joinVisibleChatLobby(*it);
+
+	 for(std::list<ChatLobbyId>::const_iterator it = invitationNeeded.begin();it!=invitationNeeded.end();++it)
+		 invitePeerToLobby(*it,item->PeerId(),false) ;
 
 	 RsServer::notify()->notifyListChange(NOTIFY_LIST_CHAT_LOBBY_LIST, NOTIFY_TYPE_ADD) ;
 	_should_reset_lobby_counts = false ;
@@ -1931,25 +1964,6 @@ bool p3ChatService::loadList(std::list<RsItem*>& load)
 			continue;
 		}
 
-		RsPrivateChatDistantInviteConfigItem *ditem = NULL ;
-
-		if(NULL != (ditem = dynamic_cast<RsPrivateChatDistantInviteConfigItem *>(*it)))
-		{
-			DistantChatInvite invite ;
-
-			memcpy(invite.aes_key,ditem->aes_key,DISTANT_CHAT_AES_KEY_SIZE) ;
-			invite.encrypted_radix64_string = ditem->encrypted_radix64_string ;
-			invite.destination_pgp_id = ditem->destination_pgp_id ;
-			invite.time_of_validity = ditem->time_of_validity ;
-			invite.last_hit_time = ditem->last_hit_time ;
-			invite.flags = ditem->flags ;
-
-			_distant_chat_invites[ditem->hash] = invite ;
-
-			delete *it ;
-			continue ;
-		}
-
 		RsConfigKeyValueSet *vitem = NULL ;
 
 		if(NULL != (vitem = dynamic_cast<RsConfigKeyValueSet*>(*it)))
@@ -2016,22 +2030,6 @@ bool p3ChatService::saveList(bool& cleanup, std::list<RsItem*>& list)
 		ci->set(*it, (*it)->PeerId(), 0);
 
 		list.push_back(ci);
-	}
-
-	/* save ongoing distant chat invites */
-
-	for(std::map<TurtleFileHash,DistantChatInvite>::const_iterator it(_distant_chat_invites.begin());it!=_distant_chat_invites.end();++it)
-	{
-		RsPrivateChatDistantInviteConfigItem *ei = new RsPrivateChatDistantInviteConfigItem ;
-		ei->hash = it->first ;
-		memcpy(ei->aes_key,it->second.aes_key,DISTANT_CHAT_AES_KEY_SIZE) ;
-		ei->encrypted_radix64_string = it->second.encrypted_radix64_string ;
-		ei->destination_pgp_id = it->second.destination_pgp_id ;
-		ei->time_of_validity = it->second.time_of_validity ;
-		ei->last_hit_time = it->second.last_hit_time ;
-		ei->flags = it->second.flags ;
-
-		list.push_back(ei) ;
 	}
 
 	/* Save Default Nick Name */
@@ -2308,7 +2306,7 @@ bool p3ChatService::sendLobbyChat(const RsPeerId &id, const std::string& msg, co
 #ifdef CHAT_DEBUG
 	std::cerr << "Sending chat lobby message to lobby " << std::hex << lobby_id << std::dec << std::endl;
 	std::cerr << "msg:" << std::endl;
-	std::wcerr << msg << std::endl;
+	std::cerr << msg << std::endl;
 #endif
 
 	RsChatLobbyMsgItem item ;
@@ -3089,24 +3087,33 @@ void p3ChatService::cleanLobbyCaches()
 		sendConnectionChallenge(*it) ;
 }
 
+/******************************************************************************************************************/
+/*                                                 Distant Chat                                                   */
+/******************************************************************************************************************/
+
 bool p3ChatService::handleTunnelRequest(const RsFileHash& hash,const RsPeerId& /*peer_id*/)
 {
 	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
-	std::map<TurtleFileHash,DistantChatInvite>::iterator it = _distant_chat_invites.find(hash) ;
+	// look into owned GXS ids, and see if the hash corresponds to the expected hash
+	//
+	std::list<RsGxsId> own_id_list ;
+	rsIdentity->getOwnIds(own_id_list) ;
 
 #ifdef DEBUG_DISTANT_CHAT
 	std::cerr << "p3ChatService::handleTunnelRequest: received tunnel request for hash " << hash << std::endl;
 #endif
 
-	if(it == _distant_chat_invites.end())
-		return false ;
+	for(std::list<RsGxsId>::const_iterator it(own_id_list.begin());it!=own_id_list.end();++it)
+		if(hashFromDistantChatPeerId(DistantChatPeerId(*it)) == hash)
+		{
+#ifdef DEBUG_DISTANT_CHAT
+			std::cerr << "  answering true!" << std::endl;
+#endif
+			return true ;
+		}
 
-	if(it->second.encrypted_radix64_string.empty())		// don't respond to collected invites. Only to the ones we actually created!
-		return false ;
-
-	it->second.last_hit_time = time(NULL) ;
-	return true ;
+	return false ;
 }
 
 void p3ChatService::addVirtualPeer(const TurtleFileHash& hash,const TurtleVirtualPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction dir)
@@ -3151,23 +3158,17 @@ void p3ChatService::addVirtualPeer(const TurtleFileHash& hash,const TurtleVirtua
 		std::cerr << "  Initing encryption parameters from existing distant chat invites." << std::endl;
 #endif
 
-		std::map<TurtleFileHash,DistantChatInvite>::iterator it = _distant_chat_invites.find(hash) ;
-
-		if(it == _distant_chat_invites.end())
-		{
-			std::cerr << "(EE) Cannot find distant chat invite for hash " << hash << ": no chat invite found for that hash." << std::endl;
-			return ;
-		}
 		DistantChatPeerInfo info ;
 		info.last_contact = now ;
 		info.status = RS_DISTANT_CHAT_STATUS_TUNNEL_OK ;
 		info.virtual_peer_id = virtual_peer_id ;
-		info.pgp_id = it->second.destination_pgp_id ;
+		info.gxs_id.clear() ; // unknown yet!
 		info.direction = dir ;
-		memcpy(info.aes_key,it->second.aes_key,DISTANT_CHAT_AES_KEY_SIZE) ;
+
+#warning Unfinished code here causes serious security defect.
+		memset(info.aes_key,0,DISTANT_CHAT_AES_KEY_SIZE) ;
 
 		_distant_chat_peers[hash] = info ;
-		it->second.last_hit_time = now ;
 	}
 
 	// then we send an ACK packet to notify that the tunnel works. That's useful
@@ -3189,7 +3190,7 @@ void p3ChatService::addVirtualPeer(const TurtleFileHash& hash,const TurtleVirtua
 
 	// Notify the GUI that the tunnel is up.
 	//
-    RsServer::notify()->notifyChatStatus(hash.toStdString(),"tunnel is up again!",true) ;
+    RsServer::notify()->notifyChatStatus(virtual_peer_id.toStdString(),"tunnel is up again!",true) ;
 }
 
 void p3ChatService::removeVirtualPeer(const TurtleFileHash& hash,const TurtleVirtualPeerId& virtual_peer_id)
@@ -3207,8 +3208,8 @@ void p3ChatService::removeVirtualPeer(const TurtleFileHash& hash,const TurtleVir
 
 		it->second.status = RS_DISTANT_CHAT_STATUS_TUNNEL_DN ;
 	}
-    RsServer::notify()->notifyChatStatus(hash.toStdString(),"tunnel is down...",true) ;
-    RsServer::notify()->notifyPeerStatusChanged(hash.toStdString(),RS_STATUS_OFFLINE) ;
+    RsServer::notify()->notifyChatStatus(virtual_peer_id.toStdString(),"tunnel is down...",true) ;
+    RsServer::notify()->notifyPeerStatusChanged(virtual_peer_id.toStdString(),RS_STATUS_OFFLINE) ;
 }
 
 #ifdef DEBUG_DISTANT_CHAT
@@ -3225,13 +3226,13 @@ static void printBinaryData(void *data,uint32_t size)
 #endif
 
 void p3ChatService::receiveTurtleData(	RsTurtleGenericTunnelItem *gitem,const RsFileHash& hash,
-													const RsPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction /*direction*/)
+													const RsPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction)
 {
 #ifdef DEBUG_DISTANT_CHAT
 	std::cerr << "p3ChatService::receiveTurtleData(): Received turtle data. " << std::endl;
 	std::cerr << "   hash = " << hash << std::endl;
 	std::cerr << "   vpid = " << virtual_peer_id << std::endl;
-	std::cerr << "    dir = " << virtual_peer_id << std::endl;
+	std::cerr << "    dir = " << direction << std::endl;
 #endif
 
 	RsTurtleGenericDataItem *item = dynamic_cast<RsTurtleGenericDataItem*>(gitem) ;
@@ -3336,8 +3337,15 @@ void p3ChatService::sendTurtleData(RsChatItem *item)
 	
 	uint8_t aes_key[DISTANT_CHAT_AES_KEY_SIZE] ;
 
-	TurtleFileHash hash = hashFromVirtualPeerId(item->PeerId());
-	TurtleVirtualPeerId virtual_peer_id ;
+	TurtleVirtualPeerId virtual_peer_id = item->PeerId();
+	RsFileHash hash ;
+
+	if(!getHashFromVirtualPeerId(item->PeerId(),hash))
+	{
+		std::cerr << "Cannot get hash from virtual peer id " << item->PeerId() << ". Dropping the chat message." << std::endl;
+		delete[] buff ;
+		return ;
+	}
 
 	{
 		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
@@ -3351,7 +3359,6 @@ void p3ChatService::sendTurtleData(RsChatItem *item)
 		}
 		it->second.last_contact = time(NULL) ;
 		memcpy(aes_key,it->second.aes_key,DISTANT_CHAT_AES_KEY_SIZE) ;
-		virtual_peer_id = it->second.virtual_peer_id ;
 	}
 #ifdef DEBUG_DISTANT_CHAT
 	std::cerr << "p3ChatService::sendTurtleData(): tunnel found. Encrypting data." << std::endl;
@@ -3403,214 +3410,32 @@ void p3ChatService::sendTurtleData(RsChatItem *item)
 	mTurtle->sendTurtleData(virtual_peer_id,gitem) ;
 }
 
-bool p3ChatService::createDistantChatInvite(const RsPgpId& pgp_id,time_t time_of_validity,std::string& encrypted_radix64_string) 
+bool p3ChatService::initiateDistantChatConnexion(const RsGxsId& gxs_id,DistantChatPeerId& pid,uint32_t& error_code)
 {
-	// create the invite
+	pid = DistantChatPeerId(gxs_id) ; // the two ids have the same size. Still, I prefer to have 2 different types.
 
-	time_t now = time(NULL) ;
-
-	DistantChatInvite invite ;
-	invite.time_of_validity = now + time_of_validity ;
-	invite.last_hit_time = now ;
-
-	RAND_bytes( (unsigned char *)&invite.aes_key[0],DISTANT_CHAT_AES_KEY_SIZE ) ;	// generate a random AES encryption key
-
-	// Create a random hash for that invite.
-	//
-    RsFileHash hash = RsFileHash::random();
-
-#ifdef DEBUG_DISTANT_CHAT
-	std::cerr << "Created new distant chat invite: " << std::endl;
-	std::cerr << "  validity time stamp = " << invite.time_of_validity << std::endl;
-	std::cerr << "                 hash = " << hash << std::endl;
-	std::cerr << "       encryption key = " << t_GenericIdType<DISTANT_CHAT_AES_KEY_SIZE,true,0x0001>(invite.aes_key) << std::endl;
-#endif
-
-	// Now encrypt the data to create the link info. We need 
-	//
-	// [E] - the hash
-	// [E] - the aes key
-	// [E] - the signature
-	//     - pgp id
-	//     - timestamp
-	//
-	// The link will be
-	//
-	// 	retroshare://chat?time_stamp=3243242&private_data=[radix64 string]
-
-	uint32_t header_size = DISTANT_CHAT_AES_KEY_SIZE + DISTANT_CHAT_HASH_SIZE + PGP_KEY_ID_SIZE;
-    unsigned char *data = new unsigned char[header_size+800] ;
-
-	RsPgpId OwnId(AuthGPG::getAuthGPG()->getGPGOwnId());
-
-	memcpy(data                                                 ,Sha1CheckSum(hash).toByteArray(),DISTANT_CHAT_HASH_SIZE) ;
-	memcpy(data+DISTANT_CHAT_HASH_SIZE                          ,invite.aes_key     ,DISTANT_CHAT_AES_KEY_SIZE) ;
-	memcpy(data+DISTANT_CHAT_HASH_SIZE+DISTANT_CHAT_AES_KEY_SIZE,OwnId.toByteArray(),PGP_KEY_ID_SIZE) ;
-
-#ifdef DEBUG_DISTANT_CHAT
-	std::cerr << "Performing signature " << std::endl;
-#endif
-    uint32_t signlen = 800;
-
-	if(!AuthGPG::getAuthGPG()->SignDataBin(data,header_size,data+header_size,&signlen))
-		return false ;
-
-#ifdef DEBUG_DISTANT_CHAT
-	std::cerr << "Signature length = " << signlen << std::endl;
-#endif
-
-	// Then encrypt the whole data into a single string.
-
-	unsigned char *encrypted_data = new unsigned char[2000] ;
-	uint32_t encrypted_size = 2000 ;
-
-	if(!AuthGPG::getAuthGPG()->encryptDataBin(pgp_id,(unsigned char *)data,signlen+header_size,encrypted_data,&encrypted_size))
-		return false ;
-
-#ifdef DEBUG_DISTANT_CHAT
-	std::cerr << "Encrypted data size: " << encrypted_size << std::endl;
-#endif
-
-	Radix64::encode((const char *)encrypted_data,encrypted_size,invite.encrypted_radix64_string) ;
-	invite.destination_pgp_id = pgp_id ;
-
-	{
-		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
-		_distant_chat_invites[hash] = invite ;
-	}
-
-	encrypted_radix64_string = invite.encrypted_radix64_string ;
-#ifdef DEBUG_DISTANT_CHAT
-	std::cerr << "Encrypted radix64 string: " << invite.encrypted_radix64_string << std::endl;
-#endif
-
-	IndicateConfigChanged();
-	return true ;
-}
-
-bool p3ChatService::initiateDistantChatConnexion(const std::string& encrypted_str,time_t time_of_validity,DistantChatPeerId& pid,uint32_t& error_code)
-{
-	// Un-radix the string.
-	//
-	char *encrypted_data_bin = NULL ;
-	size_t encrypted_data_len ;
-
-	Radix64::decode(encrypted_str,encrypted_data_bin,encrypted_data_len) ;
-
-	// Decrypt it.
-	//
-	uint32_t data_size = encrypted_data_len+1000;
-	unsigned char *data = new unsigned char[data_size] ;
-
-	if(!AuthGPG::getAuthGPG()->decryptDataBin((unsigned char *)encrypted_data_bin,encrypted_data_len,data,&data_size))
-	{
-		error_code = RS_DISTANT_CHAT_ERROR_DECRYPTION_FAILED ;
-		return false ;
-	}
-	delete[] encrypted_data_bin ;
-
-#ifdef DEBUG_DISTANT_CHAT
-	std::cerr << "Chat invite was successfuly decrypted!" << std::endl;
-#endif
-
-	uint32_t header_size = DISTANT_CHAT_HASH_SIZE + DISTANT_CHAT_AES_KEY_SIZE + PGP_KEY_ID_SIZE ;
-
-	RsPgpId pgp_id( data + DISTANT_CHAT_HASH_SIZE + DISTANT_CHAT_AES_KEY_SIZE ) ;
-
-#ifdef DEBUG_DISTANT_CHAT
-	std::cerr << "Got this PGP id: " << pgp_id.toStdString() << std::endl;
-#endif
-
-	PGPFingerprintType fingerprint ;
-	if(!AuthGPG::getAuthGPG()->getKeyFingerprint(pgp_id,fingerprint)) 
-	{
-		error_code = RS_DISTANT_CHAT_ERROR_UNKNOWN_KEY ;
-		return false ;
-	}
-
-	bool signature_checked = AuthGPG::getAuthGPG()->VerifySignBin(data,header_size,data+header_size,data_size-header_size,fingerprint) ;
-	
-#ifdef DEBUG_DISTANT_CHAT
-	std::cerr << "Signature successfuly verified!" << std::endl;
-#endif
-    TurtleFileHash hash(data);
-	pid = virtualPeerIdFromHash(hash) ;
-
-	startClientDistantChatConnection(hash,pgp_id,data+DISTANT_CHAT_HASH_SIZE) ;
-
-	// Finally, save the decrypted chat info, so that we can display some info in the GUI in case we want to re-use the link
-	//
-	DistantChatInvite dinvite ;
-
-	dinvite.encrypted_radix64_string = "" ;		// means that it's not issued by us
-	dinvite.destination_pgp_id = pgp_id;
-	dinvite.time_of_validity = time_of_validity ;
-	dinvite.last_hit_time = time(NULL) ;
-	dinvite.flags = RS_DISTANT_CHAT_FLAG_SIGNED | (signature_checked ? RS_DISTANT_CHAT_FLAG_SIGNATURE_OK : 0) ;
-	memcpy(dinvite.aes_key,data+DISTANT_CHAT_HASH_SIZE,DISTANT_CHAT_AES_KEY_SIZE) ;
-	
-	{
-		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
-		_distant_chat_invites[hash] = dinvite ;
-	}
-#ifdef DEBUG_DISTANT_CHAT
-	std::cerr << "Saving info for decrypted link, for later use:" << std::endl;
-	std::cerr << "   destination pgp id: " << dinvite.destination_pgp_id << std::endl;
-	std::cerr << "   validity          : " << dinvite.time_of_validity << std::endl;
-	std::cerr << "   last hit time     : " << dinvite.last_hit_time << std::endl;
-#endif
-
-	delete[] data ;
-
-	// And notify about chatting.
-
-	error_code = signature_checked ? RS_DISTANT_CHAT_ERROR_NO_ERROR : RS_DISTANT_CHAT_ERROR_UNKNOWN_KEY;
-
-    RsServer::notify()->AddPopupMessage(RS_POPUP_CHAT, hash.toStdString(), "Distant peer", "Conversation starts...");
-
-	// Save config, since a new invite was added.
-	//
-	IndicateConfigChanged() ;
-	return true ;
-}
-
-bool p3ChatService::initiateDistantChatConnexion(const DistantChatPeerId& pid,uint32_t& error_code)
-{
-	RsPgpId pgp_id ;
 	unsigned char aes_key[DISTANT_CHAT_AES_KEY_SIZE] ;
 
-	TurtleFileHash hash = hashFromVirtualPeerId(pid) ;
-	{
-		RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
+	TurtleFileHash hash = hashFromDistantChatPeerId(pid) ;
 
-        std::map<RsFileHash,DistantChatInvite>::iterator it = _distant_chat_invites.find(hash) ;
+#warning Unfinished code here causes serious security defect.
+	memset(aes_key,0,DISTANT_CHAT_AES_KEY_SIZE) ;
 
-        if(it == _distant_chat_invites.end())
-		{
-			error_code = RS_DISTANT_CHAT_ERROR_UNKNOWN_HASH ;
-			return false ;
-		}
-		it->second.last_hit_time = time(NULL) ;
-		pgp_id = it->second.destination_pgp_id;
+	startClientDistantChatConnection(hash,gxs_id,aes_key) ;
 
-		memcpy(aes_key,it->second.aes_key,DISTANT_CHAT_AES_KEY_SIZE) ;
-	}
-
-	startClientDistantChatConnection(hash,pgp_id,aes_key) ;
-
-    RsServer::notify()->AddPopupMessage(RS_POPUP_CHAT, hash.toStdString(), "Distant peer", "Conversation starts...");
+	RsServer::notify()->AddPopupMessage(RS_POPUP_CHAT, pid.toStdString(), "Distant peer", "Conversation starts...");
 
 	error_code = RS_DISTANT_CHAT_ERROR_NO_ERROR ;
 	return true ;
 }
 
-void p3ChatService::startClientDistantChatConnection(const RsFileHash& hash,const RsPgpId& pgp_id,const unsigned char *aes_key_buf)
+void p3ChatService::startClientDistantChatConnection(const RsFileHash& hash,const RsGxsId& gxs_id,const unsigned char *aes_key_buf)
 {
 	DistantChatPeerInfo info ;
 
 	info.last_contact = time(NULL) ;
 	info.status = RS_DISTANT_CHAT_STATUS_TUNNEL_DN ;
-	info.pgp_id = pgp_id ;
+	info.gxs_id = gxs_id ;
 	info.direction = RsTurtleGenericTunnelItem::DIRECTION_SERVER ;
 	memcpy(info.aes_key,aes_key_buf,DISTANT_CHAT_AES_KEY_SIZE) ;
 
@@ -3628,35 +3453,6 @@ void p3ChatService::startClientDistantChatConnection(const RsFileHash& hash,cons
 	mTurtle->monitorTunnels(hash,this) ;
 }
 
-void p3ChatService::cleanDistantChatInvites()
-{
-	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
-
-	time_t now = time(NULL) ;
-
-#ifdef DEBUG_DISTANT_CHAT
-	std::cerr << "p3ChatService::cleanDistantChatInvites: " << std::endl;
-#endif
-
-	for(std::map<TurtleFileHash,DistantChatInvite>::iterator it(_distant_chat_invites.begin());it!=_distant_chat_invites.end(); )
-		if(it->second.time_of_validity < now)
-		{
-#ifdef DEBUG_DISTANT_CHAT
-			std::cerr << "  Removing hash " << it->first << std::endl;
-#endif
-			std::map<TurtleFileHash,DistantChatInvite>::iterator tmp(it) ;
-			++it ;
-			_distant_chat_invites.erase(tmp) ;
-		}
-		else
-		{
-#ifdef DEBUG_DISTANT_CHAT
-			std::cerr << "  Keeping hash " << it->first << std::endl;
-#endif
-			++it ;
-		}
-}
-
 DistantChatPeerId p3ChatService::virtualPeerIdFromHash(const TurtleFileHash& hash)
 {
 	if(DistantChatPeerId::SIZE_IN_BYTES > Sha1CheckSum::SIZE_IN_BYTES)
@@ -3664,7 +3460,7 @@ DistantChatPeerId p3ChatService::virtualPeerIdFromHash(const TurtleFileHash& has
 
 	return DistantChatPeerId(hash.toByteArray()) ;
 }
-TurtleFileHash p3ChatService::hashFromVirtualPeerId(const DistantChatPeerId& pid)
+TurtleFileHash p3ChatService::hashFromDistantChatPeerId(const DistantChatPeerId& pid)
 {
 	if(DistantChatPeerId::SIZE_IN_BYTES > Sha1CheckSum::SIZE_IN_BYTES)
 		std::cerr << __PRETTY_FUNCTION__ << ": Serious inconsistency error." << std::endl;
@@ -3675,30 +3471,12 @@ TurtleFileHash p3ChatService::hashFromVirtualPeerId(const DistantChatPeerId& pid
 
 	return Sha1CheckSum(tmp);
 }
-bool p3ChatService::getDistantChatInviteList(std::vector<DistantChatInviteInfo>& invites)
-{
-	invites.clear() ;
 
-	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
-	for(std::map<TurtleFileHash,DistantChatInvite>::const_iterator it(_distant_chat_invites.begin());it!=_distant_chat_invites.end();++it)
-	{
-		DistantChatInviteInfo info ;
-		info.pid = virtualPeerIdFromHash(it->first) ;
-		info.encrypted_radix64_string = it->second.encrypted_radix64_string ;
-		info.time_of_validity = it->second.time_of_validity ;
-		info.destination_pgp_id = it->second.destination_pgp_id ;
-		info.invite_flags = it->second.flags ;
-
-		invites.push_back(info);
-	}
-	return true ;
-}
-
-bool p3ChatService::getDistantChatStatus(const DistantChatPeerId& pid,uint32_t& status,RsPgpId& pgp_id)
+bool p3ChatService::getDistantChatStatus(const DistantChatPeerId& pid,RsGxsId& gxs_id,uint32_t& status)
 {
 	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
-	TurtleFileHash hash = hashFromVirtualPeerId(pid) ;
+	TurtleFileHash hash = hashFromDistantChatPeerId(pid) ;
 	std::map<TurtleFileHash,DistantChatPeerInfo>::const_iterator it = _distant_chat_peers.find(hash) ;
 	
 	if(it == _distant_chat_peers.end())
@@ -3708,7 +3486,7 @@ bool p3ChatService::getDistantChatStatus(const DistantChatPeerId& pid,uint32_t& 
 	}
 
 	status = it->second.status ;
-	pgp_id = it->second.pgp_id ;
+	gxs_id = it->second.gxs_id ;
 
 	return true ;
 }
@@ -3719,7 +3497,7 @@ bool p3ChatService::closeDistantChatConnexion(const DistantChatPeerId& pid)
 	// 	- client needs to stop asking for tunnels => remove the hash from the list of tunnelled files
 	// 	- server needs to only close the window and let the tunnel die. But the window should only open if a message arrives.
 
-	TurtleFileHash hash = hashFromVirtualPeerId(pid) ;
+	TurtleFileHash hash = hashFromDistantChatPeerId(pid) ;
 
 	bool is_client = false ;
 	RsPeerId virtual_peer_id ;
@@ -3775,7 +3553,7 @@ void p3ChatService::markDistantChatAsClosed(const DistantChatPeerId& pid)
 {
 	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
 
-	TurtleFileHash hash = hashFromVirtualPeerId(pid) ;
+	TurtleFileHash hash = hashFromDistantChatPeerId(pid) ;
 	std::map<TurtleFileHash,DistantChatPeerInfo>::iterator it = _distant_chat_peers.find(hash) ;
 
 	if(it == _distant_chat_peers.end())		// server side. Nothing to do.
@@ -3785,26 +3563,6 @@ void p3ChatService::markDistantChatAsClosed(const DistantChatPeerId& pid)
 	}
 	
 	it->second.status = RS_DISTANT_CHAT_STATUS_REMOTELY_CLOSED ;
-}
-
-bool p3ChatService::removeDistantChatInvite(const DistantChatPeerId& pid)
-{	
-	RsStackMutex stack(mChatMtx); /********** STACK LOCKED MTX ******/
-
-	TurtleFileHash hash= hashFromVirtualPeerId(pid) ;
-	std::map<TurtleFileHash,DistantChatInvite>::iterator it = _distant_chat_invites.find(hash) ;
-
-	if(it == _distant_chat_invites.end())		// server side. Nothing to do.
-	{
-		std::cerr << "Cannot find distant chat invite for hash " << hash << std::endl;
-		return false;
-	}
-
-	_distant_chat_invites.erase(it) ;
-
-	IndicateConfigChanged() ;
-
-	return true ;
 }
 
 

@@ -1,11 +1,15 @@
 #include <math.h>
 
+#include <retroshare/rsmsgs.h>
+
 #include <QPainter>
+#include <QMessageBox>
 #include <QMenu>
 #include <QStyle>
 #include <QGraphicsItem>
 #include <QGraphicsSceneMouseEvent>
 
+#include <gui/chat/ChatDialog.h>
 #include "IdentityItem.h"
 
 #define IMAGE_MAKEFRIEND ""
@@ -143,9 +147,7 @@ void IdentityItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 
 	painter->drawRoundedRect(QRectF(-(int)IMG_SIZE/2-10, -(int)IMG_SIZE/2-10, 20+IMG_SIZE, 20+IMG_SIZE),20,15) ;
 	painter->drawImage(QPoint(-(int)IMG_SIZE/2, -(int)IMG_SIZE/2), makeDefaultIcon(_group_info.mMeta.mGroupId)) ;
-	//painter->drawRect(-(int)IMG_SIZE/2, -(int)IMG_SIZE/2, IMG_SIZE, IMG_SIZE);
 
-	//std::string desc_string = _group_info.mMeta.mGroupId.toStdString() ;
 	std::string desc_string = _group_info.mMeta.mGroupName ;
 
 	painter->drawText(-8*desc_string.size()/2, IMG_SIZE/2+24, QString::fromUtf8(desc_string.c_str()));
@@ -160,17 +162,7 @@ void IdentityItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 
 QVariant IdentityItem::itemChange(GraphicsItemChange change, const QVariant &value)
 {
-//    switch (change) {
-//    case ItemPositionHasChanged:
-//        foreach (Edge *edge, edgeList)
-//            edge->adjust();
-//        graph->itemMoved();
-//        break;
-//    default:
-//        break;
-//    };
-
-    return QGraphicsItem::itemChange(change, value);
+	return QGraphicsItem::itemChange(change, value);
 }
 
 void IdentityItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -188,14 +180,20 @@ void IdentityItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 {
 	QMenu contextMnu ;
 
-	//if(_type == GraphWidget::ELASTIC_NODE_TYPE_FRIEND)
-	//	contextMnu.addAction(QIcon(IMAGE_DENIED), QObject::tr( "Deny friend" ), this, SLOT(denyFriend()) );
-	//else if(_type != GraphWidget::ELASTIC_NODE_TYPE_OWN)
-	//	contextMnu.addAction(QIcon(IMAGE_MAKEFRIEND), QObject::tr( "Make friend" ), this, SLOT(makeFriend()) );
-
 	contextMnu.addAction(QIcon(IMAGE_MAKEFRIEND), QObject::tr( "Peer details" ), this, SLOT(peerDetails()) );
-
+	contextMnu.addAction(QIcon(IMAGE_MAKEFRIEND), QObject::tr( "Chat this peer" ), this, SLOT(distantChat()) );
 	contextMnu.exec(event->screenPos());
+}
+
+void IdentityItem::distantChat()
+{
+	DistantChatPeerId virtual_peer_id ;
+	uint32_t error_code ;
+
+	if(!rsMsgs->initiateDistantChatConnexion(RsGxsId(_group_info.mMeta.mGroupId), virtual_peer_id, error_code))
+		QMessageBox::information(NULL,"Distant cannot work","Distant chat refused with this peer. Reason: "+QString::number(error_code)) ;
+	else
+		ChatDialog::chatFriend(virtual_peer_id);
 }
 
 void IdentityItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)

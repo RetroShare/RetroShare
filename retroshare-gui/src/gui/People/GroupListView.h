@@ -71,7 +71,9 @@ private:
 	 float _friction_factor ;
 	 //NodeId _current_node ;
 
-	 TokenQueue *mIdQueue;
+	 TokenQueue *mIdentityQueue;
+	 TokenQueue *mCirclesQueue;
+
 	 UIStateHelper *mStateHelper;
 
      std::map<RsGxsGroupId,IdentityItem *> _identity_items ;

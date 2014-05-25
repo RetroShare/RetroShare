@@ -25,23 +25,24 @@ GroupListView::GroupListView(QWidget *)
 	mStateHelper = new UIStateHelper(this);
 	//mStateHelper->addWidget(IDDIALOG_IDLIST, ui.treeWidget_IdList);
 
-	mIdQueue = new TokenQueue(rsIdentity->getTokenService(), this);
+	mIdentityQueue = new TokenQueue(rsIdentity->getTokenService(), this);
+	mCirclesQueue = new TokenQueue(rsGxsCircles->getTokenService(), this);
 
-    QGraphicsScene *scene = new QGraphicsScene(QRectF(0,0,width(),height()),this);
-    scene->setItemIndexMethod(QGraphicsScene::NoIndex);
-	 scene->clear() ;
-    setScene(scene);
-    scene->setSceneRect(0, 0, width(), height());
+	QGraphicsScene *scene = new QGraphicsScene(QRectF(0,0,width(),height()),this);
+	scene->setItemIndexMethod(QGraphicsScene::NoIndex);
+	scene->clear() ;
+	setScene(scene);
+	scene->setSceneRect(0, 0, width(), height());
 
-    setCacheMode(CacheBackground);
-    setViewportUpdateMode(FullViewportUpdate);
-    setRenderHint(QPainter::Antialiasing);
-    setTransformationAnchor(AnchorUnderMouse);
-    setResizeAnchor(AnchorViewCenter);
-	 _friction_factor = 1.0f ;
+	setCacheMode(CacheBackground);
+	setViewportUpdateMode(FullViewportUpdate);
+	setRenderHint(QPainter::Antialiasing);
+	setTransformationAnchor(AnchorUnderMouse);
+	setResizeAnchor(AnchorViewCenter);
+	_friction_factor = 1.0f ;
 
-	 setMouseTracking(true) ;
-    //scale(qreal(0.8), qreal(0.8));
+	setMouseTracking(true) ;
+	//scale(qreal(0.8), qreal(0.8));
 }
 
 void GroupListView::resizeEvent(QResizeEvent *e)
@@ -199,7 +200,14 @@ void GroupListView::insertCircles(uint32_t token)
 		std::cerr << " Group: " << vit->mGroupName;
 		std::cerr << std::endl;
 
-		CircleItem *gitem = new CircleItem( *vit ) ;
+		RsGxsCircleDetails details ;
+
+		if(!rsGxsCircles->getCircleDetails(RsGxsCircleId(vit->mGroupId), details))
+		{
+			std::cerr << "(EE) Cannot get details for circle id " << vit->mGroupId << ". Circle item is not created!" << std::endl;
+			continue ;
+		}
+		CircleItem *gitem = new CircleItem( *vit, details ) ;
 
 		_circles_items[(*vit).mGroupId] = gitem ;
 
@@ -209,29 +217,6 @@ void GroupListView::insertCircles(uint32_t token)
 
 		scene()->addItem(gitem) ;
 		++i ;
- 
-		//groupItem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QString::fromUtf8(vit->mGroupName.c_str()));
-		//groupItem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPID, QString::fromStdString(vit->mGroupId.toStdString()));
-
-		//if (vit->mCircleType == GXS_CIRCLE_TYPE_LOCAL)
-		//{
-		//	personalCirclesItem->addChild(groupItem);
-		//}
-		//else
-		//{
-		//	if (vit->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
-		//	{
-		//		externalAdminCirclesItem->addChild(groupItem);
-		//	}
-		//	else if (vit->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)
-		//	{
-		//		externalSubCirclesItem->addChild(groupItem);
-		//	}
-		//	else
-		//	{
-		//		externalOtherCirclesItem->addChild(groupItem);
-		//	}
-		//}
 	}
 }
 
@@ -239,40 +224,40 @@ void GroupListView::requestIdList()
 {
 	std::cerr << "Requesting ID list..." << std::endl;
 
-	if (!mIdQueue)
+	if (!mIdentityQueue)
 		return;
 
 	mStateHelper->setLoading(GLVIEW_IDLIST,    true);
 	//mStateHelper->setLoading(GLVIEW_IDDETAILS, true);
 	//mStateHelper->setLoading(GLVIEW_REPLIST,   true);
 
-	mIdQueue->cancelActiveRequestTokens(GLVIEW_IDLIST);
+	mIdentityQueue->cancelActiveRequestTokens(GLVIEW_IDLIST);
 
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
 
 	uint32_t token;
 
-	mIdQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, GLVIEW_IDLIST);
+	mIdentityQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, GLVIEW_IDLIST);
 }
 void GroupListView::requestCirclesList()
 {
 	std::cerr << "Requesting Circles list..." << std::endl;
 
-	if (!mIdQueue)
+	if (!mCirclesQueue)
 		return;
 
 	mStateHelper->setLoading(GLVIEW_CIRCLES,    true);
 	//mStateHelper->setLoading(GLVIEW_IDDETAILS, true);
 	//mStateHelper->setLoading(GLVIEW_REPLIST,   true);
 
-	mIdQueue->cancelActiveRequestTokens(GLVIEW_CIRCLES);
+	mCirclesQueue->cancelActiveRequestTokens(GLVIEW_CIRCLES);
 
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
 
 	uint32_t token;
-	mIdQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_SUMMARY, opts, GLVIEW_CIRCLES);
+	mCirclesQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_SUMMARY, opts, GLVIEW_CIRCLES);
 }
 void GroupListView::forceRedraw()
 {

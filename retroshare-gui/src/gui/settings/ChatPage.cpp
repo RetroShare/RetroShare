@@ -29,7 +29,6 @@
 #include <retroshare/rspeers.h>
 #include "ChatPage.h"
 #include <gui/RetroShareLink.h>
-#include <gui/CreateMsgLinkDialog.h>
 #include "gui/chat/ChatStyle.h"
 #include "gui/chat/ChatDialog.h"
 #include "gui/notifyqt.h"
@@ -105,7 +104,6 @@ ChatPage::ChatPage(QWidget * parent, Qt::WindowFlags flags)
     ui.minimumContrast->hide();
 #endif
 
-	 connect(ui._personal_invites_LW, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(personalInvites_customPopupMenu(QPoint)));
 	 connect(ui._collected_contacts_LW, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(collectedContacts_customPopupMenu(QPoint)));
 
     /* Hide platform specific features */
@@ -131,8 +129,6 @@ void ChatPage::collectedContacts_customPopupMenu(QPoint p)
 	if(selected.size() == 1)
 		contextMnu.addAction( QIcon(IMAGE_CHAT_OPEN), tr("Open secured chat tunnel"), this, SLOT(collectedInvite_openDistantChat()) ) ;
 
-	contextMnu.addAction( QIcon(IMAGE_CHAT_DELETE), tr("Delete this invite"), this, SLOT(collectedInvite_delete()) ) ;
-
 	contextMnu.exec(QCursor::pos());
 }
 
@@ -140,110 +136,16 @@ void ChatPage::collectedInvite_openDistantChat()
 {
 	QList<QListWidgetItem*> selected = ui._collected_contacts_LW->selectedItems() ;
 
-	RsPeerId virtual_peer_id( (*selected.begin())->data(Qt::UserRole).toString().toStdString() );
+	RsGxsId gxs_id( (*selected.begin())->data(Qt::UserRole).toString().toStdString() );
 
-	std::cerr << "Openning secured chat tunnel for virtual peer id " << virtual_peer_id << ". Please wait..." << std::endl;
+	std::cerr << "Openning secured chat tunnel for virtual peer id " << gxs_id << ". Please wait..." << std::endl;
 	uint32_t error_code ;
+DistantChatPeerId dcpid ;
 
-	if(!rsMsgs->initiateDistantChatConnexion(virtual_peer_id,error_code))
+	if(!rsMsgs->initiateDistantChatConnexion(gxs_id,dcpid,error_code))
 		QMessageBox::critical(NULL,tr("Can't open distant chat"),tr("Cannot open distant chat. Error code=")+QString::number(error_code)) ;
 	else
-		ChatDialog::chatFriend(virtual_peer_id);
-}
-
-void ChatPage::collectedInvite_delete()
-{
-	QList<QListWidgetItem*> selected = ui._collected_contacts_LW->selectedItems() ;
-
-	for(QList<QListWidgetItem*>::const_iterator it(selected.begin());it!=selected.end();++it)
-	{
-		RsPeerId virtual_peer_id ( (*it)->data(Qt::UserRole).toString().toStdString() );
-
-		std::cerr << "Removing chat invite for virtual_peer_id " << virtual_peer_id << std::endl;
-
-		if(!rsMsgs->removeDistantChatInvite(virtual_peer_id))
-			QMessageBox::critical(NULL,tr("Can't open distant chat"),tr("Cannot remove distant chat invite.")) ;
-	}
-
-	load() ;
-}
-
-void ChatPage::personalInvites_customPopupMenu(QPoint p)
-{
-	// items: create invite, copy to clipboard, delete
-	std::cerr << "In custom popup menu" << std::endl;
-
-	QList<QListWidgetItem*> selected = ui._personal_invites_LW->selectedItems() ;
-
-	QMenu contextMnu( this );
-
-	contextMnu.addAction( QIcon(IMAGE_CHAT_CREATE), tr("Create a chat invitation"), this, SLOT(personalInvites_create()) ) ;
-
-	if(!selected.empty())
-	{
-		contextMnu.addAction( QIcon(IMAGE_CHAT_COPY), tr("Copy link to clipboard"), this, SLOT(personalInvites_copyLink()) ) ;
-		contextMnu.addAction( QIcon(IMAGE_CHAT_DELETE), tr("Delete this invite"), this, SLOT(personalInvites_delete()) ) ;
-	}
-
-	contextMnu.exec(QCursor::pos());
-}
-
-void ChatPage::personalInvites_copyLink()
-{
-	QList<QListWidgetItem*> selected = ui._personal_invites_LW->selectedItems() ;
-	QList<RetroShareLink> links ;
-
-	std::vector<DistantChatInviteInfo> invites ;
-	rsMsgs->getDistantChatInviteList(invites) ;
-
-	for(QList<QListWidgetItem*>::const_iterator it(selected.begin());it!=selected.end();++it)
-	{
-		RsPeerId virtual_peer_id ( (*it)->data(Qt::UserRole).toString().toStdString() );
-
-		bool found = false ;
-		for(uint32_t i=0;i<invites.size();++i)
-			if(invites[i].pid == virtual_peer_id)
-			{
-				RetroShareLink link ;
-
-				if(!link.createPrivateChatInvite(invites[i].time_of_validity,QString::fromStdString(invites[i].destination_pgp_id.toStdString()),QString::fromStdString(invites[i].encrypted_radix64_string))) 
-				{
-					std::cerr << "Cannot create link." << std::endl;
-					continue;
-				}
-
-				links.push_back(link) ;
-				break ;
-			}
-	}
-
-	if(!links.empty())
-		RSLinkClipboard::copyLinks(links) ;
-}
-
-void ChatPage::personalInvites_delete()
-{
-	QList<QListWidgetItem*> selected = ui._personal_invites_LW->selectedItems() ;
-	QList<RetroShareLink> links ;
-
-	for(QList<QListWidgetItem*>::const_iterator it(selected.begin());it!=selected.end();++it)
-	{
-		RsPeerId virtual_peer_id ( (*it)->data(Qt::UserRole).toString().toStdString() );
-
-		rsMsgs->removeDistantChatInvite(virtual_peer_id) ;
-	}
-	load() ;
-}
-
-void ChatPage::personalInvites_create()
-{
-	// Call the link creation box
-
-	CreateMsgLinkDialog::createNewChatLink() ;
-
-	// Now update the page
-	//
-	load() ;
+		ChatDialog::chatFriend(dcpid);
 }
 
 /** Saves the changes on this page */
@@ -388,58 +290,23 @@ ChatPage::load()
 
 	 // load personal invites
 	 //
-	 std::vector<DistantChatInviteInfo> invites ;
-	 rsMsgs->getDistantChatInviteList(invites) ;
+#ifdef TO_BE_DONE
+	 for()
+	 {
+		 QListWidgetItem *item = new QListWidgetItem;
+		 item->setData(Qt::DisplayRole,tr("Private chat invite from ")+QString::fromUtf8(detail.name.c_str())) ;
 
-	 ui._personal_invites_LW->clear() ;
-	 ui._collected_contacts_LW->clear() ;
+		 QString tt ;
+		 tt +=        tr("Name : ") + QString::fromStdString(detail.name) ;
+		 tt += "\n" + QString("PGP id : ") + QString::fromStdString(invites[i].destination_pgp_id.toStdString()) ;
+		 tt += "\n" + QString("Valid until : ") + QDateTime::fromTime_t(invites[i].time_of_validity).toString() ;
 
-	for(uint32_t i=0;i<invites.size();++i)
-	{
-		RsPeerDetails detail ;
-		rsPeers->getGPGDetails(invites[i].destination_pgp_id,detail) ;
+		 item->setData(Qt::UserRole,QString::fromStdString(invites[i].pid.toStdString())) ;
+		 item->setToolTip(tt) ;
 
-		if(invites[i].encrypted_radix64_string.empty())
-		{
-			QListWidgetItem *item = new QListWidgetItem;
-			item->setData(Qt::DisplayRole,tr("Private chat invite from ")+QString::fromUtf8(detail.name.c_str())) ;
-
-			QString tt ;
-			tt +=        tr("Name : ") + QString::fromStdString(detail.name) ;
-			tt += "\n" + QString("PGP id : ") + QString::fromStdString(invites[i].destination_pgp_id.toStdString()) ;
-			tt += "\n" + QString("Valid until : ") + QDateTime::fromTime_t(invites[i].time_of_validity).toString() ;
-
-			if(invites[i].invite_flags & RS_DISTANT_CHAT_FLAG_SIGNED)
-				if(invites[i].invite_flags & RS_DISTANT_CHAT_FLAG_SIGNATURE_OK)
-				{
-					tt += "\n"+tr("Authenticated signature") ;
-					item->setIcon(QIcon(":images/stock_signature_ok.png")) ;
-				}
-				else
-				{
-					tt += "\n"+tr("Signed with key not in keyring") ;
-					item->setIcon(QIcon(":images/stock_signature_unverified.png")) ;
-				}
-			else
-			{
-				tt += "\n"+tr("Not signed.") ;
-				item->setIcon(QIcon(":images/stock_signature_missing.png")) ;
-			}
-
-			item->setData(Qt::UserRole,QString::fromStdString(invites[i].pid.toStdString())) ;
-			item->setToolTip(tt) ;
-
-			ui._collected_contacts_LW->insertItem(0,item) ;
-		}
-		else
-		{
-			QListWidgetItem *item = new QListWidgetItem;
-			item->setData(Qt::DisplayRole,tr("Private chat invite to ")+QString::fromStdString(detail.name)+" ("+QString::fromStdString(invites[i].destination_pgp_id.toStdString())+", " + QString::fromStdString(detail.name) + ", valid until " + QDateTime::fromTime_t(invites[i].time_of_validity).toString() + ")") ;
-			item->setData(Qt::UserRole,QString::fromStdString(invites[i].pid.toStdString())) ;
-
-			ui._personal_invites_LW->insertItem(0,item) ;
-		}
-	}
+		 ui._collected_contacts_LW->insertItem(0,item) ;
+	 }
+#endif
 }
 
 void ChatPage::on_pushButtonChangeChatFont_clicked()

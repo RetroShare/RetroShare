@@ -309,7 +309,6 @@ HEADERS +=  rshare.h \
             gui/MainWindow.h \
             gui/RSHumanReadableDelegate.h \
             gui/AboutDialog.h \
-            gui/CreateMsgLinkDialog.h \
             gui/NetworkView.h \
             gui/MessengerWindow.h \
             gui/FriendsDialog.h \
@@ -526,7 +525,6 @@ FORMS +=    gui/StartDialog.ui \
             gui/FileTransfer/TurtleRouterStatistics.ui \
             gui/FileTransfer/DetailsDialog.ui \
             gui/MainWindow.ui \
-            gui/CreateMsgLinkDialog.ui \
             gui/NetworkView.ui \
             gui/MessengerWindow.ui \
             gui/FriendsDialog.ui \
@@ -634,7 +632,6 @@ SOURCES +=  main.cpp \
             gui/graphframe.cpp \
             gui/mainpagestack.cpp \
             gui/MainWindow.cpp \
-            gui/CreateMsgLinkDialog.cpp \
             gui/NetworkView.cpp \
             gui/MessengerWindow.cpp \
             gui/FriendsDialog.cpp \

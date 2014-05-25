@@ -22,6 +22,10 @@ class IdentityItem: public QObject, public QGraphicsItem
 		static IdentityItem *_selected_node ;
 
 		const RsGxsIdGroup& groupInfo() const { return _group_info  ; }	
+
+	public slots:
+		void distantChat() ;
+
 signals:
 		void itemChanged() ;
 

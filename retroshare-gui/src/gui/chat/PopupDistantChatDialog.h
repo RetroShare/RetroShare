@@ -31,26 +31,26 @@ class PopupDistantChatDialog: public PopupChatDialog
 {
 	Q_OBJECT
 
-	friend class ChatDialog;
-
 	protected:
-	/** Default constructor */
-	PopupDistantChatDialog(QWidget *parent = 0, Qt::WindowFlags flags = 0);
-	/** Default destructor */
-	virtual ~PopupDistantChatDialog();
-
-    virtual void init(const DistantChatPeerId &pid, const QString &title);
-	virtual void closeEvent(QCloseEvent *e) ;
-
-    virtual QString getPeerName(const DistantChatPeerId& id) const ;
+		/** Default constructor */
+		PopupDistantChatDialog(QWidget *parent = 0, Qt::WindowFlags flags = 0);
+		/** Default destructor */
+		virtual ~PopupDistantChatDialog();
+	
+		virtual void init(const DistantChatPeerId &pid, const QString &title);
+		virtual void closeEvent(QCloseEvent *e) ;
+	
+		virtual QString getPeerName(const DistantChatPeerId& id) const ;
 
 	protected slots:
 		void updateDisplay() ; // overloads RsAutoUpdatePage
 
 	private:
-	QTimer *_update_timer ;
-    DistantChatPeerId _pid ;
-	QLabel *_status_label ;
+		QTimer *_update_timer ;
+		DistantChatPeerId _pid ;
+		QLabel *_status_label ;
+
+		friend class ChatDialog;
 };
 
 
