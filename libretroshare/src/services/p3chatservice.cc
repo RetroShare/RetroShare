@@ -51,7 +51,7 @@
  * #define CHAT_DEBUG 1
  * #define DEBUG_DISTANT_CHAT 1
  ****/
-#define DEBUG_DISTANT_CHAT 1
+//#define DEBUG_DISTANT_CHAT 1
 
 static const int 		CONNECTION_CHALLENGE_MAX_COUNT 	  =   20 ; // sends a connection challenge every 20 messages
 static const time_t	CONNECTION_CHALLENGE_MAX_MSG_AGE	  =   30 ; // maximum age of a message to be used in a connection challenge
@@ -311,13 +311,16 @@ bool p3ChatService::getHashFromVirtualPeerId(const TurtleVirtualPeerId& vpid,Tur
 
 void p3ChatService::sendPrivateChatItem(RsChatItem *item)
 {
-	TurtleFileHash hash ;
+	TurtleFileHash hash = hashFromDistantChatPeerId(item->PeerId());
 
-	if(getHashFromVirtualPeerId(item->PeerId(),hash))	// the hash is not used here. That can be optimized.
+	std::map<RsFileHash,DistantChatPeerInfo>::const_iterator it = _distant_chat_peers.find(hash) ;
+
+	if(it != _distant_chat_peers.end())
 	{
 #ifdef CHAT_DEBUG
 		std::cerr << "p3ChatService::sendPrivateChatItem(): sending to " << item->PeerId() << ": interpreted as a distant chat virtual peer id." << std::endl;
 #endif
+		item->PeerId(it->second.virtual_peer_id) ;
 		sendTurtleData(item) ;
 	}
 	else
