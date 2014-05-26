@@ -301,6 +301,163 @@
           </widget>
          </item>
          <item>
+          <widget class="QGroupBox" name="groupBoxSearch">
+           <property name="title">
+            <string>Search by default</string>
+           </property>
+           <layout class="QVBoxLayout" name="vlSearch">
+            <property name="spacing">
+             <number>2</number>
+            </property>
+            <property name="leftMargin">
+             <number>2</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <layout class="QHBoxLayout" name="hlSearch_CharToStart">
+              <item>
+               <widget class="QLabel" name="lSearch_CharToStart">
+                <property name="text">
+                 <string>Number of char to start search</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="hsSearch_CharToStart">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QSpinBox" name="sbSearch_CharToStart">
+                <property name="maximum">
+                 <number>100</number>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="cbSearch_CaseSensitively">
+              <property name="text">
+               <string>Case sensitive</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="cbSearch_WholeWords">
+              <property name="text">
+               <string>Whole Words</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="cbSearch_MoveToCursor">
+              <property name="text">
+               <string>Move to cursor</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="cbSearch_WithoutLimit">
+              <property name="text">
+               <string>Color All Text Found</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="hlSearch_MaxLimitColor">
+              <item>
+               <widget class="QLabel" name="lSearch_MaxLimitColor">
+                <property name="text">
+                 <string>Number of found text coloring</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="hsSearch_MaxLimitColor">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QSpinBox" name="sbSearch_MaxLimitColor">
+                <property name="maximum">
+                 <number>1000</number>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="hlSearch_FoundColor">
+              <item>
+               <widget class="QLabel" name="lSearch_FoundColor">
+                <property name="text">
+                 <string>Color of found text</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="hsSearch_FoundColor">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QPushButton" name="btSearch_FoundColor">
+                <property name="minimumSize">
+                 <size>
+                  <width>24</width>
+                  <height>24</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>24</width>
+                  <height>24</height>
+                 </size>
+                </property>
+                <property name="toolTip">
+                 <string>Choose color of found text</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
           <spacer name="verticalSpacer">
            <property name="orientation">
             <enum>Qt::Vertical</enum>

@@ -25,6 +25,7 @@
 #define _RSHARESETTINGS_H
 
 #include <QHash>
+#include <QRgb>
 #include <QSettings>
 
 #include <gui/linetypes.h>
@@ -213,6 +214,27 @@ public:
 
   bool getChatSendMessageWithCtrlReturn();
   void setChatSendMessageWithCtrlReturn(bool bValue);
+
+	void setChatSearchCharToStartSearch(int iValue);
+	int getChatSearchCharToStartSearch();
+
+	void setChatSearchCaseSensitively(bool bValue);
+	bool getChatSearchCaseSensitively();
+
+	void setChatSearchWholeWords(bool bValue);
+	bool getChatSearchWholeWords();
+
+	void setChatSearchMoveToCursor(bool bValue);
+	bool getChatSearchMoveToCursor();
+
+	void setChatSearchSearchWithoutLimit(bool bValue);
+	bool getChatSearchSearchWithoutLimit();
+
+	void setChatSearchMaxSearchLimitColor(uint uiValue);
+	uint getChatSearchMaxSearchLimitColor();
+
+	void setChatSearchFoundColor(QRgb rgbValue);
+	QRgb getChatSearchFoundColor();
 
   enumToasterPosition getToasterPosition();
   void setToasterPosition(enumToasterPosition position);

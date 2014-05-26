@@ -526,6 +526,80 @@ bool RshareSettings::getChatSendMessageWithCtrlReturn()
     return valueFromGroup("Chat", "SendMessageWithCtrlReturn", false).toBool();
 }
 
+void RshareSettings::setChatSendMessageWithCtrlReturn(bool bValue)
+{
+	setValueToGroup("Chat", "SendMessageWithCtrlReturn", bValue);
+}
+
+
+void RshareSettings::setChatSearchCharToStartSearch(int iValue)
+{
+	setValueToGroup("Chat", "SearchCharToStartSearch", iValue);
+}
+
+int RshareSettings::getChatSearchCharToStartSearch()
+{
+	return valueFromGroup("Chat", "SearchCharToStartSearch", 4).toUInt();
+}
+
+void RshareSettings::setChatSearchCaseSensitively(bool bValue)
+{
+	setValueToGroup("Chat", "SearchCaseSensitively", bValue);
+}
+
+bool RshareSettings::getChatSearchCaseSensitively()
+{
+	return valueFromGroup("Chat", "SearchCaseSensitively", false).toBool();
+}
+
+void RshareSettings::setChatSearchWholeWords(bool bValue)
+{
+	setValueToGroup("Chat", "SearchWholeWords", bValue);
+}
+
+bool RshareSettings::getChatSearchWholeWords()
+{
+	return valueFromGroup("Chat", "SearchWholeWords", false).toBool();
+}
+
+void RshareSettings::setChatSearchMoveToCursor(bool bValue)
+{
+	setValueToGroup("Chat", "SearchMoveToCursor", bValue);
+}
+
+bool RshareSettings::getChatSearchMoveToCursor()
+{
+	return valueFromGroup("Chat", "SearchMoveToCursor", true).toBool();
+}
+void RshareSettings::setChatSearchSearchWithoutLimit(bool bValue)
+{
+	setValueToGroup("Chat", "SearchSearchWithoutLimit", bValue);
+}
+
+bool RshareSettings::getChatSearchSearchWithoutLimit()
+{
+	return valueFromGroup("Chat", "SearchSearchWithoutLimit", false).toBool();
+}
+
+void RshareSettings::setChatSearchMaxSearchLimitColor(uint uiValue)
+{
+	setValueToGroup("Chat", "SearchMaxSearchLimitColor", uiValue);
+}
+
+uint RshareSettings::getChatSearchMaxSearchLimitColor()
+{
+	return valueFromGroup("Chat", "SearchMaxSearchLimitColor", 40).toUInt();
+}
+
+void RshareSettings::setChatSearchFoundColor(QRgb rgbValue)
+{
+	setValueToGroup("Chat", "SearchMaxSearchFoundColor", QString::number(rgbValue));
+}
+QRgb RshareSettings::getChatSearchFoundColor()
+{
+	return valueFromGroup("Chat", "SearchMaxSearchFoundColor", QString::number(QColor(255,255,150).rgba())).toUInt();
+}
+
 RshareSettings::enumToasterPosition RshareSettings::getToasterPosition()
 {
     return (enumToasterPosition) value("ToasterPosition", TOASTERPOS_BOTTOMRIGHT).toInt();
@@ -544,11 +618,6 @@ QPoint RshareSettings::getToasterMargin()
 void RshareSettings::setToasterMargin(QPoint margin)
 {
     setValue("ToasterMargin", margin);
-}
-
-void RshareSettings::setChatSendMessageWithCtrlReturn(bool bValue)
-{
-    setValueToGroup("Chat", "SendMessageWithCtrlReturn", bValue);
 }
 
 QString RshareSettings::getChatScreenFont()

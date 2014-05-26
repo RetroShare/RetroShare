@@ -18,6 +18,8 @@
     <number>0</number>
    </property>
    <item>
+    <layout class="QHBoxLayout" name="hTitleLayout">
+     <item>
     <layout class="QVBoxLayout" name="titleLayout">
      <property name="spacing">
       <number>3</number>
@@ -58,6 +60,176 @@
        <property name="text">
         <string notr="true">Status</string>
        </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+      <spacer>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>190</width>
+         <height>25</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QFrame" name="titleBarFrame">
+       <property name="frameShape">
+        <enum>QFrame::Box</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Sunken</enum>
+       </property>
+       <layout class="QHBoxLayout" name="hlTitleBarFrame">
+        <property name="margin">
+         <number>2</number>
+        </property>
+        <item>
+         <widget class="QToolButton" name="markButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>28</width>
+            <height>28</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>28</width>
+            <height>28</height>
+           </size>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
+          <property name="icon">
+           <iconset resource="../images.qrc">
+            <normaloff>:/images/highlight.png</normaloff>:/images/highlight.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>24</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="LineEditClear" name="leSearch"/>
+        </item>
+        <item>
+         <widget class="QToolButton" name="searchBefore">
+          <property name="minimumSize">
+           <size>
+            <width>14</width>
+            <height>28</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>14</width>
+            <height>28</height>
+           </size>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
+          <property name="icon">
+           <iconset resource="../images.qrc">
+            <normaloff>:/images/arrow-left.png</normaloff>:/images/arrow-left.png</iconset>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="searchAfter">
+          <property name="minimumSize">
+           <size>
+            <width>14</width>
+            <height>28</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>14</width>
+            <height>28</height>
+           </size>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
+          <property name="icon">
+           <iconset resource="../images.qrc">
+            <normaloff>:/images/arrow-right.png</normaloff>:/images/arrow-right.png</iconset>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="searchButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>28</width>
+            <height>28</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>28</width>
+            <height>28</height>
+           </size>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
+          <property name="contextMenuPolicy">
+           <enum>Qt::CustomContextMenu</enum>
+          </property>
+          <property name="icon">
+           <iconset resource="../images.qrc">
+            <normaloff>:/images/find.png</normaloff>:/images/find.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>24</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </item>
     </layout>
@@ -716,6 +888,47 @@ border-image: url(:/images/closepressed.png)
     <string>Reset font to default</string>
    </property>
   </action>
+  <action name="actionFindCaseSensitively">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Find Case Sensitively</string>
+   </property>
+  </action>
+  <action name="actionFindWholeWords">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Find Whole Words</string>
+   </property>
+   <property name="toolTip">
+    <string>Find Whole Words</string>
+   </property>
+  </action>
+  <action name="actionMoveToCursor">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Move To Cursor</string>
+   </property>
+   <property name="toolTip">
+    <string>Move To Cursor</string>
+   </property>
+  </action>
+  <action name="actionSearchWithoutLimit">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Don't stop to color after X items found (need more CPU)</string>
+   </property>
+   <property name="toolTip">
+    <string>WARNING: Could take long time on big history.</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -733,6 +946,11 @@ border-image: url(:/images/closepressed.png)
    <class>MimeTextEdit</class>
    <extends>QTextEdit</extends>
    <header location="global">gui/common/MimeTextEdit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>LineEditClear</class>
+   <extends>QLineEdit</extends>
+   <header location="global">gui/common/LineEditClear.h</header>
   </customwidget>
  </customwidgets>
  <resources>

@@ -19,6 +19,7 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#include <QColorDialog>
 #include <QFontDialog>
 #include <QMenu>
 #include <QMessageBox>
@@ -166,6 +167,14 @@ ChatPage::save(QString &/*errmsg*/)
 
     Settings->setChatSendMessageWithCtrlReturn(ui.sendMessageWithCtrlReturn->isChecked());
 
+    Settings->setChatSearchCharToStartSearch(ui.sbSearch_CharToStart->value());
+    Settings->setChatSearchCaseSensitively(ui.cbSearch_CaseSensitively->isChecked());
+    Settings->setChatSearchWholeWords(ui.cbSearch_WholeWords->isChecked());
+    Settings->setChatSearchMoveToCursor(ui.cbSearch_MoveToCursor->isChecked());
+    Settings->setChatSearchSearchWithoutLimit(ui.cbSearch_WithoutLimit->isChecked());
+    Settings->setChatSearchMaxSearchLimitColor(ui.sbSearch_MaxLimitColor->value());
+    Settings->setChatSearchFoundColor(rgbChatSearchFoundColor);
+
     Settings->setPublicChatHistoryCount(ui.publicChatLoadCount->value());
     Settings->setPrivateChatHistoryCount(ui.privateChatLoadCount->value());
     Settings->setLobbyChatHistoryCount(ui.lobbyChatLoadCount->value());
@@ -250,6 +259,17 @@ ChatPage::load()
     fontTempChat.fromString(Settings->getChatScreenFont());
 
     ui.sendMessageWithCtrlReturn->setChecked(Settings->getChatSendMessageWithCtrlReturn());
+
+    ui.sbSearch_CharToStart->setValue(Settings->getChatSearchCharToStartSearch());
+    ui.cbSearch_CaseSensitively->setChecked(Settings->getChatSearchCaseSensitively());
+    ui.cbSearch_WholeWords->setChecked(Settings->getChatSearchWholeWords());
+    ui.cbSearch_MoveToCursor->setChecked(Settings->getChatSearchMoveToCursor());
+    ui.cbSearch_WithoutLimit->setChecked(Settings->getChatSearchSearchWithoutLimit());
+    ui.sbSearch_MaxLimitColor->setValue(Settings->getChatSearchMaxSearchLimitColor());
+    rgbChatSearchFoundColor=Settings->getChatSearchFoundColor();
+    QPixmap pix(24, 24);
+    pix.fill(rgbChatSearchFoundColor);
+    ui.btSearch_FoundColor->setIcon(pix);
 
     ui.publicChatLoadCount->setValue(Settings->getPublicChatHistoryCount());
     ui.privateChatLoadCount->setValue(Settings->getPrivateChatHistoryCount());
@@ -472,4 +492,22 @@ void ChatPage::on_privateComboBoxVariant_currentIndexChanged(int /*index*/)
 void ChatPage::on_historyComboBoxVariant_currentIndexChanged(int /*index*/)
 {
     fillPreview(ui.historyList, ui.historyComboBoxVariant, ui.historyPreview);
+}
+
+void ChatPage::on_cbSearch_WithoutLimit_toggled(bool checked)
+{
+	ui.sbSearch_MaxLimitColor->setEnabled(!checked);
+	ui.lSearch_MaxLimitColor->setEnabled(!checked);
+}
+
+void ChatPage::on_btSearch_FoundColor_clicked()
+{
+	bool ok;
+	QRgb color = QColorDialog::getRgba(rgbChatSearchFoundColor, &ok, window());
+	if (ok) {
+		rgbChatSearchFoundColor=color;
+		QPixmap pix(24, 24);
+		pix.fill(color);
+		ui.btSearch_FoundColor->setIcon(pix);
+	}
 }

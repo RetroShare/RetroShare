@@ -71,11 +71,40 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	peerStatus = 0;
 	mChatType = CHATTYPE_UNKNOWN;
 	firstShow = true;
+	firstSearch = true;
 	inChatCharFormatChanged = false;
 	completer = NULL;
 	lastMsgDate = QDate::currentDate();
 
 	lastStatusSendTime = 0 ;
+
+	iCharToStartSearch=Settings->getChatSearchCharToStartSearch();
+	bFindCaseSensitively=Settings->getChatSearchCaseSensitively();
+	bFindWholeWords=Settings->getChatSearchWholeWords();
+	bMoveToCursor=Settings->getChatSearchMoveToCursor();
+	bSearchWithoutLimit=Settings->getChatSearchSearchWithoutLimit();
+	uiMaxSearchLimitColor=Settings->getChatSearchMaxSearchLimitColor();
+	cFoundColor=Settings->getChatSearchFoundColor();
+
+
+	ui->actionSearchWithoutLimit->setText(tr("Don't stop to color after ")+QString::number(uiMaxSearchLimitColor)+tr(" items found (need more CPU)"));
+
+	ui->leSearch->setVisible(false);
+	ui->searchBefore->setVisible(false);
+	ui->searchBefore->setToolTip(tr("<b>Find Previous </b><br/><i>Ctrl+Shift+G</i>"));
+	ui->searchAfter->setVisible(false);
+	ui->searchAfter->setToolTip(tr("<b>Find Next </b><br/><i>Ctrl+G</i>"));
+	ui->searchButton->setCheckable(true);
+	ui->searchButton->setChecked(false);
+	ui->searchButton->setToolTip(tr("<b>Find </b><br/><i>Ctrl+F</i>"));
+	ui->leSearch->installEventFilter(this);
+	connect(ui->actionFindCaseSensitively, SIGNAL(triggered()), this, SLOT(toogle_FindCaseSensitively()));
+	connect(ui->actionFindWholeWords, SIGNAL(triggered()), this, SLOT(toogle_FindWholeWords()));
+	connect(ui->actionMoveToCursor, SIGNAL(triggered()), this, SLOT(toogle_MoveToCursor()));
+	connect(ui->actionSearchWithoutLimit, SIGNAL(triggered()), this, SLOT(toogle_SeachWithoutLimit()));
+	connect(ui->searchButton, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuSearchButton(QPoint)));
+
+	ui->markButton->setToolTip(tr("<b>Mark this selected text</b><br><i>Ctr+M</i>"));
 
 	connect(ui->sendButton, SIGNAL(clicked()), this, SLOT(sendChat()));
 	connect(ui->addFileButton, SIGNAL(clicked()), this , SLOT(addExtraFile()));
@@ -125,6 +154,7 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	ui->pushtoolsButton->setMenu(menu);
 
 	ui->chatTextEdit->installEventFilter(this);
+	ui->textBrowser->installEventFilter(this);
 
 #if QT_VERSION < 0x040700
 	// embedded images are not supported before QT 4.7.0
@@ -292,6 +322,51 @@ void ChatWidget::processSettings(bool load)
 
 bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 {
+	if (obj == ui->textBrowser || obj == ui->leSearch || obj == ui->chatTextEdit) {
+		if (event->type() == QEvent::KeyPress) {
+
+			QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+			if (keyEvent) {
+				if (keyEvent->key() == Qt::Key_F && keyEvent->modifiers() == Qt::ControlModifier)
+				{
+					bool bTextselected=false;
+					if (obj == ui->textBrowser )
+					{
+						if (ui->textBrowser->textCursor().selectedText().length()>0)
+						{
+							ui->leSearch->setText(ui->textBrowser->textCursor().selectedText());
+							bTextselected=true;
+						}
+					}
+					if (obj == ui->chatTextEdit)
+					{
+						if (ui->chatTextEdit->textCursor().selectedText().length()>0)
+						{
+							ui->leSearch->setText(ui->chatTextEdit->textCursor().selectedText());
+							bTextselected=true;
+						}
+					}
+					ui->searchButton->setChecked(!ui->searchButton->isChecked() | bTextselected);
+					ui->leSearch->setVisible(bTextselected);//To discard re-selection of text
+					on_searchButton_clicked(ui->searchButton->isChecked());
+					return true; // eat event
+				}
+				if (keyEvent->key() == Qt::Key_G && keyEvent->modifiers() == Qt::ControlModifier)
+				{
+					if (ui->searchAfter->isVisible())
+						on_searchAfter_clicked();
+					return true; // eat event
+				}
+				if (keyEvent->key() == Qt::Key_G && keyEvent->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier))
+				{
+					if (ui->searchBefore->isVisible())
+						on_searchBefore_clicked();
+					return true; // eat event
+				}
+
+			}
+		}
+	}
     if (obj == ui->textBrowser) {
         if (event->type() == QEvent::KeyPress) {
 
@@ -303,6 +378,10 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
                         ui->textBrowser->textCursor().deleteChar();
 
                 }
+				if (keyEvent->key() == Qt::Key_M && keyEvent->modifiers() == Qt::ControlModifier)
+				{
+					on_markButton_clicked(!ui->markButton->isChecked());
+				}
             }
         }
     } else if (obj == ui->chatTextEdit) {
@@ -348,6 +427,27 @@ bool ChatWidget::eventFilter(QObject *obj, QEvent *event)
 						}
 						return true; // eat event
 					}
+				}
+			}
+		}
+	} else if (obj == ui->leSearch) {
+		if (event->type() == QEvent::KeyPress) {
+
+			QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+			if (keyEvent) {
+				QString qsTextToFind=ui->leSearch->text();
+				if (((qsTextToFind.length()>iCharToStartSearch) || (keyEvent->key()==Qt::Key_Return)) && (keyEvent->text().length()>0))
+				{
+					if (keyEvent->key()==Qt::Key_Backspace) {
+						qsTextToFind=qsTextToFind.left(qsTextToFind.length()-1);// "\010"
+					} else if (keyEvent->key()==Qt::Key_Tab) { // "\011"
+					} else if (keyEvent->key()==Qt::Key_Return) { // "\015"
+					} else if (keyEvent->text().length()==1)
+						qsTextToFind+=keyEvent->text();
+
+					findText(qsTextToFind);
+				} else {
+					ui->leSearch->setPalette(qpSave_leSearch);
 				}
 			}
 		}
@@ -627,6 +727,11 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const QDateTime 
     ui->textBrowser->textCursor().setBlockFormat(QTextBlockFormat ());
 	ui->textBrowser->append(formatMsg);
 
+	if (ui->leSearch->isVisible()) {
+		QString qsTextToFind=ui->leSearch->text();
+		findText(qsTextToFind);
+	}
+
 	resetStatusBar();
 
 	if (incoming && chatType == MSGTYPE_NORMAL) {
@@ -672,6 +777,24 @@ void ChatWidget::contextMenuTextBrowser(QPoint point)
 	contextMnu->addAction(ui->actionClearChatHistory);
 
 	contextMnu->exec(ui->textBrowser->viewport()->mapToGlobal(point));
+	delete(contextMnu);
+}
+
+void ChatWidget::contextMenuSearchButton(QPoint /*point*/)
+{
+	QMenu *contextMnu = new QMenu;
+
+	contextMnu->addSeparator();
+	ui->actionFindCaseSensitively->setChecked(bFindCaseSensitively);
+	contextMnu->addAction(ui->actionFindCaseSensitively);
+	ui->actionFindWholeWords->setChecked(bFindWholeWords);
+	contextMnu->addAction(ui->actionFindWholeWords);
+	ui->actionMoveToCursor->setChecked(bMoveToCursor);
+	contextMnu->addAction(ui->actionMoveToCursor);
+	ui->actionSearchWithoutLimit->setChecked(bSearchWithoutLimit);
+	contextMnu->addAction(ui->actionSearchWithoutLimit);
+
+	contextMnu->exec(QCursor::pos());
 	delete(contextMnu);
 }
 
@@ -753,6 +876,202 @@ void ChatWidget::on_closeInfoFrameButton_clicked()
 	ui->infoFrame->setVisible(false);
 }
 
+void ChatWidget::on_searchButton_clicked(bool bValue)
+{
+	if (firstSearch)
+		qpSave_leSearch=ui->leSearch->palette();
+
+	removeFoundText();
+
+	ui->searchBefore->setVisible(false);//findText set it to true
+	ui->searchAfter->setVisible(false);//findText set it to true
+	ui->leSearch->setPalette(qpSave_leSearch);
+	if (bValue) {
+		ui->leSearch->setFocus();
+		if (!ui->leSearch->isVisible()){//Take text selected if leSearch is Invisible
+			if (ui->textBrowser->textCursor().selectedText().length()>0) {
+				ui->leSearch->setText(ui->textBrowser->textCursor().selectedText());
+				findText(ui->leSearch->text());
+			} else if(ui->chatTextEdit->textCursor().selectedText().length()>0) {
+				ui->leSearch->setText(ui->chatTextEdit->textCursor().selectedText());
+				findText(ui->leSearch->text());
+			}
+		}
+		if (!ui->leSearch->text().isEmpty())
+			findText(ui->leSearch->text());
+
+	} else {
+		//Erase last result Cursor
+		QTextDocument *qtdDocument = ui->textBrowser->document();
+		qtcCurrent=QTextCursor(qtdDocument);
+	}
+	ui->leSearch->setVisible(bValue);
+
+}
+void ChatWidget::on_searchBefore_clicked()
+{
+	findText(ui->leSearch->text(),true,true);
+}
+void ChatWidget::on_searchAfter_clicked()
+{
+	findText(ui->leSearch->text(),false,true);
+}
+
+void ChatWidget::toogle_FindCaseSensitively()
+{
+	bFindCaseSensitively=!bFindCaseSensitively;
+}
+
+void ChatWidget::toogle_FindWholeWords()
+{
+	bFindWholeWords=!bFindWholeWords;
+}
+
+void ChatWidget::toogle_MoveToCursor()
+{
+	bMoveToCursor=!bMoveToCursor;
+}
+
+void ChatWidget::toogle_SeachWithoutLimit()
+{
+	bSearchWithoutLimit=!bSearchWithoutLimit;
+}
+
+bool ChatWidget::findText(const QString& qsStringToFind)
+{
+	return findText(qsStringToFind, false,false);
+}
+
+bool ChatWidget::findText(const QString& qsStringToFind, bool bBackWard, bool bForceMove)
+{
+	QTextDocument *qtdDocument = ui->textBrowser->document();
+	bool bFound = false;
+	bool bFirstFound = true;
+	uint uiFoundCount = 0;
+
+	removeFoundText();
+
+	if (qsLastsearchText!=qsStringToFind)
+		qtcCurrent=QTextCursor(qtdDocument);
+	qsLastsearchText=qsStringToFind;
+
+	if (!qsStringToFind.isEmpty())
+	{
+		QPalette qpBackGround=ui->leSearch->palette();
+
+		QTextCursor qtcHighLight(qtdDocument);
+		QTextCursor qtcCursor(qtdDocument);
+
+		QTextCharFormat qtcfPlainFormat(qtcHighLight.charFormat());
+		QTextCharFormat qtcfColorFormat = qtcfPlainFormat;
+		qtcfColorFormat.setBackground(QBrush(cFoundColor));
+
+		if (ui->textBrowser->textCursor().selectedText().length()>0)
+			qtcCurrent=ui->textBrowser->textCursor();
+		if (bBackWard) qtcHighLight.setPosition(qtdDocument->characterCount()-1);
+
+		qtcCursor.beginEditBlock();
+
+		while(!qtcHighLight.isNull()
+					&& ( (!bBackWard && !qtcHighLight.atEnd())
+							 || (bBackWard && !qtcHighLight.atStart())
+							 ))
+		{
+
+			QTextDocument::FindFlags qtdFindFlag;
+			if (bFindCaseSensitively) qtdFindFlag|=QTextDocument::FindCaseSensitively;
+			if (bFindWholeWords) qtdFindFlag|=QTextDocument::FindWholeWords;
+			if (bBackWard) qtdFindFlag|=QTextDocument::FindBackward;
+
+			qtcHighLight=qtdDocument->find(qsStringToFind,qtcHighLight, qtdFindFlag);
+			if(!qtcHighLight.isNull())
+			{
+				bFound=true;
+
+				if (!bFirstFound)
+				{
+					if (smFoundCursor.size()<uiMaxSearchLimitColor || bSearchWithoutLimit)// stop after uiMaxSearchLimitColor
+					{
+						QTextCharFormat qtcfSave= qtcHighLight.charFormat();
+						smFoundCursor[qtcHighLight]=qtcfSave;
+						qtcHighLight.mergeCharFormat(qtcfColorFormat);
+					}
+				}
+
+				if (bFirstFound &&
+						((bBackWard && (qtcHighLight.position()<qtcCurrent.position()))
+						 || (!bBackWard && (qtcHighLight.position()>qtcCurrent.position()))
+						 ))
+				{
+					bFirstFound=false;
+					qtcCurrent=qtcHighLight;
+					if (bMoveToCursor || bForceMove) ui->textBrowser->setTextCursor(qtcHighLight);
+
+				}//if (bFirstFound && (qtcHighLight.position()>qtcCurrent.position()))
+
+
+				if (uiFoundCount<UINT_MAX)
+					uiFoundCount+=1;
+			}//if(!qtcHighLight.isNull())
+		}//while(!qtcHighLight.isNull() && !qtcHighLight.atEnd())
+
+		if (bFound)
+		{
+			qpBackGround.setColor(QPalette::Base,QColor(0,200,0));
+			ui->leSearch->setToolTip(QString::number(uiFoundCount)+tr(" founded items."));
+		} else {
+			qpBackGround.setColor(QPalette::Base,QColor(200,0,0));
+			ui->leSearch->setToolTip(tr("No items founded."));
+		}
+		ui->leSearch->setPalette(qpBackGround);
+
+		qtcCursor.endEditBlock();
+
+		ui->searchBefore->setVisible((!bFirstFound || (!bBackWard && bFound)));
+		ui->searchAfter->setVisible((!bFirstFound || (bBackWard && bFound)));
+
+		firstSearch = false;
+	} else { //if (!qsStringToFind.isEmpty())
+		ui->leSearch->setPalette(qpSave_leSearch);
+	}
+
+	return bFound;
+
+}
+
+void ChatWidget::removeFoundText()
+{
+	for(std::map<QTextCursor,QTextCharFormat>::const_iterator it=smFoundCursor.begin();it!=smFoundCursor.end();++it)
+	{
+		QTextCursor qtcCurrent=it->first;
+		QTextCharFormat qtcfCurrent=it->second;
+		qtcCurrent.setCharFormat(qtcfCurrent);
+	}
+	smFoundCursor.clear();
+}
+
+void ChatWidget::on_markButton_clicked(bool bValue)
+{
+	if (bValue)
+	{
+		if (ui->textBrowser->textCursor().selectedText().length()>0)
+		{
+			qtcMark=ui->textBrowser->textCursor();
+			ui->markButton->setToolTip(tr("<b>Return to marked text</b><br><i>Ctr+M</i>"));
+
+		} else { bValue=false;}
+	} else {
+		if (qtcMark.position()!=0)
+		{
+			ui->textBrowser->setTextCursor(qtcMark);
+			qtcMark=QTextCursor(ui->textBrowser->document());
+			ui->markButton->setToolTip(tr("<b>Mark this selected text</b><br><i>Ctr+M</i>"));
+
+		}
+	}
+	ui->markButton->setChecked(bValue);
+}
+
 void ChatWidget::chooseColor()
 {
 	bool ok;
@@ -828,6 +1147,8 @@ void ChatWidget::addSmiley()
 void ChatWidget::clearChatHistory()
 {
 	ui->textBrowser->clear();
+	on_searchButton_clicked(false);
+	ui->markButton->setChecked(false);
 }
 
 void ChatWidget::deleteChatHistory()

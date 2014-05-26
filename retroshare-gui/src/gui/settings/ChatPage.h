@@ -53,6 +53,9 @@ class ChatPage : public ConfigPage
       void on_privateList_currentRowChanged(int currentRow);
       void on_historyList_currentRowChanged(int currentRow);
 
+    void on_cbSearch_WithoutLimit_toggled(bool);
+    void on_btSearch_FoundColor_clicked();
+    
 		void collectedContacts_customPopupMenu(QPoint) ;
 		void collectedInvite_openDistantChat() ;
 
@@ -68,6 +71,8 @@ class ChatPage : public ConfigPage
       QString privateStyleVariant;
       QString historyStylePath;
       QString historyStyleVariant;
+
+	QRgb rgbChatSearchFoundColor;
 
       /** Qt Designer generated object */
       Ui::ChatPage ui;
