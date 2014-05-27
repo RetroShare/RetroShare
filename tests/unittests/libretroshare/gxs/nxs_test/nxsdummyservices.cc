@@ -10,8 +10,7 @@
 
 
 
-rs_nxs_test::RsNxsSimpleDummyCircles::RsNxsSimpleDummyCircles(
-		std::list<Membership>& membership, bool cached) {
+rs_nxs_test::RsNxsSimpleDummyCircles::RsNxsSimpleDummyCircles() {
 }
 
 bool rs_nxs_test::RsNxsSimpleDummyCircles::isLoaded(
@@ -101,14 +100,44 @@ bool rs_nxs_test::RsNxsDelayedDummyCircles::allowed(
 	if(mMembershipCallCount[circleId] >= mCountBeforePresent)
 	{
 		mMembershipCallCount[circleId]++;
-		return true;
+                return true;
 	}
 	else
 	{
 		mMembershipCallCount[circleId]++;
-		return false;
+                return false;
 	}
 
 }
+
+const RsPgpId& rs_nxs_test::RsDummyPgpUtils::getPGPOwnId() {
+	return mOwnId;
+}
+
+RsPgpId rs_nxs_test::RsDummyPgpUtils::getPGPId(const RsPeerId& sslid) {
+	return RsPgpId().random();
+}
+
+bool rs_nxs_test::RsDummyPgpUtils::getGPGAllList(std::list<RsPgpId>& ids) {
+	return true;
+}
+
+bool rs_nxs_test::RsDummyPgpUtils::getKeyFingerprint(const RsPgpId& id,
+		PGPFingerprintType& fp) const {
+	return true;
+}
+
+bool rs_nxs_test::RsDummyPgpUtils::VerifySignBin(const void* data, uint32_t len,
+		unsigned char* sign, unsigned int signlen,
+		const PGPFingerprintType& withfingerprint) {
+	return true;
+}
+
+bool rs_nxs_test::RsDummyPgpUtils::askForDeferredSelfSignature(const void* data,
+		const uint32_t len, unsigned char* sign, unsigned int* signlen,
+		int& signature_result) {
+	return true;
+}
+
 
 

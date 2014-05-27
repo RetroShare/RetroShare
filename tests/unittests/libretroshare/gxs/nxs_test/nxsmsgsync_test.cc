@@ -17,7 +17,7 @@
 using namespace rs_nxs_test;
 
 rs_nxs_test::NxsMsgSync::NxsMsgSync()
-{
+ : mPgpUtils(NULL) {
 	int numPeers = 2;
 
 	// create 2 peers
@@ -43,10 +43,9 @@ rs_nxs_test::NxsMsgSync::NxsMsgSync()
 	}
 
 	RsNxsSimpleDummyReputation::RepMap reMap;
-	std::list<RsNxsSimpleDummyCircles::Membership> membership;
 	// now reputation service
 	mRep = new RsNxsSimpleDummyReputation(reMap, true);
-	mCircles = new RsNxsSimpleDummyCircles(membership, true);
+	mCircles = new RsNxsSimpleDummyCircles();
 
 	// lets create 2 groups and all peers will have them
 	int nGrps = 2;
@@ -144,6 +143,11 @@ uint16_t rs_nxs_test::NxsMsgSync::getServiceType() {
 
 RsServiceInfo rs_nxs_test::NxsMsgSync::getServiceInfo() {
 	return mServInfo;
+}
+
+PgpAuxUtils* rs_nxs_test::NxsMsgSync::getDummyPgpUtils()
+{
+	return mPgpUtils;
 }
 
 const NxsMsgTestScenario::ExpectedMap& rs_nxs_test::NxsMsgSync::getExpectedMap() {

@@ -41,7 +41,8 @@ public:
 	virtual QString helpText() const { return ""; } //MainPage
 
 //	virtual UserNotify *getUserNotify(QObject *parent);
-
+protected:
+        RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_CHANNEL; }
 private slots:
 	void settingsChanged();
 	void toggleAutoDownload();

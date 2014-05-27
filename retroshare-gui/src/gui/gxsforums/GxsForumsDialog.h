@@ -40,6 +40,10 @@ public:
 
 //	virtual UserNotify *getUserNotify(QObject *parent);
 
+protected:
+
+        RetroShareLink::enumType getLinkType();
+
 private slots:
 	void settingsChanged();
 

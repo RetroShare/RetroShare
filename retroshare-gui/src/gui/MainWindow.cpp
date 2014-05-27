@@ -933,14 +933,12 @@ void SetForegroundWindowInternal(HWND hWnd)
 		 case Messages:
 			 _instance->ui->stackPages->setCurrentPage( _instance->messagesDialog );
 			 break;
-#if 0
 		 case Channels:
-			 _instance->ui->stackPages->setCurrentPage( _instance->channelFeed );
+                         _instance->ui->stackPages->setCurrentPage( _instance->gxschannelDialog );
 			 return true ;
 		 case Forums:
-			 _instance->ui->stackPages->setCurrentPage( _instance->forumsDialog );
-			 return true ;
-#endif
+                         _instance->ui->stackPages->setCurrentPage( _instance->gxsforumDialog );
+                         return true ;
 #ifdef BLOGS
 		 case Blogs:
 			 Page = _instance->blogsFeed;
@@ -1029,12 +1027,10 @@ void SetForegroundWindowInternal(HWND hWnd)
 		case Links:
 			return _instance->linksDialog;
 #endif
-#if 0
 		case Channels:
-			return _instance->channelFeed;
+                        return _instance->gxschannelDialog;
 		case Forums:
-			return _instance->forumsDialog;
-#endif
+                        return _instance->gxsforumDialog;
 #ifdef BLOGS
 		case Blogs:
 			return _instance->blogsFeed;

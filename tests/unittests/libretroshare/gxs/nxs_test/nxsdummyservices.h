@@ -14,6 +14,7 @@
 #include <gxs/rsgixs.h>
 #include <gxs/rsgxsnetutils.h>
 #include <algorithm>
+#include <pgp/pgpauxutils.h>
 
 
 namespace rs_nxs_test
@@ -21,23 +22,18 @@ namespace rs_nxs_test
 
 
 	/*!
-	 * This dummy circles implementation
-	 * allow instantiation with simple membership
-	 * list for a given circle
+	 * This is a dummy circles implementation
 	 */
 	class RsNxsSimpleDummyCircles : public RsGcxs
 	{
 	public:
-
-
-		typedef std::map<RsGxsCircleId, std::list<RsPgpId> > Membership;
 
 		/*!
 		 *
 		 * @param membership
 		 * @param cached
 		 */
-		RsNxsSimpleDummyCircles(std::list<Membership>& membership, bool cached);
+		RsNxsSimpleDummyCircles();
 
 		/* GXS Interface - for working out who can receive */
 		bool isLoaded(const RsGxsCircleId &circleId);
@@ -47,9 +43,6 @@ namespace rs_nxs_test
 		int canReceive(const RsGxsCircleId &circleId, const RsPgpId &id);
 		bool recipients(const RsGxsCircleId &circleId, std::list<RsPgpId> &friendlist);
 
-	private:
-
-		std::list<Membership> mMembership;
 	};
 
 	/*!
@@ -146,6 +139,24 @@ namespace rs_nxs_test
 
 	};
 
+	class RsDummyPgpUtils : public PgpAuxUtils
+	{
+		public:
+
+		virtual ~RsDummyPgpUtils(){}
+		const RsPgpId &getPGPOwnId() ;
+		RsPgpId getPGPId(const RsPeerId& sslid) ;
+		bool getGPGAllList(std::list<RsPgpId> &ids) ;
+		bool getKeyFingerprint(const RsPgpId& id,PGPFingerprintType& fp) const;
+
+		bool VerifySignBin(const void *data, uint32_t len, unsigned char *sign, unsigned int signlen, const PGPFingerprintType& withfingerprint);
+		bool askForDeferredSelfSignature(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen,int& signature_result );
+
+
+		private:
+
+			RsPgpId mOwnId;
+	};
 
 }
 

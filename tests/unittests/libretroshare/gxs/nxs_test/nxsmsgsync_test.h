@@ -24,6 +24,7 @@ namespace rs_nxs_test {
 		RsGixsReputation* getDummyReputations(const RsPeerId& peerId);
 		uint16_t getServiceType();
 		RsServiceInfo getServiceInfo();
+		PgpAuxUtils* getDummyPgpUtils();
 
 	protected:
 
@@ -39,6 +40,7 @@ namespace rs_nxs_test {
 		RsGixsReputation* mRep;
 		RsGcxs* mCircles;
 		RsServiceInfo mServInfo;
+		PgpAuxUtils* mPgpUtils;
 
 		NxsMsgTestScenario::ExpectedMap mExpectedResult;
 

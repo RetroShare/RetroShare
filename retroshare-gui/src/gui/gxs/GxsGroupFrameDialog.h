@@ -24,6 +24,7 @@
 
 #include "gui/gxs/RsGxsUpdateBroadcastPage.h"
 #include "RsAutoUpdatePage.h"
+#include "gui/RetroShareLink.h"
 
 #include <inttypes.h>
 
@@ -71,7 +72,7 @@ public:
 	GxsGroupFrameDialog(RsGxsIfaceHelper *ifaceImpl, QWidget *parent = 0);
 	~GxsGroupFrameDialog();
 
-	bool navigate(const RsGxsGroupId groupId, const std::string& msgId);
+        bool navigate(const RsGxsGroupId groupId, const RsGxsMessageId& msgId);
 
 	// Callback for all Loads.
 	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
@@ -81,8 +82,10 @@ protected:
 	virtual void updateDisplay(bool complete);
 
 	RsGxsGroupId groupId() { return mGroupId; }
-
 	void setSingleTab(bool singleTab);
+        bool getCurrentGroupName(QString& name);
+        virtual RetroShareLink::enumType getLinkType() = 0;
+
 
 private slots:
 	void todo();
@@ -119,6 +122,7 @@ private:
 	virtual QString text(TextType type) = 0;
 	virtual QString icon(IconType type) = 0;
 	virtual QString settingsGroupName() = 0;
+
 	virtual GxsGroupDialog *createNewGroupDialog(TokenQueue *tokenQueue) = 0;
 	virtual GxsGroupDialog *createGroupDialog(TokenQueue *tokenQueue, RsTokenService *tokenService, GxsGroupDialog::Mode mode, RsGxsGroupId groupId) = 0;
 	virtual int shareKeyType() = 0;

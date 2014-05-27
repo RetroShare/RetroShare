@@ -70,7 +70,9 @@ rs_nxs_test::NxsTestHub::NxsTestHub(NxsTestScenario::pointer testScenario)
 				new NotifyWithPeerId(*cit, *this),
 				mTestScenario->getServiceInfo(),
 				mTestScenario->getDummyReputations(*cit),
-				mTestScenario->getDummyCircles(*cit), NULL, true
+				mTestScenario->getDummyCircles(*cit),
+				mTestScenario->getDummyPgpUtils(),
+				true
 				)
 		);
 
@@ -137,8 +139,6 @@ void rs_nxs_test::NxsTestHub::EndTest()
 	{
 		mit->second->join();
 	}
-
-	mTestScenario->cleanTestScenario();
 }
 
 void rs_nxs_test::NxsTestHub::notifyNewMessages(const RsPeerId& pid,
@@ -192,6 +192,11 @@ bool rs_nxs_test::NxsTestHub::recvItem(RsRawItem* item, const RsPeerId& peerFrom
 	PayLoad p(peerFrom, item);
 	mPayLoad.push(p);
 	return true;
+}
+
+void rs_nxs_test::NxsTestHub::CleanUpTest()
+{
+	mTestScenario->cleanTestScenario();
 }
 
 void rs_nxs_test::NxsTestHub::tick()

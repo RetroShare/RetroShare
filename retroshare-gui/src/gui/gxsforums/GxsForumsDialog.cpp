@@ -80,6 +80,11 @@ QString GxsForumsDialog::text(TextType type)
 	return "";
 }
 
+RetroShareLink::enumType GxsForumsDialog::getLinkType()
+{
+    return RetroShareLink::TYPE_FORUM;
+}
+
 QString GxsForumsDialog::icon(IconType type)
 {
 	switch (type) {

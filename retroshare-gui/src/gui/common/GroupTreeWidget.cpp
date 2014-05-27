@@ -457,6 +457,21 @@ RSTreeWidget *GroupTreeWidget::treeWidget()
 	return ui->treeWidget;
 }
 
+bool GroupTreeWidget::getGroupName(QString id, QTreeWidgetItem* categoryItem, QString& name)
+{
+    int childCount = categoryItem->childCount();
+    for (int child = 0; child < childCount; child++) {
+            QTreeWidgetItem *childItem = categoryItem->child(child);
+            if (childItem->data(COLUMN_DATA, ROLE_ID).toString() == id) {
+                    /* Found child */
+
+                    name = childItem->text(COLUMN_NAME);
+                    return true;
+            }
+    }
+    return false;
+}
+
 int GroupTreeWidget::subscribeFlags(const QString &id)
 {
 	QTreeWidgetItem *item = getItemFromId(id);

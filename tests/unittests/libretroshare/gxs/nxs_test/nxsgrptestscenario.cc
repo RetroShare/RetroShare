@@ -35,7 +35,7 @@ bool NxsGrpTestScenario::checkTestPassed()
 		RsGxsGroupId::std_vector result(expGrpIds.size()+grpIds.size());
         std::sort(grpIds.begin(), grpIds.end());
         std::sort(expGrpIds.begin(), expGrpIds.end());
-		RsGxsGroupId::std_vector::iterator it = std::set_difference(grpIds.begin(), grpIds.end(),
+		RsGxsGroupId::std_vector::iterator it = std::set_symmetric_difference(grpIds.begin(), grpIds.end(),
 				expGrpIds.begin(), expGrpIds.end(), result.begin());
 
 		result.resize(it - result.begin());

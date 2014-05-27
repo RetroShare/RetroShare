@@ -37,6 +37,7 @@ namespace rs_nxs_test
 		virtual RsGixsReputation* getDummyReputations(const RsPeerId& peerId) = 0;
 		virtual uint16_t getServiceType() = 0;
 		virtual RsServiceInfo getServiceInfo() = 0;
+		virtual PgpAuxUtils* getDummyPgpUtils() = 0;
 
 		virtual void cleanTestScenario() = 0;
 

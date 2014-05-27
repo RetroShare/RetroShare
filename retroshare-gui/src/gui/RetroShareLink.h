@@ -66,7 +66,7 @@ class RetroShareLink
 								TYPE_CERTIFICATE   = 0x07,
 								TYPE_EXTRAFILE     = 0x08, 
 								TYPE_PRIVATE_CHAT  = 0x09,
-								TYPE_PUBLIC_MSG    = 0x0a
+                                                                TYPE_PUBLIC_MSG    = 0x0a
 		};
 
 	public:
@@ -79,6 +79,9 @@ class RetroShareLink
         bool createPerson(const RsPgpId &id);
 		bool createForum(const std::string& id, const std::string& msgId);
 		bool createChannel(const std::string& id, const std::string& msgId);
+                bool createGxsLink(const RsGxsGroupId &id, const RsGxsMessageId &msgId,
+                                   const std::string& groupName, const std::string& msgSubject,
+                                   const RetroShareLink::enumType &linkType);
 		bool createSearch(const QString& keywords);
         bool createMessage(const RsPeerId &peerId, const QString& subject);
         bool createMessage(const RsGxsId &peerId, const QString& subject);

@@ -351,24 +351,47 @@ void GxsGroupFrameDialog::copyGroupLink()
 		return;
 	}
 
-// THIS CODE CALLS getForumInfo() to verify that the Ids are valid.
-// As we are switching to Request/Response this is now harder to do...
-// So not bothering any more - shouldn't be necessary.
-// IF we get errors - fix them, rather than patching here.
-#if 0
-	ForumInfo fi;
-	if (rsGxsForums->getForumInfo(mCurrForumId, fi)) {
-		RetroShareLink link;
-		if (link.createForum(fi.forumId, "")) {
-			QList<RetroShareLink> urls;
-			urls.push_back(link);
-			RSLinkClipboard::copyLinks(urls);
-		}
-	}
-#endif
+        RetroShareLink link;
 
-	QMessageBox::warning(this, "RetroShare", "ToDo");
+        QString name;
+        if(!getCurrentGroupName(name)) return;
+
+        if (link.createGxsLink(mGroupId, RsGxsMessageId(), name.toStdString(), "", getLinkType())) {
+                QList<RetroShareLink> urls;
+                urls.push_back(link);
+                RSLinkClipboard::copyLinks(urls);
+        }
 }
+
+
+
+bool GxsGroupFrameDialog::getCurrentGroupName(QString& name)
+{
+    GroupTreeWidget* gtw = ui->groupTreeWidget;
+
+    QString id = QString::fromStdString(mGroupId.toStdString());
+
+    if(gtw->getGroupName(id, mYourGroups, name))
+    {
+        return true;
+    }
+    else if(gtw->getGroupName(id, mSubscribedGroups, name))
+    {
+        return true;
+    }
+    else if(gtw->getGroupName(id, mYourGroups, name))
+    {
+        return true;
+    }
+    else if(gtw->getGroupName(id, mOtherGroups, name))
+    {
+        return true;
+    }
+
+    return false;
+}
+
+
 
 void GxsGroupFrameDialog::markMsgAsRead()
 {
@@ -429,44 +452,44 @@ void GxsGroupFrameDialog::loadComment(const RsGxsGroupId &grpId, const RsGxsMess
 	ui->messageTabWidget->setCurrentWidget(commentDialog);
 }
 
-bool GxsGroupFrameDialog::navigate(const RsGxsGroupId groupId, const std::string& msgId)
+bool GxsGroupFrameDialog::navigate(const RsGxsGroupId groupId, const RsGxsMessageId& msgId)
 {
 	if (groupId.isNull()) {
 		return false;
 	}
 
-	if (ui->groupTreeWidget->activateId(QString::fromStdString(groupId.toStdString()), msgId.empty()) == NULL) {
+        if (ui->groupTreeWidget->activateId(QString::fromStdString(groupId.toStdString()), msgId.isNull()) == NULL) {
 		return false;
-	}
-
-	if (mGroupId != groupId) {
-		return false;
-	}
-
-	if (msgId.empty()) {
-		return true;
-	}
-
-//#TODO
-//	if (mThreadLoading) {
-//		mThreadLoad.FocusMsgId = msgId;
+            }
+//        if (mGroupId == groupId) {
+//		return false;
+//	}
+//
+//        if (msgId.isNull()) {
 //		return true;
 //	}
 
-	/* Search exisiting item */
-//	QTreeWidgetItemIterator itemIterator(ui->threadTreeWidget);
-//	QTreeWidgetItem *item = NULL;
-//	while ((item = *itemIterator) != NULL) {
-//		itemIterator++;
 
-//		if (item->data(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID).toString().toStdString() == msgId) {
-//			ui->threadTreeWidget->setCurrentItem(item);
-//			ui->threadTreeWidget->setFocus();
-//			return true;
-//		}
-//	}
+//#TODO
+//        if (mThreadLoading) {
+//                mThreadLoad.FocusMsgId = msgId;
+//                return true;
+//        }
 
-	return false;
+        /* Search exisiting item */
+//        QTreeWidgetItemIterator itemIterator(ui->threadTreeWidget);
+//        QTreeWidgetItem *item = NULL;
+//        while ((item = *itemIterator) != NULL) {
+//                itemIterator++;
+//
+//                if (item->data(COLUMN_THREAD_DATA, ROLE_THREAD_MSGID).toString().toStdString() == msgId) {
+//                        ui->threadTreeWidget->setCurrentItem(item);
+//                        ui->threadTreeWidget->setFocus();
+//                        return true;
+//                }
+//        }
+
+        return true;
 }
 
 GxsMessageFrameWidget *GxsGroupFrameDialog::messageWidget(const RsGxsGroupId &groupId, bool ownTab)

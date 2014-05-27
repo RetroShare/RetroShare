@@ -87,8 +87,8 @@ public:
         Transfers          = 3,  /** Transfers page. */
         SharedDirectories  = 4,  /** Shared Directories page. */
         Messages           = 5,  /** Messages page. */
- //       Channels           = 6,  /** Channels page. */
- //       Forums             = 7,  /** Forums page. */
+        Channels           = 6,  /** Channels page. */
+        Forums             = 7,  /** Forums page. */
         Search             = 8,  /** Search page. */
 #ifdef BLOGS
         Blogs              = 9,  /** Blogs page. */

@@ -74,6 +74,10 @@ namespace rs_nxs_test
 		 */
 		void EndTest();
 
+		/*!
+		 * Clean up test environment
+		 */
+		void CleanUpTest();
 	    /*!
 	     * @param messages messages are deleted after function returns
 	     */

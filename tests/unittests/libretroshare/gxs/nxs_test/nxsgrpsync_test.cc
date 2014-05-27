@@ -15,7 +15,7 @@ using namespace rs_nxs_test;
 
 
 
-NxsGrpSync::NxsGrpSync()
+NxsGrpSync::NxsGrpSync(RsGcxs* circle, RsGixsReputation* reputation)
 {
 
 	int numPeers = 2;
@@ -42,11 +42,24 @@ NxsGrpSync::NxsGrpSync()
 	}
 
 	RsNxsSimpleDummyReputation::RepMap reMap;
-	std::list<RsNxsSimpleDummyCircles::Membership> membership;
 	// now reputation service
-	mRep = new RsNxsSimpleDummyReputation(reMap, true);
-	mCircles = new RsNxsSimpleDummyCircles(membership, true);
 
+	if(!reputation)
+		mRep = new RsNxsSimpleDummyReputation(reMap, true);
+	else
+	{
+		mRep = reputation;
+	}
+
+	if(!circle)
+		mCircles = new RsNxsSimpleDummyCircles();
+	else
+	{
+		mCircles = circle;
+	}
+
+
+	mPgpUtils = new RsDummyPgpUtils();
 
 	// lets create some a group each for all peers
 	DataMap::iterator mit = mDataServices.begin();
@@ -60,7 +73,13 @@ NxsGrpSync::NxsGrpSync()
 		grp->metaData = meta;
 		meta->mSubscribeFlags = GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED;
 
-                RsGxsGroupId grpId = grp->grpId;
+		if(circle)
+		{
+			meta->mCircleType = GXS_CIRCLE_TYPE_EXTERNAL;
+			meta->mCircleId.random();
+		}
+
+		RsGxsGroupId grpId = grp->grpId;
 
 		RsGeneralDataService::GrpStoreMap gsp;
 		gsp.insert(std::make_pair(grp, meta));
@@ -69,8 +88,8 @@ NxsGrpSync::NxsGrpSync()
 		// the expected result is that each peer has the group of the others
 		it = mPeerIds.begin();
 		for(; it != mPeerIds.end(); it++)
-                {
-                    mExpectedResult[*it].push_back(grpId);
+		{
+			mExpectedResult[*it].push_back(grpId);
 		}
 	}
 
@@ -124,6 +143,11 @@ rs_nxs_test::NxsGrpSync::~NxsGrpSync()
 
 RsServiceInfo rs_nxs_test::NxsGrpSync::getServiceInfo() {
 	return mServInfo;
+}
+
+PgpAuxUtils* rs_nxs_test::NxsGrpSync::getDummyPgpUtils()
+{
+	return mPgpUtils;
 }
 
 const NxsGrpTestScenario::ExpectedMap& rs_nxs_test::NxsGrpSync::getExpectedMap() {

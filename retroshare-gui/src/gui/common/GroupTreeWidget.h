@@ -98,6 +98,7 @@ public:
 
 	void setTextColorCategory(QColor color) { mTextColor[GROUPTREEWIDGET_COLOR_CATEGORY] = color; }
 	void setTextColorPrivateKey(QColor color) { mTextColor[GROUPTREEWIDGET_COLOR_PRIVATEKEY] = color; }
+        bool getGroupName(QString id, QTreeWidgetItem* item, QString& name);
 
 	int subscribeFlags(const QString &id);
 
