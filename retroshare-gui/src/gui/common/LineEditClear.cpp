@@ -47,6 +47,7 @@ LineEditClear::LineEditClear(QWidget *parent)
 								"QToolButton:pressed  { border-image: url(:/images/closepressed.png) }");
 	mClearButton->hide();
 	mClearButton->setFocusPolicy(Qt::NoFocus);
+	mClearButton->setToolTip("Clear Filter");
 
 	connect(mClearButton, SIGNAL(clicked()), this, SLOT(clear()));
 	connect(this, SIGNAL(textChanged(const QString&)), this, SLOT(updateClearButton(const QString&)));
