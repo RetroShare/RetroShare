@@ -23,6 +23,8 @@
 #include <QCloseEvent>
 #include <QMessageBox>
 
+#include <unistd.h>
+
 #include <retroshare/rsstatus.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsidentity.h>
