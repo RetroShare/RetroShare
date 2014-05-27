@@ -23,7 +23,7 @@
    <item>
     <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
-      <widget class="QFrame" name="titleBarFrame_2">
+      <widget class="QFrame" name="titleBarFrame">
        <property name="frameShape">
         <enum>QFrame::Box</enum>
        </property>
@@ -69,7 +69,7 @@
            </font>
           </property>
           <property name="text">
-           <string>Circles</string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;People&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
          </widget>
         </item>
@@ -85,38 +85,6 @@
            </size>
           </property>
          </spacer>
-        </item>
-        <item>
-         <widget class="QToolButton" name="toolButton_NewId_3">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="focusPolicy">
-           <enum>Qt::NoFocus</enum>
-          </property>
-          <property name="toolTip">
-           <string>Create new Identity</string>
-          </property>
-          <property name="text">
-           <string>New ID</string>
-          </property>
-          <property name="icon">
-           <iconset resource="../images.qrc">
-            <normaloff>:/images/identity/identity_create_32.png</normaloff>:/images/identity/identity_create_32.png</iconset>
-          </property>
-          <property name="iconSize">
-           <size>
-            <width>24</width>
-            <height>24</height>
-           </size>
-          </property>
-          <property name="autoRaise">
-           <bool>true</bool>
-          </property>
-         </widget>
         </item>
        </layout>
       </widget>
