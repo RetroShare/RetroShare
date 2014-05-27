@@ -24,6 +24,8 @@
 #include "gui/feeds/GxsChannelPostItem.h"
 #include "gui/gxschannels/CreateGxsChannelMsg.h"
 #include "gui/common/UIStateHelper.h"
+#include "gui/settings/rsharesettings.h"
+#include "gui/feeds/SubFileItem.h"
 
 #include <algorithm>
 
@@ -39,6 +41,12 @@
 #define TOKEN_TYPE_GROUP_DATA       6
 #define TOKEN_TYPE_POSTS            7
 #define TOKEN_TYPE_RELATEDPOSTS     8
+
+/* Filters */
+#define FILTER_TITLE     1
+#define FILTER_MSG       2
+#define FILTER_FILE_NAME 3
+#define FILTER_COUNT     3
 
 /** Constructor */
 GxsChannelPostsWidget::GxsChannelPostsWidget(const RsGxsGroupId &channelId, QWidget *parent) :
@@ -65,6 +73,13 @@ GxsChannelPostsWidget::GxsChannelPostsWidget(const RsGxsGroupId &channelId, QWid
 
 	connect(ui->postButton, SIGNAL(clicked()), this, SLOT(createMsg()));
 //	connect(NotifyQt::getInstance(), SIGNAL(channelMsgReadSatusChanged(QString,QString,int)), this, SLOT(channelMsgReadSatusChanged(QString,QString,int)));
+	/* add filter actions */
+	ui->filterLineEdit->addFilter(QIcon(), tr("Title"), FILTER_TITLE, tr("Search Title"));
+	ui->filterLineEdit->addFilter(QIcon(), tr("Message"), FILTER_MSG, tr("Search Message"));
+	ui->filterLineEdit->addFilter(QIcon(), tr("Filename"), FILTER_FILE_NAME, tr("Search Filename"));
+	ui->filterLineEdit->setCurrentFilter( Settings->valueFromGroup("ChannelFeed", "filter", FILTER_TITLE).toInt());
+	connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterItems(QString)));
+	connect(ui->filterLineEdit, SIGNAL(filterChanged(int)), this, SLOT(filterChanged(int)));
 
 	/*************** Setup Left Hand Side (List of Channels) ****************/
 
@@ -73,6 +88,8 @@ GxsChannelPostsWidget::GxsChannelPostsWidget(const RsGxsGroupId &channelId, QWid
 	ui->progressBar->hide();
 
 	ui->nameLabel->setMinimumWidth(20);
+
+	mInProcessSettings = false;
 
 	/* load settings */
 	processSettings(true);
@@ -121,6 +138,7 @@ void GxsChannelPostsWidget::updateDisplay(bool complete)
 
 void GxsChannelPostsWidget::processSettings(bool load)
 {
+	mInProcessSettings = true;
 //	Settings->beginGroup(QString("GxsChannelDialog"));
 //
 //	if (load) {
@@ -130,6 +148,7 @@ void GxsChannelPostsWidget::processSettings(bool load)
 //	}
 //
 //	Settings->endGroup();
+	mInProcessSettings = false;
 }
 
 void GxsChannelPostsWidget::setGroupId(const RsGxsGroupId &groupId)
@@ -250,6 +269,63 @@ static bool sortChannelMsgSummaryDesc(const RsGxsChannelPost &msg1, const RsGxsC
 	return (msg1.mMeta.mPublishTs < msg2.mMeta.mPublishTs);
 }
 
+void GxsChannelPostsWidget::filterChanged(int filter)
+{
+	if (mInProcessSettings) {
+		return;
+	}
+	filterItems(ui->filterLineEdit->text());
+
+	// save index
+	Settings->setValueToGroup("ChannelFeed", "filter", filter);
+}
+
+void GxsChannelPostsWidget::filterItems(const QString& text)
+{
+	int filter = ui->filterLineEdit->currentFilter();
+
+	/* Search exisiting item */
+	QList<GxsChannelPostItem*>::iterator lit;
+	for (lit = mChannelPostItems.begin(); lit != mChannelPostItems.end(); lit++)
+	{
+		GxsChannelPostItem *item = *lit;
+		filterItem(item,text,filter);
+	}
+}
+
+bool GxsChannelPostsWidget::filterItem(GxsChannelPostItem *pItem, const QString &text, const int filter)
+{
+	bool bVisible = text.isEmpty();
+
+	switch(filter)
+	{
+	case FILTER_TITLE:
+		bVisible=pItem->getTitleLabel().contains(text,Qt::CaseInsensitive);
+		break;
+	case FILTER_MSG:
+		bVisible=pItem->getMsgLabel().contains(text,Qt::CaseInsensitive);
+		break;
+	case FILTER_FILE_NAME:
+	{
+		std::list<SubFileItem *> fileItems=pItem->getFileItems();
+		std::list<SubFileItem *>::iterator lit;
+		for(lit = fileItems.begin(); lit != fileItems.end(); lit++)
+		{
+			SubFileItem *fi = *lit;
+			QString fileName=QString::fromUtf8(fi->FileName().c_str());
+			bVisible=(bVisible || fileName.contains(text,Qt::CaseInsensitive));
+		}
+	}
+		break;
+	default:
+		bVisible=true;
+		break;
+	}
+	pItem->setVisible(bVisible);
+
+	return (bVisible);
+}
+
 void GxsChannelPostsWidget::insertChannelPosts(std::vector<RsGxsChannelPost> &posts, bool related)
 {
 	std::vector<RsGxsChannelPost>::const_iterator it;
@@ -281,6 +357,9 @@ void GxsChannelPostsWidget::insertChannelPosts(std::vector<RsGxsChannelPost> &po
 			//TODO: Sort timestamp
 		} else {
 			item = new GxsChannelPostItem(this, 0, *it, subscribeFlags, true, false);
+			if (!ui->filterLineEdit->text().isEmpty())
+				filterItem(item, ui->filterLineEdit->text(), ui->filterLineEdit->currentFilter());
+
 			mChannelPostItems.push_back(item);
 			if (related) {
 				ui->verticalLayout->insertWidget(0, item);

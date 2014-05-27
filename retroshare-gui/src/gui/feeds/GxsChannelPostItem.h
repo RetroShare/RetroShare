@@ -27,6 +27,7 @@
 #include <retroshare/rsgxschannels.h>
 #include "gui/gxs/GxsFeedItem.h"
 #include <stdint.h>
+#include "util/HandleRichText.h"
 
 namespace Ui {
 class GxsChannelPostItem;
@@ -48,7 +49,11 @@ public:
 	void setFileCleanUpWarning(uint32_t time_left);
 	bool setPost(const RsGxsChannelPost &post);
 
-protected: 
+	const QString getTitleLabel() {return QString::fromUtf8(mPost.mMeta.mMsgName.c_str()); }
+	const QString getMsgLabel() {return RsHtml().formatText(NULL, QString::fromUtf8(mPost.mMsg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS); }
+	const std::list<SubFileItem *> &getFileItems() {return mFileItems; }
+
+protected:
 	virtual void loadMessage(const uint32_t &token);
 
 private slots:

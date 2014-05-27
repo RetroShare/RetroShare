@@ -71,6 +71,8 @@ protected:
 
 private slots:
 	void createMsg();
+	void filterChanged(int filter);
+	void filterItems(const QString& text);
 
 	//void fillThreadFinished();
 	//void fillThreadAddMsg(const QString &channelId, const QString &channelMsgId, int current, int count);
@@ -96,6 +98,8 @@ private:
 
 	void acknowledgeMessageUpdate(const uint32_t &token);
 
+	bool filterItem(GxsChannelPostItem *pItem, const QString &text, const int filter);
+
     RsGxsGroupId mChannelId; /* current Channel */
 	TokenQueue *mChannelQueue;
 
@@ -108,6 +112,8 @@ private:
 	std::map<std::string, uint32_t> mChanSearchScore; //chanId, score
 
 	UIStateHelper *mStateHelper;
+
+	bool mInProcessSettings;
 
 	/* UI - from Designer */
 	Ui::GxsChannelPostsWidget *ui;
