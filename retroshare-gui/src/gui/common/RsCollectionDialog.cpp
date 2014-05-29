@@ -134,6 +134,10 @@ RsCollectionDialog::RsCollectionDialog(const QString& collectionFileName
 	setWindowFlags(windowFlags() & ~Qt::WindowMinimizeButtonHint);
 
 	setWindowTitle(QString("%1 - %2").arg(windowTitle()).arg(QFileInfo(_fileName).completeBaseName()));
+	
+	
+	ui.headerFrame->setHeaderImage(QPixmap(":/images/library64.png"));
+	ui.headerFrame->setHeaderText(tr("Collection Editor"));
 
 	// 1 - add all elements to the list.
 
