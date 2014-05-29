@@ -379,7 +379,8 @@ void ChatLobbyDialog::updateParticipantsList()
 
             time_t tLastAct=widgetitem->text(COLUMN_ACTIVITY).toInt();
             time_t now = time(NULL);
-            if (tLastAct<now-60*30) widgetitem->setIcon(COLUMN_ICON, QIcon(":/images/grayled.png"));
+            if (tLastAct<now-60*30)
+                widgetitem->setIcon(COLUMN_ICON, QIcon(isParticipantMuted(participant)?":/images/ledoff1.png":":/images/grayled.png"));
 
             std::string nickName;
             rsMsgs->getNickNameForChatLobby(lobbyId, nickName);
