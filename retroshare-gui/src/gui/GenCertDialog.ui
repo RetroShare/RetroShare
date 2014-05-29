@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>677</width>
+    <width>784</width>
     <height>509</height>
    </rect>
   </property>
@@ -465,7 +465,16 @@ anonymous, you can use a fake email.</string>
   <tabstop>genPGPuser</tabstop>
   <tabstop>name_input</tabstop>
   <tabstop>email_input</tabstop>
+  <tabstop>password_input</tabstop>
+  <tabstop>password_input_2</tabstop>
   <tabstop>location_input</tabstop>
+  <tabstop>hiddenaddr_input</tabstop>
+  <tabstop>hiddenport_spinBox</tabstop>
+  <tabstop>genButton</tabstop>
+  <tabstop>new_gpg_key_checkbox</tabstop>
+  <tabstop>hidden_checkbox</tabstop>
+  <tabstop>importIdentity_PB</tabstop>
+  <tabstop>exportIdentity_PB</tabstop>
  </tabstops>
  <resources>
   <include location="images.qrc"/>

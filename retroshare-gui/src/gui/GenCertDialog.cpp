@@ -464,8 +464,9 @@ void GenCertDialog::genPerson()
 	{
 		/* Message Dialog */
 		QMessageBox::warning(this,
-				tr("Generate ID Failure"),
-				tr("Failed to Generate your new Certificate, maybe PGP password is wrong!"),
-				QMessageBox::Ok);
-	}
+                               tr("Generate ID Failure"),
+                               tr("Failed to Generate your new Certificate, maybe PGP password is wrong!"),
+                               QMessageBox::Ok);
+		reject();
+       }
 }
