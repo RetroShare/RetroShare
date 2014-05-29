@@ -300,6 +300,16 @@ QString GroupTreeWidget::itemId(QTreeWidgetItem *item)
 	return item->data(COLUMN_DATA, ROLE_ID).toString();
 }
 
+QString GroupTreeWidget::itemIdAt(QPoint &point)
+{
+	QTreeWidgetItem *item = ui->treeWidget->itemAt(point);
+	if (item == NULL) {
+		return "";
+	}
+
+	return item->data(COLUMN_DATA, ROLE_ID).toString();
+}
+
 void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<GroupItemInfo> &itemList)
 {
 	if (categoryItem == NULL) {

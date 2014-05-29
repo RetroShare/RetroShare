@@ -206,7 +206,7 @@ void GxsGroupFrameDialog::todo()
 
 void GxsGroupFrameDialog::groupTreeCustomPopupMenu(QPoint point)
 {
-	QString id = "" ;//ui->groupTreeWidget->itemIdAt(point);
+	QString id = ui->groupTreeWidget->itemIdAt(point);
 	if (id.isEmpty()) return;
 
 	mGroupId = RsGxsGroupId(id.toStdString());

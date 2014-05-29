@@ -83,6 +83,7 @@ public:
 	QTreeWidgetItem *addCategoryItem(const QString &name, const QIcon &icon, bool expand);
 	// Get id of item
 	QString itemId(QTreeWidgetItem *item);
+	QString itemIdAt(QPoint &point);
 	// Fill items of a group
 	void fillGroupItems(QTreeWidgetItem *categoryItem, const QList<GroupItemInfo> &itemList);
 	// Set the unread count of an item
