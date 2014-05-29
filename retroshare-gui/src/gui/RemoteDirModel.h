@@ -75,7 +75,7 @@ class RetroshareDirModel : public QAbstractItemModel
 		void changeAgeIndicator(uint32_t indicator) { ageIndicator = indicator; }
 
 		const DirDetailsVector *requestDirDetails(void *ref, bool remote) const;
-		virtual void update() {} ;
+		virtual void update() {}
 
 	public:
 		virtual QMimeData * mimeData ( const QModelIndexList & indexes ) const;

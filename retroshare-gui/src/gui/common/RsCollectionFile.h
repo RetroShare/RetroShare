@@ -29,53 +29,82 @@
 
 #pragma once
 
+#include <QObject>
 #include <QString>
 #include <QDomDocument>
+#include <QFile>
 #include <retroshare/rsfiles.h>
+#include <QMetaType>
 
 class QDomElement ;
 class QWidget;
 
-class RsCollectionFile
+class ColFileInfo
 {
 	public:
-		static const QString ExtensionString ;
+	ColFileInfo(): name(""), size(0), path(""), hash(""), type(0), filename_has_wrong_characters(false), checked(false) {}
 
-		RsCollectionFile() ;
+public:
+	QString name ;
+	qulonglong size ;
+	QString path ;
+	QString hash ;
+	uint8_t type;
+	bool filename_has_wrong_characters ;
+	std::vector<ColFileInfo> children;
+	bool checked;
+};
+Q_DECLARE_METATYPE(ColFileInfo)
 
+class RsCollectionFile : public QObject
+{
+	Q_OBJECT
+
+public:
+
+	RsCollectionFile(QObject *parent = 0) ;
 		// create from list of files and directories
-		RsCollectionFile(const std::vector<DirDetails>& file_entries) ;
+	RsCollectionFile(const std::vector<DirDetails>& file_entries, QObject *parent = 0) ;
+	virtual ~RsCollectionFile() ;
+
+	static const QString ExtensionString ;
+
+
 
 		// Loads file from disk.
 		bool load(QWidget *parent);
-		bool load(const QString& filename, bool showError = true);
+	bool load(const QString& fileName, bool showError = true);
 
 		// Save to disk
 		bool save(QWidget *parent) const ;
-		bool save(const QString& filename) const ;
+	bool save(const QString& fileName) const ;
+
+	// Open new collection
+	bool openNewColl(QWidget *parent);
+	// Open existing collection
+	bool openColl(const QString& fileName, bool readOnly = false, bool showError = true);
 
 		// Download the content.
 		void downloadFiles() const ;
 
 		qulonglong size();
 
-		static bool isCollectionFile(const QString& filename);
+	static bool isCollectionFile(const QString& fileName);
+
+private slots:
+	void saveColl(std::vector<ColFileInfo> colFileInfos, const QString& fileName);
 
 	private:
-		struct DLinfo
-		{
-			QString name ;
-			qulonglong size ;
-			QString path ;
-			QString hash ;
-			bool filename_has_wrong_characters ;
-		};
 
 		void recursAddElements(QDomDocument&,const DirDetails&,QDomElement&) const ;
-		void recursCollectDLinfos(const QDomElement&,std::vector<DLinfo>& dlinfos,const QString& current_dir,bool bad_chars_in_parent) const ;
+	void recursAddElements(QDomDocument&,const ColFileInfo&,QDomElement&) const;
+	void recursCollectColFileInfos(const QDomElement&,std::vector<ColFileInfo>& colFileInfos,const QString& current_dir,bool bad_chars_in_parent) const ;
+	// check that the file is a valid rscollection file, and not a lol bomb or some shit like this
+	static bool checkFile(const QString &fileName, bool showError);
 
 		QDomDocument _xml_doc ;
-		QString _filename ;
+	QString _fileName ;
+	bool _saved;
 
 		friend class RsCollectionDialog ;
 };

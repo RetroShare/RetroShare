@@ -134,7 +134,10 @@ private slots:
     void showDetailsDialog();
     void updateDetailsDialog();
 
-    void openCollection();
+    void collCreate();
+    void collModif();
+    void collView();
+    void collOpen();
 
     void setShowDLSizeColumn(bool show);
     void setShowDLCompleteColumn(bool show);
@@ -167,15 +170,15 @@ private:
     void createActions();
 
     /** Defines the actions for the context menu */
-    QAction* showdownInfoAct;
-    QAction* playAct;
-    QAction* cancelAct;
-    QAction* forceCheckAct;
-    QAction* clearCompletedAct;
-    QAction* copyLinkAct;
-    QAction* pasteLinkAct;
-    QAction* rootIsNotDecoratedAct;
-    QAction* rootIsDecoratedAct;
+    QAction *showdownInfoAct;
+    QAction *playAct;
+    QAction *cancelAct;
+    QAction *forceCheckAct;
+    QAction *clearCompletedAct;
+    QAction *copyLinkAct;
+    QAction *pasteLinkAct;
+    QAction *rootIsNotDecoratedAct;
+    QAction *rootIsDecoratedAct;
     QAction *pauseAct;
     QAction *resumeAct;
     QAction *openFolderAct;
@@ -196,11 +199,14 @@ private:
     QAction *chunkStreamingAct;
     QAction *detailsFileAct;
     QAction *toggleShowCacheTransfersAct;
-    QAction *openCollectionAct;
     QAction *renameFileAct;
     QAction *specifyDestinationDirectoryAct;
     QAction *expandAllAct;
     QAction *collapseAllAct;
+    QAction *collCreateAct;
+    QAction *collModifAct;
+    QAction *collViewAct;
+    QAction *collOpenAct;
 
     /** Defines the actions for the header context menu */
     QAction* showDLSizeAct;

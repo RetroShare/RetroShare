@@ -27,6 +27,7 @@
 #include <QObject>
 #include <QPair>
 #include <QThread>
+#include <QFileDialog>
 
 #include "gui/settings/rsharesettings.h"
 
@@ -159,10 +160,17 @@ class misc : public QObject
 
     static bool getOpenAvatarPicture(QWidget *parent, QByteArray &image_data);
     static QPixmap getOpenThumbnailedPicture(QWidget *parent, const QString &caption, int width, int height);
-    static bool getOpenFileName(QWidget *parent, RshareSettings::enumLastDir type, const QString &caption, const QString &filter, QString &file);
-    static bool getOpenFileNames(QWidget *parent, RshareSettings::enumLastDir type, const QString &caption, const QString &filter, QStringList &files);
+    static bool getOpenFileName(QWidget *parent, RshareSettings::enumLastDir type
+                                , const QString &caption, const QString &filter
+                                , QString &file, QFileDialog::Options options = 0);
+    static bool getOpenFileNames(QWidget *parent, RshareSettings::enumLastDir type
+                                 , const QString &caption, const QString &filter
+                                 , QStringList &files, QFileDialog::Options options = 0);
 
-    static bool getSaveFileName(QWidget *parent, RshareSettings::enumLastDir type, const QString &caption, const QString &filter, QString &file);
+    static bool getSaveFileName(QWidget *parent, RshareSettings::enumLastDir type
+                                , const QString &caption , const QString &filter
+                                , QString &file, QString *selectedFilter = NULL
+                                , QFileDialog::Options options = 0);
 };
 
 //  Trick to get a portable sleep() function

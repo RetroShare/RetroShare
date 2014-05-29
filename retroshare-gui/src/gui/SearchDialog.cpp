@@ -45,24 +45,29 @@
 /* Images for context menu icons */
 #define IMAGE_START  		    ":/images/download.png"
 #define IMAGE_REMOVE  		  ":/images/delete.png"
-#define IMAGE_REMOVEALL   	":/images/deleteall.png"
-#define IMAGE_DIRECTORY			":/images/folder16.png"
-#define IMAGE_OPENFOLDER		":/images/folderopen.png"
+#define IMAGE_REMOVEALL            ":/images/deleteall.png"
+#define IMAGE_DIRECTORY            ":/images/folder16.png"
+#define IMAGE_OPENFOLDER           ":/images/folderopen.png"
+#define IMAGE_LIBRARY              ":/images/library.png"
+#define IMAGE_COLLCREATE           ":/images/library_add.png"
+#define IMAGE_COLLMODIF            ":/images/library_edit.png"
+#define IMAGE_COLLVIEW             ":/images/library_view.png"
+#define IMAGE_COLLOPEN             ":/images/library.png"
+#define IMAGE_COPYLINK             ":/images/copyrslink.png"
 
 /* Key for UI Preferences */
 #define UI_PREF_ADVANCED_SEARCH  "UIOptions/AdvancedSearch"
 
 /* indicies for search summary item columns SS_ = Search Summary */
-#define SS_TEXT_COL         0
-#define SS_COUNT_COL        1
+#define SS_KEYWORDS_COL     0
+#define SS_RESULTS_COL      1
 #define SS_SEARCH_ID_COL    2
 #define SS_FILE_TYPE_COL    3
-#define SS_DATA_COL         SS_TEXT_COL
+#define SS_COL_COUNT        3 //4 ???
+#define SS_DATA_COL         SS_KEYWORDS_COL
 
 #define ROLE_KEYWORDS       Qt::UserRole
 #define ROLE_SORT           Qt::UserRole + 1
-
-#define IMAGE_COPYLINK             ":/images/copyrslink.png"
 
 /* static members */
 /* These indices MUST be identical to their equivalent indices in the combobox */
@@ -89,20 +94,29 @@ SearchDialog::SearchDialog(QWidget *parent)
 
     m_bProcessSettings = false;
 
-	 _queueIsAlreadyTakenCareOf = false ;
+    _queueIsAlreadyTakenCareOf = false;
     ui.lineEdit->setFocus();
+
+    collCreateAct= new QAction(QIcon(IMAGE_COLLCREATE), tr("Create Collection..."), this);
+    connect(collCreateAct,SIGNAL(triggered()),this,SLOT(collCreate()));
+    collModifAct= new QAction(QIcon(IMAGE_COLLMODIF), tr("Modify Collection..."), this);
+    connect(collModifAct,SIGNAL(triggered()),this,SLOT(collModif()));
+    collViewAct= new QAction(QIcon(IMAGE_COLLVIEW), tr("View Collection..."), this);
+    connect(collViewAct,SIGNAL(triggered()),this,SLOT(collView()));
+    collOpenAct = new QAction(QIcon(IMAGE_COLLOPEN), tr( "Download from collection file..." ), this );
+    connect(collOpenAct, SIGNAL(triggered()), this, SLOT(collOpen()));
 
     /* initialise the filetypes mapping */
     if (!SearchDialog::initialised)
     {
-	initialiseFileTypeMappings();
+        initialiseFileTypeMappings() ;
     }
 
     connect(ui.toggleAdvancedSearchBtn, SIGNAL(clicked()), this, SLOT(showAdvSearchDialog()));
 
-    connect( ui.searchResultWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( searchtableWidgetCostumPopupMenu( QPoint ) ) );
+    connect( ui.searchResultWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( searchResultWidgetCustomPopupMenu( QPoint ) ) );
 
-    connect( ui.searchSummaryWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( searchtableWidget2CostumPopupMenu( QPoint ) ) );
+    connect( ui.searchSummaryWidget, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( searchSummaryWidgetCustomPopupMenu( QPoint ) ) );
 
     connect( ui.lineEdit, SIGNAL( returnPressed ( void ) ), this, SLOT( searchKeywords( void ) ) );
     connect( ui.lineEdit, SIGNAL( textChanged ( const QString& ) ), this, SLOT( checkText( const QString& ) ) );
@@ -121,12 +135,12 @@ SearchDialog::SearchDialog(QWidget *parent)
     connect(ui.filterLineEdit, SIGNAL(filterChanged(int)), this, SLOT(filterItems()));
 
     compareSummaryRole = new RSTreeWidgetItemCompareRole;
-    compareSummaryRole->setRole(SS_COUNT_COL, ROLE_SORT);
+    compareSummaryRole->setRole(SS_RESULTS_COL, ROLE_SORT);
 
     compareResultRole = new RSTreeWidgetItemCompareRole;
     compareResultRole->setRole(SR_SIZE_COL, ROLE_SORT);
     compareResultRole->setRole(SR_AGE_COL, ROLE_SORT);
-		compareResultRole->setRole(SR_ID_COL, ROLE_SORT);
+    compareResultRole->setRole(SR_SOURCES_COL, ROLE_SORT);
 
     /* hide the Tree +/- */
     ui.searchResultWidget -> setRootIsDecorated( true );
@@ -134,43 +148,43 @@ SearchDialog::SearchDialog(QWidget *parent)
     ui.searchSummaryWidget -> setRootIsDecorated( false );
 
 	 // We set some delegates to handle the display of size and date.
-	 // To allow a proper sorting, be careful to pad at right with spaces. This
-	 // is achieved by using QString("%1").arg(number,15,10).
-	 //
-	 ui.searchResultWidget->setItemDelegateForColumn(SR_SIZE_COL,new RSHumanReadableSizeDelegate()) ;
-	 ui.searchResultWidget->setItemDelegateForColumn(SR_AGE_COL,new RSHumanReadableAgeDelegate()) ;
+    //  To allow a proper sorting, be careful to pad at right with spaces. This
+    //  is achieved by using QString("%1").arg(number,15,10).
+    //
+    ui.searchResultWidget->setItemDelegateForColumn(SR_SIZE_COL, new RSHumanReadableSizeDelegate()) ;
+    ui.searchResultWidget->setItemDelegateForColumn(SR_AGE_COL, new RSHumanReadableAgeDelegate()) ;
 
     /* make it extended selection */
     ui.searchResultWidget -> setSelectionMode(QAbstractItemView::ExtendedSelection);
 
     /* Set header resize modes and initial section sizes */
-    ui.searchSummaryWidget->setColumnCount(3);
-    ui.searchSummaryWidget->setColumnHidden ( 2, true);
+    ui.searchSummaryWidget->setColumnCount(SS_COL_COUNT);
+    ui.searchSummaryWidget->setColumnHidden(SS_SEARCH_ID_COL, true);
 
     QHeaderView * _smheader = ui.searchSummaryWidget->header () ;
-    QHeaderView_setSectionResizeMode(_smheader, 0, QHeaderView::Interactive);
-    QHeaderView_setSectionResizeMode(_smheader, 1, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeMode(_smheader, SS_KEYWORDS_COL, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeMode(_smheader, SS_RESULTS_COL, QHeaderView::Interactive);
 
-    _smheader->resizeSection ( 0, 160 );
-    _smheader->resizeSection ( 1, 50 );
+    _smheader->resizeSection ( SS_KEYWORDS_COL, 160 );
+    _smheader->resizeSection ( SS_RESULTS_COL, 50 );
 
-    ui.searchResultWidget->setColumnCount(6);
+    ui.searchResultWidget->setColumnCount(SR_COL_COUNT);
     _smheader = ui.searchResultWidget->header () ;
-    QHeaderView_setSectionResizeMode(_smheader, 0, QHeaderView::Interactive);
-    QHeaderView_setSectionResizeMode(_smheader, 1, QHeaderView::Interactive);
-    QHeaderView_setSectionResizeMode(_smheader, 2, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeMode(_smheader, SR_NAME_COL, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeMode(_smheader, SR_SIZE_COL, QHeaderView::Interactive);
+    QHeaderView_setSectionResizeMode(_smheader, SR_SOURCES_COL, QHeaderView::Interactive);
 
-    _smheader->resizeSection ( 0, 240 );
-    _smheader->resizeSection ( 1, 75 );
-    _smheader->resizeSection ( 2, 75 );
-    _smheader->resizeSection ( 3, 75 );
-    _smheader->resizeSection ( 4, 90 );
-    _smheader->resizeSection ( 5, 240 );
+    _smheader->resizeSection ( SR_NAME_COL, 240 );
+    _smheader->resizeSection ( SR_SIZE_COL, 75 );
+    _smheader->resizeSection ( SR_SOURCES_COL, 75 );
+    _smheader->resizeSection ( SR_TYPE_COL, 75 );
+    _smheader->resizeSection ( SR_AGE_COL, 90 );
+    _smheader->resizeSection ( SR_HASH_COL, 240 );
 
     // set header text aligment
     QTreeWidgetItem * headerItem = ui.searchResultWidget->headerItem();
-    headerItem->setTextAlignment(1, Qt::AlignRight   | Qt::AlignRight);
-    headerItem->setTextAlignment(2, Qt::AlignRight | Qt::AlignRight);
+    headerItem->setTextAlignment(SR_NAME_COL, Qt::AlignRight   | Qt::AlignRight);
+    headerItem->setTextAlignment(SR_SIZE_COL, Qt::AlignRight | Qt::AlignRight);
 
     ui.searchResultWidget->sortItems(SR_NAME_COL, Qt::AscendingOrder);
 
@@ -181,7 +195,7 @@ SearchDialog::SearchDialog(QWidget *parent)
 
     /* add filter actions */
     ui.filterLineEdit->addFilter(QIcon(), tr("File Name"), SR_NAME_COL);
-//    ui.filterLineEdit->addFilter(QIcon(), tr("File Size"), SR_SIZE_COL);
+    //ui.filterLineEdit->addFilter(QIcon(), tr("File Size"), SR_SIZE_COL);
     ui.filterLineEdit->setCurrentFilter(SR_NAME_COL);
 
     // load settings
@@ -189,11 +203,11 @@ SearchDialog::SearchDialog(QWidget *parent)
   
   	ui._ownFiles_CB->setMinimumWidth(20);
   	ui._friendListsearch_SB->setMinimumWidth(20);
-  	ui._anonF2Fsearch_CB->setMinimumWidth(20);
-  	ui.label->setMinimumWidth(20);
+    ui._anonF2Fsearch_CB->setMinimumWidth(20);
+    ui.label->setMinimumWidth(20);
 
-    // workaround for Qt bug, should be solved in next Qt release 4.7.0
-    // http://bugreports.qt.nokia.com/browse/QTBUG-8270
+    // workaround for Qt bug, be solved in next Qt release 4.7.0
+    // https://bugreports.qt-project.org/browse/QTBUG-8270
     QShortcut *Shortcut = new QShortcut(QKeySequence (Qt::Key_Delete), ui.searchSummaryWidget, 0, 0, Qt::WidgetShortcut);
     connect(Shortcut, SIGNAL(activated()), this, SLOT(searchRemove()));
 
@@ -300,29 +314,49 @@ void SearchDialog::initialiseFileTypeMappings()
 	SearchDialog::initialised = true;
 }
 
-void SearchDialog::searchtableWidgetCostumPopupMenu( QPoint /*point*/ )
+void SearchDialog::searchResultWidgetCustomPopupMenu( QPoint /*point*/ )
 {
-    // block the popup if no results available
-    if ((ui.searchResultWidget->selectedItems()).size() == 0) return;
+	// Block the popup if no results available
+	if ((ui.searchResultWidget->selectedItems()).size() == 0) return ;
 
-    QMenu contextMnu(this);
+	bool add_CollActions = false ;
 
-    contextMnu.addAction(QIcon(IMAGE_START), tr("Download"), this, SLOT(download()));
-    contextMnu.addSeparator();
-    contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyResultLink()));
-    contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Send RetroShare Link"), this, SLOT(sendLinkTo()));
+	QMenu contextMnu(this) ;
 
-//    contextMnu.addAction(tr("Broadcast on Channel"), this, SLOT(broadcastonchannel()));
-//    contextMnu.addAction(tr("Recommend to Friends"), this, SLOT(recommendtofriends()));
+	contextMnu.addAction(QIcon(IMAGE_START), tr("Download"), this, SLOT(download())) ;
+	contextMnu.addSeparator();//--------------------------------------
 
-    if (ui.searchResultWidget->selectedItems().size() == 1){
-        QList<QTreeWidgetItem*> item =ui.searchResultWidget->selectedItems();
-        if (item.at(0)->data(SR_DATA_COL, SR_ROLE_LOCAL).toBool()){
-            contextMnu.addAction(QIcon(IMAGE_OPENFOLDER), tr("Open Folder"), this, SLOT(openFolderSearch()));
-        }
-    }
+	contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyResultLink())) ;
+	contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Send RetroShare Link"), this, SLOT(sendLinkTo())) ;
+	contextMnu.addSeparator();//--------------------------------------
 
-    contextMnu.exec(QCursor::pos());
+	QMenu collectionMenu(tr("Collection"), this);
+	collectionMenu.setIcon(QIcon(IMAGE_LIBRARY));
+	collectionMenu.addAction(collCreateAct);
+	collectionMenu.addAction(collModifAct);
+	collectionMenu.addAction(collViewAct);
+	collectionMenu.addAction(collOpenAct);
+
+	//contextMnu.addAction(tr("Broadcast on Channel"), this, SLOT(broadcastonchannel()));
+	//contextMnu.addAction(tr("Recommend to Friends"), this, SLOT(recommendtofriends()));
+
+	if (ui.searchResultWidget->selectedItems().size() == 1) {
+		QList<QTreeWidgetItem*> item =ui.searchResultWidget->selectedItems() ;
+		if (item.at(0)->data(SR_DATA_COL, SR_ROLE_LOCAL).toBool()) {
+			contextMnu.addAction(QIcon(IMAGE_OPENFOLDER), tr("Open Folder"), this, SLOT(openFolderSearch())) ;
+			if (item.at(0)->text(SR_NAME_COL).endsWith(RsCollectionFile::ExtensionString)) {
+				add_CollActions = true ;
+			}//if (item.at(0)->text(SR_NAME_COL).endsWith(RsCollectionFile::ExtensionString))
+		}//if (item.at(0)->data(SR_DATA_COL, SR_ROLE_LOCAL).toBool())
+	}//if (ui.searchResultWidget->selectedItems().size() == 1)
+
+	collCreateAct->setEnabled(true) ;
+	collModifAct->setEnabled(add_CollActions) ;
+	collViewAct->setEnabled(add_CollActions) ;
+	collOpenAct->setEnabled(true) ;
+	contextMnu.addMenu(&collectionMenu) ;
+
+	contextMnu.exec(QCursor::pos()) ;
 }
 
 void SearchDialog::getSourceFriendsForHash(const RsFileHash& hash,std::list<RsPeerId>& srcIds)
@@ -342,40 +376,178 @@ void SearchDialog::getSourceFriendsForHash(const RsFileHash& hash,std::list<RsPe
 
 void SearchDialog::download()
 {
-    /* should also be able to handle multi-selection */
-    QList<QTreeWidgetItem*> itemsForDownload = ui.searchResultWidget->selectedItems();
-    int numdls = itemsForDownload.size();
-    QTreeWidgetItem * item;
-    bool attemptDownloadLocal = false;
+	/* should also be able to handle multi-selection  */
+	QList<QTreeWidgetItem*> itemsForDownload = ui.searchResultWidget->selectedItems() ;
+	int numdls = itemsForDownload.size() ;
+	QTreeWidgetItem * item ;
+	bool attemptDownloadLocal = false ;
 
-    for (int i = 0; i < numdls; ++i) 
-	 {
-		 item = itemsForDownload.at(i);
-		 // call the download
-		 //
-		 if (item->text(SR_HASH_COL).isEmpty()) // we have a folder
-			 downloadDirectory(item, tr(""));
-		 else 
-		 {
-			 std::cerr << "SearchDialog::download() Calling File Request";
-			 std::cerr << std::endl;
-             std::list<RsPeerId> srcIds;
+	for (int i = 0; i < numdls; ++i) {
+		item = itemsForDownload.at(i) ;
+		 //  call the download
+		// *
+		if (item->text(SR_HASH_COL).isEmpty()) { // we have a folder
+			downloadDirectory(item, tr("")) ;
+		} else {
+			std::cerr << "SearchDialog::download() Calling File Request" << std::endl ;
+			std::list<RsPeerId> srcIds ;
 
-             RsFileHash hash ( item->text(SR_HASH_COL).toStdString());
-			 getSourceFriendsForHash(hash,srcIds) ;
+			RsFileHash hash( item->text(SR_HASH_COL).toStdString()) ;
+			getSourceFriendsForHash( hash, srcIds) ;
 
-			 if(!rsFiles -> FileRequest((item->text(SR_NAME_COL)).toUtf8().constData(), hash, (item->text(SR_SIZE_COL)).toULongLong(), "", RS_FILE_REQ_ANONYMOUS_ROUTING, srcIds))
-				 attemptDownloadLocal = true ;
-			 else
-			 {
-				 std::cout << "isuing file request from search dialog: -" << (item->text(SR_NAME_COL)).toStdString() << "-" << hash << "-" << (item->text(SR_SIZE_COL)).toULongLong() << "-ids=" ;
-                 for(std::list<RsPeerId>::const_iterator it(srcIds.begin());it!=srcIds.end();++it)
-					 std::cout << *it << "-" << std::endl ;
-			 }
-		 }
-	 }
-    if (attemptDownloadLocal)
-    	QMessageBox::information(this, tr("Download Notice"), tr("Skipping Local Files"));
+			if(!rsFiles -> FileRequest( (item->text(SR_NAME_COL)).toUtf8().constData()
+			                            , hash, (item->text(SR_SIZE_COL)).toULongLong()
+			                            , "", RS_FILE_REQ_ANONYMOUS_ROUTING, srcIds)) {
+				attemptDownloadLocal = true;
+			 } else {
+				std::cout << "isuing file request from search dialog: -"
+				          << (item->text(SR_NAME_COL)).toStdString()
+				          << "-" << hash << "-" << (item->text(SR_SIZE_COL)).toULongLong() << "-ids=" ;
+				for(std::list<RsPeerId>::const_iterator it(srcIds.begin()); it!=srcIds.end(); ++it) {
+					std::cout << *it << "-" << std::endl;
+				}//for(std::list<RsPeerId>::const_iterator
+			}//if(!rsFiles -> FileRequest(
+		}//if (item->text(SR_HASH_COL).isEmpty())
+	}//for (int i = 0
+	if (attemptDownloadLocal) {
+		QMessageBox::information(this, tr("Download Notice"), tr("Skipping Local Files")) ;
+	}//if (attemptDownloadLocal)
+}
+
+void SearchDialog::collCreate()
+{
+	std::vector <DirDetails> dirVec;
+
+	QList<QTreeWidgetItem*> selectedItems = ui.searchResultWidget->selectedItems() ;
+	int selectedCount = selectedItems.size() ;
+	QTreeWidgetItem * item ;
+
+	for (int i = 0; i < selectedCount; ++i) {
+		item = selectedItems.at(i) ;
+
+		if (!item->text(SR_HASH_COL).isEmpty()) {
+			std::string name = item->text(SR_NAME_COL).toUtf8().constData();
+			RsFileHash hash( item->text(SR_HASH_COL).toStdString() );
+			uint64_t count = item->text(SR_SIZE_COL).toULongLong();
+
+			DirDetails details;
+			details.name = name;
+			details.hash = hash;
+			details.count = count;
+			details.type = DIR_TYPE_FILE;
+
+			dirVec.push_back(details);
+		}//if (!item->text(SR_HASH_COL).isEmpty())
+	}//for (int i = 0; i < numdls; ++i)
+
+	RsCollectionFile(dirVec).openNewColl(this);
+}
+
+void SearchDialog::collModif()
+{
+	FileInfo info;
+
+	QList<QTreeWidgetItem*> selectedItems = ui.searchResultWidget->selectedItems() ;
+	if (selectedItems.size() != 1) return;
+	QTreeWidgetItem* item ;
+
+	item = selectedItems.at(0) ;
+	if (!item->data(SR_DATA_COL, SR_ROLE_LOCAL).toBool()) return;
+
+	RsFileHash hash( item->text(SR_HASH_COL).toStdString() );
+
+	if (!rsFiles->FileDetails(hash, RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_LOCAL
+	                                | RS_FILE_HINTS_BROWSABLE | RS_FILE_HINTS_NETWORK_WIDE
+	                                | RS_FILE_HINTS_SPEC_ONLY, info)) return;
+
+	/* make path for downloaded files */
+	std::string path;
+	path = info.path;
+
+	/* open file with a suitable application */
+	QFileInfo qinfo;
+	qinfo.setFile(QString::fromUtf8(path.c_str()));
+	if (qinfo.exists()) {
+		if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString)) {
+			RsCollectionFile collection;
+			collection.openColl(qinfo.absoluteFilePath());
+		}//if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString))
+	}//if (qinfo.exists())
+}
+
+void SearchDialog::collView()
+{
+	FileInfo info;
+
+	QList<QTreeWidgetItem*> selectedItems = ui.searchResultWidget->selectedItems() ;
+	if (selectedItems.size() != 1) return;
+	QTreeWidgetItem* item ;
+
+	item = selectedItems.at(0) ;
+	if (!item->data(SR_DATA_COL, SR_ROLE_LOCAL).toBool()) return;
+
+	RsFileHash hash( item->text(SR_HASH_COL).toStdString() );
+
+	if (!rsFiles->FileDetails(hash, RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_LOCAL
+	                                | RS_FILE_HINTS_BROWSABLE | RS_FILE_HINTS_NETWORK_WIDE
+	                                | RS_FILE_HINTS_SPEC_ONLY, info)) return;
+
+	/* make path for downloaded files */
+	std::string path;
+	path = info.path;
+
+	/* open file with a suitable application */
+	QFileInfo qinfo;
+	qinfo.setFile(QString::fromUtf8(path.c_str()));
+	if (qinfo.exists()) {
+		if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString)) {
+			RsCollectionFile collection;
+			collection.openColl(qinfo.absoluteFilePath(), true);
+		}//if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString))
+	}//if (qinfo.exists())
+}
+
+void SearchDialog::collOpen()
+{
+	FileInfo info;
+
+	QList<QTreeWidgetItem*> selectedItems = ui.searchResultWidget->selectedItems() ;
+	if (selectedItems.size() == 1) {
+		QTreeWidgetItem* item ;
+
+		item = selectedItems.at(0) ;
+		if (item->data(SR_DATA_COL, SR_ROLE_LOCAL).toBool()) {
+
+			RsFileHash hash( item->text(SR_HASH_COL).toStdString() );
+
+			if (rsFiles->FileDetails(hash, RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_LOCAL
+			                               | RS_FILE_HINTS_BROWSABLE | RS_FILE_HINTS_NETWORK_WIDE
+                                     | RS_FILE_HINTS_SPEC_ONLY, info)) {
+
+				/* make path for downloaded files */
+				std::string path;
+				path = info.path;
+
+				/* open file with a suitable application */
+				QFileInfo qinfo;
+				qinfo.setFile(QString::fromUtf8(path.c_str()));
+				if (qinfo.exists()) {
+					if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString)) {
+						RsCollectionFile collection;
+						if (collection.load(qinfo.absoluteFilePath(), this)) {
+							collection.downloadFiles();
+							return;
+						}//if (collection.load(this))
+					}//if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString))
+				}//if (qinfo.exists())
+			}//if (!rsFiles->FileDetails(
+		}//if (!item->data(SR_DATA_COL, SR_ROLE_LOCAL).toBool())
+	}//if (selectedItems.size() != 1)
+
+	RsCollectionFile collection;
+	if (collection.load(this)) {
+		collection.downloadFiles();
+	}//if (collection.load(this))
 }
 
 void SearchDialog::downloadDirectory(const QTreeWidgetItem *item, const QString &base)
@@ -445,7 +617,7 @@ void SearchDialog::recommendtofriends()
 
 
 /** context menu searchTablewidget2 **/
-void SearchDialog::searchtableWidget2CostumPopupMenu( QPoint /*point*/ )
+void SearchDialog::searchSummaryWidgetCustomPopupMenu( QPoint /*point*/ )
 {
     // block the popup if no results available
     if ((ui.searchSummaryWidget->selectedItems()).size() == 0) return;
@@ -527,7 +699,7 @@ void SearchDialog::copySearchLink()
         return;
 
     /* get the keywords */
-    QString keywords = ci->text(SS_TEXT_COL);
+    QString keywords = ci->text(SS_KEYWORDS_COL);
 
     std::cerr << "SearchDialog::copySearchLink(): keywords: " << keywords.toStdString();
     std::cerr << std::endl;
@@ -585,12 +757,12 @@ void SearchDialog::initSearchResult(const QString& txt, qulonglong searchId, int
 
 	QTreeWidgetItem *item2 = new RSTreeWidgetItem(compareSummaryRole);
 	if (fileType == FILETYPE_IDX_ANY) {
-		item2->setText(SS_TEXT_COL, txt);
+		item2->setText(SS_KEYWORDS_COL, txt);
 	} else {
-		item2->setText(SS_TEXT_COL, txt + " (" + ui.FileTypeComboBox->itemText(fileType) + ")");
+		item2->setText(SS_KEYWORDS_COL, txt + " (" + ui.FileTypeComboBox->itemText(fileType) + ")");
 	}
-	item2->setText(SS_COUNT_COL, QString::number(0));
-	item2->setData(SS_COUNT_COL, ROLE_SORT, 0);
+	item2->setText(SS_RESULTS_COL, QString::number(0));
+	item2->setData(SS_RESULTS_COL, ROLE_SORT, 0);
 	item2->setText(SS_SEARCH_ID_COL, sid_hexa);
 	item2->setText(SS_FILE_TYPE_COL, QString::number(fileType));
 
@@ -798,10 +970,10 @@ void SearchDialog::insertDirectory(const QString &txt, qulonglong searchId, cons
 		child->setText(SR_AGE_COL, QString::number(dir.age));
 		child->setData(SR_AGE_COL, ROLE_SORT, dir.age);
 		child->setTextAlignment( SR_SIZE_COL, Qt::AlignRight );
-		
-		child->setText(SR_ID_COL, QString::number(1));
-		child->setData(SR_ID_COL, ROLE_SORT, 1);
-		child->setTextAlignment( SR_ID_COL, Qt::AlignRight );
+
+		child->setText(SR_SOURCES_COL, QString::number(1));
+		child->setData(SR_SOURCES_COL, ROLE_SORT, 1);
+		child->setTextAlignment( SR_SOURCES_COL, Qt::AlignRight );
 
 		child->setText(SR_SEARCH_ID_COL, sid_hexa);
 		setIconAndType(child, QString::fromUtf8(dir.name.c_str()));
@@ -824,9 +996,9 @@ void SearchDialog::insertDirectory(const QString &txt, qulonglong searchId, cons
 		child->setText(SR_AGE_COL, QString::number(dir.age));
 		child->setData(SR_AGE_COL, ROLE_SORT, dir.age);
 		child->setTextAlignment( SR_SIZE_COL, Qt::AlignRight );
-		child->setText(SR_ID_COL, QString::number(1));
-		child->setData(SR_ID_COL, ROLE_SORT, 1);
-		child->setTextAlignment( SR_ID_COL, Qt::AlignRight );
+		child->setText(SR_SOURCES_COL, QString::number(1));
+		child->setData(SR_SOURCES_COL, ROLE_SORT, 1);
+		child->setTextAlignment( SR_SOURCES_COL, Qt::AlignRight );
 		child->setText(SR_SEARCH_ID_COL, sid_hexa);
 		child->setText(SR_TYPE_COL, tr("Folder"));
 
@@ -843,19 +1015,19 @@ void SearchDialog::insertDirectory(const QString &txt, qulonglong searchId, cons
 				if(ui.searchSummaryWidget->topLevelItem(i)->text(SS_SEARCH_ID_COL) == sid_hexa)
 				{
 					// increment result since every item is new
-					int s = ui.searchSummaryWidget->topLevelItem(i)->text(SS_COUNT_COL).toInt() ;
-					ui.searchSummaryWidget->topLevelItem(i)->setText(SS_COUNT_COL,QString::number(s+1));
-					ui.searchSummaryWidget->topLevelItem(i)->setData(SS_COUNT_COL, ROLE_SORT, s+1);
+					int s = ui.searchSummaryWidget->topLevelItem(i)->text(SS_RESULTS_COL).toInt() ;
+					ui.searchSummaryWidget->topLevelItem(i)->setText(SS_RESULTS_COL, QString::number(s+1));
+					ui.searchSummaryWidget->topLevelItem(i)->setData(SS_RESULTS_COL, ROLE_SORT, s+1);
 					found = true ;
 				}
 			}
 			if(!found)
 			{
 				QTreeWidgetItem *item2 = new RSTreeWidgetItem(compareSummaryRole);
-				item2->setText(SS_TEXT_COL, txt);
-				item2->setText(SS_COUNT_COL, QString::number(1));
-				item2->setData(SS_COUNT_COL, ROLE_SORT, 1);
-				item2->setTextAlignment( SS_COUNT_COL, Qt::AlignRight );
+				item2->setText(SS_KEYWORDS_COL, txt);
+				item2->setText(SS_RESULTS_COL, QString::number(1));
+				item2->setData(SS_RESULTS_COL, ROLE_SORT, 1);
+				item2->setTextAlignment( SS_RESULTS_COL, Qt::AlignRight );
 				item2->setText(SS_SEARCH_ID_COL, sid_hexa);
 
 				ui.searchSummaryWidget->addTopLevelItem(item2);
@@ -892,9 +1064,9 @@ void SearchDialog::insertDirectory(const QString &txt, qulonglong searchId, cons
     child->setText(SR_AGE_COL, QString::number(dir.min_age));
     child->setData(SR_AGE_COL, ROLE_SORT, dir.min_age);
     child->setTextAlignment( SR_SIZE_COL, Qt::AlignRight );
-    child->setText(SR_ID_COL, QString::number(1));
-		child->setData(SR_ID_COL, ROLE_SORT, 1);
-    child->setTextAlignment( SR_ID_COL, Qt::AlignRight );
+    child->setText(SR_SOURCES_COL, QString::number(1));
+    child->setData(SR_SOURCES_COL, ROLE_SORT, 1);
+    child->setTextAlignment( SR_SOURCES_COL, Qt::AlignRight );
     child->setText(SR_SEARCH_ID_COL, sid_hexa);
     child->setText(SR_TYPE_COL, tr("Folder"));
 
@@ -910,19 +1082,19 @@ void SearchDialog::insertDirectory(const QString &txt, qulonglong searchId, cons
             if(ui.searchSummaryWidget->topLevelItem(i)->text(SS_SEARCH_ID_COL) == sid_hexa)
             {
                     // increment result since every item is new
-                    int s = ui.searchSummaryWidget->topLevelItem(i)->text(SS_COUNT_COL).toInt() ;
-                    ui.searchSummaryWidget->topLevelItem(i)->setText(SS_COUNT_COL,QString::number(s+1));
-                    ui.searchSummaryWidget->topLevelItem(i)->setData(SS_COUNT_COL, ROLE_SORT, s+1);
+                    int s = ui.searchSummaryWidget->topLevelItem(i)->text(SS_RESULTS_COL).toInt() ;
+                    ui.searchSummaryWidget->topLevelItem(i)->setText(SS_RESULTS_COL, QString::number(s+1));
+                    ui.searchSummaryWidget->topLevelItem(i)->setData(SS_RESULTS_COL, ROLE_SORT, s+1);
                     found = true ;
             }
     }
     if(!found)
     {
             RSTreeWidgetItem *item2 = new RSTreeWidgetItem(compareSummaryRole);
-            item2->setText(SS_TEXT_COL, txt);
-            item2->setText(SS_COUNT_COL, QString::number(1));
-            item2->setData(SS_COUNT_COL, ROLE_SORT, 1);
-            item2->setTextAlignment( SS_COUNT_COL, Qt::AlignRight );
+            item2->setText(SS_KEYWORDS_COL, txt);
+            item2->setText(SS_RESULTS_COL, QString::number(1));
+            item2->setData(SS_RESULTS_COL, ROLE_SORT, 1);
+            item2->setTextAlignment( SS_RESULTS_COL, Qt::AlignRight );
             item2->setText(SS_SEARCH_ID_COL, sid_hexa);
 
             ui.searchSummaryWidget->addTopLevelItem(item2);
@@ -995,8 +1167,8 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 	for(QList<QTreeWidgetItem*>::const_iterator it(itms.begin());it!=itms.end();++it)
 		if((*it)->text(SR_SEARCH_ID_COL) == sid_hexa)
 		{
-			QString resultCount = (*it)->text(SR_ID_COL);
-			QStringList modifiedResultCount = resultCount.split("/", QString::SkipEmptyParts); 
+			QString resultCount = (*it)->text(SR_SOURCES_COL);
+			QStringList modifiedResultCount = resultCount.split("/", QString::SkipEmptyParts);
 			if(searchType == FRIEND_SEARCH)
 			{
 				friendSource = modifiedResultCount.at(0).toInt() + 1;
@@ -1009,8 +1181,8 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 			}
 			modifiedResult = QString::number(friendSource) + "/" + QString::number(anonymousSource);
 			float fltRes = friendSource + (float)anonymousSource/1000;
-			(*it)->setText(SR_ID_COL,modifiedResult);
-			(*it)->setData(SR_ID_COL, ROLE_SORT, fltRes);
+			(*it)->setText(SR_SOURCES_COL,modifiedResult);
+			(*it)->setData(SR_SOURCES_COL, ROLE_SORT, fltRes);
 			QTreeWidgetItem *item = (*it);
 			found = true ;
 
@@ -1084,9 +1256,9 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 
 		modifiedResult =QString::number(friendSource) + "/" + QString::number(anonymousSource);
 		float fltRes = friendSource + (float)anonymousSource/1000;
-		item->setText(SR_ID_COL,modifiedResult);
-		item->setData(SR_ID_COL, ROLE_SORT, fltRes);
-		item->setTextAlignment( SR_ID_COL, Qt::AlignRight );
+		item->setText(SR_SOURCES_COL,modifiedResult);
+		item->setData(SR_SOURCES_COL, ROLE_SORT, fltRes);
+		item->setTextAlignment( SR_SOURCES_COL, Qt::AlignRight );
 		item->setText(SR_SEARCH_ID_COL, sid_hexa);
 
 		QColor foreground;
@@ -1100,7 +1272,7 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 		} else {
 			item->setData(SR_DATA_COL, SR_ROLE_LOCAL, false);
 
-			sources = item->text(SR_ID_COL).toInt();
+			sources = item->text(SR_SOURCES_COL).toInt();
 			if (sources == 1)
 			{
 				foreground = ui.searchResultWidget->palette().color(QPalette::Text);
@@ -1125,9 +1297,9 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 	/* update the summary as well */
 	if(!found)		// only increment result when it's a new item.
 	{
-		int s = ui.searchSummaryWidget->topLevelItem(summaryItemIndex)->text(SS_COUNT_COL).toInt() ;
-		ui.searchSummaryWidget->topLevelItem(summaryItemIndex)->setText(SS_COUNT_COL,QString::number(s+1));
-		ui.searchSummaryWidget->topLevelItem(summaryItemIndex)->setData(SS_COUNT_COL, ROLE_SORT, s+1);
+		int s = ui.searchSummaryWidget->topLevelItem(summaryItemIndex)->text(SS_RESULTS_COL).toInt() ;
+		ui.searchSummaryWidget->topLevelItem(summaryItemIndex)->setText(SS_RESULTS_COL, QString::number(s+1));
+		ui.searchSummaryWidget->topLevelItem(summaryItemIndex)->setData(SS_RESULTS_COL, ROLE_SORT, s+1);
 	}
 }
 

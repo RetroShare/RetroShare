@@ -100,6 +100,7 @@
 #include "gui/Posted/PostedDialog.h"
 
 #include "gui/connect/ConnectFriendWizard.h"
+#include "gui/common/RsCollectionFile.h"
 #include "util/rsguiversion.h"
 #include "settings/rsettingswin.h"
 #include "settings/rsharesettings.h"
@@ -149,6 +150,7 @@
 #define IMAGE_GAMES             ":/images/kgames.png"
 #define IMAGE_PHOTO             ":/images/lphoto.png"
 #define IMAGE_ADDFRIEND         ":/images/user/add_user24.png"
+#define IMAGE_NEWRSCOLLECTION   ":/images/library.png"
 #define IMAGE_ADDSHARE          ":/images/directoryadd_24x24_shadow.png"
 #define IMAGE_OPTIONS           ":/images/settings.png"
 #define IMAGE_QUIT              ":/images/exit_24x24.png"
@@ -480,6 +482,7 @@ void MainWindow::initStackedPage()
 
   /** Add icon on Action bar */
   addAction(new QAction(QIcon(IMAGE_ADDFRIEND), tr("Add"), ui->toolBarAction), &MainWindow::addFriend, SLOT(addFriend()));
+  addAction(new QAction(QIcon(IMAGE_NEWRSCOLLECTION), tr("New"), ui->toolBarAction), &MainWindow::newRsCollection, SLOT(newRsCollection()));
   addAction(new QAction(QIcon(IMAGE_PREFERENCES), tr("Options"), ui->toolBarAction), &MainWindow::showSettings, SLOT(showSettings()));
   addAction(new QAction(QIcon(IMAGE_ABOUT), tr("About"), ui->toolBarAction), &MainWindow::showabout, SLOT(showabout()));
   addAction(new QAction(QIcon(IMAGE_QUIT), tr("Quit"), ui->toolBarAction), &MainWindow::doQuit, SLOT(doQuit()));
@@ -1048,6 +1051,14 @@ void MainWindow::addFriend()
     ConnectFriendWizard connwiz (this);
 
     connwiz.exec ();
+}
+
+/** New RSCollection ShortCut */
+void MainWindow::newRsCollection()
+{
+    std::vector <DirDetails> dirVec;
+
+    RsCollectionFile(dirVec).openNewColl(this);
 }
 
 /** Shows Share Manager */

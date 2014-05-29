@@ -192,6 +192,7 @@ private slots:
 
     /** Toolbar fns. */
     void addFriend();
+    void newRsCollection();
     void showMessengerWindow();
     void showDhtWindow();
     void showBwCtrlWindow();

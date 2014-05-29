@@ -915,16 +915,16 @@ const DirDetailsVector *RetroshareDirModel::requestDirDetails(void *ref, bool re
 
 void RetroshareDirModel::createCollectionFile(QWidget *parent, const QModelIndexList &list)
 {
-	if(RemoteMode)
+/*	if(RemoteMode)
 	{
 		std::cerr << "Cannot create a collection file from remote" << std::endl;
 		return ;
-	}
+	}*/
 
 	std::vector <DirDetails> dirVec;
 	getDirDetailsFromSelect(list, dirVec);
 
-	RsCollectionFile(dirVec).save(parent);
+	RsCollectionFile(dirVec).openNewColl(parent);
 }
 
 void RetroshareDirModel::downloadSelected(const QModelIndexList &list)
@@ -980,7 +980,7 @@ void RetroshareDirModel::downloadDirectory(const DirDetails & dirDetails, int pr
 {
 	if (dirDetails.type & DIR_TYPE_FILE)
 	{
-        std::list<RsPeerId> srcIds;
+		std::list<RsPeerId> srcIds ;
 		QString cleanPath = QDir::cleanPath(QString::fromUtf8(rsFiles->getDownloadDirectory().c_str()) + "/" + QString::fromUtf8(dirDetails.path.substr(prefixLen).c_str()));
 
 		srcIds.push_back(dirDetails.id);

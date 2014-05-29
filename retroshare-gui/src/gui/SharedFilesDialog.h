@@ -67,6 +67,11 @@ private slots:
   void addLinkToCloud();
 #endif
 
+  void collCreate();
+  void collModif();
+  void collView();
+  void collOpen();
+
 //==  void showFrame(bool show);
 //==  void showFrameRemote(bool show);
 //==  void showFrameSplitted(bool show);
@@ -80,7 +85,7 @@ private slots:
   void startFilter();
 
   public slots:
-	  void changeCurrentViewModel(int) ;
+  void changeCurrentViewModel(int viewTypeIndex);
 signals:
   void playFiles(QStringList files);
 
@@ -115,6 +120,11 @@ protected:
   QAction* sendchatlinkAct;
   QAction* copylinkhtmlAct;
 
+  QAction *collCreateAct;
+  QAction *collModifAct;
+  QAction *collViewAct;
+  QAction *collOpenAct;
+
   /* RetroshareDirModel */
   RetroshareDirModel *tree_model;
   RetroshareDirModel *flat_model;
@@ -147,7 +157,6 @@ class LocalSharedFilesDialog : public SharedFilesDialog
 
 	private slots:
 		void addShares();
-		void createCollectionFile();
 		void checkUpdate() ;
 		void editSharePermissions();
 		void playselectedfiles();
@@ -161,10 +170,10 @@ class LocalSharedFilesDialog : public SharedFilesDialog
 
 	private:
 		QAction* openfileAct;
-		QAction* createcollectionfileAct;
 		QAction* openfolderAct;
 		QAction* editshareAct;
 };
+
 class RemoteSharedFilesDialog : public SharedFilesDialog
 {
 	Q_OBJECT

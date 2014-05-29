@@ -70,9 +70,8 @@
 /* Images for context menu icons */
 #define IMAGE_INFO                 ":/images/fileinfo.png"
 #define IMAGE_CANCEL               ":/images/delete.png"
-#define IMAGE_LIBRARY               ":/images/library.png"
 #define IMAGE_CLEARCOMPLETED       ":/images/deleteall.png"
-#define IMAGE_PLAY		             ":/images/player_play.png"
+#define IMAGE_PLAY                 ":/images/player_play.png"
 #define IMAGE_COPYLINK             ":/images/copyrslink.png"
 #define IMAGE_PASTELINK            ":/images/pasterslink.png"
 #define IMAGE_PAUSE					       ":/images/pause.png"
@@ -86,12 +85,17 @@
 #define IMAGE_PRIORITYNORMAL			 ":/images/prioritynormal.png"
 #define IMAGE_PRIORITYHIGH			   ":/images/priorityhigh.png"
 #define IMAGE_PRIORITYAUTO			   ":/images/priorityauto.png"
-#define IMAGE_SEARCH    		        ":/images/filefind.png"
-#define IMAGE_EXPAND                ":/images/edit_add24.png"
-#define IMAGE_COLLAPSE              ":/images/edit_remove24.png"
-#define IMAGE_FRIENDSFILES          ":/images/fileshare16.png"
-#define IMAGE_MYFILES               ":images/my_documents_16.png"
-#define IMAGE_RENAMEFILE            ":images/filecomments.png"
+#define IMAGE_SEARCH               ":/images/filefind.png"
+#define IMAGE_EXPAND               ":/images/edit_add24.png"
+#define IMAGE_COLLAPSE             ":/images/edit_remove24.png"
+#define IMAGE_LIBRARY              ":/images/library.png"
+#define IMAGE_COLLCREATE           ":/images/library_add.png"
+#define IMAGE_COLLMODIF            ":/images/library_edit.png"
+#define IMAGE_COLLVIEW             ":/images/library_view.png"
+#define IMAGE_COLLOPEN             ":/images/library.png"
+#define IMAGE_FRIENDSFILES         ":/images/fileshare16.png"
+#define IMAGE_MYFILES              ":images/my_documents_16.png"
+#define IMAGE_RENAMEFILE           ":images/filecomments.png"
 #define IMAGE_STREAMING             ":images/streaming.png"
 
 Q_DECLARE_METATYPE(FileProgressInfo) 
@@ -367,9 +371,6 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 	toggleShowCacheTransfersAct->setCheckable(true) ;
 	connect(toggleShowCacheTransfersAct,SIGNAL(triggered()),this,SLOT(toggleShowCacheTransfers())) ;
 
-	openCollectionAct = new QAction(QIcon(IMAGE_LIBRARY), tr( "Download from collection file..." ), this );
-	connect(openCollectionAct, SIGNAL(triggered()), this, SLOT(openCollection()));
-
 	// Actions. Only need to be defined once.
    pauseAct = new QAction(QIcon(IMAGE_PAUSE), tr("Pause"), this);
    connect(pauseAct, SIGNAL(triggered()), this, SLOT(pauseFileTransfer()));
@@ -431,14 +432,22 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 	connect(chunkProgressiveAct, SIGNAL(triggered()), this, SLOT(chunkProgressive()));
 	playAct = new QAction(QIcon(IMAGE_PLAY), tr( "Play" ), this );
 	connect( playAct , SIGNAL( triggered() ), this, SLOT( openTransfer() ) );
-	renameFileAct = new QAction(QIcon(IMAGE_RENAMEFILE), tr("Rename file..."), this);
-	connect(renameFileAct, SIGNAL(triggered()), this, SLOT(renameFile()));
-	specifyDestinationDirectoryAct = new QAction(QIcon(IMAGE_SEARCH),tr("Specify..."),this) ;
-	connect(specifyDestinationDirectoryAct,SIGNAL(triggered()),this,SLOT(chooseDestinationDirectory())) ;
-	expandAllAct= new QAction(QIcon(IMAGE_EXPAND),tr("Expand all"),this);
-	connect(expandAllAct,SIGNAL(triggered()),this,SLOT(expandAll())) ;
-	collapseAllAct= new QAction(QIcon(IMAGE_COLLAPSE),tr("Collapse all"),this);
-	connect(collapseAllAct,SIGNAL(triggered()),this,SLOT(collapseAll())) ;
+		renameFileAct = new QAction(QIcon(IMAGE_RENAMEFILE), tr("Rename file..."), this);
+		connect(renameFileAct, SIGNAL(triggered()), this, SLOT(renameFile()));
+		specifyDestinationDirectoryAct = new QAction(QIcon(IMAGE_SEARCH),tr("Specify..."),this) ;
+		connect(specifyDestinationDirectoryAct,SIGNAL(triggered()),this,SLOT(chooseDestinationDirectory()));
+		expandAllAct= new QAction(QIcon(IMAGE_EXPAND),tr("Expand all"),this);
+		connect(expandAllAct,SIGNAL(triggered()),this,SLOT(expandAll()));
+		collapseAllAct= new QAction(QIcon(IMAGE_COLLAPSE),tr("Collapse all"),this);
+		connect(collapseAllAct,SIGNAL(triggered()),this,SLOT(collapseAll()));
+		collCreateAct= new QAction(QIcon(IMAGE_COLLCREATE), tr("Create Collection..."), this);
+		connect(collCreateAct,SIGNAL(triggered()),this,SLOT(collCreate()));
+		collModifAct= new QAction(QIcon(IMAGE_COLLMODIF), tr("Modify Collection..."), this);
+		connect(collModifAct,SIGNAL(triggered()),this,SLOT(collModif()));
+		collViewAct= new QAction(QIcon(IMAGE_COLLVIEW), tr("View Collection..."), this);
+		connect(collViewAct,SIGNAL(triggered()),this,SLOT(collView()));
+		collOpenAct = new QAction(QIcon(IMAGE_COLLOPEN), tr( "Download from collection file..." ), this );
+		connect(collOpenAct, SIGNAL(triggered()), this, SLOT(collOpen()));
 
     /** Setup the actions for the header context menu */
     showDLSizeAct= new QAction(tr("Size"),this);
@@ -618,23 +627,24 @@ void TransfersDialog::processSettings(bool bLoad)
 
 void TransfersDialog::downloadListCustomPopupMenu( QPoint /*point*/ )
 {
-    std::set<RsFileHash> items;
-	getSelectedItems(&items, NULL);
+	std::set<RsFileHash> items ;
+	getSelectedItems(&items, NULL) ;
 
 	bool single = (items.size() == 1) ;
 
-    bool atLeastOne_Waiting = false;
-    bool atLeastOne_Downloading = false;
-    bool atLeastOne_Complete = false;
-    bool atLeastOne_Queued = false;
-    bool atLeastOne_Paused = false;
+	bool atLeastOne_Waiting = false ;
+	bool atLeastOne_Downloading = false ;
+	bool atLeastOne_Complete = false ;
+	bool atLeastOne_Queued = false ;
+	bool atLeastOne_Paused = false ;
 
-    bool add_PlayOption = false;
-    bool add_PreviewOption=false;
-    bool add_OpenFileOption = false;
-    bool add_CopyLink = false;
-    bool add_PasteLink = false;
-	
+	bool add_PlayOption = false ;
+	bool add_PreviewOption=false ;
+	bool add_OpenFileOption = false ;
+	bool add_CopyLink = false ;
+	bool add_PasteLink = false ;
+	bool add_CollActions = false ;
+
 	FileInfo info;
 
 	QMenu priorityQueueMenu(tr("Move in Queue..."), this);
@@ -656,157 +666,168 @@ void TransfersDialog::downloadListCustomPopupMenu( QPoint /*point*/ )
 	chunkMenu.addAction(chunkProgressiveAct);
 	chunkMenu.addAction(chunkRandomAct);
 
+	QMenu collectionMenu(tr("Collection"), this);
+	collectionMenu.setIcon(QIcon(IMAGE_LIBRARY));
+	collectionMenu.addAction(collCreateAct);
+	collectionMenu.addAction(collModifAct);
+	collectionMenu.addAction(collViewAct);
+	collectionMenu.addAction(collOpenAct);
+
 	QMenu contextMnu( this );
 
-    if(!RSLinkClipboard::empty(RetroShareLink::TYPE_FILE))
-        add_PasteLink=true;
+	if(!RSLinkClipboard::empty(RetroShareLink::TYPE_FILE)) add_PasteLink=true;
 
 	if(!items.empty())
 	{
-        add_CopyLink = true;
+		add_CopyLink = true ;
 
 		QModelIndexList lst = ui.downloadList->selectionModel ()->selectedIndexes ();
 
-        //Look for all selected items
-		for (int i = 0; i < lst.count (); i++)
-		{
-            //Look only for first column == File List
-			if ( lst[i].column() == 0)
-			{
-                //Get Info for current item
-                if (rsFiles->FileDetails(RsFileHash(getID(lst[i].row(), DLListModel).toStdString()), RS_FILE_HINTS_DOWNLOAD, info))
-                {
-                    /*const uint32_t FT_STATE_FAILED        = 0x0000 ;
-                      const uint32_t FT_STATE_OKAY          = 0x0001 ;
-                      const uint32_t FT_STATE_WAITING       = 0x0002 ;
-                      const uint32_t FT_STATE_DOWNLOADING   = 0x0003 ;
-                      const uint32_t FT_STATE_COMPLETE      = 0x0004 ;
-                      const uint32_t FT_STATE_QUEUED        = 0x0005 ;
-                      const uint32_t FT_STATE_PAUSED        = 0x0006 ;
-                      const uint32_t FT_STATE_CHECKING_HASH = 0x0007 ;
-                    */
-                    if (info.downloadStatus == FT_STATE_WAITING)
-                    {
-                        atLeastOne_Waiting = true;
-                    }
-                    if (info.downloadStatus == FT_STATE_DOWNLOADING)
-                    {
-                        atLeastOne_Downloading=true;
-                    }
-                    if (info.downloadStatus == FT_STATE_COMPLETE)
-                    {
-                        atLeastOne_Complete = true;
-                        add_OpenFileOption = single;
-                    }
-				if(info.downloadStatus == FT_STATE_QUEUED)
-                    {
-                        atLeastOne_Queued = true;
-						  }
-                    if (info.downloadStatus == FT_STATE_PAUSED)
-                    {
-                        atLeastOne_Paused = true;
-						  }
+		//Look for all selected items
+		for (int i = 0; i < lst.count(); i++) {
+			//Look only for first column == File  List
+			if ( lst[i].column() == 0) {
+				//Get Info for current  item
+				if (rsFiles->FileDetails(RsFileHash(getID(lst[i].row(), DLListModel).toStdString())
+				                         , RS_FILE_HINTS_DOWNLOAD, info)) {
+					/*const uint32_t FT_STATE_FAILED        = 0x0000;
+					 *const uint32_t FT_STATE_OKAY          = 0x0001;
+					 *const uint32_t FT_STATE_WAITING       = 0x0002;
+					 *const uint32_t FT_STATE_DOWNLOADING   = 0x0003;
+					 *const uint32_t FT_STATE_COMPLETE      = 0x0004;
+					 *const uint32_t FT_STATE_QUEUED        = 0x0005;
+					 *const uint32_t FT_STATE_PAUSED        = 0x0006;
+					 *const uint32_t FT_STATE_CHECKING_HASH = 0x0007;
+					 */
+					if (info.downloadStatus == FT_STATE_WAITING) {
+						atLeastOne_Waiting = true ;
+					}//if (info.downloadStatus == FT_STATE_WAITING)
+					if (info.downloadStatus == FT_STATE_DOWNLOADING) {
+						atLeastOne_Downloading=true ;
+					}//if (info.downloadStatus == FT_STATE_DOWNLOADING)
+					if (info.downloadStatus == FT_STATE_COMPLETE) {
+						atLeastOne_Complete = true ;
+						add_OpenFileOption = single ;
+					}//if (info.downloadStatus == FT_STATE_COMPLETE)
+					if (info.downloadStatus == FT_STATE_QUEUED) {
+						atLeastOne_Queued = true ;
+					}//if(info.downloadStatus == FT_STATE_QUEUED)
+					if (info.downloadStatus == FT_STATE_PAUSED) {
+						atLeastOne_Paused = true ;
+					}//if (info.downloadStatus == FT_STATE_PAUSED)
 
-                    size_t pos = info.fname.find_last_of('.');
-                    /* check if the file is a media file */
-                    if(pos !=  std::string::npos)
-                    {
-                        if (misc::isPreviewable(info.fname.substr(pos + 1).c_str()))
-                        {
-                            add_PreviewOption = (info.downloadStatus != FT_STATE_COMPLETE);
-                            add_PlayOption = !add_PreviewOption;
-								}
-						  }
+					size_t pos = info.fname.find_last_of('.') ;
+					if (pos !=  std::string::npos) {
+						// Check if the file is a media file
+						if (misc::isPreviewable(info.fname.substr(pos + 1).c_str())) {
+							add_PreviewOption = (info.downloadStatus != FT_STATE_COMPLETE) ;
+							add_PlayOption = !add_PreviewOption ;
+						}// if (misc::isPreviewable(info.fname.substr(pos + 1).c_str()))
+						// Check if the file is a collection
+						if (RsCollectionFile::ExtensionString == info.fname.substr(pos + 1).c_str()) {
+							add_CollActions = (info.downloadStatus == FT_STATE_COMPLETE);
+						}//if (RsCollectionFile::ExtensionString == info
+					}// if(pos !=  std::string::npos)
 
-                }//if (rsFiles->FileDetails(lst[i].data(COLUMN_ID), RS_FILE_HINTS_DOWNLOAD, info))
-            }//if (lst[i].column() == 0)
-        }// for (int i = 0; i < lst.count (); i++)
-    }//if(!items.empty())
+				}// if (rsFiles->FileDetails(lst[i].data(COLUMN_ID), RS_FILE_HINTS_DOWNLOAD, info))
+			}// if (lst[i].column() == 0)
+		}// for (int i = 0; i < lst.count(); i++)
+	}// if (!items.empty())
 
-    if(atLeastOne_Downloading)
-			contextMnu.addMenu(&prioritySpeedMenu);
-    if(atLeastOne_Queued)
-			contextMnu.addMenu(&priorityQueueMenu) ;
+	if (atLeastOne_Downloading) {
+		contextMnu.addMenu( &prioritySpeedMenu) ;
+	}//if (atLeastOne_Downloading)
+	if (atLeastOne_Queued) {
+		contextMnu.addMenu( &priorityQueueMenu) ;
+	}//if (atLeastOne_Queued)
 
-    if( (!items.empty()) && (atLeastOne_Downloading || atLeastOne_Queued || atLeastOne_Waiting || atLeastOne_Paused))
-	 {
-		 contextMnu.addMenu( &chunkMenu);
+	if ( (!items.empty())
+	     && (atLeastOne_Downloading || atLeastOne_Queued || atLeastOne_Waiting || atLeastOne_Paused)) {
+		contextMnu.addMenu(&chunkMenu) ;
 
-		 if(single)
-			 contextMnu.addAction(renameFileAct) ;
+		if (single) {
+			contextMnu.addAction( renameFileAct) ;
+		}//if (single)
 
-		 QMenu *directoryMenu = contextMnu.addMenu(QIcon(IMAGE_OPENFOLDER),tr("Set destination directory")) ;
-		 directoryMenu->addAction(specifyDestinationDirectoryAct);
+		QMenu *directoryMenu = contextMnu.addMenu(QIcon(IMAGE_OPENFOLDER), tr("Set destination directory")) ;
+		directoryMenu->addAction(specifyDestinationDirectoryAct) ;
 
-		 // Now get the list of existing directories.
+		// Now get the list of existing  directories.
 
-		 std::list<SharedDirInfo> dirs ;
-		 rsFiles->getSharedDirectories(dirs) ;
+		std::list< SharedDirInfo> dirs ;
+		rsFiles->getSharedDirectories( dirs) ;
 
-		 for(std::list<SharedDirInfo>::const_iterator it(dirs.begin());it!=dirs.end();++it)
-		 {
-			 // check for existence of directory name
-			 QFile directory(QString::fromUtf8((*it).filename.c_str())) ;
+		for (std::list<SharedDirInfo>::const_iterator it(dirs.begin());it!=dirs.end();++it){
+			// Check for existence of directory name
+			QFile directory( QString::fromUtf8((*it).filename.c_str())) ;
 
-			 if(!directory.exists()) continue ;
-			 if(!(directory.permissions() & QFile::WriteOwner)) continue ;
+			if (!directory.exists()) continue ;
+			if (!(directory.permissions() & QFile::WriteOwner)) continue ;
 
-			 QAction *act = new QAction(QString::fromUtf8((*it).virtualname.c_str()),directoryMenu) ;
-			 act->setData(QString::fromUtf8((*it).filename.c_str())) ;
-			 connect(act,SIGNAL(triggered()),this,SLOT(setDestinationDirectory())) ;
-			 directoryMenu->addAction(act) ;
-		 }
-	 }
+			QAction *act = new QAction(QString::fromUtf8((*it).virtualname.c_str()), directoryMenu) ;
+			act->setData(QString::fromUtf8( (*it).filename.c_str() ) ) ;
+			connect(act, SIGNAL(triggered()), this, SLOT(setDestinationDirectory())) ;
+			directoryMenu->addAction( act) ;
+		 }//for (std::list<SharedDirInfo>::const_iterator it
+	 }//if ( (!items.empty()) &&
 
-    if(atLeastOne_Paused)
-				contextMnu.addAction( resumeAct);
-    if(atLeastOne_Downloading || atLeastOne_Queued || atLeastOne_Waiting)
-				contextMnu.addAction( pauseAct);
+	if (atLeastOne_Paused) {
+		contextMnu.addAction(resumeAct) ;
+	}//if (atLeastOne_Paused)
+	if (atLeastOne_Downloading || atLeastOne_Queued || atLeastOne_Waiting) {
+		contextMnu.addAction(pauseAct) ;
+	}//if (atLeastOne_Downloading || atLeastOne_Queued || atLeastOne_Waiting)
 
-    if(!atLeastOne_Complete && !items.empty())
-		{
-			contextMnu.addAction( forceCheckAct);
-			contextMnu.addAction( cancelAct);
-		}
-    if (add_PlayOption)
-    {
-        contextMnu.addAction(playAct);
-	}
+	if (!atLeastOne_Complete && !items.empty()) {
+			contextMnu.addAction(forceCheckAct) ;
+			contextMnu.addAction(cancelAct) ;
+	}//if (!atLeastOne_Complete && !items.empty())
+	if (add_PlayOption) {
+		contextMnu.addAction(playAct) ;
+	}//if (add_PlayOption)
 
-    if(atLeastOne_Paused || atLeastOne_Downloading || atLeastOne_Complete || add_PlayOption)
-        contextMnu.addSeparator();//------------------------------------------------
+	if (atLeastOne_Paused || atLeastOne_Downloading || atLeastOne_Complete || add_PlayOption) {
+		contextMnu.addSeparator() ;//------------------------------------------------
+	}//if (atLeastOne_Paused ||
 
-	if(single)
-	{
-        if (add_OpenFileOption) contextMnu.addAction( openFileAct);
-        if (add_PreviewOption) contextMnu.addAction( previewFileAct);
-        contextMnu.addAction( openFolderAct);
-        contextMnu.addAction( detailsFileAct);
-        contextMnu.addSeparator();//--------------------------------------------
-	}
+	if (single) {
+		if (add_OpenFileOption) contextMnu.addAction( openFileAct) ;
+		if (add_PreviewOption) contextMnu.addAction( previewFileAct) ;
+		contextMnu.addAction( openFolderAct) ;
+		contextMnu.addAction( detailsFileAct) ;
+		contextMnu.addSeparator() ;//--------------------------------------------
+	}//if (single)
 
-    contextMnu.addAction( clearCompletedAct);
-    contextMnu.addSeparator();//------------------------------------------------
+	contextMnu.addAction( clearCompletedAct) ;
+	contextMnu.addSeparator() ;//------------------------------------------------
 
-    if (add_CopyLink)
-        contextMnu.addAction( copyLinkAct);
-    if (add_PasteLink)
-    contextMnu.addAction( pasteLinkAct);
-    if (add_CopyLink || add_PasteLink)
-        contextMnu.addSeparator();//--------------------------------------------
+	if (add_CopyLink) {
+		contextMnu.addAction( copyLinkAct) ;
+	}//if (add_CopyLink)
+	if (add_PasteLink) {
+		contextMnu.addAction( pasteLinkAct) ;
+	}//if (add_PasteLink)
+	if (add_CopyLink || add_PasteLink) {
+		contextMnu.addSeparator() ;//--------------------------------------------
+	}//if (add_CopyLink || add_PasteLink)
 
 	if (DLListModel->rowCount()>0 ) {
 		contextMnu.addAction( expandAllAct ) ;
 		contextMnu.addAction( collapseAllAct ) ;
 	}
 
-	contextMnu.addSeparator();//-----------------------------------------------
+	contextMnu.addSeparator() ;//-----------------------------------------------
 
 	contextMnu.addAction( toggleShowCacheTransfersAct ) ;
 	toggleShowCacheTransfersAct->setChecked(_show_cache_transfers) ;
-	contextMnu.addAction( openCollectionAct ) ;
-	
-	contextMnu.exec(QCursor::pos());
+
+	collCreateAct->setEnabled(true) ;
+	collModifAct->setEnabled(single && add_CollActions) ;
+	collViewAct->setEnabled(single && add_CollActions) ;
+	collOpenAct->setEnabled(true) ;
+	contextMnu.addMenu(&collectionMenu) ;
+
+	contextMnu.exec(QCursor::pos()) ;
 }
 
 void TransfersDialog::downloadListHeaderCustomPopupMenu( QPoint /*point*/ )
@@ -1777,8 +1798,8 @@ void TransfersDialog::openTransfer()
 {
 	FileInfo info;
 
-    std::set<RsFileHash> items;
-    std::set<RsFileHash>::iterator it;
+	std::set<RsFileHash> items ;
+	std::set<RsFileHash>::iterator it ;
 	getSelectedItems(&items, NULL);
 	for (it = items.begin(); it != items.end(); it ++) {
 		if (!rsFiles->FileDetails(*it, RS_FILE_HINTS_DOWNLOAD, info)) continue;
@@ -2049,13 +2070,130 @@ QString TransfersDialog::getSources(int row, QStandardItemModel *model)
 	return temp;
 }
 
-void TransfersDialog::openCollection()
+void TransfersDialog::collCreate()
 {
-	RsCollectionFile Collection;
-	if (Collection.load(this)) {
-		Collection.downloadFiles();
-	}
+	std::vector <DirDetails> dirVec;
+
+	std::set<RsFileHash> items ;
+	std::set<RsFileHash>::iterator it ;
+	getSelectedItems(&items, NULL);
+
+	for (it = items.begin(); it != items.end(); it ++) {
+		FileInfo info;
+		if (!rsFiles->FileDetails(*it, RS_FILE_HINTS_DOWNLOAD, info)) continue;
+
+		DirDetails details;
+		details.name = info.fname;
+		details.hash = info.hash;
+		details.count = info.size;
+		details.type = DIR_TYPE_FILE;
+
+		dirVec.push_back(details);
+	}//for (it = items.begin();
+
+	RsCollectionFile(dirVec).openNewColl(this);
 }
+
+void TransfersDialog::collModif()
+{
+	FileInfo info;
+
+	std::set<RsFileHash> items ;
+	std::set<RsFileHash>::iterator it ;
+	getSelectedItems(&items, NULL);
+
+	if (items.size() != 1) return;
+	it = items.begin();
+	RsFileHash hash = *it;
+	if (!rsFiles->FileDetails(hash, RS_FILE_HINTS_DOWNLOAD, info)) return;
+
+	/* make path for downloaded files */
+	if (info.downloadStatus == FT_STATE_COMPLETE) {
+		std::string path;
+		path = info.path + "/" + info.fname;
+
+		/* open collection */
+		QFileInfo qinfo;
+		qinfo.setFile(QString::fromUtf8(path.c_str()));
+		if (qinfo.exists()) {
+			if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString)) {
+				RsCollectionFile collection;
+				collection.openColl(qinfo.absoluteFilePath());
+			}//if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString))
+		}//if (qinfo.exists())
+	}//if (info.downloadStatus == FT_STATE_COMPLETE)
+}
+
+void TransfersDialog::collView()
+{
+	FileInfo info;
+
+	std::set<RsFileHash> items;
+	std::set<RsFileHash>::iterator it;
+	getSelectedItems(&items, NULL);
+
+	if (items.size() != 1) return;
+	it = items.begin();
+	RsFileHash hash = *it;
+	if (!rsFiles->FileDetails(hash, RS_FILE_HINTS_DOWNLOAD, info)) return;
+
+	/* make path for downloaded files */
+	if (info.downloadStatus == FT_STATE_COMPLETE) {
+		std::string path;
+		path = info.path + "/" + info.fname;
+
+		/* open collection  */
+		QFileInfo qinfo;
+		qinfo.setFile(QString::fromUtf8(path.c_str()));
+		if (qinfo.exists()) {
+			if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString)) {
+				RsCollectionFile collection;
+				collection.openColl(qinfo.absoluteFilePath(), true);
+			}//if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString))
+		}//if (qinfo.exists())
+	}//if (info.downloadStatus == FT_STATE_COMPLETE)
+}
+
+void TransfersDialog::collOpen()
+{
+	FileInfo info;
+
+	std::set<RsFileHash> items;
+	std::set<RsFileHash>::iterator it;
+	getSelectedItems(&items, NULL);
+
+	if (items.size() == 1) {
+		it = items.begin();
+		RsFileHash hash = *it;
+		if (rsFiles->FileDetails(hash, RS_FILE_HINTS_DOWNLOAD, info)) {
+
+			/* make path for downloaded files */
+			if (info.downloadStatus == FT_STATE_COMPLETE) {
+				std::string path;
+				path = info.path + "/" + info.fname;
+
+				/* open file with a suitable application */
+				QFileInfo qinfo;
+				qinfo.setFile(QString::fromUtf8(path.c_str()));
+				if (qinfo.exists()) {
+					if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString)) {
+						RsCollectionFile collection;
+						if (collection.load(qinfo.absoluteFilePath(), this)) {
+							collection.downloadFiles();
+							return;
+						}//if (collection.load(this))
+					}//if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString))
+				}//if (qinfo.exists())
+			}//if (info.downloadStatus == FT_STATE_COMPLETE)
+		}//if (rsFiles->FileDetails(
+	}//if (items.size() == 1)
+
+	RsCollectionFile collection;
+	if (collection.load(this)) {
+		collection.downloadFiles();
+	}//if (collection.load(this))
+}
+
 void TransfersDialog::setShowDLSizeColumn(bool show)
 {
     if (!ui.downloadList->isColumnHidden(COLUMN_SIZE) != show) {

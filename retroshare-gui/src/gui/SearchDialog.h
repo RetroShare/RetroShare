@@ -65,18 +65,23 @@ public slots:
 private slots:
 
 /** Create the context popup menu and it's submenus */
-    void searchtableWidgetCostumPopupMenu( QPoint point );
+    void searchResultWidgetCustomPopupMenu( QPoint point );
 
 	void processResultQueue();
-    void searchtableWidget2CostumPopupMenu( QPoint point );
+    void searchSummaryWidgetCustomPopupMenu( QPoint point );
 
     void download();
+
+    void collCreate();
+    void collModif();
+    void collView();
+    void collOpen();
 
     void broadcastonchannel();
 
     void recommendtofriends();
-	 void checkText(const QString&) ;
-    
+    void checkText(const QString&);
+
     void copyResultLink();
     void copySearchLink();
     void openFolderSearch();
@@ -151,6 +156,11 @@ private:
 	QColor mTextColorNoSources;
 	QColor mTextColorLowSources;
 	QColor mTextColorHighSources;
+
+	QAction *collCreateAct;
+	QAction *collModifAct;
+	QAction *collViewAct;
+	QAction *collOpenAct;
 
 /** Qt Designer generated object */
     Ui::SearchDialog ui;

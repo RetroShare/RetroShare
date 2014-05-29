@@ -40,6 +40,7 @@
 #include "ShareDialog.h"
 #include "common/PeerDefs.h"
 #include "util/QtVersion.h"
+#include "gui/common/RsCollectionFile.h"
 #include "notifyqt.h"
 
 #include <retroshare/rspeers.h>
@@ -57,10 +58,26 @@
 #define IMAGE_PROGRESS       ":/images/browse-looking.gif"
 #define IMAGE_COPYLINK       ":/images/copyrslink.png"
 #define IMAGE_OPENFOLDER     ":/images/folderopen.png"
-#define IMAGE_OPENFILE		 ":/images/fileopen.png"
-#define IMAGE_COLLECTION     ":/images/mimetypes/rscollection-16.png"
+#define IMAGE_OPENFILE       ":/images/fileopen.png"
+#define IMAGE_LIBRARY        ":/images/library.png"
+#define IMAGE_COLLCREATE     ":/images/library_add.png"
+#define IMAGE_COLLMODIF      ":/images/library_edit.png"
+#define IMAGE_COLLVIEW       ":/images/library_view.png"
+#define IMAGE_COLLOPEN       ":/images/library.png"
 #define IMAGE_EDITSHARE      ":/images/edit_16.png"
 #define IMAGE_MYFILES        ":images/my_documents_22.png"
+
+/*define dirTreeView Column */
+#define COLUMN_NAME          0
+#define COLUMN_SIZE          1
+#define COLUMN_AGE           2
+#define COLUMN_FRIEND        3
+#define COLUMN_DIR           4
+#define COLUMN_COUNT         5
+
+/*define viewType_CB value */
+#define VIEW_TYPE_TREE       0
+#define VIEW_TYPE_FLAT       1
 
 // Define to avoid using the search in treeview, because it is really slow for now.
 //
@@ -121,14 +138,14 @@ SharedFilesDialog::SharedFilesDialog(RetroshareDirModel *_tree_model,RetroshareD
 	tree_proxyModel->setSourceModel(tree_model);
 	tree_proxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
 	tree_proxyModel->setSortRole(RetroshareDirModel::SortRole);
-	tree_proxyModel->sort(0);
+	tree_proxyModel->sort(COLUMN_NAME);
 
 	flat_proxyModel = new SFDSortFilterProxyModel(flat_model, this);
 	flat_proxyModel->setDynamicSortFilter(true);
 	flat_proxyModel->setSourceModel(flat_model);
 	flat_proxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
 	flat_proxyModel->setSortRole(RetroshareDirModel::SortRole);
-	flat_proxyModel->sort(0);
+	flat_proxyModel->sort(COLUMN_NAME);
 
 	connect(ui.filterClearButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
 	connect(ui.filterStartButton, SIGNAL(clicked()), this, SLOT(startFilter()));
@@ -138,11 +155,11 @@ SharedFilesDialog::SharedFilesDialog(RetroshareDirModel *_tree_model,RetroshareD
 	/* Set header resize modes and initial section sizes  */
 	QHeaderView * header = ui.dirTreeView->header () ;
 
-	header->resizeSection ( 0, 490 );
-	header->resizeSection ( 1, 70 );
-	header->resizeSection ( 2, 100 );
-	header->resizeSection ( 3, 100 );
-	header->resizeSection ( 4, 100 );
+	header->resizeSection ( COLUMN_NAME, 490 );
+	header->resizeSection ( COLUMN_SIZE, 70 );
+	header->resizeSection ( COLUMN_AGE, 100 );
+	header->resizeSection ( COLUMN_FRIEND, 100 );
+	header->resizeSection ( COLUMN_DIR, 100 );
 
 	header->setStretchLastSection(false);
 
@@ -162,13 +179,22 @@ SharedFilesDialog::SharedFilesDialog(RetroshareDirModel *_tree_model,RetroshareD
   addlinkCloudAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Add Links to Cloud" ), this );
   connect( addlinkCloudAct , SIGNAL( triggered() ), this, SLOT( addLinkToCloud(  ) ) );
 #endif
+
+	collCreateAct= new QAction(QIcon(IMAGE_COLLCREATE), tr("Create Collection..."), this) ;
+	connect(collCreateAct,SIGNAL(triggered()),this,SLOT(collCreate())) ;
+	collModifAct= new QAction(QIcon(IMAGE_COLLMODIF), tr("Modify Collection..."), this) ;
+	connect(collModifAct,SIGNAL(triggered()),this,SLOT(collModif())) ;
+	collViewAct= new QAction(QIcon(IMAGE_COLLVIEW), tr("View Collection..."), this) ;
+	connect(collViewAct,SIGNAL(triggered()),this,SLOT(collView())) ;
+	collOpenAct = new QAction(QIcon(IMAGE_COLLOPEN), tr( "Download from collection file..." ), this ) ;
+	connect(collOpenAct, SIGNAL(triggered()), this, SLOT(collOpen())) ;
 }
 
 LocalSharedFilesDialog::LocalSharedFilesDialog(QWidget *parent)
 	: SharedFilesDialog(new TreeStyle_RDM(false),new FlatStyle_RDM(false),parent)
 {
 	// Hide columns after loading the settings
-	ui.dirTreeView->setColumnHidden(4,false) ;
+	ui.dirTreeView->setColumnHidden(COLUMN_DIR, false) ;
 	ui.downloadButton->hide() ;
 
 	// load settings
@@ -177,27 +203,24 @@ LocalSharedFilesDialog::LocalSharedFilesDialog(QWidget *parent)
 	//
 	changeCurrentViewModel(ui.viewType_CB->currentIndex()) ;
 
-  connect(ui.addShares_PB, SIGNAL(clicked()), this, SLOT(addShares()));
-  connect(ui.checkButton, SIGNAL(clicked()), this, SLOT(forceCheck()));
+	connect(ui.addShares_PB, SIGNAL(clicked()), this, SLOT(addShares())) ;
+	connect(ui.checkButton, SIGNAL(clicked()), this, SLOT(forceCheck())) ;
 
-  createcollectionfileAct = new QAction(QIcon(IMAGE_COLLECTION), tr("Create collection file"), this);
-  openfileAct = new QAction(QIcon(IMAGE_OPENFILE), tr("Open File"), this);
-  openfolderAct = new QAction(QIcon(IMAGE_OPENFOLDER), tr("Open Folder"), this);
-  editshareAct = new QAction(QIcon(IMAGE_EDITSHARE), tr("Edit Share Permissions"), this);
+	openfileAct = new QAction(QIcon(IMAGE_OPENFILE), tr("Open File"), this) ;
+	connect(openfileAct, SIGNAL(triggered()), this, SLOT(openfile())) ;
+	openfolderAct = new QAction(QIcon(IMAGE_OPENFOLDER), tr("Open Folder"), this) ;
+	connect(openfolderAct, SIGNAL(triggered()), this, SLOT(openfolder())) ;
+	editshareAct = new QAction(QIcon(IMAGE_EDITSHARE), tr("Edit Share Permissions"), this) ;
+	connect(editshareAct, SIGNAL(triggered()), this, SLOT(editSharePermissions())) ;
 
-  connect(createcollectionfileAct, SIGNAL(triggered()), this, SLOT(createCollectionFile()));
-  connect(openfileAct, SIGNAL(triggered()), this, SLOT(openfile()));
-  connect(openfolderAct, SIGNAL(triggered()), this, SLOT(openfolder()));
-  connect(editshareAct, SIGNAL(triggered()), this, SLOT(editSharePermissions()));
-
-  ui.titleBarPixmap->setPixmap(QPixmap(IMAGE_MYFILES));
+	ui.titleBarPixmap->setPixmap(QPixmap(IMAGE_MYFILES)) ;
 }
 
 RemoteSharedFilesDialog::RemoteSharedFilesDialog(QWidget *parent)
 	: SharedFilesDialog(new TreeStyle_RDM(true),new FlatStyle_RDM(true),parent)
 {
-	ui.dirTreeView->setColumnHidden(3,false) ;
-	ui.dirTreeView->setColumnHidden(4,true) ;
+	ui.dirTreeView->setColumnHidden(COLUMN_FRIEND, false) ;
+	ui.dirTreeView->setColumnHidden(COLUMN_DIR, true) ;
 	ui.checkButton->hide() ;
 
 	connect(ui.downloadButton, SIGNAL(clicked()), this, SLOT(downloadRemoteSelected()));
@@ -302,15 +325,15 @@ void RemoteSharedFilesDialog::processSettings(bool bLoad)
 	Settings->endGroup();
 }
 
-void SharedFilesDialog::changeCurrentViewModel(int c)
+void SharedFilesDialog::changeCurrentViewModel(int viewTypeIndex)
 {
-	disconnect( ui.dirTreeView, SIGNAL( collapsed(const QModelIndex & ) ), 0, 0 );
-	disconnect( ui.dirTreeView, SIGNAL(  expanded(const QModelIndex & ) ), 0, 0 );
+	//disconnect( ui.dirTreeView, SIGNAL( collapsed(const QModelIndex & ) ), NULL, NULL );
+	//disconnect( ui.dirTreeView, SIGNAL(  expanded(const QModelIndex & ) ), NULL, NULL );
 
 	if(model!=NULL)
 		model->setVisible(false) ;
 
-	if(c==0)
+	if(viewTypeIndex==VIEW_TYPE_TREE)
 	{
 		model = tree_model ;
 		proxyModel = tree_proxyModel ;
@@ -329,19 +352,19 @@ void SharedFilesDialog::changeCurrentViewModel(int c)
 		model->update() ;
 	}
 
-	connect( ui.dirTreeView, SIGNAL( collapsed(const QModelIndex & ) ), model, SLOT(  collapsed(const QModelIndex & ) ) );
-	connect( ui.dirTreeView, SIGNAL(  expanded(const QModelIndex & ) ), model, SLOT(   expanded(const QModelIndex & ) ) );
+	//connect( ui.dirTreeView, SIGNAL( collapsed(const QModelIndex & ) ), model, SLOT(  collapsed(const QModelIndex & ) ) );
+	//connect( ui.dirTreeView, SIGNAL(  expanded(const QModelIndex & ) ), model, SLOT(   expanded(const QModelIndex & ) ) );
 
 	ui.dirTreeView->setModel(proxyModel);
 	ui.dirTreeView->update();
 
 	QHeaderView * header = ui.dirTreeView->header () ;
-	QHeaderView_setSectionResizeMode(header, 0, QHeaderView::Interactive);
+	QHeaderView_setSectionResizeMode(header, COLUMN_NAME, QHeaderView::Interactive);
 
-	ui.dirTreeView->header()->headerDataChanged(Qt::Horizontal,0,4) ;
+	ui.dirTreeView->header()->headerDataChanged(Qt::Horizontal, COLUMN_NAME, COLUMN_DIR) ;
 
 #ifdef DONT_USE_SEARCH_IN_TREE_VIEW
-	if(c == 1)
+	if(viewTypeIndex == VIEW_TYPE_FLAT)
 #endif
 		FilterItems();
 }
@@ -350,8 +373,8 @@ void LocalSharedFilesDialog::showProperColumns()
 {
 	if(model == tree_model)
 	{
-		ui.dirTreeView->setColumnHidden(3,false) ;
-		ui.dirTreeView->setColumnHidden(4,false) ;
+		ui.dirTreeView->setColumnHidden(COLUMN_FRIEND, false) ;
+		ui.dirTreeView->setColumnHidden(COLUMN_DIR, false) ;
 #ifdef DONT_USE_SEARCH_IN_TREE_VIEW
 		ui.filterLabel->hide();
 		ui.filterPatternLineEdit->hide();
@@ -361,8 +384,8 @@ void LocalSharedFilesDialog::showProperColumns()
 	}
 	else
 	{
-		ui.dirTreeView->setColumnHidden(3,true) ;
-		ui.dirTreeView->setColumnHidden(4,false) ;
+		ui.dirTreeView->setColumnHidden(COLUMN_FRIEND, true) ;
+		ui.dirTreeView->setColumnHidden(COLUMN_DIR, false) ;
 #ifdef DONT_USE_SEARCH_IN_TREE_VIEW
 		ui.filterLabel->show();
 		ui.filterPatternLineEdit->show();
@@ -373,8 +396,8 @@ void RemoteSharedFilesDialog::showProperColumns()
 {
 	if(model == tree_model)
 	{
-		ui.dirTreeView->setColumnHidden(3,true) ;
-		ui.dirTreeView->setColumnHidden(4,true) ;
+		ui.dirTreeView->setColumnHidden(COLUMN_FRIEND, true) ;
+		ui.dirTreeView->setColumnHidden(COLUMN_DIR, true) ;
 #ifdef DONT_USE_SEARCH_IN_TREE_VIEW
 		ui.filterLabel->hide();
 		ui.filterPatternLineEdit->hide();
@@ -384,8 +407,8 @@ void RemoteSharedFilesDialog::showProperColumns()
 	}
 	else
 	{
-		ui.dirTreeView->setColumnHidden(3,false) ;
-		ui.dirTreeView->setColumnHidden(4,false) ;
+		ui.dirTreeView->setColumnHidden(COLUMN_FRIEND, false) ;
+		ui.dirTreeView->setColumnHidden(COLUMN_DIR, false) ;
 #ifdef DONT_USE_SEARCH_IN_TREE_VIEW
 		ui.filterLabel->show();
 		ui.filterPatternLineEdit->show();
@@ -418,70 +441,78 @@ void LocalSharedFilesDialog::forceCheck()
 
 void RemoteSharedFilesDialog::spawnCustomPopupMenu( QPoint point )
 {
-    QModelIndex idx = ui.dirTreeView->indexAt(point);
-    if (!idx.isValid())
-        return;
-    QModelIndex midx = proxyModel->mapToSource(idx);
-    if (!midx.isValid())
-        return;
+	if (!rsPeers) return; /* not ready yet! */
 
-    int type = model->getType(midx);
-    if (type != DIR_TYPE_DIR && type != DIR_TYPE_FILE) {
-        return;
-    }
+	QModelIndex idx = ui.dirTreeView->indexAt(point) ;
+	if (!idx.isValid()) return;
 
-    QMenu contextMnu( this );
+	QModelIndex midx = proxyModel->mapToSource(idx) ;
+	if (!midx.isValid()) return;
 
-    QAction *downloadAct = new QAction(QIcon(IMAGE_DOWNLOAD), tr( "Download" ), &contextMnu );
-    connect( downloadAct , SIGNAL( triggered() ), this, SLOT( downloadRemoteSelected() ) );
-    contextMnu.addAction( downloadAct);
+	currentFile = model->data(midx, RetroshareDirModel::FileNameRole).toString() ;
+	int type = model->getType(midx) ;
+	if (type != DIR_TYPE_DIR && type != DIR_TYPE_FILE) return;
 
-    if (type == DIR_TYPE_FILE) {
-        //QAction *copyremotelinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy retroshare Link" ), &contextMnu );
-        //connect( copyremotelinkAct , SIGNAL( triggered() ), this, SLOT( copyLink() ) );
 
-        //QAction *sendremotelinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Link" ), &contextMnu );
-        //connect( sendremotelinkAct , SIGNAL( triggered() ), this, SLOT( sendremoteLinkTo(  ) ) );
+	QMenu contextMnu( this ) ;
 
-        contextMnu.addSeparator();
-        contextMnu.addAction( copylinkAct);
-        contextMnu.addAction( sendlinkAct);
-        contextMnu.addSeparator();
-        contextMnu.addAction(QIcon(IMAGE_MSG), tr("Recommend in a message to"), this, SLOT(recommendFilesToMsg()));
-    }
+	//bool bIsRsColl = currentFile.endsWith(RsCollectionFile::ExtensionString);
+	collCreateAct->setEnabled(true);
+	//collModifAct->setEnabled(bIsRsColl);
+	//collViewAct->setEnabled(bIsRsColl);
+	collOpenAct->setEnabled(true);
 
-    contextMnu.exec(QCursor::pos());
+	QMenu collectionMenu(tr("Collection"), this);
+	collectionMenu.setIcon(QIcon(IMAGE_LIBRARY));
+	collectionMenu.addAction(collCreateAct);
+	//collectionMenu.addAction(collModifAct);
+	//collectionMenu.addAction(collViewAct);
+	collectionMenu.addAction(collOpenAct);
+
+	QAction *downloadAct = new QAction(QIcon(IMAGE_DOWNLOAD), tr( "Download" ), &contextMnu ) ;
+	connect( downloadAct , SIGNAL( triggered() ), this, SLOT( downloadRemoteSelected() ) ) ;
+	contextMnu.addAction( downloadAct) ;
+
+	if ( type == DIR_TYPE_FILE ) {
+		//QAction *copyremotelinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy retroshare Link" ), &contextMnu ) ;
+		//connect( copyremotelinkAct , SIGNAL( triggered() ), this, SLOT( copyLink() ) ) ;
+
+		//QAction *sendremotelinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Link" ), &contextMnu ) ;
+		//connect( sendremotelinkAct , SIGNAL( triggered() ), this, SLOT( sendremoteLinkTo(  ) ) ) ;
+
+		contextMnu.addSeparator() ;//------------------------------------
+		contextMnu.addAction( copylinkAct) ;
+		contextMnu.addAction( sendlinkAct) ;
+		contextMnu.addSeparator() ;//------------------------------------
+		contextMnu.addAction(QIcon(IMAGE_MSG), tr("Recommend in a message to"), this, SLOT(recommendFilesToMsg())) ;
+	}//if (type == DIR_TYPE_FILE)
+
+	contextMnu.addSeparator() ;//------------------------------------
+	contextMnu.addMenu(&collectionMenu) ;
+
+	contextMnu.exec(QCursor::pos()) ;
 }
 
 QModelIndexList SharedFilesDialog::getSelected()
 {
-    QModelIndexList list = ui.dirTreeView->selectionModel()->selectedIndexes();
-    QModelIndexList proxyList;
-    for (QModelIndexList::iterator index = list.begin(); index != list.end(); index++) {
-        proxyList.append(proxyModel->mapToSource(*index));
-    }
+	QModelIndexList list = ui.dirTreeView->selectionModel()->selectedIndexes() ;
+	QModelIndexList proxyList ;
+	for (QModelIndexList::iterator index = list.begin(); index != list.end(); index++ ) {
+		proxyList.append(proxyModel->mapToSource(*index)) ;
+	}//for (QModelIndexList::iterator index
 
-    return proxyList;
-}
-
-void LocalSharedFilesDialog::createCollectionFile()
-{
-	/* call back to the model (which does all the interfacing? */
-
-	std::cerr << "Creating a collection file!" << std::endl;
-	QModelIndexList lst = getSelected();
-	model->createCollectionFile(this, lst);
+	return proxyList ;
 }
 
 void RemoteSharedFilesDialog::downloadRemoteSelected()
 {
-  /* call back to the model (which does all the interfacing? */
+	/* call back to the model (which does all the interfacing?  */
 
-  std::cerr << "Downloading Files";
-  std::cerr << std::endl;
+	std::cerr << "Downloading Files" ;
+	std::cerr << std::endl ;
 
-  QModelIndexList lst = getSelected();
-  model -> downloadSelected(lst);
+	QModelIndexList lst = getSelected() ;
+	model -> downloadSelected(lst) ;
 }
 
 void LocalSharedFilesDialog::editSharePermissions()
@@ -607,6 +638,112 @@ void SharedFilesDialog::addLinkToCloud()
 }
 #endif
 
+void SharedFilesDialog::collCreate()
+{
+	QModelIndexList lst = getSelected();
+	model->createCollectionFile(this, lst);
+}
+
+void SharedFilesDialog::collModif()
+{
+	std::list<DirDetails> files_info ;
+
+	model->getFileInfoFromIndexList(getSelected(),files_info);
+
+	if(files_info.size() != 1) return ;
+
+	/* make path for downloaded files */
+	std::list<DirDetails>::iterator it = files_info.begin();
+	DirDetails details = (*it);
+	FileInfo info;
+	if (!rsFiles->FileDetails(details.hash, RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_LOCAL
+	                                        | RS_FILE_HINTS_BROWSABLE | RS_FILE_HINTS_NETWORK_WIDE
+	                                        | RS_FILE_HINTS_SPEC_ONLY, info)) return;
+
+	std::string path;
+	path = info.path;
+
+	/* open file with a suitable application */
+	QFileInfo qinfo;
+	qinfo.setFile(QString::fromUtf8(path.c_str()));
+	if (qinfo.exists()) {
+		if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString)) {
+			RsCollectionFile collection;
+			collection.openColl(qinfo.absoluteFilePath());
+		}//if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString))
+	}//if (qinfo.exists())
+}
+
+void SharedFilesDialog::collView()
+{
+	std::list<DirDetails> files_info ;
+
+	model->getFileInfoFromIndexList(getSelected(),files_info);
+
+	if(files_info.size() != 1) return ;
+
+	/* make path for downloaded files */
+	std::list<DirDetails>::iterator it = files_info.begin();
+	DirDetails details = (*it);
+	FileInfo info;
+	if (!rsFiles->FileDetails(details.hash, RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_LOCAL
+	                                        | RS_FILE_HINTS_BROWSABLE | RS_FILE_HINTS_NETWORK_WIDE
+	                                        | RS_FILE_HINTS_SPEC_ONLY, info)) return;
+
+	std::string path;
+	path = info.path;
+
+	/* open file with a suitable application */
+	QFileInfo qinfo;
+	qinfo.setFile(QString::fromUtf8(path.c_str()));
+	if (qinfo.exists()) {
+		if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString)) {
+			RsCollectionFile collection;
+			collection.openColl(qinfo.absoluteFilePath(), true);
+		}//if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString))
+	}//if (qinfo.exists())
+}
+
+void SharedFilesDialog::collOpen()
+{
+	std::list<DirDetails> files_info ;
+
+	model->getFileInfoFromIndexList(getSelected(),files_info);
+
+	if(files_info.size() == 1) {
+
+		/* make path for downloaded files */
+		std::list<DirDetails>::iterator it = files_info.begin();
+		DirDetails details = (*it);
+		FileInfo info;
+		if (rsFiles->FileDetails(details.hash, RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_LOCAL
+		                          | RS_FILE_HINTS_BROWSABLE | RS_FILE_HINTS_NETWORK_WIDE
+		                          | RS_FILE_HINTS_SPEC_ONLY, info)) {
+
+			std::string path;
+			path = info.path;
+
+			/* open file with a suitable application */
+			QFileInfo qinfo;
+			qinfo.setFile(QString::fromUtf8(path.c_str()));
+			if (qinfo.exists()) {
+				if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString)) {
+					RsCollectionFile collection;
+					if (collection.load(qinfo.absoluteFilePath(), this)) {
+						collection.downloadFiles();
+						return;
+					}//if (collection.load(this))
+				}//if (qinfo.absoluteFilePath().endsWith(RsCollectionFile::ExtensionString))
+			}//if (qinfo.exists())
+		}//if (rsFiles->FileDetails(
+	}//if(files_info.size() == 1)
+
+	RsCollectionFile collection;
+	if (collection.load(this)) {
+		collection.downloadFiles();
+	}//if (collection.load(this))
+}
+
 void LocalSharedFilesDialog::playselectedfiles()
 {
   /* call back to the model (which does all the interfacing? */
@@ -706,56 +843,64 @@ void  SharedFilesDialog::postModDirectories(bool local)
 	QCoreApplication::flush();
 }
 
-
 void LocalSharedFilesDialog::spawnCustomPopupMenu( QPoint point )
 {
-    if (!rsPeers) 
-	 {
-        /* not ready yet! */
-        return;
-    }
+	if (!rsPeers) return; /* not ready yet! */
 
-    QModelIndex idx = ui.dirTreeView->indexAt(point);
-    if (!idx.isValid())
-        return;
-    QModelIndex midx = proxyModel->mapToSource(idx);
-    if (!midx.isValid())
-        return;
+	QModelIndex idx = ui.dirTreeView->indexAt(point) ;
+	if (!idx.isValid()) return ;
 
-    currentFile = model->data(midx, RetroshareDirModel::FileNameRole).toString();
+	QModelIndex midx = proxyModel->mapToSource(idx) ;
+	if (!midx.isValid()) return ;
 
-    int type = model->getType(midx);
 
-    QMenu contextMnu(this);
+	currentFile = model->data(midx, RetroshareDirModel::FileNameRole).toString() ;
+	int type = model->getType(midx) ;
+	if (type != DIR_TYPE_DIR && type != DIR_TYPE_FILE) return;
 
-    switch (type) 
-	 {
-		 case DIR_TYPE_DIR:
-			 contextMnu.addAction(openfolderAct);
-			 contextMnu.addSeparator() ;
-			 contextMnu.addAction(createcollectionfileAct) ;
-			 break;
-		 case DIR_TYPE_FILE:
-			 contextMnu.addAction(openfileAct);
-			 contextMnu.addSeparator();
-			 contextMnu.addAction(copylinkAct);
-			 contextMnu.addAction(sendlinkAct);
-			 contextMnu.addSeparator();
-			 contextMnu.addAction(createcollectionfileAct) ;
-			 contextMnu.addSeparator();
+	QMenu contextMnu(this) ;
+
+	bool bIsRsColl = currentFile.endsWith(RsCollectionFile::ExtensionString);
+	collCreateAct->setEnabled(true);
+	collModifAct->setEnabled(bIsRsColl);
+	collViewAct->setEnabled(bIsRsColl);
+	collOpenAct->setEnabled(true);
+
+	QMenu collectionMenu(tr("Collection"), this);
+	collectionMenu.setIcon(QIcon(IMAGE_LIBRARY));
+	collectionMenu.addAction(collCreateAct);
+	collectionMenu.addAction(collModifAct);
+	collectionMenu.addAction(collViewAct);
+	collectionMenu.addAction(collOpenAct);
+
+	switch (type) {
+		case DIR_TYPE_DIR :
+			contextMnu.addAction(openfolderAct) ;
+			contextMnu.addSeparator() ;//------------------------------------
+			contextMnu.addMenu(&collectionMenu) ;
+		break ;
+
+		case DIR_TYPE_FILE :
+			contextMnu.addAction(openfileAct) ;
+			contextMnu.addSeparator() ;//------------------------------------
+			contextMnu.addAction(copylinkAct) ;
+			contextMnu.addAction(sendlinkAct) ;
+			contextMnu.addSeparator() ;//------------------------------------
+			contextMnu.addMenu(&collectionMenu) ;
+			contextMnu.addSeparator() ;//------------------------------------
 #ifdef RS_USE_LINKS
-			 contextMnu.addAction(sendlinkCloudAct);
-			 contextMnu.addAction(addlinkCloudAct);
-			 contextMnu.addSeparator();
+			contextMnu.addAction(sendlinkCloudAct) ;
+			contextMnu.addAction(addlinkCloudAct) ;
+			contextMnu.addSeparator() ;//------------------------------------
 #endif
-			 contextMnu.addSeparator();
-			 contextMnu.addAction(QIcon(IMAGE_MSG), tr("Recommend in a message to"), this, SLOT(recommendFilesToMsg()));
-			 break;
-		 default:
-			 return;
-	 }
+			contextMnu.addAction(QIcon(IMAGE_MSG), tr("Recommend in a message to"), this, SLOT(recommendFilesToMsg())) ;
+		break ;
 
-    contextMnu.exec(QCursor::pos());
+		default :
+		return ;
+	}//switch (type)
+
+	contextMnu.exec(QCursor::pos()) ;
 }
 
 //============================================================================
@@ -763,7 +908,7 @@ void LocalSharedFilesDialog::spawnCustomPopupMenu( QPoint point )
 QAction*
 LocalSharedFilesDialog::fileAssotiationAction(const QString /*fileName*/)
 {
-    QAction* result = 0;
+    QAction* result = NULL;
 
     Settings->beginGroup("FileAssotiations");
 
@@ -826,11 +971,11 @@ void SharedFilesDialog::indicatorChanged(int index)
 	model->changeAgeIndicator(correct_indicator[index]);
 
 	ui.dirTreeView->update(ui.dirTreeView->rootIndex());
-  
+
 	if (correct_indicator[index] != IND_ALWAYS)
-		ui.dirTreeView->sortByColumn(2, Qt::AscendingOrder);
+		ui.dirTreeView->sortByColumn(COLUMN_AGE, Qt::AscendingOrder);
 	else
-		ui.dirTreeView->sortByColumn(0, Qt::AscendingOrder);
+		ui.dirTreeView->sortByColumn(COLUMN_NAME, Qt::AscendingOrder);
 
 	updateDisplay() ;
 }
@@ -878,11 +1023,11 @@ void SharedFilesDialog::FilterItems()
 	 QCoreApplication::processEvents() ;
 
     int rowCount = ui.dirTreeView->model()->rowCount();
-    for (int row = 0; row < rowCount; row++) 
+    for (int row = 0; row < rowCount; row++)
 		 if(proxyModel == tree_proxyModel)
-			 tree_FilterItem(ui.dirTreeView->model()->index(row, 0), text, 0);
+			 tree_FilterItem(ui.dirTreeView->model()->index(row, COLUMN_NAME), text, 0);
 		 else
-			 flat_FilterItem(ui.dirTreeView->model()->index(row, 0), text, 0);
+			 flat_FilterItem(ui.dirTreeView->model()->index(row, COLUMN_NAME), text, 0);
 
     setCursor(Qt::ArrowCursor);
 }

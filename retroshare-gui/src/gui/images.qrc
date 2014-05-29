@@ -683,5 +683,8 @@
         <file>images/view-certificate-sign-48.png</file>
         <file>images/toasterEnable.png</file>
         <file>images/toasterDisable.png</file>
+        <file>images/library_edit.png</file>
+        <file>images/library_view.png</file>
+        <file>images/library_add.png</file>
     </qresource>
 </RCC>

@@ -297,11 +297,13 @@ QPixmap misc::getOpenThumbnailedPicture(QWidget *parent, const QString &caption,
 	//return QPixmap(fileName).scaledToHeight(width, height, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
 }
 
-bool misc::getOpenFileName(QWidget *parent, RshareSettings::enumLastDir type, const QString &caption, const QString &filter, QString &file)
+bool misc::getOpenFileName(QWidget *parent, RshareSettings::enumLastDir type
+                           , const QString &caption, const QString &filter
+                           , QString &file, QFileDialog::Options options)
 {
     QString lastDir = Settings->getLastDir(type);
 
-    file = QFileDialog::getOpenFileName(parent, caption, lastDir, filter, NULL, QFileDialog::DontResolveSymlinks);
+    file = QFileDialog::getOpenFileName(parent, caption, lastDir, filter, NULL, QFileDialog::DontResolveSymlinks | options);
 
     if (file.isEmpty())
         return false;
@@ -318,11 +320,13 @@ bool misc::getOpenFileName(QWidget *parent, RshareSettings::enumLastDir type, co
     return true;
 }
 
-bool misc::getOpenFileNames(QWidget *parent, RshareSettings::enumLastDir type, const QString &caption, const QString &filter, QStringList &files)
+bool misc::getOpenFileNames(QWidget *parent, RshareSettings::enumLastDir type
+                            , const QString &caption, const QString &filter
+                            , QStringList &files, QFileDialog::Options options)
 {
     QString lastDir = Settings->getLastDir(type);
 
-    files = QFileDialog::getOpenFileNames(parent, caption, lastDir, filter, NULL, QFileDialog::DontResolveSymlinks);
+    files = QFileDialog::getOpenFileNames(parent, caption, lastDir, filter, NULL, QFileDialog::DontResolveSymlinks | options);
 
     if (files.isEmpty())
         return false;
@@ -341,11 +345,14 @@ bool misc::getOpenFileNames(QWidget *parent, RshareSettings::enumLastDir type, c
     return true;
 }
 
-bool misc::getSaveFileName(QWidget *parent, RshareSettings::enumLastDir type, const QString &caption, const QString &filter, QString &file)
+bool misc::getSaveFileName(QWidget *parent, RshareSettings::enumLastDir type
+													 , const QString &caption , const QString &filter
+													 , QString &file, QString *selectedFilter
+													 , QFileDialog::Options options)
 {
     QString lastDir = Settings->getLastDir(type);
 
-    file = QFileDialog::getSaveFileName(parent, caption, lastDir, filter);
+		file = QFileDialog::getSaveFileName(parent, caption, lastDir, filter, selectedFilter, options);
 
     if (file.isEmpty())
         return false;
