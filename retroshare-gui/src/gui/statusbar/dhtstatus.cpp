@@ -61,11 +61,15 @@ DHTStatus::DHTStatus(QWidget *parent)
 
     hbox->addSpacing(2);
 
+    _compactMode = false;
+
     setLayout( hbox );
 }
 
 void DHTStatus::getDHTStatus()
 {
+	statusDHT->setVisible(!_compactMode);
+	QString text = _compactMode?statusDHT->text():"";
 
 	/* now the extra bit .... switch on check boxes */
 	RsConfigNetStatus config;
@@ -75,8 +79,8 @@ void DHTStatus::getDHTStatus()
 	{
 		// GRAY.
 		dhtstatusLabel->setPixmap(QPixmap(":/images/grayled.png"));
-		dhtstatusLabel->setToolTip(tr("DHT Off"));
-		
+		dhtstatusLabel->setToolTip( text + tr("DHT Off"));
+
 		spaceLabel->setVisible(false);
 		dhtnetworkLabel->setVisible(false);
 		dhtnetworksizeLabel->setVisible(false);
@@ -93,34 +97,34 @@ void DHTStatus::getDHTStatus()
 			if (config.netDhtRsNetSize < MIN_RS_NET_SIZE)
 			{
 				dhtstatusLabel->setPixmap(QPixmap(":/images/yellowled.png"));
-				dhtstatusLabel->setToolTip(tr("DHT Searching for RetroShare Peers"));
-				
+				dhtstatusLabel->setToolTip( text + tr("DHT Searching for RetroShare Peers"));
+
 				spaceLabel->setVisible(true);
 				dhtnetworkLabel->setVisible(true);
 				dhtnetworksizeLabel->setVisible(true);
-				
+
 				dhtnetworksizeLabel->setText(QString("%1 (%2)").arg(misc::userFriendlyUnit(config.netDhtRsNetSize, 1)).arg(misc::userFriendlyUnit(config.netDhtNetSize, 1)));
-				dhtnetworksizeLabel->setToolTip(tr("RetroShare users in DHT (Total DHT users)") );
+				dhtnetworksizeLabel->setToolTip( text + tr("RetroShare users in DHT (Total DHT users)") );
 			}
 			else
 			{
 				dhtstatusLabel->setPixmap(QPixmap(":/images/greenled.png"));
-				dhtstatusLabel->setToolTip(tr("DHT Good"));
-				
+				dhtstatusLabel->setToolTip( text + tr("DHT Good"));
+
 				spaceLabel->setVisible(true);
 				dhtnetworkLabel->setVisible(true);
 				dhtnetworksizeLabel->setVisible(true);
-				
+
 				dhtnetworksizeLabel->setText(QString("%1 (%2)").arg(misc::userFriendlyUnit(config.netDhtRsNetSize, 1)).arg(misc::userFriendlyUnit(config.netDhtNetSize, 1)));
-				dhtnetworksizeLabel->setToolTip(tr("RetroShare users in DHT (Total DHT users)") );
+				dhtnetworksizeLabel->setToolTip( text + tr("RetroShare users in DHT (Total DHT users)") );
 			}
 		}
 		else
 		{
 			// RED - some issue.
 			dhtstatusLabel->setPixmap(QPixmap(":/images/redled.png"));
-			dhtstatusLabel->setToolTip(tr("DHT Error"));
-			
+			dhtstatusLabel->setToolTip( text + tr("DHT Error"));
+
 			spaceLabel->setVisible(false);
 			dhtnetworkLabel->setVisible(false);
 			dhtnetworksizeLabel->setVisible(false);

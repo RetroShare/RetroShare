@@ -162,7 +162,7 @@
      </layout>
     </widget>
    </item>
-   <item row="7" column="0">
+   <item row="8" column="0">
     <spacer>
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -399,6 +399,39 @@
     </widget>
    </item>
         </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="7" column="0">
+    <widget class="QGroupBox" name="grpStatus">
+     <property name="title">
+      <string>Status Bar</string>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <item>
+       <widget class="QCheckBox" name="checkBoxStatusCompactMode">
+        <property name="toolTip">
+         <string>Remove surplus text in status bar.</string>
+        </property>
+        <property name="text">
+         <string>Compact Mode</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="checkBoxHideSoundStatus">
+        <property name="text">
+         <string>Hide Sound Status</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="checkBoxHideToasterDisable">
+        <property name="text">
+         <string>Hide Toaster Disable</string>
+        </property>
        </widget>
       </item>
      </layout>

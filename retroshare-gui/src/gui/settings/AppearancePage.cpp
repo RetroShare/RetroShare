@@ -27,6 +27,9 @@
 #include <rshare.h>
 #include "AppearancePage.h"
 #include "rsharesettings.h"
+#include "gui/MainWindow.h"
+#include "gui/statusbar/SoundStatus.h"
+#include "gui/statusbar/ToasterDisable.h"
 
 /** Constructor */
 AppearancePage::AppearancePage(QWidget * parent, Qt::WindowFlags flags)
@@ -35,7 +38,11 @@ AppearancePage::AppearancePage(QWidget * parent, Qt::WindowFlags flags)
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
 
+	MainWindow *pMainWindow = MainWindow::getInstance();
 	connect(ui.cmboStyleSheet, SIGNAL(activated(int)), this, SLOT(loadStyleSheet(int)));
+	connect(ui.checkBoxStatusCompactMode, SIGNAL(toggled(bool)), pMainWindow, SLOT(setCompactStatusMode(bool)));
+	connect(ui.checkBoxHideSoundStatus, SIGNAL(toggled(bool)), pMainWindow->soundStatusInstance(), SLOT(setHidden(bool)));
+	connect(ui.checkBoxHideToasterDisable, SIGNAL(toggled(bool)), pMainWindow->toasterDisableInstance(), SLOT(setHidden(bool)));
 
 	/* Populate combo boxes */
 	foreach (QString code, LanguageSupport::languageCodes()) {
@@ -121,6 +128,10 @@ bool AppearancePage::save(QString &errmsg)
 	/* Set to new style */
 	Rshare::setStyle(ui.cmboStyle->currentText());
 
+	Settings->setValueToGroup("StatusBar", "CompactMode", QVariant(ui.checkBoxStatusCompactMode->isChecked()));
+	Settings->setValueToGroup("StatusBar", "HideSound", QVariant(ui.checkBoxHideSoundStatus->isChecked()));
+	Settings->setValueToGroup("StatusBar", "HideToaster", QVariant(ui.checkBoxHideToasterDisable->isChecked()));
+
 	return true;
 }
 
@@ -189,6 +200,11 @@ void AppearancePage::load()
 		case 32:
 			ui.cmboListItemSize->setCurrentIndex(3);
 	}
+
+	ui.checkBoxStatusCompactMode->setChecked(Settings->valueFromGroup("StatusBar", "CompactMode", QVariant(false)).toBool());
+	ui.checkBoxHideSoundStatus->setChecked(Settings->valueFromGroup("StatusBar", "HideSound", QVariant(false)).toBool());
+	ui.checkBoxHideToasterDisable->setChecked(Settings->valueFromGroup("StatusBar", "HideToaster", QVariant(false)).toBool());
+
 }
 
 void AppearancePage::loadStyleSheet(int index)

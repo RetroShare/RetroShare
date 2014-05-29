@@ -37,14 +37,17 @@ class QActionGroup;
 class QListWidgetItem;
 class Idle;
 class PeerStatus;
-class GxsChannelDialog ;
-class GxsForumsDialog ;
 class NATStatus;
-class RatesStatus;
-class DiscStatus;
 class DHTStatus;
 class HashingStatus;
+class DiscStatus;
+class RatesStatus;
+class OpModeStatus;
+class SoundStatus;
+class ToasterDisable;
 //class ForumsDialog;
+class GxsChannelDialog ;
+class GxsForumsDialog ;
 class FriendsDialog;
 class ChatLobbyWidget;
 class ChatDialog;
@@ -161,6 +164,9 @@ public:
     void removeStatusObject(QObject *pObject);
     void setStatus(QObject *pObject, int nStatus);
 
+    SoundStatus *soundStatusInstance();
+    ToasterDisable *toasterDisableInstance();
+
 public slots:
     void displayErrorMessage(int,int,const QString&) ;
     void postModDirectories(bool update_local);
@@ -171,6 +177,7 @@ public slots:
     void externalLinkActivated(const QUrl &url);
     //! Go to a specific part of the control panel.
     void setNewPage(int page);
+    void setCompactStatusMode(bool compact);
 
 protected:
     /** Default Constructor */
@@ -249,13 +256,16 @@ private:
     QAction *toggleVisibilityAction, *toolAct;
     QList<UserNotify*> userNotifyList;
 
+    QComboBox *statusComboBox;
     PeerStatus *peerstatus;
     NATStatus *natstatus;
     DHTStatus *dhtstatus;
-    RatesStatus *ratesstatus;
-    DiscStatus *discstatus;
     HashingStatus *hashingstatus;
-    QComboBox *statusComboBox;
+    DiscStatus *discstatus;
+    RatesStatus *ratesstatus;
+    OpModeStatus *opModeStatus;
+    SoundStatus *soundStatus;
+    ToasterDisable *toasterDisable;
 
     /* Status */
     std::set <QObject*> m_apStatusObjects; // added objects for status

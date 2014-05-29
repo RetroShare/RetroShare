@@ -687,5 +687,6 @@
         <file>images/library_view.png</file>
         <file>images/library_add.png</file>
         <file>images/library64.png</file>
+        <file>images/library16.png</file>
     </qresource>
 </RCC>

@@ -194,7 +194,8 @@
 MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     : RWindow("MainWindow", parent, flags)
 {
-	ui = new Ui::MainWindow ;
+    ui = new Ui::MainWindow;
+    trayIcon = NULL;
 
     /* Invoke the Qt Designer generated QObject setup routine */
     ui->setupUi(this);
@@ -276,11 +277,19 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     ratesstatus = new RatesStatus();
     statusBar()->addPermanentWidget(ratesstatus);
 
-    statusBar()->addPermanentWidget(new OpModeStatus());
+    opModeStatus = new OpModeStatus();
+    statusBar()->addPermanentWidget(opModeStatus);
 
-    statusBar()->addPermanentWidget(new SoundStatus());
+    soundStatus = new SoundStatus();
+    soundStatus->setHidden(Settings->valueFromGroup("StatusBar", "HideSound", QVariant(false)).toBool());
+    statusBar()->addPermanentWidget(soundStatus);
 
-    statusBar()->addPermanentWidget(new ToasterDisable());
+    toasterDisable = new ToasterDisable();
+    toasterDisable->setHidden(Settings->valueFromGroup("StatusBar", "HideToaster", QVariant(false)).toBool());
+    statusBar()->addPermanentWidget(toasterDisable);
+
+    setCompactStatusMode(Settings->valueFromGroup("StatusBar", "CompactMode", QVariant(false)).toBool());
+
     /** Status Bar end ******/
 
     /* Creates a tray icon with a context menu and adds it to the system's * notification area. */
@@ -320,8 +329,12 @@ MainWindow::~MainWindow()
     delete peerstatus;
     delete natstatus;
     delete dhtstatus;
-    delete ratesstatus;
+    delete hashingstatus;
     delete discstatus;
+    delete ratesstatus;
+    delete opModeStatus;
+    delete soundStatus;
+    delete toasterDisable;
     MessengerWindow::releaseInstance();
 #ifdef UNFINISHED
     delete applicationWindow;
@@ -482,7 +495,7 @@ void MainWindow::initStackedPage()
 
   /** Add icon on Action bar */
   addAction(new QAction(QIcon(IMAGE_ADDFRIEND), tr("Add"), ui->toolBarAction), &MainWindow::addFriend, SLOT(addFriend()));
-  addAction(new QAction(QIcon(IMAGE_NEWRSCOLLECTION), tr("New"), ui->toolBarAction), &MainWindow::newRsCollection, SLOT(newRsCollection()));
+  //addAction(new QAction(QIcon(IMAGE_NEWRSCOLLECTION), tr("New"), ui->toolBarAction), &MainWindow::newRsCollection, SLOT(newRsCollection()));
   addAction(new QAction(QIcon(IMAGE_PREFERENCES), tr("Options"), ui->toolBarAction), &MainWindow::showSettings, SLOT(showSettings()));
   addAction(new QAction(QIcon(IMAGE_ABOUT), tr("About"), ui->toolBarAction), &MainWindow::showabout, SLOT(showabout()));
   addAction(new QAction(QIcon(IMAGE_QUIT), tr("Quit"), ui->toolBarAction), &MainWindow::doQuit, SLOT(doQuit()));
@@ -801,7 +814,7 @@ void MainWindow::updateFriends()
         icon = QIcon(trayIconResource);
     }
 
-    trayIcon->setIcon(icon);
+    if (trayIcon) trayIcon->setIcon(icon);
 }
 
 void MainWindow::postModDirectories(bool update_local)
@@ -1309,7 +1322,7 @@ void MainWindow::initializeStatusObject(QObject *pObject, bool bConnect)
 
     m_apStatusObjects.insert(m_apStatusObjects.end(), pObject);
 
-    std::string statusString;
+    //std::string statusString;
 
     QMenu *pMenu = dynamic_cast<QMenu*>(pObject);
     if (pMenu) {
@@ -1480,4 +1493,28 @@ void MainWindow::retroshareLinkActivated(const QUrl &url)
 void MainWindow::servicePermission()
 {
     ServicePermissionDialog::showYourself();
+}
+
+SoundStatus *MainWindow::soundStatusInstance()
+{
+	return soundStatus;
+}
+
+ToasterDisable *MainWindow::toasterDisableInstance()
+{
+	return toasterDisable;
+}
+
+void MainWindow::setCompactStatusMode(bool compact)
+{
+	//statusComboBox: TODO Show only icon
+	peerstatus->setCompactMode(compact);
+	updateFriends();
+	natstatus->setCompactMode(compact);
+	natstatus->getNATStatus();
+	dhtstatus->setCompactMode(compact);
+	dhtstatus->getDHTStatus();
+	hashingstatus->setCompactMode(compact);
+	ratesstatus->setCompactMode(compact);
+	//opModeStatus: TODO Show only ???
 }

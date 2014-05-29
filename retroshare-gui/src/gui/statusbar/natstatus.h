@@ -33,9 +33,11 @@ public:
     NATStatus(QWidget *parent = 0);
 
     void getNATStatus( );
+    void setCompactMode(bool compact) {_compactMode = compact; }
 
 private:
     QLabel *iconLabel, *statusNAT;
+    bool _compactMode;
 };
 
 #endif

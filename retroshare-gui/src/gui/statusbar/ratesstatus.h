@@ -33,9 +33,11 @@ public:
     RatesStatus(QWidget *parent = 0);
 
     void getRatesStatus(float downKb, float upKb);
+    void setCompactMode(bool compact) {_compactMode = compact; }
 
 private:
     QLabel *iconLabel, *statusRates;
+    bool _compactMode;
 };
 
 #endif

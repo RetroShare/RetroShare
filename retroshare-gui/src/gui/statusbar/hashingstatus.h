@@ -33,12 +33,15 @@ public:
     HashingStatus(QWidget *parent = 0);
     ~HashingStatus();
 
+    void setCompactMode(bool compact) {_compactMode = compact; }
+
 public slots:
     void updateHashingInfo(const QString&) ;
 
 private:
     QLabel *statusHashing, *hashloader;
     QMovie *movie;
+    bool _compactMode;
 };
 
 #endif

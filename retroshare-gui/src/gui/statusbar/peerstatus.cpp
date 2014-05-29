@@ -39,7 +39,9 @@ PeerStatus::PeerStatus(QWidget *parent)
     statusPeers = new QLabel( tr("Friends: 0/0"), this );
 //    statusPeers->setMinimumSize( statusPeers->frameSize().width() + 0, 0 );
     hbox->addWidget(statusPeers);
-    
+
+    _compactMode = false;
+
     setLayout(hbox);
 
 }
@@ -48,11 +50,14 @@ void PeerStatus::getPeerStatus(unsigned int nFriendCount, unsigned int nOnlineCo
 {
     /* set users/friends/network */
 
-    statusPeers->setToolTip(tr("Online Friends/Total Friends") );
+    if (statusPeers){
+        statusPeers->setToolTip(tr("Online Friends/Total Friends") );
+        QString text;
+        if (_compactMode) text = QString("%1/%2").arg(nOnlineCount).arg(nFriendCount);
+        else text = QString("<strong>%1:</strong> %2/%3 ").arg(tr("Friends")).arg(nOnlineCount).arg(nFriendCount);
+        statusPeers -> setText(text);
+    }
 
-    if (statusPeers)
-        statusPeers -> setText(QString("<strong>%1:</strong> %2/%3 ").arg(tr("Friends")).arg(nOnlineCount).arg(nFriendCount));
-    		
     if (nOnlineCount > 0)
     {
         iconLabel->setPixmap(QPixmap(":/images/user/identity16.png"));
@@ -61,8 +66,4 @@ void PeerStatus::getPeerStatus(unsigned int nFriendCount, unsigned int nOnlineCo
     {
         iconLabel->setPixmap(QPixmap(":/images/user/identitygray16.png"));
     }
-   		
-
 }
-
-

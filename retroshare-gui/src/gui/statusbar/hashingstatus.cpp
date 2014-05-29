@@ -68,7 +68,9 @@ HashingStatus::HashingStatus(QWidget *parent)
 
     QSpacerItem *horizontalSpacer = new QSpacerItem(3000, 0, QSizePolicy::Expanding, QSizePolicy::Minimum);
     hbox->addItem(horizontalSpacer);
-    
+
+    _compactMode = false;
+
     setLayout(hbox);
 
     hashloader->hide();
@@ -84,16 +86,22 @@ HashingStatus::~HashingStatus()
 
 void HashingStatus::updateHashingInfo(const QString& s)
 {
-    if(s.isEmpty()) {
-        statusHashing->hide();
-        hashloader->hide();
+    if (s.isEmpty()) {
+        statusHashing->hide() ;
+        hashloader->hide() ;
 
-        movie->stop();
+        movie->stop() ;
     } else {
-        statusHashing->setText(s);
-        statusHashing->show();
-        hashloader->show();
+        hashloader->setToolTip(s) ;
 
-        movie->start();
+        if (_compactMode) {
+            statusHashing->hide() ;
+        } else {
+            statusHashing->setText(s) ;
+            statusHashing->show() ;
+        }
+        hashloader->show() ;
+
+        movie->start() ;
     }
 }

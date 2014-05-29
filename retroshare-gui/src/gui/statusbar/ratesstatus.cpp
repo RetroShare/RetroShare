@@ -42,7 +42,9 @@ RatesStatus::RatesStatus(QWidget *parent)
     statusRates = new QLabel( tr("<strong>Down:</strong> 0.00 (kB/s) | <strong>Up:</strong> 0.00 (kB/s) "), this );
 //    statusPeers->setMinimumSize( statusPeers->frameSize().width() + 0, 0 );
     hbox->addWidget(statusRates);
-    
+
+    _compactMode = false;
+
     setLayout(hbox);
 }
 
@@ -50,26 +52,20 @@ void RatesStatus::getRatesStatus(float downKb, float upKb)
 {
     /* set users/friends/network */
 
-    if (statusRates)
-          statusRates -> setText(QString("<strong>%1:</strong> %2 (kB/s) | <strong>%3:</strong> %4 (kB/s) ").arg(tr("Down")).arg(downKb, 0, 'f', 2).arg(tr("Up")).arg(upKb, 0, 'f', 2));
+    QString normalText = QString("<strong>%1:</strong> %2 (kB/s) | <strong>%3:</strong> %4 (kB/s) ")
+                                .arg(tr("Down")).arg(downKb, 0, 'f', 2)
+                                .arg(tr("Up")).arg(upKb, 0, 'f', 2);
+    QString compactText = QString("%1|%2").arg(downKb, 0, 'f', 2).arg(upKb, 0, 'f', 2);
 
-    if( upKb > 0 || downKb < 0  )
-    {
-        iconLabel->setPixmap(QPixmap(":/images/up1down0.png"));
+    if (statusRates) {
+        statusRates->setText(_compactMode?compactText:normalText);
+        statusRates->setToolTip(normalText);
     }
-    
-    if( upKb < 0 || downKb > 0 )
-    {
-        iconLabel->setPixmap(QPixmap(":/images/up0down1.png"));
-    }
-    
-    if( upKb > 0 || downKb > 0 )
-    {
-        iconLabel->setPixmap(QPixmap(":/images/up1down1.png"));
-    }
-        
-    else
-    {
-        iconLabel->setPixmap(QPixmap(":/images/up0down0.png"));
-    }
+
+    QString up = (upKb   > 0)?"1":"0";
+    QString dw = (downKb > 0)?"1":"0";
+    iconLabel->setPixmap(QPixmap(QString(":/images/")
+                                 + "up"   + up
+                                 + "down" + dw
+                                 + ".png"));
 }

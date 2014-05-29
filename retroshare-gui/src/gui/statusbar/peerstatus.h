@@ -33,9 +33,11 @@ public:
     PeerStatus(QWidget *parent = 0);
 
     void getPeerStatus(unsigned int nFriendCount, unsigned int nOnlineCount);
+    void setCompactMode(bool compact) {_compactMode = compact; }
 
 private:
     QLabel *iconLabel, *statusPeers;
+    bool _compactMode;
 };
 
 #endif

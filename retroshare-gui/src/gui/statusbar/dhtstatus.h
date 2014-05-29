@@ -31,11 +31,12 @@ class DHTStatus : public QWidget
 public:
     DHTStatus(QWidget *parent = 0);
 
-    void getDHTStatus( );    
+    void getDHTStatus( );
+    void setCompactMode(bool compact) {_compactMode = compact; }
 
 private:
     QLabel *dhtstatusLabel, *statusDHT, *dhtnetworkLabel, *dhtnetworksizeLabel, *spaceLabel;
-
+    bool _compactMode;
 };
 
 #endif
