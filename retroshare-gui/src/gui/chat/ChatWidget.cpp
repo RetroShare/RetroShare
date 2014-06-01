@@ -37,7 +37,6 @@
 #include "ui_ChatWidget.h"
 #include "gui/notifyqt.h"
 #include "gui/RetroShareLink.h"
-#include "gui/CreateMsgLinkDialog.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/settings/rsettingswin.h"
 #include "gui/settings/RsharePeerSettings.h"
