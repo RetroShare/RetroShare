@@ -30,6 +30,8 @@
 #include "gui/Posted/PostedListDialog.h"
 #include "gui/Posted/PostedItem.h"
 
+#define IMAGE_POSTED              ":/images/wikibook_32.png"
+
 class PostedDialog : public GxsCommentContainer
 {
 	Q_OBJECT
@@ -37,6 +39,11 @@ class PostedDialog : public GxsCommentContainer
 public:
 	PostedDialog(QWidget *parent = 0)
 	:GxsCommentContainer(parent) { return; }
+
+        virtual QIcon iconPixmap() const { return QIcon(IMAGE_POSTED) ; } //MainPage
+        virtual QString pageName() const { return tr("Posted") ; } //MainPage
+        virtual QString helpText() const { return ""; } //MainPage
+
 
 	virtual GxsServiceDialog *createServiceDialog()
 	{

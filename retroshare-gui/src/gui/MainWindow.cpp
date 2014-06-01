@@ -412,9 +412,9 @@ void MainWindow::initStackedPage()
   //notify.push_back(QPair<MainPage*, QAction*>(gxsforumDialog, action));
   addPage(gxsforumDialog = new GxsForumsDialog(ui->stackPages), grp, &notify);
   
-  //PostedDialog *postedDialog = NULL;
-  //addPage(postedDialog = new PostedDialog(ui->stackPages), grp, &notify);
-  //postedDialog->setup();
+  PostedDialog *postedDialog = NULL;
+  addPage(postedDialog = new PostedDialog(ui->stackPages), grp, &notify);
+  postedDialog->setup();
 
   WikiDialog *wikiDialog = NULL;
   addPage(wikiDialog = new WikiDialog(ui->stackPages), grp, &notify);
