@@ -668,7 +668,13 @@ bool    UdpStunner::storeStunPeer(const struct sockaddr_in &remote, const char *
 		}
 	}
 
-	TouStunPeer peer(std::string(peerid), remote);
+	std::string peerstring;
+	if (peerid)
+	{
+		peerstring = std::string(peerid);
+	}
+
+	TouStunPeer peer(peerstring, remote);
 	if (sent)
 	{
 		peer.failCount += 1;

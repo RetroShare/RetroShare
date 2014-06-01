@@ -143,7 +143,7 @@ int p3BitDht::NodeCallback(const bdId *id, uint32_t peerflags)
 			bdStdPrintId(std::cerr, id);
 			std::cerr << std::endl;
 #endif
-			//mProxyStunner->addStunPeer(id->addr, NULL);
+			mProxyStunner->addStunPeer(id->addr, NULL);
 		}
 		/* else */ // removed else until we have lots of peers.
 
@@ -154,7 +154,7 @@ int p3BitDht::NodeCallback(const bdId *id, uint32_t peerflags)
 			bdStdPrintId(std::cerr, id);
 			std::cerr << std::endl;
 #endif
-			//mDhtStunner->addStunPeer(id->addr, NULL);
+			mDhtStunner->addStunPeer(id->addr, NULL);
 		}
 	}
 	return 1;
