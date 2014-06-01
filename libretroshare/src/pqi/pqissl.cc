@@ -569,11 +569,11 @@ int 	pqissl::Delay_Connection()
 	{
 		waiting = WAITING_DELAY;
 
-		/* set delay */
-		if (mConnectDelay == 0)
-		{
-			return Initiate_Connection();
-		}
+		/* we cannot just jump to Initiate_Connection, 
+  		 * but must switch to WAITING_DELAY for at least one cycle.
+		 * to avoid deadlock between threads....
+		 * ie. so the connection stuff is called from tick(), rather than connect()
+		 */
 
 		/* set Connection TS.
 		 */
@@ -597,8 +597,7 @@ int 	pqissl::Delay_Connection()
 			rslog(RSL_DEBUG_BASIC, pqisslzone, out);
 		}
 #endif
-
-		if (time(NULL) > mConnectTS)
+		if (time(NULL) >= mConnectTS)
 		{
 			return Initiate_Connection();
 		}
