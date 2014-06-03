@@ -1604,7 +1604,7 @@ bool RsGenExchange::processGrpMask(const RsGxsGroupId& grpId, ContentValue &grpC
     {
         if(grpMeta)
             delete grpMeta;
-        return false;
+        return !(grpCv.empty());
     }
 
     ok &= grpCv.getAsInt32(key+GXS_MASK, mask);

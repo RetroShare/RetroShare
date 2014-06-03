@@ -294,6 +294,10 @@ void ContentValue::clear(){
     clearData();
 }
 
+bool ContentValue::empty() const{
+    return mKvSet.empty();
+}
+
 void ContentValue::clearData(){
 
     std::map<std::string, std::pair<uint32_t, char*> >::iterator

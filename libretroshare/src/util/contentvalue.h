@@ -161,6 +161,11 @@ public:
      */
     void clear();
 
+    /*!
+     * checks if internal kv map is empty
+     */
+    bool empty() const;
+
 private:
 
     /*!
