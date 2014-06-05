@@ -33,7 +33,7 @@ win32 {
 	#QMAKE_CXXFLAGS_DEBUG += -O2
 	#QMAKE_CFLAGS_DEBUG += -O2
 
-	SSL_DIR = ../../../openssl-1.0.1g
+	SSL_DIR = ../../../openssl-1.0.1h
 	ZLIB_DIR = ../../../zlib-1.2.3
 	BZIP_DIR = ../../../bzip2-1.0.6
 

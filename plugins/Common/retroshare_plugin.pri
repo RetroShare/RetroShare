@@ -46,7 +46,7 @@ win32 {
 
 	UPNPC_DIR = ../../../lib/miniupnpc-1.3
 	ZLIB_DIR = ../../../lib/zlib-1.2.3
-	SSL_DIR = ../../../openssl-1.0.1g
+	SSL_DIR = ../../../openssl-1.0.1h
 
 	INCLUDEPATH += . $${SSL_DIR}/include $${UPNPC_DIR} $${PTHREADS_DIR} $${ZLIB_DIR}
 
