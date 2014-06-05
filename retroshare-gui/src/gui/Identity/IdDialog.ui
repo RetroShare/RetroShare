@@ -259,6 +259,16 @@
      <widget class="QWidget" name="layoutWidget">
       <layout class="QVBoxLayout" name="verticalLayout_6">
        <item>
+        <widget class="HeaderFrame" name="headerFrame">
+         <property name="frameShape">
+          <enum>QFrame::StyledPanel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QGroupBox" name="detailsGroupBox">
          <property name="title">
           <string>Identity Type</string>
@@ -677,6 +687,12 @@
    <class>RSTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>gui/common/RSTreeWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>HeaderFrame</class>
+   <extends>QFrame</extends>
+   <header>gui/common/headerframe.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <tabstops>

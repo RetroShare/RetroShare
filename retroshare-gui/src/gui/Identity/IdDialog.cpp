@@ -138,6 +138,9 @@ IdDialog::IdDialog(QWidget *parent)
 	connect(ui.filterComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(filterComboBoxChanged()));
 	connect(ui.filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
 	connect(ui.repModButton, SIGNAL(clicked()), this, SLOT(modifyReputation()));
+	
+	ui.headerFrame->setHeaderImage(QPixmap(":/images/identity/identity_64.png"));
+	ui.headerFrame->setHeaderText(tr("Identities"));
 
 	/* Add filter types */
 	ui.filterComboBox->addItem(tr("All"), RSID_FILTER_ALL);
@@ -442,9 +445,11 @@ void IdDialog::insertIdDetails(uint32_t token)
 	RsPgpId ownPgpId  = rsPeers->getGPGOwnId();
 
 	ui.lineEdit_Nickname->setText(QString::fromUtf8(data.mMeta.mGroupName.c_str()));
-    ui.lineEdit_KeyId->setText(QString::fromStdString(data.mMeta.mGroupId.toStdString()));
+  ui.lineEdit_KeyId->setText(QString::fromStdString(data.mMeta.mGroupId.toStdString()));
 	ui.lineEdit_GpgHash->setText(QString::fromStdString(data.mPgpIdHash.toStdString()));
 	ui.lineEdit_GpgId->setText(QString::fromStdString(data.mPgpId.toStdString()));
+	
+	ui.headerFrame->setHeaderText(QString::fromUtf8(data.mMeta.mGroupName.c_str()));
 
 	if (data.mPgpKnown)
 	{

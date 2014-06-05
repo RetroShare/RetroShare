@@ -541,6 +541,7 @@
         <file>images/window_fullscreen.png</file>
         <file>images/window_nofullscreen.png</file>
         <file>images/identity/identities_32.png</file>
+        <file>images/identity/identity_64.png</file>
         <file>images/identity/identity_create_32.png</file>
         <file>images/identity/identity_create_64.png</file>
         <file>images/identity/identity_delete_32.png</file>
