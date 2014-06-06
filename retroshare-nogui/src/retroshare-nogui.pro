@@ -91,7 +91,7 @@ win32 {
 
 	DEFINES *= WINDOWS_SYS _USE_32BIT_TIME_T
 
-	SSL_DIR = ../../../openssl-1.0.1g
+	SSL_DIR = ../../../openssl-1.0.1h
 
 	INCLUDEPATH += . $${SSL_DIR}/include
 
