@@ -136,6 +136,8 @@ NotifyQt::NotifyQt() : cDialog(NULL)
 		QMutexLocker m(&_mutex) ;
 		_enabled = false ;
 	}
+
+	connect(this,SIGNAL(raiseChatWindow(QString)),this,SLOT(raiseChatWindow_slot(QString)),Qt::QueuedConnection) ;
 }
 
 void NotifyQt::notifyErrorMsg(int list, int type, std::string msg)
@@ -507,6 +509,11 @@ void NotifyQt::notifyChatLobbyEvent(uint64_t lobby_id,uint32_t event_type,const 
 	emit chatLobbyEvent(lobby_id,event_type,QString::fromUtf8(nickname.c_str()),QString::fromUtf8(str.c_str())) ;
 }
 
+void NotifyQt::notifyChatShow(const std::string& peer_id)
+{
+	emit raiseChatWindow(RsPeerId(peer_id)) ;
+}
+
 void NotifyQt::notifyChatStatus(const std::string& peer_id,const std::string& status_string,bool is_private)
 {
 	{
@@ -519,6 +526,11 @@ void NotifyQt::notifyChatStatus(const std::string& peer_id,const std::string& st
 	std::cerr << "notifyQt: Received chat status string: " << status_string << std::endl ;
 #endif
 	emit chatStatusChanged(QString::fromStdString(peer_id),QString::fromUtf8(status_string.c_str()),is_private) ;
+}
+
+void NotifyQt::raiseChatWindow_slot(const RsPeerId& peer_str)
+{
+	ChatDialog::chatFriend(peer_str) ;
 }
 
 void NotifyQt::notifyTurtleSearchResult(uint32_t search_id,const std::list<TurtleFileInfo>& files) 
@@ -1167,85 +1179,3 @@ void NotifyQt::runningTick()
 	}
 }
 
-//void NotifyQt::displaySearch()
-//{
-//	iface->lockData(); /* Lock Interface */
-//
-//#ifdef NOTIFY_DEBUG
-//	std::ostringstream out;
-//	std::cerr << out.str();
-//#endif
-//
-//	iface->unlockData(); /* UnLock Interface */
-//}
-
-//  void NotifyQt::displayChat()
-//  {
-//  	iface->lockData(); /* Lock Interface */
-//  
-//  #ifdef NOTIFY_DEBUG
-//  	std::ostringstream out;
-//  	std::cerr << out.str();
-//  #endif
-//  
-//  	iface->unlockData(); /* UnLock Interface */
-//  
-//  	if (hDialog)
-//   		hDialog -> insertChat();
-//  }
-//
-//
-//void NotifyQt::displayChannels()
-//{
-//	iface->lockData(); /* Lock Interface */
-//
-//#ifdef NOTIFY_DEBUG
-//	std::ostringstream out;
-//	std::cerr << out.str();
-//#endif
-//
-//	iface->unlockData(); /* UnLock Interface */
-//
-//	if (sDialog)
-// 		sDialog -> insertChannels();
-//}
-//
-//
-//void NotifyQt::displayTransfers()
-//{
-//	/* Do the GUI */
-//	if (tDialog)
-//		tDialog->insertTransfers();
-//}
-//
-//
-//void NotifyQt::preDisplayNeighbours()
-//{
-//
-//}
-//
-//void NotifyQt::preDisplayFriends()
-//{
-//
-//}
-
-//void NotifyQt::preDisplaySearch()
-//{
-//
-//}
-//
-//void NotifyQt::preDisplayMessages()
-//{
-//
-//}
-//
-//void NotifyQt::preDisplayChannels()
-//{
-//
-//}
-//
-//void NotifyQt::preDisplayTransfers()
-//{
-//
-//
-//}

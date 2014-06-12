@@ -99,6 +99,7 @@ class p3Notify: public RsNotify
 		void notifyListChange                 (int /* list */, int /* type */) ;
 		void notifyErrorMsg                   (int /* list */, int /* sev  */, std::string /* msg */) ;
 		void notifyChatStatus                 (const std::string& /* peer_id  */, const std::string& /* status_string */ ,bool /* is_private */) ;
+		void notifyChatShow                   (const std::string& /* peer_id  */) ;
 		void notifyChatLobbyEvent             (uint64_t           /* lobby id */, uint32_t           /* event type    */ ,const std::string& /* nickname */,const std::string& /* any string */) ;
 		void notifyChatLobbyTimeShift         (int                /* time_shift*/) ;
 		void notifyCustomState                (const std::string& /* peer_id   */, const std::string&               /* status_string */) ;

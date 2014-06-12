@@ -149,13 +149,10 @@ QString PopupDistantChatDialog::getPeerName(const DistantChatPeerId &id) const
 	 {
 		 RsIdentityDetails details  ;
 
-		 for(int i=0;i<3;++i)
-			 if(rsIdentity->getIdDetails(gxs_id,details))
-				 return QString::fromUtf8( details.mNickname.c_str() ) ;
-			 else
-				 usleep(500000) ;	// sleep for 500 msec.
-
-		 return QString::fromStdString(id.toStdString()) ;
+		 if(rsIdentity->getIdDetails(gxs_id,details))
+			 return QString::fromUtf8( details.mNickname.c_str() ) ;
+		 else
+			 return QString::fromStdString(gxs_id.toStdString()) ;
 	 }
 	else
 		return ChatDialog::getPeerName(id) ;

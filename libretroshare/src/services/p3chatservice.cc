@@ -3214,19 +3214,18 @@ void p3ChatService::addVirtualPeer(const TurtleFileHash& hash,const TurtleVirtua
 		info.status = RS_DISTANT_CHAT_STATUS_WAITING_DH ;
 	}
 
-	RsChatMsgItem *item = new RsChatMsgItem;
-	item->message = std::string("Tunnel is secured") ;
-	item->PeerId(virtual_peer_id) ;
-	item->chatFlags = RS_CHAT_FLAG_PRIVATE ;
+//	RsChatMsgItem *item = new RsChatMsgItem;
+//	item->message = std::string("Tunnel is secured") ;
+//	item->PeerId(virtual_peer_id) ;
+//	item->chatFlags = RS_CHAT_FLAG_PRIVATE ;
+//
+//	privateIncomingList.push_back(item) ;
 
-	privateIncomingList.push_back(item) ;
-
-	if(dir == RsTurtleGenericTunnelItem::DIRECTION_SERVER)
-		RsServer::notify()->AddPopupMessage(RS_POPUP_CHAT, virtual_peer_id.toStdString(), "Distant peer", "Conversation starts...");
+	RsServer::notify()->AddPopupMessage(RS_POPUP_CHAT, virtual_peer_id.toStdString(), "Distant peer", "Conversation starts...");
 
 	// Notify the GUI that the tunnel is up.
 	//
-	RsServer::notify()->notifyChatStatus(virtual_peer_id.toStdString(),"tunnel is up again!",true) ;
+	RsServer::notify()->notifyChatShow(virtual_peer_id.toStdString()) ;
 }
 
 void p3ChatService::removeVirtualPeer(const TurtleFileHash& hash,const TurtleVirtualPeerId& virtual_peer_id)

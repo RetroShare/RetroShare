@@ -42,6 +42,7 @@ class NotifyQt: public QObject, public NotifyClient
 		virtual void notifyListChange(int list, int type);
 		virtual void notifyErrorMsg(int list, int sev, std::string msg);
 		virtual void notifyChatStatus(const std::string& peer_id,const std::string& status_string,bool is_private);
+		virtual void notifyChatShow(const std::string& peer_id) ;
 		virtual void notifyCustomState(const std::string& peer_id, const std::string& status_string);
 		virtual void notifyHashingInfo(uint32_t type, const std::string& fileinfo);
 		virtual void notifyTurtleSearchResult(uint32_t search_id,const std::list<TurtleFileInfo>& found_files);
@@ -117,6 +118,7 @@ class NotifyQt: public QObject, public NotifyClient
 		void peerStatusChangedSummary() const;
 		void publicChatChanged(int type) const ;
 		void privateChatChanged(int list, int type) const ;
+		void raiseChatWindow(const RsPeerId&) const ;
 		void groupsChanged(int type) const ;
 		void discInfoChanged() const ;
 		void downloadComplete(const QString& /* fileHash */);
@@ -141,6 +143,7 @@ class NotifyQt: public QObject, public NotifyClient
 		void runningTick();
 		void handleSignatureEvent() ;
 		void handleChatLobbyTimeShift(int) ;
+		void raiseChatWindow_slot(const RsPeerId&) ;
 
 	private:
 		NotifyQt();
