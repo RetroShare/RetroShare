@@ -802,13 +802,10 @@ void IdDialog::chatIdentity()
 
 	std::string keyId = item->text(RSID_COL_KEYID).toStdString();
 
-	DistantChatPeerId virtual_peer_id ;
 	uint32_t error_code ;
 
-	if(!rsMsgs->initiateDistantChatConnexion(RsGxsId(keyId), virtual_peer_id, error_code))
+	if(!rsMsgs->initiateDistantChatConnexion(RsGxsId(keyId), error_code))
 		QMessageBox::information(NULL,"Distant cannot work","Distant chat refused with this peer. Reason: "+QString::number(error_code)) ;
-	else
-		ChatDialog::chatFriend(virtual_peer_id);
 }
 
 

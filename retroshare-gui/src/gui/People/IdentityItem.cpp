@@ -187,13 +187,10 @@ void IdentityItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 
 void IdentityItem::distantChat()
 {
-	DistantChatPeerId virtual_peer_id ;
 	uint32_t error_code ;
 
-	if(!rsMsgs->initiateDistantChatConnexion(RsGxsId(_group_info.mMeta.mGroupId), virtual_peer_id, error_code))
+	if(!rsMsgs->initiateDistantChatConnexion(RsGxsId(_group_info.mMeta.mGroupId), error_code))
 		QMessageBox::information(NULL,"Distant cannot work","Distant chat refused with this peer. Reason: "+QString::number(error_code)) ;
-	else
-		ChatDialog::chatFriend(virtual_peer_id);
 }
 
 void IdentityItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)

@@ -141,12 +141,9 @@ void ChatPage::collectedInvite_openDistantChat()
 
 	std::cerr << "Openning secured chat tunnel for virtual peer id " << gxs_id << ". Please wait..." << std::endl;
 	uint32_t error_code ;
-DistantChatPeerId dcpid ;
 
-	if(!rsMsgs->initiateDistantChatConnexion(gxs_id,dcpid,error_code))
+	if(!rsMsgs->initiateDistantChatConnexion(gxs_id,error_code))
 		QMessageBox::critical(NULL,tr("Can't open distant chat"),tr("Cannot open distant chat. Error code=")+QString::number(error_code)) ;
-	else
-		ChatDialog::chatFriend(dcpid);
 }
 
 /** Saves the changes on this page */
