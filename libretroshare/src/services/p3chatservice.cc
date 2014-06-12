@@ -24,6 +24,7 @@
  */
 #include <math.h>
 #include <sstream>
+#include <unistd.h>
 
 #include "openssl/rand.h"
 #include "openssl/dh.h"
