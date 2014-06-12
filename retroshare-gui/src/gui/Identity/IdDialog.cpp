@@ -27,10 +27,12 @@
 #include "IdDialog.h"
 #include "gui/gxs/GxsIdTreeWidgetItem.h"
 #include "gui/common/UIStateHelper.h"
+#include "gui/chat/ChatDialog.h"
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsidentity.h>
 #include "retroshare/rsgxsflags.h"
+#include "retroshare/rsmsgs.h"
 
 #include <iostream>
 
@@ -131,6 +133,7 @@ IdDialog::IdDialog(QWidget *parent)
 	connect(ui.toolButton_EditId, SIGNAL(clicked()), this, SLOT(editIdentity()));
 	connect(ui.removeIdentity, SIGNAL(triggered()), this, SLOT(removeIdentity()));
 	connect(ui.editIdentity, SIGNAL(triggered()), this, SLOT(editIdentity()));
+	connect(ui.chatIdentity, SIGNAL(triggered()), this, SLOT(chatIdentity()));
 
 	connect(ui.treeWidget_IdList, SIGNAL(itemSelectionChanged()), this, SLOT(updateSelection()));
 	connect(ui.treeWidget_IdList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(IdListCustomPopupMenu(QPoint)));
@@ -505,6 +508,7 @@ void IdDialog::insertIdDetails(uint32_t token)
 		mStateHelper->setWidgetEnabled(ui.toolButton_EditId, true);
 		ui.editIdentity->setEnabled(true);
 		ui.removeIdentity->setEnabled(true);
+		ui.chatIdentity->setEnabled(false);
 	}
 	else
 	{
@@ -514,6 +518,7 @@ void IdDialog::insertIdDetails(uint32_t token)
 		mStateHelper->setWidgetEnabled(ui.toolButton_EditId, false);
 		ui.editIdentity->setEnabled(false);
 		ui.removeIdentity->setEnabled(false);
+		ui.chatIdentity->setEnabled(true);
 	}
 
 	/* now fill in the reputation information */
@@ -779,7 +784,31 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
     QMenu contextMnu( this );
 
     contextMnu.addAction(ui.editIdentity);
-		contextMnu.addAction(ui.removeIdentity);
+	 contextMnu.addAction(ui.removeIdentity);
+	 contextMnu.addAction(ui.chatIdentity);
 
     contextMnu.exec(QCursor::pos());
 }
+
+void IdDialog::chatIdentity()
+{
+	QTreeWidgetItem *item = ui.treeWidget_IdList->currentItem();
+	if (!item)
+	{
+		std::cerr << "IdDialog::editIdentity() Invalid item";
+		std::cerr << std::endl;
+		return;
+	}
+
+	std::string keyId = item->text(RSID_COL_KEYID).toStdString();
+
+	DistantChatPeerId virtual_peer_id ;
+	uint32_t error_code ;
+
+	if(!rsMsgs->initiateDistantChatConnexion(RsGxsId(keyId), virtual_peer_id, error_code))
+		QMessageBox::information(NULL,"Distant cannot work","Distant chat refused with this peer. Reason: "+QString::number(error_code)) ;
+	else
+		ChatDialog::chatFriend(virtual_peer_id);
+}
+
+

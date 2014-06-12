@@ -45,6 +45,8 @@ class p3turtle ;
 
 typedef RsPeerId ChatLobbyVirtualPeerId ;
 
+static const uint32_t DISTANT_CHAT_AES_KEY_SIZE = 16 ;
+
 //!The basic Chat service.
  /**
   *
@@ -55,7 +57,7 @@ typedef RsPeerId ChatLobbyVirtualPeerId ;
 class p3ChatService: public p3Service, public p3Config, public pqiServiceMonitor, public RsTurtleClientService
 {
 	public:
-		p3ChatService(p3ServiceControl *cs, p3LinkMgr *cm, p3HistoryMgr *historyMgr);
+		p3ChatService(p3ServiceControl *cs, p3IdService *pids,p3LinkMgr *cm, p3HistoryMgr *historyMgr);
 
 		virtual RsServiceInfo getServiceInfo();
 
@@ -332,18 +334,26 @@ class p3ChatService: public p3Service, public p3Config, public pqiServiceMonitor
 		// Creates the invite if the public key of the distant peer is available.
 		// Om success, stores the invite in the map above, so that we can respond to tunnel requests.
 		//
-		bool initiateDistantChatConnexion(const RsGxsId& gxs_id,DistantChatPeerId& pid,uint32_t& error_code) ;
+		bool initiateDistantChatConnexion(const RsGxsId& gxs_id,uint32_t& error_code) ;
 		bool closeDistantChatConnexion(const DistantChatPeerId& pid) ;
 		virtual bool getDistantChatStatus(const DistantChatPeerId& hash,RsGxsId& gxs_id,uint32_t& status) ;
 
 	private:
-		struct DistantChatPeerInfo 
+		class DistantChatPeerInfo 
 		{
+			public:
+				DistantChatPeerInfo() { dh = NULL; }
+
 			time_t last_contact ; 			// used to send keep alive packets
-			unsigned char aes_key[16] ;	// key to encrypt packets
+
+			DH *dh ;
+			unsigned char aes_key[DISTANT_CHAT_AES_KEY_SIZE] ;
+
+
 			uint32_t status ;					// info: do we have a tunnel ?
 			RsPeerId virtual_peer_id;  	// given by the turtle router. Identifies the tunnel.
-			RsGxsId gxs_id ;          		// pgp id of the peer we're talking to.
+			RsGxsId gxs_id ;          		// gxs id of the peer we're talking to.
+			RsGxsId own_gxs_id ;         	// gxs id we're using to talk.
 			RsTurtleGenericTunnelItem::Direction direction ; // specifiec wether we are client(managing the tunnel) or server.
 		};
 
@@ -363,9 +373,15 @@ class p3ChatService: public p3Service, public p3Config, public pqiServiceMonitor
 		void addVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&,RsTurtleGenericTunnelItem::Direction dir) ;
 		void removeVirtualPeer(const TurtleFileHash&, const TurtleVirtualPeerId&) ;
 		void markDistantChatAsClosed(const TurtleVirtualPeerId& vpid) ;
-		void startClientDistantChatConnection(const RsFileHash& hash,const RsGxsId& gxs_id,const unsigned char *aes_key_buf) ;
+		void startClientDistantChatConnection(const RsFileHash& hash,const RsGxsId& to_gxs_id,const RsGxsId& from_gxs_id) ;
 		bool getHashFromVirtualPeerId(const TurtleVirtualPeerId& pid,RsFileHash& hash) ;
-		TurtleFileHash hashFromDistantChatPeerId(const DistantChatPeerId& pid) ;
+		TurtleFileHash hashFromGxsId(const RsGxsId& pid) ;
+
+		void handleRecvDHPublicKey(RsChatDHPublicKeyItem *item) ;
+		bool locked_sendDHPublicKey(const DistantChatPeerInfo& pinfo) ;
+		bool locked_initDHSessionKey(DistantChatPeerInfo& pinfo);
+		DistantChatPeerId virtualPeerIdFromHash(const TurtleFileHash& hash  ) ;	// ... and to a hash for p3turtle
+
 
 		// Utility functions
 
@@ -373,9 +389,9 @@ class p3ChatService: public p3Service, public p3Config, public pqiServiceMonitor
 		void sendPrivateChatItem(RsChatItem *) ;
 
 		static TurtleFileHash hashFromVirtualPeerId(const DistantChatPeerId& peerId) ;	// converts IDs so that we can talk to RsPeerId from outside
-		static DistantChatPeerId virtualPeerIdFromHash(const TurtleFileHash& hash  ) ;	// ... and to a hash for p3turtle
 
 		p3turtle *mTurtle ;
+		p3IdService *mIdService ;
 };
 
 class p3ChatService::StateStringInfo

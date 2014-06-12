@@ -39,7 +39,7 @@
 namespace RsRecogn {
 
 EVP_PKEY *	loadMasterKey();
-bool		loadSigningKeys(std::map<std::string, RsGxsRecognSignerItem *> &signMap);
+bool		loadSigningKeys(std::map<RsGxsId, RsGxsRecognSignerItem *> &signMap);
 bool		validateTagSignature(RsGxsRecognSignerItem *signer, RsGxsRecognTagItem *item);
 
 bool		signTag(EVP_PKEY *signKey, RsGxsRecognTagItem *item);

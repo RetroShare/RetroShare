@@ -57,6 +57,19 @@ std::ostream& RsChatMsgItem::print(std::ostream &out, uint16_t indent)
 	printRsItemEnd(out, "RsChatMsgItem", indent);
 	return out;
 }
+std::ostream& RsChatDHPublicKeyItem::print(std::ostream &out, uint16_t indent)
+{
+	printRsItemBase(out, "RsChatDHPublicKeyItem", indent);
+	uint16_t int_Indent = indent + 2;
+
+	printIndent(out, int_Indent);
+	out << "  Signature Key ID: " << signature.keyId << std::endl ;
+	out << "  Public    Key ID: " << gxs_key.keyId << std::endl ;
+
+	printRsItemEnd(out, "RsChatMsgItem", indent);
+	return out;
+}
+
 std::ostream& RsChatLobbyListItem_deprecated2::print(std::ostream &out, uint16_t indent)
 {
 	printRsItemBase(out, "RsChatLobbyListItem_deprecated2", indent);
@@ -296,6 +309,7 @@ RsItem *RsChatSerialiser::deserialise(void *data, uint32_t *pktsize)
 		case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_deprecated:	return new RsChatLobbyListItem_deprecated(data,*pktsize) ;
 		case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_deprecated2:return new RsChatLobbyListItem_deprecated2(data,*pktsize) ;
 		case RS_PKT_SUBTYPE_CHAT_LOBBY_CONFIG:  		return new RsChatLobbyConfigItem(data,*pktsize) ;
+		case RS_PKT_SUBTYPE_DISTANT_CHAT_DH_PUBLIC_KEY:  		return new RsChatDHPublicKeyItem(data,*pktsize) ;
 		default:
 			std::cerr << "Unknown packet type in chat!" << std::endl ;
 			return NULL ;
@@ -466,6 +480,17 @@ uint32_t RsChatLobbyConfigItem::serial_size()
     return s;
 }
 
+uint32_t RsChatDHPublicKeyItem::serial_size()
+{
+	uint32_t s = 8 ;                // header
+	s += 4 ;	                       // BN size
+	s += BN_num_bytes(public_key) ; // public_key
+	s += signature.TlvSize() ;      // signature
+	s += gxs_key.TlvSize() ;        // gxs_key
+
+	return s ;
+}
+
 /*************************************************************************/
 
 RsChatAvatarItem::~RsChatAvatarItem()
@@ -475,6 +500,41 @@ RsChatAvatarItem::~RsChatAvatarItem()
 		delete[] image_data ;
 		image_data = NULL ;
 	}
+}
+
+bool RsChatDHPublicKeyItem::serialise(void *data,uint32_t& pktsize)
+{
+	uint32_t tlvsize = serial_size() ;
+	uint32_t offset = 0;
+
+	if (pktsize < tlvsize)
+		return false; /* not enough space */
+
+	pktsize = tlvsize;
+
+	bool ok = true;
+
+	ok &= setRsItemHeader(data, tlvsize, PacketId(), tlvsize);
+
+	/* skip the header */
+	offset += 8;
+
+	uint32_t s = BN_num_bytes(public_key) ;
+
+	ok &= setRawUInt32(data, tlvsize, &offset, s);
+
+	BN_bn2bin(public_key,&((unsigned char *)data)[offset]) ;
+	offset += s ;
+
+	ok &= signature.SetTlv(data, tlvsize, &offset);
+	ok &= gxs_key.SetTlv(data, tlvsize, &offset);
+
+	if (offset != tlvsize)
+	{
+		ok = false;
+		std::cerr << "RsChatDHPublicKeyItem::serialiseItem() Size Error! offset=" << offset << ", tlvsize=" << tlvsize << std::endl;
+	}
+	return ok ;
 }
 
 /* serialise the data to the buffer */
@@ -981,6 +1041,28 @@ bool RsChatLobbyConfigItem::serialise(void *data, uint32_t& pktsize)
     return ok;
 }
 
+RsChatDHPublicKeyItem::RsChatDHPublicKeyItem(void *data,uint32_t /*size*/)
+	: RsChatItem(RS_PKT_SUBTYPE_DISTANT_CHAT_DH_PUBLIC_KEY)
+{
+	uint32_t offset = 8; // skip the header 
+	uint32_t rssize = getRsItemSize(data);
+	bool ok = true ;
+
+	uint32_t s=0 ;
+	/* get mandatory parts first */
+	ok &= getRawUInt32(data, rssize, &offset, &s);
+
+	public_key = BN_bin2bn(&((unsigned char *)data)[offset],s,NULL) ;
+	offset += s ;
+
+	ok &= signature.GetTlv(data, rssize, &offset) ;
+	ok &= gxs_key.GetTlv(data, rssize, &offset) ;
+
+	if (offset != rssize)
+		std::cerr << "RsChatDHPublicKeyItem::() Size error while deserializing." << std::endl ;
+	if (!ok)
+		std::cerr << "RsChatDHPublicKeyItem::() Unknown error while deserializing." << std::endl ;
+}
 RsChatMsgItem::RsChatMsgItem(void *data,uint32_t /*size*/,uint8_t subtype)
 	: RsChatItem(subtype)
 {

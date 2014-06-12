@@ -85,7 +85,7 @@ EVP_PKEY *RsRecogn::loadMasterKey()
 }
 
 
-bool	RsRecogn::loadSigningKeys(std::map<std::string, RsGxsRecognSignerItem *> &signMap)
+bool	RsRecogn::loadSigningKeys(std::map<RsGxsId, RsGxsRecognSignerItem *> &signMap)
 {
 
 	EVP_PKEY *signKey = loadMasterKey();
@@ -176,7 +176,7 @@ bool	RsRecogn::loadSigningKeys(std::map<std::string, RsGxsRecognSignerItem *> &s
 				std::cerr << "RsRecogn::loadSigningKeys() signature ok";
 				std::cerr << std::endl;
 #endif // DEBUG_RECOGN
-				std::string signerId = item->key.keyId;
+				RsGxsId signerId = item->key.keyId;
 				signMap[signerId] = item;
 			}
 		}
@@ -367,7 +367,7 @@ bool	RsRecogn::signTag(EVP_PKEY *signKey, RsGxsRecognTagItem *item)
 
 	/* save signature */
 	item->sign.signData.setBinData(sigbuf, siglen);
-	item->sign.keyId = signId;
+	item->sign.keyId = RsGxsId(signId);
 
 	/* clean up */
 	EVP_MD_CTX_destroy(mdctx);
@@ -422,7 +422,7 @@ bool	RsRecogn::signSigner(EVP_PKEY *signKey, RsGxsRecognSignerItem *item)
 
 	/* save signature */
 	item->sign.signData.setBinData(sigbuf, siglen);
-	item->sign.keyId = signId;
+	item->sign.keyId = RsGxsId(signId);
 
 	/* clean up */
 	EVP_MD_CTX_destroy(mdctx);
@@ -472,7 +472,7 @@ bool	RsRecogn::signTagRequest(EVP_PKEY *signKey, RsGxsRecognReqItem *item)
 
 	/* save signature */
 	item->sign.signData.setBinData(sigbuf, siglen);
-	item->sign.keyId = signId;
+	item->sign.keyId = RsGxsId(signId);
 
 	/* clean up */
 	EVP_MD_CTX_destroy(mdctx);

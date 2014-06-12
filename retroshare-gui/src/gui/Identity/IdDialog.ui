@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>605</width>
-    <height>442</height>
+    <height>497</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -674,6 +674,18 @@
    </property>
    <property name="text">
     <string>Delete Identity</string>
+   </property>
+  </action>
+  <action name="chatIdentity">
+   <property name="icon">
+    <iconset resource="../images.qrc">
+     <normaloff>:/images/toaster/chat.png</normaloff>:/images/toaster/chat.png</iconset>
+   </property>
+   <property name="text">
+    <string>Chat with this peer</string>
+   </property>
+   <property name="toolTip">
+    <string>Launches a distant chat with this peer</string>
    </property>
   </action>
  </widget>

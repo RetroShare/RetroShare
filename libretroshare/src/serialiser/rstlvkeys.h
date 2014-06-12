@@ -31,6 +31,7 @@
 
 #include "serialiser/rstlvitem.h"
 #include "serialiser/rstlvbinary.h"
+#include "retroshare/rsgxsifacetypes.h"
 
 #include <map>
 
@@ -48,22 +49,23 @@ const uint32_t RSTLV_KEY_DISTRIB_IDENTITY       = 0x0080;
 class RsTlvSecurityKey: public RsTlvItem
 {
 	public:
-	 RsTlvSecurityKey();
-virtual ~RsTlvSecurityKey() { return; }
-virtual uint32_t TlvSize() const;
-virtual void	 TlvClear();
-virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset) const; 
-virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); 
-virtual std::ostream &print(std::ostream &out, uint16_t indent) const;
+		RsTlvSecurityKey();
+		virtual ~RsTlvSecurityKey() {}
 
-	/* clears KeyData - but doesn't delete - to transfer ownership */
-	void ShallowClear(); 
+		virtual uint32_t TlvSize() const;
+		virtual void	 TlvClear();
+		virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset) const; 
+		virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); 
+		virtual std::ostream &print(std::ostream &out, uint16_t indent) const;
 
-	std::string keyId;		// Mandatory :
-	uint32_t keyFlags;		// Mandatory ;
-	uint32_t startTS;		// Mandatory : 
-	uint32_t endTS;			// Mandatory : 
-	RsTlvBinaryData keyData; 	// Mandatory : 
+		/* clears KeyData - but doesn't delete - to transfer ownership */
+		void ShallowClear(); 
+
+		RsGxsId keyId;		// Mandatory :
+		uint32_t keyFlags;		// Mandatory ;
+		uint32_t startTS;		// Mandatory : 
+		uint32_t endTS;			// Mandatory : 
+		RsTlvBinaryData keyData; 	// Mandatory : 
 };
 
 class RsTlvSecurityKeySet: public RsTlvItem
@@ -78,26 +80,25 @@ virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset);
 virtual std::ostream &print(std::ostream &out, uint16_t indent) const;
 
 	std::string groupId;				// Mandatory :
-	std::map<std::string, RsTlvSecurityKey> keys;	// Mandatory :
+	std::map<RsGxsId, RsTlvSecurityKey> keys;	// Mandatory :
 };
 
 
 class RsTlvKeySignature: public RsTlvItem
 {
 	public:
-	 RsTlvKeySignature();
-virtual ~RsTlvKeySignature() { return; }
-virtual uint32_t TlvSize() const;
-virtual void	 TlvClear();
-virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset) const; 
-virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); 
-virtual std::ostream &print(std::ostream &out, uint16_t indent) const;
+		RsTlvKeySignature();
+		virtual ~RsTlvKeySignature() { return; }
+		virtual uint32_t TlvSize() const;
+		virtual void	 TlvClear();
+		virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset) const; 
+		virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset); 
+		virtual std::ostream &print(std::ostream &out, uint16_t indent) const;
 
-	void	ShallowClear(); /* clears signData - but doesn't delete */
+		void	ShallowClear(); /* clears signData - but doesn't delete */
 
-	std::string keyId;		// Mandatory :
-        RsTlvBinaryData signData; 	// Mandatory :
-	// NO Certificates in Signatures... add as separate data type.
+		RsGxsId keyId;		// Mandatory :
+		RsTlvBinaryData signData; 	// Mandatory :
 };
 
 typedef uint32_t SignType;

@@ -31,6 +31,7 @@
 #include <iostream>
 #include <string>
 #include <set>
+#include <assert.h>
 
 #include "rstypes.h"
 #include "rsgxsifacetypes.h"
@@ -86,12 +87,77 @@ const ChatLobbyFlags RS_CHAT_LOBBY_FLAGS_AUTO_SUBSCRIBE( 0x00000001 ) ;
 
 typedef uint64_t 		ChatLobbyId ;
 typedef uint64_t 		ChatLobbyMsgId ;
-typedef std::string 		ChatLobbyNickName ;
+typedef std::string 	ChatLobbyNickName ;
 
 typedef RsPeerId 				DistantChatPeerId ;
 typedef GRouterKeyIdType	DistantMsgPeerId ;
 
-class MessageInfo 
+typedef uint64_t     MessageId ;
+
+class MsgAddress
+{
+	public:
+		typedef enum { MSG_ADDRESS_TYPE_UNKNOWN  = 0x00,
+							MSG_ADDRESS_TYPE_RSPEERID = 0x01, 
+							MSG_ADDRESS_TYPE_RSGXSID  = 0x02, 
+							MSG_ADDRESS_TYPE_EMAIL    = 0x03 } AddressType;
+
+		typedef enum { MSG_ADDRESS_MODE_UNKNOWN = 0x00,
+		               MSG_ADDRESS_MODE_TO      = 0x01,
+		               MSG_ADDRESS_MODE_CC      = 0x02,
+		               MSG_ADDRESS_MODE_BCC     = 0x03 } AddressMode;
+
+		explicit MsgAddress(const RsGxsId&  gid, MsgAddress::AddressMode mmode)
+			: _type(MSG_ADDRESS_TYPE_RSGXSID),  _mode(mmode), _addr_string(gid.toStdString()){}
+
+		explicit MsgAddress(const RsPeerId& pid, MsgAddress::AddressMode mmode)
+			: _type(MSG_ADDRESS_TYPE_RSPEERID), _mode(mmode), _addr_string(pid.toStdString()){}
+
+		explicit MsgAddress(const std::string& email, MsgAddress::AddressMode mmode)
+			: _type(MSG_ADDRESS_TYPE_EMAIL), _mode(mmode), _addr_string(email){}
+
+		MsgAddress::AddressType type() { return _type ;}
+		MsgAddress::AddressMode mode() { return _mode ;}
+
+		RsGxsId toGxsId()     const { assert(_type==MSG_ADDRESS_TYPE_RSGXSID );return RsGxsId (_addr_string);}
+		RsPeerId toRsPeerId() const { assert(_type==MSG_ADDRESS_TYPE_RSPEERID);return RsPeerId(_addr_string);}
+		std::string toEmail() const { assert(_type==MSG_ADDRESS_TYPE_EMAIL   );return          _addr_string ;}
+
+	private:
+		AddressType _type ;
+		AddressMode _mode ;
+		std::string _addr_string ;
+};
+
+class MessageInfo_v2
+{
+	public:
+		//MessageInfo_v2() {}
+
+		unsigned int msgflags;
+
+		//RsMessageId msgId;
+		MsgAddress from ;
+
+		std::list<MsgAddress> rcpt ;
+
+		// Headers
+		//
+		std::string subject;
+		std::string msg;
+		time_t time_stamp ;
+
+		//std::list<MessageHeader> headers ;
+
+		std::string attach_title;
+		std::string attach_comment;
+		std::list<FileInfo> files;
+
+		int size;  /* total of files */
+		int count; /* file count     */
+};
+
+class MessageInfo
 {
 public:
     MessageInfo() {}
@@ -126,6 +192,7 @@ public:
 
     int ts;
 };
+
 
 class MsgInfoSummary 
 {
@@ -171,6 +238,7 @@ public:
 #define RS_DISTANT_CHAT_STATUS_TUNNEL_OK		   0x0002
 #define RS_DISTANT_CHAT_STATUS_CAN_TALK		   0x0003
 #define RS_DISTANT_CHAT_STATUS_REMOTELY_CLOSED 	0x0004
+#define RS_DISTANT_CHAT_STATUS_WAITING_DH  	   0x0005
 
 #define RS_DISTANT_CHAT_ERROR_NO_ERROR            0x0000 
 #define RS_DISTANT_CHAT_ERROR_DECRYPTION_FAILED   0x0001 
@@ -356,7 +424,7 @@ virtual ChatLobbyId createChatLobby(const std::string& lobby_name,const std::str
 /*            Distant chat              */
 /****************************************/
 
-virtual bool initiateDistantChatConnexion(const RsGxsId& pid,DistantChatPeerId& id,uint32_t& error_code) = 0;
+virtual bool initiateDistantChatConnexion(const RsGxsId& pid,uint32_t& error_code) = 0;
 virtual bool getDistantChatStatus(const DistantChatPeerId& pid,RsGxsId& gxs_id,uint32_t& status) = 0;
 virtual bool closeDistantChatConnexion(const DistantChatPeerId& pid) = 0;
 

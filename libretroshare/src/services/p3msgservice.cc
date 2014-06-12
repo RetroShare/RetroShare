@@ -1977,7 +1977,7 @@ bool p3MsgService::decryptMessage(const std::string& mId)
 			  offset += tmp_data - old_data ;
 
 			  RsTlvKeySignature signature ;
-			  signature.keyId = senders_id.toStdString() ;
+			  signature.keyId = senders_id;
 			  signature.signData.bin_len = signature_size ;
 			  signature.signData.bin_data = malloc(signature_size) ;
 			  memcpy(signature.signData.bin_data,&decrypted_data[offset],signature_size) ;

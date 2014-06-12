@@ -28,7 +28,10 @@
 
 #include <map>
 
+#include "openssl/bn.h"
+
 #include "retroshare/rstypes.h"
+#include "serialiser/rstlvkeys.h"
 #include "serialiser/rsserviceids.h"
 #include "serialiser/rsserial.h"
 
@@ -76,6 +79,7 @@ const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_deprecated2	= 0x11 ;	// to be remov
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_LIST         	  = 0x12 ;
 const uint8_t RS_PKT_SUBTYPE_DISTANT_INVITE_CONFIG   	  = 0x13 ;
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_CONFIG      	  = 0x15 ;
+const uint8_t RS_PKT_SUBTYPE_DISTANT_CHAT_DH_PUBLIC_KEY = 0x16 ;
 
 // for defining tags themselves and msg tags
 const uint8_t RS_PKT_SUBTYPE_MSG_TAG_TYPE 	= 0x03;
@@ -87,6 +91,7 @@ const uint8_t RS_PKT_SUBTYPE_MSG_INVITE    	= 0x07;
 typedef uint64_t 		ChatLobbyId ;
 typedef uint64_t 		ChatLobbyMsgId ;
 typedef std::string 	ChatLobbyNickName ;
+typedef uint64_t		DistantChatDHSessionId ;
 
 class RsChatItem: public RsItem
 {
@@ -402,6 +407,32 @@ class RsChatAvatarItem: public RsChatItem
 		unsigned char *image_data ;		// image
 };
 
+// This class contains the public Diffie-Hellman parameters to be sent
+// when performing a DH agreement over a distant chat tunnel.
+//
+class RsChatDHPublicKeyItem: public RsChatItem
+{
+	public:
+		RsChatDHPublicKeyItem() :RsChatItem(RS_PKT_SUBTYPE_DISTANT_CHAT_DH_PUBLIC_KEY) {setPriorityLevel(QOS_PRIORITY_RS_CHAT_ITEM) ;}
+		RsChatDHPublicKeyItem(void *data,uint32_t size) ; // deserialization
+
+		virtual ~RsChatDHPublicKeyItem() { BN_free(public_key) ; } 
+		virtual std::ostream& print(std::ostream &out, uint16_t indent = 0);
+
+		virtual bool serialise(void *data,uint32_t& size) ;	// Isn't it better that items can serialize themselves ?
+		virtual uint32_t serial_size() ; 							// deserialise is handled using a constructor
+
+		// Private data to DH public key item
+		//
+		BIGNUM *public_key ;
+
+		RsTlvKeySignature signature ;	// signs the public key in a row.
+		RsTlvSecurityKey  gxs_key ;	// public key of the signer
+
+	private:
+		RsChatDHPublicKeyItem(const RsChatDHPublicKeyItem&) : RsChatItem(RS_PKT_SUBTYPE_DISTANT_CHAT_DH_PUBLIC_KEY) {}						// make the object non copy-able
+		const RsChatDHPublicKeyItem& operator=(const RsChatDHPublicKeyItem&) { return *this ;}
+};
 
 class RsChatSerialiser: public RsSerialType
 {

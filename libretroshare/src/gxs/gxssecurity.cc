@@ -33,7 +33,7 @@
  * #define GXS_SECURITY_DEBUG 	1
  ***/
 
-static std::string getRsaKeyFingerprint(RSA *pubkey)
+static RsGxsId getRsaKeyFingerprint(RSA *pubkey)
 {
         int lenn = BN_num_bytes(pubkey -> n);
         int lene = BN_num_bytes(pubkey -> e);
@@ -51,7 +51,7 @@ static std::string getRsaKeyFingerprint(RSA *pubkey)
 
 		  assert(Sha1CheckSum::SIZE_IN_BYTES >= CERTSIGNLEN) ;
 
-        return s.toStdString().substr(0,2*CERTSIGNLEN);
+        return RsGxsId(s.toStdString().substr(0,2*CERTSIGNLEN));
 }
 
 static RSA *extractPublicKey(const RsTlvSecurityKey& key)
@@ -151,7 +151,7 @@ bool GxsSecurity::getSignature(const char *data, uint32_t data_len, const RsTlvS
 
 	if(!rsa_pub)
 	{
-		std::cerr << "GxsSecurity::validateSignature(): Cannot validate signature. Keydata is incomplete." << std::endl;
+		std::cerr << "GxsSecurity::getSignature(): Cannot create signature. Keydata is incomplete." << std::endl;
 		return false ;
 	}
 	EVP_PKEY *key_pub = EVP_PKEY_new();
@@ -171,7 +171,7 @@ bool GxsSecurity::getSignature(const char *data, uint32_t data_len, const RsTlvS
 	EVP_PKEY_free(key_pub);
 
 	sign.signData.setBinData(sigbuf, siglen);
-	sign.keyId = privKey.keyId;
+	sign.keyId = RsGxsId(privKey.keyId);
 
 	return ok;
 }
@@ -183,6 +183,7 @@ bool GxsSecurity::validateSignature(const char *data, uint32_t data_len, const R
 	if(!rsakey)
 	{
 		std::cerr << "GxsSecurity::validateSignature(): Cannot validate signature. Keydata is incomplete." << std::endl;
+		key.print(std::cerr,0) ;
 		return false ;
 	}
 	EVP_PKEY *signKey = EVP_PKEY_new();

@@ -386,7 +386,7 @@ bool p3IdService::parseRecognTag(const RsGxsId &id, const std::string &nickname,
 	details.valid_to = tagitem->valid_to;
 	details.tag_class = tagitem->tag_class;
 	details.tag_type = tagitem->tag_type;
-	details.signer = tagitem->sign.keyId;
+	details.signer = tagitem->sign.keyId.toStdString();
 
 	details.is_valid = isValid;
 	details.is_pending = isPending;
@@ -1519,7 +1519,7 @@ bool p3IdService::cache_store(const RsGxsIdGroupItem *item)
 		return false;
 	}
 
-	std::map<std::string, RsTlvSecurityKey>::iterator kit;
+	std::map<RsGxsId, RsTlvSecurityKey>::iterator kit;
 
 	//std::cerr << "p3IdService::cache_store() KeySet is:";
 	//keySet.print(std::cerr, 10);
@@ -2137,7 +2137,7 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
 
 	/********************* TEMP HACK UNTIL GXS FILLS IN GROUP_ID *****************/	
 	// find private admin key
-	std::map<std::string, RsTlvSecurityKey>::iterator mit = keySet.keys.begin();
+	std::map<RsGxsId, RsTlvSecurityKey>::iterator mit = keySet.keys.begin();
 	for(; mit != keySet.keys.end(); mit++)
 	{
 		RsTlvSecurityKey& pk = mit->second;
@@ -2989,7 +2989,7 @@ bool p3IdService::recogn_checktag(const RsGxsId &id, const std::string &nickname
 		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
 
 		
-		std::map<std::string, RsGxsRecognSignerItem *>::iterator it;
+		std::map<RsGxsId, RsGxsRecognSignerItem *>::iterator it;
 		it = mRecognSignKeys.find(item->sign.keyId);
 		if (it == mRecognSignKeys.end())
 		{

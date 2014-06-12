@@ -268,7 +268,7 @@ void RsGenExchange::generatePublicFromPrivateKeys(const RsTlvSecurityKeySet &pri
 	publickeySet = RsTlvSecurityKeySet() ;
 	RsTlvSecurityKey pubkey ;
 
-	for(std::map<std::string, RsTlvSecurityKey>::const_iterator cit=privatekeySet.keys.begin(); cit != privatekeySet.keys.end(); ++cit)
+	for(std::map<RsGxsId, RsTlvSecurityKey>::const_iterator cit=privatekeySet.keys.begin(); cit != privatekeySet.keys.end(); ++cit)
 		if(GxsSecurity::extractPublicKey(cit->second,pubkey))
 			publickeySet.keys.insert(std::make_pair(pubkey.keyId, pubkey));
 }
@@ -284,7 +284,7 @@ uint8_t RsGenExchange::createGroup(RsNxsGrp *grp, RsTlvSecurityKeySet& privateKe
 
     // find private admin key
     RsTlvSecurityKey privAdminKey;
-    std::map<std::string, RsTlvSecurityKey>::iterator mit = privateKeySet.keys.begin();
+    std::map<RsGxsId, RsTlvSecurityKey>::iterator mit = privateKeySet.keys.begin();
 
     bool privKeyFound = false; // private admin key
     for(; mit != privateKeySet.keys.end(); mit++)
@@ -497,7 +497,7 @@ int RsGenExchange::createMsgSignatures(RsTlvKeySignatureSet& signSet, RsTlvBinar
         RsTlvSecurityKeySet& keys = grpMeta.keys;
         RsTlvSecurityKey* pubKey;
 
-        std::map<std::string, RsTlvSecurityKey>::iterator mit =
+        std::map<RsGxsId, RsTlvSecurityKey>::iterator mit =
                         keys.keys.begin(), mit_end = keys.keys.end();
         bool pub_key_found = false;
         for(; mit != mit_end; mit++)
@@ -704,10 +704,10 @@ int RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, RsTlvSecu
     {
         RsTlvKeySignature sign = metaData.signSet.keySignSet[GXS_SERV::FLAG_AUTHEN_PUBLISH];
 
-        std::map<std::string, RsTlvSecurityKey>& keys = grpKeySet.keys;
-        std::map<std::string, RsTlvSecurityKey>::iterator mit = keys.begin();
+        std::map<RsGxsId, RsTlvSecurityKey>& keys = grpKeySet.keys;
+        std::map<RsGxsId, RsTlvSecurityKey>::iterator mit = keys.begin();
 
-        std::string keyId;
+        RsGxsId keyId;
         for(; mit != keys.end() ; mit++)
         {
             RsTlvSecurityKey& key = mit->second;
@@ -719,7 +719,7 @@ int RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, RsTlvSecu
             }
         }
 
-        if(!keyId.empty())
+        if(!keyId.isNull())
         {
             RsTlvSecurityKey& key = keys[keyId];
             publishValidate &= GxsSecurity::validateNxsMsg(*msg, sign, key);
@@ -1940,7 +1940,7 @@ void RsGenExchange::processGroupDelete()
 bool RsGenExchange::checkKeys(const RsTlvSecurityKeySet& keySet)
 {
 
-	typedef std::map<std::string, RsTlvSecurityKey> keyMap;
+	typedef std::map<RsGxsId, RsTlvSecurityKey> keyMap;
 	const keyMap& allKeys = keySet.keys;
 	keyMap::const_iterator cit = allKeys.begin();
         bool adminFound = false, publishFound = false;
@@ -2011,7 +2011,7 @@ void RsGenExchange::publishGrps()
 
 		// find private admin key
         RsTlvSecurityKey privAdminKey;
-        std::map<std::string, RsTlvSecurityKey>::iterator mit_keys = privatekeySet.keys.begin();
+        std::map<RsGxsId, RsTlvSecurityKey>::iterator mit_keys = privatekeySet.keys.begin();
 
         bool privKeyFound = false;
         for(; mit_keys != privatekeySet.keys.end(); mit_keys++)
@@ -2569,8 +2569,8 @@ bool RsGenExchange::updateValid(RsGxsGrpMetaData& oldGrpMeta, RsNxsGrp& newGrp) 
 
 	RsTlvKeySignature adminSign = mit->second;
 
-	std::map<std::string, RsTlvSecurityKey>& keys = oldGrpMeta.keys.keys;
-	std::map<std::string, RsTlvSecurityKey>::iterator keyMit = keys.find(oldGrpMeta.mGroupId.toStdString());
+	std::map<RsGxsId, RsTlvSecurityKey>& keys = oldGrpMeta.keys.keys;
+	std::map<RsGxsId, RsTlvSecurityKey>::iterator keyMit = keys.find(RsGxsId(oldGrpMeta.mGroupId));
 
 	if(keyMit == keys.end())
 	{

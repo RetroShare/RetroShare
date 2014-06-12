@@ -32,6 +32,9 @@
 
 #define TLV_DEBUG 1
 
+// This should be removed eventually, but will break backward compatibility
+#define KEEP_OLD_SIGNATURE_SERIALISE_FORMAT
+
 /************************************* RsTlvSecurityKey ************************************/
 
 RsTlvSecurityKey::RsTlvSecurityKey()
@@ -67,7 +70,11 @@ uint32_t RsTlvSecurityKey::TlvSize() const
 
 	/* now add comment and title length of this tlv object */
 
-	s += GetTlvStringSize(keyId); 
+#ifdef KEEP_OLD_SIGNATURE_SERIALISE_FORMAT
+	s += GetTlvStringSize(keyId.toStdString()) ;
+#else
+	s += keyId.serial_size(); 
+#endif
 	s += 4;
 	s += 4;
 	s += 4;
@@ -85,10 +92,10 @@ bool  RsTlvSecurityKey::SetTlv(void *data, uint32_t size, uint32_t *offset) cons
 
 	if (size < tlvend)
 	{
-#ifdef TLV_DEBUG
+//#ifdef TLV_DEBUG
 		std::cerr << "RsTlvSecurityKey::SetTlv() Failed not enough space";
 		std::cerr << std::endl;
-#endif
+//#endif
 		return false; /* not enough space */
 	}
 
@@ -99,7 +106,11 @@ bool  RsTlvSecurityKey::SetTlv(void *data, uint32_t size, uint32_t *offset) cons
 
 	ok &= SetTlvBase(data, tlvend, offset, TLV_TYPE_SECURITYKEY, tlvsize);
 
-	ok &= SetTlvString(data, tlvend, offset, TLV_TYPE_STR_KEYID, keyId);  
+#ifdef KEEP_OLD_SIGNATURE_SERIALISE_FORMAT
+	ok &= SetTlvString(data, tlvend, offset, TLV_TYPE_STR_KEYID, keyId.toStdString());  
+#else
+	ok &= keyId.serialise(data, tlvend, *offset) ;
+#endif
 	ok &= setRawUInt32(data, tlvend, offset, keyFlags);
 	ok &= setRawUInt32(data, tlvend, offset, startTS);
 	ok &= setRawUInt32(data, tlvend, offset, endTS);
@@ -145,7 +156,13 @@ bool  RsTlvSecurityKey::GetTlv(void *data, uint32_t size, uint32_t *offset)
 	/* skip the header */
 	(*offset) += TLV_HEADER_SIZE;
 
-	ok &= GetTlvString(data, tlvend, offset, TLV_TYPE_STR_KEYID, keyId);
+#ifdef KEEP_OLD_SIGNATURE_SERIALISE_FORMAT
+	std::string s ;
+	ok &= GetTlvString(data, tlvend, offset, TLV_TYPE_STR_KEYID, s);  
+	keyId = RsGxsId(s) ;
+#else
+	ok &= keyId.deserialise(data, tlvend, *offset) ;
+#endif
 	ok &= getRawUInt32(data, tlvend, offset, &(keyFlags));
 	ok &= getRawUInt32(data, tlvend, offset, &(startTS));
 	ok &= getRawUInt32(data, tlvend, offset, &(endTS));
@@ -224,7 +241,7 @@ uint32_t RsTlvSecurityKeySet::TlvSize() const
 
 	uint32_t s = TLV_HEADER_SIZE; /* header */
 
-	std::map<std::string, RsTlvSecurityKey>::const_iterator it;
+	std::map<RsGxsId, RsTlvSecurityKey>::const_iterator it;
 	
 	s += GetTlvStringSize(groupId); 
 
@@ -264,7 +281,7 @@ bool  RsTlvSecurityKeySet::SetTlv(void *data, uint32_t size, uint32_t *offset) c
 
 	if(!keys.empty())
 	{
-		std::map<std::string, RsTlvSecurityKey>::const_iterator it;
+		std::map<RsGxsId, RsTlvSecurityKey>::const_iterator it;
 
 		for(it = keys.begin(); it != keys.end() ; ++it)
 			ok &= (it->second).SetTlv(data, size, offset);
@@ -361,7 +378,7 @@ std::ostream &RsTlvSecurityKeySet::print(std::ostream &out, uint16_t indent) con
 	out << "GroupId: " << groupId;
 	out << std::endl;
 
-	std::map<std::string, RsTlvSecurityKey>::const_iterator it;
+	std::map<RsGxsId, RsTlvSecurityKey>::const_iterator it;
 	for(it = keys.begin(); it != keys.end() ; ++it)
 		(it->second).print(out, int_Indent);
 
@@ -396,7 +413,11 @@ uint32_t RsTlvKeySignature::TlvSize() const
 {
 	uint32_t s = TLV_HEADER_SIZE; /* header + 4 for size */
 
-	s += GetTlvStringSize(keyId); 
+#ifdef KEEP_OLD_SIGNATURE_SERIALISE_FORMAT
+	s += GetTlvStringSize(keyId.toStdString()) ;
+#else
+	s += keyId.serial_size() ;
+#endif
 	s += signData.TlvSize();
 	return s;
 
@@ -424,7 +445,11 @@ bool  RsTlvKeySignature::SetTlv(void *data, uint32_t size, uint32_t *offset) con
 
 	ok &= SetTlvBase(data, tlvend, offset, TLV_TYPE_KEYSIGNATURE, tlvsize);
 
-	ok &= SetTlvString(data, tlvend, offset, TLV_TYPE_STR_KEYID, keyId);  
+#ifdef KEEP_OLD_SIGNATURE_SERIALISE_FORMAT
+	ok &= SetTlvString(data, tlvend, offset, TLV_TYPE_STR_KEYID, keyId.toStdString());  
+#else
+	ok &= keyId.serialise(data, tlvend, *offset) ;
+#endif
 	ok &= signData.SetTlv(data, tlvend, offset);  
 
 	if (!ok)
@@ -475,7 +500,13 @@ bool  RsTlvKeySignature::GetTlv(void *data, uint32_t size, uint32_t *offset)
 	/* skip the header */
 	(*offset) += TLV_HEADER_SIZE;
 
-	ok &= GetTlvString(data, tlvend, offset, TLV_TYPE_STR_KEYID, keyId);
+#ifdef KEEP_OLD_SIGNATURE_SERIALISE_FORMAT
+	std::string s ;
+	ok &= GetTlvString(data, tlvend, offset, TLV_TYPE_STR_KEYID, s);  
+	keyId = RsGxsId(s) ;
+#else
+	ok &= keyId.deserialise(data, tlvend, *offset) ;
+#endif
 	ok &= signData.GetTlv(data, tlvend, offset);  
 
 	/***************************************************************************

@@ -295,7 +295,7 @@ int 	pqissludp::Initiate_Connection()
  */
 #define UDP_RELAY_TRANSPORT_OVERHEAD_FACTOR (0.7)
 
-		parent()->setRateCap( UDP_RELAY_TRANSPORT_OVERHEAD_FACTOR * mConnectBandwidth / 1000.0, 
+        parent()->setRateCap( UDP_RELAY_TRANSPORT_OVERHEAD_FACTOR * mConnectBandwidth / 1000.0,
 				UDP_RELAY_TRANSPORT_OVERHEAD_FACTOR * mConnectBandwidth / 1000.0); // Set RateCap.
 	}
 

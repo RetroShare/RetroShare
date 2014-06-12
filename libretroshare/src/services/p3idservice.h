@@ -427,8 +427,8 @@ virtual void handle_event(uint32_t event_type, const std::string &elabel);
 
 	std::list<RsGxsGroupId> mRecognGroupIds;
 	std::list<RsGxsIdGroupItem *> mRecognGroupsToProcess;
-	std::map<std::string, RsGxsRecognSignerItem *> mRecognSignKeys;
-	std::map<std::string, uint32_t> mRecognOldSignKeys;
+	std::map<RsGxsId, RsGxsRecognSignerItem *> mRecognSignKeys;
+	std::map<RsGxsId, uint32_t> mRecognOldSignKeys;
 
 /************************************************************************
  * Below is the background task for processing opinions => reputations 
