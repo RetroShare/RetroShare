@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>605</width>
+    <width>625</width>
     <height>497</height>
    </rect>
   </property>
@@ -28,7 +28,7 @@
      <widget class="QWidget" name="layoutWidget">
       <layout class="QVBoxLayout" name="verticalLayout_5">
        <property name="spacing">
-        <number>1</number>
+        <number>2</number>
        </property>
        <item>
         <widget class="QFrame" name="titleBarFrame">
@@ -271,169 +271,193 @@
        <item>
         <widget class="QGroupBox" name="detailsGroupBox">
          <property name="title">
-          <string>Identity Type</string>
+          <string>Identity Info</string>
          </property>
-         <layout class="QGridLayout" name="gridLayout">
-          <item row="0" column="0">
-           <widget class="QLabel" name="label">
-            <property name="text">
-             <string>Nickname</string>
-            </property>
-           </widget>
-          </item>
+         <layout class="QGridLayout" name="gridLayout_3">
+          <property name="margin">
+           <number>6</number>
+          </property>
           <item row="0" column="1">
-           <widget class="QLineEdit" name="lineEdit_Nickname">
-            <property name="enabled">
-             <bool>true</bool>
+           <widget class="QGroupBox" name="groupBox">
+            <property name="title">
+             <string>Identity Type</string>
             </property>
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_3">
+             <property name="margin">
+              <number>9</number>
+             </property>
+             <item>
+              <widget class="QRadioButton" name="radioButton_IdYourself">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="text">
+                <string>Yourself</string>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="radioButton_IdFriend">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="text">
+                <string>Friend</string>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="radioButton_IdFOF">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="text">
+                <string>Friend of Friend</string>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="radioButton_IdOther">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="text">
+                <string>Other</string>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="Line" name="line_2">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QRadioButton" name="radioButton_IdPseudo">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="mouseTracking">
+                <bool>false</bool>
+               </property>
+               <property name="text">
+                <string>Pseudonym</string>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+               <property name="autoExclusive">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </widget>
           </item>
-          <item row="0" column="2" rowspan="6">
-           <layout class="QVBoxLayout" name="verticalLayout_3">
-            <item>
-             <widget class="QRadioButton" name="radioButton_IdYourself">
+          <item row="0" column="0">
+           <layout class="QGridLayout" name="gridLayout">
+            <property name="margin">
+             <number>6</number>
+            </property>
+            <item row="0" column="1">
+             <widget class="QLineEdit" name="lineEdit_Nickname">
               <property name="enabled">
-               <bool>false</bool>
+               <bool>true</bool>
               </property>
-              <property name="text">
-               <string>Yourself</string>
-              </property>
-              <property name="checkable">
+              <property name="readOnly">
                <bool>true</bool>
               </property>
              </widget>
             </item>
-            <item>
-             <widget class="QRadioButton" name="radioButton_IdFriend">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
+            <item row="0" column="0">
+             <widget class="QLabel" name="label">
               <property name="text">
-               <string>Friend</string>
+               <string>Nickname</string>
               </property>
-              <property name="checkable">
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QLineEdit" name="lineEdit_KeyId">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="readOnly">
                <bool>true</bool>
               </property>
              </widget>
             </item>
-            <item>
-             <widget class="QRadioButton" name="radioButton_IdFOF">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_4">
               <property name="text">
-               <string>Friend of Friend</string>
+               <string>Key ID</string>
               </property>
-              <property name="checkable">
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="label_8">
+              <property name="text">
+               <string>PGP Hash</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QLineEdit" name="lineEdit_GpgHash">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="readOnly">
                <bool>true</bool>
               </property>
              </widget>
             </item>
-            <item>
-             <widget class="QRadioButton" name="radioButton_IdOther">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
+            <item row="3" column="0">
+             <widget class="QLabel" name="label_7">
               <property name="text">
-               <string>Other</string>
+               <string>PGP Id</string>
               </property>
-              <property name="checkable">
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="QLineEdit" name="lineEdit_GpgId">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="readOnly">
                <bool>true</bool>
               </property>
              </widget>
             </item>
-            <item>
-             <widget class="Line" name="line_2">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
+            <item row="4" column="0">
+             <widget class="QLabel" name="label_3">
+              <property name="text">
+               <string>PGP Name</string>
               </property>
              </widget>
             </item>
-            <item>
-             <widget class="QRadioButton" name="radioButton_IdPseudo">
+            <item row="4" column="1">
+             <widget class="QLineEdit" name="lineEdit_GpgName">
               <property name="enabled">
-               <bool>false</bool>
+               <bool>true</bool>
               </property>
-              <property name="text">
-               <string>Pseudonym</string>
-              </property>
-              <property name="checkable">
+              <property name="readOnly">
                <bool>true</bool>
               </property>
              </widget>
             </item>
            </layout>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_4">
-            <property name="text">
-             <string>Key ID</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QLineEdit" name="lineEdit_KeyId">
-            <property name="enabled">
-             <bool>true</bool>
-            </property>
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0">
-           <widget class="QLabel" name="label_3">
-            <property name="text">
-             <string>PGP Name</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="1">
-           <widget class="QLineEdit" name="lineEdit_GpgName">
-            <property name="enabled">
-             <bool>true</bool>
-            </property>
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QLineEdit" name="lineEdit_GpgHash">
-            <property name="enabled">
-             <bool>true</bool>
-            </property>
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1">
-           <widget class="QLineEdit" name="lineEdit_GpgId">
-            <property name="enabled">
-             <bool>true</bool>
-            </property>
-            <property name="readOnly">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="label_7">
-            <property name="text">
-             <string>PGP Id</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="label_8">
-            <property name="text">
-             <string>PGP Hash</string>
-            </property>
-           </widget>
           </item>
          </layout>
         </widget>
@@ -450,6 +474,9 @@
           <string>Reputation</string>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <property name="margin">
+           <number>6</number>
+          </property>
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_2">
             <item>
@@ -480,6 +507,12 @@
             </item>
             <item>
              <layout class="QFormLayout" name="formLayout">
+              <property name="fieldGrowthPolicy">
+               <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+              </property>
+              <property name="margin">
+               <number>6</number>
+              </property>
               <item row="0" column="0">
                <widget class="QLabel" name="label_2">
                 <property name="font">
